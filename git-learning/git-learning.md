@@ -124,6 +124,8 @@
 
 配SSH公钥。git clone可选择使用ssh链接
 
+### 本地内容同步到远程仓库
+
 #### 添加所有文件到暂存区
 
 git add .
@@ -139,6 +141,20 @@ git push origin main
 #### 忽略文件
 
 被忽略的文件在 .gitignore里面，可以配置正则规则.
+
+
+
+### 从远程仓库拉取内容到本地
+
+- 本地新建文件夹
+
+- 文件夹内打开git bash
+
+  ```shell
+  git init
+  git remote add origin <git repo link>
+  git pull --rebase origin main
+  ```
 
 ### Git分支管理
 
