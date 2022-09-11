@@ -1043,7 +1043,7 @@ XFS ：large data files
 - 本地DNS解析：/etc/hosts
 - DNS优先级：/etc/nsswitch.conf
 - **/etc/nsswitch.conf** 这个文件定义了DNS解析的优先级过程，默认下，先从本地寻找（**/etc/hosts**），如果找不到，再从**/etc/resolv.conf**中定义的DNS服务器中寻找
-- nslookup和dig直接从**/etc/resolv.conf**中寻找，并不会查找本地/etc/hosts；然而getent会按照**/etc/nsswitch.conf** 定义的顺序来查找（默认时就会先查找/etc/hosts）
+- **nslookup**和**dig**直接从**/etc/resolv.conf**中寻找，并不会查找本地/etc/hosts；然而**getent**会按照**/etc/nsswitch.conf** 定义的顺序来查找（默认时就会先查找/etc/hosts）
 
 ### 检查端口监听状态
 
@@ -1971,8 +1971,6 @@ echo "Backup completed"
 ### apt
 
 - Advanced Package Tools
-
-<img src="C:\Users\XH-Legion\AppData\Roaming\Typora\typora-user-images\image-20220208153822160.png" alt="image-20220208153822160" style="zoom:50%;" />
 
 - 国内的镜像网站：会定时去国外服务器同步资源，访问速度会快一些。可以在sourcelist里面设置成从镜像网站安装，例如，在清华大学镜像站中，找到使用帮助，在对应系统版本中找到sources.list的配置
 
