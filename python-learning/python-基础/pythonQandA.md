@@ -38,9 +38,15 @@ python a = 1 和C++的int a = 1有啥区别？
 
 ## 函数参数 *args 和 **kwargs 的区别
 
-*args是元祖参数，将参数打包成元祖给函数调用；
+- 有时候不知道可能会传入多少个实参；方便传入任意数量的实参。*args是元组参数，将非键值对的多个**位置参数**打包成元组给函数调用；
 
-**kwargs是字典参数，将参数打包成字典给函数体调用。
+- 有时候不知道函数可能会传入什么类型的实参，**kwargs是字典参数，将键值对的**关键字参数**打包成字典给函数体调用。
+
+- 传参的时候，agrs要在kargs前面，否则会报错。
+
+- \* 的作用是打包 / 拆包
+
+  > [(5条消息) python中*args和**kwargs的理解_千千Sama的博客-CSDN博客_python中的**kwargs](https://lixiaoqian.blog.csdn.net/article/details/81288741?spm=1001.2101.3001.6650.1&utm_medium=distribute.pc_relevant.none-task-blog-2~default~CTRLIST~Rate-1-81288741-blog-112285969.pc_relevant_multi_platform_whitelistv3&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2~default~CTRLIST~Rate-1-81288741-blog-112285969.pc_relevant_multi_platform_whitelistv3&utm_relevant_index=2)
 
 ## 字典及其底层实现
 
