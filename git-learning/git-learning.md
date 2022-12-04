@@ -106,6 +106,13 @@
    $ git clone [url]  # https://gitee.com/kuangstudy/openclass.git
    ```
 
+#### 配置branch和remote
+
+```git
+git branch -M main
+git remote add origin https://github.com/hangx969/Scripts.git
+```
+
 #### git文件操作
 
 文件四种状态
@@ -128,15 +135,21 @@
 
 #### 添加所有文件到暂存区
 
+```git
 git add .
+```
 
 #### 提交暂存区的内容到本地仓库
 
+```git
 git commit -m “”
+```
 
 #### 提交至远程仓库
 
+```git
 git push origin main
+```
 
 #### 忽略文件
 
