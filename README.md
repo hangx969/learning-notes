@@ -17,27 +17,29 @@ My learning notes
 
 ## 计算机网络
 
-- [哈工大的计算机网络](https://www.icourse163.org/course/hit-154005)
-- [计算机网络微课堂-B站](https://www.bilibili.com/video/BV1c4411d7jb?p=1) PPT做的特别好
-- 《深入浅出计算机网络》
-- 《网络是怎样连接的》、《图解 HTTP》、《图解 TCP/IP》
-- 《计算机网络自顶向下》，这本看三遍，就很稳。
+- [x] [计算机网络微课堂-B站](https://www.bilibili.com/video/BV1c4411d7jb?p=1) PPT做的特别好
+- [x] 《深入浅出计算机网络》
+- [x] 《网络是怎样连接的》
+- [x] 《图解 HTTP》
+- [ ] 《图解 TCP/IP》
+- [ ] [哈工大的计算机网络](https://www.icourse163.org/course/hit-154005)
+- [ ] 《计算机网络自顶向下》，这本看三遍，就很稳。
 
 ## 数据库
 
-- 《MySQL必知必会》 、《从根儿上理解mysql》
-- [ Mysql实战45讲](https://t.zsxq.com/fMbMniE)  强烈推荐，基本覆盖面试问题了。
+- [ ] 《MySQL必知必会》 、《从根儿上理解mysql》
+- [ ] [ Mysql实战45讲](https://t.zsxq.com/fMbMniE)  强烈推荐，基本覆盖面试问题了。
 
-- [哈工大的数据库](https://www.bilibili.com/video/av70279349/)
-- [【尚硅谷】Redis B站视频](https://www.bilibili.com/video/BV1Rv41177Af?p=4)
+- [ ] [哈工大的数据库](https://www.bilibili.com/video/av70279349/)
+- [ ] [【尚硅谷】Redis B站视频](https://www.bilibili.com/video/BV1Rv41177Af?p=4)
 
 ## 操作系统
 
-- [王道操作系统](https://www.bilibili.com/video/BV1YE411D7nH) 入门 
-- [哈工大李志军的操作系统课程](https://www.icourse163.org/course/HIT-1002531008#/info) 深入学习 （汇编内容不考）
-- [深入理解计算机系统B站（中文字幕）](https://www.bilibili.com/video/BV1iW411d7hd) （选看）
-- [深入理解计算机系统讲解视频](https://www.bilibili.com/video/BV1cD4y1D7uR) （选看）
-- [清华大学操作系统视频B站](https://www.bilibili.com/video/BV1js411b7vg?from=search&seid=2361361014547524697) 这个相对粗糙一点
+- [ ] [王道操作系统](https://www.bilibili.com/video/BV1YE411D7nH) 入门 
+- [ ] [哈工大李志军的操作系统课程](https://www.icourse163.org/course/HIT-1002531008#/info) 深入学习 （汇编内容不考）
+- [ ] [深入理解计算机系统B站（中文字幕）](https://www.bilibili.com/video/BV1iW411d7hd) （选看）
+- [ ] [深入理解计算机系统讲解视频](https://www.bilibili.com/video/BV1cD4y1D7uR) （选看）
+- [ ] [清华大学操作系统视频B站](https://www.bilibili.com/video/BV1js411b7vg?from=search&seid=2361361014547524697) 这个相对粗糙一点
 
 ## Linux
 
