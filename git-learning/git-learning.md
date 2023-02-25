@@ -142,7 +142,7 @@ git add .
 #### 提交暂存区的内容到本地仓库
 
 ```git
-git commit -m “”
+git commit -m “comments”
 ```
 
 #### 提交至远程仓库
