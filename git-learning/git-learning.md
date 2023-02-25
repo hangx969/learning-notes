@@ -81,9 +81,12 @@
 
 #### 工作流程
 
-- 在工作目录中添加文件
-- 将需要进行版本管理的文件存入暂存区域
-- 将暂存区域的文件提交到git仓库
+- 从远程仓库中把项目clone到本地
+
+- 在本地工作区中增删改
+- 将更改的文件add到暂存区域
+- 将暂存区域的文件commit到本地git仓库
+- 从本地仓库push到远程仓库
 
 ![图片](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202209111100296.jpeg)
 
@@ -117,10 +120,18 @@ git remote add origin https://github.com/hangx969/Scripts.git
 
 文件四种状态
 
-- Untracked: 未跟踪, 此文件在文件夹中, 但并没有加入到git库, 不参与版本控制. 通过git add 状态变为Staged.
-- Unmodify: 文件已经入库, 未修改, 即版本库中的文件快照内容与文件夹中完全一致. 这种类型的文件有两种去处, 如果它被修改, 而变为Modified. 如果使用git rm移出版本库, 则成为Untracked文件
-- Modified: 文件已修改, 仅仅是修改, 并没有进行其他的操作. 这个文件也有两个去处, 通过git add可进入暂存staged状态, 使用git checkout 则丢弃修改过, 返回到unmodify状态, 这个git checkout即从库中取出文件, 覆盖当前修改 !
-- Staged: 暂存状态. 执行git commit则将修改同步到库中, 这时库中的文件和本地文件又变为一致, 文件为Unmodify状态. 执行git reset HEAD filename取消暂存, 文件状态为Modified
+- Untracked:
+  - 未跟踪, 此文件在文件夹中, 但并没有add到本地仓库, 不参与版本控制。通过git add 状态变为Staged.
+
+- Unmodified
+  - 文件已经入库, 未修改, 即版本库中的文件快照内容与文件夹中完全一致。这种类型的文件有两种去处, 如果它被修改, 而变为Modified。如果使用git rm移出版本库, 则成为Untracked文件
+
+- Modified
+  - 文件已修改, 仅仅是修改, 并没有进行其他的操作。 这个文件也有两个去处, 通过git add可进入暂存staged状态, 使用git checkout 则丢弃修改过, 返回到unmodify状态, 这个git checkout即从库中取出文件, 覆盖当前修改 !
+
+- Staged
+  - 暂存状态，文件已经暂存到暂存区。执行git commit则将修改同步到本地仓库中, 这时本地仓库中的文件和工作区文件变为一致, 文件为Unmodified状态. 执行git reset HEAD filename取消暂存, 文件状态为Modified
+
 
  查看文件状态
 
@@ -176,4 +187,6 @@ git pull
 
 ### Git分支管理
 
-master主分支应该非常稳定，用来发布新版本，一般情况下不允许在上面工作，工作一般情况下在新建的dev分支上工作，工作完后，比如上要发布，或者说dev分支代码稳定后可以合并到主分支master上来。
+- master主分支应该非常稳定，用来发布新版本，一般情况下不允许在上面工作。
+
+- 工作一般情况下在新建的dev分支上工作，工作完后，比如要发布，或者说dev分支代码稳定后可以合并到主分支master上来。
