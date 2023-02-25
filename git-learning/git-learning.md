@@ -149,6 +149,7 @@ git commit -m “comments”
 
 ```git
 git push origin main
+//或者直接 git push
 ```
 
 #### 忽略文件
