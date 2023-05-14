@@ -266,3 +266,19 @@ DMA控制器
 - 优缺点
   - 优点：CPU、通道、IO设备可以并行工作，效率高
   - 缺点：需要专门硬件支持
+
+## IO软件层次结构
+
+<img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202305142227951.png" alt="image-20230514222746797" style="zoom:50%;" />
+
+### 用户层软件
+
+<img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202305142236299.png" alt="image-20230514223634230" style="zoom:50%;" />
+
+- 提供一些与IO操作相关的库函数,对设备进行操作。（e.g. printf("Hello world")）
+
+- 用户层软件通过将用户请求翻译成格式化的IO请求，通过系统调用请求操作系统内核服务。
+
+  > Windows中，OS提供了一些系统调用，但是由于系统调用的格式严格，不容易直接使用；因此在用户层向上又封装了一层更方便的库函数供用户使用（Windows API）
+
+​	
