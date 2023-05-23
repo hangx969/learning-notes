@@ -163,6 +163,9 @@ git push origin main
 //或者直接 git push
 ```
 
+- git -u
+  - 第一次加了参数-u后，以后即可直接用git push代替git push origin master
+
 #### 忽略文件
 
 被忽略的文件在 .gitignore里面，可以配置正则规则.
