@@ -98,20 +98,20 @@
 
 1. 创建本地仓库
 
-   ```
+   ```bash
    git init #会在当前路径下创建出一个隐藏文件夹 .git，存放git的版本、管理等信息
    ```
 
 2. 克隆远程仓库
 
-   ```
+   ```bash
    # 克隆一个项目和它的整个代码历史(版本信息)
    $ git clone [url]  # https://gitee.com/kuangstudy/openclass.git
    ```
 
 #### 配置branch和remote
 
-```git
+```bash
 git branch -M main
 git remote add origin https://github.com/hangx969/Scripts.git
 ```
@@ -146,19 +146,19 @@ git remote add origin https://github.com/hangx969/Scripts.git
 
 #### 添加所有文件到暂存区
 
-```git
+```bash
 git add .
 ```
 
 #### 提交暂存区的内容到本地仓库
 
-```git
+```bash
 git commit -m “comments”
 ```
 
 #### 提交至远程仓库
 
-```git
+```bash
 git push origin main
 //或者直接 git push
 ```
@@ -172,8 +172,17 @@ git push origin main
 
 ### 从远程仓库拉取更新内容到本地
 
-```git
-git pull
+```bash
+//方法一
+git fetch origin master #从远程的origin仓库的master分支下载代码到本地的origin master
+git log -p master.. origin/master #比较本地的仓库和远程参考的区别
+git merge origin/master #把远程下载下来的代码合并到本地仓库，远程的和本地的合并
+
+//方法二
+git fetch origin master:temp #从远程的origin仓库的master分支下载到本地并新建一个分支temp
+git diff temp #比较master分支和temp分支的不同
+git merge temp #合并temp分支到master分支
+git branch -d temp #删除temp
 ```
 
 ### 从远程仓库拉取新内容到本地
