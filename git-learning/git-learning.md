@@ -202,3 +202,15 @@ git branch -d temp #删除temp
 - master主分支应该非常稳定，用来发布新版本，一般情况下不允许在上面工作。
 
 - 工作一般情况下在新建的dev分支上工作，工作完后，比如要发布，或者说dev分支代码稳定后可以合并到主分支master上来。
+
+### Troubleshooting
+
+- 目录中有大文件，push的时候显示超过100MB不能上传，删除这个文件之后，push仍然会提交这个文件报错。
+
+  - 解决：要从所有commit中把这个文件删掉，再push
+
+    ```bash
+    git filter-branch --force --index-filter "git rm --cached --ignore-unmatch xxx/xxx.exe" --prune-empty --tag-name-filter cat -- --all
+    ```
+
+    
