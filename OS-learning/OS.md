@@ -1605,8 +1605,6 @@ P2(){
 
   <img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202304091448689.png" alt="image-20230409144830425" style="zoom:50%;" />
 
- 
-
 > 分页式存储管理中，只要确定了每个页面的大小，逻辑地址结构就确定了。只要给出一个逻辑地址，系统就会自动算出页号、页内偏移量。
 >
 > 因为只需要告诉系统逻辑地址即可，分页式存储管理是一维的。
@@ -1711,6 +1709,8 @@ P2(){
 
 - 也可以引入快表机制，用段号和页号作为查询快表的关键字，减少访存次数。
 
+- 进程访问非法地址，会产生Segmentation Fault，系统将进程杀掉，产生core dump。
+
 ## 虚拟内存
 
 - 传统存储管理方式的特征
@@ -1752,7 +1752,7 @@ P2(){
 
 #### 缺页中断
 
-属于是内中断
+进程请求访问了还没调入内存的页，属于是内中断
 
 <img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202304162108272.png" alt="image-20230416210833111" style="zoom:50%;" />
 
