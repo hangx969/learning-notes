@@ -1,26 +1,43 @@
 # 认证基础
 
-**Authentication - AuthN -** **认证**
+### **Authentication - AuthN -** **认证**
 
 - Authentication - AuthN - 认证：侧重于证明某实体（如用户或服务）确实是其所称的身份。
 
-**Authorization - AuthZ -** **授权**
+### **Authorization - AuthZ -** **授权**
 
 - Authorization - AuthZ - 授权：用于设置权限，这些权限用于评估对资源或功能的访问权限。
 
-# SSO
+### Permission vs previlege vs scopes
+
+- permission: 是对resource而言的，代表这个resource能被执行什么操作。
+- previlege：是给某个user授予某资源的permission，这个user就有了previlege
+- scopes: define what an app can do on behalf of the user. (OAuth2里面用的)
+
+
+
+# 基于CAS的SSO
+
+## CAS
+
+- central authentication server，是一种仅用于authentication的协议，与OAuth、OIDC不同，不能作为authorization的协议。
+- CAS的参与者包含三部分：
+  - client：通常是使用浏览器的用户
+  - CAS client：实现CAS协议的web应用
+  - CAS server：作为统一认证的CAS服务器
+- CAS是一个比较简陋的SSO协议，能够解决的场景比较单一，目前基本不用了。
+
+## SSO
+
+- 系统中有多个服务，在不同的服务器上，用户只要在某一个地方登录一个系统，另外的系统就能认出他来免登陆。
+- 共享cookie是不行的，因为cookie不能跨域，a.com的cookie，浏览器不能发送到b.com。
+- b系统内存中也没有a系统的session，即使cookie能共享，也识别不了。session如果用redis来做成多系统共享的，也不行，因为不同系统架构不同，语言不通，难以共享。
+- SSO实现：客户端登录一个系统，验证成功后，a服务端返回的cookie中带着一个token；客户端下次访问b系统，cookie中带着token，b服务端就认出来了，实现免登陆。
+- JWT的基本原理：token需要加密，可以用header+userID进行Hash和密钥加密生成一个签名；另一个系统如果收到了token，会再对header+userid进行Hash+密钥生成签名，二者签名一致，说明token有效。这种方法的问题是：userID在每个系统中都不一样，难以统一。
 
 - 登录原理
   - 用户登陆一个服务，输入用户名密码，服务端验证后建立session，然后把session id通过cookie发给客户端浏览器。下次浏览器访问的时候，cookie就会发过来，服务端就可以认出登录用户，实现免登陆。
   
-  - SSO
-    
-    - 系统中有多个服务，在不同的服务器上，用户只要在某一个地方登录一个系统，另外的系统就能认出他来免登陆。
-    - 共享cookie是不行的，因为cookie不能跨域，a.com的cookie，浏览器不能发送到b.com。
-    - b系统内存中也没有a系统的session，即使cookie能共享，也识别不了。session如果用redis来做成多系统共享的，也不行，因为不同系统架构不同，语言不通，难以共享。
-    - SSO实现：客户端登录一个系统，验证成功后，a服务端返回的cookie中带着一个token；客户端下次访问b系统，cookie中带着token，b服务端就认出来了，实现免登陆。
-    - JWT的基本原理：token需要加密，可以用header+userID进行Hash和密钥加密生成一个签名；另一个系统如果收到了token，会再对header+userid进行Hash+密钥生成签名，二者签名一致，说明token有效。这种方法的问题是：userID在每个系统中都不一样，难以统一。
-    
   - SSO-统一认证中心 CAS
     - 建立一个统一认证中心sso.com
     
@@ -45,8 +62,6 @@
     
         ![image-20230829214543999](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202308292145207.png)
       
-      
-      
     - 此后，如果客户端再去访问B系统（b.com）：
     
       - 由于A系统的cookie不能跨域来用；但是客户端有sso认证中心的cookie，B系统先返回302，浏览器重定向给sso认证中心(www.sso.com/login?redirect=www.b.com/pageB)。
@@ -63,7 +78,13 @@
 
 ## 简介
 
-- 在RFC6749文档中提出来的，RFC中的OAuth的workflow如下：
+- 是一种授权协议，主要解决：第三方应用如何被授权访问资源服务器。（delegated authorization）
+
+- 认证部分在Oauth中没怎么涉及，基本是由厂商自己解决。目前比较流行的认证的协议是用的OIDC。
+
+  > OIDC是基于OAuth2.0扩展出来的协议，除了能够实现OAuth2.0的的Authorization场景，也额外定义了Authentication的场景。
+
+- OAuth在RFC6749文档中提出来的（[RFC 6749: The OAuth 2.0 Authorization Framework (rfc-editor.org)](https://www.rfc-editor.org/rfc/rfc6749.html)），RFC中的OAuth的workflow如下：
 
 ![image-20230830134023843](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202308301340973.png)
 
@@ -72,6 +93,17 @@
   - 应用名称、应用URL
   - 重定向URL或回调URL(redirect_url或callback_url)
   - client_id、client_secret
+
+## 术语
+
+- Resource owner：某个用户，其拥有用户信息、可以执行一些Action等。
+- client：需要被授权来代表用户获取数据、执行操作的客户端app。
+- resource server：是client需要去代表用户拿信息而调用的API/service。
+- authorization server：保存了用户账户信息的认证服务器。
+- Redirect URL/Callback URL：认证服务器grant permission之后，重定向到的URL。
+- Response type：client期望收到的类型。
+- Scope：定义了client拥有的permission，比如Read、Write、Delete等
+- Consent：认证Server弹出Promt，询问resource owner是否愿意给client相应的scope权限。
 
 ## 四种认证方式
 
@@ -86,7 +118,7 @@
 
 示例场景：开发了一个客户端app，需要读取用户网易邮箱中的邮件。
 
-资源所有者：网易邮箱的用户。
+资源所有者：网易邮箱的用户。(拥有account data、actions)
 
 资源服务器：网易邮箱的服务器。
 
@@ -114,7 +146,7 @@
 
 - 这个return_uri就是app里面需要配置的redirect_uri，作用是告诉认证中心需要把token返回给什么url。
 - 第6步，认证中心颁发token之后，以明文的形式返回给redirect_uri，www.a.com/callback#token=\<token\>，这叫做hash fragment，只停留在浏览器端，只有javascript能访问他，而且不会再次通过HTTP request发给别的服务器，提高了安全性。
-- 用javascript来访问token，所有工作在浏览器前端完成，后端服务器就不需要参与了，**客户端app就不需要去找认证中心认证了。**
+- 用javascript来访问token，所有工作在浏览器前端完成，后端服务器就不需要参与了（或者有些时候你的app根本没有后端服务器，只有前端的web page），**客户端app就不需要去找认证中心认证了。**
 
 ### 授权码许可
 
@@ -123,11 +155,18 @@
 如果要将token隐藏，可以采用授权码许可的方式：
 
 - 加一个授权码的中间层，当用户跳转到认证中心登录的时候，不直接颁发token，颁发一个授权码返回给redirect_URL。
-
 - app端拿到授权码之后，去找认证中心兑换token（**这个过程需要客户端的后端服务器去找认证中心认证**），拿到token之后就可以用api访问服务了。
 
-- 安全措施：
+> 关于为何要用authorization code，这涉及到安全原因：
+>
+> 1. front-end channel - 浏览器前端 - less secure
+> 2. backend channel - 后端服务器 - more secure
+>
+> 授权码是通过浏览器，也就是frontend传回来的，随后client app的backend server去找IdP拿token，这个过程是安全的，有HTTPS加密保障，access token不会泄露。
+>
+> 如果授权码被窃取，窃取者也无法去找IdP兑换token，因为窃取者没有app_id\app_secret的信息，这些信息只保存在后端server上。
 
+- 安全措施：
   - 授权码和app id和secret关联，确保是这个app在访问。
 
   - 可以让授权码有过期时间。
@@ -143,6 +182,10 @@
 
 ## Token介绍
 
+### Access Token
+
+- 包含了client app的scopes（权限）
+
 ### Refresh Token
 
 [理解OAuth 2.0——阮一峰_oauth2.0认证原理 阮一峰_Laputa_SKY的博客-CSDN博客](https://blog.csdn.net/Laputa_SKY/article/details/80428220)
@@ -156,3 +199,63 @@
 - 过期之后，客户端需要调用某个接口，将refresh token传过去，就能拿到新的access token。
 
 - 如果不设置refresh_token，access token过期之后，就得让用户重新认证授权。
+
+### ID token
+
+- JWT格式的token，有一段signature部分，确保header部分的user info信息未被篡改。
+
+# OIDC
+
+> 参考视频：
+>
+> - https://www.youtube.com/watch?v=t18YB3xDfXI，https://developer.okta.com/blog/2019/10/21/illustrated-guide-to-oauth-and-oidc
+> - https://www.youtube.com/watch?v=996OiexHze0&t=7s, https://speakerdeck.com/nbarbettini/oauth-and-openid-connect-in-plain-english?slide=33
+
+## 简介
+
+- OAuth只负责完成了授权部分，返回给client的access token，client不懂，也不知道这个token包含的是哪个用户，只是发给resource server来获取信息。
+
+- OIDC在OAuth基础上增加了login和profile的功能，可以让client建立一个login session来认证。
+
+  <img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202308301838405.png" alt="image-20230830183814266"  />
+
+![image-20230830220204277](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202308302202387.png)
+
+- 如果一个authentication server支持OIDC，那么会被称为IdP，因为会对client提供resource provider的信息。
+
+- What OIDC adds:
+
+  - ID token
+  - User Info endpoint - 获取更多的user info
+  - Standard set of scopes
+  - Standard implemention
+
+- 作用对比
+
+  ![image-20230830222037577](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202308302220722.png)
+
+## 认证流程
+
+![image-20230830204631831](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202308302046964.png)
+
+![image-20230830204655256](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202308302046342.png)
+
+- 基本流程与OAuth2的授权码流程类似，除了：
+
+  - 在第2步重定向到IdP的时候，会带一个scope=openid，让IdP知道这是一个OIDC的exchange。
+
+  - 在第7步client找IdP兑换token的时候。IdP会返回access token + ID token。
+
+    - ID token是JWT格式的token，包含用户信息，client可以decode出用户信息
+
+      <img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202308302053765.png" alt="image-20230830205345680" style="zoom:67%;" />
+
+    - JWT里面的data被称为**claim**
+    - client可以拿着access token再去IdP拿一些其他用户信息
+
+# SAML
+
+## 简介
+
+- Security Assertion Markup Language，是基于XML的标准协议。定义了身份提供者IDP和服务提供者Service Provider之间，如何通过SAML规范，采用加密和签名的方式建立互信，从而交换用户身份信息。
+- 是一个非常古老的Authentication协议，在早期B/S架构中比较流行。
