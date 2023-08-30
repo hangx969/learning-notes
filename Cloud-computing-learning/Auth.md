@@ -61,12 +61,28 @@
 
 # OAuth
 
-## 三种认证方式
+## 简介
+
+- 在RFC6749文档中提出来的，RFC中的OAuth的workflow如下：
+
+![image-20230830134023843](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202308301340973.png)
+
+- 以上流程主要是Authorization Grant需要具体确认。
+- 对于应用端而言需要获取到的信息：
+  - 应用名称、应用URL
+  - 重定向URL或回调URL(redirect_url或callback_url)
+  - client_id、client_secret
+
+## 四种认证方式
 
 - Resource Owner Password Credentials Grant：资源所有者密码凭据许可
 - Implicit Grant：隐式许可
 - Authorization Code Grant：授权码许可
-- client credentials：客户端凭据（用的较少，暂不涉及）
+- client credentials：客户端凭据
+
+## 四种认证方式示例
+
+（前三种来自《码农翻身》）
 
 示例场景：开发了一个客户端app，需要读取用户网易邮箱中的邮件。
 
@@ -80,8 +96,8 @@
 
 ### 资源所有者密码凭据许可
 
-- 密码凭据许可：资源所有者（即网易邮箱的用户）直接将用户名+密码提供给app，app去访问网易邮箱用。
-- 缺点：不安全，且用户不愿意直接提供密码给第三方app。
+- 密码凭据许可：资源所有者（即网易邮箱的用户）直接将用户名+密码提供给client app，app去访问网易邮箱用。
+- 缺点：用户通常不信任怕client app保存密码，不愿意直接提供密码给第三方app。
 
 ### 隐式许可
 
@@ -91,14 +107,14 @@
 - app里面提供一个入口：使用网易账号登录。用户点了之后，返回302，重定向到网易的认证系统去登录（要带着app的id和secret，让网易知道是这个app在申请授权）。
 - 网易的认证系统会要求用户输入用户名+密码，并且询问是否允许app访问网易邮箱。
 
-- 允许之后，返回302重定向到app网址，同时带了一个网易认证中心颁发的token。
-- app拿到这个token，就可以通过API来访问网易邮箱了。
+- 允许之后，返回302重定向到app网址，同时url带了一个网易认证中心颁发的access token。
+- app拿到这个access token，就可以通过API来访问网易邮箱了。
 
 注：
 
 - 这个return_uri就是app里面需要配置的redirect_uri，作用是告诉认证中心需要把token返回给什么url。
 - 第6步，认证中心颁发token之后，以明文的形式返回给redirect_uri，www.a.com/callback#token=\<token\>，这叫做hash fragment，只停留在浏览器端，只有javascript能访问他，而且不会再次通过HTTP request发给别的服务器，提高了安全性。
-- 用javascript来访问token，这个工作在前端就可以完成，后端服务器就不需要参与了。
+- 用javascript来访问token，所有工作在浏览器前端完成，后端服务器就不需要参与了，**客户端app就不需要去找认证中心认证了。**
 
 ### 授权码许可
 
@@ -106,11 +122,37 @@
 
 如果要将token隐藏，可以采用授权码许可的方式：
 
-- 加一个授权码的中间层，当用户跳转到认证中心登录的时候，不直接颁发token，颁发一个授权码，app端拿到授权码之后，去找认证中心兑换token，拿到token之后就可以用api访问服务了。
+- 加一个授权码的中间层，当用户跳转到认证中心登录的时候，不直接颁发token，颁发一个授权码返回给redirect_URL。
+
+- app端拿到授权码之后，去找认证中心兑换token（**这个过程需要客户端的后端服务器去找认证中心认证**），拿到token之后就可以用api访问服务了。
 
 - 安全措施：
 
   - 授权码和app id和secret关联，确保是这个app在访问。
 
-  - 可以让授权码有过期时间
+  - 可以让授权码有过期时间。
   - 可以让授权码只能兑换一次token。
+
+### client_credentials
+
+![image-20230830140740976](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202308301407032.png)
+
+- grant_type=client_credentials
+- 这种方式是客户端app拿着客户端自己的id和密钥去拿token，不涉及用户参与。
+- 比较适合消费API的后端服务。并且也不支持refresh token。
+
+## Token介绍
+
+### Refresh Token
+
+[理解OAuth 2.0——阮一峰_oauth2.0认证原理 阮一峰_Laputa_SKY的博客-CSDN博客](https://blog.csdn.net/Laputa_SKY/article/details/80428220)
+
+- 在上述workflow中，认证服务器返回给客户端access token时，有时也会带一个refresh token：
+
+  ![image-20230830135846613](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202308301358703.png)
+
+- expires_in表示这个access token过久之后会过期
+
+- 过期之后，客户端需要调用某个接口，将refresh token传过去，就能拿到新的access token。
+
+- 如果不设置refresh_token，access token过期之后，就得让用户重新认证授权。
