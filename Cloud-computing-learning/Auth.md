@@ -215,6 +215,8 @@
 
 - OAuth只负责完成了授权部分，返回给client的access token，client不懂，也不知道这个token包含的是哪个用户，只是发给resource server来获取信息。
 
+- Oauth2.0授权服务器能够对用户进行身份验证，但该框架也没有提供一种标准的方法来将经过身份验证的用户的身份安全地传递给应用程序。OIDC为这一需求提供了解决方案。OIDC被设计为OAuth2.0协议之上的一个层，以标准格式向应用程序提供有关经过身份验证的用户的身份的信息。这为用户身份验证和API授权的应用程序提供了一个解决方案。
+
 - OIDC在OAuth基础上增加了login和profile的功能，可以让client建立一个login session来认证。
 
   <img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202308301838405.png" alt="image-20230830183814266"  />
@@ -260,23 +262,35 @@
 - Security Assertion Markup Language，是基于XML的标准协议。定义了身份提供者IDP和服务提供者Service Provider之间，如何通过SAML规范，采用加密和签名的方式建立互信，从而交换用户身份信息。是一个非常古老的Authentication协议，在早期B/S架构中比较流行。
 - 当用户登录到启用SAML的应用程序时，服务提供商会从相应的身份提供商请求授权。 身份提供商验证用户的凭据，然后将用户的授权返回给服务提供商，用户现在可以使用该应用程序。
 
-### 涉及到三方
+### 涉及到的三方
 
 - 用户、IdP、SP
 - SP需要IdP的身份验证服务才能授予用户授权。
 - IdP执行用户的身份验证，并将数据和用户对服务的访问权限一起发送到SP。
 
-### SAML assertion
+### 名词解释
 
-- 是IdP发送给SP的XML文档，包含用户授权协议。
-- 有三种类型：身份验证、属性、授权决策
-  - 身份验证断言：证明了用户的身份，并提供了用户登录的时间以及他们使用的身份验证方法（即，Kerberos，双因素等）
+- Federation
+  - Access to protected resrouces can be gratned to security principals existing in different realms <img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202309031008389.png" alt="image-20230903100810194" style="zoom: 33%;" />
+- WS-FED \ SAMl - signin protocols
+  - Protocol used by application and identity provider to communicate with each other.
+    - 用户通过某些user agent来访问application保护的资源（DB、Api等），application需要向IdP发送request，来询问这个用户是否登陆了。application向IdP以什么格式发送信息？这种约定就是sign-in protocols，约定了SP和IdP如何交流。
 
-  - 归属断言：将SAML属性传递给服务提供商 - SAML属性是提供有关用户信息的特定数据片段。
+- SAML assertion
 
-  - 授权决策断言：表示如果用户被授权使用该服务，或者由于密码失败或缺乏对服务的权限，身份提供商拒绝了他们的请求。
+  - 是IdP发送给SP的XML文档，包含用户授权协议。（wsfed和saml都是通过https发送xml格式的request）
+
+  - 有三种类型：身份验证、属性、授权决策
+    - 身份验证断言：证明了用户的身份，并提供了用户登录的时间以及他们使用的身份验证方法（即，Kerberos，双因素等）
+
+    - 归属断言：将SAML属性传递给服务提供商 - SAML属性是提供有关用户信息的特定数据片段。
+
+    - 授权决策断言：表示如果用户被授权使用该服务，或者由于密码失败或缺乏对服务的权限，身份提供商拒绝了他们的请求。
+
 
 ## 如何工作
+
+### workflow
 
 - SAML通过在身份提供商和服务提供商之间传递有关用户，登录和属性的信息来工作。
 
@@ -285,3 +299,23 @@
 - 每个身份提供商和服务提供商需要就SAML的配置达成一致。 两端都需要具有SAML身份验证的确切配置才能工作。
 
   ![img](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202308312311143.webp)
+
+### request header
+
+![image-20230903134500266](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202309031345394.png)
+
+### Request Secutiry Token Response
+
+- WS-Fed - SAML 1.0
+- SAML - SAML 2.0
+
+# WS-FED
+
+## 简介
+
+- 2002年4月11日，微软、IBM和VeriSign三公司联合发表了Web服务的新安全规格“WS-Security”和Web安全蓝图“Security in a Web Services World”。在当时的安全蓝图说明中就包括了WS-Federation规范的基本轮廓。并于2003年7月9日发布规范的说明草案。
+- 2009年，WS-Fed1.2规范正式作为OASIS的标准发布。该版本提供了“可以向在其他领域管理其身份的安全主体提供对在一个领域中管理的资源的授权访问”的机制，该标准得到了微软ADFS服务器以及许多其他商业SSO产品和服务的支持。
+- WS-Federation（简称: WS-Fed )联合框架属于Web Services Security(简称: WS-Security、WSS: 针对web-service安全性方面扩展的协议标准集合) 的一部分。WS-Federation规范采用了XML以及其他Web服务标准，从而可以使开发者能够实现在不同环境下的网络安全管理及建立相互协调信赖关系的目的。
+- 不用看协议的具体内容，光看到协议的框架，就可以感知到整个协议的功能之强大，细节之周全。然而，这也意味着实现起来会比较重，因此，除非为了能和微软的服务整合，才会优先考虑该协议。所以，该协议主要用于微软自己的生态。
+
+  ![img](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202309031449985.webp)
