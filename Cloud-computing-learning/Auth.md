@@ -204,6 +204,16 @@
 
 - JWT格式的token，有一段signature部分，确保header部分的user info信息未被篡改。
 
+## CLient种类
+
+- Confidential的client
+  - 例如web-based server，可以安全的存储secert。
+  - 这种情况，在back channel去找IdP用auth code兑换access token，是安全的。
+- public的client
+  - 比如single page app、native app等，无法机密存储secret。可以抓traffic随便看到。
+  - 这种情况，没有back channel，怎么安全兑换token？==》PKCE（proof key for code exchange）
+    - PKCE是一种cipher，由client生成，在一开始的AuthN request通过Https发送给了IdP，后续兑换token的时候也带着，证明app的身份。
+
 # OIDC
 
 > 参考视频：
