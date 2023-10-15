@@ -1,4 +1,4 @@
-# 第二章 实验环境搭建
+# 实验环境搭建
 
 ## 虚拟机搭建
 
@@ -19,7 +19,7 @@ sudo yum install docker-ce docker-ce-cli containerd.io docker-compose-plugin
 sudo systemctl start docker
 ```
 
-进阶版
+### 进阶版
 
 ```bash
 #配置主机名：
@@ -118,6 +118,20 @@ systemctl restart docker
 #让配置文件生效
 sudo systemctl daemon-reload
 sudo systemctl restart docker
+```
+
+vscode在VM中运行docker插件
+
+报错：
+
+```bash
+Got permission denied while trying to connect to the Docker daemon socket at unix:///var/run/docker.sock: Get "http://%2Fvar%2Frun%2Fdocker.sock/v1.24/images/json": dial unix /var/run/docker.sock: connect: permission denied
+```
+
+解决：
+
+```bash
+chmod 666 /var/run/docker.sock
 ```
 
 Docker镜像加速器：
@@ -246,13 +260,13 @@ docker inspect nginx
 
   - veth6032358@if16这个设备称为veth对，一端连到物理网卡上，另一端连到docker。访问宿主机IP：高位端口时，veth对就通过管道将请求交给要访问的容器。
 
-# dockerfile构建镜像
+# dockerfile基础
 
 ## dockerfile
 
 Dockerfile是一个用于定义Docker镜像的文本文件。它包含了一系列的指令和参数，用于指示Docker在构建镜像时应该执行哪些操作，例如基于哪个基础镜像、复制哪些文件到镜像中、运行哪些命令等等。通过Dockerfile，开发人员可以将应用程序和其所有依赖项打包在一起，创建出一个可移植的Docker镜像，使得这个应用程序可以在任何Docker环境中都能够快速部署和运行。
 
-### 示例
+示例
 
 ```dockerfile
 FROM centos
@@ -348,4 +362,287 @@ ENTRYPOINT ["/usr/sbin/nginx","-g","daemon off;"]
     docker inspect #看到传了新的参数进去
     ```
 
+- COPY
+
+  - 复制指令，从当前dockerfile上下文目录中复制文件或者目录到容器里指定路径。
+
+  - 格式：
+
+    ```bash
+    COPY <src> <dest>
+    COPY [“<src>”, “<dest>”]
     
+    #[--chown=<user>:<group>]：可选参数，改变复制到容器内文件的拥有者和属组。
+    COPY [--chown=<user>:<group>] <源路径1> <目标路径>
+    COPY [--chown=<user>:<group>] ["<源路径1>", "<目标路径>"]
+    ```
+
+    <源路径>：源文件或者源目录，这里可以是通配符表达式，其通配符规则要满足 Go 的 filepath.Match 规则。例如：
+
+    COPY hom\* /mydir/
+
+    COPY hom?.txt /mydir/
+
+    <目标路径>：容器内的指定路径，该路径不用事先建好，路径不存在的话，会自动创建。
+
+- ADD
+
+  ADD 指令和 COPY 的使用格式一致（同样需求下，官方推荐使用 COPY）。功能也类似，不同之处如下：
+
+  - ADD 的优点：在执行 <源文件> 为 tar 压缩文件的话，压缩格式为 gzip, bzip2 以及 xz 的情况下，会自动复制并解压到 <目标路径>。
+
+- VOLUME
+
+  - 定义匿名数据卷。在启动容器时忘记挂载数据卷，会自动挂载到匿名卷。
+
+  - 作用：
+
+    1、避免重要的数据，因容器重启而丢失，这是非常致命的。
+
+    2、避免容器不断变大。
+
+  - 格式：
+
+    VOLUME ["<路径1>", "<路径2>"...]
+
+    VOLUME <路径>
+
+    在启动容器 docker run 的时候，我们可以通过 -v 宿主机目录：容器目录 修改挂载点。(docker run -d -P --name volume-test -v /hangx:/data centos-volume-test)
+
+- WORKDIR
+
+  - 指定工作目录。用 WORKDIR 指定的工作目录，会在构建镜像的每一层中都存在。（WORKDIR 指定的工作目录，必须是提前创建好的）。
+
+  - docker build 构建镜像过程中，每一个 RUN 命令都是新建的一层。只有通过 WORKDIR 创建的目录才会一直存在。
+
+  - 用docker exec -it /bin/bash进去之后就是指定的工作目录路径。
+
+  - 格式：
+
+    WORKDIR <工作目录绝对路径>
+
+- ENV
+
+  - 设置环境变量
+
+    ENV \<key\> \<value\>
+
+    ENV \<key\>=\<value\>
+
+  - 示例：
+
+    以下示例设置 NODE_VERSION =6.6.6， 在后续的指令中可以通过 $NODE_VERSION 引用：
+
+    ENV NODE_VERSION 6.6.6
+
+    ```bash
+    RUN curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.xz" && curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/SHASUMS256.txt.asc"**
+    ```
+
+- USER
+
+  - 用于指定执行后续命令的用户和用户组，这边只是切换后续命令执行的用户（用户和用户组必须提前已经存在）。
+
+  - 格式：
+
+    USER <用户名>[:<用户组>]
+
+    ```bash
+    USER daemon
+    USER nginx
+    USER user    
+    USER uid
+    USER user:group 
+    USER uid:gid
+    USER user:gid  
+    USER uid:group
+    ```
+
+- ONBUILD
+
+  - Dockerfile 里用 ONBUILD 指定的命令，在本次构建镜像的过程中不会执行（假设镜像为 test-build）。当有新的 Dockerfile 使用了之前构建的镜像 FROM test-build ，这时执行新镜像的 Dockerfile 构建时候，会执行 test-build 的 Dockerfile 里的 ONBUILD 指定的命令。
+  - 格式：ONBUILD <其它指令>
+
+## docker构建nginx
+
+```bash
+#准备目录，将dockerfile、index和centos源都放进去
+#写dockerfile
+FROM centos
+RUN rm -rf /etc/yum.repos.d/*
+COPY Centos-vault-8.5.2111.repo /etc/yum.repos.d/
+RUN yum install wget -y
+RUN yum install nginx -y
+COPY index.html /usr/share/nginx/html/
+EXPOSE 80
+ENTRYPOINT ["/usr/sbin/nginx","-g","daemon off;"]
+
+#写index.html
+<html>
+<head>
+        <title>page added to dockerfile</title>
+</head>
+<body>
+        <h1>Hello world</h1>
+</body>
+</html>
+
+#构建镜像：
+docker build -t="nginx:v1" . --load
+#查看镜像是否构建成功：
+docker images | grep nginx
+#基于镜像启动容器
+docker run -d -p 80 --name nginx nginx:v1
+#查看容器信息
+docker ps | grep nginx
+#宿主机访问nginx页面
+curl 10.0.0.4:32773
+```
+
+## docker构建tomcat8
+
+```bash
+#把tomcat安装包和jdk包放到dockerfile目录
+ls
+apache-tomcat-8.0.26.tar.gz  Centos-vault-8.5.2111.repo  dockerfile  jdk-8u45-linux-x64.rpm
+
+#写dockerfile
+FROM centos
+RUN rm -rf /etc/yum.repos.d/*
+COPY Centos-vault-8.5.2111.repo /etc/yum.repos.d/
+RUN yum install wget -y
+ADD jdk-8u45-linux-x64.rpm /usr/local/
+ADD apache-tomcat-8.0.26.tar.gz /usr/local/
+RUN cd /usr/local && rpm -ivh jdk-8u45-linux-x64.rpm
+RUN mv /usr/local/apache-tomcat-8.0.26 /usr/local/tomcat8
+ENTRYPOINT /usr/local/tomcat8/bin/startup.sh && tail -F /usr/local/tomcat8/logs/catalina.out
+#tomcat 的自动启动命令也可以用 ENTRYPOINT ["/usr/local/tomcat8/bin/catalina.sh", "run"]
+EXPOSE 8080
+
+#构建镜像
+docker build -t="tomcat8:v1" . --load
+#运行容器
+docker run --name tomcat8 -d -p 8080 tomcat8:v1
+```
+
+## 基于Go代码构建镜像
+
+```bash
+#安装go
+yum install -y go
+#创建代码文件
+vim main.go
+```
+
+```go
+package main
+
+import (
+	"net/http"
+
+	"github.com/gin-gonic/gin"
+)
+
+func statusOKHandler(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{"status": "success~welcome to study"})
+}
+
+func versionHandler(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{"version": "v1.1版本"})
+}
+
+func main() {
+	router := gin.New()
+	router.Use(gin.Recovery())
+	router.GET("/", statusOKHandler)
+	router.GET("/version", versionHandler)
+	router.Run(":8080")
+}
+```
+
+```bash
+#初始化项目
+go mod init test
+
+#因为有个包要从github下载，设置github代理
+go env -w GOPROXY=https://goproxy.cn,direct
+#把包下载下来
+go mod tidy
+
+#构建源码
+CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o k8s-demo main.go
+```
+
+```bash
+#写dockerfile
+FROM alpine
+WORKDIR /data/app
+ADD k8s-demo /data/app/
+CMD ["/bin/sh","-c","./k8s-demo"]
+
+#build镜像
+docker build -t godemo:v1 . --load
+
+#运行容器
+docker run -d --name godemo -p 8080 godemo:v1
+```
+
+## 基于python代码构建镜像
+
+```python
+#获取python代码，切换到代码目录
+from flask import Flask
+app = Flask(__name__)
+
+@app.route("/")
+def hello():
+    return "Hello from Python!"
+
+if __name__ == "__main__":
+    app.run(host='0.0.0.0')
+```
+
+```bash
+#写dockerfile
+FROM python:3.7 #从Docker Hub获取3.7版本的官方Python基本镜像。
+RUN mkdir /app 
+WORKDIR /app #将工作目录设置为新的app目录。
+ADD . /app/ #将dockerfile本地目录的内容复制到该新文件夹，并将其复制到镜像中。
+RUN /usr/local/bin/python -m pip install --upgrade pip
+RUN pip install -r requirements.txt #运行pip安装程序，将需求拉入镜像中。
+EXPOSE 5000 #通知Docker容器监听端口5000。
+CMD ["python","/app/main.py"] #配置启动命令，使其在容器启动时使用。
+```
+
+```bash
+#构建镜像
+docker build -t hello-python:v1
+#运行容器
+docker run -d --name python -p 5000  hello-python:v1
+```
+
+# Docker数据持久化和网络模式
+
+## Docker数据卷
+
+```bash
+#为容器添加数据卷
+docker run -v /datavolume:/data -it centos /bin/bash
+docker run --name volume -v ~/datavolume:/data -itd centos /bin/bash
+#为容器添加带权限的数据卷（容器中的data目录就是只读的，宿主机目录正常读写）
+docker run --name volume -v ~/datavolume1:/data:ro -itd centos /bin/bash
+#dockerfile构建带数据卷的镜像
+cat  dockerfile
+FROM centos
+VOLUME ["/datavolume3","/datavolume6"] #挂了两个volume进到容器内的挂载点 datavolume3和datavolume6
+CMD /bin/bash
+```
+
+## docker数据卷容器
+
+容器A挂载了一个volume，容器B通过volume-from参数，把A挂载的数据卷也挂载到自己里面，实现数据共享。
+
+```bash
+#容器A挂载一个volume
+```
+
