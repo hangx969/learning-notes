@@ -791,5 +791,213 @@ ip addr  #跟net-none的设置一样
 
 # docker资源配额
 
+Docker通过cgroup来控制容器使用的资源限制，可以对docker限制的资源包括CPU、内存、磁盘
 
+## docker容器控制CPU
+
+### CPU份额限制
+
+```bash
+#查看配置份额的帮助命令：
+docker run --help | grep cpu-shares
+# cpu配额参数：-c, --cpu-shares int 
+```
+
+- CPU shares (relative weight) 在创建容器时指定容器所使用的CPU份额值。
+
+  - cpu-shares的值不能保证可以获得1个vcpu或者多少GHz的CPU资源，仅仅只是一个弹性的加权值。只是设置一个优先级。
+
+  - 默认每个docker容器的cpu份额值都是1024。在同一个CPU核心上，同时运行多个容器时，容器的cpu加权的效果才能体现出来。
+
+- 例： 两个容器A、B的cpu份额分别为1000和500，结果会怎么样？   
+
+  - 情况1：A和B正常运行，占用同一个CPU，在cpu进行时间片分配的时候，容器A比容器B多一倍的机会获得CPU的时间片。
+
+  - 情况2：分配的结果取决于当时其他容器的运行状态。比如容器A的进程一直是空闲的，那么容器B是可以获取比容器A更多的CPU时间片的； 比如主机上只运行了一个容器，即使它的cpu份额只有50，它也可以独占整个主机的cpu资源。
+
+- cgroups只在多个容器同时争抢同一个cpu资源时（CPU紧张时），cpu配额才会生效。因此，无法单纯根据某个容器的cpu份额来确定有多少cpu资源分配给它，资源分配结果取决于同时运行的其他容器的cpu分配和容器中进程运行情况。
+
+### CPU core核心限制
+
+> 从系统架构来看，目前的商用服务器大体可以分为三类架构：
+>
+> 1. 即对称多处理器结构(SMP：Symmetric Multi-Processor) 例： x86 服务器，双路服务器。主板上有两个物理cpu
+>
+> 2. 非一致存储访问结构 (NUMA：Non-Uniform Memory Access) 例： IBM 小型机 pSeries 690
+>
+> 3. 海量并行处理结构 (MPP：Massive ParallelProcessing) 例： 大型机 Z14
+
+- 对多核CPU的服务器，docker还可以控制容器运行限定使用哪些cpu内核和内存节点，即使用--cpuset-cpus和--cpuset-mems参数。
+  - --cpuset可以绑定CPU core，指定容器只能在哪个CPU上运行。
+  - --cpuset-mems 对具有NUMA拓扑（具有多CPU、多内存节点）的服务器尤其有用，可以对需要高性能计算的容器进行性能最优的配置。如果服务器只有一个内存节点，则--cpuset-mems的配置基本上不会有明显效果。
+
+### Lab
+
+> stress 压测工具参数
+> -?        显示帮助信息
+> -v        显示版本号
+> -q       不显示运行信息
+> -n       显示已完成的指令情况
+> -t        --timeout  N  指定运行N秒后停止        
+>           --backoff   N   等待N微秒后开始运行
+> -c       产生n个进程 ：每个进程都反复不停的计算随机数的平方根，测试cpu
+> -i       产生n个进程 ：每个进程反复调用sync()，sync()用于将内存上的内容写到硬盘上，测试磁盘io
+> -m     --vm n 产生n个进程,每个进程不断调用内存分配malloc（）和内存释放free（）函数 ，测试内存
+>           --vm-bytes B  指定malloc时内存的字节数 （默认256MB）
+>           --vm-hang N   指定在free栈的秒数   
+> -d    --hadd n  产生n个执行write和unlink函数的进程
+>          -hadd-bytes B  指定写的字节数
+>          --hadd-noclean  不unlink        
+> 注：时间单位可以为秒s，分m，小时h，天d，年y，文件大小单位可以为K，M，G
+
+```bash
+#写dockerfile
+FROM centos
+RUN rm -rf /etc/yum.repos.d/*
+COPY Centos-vault-8.5.2111.repo /etc/yum.repos.d/
+RUN yum install epel-release -y
+RUN yum install stress -y
+CMD /bin/bash
+#构建镜像
+docker build -t=centos-stress . --load
+
+#起容器
+docker run -itd --name docker10 --cpuset-cpus 0 --cpu-shares 512 centos-stress /bin/bash #指定docker10只能在cpu0上运行，而且docker10的使用cpu的份额512
+docker run -itd --name docker20 --cpuset-cpus 0 --cpu-shares 1024 centos-stress /bin/bash #指定docker20只能在cpu0上运行，而且docker20的使用cpu的份额1024，比dcker10多一倍
+
+#测试1： 进入docker10，使用stress测试进程是不是只在cpu0上运行：
+docker exec -it docker10 /bin/bash
+stress -c 2 -v -t 10m  #运行2个进程，把两个cpu占满
+
+#测试2： 进入docker20，使用stress测试进程是不是只在cpu0上运行：
+docker exec -it docker10 /bin/bash
+stress -c 2 -v -t 10m  #运行2个进程，把两个cpu占满
+
+#物理机上运行top命令，按1快捷键，查看每个cpu使用情况：
+top - 13:17:29 up 12:18,  0 users,  load average: 1.53, 0.44, 0.19
+Tasks: 145 total,   5 running, 140 sleeping,   0 stopped,   0 zombie
+%Cpu0  :100.0 us,  0.0 sy,  0.0 ni,  0.0 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+%Cpu1  :  2.2 us,  1.9 sy,  0.0 ni, 90.4 id,  0.0 wa,  0.0 hi,  5.4 si,  0.0 st
+KiB Mem :  8173724 total,  6187612 free,   896372 used,  1089740 buff/cache
+KiB Swap:        0 total,        0 free,        0 used.  6938528 avail Mem 
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND                    
+11102 root      20   0    7960     92      0 R  33.6  0.0   0:08.04 stress                                   
+11103 root      20   0    7960     92      0 R  33.2  0.0   0:08.04 stress                           
+10991 root      20   0    7960     96      0 R  16.6  0.0   0:09.24 stress                               
+10992 root      20   0    7960     96      0 R  16.3  0.0   0:09.23 stress    
+```
+
+## docker容器控制内存
+
+- Docker提供参数-m, --memory=""限制容器的内存使用量。
+
+```bash
+#例：允许容器使用的内存上限为128M：
+docker run -it -m 128m centos
+#查看内存限制
+cat /sys/fs/cgroup/memory/memory.limit_in_bytes
+134217728
+```
+
+## docker容器控制IO
+
+```bash
+docker run --help | grep write-b
+--device-write-bps value   Limit write rate (bytes per second) to a device (default []) #限制此设备上的写速度（bytes per second），单位可以是kb、mb或者gb。
+--device-read-bps value  #限制此设备上的读速度（bytes per second），单位可以是kb、mb或者gb。 
+```
+
+情景：防止某个 Docker 容器吃光你的磁盘 I / O 资源
+
+Lab:
+
+```bash
+#例1：限制容器实例对硬盘的最高写入速度设定为 2MB/s。
+#--device参数：将主机设备添加到容器
+mkdir -p /var/www/html/
+docker run -itd -v /var/www/html/:/var/www/html --device /dev/sda:/dev/sda --device-write-bps /dev/sda:2mb centos  /bin/bash
+```
+
+> #用time dd测试磁盘io: time有计时作用，dd用于复制，从if读出，写到of
+> 注：dd 参数：
+> direct：读写数据采用直接IO方式，不走缓存。直接从内存写硬盘上。
+> nonblock：读写数据采用非阻塞IO方式，优先写dd命令的数据
+
+```bash
+time dd if=/dev/sda of=/var/www/html/test.out bs=2M count=50 oflag=direct,nonblock
+
+10+0 records out
+20971520 bytes (21 MB, 20 MiB) copied, 10.0456 s, 2.1 MB/s
+real    0m10.080s
+user    0m0.000s
+sys     0m0.018s
+#注： 发现1秒写2M。限制成功。
+```
+
+## docker资源自动释放
+
+```bash
+docker run --help | grep rm
+   --rm ： Automatically remove the container when it exits
+   #作用：当容器命令运行结束后，自动删除容器，自动释放资源 
+```
+
+```bash
+#示例
+docker run -it --rm --name dockerrm centos sleep 10
+#容器起来10s就自动退出了
+```
+
+# Docker私有镜像仓库harbor
+
+## Harbor介绍
+
+- Docker容器应用的开发和运行离不开可靠的镜像管理，虽然Docker官方也提供了公共的镜像仓库，但是从安全和效率等方面考虑，部署我们私有环境内的Registry也是非常必要的。
+
+- Harbor是由VMware公司开源的企业级的Docker Registry管理项目，它包括权限管理(RBAC)、LDAP、日志审核、管理界面、自我注册、镜像复制和中文支持等功能。
+
+- 官网地址：https://github.com/goharbor/harbor
+
+## Harbor安装配置
+
+1. 创建VM。为harbor创建自签发证书
+
+   ```bash
+   #设置主机名
+   hostnamectl set-hostname harbor && bash
+   
+   mkdir /data/ssl -p
+   cd /data/ssl/
+   
+   #生成一个3072位的key，也就是私钥
+   openssl genrsa -out ca.key 3072
+   
+   #生成一个数字证书ca.pem，3650表示证书的有效时间是3年
+   openssl req -new -x509 -days 3650 -key ca.key -out ca.pem 
+   
+   #生成域名的证书
+   #生成一个3072位的key，也就是私钥
+   openssl genrsa -out harbor.key  3072
+   #生成一个证书请求，一会签发证书时需要的
+   openssl req -new -key harbor.key -out harbor.csr
+   
+   #签发证书：
+   openssl x509 -req -in harbor.csr -CA ca.pem -CAkey ca.key -CAcreateserial -out harbor.pem -days 3650
+   ```
+
+2. 安装docker
+
+   #安装前面装docker的步骤
+
+3. 安装harbor
+
+   ```bash
+   #配置hosts文件
+   vim /etc/hosts
+   #添加：
+   10.0.0.4 hangxdockerlab
+   10.0.0.5 harbor
+   ```
+
+4. 
 
