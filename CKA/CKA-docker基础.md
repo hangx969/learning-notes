@@ -643,6 +643,153 @@ CMD /bin/bash
 容器A挂载了一个volume，容器B通过volume-from参数，把A挂载的数据卷也挂载到自己里面，实现数据共享。
 
 ```bash
-#容器A挂载一个volume
+#构建一个镜像
+FROM centos
+VOLUME ["/datavolume3","/datavolume6"]
+CMD /bin/bash
+
+docker build -t=volume . --load
+
+#run一个容器A挂载volume
+docker run --name volume-A -it volume
+#再run一个容器B，用volume-from挂载A的数据卷
+docker run --name volume-B --volumes-from volume-A -itd centos /bin/bash
+docker exec -it volume-B /bin/bash #可以看到容器A挂载的目录和文件
 ```
+
+### docker数据卷的备份和还原
+
+```bash
+#数据备份
+docker run --volumes-from volume-B  -v  /root/backup:/backup --name volume-copy centos tar zcvf /backup/volume-B.tar.gz /datavolume3 #新建容器，挂载主容器volume-B的volume，把容器内的/backup挂载到宿主机的/root/backup，然后把主容器的/datavolume3打包到了/backup目录下，实现备份。
+
+#这个辅助备份的容器做完复制就退出了，可以到宿主机上验证数据备份
+cd /root/backup/
+ls
+
+#数据还原
+docker run --volumes-from volume-B -v /root/backup/:/backup centos tar zxvf /backup/volume-B.tar.gz -C /
+#运行一个辅助容器，挂载上主容器volume-B的volume，然后把宿主机的/root/backup挂载到容器内的/backup，这样备份的数据就近到容器里面了。然后把备份的datavolume3解压到自己的也就是主容器的/上，实现还原。
+```
+
+## docker容器互联
+
+### docker0网桥
+
+- 安装docker的时候，会生成一个docker0的虚拟网桥。
+
+- Linux虚拟网桥的特点：可以设置ip地址，相当于拥有一个隐藏的虚拟网卡
+
+  ```bash
+  ip addr
+  3: docker0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP group default 
+      link/ether 02:42:16:a9:10:79 brd ff:ff:ff:ff:ff:ff
+      inet 172.17.0.1/16 brd 172.17.255.255 scope global docker0
+         valid_lft forever preferred_lft forever
+      inet6 fe80::42:16ff:fea9:1079/64 scope link 
+         valid_lft forever preferred_lft forever
+  ```
+
+- 每运行一个docker容器都会生成一个veth设备对，这个veth一个接口在容器里，一个接口在物理机上。
+
+  ```bash
+  7: vethb49257d@if6: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue master docker0 state UP group default 
+      link/ether c2:2b:1a:96:d2:2a brd ff:ff:ff:ff:ff:ff link-netnsid 0
+      inet6 fe80::c02b:1aff:fe96:d22a/64 scope link 
+         valid_lft forever preferred_lft forever
+  ```
+
+- 网桥管理工具
+
+  ```bash
+  yum install bridge-utils -y
+  brctl show # 查看docker0的网桥设备，下面每个接口都表示一个启动的docker容器
+  
+  bridge name     bridge id               STP enabled     interfaces
+  docker0         8000.024216a91079       no              vethb49257d
+  ```
+
+### docker link网络别名
+
+- docker link设置网络别名
+
+  ```bash
+  #dockerfile构建镜像
+  FROM centos
+  RUN rm -rf /etc/yum.repos.d/*
+  COPY Centos-vault-8.5.2111.repo /etc/yum.repos.d/
+  RUN yum install wget -y
+  RUN yum install nginx -y
+  EXPOSE 80
+  CMD /bin/bash
+  
+  docker build -t="inter-image" . --load
+  
+  #启动一个test3容器
+  docker run --name test3 -itd inter-image /bin/bash
+  
+  #启动一个test5容器，--link做链接，含义是在test5看来，test3容器别名为webtest。
+  #test3容器就算ip变了，仍可以在test5上ping别名webtest，连接到test3
+  docker run --name test5 -itd --link=test3:webtest inter-image /bin/bash
+  #进入test5容器，ping webtest
+  docker exec -it test5 /bin/bash
+  ping webtest
+  ```
+
+## docker容器网络模式
+
+docker run创建Docker容器时，可以用--net选项指定容器的网络模式，Docker有以下4种网络模式：
+
+- bridge模式：--net =bridge指定，默认设置；容器启动后会通过DHCP获取一个地址。
+
+- host模式：--net =host指定；共享宿主机网络。
+
+- none模式：--net =none指定；创建的容器没有网络地址，只有lo网卡。
+
+- container模式：使用--net =container:NAME or ID 指定。
+
+  - 和已经存在的某个容器共享一个 Network Namespace。如下图所示，右方黄色新创建的container，其网卡共享左边容器。因此就不会拥有自己独立的 IP，而是共享左边容器的 IP 172.17.0.2,端口范围等网络资源，两个容器的进程通过 lo 网卡设备通信。
+
+    ![image-20231016133450111](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202310161334288.png)
+
+```bash
+###bridge模式###
+docker run --name bridge -itd --privileged=true centos /bin/bash
+docker exec -it net-bridge /bin/bash
+ip addr
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+24: eth0@if25: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP group default 
+    link/ether 02:42:ac:11:00:02 brd ff:ff:ff:ff:ff:ff link-netnsid 0
+    inet 172.17.0.2/16 brd 172.17.255.255 scope global eth0
+       valid_lft forever preferred_lft forever
+###host模式###
+docker run --name net-host -itd --net=host --privileged=true centos /bin/bash
+docker exec -it net-host /bin/bash
+ip addr #看到的是物理机的网络设备
+
+###none模式###
+docker run -itd --name net-none --net=none --privileged=true centos
+docker exec -it net-none /bin/bash
+ip addr
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+       
+###container模式###
+docker run --name net-container --net=container:net-none  -it --privileged=true centos
+docker exec -it net-container /bin/bash
+ip addr  #跟net-none的设置一样
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+```
+
+# docker资源配额
+
+
 
