@@ -245,6 +245,10 @@ getenforce #显示Disabled说明selinux已经关闭
 
 ## keepalive+nginx实现k8s master节点高可用
 
+### 配置nginx和keepalived
+
+<img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202310201711229.png" alt="image-20231020171124147"  />
+
 - 安装nginx主备
 
   ```bash
@@ -255,7 +259,314 @@ getenforce #显示Disabled说明selinux已经关闭
 - 修改nginx配置文件
 
   ```bash
+  vim /etc/nginx/nginx.conf
+  user nginx;
+  worker_processes auto;
+  error_log /var/log/nginx/error.log;
+  pid /run/nginx.pid;
   
+  include /usr/share/nginx/modules/*.conf;
+  
+  events {
+      worker_connections 1024;
+  }
+  
+  # 四层负载均衡，为两台Master apiserver组件提供负载均衡
+  stream {
+  
+      log_format  main  '$remote_addr $upstream_addr - [$time_local] $status $upstream_bytes_sent';
+  
+      access_log  /var/log/nginx/k8s-access.log  main;
+  
+      upstream k8s-apiserver {
+         server 192.168.40.4:6443 weight=5 max_fails=3 fail_timeout=30s;   # Master1 APISERVER IP:PORT
+         server 192.168.40.5:6443 weight=5 max_fails=3 fail_timeout=30s;   # Master2 APISERVER IP:PORT
+      }
+      
+      server {
+         listen 16443; # 由于nginx与master节点复用，这个监听端口不能是6443，否则会冲突
+         proxy_pass k8s-apiserver;
+      }
+  }
+  
+  http {
+      log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+                        '$status $body_bytes_sent "$http_referer" '
+                        '"$http_user_agent" "$http_x_forwarded_for"';
+  
+      access_log  /var/log/nginx/access.log  main;
+  
+      sendfile            on;
+      tcp_nopush          on;
+      tcp_nodelay         on;
+      keepalive_timeout   65;
+      types_hash_max_size 2048;
+  
+      include             /etc/nginx/mime.types;
+      default_type        application/octet-stream;
+  
+      server {
+          listen       80 default_server;
+          server_name  _;
+  
+          location / {
+          }
+      }
+  }
+  ```
+
+- 修改keeplived配置文件
+
+  ```bash
+  #########主：master1#################
+  vim /etc/keepalived/keepalived.conf
+  global_defs { 
+     notification_email { 
+       acassen@firewall.loc 
+       failover@firewall.loc 
+       sysadmin@firewall.loc 
+     } 
+     notification_email_from Alexandre.Cassen@firewall.loc  
+     smtp_server 127.0.0.1 
+     smtp_connect_timeout 30 
+     router_id NGINX_MASTER
+  } 
+  
+  vrrp_script check_nginx {
+      script "/etc/keepalived/check_nginx.sh"
+  }
+  
+  vrrp_instance VI_1 { 
+      state MASTER 
+      interface eth0  # 修改为实际网卡名
+      virtual_router_id 51 # VRRP 路由 ID实例，每个实例是唯一的 
+      unicast_src_ip 192.168.40.4         ##source ip，当前keepalive机器的ip
+      unicast_peer {
+            192.168.40.5               ##dest ip，另一台keepalive机器的ip
+      }
+      #如果不加unicase的参数，识别peer ip，那么BACKUP的机器会自动进入MASTER STATE
+      priority 100    # 优先级，备服务器设置 90 
+      advert_int 1    # 指定VRRP 心跳包通告间隔时间，默认1秒 
+      authentication { 
+          auth_type PASS      
+          auth_pass 1111 
+      }  
+      # 虚拟IP
+      virtual_ipaddress { 
+          192.168.40.10 #需要和VM的IP处于一个网段
+      } 
+      track_script {
+          check_nginx
+      } 
+  }
+  
+  ########备master2############
+  global_defs { 
+     notification_email { 
+       acassen@firewall.loc 
+       failover@firewall.loc 
+       sysadmin@firewall.loc 
+     } 
+     notification_email_from Alexandre.Cassen@firewall.loc  
+     smtp_server 127.0.0.1 
+     smtp_connect_timeout 30 
+     router_id NGINX_MASTER
+  } 
+  
+  vrrp_script check_nginx {
+      script "/etc/keepalived/check_nginx.sh"
+  }
+  
+  vrrp_instance VI_1 { 
+      state BACKUP 
+      interface eth0  # 修改为实际网卡名
+      virtual_router_id 51 # VRRP 路由 ID实例，每个实例是唯一的
+      unicast_src_ip 192.168.40.5         ##source ip，当前keepalive机器的ip
+      unicast_peer {
+            192.168.40.4               ##dest ip，另一台keepalive机器的ip
+      }
+      priority 90    # 优先级，备服务器设置 90 
+      advert_int 1    # 指定VRRP 心跳包通告间隔时间，默认1秒 
+      authentication { 
+          auth_type PASS      
+          auth_pass 1111 
+      }  
+      # 虚拟IP
+      virtual_ipaddress { 
+          192.168.40.10 #需要和VM的IP处于一个网段
+      } 
+      track_script {
+          check_nginx
+      } 
+  }
+  ```
+
+- 写检查nginx工作状态脚本
+
+  ```bash
+  vim /etc/keepalived/check_nginx.sh 
+  #!/bin/bash
+  #1、判断Nginx是否存活
+  counter=$(ps -ef |grep nginx | grep sbin | egrep -cv "grep|$$" )
+  if [ $counter -eq 0 ]; then
+      #2、如果不存活则尝试启动Nginx
+      service nginx start
+      sleep 2
+      #3、等待2秒后再次获取一次Nginx状态
+      counter=$(ps -ef |grep nginx | grep sbin | egrep -cv "grep|$$" )
+      #4、再次进行判断，如Nginx还不存活则停止Keepalived，让地址进行漂移
+      if [ $counter -eq 0 ]; then
+          service keepalived stop
+      fi
+  fi
+  #注：keepalived根据脚本返回状态码（0为工作正常，非0不正常）判断是否故障转移。
+  ```
+
+- 启动nginx和keepalived
+
+  ```bash
+  yum install nginx-mod-stream -y
+  chmod +x /etc/keepalived/check_nginx.sh
+  chmod 644 /etc/keepalived/keepalived.conf
+  systemctl daemon-reload
+  systemctl start nginx
+  systemctl start keepalived
+  systemctl enable nginx keepalived && systemctl status keepalived
+  
+  #在nginx里面设置了监听端口16443
+  #在keeplived里面配了VIP 192.168.40.10
+  #==>访问192.168.40.10:16443的流量就会被反向代理到两个master：
+  #192.168.40.4:6443
+  #192.168.40.5:6443
+  ```
+
+- 检查keepalived主备切换情况
+
+  ```bash
+  #主机
+  systemctl stop keepalived
+  ip addr #看到VIP已经没了
+  #备机
+  ip addr #有了VIP
+  systemctl status keepalived #看到提升为Master了
+  ```
+
+  - Issue：主备两台的keepalived都会进入到MASTER state。
+  - Troubleshooting：
+    - 检查两台上面的nginx和keepalived都运行正常，也没有防火墙阻挡，互相可以ping通。
+    - keepalived的配置文件正确。
+    - KB：[Keepalived两节点出现双VIP的情况 - Netonline - 博客园 (cnblogs.com)](https://www.cnblogs.com/netonline/archive/2017/10/09/7642595.html)：主备两台采用vrrp组播流量发送心跳，有可能是两台的上级交换机禁止了组播流量，所以备用机收不到主机心跳，自动提升为MASTER。
+    - 进一步查看了Azure VNET文档：[Azure Virtual Network FAQ | Microsoft Learn](https://learn.microsoft.com/en-us/azure/virtual-network/virtual-networks-faq#do-virtual-networks-support-multicast-or-broadcast)：“No. Multicast and broadcast are not supported.” ==> 说明两台VM的虚拟网络禁止组播流量，这是平台限制。
+  - Resolve：
+    - [k8s架构师课程CKA和CKS精品班学员学习过程遇到的问题汇总（实时更新）: k8s常见学习问题汇总（实时更新） (gitee.com)](https://gitee.com/hanxianchao66/CKA_CKS#1如果做k8s高可用安装实验出现两台机器搭建keepalived但是两台机器都能看到vip这种情况是有问题的如何排查解决)：主备两台的keepalived配置文件上加上unicast_src_ip，变成vrrp单播就可以了。
+
+### 配置kubeadm
+
+- 创建kubeadm配置文件
+
+  ```bash
+  #在master1上配置：
+  cd /root/
+  vim kubeadm-config.yaml 
+  
+  apiVersion: kubeadm.k8s.io/v1beta2
+  kind: ClusterConfiguration
+  kubernetesVersion: v1.20.6
+  controlPlaneEndpoint: 192.168.40.10:16443
+  imageRepository: registry.aliyuncs.com/google_containers
+  apiServer:
+   certSANs:
+   - 192.168.40.4
+   - 192.168.40.5
+   - 192.168.40.6
+   - 192.168.40.10
+  networking:
+    podSubnet: 10.244.0.0/16
+    serviceSubnet: 10.96.0.0/16
+  ---
+  apiVersion: kubeproxy.config.k8s.io/v1alpha1
+  kind:  KubeProxyConfiguration
+  mode: ipvs
+  ```
+
+  > 注意：
+  >
+  > 1. 参数image-repository: registry.aliyuncs.com/google_containers
+  >    - 为保证拉取镜像不到国外站点拉取，手动指定仓库地址为registry.aliyuncs.com/google_containers。
+  >    - kubeadm默认从k8s.gcr.io拉取镜像。
+  >    - 如果本地有导入的离线镜像，会优先使用本地的镜像。
+  >
+  > 2. kubeproxy模式采用ipvs：如果不指定ipvs，会默认使用iptables，但是iptables效率低，所以我们生产环境建议开启ipvs。
+
+- 加载master组件的镜像
+
+  ```bash
+  #在master1、master2、node1上都解压
+  docker load -i k8simage-1-20-6.tar.gz
+  #没有离线包的话，后面执行kubeadm init也会自动从镜像源下载这些image包
+  ```
+
+- kubeadm初始化k8s集群
+
+  ```bash
+  #在master1上执行：
+  cd /root/
+  kubeadm init --config kubeadm-config.yaml --ignore-preflight-errors=SystemVerification
+  ```
+
+- 对kubectl授权
+
+  ```bash
+  mkdir -p $HOME/.kube
+  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+  sudo chown $(id -u):$(id -g) $HOME/.kube/config
+  kubectl get nodes
+  #notready是因为还没有安装网络插件
+  ```
+
+- 扩容集群-添加master节点
+
+  ```bash
+  #master2上创建证书目录
+  cd /root && mkdir -p /etc/kubernetes/pki/etcd && mkdir -p ~/.kube/
+  #把master1的证书拷贝到master2
+  scp /etc/kubernetes/pki/ca.crt master2:/etc/kubernetes/pki/
+  scp /etc/kubernetes/pki/ca.key master2:/etc/kubernetes/pki/
+  scp /etc/kubernetes/pki/sa.key master2:/etc/kubernetes/pki/
+  scp /etc/kubernetes/pki/sa.pub master2:/etc/kubernetes/pki/
+  scp /etc/kubernetes/pki/front-proxy-ca.crt master2:/etc/kubernetes/pki/
+  scp /etc/kubernetes/pki/front-proxy-ca.key master2:/etc/kubernetes/pki/
+  scp /etc/kubernetes/pki/etcd/ca.crt master2:/etc/kubernetes/pki/etcd/
+  scp /etc/kubernetes/pki/etcd/ca.key master2:/etc/kubernetes/pki/etcd/
+  #在master1上查看join节点的命令
+  kubeadm token create --print-join-command
+  #在master2上执行这个join命令
+  #查看节点状况
+  kubectl get nodes
+  ```
+
+- 扩容集群-添加node节点
+
+  ```bash
+  #在master1上查看join节点的命令
+  kubeadm token create --print-join-command
+  #在node1上执行这个join命令
+  #查看节点状况
+  kubectl get nodes
+  
+  #master1上get node看到node1的role为none
+  #可以把node1的ROLES变成worker，按照如下方法：
+  kubectl label node node1 node-role.kubernetes.io/worker=worker
+  kubectl get pod -n kube-system
+  #看到corends pod是pending，因为还没装网络插件
+  ```
+
+- 安装网络插件calico
+
+  ```bash
   ```
 
   
+
+  
+
