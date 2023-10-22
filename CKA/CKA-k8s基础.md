@@ -196,7 +196,7 @@ getenforce #显示Disabled说明selinux已经关闭
 
   ```bash
   yum install docker-ce-20.10.6 docker-ce-cli-20.10.6 containerd.io -y
-  systemctl start docker && systemctl enable docker && systemctl status docker
+  systemctl start docker --now && systemctl status docker #--now相当于 start+enable
   
   #配置docker镜像加速器和驱动
   vim /etc/docker/daemon.json 
@@ -472,7 +472,7 @@ getenforce #显示Disabled说明selinux已经关闭
   apiVersion: kubeadm.k8s.io/v1beta2
   kind: ClusterConfiguration
   kubernetesVersion: v1.20.6
-  controlPlaneEndpoint: 192.168.40.10:16443
+  controlPlaneEndpoint: 192.168.40.4:16443
   imageRepository: registry.aliyuncs.com/google_containers
   apiServer:
    certSANs:
@@ -497,6 +497,9 @@ getenforce #显示Disabled说明selinux已经关闭
   >    - 如果本地有导入的离线镜像，会优先使用本地的镜像。
   >
   > 2. kubeproxy模式采用ipvs：如果不指定ipvs，会默认使用iptables，但是iptables效率低，所以我们生产环境建议开启ipvs。
+  > 3. controlPlaneEndpoint: 192.168.40.10:16443，16443是把请求代理给nginx的配置。
+
+### 初始化集群
 
 - 加载master组件的镜像
 
@@ -524,6 +527,56 @@ getenforce #显示Disabled说明selinux已经关闭
   #notready是因为还没有安装网络插件
   ```
 
+- kubectl 修改 alias为k并添加补全
+
+  ```bash
+  #1. 设置kubectl的alias为k：
+  whereis kubectl # kubectl: /usr/bin/kubectl
+  echo  "alias k=/usr/bin/kubectl">>/etc/profile
+  source /etc/profile
+  #2. 设置alias的自动补全：
+  source <(kubectl completion bash | sed 's/kubectl/k/g')
+  #3. 解决每次启动k都会失效，要重新刷新环境变量（source /etc/profile）的问题：在~/.bashrc文件中添加以下代码：source /etc/profile
+  echo "source /etc/profile" >> ~/.bashrc
+  ```
+
+  > kubectl机理解释：
+  >
+  > - kubectl走的是 /root/.kube/config 文件中的配置，如何查看：
+  >
+  >   - kubectl config view 
+  >
+  >     ```yaml
+  >     apiVersion: v1
+  >     clusters:
+  >     - cluster:
+  >         certificate-authority-data: DATA+OMITTED
+  >         server: https://192.168.40.4:16443
+  >       name: kubernetes
+  >     contexts:
+  >     - context:
+  >         cluster: kubernetes
+  >         user: kubernetes-admin #声明了当前用户
+  >       name: kubernetes-admin@kubernetes
+  >     current-context: kubernetes-admin@kubernetes
+  >     kind: Config
+  >     preferences: {}
+  >     users:
+  >     - name: kubernetes-admin
+  >       user:
+  >         client-certificate-data: REDACTED
+  >         client-key-data: REDACTED
+  >     ```
+  >
+  > - 如果想要在别的机器上运行kubectl，只需要保证这个机器能连通到master，再把/root/.kube/config拷过去就行了。
+  >
+  >   ```bash
+  >   #目标机器
+  >   mkdir -p /root/.kube/
+  >   #master上
+  >   scp /root/.kube/config node1:/root/.kube/
+  >   ```
+
 - 扩容集群-添加master节点
 
   ```bash
@@ -545,12 +598,16 @@ getenforce #显示Disabled说明selinux已经关闭
   kubectl get nodes
   ```
 
+  - Issue: 用VM来做，keepalived的VIP无法接收到流量，无法用做k8s-apiserver暴露的IP。节点扩容会失败。
+  - Resolve：部署一个LB代替nginx和keepalived
+
 - 扩容集群-添加node节点
 
   ```bash
   #在master1上查看join节点的命令
   kubeadm token create --print-join-command
   #在node1上执行这个join命令
+  #因为是加master节点，需要加上 --control-plane --ignore-preflight-errors=SystemVerification
   #查看节点状况
   kubectl get nodes
   
@@ -564,9 +621,52 @@ getenforce #显示Disabled说明selinux已经关闭
 - 安装网络插件calico
 
   ```bash
+  #上传了Caclio.yaml
+  kubectl apply -f calico.yaml
+  #在线下载地址为：https://docs.projectcalico.org/manifests/calico.yaml
   ```
 
-  
+  - 测试caclio是否正常工作
 
-  
+    ```bash
+    #上传busybox并解压
+    docker load -i busybox-1-28.tar.gz
+    kubectl run busybox --image busybox:1.28 --restart=Never --rm -it busybox -- sh
+    #测试是否能联网
+    ping www.baidu.com
+    #测试是否能解析dns
+    nslookup kubernetes.default.svc.cluster.local #这个域名是默认创建的service的FQDN
+    
+    Server:    10.96.0.10
+    Address 1: 10.96.0.10 kube-dns.kube-system.svc.cluster.local
+    
+    Name:      kubernetes.default.svc.cluster.local
+    Address 1: 10.96.0.1 kubernetes.default.svc.cluster.local
+    #k8s内部解析域名用的dns server是coreDNS（coredns的svc ip就是这里的10.96.0.10）
+    k get svc -A
+    NAMESPACE     NAME         TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)                  AGE
+    default       kubernetes   ClusterIP   10.96.0.1    <none>        443/TCP                  4h21m
+    kube-system   kube-dns     ClusterIP   10.96.0.10   <none>        53/UDP,53/TCP,9153/TCP   4h21m
+    ```
 
+- 延长证书有效期
+
+  ```bash
+  #查看ca证书过期时间
+  openssl x509 -in /etc/kubernetes/pki/ca.crt -noout -text | grep Not
+  # 查看apiserver证书过期时间
+  openssl x509 -in /etc/kubernetes/pki/apiserver.crt -noout -text | grep Not
+  #可以看到apiserver证书的有效期是1年
+  #把延长的脚本上传：update-kubeadm-cert.sh并赋权执行
+  chmod +x update-kubeadm-cert.sh
+  ./update-kubeadm-cert.sh all
+  ```
+
+- 如何卸载kubeadm安装的集群
+
+  ```bash
+  #装错了需要重新初始化
+  kubeadm reset
+  ```
+
+# kubeadm安装单master集群
