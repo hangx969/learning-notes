@@ -872,10 +872,9 @@ kubeadm 在执行安装之前进行了相当细致的环境检测：
     - /etc/kubernetes/pki/apiserver.key
 
   - 2、kubelet客户端证书, 用作 kube-apiserver 主动向 kubelet 发起请求时的客户端认证
-
-    - /etc/kubernetes/pki/apiserver-kubelet-client.crt
-
-    - /etc/kubernetes/pki/apiserver-kubelet-client.key
+- /etc/kubernetes/pki/apiserver-kubelet-client.crt
+  
+- /etc/kubernetes/pki/apiserver-kubelet-client.key
 
 ## kube-apiserver代理根证书(客户端证书)
 
@@ -995,7 +994,7 @@ containers:
   - 获取Node IP地址的方式，默认使用第1个网络接口的IP地址，对于安装了多块网卡的Node，可以使用正则表达式选择正确的网卡，例如"interface=eth.*"表示选择名称以eth开头的网卡的IP地址。
 
     ```yaml
-    -  name: IP_AUTODETECTION_METHOD
+    -  name: IP_AUTODETECTION_METHOD #位置:在calico.yaml-DaemonSet:Containers:env里面配置
        value: "interface=ens33"
     ```
 
