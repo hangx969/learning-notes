@@ -73,10 +73,9 @@
 - 安装基础软件包
 
   ```bash
-  ##这一步如果是国外的VM不需要修改源，用自带的源安装即可成功。
   yum install -y device-mapper-persistent-data lvm2 wget net-tools nfs-utils lrzsz gcc gcc-c++ make cmake libxml2-devel openssl-devel curl curl-devel unzip sudo ntp libaio-devel wget vim ncurses-devel autoconf automake zlib-devel  python-devel epel-release openssh-server socat  ipvsadm conntrack telnet ipvsadm
   ```
-
+  
 - 配置时间同步
 
   ```bash
@@ -101,31 +100,19 @@
   #/dev/mapper/centos-swap swap      swap    defaults        0 0
   ```
 
-  > - Swap是交换分区，如果机器内存不够，会使用swap分区，但是swap分区的性能较低，k8s设计的时候为了能提升性能，默认是不允许使用交换分区的。
-  > - Kubeadm初始化的时候会检测swap是否关闭，如果没关闭，那就初始化失败。如果不想要关闭交换分区，安装k8s的时候可以指定--ignore-preflight-errors=Swap来解决。
-
 - 修改内核参数，开路由转发
 
   ```bash
   modprobe br_netfilter 
-  # 加载br_netfilter模块可以使 iptables 规则可以在 Linux Bridges 上面工作，用于将桥接的流量转发至iptables链，k8s如果没有加载br_netfilter模块，会影响同node内的pod之间通过service来通信。
-  # 加载这个模块是为了可以正常开启iptables和ip6tables参数
-  
   echo "modprobe br_netfilter" >> /etc/profile
-  
   cat > /etc/sysctl.d/k8s.conf <<EOF
   net.bridge.bridge-nf-call-ip6tables = 1
   net.bridge.bridge-nf-call-iptables = 1
   net.ipv4.ip_forward = 1 
   EOF
-  #net.ipv4.ip_forward = 1做路由转发的
-  ##net.ipv4.ip_forward是数据包转发：出于安全考虑，Linux系统默认是禁止数据包转发的。所谓转发即当主机拥有多于一块的网卡时，其中一块收到数据包，根据数据包的目的ip地址将数据包发往本机另一块网卡，该网卡根据路由表继续继续发送数据包。这通常是路由器所要实现的功能。
-  ##要让Linux系统具有路由转发功能，需要配置一个Linux的内核参数net.ipv4.ip_forward。这个参数指定了Linux系统当前对路由转发功能的支持情况；其值为0时表示禁止进行IP转发；如果是1,则说明IP转发功能已经打开。
-  
   sysctl -p /etc/sysctl.d/k8s.conf 
-  #在运行时配置内核参数，-p：从指定的文件加载系统参数，如不指定即从/etc/sysctl.conf中加载
   ```
-
+  
 - 禁用firewalld防火墙
 
   ```bash
@@ -143,14 +130,13 @@
   mkdir /root/repo.bak
   cd /etc/yum.repos.d/
   mv * /root/repo.bak/
-  
   #下载阿里云的repo源
   ###注意：用GLobalAzure的VM就不需要这面手动修改源了，用自带的源即可###
   #把CentOS-Base.repo和epel.repo文件上传到master1主机的/etc/yum.repos.d/目录下
   chmod 777 /etc/yum.repos.d/
   #通过vscode拖进来
   ```
-
+  
 - 配置阿里云docker的repo源
 
   ```bash
@@ -175,20 +161,33 @@
 ### 安装containerd并配置
 
 ```bash
-yum install containerd.io-1.6.6 -y
+yum install containerd.io-1.6.6 -y #1.27也是用这个版本
 #生成 containerd 的配置文件:
 mkdir -p /etc/containerd
 containerd config default > /etc/containerd/config.toml
 
-#修改配置文件
+#修改配置文件，1.26和1.27配置一样
+#SystemdCgroup = true表示containerd驱动用systemd，在 Kubernetes 中，容器运行时需要与宿主机的 cgroup 和 namespace 进行交互，以管理容器的资源。
+#对于 cgroup 的驱动程序，Docker 和 Containerd 默认都使用的是 cgroupfs。#systemd-cgroup 则是 Systemd 对 cgroup 的一个实现。
+#相比 cgroupfs，systemd-cgroup 在资源隔离方面提供了更好的性能和更多的特性。例如，systemd-cgroup 可以使用更多的内存压缩算法，以便更有效地使用内存。此外，systemd-cgroup 还提供了更好的 cgroup 监控和控制机制，可以更精确地调整容器的资源使用量。总之，使用 systemd-cgroup 作为容器运行时的 cgroup 驱动程序，可以提高 Kubernetes 集群中容器的资源管理效率，从而提升整个集群的性能。
+
+#将sandbox_image设置为阿里云镜像仓库中的pause:3.7，在 Kubernetes 中，每个 Pod 中都有一个 pause 容器，这个容器不会运行任何应用，只是简单地 sleep。它的作用是为了保证 Pod 中所有的容器共享同一个网络命名空间和 IPC 命名空间。pause 容器会在 Pod 的初始化过程中首先启动，然后为 Pod 中的其他容器创建对应的网络和 IPC 命名空间，并且在其他容器启动之前保持运行状态，以保证其他容器可以加入到共享的命名空间中。
+#简单来说，pause 容器就是一个占位符，它为 Pod 中的其他容器提供了一个共享的环境，使它们可以共享同一个网络和 IPC 命名空间。这也是 Kubernetes 实现容器间通信和网络隔离的重要机制之一。
 vim /etc/containerd/config.toml
-#SystemdCgroup = false ==> SystemdCgroup = true
-#sandbox_image = "k8s.gcr.io/pause:3.6" ==> sandbox_image="registry.aliyuncs.com/google_containers/pause:3.7"
+SystemdCgroup = false ==> SystemdCgroup = true
+sandbox_image = "k8s.gcr.io/pause:3.6" ==> sandbox_image="registry.aliyuncs.com/google_containers/pause:3.7"
 
 #配置 containerd 开机启动，并启动 containerd
 systemctl enable containerd --now
 
 #修改/etc/crictl.yaml文件，指定k8s的运行时和拉取镜像都使用containerd
+#这个文件是 crictl 工具的配置文件，用于指定与 containerd 交互的相关设置：
+#指定unix:///run/containerd/containerd.sock 是为了告诉 crictl 使用 Unix 域套接字的方式来连接 containerd 的 API。containerd 提供了一个 socket 文件 /run/containerd/containerd.sock，crictl 通过连接该 socket 文件，可以与 containerd 进行通信，管理容器和镜像等操作。
+#runtime-endpoint：指定 containerd 的运行时接口地址：crictl 可以与 containerd 通信来管理容器生命周期和资源隔离。
+#image-endpoint：指定 containerd 的镜像接口地址：以便 crictl 可以与 containerd 通信来管理镜像的拉取和推送。
+#timeout：指定 crictl 等待 containerd 响应的最大时间，避免出现无响应的情况。
+#debug：开启或关闭 crictl 的调试模式，方便排查问题。
+
 cat > /etc/crictl.yaml <<EOF
 runtime-endpoint: unix:///run/containerd/containerd.sock
 image-endpoint: unix:///run/containerd/containerd.sock
@@ -230,7 +229,7 @@ systemctl daemon-reload && systemctl restart docker && systemctl status docker
 ### 安装初始化k8s需要的软件包
 
 ```bash
-yum install -y kubelet-1.26.0 kubeadm-1.26.0 kubectl-1.26.0
+yum install -y kubelet-1.26.0 kubeadm-1.26.0 kubectl-1.26.0 #1.27版本就装1.27.0的工具包
 systemctl enable kubelet
 ```
 
@@ -304,6 +303,29 @@ systemctl enable kubelet
   cgroupDriver: systemd
   ```
 
+  > kubeadm.yaml文件参数解释
+  >
+  > - localAPIEndpoint: Kubernetes API Server 监听的地址和端口。
+  >
+  >   - advertiseAddress: 指定控制节点的 IP 地址，即 API Server 暴露给集群内其他节点的地址。
+  >
+  >   - bindPort: 指定 API Server 监听的端口，默认为 6443。
+  >
+  > - nodeRegistration: 控制节点的注册信息。
+  >
+  >   - criSocket: 指定容器运行时使用的 CRI Socket，即容器与 Kubernetes API Server 之间的通信通道。这里指定为 Containerd 的 Socket 地址。
+  >
+  >   - imagePullPolicy: 指定容器镜像拉取策略，这里指定为如果本地已有镜像则不拉取。
+  >
+  >   - name: 控制节点的主机名
+  >
+  >   - taints: 控制节点的 taints，即节点的标记，用于限制哪些 Pod 可以调度到该节点。这里指定为空，即不对 Pod 的调度进行限制。
+  >
+  > - podSubnet\ServiceSubnet
+  >
+  >   - 在Kubernetes集群中，每个Pod都会被分配一个IP地址，这些IP地址需要从一个预定义的IP地址池中分配。 podSubnet参数用于指定Pod IP地址池的范围，它定义了Pod的IP地址范围，例如10.244.0.0/16表示IP地址从10.244.0.1到10.244.255.255。
+  >   - 同样地，Kubernetes服务（Service）也会被分配一个IP地址，用于暴露Kubernetes服务的端口。 serviceSubnet参数用于指定Service IP地址池的范围，它定义了Service的IP地址范围，例如10.96.0.0/12表示IP地址从10.96.0.1到10.111.255.255。
+
 - 上传并解压K8s组件镜像离线包
 
   ```bash
@@ -327,14 +349,18 @@ systemctl enable kubelet
   sudo chown $(id -u):$(id -g) $HOME/.kube/config
   ```
 
-- 扩容工作节点
+## 扩容工作节点
 
-  ```bash
-  kubeadm token create --print-join-command
-  #在node-01上加参数 --ignore-preflight-errors=SystemVerification运行
-  #工作节点打标签
-  kubectl label nodes xianchaonode1 node-role.kubernetes.io/work=work
-  ```
+```bash
+kubeadm token create --print-join-command
+#在node-01上加参数 --ignore-preflight-errors=SystemVerification运行
+#工作节点打标签
+kubectl label nodes xianchaonode1 node-role.kubernetes.io/work=work
+
+mkdir -p $HOME/.kube
+#master-01的kubectl的config文件拷到node1上
+scp $HOME/.kube/config node-01:/root/.kube/
+```
 
 ## 安装calico
 
@@ -377,8 +403,10 @@ kubectl apply -f calico.yaml
     systemctl restart kubelet
     ```
 
-  - kubeadm join
+    - 这里有个问题：master-01上面的configMap两个字段controlPlaneEndpoint和localAPIEndpoint:advertiseAddress都写的是master-01自己的，那么两台master如何做到负载均衡？如果关掉master-01，master-02会接收到流量吗？
 
+  - kubeadm join
+  
     ```bash
     #join命令添加参数：--control-plane --ignore-preflight-errors=SystemVerification
     ```

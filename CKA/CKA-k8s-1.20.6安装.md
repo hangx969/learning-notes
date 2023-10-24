@@ -99,6 +99,9 @@ getenforce #显示Disabled说明selinux已经关闭
   #永久关闭：注释掉fatab的swap挂载
   vim /etc/fstab
   #/dev/mapper/centos-swap swap      swap    defaults        0 0
+  
+  #Swap交换分区是一种在计算机中使用的虚拟内存技术。当物理内存不足以容纳当前运行的程序时，操作系统将会把一部分内存空间暂时转移到硬盘上，以便为当前程序提供运行所需的内存空间。这个过程就称为交换。交换分区（Swap Partition）就是硬盘上专门预留给操作系统进行交换的一块空间。交换分区的使用可以有效避免程序因为内存不足而崩溃或运行缓慢的问题，但是硬盘的读写速度比内存要慢得多，因此交换分区的使用会对系统的性能产生一定的影响。当系统内存不足时，会将部分内存数据转移到交换分区中，以释放内存空间。但是，交换分区的读写速度较慢，会影响系统的性能。在 Kubernetes 运行过程中，需要频繁地使用内存和磁盘等系统资源。如果使用了交换分区，会导致 Kubernetes 的运行速度变慢，从而影响整个集群的性能。因此，在安装 Kubernetes 时，通常会建议关闭交换分区。
+  
   ```
 
   > - Swap是交换分区，如果机器内存不够，会使用swap分区，但是swap分区的性能较低，k8s设计的时候为了能提升性能，默认是不允许使用交换分区的。
@@ -108,9 +111,9 @@ getenforce #显示Disabled说明selinux已经关闭
 
   ```bash
   modprobe br_netfilter 
+  # 这个模块是 Linux 网桥的核心模块，它提供了网络包转发和过滤的功能。当我们使用 Kubernetes 的时候，需要使用网络插件（如 Flannel、Calico 等）来实现容器之间的网络通信，而这些网络插件通常会使用 Linux 网桥来进行数据包的转发和过滤。因此，在安装 Kubernetes 之前需要确保 br_netfilter 模块已经加载到内核中，以便 Kubernetes 能够正常使用网络插件。
   # 加载br_netfilter模块可以使 iptables 规则可以在 Linux Bridges 上面工作，用于将桥接的流量转发至iptables链，k8s如果没有加载br_netfilter模块，会影响同node内的pod之间通过service来通信。
-  # 加载这个模块是为了可以正常开启iptables和ip6tables参数
-  
+  # 加载这个模块也是为了可以正常开启iptables和ip6tables参数
   echo "modprobe br_netfilter" >> /etc/profile
   
   cat > /etc/sysctl.d/k8s.conf <<EOF
@@ -118,13 +121,12 @@ getenforce #显示Disabled说明selinux已经关闭
   net.bridge.bridge-nf-call-iptables = 1
   net.ipv4.ip_forward = 1 
   EOF
-  #net.ipv4.ip_forward = 1做路由转发的
-  ##net.ipv4.ip_forward是数据包转发：出于安全考虑，Linux系统默认是禁止数据包转发的。所谓转发即当主机拥有多于一块的网卡时，其中一块收到数据包，根据数据包的目的ip地址将数据包发往本机另一块网卡，该网卡根据路由表继续继续发送数据包。这通常是路由器所要实现的功能。
-  ##要让Linux系统具有路由转发功能，需要配置一个Linux的内核参数net.ipv4.ip_forward。这个参数指定了Linux系统当前对路由转发功能的支持情况；其值为0时表示禁止进行IP转发；如果是1,则说明IP转发功能已经打开。
+  #net.bridge.bridge-nf-call-ip6tables 和 net.bridge.bridge-nf-call-iptables 用于开启Linux的网络包过滤功能。当ubernetes 使用网络插件进行容器之间的通信时，需要通过 Linux 网桥进行数据包的转发和过滤。这些参数可以确保 Linux 系统的网络包过滤功能正常工作，以便 Kubernetes 能够正确地进行网络通信和路由。
+  #net.ipv4.ip_forward 用于开启 Linux 系统的 IP 转发功能。这个参数是1,则说明IP转发功能已经打开，Kubernetes 能够正确地进行网络路由。
+  ##出于安全考虑，Linux系统默认是禁止数据包转发的。所谓转发即当主机拥有多于一块的网卡时，其中一块收到数据包，根据数据包的目的ip地址将数据包发往本机另一块网卡，该网卡根据路由表继续继续发送数据包。这通常是路由器所要实现的功能。
   
   sysctl -p /etc/sysctl.d/k8s.conf 
   #在运行时配置内核参数，-p：从指定的文件加载系统参数，如不指定即从/etc/sysctl.conf中加载
-  
   ```
 
 - 禁用firewalld防火墙
@@ -169,6 +171,8 @@ getenforce #显示Disabled说明selinux已经关闭
   baseurl=https://mirrors.aliyun.com/kubernetes/yum/repos/kubernetes-el7-x86_64/
   enabled=1
   gpgcheck=0
+  
+  #这个仓库是Kubernetes针对CentOS 7 x86_64架构的yum仓库，当你在CentOS 7系统上使用yum安装Kubernetes时，yum会从这个指定的URL地址获取Kubernetes的安装包和依赖包。
   ```
 
 - 配置时间同步
@@ -183,6 +187,8 @@ getenforce #显示Disabled说明selinux已经关闭
   * */1 * * * /usr/sbin/ntpdate   cn.pool.ntp.org
   #重启crond服务
   service crond restart
+  
+  #因为Kubernetes集群的正常运行需要时间同步，否则会出现各种问题。例如，在Kubernetes中使用到了TLS证书，而TLS证书的验证是基于时间戳的，如果节点之间时间不同步，就会导致证书验证失败。另外，Kubernetes中的各种组件之间也需要时间同步，否则可能会出现无法调度Pod、Pod网络异常等问题。
   ```
 
 - 安装基础软件包
@@ -236,8 +242,8 @@ getenforce #显示Disabled说明selinux已经关闭
 
   ```bash
   passwd root #设一个root密码
-  ssh-keygen #一路回车
-  ssh-copy-id master1 #输入root密码
+  ssh-keygen #一路回车，生成公钥+私钥
+  ssh-copy-id master1 #把公钥拷贝到另一台机器，需要输入root密码
   ssh-copy-id master2
   ssh-copy-id node1
   #在另外两台上也执行同样操作#
@@ -496,7 +502,8 @@ getenforce #显示Disabled说明selinux已经关闭
   >    - kubeadm默认从k8s.gcr.io拉取镜像。
   >    - 如果本地有导入的离线镜像，会优先使用本地的镜像。
   >
-  > 2. kubeproxy模式采用ipvs：如果不指定ipvs，会默认使用iptables，但是iptables效率低，所以我们生产环境建议开启ipvs。
+  > 2. kubeproxy模式采用ipvs：
+  >    - 如果不指定ipvs，会默认使用iptables.开启IPVS可以提高Kubernetes集群的性能和可靠性。IPVS是一个高性能的负载均衡器，与Kubernetes Service一起使用，可以在Pod之间分配负载。相比于Kubernetes自带的iptables模式，IPVS模式在处理大量流量时具有更好的性能和可靠性。此外，IPVS还支持四层和七层协议的负载均衡，能够满足更多的应用场景需求，所以我们生产环境建议开启ipvs。
   > 3. controlPlaneEndpoint: 192.168.40.10:16443，16443是把请求代理给nginx的配置。
 
 ## 初始化集群
@@ -532,7 +539,7 @@ getenforce #显示Disabled说明selinux已经关闭
   ```bash
   #1. 设置kubectl的alias为k：
   whereis kubectl # kubectl: /usr/bin/kubectl
-  echo  "alias k=/usr/bin/kubectl">>/etc/profile
+  echo "alias k=/usr/bin/kubectl">>/etc/profile
   source /etc/profile
   #2. 设置alias的自动补全：
   source <(kubectl completion bash | sed 's/kubectl/k/g')
@@ -750,8 +757,11 @@ sudo chown $(id -u):$(id -g) $HOME/.kube/config
 #master1查看join命令
 kubeadm token create --print-join-command
 #node1上把命令添加参数：--ignore-preflight-errors=SystemVerification
+
+mkdir -p $HOME/.kube
 ##master1的kubectl的config文件拷到node1上
 scp $HOME/.kube/config node1:/root/.kube/
+
 #node1打标签
 kubectl label node node1 node-role.kubernetes.io/worker=worker
 ##同样方法扩容node2
@@ -765,273 +775,3 @@ kubectl label node node1 node-role.kubernetes.io/worker=worker
 
 方法同[前面多master的步骤](#初始化集群)
 
-# kubeadm基础
-
-## 流程
-
-![image-20231023132237932](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202310231322150.png)
-
-## 预检查  
-
-kubeadm 在执行安装之前进行了相当细致的环境检测：
-
-​    1) 检查执行 init 命令的用户是否为 root，如果不是 root，直接快速失败（fail fast）；
-
-​    2) 检查待安装的 k8s 版本是否被当前版本的 kubeadm 支持（kubeadm 版本 >= 待安装 k8s 版本）；
-
-​    3) 检查防火墙，如果防火墙未关闭，提示开放端口 10250；
-
-​    4) 检查端口是否已被占用，6443（或你指定的监听端口）、10257、10259；
-
-​    5) 检查文件是否已经存在，/etc/kubernetes/manifests/*.yaml；
-
-​    6) 检查是否存在代理，连接本机网络、服务网络、Pod网络，都会检查，目前不允许代理；
-
-​    7) 检查容器运行时，使用 CRI 还是 Docker，如果是 Docker，进一步检查 Docker 服务是否已启动，是否设置了开机自启动；
-
-​    8) 对于 Linux 系统，会额外检查以下内容：
-
-​      8.1) 检查以下命令是否存在：crictl、ip、iptables、mount、nsenter、ebtables、ethtool、socat、tc、touch；
-
-​      8.2) 检查 /proc/sys/net/bridge/bridge-nf-call-iptables、/proc/sys/net/ipv4/ip-forward 内容是否为 1；
-
-​      8.3) 检查 swap 是否是关闭状态；
-
-​    9) 检查内核是否被支持，Docker 版本及后端存储 GraphDriver 是否被支持；
-
-​       对于 Linux 系统，还需检查 OS 版本和 cgroup 支持程度（支持哪些资源的隔离）；
-
-​    10) 检查主机名访问可达性；
-
-​    11) 检查 kubelet 版本，要高于 kubeadm 需要的最低版本，同时不高于待安装的 k8s 版本；
-
-​    12) 检查 kubelet 服务是否开机自启动；
-
-​    13) 检查 10250 端口是否被占用；
-
-​    14) 如果开启 IPVS 功能，检查系统内核是否加载了 ipvs 模块；
-
-​    15) 对于 etcd，如果使用 Local etcd，则检查 2379 端口是否被占用， /var/lib/etcd/ 是否为空目录；
-
-​       如果使用 External etcd，则检查证书文件是否存在（CA、key、cert），验证 etcd 服务版本是否符合要求；
-
-​    16) 如果使用 IPv6，
-
-​        检查 /proc/sys/net/bridge/bridge-nf-call-iptables、/proc/sys/net/ipv6/conf/default/forwarding 内容是否为 1。
-
-## 完成安装前的配置
-
-​    1) 在 kube-system 命名空间创建 ConfigMap kubeadm-config，同时对其配置 RBAC 权限；
-
-​    2) 在 kube-system 命名空间创建 ConfigMap kubelet-config-<version>，同时对其配置 RBAC 权限；
-
-​    3) 为当前节点（Master）打标记：node-role.kubernetes.io/master=；
-
-​    4) 为当前节点（Master）补充 Annotation；
-
-​    5) 如果启用了 DynamicKubeletConfig 特性，设置本节点 kubelet 的配置数据源为 ConfigMap 形式；
-
-​    6) 创建 BootStrap token Secret，并对其配置 RBAC 权限；
-
-​    7) 在 kube-public 命名空间创建 ConfigMap cluster-info，同时对其配置 RBAC 权限；
-
-​    8) 与 apiserver 通信，部署 DNS 服务；
-
-​    9) 与 apiserver 通信，部署 kube-proxy 服务；
-
-​    10) 如果启用了 self-hosted 特性，将 Control Plane 转为 DaemonSet 形式运行；
-
-​    11) 打印 join 语句；
-
-# Kubeadm生成的k8s证书
-
-## 证书分组
-
-- Kubernetes把证书放在了两个文件夹中
-
-  - /etc/kubernetes/pki
-
-  - /etc/kubernetes/pki/etcd
-
-## 集群根证书
-
-- Kubernetes 集群根证书CA(Kubernetes集群组件的证书签发机构)
-
-  - /etc/kubernetes/pki/ca.crt
-
-  - /etc/kubernetes/pki/ca.key
-
-- 以上这组证书为签发其他Kubernetes组件证书使用的根证书, 可以认为是Kubernetes集群中证书签发机构之一 
-
-- 由此根证书签发的证书有:
-
-  - 1、kube-apiserver apiserver证书
-
-    - /etc/kubernetes/pki/apiserver.crt
-
-    - /etc/kubernetes/pki/apiserver.key
-
-  - 2、kubelet客户端证书, 用作 kube-apiserver 主动向 kubelet 发起请求时的客户端认证
-- /etc/kubernetes/pki/apiserver-kubelet-client.crt
-  
-- /etc/kubernetes/pki/apiserver-kubelet-client.key
-
-## kube-apiserver代理根证书(客户端证书)
-
-- 用在requestheader-client-ca-file配置选项中, kube-apiserver 使用该证书来验证客户端证书是否为自己所签发
-
-  - /etc/kubernetes/pki/front-proxy-ca.crt
-
-  - /etc/kubernetes/pki/front-proxy-ca.key
-
-- 由此根证书签发的证书只有一组:
-
-  - 代理层(如汇聚层aggregator)使用此套代理证书来向 kube-apiserver 请求认证
-
-  - 代理端使用的客户端证书, 用作代用户与 kube-apiserver 认证
-
-    - /etc/kubernetes/pki/front-proxy-client.crt
-
-    - /etc/kubernetes/pki/front-proxy-client.key
-
-## etcd 集群根证书
-
-- etcd集群所用到的证书都保存在/etc/kubernetes/pki/etcd这路径下, 这一套证书是用来专门给etcd集群服务使用的, 设计以下证书文件：
-
-  - etcd 集群根证书CA(etcd 所用到的所有证书的签发机构)
-
-    - /etc/kubernetes/pki/etcd/ca.crt
-
-    - /etc/kubernetes/pki/etcd/ca.key
-
-- 由此根证书签发机构签发的证书有:
-
-  - 1、etcd server 持有的服务端证书
-
-    - /etc/kubernetes/pki/etcd/server.crt
-
-    - /etc/kubernetes/pki/etcd/server.key
-
-  - 2、peer 集群中节点互相通信使用的客户端证书
-
-    - /etc/kubernetes/pki/etcd/peer.crt
-
-    - /etc/kubernetes/pki/etcd/peer.key
-
-  注: Peer：对同一个etcd集群中另外一个Member的称呼
-
-  - 3、pod 中定义 Liveness 探针使用的客户端证书
-
-    - kubeadm 部署的 Kubernetes 集群是以 pod 的方式运行 etcd 服务的, 在该 pod 的定义中, 配置了 Liveness 探活探针
-
-    - /etc/kubernetes/pki/etcd/healthcheck-client.crt
-
-    - /etc/kubernetes/pki/etcd/healthcheck-client.key
-
-    - 当你 describe etcd 的 pod 时, 会看到如下一行配置:
-
-      ```bash
-      Liveness: exec [/bin/sh -ec ETCDCTL_API=3 etcdctl --endpoints=https://[127.0.0.1]:2379 --cacert=/etc/kubernetes/pki/etcd/ca.crt --cert=/etc/kubernetes/pki/etcd/healthcheck-client.crt --key=/etc/kubernetes/pki/etcd/healthcheck-client.key get foo] delay=15s timeout=15s period=10s #success=1 #failure=8
-      ```
-
-  - 4、配置在 kube-apiserver 中用来与 etcd server 做双向认证的客户端证书
-
-    - /etc/kubernetes/pki/apiserver-etcd-client.crt
-
-    - /etc/kubernetes/pki/apiserver-etcd-client.key
-
-# Calico基础
-
-## 架构图
-
-![image-20231023152017200](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202310231520298.png)
-
-## Calico主要工作组件
-
-1. Felix：运行在每一台 Host 的 agent 进程，主要负责网络接口管理和监听、路由、ARP 管理、ACL 管理和同步、状态上报等。保证跨主机容器网络互通。
-2. etcd：分布式键值存储，相当于k8s集群中的数据库，存储着Calico网络模型中IP地址等相关信息。主要负责网络元数据一致性，确保 Calico 网络状态的准确性；
-
-3. BGP Client（BIRD）：Calico 为每一台 Host 部署一个 BGP Client，即每台host上部署一个BIRD。 主要负责把 Felix 写入 Kernel 的路由信息分发到当前 Calico 网络，确保 Workload 间的通信的有效性；
-
-4. BGP Route Reflector：在大型网络规模中，如果仅仅使用 BGP client 形成 mesh 全网互联的方案就会导致规模限制，因为所有节点之间俩俩互联，需要 N^2 个连接，为了解决这个规模问题，可以采用 BGP 的 Router Reflector 的方法，通过一个或者多个 BGP Route Reflector 来完成集中式的路由分发。 
-
-## calico配置文件
-
-### Daemonset配置
-
-```
-...
-containers:
-        # Runs calico-node container on each Kubernetes node. This container programs network policy and routes on each host.
-        - name: calico-node
-          image: docker.io/calico/node:v3.18.0
-……
-          env:
-          # Use Kubernetes API as the backing datastore.
-           - name: DATASTORE_TYPE
-             value: "kubernetes"
-          # Cluster type to identify the deployment type
-           - name: CLUSTER_TYPE
-             value: "k8s,bgp"
-          # Auto-detect the BGP IP address.
-           - name: IP
-             value: "autodetect"
-          #pod网段
-           - name: CALICO_IPV4POOL_CIDR 
-             value: "10.244.0.0/16"
-          # Enable IPIP
-           - name: CALICO_IPV4POOL_IPIP
-             value: "Always"
-```
-
-### calico-node服务的主要参数:
-
-- CALICO_IPV4POOL_IPIP：
-  - 是否启用IPIP模式。启用IPIP模式时，Calico将在Node上创建一个名为tunl0的虚拟隧道。IP Pool可以使用两种模式：BGP或IPIP。使用IPIP模式时，设置CALICO_IPV4POOL_IPIP="Always"，不使用IPIP模式时，设置CALICO_IPV4POOL_IPIP="Off"，此时将使用BGP模式。
-
-- IP_AUTODETECTION_METHOD：
-
-  - 获取Node IP地址的方式，默认使用第1个网络接口的IP地址，对于安装了多块网卡的Node，可以使用正则表达式选择正确的网卡，例如"interface=eth.*"表示选择名称以eth开头的网卡的IP地址。
-
-    ```yaml
-    -  name: IP_AUTODETECTION_METHOD #位置:在calico.yaml-DaemonSet:Containers:env里面配置
-       value: "interface=ens33"
-    ```
-
-## IPIP模式和BGP模式对比分析
-
-- IPIP
-  - 把一个IP数据包又套在一个IP包里，即把IP层封装到IP层的一个 tunnel，它的作用其实基本上就相当于一个基于IP层的网桥，一般来说，普通的网桥是基于mac层的，根本不需要IP，而这个ipip则是通过两端的路由做一个tunnel，把两个本来不通的网络通过点对点连接起来；
-  - calico以ipip模式部署完毕后，node上会有一个tunl0的网卡设备，这是ipip做隧道封装用的,也是一种overlay模式的网络。当我们把节点下线，calico容器都停止后，这个设备依然还在，执行 rmmodipip命令可以将它删除。
-
-- BGP
-
-  - BGP模式直接使用物理机作为虚拟路由路（vRouter），不再创建额外的tunnel
-
-  > - 边界网关协议（BorderGateway Protocol, BGP）是互联网上一个核心的去中心化的自治路由协议。它通过维护IP路由表或‘前缀’表来实现自治系统（AS）之间的可达性，属于矢量路由协议。BGP不使用传统的内部网关协议（IGP）的指标，而是基于路径、网络策略或规则集来决定路由。因此，它更适合被称为矢量性协议，而不是路由协议，通俗的说就是将接入到机房的多条线路（如电信、联通、移动等）融合为一体，实现多线单IP；
-  > - BGP 机房的优点：服务器只需要设置一个IP地址，最佳访问路由是由网络上的骨干路由器根据路由跳数与其它技术指标来确定的，不会占用服务器的任何系统；
-
-- 官方提供的calico.yaml模板里，默认打开了ip-ip功能，该功能会在node上创建一个设备tunl0，容器的网络数据会经过该设备被封装一个ip头再转发。
-  - 这里，calico.yaml中通过修改calico-node的环境变量：CALICO_IPV4POOL_IPIP来实现ipip功能的开关：默认是Always，表示开启；Off表示关闭ipip。
-
-```yaml
-- name:  CLUSTER_TYPE
-  value: "k8s,bgp"
-  # Auto-detect the BGP IP address.
-- name: IP
-  value: "autodetect"
-  # Enable IPIP
-- name: CALICO_IPV4POOL_IPIP
-  value: "Always"
-```
-
-- 总结：
-  - calico BGP通信是基于TCP协议的，所以只要节点间三层互通即可完成，即三层互通的环境bird就能生成与邻居有关的路由。但是这些路由和flannel host-gateway模式一样，需要二层互通才能访问的通，因此如果在实际环境中配置了BGP模式生成了路由但是不同节点间pod访问不通，可能需要再确认下节点间是否二层互通。
-  - 为了解决节点间二层不通场景下的跨节点通信问题，calico也有自己的解决方案——IPIP模式.
-
-## 其他常用网络插件
-
-1. flannel：支持vxlan、host-gw，但是效率比较低
-2. Calico：支持IPIP、BGP模式，效率较高，可以跨网段、支持网络策略隔离
-3. Weave
-4. Canal
