@@ -436,3 +436,14 @@ disable-pull-on-run: false
 - crictl缺少对具体镜像的管理能力，可能是k8s层面镜像管理可以由用户自行控制，能配置pod里面容器的统一镜像仓库，镜像的管理可以有habor等插件进行处理。
 
 ![image-20231023220844831](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202310232208977.png)                             
+
+（注：docker save -o打包的镜像，用ctr -n=k8s.io images import可以解压出来）
+
+# k8s舍弃dockershim
+
+- 调用链上看 - 用containerd更高效
+  - 用dockerd作为容器运行时：kubelet --> dockershim --> dockerd --> containerd
+  - 用containerd作为容器运行时：kubelet --> CRI pulgin(containerd进程内) --> containerd
+
+- 资源利用率上看 - 用containerd更精简
+  - （Docker不是一个纯粹的容器运行时，具有大量其他功能）。

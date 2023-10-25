@@ -58,7 +58,8 @@ containers:
 
 - CALICO_IPV4POOL_IPIP：
 
-  - 是否启用IPIP模式。启用IPIP模式时，Calico将在Node上创建一个名为tunl0的虚拟隧道。IP Pool可以使用两种模式：BGP或IPIP。使用IPIP模式时，设置CALICO_IPV4POOL_IPIP="Always"，不使用IPIP模式时，设置CALICO_IPV4POOL_IPIP="Off"，此时将使用BGP模式。
+  - IP Pool可以使用两种模式：BGP或IPIP。使用IPIP模式时，设置CALICO_IPV4POOL_IPIP="Always"，不使用IPIP模式时，设置CALICO_IPV4POOL_IPIP="Off"，此时将使用BGP模式。
+  - 启用IPIP模式时，Calico将在Node上创建一个名为tunl0的虚拟隧道。
 
 - IP_AUTODETECTION_METHOD：
 

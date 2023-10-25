@@ -285,7 +285,9 @@ ENTRYPOINT ["/usr/sbin/nginx","-g","daemon off;"]
 
 - FROM
 
-  指定基础镜像，必须是可以下载的镜像。
+  - 指定基础镜像，必须是可以下载的镜像。
+
+  - 多行FROM命令只会执行最后一行。
 
 - RUN
 
@@ -564,12 +566,10 @@ func main() {
 ```bash
 #初始化项目
 go mod init test
-
 #因为有个包要从github下载，设置github代理
 go env -w GOPROXY=https://goproxy.cn,direct
 #把包下载下来
 go mod tidy
-
 #构建源码
 CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o k8s-demo main.go
 ```
@@ -580,10 +580,8 @@ FROM alpine
 WORKDIR /data/app
 ADD k8s-demo /data/app/
 CMD ["/bin/sh","-c","./k8s-demo"]
-
 #build镜像
 docker build -t godemo:v1 . --load
-
 #运行容器
 docker run -d --name godemo -p 8080 godemo:v1
 ```
@@ -621,6 +619,68 @@ docker build -t hello-python:v1
 #运行容器
 docker run -d --name python -p 5000  hello-python:v1
 ```
+
+## dockerfile优化
+
+### image层数优化
+
+1. Dockerfile 的指令每执行一次都会在 docker 上新建一层。所以过多无意义的层，会造成镜像膨胀过大。
+
+```bash
+FROM centos
+RUN rm -rf /etc/yum.repos.d/*
+COPY Centos-vault-8.5.2111.repo /etc/yum.repos.d/
+RUN yum install wget -y
+RUN wget -O redis.tar.gz "http://download.redis.io/releases/redis-5.0.3.tar.gz"
+RUN tar -xvf redis.tar.gz
+```
+
+- 以上执行会创建 3 层镜像。可简化为以下格式：
+
+```bash
+FROM centos
+RUN rm -rf /etc/yum.repos.d/*
+COPY Centos-vault-8.5.2111.repo /etc/yum.repos.d/
+RUN yum install wget -y&& wget -O redis.tar.gz "http://download.redis.io/releases/redis-5.0.3.tar.gz" &&
+tar -xvf redis.tar.gz
+```
+
+2. 用安装完之后清理缓存
+
+   ```bash
+   FROM centos
+   RUN rm -rf /etc/yum.repos.d/*
+   COPY Centos-vault-8.5.2111.repo /etc/yum.repos.d/
+   RUN yum install epel-release -y && \
+   yum install -y gcc gcc-c++ make gd-devel libxml2-devel \
+   libcurl-devel libjpeg-devel libpng-devel openssl-devel \
+   libmcrypt-devel libxslt-devel libtidy-devel autoconf \
+   iproute net-tools telnet wget curl && \
+   yum clean all && \
+   rm -rf /var/cache/yum/*
+   ```
+
+   yum clean all && 和 rm -rf /var/cache/yum/* 可以清理掉yum缓存，节省image空间
+
+## 基础镜像优化
+
+- 从linux镜像开始构建：
+
+  ![image-20231025190807871](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202310251908952.png)
+
+- busybox
+  描述：可以将busybox理解为一个超级简化版嵌入式Linux系统。
+  官网：https://www.busybox.net/
+  镜像：https://hub.docker.com/_/busybox/
+  包管理命令：apk, lbu
+  包管理文档：https://wiki.alpinelinux.org/wiki/Alpine_Linux_package_managemen
+- Alpine
+  FROM Alpine
+  描述：Alpine是一个面向安全的、轻量级的Linux系统，基于musl libc和busybox。
+  官网：https://www.alpinelinux.org/
+  镜像：https://hub.docker.com/_/alpine/
+  包管理命令：apk, lbu
+  包管理文档：https://wiki.alpinelinux.org/wiki/Alpine_Linux_package_managemen
 
 # Docker数据持久化和网络模式
 
