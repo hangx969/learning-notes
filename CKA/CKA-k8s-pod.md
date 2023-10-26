@@ -24,10 +24,38 @@
 
 - pause容器作用：
 
-  - 以它为依据，评估其他容器的健康状态
-  - 给他设置一个IP地址（POD IP），其他容器通过此IP来进行内部通信
+  - 以它为依据，评估其他容器的健康状态。
+  - 启动Pod时，会先启动⼀个pause容器，然后将后续的所有容器都link到这个pause容器，以实现⽹络共享。给他设置一个IP地址（POD IP），其他容器通过此IP来进行内部通信。
 
   <img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202310252236935.png" alt="image-20231025223642872" style="zoom:50%;" />
+
+## POD中的容器
+
+Pod中可以同时运行多个容器。同一个Pod中的容器共享资源、网络环境，它们总是被同时调度，只有当你的容器需要紧密配合协作的时候才考虑用这种模式。例如，你有一个容器作为web服务器运行，需要用到共享的volume，有另一个“sidecar”容器来从远端获取资源更新这些文件。一些Pod有init容器和应用容器。在应用程序容器启动之前，运行初始化容器。
+
+1）所有容器使用同一个network namespace，共享一个IP地址和端口空间。意味着容器之间可以通过localhost高效访问，不能有端口冲突。
+
+2）允许容器之间共享存储卷，通过文件系统交互信息。当K8s挂载Volume到Pod上，本质上是将volume挂载到Pod中的每一个容器里。
+
+## POD应用示例
+
+1. 代码自动发版更新
+
+   - 假如生产环境部署了一个go的应用，而且部署了几百个节点，希望这个应用可以定时的同步最新的代码，以便自动升级线上环境。这时，我们不希望改动原来的go应用，可以开发一个Git代码仓库的自动同步服务，然后通过Pod的方式进行编排，并共享代码目录，就可以达到更新java应用代码的效果。
+
+     <img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202310261900543.png" alt="image-20231026190044415" style="zoom:50%;" />
+
+2. 日志收集服务
+
+   - 某服务模块已经实现了一些核心的业务逻辑，并且稳定运行了一段时间，日志记录在了某个目录下，按照不同级别分别为 error.log、access.log、warning.log、info.log，现在希望收集这些日志并发送到统一的日志处理服务器上。
+   - 这时我们可以修改原来的服务模块，在其中添加日志收集、发送的服务，但这样可能会影响原来服务的配置、部署方式，从而带来不必要的问题和成本，也会增加业务逻辑和基础服务的藕合度。
+
+   - 如果使用Pod的方式，通过简单的编排，既可以保持原有服务逻辑、部署方式不变，又可以增加新的日志收集服务。
+   - 而且如果我们对所有服务的日志生成有一个统一的标准，或者仅对日志收集服务稍加修改，就可以将日志收集服务和其他服务进行Pod编排，提供统一、标准的日志收集方式。
+
+   <img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202310261902236.png" alt="image-20231026190227168" style="zoom:50%;" />
+
+
 
 # POD生命周期
 
@@ -46,17 +74,17 @@
 
 - 用户通过kubectl或其他api客户端提交需要创建的pod信息给apiServer
 
-- apiServer开始生成pod对象的信息，并将信息存入etcd，然后返回确认信息至客户端
+- apiServer开始生成pod对象的metadata，并将信息存入etcd，然后返回确认信息至客户端
 
 - apiServer开始反映etcd中的pod对象的变化，其它组件使用watch机制来跟踪检查apiServer上的变动
 
-- scheduler发现有新的pod对象要创建，开始为Pod分配主机并将结果信息更新至apiServer
+- **scheduler发现有新的pod对象要创建，开始为Pod分配主机并将结果信息更新至apiServer**
 
-- node节点上的kubelet发现有pod调度过来，尝试调用docker启动容器，并将结果回送至apiServer
+- node节点上的kubelet发现有pod调度过来，调用容器运行时启动容器，并将结果回送至apiServer
 
 - apiServer将接收到的pod状态信息存入etcd中
 
-  <img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202310252242888.png" alt="image-20231025224207819" style="zoom:67%;" />
+  ![image-20231026203326085](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202310262033218.png)
 
 ## pod删除过程
 
@@ -87,7 +115,7 @@
 
 # POD健康探测
 
-### pod容器探测
+## pod容器探测
 
 [https://gitee.com/hangxu969/golang/blob/main/k8s%E8%AF%A6%E7%BB%86%E6%95%99%E7%A8%8B/Kubernetes%E8%AF%A6%E7%BB%86%E6%95%99%E7%A8%8B.md#534-%E5%AE%B9%E5%99%A8%E6%8E%A2%E6%B5%8B](https://gitee.com/hangxu969/golang/blob/main/k8s详细教程/Kubernetes详细教程.md#534-容器探测)
 

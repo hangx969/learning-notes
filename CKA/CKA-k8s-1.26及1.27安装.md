@@ -50,6 +50,7 @@
   #修改每台机器的/etc/hosts文件，增加如下三行：
   192.168.40.4 master-01
   192.168.40.5 node-01
+  192.168.40.6 node-02
   ```
 
 - 配主机间无密码登录
@@ -141,7 +142,8 @@
 
   ```bash
   yum install yum-utils -y
-  yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo #会把阿里云的docker源的配置给拉下来。
+  yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo 
+  #会把阿里云的docker源的配置给拉下来。
   ```
 
 - 配置安装k8s组件的阿里云repo源 
@@ -204,7 +206,7 @@ vim /etc/containerd/certs.d/docker.io/hosts.toml
   capabilities = ["pull"]
   
 vim /etc/containerd/config.toml
-#config_path = "" ==> config_path = "/etc/containerd/certs.d"
+config_path = "" ==> config_path = "/etc/containerd/certs.d"
 #保存退出
 systemctl restart containerd
 ```
@@ -347,6 +349,15 @@ systemctl enable kubelet
   mkdir -p $HOME/.kube
   sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
   sudo chown $(id -u):$(id -g) $HOME/.kube/config
+  
+  #1. 设置kubectl的alias为k：
+  whereis kubectl # kubectl: /usr/bin/kubectl
+  echo "alias k=/usr/bin/kubectl">>/etc/profile
+  source /etc/profile
+  #2. 设置alias的自动补全：
+  source <(kubectl completion bash | sed 's/kubectl/k/g')
+  #3. 解决每次启动k都会失效，要重新刷新环境变量（source /etc/profile）的问题：在~/.bashrc文件中添加以下代码：source /etc/profile
+  echo "source /etc/profile" >> ~/.bashrc
   ```
 
 ## 扩容工作节点
@@ -355,7 +366,7 @@ systemctl enable kubelet
 kubeadm token create --print-join-command
 #在node-01上加参数 --ignore-preflight-errors=SystemVerification运行
 #工作节点打标签
-kubectl label nodes xianchaonode1 node-role.kubernetes.io/work=work
+kubectl label nodes node-01 node-role.kubernetes.io/work=worker
 
 mkdir -p $HOME/.kube
 #master-01的kubectl的config文件拷到node1上

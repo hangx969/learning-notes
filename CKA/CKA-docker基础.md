@@ -622,7 +622,7 @@ docker run -d --name python -p 5000  hello-python:v1
 
 ## dockerfile优化
 
-### image层数优化
+## image层数优化
 
 1. Dockerfile 的指令每执行一次都会在 docker 上新建一层。所以过多无意义的层，会造成镜像膨胀过大。
 
