@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: order-processor
+  labels:
+    app: order-processor
+    azure.workload.identity/use: "true"
+spec:
+  selector:
+    matchLabels:
+      app: order-processor
+  template:
+    metadata:
+      labels:
+        app: order-processor
+    spec:
+      serviceAccountName: hangwi1
+      containers:
+      - name: order-processor
+        image: ghcr.io/kedacore/sample-dotnet-worker-servicebus-queue:latest
+        env:
+        - name: KEDA_SERVICEBUS_AUTH_MODE
+          value: WorkloadIdentity
+        - name: KEDA_SERVICEBUS_HOST_NAME
+          value: elksvcBus.servicebus.chinacloudapi.cn
+        - name: KEDA_SERVICEBUS_QUEUE_NAME
+          value: orders

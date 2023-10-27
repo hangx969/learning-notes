@@ -1,0 +1,404 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: aci-connector-linux
+  namespace: kube-system
+  uid: f30d46dc-0738-49da-8f3c-b8837b471b82
+  resourceVersion: '61885663'
+  generation: 5
+  creationTimestamp: '2022-04-07T13:21:54Z'
+  labels:
+    addonmanager.kubernetes.io/mode: Reconcile
+    kubernetes.io/cluster-service: 'true'
+  annotations:
+    deployment.kubernetes.io/revision: '5'
+    kubectl.kubernetes.io/last-applied-configuration: >
+      {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{},"labels":{"addonmanager.kubernetes.io/mode":"Reconcile","kubernetes.io/cluster-service":"true"},"name":"aci-connector-linux","namespace":"kube-system"},"spec":{"paused":false,"replicas":1,"revisionHistoryLimit":2,"selector":{"matchLabels":{"app":"aci-connector-linux"}},"template":{"metadata":{"annotations":{"checksum/cloud-provider-config":"5be9cee187b60e8473498e9913f2720a89c575d431e819b996a8ee36691b2745","cluster-autoscaler.kubernetes.io/safe-to-evict":"true"},"labels":{"app":"aci-connector-linux","kubernetes.azure.com/managedby":"aks"}},"spec":{"affinity":{"nodeAffinity":{"preferredDuringSchedulingIgnoredDuringExecution":[{"preference":{"matchExpressions":[{"key":"kubernetes.azure.com/mode","operator":"In","values":["system"]}]},"weight":100}],"requiredDuringSchedulingIgnoredDuringExecution":{"nodeSelectorTerms":[{"matchExpressions":[{"key":"kubernetes.azure.com/cluster","operator":"Exists"},{"key":"type","operator":"NotIn","values":["virtual-kubelet"]},{"key":"kubernetes.io/os","operator":"In","values":["linux"]}]}]}}},"containers":[{"args":["--provider","azure","--nodename","virtual-node-aci-linux","--os","Linux","--authentication-token-webhook=true","--no-verify-clients=false","--client-verify-ca=/etc/kubernetes/certs/ca.crt"],"command":["virtual-kubelet"],"env":[{"name":"KUBELET_PORT","value":"10250"},{"name":"AKS_CREDENTIAL_LOCATION","value":"/etc/acs/azure.json"},{"name":"AZURE_CLIENT_SECRET","valueFrom":{"secretKeyRef":{"key":"clientSecret","name":"aci-connector-linux"}}},{"name":"APISERVER_CERT_LOCATION","value":"/etc/virtual-kubelet/cert.pem"},{"name":"APISERVER_KEY_LOCATION","value":"/etc/virtual-kubelet/key.pem"},{"name":"VKUBELET_POD_IP","valueFrom":{"fieldRef":{"fieldPath":"status.podIP"}}},{"name":"ACI_EXTRA_USER_AGENT","value":"add-on/aks"},{"name":"ACI_SUBNET_NAME","value":"RxCEPRODsubnetIncpaksvpod"},{"name":"MASTER_URI","value":"https://rxceprodaksincpchina-dns-344c175c.hcp.chinaeast2.cx.prod.service.azk8s.cn"},{"name":"CLUSTER_CIDR","value":"10.1.252.0/22"},{"name":"KUBE_DNS_IP","value":"10.2.0.10"},{"name":"VIRTUALNODE_USER_IDENTITY_CLIENTID","value":"890f1900-514e-42d4-bef8-1c5daa2f7e74"},{"name":"LOG_ANALYTICS_ID","valueFrom":{"secretKeyRef":{"key":"WSID","name":"ama-logs-secret"}}},{"name":"LOG_ANALYTICS_KEY","valueFrom":{"secretKeyRef":{"key":"KEY","name":"ama-logs-secret"}}},{"name":"CLUSTER_RESOURCE_ID","value":"/subscriptions/fcc55c77-e18d-4e4b-b321-9fd0c1755363/resourceGroups/Corp-Platforms-China-Incp-prod-resources/providers/Microsoft.ContainerService/managedClusters/rxceprodaksincpchina"},{"name":"ENABLE_REAL_TIME_METRICS","value":"true"},{"name":"USE_VK_VERSION_2","value":"true"}],"image":"mcr.azk8s.cn/oss/virtual-kubelet/virtual-kubelet:1.4.6","name":"aci-connector-linux","volumeMounts":[{"mountPath":"/etc/kubernetes/certs","name":"certificates","readOnly":true},{"mountPath":"/etc/virtual-kubelet","name":"credentials"},{"mountPath":"/etc/acs/azure.json","name":"aks-credential"}]}],"priorityClassName":"system-node-critical","serviceAccountName":"aci-connector-linux","tolerations":[{"key":"CriticalAddonsOnly","operator":"Exists"}],"volumes":[{"hostPath":{"path":"/etc/kubernetes/certs"},"name":"certificates"},{"name":"credentials","secret":{"secretName":"aci-connector-linux"}},{"hostPath":{"path":"/etc/kubernetes/azure.json","type":"File"},"name":"aks-credential"}]}}}}
+  managedFields:
+    - manager: kubectl-client-side-apply
+      operation: Update
+      apiVersion: apps/v1
+      time: '2022-11-08T14:12:17Z'
+      fieldsType: FieldsV1
+      fieldsV1:
+        f:metadata:
+          f:annotations:
+            .: {}
+            f:kubectl.kubernetes.io/last-applied-configuration: {}
+          f:labels:
+            .: {}
+            f:addonmanager.kubernetes.io/mode: {}
+            f:kubernetes.io/cluster-service: {}
+        f:spec:
+          f:progressDeadlineSeconds: {}
+          f:replicas: {}
+          f:revisionHistoryLimit: {}
+          f:selector: {}
+          f:strategy:
+            f:rollingUpdate:
+              .: {}
+              f:maxSurge: {}
+              f:maxUnavailable: {}
+            f:type: {}
+          f:template:
+            f:metadata:
+              f:annotations:
+                .: {}
+                f:checksum/cloud-provider-config: {}
+                f:cluster-autoscaler.kubernetes.io/safe-to-evict: {}
+              f:labels:
+                .: {}
+                f:app: {}
+                f:kubernetes.azure.com/managedby: {}
+            f:spec:
+              f:affinity:
+                .: {}
+                f:nodeAffinity:
+                  .: {}
+                  f:preferredDuringSchedulingIgnoredDuringExecution: {}
+                  f:requiredDuringSchedulingIgnoredDuringExecution:
+                    .: {}
+                    f:nodeSelectorTerms: {}
+              f:containers:
+                k:{"name":"aci-connector-linux"}:
+                  .: {}
+                  f:args: {}
+                  f:command: {}
+                  f:env:
+                    .: {}
+                    k:{"name":"ACI_EXTRA_USER_AGENT"}:
+                      .: {}
+                      f:name: {}
+                      f:value: {}
+                    k:{"name":"ACI_SUBNET_NAME"}:
+                      .: {}
+                      f:name: {}
+                      f:value: {}
+                    k:{"name":"AKS_CREDENTIAL_LOCATION"}:
+                      .: {}
+                      f:name: {}
+                      f:value: {}
+                    k:{"name":"APISERVER_CERT_LOCATION"}:
+                      .: {}
+                      f:name: {}
+                      f:value: {}
+                    k:{"name":"APISERVER_KEY_LOCATION"}:
+                      .: {}
+                      f:name: {}
+                      f:value: {}
+                    k:{"name":"AZURE_CLIENT_SECRET"}:
+                      .: {}
+                      f:name: {}
+                      f:valueFrom:
+                        .: {}
+                        f:secretKeyRef:
+                          .: {}
+                          f:key: {}
+                          f:name: {}
+                    k:{"name":"CLUSTER_CIDR"}:
+                      .: {}
+                      f:name: {}
+                      f:value: {}
+                    k:{"name":"CLUSTER_RESOURCE_ID"}:
+                      .: {}
+                      f:name: {}
+                      f:value: {}
+                    k:{"name":"ENABLE_REAL_TIME_METRICS"}:
+                      .: {}
+                      f:name: {}
+                      f:value: {}
+                    k:{"name":"KUBELET_PORT"}:
+                      .: {}
+                      f:name: {}
+                      f:value: {}
+                    k:{"name":"KUBE_DNS_IP"}:
+                      .: {}
+                      f:name: {}
+                      f:value: {}
+                    k:{"name":"LOG_ANALYTICS_ID"}:
+                      .: {}
+                      f:name: {}
+                      f:valueFrom:
+                        .: {}
+                        f:secretKeyRef:
+                          .: {}
+                          f:key: {}
+                          f:name: {}
+                    k:{"name":"LOG_ANALYTICS_KEY"}:
+                      .: {}
+                      f:name: {}
+                      f:valueFrom:
+                        .: {}
+                        f:secretKeyRef:
+                          .: {}
+                          f:key: {}
+                          f:name: {}
+                    k:{"name":"MASTER_URI"}:
+                      .: {}
+                      f:name: {}
+                      f:value: {}
+                    k:{"name":"USE_VK_VERSION_2"}:
+                      .: {}
+                      f:name: {}
+                      f:value: {}
+                    k:{"name":"VIRTUALNODE_USER_IDENTITY_CLIENTID"}:
+                      .: {}
+                      f:name: {}
+                      f:value: {}
+                    k:{"name":"VKUBELET_POD_IP"}:
+                      .: {}
+                      f:name: {}
+                      f:valueFrom:
+                        .: {}
+                        f:fieldRef:
+                          .: {}
+                          f:apiVersion: {}
+                          f:fieldPath: {}
+                  f:image: {}
+                  f:imagePullPolicy: {}
+                  f:name: {}
+                  f:resources: {}
+                  f:terminationMessagePath: {}
+                  f:terminationMessagePolicy: {}
+                  f:volumeMounts:
+                    .: {}
+                    k:{"mountPath":"/etc/acs/azure.json"}:
+                      .: {}
+                      f:mountPath: {}
+                      f:name: {}
+                    k:{"mountPath":"/etc/kubernetes/certs"}:
+                      .: {}
+                      f:mountPath: {}
+                      f:name: {}
+                      f:readOnly: {}
+                    k:{"mountPath":"/etc/virtual-kubelet"}:
+                      .: {}
+                      f:mountPath: {}
+                      f:name: {}
+              f:dnsPolicy: {}
+              f:priorityClassName: {}
+              f:restartPolicy: {}
+              f:schedulerName: {}
+              f:securityContext: {}
+              f:serviceAccount: {}
+              f:serviceAccountName: {}
+              f:terminationGracePeriodSeconds: {}
+              f:tolerations: {}
+              f:volumes:
+                .: {}
+                k:{"name":"aks-credential"}:
+                  .: {}
+                  f:hostPath:
+                    .: {}
+                    f:path: {}
+                    f:type: {}
+                  f:name: {}
+                k:{"name":"certificates"}:
+                  .: {}
+                  f:hostPath:
+                    .: {}
+                    f:path: {}
+                    f:type: {}
+                  f:name: {}
+                k:{"name":"credentials"}:
+                  .: {}
+                  f:name: {}
+                  f:secret:
+                    .: {}
+                    f:defaultMode: {}
+                    f:secretName: {}
+    - manager: kube-controller-manager
+      operation: Update
+      apiVersion: apps/v1
+      time: '2022-11-15T10:25:04Z'
+      fieldsType: FieldsV1
+      fieldsV1:
+        f:metadata:
+          f:annotations:
+            f:deployment.kubernetes.io/revision: {}
+        f:status:
+          f:conditions:
+            .: {}
+            k:{"type":"Available"}:
+              .: {}
+              f:lastTransitionTime: {}
+              f:lastUpdateTime: {}
+              f:message: {}
+              f:reason: {}
+              f:status: {}
+              f:type: {}
+            k:{"type":"Progressing"}:
+              .: {}
+              f:lastTransitionTime: {}
+              f:lastUpdateTime: {}
+              f:message: {}
+              f:reason: {}
+              f:status: {}
+              f:type: {}
+          f:observedGeneration: {}
+          f:replicas: {}
+          f:unavailableReplicas: {}
+          f:updatedReplicas: {}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: aci-connector-linux
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: aci-connector-linux
+        kubernetes.azure.com/managedby: aks
+      annotations:
+        checksum/cloud-provider-config: 5be9cee187b60e8473498e9913f2720a89c575d431e819b996a8ee36691b2745
+        cluster-autoscaler.kubernetes.io/safe-to-evict: 'true'
+    spec:
+      volumes:
+        - name: certificates
+          hostPath:
+            path: /etc/kubernetes/certs
+            type: ''
+        - name: credentials
+          secret:
+            secretName: aci-connector-linux
+            defaultMode: 420
+        - name: aks-credential
+          hostPath:
+            path: /etc/kubernetes/azure.json
+            type: File
+      containers:
+        - name: aci-connector-linux
+          image: mcr.azk8s.cn/oss/virtual-kubelet/virtual-kubelet:1.4.6
+          command:
+            - virtual-kubelet
+          args:
+            - '--provider'
+            - azure
+            - '--nodename'
+            - virtual-node-aci-linux
+            - '--os'
+            - Linux
+            - '--authentication-token-webhook=true'
+            - '--no-verify-clients=false'
+            - '--client-verify-ca=/etc/kubernetes/certs/ca.crt'
+          env:
+            - name: KUBELET_PORT
+              value: '10250'
+            - name: AKS_CREDENTIAL_LOCATION
+              value: /etc/acs/azure.json
+            - name: AZURE_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: aci-connector-linux
+                  key: clientSecret
+            - name: APISERVER_CERT_LOCATION
+              value: /etc/virtual-kubelet/cert.pem
+            - name: APISERVER_KEY_LOCATION
+              value: /etc/virtual-kubelet/key.pem
+            - name: VKUBELET_POD_IP
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: status.podIP
+            - name: ACI_EXTRA_USER_AGENT
+              value: add-on/aks
+            - name: ACI_SUBNET_NAME
+              value: RxCEPRODsubnetIncpaksvpod
+            - name: MASTER_URI
+              value: >-
+                https://rxceprodaksincpchina-dns-344c175c.hcp.chinaeast2.cx.prod.service.azk8s.cn
+            - name: CLUSTER_CIDR
+              value: 10.1.252.0/22
+            - name: KUBE_DNS_IP
+              value: 10.2.0.10
+            - name: VIRTUALNODE_USER_IDENTITY_CLIENTID
+              value: 890f1900-514e-42d4-bef8-1c5daa2f7e74
+            - name: LOG_ANALYTICS_ID
+              valueFrom:
+                secretKeyRef:
+                  name: ama-logs-secret
+                  key: WSID
+            - name: LOG_ANALYTICS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: ama-logs-secret
+                  key: KEY
+            - name: CLUSTER_RESOURCE_ID
+              value: >-
+                /subscriptions/fcc55c77-e18d-4e4b-b321-9fd0c1755363/resourceGroups/Corp-Platforms-China-Incp-prod-resources/providers/Microsoft.ContainerService/managedClusters/rxceprodaksincpchina
+            - name: ENABLE_REAL_TIME_METRICS
+              value: 'true'
+            - name: USE_VK_VERSION_2
+              value: 'true'
+          resources: {}
+          volumeMounts:
+            - name: certificates
+              readOnly: true
+              mountPath: /etc/kubernetes/certs
+            - name: credentials
+              mountPath: /etc/virtual-kubelet
+            - name: aks-credential
+              mountPath: /etc/acs/azure.json
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          imagePullPolicy: IfNotPresent
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      serviceAccountName: aci-connector-linux
+      serviceAccount: aci-connector-linux
+      securityContext: {}
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: kubernetes.azure.com/cluster
+                    operator: Exists
+                  - key: type
+                    operator: NotIn
+                    values:
+                      - virtual-kubelet
+                  - key: kubernetes.io/os
+                    operator: In
+                    values:
+                      - linux
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              preference:
+                matchExpressions:
+                  - key: kubernetes.azure.com/mode
+                    operator: In
+                    values:
+                      - system
+      schedulerName: default-scheduler
+      tolerations:
+        - key: CriticalAddonsOnly
+          operator: Exists
+      priorityClassName: system-node-critical
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 25%
+      maxSurge: 25%
+  revisionHistoryLimit: 2
+  progressDeadlineSeconds: 600
+status:
+  observedGeneration: 5
+  replicas: 1
+  updatedReplicas: 1
+  unavailableReplicas: 1
+  conditions:
+    - type: Progressing
+      status: 'True'
+      lastUpdateTime: '2022-11-08T14:12:20Z'
+      lastTransitionTime: '2022-04-07T13:21:54Z'
+      reason: NewReplicaSetAvailable
+      message: ReplicaSet "aci-connector-linux-648df46" has successfully progressed.
+    - type: Available
+      status: 'False'
+      lastUpdateTime: '2022-11-15T10:25:04Z'
+      lastTransitionTime: '2022-11-15T10:25:04Z'
+      reason: MinimumReplicasUnavailable
+      message: Deployment does not have minimum availability.

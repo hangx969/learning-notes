@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pod-dep
+  namespace: default
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      version: "1.0"
+  template:
+    metadata:
+      labels:
+        version: "1.0"
+    spec:
+      containers:
+      - image: nginx:1.17.1
+        name: nginx
+        ports:
+        - containerPort: 80
+          protocol: TCP

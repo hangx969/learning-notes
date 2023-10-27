@@ -1,0 +1,12 @@
+{
+    "name": "fibo-app",
+    "version": "0.1.1",
+    "private": true,
+    "scripts": {
+        "start": "node ./app.js"
+    },
+    "dependencies": {
+        "express": "4.0.0",
+        "ip": "1.1.5"
+    }
+}

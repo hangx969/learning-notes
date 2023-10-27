@@ -1,0 +1,17 @@
+kind: Pod
+apiVersion: v1
+metadata:
+  name: nginx-blobfusev2-static-test
+spec:
+  nodeSelector:
+    "kubernetes.io/os": linux
+  containers:
+    - image: mcr.azk8s.cn/oss/nginx/nginx:1.17.3-alpine
+      name: nginx-blob
+      volumeMounts:
+        - name: blob01
+          mountPath: "/mnt/blobfusev2"
+  volumes:
+    - name: blob01
+      persistentVolumeClaim:
+        claimName: pvc-blobv2-static-test

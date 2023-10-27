@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: centos-py-test
+  labels:
+    size: "d64dsv5"
+spec:
+   containers:
+     - name: centos
+       image: dockerhub.azk8s.cn/library/centos:latest
+       resources:
+         requests:
+           memory: "3000Mi"
+           cpu: "5"
+         limits:
+           memory: "3000Mi"
+           cpu: "5"
+       command: ["/bin/sh"]
+       args: ["-c", "while true; do echo hello; sleep 10;done"]

@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: azurefile-premium-actimo
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: azurefile-csi-premium 
+  resources:
+    requests:
+      storage: 100Gi

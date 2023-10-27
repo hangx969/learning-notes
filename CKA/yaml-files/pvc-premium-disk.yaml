@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: azure-managed-disk-premium-2
+spec:
+  accessModes:
+  - ReadWriteOnce
+  storageClassName: managed-csi-premium
+  resources:
+    requests:
+      storage: 32Gi

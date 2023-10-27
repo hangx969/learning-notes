@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: centos-py-test1
+  labels:
+    size: "d16"
+spec:
+   containers:
+     - name: centos
+       image: dockerhub.azk8s.cn/library/centos:latest
+       command: ["/bin/sh"]
+       args: ["-c", "while true; do echo hello; sleep 10;done"]
