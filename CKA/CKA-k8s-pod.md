@@ -104,6 +104,11 @@ kubectl exec -it -c <container name> -- /bin/bash
 - 宽限期结束后，若pod中还存在仍在运行的进程，那么pod对象会收到立即终止的信号。
 - kubelet请求apiServer将此pod资源的宽限期设置为0从而完成删除操作，此时pod对于用户已不可见。
 
+```bash
+#强制删除pod
+kuebctl delete po xxx --force --grace-period=0
+```
+
 ## 钩子函数
 
 在pod.spec.containers.lifecycle下面定义
@@ -156,7 +161,20 @@ kubectl logs --previous <pod name>
 
 # POD调度
 
-## 标签
+默认情况下，pod在哪个节点上运行，是通过scheduler采用相应的算法来算出来的，这个过程不受人工控制。在实际使用中，需要手动控制pod调度到某些特定节点。
+
+k8s提供了四种调度方式：
+
+1. 自动调度：scheduler自动算
+2. 定向调度：NodeName、NodeSelector
+3. 亲和性调度：NodeAffinity、PodAffinity、PodAntiAffinity（基于标签实现）
+4. 污点调度：Taints、Toleration（基于node）
+
+## 定向调度
+
+可以使用pods.spec.nodeName或者nodeSelector字段指定要调度到的node节点。
+
+### 标签
 
 - 作用
 
@@ -190,13 +208,11 @@ kubectl logs --previous <pod name>
   kubectl get pod -L version #看key为version的pod，并打印标签值
   ```
 
-## 定向调度
-
-- 我们在创建pod资源的时候，pod会根据schduler进行调度，那么默认会调度到随机的一个工作节点，如果我们想要pod调度到指定节点或者调度到一些具有相同特点的node节点，可以使用pod中的nodeName或者nodeSelector字段指定要调度到的node节点。
-
 ### NodeName
 
-- 直接指定pod调度到哪个node上
+- 直接指定pod调度到哪个node上 
+
+  -- spec.nodeName
 
 ```yaml
 apiVersion: v1
@@ -208,7 +224,7 @@ metadata:
     app: tomcat
     env: dev
 spec:
-  nodeName: node1-01
+  nodeName: node-01
   containers:
   - name:  tomcat-pod-java
     ports:
@@ -220,6 +236,293 @@ spec:
     command:
     - "/bin/sh"
     - "-c"
-    - "sleep 3600"
+    - "while true; do echo hello; sleep 10; done"
+```
+
+### nodeSelector
+
+- pod创建之前，由scheduler使用MatchNodeSelector调度策略进行label匹配。找到目标node再调度。是强制约束的: 没有满足条件的node，这个pod就起不来。
+- pod.spec.nodeSelector
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: demo-pod
+  namespace: default
+  labels:
+    app: tomcat
+    env: dev
+spec:
+  nodeSelector:
+    disk: ceph
+  containers:
+  - name:  tomcat-pod-java
+    ports:
+    - containerPort: 8080
+    image: tomcat:8.5-jre8-alpine
+    imagePullPolicy: IfNotPresent
+  - name: busybox
+    image: busybox:latest
+    command:
+    - "/bin/sh"
+    - "-c"
+    - "while true; do echo hello; sleep 10; done"
+```
+
+```bash
+kubectl get nodes --show-labels #看node标签
+kubectl label nodes node-01 disk=ceph #给node打标签
+```
+
+> - 如果nodeName和nodeSelector都写上，并且这两个配置的调度node冲突，就会报错：Predictate NodeAffnity Failed.
+> - NodeName优先级高，在master节点有污点的情况下，如果定义nodename=master，则会强制调度上去。
+
+## 亲和性调度
+
+```bash
+kubectl explain pods.spec.affinity
+```
+
+**种类**
+
+- nodeAffinity
+
+- podAffinity 
+
+- nodeAntiAffinity
+
+**应用**
+
+- 亲和性：如果两个应用**频繁交互**，那就有必要利用亲和性让两个应用的尽可能的靠近，这样可以减少因网络通信而带来的性能损耗。
+- 反亲和性：当应用的采用**多副本部署**时，有必要采用**反亲和性**让各个应用实例打散分布在各个node上，这样可以提高服务的高可用性。
+
+### nodeAffinity
+
+```bash
+kubectl explain pods.spec.affinity.nodeAffinity
+#preferredDuringSchedulingIgnoredDuringExecution <[]Object>
+#requiredDuringSchedulingIgnoredDuringExecution <Object>
+```
+
+- prefered表示有节点尽量满足这个位置定义的亲和性，没有满足的也能调度：软亲和性
+- require表示必须有节点满足这个位置定义的亲和性，没有满足的就pending：硬亲和性
+
+#### 硬亲和性
+
+```bash
+kubectl explain pods.spec.affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution
+```
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-node-affinity-demo
+  namespace: default
+  labels:
+    app: bb
+    tier: ft
+spec:
+  affinity:
+    nodeAffinity:
+     requiredDuringSchedulingIgnoredDuringExecution:
+       nodeSelectorTerms:
+       - matchExpressions:
+         - key: zone #硬亲和性 - 必须调度到label是zone=foo或zone=bar的node
+           operator: In
+           values: 
+           - foo
+           - bar
+  containers:
+  - name: busybox
+    image: busybox:latest
+    imagePullPolicy: IfNotPresent
+    command:
+    - "/bin/sh"
+    - "-c"
+    - "while true; do echo hello; sleep 10; done"
+```
+
+#### 软亲和性
+
+```bash
+kubectl explain pods.spec.affinity.nodeAffinity.preferredDuringSchedulingIgnoredDuringExecution
+
+preference   <Object> -required-
+A node selector term, associated with the corresponding weight.
+
+weight       <integer> -required-
+Weight associated with matching the corresponding nodeSelectorTerm, in the range 1-100.
+```
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-node-affinity-demo
+  namespace: default
+  labels:
+    app: bb
+    tier: ft
+spec:
+  affinity:
+    nodeAffinity:
+      preferredDuringSchedulingIgnoredDuringExecution: #是一个对象列表[]objects，他下面的要用 - 划分字段。
+      - preference:
+          matchExpressions: #是一个[]object，下面字段用 - 
+          - key: zone1
+            operator: In
+            values: #是一个字符串列表，下面用 - 连接
+            - foo1
+            - bar1
+        weight: 10
+      - preference:
+          matchExpressions:
+          - key: zone2
+            operator: In
+            values:
+            - foo2
+            - bar2
+        weight: 20 #两个条件都有节点满足的话，权重高的条件会优先调度。
+  containers:
+  - name: busybox
+    image: busybox:latest
+    imagePullPolicy: IfNotPresent
+    command:
+    - "/bin/sh"
+    - "-c"
+    - "while true; do echo hello; sleep 10; done"
+```
+
+> NodeAffinity的注意事项：
+>
+> 1.  如果同时定义了nodeSelector和nodeAffinity，那么必须两个条件都得到满足，Pod才能运行在指定的Node上
+> 2.  如果nodeAffinity指定了多个nodeSelectorTerms，那么只需要其中一个能够匹配成功即可
+> 3.  如果一个nodeSelectorTerms中有多个matchExpressions ，则一个节点必须满足所有的才能匹配成功
+> 4.  如果一个pod所在的Node在Pod运行期间其标签发生了改变，不再符合该Pod的节点亲和性需求，则系统将忽略此变化
+
+### podAffinity 
+
+```bash
+kubectl explain pods.spec.affinity.podAffinity
+#同样分为硬亲和性和软亲和性：
+#preferredDuringSchedulingIgnoredDuringExecution <[]Object>
+#requiredDuringSchedulingIgnoredDuringExecution <Object>
+```
+
+- 先部署了一组pod，后部署的pod亲和先部署的pod，跟他部署到同一位置。
+- yaml上要定义出两个信息：
+  - 后来的pod跟啥pod做亲和？-- labelSelector
+  - 依据什么条件判断是同一位置还是不同位置？--topologyKey
+
+- 示例：
+
+  创建第一组pod：
+
+  ```yaml
+  apiVersion: v1
+  kind: Pod
+  metadata:
+    name: pod-podAffinity-1
+    namespace: default
+    labels:
+      app: bb
+      tier: ft
+  spec:
+    containers:
+    - name: busybox
+      image: busybox:latest
+      imagePullPolicy: IfNotPresent
+      command:
+      - "/bin/sh"
+      - "-c"
+      - "while true; do echo hello; sleep 10; done"
+  ```
+
+  创建第二个pod，跟第一个做亲和性：
+
+  ```yaml
+  apiVersion: v1
+  kind: Pod
+  metadata:
+    name: pod-podAffinity-2
+    namespace: default
+    labels:
+      app: bb
+      tier: ft
+  spec:
+    affinity:
+      podAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+        - labelSelector: #这个pod要跟app=bb的pod做亲和性
+            matchExpressions:
+            - {key: app, operator: In, values: ["bb"]}
+          topologyKey: kubernetes.io/hostname #怎么定义同一个位置？对于key=kubernetes.io/hostname的node，value相同就算同一位置。==> 也就是跟匹配的pod在相同的node上算相同的位置。
+    containers:
+    - name: busybox
+      image: busybox:latest
+      imagePullPolicy: IfNotPresent
+      command:
+      - "/bin/sh"
+      - "-c"
+      - "while true; do echo hello; sleep 10; done"
+  ```
+
+### podAntiAffinity
+
+跟podAffinity相反，yaml上同样要定义出两个信息：
+
+- 后来的pod跟啥pod做亲和？-- labelSelector
+- 依据什么条件判断是同一位置还是不同位置？--topologyKey
+
+## 污点调度
+
+> - 前面的亲和性调度是站在pod的角度上，通过对pod的属性添加，来决定调度到什么node上。
+> - 也可以站在node的角度上，在node上添加污点属性，决定是否允许pod调度进来。
+
+### 污点
+
+是键值对数据，**key=value:effect**, key和value是**污点的标签**，effect描述污点的作用，支持如下三个选项：
+
+- PreferNoSchedule：kubernetes将尽量避免把Pod调度到具有该污点的Node上，除非没有其他节点可调度 -- 尽量别来，除非没办法
+- NoSchedule：kubernetes将不会把Pod调度到具有该污点的Node上，但不会影响当前Node上已存在的Pod -- 新的别来，在这的就别动了
+- NoExecute：kubernetes将不会把Pod调度到具有该污点的Node上，同时也会将Node上已存在的Pod驱离 -- 新的别来，旧的赶紧走
+
+### 容忍
+
+- tolerance，键值对数据，要定义出来容忍什么k、v、effect的污点。
+
+- 示例
+
+```bash
+#node-02生产环境专用，打一个污点来区分
+kubectl taint node node-02 node-type=production:NoSchedule
+```
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-podAffinity-2
+  namespace: default
+  labels:
+    app: bb
+    tier: ft
+spec:
+  containers:
+  - name: busybox
+    image: busybox:latest
+    imagePullPolicy: IfNotPresent
+    command:
+    - "/bin/sh"
+    - "-c"
+    - "while true; do echo hello; sleep 10; done"
+  tolerations:
+  - key: "node-type"
+    operator: "Equal" #Equal要求k、v、effect必须全部匹配上，才能容忍。如果是Exists，那么NoExcute可以向下兼容匹配到 NoSchedule、PreferNoSchedule的effect。(NoExcute > NoSchedule > PreferNoSchedule)
+    value: "production"
+    effect: "NoExecute" # 
+    tolerationSeconds: 3600 #NoExcute专用字段，？？？
 ```
 
