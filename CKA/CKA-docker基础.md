@@ -24,23 +24,19 @@ sudo systemctl start docker
 ```bash
 #配置主机名：
 hostnamectl set-hostname dockerlab && bash
-
 #关闭防火墙
 systemctl stop firewalld && systemctl disable firewalld
-
 #安装iptables防火墙
 yum install iptables-services -y
 #禁用iptables
 service iptables stop   && systemctl disable iptables
 #清空防火墙规则
 iptables -F 
-
 #关闭selinux
 setenforce 0
 sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config
 #注意：修改selinux配置文件之后，重启机器，selinux才能永久生效 reboot- f
 getenforce #显示Disabled表示selinux关闭成功
-
 #配置时间同步
 yum install -y ntp ntpdate
 ntpdate cn.pool.ntp.org 
@@ -49,10 +45,8 @@ crontab -e
 * */1 * * * /usr/sbin/ntpdate   cn.pool.ntp.org
 #重启crond服务使配置生效：
 systemctl restart crond
-
 #安装基础软件包
 yum install -y  wget net-tools nfs-utils lrzsz gcc gcc-c++ make cmake libxml2-devel openssl-devel curl curl-devel unzip sudo ntp libaio-devel wget vim ncurses-devel autoconf automake zlib-devel  python-devel epel-release openssh-server socat  ipvsadm conntrack 
-
 #安装docker-ce
 #配置docker-ce国内yum源（阿里云）
 yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
@@ -60,13 +54,11 @@ yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/d
 yum install -y yum-utils device-mapper-persistent-data lvm2
 #安装docker-ce
 yum install docker-ce -y
-
 #启动docker服务
 systemctl start docker && systemctl enable docker
 systemctl status docker
 #查看Docker 版本信息
 docker version    
-
 #开启包转发功能和修改内核参数
 #内核参数修改：br_netfilter模块用于将桥接流量转发至iptables链，br_netfilter内核参数需要开启转发。
 modprobe br_netfilter
@@ -75,10 +67,8 @@ net.bridge.bridge-nf-call-ip6tables = 1
 net.bridge.bridge-nf-call-iptables = 1
 net.ipv4.ip_forward = 1
 EOF
-
 #使参数生效
 sysctl -p /etc/sysctl.d/docker.conf
-
 #重启后模块失效，下面是开机自动加载模块的脚本
 #在/etc/新建rc.sysinit 文件
 vim /etc/rc.sysinit
@@ -91,10 +81,8 @@ done
 #在/etc/sysconfig/modules/目录下新建文件如下
 vim /etc/sysconfig/modules/br_netfilter.modules
 modprobe br_netfilter
-
 #增加权限
 chmod 755 /etc/sysconfig/modules/br_netfilter.modules
-
 #重启机器模块也会自动加载
 lsmod |grep br_netfilter
 br_netfilter 22209 0
@@ -105,17 +93,14 @@ bridge 136173 1 br_netfilter
 #net.bridge.bridge-nf-call-iptables = 1
 
 #net.ipv4.ip_forward = 1：将Linux系统作为路由或者VPN服务就必须要开启IP转发功能。当linux主机有多个网卡时一个网卡收到的信息是否能够传递给其他的网卡 ，如果设置成1 的话 可以进行数据包转发，可以实现VxLAN 等功能。不开启会导致docker部署应用无法访问。
-
 #重启docker
 systemctl restart docker  
-
 #配置docker镜像加速器: 登陆阿里云镜像仓库
 #https://cr.console.aliyun.com/cn-hangzhou/instances/mirrors
 #修改/etc/docker/daemon.json，变成如下
 {
  "registry-mirrors":["https://y8y6vosv.mirror.aliyuncs.com","https://registry.docker-cn.com","https://docker.mirrors.ustc.edu.cn","https://dockerhub.azk8s.cn","http://hub-mirror.c.163.com"]
 }
-
 #让配置文件生效
 sudo systemctl daemon-reload
 sudo systemctl restart docker
@@ -152,15 +137,12 @@ exit
 #以守护进程方式启动容器，-d在后台运行容器
 docker run --name=hello1 -td centos 
 docker ps | grep hello1
-
 #进入容器
 docker exec -it hello1 /bin/bash
-
 #查看正在运行的容器
 docker ps
 #查看所有容器，包括运行和退出的容器
 docker ps -a 
-
 #停止容器
 docker stop hello1
 #启动已经停止的容器

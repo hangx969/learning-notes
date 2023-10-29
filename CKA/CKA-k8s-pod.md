@@ -65,18 +65,21 @@ kubectl exec -it -c <container name> -- /bin/bash
 
 # POD生命周期
 
-## POD生命周期
+> K8S文档：[Pod 的生命周期 | Kubernetes](https://kubernetes.io/zh-cn/docs/concepts/workloads/pods/pod-lifecycle/)
 
-- pod创建过程
-- 运行init container
-  - 先于主容器运行一些自定义工具程序或自定义代码。串行进行，前一个失败不会运行后一个。
-
-- 运行main container
-
-- pod终止过程
 <img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202310252254552.png" alt="image-20231025225409474" style="zoom:50%;" />
 
-## POD创建过程
+- 创建pause根容器
+- 运行Initcontainer
+  - 先于主容器运行一些自定义工具程序或自定义代码。串行进行，前一个失败不会运行后一个。
+  - 作用在整个pod范围的。
+- 运行主容器
+- 主容器启动之后--post start hook
+- 存活性探测、就绪性探测
+- 停止前钩子 (每个container都可以定义各自的钩子)
+- pod终止过程
+
+### POD创建过程
 
 - 用户通过kubectl或其他api客户端提交需要创建的pod信息给apiServer
 
@@ -92,16 +95,16 @@ kubectl exec -it -c <container name> -- /bin/bash
 
   ![image-20231026203326085](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202310262033218.png)
 
-## pod删除过程
+### pod删除过程
 
-- 用户向apiServer发送删除pod对象的命令。
-- apiServcer中的pod对象信息会随着时间的推移而更新，在宽限期内（默认30s），pod被视为dead。
-- 将pod标记为terminating状态。
-- kubelet在监控到pod对象转为terminating状态的同时启动pod关闭过程。
-- **端点控制器**监控到pod对象的关闭行为时将其从所有匹配到此端点的service资源的端点列表中移除。
-- 如果当前pod对象定义了**preStop钩子处理器**，则在其标记为terminating后即会以同步的方式启动执行。
+- 用户向apiServer发送删除pod的命令。
+- apiServcer中的pod信息会在宽限期内（默认30s）被视为dead。
+- 宽限期已过，将pod标记为terminating状态。
+- kubelet在监控到pod转为terminating状态，启动pod关闭过程。
+- **endpoint控制器**监控到pod关闭，将与pod与service匹配的endpoint列表中删除。
+- 如果当前pod对象定义了**preStop钩子处理器**，则在标记为terminating后，即同步执行。
 - pod对象中的容器进程收到停止信号。
-- 宽限期结束后，若pod中还存在仍在运行的进程，那么pod对象会收到立即终止的信号。
+- 宽限期结束后，若pod中还存在仍在运行的进程，那么pod对象会收到立即终止SIGKILL的信号。
 - kubelet请求apiServer将此pod资源的宽限期设置为0从而完成删除操作，此时pod对于用户已不可见。
 
 ```bash
@@ -111,45 +114,456 @@ kuebctl delete po xxx --force --grace-period=0
 
 ## 钩子函数
 
+### 介绍
+
 在pod.spec.containers.lifecycle下面定义
 
-- Post-start：启动后执行，如果执行失败容器会按照重启策略重新启动
-- Pr-start：删除前执行，没执行完就会阻塞在这里
+- Post-start
+  - 启动后执行，如果执行失败，容器会按照重启策略重新启动。不需要传递任何参数。
+  - 用于资源部署、环境准备等。
+
+- Pre-start：
+  - 删除前执行，没执行完就会阻塞在这里
+  - 用于优雅关闭应用程序、通知其他系统等。
+
+
+### 优雅关闭
+
+当用户删除含有pod的资源对象时（如RC、deployment等），K8S为了让应用程序优雅关闭（即让应用程序完成正在处理的请求后，再关闭软件），K8S提供两种信息通知：
+
+1. 默认：K8S通知node执行docker stop命令，docker会先向容器中PID为1的进程发送系统信号SIGTERM，然后等待容器中的应用程序终止执行，如果等待时间达到设定的超时时间，或者默认超时时间（30s），会继续发送SIGKILL的系统信号强行kill掉进程。
+
+2. 使用pod生命周期（利用PreStop回调函数），它执行在发送终止信号之前。
+
+默认情况下，所有的删除操作的优雅退出时间都在30秒以内。kubectl delete命令支持--grace-period=的选项，以运行用户来修改默认值。0表示删除立即执行，并且立即从API中删除pod。在节点上，被设置了立即结束的的pod，仍然会给一个很短的优雅退出时间段，才会开始被强制杀死。
+
+### 示例
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: life-demo
+spec:
+  containers:
+  - name: lifecycle-demo-container
+    image: nginx:latest
+    imagePullPolicy: IfNotPresent
+    lifecycle:
+      postStart:
+        exec:
+          command: ["/bin/sh", "-c","echo 'lifecycle hookshandler' > /usr/share/nginx/html/test.html"]
+      preStop:
+        exec:
+          command: ["/bin/sh", "-c", "nginx -s stop"]
+```
 
 ## POD状态
 
-- Pending：apiserver创建了pod资源对象，但是尚未调度或者镜像还没下载完
-- Running：pod已经被调度到某个node，并且所有容器都被kubelet创建完成
-- Succeed：pod中所有的容器都成功终止，且不会被重启（容器一次性执行成功的意思）
-- Failed：所有容器都已经终止，但是至少有一个终止失败；即容器返回了非0的退出状态
-- unknown：apiserver获取不到pod的状态，通常是由于网络失败导致
+### 第一阶段
+
+- Pending：
+  - apiserver创建了pod资源对象，卡在这个状态要检查镜像下载、存储挂载、调度情况。
+
+- Running：
+  - pod已经被调度到某个node，并且所有容器都被kubelet创建完成
+
+- Succeed：
+  - pod中所有的容器都成功终止，且不会被重启（容器一次性执行成功的意思）
+
+- Failed：
+  - 所有容器都已经终止，但是至少有一个终止失败；即容器返回了非0的退出状态。
+
+- Error
+  - 容器启动过程发生错误。
+
+- unknown：
+  - apiserver获取不到pod的状态，需要检查kubelet状态、pod和apiserver之间网络通信。
+
+
+### 第二阶段
+
+- Unschedulable：Pod不能被调度， scheduler没有匹配到合适的node节点
+- PodScheduled：pod正处于调度中，在scheduler刚开始调度的时候，还没有将pod分配到指定的node，在筛选出合适的节点后就会更新etcd数据，将pod分配到指定的node
+- Initialized：所有pod中的初始化容器已经完成了
+- ImagePullBackOff：Pod所在的node节点下载镜像失败
+
+### 其他
+
+- Evicted状态：出现这种情况，多见于系统内存或硬盘资源不足，可df-h查看docker存储所在目录的资源使用情况，如果百分比大于85%，就要及时清理下资源，尤其是一些大文件、docker镜像。
+
+- CrashLoopBackOff：
+  - 表示 Pod 中发生的重启循环：Pod 中的容器已启动，但崩溃然后又重新启动，一遍又一遍。CrashLoopBackOff 本身并不是一个错误，而是表明发生了一个错误，导致 Pod 无法正常启动。重启的原因是pod的重启策略设置为Always或者OnFailure。-- 这就是CrashLoop的含义。
+  - BackOff含义是：重启之间的指数延迟（10 秒、20 秒、40 秒……），上限为 5 分钟。当 Pod 状态显示 CrashLoopBackOff 时，表示它当前正在等待指示的时间，然后再重新启动 Pod。除非它被修复，否则它可能会再次失败。
+
+# InitContainer
+
+- spec字段下的initContainers。可以有一个或多个，如果多个按照定义的顺序依次执行，先执行初始化容器1，再执行初始化容器2等，等初始化容器执行完具体操作之后初始化容器就退出了，只有所有的初始化容器执行完后，主容器才启动。
+
+- 由于一个Pod里容器存储卷是共享的，所以Init Container里产生的数据可以被主容器使用到，Init Container可以在多种K8S资源里被使用到，如Deployment、DaemonSet, StatefulSet、Job等，但都是在Pod启动时，在主容器启动前执行，做初始化工作。
+
+- 初始化容器与主容器区别是:
+
+  - 初始化容器不支持 Readinessprobe,因为它们必须在Pod就绪之前运行完成。	
+
+  - 每个Init容器必须运行成功,下一个才能够运行。
+
+## 示例
+
+```yaml
+#主容器运行nginx服务，初始化容器用来给主容器生成index.html文件
+apiVersion: v1
+kind: Pod
+metadata:
+  name: init-nginx
+spec:
+  volumes:
+  - name: pod-workdir
+    emptyDir: {} #把物理机的目录挂进pod
+  initContainers:
+  - name: install
+    image: docker.io/library/busybox:1.28
+    imagePullPolicy: IfNotPresent
+    command:
+    - wget
+    - "-O"
+    - "/work-dir/index.html"
+    - "https://www.baidu.com" #把百度主页下下来存到这个目录
+    volumeMounts:
+    - name: pod-workdir
+      mountPath: /work-dir
+  containers:
+  - name: nginx
+    image: nginx:latest
+    imagePullPolicy: IfNotPresent
+    ports:
+    - containerPort: 80
+    volumeMounts:
+    - name: pod-workdir
+      mountPath: /usr/share/nginx/html #俩容器挂了同一个物理机存储，是文件共享的，html文件会同步进来。
+```
+
+```bash
+pod-init   0/1     Init:0/2   0          7s
+#Init: 0/2，表示两个初始化容器未完成
+```
 
 # POD健康探测
 
-## pod容器探测
-
 [https://gitee.com/hangxu969/golang/blob/main/k8s%E8%AF%A6%E7%BB%86%E6%95%99%E7%A8%8B/Kubernetes%E8%AF%A6%E7%BB%86%E6%95%99%E7%A8%8B.md#534-%E5%AE%B9%E5%99%A8%E6%8E%A2%E6%B5%8B](https://gitee.com/hangxu969/golang/blob/main/k8s详细教程/Kubernetes详细教程.md#534-容器探测)
 
-Pod.spec.containers.livenessProbe / readinessProbe
+> - 这三种probe需要在yaml文件里面自己配。
+> - StartupProbe探测成功后才会进行LivenessProbe和ReadinessProbe。后两者是并行的，没有先后关系。
 
-两种探针：
+## Probe方法
 
-- Liveness probe：检测是否正常运行，如果不是，k8s将重启容器（pod的restart policy来操作（always，OnFailure，Never））
-- Readiness probe：就绪性探针，检测是否可以接受请求，如果不能，k8s不会转发流量。检查失败，k8s就会把pod从service endpoint中剔除。不加入到负载均衡的列表中。
+- Exec命令：在容器内执行指定命令，如果命令执行的退出码为0，则认为程序正常；退出码非0，则不正常。
+- TCPSocket：将会尝试访问容器的IP+**指定端口**，如果能够建立这条连接（发现容器在监听这个端口），则认为程序正常，否则不正常。
+- HTTPGet：通过容器IP+端口号+路径，调用HTTP GET，如果返回的状态码在200和399之间，则认为程序正常，否则不正常。
 
-支持的三种探测方式：
+## StartupProbe
 
-- Exec命令：在容器内执行一次命令，如果命令执行的退出码为0，则认为程序正常，否则不正常
-- TCPSocket：将会尝试访问**指定端口**，如果能够建立这条连接（发现容器在监听这个端口 ），则认为程序正常，否则不正常
-- HTTPGet：调用容器内Web应用的URL，如果返回的状态码在200和399之间，则认为程序正常，否则不正常
+- 是为了解决程序启动时间很长，启动慢等问题的，当配置了startupProbe启动探针，会先禁用其他探针，直到startupProbe探针成功，成功后将退出不在进行探测，如果startupProbe探针探测失败，pod将会根据重启策略重启。
+- 如果容器没有提供启动探测，则默认状态为成功Success。
+
+**示例**
+
+- Exec模式
+
+  ```yaml
+  apiVersion: v1
+  kind: Pod
+  metadata:
+    name: startupprobe
+  spec:
+    containers:
+    - name: startup
+      image: xianchao/tomcat-8.5-jre8:v1
+      imagePullPolicy: IfNotPresent
+      ports:
+      - containerPort: 8080
+      startupProbe:
+        exec:
+          command:
+          - "/bin/sh"
+          - "-c"
+          - "ps aux | grep tomcat"
+        initialDelaySeconds: 20 #容器启动后多久开始探测
+        periodSeconds: 20 #执行探测的时间间隔
+        timeoutSeconds: 10 #探针执行检测请求后，等待响应的超时时间
+        successThreshold: 1 #成功多少次才算成功
+        failureThreshold: 3 #失败多少次才算失败
+  ```
+
+- tcp socket模式
+
+  ```yaml
+      startupProbe:
+        tcpSocket:
+          port: 8080
+        initialDelaySeconds: 20 #容器启动后多久开始探测
+        periodSeconds: 20 #执行探测的时间间隔
+        timeoutSeconds: 10 #探针执行检测请求后，等待响应的超时时间
+        successThreshold: 1 #成功多少次才算成功
+        failureThreshold: 3 #失败多少次才算失败
+  ```
+
+- http get模式
+
+  ```yaml
+      startupProbe:
+        httpGet:
+          path: /
+          port: 8080
+          #默认探测localhost:8080
+        initialDelaySeconds: 20 #容器启动后多久开始探测
+        periodSeconds: 20 #执行探测的时间间隔
+        timeoutSeconds: 10 #探针执行检测请求后，等待响应的超时时间
+        successThreshold: 1 #成功多少次才算成功
+        failureThreshold: 3 #失败多少次才算失败
+  ```
+
+## LivenessProbe
+
+- 用指定的方式（exec、tcp、http）检测pod中的容器是否正常运行，如果检测失败，则认为容器不健康，那么Kubelet将根据Pod中设置的 restartPolicy策略来判断Pod是否要重启，如果容器配置中没有配置 livenessProbe，Kubelet 将认为存活探针探测一直为success（成功）状态。
+
+> 存活探针是一种从应用故障中恢复的强劲方式，但应谨慎使用。 你必须仔细配置存活探针，确保它能真正标示出不可恢复的应用故障，例如死锁。
+
+**示例**
+
+- exec模式
+
+  ```yaml
+  apiVersion: v1
+  kind: Pod
+  metadata:
+    name: liveness-exec
+    labels:
+      app: liveness
+  spec:
+    containers:
+    - name: liveness
+      image: busybox:1.28
+      imagePullPolicy: IfNotPresent
+      args:                       #创建测试探针探测的文件
+      - /bin/sh
+      - -c
+      - touch /tmp/healthy; sleep 30; rm -rf /tmp/healthy; sleep 600
+      livenessProbe:
+        initialDelaySeconds: 10   #延迟检测时间
+        periodSeconds: 5          #检测时间间隔
+        exec:
+          command:
+          - cat
+          - /tmp/healthy
+          
+  #容器在初始化后，首先创建一个 /tmp/healthy 文件，然后执行睡眠命令，睡眠 30 秒，到时间后执行删除 /tmp/healthy 文件命令。而设置的存活探针检检测方式为执行 shell 命令，用 cat 命令输出 healthy 文件的内容，如果能成功执行这条命令，存活探针就认为探测成功，否则探测失败。在前 30 秒内，由于文件存在，所以存活探针探测时执行 cat /tmp/healthy 命令成功执行。30 秒后 healthy 文件被删除，所以执行命令失败，Kubernetes 会根据 Pod 设置的重启策略来判断，是否重启 Pod。
+  ```
+
+- http模式
+
+  ```yaml
+  apiVersion: v1
+  kind: Pod
+  metadata:
+    name: liveness-http
+    labels:
+      test: liveness
+  spec:
+    containers:
+    - name: liveness
+  image: docker.io/mydlqclub/springboot-helloworld:0.0.1 #ctr -n=k8s.io images import springboot.tar.gz解压
+  imagePullPolicy: IfNotPresent
+      livenessProbe:
+        initialDelaySeconds: 20   #延迟加载时间
+        periodSeconds: 5          #重试时间间隔
+        timeoutSeconds: 10        #超时时间设置
+        httpGet:
+          scheme: HTTP
+          port: 8081
+          path: /actuator/health
+  #上面 Pod 中启动的容器是一个 SpringBoot 应用，其中引用了 Actuator 组件，提供了 /actuator/health 健康检查地址，存活探针可以使用 HTTPGet 方式向服务发起请求，请求 8081 端口的 /actuator/health 路径来进行存活判断：任何大于或等于200且小于400的代码表示探测成功。任何其他代码表示失败。如果探测失败，则会根据重启策略做后续操作。
+  ```
+
+- tcp模式
+
+  ```yaml
+  apiVersion: v1
+  kind: Pod
+  metadata:
+    name: liveness-tcp
+    labels:
+      app: liveness-tcp
+  spec:
+    containers:
+    - name: liveness
+      image: nginx:latest
+      imagePullPolicy: IfNotPresent
+      livenessProbe:
+        initialDelaySeconds: 15
+        periodSeconds: 20
+        tcpSocket:
+          port: 80
+  #探测80端口起来没起来
+  #停掉nginx
+  #k exec -it liveness-tcp -- /bin/bash
+  #nginx -s stop ==> 会被存活探测自动重启。
+  ```
+
+## ReadinessProbe
+
+- 用于检测容器中的应用是否可以接受请求，当探测成功后才使Pod对外提供网络访问，将容器标记为就绪状态，可以加到pod前端负载，如果探测失败，则将容器标记为未就绪状态，会把pod从前端负载移除。
+
+- ReadinessProbe 和 livenessProbe 可以使用相同探测方式，只是对 Pod 的处置方式不同：
+
+  - readinessProbe 当检测失败后，将 Pod 的 IP:Port 从对应的 EndPoint 列表中删除。
+
+  - livenessProbe 当检测失败后，将杀死容器并根据 Pod 的重启策略来决定作出对应的措施。
+- 在生产环境中，一般会让开发提供容器的健康检查接口，在spring boot已经有原生的健康检查接口，所有然开发定义健康检查接口后我们再使用http get方法来定义我们的探针。
+
+**示例**
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: springboot
+  labels:
+    app: springboot
+spec:
+  containers:
+  - name: springboot
+    image: docker.io/mydlqclub/springboot-helloworld:0.0.1
+    imagePullPolicy: IfNotPresent
+    ports:
+    - name: server
+      containerPort: 8080
+    - name: management
+      containerPort: 8081
+    readinessProbe:
+      initialDelaySeconds: 20   
+      periodSeconds: 5          
+      timeoutSeconds: 10   
+      httpGet:
+        scheme: HTTP
+        port: 8081
+        path: /actuator/health 
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: springboot
+  labels:
+    app: springboot
+spec:
+  selector:
+    app: springboot
+  type: NodePort
+  ports:
+  - name: server
+    port: 8080
+    targetPort: 8080
+    nodePort: 31180
+  - name: management
+    port: 8081
+    targetPort: 8081
+    nodePort: 31181
+
+#Springboot 项目，设置 ReadinessProbe 探测 SpringBoot 项目的 8081 端口下的 /actuator/health 接口，如果探测成功则代表内部程序以及启动，就开放对外提供接口访问，否则内部应用没有成功启动，暂不对外提供访问，直到就绪探针探测成功。
+```
+
+## 三种probe混合使用
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: springboot-live
+  labels:
+    app: springboot
+spec:
+  containers:
+  - name: springboot
+    image: docker.io/mydlqclub/springboot-helloworld:0.0.1
+    imagePullPolicy: IfNotPresent
+    ports:
+    - name: server
+      containerPort: 8080
+    - name: management
+      containerPort: 8081
+    readinessProbe:
+      initialDelaySeconds: 20   
+      periodSeconds: 5          
+      timeoutSeconds: 10   
+      httpGet:
+        scheme: HTTP
+        port: 8081
+        path: /actuator/health
+    livenessProbe:
+      initialDelaySeconds: 20
+      periodSeconds: 5
+      timeoutSeconds: 10
+      httpGet:
+        scheme: HTTP
+        port: 8081
+        path: /actuator/health
+    startupProbe:
+      initialDelaySeconds: 20
+      periodSeconds: 5
+      timeoutSeconds: 10
+      httpGet:
+        scheme: HTTP
+        port: 8081
+        path: /actuator/health
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: springboot-live
+  labels:
+    app: springboot
+spec:
+  selector:
+    app: springboot
+  type: NodePort
+  ports:
+  - name: server
+    port: 8080
+    targetPort: 8080
+    nodePort: 31180
+  - name: management
+    port: 8081
+    targetPort: 8081
+    nodePort: 31181
+```
+
+
 
 # POD重启策略
 
 **Pod.spec.restartPolicy**
 
--   Always ：容器失效时，自动重启该容器，这也是**默认值。**
--   OnFailure ： 容器终止运行且**退出码不为0**时重启 (exit     code 不为0代表**异常终止**)
--   Never ： 不论状态为何，都不重启该容器
+-   Always：kubelet会定期查询容器的状态，一旦某个容器处于**退出**状态（正常退出后是Completed状态），就对其执行重启操作，这是**默认值。**
+-   OnFailure：容器异常退出（也就是退出码不为0）时重启。
+-   Never： 不论任何状态，都不重启该容器。
+
+测试yaml文件：
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: bb-rp
+  labels:
+    app: busybox
+spec:
+   containers:
+     - name: busybox
+       image: busybox:latest
+       command: ["/bin/sh"]
+       args: ["-c", "sleep 10, exit 1"]
+   restartPolicy: Always
+```
 
 # 查看pod日志
 
@@ -157,9 +571,20 @@ Pod.spec.containers.livenessProbe / readinessProbe
 kubectl logs <pod name> 
 #当pod处于crash状态的时候，容器不断重启，此时用 kubelet logs 可能出现一直捕捉不到日志。kubelet会保持前几个失败的容器，用--previous就能看到其日志。
 kubectl logs --previous <pod name>
+
+#查看pod内容器的日志
+kubectl logs mypod --all-containers
+#查看pod内某个容器日志
+kubectl logs mypod -c container-name
+
+#查看kube events
+kubectl get events
+kubectl get events --field-selector involvedObject.name=podName
 ```
 
 # POD调度
+
+> Pod 在其生命周期中只会被[调度](https://kubernetes.io/zh-cn/docs/concepts/scheduling-eviction/)一次。 一旦 Pod 被调度（分派）到某个节点，Pod 会一直在该节点运行，直到 Pod 停止或者被终止。
 
 默认情况下，pod在哪个节点上运行，是通过scheduler采用相应的算法来算出来的，这个过程不受人工控制。在实际使用中，需要手动控制pod调度到某些特定节点。
 
@@ -413,7 +838,7 @@ kubectl explain pods.spec.affinity.podAffinity
 
 - 先部署了一组pod，后部署的pod亲和先部署的pod，跟他部署到同一位置。
 - yaml上要定义出两个信息：
-  - 后来的pod跟啥pod做亲和？-- labelSelector
+  - 后来的pod跟先前的啥pod做亲和？-- labelSelector
   - 依据什么条件判断是同一位置还是不同位置？--topologyKey
 
 - 示例：
@@ -483,7 +908,7 @@ kubectl explain pods.spec.affinity.podAffinity
 
 ### 污点
 
-是键值对数据，**key=value:effect**, key和value是**污点的标签**，effect描述污点的作用，支持如下三个选项：
+是键值对数据，**key=value:effect**, key和value是**污点的标签**；effect描述污点的作用，支持如下三个选项：
 
 - PreferNoSchedule：kubernetes将尽量避免把Pod调度到具有该污点的Node上，除非没有其他节点可调度 -- 尽量别来，除非没办法
 - NoSchedule：kubernetes将不会把Pod调度到具有该污点的Node上，但不会影响当前Node上已存在的Pod -- 新的别来，在这的就别动了
@@ -497,7 +922,10 @@ kubectl explain pods.spec.affinity.podAffinity
 
 ```bash
 #node-02生产环境专用，打一个污点来区分
-kubectl taint node node-02 node-type=production:NoSchedule
+kubectl taint node node-02 node-type=production:NoExcute
+
+#去除污点
+kubectl taint node node-02 key: node-type-
 ```
 
 ```yaml
@@ -521,8 +949,8 @@ spec:
   tolerations:
   - key: "node-type"
     operator: "Equal" #Equal要求k、v、effect必须全部匹配上，才能容忍。如果是Exists，那么NoExcute可以向下兼容匹配到 NoSchedule、PreferNoSchedule的effect。(NoExcute > NoSchedule > PreferNoSchedule)
-    value: "production"
-    effect: "NoExecute" # 
-    tolerationSeconds: 3600 #NoExcute专用字段，？？？
+    value: "production" #value可以是空的，表示容忍特定key的污点
+    effect: "NoExecute" # effect也可以是空的。
+    tolerationSeconds: 3600 #NoExcute专用字段，通常情况下，如果给一个节点添加了一个 effect 值为 NoExecute 的污点，则任何不能容忍这个污点的 Pod 都会马上被驱逐，任何可以容忍这个污点的 Pod 都不会被驱逐。但是，如果 Pod 存在一个 effect 值为 NoExecute 的容忍度指定了可选属性 tolerationSeconds 的值，则表示在给节点添加了上述污点之后， Pod 还能继续在节点上运行的时间。3600这表示如果这个 Pod 正在运行，同时一个匹配的污点被添加到其所在的节点， 那么 Pod 还将继续在节点上运行 3600 秒，然后被驱逐。 如果在此之前上述污点被删除了，则 Pod 不会被驱逐。
 ```
 
