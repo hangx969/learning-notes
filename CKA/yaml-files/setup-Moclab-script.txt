@@ -1,8 +1,0 @@
-az account set --subscription 9ef8a15c-15a2-4ef1-a19b-e31876ab177c
-
-az ad sp create-for-rbac --name Moc-aks1-sp --output json
-az ad app credential reset --id a01b1981-5f80-4b67-9d7d-9a476f8f2d1b --end-date 2023-10-10
-az aks create -n Moc-aks1 -g VMPOD-MocLab -l chinanorth2 --node-count 2 --node-vm-size Standard_B2ms --kubernetes-version 1.26.6 --service-principal a01b1981-5f80-4b67-9d7d-9a476f8f2d1b --client-secret JKb0PACsrX~77AW1_~EqVk.u8y2e83~Y~0
-
-SP_ID=$(az aks show --resource-group VMPOD-MocLab --name Moc-aks1 --query servicePrincipalProfile.clientId -o tsv)
-az ad app credential list --id "$SP_ID" --query "[].endDateTime" -o tsv
