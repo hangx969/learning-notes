@@ -98,4 +98,95 @@ spec:
   maxUnavailable: 25%    5%25%=1.25  -> 5-1=4 #滚动更新时最少4个，最多7个
   ```
 
-  
+
+## yaml示例
+
+- 用kubectl explain一层一层的查下去慢慢写完yaml文件
+
+```yaml
+apiversion: apps/v1
+kind: deployment
+metadata:
+  name: dep-myapp-blue
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: myapp
+      version: v1
+  template:
+    metadata:
+      label:
+        app: myapp
+        version: v1
+    spec:
+      containers:
+      - name: myapp
+        images: janakiramm/myapp:v1
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 80
+        startupProbe:
+           periodSeconds: 5
+           initialDelaySeconds: 20
+           timeoutSeconds: 10
+           httpGet:
+             scheme: HTTP
+             port: 80
+             path: /
+        livenessProbe:
+           periodSeconds: 5
+           initialDelaySeconds: 20
+           timeoutSeconds: 10
+           httpGet:
+             scheme: HTTP
+             port: 80
+             path: /
+        readinessProbe:
+           periodSeconds: 5
+           initialDelaySeconds: 20
+           timeoutSeconds: 10
+           httpGet:
+             scheme: HTTP
+             port: 80
+             path: /
+```
+
+## 扩缩容
+
+- 修改yaml文件replicas的值，重新kubectl apply -f即可
+
+## 滚动更新
+
+> 滚动更新是一种自动化程度较高的发布方式，用户体验比较平滑，是目前成熟型技术组织所采用的主流发布方式，一次滚动发布一般由若干个发布批次组成，每批的数量一般是可以配置的（可以通过发布模板定义），例如第一批1台，第二批10%，第三批50%，第四批100%。每个批次之间留观察间隔，通过手工验证或监控反馈确保没有问题再发下一批次，所以总体上滚动式发布过程是比较缓慢的
+
+### yaml定义
+
+```bash
+#查看rolling update的参数定义
+kubectl explain deploy.spec.strategy
+kubectl explain deploy.spec.strategy.rollingUpdate
+#查看当前deploy的rolling update
+kubectl describe deploy
+```
+
+### 查看滚动更新历史版本
+
+```bash
+kubectl rollout history deploy dep-myapp-blue 
+
+deployment.apps/dep-myapp-blue 
+REVISION  CHANGE-CAUSE
+1         <none>
+2         <none>
+
+kubectl get rs #能看到两个rs，有一个旧版本的rs都是0.
+```
+
+### 回滚到历史版本
+
+```bash
+kubectl rollout undo deploy dep-myapp-blue --to-revision=1 
+#也是滚动的方式，ready一个新的干掉一个旧的。
+```
+
