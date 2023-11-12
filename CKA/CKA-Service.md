@@ -124,7 +124,9 @@ FIELDS:
    targetPort	<string> # targetPort是pod上的端口，从port和nodePort上来的流量，经过kube-proxy流入到后端pod的targetPort上，最后进入容器。
 ```
 
-# clusterIP
+# Svc分类
+
+## clusterIP
 
 - svc暴露的IP只能在集群内访问。
 
@@ -174,7 +176,7 @@ spec:
              scheme: HTTP
              port: 80
              path: /
-#...
+#---
 #service
 apiVersion: v1
 kind: Service
@@ -205,7 +207,7 @@ TCP  10.99.178.109:80 rr
 
 - **HeadLiness** Service：不想使用service提供的负载均衡，希望自己定策略。这种不分配cluster IP，只能通过service的域名来访问。yaml文件中将cluster IP设置为None即可。
 
-# NodePort
+## NodePort
 
 - 将pod通过node上的端口暴露给外部，可以在集群外访问服务，原理是将pod的端口（targetPort）映射到Node的一个端口（nodePort）上，通过NodeIP：NodePort来访问。NodePort 类型的服务将在每个节点上公开一个端口，并将流量路由到后端 Pod。
 
@@ -231,3 +233,151 @@ spec:
     nodePort: 30380 #pod端口映射到物理机的端口
 ```
 
+## ExternalName
+
+- 应用场景：跨名称空间访问
+
+- 需求：default名称空间下的client服务想要访问nginx-ns名称空间下的nginx-svc服务。
+
+- 解决：default名称空间下创建external name的svc，软链到nginx-ns名称空间下的nginx-svc。
+
+  ```yaml
+  #在nginx-ns的namespace中创建deploy和svc：
+  apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    name: dep-nginx
+    namespace: nginx-ns
+  spec:
+    selector:
+      matchLabels:
+        run: nginx
+    replicas: 3
+    template:
+      metadata:
+        labels:
+          run: nginx
+      spec:
+        containers:
+        - name: nginx
+          image: docker.io/library/nginx:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+          - containerPort: 80  #pod中的容器需要暴露的端口
+  ---
+  apiVersion: v1
+  kind: Service
+  metadata:
+    name: svc-nginx-clusterip
+    namespace: nginx-ns
+    labels:
+      run: nginx
+  spec:
+    selector:
+      run: nginx
+    type: ClusterIP
+    ports:
+    - name: port-svc-nginx
+      port: 80 # service 暴露的端口
+      protocol: TCP
+      targetPort: 80 # pod暴露的端口
+  ```
+
+  ```yaml
+  #在default名称空间下创建deploy和svc
+  apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    name: client
+  spec: 
+    replicas: 1
+    selector:
+      matchLabels:
+        app: busybox
+    template:
+     metadata:
+      labels:
+        app: busybox
+     spec:
+       containers:
+       - name: busybox
+         image: busybox
+         imagePullPolicy: IfNotPresent
+         command: ["/bin/sh","-c","sleep 36000"]
+  ---
+  apiVersion: v1
+  kind: Service
+  metadata:
+    name: svc-client
+  spec:
+    type: ExternalName
+    externalName: svc-nginx-clusterip.nginx-ns.svc.cluster.local #软链到目标svc
+    ports:
+    - name: http
+      port: 80
+      targetPort: 80
+  ```
+
+  ```bash
+  #进入到default下面的pod，curl请求externalName的domain，可以代理到nginx-ns里面的pod
+  k exec -it client -- /bin/sh
+  curl svc-client.default.svc.cluster.local
+  #或者直接请求nginx-ns里面的service的domain name，效果一样
+  curl svc-nginx-clusterip.dev.svc.cluster.local
+  ```
+
+## LoadBalancer
+
+- 需要借助外部云环境
+  - Azure文档中的LB：
+    - Internal LB：[创建内部负载均衡器 - Azure Kubernetes Service | Azure Docs](https://docs.azure.cn/zh-cn/aks/internal-lb)
+    - External LB：[在 Azure Kubernetes 服务 (AKS) 中使用公共负载均衡器 - Azure Kubernetes Service | Azure Docs](https://docs.azure.cn/zh-cn/aks/load-balancer-standard)
+
+![image-20231112160812381](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202311121608561.png)
+
+# 自定义endpoint资源
+
+## 示例：集群引用外部mysql数据库
+
+- 模拟在物理机上装一个mysql，用k8s的service来代理
+
+- node2上安装mysql
+
+  ```bash
+  yum install mariadb-server.x86_64 -y
+  systemctl start mariadb
+  ```
+
+- 创建mysql的svc
+
+  ```yaml
+  apiVersion: v1
+  kind: Service
+  metadata:
+    name: svc-mysql
+  spec:
+    type: ClusterIP
+    ports:
+    - port: 3306
+  #这个service没有定义label selector，所以不会生成endpoint
+  ```
+
+- 自定义一个endpoint
+
+  ```yaml
+  apiVersion: v1
+  kind: Endpoints
+  metadata:
+    name: svc-mysql #ep的name必须和要手动关联的svc的name相同。
+  subsets:
+  - addresses: 
+    - ip: 192.168.40.5 #直接写上装了mysql的物理机ip
+    ports:
+    - port: 3306 #暴露mysql的3306
+  #ep创建好之后，describe svc会自动关联上ep
+  #上面配置就是将外部IP地址和服务引入到k8s集群内部，由service作为一个代理来达到能够访问外部服务的目的。
+  ```
+
+  # coredns组件 
+
+> CoreDNS 其实就是一个 DNS 服务，而 DNS 作为一种常见的服务发现手段，所以很多开源项目以及工程师都会使用 CoreDNS 为集群提供服务发现的功能，Kubernetes 就在集群中使用 CoreDNS 解决服务发现的问题。 
