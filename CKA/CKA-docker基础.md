@@ -903,7 +903,6 @@ RUN yum install stress -y
 CMD /bin/bash
 #构建镜像
 docker build -t=centos-stress . --load
-
 #起容器
 docker run -itd --name docker10 --cpuset-cpus 0 --cpu-shares 512 centos-stress /bin/bash #指定docker10只能在cpu0上运行，而且docker10的使用cpu的份额512
 docker run -itd --name docker20 --cpuset-cpus 0 --cpu-shares 1024 centos-stress /bin/bash #指定docker20只能在cpu0上运行，而且docker20的使用cpu的份额1024，比dcker10多一倍
