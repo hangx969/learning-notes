@@ -1,6 +1,24 @@
 # 持久化存储
 
-- 查看支持的存储种类
+## Volume
+
+- 容器的生命周期可能很短，会被频繁地创建和销毁，保存在容器中的数据也会被清除。为了持久化保存容器的数据，kubernetes引入了**Volume**的概念。 
+
+- Volume是Pod中能够被**多个容器访问**的共享目录，它被定义在Pod上，然后被一个Pod里的多个容器挂载到容器自己的具体的文件目录下，
+- kubernetes通过Volume实现同一个Pod中不同容器之间的数据共享以及数据的持久化存储。Volume的生命容器不与Pod中单个容器的生命周期相关，当容器终止或者重启时，Volume中的数据也不会丢失。
+
+### 种类
+
+kubernetes的Volume支持多种类型，比较常见的有下面几个：
+
+- 简单存储：EmptyDir、HostPath、NFS（本地host存储和网络共享文件） 
+  - emptydir、hostpath、nfs等都是在pod的yaml文件中的volume中声明。
+- 高级存储：PV、PVC
+  - pvc和pv都是要用单独的yaml文件做定义，然后在pod的yaml文件中申请使用pvc
+- 配置存储：ConfigMap、Secret
+  - 这两个也是在单独的yaml文件中声明，在pod的yaml文件中引用使用。
+
+- 查看所有支持的存储种类
 
   ```bash
   kubectl explain pods.spec.volumes
@@ -8,63 +26,75 @@
 
 ## emptyDir
 
-- emptyDir类型的Volume是在Pod分配到Node上时被创建，Kubernetes会在Node上自动分配一个目录，因此无需指定宿主机Node上对应的目录文件。 这个目录的初始内容为空，当Pod从Node上移除时，emptyDir中的数据会被永久删除。emptyDir Volume主要用于某些应用程序无需永久保存的临时目录，多个容器的共享目录等。
+- 一个EmptyDir就是Host上的一个空目录。
+
+- EmptyDir是在Pod被分配到Node时创建的，它的初始内容为空，并且无须指定宿主机上对应的目录文件，因为kubernetes会自动分配一个目录，当Pod销毁时， EmptyDir中的数据也会被**永久删除**。 EmptyDir用途如下：
+
+  - 临时空间，例如应用程序运行时所需的**临时目录**，且无须永久保留
+
+  - 一个容器需要从另一个容器中获取数据的目录（**多容器共享目录**）
+
+  <img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202311141720686.png" alt="image-20231114172051513" style="zoom:50%;" />
 
 - 测试：
 
-  ```yaml
-  apiVersion: v1
-  kind: Pod
-  metadata:
-    name: pod-emptydir
-  spec:
-    containers:
-    - name: container-emptydir
-      image: nginx
-      imagePullPolicy: IfNotPresent
-      volumeMounts:
-      - name: volume-cache
-        mountPath: /cache
-    volumes:
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-emptydir
+spec:
+  containers:
+  - name: container-emptydir
+    image: nginx
+    imagePullPolicy: IfNotPresent
+    volumeMounts:
     - name: volume-cache
-      emptyDir: {}
-  ```
+      mountPath: /cache
+  volumes:
+  - name: volume-cache
+    emptyDir: {}
+```
 
 - 怎么查看emptyDir挂载到了宿主机的哪个目录
 
-  ```bash
-  kubectl get po pod-emptydir -o yaml | grep uid
-  #拿到uid，去宿主机上看挂载路径：
-  tree /var/lib/kubelet/pods/e948ebb2-50f2-4884-a16c-2c0dd7b3f1de
-  
-  /var/lib/kubelet/pods/e948ebb2-50f2-4884-a16c-2c0dd7b3f1de
-  ├── containers
-  │   └── container-emptydir
-  │       └── a247ebdd
-  ├── etc-hosts
-  ├── plugins
-  │   └── kubernetes.io~empty-dir
-  │       ├── volume-cache
-  │       │   └── ready
-  │       └── wrapped_kube-api-access-kdqtk
-  │           └── ready
-  └── volumes
-      ├── kubernetes.io~empty-dir
-      │   └── volume-cache #这就是pod emptydir的挂载路径
-      └── kubernetes.io~projected
-          └── kube-api-access-kdqtk
-              ├── ca.crt -> ..data/ca.crt
-              ├── namespace -> ..data/namespace
-              └── token -> ..data/token
-              
-  cd /var/lib/kubelet/pods/e948ebb2-50f2-4884-a16c-2c0dd7b3f1de/volumes/kubernetes.io~empty-dir/volume-cache
-  ```
+
+```bash
+kubectl get po pod-emptydir -o yaml | grep uid
+#拿到uid，去宿主机上看挂载路径：
+tree /var/lib/kubelet/pods/e948ebb2-50f2-4884-a16c-2c0dd7b3f1de
+
+/var/lib/kubelet/pods/e948ebb2-50f2-4884-a16c-2c0dd7b3f1de
+├── containers
+│   └── container-emptydir
+│       └── a247ebdd
+├── etc-hosts
+├── plugins
+│   └── kubernetes.io~empty-dir
+│       ├── volume-cache
+│       │   └── ready
+│       └── wrapped_kube-api-access-kdqtk
+│           └── ready
+└── volumes
+    ├── kubernetes.io~empty-dir
+    │   └── volume-cache #这就是pod emptydir的挂载路径
+    └── kubernetes.io~projected
+        └── kube-api-access-kdqtk
+            ├── ca.crt -> ..data/ca.crt
+            ├── namespace -> ..data/namespace
+            └── token -> ..data/token
+            
+cd /var/lib/kubelet/pods/e948ebb2-50f2-4884-a16c-2c0dd7b3f1de/volumes/kubernetes.io~empty-dir/volume-cache
+```
 
 ## hoatPath
 
 - hostPath Volume是指Pod挂载宿主机上的目录或文件。 
 
 - hostPath Volume使得容器可以使用宿主机的文件系统进行存储，hostpath（宿主机路径）：节点级别的存储卷，在pod被删除，这个存储卷还是存在的，不会被删除，所以只要同一个pod被调度到同一个节点上来，在pod被删除重新被调度到这个节点之后，对应的数据依然是存在的。
+
+  <img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202311141722615.png" alt="image-20231114172218560" style="zoom:50%;" />
 
 - 测试
 
@@ -95,6 +125,12 @@
   ```
 
 ## NFS
+
+- HostPath可以解决数据持久化的问题，但是一旦Node节点故障了，Pod如果转移到了别的节点，又会出现问题了，此时需要准备单独的网络存储系统，比较常用的有NFS、CIFS。
+
+- 搭建一台NFS服务器，然后将Pod中的存储直接连接到NFS系统上，无论Pod在节点上怎么转移，只要Node跟NFS的对接没问题，数据就可以成功访问
+
+  <img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202311141723114.png" alt="image-20231114172333052" style="zoom:50%;" />
 
 - 搭建NFS服务
 
@@ -161,9 +197,16 @@
 
 ## PV/PVC
 
+- 使用NFS提供存储，此时就要求用户会搭建NFS系统，并且会在yaml配置nfs。由于kubernetes支持的存储系统有很多，要求客户全都掌握，显然不现实。站在用户的角度，只需要提出自己需要多少存储资源，并不管关心存储的底层实现。底层由专业人员来维护即可。
+
+- 为了能够屏蔽底层存储实现的细节，方便用户使用， kubernetes引入**PV**和**PVC**两种资源对象。
+
+  ![image-20231114172731738](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202311141727818.png)
+
 ### PV
 
-- PersistentVolume（PV）是群集中的一块存储，由管理员配置或使用存储类动态配置。它是集群中的资源，是容量插件，如Volumes，其生命周期独立于使用PV的任何单个pod。
+- PersistentVolume（PV）是对底层的共享存储的一种抽象。由管理员配置或使用存储类动态配置，它与底层具体的共享存储技术有关，并通过**插件**完成与共享存储的对接。
+- 它是集群中的资源，其生命周期独立于使用PV的任何单个pod。PV通过yaml文件部署；PV是node级别的，不能配namespace。
 - PV供应方式：
   - 静态：集群管理员创建了许多PV。它们包含可供群集用户使用的实际存储的详细信息。它们存在于Kubernetes API中，可供使用。
   - 动态：当管理员创建的静态PV都不匹配用户的PersistentVolumeClaim时，群集可能会尝试为PVC专门动态配置卷。此配置基于StorageClasses，PVC必须请求存储类，管理员必须创建并配置该类，以便进行动态配置。
@@ -189,16 +232,6 @@
   e）pvc和pv它们是一一对应的关系，pv如果被pvc绑定了，就不能被其他pvc使用了；
 
   f）我们在创建pvc的时候，应该确保和底下的pv能绑定，如果没有合适的pv，那么pvc就会处于pending状态。
-
-- 回收策略
-
-  - 当我们创建pod时如果使用pvc做为存储卷，那么它会和pv绑定，当删除pod，pvc和pv绑定就会解除，解除之后和pvc绑定的pv卷里的数据需要怎么处理，目前，卷可以保留，回收或删除：
-
-    - Retain：当删除pvc的时候，pv仍然存在，处于released状态，但是它不能被其他pvc绑定使用，里面的数据还是存在的，当我们下次再使用的时候，数据还是存在的，这个是默认的回收策略
-
-    - Recycle （不推荐使用，1.15可能被废弃了）
-
-    - Delete：删除pvc时即会从Kubernetes中移除PV，也会从相关的外部设施中删除存储
 
 ### Lab
 
@@ -386,16 +419,157 @@ spec:
 
 ### 回收策略
 
-pv.spec.persistentVolumeReclaimPolicy
+- 定义：pv.spec.persistentVolumeReclaimPolicy
 
-- Retain
+- 当我们创建pod时如果使用pvc做为存储卷，那么它会和pv绑定，当删除pod，pvc和pv绑定就会解除，解除之后和pvc绑定的pv卷里的数据需要怎么处理，目前，卷可以保留，回收或删除：
 
-  - `"Retain"` means the volume will be left in its current phase (Released)
-    for manual reclamation by the administrator. The default policy is Retain.
-  - pvc和pv绑定，如果使用默认的回收策略retain，那么删除pvc之后，pv会处于released状态，无法重新被pvc绑定。
+  - Retain：
+    - `"Retain"` means the volume will be left in its current phase (Released) for manual reclamation by the administrator. The default policy is Retain.
+    - 当删除pvc的时候，pv仍然存在，处于released状态，但是它不能被其他pvc绑定使用，里面的数据还是存在的。
+    - 我们想要继续使用这个pv，需要手动删除pv。删除pv，不会删除pv后端存储里的数据。再重建pv，当重新创建pvc时还会和这个最匹配的pv绑定。
+  - Recycle （不推荐使用，1.15可能被废弃了）
+  - Delete：
+    - `"Delete"` means the volume will be deleted from Kubernetes on release from its claim. The **volume plugin must support Deletion**.
+    - 删除pvc时即会从Kubernetes中移除PV，也会从相关的外部设施中删除存储。当然这常见于云服务商的存储服务。
 
-  - 我们想要继续使用这个pv，需要手动删除pv。删除pv，不会删除pv后端存储里的数据。再重建pv，当重新创建pvc时还会和这个最匹配的pv绑定，数据还是原来数据，不会丢失。
+# StorageClass
 
-- Delete
-  - `"Delete"` means the volume will be deleted from Kubernetes on release
-    from its claim. The volume plugin must support Deletion.
+## 背景
+
+- 上面介绍的PV和PVC模式都是需要先创建好PV，然后定义好PVC和pv进行一对一的Bond，但是如果PVC请求成千上万，那么就需要创建成千上万的PV，对于运维人员来说维护成本很高。
+
+- Kubernetes提供一种自动创建PV的机制，叫StorageClass，它的作用就是创建PV的模板。k8s集群管理员通过创建storageclass可以动态生成一个存储卷pv供k8s pvc使用。
+
+- 每个StorageClass都包含字段provisioner，parameters和reclaimPolicy。 
+
+  - 具体来说，StorageClass会定义以下两部分：
+
+    1、PV的属性：比如存储的大小、类型等；
+
+    2、创建这种PV需要使用到的存储插件：比如Ceph、NFS等
+
+  - 有了这两部分信息，Kubernetes就能够根据用户提交的PVC，找到对应的StorageClass，然后Kubernetes就会调用 StorageClass声明的存储插件，创建出需要的PV。
+
+## Lab
+
+- 使用NFS作为provisioner，用storageClass自动生成PV：
+
+  ```bash
+  #上传nfs-client的自动装载程序，称之为provisioner，这个程序会使用我们已经配置好的NFS服务器自动创建持久卷，也就是自动帮我们创建PV
+  ctr -n=k8s.io images import nfs-subdir-external-provisioner.tar.gz
+  ```
+
+  ```yaml
+  #创建sa，给provisioner来用
+  #serviceaccount是为了方便Pod里面的进程调用Kubernetes API或其他外部服务而设计的。
+  apiVersion: v1
+  kind: ServiceAccount
+  metadata:
+    name: nfs-provisioner
+  ```
+
+  ```bash
+  #给这个sa授权cluster-admin
+  kubectl create clusterrolebinding nfs-provisioner-clusterrolebinding --clusterrole=cluster-admin --serviceaccount=default:nfs-provisioner
+  ```
+
+  ```bash
+  #给nfs-provisioner配置空间
+  mkdir /data/nfs_pro -p
+  echo "/data/nfs_pro *(rw,no_root_squash)" >> /etc/exports
+  exportfs -arv
+  ```
+
+  ```yaml
+  #创建nfs provisioner的pod
+  kind: Deployment
+  apiVersion: apps/v1
+  metadata:
+    name: nfs-provisioner
+  spec:
+    selector:
+      matchLabels:
+         app: nfs-provisioner
+    replicas: 1
+    strategy:
+      type: Recreate
+    template:
+      metadata:
+        labels:
+          app: nfs-provisioner
+      spec:
+        serviceAccount: nfs-provisioner
+        containers:
+          - name: nfs-provisioner
+            image: registry.cn-beijing.aliyuncs.com/mydlq/nfs-subdir-external-provisioner:v4.0.0
+            imagePullPolicy: IfNotPresent
+            volumeMounts:
+              - name: nfs-client-root
+                mountPath: /persistentvolumes
+            env:
+              - name: PROVISIONER_NAME
+                value: example.com/nfs
+              - name: NFS_SERVER
+                value: 192.168.40.4
+              - name: NFS_PATH
+                value: /data/nfs_pro/
+        volumes:
+          - name: nfs-client-root
+            nfs:
+              server: 192.168.40.4
+              path: /data/nfs_pro/
+  ```
+
+  ```yaml
+  #创建storage class
+  apiVersion: storage.k8s.io/v1
+  kind: StorageClass
+  metadata: 
+    name: sc-nfs
+  provisioner: example.com/nfs
+  
+  #创建pvc，引用sc
+  kind: PersistentVolumeClaim
+  apiVersion: v1
+  metadata:
+    name: pvc-sc-nfs
+  spec:
+    accessModes:
+    - ReadWriteMany
+    resources:
+      requests:
+        storage: 1Gi
+    storageClassName:  sc-nfs
+  
+  #创建pod，挂载pvc
+  apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    name: dep-pvc-nfs-test
+  spec:
+    replicas: 3
+    selector:
+      matchLabels:
+        storage: pvc
+    template: 
+      metadata:
+        labels:
+          storage: pvc
+      spec:
+        containers:
+        - name: test-pvc
+          image: nginx
+          imagePullPolicy: IfNotPresent
+          ports:
+          - containerPort: 80
+            protocol: TCP
+          volumeMounts:
+          - name: nginx-html
+            mountPath: /usr/share/nginx/html
+        volumes:
+        - name: nginx-html
+          persistentVolumeClaim:
+            claimName: pvc-sc-nfs
+  ```
+
+  

@@ -29,10 +29,20 @@ nc -vz mcr.azk8s.cn 443
 
 dig（域信息搜索器）命令是一个用于询问 DNS 域名服务器的灵活的工具。它执行 DNS 搜索，显示从受请求的域名服务器返回的答复。
 
-```
+```bash
 dig mcr.azk8s.cn 443
-dig mcr.azk8s.cn
- 
+dig mcr.azk8s.cn 
+```
+
+Dig工具使用：
+
+- @来指定域名服务器、
+- -t 指定要解析的类型
+
+- A 为解析类型 ，A记录：解析域名到IP
+
+```bash
+dig -t A svc-sts-nginx.default.svc.cluster.local @10.0.0.10
 ```
 
 ## curl
