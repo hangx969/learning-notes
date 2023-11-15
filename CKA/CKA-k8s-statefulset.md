@@ -117,3 +117,52 @@ for i in 0 1; do kubectl exec web-$i -- sh -c 'hostname';done
 > ```
 
 # 扩缩容
+
+- 直接修改yaml文件扩缩容
+  - 扩容：pod name从小到大开始扩。
+  - 缩容：pod name从大到小依次减小。
+
+# 滚动更新
+
+- 定义字段
+
+  ```bash
+  kubectl explain sts.spec.updateStrategy
+  ```
+
+- yaml文件
+
+  ```yaml
+  apiVersion: apps/v1
+  kind: StatefulSet
+  metadata: 
+    name: sts-web
+  spec:
+    replicas: 2
+    selector:
+      matchLabels:
+        app: nginx
+    serviceName: svc-sts-nginx #sts由前端headless service管理
+    updateStrategy: 
+      type: RollingUpdate #type还有OnDelete，OnDelete不会让pod自动更新，只有手动删除pod，才会自动创建新的pod
+      rollingUpdate:
+        maxUnavailable: 0 #与deployment的更新策略类似，这里写0，就代表replicas规定的数量一个也不能少。
+        partition: 1 #1就代表更新的时候只更新pod序号 >= 1的
+    template:
+      metadata:
+        labels:
+          app: nginx
+      spec:
+        containers:
+        - name: nginx
+          image: nginx
+          imagePullPolicy: IfNotPresent
+          ports:
+          - name: web
+            containerPort: 80
+          volumeMounts:
+          - name: www #写volumeClaimTemplates的name
+            mountPath: /usr/share/nginx/html
+  ```
+
+  
