@@ -914,6 +914,12 @@ kubectl explain pods.spec.affinity.podAffinity
 - NoSchedule：kubernetes将不会把Pod调度到具有该污点的Node上，但不会影响当前Node上已存在的Pod -- 新的别来，在这的就别动了
 - NoExecute：kubernetes将不会把Pod调度到具有该污点的Node上，同时也会将Node上已存在的Pod驱离 -- 新的别来，旧的赶紧走
 
+查看一个节点的污点：
+
+```bash
+kubectl get node master-01 -o=jsonpath='{.spec.taints}'
+```
+
 ### 容忍
 
 - tolerance，键值对数据，要定义出来容忍什么k、v、effect的污点。
