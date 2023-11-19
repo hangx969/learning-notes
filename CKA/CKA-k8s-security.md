@@ -220,7 +220,7 @@
 
 ## Role
 
-- 一组权限的集合。只能定义在命名空间中，对命名空间内的资源进行授权。如果是集群级别的资源，则需要使用ClusterRole。
+- 一组权限的集合。只能定义在**某个命名空间**中，**对命名空间内的资源**进行授权。如果是集群级别的资源，则需要使用ClusterRole。
 
 - 举例：定义一个对pod有只读权限的role
 
@@ -266,3 +266,83 @@
 
 - RoleBinding和ClusterRoleBinding用于把一个角色绑定在一个目标上，可以是User，Group，Service Account。
 - 使用RoleBinding为某个命名空间授权，使用ClusterRoleBinding为集群范围内授权。
+
+## roleBinding
+
+- 给某个user在某个命名空间binding在某个role上，那就仅在这个命名空间起作用。
+
+~~~yaml
+#将在rbac命名空间中把pod-read角色授予用户es
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: pod-read-bind
+  namespace: rbac
+subjects:
+- kind: User
+  name: es
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+- kind: Role
+  name: pod-read
+  apiGroup: rbac.authorizatioin.k8s.io
+~~~
+
+## ClusterRoleBinding
+
+- 给一个user绑定一个clusterRole，就叫clusterRoleBinding。其实也是rolebinding，只是绑定到的是clusterrole。
+
+  ~~~yaml
+  #es这个user能获取到集群中所有的资源信息
+  apiVersion: rbac.authorization.k8s.io/v1
+  kind: RoleBinding
+  metadata:
+    name: es-allresource
+    namespace: rbac
+  subjects:
+  - kind: User
+    name: es
+    apiGroup: rbac.authorization.k8s.io
+  roleRef:
+    apiGroup: rbac.authorization.k8s.io
+    kind: ClusterRole
+    name: cluster-admin
+  ~~~
+
+# 资源引用方式
+
+- 多数资源可以用其名称的字符串表示，也就是Endpoint中的URL相对路径。
+  - 例如pod中的日志是：GET /api/v1/namaspaces/{namespace}/pods/{podname}/log
+- 如果需要在一个RBAC对象中体现上下级资源，就需要使用“/”分割资源和下级资源。
+
+## Lab：让user同时读取pod和pod log
+
+- 定义role，权限是读取pod和pod log
+
+  ~~~yaml
+  apiVersion: rbac.authorization.k8s.io/v1
+  kind: Role
+  metadata:
+    name: logs-reader
+    namespace: rbac
+  rules:
+  - apiGroups: [""]
+    resources: ["pods","pods/log"]
+    verbs: ["get","list","watch"]
+  ~~~
+
+- 创建一个SA
+
+  ~~~bash
+  kubectl create sa sa-test -n rbac
+  ~~~
+
+- 创建一个rolebinding，给sa赋予role
+
+  ~~~bash
+  kubectl create rolebinding rb-sa-test -n rbac --role=logs-reader --serviceaccount=rbac:sa-test
+  ~~~
+
+  
+
+
