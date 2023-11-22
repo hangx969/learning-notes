@@ -309,7 +309,7 @@ roleRef:
     name: cluster-admin
   ~~~
 
-# 资源引用方式
+# api接口访问k8s资源
 
 - 多数资源可以用其名称的字符串表示，也就是Endpoint中的URL相对路径。
   - 例如pod中的日志是：GET /api/v1/namaspaces/{namespace}/pods/{podname}/log
@@ -337,12 +337,45 @@ roleRef:
   kubectl create sa sa-test -n rbac
   ~~~
 
-- 创建一个rolebinding，给sa赋予role
+- 创建一个rolebinding，给sa赋予logs-reader role
 
   ~~~bash
-  kubectl create rolebinding rb-sa-test -n rbac --role=logs-reader --serviceaccount=rbac:sa-test
+  kubectl create rolebinding rb-sa-test-logs-reader -n rbac --role=logs-reader --serviceaccount=rbac:sa-test
   ~~~
 
-  
+- 创建pod，把sa挂载进去
+
+  ~~~yaml
+  apiVersion: v1
+  kind: Pod
+  metadata:
+    name: pod-sa-test
+    namespace: rbac
+    labels:
+      app: sa
+  spec:
+    serviceAccountName: sa-test
+    containers:
+    - name:  sa-nginx
+      ports:
+      - containerPort: 80
+      image: nginx
+      imagePullPolicy: IfNotPresent
+  ~~~
+
+- 进pod模拟请求资源
+
+  ~~~bash
+  kubectl exec -it pod-sa-test -n rbac -- /bin/bash
+  #这里面保存着sa挂进来的token
+  cd /var/run/secrets/kubernetes.io/serviceaccount
+  #看rbac名称空间下的pod
+  curl --cacert ./ca.crt  -H "Authorization: Bearer $(cat ./token)" https://kubernetes.default/api/v1/namespaces/rbac/pods/ 
+  #看某个pod的log
+  curl --cacert ./ca.crt  -H "Authorization: Bearer $(cat ./token)" https://kubernetes.default/api/v1/namespaces/rbac/pods/pod-sa-test/log
+  ~~~
+
+## 常见的role定义
+
 
 

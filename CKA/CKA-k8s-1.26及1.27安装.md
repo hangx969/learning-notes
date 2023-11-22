@@ -257,14 +257,6 @@ systemctl enable kubelet
 
   ```yaml
   apiVersion: kubeadm.k8s.io/v1beta3
-  bootstrapTokens:
-  - groups:
-    - system:bootstrappers:kubeadm:default-node-token
-    token: abcdef.0123456789abcdef
-    ttl: 24h0m0s
-    usages:
-    - signing
-    - authentication
   kind: InitConfiguration
   localAPIEndpoint:
     advertiseAddress: 192.168.40.4 #控制节点的ip
@@ -304,7 +296,7 @@ systemctl enable kubelet
   kind: KubeletConfiguration
   cgroupDriver: systemd
   ```
-
+  
   > kubeadm.yaml文件参数解释
   >
   > - localAPIEndpoint: Kubernetes API Server 监听的地址和端口。
@@ -327,7 +319,7 @@ systemctl enable kubelet
   >
   >   - 在Kubernetes集群中，每个Pod都会被分配一个IP地址，这些IP地址需要从一个预定义的IP地址池中分配。 podSubnet参数用于指定Pod IP地址池的范围，它定义了Pod的IP地址范围，例如10.244.0.0/16表示IP地址从10.244.0.1到10.244.255.255。
   >   - 同样地，Kubernetes服务（Service）也会被分配一个IP地址，用于暴露Kubernetes服务的端口。 serviceSubnet参数用于指定Service IP地址池的范围，它定义了Service的IP地址范围，例如10.96.0.0/12表示IP地址从10.96.0.1到10.111.255.255。
-
+  
 - 上传并解压K8s组件镜像离线包
 
   ```bash
@@ -364,7 +356,7 @@ systemctl enable kubelet
 
 ```bash
 kubeadm token create --print-join-command
-#在node-01上加参数 --ignore-preflight-errors=SystemVerification运行
+#在node-01上加参数 --ignore-preflight-errors=SystemVerification
 #工作节点打标签
 kubectl label nodes node-01 node-role.kubernetes.io/work=worker
 
@@ -379,6 +371,12 @@ scp $HOME/.kube/config node-01:/root/.kube/
 #上传了Caclio.yaml
 kubectl apply -f calico.yaml
 #在线下载地址为：https://docs.projectcalico.org/manifests/calico.yaml
+#验证calico功能
+kubectl run busybox --image docker.io/library/busybox:1.28  --image-pull-policy=IfNotPresent --restart=Never --rm -it busybox -- sh
+#ping外网
+ping www.baidu.com
+#nslookup svc
+nslookup kubernetes.default.svc.cluster.local
 ```
 
 ## 扩容控制节点
