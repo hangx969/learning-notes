@@ -8,9 +8,8 @@ psping <source machine_ip>: 443 和 9443
 
 ## telnet
 
-```
+```bash
 虚拟机连不上，可以用telnet来看一下端口可达性
- 
 telnet 168.63.129.16 80
 ```
 
@@ -18,11 +17,10 @@ telnet 168.63.129.16 80
 
 测试tcp连接 
 
-```
+```bash
 nc -vz mcr.azk8s.cn 443
 -z：Zero-I/O mode, report connection status only
 -v, --verbose Set verbosity level (can be used several times)
- 
 ```
 
 ## dig
