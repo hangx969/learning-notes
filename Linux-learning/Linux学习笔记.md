@@ -187,6 +187,12 @@ Linux的文本编辑器
 
 ## 017 关机 重启 用户
 
+### linux启动过程
+
+![090eb76673404b3ff67ee7ed697224f](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202312042155530.jpg)
+
+![dc019cdb971d2f32c75f931de48252d](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202312042155497.jpg)
+
 ### 关机
 
 - shutdown -h now 立刻关机
@@ -920,6 +926,8 @@ XFS ：large data files
 
 ### 开机检测程序
 
+> **即基本输入输出系统，是服务器启动后最先运行的软件。它包括基本输入输出控制程序、上电自检程序、系统启动自举程序、系统设置信息。**BIOS是服务器硬件和OS之间的抽象层，用来设置硬件，为OS运行做准备。**BIOS设置程序是储存在BIOS芯片中的。BIOS的进化版本是UEFI（Unified Extensible FirmwareInterface），即统一的可扩展固定接口。**这种接口用于操作系统自动从预启动的操作环境，加载到一种操作系统上，从而使开机程序化繁为简，节省时间。
+
 #### BIOS
 
 写入到主板上的程序，是开机的时候计算机运行的第一个程序。
@@ -1550,6 +1558,21 @@ setenforce 1 # temporarily enable enforcing
 
   让某些服务，在某个运行级别下自启动或者不启动，重启机器生效
 
+### systemV和systemd
+
+- `SystemV`和`systemd`都是Linux系统中的初始化系统（init system），负责在系统启动时启动和管理系统服务。
+
+- `SystemV`是一个传统的初始化系统，它使用脚本来启动和停止服务。这些脚本通常位于`/etc/init.d/`目录下，服务的启动顺序由这些脚本的名字决定。
+
+- `systemd`是一个新的初始化系统，它使用单元（units）来管理服务。这些单元的配置文件通常位于`/etc/systemd/system/`目录下，服务的启动顺序由这些配置文件中的依赖关系决定。
+
+他们的主要区别如下：
+
+- 启动速度：`systemd`使用并行处理来加快启动速度，而`SystemV`则是按顺序启动服务。
+- 配置方式：`systemd`使用单元配置文件，而`SystemV`使用脚本。
+- 日志管理：`systemd`内置了日志管理系统`journald`，而`SystemV`没有内置的日志管理系统。
+- 依赖管理：`systemd`可以自动处理服务之间的依赖关系，而`SystemV`需要手动管理。
+
 ### 服务管理
 
 - systemctl   管理指令
@@ -1641,7 +1664,16 @@ setenforce 1 # temporarily enable enforcing
 
   zombie 僵尸进程，进程已经死掉，但是仍然占用着内存
 
-  %CPU 的各项指标含义 ： **待查**
+  %CPU 的各项指标含义 ：
+
+  - `us`：用户空间占用CPU的百分比。
+  - `sy`：内核空间占用CPU的百分比。
+  - `ni`：用户空间内改变过优先级的进程占用CPU的百分比。
+  - `id`：空闲CPU百分比。
+  - `wa`：等待I/O的CPU时间百分比。
+  - `hi`：处理硬中断的CPU时间百分比。
+  - `si`：处理软中断的CPU时间百分比。
+  - `st`：在虚拟环境中等待实际CPU的百分比。
 
 - top 交互操作
 
