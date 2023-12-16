@@ -86,7 +86,7 @@ ctr -n=k8s.io images import kube-webhook-certgen-v1.1.0.tar.gz
 
   https://github.com/kubernetes/ingress-nginx/tree/main/deploy/static/provider/baremetal
 
-- 但是做成高可用的nginx-ingress-controller，添加了反亲和性，对原始的yaml做了调整，yaml如下：
+- 但是这里为了做成高可用的nginx-ingress-controller，添加了反亲和性，对原始的yaml做了调整，yaml如下：
 
 ~~~yaml
 apiVersion: v1
@@ -794,7 +794,7 @@ yum install  epel-release  nginx keepalived nginx-mod-stream  -y
 ~~~
 
 ~~~bash
-#修改nginx配置文件
+#修改nginx配置文件，nginx监听30080端口
 vim /etc/nginx/nginx.conf
 chmod o+w nginx.conf #vscode加上w权限才能编辑器里面保存
 
@@ -854,7 +854,7 @@ http {
 ~~~
 
 ~~~bash
-#主keepalived
+#主keepalived，暴露VIP 192.168.40.8
 vim /etc/keepalived/keepalived.conf
 
 global_defs { 
@@ -992,10 +992,10 @@ spec:
   ports:
   - name: http
     targetPort: 8080
-    port: 8080
+    port: 8080 #svc暴露这个8080是给外部通信用的
   - name: ajp
     targetPort: 8009
-    port: 8009
+    port: 8009 #8009是给内部通信用的
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -1028,5 +1028,56 @@ spec:
 ### 部署ingress
 
 ~~~yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-tomcat
+  namespace: default
+  #1.23的k8s，需要在annotations: kubernetes.io/ingress,class: "nginx"指定是关联到哪个ingress controller上面去
+  #1.25以上的k8s，在spec中，ingressClassName中指定
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: tomcat.hangx.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: svc-tomcat
+            port:
+              number: 8080
+        path: / #指定路由，这里是根路由
+        pathType: Prefix
+~~~
+
+### 验证ingress controller配置
+
+~~~bash
+k exec -it ingress-nginx-controller-64bdc78c96-mkf2s -n ingress-nginx  -- /bin/sh
+cat nginx.conf
+#可以看到ingress里面定义的规则，已经定义到ingress controller的nginx规则里面了
+server {
+                server_name tomcat.hangx.com ;
+
+                listen 80  ;
+                listen [::]:80  ;
+                listen 443  ssl http2 ;
+                listen [::]:443  ssl http2 ;
+
+                set $proxy_upstream_name "-";
+
+                ssl_certificate_by_lua_block {
+                        certificate.call()
+                }
+
+                location / {
+
+                        set $namespace      "default";
+                        set $ingress_name   "ingress-tomcat";
+                        set $service_name   "svc-tomcat";
+                        set $service_port   "8080";
+                        set $location_path  "/";
+                        set $global_rate_limit_exceeding n;
+                      
 ~~~
 
