@@ -809,7 +809,6 @@ events {
     worker_connections 1024;
 }
 
-# 四层负载均衡，为两台Master apiserver组件提供负载均衡
 stream {
 
     log_format  main  '$remote_addr $upstream_addr - [$time_local] $status $upstream_bytes_sent';
@@ -937,7 +936,7 @@ vrrp_instance VI_1 {
 #virtual_ipaddress：虚拟IP（VIP）
 ~~~
 
-- 访问keepalived VIP + 30080端口 ==> 请求代理给了网卡eth0的30080端口 ==> nginx在监听 ==> 继续代理给upstream定义的两个node的80端口 ==> 两个ingress controller pod
+- 访问keepalived VIP + 30080端口 ==> 请求代理给了网卡eth0的30080端口 ==> nginx在监听 ==> 继续代理给upstream定义的两个node的80端口 ==> 两个ingress controller的nginx会监听node的80端口 ==> nginx转发给upstream的svc的8080端口 ==> svc转发给后端pod
 
 ### nginx存活脚本
 
@@ -1081,3 +1080,111 @@ server {
                       
 ~~~
 
+### 访问入口
+
+- Ingress Controller的暴露方式：
+  - NodePort
+  - HostNetwork
+  - LoadBalancer
+  - external name
+- 如果用的是NodePort暴露的Service，就用宿主机的IP作为入口（ingress controller在node-01上，IP是192.168.40.5）
+  - Node IP：ingress controller的NodePort高位端口 ==> ingress controller nginx ==> 代理给svc ==> 代理给后端pod
+
+~~~bash
+k get svc -n ingress-nginx
+ingress-nginx   ingress-nginx-controller             NodePort    10.105.87.199   <none>        80:31414/TCP,443:31126/TCP   7d19h
+~~~
+
+- 示例这里用的Keepalived暴露的VIP作为入口:
+  - 访问keepalived VIP + 30080端口 ==> 请求代理给了主node上网卡eth0的30080端口 ==> node上自己装的nginx在监听30080 ==> 继续代理给upstream定义的两个node IP:80端口 ==> 两个ingress controller的nginx会监听node的80端口 ==> nginx转发给upstream的svc的8080端口 ==> svc转发给后端pod
+
+# Lab - 部署ingress HTTPS代理pod
+
+### 构建TLS站点
+
+~~~bash
+cd /root/
+openssl genrsa -out tls.key 2048 #tls.key是私钥
+openssl req -new -x509 -key tls.key -out tls.crt -subj /C=CN/ST=SH/L=SH/O=CKA/CN=hangx.tomcat.com #用私钥签发证书
+~~~
+
+### 生成secret
+
+~~~bash
+kubectl create secret tls secret-tomcat-ingress --cert=tls.crt --key=tls.key
+~~~
+
+### 创建基于https的ingress
+
+~~~yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-tomcat-tls
+  namespace: default
+spec:
+  ingressClassName: nginx
+  tls:
+  - hosts:
+    -  hangx.tomcat.com
+    secretName: secret-tomcat-ingress
+  rules:
+  - host: hangx.tomcat.com
+    http:
+      paths:
+      - path: /
+        pathType:  Prefix
+        backend:
+         service:
+           name: tomcat
+           port:
+            number: 8080
+~~~
+
+- 后续访问中，如果是采用上述keepalived的方案，就在hosts文件中将VIP对应ingress的hosts。如果没采用keepalived方案，就用ingress controller所在的node IP作为入口。
+
+# 集群中搭建多套ingress-controller
+
+- ingress可以简单理解为service的service，他通过独立的ingress对象来制定请求转发的规则，把请求路由到一个或多个service中。这样就把服务与请求规则解耦了，可以从业务维度统一考虑业务的暴露，而不用为每个service单独考虑。
+
+- 为了满足多租户场景，需要在k8s集群部署多个ingress-controller，给不同用户不同环境使用。
+
+  主要参数设置：
+
+  ~~~yaml
+  containers:
+    - name: nginx-ingress-controller
+      image: registry.cn-hangzhou.aliyuncs.com/google_containers/nginx-ingress-controller:v1.1.0
+      args:
+      - /nginx-ingress-controller
+      - --ingress-class=ngx-ds
+  #注意：--ingress-class设置该Ingress Controller可监听的目标Ingress Class标识；
+  #注意：同一个集群中不同套Ingress Controller监听的Ingress Class标识必须唯一，且不能设置为nginx关键字（其是集群默认Ingress Controller的监听标识）
+  ~~~
+
+- 创建ingress规则的时候，指定ingress class
+
+  ~~~yaml
+  apiVersion: networking.k8s.io/v1
+  kind: Ingress
+  metadata:
+    name: ingress-myapp
+    namespace: default
+  spec:
+    ingressClassName: ngx-ds
+    rules:
+    - host: tomcat.lucky.com
+      http:
+        paths:
+        - path: /
+          pathType:  Prefix
+          backend:
+           service:
+             name: tomcat
+             port:
+              number: 8080
+  ~~~
+
+  # Ingress灰度发布
+
+  
