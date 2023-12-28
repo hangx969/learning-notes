@@ -1185,6 +1185,345 @@ spec:
               number: 8080
   ~~~
 
-  # Ingress灰度发布
+
+# Ingress灰度发布
+
+## 场景1-基于header/cookie
+
+- 假设线上运行了一套对外提供 7 层服务的 Service A 服务，后来开发了个新版本 Service A’ 想要上线，但又不想直接替换掉原来的 Service A，希望先灰度一小部分用户，等运行一段时间足够稳定了再逐渐全量上线新版本，最后平滑下线旧版本。
+
+- 这个时候就可以利用 Nginx Ingress 基于 Header 或 Cookie 进行流量切分的策略来发布，业务使用 Header 或 Cookie 来标识不同类型的用户，我们通过配置 Ingress 来实现让带有指定 Header 或 Cookie 的请求被转发到新版本，其它的仍然转发到旧版本，从而实现将新版本灰度给部分用户。
+
+  <img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202312281017402.png" alt="image-20231228101712175" style="zoom:50%;" />
+
+## 场景2-按比例切分流量
+
+- 假设线上运行了一套对外提供 7 层服务的 Service B 服务，后来修复了一些问题，需要灰度上线一个新版本 Service B’，但又不想直接替换掉原来的 Service B，而是让先切 10% 的流量到新版本，等观察一段时间稳定后再逐渐加大新版本的流量比例直至完全替换旧版本，最后再平滑下线旧版本，从而实现切一定比例的流量给新版本。
+
+  <img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202312281018356.png" alt="image-20231228101848227" style="zoom:50%;" />
+
+## 实现方法
+
+- 部署ingress来切分流量，在ingress的metadata.annotations字段中，定义下列annotation，实现流量控制。假设有老版本和Canry
+
+  - nginx.ingress.kubernetes.io/canary-by-header：
+    - 基于Request Header的流量切分，适用于灰度发布以及 A/B 测试。当Request Header 设置为 always时，请求将会被一直发送到 Canary 版本；当 Request Header 设置为 never时，请求不会被发送到 Canary 入口。
+
+  - nginx.ingress.kubernetes.io/canary-by-header-value：
+    - 要匹配的 Request Header 的值，用于通知 Ingress 将请求路由到 Canary Ingress 中指定的服务。当 Request Header 设置为此值时，它将被路由到 Canary 入口。
+
+  - nginx.ingress.kubernetes.io/canary-weight：
+    - 基于服务权重的流量切分，适用于蓝绿部署，权重范围 0 - 100 按百分比将请求路由到 Canary Ingress 中指定的服务。权重为 0 意味着该金丝雀规则不会向 Canary 入口的服务发送任何请求。权重为60意味着60%流量转到canary。权重为 100 意味着所有请求都将被发送到 Canary 入口。
+
+  - nginx.ingress.kubernetes.io/canary-by-cookie：
+    - 基于 Cookie 的流量切分，适用于灰度发布与 A/B 测试。用于通知 Ingress 将请求路由到 Canary Ingress 中指定的服务的cookie。当 cookie 值设置为 always时，它将被路由到 Canary 入口；当 cookie 值设置为 never时，请求不会被发送到 Canary 入口。
+
+- 注：以上的annotations是ingress nginx所官方支持的
+
+  [Annotations - Ingress-Nginx Controller (kubernetes.github.io)](https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/)
+
+> A/B测试：是一种数据驱动的决策制定方式。在A/B测试中，会将用户分为两组，一组使用A版本，一组使用B版本，然后收集用户的反馈，通过数据分析来决定哪个版本更好。A/B测试可以帮助开发者理解哪些改变可以提高用户体验或者达到其他的业务目标。
+>
+> - 和金丝雀发布（灰度发布）的区别就是灰度发布是从小比例用户使用逐步平滑增加到大比例用户使用新版本。
+
+## Lab
+
+### 搭建v1和v2版本的两个服务
+
+~~~yaml
+#v1
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dep-nginx-v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: nginx
+        version: v1
+    spec:
+      containers:
+      - name: nginx
+        image: "openresty/openresty:centos"
+        imagePullPolicy: IfNotPresent
+        ports:
+        - name: http
+          protocol: TCP
+          containerPort: 80
+        volumeMounts:
+        - mountPath: /usr/local/openresty/nginx/conf/nginx.conf
+          name: config
+          subPath: nginx.conf
+      volumes:
+      - name: config
+        configMap:
+          name: cm-nginx-v1
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  labels:
+    app: nginx
+    version: v1
+  name: cm-nginx-v1
+data:
+  nginx.conf: |-
+    worker_processes  1;
+    events {
+        accept_mutex on;
+        multi_accept on;
+        use epoll;
+        worker_connections  1024;
+    }
+    http {
+        ignore_invalid_headers off;
+        server {
+            listen 80;
+            location / {
+                access_by_lua '
+                    local header_str = ngx.say("nginx-v1") #指定到根目录的请求返回nginx-v1
+                ';
+            }
+        }
+    }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: svc-nginx-v1
+spec:
+  selector:
+    app: nginx
+    version: v1
+  type: ClusterIP
+  ports:
+  - port: 80
+    protocol: TCP
+    name: http
+~~~
+
+~~~yaml
+#v2
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dep-nginx-v2
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+      version: v2
+  template:
+    metadata:
+      labels:
+        app: nginx
+        version: v2
+    spec:
+      containers:
+      - name: nginx
+        image: "openresty/openresty:centos"
+        imagePullPolicy: IfNotPresent
+        ports:
+        - name: http
+          protocol: TCP
+          containerPort: 80
+        volumeMounts:
+        - mountPath: /usr/local/openresty/nginx/conf/nginx.conf #mountPath可以是一个文件
+          name: config
+          subPath: nginx.conf #用于指定挂载卷中的子路径。可以将卷中的特定目录或文件，而不是整个卷挂载到 Pod 中的容器。
+      volumes:
+      - name: config
+        configMap:
+          name: cm-nginx-v2
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  labels:
+    app: nginx
+    version: v2
+  name: cm-nginx-v2
+data:
+  nginx.conf: |-
+    worker_processes  1;
+    events {
+        accept_mutex on;
+        multi_accept on;
+        use epoll;
+        worker_connections  1024;
+    }
+    http {
+        ignore_invalid_headers off;
+        server {
+            listen 80;
+            location / {
+                access_by_lua '
+                    local header_str = ngx.say("nginx-v2") #指定根目录的url返回nginx-2
+                ';
+            }
+        }
+    }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: svc-nginx-v2
+spec:
+  type: ClusterIP
+  ports:
+  - port: 80
+    protocol: TCP
+    name: http
+  selector:
+    app: nginx
+    version: v2
+~~~
+
+### 创建ingress
+
+~~~yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ing-nginx
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: canary.example.com
+    http:
+      paths:
+      - path: /  #配置访问路径，如果通过url进行转发，需要修改；空默认为访问的路径为"/"
+        pathType:  Prefix
+        backend:  #配置后端服务
+         service:
+           name: svc-nginx-v1
+           port:
+            number: 80
+~~~
+
+~~~bash
+#验证ingress访问后端svc-pod
+curl -H "Host: canary.example.com" http://192.168.40.6 #ingress暴露的ip
+~~~
+
+### 基于header的流量切分
+
+- 创建 Canary Ingress，指定 v2 版本的后端服务，且加上一些 annotation，实现仅将带有名为 Region 且值为 cd 或 sz 的请求头的请求转发给当前 Canary Ingress，模拟灰度新版本给成都和深圳地域的用户。
+
+- 需要定义新的ingress配置，指定annotation字段。
+
+  ~~~yaml
+  apiVersion: networking.k8s.io/v1
+  kind: Ingress
+  metadata:
+    name: ing-nginx-canary
+    annotations:
+      nginx.ingress.kubernetes.io/canary: "true"
+      nginx.ingress.kubernetes.io/canary-by-header: "Region"
+      nginx.ingress.kubernetes.io/canary-by-header-pattern: "cd|sz"
+  spec:
+    ingressClassName: nginx
+    rules:
+    - host: canary.example.com
+      http:
+        paths:
+        - path: /  #配置访问路径，如果通过url进行转发，需要修改；空默认为访问的路径为"/"
+          pathType:  Prefix
+          backend:  #配置后端服务
+           service:
+             name: svc-nginx-v2
+             port:
+              number: 80
+  ~~~
+
+  ~~~bash
+  #测试模拟带header的请求
+  curl -H "Host: canary.example.com" -H "Region: cd" http://192.168.40.6
+  curl -H "Host: canary.example.com" -H "Region: sz" http://192.168.40.6
+  curl -H "Host: canary.example.com" http://192.168.40.6
+  #可以看到，只有header带了Region并且值为cd | sz代理到v2
+  ~~~
+
+### 基于cookie的流量切分
+
+- 与前面 Header 类似，不过使用 Cookie 就无法自定义 value 了（带了某种cookie就会被路由到canary版本）。
+
+- 这里以模拟灰度成都地域用户为例，仅将带有名为 user_from_cd 的 cookie 的请求转发给当前 Canary Ingress 。
+
+- 需要定义新的ingress配置，指定annotation字段。
+
+  ~~~yaml
+  apiVersion: networking.k8s.io/v1
+  kind: Ingress
+  metadata:
+    annotations:
+      nginx.ingress.kubernetes.io/canary: "true"
+      nginx.ingress.kubernetes.io/canary-by-cookie: "user_from_cd"
+    name: ing-nginx-canary
+  spec:
+    ingressClassName: nginx
+    rules:
+    - host: canary.example.com
+      http:
+        paths:
+        - path: /  #配置访问路径，如果通过url进行转发，需要修改；空默认为访问的路径为"/"
+          pathType:  Prefix
+          backend:  #配置后端服务
+           service:
+             name: svc-nginx-v2
+             port:
+              number: 80
+  ~~~
+
+  ~~~bash
+  #测试带cookie的请求
+  curl -s -H "Host: canary.example.com" --cookie "user_from_cd=always" http://192.168.40.6
+  curl -s -H "Host: canary.example.com" --cookie "user_from_bj=always" http://192.168.40.6
+  ~~~
+
+### 基于服务权重的流量切分
+
+- 直接定义需要导入的流量比例，这里以导入 10% 流量到 v2 版本为例。
+
+- 需要定义新的ingress配置，在annotation中指定。
+
+  ~~~yaml
+  apiVersion: networking.k8s.io/v1
+  kind: Ingress
+  metadata:
+    annotations:
+      nginx.ingress.kubernetes.io/canary: "true"
+      nginx.ingress.kubernetes.io/canary-weight: "10"
+    name: ing-nginx-canary
+  spec:
+    ingressClassName: nginx
+    rules:
+    - host: canary.example.com
+      http:
+        paths:
+        - path: /  #配置访问路径，如果通过url进行转发，需要修改；空默认为访问的路径为"/"
+          pathType:  Prefix
+          backend:  #配置后端服务
+           service:
+             name: svc-nginx-v2
+             port:
+              number: 80
+  ~~~
+
+  ~~~bash
+  #测试比例
+  for i in {1..20}; do curl -H "Host: canary.example.com" http://192.168.40.6; done;
+  ~~~
 
   
+
+
+
+### 
