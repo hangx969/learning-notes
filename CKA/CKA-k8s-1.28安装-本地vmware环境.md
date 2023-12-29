@@ -1,13 +1,37 @@
 # 本地VMWare环境搭建1.28版本K8S
 
-## 配置VMware虚拟机
+## 环境规划
+
+### k8s环境规划
+
+ podSubnet（pod网段） 10.244.0.0/16
+
+ serviceSubnet（service网段）: 10.96.0.0/12
+
+### 实验环境规划
+
+操作系统：centos7.9
+
+配置： 1Gib内存/8vCPU/20G硬盘
+
+网络：NAT模式
+
+| K8S集群角色 | IP             | 主机名   | 安装的组件                                                   |
+| ----------- | -------------- | -------- | ------------------------------------------------------------ |
+| 控制节点    | 192.168.40.180 | master-1 | apiserver、controller-manager、scheduler、kubelet、etcd、kube-proxy、容器运行时、calico |
+| 工作节点    | 192.168.40.181 | node-1   | Kube-proxy、calico、coredns、容器运行时、kubelet             |
+| 工作节点    | 192.168.40.182 | node-2   | Kube-proxy、calico、coredns、容器运行时、kubelet             |
+
+## 虚拟机准备
+
+### 配置VMware虚拟机
 
 - 安装VMware
 - 下载CentOS7镜像
 - 配置VMWare虚拟机，使用NAT模式。
 - 安装CentOS系统
 
-## 配置CentOS虚拟机网络
+### 配置CentOS虚拟机网络
 
 - 新搭建出来的虚拟机默认没有IP，需要先修改配置文件加一个IP
 
@@ -40,18 +64,18 @@
   ONBOOT=yes #开机自启动网络，必须是yes
   ~~~
 
-## 关闭Selinux
+### 关闭Selinux
 
 ~~~bash
 sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config
 reboot -f
 ~~~
 
-## SSH连接
+### SSH连接
 
 - VSCod直接配置ssh host文件用内网IP登录。
 
-### 免密登录
+#### 免密登录
 
 - 客户端ssh-keygen生成公钥
 
@@ -86,7 +110,7 @@ reboot -f
     IdentityFile /C:/Users/hangx/.ssh/id_rsa
   ~~~
 
-## 克隆两台工作节点
+### 克隆两台工作节点
 
 - 虚拟机关机-右键克隆出两台新机器
 
@@ -97,4 +121,330 @@ reboot -f
   #IP修改成192.168.40.181,192.168.40.182
   ~~~
 
+## 配置k8s环境准备
+
+### 替换aliyun的epel源
+
+~~~bash
+yum install -y wget
+wget -O /etc/yum.repos.d/epel-7.repo https://mirrors.aliyun.com/repo/epel-7.repo
+yum clean all
+~~~
+
+### 升级系统到centos7.9
+
+~~~bash
+yum update -y
+~~~
+
+### 配置主机名
+
+~~~bash
+hostnamectl set-hostname master-1 && bash 
+hostnamectl set-hostname node-1 && bash 
+hostnamectl set-hostname node-2 && bash 
+~~~
+
+### 配置hosts文件
+
+~~~bash
+vim /etc/hosts
+
+192.168.40.180   master-1  
+192.168.40.181   node-1  
+192.168.40.182   node-2
+~~~
+
+### 配置主机间无密码登录
+
+~~~bash
+ssh-keygen
+ssh-copy-id master-1
+ssh-copy-id node-1
+ssh-copy-id node-2
+~~~
+
+### 关闭交换分区
+
+~~~bash
+swapoff -a
+vim /etc/fstab
+#/dev/mapper/centos-swap swap      swap    defaults        0 0
+~~~
+
+### 配置阿里云repo源
+
+- 配置基础repo源
+
+  ~~~bash
+  #备份基础repo源
+  mkdir /root/repo.bak
+  cd /etc/yum.repos.d/
+  mv * /root/repo.bak/
+  #课件里面的阿里云的repo源
+  #把CentOS-Base.repo和epel.repo文件上传到master1主机的/etc/yum.repos.d/目录下
+  chmod o+w /etc/yum.repos.d
+  #通过vscode拖进来
+  ~~~
+
+- 配置阿里云docker的repo源
+
+  ```bash
+  yum install yum-utils -y
+  yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo 
+  #会把阿里云的docker源的配置给拉下来。
+  ```
+
+- 配置安装k8s组件的阿里云repo源 
+
+  ```bash
+  cat >  /etc/yum.repos.d/kubernetes.repo <<EOF
+  [kubernetes]
+  name=Kubernetes
+  baseurl=https://mirrors.aliyun.com/kubernetes/yum/repos/kubernetes-el7-x86_64/
+  enabled=1
+  gpgcheck=0
+  EOF
+  ```
+
+### 安装基础软件包
+
+~~~bash
+yum install -y device-mapper-persistent-data lvm2 wget net-tools nfs-utils lrzsz gcc gcc-c++ make cmake libxml2-devel openssl-devel curl curl-devel unzip sudo ntp libaio-devel wget vim ncurses-devel autoconf automake zlib-devel  python-devel epel-release openssh-server socat  ipvsadm conntrack telnet ipvsadm openssh-clients
+~~~
+
+> yum install如果出现报错：GPG key retrieval failed: [Errno 14] curl#37 - "Couldn't open file /etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-7"
+>
+> 意思是，yum源开启了GPG校验，需要在/etc/pki/rpm-gpg目录下存在对应安装文件的公钥文件，才能完成校验。
+>
+> 可以关闭掉校验：
+>
+> ~~~bash
+> sed -i 's/pgcheck=1/pgcheck=0/g' /etc/yum.repos.d/epel.repo
+> ~~~
+
+### 配置时间同步
+
+~~~bash
+#安装ntpdate命令
+yum install ntpdate -y
+#跟网络时间做同步
+ntpdate cn.pool.ntp.org
+#把时间同步做成计划任务
+crontab -e
+* */1 * * * /usr/sbin/ntpdate   cn.pool.ntp.org
+#重启crond服务
+service crond restart
+~~~
+
+### 禁用firewalld
+
+~~~bash
+systemctl stop firewalld && systemctl disable firewalld
+~~~
+
+### 修改内核参数-开路由转发
+
+~~~bash
+modprobe br_netfilter 
+echo "modprobe br_netfilter" >> /etc/profile
+cat > /etc/sysctl.d/k8s.conf <<EOF
+net.bridge.bridge-nf-call-ip6tables = 1
+net.bridge.bridge-nf-call-iptables = 1
+net.ipv4.ip_forward = 1 
+EOF
+sysctl -p /etc/sysctl.d/k8s.conf 
+~~~
+
+## 安装K8S组件
+
+### 安装配置containerd
+
+~~~bash
+yum install containerd.io-1.6.6 -y #1.27也是用这个版本
+#生成 containerd 的配置文件:
+mkdir -p /etc/containerd
+containerd config default > /etc/containerd/config.toml
+
+#修改配置文件，1.26和1.27配置一样
+#SystemdCgroup = true表示containerd驱动用systemd，在 Kubernetes 中，容器运行时需要与宿主机的 cgroup 和 namespace 进行交互，以管理容器的资源。
+#对于 cgroup 的驱动程序，Docker 和 Containerd 默认都使用的是 cgroupfs。#systemd-cgroup 则是 Systemd 对 cgroup 的一个实现。
+#相比 cgroupfs，systemd-cgroup 在资源隔离方面提供了更好的性能和更多的特性。例如，systemd-cgroup 可以使用更多的内存压缩算法，以便更有效地使用内存。此外，systemd-cgroup 还提供了更好的 cgroup 监控和控制机制，可以更精确地调整容器的资源使用量。总之，使用 systemd-cgroup 作为容器运行时的 cgroup 驱动程序，可以提高 Kubernetes 集群中容器的资源管理效率，从而提升整个集群的性能。
+
+#将sandbox_image设置为阿里云镜像仓库中的pause:3.7，在 Kubernetes 中，每个 Pod 中都有一个 pause 容器，这个容器不会运行任何应用，只是简单地 sleep。它的作用是为了保证 Pod 中所有的容器共享同一个网络命名空间和 IPC 命名空间。pause 容器会在 Pod 的初始化过程中首先启动，然后为 Pod 中的其他容器创建对应的网络和 IPC 命名空间，并且在其他容器启动之前保持运行状态，以保证其他容器可以加入到共享的命名空间中。
+#简单来说，pause 容器就是一个占位符，它为 Pod 中的其他容器提供了一个共享的环境，使它们可以共享同一个网络和 IPC 命名空间。这也是 Kubernetes 实现容器间通信和网络隔离的重要机制之一。
+sed -i 's/SystemdCgroup = false/SystemdCgroup = true/g' /etc/containerd/config.toml
+vim /etc/containerd/config.toml
+sandbox_image = "k8s.gcr.io/pause:3.6" ==> sandbox_image = "registry.aliyuncs.com/google_containers/pause:3.7"
+
+#配置 containerd 开机启动，并启动 containerd
+systemctl enable containerd --now
+
+#修改/etc/crictl.yaml文件，指定k8s的运行时和拉取镜像都使用containerd
+#这个文件是 crictl 工具的配置文件，用于指定与 containerd 交互的相关设置：
+#指定unix:///run/containerd/containerd.sock 是为了告诉 crictl 使用 Unix 域套接字的方式来连接 containerd 的 API。containerd 提供了一个 socket 文件 /run/containerd/containerd.sock，crictl 通过连接该 socket 文件，可以与 containerd 进行通信，管理容器和镜像等操作。
+#runtime-endpoint：指定 containerd 的运行时接口地址：crictl 可以与 containerd 通信来管理容器生命周期和资源隔离。
+#image-endpoint：指定 containerd 的镜像接口地址：以便 crictl 可以与 containerd 通信来管理镜像的拉取和推送。
+#timeout：指定 crictl 等待 containerd 响应的最大时间，避免出现无响应的情况。
+#debug：开启或关闭 crictl 的调试模式，方便排查问题。
+
+cat > /etc/crictl.yaml <<EOF
+runtime-endpoint: unix:///run/containerd/containerd.sock
+image-endpoint: unix:///run/containerd/containerd.sock
+timeout: 10
+debug: false
+EOF
+systemctl restart containerd
+
+#配置containerd镜像加速器，k8s所有节点均按照以下配置：
+mkdir /etc/containerd/certs.d/docker.io/ -p
+vim /etc/containerd/certs.d/docker.io/hosts.toml
+#写入如下内容：
+[host."https://y8y6vosv.mirror.aliyuncs.com",host."https://registry.docker-cn.com"]
+  capabilities = ["pull"]
   
+vim /etc/containerd/config.toml
+config_path = "" ==> config_path = "/etc/containerd/certs.d"
+#保存退出
+systemctl restart containerd
+~~~
+
+### 安装配置docker
+
+~~~bash
+#docker也要安装，docker跟containerd不冲突，安装docker是为了能基于dockerfile构建镜像
+yum install docker-ce -y
+systemctl enable docker --now
+
+#配置docker镜像加速器，k8s所有节点均按照以下配置
+vim /etc/docker/daemon.json
+{
+ "registry-mirrors":["https://y8y6vosv.mirror.aliyuncs.com","https://registry.docker-cn.com","https://docker.mirrors.ustc.edu.cn","https://dockerhub.azk8s.cn","http://hub-mirror.c.163.com"]
+} 
+#重启docker：
+systemctl daemon-reload && systemctl restart docker && systemctl status docker
+~~~
+
+### 安装k8s软件包
+
+~~~bash
+yum install -y kubelet-1.28.1 kubeadm-1.28.1 kubectl-1.28.1
+systemctl enable kubelet
+~~~
+
+## 初始化集群
+
+- 设置容器运行时
+
+  ```bash
+  crictl config runtime-endpoint unix:///run/containerd/containerd.sock
+  #这个在先前/etc/crictl.yaml中已经配置过了
+  ```
+
+- 使用kubeadm初始化k8s集群
+
+  ```bash
+  #在控制节点上
+  cd /root/
+  kubeadm config print init-defaults > kubeadm.yaml
+  #根据我们自己的需求修改配置，比如修改 imageRepository 的值，kube-proxy 的模式为 ipvs，需要注意的是由于我们使用的containerd作为运行时，所以在初始化节点的时候需要指定cgroupDriver为systemd
+  ```
+
+- kubeadm.yaml配置文件如下：
+
+  ~~~yaml
+  apiVersion: kubeadm.k8s.io/v1beta3
+  kind: InitConfiguration
+  localAPIEndpoint:
+    advertiseAddress: 192.168.40.180 #控制节点的ip
+    bindPort: 6443
+  nodeRegistration:
+    criSocket: unix:///run/containerd/containerd.sock ##指定containerd容器运行时
+    imagePullPolicy: IfNotPresent
+    name: master-1 #控制节点主机名
+    taints: null
+  ---
+  apiServer:
+    timeoutForControlPlane: 4m0s
+  apiVersion: kubeadm.k8s.io/v1beta3
+  certificatesDir: /etc/kubernetes/pki
+  clusterName: kubernetes
+  controllerManager: {}
+  dns: {}
+  etcd:
+    local:
+      dataDir: /var/lib/etcd
+  imageRepository: registry.cn-hangzhou.aliyuncs.com/google_containers #registry.k8s.io #这是kubeadm安装控制节点组件时用的镜像源
+  kind: ClusterConfiguration
+  kubernetesVersion: 1.28.1 #这里的版本要和kubeadm\kubectl\kubelet的版本一致
+  networking:
+    dnsDomain: cluster.local
+    podSubnet: 10.244.0.0/16 #指定pod网段
+    serviceSubnet: 10.96.0.0/12
+  scheduler: {}
+  
+  ---
+  apiVersion: kubeproxy.config.k8s.io/v1alpha1
+  kind: KubeProxyConfiguration
+  mode: ipvs
+  
+  ---
+  apiVersion: kubelet.config.k8s.io/v1beta1
+  kind: KubeletConfiguration
+  cgroupDriver: systemd
+  ~~~
+
+- 初始化集群
+
+  ~~~bash
+  kubeadm init --config=kubeadm.yaml --ignore-preflight-errors=SystemVerification
+  #配置kubectl的配置文件config，相当于对kubectl进行授权，这样kubectl命令可以使用这个证书对k8s集群进行管理
+  mkdir -p $HOME/.kube
+  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+  sudo chown $(id -u):$(id -g) $HOME/.kube/config
+  
+  #1. 设置kubectl的alias为k：
+  whereis kubectl # kubectl: /usr/bin/kubectl
+  echo "alias k=/usr/bin/kubectl">>/etc/profile
+  source /etc/profile
+  #2. 设置alias的自动补全：
+  source <(kubectl completion bash | sed 's/kubectl/k/g')
+  #3. 解决每次启动k都会失效，要重新刷新环境变量（source /etc/profile）的问题：在~/.bashrc文件中添加以下代码：source /etc/profile
+  echo "source /etc/profile" >> ~/.bashrc
+  ~~~
+
+- 扩容工作节点
+
+  ~~~bash
+  kubeadm token create --print-join-command
+  #在node-01上加参数 --ignore-preflight-errors=SystemVerification
+  #工作节点打标签
+  kubectl label nodes node-1 node-role.kubernetes.io/work=worker
+  
+  mkdir -p $HOME/.kube
+  #master-01的kubectl的config文件拷到node1上
+  scp $HOME/.kube/config node-1:/root/.kube/
+  ~~~
+
+## 安装calico
+
+~~~bash
+#上传了Caclio.yaml
+kubectl apply -f calico.yaml
+#在线下载地址为：https://docs.projectcalico.org/manifests/calico.yaml
+
+#修改calico配置
+#- name: CLUSTER_TYPE
+#  value: "k8s,bgp"
+# 上面这一段的下面添加：（指定calico从ens33跨节点通信，不指定的话，会走lo的IP，没办法跨节点通信，也就没办法给pod划分IP）
+- name: IP_AUTODETECTION_METHOD
+  value: "interface=ens33"
+
+#验证calico功能
+kubectl run busybox --image docker.io/library/busybox:1.28  --image-pull-policy=IfNotPresent --restart=Never --rm -it busybox -- sh
+#ping外网
+ping www.baidu.com
+#nslookup svc
+nslookup kubernetes.default.svc.cluster.local
+~~~
+

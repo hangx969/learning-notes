@@ -134,7 +134,7 @@
   #下载阿里云的repo源
   ###注意：用GLobalAzure的VM就不需要这面手动修改源了，用自带的源即可###
   #把CentOS-Base.repo和epel.repo文件上传到master1主机的/etc/yum.repos.d/目录下
-  chmod 777 /etc/yum.repos.d/
+  chmod o+w /etc/yum.repos.d
   #通过vscode拖进来
   ```
   
