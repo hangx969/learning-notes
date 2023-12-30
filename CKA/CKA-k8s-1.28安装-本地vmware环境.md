@@ -411,7 +411,19 @@ systemctl enable kubelet
   source <(kubectl completion bash | sed 's/kubectl/k/g')
   #3. 解决每次启动k都会失效，要重新刷新环境变量（source /etc/profile）的问题：在~/.bashrc文件中添加以下代码：source /etc/profile
   echo "source /etc/profile" >> ~/.bashrc
+  #安装了zsh的环境，把上面放到~/.zshrc中
+  echo "source /etc/profile" >> ~/.zshrc 
   ~~~
+
+  > `~/.bashrc` 是一个在 Linux 系统中的 shell 脚本，当用户打开新的 bash shell 时，它会被自动执行。这个文件通常用于定义环境变量，别名，函数等，以便在打开新的 bash shell 时自动设置这些值。
+  >
+  > 例如，如果你想要为所有的 bash shell 设置一个环境变量 `JAVA_HOME`，你可以在 `~/.bashrc` 文件中添加以下行：
+  >
+  > ~~~sh
+  > export JAVA_HOME=/path/to/java
+  > ~~~
+  >
+  > 注意，`~/.bashrc` 文件是针对单个用户的。如果你想要为系统中的所有用户设置环境变量或别名，你应该编辑 `/etc/bash.bashrc` 或 `/etc/profile` 文件。
 
 - 扩容工作节点
 
