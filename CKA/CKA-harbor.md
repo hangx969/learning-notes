@@ -33,7 +33,7 @@
 
 2. 安装docker（harbor是基于）
 
-   #安装前面装docker的步骤
+   安装前面装docker的步骤
 
 3. 安装harbor
 
@@ -91,6 +91,7 @@
    cd /data/install/harbor
    docker-compose stop 
    #如何启动harbor：
+   sudo su
    cd /data/install/harbor
    docker-compose start
    ```
@@ -468,5 +469,53 @@ spec:
     - name: nginx-port
       containerPort: 80
       protocol: TCP
+~~~
+
+# k8s基于docker从harbor拉取镜像
+
+## 改docker配置文件
+
+~~~sh
+#修改docker配置文件，需要在k8s每个节点都修改docker配置文件。
+cat > /etc/docker/daemon.json <<EOF
+{
+ "registry-mirrors":["https://y8y6vosv.mirror.aliyuncs.com","https://registry.docker-cn.com","https://docker.mirrors.ustc.edu.cn","https://dockerhub.azk8s.cn","http://hub-mirror.c.163.com"],
+  "exec-opts": ["native.cgroupdriver=systemd"],
+  "insecure-registries":["10.0.0.5","harbor"], 
+}
+EOF
+~~~
+
+## 配置hosts
+
+~~~sh
+#每台机器的/etc/hosts文件加上harbor地址
+vim /etc/hosts
+#10.0.0.5 harbor
+~~~
+
+## 创建secret
+
+~~~sh
+kubectl create secret docker-registry registry-pull-secret --docker-server=10.0.0.5 --docker-username=admin --docker-password=Harbor12345
+#kubectl create secret --help可以看到，这个命令自带docker-registry参数
+#kubectl create secret docker-registry --help，可以看到这个命令自带配置docker地址和用户名密码的参数
+~~~
+
+## pod挂载secret拉取镜像
+
+~~~yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+  namespace: default
+spec:
+  imagePullSecrets:
+  - name: registry-pull-secret
+  containers:
+  - name: nginx
+    image: 10.0.0.5/library/nginx:latest
+    imagePullPolicy: Always
 ~~~
 
