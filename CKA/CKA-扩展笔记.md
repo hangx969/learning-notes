@@ -111,3 +111,52 @@ ctr -n=k8s.io images export k8s1.28.0.tar.gz
 ctr -n=k8s.io images import k8s1.28.0.tar.gz
 ```
 
+# ctr和crictl区别
+
+- 背景：在部署k8s的过程中，经常要对镜像进行操作（拉取、删除、查看等）
+
+- 问题：使用过程中会发现ctr和crictl有很多相同功能，也有些不同，那区别到底在哪里？
+
+- 说明：
+
+1. ctr是containerd自带的CLI命令行工具，crictl是k8s中CRI（容器运行时接口）的客户端，k8s使用该客户端和containerd进行交互；
+
+```bash
+cat /etc/crictl.yaml 
+runtime-endpoint: unix:///run/containerd/containerd.sock
+image-endpoint: unix:///run/containerd/containerd.sock
+timeout: 10
+debug: false
+pull-image-on-create: false
+disable-pull-on-run: false
+```
+
+2.ctr和crictl命令具体区别如下，也可以--help查看。
+
+- crictl缺少对具体镜像的管理能力，可能是k8s层面镜像管理可以由用户自行控制，能配置pod里面容器的统一镜像仓库，镜像的管理可以有habor等插件进行处理。
+
+![image-20231023220844831](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202401021029023.png)                             
+
+（注：docker save -o打包的镜像，用ctr -n=k8s.io images import可以解压出来）
+
+# k8s舍弃dockershim
+
+- 调用链上看 - 用containerd更高效
+  - 用dockerd作为容器运行时：kubelet --> dockershim --> dockerd --> containerd
+  - 用containerd作为容器运行时：kubelet --> CRI pulgin(containerd进程内) --> containerd
+
+- 资源利用率上看 - 用containerd更精简
+  - （Docker不是一个纯粹的容器运行时，具有大量其他功能）。
+
+# containerd和docker作为容器运行时的区别
+
+- 拉取镜像时：
+
+  ~~~sh
+  #containerd需要写明完整镜像路径
+  ctr -n=k8s.io images pull docker.io/library/centos:latest
+  #docker拉镜像可以简写
+  docker pull centos
+  ~~~
+
+  
