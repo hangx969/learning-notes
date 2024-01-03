@@ -63,9 +63,119 @@
 
     `api_http_requests_total{method="POST", handler="/messages"}`
 
+## 数据类型
+
+### Counter
+
+- Counter是计数器类型：
+  - Counter 用于累计值，例如记录请求次数、任务完成数、错误发生次数。
+  - 一直增加，不会减少。
+  - 重启进程后，会被重置。
+
+- 例如：
+  - http_response_total{method="GET",endpoint="/api/tracks"} 100
+  - http_response_total{method="GET",endpoint="/api/tracks"} 160
+
+- Counter可以方便的了解事件产生的速率的变化，在PromQL内置的相关操作函数可以提供相应的分析，比如以HTTP应用请求量来进行说明：
+
+  - 通过rate()函数获取HTTP请求量的增长率
+
+    `rate(http_requests_total[5m])`
+
+  - 查询当前系统中，访问量前10的HTTP地址
+
+    `topk(10, http_requests_total)`
+
+### Gauge
+
+- Gauge是测量器类型：
+  - Gauge是常规数值，例如温度变化、内存使用变化。
+  - 可变大，可变小。
+  - 重启进程后，会被重置
+
+- 例如：
+  - memory_usage_bytes{host="master-01"}  100
+  - memory_usage_bytes{host="master-01"}  30
+  - memory_usage_bytes{host="master-01"}  50
+
+- 对于 Gauge 类型的监控指标，通过 PromQL 内置函数`delta()`可以获取样本在一段时间内的变化情况，例如，计算 CPU 温度在两小时内的差异：
+
+  `dalta(cpu_temp_celsius{host="zeus"}[2h])`
+
+- 还可以通过PromQL内置函数`predict_linear()`基于简单线性回归的方式，对样本数据的变化趋势做出预测。例如，基于 2 小时的样本数据，来预测主机可用磁盘空间在 4 个小时之后的剩余情况：`predict_linear(node_filesystem_free{job="node"}[2h], 4 \* 3600) < 0`
+
+### histogram
+
+- histogram是柱状图，在Prometheus系统的查询语言中，有三种作用：
+  - 在一段时间范围内对数据进行采样（通常是请求持续时间或响应大小等），并将其计入可配置的存储桶（bucket）中. 后续可通过指定区间筛选样本，也可以统计样本总数，最后一般将数据展示为直方图。
+  - 对每个采样点值累计和(sum)
+  - 对采样点的次数累计和(count)
+
+- 度量指标名称: `basename_`上面三类的作用度量指标名称
+  - `basename_bucket{le="上边界"}`, 这个值为小于等于上边界的所有采样点数量
+  - `basename_sum`
+  - `basename_count`
+
+- 为什需要用histogram柱状图？
+
+  - 在大多数情况下人们都倾向于使用某些量化指标的平均值，例如 CPU 的平均使用率、页面的平均响应时间。这种方式的问题很明显，以系统 API 调用的平均响应时间为例：如果大多数 API 请求都维持在 100ms 的响应时间范围内，而个别请求的响应时间需要 5s，那么就会导致某些 WEB 页面的响应时间落到中位数的情况，而这种现象被称为长尾问题。
+
+  - 为了区分是平均的慢还是长尾的慢，最简单的方式就是按照请求延迟的范围进行分组。例如，统计延迟在 0~10ms 之间的请求数有多少，而 10~20ms 之间的请求数又有多少。通过这种方式可以快速分析系统慢的原因。Histogram 和 Summary 都是为了能够解决这样问题的存在，通过 Histogram 和 Summary 类型的监控指标，我们可以快速了解监控样本的分布情况。
+
+- 例如：
+
+  样本的值分布在 bucket 中的数量，命名为 `basename_bucket{le="上边界"}`。这个值表示指标值小于等于上边界的所有样本数量。
+
+  1、http 请求响应时间 <=0.005 秒 的请求次数为0
+
+  `io_namespace_http_requests_latency_seconds_histogram_bucket{path="/",method="GET",code="200",le="0.005",} 0.0`
+
+  2、http 请求响应时间 <=0.01 秒 的请求次数为0
+
+  `io_namespace_http_requests_latency_seconds_histogram_bucket{path="/",method="GET",code="200",le="0.01",} 0.0`
+
+   3、http 请求响应时间 <=0.025 秒 的请求次数为0
+
+  `io_namespace_http_requests_latency_seconds_histogram_bucket{path="/",method="GET",code="200",le="0.025",} 0.0`
+
+### summary
+
+- 与 Histogram 类型类似，用于表示一段时间内的数据采样结果（通常是请求持续时间或响应大小等），但它直接存储了分位数（通过客户端计算，然后展示出来），而不是通过区间来计算。它也有三种作用：
+
+  1、观察时间的quantiles (0~1), 显示为`basename{分位数="quantitles"}`
+
+  2、`[basename]_sum`， 是指所有观察值的总和
+
+  3、`[basename]_count`, 是指已观察到的事件计数值
+
+- 例如：
+
+  - quantiles
+
+    - http 请求中有 50% 的请求响应时间在 3.052404983s以内 `io_namespace_http_requests_latency_seconds_summary{path="/",method="GET",code="200",quantile="0.5",} 3.052404983`
+
+    - http 请求中有 90% 的请求响应时间是在8.003261666s以内
+
+      `io_namespace_http_requests_latency_seconds_summary{path="/",method="GET",code="200",quantile="0.9",} 8.003261666`
+
+  - basename_sum
+
+    http 请求的总响应时间为 51.029495508s
+
+    `io_namespace_http_requests_latency_seconds_summary_sum{path="/",method="GET",code="200",} 51.029495508`
+
+  - basename_count
+
+    当前一共发生了 12 次 http 请求
+
+    `io_namespace_http_requests_latency_seconds_summary_count{path="/",method="GET",code="200",} 12.0`
+
 ## 组件
 
 1. Prometheus Server: 用于收集和存储时间序列数据。
+   - Retrieval负责在活跃的target主机上抓取监控指标数据
+   - TSDB把采集到的数据存储到磁盘中
+   - http server会将告警信息传递到alertmanager，推送到接收方
 
 2. Client Library: 客户端库，检测应用程序代码，当Prometheus抓取实例的HTTP端点时，客户端库会将所有跟踪的metrics指标的当前状态发送到prometheus server端。
 
@@ -79,5 +189,150 @@
 
 ![image-20240103104154211](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202401031041340.png)
 
+
+
 ## 工作流程
+
+1. Prometheus server可定期从活跃的（up）目标主机上（target）拉取监控指标数据，目标主机的监控数据可通过配置静态job或者服务发现的方式被prometheus server采集到，这种方式默认的pull方式拉取指标；也可通过pushgateway把采集的数据上报到prometheus server中；还可通过一些组件自带的exporter采集相应组件的数据；
+
+2. Prometheus server把采集到的监控指标数据保存到本地磁盘或者数据库；
+
+3. Prometheus采集的监控指标数据按时间序列存储，通过配置报警规则，把触发的报警发送到alertmanager
+
+4. Alertmanager通过配置报警接收方，发送报警到邮件，微信或者钉钉等
+
+5. Prometheus 自带的web ui界面提供PromQL查询语言，可查询监控数据
+
+6. Grafana可接入prometheus数据源，把监控数据以图形化形式展示出
+
+## 与Zabbix对比
+
+![image-20240103111904910](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202401031119014.png)
+
+# Prometheus高可用部署方案
+
+## 基本HA模式
+
+![image-20240103130932595](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202401031309673.png)
+
+- 只能确保prometheus服务的高可用，但是不解决Prometheus Server之间的数据一致性问题以及持久化问题(数据丢失后无法恢复)，也无法进行动态的扩展。因此这种部署方式适合监控规模不大，Promthues Server也不会频繁发生迁移的情况，并且只需要保存短周期监控数据的场景。
+
+## 基本HA+远程存储
+
+![image-20240103131028372](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202401031310434.png)
+
+- 在解决了Promthues服务可用性的基础上，同时确保了数据的持久化，当Promthues Server发生宕机或者数据丢失的情况下，可以快速的恢复。 同时Promthues Server可能很好的进行迁移。因此，该方案适用于用户监控规模不大（几百台服务器的规模），但是希望能够将监控数据持久化，同时能够确保Promthues Server的可迁移性的场景。
+
+## 基本HA+远程存储+联邦集群
+
+![image-20240103131314094](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202401031313162.png)
+
+- Promthues的性能瓶颈主要在于大量的采集任务，因此用户需要利用Prometheus联邦集群的特性，将不同类型的采集任务划分到不同的Promthues子服务中，从而实现功能分区。
+- 例如一个Promthues Server负责采集基础设施相关的监控指标，另外一个Prometheus Server负责采集应用监控指标。再有上层Prometheus Server实现对数据的汇聚。
+- 这种方案比较耗费资源，规模较小的环境（几百台服务器）就没必要部署这种方案了。
+
+## prometheus监控k8s集群
+
+- 对于Kubernetes而言，我们可以把当中所有的资源分为几类：
+
+  - 基础设施层（Node）：集群节点，为整个集群和应用提供运行时资源
+  - 容器基础设施（Container）：为应用提供运行时环境
+  - 用户应用（Pod）：Pod中会包含一组容器，它们一起工作，并且对外提供一个（或者一组）功能
+  - 内部服务负载均衡（Service）：在集群内，通过Service在集群暴露应用功能，集群内应用和应用之间访问时提供内部的负载均衡
+  - 外部访问入口（Ingress）：通过Ingress提供集群外的访问入口，从而可以使外部客户端能够访问到部署在Kubernetes集群内的服务
+
+- 因此，如果要构建一个完整的监控体系，我们应该考虑，以下5个方面：
+
+  1. 集群节点状态监控：从集群中各节点的kubelet服务获取节点的基本运行状态；
+
+  2. 集群节点资源用量监控：通过Daemonset的形式在集群中各个节点部署Node Exporter采集节点的资源使用情况；
+
+  3. 节点中运行的容器监控：通过各个节点中kubelet内置的cAdvisor中获取个节点中所有容器的运行状态和资源使用情况；
+
+  4. 如果在集群中部署的应用程序本身内置了对Prometheus的监控支持，那么我们还应该找到相应的Pod实例，并从该Pod实例中获取其内部运行状态的监控指标。
+
+  5. 对k8s本身的组件做监控：apiserver、scheduler、controller-manager、kubelet、kube-proxy
+
+# 部署node-exporter
+
+- node-exporter可以采集机器（物理机、虚拟机、云主机等）的监控指标数据，能够采集到的指标包括CPU, 内存，磁盘，网络，文件数等信息。
+
+## 安装node-exporter
+
+~~~sh
+kubectl create ns monitor-sa
+~~~
+
+~~~yaml
+apiVersion: apps/v1
+kind: DaemonSet  #可以保证k8s集群的每个节点都运行完全一样的pod
+metadata:
+  name: node-exporter
+  namespace: monitor-sa
+  labels:
+    name: node-exporter
+spec:
+  selector:
+    matchLabels:
+     name: node-exporter
+  template:
+    metadata:
+      labels:
+        name: node-exporter
+    spec:
+      hostPID: true
+      hostIPC: true
+      hostNetwork: true #表示这个pod不用网络插件划分Ip，共享宿主机IP，调度到哪个node上，就用哪个node的IP。
+      # hostNetwork、hostIPC、hostPID都为True时，表示这个Pod里的所有容器，会直接使用宿主机的网络，直接与宿主机进行IPC（进程间通信）通信，可以看到宿主机里正在运行的所有进程。加入了hostNetwork:true会直接将我们的宿主机的9100端口映射出来，从而不需要创建service在宿主机上就会有一个9100的端口
+      containers:
+      - name: node-exporter
+        image: prom/node-exporter:v0.16.0
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 9100
+        resources:
+          requests:
+            cpu: 0.15  #这个容器运行至少需要0.15核cpu
+        securityContext:
+          privileged: true  #开启特权模式，任何在容器内运行的进程都将拥有几乎与主机上运行的进程相同的权限。这意味着这些进程可以访问主机的所有资源，包括操作系统和硬件设备。
+        args:
+        - --path.procfs  #配置挂载宿主机（node节点）的路径
+        - /host/proc
+        - --path.sysfs  #配置挂载宿主机（node节点）的路径
+        - /host/sys
+        - --collector.filesystem.ignored-mount-points
+        - '"^/(sys|proc|dev|host|etc)($|/)"' #node-exporter在收集文件系统指标时，将忽略挂载点路径以/sys、/proc、/dev、/host或/etc开头的文件系统。这些路径通常包含的是操作系统和运行环境的数据，而不是用户数据，因此通常不需要监控它们的文件系统使用情况。忽略这些路径可以减少node-exporter的输出，使得输出的指标更加关注于对用户更有价值的数据。
+        volumeMounts:
+        #将主机/dev、/proc、/sys这些目录挂到容器中，这是因为我们采集的很多节点数据都是通过这些文件来获取系统信息的。
+        - name: dev
+          mountPath: /host/dev
+        - name: proc
+          mountPath: /host/proc
+        - name: sys
+          mountPath: /host/sys
+        - name: rootfs
+          mountPath: /rootfs
+      tolerations:
+      - key: "node-role.kubernetes.io/master"
+        operator: "Exists"
+        effect: "NoSchedule"
+      volumes:
+        - name: proc
+          hostPath:
+            path: /proc
+        - name: dev
+          hostPath:
+            path: /dev
+        - name: sys
+          hostPath:
+            path: /sys
+        - name: rootfs
+          hostPath:
+            path: /
+~~~
+
+~~~sh
+#查看宿主机的9100端口占用
+ss -antulp | grep :9100
+~~~
 
