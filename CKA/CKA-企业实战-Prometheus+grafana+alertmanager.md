@@ -694,7 +694,15 @@ spec:
 ## 部署模板
 
 - 导入监控模板：
-  - 监控模板可以在官网下载，比如node-exporter：[Node Exporter Full | Grafana Labs](https://grafana.com/grafana/dashboards/1860-node-exporter-full/)
+  - 监控模板可以在官网下载：
+     https://grafana.com/dashboards?dataSource=prometheus&search=kubernetes
+  
+  - 在左侧filter中筛选，一个个测试
+  
+    <img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202401041802433.png" alt="image-20240104180259270" style="zoom:50%;" />
+  
+    - 比如node-exporter：[Node Exporter Full | Grafana Labs](https://grafana.com/grafana/dashboards/1860-node-exporter-full/)
+  
   - 在左侧Create-Import中导入json文件，这里导入了docker_rev1.json和node_exporter.json两个文件。
 
 ## 查看图标的query
@@ -715,4 +723,110 @@ spec:
 
 ## ksm简介
 
-- 
+- kube-state-metrics监听API Server生成有关资源对象的状态指标，比如Node、Pod。
+- 需要注意的是kube-state-metrics只是简单的提供一个metrics数据，并不会存储这些指标数据，所以我们可以使用Prometheus来抓取这些数据然后存储。
+- 主要关注的是业务相关的元数据，比如Pod副本状态；调度了多少个replicas；现在可用的有几个；多少个Pod是running/stopped/terminated状态；Pod重启了多少次；有多少job在运行中。
+
+## 部署ksm
+
+### 创建sa并授权
+
+~~~sh
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: kube-state-metrics
+  namespace: kube-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: kube-state-metrics
+rules:
+- apiGroups: [""]
+  resources: ["nodes", "pods", "services", "resourcequotas", "replicationcontrollers", "limitranges", "persistentvolumeclaims", "persistentvolumes", "namespaces", "endpoints"]
+  verbs: ["list", "watch"]
+- apiGroups: ["extensions"]
+  resources: ["daemonsets", "deployments", "replicasets"]
+  verbs: ["list", "watch"]
+- apiGroups: ["apps"]
+  resources: ["statefulsets"]
+  verbs: ["list", "watch"]
+- apiGroups: ["batch"]
+  resources: ["cronjobs", "jobs"]
+  verbs: ["list", "watch"]
+- apiGroups: ["autoscaling"]
+  resources: ["horizontalpodautoscalers"]
+  verbs: ["list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: kube-state-metrics
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: kube-state-metrics
+subjects:
+- kind: ServiceAccount
+  name: kube-state-metrics
+  namespace: kube-system
+~~~
+
+### 部署ksm pod
+
+- 上传并解压quay.io/coreos/kube-state-metrics:v1.9.0镜像（不上传也能拉下来）
+- 创建deployment
+
+~~~yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kube-state-metrics
+  namespace: kube-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kube-state-metrics
+  template:
+    metadata:
+      labels:
+        app: kube-state-metrics
+    spec:
+      serviceAccountName: kube-state-metrics
+      containers:
+      - name: kube-state-metrics
+        image: quay.io/coreos/kube-state-metrics:v1.9.0
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+~~~
+
+- 创建svc
+
+  ~~~yaml
+  apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      prometheus.io/scrape: 'true'
+    name: kube-state-metrics
+    namespace: kube-system
+    labels:
+      app: kube-state-metrics
+  spec:
+    selector:
+      app: kube-state-metrics
+    ports:
+    - name: kube-state-metrics
+      port: 8080
+      protocol: TCP
+  ~~~
+
+## grafana基于ksm监控pod信息
+
+- ksm部署好之后，可以在grafana中导入以下两个json：
+  - Kubernetes Cluster (Prometheus)-1577674936972.json
+  - Kubernetes cluster monitoring (via Prometheus) (k8s 1.16)-1577691996738.json
