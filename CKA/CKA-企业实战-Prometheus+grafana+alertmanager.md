@@ -331,8 +331,388 @@ spec:
             path: /
 ~~~
 
+## 验证exporter数据采集
+
 ~~~sh
 #查看宿主机的9100端口占用
 ss -antulp | grep :9100
+#查看exporter采集到的数据
+curl http://192.168.40.180:9100/metrics
 ~~~
 
+# 部署prometheus
+
+## 创建sa并授权
+
+~~~sh
+kubectl create serviceaccount monitor -n monitor-sa
+#给sa和sa用户都授权，防止prometheus报错--user=system:serviceaccount:monitor:monitor-sa没有权限。
+kubectl create clusterrolebinding monitor-clusterrolebinding -n monitor-sa --clusterrole=cluster-admin  --serviceaccount=monitor-sa:monitor
+
+kubectl create clusterrolebinding monitor-clusterrolebinding-1 -n monitor-sa --clusterrole=cluster-admin --user=system:serviceaccount:monitor:monitor-sa
+#将cluster-admin这个ClusterRole绑定到了一个特定的用户，这个用户是monitor命名空间下的monitor-sa这个ServiceAccount。这里的--user参数的值system:serviceaccount:monitor:monitor-sa是Kubernetes内部用来表示ServiceAccount的一种格式。
+~~~
+
+> 这两条命令的主要区别在于它们绑定的对象不同，第一条命令是直接绑定到一个`ServiceAccount`，而第二条命令是绑定到一个表示`ServiceAccount`的用户。在实际使用中，这两种方式的效果是相同的，都是将`cluster-admin`这个`ClusterRole`的权限赋予了`monitor`命名空间下的`monitor-sa`这个`ServiceAccount`。
+
+## 创建数据存储目录
+
+~~~sh
+#在node-1上创建数据目录并给满权限（否则prometheus写不进去数据）
+mkdir /data
+chmod 777 /data/
+~~~
+
+## 安装prometheus server服务
+
+### 创建configmap存储配置
+
+~~~yaml
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  labels:
+    app: prometheus
+  name: prometheus-config
+  namespace: monitor-sa
+data:
+  prometheus.yml: |
+    global:
+      scrape_interval: 20s #采集目标主机监控据的时间间隔
+      scrape_timeout: 10s #数据采集超时时间，默认10s
+      evaluation_interval: 1m #触发告警检测的时间，默认是1m。这个时间间隔要大于采集数据的间隔，否则会产生多次重复告警。假如我们的指标是5m被拉取一次。检测根据evaluation_interval 1m一次，所以在值被更新前，我们一直用的旧值来进行多次判断，造成了1m一次，同一个指标被告警了4次。
+    scrape_configs: #定义了Prometheus从哪些源收集指标数据。每个scrape_config块指定一组目标和参数，描述了如何从这些目标收集指标。
+    - job_name: 'kubernetes-node' 
+      kubernetes_sd_configs: #使用的是k8s的服务发现
+      - role: node #使用node模式，意味着Prometheus将从Kubernetes的节点收集指标。可能包括CPU使用率、内存使用量、磁盘空间等。
+      relabel_configs: #定义标签重写规则
+      - source_labels: [__address__] #更改__address__标签
+        regex: '(.*):10250' #10250是kubelet的监听端口，为的是找到每个node，默认走kubelet10250来服务发现
+        replacement: '${1}:9100' #把匹配到的ip:10250的ip保留，端口替换成exporter的9100端口
+        target_label: __address__ #表示找这个node上面的exporter拿数据
+        action: replace
+      - action: labelmap
+        regex: __meta_kubernetes_node_label_(.+) #匹配所有以__meta_kubernetes_node_label_开头的标签。这些标签是由Prometheus的Kubernetes服务发现生成的，包含了k8s节点的元数据。所以，这个labelmap动作将所有K8s节点的标签复制到Prometheus指标的标签中。这样，你就可以在Prometheus查询中使用这些标签
+    - job_name: 'kubernetes-node-cadvisor' #抓取cAdvisor数据，是获取kubelet上/metrics/cadvisor接口数据来获取容器的资源使用情况
+      kubernetes_sd_configs:
+      - role:  node
+      scheme: https
+      tls_config:
+        ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+      bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+      relabel_configs:
+      - action: labelmap
+        regex: __meta_kubernetes_node_label_(.+)
+      - target_label: __address__ ##获取到的地址：__address__="192.168.40.180:10250"
+        replacement: kubernetes.default.svc:443 ##把获取到的地址替换成新的地址kubernetes.default.svc:443,这个svc后端关联到的pod是apiserver
+      - source_labels: [__meta_kubernetes_node_name]
+        regex: (.+)
+        target_label: __metrics_path__
+        replacement: /api/v1/nodes/${1}/proxy/metrics/cadvisor #将指标路径设置为每个节点的cAdvisor指标路径。cAdvisor是一个开源的容器监控工具，它内置在Kubernetes的节点中，提供了关于容器的详细指标。
+    - job_name: 'kubernetes-apiserver' 
+      kubernetes_sd_configs:
+      - role: endpoints #基于k8s的服务发现，走的是endpoint模式，采集apiserver 6443端口获取到的监控数据
+      scheme: https
+      tls_config:
+        ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+      bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+      relabel_configs:
+      - source_labels: [__meta_kubernetes_namespace, __meta_kubernetes_service_name, __meta_kubernetes_endpoint_port_name]
+        action: keep
+        regex: default;kubernetes;https
+    - job_name: 'kubernetes-service-endpoints' #创建svc的时候加一个annotation，svc就能被这个job监控到
+      kubernetes_sd_configs:
+      - role: endpoints 
+      relabel_configs:
+      - source_labels: [__meta_kubernetes_service_annotation_prometheus_io_scrape]
+        action: keep
+        regex: true
+      - source_labels: [__meta_kubernetes_service_annotation_prometheus_io_scheme]
+        action: replace
+        target_label: __scheme__
+        regex: (https?)
+      - source_labels: [__meta_kubernetes_service_annotation_prometheus_io_path]
+        action: replace
+        target_label: __metrics_path__
+        regex: (.+)
+      - source_labels: [__address__, __meta_kubernetes_service_annotation_prometheus_io_port]
+        action: replace
+        target_label: __address__
+        regex: ([^:]+)(?::\d+)?;(\d+)
+        replacement: $1:$2
+      - action: labelmap
+        regex: __meta_kubernetes_service_label_(.+)
+      - source_labels: [__meta_kubernetes_namespace]
+        action: replace
+        target_label: kubernetes_namespace
+      - source_labels: [__meta_kubernetes_service_name]
+        action: replace
+        target_label: kubernetes_name 
+~~~
+
+> summary：
+>
+> job_name: 'kubernetes-node' ：访问node exporter，获取物理机监控数据
+>
+> job_name: 'kubernetes-node-cadvisor'：可以请求到node上的kubelet的cAdvisior里面的监控数据
+>
+> job_name: 'kubernetes-apiserver' ：采集apiserver 6443端口获取到的监控数据
+>
+> job_name: 'kubernetes-service-endpoints' ：创建svc的时候加一个annotation，svc就能被这个job监控到
+
+### 创建prometheus pod
+
+- 通过deployment把prometheus server调度到有数据目录的node-1上面
+
+  ~~~yaml
+  ---
+  apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    name: prometheus-server
+    namespace: monitor-sa
+    labels:
+      app: prometheus
+  spec:
+    replicas: 1
+    selector:
+      matchLabels:
+        app: prometheus
+        component: server
+      #matchExpressions:
+      #- {key: app, operator: In, values: [prometheus]}
+      #- {key: component, operator: In, values: [server]}
+    template:
+      metadata:
+        labels:
+          app: prometheus
+          component: server
+        annotations:
+          prometheus.io/scrape: 'false'
+      spec:
+        nodeName: node-1 #直接指定要调度到的node
+        serviceAccountName: monitor
+        containers:
+        - name: prometheus
+          image: prom/prometheus:v2.2.1
+          imagePullPolicy: IfNotPresent
+          command:
+            - prometheus
+            - --config.file=/etc/prometheus/prometheus.yml
+            - --storage.tsdb.path=/prometheus
+            - --storage.tsdb.retention=240h
+            - --web.enable-lifecycle
+            #web.enable-lifecycle：修改配置之后不需要重新创建pod，会热加载
+          ports:
+          - containerPort: 9090
+            protocol: TCP
+          volumeMounts:
+          - mountPath: /etc/prometheus
+            name: prometheus-config
+          - mountPath: /prometheus/
+            name: prometheus-storage-volume
+        volumes:
+          - name: prometheus-config
+            configMap:
+              name: prometheus-config
+          - name: prometheus-storage-volume
+            hostPath:
+             path: /data
+             type: Directory
+  ~~~
+
+### 创建svc代理prometheus server
+
+~~~yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: prometheus
+  namespace: monitor-sa
+  labels:
+    app: prometheus
+spec:
+  type: NodePort
+  selector:
+    app: prometheus
+    component: server
+  ports:
+    - port: 9090
+      targetPort: 9090
+     protocol: TCP
+~~~
+
+### 查看prometheus UI
+
+- 直接访问node IP:31408
+
+- 在Status - Targets - kubernetes-service-endpoints里面能看到两个svc后端pod。这两个pod是coredns，svc是kube-dns。
+
+  ![image-20240104132718578](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202401041327748.png)
+
+  - 为啥这个svc会被监控到？因为这个svc自带了annotation：
+
+    ~~~yaml
+    Name:              kube-dns
+    Namespace:         kube-system
+    Labels:            k8s-app=kube-dns
+                       kubernetes.io/cluster-service=true
+                       kubernetes.io/name=CoreDNS
+    Annotations:       prometheus.io/port: 9153
+                       prometheus.io/scrape: true
+    ~~~
+
+## prometheus热加载
+
+- 为了每次修改配置文件可以热加载prometheus，也就是不停止prometheus就可以使配置生效，想要使配置生效可用如下热加载命令：
+
+  ~~~sh
+  #查看prometheus server的pod IP
+  kubectl get pods -n monitor-sa -o wide -l app=prometheus
+  #推送更新
+  curl -X POST http://<pod ip>:9090/-/reload
+  #前提是在prometheus server的deployment yaml中配置了参数：--web.enable-lifecycle
+  ~~~
+
+- 另一种方式是暴力重启prometheus:kubectl delete 删掉configmap和deploy，再重新apply。这样会造成监控数据中断甚至丢失。推荐热加载。
+
+# Grafana简介
+
+- Grafana是一个跨平台的开源的度量分析和可视化工具，可以将采集的数据可视化的展示，并及时通知给告警接收方。（自带alert功能，但是不常用，一般用专业alert服务比如alertmanager）
+
+# 部署Grafana服务
+
+~~~sh
+#grafana用到的镜像为k8s.gcr.io/heapster-grafana-amd64:v5.0.4
+#可以创建pod的时候拉取，也可以先上传到node上
+docker load -i k8s.gcr.io/heapster-grafana-amd64:v5.0.4
+#上传grafana的yaml文件
+kubectl apply -f dep-grafana.yaml
+~~~
+
+~~~yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: monitoring-grafana
+  namespace: kube-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      task: monitoring
+      k8s-app: grafana
+  template:
+    metadata:
+      labels:
+        task: monitoring
+        k8s-app: grafana
+    spec:
+      containers:
+      - name: grafana
+        image: k8s.gcr.io/heapster-grafana-amd64:v5.0.4
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 3000
+          protocol: TCP
+        volumeMounts:
+        - mountPath: /etc/ssl/certs
+          name: ca-certificates
+          readOnly: true
+        - mountPath: /var
+          name: grafana-storage
+        env:
+        - name: INFLUXDB_HOST
+          value: monitoring-influxdb
+        - name: GF_SERVER_HTTP_PORT
+          value: "3000"
+          # The following env variables are required to make Grafana accessible via
+          # the kubernetes api-server proxy. On production clusters, we recommend
+          # removing these env variables, setup auth for grafana, and expose the grafana
+          # service using a LoadBalancer or a public IP.
+        - name: GF_AUTH_BASIC_ENABLED
+          value: "false"
+        - name: GF_AUTH_ANONYMOUS_ENABLED
+          value: "true"
+        - name: GF_AUTH_ANONYMOUS_ORG_ROLE
+          value: Admin
+        - name: GF_SERVER_ROOT_URL
+          # If you're only using the API Server proxy, set this value instead:
+          # value: /api/v1/namespaces/kube-system/services/monitoring-grafana/proxy
+          value: /
+      volumes:
+      - name: ca-certificates
+        hostPath:
+          path: /etc/ssl/certs
+      - name: grafana-storage
+        emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    # For use as a Cluster add-on (https://github.com/kubernetes/kubernetes/tree/master/cluster/addons)
+    # If you are NOT using this as an addon, you should comment out this line.
+    kubernetes.io/cluster-service: 'true'
+    kubernetes.io/name: monitoring-grafana
+  name: monitoring-grafana
+  namespace: kube-system
+spec:
+  # In a production setup, we recommend accessing Grafana through an external Loadbalancer
+  # or through a public IP.
+  # type: LoadBalancer
+  # You could also use NodePort to expose the service at a randomly-generated port
+  # type: NodePort
+  ports:
+  - port: 80
+    targetPort: 3000
+  selector:
+    k8s-app: grafana
+  type: NodePort
+~~~
+
+# 接入prometheus服务
+
+## 配置UI界面
+
+- 通过nodeport的svc进入UI界面
+
+- 选择Create your first data source
+
+  - Name: Prometheus 
+
+  - Type: Prometheus
+
+  - HTTP 处的URL：http://prometheus.monitor-sa.svc.cluster.local:9090
+
+- 配置好的整体页面如下：
+
+  <img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202401041620772.png" alt="image-20240104162026461" style="zoom:67%;" />
+
+- 点击左下角Save & Test，出现如下Data source is working，说明prometheus数据源成功的被grafana接入了
+
+## 部署模板
+
+- 导入监控模板：
+  - 监控模板可以在官网下载，比如node-exporter：[Node Exporter Full | Grafana Labs](https://grafana.com/grafana/dashboards/1860-node-exporter-full/)
+  - 在左侧Create-Import中导入json文件，这里导入了docker_rev1.json和node_exporter.json两个文件。
+
+## 查看图标的query
+
+- 在表头上的edit里面可以看到图表使用的什么query
+
+![image-20240104163719840](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202401041637921.png)
+
+![image-20240104163832044](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202401041638122.png)
+
+- 如果某个指标或者table没数：
+
+  - 可以通过edit找到这个指标名称，放到prometheus中execute查一下，如果prometheus中都没数据，说明这个指标没被采集。可以从后往前删，看看是不是因为版本问题导致的拼写差异。找到prometheus中正确的写法之后，再修改grafana中的query。
+
+  ![image-20240104164035604](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202401041640657.png)
+
+# 监控pod：kube-state-metrics组件
+
+## ksm简介
+
+- 

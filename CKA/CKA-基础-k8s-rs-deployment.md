@@ -104,8 +104,8 @@ spec:
 - 用kubectl explain一层一层的查下去慢慢写完yaml文件
 
 ```yaml
-apiversion: apps/v1
-kind: deployment
+apiVersion: apps/v1
+kind: Deployment
 metadata:
   name: dep-myapp-blue
 spec:
@@ -116,13 +116,13 @@ spec:
       version: v1
   template:
     metadata:
-      label:
+      Label:
         app: myapp
         version: v1
     spec:
       containers:
       - name: myapp
-        images: janakiramm/myapp:v1
+        image: janakiramm/myapp:v1
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 80

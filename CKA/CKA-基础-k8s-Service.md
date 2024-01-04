@@ -209,7 +209,9 @@ TCP  10.99.178.109:80 rr
 
 ## NodePort
 
-- 将pod通过node上的端口暴露给外部，可以在集群外访问服务，原理是将pod的端口（targetPort）映射到Node的一个端口（nodePort）上，通过NodeIP：NodePort来访问。NodePort 类型的服务将在每个节点上公开一个端口，并将流量路由到后端 Pod。
+- 将pod通过node上的端口暴露给外部，可以在集群外访问服务，原理是将pod的端口（targetPort）映射到Node的一个端口（nodePort）上，通过NodeIP：NodePort来访问。NodePort 类型的服务将在**每个节点上公开一个端口**，并将流量路由到后端 Pod。
+
+- 注意是每个节点！当在Kubernetes中创建一个NodePort类型的Service时，Kubernetes会在每个Node上打开相同的端口。这样，无论你的请求发送到哪个Node，都可以通过这个端口访问到Service。这是通过Kubernetes的iptables规则或者IPVS来实现的。
 
 - 访问链路：
 
