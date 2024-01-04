@@ -100,7 +100,7 @@ metadata:
   labels:
     app: mysql
 data:
-  master.cnf: |  #文件名称后面需要加上 | 以表示文件中每一行就是一行
+  master.cnf: |  #文件名称后面需要加上 | 以表示此yaml文件中的每一行就是挂载进去的文件的一行
     [mysqld]
     log-bin
     log_bin_trust_function_creators=1
@@ -110,6 +110,32 @@ data:
     super-read-only
     log_bin_trust_function_creators=1
 ```
+
+> 在 Kubernetes 的 ConfigMap 中，`|` 和 `| -` 的主要区别在于它们处理多行字符串的方式。
+>
+> `|` 是一个块标识符，它会保留换行符和（除最后一行外的）尾随空格。例如：
+>
+> ```yaml
+> data:
+>  a.yml: |
+>   key1: value1
+>   key2: value2
+> ```
+>
+> 这将创建一个字符串，其中包含“key1: value1\nkey2: value2\n”。
+>
+> `|-` 也是一个块标识符，但它会剥离掉尾随的换行符。例如：
+>
+> ```yaml
+> data:
+>  a.yml: |-
+>   key1: value1
+>   key2: value2
+> ```
+>
+> 这将创建一个字符串，其中包含“key1: value1\nkey2: value2”，注意这里没有尾随的换行符。
+>
+> 总的来说，`|` 和 `|-` 都用于表示多行字符串，但 `|-` 会删除尾随的换行符。
 
 ## 挂载cm
 

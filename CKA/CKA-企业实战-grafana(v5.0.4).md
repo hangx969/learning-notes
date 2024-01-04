@@ -1,8 +1,10 @@
-# Grafana简介
+# Grafana
+
+## Grafana简介
 
 - Grafana是一个跨平台的开源的度量分析和可视化工具，可以将采集的数据可视化的展示，并及时通知给告警接收方。（自带alert功能，但是不常用，一般用专业alert服务比如alertmanager）
 
-# 部署Grafana服务
+## 部署Grafana服务
 
 ~~~sh
 #grafana用到的镜像为k8s.gcr.io/heapster-grafana-amd64:v5.0.4
@@ -93,9 +95,9 @@ spec:
   type: NodePort
 ~~~
 
-# 接入prometheus服务
+## 接入prometheus服务
 
-## 配置UI界面
+### 配置UI界面
 
 - 通过nodeport的svc进入UI界面
 
@@ -113,7 +115,7 @@ spec:
 
 - 点击左下角Save & Test，出现如下Data source is working，说明prometheus数据源成功的被grafana接入了
 
-## 部署模板
+### 部署模板
 
 - 导入监控模板：
 
@@ -128,7 +130,7 @@ spec:
 
   - 在左侧Create-Import中导入json文件，这里导入了docker_rev1.json和node_exporter.json两个文件。
 
-## 查看图标的query
+### 查看表的query
 
 - 在表头上的edit里面可以看到图表使用的什么query
 
@@ -142,17 +144,17 @@ spec:
 
   ![image-20240104164035604](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202401041805995.png)
 
-# 监控pod：kube-state-metrics组件
+## 监控pod：kube-state-metrics组件
 
-## ksm简介
+### ksm简介
 
 - kube-state-metrics监听API Server生成有关资源对象的状态指标，比如Node、Pod。
 - 需要注意的是kube-state-metrics只是简单的提供一个metrics数据，并不会存储这些指标数据，所以我们可以使用Prometheus来抓取这些数据然后存储。
 - 主要关注的是业务相关的元数据，比如Pod副本状态；调度了多少个replicas；现在可用的有几个；多少个Pod是running/stopped/terminated状态；Pod重启了多少次；有多少job在运行中。
 
-## 部署ksm
+### 部署ksm
 
-### 创建sa并授权
+#### 创建sa并授权
 
 ~~~sh
 ---
@@ -197,7 +199,7 @@ subjects:
   namespace: kube-system
 ~~~
 
-### 部署ksm pod
+#### 部署ksm pod
 
 - 上传并解压quay.io/coreos/kube-state-metrics:v1.9.0镜像（不上传也能拉下来）
 - 创建deployment
@@ -248,8 +250,11 @@ spec:
       protocol: TCP
   ~~~
 
-## grafana基于ksm监控pod信息
+### grafana基于ksm监控pod信息
 
 - ksm部署好之后，可以在grafana中导入以下两个json：
   - Kubernetes Cluster (Prometheus)-1577674936972.json
   - Kubernetes cluster monitoring (via Prometheus) (k8s 1.16)-1577691996738.json
+
+
+
