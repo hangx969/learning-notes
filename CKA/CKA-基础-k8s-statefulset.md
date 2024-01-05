@@ -73,7 +73,7 @@ spec:
 
 # POD主机名
 
-- 每个pod有唯一**主机名**；根据主机名+一定规则，生成pod唯一的FQDN：**pod-name.service名称.名称空间.svc.cluster.local**
+- 每个pod有唯一**主机名**：**pod-name.service名称.名称空间.svc.cluster.local**
   - 例如：sts-web-0.svc-sts-nginx.default.svc.cluster.local
 
 ```bash
