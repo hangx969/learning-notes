@@ -562,7 +562,98 @@ spec:
                        prometheus.io/scrape: true
     ~~~
 
-## prometheus热加载
+# prometheus监控常见服务
+
+## tomcat
+
+- tomcat_exporter地址：https://github.com/nlighten/tomcat_exporter
+
+- 下载相关包
+
+  metrics.war 
+
+  simpleclient-0.8.0.jar
+
+  simpleclient_common-0.8.0.jar
+
+  simpleclient_hotspot-0.8.0.jar
+
+  simpleclient_servlet-0.8.0.jar
+
+  tomcat_exporter_client-0.0.12.jar
+
+- 打包镜像
+
+  ~~~dockerfile
+  cat Dockerfile
+  FROM tomcat:8.5-jdk8-corretto
+  ADD metrics.war /usr/local/tomcat/webapps/
+  ADD simpleclient-0.8.0.jar  /usr/local/tomcat/lib/
+  ADD simpleclient_common-0.8.0.jar /usr/local/tomcat/lib/
+  ADD simpleclient_hotspot-0.8.0.jar /usr/local/tomcat/lib/
+  ADD simpleclient_servlet-0.8.0.jar /usr/local/tomcat/lib/
+  ADD tomcat_exporter_client-0.0.12.jar /usr/local/tomcat/lib/
+  ~~~
+
+  ~~~sh
+  docker build -t='tomcat_prometheus:v1' .
+  docker save -o 
+  ~~~
+
+- 创建tomcat实例
+
+  ~~~yaml
+  apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    name: dep-tomcat
+    namespace: default
+  spec:
+    selector: 
+      matchLabels: 
+       app: tomcat
+    replicas: 2 # tells deployment to run 2 pods matching the template
+    template: # create pods using pod definition in this template
+      metadata:
+        labels:
+          app: tomcat
+        annotations:
+          prometheus.io/scrape: 'true'
+      spec:
+        containers:
+        - name: tomcat
+          image: tomcat_prometheus:v1
+          ports:
+          - containerPort: 8080
+          securityContext: 
+            privileged: true
+  ---
+  kind: Service
+  apiVersion: v1
+  metadata:
+    name: svc-tomcat
+    annotations:
+      prometheus.io/scrape: 'true'
+  spec:
+    selector:
+      app: tomcat
+    ports:
+    - nodePort: 31360
+      port: 80
+      protocol: TCP
+      targetPort: 8080
+    type: NodePort
+  ~~~
+
+- prometheus中通过kubernetes-pods的job查看监控到的pod情况
+
+## redis
+
+
+
+
+
+# prometheus热加载
 
 - 为了每次修改配置文件可以热加载prometheus，也就是不停止prometheus就可以使配置生效，想要使配置生效可用如下热加载命令：
 
@@ -575,3 +666,112 @@ spec:
   ~~~
 
 - 另一种方式是暴力重启prometheus:kubectl delete 删掉configmap和deploy，再重新apply。这样会造成监控数据中断甚至丢失。推荐热加载。
+
+# PromQL查询语言
+
+- PromQL（Prometheus Query Language）是 Prometheus 自己开发的表达式语言，语言表现力很丰富，内置函数也很多。使用它可以对时序数据进行筛选和聚合。
+
+## 数据类型
+
+PromQL 表达式计算出来的值有以下几种类型：
+
+- 瞬时向量 (Instant vector): 一组时序，每个时序只有一个采样值
+
+- 区间向量 (Range vector): 一组时序，每个时序包含一段时间内的多个采样值
+
+- 标量数据 (Scalar): 一个浮点数
+
+- 字符串 (String): 一个字符串，暂时未用 
+
+### 瞬时向量选择器
+
+- 瞬时向量选择器用来选择一组时序在某个采样点的采样值。最简单的情况就是指定一个度量指标，选择出所有属于该度量指标的时序的当前采样值。
+- 比如下面的表达式：`apiserver_request_total`，可以通过在后面添加用大括号包围起来的一组标签键值对来对时序进行过滤。比如下面的表达式筛选出了 job 为 kubernetes-apiservers，并且 resource为 pod的时序：`apiserver_request_total{job="kubernetes-apiserver",resource="pods"}`
+
+- 匹配标签值时可以是等于，也可以使用正则表达式。总共有下面几种匹配操作符：
+
+  - =：完全相等
+
+  - !=： 不相等
+
+  - =~： 正则表达式匹配
+
+  - !~： 正则表达式不匹配
+
+- 下面的表达式筛选出了container是kube-scheduler或kube-proxy或kube-apiserver的时序数据:`container_processes{container=~"kube-scheduler|kube-proxy|kube-apiserver"}`
+
+### 区间向量选择器
+
+- 区间向量选择器类似于瞬时向量选择器，不同的是它选择的是过去一段时间的采样值。可以通过在瞬时向量选择器后面添加包含在 [] 里的时长来得到区间向量选择器。
+- 比如下面的表达式选出了所有度量指标为apiserver_request_total且resource是pod的时序在过去1分钟的采样值：`apiserver_request_total{job="kubernetes-apiserver",resource="pods"}[1m]`
+
+### 偏移向量选择器
+
+- 偏移修饰器用来调整基准时间，使其往前偏移一段时间。偏移修饰器紧跟在选择器后面，使用 offset 来指定要偏移的量。
+- 比如下面的表达式选择度量名称为apiserver_request_total的所有时序在 5 分钟前的采样值:`apiserver_request_total{job="kubernetes-apiserver",resource="pods"} offset 5m`
+
+- 下面的表达式选择apiserver_request_total 度量指标在 1 周前的这个时间点过去 5 分钟的采样值:`apiserver_request_total{job="kubernetes-apiserver",resource="pods"} [5m] offset 1w`
+
+## 聚合操作符
+
+- PromQL 的聚合操作符用来将向量里的元素聚合得更少。总共有下面这些聚合操作符：
+
+  - sum：求和
+
+  - min：最小值
+
+  - max：最大值
+
+  - avg：平均值
+
+  - stddev：标准差
+
+  - stdvar：方差
+
+  - count：元素个数
+
+  - count_values：等于某值的元素个数
+
+  - bottomk：最小的 k 个元素
+
+  - topk：最大的 k 个元素
+
+  - quantile：分位数
+
+- 如：
+
+  - 计算xianchaomaster1节点所有容器总计内存
+
+    `sum(container_memory_usage_bytes{instance=~"xianchaomaster1"})/1024/1024/1024` 
+
+  - 计算xianchaomaster1节点最近1m所有容器cpu使用率
+
+    `sum (rate (container_cpu_usage_seconds_total{instance=~"xianchaomaster1"}[1m])) / sum (machine_cpu_cores{ instance =~"xianchaomaster1"}) * 100`
+
+  - 计算最近1m所有容器cpu使用率的总和
+
+    `sum (rate (container_cpu_usage_seconds_total{id!="/"}[1m])) by (id)`\#把id会打印出来
+
+  > `rate()`函数用于计算时间序列数据的平均速率。这个函数通常用于处理计数器类型的指标
+
+## 函数
+
+- Prometheus 内置了一些函数来辅助计算，下面介绍一些典型的。
+
+  - abs()：绝对值
+
+  - sqrt()：平方根
+
+  - exp()：指数计算
+
+  - ln()：自然对数
+
+  - ceil()：向上取整
+
+  - floor()：向下取整
+
+  - round()：四舍五入取整
+
+  - delta()：计算区间向量里每一个时序第一个和最后一个的差值
+
+  - sort()：排序

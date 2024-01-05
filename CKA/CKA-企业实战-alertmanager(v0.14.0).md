@@ -731,5 +731,45 @@ data:
         send_resolved: true
 ~~~
 
-## 部署pod到企业微信
+## 发送告警到企业微信
+
+### 注册企业微信 
+
+- 登陆网址：https://work.weixin.qq.com/
+
+### 创建应用
+
+- 找到应用管理，创建应用，拿到应用name、agent id、secret
+
+### 配置configmap
+
+~~~yaml
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: alertmanager
+  namespace: monitor-sa
+data:
+  alertmanager.yml: |-
+    global:
+      resolve_timeout: 1m
+      smtp_smarthost: 'smtp.163.com:25'
+      smtp_from: 'xuhang969@163.com' #指定从哪个邮箱发告警
+      smtp_auth_username: 'xuhang969@163.com' #邮箱地址
+      smtp_auth_password: 'UDBDVTBABEVRBPDC' #smtp授权码
+      smtp_require_tls: false
+    route:  #用于配置告警分发策略
+      group_by: [alertname] # alertmanager会根据group_by配置将Alert分组
+      group_wait: 10s       # 组告警等待时间。也就是告警产生后等待10s再发出去，10s期间如果有同组告警一起发出
+      group_interval: 10s    # 上下两组发送告警的间隔时间
+      repeat_interval: 30m    # 若产生重复告警，间隔多久再重发一次告警
+      receiver: prometheus  #定义谁来收告警
+    receivers:
+    - name: 'prometheus'
+      wechat_configs:
+      - corp_id: <企业id>
+        to_user: '@all'
+        agent_id: 
+        api_secret: 
+~~~
 
