@@ -649,7 +649,357 @@ spec:
 
 ## redis
 
+- 笔记地址：https://note.youdao.com/ynoteshare/index.html?id=b9f87092ce8859cd583967677ea332df&type=note
 
+- 部署redis pod
+
+  ~~~yaml
+  apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    name: redis
+    namespace: kube-system
+  spec:
+    replicas: 1
+    selector:
+      matchLabels:
+        app: redis
+    template:
+      metadata:
+        labels:
+          app: redis
+      spec:
+        containers:
+        - name: redis
+          image: redis:4
+          resources:
+            requests:
+              cpu: 100m
+              memory: 100Mi
+          ports:
+          - containerPort: 6379
+        - name: redis-exporter #包含两个容器，1是redis，2是redis_exporter
+          image: oliver006/redis_exporter:latest
+          resources:
+            requests:
+              cpu: 100m
+              memory: 100Mi
+          ports:
+          - containerPort: 9121
+  ---
+  kind: Service
+  apiVersion: v1
+  metadata:
+    name: redis
+    namespace: kube-system
+    annotations:
+      prometheus.io/scrape: "true"
+      prometheus.io/port: "9121" # 由于Redis服务的metrics接口在redis-exporter 9121上，所以添加prometheus.io/port=9121这样的annotation,prometheus就会自动发现redis了
+  spec:
+    selector:
+      app: redis
+    ports:
+    - name: redis
+      port: 6379
+      targetPort: 6379
+    - name: prom
+      port: 9121
+      targetPort: 9121
+  ~~~
+
+- grafana导入“Redis Cluster-1571393212519.json”，可以在grafana中监控。
+
+## mysql
+
+### 安装mysql和exporter
+
+```sh
+yum install mysql -y
+yum install mariadb -y
+tar -xvf mysqld_exporter-0.10.0.linux-amd64.tar.gz
+cd mysqld_exporter-0.10.0.linux-amd64
+cp -ar mysqld_exporter /usr/local/bin/
+chmod +x /usr/local/bin/mysqld_exporter
+```
+
+### 登陆mysql为mysql_exporter创建账号并授权
+
+```sh
+# 创建数据库用户
+mysql
+CREATE USER 'mysql_exporter'@'localhost' IDENTIFIED BY 'Abcdef123!.';
+# 对mysql_exporter用户授权
+GRANT PROCESS, REPLICATION CLIENT, SELECT ON *.* TO 'mysql_exporter'@'localhost';
+exit #退出mysql
+```
+
+### 配置mysql免密连db
+
+```sh
+cd mysqld_exporter-0.10.0.linux-amd64
+cat my.cnf
+[client]
+user=mysql_exporter
+password=Abcdef123!.
+```
+
+### 启动mysql_exporter
+
+```sh
+nohup ./mysqld_exporter --config.my-cnf=./my.cnf &
+mysqld_exporter的监听端口是9104
+```
+
+### 配置prometheus configmap
+
+```yaml
+#添加下面的job
+- job_name: 'mysql'
+  static_configs:
+  - targets: ['192.168.40.180:9104']
+```
+
+```sh
+#暴力重启
+kubectl apply -f prometheus-alertmanager-cfg.yaml
+kubectl delete -f prometheus-alertmanager-deploy.yaml
+kubectl apply -f prometheus-alertmanager-deploy.yaml
+#我测试可以手动删deploy的pod，新建出来的pod会用
+```
+
+### grafana导入mysql监控
+
+- mysql-overview_rev5.json
+
+## nginx
+
+- 下载nginx-module-vts模块（这个模块可以采集nginx数据）
+
+  ~~~sh
+  unzip nginx-module-vts-master.zip
+  mv nginx-module-vts-master /usr/local/
+  ~~~
+
+- 源码编译安装nginx
+
+  ~~~sh
+  #下载nginx-1.15.7.tar.gz
+  tar zxvf nginx-1.15.7.tar.gz
+  cd nginx-1.15.7
+  ./configure  --prefix=/usr/local/nginx --with-http_gzip_static_module --with-http_stub_status_module --with-http_ssl_module --with-pcre --with-file-aio --with-http_realip_module --add-module=/usr/local/nginx-module-vts-master
+  make && make install
+  ~~~
+
+- 修改nginx配置文件
+
+  ~~~sh
+  vim /usr/local/nginx/conf/nginx.conf
+  ~~~
+
+  ~~~json
+  //server下添加如下：
+  location /status {
+          vhost_traffic_status_display;
+          vhost_traffic_status_display_format html;
+          }
+  //http中添加如下：
+  vhost_traffic_status_zone;
+  ~~~
+
+- 测试nginx配置文件是否合法
+
+  ~~~sh
+  /usr/local/nginx/sbin/nginx -t
+  ~~~
+
+- 如果正确没问题，启动nginx
+
+  ~~~sh
+  /usr/local/nginx/sbin/nginx
+  ~~~
+
+  访问192.168.40.180/status可以看到nginx监控数据
+
+- 安装nginx-vts-exporter
+
+  ~~~sh
+  #下载nginx-vts-exporter-0.5.zip，nginx-vts-exporter的监听端口是9913
+  mv nginx-vts-exporter-0.5  /usr/local/
+  chmod +x /usr/local/nginx-vts-exporter-0.5/bin/nginx-vts-exporter
+  cd /usr/local/nginx-vts-exporter-0.5/bin
+  nohup ./nginx-vts-exporter  -nginx.scrape_uri http://192.168.40.180/status/format/json &
+  ~~~
+
+- 修改prometheus configmap，添加新的job
+
+  ~~~yaml
+  - job_name: 'nginx'
+      scrape_interval: 5s
+      static_configs:
+      - targets: ['192.168.40.180:9913']
+  ~~~
+
+- grafana导入模板：nginx-vts-stats_rev2.json
+
+## mongodb
+
+- 下载MongoDB和MongoDB exporter镜像
+
+  ~~~bash
+  docker pull mongo
+  docker pull eses/mongodb_exporter
+  ~~~
+
+- 启动MongoDB
+
+  ~~~sh
+  mkdir -p /data/db
+  docker run -d --name mongodb -p 27017:27017 -v /data/db:/data/db mongo
+  #创建mongo账号密码，给mongodb_exporter连接mongo用
+  #登录到容器
+  docker exec -it 24f910190790ade396844cef61cc66412b7af2108494742922c6157c5b236aac mongo admin
+  #设置密码
+  use admin
+  db.createUser({ user: 'admin', pwd: 'admin111111', roles: [ { role: "userAdminAnyDatabase", db: "admin" } ] })
+  
+  exit
+  ~~~
+
+- 启动MongoDB exporter
+
+  ~~~sh
+  docker run -d --name mongodb_exporter -p 30056:9104  percona/mongodb_exporter:0.34.0 --mongodb.uri mongodb://admin:admin111111@192.168.40.180:27017
+  #注：admin:admin111111这个就是上面启动mongodb后设置的密码，@后面接mongodb的ip和端口
+  ~~~
+
+- 更新prometheus configmap
+
+  ~~~sh
+  #添加一个job_name
+  - job_name: 'mongodb'
+    scrape_interval: 5s
+    static_configs:
+    - targets: ['192.168.40.180:30056']
+  ~~~
+
+  
+
+# pushgateway
+
+## 介绍
+
+- Pushgateway是prometheus的一个组件，prometheus server默认是通过exporter主动获取数据（默认采取pull拉取数据），pushgateway则是通过被动方式推送数据到prometheus server，用户可以写一些自定义的监控脚本把需要监控的数据发送给pushgateway， 然后pushgateway再把数据发送给Prometheus server
+
+- Pushgateway优点：
+
+  - Prometheus 默认采用定时pull 模式拉取targets数据，但是如果不在一个子网或者防火墙，prometheus就拉取不到targets数据，所以可以采用各个target往pushgateway上push数据，然后prometheus去pushgateway上定时pull数据
+
+  - 在监控业务数据的时候，需要将不同数据汇总, 汇总之后的数据可以由pushgateway统一收集，然后由 Prometheus 统一拉取。
+
+- pushgateway缺点：
+
+  - Prometheus拉取状态只针对 pushgateway, 不能对每个节点都有效；
+
+  - Pushgateway出现问题，整个采集到的数据都会出现问题
+
+  - 监控下线，prometheus还会拉取到旧的监控数据，需要手动清理 pushgateway不要的数据。
+
+## 部署pushgateway
+
+~~~sh 
+#在工作节点上
+docker pull prom/pushgateway
+docker run -d --name pushgateway -p 9091:9091 prom/pushgateway
+#在浏览器访问192.168.40.181:9091 ui界面
+~~~
+
+- 修改prometheus configmap，添加job
+
+~~~yaml
+- job_name: 'pushgateway'
+      scrape_interval: 5s
+      static_configs:
+      - targets: ['192.168.40.181:9091']
+      honor_labels: true
+~~~
+
+> 在 Prometheus 的配置中，`honor_labels: true` 是一个特殊的选项，它影响 Prometheus 如何处理冲突的标签。
+>
+> - 在默认情况下（即 `honor_labels` 为 `false` 或未设置时），如果 Prometheus 从目标实例抓取的指标数据中的标签和 Prometheus 服务器中已经存在的标签冲突，Prometheus 会保留已经存在的标签，并且添加一个新的标签 `exported_` 来保存抓取的标签。
+>
+> - 但是，如果设置了 `honor_labels: true`，Prometheus 在处理冲突的标签时，会保留从目标实例抓取的标签，而不是已经存在的标签。这在某些情况下是有用的，例如，当你使用 Prometheus 的 Pushgateway 或者 Federation 功能时。
+>
+> - 所以，`honor_labels: true` 的作用是让 Prometheus 在处理标签冲突时，优先保留从目标实例抓取的标签。
+>
+> 比如：
+>
+> - pushgateway中推送上去的数据，有job和instance的label
+>
+>   <img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202401051357493.png" alt="image-20240105135753400" style="zoom:50%;" />
+>
+> - prometheus中对于pushgateway也有job_name和instance，这个job和instance是指pushgateway实例本身
+>
+>   ![image-20240105135855414](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202401051358479.png)
+>
+> - `honor_labels: true` 定义好之后，prometheus和pushgateway的label各管各的，不冲突。
+
+- 在prometheus的targets列表可以看到pushgateway
+
+- 推送数据到pushgateway
+
+  ~~~sh
+  #向 {job="test_job"} 添加单条数据：
+  echo "metric 3.6" | curl --data-binary @- http://192.168.40.181:9091/metrics/job/test_job
+  #注：--data-binary 表示发送二进制数据，注意：它是使用POST方式发送的！
+  
+  #在 curl 命令中，@- 是一个特殊的符号，它表示从标准输入（stdin）读取数据。当你使用 --data-binary @- 选项时，curl 会等待从标准输入读取数据，直到遇到 EOF（End Of File）标记。在你的命令 echo "metric 3.6" | curl --data-binary @- http://192.168.40.181:9091/metrics/job/test_job 中，| 符号将 echo "metric 3.6" 的输出作为 curl --data-binary @- 的标准输入。所以，@- 在这里表示的就是 "metric 3.6" 这个字符串。
+  
+  #prometheus中直接搜metrics指标，可以看到3.6
+  ~~~
+
+  ~~~sh
+  #推送复杂数据
+  cat <<EOF | curl --data-binary @- http://192.168.40.181:9091/metrics/job/test_job/instance/test_instance
+  node_memory_usage 37
+  node_memory_total 36000
+  EOF
+  ~~~
+
+- 删除数据
+
+  ~~~sh
+  #删除某个实例下面的数据
+  curl -X DELETE http://192.168.40.181:9091/metrics/job/test_job/instance/test_instance
+  #删除某个组下的所有数据：
+  curl -X DELETE http://192.168.40.181:9091/metrics/job/test_job
+  ~~~
+
+  ## 脚本方式动态推送到pushgateway
+
+  ~~~sh
+  #写个脚本
+  node_memory_usages=$(free -m | grep Mem | awk '{print $3/$2*100}') 
+  #把free输出的第三列除以第二列，就是内存使用百分比
+  job_name="memory"
+  instance_name="192.168.40.181"
+  
+  cat <<EOF | curl --data-binary @- http://192.168.40.181:9091/metrics/job/$job_name/instance/$instance_name
+  node_memory_usages $node_memory_usages
+  EOF
+  ~~~
+
+  ~~~sh
+  sh push.sh #测试一下推送结果
+  ~~~
+
+  ~~~sh
+  #写定时任务，定时上报数据
+  chmod +x push.sh
+  crontab -e
+  */1 * * * * /usr/bin/bash  /k8s/push.sh
+  ~~~
+
+  
 
 
 
