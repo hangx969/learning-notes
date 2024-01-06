@@ -700,6 +700,51 @@ spec:
 
 ~~~yaml
 #部署示例业务pod
-
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dep-busybox
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: busybox
+  template:
+    metadata:
+      labels:
+        app: busybox
+    spec:
+      containers:
+      - name: busybox
+        image: busybox:latest
+        imagePullPolicy: IfNotPresent
+        args: ["/bin/sh", "-c", 'i=0; while true; do echo "$i: $(date)"; i=$((i+1)); sleep 1; done']
+        volumeMounts:
+        - name: localtime
+          mountPath: /etc/localtime
+      volumes:
+      - name: localtime
+        hostPath:
+          path: /usr/share/zoneinfo/Asia/Shanghai
 ~~~
 
+> ~~~yaml
+>         volumeMounts:
+>         - name: localtime
+>           mountPath: /etc/localtime
+>       volumes:
+>       - name: localtime
+>         hostPath:
+>           path: /usr/share/zoneinfo/Asia/Shanghai
+> ~~~
+>
+> - 通过这一部分的挂载，把本地的北京时间挂到了pod里面，让pod中产生的log时间更易读。
+
+- kibana中，通过query pod name来看：
+
+  ~~~mysql
+  kubernetes.pod_name : dep-busybox-577ccf67c4-nqbcn
+  ~~~
+
+# 
