@@ -12,7 +12,7 @@
 
 操作系统：centos7.9
 
-配置： 1Gib内存/8vCPU/20G硬盘
+配置： 4Gib内存/8vCPU/20G硬盘
 
 网络：NAT模式
 
