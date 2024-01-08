@@ -294,12 +294,545 @@ ceph -s
 
 # 测试k8s集群挂载ceph rbd
 
-~~~yaml
+## 安装前置软件
 
+~~~yaml
+# kubernetes要想使用ceph，需要在k8s的每个node节点安装ceph-common的驱动  。
+#把ceph节点上的ceph.repo文件拷贝到k8s各个节点/etc/yum.repos.d/目录下，然后在k8s的各个节点yum install ceph-common -y
+scp /etc/yum.repos.d/ceph.repo 192.168.40.4:/etc/yum.repos.d/
+scp /etc/yum.repos.d/ceph.repo 192.168.40.5:/etc/yum.repos.d/
+scp /etc/yum.repos.d/ceph.repo 192.168.40.6:/etc/yum.repos.d/
+#每个k8s节点上安装
+yum install ceph-common -y
+#在ceph的master1-admin上把ceph配置文件拷贝到k8s node上
+scp /etc/ceph/* 192.168.40.4:/etc/ceph/
+scp /etc/ceph/* 192.168.40.5:/etc/ceph/
+scp /etc/ceph/* 192.168.40.6/etc/ceph/
 ~~~
 
+## 配置rbd
 
+~~~sh
+#master1-admin上
+#创建ceph rbd
+ceph osd pool create k8srbd1 6 #创建pool，pgnum是6
+rbd create rbda -s 1024 -p k8srbd1 #创建1G大小的块设备
+rbd feature disable k8srbd1/rbda object-map fast-diff deep-flatten
+~~~
 
+## 创建pod挂载ceph rbd
 
+~~~yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: po-testrbd
+spec:
+  containers:
+    - name: nginx
+      image: nginx
+      imagePullPolicy: IfNotPresent
+      volumeMounts:
+      - name: testrbd
+        mountPath: /mnt
+  volumes:
+    - name: testrbd #注意： k8srbd1下的rbda被pod挂载了，那其他pod就不能占用这个k8srbd1下的rbda了
+      rbd:
+        monitors:
+        - '192.168.40.7:6789'
+        - '192.168.40.8:6789'
+        - '192.168.40.9:6789'
+        pool: k8srbd1
+        image: rbda
+        fsType: xfs
+        readOnly: false
+        user: admin
+        keyring: /etc/ceph/ceph.client.admin.keyring
+~~~
+
+- 注意：rbd设备不能同时被多个pod挂载。例如，创建一个deploy，2个pod挂载同一个rbd设备
+
+  ~~~yaml
+  apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    name: dep-cephrbd
+  spec:
+    replicas: 2
+    selector:
+      matchLabels:
+        storage: ceph
+    template:
+      metadata:
+        labels:
+          storage: ceph
+      spec:
+        containers:
+        - name: nginx
+          image: nginx
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+          - name: testrbd
+            mountPath: /mnt/
+        volumes:
+        - name: testrbd #注意： k8srbd1下的rbda被pod挂载了，那其他pod就不能占用这个k8srbd1下的rbda了
+          rbd:
+            monitors:
+            - '192.168.40.7:6789'
+            - '192.168.40.8:6789'
+            - '192.168.40.9:6789'
+            pool: k8srbd1
+            image: rbda
+            fsType: xfs
+            readOnly: false
+            user: admin
+            keyring: /etc/ceph/ceph.client.admin.keyring
+  ~~~
+
+- 如果是按照前面直接挂载的方式，两个pod只有1个pod能起来，另一个会提示MountVolume.WaitForAttach failed for volume "testrbd" : rbd image k8srbd1/rbda is still being used。即使设置调度到同一pod也不行。
 
 # 基于ceph rbd生成pv
+
+## 创建secret
+
+~~~sh
+#创建ceph-secret这个k8s secret对象，这个secret对象用于k8s volume插件访问ceph集群，获取client.admin的keyring值，并用base64编码，在master1-admin（ceph管理节点）操作
+ceph auth get-key client.admin | base64
+#创建ceph的secret，在k8s的控制节点操作：
+cat secret-ceph.yaml 
+apiVersion: v1
+kind: Secret
+metadata:
+  name: ceph-secret
+data:
+  key: QVFCVFJwdGx4Z2VoTFJBQW9QVkpsb3NvZDl1ZFBTYXRZbThDUGc9PQ== #<上一步生成的key>
+
+kubectl apply -f ceph-secret.yaml
+~~~
+
+## 创建osd pool
+
+~~~sh
+#创建ceph rbd
+ceph osd pool create k8srbd1 6 #创建pool，pgnum是6
+rbd create rbda -s 1024 -p k8srbd1 #创建1G大小的块设备
+rbd feature disable k8srbd1/rbda object-map fast-diff deep-flatten
+~~~
+
+## 创建pv
+
+~~~yaml
+apiVersion: v1 
+kind: PersistentVolume 
+metadata: 
+  name: ceph-pv 
+spec:   
+   capacity:     
+     storage: 1Gi   
+   accessModes:     
+   - ReadWriteOnce   
+   rbd:     
+         monitors:       
+         - '192.168.40.7:6789'
+         - '192.168.40.8:6789'
+         - '192.168.40.9:6789'    
+         pool: k8srbd1     
+         image: rbda     
+         user: admin     
+         secretRef:       
+           name: ceph-secret     
+         fsType: xfs     
+         readOnly: false   
+   persistentVolumeReclaimPolicy: Recycle
+~~~
+
+## 创建pvc
+
+~~~yaml
+kind: PersistentVolumeClaim 
+apiVersion: v1 
+metadata:   
+  name: ceph-pvc 
+spec:   
+  accessModes:     
+  - ReadWriteOnce   
+  resources:     
+   requests:       
+    storage: 1Gi
+~~~
+
+## 挂载pvc
+
+~~~yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+spec:
+  selector:
+    matchLabels:
+     app: nginx
+  replicas: 2 # tells deployment to run 2 pods matching the template
+  template: # create pods using pod definition in this template
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 80
+        volumeMounts:
+          - name: ceph-data
+            mountPath: "/ceph-data"
+      volumes:
+      - name: ceph-data
+        persistentVolumeClaim:
+          claimName: ceph-pvc
+~~~
+
+- 做成pv来挂载，就允许同一node上的多pod挂载了：ceph rbd块存储能在同一个node上跨pod以ReadWriteOnce共享挂载；ceph rbd块存储能在同一个node上同一个pod多个容器中以ReadWriteOnce共享挂载
+- ceph rbd块存储不能跨node以ReadWriteOnce共享挂载
+  - 如果一个使用ceph rdb的pod所在的node挂掉，这个pod虽然会被调度到其它node，但是由于rbd不能跨node多次挂载和挂掉的pod不能自动解绑pv的问题，这个新pod不会正常运行
+
+- 解决办法：
+
+  1，使用能支持跨node和pod之间挂载的共享存储，例如cephfs，GlusterFS等
+
+  2，给node添加label，只允许deployment所管理的pod调度到一个固定的node上。（不建议，这个node挂掉的话，服务就故障了）
+
+# 基于storage class动态生成pv
+
+## ceph配置文件授权
+
+~~~sh
+#3台ceph节点和3台k8s节点都执行。sc需要用到。
+chmod 777  -R  /etc/ceph/*
+mkdir /root/.ceph/
+cp -ar /etc/ceph/ /root/.ceph/
+~~~
+
+## 安装rbd供应商
+
+~~~sh
+#事先上传镜像
+docker load -i 
+~~~
+
+~~~yaml
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: rbd-provisioner
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: rbd-provisioner
+rules:
+  - apiGroups: [""]
+    resources: ["persistentvolumes"]
+    verbs: ["get", "list", "watch", "create", "delete"]
+  - apiGroups: [""]
+    resources: ["persistentvolumeclaims"]
+    verbs: ["get", "list", "watch", "update"]
+  - apiGroups: ["storage.k8s.io"]
+    resources: ["storageclasses"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: [""]
+    resources: ["events"]
+    verbs: ["create", "update", "patch"]
+  - apiGroups: [""]
+    resources: ["services"]
+    resourceNames: ["kube-dns","coredns"]
+    verbs: ["list", "get"]
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: rbd-provisioner
+subjects:
+  - kind: ServiceAccount
+    name: rbd-provisioner
+    namespace: default
+roleRef:
+  kind: ClusterRole
+  name: rbd-provisioner
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: rbd-provisioner
+rules:
+- apiGroups: [""]
+  resources: ["secrets"]
+  verbs: ["get"]
+- apiGroups: [""]
+  resources: ["endpoints"]
+  verbs: ["get", "list", "watch", "create", "update", "patch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: rbd-provisioner
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: rbd-provisioner
+subjects:
+- kind: ServiceAccount
+  name: rbd-provisioner
+  namespace: default
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rbd-provisioner
+spec:
+  selector:
+    matchLabels:
+      app: rbd-provisioner
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: rbd-provisioner
+    spec:
+      containers:
+      - name: rbd-provisioner
+        image: quay.io/xianchao/external_storage/rbd-provisioner:v1
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: PROVISIONER_NAME
+          value: ceph.com/rbd
+      serviceAccount: rbd-provisioner
+~~~
+
+## 创建ceph secret
+
+~~~sh
+#创建ceph-secret这个k8s secret对象，这个secret对象用于k8s volume插件访问ceph集群，获取client.admin的keyring值，并用base64编码，在master1-admin（ceph管理节点）操作
+ceph auth get-key client.admin | base64
+~~~
+
+~~~yaml
+#创建ceph的secret，在k8s的控制节点操作：
+apiVersion: v1
+kind: Secret
+metadata:
+  name: ceph-secret-sc
+type: "ceph.com/rbd" #secret的type除了可以用内置的，也可以自定义一个string。
+data:
+  key: QVFCVFJwdGx4Z2VoTFJBQW9QVkpsb3NvZDl1ZFBTYXRZbThDUGc9PQ== #<上一步生成的key>
+~~~
+
+~~~sh
+#创建ceph pool，只需要创建pool即可，rbd设备会被sc来自动创建
+ceph osd pool create k8stest1 6 #创建pool，pgnum是6
+~~~
+
+## 创建sc
+
+~~~yaml
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: k8s-rbd
+provisioner: ceph.com/rbd #要用provisioner里面env定义的name
+parameters:
+  monitors: 192.168.40.8:6789,192.168.40.7:6789,192.168.40.9:6789
+  adminId: admin
+  adminSecretName: ceph-secret-sc
+  pool: k8stest1
+  userId: admin
+  userSecretName: ceph-secret-sc
+  fsType: xfs
+  imageFormat: "2" #指定了RBD镜像的格式。"2"表示使用第二版的RBD镜像格式，这是一种新的、更加灵活的格式，支持更多的特性，如快照、克隆和层次化存储等
+  imageFeatures: "layering" #这个参数指定了RBD镜像的特性。"layering"表示启用了层次化存储特性。层次化存储允许镜像共享相同的数据块，可以节省存储空间，并且可以更快地创建新的镜像和快照。
+~~~
+
+> k8s1.20版本通过rbd  provisioner动态生成pv会报错:
+>
+> ```sh
+> kubectl logs rbd-provisioner-685746688f-8mbz
+> ```
+>
+> E0418 15:50:09.610071    1 controller.go:1004] provision "default/rbd-pvc" class "k8s-rbd": unexpected error getting claim reference: selfLink was empty, can't make reference
+>
+> - 报错原因是1.20版本禁用了selfLink，解决方法如下；
+>
+> - 编辑/etc/kubernetes/manifests/kube-apiserver.yaml，在这里：
+>
+> ```yaml
+> spec:
+>  containers:
+>  - command:
+>    - kube-apiserver
+> ```
+>
+> 添加这一行：
+>
+> ```yaml
+> - --feature-gates=RemoveSelfLink=false
+> ```
+>
+> 重启lubelet
+>
+> ~~~sh
+> systemctl restart kubelet
+> ~~~
+
+## 创建pvc
+
+~~~yaml
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: rbd-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  volumeMode: Filesystem
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: k8s-rbd
+~~~
+
+> 在Kubernetes的PersistentVolumeClaim（PVC）定义中，`pvc.spec.volumeMode`字段用于指定所请求的存储卷的访问模式。
+>
+> `volumeMode`字段有两个可能的取值：
+>
+> 1. `Filesystem`：这是默认的模式。在这种模式下，Kubernetes会在卷上创建一个文件系统，然后将这个文件系统挂载到Pod中的容器上。
+> 2. `Block`：在这种模式下，卷作为裸设备（raw block device）提供给Pod。也就是说，卷不会被格式化，也不会被挂载到Pod中的容器上。而是直接作为块设备提供给容器使用。
+>
+> 这两种模式的选择取决于你的应用需求。一般来说，大多数应用都会使用`Filesystem`模式，但是一些需要高性能IO或者特殊的文件系统特性的应用可能会选择`Block`模式。
+
+## 创建pod挂载pvc
+
+~~~yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    test: rbd-pod
+  name: ceph-rbd-pod
+spec:
+  containers:
+  - name: ceph-rbd-nginx
+    image: nginx:latest
+    imagePullPolicy: IfNotPresent
+    volumeMounts:
+    - name: ceph-rbd
+      mountPath: /mnt
+      readOnly: false
+  volumes:
+  - name: ceph-rbd
+    persistentVolumeClaim:
+      claimName: rbd-pvc
+~~~
+
+# k8s挂载cephfs
+
+## 创建ceph子目录
+
+~~~sh
+ceph fs ls
+#为了别的地方能挂载cephfs，先创建一个secretfile，在master1-admin上
+cat /etc/ceph/ceph.client.admin.keyring |grep key|awk -F" " '{print $3}' > /etc/ceph/admin.secret
+
+#挂载cephfs的根目录(192.168.40.8:6789:/)到集群mon节点下的一个目录，比如/mnt/k8s_data/，因为挂载后，我们就可以直接在k8s_data下面用Linux命令创建子目录了。
+mkdir /mnt/k8s_data/
+mount -t ceph 192.168.40.8:6789:/ /mnt/k8s_data -o name=admin,secretfile=/etc/ceph/admin.secret
+df -h
+
+#在cephfs的根目录里面创建了一个子目录podtest，k8s以后就可以挂载这个目录 
+cd /mnt/k8s_data/
+mkdir podtest -p
+chmod 0777 podtest/ 
+~~~
+
+## 创建secret
+
+~~~sh
+#将/etc/ceph/ceph.client.admin.keyring里面的key的值转换为base64
+cat /etc/ceph/ceph.client.admin.keyring | base64
+W2NsaWVudC5hZG1pbl0KCWtleSA9IEFRQlRScHRseGdlaExSQUFvUFZKbG9zb2Q5dWRQU2F0WW04Q1BnPT0K
+~~~
+
+~~~yaml
+#创建secret
+apiVersion: v1
+kind: Secret
+metadata:
+  name: cephfs-secret
+data:
+  key: W2NsaWVudC5hZG1pbl0KCWtleSA9IEFRQlRScHRseGdlaExSQUFvUFZKbG9zb2Q5dWRQU2F0WW04Q1BnPT0K
+~~~
+
+## 创建pv
+
+~~~yaml
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: cephfs-pv
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteMany
+  cephfs:
+    monitors:
+      - 192.168.40.8:6789
+    path: /podtest
+    user: admin
+    readOnly: false
+    secretRef:
+        name: cephfs-secret
+  persistentVolumeReclaimPolicy: Recycle  
+~~~
+
+## 创建pvc
+
+~~~yaml
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: cephfs-pvc
+spec:
+  accessModes:
+    - ReadWriteMany
+  volumeName: cephfs-pv
+  resources:
+    requests:
+      storage: 1Gi
+~~~
+
+## pod挂载pvc
+
+~~~yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: cephfs-pod-1
+spec:
+  containers:
+    - image: nginx
+      name: nginx
+      imagePullPolicy: IfNotPresent
+      volumeMounts:
+      - name: test-v1
+        mountPath: /mnt
+  volumes:
+  - name: test-v1
+    persistentVolumeClaim:
+      claimName: cephfs-pvc
+~~~
+
