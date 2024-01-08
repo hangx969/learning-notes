@@ -202,13 +202,12 @@ ls
 #把ceph.conf配置文件里的默认副本数从3改成1 。把osd_pool_default_size = 2 加入[global]段，这样只有2个osd也能达到active+clean状态：
 vim /etc/ceph/ceph.conf
 [global]
-fsid = af5cd413-1c53-4035-90c6-95368eef5c78
-mon_initial_members = node1-monitor
-mon_host = 192.168.40.201
+fsid = c617a513-0b8e-40a4-ba5a-741bbc9a13d8
+mon_initial_members = master1-admin, node1-monitor, node2-osd
+mon_host = 192.168.40.7,192.168.40.8,192.168.40.9
 auth_cluster_required = cephx
 auth_service_required = cephx
 auth_client_required = cephx
-filestore_xattr_use_omap = true
 osd_pool_default_size = 2
 mon clock drift allowed = 0.500 
 mon clock drift warn backoff = 10
@@ -228,16 +227,16 @@ ls *.keyring
 ## 部署osd服务
 
 ~~~sh
-#准备osd
+#准备osd，在master1-admin上
 cd /etc/ceph/
-ceph-deploy osd prepare master1-admin:/dev/sdb
-ceph-deploy osd prepare node1-monitor:/dev/sdb 
-ceph-deploy osd prepare node2-osd:/dev/sdb
+ceph-deploy osd prepare master1-admin:/dev/sdc
+ceph-deploy osd prepare node1-monitor:/dev/sdc 
+ceph-deploy osd prepare node2-osd:/dev/sdc
 
-#激活osd
-ceph-deploy osd activate master1-admin:/dev/sdb1
-ceph-deploy osd activate node1-monitor:/dev/sdb1
-ceph-deploy osd activate node2-osd:/dev/sdb1
+#激活osd，在master1-admin上
+ceph-deploy osd activate master1-admin:/dev/sdc1
+ceph-deploy osd activate node1-monitor:/dev/sdc1
+ceph-deploy osd activate node2-osd:/dev/sdc1
 
 #查看状态：
 ceph-deploy osd list master1-admin node1-monitor node2-osd
@@ -261,7 +260,7 @@ ceph fs ls
 > 1. 为metadata pool设置较高级别的副本级别，因为metadata的损坏可能导致整个文件系统不可用。
 > 2. 建议metadata pool使用低延时存储，比如SSD，因为metadata会直接影响客户端的响应速度。
 
-### 创建存储池
+### 创建osd存储池
 
 ~~~sh
 #master1-admin上
@@ -269,7 +268,7 @@ ceph osd pool create cephfs_data 128
 ceph osd pool create cephfs_metadata 128
 ~~~
 
-> 确定 pg_num 取值是强制性的，因为不能自动计算。下面是几个常用的值：
+> 上面的128是pg_num的值，确定 pg_num 取值是强制性的，因为不能自动计算。下面是几个常用的值：
 >
 > - 少于 5 个 OSD 时可把 pg_num 设置为 128
 >
@@ -293,6 +292,14 @@ ceph mds stat
 ceph -s
 ~~~
 
-# 测试k8s集群挂载ceph
+# 测试k8s集群挂载ceph rbd
+
+~~~yaml
+
+~~~
+
+
+
+
 
 # 基于ceph rbd生成pv
