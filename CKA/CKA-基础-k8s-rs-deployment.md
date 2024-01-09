@@ -116,7 +116,7 @@ spec:
       version: v1
   template:
     metadata:
-      Label:
+      labels:
         app: myapp
         version: v1
     spec:
