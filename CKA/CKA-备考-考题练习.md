@@ -15,25 +15,7 @@ Task
 
 ## 解答
 
-- kubernetes.io文档中搜rbac
 
-~~~sh
-#切换集群
-kubectl config use-context k8s
-#创建ns（考试时ns已经有了不用创建）
-kubectl create ns app-team1
-#创建clusterrole，文档中搜create clusterrole
-kubectl create clusterrole deployment-clusterrole --verb=create --resource=deployment,daemonset,statefulset
-#创建sa
-kubectl create sa cicd-token -n app-team1
-#创建rolebinding，文档搜create rolebinding
-kubectl create rolebinding -n app-team1 --clusterrole=deployment-clusterrole --serviceaccount=cicd-token
-#检查
-kubectl describe rolebinding cicd-token-binding -n app-team1
-~~~
-
-> - 注意资源要变复数
-> - sa要带着ns，--serviceaccount=`app-team1`:cicd-token
 
 # 2 node节点不可用
 
@@ -43,14 +25,7 @@ kubectl describe rolebinding cicd-token-binding -n app-team1
 
 ## 解答
 
-- kubectl drain --help 来看参数
 
-~~~sh
-kubectl config use context ek8s
-kubectl get nodes
-kubectl cordon ckanode1
-kubectl drain ckanode1 --delete-emptydir-data --ignore-daemonsets --force
-~~~
 
 # 3 k8s版本升级
 
@@ -64,50 +39,9 @@ kubectl drain ckanode1 --delete-emptydir-data --ignore-daemonsets --force
 
 ## 解答
 
-- kubernetes.io搜upgrade
-
-~~~sh
-kubectl get nodes
-#在node节点上，cordon and drain nodes
-kubectl cordon master01
-kubectl drain master01 --delete-emptydir-data --ignore-daemonsets --force
-
-#ssh到master01节点
-ssh master01
-sudo -i
-#Determine which version to upgrade to 
-apt update
-apt-cache madison kubeadm | grep 1.23.2
-#Upgrading control plane nodes 
-#Call "kubeadm upgrade" 
-apt-mark unhold kubeadm && \
-apt-get update && apt-get install -y kubeadm='1.23.2-00' && \
-apt-mark hold kubeadm
-kubeadm version
-#Verify the upgrade plan
-kubeadm upgrade plan
-kubeadm upgrade apply v1.23.2 --etcd-upgrade=false
-#upgrade kubelet and kubectl
-apt-mark unhold kubelet kubectl && \
-apt-get update && apt-get install -y kubelet='1.23.2-00' kubectl='1.23.2-00' && \
-apt-mark hold kubelet kubectl
-#restart the kubelet
-systemctl daemon-reload
-systemctl restart kubelet
-#退出root
-exit
-#退出master01
-exit
-#uncordon master01
-kubectl uncordon master01
-kubectl get nodes 
-~~~
-
 # 4 etcd备份还原
 
 ## 题目
-
-> （真实考试时，第3题是“升级集群”那道题。建议真正考试时，前4道题按照顺序做，特别是第4题，且做完后不要再修改，做完第3道题，如果没有exit退出到student@node-1，则无法执行etcdctl命令，另外这道题没有切换集群，用的是第3道题的集群，所以，这道题做完就不要在回来检查或者操作了，etcd不建议放到最后做，如果最后做，etcd备份还原可能把所有pod都清空了，有可能会出现，所以前4道题按照顺序做）
 
 - 首先，为运行在https://27.0.0.1:2379 上的现有 etcd 实例创建快照并将快照保存到 /srv/data/etcd-snapshot.db 文件。为给定实例创建快照预计能在几秒钟内完成。 如果该操作似乎挂起，则命令可能有问题。用 CTRL + C 来取消操作，然后重试。
 - 然后还原位于/var/lib/backup/etcd-snapshot-previous.db的现有先前快照。提供了以下TLS证书和密钥，以通过etcdctl连接到服务器。
@@ -116,41 +50,6 @@ kubectl get nodes
   客户端密钥: /opt/KUIN00601/etcd-client.key
 
 ## 解答
-
-> 自己的环境先安装etcdctl：上传etcd-v3.4.13-linux-amd64.tar.gz
->
-> ~~~sh
-> tar zxvf etcd-v3.4.13-linux-amd64.tar.gz
-> cp etcd-v3.4.13-linux-amd64/etcdctl /usr/bin/
-> ~~~
-
-- kubernetes.io搜etcd restore, ctrl+F搜snapshot
-
-~~~sh
-#首先确保退回到了student@node-1的终端，才能继续用etcdctl，官网命令如下：
-ETCDCTL_API=3 etcdctl --endpoints=https://127.0.0.1:2379 \
-  --cacert=<trusted-ca-file> --cert=<cert-file> --key=<key-file> \
-  snapshot save <backup-file-location>
-
-#自己环境命令：
-mkdir -p /srv/data/
-##备份
-ETCDCTL_API=3 etcdctl --endpoints=https://127.0.0.1:2379  --cacert=/etc/kubernetes/pki/etcd/ca.crt --cert=/etc/kubernetes/pki/etcd/server.crt --key=/etc/kubernetes/pki/etcd/server.key \
-  snapshot save /srv/data/etcd-snapshot.db
-##还原
-ETCDCTL_API=3 etcdctl --endpoints=https://127.0.0.1:2379 \
---cacert=/etc/kubernetes/pki/etcd/ca.crt --cert=/etc/kubernetes/pki/etcd/server.crt --key=/etc/kubernetes/pki/etcd/server.key \
-  snapshot restore /srv/data/etcd-snapshot.db
-
-#考试环境命令
-##备份
-ETCDCTL_API=3 etcdctl --endpoints=https://127.0.0.1:2379  --cacert=/etc/kubernetes/pki/etcd/ca.crt --cert=/etc/kubernetes/pki/etcd/server.crt --key=/etc/kubernetes/pki/etcd/server.key \
-  snapshot save /srv/data/etcd-snapshot.db
-##还原
-ETCDCTL_API=3 etcdctl --endpoints=https://127.0.0.1:2379 \
---cacert=/opt/KUIN00601/ca.crt --cert=/opt/KUIN00601/etcd-client.crt --key=/opt/KUIN00601/etcd-client.key \
-  snapshot restore /var/lib/backup/etcd-snapshot-previous.db
-~~~
 
 # 5 networkpolicy
 
@@ -255,11 +154,13 @@ spec:
   selector:
     app: nginx
   ports:
-    - port: 80
+    - port: 80 #题目没规定svc的端口是多少，就还用跟containerport一样的80就行
       targetPort: http #targetPort可以写containerport的名字
 ~~~
 
 # 7 Ingress七层代理
+
+> 规定了ns的题目，创建资源的时候记得yaml文件里面加上ns
 
 ## 题目
 
@@ -293,7 +194,7 @@ metadata:
   labels:
     app.kubernetes.io/component: controller
   name: nginx-example
-  namespace: ing-internal #补一个ns
+  namespace: ing-internal #补一个ns，这里容易忘记
   annotations:
     ingressclass.kubernetes.io/is-default-class: "true"
 spec:
@@ -353,7 +254,7 @@ kind: Pod
 metadata:
   name: nginx-kusc00401
 spec:
-  nodeSelector:
+  nodeSelector: #注意nodeselector这里不需要写matchlabels
     disk: spinning #注意labels的写法，yaml文件里面是map[string][string]，是冒号空格的形式
   containers:
   - name: nginx
@@ -370,7 +271,7 @@ spec:
 
 ~~~sh
 #先找Ready的nodes
-kubectl get nodes | grep -w "Ready" | wc -l
+kubectl get nodes | grep -w "Ready"
 #再把出来的node名称放到下面去describe
 kubectl describe nodes ckanode1 | grep -i Taint | grep -vc NoSchedule
 #记录总数为x
@@ -497,7 +398,7 @@ spec:
 ## 解答
 
 ~~~sh
-kubectl logs foobar | grep unable-access-website > /opt/KUTR00101/foobar
+kubectl logs foobar | grep unable-access-website > /opt/KUTR00101/foobar #写入的命令可以直接在grep后面加>
 ~~~
 
 # 15 side-car代理
@@ -562,6 +463,8 @@ kubectl logs counter -c sidecar
 
 # 16 查看pod的CPU使用
 
+> 这里 -A 指定所有pod 容易被忽略
+
 ## 题目
 
 找出标签是name=cpu-user 的Pod，并过滤出使用CPU最高的Pod，然后把它的名字写在已经存在的/opt/KUTR00401/KUTR00401.txt 文件里（注意他没有说指定namespace。所以需要使用 -A）
@@ -583,6 +486,7 @@ echo "pod name" > /opt/KUTR00401/KUTR00401.txt
 > - metrics.yaml
 >
 > ~~~sh
+> #ckanode1上
 > docker load -i metrics-server-amd64-0-3-6.tar.gz
 > docker load -i addon.tar.gz
 > kubectl apply -f metrics.yaml

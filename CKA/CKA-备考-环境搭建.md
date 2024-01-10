@@ -5,8 +5,8 @@
 - VMWare中打开master1和node1两个虚拟机，删除快照。
 - 登录虚拟机，user：linux，passwd：linux；user：root，passwd：linux。
 - ip addr查看本机IP：
-  - ckamaster1：10.17.0.247
-  - ckanode1：10.17.1.27
+  - ckamaster1：10.17.0.62
+  - ckanode1：10.17.2.182
 
 ## 配置OS
 
@@ -177,12 +177,12 @@ bootstrapTokens:
   - authentication
 kind: InitConfiguration
 localAPIEndpoint:
-  advertiseAddress: 192.168.40.180 #控制节点的ip
+  advertiseAddress: 10.17.0.247 #控制节点的ip
   bindPort: 6443
 nodeRegistration:
   criSocket: /var/run/dockershim.sock
   imagePullPolicy: IfNotPresent
-  name: master-1 #控制节点的hostname
+  name: ckamaster1 #控制节点的hostname
   taints: null
 ---
 apiServer:
