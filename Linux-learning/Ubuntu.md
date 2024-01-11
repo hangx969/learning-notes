@@ -1,0 +1,1 @@
+Ubuntu 2004配置静态IP: [为Ubuntu 20.04 设置静态IP简明教程（和把大象装冰箱一样简单）-腾讯云开发者社区-腾讯云 (tencent.com)](https://cloud.tencent.com/developer/article/1933335)
