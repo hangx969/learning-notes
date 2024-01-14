@@ -1331,9 +1331,9 @@ xfs_admin 和 tune2fs
 - **nslookup** microsoft.com
 - **getent hosts** microsoft.com
 - 本地DNS解析：/etc/hosts
-- DNS优先级：/etc/nsswitch.conf
+- DNS优先级定义：/etc/nsswitch.conf
 - **/etc/nsswitch.conf** 这个文件定义了DNS解析的优先级过程，默认下，先从本地寻找（**/etc/hosts**），如果找不到，再从**/etc/resolv.conf**中定义的DNS服务器中寻找
-- **nslookup**和**dig**直接从**/etc/resolv.conf**中寻找，并不会查找本地/etc/hosts；然而**getent**会按照**/etc/nsswitch.conf** 定义的顺序来查找（默认时就会先查找/etc/hosts）
+- **nslookup**和**dig**直接从**/etc/resolv.conf**中定义的nameserver寻找，并不会查找本地/etc/hosts；然而**getent**会按照**/etc/nsswitch.conf** 定义的顺序来查找（默认时就会先查找/etc/hosts）
 
 ### 检查端口监听状态
 

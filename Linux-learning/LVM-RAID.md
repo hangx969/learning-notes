@@ -41,8 +41,6 @@ So we need to maintain the mount even after a reboot through configuring the **f
 vim /etc/fstab  # It's important to use UUID instead of disk name in VM
 ```
 
-![Graphical user interface, text  Description automatically generated](file:///C:/Users/V-HANG~1.FAR/AppData/Local/Temp/msohtmlclip1/01/clip_image002.gif)
-
 ```shell
 mount -a 
 ```
@@ -78,8 +76,6 @@ t # change partition type
 8e # hex code for LVM
 fdisk -l # check
 ```
-
- <img src="C:\Users\v-hangx.FAREAST\AppData\Roaming\Typora\typora-user-images\image-20220119145410007.png" alt="image-20220119145410007" style="zoom:80%;" />
 
 ### 2. Prepare Physical volume (PV)
 
