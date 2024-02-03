@@ -23,11 +23,11 @@ kubectl config use-context k8s
 #创建ns（考试时ns已经有了不用创建）
 kubectl create ns app-team1
 #创建clusterrole，文档中搜create clusterrole
-kubectl create clusterrole deployment-clusterrole --verb=create --resource=deployment,daemonset,statefulset
+kubectl create clusterrole deployment-clusterrole --verb=create --resource=deployments,daemonsets,statefulsets
 #创建sa
 kubectl create sa cicd-token -n app-team1
 #创建rolebinding，文档搜create rolebinding
-kubectl create rolebinding -n app-team1 --clusterrole=deployment-clusterrole --serviceaccount=cicd-token
+kubectl create rolebinding -n app-team1 --clusterrole=deployment-clusterrole --serviceaccount=app-team1:cicd-token
 #检查
 kubectl describe rolebinding cicd-token-binding -n app-team1
 ~~~
@@ -39,14 +39,14 @@ kubectl describe rolebinding cicd-token-binding -n app-team1
 
 ## 题目
 
-将ek8s-node-1 节点设置为不可用，然后重新调度该节点上的所有Pod
+将ek8s-node-1节点设置为不可用，然后重新调度该节点上的所有Pod
 
 ## 解答
 
 - kubectl drain --help 来看参数
 
 ~~~sh
-kubectl config use context ek8s
+kubectl config use-context ek8s
 kubectl get nodes
 kubectl cordon ckanode1
 kubectl drain ckanode1 --delete-emptydir-data --ignore-daemonsets --force
@@ -286,7 +286,7 @@ kubectl create ns ing-internal
 - #先创建一个ingressClass
 
 ~~~yaml
-#官网搜ingress，在文档内搜default ingressClass吗，拿到示例ingressclass的yaml文件
+#官网搜ingress，在文档内搜default ingressClass，拿到示例ingressclass的yaml文件
 apiVersion: networking.k8s.io/v1
 kind: IngressClass
 metadata:
@@ -311,7 +311,7 @@ metadata:
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
-  ingressClassName: nginx #ingressClassName一般写nginx就行
+  ingressClassName: nginx-example
   rules:
   - http:
       paths:
@@ -372,7 +372,7 @@ spec:
 #先找Ready的nodes
 kubectl get nodes | grep -w "Ready" | wc -l
 #再把出来的node名称放到下面去describe
-kubectl describe nodes ckanode1 | grep -i Taint | grep -vc NoSchedule
+kubectl describe nodes ckanode1 | grep -i Taint | grep -v NoSchedule | wc -l
 #记录总数为x
 echo x > /opt/KUSC00402/kusc00402.txt
 ~~~
@@ -385,7 +385,7 @@ echo x > /opt/KUSC00402/kusc00402.txt
 
 ## 题目
 
-创建一个PodPod，名字为kucc1，这个Pod 包含4容器，为nginx 、redis 、memcached 、consul
+创建一个Pod，名字为kucc1，这个Pod 包含4容器，为nginx 、redis 、memcached 、consul
 
 ## 解答
 
