@@ -109,7 +109,7 @@ git clone https://github.com/bhilburn/powerlevel9k.git ~/.oh-my-zsh/custom/theme
 vim /root/.zshrc
 #修改主题配置为powerlevel9k
 ZSH_THEME="powerlevel9k/powerlevel9k"
-
+source ~/.zshrc
 ~~~
 
 ### powerlevel10k

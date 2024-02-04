@@ -395,7 +395,11 @@ sudo chown $(id -u):$(id -g) $HOME/.kube/config
 whereis kubectl # kubectl: /usr/bin/kubectl
 echo "alias k=/usr/bin/kubectl">>/etc/profile
 source /etc/profile
-#2. 设置alias的自动补全：
+#2. 安装并设置alias的自动补全：
+yum install -y bash-completion
+source /usr/share/bash-completion/bash_completion
+kubectl completion bash | sudo tee /etc/bash_completion.d/kubectl > /dev/null
+##生成 bash 自动补全脚本，写入到 /etc/bash_completion.d/kubectl 文件中
 source <(kubectl completion bash | sed 's/kubectl/k/g')
 #3. 解决每次启动k都会失效，要重新刷新环境变量（source /etc/profile）的问题：在~/.bashrc文件中添加以下代码：source /etc/profile
 echo "source /etc/profile" >> ~/.bashrc

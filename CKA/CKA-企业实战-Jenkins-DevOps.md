@@ -58,7 +58,172 @@ exportfs -arv
 - 创建ns
 
   ~~~sh
+  kubectl create namespace jenkins-k8s
   ~~~
 
-- 安装jenkins（示例就用2.421版本）
+- 创建pv
+
+  ~~~yaml
+  apiVersion: v1
+  kind: PersistentVolume
+  metadata:
+    name: jenkins-k8s-pv
+    namespace: jenkins-k8s
+  spec:
+    capacity:
+      storage: 10Gi
+    accessModes:
+    - ReadWriteMany
+    nfs:
+      server: 192.168.40.180
+      path: /data/v2
+  ~~~
+
+- 创建pvc
+
+  ~~~yaml
+  kind: PersistentVolumeClaim
+  apiVersion: v1
+  metadata:
+    name: jenkins-k8s-pvc
+    namespace: jenkins-k8s
+  spec:
+    resources:
+      requests:
+        storage: 10Gi
+    accessModes:
+    - ReadWriteMany
+  ~~~
+
+- 创建sa并做授权
+
+  ~~~sh
+  kubectl create sa jenkins-k8s-sa -n jenkins-k8s
+  kubectl create clusterrolebinding jenkins-k8s-sa-cluster -n jenkins-k8s  --clusterrole=cluster-admin --serviceaccount=jenkins-k8s:jenkins-k8s-sa
+  ~~~
+
+- 制作jenkins镜像
+
+  ~~~sh
+  #制作jenkins镜像
+  docker pull jenkins/jenkins:2.394
+  docker save -o jenkins2.394.tar.gz  jenkins/jenkins:2.394
+  
+  #制作jenkins-slave从节点的镜像
+  mkdir -p ./jenkins-slave
+  cd ./jenkins-slave
+  ##写dockerfile##
+  cat dockerfile
+  FROM jenkins/jnlp-slave:4.13.3-1-jdk11
+  USER root
+  ##安装Docker
+  RUN apt-get update && apt-get install -y \
+      docker.io
+  ##将当前用户加入docker用户组
+  RUN usermod -aG docker jenkins
+  RUN curl -LO https://dl.k8s.io/release/stable.txt
+  RUN curl -LO https://dl.k8s.io/release/$(cat stable.txt)/bin/linux/amd64/kubectl
+  RUN chmod +x kubectl
+  RUN mv kubectl /usr/local/bin/
+  ENV DOCKER_HOST unix:///var/run/docker.sock
+  
+  ##打包镜像
+  docker build -t=jenkins-slave-4-13:v1 .
+  docker save -o jenkins-slave-4-13.tar.gz  jenkins-slave-4-13:v1
+  #拷贝到所有节点上
+  ~~~
+
+  ~~~sh
+  #更改jenkins数据目录的属主。将 /data/v2 目录及其下所有文件和子目录的所有权更改为用户 ID 和组 ID 都为 1000 的用户。
+  chown -R 1000.1000 /data/v2
+  ~~~
+
+- 安装jenkins
+
+  ~~~yaml
+  kind: Deployment
+  apiVersion: apps/v1
+  metadata:
+    name: jenkins
+    namespace: jenkins-k8s
+  spec:
+    replicas: 1
+    selector:
+      matchLabels:
+        app: jenkins
+    template:
+      metadata:
+        labels:
+          app: jenkins
+      spec:
+        serviceAccount: jenkins-k8s-sa
+        containers:
+        - name: jenkins
+          image:  jenkins/jenkins:2.394
+          imagePullPolicy: IfNotPresent
+          ports:
+          - name: web 
+            containerPort: 8080
+            protocol: TCP
+          - name: agent
+            containerPort: 50000
+            protocol: TCP
+          resources:
+            limits:
+              cpu: 1000m
+              memory: 1Gi
+            requests:
+              cpu: 500m
+              memory: 512Mi
+          livenessProbe:
+            httpGet:
+              path: /login
+              port: 8080
+            initialDelaySeconds: 60
+            timeoutSeconds: 5
+            failureThreshold: 12
+          readinessProbe:
+            httpGet:
+              path: /login
+              port: 8080
+            initialDelaySeconds: 60
+            timeoutSeconds: 5
+            failureThreshold: 12
+          volumeMounts:
+          - name: jenkins-volume
+            subPath: jenkins-home
+            mountPath: /var/jenkins_home
+        volumes:
+        - name: jenkins-volume
+          persistentVolumeClaim:
+            claimName: jenkins-k8s-pvc
+  ~~~
+
+### 暴露服务
+
+~~~yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: jenkins-service
+  namespace: jenkins-k8s
+  labels:
+    app: jenkins
+spec:
+  selector:
+    app: jenkins
+  type: NodePort
+  ports:
+  - name: web
+    port: 8080
+    targetPort: web
+    nodePort: 30002
+  - name: agent
+    port: 50000
+    targetPort: agent
+~~~
+
+### 配置jenkins
+
+
 
