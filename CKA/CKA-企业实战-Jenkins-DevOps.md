@@ -133,11 +133,6 @@ exportfs -arv
   #拷贝到所有节点上
   ~~~
 
-  ~~~sh
-  #更改jenkins数据目录的属主。将 /data/v2 目录及其下所有文件和子目录的所有权更改为用户 ID 和组 ID 都为 1000 的用户。
-  chown -R 1000.1000 /data/v2
-  ~~~
-
 - 安装jenkins
 
   ~~~yaml
@@ -197,6 +192,16 @@ exportfs -arv
         - name: jenkins-volume
           persistentVolumeClaim:
             claimName: jenkins-k8s-pvc
+  ~~~
+
+  ~~~sh
+  #报错
+  k logs jenkins-c5c56899f-h2r4c -n jenkins-k8s
+  #Can not write to /var/jenkins_home/copy_reference_file.log. Wrong volume permissions?
+  #touch: cannot touch '/var/jenkins_home/copy_reference_file.log': Permission denied
+  #解决
+  #更改jenkins数据目录的属主。将 /data/v2 目录及其下所有文件和子目录的所有权更改为用户 ID 和组 ID 都为 1000 的用户。
+  chown -R 1000.1000 /data/v2
   ~~~
 
 ### 暴露服务
