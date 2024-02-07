@@ -186,7 +186,7 @@ exportfs -arv
             failureThreshold: 12
           volumeMounts:
           - name: jenkins-volume
-            subPath: jenkins-home
+            subPath: jenkins-home #这个subPath指的是宿主机目录里面创建一个子目录挂载
             mountPath: /var/jenkins_home
         volumes:
         - name: jenkins-volume
@@ -201,6 +201,7 @@ exportfs -arv
   #touch: cannot touch '/var/jenkins_home/copy_reference_file.log': Permission denied
   #解决
   #更改jenkins数据目录的属主。将 /data/v2 目录及其下所有文件和子目录的所有权更改为用户 ID 和组 ID 都为 1000 的用户。
+  #pod挂载nfs的目录，如果没有权限，可以将属主属组改成1000.1000即可
   chown -R 1000.1000 /data/v2
   ~~~
 
@@ -230,5 +231,58 @@ spec:
 
 ### 配置jenkins
 
+~~~sh
+#浏览器访问192.168.40.180:30002，进到jenkins管理界面
+#访问物理机的数据目录获取密码。密码文件在pod内的路径为/var/jenkins-home/secrets/initialAdminPassword
+#由于pod挂载的是master节点的/data/v2，所以去master的/data/v2/jenkins-home/secrets/initialAdminPassword
+cat /data/v2/jenkins-home/secrets/initialAdminPassword
+#b747213415c545548308434f7b30bee7
+#等他自动安装插件完，设置管理员
+#用户名：admin
+#密码：admin
+~~~
 
+- manage jenkins - 插件管理 - available plugins - 搜索kubernetes、blueocean - 均选择download node and install after restart
 
+- 安装完kubernetes、blueocean之后，浏览器手动重启jenkins：
+
+  ~~~sh
+  192.168.40.180:30002/restart
+  ~~~
+
+- 弹出登录界面说明插件安装没问题，可以进行后续实验。
+
+## jenkins对接k8s自动生成从节点
+
+### 连接k8s集群
+
+~~~sh
+#http://192.168.40.180:30002/configureClouds/
+#kubernetes地址: https://192.168.40.180:6443
+#kubernetes名称空间：jenkins-k8s
+#jenkins地址写jenkins svc地址：http://jenkins-service.jenkins-k8s.svc.cluster.local:8080
+~~~
+
+![image-20240207210712930](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202402072107183.png)
+
+### 配置pod template
+
+- 配置从节点的pod模板
+
+  - docker镜像写之前导入到node上的slave的image名称
+
+  ![image-20240207213411537](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202402072134653.png)
+
+- 从节点的pod要调用docker去创建其他pod，所以把相关路径挂载进去
+
+![image-20240207213709147](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202402072137227.png)
+
+- 拷贝master1的.kube到node1上。因为从节点pod挂载的是主机路径，从节点pod调度到哪个node上，node都要有/root/.kube/目录
+
+  ~~~sh
+  scp -r /root/.kube/  node1:/root/
+  ~~~
+
+- apply - save保存
+
+### 配置dockerhub凭据
