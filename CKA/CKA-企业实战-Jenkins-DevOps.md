@@ -269,11 +269,12 @@ cat /data/v2/jenkins-home/secrets/initialAdminPassword
 
 - 配置从节点的pod模板
 
-  - docker镜像写之前导入到node上的slave的image名称
+  - 点击添加pod模板
+  - docker镜像写之前导入到node上的slave的image名称，container template名称要写jnlp。
 
   ![image-20240207213411537](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202402072134653.png)
 
-- 从节点的pod要调用docker去创建其他pod，所以把相关路径挂载进去
+- 从节点的pod要调用docker去创建其他pod，所以把相关路径挂载进去。配置host path卷。
 
 ![image-20240207213709147](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202402072137227.png)
 
@@ -286,3 +287,126 @@ cat /data/v2/jenkins-home/secrets/initialAdminPassword
 - apply - save保存
 
 ### 配置dockerhub凭据
+
+- manage credentials：
+
+
+![image-20240208194828707](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202402081948880.png)
+
+- 去dockerhub注册用户名密码
+
+- 填写credentials
+
+  ![image-20240208195456048](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202402081954137.png)
+
+## jenkins+k8s自动化发布Go、Java、PHP等项目
+
+### 流程
+
+- 开发提交代码到代码仓库gitlab --> jenkins检测到代码更新 --> 调用k8s api在k8s中创建jenkins slave pod
+
+- slave pod拉取代码 --> maven把拉取的代码进行构建成war包/jar包 --> 上传代码到Sonarqube，静态代码扫描 --> 基于war包构建docker image --> 把镜像上传到harbor/dockerhub --> 基于镜像部署到开发/测试/生产环境
+
+  ![image-20240208200024244](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202402082000326.png)
+
+### 创建流水线
+
+- 创建三个测试用namespace
+
+  ~~~sh
+  kubectl create ns devlopment
+  kubectl create ns production
+  kubectl create ns qatest
+  ~~~
+
+- jenkins UI创建一个新任务
+
+  - 任务名称：jenkins-variable-test-deploy
+  - 创建类型为流水线
+
+- pipeline script - 需要修改的地方见脚本注释
+
+  ~~~sh
+  node('test') { #pod模板里面指定了标签是test。
+      stage('Clone') {
+          echo "1.Clone Stage"
+          git url: "https://github.com/hangx969/jenkins-sample.git" #把韩老师的项目fork过来https://github.com/luckylucky421/jenkins-sample.git #并且注意fork过来之后，在k8s-dev/qa/prod.yaml文件中，把image的xianchao改成自己的dockerhub用户名xuhang969
+          script {
+              build_tag = sh(returnStdout: true, script: 'git rev-parse --short HEAD').trim() #基于当前代码生成随机数，代码发生变化后，随机数变化会被检测到，从而触发后面的操作。
+          }
+      }
+      stage('Test') {
+        echo "2.Test Stage"
+  
+      }
+      stage('Build') {
+          echo "3.Build Docker Image Stage"
+          sh "docker build -t xuhang969/jenkins-demo:${build_tag} ."
+      }
+      stage('Push') {
+          echo "4.Push Docker Image Stage"
+          withCredentials([usernamePassword(credentialsId: 'dockerhub', passwordVariable: 'dockerHubPassword', usernameVariable: 'dockerHubUser')]) {
+              sh "docker login -u ${dockerHubUser} -p ${dockerHubPassword}"
+              sh "docker push xuhang969/jenkins-demo:${build_tag}"
+          } #检测jenkins之前配置的credentials的ID
+      }
+      stage('Deploy to dev') {
+          echo "5. Deploy DEV"
+  		sh "sed -i 's/<BUILD_TAG>/${build_tag}/' k8s-dev.yaml"
+          sh "sed -i 's/<BRANCH_NAME>/${env.BRANCH_NAME}/' k8s-dev.yaml"
+  //        sh "bash running-devlopment.sh"
+          sh "kubectl apply -f k8s-dev.yaml  --validate=false"
+  	}	
+  	stage('Promote to qa') {	
+  		def userInput = input( #定义函数选择是否发布到qa
+              id: 'userInput',
+  
+              message: 'Promote to qa?',
+              parameters: [
+                  [
+                      $class: 'ChoiceParameterDefinition',
+                      choices: "YES\nNO",
+                      name: 'Env'
+                  ]
+              ]
+          )
+          echo "This is a deploy step to ${userInput}"
+          if (userInput == "YES") {
+              sh "sed -i 's/<BUILD_TAG>/${build_tag}/' k8s-qa.yaml"
+              sh "sed -i 's/<BRANCH_NAME>/${env.BRANCH_NAME}/' k8s-qa.yaml"
+  //            sh "bash running-qa.sh"
+              sh "kubectl apply -f k8s-qa.yaml --validate=false"
+              sh "sleep 6"
+              sh "kubectl get pods -n qatest"
+          } else {
+              //exit
+          }
+      }
+  	stage('Promote to pro') {	
+  		def userInput = input(
+  
+              id: 'userInput',
+              message: 'Promote to pro?',
+              parameters: [
+                  [
+                      $class: 'ChoiceParameterDefinition',
+                      choices: "YES\nNO",
+                      name: 'Env'
+                  ]
+              ]
+          )
+          echo "This is a deploy step to ${userInput}"
+          if (userInput == "YES") {
+              sh "sed -i 's/<BUILD_TAG>/${build_tag}/' k8s-prod.yaml"
+              sh "sed -i 's/<BRANCH_NAME>/${env.BRANCH_NAME}/' k8s-prod.yaml"
+  //            sh "bash running-production.sh"
+              sh "cat k8s-prod.yaml"
+              sh "kubectl apply -f k8s-prod.yaml --record --validate=false"
+          }
+      }
+  }
+  ~~~
+
+- 应用-保存-立即构建
+
+- 查看console output
