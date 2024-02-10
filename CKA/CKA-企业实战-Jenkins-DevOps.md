@@ -18,6 +18,10 @@
 
   ![image-20240203174605239](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202402031746374.png)
 
+# Jenkins语法
+
+## jenkins pipeline介绍
+
 # 基于Jenkins+k8s+Git+DockerHub构建DevOps平台
 
 ## 环境准备
@@ -299,7 +303,7 @@ cat /data/v2/jenkins-home/secrets/initialAdminPassword
 
   ![image-20240208195456048](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202402081954137.png)
 
-## jenkins+k8s自动化发布Go、Java、PHP等项目
+## jenkins+k8s自动化发布Go项目
 
 ### 流程
 
@@ -330,7 +334,9 @@ cat /data/v2/jenkins-home/secrets/initialAdminPassword
   node('test') { #pod模板里面指定了标签是test。
       stage('Clone') {
           echo "1.Clone Stage"
-          git url: "https://github.com/hangx969/jenkins-sample.git" #把韩老师的项目fork过来https://github.com/luckylucky421/jenkins-sample.git #并且注意fork过来之后，在k8s-dev/qa/prod.yaml文件中，把image的xianchao改成自己的dockerhub用户名xuhang969
+          git url: "https://github.com/hangx969/jenkins-sample.git" 
+          #把韩老师的项目fork过来https://github.com/luckylucky421/jenkins-sample.git #并且注意fork过来之后，在k8s-dev/qa/prod.yaml文件中，把image的xianchao改成自己的dockerhub用户名xuhang969
+          #jenkins会自动拉下来代码并解压，后面会通过dockerfile打包镜像
           script {
               build_tag = sh(returnStdout: true, script: 'git rev-parse --short HEAD').trim() #基于当前代码生成随机数，代码发生变化后，随机数变化会被检测到，从而触发后面的操作。
           }
@@ -410,3 +416,109 @@ cat /data/v2/jenkins-home/secrets/initialAdminPassword
 - 应用-保存-立即构建
 
 - 查看console output
+
+> 上面这套方法，在开发、生产、测试环境里面用的镜像都是一样的。实际应用中，不同的环境的配置是不同的，比如要脸接到的一些IP等。这种情况可以用configmap把不同环境的配置挂到deployment里面去用。
+
+- 更改源代码之后，可以在blue ocean界面再点击重新部署来重新拉代码，部署新的pod。
+  - 打开blue ocean - 重运行
+
+### troubleshooting
+
+- 有时候jenkins-slave pod自动创建的时候会报错：
+
+  ```sh
+  Failed to create pod sandbox: rpc error: code = Unknown desc = [failed to set up sandbox container "3787dcff86eec2020a21f0040b5225263d0df90500edcebb4e1941ee36c36ba5" network for pod "calico-kube-controllers-57c6dcfb5b-9lf78": networkPlugin cni failed to set up pod "calico-kube-controllers-57c6dcfb5b-9lf78_kube-system" network: error getting ClusterInformation: connection is unauthorized: Unauthorized, failed to clean up sandbox container "3787dcff86eec2020a21f0040b5225263d0df90500edcebb4e1941ee36c36ba5" network for pod "calico-kube-controllers-57c6dcfb5b-9lf78": networkPlugin cni failed to teardown pod "calico-kube-controllers-57c6dcfb5b-9lf78_kube-system" network: error getting ClusterInformation: connection is unauthorized: Unauthorized]
+  ```
+
+- 解决：
+
+  参考文档：[kubernetes - After uninstalling calico, new pods are stuck in container creating state - Stack Overflow](https://stackoverflow.com/questions/61672804/after-uninstalling-calico-new-pods-are-stuck-in-container-creating-state)
+
+  - 删掉calico
+
+    ~~~sh
+    kubectl delete -f calico.yaml 
+    ~~~
+
+  - 删掉calico的配置文件
+
+    ```sh
+    cd /etc/cni/net.d/
+    rm -f ./10-calico.conflist ./calico-kubeconfig
+    ```
+
+  - 重启工作节点
+
+  - 重新部署calico
+
+# jenkins实现k8s应用按照指定版本回滚
+
+- 更新版本之后，k8s里的deployment中会存在两个版本的replicaset，可以通过kubectl rollout来回滚
+
+- 新建一个任务 --> 任务名称：jenkins-variable-test-deploy-rollout --> 流水线 --> 在Pipeline script处：
+
+  ~~~sh
+  node('test') {
+    stage('git clone') {
+      git url: "https://github.com/luckylucky421/jenkins-rollout"
+      sh "ls -al"
+      sh "pwd"
+  }
+    stage('select env') {
+      def envInput = input(
+        id: 'envInput',
+        message: 'Choose a deploy environment',
+        parameters: [
+           [
+               $class: 'ChoiceParameterDefinition',
+               choices: "devlopment\nqatest\nproduction",
+               name: 'Env'
+           ]
+       ]
+  )
+  echo "This is a deploy step to ${envInput}"  //用户选择了env之后填写到脚本里
+  sh "sed -i 's/<namespace>/${envInput}/' getVersion.sh"
+  sh "sed -i 's/<namespace>/${envInput}/' rollout.sh"
+  sh "bash getVersion.sh"
+  // env.WORKSPACE = pwd()
+  // def version = readFile "${env.WORKSPACE}/version.csv"
+  // println version
+  }
+    stage('select version') {
+       env.WORKSPACE = pwd()
+    def version = readFile "${env.WORKSPACE}/version.csv"
+    println version
+        def userInput = input(id: 'userInput',
+                                          message: '选择回滚版本',
+                                          parameters: [
+              [
+                   $class: 'ChoiceParameterDefinition',
+                   choices: "$version\n",
+                   name: 'Version'
+         ]
+        ]
+  )
+         sh "sed -i 's/<version>/${userInput}/' rollout.sh"
+  } //用户选了版本之后填写到脚本里
+    stage('rollout deploy') {
+        sh "bash rollout.sh"
+  }
+  }
+  ~~~
+
+- getVersion.sh
+
+  ~~~sh
+  kubectl rollout history deploy/jenkins-demo -n <namespace> | grep -v "deployment" | grep -v "REVISION" | awk '{print $1}' > version.csv
+  #查询deployment的历史版本并输出到version.csv文件
+  #需要替换掉namespace
+  ~~~
+
+- rollout.sh
+
+  ~~~sh
+  kubectl rollout undo deployment jenkins-demo  --to-revision=<version> -n <namespace>
+  #回滚到指定版本，需要替换掉namespace和version
+  ~~~
+
+  
