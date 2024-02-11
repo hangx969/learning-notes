@@ -31,7 +31,7 @@
    openssl x509 -req -in harbor.csr -CA ca.pem -CAkey ca.key -CAcreateserial -out harbor.pem -days 3650
    ```
 
-2. 安装docker（harbor是基于）
+2. 安装docker（harbor是基于docker的）
 
    安装前面装docker的步骤
 
