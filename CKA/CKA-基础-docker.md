@@ -97,13 +97,13 @@ bridge 136173 1 br_netfilter
 systemctl restart docker  
 #配置docker镜像加速器: 登陆阿里云镜像仓库
 #https://cr.console.aliyun.com/cn-hangzhou/instances/mirrors
-#修改/etc/docker/daemon.json，变成如下
+vim /etc/docker/daemon.json
 {
  "registry-mirrors":["https://y8y6vosv.mirror.aliyuncs.com","https://registry.docker-cn.com","https://docker.mirrors.ustc.edu.cn","https://dockerhub.azk8s.cn","http://hub-mirror.c.163.com"]
 }
 #让配置文件生效
-sudo systemctl daemon-reload
-sudo systemctl restart docker
+systemctl daemon-reload
+systemctl restart docker
 ```
 
 vscode在VM中运行docker插件

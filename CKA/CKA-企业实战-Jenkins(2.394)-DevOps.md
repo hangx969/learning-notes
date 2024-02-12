@@ -896,81 +896,320 @@ sysctl -p
 
 ## 私服nexus配置
 
-- 安装harbor
+### 安装harbor
 
-  1. 为harbor创建自签发证书
+1. 为harbor创建自签发证书
 
-     ```bash
-     #在node1上
-     mkdir /data/ssl -p
-     cd /data/ssl/
-     #生成一个3072位的key，也就是私钥
-     openssl genrsa -out ca.key 3072
-     #生成一个数字证书ca.pem，3650表示证书的有效时间是3年。后续根据ca.pem根证书来签发信任的客户端证书
-     openssl req -new -x509 -days 3650 -key ca.key -out ca.pem 
-     #生成域名的证书
-     #生成一个3072位的key，也就是私钥
-     openssl genrsa -out harbor.key  3072
-     #生成一个证书请求文件，一会签发证书时需要的
-     openssl req -new -key harbor.key -out harbor.csr
-     #签发证书：
-     openssl x509 -req -in harbor.csr -CA ca.pem -CAkey ca.key -CAcreateserial -out harbor.pem -days 3650
-     ```
+   ```bash
+   #在node1上
+   mkdir /data/ssl -p
+   cd /data/ssl/
+   #生成一个3072位的key，也就是私钥
+   openssl genrsa -out ca.key 3072
+   #生成一个数字证书ca.pem，3650表示证书的有效时间是3年。后续根据ca.pem根证书来签发信任的客户端证书
+   openssl req -new -x509 -days 3650 -key ca.key -out ca.pem 
+   #生成域名的证书
+   #生成一个3072位的key，也就是私钥
+   openssl genrsa -out harbor.key  3072
+   #生成一个证书请求文件，一会签发证书时需要的
+   openssl req -new -key harbor.key -out harbor.csr
+   #签发证书：
+   openssl x509 -req -in harbor.csr -CA ca.pem -CAkey ca.key -CAcreateserial -out harbor.pem -days 3650
+   ```
 
-  2. 安装docker（harbor是基于docker的）
+2. 安装docker（harbor是基于docker的）
 
-  3. 安装harbor
+3. 安装harbor
 
-     ```bash
-     #创建安装目录
-     mkdir /data/install -p
-     cd /data/install/
-     #安装harbor
-     #/data/ssl目录下有如下文件：ca.key  ca.pem  ca.srl  harbor.csr  harbor.key  harbor.pem
-     #把harbor的离线包harbor-offline-installer-v2.3.0-rc3.tgz上传到这个目录，离线包在课件里提供了
-     #下载harbor离线包的地址：
-     #https://github.com/goharbor/harbor
-     #解压：
-     tar zxvf harbor-offline-installer-v2.3.0-rc3.tgz
-     cd harbor
-     cp harbor.yml.tmpl harbor.yml 
-     
-     vim harbor.yml
-     #修改配置文件：
-     hostname: node1 #修改hostname，跟上面签发的证书域名保持一致
-     #协议用https
-     certificate: /data/ssl/harbor.pem
-     private_key: /data/ssl/harbor.key
-     #邮件和ldap不需要配置，在harbor的web界面可以配置，其他配置采用默认即可。
-     #注：harbor默认的账号密码：admin/Harbor12345
-     ```
+   ```bash
+   #创建安装目录
+   mkdir /data/install -p
+   cd /data/install/
+   #安装harbor
+   #/data/ssl目录下有如下文件：ca.key  ca.pem  ca.srl  harbor.csr  harbor.key  harbor.pem
+   #把harbor的离线包harbor-offline-installer-v2.3.0-rc3.tgz上传到这个目录，离线包在课件里提供了
+   #下载harbor离线包的地址：
+   #https://github.com/goharbor/harbor
+   #解压：
+   tar zxvf harbor-offline-installer-v2.3.0-rc3.tgz
+   cd harbor
+   cp harbor.yml.tmpl harbor.yml 
+   
+   vim harbor.yml
+   #修改配置文件：
+   hostname: node1 #修改hostname，跟上面签发的证书域名保持一致
+   #协议用https
+   certificate: /data/ssl/harbor.pem
+   private_key: /data/ssl/harbor.key
+   #邮件和ldap不需要配置，在harbor的web界面可以配置，其他配置采用默认即可。
+   #注：harbor默认的账号密码：admin/Harbor12345
+   ```
 
-  4. 安装docker-compose
+4. 安装docker-compose
 
-     docker-compose项目是Docker官方的开源项目，负责实现对Docker容器集群的快速编排。Docker-Compose的工程配置文件默认为docker-compose.yml，Docker-Compose运行目录下的必要有一个docker-compose.yml。docker-compose可以管理多个docker实例。
+   docker-compose项目是Docker官方的开源项目，负责实现对Docker容器集群的快速编排。Docker-Compose的工程配置文件默认为docker-compose.yml，Docker-Compose运行目录下的必要有一个docker-compose.yml。docker-compose可以管理多个docker实例。
 
-     ```bash
-     #上传docker-compose-Linux-x86_64文件到harbor机器，这是harbor的依赖
-     mv docker-compose-Linux-x86_64.64 /usr/bin/docker-compose
-     chmod +x /usr/bin/docker-compose
-     
-     #安装harbor依赖的的离线镜像包docker-harbor-2-3-0.tar.gz上传到harbor机器，通过docker load -i解压
-     docker load -i docker-harbor-2-3-0.tar.gz 
-     cd /data/install/harbor
-     ./install.sh
-     #出现✔ ----Harbor has been installed and started successfully.---- 表明安装成功。
-     ```
+   ```bash
+   #上传docker-compose-Linux-x86_64文件到harbor机器，这是harbor的依赖
+   mv docker-compose-Linux-x86_64.64 /usr/bin/docker-compose
+   chmod +x /usr/bin/docker-compose
+   
+   #安装harbor依赖的的离线镜像包docker-harbor-2-3-0.tar.gz上传到harbor机器，通过docker load -i解压
+   docker load -i docker-harbor-2-3-0.tar.gz 
+   cd /data/install/harbor
+   ./install.sh
+   #出现✔ ----Harbor has been installed and started successfully.---- 表明安装成功。
+   ```
 
-  5. harbor启动和停止
+5. harbor启动和停止
 
-     ```bash
-     #如何停掉harbor：
-     cd /data/install/harbor
-     docker-compose stop 
-     #如何启动harbor：
-     sudo su
-     cd /data/install/harbor
-     docker-compose start
-     ```
+   ```bash
+   #如何停掉harbor：
+   cd /data/install/harbor
+   docker-compose stop 
+   #如何启动harbor：
+   sudo su
+   cd /data/install/harbor
+   docker-compose start
+   ```
 
-  6. 图形化界面访问harbor
+### jenkins注册harbor credentials
+
+- 系统管理-凭据管理-添加全局凭据
+  - username：admin
+  - password：Harbor12345
+  - ID：dockerharbor
+
+### 安装nexus
+
+> - Nexus服务器是一个代码包管理的服务器，可以理解 Nexus 服务器是一个巨大的 Library 仓库。
+>
+> - Nexus 可以支持管理的工具包括 Maven ， npm 等，对于 JAVA 开发来说，只要用到 Maven 管理就可以了。
+>
+> - Nexus服务器作用：因为传统的中央仓库在国外，其地理位置比较远，下载速度比较缓慢。
+>
+> - 如果不架设一台自己的Nexus服务器，会产生大量的流量阻塞带宽，开发就会因为无法下载相关依赖包而进度停滞。
+>
+> - 因此在本地环境部署一台私有的Nexus服务器来缓存所有依赖包，并且将公司内部开发的私有包也部署上去，方便其他开发人员下载，是非常有必要的。因为 Nexus 有权限控制，因此外部人员是无法得到公司内部开发的项目包的。
+
+~~~sh
+docker run -d -p 8081:8081 -p 8082:8082 -p 8083:8083 -v /etc/localtime:/etc/localtime --name nexus3   sonatype/nexus3
+#在docker log日志中，会看到一条消息： Started Sonatype Nexus OSS 3.20.1-01 这意味着Nexus Repository Manager可以使用了。现在转到浏览器并打开：http://192.168.0.181:8081
+~~~
+
+- 在 pom.xml 文件中声明发布的宿主仓库和 release 版本发布的仓库。
+
+  ~~~xml
+  <! -- 发布构件到Nexus -- >
+      <distributionManagement>
+          <repository>
+              <id>releases</id>
+              <name>nexus-releases</name>
+              <url>http://192.168.40.181:8081/repository/maven-releases/</url>
+          </repository>
+          <snapshotRepository>
+              <id>snapshots</id>
+              <name>nexus-snapshots</name>
+              <url>http://192.168.40.181:8081/repository/maven-snapshots/</url>
+          </snapshotRepository>
+      </distributionManagement>
+  ~~~
+
+- 由于用 Maven 分发构件到远程仓库需要认证，须要在~/.m2/settings.xml或者中加入验证信息
+
+  ~~~xml
+  <servers>  
+     <server>  
+             <id>public</id>  
+             <username>admin</username>  
+             <password>123456</password>  
+         </server>  
+     <server>  
+             <id>releases</id>  
+             <username>admin</username>  
+             <password>123456</password>  
+         </server>  
+     <server>  
+             <id>snapshots</id>  
+             <username>admin</username>  
+             <password>123456</password>  
+         </server>  
+   </servers> 
+  ~~~
+
+> `pom.xml`和`settings.xml`都是Maven项目中的配置文件。
+>
+> - `pom.xml`（Project Object Model）是Maven项目必备的配置文件，它是整个项目的基本单元。`pom.xml`文件定义了项目的基本信息，如项目的依赖、构建设置、插件、目标等。
+>
+> - `settings.xml`文件是Maven的全局配置文件，它包含了如本地仓库的位置、镜像仓库设置、代理设置等信息。这个文件通常位于Maven安装的`conf`目录下，或者在用户的`.m2`目录下。
+> - settings.xml 中 server 元素下 id 的值必须与 POM 中 repository 或 snapshotRepository 下 id 的值完全一致
+
+## 安装gitlab
+
+- 安装
+
+  ~~~sh
+  #在192.168.40.182上安装
+  docker run -d -p 443:443 -p 80:80 -p 222:22 --name gitlab --restart always -v /home/gitlab/config:/etc/gitlab -v /home/gitlab/logs:/var/log/gitlab -v /home/gitlab/data:/var/opt/gitlab gitlab/gitlab-ce
+  ~~~
+
+- 改配置
+
+  ~~~sh
+  vim /home/gitlab/config/gitlab.rb
+  #增加以下3行
+  external_url 'http://192.168.40.182'
+  gitlab_rails['gitlab_ssh_host'] = '192.168.40.182'
+  gitlab_rails['gitlab_shell_ssh_port'] = 222
+  #重启容器
+  docker restart gitlab
+  ~~~
+
+- 登录
+
+  - 浏览器访问192.168.40.182即可登录：
+
+  - 第一次登录注册账号密码之后，报错如下：
+
+    Your account is pending approval from your GitLab administrator and hence bl 
+
+  - 解决：
+
+  ```sh
+  docker exec -it gitlab sh
+  gitlab-rails console #进入gitlab控制台
+  u=User.where(id:1).first
+  u.password='12345678'
+  u.password_confirmation='12345678' 
+  u.save!
+  ```
+
+  - 再次登录192.168.40.135
+
+    - 用户名是root
+
+    - 密码是12345678
+
+- jenkins安装git插件
+  - 系统管理-插件管理-可选插件-搜索git安装即可
+
+- jenkins安装gitlab凭据
+  - 系统管理-凭据管理-新建全局凭据
+  - 用户名root，密码12345678，ID gitlab
+
+### 配置gitlab
+
+- gitlab上新建项目
+
+  - New project - create blank project：
+
+    <img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202402120840309.png" alt="image-20240212084059114" style="zoom:50%;" />
+
+- 创建密钥对
+
+  ~~~sh
+  ssh-keygen -t rsa
+  cat ~/.ssh/id_rsa.pub #查看公钥
+  ~~~
+
+- gitlab - 右上角Preferences - ssh keys - 把公钥粘贴进去 - add
+
+### 提交本地代码到gitlab
+
+~~~sh
+yum install git -y
+#上传项目microservic-test.zip
+unzip microservic-test.zip
+cd microservic-test
+#建仓
+git init
+#把当前文件夹所有代码提交
+git add * 
+#代码提交到缓冲区
+git commit -m "add microservic-test" 
+#代码提交到远程仓库
+git remote add origin http://192.168.40.135/root/microservic-test.git   
+#最后一步push推送过去，输入账号和密码，这里的用户名和密码就是gitlab上注册的用户了
+git push -u origin master
+~~~
+
+## jenkins流水线配置
+
+- 添加新的slave pod镜像：jenkins-jnlp-v2.tar.gz这个压缩包封装的镜像带有mvn命令
+
+  ~~~sh
+  docker load -i jenkins-jnlp-v2.tar.gz
+  ~~~
+
+- 在http://192.168.40.180:30002/configureClouds/，把Container Template镜像改成jenkins-jnlp-v2.tar.gz压缩包解压之后的镜像xianchao/jenkins-jnlp:v2
+
+- 修改gitlab上的项目中的k8s/portral.yaml文件，将image改成：192.168.40.181/microservice/jenkins-demo:v1（harbor server的地址）。同时harbor上面要创建microservice仓库。
+
+- jenkins上面创建流水线
+
+  - name：**mvn-gitlab-harbor-springcloud**
+
+  - script
+
+    ~~~groovy
+    node('test') {
+       stage('Clone') {
+           echo "1.Clone Stage"
+          git credentialsId: 'gitlab', url: 'http://192.168.40.182/root/microservic-test.git ' //gitlab地址，slave pod去拉源代码
+           script {
+               build_tag = sh(returnStdout: true, script: 'git rev-parse --shortHEAD').trim()
+           }
+        }
+    
+       stage('Test') {
+         echo "2.Test Stage"
+        }
+        
+       stage('mvn') {
+         sh "mvn clean package -D maven.test.skip=true" //slave pod运行mvn构建java代码
+        }
+        
+       stage('Build') {
+           echo "3.Build Docker Image Stage"
+           sh "cd /home/jenkins/agent/workspace/mvn-gitlab-harbor-springcloud/portal-service"
+           sh "docker build --tag 192.168.40.181/microservice/jenkins-demo:v1 /home/jenkins/agent/workspace/mvn-gitlab-harbor-springcloud/portal-service/" //这里的workspace/项目名和流水线名字要一致。//写harbor地址 //slave pod把构建好的代码做成镜像push到harbor仓库
+        }
+        
+       stage('Push') {
+           echo "4.Push Docker Image Stage"
+           withCredentials([usernamePassword(credentialsId: 'dockerharbor',passwordVariable: 'dockerHubPassword', usernameVariable: 'dockerHubUser')]) {
+               sh "docker login 192.168.40.181 -u ${dockerHubUser} -p ${dockerHubPassword}" //harbor地址
+               sh "docker push 192.168.40.181/microservice/jenkins-demo:v1" //harbor地址
+           }
+        }
+        
+         stage('Promoteto pro') {    
+        sh "kubectl apply -f /home/jenkins/agent/workspace/mvn-gitlab-harbor-springcloud/k8s/portal.yaml"
+          } //slave pod读取yaml文件，利用harbor的镜像部署pod
+    }
+    ~~~
+
+- k8s环境创建namespace：ms
+
+  ~~~sh
+  kubectl create ns ms
+  ~~~
+
+- 流水线立即构建
+
+  > - 构建的时候到连接harbor这一步，docker login 192.168.40.181 -u -p 命令登录harbor会报错：，报错：“tls: failed to verify certificate: x509: cannot validate certificate for 192.168.40.181 because it doesn't contain any IP SANs
+  >
+  > - 解决办法：
+  >
+  >   - Docker 客户端在尝试验证服务器的 SSL 证书时，没有找到任何 IP 主题备用名称（IP SANs）。这通常发生在使用自签名证书的情况下。
+  >
+  >   - 解决这个问题的一种方法是在 Docker 客户端配置中禁用对该服务器的 TLS 验证。这可以通过在 Docker 客户端的 `daemon.json` 文件中添加 `insecure-registries` 来完成。
+  >
+  >     ~~~sh
+  >     vim /etc/docker/daemon.json
+  >     #添加
+  >     "insecure-registries" : ["192.168.40.181"]
+  >     systemctl restart docker
+  >     ~~~
+
+- jenkins和gitlab、harbor比较吃资源，VMWare VM给3G内存容易OOM，20G磁盘容器用光。
