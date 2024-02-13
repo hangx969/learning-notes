@@ -404,6 +404,14 @@ kubectl completion bash | sudo tee /etc/bash_completion.d/kubectl > /dev/null
 source <(kubectl completion bash | sed 's/kubectl/k/g')
 #3. 解决每次启动k都会失效，要重新刷新环境变量（source /etc/profile）的问题：在~/.bashrc文件中添加以下代码：source /etc/profile
 echo "source /etc/profile" >> ~/.bashrc
+#4. 给alias k也配置补全
+vim ~/.bashrc
+##加入以下
+alias k='kubectl'
+complete -o default -F __start_kubectl k
+source <(kubectl completion bash)
+##使命令生效
+source ~/.bashrc
 #安装了zsh的环境，把上面放到~/.zshrc中
 echo "source /etc/profile" >> ~/.zshrc 
 ~~~

@@ -431,3 +431,4 @@ kubectl set image deployment myapp-v1 myapp=nginx:latest  -n blue-green && kubec
 kubectl rollout resume deployment myapp-v1 -n blue-green
 ```
 
+> 金丝雀发布功能，用istio实现，更加方便
