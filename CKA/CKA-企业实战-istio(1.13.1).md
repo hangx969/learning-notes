@@ -1009,3 +1009,277 @@ kubectl exec -it fortio-deploy-8654b894f5-7szjh  -c fortio -- /usr/bin/fortio lo
 #-n 20: 指定总请求数为 20。这表示在测试期间，将发送总共 20 个请求
 ~~~
 
+## 最佳实践
+
+假设你的应用是一个 Web 服务，每个 Pod 最多支持 100 万并发请求数，并且你的 Kubernetes 集群中每个节点有 100 个 vCPU 和 100GB 内存。
+
+1. maxConnections：
+
+- 假设每个 Pod 最多支持 6 个 vCPU，你可以设置 maxConnections 为 80（稍微小于节点的 CPU 核心数，考虑到其他系统进程的资源使用）。
+
+2. http1MaxPendingRequests：
+
+- 假设你的应用在正常负载情况下，每秒请求数在 1000 到 5000 之间，你可以设置 http1MaxPendingRequests 为 500，以确保连接不会积压过多的请求。
+
+3. maxRequestsPerConnection：
+
+- 假设你的应用的响应时间在 10 毫秒左右，你可以设置 maxRequestsPerConnection 为 100，这样每个连接可以处理 100 个请求后再关闭。
+
+4. 可以根据之前提到的测试结果和分析，根据实际情况设置 consecutiveGatewayErrors 和 interval 等参数，以实现对代理层的熔断保护。
+
+最终的参数设置是一个动态平衡的过程，需要结合多方面因素综合考虑。建议在测试环境中进行实际的压力测试和性能评估，以找到最优的参数配置，确保你的应用在高负载下能够稳定运行。
+
+### 参数含义
+
+1. maxConnections：TCP 连接数的最大值。它限制了单个 Pod 上的 TCP 连接数量。这个值需要根据你的 Web 服务的并发量和每个请求的连接数来确定。
+
+2. http1MaxPendingRequests：HTTP1 的最大挂起请求数。当超过这个数值时，新的请求将被拒绝，直到有请求处理完成。这个值也要根据你的 Web 服务的并发量和 HTTP1 的特性来确定。
+
+3. maxRequestsPerConnection：每个连接的最大请求数。当超过这个数值时，连接将被关闭，新的请求将使用新的连接。这个值可以用于限制长时间保持的连接。
+
+4. outlierDetection：异常检测参数。这个参数用于检测异常的流量，并触发熔断机制。以下是outlierDetection 参数的两个属性：
+
+   - consecutiveGatewayErrors：连续网关错误数。当连续出现这么多次网关错误时，熔断将会触发。
+
+   - interval：检测的时间间隔。在这个时间间隔内进行异常检测。
+
+# 示例-超时
+
+- 生产环境中经常会碰到由于调用方等待下游的响应过长，堆积大量的请求阻塞了自身服务，造成雪崩的情况，通过超时处理来避免由于无限期等待造成的故障，进而增强服务的可用性，Istio 使用虚拟服务来优雅实现超时处理。
+
+- 下面例子模拟客户端调用 nginx，nginx 将请求转发给 tomcat。
+  - nginx 服务设置了超时时间为2秒，如果超出这个时间就不等待，返回超时错误。
+  - tomcat服务设置了响应时间延迟10秒，任何请求都需要等待10秒后才能返回。
+  - client 通过访问 nginx 服务去反向代理 tomcat服务，由于 tomcat服务需要10秒后才能返回，但nginx 服务只等待2秒，所以客户端会提示超时错误。
+
+## 准备镜像
+
+~~~sh
+#busybox.tar.gz、 nginx.tar.gz、 tomcat-app.tar.gz解压
+mkdir /root/timeout
+cd /root/timeout/
+~~~
+
+## 部署应用
+
+- nginx
+
+~~~yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx
+  labels:
+    server: nginx
+    app: web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      server: nginx
+      app: web
+  template:
+    metadata:
+      name: nginx
+      labels: 
+        server: nginx
+        app: web
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.14-alpine
+        imagePullPolicy: IfNotPresent
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-svc
+spec:
+  selector:
+    server: nginx
+  ports:
+  - name: http
+    port: 80
+    targetPort: 80
+    protocol: TCP
+~~~
+
+- tomcat
+
+~~~yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tomcat
+  labels:
+    server: tomcat
+    app: web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      server: tomcat
+      app: web
+  template:
+    metadata:
+      name: tomcat
+      labels: 
+        server: tomcat
+        app: web
+    spec:
+      containers:
+      - name: tomcat
+        image: docker.io/kubeguide/tomcat-app:v1 
+        imagePullPolicy: IfNotPresent
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tomcat-svc
+spec:
+  selector:
+    server: tomcat
+  ports:
+  - name: http
+    port: 8080
+    targetPort: 8080
+    protocol: TCP
+~~~
+
+## 配置超时
+
+- virtual service - 定义nginx和tomcat的超时时间
+
+~~~yaml
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: nginx-vs
+spec:
+  hosts:
+  - nginx-svc
+  http:
+  - route:
+    timeout: 2s #调用 nginx-svc，请求超时时间是 2s
+    - destination: 
+        host: nginx-svc
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: tomcat-vs
+spec:
+  hosts:
+  - tomcat-svc
+  http:
+  - fault:
+      delay:
+        fixedDelay: 10s #每次调用 tomcat-svc，都会延迟10s才会调用
+        percentage:
+          value: 100
+    route:
+    - destination:
+        host: tomcat-svc
+~~~
+
+- nginx配置，把代理后端改成tomcat
+
+~~~sh
+k exec -it nginx-7649c6ff85-jn4nc -c nginx -- /bin/sh
+vi /etc/nginx/conf.d/default.conf
+#location处修改如下，让nginx后端代理tomcat
+    location / {
+        #root   /usr/share/nginx/html;
+        #index  index.html index.htm;
+        proxy_pass http://tomcat-svc.default.svc.cluster.local:8080;
+        proxy_http_version 1.1;
+    }   
+#让配置生效
+nginx -t #验证config文件语法
+nginx -s reload #重启
+~~~
+
+## 验证超时
+
+~~~sh
+kubectl run busybox --image busybox:1.28 --restart=Never --rm -it busybox -- /bin/sh
+#验证故障注入效果，tomcat 10s之后才有返回
+time wget -q -O - http://tomcat-svc.default.svc.cluster.local:8080
+#验证超时，会报gateway timeout。因为等了nginx 2s，nginx没返回，就直接报网关超时了。
+time wget -q -O - http://nginx-svc.default.svc.cluster.local:80
+#验证超时，每隔2秒，由于 nginx 服务的超时时间到了而 tomcat未有响应，则提示返回超时错误。
+while true; do wget -q -O - http://nginx-svc.default.svc.cluster.local:80; done
+~~~
+
+# 示例-故障注入和重试
+
+- Istio 重试机制就是如果调用服务失败，Envoy 代理尝试连接服务的最大次数。而默认情况下，Envoy 代理在失败后并不会尝试重新连接服务，除非我们启动 Istio 重试机制。
+- 下面例子模拟客户端调用 nginx，nginx 将请求转发给 tomcat。tomcat 通过**故障注入**而中止对外服务，nginx 设置如果访问 tomcat 失败则会重试 3 次。
+
+## 准备镜像
+
+- 沿用超时示例中的tomcat和nginx服务
+
+## 配置重试
+
+~~~sh
+cd /root/timeout/
+kubectl delete -f virtual-tomcat.yaml
+cat virtual-attempt.yaml
+~~~
+
+~~~yaml
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: nginx-vs
+spec:
+  hosts:
+  - nginx-svc
+  http:
+  - route:
+    - destination: 
+        host: nginx-svc
+    retries: #调用 nginx-svc，在初始调用失败后，最多再去重试 3 次，每个重试都有 2 秒的超时，等2s失败了再重试。
+      attempts: 3
+      perTryTimeout: 2s
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: tomcat-vs
+spec:
+  hosts:
+  - tomcat-svc
+  http:
+  - fault:
+      abort: #abort模拟tomcat服务始终不可用，该设置说明每次调用 tomcat-svc，100%都会返回503。这些是istio提供的用来测试的配置字段
+        percentage:
+          value: 100
+        httpStatus: 503
+    route:
+    - destination:
+        host: tomcat-svc
+~~~
+
+## 验证重试
+
+~~~sh
+kubectl run busybox --image busybox:1.28 --restart=Never --rm -it busybox -- /bin/sh
+#验证重试
+wget -q -O - http://nginx-svc.default.svc.cluster.local:80
+#新开终端看istio envoy的log
+kubectl logs -f nginx-7649c6ff85-jn4nc -c istio-proxy
+~~~
+
+# 关闭istio自动注入功能
+
+~~~sh
+#给ns把istio-injection的标签删掉即可
+kubectl label ns default istio-injection-
+~~~
+
+
+
+
+
