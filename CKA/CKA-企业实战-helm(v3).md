@@ -273,12 +273,14 @@ maintainers:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "myapp.fullname" . }} #
+  name: {{ include "myapp.fullname" . }} #include开头的，都是来自于helpers.tpl
   labels:
     {{- include "myapp.labels" . | nindent 4 }}
 spec:
   {{- if not .Values.autoscaling.enabled }}
-  replicas: {{ .Values.replicaCount }}
+  replicas: {{ .Values.replicaCount }} 
+  #.Values开头的来自于Values.yaml
+  # 如果 autoscaling.enabled 参数没有启用，副本数将使用配置文件中 .Values.replicaCount 设置。如果启用了自动扩展，则不会应用这个副本数设置，而是由自动扩展机制根据负载动态调整副本数。
   {{- end }}
   selector:
     matchLabels:
@@ -287,7 +289,9 @@ spec:
     metadata:
       {{- with .Values.podAnnotations }}
       annotations:
-        {{- toYaml . | nindent 8 }}
+        {{- toYaml . | nindent 8 }} 
+        # 将 .Values.podAnnotations 参数转换为 YAML 格式，并通过 nindent 8 命令进行缩进。toYaml 是一个 Helm 函数，它将参数转换为 YAML 格式。
+        # nindent 8 是一个 Helm 函数，用于对生成的 YAML 进行缩进，使其适应于 YAML 文件中的正确位置。
       {{- end }}
       labels:
         {{- include "myapp.selectorLabels" . | nindent 8 }}
@@ -331,5 +335,238 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+~~~
+
+## helpers.hpl
+
+~~~yaml
+{{/*
+Expand the name of the chart.
+*/}} # Helm 模板中的注释标记
+{{- define "myapp.name" -}} 
+#使用 define 定义了一个名为 "myapp.name" 的模板函数。它意味着我们正在创建一个可以在其他模板中调用的函数，并且函数名是 "myapp.name"
+{{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
+{{- end }} # 模板函数的结束标记，表示 "myapp.name" 模板函数的定义结束
+
+{{/*
+Create a default fully qualified app name.
+We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
+If release name contains chart name it will be used as a full name.
+*/}}
+{{- define "myapp.fullname" -}}
+{{- if .Values.fullnameOverride }}
+# 使用 if 语句检查是否在 Helm 部署时提供了 .Values.fullnameOverride。如果提供了，将会使用这个值来覆盖生成的应用名称。
+{{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
+# 如果生成的名称超过了 63 个字符，这一步会截断名称，确保它不会超过 Kubernetes 资源名称的长度限制。
+#如果名称末尾有 - 符号，则会将其删除
+{{- else }}
+{{- $name := default .Chart.Name .Values.nameOverride }}
+#使用 Helm 模板函数的 default 来选择默认值。它会先尝试使用 .Values.nameOverride，如果未定义，则使用 .Chart.Name作为默认值。
+{{- if contains $name .Release.Name }}
+#检查 .Release.Name 是否包含在名称中，如果包含，说明 .Release.Name 已经在名称中，不需要重复添加。
+{{- .Release.Name | trunc 63 | trimSuffix "-" }}
+# 如果 .Release.Name 已经在名称中，就直接使用 .Release.Name 作为完整名称。
+{{- else }}
+{{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" }}
+# 如果 .Release.Name 不包含在名称中，就使用 .Release.Name 和 $name 的组合来生成一个完整的名称，确保不超过 63 个字符
+# printf "%s-%s"：这是一个格式化字符串的函数，它将 .Chart.Name和 .Chart.Version连接在一起，中间用 "-" 分隔。
+# 注意：release name只有在helm install部署完之后才指定了release name
+{{- end }}
+{{- end }}
+{{- end }}
+
+{{/*
+Create chart name and version as used by the chart label.
+*/}}
+{{- define "myapp.chart" -}}
+# 生成 Chart 的名称和版本的组合，作为一个通用的标签。
+{{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
+#将 Chart 的名称和版本用 - 符号连接在一起，并将版本中的 + 替换为 _，
+{{- end }}
+
+{{/*
+Common labels
+*/}}
+{{- define "myapp.labels" -}}
+helm.sh/chart: {{ include "myapp.chart" . }}
+# 将之前定义的 "myapp.chart" 模板函数的结果作为 helm.sh/chart 标签的值。
+{{ include "myapp.selectorLabels" . }}
+{{- if .Chart.AppVersion }} 
+# 检查 .Chart.AppVersion 是否存在
+app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+#如果应用版本存在，这一行生成一个标签，将应用版本作为 app.kubernetes.io/version 标签的值，并使用 quote 函数将值引用起来。这个标签用于表示应用程序的版本。
+{{- end }}
+app.kubernetes.io/managed-by: {{ .Release.Service }}
+
+{{- end }}
+
+{{/*
+Selector labels
+*/}}
+{{- define "myapp.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "myapp.name" . }}
+app.kubernetes.io/instance: {{ .Release.Name }}
+{{- end }}
+
+{{/*
+Create the name of the service account to use
+*/}}
+{{- define "myapp.serviceAccountName" -}}
+{{- if .Values.serviceAccount.create }}
+#用条件语句来检查是否应该创建服务账户。这里是根据用户在value中是否设置了 .Values.serviceAccount.create 来判断是否需要创建。
+{{- default (include "myapp.fullname" .) .Values.serviceAccount.name }}
+# 如果需要创建服务账户，将 .Values.serviceAccount.name 作为服务账户的名称。如果没有提供这个值，将使用默认值 myapp.fullname
+{{- else }}
+{{- default "default" .Values.serviceAccount.name }}
+# 将 .Values.serviceAccount.name 作为服务账户的名称。如果没有提供这个值，将使用默认值 "default"。
+{{- end }}
+{{- end }}
+~~~
+
+## values.yaml
+
+- 比如我们要引用values.yaml文件中的image字段下的tag字段的值
+  - 可以在模板文件中写成{{ .Values.image.tag }}；
+  - 如果在命令行使用--set选项来应用我们可以写成 image.tag；
+- 修改对应的值可以直接编辑对应values.yaml文件中对应字段的值，也可以直接使用--set 指定对应字段的对应值即可；默认情况在命令行使用--set选项给出的值，都会直接被替换；没有给定的值，默认还是使用values.yaml文件中给定的默认值；
+
+~~~yaml
+# Default values for myapp.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  repository: nginx
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "latest"
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+service:
+  type: ClusterIP
+  port: 80
+
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: chart-example.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+~~~
+
+## 部署chart
+
+~~~sh
+cd ~/myapp/
+helm install nginx ./
+~~~
+
+# Helm常用命令演示
+
+- 官网地址：[Helm | Helm](https://helm.sh/zh/docs/helm/helm/)
+
+## 检查values语法格式
+
+~~~sh
+helm lint /root/myapp/
+
+==> Linting /root/myapp/
+[INFO] Chart.yaml: icon is recommended
+
+1 chart(s) linted, 0 chart(s) failed
+~~~
+
+## 调整参数
+
+~~~sh
+helm upgrade --set service.type="NodePort" nginx .
+~~~
+
+> - 在 Helm 命令中，`.` 表示当前目录。
+>
+> - 命令 `helm upgrade --set service.type="NodePort" nginx .` 中，`.` 表示 Helm chart 的位置是当前目录。Helm 将在这个目录下查找 `Chart.yaml` 文件以及其他相关的模板文件来部署或升级你的应用。
+
+## 回滚版本
+
+~~~sh
+#查看历史版本
+helm history nginx
+# 回滚到指定版本
+helm rollback nginx 1
+~~~
+
+## 打包chart
+
+~~~sh
+helm package /root/myapp/
+~~~
+
+## 查看chart
+
+~~~sh
+#inspect和show互为alias
+helm inspect chart ~/myapp/
+helm show chart ~/myapp/
 ~~~
 
