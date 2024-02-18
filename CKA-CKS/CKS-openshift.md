@@ -131,6 +131,51 @@ DEVICE=ens33
 ONBOOT=yes
 ~~~
 
+### 添加磁盘
+
+- vmware虚拟机设置 - 添加 - 硬盘 - ...
+
+- 系统内创建分区并格式化
+
+  ~~~sh
+  lsblk -f #查看刚添加的盘是否识别
+  fdisk /dev/sdb #n，后面保持默认，分一个sdb1出来，w保存
+  mkfs -t xfs /dev/sdb1 #格式化
+  #查看新添加的disk大小
+  df -h
+  fdisk -l
+  blkid /dev/sdb1 #获取UUID
+  vim /etc/fstab
+  #添加永久挂载
+  UUID=xxx /mnt/data xfs defaults 0 1
+  mount -a #执行挂载
+  ~~~
+
+### 配置VSCode ssh登录VM
+
+- host宿主机的/etc/hosts中添加VM的记录
+- ssh配置中使用主机名来登录
+
+~~~sh
+Host ocpmaster1
+  HostName ocpmaster1
+  User root
+  Port 22
+~~~
+
+~~~sh
+#修改VM ssh配置文件
+vim /etc/ssh/sshd_config
+#修改GSSAPIAuthentication no
+#取消注释 PubkeyAuthentication yes
+#宿主机上复制ssh公钥
+cat ~/.ssh/id_rsa.pub
+#VM上创建authorized_keys文件
+mkdir -p ~/.ssh/
+vi ~/.ssh/authorized_keys
+#将host主机的公钥粘贴进去保存，即可用VSCode免密登录VM
+~~~
+
 ### 更新centos版本
 
 ~~~sh
