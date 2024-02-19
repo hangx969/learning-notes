@@ -130,8 +130,22 @@ OpenSSH提供了工具 `ssh-keygen`命令用来生成密钥，采用默认的`rs
 
   - 解决办法：
 
-
 ![image-20240113075011013](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202401130750113.png)
+
+- vscode ssh登录vmware虚拟机时报错：Address 192.168.*.* maps to localhost, but this does not map back to the address - POSSIBLE BREAK-IN ATTEMPT!
+
+  - 是因为DNS服务器把 192.168.x.x 的地址都反向解析成 localhost 。 解决的办法就是，编辑 ssh 客户端的 /etc/hosts 文件，把出问题的IP 地址和主机名加进去，就不会报这样的错了。
+
+  - 解决方案1：
+    - 给客户端主机配置hostname /etc/hosts，然后使用hostname ssh连接就可以了
+
+  - 解决方法2：
+
+    ```sh
+    vim  /etc/ssh/ssh_config
+    #把GSSAPIAuthentication yes 改成 no
+    systemctl restart sshd
+    ```
 
 # How to change ssh port on Azure
 
