@@ -380,10 +380,12 @@ systemctl restart docker
 ~~~sh
 #仅在master上配置私有镜像仓库
 docker load -i registry.tar.gz
+#使用httpd作为身份提供商
 yum install httpd -y
 systemctl start httpd
 systemctl enable httpd
 mkdir -p /opt/registry-var/auth/
+#设置registry的用户名密码
 docker run --entrypoint htpasswd registry:2.5 -Bbn hangxu hangxu  >> /opt/registry-var/auth/htpasswd
 
 #设置配置文件
@@ -471,7 +473,7 @@ openshift_version=3.10.0
 openshift_image_tag=v3.10
 openshift_disable_check=disk_availability,docker_storage,memory_availability,docker_image_availability,os_sdn_network_plugin_name=redhat/openshift-ovs-multitenant i
 openshift_master_identity_providers=[{'name': 'htpasswd_auth','login': 'true', 'challenge': 'true','kind': 'HTPasswdPasswordIdentityProvider'}]
-[masters]
+[masters] 
 ocpmaster1
 [nodes]
 ocpmaster1 openshift_node_group_name='node-config-master'
@@ -521,7 +523,7 @@ oc label node ocpnode2 node-role.kubernetes.io/infra=true
 ~~~sh
 #首次新建用户密码
 htpasswd -cb /etc/origin/master/htpasswd admin admin
-#添加用户密码
+#添加另一个用户密码
 htpasswd -b /etc/origin/master/htpasswd dev dev
 #以集群管理员登录
 oc login -u system:admin
