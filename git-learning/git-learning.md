@@ -213,4 +213,28 @@ git branch -d temp #删除temp
     git filter-branch --force --index-filter "git rm --cached --ignore-unmatch xxx/xxx.exe" --prune-empty --tag-name-filter cat -- --all
     ```
 
+- git pull时如果遇到报错
+
+  ~~~sh
+  fetch-pack: unexpected disconnect while reading sideband packet
+  fatal: early EOF
+  fatal: fetch-pack: invalid index-pack output
+  ~~~
+
+  - 原因：远程仓库的文件过大，需要设置本地仓库大小。
+
+  - 解决：
+
+    ~~~sh
+    git config http.sslVerify "false"
+    #若出现下列错误：
+    git config http.sslVerify "false" fatal: not in a git directory
+    #再继续执行即可解决
+    git config --global http.sslVerify "false"
+    #文件大小的上限设置：
+    git config --global http.postBuffer 524288000
+    ~~~
+
+    
+
     
