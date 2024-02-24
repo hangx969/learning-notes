@@ -1032,7 +1032,7 @@ kind: Ingress
 metadata:
   name: ingress-tomcat
   namespace: default
-  #1.23的k8s，需要在annotations: kubernetes.io/ingress,class: "nginx"指定是关联到哪个ingress controller上面去
+  #1.23的k8s，需要在annotations: kubernetes.io/ingress.class: "nginx"指定是关联到哪个ingress controller上面去
   #1.25以上的k8s，在spec中，ingressClassName中指定
 spec:
   ingressClassName: nginx
