@@ -1,6 +1,6 @@
 # VM ID and Nodes
 
-~~~json
+~~~sh
 //---------------------- Query all kind of IDs -------------------------------------------------------
 //Azurecm - azurecm
 //看node和container id
@@ -539,7 +539,7 @@ LiveMigrationSessionCompleteLog
 
 # AKS
 
-~~~json
+~~~sh
 //rp service分前后端，前端是frontend* 后端是async*
 //frontendqos是 用户发来的request； asyncqos是前段发给后端的request，是内部实现用的
 //blackbox不是rp的组件，是monitoring的组件，会不停扫描用户的master pod状态， blackbox跟用户的请求没有直接关系
@@ -997,7 +997,7 @@ cluster('icmcluster.kusto.windows.net').database('AzNSPROD').AzNSTransmissionsMo
 
 # Storage
 
-~~~json
+~~~sh
 	// ARM - Armmcadx - armmc
 	EventServiceEntries
 	| where TIMESTAMP between(datetime(2023-08-12 00:00)..datetime(2023-08-14 23:00))
@@ -1156,7 +1156,7 @@ AccountTransactionsDaily
 
 # ACR
 
-~~~json
+~~~sh
 //Acrmc2
 RegistryActivity
 | where PreciseTimeStamp > ago(5h) //and PreciseTimeStamp < ago(d)
@@ -1225,7 +1225,7 @@ cluster('acimooncake.chinaeast2.kusto.chinacloudapi.cn').database('acimooncake')
 
 # MDC
 
-~~~json
+~~~sh
 //List successfully created exemptions
 cluster('rometelemetrydata.kusto.windows.net').database('RomeTelemetryProd').GetRomeClientTelemetry()  
 | where timestamp  > ago(5d)  
@@ -1297,7 +1297,7 @@ RecommendationsData(31d,0d)
 
 # CRP
 
-~~~json
+~~~sh
 
 //----------------CRP operation---------------------------------------------------
 // Check VM deployment time
@@ -1358,10 +1358,8 @@ cluster("https://azurecm.chinanorth2.kusto.chinacloudapi.cn").database("azurecm"
 
 # backup+ASR
 
-~~~json
+~~~sh
 //=======backup=================
-.create-merge table BCMBackupStats (TIMESTAMP:datetime, PreciseTimeStamp:datetime, DeploymentName:string, ServiceName:string, StampName:string, Tenant:string, Role:string, RoleInstance:string, Level:long, ProviderGuid:string, EventId:long, Pid:long, Tid:long, ActivityId:string, EventName:string, BackupPolicyId:string, ContainerName:string, NumberOfDisks:long, NumberOfDisksIncludedInBackup:long, TotalSize:long, DeltaSizeInMB:long, Total4MBBlocksChanged:long, DiskAvgSizeInMB:long, MaxDiskSizeInMB:long, NumberOfDiskAdded:long, NumberOfDiskDeleted:long, IsVMOffline:bool, SnapshotType:string, SnapshotRetriesCount:long, TotalSnapshotTimeInMilliSec:long, DiffCopyTimeInMilliSec:long, IntegrityCheckTimeInMilliSec:long, BackupQueueTimeInMilliSec:long, OSType:string, OSVersion:string, DataSourceType:string, IsIR:bool, OSDiskDeltaSizeInMB:long, FailedWriters:string, JobStatus:string, ContainerId:long, NumberOfDisksOnPremiumStorage:long, SizeOfVm:string, ContainerType:string, CloudServiceName:string, TelemetryLogMessage:string, TelemetryVmInfo:string, TelemetryRetryInfo:string, RPExpiryTime:string, RecoveryPointId:string, PreviousRecoveryPointId:string, GuestAgentInfo:string, ExtensionStatusBlobMsg:string, DiskStorageAccountsList:string, ExtensionStatus:string, ExtensionErrorLogs:string, CopyPremiumBlobTimeInMilliSec:long, VmLocation:string, ExtensionErrorCode:string, HostCachingOnOSDisk:string, IsEncrypted:bool, EncryptionMechanism:string, VMName:string, BackupTimeInMins:long, ExtensionOperationId:string, ExtensionOpCode:string, GuestAgentVersion:string, IsInstantRp:bool, IsScheduledBackup:bool, ExtensionTelemetry:string, IsManagedVm:bool, ExtensionReportedTotalSize:string, VirtualMachineHealth:long, VirtualMachineHealthCode:string, IsInstantRPEnabled:bool, IsDiffAPIEnabled:bool, NumberOfDiskUsingDiffAPI:long, OriginalStorageAccountOption:bool, IsBlockBlobEnabled:bool, CrpVmId:string, SchedulerMessageVersion:long, PreviousFailedJobID:string, IsBlockBlobMigrated:bool, CrpInstantRpId:string, IsZonedVm:bool, GenericProperty:string, CommittedTiers:string, DiskExMode:string, RequestId:string, TaskId:string, CompanyId:long, SubscriptionId:string, DataSourceId:string, ResourceId:string, OperationName:string, Result:bool, StartTime:datetime, DurationInMilliSec:long, ErrorCode:string, JobId:string, OrigTS:datetime, TraceSource:string, SourceNamespace:string, SourceMoniker:string, SourceVersion:string, CrpImageReference:string, DeploymentUnit:string, IsRPCv2Enabled:bool, IsRPCv2LastScheduledBackup:bool, VmExtendedLocationName:string, VmExtendedLocationType:string, HasDiskAccess:bool)  
-
 let _resId="/subscriptions/8fc622eb-ff9b-43a5-834b-da271f8e9b4d/resourceGroups/Backup/providers/Microsoft.RecoveryServices/vaults/AzureCloudBackup";
 union cluster('mabprod1').database('MABKustoProd1').BMSProtectionStats, 
  cluster('mabprodweu').database('MABKustoProd').BMSProtectionStats, 
@@ -1645,7 +1643,7 @@ cluster('asradxclusmc.chinanorth2.kusto.chinacloudapi.cn').database('ASRKustoDB'
 
 # Monitor+Automation
 
-~~~json
+~~~sh
 //---------------------- Query all kind of IDs -------------------------------------------------------
 //Azurecm - azurecm
 //看node和container id
@@ -1981,7 +1979,7 @@ cluster("sparkle.eastus").database("defaultdb").WheaXPFMCAFull
 
 # AAD
 
-~~~json
+~~~sh
 
 // Connection = https://armmcadx.chinaeast2.kusto.chinacloudapi.cn
 // Role assignment creation or deletions
@@ -2032,7 +2030,7 @@ IfxBECAuthorizationManager
 
 # Health Event
 
-~~~json
+~~~sh
 // Check ServiceHealth
 // https://icmcluster.kusto.windows.net | database("ACM.Publisher")
 ServiceHealthPublisherCommunications | where TrackingId == 'NL9G-JP8'
@@ -2046,7 +2044,7 @@ ServiceHealthTargets
 
 # AH2021 patch
 
-~~~json
+~~~sh
 //Azurecm - azurecm
 //看node和container id
 LogContainerSnapshot
@@ -2129,5 +2127,3 @@ IridiasTargets
 | where TrackingId contains "2K1S-390"
 | where Subscriptions contains "0050641c-cefb-4119-b748-c6cc4556a027"
 ~~~
-
-# 
