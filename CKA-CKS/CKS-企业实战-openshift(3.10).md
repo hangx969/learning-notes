@@ -654,6 +654,8 @@ Git Repository：写自己的github/gitee项目地址
 
 > 注：python3.5的s2i镜像: https://github.com/sclorg/s2i-python-container/blob/master/3.5/README.md
 
+- 创建了一个build的pod（基础镜像用的是选择的python环境镜像），去把代码拉下来，构成一个新的镜像。然后用新的镜像把主pod跑起来。（新的镜像被push到了openshift私有镜像仓库）
+
 #### 部署django项目
 
 - Github代码地址：https://github.com/openshift-instruqt/blog-django-py，可以fork到自己的github上，或者迁移到gitee上。
@@ -854,4 +856,5 @@ Git Repository：写自己的github/gitee项目地址
   oc new-app openshift/hello-openshift #--name podName 指定 应用名称
   ~~~
 
-  
+
+> 企业中使用ocp一般是花钱订阅红帽的源，安装企业版。
