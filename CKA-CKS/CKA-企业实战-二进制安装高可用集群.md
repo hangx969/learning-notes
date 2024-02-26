@@ -10,7 +10,7 @@
 
 ## 架构图
 
-![image-20240226204836549](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202402262048651.png)
+![image-20240226215935013](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202402262159081.png)
 
 ## 实验机器规划
 
