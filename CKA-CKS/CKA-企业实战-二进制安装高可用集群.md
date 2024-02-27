@@ -14,18 +14,23 @@
 
 ## 实验机器规划
 
-- 操作系统：centos7.6
-- 配置：4Gib内存/4vCPU/40G硬盘
+- 操作系统：centos7.9
+
+- 配置：4Gib内存/4vCPU/50G硬盘
+
+  > 如果VM是从20G磁盘扩容到了50G，那么在VMWare上加完磁盘容量后需要扩容文件系统。由于使用的镜像的根分区是用的LVM，所以需要LVM扩容。参考文档：https://blog.csdn.net/yangfenggh/article/details/130475248
+
 - 网络：NAT
+
 - 开启虚拟机的虚拟化
 
-| K8S集群角色 | Ip             | 主机名          | 安装的组件                                                   |
-| ----------- | -------------- | --------------- | ------------------------------------------------------------ |
-| 控制节点    | 192.168.40.180 | xianchaomaster1 | apiserver、controller-manager、scheduler、etcd、docker、keepalived、nginx |
-| 控制节点    | 192.168.40.181 | xianchaomaster2 | apiserver、controller-manager、scheduler、etcd、docker、keepalived、nginx |
-| 控制节点    | 192.168.40.182 | xianchaomaster3 | apiserver、controller-manager、scheduler、etcd、docker       |
-| 工作节点    | 192.168.40.183 | xianchaonode1   | kubelet、kube-proxy、docker、calico、coredns                 |
-| Vip         | 192.168.40.199 |                 |                                                              |
+| K8S集群角色 | Ip            | 主机名     | 安装的组件                                                   |
+| ----------- | ------------- | ---------- | ------------------------------------------------------------ |
+| 控制节点    | 172.16.183.76 | binmaster1 | apiserver、controller-manager、scheduler、etcd、docker、keepalived、nginx |
+| 控制节点    | 172.16.183.77 | binmaster2 | apiserver、controller-manager、scheduler、etcd、docker、keepalived、nginx |
+| 控制节点    | 172.16.183.78 | binmaster3 | apiserver、controller-manager、scheduler、etcd、docker       |
+| 工作节点    | 172.16.183.79 | binnode1   | kubelet、kube-proxy、docker、calico、coredns                 |
+| Vip         | 172.16.183.75 |            |                                                              |
 
 ## 实验环境准备
 
@@ -38,10 +43,10 @@ TYPE=Ethernet
 PROXY_METHOD=none
 BROWSER_ONLY=no
 BOOTPROTO=static #static表示静态ip地址
-IPADDR=192.168.40.180 #ip地址，需要跟自己电脑所在网段一致
+IPADDR=172.16.183.76 #ip地址，需要跟自己电脑所在网段一致
 NETMASK=255.255.255.0
-GATEWAY=192.168.40.2
-DNS1=192.168.40.2
+GATEWAY=172.16.183.2
+DNS1=172.16.183.2
 DEFROUTE=yes
 IPV4_FAILURE_FATAL=no
 IPV6INIT=yes
@@ -54,20 +59,22 @@ DEVICE=ens33 #网卡设备名，ip addr可看到自己的这个网卡设备名
 ONBOOT=yes #开机自启动网络，必须是yes
 ~~~
 
+> - VMware上由模板机复制过来的VM，要删掉网卡配置的UUID字段
+
 ### 修改主机名
 
 ~~~sh
-hostnamectl set-hostname master1 && bash #master2 master3 node1
+hostnamectl set-hostname binmaster1 && bash #binmaster2 binmaster3 binnode1
 ~~~
 
 ### 配置hosts文件
 
 ~~~sh
 tee -a /etc/hosts << 'EOF'
-192.168.40.180   master1
-192.168.40.181   master2
-192.168.40.182   master3
-192.168.40.183   node1
+172.16.183.76   binmaster1
+172.16.183.77   binmaster2
+172.16.183.78   binmaster3
+172.16.183.79   binnode1
 EOF
 ~~~
 
@@ -75,7 +82,7 @@ EOF
 
 ~~~sh
 ssh-keygen -t rsa
-ssh-copy-id -i .ssh/id_rsa.pub master1
+ssh-copy-id -i .ssh/id_rsa.pub binmaster1
 ~~~
 
 ### 关闭firewalld
@@ -119,12 +126,12 @@ sysctl -p /etc/sysctl.d/k8s.conf
 #安装rzsz命令
 yum install lrzsz -y
 #安装scp
-yum install openssh-clients
+yum install openssh-clients -y
 #备份基础repo源
 mkdir /root/repo.bak/
 mv /etc/yum.repos.d/* /root/repo.bak/
 #下载阿里云的repo源
-#把CentOS-Base.repo文件上传到xianchaomaster1主机的/etc/yum.repos.d/目录下
+#把CentOS-Base.repo文件上传到master1主机的/etc/yum.repos.d/目录下
 #或者直接创建/etc/yum.repos.d/CentOS-Base.repo
 vi /etc/yum.repos.d/CentOS-Base.repo
 ~~~
@@ -302,5 +309,146 @@ systemctl status docker
 
 ## 搭建etcd集群
 
+### 配置ectd工作目录
 
+~~~sh
+#3台master上
+mkdir -p /etc/etcd/ssl
+~~~
+
+### 安装签发证书工具cfssl
+
+~~~sh
+#在master1上
+mkdir /data/work -p
+cd /data/work/
+#cfssl-certinfo_linux-amd64 、cfssljson_linux-amd64 、cfssl_linux-amd64上传到/data/work/目录下
+ls
+cfssl-certinfo_linux-amd64  cfssljson_linux-amd64  cfssl_linux-amd64
+#把文件变成可执行权限
+chmod +x *
+mv cfssl_linux-amd64 /usr/local/bin/cfssl
+mv cfssljson_linux-amd64 /usr/local/bin/cfssljson
+mv cfssl-certinfo_linux-amd64 /usr/local/bin/cfssl-certinfo
+~~~
+
+### 配置CA证书
+
+~~~sh
+#生成ca证书请求文件,mater1上
+tee -a ca-csr.json << 'EOF'
+{
+  "CN": "kubernetes",
+  "key": {
+      "algo": "rsa",
+      "size": 2048
+  },
+  "names": [
+    {
+      "C": "CN",
+      "ST": "Hubei",
+      "L": "Wuhan",
+      "O": "k8s",
+      "OU": "system"
+    }
+  ],
+  "ca": {
+          "expiry": "87600h"
+  }
+}
+EOF
+~~~
+
+~~~sh
+cfssl gencert -initca ca-csr.json  | cfssljson -bare ca
+~~~
+
+> 注： 
+>
+> - CN：Common Name（公用名称），kube-apiserver 从证书中提取该字段作为请求的用户名 (User Name)；浏览器使用该字段验证网站是否合法；对于 SSL 证书，一般为网站域名；而对于代码签名证书则为申请单位名称；而对于客户端证书则为证书申请者的姓名。
+>
+> - O：Organization（单位名称），kube-apiserver 从证书中提取该字段作为请求用户所属的组 (Group)；对于 SSL 证书，一般为网站域名；而对于代码签名证书则为申请单位名称；而对于客户端单位证书则为证书申请者所在单位名称。
+>
+> - L 字段：所在城市
+>
+> - S 字段：所在省份
+>
+> - C 字段：只能是国家字母缩写，如中国：CN
+
+### 生成CA证书文件
+
+~~~sh
+tee -a ca-config.json << 'EOF'
+{
+  "signing": {
+      "default": {
+          "expiry": "87600h"
+        },
+      "profiles": {
+          "kubernetes": {
+              "usages": [
+                  "signing",
+                  "key encipherment",
+                  "server auth",
+                  "client auth"
+              ],
+              "expiry": "87600h"
+          }
+      }
+  }
+}
+EOF
+~~~
+
+### 生成etcd证书
+
+~~~sh
+#配置etcd证书请求，hosts的ip变成自己etcd所在节点的ip
+vim etcd-csr.json 
+{
+  "CN": "etcd",
+  "hosts": [
+    "127.0.0.1",
+    "172.16.183.76",
+    "172.16.183.77",
+    "172.16.183.78",
+    "172.16.183.79",
+    "172.16.183.75"
+  ],
+  "key": {
+    "algo": "rsa",
+    "size": 2048
+  },
+  "names": [{
+    "C": "CN",
+    "ST": "Hubei",
+    "L": "Wuhan",
+    "O": "k8s",
+    "OU": "system"
+  }]
+} 
+
+#上述文件hosts字段中IP为所有etcd节点的集群内部通信IP，可以预留几个，做扩容用? 
+cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-config.json -profile=kubernetes etcd-csr.json | cfssljson  -bare etcd
+ls etcd*.pem
+#etcd-key.pem  etcd.pem
+~~~
+
+### 部署etcd集群
+
+#### 上传镜像
+
+- 上传etcd-v3.4.13-linux-amd64.tar.gz上传到master1的/data/work目录下
+
+~~~sh
+tar -xf etcd-v3.4.13-linux-amd64.tar.gz
+cp -p etcd-v3.4.13-linux-amd64/etcd* /usr/local/bin/
+scp -r  etcd-v3.4.13-linux-amd64/etcd* binmaster2:/usr/local/bin/
+scp -r  etcd-v3.4.13-linux-amd64/etcd* binchaomaster3:/usr/local/bin/
+~~~
+
+#### 创建配置文件
+
+~~~sh
+~~~
 
