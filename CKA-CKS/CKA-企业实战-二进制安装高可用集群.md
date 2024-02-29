@@ -307,7 +307,7 @@ systemctl status docker
 #修改docker文件驱动为systemd，默认为cgroupfs，kubelet默认使用systemd，两者必须一致才可以。
 ~~~
 
-## 搭建etcd集群
+## 搭建etcd集群 - 0229到这里
 
 ### 配置ectd工作目录
 
@@ -591,7 +591,7 @@ systemctl status etcd
 ~~~sh
 #master1上
 ETCDCTL_API=3
-/usr/local/bin/etcdctl --write-out=table --cacert=/etc/etcd/ssl/ca.pem --cert=/etc/etcd/ssl/etcd.pem --key=/etc/etcd/ssl/etcd-key.pem --endpoints=https://192.168.40.180:2379,https://192.168.40.181:2379,https://192.168.40.182:2379  endpoint health
+/usr/local/bin/etcdctl --write-out=table --cacert=/etc/etcd/ssl/ca.pem --cert=/etc/etcd/ssl/etcd.pem --key=/etc/etcd/ssl/etcd-key.pem --endpoints=https://172.16.183.76:2379,https://172.16.183.77:2379,https://172.16.183.78:2379  endpoint health
 ~~~
 
 ## 安装k8s组件
@@ -602,6 +602,7 @@ ETCDCTL_API=3
 
 ~~~sh
 #把kubernetes-server-linux-amd64.tar.gz上传到master1上的/data/work目录下:
+#master1上
 cd /data/work
 tar zxvf kubernetes-server-linux-amd64.tar.gz
 cd kubernetes/server/bin/
@@ -618,25 +619,458 @@ mkdir /var/log/kubernetes
 
 ### 部署apiserver组件
 
-> - Master apiserver启用TLS认证后，每个节点的 kubelet 组件都要使用由 apiserver 使用的 CA 签发的有效证书才能与 apiserver 通讯，当Node节点很多时，这种客户端证书颁发需要大量工作，同样也会增加集群扩展复杂度。
+#### bootstrapping机制
+
+- 启动TLS Bootstrapping 机制
+  - Master apiserver启用TLS认证后，每个节点的 kubelet 组件都要使用由 apiserver 使用的 CA 签发的有效证书才能与 apiserver 通讯，当Node节点很多时，这种客户端证书颁发需要大量工作，同样也会增加集群扩展复杂度。
+  - 为了简化流程，Kubernetes引入了TLS bootstraping机制来自动颁发客户端证书，kubelet会以一个低权限用户自动向apiserver申请证书，kubelet的证书由apiserver动态签署。
+
+  - Bootstrap 是很多系统中都存在的程序，比如 Linux 的bootstrap，bootstrap 一般都是作为预先配置在开启或者系统启动的时候加载，这可以用来生成一个指定环境。Kubernetes 的 kubelet 在启动时同样可以加载一个这样的配置文件，这个文件的内容类似如下形式：
+
+~~~yaml
+apiVersion: v1
+clusters: null
+contexts:
+- context:
+    cluster: kubernetes
+    user: kubelet-bootstrap
+  name: default
+current-context: default
+kind: Config
+preferences: {}
+users:
+- name: kubelet-bootstrap
+  user: {}
+~~~
+
+- Bootstrap具体引导过程
+  - TLS 作用 
+    TLS 的作用就是对通讯加密，防止中间人窃听；同时如果证书不信任的话根本就无法与 apiserver 建立连接，更不用提有没有权限向apiserver请求指定内容。
+  - RBAC 作用 
+    当 TLS 解决了通讯问题后，那么权限问题就应由 RBAC 解决；RBAC 中规定了一个用户或者用户组(subject)具有请求哪些 api 的权限；在配合 TLS 加密的时候，实际上 apiserver 读取客户端证书的 CN 字段作为用户名，读取 O字段作为用户组.
+  - 以上说明：第一，想要与 apiserver 通讯就必须采用由 apiserver CA 签发的证书，这样才能形成信任关系，建立 TLS 连接；第二，可以**通过证书的 CN、O 字段来提供 RBAC 所需的用户与用户组**。
+
+- kubelet 首次启动流程 
+
+  - TLS bootstrapping 功能是让 kubelet 组件去 apiserver 申请证书，然后用于连接 apiserver；那么第一次启动时没有证书如何连接 apiserver ?
+
+  - 在apiserver 配置中指定了一个 `token.csv` 文件，该文件中是一个预设的用户配置；
+    - 同时该用户的Token 和 由apiserver 的 CA签发的用户被写入了 kubelet 所使用的 `bootstrap.kubeconfig` 配置文件中；
+    - 这样在首次请求时，kubelet 使用 `bootstrap.kubeconfig` 中被 apiserver CA 签发证书时信任的用户来与 apiserver 建立 TLS 通讯，使用 `bootstrap.kubeconfig` 中的用户 Token 来向 apiserver 声明自己的 RBAC 授权身份.
+
+  - token.csv格式:
+
+    `3940fd7fbb391d1b4d861ad17a1f0613,kubelet-bootstrap,10001,"system:kubelet-bootstrap"`
+
+  - 首次启动时，可能与遇到 kubelet 报 401 无权访问 apiserver 的错误；这是因为在默认情况下，kubelet 通过 `bootstrap.kubeconfig` 中的预设用户 Token 声明了自己的身份，然后创建 CSR 请求；但是不要忘记这个用户在我们不处理的情况下他没任何权限的，包括创建 CSR 请求；所以需要创建一个 `ClusterRoleBinding`，将预设用户 `kubelet-bootstrap` 与内置的 `ClusterRole system:node-bootstrapper` 绑定到一起，使其能够发起 CSR 请求。
+
+#### 创建token.csv文件
+
+~~~sh
+#master1上
+cat > token.csv << EOF
+$(head -c 16 /dev/urandom | od -An -t x | tr -d ' '),kubelet-bootstrap,10001,"system:kubelet-bootstrap"
+EOF
+#格式：token，用户名，UID，用户组
+~~~
+
+#### 创建csr请求文件
+
+- 注：如果 hosts 字段不为空则需要指定授权使用该证书的 IP 或域名列表。由于该证书后续被 kubernetes master 集群使用，需要将master节点的IP都填上，同时还需要填写 service 网络的首个IP。(一般是 kube-apiserver 指定的 service-cluster-ip-range 网段的第一个IP，如 10.255.0.1)
+
+~~~sh
+#master1上
+vim kube-apiserver-csr.json 
+{
+  "CN": "kubernetes",
+  "hosts": [
+    "127.0.0.1",
+    "172.16.183.76",
+    "172.16.183.77",
+    "172.16.183.78",
+    "172.16.183.79",
+    "172.16.183.75",
+    "10.255.0.1",
+    "kubernetes",
+    "kubernetes.default",
+    "kubernetes.default.svc",
+    "kubernetes.default.svc.cluster",
+    "kubernetes.default.svc.cluster.local"
+  ],
+  "key": {
+    "algo": "rsa",
+    "size": 2048
+  },
+  "names": [
+    {
+      "C": "CN",
+      "ST": "Hubei",
+      "L": "Wuhan",
+      "O": "k8s",
+      "OU": "system"
+    }
+  ]
+}
+~~~
+
+#### 生成证书
+
+~~~sh
+#master1上
+cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-config.json -profile=kubernetes kube-apiserver-csr.json | cfssljson -bare kube-apiserver
+~~~
+
+#### 创建apiserver的配置文件
+
+~~~sh
+#master1上
+vim kube-apiserver.conf 
+KUBE_APISERVER_OPTS="--enable-admission-plugins=NamespaceLifecycle,NodeRestriction,LimitRanger,ServiceAccount,DefaultStorageClass,ResourceQuota \
+  --anonymous-auth=false \
+  --bind-address=172.16.183.76 \
+  --secure-port=6443 \
+  --advertise-address=172.16.183.76 \
+  --insecure-port=0 \
+  --authorization-mode=Node,RBAC \
+  --runtime-config=api/all=true \
+  --enable-bootstrap-token-auth \
+  --service-cluster-ip-range=10.255.0.0/16 \
+  --token-auth-file=/etc/kubernetes/token.csv \
+  --service-node-port-range=30000-50000 \
+  --tls-cert-file=/etc/kubernetes/ssl/kube-apiserver.pem  \
+  --tls-private-key-file=/etc/kubernetes/ssl/kube-apiserver-key.pem \
+  --client-ca-file=/etc/kubernetes/ssl/ca.pem \
+  --kubelet-client-certificate=/etc/kubernetes/ssl/kube-apiserver.pem \
+  --kubelet-client-key=/etc/kubernetes/ssl/kube-apiserver-key.pem \
+  --service-account-key-file=/etc/kubernetes/ssl/ca-key.pem \
+  --service-account-signing-key-file=/etc/kubernetes/ssl/ca-key.pem  \
+  --service-account-issuer=https://kubernetes.default.svc.cluster.local \
+  --etcd-cafile=/etc/etcd/ssl/ca.pem \
+  --etcd-certfile=/etc/etcd/ssl/etcd.pem \
+  --etcd-keyfile=/etc/etcd/ssl/etcd-key.pem \
+  --etcd-servers=https://172.16.183.76:2379,https://172.16.183.77:2379,https://172.16.183.78:2379 \
+  --enable-swagger-ui=true \
+  --allow-privileged=true \
+  --apiserver-count=3 \
+  --audit-log-maxage=30 \
+  --audit-log-maxbackup=3 \
+  --audit-log-maxsize=100 \
+  --audit-log-path=/var/log/kube-apiserver-audit.log \
+  --event-ttl=1h \
+  --alsologtostderr=true \
+  --logtostderr=false \
+  --log-dir=/var/log/kubernetes \
+  --v=4"
+~~~
+
+> 注： 
 >
-> - 为了简化流程，Kubernetes引入了TLS bootstraping机制来自动颁发客户端证书，kubelet会以一个低权限用户自动向apiserver申请证书，kubelet的证书由apiserver动态签署。
+> --logtostderr：启用日志 
 >
-> - Bootstrap 是很多系统中都存在的程序，比如 Linux 的bootstrap，bootstrap 一般都是作为预先配置在开启或者系统启动的时候加载，这可以用来生成一个指定环境。Kubernetes 的 kubelet 在启动时同样可以加载一个这样的配置文件，这个文件的内容类似如下形式：
+> --v：日志等级 
 >
->   ~~~yaml
->    apiVersion: v1
->   clusters: null
->   contexts:
->   - context:
->       cluster: kubernetes
->       user: kubelet-bootstrap
->     name: default
->   current-context: default
->   kind: Config
->   preferences: {}
->   users:
->   - name: kubelet-bootstrap
->     user: {}
->   ~~~
+> --log-dir：日志目录 
+>
+> --etcd-servers：etcd集群地址 
+>
+> --bind-address：监听地址 
+>
+> --secure-port：https安全端口 
+>
+> --advertise-address：集群通告地址 
+>
+> --allow-privileged：启用授权 
+>
+> --service-cluster-ip-range：Service虚拟IP地址段 
+>
+> --enable-admission-plugins：准入控制模块 
+>
+> --authorization-mode：认证授权，启用RBAC授权和节点自管理 
+>
+> --enable-bootstrap-token-auth：启用TLS bootstrap机制 
+>
+> --token-auth-file：bootstrap token文件 
+>
+> --service-node-port-range：Service nodeport类型默认分配端口范围 
+>
+> --kubelet-client-xxx：apiserver访问kubelet客户端证书 
+>
+> --tls-xxx-file：apiserver https证书 
+>
+> --etcd-xxxfile：连接Etcd集群证书 –
+>
+> -audit-log-xxx：审计日志
+
+#### 创建服务启动文件
+
+~~~sh
+#master1上
+vim kube-apiserver.service 
+[Unit]
+Description=Kubernetes API Server
+Documentation=https://github.com/kubernetes/kubernetes
+After=etcd.service
+Wants=etcd.service
+ 
+[Service]
+EnvironmentFile=-/etc/kubernetes/kube-apiserver.conf
+ExecStart=/usr/local/bin/kube-apiserver $KUBE_APISERVER_OPTS
+Restart=on-failure
+RestartSec=5
+Type=notify
+LimitNOFILE=65536
+ 
+[Install]
+WantedBy=multi-user.target
+~~~
+
+~~~sh
+cp ca*.pem /etc/kubernetes/ssl
+cp kube-apiserver*.pem /etc/kubernetes/ssl/
+cp token.csv /etc/kubernetes/
+cp kube-apiserver.conf /etc/kubernetes/
+cp kube-apiserver.service /usr/lib/systemd/system/
+rsync -vaz token.csv binmaster2:/etc/kubernetes/
+rsync -vaz token.csv binmaster3:/etc/kubernetes/
+rsync -vaz kube-apiserver*.pem binmaster2:/etc/kubernetes/ssl/
+rsync -vaz kube-apiserver*.pem binmaster3:/etc/kubernetes/ssl/
+rsync -vaz ca*.pem binmaster2:/etc/kubernetes/ssl/
+rsync -vaz ca*.pem binmaster3:/etc/kubernetes/ssl/
+rsync -vaz kube-apiserver.conf binmaster2:/etc/kubernetes/
+rsync -vaz kube-apiserver.conf binmaster3:/etc/kubernetes/
+rsync -vaz kube-apiserver.service binmaster2:/usr/lib/systemd/system/
+rsync -vaz kube-apiserver.service binmaster3:/usr/lib/systemd/system/
+~~~
+
+~~~sh
+#修改master2和master3上的kube-apiserver.conf文件的IP地址
+#3台master上执行
+systemctl daemon-reload
+systemctl enable kube-apiserver
+systemctl start kube-apiserver
+systemctl status kube-apiserver
+curl --insecure https://172.16.183.76:6443/
+#上面看到401，这个是正常的的状态，还没认证
+~~~
+
+### 部署kubectl组件
+
+#### 配置kubeconfig文件
+
+- Kubectl操作资源的时候，怎么知道连接到哪个集群？需要一个文件/etc/kubernetes/admin.conf，kubectl会根据这个文件的配置，去访问k8s资源。/etc/kubernetes/admin.conf文件记录了访问的k8s集群，和用到的证书。
+
+~~~sh
+#可以设置一个环境变量KUBECONFIG，这样操作kubectl，就会自动加载KUBECONFIG来操作要管理哪个集群的k8s资源了
+export KUBECONFIG =/etc/kubernetes/admin.conf
+#也可以按照下面方法，这个是在kubeadm初始化k8s的时候会告诉我们要用的方法
+cp /etc/kubernetes/admin.conf /root/.kube/config
+#如果设置了KUBECONFIG，那就会先找到KUBECONFIG去操作k8s，如果没有KUBECONFIG变量，那就会使用/root/.kube/config文件决定管理哪个k8s集群的资源。
+~~~
+
+#### 创建csr请求文件
+
+~~~sh
+#master1上
+cd /data/work
+vim admin-csr.json 
+{
+  "CN": "admin",
+  "hosts": [],
+  "key": {
+    "algo": "rsa",
+    "size": 2048
+  },
+  "names": [
+    {
+      "C": "CN",
+      "ST": "Hubei",
+      "L": "Wuhan",
+      "O": "system:masters",             
+      "OU": "system"
+    }
+  ]
+}
+~~~
+
+> 说明：
+>
+> - 后续 kube-apiserver 使用 RBAC 对客户端(如 kubelet、kube-proxy、Pod)请求进行授权； 
+>
+> - kube-apiserver 预定义了一些 RBAC 使用的 RoleBindings，如 cluster-admin 将 Group system:masters 与 Role cluster-admin 绑定，该 Role 授予了调用apiserver的所有API的权限； 
+>
+> - O指定该证书的 Group 为 system:masters，kubelet 使用该证书访问apiserver时，由于证书被 CA 签名，所以认证通过；同时由于证书用户组为经过预授权的 system:masters，所以被授予访问所有 API 的权限；
+
+> 注： 
+>
+> - 这个admin证书是将来生成管理员用的kube config 配置文件用的，现在我们一般建议使用RBAC来对kubernetes进行角色权限控制，kubernetes将证书中的CN字段作为User， O 字段作为 Group； "O": "system:masters", 必须是system:masters，否则后面kubectl create clusterrolebinding报错。
+
+#### 生成证书
+
+~~~sh
+#master1上
+cd /data/work
+cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-config.json -profile=kubernetes admin-csr.json | cfssljson -bare admin
+cp admin*.pem /etc/kubernetes/ssl/
+~~~
+
+#### 配置安全上下文
+
+- 创建kubeconfig配置文件
+
+~~~sh
+#kubeconfig 为 kubectl 的配置文件，包含访问 apiserver 的所有信息，如 apiserver 地址、CA 证书和自身使用的证书（这里如果报错找不到kubeconfig路径，请手动复制到相应路径下，没有则忽略）
+#1.设置集群参数
+cd /data/work
+kubectl config set-cluster kubernetes --certificate-authority=ca.pem --embed-certs=true --server=https://172.16.183.76:6443 --kubeconfig=kube.config
+##查看kube.config内容
+vim kube.config
+#2.设置客户端认证参数
+kubectl config set-credentials admin --client-certificate=admin.pem --client-key=admin-key.pem --embed-certs=true --kubeconfig=kube.config
+#3.设置上下文参数
+kubectl config set-context kubernetes --cluster=kubernetes --user=admin --kubeconfig=kube.config
+#4.设置当前上下文
+kubectl config use-context kubernetes --kubeconfig=kube.config
+mkdir ~/.kube -p
+cp kube.config ~/.kube/config
+#5.授权kubernetes证书访问kubelet api权限
+kubectl create clusterrolebinding kube-apiserver:kubelet-apis --clusterrole=system:kubelet-api-admin --user kubernetes
+##查看集群组件状态
+kubectl cluster-info
+kubectl get componentstatuses
+kubectl get all --all-namespaces
+~~~
+
+```sh
+#同步kubectl文件到其他节点
+##master2和3上
+mkdir /root/.kube/
+##master1上
+rsync -vaz /root/.kube/config binmaster2:/root/.kube/
+rsync -vaz /root/.kube/config binmaster3:/root/.kube/
+#配置kubectl子命令补全
+##master1上
+yum install -y bash-completion
+source /usr/share/bash-completion/bash_completion
+source <(kubectl completion bash)
+kubectl completion bash > ~/.kube/completion.bash.inc
+source '/root/.kube/completion.bash.inc'
+source $HOME/.bash_profile
+```
+
+### 部署kube-controller-manager组件
+
+#### 创建csr请求文件
+
+```sh
+#master1上
+cd /data/work
+vim kube-controller-manager-csr.json 
+{
+    "CN": "system:kube-controller-manager",
+    "key": {
+        "algo": "rsa",
+        "size": 2048
+    },
+    "hosts": [
+      "127.0.0.1",
+      "172.16.183.76",
+      "172.16.183.77",
+      "172.16.183.78",
+      "172.16.183.79"
+    ],
+    "names": [
+      {
+        "C": "CN",
+        "ST": "Hubei",
+        "L": "Wuhan",
+        "O": "system:kube-controller-manager",
+        "OU": "system"
+      }
+    ]
+}
+```
+
+> 注：hosts 列表包含所有 kube-controller-manager 节点 IP； CN 为 system:kube-controller-manager、O 为 system:kube-controller-manager，kubernetes 内置的 ClusterRoleBindings system:kube-controller-manager 赋予 kube-controller-manager 工作所需的权限
+
+#### 生成证书
+
+~~~sh
+#master1上
+cd /data/work
+cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-config.json -profile=kubernetes kube-controller-manager-csr.json | cfssljson -bare kube-controller-manager
+~~~
+
+#### 创建kube-controller-manager的kubeconfig
+
+~~~sh
+#master1上
+cd /data/work
+#1.设置集群参数
+kubectl config set-cluster kubernetes --certificate-authority=ca.pem --embed-certs=true --server=https://172.16.183.76:6443 --kubeconfig=kube-controller-manager.kubeconfig
+#2.设置客户端认证参数
+kubectl config set-credentials system:kube-controller-manager --client-certificate=kube-controller-manager.pem --client-key=kube-controller-manager-key.pem --embed-certs=true --kubeconfig=kube-controller-manager.kubeconfig
+#3.设置上下文参数
+kubectl config set-context system:kube-controller-manager --cluster=kubernetes --user=system:kube-controller-manager --kubeconfig=kube-controller-manager.kubeconfig
+#4.设置当前上下文
+kubectl config use-context system:kube-controller-manager --kubeconfig=kube-controller-manager.kubeconfig
+~~~
+
+#### 创建配置文件kube-controller-manager.conf
+
+~~~sh
+#master1上
+cd /data/work
+vim kube-controller-manager.conf 
+KUBE_CONTROLLER_MANAGER_OPTS="--port=0 \
+  --secure-port=10252 \
+  --bind-address=127.0.0.1 \
+  --kubeconfig=/etc/kubernetes/kube-controller-manager.kubeconfig \
+  --service-cluster-ip-range=10.255.0.0/16 \
+  --cluster-name=kubernetes \
+  --cluster-signing-cert-file=/etc/kubernetes/ssl/ca.pem \
+  --cluster-signing-key-file=/etc/kubernetes/ssl/ca-key.pem \
+  --allocate-node-cidrs=true \
+  --cluster-cidr=10.0.0.0/16 \
+  --experimental-cluster-signing-duration=87600h \
+  --root-ca-file=/etc/kubernetes/ssl/ca.pem \
+  --service-account-private-key-file=/etc/kubernetes/ssl/ca-key.pem \
+  --leader-elect=true \
+  --feature-gates=RotateKubeletServerCertificate=true \
+  --controllers=*,bootstrapsigner,tokencleaner \
+  --horizontal-pod-autoscaler-use-rest-clients=true \
+  --horizontal-pod-autoscaler-sync-period=10s \
+  --tls-cert-file=/etc/kubernetes/ssl/kube-controller-manager.pem \
+  --tls-private-key-file=/etc/kubernetes/ssl/kube-controller-manager-key.pem \
+  --use-service-account-credentials=true \
+  --alsologtostderr=true \
+  --logtostderr=false \
+  --log-dir=/var/log/kubernetes \
+  --v=2"
+~~~
+
+#### 创建启动文件
+
+~~~sh
+#master1上
+cd /data/work
+vim kube-controller-manager.service 
+[Unit]
+Description=Kubernetes Controller Manager
+Documentation=https://github.com/kubernetes/kubernetes
+[Service]
+EnvironmentFile=-/etc/kubernetes/kube-controller-manager.conf
+ExecStart=/usr/local/bin/kube-controller-manager $KUBE_CONTROLLER_MANAGER_OPTS
+Restart=on-failure
+RestartSec=5
+[Install]
+WantedBy=multi-user.target
+~~~
+
+#### 启动服务
+
+~~~sh
+
+~~~
+
+
 
