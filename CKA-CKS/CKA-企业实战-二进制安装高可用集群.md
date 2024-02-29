@@ -443,6 +443,7 @@ ls etcd*.pem
 ~~~sh
 tar -xf etcd-v3.4.13-linux-amd64.tar.gz
 cp -p etcd-v3.4.13-linux-amd64/etcd* /usr/local/bin/
+#拷贝到另外两台
 scp -r  etcd-v3.4.13-linux-amd64/etcd* binmaster2:/usr/local/bin/
 scp -r  etcd-v3.4.13-linux-amd64/etcd* binchaomaster3:/usr/local/bin/
 ~~~
@@ -450,5 +451,192 @@ scp -r  etcd-v3.4.13-linux-amd64/etcd* binchaomaster3:/usr/local/bin/
 #### 创建配置文件
 
 ~~~sh
+vim etcd.conf 
+#[Member]
+ETCD_NAME="etcd1"
+ETCD_DATA_DIR="/var/lib/etcd/default.etcd"
+ETCD_LISTEN_PEER_URLS="https://172.16.183.76:2380"
+ETCD_LISTEN_CLIENT_URLS="https://172.16.183.76:2379,http://127.0.0.1:2379"
+#[Clustering]
+ETCD_INITIAL_ADVERTISE_PEER_URLS="https://172.16.183.76:2380"
+ETCD_ADVERTISE_CLIENT_URLS="https://172.16.183.76:2379"
+ETCD_INITIAL_CLUSTER="etcd1=https://172.16.183.76:2380,etcd2=https://172.16.183.77:2380,etcd3=https://172.16.183.78:2380"
+ETCD_INITIAL_CLUSTER_TOKEN="etcd-cluster"
+ETCD_INITIAL_CLUSTER_STATE="new"
 ~~~
+
+> ETCD_NAME：节点名称，集群中唯一 
+>
+> ETCD_DATA_DIR：数据目录 
+>
+> ETCD_LISTEN_PEER_URLS：集群通信监听地址 
+>
+> ETCD_LISTEN_CLIENT_URLS：客户端访问监听地址 
+>
+> ETCD_INITIAL_ADVERTISE_PEER_URLS：集群通告地址 
+>
+> ETCD_ADVERTISE_CLIENT_URLS：客户端通告地址 
+>
+> ETCD_INITIAL_CLUSTER：集群节点地址
+>
+> ETCD_INITIAL_CLUSTER_TOKEN：集群Token
+>
+> ETCD_INITIAL_CLUSTER_STATE：加入集群的当前状态，new是新集群，existing表示加入已有集群
+
+#### 创建启动服务文件
+
+~~~sh
+#master1上
+vim etcd.service
+~~~
+
+~~~sh
+[Unit]
+Description=Etcd Server
+After=network.target
+After=network-online.target
+Wants=network-online.target
+ 
+[Service]
+Type=notify
+EnvironmentFile=-/etc/etcd/etcd.conf
+WorkingDirectory=/var/lib/etcd/
+ExecStart=/usr/local/bin/etcd \
+  --cert-file=/etc/etcd/ssl/etcd.pem \
+  --key-file=/etc/etcd/ssl/etcd-key.pem \
+  --trusted-ca-file=/etc/etcd/ssl/ca.pem \
+  --peer-cert-file=/etc/etcd/ssl/etcd.pem \
+  --peer-key-file=/etc/etcd/ssl/etcd-key.pem \
+  --peer-trusted-ca-file=/etc/etcd/ssl/ca.pem \
+  --peer-client-cert-auth \
+  --client-cert-auth
+Restart=on-failure
+RestartSec=5
+LimitNOFILE=65536
+ 
+[Install]
+WantedBy=multi-user.target
+~~~
+
+~~~sh
+#master1上
+cp ca*.pem /etc/etcd/ssl/
+cp etcd*.pem /etc/etcd/ssl/
+cp etcd.conf /etc/etcd/
+cp etcd.service /usr/lib/systemd/system/
+for i in binmaster2 binmaster3;do rsync -vaz etcd.conf $i:/etc/etcd/;done
+for i in binmaster2 binmaster3;do rsync -vaz etcd*.pem ca*.pem $i:/etc/etcd/ssl/;done
+for i in binmaster2 binmaster3;do rsync -vaz etcd.service $i:/usr/lib/systemd/system/;done
+~~~
+
+#### 启动etcd集群
+
+~~~sh
+#3台master上
+mkdir -p /var/lib/etcd/default.etcd
+~~~
+
+~~~sh
+#master2上
+vim /etc/etcd/etcd.conf 
+#[Member]
+ETCD_NAME="etcd2"
+ETCD_DATA_DIR="/var/lib/etcd/default.etcd"
+ETCD_LISTEN_PEER_URLS="https://172.16.183.77:2380"
+ETCD_LISTEN_CLIENT_URLS="https://172.16.183.77:2379,http://127.0.0.1:2379"
+#[Clustering]
+ETCD_INITIAL_ADVERTISE_PEER_URLS="https://172.16.183.77:2380"
+ETCD_ADVERTISE_CLIENT_URLS="https://172.16.183.77:2379"
+ETCD_INITIAL_CLUSTER="etcd1=https://172.16.183.76:2380,etcd2=https://172.16.183.77:2380,etcd3=https://172.16.183.78:2380"
+ETCD_INITIAL_CLUSTER_TOKEN="etcd-cluster"
+ETCD_INITIAL_CLUSTER_STATE="new"
+~~~
+
+~~~sh
+#master3上
+vim /etc/etcd/etcd.conf 
+#[Member]
+ETCD_NAME="etcd3"
+ETCD_DATA_DIR="/var/lib/etcd/default.etcd"
+ETCD_LISTEN_PEER_URLS="https://172.16.183.78:2380"
+ETCD_LISTEN_CLIENT_URLS="https://172.16.183.78:2379,http://127.0.0.1:2379"
+#[Clustering]
+ETCD_INITIAL_ADVERTISE_PEER_URLS="https://172.16.183.78:2380"
+ETCD_ADVERTISE_CLIENT_URLS="https://172.16.183.78:2379"
+ETCD_INITIAL_CLUSTER="etcd1=https://172.16.183.76:2380,etcd2=https://172.16.183.77:2380,etcd3=https://172.16.183.78:2380"
+ETCD_INITIAL_CLUSTER_TOKEN="etcd-cluster"
+ETCD_INITIAL_CLUSTER_STATE="new"
+~~~
+
+~~~sh
+#master1上
+systemctl daemon-reload
+systemctl enable etcd.service
+systemctl start etcd.service
+#master2上
+systemctl daemon-reload
+systemctl enable etcd.service
+systemctl start etcd.service
+#master3上
+systemctl daemon-reload
+systemctl enable etcd.service
+systemctl start etcd.service
+#启动etcd的时候，先启动master1的etcd服务，会一直卡住在启动的状态，然后接着再启动master2的etcd，这样master1这个节点etcd才会正常起来
+#3台上检查etcd状态
+systemctl status etcd
+~~~
+
+### 查看etcd集群
+
+~~~sh
+#master1上
+ETCDCTL_API=3
+/usr/local/bin/etcdctl --write-out=table --cacert=/etc/etcd/ssl/ca.pem --cert=/etc/etcd/ssl/etcd.pem --key=/etc/etcd/ssl/etcd-key.pem --endpoints=https://192.168.40.180:2379,https://192.168.40.181:2379,https://192.168.40.182:2379  endpoint health
+~~~
+
+## 安装k8s组件
+
+### 下载安装包
+
+- 二进制包所在的github地址如下：https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/
+
+~~~sh
+#把kubernetes-server-linux-amd64.tar.gz上传到master1上的/data/work目录下:
+cd /data/work
+tar zxvf kubernetes-server-linux-amd64.tar.gz
+cd kubernetes/server/bin/
+cp kube-apiserver kube-controller-manager kube-scheduler kubectl /usr/local/bin/
+rsync -vaz kube-apiserver kube-controller-manager kube-scheduler kubectl binmaster2:/usr/local/bin/
+rsync -vaz kube-apiserver kube-controller-manager kube-scheduler kubectl binmaster3:/usr/local/bin/
+
+scp kubelet kube-proxy binnode1:/usr/local/bin/
+cd /data/work/
+mkdir -p /etc/kubernetes/ 
+mkdir -p /etc/kubernetes/ssl
+mkdir /var/log/kubernetes
+~~~
+
+### 部署apiserver组件
+
+> - Master apiserver启用TLS认证后，每个节点的 kubelet 组件都要使用由 apiserver 使用的 CA 签发的有效证书才能与 apiserver 通讯，当Node节点很多时，这种客户端证书颁发需要大量工作，同样也会增加集群扩展复杂度。
+>
+> - 为了简化流程，Kubernetes引入了TLS bootstraping机制来自动颁发客户端证书，kubelet会以一个低权限用户自动向apiserver申请证书，kubelet的证书由apiserver动态签署。
+>
+> - Bootstrap 是很多系统中都存在的程序，比如 Linux 的bootstrap，bootstrap 一般都是作为预先配置在开启或者系统启动的时候加载，这可以用来生成一个指定环境。Kubernetes 的 kubelet 在启动时同样可以加载一个这样的配置文件，这个文件的内容类似如下形式：
+>
+>   ~~~yaml
+>    apiVersion: v1
+>   clusters: null
+>   contexts:
+>   - context:
+>       cluster: kubernetes
+>       user: kubelet-bootstrap
+>     name: default
+>   current-context: default
+>   kind: Config
+>   preferences: {}
+>   users:
+>   - name: kubelet-bootstrap
+>     user: {}
+>   ~~~
 
