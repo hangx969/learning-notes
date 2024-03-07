@@ -375,6 +375,18 @@ cfssl gencert -initca ca-csr.json  | cfssljson -bare ca
 >
 > - C 字段：只能是国家字母缩写，如中国：CN
 
+> - `cfssljson`是CloudFlare的PKI(TLS/SSL)工具包cfssl的一部分。这个命令主要用于处理cfssl生成的JSON格式的输出。
+>
+> - `cfssljson`的主要功能是从cfssl的输出中提取和写入证书，私钥和证书链。这对于自动化处理证书生成和部署非常有用。
+>
+> - 例如，你可以使用cfssl和cfssljson生成一个新的自签名证书：
+>
+> ```sh
+> cfssl gencert -initca ca-csr.json | cfssljson -bare ca
+> ```
+>
+> - 在这个例子中，`cfssl gencert -initca ca-csr.json`生成一个新的自签名证书和私钥，然后通过管道传递给`cfssljson -bare ca`，它从JSON输出中提取证书和私钥，并将它们分别写入`ca.pem`和`ca-key.pem`文件。
+
 ### 生成CA证书文件
 
 ~~~sh
@@ -1069,8 +1081,603 @@ WantedBy=multi-user.target
 #### 启动服务
 
 ~~~sh
-
+#master1上
+cd /data/work
+cp kube-controller-manager*.pem /etc/kubernetes/ssl/
+cp kube-controller-manager.kubeconfig /etc/kubernetes/
+cp kube-controller-manager.conf /etc/kubernetes/
+cp kube-controller-manager.service /usr/lib/systemd/system/
+rsync -vaz kube-controller-manager*.pem binmaster2:/etc/kubernetes/ssl/
+rsync -vaz kube-controller-manager*.pem binmaster3:/etc/kubernetes/ssl/
+rsync -vaz kube-controller-manager.kubeconfig kube-controller-manager.conf binmaster2:/etc/kubernetes/
+rsync -vaz kube-controller-manager.kubeconfig kube-controller-manager.conf binmaster3:/etc/kubernetes/
+rsync -vaz kube-controller-manager.service binmaster2:/usr/lib/systemd/system/
+rsync -vaz kube-controller-manager.service binmaster3:/usr/lib/systemd/system/
+#master1、2、3上
+systemctl daemon-reload 
+systemctl enable kube-controller-manager
+systemctl start kube-controller-manager
+systemctl status kube-controller-manager
 ~~~
 
+## 部署kube-scheduler组件
 
+### 创建csr请求
 
+```sh
+#master1上
+cd /data/work
+vim kube-scheduler-csr.json 
+{
+    "CN": "system:kube-scheduler",
+    "hosts": [
+      "127.0.0.1",
+      "172.16.183.76",
+      "172.16.183.77,
+      "172.16.183.78,
+      "172.16.183.79
+    ],
+    "key": {
+        "algo": "rsa",
+        "size": 2048
+    },
+    "names": [
+      {
+        "C": "CN",
+        "ST": "Hubei",
+        "L": "Wuhan",
+        "O": "system:kube-scheduler",
+        "OU": "system"
+      }
+    ]
+}
+```
+
+> hosts 列表包含所有 kube-scheduler 节点 IP； CN 为 system:kube-scheduler、O 为 system:kube-scheduler，kubernetes 内置的 ClusterRoleBindings system:kube-scheduler 将赋予 kube-scheduler 工作所需的权限。
+
+### 生成证书
+
+```sh
+cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-config.json -profile=kubernetes kube-scheduler-csr.json | cfssljson -bare kube-scheduler
+```
+
+### 创建kubeconfig
+
+1. 设置集群参数
+
+```sh
+kubectl config set-cluster kubernetes --certificate-authority=ca.pem --embed-certs=true --server=https://172.16.183.76:6443 --kubeconfig=kube-scheduler.kubeconfig
+```
+
+2. 设置客户端认证参数
+
+```sh
+kubectl config set-credentials system:kube-scheduler --client-certificate=kube-scheduler.pem --client-key=kube-scheduler-key.pem --embed-certs=true --kubeconfig=kube-scheduler.kubeconfig
+```
+
+3. 设置上下文参数
+
+```sh
+kubectl config set-context system:kube-scheduler --cluster=kubernetes --user=system:kube-scheduler --kubeconfig=kube-scheduler.kubeconfig
+```
+
+4. 设置当前上下文
+
+```sh
+kubectl config use-context system:kube-scheduler --kubeconfig=kube-scheduler.kubeconfig
+```
+
+### 创建配置文件kube-scheduler.conf
+
+```sh
+vim kube-scheduler.conf 
+KUBE_SCHEDULER_OPTS="--address=127.0.0.1 \
+--kubeconfig=/etc/kubernetes/kube-scheduler.kubeconfig \
+--leader-elect=true \
+--alsologtostderr=true \
+--logtostderr=false \
+--log-dir=/var/log/kubernetes \
+--v=2"
+```
+
+### 创建服务启动文件
+
+```sh
+vim kube-scheduler.service 
+[Unit]
+Description=Kubernetes Scheduler
+Documentation=https://github.com/kubernetes/kubernetes
+ 
+[Service]
+EnvironmentFile=-/etc/kubernetes/kube-scheduler.conf
+ExecStart=/usr/local/bin/kube-scheduler $KUBE_SCHEDULER_OPTS
+Restart=on-failure
+RestartSec=5
+ 
+[Install]
+WantedBy=multi-user.target
+```
+
+### 启动服务
+
+```sh
+#master1上
+cp kube-scheduler*.pem /etc/kubernetes/ssl/
+cp kube-scheduler.kubeconfig /etc/kubernetes/
+cp kube-scheduler.conf /etc/kubernetes/
+cp kube-scheduler.service /usr/lib/systemd/system/
+rsync -vaz kube-scheduler*.pem binmaster2:/etc/kubernetes/ssl/
+rsync -vaz kube-scheduler*.pem binmaster3:/etc/kubernetes/ssl/
+rsync -vaz kube-scheduler.kubeconfig kube-scheduler.conf binmaster2:/etc/kubernetes/
+rsync -vaz kube-scheduler.kubeconfig kube-scheduler.conf binmaster3:/etc/kubernetes/
+rsync -vaz kube-scheduler.service binmaster2:/usr/lib/systemd/system/
+rsync -vaz kube-scheduler.service binmaster3:/usr/lib/systemd/system/
+#master 1、2、3上
+binsystemctl daemon-reload
+binsystemctl enable kube-scheduler
+binsystemctl start kube-scheduler
+binsystemctl status kube-scheduler
+```
+
+## 导入coredns镜像包
+
+```sh
+#把pause-cordns.tar.gz上传到node1节点，手动解压
+docker load -i pause-cordns.tar.gz
+```
+
+## 部署kubelet组件
+
+- kubelet： 每个Node节点上的kubelet定期就会调用API Server的REST接口报告自身状态，API Server接收这些信息后，将节点状态信息更新到etcd中。kubelet也通过API Server监听Pod信息，从而对Node机器上的POD进行管理，如创建、删除、更新Pod。
+
+### 配置bootstrap token
+
+```sh
+#在master1上
+cd /data/work/
+BOOTSTRAP_TOKEN=$(awk -F "," '{print $1}' /etc/kubernetes/token.csv)
+rm -r kubelet-bootstrap.kubeconfig
+kubectl config set-cluster kubernetes --certificate-authority=ca.pem --embed-certs=true --server=https://172.16.183.76:6443 --kubeconfig=kubelet-bootstrap.kubeconfig
+kubectl config set-credentials kubelet-bootstrap --token=${BOOTSTRAP_TOKEN} --kubeconfig=kubelet-bootstrap.kubeconfig
+kubectl config set-context default --cluster=kubernetes --user=kubelet-bootstrap --kubeconfig=kubelet-bootstrap.kubeconfig
+kubectl config use-context default --kubeconfig=kubelet-bootstrap.kubeconfig
+kubectl create clusterrolebinding kubelet-bootstrap --clusterrole=system:node-bootstrapper --user=kubelet-bootstrap
+```
+
+### 创建配置文件kubelet.json
+
+- "cgroupDriver": "systemd"要和docker的驱动一致。
+- address替换为各个worker节点的IP地址。
+
+```sh
+vim kubelet.json 
+{
+  "kind": "KubeletConfiguration",
+  "apiVersion": "kubelet.config.k8s.io/v1beta1",
+  "authentication": {
+    "x509": {
+      "clientCAFile": "/etc/kubernetes/ssl/ca.pem"
+    },
+    "webhook": {
+      "enabled": true,
+      "cacheTTL": "2m0s"
+    },
+    "anonymous": {
+      "enabled": false
+    }
+  },
+  "authorization": {
+    "mode": "Webhook",
+    "webhook": {
+      "cacheAuthorizedTTL": "5m0s",
+      "cacheUnauthorizedTTL": "30s"
+    }
+  },
+  "address": "172.16.183.79",
+  "port": 10250,
+  "readOnlyPort": 10255,
+  "cgroupDriver": "systemd",
+  "hairpinMode": "promiscuous-bridge",
+  "serializeImagePulls": false,
+  "featureGates": {
+    "RotateKubeletClientCertificate": true,
+    "RotateKubeletServerCertificate": true
+  },
+  "clusterDomain": "cluster.local.",
+  "clusterDNS": ["10.255.0.2"]
+}
+```
+
+### 创建kubelet服务启动文件
+
+```sh
+vim kubelet.service 
+[Unit]
+Description=Kubernetes Kubelet
+Documentation=https://github.com/kubernetes/kubernetes
+After=docker.service
+Requires=docker.service
+[Service]
+WorkingDirectory=/var/lib/kubelet
+ExecStart=/usr/local/bin/kubelet \
+  --bootstrap-kubeconfig=/etc/kubernetes/kubelet-bootstrap.kubeconfig \
+  --cert-dir=/etc/kubernetes/ssl \
+  --kubeconfig=/etc/kubernetes/kubelet.kubeconfig \
+  --config=/etc/kubernetes/kubelet.json \
+  --network-plugin=cni \
+  --pod-infra-container-image=k8s.gcr.io/pause:3.2 \
+  --alsologtostderr=true \
+  --logtostderr=false \
+  --log-dir=/var/log/kubernetes \
+  --v=2
+Restart=on-failure
+RestartSec=5
+ 
+[Install]
+WantedBy=multi-user.target
+```
+
+```sh
+#node1上
+mkdir /etc/kubernetes/ssl -p
+#master1上
+scp kubelet-bootstrap.kubeconfig kubelet.json binnode1:/etc/kubernetes/
+scp ca.pem binnode1:/etc/kubernetes/ssl/
+scp kubelet.service binnode1:/usr/lib/systemd/system/
+```
+
+### 启动kubelet服务
+
+```sh
+#node1上
+mkdir /var/lib/kubelet
+mkdir /var/log/kubernetes
+systemctl daemon-reload
+systemctl enable kubelet
+systemctl start kubelet
+systemctl status kubelet
+
+#确认kubelet服务启动成功后，接着到binmaster1节点上Approve一下bootstrap请求
+#执行如下命令可以看到一个worker节点发送了一个 CSR 请求：
+kubectl get csr
+kubectl certificate approve node-csr-xxxx
+kubectl get nodes
+#会显示binnode1的notready状态，是因为还未安装网络插件。kubelet暂时不能与apiserver通信
+```
+
+## 部署kube-proxy组件
+
+### 创建csr请求
+
+```sh
+#在master1上
+cd /data/work/
+vim kube-proxy-csr.json 
+{
+  "CN": "system:kube-proxy",
+  "key": {
+    "algo": "rsa",
+    "size": 2048
+  },
+  "names": [
+    {
+      "C": "CN",
+      "ST": "Hubei",
+      "L": "Wuhan",
+      "O": "k8s",
+      "OU": "system"
+    }
+  ]
+}
+```
+
+### 生成证书
+
+~~~sh
+#在master1上
+cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-config.json -profile=kubernetes kube-proxy-csr.json | cfssljson -bare kube-prox
+~~~
+
+### 创建kubeconfig文件
+
+~~~sh
+#在master1上
+kubectl config set-cluster kubernetes --certificate-authority=ca.pem --embed-certs=true --server=https://172.16.183.76:6443 --kubeconfig=kube-proxy.kubeconfig
+kubectl config set-credentials kube-proxy --client-certificate=kube-proxy.pem --client-key=kube-proxy-key.pem --embed-certs=true --kubeconfig=kube-proxy.kubeconfig
+kubectl config set-context default --cluster=kubernetes --user=kube-proxy --kubeconfig=kube-proxy.kubeconfig
+kubectl config use-context default --kubeconfig=kube-proxy.kubeconfig
+~~~
+
+### 创建kube-proxy配置文件
+
+~~~sh
+#在master1上
+vim kube-proxy.yaml 
+apiVersion: kubeproxy.config.k8s.io/v1alpha1
+bindAddress: 172.16.183.79
+clientConnection:
+  kubeconfig: /etc/kubernetes/kube-proxy.kubeconfig
+clusterCIDR: 172.16.183.0/24
+healthzBindAddress: 172.16.183.79:10256
+kind: KubeProxyConfiguration
+metricsBindAddress: 172.16.183.79:10249
+mode: "ipvs"
+~~~
+
+### 创建服务启动文件
+
+~~~sh
+#在master1上
+vim kube-proxy.service 
+[Unit]
+Description=Kubernetes Kube-Proxy Server
+Documentation=https://github.com/kubernetes/kubernetes
+After=network.target
+ 
+[Service]
+WorkingDirectory=/var/lib/kube-proxy
+ExecStart=/usr/local/bin/kube-proxy \
+  --config=/etc/kubernetes/kube-proxy.yaml \
+  --alsologtostderr=true \
+  --logtostderr=false \
+  --log-dir=/var/log/kubernetes \
+  --v=2
+Restart=on-failure
+RestartSec=5
+LimitNOFILE=65536
+ 
+[Install]
+WantedBy=multi-user.target
+~~~
+
+~~~sh
+scp  kube-proxy.kubeconfig kube-proxy.yaml binnode1:/etc/kubernetes/
+scp  kube-proxy.service binnode1:/usr/lib/systemd/system/
+~~~
+
+### 启动服务
+
+~~~sh
+#node1上
+mkdir -p /var/lib/kube-proxy
+systemctl daemon-reload
+systemctl enable kube-proxy
+systemctl start kube-proxy
+systemctl status kube-proxy
+~~~
+
+## 部署calico组件
+
+~~~sh
+#上传calico镜像，calico.tar.gz上传到node1节点，手动解压
+docker load -i calico.tar.gz
+#把calico.yaml文件上传到master1上的的/data/work目录
+kubectl apply -f calico.yaml
+~~~
+
+## 部署coredns组件
+
+~~~sh
+kubectl apply -f coredns.yaml
+#测试coredns
+kubectl run busybox --image busybox:1.28 --restart=Never --rm -it busybox -- sh
+ping www.baidu.com
+nslookup kubernetes.default.svc.cluster.local #解析内部Service的名称，是通过coreDNS去解析的。
+~~~
+
+## keepalived+nginx实现apiserver高可用
+
+### 准备epel.repo
+
+~~~sh
+#把epel.repo上传到binmaster1的/etc/yum.repos.d目录下.
+scp /etc/yum.repos.d/epel.repo binmaster2:/etc/yum.repos.d/
+scp /etc/yum.repos.d/epel.repo binmaster3:/etc/yum.repos.d/
+scp /etc/yum.repos.d/epel.repo binnode1:/etc/yum.repos.d/
+#安装nginx主备
+#在master1和master2上做nginx主备安装
+yum install nginx keepalived -y
+#在master1和master2上，修改nginx配置文件。主备一样
+cat /etc/nginx/nginx.conf
+~~~
+
+### 修改nginx配置文件
+
+~~~sh
+user nginx;
+worker_processes auto;
+error_log /var/log/nginx/error.log;
+pid /run/nginx.pid;
+
+include /usr/share/nginx/modules/*.conf;
+
+events {
+    worker_connections 1024;
+}
+
+# 四层负载均衡，为两台Master apiserver组件提供负载均衡
+stream {
+
+    log_format  main  '$remote_addr $upstream_addr - [$time_local] $status $upstream_bytes_sent';
+
+    access_log  /var/log/nginx/k8s-access.log  main;
+
+    upstream k8s-apiserver {
+       server 172.16.183.76:6443;   # binmaster1 APISERVER IP:PORT
+       server 172.16.183.77:6443;   # binmaster2 APISERVER IP:PORT
+       server 172.16.183.78:6443;   # binmaster3 APISERVER IP:PORT
+
+    }
+    
+    server {
+       listen 16443; # 由于nginx与master节点复用，这个监听端口不能是6443，否则会冲突
+       proxy_pass k8s-apiserver;
+    }
+}
+
+http {
+    log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+                      '$status $body_bytes_sent "$http_referer" '
+                      '"$http_user_agent" "$http_x_forwarded_for"';
+
+    access_log  /var/log/nginx/access.log  main;
+
+    sendfile            on;
+    tcp_nopush          on;
+    tcp_nodelay         on;
+    keepalive_timeout   65;
+    types_hash_max_size 2048;
+
+    include             /etc/nginx/mime.types;
+    default_type        application/octet-stream;
+
+    server {
+        listen       80 default_server;
+        server_name  _;
+
+        location / {
+        }
+    }
+}
+~~~
+
+### 修改keepalived配置文件
+
+#### 主keepalived节点
+
+~~~sh
+#主keepalived配置
+cat /etc/keepalived/keepalived.conf 
+global_defs { 
+   notification_email { 
+     acassen@firewall.loc 
+     failover@firewall.loc 
+     sysadmin@firewall.loc 
+   } 
+   notification_email_from Alexandre.Cassen@firewall.loc  
+   smtp_server 127.0.0.1 
+   smtp_connect_timeout 30 
+   router_id NGINX_MASTER
+} 
+
+vrrp_script check_nginx {
+    script "/etc/keepalived/check_nginx.sh"
+}
+
+vrrp_instance VI_1 { 
+    state MASTER 
+    interface ens33  # 修改为实际网卡名
+    virtual_router_id 51 # VRRP 路由 ID实例，每个实例是唯一的 
+    priority 100    # 优先级，备服务器设置 90 
+    advert_int 1    # 指定VRRP 心跳包通告间隔时间，默认1秒 
+    authentication { 
+        auth_type PASS      
+        auth_pass 1111 
+    }  
+    # 虚拟IP
+    virtual_ipaddress { 
+        172.16.183.75/24
+    } 
+    track_script {
+        check_nginx
+    } 
+}
+
+#vrrp_script：指定检查nginx工作状态脚本（根据nginx状态判断是否故障转移）
+#virtual_ipaddress：虚拟IP（VIP）
+~~~
+
+~~~sh
+#master1上
+cd ~
+cat /etc/keepalived/check_nginx.sh 
+#!/bin/bash
+count=$(ps -ef |grep nginx | grep sbin | egrep -cv "grep|$$")
+if [ "$count" -eq 0 ];then
+    systemctl stop keepalived
+fi
+chmod +x  /etc/keepalived/check_nginx.sh
+~~~
+
+#### 备keepalived节点
+
+~~~sh
+cat /etc/keepalived/keepalived.conf 
+global_defs { 
+   notification_email { 
+     acassen@firewall.loc 
+     failover@firewall.loc 
+     sysadmin@firewall.loc 
+   } 
+   notification_email_from Alexandre.Cassen@firewall.loc  
+   smtp_server 127.0.0.1 
+   smtp_connect_timeout 30 
+   router_id NGINX_BACKUP
+} 
+
+vrrp_script check_nginx {
+    script "/etc/keepalived/check_nginx.sh"
+}
+
+vrrp_instance VI_1 { 
+    state BACKUP 
+    interface ens33
+    virtual_router_id 51 # VRRP 路由 ID实例，每个实例是唯一的 
+    priority 90
+    advert_int 1
+    authentication { 
+        auth_type PASS      
+        auth_pass 1111 
+    }  
+    virtual_ipaddress { 
+        172.16.183.75/24
+    } 
+    track_script {
+        check_nginx
+    } 
+}
+~~~
+
+~~~sh
+#master2上
+cd ~
+cat /etc/keepalived/check_nginx.sh 
+#!/bin/bash
+count=$(ps -ef |grep nginx | grep sbin | egrep -cv "grep|$$")
+if [ "$count" -eq 0 ];then
+    systemctl stop keepalived
+fi
+chmod +x /etc/keepalived/check_nginx.sh
+#注：keepalived根据脚本返回状态码（0为工作正常，非0不正常）判断是否故障转移。
+~~~
+
+### 启动服务
+
+~~~sh
+#master1和2上
+systemctl daemon-reload
+yum install nginx-mod-stream -y
+systemctl start nginx
+systemctl start keepalived
+systemctl enable nginx keepalived
+~~~
+
+- 测试keepalived工作：stop掉master1上的nginx，vip会漂移到master2上
+
+  `service stop nginx`
+
+### 配置worker节点与master的连接
+
+~~~sh
+#目前所有的Worker Node组件连接都还是master1 Node，如果不改为连接VIP走负载均衡器，那么Master还是单点故障。
+#因此接下来就是要改所有Worker Node（kubectl get node命令查看到的节点）组件配置文件，由原来172.16.183.76修改为172.16.183.75（VIP）。
+#在所有Worker Node执行：
+sed -i 's#172.16.183.76:6443#172.16.183.75:16443#' /etc/kubernetes/kubelet-bootstrap.kubeconfig
+sed -i 's#172.16.183.76:6443#172.16.183.75:16443#' /etc/kubernetes/kubelet.json
+sed -i 's#172.16.183.76:6443#172.16.183.75:16443#' /etc/kubernetes/kubelet.kubeconfig
+sed -i 's#172.16.183.76:6443#172.16.183.75:16443#' /etc/kubernetes/kube-proxy.yaml
+sed -i 's#172.16.183.76:6443#172.16.183.75:16443#' /etc/kubernetes/kube-proxy.kubeconfig
+systemctl restart kubelet kube-proxy
+~~~
+
+?question:不是有3台master节点吗？VIP漂移只发生在两个master上？master3是否也要设置为备用节点？后面看看视频中的解释。
