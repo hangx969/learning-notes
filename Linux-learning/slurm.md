@@ -709,9 +709,233 @@ systemctl restart slurmd && systemctl status slurmd
 systemctl enable slurmd
 ~~~
 
-## 作业调度测试
+# Ubuntu 2204部署Slurm
 
-### 查看集群状态
+## 实验机器规划
+
+- OS：[ubuntu-22.04.4-live-server-amd64.iso](https://mirrors.tuna.tsinghua.edu.cn/ubuntu-releases/22.04/ubuntu-22.04.4-live-server-amd64.iso)
+
+- 2vcpu，4GB内存。
+
+- User：
+
+  - hangx hangx
+  - root root
+
+- IP地址规划
+
+  - 172.16.183.130 um1
+
+  - 172.16.183.131 um2
+
+## 环境准备
+
+### IP配置
+
+- Ubuntu系统安装时，可以在网卡配置页面，将ens33设置为静态IP。
+- Gateway: 172.16.183.2
+- name servers: 8.8.8.8,114.114.114.114
+
+~~~sh
+sudo vim etc/netplan/00-installer-config.yaml
+# This is the network config written by 'subiquity'
+network:
+  ethernets:
+    ens33:
+      addresses:
+      - 172.16.183.130/24
+      nameservers:
+        addresses:
+        - 8.8.8.8
+        - 114.114.114.114
+      routes:
+      - to: default
+        via: 172.16.183.2
+  version: 2
+~~~
+
+### apt源设置
+
+- Ubuntu系统安装时，在mirror address页面上，配置为清华镜像源： https://mirrors.tuna.tsinghua.edu.cn/help/ubuntu/
+- 设置主机名
+
+~~~sh
+sudo hostnamectl set-hostname um1 && bash
+sudo hostnamectl set-hostname uc1 && bash
+~~~
+
+### 添加hosts
+
+~~~sh
+cat >> /etc/hosts << EOF
+172.16.183.130 um1
+172.16.183.131 uc1
+EOF
+~~~
+
+### 修改资源限制
+
+~~~sh
+cat >> /etc/security/limits.conf << EOF
+* hard nofile 1000000
+* soft nofile 1000000
+* soft core unlimited
+* soft stack 10240
+* soft memlock unlimited
+* hard memlock unlimited
+EOF
+~~~
+
+### 配置时区
+
+~~~sh
+#安装ntpdate命令
+apt install ntpdate -y
+#跟网络时间做同步
+ntpdate cn.pool.ntp.org
+#把时间同步做成计划任务
+crontab -e
+* */1 * * * /usr/sbin/ntpdate   cn.pool.ntp.org
+#重启crond服务
+systemctl restart cron
+~~~
+
+### 配置ssh免登录
+
+~~~sh
+ssh-keygen
+ssh-copy-id -i ~/.ssh/id_rsa.pub um1
+ssh-copy-id -i ~/.ssh/id_rsa.pub uc1
+~~~
+
+## 配置munge
+
+- Munge用户要确保Master Node和Compute Nodes的UID和GID相同，所有节点都需要安装Munge；
+
+~~~sh
+#所有节点上
+groupadd -g 1108 munge
+useradd -m -c "Munge Uid 'N' Gid Emporium" -d /var/lib/munge -u 1108 -g munge -s /sbin/nologin munge
+#-m：这个选项告诉 useradd 命令为新用户创建一个主目录。
+#-c "Munge Uid 'N' Gid Emporium"：这个选项用于设置新用户的注释字段，通常用于存储用户的全名或其他信息。在这里，它被设置为 "Munge Uid 'N' Gid Emporium"。
+#-d /var/lib/munge：这个选项用于指定新用户的主目录。在这里，主目录被设置为 /var/lib/munge。
+#-u 1108：这个选项用于指定新用户的用户 ID（UID） 被设置为 1108。
+#-g munge：这个选项用于指定新用户的初始登录组，被设置为 munge。
+#-s /sbin/nologin：这个选项用于指定新用户的登录 shell。在这里，shell 被设置为 /sbin/nologin，这意味着用户不能登录到系统。
+#munge：这是新创建的用户名。
+~~~
+
+- 生成熵池
+
+~~~sh
+#管理节点上
+apt install -y rng-tools
+~~~
+
+- 使用/dev/urandom来做熵源
+
+~~~sh
+#管理节点上
+rngd -r /dev/urandom
+vim /usr/lib/systemd/system/rngd.service 
+#修改如下参数
+[Service]
+ExecStart=/sbin/rngd -f -r /dev/urandom
+
+systemctl daemon-reload
+systemctl start rngd
+systemctl enable rngd
+~~~
+
+- 安装munge
+
+~~~sh
+# 安装 munge
+# 管理节点
+apt -y install munge munge-libs munge-devel
+# 在管理节点执行，给计算节点安装munge
+for i in `seq 1`; do ssh uc$i apt -y install munge munge-libs munge-devel -y; done
+~~~
+
+- 创建全局秘钥
+
+~~~sh
+#在Master Node生成全局使用的秘钥文件：/etc/munge/munge.key
+dd if=/dev/urandom bs=1 count=1024 > /etc/munge/munge.key
+#或者
+create-munge-key
+~~~
+
+- 密钥同步到所有计算节点
+
+~~~sh
+# Master Node执行
+for i in `seq 1`; do scp /etc/munge/munge.key root@uc$i:/etc/munge/ ; done
+# 计算节点执行
+chown munge: /etc/munge/munge.key
+chmod 400 /etc/munge/munge.key
+~~~
+
+- 检查账户是否存在
+
+~~~sh
+#master node执行
+for i in `seq 1 2`;do ssh c$i id munge;done
+#uid=1108(munge) gid=1108(munge) groups=1108(munge)
+#uid=1108(munge) gid=1108(munge) groups=1108(munge)
+~~~
+
+- 修改配置属主，启动所有节点
+
+~~~sh
+#master节点
+chown munge: /etc/munge/munge.key
+chmod 400 /etc/munge/munge.key
+systemctl start munge
+systemctl enable munge
+~~~
+
+~~~sh
+# 设置各计算节点/etc/munge/munge.key  所有者为munge，并检查是否设置成功
+for i in `seq 1 2`;do ssh c$i chown munge.munge /etc/munge/munge.key;ls -l /etc/munge/munge.key;done
+# 设置各节点开机自动启动munge服务
+for i in `seq 1 2`;do ssh c$i systemctl enable --now munge;done
+# 重启并检查所有节点
+for i in `seq 1 2`;do ssh c$i systemctl restart munge ;done
+for i in `seq 1 2`;do ssh c$i ps -ef|grep munge ;done
+~~~
+
+- 测试munge服务: 每个计算节点与控制节点进行连接验证
+
+- 本地查看凭据
+
+```sh
+munge -n
+```
+
+- 本地解码
+
+```sh
+munge -n | unmunge
+```
+
+- 验证compute node，控制节点进行连接验证
+
+```sh
+munge -n | ssh m1 unmunge
+```
+
+- Munge凭证基准测试
+
+```sh
+remunge
+```
+
+
+
+# 作业调度测试
+
+## 查看集群状态
 
 ~~~sh
 # 查看集群
@@ -727,7 +951,7 @@ scontrol show jobs
 squeue -a
 ~~~
 
-### 交互式提交作业
+## 交互式提交作业
 
 ~~~sh
 # --mem=5M表示申请5MB内存，-c 1表示申请1个核心。
@@ -749,7 +973,7 @@ squeue -o "%.5i %.10u %.2t %.10M %.6D %.4C %.7m   %R"
 sacct  -o jobid,jobname,partition,alloccpus,state,reqmem,averss,maxrss,exitcode  -j jobid
 ```
 
-### sbatch提交作业
+## sbatch提交作业
 
 ~~~sh
 #!/bin/bash
@@ -768,7 +992,7 @@ hostname                    # 执行我的hostname命令
 sacct  -o jobid,jobname,partition,alloccpus,state,reqmem,averss,maxrss,exitcode  -j job-id
 ```
 
-### 示例python作业
+## 示例python作业
 
 ~~~python
 #!/usr/bin/python3
@@ -862,7 +1086,7 @@ subprocess.call(['sbatch', 'job.sh'])
 sacct -j ID-number
 ~~~
 
-### 分配模式salloc提交作业
+## 分配模式salloc提交作业
 
 ~~~sh
 #使用salloc命令提交。为需实时处理的作业分配资源，典型场景为分配资源并启动一个shell，然 后用此shell执行srun命令去执行并行任务。
@@ -881,7 +1105,7 @@ scancel 71
 squeue -j 71
 ~~~
 
-### 常见命令
+## 常见命令
 
 ~~~sh
 scontrol show nodes #显示所有计算节点
