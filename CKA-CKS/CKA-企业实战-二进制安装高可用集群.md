@@ -332,10 +332,11 @@ mv cfssljson_linux-amd64 /usr/local/bin/cfssljson
 mv cfssl-certinfo_linux-amd64 /usr/local/bin/cfssl-certinfo
 ~~~
 
-### 配置CA证书
+### 配置CA证书请求
 
 ~~~sh
 #生成ca证书请求文件,mater1上
+cd /data/work/ hang.xu@zenseact.comhang.xu@zenseact.comConvulse123456hang.xu@zenseact.comConvulse123456
 tee -a ca-csr.json << 'EOF'
 {
   "CN": "kubernetes",
@@ -415,7 +416,7 @@ EOF
 ### 生成etcd证书
 
 ~~~sh
-#配置etcd证书请求，hosts的ip变成自己etcd所在节点的ip
+#配置etcd证书请求，hosts的ip变成自己etcd所在节点的ip。可以预先写进去一些冗余的IP，方便后面扩容。 
 vim etcd-csr.json 
 {
   "CN": "etcd",
@@ -457,7 +458,7 @@ tar -xf etcd-v3.4.13-linux-amd64.tar.gz
 cp -p etcd-v3.4.13-linux-amd64/etcd* /usr/local/bin/
 #拷贝到另外两台
 scp -r  etcd-v3.4.13-linux-amd64/etcd* binmaster2:/usr/local/bin/
-scp -r  etcd-v3.4.13-linux-amd64/etcd* binchaomaster3:/usr/local/bin/
+scp -r  etcd-v3.4.13-linux-amd64/etcd* binmaster3:/usr/local/bin/
 ~~~
 
 #### 创建配置文件
@@ -531,11 +532,12 @@ WantedBy=multi-user.target
 ~~~
 
 ~~~sh
-#master1上
+#master1上，把前面生成的证书文件转移到/etc/etcd/ssl/
+cd /data/work
 cp ca*.pem /etc/etcd/ssl/
 cp etcd*.pem /etc/etcd/ssl/
 cp etcd.conf /etc/etcd/
-cp etcd.service /usr/lib/systemd/system/
+cp etcd.service /usr/lib/systemd/system/ # 这是系统启动脚本的目录
 for i in binmaster2 binmaster3;do rsync -vaz etcd.conf $i:/etc/etcd/;done
 for i in binmaster2 binmaster3;do rsync -vaz etcd*.pem ca*.pem $i:/etc/etcd/ssl/;done
 for i in binmaster2 binmaster3;do rsync -vaz etcd.service $i:/usr/lib/systemd/system/;done
@@ -544,7 +546,7 @@ for i in binmaster2 binmaster3;do rsync -vaz etcd.service $i:/usr/lib/systemd/sy
 #### 启动etcd集群
 
 ~~~sh
-#3台master上
+#3台master上，创建etcd的数据目录
 mkdir -p /var/lib/etcd/default.etcd
 ~~~
 
@@ -602,7 +604,8 @@ systemctl status etcd
 
 ~~~sh
 #master1上
-ETCDCTL_API=3
+ETCDCTL_API=3 #设置etcdctl api版本为3
+echo $ETCDCTL_API
 /usr/local/bin/etcdctl --write-out=table --cacert=/etc/etcd/ssl/ca.pem --cert=/etc/etcd/ssl/etcd.pem --key=/etc/etcd/ssl/etcd-key.pem --endpoints=https://172.16.183.76:2379,https://172.16.183.77:2379,https://172.16.183.78:2379  endpoint health
 ~~~
 
