@@ -193,6 +193,15 @@ Linux的文本编辑器
 
 ![dc019cdb971d2f32c75f931de48252d](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202312042155497.jpg)
 
+1. 按电源键，服务器启动，首先会加载BIOS或者UEFI
+2. BIOS会检测硬件是否准备就绪，例如内存、硬盘、CPU等。
+3. 硬件检测通过，会选择启动设备，可以是硬盘、光驱、网络服务器。
+4. 从设备中读取引导文件（grub），读取到之后会提示选择内核版本，操作系统等。
+5. Linux内核启动，运行用户环境，systemd将成为第一个用户空间的进程。用于管理系统中的进程和服务，并挂载文件系统。
+6. 在操作系统启动时，也会启动相关的服务或者进程，比如sshd，syslog，或者用户设置的开机启动服务。
+7. 运行启动脚本，并配置用户环境。
+8. 然后显示登录界面，提示输入用户名密码。
+
 ### 关机
 
 - shutdown -h now 立刻关机
@@ -504,12 +513,13 @@ head -n 5 看前5行
 
   ```shell
   tail -f /opt/mylog.txt
+  tail -fn 10 test.log #循环实时查看最后10行记录(最常用的)
   ```
-
+  
   实时监控 按ctrl + C 中断指令
-
+  
   tail -f 只能监控echo写入的内容，vim写入的不行。因为tail -f 是基于文件的inode监控，而vim会改变文件的inode
-
+  
   （Unix/Linux系统内部不使用文件名，而使用inode号码来识别文件。对于系统来说，文件名只是inode号码便于识别的别称或者绰号。）
 
 ### more 基于Vi的文本过滤器
