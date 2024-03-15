@@ -730,11 +730,14 @@ systemctl enable slurmd
 
 ## 环境准备
 
-### IP配置
+- IP配置
 
-- Ubuntu系统安装时，可以在网卡配置页面，将ens33设置为静态IP。
-- Gateway: 172.16.183.2
-- name servers: 8.8.8.8,114.114.114.114
+  - Ubuntu系统安装时，可以在网卡配置页面，将ens33设置为静态IP。
+
+  - Gateway: 172.16.183.2
+
+  - name servers: 8.8.8.8,114.114.114.114
+
 
 ~~~sh
 sudo vim etc/netplan/00-installer-config.yaml
@@ -754,17 +757,19 @@ network:
   version: 2
 ~~~
 
-### apt源设置
+- apt源设置
 
-- Ubuntu系统安装时，在mirror address页面上，配置为清华镜像源： https://mirrors.tuna.tsinghua.edu.cn/help/ubuntu/
-- 设置主机名
+  - Ubuntu系统安装时，在mirror address页面上，配置为清华镜像源： https://mirrors.tuna.tsinghua.edu.cn/help/ubuntu/
+
+  - 设置主机名
+
 
 ~~~sh
 sudo hostnamectl set-hostname um1 && bash
 sudo hostnamectl set-hostname uc1 && bash
 ~~~
 
-### 添加hosts
+- 添加hosts
 
 ~~~sh
 cat >> /etc/hosts << EOF
@@ -773,7 +778,7 @@ cat >> /etc/hosts << EOF
 EOF
 ~~~
 
-### 修改资源限制
+- 修改资源限制
 
 ~~~sh
 cat >> /etc/security/limits.conf << EOF
@@ -786,7 +791,7 @@ cat >> /etc/security/limits.conf << EOF
 EOF
 ~~~
 
-### 配置时区
+- 配置时区
 
 ~~~sh
 #安装ntpdate命令
@@ -800,7 +805,7 @@ crontab -e
 systemctl restart cron
 ~~~
 
-### 配置ssh免登录
+- 配置ssh免登录
 
 ~~~sh
 ssh-keygen
@@ -841,6 +846,8 @@ vim /usr/lib/systemd/system/rngd.service
 #修改如下参数
 [Service]
 ExecStart=/sbin/rngd -f -r /dev/urandom
+[Install]
+WantedBy=multi-user.target
 
 systemctl daemon-reload
 systemctl start rngd
@@ -852,9 +859,9 @@ systemctl enable rngd
 ~~~sh
 # 安装 munge
 # 管理节点
-apt -y install munge munge-libs munge-devel
+apt -y install munge
 # 在管理节点执行，给计算节点安装munge
-for i in `seq 1`; do ssh uc$i apt -y install munge munge-libs munge-devel -y; done
+for i in `seq 1`; do ssh uc$i apt -y install munge -y; done
 ~~~
 
 - 创建全局秘钥
@@ -869,7 +876,7 @@ create-munge-key
 - 密钥同步到所有计算节点
 
 ~~~sh
-# Master Node执行
+# Master Node执行，把munge key同步到计算节点
 for i in `seq 1`; do scp /etc/munge/munge.key root@uc$i:/etc/munge/ ; done
 # 计算节点执行
 chown munge: /etc/munge/munge.key
@@ -880,8 +887,7 @@ chmod 400 /etc/munge/munge.key
 
 ~~~sh
 #master node执行
-for i in `seq 1 2`;do ssh c$i id munge;done
-#uid=1108(munge) gid=1108(munge) groups=1108(munge)
+for i in `seq 1`;do ssh uc$i id munge;done
 #uid=1108(munge) gid=1108(munge) groups=1108(munge)
 ~~~
 
@@ -897,12 +903,12 @@ systemctl enable munge
 
 ~~~sh
 # 设置各计算节点/etc/munge/munge.key  所有者为munge，并检查是否设置成功
-for i in `seq 1 2`;do ssh c$i chown munge.munge /etc/munge/munge.key;ls -l /etc/munge/munge.key;done
+for i in `seq 1`;do ssh uc$i chown munge.munge /etc/munge/munge.key;ls -l /etc/munge/munge.key;done
 # 设置各节点开机自动启动munge服务
-for i in `seq 1 2`;do ssh c$i systemctl enable --now munge;done
+for i in `seq 1`;do ssh uc$i systemctl enable --now munge;done
 # 重启并检查所有节点
-for i in `seq 1 2`;do ssh c$i systemctl restart munge ;done
-for i in `seq 1 2`;do ssh c$i ps -ef|grep munge ;done
+for i in `seq 1`;do ssh uc$i systemctl restart munge ;done
+for i in `seq 1`;do ssh uc$i ps -ef|grep munge ;done
 ~~~
 
 - 测试munge服务: 每个计算节点与控制节点进行连接验证
@@ -922,7 +928,8 @@ munge -n | unmunge
 - 验证compute node，控制节点进行连接验证
 
 ```sh
-munge -n | ssh m1 unmunge
+munge -n | ssh um1 unmunge
+munge -n | ssh uc1 unmunge
 ```
 
 - Munge凭证基准测试
@@ -930,6 +937,99 @@ munge -n | ssh m1 unmunge
 ```sh
 remunge
 ```
+
+## 配置slurm - 0315 here
+
+- 创建slurm用户
+
+~~~sh
+#所有节点上
+groupadd -g 1109 slurm
+useradd -m -c "Slurm manager" -d /var/lib/slurm -u 1109 -g slurm -s /bin/bash slurm
+~~~
+
+- 检查slurm用户存在
+
+~~~sh
+for i in `seq 1`; do ssh uc$i id slurm; done
+~~~
+
+- 编译安装slurm - 计算和控制节点
+
+  https://slurm.schedmd.com/quickstart_admin.html#debuild
+
+~~~sh
+wget https://download.schedmd.com/slurm/slurm-23.11.4.tar.bz2
+#Install basic Debian package build requirements:
+apt-get install build-essential fakeroot devscripts
+#Unpack the distributed tarball:
+tar -xaf slurm*tar.bz2
+#cd to the directory containing the Slurm source
+#Install the Slurm package dependencies:
+#mk-build-deps是一个用于处理Debian包构建依赖的工具。它可以创建一个虚拟的Debian包，这个虚拟的包依赖于你的源代码包的所有构建依赖。当你安装这个虚拟的包时，所有的构建依赖也会被自动安装。-i选项告诉mk-build-deps在创建虚拟的包之后，立即尝试安装它。debian/control是Debian包的控制文件，它包含了关于包的元数据，例如包的名称、版本、描述，以及构建依赖等信息。
+mk-build-deps -i debian/control
+#Build the Slurm packages:
+#构建二进制包，但不对改变的文件和源代码包进行签名。这个命令通常在你信任源代码，并且不需要签名的情况下使用。
+debuild -b -uc -us
+~~~
+
+- The packages will be in the parent directory after debuild completes.
+- 配置控制节点slurm
+
+~~~sh
+#master节点上
+vim /etc/slurm/slurm.conf
+
+ClusterName=cluster-test
+ControlMachine=m1 # 控制节点的名称
+ControlAddr=172.16.183.70 #控制节点的 IP
+SlurmctldDebug=info
+SlurmdDebug=debug3
+GresTypes=gpu
+MpiDefault=none
+ProctrackType=proctrack/cgroup
+SlurmctldPidFile=/var/run/slurmctld.pid
+SlurmctldPort=6817
+SlurmdPidFile=/var/run/slurmd.pid
+SlurmdPort=6818
+SlurmdSpoolDir=/var/spool/slurm
+SlurmUser=slurm
+StateSaveLocation=/var/spool/slurm/ctld
+SwitchType=switch/none
+TaskPlugin=task/affinity,task/cgroup
+TaskPluginParam=verbose
+MinJobAge=172800
+AccountingStorageEnforce=associations
+AccountingStorageHost=m1
+AccountingStoragePort=6819
+AccountingStorageType=accounting_storage/slurmdbd
+AccountingStoreFlags=job_comment
+SlurmctldLogFile=/var/log/slurm/slurmctld.log
+SlurmdLogFile=/var/log/slurm/slurmd.log
+#AuthAltTypes=auth/jwt
+#AuthAltParameters=jwt_key=/var/spool/slurm/ctld/jwt_hs256.key
+NodeName=m1,c[1-2] CPUs=2 RealMemory=1024 State=UNKNOWN # 控制节点的名称，计算节点名称
+PartitionName=compute Nodes=c[1-2] Default=YES MaxTime=INFINITE State=UP #Nodes  计算节点的名称
+~~~
+
+- 配置同步/权限修改
+
+~~~sh
+# 复制配置文件（Master node执行）
+for i in `seq 1 2`;do ssh c$i mkdir -p /etc/slurm ;done
+for i in `seq 1 2`;do scp -p /etc/slurm/*.conf  root@c$i:/etc/slurm/;done
+# 设置文件权限，所有节点执行
+for i in `seq 1 2`;do ssh c$i mkdir -p /var/spool/slurm ;done
+for i in `seq 1 2`;do ssh c$i chown slurm: /var/spool/slurm;done #只改属主
+for i in `seq 1 2`;do ssh c$i mkdir -p /var/log/slurm;done
+for i in `seq 1 2`;do ssh c$i chown slurm: /var/log/slurm;done
+~~~
+
+- 检查slurm配置是否正确
+
+~~~sh
+slurmd -C
+~~~
 
 
 
@@ -1125,4 +1225,8 @@ scontrol show node | grep CPU   #查看各节点cpu状态
 scontrol show node node-name | grep CPU #查看指定节点cpu状态
 ~~~
 
-# 
+# PBS vs Slurm
+
+![img](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202402202153564.png)
+
+[HPC调度基础：slurm集群的部署与配置-天翼云开发者社区 - 天翼云 (ctyun.cn)](https://www.ctyun.cn/developer/article/363542369067077)
