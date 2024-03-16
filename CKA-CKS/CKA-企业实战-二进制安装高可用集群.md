@@ -307,7 +307,7 @@ systemctl status docker
 #修改docker文件驱动为systemd，默认为cgroupfs，kubelet默认使用systemd，两者必须一致才可以。
 ~~~
 
-## 搭建etcd集群 - 0229到这里
+## 搭建etcd集群 - 0229到这里了
 
 ### 配置ectd工作目录
 
