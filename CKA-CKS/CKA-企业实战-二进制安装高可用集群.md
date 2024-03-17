@@ -212,7 +212,7 @@ yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/d
 ### 安装基础软件包
 
 ~~~bash
-yum install -y device-mapper-persistent-data lvm2 wget net-tools nfs-utils lrzsz gcc gcc-c++ make cmake libxml2-devel openssl-devel curl curl-devel unzip sudo ntp libaio-devel wget vim ncurses-devel autoconf automake zlib-devel  python-devel epel-release openssh-server socat conntrack telnet ipvsadm openssh-clients
+yum install -y device-mapper-persistent-data lvm2 wget net-tools nfs-utils lrzsz gcc gcc-c++ make cmake libxml2-devel openssl-devel curl curl-devel unzip sudo ntp libaio-devel wget vim ncurses-devel autoconf automake zlib-devel python-devel epel-release openssh-server socat conntrack telnet ipvsadm openssh-clients
 ~~~
 
 > yum install如果出现报错：GPG key retrieval failed: [Errno 14] curl#37 - "Couldn't open file /etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-7"
@@ -307,7 +307,7 @@ systemctl status docker
 #修改docker文件驱动为systemd，默认为cgroupfs，kubelet默认使用systemd，两者必须一致才可以。
 ~~~
 
-## 搭建etcd集群 - 0229到这里了
+## 搭建etcd集群
 
 ### 配置ectd工作目录
 
@@ -336,7 +336,8 @@ mv cfssl-certinfo_linux-amd64 /usr/local/bin/cfssl-certinfo
 
 ~~~sh
 #生成ca证书请求文件,mater1上
-cd /data/work/ hang.xu@zenseact.comhang.xu@zenseact.comConvulse123456hang.xu@zenseact.comConvulse123456
+#CA证书请求文件，也被称为CSR（Certificate Signing Request），是一种由服务器管理员或者网站所有者生成的特殊文件。它包含了公钥以及一些附加信息，如组织名称、常用名称（例如网站域名）等。这个文件会被发送给证书颁发机构（CA，Certificate Authority），CA会基于这个请求生成一个数字证书。
+cd /data/work/
 tee -a ca-csr.json << 'EOF'
 {
   "CN": "kubernetes",
@@ -417,7 +418,7 @@ EOF
 
 ~~~sh
 #配置etcd证书请求，hosts的ip变成自己etcd所在节点的ip。可以预先写进去一些冗余的IP，方便后面扩容。 
-vim etcd-csr.json 
+tee -a etcd-csr.json << 'EOF'
 {
   "CN": "etcd",
   "hosts": [
@@ -440,14 +441,14 @@ vim etcd-csr.json
     "OU": "system"
   }]
 } 
-
+EOF
 #上述文件hosts字段中IP为所有etcd节点的集群内部通信IP，可以预留几个，做扩容用? 
 cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-config.json -profile=kubernetes etcd-csr.json | cfssljson  -bare etcd
 ls etcd*.pem
 #etcd-key.pem  etcd.pem
 ~~~
 
-### 部署etcd集群
+### 部署etcd集群 - 03
 
 #### 上传镜像
 
@@ -464,7 +465,7 @@ scp -r  etcd-v3.4.13-linux-amd64/etcd* binmaster3:/usr/local/bin/
 #### 创建配置文件
 
 ~~~sh
-vim etcd.conf 
+tee -a etcd.conf << 'EOF' 
 #[Member]
 ETCD_NAME="etcd1"
 ETCD_DATA_DIR="/var/lib/etcd/default.etcd"
@@ -476,6 +477,7 @@ ETCD_ADVERTISE_CLIENT_URLS="https://172.16.183.76:2379"
 ETCD_INITIAL_CLUSTER="etcd1=https://172.16.183.76:2380,etcd2=https://172.16.183.77:2380,etcd3=https://172.16.183.78:2380"
 ETCD_INITIAL_CLUSTER_TOKEN="etcd-cluster"
 ETCD_INITIAL_CLUSTER_STATE="new"
+EOF
 ~~~
 
 > ETCD_NAME：节点名称，集群中唯一 
@@ -500,10 +502,7 @@ ETCD_INITIAL_CLUSTER_STATE="new"
 
 ~~~sh
 #master1上
-vim etcd.service
-~~~
-
-~~~sh
+tee -a etcd.service << 'EOF'
 [Unit]
 Description=Etcd Server
 After=network.target
@@ -529,6 +528,7 @@ LimitNOFILE=65536
  
 [Install]
 WantedBy=multi-user.target
+EOF
 ~~~
 
 ~~~sh
@@ -552,7 +552,7 @@ mkdir -p /var/lib/etcd/default.etcd
 
 ~~~sh
 #master2上
-vim /etc/etcd/etcd.conf 
+tee -a /etc/etcd/etcd.conf << 'EOF' 
 #[Member]
 ETCD_NAME="etcd2"
 ETCD_DATA_DIR="/var/lib/etcd/default.etcd"
@@ -564,11 +564,12 @@ ETCD_ADVERTISE_CLIENT_URLS="https://172.16.183.77:2379"
 ETCD_INITIAL_CLUSTER="etcd1=https://172.16.183.76:2380,etcd2=https://172.16.183.77:2380,etcd3=https://172.16.183.78:2380"
 ETCD_INITIAL_CLUSTER_TOKEN="etcd-cluster"
 ETCD_INITIAL_CLUSTER_STATE="new"
+EOF
 ~~~
 
 ~~~sh
 #master3上
-vim /etc/etcd/etcd.conf 
+tee -a /etc/etcd/etcd.conf << 'EOF'
 #[Member]
 ETCD_NAME="etcd3"
 ETCD_DATA_DIR="/var/lib/etcd/default.etcd"
@@ -580,18 +581,11 @@ ETCD_ADVERTISE_CLIENT_URLS="https://172.16.183.78:2379"
 ETCD_INITIAL_CLUSTER="etcd1=https://172.16.183.76:2380,etcd2=https://172.16.183.77:2380,etcd3=https://172.16.183.78:2380"
 ETCD_INITIAL_CLUSTER_TOKEN="etcd-cluster"
 ETCD_INITIAL_CLUSTER_STATE="new"
+EOF
 ~~~
 
 ~~~sh
-#master1上
-systemctl daemon-reload
-systemctl enable etcd.service
-systemctl start etcd.service
-#master2上
-systemctl daemon-reload
-systemctl enable etcd.service
-systemctl start etcd.service
-#master3上
+#master1\2\3上
 systemctl daemon-reload
 systemctl enable etcd.service
 systemctl start etcd.service
@@ -600,7 +594,7 @@ systemctl start etcd.service
 systemctl status etcd
 ~~~
 
-### 查看etcd集群
+### 查看etcd集群健康状态
 
 ~~~sh
 #master1上
@@ -613,7 +607,7 @@ echo $ETCDCTL_API
 
 ### 下载安装包
 
-- 二进制包所在的github地址如下：https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/
+- 二进制包所在的github地址如下：https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/，可以按照版本下载二进制包。控制节点组件，找到Server Binaries，下载amd64版本的。server binaries二进制包里面就包含了：controller-manager，apiserver，scheduler等控制平面组件。其实也包含了工作节点需要的kubelet和kubeproxy
 
 ~~~sh
 #把kubernetes-server-linux-amd64.tar.gz上传到master1上的/data/work目录下:
@@ -624,12 +618,11 @@ cd kubernetes/server/bin/
 cp kube-apiserver kube-controller-manager kube-scheduler kubectl /usr/local/bin/
 rsync -vaz kube-apiserver kube-controller-manager kube-scheduler kubectl binmaster2:/usr/local/bin/
 rsync -vaz kube-apiserver kube-controller-manager kube-scheduler kubectl binmaster3:/usr/local/bin/
-
+#kubelet kubeproxy放到工作节点
 scp kubelet kube-proxy binnode1:/usr/local/bin/
 cd /data/work/
-mkdir -p /etc/kubernetes/ 
-mkdir -p /etc/kubernetes/ssl
-mkdir /var/log/kubernetes
+mkdir -p /etc/kubernetes/ssl/
+mkdir -p /var/log/kubernetes
 ~~~
 
 ### 部署apiserver组件
@@ -662,7 +655,7 @@ users:
   - TLS 作用 
     TLS 的作用就是对通讯加密，防止中间人窃听；同时如果证书不信任的话根本就无法与 apiserver 建立连接，更不用提有没有权限向apiserver请求指定内容。
   - RBAC 作用 
-    当 TLS 解决了通讯问题后，那么权限问题就应由 RBAC 解决；RBAC 中规定了一个用户或者用户组(subject)具有请求哪些 api 的权限；在配合 TLS 加密的时候，实际上 apiserver 读取客户端证书的 CN 字段作为用户名，读取 O字段作为用户组.
+    当 TLS 解决了通讯问题后，那么权限问题就应由 RBAC 解决；RBAC 中规定了一个用户或者用户组(subject)具有请求哪些 api 的权限；在配合 TLS 加密的时候，实际上 apiserver 读取客户端证书的 `CN` 字段作为用户名，读取 `O` 字段作为用户组.
   - 以上说明：第一，想要与 apiserver 通讯就必须采用由 apiserver CA 签发的证书，这样才能形成信任关系，建立 TLS 连接；第二，可以**通过证书的 CN、O 字段来提供 RBAC 所需的用户与用户组**。
 
 - kubelet 首次启动流程 
@@ -670,16 +663,16 @@ users:
   - TLS bootstrapping 功能是让 kubelet 组件去 apiserver 申请证书，然后用于连接 apiserver；那么第一次启动时没有证书如何连接 apiserver ?
 
   - 在apiserver 配置中指定了一个 `token.csv` 文件，该文件中是一个预设的用户配置；
-    - 同时该用户的Token 和 由apiserver 的 CA签发的用户被写入了 kubelet 所使用的 `bootstrap.kubeconfig` 配置文件中；
-    - 这样在首次请求时，kubelet 使用 `bootstrap.kubeconfig` 中被 apiserver CA 签发证书时信任的用户来与 apiserver 建立 TLS 通讯，使用 `bootstrap.kubeconfig` 中的用户 Token 来向 apiserver 声明自己的 RBAC 授权身份.
+    - 同时该用户的Token和apiserver CA签发的用户被写入了kubelet的`bootstrap.kubeconfig` 配置文件中；
+    - 这样在首次请求时，kubelet 使用 `bootstrap.kubeconfig` 中被apiserver CA信任的用户与apiserver连接，使用 `bootstrap.kubeconfig` 中的用户 Token 来向 apiserver 声明自己的 RBAC 授权身份.
 
   - token.csv格式:
 
     `3940fd7fbb391d1b4d861ad17a1f0613,kubelet-bootstrap,10001,"system:kubelet-bootstrap"`
 
-  - 首次启动时，可能与遇到 kubelet 报 401 无权访问 apiserver 的错误；这是因为在默认情况下，kubelet 通过 `bootstrap.kubeconfig` 中的预设用户 Token 声明了自己的身份，然后创建 CSR 请求；但是不要忘记这个用户在我们不处理的情况下他没任何权限的，包括创建 CSR 请求；所以需要创建一个 `ClusterRoleBinding`，将预设用户 `kubelet-bootstrap` 与内置的 `ClusterRole system:node-bootstrapper` 绑定到一起，使其能够发起 CSR 请求。
+  - 首次启动时，可能与遇到 kubelet 报 401 无权访问 apiserver 的错误；这是因为在默认情况下，kubelet 通过 `bootstrap.kubeconfig` 中的预设用户 Token 声明了自己的身份，然后创建 CSR 请求。但是不要忘记这个用户在我们不处理的情况下他没任何权限的，包括创建CSR请求的权限也没有。所以需要创建一个 `ClusterRoleBinding`，将预设用户 `kubelet-bootstrap` 与内置的 `ClusterRole system:node-bootstrapper` 绑定到一起，使其能够发起 CSR 请求。
 
-#### 创建token.csv文件
+#### 创建token.csv文件 - 0316到这里
 
 ~~~sh
 #master1上
