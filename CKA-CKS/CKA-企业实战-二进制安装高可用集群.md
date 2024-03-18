@@ -387,7 +387,7 @@ cfssl gencert -initca ca-csr.json  | cfssljson -bare ca
 > cfssl gencert -initca ca-csr.json | cfssljson -bare ca
 > ```
 >
-> - 在这个例子中，`cfssl gencert -initca ca-csr.json`生成一个新的自签名证书和私钥，然后通过管道传递给`cfssljson -bare ca`，它从JSON输出中提取证书和私钥，并将它们分别写入`ca.pem`和`ca-key.pem`文件。
+> - 在这个例子中，`cfssl gencert -initca ca-csr.json`生成一个新的自签名证书和私钥，然后通过管道传递给`cfssljson -bare ca`，它从JSON输出中提取证书和私钥，并将它们分别写入`ca.pem`和`ca-key.pem`文件。后面所有证书都是由ca.pem这个证书来颁发的
 
 ### 生成CA证书文件
 
@@ -672,7 +672,7 @@ users:
 
   - 首次启动时，可能与遇到 kubelet 报 401 无权访问 apiserver 的错误；这是因为在默认情况下，kubelet 通过 `bootstrap.kubeconfig` 中的预设用户 Token 声明了自己的身份，然后创建 CSR 请求。但是不要忘记这个用户在我们不处理的情况下他没任何权限的，包括创建CSR请求的权限也没有。所以需要创建一个 `ClusterRoleBinding`，将预设用户 `kubelet-bootstrap` 与内置的 `ClusterRole system:node-bootstrapper` 绑定到一起，使其能够发起 CSR 请求。
 
-#### 创建token.csv文件 - 0316到这里
+#### 创建token.csv文件
 
 ~~~sh
 #master1上
@@ -688,7 +688,7 @@ EOF
 
 ~~~sh
 #master1上
-vim kube-apiserver-csr.json 
+tee -a kube-apiserver-csr.json << 'EOF'
 {
   "CN": "kubernetes",
   "hosts": [
@@ -719,6 +719,7 @@ vim kube-apiserver-csr.json
     }
   ]
 }
+EOF
 ~~~
 
 #### 生成证书
@@ -732,7 +733,7 @@ cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-config.json -profile=kube
 
 ~~~sh
 #master1上
-vim kube-apiserver.conf 
+tee -a kube-apiserver.conf << 'EOF'
 KUBE_APISERVER_OPTS="--enable-admission-plugins=NamespaceLifecycle,NodeRestriction,LimitRanger,ServiceAccount,DefaultStorageClass,ResourceQuota \
   --anonymous-auth=false \
   --bind-address=172.16.183.76 \
@@ -769,6 +770,7 @@ KUBE_APISERVER_OPTS="--enable-admission-plugins=NamespaceLifecycle,NodeRestricti
   --logtostderr=false \
   --log-dir=/var/log/kubernetes \
   --v=4"
+EOF
 ~~~
 
 > 注： 
@@ -813,7 +815,7 @@ KUBE_APISERVER_OPTS="--enable-admission-plugins=NamespaceLifecycle,NodeRestricti
 
 ~~~sh
 #master1上
-vim kube-apiserver.service 
+tee -a kube-apiserver.service << 'EOF'
 [Unit]
 Description=Kubernetes API Server
 Documentation=https://github.com/kubernetes/kubernetes
@@ -830,6 +832,7 @@ LimitNOFILE=65536
  
 [Install]
 WantedBy=multi-user.target
+EOF
 ~~~
 
 ~~~sh
@@ -851,7 +854,7 @@ rsync -vaz kube-apiserver.service binmaster3:/usr/lib/systemd/system/
 ~~~
 
 ~~~sh
-#修改master2和master3上的kube-apiserver.conf文件的IP地址
+#修改master2和master3上的kube-apiserver.conf文件的IP地址(--bind-address，--advertise-address)
 #3台master上执行
 systemctl daemon-reload
 systemctl enable kube-apiserver
@@ -869,18 +872,27 @@ curl --insecure https://172.16.183.76:6443/
 
 ~~~sh
 #可以设置一个环境变量KUBECONFIG，这样操作kubectl，就会自动加载KUBECONFIG来操作要管理哪个集群的k8s资源了
-export KUBECONFIG =/etc/kubernetes/admin.conf
+#直接命令行定义环境变量，只对当前的shell有效
+export KUBECONFIG=/etc/kubernetes/admin.conf
+#编辑/etc/profile，对于所有用户，永久生效（也可以在用户家目录下的.bash_profile增加环境变量，对当前用户永久生效）
+tee -a /etc/profile << 'EOF'
+export KUBECONFIG=/etc/kubernetes/admin.conf
+EOF
+source /etc/profile
 #也可以按照下面方法，这个是在kubeadm初始化k8s的时候会告诉我们要用的方法
-cp /etc/kubernetes/admin.conf /root/.kube/config
+cp /etc/kubernetes/admin.conf /root/.kube/config 
 #如果设置了KUBECONFIG，那就会先找到KUBECONFIG去操作k8s，如果没有KUBECONFIG变量，那就会使用/root/.kube/config文件决定管理哪个k8s集群的资源。
 ~~~
+
+==二进制安装这里没有admin.conf这个文件，直接就用/root/.kube/config，所以不用做上面的步骤==
 
 #### 创建csr请求文件
 
 ~~~sh
 #master1上
 cd /data/work
-vim admin-csr.json 
+#创建一个集群管理员的user，叫admin，组是system:master，这个组已经预先内置了cluster-admin的权限。
+tee -a admin-csr.json << 'EOF' 
 {
   "CN": "admin",
   "hosts": [],
@@ -898,6 +910,7 @@ vim admin-csr.json
     }
   ]
 }
+EOF
 ~~~
 
 > 说明：
@@ -917,6 +930,7 @@ vim admin-csr.json
 ~~~sh
 #master1上
 cd /data/work
+#用apiserver的证书颁发机构，给kubectl客户端签发了一个admin客户端证书
 cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-config.json -profile=kubernetes admin-csr.json | cfssljson -bare admin
 cp admin*.pem /etc/kubernetes/ssl/
 ~~~
@@ -929,7 +943,7 @@ cp admin*.pem /etc/kubernetes/ssl/
 #kubeconfig 为 kubectl 的配置文件，包含访问 apiserver 的所有信息，如 apiserver 地址、CA 证书和自身使用的证书（这里如果报错找不到kubeconfig路径，请手动复制到相应路径下，没有则忽略）
 #1.设置集群参数
 cd /data/work
-kubectl config set-cluster kubernetes --certificate-authority=ca.pem --embed-certs=true --server=https://172.16.183.76:6443 --kubeconfig=kube.config
+kubectl config set-cluster kubernetes --certificate-authority=ca.pem --embed-certs=true --server=https://172.16.183.76:6443 --kubeconfig=kube.config #这一步会生成kube.config文件，就是后面的/kube/config文件。
 ##查看kube.config内容
 vim kube.config
 #2.设置客户端认证参数
@@ -940,8 +954,9 @@ kubectl config set-context kubernetes --cluster=kubernetes --user=admin --kubeco
 kubectl config use-context kubernetes --kubeconfig=kube.config
 mkdir ~/.kube -p
 cp kube.config ~/.kube/config
-#5.授权kubernetes证书访问kubelet api权限
+#5.授权kubernetes证书访问kubelet api权限，目的是可以创建资源。#注意这里的用户是kubernetes，这是前面apiserver的ca-csr文件里面定义的CN=kubernetes，代表给apiserver赋予api的权限
 kubectl create clusterrolebinding kube-apiserver:kubelet-apis --clusterrole=system:kubelet-api-admin --user kubernetes
+
 ##查看集群组件状态
 kubectl cluster-info
 kubectl get componentstatuses
@@ -951,7 +966,7 @@ kubectl get all --all-namespaces
 ```sh
 #同步kubectl文件到其他节点
 ##master2和3上
-mkdir /root/.kube/
+mkdir /root/.kube/ -p
 ##master1上
 rsync -vaz /root/.kube/config binmaster2:/root/.kube/
 rsync -vaz /root/.kube/config binmaster3:/root/.kube/
@@ -965,7 +980,7 @@ source '/root/.kube/completion.bash.inc'
 source $HOME/.bash_profile
 ```
 
-### 部署kube-controller-manager组件
+### 部署kube-controller-manager组件 - 0318到这里
 
 #### 创建csr请求文件
 
