@@ -448,7 +448,7 @@ ls etcd*.pem
 #etcd-key.pem  etcd.pem
 ~~~
 
-### 部署etcd集群 - 03
+### 部署etcd集群
 
 #### 上传镜像
 
@@ -987,7 +987,7 @@ source $HOME/.bash_profile
 ```sh
 #master1上
 cd /data/work
-vim kube-controller-manager-csr.json 
+tee -a kube-controller-manager-csr.json << 'EOF' 
 {
     "CN": "system:kube-controller-manager",
     "key": {
@@ -1011,6 +1011,7 @@ vim kube-controller-manager-csr.json
       }
     ]
 }
+EOF
 ```
 
 > 注：hosts 列表包含所有 kube-controller-manager 节点 IP； CN 为 system:kube-controller-manager、O 为 system:kube-controller-manager，kubernetes 内置的 ClusterRoleBindings system:kube-controller-manager 赋予 kube-controller-manager 工作所需的权限
@@ -1028,9 +1029,9 @@ cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-config.json -profile=kube
 ~~~sh
 #master1上
 cd /data/work
-#1.设置集群参数
+#1.设置集群参数，指定apiserver信任的
 kubectl config set-cluster kubernetes --certificate-authority=ca.pem --embed-certs=true --server=https://172.16.183.76:6443 --kubeconfig=kube-controller-manager.kubeconfig
-#2.设置客户端认证参数
+#2.设置客户端认证参数,指定客户端使用的证书
 kubectl config set-credentials system:kube-controller-manager --client-certificate=kube-controller-manager.pem --client-key=kube-controller-manager-key.pem --embed-certs=true --kubeconfig=kube-controller-manager.kubeconfig
 #3.设置上下文参数
 kubectl config set-context system:kube-controller-manager --cluster=kubernetes --user=system:kube-controller-manager --kubeconfig=kube-controller-manager.kubeconfig
@@ -1043,7 +1044,7 @@ kubectl config use-context system:kube-controller-manager --kubeconfig=kube-cont
 ~~~sh
 #master1上
 cd /data/work
-vim kube-controller-manager.conf 
+tee -a kube-controller-manager.conf <<'EOF'
 KUBE_CONTROLLER_MANAGER_OPTS="--port=0 \
   --secure-port=10252 \
   --bind-address=127.0.0.1 \
@@ -1069,6 +1070,8 @@ KUBE_CONTROLLER_MANAGER_OPTS="--port=0 \
   --logtostderr=false \
   --log-dir=/var/log/kubernetes \
   --v=2"
+EOF
+#这里的--bind-address=127.0.0.1 ，绑定了本机IP而非网卡IP，官方在1.20之后是这样设计的，为了避免物理机上curl能访问到，更安全。
 ~~~
 
 #### 创建启动文件
@@ -1076,7 +1079,7 @@ KUBE_CONTROLLER_MANAGER_OPTS="--port=0 \
 ~~~sh
 #master1上
 cd /data/work
-vim kube-controller-manager.service 
+tee -a kube-controller-manager.service << 'EOF' 
 [Unit]
 Description=Kubernetes Controller Manager
 Documentation=https://github.com/kubernetes/kubernetes
@@ -1087,6 +1090,7 @@ Restart=on-failure
 RestartSec=5
 [Install]
 WantedBy=multi-user.target
+EOF
 ~~~
 
 #### 启动服务
@@ -1109,9 +1113,10 @@ systemctl daemon-reload
 systemctl enable kube-controller-manager
 systemctl start kube-controller-manager
 systemctl status kube-controller-manager
+ss -antulp | grep 10252 #查看端口占用
 ~~~
 
-## 部署kube-scheduler组件
+## 部署kube-scheduler组件 -0319到这里
 
 ### 创建csr请求
 
