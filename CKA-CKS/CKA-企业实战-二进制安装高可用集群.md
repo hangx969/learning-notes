@@ -1116,22 +1116,22 @@ systemctl status kube-controller-manager
 ss -antulp | grep 10252 #查看端口占用
 ~~~
 
-## 部署kube-scheduler组件 -0319到这里
+## 部署kube-scheduler组件
 
 ### 创建csr请求
 
 ```sh
 #master1上
 cd /data/work
-vim kube-scheduler-csr.json 
+tee -a kube-scheduler-csr.json <<'EOF'
 {
     "CN": "system:kube-scheduler",
     "hosts": [
       "127.0.0.1",
       "172.16.183.76",
-      "172.16.183.77,
-      "172.16.183.78,
-      "172.16.183.79
+      "172.16.183.77",
+      "172.16.183.78",
+      "172.16.183.79"
     ],
     "key": {
         "algo": "rsa",
@@ -1147,6 +1147,7 @@ vim kube-scheduler-csr.json
       }
     ]
 }
+EOF
 ```
 
 > hosts 列表包含所有 kube-scheduler 节点 IP； CN 为 system:kube-scheduler、O 为 system:kube-scheduler，kubernetes 内置的 ClusterRoleBindings system:kube-scheduler 将赋予 kube-scheduler 工作所需的权限。
@@ -1186,7 +1187,7 @@ kubectl config use-context system:kube-scheduler --kubeconfig=kube-scheduler.kub
 ### 创建配置文件kube-scheduler.conf
 
 ```sh
-vim kube-scheduler.conf 
+tee -a kube-scheduler.conf <<'EOF' 
 KUBE_SCHEDULER_OPTS="--address=127.0.0.1 \
 --kubeconfig=/etc/kubernetes/kube-scheduler.kubeconfig \
 --leader-elect=true \
@@ -1194,12 +1195,13 @@ KUBE_SCHEDULER_OPTS="--address=127.0.0.1 \
 --logtostderr=false \
 --log-dir=/var/log/kubernetes \
 --v=2"
+EOF
 ```
 
 ### 创建服务启动文件
 
 ```sh
-vim kube-scheduler.service 
+tee -a kube-scheduler.service <<'EOF' 
 [Unit]
 Description=Kubernetes Scheduler
 Documentation=https://github.com/kubernetes/kubernetes
@@ -1212,6 +1214,7 @@ RestartSec=5
  
 [Install]
 WantedBy=multi-user.target
+EOF
 ```
 
 ### 启动服务
@@ -1229,10 +1232,10 @@ rsync -vaz kube-scheduler.kubeconfig kube-scheduler.conf binmaster3:/etc/kuberne
 rsync -vaz kube-scheduler.service binmaster2:/usr/lib/systemd/system/
 rsync -vaz kube-scheduler.service binmaster3:/usr/lib/systemd/system/
 #master 1、2、3上
-binsystemctl daemon-reload
-binsystemctl enable kube-scheduler
-binsystemctl start kube-scheduler
-binsystemctl status kube-scheduler
+systemctl daemon-reload
+systemctl enable kube-scheduler
+systemctl start kube-scheduler
+systemctl status kube-scheduler
 ```
 
 ## 导入coredns镜像包
@@ -1246,13 +1249,13 @@ docker load -i pause-cordns.tar.gz
 
 - kubelet： 每个Node节点上的kubelet定期就会调用API Server的REST接口报告自身状态，API Server接收这些信息后，将节点状态信息更新到etcd中。kubelet也通过API Server监听Pod信息，从而对Node机器上的POD进行管理，如创建、删除、更新Pod。
 
-### 配置bootstrap token
+### 配置bootstrap token  -- 0320到这里
 
 ```sh
 #在master1上
 cd /data/work/
 BOOTSTRAP_TOKEN=$(awk -F "," '{print $1}' /etc/kubernetes/token.csv)
-rm -r kubelet-bootstrap.kubeconfig
+rm -r kubelet-bootstrap.kubeconfig #为何要删？
 kubectl config set-cluster kubernetes --certificate-authority=ca.pem --embed-certs=true --server=https://172.16.183.76:6443 --kubeconfig=kubelet-bootstrap.kubeconfig
 kubectl config set-credentials kubelet-bootstrap --token=${BOOTSTRAP_TOKEN} --kubeconfig=kubelet-bootstrap.kubeconfig
 kubectl config set-context default --cluster=kubernetes --user=kubelet-bootstrap --kubeconfig=kubelet-bootstrap.kubeconfig
