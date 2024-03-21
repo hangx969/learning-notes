@@ -980,7 +980,7 @@ source '/root/.kube/completion.bash.inc'
 source $HOME/.bash_profile
 ```
 
-### 部署kube-controller-manager组件 - 0318到这里
+### 部署kube-controller-manager组件
 
 #### 创建csr请求文件
 
@@ -1150,7 +1150,8 @@ tee -a kube-scheduler-csr.json <<'EOF'
 EOF
 ```
 
-> hosts 列表包含所有 kube-scheduler 节点 IP； CN 为 system:kube-scheduler、O 为 system:kube-scheduler，kubernetes 内置的 ClusterRoleBindings system:kube-scheduler 将赋予 kube-scheduler 工作所需的权限。
+> - 证书请求文件让system:kube-scheduler这个用户被api-server信任，后面scheduler就能访问apiserver了，至于权限是由kubernetes 内置的 ClusterRoleBindings system:kube-scheduler 将赋予 kube-scheduler 工作所需的权限。
+> - hosts 列表包含所有 kube-scheduler 节点 IP； CN 为 system:kube-scheduler、O 为 system:kube-scheduler，
 
 ### 生成证书
 
@@ -1175,6 +1176,7 @@ kubectl config set-credentials system:kube-scheduler --client-certificate=kube-s
 3. 设置上下文参数
 
 ```sh
+#上下文的名称随便起，但是用户和集群要写对，跟证书请求文件中一致
 kubectl config set-context system:kube-scheduler --cluster=kubernetes --user=system:kube-scheduler --kubeconfig=kube-scheduler.kubeconfig
 ```
 
@@ -1196,6 +1198,7 @@ KUBE_SCHEDULER_OPTS="--address=127.0.0.1 \
 --log-dir=/var/log/kubernetes \
 --v=2"
 EOF
+#kube-scheduler.kubeconfig里面已经指定了apiserver地址以及证书。
 ```
 
 ### 创建服务启动文件
@@ -1241,21 +1244,21 @@ systemctl status kube-scheduler
 ## 导入coredns镜像包
 
 ```sh
-#把pause-cordns.tar.gz上传到node1节点，手动解压
+#把pause-cordns.tar.gz上传到node1节点，手动解压。pause和coredns是工作节点调度创建pod需要用到。
 docker load -i pause-cordns.tar.gz
 ```
 
 ## 部署kubelet组件
 
 - kubelet： 每个Node节点上的kubelet定期就会调用API Server的REST接口报告自身状态，API Server接收这些信息后，将节点状态信息更新到etcd中。kubelet也通过API Server监听Pod信息，从而对Node机器上的POD进行管理，如创建、删除、更新Pod。
+- master节点上不需要调度pod，所以不需要安装kubelet 
 
-### 配置bootstrap token  -- 0320到这里
+### 配置bootstrap token
 
 ```sh
 #在master1上
 cd /data/work/
 BOOTSTRAP_TOKEN=$(awk -F "," '{print $1}' /etc/kubernetes/token.csv)
-rm -r kubelet-bootstrap.kubeconfig #为何要删？
 kubectl config set-cluster kubernetes --certificate-authority=ca.pem --embed-certs=true --server=https://172.16.183.76:6443 --kubeconfig=kubelet-bootstrap.kubeconfig
 kubectl config set-credentials kubelet-bootstrap --token=${BOOTSTRAP_TOKEN} --kubeconfig=kubelet-bootstrap.kubeconfig
 kubectl config set-context default --cluster=kubernetes --user=kubelet-bootstrap --kubeconfig=kubelet-bootstrap.kubeconfig
@@ -1269,7 +1272,7 @@ kubectl create clusterrolebinding kubelet-bootstrap --clusterrole=system:node-bo
 - address替换为各个worker节点的IP地址。
 
 ```sh
-vim kubelet.json 
+tee -a kubelet.json <<'EOF'
 {
   "kind": "KubeletConfiguration",
   "apiVersion": "kubelet.config.k8s.io/v1beta1",
@@ -1305,12 +1308,13 @@ vim kubelet.json
   "clusterDomain": "cluster.local.",
   "clusterDNS": ["10.255.0.2"]
 }
+EOF
 ```
 
 ### 创建kubelet服务启动文件
 
 ```sh
-vim kubelet.service 
+tee -a kubelet.service <<'EOF'
 [Unit]
 Description=Kubernetes Kubelet
 Documentation=https://github.com/kubernetes/kubernetes
@@ -1319,7 +1323,7 @@ Requires=docker.service
 [Service]
 WorkingDirectory=/var/lib/kubelet
 ExecStart=/usr/local/bin/kubelet \
-  --bootstrap-kubeconfig=/etc/kubernetes/kubelet-bootstrap.kubeconfig \
+  --bootstrap-kubeconfig=/etc/kubernetes/kubelet-bootstrap.kubeconfig \ #这个config是为了kubelet第一次和apiserver通信的时候自动生成证书保存到下面的目录里面
   --cert-dir=/etc/kubernetes/ssl \
   --kubeconfig=/etc/kubernetes/kubelet.kubeconfig \
   --config=/etc/kubernetes/kubelet.json \
@@ -1334,6 +1338,7 @@ RestartSec=5
  
 [Install]
 WantedBy=multi-user.target
+EOF
 ```
 
 ```sh
@@ -1355,7 +1360,6 @@ systemctl daemon-reload
 systemctl enable kubelet
 systemctl start kubelet
 systemctl status kubelet
-
 #确认kubelet服务启动成功后，接着到binmaster1节点上Approve一下bootstrap请求
 #执行如下命令可以看到一个worker节点发送了一个 CSR 请求：
 kubectl get csr
@@ -1371,7 +1375,7 @@ kubectl get nodes
 ```sh
 #在master1上
 cd /data/work/
-vim kube-proxy-csr.json 
+tee -a kube-proxy-csr.json <<'EOF' 
 {
   "CN": "system:kube-proxy",
   "key": {
@@ -1388,13 +1392,14 @@ vim kube-proxy-csr.json
     }
   ]
 }
+EOF
 ```
 
 ### 生成证书
 
 ~~~sh
 #在master1上
-cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-config.json -profile=kubernetes kube-proxy-csr.json | cfssljson -bare kube-prox
+cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-config.json -profile=kubernetes kube-proxy-csr.json | cfssljson -bare kube-proxy
 ~~~
 
 ### 创建kubeconfig文件
@@ -1411,7 +1416,7 @@ kubectl config use-context default --kubeconfig=kube-proxy.kubeconfig
 
 ~~~sh
 #在master1上
-vim kube-proxy.yaml 
+tee -a kube-proxy.yaml <<'EOF'
 apiVersion: kubeproxy.config.k8s.io/v1alpha1
 bindAddress: 172.16.183.79
 clientConnection:
@@ -1421,13 +1426,14 @@ healthzBindAddress: 172.16.183.79:10256
 kind: KubeProxyConfiguration
 metricsBindAddress: 172.16.183.79:10249
 mode: "ipvs"
+EOF
 ~~~
 
 ### 创建服务启动文件
 
 ~~~sh
 #在master1上
-vim kube-proxy.service 
+tee -a kube-proxy.service <<'EOF'
 [Unit]
 Description=Kubernetes Kube-Proxy Server
 Documentation=https://github.com/kubernetes/kubernetes
@@ -1447,6 +1453,7 @@ LimitNOFILE=65536
  
 [Install]
 WantedBy=multi-user.target
+EOF
 ~~~
 
 ~~~sh
@@ -1468,7 +1475,7 @@ systemctl status kube-proxy
 ## 部署calico组件
 
 ~~~sh
-#上传calico镜像，calico.tar.gz上传到node1节点，手动解压
+#上传calico镜像，calico.tar.gz上传到node1节点，手动解压。calico pod运行在工作节点
 docker load -i calico.tar.gz
 #把calico.yaml文件上传到master1上的的/data/work目录
 kubectl apply -f calico.yaml
@@ -1477,6 +1484,7 @@ kubectl apply -f calico.yaml
 ## 部署coredns组件
 
 ~~~sh
+#上传coredns.yaml到master1
 kubectl apply -f coredns.yaml
 #测试coredns
 kubectl run busybox --image busybox:1.28 --restart=Never --rm -it busybox -- sh
@@ -1484,7 +1492,7 @@ ping www.baidu.com
 nslookup kubernetes.default.svc.cluster.local #解析内部Service的名称，是通过coreDNS去解析的。
 ~~~
 
-## keepalived+nginx实现apiserver高可用
+## keepalived+nginx实现apiserver高可用 -- 0321到这里
 
 ### 准备epel.repo
 
