@@ -439,5 +439,24 @@ $ sudo apt list --upgradable | grep -e "-security" | awk -F "/" '{print $1}' | x
 apt changelog packagename
 ~~~
 
+## Jade VM 安全补丁逻辑
+
+~~~sh
+sudo crontab -e
+~~~
+
+~~~sh
+# automitically updating and installing secutiry patches on VM using unattended-upgrade. (Note that the apt update runs everyday, which is defined in `/etc/apt/apt.conf.d/20auto-upgrades`.
+
+# Frequency of installing the security updates: [23:59] on [last Saturday of the month] every [3 months].
+
+# Logic: If the month number of [today plus 7 days] is not equal to the month number of today, this means this week is the last week of this month. So, this Saturday is the last Saturady of the current month.
+59 23 * 3,6,9,12 6 [ "$(date +\%m -d +7days)" != "$(date +\%m)" ] && unattended-upgrade
+~~~
+
+~~~sh
+sudo systemctl restart cron.service && sudo systemctl status cron.service
+~~~
+
 
 
