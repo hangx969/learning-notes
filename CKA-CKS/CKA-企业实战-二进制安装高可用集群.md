@@ -1492,7 +1492,7 @@ ping www.baidu.com
 nslookup kubernetes.default.svc.cluster.local #解析内部Service的名称，是通过coreDNS去解析的。
 ~~~
 
-## keepalived+nginx实现apiserver高可用 -- 0321到这里
+## keepalived+nginx实现apiserver高可用
 
 ### 准备epel.repo
 
@@ -1504,13 +1504,14 @@ scp /etc/yum.repos.d/epel.repo binnode1:/etc/yum.repos.d/
 #安装nginx主备
 #在master1和master2上做nginx主备安装
 yum install nginx keepalived -y
-#在master1和master2上，修改nginx配置文件。主备一样
-cat /etc/nginx/nginx.conf
 ~~~
 
 ### 修改nginx配置文件
 
 ~~~sh
+#在master1和master2上，修改nginx配置文件。主备一样
+mkdir -p /etc/nginx/
+tee /etc/nginx/nginx.conf <<'EOF'
 user nginx;
 worker_processes auto;
 error_log /var/log/nginx/error.log;
@@ -1537,7 +1538,7 @@ stream {
     }
     
     server {
-       listen 16443; # 由于nginx与master节点复用，这个监听端口不能是6443，否则会冲突
+       listen 16443; # 由于nginx与master节点复用，这个监听端口不能是6443，否则会冲突。访问master1的16443端口，请求会被代理到upstream的3台节点
        proxy_pass k8s-apiserver;
     }
 }
@@ -1566,6 +1567,7 @@ http {
         }
     }
 }
+EOF
 ~~~
 
 ### 修改keepalived配置文件
@@ -1573,8 +1575,9 @@ http {
 #### 主keepalived节点
 
 ~~~sh
-#主keepalived配置
-cat /etc/keepalived/keepalived.conf 
+#主keepalived配置 - keepalived主要用来提供VIP
+mkdir -p /etc/keepalived/
+tee /etc/keepalived/keepalived.conf <<'EOF'
 global_defs { 
    notification_email { 
      acassen@firewall.loc 
@@ -1609,7 +1612,7 @@ vrrp_instance VI_1 {
         check_nginx
     } 
 }
-
+EOF
 #vrrp_script：指定检查nginx工作状态脚本（根据nginx状态判断是否故障转移）
 #virtual_ipaddress：虚拟IP（VIP）
 ~~~
@@ -1617,19 +1620,20 @@ vrrp_instance VI_1 {
 ~~~sh
 #master1上
 cd ~
-cat /etc/keepalived/check_nginx.sh 
+tee /etc/keepalived/check_nginx.sh <<'EOF' 
 #!/bin/bash
 count=$(ps -ef |grep nginx | grep sbin | egrep -cv "grep|$$")
 if [ "$count" -eq 0 ];then
     systemctl stop keepalived
 fi
+EOF
 chmod +x  /etc/keepalived/check_nginx.sh
 ~~~
 
 #### 备keepalived节点
 
 ~~~sh
-cat /etc/keepalived/keepalived.conf 
+tee /etc/keepalived/keepalived.conf <<'EOF'
 global_defs { 
    notification_email { 
      acassen@firewall.loc 
@@ -1663,6 +1667,7 @@ vrrp_instance VI_1 {
         check_nginx
     } 
 }
+EOF
 ~~~
 
 ~~~sh
@@ -1675,7 +1680,7 @@ if [ "$count" -eq 0 ];then
     systemctl stop keepalived
 fi
 chmod +x /etc/keepalived/check_nginx.sh
-#注：keepalived根据脚本返回状态码（0为工作正常，非0不正常）判断是否故障转移。
+#注：keepalived根据脚本返回状态码（0为工作正常，非0不正常）判断是否故障转移。当nginx服务出现故障时，自动停止keepalived服务，触发故障切换。VIP就会切走。
 ~~~
 
 ### 启动服务
@@ -1707,4 +1712,4 @@ sed -i 's#172.16.183.76:6443#172.16.183.75:16443#' /etc/kubernetes/kube-proxy.ku
 systemctl restart kubelet kube-proxy
 ~~~
 
-?question:不是有3台master节点吗？VIP漂移只发生在两个master上？master3是否也要设置为备用节点？后面看看视频中的解释。
+?question:不是有3台master节点吗？VIP漂移只发生在两个master上？master3是否也要设置为备用节点？ 不需要，k8s组件请求apiserver的时候走的是VIP+16443端口，也就是nginx，nginx配置中已经将请求代理给了upstream的3台master。
