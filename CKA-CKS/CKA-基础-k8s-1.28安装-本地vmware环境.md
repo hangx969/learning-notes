@@ -153,6 +153,11 @@ vim /etc/hosts
 192.168.40.180   master-1  
 192.168.40.181   node-1  
 192.168.40.182   node-2
+
+tee -a /etc/hosts <<'EOF'
+172.16.183.75 master1
+172.16.183.76 node1
+EOF
 ~~~
 
 ### 配置主机间无密码登录
@@ -298,11 +303,11 @@ systemctl restart containerd
 
 #配置containerd镜像加速器，k8s所有节点均按照以下配置：
 mkdir /etc/containerd/certs.d/docker.io/ -p
-vim /etc/containerd/certs.d/docker.io/hosts.toml
-#写入如下内容：
+tee -a /etc/containerd/certs.d/docker.io/hosts.toml <<'EOF'
 [host."https://y8y6vosv.mirror.aliyuncs.com",host."https://registry.docker-cn.com"]
   capabilities = ["pull"]
-  
+EOF
+
 vim /etc/containerd/config.toml
 config_path = "" ==> config_path = "/etc/containerd/certs.d"
 #保存退出
@@ -315,12 +320,12 @@ systemctl restart containerd
 #docker也要安装，docker跟containerd不冲突，安装docker是为了能基于dockerfile构建镜像
 yum install docker-ce -y
 systemctl enable docker --now
-
 #配置docker镜像加速器，k8s所有节点均按照以下配置
-vim /etc/docker/daemon.json
+tee -a /etc/docker/daemon.json <<'EOF'
 {
  "registry-mirrors":["https://y8y6vosv.mirror.aliyuncs.com","https://registry.docker-cn.com","https://docker.mirrors.ustc.edu.cn","https://dockerhub.azk8s.cn","http://hub-mirror.c.163.com"]
 } 
+EOF
 #重启docker：
 systemctl daemon-reload && systemctl restart docker && systemctl status docker
 ~~~
@@ -353,6 +358,7 @@ systemctl enable kubelet
 - kubeadm.yaml配置文件如下：
 
   ~~~yaml
+  tee kubeadm.yaml << 'EOF'
   apiVersion: kubeadm.k8s.io/v1beta3
   kind: InitConfiguration
   localAPIEndpoint:
@@ -392,6 +398,7 @@ systemctl enable kubelet
   apiVersion: kubelet.config.k8s.io/v1beta1
   kind: KubeletConfiguration
   cgroupDriver: systemd
+  EOF
   ~~~
 
 - 初始化集群
@@ -407,18 +414,23 @@ systemctl enable kubelet
   whereis kubectl # kubectl: /usr/bin/kubectl
   echo "alias k=/usr/bin/kubectl">>/etc/profile
   source /etc/profile
+  
   #2. 设置alias的自动补全：
   source <(kubectl completion bash | sed 's/kubectl/k/g')
+  
   #3. 解决每次启动k都会失效，要重新刷新环境变量（source /etc/profile）的问题：在~/.bashrc文件中添加以下代码：source /etc/profile
   echo "source /etc/profile" >> ~/.bashrc
+  
   #4. 给alias k也配置补全
-  vim ~/.bashrc
-  ##加入以下
+  tee -a ~/.bashrc <<'EOF'
   alias k='kubectl'
   complete -o default -F __start_kubectl k
   source <(kubectl completion bash)
+  EOF
+  
   ##使命令生效
   source ~/.bashrc
+  
   #安装了zsh的环境，把上面放到~/.zshrc中
   echo "source /etc/profile" >> ~/.zshrc 
   ~~~
