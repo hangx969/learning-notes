@@ -29,7 +29,7 @@ metadata:
 spec:
   selector:
     app: nginx
-  clusterIP: None
+  clusterIP: None #这里才真正标识了svc是headless svc
   ports:
   - name: web
     port: 80
@@ -83,7 +83,7 @@ for i in 0 1; do kubectl exec web-$i -- sh -c 'hostname';done
 
 # headless service
 
-- 不分配clusterIP，headless service可以通过解析service的FQDN（service名称.名称空间.svc.cluster.local）, 返回所有Pod的FQDN和ip地址 (statefulSet部署的Pod才有DNS)，普通的service, 只能通过解析service的DNS返回service的ClusterIP。
+- 不分配clusterIP，headless service可以通过解析service的FQDN（service名称.名称空间.svc.cluster.local）, 返回所有Pod的FQDN和ip地址 (statefulSet部署的Pod才有FQDN：$\<Pod Name>.$\<service name>.$\<namespace name>.svc.cluster.local)，普通的service, 只能通过解析service的DNS返回service的ClusterIP。
 
   ```bash
   #集群内解析headless service的FQDN ==> 直接解析出pod的IP
@@ -115,6 +115,16 @@ for i in 0 1; do kubectl exec web-$i -- sh -c 'hostname';done
 > ```bash
 > dig -t A svc-sts-nginx.default.svc.cluster.local @10.0.0.10
 > ```
+
+# 存储模板
+
+- 对于有状态应用都会用到持久化存储，比如mysql主从，由于主从数据库的数据是不能存放在一个目录下的，每个mysql节点都需要有自己独立的存储空间。
+
+- 而在deployment中创建的存储卷是一个共享的存储卷，多个pod使用同一个存储卷，它们数据是同步的；而statefulset定义中的每一个pod都不能使用同一个存储卷，这就需要使用volumeClainTemplate。
+
+- 当在使用statefulset创建pod时，volumeClainTemplate会自动生成一个PVC，从而请求绑定一个PV，每一个pod都有自己专用的存储卷。Pod、PVC和PV对应的关系图如下：
+
+  ![image-20240324095254313](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202403240952473.png)
 
 # 扩缩容
 
@@ -165,4 +175,74 @@ for i in 0 1; do kubectl exec web-$i -- sh -c 'hostname';done
             mountPath: /usr/share/nginx/html
   ```
 
+  # 案例-部署web站点
+  
+  ~~~sh
+  #sts
+  apiVersion: apps/v1
+  kind: StatefulSet
+  metadata:
+    name: sts-web
+    namespace: default
+    labels:
+      app: web
+  spec:
+    replicas: 2
+    selector:
+      matchLabels:
+         app: nginx
+    serviceName: svc-sts-web
+    template:
+      metadata:
+        namespace: default
+        labels:
+          app: nginx
+      spec:
+        containers:
+          name: nginx
+          image: nginx
+          imagePullPolicy: IfNotPresent
+          ports:
+          - name: www
+            containerPort: 80
+            protool: TCP
+          volumeMounts:
+          - name: storage-web
+            mountPath: /usr/share/nginx/html
+    volumeClaimTemplates:
+    - metadata:
+        name: storage-web
+        namespace: default
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: sc-web
+        resources:
+          requests: 
+            storage: 1Gi
+            
+  #svc
+  ---
+  apiVersion: v1
+  kind: Service
+  metadata:
+    name: svc-sts-web
+    namespace: default
+  spec:
+    clusterIP: None
+    selector:
+      app: nginx
+    ports:
+    - name: www
+      port: 80
+      protocol: TCP
+  
+  #sc
+  ---
+  apiVersion: storage.k8s.io/v1
+  kind: StorageClass
+  metadata:
+    name: nfs-web
+  provisioner: example.com/nfs
+  ~~~
+  
   
