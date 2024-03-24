@@ -480,3 +480,244 @@ case $i in
 esac
 ~~~
 
+# 列出排名前10的内存占用进程
+
+~~~sh
+ps aux | sort -rk 4,4 | head -n 10
+~~~
+
+# iptables自动屏蔽访问网站频繁的IP
+
+- 使用场景：针对恶意访问网站情况
+  - 根据访问日志（以 nginx 的 logs 中记录访问的 access.log 日志文件为例，检测短期访问大于100的IP，并使用iptables命令进行屏蔽，同时将禁用的IP放到/tmp/deny_ip.log文件中）
+
+```sh
+#!/bin/bash
+DATE=$(date +%d/%b/%Y:%H:%M)
+LOG_FILE=/usr/local/nginx/logs/demo2.access.log
+ABNORMAL_IP=$(tail -n5000 $LOG_FILE |grep $DATE |awk '{a[$1]++}END{for(i in a)if(a[i]>100)print i}')
+for IP in $ABNORMAL_IP; do
+    if [ $(iptables -vnL |grep -c "$IP") -eq 0 ]; then
+        iptables -I INPUT -s $IP -j DROP
+        echo "$(date +'%F_%T') $IP" >> /tmp/deny_ip.log
+    fi
+done
+```
+
+# 自动发布 Java 项目（Tomcat）
+
+~~~sh
+#!/bin/bash
+DATE=$(date +%F_%T)
+
+TOMCAT_NAME=$1
+TOMCAT_DIR=/usr/local/$TOMCAT_NAME
+ROOT=$TOMCAT_DIR/webapps/ROOT
+
+BACKUP_DIR=/data/backup
+WORK_DIR=/tmp
+PROJECT_NAME=tomcat-java-demo
+
+# 拉取代码
+cd $WORK_DIR
+if [ ! -d $PROJECT_NAME ]; then
+   git clone https://github.com/xxxx/tomcat-java-demo
+   cd $PROJECT_NAME
+else
+   cd $PROJECT_NAME
+   git pull
+fi
+
+# 构建
+mvn clean package -Dmaven.test.skip=true
+if [ $? -ne 0 ]; then
+   echo "maven build failure!"
+   exit 1
+fi
+
+# 部署
+TOMCAT_PID=$(ps -ef |grep "$TOMCAT_NAME" |egrep -v "grep|$$" |awk 'NR==1{print $2}')
+[ -n "$TOMCAT_PID" ] && kill -9 $TOMCAT_PID
+[ -d $ROOT ] && mv $ROOT $BACKUP_DIR/${TOMCAT_NAME}_ROOT$DATE
+unzip $WORK_DIR/$PROJECT_NAME/target/*.war -d $ROOT
+$TOMCAT_DIR/bin/startup.sh
+~~~
+
+# Nginx日志分析
+
+~~~sh
+#!/bin/bash
+# 日志格式: $remote_addr - $remote_user [$time_local] "$request" $status $body_bytes_sent "$http_referer" "$http_user_agent" "$http_x_forwarded_for"
+LOG_FILE=$1
+echo "统计访问最多的10个IP"
+awk '{a[$1]++}END{print "UV:",length(a);for(v in a)print v,a[v]}' $LOG_FILE |sort -k2 -nr |head -10
+echo "----------------------"
+
+echo "统计时间段访问最多的IP"
+awk '$4>="[01/Dec/2018:13:20:25" && $4<="[27/Nov/2018:16:20:49"{a[$1]++}END{for(v in a)print v,a[v]}' $LOG_FILE |sort -k2 -nr|head -10
+echo "----------------------"
+
+echo "统计访问最多的10个页面"
+awk '{a[$7]++}END{print "PV:",length(a);for(v in a){if(a[v]>10)print v,a[v]}}' $LOG_FILE |sort -k2 -nr
+echo "----------------------"
+
+echo "统计访问页面状态码数量"
+awk '{a[$7" "$9]++}END{for(v in a){if(a[v]>5)print v,a[v]}}'
+~~~
+
+# 查看网卡实时流量
+
+~~~sh
+#!/bin/bash
+NIC=$1
+echo -e " In ------ Out"
+while true; do
+    OLD_IN=$(awk '$0~"'$NIC'"{print $2}' /proc/net/dev)
+    OLD_OUT=$(awk '$0~"'$NIC'"{print $10}' /proc/net/dev)
+    sleep 1
+    NEW_IN=$(awk  '$0~"'$NIC'"{print $2}' /proc/net/dev)
+    NEW_OUT=$(awk '$0~"'$NIC'"{print $10}' /proc/net/dev)
+    IN=$(printf "%.1f%s" "$((($NEW_IN-$OLD_IN)/1024))" "KB/s")
+    OUT=$(printf "%.1f%s" "$((($NEW_OUT-$OLD_OUT)/1024))" "KB/s")
+    echo "$IN $OUT"
+    sleep 1
+done
+~~~
+
+# 批量检查网站是否异常并发邮件
+
+~~~sh
+#!/bin/bash  
+URL_LIST="www.baidu.com www.ctnrs.com www.der-matech.net.cn www.der-matech.com.cn www.der-matech.cn www.der-matech.top www.der-matech.org"
+for URL in $URL_LIST; do
+    FAIL_COUNT=0
+    for ((i=1;i<=3;i++)); do
+        HTTP_CODE=$(curl -o /dev/null --connect-timeout 3 -s -w "%{http_code}" $URL)
+        if [ $HTTP_CODE -eq 200 ]; then
+            echo "$URL OK"
+            break
+        else
+            echo "$URL retry $FAIL_COUNT"
+            let FAIL_COUNT++
+        fi
+    done
+    if [ $FAIL_COUNT -eq 3 ]; then
+        echo "Warning: $URL Access failure!"
+  echo "网站$URL坏掉，请及时处理" | mail -s "$URL网站高危" xxxxx@163.com
+    fi
+done
+~~~
+
+# 目录入侵检测与告警
+
+~~~sh
+#!/bin/bash
+
+MON_DIR=/opt
+inotifywait -mqr --format %f -e create $MON_DIR |\
+while read files; do
+   #同步文件
+   rsync -avz /opt /tmp/opt
+  #检测文件是否被修改
+   #echo "$(date +'%F %T') create $files" | mail -s "dir monitor" xxx@163.com
+done
+~~~
+
+# 一键查看服务器利用率
+
+~~~sh
+#!/bin/bash
+function cpu(){
+
+ util=$(vmstat | awk '{if(NR==3)print $13+$14}')
+ iowait=$(vmstat | awk '{if(NR==3)print $16}')
+ echo "CPU -使用率：${util}% ,等待磁盘IO相应使用率：${iowait}:${iowait}%"
+
+}
+function memory (){
+
+ total=`free -m |awk '{if(NR==2)printf "%.1f",$2/1024}'`
+    used=`free -m |awk '{if(NR==2) printf "%.1f",($2-$NF)/1024}'`
+    available=`free -m |awk '{if(NR==2) printf "%.1f",$NF/1024}'`
+    echo "内存 - 总大小: ${total}G , 使用: ${used}G , 剩余: ${available}G"
+}
+function disk(){
+
+ fs=$(df -h |awk '/^\/dev/{print $1}')
+    for p in $fs; do
+        mounted=$(df -h |awk '$1=="'$p'"{print $NF}')
+        size=$(df -h |awk '$1=="'$p'"{print $2}')
+        used=$(df -h |awk '$1=="'$p'"{print $3}')
+        used_percent=$(df -h |awk '$1=="'$p'"{print $5}')
+        echo "硬盘 - 挂载点: $mounted , 总大小: $size , 使用: $used , 使用率: $used_percent"
+    done
+
+}
+function tcp_status() {
+    summary=$(ss -antp |awk '{status[$1]++}END{for(i in status) printf i":"status[i]" "}')
+    echo "TCP连接状态 - $summary"
+}
+cpu
+memory
+disk
+tcp_status
+~~~
+
+# 以sudo运行整个shell脚本
+
+- 将 sudo 放在 shell 脚本的首中，会以 root 身份运行整个程序。 例如自动化系统升级或包管理器包装器——不再需要用 sudo 预先准备一切
+
+```sh
+#!/usr/bin/sudo /bin/bash
+```
+
+# 将视频转换为gif动图
+
+- 需要系统安装 ffmpeg , ubuntu 中可以通过 `sudo apt install ffmpeg` 安装。
+
+```sh
+ffmpeg -ss 00:00:03 -t 3 -i test.mov -s 640x360 -r  15  dongtu.gif
+```
+
+- `-ss 00:00:03` 表示从第 `00` 分钟 `03` 秒开始制作 GIF，如果你想从第 9 秒开始，则输入 `-ss 00:00:09`，或者 `-ss 9`，支持小数点，所以也可以输入 `-ss 00:00:11.3`，或者 `-ss 34.6` 之类的，如果不加该命令，则从 0 秒开始制作； 
+- `-t 3` 表示把持续 3 秒的视频转换为 GIF，你可以把它改为其他数字，例如 1.5，7 等等，时间越长，GIF 体积越大，如果不加该命令，则把整个视频转为 GIF； 
+- `-i` 表示 invert； 
+- test.mov 就是你要转换的视频，名称最好不要有中文，不要留空格，支持多种视频格式； 
+- `-s 640x360` 是 GIF 的分辨率，视频分辨率可能是 1080p，但你制作的 GIF 可以转为 720p 等，允许自定义，分辨率越高体积越大，如果不加该命令，则保持分辨率不变； 
+- `-r “15”` 表示帧率，网上下载的视频帧率通常为 24，设为 15 效果挺好了，帧率越高体积越大，如果不加该命令，则保持帧率不变；
+- dongtu.gif：就是你要输出的文件，你也可以把它命名为 hello.gif 等等。
+
+# 批量监控服务器磁盘使用率
+
+~~~sh
+#!/bin/bash  
+HOST_INFO=host.info  
+  
+# 遍历host.info文件中的每个IP地址  
+for IP in $(awk '/^[^#]/{print $1}' $HOST_INFO); do  
+    # 根据IP地址获取对应的用户名和端口号  
+    USER=$(awk -v ip=$IP 'ip==$1{print $2}' $HOST_INFO)  
+    PORT=$(awk -v ip=$IP 'ip==$1{print $3}' $HOST_INFO)  
+    TMP_FILE=/tmp/disk.tmp  
+  
+    # 通过SSH远程执行df -h命令，获取磁盘使用情况并保存到临时文件中  
+    ssh -p $PORT $USER@$IP 'df -h' > $TMP_FILE  
+  
+    # 提取每个分区的名称和使用率，并判断是否超过阈值  
+    USE_RATE_LIST=$(awk 'BEGIN{OFS="="}/^\/dev/{print $NF,int($5)}' $TMP_FILE)  
+    for USE_RATE in $USE_RATE_LIST; do  
+        PART_NAME=${USE_RATE%=*}  # 提取分区名称  
+        USE_RATE=${USE_RATE#*=}   # 提取使用率  
+        if [ $USE_RATE -ge 80 ]; then  # 判断使用率是否超过80%  
+            echo "Warning: $PART_NAME Partition usage $USE_RATE% on server $IP!"  
+        fi  
+    done  
+done
+~~~
+
+~~~sh
+#host.info
+172.16.183.75 root 22
+172.16.183.76 root 22
+~~~
+
