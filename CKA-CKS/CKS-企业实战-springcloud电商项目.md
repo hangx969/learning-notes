@@ -8,15 +8,10 @@
 
 ## 安装准备
 
-- 备份原来的yum源
+- 更换阿里的yum源 
 
 ```sh
 mv /etc/yum.repos.d/CentOS-Base.repo  /etc/yum.repos.d/CentOS-Base.repo.backup
-```
-
-- 下载阿里的yum源 
-
-```sh
 wget -O /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-7.repo
 ```
 
@@ -44,7 +39,7 @@ systemctl stop firewalld  && systemctl  disable firewalld
 ntpdate cn.pool.ntp.org
 #编辑计划任务，每分钟做一次同步
 crontab -e
-*/1 * * * /usr/sbin/ntpdate   cn.pool.ntp.org
+* */1 * * * /usr/sbin/ntpdate   cn.pool.ntp.org
 ```
 
 - 重启crond服务
@@ -83,11 +78,10 @@ sysctl --system
   EOF
   #master1和node1添加harbor
   tee -a /etc/hosts <<'EOF'
-  #添加：
   172.16.183.74 harbor
   EOF
   ```
-
+  
 - 主机间无密码登录
 
 ~~~sh
@@ -102,8 +96,7 @@ ssh-copy-id -i .ssh/id_rsa.pub root@harbor
 
 ```sh
 yum install -y docker-ce-19.03.7-3.el7
-systemctl enable docker && systemctl start docker
-systemctl status docker
+systemctl enable docker && systemctl start docker && systemctl status docker
 #修改docker配置文件
 cat > /etc/docker/daemon.json <<EOF
 {
@@ -136,7 +129,7 @@ sysctl -p /etc/sysctl.conf
    cd /data/ssl/
    #生成一个3072位的key，也就是私钥
    openssl genrsa -out ca.key 3072
-   #生成一个数字证书ca.pem，3650表示证书的有效时间是3年。后续根据ca.pem根证书来签发信任的客户端证书
+   #生成一个数字证书ca.pem，3650表示证书的有效时间是10年。后续根据ca.pem根证书来签发信任的客户端证书
    openssl req -new -x509 -days 3650 -key ca.key -out ca.pem 
    #生成域名的证书
    #生成一个3072位的key，也就是私钥
@@ -154,7 +147,6 @@ sysctl -p /etc/sysctl.conf
    ```bash
    #创建安装目录
    mkdir /data/install -p
-   cd /data/install/
    #安装harbor
    #/data/ssl目录下有如下文件：ca.key  ca.pem  ca.srl  harbor.csr  harbor.key  harbor.pem
    cd /data/install/
@@ -173,9 +165,8 @@ sysctl -p /etc/sysctl.conf
    certificate: /data/ssl/harbor.pem
    private_key: /data/ssl/harbor.key
    #邮件和ldap不需要配置，在harbor的web界面可以配置，其他配置采用默认即可。
-   #注：harbor默认的账号密码：admin/Harbor12345
    ```
-
+   
 3. 安装docker-compose
 
    - docker-compose项目是Docker官方的开源项目，负责实现对Docker容器集群的快速编排。Docker-Compose的工程配置文件默认为docker-compose.yml，Docker-Compose运行目录下的必要有一个docker-compose.yml。docker-compose可以管理多个docker实例。
@@ -192,17 +183,14 @@ sysctl -p /etc/sysctl.conf
    ```
 
    ```bash
-   #上传docker-compose-Linux-x86_64文件到harbor机器，这是harbor的依赖
-   mv docker-compose-Linux-x86_64.64 /usr/bin/docker-compose
-   chmod +x /usr/bin/docker-compose
-   
+   yum install docker-compose -y
    #安装harbor依赖的的离线镜像包docker-harbor-2-3-0.tar.gz上传到harbor机器解压。docker compose要用
    docker load -i docker-harbor-2-3-0.tar.gz 
    cd /data/install/harbor
    ./install.sh
    #出现✔ ----Harbor has been installed and started successfully.---- 表明安装成功。
    ```
-
+   
 4. harbor启动和停止
 
    ```bash
@@ -214,6 +202,8 @@ sysctl -p /etc/sysctl.conf
    cd /data/install/harbor
    docker-compose start
    ```
+
+   #注：harbor默认的账号密码：admin/Harbor12345
 
 5. 图形化界面访问harbor
 
