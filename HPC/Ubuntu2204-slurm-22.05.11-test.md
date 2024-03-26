@@ -1,21 +1,17 @@
 # 实验机器规划
 
 - OS：[ubuntu-22.04.4-live-server-amd64.iso](https://mirrors.tuna.tsinghua.edu.cn/ubuntu-releases/22.04/ubuntu-22.04.4-live-server-amd64.iso)
-
-- 2vcpu，4GB内存。
-
 - User：
 
   - hangx hangx
   - root root
-
 - IP地址规划
 
-  - 172.16.183.130 um1
+  - 172.16.183.133 m1
 
-  - 172.16.183.131 uc1
+  - 172.16.183.134 c1
 
-  - 172.16.183.132 ul1
+  - 172.16.183.135 l1
 
 # 环境准备
 
@@ -27,66 +23,34 @@
 
   - name servers: 8.8.8.8,114.114.114.114
 
-
-~~~sh
-sudo vim /etc/netplan/00-installer-config.yaml
-# This is the network config written by 'subiquity'
-network:
-  ethernets:
-    ens33:
-      addresses:
-      - 172.16.183.130/24
-      nameservers:
-        addresses:
-        - 8.8.8.8
-        - 114.114.114.114
-      routes:
-      - to: default
-        via: 172.16.183.2
-  version: 2
-~~~
-
 - apt源设置
-
-  - Ubuntu系统安装时，在mirror address页面上，配置为清华镜像源： https://mirrors.tuna.tsinghua.edu.cn/help/ubuntu/
 
   - 设置主机名
 
 
 ~~~sh
-sudo hostnamectl set-hostname um1 && bash
-sudo hostnamectl set-hostname uc1 && bash
-sudo hostnamectl set-hostname ul1 && bash
+sudo hostnamectl set-hostname m1 && bash
+sudo hostnamectl set-hostname c1 && bash
+sudo hostnamectl set-hostname l1 && bash
 ~~~
 
 - 添加hosts
 
 ~~~sh
-cat >> /etc/hosts << EOF
-172.16.183.130 um1
-172.16.183.131 uc1
-172.16.183.132 ul1
-EOF
-~~~
-
-- 修改资源限制
-
-~~~sh
-cat >> /etc/security/limits.conf << EOF
-* hard nofile 1000000
-* soft nofile 1000000
-* soft core unlimited
-* soft stack 10240
-* soft memlock unlimited
-* hard memlock unlimited
+sudo tee -a /etc/hosts << 'EOF'
+172.16.183.133 m1
+172.16.183.134 c1
+172.16.183.135 l1
 EOF
 ~~~
 
 - 配置时区
 
 ~~~sh
+#查看时间同步信息
+timedatectl status
 #安装ntpdate命令
-apt install ntpdate -y
+sudo apt install ntpdate -y
 #跟网络时间做同步
 ntpdate cn.pool.ntp.org
 #把时间同步做成计划任务
@@ -111,8 +75,8 @@ ssh-copy-id -i ~/.ssh/id_rsa.pub ul1
 
 ~~~sh
 #所有节点上
-groupadd -g 1108 munge
-useradd -m -c "Munge Uid 'N' Gid Emporium" -d /var/lib/munge -u 1108 -g munge -s /sbin/nologin munge
+sudo groupadd -g 1108 munge
+sudo useradd -m -c "Munge Uid 'N' Gid Emporium" -d /var/lib/munge -u 1108 -g munge -s /sbin/nologin munge
 #-m：这个选项告诉 useradd 命令为新用户创建一个主目录。
 #-c "Munge Uid 'N' Gid Emporium"：这个选项用于设置新用户的注释字段，通常用于存储用户的全名或其他信息。在这里，它被设置为 "Munge Uid 'N' Gid Emporium"。
 #-d /var/lib/munge：这个选项用于指定新用户的主目录。在这里，主目录被设置为 /var/lib/munge。
@@ -126,24 +90,24 @@ useradd -m -c "Munge Uid 'N' Gid Emporium" -d /var/lib/munge -u 1108 -g munge -s
 
 ~~~sh
 #管理节点上
-apt install -y rng-tools
+sudo apt install -y rng-tools
 ~~~
 
 - 使用/dev/urandom来做熵源
 
 ~~~sh
 #管理节点上
-rngd -r /dev/urandom
-tee /usr/lib/systemd/system/rngd.service <<'EOF'
+sudo rngd -r /dev/urandom
+sudo tee /usr/lib/systemd/system/rngd.service <<'EOF'
 [Service]
 ExecStart=/sbin/rngd -f -r /dev/urandom
 [Install]
 WantedBy=multi-user.target
 EOF
 
-systemctl daemon-reload
-systemctl start rngd
-systemctl enable rngd
+sudo systemctl daemon-reload
+sudo systemctl start rngd
+sudo systemctl enable rngd
 ~~~
 
 - 安装munge
@@ -151,16 +115,16 @@ systemctl enable rngd
 ~~~sh
 # 安装 munge
 # 所有节点
-apt -y install munge
+sudo apt -y install munge
 ~~~
 
 - 创建全局秘钥
 
 ~~~sh
 #在Master Node生成全局使用的秘钥文件：/etc/munge/munge.key
-dd if=/dev/urandom bs=1 count=1024 > /etc/munge/munge.key
+sudo dd if=/dev/urandom bs=1 count=1024 > /etc/munge/munge.key
 #或者
-create-munge-key
+sudo create-munge-key
 ~~~
 
 - 密钥同步到所有计算节点
@@ -175,7 +139,7 @@ scp /etc/munge/munge.key root@ul1:/etc/munge/ ; done
 
 ~~~sh
 #所有节点执行
-id munge
+sudo id munge
 #uid=1108(munge) gid=1108(munge) groups=1108(munge)
 ~~~
 
@@ -183,12 +147,12 @@ id munge
 
 ~~~sh
 # 所有节点执行
-chown munge: /etc/munge/munge.key
-chmod 400 /etc/munge/munge.key
-chown munge.munge /etc/munge/munge.key
-systemctl start munge
-systemctl enable --now munge
-systemctl status munge
+sudo chown munge: /etc/munge/munge.key
+sudo chmod 400 /etc/munge/munge.key
+sudo chown munge.munge /etc/munge/munge.key
+sudo systemctl start munge
+sudo systemctl enable --now munge
+sudo systemctl status munge
 ps -ef | grep munge ;done
 ~~~
 
@@ -226,8 +190,8 @@ remunge
 
 ~~~sh
 #所有节点上
-groupadd -g 1109 slurm
-useradd -m -c "Slurm manager" -d /var/lib/slurm -u 1109 -g slurm -s /bin/bash slurm
+sudo groupadd -g 1109 slurm
+sudo useradd -m -c "Slurm manager" -d /var/lib/slurm -u 1109 -g slurm -s /bin/bash slurm
 ~~~
 
 - 检查slurm用户存在
@@ -241,12 +205,12 @@ id slurm
   https://slurm.schedmd.com/quickstart_admin.html#debuild
 
 ~~~sh
-wget https://download.schedmd.com/slurm/slurm-23.11.4.tar.bz2
+wget https://download.schedmd.com/slurm/slurm-22.05.11.tar.bz2
 #Install basic Debian package build requirements:
-apt-get install build-essential fakeroot devscripts equivs
+sudo apt-get install build-essential fakeroot devscripts equivs
 #Unpack the distributed tarball:
 tar -xaf slurm*tar.bz2
-cd slurm-23.11.4
+cd slurm-22.05.11
 #Install the Slurm package dependencies:
 #mk-build-deps是一个用于处理Debian包构建依赖的工具。它可以创建一个虚拟的Debian包，这个虚拟的包依赖于你的源代码包的所有构建依赖。当你安装这个虚拟的包时，所有的构建依赖也会被自动安装。-i选项告诉mk-build-deps在创建虚拟的包之后，立即尝试安装它。debian/control是Debian包的控制文件，它包含了关于包的元数据，例如包的名称、版本、描述，以及构建依赖等信息。
 mk-build-deps -i debian/control
@@ -258,18 +222,18 @@ debuild -b -uc -us
 - The packages will be in the parent directory after debuild completes.
 
   ~~~sh
-  #um1上
+  #m1上
   cd ..
   dpkg -i slurm-smd_23.11.4-1_amd64.deb
   dpkg -i slurm-smd-slurmctld_23.11.4-1_amd64.deb
   dpkg -i slurm-smd-client_23.11.4-1_amd64.deb
   dpkg -i slurm-smd-slurmdbd_23.11.4-1_amd64.deb
-  #uc1上
+  #c1上
   cd ..
   dpkg -i slurm-smd_23.11.4-1_amd64.deb
   dpkg -i slurm-smd-slurmd_23.11.4-1_amd64.deb
   dpkg -i slurm-smd-client_23.11.4-1_amd64.deb
-  #ul1上
+  #l1上
   cd ..
   dpkg -i slurm-smd_23.11.4-1_amd64.deb
   dpkg -i slurm-smd-client_23.11.4-1_amd64.deb
@@ -453,27 +417,27 @@ scp -p /etc/slurm/*.conf root@ul1:/etc/slurm/;done
 # 设置文件权限，所有节点执行
 #chmod 0755 /var/spool
 #chown -R slurm:slurm /var/spool
-mkdir -p /var/spool/slurm
-chown slurm: /var/spool/slurm
-mkdir -p /var/log/slurm
-chown slurm: /var/log/slurm
-mkdir -p /var/spool/slurm
-chown slurm: /var/spool/slurm
-mkdir -p /var/log/slurm;done
-chown slurm: /var/log/slurm
+sudo mkdir -p /var/spool/slurm
+sudo chown slurm: /var/spool/slurm
+sudo mkdir -p /var/log/slurm
+sudo chown slurm: /var/log/slurm
+sudo mkdir -p /var/spool/slurm
+sudo chown slurm: /var/spool/slurm
+sudo mkdir -p /var/log/slurm;done
+sudo chown slurm: /var/log/slurm
 ~~~
 
 # 启动服务
 
 ~~~sh
 #um1上
-systemctl enable slurmctld
-systemctl start slurmctld
-systemctl status slurmctld
+sudo systemctl enable slurmctld
+sudo systemctl start slurmctld
+sudo systemctl status slurmctld
 #uc1上
-systemctl enable slurmd
-systemctl start slurmd
-systemctl status slurmd
+sudo systemctl enable slurmd
+sudo systemctl start slurmd
+sudo systemctl status slurmd
 ~~~
 
 # 常用命令
