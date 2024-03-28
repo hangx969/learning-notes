@@ -54,19 +54,19 @@ sudo apt install ntpdate -y
 #跟网络时间做同步
 ntpdate cn.pool.ntp.org
 #把时间同步做成计划任务
-crontab -e
+sudo crontab -e
 * */1 * * * /usr/sbin/ntpdate   cn.pool.ntp.org
 #重启crond服务
-systemctl restart cron
+sudo systemctl restart cron
 ~~~
 
 - 配置ssh免登录
 
 ~~~sh
 ssh-keygen
-ssh-copy-id -i ~/.ssh/id_rsa.pub um1
-ssh-copy-id -i ~/.ssh/id_rsa.pub uc1
-ssh-copy-id -i ~/.ssh/id_rsa.pub ul1
+ssh-copy-id -i ~/.ssh/id_rsa.pub m1
+ssh-copy-id -i ~/.ssh/id_rsa.pub c1
+ssh-copy-id -i ~/.ssh/id_rsa.pub l1
 ~~~
 
 # 配置munge
@@ -75,6 +75,8 @@ ssh-copy-id -i ~/.ssh/id_rsa.pub ul1
 
 ~~~sh
 #所有节点上
+#验证gid为1108的组不存在
+getent group 1108
 sudo groupadd -g 1108 munge
 sudo useradd -m -c "Munge Uid 'N' Gid Emporium" -d /var/lib/munge -u 1108 -g munge -s /sbin/nologin munge
 #-m：这个选项告诉 useradd 命令为新用户创建一个主目录。
@@ -105,9 +107,7 @@ ExecStart=/sbin/rngd -f -r /dev/urandom
 WantedBy=multi-user.target
 EOF
 
-sudo systemctl daemon-reload
-sudo systemctl start rngd
-sudo systemctl enable rngd
+sudo systemctl daemon-reload && sudo systemctl start rngd && sudo systemctl enable rngd
 ~~~
 
 - 安装munge
@@ -122,17 +122,22 @@ sudo apt -y install munge
 
 ~~~sh
 #在Master Node生成全局使用的秘钥文件：/etc/munge/munge.key
-sudo dd if=/dev/urandom bs=1 count=1024 > /etc/munge/munge.key
-#或者
-sudo create-munge-key
+#装好了munge之后，/etc/munge/的权限默认是700，munge:munge; /etc/munge/munge.key的权限默认是600，munge:munge
+#临时提权，为了写入key
+sudo chmod 777 /etc/munge
+sudo chmod 777 /etc/munge/munge.key
+dd if=/dev/urandom bs=1 count=1024 > /etc/munge/munge.key
 ~~~
 
 - 密钥同步到所有计算节点
 
 ~~~sh
 # Master Node执行，把munge key同步到其他节点
-scp /etc/munge/munge.key root@uc1:/etc/munge/ ; done
-scp /etc/munge/munge.key root@ul1:/etc/munge/ ; done
+#其他节点上：
+sudo chmod 777 /etc/munge
+sudo chmod 777 /etc/munge/munge.key
+scp /etc/munge/munge.key c1:/etc/munge/
+scp /etc/munge/munge.key l1:/etc/munge/
 ~~~
 
 - 检查账户是否存在
@@ -149,11 +154,13 @@ sudo id munge
 # 所有节点执行
 sudo chown munge: /etc/munge/munge.key
 sudo chmod 400 /etc/munge/munge.key
+sudo chmod 700 /etc/munge/
+sudo chmod 711 /var/lib/munge/
+sudo chmod 700 /var/log/munge/
+sudo chmod 755 /var/run/munge/
 sudo chown munge.munge /etc/munge/munge.key
-sudo systemctl start munge
-sudo systemctl enable --now munge
-sudo systemctl status munge
-ps -ef | grep munge ;done
+sudo systemctl start munge && sudo systemctl enable --now munge && sudo systemctl status munge
+ps -ef | grep munge | grep -v grep
 ~~~
 
 - 测试munge服务: 每个计算节点与控制节点进行连接验证
@@ -173,9 +180,10 @@ munge -n | unmunge
 - 验证compute node，控制节点进行连接验证
 
 ```sh
-munge -n | ssh um1 unmunge
-munge -n | ssh uc1 unmunge
-munge -n | ssh ul1 unmunge
+munge -n | ssh m1 unmunge
+munge -n | ssh c1 unmunge
+munge -n | ssh l1 unmunge
+#如果出现unmunge: Error: Invalid credential，重启节点，报错消失
 ```
 
 - Munge凭证基准测试
@@ -184,7 +192,7 @@ munge -n | ssh ul1 unmunge
 remunge
 ```
 
-# 配置slurm
+# 配置slurm -- 0327到这里
 
 - 创建slurm用户
 
