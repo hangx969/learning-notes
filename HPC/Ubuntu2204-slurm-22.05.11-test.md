@@ -198,6 +198,8 @@ remunge
 
 ~~~sh
 #所有节点上
+getent group 1109
+id 1109
 sudo groupadd -g 1109 slurm
 sudo useradd -m -c "Slurm manager" -d /var/lib/slurm -u 1109 -g slurm -s /bin/bash slurm
 ~~~
@@ -215,37 +217,15 @@ id slurm
 ~~~sh
 wget https://download.schedmd.com/slurm/slurm-22.05.11.tar.bz2
 #Install basic Debian package build requirements:
-sudo apt-get install build-essential fakeroot devscripts equivs
+sudo apt-get install build-essential fakeroot devscripts equivs make hwloc libhwloc-dev libmunge-dev libmunge2 munge mariadb-server libmysqlclient-dev
 #Unpack the distributed tarball:
 tar -xaf slurm*tar.bz2
 cd slurm-22.05.11
-#Install the Slurm package dependencies:
-#mk-build-deps是一个用于处理Debian包构建依赖的工具。它可以创建一个虚拟的Debian包，这个虚拟的包依赖于你的源代码包的所有构建依赖。当你安装这个虚拟的包时，所有的构建依赖也会被自动安装。-i选项告诉mk-build-deps在创建虚拟的包之后，立即尝试安装它。debian/control是Debian包的控制文件，它包含了关于包的元数据，例如包的名称、版本、描述，以及构建依赖等信息。
-mk-build-deps -i debian/control
-#Build the Slurm packages:
-#构建二进制包，但不对改变的文件和源代码包进行签名。这个命令通常在你信任源代码，并且不需要签名的情况下使用。
-debuild -b -uc -us
+#这里看一下Hal的配置，安装位置怎么定义的？
+./configure --prefix=/opt/slurm/21.08.8 --sysconfdir=/opt/slurm/21.08.8/etc
+make -j16
+make install
 ~~~
-
-- The packages will be in the parent directory after debuild completes.
-
-  ~~~sh
-  #m1上
-  cd ..
-  dpkg -i slurm-smd_23.11.4-1_amd64.deb
-  dpkg -i slurm-smd-slurmctld_23.11.4-1_amd64.deb
-  dpkg -i slurm-smd-client_23.11.4-1_amd64.deb
-  dpkg -i slurm-smd-slurmdbd_23.11.4-1_amd64.deb
-  #c1上
-  cd ..
-  dpkg -i slurm-smd_23.11.4-1_amd64.deb
-  dpkg -i slurm-smd-slurmd_23.11.4-1_amd64.deb
-  dpkg -i slurm-smd-client_23.11.4-1_amd64.deb
-  #l1上
-  cd ..
-  dpkg -i slurm-smd_23.11.4-1_amd64.deb
-  dpkg -i slurm-smd-client_23.11.4-1_amd64.deb
-  ~~~
 
 - 配置控制节点slurm
 
@@ -448,201 +428,5 @@ sudo systemctl start slurmd
 sudo systemctl status slurmd
 ~~~
 
-# 常用命令
 
-## 查看集群状态
-
-~~~sh
-# 查看集群
-sinfo
-scontrol show partition
-scontrol show node
-
-# 提交作业 
-srun -N2 hostname
-scontrol show jobs
-
-# 查看作业
-squeue -a
-~~~
-
-## 交互式提交作业
-
-~~~sh
-# --mem=5M表示申请5MB内存，-c 1表示申请1个核心。
-srun -p compute -w c1 --mem=5M -c 1 hostname
-srun -J sample-job -p compute -N 2 -c 1 -n 1 whoami;hostname;ip a;
-srun -J my-sleep -p compute -w c[1-2] -N 2 -c 1 -n 1 sleep 10
-srun -p compute -w c1 sh ./a.sh
-~~~
-
-- 推荐使用squeue时指定输出格式如下
-
-```text
-squeue -o "%.5i %.10u %.2t %.10M %.6D %.4C %.7m   %R"
-```
-
-- 查看已经运行任务
-
-```bash
-sacct  -o jobid,jobname,partition,alloccpus,state,reqmem,averss,maxrss,exitcode  -j jobid
-```
-
-## sbatch提交作业
-
-~~~sh
-#!/bin/bash
-#SBATCH -J test             # 作业名是 test
-#SBATCH -p compute          # 提交到 compute分区
-#SBATCH -N 1                # 使用一个节点
-#SBATCH --cpus-per-task=1   # 每个进程占用一个 cpu核心
-#SBATCH -t 5:00             # 任务最大运行时间是5分钟
-#SBATCH -o test.out         # 将屏幕的输出结果保存到当前文件夹的test.out，问题：并未有输出
-hostname                    # 执行我的hostname命令
-~~~
-
-- 查看作业运行信息
-
-```bash
-sacct  -o jobid,jobname,partition,alloccpus,state,reqmem,averss,maxrss,exitcode  -j job-id
-```
-
-## 示例python作业
-
-~~~python
-#!/usr/bin/python3
-# -*- coding: UTF-8 -*-
-
-# SBATCH --output=/root/python_slurm.log
-# SBATCH --partition=compute
-# SBATCH -n 1 # 1 cores
-import os
-import sys
-from threading import Thread
-from time import sleep, ctime
-
-sys.path.append(os.getcwd())
-
-
-class MyClass(object):
-
-    def func(self, name, sec):
-        print('---Start---', name, 'time', ctime())
-        sleep(sec)
-        print('***End***', name, 'time', ctime())
-
-
-def main():
-    # 创建 Thread 实例
-    t1 = Thread(target=MyClass().func, args=(1, 1))
-    t2 = Thread(target=MyClass().func, args=(2, 2))
-
-    # 启动线程运行
-    t1.start()
-    t2.start()
-
-    # 等待所有线程执行完毕
-    t1.join()  # join() 等待线程终止，要不然一直挂起
-    t2.join()
-
-    
-if __name__ == "__main__":
-    main()
-scp thread_demo.py root@c1:/root
-srun python /root/thread_demo.py 
-cpu-bind=MASK - c1, task  0  0 [8685]: mask 0x1 set
-('---Start---', 1, 'time', 'Thu Jun 15 19:17:46 2023')
-('---Start---', 2, 'time', 'Thu Jun 15 19:17:46 2023')
-('***End***', 1, 'time', 'Thu Jun 15 19:17:47 2023')
-('***End***', 2, 'time', 'Thu Jun 15 19:17:48 2023')
-~~~
-
-- python提交作业
-
-~~~python
-#!/usr/bin/env python3
-
-import subprocess
-"""
-#提交单个作业
-#SBATCH --job-name=JOBNAME      %指定作业名称
-#SBATCH --partition=debug       %指定分区
-#SBATCH --nodes=2               %指定节点数量
-#SBATCH --cpus-per-task=1       %指定每个进程使用核数，不指定默认为1
-#SBATCH -n 32       %指定总进程数；不使用cpus-per-task，可理解为进程数即为核数
-#SBATCH --ntasks-per-node=16    %指定每个节点进程数/核数,使用-n参数（优先级更高），变为每个节点最多运行的任务数
-#SBATCH --nodelist=node[3,4]    %指定优先使用节点
-#SBATCH --exclude=node[1,5-6]   %指定避免使用节点
-#SBATCH --time=dd-hh:mm:ss      %作业最大运行时长，参考格式填写
-#SBATCH --output=file_name      %指定输出文件输出
-#SBATCH --error=file_name       %指定错误文件输出
-#SBATCH --mail-type=ALL         %邮件提醒,可选:END,FAIL,ALL
-#SBATCH --mail-user=address     %通知邮箱地址
-"""
-job_script = """#!/bin/bash
-#SBATCH --job-name=myjob
-#SBATCH --output=myjob.out
-#SBATCH --ntasks=2
-#SBATCH --time=00:10:00
-#SBATCH --nodelist=c[2]
-#SBATCH --exclude=c[1]
-srun hostname
-sleep 100
-"""
-
-with open('job.sh', 'w') as f:
-    f.write(job_script)
-
-subprocess.call(['sbatch', 'job.sh'])
-~~~
-
-~~~sh
-#查看任务状态
-sacct -j ID-number
-~~~
-
-## 分配模式salloc提交作业
-
-~~~sh
-#使用salloc命令提交。为需实时处理的作业分配资源，典型场景为分配资源并启动一个shell，然 后用此shell执行srun命令去执行并行任务。
-#申请partition compute上申请一个核的资源
-salloc -p compute -N1 -n1 -q low -t 2:00:00
-#查看分配到的node
-squeue
-             JOBID PARTITION     NAME     USER ST       TIME  NODES NODELIST(REASON)
-                70   compute interact     root  R       3:59      1 c1
-                71   compute interact     root  R       0:10      1 c2
-# 登录c2调试作业
-ssh c2
-# 取消作业
-scancel 71
-# 查看作业是否还在执行
-squeue -j 71
-~~~
-
-## 常见命令
-
-~~~sh
-scontrol show nodes #显示所有计算节点
-#如果Compute Nodes的State=DOWN，则如下执行，将状态变成恢复
-scontrol update nodename=uc1 state=resume
-
-sacctmgr add cluster cluster-test
-squeue #检查队列状况
-scancel #结合作业ID，终止作业
-
-#信息查看
-scontrol show jobs              #显示作业数量
-scontrol show job JOBID         #查看作业的详细信息
-scontrol show node              #查看所有节点详细信息
-scontrol show node node-name    #查看指定节点详细信息
-scontrol show node | grep CPU   #查看各节点cpu状态
-scontrol show node node-name | grep CPU #查看指定节点cpu状态
-~~~
-
-## PBS vs Slurm
-
-![image-20240322155447470](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202403221554549.png)
-
-[HPC调度基础：slurm集群的部署与配置-天翼云开发者社区 - 天翼云 (ctyun.cn)](https://www.ctyun.cn/developer/article/363542369067077)
 
