@@ -120,7 +120,7 @@ net.bridge.bridge-nf-call-ip6tables = 1
 sysctl -p /etc/sysctl.conf
 ```
 
-## Harbor安装
+## 安装Harbor
 
 1. 为harbor创建自签发证书
 
@@ -616,6 +616,48 @@ url: jdbc:mysql://172.16.183.75:3306/tb_order?characterEncoding=utf-8
 ~~~sh
 cd /root/microservic-test
 mvn clean package -D maven.test.skip=true
+#打包完生成jar包，后面需要把jar包打成镜像。
 ~~~
 
 ## k8s中部署eureka
+
+- 登录harbor
+
+~~~sh
+docker login 172.16.183.74
+#admin
+#Harbor12345
+~~~
+
+- 创建拉取私有镜像需要的secret
+
+~~~sh
+kubectl create ns ms
+kubectl create secret docker-registry registry-pull-secret --docker-server=172.16.183.74 --docker-username=admin --docker-password=Harbor12345  -n ms
+#docker-registry是secret的类型
+~~~
+
+- harbor上创建项目：microsoftservice
+
+- 构建镜像
+
+~~~sh
+#上传java-8.tar.gz，这个是dockerfile构建镜像依赖的基础镜像包
+docker load -i jave-8.tar.gz
+cd /root/microservic-test/eureka-service
+docker build -t  172.16.183.74/microservice/eureka:v1 .
+~~~
+
+- 部署服务
+
+~~~sh
+cd /root/microservic-test/k8s
+#修改eureka.yaml文件，把镜像变成image: 172.16.183.74/microservice/eureka:v1
+kubectl apply -f eureka.yaml
+kubectl get pods -n ms
+#eureka是以stateful set形式部署的。pod有域名。
+#pod域名对应ingress-nginx-controller所在的node节点的IP地址。
+#电脑host添加 172.16.183.76 eureka.ctnrs.com，即可访问web UI界面。
+~~~
+
+## k8s中部署网关gateway服务
