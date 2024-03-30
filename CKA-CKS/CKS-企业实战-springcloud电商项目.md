@@ -646,6 +646,7 @@ kubectl create secret docker-registry registry-pull-secret --docker-server=172.1
 docker load -i jave-8.tar.gz
 cd /root/microservic-test/eureka-service
 docker build -t  172.16.183.74/microservice/eureka:v1 .
+docker push 172.16.183.74/microservice/eureka:v1
 ~~~
 
 - 部署服务
@@ -661,3 +662,12 @@ kubectl get pods -n ms
 ~~~
 
 ## k8s中部署网关gateway服务
+
+- 构建镜像
+
+~~~sh
+cd  microservic-test/gateway-service/
+docker build -t 172.16.183.74/microservice/gateway:v1 .
+docker push 172.16.183.74/microservice/gateway:v1
+~~~
+
