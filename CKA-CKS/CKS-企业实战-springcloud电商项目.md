@@ -537,7 +537,6 @@ wget http://repo.mysql.com/mysql-community-release-el7-5.noarch.rpm
 rpm -ivh mysql-community-release-el7-5.noarch.rpm
 yum install mysql-server -y
 chown mysql:mysql -R /var/lib/mysql
-
 ~~~
 
 ## 初始化
@@ -570,3 +569,53 @@ use tb_product
 source /root/product.sql
 ~~~
 
+## 授权数据库
+
+~~~sh
+grant all on *.* to 'root'@'%' identified by '111111';
+flush privileges;
+~~~
+
+# 将springlcloud项目部署到K8S平台
+
+## 安装openjdk和maven
+
+~~~sh
+#master上操作
+yum install java-1.8.0-openjdk  maven-3.0.5* -y
+~~~
+
+## 配置微服务源码
+
+~~~sh
+#上传微服务的源代码
+unzip microservic-test.zip
+cd microservic-test
+~~~
+
+~~~sh
+#修改源代码，更改数据库源代码地址
+#库存数据库
+vim /root/microservic-test/stock-service/stock-service-biz/src/main/resources/application-fat.yml
+jdbc:mysql://172.16.183.75:3306/tb_stock?characterEncoding=utf-8  
+#变成自己的数据库地址
+
+#产品数据库
+vim /root/microservic-test/product-service/product-service-biz/src/main/resources/application-fat.yml 
+jdbc:mysql://172.16.183.75:3306/tb_product?characterEncoding=utf-8
+#变成自己的数据库地址
+
+#订单数据库
+vim /root/microservic-test/order-service/order-service-biz/src/main/resources/application-fat.yml
+url: jdbc:mysql://172.16.183.75:3306/tb_order?characterEncoding=utf-8 
+#变成自己的数据库地址
+~~~
+
+## maven编译构建打包源代码
+
+~~~sh
+cd /root/microservic-test
+mvn clean package -D maven.test.skip=true
+~~~
+
+## k8s中部署eureka
