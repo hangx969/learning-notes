@@ -627,6 +627,7 @@ mvn clean package -D maven.test.skip=true
 docker login 172.16.183.74
 #admin
 #Harbor12345
+#登录失败就重启harbor实例
 ~~~
 
 - 创建拉取私有镜像需要的secret
@@ -654,7 +655,7 @@ docker push 172.16.183.74/microservice/eureka:v1
 ~~~sh
 cd /root/microservic-test/k8s
 #修改eureka.yaml文件，把镜像变成image: 172.16.183.74/microservice/eureka:v1
-kubectl apply -f eureka.yaml
+kubectl apply -f eureka.yaml #yaml文件里面定义了ingress、svc、sts
 kubectl get pods -n ms
 #eureka是以stateful set形式部署的。pod有域名。
 #pod域名对应ingress-nginx-controller所在的node节点的IP地址。
@@ -670,4 +671,92 @@ cd  microservic-test/gateway-service/
 docker build -t 172.16.183.74/microservice/gateway:v1 .
 docker push 172.16.183.74/microservice/gateway:v1
 ~~~
+
+- 部署服务
+
+~~~sh
+cd /root/microservic-test/k8s
+#修改gateway.yaml文件，把镜像变成image: 172.16.183.74/microservice/gateway:v1
+kubectl apply -f gateway.yaml
+#ateway的域名是gateway.ctnrs.com，IP是ingress controller对应的IP。修改host文件后即可域名访问
+~~~
+
+## k8s中部署前端portal页面
+
+- 构建镜像
+
+~~~sh
+cd  /root/microservic-test/portal-service
+docker build -t  172.16.183.74/microservice/portal:v1 .
+docker push   172.16.183.74/microservice/portal:v1
+~~~
+
+- 部署服务
+
+~~~sh
+cd /root/microservic-test/k8s
+#修改portal.yaml文件，把镜像变成image: 172.16.183.74/microservice/portal:v1
+kubectl apply -f portal.yaml
+#eureka.ctnrs.com中查看portal服务是否注册
+#portal前端页面为：portal.ctnrs.com
+~~~
+
+## k8s重部署订单服务
+
+- 构建镜像
+
+~~~sh
+cd /root/microservic-test/order-service/order-service-biz
+docker build -t  192.168.40.132/microservice/order:v1 .
+docker push   192.168.40.132/microservice/order:v1
+~~~
+
+- 部署服务
+
+~~~sh
+cd /root/microservic-test/k8s
+#修改order.yaml文件，把镜像变成image: 192.168.40.132/microservice/order:v1
+kubectl apply -f order.yaml
+~~~
+
+## k8s中部署产品服务
+
+- 构建镜像
+
+~~~sh
+cd  /root/microservic-test/product-service/product-service-biz
+docker build -t  192.168.40.132/microservice/product:v1 .
+docker push   192.168.40.132/microservice/product:v1
+~~~
+
+- 部署服务
+
+~~~sh
+cd /root/microservic-test/k8s
+#修改product.yaml文件，把镜像变成image: 192.168.40.132/microservice/product:v1
+kubectl apply -f product.yaml
+~~~
+
+## k8s中部署库存服务
+
+- 构建镜像
+
+~~~sh
+cd  /root/microservic-test/stock-service/stock-service-biz
+docker build -t  192.168.40.132/microservice/stock:v1 .
+docker push   192.168.40.132/microservice/stock:v1
+~~~
+
+- 部署服务
+
+~~~sh
+cd /root/microservic-test/k8s
+#修改stock.yaml文件，把镜像变成image: 192.168.40.132/microservice/stock:v1
+kubectl apply -f stock.yaml
+#eureka.ctnrs.com中检查各项服务已经部署完成。
+~~~
+
+
+
+
 
