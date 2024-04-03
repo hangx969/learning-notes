@@ -1205,6 +1205,16 @@ scontrol show jobs
 
 # 查看作业
 squeue -a
+
+#计算节点查看slurmd报错
+sudo slurmd -cDvvvvv
+
+#重启控制节点组件
+systemctl daemon-reload && systemctl restart slurmctld && systemctl restart slurmdbd
+systemctl status slurmctld && systemctl status slurmdbd
+
+#重启计算节点组件
+systemctl daemon-reload && systemctl restart slurmd && systemctl status slurmd
 ~~~
 
 ## 交互式提交作业

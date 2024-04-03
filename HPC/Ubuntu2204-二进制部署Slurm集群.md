@@ -436,7 +436,7 @@ SlurmdLogFile=/var/log/slurm/slurmd.log
 #
 #
 # COMPUTE NODES
-NodeName=uc1 NodeAddr=172.16.183.131 CPUs=2 RealMemory=3969468 Sockets=2 CoresPerSocket=1 ThreadsPerCore=1 State=UNKNOWN
+NodeName=uc1 NodeAddr=172.16.183.131 CPUs=2 RealMemory=5886 Sockets=2 CoresPerSocket=1 ThreadsPerCore=1 State=UNKNOWN
 PartitionName=debug Nodes=ALL Default=YES MaxTime=1 State=UP
 EOF
 ~~~
