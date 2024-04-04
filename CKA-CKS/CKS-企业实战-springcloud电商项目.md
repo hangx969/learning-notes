@@ -1036,5 +1036,80 @@ version = 2
   uid = 0
 ~~~
 
+# 全链路监控
+
+## 介绍
+
+- 在分布式微服务架构中，系统为了接收并处理一个前端用户请求，需要让多个微服务应用协同工作，其中的每一个微服务应用都可以用不同的编程语言构建，由不同的团队开发，并可以通过多个对等的应用实例实现水平扩展，甚至分布在横跨多个数据中心的数千台服务器上。单个用户请求会引发不同应用之间产生一串顺序性的调用关系，如果要对这些调用关系进行监控，了解每个应用如何调用，这就产生了全链路监控。
+
+  ![image-20240404212358708](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202404042124892.png)
+
+## 常见工具
+
+- Zipkin
+  - **github：**https://github.com/openzipkin/zipkin
+  - zipkin是一个分布式的追踪系统，它能够帮助你收集服务架构中解决问题需要的时间数据，功能包括收集和查找这些数据。如果日志文件中有跟踪ID，可以直接跳转到它。否则，可以根据服务、操作名称、标记和持续时间等属性进行查询。例如在服务中花费的时间百分比，以及哪些环节操作失败。特点是轻量，使用部署简单。zipkin还提供了一个UI界面，它能够显示通过每个应用程序的跟踪请求数。这有助于识别聚合行为，包括错误路径或对不推荐使用的服务的调用。
+
+
+- Skywalking
+  - github: https://github.com/apache/incubator-skywalking
+  - skywalking是本土开源的调用链追踪系统，包括监控、跟踪、诊断功能，目前已加入Apache孵化器，专门为微服务、云本地和基于容器（Docker、Kubernetes、Mesos）架构设计。
+
+- Pinpoint
+
+  - github: https://github.com/naver/pinpoint
+
+  - pinpoint是韩国人开源的基于字节码注入的调用链分析，以及应用监控分析工具。Pinpoint提供了一个解决方案，可以帮助分析系统的整体结构，以及通过跟踪分布式应用程序中的事务来分析其中的组件是如何相互连接的。
+  - 对代码无侵入，把pinpoint代理包放到源码路径下面，编译就行。
+
+## pinpoint监控微服务
+
+### 环境准备
+
+- 新建一台pinpoint机器：
+  - 172.16.180.73
+- 初始化步骤与前面相同。
+
+### 安装docker
+
+~~~sh
+yum install -y docker-ce-19.03.7-3.el7
+systemctl enable docker && systemctl start docker && systemctl status docker
+#修改docker配置文件
+cat > /etc/docker/daemon.json <<EOF
+{
+"registry-mirrors":["https://rsbud4vc.mirror.aliyuncs.com","https://registry.docker-cn.com","https://docker.mirrors.ustc.edu.cn","https://dockerhub.azk8s.cn","http://hub-mirror.c.163.com","http://qtid6917.mirror.aliyuncs.com"], 
+"insecure-registries":["172.16.183.74"]
+}
+EOF
+systemctl daemon-reload && systemctl restart docker && systemctl status docker
+~~~
+
+### 安装pinpoint
+
+~~~sh
+yum install docker-compose -y
+# 拉取安装pinpoint服务需要的镜像，把pinpoint-image.tar.gz镜像压缩包上传到pinpoint机器上，手动解压：
+docker load -i pinpoint-image.tar.gz
+#通过下面命令也可以把安装pinpoint需要的镜像在线获取，但是速度较慢，可以通过上面手动解压方式拉取
+docker-compose pull 
+
+#把pinpoint-docker-2.0.1.zip上传到pinpoint机器上，unzip解压
+unzip pinpoint-docker-2.0.1.zip
+
+cd pinpoint-docker-2.0.1
+#修改docker-compose.yml文件的version版本，如2.2，变成自己支持的版本
+#version: "3.6" 变成 version: "2.2"
+
+#启动服务
+docker-compose up -d 
+#查看对应的服务是否启动
+docker ps | grep pinpoint 
+#找到pinpoint-web，可看到在宿主机绑定的端口是8079，
+#在浏览器访问ip:8079即可访问pinpoint的web ui界面
+~~~
+
+### 部署电商项目-带pinpoint客户端 -- 0404到这里
+
 
 
