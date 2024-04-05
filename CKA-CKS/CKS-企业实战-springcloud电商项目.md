@@ -1062,15 +1062,15 @@ version = 2
   - pinpoint是韩国人开源的基于字节码注入的调用链分析，以及应用监控分析工具。Pinpoint提供了一个解决方案，可以帮助分析系统的整体结构，以及通过跟踪分布式应用程序中的事务来分析其中的组件是如何相互连接的。
   - 对代码无侵入，把pinpoint代理包放到源码路径下面，编译就行。
 
-## pinpoint监控微服务
+# pinpoint监控微服务
 
-### 环境准备
+## 环境准备
 
 - 新建一台pinpoint机器：
   - 172.16.180.73
 - 初始化步骤与前面相同。
 
-### 安装docker
+## 安装docker
 
 ~~~sh
 yum install -y docker-ce-19.03.7-3.el7
@@ -1085,7 +1085,7 @@ EOF
 systemctl daemon-reload && systemctl restart docker && systemctl status docker
 ~~~
 
-### 安装pinpoint
+## 安装pinpoint
 
 ~~~sh
 yum install docker-compose -y
@@ -1106,10 +1106,64 @@ docker-compose up -d
 #查看对应的服务是否启动
 docker ps | grep pinpoint 
 #找到pinpoint-web，可看到在宿主机绑定的端口是8079，
-#在浏览器访问ip:8079即可访问pinpoint的web ui界面
+#在浏览器访问ip:8079即可访问pinpoint的web ui界面(http://172.16.183.73:8079)
 ~~~
 
-### 部署电商项目-带pinpoint客户端 -- 0404到这里
+## 部署电商项目-带pinpoint客户端 -- 0404到这里
 
+- 上传源码包到master1
 
+~~~sh
+unzip microservic-test-dev1.zip
+~~~
 
+- 配置数据库连接地址
+
+~~~sh
+#1）修改库存数据库
+vim /root/microservic-test-dev1/stock-service/stock-service-biz/src/main/resources/application-fat.yml
+jdbc:mysql://172.16.183.75:3306/tb_stock?characterEncoding=utf-8  
+
+#2）修改产品数据库
+vim /root/microservic-test-dev1/product-service/product-service-biz/src/main/resources/application-fat.yml
+jdbc:mysql://172.16.183.75:3306/tb_product?characterEncoding=utf-8
+
+#3）修改订单数据库
+vim /root/microservic-test-dev1/order-service/order-service-biz/src/main/resources/application-fat.yml
+url: jdbc:mysql://172.16.183.75:3306/tb_order?characterEncoding=utf-8 
+~~~
+
+- 修改配置，指定pinpoint服务端
+
+> - 源代码包里面的pinpoint包是怎么来的？
+> - 部署完pinpoint,在右侧设置里面点击installation,会给pinpoint的github链接，下载下来解压出来一个pinpoint目录，放到你的项目源码路径下
+
+~~~sh
+cd  /root/microservic-test-dev1/product-service/product-service-biz/pinpoint
+#打开pinpoint.config，需要修改的地方如下：
+profiler.collector.ip=172.16.183.73
+
+cd /root/microservic-test-dev1/order-service/order-service-biz/pinpoint
+#打开pinpoint.config，需要修改的地方如下：
+profiler.collector.ip=172.16.183.73
+
+cd /root/microservic-test-dev1/stock-service/stock-service-biz/pinpoint
+#打开pinpoint.config，需要修改的地方如下：
+profiler.collector.ip=172.16.183.73
+
+cd /root/microservic-test-dev1/portal-service/pinpoint
+#打开pinpoint.config，需要修改的地方如下：
+profiler.collector.ip=172.16.183.73
+
+cd /root/microservic-test-dev1/gateway-service/pinpoint
+#打开pinpoint.config，需要修改的地方如下：
+profiler.collector.ip=172.16.183.73
+
+cd /root/microservic-test-dev1/eureka-service/pinpoint
+#打开pinpoint.config，需要修改的地方如下：
+profiler.collector.ip=172.16.183.73
+
+#上面修改的ip是部署pinpoint的机器的ip地址，也就是pinpoint的服务端
+~~~
+
+## 通过Maven编译、打包、构建代码
