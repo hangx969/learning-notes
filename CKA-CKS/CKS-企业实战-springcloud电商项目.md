@@ -729,7 +729,7 @@ docker push   172.16.183.74/microservice/order:v1
 
 ~~~sh
 cd /root/microservic-test/k8s
-#修改order.yaml文件，把镜像变成image: 192.168.40.132/microservice/order:v1
+#修改order.yaml文件，把镜像变成image: 172.16.183.74/microservice/order:v1
 kubectl apply -f order.yaml
 ~~~
 
@@ -747,7 +747,7 @@ docker push   172.16.183.74/microservice/product:v1
 
 ~~~sh
 cd /root/microservic-test/k8s
-#修改product.yaml文件，把镜像变成image: 192.168.40.132/microservice/product:v1
+#修改product.yaml文件，把镜像变成image: 172.16.183.74/microservice/product:v1
 kubectl apply -f product.yaml
 ~~~
 
@@ -765,7 +765,7 @@ docker push 172.16.183.74/microservice/stock:v1
 
 ~~~sh
 cd /root/microservic-test/k8s
-#修改stock.yaml文件，把镜像变成image: 192.168.40.132/microservice/stock:v1
+#修改stock.yaml文件，把镜像变成image: 172.16.183.74/microservice/stock:v1
 kubectl apply -f stock.yaml
 #eureka.ctnrs.com中检查各项服务已经部署完成。
 ~~~
@@ -1167,3 +1167,26 @@ profiler.collector.ip=172.16.183.73
 ~~~
 
 ## 通过Maven编译、打包、构建代码
+
+~~~sh
+#控制节点操作
+cd /root/microservic-test-dev1
+mvn clean package -D maven.test.skip=true
+~~~
+
+## 部署带pinpoint客户端的产品服务
+
+~~~sh
+kubectl create ns ms && kubectl create secret docker-registry registry-pull-secret --docker-server=172.16.183.74 --docker-username=admin --docker-password=Harbor12345  -n ms
+
+cd /root/microservic-test-dev1/product-service/product-service-biz
+docker build -t 172.16.183.74/microservice/product:v2 .
+docker push 172.16.183.74/microservice/product:v2
+
+cd  /root/microservic-test-dev1/k8s
+#修改product.yaml文件，把镜像变成image: 172.16.183.74/microservice/product:v2
+
+#pinpoint端即可看到新建出来的服务
+http://172.16.183.73:8079
+~~~
+
