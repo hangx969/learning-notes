@@ -1200,7 +1200,7 @@ scontrol show partition
 scontrol show node
 
 # 提交作业 
-srun -N2 hostname
+srun -N1 hostname
 scontrol show jobs
 
 # 查看作业
@@ -1215,6 +1215,10 @@ systemctl status slurmctld && systemctl status slurmdbd
 
 #重启计算节点组件
 systemctl daemon-reload && systemctl restart slurmd && systemctl status slurmd
+
+#恢复计算节点状态
+#如果Compute Nodes的State=DOWN，则如下执行，将状态变成恢复
+scontrol update nodename=c1 state=resume
 ~~~
 
 ## 交互式提交作业
@@ -1244,12 +1248,14 @@ sacct  -o jobid,jobname,partition,alloccpus,state,reqmem,averss,maxrss,exitcode 
 ~~~sh
 #!/bin/bash
 #SBATCH -J test             # 作业名是 test
-#SBATCH -p compute          # 提交到 compute分区
+#SBATCH -p cpu              # 提交到 cpu分区
 #SBATCH -N 1                # 使用一个节点
 #SBATCH --cpus-per-task=1   # 每个进程占用一个 cpu核心
 #SBATCH -t 5:00             # 任务最大运行时间是5分钟
 #SBATCH -o test.out         # 将屏幕的输出结果保存到当前文件夹的test.out，问题：并未有输出
 hostname                    # 执行我的hostname命令
+
+sbatch test.sh #提交作业
 ~~~
 
 - 查看作业运行信息
@@ -1378,6 +1384,10 @@ scontrol show nodes #显示所有计算节点
 #如果Compute Nodes的State=DOWN，则如下执行，将状态变成恢复
 scontrol update nodename=uc1 state=resume
 
+# Why is a node shown in state DOWN when the node has registered for service?
+# https://slurm.schedmd.com/faq.html#return_to_service
+#The configuration parameter ReturnToService in slurm.conf controls how DOWN nodes are handled. Set its value to one in order for DOWN nodes to automatically be returned to service once the slurmd daemon registers with a valid node configuration. A value of zero is the default and results in a node staying DOWN until an administrator explicitly returns it to service using the command "scontrol update NodeName=whatever State=RESUME". See "man slurm.conf" and "man scontrol" for more details.
+
 sacctmgr add cluster cluster-test
 squeue #检查队列状况
 scancel #结合作业ID，终止作业
@@ -1390,6 +1400,18 @@ scontrol show node node-name    #查看指定节点详细信息
 scontrol show node | grep CPU   #查看各节点cpu状态
 scontrol show node node-name | grep CPU #查看指定节点cpu状态
 ~~~
+
+# slurm用户账户管理?
+
+~~~sh
+#在Slurm中，账户通常用于跟踪和控制用户对集群资源的使用。分区则定义了一组节点和作业在这些节点上的运行参数。
+#查看所有的账户
+sacctmgr list assoc
+#查看账户和分区的关联
+sacctmgr show associations
+~~~
+
+
 
 # PBS vs Slurm
 
