@@ -439,7 +439,7 @@ $ sudo apt list --upgradable | grep -e "-security" | awk -F "/" '{print $1}' | x
 apt changelog packagename
 ~~~
 
-## Jade VM 安全补丁逻辑
+## VM unattended-upgrade逻辑
 
 ~~~sh
 sudo crontab -e

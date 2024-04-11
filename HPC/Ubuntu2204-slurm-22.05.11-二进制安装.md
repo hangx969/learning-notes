@@ -216,7 +216,7 @@ https://slurm.schedmd.com/quickstart_admin.html#debuild
 ~~~sh
 wget https://download.schedmd.com/slurm/slurm-22.05.11.tar.bz2
 #Install basic Debian package build requirements:
-sudo apt-get install build-essential fakeroot devscripts equivs make hwloc libhwloc-dev libmunge-dev libmunge2 mariadb-server libmysqlclient-dev
+sudo apt-get install build-essential fakeroot devscripts equivs make hwloc libhwloc-dev mariadb-server libmysqlclient-dev #libmunge-dev libmunge2
 #Unpack the distributed tarball:
 sudo tar -xaf slurm*tar.bz2
 cd slurm-22.05.11
