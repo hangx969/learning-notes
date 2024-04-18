@@ -522,6 +522,7 @@ EOF
 - 客户端/etc/slurm/下新建gres.conf
 
 ~~~sh
+#AutoDetect=nvml
 Name=gpu Type=H800 File=/dev/nvidia[0-7]
 ~~~
 
@@ -931,13 +932,12 @@ scontrol show node | grep CPU   #查看各节点cpu状态
 scontrol show node node-name | grep CPU #查看指定节点cpu状态
 ~~~
 
-# slurm用户账户管理?
+# slurm用户账户管理
 
 ~~~sh
 #在Slurm中，账户通常用于跟踪和控制用户对集群资源的使用。分区则定义了一组节点和作业在这些节点上的运行参数。
-#查看所有的账户
+#查看所有的账户、查看账户和分区的关联
 sacctmgr list assoc
-#查看账户和分区的关联
-sacctmgr show associations
+#或者sacctmgr show associations
 ~~~
 
