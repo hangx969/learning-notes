@@ -1190,3 +1190,63 @@ cd  /root/microservic-test-dev1/k8s
 http://172.16.183.73:8079
 ~~~
 
+## 部署带pinpoint客户端的订单服务
+
+~~~sh
+cd  /root/microservic-test-dev1/order-service/order-service-biz
+docker  build -t  172.16.183.74/microservice/order:v2 .
+docker push   172.16.183.74/microservice/order:v2
+docker push   172.16.183.74/microservice/order:v2
+cd /root/microservic-test-dev1/k8s
+#修改order.yaml文件，把镜像变成image: 172.16.183.74/microservice/order:v2
+kubectl apply -f order.yaml
+kubectl get pods -n ms  | grep order
+~~~
+
+## 部署带pinpoint agent端的stock服务
+
+```sh
+cd  /root/microservic-test-dev1/stock-service/stock-service-biz
+docker build -t  172.16.183.74/microservice/stock:v2 .
+docker push   172.16.183.74/microservice/stock:v2
+cd /root/microservic-test-dev1/k8s
+#修改stock.yaml文件，把镜像变成image: 172.16.183.74/microservice/stock:v2
+kubectl apply -f stock.yaml
+kubectl get pods -n ms  | grep stock
+```
+
+## 部署带pinpoint agent端的portal服务
+
+~~~sh
+cd /root/microservic-test-dev1/portal-service/
+docker build -t  172.16.183.74/microservice/portal:v2 .
+docker push   172.16.183.74/microservice/portal:v2
+cd /root/microservic-test-dev1/k8s
+#修改portal.yaml文件，把镜像变成image: 172.16.183.74/microservice/portal:v2
+kubectl apply -f portal.yaml
+kubectl get pods -n ms  | grep portal
+~~~
+
+## 部署带pinpoint agent端的网关服务
+
+~~~sh
+#1）构建镜像
+cd  /root/microservic-test-dev1/gateway-service/
+docker build -t  172.16.183.74/microservice/gateway:v2 .
+docker push 172.16.183.74/microservice/gateway:v2
+#2）部署服务
+cd /root/microservic-test-dev1/k8s
+修改gateway.yaml文件，把镜像变成image: 172.16.183.74/microservice/gateway:v2
+#3）更新yaml文件
+kubectl apply -f gateway.yaml
+#4）查看pod状态
+kubectl get pods -n ms  | grep gateway
+#5）看到如下running说明pod运行正常
+gateway-c94f4d95c-2dqvw   1/1     Running   0          31s
+gateway-c94f4d95c-l4jmq    1/1     Running   0          31s
+#6）配置hosts文件
+#gateway的域名是gateway.ctnrs.com，需要在电脑找到hosts文件，再增加一行如下：
+192.168.1.64  gateway.ctnrs.com
+#在浏览器访问eureka.ctnrs.com
+~~~
+
