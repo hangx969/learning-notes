@@ -14,6 +14,7 @@ nohup cp /path/to/source /path/to/destination &
 
 ```sh
 tail nohup.out
+tail -f -n 1 nohup.out #持续监控最后一行的输出
 ```
 
 - 如果`cp`命令成功完成，那么`nohup.out`文件可能不会有任何输出。如果`cp`命令遇到错误，那么错误信息将会被写入`nohup.out`文件。
