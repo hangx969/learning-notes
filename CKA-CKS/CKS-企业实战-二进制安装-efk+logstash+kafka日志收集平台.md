@@ -374,4 +374,4 @@ http://172.16.183.191:5601/app/management/kibana/indexPatterns
 
 - 回到kibana首页，点击Discover查看日志
 
-  ![image-20240426220309720](/home/s0001969/.config/Typora/typora-user-images/image-20240426220309720.png)
+  ![image-20240426220309720](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202404262214829.png)
