@@ -471,6 +471,8 @@ spec:
       protocol: TCP
 ~~~
 
+- 注：使用中发现，给containerd的config.toml配置了harbor之后，新部署的pod，即使镜像已经在本地，并且设置为IfNoePresent，containerd并不会识别到本地的镜像，反而会去镜像源拉取。将config中关于harbor的配置注释掉之后，又可以识别到本地镜像了。
+
 # k8s基于docker从harbor拉取镜像
 
 ## 改docker配置文件
