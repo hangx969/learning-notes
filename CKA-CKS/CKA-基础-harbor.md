@@ -154,7 +154,7 @@ docker pull 10.0.0.5/test/tomcat:v1
 
 ## containerd配置文件修改
 
-- 修改containerd.toml配置文件里的harbor的ip地址，变成自己真实环境的harbor的ip
+- 修改/etc/containerd/containerd.toml配置文件里的harbor的ip地址，变成自己真实环境的harbor的ip
 
 - 修改完之后重启containerd
 

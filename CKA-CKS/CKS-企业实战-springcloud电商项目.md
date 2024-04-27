@@ -186,8 +186,7 @@ sysctl -p /etc/sysctl.conf
    yum install docker-compose -y
    #安装harbor依赖的的离线镜像包docker-harbor-2-3-0.tar.gz上传到harbor机器解压。docker compose要用
    docker load -i docker-harbor-2-3-0.tar.gz 
-   cd /data/install/harbor
-   ./install.sh
+   cd /data/install/harbor && ./install.sh
    #出现✔ ----Harbor has been installed and started successfully.---- 表明安装成功。
    ```
    
@@ -195,14 +194,12 @@ sysctl -p /etc/sysctl.conf
 
    ```bash
    #如何停掉harbor：
-   cd /data/install/harbor
-   docker-compose stop 
+   cd /data/install/harbor && docker-compose stop 
    #如何启动harbor：
    sudo su
-   cd /data/install/harbor
-   docker-compose start
+   cd /data/install/harbor && docker-compose start
    ```
-
+   
    #注：harbor默认的账号密码：admin/Harbor12345
 
 5. 图形化界面访问harbor
@@ -715,7 +712,7 @@ kubectl apply -f portal.yaml
 #portal前端页面为：portal.ctnrs.com
 ~~~
 
-## k8s重部署订单服务
+## k8s中部署订单服务
 
 - 构建镜像
 
