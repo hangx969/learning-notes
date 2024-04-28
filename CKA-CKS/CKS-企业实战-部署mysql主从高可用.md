@@ -117,3 +117,42 @@ EOF
 
 # sts部署mysql高可用服务
 
+## mysql
+
+- MySQL是一种关系型数据库管理系统，关系数据库将数据保存在不同的表中，而不是将所有数据放在一个大仓库内，这样就增加了速度并提高了灵活性。MySQL所使用的 SQL 语言是用于访问数据库的最常用标准化语言。MySQL 软件采用了双授权政策，分为社区版和商业版，由于其体积小、速度快、总体拥有成本低，尤其是开放源码这一特点，一般中小型网站的开发都选择 MySQL 作为网站数据库。
+
+- mysql高可用方案
+
+  - MySQL高可用方案采用主从复制+读写分离，即由单一的master和多个slave所构成。
+  - 客户端通过master对数据库进行写操作，通过slave端进行读操作。master出现问题后，可以将应用切换到slave端。
+  - 此方案是MySQL官方提供的一种高可用解决方案，节点间的数据同步采用MySQL Replication技术。MySQL Replication从一个MySQL master的数据复制到一个或多个MySQL slave。
+  - 在默认情况下，复制是异步的；slave不需要一直接收来自主机的更新。根据配置，可以复制数据库中的所有数据库、选定的数据库，或者特定的表。
+
+  ![image-20240428092946740](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202404280931707.png)
+
+## 部署mysql
+
+- 创建configmap
+
+~~~yaml
+tee mysql-configmap.yaml <<'EOF' 
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql
+  labels:
+    app: mysql
+data:
+  master.cnf: |
+    [mysqld]
+    log-bin
+    log_bin_trust_function_creators=1
+    lower_case_table_names=1
+  slave.cnf: |
+    [mysqld]
+    super-read-only
+    log_bin_trust_function_creators=1
+EOF
+~~~
+
+- 创建svc
