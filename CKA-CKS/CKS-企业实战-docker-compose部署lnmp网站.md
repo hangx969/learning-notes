@@ -1,404 +1,234 @@
-# 搭建nfs供应商
+# LNMP
+
+- LNMP指的是Linux、Nginx、MySQL和PHP的组合，通常用于搭建和运行网站。
+
+# 安装docker-compose
+
+## 关闭selinux和防火墙
 
 ~~~sh
-#（1）yum安装nfs，所有节点安装
-yum install nfs-utils -y
-systemctl start nfs
-systemctl enable nfs.service
-#（2）在master上创建一个nfs共享目录
-mkdir  /data/v3 -p
-mkdir  /data/v4
-mkdir  /data/v5
-tee -a /etc/exports << 'EOF'
-/data/v3     *(rw,no_root_squash)
-/data/v4     *(rw,no_root_squash)
-/data/v5     *(rw,no_root_squash)
-EOF
-#使配置生效
-exportfs -arv
-systemctl restart nfs
+sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config
+reboot -f
+#关闭防火墙
+systemctl stop firewalld ; systemctl disable firewalld
 ~~~
 
-# 配置存储
+## 时间同步
 
 ~~~sh
-#创建ns
-kubectl create ns kube-ops
+yum install ntpdate -y
+ntpdate cn.pool.ntp.org
+crontab -e
+* */1 * * * /usr/sbin/ntpdate   cn.pool.ntp.org
 ~~~
 
-- 创建gitlab需要的pv和pvc
-
-~~~yaml
-tee pv-pvc-gitlab.yaml <<'EOF'
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: pv-gitlab
-spec:
-  capacity:
-    storage: 2Gi
-  accessModes:
-  - ReadWriteMany
-  persistentVolumeReclaimPolicy: Delete
-  nfs:
-    server: 192.168.40.180  #nfs服务端ip，即master1节点ip
-    path: /data/v5
----
-kind: PersistentVolumeClaim
-apiVersion: v1
-metadata:
-  name: pvc-gitlab
-  namespace: kube-ops
-spec:
-  accessModes:
-  - ReadWriteMany
-  resources:
-    requests:
-      storage: 2Gi
-EOF
-~~~
-
-- 创建postgresql需要的pv和pvc
-
-~~~yaml
-tee pv-pvc-postsql.yaml <<'EOF'
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: pv-postsql
-spec:
-  capacity:
-    storage: 2Gi
-  accessModes:
-  - ReadWriteMany
-  persistentVolumeReclaimPolicy: Delete
-  nfs:
-    server: 192.168.40.180
-    path: /data/v4
----
-kind: PersistentVolumeClaim
-apiVersion: v1
-metadata:
-  name: pvc-postsql
-  namespace: kube-ops
-spec:
-  accessModes:
-  - ReadWriteMany
-  resources:
-    requests:
-      storage: 2Gi
-EOF
-~~~
-
-- 创建redis需要的pv和pvc
-
-~~~yaml
-tee pv-pvc-redis.yaml <<'EOF'
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: pv-redis
-spec:
-  capacity:
-    storage: 2Gi
-  accessModes:
-  - ReadWriteMany
-  persistentVolumeReclaimPolicy: Delete
-  nfs:
-    server: 192.168.40.180
-    path: /data/v3
----
-kind: PersistentVolumeClaim
-apiVersion: v1
-metadata:
-  name: pvc-redis
-  namespace: kube-ops
-spec:
-  accessModes:
-  - ReadWriteMany
-  resources:
-    requests:
-      storage: 2Gi
-EOF
-~~~
-
-- 检查pvc绑定情况
+## 安装基础软件包
 
 ~~~sh
-kubectl get pvc -n kube-ops
+yum install -y yum-utils device-mapper-persistent-data lvm2 wget net-tools nfs-utils lrzsz gcc gcc-c++ make cmake libxml2-devel openssl-devel curl curl-devel unzip sudo ntp libaio-devel wget vim ncurses-devel autoconf automake zlib-devel  python-devel epel-release openssh-server socat  ipvsadm conntrack ntpdate telnet ipvsadm
 ~~~
 
-# 安装postgresql服务
+## 修改内核参数
 
-~~~yaml
-tee dep-postgresql.yaml <<'EOF'
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: postgresql
-  namespace: kube-ops
-  labels:
-    name: postgresql
-spec:
-  selector:
-    matchLabels:
-       name: postgresql
-  template:
-    metadata:
-      name: postgresql
-      labels:
-        name: postgresql
-    spec:
-      containers:
-      - name: postgresql
-        image: sameersbn/postgresql:10
-        imagePullPolicy: IfNotPresent
-        env:
-        - name: DB_USER
-          value: gitlab
-        - name: DB_PASS
-          value: passw0rd
-        - name: DB_NAME
-          value: gitlab_production
-        - name: DB_EXTENSION
-          value: pg_trgm
-        ports:
-        - name: postgres
-          containerPort: 5432
-        volumeMounts:
-        - mountPath: /var/lib/postgresql
-          name: data
-        livenessProbe:
-          exec:
-            command:
-            - pg_isready
-            - -h
-            - localhost
-            - -U
-            - postgres
-          initialDelaySeconds: 30
-          timeoutSeconds: 5
-        readinessProbe:
-          exec:
-            command:
-            - pg_isready
-            - -h
-            - localhost
-            - -U
-            - postgres
-          initialDelaySeconds: 5
-          timeoutSeconds: 1
-      volumes:
-      - name: data
-        persistentVolumeClaim:
-          claimName: pvc-postsql
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: svc-postgresql
-  namespace: kube-ops
-  labels:
-    name: postgresql
-spec:
-  ports:
-    - name: postgres
-      port: 5432
-      targetPort: postgres
-  selector:
-    name: postgresql
+~~~sh
+modprobe br_netfilter
+cat > /etc/sysctl.d/k8s.conf <<EOF
+net.bridge.bridge-nf-call-ip6tables = 1
+net.bridge.bridge-nf-call-iptables = 1
+net.ipv4.ip_forward = 1
+EOF
+sysctl -p /etc/sysctl.d/k8s.conf
+~~~
+
+## 配置yum源
+
+~~~sh
+#上传kubernetes.repo到/etc/yum.repos.d/目录中
+#添加docker在线源
+yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
+~~~
+
+## 启动docker
+
+```sh
+yum install docker-ce docker-compose -y
+systemctl start docker && systemctl enable docker.service
+```
+
+# 准备镜像
+
+~~~sh
+#上传mysql、nginx、php镜像
+docker load -i nginx.tar.gz
+docker load -i mysql.tar.gz
+docker load -i php.tar.gz
+~~~
+
+> docker-compose常用的命令
+>
+> ```sh
+> #启动并后台运行所有的服务 
+> docker-compose up -d 
+> #列出项目中目前的所有容器 
+> docker-compose ps 
+> #停止某个服务 
+> docker-compose stop 
+> #启动某个服务 
+> docker-compose start 
+> #停止并删除容器、网络、卷、镜像 
+> docker-compose down               
+> ```
+
+# docker-compose部署lnmp
+
+## 准备nginx配置文件
+
+~~~sh
+# nginx挂载目录
+mkdir /root/lnmp && cd /root/lnmp && mkdir nginx && cd nginx && mkdir conf && cd conf
+# nginx默认配置文件
+tee default.conf <<'EOF'
+server {
+    listen       80;
+    root   /usr/share/nginx/html;
+    index   index.html index.htm index.php;
+
+
+    # redirect server error pages to the static page /50x.html
+    #
+    error_page   500 502 503 504  /50x.html;
+    location = /50x.html {
+        root   /usr/share/nginx/html;
+    }
+
+    location / {
+        index  index.html index.htm index.php ;
+        try_files $uri $uri/ /index.php?$query_string;
+        autoindex  on;
+    }
+
+    location ~ \.php$ {
+        #php73是容器命名
+        fastcgi_pass   php73:9000;
+        fastcgi_index  index.php;
+        include        fastcgi_params;
+        fastcgi_param  PATH_INFO $fastcgi_path_info;
+        fastcgi_param  SCRIPT_FILENAME  /var/www/html/$fastcgi_script_name;
+    }
+
+}
 EOF
 ~~~
 
-# 安装redis服务
+## docker-compose yml文件
 
 ~~~yaml
-cat  gitlab-redis.yaml
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: redis
-  namespace: kube-ops
-  labels:
-    name: redis
-spec:
-  selector:
-    matchLabels:
-      name: redis
-  template:
-    metadata:
-      name: redis
-      labels:
-        name: redis
-    spec:
-      containers:
-      - name: redis
-        image: sameersbn/redis
-        imagePullPolicy: IfNotPresent
-        ports:
-        - name: redis
-          containerPort: 6379
-        volumeMounts:
-        - mountPath: /var/lib/redis
-          name: data
-        livenessProbe:
-          exec:
-            command:
-            - redis-cli
-            - ping
-          initialDelaySeconds: 30
-          timeoutSeconds: 5
-        readinessProbe:
-          exec:
-            command:
-            - redis-cli
-            - ping
-          initialDelaySeconds: 5
-          timeoutSeconds: 1
-      volumes:
-      - name: data
-        persistentVolumeClaim:
-          claimName: pvc-redis
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: svc-redis
-  namespace: kube-ops
-  labels:
-    name: redis
-spec:
-  ports:
-    - name: redis
-      port: 6379
-      targetPort: redis
-  selector:
-    name: redis
+cd /root/lnmp/
+tee docker-compose.yml <<'EOF'
+#定义docker compose yml版本
+version: "3"  
+networks:   
+  #创建了一个自定义的网络叫做lnmp
+   lnmp:
+#定义我们的服务对象
+services:   
+#自定义的服务名称
+  nginx:    
+     #镜像名称，默认拉取本地镜像，没有的话从远程获取
+     image: nginx:latest
+     #自定义容器的名称
+     container_name: c_nginx
+     #将宿主机的80端口映射到容器的80端口
+     ports:
+      - "80:80"
+     #将宿主机的~/lnmp/www目录和容器的/usr/share/nginx/html目录进行绑定，并设置rw权限
+     #将宿主机的~/lnmp/nginx/conf/default.conf和容器的/etc/nginx/conf.d/default.conf进行绑定
+     volumes:
+      - ~/lnmp/www/:/usr/share/nginx/html/:rw
+      - ~/lnmp/nginx/conf/default.conf:/etc/nginx/conf.d/default.conf
+     #设置环境变量，当前的时区
+     environment:
+      TZ: "Asia/Shanghai"
+     #容器是否随docker服务启动重启
+     restart: always
+     #容器加入名为lnmp的网络
+     networks:
+      - lnmp
+  php:
+    image: php:7.3.29-fpm
+    container_name: php73
+    volumes:
+      - ~/lnmp/www/:/var/www/html/:rw
+    restart: always
+    cap_add:
+      - SYS_PTRACE
+    networks:
+      - lnmp
+  mysql:
+    image: mysql:5.6
+    container_name: mysql56
+    ports:
+      - "3306:3306"
+    volumes:
+      - ~/lnmp/mysql/data:/var/lib/mysql/:rw
+    restart: always
+    networks:
+      - lnmp
+    environment:
+      MYSQL_ROOT_PASSWORD: "123456"
+      TZ: "Asia/Shanghai"
 EOF
+
+#基于docker-compose启动容器
+docker-compose up -d
 ~~~
 
-# 安装gitlab服务
+## 测试网站主页
 
-~~~yaml
-cat  gitlab.yaml
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: gitlab
-  namespace: kube-ops
-  labels:
-    name: gitlab
-spec:
-  selector:
-    matchLabels:
-        name: gitlab
-  template:
-    metadata:
-      name: gitlab
-      labels:
-        name: gitlab
-    spec:
-      containers:
-      - name: gitlab
-        image: sameersbn/gitlab:11.8.1
-        imagePullPolicy: IfNotPresent
-        env:
-        - name: TZ
-          value: Asia/Shanghai
-        - name: GITLAB_TIMEZONE
-          value: Beijing
-        - name: GITLAB_SECRETS_DB_KEY_BASE
-          value: long-and-random-alpha-numeric-string
-        - name: GITLAB_SECRETS_SECRET_KEY_BASE
-          value: long-and-RANDOM-ALPHA-NUMERIc-string
-        - name: GITLAB_SECRETS_OTP_KEY_BASE
-          value: long-and-random-alpha-numeric-string
-        - name: GITLAB_ROOT_PASSWORD
-          value: admin321
-        - name: GITLAB_ROOT_EMAIL
-          value: 1003665363@qq.com
-        - name: GITLAB_HOST
-          value: 192.168.40.180
-        - name: GITLAB_PORT
-          value: "30852"
-        - name: GITLAB_SSH_PORT
-          value: "32353"
-        - name: GITLAB_NOTIFY_ON_BROKEN_BUILDS
-          value: "true"
-        - name: GITLAB_NOTIFY_PUSHER
-          value: "false"
-        - name: GITLAB_BACKUP_SCHEDULE
-          value: daily
-        - name: GITLAB_BACKUP_TIME
-          value: 01:00
-        - name: DB_TYPE
-          value: postgres
-        - name: DB_HOST
-          value: postgresql
-        - name: DB_PORT
-          value: "5432"
-        - name: DB_USER
-          value: gitlab
-        - name: DB_PASS
-          value: passw0rd
-        - name: DB_NAME
-          value: gitlab_production
-        - name: REDIS_HOST
-          value: redis
-        - name: REDIS_PORT
-          value: "6379"
-        ports:
-        - name: http
-          containerPort: 80
-        - name: ssh
-          containerPort: 22
-        volumeMounts:
-        - mountPath: /home/git/data
-          name: data
-        livenessProbe:
-          httpGet:
-            path: /
-            port: 80
-          initialDelaySeconds: 180
-          timeoutSeconds: 5
-        readinessProbe:
-          httpGet:
-            path: /
-            port: 80
-          initialDelaySeconds: 5
-          timeoutSeconds: 1
-      volumes:
-      - name: data
-        persistentVolumeClaim:
-          claimName: pvc-gitlab
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: svc-gitlab
-  namespace: kube-ops
-  labels:
-    name: gitlab
-spec:
-  type: NodePort
-  selector:
-    name: gitlab
-  ports:
-    - name: http
-      port: 80
-      targetPort: http
-      nodePort: 30852
-    - name: ssh
-      port: 22
-      nodePort: 32353
-      targetPort: ssh
-EOF
+~~~sh
+cd /root/lnmp/www/
+echo "hello,welcome to study" > index.html
+#浏览器访问docker-compose机器ip:
+http://192.168.40.186/
 ~~~
 
-## 访问gitlab UI界面
+## 测试php服务
 
-- 查看gitlab svc的物理机映射端口`kubectl get svc svc-gitlab -n kube-ops`，浏览器访问物理机IP和端口即可访问UI界面
+~~~sh
+tee aa.php <<'EOF' 
+<?php
+  phpinfo();
+?>
+EOF
+#浏览器访问docker-compose机器ip:
+http://192.168.40.186/aa.php
+~~~
 
-- 初次登录需要Register，username和password随便起。
+## 连接mysql
 
-  ![image-20240428220506815](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202404282205114.png)
+~~~sh
+#安装了 `pdo`、`pdo_mysql` 和 `mysqli` 这三个扩展，这些扩展通常用于 PHP 与 MySQL 数据库进行交互。
+docker exec -it php73 /bin/bash
+docker-php-ext-install pdo pdo_mysql mysqli
+docker-php-ext-enable pdo pdo_mysql mysqli
+exit
+#重启docker-compose
+cd /root/lnmp/
+docker-compose restart
+
+#通过php脚本连接数据库
+cd /root/lnmp/www/
+tee mysql.php <<'EOF'
+<?php
+// 创建连接
+$conn = new mysqli('mysql56','root','123456');
+if($conn->connect_error){
+    die("连接失败，错误:" . $conn->connect_error);
+}
+echo "mysql连接成功";
+EOF
+
+#浏览器访问docker-compose机器ip：
+http://192.168.40.186/mysql.php
+~~~
+

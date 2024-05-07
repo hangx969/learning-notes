@@ -165,11 +165,12 @@ metadata:
   labels:
     app: elasticsearch
 spec:
-  ports:
-    - port: 9200
-      name: elasticsearch
   type: NodePort
   selector:
     app: elasticsearch
+  ports:
+    - port: 9200
+      name: elasticsearch
 ~~~
 
+- 访问ES集群：任意node IP加NodePort
