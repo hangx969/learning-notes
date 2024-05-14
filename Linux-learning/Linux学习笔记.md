@@ -37,6 +37,18 @@
 
 - Linux是内核，发行版是内核+程序包等扩展功能形成的封装版
 
+Linux发行版与Windows或Mac OS（操作系统）一样，Linux由多种类型组成，称为分发,每个发行版都很相似，但是不完全一样。一般情况下，Linux发行版是各种应用程序（软件）的集合，从而来适应使用目的，除了在服务器上安装之外，其他还要提前设置，以便可以立即进行实际使用。
+
+Linux发行版主要有：Debian类型、Slackware系列、Red Hat
+1.Debian类型：
+Debian拥有出色的性能，可用于嵌入式设备等众多应用。此外，它已经发展成为一种流行的Linux发行版，名为Ubuntu。 
+2.Slackware系列：
+Slackware管理方法比其他线路更复杂，对于初学者来说相对困难。Slackware著名的发行版包括openSUSE，Plamo Linux和Puppy Linux。 
+3.Red Hat：
+目前Red Hat大致分为两类，第一个是红帽企业Linux（RHEL），有些服务是要收费的。另一种是名为Fedora（Fedora）的免费发行版。
+4、Centos
+CentOS是Linux发行版之一，它是来自于Red Hat Enterprise Linux依照开放源代码规定释出的源代码所编译而成。由于出自同样的源代码，因此有些要求高度稳定性的服务器以CentOS替代商业版的Red Hat Enterprise Linux使用。
+
 ## 004 Unix与Linux
 
 -  1970s 贝尔实验室+Ken Tompson + Dennis = Unix诞生 （多用户分时操作系统）
