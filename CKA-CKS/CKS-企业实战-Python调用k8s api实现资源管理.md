@@ -1,404 +1,160 @@
-# 搭建nfs供应商
+# 前置条件
 
-~~~sh
-#（1）yum安装nfs，所有节点安装
-yum install nfs-utils -y
-systemctl start nfs
-systemctl enable nfs.service
-#（2）在master上创建一个nfs共享目录
-mkdir  /data/v3 -p
-mkdir  /data/v4
-mkdir  /data/v5
-tee -a /etc/exports << 'EOF'
-/data/v3     *(rw,no_root_squash)
-/data/v4     *(rw,no_root_squash)
-/data/v5     *(rw,no_root_squash)
-EOF
-#使配置生效
-exportfs -arv
-systemctl restart nfs
+- 安装python（pycharm）
+
+- 安装kubernetes包
+
+  ~~~sh
+  python -m pip install --upgrade pip
+  pip install ignore-installed kubernetes
+  ~~~
+
+- 将master节点上的/root/.kube/config下载到本地
+
+- 部署pod的yaml文件
+
+  ~~~yaml
+  apiVersion: v1
+  kind: Pod
+  metadata:
+    name: po-nginx
+    namespace: default
+  spec:
+    containers:
+    - name: nginx
+      image: nginx
+      imagePullPolicy: IfNotPresent
+  ~~~
+
+- 部署deploy的yam文件
+
+  ~~~yaml
+  apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    name: dep-nginx
+  spec:
+    replicas: 2
+    selector:
+      matchLabels:
+        app: myapp
+        version: v1
+    template:
+      metadata:
+        labels:
+          app: myapp
+          version: v1
+      spec:
+        containers:
+        - name: nginx
+          image: nginx
+          imagePullPolicy: IfNotPresent
+          ports:
+          - containerPort: 80
+  ~~~
+
+# 查看资源
+
+~~~python
+import kubernetes
+from kubernetes import client,config
+config.kube_config.load_kube_config(config_file='E:\work\KEEP-WORKING\CS-Learning\python\python-k8s')
+
+
+#获取CoreV1API版本对象
+v1 = client.CoreV1Api()
+
+
+#列出k8s中的所有名称空间
+for namespace in v1.list_namespace().items:
+    print(namespace.metadata.name)
+
+    
+#列举所有名称空间下的所有service
+services=v1.list_service_for_all_namespaces()
+for svc in services.items:
+    print('%s \t%s \t%s \t%s \n' %(svc.metadata.namespace,svc.metadata.name,svc.spec.cluster_ip,svc.spec.ports))
+
+    
+#列举所有名称空间下的pod资源
+pods=v1.list_pod_for_all_namespaces()
+for i in pods.items:
+    print("%s\t%s\t%s" %(i.status.pod_ip,i.metadata.namespace,i.metadata.name))
+
+    
+#client.AppsV1Api对象可以操作跟k8s中控制器相关资源对象，下面演示的是列举所有名称空间的deployment
+v1_deploy=client.AppsV1Api()
+deploys=v1_deploy.list_deployment_for_all_namespaces()
+for i in deploys.items:
+    print("%s\t%s\t%s"%(i.metadata.name,i.metadata.namespace,i.spec.replicas))
+
+#读取pod指定的属性   
+resp=k8s_core_v1.read_namespaced_pod(namespace='default',name='busybox-test')
+print('read pod')
+#print(resp)
+print(resp.spec.containers[0])
+print(resp.spec.containers[0].image)
+if __name__=='__main__':
+    main()
 ~~~
 
-# 配置存储
+# 创建deploy
 
-~~~sh
-#创建ns
-kubectl create ns kube-ops
+~~~python
+from os import path 
+import yaml
+from kubernetes import client,config
+
+def main():
+    #读入集群信息
+    config.load_kube_config(config_file='E:\work\KEEP-WORKING\CS-Learning\python\python-k8s')
+    with open(path.join(path.dirname(__file__),"nginx-deploy.yaml")) as f:
+        dep=yaml.safe_load(f)
+        k8s_apps_v1=client.AppsV1Api()
+        resp = k8s_apps_v1.create_namespaced_deployment(body=dep,namespace='default')
+        print('deployment created,name=%s'%(resp.metadata.name))
+
+if __name__ == '__main__':
+      main()
 ~~~
 
-- 创建gitlab需要的pv和pvc
+# 修改资源
 
-~~~yaml
-tee pv-pvc-gitlab.yaml <<'EOF'
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: pv-gitlab
-spec:
-  capacity:
-    storage: 2Gi
-  accessModes:
-  - ReadWriteMany
-  persistentVolumeReclaimPolicy: Delete
-  nfs:
-    server: 192.168.40.180  #nfs服务端ip，即master1节点ip
-    path: /data/v5
----
-kind: PersistentVolumeClaim
-apiVersion: v1
-metadata:
-  name: pvc-gitlab
-  namespace: kube-ops
-spec:
-  accessModes:
-  - ReadWriteMany
-  resources:
-    requests:
-      storage: 2Gi
-EOF
+~~~python
+from os import path
+import yaml
+from kubernetes import client,config
+def main():
+    config.load_kube_config(config_file='E:\work\KEEP-WORKING\CS-Learning\python\python-k8s')
+    k8s_core_v1=client.CoreV1Api()
+    #原image为busybox
+    old_resp=k8s_core_v1.read_namespaced_pod(namespace='default',name='busybox-test')
+    #修改镜像为nginx
+    old_resp.spec.containers[0].image='nginx'
+    #patch pod
+    new_resp=k8s_core_v1.patch_namespaced_pod(namespace='default',name='busybox-test',body=old_resp)
+    print(new_resp.spec.containers[0].image)
+        
+if __name__=='__main__':
+    main()
 ~~~
 
-- 创建postgresql需要的pv和pvc
+# 删除资源
 
-~~~yaml
-tee pv-pvc-postsql.yaml <<'EOF'
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: pv-postsql
-spec:
-  capacity:
-    storage: 2Gi
-  accessModes:
-  - ReadWriteMany
-  persistentVolumeReclaimPolicy: Delete
-  nfs:
-    server: 192.168.40.180
-    path: /data/v4
----
-kind: PersistentVolumeClaim
-apiVersion: v1
-metadata:
-  name: pvc-postsql
-  namespace: kube-ops
-spec:
-  accessModes:
-  - ReadWriteMany
-  resources:
-    requests:
-      storage: 2Gi
-EOF
+~~~python
+from os import path
+import yaml
+from kubernetes import client,config
+
+def main():
+    config.load_kube_config(config_file='E:\work\KEEP-WORKING\CS-Learning\python\python-k8s')
+    k8s_core_v1=client.CoreV1Api()
+    resp=k8s_core_v1.delete_namespaced_pod(namespace='default',name='busybox-test')
+    print('delete pod')
+    
+if __name__=='__main__':
+    main()
 ~~~
 
-- 创建redis需要的pv和pvc
 
-~~~yaml
-tee pv-pvc-redis.yaml <<'EOF'
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: pv-redis
-spec:
-  capacity:
-    storage: 2Gi
-  accessModes:
-  - ReadWriteMany
-  persistentVolumeReclaimPolicy: Delete
-  nfs:
-    server: 192.168.40.180
-    path: /data/v3
----
-kind: PersistentVolumeClaim
-apiVersion: v1
-metadata:
-  name: pvc-redis
-  namespace: kube-ops
-spec:
-  accessModes:
-  - ReadWriteMany
-  resources:
-    requests:
-      storage: 2Gi
-EOF
-~~~
 
-- 检查pvc绑定情况
-
-~~~sh
-kubectl get pvc -n kube-ops
-~~~
-
-# 安装postgresql服务
-
-~~~yaml
-tee dep-postgresql.yaml <<'EOF'
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: postgresql
-  namespace: kube-ops
-  labels:
-    name: postgresql
-spec:
-  selector:
-    matchLabels:
-       name: postgresql
-  template:
-    metadata:
-      name: postgresql
-      labels:
-        name: postgresql
-    spec:
-      containers:
-      - name: postgresql
-        image: sameersbn/postgresql:10
-        imagePullPolicy: IfNotPresent
-        env:
-        - name: DB_USER
-          value: gitlab
-        - name: DB_PASS
-          value: passw0rd
-        - name: DB_NAME
-          value: gitlab_production
-        - name: DB_EXTENSION
-          value: pg_trgm
-        ports:
-        - name: postgres
-          containerPort: 5432
-        volumeMounts:
-        - mountPath: /var/lib/postgresql
-          name: data
-        livenessProbe:
-          exec:
-            command:
-            - pg_isready
-            - -h
-            - localhost
-            - -U
-            - postgres
-          initialDelaySeconds: 30
-          timeoutSeconds: 5
-        readinessProbe:
-          exec:
-            command:
-            - pg_isready
-            - -h
-            - localhost
-            - -U
-            - postgres
-          initialDelaySeconds: 5
-          timeoutSeconds: 1
-      volumes:
-      - name: data
-        persistentVolumeClaim:
-          claimName: pvc-postsql
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: svc-postgresql
-  namespace: kube-ops
-  labels:
-    name: postgresql
-spec:
-  ports:
-    - name: postgres
-      port: 5432
-      targetPort: postgres
-  selector:
-    name: postgresql
-EOF
-~~~
-
-# 安装redis服务
-
-~~~yaml
-cat  gitlab-redis.yaml
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: redis
-  namespace: kube-ops
-  labels:
-    name: redis
-spec:
-  selector:
-    matchLabels:
-      name: redis
-  template:
-    metadata:
-      name: redis
-      labels:
-        name: redis
-    spec:
-      containers:
-      - name: redis
-        image: sameersbn/redis
-        imagePullPolicy: IfNotPresent
-        ports:
-        - name: redis
-          containerPort: 6379
-        volumeMounts:
-        - mountPath: /var/lib/redis
-          name: data
-        livenessProbe:
-          exec:
-            command:
-            - redis-cli
-            - ping
-          initialDelaySeconds: 30
-          timeoutSeconds: 5
-        readinessProbe:
-          exec:
-            command:
-            - redis-cli
-            - ping
-          initialDelaySeconds: 5
-          timeoutSeconds: 1
-      volumes:
-      - name: data
-        persistentVolumeClaim:
-          claimName: pvc-redis
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: svc-redis
-  namespace: kube-ops
-  labels:
-    name: redis
-spec:
-  ports:
-    - name: redis
-      port: 6379
-      targetPort: redis
-  selector:
-    name: redis
-EOF
-~~~
-
-# 安装gitlab服务
-
-~~~yaml
-cat  gitlab.yaml
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: gitlab
-  namespace: kube-ops
-  labels:
-    name: gitlab
-spec:
-  selector:
-    matchLabels:
-        name: gitlab
-  template:
-    metadata:
-      name: gitlab
-      labels:
-        name: gitlab
-    spec:
-      containers:
-      - name: gitlab
-        image: sameersbn/gitlab:11.8.1
-        imagePullPolicy: IfNotPresent
-        env:
-        - name: TZ
-          value: Asia/Shanghai
-        - name: GITLAB_TIMEZONE
-          value: Beijing
-        - name: GITLAB_SECRETS_DB_KEY_BASE
-          value: long-and-random-alpha-numeric-string
-        - name: GITLAB_SECRETS_SECRET_KEY_BASE
-          value: long-and-RANDOM-ALPHA-NUMERIc-string
-        - name: GITLAB_SECRETS_OTP_KEY_BASE
-          value: long-and-random-alpha-numeric-string
-        - name: GITLAB_ROOT_PASSWORD
-          value: admin321
-        - name: GITLAB_ROOT_EMAIL
-          value: 1003665363@qq.com
-        - name: GITLAB_HOST
-          value: 192.168.40.180
-        - name: GITLAB_PORT
-          value: "30852"
-        - name: GITLAB_SSH_PORT
-          value: "32353"
-        - name: GITLAB_NOTIFY_ON_BROKEN_BUILDS
-          value: "true"
-        - name: GITLAB_NOTIFY_PUSHER
-          value: "false"
-        - name: GITLAB_BACKUP_SCHEDULE
-          value: daily
-        - name: GITLAB_BACKUP_TIME
-          value: 01:00
-        - name: DB_TYPE
-          value: postgres
-        - name: DB_HOST
-          value: postgresql
-        - name: DB_PORT
-          value: "5432"
-        - name: DB_USER
-          value: gitlab
-        - name: DB_PASS
-          value: passw0rd
-        - name: DB_NAME
-          value: gitlab_production
-        - name: REDIS_HOST
-          value: redis
-        - name: REDIS_PORT
-          value: "6379"
-        ports:
-        - name: http
-          containerPort: 80
-        - name: ssh
-          containerPort: 22
-        volumeMounts:
-        - mountPath: /home/git/data
-          name: data
-        livenessProbe:
-          httpGet:
-            path: /
-            port: 80
-          initialDelaySeconds: 180
-          timeoutSeconds: 5
-        readinessProbe:
-          httpGet:
-            path: /
-            port: 80
-          initialDelaySeconds: 5
-          timeoutSeconds: 1
-      volumes:
-      - name: data
-        persistentVolumeClaim:
-          claimName: pvc-gitlab
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: svc-gitlab
-  namespace: kube-ops
-  labels:
-    name: gitlab
-spec:
-  type: NodePort
-  selector:
-    name: gitlab
-  ports:
-    - name: http
-      port: 80
-      targetPort: http
-      nodePort: 30852
-    - name: ssh
-      port: 22
-      nodePort: 32353
-      targetPort: ssh
-EOF
-~~~
-
-## 访问gitlab UI界面
-
-- 查看gitlab svc的物理机映射端口`kubectl get svc svc-gitlab -n kube-ops`，浏览器访问物理机IP和端口即可访问UI界面
-
-- 初次登录需要Register，username和password随便起。
-
-  ![image-20240428220506815](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202404282205114.png)
