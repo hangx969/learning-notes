@@ -17,14 +17,9 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: nfs-provisioner
-
-EOFtee sa-nfs.yaml <<'EOF' 
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: nfs-provisioner
-
 EOF
+
+kubectl apply -f sa-nfs.yaml
 ```
 
 - 对sa授权
@@ -38,9 +33,8 @@ kubectl create clusterrolebinding rb-nfs-provisioner --clusterrole=cluster-admin
 - 安装nfs服务
 
 ```sh
-#master和node上都安装nfs服务
+#master和node上都安装并启动nfs服务
 yum install nfs-utils -y
-#启动nfs服务
 systemctl start nfs && systemctl enable nfs && systemctl status nfs
 ```
 
@@ -90,16 +84,16 @@ spec:
             - name: PROVISIONER_NAME
               value: example.com/nfs
             - name: NFS_SERVER
-              value: 172.16.183.75
+              value: 192.168.40.180
             - name: NFS_PATH
               value: /data/nfs_pro
       volumes:
         - name: nfs-client-root
           nfs:
-            server: 172.16.183.75 #nfs源路径server的IP
-            path: /data/nfs_pro
-            
+            server: 192.168.40.180 #nfs源路径server的IP
+            path: /data/nfs_pro        
 EOF
+kubectgl apply -f nfs-deployment.yaml
 ~~~
 
 - 创建存储类
@@ -111,13 +105,13 @@ kind: StorageClass
 metadata:
   name: nfs
 provisioner: example.com/nfs
-
 EOF
+kubectl apply -f sc-nfs.yaml
 ~~~
 
 # sts部署mysql高可用服务
 
-## mysql
+## mysql简介
 
 - MySQL是一种关系型数据库管理系统，关系数据库将数据保存在不同的表中，而不是将所有数据放在一个大仓库内，这样就增加了速度并提高了灵活性。MySQL所使用的 SQL 语言是用于访问数据库的最常用标准化语言。MySQL 软件采用了双授权政策，分为社区版和商业版，由于其体积小、速度快、总体拥有成本低，尤其是开放源码这一特点，一般中小型网站的开发都选择 MySQL 作为网站数据库。
 
@@ -153,6 +147,7 @@ data:
     super-read-only
     log_bin_trust_function_creators=1
 EOF
+kubectl apply -f mysql-configmap.yaml
 ~~~
 
 ## 部署svc
@@ -160,7 +155,7 @@ EOF
 - 创建svc，需要两个svc：mysql和mysql-read
 
 ~~~yaml
-tee svc-mysql.yaml <<'EOF '
+tee svc-mysql.yaml <<'EOF'
 apiVersion: v1
 kind: Service
 metadata:
@@ -188,14 +183,14 @@ spec:
   selector:
     app: mysql
 EOF
-
+kubectl apply -f svc-mysql.yaml
 ##statefulSet下的Pod有DNS地址,通过解析Pod的DNS可以返回Pod的IP。
 ##用户所有写请求，必须以 DNS 记录的方式直接访问到 Master 节点，也就是 mysql-0.mysql 这条DNS记录。用户所有读请求需要访问mysql-read 这条DNS记录。
 ~~~
 
 ## 部署mysql sts
 
-- 准备镜像
+- 准备镜像，注意镜像要上传到工作节点
 
 ~~~sh
 docker load -i mysql-5-7.tar.gz
@@ -224,7 +219,7 @@ spec:
       accessModes: [ "ReadWriteOnce" ]
       resources:
         requests:
-          storage: 10Gi
+          storage: 2Gi
   template:
     metadata:
       labels:
@@ -233,6 +228,7 @@ spec:
       initContainers:  #定义一个初始化容器
       - name: init-mysql
         image: mysql:5.7
+        imagePullPolicy: IfNotPresent
         command:
         - bash
         - "-c"
@@ -282,6 +278,7 @@ spec:
       containers:
       - name: mysql
         image: mysql:5.7
+        imagePullPolicy: IfNotPresent
         env:
         - name: MYSQL_ALLOW_EMPTY_PASSWORD
           value: "1"
@@ -312,6 +309,7 @@ spec:
           timeoutSeconds: 1
       - name: xtrabackup
         image: xtrabackup:1.0
+        imagePullPolicy: IfNotPresent
         ports:
         - name: xtrabackup
           containerPort: 3307
@@ -333,7 +331,7 @@ spec:
            # 把两个字段的值拼装成 SQL，写入 change_master_to.sql.in 文件
             echo "CHANGE MASTER TO MASTER_LOG_FILE='${BASH_REMATCH[1]}',\
                   MASTER_LOG_POS=${BASH_REMATCH[2]}" > change_master_to.sql.in
-          Fi
+          fi
           #如果存在 change_master_to.sql.in，就意味着需要做集群初始化工作
           if [[ -f change_master_to.sql.in ]]; then
           #但一定要先等 MySQL 容器启动之后才能进行下一步连接 MySQL 的操作
@@ -351,7 +349,7 @@ spec:
             MASTER_CONNECT_RETRY=10;
           START SLAVE;
           EOF
-          Fi
+          fi
           #使用ncat监听3307 端口。
           #它的作用是，在收到传输请求的时候，直接执行xtrabackup --backup 命令，备份 MySQL的数据并发送给请求者
           exec ncat --listen --keep-open --send-only --max-conns=1 3307 -c \
@@ -373,6 +371,18 @@ spec:
         configMap:
           name: mysql
 ~~~
+
+> xtrabackup容器启动命令解释：
+>
+> 首先通过检查备份信息文件（如 xtrabackup_slave_info 和 xtrabackup_binlog_info）来确定备份的来源，然后根据不同情况分别处理这些备份信息。
+>
+> 具体实现步骤如下：
+>
+> 1. 如果存在 xtrabackup_slave_info 文件，则将其重命名为 change_master_to.sql.in，然后删除 xtrabackup_binlog_info 文件。
+> 2. 如果只存在 xtrabackup_binlog_info 文件，则解析该文件中的备份信息，并将其拼装成相应的 SQL 语句，写入 change_master_to.sql.in 文件中。
+> 3. 如果存在 change_master_to.sql.in 文件，则等待 MySQL 容器启动，然后执行相应的初始化和启动 Slave 的 SQL 语句。
+> 4. 最后，使用 ncat 监听 3307 端口，当接收到传输请求时，执行 xtrabackup 命令，备份 MySQL 的数据并发送给请求者。
+> 5. 因此，该代码的主要功能是根据备份信息来实现集群初始化、启动 Slave，以及在接收传输请求时备份 MySQL 数据。
 
 ## 验证高可用方案
 
