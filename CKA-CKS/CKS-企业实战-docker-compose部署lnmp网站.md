@@ -127,9 +127,6 @@ cd /root/lnmp/
 tee docker-compose.yml <<'EOF'
 #定义docker compose yml版本
 version: "3"  
-networks:   
-  #创建了一个自定义的网络叫做lnmp
-   lnmp:
 #定义我们的服务对象
 services:   
 #自定义的服务名称
@@ -164,6 +161,7 @@ services:
       - SYS_PTRACE
     networks:
       - lnmp
+
   mysql:
     image: mysql:5.6
     container_name: mysql56
@@ -177,6 +175,9 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: "123456"
       TZ: "Asia/Shanghai"
+networks:   
+  #创建了一个自定义的网络叫做lnmp
+   lnmp:
 EOF
 
 #基于docker-compose启动容器
@@ -189,7 +190,7 @@ docker-compose up -d
 cd /root/lnmp/www/
 echo "hello,welcome to study" > index.html
 #浏览器访问docker-compose机器ip:
-http://192.168.40.186/
+http://192.168.40.200/
 ~~~
 
 ## 测试php服务

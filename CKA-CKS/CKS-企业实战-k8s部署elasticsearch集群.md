@@ -40,7 +40,7 @@ metadata:
     app: elasticsearch
 data:             #具体挂载的配置文件
   elasticsearch.yml: |+     
-cluster.name: xianchao
+cluster.name: es-test
 #配置的集群名称，默认是elasticsearch，es服务会通过广播方式自动连接在同一网段下的es服务，通过多播方式进行通信，同一网段下可以有多个集群，通过集群名称这个属性来区分不同的集群。
 node.name: ${MY_POD_NAME}    
 #环境变量，通过kubectl explain pod.spec.containers.env.valueFrom.fieldRef获取，当前配置所在机器的节点名，你不设置就默认随机指定一个name列表中名字，该name列表在es的jar包中config文件夹里name.txt文件中。当创建ES集群时，保证同一集群中的cluster.name名称是相同的，node.name节点名称是不同的。
