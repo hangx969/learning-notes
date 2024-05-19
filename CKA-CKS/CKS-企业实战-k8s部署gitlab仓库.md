@@ -56,6 +56,7 @@ spec:
     requests:
       storage: 2Gi
 EOF
+kubectl apply -f pv-pvc-gitlab.yaml
 ~~~
 
 - 创建postgresql需要的pv和pvc
@@ -88,6 +89,7 @@ spec:
     requests:
       storage: 2Gi
 EOF
+kubectl apply -f pv-pvc-postsql.yaml
 ~~~
 
 - 创建redis需要的pv和pvc
@@ -120,6 +122,7 @@ spec:
     requests:
       storage: 2Gi
 EOF
+kubectl apply -f pv-pvc-redis.yaml
 ~~~
 
 - 检查pvc绑定情况
@@ -201,19 +204,20 @@ metadata:
   labels:
     name: postgresql
 spec:
-  ports:
-    - name: postgres
-      port: 5432
-      targetPort: postgres
   selector:
     name: postgresql
+  ports:
+  - name: postgres
+    port: 5432
+    targetPort: postgres
 EOF
+kubectl apply -f dep-postgresql.yaml
 ~~~
 
 # 安装redis服务
 
 ~~~yaml
-cat  gitlab-redis.yaml
+tee gitlab-redis.yaml <<'EOF'
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -268,19 +272,20 @@ metadata:
   labels:
     name: redis
 spec:
-  ports:
-    - name: redis
-      port: 6379
-      targetPort: redis
   selector:
     name: redis
+  ports:
+  - name: redis
+    port: 6379
+    targetPort: redis
 EOF
+kubectl apply -f gitlab-redis.yaml
 ~~~
 
 # 安装gitlab服务
 
 ~~~yaml
-cat  gitlab.yaml
+tee gitlab.yaml <<'EOF'
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -384,15 +389,16 @@ spec:
   selector:
     name: gitlab
   ports:
-    - name: http
-      port: 80
-      targetPort: http
-      nodePort: 30852
-    - name: ssh
-      port: 22
-      nodePort: 32353
-      targetPort: ssh
+  - name: http
+    port: 80
+    targetPort: http
+    nodePort: 30852
+  - name: ssh
+    port: 22
+    nodePort: 32353
+    targetPort: ssh
 EOF
+kubectl apply -f gitlab.yaml
 ~~~
 
 ## 访问gitlab UI界面
