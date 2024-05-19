@@ -428,7 +428,7 @@ scp $HOME/.kube/config node-1:/root/.kube/
 
 ~~~sh
 kubeadm token create --print-join-command
-kubeadm join 192.168.40.180:6443 --token abcdef.0123456789abcdef --discovery-token-ca-cert-hash sha256:1b9128584208de83f03dd84a4d4c0633f3cc199c1ab115fdc6ac00cc98061992 --ignore-preflight-errors=SystemVerification
+kubeadm join 192.168.40.180:6443 --token gi3nxj.sd7cl2k1kg11751z --discovery-token-ca-cert-hash sha256:6e4da4d1909a6a07df108303f8d5f45e9d328128554d7db378cf784b3224b996 --ignore-preflight-errors=SystemVerification
 kubectl label node node1 node-role.kubernetes.io/worker=worker
 ~~~
 

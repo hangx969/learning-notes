@@ -39,3 +39,24 @@ spec:
 >
 > - 如果是request.cpu: 0.5 --> 那就是请求0.5个核
 > - 如果是request.cpu: 500m --> 那是500毫核 --> 也就是0.5核
+
+# ns删除后卡在terminating状态
+
+- 需要手动结束finalizer
+
+~~~sh
+#开启代理
+kubectl proxy
+#Starting to serve on 127.0.0.1:8001
+#新开终端
+kubectl get namespace $NAMESPACE -o json > temp.json
+#编辑状态文件
+vim temp.json
+#删掉以下三行：
+"finalizers": [
+   "controller.cattle.io/namespace-auth"
+],
+#发送状态文件
+curl -k -H "Content-Type: application/json" -X PUT --data-binary @temp.json 127.0.0.1:8001/api/v1/namespaces/$NAMESPACE/finalize
+~~~
+

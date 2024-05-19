@@ -339,7 +339,7 @@ spec:
         - name: DB_TYPE
           value: postgres
         - name: DB_HOST
-          value: postgresql
+          value: postgresql #postgresql的svc
         - name: DB_PORT
           value: "5432"
         - name: DB_USER
@@ -349,7 +349,7 @@ spec:
         - name: DB_NAME
           value: gitlab_production
         - name: REDIS_HOST
-          value: redis
+          value: redis #redis svc
         - name: REDIS_PORT
           value: "6379"
         ports:

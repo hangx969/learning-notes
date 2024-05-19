@@ -5,7 +5,7 @@
 ## 特点
 
 1. **动态添加**：Ephemeral容器可以动态添加到已经运行的Pod中，这可以让运维人员或开发人员在不干扰Pod正常运行的情况下，进行故障排查或性能分析。
-2. **不包含在Pod规范中**：临时容器不像Pod中的其他常规容器，不会在Pod的初始规范中定义。它们是临时添加的，通常在需要时通过kubectl工具注入。临时容器没有端口配置，因此像 ports，livenessProbe，readinessProbe 这样的字段是不允许的。Pod 资源分配是不可变的，因此 resources 配置是不允许的。临时容器是使用 API 中的一种特殊的 ephemeralcontainers 处理器进行创建的， 而不是直接添加到 pod.spec 段，因此无法使用 kubectl edit 来添加一个临时容器。
+2. **不包含在Pod规范中**：临时容器不像Pod中的其他常规容器，不会在Pod的初始规范中定义。它们是临时添加的，通常在需要时通过kubectl工具注入。临时容器没有端口配置，因此像 ports，livenessProbe，readinessProbe 这样的字段是不允许的。Pod 资源分配是不可变的，因此 resources 配置是不允许的。临时容器是使用 API 中的一种特殊的 ephemeralcontainers 处理器进行创建的， 而不是直接添加到 pod.spec 段，因此无法使用 kubectl edit 来添加一个临时容器，也无法通过yaml文件创建临时容器。
 3. **隔离与安全**：尽管临时容器可以访问Pod的所有资源和网络，但它们的运行和存在不会对Pod的安全性配置或其它运行容器产生影响。
 
 ## 使用场景
@@ -53,7 +53,6 @@ spec:
     #......
     - --feature-gates=RemoveSelfLink=false
     - --feature-gates=EphemeralContainers=true
-#......
 #新增加--feature-gates=EphemeralContainers=true字段
 ~~~
 
@@ -98,6 +97,8 @@ systemctl restart kubelet
 kubectl get pods -n kube-system #检查pod正常工作
 ~~~
 
+> 重启apiserver会影响业务，最好集群创建完就配置上；或者配置高可用master节点
+
 # 使用临时容器
 
 - 创建主pod
@@ -119,17 +120,33 @@ spec:
     ports:
     - containerPort: 8080
 EOF
+kubectl apply -f pod-tomcat.yaml
 ~~~
 
 - kubectl debug注入临时容器
 
 ~~~sh
-kubectl debug -it tomcat-test --image=busybox:1.28 --target=tomcat-java
-ps -ef | grep tomcat #通过临时容器查看tomcat主容器信息
-kubectl describe pods tomcat-test #查看pod yaml中是否注入了临时容器
+kubectl debug -it tomcat-test --image=busybox --target=tomcat-java
+#通过临时容器查看tomcat主容器信息
+ps -ef | grep tomcat
+#查看pod yaml中是否注入了临时容器
+kubectl describe pods tomcat-test 
+Ephemeral Containers:
+  debugger-lhdc8:
+    Container ID:   docker://e005a0bbd9020107585e8742fb8442c21d32a5365df6fa49bdf2ef48bab6b009
+    Image:          busybox
+    Image ID:       docker-pullable://busybox@sha256:5acba83a746c7608ed544dc1533b87c737a0b0fb730301639a0179f9344b1678
+    Port:           <none>
+    Host Port:      <none>
+    State:          Running
+      Started:      Sun, 19 May 2024 09:23:39 -0400
+    Ready:          False
+    Restart Count:  0
+    Environment:    <none>
+    Mounts:         <none>
 ~~~
 
-- kubectl raw注入临时容器
+- 通过kubectl raw注入临时容器
 
 ~~~sh
 kubectl delete -f pod-tomcat.yaml
@@ -154,6 +171,7 @@ tee a.json <<'EOF'
         "terminationMessagePolicy": "File"
     }]
 }
+
 EOF
 
 kubectl replace --raw /api/v1/namespaces/default/pods/tomcat-test/ephemeralcontainers -f a.json
@@ -161,6 +179,21 @@ kubectl replace --raw /api/v1/namespaces/default/pods/tomcat-test/ephemeralconta
 kubectl attach -it -c debugger tomcat-test
 #调试完成退出临时容器之后，这个容器会被销毁，无法再次attach
 ~~~
+
+> - kubectl replace --raw /api/v1/namespaces/default/pods/tomcat-test/ephemeralcontainers -f a.json
+> - 报错：Error from server (BadRequest): EphemeralContainers in version "v1" cannot be handled as a Pod: no kind "EphemeralContainers" is registered for version "v1" in scheme "k8s.io/kubernetes/pkg/api/legacyscheme/scheme.go:30" 
+>
+> ~~~sh
+> kubectl get api-versions #查看支持的所有api
+> #里面有v1版本
+> #查看v1版本里面具体有哪些资源
+> kubectl api-resources --api-group=""
+> #查看apps/v1版本里面具体有哪些资源
+> kubectl api-resources --api-group=apps
+> #都没有看到ephemeralcontainers资源
+> ~~~
+>
+> - k8s官网上都没有给出这种上传json的方法，暂时不搞这种方法了。
 
 # 问题
 
