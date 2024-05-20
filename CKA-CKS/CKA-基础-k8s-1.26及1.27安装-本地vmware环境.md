@@ -397,18 +397,18 @@ nslookup kubernetes.default.svc.cluster.local
 
     ```bash
     #把master-01节点的证书拷贝到master-02
-    #在xianchaomaster2创建证书存放目录：
+    #在master2创建证书存放目录：
     cd /root && mkdir -p /etc/kubernetes/pki/etcd &&mkdir -p ~/.kube/
     
     #把master-01节点的证书拷贝到master-02上：
-    scp /etc/kubernetes/pki/ca.crt xianchaomaster2:/etc/kubernetes/pki/
-    scp /etc/kubernetes/pki/ca.key xianchaomaster2:/etc/kubernetes/pki/
-    scp /etc/kubernetes/pki/sa.key xianchaomaster2:/etc/kubernetes/pki/
-    scp /etc/kubernetes/pki/sa.pub xianchaomaster2:/etc/kubernetes/pki/
-    scp /etc/kubernetes/pki/front-proxy-ca.crt xianchaomaster2:/etc/kubernetes/pki/
-    scp /etc/kubernetes/pki/front-proxy-ca.key xianchaomaster2:/etc/kubernetes/pki/
-    scp /etc/kubernetes/pki/etcd/ca.crt xianchaomaster2:/etc/kubernetes/pki/etcd/
-    scp /etc/kubernetes/pki/etcd/ca.key xianchaomaster2:/etc/kubernetes/pki/etcd/
+    scp /etc/kubernetes/pki/ca.crt master2:/etc/kubernetes/pki/
+    scp /etc/kubernetes/pki/ca.key master2:/etc/kubernetes/pki/
+    scp /etc/kubernetes/pki/sa.key master2:/etc/kubernetes/pki/
+    scp /etc/kubernetes/pki/sa.pub master2:/etc/kubernetes/pki/
+    scp /etc/kubernetes/pki/front-proxy-ca.crt master2:/etc/kubernetes/pki/
+    scp /etc/kubernetes/pki/front-proxy-ca.key master2:/etc/kubernetes/pki/
+    scp /etc/kubernetes/pki/etcd/ca.crt master2:/etc/kubernetes/pki/etcd/
+    scp /etc/kubernetes/pki/etcd/ca.key master2:/etc/kubernetes/pki/etcd/
     ```
 
   - master-01的kubeadm-config ConfigMap 配置controlPlaneEndpoint
@@ -439,9 +439,9 @@ nslookup kubernetes.default.svc.cluster.local
   ```
 
   ```sh
-  - --initial-cluster=xianchaomaster1=https://192.168.40.180:2380
+  - --initial-cluster=master1=https://192.168.40.180:2380
   变成如下：
-  - --initial-cluster=xianchaomaster1=https://192.168.40.180:2380,xianchaomaster2=https://192.168.40.181:2380,xianchaomaster3=https://192.168.40.183:2380**
+  - --initial-cluster=master1=https://192.168.40.180:2380,master2=https://192.168.40.181:2380,master3=https://192.168.40.183:2380
   ```
 
 - 修改成功之后重启kubelet：
@@ -462,44 +462,44 @@ nslookup kubernetes.default.svc.cluster.local
 
 # 模拟剔除故障节点重新加入
 
-- K8s集群，公司里有3个控制节点和1个工作节点，有一个控制节点xianchaomaster1出问题关机了，修复不成功，然后我们kubectl delete nodes xianchaomaster1把xianchaomaster1移除，移除之后，我把机器恢复了，上架了，我打算还这个机器加到k8s集群，还是做控制节点，如何做？
+- K8s集群，公司里有3个控制节点和1个工作节点，有一个控制节点master1出问题关机了，修复不成功，然后我们kubectl delete nodes master1把master1移除，移除之后，我把机器恢复了，上架了，我打算还这个机器加到k8s集群，还是做控制节点，如何做？
 
-  1. 把xianchaomaster1这个机器的etcd从etcd集群删除
+  1. 把master1这个机器的etcd从etcd集群删除（可以在master2上执行）
 
   ```sh
   docker run --rm -it --net host -v /etc/kubernetes:/etc/kubernetes  registry.cn-hangzhou.aliyuncs.com/google_containers/etcd:3.5.4-0 etcdctl --cert /etc/kubernetes/pki/etcd/peer.crt --key /etc/kubernetes/pki/etcd/peer.key --cacert /etc/kubernetes/pki/etcd/ca.crt --endpoints=https://192.168.40.181:2379,https://192.168.40.182:2379 member list
+  #拿到故障节点上的etcd的id。
   ```
-
-  拿到故障节点上的etcd的id。
-
-  2. 通过如下命令：删除xianchaomaster1上的etcd
-
+  
+  2. 通过如下命令：删除master1上的etcd
+  
   ```sh
   docker run --rm -it --net host -v /etc/kubernetes:/etc/kubernetes  registry.cn-hangzhou.aliyuncs.com/google_containers/etcd:3.5.4-0 etcdctl --cert /etc/kubernetes/pki/etcd/peer.crt --key /etc/kubernetes/pki/etcd/peer.key --cacert /etc/kubernetes/pki/etcd/ca.crt --endpoints=https://192.168.40.181:2379,https://192.168.40.182:2379 member remove 75e64910a4405073
   ```
-
-  3. 就是在xianchaomaster1上，创建存放证书目录
-
+  
+  3. 在master1上，创建存放证书目录
+  
   ```sh
   cd /root && mkdir -p /etc/kubernetes/pki/etcd &&mkdir -p ~/.kube/
   ```
-
-  4. 把其他控制节点的证书拷贝到xianchaomaster1上
-
+  
+  4. 把其他控制节点的证书拷贝到master1上
+  
   ```sh
-  scp /etc/kubernetes/pki/ca.crt xianchaomaster1:/etc/kubernetes/pki/
-  scp /etc/kubernetes/pki/ca.key xianchaomaster1:/etc/kubernetes/pki/
-  scp /etc/kubernetes/pki/sa.key xianchaomaster1:/etc/kubernetes/pki/
-  scp /etc/kubernetes/pki/sa.pub xianchaomaster1:/etc/kubernetes/pki/
-  scp /etc/kubernetes/pki/front-proxy-ca.crt xianchaomaster1:/etc/kubernetes/pki/
-  scp /etc/kubernetes/pki/front-proxy-ca.key xianchaomaster1:/etc/kubernetes/pki/
-  scp /etc/kubernetes/pki/etcd/ca.crt xianchaomaster1:/etc/kubernetes/pki/etcd/
-  scp /etc/kubernetes/pki/etcd/ca.key xianchaomaster1:/etc/kubernetes/pki/etcd/
+  scp /etc/kubernetes/pki/ca.crt master1:/etc/kubernetes/pki/
+  scp /etc/kubernetes/pki/ca.key master1:/etc/kubernetes/pki/
+  scp /etc/kubernetes/pki/sa.key master1:/etc/kubernetes/pki/
+  scp /etc/kubernetes/pki/sa.pub master1:/etc/kubernetes/pki/
+  scp /etc/kubernetes/pki/front-proxy-ca.crt master1:/etc/kubernetes/pki/
+  scp /etc/kubernetes/pki/front-proxy-ca.key master1:/etc/kubernetes/pki/
+  scp /etc/kubernetes/pki/etcd/ca.crt master1:/etc/kubernetes/pki/etcd/
+  scp /etc/kubernetes/pki/etcd/ca.key master1:/etc/kubernetes/pki/etcd/
   ```
-
-  5. 把xianchaomaster1加入到集群
-
+  
+  5. 把master1加入到集群
+  
   ```sh
-  #其他节点上查看加入集群的命令，在master1上执行，加入集群。
+  #其他节点上查看加入集群的命令
   kubeadm token create --print-join-command
+  #在master1上执行，使其加入集群。
   ```
