@@ -1,6 +1,10 @@
 # CRD
 
-https://mp.weixin.qq.com/s/Ts9MxQOpQVaUtw6YbHXogw
+- https://mp.weixin.qq.com/s/Ts9MxQOpQVaUtw6YbHXogw
+- CRD全称是CustomResourceDefinition：
+  - 在 Kubernetes 中一切都可视为资源，Kubernetes 1.7 之后增加了对 CRD 自定义资源二次开发能力来扩展 Kubernetes API，通过 CRD 我们可以向 Kubernetes API 中增加新资源类型，而不需要修改 Kubernetes 源码来创建自定义的 API server，该功能大大提高了 Kubernetes 的扩展能力。
+  - 当你创建一个新的(CRD)时，Kubernetes API服务器将为你指定的每个版本创建一个新的RESTful资源路径，我们可以根据该api路径来创建一些我们自己定义的类型资源。
+  - CRD可以是命名空间的，也可以是集群范围的，由CRD的作用域(scpoe)字段中所指定的，与现有的内置对象一样，删除名称空间将删除该名称空间中的所有自定义对象。CRD本身没有名称空间，所有名称空间都可以使用。
 
 # 自定义CRD资源
 
