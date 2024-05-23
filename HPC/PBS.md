@@ -146,6 +146,7 @@ qsub test.sh即可提交作业脚本
 #命令格式：
 qdel [-W 间隔时间] 作业号
 # qdel -W 15 211 #15秒后删除作业号为211 的作业
+qdel -W force jobid #强制删除作业
 ```
 
 ## 队列管理-qmgr

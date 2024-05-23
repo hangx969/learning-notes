@@ -1,50 +1,3 @@
-# Mount new data disk via fdisk
-
-### 1. Add a new disk on Azure Portal
-
-### 2.  Check the new disk
-
-```shell
-lsblk -f
-```
-
-### 3. Add a partition and check
-
-```shell
-fdisk /dev/sdd
-m # for help
-n # add a new partition
-p # primary
-1 # partition number, default in the following
-w # save and quit
-lsblk -f
-```
-
-### 4. Format the new partition and mount 
-
-To set file format and get UUID
-
-```shell
-mkfs -t ext4 /dev/sdd1 # format
-mkdir mnt/resource/newdisk2
-mount /dev/sdd1 /mnt/resource/newdisk2
-lsblk -f
-```
-
-### 5. Configure the mount in fstab
-
-Mount through command line will not be kept after a reboot
-
-So we need to maintain the mount even after a reboot through configuring the **fstab**
-
-```shell
-vim /etc/fstab  # It's important to use UUID instead of disk name in VM
-```
-
-```shell
-mount -a 
-```
-
 # Difference about RAID and LVM
 
 ### RAID
@@ -62,9 +15,54 @@ mount -a
 
 - RAID is a disk management technology to improve IO performance by combining several disks to one array, while LVM is another disk management technology which allow users to adjust volume of partition dynamically by creating PV, VG and LV. 
 
-# Configure LVM for test
+# How to add a disk on Azure VM
 
-### 1. Prepare disk partition with type of 8e
+- Mount new data disk via fdisk
+
+- Add a new disk on Azure Portal
+- Check the new disk
+
+```shell
+lsblk -f
+```
+
+- Add a partition and check
+
+```shell
+fdisk /dev/sdd
+m # for help
+n # add a new partition
+p # primary
+1 # partition number, default in the following
+w # save and quit
+lsblk -f
+```
+
+- Format the new partition and mount 
+  - To set file format and get UUID
+
+```shell
+mkfs -t ext4 /dev/sdd1 # format
+mkdir mnt/resource/newdisk2
+mount /dev/sdd1 /mnt/resource/newdisk2
+lsblk -f
+```
+
+- Configure the mount in fstab
+  - Mount through command line will not be kept after a reboot
+  - So we need to maintain the mount even after a reboot through configuring the **fstab**
+
+```shell
+vim /etc/fstab  # It's important to use UUID instead of disk name in VM
+```
+
+```shell
+mount -a 
+```
+
+# Configure LVM in centos
+
+1. Prepare disk partition with type of 8e
 
 ```shell
 fdisk /dev/sde
@@ -77,7 +75,7 @@ t # change partition type
 fdisk -l # check
 ```
 
-### 2. Prepare Physical volume (PV)
+2. Prepare Physical volume (PV)
 
 ```shell
 pvcreate /dev/sde1
@@ -86,21 +84,21 @@ pvcreate /dev/sde3
 pvdisplay # check
 ```
 
-### 3. Prepare volume group (VG)
+3. Prepare volume group (VG)
 
 ```shell
 vgcreate vg1 /dev/sde1 /dev/sde2 /dev/sde3  # vg1 is a name for VG
 vgdisplay # check
 ```
 
-### 4. Prepare logical volume (LV)
+4. Prepare logical volume (LV)
 
 ```shell
 lvcreate -L 100M -n lv1 vg1 # lv1: you name it, vg1: lv1 uses the volume on vg1
 lvdisplay # check
 ```
 
-### 5. Format the LV and mount
+5. Format the LV and mount
 
 ```shell
 mkfs -t ext4 /dev/vg1/lv1
@@ -109,7 +107,7 @@ mount /dev/vg1/lv1 /lvm-mount/
 lsblk -f # check
 ```
 
-### 6 [if necessary]. Expand  the volume of  LV 
+6 [if necessary]. Expand the volume of LV 
 
 ```shell
 umount /lvm-mount/ # unmount the point
@@ -123,7 +121,7 @@ vim /etc/fstab
 # configure fstab to add /dev/vg1/lv1 then the mount point is kept atfer reboot
 ```
 
-### 7. [if necessary] Curtail the volume of LV
+7. [if necessary] Curtail the volume of LV
 
 ```shell
 umount /dev/vg1/lv1 /lvm-mount
@@ -134,7 +132,7 @@ lvresize -L 50M /dev/vg1/lv1 # curtail the LV volume
 lvdisplay # check
 ```
 
-### 8. [if necessary] Expand the VG
+8. [if necessary] Expand the VG
 
 Add a PV to VG. Then more LV can be created on the expanded VG.
 
@@ -148,7 +146,7 @@ vgextend vg1 /dev/sde4 # Expand the Voulme Group VG1
 vgdisplay # check
 ```
 
-### 9. Remove
+9. Remove
 
 ```shell
 umount /lvm-mount
@@ -157,13 +155,11 @@ vgremove vg1 # delete the VG
 pvremove /dev/sde1 # delete the PV
 ```
 
-
-
 # Configure RAID0 
 
 Get two new disks on Azure Portal
 
-### 1. Install mdadm 
+## 1. Install mdadm
 
 use mdadm to manage RAID configuration
 
@@ -202,5 +198,16 @@ vim /etc/fstab
 # add md0p1 to fstab to make it work after reboot
 ```
 
+# 扩容基于LVM的文件系统
 
+- 实验环境：
+  - Ubuntu 2204
+- 实验目标：
+  - 原始配置了20GB的LVM，挂载到根分区。
+  - 对磁盘进行扩容，如何扩容到根分区。
+
+- 查看现有LVM配置
+
+~~~sh
+~~~
 
