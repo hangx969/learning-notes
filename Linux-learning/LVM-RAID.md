@@ -241,4 +241,17 @@ sda                         8:0    0    25G  0 disk
   └─ubuntu--vg-ubuntu--lv 253:0    0    10G  0 lvm  /
 ~~~
 
-> 是直接加一个分区？还是扩展已有分区？（扩展已有分区的话，由于分区挂载了根目录，可能会有风险）
+> 是直接加一个分区？(添加一个新的磁盘分区/dev/sda4包含扩容的容量,将其做成新PV，将新PV添加至VG，然后扩容LV)
+>
+> 还是扩展已有分区？（扩展已有分区的话，由于分区挂载了根目录，可能会有风险）
+
+~~~sh
+#新建磁盘分区
+
+#扩容lvm
+sudo pvcreate /dev/sda4
+sudo vgextend ubuntu--vg /dev/sda4
+sudo lvextend -L +5G /dev/ubuntu--vg/ubuntu--lv
+sudo resize2fs /dev/ubuntu--vg/ubuntu--lv
+~~~
+
