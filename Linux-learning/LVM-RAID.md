@@ -209,5 +209,36 @@ vim /etc/fstab
 - 查看现有LVM配置
 
 ~~~sh
+root@ubuntu-test:~# df -h
+Filesystem                         Size  Used Avail Use% Mounted on
+tmpfs                              791M  1.6M  789M   1% /run
+/dev/mapper/ubuntu--vg-ubuntu--lv  9.8G  3.1G  6.3G  33% /
+tmpfs                              3.9G     0  3.9G   0% /dev/shm
+tmpfs                              5.0M     0  5.0M   0% /run/lock
+/dev/sda2                          1.8G  130M  1.5G   8% /boot
+tmpfs                              791M  4.0K  791M   1% /run/user/0
+
+root@ubuntu-test:~# lsblk
+sda                         8:0    0    20G  0 disk 
+├─sda1                      8:1    0     1M  0 part 
+├─sda2                      8:2    0   1.8G  0 part /boot
+└─sda3                      8:3    0  18.2G  0 part 
+  └─ubuntu--vg-ubuntu--lv 253:0    0    10G  0 lvm  /
 ~~~
 
+- 扩容磁盘到25G
+
+- 更新磁盘容量
+
+~~~SH
+#刷新SCSI
+for i in $(ls /sys/class/scsi_host/); do echo "- - -" > /sys/class/scsi_host/$i/scan; done
+#查看磁盘容量
+sda                         8:0    0    25G  0 disk 
+├─sda1                      8:1    0     1M  0 part 
+├─sda2                      8:2    0   1.8G  0 part /boot
+└─sda3                      8:3    0  18.2G  0 part 
+  └─ubuntu--vg-ubuntu--lv 253:0    0    10G  0 lvm  /
+~~~
+
+> 是直接加一个分区？还是扩展已有分区？（扩展已有分区的话，由于分区挂载了根目录，可能会有风险）
