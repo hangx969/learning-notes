@@ -273,41 +273,111 @@ k applly -f redis.yaml
 #切换集群环境
 kubectl config use-context KSRS00101
 k get po
-k describe po redis-deployment-5b569f968-86h8n
-#复制containerID前12位即可 ？
+k describe po redis-deployment-5b569f968-86h8n | grep "Container ID"
+#复制containerID前12位即可
 2d3affbe35b4
-#去工作节点上用sysdig检查
+
+#去工作节点上用sysdig检查。
 ssh xianchaonode1
 sudo -i 
-sysdig -l | grep time
-sysdig -l | grep uid
-sysdig -l | grep name
-sysdig -M 120 -p "*%evt.time,%user.uid,%proc.name" --cri unix:///run/containerd/containerd.sock container.id=2d3affbe35b4 > /opt/KSRS00101/events/details
+#用下面命令查看sysdig里面的变量叫啥
+sysdig -l | grep time #找到 evt.time
+sysdig -l | grep uid #找到 user.uid
+sysdig -l | grep name #找到 proc.name
+#containerd的路径可以先查找一下：
+find / -name "containerd.sock" #/run/containerd/containerd.sock
+#就用上面的变量名来组成输出格式
+sysdig -M 120 -p "%evt.time,%user.uid,%proc.name" --cri unix:///run/containerd/containerd.sock container.id=2d3affbe35b4 > /opt/KSRS00101/events/details
 
 #-p：指定打印事件时使用的格式
 #-M: 多少秒后停止收集
 # evt.time: 事件发生的时间
 # user.uid: 用户uid
 # proc.name: 生成事件的进程名字
-# container.id: 根据容器过滤
+# container.id: 根据容器id过滤
 
 #如果details中没输出数据，可以尝试改成container name
-#sysdig -M 120 -p "*%evt.time,%user.uid,%proc.name" --cri unix:///run/containerd/containerd.sock container.id=redis > /opt/KSRS00101/events/details
+#sysdig -M 120 -p "*%evt.time,%user.uid,%proc.name" --cri unix:///run/containerd/containerd.sock container.name=redis > /opt/KSRS00101/events/details
 ~~~
+
+> - 注意一定去工作节点上运行sysdig，因为pod跑在工作节点上，在控制节点上sysdig没有输出的。
 
 # 5 service account
 
-## 介绍
-
-- 
-
 ## Task
 
-~~~sh
+Context：
 
+- ServiceAccount不得自动挂载API凭据，ServiceAccount名称必须以“-sa”结尾。
+- 清单文件/home/candidate/KSCH00301/pod-manifest.yaml中指定的pod由于ServiceAccount指定错误而无法调度。
+
+Task：
+
+- 首先，在现有 namespace dev 中创建一个名为 database-sa 的新ServiceAccount，确保此ServiceAccount不得自动挂载API凭据。
+- 其次，使用 /home/candidate/KSCH00301/pod-manifest.yaml 中的清单文件来创建pod。
+- 最后，清理 namespace dev 中任何未使用的 ServiceAccount。
+
+## Answer
+
+- 文档：k8s官网搜configure service account
+
+~~~yaml
+#自己环境搭建资源
+sudo kubectl create ns dev
+#切换集群
+kubectl config use-context KSCH00301
+sudo -i
+#通过dry-run生成yaml文件，--dry-run=client选项，仅生成结果，不发送给api server
+kubectl create sa database-sa  -n dev --dry-run=client -o yaml > sa.yaml
+vim sa.yaml
+apiVersion: v1
+kind: ServiceAccount
+automountServiceAccountToken: false  #不自动挂载API凭据
+metadata:
+  creationTimestamp: null
+  name: database-sa
+  namespace: dev
+  
+kubectl apply -f sa.yaml
 ~~~
 
-# 6
+~~~yaml
+#pod yaml文件新增两个字段
+vim /home/candidate/KSCH00301/pod-manifest.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    app: dev
+  name: dev-pod
+  namespace: dev
+spec:
+  automountServiceAccountToken: false #
+  serviceAccountName: database-sa
+  containers:
+  - image: docker.io/xianchao/nginx:v1
+    name: nginx
+    imagePullPolicy: IfNotPresent
+
+kubectl delete -f /home/candidate/KSCH00301/pod-manifest.yaml
+kubectl apply -f /home/candidate/KSCH00301/pod-manifest.yaml
+~~~
+
+~~~sh
+#先看有哪些sa
+kubectl get sa -n dev
+#再看有哪些pod
+kubectl get po -n dev
+#挨个pod describe看挂载了哪些
+kubectl describe po xxx
+~~~
+
+> 注意：
+>
+> - default这个sa不用删除，会自动生成的。
+> - 如果pod删除较慢，直接`kubectl delete po xxx --force --grace-period=0`强制删除
+
+# 6 TLS密码套件
 
 ## 介绍
 
@@ -391,3 +461,4 @@ sysdig -M 120 -p "*%evt.time,%user.uid,%proc.name" --cri unix:///run/containerd/
 
 ~~~
 
+ 
