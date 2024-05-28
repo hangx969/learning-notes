@@ -136,7 +136,7 @@ cgroupDriver: systemd
 ~~~yaml
 apiVersion: kubelet.config.k8s.io/v1beta1
 authentication:
-  anonymous:
+  anonymous: 
     enabled: false #改为false
   webhook:
     cacheTTL: 0s
@@ -156,8 +156,13 @@ systemctl restart kubelet
 - 修改工作节点kubelet文件，修改内容同master节点。
 
 ~~~sh
+ssh xianchaonode1
+sudo -i
+vim /var/lib/kubelet/config.yaml
 #修改完重启kubelet
 systemctl restart kubelet
+#退出工作节点
+exit
 ~~~
 
 - 修改master节点etcd
@@ -174,18 +179,22 @@ vim /etc/kubernetes/manifests/etcd.yaml
 
 ~~~sh
 systemctl restart kubelet
+#exit退回原始终端，切换集群
+kubectl config use-context KSSH00201
 kubectl get nodes
 #这个过程比较慢，估计需要几分钟才可以启动
 ~~~
 
 > 注意：
 >
-> - 这个字段可能默认没有，需要自己添加，考试的时候自己注意下
+> - 这些字段可能默认没有，需要自己添加
 >
 > ~~~yaml
-> webhook:
->   cacheTTL: 0s
->   enabled: true
+>   anonymous: 
+>     enabled: false #改为false
+>   webhook:
+>     cacheTTL: 0s
+>     enabled: true #改为true
 > ~~~
 >
 > - 背过kubelet和etcd配置文件的路径：
@@ -194,29 +203,99 @@ kubectl get nodes
 
 # 3 Trivy镜像扫描
 
+## Task
+
+- 使用Trivy开源容器扫描器检测namespace yavin中pod使用的具有严重漏洞的镜像。查找具有High或Critical漏洞的镜像，并删除使用这些镜像的pod。
+- Trivy仅预装在cluster的master节点上
+
+## Answer
+
+~~~sh
+#自己练习先创建pod
+kubectl create ns yavin
+kubectl apply -f trivy-1.yaml
+kubectl apply -f trivy-2.yaml
+
+#考试环境先切换集群
+kubectl config use-context KSRS00101
+#原始terminal上面查看pod的镜像
+k get po -n yavin -o yaml | grep image:
+#到master节点上扫描pod
+ssh xianchaomaster1
+trivy image --help #查看参数选项
+#扫描刚才列出来的镜像
+trivy image --skip-db-update -s HIGH,CRITICAL docker.io/library/nginx:1.25 >> scan.log
+trivy image --skip-db-update -s HIGH,CRITICAL docker.io/library/redis:7.2 >> scan.log 
+#过滤扫描结果,-B 2是把total:前面两行也显示出来
+grep -iB 2 total: scan.log
+#exit回到原始命令终端，切换到集群环境
+kubectl config use-context KSRS00101
+#列出pod，找到使用漏洞镜像的pod，删掉
+k get po -n yavin
+k describe po trivy-1 -n yavin
+k delete po trivy -n trivy --force --grace-period=0
+~~~
+
+> 注意：
+>
+> - 原始终端才能执行kubectl命令，exit退回到原始终端之后，需要重新执行kubectl use-context切换到集群环境。
+> - trivy命令需要ssh登录到master节点才能执行
+
+# 4 sysdig & falco
+
 ## 介绍
 
-- 
+- Sysdig官网：www.sysdig.org
+  - sysdig的定位是系统监控、分析和排障的工具
+
+- Falco 是一个云原生运行时安全系统，可与容器和原始 Linux 主机一起使用。它由 Sysdig 开发，是 Cloud Native Computing Foundation（云原生计算基金会）的一个沙箱项目。
+  - Falco 的工作方式是查看文件更改、网络活动、进程表和其他数据是否存在可疑行为，然后通过可插拔后端发送警报。
+  - 通过内核模块或扩展的 BPF 探测器在主机的系统调用级别检查事件。
+  - Falco 包含一组丰富的规则，您可以编辑这些规则以标记特定的异常行为，并为正常的计算机操作创建允许列表。
+
 
 ## Task
 
-~~~sh
+- 使用运行时检测工具检测在属于Pod redis的单个容器中频繁产生和执行异常的进程。 
+- cluster的工作节点上已经安装了sysdig和falco
+- 使用你选择的工具（包括任何未预装的工具），至少分析容器120s，使用过滤器检查新生成和执行的进程。在/opt/KSRS00101/events/details中存储一个事件文件，其中包含检测到的事件，每行一个，格式如下所示：
+  - timestamp,uid or namespace, processName
+  - 以下是格式的正确的事件文件：
+    - 18:18:18.688688688,root,init
+    - 18:18:19.688688688,nobody,init
 
-~~~
-
-# 4
-
-## 介绍
-
-- 
-
-## Task
+## Answer
 
 ~~~sh
+#自己环境中练习时，创建pod
+k applly -f redis.yaml
 
+#切换集群环境
+kubectl config use-context KSRS00101
+k get po
+k describe po redis-deployment-5b569f968-86h8n
+#复制containerID前12位即可 ？
+2d3affbe35b4
+#去工作节点上用sysdig检查
+ssh xianchaonode1
+sudo -i 
+sysdig -l | grep time
+sysdig -l | grep uid
+sysdig -l | grep name
+sysdig -M 120 -p "*%evt.time,%user.uid,%proc.name" --cri unix:///run/containerd/containerd.sock container.id=2d3affbe35b4 > /opt/KSRS00101/events/details
+
+#-p：指定打印事件时使用的格式
+#-M: 多少秒后停止收集
+# evt.time: 事件发生的时间
+# user.uid: 用户uid
+# proc.name: 生成事件的进程名字
+# container.id: 根据容器过滤
+
+#如果details中没输出数据，可以尝试改成container name
+#sysdig -M 120 -p "*%evt.time,%user.uid,%proc.name" --cri unix:///run/containerd/containerd.sock container.id=redis > /opt/KSRS00101/events/details
 ~~~
 
-# 5
+# 5 service account
 
 ## 介绍
 
