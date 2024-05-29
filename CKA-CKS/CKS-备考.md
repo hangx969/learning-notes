@@ -377,41 +377,176 @@ kubectl describe po xxx
 > - default这个sa不用删除，会自动生成的。
 > - 如果pod删除较慢，直接`kubectl delete po xxx --force --grace-period=0`强制删除
 
-# 6 TLS密码套件
-
-## 介绍
-
-- 
+# 6 TLS通信加强
 
 ## Task
 
-~~~sh
+一个现有的Kubernetes集群，通过更新组件的TLS配置进行安全加固
 
+- 修改API server和etcd之间通信的TLS配置，对于API server
+  - 删除对除了TLS1.2及更高版本之外的所有TLS版本的支持
+  - 删除对**TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256**之外左右密码套件的支持
+- 对于etcd：
+  - 删除对于除了TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256之外的所有密码套件的支持
+
+## Answer
+
+- 官网搜：kube-apiserver, ctrl+F搜--tls
+
+~~~sh
+#切换集群
+kubectl config use-context KSMV00401
+k get nodes
+#ssh到master节点更改配置
+ssh xianchaomaster1
+sudo -i
+#修改api server参数
+vim /etc/kubernetes/manifests/kube-apiserver.yaml
+  containers:
+  - command:
+    - kube-apiserver
+    - --tls-min-version=VersionTLS12 #照文档添加这一项。TLS12代表TLS 1.2
+    - --tls-cipher-suites=TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256 #照文档添加这一项指定的TLS cipher
+#重启kubelet
+systemctl restart kubelet
+
+#修改etcd配置
+vim /etc/kubernetes/manifests/etcd.yaml
+spec:
+  containers:
+  - command:
+    - etcd
+    - --cipher-suites=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256 #添加这一项
+#重启kubelet
+systemctl restart kubelet
+
+#exit退出控制节点，到login node上检查
+kubectl config use-context KSMV00401
+k get nodes -n kube-system
 ~~~
 
-# 7
+> 注意：
+>
+> - etcd的参数文档上没有，记住是比apiserver上少了tls（- --cipher-suites）
+> - apiserver和etcd的要求的cipher不一定相同，注意甄别。
+> - 重启kubelet完之后，可能会花费几分钟才能显示出k get nodes的结果
 
-## 介绍
-
-- 
+# 7 NetworkPolicy拒绝所有的ingress+egress流量
 
 ## Task
 
-~~~sh
+一个默认拒绝（default-deny）的NetworkPolicy可避免在未定义任何其他NetworkPolicy的namespace中意外公开Pod。
 
+- 在namespace development中创建一个名字为denynetwork的default-deny的NetworkPolicy
+  - 此新的NetworkPolicy必须拒绝namespace development中的所有lngress+Egress流量。
+  - 将新NetworkPolicy应用于在namespace development中运行的所有POD
+- 您可以在/home/candidate/KSCS00101/network-policy.yaml中找到模板清单文件
+
+## Answer
+
+- 官网搜networkpolicies --> 搜deny --> 找到 Default deny all ingress and all egress traffic
+
+~~~sh
+#自己环境
+k create ns development
+mkdir -p /home/candidate/KSCS00101/
+#切换集群
+kubectl config use-context KSCS00101
+vim /home/candidate/KSCS00101/network-policy.yaml
+#将官网的模板复制进来，加个namespace即可
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: denynetwork
+  namespace: development
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  - Egress
+
+k apply -f network-policy.yaml
 ~~~
 
-# 8
+> 注意：
+>
+> - 看清题目要求的限制的类型，如果是仅限制ingress/egress，从官网复制对应的条目即可：
+>   - Default deny all egress traffic
+>   - Default deny all ingress traffic
 
-## 介绍
-
-- 
+# 8 NetworkPolicy限制pod之间访问
 
 ## Task
 
-~~~sh
+- 创建名为pod-access的NetworkPolicy来限制对在namespace development中运行的pod products-service的访问。
 
+- 只允许以下Pod连接到pod products-service：
+
+  1、在namespace qa中的pod
+  2、位于任何namespace，带有environment: testing的pod
+
+## Answer
+
+- 官网搜network policies --> The NetworkPolicy resource下面复制模板
+
+~~~sh
+#自己环境搭建
+sudo kubectl create ns development 
+sudo kubectl create ns qa
+sudo kubectl apply -f network-1.yaml
+sudo kubectl apply -f qa-pod.yaml
+sudo kubectl apply -f products-service.yaml
+
+#切换集群
+kubectl config use-context KSSH00301
+#查看ns qa、product-service的标签
+k get ns qa --show-labels #kubernetes.io/metadata.name=qa
+k get po product-service -n development --show-labels #app=product
+#根据模板创建network policies
 ~~~
+
+~~~yaml
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: pod-access
+  namespace: development
+spec:
+  podSelector:
+    matchLabels:
+      app: product
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: qa
+  - from: #分开写两个from，逻辑更清楚
+    - namespaceSelector: {} #这里注意：题目说了任何namespace下，这里必须加上。
+      podSelector: 
+        matchLabels:
+          environment: testing
+~~~
+
+> 注意：
+>
+> - network policies要限制哪个namespace里面的pod被访问，就将其创建到哪个namespace
+>
+> - labels要改成xxx: xx这种格式
+>
+> - 如果ns或者po有多个标签，就可以把标签都写上
+>
+>   ```yaml
+>   matchLabels:
+>     app: product
+>     xxx: xx
+>   ```
+>
+> - “**位于任何namespace，带有environment: testing的pod**”：意味着要写上namespaceSelector: {}
+>
+> - 写两个from包含两个逻辑，更清楚
 
 # 9
 
