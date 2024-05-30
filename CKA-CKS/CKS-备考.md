@@ -548,52 +548,331 @@ spec:
 >
 > - 写两个from包含两个逻辑，更清楚
 
-# 9
-
-## 介绍
-
-- 
+# 9 RBAC
 
 ## Task
 
-~~~sh
+绑定到Pod的serviceAccount的Role授予过度的权限。完成以下任务以降低权限。
 
+- 一个名为web-pod的现有Pod已在namespace db中运行。
+- 编辑绑定到Pod的ServiceAccount： test-sa-3的现有Role：
+  - 仅允许只对services类型的资源执行get操作。
+- 在namespace db中创建一个role：
+  - 名为test-role-2
+  - 并仅允许只对namespaces类型的资源执行patch操作。
+- 创建一个名为test-role-2-binding新RoleBinding，将新创建的 Role绑定到Pod的ServiceAccount
+- 不要删除现有RoleBinding。
+
+## Answer
+
+- k8s官网搜RBAC（查看create role和rolebinding的命令）
+
+~~~sh
+#自己环境搭建
+kubectl create ns db
+kubectl create sa test-sa-3 -n db
+kubectl apply -f test-sa-3-role.yaml
+kubectl create rolebinding test-sa-rolebinding  --role=test-sa-3-role --serviceaccount=db:test-sa-3 --namespace=db
+kubectl apply -f web-pod.yaml
+
+#查看db名称空间之下的所有rolebinding
+k get rolebinding -n db
+#查看这个rolebinding对应哪个sa绑定到了哪个role上
+k get rolebinding -n db test-sa-rolebinding -o yaml
+#编辑role的权限
+k edit role test-sa-3-role -n db
+#resource改成services，verb改成get
+  resources:
+  - services
+  verbs:
+  - get
+
+#新创建一个role
+kubectl create role test-role-2  -n db --resource=namespaces --verb=patch
+#创建rolebinding绑定到service account
+k create rolebinding -n db --role=test-role-2 --serviceaccount=db:test-sa-3
 ~~~
 
-# 10
-
-## 介绍
-
-- 
+# 10 kube-apiserver审计日志记录采集
 
 ## Task
 
-~~~sh
+- 在cluster 中启用审计日志。为此，请启用日志后端，并确保：
 
-~~~
+  1.日志存储在/var/log/kubernetes/logs.txt中
+  2.日志文件能保留5天
+  3.最多保留1个旧的审计日志文件
 
-# 11
+- /etc/kubernetes/logpolicy/sample-policy.yaml提供了基本策略。基本策略位于cluster的master节点上。它仅指定不记录的内容。
 
-## 介绍
+- 编辑和扩展基本策略来记录：
+
+  1. RequestResponse级别的namespaces的更改
+  2. namespace webapps中 pods 更改的request
+  3. Metadata级别的所有namespace中的ConfigMap和Secret的更改
 
 - 
+  另外，添加一个全方位的规则以在Metadata级别记录的所有其他请求。不要忘记应用修改后的策略。
+
+
+## Answer
+
+- 官网搜auditing
+
+~~~sh
+#切换集群，ssh到master节点
+kubectl config use-context KSRS00602
+ssh ksrs00602-master
+sudo -i
+#编辑auditing policy的yaml文件
+vim /etc/kubernetes/logpolicy/sample-policy.yaml
+##原始文件不动，按照题目要求，在rules下面的-level字段新增配置即可。可以从官网复制。
+#RequestResponse级别的namespaces的更改
+  - level: RequestResponse
+    resources:
+    - group: ""
+      # Resource "pods" doesn't match requests to any subresource of pods,
+      # which is consistent with the RBAC policy.
+      resources: ["namespaces"]
+      
+#namespace webapps中 pods 更改的request
+  - level: Request
+    resources:
+    - group: "" # core API group
+      resources: ["pods"]
+    # This rule only applies to resources in the "kube-system" namespace.
+    # The empty string "" can be used to select non-namespaced resources.
+    namespaces: ["webapp"]
+    
+#Metadata级别的所有namespace中的ConfigMap和Secret的更改
+  # Log configmap and secret changes in all other namespaces at the Metadata level.
+  - level: Metadata
+    resources:
+    - group: "" # core API group
+      resources: ["secrets", "configmaps"]
+~~~
+
+~~~yaml
+#修改apiserver - 文档中logs backend字段有参数说明
+vim /etc/kubernetes/manifests/kube-apiserver.yaml
+#添加参数：
+- --audit-policy-file=/etc/kubernetes/logpolicy/sample-policy.yaml #审计策略文件
+- --audit-log-path=/var/log/kubernetes/logs.txt  #审计日志文件
+- --audit-log-maxage=5   #日志最大保留天数
+- --audit-log-maxbackup=1  #审计日志文件最大保留数据
+
+#apiserver的pod上写volume和volumeMounts挂载策略文件和日志文件 - 文档中logs backend字段有参数说明
+    volumeMounts:
+    - name: kubernetes-logs
+      mountPath: /var/log/kubernetes/
+    - name: kubernetes-policy 
+      mountPath: /etc/kubernetes/logpolicy/sample-policy.yaml
+
+volumes:
+  - name: kubernetes-policy
+    hostPath:  
+      type: File
+      path: /etc/kubernetes/logpolicy/sample-policy.yaml
+  - name: kubernetes-logs
+    hostPath:
+      type: DirectoryOrCreate
+      path: /var/log/kubernetes/
+
+#重启kubelet
+systemctl daemon-reload
+systemctl restart kubelet
+#exit回到login node查看集群状态
+~~~
+
+> 注意：
+>
+> - 也可能抽到这个题：
+>   - RequestResponse级别的nodes更改
+>   - namespace front-apps中pods更改的request
+>   - metadata级别的所有namespace中的ConfigMap和Secret的更改
+>
+> ~~~yaml
+> ##编辑auditing policy的yaml文件
+> vim /etc/kubernetes/logpolicy/sample-policy.yaml
+> ##原始文件不动，按照题目要求，在rules下面的-level字段新增配置即可。可以从官网复制。
+> #RequestResponse级别的nodes的更改
+>   - level: RequestResponse
+>     resources:
+>     - group: ""
+>       # Resource "pods" doesn't match requests to any subresource of pods,
+>       # which is consistent with the RBAC policy.
+>       resources: ["nodes"]
+> #namespace front-apps中pods更改的request
+>   - level: Request
+>     resources:
+>     - group: "" # core API group
+>       resources: ["pods"]
+>     # This rule only applies to resources in the "kube-system" namespace.
+>     # The empty string "" can be used to select non-namespaced resources.
+>     namespaces: ["front-apps"]
+> #metadata级别的所有namespace中的ConfigMap和Secret的更改
+>   # Log configmap and secret changes in all other namespaces at the Metadata level.
+>   - level: Metadata
+>     resources:
+>     - group: "" # core API group
+>       resources: ["secrets", "configmaps"]
+> ~~~
+
+# 11 创建secret
 
 ## Task
 
-~~~sh
+- 在namespace db中获取名为db1-test的现有secret的内容。
+  - 将username字段存储在名为/home/candidate/old-username.txt的文件中，
+  - 并将password字段存储在名为/home/candidate/pass.txt文件中
+  - 你必须创建这两个文件；它们还不存在。
 
+- 不要在以下步骤中使用/修改先前创建的文件，如果需要，创建新的临时文件。
+  - 在db namespace中创建一个名为test-workflow 的新secret，内容如下；
+    username: thanos
+    password: u9YuWVpoVu7m
+
+- 最后，新建一个pod，可以通过卷访问secret test-workflow：
+  - pod名： dev-pod
+  - namespace: db
+  - 容器名：dev-container
+  - 镜像：redis:7.2
+  - 卷名：dev-volume
+  - 挂载路径：/etc/secret
+
+## Answer
+
+- 官网搜secret
+
+~~~sh
+#自己环境
+kubectl create ns db
+kubectl  apply -f secret.yaml
+#切换集群环境
+kubectl config use-context KSMV00201
+#创建两个文件
+touch /home/candidate/old-username.txt
+touch /home/candidate/pass.txt
+#获取secret。命令可以在secret文档中，搜json获取
+#直接显示出来，手动copy进去也行：kubectl get secret db1-test -n db -o jsonpath='{.data.*}' | base64 -d
+kubectl get secret db1-test -n db -o jsonpath='{.data.username}' | base64 -d > /home/candidate/old-username.txt
+kubectl get secret db1-test -n db -o jsonpath='{.data.password}' | base64 -d > /home/candidate/pass.txtpass.txt
+
+#创建新secret -- 文档搜secret kubectl --> 搜literal
+kubectl create secret generic test-workflow -n db --from-literal=username=thanos --from-literal=password=u9YuWVpoVu7m
 ~~~
 
-# 12
+~~~yaml
+#创建pod -- 官网在secret页面
+vim secret-pod.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: dev-pod
+  namespace: db
+spec:
+  containers:
+  - name: dev-container
+    image: redis:7.2
+    imagePullPolicy: IfNotPresent
+    volumeMounts:
+    - name: dev-volume
+      mountPath: "/etc/secret"
+  volumes:
+  - name: dev-volume
+    secret:
+      secretName: test-workflow
 
-## 介绍
+k apply -f secret-pod.yaml
+~~~
 
-- 
+> 注意：
+>
+> - 参考官网的secret、Managing Secrets using kubectl两个页面
+
+# 12 dockefile和deployment优化
 
 ## Task
 
-~~~sh
+- 分析指定的Dockerfile（基于Ubuntu:16.04），修复其中有安全问题的两个命令。
+- 分析指定的deployment，修复其中有安全问题的两个字段。
+- 如果需要非特权用户执行某些指令，可以采用uid为65535的user nobody
 
+## Answer
+
+- 官网搜security context
+
+~~~sh
+#切换集群环境
+kubectl config use-context KSSC00301
+#修改dockerfile
+vim /home/candidate/KSSC00301/Dockerfile
+#原内容如下:
+FROM ubuntu
+USER root
+USER root
+#修改之后的内容如下：
+FROM ubuntu:16.04  
+USER nobody
+USER nobody
 ~~~
 
+ ~~~yaml
+ #修改deployment
+ #内容如下：
+ vim /home/candidate/KSSC00301/deployment.yaml
+ apiVersion: apps/v1
+ kind: Deployment
+ metadata:
+  name: test
+  labels:
+    app: dev
+    name: dev
+ spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dev
+  template:
+    metadata:
+      labels:
+        app: dev
+    spec:
+      containers:
+      - image: nginx:1.25
+        imagePullPolicy: IfNotPresent
+        name: nginx
+        securityContext: {'capabilities':{'add':['NET_ADMIN'],'drop':['all']},'privileged':True,'readOnlyRootFilesystem':False,'runAsUser':2000}
+        
+ #修改securityContext内容：
+ #'privileged':False
+ #'readOnlyRootFilesystem':True
+ #'runAsUser':65535
+ {'capabilities':{'add':['NET_ADMIN'],'drop':['all']},'privileged':False,'readOnlyRootFilesystem':True,'runAsUser':65535}
  
+ k apply -f /home/candidate/KSSC00301/deployment.yaml
+ ~~~
+
+# 13 镜像安全ImagePolicyWebhook
+
+## Task
+
+您必须在cluster的master节点上完成整个考题，所有服务和文件都已被准备好并放置在该节点上。cluster上设置了容器镜像扫描器，但尚未完全集成到cluster的配置中。完成后，容器镜像扫描器应扫描并拒绝易受攻击的镜像的使用。
+
+- 给定一个目录/etc/kubernetes/controlconf中不完整的配置以及具有HTTPS 端点的https://wakanda:8080/image_policy的功能性容器镜像扫描器：
+  - 启用必要的插件来创建镜像策略
+  - 校验控制配置并将其更改为隐式拒绝（implicit deny）(在隐式拒绝模式下，除非明确允许，否则所有请求都会被拒绝)
+  - 编辑配置以正确指向提供的HTTPS端点。
+- 最后，通过尝试部署易受攻击的资源/root/KSSC00202/vulnerable-resource.yml来测试配置是否有效。
+- 可以在/var/log/limagepolicy/roadrunner.log找到容器镜像扫描的日志文件
+
+## Answer
+
+- 官网搜:
+  - ImagePolicyWebhook （在admission controllers里面）
+  - kube-api-server都enable-admission
+
+~~~sh
+#
+~~~
+
