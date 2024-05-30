@@ -555,7 +555,7 @@ spec:
 绑定到Pod的serviceAccount的Role授予过度的权限。完成以下任务以降低权限。
 
 - 一个名为web-pod的现有Pod已在namespace db中运行。
-- 编辑绑定到Pod的ServiceAccount： test-sa-3的现有Role：
+- 编辑绑定到Pod的ServiceAccount：test-sa-3的现有Role：
   - 仅允许只对services类型的资源执行get操作。
 - 在namespace db中创建一个role：
   - 名为test-role-2
@@ -577,11 +577,11 @@ kubectl apply -f web-pod.yaml
 
 #查看db名称空间之下的所有rolebinding
 k get rolebinding -n db
-#查看这个rolebinding对应哪个sa绑定到了哪个role上
+#挨个查看rolebinding，看哪个rolebinding是绑定了题目给的sa:test-sa-3
 k get rolebinding -n db test-sa-rolebinding -o yaml
 #编辑role的权限
 k edit role test-sa-3-role -n db
-#resource改成services，verb改成get
+#resource改成services，verb改成get(如果考试环境没给resources何verbs字段，官网搜roles即可)
   resources:
   - services
   verbs:
@@ -592,6 +592,10 @@ kubectl create role test-role-2  -n db --resource=namespaces --verb=patch
 #创建rolebinding绑定到service account
 k create rolebinding -n db --role=test-role-2 --serviceaccount=db:test-sa-3
 ~~~
+
+> 注意：
+>
+> - 答完题看一下pod的yaml字段是不是有serviceAccountName字段，没有的话要加上。
 
 # 10 kube-apiserver审计日志记录采集
 
@@ -650,10 +654,12 @@ vim /etc/kubernetes/logpolicy/sample-policy.yaml
     resources:
     - group: "" # core API group
       resources: ["secrets", "configmaps"]
+#添加一个全方位的规则以在Metadata级别记录的所有其他请求
+  - level: Metadata
 ~~~
 
 ~~~yaml
-#修改apiserver - 文档中logs backend字段有参数说明
+#修改apiserver - 文档搜kube-apiserver
 vim /etc/kubernetes/manifests/kube-apiserver.yaml
 #添加参数：
 - --audit-policy-file=/etc/kubernetes/logpolicy/sample-policy.yaml #审计策略文件
@@ -661,7 +667,7 @@ vim /etc/kubernetes/manifests/kube-apiserver.yaml
 - --audit-log-maxage=5   #日志最大保留天数
 - --audit-log-maxbackup=1  #审计日志文件最大保留数据
 
-#apiserver的pod上写volume和volumeMounts挂载策略文件和日志文件 - 文档中logs backend字段有参数说明
+#apiserver的pod上写volume和volumeMounts挂载策略文件和日志文件 - 文档中logs backend字段有参数说明sa
     volumeMounts:
     - name: kubernetes-logs
       mountPath: /var/log/kubernetes/
