@@ -1007,3 +1007,80 @@ k apply -f la.yaml
 >   - po.spec.containers.securityContext
 >
 >   这个题就在container字段下面写就行，有几个container就写几个。
+
+# 15 gVisor
+
+## Task
+
+- 该cluster 使用containerd 作为CRI运行时。containerd的默认运行时处理程序是runc。containerd 已准备好支持额外的运行时处理程序runsc（gVisor）
+- 使用名为runsc的现有运行时处理程序，创建一个名为untrusted 的 RuntimeClass。更新 namespace client 中的所有 Pod 以在 gVisor（runsc） 上运行。
+- 你可以在/home/candidate/KSMV00301/runtime-class.yaml找到一个模板清单文件。
+
+## Answer
+
+- 官网搜：runtime class
+
+~~~sh
+#切换集群环境
+kubectl config use-context KSMV00301
+#创建runtime class
+vim /home/candidate/KSMV00301/runtime-class.yaml
+# RuntimeClass is defined in the node.k8s.io API group
+apiVersion: node.k8s.io/v1
+kind: RuntimeClass
+metadata:
+  # The name the RuntimeClass will be referenced by.
+  # RuntimeClass is a non-namespaced resource.
+  name: untrusted 
+# The name of the corresponding CRI configuration
+handler: runsc
+~~~
+
+~~~sh
+#获取client ns中的deployment
+k get deploy -n client
+k get po -n client
+#导出deploy的yaml
+kubectl get deploy run-client -n client -o yaml > run-deploy.yaml
+
+vim run-deploy.yaml
+#在deploy.spec.template.spec.runtimeClassName配置
+runtimeClassName: untrusted
+
+#重新部署
+k delete -f run-deploy.yaml
+k apply -f run-deploy.yaml
+~~~
+
+# 16 k8s 准入控制
+
+## Task
+
+- 重新配置cluster的k8s API服务器，以确保只允许经过身份验证和授权的REST请求。
+- 使用授权模式Node,RBAC和准入控制器NodeRestriction。
+- 删除用户system:anonymous的ClusterRoleBinding来进行清理。注意：所有kubectl配置环境也被配置使用未经身份验证和未经授权的访问。不必更改，但注意一旦完成cluster的安全加固，kubectl的配置将无法工作。
+- 可以使用位于cluster的master节点上，cluster原本的kubectl配置文件/etc/kubernetes/admin.conf，以确保经过身份验证的授权的请求仍然被允许。
+
+## Answer
+
+~~~sh
+#切换集群
+kubectl config use-context KSCH00101
+ssh ksch00101-master
+#修改apiserver参数
+vim /etc/kubernetes/manifests/kube-apiserver.yaml
+#原始内容如下：
+- --authorization-mode=AlwaysAllow
+- --enable-admission-plugins=AlwaysAdmit
+
+#修改成:
+- --authorization-mode=Node,RBAC #注意，只保留Node,RBAC这两个，中间是英文状态下的逗号。在最新考试中，这一行默认可能已经有了，但也需要检查确认。
+- --enable-admission-plugins=NodeRestriction
+
+systemctl restart kubelet
+#exit回到login node，查询clusterrolebinding并删除
+kubectl config use-context KSCH00101
+k get clusterbolebinding system:anonymous
+k delete clusterrolebinding system:anynomous
+~~~
+
