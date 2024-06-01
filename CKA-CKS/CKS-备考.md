@@ -692,6 +692,8 @@ systemctl restart kubelet
 
 > 注意：
 >
+> - 记得查看kube-apiserver是否配置了volumeMount和volume。log是挂目录，policy是直接挂文件。
+>
 > - 也可能抽到这个题：
 >   - RequestResponse级别的nodes更改
 >   - namespace front-apps中pods更改的request
@@ -753,7 +755,7 @@ systemctl restart kubelet
 ~~~sh
 #自己环境
 kubectl create ns db
-kubectl  apply -f secret.yaml
+kubectl apply -f secret.yaml
 #切换集群环境
 kubectl config use-context KSMV00201
 #创建两个文件
@@ -817,7 +819,7 @@ vim /home/candidate/KSSC00301/Dockerfile
 FROM ubuntu
 USER root
 USER root
-#修改之后的内容如下：
+#修改之后的内容如下： （只改FROM和USER，有几个root都改成nobody）
 FROM ubuntu:16.04  
 USER nobody
 USER nobody
@@ -863,7 +865,9 @@ USER nobody
 
 ## Task
 
-您必须在cluster的master节点上完成整个考题，所有服务和文件都已被准备好并放置在该节点上。cluster上设置了容器镜像扫描器，但尚未完全集成到cluster的配置中。完成后，容器镜像扫描器应扫描并拒绝易受攻击的镜像的使用。
+您必须在cluster的master节点上完成整个考题，所有服务和文件都已被准备好并放置在该节点上。
+
+cluster上设置了容器镜像扫描器，但尚未完全集成到cluster的配置中。完成后，容器镜像扫描器应扫描并拒绝易受攻击的镜像的使用。
 
 - 给定一个目录/etc/kubernetes/controlconf中不完整的配置以及具有HTTPS 端点的https://wakanda:8080/image_policy的功能性容器镜像扫描器：
   - 启用必要的插件来创建镜像策略
@@ -876,9 +880,130 @@ USER nobody
 
 - 官网搜:
   - ImagePolicyWebhook （在admission controllers里面）
-  - kube-api-server都enable-admission
+  - kube-api-server -- 搜admission
 
 ~~~sh
-#
+#自己环境把相关文件写上
+ 
+#切换集群环境，到master节点上做题
+kubectl config use-context KSSC00202
+ssh xianchaomaster1
+sudo -i
+
+#修改admission controller的配置文件/etc/kubernetes/controlconf/admission_configuration.json
+cd /etc/kubernetes/controlconf
+vim admission_configuration.json
+apiversion: apiserver.config.k8s.io/v1
+kind: AdmissionConfiguration
+plugins:
+  - name: ImagePolicyWebhook
+    configuration:
+      imagePolicy:
+        kubeConfigFile: /etc/kubernetes/controlconf/kubeconfig.yaml
+        allowTTL: 50
+        denyTTL: 50
+        retryBackoff: 500
+        defaultAllow: false #将true改为false（没有这个字段的话自己加上，官网搜admission，有这个字段的示例）
+
+#修改ImagePolicyWebhook的配置文件/etc/kubernetes/controlconf/kubeconfig.yaml
+vim kubeconfig.yaml
+clusters:
+  - name: name-of-remote-imagepolicy-service
+    cluster:
+      certificate-authority: /path/to/ca.pem    
+      server: https://wakanda:8080/image_policy # 把这里改成题目给的地址
+
+users:
+  - name: name-of-api-server
+    user:
+      client-certificate: /path/to/cert.pem 
+      client-key: /path/to/key.pem     
+    
+#修改apiserver配置
+vim /etc/kubernetes/manifests/kube-apiserver.yaml
+#添加两项配置，开启admission plugin和admission controller配置文件的位置
+- --enable-admission-plugins=NodeRestriction,ImagePolicyWebhook #NodeRestriction是自带的，在后面加上ImagePolicyWebhook即可
+- --admission-control-config-file="/etc/kubernetes/controlconf/admission_configuration.json"
+
+#apiserver需要检查是否挂载了配置文件的目录，没有的话，自己写volume和volumeMount挂载进去
+...
+  volumeMounts:
+  - mountPath: /etc/kubernetes/controlconf
+    name: config
+...
+volumes:
+- hostPath:
+    path: /etc/kubernetes/controlconf
+    type: DirectoryOrCreate
+  name: config
+  
+#重启kubelet
+systemctl restart kubelet
 ~~~
 
+~~~sh
+#exit回到login node部署示例的pod
+kubectl apply -f /root/KSSC00202/vulnerable-resource.yml
+~~~
+
+# 14 修改deploy的security context
+
+## Task
+
+修改运行在namespace app，名为lamp-deployment的现有 Deployment，使其容器：
+
+1. 使用用户ID 10000运行
+2. 使用一个只读的根文件系统
+3. 禁止特权提升
+
+## Answer
+
+- 官网搜securitycontext
+
+~~~sh
+#自己环境搭建
+kubectl create ns app
+kubectl apply -f  /home/candidate/finer-sunbeam/lamp-deployment.yaml
+#切换集群环境
+kubectl config use-context KSRS00502
+#获取deployment的yaml文件
+kubectl get deploy lamp-deployment -n app -o yaml > la.yaml
+~~~
+
+~~~yaml
+vim la.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lamp-deployment
+  namespace: app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: lamp-deployment
+  template:
+    metadata:
+      labels:
+         app: lamp-deployment
+    spec:
+      containers:
+      - name: nginx
+        image: docker.io/xianchao/nginx:v1
+        imagePullPolicy: IfNotPresent
+        securityContext:
+          runAsUser: 1000
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+
+k apply -f la.yaml
+~~~
+
+> 注意：
+>
+> - securityContext在两个位置都有：
+>
+>   - po.spec.securityContext
+>   - po.spec.containers.securityContext
+>
+>   这个题就在container字段下面写就行，有几个container就写几个。
