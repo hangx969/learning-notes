@@ -36,6 +36,7 @@ kubectl config use-context KSSH00401
 sudo kubectl get nodes
 ssh kssh00401-worker1
 sudo -i
+#查看apparmor配置文件是为了获取profile的名称
 cat /etc/apparmor.d/nginx_apparmor 
 #...
 profile nginx-profile  flags=(attach_disconnected) {
@@ -73,22 +74,21 @@ sudo kubectl apply -f /home/candidate/KSSH00401/nginx-deploy.yaml
 
 ## Task
 
-- context：针对kubeadm创建的cluster运行CIS基准测试工具时，发现了多个必须解决的问题。
+context：针对kubeadm创建的cluster运行CIS基准测试工具时，发现了多个必须解决的问题。
 
 
 - task：通过配置修复所有问题并重新启动受影响的组件以确保新设置生效。
 
 - 修复针对kubelet发现的所有以下违规行为
 
-  - Ensure  that the  anonymous-auth argument  is set to false  
+  - Ensure that the anonymous-auth argument is set to false  
 
-  - Ensure  that the  -authorization-mode argument  is  not set to AlwaysAllow 
-
-- 尽可能使用Webhook 身份验证/授权
+  - Ensure that the -authorization-mode argument is not set to AlwaysAllow 
+  - 尽可能使用Webhook 身份验证/授权
 
 - 修复针对etcd发现的以下违规行为：
 
-  - Ensure  that the  --client-cert-auth argument  is set to true
+  - Ensure that the --client-cert-auth argument is set to true
 
 ## Answer
 
@@ -1044,7 +1044,7 @@ k get po -n client
 kubectl get deploy run-client -n client -o yaml > run-deploy.yaml
 
 vim run-deploy.yaml
-#在deploy.spec.template.spec.runtimeClassName配置
+#在deploy.spec.template.spec.runtimeClassName配置（和containers字段同级）
 runtimeClassName: untrusted
 
 #重新部署
@@ -1055,6 +1055,8 @@ k apply -f run-deploy.yaml
 # 16 k8s 准入控制
 
 ## Task
+
+Context：集群处于测试目的，已经配置为未经身份验证和未经授权的访问，授予匿名用户cluster-admin的权限。现在要加固安全配置。
 
 - 重新配置cluster的k8s API服务器，以确保只允许经过身份验证和授权的REST请求。
 - 使用授权模式Node,RBAC和准入控制器NodeRestriction。
@@ -1084,3 +1086,8 @@ k get clusterbolebinding system:anonymous
 k delete clusterrolebinding system:anynomous
 ~~~
 
+> 注意：
+>
+> - apiserver配置修改完之后，login node就用不了kubectl了。按照题目提示，可以在master上：
+>
+>   `kubectl get nodes --kubeconfig=/etc/kubernetes/admin.conf`继续操作kubectl
