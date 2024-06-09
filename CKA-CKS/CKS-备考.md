@@ -273,7 +273,7 @@ k applly -f redis.yaml
 #切换集群环境
 kubectl config use-context KSRS00101
 k get po
-k describe po redis-deployment-5b569f968-86h8n | grep "Container ID"
+k get po redis-deployment-5b569f968-86h8n -o yaml | grep containerID
 #复制containerID前12位即可
 2d3affbe35b4
 
@@ -281,9 +281,10 @@ k describe po redis-deployment-5b569f968-86h8n | grep "Container ID"
 ssh xianchaonode1
 sudo -i 
 #用下面命令查看sysdig里面的变量叫啥
-sysdig -l | grep time #找到 evt.time
-sysdig -l | grep uid #找到 user.uid
-sysdig -l | grep name #找到 proc.name
+sysdig -l | grep time #找到 evt.time，作为输出字段
+sysdig -l | grep uid #找到 user.uid，作为输出字段
+sysdig -l | grep name #找到 proc.name，作为输出字段
+sysdig -l | grep container #找到container.id作为filter条件
 #containerd的路径可以先查找一下：
 find / -name "containerd.sock" #/run/containerd/containerd.sock
 #就用上面的变量名来组成输出格式
@@ -352,7 +353,7 @@ metadata:
   name: dev-pod
   namespace: dev
 spec:
-  automountServiceAccountToken: false #
+  automountServiceAccountToken: false 
   serviceAccountName: database-sa
   containers:
   - image: docker.io/xianchao/nginx:v1
@@ -368,8 +369,8 @@ kubectl apply -f /home/candidate/KSCH00301/pod-manifest.yaml
 kubectl get sa -n dev
 #再看有哪些pod
 kubectl get po -n dev
-#挨个pod describe看挂载了哪些
-kubectl describe po xxx
+#看pod都挂载了哪些sa。这样就找到了没被使用的sa，k delete sa -n dev删掉。
+k get po -n dev -o yaml | grep serviceAccountName:
 ~~~
 
 > 注意：
@@ -438,7 +439,7 @@ k get nodes -n kube-system
 一个默认拒绝（default-deny）的NetworkPolicy可避免在未定义任何其他NetworkPolicy的namespace中意外公开Pod。
 
 - 在namespace development中创建一个名字为denynetwork的default-deny的NetworkPolicy
-  - 此新的NetworkPolicy必须拒绝namespace development中的所有lngress+Egress流量。
+  - 此新的NetworkPolicy必须拒绝namespace development中的所有ingress+Egress流量。
   - 将新NetworkPolicy应用于在namespace development中运行的所有POD
 - 您可以在/home/candidate/KSCS00101/network-policy.yaml中找到模板清单文件
 
@@ -474,6 +475,7 @@ k apply -f network-policy.yaml
 > - 看清题目要求的限制的类型，如果是仅限制ingress/egress，从官网复制对应的条目即可：
 >   - Default deny all egress traffic
 >   - Default deny all ingress traffic
+> - “拒绝所有ns development”这个条件，在metadata.namespace这一条就满足了，不需要加namespaceSelector
 
 # 8 NetworkPolicy限制pod之间访问
 
@@ -575,6 +577,8 @@ kubectl apply -f test-sa-3-role.yaml
 kubectl create rolebinding test-sa-rolebinding  --role=test-sa-3-role --serviceaccount=db:test-sa-3 --namespace=db
 kubectl apply -f web-pod.yaml
 
+#检查一下题目说的pod是否真的挂载了sa
+k describe po web-pod -n db
 #查看db名称空间之下的所有rolebinding
 k get rolebinding -n db
 #挨个查看rolebinding，看哪个rolebinding是绑定了题目给的sa:test-sa-3
@@ -693,6 +697,8 @@ systemctl restart kubelet
 > 注意：
 >
 > - 记得查看kube-apiserver是否配置了volumeMount和volume。log是挂目录，policy是直接挂文件。
+>
+> - 应用这个audit policy就是systemctl daemon-reload，systemctl restart kubelet
 >
 > - 也可能抽到这个题：
 >   - RequestResponse级别的nodes更改
@@ -883,8 +889,6 @@ cluster上设置了容器镜像扫描器，但尚未完全集成到cluster的配
   - kube-api-server -- 搜admission
 
 ~~~sh
-#自己环境把相关文件写上
- 
 #切换集群环境，到master节点上做题
 kubectl config use-context KSSC00202
 ssh xianchaomaster1
@@ -946,6 +950,13 @@ systemctl restart kubelet
 kubectl apply -f /root/KSSC00202/vulnerable-resource.yml
 ~~~
 
+> - admission_configuration里面修改defaultAllow
+> - kubeconfig里面修改扫描器endpoint
+> - kube-apiserver.yaml里面：
+>   - 添加enable-admission-plugins ImagePolicyWebhook
+>   - 添加配置文件路径--admission-control-config-file（写的是json文件）
+>   - 添加volume和volumeMounts把存放配置文件的路径挂进去
+
 # 14 修改deploy的security context
 
 ## Task
@@ -992,7 +1003,7 @@ spec:
         image: docker.io/xianchao/nginx:v1
         imagePullPolicy: IfNotPresent
         securityContext:
-          runAsUser: 1000
+          runAsUser: 10000
           allowPrivilegeEscalation: false
           readOnlyRootFilesystem: true
 
