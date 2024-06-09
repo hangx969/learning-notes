@@ -1093,7 +1093,7 @@ vim /etc/kubernetes/manifests/kube-apiserver.yaml
 systemctl restart kubelet
 #exit回到login node，查询clusterrolebinding并删除
 kubectl config use-context KSCH00101
-k get clusterbolebinding system:anonymous
+k get clusterrolebinding system:anonymous
 k delete clusterrolebinding system:anynomous
 ~~~
 
