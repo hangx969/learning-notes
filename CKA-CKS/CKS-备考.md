@@ -268,7 +268,7 @@ k delete po trivy-1 -n trivy --force --grace-period=0
 
 ~~~sh
 #自己环境中练习时，创建pod
-k applly -f redis.yaml
+k apply -f redis.yaml
 
 #切换集群环境
 kubectl config use-context KSRS00101
@@ -549,6 +549,24 @@ spec:
 > - “**位于任何namespace，带有environment: testing的pod**”：意味着要写上namespaceSelector: {}
 >
 > - 写两个from包含两个逻辑，更清楚
+>
+> - network policy的yaml规则：
+>
+>   ~~~yaml
+>     ingress:
+>     - from: 
+>       - namespaceSelector: {}
+>       - podSelector: #两个杠分开的两个条件是相互独立的or
+>           matchLabels:
+>             environment: testing
+>      - from: 
+>       - namespaceSelector: {}
+>         podSelector: #同一个杠下面的两行是串联的and
+>           matchLabels:
+>             environment: testing
+>   ~~~
+>
+>   
 
 # 9 RBAC
 
