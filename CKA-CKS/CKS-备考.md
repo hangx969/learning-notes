@@ -885,6 +885,10 @@ USER nobody
  k apply -f /home/candidate/KSSC00301/deployment.yaml
  ~~~
 
+> 注意：
+>
+> - deployment资源中的spec.selector和template.metadata中的label是否对应了，题目中会出现不对应的情况。
+
 # 13 镜像安全ImagePolicyWebhook
 
 ## Task
