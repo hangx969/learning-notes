@@ -375,6 +375,7 @@ k get po -n dev -o yaml | grep serviceAccountName:
 
 > 注意：
 >
+> - 创建sa的时候一定注意加上**metadata.namespace**，否则后面的pod创建不出来
 > - default这个sa不用删除，会自动生成的。
 > - 如果pod删除较慢，直接`kubectl delete po xxx --force --grace-period=0`强制删除
 
@@ -911,6 +912,10 @@ cluster上设置了容器镜像扫描器，但尚未完全集成到cluster的配
   - kube-api-server -- 搜admission
 
 ~~~sh
+#自己环境搭建
+mkdir -p /etc/kubernetes/controlconf
+touch /etc/kubernetes/controlconf/admission_configuration.json
+touch /etc/kubernetes/controlconf/kubeconfig.yaml
 #切换集群环境，到master节点上做题
 kubectl config use-context KSSC00202
 ssh xianchaomaster1
@@ -972,7 +977,7 @@ systemctl restart kubelet
 kubectl apply -f /root/KSSC00202/vulnerable-resource.yml
 ~~~
 
-> - admission_configuration里面修改defaultAllow
+> - admission_configuration里面修改defaultAllow false
 > - kubeconfig里面修改扫描器endpoint
 > - kube-apiserver.yaml里面：
 >   - 添加enable-admission-plugins ImagePolicyWebhook
