@@ -664,6 +664,14 @@ tar -xvf redis.tar.gz
   包管理命令：apk, lbu
   包管理文档：https://wiki.alpinelinux.org/wiki/Alpine_Linux_package_managemen
 
+## 制作支持多操作系统的镜像
+
+~~~sh
+docker build --platform linux/amd64,windows/amd64 -t myapp .
+~~~
+
+
+
 # Docker数据持久化和网络模式
 
 ## Docker数据卷
