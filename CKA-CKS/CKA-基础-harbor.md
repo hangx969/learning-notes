@@ -84,6 +84,14 @@
    #出现✔ ----Harbor has been installed and started successfully.---- 表明安装成功。
    ```
 
+   > 注：
+   >
+   > - docker-compose可以直接yum install docker-compose或者apt install docker-compose
+   >
+   > - 离线镜像包docker-harbor-2-3-0.tar.gz如果不上传，install.sh会自动拉取
+   >
+   > - 安装过程中如果报错类似HTTP error chucked，执行`pip install 'urllib3<2'`
+
 5. harbor启动和停止
 
    ```bash
