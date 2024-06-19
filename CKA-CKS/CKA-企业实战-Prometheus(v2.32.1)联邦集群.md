@@ -163,4 +163,6 @@ vim /apps/prometheus/prometheus.yml
 systemctl restart prometheus
 ~~~
 
-- 访问访问主节点的prometheus 192.168.40.180:9090，查看抓取到的prometheus-federate-2.101数据
+- 访问访问主节点的prometheus 192.168.40.180:9090，查看抓取到的prometheus-federate-2.101数据。在graph界面查询node_load1数据
+- 后面可以接入grafana可视化展示监控数据。
+
