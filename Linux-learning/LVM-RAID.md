@@ -248,17 +248,21 @@ p #查看已有分区
 n #创建新分区
 5 #输入分区编号。
 enter #默认起始点
-+5G #按照结束点设置分区大小 +5G。
++100G #按照结束点设置分区大小 +5G。
 8e00 #更改分区类型为LVM。
 w #保存并退出 fdisk。
 #更新分区表
 partprobe /dev/sda
 #扩容lvm
-sudo pvcreate /dev/sda4
-sudo vgextend ubuntu-vg /dev/sda4
-sudo lvextend -L +5G /dev/ubuntu-vg/ubuntu-lv
+pvs/pvdisplay
+sudo pvcreate /dev/sda5
+vgs/vgdisplay
+sudo vgextend ubuntu-vg /dev/sda5
+lvs
+sudo lvextend -L +100%FREE /dev/ubuntu-vg/ubuntu-lv
+lvs/lvdisplay
 sudo resize2fs /dev/ubuntu-vg/ubuntu-lv
 df -h
-/dev/mapper/ubuntu--vg-ubuntu--lv   15G  3.4G   11G  24% /
+lsblk
 ~~~
 
