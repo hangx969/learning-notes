@@ -815,6 +815,34 @@ Git Repository：写自己的github/gitee项目地址
   #gogs账号密码：需要注册，gogs/gogs
   ~~~
 
+# openshift部署nginx
+
+- 普通nginx镜像启动后pod会进入error状态，查看日志：
+
+  ~~~sh
+  oc log <pod name>
+  #nginx: [emerg] mkdir() "/var/cache/nginx/client_temp" failed (13: Permission denied)
+  ~~~
+
+- 利用openshift的debug功能进入pod查看
+
+  ~~~sh
+  oc debug <pod name> -c <container name>
+  ls -la /var/cache
+  #drwxr-xr-x. 2 root root  6 May 29 16:45 nginx
+  #发现nginx目录只能由root来写，但是openshift中容器是没有root权限的
+  whoami
+  #user ID 1000110000
+  ~~~
+
+- dockerhub上提供了非特权版本的nginx
+
+  ~~~sh
+  docker pull nginxinc/nginx-unprivileged:latest
+  ~~~
+
+  
+
 # 常用命令介绍
 
 - 登录oc命令
