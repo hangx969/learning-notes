@@ -856,5 +856,29 @@ Git Repository：写自己的github/gitee项目地址
   oc new-app openshift/hello-openshift #--name podName 指定 应用名称
   ~~~
 
+## oc alias
 
-> 企业中使用ocp一般是花钱订阅红帽的源，安装企业版。
+- 把oc命令设一个alias为k
+
+~~~sh
+whereis oc # kubectl: /usr/bin/oc
+echo "alias k=/usr/bin/oc">>/etc/profile
+source /etc/profile
+#2. 安装并设置alias的自动补全：
+yum install -y bash-completion
+source /usr/share/bash-completion/bash_completion
+oc completion bash | sudo tee /etc/bash_completion.d/oc > /dev/null
+##生成 bash 自动补全脚本，写入到 /etc/bash_completion.d/kubectl 文件中
+source <(oc completion bash | sed 's/oc/k/g')
+#3. 解决每次启动k都会失效，要重新刷新环境变量（source /etc/profile）的问题：在~/.bashrc文件中添加以下代码：source /etc/profile
+echo "source /etc/profile" >> ~/.bashrc
+#4. 给alias k也配置补全
+vim ~/.bashrc
+##加入以下
+alias k='oc'
+complete -o default -F __start_oc k
+source <(oc completion bash)
+##使命令生效
+source ~/.bashrc
+~~~
+
