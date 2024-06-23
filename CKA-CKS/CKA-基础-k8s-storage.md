@@ -92,7 +92,7 @@ cd /var/lib/kubelet/pods/e948ebb2-50f2-4884-a16c-2c0dd7b3f1de/volumes/kubernetes
 
 - hostPath Volume是指Pod挂载宿主机上的目录或文件。 
 
-- hostPath Volume使得容器可以使用宿主机的文件系统进行存储，hostpath（宿主机路径）：节点级别的存储卷，在pod被删除，这个存储卷还是存在的，不会被删除，所以只要同一个pod被调度到同一个节点上来，在pod被删除重新被调度到这个节点之后，对应的数据依然是存在的。
+- hostPath Volume使得容器可以使用宿主机的文件系统进行存储，hostpath（宿主机路径）：节点级别的存储卷，pod被删除这个存储卷还是存在的.所以只要同一个pod被调度到同一个节点上来，对应的数据依然是存在的。
 
   <img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202311141722615.png" alt="image-20231114172218560" style="zoom:50%;" />
 

@@ -841,7 +841,8 @@ Git Repository：写自己的github/gitee项目地址
   docker pull nginxinc/nginx-unprivileged:latest
   ~~~
 
-  
+
+> 非特权版本的nginx容器监听8080端口而非80，需要在containerPort和svc的targetport中修改为8080才能访问通
 
 # 常用命令介绍
 
