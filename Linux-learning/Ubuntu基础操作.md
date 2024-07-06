@@ -432,7 +432,7 @@ sudo unattended-upgrade # 直接安装
 
 ~~~sh
 sudo apt list --upgradable | grep -e "-security"
-$ sudo apt list --upgradable | grep -e "-security" | awk -F "/" '{print $1}' | xargs apt install
+sudo apt list --upgradable | grep -e "-security" | awk -F "/" '{print $1}' | xargs apt install
 #focal-security是一个特殊的软件源，它包含了针对Ubuntu 20.04 LTS（代号为Focal Fossa）的所有安全更新。
 # apt install -s是dry-run
 #查看changelog，有更新时间

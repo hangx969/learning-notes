@@ -124,6 +124,120 @@ cd /var/lib/kubelet/pods/e948ebb2-50f2-4884-a16c-2c0dd7b3f1de/volumes/kubernetes
         type: DirectoryOrCreate #type的定义：https://kubernetes.io/docs/concepts/storage/volumes/#hostpath
   ```
 
+> 注：
+>
+> - 根据官网说明：https://kubernetes.io/docs/concepts/storage/volumes/#hostpath，hostPath方式存在安全隐患，需要小心使用。更推荐使用local类型volume
+
+## local
+
+- 官网链接：
+  - https://kubernetes.io/docs/concepts/storage/volumes/#local
+  - https://kubernetes.io/docs/concepts/storage/storage-classes/#local
+- 创建local需要的sc，这个sc的作用是确保pod在创建出来后才会绑定pv和pvc
+
+~~~yaml
+#创建local存储类
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: local-storage
+provisioner: kubernetes.io/no-provisioner #不需要自动创建PV
+volumeBindingMode: WaitForFirstConsumer   #等到Pod运行之后才让PVC和PV绑定。因为在使用Local Persistent Volume的时候PV和对应的PVC必须要跟随Pod在同一node下面，否则会调度失败。
+parameters:
+  archiveOnDelete: "true" #false删除数据，true存档，即重命名路径，命名格式为oldPath前面增加archived-的前缀
+reclaimPolicy: Retain #回收策略是手动回收
+allowVolumeExpansion: true
+~~~
+
+- 创建PV
+
+~~~yaml
+#创建local类型的PV
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: local-storage-pv
+  labels:
+    app: local-storage-pv
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+  - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  #与local-storageClass.yaml中name标签相同，否则不需要等待pod调用，pv创建之后就可以直接bound
+  storageClassName: local-storage
+  #指定的PV对应的本地磁盘的路径
+  local:
+    path: /var/mnt/nfs
+  #并且用nodeAffinity指定这个PV必须运行在某节点上
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - worker1.ocp.example.com
+~~~
+
+- 创建pvc
+
+~~~yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: local-storage-pvc
+spec:
+  selector:
+    matchLabels:
+      app: local-storage-pv
+  accessModes:
+    - ReadWriteOnce
+  #这边的storageClassName要与static-pv.yaml匹配，同时selector标签匹配时，才能够与pv进行绑定
+  storageClassName: local-storage
+  resources:
+    requests:
+      storage: 1Gi
+~~~
+
+- 创建pod挂载pvc
+
+~~~yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grafana-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: grafana
+  template:
+    metadata:
+      labels:
+        app: grafana
+    spec:
+      volumes:
+      - name: local-storage-volume
+        persistentVolumeClaim:
+    #与static-pvc.yaml中metadata-name名称一致，表示pod调用该pvc
+          claimName: local-storage-pvc  
+      containers:
+      - name: grafana-container
+        image: quay.ocp.example.com/ocp4/custom/grafana:8.2.0
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        volumeMounts:
+          - mountPath: /mnt/local
+            name: local-storage-volume
+~~~
+
 ## NFS
 
 - HostPath可以解决数据持久化的问题，但是一旦Node节点故障了，Pod如果转移到了别的节点，又会出现问题了，此时需要准备单独的网络存储系统，比较常用的有NFS、CIFS。
