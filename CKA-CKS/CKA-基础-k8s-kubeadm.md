@@ -172,3 +172,7 @@ kubeadm 在执行安装之前进行了相当细致的环境检测：
     - /etc/kubernetes/pki/apiserver-etcd-client.crt
 
     - /etc/kubernetes/pki/apiserver-etcd-client.key
+
+# kubeadm安装的k8s集群升级
+
+参考官网：http://kubernetes.io/docs/tasks/administer-cluster/kubeadm/kubeadm-upgrade

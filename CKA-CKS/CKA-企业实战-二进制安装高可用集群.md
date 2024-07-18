@@ -1713,3 +1713,71 @@ systemctl restart kubelet kube-proxy
 ~~~
 
 ?question:不是有3台master节点吗？VIP漂移只发生在两个master上？master3是否也要设置为备用节点？ 不需要，k8s组件请求apiserver的时候走的是VIP+16443端口，也就是nginx，nginx配置中已经将请求代理给了upstream的3台master。
+
+# 二进制组件升级
+
+## 下载二进制包
+
+- 二进制包所在的github地址如下：https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/，可以按照版本下载二进制包。控制节点组件，找到Server Binaries，下载amd64版本的。server binaries二进制包里面就包含了：controller-manager，apiserver，scheduler等控制平面组件。其实也包含了工作节点需要的kubelet和kubeproxy
+
+## master节点升级
+
+- 备份二进制文件
+
+~~~sh
+cd /usr/bin
+mv kubectl kubectl.bak
+systemctl stop kube-apiserver
+systemctl stop kube-scheduler
+systemctl stop kube-controller-manager
+mv kube-apiserver kube-apiserver.bak
+mv kube-controller-manager kube-controller-manager.bak
+mv kube-scheduler kube-scheduler.bak
+~~~
+
+- 升级
+
+~~~sh
+tar xf kubernetes-server-linux-amd64.tar.gz
+cp kubernetes/server/bin/kubectl /usr/bin/
+cp kubernetes/server/bin/{kube-apiserver,kube-controller-manager,kube-scheduler} /usr/bin/
+~~~
+
+- 启动服务
+
+~~~sh
+systemctl start kube-apiserver
+systemctl start kube-controller-manager
+systemctl start kube-scheduler
+~~~
+
+> 如果升级完某些服务起不来，有可能是因为配置文件某些参数并不支持。可以查看服务状态中的报错:
+>
+> `systemctl status kube-apiserver -l`
+
+## 工作节点升级
+
+- 备份二进制文件
+
+~~~sh
+systemctl stop kubelet
+systemctl stop kube-proxy
+cd /usr/bin
+mv kubelet kubelet.bak
+mv kube-proxy kube-proxy.bak
+~~~
+
+- 升级
+
+~~~sh
+#回到控制节点，把二进制文件分发到node节点
+scp kubernetes/server/bin/{kubelet,kube-proxy} node:/usr/bin/
+~~~
+
+- 启动服务
+
+~~~sh
+systemctl daemon-reload && systemctl start kubelet
+systemctl daemon-reload && systemctl start kube-proxy
+~~~
+
