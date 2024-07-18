@@ -34,13 +34,15 @@
 
 ## iptables
 
-- iptables模式下，kube-proxy为service后端的每个Pod创建对应的iptables规则，直接将发向Cluster IP的请求重定向到一个Pod IP。 该模式下kube-proxy不承担四层负责均衡器的角色，只负责创建iptables规则。该模式的优点是较userspace模式效率更高，但不能提供灵活的LB策略，当后端Pod不可用时也无法进行重试。
+- iptables模式下，kube-proxy为service后端的每个Pod创建对应的iptables规则，直接将发向Cluster IP的请求重定向到一个Pod IP。 该模式下kube-proxy不承担四层负责均衡器的角色，只负责创建iptables规则。该模式的优点是较userspace模式效率更高，但不能提供灵活的LB策略，当后端Pod不可用时也无法进行重试。（采用线性表，从上到下一条一条查，性能很低）
 
-  ![image-20231111111411881](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202311111114959.png)
+> - 在 Kubernetes v1.29 中，Kubernetes 使用 nftables 作为 kube-proxy 新的后端，此功能现在是 Alpha 版本。 iptables 存在无法修复的性能问题，随着规则集大小的增加，性能损耗不断增加。很大程度上由于其无法修复的问题， 内核中 iptables 的开发速度已经放缓，并且大部分已经停止。新功能不会添加到 iptables 中，新功能和性能改进主要进入 nftables。 nftables 能完成 iptables 能做的所有事情，而且做得更好。 --- https://docs.daocloud.io/blogs/231213-k8s-1.29/
+
+![image-20231111111411881](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202311111114959.png)
 
 ## ipvs
 
-- ipvs模式和iptables类似，kube-proxy监控Pod的变化并创建相应的ipvs规则。ipvs相对iptables转发效率更高。除此以外，ipvs支持更多的LB算法。
+- ipvs模式和iptables类似，kube-proxy监控Pod的变化并创建相应的ipvs规则。ipvs相对iptables转发效率更高（采用hash表，性能达到一定规模时，hash表的优势就体现出来了）。除此以外，ipvs支持更多的LB算法。
 
   ![image-20231111111435638](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202311111114753.png)
 
@@ -389,3 +391,50 @@ spec:
 > 在 Kubernetes 集群中，名称为 "kubernetes" 的 Service 是一个特殊的 Service，它提供了对 Kubernetes API server 的访问。
 >
 > 这个 Service 的主要作用是允许集群内的 Pod 通过 Service 网络（通常是 ClusterIP）来访问 Kubernetes API，而不需要知道 API server 的实际 IP 地址或主机名。这对于运行在 Pod 中的应用程序来说非常有用，因为它们可以使用 Kubernetes API 来查询集群状态、操作资源等，而无需关心 API server 的具体位置。
+
+# kube-proxy由iptables切换到ipvs
+
+- 在用kubeadm安装集群时，在kubeadm.yaml文件中手动定义了kube-proxy的类型
+
+~~~yaml
+---
+apiVersion: kubeproxy.config.k8s.io/v1alpha1
+kind: KubeProxyConfiguration
+mode: ipvs
+~~~
+
+- 安装配置ipvs
+
+```sh
+#在所有节点上安装以下：
+yum install -y ipset ipvsadm
+#所有节点加载内核参数
+cat << 'EOF' > /etc/sysconfig/modules/ipvs.modules
+#!/bin/bash
+ipvs_modules=(ip_vs ip_vs_lc ip_vs_wlc ip_vs_rr ip_vs_wrr ip_vs_lblc ip_vs_lblcr ip_vs_dh ip_vs_sh ip_vs_fo ip_vs_nq
+ip_vs_sed ip_vs_ftp nf_conntrack_ipv4)
+for kernel_module in ${ipvs_modules[*]}; do
+/sbin/modinfo -F filename ${kernel_module} > /dev/null 2>&1
+if [ $? -eq 0 ]; then
+/sbin/modprobe ${kernel_module}
+fi
+done
+EOF
+
+chmod +x /etc/sysconfig/modules/ipvs.modules
+/etc/sysconfig/modules/ipvs.modules
+```
+
+- 编辑configmap
+
+~~~sh
+kubectl -n kube-system edit cm kube-proxy
+#修改mode字段为"ipvs"
+#手动删除kube-proxy pod，自动生成的新pd会拉取新的配置
+kubectl -n kube-system get pod -l k8s-app=kube-proxy | grep -v 'NAME' | awk '{print $1}' | xargs kubectl -n kube-system delete pod
+#清理iptables防火墙规则
+iptables -t filter -F; iptables -t filter -X; iptables -t nat -F; iptables -t nat -X
+#修改ipvs模式之后过5-10分钟测试在k8s创建pod是否可以正常访问网络
+kubectl run busybox --image busybox:1.28 --restart=Never --rm -it busybox -- sh
+~~~
+
