@@ -100,6 +100,7 @@ kubectl get nodes -owide
 ## 实验环境
 
 - 由1.23升级到1.24，包括了容器运行时由docker升级为containerd，升级kubernetes组件。这里接着上面升级到containerd继续进行。
+- 参考官网文档：http://kubernetes.io/docs/tasks/administer-cluster/kubeadm/kubeadm-upgrade
 
 ## 封锁排空控制节点
 
