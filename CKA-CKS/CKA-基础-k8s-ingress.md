@@ -1522,8 +1522,85 @@ curl -H "Host: canary.example.com" http://192.168.40.6 #ingress暴露的ip
   for i in {1..20}; do curl -H "Host: canary.example.com" http://192.168.40.6; done;
   ~~~
 
-  
 
+# nginx-ingress-controller高并发优化
 
+1. 大量请求涌入导致负载过高，影响请求的响应速度和稳定性。
+2. 由于大量请求需要处理，可能会导致nginx-ingress-controller的资源（CPU、内存等）耗尽，从而导
+   致服务崩溃。
+3. 高并发场景下的负载均衡器需要快速且准确地将请求分配给后端服务，否则会影响响应速度和服务可用性
 
-### 
+因此，需要对nginx-ingress-controller进行优化以提高其处理高并发请求的能力
+
+## 优化步骤
+
+1. 修改ConfigMap，调整worker进程数和每个进程的最大连接数来优化性能。
+
+~~~sh
+#可以在nginx-ingress-controller的ConfigMap中增加“worker-processes”和“worker-connections”字段，分别表示worker进程数和每个进程的最大连接数。
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-ingress-controller
+data:
+  worker-processes: "4" # worker_processes是Nginx服务器进程的数量，通常将其设置为服务器上可用的CPU核心数量-1。
+  worker-connections: "1024" # worker_connections是每个工作进程（worker process）可以同时处理的最大连接数，这个值应该根据服务器资源以及预期的并发量来设置。通常的建议是将它设置为1024或更高，但实际上需要根据实际情况进行调整。
+~~~
+
+- 例如，如果你有4个CPU核心，可以将worker_processes设置为3。如果你预计每个连接将占用2MB内存，而服务器有8GB的内存，则可以将worker_connections设置为较小的值，如1k。如果你有更多的内存可用，或者希望处理更多的并发连接，则可以将其设置为更大的值。
+- 备注：如何知道每个连接占用多大内存？
+  - 一般来说，HTTP/HTTPS连接使用的内存量通常较小，通常在几百字节到几千字节之间。但是，在高流量情况下，大量连接的累积内存使用量可能很大。
+  - 最好的方法是使用监控和性能测试工具来实际测量您的应用程序在给定负载下的内存使用情况，并根据的观察结果来调整worker-processes和worker-connections的值
+  - 常用的压测工具：JMeter、Gatling、Vegeta、ab等
+
+2. 开启缓存
+
+- nginx-ingress-controller可以使用缓存来缓存请求的响应，从而减少后端服务器的压力。可以通过以下两种方式开启缓存：
+
+~~~sh
+#在nginx-ingress-controller的ConfigMap中增加“proxy-cache-enabled”字段
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-ingress-controller
+data:
+  proxy-cache-enabled: "true"
+
+#可以在Ingress的Annotations中增加“nginx.ingress.kubernetes.io/proxy-cache: 'on'”来开启缓存。
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: example-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-cache: "on"
+spec:
+  rules:
+  - host: example.com
+    http:
+      paths:
+      - path: /test
+        pathType: Prefix
+        backend:
+          service:
+            name: test-service
+            port:
+              name: http
+~~~
+
+3. nginx参数优化
+
+- 有一个业务应用部署在kubernetes中，如果将该应用以Kubernetes Service NodePort暴露出来，压测可以发现页面响应性能较高，可以达到10w多的QPS；而将这个Kubernetes用Ingress暴露出来，压测只能响应5w多的QPS了。
+
+- 参考文档:shttps://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/configmap/
+
+~~~sh
+#upstream中的keepalive、keepalive_requests、keepalive_timeout这些配置项可以优化下
+keep-alive: "100"
+keep-alive-requests: "110"
+upstream-keepalive-connections: "20000"
+upstream-keepalive-requests: "110"
+upstream-keepalive-timeout: "100"
+#由于Ingress-nginx-controller配置了upstream-keepalive-connections、upstream-keepalive-requests、
+#upstream-keepalive-timeout参数，这样nginx->upstream的HTTP处理是启用了Keep-Alive的，这样到Kuberentes Service的TCP连接可以高效地复用，避免了重建连接的开销。
+~~~
+
