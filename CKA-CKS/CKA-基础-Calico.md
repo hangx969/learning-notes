@@ -76,15 +76,17 @@ containers:
 
   - 因此，在安装 Calico 网络插件时，需要通过 IP_AUTODETECTION_METHOD 环境变量来指定使用 ens33 接口来分配 IP 地址给 Kubernetes Pod。这样可以确保 Calico 插件能够正确地配置 Pod 网络。
 
-## IPIP模式和BGP模式对比分析
+## Calico支持的网络模式对比分析
 
 - IPIP
 
+  - 使用 IPIP 封装技术进行数据传输，每个节点需要分配两个 IP 地址，一个是节点 IP 地址，另一个是虚拟节点 IP 地址。相较于 BGP 模式，IPIP 模式的配置更加简单，但是性能和路由协议的稳定性会受到一定影响。
   - 把一个IP数据包又套在一个IP包里，即把IP层封装到IP层的一个 tunnel，它的作用其实基本上就相当于一个基于IP层的网桥，一般来说，普通的网桥是基于mac层的，根本不需要IP，而这个ipip则是通过两端的路由做一个tunnel，把两个本来不通的网络通过点对点连接起来；
   - calico以ipip模式部署完毕后，node上会有一个tunl0的网卡设备，这是ipip做隧道封装用的,也是一种overlay模式的网络。当我们把节点下线，calico容器都停止后，这个设备依然还在，执行 rmmodipip命令可以将它删除。
 
 - BGP
 
+  - 使用 BGP 协议作为路由协议，每个节点会分配一个全局唯一的 IP 地址，可以支持跨 VPC 或者跨云的网络互通。
   - BGP模式直接使用物理机作为虚拟路由路（vRouter），不再创建额外的tunnel
 
   > - 边界网关协议（BorderGateway Protocol, BGP）是互联网上一个核心的去中心化的自治路由协议。它通过维护IP路由表或‘前缀’表来实现自治系统（AS）之间的可达性，属于矢量路由协议。BGP不使用传统的内部网关协议（IGP）的指标，而是基于路径、网络策略或规则集来决定路由。因此，它更适合被称为矢量性协议，而不是路由协议，通俗的说就是将接入到机房的多条线路（如电信、联通、移动等）融合为一体，实现多线单IP；
@@ -105,9 +107,68 @@ containers:
   value: "Always"
 ```
 
+- VXLAN模式
+  - 使用 VXLAN 封装技术进行数据传输，与 IPIP 模式类似，需要为每个节点分配两个 IP 地址，但是 VXLAN 模式相较于 IPIP 模式的性能更好。
+- hostgateway模式
+  - 将每个节点的主机网络接口作为网关来进行数据传输，不需要额外的 IP 地址分配，但是节点之间的网络互通会受到主机网络接口的限制。
 - 总结：
   - calico BGP通信是基于TCP协议的，所以只要节点间三层互通即可完成，即三层互通的环境bird就能生成与邻居有关的路由。但是这些路由和flannel host-gateway模式一样，需要二层互通才能访问的通，因此如果在实际环境中配置了BGP模式生成了路由但是不同节点间pod访问不通，可能需要再确认下节点间是否二层互通。
   - 为了解决节点间二层不通场景下的跨节点通信问题，calico也有自己的解决方案——IPIP模式.
+
+## 配置IPIP模式
+
+~~~yaml
+在calico.yaml文件中找到以下内容：
+# Disable IPIP tunneling. (required on Azure)
+# - name: CALICO_IPV4POOL_IPIP
+# value: "Never“
+将注释去掉，并将value修改为"CrossSubnet"，表示启用IPIP模式。
+~~~
+
+## 配置BGP模式
+
+~~~yaml
+在calico.yaml文件中找到以下内容：
+# Enable BGP. (required to enable bird)
+# - name: CALICO_IPV4POOL_CIDR
+# value: "192.168.0.0/16"
+# - name: CALICO_IPV4POOL_IPIP
+# value: "CrossSubnet"
+# - name: CALICO_NETWORKING_BACKEND
+# value: "bird"
+将注释去掉，并将CALICO_IPV4POOL_CIDR修改为当前网络的CIDR地址，CALICO_IPV4POOL_IPIP修改为
+"CrossSubnet"，CALICO_NETWORKING_BACKEND修改为"bird"，表示启用BGP模式。
+~~~
+
+> 备注：当CALICO_IPV4POOL_IPIP被设置为“CrossSubnet”时，Calico可以为不同子网中的节点创建IPIP隧道，以便它们可以通过隧道相互通信。在 BGP 模式下，IPIP 仍然是 Calico 网络的一部分，用于支持 Kubernetes 网络的内部通信，因此仍需要设置CALICO_IPV4POOL_IPIP 参数。设置为 “CrossSubnet” 表示启用 IPIP 模式，且IPIP 模式的隧道可以跨越多个子网，而不仅仅是在同一子网内（子网值物理机网络）。这有助于支持更大规模的Kubernetes 网络，其中节点分布在多个子网中。
+
+## 配置VXLAN模式
+
+~~~yaml
+在calico.yaml文件中找到以下内容：
+# Enable VXLAN encapsulation mode. (required to enable host-gw and vxlan)
+# - name: CALICO_IPV4POOL_IPIP
+# value: "CrossSubnet"
+# - name: CALICO_NETWORKING_BACKEND
+# value: "vxlan“
+将注释去掉，并将CALICO_IPV4POOL_IPIP修改为"CrossSubnet"，CALICO_NETWORKING_BACKEND修改为
+"vxlan"，表示启用VXLAN模式。
+~~~
+
+## 配置host-gw模式
+
+~~~yaml
+在calico.yaml文件中找到以下内容：
+# Enable host gateway mode. (required to enable host-gw and vxlan)
+# - name: CALICO_IPV4POOL_IPIP
+# value: "CrossSubnet"
+# - name: CALICO_NETWORKING_BACKEND
+# value: "hostgw“
+将注释去掉，并将CALICO_IPV4POOL_IPIP修改为"CrossSubnet"，CALICO_NETWORKING_BACKEND修改为
+"hostgw"，表示启用host-gw模式。
+~~~
+
+
 
 # 其他常用网络插件
 
