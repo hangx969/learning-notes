@@ -347,6 +347,7 @@ roleRef:
 > ```
 >
 > - /etc/kubernetes/manifests/kube-apiserver.yaml这个文件默认的权限是：600，不能改，改完之后就连不到apiserver了。
+> - 注意：1.27版本这个feature-gate不需要改了
 
 ### 部署nfs-provisioner deploy
 
@@ -599,6 +600,7 @@ spec:
       containers:
       - name: fluentd
         image: fluent/fluentd-kubernetes-daemonset:v1.4.2-debian-elasticsearch-1.1
+        #适用于containerd容器运行时的镜像：docker.io/fluent/fluentd-kubernetes-daemonset:v1.16-debian-elasticsearch7-1
         imagePullPolicy: IfNotPresent
         env:
           - name:  FLUENT_ELASTICSEARCH_HOST
