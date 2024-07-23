@@ -278,7 +278,7 @@ chmod 755 /etc/sysconfig/modules/ipvs.modules && bash /etc/sysconfig/modules/ipv
 >
 > - kube-proxy支持 iptables 和 ipvs 两种模式， 在kubernetes v1.8 中引入了 ipvs 模式，在 v1.9 中处于 beta 阶段，在 v1.11 中已经正式可用了。iptables 模式在 v1.1 中就添加支持了，从 v1.2 版本开始 iptables 就是 kube-proxy 默认的操作模式，ipvs 和 iptables 都是基于netfilter的，但是ipvs采用的是hash表，因此当service数量达到一定规模时，hash查表的速度优势就会显现出来，从而提高service的服务性能。那么 ipvs 模式和 iptables 模式之间有哪些差异呢？
 >
->   ## 1、ipvs 为大型集群提供了更好的可扩展性和性能
+>   1、ipvs 为大型集群提供了更好的可扩展性和性能
 >
 >   2、ipvs 支持比 iptables 更复杂的复制均衡算法（最小负载、最少连接、加权等等）
 >
