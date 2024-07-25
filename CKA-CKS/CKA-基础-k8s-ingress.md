@@ -11,6 +11,7 @@
 - 如果Service想要被k8s集群外部访问，需要用NodePort类型，但是NodePort类型的svc有如下几个问题：
   - nodeport会在物理机映射一个端口，绑定到物理机上，这样就导致每个服务都要映射一个端口，端口过多，维护困难。
   - 还有Service底层使用的是iptables或者ipvs，仅支持四层代理，无法基于https协议做代理。
+  - 实际使用中，一般用域名，根据不同域名跳转到不同端口服务中。
 
 ## 四层vs七层代理
 
@@ -25,18 +26,20 @@
 - Ingress官网定义：Ingress可以把进入到集群内部的请求转发到集群中的一些服务上，从而可以把服务映射到集群外部。Ingress 能把集群内Service 配置成外网能够访问的 URL，流量负载均衡，提供基于域名访问的虚拟主机等。
 - Ingress 是k8s中的资源，主要是管理ingress-controller这个代理的配置文件。件通过它定义某个域名的请求过来之后转发到集群中指定的 Service。它可以通过 Yaml 文件定义，可以给一个或多个 Service 定义一个或多个 Ingress 规则。
 
+![image-20240725225555680](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202407252255843.png)
+
 ## Ingress Controller
 
 - Ingress Controller是一个七层负载均衡调度器，客户端的请求先到达这个七层负载均衡调度器，由七层负载均衡器在反向代理到后端pod，常见的七层负载均衡器有nginx、traefik。
   - 以我们熟悉的nginx为例，假如请求到达nginx，会通过upstream反向代理到后端pod应用，但是后端pod的ip地址是一直在变化的，因此在后端pod前需要加一个service，这个service只是起到分组的作用，那么我们upstream只需要填写service地址即可。
-
 - 简单理解就是封装了nginx/traefik的代理。
 
 ## Ingress Controller vs nginx
 
-- Nginx：nginx配置文件一改动，还需要手动reload一下才可以生效
-
-- 但是如果用ingress-controller封装的nginx，在ingress维护配置，ingress创建好之后，会自动的把配置文件传到ingress-controller这个pod里，会自动进行reload，然后配置就生效了。
+- 在**ingress**里定义多个映射规则，**ingress controller**监听这些规则，转化为反向代理配置，对外提供服务。
+- 核心概念：
+  - Ingress：k8s中的一个对象，定义请求是如何转发到svc的规则
+  - Ingress controller：具体实现反向代理和负载均衡的程序，解析ingress的规则，根据配置的规则进行转发。实现方式很多，比如可以用nginx等。nginx配置文件一改动，还需要手动reload一下才可以生效。但是如果用ingress-controller封装的nginx，在ingress维护配置，ingress创建好之后，会自动的把配置文件传到ingress-controller这个pod里，会自动进行reload，然后配置就生效了。
 
 # Ingress代理pod的流程
 

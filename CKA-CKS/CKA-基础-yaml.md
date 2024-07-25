@@ -81,3 +81,36 @@ heima:
 - Containers 数组：容器的详细信息
 
   ![image-20231026205427484](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202310262054540.png)
+
+- imagePullPolicy:
+  - Always：总是从远程仓库下载。
+  - IfNotExist：本地有就用本地，否则远程仓库下载。
+  - Never：只用本地镜像，本地没有就报错。
+- Command：启动镜像的时候执行的命令
+  - eg：busybox并不是一个程序，而是一个工具类的集合，k8s集群启动管理后，由于没有前台进程阻塞，会自动关闭，解决方法就是让其一直在运行。
+  - 解决：用command写一个死循环来执行，就可以一直执行了。
+  - 查看：进入容器内部看这个文件：`kubectl exec pod-command -n dev -it -c busybox /bin/sh`
+- args：
+  - 特别说明：通过上面发现command已经可以完成启动命令和传递参数的功能，为什么这里还要提供一个args选项，用于传递参数呢?这其实跟docker有点关系，kubernetes中的command、args两项其实是实现覆盖Dockerfile中ENTRYPOINT的功能。
+
+ 1、如果command和args均没有写，那么用Dockerfile的配置。
+
+ 2、如果command写了，但args没有写，那么Dockerfile默认的配置会被忽略，执行输入的command
+
+ 3、如果command没写，但args写了，那么Dockerfile中配置的ENTRYPOINT的命令会被执行，使用当前args的参数
+
+ 4、如果command和args都写了，那么Dockerfile的配置被忽略，执行command并追加上args参数
+
+- Env: 设置环境变量，但是不推荐，推荐单独放到一个配置文件里面
+- port：
+  - containerPort：容器监听的端口
+  - hostport：容器端口映射到主机上的端口，如果设置，主机上只能运行一个容器的副本（其他的副本映射过来就端口冲突了），所以一般不设置。
+  - 访问程序要使用pod ip:container port （集群内部访问）
+- resources：资源配额。
+  - limits：限制容器运行的最大占用资源，一旦超过就会自动重启
+  - requests：规定下限。下限的意思是只有占**用的资源到了下限才能启动**。否则会是pending状态
+- nodeSelector 键值对：根据键值对定义的信息，将pod调度到这些label的node上
+
+## 常用字段含义
+
+![image-20240725224115645](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202407252241732.png)
