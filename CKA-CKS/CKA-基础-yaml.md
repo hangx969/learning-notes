@@ -9,7 +9,7 @@ YAML：标记语言
 - : 后面要加一个空格
 - \# 表示注释
 
-## 数据类型：
+## 数据类型
 
 1. 纯量：单个值 
 
@@ -60,13 +60,12 @@ heima:
     key2: value2
    ```
 
-   
 
 # POD yaml文件
 
 > kubectl explain pod 查看pod的yaml文件写法。
 
-## 一级属性：
+## 一级属性
 
 - apiVersion：k8s内部定义，用kubectl api-versions 查询
 - kind：资源类型，查看：kubectl api-resources
@@ -76,7 +75,7 @@ heima:
 - Spec <object>: specification，描述，是对各种资源配置的详细描述
 - Status <object>: 内容无需定义，k8s自动生成
 
-## spec子属性：
+## spec子属性
 
 - Containers 数组：容器的详细信息
 
