@@ -433,8 +433,9 @@ gpgcheck=1
 gpgkey=https://mirrors.aliyun.com/kubernetes-new/core/stable/v1.30/rpm/repodata/repomd.xml.key
 EOF
 #其中baseurl是指定仓库的URL地址。这个仓库是Kubernetes针对CentOS 7 x86_64架构的yum仓库，yum会从这个指定的URL地址获取Kubernetes的安装包和依赖包，从而进行安装。使用阿里云镜像站可以提高安装速度和稳定性。
-
 yum clean all && yum makecache
+yum install -y kubelet-1.30.0 kubeadm-1.30.0 kubectl-1.30.0
+systemctl enable kubelet
 ~~~
 
 # kubeadm初始化k8s集群
@@ -535,11 +536,8 @@ kubectl apply -f calico.yaml
 ~~~
 
 ~~~sh
-#测试
+#测试网络访问
 kubectl run busybox --image busybox:1.28  --image-pull-policy=IfNotPresent --restart=Never --rm -it busybox -- sh
-/ # ping www.baidu.com
-/ # nslookup kubernetes.default.svc.cluster.local
+# ping www.baidu.com
+# nslookup kubernetes.default.svc.cluster.local
 ~~~
-
-
-
