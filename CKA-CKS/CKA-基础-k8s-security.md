@@ -18,6 +18,10 @@
 
 ## 客户端认证
 
+- kubectl的认证步骤：
+  - 先去找环境变量KUBECONFIG。如果用这种方式配置，需要给这个环境变量配置成KUBECONFIG=/etc/kubernetes/admin.conf
+  - `echo $KUBECONFIG`看到这个环境变量是空的，下一步去找`$HOME/.kube/config`文件，根据其中的用户和集群信息去访问，可以通过`kubectl config view`来看
+
 - 也称为双向TLS认证， kubectl在访问apiserver的时候，apiserver也要认证kubectl是否是合法的，他们都会通过ca根证书来进行验证，如下图：
 
 <img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202311161317269.png" alt="image-20231116131757137" style="zoom:67%;" />
@@ -63,7 +67,9 @@
       client-key-data: REDACTED
   ~~~
 
-  - 在上面的配置文件当中，定义了集群、上下文以及用户。其中Config也是K8S的标准资源之一，在该配置文件当中定义了一个集群列表，指定的集群可以有多个；用户列表也可以有多个，指明集群中的用户；而在上下文列表当中，是进行定义可以使用哪个用户对哪个集群进行访问，以及当前使用的上下文是什么。
+  - 首先看`current-context: kubernetes-admin@kubernetes`表示当前使用的context
+  - 然后找context下面，name是`kubernetes-admin@kubernetes`的这个context中，user是kubernetes-admin，集群是kubernetes。
+  - 然后网上找，在cluster里面，看到name是kubernetes的这个集群，apiserver的地址是https://192.168.40.4:6443
 
 ## ServiceAccount
 
