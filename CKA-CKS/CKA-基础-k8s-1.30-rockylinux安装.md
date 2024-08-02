@@ -18,7 +18,7 @@
 - 软件包安装
 
 ~~~sh
-yum install -y device-mapper-persistent-data lvm2 wget net-tools nfs-utils lrzsz gcc gcc-c++ make cmake libxml2-devel openssl-devel curl curl-devel unzip sudo ntp libaio-devel wget vim ncurses-devel autoconf automake zlib-devel  python-devel epel-release openssh-server socat  ipvsadm conntrack telnet ipvsadm
+yum install -y device-mapper-persistent-data lvm2 wget net-tools nfs-utils lrzsz gcc gcc-c++ make cmake libxml2-devel openssl-devel curl curl-devel unzip sudo ntp libaio-devel wget vim ncurses-devel autoconf automake zlib-devel  python-devel epel-release openssh-server socat ipvsadm conntrack telnet ipvsadm vim
 ~~~
 
 - 配置网络
@@ -30,7 +30,7 @@ ip addr
 
 ~~~sh
 #编辑网卡配置文件
-vim /etc/sysconfig/network-scripts/ifcfg-ens33
+vim /etc/sysconfig/network-scripts/ifcfg-ens160
 #修改成如下内容：
 TYPE=Ethernet
 PROXY_METHOD=none
@@ -47,14 +47,14 @@ IPV6_AUTOCONF=yes
 IPV6_DEFROUTE=yes
 IPV6_FAILURE_FATAL=no
 IPV6_ADDR_GEN_MODE=stable-privacy
-NAME=ens33
-DEVICE=ens33
+NAME=ens160
+DEVICE=ens160
 ONBOOT=yes
 ~~~
 
 ~~~sh
 nmcli connection reload 
-nmcli c up ens33
+nmcli c up ens160
 ~~~
 
 - 关闭selinux
@@ -76,6 +76,7 @@ hostnamectl set-hostname rmaster1 && bash #rnode1
 tee -a /etc/hosts <<'EOF'
 172.16.183.60   rmaster1  
 172.16.183.61   rnode1
+EOF
 ~~~
 
 - 配置ssh互信
@@ -492,8 +493,8 @@ kubeadm init --config=kubeadm.yaml --ignore-preflight-errors=SystemVerification
 
 ~~~sh
 mkdir -p $HOME/.kube
-sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
-sudo chown $(id -u):$(id -g) $HOME/.kube/config
+cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+chown $(id -u):$(id -g) $HOME/.kube/config
 
 #1. 设置kubectl的alias为k：
 whereis kubectl ## kubectl: /usr/bin/kubectl
