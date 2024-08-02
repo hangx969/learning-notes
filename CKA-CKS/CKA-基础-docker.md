@@ -347,15 +347,17 @@ ENTRYPOINT ["/usr/sbin/nginx","-g","daemon off;"]
 
   3、可以是一个或者多个端口，也可以指定多个EXPOSE。格式：EXPOSE 80 8080。
 
+### CMD和ENTRYPOINT
+
 - CMD
 
-  - 类似于 RUN 指令，用于运行程序，但二者运行的时间点不同:
+  - 类似于 RUN 指令，用于设置默认的可执行命令或参数，但二者运行的时间点不同:
 
-    1、CMD 在docker run 时运行。这是自启动的命令，容器起来之后，
+    1、CMD 在docker run 时运行。是容器起来之后自启动的命令。
 
     2、RUN 是在 docker build构建镜像时运行。
 
-  - CMD的命令会被docker run的命令行参数给覆盖掉.
+  - CMD的命令会被docker run的命令行参数给覆盖掉
 
   - CMD如果有多个，只有最后一行会生效。
 
@@ -363,7 +365,7 @@ ENTRYPOINT ["/usr/sbin/nginx","-g","daemon off;"]
 
   - 类似于 CMD 指令，但其不会被 docker run 的命令行参数指定的指令所覆盖，而且这些命令行参数会被当作参数送给 ENTRYPOINT 指令指定的程序。
 
-  - 但是, 如果运行 docker run 时使用了 --entrypoint 选项，将覆盖 entrypoint指令指定的程序。
+  - 但是, 如果运行 docker run 时使用了 --entrypoint 选项，将覆盖docker file的entrypoint
 
   - 优点：在执行 docker run 的时候可以指定 ENTRYPOINT 运行所需的参数。
 
@@ -377,6 +379,8 @@ ENTRYPOINT ["/usr/sbin/nginx","-g","daemon off;"]
 
   - CMD和ENTRYPOINT配合使用举例
 
+    - 如果dockerfile中也有CMD指令，CMD中的参数会被附加到ENTRYPOINT 指令的后面。 如果这时docker run命令带了参数，这个参数会覆盖掉CMD指令的参数，并也会附加到ENTRYPOINT 指令的后面。这样当容器启动后，会执行ENTRYPOINT 指令的参数部分。
+    
     ```bash
     #dockerfile
     FROM nginx
@@ -395,6 +399,18 @@ ENTRYPOINT ["/usr/sbin/nginx","-g","daemon off;"]
     docker run --name nginx nginx:test /etc/nginx/new.conf
     docker inspect #看到传了新的参数进去
     ```
+
+  > 在pod中定义command和args时的规律如下：
+  >
+  > 1.如果command和args均没有写，那么用Dockerfile的配置。
+  >
+  > 2.如果command写了，但args没有写，那么Dockerfile默认的配置会被忽略，执行输入的command
+  >
+  > 3.如果command没写，但args写了，那么Dockerfile中配置的ENTRYPOINT的命令行会被执行，并且将args中填写的参数追加到ENTRYPOINT中。
+  >
+  > 4.如果command和args都写了，那么Dockerfile的配置被忽略，执行command并追加上args参数。
+  >
+  > 基于以上：建议不在dockerfile中定义任何cmd和entrypoint，在pod yaml文件中去定义command和args
 
 - COPY
 
@@ -704,22 +720,43 @@ tar -xvf redis.tar.gz
   官网：https://www.busybox.net/
   镜像：https://hub.docker.com/_/busybox/
   包管理命令：apk, lbu
-  包管理文档：https://wiki.alpinelinux.org/wiki/Alpine_Linux_package_managemen
+  包管理文档：https://wiki.alpinelinux.org/wiki/Alpine_Linux_package_management
+  
 - Alpine
   FROM Alpine
   描述：Alpine是一个面向安全的、轻量级的Linux系统，基于musl libc和busybox。
   官网：https://www.alpinelinux.org/
   镜像：https://hub.docker.com/_/alpine/
   包管理命令：apk, lbu
-  包管理文档：https://wiki.alpinelinux.org/wiki/Alpine_Linux_package_managemen
+  包管理文档：https://wiki.alpinelinux.org/wiki/Alpine_Linux_package_management
+  
+- CentOS/rockylinux
+
+  ~~~sh
+  #centos7的yum源目前还可以用
+  FROM centos:centos7.9.2009
+  RUN yum install -y wget
+  
+  FROM docker.io/library/rockylinux:latest
+  RUN yum install -y wget
+  
+  #如果基础镜像用centos8，需要替换镜像源为Centos-vault-8.5.2111.repo
+  wget http://mirrors.aliyun.com/repo/Centos-vault-8.5.2111.repo -O /etc/yum.repos.d/Centos-vault-8.5.2111.repo
+  wget http://mirrors.aliyun.com/repo/epel-archive-8.repo -O /etc/yum.repos.d/epel-archive-8.repo
+  yum clean all && yum makecache
+  
+  FROM centos:latest
+  MAINTAINER xianchao
+  RUN rm -rf /etc/yum.repos.d/*
+  COPY Centos-vault-8.5.2111.repo /etc/yum.repos.d/
+  RUN yum install wget -y
+  ~~~
 
 ## 制作支持多操作系统的镜像
 
 ~~~sh
 docker build --platform linux/amd64,windows/amd64 -t myapp .
 ~~~
-
-
 
 # Docker数据持久化和网络模式
 
