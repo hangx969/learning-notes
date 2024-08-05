@@ -404,7 +404,7 @@ ENTRYPOINT ["/usr/sbin/nginx","-g","daemon off;"]
   >
   > 1.如果command和args均没有写，那么用Dockerfile的配置。
   >
-  > 2.如果command写了，但args没有写，那么Dockerfile默认的配置会被忽略，执行输入的command
+  > 2.如果command写了，但args没有写，那么Dockerfile中的entrypoint和cmd会被忽略，执行yaml中的command
   >
   > 3.如果command没写，但args写了，那么Dockerfile中配置的ENTRYPOINT的命令行会被执行，并且将args中填写的参数追加到ENTRYPOINT中。
   >
@@ -429,10 +429,11 @@ ENTRYPOINT ["/usr/sbin/nginx","-g","daemon off;"]
 
     <源路径>：源文件或者源目录，这里可以是通配符表达式，其通配符规则要满足 Go 的 filepath.Match 规则。例如：
 
+    ```dockerfile
     COPY hom\* /mydir/
-
     COPY hom?.txt /mydir/
-
+    ```
+    
     <目标路径>：容器内的指定路径，该路径不用事先建好，路径不存在的话，会自动创建。
 
 - ADD
@@ -574,6 +575,57 @@ docker build -t="tomcat8:v1" . --load
 #运行容器
 docker run --name tomcat8 -d -p 8080 tomcat8:v1
 ```
+
+## docker构建httpd服务镜像
+
+- httpd镜像可以直接从官网下载：https://httpd.apache.org/download.cgi
+- 准备dockerfile
+
+~~~sh
+mkdir docker-httpd
+cd docker-httpd
+#上传httpd镜像
+
+#创建启动脚本
+tee run.sh <<'EOF'
+#!/bin/bash
+/usr/local/apache2/bin/httpd -D FOREGROUND
+EOF
+
+#创建dockerfile
+tee dockerfile <<'EOF'
+FROM centos:centos7.9.2009
+#安装wget
+RUN yum -y install epel-release.noarch 
+RUN yum install -y wget
+WORKDIR /usr/local/src
+#下载并解压源码包
+COPY httpd-2.4.54.tar.gz /usr/local/src
+RUN tar -zxvf httpd-2.4.54.tar.gz
+WORKDIR httpd-2.4.54
+#编译安装apache
+RUN yum install -y gcc gcc-c++  make  cmake apr-devel apr apr-util apr-util-devel pcre-devel
+RUN ./configure --prefix=/usr/local/apache2 --enable-mods-shared=most --enable-so
+RUN make
+RUN make install
+#修改apache配置文件
+RUN sed -i 's/#ServerName www.example.com:80/ServerName localhost:80/g' /usr/local/apache2/conf/httpd.conf
+#复制服务启动脚本并设置权限
+COPY run.sh /usr/local/sbin/run.sh
+RUN chmod 755 /usr/local/sbin/run.sh
+#开放80端口
+EXPOSE 80
+CMD ["/usr/local/sbin/run.sh"]
+EOF
+~~~
+
+- 制作镜像并运行
+
+~~~sh
+docker build -t apache:v1  .
+docker run -d -p 2222:22 -p 8000:80 apache:v1
+#浏览器访问机器IP:8000端口
+~~~
 
 ## 基于Go代码构建镜像
 
