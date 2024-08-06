@@ -1,3 +1,7 @@
+> 注：
+>
+> - 生产环境中如果要用ceph，一定要非常专业精通、可以troubleshooting才能去用；而且建议二进制安装在服务器上，不要装在k8s中。否则出问题之后因为ceph是分块存储，数据非常难以还原，有极大的丢失风险。
+
 # ceph简介
 
 ## 类型
@@ -16,7 +20,7 @@
   - 对象存储(RADOS Fateway)
     - Ceph对象存储使用Ceph对象网关守护进程（radosgw），它是一个用于与Ceph存储集群交互的HTTP服务器。由于它提供与OpenStack Swift和Amazon S3兼容的接口，因此Ceph对象网关具有自己的用户管理。 Ceph对象网关可以将数据存储在用于存储来自Ceph文件系统客户端或Ceph块设备客户端的数据的相同Ceph存储集群中。
     - 使用方式就是通过http协议上传下载删除对象（文件即对象）。
-    - ***有了块设备接口存储和文件系统接口存储，为什么还整个对象存储呢\******?\***
+    - 有了块设备接口存储和文件系统接口存储，为什么还整个对象存储呢
       - Ceph的块设备存储具有优异的存储性能但不具有共享性，而Ceph的文件系统具有共享性然而性能较块设备存储差，为什么不权衡一下存储性能和共享性，整个具有共享性而存储性能好于文件系统存储的存储呢，对象存储就这样出现了。
 
 > 分布式存储的优点：
@@ -836,3 +840,128 @@ spec:
       claimName: cephfs-pvc
 ~~~
 
+# 基于Rook部署ceph集群
+
+## 安装ceph
+
+参考：https://rook.github.io/docs/rook/v1.12/Getting-Started/quickstart/#cluster-environments
+
+- 下载ceph安装包：https://github.com/rook/rook
+
+~~~sh
+unzip rook-master.zip
+cd rook-master/deploy/examples/
+vim operator.yaml
+#修改镜像地址：registry.k8s.io访问速度慢。可以使用阿里云的镜像源：registry.cn-hangzhou.aliyuncs.com/google_containers。
+##把下面的镜像地址修改成阿里云的##
+# ROOK_CSI_CEPH_IMAGE: "quay.io/cephcsi/cephcsi:v3.7.2"
+# ROOK_CSI_REGISTRAR_IMAGE: "registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.7.0"
+# ROOK_CSI_RESIZER_IMAGE: "registry.k8s.io/sig-storage/csi-resizer:v1.7.0"
+# ROOK_CSI_PROVISIONER_IMAGE: "registry.k8s.io/sig-storage/csi-provisioner:v3.4.0"
+# ROOK_CSI_SNAPSHOTTER_IMAGE: "registry.k8s.io/sig-storage/csi-snapshotter:v6.2.1"
+# ROOK_CSI_ATTACHER_IMAGE: "registry.k8s.io/sig-storage/csi-attacher:v4.1.0"
+##改完之后变成如下##
+ROOK_CSI_CEPH_IMAGE: "quay.io/cephcsi/cephcsi:v3.7.2"
+ROOK_CSI_CEPH_IMAGE: "registry.cn-hangzhou.aliyuncs.com/google_containers/cephcsi:v3.7.2"   ROOK_CSI_REGISTRAR_IMAGE: "registry.cn-hangzhou.aliyuncs.com/google_containers/csi-node-driver-registrar:v2.7.0"
+ROOK_CSI_RESIZER_IMAGE: "registry.cn-hangzhou.aliyuncs.com/google_containers/csi-resizer:v1.7.0"
+ROOK_CSI_PROVISIONER_IMAGE: "registry.cn-hangzhou.aliyuncs.com/google_containers/csi-provisioner:v3.4.0"
+ROOK_CSI_SNAPSHOTTER_IMAGE: "registry.cn-hangzhou.aliyuncs.com/google_containers/csi-snapshotter:v6.2.1"
+ROOK_CSI_ATTACHER_IMAGE: "registry.cn-hangzhou.aliyuncs.com/google_containers/csi-attacher:v4.1.0"
+#修改以下字段：
+ROOK_ENABLE_DISCOVERY_DAEMON： "true"
+#Rook的一个环境变量，用于控制是否启用发现守护程序。发现守护程序是Rook集群中的一个组件，用于检测新的存储设备并将其添加到Rook集群中。
+~~~
+
+- 安装rook
+
+~~~sh
+kubectl apply -f crds.yaml -f common.yaml -f operator.yaml
+kubectl get pods -n rook-ceph
+~~~
+
+## 创建ceph集群
+
+- 修改cluster.yaml文件（在/rook-master/deploy/examples/路径下）
+
+~~~yaml
+storage:
+  useAllNodes: false
+  useAllDevices: false
+  #deviceFilter:
+  config:
+    nodes:
+      - name: "master1"
+        devices:
+        - name: "sdb"
+      - name: "node1"
+        devices:
+        - name: "sdb"
+      - name: "node2"
+        devices:
+        - name: "sdb"
+#部署
+kubectl apply -f cluster.yaml
+~~~
+
+字段说明：
+
+-  useAllNodes
+  - true： Rook 会在所有可用的 Kubernetes 节点上启动存储服务。这意味着每一个 Kubernetes 节点（服务器或虚拟机）都会被用来运行 Ceph 存储服务，从而使整个 Kubernetes 集群的所有节点都参与到存储服务中。
+  - false： Rook 只会在指定的 Kubernetes 节点上启动存储服务。这意味着只有你明确选择的节点会被用来运行 Ceph 存储服务，而不是整个集群的所有节点。
+- useAllDevices：
+  - true： Rook 会在所有可用的存储设备上启动存储服务。这意味着每一个被检测到的存储设备（如硬盘、SSD）都会被用来存储数据，从而充分利用所有可用的存储资源。
+  - false： Rook 只会在你指定的存储设备上启动存储服务。这意味着只有你明确选择的存储设备会被用来存储数据，而不是所有可用的存储设备。
+- -name:”sdb”: 采用裸盘，即未格式化的磁盘。其中master1, node1, node2新加磁盘sdb，建议最少三个节点，否则后面的试验可能会出现问题
+
+## 安装ceph客户端工具
+
+~~~sh
+kubectl apply -f toolbox.yaml -n rook-ceph
+#等待pod running
+kubectl -n rook-ceph exec -it rook-ceph-tools-6adffg7qzsvg-adv -- bash
+ceph status
+ceph osd status
+ceph df
+~~~
+
+## 安装ceph dashboard
+
+- 默认情况下，ceph dashboard已经创建好了，可以在ceph dashboard前面创建一个nodePort类型的Service暴露pod
+
+~~~yaml
+tee dashboard.yaml <<'EOF'
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: rook-ceph-mgr
+    ceph_daemon_id: a
+    rook_cluster: rook-ceph
+  name: rook-ceph-mgr-dashboard
+  namespace: rook-ceph
+spec:
+  ports:
+  - name: http-dashboard
+    port: 7000
+    protocol: TCP
+    targetPort: 7000
+  selector:
+    app: rook-ceph-mgr
+    ceph_daemon_id: a
+    rook_cluster: rook-ceph
+  sessionAffinity: None
+  type: NodePort
+EOF
+~~~
+
+- 任意节点IP:Nodeport即可查看ceph dashboard
+
+  - username: admin
+
+  - password:
+
+    ```sh
+    kubectl -n rook-ceph get secret rook-ceph-dashboard-password -o jsonpath="{['data']['password']}" | base64 --decode && echo
+    ```
+
+    
