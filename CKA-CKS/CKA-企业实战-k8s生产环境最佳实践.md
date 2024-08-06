@@ -10,13 +10,16 @@
 
 3. 如果没有前期的压测数据，一般先采用3 master、2 worker的配置，后期不够了再加节点。
 
-   - 如果没有任何应用的数据，默认先给master：8G内存、8vCPU；工作节点：12G内存，12vCPU。
-   - 有应用规划的话，就算一下所有应用的内存、vCPU的占用，算上副本数来规划配置。
-
+   - 如果没有任何应用的数据，默认给这个最低配置：
+   
+     - master：8G/8vCPU
+     - worker：12G/12vCPU
+   - 有应用规划的话，就算一下所有应用的内存、vCPU的占用总和，算上pod副本数来规划配置。
+   
    - 一般来说etcd是装在控制节点上的。单独找机器装etcd也行，但是不省钱。
-
+   
    - 3 master是为了etcd的计数选举机制的高可用。 
-
+   
      > etcd一般做3个或者5个备份 - 因为有奇数选举机制：
      >
      > - leader选举算法采用了paxos协议。
@@ -25,9 +28,10 @@
 
 - 3 master管理900个worker都是够用的
 
-## 组件规划
+## 日志和监控
 
-
+- 监控系统：prometheus+alertManager+grafana
+- 日志平台：EFK = Elasticsearch + kibana + filebeat/fluentd （节点日志+容器日志）
 
 # 如何使用k8s管理应用
 
@@ -76,9 +80,7 @@
 
 # apiserver优化
 
-kube-apiserver是整个集群的所有请求的入口，apiserver不可用会导致集群失效。可以从以下几个方面优化：
-
-https://kubernetes.io/docs/reference/command-line-tools-reference/kube-apiserver/
+kube-apiserver是整个集群的所有请求的入口，apiserver不可用会导致集群失效。可以从以下几个方面优化：https://kubernetes.io/docs/reference/command-line-tools-reference/kube-apiserver/
 
 1. apiserver部署多个实例，前端用SLB做负载均衡，提供可用性。
 2. 参数优化（/etc/kubernetes/manifests/kube-apiserver.yaml）：--max-mutating-requests-inflight
