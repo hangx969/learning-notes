@@ -466,7 +466,7 @@ ENTRYPOINT ["/usr/sbin/nginx","-g","daemon off;"]
 
   - docker build 构建镜像过程中，每一个 RUN 命令都是新建的一层。只有通过 WORKDIR 创建的目录才会一直存在。
 
-  - 用docker exec -it /bin/bash进去之后就是指定的工作目录路径。
+  - 用`docker exec -it /bin/bash`进去之后就是指定的工作目录路径。
 
   - 格式：
 
