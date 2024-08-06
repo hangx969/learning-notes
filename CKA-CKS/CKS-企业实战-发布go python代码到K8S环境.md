@@ -1,4 +1,4 @@
-# 发布go代码到k8s
+# 发布go代码到k8s-示例1
 
 ## 部署go源码和镜像
 
@@ -48,12 +48,14 @@ func main() {
 
 ```sh
 go mod init go-test
-#设置代理
+#设置代理，是为了下载依赖包更快一些
 go env -w GOPROXY=https://goproxy.cn,direct
 #拉取依赖包
 go mod tidy
 #构建源码
 CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o go-k8sdemo main.go
+#直接运行程序
+./go-k8sdemo
 ```
 
 - 编写dockerfile文件
@@ -158,6 +160,120 @@ spec:
 ~~~sh
 curl 172.16.183.76:30835
 #{"status":"success~welcome to study"}
+~~~
+
+# 发布go代码到k8s-示例2
+
+## 准备源码和镜像
+
+- 准备源码
+
+~~~sh
+mkdir go-game
+cd go-game
+~~~
+
+~~~go
+tee main.go <<'EOF' 
+package main
+
+import (
+	"fmt"
+	"math/rand"
+	"time"
+)
+
+const maxGuesses = 10
+
+func main() {
+	rand.Seed(time.Now().UnixNano())
+	number := rand.Intn(100) + 1
+
+	fmt.Println("I'm thinking of a number between 1 and 100.")
+	fmt.Printf("You have %d guesses.\n", maxGuesses)
+
+	for guesses := 1; guesses <= maxGuesses; guesses++ {
+		fmt.Printf("Guess #%d: ", guesses)
+		var guess int
+		_, err := fmt.Scanln(&guess)
+		if err != nil {
+			fmt.Println("Invalid input. Please enter an integer.")
+			continue
+		}
+		if guess < 1 || guess > 100 {
+			fmt.Println("Invalid input. Please enter a number between 1 and 100.")
+			continue
+		}
+		if guess < number {
+			fmt.Println("Too low.")
+		} else if guess > number {
+			fmt.Println("Too high.")
+		} else {
+			fmt.Printf("Correct! You guessed the number in %d guesses.\n", guesses)
+			return
+		}
+	}
+
+	fmt.Printf("Sorry, you did not guess the number. It was %d.\n", number)
+}
+EOF
+~~~
+
+- 构建go源码
+
+~~~sh
+go mod init test
+#设置代理
+go env -w GOPROXY=https://goproxy.cn,direct
+go mod tidy
+#构建源码
+CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o k8s-demo main.go
+~~~
+
+- 制作镜像
+
+~~~sh
+tee dockerfile <<'EOF' 
+FROM alpine
+WORKDIR /app
+COPY k8s-demo /app
+CMD ["/bin/sh","-c","./k8s-demo"]
+EOF
+~~~
+
+~~~sh
+docker build -t docker.io/library/k8sgame:v1 .
+docker save -o k8sgame.tar.gz docker.io/library/k8sgame:v1
+#上传到工作节点并解压
+~~~
+
+## 创建pod
+
+~~~yaml
+tee deployment.yaml <<'EOF' 
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: guess-game
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: guess-game
+  template:
+    metadata:
+      labels:
+        app: guess-game
+    spec:
+      containers:
+      - name: guess-game
+        image: docker.io/library/k8sgame:v1
+        imagePullPolicy: IfNotPresent
+        command: ["/bin/sh","-c","sleep 3600"] #pod自己没定义前台程序，所以写一个前台保持程序
+EOF
+
+#服务没暴露，只能进入pod访问
+kubectl exec -it guess-game-6c9b4df786-892ds -- /bin/sh
 ~~~
 
 # 发布python代码到k8s
