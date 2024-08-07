@@ -389,7 +389,13 @@ pbsnodes -aSjv
 qstat -Bf
 ~~~
 
-### 节点资源
+## 查看queue
+
+~~~sh
+qstat -q
+~~~
+
+## 查看节点资源
 
 ~~~sh
 pbsnodes pbs2 #指定节点名查看节点资源情况
