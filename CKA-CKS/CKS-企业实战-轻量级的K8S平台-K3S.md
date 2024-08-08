@@ -36,7 +36,7 @@
 
 ![image-20240514221358017](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202405142213092.png)
 
-# 部署K3S
+# 部署K3S-基于k8s-1.20
 
 ## 环境规划
 
