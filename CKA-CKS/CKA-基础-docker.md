@@ -775,7 +775,6 @@ tar -xvf redis.tar.gz
   包管理文档：https://wiki.alpinelinux.org/wiki/Alpine_Linux_package_management
   
 - Alpine
-  FROM Alpine
   描述：Alpine是一个面向安全的、轻量级的Linux系统，基于musl libc和busybox。
   官网：https://www.alpinelinux.org/
   镜像：https://hub.docker.com/_/alpine/
@@ -808,6 +807,19 @@ tar -xvf redis.tar.gz
 
 ~~~sh
 docker build --platform linux/amd64,windows/amd64 -t myapp .
+~~~
+
+# 使用根文件系统镜像
+
+~~~sh
+#访问 Alpine 官方网站的 下载页面，找到并下载最新版本的根文件系统 tarball。你也可以使用以下命令直接下载（这里以 3.14 版本为例）
+wget https://dl-cdn.alpinelinux.org/alpine/v3.14/releases/x86_64/alpine-minirootfs-3.14.0-x86_64.tar.gz
+#使用下载的 tarball 创建 Docker 镜像：
+cat alpine-minirootfs-3.14.0-x86_64.tar.gz | docker import - alpine:3.14
+#验证镜像是否成功创建：
+docker images
+#运行 Docker 容器
+docker run -it alpine:3.14 /bin/sh
 ~~~
 
 # Docker数据持久化和网络模式
