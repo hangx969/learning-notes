@@ -773,3 +773,100 @@ data:
         api_secret: 
 ~~~
 
+# 常用监控告警文件
+
+~~~yaml
+    groups:
+    - name: example
+      rules:
+      - alert: HighNginxServerRequests
+        expr: sum(irate(nginx_server_requests{instance=~"192.168.40.180:9913", code="2xx"}[5m])) by (code)>1000
+        for: 2s
+        labels:
+          severity: critical
+        annotations:
+          summary: "High Nginx Server Requests"
+          description: "在最近2s钟时间,nginx服务请求数达到了1000次"
+    - name: 物理节点状态-监控告警
+      rules:
+      - alert: 物理节点cpu使用率
+        expr: 100-avg(irate(node_cpu_seconds_total{mode="idle"}[5m])) by(instance)*100 > 20
+        for: 2s
+        labels:
+          severity: ccritical
+        annotations:
+          summary: "{{ $labels.instance }}cpu使用率过高"
+          description: "{{ $labels.instance }}的cpu使用率超过20%,当前使用率[{{ $value }}],需要排查处理" 
+      - alert: 物理节点内存使用率
+        expr: (node_memory_MemTotal_bytes - (node_memory_MemFree_bytes + node_memory_Buffers_bytes + node_memory_Cached_bytes)) / node_memory_MemTotal_bytes * 100 > 50
+        for: 2s
+        labels:
+          severity: critical
+        annotations:
+          summary: "{{ $labels.instance }}内存使用率过高"
+          description: "{{ $labels.instance }}的内存使用率超过60%,当前使用率[{{ $value }}],需要排查处理"
+      - alert: InstanceDown
+        expr: up == 0
+        for: 2s
+        labels:
+          severity: critical
+        annotations:   
+          summary: "{{ $labels.instance }}: 服务器宕机"
+          description: "{{ $labels.instance }}: 服务器延时超过2分钟"
+      - alert: 物理节点磁盘的IO性能
+        expr: 100-(avg(irate(node_disk_io_time_seconds_total[1m])) by(instance)* 100) < 60
+        for: 2s
+        labels:
+          severity: critical
+        annotations:
+          summary: "{{$labels.mountpoint}} 流入磁盘IO使用率过高！"
+          description: "{{$labels.mountpoint }} 流入磁盘IO大于60%(目前使用:{{$value}})"
+      - alert: 入网流量带宽
+        expr: ((sum(rate (node_network_receive_bytes_total{device!~'tap.*|veth.*|br.*|docker.*|virbr*|lo*'}[5m])) by (instance)) / 100) > 102400
+        for: 2s
+        labels:
+          severity: critical
+        annotations:
+          summary: "{{$labels.mountpoint}} 流入网络带宽过高！"
+          description: "{{$labels.mountpoint }}流入网络带宽持续5分钟高于100M. RX带宽使用率{{$value}}"
+      - alert: 出网流量带宽
+        expr: ((sum(rate (node_network_transmit_bytes_total{device!~'tap.*|veth.*|br.*|docker.*|virbr*|lo*'}[5m])) by (instance)) / 100) > 102400
+        for: 2s
+        labels:
+          severity: critical
+        annotations:
+          summary: "{{$labels.mountpoint}} 流出网络带宽过高！"
+          description: "{{$labels.mountpoint }}流出网络带宽持续5分钟高于100M. RX带宽使用率{{$value}}"
+      - alert: TCP会话
+        expr: node_netstat_Tcp_CurrEstab > 1000
+        for: 2s
+        labels:
+          severity: critical
+        annotations:
+          summary: "{{$labels.mountpoint}} TCP_ESTABLISHED过高！"
+          description: "{{$labels.mountpoint }} TCP_ESTABLISHED大于1000%(目前使用:{{$value}}%)"
+      - alert: 磁盘容量
+        expr: 100-(node_filesystem_free_bytes{fstype=~"ext4|xfs"}/node_filesystem_size_bytes {fstype=~"ext4|xfs"}*100) > 80
+        for: 2s
+        labels:
+          severity: critical
+        annotations:
+          summary: "{{$labels.mountpoint}} 磁盘分区使用率过高！"
+          description: "{{$labels.mountpoint }} 磁盘分区使用大于80%(目前使用:{{$value}}%)"
+      - alert: apiserver的cpu使用率大于90%
+        expr: rate(process_cpu_seconds_total{job=~"kubernetes-apiserver"}[1m]) * 100 > 0
+        for: 2s
+        labels:
+          severity: warnning
+        annotations:
+          description: "{{$labels.instance}}的{{$labels.job}}组件的cpu使用率超过80%"
+      - alert: 容器内存使用率
+        expr: (container_memory_usage_bytes / container_spec_memory_limit_bytes) * 100 > 0
+        for: 2s
+        labels:
+          severity: critical
+        annotations:
+          summary: "High Container Memory Usage"
+          description: "Container memory usage is above 90%."
+~~~
+
