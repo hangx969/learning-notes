@@ -117,12 +117,21 @@ disable-pull-on-run: false
 
 # k8s舍弃dockershim
 
+> background: https://kubernetes.io/blog/2022/02/17/dockershim-faq/
+>
+> - Kubernetes 的早期版本仅适用于特定的容器运行时：Docker Engine。后来，Kubernetes 增加了对使用其他容器运行时的支持。创建 CRI 标准是为了和许多不同的容器运行时之间交互操作。
+> - Docker Engine 没有实现（CRI）接口，因此 Kubernetes 项目创建了特殊代码来帮助过渡，并使 dockershim 代码成为 Kubernetes 的一部分。dockershim 代码一直是一个临时解决方案（因此得名：shim）。事实上，维护 dockershim 已经成为 Kubernetes 维护者的沉重负担。
+> - 此外，在较新的 CRI 运行时中实现了与 dockershim 不兼容的功能，例如 cgroups v2 和用户命名空间。 从 Kubernetes 中移除 dockershim 允许在这些领域进行进一步的开发。
+> - 舍弃dockershim，但是docker技术还是有用的，因为要用dockerfile和docker build做镜像。这个功能是其他容器运行时没有的。
+
+舍弃dockershim带来的优势：
+
 - 调用链上看 - 用containerd更高效
   - 用dockerd作为容器运行时：kubelet --> dockershim --> dockerd --> containerd
-  - 用containerd作为容器运行时：kubelet --> CRI pulgin(containerd进程内) --> containerd
+  - 用containerd作为容器运行时：kubelet --> CRI pulgin (containerd进程内) --> containerd
 
 - 资源利用率上看 - 用containerd更精简
-  - （Docker不是一个纯粹的容器运行时，具有大量其他功能）。
+  - Docker不是一个纯粹的容器运行时，具有大量其他功能
 
 # containerd和docker作为容器运行时的区别
 
