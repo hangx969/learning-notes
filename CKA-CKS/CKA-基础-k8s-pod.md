@@ -537,7 +537,40 @@ spec:
     nodePort: 31181
 ```
 
+# 优化探针使用
 
+pod可以通过存活探测和就绪探测对容器进行健康检查：
+
+- 探测间隔时间太短，可能会增加集群的负载，并且可能会导致不必要的故障转移或服务中断
+- 探测间隔时间太长，可能出现Pod里的容器已经出问题了，但是还没开始探测，pod就不会从svc移除，请求svc还会把流量转到没就绪的pod。
+
+那如何设置探测时间、探测超时时间、探测失败次数，做到最大限度的做到业务无感知，需要根据具体的应用程序和环境来确定。以下是一些考虑因素和常见的最佳实践：
+
+1. 存活探测时间（livenessProbe）
+   - 初始延迟（initialDelaySeconds）：默认是0s，但是建议设置为应用程序完成启动所需的时间，确保程序可以顺利完成初始化。一般设置为几秒到几分钟
+   - 探测间隔（periodSeconds）：默认是10s，但是建议根据应用特点进行调整。轻量级应用，可以设置较短间隔（5-10s）；重型应用建议增加间隔（30-60s）
+   - 探测超时时间（timeoutSeconds）：默认1s，设置为应用正常响应的范围内即可，通常是1-5s。
+   - 连续失败阈值（failureThreshold）：一般连续2次失败即认为探测失败，减少因为短暂网络问题或偶发故障引起误报。
+2. 就绪探测时间（readinessProbe）
+   - 其余参数和livenessProbe类似
+   - 连续成功阈值（successThreshold）：一般设置1次成功即认为就绪，可以尽早把流量转发到已就绪的pod
+
+> k8s中探测间隔最小单位就是1s，如果需要更短的探测间隔，可以自己写脚本来实现：
+>
+> - 在业务pod里面定义sidecar容器，执行一个shell脚本，每隔1ms请求一次探测接口（一般是代码里面预先留出的）
+>
+> ~~~sh
+> #!/bin/bash
+> while true; do
+>   response=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8080/health)
+>   if [ "$response" != "200" ]; then
+>     echo "Tomcat is not healthy. Exiting..."
+>     exit 1
+>   fi
+>   
+>   sleep 0.001  # 控制每次检测间隔为1ms
+> Done
+> ~~~
 
 # POD重启策略
 
