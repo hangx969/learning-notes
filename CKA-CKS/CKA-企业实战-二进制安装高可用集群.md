@@ -6,7 +6,7 @@
 
 - Kubeadm和二进制都适合生产环境，在生产环境运行都很稳定，具体如何选择，可以根据实际项目进行评估。
 
-# 二进制安装多master高可用集群
+# 二进制安装多master高可用集群1.20.7
 
 ## 架构图
 
@@ -608,6 +608,7 @@ echo $ETCDCTL_API
 ### 下载安装包
 
 - 二进制包所在的github地址如下：https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/，可以按照版本下载二进制包。控制节点组件，找到Server Binaries，下载amd64版本的。server binaries二进制包里面就包含了：controller-manager，apiserver，scheduler等控制平面组件。其实也包含了工作节点需要的kubelet和kubeproxy
+- 这里下载的是1.20.7版本
 
 ~~~sh
 #把kubernetes-server-linux-amd64.tar.gz上传到master1上的/data/work目录下:
@@ -1781,3 +1782,126 @@ systemctl daemon-reload && systemctl start kubelet
 systemctl daemon-reload && systemctl start kube-proxy
 ~~~
 
+# 二进制安装多master集群-1.25
+
+## 环境准备
+
+- 机器规划
+
+  - podSubnet（pod网段） 10.244.0.0/16
+  - serviceSubnet（service网段）: 10.96.0.0/12
+  - 操作系统：centos7.9
+  - 配置： 4Gib内存/4vCPU/60G硬盘
+  - 网络：NAT模式
+
+  | K8S集群角色 | IP             | 主机名          | 安装的组件                                                   |
+  | ----------- | -------------- | --------------- | ------------------------------------------------------------ |
+  | 控制节点    | 192.168.40.180 | xianchaomaster1 | apiserver、controller-manager、schedule、etcd、kube-proxy、容器运行时、keepalived、nginx |
+  | 控制节点    | 192.168.40.181 | xianchaomaster2 | apiserver、controller-manager、schedule、etcd、kube-proxy、容器运行时、keepalived、nginx |
+  | 控制节点    | 192.168.40.182 | xianchaomaster3 | apiserver、controller-manager、schedule、etcd、kube-proxy、容器运行时、keepalived、nginx |
+  | 工作节点    | 192.168.40.183 | xianchaonode1   | Kube-proxy、calico、coredns、容器运行时、kubelet             |
+  | VIP         | 192.168.40.199 |                 |                                                              |
+
+- 配置静态IP
+
+- 关闭selinux
+
+- 配置机器主机名
+
+- 配置hosts文件
+
+- 配置时间同步
+
+- 安装基础软件包
+
+- 配置ssh互信
+
+- 关闭swap分区
+
+- 开启内核转发
+
+- 关闭firewalld防火墙
+
+- 配置aliyun repo源
+
+  ~~~sh
+  #docker repo源
+  yum install yum-utils -y
+  yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
+  
+  
+  #containerd repo源
+  #k8s repo源
+  
+  
+  
+  #containerd repo源
+  containerd repo源    
+  ~~~
+
+## 安装containerd
+
+~~~sh
+#所有节点安装
+yum install  containerd.io-1.6.6 -y
+mkdir -p /etc/containerd
+containerd config default > /etc/containerd/config.toml
+vim /etc/containerd/config.toml
+#把SystemdCgroup = false修改成SystemdCgroup = true
+#把sandbox_image = "k8s.gcr.io/pause:3.6"修改sandbox_image="registry.aliyuncs.com/google_containers/pause:3.7"
+systemctl enable containerd  --now
+~~~
+
+- 配置containerd镜像加速器
+
+~~~sh
+vim /etc/containerd/config.toml文件
+#找到config_path = ""，修改成如下目录：config_path = "/etc/containerd/certs.d"
+mkdir /etc/containerd/certs.d/docker.io/ -p
+vim /etc/containerd/certs.d/docker.io/hosts.toml
+#写入如下内容：
+[host."https://vh3bm52y.mirror.aliyuncs.com",host."https://registry.docker-cn.com"]
+  capabilities = ["pull"]
+#重启containerd：
+systemctl restart containerd
+~~~
+
+## 安装crictl
+
+- 安装包可以从这里下载：https://github.com/kubernetes-sigs/cri-tools/releases/
+
+~~~sh
+#所有节点
+wget https://github.com/kubernetes-sigs/cri-tools/releases/download/v1.24.2/crictl-v1.24.2-linux-amd64.tar.gz
+tar zxvf crictl-v1.24.2-linux-amd64.tar.gz -C /usr/bin/
+cat > /etc/crictl.yaml <<EOF
+runtime-endpoint: unix:///run/containerd/containerd.sock
+image-endpoint: unix:///run/containerd/containerd.sock
+timeout: 10
+debug: false
+EOF
+systemctl restart  containerd
+~~~
+
+## 安装docker
+
+~~~sh
+#所有节点
+yum install  docker-ce  -y
+systemctl enable docker --now
+~~~
+
+- 配置加速器
+
+~~~sh
+#配置docker镜像加速器，k8s所有节点均按照以下配置
+vim /etc/docker/daemon.json
+#写入如下内容：
+{
+ "registry-mirrors":["https://vh3bm52y.mirror.aliyuncs.com","https://registry.docker-cn.com","https://docker.mirrors.ustc.edu.cn","https://dockerhub.azk8s.cn","http://hub-mirror.c.163.com"]
+} 
+#重启docker：
+systemctl restart docker
+~~~
+
+## 搭建etcd集群
