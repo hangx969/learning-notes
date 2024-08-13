@@ -273,7 +273,7 @@ nohup jmap -dump:format=b,file=java_app_mem_dump_${cur_date}_pid_${most_thread_n
 exit 0
 ~~~
 
-# 查看磁盘目录使用情况
+# 查看磁盘目录使用并排序
 
 ~~~sh
 #!/bin/bash
@@ -307,6 +307,17 @@ do
 #
 done                #End of for loop for du directories
 ~~~
+
+# 查看某目录使用量
+
+~~~sh
+dir=${1:-/} #指定目录 作为脚本第一个参数，默认是/
+depth=${2:-5} #指定深度 作为脚本第二个参数，默认是5层
+exclude_dir=$(df |awk 'NR>1 {print $6}' | grep -wv ${dir} | awk '{print "--exclude="$1""}')
+du -h --max-depth=${depth} ${exclude_dir} ${dir} 2>/dev/null | awk '$1~/G$/{print $0}'
+~~~
+
+
 
 # 根据PID过滤进程信息
 
@@ -722,6 +733,8 @@ done
 ~~~
 
 # 使用rsync备份目录
+
+- https://mp.weixin.qq.com/s/k-qOKIWHgfwngNG_YlylKA
 
 ~~~sh
 #!/bin/bash
