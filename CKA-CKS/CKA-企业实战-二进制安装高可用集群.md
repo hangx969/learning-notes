@@ -318,6 +318,11 @@ mkdir -p /etc/etcd/ssl
 
 ### 安装签发证书工具cfssl
 
+> cfssl 是 CloudFlare 开源的一款PKI/TLS工具。 CFSSL 包含一个命令行工具(cfssl, cfssljson)用于签名，可以生成CA，签发证书
+> 使用cfssl需要两个文件：
+> 1、创建自己的内部服务使用的CA认证中心
+> 2、运行认证中心需要一个CA证书和相应的私钥。后者是极其敏感的数据。任何知道私钥的人都可以充当CA颁发证书。因此，私钥的保护至关重要
+
 ~~~sh
 #在master1上
 mkdir /data/work -p
@@ -447,6 +452,13 @@ cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-config.json -profile=kube
 ls etcd*.pem
 #etcd-key.pem  etcd.pem
 ~~~
+
+> 在生成证书过程中需要有四类文件
+>
+> 1. *.csr - 证书请求文件,base64格式，有-----BEGIN CERTIFICATE REQUEST-----标识
+> 2. *csr.json - 证书请求文件，是上面格式的再封装，便于传给cfssl，json格式，大括号开始
+> 3. *-key.pem - 私匙文件，base64格式，有-----BEGIN RSA PRIVATE KEY-----标识
+> 4. *.pem - 证书文件，base64格式，可以用cfssl certinfo -cert 文件名查看有效期，有-----BEGIN CERTIFICATE-----标识
 
 ### 部署etcd集群
 
@@ -605,6 +617,16 @@ echo $ETCDCTL_API
 
 ## 安装k8s组件
 
+- Kubernetes API的请求从发起到其持久化⼊库的流程如下：
+  1. 认证阶段（Authentication）
+     - 判断⽤户是否为能够访问集群的合法⽤户。
+     - apiserver⽬前提供了9种认证机制。每⼀种认证机制被实例化后会成为认证器（Authenticator），每⼀个认证器都被封装在http.Handler请求处理函数中，它们接收组件或客户端的请求并认证请求。
+     - 假设所有的认证器都被启⽤，当客户端发送请求到kube-apiserver服务，该请求会进⼊Authentication Handler函数（处理认证相关的Handler函数）。在Authentication Handler函数中，会遍历已启⽤的认证器列表，尝试执⾏每个认证器，当有⼀个认证器返回true时，则认证成功，否则继续尝试下⼀个认证器；如果⽤户是个⾮法⽤户，那apiserver会返回⼀个401的状态码，并终⽌该请求。
+  2. clientCA认证
+     - X509认证是Kubernetes组件间默认使⽤的认证⽅式，同时也是kubectl客户端对应的kube-config中经常使⽤到的访问凭证。它是⼀个⽐较安全的⽅式。
+     - ⾸先访问者会使⽤由集群CA签发的，或是添加在apiserver配置中的授信CA签发的客户端证书去访问apiserver。apiserver在接收到请求后，会进⾏TLS的握⼿流程。
+     - 除了验证证书的合法性，apiserver还会校验客户端证书的请求源地址等信息，开启双向认证。
+
 ### 下载安装包
 
 - 二进制包所在的github地址如下：https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/，可以按照版本下载二进制包。控制节点组件，找到Server Binaries，下载amd64版本的。server binaries二进制包里面就包含了：controller-manager，apiserver，scheduler等控制平面组件。其实也包含了工作节点需要的kubelet和kubeproxy
@@ -684,6 +706,8 @@ EOF
 ~~~
 
 #### 创建csr请求文件
+
+- 集群中所有系统组件与apiserver通讯⽤到的证书，其实都是由集群根CA签发的
 
 - 注：如果 hosts 字段不为空则需要指定授权使用该证书的 IP 或域名列表。由于该证书后续被 kubernetes master 集群使用，需要将master节点的IP都填上，同时还需要填写 service 网络的首个IP。(一般是 kube-apiserver 指定的 service-cluster-ip-range 网段的第一个IP，如 10.255.0.1)
 
@@ -1334,6 +1358,8 @@ ExecStart=/usr/local/bin/kubelet \
   --logtostderr=false \
   --log-dir=/var/log/kubernetes \
   --v=2
+  #如果1.24以上用containerd作为容器运行时，加这个参数
+  --container-runtime-endpoint=unix:///run/containerd/containerd.sock
 Restart=on-failure
 RestartSec=5
  
@@ -1341,6 +1367,10 @@ RestartSec=5
 WantedBy=multi-user.target
 EOF
 ```
+
+- kubelet 启动时实际需要指定两个配置⽂件
+  - --kubeconfig 指定的是kube-config ⽂件，其中内置了集群根CA 公钥以及⾃⼰作为客户端的公钥和私钥
+  - --config 指定的是kubelet的配置
 
 ```sh
 #node1上
@@ -1904,4 +1934,18 @@ vim /etc/docker/daemon.json
 systemctl restart docker
 ~~~
 
-## 搭建etcd集群
+# 搭建etcd集群
+
+同上面1.20.7
+
+# 安装k8s组件
+
+同上面1.20.7
+
+- 注：镜像解压用ctr -n=k8s.io images import
+
+- 最后多一步：对系统用户kubernetes做授权
+
+  ~~~sh
+  kubectl create clusterrolebinding kubernetes-kubectl --clusterrole=cluster-admin --user=kubernetes
+  ~~~
