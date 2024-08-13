@@ -721,3 +721,84 @@ done
 172.16.183.76 root 22
 ~~~
 
+# 使用rsync备份目录
+
+~~~sh
+#!/bin/bash
+
+# 检查是否安装了rsync
+if ! command -v rsync &> /dev/null; then
+    echo "rsync 未安装。正在安装..."
+    
+    if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+        if [ -x "$(command -v apt-get)" ]; then
+            sudo apt-get update && sudo apt-get install -y rsync
+        elif [ -x "$(command -v yum)" ]; then
+            sudo yum install -y rsync
+        elif [ -x "$(command -v dnf)" ]; then
+            sudo dnf install -y rsync
+        else
+            echo "无法检测到合适的包管理器，请手动安装rsync。"
+            exit 1
+        fi
+    elif [[ "$OSTYPE" == "darwin"* ]]; then
+        if ! command -v brew &> /dev/null; then
+            echo "Homebrew 未安装。请先安装Homebrew。"
+            exit 1
+        fi
+        brew install rsync
+    else
+        echo "不支持的操作系统，请手动安装rsync。"
+        exit 1
+    fi
+    
+    echo "rsync 安装完成。"
+else
+    echo "rsync 已安装。"
+fi
+
+#要备份的文件目录
+read -p "请输入要备份的源目录: " BACKUP_SOURCE_DIR
+
+# 获取当前时间和昨天的日期
+NOW=$(date +%Y%m%d%H%M)
+YESTERDAY=$(date -d "yesterday" +%Y%m%d)
+
+# 配置备份系统存放的目录
+BACKUP_HOME="/srv/backups"
+CURRENT_LINK="$BACKUP_HOME/current"
+SNAPSHOT_DIR="$BACKUP_HOME/snapshots"
+ARCHIVES_DIR="$BACKUP_HOME/archives"
+
+# 创建备份文件存放目录
+mkdir -p "$SNAPSHOT_DIR" "$ARCHIVES_DIR" &> /dev/null
+
+# 使用rsync进行备份
+rsync -azH --link-dest="$CURRENT_LINK" "$BACKUP_SOURCE_DIR" "$SNAPSHOT_DIR/$NOW" \
+&& ln -snf "$(ls -1d "$SNAPSHOT_DIR"/* | tail -n 1)" "$CURRENT_LINK"
+
+# 归档
+# 如果快照是昨天的，将其压缩归档
+if [ $(ls -d "$SNAPSHOT_DIR"/"$YESTERDAY"* 2> /dev/null | wc -l) -ne 0 ]; then
+  tar -czf "$ARCHIVES_DIR/$YESTERDAY.tar.gz" "$SNAPSHOT_DIR/$YESTERDAY"* \
+  && rm -rf "$SNAPSHOT_DIR/$YESTERDAY"*
+fi
+~~~
+
+# 创建指定大小的单个测试文件
+
+```sh
+dd if=/dev/zero of=testfile bs=1G count=200
+```
+
+# 创建多个指定大小的测试文件
+
+```sh
+#!/bin/bash
+
+for i in {1..100}
+do
+   dd if=/dev/zero of=testfile$i bs=1M count=1
+done
+```
+
