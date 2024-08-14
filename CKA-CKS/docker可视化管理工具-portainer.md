@@ -19,9 +19,10 @@ services:
 EOF
 #后台启动
 docker-compose -f portainer.yml up -d
+#rocky linux中，docker-compose变成了docker compose
 ~~~
 
-- 访问宿主机IP:9876端口
+- 访问宿主机IP:9876端口(username: admin, passwd: 26bN87:KP>?TzW:)
 - 点击local进行本地容器管理。更多文档参考：https://www.portainer.io/take-5
 
 # 基于Portainer安装redis-sentinel
