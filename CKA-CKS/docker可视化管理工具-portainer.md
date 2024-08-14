@@ -1,3 +1,5 @@
+Reference: https://mp.weixin.qq.com/s/pkpDv1nBjiEiCMeGPSwPeA
+
 # 部署portainer工具
 
 - docker-compose部署
