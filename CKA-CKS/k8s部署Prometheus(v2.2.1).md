@@ -999,9 +999,6 @@ docker run -d --name pushgateway -p 9091:9091 prom/pushgateway
   */1 * * * * /usr/bin/bash  /k8s/push.sh
   ~~~
 
-  
-
-
 
 # prometheus热加载
 

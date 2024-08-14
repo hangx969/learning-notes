@@ -14,7 +14,7 @@ https://docs.docker.com/engine/install/centos/
 
 ```bash
 sudo yum install -y yum-utils
-sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+sudo yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
 sudo yum install docker-ce docker-ce-cli containerd.io docker-compose-plugin
 #ubuntu上apt install docker.io docker-compose
 sudo systemctl start docker
@@ -30,7 +30,7 @@ systemctl stop firewalld && systemctl disable firewalld
 #安装iptables防火墙
 yum install iptables-services -y
 #禁用iptables
-service iptables stop   && systemctl disable iptables
+service iptables stop && systemctl disable iptables
 #清空防火墙规则
 iptables -F 
 #关闭selinux
@@ -47,7 +47,7 @@ crontab -e
 #重启crond服务使配置生效：
 systemctl restart crond
 #安装基础软件包
-yum install -y  wget net-tools nfs-utils lrzsz gcc gcc-c++ make cmake libxml2-devel openssl-devel curl curl-devel unzip sudo ntp libaio-devel wget vim ncurses-devel autoconf automake zlib-devel  python-devel epel-release openssh-server socat  ipvsadm conntrack 
+yum install -y wget net-tools nfs-utils lrzsz gcc gcc-c++ make cmake libxml2-devel openssl-devel curl curl-devel unzip sudo ntp libaio-devel wget vim ncurses-devel autoconf automake zlib-devel  python-devel epel-release openssh-server socat  ipvsadm conntrack 
 #安装docker-ce
 #配置docker-ce国内yum源（阿里云）
 yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
@@ -72,16 +72,17 @@ EOF
 sysctl -p /etc/sysctl.d/docker.conf
 #重启后模块失效，下面是开机自动加载模块的脚本
 #在/etc/新建rc.sysinit 文件
-vim /etc/rc.sysinit
-
+tee /etc/rc.sysinit <<'EOF'
 #!/bin/bash
 for file in /etc/sysconfig/modules/*.modules ; do
 [ -x $file ] && $file
 done
+EOF
 
 #在/etc/sysconfig/modules/目录下新建文件如下
-vim /etc/sysconfig/modules/br_netfilter.modules
+tee /etc/sysconfig/modules/br_netfilter.modules <<'EOF'
 modprobe br_netfilter
+EOF
 #增加权限
 chmod 755 /etc/sysconfig/modules/br_netfilter.modules
 #重启机器模块也会自动加载
@@ -98,13 +99,13 @@ bridge 136173 1 br_netfilter
 systemctl restart docker  
 #配置docker镜像加速器: 登陆阿里云镜像仓库
 #https://cr.console.aliyun.com/cn-hangzhou/instances/mirrors
-vim /etc/docker/daemon.json
+tee /etc/docker/daemon.json <<'EOF'
 {
  "registry-mirrors":["https://y8y6vosv.mirror.aliyuncs.com","https://registry.docker-cn.com","https://docker.mirrors.ustc.edu.cn","https://dockerhub.azk8s.cn","http://hub-mirror.c.163.com"]
 }
+EOF
 #让配置文件生效
-systemctl daemon-reload
-systemctl restart docker
+systemctl daemon-reload && systemctl restart docker
 ```
 
 vscode在VM中运行docker插件

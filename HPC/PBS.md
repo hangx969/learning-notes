@@ -332,6 +332,7 @@ qmgr -c "set server default_queue=batch"
 
 ~~~sh
 qstat -answ1 #查看当前所有作业详细信息
+qstat -fx jobid
 qstat -f 16.pbs1 #查看某个作业详细信息
 qstat -fx 16 -F json #以json格式输出历史job的详细信息
 tracejob 3.pbs1 #输出中的L代表log来自scheduler，S代表来自server
