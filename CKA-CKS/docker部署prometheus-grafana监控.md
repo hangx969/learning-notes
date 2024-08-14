@@ -6,6 +6,9 @@
 
 # 被监控端安装node_exporter
 
+- 可以从GitHub上的Prometheus项目页面下载node_exporter：https://github.com/prometheus/node_exporter/releases。
+- 建议选择一个稳定但不是最新版本的node_exporter进行下载，以避免潜在的问题。下载完成后，将其上传到服务器上。
+
 ~~~sh
 #amd平台
 wget https://github.com/prometheus/node_exporter/releases/download/v1.6.1/node_exporter-1.6.1.linux-amd64.tar.gz
