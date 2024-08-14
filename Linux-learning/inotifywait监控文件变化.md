@@ -20,7 +20,6 @@ tar zxvf rsync-3.1.1.tar.gz
 make
 make install
 
-
 wget http://github.com/downloads/rvoicilas/inotify-tools/inotify-tools-3.14.tar.gz
 tar zxvf inotify-tools-3.14.tar.gz
 cd inotify-tools-3.14
@@ -66,5 +65,68 @@ chmod +x inotifywait.sh
 nohup sh inotifywait.sh > /dev/null 2>&1
 #如果想生成日志
 nohup sh inotifywait.sh > output.log 2>&1
+~~~
+
+# systemd管理rsync同步任务
+
+## 编写rsync脚本
+
+~~~sh
+#!/bin/bash
+
+SRC_DIR="/home/s0001969/Documents/learning-notes-git"
+DEST_DIR="/home/backup/"
+LOGFILE="/var/log/rsync_sync.log"
+DELAY=10 #增加延迟时间以减少频繁同步
+
+while inotifywait -e modify,move_self,create,delete,move,close_write -r "$SRC_DIR"
+do
+    echo "Sync started at $(date)" >> "$LOGFILE"
+
+    if rsync -avhz --delete "$SRC_DIR" "$DEST_DIR"; then
+        echo "Sync successful at $(date)" >> "$LOGFILE"
+    else
+        echo "Sync failed at $(date)" >> "$LOGFILE"
+    fi
+
+    sleep $DELAY
+done
+~~~
+
+## 创建systemd服务单元
+
+~~~sh
+tee rsync-inotifywait.service <<'EOF'
+[Unit]
+Description=Sync Service
+After=network.target
+
+[Service]
+ExecStart=/bin/bash /home/s0001969/rsync-inotifywait.sh
+Restart=Always
+User=root
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+sudo cp rsync-inotifywait.service /etc/systemd/system/
+sudo systemctl daemon-reload
+sudo systemctl enable rsync-inotifywait.service
+sudo systemctl start rsync-inotifywait.service && sudo systemctl status rsync-inotifywait.service
+~~~
+
+- 查看所有service
+
+~~~sh
+sudo systemctl --type=service
+#只查看active的
+sudo systemctl --type=service --state=active
+~~~
+
+- 禁用service
+
+~~~sh
+sudo systemctl disable rsync-inotifywait.service
 ~~~
 
