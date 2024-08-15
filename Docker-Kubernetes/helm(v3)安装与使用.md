@@ -18,6 +18,10 @@
 
 - helm与k8s的版本支持策略：[Helm | Helm版本支持策略](https://helm.sh/zh/docs/topics/version_skew/)
 
+## 教程文章：
+
+- https://mp.weixin.qq.com/s/S_4QK6pLSrmu0PgShOZEjw
+
 ## Helm v3版本变化
 
 - 2019年11月13日，Helm团队发布Helmv3的第一个稳定版本。
