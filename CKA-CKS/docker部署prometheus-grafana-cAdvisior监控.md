@@ -2,7 +2,7 @@
 
 - 参考：https://www.aiwanyun.cn/archives/174
 
-- rockylinux-8.9，安装docker、prometheus、grafana、node exporter
+- rockylinux-8.10 (IP： 172.16.183.80)，安装docker、prometheus、grafana、node_exporter
 
 # 被监控端安装node_exporter
 
@@ -16,7 +16,7 @@ tar -xzf node_exporter-1.6.1.linux-amd64.tar.gz
 cp node_exporter-1.6.1.linux-amd64/node_exporter /usr/local/bin/
 
 #进程守护
-cat > /etc/systemd/system/notdeexporter.service << EOF
+cat > /etc/systemd/system/nodeexporter.service << EOF
 [Unit]
 Description=node-exporter
 After=network.target network-online.target nss-lookup.target
@@ -34,9 +34,7 @@ EOF
 
 #启动
 systemctl daemon-reload
-systemctl start notdeexporter
-systemctl enable notdeexporter
-systemctl status notdeexporter
+systemctl start nodeexporter && systemctl enable nodeexporter && systemctl status nodeexporter
 #访问宿主+9100端口既可访问Node Exporter采集的指标数据
 ~~~
 
@@ -49,43 +47,69 @@ systemctl status notdeexporter
 
 ~~~sh
 mkdir -p /root/prometheus/data /root/prometheus/rules
+#需要修改权限，否则prometheus访问不了
+chmod 777 -R /root/prometheus
 cd /root/prometheus/
 
-tee /root/prometheus/prometheus.yml <<'EOF'
+####config文件示例###########
 # 抓取规则
 global:
   scrape_interval: 15s # 抓取间隔
   evaluation_interval: 15s # 评估间隔
 # 触发规则
-rule_files:
-  - /etc/prometheus/rules/*.rules
+#rule_files:
+#- /etc/prometheus/rules/*.rules
 # alert告警服务器
-alerting:
-  alertmanagers:
-    - static_configs:
-        - targets: ['域名/服务器+端口']
+#alerting:
+  #alertmanagers:
+  #- static_configs:
+    #- targets: ['域名/服务器+端口']
 # 监控客户端列表
 scrape_configs:
-  - job_name: "测试服务器"
-    static_configs:
-      - targets: ['域名/IP:9100']
-        labels:
-          name: "1号服务器"
-          group: "测试服务器"
-      - targets: ['域名/IP:9100']
-        labels:
-          name: "2号服务器/编译/监控"
-          group: "测试服务器"
-  - job_name: "应用服务器"
-    static_configs:
-      - targets: ['域名/IP:9100']
-        labels:
-          name: "邮件服务器"
-          group: "应用服务器"
-      - targets: ['域名/IP:9100']
-        labels:
-          name: "测试服务器"
-          group: "应用服务器"
+- job_name: "测试服务器"
+  static_configs:
+  - targets: 
+    - '域名/IP:9100'
+    labels:
+      name: "1号服务器"
+      group: "测试服务器"
+  - targets: 
+    - '域名/IP:9100'
+    labels:
+      name: "2号服务器/编译/监控"
+      group: "测试服务器"
+- job_name: "应用服务器"
+  static_configs:
+  - targets: 
+    - '域名/IP:9100'
+    labels:
+      name: "邮件服务器"
+      group: "应用服务器"
+  - targets: 
+    - '域名/IP:9100'
+    labels:
+      name: "测试服务器"
+      group: "应用服务器"
+##############################################
+tee /root/prometheus/prometheus.yml <<'EOF'
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+rule_files:
+- /etc/prometheus/rules/*.rules
+alerting:
+  alertmanagers:
+  - static_configs:
+    - targets:
+      - 172.16.183.80:9093
+scrape_configs:
+- job_name: test-servers
+  static_configs:
+  - targets:
+    - 172.16.183.80:9100
+    labels:
+      name: rocky1
+      group: test-servers
 EOF
 ~~~
 
@@ -132,8 +156,6 @@ EOF
 - 启动容器
 
 ~~~sh
-docker stop prometheusserver
-docker rm prometheusserver
 docker run -i --restart=always \
 --name prometheusserver \
 -p 9000:9090 \
@@ -164,17 +186,17 @@ docker run -i --restart=always \
 ~~~sh
 docker run -i --restart=always \
 --name grafanaserver \
--v /root/grafana/config/grafana.ini:/etc/grafana/grafana.ini \
 -v /root/grafana/data:/var/lib/grafana \
 -p 9001:3000 \
 -d grafana/grafana
+#-v /root/grafana/config/grafana.ini:/etc/grafana/grafana.ini \
 #9001:3000 内部端口为3000，我们映射到宿主机端口9001进行访问 访问登录页面需要输入账号密码，默认账号密码admin/admin
 ~~~
 
 - 配置prometheus数据源
   - 仪表盘=>Connections=>Data sources
   - 右上角Add data source，选择第一个Prometheus作为数据源
-  - 填写上刚刚部署的Prometheus的地址，并设置为默认数据源，然后拉到最下面保存便接入完成了。
+  - 填写上刚刚部署的Prometheus的地址(http://172.16.183.80:9000)，并设置为默认数据源，然后拉到最下面保存便接入完成了。
 - 导入仪表板
   - 仪表板-右上角导入仪表板-（提供三个好看的面板，分别是8919，9276，11074）
   - 点击load可以加载面板
@@ -190,8 +212,9 @@ docker run -i --restart=always \
   - /etc/alertmanager/alertmanager.yml 是推送相关的配置
 
 ~~~yaml
-mkdir -p /alertmanager-data
-tee /etc/alertmanager/alertmanager.yml <<'EOF'
+mkdir -p /alertmanager/data
+chmod -R 777 /alertmanager/data
+tee /root/alertmanager/alertmanager.yml <<'EOF'
 global:
   resolve_timeout: 1m
   smtp_smarthost: 'smtp.163.com:25'
@@ -226,3 +249,68 @@ docker run -i --restart=always \
 -d prom/alertmanager --config.file=/etc/alertmanager/alertmanager.yml --storage.path=/alertmanager-data/
 #9002:9093 内部端口是9003，通过宿主机的9002进行访问或者代理访问。启动服务后，访问9002端口进行查看，如能进行访问，则部署成功。
 ~~~
+
+# docker部署cAdvisior容器监控
+
+## 被控端部署cAdvisior
+
+- 为了解决容器的监控问题，Google开发了一款容器监控工具cAdvisor（Container Advisor），它为容器用户提供了对其运行容器的资源使用和性能特征的直观展示。 它是一个运行守护程序，用于收集，聚合，处理和导出有关正在运行的容器的信息。
+- cAdvisor可以对节点机器上的资源及容器进行实时监控和性能数据采集，包括CPU使用情况、内存使用情况、网络吞吐量及文件系统使用情况。cAdvisor使用go语言开发，如果想了解更多请访问其官方github：https://github.com/google/cadvisor
+
+- cAdvisior自带一些指标监控，但不是很直观；我们这里配置prometheus抓取cAdvisior数据，并用grafana展示出来。（参考：https://mp.weixin.qq.com/s/GRexd30-oxLiwhBVjiOLew）
+
+> Prometheus支持多种Exporter，这里我们使用Node Exporter 和 cAdvisor。其中，Node Exporter用于收集Host相关数据，cAdvisor用于收集容器相关数据
+
+~~~sh
+docker pull google/cadvisor
+#docker pull lagoudocker/cadvisor:v0.37.0这个镜像拉不下来，换成google镜像了
+docker run \
+--volume=/:/rootfs:ro \
+--volume=/var/run:/var/run:ro \
+--volume=/sys:/sys:ro \
+--volume=/var/lib/docker/:/var/lib/docker:ro \
+--volume=/dev/disk/:/dev/disk:ro \
+--publish=8080:8080 \
+--detach=true \
+--name=cadvisor \
+--privileged \
+--device=/dev/kmsg \
+google/cadvisor
+#访问宿主机IP:8080端口
+~~~
+
+## prometheus抓取cAdvisior数据
+
+- 修改prometheus配置文件，添加cAdvisior内容
+
+~~~sh
+tee /root/prometheus/prometheus.yml <<'EOF'
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+rule_files:
+- /etc/prometheus/rules/*.rules
+alerting:
+  alertmanagers:
+  - static_configs:
+    - targets:
+      - 172.16.183.80:9093
+scrape_configs:
+- job_name: "test-servers"
+  static_configs:
+  - targets:
+    - 172.16.183.80:9100
+    labels:
+      name: rocky1
+      group: "test-servers"
+- job_name: "docker-cAdvisior"
+  static_configs:
+  - targets: ["172.16.183.80:8080"]
+EOF
+~~~
+
+- 重启prometheus容器，刷新配置文件
+
+## grafana展示cAdvisior数据
+
+- https://grafana.com/grafana/dashboards/13946-docker-cadvisor/，dashboard导入13946模板
