@@ -72,11 +72,13 @@ EOF
 ~~~
 
 ~~~sh
-docker-compose -f redis-cluster.yml up
+docker-compose -f redis-cluster.yml up -d
 ~~~
 
 - 容器启动后可以在portainer中查看master容器的log，可以直接用console功能connect进入容器，尝试设置一个键值对
 
+  （202408：docker 26版本与portainer 2.19版本不兼容，console用不了）
+  
   ~~~SH
   #用redis-cli认证
   redis-cli
@@ -99,7 +101,7 @@ docker-compose -f redis-cluster.yml up
 - 输入名称为redis-sentinel，其余默认 -- create network
 
 - 重点来了，我们的redis主从节点现在都处于默认的网络驱动中，我们必须手动将其配置到redis-sentinel网络中
-  - 点击容器列表，找到我们的主动节点容器，然后分别进入他们的管理列表最下方，找到network选项，在network列表中找到redis-sentinel选择join network即可。
+  - 点击容器列表，找到我们的主从节点容器，然后分别进入他们的管理列表最下方，找到network选项，在network列表中找到redis-sentinel选择join network即可。
 
 ## 创建哨兵
 
@@ -116,7 +118,7 @@ tee sentinel1.conf <<'EOF'
 port 26379
 dir /tmp
 # master节点在bridge网络中的ip值
-sentinel monitor redis-master 172.20.0.2 6379 2
+sentinel monitor redis-master 172.19.0.2 6379 2
 # master节点密码
 sentinel auth-pass redis-master 123456
 sentinel down-after-milliseconds redis-master 30000
@@ -130,7 +132,7 @@ tee sentinel2.conf <<'EOF'
 port 26380
 dir /tmp
 # master节点在bridge网络中的ip值
-sentinel monitor redis-master 172.20.0.2 6379 2
+sentinel monitor redis-master 172.19.0.2 6379 2
 # master节点密码
 sentinel auth-pass redis-master 123456
 sentinel down-after-milliseconds redis-master 30000
@@ -144,7 +146,7 @@ tee sentinel3.conf <<'EOF'
 port 26381
 dir /tmp
 # master节点在bridge网络中的ip值
-sentinel monitor redis-master 172.20.0.2 6379 2
+sentinel monitor redis-master 172.19.0.2 6379 2
 # master节点密码
 sentinel auth-pass redis-master 123456
 sentinel down-after-milliseconds redis-master 30000
@@ -154,9 +156,9 @@ sentinel deny-scripts-reconfig yes
 EOF
 ~~~
 
-> 将master节点命名为redis-master，然后网络配置为172.20.0.2这个值是从哪里来的呢？
+> 将master节点命名为redis-master，然后网络配置为172.19.0.2这个值是从哪里来的呢？
 >
-> - 我们点击redis-master即redis主节点容器管理界面，在ip address一栏看到master节点的容器ip地址，因为哨兵节点和主从节点都处于redis-sentinel这个网络中，所以170.20.0.x这个网络是互通的，在bridge模式下配置这个ip地址是完全没有问题的。
+> - 我们点击redis-master即redis主节点容器管理界面，在ip address一栏看到master节点的容器ip地址，因为哨兵节点和主从节点都处于redis-sentinel这个网络中，所以172.19.0.x这个网络是互通的，在bridge模式下配置这个ip地址是完全没有问题的。
 
 ~~~yaml
 tee redis-sentinel.yml <<'EOF'
@@ -201,7 +203,7 @@ EOF
 - 启动哨兵集群
 
 ~~~sh
-docker-compose -f redis-sentinel.yml up
+docker-compose -f redis-sentinel.yml up -d
 ~~~
 
 ## 测试高可用
@@ -210,4 +212,9 @@ docker-compose -f redis-sentinel.yml up
 - 关闭master节点：portainer界面直接stop掉master的容器
 
 - 点入任意一个哨兵日志，可以看到它监控到主节点下线，并快速选举出一个新的节点作为master上线
+
+  ```sh
+  +sdown slave 172.19.0.2:6379 172.19.0.2 6379 @ redis-master 172.19.0.4变成了master 6379
+  #172.19.0.4变成了master
+  ```
 - 通过ip地址定位到容器，我们进入容器查看其身份，确实变为master
