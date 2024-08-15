@@ -314,3 +314,20 @@ EOF
 ## grafana展示cAdvisior数据
 
 - https://grafana.com/grafana/dashboards/13946-docker-cadvisor/，dashboard导入13946模板
+
+> 注意：
+>
+> - VMWare虚机挂起的话，每次重新激活，时间同步会有问题导致prometheus抓取数据有时间偏差，从而grafana dashboard数据无法展示
+>
+> 解决：
+>
+> ~~~sh
+> #rockylinux下使用chrony作为时间同步服务
+> #手动强制同步
+> chronyc -a makestep
+> timedatectl set-ntp true
+> systemctl restart chronyd.service
+> #查看时间同步状态
+> timedatectl status
+> ~~~
+
