@@ -25,6 +25,11 @@ docker-compose -f portainer.yml up -d
 - 访问宿主机IP:9876端口(username: admin, passwd: 26bN87:KP>?TzW:)
 - 点击local进行本地容器管理。更多文档参考：https://www.portainer.io/take-5
 
+# portainer添加environment
+
+- 在rocky-1机器部署了portainer，想去监控rocky-2机器上的容器。可以在portainer UI上找到Settings - Environments - Add Environment - 选择docker Standalone - 进入environment wizard
+- 在被监控的rocky-2上pull一个agent镜像（根据wizard的提示）- 起一个agent容器 - name和environment address上填入rocky-2的地址，点击connect即可
+
 # 基于Portainer安装redis-sentinel
 
 ## 环境准备

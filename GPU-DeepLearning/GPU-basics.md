@@ -3,6 +3,7 @@
 GPU介绍：
 
 - https://mp.weixin.qq.com/s/V4mMjzQ261kk6qmyH-STUQ
+- https://mp.weixin.qq.com/s/nfDY6DezdsN0VHDmRbA9pw
 
 各种型号GPU：
 

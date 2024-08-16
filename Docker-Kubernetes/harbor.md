@@ -31,9 +31,7 @@
    openssl x509 -req -in harbor.csr -CA ca.pem -CAkey ca.key -CAcreateserial -out harbor.pem -days 3650
    ```
 
-2. 安装docker（harbor是基于docker的）
-
-   安装前面装docker的步骤
+2. 安装docker（harbor是基于docker-compose的）
 
 3. 安装harbor
 
@@ -50,7 +48,6 @@
    #/data/ssl目录下有如下文件：ca.key  ca.pem  ca.srl  harbor.csr  harbor.key  harbor.pem
    cd /data/install/
    #把harbor的离线包harbor-offline-installer-v2.3.0-rc3.tgz上传到这个目录，离线包在课件里提供了
-   
    #下载harbor离线包的地址：
    #https://github.com/goharbor/harbor
    #解压：
@@ -67,7 +64,7 @@
    #邮件和ldap不需要配置，在harbor的web界面可以配置，其他配置采用默认即可。
    #注：harbor默认的账号密码：admin/Harbor12345
    ```
-
+   
 4. 安装docker-compose
 
    docker-compose项目是Docker官方的开源项目，负责实现对Docker容器集群的快速编排。Docker-Compose的工程配置文件默认为docker-compose.yml，Docker-Compose运行目录下的必要有一个docker-compose.yml。docker-compose可以管理多个docker实例。
@@ -529,3 +526,194 @@ spec:
     imagePullPolicy: Always
 ~~~
 
+# nginx实现harbor双向认证
+
+> 双向认证方案：使用 Nginx 代理 Harbor镜像仓库，Nginx开启双向认证
+
+## 环境配置
+
+harbor和nginx装到同一台机器：
+
+| 名称      | 版本信息      |
+| --------- | ------------- |
+| IP        | 172.16.183.81 |
+| hostname  | rocky-2       |
+| OS        | rocky linux 8 |
+| Harbor    | 2.10.3        |
+| Nginx     | 1.14.1-9      |
+| Docker    | 26.1.3        |
+| Continerd | 1.6.22        |
+
+- 安装containerd
+
+~~~sh
+yum install containerd.io-1.6.22*  -y
+~~~
+
+- 安装nginx
+
+~~~sh
+yum install nginx -y
+~~~
+
+## 配置证书
+
+- 生成CA证书
+
+~~~sh
+mkdir -p /data/ca
+cd /data/ca
+#生成CA私钥
+openssl genrsa -out ca.key 2048
+#生成CA证书
+openssl req -new -x509 -days 365 -key ca.key -out ca.crt -subj "/C=CN/ST=Beijing/L=Beijing/O=Personal/OU=Personal/CN=Registry CA"
+#创建v3.ext文件
+cat > v3.ext <<-EOF
+authorityKeyIdentifier=keyid,issuer
+basicConstraints=CA:FALSE
+keyUsage = digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment
+extendedKeyUsage = serverAuth
+subjectAltName = @alt_names
+
+[alt_names]
+DNS.1=rocky-2
+EOF
+~~~
+
+- 生成服务端证书
+
+~~~sh
+#生成服务端私钥
+openssl genrsa -out server.key 2048
+#生成服务端CSR（证书签名请求）
+openssl req -new -key server.key -out server.csr -subj "/C=CN/ST=Beijing/L=Beijing/O=Personal/OU=Personal/CN=rocky-2"
+#使用CA证书签名生成服务端证书
+openssl x509 -req -in server.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out server.crt -days 365 -extfile v3.ext
+~~~
+
+- 生成客户端证书
+
+```sh
+#生成客户端私钥
+openssl genrsa -out client.key 2048
+#生成客户端CSR
+openssl req -new -key client.key -out client.csr -subj "/C=CN/ST=Beijing/L=Beijing/O=Personal/OU=Personal/CN=Registry client"
+#使用CA证书签名生成客户端证书
+openssl x509 -req -in client.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out client.crt -days 365
+#生成cert格式客户端证书
+openssl x509 -inform PEM -in client.crt -out client.cert
+```
+
+- 证书上传
+
+  > 根证书（ca.crt）和服务端证书（server.cert、server.key）上传至Nginx服务器和Harbor服务器使用（rocky-2: 172.16.183.81）
+
+  ~~~sh
+  ls /data/ca
+  ca.crt  ca.key  ca.srl  client.cert  client.crt  client.csr  client.key  server.crt  server.csr  server.key  v3.ext
+  ~~~
+
+  > 根证书（ca.crt）和客户端证书（client.cert、client.key）上传至容器环境服务器使用（rocky-1: 172.16.183.80）
+
+  ~~~sh
+  scp /data/ca/ca.crt root@rocky-1:/data/ca/ca.crt
+  scp /data/ca/client.cert root@rocky-1:/data/ca/client.cert
+  scp /data/ca/client.key root@rocky-1:/data/ca/client.key
+  ~~~
+
+## 安装配置harbor
+
+（下载地址：https://github.com/goharbor/harbor/releases/tag/v2.10.3）
+
+~~~sh
+tar zxvf harbor-offline-installer-v2.10.3.tgz
+cd harbor
+cp harbor.yml.tmpl harbor.yml
+#修改配置文件
+vim harbor.yml
+#关闭http连接：注释掉http配置
+#修改hostname，跟上面签发的证书域名保持一致
+hostname: rocky-2 
+#协议用https，配置https连接中证书信息，修改https端口号为8443，和nginx代理地址端口保持一致
+certificate: /data/ca/server.crt #服务端证书
+private_key: /data/ca/server.key #服务端密钥
+#邮件和ldap不需要配置，在harbor的web界面可以配置，其他配置采用默认即可。
+~~~
+
+~~~sh
+#安装harbor依赖的的离线镜像包docker-harbor-2-3-0.tar.gz上传到harbor机器，通过docker load -i解压（如果不上传，install.sh会自动拉取）
+cd /root/harbor
+./install.sh
+#出现✔ ----Harbor has been installed and started successfully.---- 表明安装成功。
+#如何停掉harbor：
+cd /root/harbor
+docker-compose stop 
+#如何启动harbor：
+sudo su
+cd /root/harbor
+docker-compose start
+~~~
+
+- harbor默认的账号密码：admin/Harbor12345
+
+## 配置nginx -- 有问题
+
+- 增加代理Harbor配置，Harbor地址为 127.0.0.1:8443 （Nginx和Harbor部署在一台服务器）
+
+```sh
+tee /etc/nginx/conf.d/harbor.conf <<'EOF'
+  upstream harbor {
+    server 127.0.0.1:8443;
+}
+
+  server {
+    listen 443 ssl;
+    server_name rocky-2;
+    server_tokens off;
+# SSL
+    ssl_certificate /data/ca/server.crt;
+    ssl_certificate_key /data/ca/server.key;
+
+    ssl_client_certificate /data/ca/ca.crt;
+    ssl_verify_client on;
+
+# Recommendations from https://raymii.org/s/tutorials/Strong_SSL_Security_On_nginx.html
+    ssl_protocols TLSv1.2;
+    ssl_ciphers '!aNULL:kECDH+AESGCM:ECDH+AESGCM:RSA+AESGCM:kECDH+AES:ECDH+AES:RSA+AES:';
+    ssl_prefer_server_ciphers on;
+    ssl_session_cache shared:SSL:10m;
+
+# disable any limits to avoid HTTP 413 for large image uploads
+    client_max_body_size 0;
+
+# required to avoid HTTP 411: see Issue #1486 (https://github.com/docker/docker/issues/1486)
+    chunked_transfer_encoding on;
+
+# Add extra headers
+    add_header Strict-Transport-Security "max-age=31536000; includeSubdomains; preload";
+    add_header X-Frame-Options DENY;
+    add_header Content-Security-Policy "frame-ancestors 'none'";
+
+    location /{
+      proxy_pass https://harbor/;
+      proxy_set_header Host $http_host;
+      proxy_set_header X-Real-IP $remote_addr;
+      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+#proxy_set_header X-Forwarded-Proto $x_forwarded_proto;
+
+      proxy_cookie_path / "/; HttpOnly; Secure";
+
+      proxy_buffering off;
+      proxy_request_buffering off;
+}
+  }
+EOF
+```
+
+~~~sh
+#使配置生效
+nginx -t
+nginx -s reload
+~~~
+
+> nginx配置下发不下去，因为harbor的部署已经有nginx的容器在跑了，端口80会冲突，无法刷新自己装的nginx的配置

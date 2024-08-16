@@ -1181,7 +1181,7 @@ docker run -it --rm --name dockerrm centos sleep 10
 
 # docker-compose
 
-背景：
+## 背景
 
 - docker建议我们每一个容器中只运行一个服务，因为docker容器本身占用资源极少，所以最好是将每个服务单独的分割开来，但是这样我们又面临了一个问题：如果需要同时部署多个服务,每个服务单独写Dockerfile、构建镜像、构建容器，繁琐。
 
@@ -1195,6 +1195,26 @@ docker-compose使用的三个步骤：
 1. 编写Dockerfile定义各个微服务应用并构建出对应的镜像文件
 2. 使用 docker-compose.yml 定义一个完整业务单元，安排好整体应用中的各个容器服务。
 3. 最后，执行docker-compose up命令 来启动并运行整个应用程序，完成一键部署上线
+
+## 安装
+
+- 直接随着docker安装
+
+~~~sh
+sudo yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
+sudo yum install docker-ce docker-ce-cli containerd.io docker-compose-plugin
+#docker compose version就能看到已经安装了
+~~~
+
+- github下载
+
+~~~sh
+#https://github.com/docker/compose/releases下载安装包
+mv docker-compose-Linux-x86_64.64 /usr/bin/docker-compose
+chmod +x /usr/bin/docker-compose
+~~~
+
+
 
 # Docker私有镜像仓库harbor
 
