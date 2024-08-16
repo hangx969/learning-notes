@@ -103,13 +103,21 @@ alerting:
     - targets:
       - 172.16.183.80:9093
 scrape_configs:
-- job_name: test-servers
+- job_name: "test-servers"
   static_configs:
   - targets:
     - 172.16.183.80:9100
     labels:
-      name: rocky1
-      group: test-servers
+      name: rocky-1
+      group: "test-servers"
+  - targets:
+    - 172.16.183.81:9100
+    labels:
+      name: rocky-2
+      group: "test-servers"
+- job_name: "docker-cAdvisior"
+  static_configs:
+  - targets: ["172.16.183.80:8080"]
 EOF
 ~~~
 
@@ -306,6 +314,7 @@ scrape_configs:
 - job_name: "docker-cAdvisior"
   static_configs:
   - targets: ["172.16.183.80:8080"]
+  - targets: ["172.16.183.81:8080"]
 EOF
 ~~~
 
