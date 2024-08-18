@@ -526,7 +526,7 @@ spec:
     imagePullPolicy: Always
 ~~~
 
-# nginx实现harbor双向认证
+# nginx实现harbor双向认证 -- 方案失败不可用
 
 > 双向认证方案：使用 Nginx 代理 Harbor镜像仓库，Nginx开启双向认证
 
@@ -717,3 +717,42 @@ nginx -s reload
 ~~~
 
 > nginx配置下发不下去，因为harbor的部署已经有nginx的容器在跑了，端口80会冲突，无法刷新自己装的nginx的配置
+
+## 容器环境证书配置
+
+### docker
+
+- 存放证书
+
+~~~sh
+/etc/docker/certs.d/rocky-2/ca.crt
+/etc/docker/certs.d/rocky-2/client.cert
+/etc/docker/certs.d/rocky-2/client.key
+systemctl restart docker
+~~~
+
+### Containerd配置
+
+- ctr存放证书（Kubernetes默认使用）
+
+```sh
+      [plugins."io.containerd.grpc.v1.cri".registry.configs]
+        [plugins."io.containerd.grpc.v1.cri".registry.configs."reg.mydomain.com".tls]
+          ca_file = "/etc/containerd/certs.d/reg.mydomain.com/ca.crt"
+          cert_file = "/etc/containerd/certs.d/reg.mydomain.com/client.cert"
+          key_file = "/etc/containerd/certs.d/reg.mydomain.com/client.key"
+```
+
+- crictl和nerdctl存放证书
+
+```sh
+/etc/containerd/certs.d/reg.mydomain.com/ca.crt
+/etc/containerd/certs.d/reg.mydomain.com/client.cert
+/etc/containerd/certs.d/reg.mydomain.com/client.key
+```
+
+- 重启Containerd服务
+
+```sh
+systemctl restart containerd
+```

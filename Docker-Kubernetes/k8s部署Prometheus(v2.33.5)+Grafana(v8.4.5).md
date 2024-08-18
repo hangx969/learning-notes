@@ -60,7 +60,7 @@ spec:
         - name: rootfs
           mountPath: /rootfs
       tolerations:
-      - key: "node-role.kubernetes.io/master"
+      - key: "node-role.kubernetes.io/control-plane"
         operator: "Exists"
         effect: "NoSchedule"
       volumes:
@@ -238,11 +238,11 @@ data:
         annotations:
           prometheus.io/scrape: 'false'
       spec:
-        nodeName: node-01
+        nodeName: node1
         serviceAccountName: monitor
         containers:
         - name: prometheus
-          image: prom/prometheus:v2.33.5
+          image: docker.io/prom/prometheus:latest
           imagePullPolicy: IfNotPresent
           command:
             - prometheus
@@ -284,9 +284,9 @@ spec:
     app: prometheus
     component: server
   ports:
-    - port: 9090
-      targetPort: 9090
-     protocol: TCP
+  - port: 9090
+    targetPort: 9090
+    protocol: TCP
 ~~~
 
 # Grafana v8.4.5部署
