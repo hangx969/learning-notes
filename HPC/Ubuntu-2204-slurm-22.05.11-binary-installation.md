@@ -998,8 +998,8 @@ sudo sacctmgr create account Name=jade-slurm-user
 - 关联linux user与slurm account、partition
 
 ~~~sh
-sudo sacctmgr add user hanxux DefaultAccount=jade-slurm-user Partition=zprodhigh,zprod,zprodlow,zprodtest,zprodcpu
-#已经添加的ubuntu、slurm、petwan、liuwan、siyyan、svc-simulation、jinfen
+sudo sacctmgr add user <username> DefaultAccount=jade-slurm-user Partition=zprodhigh,zprod,zprodlow,ztest,zprodcpu
+#已经添加的user: ubuntu、slurm、petwan、liuwan、siyyan、svc-simulation、jinfen、hanxux
 ~~~
 
 -  查看账户用户分区的情况
