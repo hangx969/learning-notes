@@ -6,7 +6,7 @@
 
 - 2G内存、2vcpu
 
-## docker安装
+## docker安装-centos
 
 ### 简洁版
 
