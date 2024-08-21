@@ -226,9 +226,9 @@ sudo vgextend ubuntu-vg /dev/sda5
 lvs
 sudo lvextend -L +100%FREE /dev/ubuntu-vg/ubuntu-lv
 lvs/lvdisplay
-#扩容文件系统 -- ext4 指定的是lvdisplay中的LV Path
+#扩容ext4文件系统 -- 指定的是lvdisplay中的LV Path
 sudo resize2fs /dev/ubuntu-vg/ubuntu-lv
-#扩容文件系统 -- xfs 指定的是挂载点而非逻辑卷路径
+#扩容xfs文件系统 -- 指定的是挂载点而非逻辑卷路径
 xfs_growfs /
 df -h
 lsblk

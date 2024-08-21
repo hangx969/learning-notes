@@ -164,12 +164,146 @@
    ```sh
    helm install myharbor . -n harbor
    #更新yaml文件之后，update helm部署
-   helm upgrade myharbor . -n harbor
+   helm upgrade --namespace harbor myharbor . -f values.yaml
    ```
 
 6. 检查 Pod 状态，确保所有服务都处于 Running 状态。
 
-# 访问harbor
+# web-UI访问harbor
+
+- 默认是配置的ingress方式，需要在values.yaml中改为nodeport模式，修改以下字段：
+  -   type: nodePort
+  - ​    enabled: false
+  - externalURL: http://172.16.183.76:30822
+
+~~~sh
+expose:
+  # Set how to expose the service. Set the type as "ingress", "clusterIP", "nodePort" or "loadBalancer"
+  # and fill the information in the corresponding section
+  type: nodePort
+  tls:
+    # Enable TLS or not.
+    # Delete the "ssl-redirect" annotations in "expose.ingress.annotations" when TLS is disabled and "expose.type" is "ingress"
+    # Note: if the "expose.type" is "ingress" and TLS is disabled,
+    # the port must be included in the command when pulling/pushing images.
+    # Refer to https://github.com/goharbor/harbor/issues/5291 for details.
+    enabled: false
+    # The source of the tls certificate. Set as "auto", "secret"
+    # or "none" and fill the information in the corresponding section
+    # 1) auto: generate the tls certificate automatically
+    # 2) secret: read the tls certificate from the specified secret.
+    # The tls certificate can be generated manually or by cert manager
+    # 3) none: configure no tls certificate for the ingress. If the default
+    # tls certificate is configured in the ingress controller, choose this option
+    certSource: auto
+    auto:
+      # The common name used to generate the certificate, it's necessary
+      # when the type isn't "ingress"
+      commonName: ""
+    secret:
+      # The name of secret which contains keys named:
+      # "tls.crt" - the certificate
+      # "tls.key" - the private key
+      secretName: ""
+  ingress:
+    hosts:
+      core: core.harbor.domain
+    # set to the type of ingress controller if it has specific requirements.
+    # leave as `default` for most ingress controllers.
+    # set to `gce` if using the GCE ingress controller
+    # set to `ncp` if using the NCP (NSX-T Container Plugin) ingress controller
+    # set to `alb` if using the ALB ingress controller
+    # set to `f5-bigip` if using the F5 BIG-IP ingress controller
+    controller: default
+    ## Allow .Capabilities.KubeVersion.Version to be overridden while creating ingress
+    kubeVersionOverride: ""
+    className: ""
+    annotations:
+      # note different ingress controllers may require a different ssl-redirect annotation
+      # for Envoy, use ingress.kubernetes.io/force-ssl-redirect: "true" and remove the nginx lines below
+      ingress.kubernetes.io/ssl-redirect: "true"
+      ingress.kubernetes.io/proxy-body-size: "0"
+      nginx.ingress.kubernetes.io/ssl-redirect: "true"
+      nginx.ingress.kubernetes.io/proxy-body-size: "0"
+    # ingress-specific labels
+    labels: {}
+  clusterIP:
+    # The name of ClusterIP service
+    name: harbor
+    # The ip address of the ClusterIP service (leave empty for acquiring dynamic ip)
+    staticClusterIP: ""
+    ports:
+      # The service port Harbor listens on when serving HTTP
+      httpPort: 80
+      # The service port Harbor listens on when serving HTTPS
+      httpsPort: 443
+    # Annotations on the ClusterIP service
+    annotations: {}
+    # ClusterIP-specific labels
+    labels: {}
+  nodePort:
+    # The name of NodePort service
+    name: harbor
+    ports:
+      http:
+        # The service port Harbor listens on when serving HTTP
+        port: 80
+        # The node port Harbor listens on when serving HTTP
+        nodePort: 30822
+      https:
+        # The service port Harbor listens on when serving HTTPS
+        port: 443
+        # The node port Harbor listens on when serving HTTPS
+        nodePort: 30003
+    # Annotations on the nodePort service
+    annotations: {}
+    # nodePort-specific labels
+    labels: {}
+  loadBalancer:
+    # The name of LoadBalancer service
+    name: harbor
+    # Set the IP if the LoadBalancer supports assigning IP
+    IP: ""
+    ports:
+      # The service port Harbor listens on when serving HTTP
+      httpPort: 80
+      # The service port Harbor listens on when serving HTTPS
+      httpsPort: 443
+    # Annotations on the loadBalancer service
+    annotations: {}
+    # loadBalancer-specific labels
+    labels: {}
+    sourceRanges: []
+
+# The external URL for Harbor core service. It is used to
+# 1) populate the docker/helm commands showed on portal
+# 2) populate the token service URL returned to docker client
+#
+# Format: protocol://domain[:port]. Usually:
+# 1) if "expose.type" is "ingress", the "domain" should be
+# the value of "expose.ingress.hosts.core"
+# 2) if "expose.type" is "clusterIP", the "domain" should be
+# the value of "expose.clusterIP.name"
+# 3) if "expose.type" is "nodePort", the "domain" should be
+# the IP address of k8s node
+#
+# If Harbor is deployed behind the proxy, set it as the URL of proxy
+externalURL: http://172.16.183.76:30822
+~~~
+
+# docker cli推镜像
+
+~~~sh
+tee /etc/docker/daemon.json <<'EOF'
+{
+ "registry-mirrors":["https://y8y6vosv.mirror.aliyuncs.com","https://dockerhub.cicd.autoheim.net","https://registry.docker-cn.com","https://docker.mirrors.ustc.edu.cn","https://dockerhub.azk8s.cn","http://hub-mirror.c.163.com"],
+"insecure-registries": ["172.16.183.76:30822","node1"]
+}
+EOF
+docker login -u admin -p Harbor12345 172.16.183.76:30822
+docker tag prom/node-exporter:latest 172.16.183.76:30822/library/node-exporter:latest
+docker push 172.16.183.76:30822/library/node-exporter:latest
+~~~
 
 # 高可用测试
 
@@ -184,8 +318,8 @@
 2. 向 Harbor 注册表中推送一个名为 `busybox` 的测试镜像。
 
    ```sh
-   docker docker tag busybox harbor.domain.com/library/busybox
-   docker push harbor.domain.com/library/busybox     
+   docker tag busybox node1/library/busybox
+   docker push node1/library/busybox     
    ```
 
 3. 查看 Harbor 仓库，可以看到该镜像已成功推送到 Harbor 注册表。
