@@ -125,7 +125,7 @@
    kubectl get service -n harbor
    ```
 
-3. 在 `values.yaml` 文件中配置 PostgreSQL 数据库。使用 KubeBlocks 提供的外部数据库，并填写必要的数据库信息。如需配置其他参数（如 `expose.type`），可参考**官方文档**[8]。
+3. 在 `values.yaml` 文件中配置 PostgreSQL 数据库。使用 KubeBlocks 提供的外部数据库，并填写必要的数据库信息。如需配置其他参数（如 `expose.type`），可参考[官方文档](https://goharbor.io/docs/2.11.0/install-config/configure-yml-file/)。
 
    ```sh
    database:
@@ -163,7 +163,115 @@
 
    ```sh
    helm install myharbor . -n harbor
+   #更新yaml文件之后，update helm部署
+   helm upgrade myharbor . -n harbor
    ```
 
 6. 检查 Pod 状态，确保所有服务都处于 Running 状态。
 
+# 访问harbor
+
+# 高可用测试
+
+本节将演示 KubeBlocks 创建的 Harbor 集群的高可用能力。我们将通过 PostgreSQL 集群主节点故障来模拟。
+
+1. 查看 PostgreSQL 集群和 Pod 的初始状态。当前，`mypg-postgresql-0` 为主节点，`mypg-postgresql-1` 为备节点。
+
+   ```sh
+   kubectl -n harbor get pod -L kubeblocks.io/role
+   ```
+
+2. 向 Harbor 注册表中推送一个名为 `busybox` 的测试镜像。
+
+   ```sh
+   docker docker tag busybox harbor.domain.com/library/busybox
+   docker push harbor.domain.com/library/busybox     
+   ```
+
+3. 查看 Harbor 仓库，可以看到该镜像已成功推送到 Harbor 注册表。
+
+4. 接下来，模拟 PostgreSQL 主节点故障。
+
+```sh
+# Enter the primary pod
+kubectl exec -it mypg-postgresql-0 -n harbor -- bash
+
+# Delete the data directory of PostgreSQL to simulate an exception
+root@mycluster-postgresql-0:/home/postgres# rm -fr /home/postgres/pgdata/pgroot/data
+```
+
+5. 查看集群日志，观察故障发生时节点角色变化。
+
+```sh
+# View the primary pod logs
+kubectl logs mypg-postgresql-0 -n harbor
+```
+
+从日志中我们可以看到，leader lock 从主节点释放出来，触发了 HA 切换，并从备份数据中创建出新的副本。该服务几十秒便恢复正常。
+
+```sh
+ 2024-06-26 08:00:51,759 INFO: no action. I am (mypg-postgresql-0), the leader with the lock
+ 2024-06-26 08:01:01,726 INFO: Lock owner: mypg-postgresql-0; I am mypg-postgresql-0
+ 2024-06-26 08:01:01,802 INFO: Leader key released
+ 2024-06-26 08:01:01,824 INFO: released leader key voluntarily as data dir empty and currently leader
+ 2024-06-26 08:01:01,825 INFO: Lock owner: mypg-postgresql-1; I am mypg-postgresql-0
+ ...
+ 2024-06-26 08:01:04,475 INFO: replica has been created using basebackup_fast_xlog
+ 2024-06-26 08:01:04,475 INFO: bootstrapped from leader 'mypg-postgresql-1'
+ 2024-06-26 08:01:04,476 INFO: closed patroni connection to the postgresql cluster
+```
+
+```sh
+# View secondary pod logs
+kubectl logs mypg-postgresql-1 -n harbor
+```
+
+原来的备节点 `mypg-postgresql-1` 获得了 leader locks，成为主节点。
+
+```sh
+2024-06-26 08:02:13,638 INFO: no action. I am (mypg-postgresql-1), the leader with the lock
+```
+
+6. 再次查看 PostgreSQL 集群和 Pod 的状态。故障转移后，`mypg-posgresql-0` 变成了备节点，`mypg-postgresql-1` 变成了主节点。
+
+```sh
+kubectl -n harbor get pod -L kubeblocks.io/role
+>
+NAME                                   READY   STATUS    RESTARTS   AGE   ROLE
+...
+mypg-postgresql-0                      4/4     Running   0          89m   secondary
+mypg-postgresql-1                      4/4     Running   0          26m   primary
+...
+```
+
+7. 连接到 PostgreSQL 集群，查看主节点的 replication 信息。
+
+```sh
+postgres=# select * from pg_stat_replication;
+```
+
+8. 结果显示 `mypg-postgresql-0` 已被分配备节点角色。
+
+9. 验证 Harbor 集群的服务。这里我们拉取之前推送的 `busybox` 镜像。该镜像可以成功地从 Harbor 注册表中拉取。同时，我们也推送了新镜像 `hello-world`。该镜像也能够成功推送到 Harbor 注册表。故障转移后，Harbor 集群的读写功能已恢复，证实了 KubeBlocks 提供的高可用功能的有效性。
+
+# 集群扩容
+
+KubeBlocks 提供了垂直和水平扩容的能力。您可以通过执行以下命令轻松扩容集群。
+
+- 垂直扩容
+
+  ```sh
+  kbcli cluster vscale mypg \
+  --components="postgresql" \
+  --memory="4Gi" --cpu="2" \
+  --namespace harbor
+  ```
+
+- 水平扩容
+
+  ```sh
+  kbcli cluster hscale mypg 
+  --replicas 3 \
+  --namespace harbor \ 
+  --components postgresql
+  ```
