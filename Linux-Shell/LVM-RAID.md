@@ -374,6 +374,7 @@ umount /lvm-mount/ # unmount the point
 lvresize -L 200M /dev/vg1/lv1 # resize the volume to 200M
 e2fsck -f /dev/vg1/lv1 # check the error in disk
 resize2fs /dev/vg1/1v1 # update
+#xfs_growfs /
 # note : order of the ubove command is IMPORTANT
 lvdisplay # check
 mount /dev/vg1/lv1 /lvm-mount
