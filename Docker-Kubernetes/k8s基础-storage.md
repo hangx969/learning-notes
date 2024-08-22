@@ -253,6 +253,11 @@ spec:
   yum install nfs-utils -y
   mkdir /data/volumes -pv
   systemctl start nfs
+  #rockylinux中
+  sudo systemctl start rpcbind
+  sudo systemctl enable rpcbind
+  sudo systemctl start nfs-server
+  sudo systemctl enable nfs-server
   
   #配置nfs共享服务器上的/data/volumes目录
   vim /etc/exports
@@ -573,29 +578,37 @@ spec:
   ctr -n=k8s.io images import nfs-subdir-external-provisioner.tar.gz
   ```
 
-  ```yaml
-  #创建sa，给provisioner来用
-  #serviceaccount是为了方便Pod里面的进程调用Kubernetes API或其他外部服务而设计的。
-  apiVersion: v1
-  kind: ServiceAccount
-  metadata:
-    name: nfs-provisioner
-  ```
-
-  ```bash
-  #给这个sa授权cluster-admin
-  kubectl create clusterrolebinding nfs-provisioner-clusterrolebinding --clusterrole=cluster-admin --serviceaccount=default:nfs-provisioner
-  ```
-
   ```bash
   #给nfs-provisioner配置空间
   mkdir /data/nfs_pro -p
   echo "/data/nfs_pro *(rw,no_root_squash)" >> /etc/exports
   exportfs -arv
   ```
-
+  
   ```yaml
-  #创建nfs provisioner的pod
+  ---
+  #创建sa，给provisioner来用
+  #serviceaccount是为了方便Pod里面的进程调用Kubernetes API或其他外部服务而设计的。
+  apiVersion: v1
+  kind: ServiceAccount
+  metadata:
+    name: nfs-provisioner
+    
+  ---
+  apiVersion: rbac.authorization.k8s.io/v1
+  kind: ClusterRoleBinding
+  metadata:
+    name: nfs-provisioner-clusterrolebinding
+  roleRef:
+    apiGroup: rbac.authorization.k8s.io
+    kind: ClusterRole
+    name: cluster-admin
+  subjects:
+  - kind: ServiceAccount
+    name: nfs-provisioner
+    namespace: default
+  
+  ---
   kind: Deployment
   apiVersion: apps/v1
   metadata:
@@ -622,26 +635,26 @@ spec:
                 mountPath: /persistentvolumes
             env:
               - name: PROVISIONER_NAME
-                value: example.com/nfs
+                value: rm1.com/nfs
               - name: NFS_SERVER
-                value: 192.168.40.4
+                value: 172.16.183.100
               - name: NFS_PATH
                 value: /data/nfs_pro/
         volumes:
           - name: nfs-client-root
             nfs:
-              server: 192.168.40.4
+              server: 172.16.183.100
               path: /data/nfs_pro/
-  ```
-
-  ```yaml
-  #创建storage class
+              
+  ---
   apiVersion: storage.k8s.io/v1
   kind: StorageClass
   metadata: 
     name: sc-nfs
-  provisioner: example.com/nfs
+  provisioner: rm1.com/nfs
+  ```
   
+  ```yaml
   #创建pvc，引用sc
   kind: PersistentVolumeClaim
   apiVersion: v1
@@ -685,5 +698,5 @@ spec:
           persistentVolumeClaim:
             claimName: pvc-sc-nfs
   ```
-
+  
   

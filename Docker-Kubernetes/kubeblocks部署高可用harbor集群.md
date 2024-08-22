@@ -174,7 +174,7 @@
 - 默认是配置的ingress方式，需要在values.yaml中改为nodeport模式，修改以下字段：
   -   type: nodePort
   - ​    enabled: false
-  - externalURL: http://172.16.183.76:30822
+  - externalURL: http://172.16.183.100:32002
 
 ~~~sh
 expose:
@@ -249,12 +249,12 @@ expose:
         # The service port Harbor listens on when serving HTTP
         port: 80
         # The node port Harbor listens on when serving HTTP
-        nodePort: 30822
+        nodePort: 32002
       https:
         # The service port Harbor listens on when serving HTTPS
         port: 443
         # The node port Harbor listens on when serving HTTPS
-        nodePort: 30003
+        nodePort: 32003
     # Annotations on the nodePort service
     annotations: {}
     # nodePort-specific labels
@@ -288,7 +288,7 @@ expose:
 # the IP address of k8s node
 #
 # If Harbor is deployed behind the proxy, set it as the URL of proxy
-externalURL: http://172.16.183.76:30822
+externalURL: http://172.16.183.100:32002
 ~~~
 
 # docker cli推镜像
@@ -297,12 +297,13 @@ externalURL: http://172.16.183.76:30822
 tee /etc/docker/daemon.json <<'EOF'
 {
  "registry-mirrors":["https://y8y6vosv.mirror.aliyuncs.com","https://dockerhub.cicd.autoheim.net","https://registry.docker-cn.com","https://docker.mirrors.ustc.edu.cn","https://dockerhub.azk8s.cn","http://hub-mirror.c.163.com"],
-"insecure-registries": ["172.16.183.76:30822","node1"]
+"insecure-registries": ["172.16.183.100:32002","harbor"]
 }
 EOF
-docker login -u admin -p Harbor12345 172.16.183.76:30822
-docker tag prom/node-exporter:latest 172.16.183.76:30822/library/node-exporter:latest
-docker push 172.16.183.76:30822/library/node-exporter:latest
+systemctl daemon-reload && systemctl restart docker.service
+docker login -u admin -p Harbor12345 172.16.183.100:32002
+docker tag prom/node-exporter:latest 172.16.183.100:32002/library/node-exporter:latest
+docker push 172.16.183.100:32002/library/node-exporter:latest
 ~~~
 
 # 高可用测试
@@ -315,11 +316,11 @@ docker push 172.16.183.76:30822/library/node-exporter:latest
    kubectl -n harbor get pod -L kubeblocks.io/role
    ```
 
-2. 向 Harbor 注册表中推送一个名为 `busybox` 的测试镜像。
+2. 向 Harbor 注册表中推送一个名为 `busybox`测试镜像。
 
    ```sh
-   docker tag busybox node1/library/busybox
-   docker push node1/library/busybox     
+   docker tag busybox 172.16.183.100:32002/library/busybox
+   docker push 172.16.183.100:32002/library/busybox     
    ```
 
 3. 查看 Harbor 仓库，可以看到该镜像已成功推送到 Harbor 注册表。

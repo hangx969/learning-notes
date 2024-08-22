@@ -63,6 +63,13 @@
    > 如果报错：error: failed to find the default storageClass, use '--set storageClass=NAME' to set it，查看pod和pvc，发现有unbound的pvc，搭建nfs的provisioner，把nfs的sc设为默认sc，这样mysql的pvc可以自动绑定pv了
    >
    > - https://kubernetes.io/zh-cn/docs/tasks/administer-cluster/change-default-storage-class/
+   >
+   > ~~~sh
+   > kubectl get storageclass
+   > #默认 StorageClass 以 (default) 标记。
+   > #标记一个 StorageClass 为默认的
+   > kubectl patch storageclass <your-class-name> -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
+   > ~~~
 
 2. 查看集群状态，等待所有相关 Pod 变为 running 状态
 
