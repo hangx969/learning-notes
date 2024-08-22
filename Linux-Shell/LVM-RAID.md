@@ -220,14 +220,14 @@ w #保存并退出 fdisk。
 partprobe /dev/sda
 #扩容lvm
 pvs/pvdisplay
-sudo pvcreate /dev/sda5
+pvcreate /dev/sda5
 vgs/vgdisplay
-sudo vgextend ubuntu-vg /dev/sda5
+vgextend ubuntu-vg /dev/sda5
 lvs
-sudo lvextend -L +100%FREE /dev/ubuntu-vg/ubuntu-lv
+lvextend -L +100%FREE /dev/ubuntu-vg/ubuntu-lv
 lvs/lvdisplay
 #扩容ext4文件系统 -- 指定的是lvdisplay中的LV Path
-sudo resize2fs /dev/ubuntu-vg/ubuntu-lv
+resize2fs /dev/ubuntu-vg/ubuntu-lv
 #扩容xfs文件系统 -- 指定的是挂载点而非逻辑卷路径
 xfs_growfs /
 df -h
