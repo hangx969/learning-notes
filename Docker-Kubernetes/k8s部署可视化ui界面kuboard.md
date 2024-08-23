@@ -8,7 +8,9 @@
 ~~~sh
 #先安装docker，再下载kuboard_v3安装包。为测试用，直接在master1上部署
 docker load -i kuboard_v3.tar.gz
-docker run -d   --restart=unless-stopped   --name=kuboard   -p 80:80/tcp   -p 10081:10081/tcp   -e KUBOARD_ENDPOINT="http://192.168.40.180:80"   -e KUBOARD_AGENT_SERVER_TCP_PORT="10081"   -v /root/kuboard-data:/data  swr.cn-east-2.myhuaweicloud.com/kuboard/kuboard:v3
+mkdir -p /root/kuboard-data
+docker run -d --restart=unless-stopped --name=kuboard -p 10080:80/tcp -p 10081:10081/tcp -e KUBOARD_ENDPOINT="http://172.16.183.100:80" -e KUBOARD_AGENT_SERVER_TCP_PORT="10081" -v /root/kuboard-data:/data  swr.cn-east-2.myhuaweicloud.com/kuboard/kuboard:v3
+#eipwork/kuboard:v3
 ~~~
 
 - 登录

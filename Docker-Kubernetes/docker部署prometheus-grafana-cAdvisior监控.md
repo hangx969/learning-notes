@@ -174,6 +174,7 @@ docker run -i --restart=always \
 #-v <主机目录>:<容器目录>
 #9090是容器内部端口，9000是外部暴露端口，可以通过服务端IP+9000端口访问
 #在UI界面-Status-Rules中可以看到前面配置的alert规则
+#改完配置文件可以检查yaml格式：promtool check-config prometheus.yml
 ~~~
 
 # docker安装grafana

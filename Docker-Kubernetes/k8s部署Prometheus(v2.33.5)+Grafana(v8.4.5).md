@@ -102,6 +102,43 @@ kubectl create clusterrolebinding monitor-clusterrolebinding-1 -n monitor-sa --c
 
 > 这两条命令的主要区别在于它们绑定的对象不同，第一条命令是直接绑定到一个`ServiceAccount`，而第二条命令是绑定到一个表示`ServiceAccount`的用户。在实际使用中，这两种方式的效果是相同的，都是将`cluster-admin`这个`ClusterRole`的权限赋予了`monitor`命名空间下的`monitor-sa`这个`ServiceAccount`。
 
+> yaml格式的：
+>
+> ~~~yaml
+> apiVersion: v1
+> kind: ServiceAccount
+> metadata:
+>   name: monitor
+>   namespace: monitor-sa
+>   
+> ---
+> apiVersion: rbac.authorization.k8s.io/v1
+> kind: ClusterRoleBinding
+> metadata:
+>   name: monitor-clusterrolebinding
+> roleRef:
+>   apiGroup: rbac.authorization.k8s.io
+>   kind: ClusterRole
+>   name: cluster-admin
+> subjects:
+> - kind: ServiceAccount
+>   name: monitor
+>   namespace: monitor-sa
+> ---
+> apiVersion: rbac.authorization.k8s.io/v1
+> kind: ClusterRoleBinding
+> metadata:
+>   name: monitor-clusterrolebinding-1
+> roleRef:
+>   apiGroup: rbac.authorization.k8s.io
+>   kind: ClusterRole
+>   name: cluster-admin
+> subjects:
+> - apiGroup: rbac.authorization.k8s.io
+>   kind: User
+>   name: system:serviceaccount:monitor:monitor-sa
+> ~~~
+
 ### 创建数据存储目录
 
 ~~~sh
@@ -267,6 +304,33 @@ data:
              path: /data
              type: Directory
   ~~~
+  
+  > 如果集群搭建了nfs供应商，可以用nfs存储
+  >
+  > ~~~yaml
+  > #......
+  >      volumes:
+  >         - name: prometheus-config
+  >           configMap:
+  >             name: prometheus-config
+  >         - name: prometheus-storage-volume
+  >           persistentVolumeClaim:
+  >             claimName: pvc-prometheus
+  > 
+  > ---
+  > kind: PersistentVolumeClaim
+  > apiVersion: v1
+  > metadata:
+  >   name: pvc-prometheus
+  >   namespace: monitor-sa
+  > spec:
+  >   accessModes:
+  >   - ReadWriteMany
+  >   resources:
+  >     requests:
+  >       storage: 1Gi
+  >   storageClassName:  sc-nfs
+  > ~~~
 
 #### 创建svc代理prometheus server
 
@@ -319,7 +383,7 @@ spec:
         task: monitoring
         k8s-app: grafana
     spec:
-      nodeName: node-01
+      #nodeName: node-01
       containers:
       - name: grafana
         image: grafana/grafana:8.4.5
@@ -388,9 +452,54 @@ spec:
   type: NodePort
 ~~~
 
+> 部署了nfs供应商的集群里面可以直接用：
+>
+> ~~~yaml
+>      volumes:
+>       - name: ca-certificates
+>         hostPath:
+>           path: /etc/ssl/certs
+>       - name: grafana-storage
+>         persistentVolumeClaim:
+>           claimName: pvc-grafana-storage
+>       - name: lib
+>         persistentVolumeClaim:
+>           claimName: pvc-grafana-storage-lib
+> ---
+> kind: PersistentVolumeClaim
+> apiVersion: v1
+> metadata:
+>   name: pvc-grafana-storage
+>   namespace: monitor-sa
+> spec:
+>   accessModes:
+>   - ReadWriteMany
+>   resources:
+>     requests:
+>       storage: 200Mi 
+>   storageClassName:  sc-nfs
+> ---
+> kind: PersistentVolumeClaim
+> apiVersion: v1
+> metadata:
+>   name: pvc-grafana-storage-lib
+>   namespace: monitor-sa
+> spec:
+>   accessModes:
+>   - ReadWriteMany
+>   resources:
+>     requests:
+>       storage: 200Mi 
+>   storageClassName:  sc-nfs
+> ~~~
+
 ## 接入prometheus服务
 
-- 通过nodeport登陆grafana，在浏览器访问UI
+- 通过nodeIP:nodeport登陆grafana，在浏览器访问UI
+
+- 默认admin/admin
+
+- add data source - prometheus - 地址填`http://<prometheus svc name>.<namespace>.svc:9090`
 
   ![image-20240105161500835](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202401051615043.png)
 
@@ -404,5 +513,5 @@ spec:
 
 ## 导入监控模板
 
-- import **node_exporter.json**、**docker_rev1.json**
+- import **node_exporter.json**、**docker_rev1.json** (ID为：8919，9276，11074)
 
