@@ -1,4 +1,6 @@
-# 部署
+# 旧版exporter
+
+## 在线部署
 
 参考：
 
@@ -6,12 +8,10 @@
 - https://github.com/vpenso/prometheus-slurm-exporter
 - 编译指南：https://github.com/vpenso/prometheus-slurm-exporter/blob/master/DEVELOPMENT.md
 
-
-
 1. 下载安装包解压并复制
 
 ~~~sh
-#去工作节点
+#去slurm工作节点
 export VERSION=1.15 OS=linux ARCH=amd64
 wget https://dl.google.com/go/go$VERSION.$OS-$ARCH.tar.gz
 tar -xzvf go$VERSION.$OS-$ARCH.tar.gz
@@ -30,7 +30,7 @@ tee /etc/systemd/system/slurm-exporter.service <<'EOF'
 Description=Prometheus SLURM Exporter
 
 [Service]
-ExecStart=/usr/bin/prometheus-slurm-exporter
+ExecStart=/usr/bin/prometheus-slurm-exporter -listen-address :9092
 Restart=always
 RestartSec=15
 
@@ -39,21 +39,100 @@ WantedBy=multi-user.target
 EOF
 
 #启动 Slurm Exporter 
-systemctl enable slurm-exporter --now
+systemctl daemon-reload
+systemctl enable slurm-exporter.service --now
+systemctl restart slurm-exporter.service
 ~~~
 
-# 可以收集的监控指标
+## 离线环境部署
+
+~~~sh
+##去在线环境下载go依赖##
+#下载go 1.15
+export VERSION=1.15 OS=linux ARCH=amd64
+wget https://dl.google.com/go/go$VERSION.$OS-$ARCH.tar.gz
+tar -xzvf go$VERSION.$OS-$ARCH.tar.gz
+export PATH=$PWD/go/bin:$PATH
+
+#下载源码包
+git clone https://github.com/vpenso/prometheus-slurm-exporter.git
+cd prometheus-slurm-exporter
+mkdir vendor
+#下载依赖到vendor中
+go mod download
+go mod vendor
+#打包整个源码包到离线环境
+
+###离线环境中，编辑makefile###
+cd prometheus-slurm-exporter
+vim Makefile
+#如下，注释掉go mod download和go test部分，避免联网
+PROJECT_NAME = prometheus-slurm-exporter
+SHELL := $(shell which bash) -eu -o pipefail
+
+GOPATH := $(shell pwd)/go/modules
+GOBIN := bin/$(PROJECT_NAME)
+GOFILES := $(shell ls *.go)
+
+.PHONY: build
+build: test $(GOBIN)
+
+$(GOBIN): go/modules/pkg/mod $(GOFILES)
+        mkdir -p bin
+        @echo "Building $(GOBIN)"
+        go build -v -o $(GOBIN) -mod=vendor
+
+go/modules/pkg/mod: go.mod
+        #go mod download
+
+.PHONY: test
+test: go/modules/pkg/mod $(GOFILES)
+        #go test -v
+
+run: $(GOBIN)
+        $(GOBIN)
+
+clean:
+        go clean -modcache
+        rm -fr bin/ go/
+
+#编译
+make
+
+#部署服务
+cp prometheus-slurm-exporter/bin/prometheus-slurm-exporter /usr/bin/prometheus-slurm-exporter
+
+tee /etc/systemd/system/slurm-exporter.service <<'EOF'
+[Unit]
+Description=Prometheus SLURM Exporter
+
+[Service]
+ExecStart=/usr/bin/prometheus-slurm-exporter -listen-address :9092
+Restart=always
+RestartSec=15
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+#启动 Slurm Exporter 
+systemctl daemon-reload
+systemctl enable slurm-exporter.service --now
+systemctl restart slurm-exporter.service
+~~~
+
+## 可以收集的监控指标
 
 使用 Slurm Exporter 可以收集很多的指标，包括 CPU、GPU、机器节点、提交的作业、作业分区的状态、每个账户和用户的作业信息、调度器的信息，我们大概看一下具体是什么。
 
-## CPU 的状态
+### CPU 的状态
 
 - Allocated: 已经被分配给作业的 CPU 数量。
 - Idle: 没有被分配给做而已，空闲的 CPU 数量。
 - Other: 暂时无法使用的 CPU 数量，不能使用的原因有多种，可能是机器坏了，也可能是被管理员设置了这些机器不能用于作业分配，一般是处于维护或者特殊用途
 - Total: CPU 总数
 
-## GPU 的状态
+### GPU 的状态
 
 - Allocated: 已经被分配给作业的 GPU 数量。
 - Other: GPUs which are unavailable for use at the moment.
@@ -62,7 +141,7 @@ systemctl enable slurm-exporter --now
 
 从0.19版本开始，GPU计费必须在命令行中添加 `-gpu-acct` 选项来显式启用，否则它将不会被激活。
 
-## 机器节点的状态
+### 机器节点的状态
 
 - Allocated: 已经被分配给作业的节点。
 - Completing: 与这些节点关联的所有作业都在完成过程中。a
@@ -83,7 +162,7 @@ systemctl enable slurm-exporter --now
 - 内存:已分配和总内存。
 - 标签:主机名及其Slurm状态(例如空闲、混合、分配、耗尽等)
 
-## 作业状态
+### 作业状态
 
 - PENDING: 等待分配资源的作业.
 
@@ -109,18 +188,19 @@ systemctl enable slurm-exporter --now
 
 - NODE_FAIL: 由于一个或多个分配的节点失败而终止作业。
 
-  ## 作业分区的状态
+
+### 作业分区的状态
 
 - 每个分区运行/挂起的作业，分配给Slurm帐户和用户。
 
 - 每个分区的总/分配/空闲CPU加上每个用户ID的已用CPU。
 
-## 每个账户和用户的作业信息
+### 每个账户和用户的作业信息
 
 - Running/Pending/Suspended 每个账号的作业.
 - Running/Pending/Suspended 每个用户的作业
 
-## 调度器的信息
+### 调度器的信息
 
 - Server Thread count: 当前活动的slurmctld线程数。
 - Queue size: scheduler queue 的长度
@@ -135,7 +215,7 @@ systemctl enable slurm-exporter --now
 - (Backfill) Total Backfilled Jobs (since last stats cycle start): 自上次统计复位以来，由于回填而启动的作业数量。
 - (Backfill) Total backfilled heterogeneous Job components: 自上次Slurm启动以来，由于回填，异构作业组件的数量开始增加。
 
-# prometheus配置
+## prometheus配置
 
 添加下面的config：
 
@@ -145,11 +225,88 @@ scrape_configs:
     scrape_interval:  30s
     scrape_timeout:   30s
     static_configs:
-    - targets: ['172.16.183.134:8080']
+    - targets: ['172.16.183.134:9092']
 ~~~
 
-# grafana配置
+## grafana配置
 
 - 使用dashboard：https://grafana.com/grafana/dashboards/4323-slurm-dashboard/
 
-# 测试Slurm Dashboard V2的
+# 新版exporter+Slurm Dashboard V2
+
+## 部署
+
+- 前面的slurm exporter停止维护了，现在有新的exporter：https://github.com/rivosinc/prometheus-slurm-exporter
+
+~~~sh
+#下载二进制包解压，直接有了二进制文件
+tar zxvf prometheus-slurm-exporter_1.6.4_linux_amd64.tar.gz
+#拷贝到bin目录
+cp ./prometheus-slurm-exporter /usr/bin/prometheus-slurm-exporter
+
+#用systemd管理服务
+tee /etc/systemd/system/slurm-exporter.service <<'EOF'
+[Unit]
+Description=Prometheus SLURM Exporter New
+
+[Service]
+ExecStart=/usr/bin/prometheus-slurm-exporter -slurm.collect-diags -slurm.collect-licenses -slurm.collect-limits
+Restart=always
+RestartSec=15
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+#启动 Slurm Exporter 
+systemctl enable slurm-exporter --now
+~~~
+
+> 参数说明：
+>
+> Usage of /usr/bin/prometheus-slurm-exporter:
+>   -slurm.cli-fallback
+>         drop the --json arg and revert back to standard squeue for performance reasons (default true)
+>   -slurm.collect-diags
+>         Collect daemon diagnostics stats from slurm
+>   -slurm.collect-licenses
+>         Collect license info from slurm
+>   -slurm.collect-limits
+>         Collect account and user limits from slurm
+>   -slurm.diag-cli string
+>         sdiag cli override
+>   -slurm.lic-cli string
+>         squeue cli override
+>   -slurm.poll-limit float
+>         throttle for slurmctld (default: 10s)
+>   -slurm.sacctmgr-cli string
+>         saactmgr cli override
+>   -slurm.sinfo-cli string
+>         sinfo cli override
+>   -slurm.squeue-cli string
+>         squeue cli override
+>   -trace.enabled
+>         Set up Post endpoint for collecting traces
+>   -trace.path string
+>         POST path to upload job proc info
+>   -trace.rate uint
+>         number of seconds proc info should stay in memory before being marked as stale (default 10)
+>   -web.listen-address string
+>         Address to listen on for telemetry "(default: :9092)"
+
+## prometheus配置
+
+添加下面的config：
+
+~~~sh
+scrape_configs:
+  - job_name: 'slurm_exporter'
+    scrape_interval:  30s
+    scrape_timeout:   30s
+    static_configs:
+    - targets: ['172.16.183.134:9092']
+    - targets: ['172.16.183.133:9092']
+    - targets: ['172.16.183.135:9092']
+~~~
+
+注:这个版本不太好用，不如老的那版exporter数据多
