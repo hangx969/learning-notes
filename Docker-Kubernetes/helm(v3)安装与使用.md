@@ -526,6 +526,234 @@ cd ~/myapp/
 helm install nginx ./
 ~~~
 
+# Lab-自定义chart部署flask应用并推送到harbor
+
+## 应用代码
+
+~~~python
+#这里使用python基于flask开发一个web服务器，该服务通过读取环境变量 USERNAME 获得用户自己定义的名称，然后监听 80 端口。对于任意 HTTP 请求，返回 Hello ${USERNAME}。比如如果设置USERNAME=world（默认场景），该服务会返回 Hello world。
+tee app.py <<'EOF'
+from flask import Flask
+import os
+
+app = Flask(__name__)
+
+@app.route("/", methods=["GET"])
+def hello():
+    username = os.getenv("USERNAME", "world")
+    return f"Hello {username}!"
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=80)
+EOF
+~~~
+
+## 构建容器镜像
+
+~~~dockerfile
+# 使用官方 Python 基础镜像
+FROM python:3.10-slim
+# 设置工作目录
+WORKDIR /app
+# 复制当前目录内容到工作目录
+COPY . /app
+# 安装依赖
+RUN pip install --no-cache-dir Flask -i https://mirrors.aliyun.com/pypi/simple/
+# 设置环境变量
+ENV USERNAME world
+# 暴露应用运行的端口
+EXPOSE 80
+# 运行 Flask 应用
+CMD ["python", "app.py"]
+~~~
+
+~~~sh
+docker build -t my-hello .
+#镜像可以推送到harbor
+~~~
+
+## 构建helm chart
+
+~~~sh
+helm create my-hello
+#这个命令会生成一个名为 my-hello 的目录，里面包含了 Helm Chart 的基本结构。
+#需要注意的是，Chart 里面的 my-hello名称需要和生成的 Chart 文件夹名称一致。如果修改 my-hello，则需要做一致的修改。
+~~~
+
+- 在根目录下的 Chart.yaml 文件内，声明了当前 Chart 的名称、版本等基本信息，这些信息会在该 Chart 被放入仓库后，供用户浏览检索。
+
+~~~yaml
+apiVersion: v2
+name: my-hello
+description: My hello app Helm chart for Kubernetes      # helm chart描述信息
+
+# A chart can be either an 'application' or a 'library' chart.
+#
+# Application charts are a collection of templates that can be packaged into versioned archives
+# to be deployed.
+#
+# Library charts provide useful utilities or functions for the chart developer. They're included as
+# a dependency of application charts to inject those utilities and functions into the rendering
+# pipeline. Library charts do not define any templates and therefore cannot be deployed.
+type: application
+
+# This is the chart version. This version number should be incremented each time you make changes
+# to the chart and its templates, including the app version.
+# Versions are expected to follow Semantic Versioning (https://semver.org/)
+version: 1.0   #Chart 的版本
+
+# This is the version number of the application being deployed. This version number should be
+# incremented each time you make changes to the application. Versions are not expected to
+# follow Semantic Versioning. They should reflect the version the application is using.
+# It is recommended to use it with quotes.
+appVersion: "1.16.0"   # 应用的版本
+~~~
+
+- 编辑values.yaml
+
+~~~yaml
+#根目录下有一个values.yaml文件，这个文件提供了应用在安装时的默认参数。编辑 values.yaml 文件，定义 Chart 的默认值：
+#这里主要修改values.yaml内的 image.repository,image.tag，并添加Username: helm。其他保持默认。
+replicaCount: 1
+
+image:
+  repository: harbor.test.com/library/my-hello
+  pullPolicy: IfNotPresent
+  tag: "v1.0"
+
+service:
+  type: ClusterIP
+  port: 80
+...
+Username: helm
+~~~
+
+- 编辑模板文件templates/deployment.yaml
+
+~~~sh
+#在templates文件夹内存放了应用部署所需要使用的YAML文件，比如Deployment 和 Service。在我当前的应用内，只需要一个 deployment，而有的应用可能包含不同组件，需要多个deployment，就需要在 templates 文件夹下放置不同deployment的YAML文件。
+#增加env部分：
+...
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: USERNAME
+              value: {{ .Values.Username }}
+...
+~~~
+
+- 编辑 templates/service.yaml
+
+~~~yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "my-hello.fullname" . }}
+  labels:
+    {{- include "my-hello.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "my-hello.selectorLabels" . | nindent 4 }}
+~~~
+
+## 打包应用
+
+~~~sh
+#使用Helm lint校验Chart有无语法问题。
+helm lint
+==> Linting .
+[ERROR] Chart.yaml: version should be of type string but it's of type float64
+[INFO] Chart.yaml: icon is recommended
+Error: 1 chart(s) linted, 1 chart(s) failed
+
+# 上面提示，version应该为string，而不是float64。将Chart.yaml中的version字段改为字符串，version: "1.0"。重新校验通过：
+
+helm lint
+==> Linting .
+[INFO] Chart.yaml: icon is recommended
+1 chart(s) linted, 0 chart(s) failed
+~~~
+
+~~~sh
+#使用helm package对已经创建好的chart应用进行打包，即得到我们厂家的tgz格式的chart包。
+helm package ./my-hello/
+~~~
+
+## 部署应用
+
+~~~sh
+#部署 Chart进行测试使用以下命令部署你创建的 Helm Chart
+helm install my-hello my-hello-1.0.tgz
+#也可以根据部署后的提示，配置端口转发到宿主机的8080端口进行测试：
+export POD_NAME=$(kubectl get pods --namespace default -l "app.kubernetes.io/name=my-hello,app.kubernetes.io/instance=my-hello" -o jsonpath="{.items[0].metadata.name}")
+export CONTAINER_PORT=$(kubectl get pod --namespace default $POD_NAME -o jsonpath="{.spec.containers[0].ports[0].containerPort}")
+echo "Visit http://127.0.0.1:8080 to use your application"
+kubectl --namespace default port-forward $POD_NAME 8080:$CONTAINER_PORT
+#此时节点处于监听8080端口状态，任何访问8080端口的流量都会转发到my-hello容器的80端口 ：
+#新开终端
+curl localhost:8080
+~~~
+
+## 参数重载
+
+~~~sh
+#应用开发者在 Chart 的 values 配置中只是提供了默认的安装参数，用户也可以在安装时指定自己的配置，通过set参数传递参数。如果应用已经部署，可以用upgrade命令替代install，实现在原有部署好的应用的基础上变更配置。
+# 全新安装
+helm install my-hello my-hello-1.0.tgz --set Username="K8S"
+# 也可以通过配置文件进行传参
+helm install my-hello2 my-hello-1.0.tgz -f my-values.yaml
+# 升级更新。基于新的value.yaml或者set更新参数
+helm upgrade my-hello my-hello-1.0.tgz -f my-new-values.yaml
+helm upgrade my-hello my-hello-1.0.tgz --set Username="K8S"
+~~~
+
+## 修改提示信息
+
+~~~sh
+#修改提示信息部署chart后的提示信息来自templates目录下的NOTES.txt文件：
+#根据需要可以自定义输出。
+cat my-hello/templates/NOTES.txt
+1. Get the application URL by running these commands:
+{{- if .Values.ingress.enabled }}
+{{- range $host := .Values.ingress.hosts }}
+  {{- range .paths }}
+  http{{ if $.Values.ingress.tls }}s{{ end }}://{{ $host.host }}{{ .path }}
+  {{- end }}
+{{- end }}
+{{- else if contains "NodePort" .Values.service.type }}
+  export NODE_PORT=$(kubectl get --namespace {{ .Release.Namespace }} -o jsonpath="{.spec.ports[0].nodePort}" services {{ include "my-hello.fullname" . }})
+  export NODE_IP=$(kubectl get nodes --namespace {{ .Release.Namespace }} -o jsonpath="{.items[0].status.addresses[0].address}")
+  echo http://$NODE_IP:$NODE_PORT
+{{- else if contains "LoadBalancer" .Values.service.type }}
+     NOTE: It may take a few minutes for the LoadBalancer IP to be available.
+           You can watch its status by running 'kubectl get --namespace {{ .Release.Namespace }} svc -w {{ include "my-hello.fullname" . }}'
+  export SERVICE_IP=$(kubectl get svc --namespace {{ .Release.Namespace }} {{ include "my-hello.fullname" . }} --template "{{"{{ range (index .status.loadBalancer.ingress 0) }}{{.}}{{ end }}"}}")
+  echo http://$SERVICE_IP:{{ .Values.service.port }}
+{{- else if contains "ClusterIP" .Values.service.type }}
+  export POD_NAME=$(kubectl get pods --namespace {{ .Release.Namespace }} -l "app.kubernetes.io/name={{ include "my-hello.name" . }},app.kubernetes.io/instance={{ .Release.Name }}" -o jsonpath="{.items[0].metadata.name}")
+  export CONTAINER_PORT=$(kubectl get pod --namespace {{ .Release.Namespace }} $POD_NAME -o jsonpath="{.spec.containers[0].ports[0].containerPort}")
+  echo "Visit http://127.0.0.1:8080 to use your application"
+  kubectl --namespace {{ .Release.Namespace }} port-forward $POD_NAME 8080:$CONTAINER_PORT
+{{- end }}
+~~~
+
+## 清理部署
+
+~~~sh
+helm ls
+helm uninstall my-hello
+~~~
+
 # Helm常用命令演示
 
 - 官网地址：[Helm | Helm](https://helm.sh/zh/docs/helm/helm/)

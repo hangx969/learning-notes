@@ -526,6 +526,157 @@ spec:
     imagePullPolicy: Always
 ~~~
 
+# 使用harbor作为helm chart仓库实现内网部署
+
+- 制作好的chart包可以传到chart仓库进行共享，chart仓库可以是公有仓库或者使用Harbor搭建的私有仓库。
+
+## chart仓库
+
+- chart仓库是打包的chart存储和分享的位置。chart仓库由chart包和包含了仓库中所有chart索引的特殊文件index.yaml。通常描述chart的index.yaml也托管在同一个服务器上作为来源文件。
+
+## 基于OCI的注册中心
+
+- 从Helm 3开始，可以使用具有 OCI支持的容器注册中心来存储和共享chart包。从Helm v3.8.0开始，默认启用OCI支持。
+
+- 以下是几种chart可以使用的托管容器注册中心，都支持OCI，例如：
+
+  - Amazon ECR
+
+  - Azure Container Registry
+
+  - Docker Hub
+
+  - Google Artifact Registry
+
+  - IBM Cloud Container Registry
+
+  - JFrog Artifactory
+
+- 同样的，harbor作为是一款云原生制品仓库，可以存储和管理容器镜像、Helm Chart 等 Artifact，同样启用了OCI支持。
+
+## 上传自定义chart到harbor
+
+如果Harbor版本低于2.8，安装harbor时需要启用chartmuseum。
+
+### harbor启用helm chart仓库（harbor 2.8之前）
+
+默认新版 harbor 不会启用 chart repository service，如果启用安装方式要添加一个参数 `--with-chartmuseum`
+
+```sh
+$ ./install.sh --with-chartmuseum
+```
+
+如果是后期修改配置文件，可以使用 `./prepare --with-chartmuseum` 后，再 `docker-compose up -d`
+
+启用后Harbor中有独立的Helm Charts页面。Charts支持UI上传、helm push两种上传chart的方式。
+
+### **Harbor2.8（包括）之后管理Helm Charts**
+
+harbor版本大于等于2.8，按照下面的命令直接推送chart即可。Harbor中Charts与Image保存在相同目录下，没有单独的页面。
+
+```sh
+# 登录helm仓库
+helm registry login harbor.test.com --insecure
+
+# 提前在harbor中创建好harbor项目。上传不再支持UI界面，必须使用helm push
+helm push my-hello-1.0.tgz oci://harbor.test.com/library/
+#Error: failed to do request: Head "https://harbor.test.com/v2/library/my-hello/blobs/sha256:0db1fb6272f773572edb9ebad8c7fb902a76166bf14d896d3790f2a82f524838": tls: failed to verify certificate: x509: certificate signed by unknown authority
+# 加--insecure-skip-tls-verify跳过tls验证
+helm push my-hello-1.0.tgz oci://harbor.test.com/library/ --insecure-skip-tls-verify
+# 下载chart执行下面命令，命令可以从harbor界面复制
+helm pull oci://harbor.test.com/library/my-hello --version 1.0 -insecure-skip-tls-verify
+```
+
+这样就实现了chart上传到harbor仓库。
+
+## 修改第三方chart重新打包推送到harbor
+
+- 这里演示将harbor的官方chart从官方仓库下载后，修改镜像仓库地址，重新打包上传到私有仓库harbor，方便内部后续进行部署。
+
+```sh
+# 下载harbor官方的helm chart，这里可以换成其他chart进行测试
+helm repo add harbor https://helm.goharbor.io
+helm repo update
+helm pull harbor/harbor
+tar xf harbor-1.15.0.tgz
+cd harbor
+# 修改value.yaml中的镜像仓库为私有harbor
+sed -i 's/repository: goharbor/repository: harbor.test.com\/harbor/g' values.yaml
+# 重新打包chart
+helm package .
+```
+
+- 将chart推送到harbor：
+
+```sh
+helm push harbor-1.15.0.tgz oci://harbor.test.com/harbor --insecure-skip-tls-verify
+```
+
+- 拉取部署chart所需的容器镜像并重新打tag推送到harbor，该过程通过如下脚本进行：
+
+```sh
+# 脚本内容
+cat images-pull-push-2-harbor.sh
+NAMESPACE="harbor"
+kubectl get pods -n $NAMESPACE -o jsonpath="{range .items[*]}{.spec.containers[*].image}{'\n'}{end}" | sort |
+
+NAMESPACE="harbor"              # 命名空间
+HARBOR_URL="harbor.test.com"    # harbor访问的域名
+HARBOR_PROJECT="harbor"         # 镜像项目名称
+
+# 获取所有Pod的镜像
+IMAGES=$(kubectl get pods -n $NAMESPACE -o jsonpath="{range .items[*]}{.spec.containers[*].image}{'\n'}{end}" | sort | uniq)
+
+# 登录Harbor
+docker login $HARBOR_URL -u admin -p Harbor12345
+
+# 拉取镜像、重新tag并推送到Harbor
+for IMAGE in $IMAGES; do
+  IMAGE_NAME=$(echo $IMAGE | awk -F'/' '{print $NF}')
+  NEW_TAG="$HARBOR_URL/$HARBOR_PROJECT/$IMAGE_NAME"
+
+  # 拉取原镜像
+  docker pull $IMAGE
+
+  # 重新tag镜像
+  docker tag $IMAGE $NEW_TAG
+
+  # 推送到Harbor
+  docker push $NEW_TAG
+
+  # 删除本地镜像
+  docker rmi $IMAGE
+  docker rmi $NEW_TAG
+done
+
+# 运行脚本
+sh images-pull-push-2-harbor.sh
+```
+
+最终在harbor的harbor项目下，同时存放了harbor的chart和部署所需的镜像。
+
+## chart部署验证
+
+~~~sh
+#验证上传到harbor的chart：
+#下载chart
+helm pull oci://harbor.test.com/harbor/harbor --version 1.15.0 --insecure-skip-tls-verify
+helm upgrade --install harbor harbor-1.15.0.tgz --namespace harbor --create-namespace \
+   --set expose.type=ingress \
+   --set expose.ingress.className=nginx \
+   --set expose.ingress.hosts.core=harbor.abc.com \
+   --set expose.ingress.hosts.notary=notary.abc.com \
+   --set externalURL=https://harbor.abc.com \
+   --set harborAdminPassword="Harbor12345" \
+   --set persistence.persistentVolumeClaim.registry.storageClass="openebs-hostpath" \
+   --set persistence.persistentVolumeClaim.jobservice.jobLog.storageClass="openebs-hostpath" \
+   --set persistence.persistentVolumeClaim.database.storageClass="openebs-hostpath" \
+   --set persistence.persistentVolumeClaim.redis.storageClass="openebs-hostpath" \
+   --set persistence.persistentVolumeClaim.trivy.storageClass="openebs-hostpath"
+~~~
+
+测试安装chart正常，且会从harbor拉取镜像，这样就可以实现官方chart的内网部署。同理一切官方发布的chart都可以使用类似的过程修改重新打包后部署到自己的私有harbor仓库中。
+
 # nginx实现harbor双向认证 -- 方案失败不可用
 
 > 双向认证方案：使用 Nginx 代理 Harbor镜像仓库，Nginx开启双向认证
