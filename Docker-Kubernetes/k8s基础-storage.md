@@ -7,8 +7,6 @@
 - Volume是Pod中能够被**多个容器访问**的共享目录，它被定义在Pod上，然后被一个Pod里的多个容器挂载到容器自己的具体的文件目录下，
 - kubernetes通过Volume实现同一个Pod中不同容器之间的数据共享以及数据的持久化存储。Volume的生命容器不与Pod中单个容器的生命周期相关，当容器终止或者重启时，Volume中的数据也不会丢失。
 
-### 种类
-
 kubernetes的Volume支持多种类型，比较常见的有下面几个：
 
 - 简单存储：EmptyDir、HostPath、NFS（本地host存储和网络共享文件） 
@@ -246,6 +244,13 @@ spec:
 
   <img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202311141723114.png" alt="image-20231114172333052" style="zoom:50%;" />
 
+- NFS的访问权限控制：NFS的用户认证和权限控制基于RPC，在nfs3和nfs4版本中，最常用的认证机制是AUTH_UNIX。客户端上的UID/GID通过RPC传递到服务端，然后对这些ID做权限校验，这就要求客户端、服务端的UID/GID必须相同。同时，NFS支持在其文件夹上通过以下配置来设置文件夹的访问权限：
+  - all_squash: 将所有用户和组映射为匿名用户和组。默认为nfsnobody用户（UID：65534）、nfsnobody组（GID：65534），也可以通过anonuid、anongid指定。
+  - no_all_squash：访问用户先与本机用户通过ID匹配，能匹配上就用；匹配不上再映射为匿名用户和组。这是默认选项。
+  - root_squash: 将来访的root用户（UID=0）映射为匿名用户。这是默认行为。可以通过设置no_root_squash取消这种映射，保持root用户。
+
+Lab
+
 - 搭建NFS服务
 
   ```bash
@@ -314,7 +319,7 @@ spec:
 
 - nfs支持多个客户端挂载，可以创建多个pod，挂载同一个nfs服务器共享出来的目录；但是nfs如果宕机了，数据也就丢失了，所以需要使用分布式存储，常见的分布式存储有glusterfs和cephfs
 
-## PV/PVC
+## PV
 
 - 使用NFS提供存储，此时就要求用户会搭建NFS系统，并且会在yaml配置nfs。由于kubernetes支持的存储系统有很多，要求客户全都掌握，显然不现实。站在用户的角度，只需要提出自己需要多少存储资源，并不管关心存储的底层实现。底层由专业人员来维护即可。
 
@@ -322,15 +327,13 @@ spec:
 
   ![image-20231114172731738](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202311141727818.png)
 
-### PV
-
 - PersistentVolume（PV）是对底层的共享存储的一种抽象。由管理员配置或使用存储类动态配置，它与底层具体的共享存储技术有关，并通过**插件**完成与共享存储的对接。
 - 它是集群中的资源，其生命周期独立于使用PV的任何单个pod。PV通过yaml文件部署；PV是node级别的，不能配namespace。
 - PV供应方式：
   - 静态：集群管理员创建了许多PV。它们包含可供群集用户使用的实际存储的详细信息。它们存在于Kubernetes API中，可供使用。
   - 动态：当管理员创建的静态PV都不匹配用户的PersistentVolumeClaim时，群集可能会尝试为PVC专门动态配置卷。此配置基于StorageClasses，PVC必须请求存储类，管理员必须创建并配置该类，以便进行动态配置。
 
-### PVC
+## PVC
 
 - PersistentVolumeClaim（PVC）是一个**持久化存储卷**，我们在创建pod时可以定义这个类型的存储卷。它类似于一个pod。Pod消耗节点资源，PVC消耗PV资源。Pod可以请求特定级别的资源（CPU和内存）。pvc在申请pv的时候也可以请求**特定的大小和访问模式**（例如，可以一次读写或多次只读）。
 
@@ -352,7 +355,7 @@ spec:
 
   f）我们在创建pvc的时候，应该确保和底下的pv能绑定，如果没有合适的pv，那么pvc就会处于pending状态。
 
-### Lab
+## Lab
 
 - 创建pod，使用pvc作为持久化存储卷
 
@@ -536,7 +539,7 @@ spec:
             claimName: pvc-nfs-v2
   ```
 
-### 回收策略
+## 回收策略
 
 - 定义：pv.spec.persistentVolumeReclaimPolicy
 
@@ -587,7 +590,7 @@ spec:
   ```bash
   #给nfs-provisioner配置空间
   mkdir /data/nfs_pro -p
-  echo "/data/nfs_pro *(rw,no_root_squash)" >> /etc/exports
+  echo "/data/nfs_pro *(rw,no_root_squash)" >> /etc/exports #注：这里如果配置可访问的网段，要写宿主机网段而非pod网段，因为pv本质是挂载到宿主机上再挂载到pod上。
   exportfs -arv
   ```
   

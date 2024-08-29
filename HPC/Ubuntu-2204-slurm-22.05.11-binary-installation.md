@@ -1000,6 +1000,7 @@ sudo sacctmgr create account Name=jade-slurm-user
 ~~~sh
 sudo sacctmgr add user <username> DefaultAccount=jade-slurm-user Partition=zprodhigh,zprod,zprodlow,ztest,zprodcpu
 #已经添加的user: ubuntu、slurm、petwan、liuwan、siyyan、svc-simulation、jinfen、hanxux
+
 ~~~
 
 -  查看账户用户分区的情况
