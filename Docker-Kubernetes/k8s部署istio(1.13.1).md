@@ -6,6 +6,8 @@
 
 Github地址：[https://github.com/istio/istio/](https://github.com/istio/istio/releases)
 
+- 详解文章：https://juejin.cn/post/7310878133720301604
+
 ### 作用
 
 Istio是一个开源的服务网格（Service Mesh），为Kubernetes和其他平台上的微服务架构提供了一种统一的、灵活的网络通信和管理方式。具有服务发现、负载均衡、流量管理、故障恢复和安全性等功能。

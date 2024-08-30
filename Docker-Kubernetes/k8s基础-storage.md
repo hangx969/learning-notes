@@ -554,7 +554,7 @@ spec:
     - `"Delete"` means the volume will be deleted from Kubernetes on release from its claim. The **volume plugin must support Deletion**.
     - 删除pvc时即会从Kubernetes中移除PV，也会从相关的外部设施中删除存储。当然这常见于云服务商的存储服务。
 
-# NFS StorageClass
+# StorageClass
 
 ## 背景
 
@@ -572,7 +572,40 @@ spec:
 
   - 有了这两部分信息，Kubernetes就能够根据用户提交的PVC，找到对应的StorageClass，然后Kubernetes就会调用 StorageClass声明的存储插件，创建出需要的PV。
 
-## Lab
+
+## 默认存储类
+
+- 默认StorageClass是指当用户创建PVC时未显式指定StorageClass的情况下，Kubernetes将自动使用该StorageClass来动态配置存储卷。这大大简化了用户的操作，并确保了一致性和可靠性。文档：
+
+  - https://kubernetes.io/zh-cn/docs/concepts/storage/storage-classes/#default-storageclass
+
+  - https://kubernetes.io/zh-cn/docs/tasks/administer-cluster/change-default-storage-class/
+
+- 给一个Storage class设置为默认存储类：
+
+  ~~~sh
+  kubectl patch storageclass ceph-rbd-storage -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
+  ~~~
+
+- 创建pvc时无需指定sc即可
+
+  ~~~yaml
+  $ cat <<EOF | kubectl apply -f -
+  apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    name: test-default-sc
+    namespace: default
+  spec:
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: 10Gi
+  EOF
+  ~~~
+
+## Lab - NFS Storage Class
 
 > 安装 **nfs-subdir-external-provisioner** ，它是一个存储资源自动调配器，它可将现有的 NFS 服务器通过持久卷声明来支持 Kubernetes 持久卷的动态分配。
 >
