@@ -61,8 +61,6 @@ kubectl exec -it -c <container name> -- /bin/bash
 
    <img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202310261902236.png" alt="image-20231026190227168" style="zoom:50%;" />
 
-
-
 # POD生命周期
 
 > K8S文档：[Pod 的生命周期 | Kubernetes](https://kubernetes.io/zh-cn/docs/concepts/workloads/pods/pod-lifecycle/)
@@ -79,7 +77,7 @@ kubectl exec -it -c <container name> -- /bin/bash
 - 停止前钩子 (每个container都可以定义各自的钩子)
 - pod终止过程
 
-### POD创建过程
+### pod创建过程
 
 - 用户通过kubectl或其他api客户端提交需要创建的pod信息给apiServer
 
@@ -195,6 +193,73 @@ spec:
 - CrashLoopBackOff：
   - 表示 Pod 中发生的重启循环：Pod 中的容器已启动，但崩溃然后又重新启动，一遍又一遍。CrashLoopBackOff 本身并不是一个错误，而是表明发生了一个错误，导致 Pod 无法正常启动。重启的原因是pod的重启策略设置为Always或者OnFailure。-- 这就是CrashLoop的含义。
   - BackOff含义是：重启之间的指数延迟（10 秒、20 秒、40 秒……），上限为 5 分钟。当 Pod 状态显示 CrashLoopBackOff 时，表示它当前正在等待指示的时间，然后再重新启动 Pod。除非它被修复，否则它可能会再次失败。
+
+# 容器保持长时运行
+
+- 如果容器的主进程退出，Pod 通常会自动重启该容器。然而，在某些情况下，主进程的退出可能是不可避免的，这时我们需要确保容器通过其他方式持续运行。有以下几种思路：
+
+  1. 保持后台进程持续运行
+
+     ~~~yaml
+     apiVersion: v1
+     kind: Pod
+     metadata:
+       name: tail-pod
+     spec:
+       containers:
+       - name: nginx
+         image: nginx:latest
+         command: ["tail", "-f", "/dev/null"] 
+     # tail 命令进入了一个无限循环状态，持续读取一个始终为空的文件（/dev/null），从而保持容器的持续运行。不执行任何实际操作，因此不会占用大量系统资源。
+     ~~~
+
+  2. 保持容器无限暂停
+
+     ~~~yaml
+     apiVersion: v1
+     kind: Pod
+     metadata:
+       name: sleep-pod
+     spec:
+       containers:
+       - name: alpine
+         image: alpine:latest
+         command: ["sleep", "infinity"] 
+     # 容器会保持在一个无限期的休眠状态。这种方法非常轻量，因为 sleep 命令本身不消耗 CPU 资源，而仅仅占用少量内存
+     ~~~
+
+  3. 使用进程管理器保持容器运行
+
+     - 进程管理器是用于管理进程生命周期的工具，特别适用于需要在容器内运行多个进程的场景。Tini 是一种轻量级的进程管理器，设计用于在容器环境中运行，能够处理常见的 `PID 1` 问题，如信号处理、孤儿进程清理等。
+     - 在容器化环境中，通常只有一个进程（通常是 `PID 1`）被直接运行，并且由它来管理整个容器的生命周期。然而，某些情况下，`PID 1` 进程无法正常处理信号或清理子进程，从而导致容器中的进程管理混乱。Tini 作为容器的 `init` 系统，能够有效地接管 `PID 1` 的角色，处理信号转发、子进程清理等工作，从而保证容器内的多进程运行稳定。
+
+     - 构建镜像
+
+     ```sh
+     FROM ubuntu:latest
+     ADD https://github.com/krallin/tini/releases/download/v0.19.0/tini /tini
+     RUN chmod +x /tini
+     ENTRYPOINT ["/tini", "--"]
+     CMD ["your-main-process"]
+     
+     docker build -t your-image-with-tini .
+     ```
+
+     - 创建pod
+
+     ~~~yaml
+     apiVersion: v1
+     kind: Pod
+     metadata:
+       name: tini-pod
+     spec:
+       containers:
+       - name: my-container
+         image: your-image-with-tini
+         command: ["your-main-process"]
+     ~~~
+
+     
 
 # InitContainer
 
