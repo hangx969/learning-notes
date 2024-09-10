@@ -1,3 +1,48 @@
+# Jfrog Artifactory
+
+- 官网：https://jfrog.com/help/r/jfrog-installation-setup-documentation/installation-configuration
+
+- 目录结构
+  - app是程序目录，包含Artifactory应用程序的二进制文件和配置文件。它通常包括软件本身、所需的库（libraries）、脚本以及其他与应用程序运行相关的文件，一般不需要持久化
+  - var是数据目录，这个目录包含了所有的用户数据，需要持久化
+
+~~~sh
+JFROG_HOME
+  └── <product>
+     ├── app
+     │   ├── bin
+     │   ├── run
+     │   ├── doc
+     │   ├── <third-party>
+     │   │   ├── java
+     │   │   ├── yq
+     │   │   └── others
+     │   └── <service>
+     │   │   ├── bin
+     │   │   └── lib
+     │   └── misc
+     │
+     └── var
+        ├── backup
+        │   └── <service>
+        ├── bootstrap
+        │   └── <service>
+        ├── data
+        │   └── <service>
+        ├── etc
+        │   ├── system.yaml
+        │   ├── <service>
+        │   └── security
+        │       └──master.key
+        │       └──join.key
+        ├── log
+        │   └── <service logs>
+        │   └── archived
+        │       └── <archived service logs>
+        └── work
+            └── <service>
+~~~
+
 # Artifactory-ACI
 
 ## Prepare Image
@@ -10,13 +55,14 @@ az login -t 8f56d2b8-03ec-4557-b25b-da031f0b234c
 az acr list
 az acr login --n acrcdstest
 docker pull releases-docker.jfrog.io/jfrog/artifactory-oss:latest
+#pulled 7.90.9
 docker tag releases-docker.jfrog.io/jfrog/artifactory-oss:latest acrcdstest.azurecr.cn/artifactory:latest
 docker push acrcdstest.azurecr.cn/artifactory:latest
 ~~~
 
 ## Prepare Storage
 
-https://docs.azure.cn/zh-cn/container-instances/container-instances-volume-azure-files#deploy-container-and-mount-volume---yaml
+- ACI mount azure file：https://docs.azure.cn/zh-cn/container-instances/container-instances-volume-azure-files#deploy-container-and-mount-volume---yaml
 
 - Create sa and file share
 
@@ -38,7 +84,22 @@ STORAGE_KEY=$(az storage account keys list --resource-group $ACI_PERS_RESOURCE_G
 echo $STORAGE_KEY
 ~~~
 
+- create config file and upload to azure file share
+  - url can be obtained from azure portal - postgresql - connect - connect from your app - JDBC
+
+~~~yaml
+shared:
+  database:
+    driver: org.postgresql.Driver
+    type: postgresql
+    url: jdbc:postgresql://pg-artifactory.postgres.database.chinacloudapi.cn:5432/postgres?user=artifactory&password=Passw0rd&sslmode=require
+    username: artifactory
+    password: Passw0rd
+~~~
+
 ## Prepare postgresql
+
+- Create a postgresql in a VNET
 
 ## ACI deployment
 
@@ -52,15 +113,23 @@ echo $STORAGE_KEY
 az container create \
     --resource-group $ACI_PERS_RESOURCE_GROUP \
     --name artifactory \
+    --location chinanorth3 \
     --image acrcdstest.azurecr.cn/artifactory:latest \
-    --ports  \
+    --registry-login-server acrcdstest.azurecr.cn \
+    --registry-username acrcdstest \
+    --registry-password FEUD1ehvgz1R2P1IkzULd7+z5Bhz/tIZzsB1s1GDbJ+ACRBP1dvE \
+    --subnet /subscriptions/4eab3273-e0ec-4165-b6d7-b80ae903b0c7/resourceGroups/rg-artifactory-cds-test/providers/Microsoft.Network/virtualNetworks/artifactory-cds-test-vnet/subnets/aci \
+    --ports 8081 8082 \
+    --cpu 1 \
+    --memory 2 \
     --azure-file-volume-account-name $ACI_PERS_STORAGE_ACCOUNT_NAME \
     --azure-file-volume-account-key $STORAGE_KEY \
     --azure-file-volume-share-name $ACI_PERS_SHARE_NAME \
-    --azure-file-volume-mount-path /aci/logs/
+    --azure-file-volume-mount-path /var/opt/jfrog/artifactory
 ~~~
 
-
+- login UI using containerIP:8082/ui
+  - edit admin password: Passw0rd
 
 # Artifactory-docker
 
@@ -81,7 +150,7 @@ shared:
   database:
     driver: org.postgresql.Driver
     type: postgresql
-    url: jdbc:postgresql://host.docker.internal:5432/artifactorydb
+    url: jdbc:postgresql://pg-artifactory.postgres.database.chinacloudapi.cn:5432/postgres?user=artifactory&password=Passw0rd&sslmode=require
     username: artifactory
     password: Passw0rd
 ```
@@ -98,6 +167,5 @@ chown -R 1030:1030 $JFROG_HOME/artifactory/var
 docker run --name artifactory -v $JFROG_HOME/artifactory/var/:/var/opt/jfrog/artifactory -d -p 8081:8081 -p 8082:8082 releases-docker.jfrog.io/jfrog/artifactory-oss:latest
 ~~~
 
-> 管理页面:http://localhost:8082/ui/,默认管理用户名admin,口令password
->
+> 管理页面:http://localhost:8082/ui/，默认管理用户名admin，口令password
 
