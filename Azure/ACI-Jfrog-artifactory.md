@@ -117,7 +117,7 @@ az container create \
     --image acrcdstest.azurecr.cn/artifactory:latest \
     --registry-login-server acrcdstest.azurecr.cn \
     --registry-username acrcdstest \
-    --registry-password FEUD1ehvgz1R2P1IkzULd7+z5Bhz/tIZzsB1s1GDbJ+ACRBP1dvE \
+    --registry-password  \
     --subnet /subscriptions/4eab3273-e0ec-4165-b6d7-b80ae903b0c7/resourceGroups/rg-artifactory-cds-test/providers/Microsoft.Network/virtualNetworks/artifactory-cds-test-vnet/subnets/aci \
     --ports 8081 8082 \
     --cpu 1 \
