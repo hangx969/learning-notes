@@ -45,6 +45,12 @@ JFROG_HOME
 
 # Artifactory-ACI
 
+## Prepare Vnet
+
+- Create Vnet with address range 10.225.130.0/24, create 2 subnets
+  - subnet-aci: 10.225.130.64/26
+  - subnet-artifactory: 10.225.130.0/26
+
 ## Prepare Image
 
 - create ACR：acrcdstest
@@ -68,23 +74,27 @@ docker push acrcdstest.azurecr.cn/artifactory:latest
 
 ~~~sh
 # Change these four parameters as needed
-ACI_PERS_RESOURCE_GROUP=rg-artifactory-cds-test
-ACI_PERS_STORAGE_ACCOUNT_NAME=artsa
+ACI_PERS_RESOURCE_GROUP=rg-artifactory-cds-demo
+ACI_PERS_STORAGE_ACCOUNT_NAME=artisa
 ACI_PERS_LOCATION=chinanorth3
-ACI_PERS_SHARE_NAME=acishare
+ACI_PERS_SHARE_NAME=artishare
 
 # Create the storage account with the parameters
 az storage account create --resource-group $ACI_PERS_RESOURCE_GROUP --name $ACI_PERS_STORAGE_ACCOUNT_NAME --location $ACI_PERS_LOCATION --sku Standard_LRS
+#az storage account create --resource-group rg-artifactory-cds-test --name artifactorysatest --location chinanorth3 --sku Standard_LRS
 
 # Create the file share
 az storage share create --name $ACI_PERS_SHARE_NAME --account-name $ACI_PERS_STORAGE_ACCOUNT_NAME
+#az storage share create --name artisharetest --account-name artifactorysatest
 
 # Get credentials
 STORAGE_KEY=$(az storage account keys list --resource-group $ACI_PERS_RESOURCE_GROUP --account-name $ACI_PERS_STORAGE_ACCOUNT_NAME --query "[0].value" --output tsv)
+#STORAGE_KEY=$(az storage account keys list --resource-group rg-artifactory-cds-test --account-name artifactorysatest --query "[0].value" --output tsv)
 echo $STORAGE_KEY
 ~~~
 
-- create config file and upload to azure file share
+- create a folder named “etc” in fileshare.
+- create config file locally and upload to azure file share/etc
   - url can be obtained from azure portal - postgresql - connect - connect from your app - JDBC
 
 ~~~yaml
@@ -100,6 +110,20 @@ shared:
 ## Prepare postgresql
 
 - Create a postgresql in a VNET
+- admin - Passw0rd
+
+~~~sh
+az postgres flexible-server create \
+  --resource-group testGroup \
+  --name testserver \
+  --vnet testVnet \
+  --subnet testSubnet \
+  --location chinanorth3 \
+  --private-dns-zone /subscriptions/{SubId}/resourceGroups/{testGroup}/providers/Microsoft.Network/privateDnsZones/testDNS.postgres.database.azure.com \
+  --active-directory-auth Enabled \
+  --admin-user artifactory \
+  --admin-password Passw0rd \
+~~~
 
 ## ACI deployment
 
@@ -117,19 +141,38 @@ az container create \
     --image acrcdstest.azurecr.cn/artifactory:latest \
     --registry-login-server acrcdstest.azurecr.cn \
     --registry-username acrcdstest \
-    --registry-password  \
-    --subnet /subscriptions/4eab3273-e0ec-4165-b6d7-b80ae903b0c7/resourceGroups/rg-artifactory-cds-test/providers/Microsoft.Network/virtualNetworks/artifactory-cds-test-vnet/subnets/aci \
-    --ports 8081 8082 \
-    --cpu 1 \
-    --memory 2 \
+    --registry-password FEUD1ehvgz1R2P1IkzULd7+z5Bhz/tIZzsB1s1GDbJ+ACRBP1dvE \
+    --subnet /subscriptions/4eab3273-e0ec-4165-b6d7-b80ae903b0c7/resourceGroups/rg-artifactory-cds-demo/providers/Microsoft.Network/virtualNetworks/vnet-artifactory/subnets/subnet-aci \
+    --ports 8081 8082\
+    --cpu 2 \
+    --memory 4 \
     --azure-file-volume-account-name $ACI_PERS_STORAGE_ACCOUNT_NAME \
     --azure-file-volume-account-key $STORAGE_KEY \
     --azure-file-volume-share-name $ACI_PERS_SHARE_NAME \
     --azure-file-volume-mount-path /var/opt/jfrog/artifactory
+
+
+#######################################
+az container create \
+    --resource-group rg-artifactory-cds-test \
+    --name artifactorytest \
+    --location chinanorth3 \
+    --image acrcdstest.azurecr.cn/artifactory:latest \
+    --registry-login-server acrcdstest.azurecr.cn \
+    --registry-username acrcdstest \
+    --registry-password FEUD1ehvgz1R2P1IkzULd7+z5Bhz/tIZzsB1s1GDbJ+ACRBP1dvE \
+    --subnet /subscriptions/4eab3273-e0ec-4165-b6d7-b80ae903b0c7/resourceGroups/rg-artifactory-cds-test/providers/Microsoft.Network/virtualNetworks/vnet-artifactory-test/subnets/aci-test \
+    --ports 8081 8082\
+    --cpu 1 \
+    --memory 2 \
+    --azure-file-volume-account-name artifactorysatest \
+    --azure-file-volume-account-key $(az storage account keys list --resource-group $ACI_PERS_RESOURCE_GROUP --account-name $ACI_PERS_STORAGE_ACCOUNT_NAME --query "[0].value" --output tsv) \
+    --azure-file-volume-share-name artisharetest \
+    --azure-file-volume-mount-path /var/opt/jfrog/artifactory
 ~~~
 
-- login UI using containerIP:8082/ui
-  - edit admin password: Passw0rd
+- login UI using containerIP:8082/ui (default username: admin, passwd: password)
+  - edit admin password after logged in
 
 # Artifactory-docker
 

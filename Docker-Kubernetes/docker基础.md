@@ -126,6 +126,48 @@ Docker镜像加速器：
 
 <img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202310141551863.png" alt="image-20231014155157774" style="zoom: 67%;" />
 
+## docker安装-ubuntu
+
+~~~sh
+# Switch to root account
+su ubuntu
+sudo su
+# install prerequisites
+apt install apt-transport-https ca-certificates curl software-properties-common
+# add aliyun docker source
+add-apt-repository "deb [arch=amd64] http://mirrors.aliyun.com/docker-ce/linux/ubuntu $(lsb_release -cs) stable"
+# import GPG keys
+curl -fsSL http://mirrors.aliyun.com/docker-ce/linux/ubuntu/gpg | sudo apt-key add -
+# double check apt source for docker
+apt update
+apt-cache policy docker-ce
+# install docker community
+apt-get install -y docker-ce
+# check docker installation
+docker -v
+# start and enable docker
+systemctl enable docker.service && systemctl start docker.service && systemctl status docker.service
+~~~
+
+- If docker service failed to start with error: "systemd[1]: Job docker.service/start failed with result 'dependency'.", start docker with below command:
+
+```sh
+/usr/bin/dockerd -H unix://
+sytemctl status docker
+```
+
+- User permission: by default, users in group named docker will have permission to use docker-cli, follow below steps to configure:
+
+```sh
+# Check if docker group exists
+cat /etc/group | grep docker
+#If not, create one
+groupadd docker
+# Add user to docker group
+gpasswd -a $USER docker 
+newgrp docker
+```
+
 # docker基础
 
 ## docker介绍
@@ -937,8 +979,6 @@ docker network ls
 #删除
 docker network rm name
 ~~~
-
-
 
 # docker-compose
 
