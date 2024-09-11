@@ -112,26 +112,13 @@ shared:
 - Create a postgresql in a VNET
 - admin - Passw0rd
 
-~~~sh
-az postgres flexible-server create \
-  --resource-group testGroup \
-  --name testserver \
-  --vnet testVnet \
-  --subnet testSubnet \
-  --location chinanorth3 \
-  --private-dns-zone /subscriptions/{SubId}/resourceGroups/{testGroup}/providers/Microsoft.Network/privateDnsZones/testDNS.postgres.database.azure.com \
-  --active-directory-auth Enabled \
-  --admin-user artifactory \
-  --admin-password Passw0rd \
-~~~
-
 ## ACI deployment
 
 > Best Practices:
 >
 > - 容器组 IP 地址在创建或删除后可能会发生更改。 建议不要让应用程序代码依赖于容器组的 IP 地址。 如果想维护静态 IP 地址，还建议使用 [NAT 网关](https://docs.azure.cn/zh-cn/container-instances/container-instances-nat-gateway)或[应用程序网关](https://docs.azure.cn/zh-cn/container-instances/container-instances-application-gateway)。
 > - ACI 服务保留以下服务功能端口：22、1025-1027、3389-3399、9999、19000、19080、19390、19100、20000-30000、49152-65534。 请避免在容器组定义中使用这些端口。
-> - 可在 Azure 容器实例上部署的容器映像的最大大小为 15 GB。 根据部署时的确切可用性，你也许可以部署更大的映像，但不能保证映像大小更大。
+> - 可在 Azure 容器实例上部署的容器映像的最大大小为 15 GB。根据部署时的确切可用性，你也许可以部署更大的映像，但不能保证映像大小更大。
 
 ~~~sh
 az container create \
@@ -149,26 +136,7 @@ az container create \
     --azure-file-volume-account-name $ACI_PERS_STORAGE_ACCOUNT_NAME \
     --azure-file-volume-account-key $STORAGE_KEY \
     --azure-file-volume-share-name $ACI_PERS_SHARE_NAME \
-    --azure-file-volume-mount-path /var/opt/jfrog/artifactory
-
-
-#######################################
-az container create \
-    --resource-group rg-artifactory-cds-test \
-    --name artifactorytest \
-    --location chinanorth3 \
-    --image acrcdstest.azurecr.cn/artifactory:latest \
-    --registry-login-server acrcdstest.azurecr.cn \
-    --registry-username acrcdstest \
-    --registry-password FEUD1ehvgz1R2P1IkzULd7+z5Bhz/tIZzsB1s1GDbJ+ACRBP1dvE \
-    --subnet /subscriptions/4eab3273-e0ec-4165-b6d7-b80ae903b0c7/resourceGroups/rg-artifactory-cds-test/providers/Microsoft.Network/virtualNetworks/vnet-artifactory-test/subnets/aci-test \
-    --ports 8081 8082\
-    --cpu 1 \
-    --memory 2 \
-    --azure-file-volume-account-name artifactorysatest \
-    --azure-file-volume-account-key $(az storage account keys list --resource-group $ACI_PERS_RESOURCE_GROUP --account-name $ACI_PERS_STORAGE_ACCOUNT_NAME --query "[0].value" --output tsv) \
-    --azure-file-volume-share-name artisharetest \
-    --azure-file-volume-mount-path /var/opt/jfrog/artifactory
+    --azure-file-volume-mount-path /var/opt/jfrog/artifactory 
 ~~~
 
 - login UI using containerIP:8082/ui (default username: admin, passwd: password)
@@ -208,7 +176,49 @@ cd $JFROG_HOME/artifactory/var/etc/
 touch ./system.yaml
 chown -R 1030:1030 $JFROG_HOME/artifactory/var
 docker run --name artifactory -v $JFROG_HOME/artifactory/var/:/var/opt/jfrog/artifactory -d -p 8081:8081 -p 8082:8082 releases-docker.jfrog.io/jfrog/artifactory-oss:latest
+#docker run --name artifactory -v $JFROG_HOME/artifactory/var/:/var/opt/jfrog/artifactory -d -p 8081:8081 -p 80:8082 acrcdstest.azurecr.cn/artifactory:latest 
 ~~~
 
 > 管理页面:http://localhost:8082/ui/，默认管理用户名admin，口令password
+
+# Artifactory-docker-azure vm
+
+- VM environment
+
+  - Ubuntu 22.04
+
+  - docker version: 27.2.1
+
+- Create a postgresql flexible server
+- set up data folder
+  - create a data disk, format to ext4 and mount it to /app/jfrog as data store path.
+
+~~~sh
+mkdir /app/jfrog
+export JFROG_HOME=/app/jfrog
+mkdir -p $JFROG_HOME/artifactory/var/etc/
+cd $JFROG_HOME/artifactory/var/etc/
+touch ./system.yaml
+chown -R 1030:1030 $JFROG_HOME/artifactory/var
+~~~
+
+- setup pgsql connection
+
+~~~yaml
+tee $JFROG_HOME/artifactory/var/etc/system.yaml <<'EOF'
+shared:
+    database:
+        driver: org.postgresql.Driver
+        type: postgresql
+        url: jdbc:postgresql://artipgsql.postgres.database.chinacloudapi.cn:5432/artifactory?user=artifactory&password=Passw0rd&sslmode=require
+        username: artifactory
+        password: Passw0rd
+EOF
+~~~
+
+- run container
+
+~~~sh
+docker run --name artifactory -v $JFROG_HOME/artifactory/var/:/var/opt/jfrog/artifactory -d -p 8081:8081 -p 80:8082 acrcdstest.azurecr.cn/artifactory:latest 
+~~~
 
