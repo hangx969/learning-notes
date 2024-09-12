@@ -224,23 +224,124 @@ docker run --name artifactory -v $JFROG_HOME/artifactory/var/:/var/opt/jfrog/art
 
 # Artifactory-AKS
 
+- Create private aks cluster
+
+- use external pgsql:
+
+  name: artipgsql
+
+  database: artifactory-aks 
+
+- ns
+
+  ~~~sh
+  k create ns artifactory
+  ~~~
+
+- Create an azure file share as data path, mount it to aks
+
+  https://docs.azure.cn/zh-cn/aks/azure-csi-files-storage-provision#using-azure-tags
+
+~~~sh
+# Change these four parameters as needed
+ACI_PERS_RESOURCE_GROUP=rg-artifactory-cds-demo
+ACI_PERS_STORAGE_ACCOUNT_NAME=artifactorysa
+ACI_PERS_LOCATION=chinanorth3
+ACI_PERS_SHARE_NAME=artishare
+
+# Create the storage account with the parameters
+az storage account create --resource-group $ACI_PERS_RESOURCE_GROUP --name $ACI_PERS_STORAGE_ACCOUNT_NAME --location $ACI_PERS_LOCATION --sku Standard_LRS
+#az storage account create --resource-group rg-artifactory-cds-test --name artifactorysatest --location chinanorth3 --sku Standard_LRS
+
+# Create the file share
+az storage share create --name $ACI_PERS_SHARE_NAME --account-name $ACI_PERS_STORAGE_ACCOUNT_NAME
+#az storage share create --name artisharetest --account-name artifactorysatest
+
+# Get credentials
+STORAGE_KEY=$(az storage account keys list --resource-group $ACI_PERS_RESOURCE_GROUP --account-name $ACI_PERS_STORAGE_ACCOUNT_NAME --query "[0].value" --output tsv)
+#STORAGE_KEY=$(az storage account keys list --resource-group rg-artifactory-cds-test --account-name artifactorysatest --query "[0].value" --output tsv)
+echo $STORAGE_KEY
+
+# Create secret
+kubectl create secret generic azurefile-secret --namespace artifactory --from-literal=azurestorageaccountname=$ACI_PERS_STORAGE_ACCOUNT_NAME --from-literal=azurestorageaccountkey=$STORAGE_KEY
+~~~
+
+~~~yaml
+tee azurefile-pv-pvc.yaml <<'EOF'
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-azurefile-artishare
+  namespace: artifactory
+spec:
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: azurefile-csi
+  csi:
+    driver: file.csi.azure.com
+    volumeHandle: "rg-artifactory-cds-demo#artifactorysa#artishare"  # make sure this volumeid is unique for every identical share in the cluster
+    volumeAttributes:
+      resourceGroup: rg-artifactory-cds-demo  # optional, only set this when storage account is not in the same resource group as node
+      storageAccount: artifactorysa
+      shareName: artishare
+      server: artifactorysa.privatelink.file.core.chinacloudapi.cn
+    nodeStageSecretRef:
+      name: azurefile-secret
+      namespace: artifactory
+  mountOptions:
+    - dir_mode=0777
+    - file_mode=0777
+    - uid=0
+    - gid=0
+    - mfsymlinks
+    - cache=strict
+    - nosharesock
+    - nobrl  # disable sending byte range lock requests to the server and for applications which have challenges with posix locks
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pvc-azurefile-artishare
+  namespace: artifactory
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: azurefile-csi
+  volumeName: pv-azurefile-artishare #pv name
+  resources:
+    requests:
+      storage: 10Gi
+      
+EOF
+~~~
+
 - config map
 
 ~~~yaml
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: artifactory-demo
-  labels:
-    app: artifactory
-data:
-  system.yaml: |  
-  shared:
+tee system.yaml <<'EOF'
+shared:
     database:
         driver: org.postgresql.Driver
         type: postgresql
-        url: jdbc:postgresql://artipgsql.postgres.database.chinacloudapi.cn:5432/artifactory-aks?user=artifactory&password=Passw0rd&sslmode=require
+        url: jdbc:postgresql://artipgsql.postgres.database.chinacloudapi.cn:5432/artifactory?user=artifactory&password=Passw0rd&sslmode=require
         username: artifactory
         password: Passw0rd
+EOF
+
+kubectl create cm artifactory-config -n artifactory --from-file=./system.yaml
+~~~
+
+- pod
+
+~~~yaml
+...
+  volumes:
+  - name: azure
+    persistentVolumeClaim:
+      claimName: azurefile
 ~~~
 
