@@ -222,3 +222,25 @@ EOF
 docker run --name artifactory -v $JFROG_HOME/artifactory/var/:/var/opt/jfrog/artifactory -d -p 8081:8081 -p 80:8082 acrcdstest.azurecr.cn/artifactory:latest 
 ~~~
 
+# Artifactory-AKS
+
+- config map
+
+~~~yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: artifactory-demo
+  labels:
+    app: artifactory
+data:
+  system.yaml: |  
+  shared:
+    database:
+        driver: org.postgresql.Driver
+        type: postgresql
+        url: jdbc:postgresql://artipgsql.postgres.database.chinacloudapi.cn:5432/artifactory-aks?user=artifactory&password=Passw0rd&sslmode=require
+        username: artifactory
+        password: Passw0rd
+~~~
+
