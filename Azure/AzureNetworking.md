@@ -151,6 +151,9 @@ Azure 中的专用终结点（Private Endpoint）和服务终结点（Service En
 
 综上所述，专用终结点和服务终结点都是提高安全性和控制网络访问的重要工具。选择使用哪种终结点取决于需要保护的资源类型和服务类型。
 
+- 存储账户配置了private endpoint的时候，如果从subnet内访问，那么azure dns也先去解析公共终结点（例如artifactorysa.file.core.chinacloudapi.cn），通过cname记录解析到private endpoint（例如artifactorysa.privatelink.file.core.chinacloudapi.cn），再由private endpoint解析成内网IP。
+- 自己本地DNS需要设置把公共终结点forward到azure dns上来做解析。或者直接在/etc/hosts上把公共终结点配置为终结点的私有IP
+
 ## Loadbalancer
 
 - Load balancer 工作在传输层 

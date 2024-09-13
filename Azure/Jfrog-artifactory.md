@@ -294,8 +294,8 @@ spec:
   mountOptions:
     - dir_mode=0777
     - file_mode=0777
-    - uid=0
-    - gid=0
+    - uid=1030 # set for artifactory user
+    - gid=1030
     - mfsymlinks
     - cache=strict
     - nosharesock
@@ -327,7 +327,7 @@ shared:
     database:
         driver: org.postgresql.Driver
         type: postgresql
-        url: jdbc:postgresql://artipgsql.postgres.database.chinacloudapi.cn:5432/artifactory?user=artifactory&password=Passw0rd&sslmode=require
+        url: jdbc:postgresql://artipgsql.postgres.database.chinacloudapi.cn:5432/artifactory-aks?user=artifactory&password=Passw0rd&sslmode=require
         username: artifactory
         password: Passw0rd
 EOF
@@ -338,10 +338,99 @@ kubectl create cm artifactory-config -n artifactory --from-file=./system.yaml
 - pod
 
 ~~~yaml
-...
+tee deploy-artifactory.yaml <<'EOF'
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deploy-artifactory-demo
+  namespace: artifactory
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: artifactory
+  template:
+    metadata:
+      labels:
+        app: artifactory
+    spec:
+      containers:
+      - name: artifactory
+        image: acrcdstest.azurecr.cn/artifactory:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8081
+        - containerPort: 8082
+        volumeMounts:
+        - name: fileshare-artifactory
+          mountPath: /var/opt/jfrog/artifactory
+          readOnly: false
+        #- name: cm-system
+          #mountPath: /var/opt/jfrog/artifactory/etc/
+          #readOnly: false
+      volumes:
+      - name: fileshare-artifactory
+        persistentVolumeClaim:
+          claimName: pvc-azurefile-artishare
+      #- name: cm-system 
+        #configMap:
+          #name: artifactory-config
+EOF
+~~~
+
+- internal LB
+
+~~~yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: ilb-artifactory
+  annotations:
+    service.beta.kubernetes.io/azure-load-balancer-internal: "true"
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+    targetPort: 8082
+  selector:
+    app: artifactory
+~~~
+
+## test
+
+~~~yaml
+tee busybox.yaml <<'EOF'
+apiVersion: v1
+kind: Pod
+metadata:
+  name: busybox-test-pv-pvc
+  namespace: artifactory
+spec:
+  containers:
+  - name: busybox
+    image: acrcdstest.azurecr.cn/busybox:1.28
+    imagePullPolicy: IfNotPresent
+    #volume mount
+    volumeMounts:
+    - name: volume-test
+      mountPath: /data/volume-test
+    #resource limit
+    resources:
+      limits:
+        cpu: "200m"
+        memory: "200Mi"
+      requests:
+        cpu: "100m"
+        memory: "100Mi"
+    command:
+    #keep output some message
+    - sh
+    - -c
+    - while true; do echo "hello"; sleep 15; done
   volumes:
-  - name: azure
+  - name: volume-test
     persistentVolumeClaim:
-      claimName: azurefile
+      claimName: pvc-azurefile-artishare
+EOF
 ~~~
 
