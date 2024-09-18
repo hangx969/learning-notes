@@ -191,7 +191,8 @@ docker run --name artifactory -v $JFROG_HOME/artifactory/var/:/var/opt/jfrog/art
 
 - Create a postgresql flexible server
 - set up data folder
-  - create a data disk, format to ext4 and mount it to /app/jfrog as data store path.
+  - create a data disk (32G), format to ext4 and mount it to /app/jfrog as data store path.
+  - configure fstab
 
 ~~~sh
 mkdir /app/jfrog
@@ -222,7 +223,9 @@ EOF
 docker run --name artifactory -v $JFROG_HOME/artifactory/var/:/var/opt/jfrog/artifactory -d -p 8081:8081 -p 80:8082 acrcdstest.azurecr.cn/artifactory:latest 
 ~~~
 
-# Artifactory-AKS
+- visit home page: 
+
+# Artifactory-AKS-self-designed
 
 - Create private aks cluster
 
@@ -396,41 +399,51 @@ spec:
     app: artifactory
 ~~~
 
-## test
+# Artifactory-AKS-helm
 
-~~~yaml
-tee busybox.yaml <<'EOF'
-apiVersion: v1
-kind: Pod
-metadata:
-  name: busybox-test-pv-pvc
-  namespace: artifactory
-spec:
-  containers:
-  - name: busybox
-    image: acrcdstest.azurecr.cn/busybox:1.28
-    imagePullPolicy: IfNotPresent
-    #volume mount
-    volumeMounts:
-    - name: volume-test
-      mountPath: /data/volume-test
-    #resource limit
-    resources:
-      limits:
-        cpu: "200m"
-        memory: "200Mi"
-      requests:
-        cpu: "100m"
-        memory: "100Mi"
-    command:
-    #keep output some message
-    - sh
-    - -c
-    - while true; do echo "hello"; sleep 15; done
-  volumes:
-  - name: volume-test
-    persistentVolumeClaim:
-      claimName: pvc-azurefile-artishare
-EOF
+- add helm repo
+
+~~~sh
+helm repo add jfrog https://charts.jfrog.io
+helm repo update
 ~~~
 
+- create master key as k8s secret
+
+~~~sh
+# Create a key
+export MASTER_KEY=$(openssl rand -hex 32)
+echo ${MASTER_KEY}
+ 
+# Create a secret containing the key. The key in the secret must be named master-key
+kubectl create secret generic masterkey-secret -n artifactory --from-literal=master-key=${MASTER_KEY}
+~~~
+
+> In either case, make sure to pass the same master key on all future calls to Helm install and Helm upgrade. This means always passing 
+> --set artifactory.masterKey=${MASTER_KEY}
+>  (for the custom master key) or 
+> --set artifactory.masterKeySecretName=my-masterkey-secret
+>  (for the manual secret) and verifying that the contents of the secret remain unchanged.
+
+- create join key as k8s secret
+
+~~~sh
+# Create a key
+export JOIN_KEY=$(openssl rand -hex 32)
+echo ${JOIN_KEY}
+ 
+# Create a secret containing the key. The key in the secret must be named join-key
+kubectl create secret generic joinkey-secret -n artifactory --from-literal=join-key=${JOIN_KEY}
+~~~
+
+- configure pgsql in helm
+  - https://jfrog.com/help/r/jfrog-installation-setup-documentation/configure-artifactory-to-use-postgresql-single-node
+  - artifactory-oss/charts/artifactory/values.yaml的1645行修改
+
+- install helm
+
+  ~~~sh
+  helm upgrade --install artifactory --set artifactory.masterKeySecretName=masterkey-secret --set artifactory.joinKeySecretName=joinkey-secret --namespace artifactory --create-namespace jfrog/artifactory
+  ~~~
+
+  
