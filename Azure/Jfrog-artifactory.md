@@ -375,6 +375,15 @@ spec:
       - name: artifactory
         image: acrcdstest.azurecr.cn/artifactory:latest
         imagePullPolicy: IfNotPresent
+        env:
+        - name: http_proxy
+          value: ""
+        - name: HTTP_PROXY
+          value: ""
+        - name: https_proxy
+          value: ""
+        - name: HTTPS_PROXY
+          value: ""
         ports:
         - containerPort: 8081
         - containerPort: 8082
@@ -412,6 +421,12 @@ spec:
   selector:
     app: artifactory
 ~~~
+
+> 总是报错：
+>
+> Caught exception in GET /artifactory/api/system/ping
+>
+> Missing required services: [jffe]
 
 # Artifactory-AKS-helm
 
@@ -459,7 +474,7 @@ kubectl create secret generic joinkey-secret -n artifactory --from-literal=join-
 #这个命令无效
 helm upgrade --install artifactory --set artifactory.masterKeySecretName=masterkey-secret --set artifactory.joinKeySecretName=joinkey-secret --namespace artifactory --create-namespace jfrog/artifactory
 
-#
+#这个命令没有用到自定义的image
 helm install artifactory-oss \
   --set artifactory.masterKeySecretName=masterkey-secret \
   --set artifactory.joinKeySecretName=joinkey-secret \
@@ -475,6 +490,25 @@ helm install artifactory-oss \
   --set artifactory.artifactory.image.repository=artifactory \
   --set artifactory.artifactory.image.tag=latest \
   jfrog/artifactory-oss -n artifactory
+
+# 手动传入key、指定valus.yaml
+export MASTER_KEY=$(openssl rand -hex 32)
+export JOIN_KEY=$(openssl rand -hex 32)
+helm install artifactory-oss \
+  --set artifactory.masterKey=${MASTER_KEY} \ 
+  --set artifactory.joinKey=${JOIN_KEY} \
+  --set artifactory.nginx.enabled=false \
+  --set artifactory.postgresql.enabled=false \
+  --set postgresql.enabled=false \
+  --set artifactory.artifactory.service.type=NodePort \
+  --set artifactory.artifactory.resources.requests.cpu="500m" \
+  --set artifactory.artifactory.resources.limits.cpu="2" \
+  --set artifactory.artifactory.resources.requests.memory="1Gi" \
+  --set artifactory.artifactory.resources.limits.memory="4Gi" \
+  --set artifactory.artifactory.image.registry=acrcdstest.azurecr.cn \
+  --set artifactory.artifactory.image.repository=artifactory \
+  --set artifactory.artifactory.image.tag=latest \
+  jfrog/artifactory-oss -n artifactory -f --values.yaml
 
 #acrcdstest.azurecr.cn/artifactory:latest 
 ~~~

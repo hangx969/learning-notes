@@ -89,3 +89,20 @@ K8S中Pod服务连接超时主要分以下几种情况：
 - 直接访问pod可以请求到，但是访问pod前端service，通过请求pod有问题，请求不到。
   - iptables： 重启iptables，重启iptables不可以，重启下机器
   - ipvs：重启机器
+
+# openshift中busybox无法ping
+
+- 报错permission denied are you root
+
+- 解决：
+
+  - 查了下资料，发现是crio运行容器时为了安全，会把NET_RAW删除，而docker默认是启用的，可以在yaml自行手动添加
+  
+  ~~~yaml
+  securityContext:
+    capabilities:
+      add:
+      - NET_RAW
+  ~~~
+  
+  
