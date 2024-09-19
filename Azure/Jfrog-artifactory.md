@@ -189,7 +189,12 @@ docker run --name artifactory -v $JFROG_HOME/artifactory/var/:/var/opt/jfrog/art
 
   - docker version: 27.2.1
 
+- Artifactory requirement: 
+
+  https://jfrog.com/help/r/jfrog-installation-setup-documentation/install-artifactory-single-node-with-helm-charts?section=UUID-5a5bc1a4-b867-9be2-2902-04b3ce759902_UUID-6560a094-94c2-ca03-359f-ccb55be0e480
+
 - Create a postgresql flexible server
+
 - set up data folder
   - create a data disk (32G), format to ext4 and mount it to /app/jfrog as data store path.
   - configure fstab
@@ -223,7 +228,7 @@ EOF
 docker run --name artifactory -v $JFROG_HOME/artifactory/var/:/var/opt/jfrog/artifactory -d -p 8081:8081 -p 80:8082 acrcdstest.azurecr.cn/artifactory:latest 
 ~~~
 
-- visit home page: 
+- visit home page: http://10.225.126.36/ui/ with username admin/passwd Passw0rd
 
 # Artifactory-AKS-self-designed
 
@@ -322,7 +327,7 @@ spec:
 EOF
 ~~~
 
-- config map
+- config file upload to file share
 
 ~~~yaml
 tee system.yaml <<'EOF'
@@ -334,8 +339,17 @@ shared:
         username: artifactory
         password: Passw0rd
 EOF
+~~~
 
-kubectl create cm artifactory-config -n artifactory --from-file=./system.yaml
+- copy system.yaml from VM which has mounted the file share
+
+~~~sh
+mkdir /mnt/artishare/etc/security/ -p
+cp ./system.yaml /mnt/artishare/etc/
+#尝试提前写入两个key
+mkdir /mnt/artishare/etc/security -p
+openssl rand -hex 32 > /mnt/artishare/etc/security/master.key
+openssl rand -hex 32 > /mnt/artishare/etc/security/join.key
 ~~~
 
 - pod
@@ -348,7 +362,7 @@ metadata:
   name: deploy-artifactory-demo
   namespace: artifactory
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: artifactory
@@ -439,11 +453,45 @@ kubectl create secret generic joinkey-secret -n artifactory --from-literal=join-
 - configure pgsql in helm
   - https://jfrog.com/help/r/jfrog-installation-setup-documentation/configure-artifactory-to-use-postgresql-single-node
   - artifactory-oss/charts/artifactory/values.yaml的1645行修改
+- install
 
-- install helm
+~~~sh
+#这个命令无效
+helm upgrade --install artifactory --set artifactory.masterKeySecretName=masterkey-secret --set artifactory.joinKeySecretName=joinkey-secret --namespace artifactory --create-namespace jfrog/artifactory
 
-  ~~~sh
-  helm upgrade --install artifactory --set artifactory.masterKeySecretName=masterkey-secret --set artifactory.joinKeySecretName=joinkey-secret --namespace artifactory --create-namespace jfrog/artifactory
-  ~~~
+#
+helm install artifactory-oss \
+  --set artifactory.masterKeySecretName=masterkey-secret \
+  --set artifactory.joinKeySecretName=joinkey-secret \
+  --set artifactory.nginx.enabled=false \
+  --set artifactory.postgresql.enabled=false \
+  --set postgresql.enabled=false \
+  --set artifactory.artifactory.service.type=NodePort \
+  --set artifactory.artifactory.resources.requests.cpu="500m" \
+  --set artifactory.artifactory.resources.limits.cpu="2" \
+  --set artifactory.artifactory.resources.requests.memory="1Gi" \
+  --set artifactory.artifactory.resources.limits.memory="4Gi" \
+  --set artifactory.artifactory.image.registry=acrcdstest.azurecr.cn \
+  --set artifactory.artifactory.image.repository=artifactory \
+  --set artifactory.artifactory.image.tag=latest \
+  jfrog/artifactory-oss -n artifactory
 
-  
+#acrcdstest.azurecr.cn/artifactory:latest 
+~~~
+
+uninstall
+
+~~~sh
+helm uninstall artifactory-oss && sleep 90 && kubectl delete pvc -l app=artifactory
+~~~
+
+delete artifactory
+
+Deleting Artifactory will also delete your data volumes and you will lose all of your data. You must back up all this information before deletion. You do not need to uninstall Artifactory before deleting it.
+
+```sh
+helm delete artifactory-oss --namespace artifactory
+```
+
+> 这个helm chart官网的说明不清楚。总是会自动创建内部postgresql，无法custom image和external postgresql，暂时放弃。
+
