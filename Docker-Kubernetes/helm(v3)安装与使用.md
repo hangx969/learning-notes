@@ -18,16 +18,15 @@
 
 - helm与k8s的版本支持策略：[Helm | Helm版本支持策略](https://helm.sh/zh/docs/topics/version_skew/)
 
-## 教程文章：
+## 教程文章
 
 - https://mp.weixin.qq.com/s/S_4QK6pLSrmu0PgShOZEjw
 
 ## Helm v3版本变化
 
-- 2019年11月13日，Helm团队发布Helmv3的第一个稳定版本。
-
+- 2019年11月13日，Helm团队发布Helm v3的第一个稳定版本。
 - 该版本主要变化是架构变化：
-  - Helm服务端Tiller被删除（v2版本中，需要装一个Tiller才能与k8s交互。v3版不需要了。）
+  - Helm服务端Tiller被删除（v2版本中，需要装一个Tiller服务端作为通信桥梁才能与k8s交互。v3版不需要了。）
 
 # 安装helm v3.12.3
 

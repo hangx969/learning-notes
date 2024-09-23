@@ -1028,7 +1028,7 @@ kubectl get node master-01 -o=jsonpath='{.spec.taints}'
 #node-02生产环境专用，打一个污点来区分
 kubectl taint node node-02 node-type=production:NoExcute
 
-#去除污点
+#给节点去除污点，后面带一个减号
 kubectl taint node node-02 key: node-type-
 ```
 
