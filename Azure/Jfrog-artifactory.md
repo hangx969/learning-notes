@@ -511,18 +511,20 @@ helm install artifactory-oss \
   jfrog/artifactory-oss -n artifactory -f values.yaml
 
 #dryrun
-helm install artifactory-oss   --set artifactory.masterKey=${MASTER_KEY}   --set artifactory.joinKey=${JOIN_KEY}   --set artifactory.nginx.enabled=false   --set artifactory.postgresql.enabled=false   --set postgresql.enabled=false   --set artifactory.artifactory.service.type=NodePort   --set artifactory.artifactory.resources.requests.cpu="500m"   --set artifactory.artifactory.resources.limits.cpu="2"   --set artifactory.artifactory.resources.requests.memory="1Gi"   --set artifactory.artifactory.resources.limits.memory="4Gi"   --set artifactory.artifactory.image.registry=acrcdstest.azurecr.cn   --set artifactory.artifactory.image.repository=artifactory   --set artifactory.artifactory.image.tag=latest   jfrog/artifactory-oss -n artifactory -f values.yaml --dry-run --debug 
+helm install artifactory-oss   --set artifactory.masterKey=${MASTER_KEY}   --set artifactory.joinKey=${JOIN_KEY}   --set artifactory.nginx.enabled=false   --set artifactory.postgresql.enabled=false   --set postgresql.enabled=false   --set artifactory.artifactory.service.type=NodePort   --set artifactory.artifactory.resources.requests.cpu="500m"   --set artifactory.artifactory.resources.limits.cpu="2"   --set artifactory.artifactory.resources.requests.memory="1Gi"   --set artifactory.artifactory.resources.limits.memory="4Gi"   --set artifactory.artifactory.image.registry=acrcdstest.azurecr.cn   --set artifactory.artifactory.image.repository=artifactory   --set artifactory.artifactory.image.tag=latest   jfrog/artifactory-oss -n artifactory -f --values.yaml --dry-run --debug > result.txt
 
 ##！！！initcontainer的image始终没办法修改成ACR里面的。。。
 ~~~
 
-uninstall
+- uninstall
+
 
 ~~~sh
 helm uninstall artifactory-oss && sleep 90 && kubectl delete pvc -l app=artifactory
 ~~~
 
-delete artifactory
+- delete artifactory
+
 
 Deleting Artifactory will also delete your data volumes and you will lose all of your data. You must back up all this information before deletion. You do not need to uninstall Artifactory before deleting it.
 
@@ -530,5 +532,14 @@ Deleting Artifactory will also delete your data volumes and you will lose all of
 helm delete artifactory-oss --namespace artifactory
 ```
 
-> 这个helm chart官网的说明不清楚。总是会自动创建内部postgresql，无法custom image和external postgresql，暂时放弃。
+# rancher安装artifactory
+
+- 单独开一台虚机，启动rancher容器
+
+> 注意：Ubuntu 2204有bug起导致容器中的K3S起不来：https://github.com/rancher/rancher/issues/36238
+
+~~~sh
+#尝试rockylinux上安装rancher
+docker run -d --restart=unless-stopped -p 80:80 -p 443:443 --privileged acrcdstest.azurecr.cn/rancher:v2.6.4
+~~~
 

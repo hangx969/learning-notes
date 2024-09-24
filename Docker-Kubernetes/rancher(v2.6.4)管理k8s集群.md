@@ -172,7 +172,7 @@ systemctl status docker
 #在master1和node1上解压agent包，在rancher上解压rancher包
 docker load -i rancher-agent_2.6.4.tar.gz
 docker load -i rancher_2.6.4.tar.gz
-#rancher上启动服务
+#rancher VM上启动服务
 docker run -d --restart=unless-stopped -p 80:80 -p 443:443 --privileged rancher/rancher:v2.6.4
 #注：unless-stopped，在容器退出时总是重启容器，除非是用户指定去停止容器。
 ~~~

@@ -54,10 +54,10 @@ yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/d
 #安装docker依赖包
 yum install -y yum-utils device-mapper-persistent-data lvm2
 #安装docker-ce
+#注：rocky linux8中需要先yum remove containerd* runc*否则会冲突
 yum install docker-ce -y
 #启动docker服务
-systemctl start docker && systemctl enable docker
-systemctl status docker
+systemctl start docker && systemctl enable docker && systemctl status docker
 #查看Docker 版本信息
 docker version    
 #开启包转发功能和修改内核参数
