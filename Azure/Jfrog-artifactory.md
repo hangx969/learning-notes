@@ -508,9 +508,12 @@ helm install artifactory-oss \
   --set artifactory.artifactory.image.registry=acrcdstest.azurecr.cn \
   --set artifactory.artifactory.image.repository=artifactory \
   --set artifactory.artifactory.image.tag=latest \
-  jfrog/artifactory-oss -n artifactory -f --values.yaml
+  jfrog/artifactory-oss -n artifactory -f values.yaml
 
-#acrcdstest.azurecr.cn/artifactory:latest 
+#dryrun
+helm install artifactory-oss   --set artifactory.masterKey=${MASTER_KEY}   --set artifactory.joinKey=${JOIN_KEY}   --set artifactory.nginx.enabled=false   --set artifactory.postgresql.enabled=false   --set postgresql.enabled=false   --set artifactory.artifactory.service.type=NodePort   --set artifactory.artifactory.resources.requests.cpu="500m"   --set artifactory.artifactory.resources.limits.cpu="2"   --set artifactory.artifactory.resources.requests.memory="1Gi"   --set artifactory.artifactory.resources.limits.memory="4Gi"   --set artifactory.artifactory.image.registry=acrcdstest.azurecr.cn   --set artifactory.artifactory.image.repository=artifactory   --set artifactory.artifactory.image.tag=latest   jfrog/artifactory-oss -n artifactory -f values.yaml --dry-run --debug 
+
+##！！！initcontainer的image始终没办法修改成ACR里面的。。。
 ~~~
 
 uninstall

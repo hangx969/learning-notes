@@ -1001,6 +1001,8 @@ kubectl explain pods.spec.affinity.podAffinity
 
 ## 污点调度
 
+官网链接：https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/
+
 > - 前面的亲和性调度是站在pod的角度上，通过对pod的属性添加，来决定调度到什么node上。
 > - 也可以站在node的角度上，在node上添加污点属性，决定是否允许pod调度进来。
 
