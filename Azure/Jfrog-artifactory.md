@@ -511,7 +511,7 @@ helm install artifactory-oss \
   jfrog/artifactory-oss -n artifactory -f values.yaml
 
 #dryrun
-helm install artifactory-oss   --set artifactory.masterKey=${MASTER_KEY}   --set artifactory.joinKey=${JOIN_KEY}   --set artifactory.nginx.enabled=false   --set artifactory.postgresql.enabled=false   --set postgresql.enabled=false   --set artifactory.artifactory.service.type=NodePort   --set artifactory.artifactory.resources.requests.cpu="500m"   --set artifactory.artifactory.resources.limits.cpu="2"   --set artifactory.artifactory.resources.requests.memory="1Gi"   --set artifactory.artifactory.resources.limits.memory="4Gi"   --set artifactory.artifactory.image.registry=acrcdstest.azurecr.cn   --set artifactory.artifactory.image.repository=artifactory   --set artifactory.artifactory.image.tag=latest   jfrog/artifactory-oss -n artifactory -f --values.yaml --dry-run --debug > result.txt
+helm install artifactory-oss   --set artifactory.masterKey=${MASTER_KEY}   --set artifactory.joinKey=${JOIN_KEY}   --set artifactory.nginx.enabled=false   --set artifactory.postgresql.enabled=false   --set postgresql.enabled=false   --set artifactory.artifactory.service.type=NodePort   --set artifactory.artifactory.resources.requests.cpu="500m"   --set artifactory.artifactory.resources.limits.cpu="2"   --set artifactory.artifactory.resources.requests.memory="1Gi"   --set artifactory.artifactory.resources.limits.memory="4Gi"   --set artifactory.artifactory.image.registry=acrcdstest.azurecr.cn   --set artifactory.artifactory.image.repository=artifactory   --set artifactory.artifactory.image.tag=latest --set router.image.registry=acrcdstest.azurecr.cn   --set router.image.repository=router   --set router.image.tag=7.118.2 --set initContainers.image.registry=acrcdstest.azurecr.cn   --set initContainers.image.repository=ubi-minimal   --set initContainers.image.tag=9.4.949.1716471857 jfrog/artifactory-oss -n artifactory -f values.yaml --dry-run --debug > result.txt
 
 ##！！！initcontainer的image始终没办法修改成ACR里面的。。。
 ~~~
@@ -520,7 +520,7 @@ helm install artifactory-oss   --set artifactory.masterKey=${MASTER_KEY}   --set
 
 
 ~~~sh
-helm uninstall artifactory-oss && sleep 90 && kubectl delete pvc -l app=artifactory
+helm uninstall jfrog/artifactory-oss && sleep 90 && kubectl delete pvc -l app=artifactory
 ~~~
 
 - delete artifactory
@@ -529,7 +529,7 @@ helm uninstall artifactory-oss && sleep 90 && kubectl delete pvc -l app=artifact
 Deleting Artifactory will also delete your data volumes and you will lose all of your data. You must back up all this information before deletion. You do not need to uninstall Artifactory before deleting it.
 
 ```sh
-helm delete artifactory-oss --namespace artifactory
+helm delete jfrog/artifactory-oss --namespace artifactory
 ```
 
 # rancher安装artifactory
@@ -539,7 +539,49 @@ helm delete artifactory-oss --namespace artifactory
 > 注意：Ubuntu 2204有bug起导致容器中的K3S起不来：https://github.com/rancher/rancher/issues/36238
 
 ~~~sh
-#尝试rockylinux上安装rancher
-docker run -d --restart=unless-stopped -p 80:80 -p 443:443 --privileged acrcdstest.azurecr.cn/rancher:v2.6.4
+#ubuntu 2004上安装latest rancher可以起来
+docker run -d --restart=unless-stopped -p 80:80 -p 443:443 --privileged acrcdstest.azurecr.cn/rancher:latest
+#passwd:DqO51FvMZihRDsP7
+~~~
+
+- azure 创建 sp
+
+~~~sh
+az ad sp create-for-rbac --scope /subscriptions/4eab3273-e0ec-4165-b6d7-b80ae903b0c7/resourcegroups/rg-artifactory-cds-demo --role Contributor
+~~~
+
+> rancher无法导入AKS集群，他会默认集群在china east，导致无法获取到api version，但是这个配置无处改变，遂放弃
+
+# Artifactory-cpp-ce
+
+~~~sh
+export MASTER_KEY=$(openssl rand -hex 32)
+export JOIN_KEY=$(openssl rand -hex 32)
+helm install artifactory-cpp-ce   --set artifactory.masterKey=${MASTER_KEY}   --set artifactory.joinKey=${JOIN_KEY}   --set artifactory.nginx.enabled=false   --set artifactory.postgresql.enabled=false   --set postgresql.enabled=false   --set artifactory.artifactory.service.type=NodePort   --set artifactory.artifactory.resources.requests.cpu="500m"   --set artifactory.artifactory.resources.limits.cpu="2"   --set artifactory.artifactory.resources.requests.memory="1Gi"   --set artifactory.artifactory.resources.limits.memory="4Gi"  --set router.image.registry=acrcdstest.azurecr.cn   --set router.image.repository=router   --set router.image.tag=7.118.2 --set initContainers.image.registry=acrcdstest.azurecr.cn   --set initContainers.image.repository=ubi-minimal   --set initContainers.image.tag=9.4.949.1716471857 jfrog/artifactory-cpp-ce -n artifactory -f values.yaml --dry-run --debug > result.txt
+
+helm install artifactory-cpp-ce  ./ --set artifactory.masterKey=${MASTER_KEY}   --set artifactory.joinKey=${JOIN_KEY}   --set artifactory.nginx.enabled=false   --set artifactory.postgresql.enabled=false   --set postgresql.enabled=false   --set artifactory.artifactory.service.type=NodePort   --set artifactory.artifactory.resources.requests.cpu="500m"   --set artifactory.artifactory.resources.limits.cpu="2"   --set artifactory.artifactory.resources.requests.memory="1Gi"   --set artifactory.artifactory.resources.limits.memory="4Gi"  -n artifactory -f values.yaml --dry-run --debug > result.txt
+~~~
+
+- internal LB
+
+~~~yaml
+tee iLB.yaml <<'EOF'
+apiVersion: v1
+kind: Service
+metadata:
+  name: ilb-artifactory-cpp-demo
+  namespace: artifactory
+  annotations:
+    service.beta.kubernetes.io/azure-load-balancer-internal: "true"
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+    targetPort: 8082
+  selector:
+    app: artifactory
+    component: artifactory
+    release: artifactory-cpp-ce
+EOF
 ~~~
 
