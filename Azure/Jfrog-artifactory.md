@@ -142,46 +142,11 @@ az container create \
 - login UI using containerIP:8082/ui (default username: admin, passwd: password)
   - edit admin password after logged in
 
-# Artifactory-docker
-
-https://jfrog.com/help/r/jfrog-installation-setup-documentation/install-artifactory-single-node-with-docker
-
-## external database
-
-- For Non-Production environment, you can start an PostgreSQL container on the same machine as Artifactory Container:
-
-```sh
-docker run --name postgres -itd -e POSTGRES_USER=artifactory -e POSTGRES_PASSWORD=Passw0rd -e POSTGRES_DB=artifactorydb -p 5432:5432 library/postgres
-```
-
-- Configure the system.yaml file with the database configuration details:
-
-```yaml
-shared:
-  database:
-    driver: org.postgresql.Driver
-    type: postgresql
-    url: jdbc:postgresql://pg-artifactory.postgres.database.chinacloudapi.cn:5432/postgres?user=artifactory&password=Passw0rd&sslmode=require
-    username: artifactory
-    password: Passw0rd
-```
-
-## start up container
-
-~~~sh
-mkdir /app/jfrog
-export JFROG_HOME=/app/jfrog
-mkdir -p $JFROG_HOME/artifactory/var/etc/
-cd $JFROG_HOME/artifactory/var/etc/
-touch ./system.yaml
-chown -R 1030:1030 $JFROG_HOME/artifactory/var
-docker run --name artifactory -v $JFROG_HOME/artifactory/var/:/var/opt/jfrog/artifactory -d -p 8081:8081 -p 8082:8082 releases-docker.jfrog.io/jfrog/artifactory-oss:latest
-#docker run --name artifactory -v $JFROG_HOME/artifactory/var/:/var/opt/jfrog/artifactory -d -p 8081:8081 -p 80:8082 acrcdstest.azurecr.cn/artifactory:latest 
-~~~
-
-> 管理页面:http://localhost:8082/ui/，默认管理用户名admin，口令password
+> ACI部署artifactory会出现各种各样的artifactory报错，导致容器起不来。遂放弃。
 
 # Artifactory-docker-azure vm
+
+https://jfrog.com/help/r/jfrog-installation-setup-documentation/install-artifactory-single-node-with-docker
 
 - VM environment
 
@@ -404,29 +369,12 @@ spec:
 EOF
 ~~~
 
-- internal LB
-
-~~~yaml
-apiVersion: v1
-kind: Service
-metadata:
-  name: ilb-artifactory
-  annotations:
-    service.beta.kubernetes.io/azure-load-balancer-internal: "true"
-spec:
-  type: LoadBalancer
-  ports:
-  - port: 80
-    targetPort: 8082
-  selector:
-    app: artifactory
-~~~
-
 > 总是报错：
 >
-> Caught exception in GET /artifactory/api/system/ping
+> - Caught exception in GET /artifactory/api/system/ping
 >
-> Missing required services: [jffe]
+> - Missing required services: [jffe]
+> - 即使把key文件放到指定位置了也识别不到，遂放弃。
 
 # Artifactory-AKS-helm
 
@@ -541,7 +489,7 @@ helm delete jfrog/artifactory-oss --namespace artifactory
 ~~~sh
 #ubuntu 2004上安装latest rancher可以起来
 docker run -d --restart=unless-stopped -p 80:80 -p 443:443 --privileged acrcdstest.azurecr.cn/rancher:latest
-#passwd:DqO51FvMZihRDsP7
+#按照提示获取登录密码
 ~~~
 
 - azure 创建 sp
@@ -554,15 +502,16 @@ az ad sp create-for-rbac --scope /subscriptions/4eab3273-e0ec-4165-b6d7-b80ae903
 
 # Artifactory-cpp-ce
 
+- 先在helm配置文件中修改image地址，配置system.yaml中的database字段到外部azure pgsql（找到对应的values.yaml），配置关闭nginx、内部pgsql等功能（找到外部和内部两个values.yaml）
+
 ~~~sh
 export MASTER_KEY=$(openssl rand -hex 32)
 export JOIN_KEY=$(openssl rand -hex 32)
-helm install artifactory-cpp-ce   --set artifactory.masterKey=${MASTER_KEY}   --set artifactory.joinKey=${JOIN_KEY}   --set artifactory.nginx.enabled=false   --set artifactory.postgresql.enabled=false   --set postgresql.enabled=false   --set artifactory.artifactory.service.type=NodePort   --set artifactory.artifactory.resources.requests.cpu="500m"   --set artifactory.artifactory.resources.limits.cpu="2"   --set artifactory.artifactory.resources.requests.memory="1Gi"   --set artifactory.artifactory.resources.limits.memory="4Gi"  --set router.image.registry=acrcdstest.azurecr.cn   --set router.image.repository=router   --set router.image.tag=7.118.2 --set initContainers.image.registry=acrcdstest.azurecr.cn   --set initContainers.image.repository=ubi-minimal   --set initContainers.image.tag=9.4.949.1716471857 jfrog/artifactory-cpp-ce -n artifactory -f values.yaml --dry-run --debug > result.txt
 
-helm install artifactory-cpp-ce  ./ --set artifactory.masterKey=${MASTER_KEY}   --set artifactory.joinKey=${JOIN_KEY}   --set artifactory.nginx.enabled=false   --set artifactory.postgresql.enabled=false   --set postgresql.enabled=false   --set artifactory.artifactory.service.type=NodePort   --set artifactory.artifactory.resources.requests.cpu="500m"   --set artifactory.artifactory.resources.limits.cpu="2"   --set artifactory.artifactory.resources.requests.memory="1Gi"   --set artifactory.artifactory.resources.limits.memory="4Gi"  -n artifactory -f values.yaml --dry-run --debug > result.txt
+helm install artifactory-cpp-ce  ./ --set artifactory.masterKey=${MASTER_KEY}   --set artifactory.joinKey=${JOIN_KEY}   --set artifactory.nginx.enabled=false   --set artifactory.postgresql.enabled=false   --set postgresql.enabled=false   --set artifactory.artifactory.service.type=NodePort   --set artifactory.artifactory.resources.requests.cpu="500m"   --set artifactory.artifactory.resources.limits.cpu="2"   --set artifactory.artifactory.resources.requests.memory="1Gi"   --set artifactory.artifactory.resources.limits.memory="4Gi"  -n artifactory -f values.yaml #--dry-run --debug > result.txt
 ~~~
 
-- internal LB
+- internal LB代理pod，selector复制helm里面的tag进来。注意后面tag变化之后也要修改iLB的selector
 
 ~~~yaml
 tee iLB.yaml <<'EOF'
