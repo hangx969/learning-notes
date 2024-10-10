@@ -221,6 +221,7 @@ spec:
 
 ```sh
 k exec -it centos-workload-identity -- /bin/bash
+#查看token
 cat /run/secrets/azure/tokens/azure-identity-token
 ```
 
