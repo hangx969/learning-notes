@@ -502,13 +502,30 @@ az ad sp create-for-rbac --scope /subscriptions/4eab3273-e0ec-4165-b6d7-b80ae903
 
 # Artifactory-cpp-ce
 
-- 先在helm配置文件中修改image地址，配置system.yaml中的database字段到外部azure pgsql（找到对应的values.yaml），配置关闭nginx、内部pgsql等功能（找到外部和内部两个values.yaml）
+- 外部azure pgsql先创建好
+
+- helm文件配置
+  - 先在helm配置文件中修改image地址到ACR
+  - 配置system.yaml中的database字段到外部azure pgsql（参数配置要找到对应的values.yaml），
+  - 配置关闭nginx、内部pgsql等功能（找到外部和内部两个values.yaml）
+
 
 ~~~sh
+#key用手动生成的
 export MASTER_KEY=$(openssl rand -hex 32)
 export JOIN_KEY=$(openssl rand -hex 32)
-
 helm install artifactory-cpp-ce  ./ --set artifactory.masterKey=${MASTER_KEY}   --set artifactory.joinKey=${JOIN_KEY}   --set artifactory.nginx.enabled=false   --set artifactory.postgresql.enabled=false   --set postgresql.enabled=false   --set artifactory.artifactory.service.type=NodePort   --set artifactory.artifactory.resources.requests.cpu="500m"   --set artifactory.artifactory.resources.limits.cpu="2"   --set artifactory.artifactory.resources.requests.memory="1Gi"   --set artifactory.artifactory.resources.limits.memory="4Gi"  -n artifactory -f values.yaml #--dry-run --debug > result.txt
+
+#key用secret
+export MASTER_KEY=$(openssl rand -hex 32)
+echo ${MASTER_KEY}
+kubectl create secret generic masterkey-secret -n artifactory --from-literal=master-key=${MASTER_KEY}
+
+export JOIN_KEY=$(openssl rand -hex 32)
+echo ${JOIN_KEY}
+kubectl create secret generic joinkey-secret -n artifactory --from-literal=join-key=${JOIN_KEY}
+
+helm install artifactory-cpp-ce  ./ --set artifactory.nginx.enabled=false   --set artifactory.postgresql.enabled=false   --set postgresql.enabled=false   --set artifactory.artifactory.service.type=NodePort   --set artifactory.artifactory.resources.requests.cpu="500m"   --set artifactory.artifactory.resources.limits.cpu="2"   --set artifactory.artifactory.resources.requests.memory="1Gi"   --set artifactory.artifactory.resources.limits.memory="4Gi"  -n artifactory -f values.yaml
 ~~~
 
 - internal LB代理pod，selector复制helm里面的tag进来。注意后面tag变化之后也要修改iLB的selector
@@ -534,3 +551,23 @@ spec:
 EOF
 ~~~
 
+- 查看release
+
+~~~sh
+helm list -n artifactory
+~~~
+
+- 升级release
+
+~~~sh
+#cd到helm项目目录
+helm upgrade artifactory-cpp-ce -n artifactory .
+~~~
+
+- 卸载release
+
+~~~sh
+helm uninstall artifactory-cpp-ce -n artifactory
+~~~
+
+- 10/12 admin/cdsPassw0rd
