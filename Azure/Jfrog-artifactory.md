@@ -530,6 +530,8 @@ helm install artifactory-cpp-ce  ./ --set artifactory.nginx.enabled=false   --se
 
 - internal LB代理pod，selector复制helm里面的tag进来。注意后面tag变化之后也要修改iLB的selector
 
+  doc: https://docs.azure.cn/zh-cn/aks/internal-lb?tabs=set-service-annotations
+
 ~~~yaml
 tee iLB.yaml <<'EOF'
 apiVersion: v1
@@ -538,6 +540,7 @@ metadata:
   name: ilb-artifactory-cpp-demo
   namespace: artifactory
   annotations:
+    service.beta.kubernetes.io/azure-load-balancer-ipv4: 10.225.126.70 # fixed internal IP
     service.beta.kubernetes.io/azure-load-balancer-internal: "true"
 spec:
   type: LoadBalancer

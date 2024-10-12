@@ -275,3 +275,24 @@ module "StorageAccount" {
 - 当你运行`terraform init`命令时，Terraform会初始化后端，并将本地状态文件迁移到远程状态存储。在后续的`terraform apply`或`terraform destroy`操作中，Terraform会直接从远程状态存储读取和写入状态。
 - 如果你想从远程状态存储拉取最新的状态，你可以运行`terraform refresh`命令。如果你想将远程状态下载到本地，你可以运行`terraform state pull`命令。如果你想将本地状态推送到远程存储，你可以运行`terraform state push`命令。
 - 需要注意的是，使用远程状态存储需要考虑安全性和访问控制。例如，你可能需要配置适当的IAM策略来限制对S3 bucket的访问，或者使用服务器端加密来保护存储在bucket中的状态文件。
+
+# import导入已有资源
+
+- 项目根目录创建一个imports.tf文件
+
+  ~~~json
+  tee imports.tf <<'EOF'
+  import {
+      to = azurerm_storage_account.infrasa
+      id = "/subscriptions/9365cbc6-1cc4-4ab2-bd5f-2cb518cc2a51/resourceGroups/rg-mapapps-dev-mmatransfer/providers/Microsoft.Storage/storageAccounts/samapappsdevmmatransfer"
+  }
+  EOF
+  ~~~
+
+- terraform导入
+
+  ~~~sh
+  terraform plan -generate-config-out=generated_resources.tf
+  ~~~
+
+- 在generated_resources.tf中即可看到资源定义
