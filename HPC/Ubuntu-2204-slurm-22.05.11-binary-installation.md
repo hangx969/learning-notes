@@ -652,7 +652,7 @@ EOF
 ~~~sh
 sudo su
 for i in `seq 1 4`; do
-scp slurm-22.05.11.tar.bz2 test@cn01dl00$i:~/;
+scp slurm.conf test@cn01dl00$i:/etc/slurm/;
 done
 ~~~
 
@@ -999,7 +999,7 @@ sudo sacctmgr create account Name=jade-slurm-user
 
 ~~~sh
 sudo sacctmgr add user <username> DefaultAccount=jade-slurm-user Partition=zprodhigh,zprod,zprodlow,ztest,zprodcpu
-#已经添加的user: ubuntu、slurm、petwan、liuwan、siyyan、svc-simulation、jinfen、hanxux、guanix
+#已经添加的user: ubuntu、slurm、petwan、liuwan、siyyan、svc-simulation、jinfen、hanxux、guanix,tomche
 #注：ubuntu用户在dl节点不存在，但是prolog要读取提交作业的用户来在dl节点创建文件，所以用ubuntu用户提交任务的时候会报prolog失败
 ~~~
 
