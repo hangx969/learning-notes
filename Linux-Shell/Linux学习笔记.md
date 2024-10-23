@@ -2066,7 +2066,7 @@ sar
 
   - 基本语法
 
-    - 在etc/profile中加入 export 变量名=变量值  （将shell变量输出为环境变量/全局变量  可以被多个文件共用）
+    - 在/etc/profile中加入 export 变量名=变量值  （将shell变量输出为环境变量/全局变量，可以被多个文件共用）
     - source /etc/profile  (写入新的环境变量之后，应该用source刷新一下)
 
     - echo $变量名
