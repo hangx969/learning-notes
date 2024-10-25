@@ -4,7 +4,7 @@
 - 与其他资源对象相比，Events非常活跃，数据量也很大，考虑到Etcd集群的性能问题，因此不太可能长时间存储在Etcd中。默认情况下，Kubernetes Events只保留一个小时，这对于长期分析和故障排查是不够的。因此，将Kubernetes Events持久化存储，并通过可视化工具进行分析变得非常重要。
 
 - 常见的event类型：
-  - Failed events：由于对象单元级别的错误或从仓库拉取容器镜像失败引起。
+  1. Failed events：由于对象单元级别的错误或从仓库拉取容器镜像失败引起。
   2. Evicted events：资源不足时，Kubelet驱逐节点上的Pods。
 
   3. Failed scheduling events：没有足够的节点可用或节点不匹配选择器。
@@ -94,3 +94,9 @@ helm install loki grafana/loki -n monitoring -f install-values.yaml --debug
   ```
 
 - 配置grafana仪表板
+
+  - 在Grafana中创建一个新的仪表盘，使用loki作为数据源。
+  - 添加Loki查询面板，配置查询语句以筛选和展示Kubernetes事件。
+  - 通过Grafana的图表和过滤功能，创建适合的可视化视图。
+  - 这里有个更好的建议，直接在Grafana官网下载相关Dashboard，稍微改改适合我们场景就挺好.
+  - 查询语句（Explain query非常友好）也非常好写.
