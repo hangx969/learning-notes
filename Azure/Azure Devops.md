@@ -16,6 +16,10 @@
   - 什么情况下触发trigger
   - pipeline在什么agent pool下运行
   - 每一个steps做什么（运行scripts或者tasks）
+- pipeline分两种：
+  - YAML pipeline -- 常用
+  - classic pipeline
+
 
 ## Stage
 
@@ -82,11 +86,61 @@ For each job, an agent:
 - 每个job有timeout超时时间，未能完成就会被server cancel掉。这时就会进入到cancel timeout时间，在这个时间内，agent没能cancel完成，server直接标记job为失败。
 - agent每分钟向server报告一次心跳，五次心跳没接收到，server就认为agent下线，其上的job标记为失败。
 
+# Jobs
+
+## 格式
+
+https://learn.microsoft.com/en-us/azure/devops/pipelines/process/phases?view=azure-devops&tabs=yaml#define-a-single-job
+
+- pipeline中的job不支持priority，而是通过condition和dependency来实现
+
+# Stages
+
+https://learn.microsoft.com/en-us/azure/devops/pipelines/process/stages?view=azure-devops&tabs=yaml
+
+# Tasks/Scripts
+
+https://learn.microsoft.com/en-us/azure/devops/pipelines/tasks/reference/?view=azure-pipelines&viewFallbackFrom=azure-devops
+
+# Templates
+
+https://learn.microsoft.com/en-us/azure/devops/pipelines/process/templates?view=azure-devops&pivots=templates-includes
+
+# Variables
+
+https://learn.microsoft.com/en-us/azure/devops/pipelines/process/variables?view=azure-devops&tabs=yaml%2Cbatch
+
+# Templates
+
+https://learn.microsoft.com/en-us/azure/devops/pipelines/process/templates?view=azure-devops&pivots=templates-includes
+
+# Resources
+
+https://learn.microsoft.com/en-us/azure/devops/pipelines/process/about-resources?view=azure-devops&tabs=yaml
+
 # Self-hosted agents
+
+> https://learn.microsoft.com/en-us/azure/devops/pipelines/agents/agents?view=azure-devops&tabs=yaml%2Cbrowser#self-hosted-agents
 
 - azure devops在azure china不支持MS managed agents，只能是用self-hosted agents，可能会存在一些cache warm-up和拉取commit到local repo的准备时间。
 - self-hosted agents提供capability，意思是上面装了什么软件。pipeline的demand会定义需要哪些软件。
   - 如果pipeline定义的demands，没有agent具备capability能满足，那么job就会失败。
   - 如果是没有空闲的agent能满足demands，job就会等待。
 
--  azure devops - pipelines - edit - triggers - YAML - Default agent pool for YAML里面可以选择用Azure-hosted还是private（self hosted）
+- azure devops - pipelines - edit - triggers - YAML - Default agent pool for YAML：可以选择默认用Azure-hosted还是private（self hosted）。yaml文件里面没定义agent pool的话，就用这个默认的。
+
+## Agent与pipeline通信
+
+https://learn.microsoft.com/en-us/azure/devops/pipelines/agents/agents?view=azure-devops&tabs=yaml%2Cbrowser#communication
+
+## Agent版本
+
+https://learn.microsoft.com/en-us/azure/devops/pipelines/agents/v3-agent?view=azure-devops
+
+## Agent手动注册
+
+https://learn.microsoft.com/en-us/azure/devops/pipelines/agents/linux-agent?view=azure-devops
+
+## Agent认证
+
+https://learn.microsoft.com/en-us/azure/devops/pipelines/agents/personal-access-token-agent-registration?view=azure-devops
