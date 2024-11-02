@@ -133,9 +133,18 @@ https://learn.microsoft.com/en-us/azure/devops/pipelines/process/about-resources
 
 https://learn.microsoft.com/en-us/azure/devops/pipelines/agents/agents?view=azure-devops&tabs=yaml%2Cbrowser#communication
 
+- agent向pipeline注册的时候会拿到一个listener OAuth Token。
+
+- agent监听pipeline service是否有job要执行，有job的话，会下载一个per-job的OAuth Token，用来访问pipeline的资源，用完即弃。
+- agent和pipeline之间走的是非对称加密，agent的公钥在注册的时候提供给了devops service。
+
 ## Agent版本
 
 https://learn.microsoft.com/en-us/azure/devops/pipelines/agents/v3-agent?view=azure-devops
+
+- agent版本每隔几周会更新，major version.minor version的格式。
+- 对于self-hosted agent，小版本可以自动升级，大版本需要手动升级。
+- 检查现有agent的version：在agent页面的system capabilities里面。检查最新发布的版本：https://github.com/Microsoft/azure-pipelines-agent/releases
 
 ## Agent手动注册
 
@@ -144,3 +153,48 @@ https://learn.microsoft.com/en-us/azure/devops/pipelines/agents/linux-agent?view
 ## Agent认证
 
 https://learn.microsoft.com/en-us/azure/devops/pipelines/agents/personal-access-token-agent-registration?view=azure-devops
+
+- 对于self-hosted agent，当agent向pipeline注册的时候，需要agent做认证。有三种认证方式：PAT、device code、Service Principal
+
+- PAT：在自己account的setting里面创建PAT，复制下来，agent注册时会用
+- 注意这个PAT仅用于agent首次向pipeline注册时使用。后续的agent-pipeline通信用的是OAuth Token。
+
+## vmss agent
+
+- 特点：每个job结束后会reimage job，而且支持base image的更新。无需手动安装注册agent，pipeline自动安装agent
+- 创建VMSS需要关闭Overprovisioning和auto-scaling功能。由Pipelines根据要运行的job数量决定scale的数量？（https://learn.microsoft.com/en-us/azure/devops/pipelines/agents/scale-set-agents?view=azure-devops#how-azure-pipelines-manages-the-scale-set）
+
+- custom image：https://learn.microsoft.com/en-us/azure/devops/pipelines/agents/scale-set-agents?view=azure-devops#create-a-scale-set-with-custom-image-software-or-disk-size
+
+- 创建vmss agent pool可以在**Project settings** or **Organization settings**，但是删除agentpool需要去**Organization settings**，而且要先删pipeline上的agent pool，再去portal删vmss。
+- 添加vmss agent pool需要一个认证过程，登录的账户要对vmss的sub具有Owner或者User Access Admin角色。
+- 如果有现成的service connection，可以不用认证。
+
+# service connection
+
+https://learn.microsoft.com/en-us/azure/devops/pipelines/library/service-endpoints?view=azure-devops
+
+- 作用是在pipeline中连接到azure服务
+
+- 认证鉴权我们采用app registration with workload identity：
+
+  > https://learn.microsoft.com/en-us/azure/devops/pipelines/library/connect-to-azure?view=azure-devops#create-an-azure-resource-manager-app-registration-with-workload-identity-federation-automatic
+
+  - 创建federated token，让EntraID信任devops颁发的token
+  - 在相应的scope上赋予这个app一定的的权限。
+
+# Security
+
+> - https://learn.microsoft.com/en-us/azure/devops/organizations/security/about-permissions?view=azure-devops&tabs=preview-page
+> - https://learn.microsoft.com/en-us/azure/devops/pipelines/library/add-resource-protection?view=azure-devops
+> - https://learn.microsoft.com/en-us/azure/devops/organizations/security/add-users-team-project?view=azure-devops&tabs=preview-page
+> - https://learn.microsoft.com/en-us/azure/devops/pipelines/security/overview?view=azure-devops
+
+- ado中，下列资源属于protected resources，每项资源都可以单独被管理，需要user账户被加到Admin Group中：
+  - Agent pools
+  - Secret variables in variable groups
+  - Secure files
+  - Service connections
+  - Environments
+  - Repositories
+- ado中的user可被分配到security group中，从group层面会对ado中的各项功能做授权。
