@@ -89,6 +89,8 @@ ctr -n=k8s.io images import kube-webhook-certgen-v1.1.0.tar.gz
 
   https://github.com/kubernetes/ingress-nginx/tree/main/deploy/static/provider/baremetal
 
+  (不做高可用的话直接在这里下载apply就行)
+
 - 但是这里为了做成高可用的nginx-ingress-controller，添加了反亲和性，对原始的yaml做了调整，yaml如下：
 
 ~~~yaml
@@ -789,6 +791,8 @@ spec:
 - 部署完会在两个worker node上建出来两个pod：ingress-nginx-controller-64bdc78c96-8t25x
 - ingress-nginx-admission-create-2qqzl和ingress-nginx-admission-patch-8nzwm是生成证书用的两个一次性pod
 
+> - 如果部署完ingress，访问ingress的80端口被拒绝，原因一般是： ingress-controller的官方yaml默认注释了hostNetwork 工作方式，以防止端口的在宿主机的冲突，没有绑定到宿主机 80 端口。需要在ingress-class的deployment.spec.template.spec中加上hostNetwork: true
+
 ### 安装配置nginx和keeplived
 
 ~~~bash
@@ -1040,7 +1044,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-  - host: tomcat.hangx.com
+  - host: tomcat.hanxux.com
     http:
       paths:
       - backend:
@@ -1100,6 +1104,7 @@ ingress-nginx   ingress-nginx-controller             NodePort    10.105.87.199  
 
 - 示例这里用的Keepalived暴露的VIP作为入口:
   - 访问keepalived VIP + 30080端口 ==> 请求代理给了主node上网卡eth0的30080端口 ==> node上自己装的nginx在监听30080 ==> 继续代理给upstream定义的两个node IP:80端口 ==> 两个ingress controller的nginx会监听node的80端口 ==> nginx转发给upstream的svc的8080端口 ==> svc转发给后端pod
+- hostnetwork模式需要显式在ingress controller的deployment上指定hostnetwork=true，然后必须配置hosts文件，让自定义的域名指向ingress的ip，然后根据设定的路由来访问。直接访问ingress的ip是不行的，nginx会报404.
 
 # Lab - 部署ingress HTTPS代理pod
 
