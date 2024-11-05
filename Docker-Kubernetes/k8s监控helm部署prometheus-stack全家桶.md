@@ -1,10 +1,16 @@
 # 前提条件
 
-- 准备storage class提供数据持久化，实验环境下事先部署了nfs-client的sc，并设置为default storage class
+1. 准备storage class提供数据持久化，实验环境下事先部署了nfs-client的sc，并设置为default storage class
+   - 默认存储类：https://kubernetes.io/zh-cn/docs/concepts/storage/storage-classes/#default-storageclass
 
-> 默认存储类：https://kubernetes.io/zh-cn/docs/concepts/storage/storage-classes/#default-storageclass
+
+2. 提前配置ingress controller和ingress class
+   - ingress controller yaml: https://github.com/kubernetes/ingress-nginx/tree/main/deploy/static/provider/baremetal
+   - ingressController的deployment中配置hostnetwork=true
 
 # helm配置
+
+> 官网地址：https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack#kube-prometheus-stack
 
 - 添加仓库
 
@@ -16,7 +22,7 @@ tar xzvf kube-prometheus-stack-52.1.0.tgz
 cd kube-prometheus-stack
 ~~~
 
-- 修改配置
+- 修改配置文件
 
 ~~~yaml
 #修改两个镜像源
@@ -52,7 +58,8 @@ image:
 ~~~
 
 ~~~yaml
-#将prometheus和alerManager数据持久化
+#将prometheus和alertManager数据持久化
+#需要提前部署nfs-provisioner和默认存储类
 vim values.yaml 
 ---
     storage:
@@ -62,15 +69,16 @@ vim values.yaml
           accessModes: ["ReadWriteOnce"]
           resources:
             requests:
-              storage: 50Gi
+              storage: 1Gi
 ---
+    storageSpec:
       volumeClaimTemplate:
         spec:
           storageClassName: sc-nfs
           accessModes: ["ReadWriteOnce"]
           resources:
             requests:
-              storage: 50Gi
+              storage: 1Gi
 ---
 ~~~
 
@@ -80,16 +88,15 @@ vim charts/grafana/values.yaml
 persistence:
   type: pvc
   enabled: true
-    storageClassName: sc-nfs
+  storageClassName: sc-nfs
   accessModes:
     - ReadWriteOnce
   size: 1Gi
 ~~~
 
-# 安装
-
-~~~sh
-helm install kube-prometheus-stack -n monitoring --create-namespace \
+~~~yaml
+#配置ingress
+#需要修改的values.yaml地方如下：
   --set prometheus.ingress.enabled=true \
   --set prometheus.prometheusSpec.retention=7d \
   --set prometheus.ingress.hosts='{prometheus.hanxux.local}' \
@@ -106,5 +113,63 @@ helm install kube-prometheus-stack -n monitoring --create-namespace \
   --set grafana.ingress.pathType=Prefix . -f values.yaml
 ~~~
 
+# 安装
 
+~~~sh
+helm install kube-prometheus-stack -n monitoring --create-namespace . -f values.yaml
+~~~
+
+# 升级
+
+~~~sh
+helm upgrade kube-prometheus-stack -n monitoring . -f values.yaml
+~~~
+
+# 卸载
+
+~~~sh
+helm uninstall kube-prometheus-stack -n monitoring #--dry-run
+
+#CRDs created by this chart are not removed by default and should be manually cleaned up:
+kubectl delete crd alertmanagerconfigs.monitoring.coreos.com
+kubectl delete crd alertmanagers.monitoring.coreos.com
+kubectl delete crd podmonitors.monitoring.coreos.com
+kubectl delete crd probes.monitoring.coreos.com
+kubectl delete crd prometheusagents.monitoring.coreos.com
+kubectl delete crd prometheuses.monitoring.coreos.com
+kubectl delete crd prometheusrules.monitoring.coreos.com
+kubectl delete crd scrapeconfigs.monitoring.coreos.com
+kubectl delete crd servicemonitors.monitoring.coreos.com
+kubectl delete crd thanosrulers.monitoring.coreos.com
+~~~
+
+
+
+# ingress访问
+
+- 查看ingress的ip
+
+~~~sh
+k get ing -n monitoring
+
+NAME                                 CLASS   HOSTS                       ADDRESS          PORTS   AGE
+kube-prometheus-stack-alertmanager   nginx   alertmanager.hanxux.local   172.16.183.101   80      10m
+kube-prometheus-stack-grafana        nginx   grafana.hanxux.local        172.16.183.101   80      10m
+kube-prometheus-stack-prometheus     nginx   prometheus.hanxux.local     172.16.183.101   80      10m
+~~~
+
+- 本地加解析
+
+~~~sh
+172.16.183.101 prometheus.hanxux.local alertmanager.hanxux.local grafana.hanxux.local
+~~~
+
+- 浏览器登录grafana：grafana.hanxux.local admin/admin
+
+> ~~~sh
+> #查看grafana密码
+> kubectl get secrets  -n monitoring kube-prometheus-stack-grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
+> ~~~
+
+# slack alert配置
 
