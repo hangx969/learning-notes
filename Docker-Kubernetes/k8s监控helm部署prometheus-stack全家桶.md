@@ -113,6 +113,37 @@ persistence:
   --set grafana.ingress.pathType=Prefix . -f values.yaml
 ~~~
 
+~~~yaml
+#额外又根据mimer的配置进行了对应调整
+~~~
+
+> 注意：
+>
+> 后面单独部署了loki和tempo之后，要去prometheus-stack的values里面加上grafana.additaionalDataSources字段：
+>
+> ~~~yaml
+>   additionalDataSources:
+>     - name: Tempo
+>       type: tempo
+>       uid: tempo
+>       url: http://tempo.monitoring.svc:3100
+>       access: proxy
+>       version: 1
+>       jsonData:
+>         httpMethod: GET
+>         serviceMap:
+>           datasourceUid: 'prometheus'
+>         tracesToLogsV2: # https://grafana.com/docs/grafana/next/datasources/tempo/#trace-to-logs
+>           datasourceUid: 'Loki'
+>           spanStartTimeShift: '-5m'
+>           spanEndTimeShift: '5m'
+>           tags: [{ key: 'service.name', value: 'app' }, { key: 'host.name', value: 'pod' }]
+>     - name: Loki
+>       type: loki
+>       url: http://loki.monitoring.svc:3100
+>       access: proxy
+> ~~~
+
 # 安装
 
 ~~~sh
@@ -122,7 +153,7 @@ helm install kube-prometheus-stack -n monitoring --create-namespace . -f values.
 # 升级
 
 ~~~sh
-helm upgrade kube-prometheus-stack -n monitoring . -f values.yaml
+helm upgrade -i kube-prometheus-stack -n monitoring . -f values.yaml
 ~~~
 
 # 卸载

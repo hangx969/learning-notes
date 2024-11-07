@@ -98,24 +98,82 @@ helm install loki grafana/loki -n monitoring -f install-values.yaml --debug
   - 在Grafana中创建一个新的仪表盘，使用loki作为数据源。
   - 添加Loki查询面板，配置查询语句以筛选和展示Kubernetes事件。
   - 通过Grafana的图表和过滤功能，创建适合的可视化视图。
-  - 这里有个更好的建议，直接在Grafana官网下载相关Dashboard，稍微改改适合我们场景就挺好.
-  - 查询语句（Explain query非常友好）也非常好写.
+  - 这里有个更好的建议，直接在Grafana官网下载相关Dashboard，稍微改改适合我们场景.
+  - 查询语句（Explain query）也非常好写.
 
-# helm部署loki全家桶
+# helm部署loki promtail tempo全家桶
+
+## Loki
+
+- 下载
 
 ~~~sh
-helm repo add grafana https://grafana.github.io/helm-charts4
+helm repo add grafana https://grafana.github.io/helm-chart
 helm repo update
-helm pull grafana/loki --version "${LOKI_VERSION#helm-loki-}"
-helm pull grafana/promtail --version "${PROMTAIL_VERSION#promtail-}"
-helm pull grafana/tempo --version "${TEMPO_VERSION#tempo-}"
+helm pull grafana/loki --version "${LOKI_VERSION#helm-loki-}" #5.48.0
 ~~~
+
+- 配置
+
+  ~~~yaml
+  #这里仿照mimer的values.yaml进行了调整
+  ~~~
+
+  > loki的log volume没配置？
+
+- 安装
 
 ~~~sh
-helm upgrade -i loki -n monitoring \
-                  oci://crcommoninfra${{parameters.environment}}${{parameters.region}}.azurecr.cn/helm/loki \
-                  --version $VERSION \
-                  --history-max 3 \
-                  -f $VALUES_FILE
+helm upgrade -i loki -n monitoring . -f values.yaml
 ~~~
 
+- 添加grafana数据源
+  - add data source - loki - URL: http://loki.monitoring.svc.cluster.local:3100
+
+## Promtail
+
+- 下载
+
+~~~sh
+helm repo add grafana https://grafana.github.io/helm-chart
+helm repo update
+helm pull grafana/promtail --version "${PROMTAIL_VERSION#promtail-}" #6.15.5
+~~~
+
+- 配置
+
+~~~sh
+#同样采用mimer的values.yaml进行调整
+~~~
+
+- 安装
+
+~~~sh
+helm upgrade -i promtail -n monitoring . -f values.yaml
+~~~
+
+## tempo
+
+- 下载
+
+~~~sh
+helm repo add grafana https://grafana.github.io/helm-chart
+helm repo update
+helm pull grafana/tempo --version "${TEMPO_VERSION#tempo-}" #1.8.0
+~~~
+
+- 配置
+
+~~~sh
+#同样采用mimer的values.yaml进行调整
+~~~
+
+- 安装
+
+~~~sh
+helm upgrade -i promtail -n monitoring . -f values.yaml
+~~~
+
+
+
+> 部署完loki和tempo，去prometheus-stack的grafana配置里面加上additionalDataSource
