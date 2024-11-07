@@ -100,3 +100,22 @@ helm install loki grafana/loki -n monitoring -f install-values.yaml --debug
   - 通过Grafana的图表和过滤功能，创建适合的可视化视图。
   - 这里有个更好的建议，直接在Grafana官网下载相关Dashboard，稍微改改适合我们场景就挺好.
   - 查询语句（Explain query非常友好）也非常好写.
+
+# helm部署loki全家桶
+
+~~~sh
+helm repo add grafana https://grafana.github.io/helm-charts4
+helm repo update
+helm pull grafana/loki --version "${LOKI_VERSION#helm-loki-}"
+helm pull grafana/promtail --version "${PROMTAIL_VERSION#promtail-}"
+helm pull grafana/tempo --version "${TEMPO_VERSION#tempo-}"
+~~~
+
+~~~sh
+helm upgrade -i loki -n monitoring \
+                  oci://crcommoninfra${{parameters.environment}}${{parameters.region}}.azurecr.cn/helm/loki \
+                  --version $VERSION \
+                  --history-max 3 \
+                  -f $VALUES_FILE
+~~~
+

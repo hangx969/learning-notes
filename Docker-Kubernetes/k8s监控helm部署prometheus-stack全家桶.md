@@ -143,8 +143,6 @@ kubectl delete crd servicemonitors.monitoring.coreos.com
 kubectl delete crd thanosrulers.monitoring.coreos.com
 ~~~
 
-
-
 # ingress访问
 
 - 查看ingress的ip
@@ -173,3 +171,6 @@ kube-prometheus-stack-prometheus     nginx   prometheus.hanxux.local     172.16.
 
 # slack alert配置
 
+https://prometheus.wang/alertmanager/slack.html
+
+我们的workspace里面没有“Incoming Webhooks”的app？需要admin安装，之前的alert是怎么发进来的？
