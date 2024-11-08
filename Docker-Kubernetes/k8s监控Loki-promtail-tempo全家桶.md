@@ -171,9 +171,30 @@ helm pull grafana/tempo --version "${TEMPO_VERSION#tempo-}" #1.8.0
 - 安装
 
 ~~~sh
-helm upgrade -i promtail -n monitoring . -f values.yaml
+helm upgrade -i tempo -n monitoring . -f values.yaml
 ~~~
 
-
-
-> 部署完loki和tempo，去prometheus-stack的grafana配置里面加上additionalDataSource
+> 注：部署完loki和tempo，去prometheus-stack的grafana配置里面加上additionalDataSource：
+>
+> ~~~yaml
+>   additionalDataSources:
+>     - name: Tempo
+>       type: tempo
+>       uid: tempo
+>       url: http://tempo.monitoring.svc:3100
+>       access: proxy
+>       version: 1
+>       jsonData:
+>         httpMethod: GET
+>         serviceMap:
+>           datasourceUid: 'prometheus'
+>         tracesToLogsV2: # https://grafana.com/docs/grafana/next/datasources/tempo/#trace-to-logs
+>           datasourceUid: 'Loki'
+>           spanStartTimeShift: '-5m'
+>           spanEndTimeShift: '5m'
+>           tags: [{ key: 'service.name', value: 'app' }, { key: 'host.name', value: 'pod' }]
+>     - name: Loki
+>       type: loki
+>       url: http://loki.monitoring.svc:3100
+>       access: proxy
+> ~~~

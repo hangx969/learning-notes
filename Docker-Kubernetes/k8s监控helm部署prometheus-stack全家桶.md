@@ -1,3 +1,9 @@
+# 介绍
+
+- 官网地址：https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack#kube-prometheus-stack
+
+- 通过一个prometheus-stack的chart，自动部署prometheus、kube-state-metrics、grafana、node-exporter、Alertmanager。
+
 # 前提条件
 
 1. 准备storage class提供数据持久化，实验环境下事先部署了nfs-client的sc，并设置为default storage class
@@ -9,8 +15,6 @@
    - ingressController的deployment中配置hostnetwork=true
 
 # helm配置
-
-> 官网地址：https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack#kube-prometheus-stack
 
 - 添加仓库
 
@@ -205,3 +209,65 @@ kube-prometheus-stack-prometheus     nginx   prometheus.hanxux.local     172.16.
 https://prometheus.wang/alertmanager/slack.html
 
 我们的workspace里面没有“Incoming Webhooks”的app？需要admin安装，之前的alert是怎么发进来的？
+
+# helm安装dashboard
+
+- dashboard可以单独打成一个helm包
+
+~~~yaml
+./
+├── Chart.yaml
+├── dashboards #放各种dashboard的json文件
+│   ├── aks.json
+├── templates
+│   └── grafana_dashboard.yaml
+├── values
+└── values.yaml #主要定义dashboard的名字和json模板路径
+~~~
+
+- Chart.yaml
+
+~~~yaml
+apiVersion: v2
+name: grafana-dashboards-config
+description: A Helm chart for Grafana Dashborads configuration
+type: application
+version: 0.0.1
+appVersion: "0.0.1"
+~~~
+
+- values.yaml
+
+~~~yaml
+dashboards:
+  - file_path: "dashboards/aks.json"
+    dashboard_name: aks-onepilot-platform
+~~~
+
+- templates/grafana_dashboard.yaml
+
+~~~yaml
+{{- range .Values.dashboards }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: "grafana-dashboard-{{ .dashboard_name -}}"
+  namespace: monitoring
+  labels:
+    grafana_dashboard: "1"
+data:
+  grafana_dashboard_{{- .file_path | replace "dashboards/" "" }}: |- 
+{{ $.Files.Get .file_path | indent 4 }}
+{{- end }}
+~~~
+
+- 安装命令
+
+~~~sh
+helm upgrade -i grafana-dashboards-config -n monitoring . --values values.yaml 
+~~~
+
+# helm安装prometheus config
+
+# helm安装grafana datasources
