@@ -204,12 +204,6 @@ kube-prometheus-stack-prometheus     nginx   prometheus.hanxux.local     172.16.
 > kubectl get secrets  -n monitoring kube-prometheus-stack-grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
 > ~~~
 
-# slack alert配置
-
-https://prometheus.wang/alertmanager/slack.html
-
-我们的workspace里面没有“Incoming Webhooks”的app？需要admin安装，之前的alert是怎么发进来的？
-
 # helm安装dashboard
 
 - dashboard可以单独打成一个helm包
