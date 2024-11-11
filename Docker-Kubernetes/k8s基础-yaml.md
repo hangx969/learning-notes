@@ -113,3 +113,10 @@ heima:
 ## 常用字段含义
 
 ![image-20240725224115645](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202407252241732.png)
+
+# kubectl apply
+
+- kubectl apply默认是client side apply和server side apply。
+  - 不指定任何参数时是client-side apply，字段比较在客户端完成。
+  - 可以指定`kubectl apply --server-side`使部署成为server side apply
+  - 具体：https://juejin.cn/post/7173328614644006942，https://kubernetes.io/docs/reference/using-api/server-side-apply/

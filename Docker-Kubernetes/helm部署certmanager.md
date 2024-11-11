@@ -16,12 +16,22 @@ helm pull jetstack/cert-manager --version v1.16.1
 # 配置
 
 ~~~yaml
-
+#参照ado code调整
+#注意：crds.enabled额外设置成true，crds.keep设置成true，因为cert-manager-cainjector需要这个crd才能正常工作
 ~~~
 
 # 安装
 
 ~~~sh
-helm upgrade -i cert-manager -n cert-manager . --values values.yaml
+helm upgrade -i cert-manager -n cert-manager . --values values.yaml --create-namespace
+#可以使用下面命令检查pod是否是ready
+kubectl wait --for=condition=Ready pods --all -n cert-manager
 ~~~
 
+# 使用
+
+- cert-manager服务部署好之后，可以创建issuer和certificate资源
+
+## Issuer
+
+- 

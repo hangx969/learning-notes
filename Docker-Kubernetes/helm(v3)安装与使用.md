@@ -755,6 +755,12 @@ helm lint /root/myapp/
 1 chart(s) linted, 0 chart(s) failed
 ~~~
 
+## 输出部署文件
+
+~~~sh
+helm template cert-manager jetstack/cert-manager -n cert-manager -f values.yaml > cert-manager.yaml
+~~~
+
 ## 调整参数
 
 ~~~sh
