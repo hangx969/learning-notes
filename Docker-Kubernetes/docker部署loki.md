@@ -9,7 +9,7 @@
 
 与其他日志聚合系统相比，Loki 具有下面的一些特性：
 
-- 不对日志进行全文索引。通过存储压缩非结构化日志和仅索引元数据，Loki 操作起来会更简单，更省成本。
+- 不对日志进行全文编排索引。Loki是为每个日志处理成一组键值对，这一组键值对类似Promethues采集的指标中的Labels。这样日志内容就可以像通过Label查询Metrcis一样进行查找。类似Prometheus的查询PromQL规则一样，Loki提供了LogQL语句查询。Loki 操作起来会更简单，更省成本。
 - 通过使用与 Prometheus 相同的标签记录流对日志进行索引和分组，这使得日志的扩展和操作效率更高，能对接 alertmanager。
 - 特别适合储存 Kubernetes Pod 日志；诸如 Pod 标签之类的元数据会被自动删除和编入索引。
 - 受 Grafana 原生支持，避免 kibana 和 grafana 来回切换。

@@ -19,6 +19,8 @@
 
 - 收集log的组件很多，EFK比较常用，但是ES太重了。这里推荐Loki，一个高效的日志聚合器，适用于收集和存储日志数据，还非常轻量化，非常适合用于聚合存储**Kubernetes Events**。
 
+- loki日志查询参考：https://mp.weixin.qq.com/s?__biz=Mzk0NzIyMDA4MA==&mid=2247484579&idx=1&sn=3b2be6ca22c78aae1112601341bb80e9&chksm=c37b7fbcf40cf6aab13c14177d0e0a15d97ee6f3ef1aad00e08ba7e18ff4fae84476dce61434&cur_album_id=3143335204699504647&scene=189#wechat_redirect
+
 # Helm部署Loki
 
 - 使用**Helm**部署**Loki**，部署挺简单，定义一个**value**文件，直接**helm install**就好。因为我们使用的场景相对简单，所以部署方式使用**singleBinary**即可，数据需要持久化。
@@ -105,6 +107,8 @@ helm install loki grafana/loki -n monitoring -f install-values.yaml --debug
 
 ## Loki
 
+> Grafana生态中日志存储的后端，其单机模式支持直接使用文件存储，而多副本模式依赖对象存储来对数据进行持久化。Grafana内置了Loki数据源类型，在配置相应的数据源后可以通过Grafana Explore页面进行日志查询。
+
 - 下载
 
 ~~~sh
@@ -154,6 +158,21 @@ helm upgrade -i promtail -n monitoring . -f values.yaml
 
 ## tempo
 
+> 遵循OTel协议的Trace数据存储后端服务，包含若干组件：
+>
+> - Distributor：接收来自客户端的数据
+> - Metrics generator：将Trace数据转化为Metrics存储至Prometheus
+> - Ingester：对接存储，将数据写入存储
+> - Compactor：将存储的数据进行压缩清理，减少block数量
+> - Query Frontend：将前端查询拆分若干搜索空间至Querier进行查询
+> - Querier：向存储查询数据，并返回给Query Fronted
+>
+> Trace的数据流如下图：
+>
+> ![image-20241112141012964](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202411121410028.png)
+>
+> 官网：https://grafana.org.cn/docs/tempo/latest/introduction/telemetry/
+
 - 下载
 
 ~~~sh
@@ -198,3 +217,38 @@ helm upgrade -i tempo -n monitoring . -f values.yaml
 >       url: http://loki.monitoring.svc:3100
 >       access: proxy
 > ~~~
+
+# helm部署grafana agent
+
+## 介绍
+
+Refer：https://mp.weixin.qq.com/s?__biz=Mzk0NzIyMDA4MA==&mid=2247484542&idx=1&sn=02cba4c7dd124a06afa97104c2d50bca&chksm=c37b7f61f40cf677ae5b0aa9dfef3a39a6c945aa6f68379d1f81ccfe54d2cd706aa481efa08b&cur_album_id=3143335204699504647&scene=189#wechat_redirect
+
+- Tempo服务是可以直接通过Tempo-distributor组件或者使用TempoGateWay直接接收Trace数据的，是无需部署Grafana Agent组件的。
+
+- 考虑到生产实践中，Tempo作为基础组件一般与业务服务集群分开部署，部署在单独的集群，为各个业务集群提供Trace存储服务，所以考虑在各集群内部部署Grafana Agent，业务服务产生的Trace数据发送至Grafana Agent，由Grafana Agent根据配置的策略统一发送至Tempo服务端，如图：
+
+  ![image-20241112141359129](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202411121413231.png)
+
+- Grafana Agent集成了监控、日志、链路的处理转发相关客户端功能，可以完成对以上数据的采集。
+
+![image-20241112140930901](/home/s0001969/.config/Typora/typora-user-images/image-20241112140930901.png)
+
+## 下载
+
+~~~sh
+helm repo add grafana https://grafana.github.io/helm-charts
+helm repo update grafana
+helm pull grafana/grafana-agent --version 0.42.0
+~~~
+
+## 配置
+
+- 仿照ado的values文件配置
+
+## 安装
+
+~~~sh
+helm upgrade -i grafana-agent -n monitoring . -f ./values.yaml
+~~~
+

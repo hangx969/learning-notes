@@ -262,6 +262,91 @@ data:
 helm upgrade -i grafana-dashboards-config -n monitoring . --values values.yaml 
 ~~~
 
+# helm安装grafana datasources
+
+- datasource也可以以helm chart的形式部署，例如：
+
+~~~yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-event-datasource
+  namespace: monitoring
+  labels:
+    grafana_datasource: "1"
+data:
+  postgres_event_datasource.yaml: |-
+    apiVersion: 1
+    datasources:
+      - name: PostgresDB
+        type: postgres
+        access: proxy
+        url: {{ .Values.quantum.db.url }}:{{ .Values.quantum.db.port }}
+        database: {{ .Values.quantum.db.database }}
+        user: {{ .Values.quantum.db.user }}
+        secureJsonData:
+          password: {{ .Values.quantum.db.password }}
+        sslmode: verify-full
+        jsonData:
+          postgresVersion: 1400 # 903=9.3, 904=9.4, 905=9.5, 906=9.6, 1000=10
+          timescaledb: true
+~~~
+
 # helm安装prometheus config
 
-# helm安装grafana datasources
+- alert可以通过crd PrometheusRule的方式来创建，示例如下：
+
+~~~yaml
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: loki
+  namespace: monitoring
+spec:
+  groups:
+    - name: loki-prometheus
+      rules:
+        - alert: LokiStorageHigh
+          expr: kubelet_volume_stats_available_bytes{namespace="monitoring", persistentvolumeclaim=~"storage-loki.*"} / 1024 / 1024 / 1024 < 5
+          labels:
+            severity: warning
+            namespace: monitoring
+          annotations:
+            summary: "Loki storage is high"
+            description: "Loki storage is high. Please review retention defaults"
+            runbook: https://confluence.zenseact.com/pages/viewpage.action?pageId=255570326
+        - alert: LokiStorageVeryHigh
+          expr: kubelet_volume_stats_available_bytes{namespace="monitoring", persistentvolumeclaim=~"storage-loki.*"} / 1024 / 1024 / 1024 < 1
+          labels:
+            severity: warning
+            namespace: monitoring
+          annotations:
+            summary: "Loki storage is very high"
+            description: "Loki storage is very high and is about to auto-expand. Please consider changing retention/storage/alert defaults"
+            runbook:  https://confluence.zenseact.com/pages/viewpage.action?pageId=255570326
+        - alert: PrometheusStorageHigh
+          expr: kubelet_volume_stats_available_bytes{namespace="monitoring", persistentvolumeclaim=~"prometheus-kube-prometheus-stack-prometheus-db.*"} / 1024 / 1024 / 1024 < 5
+          labels:
+            severity: warning
+            namespace: monitoring
+          annotations:
+            summary: "Prometheus storage is high"
+            description: "Prometheus storage is high. Please consider adding more storage"
+            runbook: https://confluence.zenseact.com/pages/viewpage.action?pageId=255570326
+        - alert: PrometheusStorageVeryHigh
+          expr: kubelet_volume_stats_available_bytes{namespace="monitoring", persistentvolumeclaim=~"prometheus-kube-prometheus-stack-prometheus-db.*"} / 1024 / 1024 / 1024 < 1
+          labels:
+            severity: critical
+            namespace: monitoring
+          annotations:
+            summary: "Prometheus storage is very high"
+            description: "Prometheus storage is very high. Please add more storage"
+            runbook: https://confluence.zenseact.com/pages/viewpage.action?pageId=255570326
+~~~
+
+- 安装
+
+~~~sh
+helm upgrade -i commoninfra-kube-prometheus-config -n kube-system . --values ./values/dev.chinanorth3.yaml
+~~~
+
