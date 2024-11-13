@@ -198,3 +198,10 @@ https://learn.microsoft.com/en-us/azure/devops/pipelines/library/service-endpoin
   - Environments
   - Repositories
 - ado中的user可被分配到security group中，从group层面会对ado中的各项功能做授权。
+
+
+
+# Lab
+
+- https://www.youtube.com/watch?v=zZWJocpYZxA&list=PLpbcUe4chE79sB7Jg7B4z3HytqUUEwcNE&index=75
+- https://github.com/prometheus-operator/prometheus-operator

@@ -350,3 +350,6 @@ spec:
 helm upgrade -i commoninfra-kube-prometheus-config -n kube-system . --values ./values/dev.chinanorth3.yaml
 ~~~
 
+> PrometheusRule是Prometheus Operator中定义的CRD。有一个专门的网站可以查看各种各样的开源CRD的定义：
+>
+> - https://operatorhub.io/operator/prometheus

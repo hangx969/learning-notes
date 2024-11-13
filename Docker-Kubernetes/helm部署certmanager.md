@@ -119,4 +119,8 @@ kubectl wait --for=condition=Ready pods --all -n cert-manager
                       number: 80
     ~~~
 
-    
+
+# 教程
+
+- pod间TLS通信：https://www.youtube.com/watch?v=uTaXgZWwXzs&list=PLpbcUe4chE79sB7Jg7B4z3HytqUUEwcNE&index=93
+- certmanager教程：https://www.youtube.com/watch?v=rOe9UpHcnKk&list=PLpbcUe4chE79sB7Jg7B4z3HytqUUEwcNE&index=96
