@@ -119,6 +119,117 @@ kubectl wait --for=condition=Ready pods --all -n cert-manager
                       number: 80
     ~~~
 
+## 创建自签证书
+
+- Lab为简化处理，不去连接CA机构，用自签证书代替。https://github.com/HoussemDellai/aks-course/blob/main/34_https_pod_certmanager_letsencrypt/certificate.yaml
+
+~~~yaml
+tee cluster-issuer-selfsigned <<'EOF'
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: selfsigned
+spec:
+  selfSigned: {}
+EOF
+~~~
+
+## 创建Certificate
+
+~~~yaml
+tee certificate-app01.yaml <<'EOF'
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: app01
+spec:
+  secretName: app01-tls-cert-secret
+  privateKey:
+    rotationPolicy: Always
+  commonName: app01.default.svc.cluster.local #写的是后面要部署的svc的name
+  dnsNames:
+    - app01.default.svc.cluster.local
+  usages:
+    - digital signature
+    - key encipherment
+    - server auth
+  issuerRef:
+    name: selfsigned
+    kind: ClusterIssuer
+EOF
+~~~
+
+~~~sh
+#查看证书
+k get clusterissuer,secret,certificate
+NAME                                       READY   AGE
+clusterissuer.cert-manager.io/selfsigned   True    5m27s
+
+NAME                           TYPE                DATA   AGE
+secret/app01-tls-cert-secret   kubernetes.io/tls   3      16s
+
+NAME                                READY   SECRET                  AGE
+certificate.cert-manager.io/app01   True    app01-tls-cert-secret   16s
+~~~
+
+## pod使用certificate
+
+- pod用volume挂载secret，用环境变量指定证书位置。app中需要提前配置好https 
+
+~~~yaml
+tee deploy-app01.yaml <<'EOF'
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: app01
+  name: app01
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app01
+  template:
+    metadata:
+      labels:
+        app: app01
+    spec:
+      restartPolicy: Always
+      volumes:
+      - name: app01-tls
+        secret:
+          secretName: app01-tls-cert-secret
+      containers:
+      - name: app01
+        image: us-docker.pkg.dev/google-samples/containers/gke/hello-app-tls:1.0
+        ports:
+        - containerPort: 8443
+        volumeMounts:
+          - name: app01-tls
+            mountPath: /etc/tls
+            readOnly: true
+        env:
+          - name: TLS_CERT
+            value: /etc/tls/tls.crt
+          - name: TLS_KEY
+            value: /etc/tls/tls.key
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: app01
+  name: app01
+spec:
+  ports:
+  - port: 443
+    protocol: TCP
+    targetPort: 8443
+  selector:
+    app: app01
+  type: ClusterIP
+EOF
+~~~
 
 # 教程
 

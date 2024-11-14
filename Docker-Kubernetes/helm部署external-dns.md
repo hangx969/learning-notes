@@ -28,16 +28,15 @@ helm pull external-dns/external-dns --version 1.14.4
 
 
   - 再去域名注册机构，配置使用azure dns nameserver
-
-  - 配置文件中的source字段指定了监控哪些服务（例如ingress、service）；provider字段指定了外部dns服务商，我们用的是azure-private-dns
-
+  - 配置文件中的source字段指定了监控哪些服务（例如ingress、service）；provider字段指定了外部dns服务商，我们用的是azure-private-dns-zone
+  - 创建ingress和service时可以通过annotations字段指定hostname，external dns就会同步到外部dns
 - 与Azure的身份验证：
 
   - SP or MI？
     - SPN的方式，通过azure.json里面写入appID，secret等信息绑定到SPN，azure层面做一下RBAC授权（RG的reader，DNS Zone的DNS Zone Contributor）
     - MI是用的kubelet Identity，因为是所有pod共用的，会存在安全问题。
 
-  - workload identity？可以限制仅某些pod可以使用，external-dns已经支持workloadIdentityExtension。
+  - workload identity？可以限制仅某些pod可以使用，external-dns已经支持workloadIdentityExtension。配置方式见官网。
 
 # 安装
 
