@@ -1,9 +1,12 @@
 # 介绍
 
+- 使用 HTTPS 需要向CA申请证书，并且需要付出一定的成本，如果需求数量多，则开支也相对增加。[cert-manager](https://cert-manager.io/docs/) 是 Kubernetes 上的全能证书管理工具，支持利用 cert-manager 基于 [ACME](https://tools.ietf.org/html/rfc8555) 协议与[Let's Encrypt CA](https://letsencrypt.org/) 签发免费证书并为证书自动续期，实现永久免费使用证书。
+
 - 使用certmanager，对cloudfare申请的域名签发证书：https://todoit.tech/k8s/cert/
 - certmanager官网：https://cert-manager.io/docs/installation/helm/
 
-- 使用 HTTPS 需要向CA申请证书，并且需要付出一定的成本，如果需求数量多，则开支也相对增加。[cert-manager](https://cert-manager.io/docs/) 是 Kubernetes 上的全能证书管理工具，支持利用 cert-manager 基于 [ACME](https://tools.ietf.org/html/rfc8555) 协议与[Let's Encrypt CA](https://letsencrypt.org/) 签发免费证书并为证书自动续期，实现永久免费使用证书。
+- pod间TLS通信：https://www.youtube.com/watch?v=uTaXgZWwXzs&list=PLpbcUe4chE79sB7Jg7B4z3HytqUUEwcNE&index=93
+- certmanager教程：https://www.youtube.com/watch?v=rOe9UpHcnKk&list=PLpbcUe4chE79sB7Jg7B4z3HytqUUEwcNE&index=96
 
 # 拉取
 
@@ -134,7 +137,7 @@ spec:
 EOF
 ~~~
 
-## 创建Certificate
+## 创建Certificate--颁发给svc
 
 ~~~yaml
 tee certificate-app01.yaml <<'EOF'
@@ -231,7 +234,7 @@ spec:
 EOF
 ~~~
 
-# 教程
+## 证书颁发给ingress
 
-- pod间TLS通信：https://www.youtube.com/watch?v=uTaXgZWwXzs&list=PLpbcUe4chE79sB7Jg7B4z3HytqUUEwcNE&index=93
-- certmanager教程：https://www.youtube.com/watch?v=rOe9UpHcnKk&list=PLpbcUe4chE79sB7Jg7B4z3HytqUUEwcNE&index=96
+- 创建certificate时common name和dns name写ingress的hostname，证书保存到secret
+- 创建ingress时，配置tls字段，指定secret name

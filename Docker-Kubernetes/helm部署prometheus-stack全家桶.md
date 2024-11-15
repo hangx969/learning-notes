@@ -180,6 +180,8 @@ kubectl delete crd thanosrulers.monitoring.coreos.com
 
 # ingress访问
 
+## Http
+
 - 查看ingress的ip
 
 ~~~sh
@@ -203,6 +205,50 @@ kube-prometheus-stack-prometheus     nginx   prometheus.hanxux.local     172.16.
 > #查看grafana密码
 > kubectl get secrets  -n monitoring kube-prometheus-stack-grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
 > ~~~
+
+## Https
+
+- 首先部署出certmanager --> 创建clusterissuer --> 创建给grafana ingress https的secret --> helm values.yaml的grafana ingress tls部分配置secret、host
+
+- secret
+
+~~~yaml
+tee certificate-grafana.yaml <<'EOF'
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: cert-grafana
+  namespace: monitoring
+spec:
+  secretName: grafana-tls-cert-secret
+  privateKey:
+    rotationPolicy: Always
+  commonName: grafana.hanxux.local
+  dnsNames:
+    - grafana.hanxux.local
+  usages:
+    - digital signature
+    - key encipherment
+    - server auth
+  issuerRef:
+    name: selfsigned
+    kind: ClusterIssuer
+EOF
+~~~
+
+- kube-prometheus-stack的values配置
+
+~~~yaml
+    ## TLS configuration for grafana Ingress
+    ## Secret must be manually created in the namespace
+    ##
+    tls:
+      - secretName: cert-grafana
+        hosts:
+        - grafana.hanxux.local
+~~~
+
+- https访问hostname即可，由于lab用的是自签证书，所以浏览器会报连接不安全。
 
 # helm安装dashboard
 

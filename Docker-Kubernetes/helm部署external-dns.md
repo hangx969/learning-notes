@@ -19,6 +19,8 @@ helm pull external-dns/external-dns --version 1.14.4
 
 # 配置
 
+> 以Azure作为外部DNS为例：https://kubernetes-sigs.github.io/external-dns/v0.13.6/tutorials/azure/#managed-identity-using-workload-identity
+
 - Azure DNS托管域名的大致过程：
 
   - 首先从域名注册机构注册一个父域名比如xyz
@@ -41,6 +43,6 @@ helm pull external-dns/external-dns --version 1.14.4
 # 安装
 
 ~~~sh
-helm upgrade -i external-dns -n external-dns --version 1.14.4 -f values.yaml --create-namespace
+helm upgrade -i external-dns -n external-dns . -f values.yaml --create-namespace
 ~~~
 
