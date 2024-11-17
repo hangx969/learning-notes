@@ -575,7 +575,7 @@ roleRef:
   useradd hangx
   #config文件的拷贝：得把/root/.kube/一整个目录拷贝过去
   cp -ar /root/.kube/ /tmp/
-  #修改/tmp/.kube/config文件，把kubernetes-admin相关的删除，只留hangx用户
+  #修改/tmp/.kube/config文件，把kubernetes-admin相关的删除，只留hangx用户；current context切换到hangx用户
   #kubeconfig文件拷贝到这个用户的家目录
   cp -ar /tmp/.kube/ /home/hangx/
   #root用户下操作，修改.kube目录的属主、属组为hangx
@@ -640,7 +640,7 @@ roleRef:
   useradd hangx
   #config文件的拷贝：得把/root/.kube/一整个目录拷贝过去
   cp -ar /root/.kube/ /tmp/
-  #修改/tmp/.kube/config文件，把kubernetes-admin相关的删除，只留hangx用户
+  #修改/tmp/.kube/config文件，把kubernetes-admin相关的删除，只留hangx用户；current context切换到hangx用户
   #kubeconfig文件拷贝到这个用户的家目录
   cp -ar /tmp/.kube/ /home/hangx/
   #root用户下操作，修改.kube目录的属主、属组为hangx
