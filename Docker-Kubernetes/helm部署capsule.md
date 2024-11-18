@@ -1,6 +1,7 @@
 # 介绍
 
 - 官网：https://capsule.clastix.io/docs/#kubernetes-multi-tenancy-made-easy
+- helm参数含义：https://github.com/projectcapsule/capsule/blob/main/charts/capsule/README.md#customize-the-installation
 - Tenant: capsule是管理multi tenant的工具，什么是tenant？tenant在capsule的语境下可以理解为：一组namespace，可以对其做RBAC授权、设置resource quota、network policy等。
 
 # 下载
@@ -14,7 +15,8 @@ helm pull clastix/capsule --version helm-v0.4.6
 # 配置
 
 - 我们ado中仅仅指定了capsuleUserGroups，用的是AAD的group
-- capsuleUserGroups解释：用于配置可以访问和管理 Capsule 功能的用户组。在默认提供的 `values.yaml` 中，指定了 `capsuleUserGroups: ["capsule.clastix.io"]`，这意味着只有属于 `capsule.clastix.io` 这个用户组的用户或服务账户可以进行与 Capsule 相关的操作
+- capsuleUserGroups解释：用于配置可以访问和管理 Capsule 功能的用户组。在默认提供的 `values.yaml` 中，指定了 `capsuleUserGroups: ["capsule.clastix.io"]`，这意味着只有属于 `capsule.clastix.io` 这个用户组的用户或服务账户可以进行与 Capsule 相关的操作。
+- 在后续创建tenant指定tenant owner时，tenant owner要被设置成capsule user group的一员。（user可以通过证书的O字段设置，group可以用外部idp的嵌套组，service account可以直接把capsule user group设置为system:serviceaccounts:tenant-system）
 
 # 安装
 
@@ -389,5 +391,46 @@ rules:
 helm upgrade -i commoninfra-capsule-tenants -n kube-system . --values ./values/dev.chinanorth3.yaml
 ~~~
 
+- 切换到hangx user，可以在tenant中创建ns
+
+~~~sh
+#检查是否有权限创建ns
+kubectl auth can-i create namespaces
+kubectl auth can-i delete ns -n hangx-helm-release
+~~~
+
+- 如果user是多个tenant的owner，在capsule values中开启了forceTenantPrefix选项，则根据ns的前缀匹配到tenant中；否则，需要显式在ns的label中指定tenant。不指定的话就会报错：Unable to assign namespace to tenant. Please use capsule.clastix.io/tenant label when creating a namespace
+
+~~~yaml
+kubectl apply -f - << EOF
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: team-hangx-helm-release-2
+  labels:
+    capsule.clastix.io/tenant: team-hangx-2
+EOF
+~~~
+
+## tenant层面的配置
+
+- resource、ingress、priority class、storage class、network policies、image registries、label/annotations等等都可以在tenant层面进行配置。详见官网：https://capsule.clastix.io/docs/general/tutorial/
+
+- 值得注意的是，PVC是namespaces-scoped的资源，但是PV不是；在一个tenant下创建的PVC只能挂载本tenant下的PV，怎么给PV指定tenant呢?
+
+  ~~~yaml
+  apiVersion: v1
+  kind: PersistentVolume
+  metadata:
+    labels:
+      capsule.clastix.io/tenant: atreides
+    name: pvc-1b3aa814-3b0c-4912-9bd9-112820da38fe
+  ...
+  ~~~
 
 
+## dashboard
+
+- 对于已经部署好prometheus stack的集群来说，可以直接在capsule的helm中开启service monitor功能，配置prometheus抓取数据、grafana展示，详情参考：https://capsule.clastix.io/docs/guides/monitoring#quick-start
+
+## 
