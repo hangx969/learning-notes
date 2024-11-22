@@ -237,4 +237,25 @@ EOF
 ## 证书颁发给ingress
 
 - 创建certificate时common name和dns name写ingress的hostname，证书保存到secret
-- 创建ingress时，配置tls字段，指定secret name
+
+- 创建ingress时，配置tls字段，指定secret name，例如：
+
+  ~~~yaml
+    ingress:
+      enabled: true
+      ingressClassName: nginx-default
+      annotations:
+        nginx.ingress.kubernetes.io/auth-url: "https://oauth2proxy.hanxux.local/oauth2/auth"
+        nginx.ingress.kubernetes.io/auth-signin: "https://oauth2proxy.hanxux.local/oauth2/start?rd=https%3A%2F%2Fkyverno.hanxux.local"
+      hosts:
+        - host: kyverno.hanxux.local
+          paths:
+            - path: /
+              pathType: Prefix
+      tls:
+        - secretName: policy-reporter-tls-cert-secret
+          hosts:
+            - kyverno.hanxux.local
+  ~~~
+
+  

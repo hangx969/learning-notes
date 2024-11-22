@@ -1,8 +1,7 @@
 # kuboard
 
 - 官网地址：https://www.kuboard.cn/
-- 安装kuboard参考：[https://www.kuboard.cn/install
-- [/v3/install-built-in.html#%E9%83%A8%E7%BD%B2%E8%AE%A1%E5%88%92](https://www.kuboard.cn/install/v3/install-built-in.html#部署计划)
+- 安装kuboard参考：https://www.kuboard.cn/v4/install/
 
 # 部署kuboard
 
