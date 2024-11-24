@@ -8,16 +8,12 @@
 # 下载
 
 ~~~sh
-              helm repo add --force-update appscode https://charts.appscode.com/stable
-              helm repo update appscode
-              helm pull appscode/kubed --version "${CONFIG_SYNCER_VERSION#v}"
+helm repo add --force-update appscode https://charts.appscode.com/stable
+helm repo update appscode
+helm pull appscode/kubed --version "${CONFIG_SYNCER_VERSION#v}" #0.13.2
 ~~~
 
-- 注意：镜像从ACR拉取
-
 # 配置
-
-- 
 
 # 安装
 
@@ -26,3 +22,5 @@ helm template oci://crcommoninfra${{parameters.environment}}${{parameters.region
 
 helm upgrade -i config-syncer -n kube-system \ oci://crcommoninfra${{parameters.environment}}${{parameters.region}}.azurecr.cn/helm/kubed \ --history-max 3 \ --version $CHART_VERSION \ -f $DIRECTORY/external/config-syncer/${{parameters.environment}}.${{parameters.region}}.yaml \ --set config.additionalOptions="{--resync-period=30s}"
 ~~~
+
+> - 由于当前镜像存在ACR中暂时获取不到，自己build直接报错。先暂停测试。后面可以尝试用官网提供的license方法来部署。
