@@ -4,6 +4,7 @@
 
 - Configmap是k8s中的资源对象，用于保存非机密性的配置的，数据可以用key/value键值对的形式保存，也可通过文件的形式保存。
 - 我们在部署服务的时候，每个服务都有自己的配置文件，如果一台服务器上部署多个服务：nginx、tomcat、apache等，那么这些配置都存在这个节点上，假如一台服务器不能满足线上高并发的要求，需要对服务器扩容，扩容之后的服务器还是需要部署多个服务：nginx、tomcat、apache，新增加的服务器上还是要管理这些服务的配置，如果有一个服务出现问题，需要修改配置文件，每台物理节点上的配置都需要修改，这种方式肯定满足不了线上大批量的配置变更要求。所以，k8s中引入了Configmap资源对象，可以当成volume挂载到pod中，实现统一的配置管理。
+- 官网地址：https://kubernetes.io/docs/concepts/configuration/configmap/
 
 <img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202311151711600.png" alt="image-20231115171130386" style="zoom:67%;" />
 
@@ -196,7 +197,9 @@ spec:
   - name: mysql
     image: busybox
     command: [ "/bin/sh", "-c", "sleep 3600" ]
-    
+    envFrom: #这个configMap里面所有的k-v都被一键做成了环境变量
+    - configMapRef:
+        name: myconfigmap    
   restartPolicy: Never 
 ~~~
 
