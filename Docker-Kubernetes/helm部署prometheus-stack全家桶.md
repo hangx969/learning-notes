@@ -250,6 +250,16 @@ EOF
 
 - https访问hostname即可，由于lab用的是自签证书，所以浏览器会报连接不安全。
 
+## oauth2proxy
+
+- 给ingress添加annotations：
+
+~~~yaml
+annotations:
+  nginx.ingress.kubernetes.io/auth-url: "https://oauth2proxy.hanxux.local/oauth2/auth"
+  nginx.ingress.kubernetes.io/auth-signin: "https://oauth2proxy.hanxux.local/oauth2/start?rd=https%3A%2F%2Fgrafana.hanxux.local"
+~~~
+
 # helm安装dashboard
 
 - dashboard可以单独打成一个helm包

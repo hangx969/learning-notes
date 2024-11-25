@@ -24,3 +24,12 @@ helm upgrade -i config-syncer -n kube-system \ oci://crcommoninfra${{parameters.
 ~~~
 
 > - 由于当前镜像存在ACR中暂时获取不到，自己build直接报错。先暂停测试。后面可以尝试用官网提供的license方法来部署。
+
+# 使用
+
+- 将configMap同步到其他namespace：
+
+  - 如果创建了一个configMap/Secret，具有annotation：**`kubed.appscode.com/sync: ""`**，config-syncer会把自动同步到其他所有namespace。
+  - 如果创建了一个configMap/Secret，具有annotation：**`kubed.appscode.com/sync: "app=kubed"`**，config-syncer会把自动同步到具有标签：app=kubed的所有namespace。
+
+  

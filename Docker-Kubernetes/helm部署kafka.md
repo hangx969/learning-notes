@@ -59,7 +59,7 @@ helm upgrade -i strimzi-kafka-operator -n kafka --create-namespace . --values va
 
 # 部署kafka cluster
 
-- cluster operator部署完之后，去部署下面几个CRD资源，这些资源也是以helm chart形式部署，chart name：name: commoninfra-kafka-config
+- cluster operator部署完之后，去部署下面几个CRD资源，这些资源也是以helm chart形式部署，chart name：commoninfra-kafka-config
 
 ## kafka-broker-nodepool
 
@@ -481,7 +481,9 @@ spec:
       action: replace
 ~~~
 
-## values.yaml
+## values
+
+- dev.chinanorth3.yaml
 
 ~~~yaml
 environment: "hanxux"
@@ -499,6 +501,43 @@ commoninfra:
       class: sc-nfs
 ~~~
 
+- values.yaml
+
+~~~yaml
+environment: "hanxux"
+cloud: ""
+product: "local"
+dns:
+  #domain: "azure.autoheim.net"
+  #subscription_id: "287b9fb1-557e-4f1a-9c99-1a5e1a322cee"
+  #resource_group_name: "rg-es-identity-dns-westeurope"
+commoninfra:
+  kafka:
+    name: kafka
+    zoneredundant: "false"
+    kafka_controller_resources:
+      requests:
+        cpu: 300m
+        memory: 200Mi
+      limits:
+        cpu: 600m
+        memory: 2Gi
+    kafka_resources:
+      requests:
+        ## see https://github.com/strimzi/strimzi-kafka-bridge/issues/731
+        cpu: 600m
+        memory: 200Mi
+      limits:
+        cpu: 1200m
+        memory: 4Gi
+    version: 3.7.1
+    replicas: 3
+    storage:
+      type: persistent-claim
+      size: "1Gi"
+      class: sc-default
+~~~
+
 ## 安装
 
 ~~~sh
@@ -507,3 +546,146 @@ helm upgrade -i commoninfra-kafka-config -n kube-system . --values ./values/valu
 
 # 部署kafka-ui
 
+## kafka-ui-config
+
+- template/kafka_ui_user.yaml
+
+  ~~~yaml
+  apiVersion: kafka.strimzi.io/v1beta1
+  kind: KafkaUser
+  metadata:
+    name: kafka-ui-client
+    labels:
+      strimzi.io/cluster: kafka
+    namespace: kafka
+  spec:
+    authentication:
+      type: tls
+    authorization:
+      acls:
+        {{- with .Values.acls }}
+          {{- toYaml . | nindent 6 }}
+        {{- end }}
+        - resource:
+            name: 'kafka-ui-client'
+            patternType: literal
+            type: group
+          operations:
+            - All
+        - resource:
+            type: cluster
+          operations:
+            - Describe
+            - DescribeConfigs
+      type: simple
+    template:
+      secret:
+        metadata:
+          annotations:
+            kubed.appscode.com/sync: "config-sync-app=kafka-ui" #config-syncer会把这个secret自动同步到具有标签config-sync-app=kafka-ui的namespace
+  ~~~
+
+- values.yaml
+
+  ~~~yaml
+  acls:
+    - resource:
+        name: '*'
+        patternType: literal
+        type: topic
+      operations:
+        - Read
+        - Write
+        - Describe
+        - DescribeConfigs
+        - Alter
+        - AlterConfigs
+  
+    - resource:
+        name: '*'
+        patternType: literal
+        type: group
+      operations:
+        - Describe
+        - Read
+  ~~~
+
+- 安装
+
+  ~~~sh
+  helm upgrade -i commoninfra-kafka-ui-config -n kafka . --values $VALUES_FILE
+  ~~~
+
+## kafka-ui本体
+
+- 下载安装
+
+~~~sh
+helm repo add kafka-ui https://provectus.github.io/kafka-ui-charts
+helm repo update kafka-ui
+helm pull kafka-ui/kafka-ui --version 0.7.6
+helm upgrade -i kafka-ui -n kafka --values values.yaml
+~~~
+
+- 配置ingress和tls
+
+~~~yaml
+# 先创建certificate
+tee certificate-kafka-ui.yaml <<'EOF'
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: cert-kafka-ui
+  namespace: kafka
+spec:
+  secretName: kafka-ui-tls-cert-secret
+  privateKey:
+    rotationPolicy: Always
+  commonName: kafka-ui.hanxux.local
+  dnsNames:
+    - kafka-ui.hanxux.local
+  usages:
+    - digital signature
+    - key encipherment
+    - server auth
+  issuerRef:
+    name: selfsigned
+    kind: ClusterIssuer
+EOF
+~~~
+
+~~~yaml
+ingress:
+  # Enable ingress resource
+  enabled: true
+
+  # Annotations for the Ingress
+  annotations:
+    nginx.ingress.kubernetes.io/auth-url: "https://oauth2proxy.hanxux.local/oauth2/auth"
+    nginx.ingress.kubernetes.io/auth-signin: "https://oauth2proxy.hanxux.local/oauth2/start?rd=https%3A%2F%2Fkafka-ui.hanxux.local"
+
+  # ingressClassName for the Ingress
+  ingressClassName: "nginx-default"
+
+  # The path for the Ingress
+  path: "/"
+
+  # The path type for the Ingress
+  pathType: "Prefix"
+
+  # The hostname for the Ingress
+  host: "kafka-ui.hanxux.local"
+  tls:
+    # Enable TLS termination for the Ingress
+    enabled: true
+    # the name of a pre-created Secret containing a TLS private key and certificate
+    secretName: "cert-kafka-ui"
+~~~
+
+- 配置oauth2proxy：ingress添加annotations：
+
+~~~yaml
+annotations:
+  nginx.ingress.kubernetes.io/auth-url: "https://oauth2proxy.hanxux.local/oauth2/auth"
+  nginx.ingress.kubernetes.io/auth-signin: "https://oauth2proxy.hanxux.local/oauth2/start?rd=https%3A%2F%2Fkafka-ui.hanxux.local"
+~~~
