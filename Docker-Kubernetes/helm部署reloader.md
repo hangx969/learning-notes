@@ -1,6 +1,6 @@
 # 介绍
 
-- 官网地址：https://github.com/stakater/Reloader
+- 官网地址：https://github.com/stakater/Reloader，教程：https://zhuanlan.zhihu.com/p/669681298
 
 - configMap和secret有两种方式赋值：
 
@@ -29,7 +29,7 @@ helm pull stakater/reloader --version 1.0.115
 
 # 配置
 
-- 
+- watchGlobally: true --> 配置为全部监测即可
 
 
 # 安装
@@ -89,4 +89,7 @@ helm upgrade -i reloader -n reloader --create-namespace . -f values.yaml
   ...
   ~~~
 
-  
+
+> 注：
+>
+> - 需要注意的一点是，`reloader.stakater.com/search` 和 `reloader.stakater.com/auto` 不能同时生效。如果已经指定了 `reloader.stakater.com/auto: "true"` 这个注释，那么这个 Pod 就会在任何一个 ConfigMap 或 Secret 改变时开始滚动更新，不论是否还有其他的相关注释
