@@ -1,6 +1,9 @@
 # 介绍
 
-- 官网地址：https://artifacthub.io/packages/helm/sonarqube/sonarqube#production-use-case
+- 官网地址：
+  - https://artifacthub.io/packages/helm/sonarqube/sonarqube#production-use-case
+  - https://docs.sonarsource.com/sonarqube-server/10.5/setup-and-upgrade/deploy-on-kubernetes/sonarqube/
+
 - SonarQube是一个开源的代码质量管理系统，用于自动化检查源代码的质量并提供报告。它支持多种编程语言，包括Java、C#、JavaScript、Python等，能够检测出代码中的错误、漏洞、代码异味等问题。SonarQube可以集成到CI/CD流程中，帮助开发团队在开发过程中持续改进代码质量。
 
 
@@ -84,3 +87,4 @@ helm upgrade -i sonarqube -n sonarqube --create-namespace . -f values.yaml
 
 # 使用
 
+- 与azure devops集成：https://docs.sonarsource.com/sonarqube-server/10.5/devops-platform-integration/azure-devops-integration/55
