@@ -27,9 +27,16 @@ helm upgrade -i config-syncer -n kube-system \ oci://crcommoninfra${{parameters.
 
 # 使用
 
+- 参考官网：https://config-syncer.com/docs/v0.15.2/guides/config-syncer/intra-cluster/#namespace-selector
+
 - 将configMap同步到其他namespace：
 
   - 如果创建了一个configMap/Secret，具有annotation：**`kubed.appscode.com/sync: ""`**，config-syncer会把自动同步到其他所有namespace。
   - 如果创建了一个configMap/Secret，具有annotation：**`kubed.appscode.com/sync: "app=kubed"`**，config-syncer会把自动同步到具有标签：app=kubed的所有namespace。
 
-  
+
+> 注意：
+>
+> - 源secret/ConfigMap是在**annotation**中设置**`kubed.appscode.com/sync: "app=kubed"`**
+> - 需要被同步的目的namespace是在**label**中设置**`app=kubed`**
+

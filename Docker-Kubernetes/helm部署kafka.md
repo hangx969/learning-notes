@@ -23,9 +23,27 @@
 ## strimzi-kafka-operator
 
 - 生产环境推荐的kafka部署方式为operator方式部署，Strimzi是目前最主流的operator方案。集群数据量较小的话，可以采用NFS共享存储，数据量较大的话可使用local pv存储。
+
 - github地址：https://github.com/strimzi/strimzi-kafka-operator/releases
+
 - 官网地址：https://strimzi.io/docs/operators/latest/deploying.html#deploying-cluster-operator-helm-chart-str
+
 - cluster operator部署出来之后，再去手动创建kafka cluster、topic operator、user operator等CRD资源。
+
+- cluster operator提供了这些CRD资源
+
+  | Strimzi resource    | Long name         | Short name |
+  | :------------------ | :---------------- | :--------- |
+  | Kafka               | kafka             | k          |
+  | Kafka Node Pool     | kafkanodepool     | knp        |
+  | Kafka Topic         | kafkatopic        | kt         |
+  | Kafka User          | kafkauser         | ku         |
+  | Kafka Connect       | kafkaconnect      | kc         |
+  | Kafka Connector     | kafkaconnector    | kctr       |
+  | Kafka MirrorMaker   | kafkamirrormaker  | kmm        |
+  | Kafka MirrorMaker 2 | kafkamirrormaker2 | kmm2       |
+  | Kafka Bridge        | kafkabridge       | kb         |
+  | Kafka Rebalance     | kafkarebalance    | kr         |
 
 ## kafka-ui
 
@@ -75,6 +93,27 @@ spec:
   replicas: {{ .Values.commoninfra.kafka.replicas }}
   roles:
     - broker
+  storage:
+    type: {{ .Values.commoninfra.kafka.storage.type }}
+    size: {{ .Values.commoninfra.kafka.storage.size }}
+    class: {{ .Values.commoninfra.kafka.storage.class }}
+~~~
+
+## kafka-controller-nodepool
+
+~~~yaml
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaNodePool
+metadata:
+  name: controller
+  namespace: kafka
+  labels:
+    strimzi.io/cluster: {{ .Values.commoninfra.kafka.name }}
+spec:
+  replicas: {{ .Values.commoninfra.kafka.replicas }}
+  roles:
+    - controller
+  resources: {{- .Values.commoninfra.kafka.kafka_controller_resources | toYaml | trim | nindent 4 }}
   storage:
     type: {{ .Values.commoninfra.kafka.storage.type }}
     size: {{ .Values.commoninfra.kafka.storage.size }}
@@ -184,27 +223,6 @@ spec:
         -Xms: 256m
         -Xmx: 256m
   kafkaExporter: {}
-~~~
-
-## kafka-controller-nodepool
-
-~~~yaml
-apiVersion: kafka.strimzi.io/v1beta2
-kind: KafkaNodePool
-metadata:
-  name: controller
-  namespace: kafka
-  labels:
-    strimzi.io/cluster: {{ .Values.commoninfra.kafka.name }}
-spec:
-  replicas: {{ .Values.commoninfra.kafka.replicas }}
-  roles:
-    - controller
-  resources: {{- .Values.commoninfra.kafka.kafka_controller_resources | toYaml | trim | nindent 4 }}
-  storage:
-    type: {{ .Values.commoninfra.kafka.storage.type }}
-    size: {{ .Values.commoninfra.kafka.storage.size }}
-    class: {{ .Values.commoninfra.kafka.storage.class }}
 ~~~
 
 ## kafka-metrics-config
@@ -483,38 +501,26 @@ spec:
 
 ## values
 
-- dev.chinanorth3.yaml
+- values.yaml
 
 ~~~yaml
 environment: "hanxux"
-cloud: "" #azurecloudchina
+cloud: "azurechinacloud" #azurecloudchina
 product: "local"
+#dns:
+  #domain: "onepilot.azurecn.autoheim.net"
+  #subscription_id: "e8aaa21f-52cf-48d2-9293-796ab1dddaeb"
+  #resource_group_name: "rg-es-identity-dns-chinanorth3"
 commoninfra:
   kafka:
     name: kafka
-    zoneredundant: "true"
+    zoneredundant: "false"
     version: 3.7.1
     replicas: 3
     storage:
       type: persistent-claim
       size: "1Gi"
       class: sc-nfs
-~~~
-
-- values.yaml
-
-~~~yaml
-environment: "hanxux"
-cloud: ""
-product: "local"
-dns:
-  #domain: "azure.autoheim.net"
-  #subscription_id: "287b9fb1-557e-4f1a-9c99-1a5e1a322cee"
-  #resource_group_name: "rg-es-identity-dns-westeurope"
-commoninfra:
-  kafka:
-    name: kafka
-    zoneredundant: "false"
     kafka_controller_resources:
       requests:
         cpu: 300m
@@ -525,17 +531,73 @@ commoninfra:
     kafka_resources:
       requests:
         ## see https://github.com/strimzi/strimzi-kafka-bridge/issues/731
-        cpu: 600m
+        cpu: 300m
         memory: 200Mi
       limits:
-        cpu: 1200m
-        memory: 4Gi
+        cpu: 600m
+        memory: 2Gi
+~~~
+
+> 注：
+>
+> - 上面的是仿照ado中的配置，但是在本地nodepool创建不出来。
+> - 下面用官网给的示例可以成功创建：https://github.com/strimzi/strimzi-kafka-operator/blob/0.44.0/examples/kafka/kraft/kafka-single-node.yaml
+
+~~~yaml
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaNodePool
+metadata:
+  name: dual-role
+  namespace: kafka
+  labels:
+    strimzi.io/cluster: my-cluster
+spec:
+  replicas: 1
+  roles:
+    - controller
+    - broker
+  storage:
+    type: jbod
+    volumes:
+      - id: 0
+        type: persistent-claim
+        size: 1Gi
+        class: sc-nfs
+        deleteClaim: false
+        kraftMetadata: shared
+--
+apiVersion: kafka.strimzi.io/v1beta2
+kind: Kafka
+metadata:
+  name: my-cluster
+  namespace: kafka
+  annotations:
+    strimzi.io/node-pools: enabled
+    strimzi.io/kraft: enabled
+spec:
+  kafka:
     version: 3.7.1
-    replicas: 3
-    storage:
-      type: persistent-claim
-      size: "1Gi"
-      class: sc-default
+    #metadataVersion: 3.8-IV0
+    authorization:
+      type: simple
+    listeners:
+      - name: plain
+        port: 9092
+        type: internal
+        tls: false
+      - name: tls
+        port: 9093
+        type: internal
+        tls: true
+    config:
+      offsets.topic.replication.factor: 1
+      transaction.state.log.replication.factor: 1
+      transaction.state.log.min.isr: 1
+      default.replication.factor: 1
+      min.insync.replicas: 1
+  entityOperator:
+    topicOperator: {}
+    userOperator: {}
 ~~~
 
 ## 安装
@@ -556,7 +618,7 @@ helm upgrade -i commoninfra-kafka-config -n kube-system . --values ./values/valu
   metadata:
     name: kafka-ui-client
     labels:
-      strimzi.io/cluster: kafka
+      strimzi.io/cluster: my-cluster
     namespace: kafka
   spec:
     authentication:
@@ -600,7 +662,6 @@ helm upgrade -i commoninfra-kafka-config -n kube-system . --values ./values/valu
         - DescribeConfigs
         - Alter
         - AlterConfigs
-  
     - resource:
         name: '*'
         patternType: literal
@@ -609,7 +670,7 @@ helm upgrade -i commoninfra-kafka-config -n kube-system . --values ./values/valu
         - Describe
         - Read
   ~~~
-
+  
 - 安装
 
   ~~~sh
@@ -689,3 +750,68 @@ annotations:
   nginx.ingress.kubernetes.io/auth-url: "https://oauth2proxy.hanxux.local/oauth2/auth"
   nginx.ingress.kubernetes.io/auth-signin: "https://oauth2proxy.hanxux.local/oauth2/start?rd=https%3A%2F%2Fkafka-ui.hanxux.local"
 ~~~
+
+- 安装
+
+~~~sh
+helm upgrade -i kafka-ui -n kafka . --values values.yaml
+~~~
+
+## kafka-ui连接cluster
+
+- 通过values.yaml环境变量来配置的。
+  - ado里面配置的使用kafka-ui-client的secret做认证，在本地部署有点问题，遂添加AUTH_TYPE=DISABLED参数，在UI上就能看到online的cluster了。这样部署的话前面的kafka-ui-config就暂时不需要了。
+- 配置方法可以参考官网：https://docs.kafka-ui.provectus.io/configuration/configuration-file
+
+~~~yaml
+env:
+  - name: MANAGEMENT_HEALTH_LDAP_ENABLED
+    value: "FALSE"
+  - name: AUTH_TYPE
+    value: "DISABLED"
+  - name: DYNAMIC_CONFIG_ENABLED
+    value: "true"
+  - name: LOGGING_LEVEL_PROVECTUS
+    value: info
+  - name: KAFKA_CLUSTERS_0_NAME
+    value: my-cluster
+  # - name: KAFKA_CLUSTERS_0_PROPERTIES_SECURITY_PROTOCOL
+  #   value: SSL
+  - name: KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS
+    value: my-cluster-kafka-bootstrap.kafka.svc:9092
+  #- name: KAFKA_CLUSTERS_0_SCHEMAREGISTRY
+    #value: http://apicurio-schema-registry.apicurio-schema-registry.svc:8080/apis/ccompat/v6
+#   - name: KAFKA_CLUSTERS_0_PROPERTIES_SSL_TRUSTSTORE_TYPE
+#     value: "PKCS12"
+#   - name: KAFKA_CLUSTERS_0_PROPERTIES_SSL_TRUSTSTORE_PASSWORD
+#     valueFrom:
+#       secretKeyRef:
+#         name: kafka-cluster-ca-cert
+#         key: ca.password
+#   - name: KAFKA_CLUSTERS_0_PROPERTIES_SSL_TRUSTSTORE_LOCATION
+#     value: "/etc/kafka/ca-secret/ca.p12"
+#   - name: KAFKA_CLUSTERS_0_PROPERTIES_SSL_KEYSTORE_TYPE
+#     value: "PKCS12"
+#   - name: KAFKA_CLUSTERS_0_PROPERTIES_SSL_KEYSTORE_PASSWORD
+#     valueFrom:
+#       secretKeyRef:
+#         name: kafka-ui-client
+#         key: user.password
+#   - name: KAFKA_CLUSTERS_0_PROPERTIES_SSL_KEYSTORE_LOCATION
+#     value: "/etc/kafka/client-secret/user.p12"
+
+# volumeMounts:
+#   - name: kafka-ui-client
+#     mountPath: "/etc/kafka/client-secret/"
+#   - name: kafka-cluster-ca-cert
+#     mountPath: "/etc/kafka/ca-secret/"
+
+# volumes:
+#   - name: kafka-ui-client
+#     secret:
+#       secretName: kafka-ui-client
+#   - name: kafka-cluster-ca-cert
+#     secret:
+#       secretName: kafka-cluster-ca-cert
+~~~
+
