@@ -195,6 +195,20 @@ kubectl attach -it -c debugger tomcat-test
 >
 > - k8s官网上都没有给出这种上传json的方法，暂时不搞这种方法了。
 
+## 示例-AKS pod添加azcli debug容器
+
+- 有时AKS中的pod与azure交互出现问题需要排查，我们可以在pod上attach一个azcli的debug容器
+
+- 获取azure官方azcli容器：https://learn.microsoft.com/zh-cn/cli/azure/run-azure-cli-docker#run-the-docker-container-with-a-specific-version-of-the-azure-cli
+
+~~~sh
+#镜像上传到ACR
+z acr import --name "<acr name>.azurecr.cn" --source mcr.microsoft.com/azure-cli:2.65.0-cbl-mariner2.0 --image azure-cli:2.65.0-cbl-mariner2.0
+
+#attach debug容器
+kubectl debug -it <pod name> -n <ns name> --image=<acr name>/azure-cli:2.66.0-cbl-mariner2.0 --target=<container name>
+~~~
+
 # 问题
 
 - 目前临时容器存在一个bug：
