@@ -1,15 +1,18 @@
 # 介绍
 
-- 官网：https://capsule.clastix.io/docs/#kubernetes-multi-tenancy-made-easy
+- 官网：
+  - https://github.com/projectcapsule/capsule/blob/main/docs/content/general/tutorial.md
+  - https://capsule.clastix.io/docs/#kubernetes-multi-tenancy-made-easy
+
 - helm参数含义：https://github.com/projectcapsule/capsule/blob/main/charts/capsule/README.md#customize-the-installation
 - Tenant: capsule是管理multi tenant的工具，什么是tenant？tenant在capsule的语境下可以理解为：一组namespace，可以对其做RBAC授权、设置resource quota、network policy等。
 
 # 下载
 
 ~~~sh
-helm repo add --force-update clastix https://clastix.github.io/charts
-helm repo update clastix
-helm pull clastix/capsule --version helm-v0.4.6
+helm repo add --force-update projectcapsule https://projectcapsule.github.io/charts
+helm repo update projectcapsule
+helm pull projectcapsule/capsule --version 0.6.2
 ~~~
 
 # 配置

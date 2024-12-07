@@ -95,7 +95,26 @@ ls
 #values.yaml：存放全局变量，templates下的文件可以调用
 ~~~
 
+- 一键下载helm chart并解压
+
+~~~sh
+helm fetch stable/mysql --version 0.2.8 --untar
+~~~
+
 ## 部署chart
+
+### 方式
+
+~~~sh
+#指定chart: 
+helm install stable/mariadb
+#指定打包的chart: 
+helm install ./nginx-1.2.3.tgz
+#指定打包目录: 
+helm install ./nginx
+#指定chart包URL: 
+helm install https://example.com/charts/nginx-1.2.3.tgz
+~~~
 
 ### 示例-helm部署memcached服务
 
@@ -761,6 +780,19 @@ helm lint /root/myapp/
 helm template cert-manager jetstack/cert-manager -n cert-manager -f values.yaml > cert-manager.yaml
 ~~~
 
+## 部署chart
+
+~~~sh
+#指定chart: 
+helm install stable/mariadb
+#指定打包的chart: 
+helm install ./nginx-1.2.3.tgz
+#指定打包目录: 
+helm install ./nginx
+#指定chart包URL: 
+helm install https://example.com/charts/nginx-1.2.3.tgz
+~~~
+
 ## 调整参数
 
 ~~~sh
@@ -774,10 +806,18 @@ helm upgrade --set service.type="NodePort" nginx .
 ## 回滚版本
 
 ~~~sh
-#查看历史版本
+#查看历史版本号
 helm history nginx
-# 回滚到指定版本
+#简写为hist
+helm hist nginx
+# 回滚到指定版本号
 helm rollback nginx 1
+~~~
+
+## 查看部署状态
+
+~~~sh
+helm status nginx
 ~~~
 
 ## 打包chart
@@ -794,3 +834,54 @@ helm inspect chart ~/myapp/
 helm show chart ~/myapp/
 ~~~
 
+# helm dashboard
+
+- 一款开源helm ui插件：https://github.com/komodorio/helm-dashboard
+
+- 安装插件
+
+  ~~~sh
+  helm plugin install https://github.com/komodorio/helm-dashboard.git
+  ~~~
+
+- 更新插件
+
+  ~~~sh
+  helm plugin update dashboard
+  ~~~
+
+- 卸载
+
+  ~~~sh
+  helm plugin uninstall dashboard
+  ~~~
+
+- 使用插件
+
+  ~~~sh
+   设置服务运行绑定 ipv4 ,否则只能本地访问
+  export HD_BIND=0.0.0.0
+  # 设置 web 端口，默认8080
+  export HD_PORT=9000
+  
+  # 设置1是不打开浏览器，否则默认打开浏览器
+  #export HD_NOBROWSER=1
+  # 后台运行
+  setsid helm dashboard &
+  ~~~
+
+> helm安装helm dashboard：https://github.com/komodorio/helm-charts/tree/master/charts/helm-dashboard
+
+# helm diff
+
+- 用于展示helm upgrade将会带来哪些变化：https://github.com/databus23/helm-diff?tab=readme-ov-file
+
+# helm lint
+
+- 用来检查chart是否有问题
+
+  ~~~sh
+  helm lint mysql
+  ~~~
+
+  
