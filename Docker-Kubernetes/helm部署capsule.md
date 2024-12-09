@@ -33,7 +33,7 @@ helm upgrade -i capsule -n capsule-system --create-namespace . -f values.yaml #-
 
 - azure中可以直接用EntraID with Azure RBAC的模式把entraID group
 
-- lab中：先创建一个user，
+- lab中：先创建一个user
 
   - SSL认证
 
@@ -435,5 +435,3 @@ EOF
 ## dashboard
 
 - 对于已经部署好prometheus stack的集群来说，可以直接在capsule的helm中开启service monitor功能，配置prometheus抓取数据、grafana展示，详情参考：https://capsule.clastix.io/docs/guides/monitoring#quick-start
-
-## 
