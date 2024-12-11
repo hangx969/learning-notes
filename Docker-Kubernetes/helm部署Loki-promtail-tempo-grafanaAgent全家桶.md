@@ -107,6 +107,8 @@ helm install loki grafana/loki -n monitoring -f install-values.yaml --debug
 
 ## Loki
 
+- 文档：https://grafana.com/docs/loki/latest/setup/install/helm/install-monolithic/#deploying-the-helm-chart-for-development-and-testing
+
 > Grafana生态中日志存储的后端，其单机模式支持直接使用文件存储，而多副本模式依赖对象存储来对数据进行持久化。Grafana内置了Loki数据源类型，在配置相应的数据源后可以通过Grafana Explore页面进行日志查询。
 
 - 下载
@@ -136,6 +138,8 @@ helm upgrade -i loki -n monitoring . -f values.yaml
 
 ## Promtail
 
+- 文档：https://grafana.com/docs/loki/latest/send-data/promtail/
+
 - 下载
 
 ~~~sh
@@ -158,6 +162,10 @@ helm upgrade -i promtail -n monitoring . -f values.yaml
 
 ## tempo
 
+- 文档：
+  - https://grafana.org.cn/docs/tempo/latest/introduction/telemetry/
+  - https://grafana.com/docs/tempo/latest/getting-started/tempo-in-grafana/
+
 > 遵循OTel协议的Trace数据存储后端服务，包含若干组件：
 >
 > - Distributor：接收来自客户端的数据
@@ -171,7 +179,6 @@ helm upgrade -i promtail -n monitoring . -f values.yaml
 >
 > ![image-20241112141012964](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202411121410028.png)
 >
-> 官网：https://grafana.org.cn/docs/tempo/latest/introduction/telemetry/
 
 - 下载
 

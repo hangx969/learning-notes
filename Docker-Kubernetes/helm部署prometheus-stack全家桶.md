@@ -2,7 +2,27 @@
 
 - 官网地址：https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack#kube-prometheus-stack
 
-- 通过一个prometheus-stack的chart，自动部署prometheus、kube-state-metrics、grafana、node-exporter、Alertmanager。
+- 通过一个prometheus-stack的chart，自动部署prometheus、prometheus rules、Alertmanager以及各种operator；还有kube-state-metrics、grafana、node-exporter。
+
+- 其中，kube-state-metrics、grafana、node-exporter是通过独立的helm chart安装的：
+
+  https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack#dependencies
+
+  - [prometheus-community/kube-state-metrics](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-state-metrics)
+  - [prometheus-community/prometheus-node-exporter](https://github.com/prometheus-community/helm-charts/tree/main/charts/prometheus-node-exporter)
+  - [grafana/grafana](https://github.com/grafana/helm-charts/tree/main/charts/grafana)
+
+## service/pod monitor
+
+- prometheus stack提供service monitor来负责从其他service暴露的接口上抓取数据
+  - 介绍：https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack#prometheusioscrape
+  - 使用说明：https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/user-guides/getting-started.md#include-servicemonitors （app需要用service暴露metrics接口，然后定义serviceMonitor资源去抓取接口数据）
+
+- pod monitor绕过了service，直接通过pod的label找到pod，抓取pod暴露的metrics接口：
+
+  https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/user-guides/getting-started.md#using-podmonitors
+
+
 
 # 前提条件
 
