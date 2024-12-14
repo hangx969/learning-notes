@@ -12,7 +12,7 @@
 ~~~sh
 helm repo add --force-update projectcapsule https://projectcapsule.github.io/charts
 helm repo update projectcapsule
-helm pull projectcapsule/capsule --version 0.6.2
+helm pull projectcapsule/capsule --version 0.7.1
 ~~~
 
 # 配置
@@ -24,7 +24,7 @@ helm pull projectcapsule/capsule --version 0.6.2
 # 安装
 
 ~~~sh
-helm upgrade -i capsule -n capsule-system --create-namespace . -f values.yaml #--skip-crds
+helm upgrade -i capsule -n capsule-system --create-namespace . -f values.yaml
 ~~~
 
 # 使用
