@@ -41,7 +41,7 @@
 ~~~sh
 helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
 helm repo update
-helm pull prometheus-community/kube-prometheus-stack
+helm pull prometheus-community/kube-prometheus-stack --version 59.1.0
 tar xzvf kube-prometheus-stack-52.1.0.tgz
 cd kube-prometheus-stack
 ~~~
