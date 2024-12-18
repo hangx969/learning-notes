@@ -22,7 +22,12 @@
 - 与其他资源对象相比，Events非常活跃，数据量也很大，考虑到Etcd集群的性能问题，不太可能长时间存储在Etcd中。默认情况下Kubernetes Events只保留**一个小时**，这对于长期分析和故障排查是不够的。因此，将Kubernetes Events持久化存储，并通过可视化工具进行分析变得非常重要。
 - 收集log的组件很多，EFK比较常用，但是ES太重了。这里推荐Loki，一个高效的日志聚合器，适用于收集和存储日志数据，还非常轻量化，非常适合用于聚合存储Kubernetes Events。
 
-# helm部署k8s-event-logger导入loki
+- 采集k8s events的组件也有很多:
+  - grafana-agent: https://grafana.com/docs/agent/latest/static/configuration/integrations/integrations-next/eventhandler-config/?pg=blog&plcmt=body-txt
+  - k8s-event-logger
+  - evetns-operator
+
+# helm部署k8s-event-logger
 
 - 有一个简单的系统`max-rocket-internet/k8s-event-logger`，它监听 Kubernetes API，接收所有事件，并以 JSON 日志形式写入。
 
