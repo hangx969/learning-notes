@@ -763,22 +763,49 @@ helm uninstall my-hello
 
 - 官网地址：[Helm | Helm](https://helm.sh/zh/docs/helm/helm/)
 
-## 检查values语法格式
+## helm调试命令
 
-~~~sh
-helm lint /root/myapp/
+### helm template
 
-==> Linting /root/myapp/
-[INFO] Chart.yaml: icon is recommended
-
-1 chart(s) linted, 0 chart(s) failed
-~~~
-
-## 输出部署文件
+- 输出部署文件
 
 ~~~sh
 helm template cert-manager jetstack/cert-manager -n cert-manager -f values.yaml > cert-manager.yaml
 ~~~
+
+### helm diff
+
+- 用于展示helm upgrade将会带来哪些变化：https://github.com/databus23/helm-diff?tab=readme-ov-file
+
+  ~~~sh
+  #比较升级会带来哪些变化
+  helm diff upgrade <release name> -n <namespace> <source-chart-location> --version $VERSION -f values.yaml --set xxx=$xxx
+  #比较两个chart版本的变化
+  helm diff revision nginx-chart 1 2
+  ~~~
+
+### helm lint
+
+- 用来检查chart格式是否有问题
+
+  ~~~sh
+  helm lint mysql
+  helm lint /root/myapp/
+  
+  ==> Linting /root/myapp/
+  [INFO] Chart.yaml: icon is recommended
+  
+  1 chart(s) linted, 0 chart(s) failed
+  ~~~
+
+
+### helm get values
+
+- 输出实际部署到charts中的values值
+
+### helm install --dry-run
+
+- 模拟安装到集群中，看看是否会有报错
 
 ## 部署chart
 
@@ -871,17 +898,3 @@ helm show chart ~/myapp/
   ~~~
 
 > helm安装helm dashboard：https://github.com/komodorio/helm-charts/tree/master/charts/helm-dashboard
-
-# helm diff
-
-- 用于展示helm upgrade将会带来哪些变化：https://github.com/databus23/helm-diff?tab=readme-ov-file
-
-# helm lint
-
-- 用来检查chart是否有问题
-
-  ~~~sh
-  helm lint mysql
-  ~~~
-
-  
