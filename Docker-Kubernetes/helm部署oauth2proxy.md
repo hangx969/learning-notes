@@ -4,6 +4,8 @@
 
   ![image-20241121102327853](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202411211023948.png)
 
+  在我们的示例中，使用的是右边的middleware模式，作用于ingress-nginx。
+
 - 官网：https://oauth2-proxy.github.io/oauth2-proxy/installation/
 
 - github：https://github.com/oauth2-proxy/oauth2-proxy
@@ -131,11 +133,10 @@ helm upgrade -i oauth2-proxy -n oauth2-proxy --create-namespace . -f values.yaml
 # 使用oauth2proxy保护其他app
 
 - 在其他应用的ingress中添加annotations，详细说明参考ingress官网：https://kubernetes.github.io/ingress-nginx/examples/auth/oauth-external-auth/
+- 这两个annotations会将请求redirect到oauth2proxy，由oauth2proxy将请求转发到配置的3rd party认证endpoint
 
-  ~~~yaml
-  annotations:
-    nginx.ingress.kubernetes.io/auth-url: "https://oauth2proxy.hanxux.local/oauth2/auth"
-    nginx.ingress.kubernetes.io/auth-signin: "https://oauth2proxy.hanxux.local/oauth2/start?rd=https%3A%2F%2Foauth2proxy.hanxux.local"
-  ~~~
-
-  
+~~~yaml
+annotations:
+  nginx.ingress.kubernetes.io/auth-url: "https://oauth2proxy.hanxux.local/oauth2/auth"
+  nginx.ingress.kubernetes.io/auth-signin: "https://oauth2proxy.hanxux.local/oauth2/start?rd=https%3A%2F%2Foauth2proxy.hanxux.local"
+~~~

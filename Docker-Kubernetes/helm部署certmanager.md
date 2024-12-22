@@ -1,10 +1,8 @@
 # 介绍
 
 - 使用 HTTPS 需要向CA申请证书，并且需要付出一定的成本，如果需求数量多，则开支也相对增加。[cert-manager](https://cert-manager.io/docs/) 是 Kubernetes 上的全能证书管理工具，支持利用 cert-manager 基于 [ACME](https://tools.ietf.org/html/rfc8555) 协议与[Let's Encrypt CA](https://letsencrypt.org/) 签发免费证书并为证书自动续期，实现永久免费使用证书。
-
 - 使用certmanager，对cloudfare申请的域名签发证书：https://todoit.tech/k8s/cert/
 - certmanager官网：https://cert-manager.io/docs/installation/helm/
-
 - pod间TLS通信：https://www.youtube.com/watch?v=uTaXgZWwXzs&list=PLpbcUe4chE79sB7Jg7B4z3HytqUUEwcNE&index=93
 - certmanager教程：https://www.youtube.com/watch?v=rOe9UpHcnKk&list=PLpbcUe4chE79sB7Jg7B4z3HytqUUEwcNE&index=96
 
@@ -234,7 +232,7 @@ spec:
 EOF
 ~~~
 
-## 证书颁发给ingress
+## Certificate颁发给ingress
 
 - 创建certificate时common name和dns name写ingress的hostname，证书保存到secret
 
@@ -258,4 +256,34 @@ EOF
             - kyverno.hanxux.local
   ~~~
 
+
+## 创建Letsencrypt证书
+
+- 参考azure文档：https://learn.microsoft.com/en-us/previous-versions/azure/aks/ingress-tls?tabs=azure-cli#install-cert-manager
+
+# helm管理配置文件
+
+- cluster issuer、certificate等yaml文件都可以用helm去管理。
+
+- 创建cert-manager-config目录
+
+  ~~~yaml
+  #Chart.yaml文件
+  apiVersion: v2
+  name: commoninfra-cert-manager-config
+  description: A Helm chart for cert manager configurations
+  type: application
+  version: 0.0.1
+  appVersion: "0.0.1"
+  ~~~
+
+- 创建template目录，里面放所有需要创建的yaml文件
+
+- 安装
+
+  ~~~sh
+  helm upgrade -i commoninfra-cert-manager-config -n kube-system . --values ./values.yaml --force
+  ~~~
+
   
+
