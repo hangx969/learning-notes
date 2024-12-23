@@ -231,6 +231,36 @@ helm list
 helm uninstall memcached
 ~~~
 
+## helm管理crds
+
+https://helm.sh/zh/docs/topics/charts/#crd%E7%9A%84%E9%99%90%E5%88%B6
+
+> 不像大部分的Kubernetes对象，CRD是全局安装的。因此Helm管理CRD时会采取非常谨慎的方式。 CRD受到以下限制：
+>
+> - CRD从不重新安装。 如果Helm确定`crds/`目录中的CRD已经存在（忽略版本），Helm不会安装或升级。
+> - CRD从不会在升级或回滚时安装。Helm只会在安装时创建CRD。
+> - CRD从不会被删除。自动删除CRD会删除集群中所有命名空间中的所有CRD内容。因此Helm不会删除CRD。
+
+## 给资源加入helm管理
+
+- 某项资源是手动创建出来的，现在需要加到某个helm release里面，变成helm去管理，需要给这个资源加上label和annotations：
+  - label： "app.kubernetes.io/managed-by"="Helm"
+  - annotation： "meta.helm.sh/release-name"="xxxx" "meta.helm.sh/release-namespace"="xxxx"
+- 命令行操作：
+
+~~~sh
+kubectl label certificate app01 "app.kubernetes.io/managed-by"="Helm"
+kubectl annotate certificate app01 "meta.helm.sh/release-name"="xxx" "meta.helm.sh/release-namespace"="xxx"
+~~~
+
+- 脚本批量操作，以更新crd为例：
+
+~~~sh
+kubectl get crd --no-headers -o custom-columns=":metadata.name" | grep kyverno | xargs -I {} kubectl annotate crd {} meta.helm.sh/release-name=kyverno
+kubectl get crd --no-headers -o custom-columns=":metadata.name" | grep kyverno | xargs -I {} kubectl annotate crd {} meta.helm.sh/release-namespace=kyverno
+kubectl get crd --no-headers -o custom-columns=":metadata.name" | grep kyverno | xargs -I {} kubectl label crd {} app.kubernetes.io/managed-by=Helm
+~~~
+
 # 自定义chart模板
 
 ## 创建模板
