@@ -243,13 +243,16 @@ metadata:
   name: letsencrypt-dns01
 spec:
   acme:
+    #指定一个
     privateKeySecretRef:
       name: letsencrypt-dns01
-      #ClusterIssuer去https://acme-v02.api.letsencrypt.org/directory申请证书
+    #ClusterIssuer去https://acme-v02.api.letsencrypt.org/directory申请证书
     server: https://acme-v02.api.letsencrypt.org/directory
     solvers:
     - dns01:
-        cloudflare:
+    	# clusterissuer支持的resolver类型有限，必须选一种dns server来配置。
+        # 通过命令查看：k explain clusterissuer.spec.acme.solvers.dns01
+        cloudflare: 
           email: xxxxx
           #指定存储着API token的secret，secret的名字为cloudflare-api-token-secret，secret的key为api-token
           apiTokenSecretRef:
@@ -299,9 +302,8 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: my-ingress
-  annotations:
-    kubernetes.io/ingress.class: "nginx"
 spec:
+  ingressClassName: nginx-default
   tls: 
   - hosts: 
     - www.rengshengdezheli.xyz
@@ -366,13 +368,20 @@ spec:
 
 #### 配置clusterissuer自动挂载证书
 
-- 我们申请证书的步骤是创建certificate，然后clusterissuer使用certificate申请证书，最后带有certificate信息的secret和ingress一起使用。我们现在使用另外一种方法，创建ingress的时候自动让clusterissuer申请证书，不用创建certificate yaml文件。
+- 我们申请证书的步骤是创建certificate，然后clusterissuer使用certificate申请证书，最后带有certificate信息的secret和ingress一起使用。
+
+- 我们现在使用另外一种方法，创建ingress的时候自动让clusterissuer申请证书，不用创建certificate yaml文件。
 
 - 添加cert-manager.io/cluster-issuer: "letsencrypt-dns01"表示使用名为letsencrypt-dns01的clusterissuer申请证书。
 
   当我们创建ingress规则之后，会自动使用名为letsencrypt-dns01的clusterissuer申请证书，申请的证书放在名为cert-zheli-com-tls的secret里
 
-- 证书到期之后，clusterissuers会自动给我们续约的。
+- 证书到期之后，clusterissuers会自动续约。
+
+> 注：为配置certificate自动续约，可以给ingress添加annotation
+>
+> - ingress支持的annotation：https://cert-manager.io/docs/usage/ingress/#supported-annotations
+> - How it works： https://cert-manager.io/docs/usage/ingress/#how-it-works
 
 ~~~yaml
 apiVersion: networking.k8s.io/v1
@@ -380,9 +389,9 @@ kind: Ingress
 metadata:
   name: my-ingress
   annotations:
-    kubernetes.io/ingress.class: "nginx"
     cert-manager.io/cluster-issuer: "letsencrypt-dns01"
 spec:
+  ingressClassName: nginx-default
   tls: 
   - hosts: 
     - www.rengshengdezheli.xyz
@@ -391,7 +400,6 @@ spec:
   - host: www.rengshengdezheli.xyz
     http:
       paths:
-      #访问网址目录
       - path: /
         pathType: Prefix
         backend:
@@ -401,12 +409,44 @@ spec:
               number: 80
 ~~~
 
-### 使用azure dns作为dns resolver
+#### 配置wildcard证书
 
-#### 创建cluster issuer
+一个父域里面有很多个子域，直接用一个wildcard certificate给父域申请证书。
+
+子域的ingress资源不再需要额外单独配置cert-manager，自动沿用父域的certificate
 
 ~~~yaml
-tee cluster-issuer-letsencrypt.yaml <<'EOF'
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: private-wildcard-certificate-onepilot-tls
+  namespace: cert-manager
+spec:
+  secretName: private-wildcard-certificate-onepilot-tls
+  secretTemplate:
+    annotations:
+      kubed.appscode.com/sync: "kubernetes.io/metadata.name in (external-nginx,rabbit)"
+  dnsNames:
+    - "dev.onepilot.azurecn.autoheim.net"
+    - "*.onepilot.azurecn.autoheim.net"
+  issuerRef:
+    name: letsencrypt
+    kind: ClusterIssuer
+  keystores:
+    pkcs12:
+      create: true
+      passwordSecretRef: # Password used to encrypt the keystore
+        key: password
+        name: pkcs12-password-secret
+~~~
+
+### 使用azure dns作为dns resolver
+
+cert-manager官网教程：https://cert-manager.io/docs/tutorials/getting-started-aks-letsencrypt/#part-2
+
+- cluster issuer中的dns配置为azureDNS
+
+~~~yaml
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
 metadata:
@@ -414,49 +454,43 @@ metadata:
 spec:
   acme:
     server: https://acme-v02.api.letsencrypt.org/directory
-    email: 1003665363@qq.com
+    email: dl_team_mimer@zenseact.com
     privateKeySecretRef:
-      name: letsencrypt
+      name: letsencrypt-account-key
     solvers:
-    - http01:
-        ingress:
-          class: nginx-default
-          podTemplate:
-            spec:
-              nodeSelector:
-                "kubernetes.io/os": linux
-EOF
+      - dns01:
+          azureDNS:
+            managedIdentity:
+              clientID: {{ .Values.workload_identity_client_id }}
+            subscriptionID: {{ .Values.dns.subscription_id }}
+            resourceGroupName: {{ .Values.dns.resource_group_name }}
+            hostedZoneName: {{ .Values.dns.domain }}
+            environment: {{.Values.dns.environment}}
 ~~~
 
-#### 创建certificate
+- cert-manager本体的配置中，podLabel和service account都要配置workload identity
 
 ~~~yaml
-tee cert-letsencrypt-app01.yaml <<'EOF'
-apiVersion: cert-manager.io/v1
-kind: Certificate
-metadata:
-  name: cert-letsencrypt-test
-  namespace: default
-spec:
-  dnsNames:
-  - app01.default.svc.cluster.local # 要签发证书的域名
-  secretName: app01-tls-cert-secret-letsencrypt # 最终签发出来的证书会保存在这个 Secret 里面
-  commonName: app01.default.svc.cluster.local
-  usages:
-    - digital signature
-    - key encipherment
-    - server auth
-  privateKey:
-    rotationPolicy: Always
-  issuerRef:
-    name: letsencrypt
-    kind: ClusterIssuer
-EOF
+podLabels:
+  azure.workload.identity/use: "true"
+
+serviceAccount:
+  labels:
+    azure.workload.identity/use: "true"
+  annotations:
+    azure.workload.identity/client-id:
 ~~~
 
-## 没有域名的情况下申请证书
-
-
+> 注：对于azureDNS，cert-manager定义了一个staging server用于前期测试，避免对于一个domain用尽cert的quota：
+>
+> 参考：https://cert-manager.io/docs/tutorials/getting-started-aks-letsencrypt/#create-a-clusterissuer-for-lets-encrypt-staging
+>
+> 流程如下：
+>
+> - 先在cluster issuer中配置连接到letsencrypt staging server
+> - 创建出来的certificate是staging签发的证书，是insecure的
+> - web server先用这个insecure证书，测试流程都是通的。
+> - 再在cluster issuer中配置连接到letsencrypt prod server，签发正式证书
 
 # Troubleshooting
 
@@ -492,7 +526,6 @@ EOF
   ~~~sh
   helm upgrade -i commoninfra-cert-manager-config . --values ./values.yaml
   ~~~
-
 
 
 
