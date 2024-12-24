@@ -3,6 +3,7 @@
 > - external-dns配置azure dns教程：https://kubernetes-sigs.github.io/external-dns/v0.13.6/tutorials/azure/
 > - github地址：https://github.com/kubernetes-sigs/external-dns
 > - 视频教程：https://www.youtube.com/watch?v=VSn6DPKIhM8&list=PLpbcUe4chE79sB7Jg7B4z3HytqUUEwcNE，https://github.com/HoussemDellai/aks-course/tree/main/61_external_dns
+> - github示例：https://github.com/HoussemDellai/aks-course/tree/main/61_external_dns
 >
 
 - AKS中的app，通过ingress暴露了一个IP以供访问，需要配置一个域名绑定IP方便访问，往往公司已经有了一个注册域名，这个app一般会用公司域名下的custom sub-domain name，例如app1.mycompany.com。公司域名的解析可能已经用了一个外部DNS提供商比如AzureDNS，我们就需要把app1.mycompany.com这个域名解析记录添加到外部DNS提供商。
