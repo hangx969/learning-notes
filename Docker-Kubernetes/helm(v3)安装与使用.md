@@ -233,7 +233,11 @@ helm uninstall memcached
 
 ## helm管理crds
 
-https://helm.sh/zh/docs/topics/charts/#crd%E7%9A%84%E9%99%90%E5%88%B6
+- crd在helm中的管理过程：https://helm.sh/zh/docs/topics/charts/#%E7%94%A8%E6%88%B7%E8%87%AA%E5%AE%9A%E4%B9%89%E8%B5%84%E6%BA%90crd
+
+- crd不会被升级的说明：https://helm.sh/zh/docs/topics/charts/#crd%E7%9A%84%E9%99%90%E5%88%B6
+
+- crd最佳实践说明：https://helm.sh/docs/chart_best_practices/custom_resource_definitions/#some-caveats-and-explanations
 
 > 不像大部分的Kubernetes对象，CRD是全局安装的。因此Helm管理CRD时会采取非常谨慎的方式。 CRD受到以下限制：
 >

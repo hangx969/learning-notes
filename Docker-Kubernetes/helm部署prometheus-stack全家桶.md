@@ -298,7 +298,7 @@ annotations:
   nginx.ingress.kubernetes.io/auth-signin: "https://oauth2proxy.hanxux.local/oauth2/start?rd=https%3A%2F%2Fgrafana.hanxux.local"
 ~~~
 
-# helm安装dashboard
+# helm管理grafana dashboard
 
 - dashboard可以单独打成一个helm包
 
@@ -356,7 +356,7 @@ data:
 helm upgrade -i grafana-dashboards-config -n monitoring . --values values.yaml 
 ~~~
 
-# helm安装grafana datasources
+# helm管理grafana datasources
 
 - datasource也可以以helm chart的形式部署，例如：
 
@@ -386,7 +386,7 @@ data:
           timescaledb: true
 ~~~
 
-# helm安装prometheus config
+# helm安装PrometheusRule
 
 - alert可以通过crd PrometheusRule的方式来创建，示例如下：
 
@@ -447,3 +447,148 @@ helm upgrade -i commoninfra-kube-prometheus-config -n kube-system . --values ./v
 > PrometheusRule是Prometheus Operator中定义的CRD。有一个专门的网站可以查看各种各样的开源CRD的定义：
 >
 > - https://operatorhub.io/operator/prometheus
+
+# Alert-manager发送告警到slack
+
+> - prometheus与slack集成的配置文件说明：https://prometheus.io/docs/alerting/latest/configuration/#slack_config
+> - slack web API说明：https://api.slack.com/web
+> - slack web API认证：https://api.slack.com/web#authentication
+> - chat.postMessage API文档：https://api.slack.com/methods/chat.postMessage
+> - bot token: https://api.slack.com/concepts/token-types#bot
+
+## Slack端配置
+
+1. Slack workspace中安装一个App，拿到其Api token（bot token）
+2. 创建一个channel用来接收告警信息
+
+## alertmanager端配置
+
+1. 将bot token放到k8s里面：
+
+   - 如果是azure环境下，token被写入到azure keyvault中，k8s用SecretProviderClass将keyvault secret转换成k8s secret，示例如下：
+
+     ~~~yaml
+     apiVersion: secrets-store.csi.x-k8s.io/v1
+     kind: SecretProviderClass
+     metadata:
+       name: sp-alertmanager
+       namespace: monitoring
+     spec:
+       provider: azure
+       parameters:
+         usePodIdentity: "false"
+         useVMManagedIdentity: "true" #采用MI的认证方式，secretProviderClass在azure中有默认创建的MI以供使用
+         userAssignedIdentityID: {{ .Values.commoninfra.secretProviderIdentityId }} # Set the clientID of the user-assigned managed identity to use, e.g. azurekeyvaultsecretsprovider-aks-commoninfra-dev-westeurope
+         keyvaultName: {{ .Values.commoninfra.keyvaultName }}
+         cloudName: {{ .Values.commoninfra.cloudName }}
+         objects:  |
+           array:
+             - |
+               objectName: slack-api-token
+               objectType: secret
+               objectVersion: ""
+     
+         tenantId: "{{ .Values.commoninfra.tenantId }}"
+       # This creates an actual secret that we can use
+       secretObjects:
+       - secretName: alertmanager-slack
+         data:
+         - key: token # add a secret referencable with the same key as was in the keyvault
+           objectName: slack-api-token
+         type: Opaque
+     ~~~
+
+   - 本地环境下，直接把token做成secret
+
+     ~~~sh
+     #Opaque类型的secret只接受base64类型的string，先转一下token到base64
+     echo -n 'xxxxx' | base64
+     ~~~
+
+     ~~~yaml
+     apiVersion: v1
+     kind: Secret
+     metadata:
+       name: alertmanager-slack-api-token
+       namespace: monitoring
+     type: Opaque
+     data:
+       token: xxxxxx
+     ~~~
+
+2. kube-prometheus-stack的values.yaml中alertmanager部分配置slack
+
+   ~~~yaml
+   alertmanager:
+   ...
+     ## Alertmanager configuration directives
+     ## ref: https://prometheus.io/docs/alerting/configuration/#configuration-file
+     ##      https://prometheus.io/webtools/alerting/routing-tree-editor/
+     ##
+     config:
+       global:
+         resolve_timeout: 5m
+         slack_api_url: https://slack.com/api/chat.postMessage
+         http_config:
+           authorization:
+             credentials_file: '/mnt/secrets-store/token' #这里的文件名需要和secret的keyname相一致
+   ...
+       receivers:
+       - name: 'null'
+       - name: platform-slack
+         slack_configs:
+           - channel: '#alert-china-onepilot-dev'
+             send_resolved: true
+             title: '{{ template "slack.onepilot.title" . }}'
+             text: '{{ template "slack.onepilot.text" . }}'
+       - name: platform-slack-info
+         slack_configs:
+           - channel: '#alert-china-onepilot-platform-info'
+             send_resolved: true
+             title: '{{ template "slack.onepilot.title" . }}'
+             text: '{{ template "slack.onepilot.text" . }}'
+       templates:
+       - '/etc/alertmanager/config/*.tmpl'
+   ...
+     ## Alertmanager template files to format alerts
+     ## By default, templateFiles are placed in /etc/alertmanager/config/ and if
+     ## they have a .tmpl file suffix will be loaded. See config.templates above
+     ## to change, add other suffixes. If adding other suffixes, be sure to update
+     ## config.templates above to include those suffixes.
+     ## ref: https://prometheus.io/docs/alerting/notifications/
+     ##      https://prometheus.io/docs/alerting/notification_examples/
+     ##
+     templateFiles:
+       default_title.tmpl: |-
+         {{ define "slack.onepilot.title" }}
+         {{ .CommonLabels.alertname }} - {{ .Alerts.Firing | len }} in {{ .CommonLabels.namespace }}
+         {{ end }}
+       default_text.tmpl: |-
+         {{ define "slack.onepilot.text" }}
+         {{ range .Alerts }}
+         `{{ .Labels.severity }}` - {{ .Annotations.summary }}
+         *Description:* {{ .Annotations.description }}
+         {{ if match `^http.+` .GeneratorURL }}*Graph:* <{{ .GeneratorURL }}|:chart_with_upwards_trend:> {{ end }}{{ if .Annotations.runbook }}*Runbook:* <{{ .Annotations.runbook }}|:spiral_note_pad:>{{ end }}
+         *Details:*
+           {{ range .Labels.SortedPairs }} • *{{ .Name }}:* `{{ .Value }}`
+           {{ end }}
+         {{ end }}
+         {{ end }}
+     
+       # Additional volumes on the output StatefulSet definition.
+       volumes:
+         - name: alertmanager-secrets
+           csi:
+             driver: secrets-store.csi.k8s.io
+             readOnly: true
+             volumeAttributes:
+               secretProviderClass: "sp-alertmanager"
+   
+       # Additional VolumeMounts on the output StatefulSet definition.
+       volumeMounts:
+         - name: alertmanager-secrets
+           mountPath: "/mnt/secrets-store"
+           readOnly: true
+   ~~~
+
+3. 验证slack端是否可以接收到告警信息
