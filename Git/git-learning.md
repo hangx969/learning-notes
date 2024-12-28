@@ -140,7 +140,23 @@ git status
 
 # 免密码登录git
 
-- 配SSH公钥。git clone可选择使用ssh链接。
+- github设置中加入客户端的ssh公钥。
+
+- git clone项目下来的时候，使用ssh链接而非http链接。（http链接是需要MFA的，后续每次push都需要输入用户名密码）
+
+  <img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202412281415127.png" alt="image-20241228141528061" style="zoom:67%;" />
+
+- git remote add采用ssh的link
+
+  ~~~sh
+  git remote add origin git@github.com:hangx969/k8s-platform-tools.git】
+  git add .
+  git commit -m "xxx"
+  git checkout -b xxx
+  git push origin xxx
+  ~~~
+
+  
 
 
 # 本地内容同步到远程仓库
