@@ -222,7 +222,7 @@ pipeline {
   | 控制节点    | 192.168.40.180 | master1 |
   | 工作节点    | 192.168.40.181 | node1   |
 
-## 部署jenkins
+## 部署jenkins--yaml文件
 
 ### 安装nfs
 
