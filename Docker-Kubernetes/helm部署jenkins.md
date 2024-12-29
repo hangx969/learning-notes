@@ -67,9 +67,9 @@ helm pull jenkins/jenkins
         - jenkins.hanxux.local
 ~~~
 
-- 配置persistence storage class name
+## 配置persistence storage class name
 
-- 挂载本地时区
+## 挂载本地时区
 
 ~~~yaml
   # -- SubPath for jenkins-home mount
@@ -88,11 +88,11 @@ helm pull jenkins/jenkins
     name: local-time
 ~~~
 
-- 修改容器特权
+## 修改容器特权
 
-  > 否则会报错：/var/jenkins_config/apply_config.sh: 4: cannot create /var/jenkins_home/jenkins.install.UpgradeWizard.state: Permission denied
-  >
-  > 参考：https://github.com/jenkinsci/helm-charts/issues/210
+> 否则会报错：/var/jenkins_config/apply_config.sh: 4: cannot create /var/jenkins_home/jenkins.install.UpgradeWizard.state: Permission denied
+>
+> 参考：https://github.com/jenkinsci/helm-charts/issues/210
 
 ~~~yaml
 controller:
@@ -107,6 +107,19 @@ controller:
   runAsUser: 0
   runAsGroup: 0
 ~~~
+
+## 配置k8s集群连接
+
+- values.yaml
+
+~~~yaml
+kubernetesURL: "https://172.16.183.100:6443"
+controller:
+    cloudName: "local-platform-dev"
+~~~
+
+- jenkins UI
+  - https://jenkins.hanxux.local/manage/cloud 中也可以配置
 
 # 安装
 
@@ -137,3 +150,6 @@ helm upgrade -i jenkins -n jenkins --create-namespace . -f values.yaml
   ~~~
 
 - 弹出登录界面说明插件安装没问题，可以进行后续实验。
+
+# 配置agent从节点
+

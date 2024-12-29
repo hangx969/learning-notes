@@ -604,7 +604,7 @@ cat /data/v2/jenkins-home/secrets/initialAdminPassword
 
 - 查看console output
 
-> 上面这套方法，在开发、生产、测试环境里面用的镜像都是一样的。实际应用中，不同的环境的配置是不同的，比如要脸接到的一些IP等。这种情况可以用configmap把不同环境的配置挂到deployment里面去用。
+> 上面这套方法，在开发、生产、测试环境里面用的镜像都是一样的。实际应用中，不同的环境的配置是不同的，比如要连接到的一些IP等。这种情况可以用configmap把不同环境的配置挂到deployment里面去用。
 
 - 更改源代码之后，可以在blue ocean界面再点击重新部署来重新拉代码，部署新的pod。
   - 打开blue ocean - 重运行
