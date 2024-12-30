@@ -5,7 +5,7 @@
   - https://capsule.clastix.io/docs/#kubernetes-multi-tenancy-made-easy
 
 - helm参数含义：https://github.com/projectcapsule/capsule/blob/main/charts/capsule/README.md#customize-the-installation
-- 升级到capsule 0.7.x带来的crd管理方式改变：https://github.com/projectcapsule/capsule/blob/main/charts/capsule/README.md#upgrading-to-07x
+- 升级到capsule 0.7.x带来的crd管理方式改变：https://github.com/projectcapsule/capsule/blob/main/charts/capsule/README.md#upgrading-to-07x （CRDs可以随helm chart更新了）
 - Tenant: capsule是管理multi tenant的工具，什么是tenant？tenant在capsule的语境下可以理解为：一组namespace，可以对其做RBAC授权、设置resource quota、network policy等。
 
 # 下载

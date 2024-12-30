@@ -1,3 +1,30 @@
+# 介绍
+
+- 基于OCI的注册中心
+
+  - 从Helm 3开始，可以使用具有 OCI支持的容器注册中心来存储和共享chart包。从Helm v3.8.0开始，默认启用OCI支持。
+
+
+  - 以下是几种chart可以使用的托管容器注册中心，都支持OCI，例如：
+
+    - Amazon ECR
+
+    - Azure Container Registry
+
+    - Docker Hub
+
+    - Google Artifact Registry
+
+    - IBM Cloud Container Registry
+
+    - JFrog Artifactory
+
+
+  - 同样的，harbor作为是一款云原生制品仓库，可以存储和管理容器镜像、Helm Chart 等 Artifact，同样启用了OCI支持。
+
+
+- 文档：https://goharbor.io/docs/main/working-with-projects/working-with-oci/working-with-helm-oci-charts/
+
 # 下载
 
 ~~~sh
@@ -107,21 +134,22 @@ helm upgrade -i harbor -n harbor . -f values.yaml
 
 - `harbor.hanxux.local`访问harbor-ui
 
-## Harbor管理Helm Charts
+## 推送Helm Chart到harbor
 
 harbor版本大于等于2.8，按照下面的命令直接推送chart即可。Harbor中Charts与Image保存在相同目录下，没有单独的页面。
 
 ```sh
 # 登录helm仓库
 helm registry login harbor.hanxux.local --insecure
-
+# 打包chart，需要cd到chart目录里面打包所有文件才行。否则会报错Error: Chart.yaml file is missing
+helm package .
 # 提前在harbor中创建好harbor项目。上传不再支持UI界面，必须使用helm push
-helm push my-hello-1.0.tgz oci://harbor.hanxux.local/platform-external/
+helm push commoninfra-0.0.1.tgz oci://harbor.hanxux.local/platform-external/
 #Error: failed to do request: Head "https://harbor.hanxux.local/v2/library/my-hello/blobs/sha256:0db1fb6272f773572edb9ebad8c7fb902a76166bf14d896d3790f2a82f524838": tls: failed to verify certificate: x509: certificate signed by unknown authority
-# 加--insecure-skip-tls-verify跳过tls验证
-helm push my-hello-1.0.tgz oci://harbor.hanxux.local/platform-external/ --insecure-skip-tls-verify
+# --insecure-skip-tls-verify跳过tls验证
+helm push commoninfra-0.0.1.tgz oci://harbor.hanxux.local/platform-external/ --insecure-skip-tls-verify
 # 下载chart执行下面命令，命令可以从harbor界面复制
-helm pull oci://harbor.hanxux.local/platform-external/my-hello --version 1.0 -insecure-skip-tls-verify
+helm pull oci://harbor.hanxux.local/platform-external/commoninfra --version 0.0.1 -insecure-skip-tls-verify
 ```
 
 这样就实现了chart上传到harbor仓库。
@@ -191,4 +219,11 @@ sh images-pull-push-2-harbor.sh
 ```
 
 最终在harbor的harbor项目下，同时存放了harbor的chart和部署所需的镜像。
+
+## 安装harbor中的helm chart
+
+~~~sh
+helm registry login harbor.hanxux.local --insecure
+helm install <release_name> oci://<harbor_address>/<project>/<chart_name> --version <version> -f values.yaml --insecure-skip-tls-verify
+~~~
 
