@@ -113,13 +113,26 @@ controller:
 - values.yaml
 
 ~~~yaml
-kubernetesURL: "https://172.16.183.100:6443"
+kubernetesURL: "https://kubernetes.default" #jenkins在集群内的话就用内部地址。否则用外部地址。
 controller:
     cloudName: "local-platform-dev"
 ~~~
 
 - jenkins UI
   - https://jenkins.hanxux.local/manage/cloud 中也可以配置
+
+## 配置agent从节点
+
+~~~yaml
+agent:
+  # Doesn't allocate pseudo TTY by default
+  # -- Allocate pseudo tty to the side container
+  TTYEnabled: true
+  # -- Max number of agents to launch
+  containerCap: 10
+  # -- Agent Pod base name
+  podName: "jenkins-agent"
+~~~
 
 # 安装
 
@@ -151,5 +164,77 @@ helm upgrade -i jenkins -n jenkins --create-namespace . -f values.yaml
 
 - 弹出登录界面说明插件安装没问题，可以进行后续实验。
 
-# 配置agent从节点
+# 测试连接k8s
+
+- 新建一个pipeline看是否可以执行任务
+
+  ~~~groovy
+  pipeline {
+      agent {
+          kubernetes {
+              cloud 'local-platform-dev' 
+          }
+      }
+   
+      stages {
+          stage('Hello') {
+              steps {
+                  echo 'Hello World'
+              }
+          }
+      }
+  }
+  ~~~
+
+  > 问题：
+  >
+  > - pod template写的image是：jenkins/inbound-agent:3273.v4cfe589b_fd83-1
+  > - 实际agent拉的image是：jenkins/inbound-agent:3283.v92c105e0f819-4
+  >
+  > 为啥？？？
+
+# jnlp配置helm和docker
+
+自己基于jenkins的inbound-agent镜像做一个装了docker、helm、kubectl的镜像：
+
+~~~sh
+FROM jenkins/inbound-agent:4.3-4
+
+ARG VCS_REF
+ARG BUILD_DATE
+
+# Metadata
+LABEL org.label-schema.vcs-ref=$VCS_REF \
+      org.label-schema.vcs-url="https://github.com/dtzar/jnlp-slave-helm" \
+      org.label-schema.build-date=$BUILD_DATE \
+      org.label-schema.docker.dockerfile="/Dockerfile"
+
+USER root
+
+# Note: Latest version of kubectl may be found at:
+# https://aur.archlinux.org/packages/kubectl-bin/
+ENV KUBE_LATEST_VERSION="v1.18.6"
+# Note: Latest version of helm may be found at:
+# https://github.com/kubernetes/helm/releases
+ENV HELM_VERSION="v3.3.1"
+# Note: Latest version of docker may be found at:
+# https://get.docker.com/builds
+ENV DOCKER_VERSION="18.09.9"
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    # Install Kubectl
+    && curl -L https://storage.googleapis.com/kubernetes-release/release/${KUBE_LATEST_VERSION}/bin/linux/amd64/kubectl -o /usr/local/bin/kubectl \
+    && chmod +x /usr/local/bin/kubectl \
+    # Install Helm
+    && curl -L https://get.helm.sh/helm-v3.3.4-linux-amd64.tar.gz -o /tmp/helm.tar.gz \
+    && tar -zxvf /tmp/helm.tar.gz -C /tmp \
+    && cp /tmp/linux-amd64/helm /usr/local/bin/helm \
+    # Install Docker
+    && curl -L https://download.docker.com/linux/static/stable/x86_64/docker-19.03.12.tgz -o /tmp/docker-19.03.12.tgz \
+    && tar --strip-components=1 -xvzf /tmp/docker-19.03.12.tgz -C /usr/local/bin \
+    && chmod a+x /usr/local/bin/dockerd \
+    # Cleanup uncessary files
+    && apt-get clean \
+    && rm -rf /tmp/* ~/*.tgz
+~~~
 

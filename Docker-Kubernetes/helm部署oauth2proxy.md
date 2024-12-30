@@ -138,5 +138,5 @@ helm upgrade -i oauth2-proxy -n oauth2-proxy --create-namespace . -f values.yaml
 ~~~yaml
 annotations:
   nginx.ingress.kubernetes.io/auth-url: "https://oauth2proxy.hanxux.local/oauth2/auth"
-  nginx.ingress.kubernetes.io/auth-signin: "https://oauth2proxy.hanxux.local/oauth2/start?rd=https%3A%2F%2Foauth2proxy.hanxux.local"
+  nginx.ingress.kubernetes.io/auth-signin: "https://oauth2proxy.hanxux.local/oauth2/start?rd=https%3A%2F%2F<host>.hanxux.local"
 ~~~
