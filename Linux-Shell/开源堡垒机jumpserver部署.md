@@ -1,0 +1,4 @@
+- 简洁版教程：https://mp.weixin.qq.com/s/2bFbblu7ViEzSgXpB8vU9w
+- 详细版教程：https://mp.weixin.qq.com/s/0-8vWJPbpmyVKFxzhjdnjA
+- 官网：https://github.com/jumpserver
+- 文档：https://www.jumpserver.com/docs/installation
