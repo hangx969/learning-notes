@@ -156,55 +156,56 @@ git remote add origin https://github.com/hangx969/Scripts.git
   git push origin xxx
   ~~~
 
-  
 
+# Git分支管理
 
-# 本地内容同步到远程仓库
+- master主分支应该非常稳定，用来发布新版本，一般情况下不允许在上面工作。
 
-## 添加所有文件到暂存区
+- 工作一般情况下在新建的dev分支上工作，工作完后，比如要发布，或者说dev分支代码稳定后可以合并到主分支master上来。
 
-```bash
-git add .
-```
+- 要将修改后的代码推送到新的分支 "dev" 上，您可以按照以下步骤使用 Git 命令来操作：
 
-## 提交暂存区的内容到本地仓库
+  1. 首先，确保您的本地仓库是最新的：
 
-```bash
-git commit -m “comments”
-```
+     ```bash
+     git pull origin main  # 假设您从 main 分支拉取的最新代码
+     ```
 
-## 提交至远程仓库
+  2. 创建并切换到新的分支 "dev"：
 
-```bash
-git push origin main
-//或者直接 git push
-```
+     ```bash
+     git checkout -b dev
+     ```
 
-- git -u
-  - 第一次加了参数-u后，以后即可直接用git push代替git push origin master
+     这个命令会创建一个名为 "dev" 的新分支，并自动切换到这个分支。
 
-## 忽略文件
+  3. 将您的代码更改添加到暂存区：
 
-被忽略的文件在 .gitignore里面，可以配置正则规则.
+     ```bash
+     git add .
+     # 或者您可以只添加部分文件
+     git add <文件路径>
+     ```
 
-# 从远程仓库拉取更新内容到本地
+  4. 提交您的更改：
 
-```bash
-//方法一
-#直接merge到本地main分支
-git checkout main
-git fetch origin main #从远程的origin仓库的master分支下载代码到本地的origin master
-git log -p main.. origin/main #比较本地的仓库和远程参考的区别
-git merge origin/main #把远程下载下来的代码合并到本地仓库，远程的和本地的合并
+     ```bash
+     git commit -m "描述您的更改"
+     ```
 
-//方法二
-git fetch origin master:temp #从远程的origin仓库的master分支下载到本地并新建一个分支temp
-git diff temp #比较master分支和temp分支的不同
-git merge temp #合并temp分支到master分支
-git branch -d temp #删除temp
-```
+     这里的 "描述您的更改" 应该替换为具体描述您所做更改的信息，帮助其他开发者理解此次提交的目的。
 
-# 初始化本地仓库并拉取远程内容
+  5. 将 "dev" 分支推送到远程仓库：
+
+     ```bash
+     git push origin dev
+     ```
+
+     如果是第一次将这个分支推送到远程仓库，Git 会创建远程的 "dev" 分支。
+
+# 开发常用流程
+
+## 初始化本地仓库并拉取远程仓库
 
 - 本地新建文件夹
 
@@ -216,51 +217,67 @@ git branch -d temp #删除temp
   git pull --rebase origin main
   ```
 
-# Git分支管理
+## 本地更改推送到远程仓库
 
-- master主分支应该非常稳定，用来发布新版本，一般情况下不允许在上面工作。
+- 添加所有文件到暂存区
 
-- 工作一般情况下在新建的dev分支上工作，工作完后，比如要发布，或者说dev分支代码稳定后可以合并到主分支master上来。
+```bash
+git add .
+```
 
-- 要将修改后的代码推送到新的分支 "dev" 上，您可以按照以下步骤使用 Git 命令来操作：
+- 提交暂存区的内容到本地仓库
 
-  1. 首先，确保您的本地仓库是最新的：
-     ```bash
-     git pull origin main  # 假设您从 main 分支拉取的最新代码
-     ```
+```bash
+git commit -m “comments”
+```
 
-  2. 创建并切换到新的分支 "dev"：
-     ```bash
-     git checkout -b dev
-     ```
+- 新建分支
 
-     这个命令会创建一个名为 "dev" 的新分支，并自动切换到这个分支。
+~~~sh
+git checkout -b aaa-bbb-ccc
+~~~
 
-  3. 将您的代码更改添加到暂存区：
-     ```bash
-     git add .
-     # 或者您可以只添加部分文件
-     git add <文件路径>
-     ```
+- 提交至远程仓库的新分支
 
-  4. 提交您的更改：
-     
-     ```bash
-     git commit -m "描述您的更改"
-     ```
-     
-     这里的 "描述您的更改" 应该替换为具体描述您所做更改的信息，帮助其他开发者理解此次提交的目的。
-     
-  5. 将 "dev" 分支推送到远程仓库：
-     ```bash
-     git push origin dev
-     ```
+```bash
+git push origin aaa-bbb-ccc
+# git -u: 第一次加了参数-u后，以后即可直接用git push代替git push origin main
+```
 
-     如果是第一次将这个分支推送到远程仓库，Git 会创建远程的 "dev" 分支。
-     
-  
+- 忽略文件
+  - 被忽略的文件在 .gitignore里面，可以配置正则规则配置哪些文件不会被push到远端仓库
 
-# git清除github repo的commit记录
+## Merge PR
+
+推送新分支到远程仓库之后，在远程仓库上会执行创建Pull Request、Merge Pull Request等操作。
+
+- 在github上一般采用“Merge and rebase”方式来merge PR：
+
+  1. 先对PR分支执行rebase，PR分支的commit会加到main分支的最新状态上
+  2. 再通过merge commit将PR的更改合并到main上
+
+  这样main分支上会保留一个merge commit。
+
+- azure devops上一般采用“Rebase and fast-forward”：
+
+  1. 对 PR 的分支执行一个 rebase 操作，将 PR 分支上的提交重新应用到目标分支的最新状态上。
+  2. 然后通过 fast-forward merge 将这些提交直接添加到目标分支中，不会创建 merge commit。
+
+  合并后，目标分支上的提交历史是线性的，PR 的提交直接接在目标分支的最新提交之后。没有额外的 merge commit。
+
+## 从远程仓库拉取更新内容到本地
+
+本地推送完成新分支之后，远端仓库执行了merge PR操作，这样main分支的提交记录已经改变，需要把新的main分支同步到本地仓库：
+
+```bash
+git checkout main
+git branch -D aaa-bbb-ccc
+git pull --rebase origin main
+```
+
+# 清理操作
+
+## git清除github repo的commit记录
 
 首先，我们需要在本地Git仓库上执行一系列操作来修改commit历史记录。请确定你已经安装了Git并将其配置到你的系统中。然后，按照以下步骤执行：
 
@@ -318,7 +335,7 @@ git push -f origin main
 
 由于我们已经改变了本地仓库的历史记录，所以必须使用强制推送选项。
 
-# 清除所有git history并覆盖到远端仓库
+## 清除所有git history并覆盖到远端仓库
 
 ~~~sh
 cd <repo dir>
