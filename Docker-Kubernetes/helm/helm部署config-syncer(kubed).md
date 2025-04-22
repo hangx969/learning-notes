@@ -43,15 +43,15 @@ docker save -o './kubed-image.tar' 'appscode/kubed:v0.13.2_linux_amd64'
 - 登录harbor
 
   ~~~sh
-  docker login harbor.hanxux.local
+  docker login harbor.hanxux.local 
   #使用默认用户名和密码登录
   ~~~
 
 - 推送镜像
 
   ~~~sh
-  docker tag appscode/kubed:v0.13.2_linux_amd64 harbor.hanxux.local/platform-external/appscode/kubed:v0.13.2_linux_amd64
-  docker push harbor.hanxux.local/platform-external/appscode/kubed:v0.13.2_linux_amd64
+  docker tag appscode/kubed:v0.13.2_linux_amd64 harbor.hanxux.local/platform-tools-local/appscode/kubed:v0.13.2_linux_amd64
+  docker push harbor.hanxux.local/platform-tools-local/appscode/kubed:v0.13.2_linux_amd64
   ~~~
 
 # 配置helm chart
