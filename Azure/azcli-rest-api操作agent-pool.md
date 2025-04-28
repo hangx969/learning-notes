@@ -151,7 +151,7 @@ curl -s -H "Authorization: Basic $PAT_TOKEN_B64" "${ORG_URL}/_apis/distributedta
 
 > 注意：
 >
-> - azcli pod中需要先安装gawk：`yum install gawk -y`
+> - azcli pod中需要先安装gawk：`yum install gawk -y`，也可以东dockerfile做一个提前安装好gawk的azcli-gawk image以供使用。
 
 1. 根据pool name获取pool id
 2. 获取这个pool中的所有agent id和agent count
