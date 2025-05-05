@@ -191,4 +191,37 @@ oci://${{ env.harborURL }}/${{ env.harborProjectName }}/$helmRepoName/$helmChart
 >
 >    部署时不会报错，但是完成后pact-broker pod会报错连接不上pgsql，密码认证失败。问题暂时未解决。
 >
-> 3. 本地部署暂时采用直接在values.yaml里设置pgsql密码，可以完成部署。
+> 3. 本地部署暂时采用直接在values.yaml里设置pgsql密码(postgresql.auth.password随便写了一个，existingSecret置空)。
+>
+>    但是helm upgrade的时候又会遇到报错：**The secret "pact-broker-postgresql" does not contain the key "user-password"。**
+>
+>    猜测可能是这个helm chart有bug，明明设置为不用existingSecret，他还是要去检测userPasswordKey字段，所以无奈之下手动创建了一个secret，将existingSecret设成这个secret，手动把需要的两个key加进去：
+>
+>    ~~~sh
+>    kubectl create secret generic pact-broker-postgresql-secret \
+>      --from-literal=admin-password=abc123abc123 \
+>      --from-literal=user-password=abc123abc123 \
+>      -n observability
+>    ~~~
+>
+>    ~~~yaml
+>    postgresql:
+>      # -- Switch to enable or disable the PostgreSQL helm chart
+>      enabled: true
+>      # The authentication details of the Postgres database
+>      auth:
+>        # -- Name for a custom user to create
+>        username: bn_broker
+>        # -- Password for the custom user to create
+>        password: "abc123abc123"
+>        # -- Name for a custom database to create
+>        database: bitnami_broker
+>        # -- Name of existing secret to use for PostgreSQL credentials
+>        existingSecret: "pact-broker-postgresql-secret"
+>        # The secret keys Postgres will look for to retrieve the relevant password
+>        secretKeys:
+>          # -- The key in which Postgres well look for, for the admin password, in the existing Secret
+>          adminPasswordKey: admin-password
+>          # -- The key in which Postgres well look for, for the user password, in the existing Secret
+>          userPasswordKey: user-password
+>    ~~~

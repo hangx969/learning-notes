@@ -59,5 +59,3 @@
    sudo systemctl show --property=Environment docker
    ~~~
 
-   
-
