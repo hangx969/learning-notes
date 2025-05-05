@@ -95,7 +95,7 @@ kubectl get nodes -owide
 
 - 遵循上面与master相同的步骤
 
-# k8s版本升级
+# k8s版本升级-1.23-1.24
 
 ## 实验环境
 
@@ -106,7 +106,7 @@ kubectl get nodes -owide
 
 ~~~sh
 kubectl cordon master1
-kubectl drain master1  --delete-emptydir-data  --force --ignore-daemonsets
+kubectl drain master1 --delete-emptydir-data --force --ignore-daemonsets
 ~~~
 
 ## 升级控制节点
@@ -114,6 +114,7 @@ kubectl drain master1  --delete-emptydir-data  --force --ignore-daemonsets
 - 升级kubeadm
 
 ~~~sh
+# 升级到对应版本
 yum install -y kubeadm-1.24.1-0 --disableexcludes=kubernetes
 #--disableexcludes=kubernetes表示临时禁用对kubernetes分类的排除，确保即使 yum 配置中设置了对 Kubernetes 相关软件包的排除，这个命令也能够强制安装指定的 kubelet 和 kubectl 版本。这样可以帮助用户安装特定版本的软件，即使这些版本可能与系统中其他部分软件的兼容性有冲突或者其他原因导致它们被默认排除。
 kubeadm upgrade plan
@@ -148,5 +149,211 @@ systemctl daemon-reload && systemctl restart kubelet
 kubeadm upgrade node
 ~~~
 
+# k8s patch版本升级-1.30.0-1.30.12
 
+## 控制节点
 
+1. 封锁排空控制节点
+
+   ~~~sh
+   kubectl cordon rm1
+   kubectl drain rm1 --delete-emptydir-data --force --ignore-daemonsets
+   ~~~
+
+2. 升级kubeadm
+
+   ~~~sh
+   yum install -y kubeadm-'1.31.12-0' --disableexcludes=kubernetes
+   kubeadm upgrade plan
+   kubeadm upgrade apply v1.31.12
+   ~~~
+
+3. 升级kubelet和kubectl
+
+   ~~~sh
+   yum install -y kubelet-1.30.12-150500.1.1 kubectl-1.30.12-150500.1.1 --disableexcludes=kubernetes
+   systemctl daemon-reload
+   systemctl restart kubelet
+   # 重启kubelet之后，node才会显示新版本
+   kubectl get nodes
+   ~~~
+
+4. 恢复节点
+
+   ~~~sh
+   kubectl uncordon rm1
+   ~~~
+
+## 工作节点
+
+1. 封锁排空
+
+   ~~~sh
+   # 控制节点上
+   kubectl cordon rn1
+   kubectl drain rn1 --delete-emptydir-data --force --ignore-daemonsets
+   ~~~
+
+2. 升级kubeadm
+
+   ~~~sh
+   # 登录到工作节点上
+   yum list --showduplicates kubeadm --disableexcludes=kubernetes
+   yum install -y kubeadm-'1.30.12-150500.1.1' --disableexcludes=kubernetes
+   kubeadm upgrade node
+   ~~~
+
+3. 升级kubelet和kubectl
+
+   ~~~sh
+   # 工作节点上
+   yum install -y kubelet-1.30.12-150500.1.1 kubectl-1.30.12-150500.1.1 --disableexcludes=kubernetes
+   systemctl daemon-reload
+   systemctl restart kubelet
+   ~~~
+
+4. 恢复节点
+
+   ~~~sh
+   # 控制节点上
+   kubectl uncordon rn1
+   ~~~
+
+# k8s minor版本升级-1.30-1.31
+
+## 控制节点
+
+1. 封锁排空控制节点
+
+   ~~~sh
+   kubectl cordon rm1
+   kubectl drain rm1 --delete-emptydir-data --force --ignore-daemonsets
+   ~~~
+
+2. 升级kubeadm
+
+   ~~~sh
+   yum list --showduplicates kubeadm --disableexcludes=kubernetes
+   yum install -y kubeadm-'1.31.8-150500.1.1' --disableexcludes=kubernetes
+   kubeadm upgrade plan
+   kubeadm upgrade apply v1.31.8
+   ~~~
+
+   > 如果yum install报错找不到包，两种方式解决：
+   >
+   > **方法1：**
+   >
+   > - 可以直接去repo下载rpm文件：https://mirrors.aliyun.com/kubernetes-new/core/stable/v1.31/rpm/x86_64/
+   > - 安装命令：`rpm -ivh xxx.rpm`
+   >
+   > **方法2：**
+   >
+   > - 添加k8s repo
+   >
+   >   ~~~sh
+   >   cat > /etc/yum.repos.d/kubernetes.repo <<EOF
+   >   [kubernetes]
+   >   name=Kubernetes
+   >   baseurl=https://mirrors.aliyun.com/kubernetes-new/core/stable/v1.31/rpm/
+   >   enabled=1
+   >   gpgcheck=1
+   >   gpgkey=https://mirrors.aliyun.com/kubernetes-new/core/stable/v1.31/rpm/repodata/repomd.xml.key
+   >   EOF
+   >   ~~~
+   >
+   > - 重新build
+   >
+   >   ~~~sh
+   >   yum clean all && yum makecache
+   >   ~~~
+   >
+   > - 查找新版本的包
+   >
+   >   ~~~sh
+   >   yum list --showduplicates kubeadm --disableexcludes=kubernetes
+   >   ~~~
+
+3. 升级kubelet和kubectl
+
+   ~~~sh
+   yum install -y kubelet-1.31.8-150500.1.1 kubectl-1.31.8-150500.1.1 --disableexcludes=kubernetes
+   systemctl daemon-reload
+   systemctl restart kubelet
+   # 重启kubelet之后，node才会显示新版本
+   kubectl get nodes
+   ~~~
+
+4. 恢复节点
+
+   ~~~sh
+   kubectl uncordon rm1
+   ~~~
+
+## 工作节点
+
+1. 封锁排空
+
+   ~~~sh
+   # 控制节点上
+   kubectl cordon rn1
+   kubectl drain rn1 --delete-emptydir-data --force --ignore-daemonsets
+   ~~~
+
+2. 升级kubeadm
+
+   ~~~sh
+   # 登录到工作节点上
+   yum list --showduplicates kubeadm --disableexcludes=kubernetes
+   yum install -y kubeadm-'1.31.8-150500.1.1' --disableexcludes=kubernetes
+   kubeadm upgrade node
+   ~~~
+
+   > 如果yum install报错找不到包，两种方式解决：
+   >
+   > **方法1：**
+   >
+   > - 可以直接去repo下载rpm文件：https://mirrors.aliyun.com/kubernetes-new/core/stable/v1.31/rpm/x86_64/
+   > - 安装命令：`rpm -ivh xxx.rpm`
+   >
+   > **方法2：**
+   >
+   > - 添加k8s repo
+   >
+   >   ~~~sh
+   >   cat > /etc/yum.repos.d/kubernetes.repo <<EOF
+   >   [kubernetes]
+   >   name=Kubernetes
+   >   baseurl=https://mirrors.aliyun.com/kubernetes-new/core/stable/v1.31/rpm/
+   >   enabled=1
+   >   gpgcheck=1
+   >   gpgkey=https://mirrors.aliyun.com/kubernetes-new/core/stable/v1.31/rpm/repodata/repomd.xml.key
+   >   EOF
+   >   ~~~
+   >
+   > - 重新build
+   >
+   >   ~~~sh
+   >   yum clean all && yum makecache
+   >   ~~~
+   >
+   > - 查找新版本的包
+   >
+   >   ~~~sh
+   >   yum list --showduplicates kubeadm --disableexcludes=kubernetes
+   >   ~~~
+
+3. 升级kubelet和kubectl
+
+   ~~~sh
+   # 工作节点上
+   yum install -y kubelet-1.31.8-150500.1.1 kubectl-1.31.8-150500.1.1 --disableexcludes=kubernetes
+   systemctl daemon-reload
+   systemctl restart kubelet
+   ~~~
+
+4. 恢复节点
+
+   ~~~sh
+   # 控制节点上
+   kubectl uncordon rn1
+   ~~~
