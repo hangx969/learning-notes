@@ -118,8 +118,6 @@ postgresql:
       replicationPasswordKey: passwd # key name要自己指定
 ~~~
 
-
-
 # 安装
 
 ~~~sh
@@ -134,6 +132,8 @@ pact-broker/pact-broker \
 
 注意由于我们安装的时候是采用默认的postgres password，不是使用已有password，所以升级的时候会被要求提供这个数据库password，获取方式如下：
 
+https://docs.pact.io/pact_broker/kubernetes/readme#configuration-and-installation-details
+
 ~~~sh
 export POSTGRES_PASSWORD=$(kubectl get secret --namespace "observability" pact-broker-postgresql --kubeconfig $KUBECONFIG -o jsonpath="{.data.postgres-password}" | base64 -d)
 
@@ -147,3 +147,48 @@ oci://${{ env.harborURL }}/${{ env.harborProjectName }}/$helmRepoName/$helmChart
 --kubeconfig $KUBECONFIG
 ~~~
 
+> 本地部署的时候遇到pgsql无法认证的问题：
+>
+> 1. 如果开启了pgsql,采用自动生成数据库密码的方式（把postgresql.auth.password和existingSecret都置空），部署时会报错：
+>
+>    ~~~sh
+>    Error: UPGRADE FAILED: cannot patch "pact-broker" with kind Deployment: Deployment.apps "pact-broker" is invalid: [spec.template.spec.containers[0].env[9].valueFrom.secretKeyRef.name: Invalid value: "": a lowercase RFC 1123 subdomain must consist of lower case alphanumeric characters, '-' or '.', and must start and end with an alphanumeric character (e.g. 'example.com', regex used for validation is '[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*'), spec.template.spec.containers[0].env[9].valueFrom.secretKeyRef.key: Required value]
+>    ~~~
+>
+> 2. 如果开启pgsql，采用自己指定secret的方式（把postgresql.auth.password置空，existingSecret填secret name），pipeline需要这么写：
+>
+>    ~~~yaml
+>          - name: Upgrade pact-broker
+>            run: |
+>              export helmChartVersion=${{env.pactVersion}}
+>              export helmRepoName='pact-broker'
+>              export helmChartName='pact-broker'
+>    
+>              if kubectl get secret pact-pg-local-passwd -n observability --kubeconfig $KUBECONFIG 2>&1; then
+>                PASSWD=$(kubectl get secret pact-pg-local-passwd -n observability --kubeconfig $KUBECONFIG -o jsonpath="{.data.passwd}" | base64 --decode)
+>    
+>                helm upgrade -i pact-broker -n observability \
+>                  oci://${{ env.harborURL }}/${{ env.harborProjectName }}/$helmRepoName/$helmChartName \
+>                  --version $helmChartVersion \
+>                  -f ./base/external/pact-broker/values.yaml \
+>                  --history-max 5 \
+>                  --insecure-skip-tls-verify \
+>                  --kubeconfig $KUBECONFIG \
+>                  --set postgresql.auth.password=$PASSWD
+>              else
+>                PASSWD=$( openssl rand -base64 10 )
+>                kubectl create secret generic pact-pg-local-passwd --from-literal=passwd=$PASSWD --namespace=observability --kubeconfig $KUBECONFIG
+>    
+>                helm upgrade -i pact-broker -n observability \
+>                  oci://${{ env.harborURL }}/${{ env.harborProjectName }}/$helmRepoName/$helmChartName \
+>                  --version $helmChartVersion \
+>                  -f ./base/external/pact-broker/values.yaml \
+>                  --history-max 5 \
+>                  --insecure-skip-tls-verify \
+>                  --kubeconfig $KUBECONFIG
+>              fi;
+>    ~~~
+>
+>    部署时不会报错，但是完成后pact-broker pod会报错连接不上pgsql，密码认证失败。问题暂时未解决。
+>
+> 3. 本地部署暂时采用直接在values.yaml里设置pgsql密码，可以完成部署。
