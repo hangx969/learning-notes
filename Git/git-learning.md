@@ -287,13 +287,11 @@ git pull --rebase origin main
 cd /path/to/your/repository
 ```
 
-2. 创建并切换到一个新的空分支（可以使用任意名称）：
+2. 创建并切换到一个与当前分支无关的新的孤立分支。
 
 ```bash
 git checkout --orphan newBranch
 ```
-
-这个命令将创建一个与当前分支无关的新的孤立分支。
 
 3. 添加所有的文件到新分支：
 
@@ -301,23 +299,17 @@ git checkout --orphan newBranch
 git add -A
 ```
 
-这个命令将添加所有文件和文件夹到新的分支中。
-
 4. 提交更改：
 
 ```bash
 git commit -am "Initial commit"
 ```
 
-这个命令将提交你所做的更改。
-
-5. 删除原始分支：
+5. 删除原始分支：因为我们将删除commit历史记录，所以不再需要原始分支。
 
 ```bash
 git branch -D main
 ```
-
-因为我们将删除commit历史记录，所以不再需要原始分支。
 
 6. 将新的分支重命名为 main 分支：
 
@@ -325,15 +317,11 @@ git branch -D main
 git branch -m main
 ```
 
-这个命令将新的分支重命名为 main 分支。
-
-7. 强制将本地修改推送到远程仓库：
+7. 强制将本地修改推送到远程仓库：由于我们已经改变了本地仓库的历史记录，所以必须使用强制推送选项。
 
 ```bash
 git push -f origin main
 ```
-
-由于我们已经改变了本地仓库的历史记录，所以必须使用强制推送选项。
 
 ## 清除所有git history并覆盖到远端仓库
 
