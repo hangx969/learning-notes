@@ -36,6 +36,8 @@ helm pull ingress-nginx/ingress-nginx --version "${INGRESS_NGINX_VERSION#helm-ch
   - hosts文件还是配置任意工作节点IP
 
     172.16.183.101 prometheus.hanxux.local alertmanager.hanxux.local grafana.hanxux.local
+    
+    > 注意：hosts文件里面写哪个host的IP取决于ingress-controller的pod调度到了哪个host上面，保险起见需要把`controller.sutoscaling`里面设置成3个replica,这样每个host都有pod可以接收80端口的请求。
 
 # 安装
 

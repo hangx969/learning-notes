@@ -138,6 +138,17 @@ git branch -M main
 git remote add origin https://github.com/hangx969/Scripts.git
 ```
 
+## 更换remote
+
+有时候在一开始添加remote的时候添加的是https url，后面希望更换成ssh url：
+
+~~~sh
+# 查看当前remote
+git remote -v
+# 切换remote
+git remote set-url origin git@ssh.xxxx
+~~~
+
 ## 免密码登录git
 
 - github设置中加入客户端的ssh公钥。

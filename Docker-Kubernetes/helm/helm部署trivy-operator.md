@@ -80,7 +80,6 @@ Vulnerability DB是OCI image，不是container image，不能用docker pull下�
 
   ~~~sh
   oras pull ghcr.io/aquasecurity/trivy-db:2 # https://github.com/aquasecurity/trivy-db/pkgs/container/trivy-db#building-the-db
-  
   oras pull ghcr.io/aquasecurity/trivy-java-db:1 # https://github.com/aquasecurity/trivy-java-db
   ~~~
 
@@ -100,11 +99,11 @@ Vulnerability DB是OCI image，不是container image，不能用docker pull下�
 #首先确保db的tar.gz文件位于当前目录下
 cd ~/Downloads
 # push trivy-db
-oras push cronepilot.azurecr.cn/docker.io/aquasec/trivy-db:2 \
+oras push <ACR FQDN>/docker.io/aquasec/trivy-db:2 \
     --artifact-type application/vnd.aquasec.trivy.config.v1+json \
     db.tar.gz:application/vnd.aquasec.trivy.db.layer.v1.tar+gzip
 # push java-db
-oras push cronepilot.azurecr.cn/docker.io/aquasec/trivy-java-db:1 \
+oras push <ACR FQDN>/docker.io/aquasec/trivy-java-db:1 \
     --artifact-type application/vnd.aquasec.trivy.config.v1+json \
     db.tar.gz:application/vnd.aquasec.trivy.javadb.layer.v1.tar+gzip
 ~~~
@@ -112,10 +111,70 @@ oras push cronepilot.azurecr.cn/docker.io/aquasec/trivy-java-db:1 \
 ### [Recommended] oras cp直接复制到ACR
 
 ~~~sh
-oras cp ghcr.io/aquasecurity/trivy-checks:0 cronepilot.azurecr.cn/docker.io/aquasec/trivy-checks:0 # https://github.com/aquasecurity/trivy-checks/pkgs/container/trivy-checks
-oras cp ghcr.io/aquasecurity/trivy-checks:1 cronepilot.azurecr.cn/docker.io/aquasec/trivy-checks:1
-oras cp ghcr.io/aquasecurity/trivy-java-db:1 cronepilot.azurecr.cn/docker.io/aquasec/trivy-java-db:1
-oras cp ghcr.io/aquasecurity/trivy-db:2 cronepilot.azurecr.cn/docker.io/aquasec/trivy-db:2
+az acr login -n <ACR FQDN>
+oras cp ghcr.io/aquasecurity/trivy-checks:0 <ACR FQDN>/docker.io/aquasec/trivy-checks:0 
+# https://github.com/aquasecurity/trivy-checks/pkgs/container/trivy-checks
+oras cp ghcr.io/aquasecurity/trivy-checks:1 <ACR FQDN>/docker.io/aquasec/trivy-checks:1
+oras cp ghcr.io/aquasecurity/trivy-java-db:1 <ACR FQDN>/docker.io/aquasec/trivy-java-db:1
+oras cp ghcr.io/aquasecurity/trivy-db:2 <ACR FQDN>/docker.io/aquasec/trivy-db:2
+~~~
+
+### pipeline定时任务复制DB
+
+~~~yaml
+schedules:
+- cron: '0 1 * * *'
+  displayName: Copy trivy vulnerability databases
+  branches:
+    include:
+    - main
+  always: true
+trigger: none
+lockBehavior: sequential
+stages:
+  - stage: "copy_dbs"
+    displayName: "Copy trivy vulnerability databases"
+    condition: succeeded()
+    jobs:
+      - job: "copy_dbs"
+        displayName: "Copy trivy vulnerability databases"
+        pool: "<agent pool name>"
+        workspace:
+          clean: all
+        timeoutInMinutes: 30
+        steps:
+          - checkout: none
+
+          - task: AzureCLI@2
+            displayName: 'Authenticate with ACR'
+            condition: and(succeeded(), ne(variables.authenticatedWithACR, true))
+            inputs:
+              azureSubscription: '<service connection name>'
+              scriptType: 'bash'
+              scriptLocation: 'inlineScript'
+              inlineScript: |
+                set -e
+                az account set -s <sub name>
+                az acr login -n <ACR FQDN>
+                echo "##vso[task.setvariable variable=authenticatedWithACR]true"
+
+          - script: |
+
+                set -ex
+                
+                # Download oras
+                curl -LO "https://github.com/oras-project/oras/releases/download/v1.2.0/oras_1.2.0_linux_amd64.tar.gz"
+                tar xvf oras_1.2.0_linux_amd64.tar.gz
+                chmod +x ./oras
+                
+                # copy dbs
+                set +e
+                ./oras cp ghcr.io/aquasecurity/trivy-checks:0 <ACR FQDN>/aquasecurity/trivy-checks:0
+                ./oras cp ghcr.io/aquasecurity/trivy-checks:1 <ACR FQDN>/aquasecurity/trivy-checks:1
+                ./oras cp ghcr.io/aquasecurity/trivy-java-db:1 <ACR FQDN>/aquasecurity/trivy-java-db:1
+                ./oras cp ghcr.io/aquasecurity/trivy-db:2 <ACR FQDN>/aquasecurity/trivy-db:2
+                set -e
+            displayName: 'Copy trivy vulnerability databases'
 ~~~
 
 ### 上传到harbor
@@ -164,6 +223,4 @@ https://trivy.dev/v0.57/docs/advanced/air-gap/
    kubectl delete crd clustersbomreports.aquasecurity.github.io
    kubectl delete crd clustervulnerabilityreports.aquasecurity.github.io
    ~~~
-
-   
 
