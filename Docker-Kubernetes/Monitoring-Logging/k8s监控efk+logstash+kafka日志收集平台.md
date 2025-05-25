@@ -111,7 +111,7 @@ cd /opt/zookeeper/bin/
 
 - Broker：Kafka集群包含一个或多个服务器，服务器被称为broker。Kafka的数据是分布式存储在各个Broker上的。每个Broker都会存储一部分Topic的Partition。Kafka的Broker主要用于存储和处理实时数据流。
 - Topic：每条发布到Kafka集群的消息都有一个类别，这个类别被称为Topic。（物理上不同Topic的消息分开存储，逻辑上一个Topic的消息虽然保存于一个或多个broker上，但用户只需指定消息的Topic，即可生产或消费数据，而不必关心数据存于何处）
-- Partition：Partition是物理上的概念，每个Topic包含一个或多个Partition。
+- Partition：Partition是物理上的概念，每个Topic包含一个或多个Partition。消费者从不同的partition上读取消息，避免同时读取的争抢现象。
 - Producer：负责发布消息到Kafka broker
 - Consumer：消息消费者，向Kafka broker读取消息的客户端。
 

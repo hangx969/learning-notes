@@ -108,13 +108,13 @@ rm nfs-test.txt
 
   所有 Kubernetes 集群节点需要提前安装 nfs-utils，否则在部署过程中会报错.
 
-```shell
+```sh
 yum install nfs-utils
 ```
 
 - 添加 Helm 源
 
-```shell
+```sh
 helm repo add nfs-subdir-external-provisioner https://kubernetes-sigs.github.io/nfs-subdir-external-provisioner
 ```
 
@@ -148,7 +148,7 @@ helm install nfs-subdir-external-provisioner nfs-subdir-external-provisioner/nfs
 
 ### Option2:自定义values安装 NFS Provisioner
 
-**（备选方案，使用配置文件设置变量参数）**，有更多定制化需求时可以选择自定义 `values.yaml` 的方式进行安装，实际使用中与命令行安装 NFS Subdir External Provisioner 的方式**二选一**即可。
+有更多定制化需求时可以选择自定义 `values.yaml` 的方式进行安装，实际使用中与命令行安装 NFS Subdir External Provisioner 的方式**二选一**即可。
 
 ```shell
 #下载解压Charts
@@ -209,16 +209,25 @@ podDisruptionBudget:
 - 根据实际情况修改 `nfs-subdir-external-provisioner/values.yaml`
 
 ```yaml
-# 主要修改内容如下
-image:
-  repository: registry.k8s.io/sig-storage/nfs-subdir-external-provisioner  #镜像拉取地址，默认可能拉取不下来，建议替换成本地或是其他可正常访问的仓库
-  tag: v4.0.2             #镜像 tag 默认为 v4.0.2，可根据实际情况替换
+replicaCount: 2
+
 nfs:
-  server: 192.168.9.81    #指定 NFS 服务器的地址
-  path: /data/k8s         #指定 NFS 导出的共享数据目录
+  server: 172.16.183.100
+  path: /data/nfs_pro/
+
 storageClass:
-  defaultClass: false     #是否设置为默认的 StorageClass，本示例没设置，有需要的可以设置为 true
-  name: nfs-sc            #指定 storageClass 的名字
+  create: true
+  defaultClass: true
+  name: sc-nfs
+
+resources:
+  limits:
+   cpu: 100m
+   memory: 128Mi
+  requests:
+   cpu: 100m
+   memory: 128Mi
+
 ```
 
 - 安装 NFS Subdir External Provisioner
