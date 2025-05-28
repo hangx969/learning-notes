@@ -288,49 +288,22 @@ git pull --rebase origin main
 
 # 清理操作
 
-## git清除github repo的commit记录
-
-首先，我们需要在本地Git仓库上执行一系列操作来修改commit历史记录。请确定你已经安装了Git并将其配置到你的系统中。然后，按照以下步骤执行：
-
-1. 进入本地仓库的目录：
+## 清除github repo的commit记录
 
 ```bash
+#进入本地仓库的目录
 cd /path/to/your/repository
-```
-
-2. 创建并切换到一个与当前分支无关的新的孤立分支。
-
-```bash
+#创建并切换到一个与当前分支无关的新的孤立分支。
 git checkout --orphan newBranch
-```
-
-3. 添加所有的文件到新分支：
-
-```bash
-git add -A
-```
-
-4. 提交更改：
-
-```bash
+# 添加所有的文件到新分支
+git add .
+# 提交更改
 git commit -am "Initial commit"
-```
-
-5. 删除原始分支：因为我们将删除commit历史记录，所以不再需要原始分支。
-
-```bash
+# 删除原始分支：因为我们将删除commit历史记录，所以不再需要原始分支
 git branch -D main
-```
-
-6. 将新的分支重命名为 main 分支：
-
-```bash
+# 将新的分支重命名为 main 分支
 git branch -m main
-```
-
-7. 强制将本地修改推送到远程仓库：由于我们已经改变了本地仓库的历史记录，所以必须使用强制推送选项。
-
-```bash
+# 强制将本地修改推送到远程仓库：由于我们已经改变了本地仓库的历史记录，所以必须使用强制推送选项
 git push -f origin main
 ```
 
@@ -383,6 +356,7 @@ Host github.com
 - fork
 - sourceTree
 - git graph (vscode插件)
+- 学习git：https://learngitbranching.js.org/?locale=zh_CN
 
 # Lab
 

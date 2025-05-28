@@ -870,3 +870,6 @@ data:
           description: "Container memory usage is above 90%."
 ~~~
 
+> - https://github.com/samber/awesome-prometheus-alerts
+>
+>   这个项目中包含了常见组件的prometheus alerts
