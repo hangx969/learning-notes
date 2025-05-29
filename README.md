@@ -71,7 +71,8 @@ A well-organized repository of knowledge covering Kubernetes, cloud-native techn
 - **Concepts and Architectures**
   - [Cloud Computing Overview](./CloudComputing/大话云计算.md)
   - [Kubernetes Deep Dive](./CloudComputing/深入剖析Kubernetes.md)
-  - [OpenStack](./CloudComputing/Openstack.md)
+  - [Cloud Native Architecture](./CloudComputing/图解云计算架构.md)
+  - [AuthN and AuthZ](./CloudComputing/Auth.md)
 
 ## 📚 Networking
 
