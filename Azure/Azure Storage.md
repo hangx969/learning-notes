@@ -187,3 +187,535 @@ $logs | Out-GridView -Title "Storage Analytic Log Parser"
   - IOPS * Latency = Queue Depth
 
 - 条带化卷应保持足够高的队列深度，使得每个磁盘都有各自的高峰队列深度。 例如，应用程序所推送的队列深度为 2，条带中有四个磁盘。 两个 IO 请求会发送到两个磁盘中，剩下两个磁盘会处于空闲状态。 因此，将队列深度配置为让所有磁盘都能够处于繁忙状态。
+
+# AKS上传文件到storage
+
+## curl测试pod连接storage
+
+~~~sh
+kubectl run curl-testing --image curl:latest  --image-pull-policy=IfNotPresent --restart=Never --rm -it curl-testing -- curl "https://<sa name>.blob.core.chinacloudapi.cn/<container name>/<file name>?<sas>"
+curl: (7) Failed to connect to curl-testing port 80: Connection refused
+curl: (6) Could not resolve host: curl
+########################################
+## Testing Connection Success
+########################################
+~~~
+
+## 上传文件的方案--azcopy
+
+### VM中测试
+
+- apt安装azcopy：https://learn.microsoft.com/zh-cn/azure/storage/common/storage-use-azcopy-v10?tabs=apt#install-azcopy-on-linux-by-using-a-package-manager
+
+~~~sh
+#curl -sSL -O https://packages.microsoft.com/config/ubuntu/22.04/packages-microsoft-prod.deb
+#dpkg -i packages-microsoft-prod.deb && rm packages-microsoft-prod.deb
+#apt-get update && apt-get install azcopy
+wget -O azcopy_v10.tar.gz https://aka.ms/downloadazcopy-v10-linux && tar -xf azcopy_v10.tar.gz --strip-components=1
+~~~
+
+- 上传文件，不带sas -- 失败 需要认证
+
+~~~sh
+./azcopy copy 'test.log' 'https://<sa name>.blob.core.chinacloudapi.cn/<container name>/test.log'
+~~~
+
+- 上传文件，带container level的sas -- 成功
+
+~~~sh
+./azcopy copy 'test.log' 'https://<sa name>.blob.core.chinacloudapi.cn/<container name>?<sas>'
+~~~
+
+- 上传文件，用vm的system-assigned identity
+
+  - 给identity赋予storage account的storage blob contributor
+
+  - 直接上传文件无需sas token
+
+    ~~~sh
+    ./azcopy copy 'test.log' 'https://<sa name>.blob.core.chinacloudapi.cn/<container name>'
+    ~~~
+
+### AKS pod中测试
+
+- 先在pod中获取到azcopy -- busybox和alpine的image下载了azcopy之后均无法运行
+
+  ~~~sh
+  kubectl run apline --image apline:latest  --image-pull-policy=IfNotPresent --restart=Never --rm -it -- sh
+  ~~~
+
+- 尝试ubuntu，容器有root -- 成功
+
+  ~~~sh
+  kubectl run ubuntu --image ubuntu:22.04  --image-pull-policy=IfNotPresent --restart=Never --rm -it -- /bin/bash
+  
+  ./azcopy login --identity --identity-client-id <client id>
+  #这里用aks的kubelet identity，sa层面赋予Storage Blob Contributor角色
+  #测试上传
+  echo "tesetingfromakspod" >> test.log
+  ./azcopy copy 'test.log' 'https://<sa name>.blob.core.chinacloudapi.cn/<container name>'
+  ~~~
+
+  - aks kubelet identity: https://techcommunity.microsoft.com/t5/fasttrack-for-azure/aks-review-2-1-identity-amp-access-control-cluster-operator-amp/ba-p/3716906
+
+- pod中运行的完整命令
+
+
+~~~sh
+apt-get update && apt-get install -y wget
+wget -O azcopy_v10.tar.gz https://aka.ms/downloadazcopy-v10-linux && tar -xf azcopy_v10.tar.gz --strip-components=1
+./azcopy login --identity --identity-client-id <client-id> #--aad-endpoint https://login.partner.microsoftonline.cn
+./azcopy copy '<file name>' 'https://<sa name>.blob.core.chinacloudapi.cn/<container name>'
+~~~
+
+### workload identity with azcopy
+
+前面是用kubelet identity。尝试用workload identity登录azcopy(直接挂service account就行，不需要指定uai id)
+
+azcopy 10.25+已经support login with workload identity： 
+
+- https://github.com/Azure/azure-storage-azcopy/issues/2545#issuecomment-2136833573
+- azcopy环境变量说明： https://learn.microsoft.com/zh-cn/azure/storage/common/storage-ref-azcopy-configuration-settings?toc=%2Fazure%2Fstorage%2Fblobs%2Ftoc.json&bc=%2Fazure%2Fstorage%2Fblobs%2Fbreadcrumb%2Ftoc.json#azcopy-v10-environment-variables
+
+```yaml
+tee pod-wi-ubuntu.yaml <<'EOF'
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-test-wi
+  namespace: <ns name>
+  labels:
+    azure.workload.identity/use: "true"
+spec:
+  serviceAccountName: <sa name>
+  containers:
+    - name: ubuntu
+      image: ubuntu:22.04
+      command: ["/bin/sh"]
+      args: ["-c", "while true; do echo hello; sleep 10;done"]
+      env:
+      - name: STORAGE_ACCOUNT_NAME
+        value: <sa name>
+      - name: STORAGE_CONTAINER_NAME
+        value: <container name>
+      - name: AZCOPY_AUTO_LOGIN_TYPE
+        value: WORKLOAD
+EOF
+
+##job的yaml需要添加的字段##
+#1. 加一个label
+  labels:
+    azure.workload.identity/use: "true"
+    
+#2. 加环境变量
+env:
+- name: STORAGE_ACCOUNT_NAME
+  value: <sa name>
+- name: STORAGE_CONTAINER_NAME
+  value: <container name>
+- name: AZCOPY_AUTO_LOGIN_TYPE
+  value: WORKLOAD
+  
+#3. job的command改成下面:
+apt-get update && apt-get install -y wget
+wget -O azcopy_v10.tar.gz https://aka.ms/downloadazcopy-v10-linux && tar -xf azcopy_v10.tar.gz --strip-components=1
+./azcopy copy '<file name>' 'https://<sa name>.blob.core.chinacloudapi.cn/<container name>' --put-md5
+```
+
+> - azure blob的md5，对于大文件上传时需要手动指定：
+>
+>   https://learn.microsoft.com/en-us/answers/questions/282572/md5-hash-calculation-for-large-files
+>
+>   https://technet2.github.io/Wiki/blogs/windowsazurestorage/windows-azure-blob-md5-overview.html
+>
+>   https://azure.rvr.cloud/azcopy-sync.html
+
+### workload identity with az login
+
+- directly install az cli in main container (up to 700 MB will be installed, too big, the pod will crash during installation)
+
+  https://learn.microsoft.com/zh-cn/cli/azure/install-azure-cli-linux?pivots=apt
+
+- sidecar container
+
+  https://learn.microsoft.com/zh-cn/cli/azure/run-azure-cli-docker
+
+``` yaml
+tee pod-sidecar.yaml <<'EOF'
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-test-wi
+  namespace: mapapps
+  labels:
+    azure.workload.identity/use: "true"
+spec:
+  serviceAccountName: <sa name>
+  containers:
+    - name: ubuntu
+      image: ubuntu:22.04
+      imagePullPolicy: IfNotPresent
+      command:
+      - /bin/sh
+      - -c
+      - >
+        while true; do echo hello >> /mnt/test.txt; sleep 10; done
+      volumeMounts:
+      - name: localstorage
+        mountPath: /mnt
+    - name: sidecar-azlogin
+      image: azure-cli:cbl-mariner2.0
+      command:
+      - /bin/sh
+      - -c
+      - |
+        az login --service-principal -u $AZURE_CLIENT_ID -t $AZURE_TENANT_ID --federated-token $AZURE_FEDERATED_TOKEN_FILE && \
+        az storage blob upload --account-name <sa name> --container-name <container name> --name test.txt --file /mnt/test.txt
+      volumeMounts:
+      - name: localstorage
+        mountPath: /mnt
+  volumes:
+  - name: localstorage
+    emptyDir: {}
+EOF
+```
+
+> - 每个pod都有wi的环境变量
+>
+>   ```sh
+>   Environment:
+>         AZURE_CLIENT_ID:             <client id>
+>         AZURE_TENANT_ID:             <tenant id>
+>         AZURE_FEDERATED_TOKEN_FILE:  /var/run/secrets/azure/tokens/azure-identity-token
+>         AZURE_AUTHORITY_HOST:        https://login.chinacloudapi.cn
+>   ```
+>
+> - login command
+>
+>   https://github.com/Azure/azure-cli/issues/24756
+>
+>   ```sh
+>   az cloud set --name AzureChinaCloud && az login --service-principal --username "${AZURE_CLIENT_ID}" --tenant "${AZURE_TENANT_ID}" --federated-token "$(cat $AZURE_FEDERATED_TOKEN_FILE)" 
+>   ```
+>
+> - upload command
+>
+>   ```sh
+>   az storage blob upload --account-name <sa name> --container-name <container name> --name test.txt --file /mnt/test.txt --auth-mode login
+>   ```
+
+```yaml
+#azcli pod单独测试
+tee pod-azcli.yaml <<'EOF'
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-test-azcli
+  namespace: <ns name>
+  labels:
+    azure.workload.identity/use: "true"
+spec:
+  serviceAccountName: <sa name>
+  containers:
+    - name: sidecar-azlogin
+      image: azure-cli:cbl-mariner2.0
+      command: ["/bin/sh"]
+      args: ["-c", "while true; do echo hello; sleep 10;done"]
+EOF
+```
+
+> issue: MS提供的azcli container运行az命令会直接崩溃，原因是container的cpu memory需要指定稍微大一些：request 200m cpu和500Mi memory即可运行。
+
+## 上传文件的方案 -- pv挂载blob
+
+- 创建secret
+
+~~~sh
+kubectl create secret generic <secret name> --from-literal sazurestorageaccountname=<sa name> --from-literal azurestorageaccountkey="<key value>" --type=Opaque
+~~~
+
+- 创建PV
+
+~~~yaml
+tee pv-download.yaml <<'EOF'
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  annotations:
+    pv.kubernetes.io/provisioned-by: blob.csi.azure.com
+  name: pv-blob-download
+spec:
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain  # If set as "Delete" container would be removed after pvc deletion
+  storageClassName: managed-blobfuse-premium-lrs
+  mountOptions:
+    - -o allow_other
+    - --file-cache-timeout-in-seconds=120
+  csi:
+    driver: blob.csi.azure.com
+    # volumeid has to be unique for every identical storage blob container in the cluster
+    # character `#`and `/` are reserved for internal use and cannot be used in volumehandle
+    volumeHandle: <handle name>
+    volumeAttributes:
+      containerName: <container name>
+    nodeStageSecretRef:
+      name: <secret name>
+      namespace: default
+EOF
+~~~
+
+- 创建PVC
+
+~~~yaml
+tee pvc-download.yaml <<'EOF'
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pvc-blob-download
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 10Gi
+  volumeName: pv-blob-download
+  storageClassName: managed-blobfuse-premium-lrs
+EOF
+~~~
+
+### workload identity with pv
+
+- 测试简单pod挂载
+
+~~~yaml
+tee pod-wi-ubuntu.yaml <<'EOF'
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-test-wi
+  namespace: <ns name>
+  labels:
+    azure.workload.identity/use: "true"
+spec:
+  serviceAccountName: <sa name>
+  containers:
+    - name: ubuntu
+      image: ubuntu:22.04
+      command: ["/bin/sh"]
+      args: ["-c", "while true; do echo hello; sleep 10;done"]
+EOF
+
+k exec -it pod-test-wi -n <ns name> -- /bin/bash
+#查看token
+cat /run/secrets/azure/tokens/azure-identity-token
+~~~
+
+- 测试job挂载blob 
+
+pv:
+
+~~~yaml
+tee pv-upload.yaml <<'EOF'
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  annotations:
+    pv.kubernetes.io/provisioned-by: blob.csi.azure.com
+  name: pv-blob-upload
+  namespace: <ns name>
+spec:
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain  # If set as "Delete" container would be removed after pvc deletion
+  storageClassName: managed-blobfuse-premium-lrs
+  mountOptions:
+    - -o allow_other
+    - --file-cache-timeout-in-seconds=120
+  csi:
+    driver: blob.csi.azure.com
+    # volumeid has to be unique for every identical storage blob container in the cluster
+    # character `#`and `/` are reserved for internal use and cannot be used in volumehandle
+    volumeHandle: <handle name>
+    volumeAttributes:
+      storageAccount: <sa name>
+      containerName: <container name>
+      AzureStorageAuthType: MSI
+      AzureStorageIdentityClientID: <client id>
+      AzureStorageIdentityResourceID: <uai id>
+      #MSIEndpoint: 
+EOF
+~~~
+
+pvc:
+
+~~~yaml
+tee pvc-download.yaml <<'EOF'
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pvc-blob-upload
+  namespace: <ns name>
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 10Gi
+  volumeName: pv-blob-upload
+  storageClassName: managed-blobfuse-premium-lrs
+EOF
+~~~
+
+测试动态预配pv:
+
+~~~yaml
+tee pod-wi-ubuntu.yaml <<'EOF'
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-test-wi
+  namespace: <ns name>
+  labels:
+    azure.workload.identity/use: "true"
+spec:
+  serviceAccountName: <sa name>
+  containers:
+    - name: ubuntu
+      image: ubuntu:22.04
+      command: ["/bin/sh"]
+      args: ["-c", "while true; do echo hello; sleep 10;done"]
+      volumeMounts:
+        - name: storage
+          mountPath: /mnt/storage
+  volumes:
+    - name: storage
+      persistentVolumeClaim:
+        claimName: pvc-blob-upload
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pvc-blob-upload
+  namespace: <ns name>
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 10Gi
+  storageClassName: managed-blobfuse-premium-lrs
+EOF
+~~~
+
+# 下载文件-获取md5
+
+- 看一下container level的sas token怎么做到下载文件？
+
+  直接url后缀加上文件名即可。需要两边同步好文件名
+
+- 看一下blob md5的值怎么获取？
+
+  sas url的reponse header里就带着了，”Content-MD5”字段，curl -i就能直接查看
+
+  ![image-20241010170509800](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202410101725170.png)
+
+~~~sh
+curl -i "https://<sa name>.blob.core.chinacloudapi.cn/<container name>/values.yaml?xxxxxxxxxx"
+HTTP/1.1 200 OK
+Content-Length: 111
+Content-Type: application/x-yaml
+Content-MD5: +s1+xxxxxxxxxxxxxxxxxx
+Last-Modified: Tue, 08 Oct 2024 03:25:34 GMT
+Accept-Ranges: bytes
+ETag: "xxx"
+Server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+x-ms-request-id: xxxx
+x-ms-version: 2022-11-02
+x-ms-creation-time: Fri, 27 Sep 2024 06:50:32 GMT
+x-ms-lease-status: unlocked
+x-ms-lease-state: available
+x-ms-blob-type: BlockBlob
+x-ms-server-encrypted: true
+~~~
+
+# 自动化下载blob脚本建议
+
+相关背景说明：
+
+1. 文件上传到azure storage account存储中，每次更新都会在同一目录下创建新的blob文件以供下载。
+2. 基于此，提供一个目录级别的长期有效的SAS Token。可以用这个SAS Token来list出目录中所有文件，以及每个文件的创建时间、MD5校验值等。
+
+使用SAS Token来list所有文件及信息的方法：
+
+1. 提供一个格式如下的SAS URL：
+
+~~~sh
+https://<sa name>.blob.core.chinacloudapi.cn/<container name>?sp=rl&st=2024-10-11T06:04:27Z&se=2024-10-11T14:04:27Z&sip=101.95.105.42&spr=https&sv=2022-11-02&sr=c&sig=xxx
+~~~
+
+其中：
+
+- “https://<sa name>.blob.core.chinacloudapi.cn/<container>”部分是存储目录的路径
+- “sp=rl&st=2024-10-11T06:04:27Z&se=2024-10-11T14:04:27Z&sip=101.95.105.42&spr=https&sv=2022-11-02&sr=c&sig=xxx”部分是SAS Token的值。
+
+2. 可以在目录路径和SAS Token中间添加“**restype=container&comp=list&**”参数，来获取到目录下所有文件及信息。
+
+   - 拼接后的URL为：“https://<sa name>.blob.core.chinacloudapi.cn/<container name>?restype=container&comp=list&sp=rl&st=2024-10-11T06:04:27Z&se=2024-10-11T14:04:27Z&sip=101.95.105.42&spr=https&sv=2022-11-02&sr=c&sig=xxx”
+
+   - 请求命令示例：
+
+     ~~~sh
+     curl -X GET “https://<sa name>.blob.core.chinacloudapi.cn/<container name>?restype=container&comp=list&sp=rl&st=2024-10-11T06:04:27Z&se=2024-10-11T14:04:27Z&sip=101.95.105.42&spr=https&sv=2022-11-02&sr=c&sig=xxx”
+     ~~~
+
+   - 返回值为xml格式，示例：
+
+     ~~~xml
+     <?xml version="1.0" encoding="utf-8"?>
+     <EnumerationResults ServiceEndpoint="https://<sa name>.blob.core.chinacloudapi.cn/" ContainerName="<container name>">
+         <Blobs>
+             <Blob>
+                 <Name>test.log</Name>
+                 <Properties>
+                     <Creation-Time>Tue, 08 Oct 2024 08:33:51 GMT</Creation-Time>
+                     <Last-Modified>Thu, 10 Oct 2024 08:17:07 GMT</Last-Modified>
+                     <Etag>xxx</Etag>
+                     <Content-Length>19</Content-Length>
+                     <Content-Type>text/plain</Content-Type>
+                     <Content-Encoding />
+                     <Content-Language />
+                     <Content-CRC64 />
+                     <Content-MD5>xxx</Content-MD5>
+                     <Cache-Control />
+                     <Content-Disposition />
+                     <BlobType>BlockBlob</BlobType>
+                     <AccessTier>Hot</AccessTier>
+                     <AccessTierInferred>true</AccessTierInferred>
+                     <LeaseStatus>unlocked</LeaseStatus>
+                     <LeaseState>available</LeaseState>
+                     <ServerEncrypted>true</ServerEncrypted>
+                 </Properties>
+                 <OrMetadata />
+             </Blob>
+         <NextMarker />
+     </EnumerationResults>
+     ~~~
+
+
+   使用SAS URL来下载文件的方法：
+
+   1. 在提供的SAS URL的container路径后面加上前一个步骤获取到的blob文件名即可，例如：     
+
+   ```sh
+   curl "https://<sa name>.blob.core.chinacloudapi.cn/<container name>/test.log?sp=rl&st=2024-10-11T06:04:27Z&se=2024-10-11T14:04:27Z&sip=101.95.105.42&spr=https&sv=2022-11-02&sr=c&sig=xxx"
+   ```
+
+   # 
