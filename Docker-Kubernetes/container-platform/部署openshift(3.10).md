@@ -911,3 +911,105 @@ source <(oc completion bash)
 source ~/.bashrc
 ~~~
 
+# openshift管理
+
+## Grant permission of projects for users
+
+Create a cluster-role which grants all permission：
+
+~~~yaml
+tee cluster-role-namespace-admin.yaml <<'EOF'
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: namespace-admin
+rules:
+- apiGroups: ["*"]
+  resources: ["*"]
+  verbs: ["*"]
+EOF
+ 
+# Apply the yaml file
+oc apply -f cluster-role-namespace-admin.yaml
+~~~
+
+Create Rolebinding for granting permission on a certain project (namespace):
+
+~~~yaml
+# Take project opt-airflow as a demo
+tee binding-namespace-admin.yaml <<'EOF'
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: admin-opt-airflow
+  namespace: opt-airflow # Specify the name of project/namespace
+subjects:
+- kind: Group
+  name: team-test
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: namespace-admin
+  apiGroup: rbac.authorization.k8s.io
+EOF
+ 
+# Apply the yaml file
+oc apply -f binding-namespace-admin.yaml
+~~~
+
+## openshift pod内抓包
+
+Reference: https://access.redhat.com/solutions/4569211
+
+1. Determine which worker node that the target pod is running
+   ~~~sh
+   kubectl get pod -owide | grep <pod name>
+   ~~~
+
+2. Open a debug shell on the node where the target pod is running
+   ~~~sh
+   oc debug node/<nodename>
+   # It is NOT required to run chroot /host and toolbox in currently supported OpenShift versions. The oc debug node/<nodename> has tcpdump already.
+   ~~~
+
+3. Build the required nsenter parameters so that you can enter the pod namespace.
+   ~~~sh
+   NAME=<pod-name>
+   NAMESPACE=<pod-namespace>
+   pod_id=$(chroot /host crictl pods --namespace ${NAMESPACE} --name ${NAME} -q)
+   ns_path="/host$(chroot /host bash -c "crictl inspectp $pod_id | jq '.info.runtimeSpec.linux.namespaces[]|select(.type==\"network\").path' -r")"
+   nsenter_parameters="--net=${ns_path}"
+   ~~~
+
+4. Before running the tcpdump command, you need to determine the name of the correct interface to use. You can list all the interfaces within the pod by running ip a or tcpdump -D as shown below.
+   ~~~sh
+   nsenter $nsenter_parameters -- chroot /host ip a
+   ~~~
+
+5. Once you have the interface name, start the tcpdump in the container's network namespace using command below. Make sure to replace ${INTERFACE} with the relevant interface name found in the earlier step (or set the variable to the correct value in your shell).
+   ~~~sh
+   nsenter $nsenter_parameters -- tcpdump -nn -i ${INTERFACE} -w /host/var/tmp/${HOSTNAME}_$(date +\%d_%m_%Y-%H_%M_%S-%Z).pcap ${TCPDUMP_EXTRA_PARAMS}
+   ~~~
+
+6. Press ctrl+c when you are ready to end capture and list the generated file(s):
+   ~~~sh
+   ls /host/var/tmp/*.pcap
+   ~~~
+
+   > See this page for more details on using the `tcpdump` command: [Capturing network packets with tcpdump](https://access.redhat.com/solutions/8787). You can also replace `tcpdump` command with any other command you want to run from the `pod's` network `namespace`
+
+7. Before exiting the debug pod, open a new terminal and copy the .pcap file generated :
+
+   ~~~sh
+   kubectl get po -A | grep debug
+   oc project <debugPodNamespace>
+    
+   $ oc get pods
+   NAME                                            READY   STATUS      RESTARTS   AGE
+   ip-10-z-yyy-xxxus-west-2computeinternal-debug   1/1     Running     0          97s
+    
+   $ oc cp ip-10-z-yyy-xxxus-west-2computeinternal-debug:/host/var/tmp/<filename>.pcap <filename>.pcap
+   ~~~
+
+8. Analyze pcap files: use wireshark to open pcap file.
