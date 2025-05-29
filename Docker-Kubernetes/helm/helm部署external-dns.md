@@ -44,6 +44,10 @@ helm pull external-dns/external-dns --version 1.14.4
 
   - workload identity？可以限制仅某些pod可以使用，external-dns已经支持workloadIdentityExtension。配置方式见官网。
 
+![image-20241113111835919](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202411131118112.png)
+
+# 
+
 # 安装
 
 ~~~sh
