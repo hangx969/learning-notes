@@ -48,6 +48,14 @@
 
 - 是用户自定义的command
 
+### working directory
+
+system variables: https://learn.microsoft.com/en-us/azure/devops/pipelines/build/variables?view=azure-devops&tabs=yaml#system-variables
+
+agent directory structure: https://learn.microsoft.com/en-us/azure/devops/pipelines/agents/agents?view=azure-devops&tabs=yaml%2Cbrowser#agent-directory-structure
+
+用的是`$(System.DefaultWorkingDirectory)`，详细定义见上面文档。
+
 ## Run
 
 - run是pipeline的一次运行。每次Run，将job发给agent去运行
@@ -118,58 +126,6 @@ https://learn.microsoft.com/en-us/azure/devops/pipelines/process/templates?view=
 
 https://learn.microsoft.com/en-us/azure/devops/pipelines/process/about-resources?view=azure-devops&tabs=yaml
 
-# Self-hosted agents
-
-> https://learn.microsoft.com/en-us/azure/devops/pipelines/agents/agents?view=azure-devops&tabs=yaml%2Cbrowser#self-hosted-agents
-
-- azure devops在azure china不支持MS managed agents，只能是用self-hosted agents，可能会存在一些cache warm-up和拉取commit到local repo的准备时间。
-- self-hosted agents提供capability，意思是上面装了什么软件。pipeline的demand会定义需要哪些软件。
-  - 如果pipeline定义的demands，没有agent具备capability能满足，那么job就会失败。
-  - 如果是没有空闲的agent能满足demands，job就会等待。
-
-- azure devops - pipelines - edit - triggers - YAML - Default agent pool for YAML：可以选择默认用Azure-hosted还是private（self hosted）。yaml文件里面没定义agent pool的话，就用这个默认的。
-
-## Agent与pipeline通信
-
-https://learn.microsoft.com/en-us/azure/devops/pipelines/agents/agents?view=azure-devops&tabs=yaml%2Cbrowser#communication
-
-- agent向pipeline注册的时候会拿到一个listener OAuth Token。
-
-- agent监听pipeline service是否有job要执行，有job的话，会下载一个per-job的OAuth Token，用来访问pipeline的资源，用完即弃。
-- agent和pipeline之间走的是非对称加密，agent的公钥在注册的时候提供给了devops service。
-
-## Agent版本
-
-https://learn.microsoft.com/en-us/azure/devops/pipelines/agents/v3-agent?view=azure-devops
-
-- agent版本每隔几周会更新，major version.minor version的格式。
-- 对于self-hosted agent，小版本可以自动升级，大版本需要手动升级。
-- 检查现有agent的version：在agent页面的system capabilities里面。检查最新发布的版本：https://github.com/Microsoft/azure-pipelines-agent/releases
-
-## Agent手动注册
-
-https://learn.microsoft.com/en-us/azure/devops/pipelines/agents/linux-agent?view=azure-devops
-
-## Agent认证
-
-https://learn.microsoft.com/en-us/azure/devops/pipelines/agents/personal-access-token-agent-registration?view=azure-devops
-
-- 对于self-hosted agent，当agent向pipeline注册的时候，需要agent做认证。有三种认证方式：PAT、device code、Service Principal
-
-- PAT：在自己account的setting里面创建PAT，复制下来，agent注册时会用
-- 注意这个PAT仅用于agent首次向pipeline注册时使用。后续的agent-pipeline通信用的是OAuth Token。
-
-## vmss agent
-
-- 特点：每个job结束后会reimage job，而且支持base image的更新。无需手动安装注册agent，pipeline自动安装agent
-- 创建VMSS需要关闭Overprovisioning和auto-scaling功能。由Pipelines根据要运行的job数量决定scale的数量？（https://learn.microsoft.com/en-us/azure/devops/pipelines/agents/scale-set-agents?view=azure-devops#how-azure-pipelines-manages-the-scale-set）
-
-- custom image：https://learn.microsoft.com/en-us/azure/devops/pipelines/agents/scale-set-agents?view=azure-devops#create-a-scale-set-with-custom-image-software-or-disk-size
-
-- 创建vmss agent pool可以在**Project settings** or **Organization settings**，但是删除agentpool需要去**Organization settings**，而且要先删pipeline上的agent pool，再去portal删vmss。
-- 添加vmss agent pool需要一个认证过程，登录的账户要对vmss的sub具有Owner或者User Access Admin角色。
-- 如果有现成的service connection，可以不用认证。
-
 # Security
 
 > - https://learn.microsoft.com/en-us/azure/devops/organizations/security/about-permissions?view=azure-devops&tabs=preview-page
@@ -186,7 +142,71 @@ https://learn.microsoft.com/en-us/azure/devops/pipelines/agents/personal-access-
   - Repositories
 - ado中的user可被分配到security group中，从group层面会对ado中的各项功能做授权。
 
+# Service Connection
 
+作用是在pipeline中连接到azure cloud中。是azure devops project级别的资源，在project setting中添加。
+
+https://learn.microsoft.com/en-us/azure/devops/pipelines/library/service-endpoints?view=azure-devops
+
+## 连接方式
+
+https://learn.microsoft.com/en-us/azure/devops/pipelines/library/connect-to-azure?view=azure-devops#create-an-azure-resource-manager-app-registration-with-workload-identity-federation-automatic
+
+ado中提供了如下几种连接方式：
+
+1. App registration (automatic)：只适用于azure global，因为需要在UI界面直接选择订阅。而Azure China的sub他是识别不了的。
+2. managed identity：同上
+3. App registration or managed identity (manual): 可以支持自定义Cloud type，可以设成AzureChinaCLoud
+
+## 认证方式
+
+app registration/managed identity方式都支持两种认证方式：
+
+1. workload identity： 是推荐的方式，需要在service principal或者managed identity上创建federated secret，让entraID信任devops颁发的token。在相应的scope上授予权限，devops就能用这个身份创建资源。
+2. secret： 不推荐，因为client secret需要手动rotation。
+
+现在我们采用的是service principal+federated secert方式，目前存在一个bug就是service principal - federated secert设置中需要手动把Audience的值从`api://AzureADTokenExchangeChina`（默认值）改成`api://AzureADTokenExchange`。否则devops会找不到service principal
+
+与Azure Support沟通后，他们表示这种修改是非标操作，建议更换为workload identity方式。
+
+测试下来workload identity同样可以实现同样的功能，并且在创建federated secret时默认值就是`api://AzureADTokenExchange`并不需要再改。
+
+### managed identity+workload identity
+
+先在devops UI界面添加service connection中获取到issuer和subject identifier。然后可以用下面terraform代码创建uai+federated secert。
+
+然后去devops UI界面verify and save，完成service connection的创建。
+
+~~~terraform
+resource "azurerm_user_assigned_identity" "uai" {
+  name                = var.uai_name
+  location            = var.location
+  resource_group_name = var.test-rg.name
+
+  lifecycle {
+    ignore_changes = [tags]
+  }
+}
+
+resource "azurerm_role_assignment" "test-assign" {
+  depends_on           = [azurerm_user_assigned_identity.uai]
+  scope                = var.test-rg.id
+  role_definition_name = "Contributor"
+  principal_id         = azurerm_user_assigned_identity.uai.principal_id
+  timeouts {
+    create = "20m"
+  }
+}
+
+resource "azurerm_federated_identity_credential" "example" {
+  name                = "ado-service-connection"
+  resource_group_name = var.test-rg.name
+  audience            = ["api://AzureADTokenExchange"]
+  issuer              = ""
+  parent_id           = azurerm_user_assigned_identity.uai.id
+  subject             = ""
+}
+~~~
 
 # Lab
 
