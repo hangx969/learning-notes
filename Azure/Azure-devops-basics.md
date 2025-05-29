@@ -54,7 +54,7 @@
 
 ## Approval
 
-- define a set of validations required before a deployment runs. Manual approval is a common check performed to control deployments to production environments. 
+- define a set of validations required before a deployment runs. Manual approval is a common check performed to control deployments to production environments.
 - When checks are configured on an environment, a pipeline run pauses until all the checks are completed successfully.
 
 ## Artifact
