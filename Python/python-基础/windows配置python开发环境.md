@@ -16,7 +16,7 @@
   - Output Colorizer
   - Path Intellisense
 
-- vscode输出中文乱码解决办法：
+- vscode output控制台输出中文乱码解决办法：
 
   ~~~python
   # 在代码中输入以下几行：
@@ -24,8 +24,6 @@
   import io
   sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
   ~~~
-
-  
 
 # pycharm配置
 
