@@ -1,16 +1,19 @@
 import re
 
-config_files = ['config1.conf', 'config2.conf']
-pattern = re.compile(r'(DB_CONNECTION="mysql://)([^:]+)(:password@localhost/[^"]+)')
-new_user = 'admin_user'
+report = """
+CPU Usage: 45%
+Memory Usage: 73%
+CPU Usage: 55%
+Memory Usage: 80%
+"""
+cpu_pattern = r'CPU Usage:\s*(\d+)%'
+mem_pattern = r'Memory Usage:\s*(\d+)%'
 
-for file in config_files:
-    with open(file, 'r') as f:
-        content = f.read()
+# 直接构造整型数组
+cpu_usage = [int(match) for match in re.findall(cpu_pattern,report)]
+mem_usage = [int(match) for match in re.findall(mem_pattern,report)]
 
-    new_content = pattern.sub(r'\1' + new_user + r'\3', content)
-
-    with open(file, 'w') as f:
-        f.write(new_content)
-
-    print(f"Updated {file}")
+avg_cpu = sum(cpu_usage) / len(cpu_usage)
+avg_mem = sum(mem_usage) / len(mem_usage)
+print(f"Average CPU Usage: {avg_cpu}%")
+print(f"Average Memory Usage: {avg_mem}%")

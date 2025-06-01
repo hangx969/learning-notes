@@ -1262,17 +1262,105 @@ new_user = 'admin_user'
 for file in config_files:
     with open(file, 'r') as f:
         content = f.read()
-    
-    new_content = pattern.sub(r'\1' + new_username + r'\3', content)
-    
+    # with 退出之后，读取的文件内容还在
+    new_content = pattern.sub(r'\1' + new_user + r'\3', content)
     with open(file, 'w') as f:
         f.write(new_content)
-        
     print(f"Updated {file}")
 ~~~
 
 - 重点：
-  - 因为要替换这一句中间的内容，所以要把整个句子拆分成三部分，再重新拼接
+  - 因为要替换这一句中间的内容，所以要把整个句子拆分成三部分，将匹配到的user1部分替换成新的值，再拼接起来。
   - 匹配 `：` 前面的一段用户名： `[^:]+` 非冒号的字符出现一次或多次
   - 匹配 `"` 前面的一段db名： `[^"]+` 非双引号的字符出现一次或多次
   - `r'\1'` 代表第一个捕获组(第一个`()`)匹配到的值，`r'\3'` 代表第三个捕获组(第三个`()`)匹配到的值
+
+## 案例：检查配置文件中的缺失项
+
+检查某些配置文件，确保它们包含所需的所有配置项。比如，你需要确认所有配置文件都包含 max_connections 这个设置项。
+
+~~~sh
+#config1.conf
+max_connections=100
+timeout=30
+# config2.conf
+timeout=30
+~~~
+
+~~~python
+import re
+
+config_files = ['config1.conf', 'config2.conf']
+required_para = 'max_connections'
+# 直接匹配对应的关键词
+pattern = re.compile(f'{required_para}')
+
+for file in config_files:
+    with open(file, 'r') as f:
+        content = f.read()
+    if not pattern.search(content):
+        print(f"{file} is missing required parameter \'{required_para}\'")
+~~~
+
+## 案例：提取分析系统资源使用情况
+
+从系统生成的资源监控报告中提取 CPU 和内存的使用情况，并求平均值。
+
+~~~sh
+CPU Usage: 45%
+Memory Usage: 73%
+CPU Usage: 55%
+Memory Usage: 80%
+~~~
+
+- 如果是从文件中读取
+
+~~~python
+import re
+
+report_file = 'example.txt'
+
+# 用捕获组专门获取保存数字部分
+cpu_pattern = re.compile(r'CPU Usage:\s*(\d+)%')
+mem_pattern = re.compile(r'Memory Usage:\s*(\d+)%')
+
+# 思路是把匹配出来的cpu和mem使用率分别保存到列表中，对列表值求平均
+with open(report_file, 'r') as f:
+    content = f.read()
+
+# 匹配出来的是字符串列表
+cpu_usage = cpu_pattern.findall(content)
+mem_usage = mem_pattern.findall(content)
+
+# 计算平均值需要整形列表，用list(map(int,))来转换
+cpu_avg = sum(list(map(int, cpu_usage))) / len(cpu_usage)
+mem_avg = sum(list(map(int, mem_usage))) / len(mem_usage)
+
+print(f"Average CPU Usage: {cpu_avg}%")
+print(f"Average Memory Usage: {mem_avg}%")
+~~~
+
+- 如果是从字符串中读取
+
+~~~python
+import re
+
+report = """
+CPU Usage: 45%
+Memory Usage: 73%
+CPU Usage: 55%
+Memory Usage: 80%
+"""
+cpu_pattern = r'CPU Usage:\s*(\d+)%'
+mem_pattern = r'Memory Usage:\s*(\d+)%'
+
+# 直接构造整型数组
+cpu_usage = [int(match) for match in re.findall(cpu_pattern,report)]
+mem_usage = [int(match) for match in re.findall(mem_pattern,report)]
+
+avg_cpu = sum(cpu_usage) / len(cpu_usage)
+avg_mem = sum(mem_usage) / len(mem_usage)
+print(f"Average CPU Usage: {avg_cpu}%")
+print(f"Average Memory Usage: {avg_mem}%")
+~~~
+
