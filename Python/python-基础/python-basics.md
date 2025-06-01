@@ -1012,6 +1012,8 @@ print(re.match(pattern, 'ac').group())
 
 `\s`:匹配空白字符
 
+`\S`:匹配非空白字符
+
 `\w`:匹配字母/数字/下划线任一种
 
 ~~~python
