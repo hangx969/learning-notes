@@ -921,7 +921,7 @@ for file in os.listdir(file_dir):
   - `*` 匹配前一个字符零次或多次。
   - `+` 匹配前一个字符一次或多次。
   - `?` 匹配前一个字符零次或一次，或将其用于非贪婪匹配(可以有也可以没有)。
-  - `[]` 匹配括号内的任何一个字符，如`[abc]`匹配`'a'`、`'b'`或`'c'`。
+  - `[]` 匹配括号内的任何一个字符，如`[abc]`匹配`'a'`、`'b'`或`'c'`。`[^abc]`匹配除了abc之外的字符。
   - `|` 表示逻辑或（OR）如 `a|b` 匹配`'a'`或`'b'`。
   - `()` 用于分组，提取子字符串或改变运算的优先级。
 3. 转义字符：用于将元字符当作普通字符对待，通常使用反斜杠`\`，如`\.`匹配一个点。
@@ -979,9 +979,23 @@ if re.match(pattern, text):
 
 ### 重复匹配
 
-`+`：匹配一次或多次，换言之必须得有
+`+`：匹配前面的模式一次或多次，换言之必须得有。
 
-`*`：匹配零次或多次，换言之有没有都行
+`*`：匹配前面的模式零次或多次，换言之有没有都行。
+
+`?`：匹配前面的模式零次或一次。
+
+> - `+`和`*`会尽可能多的匹配字符，即贪婪模式。
+>
+> - 在`+`或`*`后面加上`?`表示从贪婪模式转变为非贪婪模式，最小匹配。
+>
+> 例如：
+>
+> ~~~python
+> text = '<h1>RUNOOB-菜鸟教程</h1>'
+> pattern = '<.*>' # 匹配到整个'<h1>RUNOOB-菜鸟教程</h1>'
+> pattern = '<.*?>' # 仅匹配到'<h1>'
+> ~~~
 
 ~~~python
 import re
@@ -998,7 +1012,7 @@ print(re.match(pattern, 'ac').group())
 
 `\s`:匹配空白字符
 
-`\w`:匹配字母/数字/下划线
+`\w`:匹配字母/数字/下划线任一种
 
 ~~~python
 import re
@@ -1016,6 +1030,87 @@ import re
 pattern = '^hello'
 print(re.match(pattern, 'hello world').group())
 ~~~
+
+`$`：匹配字符结尾
+
+`\b`：匹配单词边界。单词边界是单词和空格之间的位置。单词边界确保匹配的字符串是一个完整的“单词”部分。
+
+`\B`：匹配非单词边界，是除了单词边界（空格、标点、特殊字符）任何其他位置。
+
+~~~python
+text1 = 'hello 192.168.1.1 world'
+text2 = 'hello192.168.1.1world'
+pattern = r'\b192.168.1.1\b' # 表示192.168.1.1前面和后面都必须是一个非单词字符（空格、标点、特殊字符等）
+result = re.match(pattern, text1) # 可以匹配上，因为前后都是空格
+result = re.match(pattern, text2) # 匹配不上，因为前后都是字母，不满足单词边界
+~~~
+
+### 捕获组/非捕获组
+
+#### 捕获组
+
+捕获组是由圆括号 `()` 包围的部分，会把每个分组里面匹配到的值保存起来，通过group(n)来查看，表示第n个捕获组的内容。
+
+例如，在正则表达式 `r'(foo)(bar)'` 中：
+
+- `(foo)` 是第一个捕获组。
+- `(bar)` 是第二个捕获组。
+
+~~~python
+import re
+text = '123-45-6789'
+pattern = r'(\d{3})-(\d{2})-(\d{4})'
+result = re.match(pattern, text)
+if match:
+    print(result.group(0)) # 捕获完整输出‘123-45-6789’
+    print(result.group(1)) # 第一个捕获组‘123’
+    print(result.group(2)) # 第二个捕获组‘45’
+    print(result.group(3)) # 第三个捕获组‘6789’
+~~~
+
+#### 非捕获组
+
+如果你不需要保存单个`()`匹配的子串，可以使用非捕获组。非捕获组用 `(?:...)` 表示，不会保存单个`()`匹配的内容。
+
+例如：`pattern = r'(?:\d{2})-(?:\d{4})'`：
+
+- `(?:\d{2})` 是一个非捕获组，它会匹配两位数字但不作为捕获组保存。
+- `(?:\d{4})` 是另一个非捕获组。
+
+#### 对比
+
+**使用普通捕获组：**
+
+~~~python
+import re
+pattern = r'([0-9]{1,3}\.){3}'
+string = "192.168.0."
+match = re.search(pattern, string)
+if match:
+    print(match.groups()) # 输出 ('0.',) 只保存了最后一次捕获
+~~~
+
+- 发生了什么？
+  1. 正则表达式 `([0-9]{1,3}\.){3}` 包含一个捕获组 `([0-9]{1,3}\.)`，它会捕获 1 到 3 位数字，后面跟一个点号。
+
+  2. `{3}` 表示这个捕获组会重复三次，也就是说它会尝试匹配三段类似于 `192.`、`168.`、`0.`的内容。
+
+  3. 为什么只显示最后一次的捕获？ 在正则表达式中，捕获组在每次匹配时会覆盖之前的匹配结果。由于捕获组会被最后一次匹配的内容覆盖，最终 `groups()` 只返回最后一次匹配到的 `0.`
+
+**使用非捕获组：**
+
+~~~python
+import re
+pattern - r'(?:[0-9]{1,3}\.){3}'
+string = "192.168.0."
+match = re.search(pattern, string)
+if match:
+    print(match.groups()) # 输出 ('192.168.0.',) 
+~~~
+
+只需要对 1-3 位数字 + 一个点号 的模式进行三次重复匹配，而不需要保存每次匹配的内容，因此用到了非捕获组 `(?:[0-9]{1,3}\.)`，输出了全部匹配。
+
+
 
 ## 正则表达式函数
 
@@ -1071,7 +1166,7 @@ print(f"Match well {result}") if result else print("Match failed")
 
 在字符串 "ababa" 中，虽然有两个 "aba" 出现的可能性（第一个从索引 0 开始，第二个从索引 2 开始），但 re.findall() 只会匹配第一次出现的 "aba"，然后继续从匹配后的字符（即从索引 3 开始）进行查找。由于从索引 3 开始再没有 "aba" 出现，所以结果中只有一个匹配。
 
-### 替换
+### 替换/拆分/预编译
 
 #### re.sub()
 
@@ -1084,5 +1179,100 @@ print(f"Match well {result}") if result else print("Match failed")
   - `count` 是可选参数，用于指定替换的最大次数（默认为 0，表示替换所有匹配项）
 
 ~~~python
+import re
+pattern = r'\d{3}-\d{3,8}'
+text = 'My phone 123-1234567, and 987-6543210'
+new_text = re.sub(pattern,'xxx-xxxx',text)
+print(new_text)
 ~~~
 
+#### re.split()
+
+- 根据模式中的匹配项来拆分字符串，并返回拆分后的列表。
+
+~~~python
+import re
+pattern = r'\s+' # 匹配一个或多个空白。可以直接用于句子拆分成列表
+text = 'This is  a  test   string'
+result = re.split(pattern,text)
+print(result)
+~~~
+
+#### re.compile()
+
+- 预编译正则表达式。预编译的正则表达式对象可以复用，以提高效率，特别是在多次使用同一正则表达式时。
+- re.compile() 返回一个正则表达式对象，该对象可以使用 `match(), search(), findall(), sub()` 等方法。
+
+~~~python
+import re
+pattern = re.compile(r'\d{3}-\d{3,8}')
+text = 'My phone 123-1234567, and 987-6543210'
+result = pattern.match(text)
+result = pattern.search(text)
+result = pattern.findall(text)
+result = pattern.sub('xxx-xxxx',text)
+~~~
+
+## 案例：解析日志文件中的IP地址
+
+有一个log文件，需要提取出IP地址：
+
+~~~sh
+192.168.0.1 - - [28/Aug/2030:10:22:04 +0000] "GET /index.html HTTP/1.1" 200 2326
+203.0.113.45 - - [28/Aug/2030:10:22:05 +0000] "POST /login.php HTTP/1.1" 200 342
+192.168.0.2 - - [28/Aug/2030:10:22:06 +0000] "GET /dashboard HTTP/1.1" 200 128
+~~~
+
+~~~python
+import re
+log_file = './example.txt'
+#读取日志文件
+with open(log_file, 'r') as f:
+    logs = f.read()
+    ip_pattern = re.compile(r'\b(?:[0-9]{1,3}\.){3}[0-9]{1,3}\b')
+    ips = ip_pattern.findall(logs)
+    for ip in ips:
+        print(ip)
+~~~
+
+重点：
+
+- 用`\b`匹配单词边界
+- `(?:[0-9]{1,3}\.){3}`非捕获组匹配重复的3个数字和`\.` 作为IP地址的前三位。
+- IP地址的最后一位要单独匹配，仅是三位数字没有点
+
+## 案例：批量替换配置文件中的某个配置项
+
+有多个配置文件，你需要将 user1 改为 admin_user。
+
+~~~sh
+# config1.conf
+DB_CONNECTION="mysql://user1:password@localhost/db1"
+# config2.conf
+DB_CONNECTION="mysql://user1:password@localhost/db2"
+~~~
+
+~~~python
+import re
+
+config_files = ['config1.conf', 'config2.conf']
+pattern = re.compile(r'(DB_CONNECTION="mysql://)([^:]+)(:password@localhost/[^"]+)')
+new_user = 'admin_user'
+
+for file in config_files:
+    with open(file, 'r') as f:
+        content = f.read()
+    
+    new_content = pattern.sub(r'\1' + new_username + r'\3', content)
+    
+    with open(file, 'w') as f:
+        f.write(new_content)
+        
+    print(f"Updated {file}")
+~~~
+
+- 重点：
+  - 因为要替换这一句中间的内容，所以要把整个句子拆分成三部分，再重新拼接
+  - 匹配 `：` 前面的一段用户名： `[^:]+` 非冒号的字符出现一次或多次
+  - 匹配 `"` 前面的一段db名： `[^"]+` 非双引号的字符出现一次或多次
+  - `r'\1'` 代表第一个捕获组(第一个`()`)匹配到的值，`r'\3'` 代表第三个捕获组(第三个`()`)匹配到的值

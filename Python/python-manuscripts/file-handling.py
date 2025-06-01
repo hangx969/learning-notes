@@ -1,5 +1,16 @@
 import re
-pattern = r'\d{3}-\d{3,8}'
-text = 'My phone 123-1234567, and 987-6543210'
-result = re.findall(pattern, text) # result返回列表，直接print就行，不用group()方法
-print(f"Match well {result}") if result else print("Match failed")
+
+config_files = ['config1.conf', 'config2.conf']
+pattern = re.compile(r'(DB_CONNECTION="mysql://)([^:]+)(:password@localhost/[^"]+)')
+new_user = 'admin_user'
+
+for file in config_files:
+    with open(file, 'r') as f:
+        content = f.read()
+
+    new_content = pattern.sub(r'\1' + new_user + r'\3', content)
+
+    with open(file, 'w') as f:
+        f.write(new_content)
+
+    print(f"Updated {file}")
