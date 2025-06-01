@@ -539,3 +539,550 @@ text.lstrip()
 # 对末尾字符去除
 text.rstrip()
 ~~~
+
+# 文件处理
+
+## 读取
+
+在 Python 中，文件操作是通过内置的 `open()` 函数来实现的。你可以使用不同的模式打开文件，如：
+
+- 'r' 只读模式
+- 'w' 写入模式（会覆盖原有内容）
+- 'a' 追加模式
+
+操作完成后必须关闭文件，释放系统资源。Python 提供了 `file.close()` 方法:
+
+~~~python
+file = open('example.txt', 'r')
+content = file.read()
+file.close()
+~~~
+
+也推荐使用 `with` 语句，它会自动处理文件关闭，即使在代码块中发生了异常：
+
+~~~python
+# as 关键字用于将上下文管理器（在这里是 open('example.txt', 'r')）返回的对象（文件对象）绑定到一个变量上（这里是file）。
+with open('example.txt', 'r') as file:
+    content = file.read() 
+~~~
+
+### 读取全部内容
+
+~~~python
+with open('example.txt', 'r') as file:
+    #读取全部文件内容
+    content = file.read() 
+~~~
+
+`file.read()`：
+
+优点：操作简单，适合处理文件内容较小的情况。
+
+缺点：如果文件很大，可能会占用大量内存，因为整个文件内容都会被加载到内存中。
+
+适用场景：
+
+- 文件大小适中，能够完全载入内存时使用。
+- 当你需要对整个文件的内容进行处理或分析时使用。
+
+### 逐行读取
+
+~~~python
+with open('example.txt', 'r') as file:
+    #读取全部文件内容
+    for line in file:
+        print(line, end='')
+~~~
+
+`for line in file`：逐行读取文件的内容。file 对象是一个**`可迭代对象`**，每次迭代返回一行文本。
+
+优点：适合处理大文件，因为不会一次性将整个文件加载到内存中。逐行读取会将当前行加载到内存，而不是整个文件.
+
+缺点：处理文件时，每次读取一行，可能会稍微增加处理时间
+
+适用场景：
+
+- 文件较大时，逐行处理可以有效减少内存使用。
+- 你需要处理文件的每一行，可能会根据每行内容执行不同操作。
+
+### 读取每行到列表
+
+~~~python
+with open('example.txt', 'r') as file:
+    lines = file.readlines() # lines是一个列表，每个元素是文件中的每一行
+    print(lines)
+for line in lines
+	print(line, end='')
+~~~
+
+`file.readlines()`：读取文件中的所有行，并将每一行作为列表中的一个元素返回。
+
+优点：能够在内存中以列表的形式处理文件的每一行，可以随机访问每一行。
+
+缺点：会一次性将整个文件加载到内存中，因此适用于文件较小的情况。对于大文件，可能会导致高内存使用。
+
+适用场景：
+
+- 文件大小适中，能够完全载入内存时使用。
+
+- 需要多次访问文件中的不同部分或行时使用，因为你可以通过列表索引来访问特定的行。
+
+## 写入
+
+### 覆盖模式w
+
+~~~python
+with open('example.txt', 'w') as file:
+    # 写入文件，覆盖掉原有内容
+    file.write("Hello from Python\n")
+~~~
+
+### 追加模式a
+
+~~~python
+with open('example.txt', 'a') as file:
+    # 写入文件，追加内容
+    file.write("Hello from Python\n")
+~~~
+
+### 写入多行
+
+~~~python
+lines = ['Line1\n', 'Line2\n']
+with open('example.txt', 'w') as file:
+    # 把一个列表的元素作为每一行写到文件中
+    file.writelines(lines)
+~~~
+
+## 文件目录管理
+
+Python 的 os 和 shutil 模块提供了文件和目录的管理功能，包括创建、删除、重命名文件和目录等。
+
+### 重命名文件
+
+~~~python
+import os
+# 如果打开的文件不存在，会帮你创建出来
+with open('file-test.txt', 'w') as file:
+    file.write("Hello from Python\n")
+
+# 重命名
+os.rename('file-test.txt', 'file-demo.txt')
+
+# 检查某个文件是否存在
+if os.path.exists('file-demo.txt'):
+    print("Rename successfully")
+else:
+    print("Rename failed")
+~~~
+
+### 复制文件
+
+~~~python
+import os, shutil
+with open('file-test.txt', 'w') as file:
+    file.write("Hello from Python\n")
+
+# 复制文件，指定文件名
+shutil.copy('file-test.txt','file-copy.txt')
+
+# 检查结果
+if os.path.exists('file-copy.txt'):
+    print("Copy successfully")
+else:
+    print("Copy failed")
+~~~
+
+### 移动文件
+
+~~~python
+import os, shutil
+with open('file-test.txt', 'w') as file:
+    file.write("Hello from Python\n")
+
+# 移动文件，指定目标路径和文件名
+shutil.move('file-test.txt','dir1/sub_dir/file-new.txt')
+
+# 检查结果
+if os.path.exists('dir1/sub_dir/file-new.txt'):
+    print("Move successfully")
+else:
+    print("Move failed")
+~~~
+
+### 删除文件
+
+~~~python
+import os
+with open('file-test.txt', 'w') as file:
+    file.write("Hello from Python\n")
+# 删除文件
+os.remove("file-test.txt")
+# 检查删除结果
+if not os.path.exists("file-test.txt"):
+    print("Delete file successfully")
+else:
+	print("Delete file failed")
+~~~
+
+### 创建/删除目录
+
+~~~python
+import os
+# 创建目录
+os.makedirs("empty_dir")
+# 删除目录
+os.rmdir("empty_dir")
+if not os.path.exists("empty_dir"):
+    print("Dir delete successfully")
+else:
+    print("Dir delete failed")
+~~~
+
+创建层级目录：
+
+~~~python
+import os
+# 创建层级目录
+os.makedirs('dir1/sub_dir')
+# 检查
+if os.path.exists('dir1/sub_dir'):
+    print("Dir created successfully")
+else:
+    print("Dir created failed")
+~~~
+
+## 案例：处理大文件
+
+处理大文件时，直接将整个文件读入内存可能会导致内存不足或程序变得非常慢。因此，逐块读取文件内容是一种更有效的方式，这样可以逐步处理文件内容，而不是一次性加载整个文件。这种方法特别适合处理大型日志文件、大型数据文件等。
+
+- 重点：`file.read(chuck_size)`参数
+
+~~~python
+import os
+
+chuck_size = 1024 # 每次读取1024字节的数据（1 KB）
+
+with open("example.txt", "w") as file:
+    file.write('A' * 1024 * 1024) # 文件写入1MB数据
+
+# 逐块读取文件
+with open ('example.txt', 'r') as file:
+    while True:
+        # file.read()加参数意思是每次读取多少字节的数据
+        chunk = file.read(chuck_size)
+        # 如果没有更多数据，chuck为空，退出循环
+        if not chunk:
+            break
+        print("Chunk read:")
+        print(chunk[:100])  # 打印前100个字符
+~~~
+
+## 案例：备份数据到目录
+
+- 重点：
+  - `os.path.exists()` 判断路径是否存在
+  - `os.makedirs()` 创建目录
+  - `os.path.isdir()` 判断是否是目录
+  - `shutil.copytree(src, dest, dirs_exist_ok=True, copy_function=shutil.copy2)` 复制目录及metadata,并默认覆盖已存在
+  - `shutil.copy2(src, dest)`复制文件以及metadata
+
+~~~python
+import os, shutil
+from datetime import datetime
+
+# 定义源目录和目标目录
+src_dir = 'path/to/source/directory'
+dest_dir = 'path/to/destination/directory'
+
+# 创建源目录和目标目录，如果它们不存在
+if not os.path.exists(src_dir):
+    print(f"Source directory '{src_dir}' does not exist, creating it now.")
+    os.makedirs(src_dir)
+
+if not os.path.exists(dest_dir):
+    print(f"Destination directory '{dest_dir}' does not exist, creating it now.")
+    os.makedirs(dest_dir)
+
+# 创建子目录，如果子目录已经存在，不抛异常
+os.makedirs(os.path.join(src_dir,'subdir1'), exist_ok=True)
+os.makedirs(os.path.join(src_dir,'subdir2'), exist_ok=True)
+
+# 创建文件
+with open(os.path.join(src_dir, 'file1.txt'), 'w') as f:
+    f.write('This is file 1.')
+
+with open(os.path.join(src_dir, 'file2.txt'), 'w') as f:
+    f.write('This is file 2.')
+
+# 获取时间戳，datetime.now() 返回的是从Unix epoch到现在的秒数，strftime() 方法将其格式化为字符串
+timestamp = datetime.now().strftime('%Y%m%d-%H%M%S')
+
+# 用时间戳命名备份目录
+backup_dir = os.path.join(dest_dir, f'backup_{timestamp}')
+os.makedirs(backup_dir, exist_ok=True)
+
+# 开始备份
+for item in os.listdir(src_dir):
+    # for循环获取到的是相对路径，所以需要使用os.path.join()来拼接源目录和目标目录
+    src_item = os.path.join(src_dir, item)
+    dest_item = os.path.join(backup_dir, item)
+
+    # 判断目标是否是目录
+    if os.path.isdir(src_item):
+        # 复制目录。
+        # dirs_exist_ok=True 目标目录如果存在不会抛异常，会覆盖掉。
+        # copy_function=shutil.copy2 把源目录的metadata也复制过去
+        shutil.copytree(src_item, dest_item, dirs_exist_ok=True, copy_function=shutil.copy2)
+    else:
+        # 复制文件，metadata也会被复制
+        shutil.copy2(src_item, dest_item)
+
+print(f"Backup completed successfully to {backup_dir}")
+~~~
+
+## 案例：清理过期日志文件
+
+- 重点：
+  - `os.path.isfile()` 判断是否是文件
+  - `os.path.getmtime` 获取文件最后修改时间
+
+~~~sh
+# 模拟生成日志文件
+mkdir /path/to/logs -p
+touch -t $(date -d "60 days ago" +"%m%d%H%M.%S") /path/to/logs/test_file_1.log
+touch -t $(date -d "50 days ago" +"%m%d%H%M.%S") /path/to/logs/test_file_2.log
+touch -t $(date -d "30 days ago" +"%m%d%H%M.%S") /path/to/logs/test_file_3.log
+touch -t $(date -d "15 days ago" +"%m%d%H%M.%S") /path/to/logs/test_file_4.log
+touch /path/to/logs/test_file_4.log
+~~~
+
+~~~python
+import os, time
+
+log_dir = 'path/to/logs'
+
+retention_days = 30
+current_time = time.time()
+cutoff = current_time - (retention_days * 86400)
+
+for file in os.listdir(log_dir):
+    # 获取绝对路径
+    file_path = os.path.join(log_dir, file)
+
+    # 检查是否是文件
+    if os.path.isfile(file_path):
+        file_mtime = os.path.getmtime(file_path)
+
+        # 如果文件的修改时间早于保留截止时间，则删除
+        if file_mtime < cutoff:
+            try:
+                os.remove(file_path)
+                print(f"Deleted: {file_path}")
+            except Exception as e:
+                print(f"Error deleting {file_path}: {e}")
+~~~
+
+## 案例：批量重命名文件
+
+- 重点：
+  - `file.endswith()` 检测文件扩展名
+  - `os.path.splitext()` 分离文件名和扩展名，[0]是文件名，[1]是扩展名
+
+~~~python
+import os
+
+file_dir = './'
+
+old_ext = '.txt'
+new_ext = '.bak'
+
+for file in os.listdir(file_dir):
+    if file.endswith(old_ext):
+        # 把文件名和扩展名分离成list，[0]是文件名，[1]是扩展名
+        base_name = os.path.splitext(file)[0]
+        new_file_path = os.path.join(file_dir, base_name + new_ext)
+        old_file_path = os.path.join(file_dir, file)
+        os.rename(old_file_path, new_file_path)
+        print(f'Renamed {old_file_path} to {new_file_path}')
+
+~~~
+
+# 正则表达式
+
+## 规则
+
+正则表达式的基本组成部分：
+1. 普通字符：直接匹配自身的字符，如 `a` 匹配字符`'a'`。
+2. 元字符（Metacharacters）：具有特殊含义的字符。
+  - `.` 匹配除换行符外的任何单个字符。
+  - `^` 匹配字符串的开始。
+  - `$` 匹配字符串的结束。
+  - `*` 匹配前一个字符零次或多次。
+  - `+` 匹配前一个字符一次或多次。
+  - `?` 匹配前一个字符零次或一次，或将其用于非贪婪匹配(可以有也可以没有)。
+  - `[]` 匹配括号内的任何一个字符，如`[abc]`匹配`'a'`、`'b'`或`'c'`。
+  - `|` 表示逻辑或（OR）如 `a|b` 匹配`'a'`或`'b'`。
+  - `()` 用于分组，提取子字符串或改变运算的优先级。
+3. 转义字符：用于将元字符当作普通字符对待，通常使用反斜杠`\`，如`\.`匹配一个点。
+4. 量词（Quantifiers）：指定匹配的数量。
+  - `{n}`: 精确匹配 `n` 次。
+  - `{n,}`: 至少匹配 `n` 次。
+  - `{n,m}`: 匹配 `n` 到 `m` 次。
+
+示例：从You can contact us at info@example.com or support@service.org.中匹配出邮箱地址，可以用
+
+~~~python
+[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}
+~~~
+
+- `[A-Za-z0-9._%+-]+`：匹配邮箱的用户名部分，允许字母、数字和一些特殊符号（如.\_%+-等）
+- `@`：匹配邮箱的@符号。
+- `[A-Za-z0-9.-]+`：匹配邮箱的域名部分（如“example”或“service”）。
+- `\.`：匹配`“.”`符号。
+- `[A-Za-z]{2,4}`：匹配域名的后缀部分（如“com”或“org”）
+
+### 字符匹配
+
+正则表达式中的字符具有特殊的含义：
+
+- 普通字符：如 `a, b, 1, 9` 等，表示它们本身。
+- 点号 `.`：匹配除换行符以外的任意单个字符。
+
+~~~python
+import re
+text = 'hello'
+pattern = 'h.llo'
+
+# re.match返回的是一个匹配对象，如：<re.Match object; span=(0, 5), match='hello'>
+if re.match(pattern, text):
+    match = re.match(pattern, text)
+    # 用match.group返回匹配到的字符串'hello'
+    print("Match successfully:", match.group())
+else:
+    print("Match failed.")
+~~~
+
+### 字符集匹配
+
+`[hH]` 匹配其中的某一个字符，换言之只要待匹配的字符在[]里面存在，就能匹配上
+
+~~~python
+import re
+text = 'hello'
+pattern = '[hH]ello'
+
+if re.match(pattern, text):
+    match = re.match(pattern, text)
+    print(f"Match well: {match.group()}")
+~~~
+
+### 重复匹配
+
+`+`：匹配一次或多次，换言之必须得有
+
+`*`：匹配零次或多次，换言之有没有都行
+
+~~~python
+import re
+pattern = 'a+b*c' # a匹配一次或多次，b匹配零次或多次，c就是匹配c
+
+print(re.match(pattern, 'aabbc').group())
+print(re.match(pattern, 'aabbccpoiupio').group()) # 这表示字符串的子串符合正则，也能匹配出來
+print(re.match(pattern, 'ac').group())
+~~~
+
+### 特殊字符匹配
+
+`\d`:匹配数字
+
+`\s`:匹配空白字符
+
+`\w`:匹配字母/数字/下划线
+
+~~~python
+import re
+pattern = r'\d+\s\w+' # 匹配一个或多个数字，匹配一个空白字符，匹配一个或多个字母数字下划线
+text = '123 abc'
+print(re.match(pattern, text).group())
+~~~
+
+### 边界匹配
+
+`^`：匹配以某个字符串开头，^后面的字符串都参与判断。
+
+~~~python
+import re 
+pattern = '^hello'
+print(re.match(pattern, 'hello world').group())
+~~~
+
+## 正则表达式函数
+
+### 查找
+
+#### re.match()
+
+- 从字符串的开头匹配，开头匹配不上就直接失败。
+
+~~~python
+import re
+pattern = r'\d{3}-\d{3,8}'
+print(re.match(pattern, '123-45678').group()) 
+print(re.match(pattern, '12345-45678').group())
+print(re.match(pattern, 'w123-45678').group())
+~~~
+
+#### re.search()
+
+- 可以从字符串的任意位置截取符合模式的子串。
+
+- 但是只会匹配从前往后首次出现的匹配项。
+
+~~~python
+import re
+pattern = r'\d{3}-\d{3,8}'
+text = 'My phone 123-1234567, and 987-6543210'
+result = re.search(pattern, text)
+print(f"Match well {result.group()}") if result else print("Match failed")
+~~~
+
+#### re.findall()
+
+- 查找字符串中所有**非重叠**的匹配项，并以列表形式返回。
+
+~~~python
+import re
+pattern = r'\d{3}-\d{3,8}'
+text = 'My phone 123-1234567, and 987-6543210'
+result = re.findall(pattern, text) # result返回列表，直接print就行，不用group()方法
+print(f"Match well {result}") if result else print("Match failed")
+~~~
+
+什么叫非重叠？
+
+~~~python
+import re
+pattern = 'aba'
+text = 'ababa'
+result = re.findall(pattern, text)
+print(f"Match well {result}") if result else print("Match failed")
+~~~
+
+在字符串 "ababa" 中，虽然有两个 "aba" 出现的可能性（第一个从索引 0 开始，第二个从索引 2 开始），但 re.findall() 只会匹配第一次出现的 "aba"，然后继续从匹配后的字符（即从索引 3 开始）进行查找。由于从索引 3 开始再没有 "aba" 出现，所以结果中只有一个匹配。
+
+### 替换
+
+#### re.sub()
+
+- re.sub() 方法用于替换字符串中所有匹配的子串。
+
+- 语法为 `re.sub(pattern, repl, string, count=0)`，
+  - `pattern` 是正则表达式
+  - `repl` 是替换内容
+  - `string` 是要处理的字符串
+  - `count` 是可选参数，用于指定替换的最大次数（默认为 0，表示替换所有匹配项）
+
+~~~python
+~~~
+
