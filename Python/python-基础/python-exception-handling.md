@@ -172,6 +172,24 @@ finally:
 
 ## 网络请求异常处理
 
+网络请求可能会遇到网络超时或者请求错误的问题
+
+安装网络模块`pip install requests`，requests是一个用于发送HTTP请求的三方库。
+
 ~~~python
+import requests
+
+try:
+    response = requests.get("http://api.test.com/data", timeout=5)
+    response.raise_for_status() #检查响应的状态码。如果状态码表示请求失败（例如404、500 等），将引发HTTPError 异常。200不会触发异常
+    data = response.json() # 将响应内容解析为 JSON 格式的数据
+    print(data)
+
+except requests.exceptions.HTTPError as e: # 捕获HTTPError 异常，处理 HTTP 错误（如404、500）。
+    print(f"HTTP error occurred: {e}")
+
+except requests.exceptions.RequestException as e: # 请求超时、连接错误等异常
+    print(f"Error occurred: {e}")
+
 ~~~
 
