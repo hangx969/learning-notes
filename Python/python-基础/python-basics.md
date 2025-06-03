@@ -1366,3 +1366,81 @@ print(f"Average CPU Usage: {avg_cpu}%")
 print(f"Average Memory Usage: {avg_mem}%")
 ~~~
 
+# 练习：用户管理系统
+
+题目：开发一个用户管理系统：
+
+1. 用户注册：用户输入姓名、年龄、手机号。信息存入字典，用户存储在列表中。
+2. 用户查询：输入手机号、查找并显示已注册用户的信息
+3. 用户列表：显示所有已注册用户的信息
+4. 退出系统。
+
+要求：
+
+1. 使用while实现菜单交互
+2. 输入手机号必须是11位数字，否则提示错误
+
+~~~python
+# 用户信息列表
+users = []
+
+
+def user_register():
+    name = input("Please input name:")
+    age = input("Please input age:")
+    phone = input("Please input phone number:")
+
+    if len(phone) != 11 or not phone.isdigit():
+        print("Phone number should be 11 digits.")
+        return
+
+    user = {
+        'name': name,
+        'age': age,
+        'phone': phone
+    }
+    users.append(user)
+    print(f"User {name} registered successfully.")
+
+
+def user_search():
+    phone = input("Please enter phone number to search:")
+    for user in users:
+        if user['phone'] == phone:
+            print(f"Found user {user['name']} whose phone number is {user['phone']}.")
+            return
+    print("User not found.")
+
+
+def user_lists():
+    if not users:
+        print("No users registered.")
+    for user in users:
+        print(f"User name: {user['name']}, age: {user['age']}, phone number: {user['phone']}")
+
+
+def main():
+    while True:
+        print("\n=====User management system=====")
+        print("1. Register user")
+        print("2. Search user")
+        print("3. List all users")
+        print("4. Exit system")
+
+        choice = input("Please enter number to select function:")
+
+        if choice == '1':
+            user_register()
+        elif choice == '2':
+            user_search()
+        elif choice == '3':
+            user_lists()
+        elif choice == '4':
+            print("Existing...Thanks for using.")
+            break
+        else:
+            print("Invalid input, please re-select.")
+
+main()
+~~~
+
