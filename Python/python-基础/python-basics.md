@@ -181,11 +181,67 @@ isbn = '978-3-16-148410-0'
 print (library_books[isbn]['available'])
 ~~~
 
-### 字典方法
+### 字典赋值
+
+- 直接赋值
+
+~~~python
+# 适合用在for循环中，能迭代获得两个变量的情况用for循环直接给字典赋值
+for k, v in lines.split(maxsplit=1):
+	dic[k] = v
+~~~
+
+- 字面量赋值
+
+~~~python
+# 一般适合在创建字典时直接赋值
+dic = {
+    'k1'： 'v1',
+    'k2'： 'v2'
+}
+~~~
+
+- update方法更新字典
+
+~~~python
+dir = {}
+dir.update({
+    'k1': 'v1',
+    'k2': 'v2'
+})
+~~~
+
+### 字典排序
+
+比较常见的情况是字典的key存某种属性，value存该属性的值。我们经常需要对值进行排序：
+
+~~~python
+dic = {
+    'k1': 100,
+    'k2': 50,
+    'k3': 200
+}
+# 常用sorted函数进行排序
+# 默认是从小到大排序
+sorted_list = sorted(dic.items(), key=lambda x:x[1])
+# 加了reverse=True是从大到小
+sorted_list = sorted(dic.items(), key=lambda x:x[1], reverse=True)
+
+print(sorted_list)
+# sorted会返回一个列表，元素是k-v组成的元组，例如：
+# [('k3', 200), ('k1', 100), ('k2', 50)]
+# 迭代这个列表：
+print("top 2 is:\n")
+for k, v in sorted_list[:2]:
+    # k,v会自动获取成元组里面的两元组
+    print(f"{k}:{v}")
+~~~
 
 ## 集合(Set)
 
 集合是一个无序、不重复的元素集合。它有点像数学中的集合概念，特别适合用于去重或检查某个元素是否在集合中。
+
+集合可以当成一个函数来用做去重：
 
 ~~~python
 email_list = [
