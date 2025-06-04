@@ -272,3 +272,58 @@ if __name__ == "__main__":
     check_disk_usage(threshold=80, top_n=5)
 ~~~
 
+# psutil模块
+
+psutil 是一个跨平台库，用于检索系统的硬件信息，如 CPU、内存、磁盘、网络等资源使用情况。它广泛应用于系统监控、性能分析和运维自动化。
+
+安装psutil：
+
+~~~python
+pip install psutil
+~~~
+
+## 获取所有程序的PID:process_iter()
+
+~~~python
+import psutil
+
+# psutil.process_iter()返回一个process对象，遍历系统中所有正在运行的进程。
+# ['pid', 'name']参数让其返回每个进程的PID和name。
+for proc in psutil.process_iter(['pid', 'name']):
+    # proc.info获取到一个字典，字典的kv是process_iter()里面我们规定的参数。类似于{'pid': 2958594, 'name': 'sh'}
+    print(f"PID: {proc.info['pid']}, process name: {proc.info['name']}")
+~~~
+
+## 监控磁盘分区大小:disk_usage()
+
+~~~python
+import psutil
+
+def get_disk_usage():
+    # disk_partition()方法返回一个列表，里面是分区信息的元组 - namedtuple：
+    # 类似于[sdiskpart(device='/dev/vg00/root', mountpoint='/', fstype='ext4', opts='rw')]
+    part_usage = psutil.disk_partitions()
+
+    # 遍历分区元组，获取其中mountpoint参数，让psutil.disk_usage计算使用情况
+    for part in part_usage:
+        # disk_usage方法获取到一个namedtuple，类似于：sdiskusage(total=1046, used=520, free=99, percent=5.0)
+        usage = psutil.disk_usage(part.mountpoint)
+        
+        # 单位转换，字节转换为Gib，除以2的30次方（1 Gib的字节数）
+        total_gb = usage.total / (2 ** 30)
+        used_gb = usage.used / (2 ** 30)
+        free_gb = usage.free / (2 ** 30)
+        used_percentage = usage.used / usage.total * 100
+        print(f"Mount point: {part.mountpoint}")
+        print(f"Total: {total_gb: .2f} GiB")
+        print(f"Used: {used_gb: .2f} GiB")
+        print(f"Free: {free_gb: .2f} GiB")
+        print(f"Used percentage: {used_percentage: .1f}%")
+        print('-' * 30)
+
+if __name__ == '__main__':
+    get_disk_usage()
+~~~
+
+
+
