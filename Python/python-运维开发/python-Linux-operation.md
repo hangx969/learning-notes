@@ -396,7 +396,7 @@ if __name__ == '__main__':
     get_load()
 ~~~
 
-## CPU、内存、根分区使用报告
+## 案例：CPU、内存、根分区使用报告
 
 重点：
 
@@ -439,9 +439,144 @@ import os
 
 # 获取当前工作目录
 current_dir = os.getcwd()
-print(f"current working dir: {current_dir})
+print(f"current working dir: {current_dir}")
 
 # 切换工作目录
- 
+os.chdir("/home/s0001969/Documents/learning-notes-git/Python")
+current_dir = os.getcwd()
+print(f"current working dir: {current_dir}")
+
+# 列出指定目录下所有内容
+contents = os.listdir('.')
+print(f"Files in current dir:\n {contents}")
+
+# 创建新目录，但是新目录已经存在时会抛异常
+os.mkdir('new_dir')
+
+# 递归创建新目录
+os.makedirs('parent_dir/sub_dir')
+
+# 删除目录，目录必须是空的，否则会报错
+os.rmdir('new_dir')
+
+# 递归删除目录，子目录必须全是空的
+os.removedirs('parent_dir/sub_dir')
 ~~~
+
+## 文件操作
+
+~~~python
+import os
+
+file_path = '/home/s0001969/Documents/learning-notes-git/Python/python-manuscripts/old.txt'
+os.chdir('/'.join(file_path.split('/')[:-1]))
+
+# 判断文件是否存在
+if not os.path.exists(file_path):
+    with open (file_path, 'w') as f:
+        f.write('test')
+else:
+    print(f"{file_path} exists.")
+
+# 重命名文件
+os.rename('old.txt','new.txt')
+print("old.txt has been renamed to new.txt")
+
+# 删除文件
+os.remove('new.txt')
+print(f"new.txt has been deleted.")
+
+# 查看文件信息，返回元组
+# os.stat_result(st_mode=3, st_ino=6, st_dev=6, st_nlink=1, st_uid=1, st_gid=1, st_size=1, st_atime=1, st_mtime=1, st_ctime=1)
+file_info = os.stat('oop.py')
+print(file_info)
+
+# 拼接文件路径。用目录名和文件名做拼接成完成的绝对路径
+full_path = os.path.join('/', 'file.txt')
+~~~
+
+## 操作环境变量
+
+~~~python
+import os
+
+# 列出所有环境变量
+# 返回一个namedtuple，元素是一个字典，包含所有环境变量
+# environ({'LANGUAGE': 'en_US:en', 'LC_TIME': 'en_US.UTF-8'})
+env_vars = os.environ
+print(env_vars)
+
+# 查询指定环境变量，若不存在，返回None
+result = os.getenv('PATH')
+print(f"env PATH is: {result}")
+
+# 设置环境变量，和字典赋值方法一样
+os.environ['MY_VAR'] = '123'
+print(f"ENV 'MY_VAR' has been set to: {os.getenv('MY_VAR')}")
+
+# 删除环境变量，相当于删除字典的某个键值对
+del os.environ['MY_VAR']
+print("ENV 'MY_VAR' has been deleted.")
+~~~
+
+## 路径处理
+
+~~~python
+import os
+
+path = '/home/s0001969/Documents/learning-notes-git/Python/python-manuscripts/'
+file_name = 'oop.py'
+os.chdir(path)
+
+# 判断文件是否存在
+print('File exists') if os.path.exists('oop.py') else print('File does not exists')
+
+# 判断路径是否是文件
+print("This is a file") if os.path.isfile('oop.py') else print("This is not a file")
+
+# 判断路径是否是目录
+print("This is a dir") if os.path.isdir('oop.py') else print("This is not a dir")
+
+# 获取文件绝对路径
+abs_path = os.path.abspath('ooo.py')
+print(f"Absolute path: {abs_path}")
+
+# 拆分绝对路径中的文件名和路径名
+path = os.path.dirname(os.path.join(path, file_name))
+file_name = os.path.basename(os.path.join(path, file_name))
+print(f"path name: {path}, file name: {file_name}.")
+
+# 拆分绝对路径成列表
+dir_name, file_name =os.path.split(os.path.join(path, file_name))
+print(f"path name: {dir_name}, file name: {file_name}.")
+
+# 拆分文件名和扩展名
+file_base_name, ext_name = os.path.splitext('oop.py')
+print(f"file base name is: {file_base_name}, extention name is {ext_name}.")
+
+# 获取文件大小
+file_size = os.path.getsize('oop.py')
+print(f"file size: {file_size} Byte")
+~~~
+
+# logging模块
+
+`logging` 模块是 Python 标准库中的一个模块，用于记录和跟踪程序的运行状态和事件。它提供了灵活的框架来生成和管理日志信息，便于调试和运行监控。
+
+logging 模块使用不同的日志级别来表示日志的重要性，常用的级别有：
+
+- DEBUG：调试信息，通常用于开发过程中获取详细信息。
+- INFO：普通信息，表示程序的正常运行状态。
+- WARNING：警告信息，表示可能出现问题的情况。
+- ERROR：错误信息，表示发生了错误，可能影响程序的某些功能。
+- CRITICAL：严重错误信息，表示非常严重的错误，可能导致程序无法继续运行。
+
+logging模块中的三个功能：
+
+- `日志记录器`：记录器是 logging 模块的主要接口，负责记录消息。通过名称来区分不同的记录器。
+
+- `处理器`：处理器将记录的日志消息发送到合适的目的地，比如控制台、文件等。
+- `格式化器`：格式化器定义了日志信息的输出格式。
+
+
 

@@ -1,23 +1,36 @@
 import os
 
-# 获取当前工作目录
-current_dir = os.getcwd()
-print(f"current working dir: {current_dir}")
+path = '/home/s0001969/Documents/learning-notes-git/Python/python-manuscripts/'
+file_name = 'oop.py'
+os.chdir(path)
 
-# 切换工作目录
-os.chdir("/home/s0001969/Documents/learning-notes-git/Python")
-current_dir = os.getcwd()
-print(f"current working dir: {current_dir}")
+# 判断文件是否存在
+print('File exists') if os.path.exists('oop.py') else print('File does not exists')
 
-# 列出指定目录下所有内容
-contents = os.listdir('.')
-print(f"Files in current dir:\n {contents}")
+# 判断路径是否是文件
+print("This is a file") if os.path.isfile('oop.py') else print("This is not a file")
 
-# 创建新目录，但是新目录已经存在时会抛异常
-os.mkdir('new_dir')
+# 判断路径是否是目录
+print("This is a dir") if os.path.isdir('oop.py') else print("This is not a dir")
 
-# 递归创建新目录
-os.makedirs('parent_dir/sub_dir')
+# 获取文件绝对路径
+abs_path = os.path.abspath('ooo.py')
+print(f"Absolute path: {abs_path}")
 
-# 删除目录，目录必须是空的，否则会报错
-os.rmdir('new_dir')
+# 拆分绝对路径中的文件名和路径名
+path = os.path.dirname(os.path.join(path, file_name))
+file_name = os.path.basename(os.path.join(path, file_name))
+print(f"path name: {path}, file name: {file_name}.")
+
+# 拆分绝对路径成列表
+dir_name, file_name =os.path.split(os.path.join(path, file_name))
+print(f"path name: {dir_name}, file name: {file_name}.")
+
+# 拆分文件名和扩展名
+file_base_name, ext_name = os.path.splitext('oop.py')
+print(f"file base name is: {file_base_name}, extention name is {ext_name}.")
+
+# 获取文件大小
+file_size = os.path.getsize('oop.py')
+print(f"file size: {file_size} Byte")
+
