@@ -325,5 +325,123 @@ if __name__ == '__main__':
     get_disk_usage()
 ~~~
 
+## 多核CPU使用率cpu_percent()
 
+~~~python
+import psutil
+
+def get_cpu_usage():
+    cpu_usage = psutil.cpu_percent(interval=1, percpu=True)
+    print(f"CPU usage of every core: {cpu_usage}.")
+    print(f"Overall CPU usage: {psutil.cpu_percent()}.")
+
+if __name__ == '__main__':
+    get_cpu_usage()
+~~~
+
+## 获取物理内存和交换分区统计vitrual_mamory()
+
+~~~python
+import psutil
+
+def get_memory():
+    # 物理内存使用情况
+    mem_usage = psutil.virtual_memory()
+    # 返回namedtuple：svmem(total=3, available=2, percent=34.2, used=1, free=1, active=1, inactive=3, buffers=5, cached=7, shared=4, slab=1)
+    print(f"Total memory: {mem_usage.total / (2 ** 30) : .2f} GiB.")
+    print(f"Used memory: {mem_usage.used / (2 ** 30) : .2f} GiB.")
+    print(f"Available memory: {mem_usage.free / (2 ** 30) : .2f} GiB.")
+
+    # 交换分区使用情况
+    swap_usage = psutil.swap_memory()
+    print(f"Total swap: {swap_usage.total / (2 ** 30) : .2f} GiB.")
+    print(f"Used swap: {swap_usage.used / (2 ** 30) : .2f} GiB.")
+    print(f"Available swap: {swap_usage.free / (2 ** 30) : .2f} GiB.")
+
+if __name__ == '__main__':
+    get_memory()
+~~~
+
+## 网络流量监控get_io_counters()
+
+~~~python
+import psutil
+
+def get_net_io():
+    net_io = psutil.net_io_counters()
+    # net_io_counters()返回namedtuple
+    # 类似于：snetio(bytes_sent=1, bytes_recv=3, packets_sent=3, packets_recv=4, errin=0, errout=0, dropin=0, dropout=0)
+    print(f"Total received byte: {net_io.bytes_recv / (2 ** 20): .2f} MiB.")
+    print(f"Total sent byte: {net_io.bytes_sent / (2 ** 20): .2f} MiB.")
+
+
+if __name__ == '__main__':
+    get_net_io()
+~~~
+
+## 系统负载getloadavg()
+
+~~~python
+import psutil
+
+def get_load():
+    # 物理内存使用情况
+    load = psutil.getloadavg()
+    # 返回元组：(0.5, 0.6, 0.5)，含义是最近1min负载，最近5min负载，最近15min负载
+    print(f"System load in 1 min: {load[0]: .2f}.")
+    print(f"System load in 5 min: {load[1]: .2f}.")
+    print(f"System load in 15 min: {load[2]: .2f}.")
+
+if __name__ == '__main__':
+    get_load()
+~~~
+
+## CPU、内存、根分区使用报告
+
+重点：
+
+- `datetime.datetime.now()`获取时间戳
+- `psutil.cpu_percent()`获取CPU使用率
+- `psutil.virtual_memory().percent`获取内存使用情况
+- `shutil.disk_usage(path)`获取到某个文件系统的磁盘占用情况，返回namedtuple，类似于：usage(total=9, used=4, free=4)，可以被三个变量迭代
+
+~~~python
+import psutil, shutil, datetime
+
+def get_system_report():
+    report = []
+    # 打印报告时间
+    report.append(f"Report time: {datetime.datetime.now().strftime('%m-%d')}.")
+    # 获取CPU memory使用情况
+    report.append(f"CPU usage: {psutil.cpu_percent()}%.")
+    report.append(f"Memory usage: {psutil.virtual_memory().percent}%.")
+    # 获取根分区使用情况统计
+    total, used, free = shutil.disk_usage("/")
+    # 转换成Gib,保留一位小数
+    report.append(f"Disk total: {(total / (2 ** 30)): .1f} Gib.")
+    report.append(f"Disk used: {(used / (2 ** 30)): .1f} Gib.")
+    report.append(f"Disk rfree: {(free / (2 ** 30)): .1f} Gib.")
+	# 列表连成字符串打印
+    return ('\n').join(report)
+
+if __name__ == '__main__':
+    print(get_system_report())
+~~~
+
+# os模块
+
+os 模块是 Python 标准库中用于与操作系统进行交互的模块，主要提供对文件和目录的操作，以及对操作系统环境变量的访问和管理。通过 os 模块，我们可以执行文件系统的常见操作如文件创建、删除、目录操作，以及管理操作系统的环境变量。
+
+## 目录操作
+
+~~~python
+import os
+
+# 获取当前工作目录
+current_dir = os.getcwd()
+print(f"current working dir: {current_dir})
+
+# 切换工作目录
+ 
+~~~
 
