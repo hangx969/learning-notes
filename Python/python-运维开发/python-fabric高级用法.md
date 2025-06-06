@@ -286,7 +286,6 @@ output: {"name": "fab", "help": null, "default": null, "tasks": [{"name": "task1
 from fabric import Connection
 from pathlib import Path
 import stat
-
 import logging
 
 

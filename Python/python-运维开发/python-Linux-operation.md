@@ -971,12 +971,13 @@ with Connection(host='172.16.183.81', user='root', connect_kwargs={'password': '
 ~~~python
 from fabric import Connection
 
-# 连接到远程主机
-with Connection(host='172.16.183.81', user='root', connect_kwargs={'password': 'root'}) as conn:
-    # 切换工作目录
-    conn.cd('/root/')
+conn = Connection(host='172.16.183.81', user='root', connect_kwargs={'password': 'root'})
+# 连接到远程主机，并指定工作目录，后面的操作都在这个目录中进行
+# 退出with上下文之后会回到当前登录用户的家目录
+with conn.cd('/root/'):
     result = conn.run('ls', hide=True)
     print(result.stdout)
+conn.close()
 ~~~
 
 # json模块
