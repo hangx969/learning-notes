@@ -776,5 +776,207 @@ ssh.close()
 ## sftp操作
 
 ~~~python
+import paramiko, os
+
+# 创建ssh客户端
+ssh = paramiko.SSHClient()
+# 设置自动接受host key
+ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy)
+
+# 准备本地文件路径
+# 如果是windows上，local_dir可以写成'D:/'
+local_dir = '/home/s0001969/Documents/learning-notes-git/Python/python-manuscripts/'
+local_file = 'oop.py'
+local_path = os.path.join(local_dir,local_file)
+
+# 连接到的远程服务器
+hostname = '172.16.183.81'
+port = 22
+username = 'root'
+password = 'root'
+# 远程路径必须要具体到文件名才能成功sftp put。
+remote_path = '/root/oop.py'
+
+try:
+    # 创建本地目录，检查本地文件
+    os.makedirs(local_dir, exist_ok=True)
+    if not os.path.exists(local_path):
+        with open(local_path, 'w') as f:
+            f.write("test")
+        print(f"File {local_path} has been created.")
+
+    # 创建ssh客户端
+    ssh.connect(hostname, port, username, password)
+    print(f"Connected to {hostname}.")
+    # 创建sftp客户端
+    sftp = ssh.open_sftp()
+    # sftp上传文件
+    sftp.put(local_path, remote_path)
+    print(f"File transferred from {local_path} to {remote_path}.")
+
+    # sftp下载文件
+    # sftp.get(remote_path, local_path)
+
+except Exception as e:
+    print(f"Error occurred: {e}")
+
+finally:
+    # paramiko模块需要手动关闭ssh和sftp连接
+    sftp.close()
+    ssh.close()
+    print("Connection has closed.")
 ~~~
 
+# fabric模块
+
+Fabric和Paramiko都是用于ssh连接的Python库，但是他们之间有区别：
+
+1. 功能定位：
+- Paramiko：是一个底层库，提供了 SSH 协议的实现，可以直接用于执行远程命令、文件传输等基本操作。适合需要对 SSH 连接有更大控制的开发者。
+- Fabric：建立在 Paramiko 之上，是一个高级库，旨在简化和自动化通过 SSH 进行的任务。Fabric 提供了更易于使用的 API，方便批量执行命令和文件传输，适合需要快速部署和管理服务器的用户。
+2. 使用方式：
+- Paramiko：需要编写更多的底层代码，例如创建 SSH 客户端、连接、处理文件传输等。
+- Fabric：提供了更简单的命令接口，可以用更少的代码来实现相同的功能，同时支持任务组织和多主机操作。
+3. 任务管理：
+- Fabric：允许你定义可重用的任务，方便进行复杂的自动化工作流。
+- paramiko：没有内置的任务管理功能，更多依赖用户自己组织代码。
+
+**安装Fabric：**
+
+~~~sh
+pip3 install fabric --resume-retries 5 # 应对网络不好的情况，加入下载失败的重试选项
+# 本次安装的版本是fabric-3.2.0
+~~~
+
+## 远程运行命令Connection.run()
+
+命令格式：`Connection.run(command, **kwargs)`
+
+理论： `Connection.run()` 方法封装了Paramiko的SSHCliet()用于在远程服务器上执行指定的命令。这是执行非交互式命令的主要方法。可以通过参数控制命令的输出和处理方式。
+
+参数：
+
+- command: 要执行的命令字符串。
+- hide: 如果设置为 True，将隐藏命令的标准输出（stdout）和标准错误（stderr）。常用于不需要显示命令执行过程的情况。
+- warn: 如果设置为 True，即使命令返回非零退出状态也不会引发异常，适合于非关键操作的检查。
+- pty: 如果设置为 True，使用伪终端（PTY）来执行命令，适用于需要模拟终端交互的命令。
+
+案例：获取远程服务器的系统信息
+
+~~~python
+# 从Fabric模块中导入connection这个类，就可以用这个类中的方法了
+from fabric import Connection
+
+# 实例化一个Connection对象，连接到远程主机
+# connect_kwargs是一个字典，用于传递额外的连接参数。
+conn = Connection(host='172.16.183.81', user='root', connect_kwargs={'password': 'root'})
+
+# 调用Connection对象的run方法执行命令
+# 隐藏命令执行的输出，避免在控制台上打印详细信息，只将结果存储在`result` 对象中
+result = conn.run('uname -a', hide=True)
+# 通过result.stdout获取命令结果
+print(result.stdout.strip())
+conn.close()
+~~~
+
+## 远程执行sudo命令Connection.sudo()
+
+与Connection.run()方法类似，但支持需要以sudo运行的命令。需要在Connection.sudo(password=‘’)添加password参数，传入执行sudo需要的密码。
+
+~~~python
+from fabric import Connection
+conn = Connection(host='172.16.183.81', user='root', connect_kwargs={'password': 'root'})
+result = conn.sudo('uname -a', password='root', hide=True)
+print(result.stdout.strip())
+conn.close()
+~~~
+
+## 本地文件上传Connection.put()
+
+语法：`Connection.put(local, remote)`
+
+~~~python
+from fabric import Connection
+
+# 连接到远程主机
+conn = Connection(host='172.16.183.81', user='root', connect_kwargs={'password': 'root'})
+
+local_path = '/home/s0001969/Documents/learning-notes-git/Python/python-manuscripts/oop.py'
+remote_path = '/root/oop.py'
+try:
+    # 上传文件
+    conn.put(local_path, remote_path)
+except Exception as e:
+    print(f"Error occurred: {e}.")
+finally:
+    conn.close()
+~~~
+
+## 下载远程服务器文件Connection.get()
+
+语法：`Connection.put(remote, local)`
+
+~~~python
+from fabric import Connection
+
+# 连接到远程主机
+conn = Connection(host='172.16.183.81', user='root', connect_kwargs={'password': 'root'})
+
+local_path = '/home/s0001969/Documents/learning-notes-git/Python/python-manuscripts/test.py'
+remote_path = '/root/test.py'
+
+try:
+    # 下载文件
+    conn.get(remote_path, local_path)
+except Exception as e:
+    print(f"Error occurred: {e}.")
+finally:
+    conn.close()
+~~~
+
+## 自动关闭连接
+
+之前的conn.run()跑完命令之后都需要手动关闭一下ssh连接`conn.close()`，这样做是为了释放资源。如果不关闭连接，ssh会话会保持到超时自动关闭，未释放的连接可能会占用系统资源。(注：`conn.open()`方法用于手动打开一个连接，但是一般不需要写，因为Connection会自动打开)
+
+为自动关闭ssh连接，可以使用上下文管理器with，with会把Connection对象作为上下文管理器，在代码执行完毕后会自动关闭，无需显式调用conn.close()
+
+~~~python
+from fabric import Connection
+
+# 连接到远程主机
+with Connection(host='172.16.183.81', user='root', connect_kwargs={'password': 'root'}) as conn:
+    result = conn.run('uname -a')
+    print(result.stdout)
+~~~
+
+## 判断远程路径是否存在
+
+核心是在远程机器上用shell命令判断路径是否存在：
+
+~~~sh
+test -e /root/oop.py && echo "exists" || echo "Not exists"
+~~~
+
+~~~python
+from fabric import Connection
+
+# 连接到远程主机
+with Connection(host='172.16.183.81', user='root', connect_kwargs={'password': 'root'}) as conn:
+    result = conn.run('test -e /root/oop.py && echo "exists" || echo "Not exists"', hide=True)
+    print(result.stdout)
+~~~
+
+## 切换远程目录Connection.cd()
+
+~~~python
+from fabric import Connection
+
+# 连接到远程主机
+with Connection(host='172.16.183.81', user='root', connect_kwargs={'password': 'root'}) as conn:
+    # 切换工作目录
+    conn.cd('/root/')
+    result = conn.run('ls', hide=True)
+    print(result.stdout)
+~~~
+
+# json模块
