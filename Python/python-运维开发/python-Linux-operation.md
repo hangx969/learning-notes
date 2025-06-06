@@ -578,7 +578,7 @@ logging模块中的三个功能：
 - `处理器`：处理器将记录的日志消息发送到合适的目的地，比如控制台、文件等。
 - `格式化器`：格式化器定义了日志信息的输出格式。
 
-## 基本日志记录器
+## 基本日志记录器logging.basicConfig()
 
 ~~~python
 import logging
@@ -617,7 +617,7 @@ logging.critical("This is critical message")
 > AttributeError: partially initialized module 'logging' has no attribute 'basicConfig' (most likely due to a circular import)
 > ~~~
 
-## 自定义日志记录器
+## 自定义日志记录器logging.getLogger()
 
 ~~~python
 import logging,os
@@ -659,7 +659,7 @@ logger.error("This is an error message.")
 logger.critical("This is a critical message.")
 ~~~
 
-## 案例：日志文件切割
+## 案例：日志文件切割RotatingFileHandler
 
 使用 logging 模块的 `RotatingFileHandler 处理器`来实现日志文件的切割。
 
@@ -694,11 +694,86 @@ for i in range(1000):
     logger.debug(f'This is number {i} message.')
 ~~~
 
-## 案例：报错信息自动发送到邮箱
+## 案例：报错信息自动发送到邮箱SMTPHandler
 
 使用 `SMTPHandler 处理器` 发送日志信息到电子邮件。
 
 需要预先导入：`from logging.handlers import SMTPHandler`
+
+~~~python
+import logging, os
+from logging.handlers import SMTPHandler
+
+os.chdir('/home/s0001969/Documents/learning-notes-git/Python/python-manuscripts/')
+
+# 创建一个日志记录器
+logger = logging.getLogger('smtp_logger')
+logger.setLevel(logging.ERROR)
+
+# 创建SMTP处理器,password是发件邮箱的smtp的授权码
+smtp_handler = SMTPHandler(mailhost=('smtp.163.com', 25),
+                           fromaddr='xxxxxx@163.com',
+                           toaddrs=['xxxxx@qq.com'],
+                           subject="Error log",
+                           credentials=('user','password'),
+                           secure=()
+                           )
+
+# 创建格式化器
+formatter = logging.Formatter('%(asctime)s-%(name)s-%(levelname)s: %(message)s', datefmt='%Y%m%d_%H:%M:%S')
+smtp_handler.setFormatter(formatter)
+
+# 将处理器添加到记录器上
+logger.addHandler(smtp_handler)
+
+# 记录日志，每一条日志独立发送
+logger.error(f'This is an error message.')
+logger.critical(f'This is an critical message.')
+~~~
+
+# paramiko模块
+
+`Paramiko` 是一个用于实现 SSH 协议的 Python 库，它提供了 SSH、SFTP 客户端和服务器的功能。
+
+使用前先安装paramiko：
+
+~~~sh
+pip3 install paramiko
+~~~
+
+## ssh连接
+
+本次实验准备了一台本地VMware虚拟机，IP: **172.16.183.81**
+
+~~~python
+import paramiko
+# 创建ssh客户端
+ssh = paramiko.SSHClient()
+# 设置自动接受host key
+ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy)
+# 连接到远程主机
+ssh.connect(hostname='172.16.183.81', username='root', password='root')
+# 执行命令ssh.exec_command返回一个三元可迭代: stdin, stdout, stderr
+stdin, stdout, stderr = ssh.exec_command('df -h')
+print(stdout.read().decode('utf-8'))
+# 关闭连接
+ssh.close()
+~~~
+
+### AutoAddPolicy
+
+在使用 SSH 协议连接远程服务器时，客户端通常会验证服务器的主机密钥（Host Key）以确保连接的安全性。主机密钥是服务器的唯一标识，用于防止中间人攻击。如果服务器的主机密钥不在客户端的已知主机密钥列表中（通常存储在 `~/.ssh/known_hosts` 中），客户端需要决定如何处理这种情况。
+
+`set_missing_host_key_policy` 是一个方法，用于设置客户端在遇到未知主机密钥时的处理策略。它接受一个策略类（或实例）作为参数，该策略定义了如何处理未知的主机密钥。
+
+`paramiko.AutoAddPolicy` 是 `paramiko` 提供的一个策略类，表示自动接受未知主机的密钥并将其添加到客户端的已知主机密钥列表中。这种策略的特点是：
+
+- **自动接受**：当连接到一个未知主机时，客户端不会拒绝连接或提示警告，而是直接接受主机密钥。
+- **添加到已知列表**：接受的主机密钥会被缓存，以便后续连接时进行验证。
+
+这种策略适合开发和测试环境，因为它避免了手动管理主机密钥的麻烦。然而，在生产环境中，这种策略可能存在安全风险，因为它无法防止连接到伪造的服务器。
+
+## sftp操作
 
 ~~~python
 ~~~
