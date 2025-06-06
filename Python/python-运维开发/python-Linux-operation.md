@@ -578,10 +578,12 @@ logging模块中的三个功能：
 - `处理器`：处理器将记录的日志消息发送到合适的目的地，比如控制台、文件等。
 - `格式化器`：格式化器定义了日志信息的输出格式。
 
+## 基本日志记录器
+
 ~~~python
 import logging
 
-# logging 记录器
+# 基本 logging 记录器
 # 开启DEUBG级别信息，意思是所有等级DEBUG、INFO、WARNING、ERROR、CRITICAL）日志都记录
 logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s-%(levelname)s-%(message)s',
@@ -616,6 +618,87 @@ logging.critical("This is critical message")
 > ~~~
 
 ## 自定义日志记录器
+
+~~~python
+import logging,os
+
+os.chdir('/home/s0001969/Documents/learning-notes-git/Python/python-manuscripts/')
+
+# getLogger()方法创建自定义记录器
+logger = logging.getLogger('my_logger')
+# 设定日志的记录级别
+logger.setLevel(logging.DEBUG)
+
+# 创建控制台处理器,意思是将收集到的日志通过控制台输出
+# 设置控制台处理器的日志级别，意思是只有WARNING及以上的级别会被输出到控制台
+console_handler = logging.StreamHandler()
+console_handler.setLevel(logging.WARNING)
+
+# 创建文件处理器,意思是将收集到的日志写入到文件中。所有级别的日志都会输出到文件
+file_handler = logging.FileHandler('my_log.log', encoding='utf-8')
+file_handler.setLevel(logging.DEBUG)
+
+# 创建格式化器，应用到控制台处理器和文件处理器
+# 规定了格式：时间-记录器名称-日志级别：日志信息，时间格式：年月日_时:分:秒
+# 年份格式%y是简写年（25），%Y是全称年（2025）
+formatter = logging.Formatter('%(asctime)s-%(name)s-%(levelname)s: %(message)s', datefmt='%Y%m%d_%H:%M:%S')
+console_handler.setFormatter(formatter)
+file_handler.setFormatter(formatter)
+
+# 将处理器添加到记录器
+logger.addHandler(console_handler)
+logger.addHandler(file_handler)
+
+# 记录日志
+# logging.debug/info...用的是基本日志处理器
+# 我们自定义了日志处理器，要用自定义的name: logger.debug/info...
+logger.debug("This is a debug message.")
+logger.info("This is an info message.")
+logger.warning("This is a warning message.")
+logger.error("This is an error message.")
+logger.critical("This is a critical message.")
+~~~
+
+## 案例：日志文件切割
+
+使用 logging 模块的 `RotatingFileHandler 处理器`来实现日志文件的切割。
+
+需要预先导入：`from logging.handlers import RotatingFileHandler`
+
+~~~python
+import logging, os
+from logging.handlers import RotatingFileHandler
+
+os.chdir('/home/s0001969/Documents/learning-notes-git/Python/python-manuscripts/')
+
+# 创建一个日志记录器
+logger = logging.getLogger('rotating_logger')
+logger.setLevel(logging.DEBUG)
+
+# 创建日志轮替处理器
+# maxBytes=2000: 当文件大小达到2000字节，触发日志轮替
+# backupCount = 5 最多保留五个旧的日志文件（my_log.log1 ... my_log.log5）
+# encoding = 'utf-8' 文件使用UTF-8编码，避免中文乱码
+rotating_handler = RotatingFileHandler('my_log.log', maxBytes=2000,backupCount=5,encoding='utf-8')
+
+# 创建格式化器
+formatter = logging.Formatter('%(asctime)s-%(name)s-%(levelname)s: %(message)s', datefmt='%Y%m%d_%H:%M:%S')
+# 对处理器应用这个格式
+rotating_handler.setFormatter(formatter)
+
+# 将处理器添加到记录器上
+logger.addHandler(rotating_handler)
+
+# 记录日志，观察日志轮替的生成文件的结果
+for i in range(1000):
+    logger.debug(f'This is number {i} message.')
+~~~
+
+## 案例：报错信息自动发送到邮箱
+
+使用 `SMTPHandler 处理器` 发送日志信息到电子邮件。
+
+需要预先导入：`from logging.handlers import SMTPHandler`
 
 ~~~python
 ~~~
