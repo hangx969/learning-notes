@@ -579,7 +579,44 @@ logging模块中的三个功能：
 - `格式化器`：格式化器定义了日志信息的输出格式。
 
 ~~~python
+import logging
+
+# logging 记录器
+# 开启DEUBG级别信息，意思是所有等级DEBUG、INFO、WARNING、ERROR、CRITICAL）日志都记录
+logging.basicConfig(level=logging.DEBUG,
+                    format='%(asctime)s-%(levelname)s-%(message)s',
+                    datefmt='%m%d_%H:%M:%S')
+# format='%(asctime)s-%(levelname)s-%(message)s': 日志输出的格式字符串，定义了每条日志的显示内容：
+# %(asctime)s：日志记录的时间。
+# %(levelname)s：日志级别
+# %(message)s：日志内容，即你记录的消息。
+# datefmt='%m%d_%H:%M:%S': 格式化日期和时间的字符串
+# %m%d_%H:%M:%S 会输出成 0925_14:30:00的形式
+
+# 记录日志
+logging.debug("This is debug message")
+logging.info("This is info message")
+logging.warning("This is warning message")
+logging.error("This is error message")
+logging.critical("This is critical message")
 ~~~
 
+> 注意python的py文件命名最好不要与module名字重名，否则import module的时候会错误的引用到本文件。
+>
+> 比如这个脚本文件命名为`logging.py`,在其中`import logging`的时候，就会报错：
+>
+> ~~~sh
+> Original exception was:
+> Traceback (most recent call last):
+>   File "/home/s0001969/Documents/learning-notes-git/Python/python-manuscripts/logging.py", line 1, in <module>
+>     import logging
+>   File "/home/s0001969/Documents/learning-notes-git/Python/python-manuscripts/logging.py", line 5, in <module>
+>     logging.basicConfig(level=logging.DEBUG,
+> AttributeError: partially initialized module 'logging' has no attribute 'basicConfig' (most likely due to a circular import)
+> ~~~
 
+## 自定义日志记录器
+
+~~~python
+~~~
 

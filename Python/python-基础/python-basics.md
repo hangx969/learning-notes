@@ -269,9 +269,7 @@ setb = {"c","d","e"}
 seta.intersection(setb)
 ~~~
 
-# 条件判断语句
-
-## if
+# 条件判断语句if
 
 ~~~python
 # 语法格式
