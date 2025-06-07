@@ -981,3 +981,253 @@ conn.close()
 ~~~
 
 # json模块
+
+JSON 是一种轻量级数据交换格式，既易于人类阅读和编写，又便于计算机解析和生成。它在 Web 开发、API 通信和配置文件中应用广泛。
+
+json 模块是 Python 内置的强大工具，用于在 Python 和 JSON（JavaScript Object Notation）格式之间进行高效的数据转换。Python的 json 模块提供了几种核心方法，帮助开发者实现 Python 数据结构与 JSON 格式之间的灵活转换。
+
+序列化：将python中的数据结构转换成可存储或者传输的格式（如json格式）
+
+核心方法：
+
+- `json.dump()`:将python对象(比如字典、列表等)转换成json格式，并写入文件
+- `json.dumps()`：将pyhton对象转换成json格式，并返回json字符串
+- `json.load()`：从文件读取json数据，转换为python对象
+- `json.loads()`：将json字符串转换为python对象
+
+## 序列化到文件json.dump()
+
+### 语法参数
+
+`json.dump(obj, fp, *, skipkeys=False, ensure_ascii=True, check_circular=True, allow_nan=True, cls=None, indent=None, separators=None, default=None, sort_keys=False)`
+
+- obj:需要序列化的python对象
+
+- fp：文件对象，表示将json写入此文件中
+
+- skipkeys：如果为Ture，字典中不可序列化的键将被跳过。默认为False，遇到无法序列化的键会报错。
+
+- ensure_ascii：决定非ASCII字符（比如中文、特殊符号等）怎么处理。默认是True，表示所有非ASCII字符会被转义为`\uxxx`的Unicode编码，确保json输出便于跨平台夸系统处理和传输。
+
+  ~~~python
+  # 用Unicode编码
+  import json
+  data = {'name': '张三'}
+  json_str = json.dumps(data, ensure_ascii=True)
+  print(json_str) # {"name": "\u5f20\u4e09"}
+  
+  # 用原始编码
+  import json
+  data = {'name': '张三'}
+  json_str = json.dumps(data, ensure_ascii=False)
+  print(json_str) # {"name": "张三"}
+  ~~~
+
+- check_circular: 默认为True，即检测对象中的循环引用，如果检测到，抛出异常并停止序列化，避免无限递归。
+
+  ~~~python
+  import json
+  
+  a = {}
+  a['self'] = a  # 循环引用
+  
+  try:
+      json_str = json.dumps(a)  # 默认会检查循环引用
+  except ValueError as e:
+      print(f"Error: {e}")  # 输出 "Error: Circular reference detected"
+  ~~~
+
+- allow_nan: 允许将特殊的浮点数，如`NaN (Not a Number), Infinity (正无穷大), -Inifity(负无穷大)`进行序列化为合法的json字符串。这些值在python中是有效的，但是由于这些值不符合json标准，序列化的时候会转变为字符串`null`。
+
+- cls: 指定一个自定义的json编码器类，示例：
+
+  ~~~python
+  import json
+  
+  class CustomEncoder(json.JSONEncoder):
+      def default(self, obj):
+          if isinstance(obj, set):
+              return list(obj)
+          return super().default(obj)
+  
+  json_str = json.dumps({"set": {1, 2, 3}}, cls=CustomEncoder)
+  print(json_str)  # 输出：{"set": [1, 2, 3]}
+  ~~~
+
+- indent：控制输出的缩进格式，为None时紧凑输出，为整数时指定缩进空格数。
+
+- separators：用于指定键值对之间的分隔符，默认(',', ': ')
+
+- default：自定义处理无法序列化的对象，比如类示例、日期、特殊类型等，可能不符合json标准格式，无法直接序列化。通过指定一个default函数，告诉json如何处理。
+
+- sort_keys: 如果为 True，则字典的键会按字母顺序排序。在默认情况下，字典键的顺序是保持原来的顺序，不会进行排序。
+
+### 示例
+
+~~~python
+import json
+
+data = {
+    'name': 'Alice',
+    'age': 12,
+    'city': 'Beijing',
+    'skills': ['python','java','k8s']
+}
+
+with open ('python-manuscripts/data.json', 'w', encoding='utf-8') as f:
+    # 把字典写入文件，缩进4个字符更具有可读性
+    # 非 ASCII 字符会以原始 Unicode 字符的形式输出，这样在阅读时更直观，也便于处理和显示
+    json.dump(data, f, indent=4, ensure_ascii=False)
+~~~
+
+## 序列化到字符串json.dumps()
+
+### 语法参数
+
+`json.dumps(obj, *, skipkeys=False, ensure_ascii=True, check_circular=True, allow_nan=True, cls=None, indent=None, separators=None, default=None, sort_keys=False)`
+
+与 json.dump() 参数一致，区别在于 json.dumps() 返回一个字符串，而不是写入文件。
+
+### 示例
+
+~~~python
+import json
+
+data = {
+    'name': 'Alice',
+    'age': 12,
+    'city': 'Beijing',
+    'skills': ['python','java','k8s']
+}
+# 转成字符串
+json_str = json.dumps(data, indent=4, ensure_ascii=False)
+print(json_str)
+~~~
+
+## 反序列化到文件json.load()
+
+### 语法参数
+
+`json.load(fp, *, cls=None, object_hook=None, parse_float=None, parse_int=None, parse_constant=None, object_pairs_hook=None)`
+
+- fp: 包含 JSON 数据的文件对象。
+- cls: 自定义解码类，默认为 None。
+- object_hook: 解码 JSON 对象时调用的函数，常用于自定义解码逻辑。
+- parse_float: 自定义解析 JSON 中浮点数的函数。
+- parse_int: 自定义解析 JSON 中整数的函数。
+- parse_constant: 自定义解析特殊值 NaN、Infinity 和 -Infinity 的函数。
+- object_pairs_hook: 当处理 JSON 对象键值对时调用的函数。
+
+### 示例
+
+~~~python
+import json
+
+with open('python-manuscripts/data.json', 'r', encoding='utf-8') as f:
+    data = json.load(f)
+    print(data)
+    # 返回了一个字典： {'name': 'Alice', 'age': 12, 'city': 'Beijing', 'skills': ['python', 'java', 'k8s']}
+~~~
+
+## 反序列化到字符串json.loads()
+
+### 语法参数
+
+`json.loads(s, *, cls=None, object_hook=None, parse_float=None, parse_int=None, parse_constant=None, object_pairs_hook=None)`
+
+与 json.load() 类似，但 json.loads() 接收的是 JSON 字符串，而不是文件。
+
+### 示例
+
+~~~python
+import json
+
+# 定义json格式字符串，用"""引起来
+data = """{
+    "name": "Alice",
+    "age": 12,
+    "city": "Beijing",
+    "skills": [
+        "python",
+        "java",
+        "k8s"
+    ]
+}"""
+
+print(json.loads(data))
+# 返回了一个字典： {'name': 'Alice', 'age': 12, 'city': 'Beijing', 'skills': ['python', 'java', 'k8s']}
+~~~
+
+## 案例：配置文件管理
+
+~~~python
+import json
+
+# 有一个json配置文件，需要修改其中的字段：
+# 1. 读取json文件
+# 2. 反序列化成python对象
+# 3. 修改字段
+# 4. 序列化到文件中
+
+# 读取json文件并反序列化成字典
+with open('python-manuscripts/config.json', 'r') as f:
+    config = json.load(f)
+
+# 字典赋值的方法来修改字段
+config['version'] = '1.0.1'
+config['logging']['level'] = 'DEBUG'
+config['notifications']['email']['username'] = 'test_user'
+
+# 序列化到json文件
+with open('python-manuscripts/config.json', 'w') as f:
+    json.dump(config, f, indent=4)
+~~~
+
+## 案例：服务器状态监控
+
+~~~python
+import json, psutil, time
+from datetime import datetime
+
+# 使用python收集服务器状态，序列化到json文件
+
+# 用列表来存放字典
+status_data = []
+
+# 连续收集五次数据
+for _ in range(5):
+    # 用字典来格式化收集的数据
+    status ={
+        'timestamp': datetime.now().strftime('%m-%d %H:%M:%S'),
+        'cpu_usage': psutil.cpu_percent(),
+        'mem_usage': psutil.virtual_memory()
+    }
+	# 把每一秒生成的数据（字典）添加到列表中
+    status_data.append(status)
+    time.sleep(1)
+
+# 把列表序列化到json文件
+with open('python-manuscripts/status.json', 'w') as f:
+    json.dump(status_data, f, indent=4)
+~~~
+
+## 案例：用户权限管理
+
+~~~python
+import json
+
+# 用一个json文件存放用户权限信息，使用python读取和更新权限信息
+
+with open('python-manuscripts/permissions.json', 'r') as f:
+    # 把json反序列化成一个字典
+    user_info = json.load(f)
+
+# 修改字段
+user_info['user123']['access_level'] = 'admin'
+user_info['user789']['active'] = True
+
+# 序列化回文件中
+with open('python-manuscripts/permissions.json', 'w') as f:
+    json.dump(user_info, f, indent=4)
+~~~
+
