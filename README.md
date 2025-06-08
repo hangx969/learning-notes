@@ -47,11 +47,16 @@ A well-organized repository of knowledge covering Kubernetes, cloud-native techn
 ## 📚 Azure
 
 - **Azure Services**
-  - [Azure Storage](./Azure/Azure%20Storage.md)
-  - [Azure Networking](./Azure/AzureNetworking.md)
-  - [Azure Kubernetes Basics](./Azure/AKS-basics.md)
-  - [Azure DevOps](./Azure/Azure-devops-basics.md)
+  - [Azure VM](./Azure/0_Azure-VM-VMSS.md)
+  - [Azure Storage](./Azure/5_Azure-Storage.md)
+  - [Azure Networking](./Azure/6_Azure-Networking.md)
+  - [Azure Kubernetes Basics](./Azure/2_AKS-basics.md)
+  - [Azure DevOps](./Azure/8_Azure-devops-basics.md)
   - [Terraform Basics](./Azure/terraform-basics.md)
+
+- Troubleshooting Guides
+  - [Azure Linux VM](./Azure/1_Azure-Linux-VM-troubheshooting.md)
+
 
 ## 📚 Linux & Shell
 
