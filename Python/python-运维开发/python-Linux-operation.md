@@ -1217,7 +1217,6 @@ with open('python-manuscripts/status.json', 'w') as f:
 import json
 
 # 用一个json文件存放用户权限信息，使用python读取和更新权限信息
-
 with open('python-manuscripts/permissions.json', 'r') as f:
     # 把json反序列化成一个字典
     user_info = json.load(f)
@@ -1229,5 +1228,32 @@ user_info['user789']['active'] = True
 # 序列化回文件中
 with open('python-manuscripts/permissions.json', 'w') as f:
     json.dump(user_info, f, indent=4)
+~~~
+
+# PyYaml模块
+
+Python中的YAML模块指的是PyYAML库，它用于处理YAML（YAML Ain't Markup Language）格式的数据。YAML是一种简洁、易读的文件格式，常用于配置文件。相比于JSON，YAML更加人类可读，特别适合描述像字典、列表这样的数据结构。
+
+在Python中，PyYAML让开发者能够方便地解析（读取）和生成（写入）YAML文件。通过导入yaml模块，你可以将YAML文件的内容转化为 Python数据结构，或将Python对象转换为YAML格式并存储到文件中。PyYAML被广泛用于配置管理、数据序列化等场景，特别是在应用程序需要灵活配置时。
+
+核心功能：
+
+- 解析 YAML 文件：将 YAML 格式的数据转化为 Python 对象，如字典、列表等。
+- 生成 YAML 文件：将 Python 对象转化为 YAML 格式并保存到文件中。
+
+yaml 模块主要提供以下几个方法：
+1. `yaml.load()` - 解析 YAML 格式的字符串为 Python 对象。
+2. `yaml.safe_load()`  -  解析  YAML，但会限制可能不安全的语法。它不会加载某些可能导致安全隐患的 YAML 特性，例如自定义对象或执行代码的构造。
+3. `yaml.dump()` - 将 Python 对象序列化为 YAML 格式的字符串。
+4. `yaml.safe_dump()`  -  将  Python  对象序列化为安全的  YAML  格式字符串。只支持基本的 Python 数据类型（如列表、字典、字符串和整数），不支持某些复杂类型如自定义类实例或特殊对象），因此确保生成的 YAML 是安全的。
+5. `yaml.load_all()` - 解析包含多个文档的 YAML 字符串。
+6. `yaml.safe_load_all()` - 安全解析多个文档的 YAML 字符串。
+7. `yaml.dump_all()` - 将多个 Python 对象序列化为 YAML 字符串。
+8. `yaml.safe_dump_all()` - 安全地序列化多个 Python 对象为 YAML 字符串。
+
+## 解析yaml数据yaml.load()
+
+~~~python
+import 
 ~~~
 
