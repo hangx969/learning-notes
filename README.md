@@ -52,8 +52,9 @@ A well-organized repository of knowledge covering Kubernetes, cloud-native techn
   - [Azure Networking](./Azure/6_Azure-Networking.md)
   - [Azure Kubernetes Basics](./Azure/2_AKS-basics.md)
   - [Azure DevOps](./Azure/8_Azure-devops-basics.md)
+  - [Azure Policy](./Azure/11_Azure-Policy.md)
   - [Terraform Basics](./Azure/terraform-basics.md)
-
+  
 - Troubleshooting Guides
   - [Azure Linux VM](./Azure/1_Azure-Linux-VM-troubheshooting.md)
 
