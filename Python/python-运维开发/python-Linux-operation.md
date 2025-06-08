@@ -1124,7 +1124,7 @@ print(json_str)
 import json
 
 with open('python-manuscripts/data.json', 'r', encoding='utf-8') as f:
-    data = json.load(f)
+    data = json.load(f) # 在windows中需要用json.load(f.read())
     print(data)
     # 返回了一个字典： {'name': 'Alice', 'age': 12, 'city': 'Beijing', 'skills': ['python', 'java', 'k8s']}
 ~~~
