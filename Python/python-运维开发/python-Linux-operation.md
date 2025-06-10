@@ -1243,7 +1243,7 @@ Python中的YAML模块指的是PyYAML库，它用于处理YAML（YAML Ain't Mark
 
 yaml 模块主要提供以下几个方法：
 1. `yaml.load()` - 解析 YAML 格式的字符串为 Python 对象。
-2. `yaml.safe_load()`  -  解析  YAML，但会限制可能不安全的语法。它不会加载某些可能导致安全隐患的 YAML 特性，例如自定义对象或执行代码的构造。
+2. `yaml.safe_load()`  -  解析  YAML，但会限制可能不安全的语法。它不会加载某些可能导致安全隐患的 YAML 特性，例如自定义对象或自己构造的对象。
 3. `yaml.dump()` - 将 Python 对象序列化为 YAML 格式的字符串。
 4. `yaml.safe_dump()`  -  将  Python  对象序列化为安全的  YAML  格式字符串。只支持基本的 Python 数据类型（如列表、字典、字符串和整数），不支持某些复杂类型如自定义类实例或特殊对象），因此确保生成的 YAML 是安全的。
 5. `yaml.load_all()` - 解析包含多个文档的 YAML 字符串。
@@ -1251,9 +1251,181 @@ yaml 模块主要提供以下几个方法：
 7. `yaml.dump_all()` - 将多个 Python 对象序列化为 YAML 字符串。
 8. `yaml.safe_dump_all()` - 安全地序列化多个 Python 对象为 YAML 字符串。
 
-## 解析yaml数据yaml.load()
+安装：
 
-~~~python
-import 
+~~~sh
+# 安装的是pyyaml
+pip3 install pyyaml
+# 导入的是yaml模块
+import yaml
 ~~~
 
+## 不安全的yaml对象
+
+在 YAML 中，“基本的 YAML 标签”和“自定义对象或函数”是两种不同的概念，分别对应 YAML 的常规数据类型和扩展功能。以下是详细说明和示例：
+
+---
+
+### **1. 基本的YAML标签**
+基本的 YAML 标签是 YAML 的核心数据类型，直接映射到 Python 的基本数据结构。这些标签包括：
+- **标量值**（字符串、数字、布尔值、`null` 等）。
+- **列表**（数组）。
+- **字典**（键值对）。
+
+**示例：基本的 YAML 标签**
+
+```yaml
+name: John          # 字符串
+age: 30             # 数字
+is_student: false   # 布尔值
+languages:          # 列表
+  - Python
+  - Java
+address:            # 字典
+  city: New York
+  zip: 10001
+```
+
+**解析结果（Python 数据结构）：**
+
+```python
+{
+    'name': 'John',
+    'age': 30,
+    'is_student': False,
+    'languages': ['Python', 'Java'],
+    'address': {'city': 'New York', 'zip': 10001}
+}
+```
+
+这些标签是 YAML 的核心功能，使用 `yaml.safe_load()` 可以安全地解析这些内容。
+
+---
+
+### **2. 自定义对象或函数**
+自定义对象或函数是 YAML 的扩展功能，允许定义复杂的结构或行为。这些通常通过 YAML 的标签（`!` 开头）实现。例如：
+- **自定义对象**：表示某种特定类型的实例。
+- **函数调用**：执行某些操作或逻辑。
+
+**示例：自定义对象**
+
+```yaml
+person: !Person
+  name: John
+  age: 30
+```
+
+在这个例子中，`!Person` 是一个自定义标签，表示一个 `Person` 类型的**对象**。要解析这种标签，必须使用 PyYAML 的 `Loader` 或自定义加载器。
+
+**解析结果（需要自定义处理）：**
+
+```python
+class Person:
+    def __init__(self, name, age):
+        self.name = name
+        self.age = age
+
+def person_constructor(loader, node):
+    fields = loader.construct_mapping(node)
+    return Person(**fields)
+
+yaml.add_constructor('!Person', person_constructor)
+
+yaml_str = """
+person: !Person
+  name: John
+  age: 30
+"""
+
+data = yaml.load(yaml_str, Loader=yaml.Loader)
+print(data.person.name)  # 输出：John
+```
+
+**示例：函数调用**
+
+```yaml
+calculate: !Add
+  - 5
+  - 10
+```
+
+在这个例子中，`!Add` 是一个自定义标签，表示执行加法操作。要解析这种标签，必须定义一个函数并注册到 YAML 加载器中。
+
+**解析结果（需要自定义处理）：**
+```python
+def add_constructor(loader, node):
+    values = loader.construct_sequence(node)
+    return sum(values)
+
+yaml.add_constructor('!Add', add_constructor)
+
+yaml_str = """
+calculate: !Add
+  - 5
+  - 10
+"""
+
+data = yaml.load(yaml_str, Loader=yaml.Loader)
+print(data['calculate'])  # 输出：15
+```
+
+---
+
+### **3. 恶意代码**
+自定义对象或函数可能存在安全风险，尤其是当 YAML 数据来自不受信任的来源时。恶意用户可以利用自定义标签执行任意代码。
+
+**示例：恶意代码**
+
+```yaml
+execute: !!python/object/apply:os.system
+- rm -rf /
+```
+
+如果使用 `yaml.load()` 解析上述 YAML 数据，可能会执行 `rm -rf /` 命令，导致系统文件被删除。
+
+## 解析yaml数据yaml.load()
+
+语法：`yaml.load(stream, Loader=yaml.FullLoader)`
+
+参数说明：
+1. stream：可以是 YAML 格式的字符串或一个文件对象（即包含 YAML 内容的文件）
+2. Loader：指定加载器类型，影响解析 YAML 的行为。
+   - 这是一个加载器，能够解析 YAML 的所有功能，包括标准类型（如列表、字典）和自定义对象。
+   - 但使用 `FullLoader` 可能带来安全风险，特别是当解析不可信任的数据时。
+   - 出于安全性考虑：使用 yaml.load() 加载不受信任的数据时，可能会执行不安全的操作（例如恶意代码）
+
+安全建议：如果处理的是不可信的数据，推荐使用 `yaml.safe_load()`，它只解析基本类型，能减少安全隐患。
+
+~~~python
+import yaml
+
+yaml_str = """
+name: John
+age: 30
+languages:
+- Python
+- Java
+"""
+
+data = yaml.load(yaml_str, Loader=yaml.FullLoader)
+print(data)
+~~~
+
+## 安全解析yaml数据yaml.safe_load()
+
+语法：`yaml.safe_load(stream)`，steam可以是yaml格式的字符串或者文件对象。
+
+~~~python
+import yaml
+
+yaml_str = """
+name: John
+age: 30
+languages:
+- Python
+- Java
+"""
+
+data = yaml.safe_load(yaml_str)
+print(data)
+~~~
