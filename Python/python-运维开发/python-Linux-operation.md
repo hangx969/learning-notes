@@ -1429,3 +1429,210 @@ languages:
 data = yaml.safe_load(yaml_str)
 print(data)
 ~~~
+
+## 解析多个yaml数据yaml.load_all()
+
+功能：`yaml.load_all()` 用于解析多个 YAML 文档/字符串，将其转换为多个 Python 对象。它可以一次处理多个在同一流（如文件或字符串）中的 YAML 文档。
+
+语法：`yaml.load_all(stream, Loader=yaml.FullLoader)`
+
+参数说明：
+
+- stream：YAML 数据的来源，包含多个文档的字符串或文件对象。例如，一个文件中可能有多个以 `---` 分隔的 YAML 文档。
+- Loader：指定加载器，通常使用 `yaml.FullLoader`，用于解析 YAML 文档中的所有标准类型和自定义对象。
+
+~~~python
+import yaml
+
+yaml_str = """
+---
+'name': Bob
+'age': 18
+---
+'name': John
+'age': 18
+"""
+documents = yaml.load_all(yaml_str, Loader=yaml.FullLoader)
+for doc in documents:
+    print(doc)
+~~~
+
+## 安全解析多个yaml数据yaml.safe_load_all()
+
+凡是带safe的都不需要写Loader参数：`yaml.safe_load_all(stream)`
+
+~~~python
+import yaml
+yaml_str = """
+---
+'name': Bob
+'age': 18
+---
+'name': John
+'age': 18
+"""
+
+documents = yaml.safe_load_all(yaml_str)
+for doc in documents:
+    print(doc)
+~~~
+
+## 序列化python对象yaml.dump()
+
+功能：将 Python 对象序列化为 YAML 格式的字符串。
+
+语法：`yaml.dump(data, stream=None, Dumper=yaml.Dumper, default_flow_style=False)`
+
+参数说明：
+1. data：要序列化的 Python 对象，比如字典、列表等。它是你想转换为 YAML 格式的内容。
+2. stream：可选参数。如果指定了 stream（比如文件对象），YAML 数据会被写入该文件。如果没有指定 stream，yaml.dump() 会返回一个 YAML 格式的字符串。
+3. Dumper：序列化器，控制如何把 Python 对象转换为 YAML 格式。通常直接使用默认的 `yaml.Dumper` 就可以，不需要更改。
+4. default_flow_style：控制 YAML 输出格式的样式：
+  - False（默认）：使用块样式，即分多行显示，适合人类阅读。
+  - True：使用流样式，即所有内容在一行内显示，适合简洁输出。
+
+~~~python
+import yaml
+data ={
+    'name': 'Bob',
+    'age': 18,
+    'languages':['Python', "Java"]
+}
+# 序列化到yaml字符串
+yaml_str = yaml.dump(data, default_flow_style=False)
+print(yaml_str)
+# 序列化到文件
+with open('python-manuscripts/status.yaml', 'w') as f:
+    yaml.dump(data, f, default_flow_style=False)
+~~~
+
+## 安全序列化python对象yaml.safe_dump()
+
+功能：安全地将 Python 对象序列化为 YAML 字符串，防止执行不安全代码。
+
+语法：`yaml.safe_dump(data, stream=None, default_flow_style=False)`
+
+参数说明：
+
+1. data：要序列化的 Python 对象，比如字典、列表等。它是你想转换为 YAML 格式的内容。
+2. stream：可选参数。如果指定了 stream（比如文件对象），YAML 数据会被写入该文件。如果没有指定 stream，yaml.safe_dump()会返回一个 YAML 格式的字符串。
+3. default_flow_style：控制 YAML 输出格式的样式:
+  - False（默认）：使用块样式，即分多行显示，适合人类阅读。
+  - True：使用流样式，即所有内容在一行内显示，适合简洁输出。
+
+~~~python
+import yaml
+data ={
+    'name': 'Bob',
+    'age': 18,
+    'languages':['Python', "Java"]
+}
+# 序列化到yaml字符串
+yaml_str = yaml.safe_dump(data, default_flow_style=False)
+print(yaml_str)
+# 序列化到文件
+with open('python-manuscripts/status.yaml', 'w') as f:
+    yaml.safe_dump(data, f, default_flow_style=False)
+~~~
+
+## 序列化多个python对象yaml.dump_all()
+
+功能：`yaml.dump_all()` 用于将多个 Python 对象序列化为一个 YAML 格式的字符串。它可以处理一个**可迭代的集合（如列表或元组）**，并将其中的每个对象转换为 YAML 文档。
+
+语法：`yaml.dump_all(documents, stream=None, Dumper=yaml.Dumper, default_flow_style=False)`
+
+~~~python
+import yaml
+# 一个列表，里面包含多个字典
+data = [{'name':'Bob','age':18},{'name':'Joe','age':20}]
+# 序列化为yaml字符串
+yaml_str = yaml.dump_all(data)
+print(yaml_str) # 会生成yaml字符串，包含两个yaml,用 --- 隔开
+~~~
+
+## 安全序列化多个python对象yaml.safe_dump_all()
+
+功能：安全地将多个 Python 对象序列化为 YAML 字符串。
+
+语法：`yaml.safe_dump_all(documents, stream=None, default_flow_style=False)`
+
+~~~python
+import yaml
+
+data = [{'name':'Bob','age':18},{'name':'Joe','age':20}]
+# 序列化为yaml字符串
+yaml_str = yaml.safe_dump_all(data)
+print(yaml_str)
+~~~
+
+## 案例：解析yaml配置文件
+
+运维中经常需要读取服务或应用程序的配置文件，例如 Kubernetes 的 deployment.yaml，通过 Python 脚本读取和解析这些 YAML 文件，提取关键配置信息。
+
+~~~python
+import yaml
+
+with open('python-manuscripts/deployment.yaml', 'r') as f:
+    config = yaml.safe_load(f)
+
+# 获取某些值，用字典key来获取
+replicas = config['spec']['replicas']
+print(replicas)
+
+# 注意containers是一个列表，里面元素是一个一个的字典，第一个container的序号是0
+image = config['spec']['template']['spec']['containers'][0]['image']
+print(image)
+~~~
+
+## 案例：批量更新yaml文件参数
+
+运维人员在管理集群或多个服务时，可能需要批量更新 YAML 文件中的某些参数，例如统一更新某个服务的镜像版本。
+
+~~~python
+import yaml
+
+def update_yaml(yaml_file, new_image):
+    # 读取yaml文件转成python字典
+    with open(yaml_file, 'r') as f:
+        config = yaml.safe_load(f)
+    # 修改python字典里面的image字段，注意containers是一个列表需要用下标找到第一个字典元素
+    config['spec']['template']['spec']['containers'][0]['image'] = new_image
+    # 把改完的字典序列化回到文件
+    with open(yaml_file, 'w') as f:
+        yaml.safe_dump(config, f)
+
+if __name__ == '__main__':
+    update_yaml('python-manuscripts/service1.yaml', 'janakiramm/myapp:v2')
+    update_yaml('python-manuscripts/service2.yaml', 'janakiramm/myapp:v2')
+~~~
+
+## 案例：从yaml文件批量获取配置信息
+
+从大量的 YAML 文件中提取指定的配置项，生成统一的报告或检查是否存在不一致的配置，方便后期审计或排查问题。
+
+~~~python
+# 从两个yaml文件中获取到deployment的name和image
+import yaml, os
+
+def get_config(yaml_dir):
+    report = []
+    for file in os.listdir(yaml_dir):
+        if file.endswith('.yaml'):
+            # 把yaml文件读取成字典
+            with open(os.path.join(yaml_dir,file), 'r') as f:
+                config = yaml.safe_load(f)
+            # 获取字典键值
+            name = config['metadata']['name']
+            image = config['spec']['template']['spec']['containers'][0]['image']
+            # 列表中直接把编写好的字符串放进去
+            report.append(f"Service name: {name}, image version: {image}")
+    return report
+
+if __name__ == '__main__':
+    os.chdir('Python/python-manuscripts')
+    yaml_dir = 'configs'
+    report = get_config(yaml_dir)
+    for line in report:
+        print(line)
+~~~
+

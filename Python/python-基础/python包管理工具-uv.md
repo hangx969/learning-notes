@@ -38,6 +38,11 @@ powershell -ExecutionPolicy Bypass -c "irm https://gitee.com/jk01/uv/releases/do
 uv --version
 ~~~
 
+> 注意：
+>
+> - windows上使用uv时，在pycharm创建新项目时，“解释器类型”选择“自定义环境”，“类型”选择“uv”，基础python选择uv安装的python路径
+> - vscode中：按 Ctrl+Shift+P (或 Cmd+Shift+P on Mac) 打开命令面板，输入 Python: Select Interpreter (Python: 选择解释器)。在弹出的列表中，选择你用 uv 安装的 Python 3.10 版本。VS Code 通常会自动检测到。如果没找到，可以手动 "Enter interpreter path..." 指定路径。然后在终端中输入`uv venv`来激活虚拟环境。
+
 # 实战入门
 
 `uv` 的设计目标之一就是尽量兼容 `pip` 的使用习惯。让我们看看最常见的操作怎么用 `uv` 实现。
