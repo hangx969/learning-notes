@@ -1,11 +1,13 @@
 import requests
 
-response = requests.post(
-    'https://httpbin.org/post',
-    json = {'key': 'value'},
-    headers={'Content-Type': 'application.json'}
-)
+url = 'https://httpbin.org/redirect/1'
+response = requests.get(url, allow_redirects=False)
+print(f"Status code: {response.status_code}.")
+print(f"Redirect URL: {response.headers.get('Location')}")
+print(response.content)
 
-print(response.status_code)
-# 获取返回内容，用json格式显示
-print(response.json())
+url = 'https://httpbin.org/redirect/1'
+response = requests.get(url)
+print(f"Status code: {response.status_code}.")
+print(f"Redirect URL: {response.headers.get('Location')}")
+print(response.content)
