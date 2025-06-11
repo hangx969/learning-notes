@@ -415,9 +415,13 @@ print(response.text) # 返回值中带着cookie信息
 
 举个例子：你请求的 URL 是 A（比如 http://example.com/page1），服务器回应一个状态码 302，并告诉你新的 URL 是 B（比如http://example.com/page2）
 
-默认行为：requests 模块的默认行为是自动处理这些重定向。当你发送请求时，如果服务器返回了重定向状态码，requests 会自动向新的 URL 发送请求，直到最终返回目标资源的内容。
+默认行为：
 
-禁用重定向： 如果你希望手动处理重定向，可以通过设置 allow_redirects 参数为 False 来禁用自动重定向。这意味着如果请求返回了重定向状态码，requests 不会自动跟随，而是直接返回重定向响应。
+- requests 模块的默认行为是自动处理这些重定向。当你发送请求时，如果服务器返回了重定向状态码，requests 会自动向新的 URL 发送请求，直到最终返回目标资源的内容。
+
+禁用重定向：
+
+- 如果你希望手动处理重定向，可以通过设置 allow_redirects 参数为 False 来禁用自动重定向。这意味着如果请求返回了重定向状态码，requests 不会自动跟随，而是直接返回重定向响应。
 
 ~~~python
 import requests
@@ -434,5 +438,17 @@ response = requests.get(url)
 print(f"Status code: {response.status_code}.") # 返回200
 print(f"Redirect URL: {response.headers.get('Location')}") # 返回None
 print(response.content) # 直接重定向到了新url
+~~~
+
+查看重定向历史
+
+~~~python
+import requests
+
+url = 'https://httpbin.org/redirect/3'
+response = requests.get(url)
+# response.history.url获取到重定向历史的链接
+for r in response.history:
+    print(f"Redirect url: {r.url}")
 ~~~
 
