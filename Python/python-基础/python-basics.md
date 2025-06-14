@@ -317,7 +317,7 @@ else:
 
 for: 用于已知循环次数。while：用于循环次数未知，但是知道终止条件，循环到终止条件被满足。
 
-### 案例1：批量数据备份与恢复
+## 案例1：批量数据备份与恢复
 
 `os.listdir`, `os.path.join`的使用
 
@@ -339,7 +339,7 @@ for file_name in os.listdir(config_dir):
         print(f"Backup of {file_path} completed to {backup_path}")
 ~~~
 
-### 案例2：旧日志数据管理与清理
+## 案例2：旧日志数据管理与清理
 
 `os.path.join`, `os.path.getmtime`的使用
 
@@ -372,7 +372,7 @@ for file_name in os.listdir(log_dir):
                 print(f"Error deleting file {file_path}: {e}")
 ~~~
 
-### 案例3：服务器运行状态定期检查
+## 案例3：服务器运行状态定期检查
 
 `subprocess.run([],)`的使用:
 
@@ -406,7 +406,7 @@ while True:
     print("Waiting for the next check...\n")
 ~~~
 
-### 案例4：根分区空间监控
+## 案例4：根分区空间监控
 
 `shutil.disk_usage`的使用
 
@@ -422,7 +422,7 @@ while True:
     time.sleep(check_interval)
 ~~~
 
-### 案例5：服务状态监控
+## 案例5：服务状态监控
 
 `os.system`的使用
 
@@ -440,7 +440,7 @@ while True:
         time.sleep(CHECK_INT)
 ~~~
 
-### 案例6：多台服务器上执行命令
+## 案例6：多台服务器上执行命令
 
 `os.system()`的使用
 
@@ -453,6 +453,63 @@ for server in servers:
     print (f"Connecting to {server} and run command")
     os.system(f"ssh root@{server} '{command}'")
 ~~~
+
+## 扩展：循环中的海象运算符:=
+
+`:=` 运算符，也称为“海象运算符”（Walrus Operator），是 Python 3.8 引入的一种语法，用于在表达式中进行赋值操作。它允许在一个表达式中同时完成变量赋值和使用赋值结果，从而提高代码的简洁性和可读性。
+
+### 特点
+
+1. **赋值与返回值结合**:
+
+   - `:=` 运算符将右侧的值赋给左侧的变量，同时返回赋值的结果。
+   - 这使得可以在表达式中直接使用赋值后的值，而无需单独写一行赋值代码。
+
+2. **简化代码**:
+
+   - 在循环、条件判断等场景中，`:=` 运算符可以减少代码冗余。例如：
+
+     ```python
+     # 使用 := 运算符
+     while (chunk := f.read(1024)):
+         process(chunk)
+     ```
+
+     等价于：
+
+     ```python
+     # 不使用 := 运算符
+     chunk = f.read(1024)
+     while chunk:
+         process(chunk)
+         chunk = f.read(1024)
+     ```
+
+3. **适用场景**:
+
+   - **循环**: 在循环中动态更新变量值。
+   - **条件判断**: 在 `if` 或 `while` 中直接使用赋值结果。
+   - **列表推导**: 在列表推导中保存中间结果以避免重复计算。
+
+### 示例
+
+在循环中使用：
+
+```python
+while (data := socket.recv(1024)):
+    print(data)
+```
+
+- `data := socket.recv(1024)` 将接收到的数据赋值给 `data`，同时返回数据以供 `while` 判断是否继续循环。
+
+在条件判断中使用：
+
+```python
+if (result := expensive_function()) > 0:
+    print(f"Result is {result}")
+```
+
+- `result := expensive_function()` 调用函数并将结果赋值给 `result`，同时返回结果以供 `if` 判断。
 
 # 字符串操作
 
