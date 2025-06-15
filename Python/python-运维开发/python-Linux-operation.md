@@ -310,6 +310,7 @@ def get_disk_usage():
         usage = psutil.disk_usage(part.mountpoint)
         
         # 单位转换，字节转换为Gib，除以2的30次方（1 Gib的字节数）
+        # 如果要转换为GB, 除以1024**3
         total_gb = usage.total / (2 ** 30)
         used_gb = usage.used / (2 ** 30)
         free_gb = usage.free / (2 ** 30)
