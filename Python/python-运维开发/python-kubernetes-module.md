@@ -608,3 +608,60 @@ while True:
         else:
             print(f"Error occurred: {e.reason}")
 ~~~
+
+# 案例：批量更新image
+
+场景：有多个pod需要更新到同一image版本
+
+~~~python
+from kubernetes import client, config
+# 导入集群kubeconfig文件
+config.load_kube_config(config_file='kubernetes/kubeconfig-local')
+# 创建对象
+appsv1 = client.AppsV1Api()
+
+namespaces = ['qatest','development','production']
+old_image = 'busybox:1.28'
+new_image = 'busybox:latest'
+deployment_name = 'my-deployment'
+
+for ns in namespaces:
+    try:
+        dep = appsv1.read_namespaced_deployment(name=deployment_name, namespace=ns)
+        current_image = dep.spec.template.spec.containers[0].image
+        if current_image == old_image:
+            print(f"Namespace: {ns}, deployment: {deployment_name}, updating image from {old_image} to {new_image}.")
+            dep.spec.template.spec.containers[0].image = new_image
+            appsv1.patch_namespaced_deployment(name=deployment_name, namespace=ns, body=dep)
+            print(f"Namespace: {ns}, deployment: {deployment_name}, updated image from {old_image} to {new_image}.")
+        else:
+            print(f"Namespce: {ns}, deployment {deployment_name}, image has already been up-to-date.")
+    except client.exceptions.ApiException as e:
+        print(f"Error: {str(e)}")
+~~~
+
+# 案例：动态扩缩容
+
+场景：根据实际流量动态扩展或缩减服务的副本数
+
+~~~python
+from kubernetes import client, config
+
+def scale_deploy(deploy_name, new_replicas):
+    # 导入集群kubeconfig文件
+    config.load_kube_config(config_file='kubernetes/kubeconfig-local')
+    # 创建对象
+    appsv1 = client.AppsV1Api()
+    # 读取deployment信息
+    deployment = appsv1.read_namespaced_deployment(name=deploy_name, namespace='default')
+    # 修改副本数
+    deployment.spec.replicas = new_replicas
+    appsv1.patch_namespaced_deployment(name=deploy_name,namespace='default',body=deployment)
+
+if __name__ == '__main__':
+    current_traffic = get_traffic() # 假设这是获取流量的函数
+    if current_traffic > 100:
+        scale_deploy('my-deployment', 5)
+    else:
+        scale_deploy('my_deployment', 2)
+~~~
