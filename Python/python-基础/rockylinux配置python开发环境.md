@@ -8,7 +8,11 @@ yum install openssl-devel bzip2-devel expat-devel gdbm-devel readline-devel sqli
 
 2. python官网下载python源码包：https://www.python.org/downloads，选择Gzipped source tarball版本
 
-3. 编译安装
+~~~sh
+wget https://www.python.org/ftp/python/3.12.5/Python-3.12.5.tgz
+~~~
+
+2. 编译安装
 
 ~~~sh
 tar zxvf Python-3.12.5.tgz
@@ -33,3 +37,4 @@ ln -s /usr/local/bin/python3.12 /usr/bin/python
 python -V
 ~~~
 
+> 升级版本时，直接下载新版安装包，编译安装，软链接到新版路径即可。
