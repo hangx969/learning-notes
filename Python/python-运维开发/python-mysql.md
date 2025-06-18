@@ -159,5 +159,163 @@ age INT
 ### 对表进行增删改查
 
 ~~~python
+import mysql.connector
+
+# 插入数据
+def insert_user(name, age):
+    # 定义sql语句。VALUES (%s, %s) 是占位符，用于防止 SQL 注入攻击
+    sql = 'INSERT INTO users(name, age) VALUES(%s, %s)'
+    # 将 name 和 age 打包成一个元组，作为插入 SQL 语句的参数。它会被替换为 sql 中的占位符 %s。
+    val=(name, age)
+    # 执行sql语句，将传入的 val 代入到占位符中，完成插入操作
+    cursor.execute(sql, val)
+    # 提交事务。MySQL 默认使用事务机制。commit() 方法用于提交当前事务，确保插入操作生效。
+    # 如果没有调用 commit()，插入操作将不会被保存到数据库中。
+    db.commit()
+    # 输出插入了几条数据
+    print(f'Insert {cursor.rowcount} records.')
+
+# 查询数据
+def fetch_users():
+    cursor.execute("SELECT * FROM users")
+    result = cursor.fetchall() # 将结果返回成一个列表，里面元素是每一行的内容，且打包成了元组
+    for row in result:
+        print(row)
+
+# 更改数据
+def update_user(user_id, name, age):
+    sql = "UPDATE users SET name=%s, age=%s WHERE id=%s"
+    val = (name, age, user_id)
+    cursor.execute(sql, val)
+    db.commit()
+    print(f"Updated {cursor.rowcount} records.")
+
+# 删除数据
+def delete_user(user_id):
+    sql = "DELETE FROM users WHERE id = %s"
+    val=(user_id,) # 这里要求必须是元组类型，所以必须加一个逗号表示是元组
+    cursor.execute(sql, val)
+    db.commit()
+    print(f"delete {cursor.rowcount} records.")
+
+if __name__ == '__main__':
+
+    #建立连接对象
+    db = mysql.connector.connect(
+        host='172.16.183.102', # 在k8s中用nodePort暴露了一个mysql服务，实验中就用这个
+        port='30006', # 默认找3306端口，如果不是需要显式指定端口号
+        user='root',
+        password='111111',
+        database='test_db',
+    )
+
+    # 创建游标对象，代表了数据库操作的上下文。允许我们用过它来执行SQL查询语句。
+    # 对数据库的sql语句都是基于cursor.execute()方法实现的
+    cursor = db.cursor()
+
+    #插入数据
+    insert_user('Alice', 30)
+    insert_user('Bob', 25)
+    fetch_users()
+
+    #更新数据
+    update_user(1, 'Smith', 12)
+    fetch_users()
+
+    #删除数据
+    delete_user(2)
+    fetch_users()
+
+    # 关闭游标和连接
+    cursor.close()
+    db.close()
 ~~~
 
+### %s占位符的作用
+
+在 MySQL 的 Python 客户端中，`%s` 是一种占位符，用于参数化 SQL 查询。它的主要作用是将用户输入的值安全地绑定到 SQL 语句中，而不是直接拼接到 SQL 字符串中。这种机制可以有效地防止 SQL 注入攻击。
+
+#### `%s` 的工作原理
+
+1. 占位符的定义:
+   - 在 SQL 查询中，`%s` 是一个占位符，表示一个参数的位置。
+   - 它不会直接插入用户提供的值，而是作为一个标记，告诉数据库驱动程序在执行 SQL 时将参数值绑定到该位置。
+
+2. 参数绑定:
+   - 当调用 `cursor.execute(sql, val)` 时，`val` 中的参数会被安全地绑定到 SQL 语句中的 `%s`。
+   - 数据库驱动程序会对参数进行转义和处理，确保它们被视为**数据**而不是**SQL 代码**。
+
+3. 执行流程:
+   - 例如，以下代码：
+     ```python
+     sql = "INSERT INTO users(name, age) VALUES(%s, %s)"
+     val = ("Alice", 30)
+     cursor.execute(sql, val)
+     ```
+     会被数据库驱动程序转换为类似以下的安全 SQL：
+     ```sql
+     INSERT INTO users(name, age) VALUES('Alice', 30)
+     ```
+     参数 `"Alice"` 和 `30` 被安全地插入，而不是直接拼接到 SQL 字符串中。
+
+---
+
+#### 为什么 `%s` 能阻止 SQL 注入攻击？
+
+SQL 注入攻击的核心是通过恶意输入将额外的 SQL 代码插入到查询中，从而改变查询的逻辑。例如：
+```sql
+SELECT * FROM users WHERE name = 'Alice'; DROP TABLE users; --'
+```
+如果直接拼接用户输入到 SQL 中，攻击者可以通过输入类似 `"Alice'; DROP TABLE users; --"` 来破坏数据库。
+
+使用 `%s` 占位符可以防止这种情况，原因如下：
+
+1. 参数转义:
+   - 数据库驱动程序会对参数进行转义，将特殊字符（如单引号 `'`）处理为普通数据，而不是 SQL 代码。
+   - 例如，输入 `"Alice'; DROP TABLE users; --"` 会被转义为：
+     ```sql
+     SELECT * FROM users WHERE name = 'Alice\'; DROP TABLE users; --'
+     ```
+     这样，恶意代码不会被执行。
+
+2. 分离数据与代码：
+   - 参数化查询将数据与 SQL 代码分离，**用户输入的值始终被视为数据**，而不是 SQL 代码的一部分。
+   - 即使用户输入了恶意字符串，也无法改变 SQL 的逻辑。
+
+3. 防止拼接漏洞:
+   
+   - 如果直接拼接字符串，SQL 查询会变得不安全。例如：
+     ```python
+     sql = f"SELECT * FROM users WHERE name = '{name}'"
+     ```
+     如果 `name` 的值是 `"Alice'; DROP TABLE users; --"`，最终的 SQL 会变成：
+     ```sql
+     SELECT * FROM users WHERE name = 'Alice'; DROP TABLE users; --'
+     ```
+     而使用 `%s` 占位符时，恶意输入会被转义，无法破坏查询逻辑。
+
+---
+
+#### 示例对比
+
+**不安全的拼接方式：**
+
+```python
+name = "Alice'; DROP TABLE users; --"
+sql = f"SELECT * FROM users WHERE name = '{name}'"
+cursor.execute(sql)
+```
+最终的 SQL 会执行恶意代码，导致数据库表被删除。
+
+**安全的参数化查询：**
+
+```python
+name = "Alice'; DROP TABLE users; --"
+sql = "SELECT * FROM users WHERE name = %s"
+cursor.execute(sql, (name,))
+```
+最终的 SQL 会被安全处理为：
+```sql
+SELECT * FROM users WHERE name = 'Alice\'; DROP TABLE users; --'
+```
+恶意代码不会被执行。

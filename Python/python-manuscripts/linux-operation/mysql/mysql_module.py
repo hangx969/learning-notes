@@ -1,17 +1,5 @@
 import mysql.connector
 
-#建立连接对象
-db = mysql.connector.connect(
-    host='172.16.183.102', # 在k8s中用nodePort暴露了一个mysql服务，实验中就用这个
-    user='root',
-    password='111111',
-    database='test_db',
-)
-
-# 创建游标对象，代表了数据库操作的上下文。允许我们用过它来执行SQL查询语句。
-cursor = db.cursor()
-
-# 接下来所有对数据库的sql语句都是基于cursor.execute()方法实现的
 # 插入数据
 def insert_user(name, age):
     # 定义sql语句。VALUES (%s, %s) 是占位符，用于防止 SQL 注入攻击？
@@ -43,13 +31,40 @@ def update_user(user_id, name, age):
 
 # 删除数据
 def delete_user(user_id):
-    sql = "DELETE FROM users WHERE user_id=%s"
-    val=(user_id)
+    sql = "DELETE FROM users WHERE id = %s"
+    val=(user_id,) # 这里要求必须是元组类型，所以必须加一个逗号表示是元组
     cursor.execute(sql, val)
     db.commit()
     print(f"delete {cursor.rowcount} records.")
 
 if __name__ == '__main__':
-    # 执行操作
+
+    #建立连接对象
+    db = mysql.connector.connect(
+        host='172.16.183.102', # 在k8s中用nodePort暴露了一个mysql服务，实验中就用这个
+        port='30006', # 默认找3306端口，如果不是需要显式指定端口号
+        user='root',
+        password='111111',
+        database='test_db',
+    )
+
+    # 创建游标对象，代表了数据库操作的上下文。允许我们用过它来执行SQL查询语句。
+    # 对数据库的sql语句都是基于cursor.execute()方法实现的
+    cursor = db.cursor()
+
+    #插入数据
     insert_user('Alice', 30)
     insert_user('Bob', 25)
+    fetch_users()
+
+    #更新数据
+    update_user(1, 'Smith', 12)
+    fetch_users()
+
+    #删除数据
+    delete_user(2)
+    fetch_users()
+
+    # 关闭游标和连接
+    cursor.close()
+    db.close()
