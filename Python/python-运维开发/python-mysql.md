@@ -144,6 +144,20 @@ pip3 install -i https://pypi.tuna.tsinghua.edu.cn/simple mysql-connector-python
 
 ### 创建数据库和表
 
+在开始编写 Python 代码之前，我们需要在 MySQL 中创建一个数据库和一个表。假设我们创建一个名为 test_db 的数据库，并在其中创建一个名为 users 的表。
+
+~~~mysql
+CREATE DATABASE test_db;
+USE test_db;
+CREATE TABLE users (
+id INT AUTO_INCREMENT PRIMARY KEY,
+name VARCHAR(100),
+age INT
+);
+~~~
+
+### 对表进行增删改查
+
 ~~~python
 ~~~
 

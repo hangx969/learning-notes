@@ -85,6 +85,8 @@ helm upgrade -i mysql -n mysql -f values.dev.yaml .
 
 ## 连接到mysql pod
 
+### 通过client pod连接
+
 Execute the following to get the administrator credentials:
 
 ```sh
@@ -105,5 +107,13 @@ To connect to your database:
       ```sh
       mysql -h mysql.mysql.svc.cluster.local -uroot -p"$MYSQL_ROOT_PASSWORD"
       ```
-      
-      
+
+### 通过mysql client cli连接
+
+~~~python
+# Ubuntu上安装mysql client
+sudo apt install mysql-client-core-8.0
+# 登陆mysql
+mysql -h 172.16.183.102 -P 30006 -u root -p111111
+~~~
+
