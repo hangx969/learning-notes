@@ -324,6 +324,25 @@ git push -f origin main
 
 此操作会覆盖掉远程仓库的历史记录。完成之后，repo就只会有一个干净的提交记录，所有历史记录都会被清除。
 
+## 清理被gitignore的文件
+
+有时候有些文件已经被git add和commit了，但是后面在gitignore中配置忽略他们。这时需要重新track文件：
+
+~~~sh
+# 先更改.gitignore文件
+# 取消track
+git rm --cached -r Python/python-manuscripts
+# 重新commit，移除这些文件
+git commit -m "Stop tracking Python/python-manuscripts files"
+# 重新add和commit
+git add .
+git commit -m "re-track files"
+git push origin main
+# 完成后，git将不再追踪这些后来配置的忽略文件
+~~~
+
+
+
 # git配置代理
 
 ## git代理
