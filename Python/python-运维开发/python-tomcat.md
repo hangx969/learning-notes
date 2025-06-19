@@ -86,5 +86,75 @@ Tomcat 命令
 # 基于subprocess启动停止tomcat
 
 ~~~python
+import subprocess
+
+# 启动tomcat
+def start_tomcat(tomcat_home):
+    command=f"{tomcat_home}/bin/catalina.sh start"
+    result = subprocess.run(command, shell=True, capture_output=True, check=True, text=True)
+    if result.returncode == 0:
+        print("Tomcat starts successfully.")
+    else:
+        print("Failed to start Tomcat.")
+        print(result.stderr)
+
+tomcat_home = '/opt/tomcat'
+start_tomcat(tomcat_home)
+
+# 停止tomcat
+def stop_tomcat(tomcat_home):
+    command = f"tomcat_home/bin/catalina.sh stop"
+    result = subprocess.run(command, shell=True, capture_output=True, check=True, text=True)
+    if result.returncode == 0:
+        print("Tomcat has stopped")
+    else:
+        print(result.stderr)
+
+tomcat_home = '/opt/tomcat'
+start_tomcat(tomcat_home)
+~~~
+
+# 案例：定时监控tomcat自动重启
+
+每隔 1 分钟检查 tomcat 是否正在运行，如果 tomcat 停止了，需要自动重启 tomcat
+
+~~~python
+import time, subprocess
+
+def check_tomcat() -> bool:
+    try:
+        # grep 要把grep和python脚本本身的进程排除出去
+        result = subprocess.run("ps aux | grep tomcat | grep -v grep | grep -v python", shell=True, capture_output=True, check=True, text=True)
+        if result.stdout:
+            print("Tomcat is running.")
+            return True
+        else:
+            print("Tomcat is not running")
+            return False
+    except Exception as e:
+        print(f"An error occurred while checking TOmcat status: {e}.")
+        return False
+
+def start_tomcat():
+    try:
+        tomcat_start_command="/opt/tomcat/bin/catalina.sh start"
+        result = subprocess.run(tomcat_start_command, shell=True, text=True, capture_output=True, check=True)
+        if result.returncode == 0:
+            print("Tomcat started successfully.")
+        else:
+            print("Failed to start tomcat.")
+    except Exception as e:
+        print(f"{e}")
+
+def monitor_tomcat(interval):
+    while True:
+        if not check_tomcat():
+            start_tomcat()
+        else:
+            print("No actionneeded, tomcat is running.")
+        time.sleep(interval)
+
+if __name__ == '__main__':
+    monitor_tomcat(60)
 ~~~
 
