@@ -78,31 +78,33 @@ def view_nginx_logs():
         logs_text.insert(tk.END, output)
         logs_text.pack(fill='both', expand=True)
 
-# 创建GUI主窗口
-root = tk.Tk()
-root.title("Nginx manager")
 
-# 显示nginx状态的标签
-status_label = tk.Label(root, text="Nginx Status: Checking...", font=('Arial', 12))
-status_label.pack(padx=10, pady=10)
+if __name__ == '__main__':
+    # 创建GUI主窗口
+    root = tk.Tk()
+    root.title("Nginx manager")
 
-# 创建启动按钮
-start_button = tk.Button(root, text="Start Nginx", command=start_nginx)
-start_button.pack(padx=10,pady=10)
+    # 显示nginx状态的标签
+    status_label = tk.Label(root, text="Nginx Status: Checking...", font=('Arial', 12))
+    status_label.pack(padx=10, pady=10)
 
-#创建停止按钮
-stop_button = tk.Button(root, text="Stop Nginx", command=stop_nginx)
-stop_button.pack(padx=10,pady=10)
+    # 创建启动按钮
+    start_button = tk.Button(root, text="Start Nginx", command=start_nginx)
+    start_button.pack(padx=10,pady=10)
 
-#创建重启按钮
-restart_button = tk.Button(root, text="Restart Nginx", command=restart_nginx)
-restart_button.pack(padx=10,pady=10)
+    #创建停止按钮
+    stop_button = tk.Button(root, text="Stop Nginx", command=stop_nginx)
+    stop_button.pack(padx=10,pady=10)
 
-# 查看日志按钮
-nginx_log_button = tk.Button(root, text="Get Nginx Log", command=view_nginx_logs)
-nginx_log_button.pack(padx=10,pady=10)
+    #创建重启按钮
+    restart_button = tk.Button(root, text="Restart Nginx", command=restart_nginx)
+    restart_button.pack(padx=10,pady=10)
 
-update_status_label()
+    # 查看日志按钮
+    nginx_log_button = tk.Button(root, text="Get Nginx Log", command=view_nginx_logs)
+    nginx_log_button.pack(padx=10,pady=10)
 
-# 运行主程序，窗口持续显示
-root.mainloop()
+    update_status_label()
+
+    # 运行主程序，窗口持续显示
+    root.mainloop()
