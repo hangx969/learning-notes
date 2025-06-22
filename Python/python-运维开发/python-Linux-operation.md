@@ -279,7 +279,9 @@ psutil 是一个跨平台库，用于检索系统的硬件信息，如 CPU、内
 安装psutil：
 
 ~~~python
-pip install psutil
+pip3 install psutil
+# 清华源
+pip3 install -i https://pypi.tuna.tsinghua.edu.cn/simple psutil
 ~~~
 
 ## 获取所有程序的PID:process_iter()
@@ -740,6 +742,8 @@ logger.critical(f'This is an critical message.')
 
 ~~~sh
 pip3 install paramiko
+# 清华源
+pip3 install -i https://pypi.tuna.tsinghua.edu.cn/simple paramiko
 ~~~
 
 ## ssh连接
@@ -847,6 +851,8 @@ Fabric和Paramiko都是用于ssh连接的Python库，但是他们之间有区别
 ~~~sh
 pip3 install fabric --resume-retries 5 # 应对网络不好的情况，加入下载失败的重试选项
 # 本次安装的版本是fabric-3.2.0
+# 清华源
+pip3 install -i https://pypi.tuna.tsinghua.edu.cn/simple fabric
 ~~~
 
 ## 远程运行命令Connection.run()
@@ -1257,6 +1263,8 @@ yaml 模块主要提供以下几个方法：
 ~~~sh
 # 安装的是pyyaml
 pip3 install pyyaml
+# 清华源
+pip3 install -i https://pypi.tuna.tsinghua.edu.cn/simple pyyaml
 # 导入的是yaml模块
 import yaml
 ~~~
