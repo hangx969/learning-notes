@@ -12,7 +12,7 @@ core_v1 = client.CoreV1Api()
 
 # 获取集群namespace
 def get_namespace():
-    # list_namespace返回对象，包含所有ns的json属性
+    # list_namespace返回的是对象，包含所有ns的属性
     # .items是转成列表，可以直接遍历每一个ns的json属性
     return [ns.metadata.name for ns in core_v1.list_namespace().items]
 
@@ -20,31 +20,43 @@ def get_namespace():
 def get_resources(namespace):
     deployments = apps_v1.list_namespaced_deployment(namespace=namespace).items
     statefulsets = apps_v1.list_namespaced_stateful_set(namespace=namespace).items
-    # 把deployment和其name打包成元组放进列表
-    # 把statefulset和其name打包成元组放进列表
-    # 两个列表 + 拼接到一起
-    resources = [("Deployment", d.metadata.name) for d in deployments] + [("Statefulset", s.metadata.name) for s in statefulsets]
-    return resources
+    # 把deployment和statefulset的name分别打包成元组放进列表
+    deployment_list = [ d.metadata.name for d in deployments ]
+    statefulset_list = [ s.metadata.name for s in statefulsets ]
+    return deployment_list, statefulset_list
 
-# 更新资源名称下拉菜单。当用户选择了namespace后，自动列出这个namespace中的deployment或者statefulset
+# 更新资源名称下拉菜单。当用户选择了namespace和resource type后，自动列出这个namespace中的deployment或者statefulset
 def update_resources_menu(*args):
-    # 从namespace下拉菜单变量获取到选择好的namespace
+    # 从下拉菜单变量获取到选择好的namespace和resource type
     namespace = ns_var.get().strip()
-    # 从函数里拿到所有的deployment和sts
-    resources = get_resources(namespace)
+    resource_type = resource_type_var.get().strip()
+    # 从函数里拿到所有的deployment和sts列表
+    deployment_list, statefulset_list = get_resources(namespace)
     # 清空resource name下拉菜单
     resource_name_menu['menu'].delete(0, 'end')
-    # 设定reosurce_name_ver的默认值显示
-    if resources:
-        resource_name_var.set(resources[0][1])
-    else:
-        # 列表为空说明对应namespace没这种资源，变量返回空值。不显示。
-        resource_name_var.set('')
-    # 往下拉菜单中添加所有resource name
-    for type, name in resources:
-        # ['menu‘]访问OptionMenu的菜单部分，add_command添加菜单元素，label指定新条目的值，setit将label的值赋值给变量
-        resource_name_menu['menu'].add_command(label=name, command=tk._setit(resource_name_var, name))
 
+    # 分deployment和statefulset两种情况分别更新下拉菜单
+    if resource_type == 'Deployment':
+        # 设定reosurce_name_var的默认值显示
+        # 列表长度大于零说明有对应资源
+        if len(deployment_list) > 0:
+            # 先设默认值
+            resource_name_var.set(deployment_list[0])
+        else:
+            # 列表为空说明对应namespace没这种资源，变量返回空值。不显示。
+            resource_name_var.set('')
+        # 往下拉菜单中添加所有resource name
+        for name in deployment_list:
+            # ['menu‘]访问OptionMenu的菜单部分，add_command添加菜单元素，label指定新条目的值，setit将label的值赋值给变量
+            resource_name_menu['menu'].add_command(label=name, command=tk._setit(resource_name_var, name))
+
+    elif resource_type == 'Statefulset':
+        if len(statefulset_list) > 0:
+            resource_name_var.set(statefulset_list[0])
+        else:
+            resource_name_var.set('')
+        for name in statefulset_list:
+            resource_name_menu['menu'].add_command(label=name, command=tk._setit(resource_name_var, name))
 
 # 更新副本数
 def update_replicas():
@@ -105,6 +117,7 @@ if __name__ == '__main__':
 
     # 当ns_var变量发生写入时，调用指定的回调函数，更新资源名称下拉菜单内容
     ns_var.trace_add('write', update_resources_menu)
+    resource_type_var.trace_add('write', update_resources_menu)
 
     # 输入副本数的窗口
     tk.Label(root, text='Replicas').grid(row=3, column=5, padx=10, pady=10)
