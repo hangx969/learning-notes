@@ -2,13 +2,13 @@ import tkinter as tk
 from tkinter import messagebox, scrolledtext
 import paramiko, pymysql
 
-SSH_HOST = '192.168.40.80'
+SSH_HOST = '172.16.183.102'
 SSH_USERNAME = 'root'
-SSH_PASSWD = '111111'
-MYSQL_HOST = '192.168.40.80'
+SSH_PASSWD = 'root'
+MYSQL_HOST = '172.16.183.102'
 MYSQL_USER = 'root'
 MYSQL_PASSWD = '111111'
-MYSQL_PORT = 3306
+MYSQL_PORT = 30006
 
 def connect_ssh():
     try:
@@ -17,7 +17,7 @@ def connect_ssh():
         client.connect(SSH_HOST, username=SSH_USERNAME, password=SSH_PASSWD)
         return client
     except Exception as e:
-        messagebox.showerror(f"Failed to connect ssh: {str(e)}\n")
+        messagebox.showerror('Error', f"Failed to connect ssh: {str(e)}\n")
         return None
 
 def execute_ssh_command(command):
@@ -61,13 +61,13 @@ def connect_mysql():
         )
         return connection
     except Exception as e:
-        messagebox.showerror(f"Error: cannot connect to mysql: {e}\n")
+        messagebox.showerror('Error', f"Cannot connect to mysql: {e}\n")
         return None
 
 def create_database():
     db_name = db_name_entry.get().strip()
     if not db_name:
-        messagebox.showwarning("Warning: please input the database name!\n")
+        messagebox.showwarning("Warning", "Please input the database name!\n")
         return
     connection = connect_mysql()
     if connection:
@@ -77,7 +77,7 @@ def create_database():
             connection.commit()
             output_text.insert(tk.END, f"Database {db_name} has been created sucessfully.\n")
         except Exception as e:
-            messagebox.showerror(f'Error: failed to create database: {str(e)}\n')
+            messagebox.showerror('Error', f'Failed to create database: {str(e)}\n')
         finally:
             connection.close()
 
@@ -86,7 +86,7 @@ def create_table():
     table_name = table_name_entry.get().strip()
     table_definition = table_definition_entry.get().strip()
     if not db_name or not table_name or not table_definition:
-        messagebox.showwarning("Warning: please input required table info!\n")
+        messagebox.showwarning("Warning", "Please input required table info!\n")
         return
     connection = connect_mysql()
     if connection:
@@ -97,7 +97,7 @@ def create_table():
             connection.commit()
             output_text.insert(tk.END, f"Table {table_name} has been created successfully\n")
         except Exception as e:
-            messagebox.showerror(f'Error: failed to create table: {str(e)}')
+            messagebox.showerror('Error', f'Failed to create table: {str(e)}')
         finally:
             connection.close()
 
@@ -106,7 +106,7 @@ def insert_data():
     table_name = table_name_entry.get().strip()
     data_values = data_values_entry.get().strip()
     if not db_name or not table_name or not data_values:
-        messagebox.showerror("Warning, please input required info!")
+        messagebox.showerror("Warning", "Please input required info!")
         return
     connection = connect_mysql()
     if connection:
@@ -117,7 +117,7 @@ def insert_data():
             connection.commit()
             output_text.insert(tk.END, f'Data has inserted into {table_name} successfully.\n')
         except Exception as e:
-            messagebox.showerror(f'Failed to insert data: {str(e)}')
+            messagebox.showerror('Error', f'Failed to insert data: {str(e)}')
         finally:
             connection.close()
 
@@ -125,9 +125,13 @@ if __name__ == '__main__':
     root = tk.Tk()
     root.title('Mysql Manager')
 
+    #LabelFrame是带有标题的框架，标题会放在框架的顶端。通常用于将相关的控件放到一起。
     ssh_frame = tk.LabelFrame(root, text='Mysql Management', padx=10, pady=10)
+    # 创建之后需要用布局管理器如pack，将其添加到窗口上，否则不显示。
+    # fill=x 表示控件会在水平方向上填满父容器的宽度，垂直方向上保持默认高度。如果需要同时填满水平和垂直，用fill='both'
     ssh_frame.pack(padx=10, pady=10, fill='x')
 
+    # Label就是一个简单控件，用于显示文本或图像，其中不能包含子控件
     status_label = tk.Label(ssh_frame, text='Mysql Status: Unknown', fg='blue')
     status_label.pack()
 

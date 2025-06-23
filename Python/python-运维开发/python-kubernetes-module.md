@@ -87,6 +87,36 @@ for node in nodes.items:
     print(f"Node name: {node.metadata.name}")
 ~~~
 
+## namespace操作
+
+### 获取所有namespace
+
+~~~python
+from kubernetes import config, client
+# 导入集群kubeconfig文件
+config.load_kube_config(config_file='kubernetes/kubeconfig-local')
+# 创建对象
+v1 = client.CoreV1Api()
+
+# 返回的是一个对象，包含所有ns的json属性
+namespaces = v1.list_namespace()
+# for ns in namespaces.items:
+#     print(ns)
+
+for ns in namespaces.items:
+    # 打印每个ns的name
+    print(ns.metadata.name)
+
+# 用函数获取集群namespace
+def get_namespace():
+    return [ns.metadata.name for ns in core_v1.list_namespace().items]
+
+if __name__ == '__main__':
+    ns_list = get_namespace()
+    for ns in ns_list:
+        print(ns)
+~~~
+
 ## pod操作
 
 ### 获取所有ns下的pod

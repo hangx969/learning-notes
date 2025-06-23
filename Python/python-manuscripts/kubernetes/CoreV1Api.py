@@ -4,6 +4,11 @@ config.load_kube_config(config_file='kubernetes/kubeconfig-local')
 # 创建对象
 v1 = client.CoreV1Api()
 
-services = v1.list_service_for_all_namespaces()
-for svc in services.items:
-    print(f"service name: {svc.metadata.name} - namespace: {svc.metadata.namespace}")
+# 返回的是一个对象，包含所有ns的json属性
+namespaces = v1.list_namespace()
+# for ns in namespaces.items:
+#     print(ns)
+
+for ns in namespaces.items:
+    # 打印每个ns的name
+    print(ns.metadata.name)

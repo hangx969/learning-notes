@@ -45,6 +45,15 @@ pyinstaller --onefile --windowed .\nginx-gui.py
 
 基于 Python 开发的 Windows GUI 应用程序，用于远程管理 Nginx 服务。它利用 paramiko 库通过 SSH 连接到远程安装 nginx 的服务器，实现对 Nginx 服务的状态监控和基本操作，如启动、停止、重启 Nginx 服务以及查看 Nginx 错误日志。用户可以通过简洁的图形界面操作Nginx 服务，方便地维护和监控远程服务器上的服务状态。
 
+> ```python
+> import tkinter as tk
+> from tkinter import messagebox
+> ```
+>
+> messagebox是tkinter中单独的子模块，并不包含在tkinter的主命名空间中。如果只import tk，不能直接用messagebox，得`tk.messagebox.showinfo`才能调用。
+>
+> 而`from ... import ...`会将messagebox直接导入到当前命名空间中，可以`messagebox.showinfo`直接调用。
+
 ~~~python
 import tkinter as tk
 from tkinter import messagebox
@@ -307,11 +316,179 @@ if __name__ == '__main__':
 5. 在操作结果框中查看执行结果。
 
 ~~~python
+import tkinter as tk
+from tkinter import messagebox, scrolledtext
+import paramiko, pymysql
+
+SSH_HOST = '172.16.183.102'
+SSH_USERNAME = 'root'
+SSH_PASSWD = 'root'
+MYSQL_HOST = '172.16.183.102'
+MYSQL_USER = 'root'
+MYSQL_PASSWD = '111111'
+MYSQL_PORT = 30006
+
+def connect_ssh():
+    try:
+        client = paramiko.SSHClient()
+        client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        client.connect(SSH_HOST, username=SSH_USERNAME, password=SSH_PASSWD)
+        return client
+    except Exception as e:
+        messagebox.showerror('Error', f"Failed to connect ssh: {str(e)}\n")
+        return None
+
+def execute_ssh_command(command):
+    client = connect_ssh()
+    if client:
+        try:
+            stdin, stdout, stderr = client.exec_command(command)
+            # 把远程命令的输出和错误放一起返回
+            result = stdout.read().decode('utf-8') + stderr.read().decode('utf-8')
+            return result
+        finally:
+            client.close()
+    return None
+
+def check_mysql_status():
+    result = execute_ssh_command('systemctl status mysqld')
+    if "active(running)" in str(result):
+        status_label.config(text='Mysql status: running', fg='green')
+    else:
+        status_label.config(text='Mysql status: stopped', fg='red')
+    output_text.insert(tk.END, f"Mysql status checking result:\n{result}\n")
+
+
+def start_mysql():
+    result = execute_ssh_command('systemctl start mysqld')
+    output_text.insert(tk.END, f"Mysql start result:\n{result}\n")
+    check_mysql_status()
+
+def stop_mysql():
+    result = execute_ssh_command('systemctl stop mysqld')
+    output_text.insert(tk.END, f"Mysql stop result:\n{result}\n")
+    check_mysql_status()
+
+def connect_mysql():
+    try:
+        connection = pymysql.connect(
+            host = MYSQL_HOST,
+            user = MYSQL_USER,
+            password = MYSQL_PASSWD,
+            port = MYSQL_PORT
+        )
+        return connection
+    except Exception as e:
+        messagebox.showerror('Error', f"Cannot connect to mysql: {e}\n")
+        return None
+
+def create_database():
+    db_name = db_name_entry.get().strip()
+    if not db_name:
+        messagebox.showwarning("Warning", "Please input the database name!\n")
+        return
+    connection = connect_mysql()
+    if connection:
+        try:
+            cursor = connection.cursor()
+            cursor.execute(f"CREATE DATABASE {db_name}")
+            connection.commit()
+            output_text.insert(tk.END, f"Database {db_name} has been created sucessfully.\n")
+        except Exception as e:
+            messagebox.showerror('Error', f'Failed to create database: {str(e)}\n')
+        finally:
+            connection.close()
+
+def create_table():
+    db_name = db_name_entry.get().strip()
+    table_name = table_name_entry.get().strip()
+    table_definition = table_definition_entry.get().strip()
+    if not db_name or not table_name or not table_definition:
+        messagebox.showwarning("Warning", "Please input required table info!\n")
+        return
+    connection = connect_mysql()
+    if connection:
+        try:
+            connection.select_db(db_name)
+            cursor = connection.cursor()
+            cursor.execute(f'CREATE TABLE {table_name} ({table_definition})')
+            connection.commit()
+            output_text.insert(tk.END, f"Table {table_name} has been created successfully\n")
+        except Exception as e:
+            messagebox.showerror('Error', f'Failed to create table: {str(e)}')
+        finally:
+            connection.close()
+
+def insert_data():
+    db_name = db_name_entry.get().strip()
+    table_name = table_name_entry.get().strip()
+    data_values = data_values_entry.get().strip()
+    if not db_name or not table_name or not data_values:
+        messagebox.showerror("Warning", "Please input required info!")
+        return
+    connection = connect_mysql()
+    if connection:
+        try:
+            connection.select_db(db_name)
+            cursor = connection.cursor()
+            cursor.execute(f'INSERT INTO {table_name} VALUES ({data_values})')
+            connection.commit()
+            output_text.insert(tk.END, f'Data has inserted into {table_name} successfully.\n')
+        except Exception as e:
+            messagebox.showerror('Error', f'Failed to insert data: {str(e)}')
+        finally:
+            connection.close()
+
+if __name__ == '__main__':
+    root = tk.Tk()
+    root.title('Mysql Manager')
+
+    #LabelFrame是带有标题的框架，标题会放在框架的顶端。通常用于将相关的控件放到一起。
+    ssh_frame = tk.LabelFrame(root, text='Mysql Management', padx=10, pady=10)
+    # 创建之后需要用布局管理器如pack，将其添加到窗口上，否则不显示。
+    # fill=x 表示控件会在水平方向上填满父容器的宽度，垂直方向上保持默认高度。如果需要同时填满水平和垂直，用fill='both'
+    ssh_frame.pack(padx=10, pady=10, fill='x')
+
+    # Label就是一个简单控件，用于显示文本或图像，其中不能包含子控件
+    status_label = tk.Label(ssh_frame, text='Mysql Status: Unknown', fg='blue')
+    status_label.pack()
+
+    tk.Button(ssh_frame, text='Start mysql', command=start_mysql).pack(side='left', padx=5)
+    tk.Button(ssh_frame, text='Stop mysql', command=stop_mysql).pack(side='left', padx=5)
+    tk.Button(ssh_frame, text='Check mysql status', command=check_mysql_status).pack(side='left', padx=5)
+
+    db_frame = tk.LabelFrame(root, text='Database operation', padx=10, pady=10)
+    db_frame.pack(padx=10, pady=10, fill='x')
+
+    tk.Label(db_frame, text='Database name').grid(row=0, column=0, sticky='w', padx=5, pady=5)
+    db_name_entry = tk.Entry(db_frame)
+    db_name_entry.grid(row=0, column=1, padx=5, pady=5)
+    tk.Button(db_frame, text='Create database', command=create_database).grid(row=0, column=2, padx=5)
+
+    tk.Label(db_frame, text='Table name').grid(row=1, column=0, sticky='w', padx=5, pady=5)
+    table_name_entry = tk.Entry(db_frame)
+    table_name_entry.grid(row=1, column=1, padx=5, pady=5)
+
+    tk.Label(db_frame, text='Table definition (e.g., id INT, name VARCHAR(50), age INT):').grid(row=2, column=0, sticky='w', padx=5, pady=5)
+    table_definition_entry = tk.Entry(db_frame, width=50)
+    table_definition_entry.grid(row=2, column=1, padx=5, pady=5)
+    tk.Button(db_frame, text='Create table', command=create_table).grid(row=3, column=0, columnspan=3, pady=5)
+
+    tk.Label(db_frame, text="Data values (e.g., 1, 'Alice', 15):").grid(row=4, column=0, sticky='w', padx=5, pady=5)
+    data_values_entry = tk.Entry(db_frame, width=50)
+    data_values_entry.grid(row=4, column=1, columnspan=2, padx=5, pady=5)
+    tk.Button(db_frame, text='Insert data', command=insert_data).grid(row=5, column=0, columnspan=3, pady=5)
+
+    output_frame = tk.LabelFrame(root, text='Results', padx=10, pady=10)
+    output_text = scrolledtext.ScrolledText(output_frame, wrap=tk.WORD, height=10)
+    output_text.pack(fill='both', expand=True)
+
+    root.mainloop()
 ~~~
 
 # 案例：GUI界面自动管理httpd
 
-## 介绍
+**介绍**
 
 httpd 服务是 Apache HTTP Server 的一个守护进程，用于运行在服务器上，它是世界上最流行的 Web 服务器软件之一，通常简称为 Apache。httpd（HTTP Daemon）是负责处理 HTTP 请求和响应的守护进程，主要用于部署和运行网站和 Web 应用程序。
 
@@ -321,7 +498,7 @@ httpd 服务是 Apache HTTP Server 的一个守护进程，用于运行在服务
 
 它会找到你请求的网页内容，然后把它发送回你的浏览器，这样你就能看到你想要的网页。
 
-## 基本功能
+**基本功能**
 
 1. 处理 HTTP 请求：httpd 服务基于 HTTP 协议，处理客户端（如浏览器）发送的请求，并返回相应的内容（如 HTML 页面、图像、文件等）。
 2. 跨平台支持：Apache HTTP Server 可以运行在各种操作系统上，包括 Linux、Windows、macOS 等，是一个跨平台的 Web 服务器。
@@ -331,13 +508,13 @@ httpd 服务是 Apache HTTP Server 的一个守护进程，用于运行在服务
 6. 可扩展性：用户可以根据需要加载或卸载特定功能的模块，灵活扩展 Apache 的能力。
 7. 日志管理：Apache 提供了详细的访问日志和错误日志功能，方便管理员对服务器进行监控、调试和优化。
 
-## 使用场景
+**使用场景**
 
 1. 网站托管：httpd 是运行和托管静态网站或动态 Web 应用的核心服务之一。
 2. Web 应用服务器：通过结合 PHP、Python 或 Perl 等动态编程语言，httpd 可以作为 Web 应用的服务器。
 3. 反向代理服务器：使用 httpd 的代理模块，可以将其配置为反向代理服务器，转发请求到后端服务器。
 
-## 安装和管理http服务
+**安装和管理http服务**
 
 1. 安装：
 
@@ -366,11 +543,110 @@ systemctl start httpd
 systemctl enable httpd
 ```
 
-## GUI管理工具
+**GUI管理工具**
 
 该项目是一个使用 Tkinter 创建的图形用户界面（GUI）工具，用于远程管理 HTTPD（Apache HTTP Server）服务。该工具利用 Paramiko 库实现 SSH 连接，允许用户通过简单的按钮操作来检查服务状态、启动或停止服务，以及查看服务日志。该工具适用于需要远程管理 Web 服务器的系统管理员或运维人员。
 
 ~~~python
+import tkinter as tk
+from tkinter import messagebox, scrolledtext
+import paramiko
+
+HOST = '192.168.40.80'
+USERNAME = 'root'
+PASSWD = '111111'
+HTTPD_SERVICE = 'httpd'
+LOG_PATH = '/var/log/httpd/access.log'
+
+def create_ssh_client():
+    try:
+        client = paramiko.SSHClient()
+        client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        client.connect(HOST, username=USERNAME, password=PASSWD)
+        return client
+    except Exception as e:
+        messagebox.showerror('Error', f"Failed to connect SSH: {str(e)}\n")
+        return None
+
+def check_status():
+    client = create_ssh_client()
+    if client:
+        stdin, stdout, stderr = client.exec_command(f'systemctl status {HTTPD_SERVICE}')
+        output = stdout.read().decode()
+        if "running" in str(output):
+            status_text.delete(1.0, tk.END)
+            status_text.insert(tk.END, 'Running')
+        else:
+            status_text.delete(1.0, tk.END)
+            status_text.insert(tk.END, 'Not Running')
+        client.close()
+
+def start_service():
+    client = create_ssh_client()
+    if client:
+        try:
+            stdin, stdout, stderr = client.exec_command(f'systemctl start {HTTPD_SERVICE}')
+            error = stderr.read().decode()
+            if error:
+                messagebox.showerror("Error", f"Failed to start httpd: {error}\n")
+            else:
+                messagebox.showinfo('Info', 'Httpd has been started\n')
+        finally:
+            client.close()
+
+def stop_service():
+    client = create_ssh_client()
+    if client:
+        try:
+            stdin, stdout, stderr = client.exec_command(f'systemctl stop {HTTPD_SERVICE}')
+            error = stderr.read().decode()
+            if error:
+                messagebox.showerror("Error", f"Failed to stop httpd: {error}\n")
+            else:
+                messagebox.showinfo('Info', 'Httpd has been stopped\n')
+        finally:
+            client.close()
+
+def view_log():
+    client = create_ssh_client()
+    if client:
+        stdin, stdout, stderr = client.exec_command(f'cat {LOG_PATH}')
+        error = stderr.read().decode()
+        if error:
+            messagebox.showerror("Error", f"Failed to get httpd log: {error}\n")
+        else:
+            log_content = stdout.read().decode()
+            log_window = tk.Toplevel(root)
+            log_window.title('Httpd logs')
+            log_text = scrolledtext.ScrolledText(log_window, height=20, width=80)
+            log_text.pack()
+            log_text.insert(tk.END, log_content)
+        client.close()
+
+
+if __name__ == '__main__':
+    root = tk.Tk()
+    root.title("Httpd service management")
+
+    status_label = tk.Label(root, text='httpd service status:')
+    status_label.pack()
+    status_text = tk.Text(root, height=1, width=30)
+    status_text.pack()
+
+    check_status_button = tk.Button(root, text='Check status', command=check_status)
+    check_status_button.pack()
+
+    start_button = tk.Button(root, text='start service', command=start_service)
+    start_button.pack()
+
+    stop_button = tk.Button(root, text='stop service', command=stop_service)
+    stop_button.pack()
+
+    log_button = tk.Button(root, text='check logs', command=view_log)
+    log_button.pack()
+
+    root.mainloop()
+
 ~~~
 
 # 案例：GUI管理k8s资源
