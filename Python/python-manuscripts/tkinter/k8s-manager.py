@@ -20,7 +20,7 @@ def get_namespace():
 def get_resources(namespace):
     deployments = apps_v1.list_namespaced_deployment(namespace=namespace).items
     statefulsets = apps_v1.list_namespaced_stateful_set(namespace=namespace).items
-    # 把deployment和statefulset的name分别打包成元组放进列表
+    # 把deployment和statefulset的name分别放进列表
     deployment_list = [ d.metadata.name for d in deployments ]
     statefulset_list = [ s.metadata.name for s in statefulsets ]
     return deployment_list, statefulset_list
@@ -115,7 +115,7 @@ if __name__ == '__main__':
     resource_name_menu = tk.OptionMenu(root, resource_name_var, '')
     resource_name_menu.grid(row=2, column=1, padx=10, pady=10)
 
-    # 当ns_var变量发生写入时，调用指定的回调函数，更新资源名称下拉菜单内容
+    # 当ns_var和resource_type_var发生写入时，调用指定的回调函数，更新资源名称下拉菜单内容
     ns_var.trace_add('write', update_resources_menu)
     resource_type_var.trace_add('write', update_resources_menu)
 
@@ -124,10 +124,10 @@ if __name__ == '__main__':
     replicas_entry = tk.Entry(root)
     replicas_entry.grid(row=3, column=1, padx=10, pady=10)
 
-    # 提交按钮
+    # 提交按钮。点击提交，触发更新副本数的函数
     submit_button = tk.Button(root, text='Submit', command=update_replicas)
     submit_button.grid(row=4, column=1, padx=10, pady=10)
 
-    # 先根据默认显示的namespace，列出资源名称
+    # 在程序启动时就 根据默认值填充资源列表，从而确保用户在第一次操作时能看到可选的资源。
     update_resources_menu()
     tk.mainloop()
