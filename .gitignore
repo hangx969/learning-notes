@@ -4,3 +4,10 @@ Python/python-manuscripts/**/*.log
 Python/python-manuscripts/**/*.yaml
 Python/python-manuscripts/**/*.json
 Python/python-manuscripts/**/kubeconfig-local
+Python/python-manuscripts/**/*.sqlite3
+Python/python-manuscripts/**/staticfiles
+Python/python-manuscripts/**/media
+Python/python-manuscripts/**/__pycache__
+Python/python-manuscripts/**/*.pyc
+Python/python-manuscripts/**/*.env
+Python/python-manuscripts/**/venv

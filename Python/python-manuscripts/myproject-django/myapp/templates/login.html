@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login</title>
+</head>
+<body>
+    <h1>Login</h1>
+    <form method="post">  <!-- 表单使用 POST 方法提交数据 -->
+        {% csrf_token %}  <!-- Django 的安全机制，防止跨站请求伪造攻击 -->
+        <label for="username">Username:</label>
+        <input type="text" name="username" required>  <!-- 用户名输入框 -->
+        <label for="password">Password:</label>
+        <input type="password" name="password" required>  <!-- 密码输入框 -->
+        <button type="submit">Login</button>  <!-- 提交按钮 -->
+    </form>
+</body>
+</html>
