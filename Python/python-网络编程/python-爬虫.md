@@ -294,6 +294,216 @@ else:
 
 ## 爬取各个国家的天气
 
+用的是openweathermap.org网站的api。需要注册帐号获取自己的api_key
+
 ~~~python
+import requests
+import json
+
+#基础设置
+base_url = "http://api.openweathermap.org/data/2.5/weather"
+city = "New York"
+country = "US"
+api_key = "xxx"
+
+# 构造查询url
+url = f"{base_url}?q={city},{country}&appid={api_key}&units=metrics"
+
+try:
+    # 发送get请求
+    response = requests.get(url)
+    if response.status_code == 401:
+        print("Failed to authenticate.")
+    elif response.status_code == 404:
+        print("Page Not Found, please check the url")
+    elif response.status_code == 200:
+        # 返回的data是字典
+        data = response.json()
+        # 返回的字段里面的cod表示状态码，不是200表示请求出错
+        if data.get('cod') != 200:
+            print(f"Request URL is not correct: {data.get('message')}")
+        else:
+            # 构造一个字典包含想要的天气信息
+            weather = {
+                'city': data.get('name'),
+                'country': data.get('sys',{}).get('country'),
+                'temerature': data.get('main',{}).get('temp'),
+                'humidity': data.aget('main',{}).get('humidity'),
+                # weather字段下是一个列表，列表元素是字典，所以get的默认值设为[{}]
+                'description': data.get('weather',[{}])[0].get('description')
+            }
+            print("Weather: ")
+            # 把python字典转成json格式打印
+            print(json.dumps(weather, indent=4))
+            with open('scrape/weather.txt', 'w', encoding='utf-8') as f:
+                f.write("Weather\n")
+                f.write(json.dumps(weather, indent=4))
+            print("Weather info has been saved to weather.txt")
+    else:
+        print("Status code is unknown")
+
+except Exception as e:
+    print(f"Error: {str(e)}")
 ~~~
 
+## 爬取全球头条新闻
+
+使用[NewsAPI](https://newsapi.org/)网站的API，需要注册帐号并获取api key
+
+~~~python
+import requests
+
+def fetch_news(api_key):
+    #构造API
+    url = f"https://newsapi.org/v2/top-headlines?country=us&apikey={api_key}"
+    # 发送get请求
+    response = requests.get(url)
+    if response.status_code == 200:
+        # 把json格式数据转成python字典
+        data = response.json()
+        # 从相应数据里面获取articles字段，返回的是列表
+        articles = data.get('articles',[{}])
+        for article in articles:
+            title = article.get('title','N/A')
+            description = article.get('description', 'N/A')
+            link = article.get('url', 'N/A')
+            with open('scrape/news.txt', 'a', encoding='utf-8') as f:
+                f.write(f"Title: {title}\nDescription: {description}\nURL: {url}\n")
+            print("News has been save to news.txt")
+    else:
+        print(f"Failed to fetch news, status code is {response.status_code}.")
+
+if __name__ == '__main__':
+    fetch_news("xxxx")
+~~~
+
+# 网站爬虫协议robot.txt
+
+## 什么是 robots.txt 协议
+- **`robots.txt`** 是一种用于网站的标准文件，称为 **"机器人排除标准"**（Robots Exclusion Protocol，简称 REP）。
+- 它是网站管理员用来告诉搜索引擎爬虫（如 Googlebot）或其他网络爬虫，哪些页面或资源可以被抓取，哪些不可以被抓取。
+- 该文件通常位于网站的根目录下，访问路径为：
+  ```sh
+  https://example.com/robots.txt
+  ```
+
+---
+
+### robots.txt 的作用
+
+1. **限制爬虫访问**：
+   
+   - 网站管理员可以通过 `robots.txt` 限制爬虫访问某些敏感或不必要的页面（如后台管理页面、用户隐私数据等）。
+   - 例如：
+     ```sh
+     User-agent: *
+     Disallow: /admin/
+     Disallow: /private/
+     ```
+     上述规则禁止所有爬虫访问 `/admin/` 和 `/private/` 路径。
+   
+2. **优化爬虫行为**：
+   
+   - 通过指定允许抓取的路径，减少爬虫对服务器的负载。
+   - 例如：
+     ```sh
+     User-agent: Googlebot
+     Allow: /public/
+     ```
+   
+3. **防止重复内容抓取**：
+   
+   - 避免爬虫抓取重复内容，影响 SEO（搜索引擎优化）。
+
+---
+
+### robots.txt 的基本语法
+
+1. **`User-agent`**：
+   
+   - 指定爬虫的名称。
+   - 例如：
+     ```sh
+     User-agent: Googlebot
+     ```
+     表示规则仅适用于 Google 的爬虫。
+   
+2. **`Disallow`**：
+   
+   - 指定禁止爬虫访问的路径。
+   - 例如：
+     ```txt
+     Disallow: /private/
+     ```
+     禁止访问 `/private/` 路径。
+   
+3. **`Allow`**：
+   
+   - 指定允许爬虫访问的路径（通常用于更精细的控制）。
+   - 例如：
+     ```sh
+     Allow: /public/
+     ```
+   
+4. **`*` 和 `$` 通配符**：
+   
+   - `*` 表示任意字符。
+   - `$` 表示路径的结尾。
+   - 例如：
+     ```sh
+     Disallow: /*.pdf$
+     ```
+     禁止访问所有以 `.pdf` 结尾的文件。
+   
+5. **示例完整文件**：
+   
+   ```sh
+   User-agent: *
+   Disallow: /admin/
+   Allow: /public/
+   ```
+
+---
+
+### robots.txt 的局限性
+
+1. **非强制性**：
+   - `robots.txt` 是一种约定，而不是强制执行的规则。
+   - 恶意爬虫可以选择忽略 `robots.txt`，继续抓取被禁止的内容。
+
+2. **无法保护敏感数据**：
+   - `robots.txt` 仅用于告诉爬虫不要抓取某些内容，但这些内容仍然可以通过直接访问 URL 获取。
+   - 如果需要保护敏感数据，应使用身份验证或其他安全措施。
+
+---
+
+## 如何在爬虫中处理 robots.txt
+1. **遵守 robots.txt**：
+   
+   - 在编写爬虫时，建议遵守目标网站的 `robots.txt` 文件，避免抓取被禁止的内容。
+   - 可以使用 Python 的 `robotparser` 模块检查 URL 是否允许抓取：
+     ```python
+     from urllib.robotparser import RobotFileParser
+     
+     rp = RobotFileParser()
+     rp.set_url("https://example.com/robots.txt")
+     rp.read()
+     
+     url = "https://example.com/private/"
+     if rp.can_fetch("*", url):
+         print("Allowed to fetch:", url)
+     else:
+         print("Disallowed to fetch:", url)
+     ```
+   
+2. **忽略 robots.txt**：
+   
+   - 如果爬虫是用于合法目的（如数据分析），且目标网站允许抓取，可以选择忽略 `robots.txt`。
+   - 但在抓取前，建议与网站管理员沟通，确保不会违反法律或道德规范。
+
+---
+
+## 总结
+- **robots.txt** 是一种用于限制爬虫行为的协议，帮助网站管理员管理爬虫访问。
+- 它通过简单的规则指定哪些路径可以被抓取，哪些不能。
+- 在编写爬虫时，建议遵守目标网站的 `robots.txt` 文件，以避免不必要的法律或道德问题。
