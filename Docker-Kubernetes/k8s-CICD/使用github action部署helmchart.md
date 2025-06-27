@@ -159,8 +159,6 @@ jobs:
 
 # 编写github action workflow
 
-
-
 > 参考文档：
 >
 > - 配置self-hosted runner：https://docs.github.com/zh/actions/hosting-your-own-runners/managing-self-hosted-runners/adding-self-hosted-runners
@@ -169,3 +167,8 @@ jobs:
 > - 创建repo secret：https://docs.github.com/zh/actions/security-for-github-actions/security-guides/using-secrets-in-github-actions#creating-secrets-for-a-repository
 > - workflow的触发条件：https://docs.github.com/zh/actions/writing-workflows/choosing-when-your-workflow-runs/triggering-a-workflow
 > - reusable workflow调用：https://docs.github.com/zh/actions/sharing-automations/reusing-workflows
+
+# 卸载runner
+
+- 按照文档方法移除runner：https://docs.github.com/en/actions/how-tos/hosting-your-own-runners/managing-self-hosted-runners/configuring-the-self-hosted-runner-application-as-a-service
+- 有时候github上的runner会莫名其妙消失，这时候需要在本地暴力移除runner，直接删掉actions-runner目录即可

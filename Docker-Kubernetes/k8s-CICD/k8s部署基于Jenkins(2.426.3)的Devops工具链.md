@@ -215,7 +215,7 @@ Manage Jnekins-->插件管理-->可选插件
 
 3. 点击容器列表下的添加容器，选container template：
 
-   - 名称：`jnlp` （固定值，必须谢jnlp）
+   - 名称：`jnlp` （固定值，必须写jnlp）
    - Docker镜像：`docker.io/library/jenkins.agent:v2`
    - 工作目录：`/home/jenkins/agent`
    - 运行的命令 和 命令参数 两行清空
@@ -226,7 +226,7 @@ Manage Jnekins-->插件管理-->可选插件
    在卷中选择添加卷，添加5个Host Path Volume类型的卷：
 
    1. 主机路径：`/var/run/docker.sock`，挂载路径：`/var/run/docker.sock`
-   2. 主机路径：`/root/.kube`，挂载路径：`/home/jenkins/,kube`
+   2. 主机路径：`/root/.kube`，挂载路径：`/home/jenkins/.kube`
    3. 主机路径：`/usr/bin/docker`，挂载路径：`/usr/bin/docker`
    4. 主机路径：`/usr/bin/kubectl`，挂载路径：`/usr/bin/kubectl`
    5. 主机路径：`/etc/docker/daemon.json`，挂载路径：`/etc/docker/daemon.json`
@@ -243,9 +243,104 @@ chown -R 1000.1000  /usr/bin/docker
 6. 把控制节点的.kube目录复制到工作节点
 
 ~~~sh
-scp -r /root/.kube/  node1:/root/
+# 控制节点上
+scp -r /root/.kube/  rn1:/root/
+# 工作节点上
 chown -R 1000.1000 /root/.kube/
 ~~~
 
 7. 在Environment Variable --> 高级中，勾选以最高权限运行。
-8. 在service account
+8. 在service account处填入`jenkins-k8s-sa`，是一开始部署的sa
+9. 配置好之后选择Create
+
+# 连接harbor
+
+1. 首先需要[安装harbor](../helm/helm部署harbor.md)
+2. Jenkins中首页-->系统管理-->管理凭据-->Stores scoped to Jenkins-->全局-->添加凭据
+3. 类型：Username with Password，范围：全局，用户名和密码：写harbor的用户名密码，ID：dockerharbor。
+4. 点击Create
+
+# 编写Pipeline
+
+1. harbor中新建项目`jenkins-demo`
+
+2. 新建一个任务-->输入任务名称jenkins-harbor-->流水线-->确定-->在Pipeline script处写入脚本：
+
+   ~~~groovy
+   node('testhan') {
+       stage('第1步:从gitee上下载源代码') {
+           git url: "https://gitee.com/hanxianchao66/jenkins-sample"
+           script {
+               build_tag = sh(returnStdout: true, script: 'git rev-parse --short HEAD').trim()
+           }
+       }
+       stage('第2步：基于dockerfile文件制作镜像') {
+           sh "docker build -t 192.168.40.62/jenkins-demo/jenkins-demo:${build_tag} ."
+       }
+       stage('第3步：把镜像上传到harbor私有仓库') {
+           withCredentials([usernamePassword(credentialsId: 'dockerharbor', passwordVariable: 'dockerHubPassword', usernameVariable: 'dockerHubUser')]) {
+               sh "docker login 192.168.40.62 -u ${dockerHubUser} -p ${dockerHubPassword}"
+               sh "docker push 192.168.40.62/jenkins-demo/jenkins-demo:${build_tag}"
+           }
+       }
+       stage('第4步：把pod部署到开发环境') {
+   		sh "sed -i 's/<BUILD_TAG>/${build_tag}/' k8s-dev-harbor.yaml"
+           sh "sed -i 's/<BRANCH_NAME>/${env.BRANCH_NAME}/' k8s-dev-harbor.yaml"
+   //        sh "bash running-devlopment.sh"
+           sh "kubectl apply -f k8s-dev-harbor.yaml  --validate=false"
+   	}	
+   	stage('第5步：把pod部署到测试环境') {	
+   		def userInput = input(
+               id: 'userInput',
+   
+               message: '确定部署到测试环境吗？输入yes确定',
+               parameters: [
+                   [
+                       $class: 'ChoiceParameterDefinition',
+                       choices: "YES\nNO",
+                       name: 'Env'
+                   ]
+               ]
+           )
+           echo "This is a deploy step to ${userInput}"
+           if (userInput == "YES") {
+               sh "sed -i 's/<BUILD_TAG>/${build_tag}/' k8s-qa-harbor.yaml"
+               sh "sed -i 's/<BRANCH_NAME>/${env.BRANCH_NAME}/' k8s-qa-harbor.yaml"
+   			//sh "bash running-qa.sh"
+               sh "kubectl apply -f k8s-qa-harbor.yaml --validate=false"
+               sh "sleep 6"
+               sh "kubectl get pods -n qatest"
+               sh "cd /home/jenkins/agent/workspace/jenkins-harbor"
+               sh "/root/Python-3.12.5/python qatest.py"
+           } else {
+               //exit
+           }
+       }
+   	stage('第6步：pod部署到生产环境') {	
+   		def userInput = input(
+   
+               id: 'userInput',
+               message: '确定部署到生产环境吗？输入yes确定',
+               parameters: [
+                   [
+                       $class: 'ChoiceParameterDefinition',
+                       choices: "YES\nNO",
+                       name: 'Env'
+                   ]
+               ]
+           )
+           echo "This is a deploy step to ${userInput}"
+           if (userInput == "YES") {
+               sh "sed -i 's/<BUILD_TAG>/${build_tag}/' k8s-prod-harbor.yaml"
+               sh "sed -i 's/<BRANCH_NAME>/${env.BRANCH_NAME}/' k8s-prod-harbor.yaml"
+   			// sh "bash running-production.sh"
+               sh "cat k8s-prod-harbor.yaml"
+               sh "kubectl apply -f k8s-prod-harbor.yaml --record --validate=false"
+               sh "cd /home/jenkins/agent/workspace/jenkins-harbor"
+               sh "/root/Python-3.12.5/python smtp.py"
+           }
+       }
+   }
+   ~~~
+
+3. 应用-->保存-->立即构建-->打开blue ocean可以看到流程，可以在交互式输入中手动点击确认
