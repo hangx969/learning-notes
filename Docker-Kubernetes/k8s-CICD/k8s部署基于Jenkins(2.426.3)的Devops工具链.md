@@ -238,6 +238,8 @@ chown 1000:1000  /var/run/docker.sock
 chmod 777  /var/run/docker.sock
 chmod  777 /usr/bin/docker
 chown -R 1000.1000  /usr/bin/docker
+chmod 777 /usr/bin/kubectl
+chown -R 1000.1000 /usr/bin/kubectl
 ~~~
 
 6. 把控制节点的.kube目录复制到工作节点
@@ -267,20 +269,23 @@ chown -R 1000.1000 /root/.kube/
 2. 新建一个任务-->输入任务名称jenkins-harbor-->流水线-->确定-->在Pipeline script处写入脚本：
 
    ~~~groovy
-   node('testhan') {
+   node('jenkins-jenkins-agent') {
        stage('第1步:从gitee上下载源代码') {
-           git url: "https://gitee.com/hanxianchao66/jenkins-sample"
+           git url: "https://gitee.com/hangxu969/jenkins-sample"
            script {
                build_tag = sh(returnStdout: true, script: 'git rev-parse --short HEAD').trim()
            }
        }
        stage('第2步：基于dockerfile文件制作镜像') {
-           sh "docker build -t 192.168.40.62/jenkins-demo/jenkins-demo:${build_tag} ."
+           withCredentials([usernamePassword(credentialsId: 'harbork8s', passwordVariable: 'harborPassword', usernameVariable: 'harborUser')]) {
+               sh "docker login harbor.hanxux.local -u ${harborUser} -p ${harborPassword}"
+               sh "docker build -t harbor.hanxux.local/jenkins-demo/jenkins-demo:${build_tag} ."
+           }
        }
        stage('第3步：把镜像上传到harbor私有仓库') {
-           withCredentials([usernamePassword(credentialsId: 'dockerharbor', passwordVariable: 'dockerHubPassword', usernameVariable: 'dockerHubUser')]) {
-               sh "docker login 192.168.40.62 -u ${dockerHubUser} -p ${dockerHubPassword}"
-               sh "docker push 192.168.40.62/jenkins-demo/jenkins-demo:${build_tag}"
+           withCredentials([usernamePassword(credentialsId: 'harbork8s', passwordVariable: 'harborPassword', usernameVariable: 'harborUser')]) {
+               sh "docker login harbor.hanxux.local -u ${harborUser} -p ${harborPassword}"
+               sh "docker push harbor.hanxux.local/jenkins-demo/jenkins-demo:${build_tag}"
            }
        }
        stage('第4步：把pod部署到开发环境') {
@@ -310,8 +315,8 @@ chown -R 1000.1000 /root/.kube/
                sh "kubectl apply -f k8s-qa-harbor.yaml --validate=false"
                sh "sleep 6"
                sh "kubectl get pods -n qatest"
-               sh "cd /home/jenkins/agent/workspace/jenkins-harbor"
-               sh "/root/Python-3.12.5/python qatest.py"
+               // sh "cd /home/jenkins/agent/workspace/jenkins-harbor"
+               // sh "/root/Python-3.12.5/python qatest.py"
            } else {
                //exit
            }
@@ -336,8 +341,8 @@ chown -R 1000.1000 /root/.kube/
    			// sh "bash running-production.sh"
                sh "cat k8s-prod-harbor.yaml"
                sh "kubectl apply -f k8s-prod-harbor.yaml --record --validate=false"
-               sh "cd /home/jenkins/agent/workspace/jenkins-harbor"
-               sh "/root/Python-3.12.5/python smtp.py"
+               // sh "cd /home/jenkins/agent/workspace/jenkins-harbor"
+               // sh "/root/Python-3.12.5/python smtp.py"
            }
        }
    }

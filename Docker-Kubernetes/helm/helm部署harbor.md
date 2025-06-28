@@ -145,6 +145,9 @@ helm upgrade -i harbor -n harbor . -f values.yaml
   vim /etc/docker/daemon.json
   #添加docker登录harbor的http设置
   "insecure-registries": ["172.16.183.100","harbor.hanxux.local"]
+  # 重启docker
+  systemctl daemon-reload
+  systemctl restart docker.service
   ~~~
 
 - 登录harbor

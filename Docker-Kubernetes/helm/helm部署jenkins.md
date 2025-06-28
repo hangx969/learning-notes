@@ -88,6 +88,23 @@ persistence:
   size: "1Gi"
 ~~~
 
+配置文件里面把docker和kubectl通过host path挂进slave pod里面了，需要修改一下权限否则slave pod中会报错permission denied：
+
+~~~sh
+# 工作节点上修改属主属组和权限
+chown 1000:1000  /var/run/docker.sock
+chmod 777  /var/run/docker.sock
+chmod 777 /usr/bin/docker
+chown -R 1000.1000  /usr/bin/docker
+chmod 777 /usr/bin/kubectl
+chown -R 1000.1000 /usr/bin/kubectl
+# 把kubeconfig复制到工作节点
+# 控制节点上
+scp -r /root/.kube/  rn1:/root/
+# 工作节点上
+chown -R 1000.1000 /root/.kube/
+~~~
+
 # 安装
 
 ~~~sh
@@ -114,11 +131,7 @@ helm upgrade -i jenkins -n jenkins --create-namespace . -f values.yaml
 
 - 安装完kubernetes、blueocean之后，会自动重启jenkins
 
-- 也可以浏览器手动重启jenkins：
-
-  ~~~sh
-  https://jenkins.hanxux.local/restart
-  ~~~
+- 也可以浏览器手动重启jenkins： https://jenkins.hanxux.local/restart
 
 - 弹出登录界面说明插件安装没问题，可以进行后续实验。
 
@@ -130,26 +143,31 @@ helm upgrade -i jenkins -n jenkins --create-namespace . -f values.yaml
   pipeline {
       agent {
           kubernetes {
-              cloud 'kubernetes' 
+              cloud 'kubernetes'
           }
       }
-   
       stages {
           stage('Hello') {
+              agent {
+                  node {
+                      label 'jenkins-jenkins-agent'
+                  }
+              }
               steps {
-                  echo 'Hello World'
+                  echo "Hello world!"
+                  sh "cat /etc/docker/daemon.json"
               }
           }
       }
   }
   ~~~
-
+  
 
 ## 连接harbor
 
 1. 首先需要[安装harbor](../helm/helm部署harbor.md)
 2. Jenkins中首页-->系统管理-->管理凭据-->Stores scoped to Jenkins-->全局-->添加凭据
-3. 类型：Username with Password，范围：全局，用户名和密码：写harbor的用户名密码，ID：dockerharbor。
+3. 类型：Username with Password，范围：全局，用户名和密码：写harbor的用户名密码admin/Harbor12345，ID：harbork8s。
 4. 点击Create
 
 # 编写pipeline
@@ -158,21 +176,29 @@ helm upgrade -i jenkins -n jenkins --create-namespace . -f values.yaml
 
 2. 新建一个任务-->输入任务名称jenkins-harbor-->流水线-->确定-->在Pipeline script处写入脚本：
 
+   > 注意：
+   >
+   > 1. `node(‘jenkins-jenkins-agent’)`是匹配标签为jenkins-jenkins-agent的pod template。
+   > 2. 已经把宿主机的`/etc/docker/daemon.json`挂进slave pod中了，里面配置了harbor的insecure registry，所以在pipeline里面docker login直接登录不需要--insecure选项
+
    ~~~groovy
-   node('testhan') {
+   node('jenkins-jenkins-agent') {
        stage('第1步:从gitee上下载源代码') {
-           git url: "https://gitee.com/hanxianchao66/jenkins-sample"
+           git url: "https://gitee.com/hangxu969/jenkins-sample"
            script {
                build_tag = sh(returnStdout: true, script: 'git rev-parse --short HEAD').trim()
            }
        }
        stage('第2步：基于dockerfile文件制作镜像') {
-           sh "docker build -t 192.168.40.62/jenkins-demo/jenkins-demo:${build_tag} ."
+           withCredentials([usernamePassword(credentialsId: 'harbork8s', passwordVariable: 'harborPassword', usernameVariable: 'harborUser')]) {
+               sh "docker login harbor.hanxux.local -u ${harborUser} -p ${harborPassword}"
+               sh "docker build -t harbor.hanxux.local/jenkins-demo/jenkins-demo:${build_tag} ."
+           }
        }
        stage('第3步：把镜像上传到harbor私有仓库') {
-           withCredentials([usernamePassword(credentialsId: 'dockerharbor', passwordVariable: 'dockerHubPassword', usernameVariable: 'dockerHubUser')]) {
-               sh "docker login 192.168.40.62 -u ${dockerHubUser} -p ${dockerHubPassword}"
-               sh "docker push 192.168.40.62/jenkins-demo/jenkins-demo:${build_tag}"
+           withCredentials([usernamePassword(credentialsId: 'harbork8s', passwordVariable: 'harborPassword', usernameVariable: 'harborUser')]) {
+               sh "docker login harbor.hanxux.local -u ${harborUser} -p ${harborPassword}"
+               sh "docker push harbor.hanxux.local/jenkins-demo/jenkins-demo:${build_tag}"
            }
        }
        stage('第4步：把pod部署到开发环境') {
@@ -202,8 +228,8 @@ helm upgrade -i jenkins -n jenkins --create-namespace . -f values.yaml
                sh "kubectl apply -f k8s-qa-harbor.yaml --validate=false"
                sh "sleep 6"
                sh "kubectl get pods -n qatest"
-               sh "cd /home/jenkins/agent/workspace/jenkins-harbor"
-               sh "/root/Python-3.12.5/python qatest.py"
+               // sh "cd /home/jenkins/agent/workspace/jenkins-harbor"
+               // sh "/root/Python-3.12.5/python qatest.py"
            } else {
                //exit
            }
@@ -228,8 +254,8 @@ helm upgrade -i jenkins -n jenkins --create-namespace . -f values.yaml
    			// sh "bash running-production.sh"
                sh "cat k8s-prod-harbor.yaml"
                sh "kubectl apply -f k8s-prod-harbor.yaml --record --validate=false"
-               sh "cd /home/jenkins/agent/workspace/jenkins-harbor"
-               sh "/root/Python-3.12.5/python smtp.py"
+               // sh "cd /home/jenkins/agent/workspace/jenkins-harbor"
+               // sh "/root/Python-3.12.5/python smtp.py"
            }
        }
    }
