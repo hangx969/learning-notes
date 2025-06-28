@@ -12,7 +12,7 @@
 
 文档意思是：如果你的 **容器** 需要使用代理服务器，那么可以以如下方式配置： 在运行容器的用户 home 目录下，配置 `~/.docker/config.json` 文件。重新启动容器后，这些环境变量将自动设置进容器，从而容器内的进程可以使用代理服务。
 
-所以这篇文章是讲如何配置运行 容器 的环境，与如何拉取镜像无关。如果按照这篇文档的指导，如同南辕北辙。
+所以这篇文章是讲如何配置运行 **容器** 的环境，与如何拉取镜像无关。如果按照这篇文档的指导，如同南辕北辙。
 
 ## 环境变量
 
@@ -59,3 +59,10 @@
    sudo systemctl show --property=Environment docker
    ~~~
 
+# dockerhub镜像下载插件
+
+有时候docker代理也无法下载一些dockerhub的镜像，总是报timeout。网上找到一个chrome插件，在浏览器上模拟docker pull命令直接下载镜像tar包到本地。
+
+插件地址：https://chromewebstore.google.com/detail/dfpojffmnkiglpjpjodlpmoejdcfobnd?utm_source=item-share-cb
+
+可用于docker.io, gcr.io等
