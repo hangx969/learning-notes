@@ -168,7 +168,10 @@ containers:
 "hostgw"，表示启用host-gw模式。
 ~~~
 
+## 安装calico-deployment部署
 
+1. 从官网找到最新版calico的yaml链接：https://docs.tigera.io/calico/latest/getting-started/kubernetes/self-managed-onprem/onpremises#install-calico
+2. 下载yaml文件部署
 
 # 其他常用网络插件
 
