@@ -1016,7 +1016,6 @@ for file in os.listdir(file_dir):
         old_file_path = os.path.join(file_dir, file)
         os.rename(old_file_path, new_file_path)
         print(f'Renamed {old_file_path} to {new_file_path}')
-
 ~~~
 
 # 正则表达式

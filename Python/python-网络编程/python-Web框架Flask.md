@@ -204,7 +204,7 @@ status_url = 'https://server/api/service/status'
 restart_url = 'https://server/api/service/restart'
 
 # 发送请求获取服务状态
-response = requests.get(status_url, headers={'Authorization': 'Bear YOUR_API_KEY'})
+response = requests.get(status_url, headers={'Authorization': 'Bearer YOUR_API_KEY'})
 
 # 判断服务是否停止
 if response.status_code == 200:
@@ -213,7 +213,7 @@ if response.status_code == 200:
     if service_status != 'running':
         print('Service has stopped running, trying to restart it...')
         # 发送重启请求
-        restart_response = request.post(restart_url, headers={'Authorization': 'Bearer YOUR_API_KEY'})
+        restart_response = requests.post(restart_url, headers={'Authorization': 'Bearer YOUR_API_KEY'})
         # 重启成功，返回值200
         if restart_response.status_code == 200:
             print('Service restarted successfully')
@@ -279,7 +279,7 @@ def restart_service():
 def service_status_api():
     status = check_status()
     # 定义http请求的返回
-    return jsonify({'status': 'status'})
+    return jsonify({'status': status})
 
 # flask定义重启服务接口
 @app.route('/api/service/restart', methods=['POST'])

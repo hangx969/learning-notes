@@ -115,6 +115,5 @@ if __name__ == '__main__':
 
     add_server_block(config, new_server_block)
     reload_nginx()
-
 ~~~
 

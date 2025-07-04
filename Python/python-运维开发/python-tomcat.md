@@ -132,7 +132,7 @@ def check_tomcat() -> bool:
             print("Tomcat is not running")
             return False
     except Exception as e:
-        print(f"An error occurred while checking TOmcat status: {e}.")
+        print(f"An error occurred while checking Tomcat status: {e}.")
         return False
 
 def start_tomcat():
@@ -151,7 +151,7 @@ def monitor_tomcat(interval):
         if not check_tomcat():
             start_tomcat()
         else:
-            print("No actionneeded, tomcat is running.")
+            print("No action needed, tomcat is running.")
         time.sleep(interval)
 
 if __name__ == '__main__':
