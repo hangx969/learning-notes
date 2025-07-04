@@ -423,7 +423,7 @@ def get_system_report():
     # 转换成Gib,保留一位小数
     report.append(f"Disk total: {(total / (2 ** 30)): .1f} Gib.")
     report.append(f"Disk used: {(used / (2 ** 30)): .1f} Gib.")
-    report.append(f"Disk rfree: {(free / (2 ** 30)): .1f} Gib.")
+    report.append(f"Disk free: {(free / (2 ** 30)): .1f} Gib.")
 	# 列表连成字符串打印
     return ('\n').join(report)
 
@@ -471,7 +471,7 @@ os.removedirs('parent_dir/sub_dir')
 ~~~python
 import os
 
-file_path = '/home/s0001969/Documents/learning-notes-git/Python/python-manuscripts/old.txt'
+file_path = '/path/to/python/old.txt'
 os.chdir('/'.join(file_path.split('/')[:-1]))
 
 # 判断文件是否存在
@@ -527,7 +527,7 @@ print("ENV 'MY_VAR' has been deleted.")
 ~~~python
 import os
 
-path = '/home/s0001969/Documents/learning-notes-git/Python/python-manuscripts/'
+path = '/path/to/python/'
 file_name = 'oop.py'
 os.chdir(path)
 
@@ -613,9 +613,9 @@ logging.critical("This is critical message")
 > ~~~sh
 > Original exception was:
 > Traceback (most recent call last):
->   File "/home/s0001969/Documents/learning-notes-git/Python/python-manuscripts/logging.py", line 1, in <module>
+>   File "/path/to/python/logging.py", line 1, in <module>
 >     import logging
->   File "/home/s0001969/Documents/learning-notes-git/Python/python-manuscripts/logging.py", line 5, in <module>
+>   File "/path/to/python/logging.py", line 5, in <module>
 >     logging.basicConfig(level=logging.DEBUG,
 > AttributeError: partially initialized module 'logging' has no attribute 'basicConfig' (most likely due to a circular import)
 > ~~~
@@ -625,7 +625,7 @@ logging.critical("This is critical message")
 ~~~python
 import logging,os
 
-os.chdir('/home/s0001969/Documents/learning-notes-git/Python/python-manuscripts/')
+os.chdir('/path/to/python/')
 
 # getLogger()方法创建自定义记录器
 logger = logging.getLogger('my_logger')
@@ -672,7 +672,7 @@ logger.critical("This is a critical message.")
 import logging, os
 from logging.handlers import RotatingFileHandler
 
-os.chdir('/home/s0001969/Documents/learning-notes-git/Python/python-manuscripts/')
+os.chdir('/path/to/python/')
 
 # 创建一个日志记录器
 logger = logging.getLogger('rotating_logger')
@@ -707,7 +707,7 @@ for i in range(1000):
 import logging, os
 from logging.handlers import SMTPHandler
 
-os.chdir('/home/s0001969/Documents/learning-notes-git/Python/python-manuscripts/')
+os.chdir('/path/to/python/')
 
 # 创建一个日志记录器
 logger = logging.getLogger('smtp_logger')
@@ -790,7 +790,7 @@ ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy)
 
 # 准备本地文件路径
 # 如果是windows上，local_dir可以写成'D:/'
-local_dir = '/home/s0001969/Documents/learning-notes-git/Python/python-manuscripts/'
+local_dir = '/path/to/python/'
 local_file = 'oop.py'
 local_path = os.path.join(local_dir,local_file)
 
@@ -908,7 +908,7 @@ from fabric import Connection
 # 连接到远程主机
 conn = Connection(host='172.16.183.81', user='root', connect_kwargs={'password': 'root'})
 
-local_path = '/home/s0001969/Documents/learning-notes-git/Python/python-manuscripts/oop.py'
+local_path = '/path/to/python/oop.py'
 remote_path = '/root/oop.py'
 try:
     # 上传文件
@@ -929,7 +929,7 @@ from fabric import Connection
 # 连接到远程主机
 conn = Connection(host='172.16.183.81', user='root', connect_kwargs={'password': 'root'})
 
-local_path = '/home/s0001969/Documents/learning-notes-git/Python/python-manuscripts/test.py'
+local_path = '/path/to/python/test.py'
 remote_path = '/root/test.py'
 
 try:
