@@ -109,7 +109,7 @@ for ns in namespaces.items:
 
 # 用函数获取集群namespace
 def get_namespace():
-    return [ns.metadata.name for ns in core_v1.list_namespace().items]
+    return [ns.metadata.name for ns in v1.list_namespace().items]
 
 if __name__ == '__main__':
     ns_list = get_namespace()
@@ -204,7 +204,6 @@ while True:
 
 ~~~python
 from kubernetes import config, client
-import time
 
 # 导入集群kubeconfig文件
 config.load_kube_config(config_file='kubernetes/kubeconfig-local')
@@ -665,7 +664,7 @@ for ns in namespaces:
             appsv1.patch_namespaced_deployment(name=deployment_name, namespace=ns, body=dep)
             print(f"Namespace: {ns}, deployment: {deployment_name}, updated image from {old_image} to {new_image}.")
         else:
-            print(f"Namespce: {ns}, deployment {deployment_name}, image has already been up-to-date.")
+            print(f"Namespace: {ns}, deployment {deployment_name}, image has already been up-to-date.")
     except client.exceptions.ApiException as e:
         print(f"Error: {str(e)}")
 ~~~
