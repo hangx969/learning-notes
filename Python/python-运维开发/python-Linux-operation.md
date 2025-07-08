@@ -944,8 +944,6 @@ print(stdout.read().decode('utf-8'))
 在本地下载了k8s镜像tar包，需要批量上传到多个远程主机并解压以供pod使用。
 
 ~~~python
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
 Kubernetes 镜像批量传输和加载工具
 

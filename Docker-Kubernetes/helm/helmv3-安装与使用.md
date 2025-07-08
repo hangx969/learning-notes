@@ -34,6 +34,8 @@
 
 - 下载地址：https://github.com/helm/helm/releases
 
+### Linux安装
+
 ~~~sh
 #对于k8s 1.23版本，小于等于3.11.x版本的helm是支持的
 tar zxvf helm-v3.11.3-linux-amd64.tar.gz
@@ -41,6 +43,54 @@ cp linux-amd64/helm /bin/  #/bin/是默认的环境变量路径之一，所以�
 #查看helm版本
 helm version
 ~~~
+
+### Windows安装-基于scoop
+
+#### scoop
+
+Scoop是一款适用于Windows平台的命令行软件（包）管理工具，这里是[Github介绍页](https://link.zhihu.com/?target=https%3A//github.com/ScoopInstaller/Scoop)。简单来说，就是可以通过命令行工具（PowerShell、CMD等）实现软件（包）的安装管理等需求，**通过简单的一行代码实现软件的下载、安装、卸载、更新等操作**。
+
+先安装scoop：[Scoop](https://scoop.sh/)
+
+~~~powershell
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+# 更改默认安装目录
+$env:SCOOP='D:\0Software\scoop'
+[Environment]::SetEnvironmentVariable('SCOOP', $env:SCOOP, 'User')
+# 安装
+Invoke-Expression (New-Object System.Net.WebClient).DownloadString('https://get.scoop.sh')
+~~~
+
+**设置scoop代理：**
+
+- 方法1：`scoop config proxy 127.0.0.1:7078` (根据实际代理端口修改)
+- 方法2：修改配置文件：`C:\Users\username\.config\scoop\config.json`，添加`“proxy”: “127.0.0.1:7078”`
+
+**基本使用：**
+
+在实际使用过程中，我们可以先通过`search`命令查询一下是否有相应软件，软件名称是否正确，然后通过`install`命令完成软件的安装。另外，有两个必备的软件需要安装——git和7zip，建议完成Scoop安装后先执行以下命令：`scoop install git 7zip`（Scoop支持多个软件同时依次安装），虽然后续操作中未安装这两个软件时也会提醒用户安装就是了。
+
+- search——搜索仓库中是否有相应软件。
+- install——安装软件。
+- uninstall——卸载软件。
+- update——更新软件。可通过`scoop update *`更新所有已安装软件，或通过`scoop update`更新所有软件仓库资料及Scoop自身而不更新软件。
+- hold——锁定软件阻止其更新。
+- info——查询软件简要信息。
+- home——打开浏览器进入软件官网。
+
+**软件仓库：**
+
+软件仓库是Scoop软件管理的重要基础，通过json文件记录仓库中每一个软件的信息，从而实现软件的管理等便捷命令行操作，并由仓库管理员（其实开源项目都是大家用爱发电）负责软件信息的更新。
+
+前面提到，默认安装Scoop后仅有`main`仓库，其中主要是面向程序员的工具，对于一般用户而言并不是那么实用。好在Scoop本身考虑到了这一点，添加了面向一般用户的软件仓库`extras`，其中收录大量好用的小软件，足够日常的使用。
+
+Scoop添加软件仓库的命令是`scoop bucket add bucketname (+ url可选)`。如添加`extras`的命令是`scoop bucket add extras`，执行此命令后会在scoop文件夹中的buckets子文件夹中添加extras文件夹。
+
+除了官方的软件仓库，Scoop也支持用户自建仓库并共享，于是又有很多大佬提供了许多好用的软件仓库。这里强推[dorado](https://link.zhihu.com/?target=https%3A//github.com/chawyehsu/dorado)仓库，里面有许多适合中国用户的软件，或者你有兴趣可以去看看仓库作者[关于Scoop更多技术方面的探讨](https://link.zhihu.com/?target=https%3A//chawyehsu.com/blog/talk-about-scoop-the-package-manager-for-windows-again)。添加`dorado`仓库的命令如下：`scoop bucket add dorado https://github.com/chawyehsu/dorado`。
+
+#### helm
+
+一行命令安装：`scoop install helm`
 
 ## 配置chart仓库
 
