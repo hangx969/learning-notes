@@ -18,6 +18,7 @@ yum install nfs-utils
 ```shell
 mkdir -p /data/k8s
 chown nfsnobody:nfsnobody /data/k8s
+# 如果没有nfsnobody用户，可以用nobody用户
 ```
 
 - 编辑服务配置文件

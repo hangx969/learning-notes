@@ -168,6 +168,13 @@ gpasswd -a $USER docker
 newgrp docker
 ```
 
+## docker安装-windows
+
+1. 首先安装scoop，参考[这里](../helm/helmv3-安装与使用.md)
+2. scoop安装docker和gsudo：`scoop install docker gsudo`
+3. 开一个终端运行dockerd：`gsudo dockerd`
+4. 开一个终端运行docker命令：`gsudo docker images`
+
 # docker基础
 
 ## docker介绍

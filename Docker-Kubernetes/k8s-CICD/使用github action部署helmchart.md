@@ -59,17 +59,45 @@ sudo ./svc.sh uninstall
 ## 安装必要工具
 
 - kubectl
-  - kubectl krew插件
+  - [kubectl krew插件](../k8s-UI-tools/kuebctl-插件krew-rolesum.md)
   - kubectl krew install kyverno插件
-- helm3
-  - helm lint插件
-  - helm diff插件
+- [helm3](../helm/helmv3-安装与使用.md)
+  - [helm diff插件]([databus23/helm-diff: A helm plugin that shows a diff explaining what a helm upgrade would change](https://github.com/databus23/helm-diff?tab=readme-ov-file)): helm plugin install https://github.com/databus23/helm-diff
+
+注：
+
+- Windows环境下用scoop安装helm、kubectl、krew。有关scoop安装参考[这里](../helm/helmv3-安装与使用.md)。
+
+- scoop安装完krew后，还要去krew.exe目录下（D:\0Software\scoop\apps\krew\current）安装一下krew (参考：[Installing · Krew](https://krew.sigs.k8s.io/docs/user-guide/setup/install/#windows))：
+
+  1. 需要安装gsudo来提权`scoop install gsudo`
+
+  2. `gsudo ./krew install krew`
+
+  3. 安装完成后，按照提示把`%USERPROFILE%\.krew\bin`加到PATH路径
+
+  4. `gsudo kubectl krew install kyverno`
+
+  5. 如果遇到github访问网络问题，可以设置powershell的HTTP代理：
+
+     ~~~powershell
+     # 设置
+     $env:HTTP_PROXY = "http://127.0.0.1:7078"; $env:HTTPS_PROXY = "http://127.0.0.1:7078"
+     # 取消设置
+     [Environment]::SetEnvironmentVariable("HTTP_PROXY", $null, "User");[Environment]::SetEnvironmentVariable("HTTPS_PROXY", $null, "User")
+     ~~~
+
+- `helm diff`无法用命令行安装，需要手动下载安装包解压：[Releases · databus23/helm-diff](https://github.com/databus23/helm-diff/releases)，解压到C:\Users\xuhan\AppData\Roaming\helm\plugins中
 
 ## 上传并使用kubeconfig
 
-1. 把本地的kuneconfig文件转换为base64：`cat kubeconfig-local | base64 -w 0`，复制。
-2. 在github repo - Settings - Security - Secrets and variables - Actions - 添加一条`Repository secret`，粘贴进去。
-3. workflow中用base64解密，输出到一个临时文件中，设为环境变量以供helm和kubectl使用。
+1. 登录到k8s master节点上拿到kubeconfig文件：`/root/.kube/cofig`
+
+2. 把本地的kuneconfig文件转换为base64：`cat kubeconfig-local | base64 -w 0`，复制。
+
+3. 在github repo - Settings - Security - Secrets and variables - Actions - 添加一条`Repository secret`，粘贴进去。
+
+4. workflow中用base64解密，输出到一个临时文件中，设为环境变量以供helm和kubectl使用。
 
 参考：https://dev.to/richicoder1/how-we-connect-to-kubernetes-pods-from-github-actions-1mg
 
