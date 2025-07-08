@@ -61,7 +61,9 @@
 
 # dockerhub镜像下载插件
 
-有时候docker代理也无法下载一些dockerhub的镜像，总是报timeout。网上找到一个chrome插件，在浏览器上模拟docker pull命令直接下载镜像tar包到本地。
+有时候docker代理也无法下载一些dockerhub的镜像，总是报timeout。网上找到一个chrome插件Docker Image Downloader
+
+从Chrome中移除，在浏览器上模拟docker pull命令直接下载镜像tar包到本地。
 
 插件地址：https://chromewebstore.google.com/detail/dfpojffmnkiglpjpjodlpmoejdcfobnd?utm_source=item-share-cb
 

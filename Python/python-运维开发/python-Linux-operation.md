@@ -832,6 +832,206 @@ finally:
     print("Connection has closed.")
 ~~~
 
+## 执行远程命令
+
+`exec_command()` 是 paramiko SSHClient 的一个核心方法，用于在远程服务器上执行命令并获取执行结果。
+
+### 基本语法
+```python
+stdin, stdout, stderr = client.exec_command(command, bufsize=-1, timeout=None, get_pty=False, environment=None)
+```
+
+### 参数说明
+- **command**: 要执行的命令字符串
+- **bufsize**: 缓冲区大小，默认 -1（系统默认）
+- **timeout**: 命令执行超时时间（秒）
+- **get_pty**: 是否分配伪终端，默认 False
+- **environment**: 环境变量字典
+
+### 返回值
+返回三个文件对象：
+- **stdin**: 标准输入流（可向命令发送数据）
+- **stdout**: 标准输出流（命令的正常输出）
+- **stderr**: 标准错误流（命令的错误输出）
+
+### 使用示例
+
+1. 基本使用
+
+```python
+import paramiko
+
+# 建立SSH连接
+client = paramiko.SSHClient()
+client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+client.connect('192.168.1.100', username='user', password='password')
+
+# 执行命令
+stdin, stdout, stderr = client.exec_command('ls -la')
+
+# 获取输出
+output = stdout.read().decode('utf-8')
+error = stderr.read().decode('utf-8')
+
+print("输出:", output)
+print("错误:", error)
+
+client.close()
+```
+
+2. 检查命令执行状态
+
+```python
+stdin, stdout, stderr = client.exec_command('ls /nonexistent')
+
+# 获取退出状态码
+exit_status = stdout.channel.recv_exit_status()
+print(f"退出状态码: {exit_status}")  # 0表示成功，非0表示失败
+
+if exit_status == 0:
+    print("命令执行成功")
+    print(stdout.read().decode('utf-8'))
+else:
+    print("命令执行失败")
+    print(stderr.read().decode('utf-8'))
+```
+
+3. 带超时的命令执行
+
+```python
+try:
+    stdin, stdout, stderr = client.exec_command('sleep 10', timeout=5)
+    output = stdout.read().decode('utf-8')
+except paramiko.SSHException as e:
+    print(f"命令执行超时: {e}")
+```
+
+4. 交互式命令（需要输入）
+
+```python
+# 执行需要输入的命令
+stdin, stdout, stderr = client.exec_command('sudo ls', get_pty=True)
+
+# 发送密码
+stdin.write('your_password\n')
+stdin.flush()
+
+# 获取输出
+output = stdout.read().decode('utf-8')
+print(output)
+```
+
+5. 设置环境变量
+
+```python
+env = {'PATH': '/usr/local/bin:/usr/bin:/bin'}
+stdin, stdout, stderr = client.exec_command('echo $PATH', environment=env)
+print(stdout.read().decode('utf-8'))
+```
+
+### 注意事项
+
+1. **资源管理**: 始终确保关闭连接
+2. **错误处理**: 检查退出状态码而不仅仅是 stderr
+3. **编码问题**: 使用 `.decode('utf-8')` 处理输出
+4. **阻塞操作**: `exec_command` 是阻塞的，命令执行完才返回
+5. **并发限制**: 一个 SSH 连接通常一次只能执行一个命令
+
+这个方法非常适合远程服务器管理、自动化部署和系统监控等场景。
+
+## 案例：批量传输并解压镜像包
+
+在本地下载了k8s镜像tar包，需要批量上传到多个远程主机并解压以供pod使用。
+
+~~~python
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Kubernetes 镜像批量传输和加载工具
+
+功能描述:
+    该脚本用于自动化批量传输和加载 Kubernetes 镜像到多个远程主机。
+    主要实现以下功能：
+    1. 通过 SSH 连接到多个远程 Kubernetes 节点
+    2. 使用 SFTP 将本地的 Docker 镜像 tar 包传输到远程主机
+    3. 在远程主机上使用 containerd 的 ctr 命令导入镜像
+    4. 支持批量处理多个镜像文件和多个目标主机
+"""
+
+import os, paramiko
+
+def ssh_connect(host):
+    try:
+        client = paramiko.SSHClient()
+        client.set_missing_host_key_policy(paramiko.AutoAddPolicy)
+        client.connect(hostname=host, username='root', password='root')
+        return client
+    except Exception as e:
+        print(f"Error: {str(e)}.")
+        return None
+
+
+def transfer_image(client, local_file, remote_file):
+    try:
+        sftp = client.open_sftp()
+        sftp.put(local_file, remote_file)
+        print(f"\n\nFiles transferred from {local_file} to {remote_file}.")
+    except Exception as e:
+        print(f"Error: {str(e)}.")
+    finally:
+        sftp.close()
+
+
+def load_image(client, image_path):
+    stdin, stdout, stderr = client.exec_command(f"ctr -n=k8s.io images import {image_path}")
+    # 获取返回状态码
+    exit_status = stdout.channel.recv_exit_status()
+    if exit_status == 0:
+        print(f"{image_path} loaded")
+        output = stdout.read().decode('utf-8').strip()
+        if output:
+            print(f"Output: {output}")
+    else:
+        error_msg = stderr.read().decode('utf-8').strip()
+        print(f"Error loading {image_path}: {error_msg}.")
+
+
+
+if __name__ == '__main__':
+
+    local_path = r"D:\InstallationPackages\k8s-images"
+    remote_path = "/root/"
+    hosts = ['192.168.40.180','192.168.40.181','192.168.40.182']
+
+    # 检查本地路径是否存在
+    if not os.path.exists(local_path):
+        print(f"{local_path} does not exist, creating...")
+        os.makedirs(local_path)
+
+    for host in hosts:
+        # 建立ssh连接
+        client = ssh_connect(host)
+        if not client:
+            print(f"Error connected to {host}")
+            break
+
+        print(f"\n\nConnected to {host}")
+
+        # 对每个tar镜像，先传输，再解压
+        for image in os.listdir(local_path):
+            if image.endswith(".tar"):
+                local_file = os.path.join(local_path,image)
+                remote_file = os.path.join(remote_path, image)
+                # sftp传输镜像文件
+                transfer_image(client, local_file, remote_file)
+                # 远程主机解压镜像
+                load_image(client, remote_file)
+
+        client.close()
+~~~
+
+
+
 # fabric模块
 
 Fabric和Paramiko都是用于ssh连接的Python库，但是他们之间有区别：
