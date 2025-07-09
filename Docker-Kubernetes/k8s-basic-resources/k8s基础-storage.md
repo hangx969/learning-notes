@@ -760,7 +760,16 @@ yum install nfs-utils
 
 ```shell
 mkdir -p /data/k8s
+systemctl start rpcbind
+systemctl enable rpcbind
+systemctl start nfs-server
+systemctl enable nfs-server
+
+# 检查用户id和组id 65534名字是啥？有可能是nobody，有可能是nfsnobody
+# 如果是nfsnobody，修改权限：
 chown nfsnobody:nfsnobody /data/k8s
+# 如果是nobody，修改权限：
+chown nobody:nobody /data/k8s
 ```
 
 - 编辑服务配置文件
@@ -853,6 +862,17 @@ rm nfs-test.txt
 
 ```shell
 yum install nfs-utils
+mkdir -p /data/k8s
+systemctl start rpcbind
+systemctl enable rpcbind
+systemctl start nfs-server
+systemctl enable nfs-server
+
+tee -a /etc/exports<<'EOF'
+/data/k8s *(rw,no_root_squash)
+EOF
+
+exportfs -v
 ```
 
 - 添加 Helm 源

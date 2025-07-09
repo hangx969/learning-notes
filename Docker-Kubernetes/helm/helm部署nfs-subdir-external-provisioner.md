@@ -9,48 +9,19 @@
 
 ```shell
 yum install nfs-utils
+systemctl start rpcbind
+systemctl enable rpcbind
+systemctl start nfs-server
+systemctl enable nfs-server
 ```
 
 - 创建共享数据目录
 
-执行以下命令创建共享[数据存储](https://cloud.tencent.com/product/cdcs?from_column=20065&from=20065)目录，本文以 `/data/k8s` 为例，请根据实际情况修改。
-
 ```shell
-mkdir -p /data/k8s
-chown nfsnobody:nfsnobody /data/k8s
-# 如果没有nfsnobody用户，可以用nobody用户
-```
-
-- 编辑服务配置文件
-
-配置 NFS 服务器数据导出目录及访问 NFS 服务器的客户端机器权限。
-
-编辑配置文件 `vi /etc/exports`，添加如下内容
-
-```shell
-/data/k8s 192.168.9.0/24(rw,sync,all_squash,anonuid=65534,anongid=65534,no_subtree_check)
-```
-
-> **说明：**
->
-> - 192.168.9.0/24：可以访问 NFS 存储的客户端 IP 地址
-> - rw：读写操作，客户端机器拥有对卷的读写权限。 
-> - sync：内存数据实时写入磁盘，性能会有所限制 
-> - all_squash：NFS 客户端上的所有用户在使用共享目录时都会被转换为一个普通用户的权限 
-> - anonuid：转换后的用户权限 ID，对应的操作系统的 nfsnobody 用户 
-> - anongid：转换后的组权限 ID，对应的操作系统的 nfsnobody 组 
-> - no_subtree_check：不检查客户端请求的子目录是否在共享目录的子树范围内，也就是说即使输出目录是一个子目录，NFS 服务器也不检查其父目录的权限，这样可以提高效率。
-
-- 启动服务并设置开机自启
-
-```shell
-systemctl enable nfs-server --now
-```
-
-- 导出目录
-
-```shell
-exportfs -v
+#给nfs-provisioner配置空间
+mkdir /data/nfs_pro -p
+echo "/data/nfs_pro *(rw,no_root_squash)" >> /etc/exports #注：这里如果配置可访问的网段，要写宿主机网段而非pod网段，因为pv本质是挂载到宿主机上再挂载到pod上。
+exportfs -arv
 ```
 
 ## 客户端挂载测试
@@ -72,7 +43,7 @@ yum install nfs-utils
 - 挂载 NFS 共享目录
 
 ```shell
-mount -t nfs 192.168.9.81:/data/k8s /mnt/nfs/
+mount -t nfs 192.168.40.180:/data/nfs_pro /mnt/nfs/
 ```
 
 - 增删改查测试
@@ -132,14 +103,14 @@ kubectl create ns nfs-system
 **（首选方案，使用命令行设置变量参数）**
 
 ```shell
-helm install nfs-subdir-external-provisioner nfs-subdir-external-provisioner/nfs-subdir-external-provisioner --set storageClass.name=nfs-sc --set nfs.server=192.168.9.81 --set nfs.path=/data/k8s -n nfs-system
+helm install nfs-subdir-external-provisioner nfs-subdir-external-provisioner/nfs-subdir-external-provisioner --set storageClass.name=nfs-sc --set nfs.server=192.168.40.180 --set nfs.path=/data/k8s -n nfs-system
 ```
 
 > **说明：**
 >
 > --set storageClass.name=nfs-sc：指定 storageClass 的名字 
 >
-> --set nfs.server=192.168.9.81：指定 NFS 服务器的地址 
+> --set nfs.server=192.168.40.180：指定 NFS 服务器的地址 
 >
 > --set nfs.path=/data/k8s：指定 NFS 导出的共享数据目录 
 >
@@ -213,7 +184,7 @@ podDisruptionBudget:
 replicaCount: 2
 
 nfs:
-  server: 172.16.183.100
+  server: 192.168.40.180
   path: /data/nfs_pro/
 
 storageClass:

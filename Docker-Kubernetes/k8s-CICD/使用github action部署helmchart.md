@@ -1,6 +1,6 @@
 # 准备工作
 
-## 配置github self-hosted runner
+## 配置github self-hosted runner-Linux
 
 https://docs.github.com/en/actions/hosting-your-own-runners
 
@@ -55,6 +55,13 @@ sudo ./svc.sh stop
 #卸载
 sudo ./svc.sh uninstall
 ~~~
+
+## 配置github self-hosted runner-windows
+
+1. 先按照：[Add new self-hosted runner · hangx969/local-k8s-platform-tools](https://github.com/hangx969/local-k8s-platform-tools/settings/actions/runners/new)指示，配置runner。
+2. 运行./run.cmd
+
+注：可以按照[Configuring the self-hosted runner application as a service - GitHub Docs](https://docs.github.com/en/actions/how-tos/hosting-your-own-runners/managing-self-hosted-runners/configuring-the-self-hosted-runner-application-as-a-service?platform=windows)：配置成服务（由于需要Admin权限，暂时未配置成服务）
 
 ## 安装必要工具
 
