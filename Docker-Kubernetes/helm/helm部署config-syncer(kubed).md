@@ -23,10 +23,38 @@ helm pull appscode/kubed --version 0.13.2
 他们仍然在Apache 2.0 Open Source license下，所以我们可以自行通过dockerfile制作镜像，推送到我们的私有仓库中以供使用。步骤如下：
 
 ~~~sh
+# 预先下载镜像，并且docker load解压
+# appscode/golang-dev:1.17, gcr.io/distroless/static-debian11:latest
+# 安装go
+# 1. 下载最新版本的 Go（以 1.21.5 为例，请检查最新版本）
+cd /tmp
+wget https://go.dev/dl/go1.21.5.linux-amd64.tar.gz
+# 2. 删除之前的 Go 安装（如果有）
+rm -rf /usr/local/go
+# 3. 解压到 /usr/local
+sudo tar -C /usr/local -xzf go1.21.5.linux-amd64.tar.gz
+# 4. 设置环境变量
+echo 'export PATH=$PATH:/usr/local/go/bin' >> ~/.bashrc
+echo 'export GOPATH=$HOME/go' >> ~/.bashrc
+echo 'export GOBIN=$GOPATH/bin' >> ~/.bashrc
+# 5. 重新加载环境变量
+source ~/.bashrc
+# 6. 验证安装
+go version
+
+# 制作镜像
 git clone --branch 'v0.13.2' --depth 1 --verbose 'https://github.com/config-syncer/config-syncer.git' .
 make 'container-linux_amd64'
 docker save -o './kubed-image.tar' 'appscode/kubed:v0.13.2_linux_amd64'
 ~~~
+
+> 如果发现报错：`ERROR: failed to solve: gcr.io/distroless/static-debian11: failed to do request: Head "[https://gcr.io/v2/distroless/static-debian11/manifests/latest]: dial tcp 108.177.98.82:443: connect: connection refused`，修改Makefile的第243行，去掉--pull参数：
+>
+> ~~~sh
+> 	@DOCKER_CLI_EXPERIMENTAL=enabled docker buildx build --platform $(OS)/$(ARCH) --load -t $(IMAGE):$(TAG_$*) -f bin/.dockerfile-$*-$(OS)_$(ARCH) .
+> ~~~
+>
+> 这样就会加载预先解压到本地的镜像了
 
 > 在github上有用户提到了config-syncer的替代品：https://github.com/mittwald/kubernetes-replicator，后面可以尝试一下。
 
