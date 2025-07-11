@@ -24,6 +24,17 @@ helm pull oauth2-proxy/oauth2-proxy --version 7.7.1
 
 # 配置oauth2proxy
 
+## 创建redis password
+
+~~~sh
+export REDIS_PASSWD=$( openssl rand -base64 32 | head -c 32 | base64 )
+kubectl -n oauth2-proxy create secret generic oauth2-proxy-redis --from-literal=redis-password=$REDIS_PASSWD
+# 需要打上标签，后续安装helm的时候会被纳入到helm管理
+kubectl label secrets oauth2-proxy-redis -n oauth2-proxy "app.kubernetes.io/managed-by"="Helm"
+kubectl annotate secrets oauth2-proxy-redis -n oauth2-proxy "meta.helm.sh/release-name"="oauth2-proxy"
+kubectl annotate secrets oauth2-proxy-redis -n oauth2-proxy "meta.helm.sh/release-namespace"="oauth2-proxy"
+~~~
+
 ## 集成github认证
 
 - 先去github生成一个OauthAPP：https://github.com/settings/applications，复制client id和client secret。
@@ -79,6 +90,27 @@ helm pull oauth2-proxy/oauth2-proxy --version 7.7.1
     cookieName: ""
   ~~~
 
+- 后续修改了secret加载方式，先存到github secret里面，再从workflow中读取
+
+  ~~~sh
+  export helmChartVersion=${{env.oauth2proxyVersion}}
+  export helmRepoName='oauth2-proxy'
+  export helmChartName='oauth2-proxy'
+  export REDIS_PASSWORD=$(kubectl get secret --namespace "oauth2-proxy" oauth2-proxy-redis --kubeconfig $KUBECONFIG -o jsonpath="{.data.redis-password}" | base64 -d)
+  
+  helm upgrade -i oauth2-proxy -n oauth2-proxy \
+  oci://${{ env.harborURL }}/${{ env.harborProjectName }}/$helmRepoName/$helmChartName \
+  --version $helmChartVersion \
+  --history-max 5 \
+  -f ./base/external/oauth2-proxy/values.yaml \
+  --set config.clientID='${{ secrets.OAUTH2PROXY_CLIENT_ID}}' \
+  --set config.clientSecret='${{ secrets.OAUTH2PROXY_CLIENT_SECRET}}' \
+  --set config.cookieSecret='${{ secrets.OAUTH2PROXY_COOKIE_SECRET}}' \
+  --set global.redis.password=$REDIS_PASSWORD \
+  --insecure-skip-tls-verify \
+  --kubeconfig $KUBECONFIG
+  ~~~
+
 ## 配置Https
 
 - 首先部署出certmanager --> 创建clusterissuer --> 创建给oauth2proxy ingress https的secret --> helm values.yaml的ingress.tls部分配置secret、host
@@ -132,7 +164,7 @@ ingress:
 helm upgrade -i oauth2-proxy -n oauth2-proxy --create-namespace . -f values.yaml 
 ~~~
 
-- 验证安装：oauth2proxy.hanxux.local也要加到本机hosts文件中，https访问hostname即可看到oauthproxy的主页，有用github登录的提示。由于lab用的是自签证书，所以浏览器会报连接不安全。
+- 验证安装：`oauth2proxy.hanxux.local`也要加到本机hosts文件中，https访问hostname即可看到oauthproxy的主页，有用github登录的提示。由于lab用的是自签证书，所以浏览器会报连接不安全。
 
 # 使用oauth2proxy保护其他app
 
