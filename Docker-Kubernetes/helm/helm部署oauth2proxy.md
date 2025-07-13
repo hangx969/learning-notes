@@ -26,7 +26,7 @@ helm pull oauth2-proxy/oauth2-proxy --version 7.7.1
 
 ## 创建redis password
 
-oauth的sessionStorage选择使用redis，oauth helm chart会安装redis subchart。这里需要一个redis密码，保存到secret里面
+oauth的sessionStorage选择使用redis，oauth helm chart会安装redis subchart。这里需要一个redis密码，保存到secret里。
 
 ~~~sh
 export REDIS_PASSWD=$( openssl rand -base64 32 | head -c 32 | base64 )
@@ -36,6 +36,22 @@ kubectl label secrets oauth2-proxy-redis -n oauth2-proxy "app.kubernetes.io/mana
 kubectl annotate secrets oauth2-proxy-redis -n oauth2-proxy "meta.helm.sh/release-name"="oauth2-proxy"
 kubectl annotate secrets oauth2-proxy-redis -n oauth2-proxy "meta.helm.sh/release-namespace"="oauth2-proxy"
 ~~~
+
+> sessionStorage负责认证状态维护
+>
+> ```yaml
+> sessionStorage:
+>   type: redis     # 使用 Redis 存储用户会话状态
+> redis:
+>   enabled: true   # 启用内置 Redis
+> ```
+>
+> 这样的架构使得：
+>
+> - Nginx 负责流量路由和认证检查
+> - OAuth2 Proxy 负责具体的 OAuth 认证流程
+> - Redis 负责会话状态存储
+> - 所有受保护的服务都能自动获得统一的身份认证
 
 ## 集成github认证
 
@@ -72,7 +88,7 @@ kubectl annotate secrets oauth2-proxy-redis -n oauth2-proxy "meta.helm.sh/releas
 
   ~~~sh
   export CLIENT_ID="Ov23liF0QvSRG51yPKq1"
-  export CLIENT_SECRET="xxx" # 需要复制出来之后直接写入github secrets
+  export CLIENT_SECRET="xxx"
   kubectl create namespace oauth2-proxy
   kubectl -n oauth2-proxy create secret generic oauth2-proxy-creds --from-literal=cookie-secret=$COOKIE_SECRET --from-literal=client-id=$CLIENT_ID --from-literal=client-secret=$CLIENT_SECRET
   ~~~
@@ -104,7 +120,7 @@ kubectl annotate secrets oauth2-proxy-redis -n oauth2-proxy "meta.helm.sh/releas
 
 ### 方法3-github secrets
 
-- 后续修改了secret加载方式，先存到github repository secrets里面，再从workflow中读取
+- 上述方式不安全，会直接暴露secret。后续修改了secret加载方式，先存到github repository secrets里面，再从workflow中读取
 
   ~~~sh
   export helmChartVersion=${{env.oauth2proxyVersion}}
@@ -180,13 +196,108 @@ helm upgrade -i oauth2-proxy -n oauth2-proxy --create-namespace . -f values.yaml
 
 - 验证安装：`oauth2proxy.hanxux.local`也要加到本机hosts文件中，https访问hostname即可看到oauthproxy的主页，有用github登录的提示。由于lab用的是自签证书，所以浏览器会报连接不安全。
 
+# 回调URL
+
+
+
+回调 URL 是 OAuth2 授权流程中，**授权服务器（GitHub）在用户完成授权后，将用户重定向回去的目标地址**。
+
+使用回调URL的优点：
+
+1. **安全验证**
+
+- GitHub 只会将授权码发送到预先注册的回调 URL
+- 防止恶意应用窃取授权码
+
+2. **完成授权流程**
+
+- OAuth2 Proxy 通过这个 URL 接收 GitHub 返回的授权码
+- 没有这个回调，授权流程无法完成
+
+3. **状态管理**
+
+- 回调中包含 `state` 参数，用于防止 CSRF 攻击
+- OAuth2 Proxy 验证 state 确保请求的合法性
+
+## 实际示例
+
+使用的是 ingress-nginx 的**外部认证功能**来集成 OAuth2 Proxy。以访问jenkins
+
+```mermaid
+sequenceDiagram
+    participant User as 用户浏览器
+    participant IngressNginx as Ingress-Nginx Controller
+    participant OAuth2 as OAuth2 Proxy
+    participant GitHub as GitHub OAuth
+    participant Jenkins as Jenkins Pod
+
+    Note over User,Jenkins: 1. 初始访问
+    User->>IngressNginx: GET https://jenkins.hanxux.local
+    
+    Note over IngressNginx,OAuth2: 2. Nginx 外部认证检查
+    IngressNginx->>OAuth2: auth_request to https://oauth2proxy.hanxux.local/oauth2/auth
+    OAuth2->>IngressNginx: 401 Unauthorized (no valid session)
+    
+    Note over IngressNginx,User: 3. 重定向到认证
+    IngressNginx->>User: 302 Redirect to https://oauth2proxy.hanxux.local/oauth2/start?rd=https://jenkins.hanxux.local
+    
+    Note over User,GitHub: 4. OAuth2 授权流程开始
+    User->>OAuth2: GET /oauth2/start?rd=...
+    OAuth2->>User: 302 Redirect to GitHub OAuth
+    
+    User->>GitHub: GET /login/oauth/authorize?client_id=...&redirect_uri=https://oauth2proxy.hanxux.local/oauth2/callback
+    
+    Note over User,GitHub: 5. 用户在 GitHub 授权
+    GitHub->>User: 显示授权页面
+    User->>GitHub: 用户点击"授权"
+    
+    Note over GitHub,OAuth2: 6. GitHub 回调
+    GitHub->>User: 302 Redirect to https://oauth2proxy.hanxux.local/oauth2/callback?code=...&state=...
+    User->>OAuth2: GET /oauth2/callback?code=...
+    
+    Note over OAuth2,GitHub: 7. 交换访问令牌
+    OAuth2->>GitHub: POST /login/oauth/access_token (exchange code for token)
+    GitHub->>OAuth2: 返回 access_token
+    
+    OAuth2->>GitHub: GET /user (获取用户信息)
+    GitHub->>OAuth2: 返回用户信息
+    
+    Note over OAuth2,User: 8. 设置认证会话
+    OAuth2->>User: 设置认证 cookie + 302 Redirect to https://jenkins.hanxux.local
+    
+    Note over User,Jenkins: 9. 重新访问原始资源
+    User->>IngressNginx: GET https://jenkins.hanxux.local (with auth cookie)
+    
+    Note over IngressNginx,OAuth2: 10. 再次进行外部认证
+    IngressNginx->>OAuth2: auth_request to https://oauth2proxy.hanxux.local/oauth2/auth (with cookie)
+    OAuth2->>IngressNginx: 200 OK + X-Auth-Request-User headers
+    
+    Note over IngressNginx,Jenkins: 11. 转发到后端服务
+    IngressNginx->>Jenkins: GET / (with user headers)
+    Jenkins->>IngressNginx: 返回 Jenkins 页面
+    IngressNginx->>User: 返回 Jenkins 页面
+```
+
+OAuth2 Proxy 的作用：
+
+从流程可以看出，OAuth2 Proxy 在这里扮演两个关键角色：
+
+1. **认证端点** (`/oauth2/auth`): 
+   - Nginx 每次请求都会调用这个端点检查用户是否已认证
+   - 返回 200 表示已认证，401 表示未认证
+
+2. **认证流程处理器**:
+   - `/oauth2/start`: 开始 OAuth 流程
+   - `/oauth2/callback`: 处理 GitHub 回调
+
 # 使用oauth2proxy保护其他app
 
 - 在其他应用的ingress中添加annotations，详细说明参考ingress官网：https://kubernetes.github.io/ingress-nginx/examples/auth/oauth-external-auth/
-- 这两个annotations会将请求redirect到oauth2proxy，由oauth2proxy将请求转发到配置的3rd party认证endpoint
+- 这两个annotations会将请求redirect到oauth2proxy，由oauth2proxy将请求转发到配置的3rd party认证endpoint (github)
 
 ~~~yaml
 annotations:
   nginx.ingress.kubernetes.io/auth-url: "https://oauth2proxy.hanxux.local/oauth2/auth"
   nginx.ingress.kubernetes.io/auth-signin: "https://oauth2proxy.hanxux.local/oauth2/start?rd=https%3A%2F%2F<host>.hanxux.local"
 ~~~
+
