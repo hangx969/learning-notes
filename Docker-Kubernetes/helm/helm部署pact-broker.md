@@ -61,7 +61,7 @@ ingress:
   enabled: true
 
   # -- ingress.className Name of the IngressClass cluster resource which defines which controller will implement the resource (e.g nginx)
-  className: "nginx-ingress"
+  className: "nginx-default"
 
   # -- ingress.annotations Additional annotations for the Ingress resource
   annotations:

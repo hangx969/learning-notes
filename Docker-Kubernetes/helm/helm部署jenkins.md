@@ -310,4 +310,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /tmp/* ~/*.tgz
 ~~~
 
-# 
+# troubleshooting
+
+1. Jenkins Pod 启动失败，`config-reload-init` 容器报告 SSL 证书验证错误：
+
+   ~~~sh
+   config-reload-init {"time": "2025-07-11T15:04:40.489716+00:00", "level": "ERROR", "msg": "MaxRetryError: HTTPSConnectionPool(host='10.96.0.1', port=443): Max retries exceeded with url: /api/v1/namespaces/jenkins/configmaps?labelSelector=jenkins-jenkins-config (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: Missing Authority Key Identifier (_ssl.c:1028)')))"
+   ~~~
+
+   jenkins helm chart从5.8.61升级到5.8.68问题自动消失。可能是旧版本的 config-reload-init 容器对证书验证要求过于严格或者无法处理缺少 Authority Key Identifier 扩展的证书。
