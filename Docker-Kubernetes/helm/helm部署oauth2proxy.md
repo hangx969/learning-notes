@@ -26,6 +26,8 @@ helm pull oauth2-proxy/oauth2-proxy --version 7.7.1
 
 ## 创建redis password
 
+oauth的sessionStorage选择使用redis，oauth helm chart会安装redis subchart。这里需要一个redis密码，保存到secret里面
+
 ~~~sh
 export REDIS_PASSWD=$( openssl rand -base64 32 | head -c 32 | base64 )
 kubectl -n oauth2-proxy create secret generic oauth2-proxy-redis --from-literal=redis-password=$REDIS_PASSWD
@@ -37,35 +39,44 @@ kubectl annotate secrets oauth2-proxy-redis -n oauth2-proxy "meta.helm.sh/releas
 
 ## 集成github认证
 
-- 先去github生成一个OauthAPP：https://github.com/settings/applications，复制client id和client secret。
+1. 先去github生成一个OauthAPP：([Developer applications](https://github.com/settings/developers))，复制`client id`和`client secret`。
 
-- 创建一个cookie secret
+   - application name：`oauth2proxy-local`
+
+   - Homepage URL：https://oauth2proxy.hanxux.local/
+
+   - Authorization callback URL：https://oauth2proxy.hanxux.local/oauth2/callback
+
+2. 创建一个cookie secret
 
   ~~~sh
   export COOKIE_SECRET=$( openssl rand -base64 32 | head -c 32 | base64 )
   ~~~
+
+3. oauth2proxy的values.yaml里面添加github认证相关参数
+
+   ~~~yaml
+   config:
+     existingSecret: oauth2-proxy-creds
+   extraArgs:
+     provider: github
+     whitelist-domain: .hanxux.local
+     cookie-domain: .hanxux.local
+   ~~~
+
+4. 传入gitub oauth app的client id和secret
 
 ### 方法1-创建secret保存
 
 - 创建k8s secret
 
   ~~~sh
-  export CLIENT_ID="Ov23liWdMPv205NEPKqW"
-  export CLIENT_SECRET="xxx"
+  export CLIENT_ID="Ov23liF0QvSRG51yPKq1"
+  export CLIENT_SECRET="xxx" # 需要复制出来之后直接写入github secrets
   kubectl create namespace oauth2-proxy
   kubectl -n oauth2-proxy create secret generic oauth2-proxy-creds --from-literal=cookie-secret=$COOKIE_SECRET --from-literal=client-id=$CLIENT_ID --from-literal=client-secret=$CLIENT_SECRET
   ~~~
 
-- oauth2proxy的values.yaml里面添加github认证相关参数
-
-  ~~~yaml
-  config:
-    existingSecret: oauth2-proxy-creds
-  extraArgs:
-    provider: github
-    whitelist-domain: .hanxux.local
-    cookie-domain: .hanxux.local
-  ~~~
 
 ### 方法2-直接写入values
 
@@ -76,7 +87,7 @@ kubectl annotate secrets oauth2-proxy-redis -n oauth2-proxy "meta.helm.sh/releas
     # Add config annotations
     annotations: {}
     # OAuth client ID
-    clientID: "Ov23liWdMPv205NEPKqW"
+    clientID: "Ov23liF0QvSRG51yPKq1"
     # OAuth client secret
     clientSecret: "xxx"
     # Create a new secret with the following command
@@ -90,7 +101,10 @@ kubectl annotate secrets oauth2-proxy-redis -n oauth2-proxy "meta.helm.sh/releas
     cookieName: ""
   ~~~
 
-- 后续修改了secret加载方式，先存到github secret里面，再从workflow中读取
+
+### 方法3-github secrets
+
+- 后续修改了secret加载方式，先存到github repository secrets里面，再从workflow中读取
 
   ~~~sh
   export helmChartVersion=${{env.oauth2proxyVersion}}
