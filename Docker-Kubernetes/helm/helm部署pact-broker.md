@@ -65,7 +65,7 @@ ingress:
 
   # -- ingress.annotations Additional annotations for the Ingress resource
   annotations:
-    nginx.ingress.kubernetes.io/auth-url: "https://oauth2proxy.hanxux.local/oauth2/auth"
+    nginx.ingress.kubernetes.io/auth-url: "http://oauth2-proxy.oauth2-proxy.svc.cluster.local/oauth2/auth"
     nginx.ingress.kubernetes.io/auth-signin: "https://oauth2proxy.hanxux.local/oauth2/start?rd=https%3A%2F%2Fpact-broker.hanxux.local"
 
   # -- host Hostname to be used to expose the route to access the Pact Broker
@@ -125,7 +125,7 @@ helm diff upgrade pact-broker -n observability \
 pact-broker/pact-broker \
 --version 1.1.0 \
 -f values.yaml
-#--set global.postgresql.auth.password=$PSSWD 
+#--set global.postgresql.auth.password=$PSSWD
 ~~~
 
 # 升级
@@ -163,10 +163,10 @@ oci://${{ env.harborURL }}/${{ env.harborProjectName }}/$helmRepoName/$helmChart
 >              export helmChartVersion=${{env.pactVersion}}
 >              export helmRepoName='pact-broker'
 >              export helmChartName='pact-broker'
->    
+>
 >              if kubectl get secret pact-pg-local-passwd -n observability --kubeconfig $KUBECONFIG 2>&1; then
 >                PASSWD=$(kubectl get secret pact-pg-local-passwd -n observability --kubeconfig $KUBECONFIG -o jsonpath="{.data.passwd}" | base64 --decode)
->    
+>
 >                helm upgrade -i pact-broker -n observability \
 >                  oci://${{ env.harborURL }}/${{ env.harborProjectName }}/$helmRepoName/$helmChartName \
 >                  --version $helmChartVersion \
@@ -178,7 +178,7 @@ oci://${{ env.harborURL }}/${{ env.harborProjectName }}/$helmRepoName/$helmChart
 >              else
 >                PASSWD=$( openssl rand -base64 10 )
 >                kubectl create secret generic pact-pg-local-passwd --from-literal=passwd=$PASSWD --namespace=observability --kubeconfig $KUBECONFIG
->    
+>
 >                helm upgrade -i pact-broker -n observability \
 >                  oci://${{ env.harborURL }}/${{ env.harborProjectName }}/$helmRepoName/$helmChartName \
 >                  --version $helmChartVersion \

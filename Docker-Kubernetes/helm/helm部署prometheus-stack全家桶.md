@@ -45,7 +45,7 @@ cd kube-prometheus-stack
 
 ~~~yaml
 #修改两个镜像源
-vim values.yaml 
+vim values.yaml
 ##将
 ---
       image:
@@ -58,7 +58,7 @@ vim values.yaml
         registry: registry.cn-hangzhou.aliyuncs.com/google_containers
         repository: kube-webhook-certgen
         tag: v20221220-controller-v1.5.1-58-g787ea74b6
-        
+
 vim charts/kube-state-metrics/values.yaml
 #将
 ---
@@ -79,7 +79,7 @@ image:
 ~~~yaml
 #将prometheus和alertManager数据持久化
 #需要提前部署nfs-provisioner和默认存储类
-vim values.yaml 
+vim values.yaml
 ---
     storage:
       volumeClaimTemplate:
@@ -289,7 +289,7 @@ EOF
 
 ~~~yaml
 annotations:
-  nginx.ingress.kubernetes.io/auth-url: "https://oauth2proxy.hanxux.local/oauth2/auth"
+  nginx.ingress.kubernetes.io/auth-url: "http://oauth2-proxy.oauth2-proxy.svc.cluster.local/oauth2/auth"
   nginx.ingress.kubernetes.io/auth-signin: "https://oauth2proxy.hanxux.local/oauth2/start?rd=https%3A%2F%2Fgrafana.hanxux.local"
 ~~~
 
@@ -340,7 +340,7 @@ metadata:
   labels:
     grafana_dashboard: "1"
 data:
-  grafana_dashboard_{{- .file_path | replace "dashboards/" "" }}: |- 
+  grafana_dashboard_{{- .file_path | replace "dashboards/" "" }}: |-
 {{ $.Files.Get .file_path | indent 4 }}
 {{- end }}
 ~~~
@@ -348,7 +348,7 @@ data:
 - 安装命令
 
 ~~~sh
-helm upgrade -i grafana-dashboards-config -n monitoring . --values values.yaml 
+helm upgrade -i grafana-dashboards-config -n monitoring . --values values.yaml
 ~~~
 
 # helm管理grafana datasources
@@ -422,7 +422,7 @@ EOF
                objectName: <the object name of keyvault>
                objectType: secret
                objectVersion: ""
-     
+
          tenantId: "<tenant-id>"
        # This creates an actual secret that we can use
        secretObjects:
@@ -487,7 +487,7 @@ EOF
          # 背景：info的alert正常情况下会noisy，但是每当有warning/critical的alert出现时，info又会提供有价值的信息。
          # 在同一个namespace下，InfoInhibitor会在Info alert触发之后触发，压制Info alert；但又会在有warning/critical出现后停止触发，不压制那时的Info alert。
          # Refer to: https://runbooks.prometheus-operator.dev/runbooks/general/infoinhibitor/
-             - 'alertname = InfoInhibitor' 
+             - 'alertname = InfoInhibitor'
            target_matchers:
              - 'severity = info'
            equal:
@@ -536,7 +536,7 @@ EOF
            {{ end }}
          {{ end }}
          {{ end }}
-     
+
        # Additional volumes on the output StatefulSet definition.
        volumes:
          - name: <volume-name>
@@ -545,7 +545,7 @@ EOF
              readOnly: true
              volumeAttributes:
                secretProviderClass: "sp-alertmanager"
-   
+
        # Additional VolumeMounts on the output StatefulSet definition.
        volumeMounts:
          - name: <volume-name>
@@ -673,7 +673,7 @@ spec:
       annotations:
         summary: "ArgoCD Application Controller Reconciliation Latency High ({{ $labels.namespace }})"
         description: "The reconciliation latency for ArgoCD application controller in namespace {{ $labels.namespace }} is over 1 second for more than 2 minutes."
-        
+
     # ArgoCD Server 高请求错误率告警
     - alert: ArgoCDServerHighRequestErrorRate
       expr: rate(argocd_server_http_requests_total{status=~"5.*"}[5m]) > 0.05

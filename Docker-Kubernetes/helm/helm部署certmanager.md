@@ -10,7 +10,7 @@
 # 拉取
 
 ~~~sh
-helm repo add jetstack https://charts.jetstack.io 
+helm repo add jetstack https://charts.jetstack.io
 helm repo update jetstack
 helm pull jetstack/cert-manager --version v1.16.1
 ~~~
@@ -95,7 +95,7 @@ certificate.cert-manager.io/app01   True    app01-tls-cert-secret   16s
 
 ### pod挂载certificate
 
-- pod用volume挂载secret，用环境变量指定证书位置。app中需要提前配置好https 
+- pod用volume挂载secret，用环境变量指定证书位置。app中需要提前配置好https
 
 ~~~yaml
 tee deploy-app01.yaml <<'EOF'
@@ -172,7 +172,7 @@ EOF
       enabled: true
       ingressClassName: nginx-default
       annotations:
-        nginx.ingress.kubernetes.io/auth-url: "https://oauth2proxy.hanxux.local/oauth2/auth"
+        nginx.ingress.kubernetes.io/auth-url: "http://oauth2-proxy.oauth2-proxy.svc.cluster.local/oauth2/auth"
         nginx.ingress.kubernetes.io/auth-signin: "https://oauth2proxy.hanxux.local/oauth2/start?rd=https%3A%2F%2Fkyverno.hanxux.local"
       hosts:
         - host: kyverno.hanxux.local
@@ -265,12 +265,12 @@ spec:
     - dns01:
     	# clusterissuer支持的resolver类型有限，必须选一种dns server来配置。
         # 通过命令查看：k explain clusterissuer.spec.acme.solvers.dns01
-        cloudflare: 
+        cloudflare:
           email: xxxxx
           #指定存储着API token的secret，secret的名字为cloudflare-api-token-secret，secret的key为api-token
           apiTokenSecretRef:
             key: api-token
-            name: cloudflare-api-token-secret        
+            name: cloudflare-api-token-secret
 ~~~
 
 #### 申请证书
@@ -290,9 +290,9 @@ spec:
   issuerRef:
     kind: ClusterIssuer
     #name: letsencrypt-dns01表示使用哪个ClusterIssuer申请证书
-    name: letsencrypt-dns01 
+    name: letsencrypt-dns01
   #secretName: cert-zheli-com-tls表示申请到的证书放在哪个secret里面
-  secretName: cert-zheli-com-tls 
+  secretName: cert-zheli-com-tls
 ~~~
 
 - 查看相关资源
@@ -317,8 +317,8 @@ metadata:
   name: my-ingress
 spec:
   ingressClassName: nginx-default
-  tls: 
-  - hosts: 
+  tls:
+  - hosts:
     - www.rengshengdezheli.xyz
     secretName: cert-zheli-com-tls
   rules:
@@ -405,8 +405,8 @@ metadata:
     cert-manager.io/cluster-issuer: "letsencrypt-dns01"
 spec:
   ingressClassName: nginx-default
-  tls: 
-  - hosts: 
+  tls:
+  - hosts:
     - www.rengshengdezheli.xyz
     secretName: cert-zheli-com-tls
   rules:
@@ -517,7 +517,7 @@ serviceAccount:
   ~~~
 
   删掉cert-manager-webhook-86b8dc6c77-hczkm这个pod重建就好了
-  
+
 - cert-manager-config中部署的certificate会自动帮你创建secrets，但是经历certificate重建之后，关联的secret并不会被删除，需要手动删除掉之后，会自动重建。
 
 # helm管理配置文件

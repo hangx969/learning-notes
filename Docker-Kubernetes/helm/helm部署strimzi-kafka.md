@@ -704,7 +704,7 @@ helm upgrade -i commoninfra-kafka-config -n kube-system . --values ./values/valu
         - Describe
         - Read
   ~~~
-  
+
 - 安装
 
   ~~~sh
@@ -756,7 +756,7 @@ ingress:
 
   # Annotations for the Ingress
   annotations:
-    nginx.ingress.kubernetes.io/auth-url: "https://oauth2proxy.hanxux.local/oauth2/auth"
+    nginx.ingress.kubernetes.io/auth-url: "http://oauth2-proxy.oauth2-proxy.svc.cluster.local/oauth2/auth"
     nginx.ingress.kubernetes.io/auth-signin: "https://oauth2proxy.hanxux.local/oauth2/start?rd=https%3A%2F%2Fkafka-ui.hanxux.local"
 
   # ingressClassName for the Ingress
@@ -781,7 +781,7 @@ ingress:
 
 ~~~yaml
 annotations:
-  nginx.ingress.kubernetes.io/auth-url: "https://oauth2proxy.hanxux.local/oauth2/auth"
+  nginx.ingress.kubernetes.io/auth-url: "http://oauth2-proxy.oauth2-proxy.svc.cluster.local/oauth2/auth"
   nginx.ingress.kubernetes.io/auth-signin: "https://oauth2proxy.hanxux.local/oauth2/start?rd=https%3A%2F%2Fkafka-ui.hanxux.local"
 ~~~
 

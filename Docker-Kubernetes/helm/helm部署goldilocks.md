@@ -43,7 +43,7 @@ dashboard:
         hosts:
           - goldilocks.hanxux.local
     annotations:
-      nginx.ingress.kubernetes.io/auth-url: "https://oauth2proxy.hanxux.local/oauth2/auth"
+      nginx.ingress.kubernetes.io/auth-url: "http://oauth2-proxy.oauth2-proxy.svc.cluster.local/oauth2/auth"
       nginx.ingress.kubernetes.io/auth-signin: "https://oauth2proxy.hanxux.local/oauth2/start?rd=https%3A%2F%2Fgoldilocks.hanxux.local"
 ~~~
 

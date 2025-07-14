@@ -217,7 +217,7 @@ ingress-nginx → Grafana Service → Grafana Pod
 ````yaml
 controller:
   # ...existing code...
-  
+
   # 禁用 hostNetwork 模式
   hostNetwork: false
   # 移除 hostPort 配置
@@ -226,7 +226,7 @@ controller:
   #   ports:
   #     http: 80
   #     https: 443
-  
+
   # 启用 Service 并配置为 NodePort
   service:
     enabled: true
@@ -237,10 +237,10 @@ controller:
     nodePorts:
       http: 30080    # 指定 NodePort 端口
       https: 30443   # 指定 NodePort 端口
-  
+
   # DNS 策略可以改回默认值
   dnsPolicy: ClusterFirst
-  
+
   # ...existing code...
 ````
 
@@ -293,9 +293,9 @@ netsh interface portproxy add v4tov4 listenport=443 listenaddress=0.0.0.0 connec
 3. **网络流量路径**
 
 ```
-[Windows 电脑:浏览器] 
+[Windows 电脑:浏览器]
         ↓ HTTP请求 grafana.hanxux.local:80
-[端口转发规则] 
+[端口转发规则]
         ↓ 80 → 30080 转发
 [VMware 虚拟网络层]
         ↓ 网络包转发到 30080
@@ -336,13 +336,13 @@ netsh interface portproxy add v4tov4 listenport=443 listenaddress=0.0.0.0 connec
 
 ~~~yaml
 annotations:
-  nginx.ingress.kubernetes.io/auth-url: "https://oauth2proxy.hanxux.local/oauth2/auth"
+  nginx.ingress.kubernetes.io/auth-url: "http://oauth2-proxy.oauth2-proxy.svc.cluster.local/oauth2/auth"
   nginx.ingress.kubernetes.io/auth-signin: "https://oauth2proxy.hanxux.local/oauth2/start?rd=https%3A%2F%2Fgrafana.hanxux.local"
 ~~~
 
-- ingress可以配置的annotations：https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/，可以实现其他流量控制等功能。
+> 注意这里的auth-url写的是oauth2proxy的svc地址。而不是oauth的ingress url（oauth2proxy.hanxux.local），是因为这个auth-url是在ingress pod内部去请求的，来找oauth获取是否认证的信息。如果写oauth2proxy.hanxux.local，pod内部用的是coreDNS，解析不了。写svc地址就可以解析了。
 
-# 
+- ingress可以配置的annotations：https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/，可以实现其他流量控制等功能。
 
 # 实战--流量复制/流量镜像
 
@@ -423,7 +423,7 @@ metadata:
             # 自定义字符串，会作为请求头X-Shadow-Service值传给mirror server
             set $shadow_service_name    "nginx-product-service";
             proxy_set_header X-Shadow-Service  $shadow_service_name;
-            proxy_set_header Host $mirror_servers1; 
+            proxy_set_header Host $mirror_servers1;
             proxy_pass http://$mirror_servers1$request_uri;
         }
         # 配置第2个接收复制的集群
@@ -431,7 +431,7 @@ metadata:
             internal;
             # 不打印mirror请求日志
             #access_log off;
-            # 设置proxy_upstream_name，格式必须为[Namespace]-[BackendServiceName]-[BackendServicePort] 
+            # 设置proxy_upstream_name，格式必须为[Namespace]-[BackendServiceName]-[BackendServicePort]
             set $proxy_upstream_name    "default-nginx-service-80";
             # 自定义字符串，会作为请求头X-Shadow-Service值传给mirror server
             set $shadow_service_name    "nginx-product-service";

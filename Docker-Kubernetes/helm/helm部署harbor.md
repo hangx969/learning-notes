@@ -113,7 +113,7 @@ expose:
       nginx.ingress.kubernetes.io/ssl-redirect: "true"
       nginx.ingress.kubernetes.io/proxy-body-size: "0"
       #开启oauth2proxy认证之后，helm registry login就会失败
-      #nginx.ingress.kubernetes.io/auth-url: "https://oauth2proxy.hanxux.local/oauth2/auth"
+      #nginx.ingress.kubernetes.io/auth-url: "http://oauth2-proxy.oauth2-proxy.svc.cluster.local/oauth2/auth"
       #nginx.ingress.kubernetes.io/auth-signin: "https://oauth2proxy.hanxux.local/oauth2/start?rd=https%3A%2F%2Fharbor.hanxux.local"
     # ingress-specific labels
     labels: {}
@@ -794,4 +794,4 @@ version = 2
 
 > 注意：所有k8s节点都需要在/etc/hosts里面加上harbor域名和node ip的映射。
 
-## 
+##
