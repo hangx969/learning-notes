@@ -11,7 +11,7 @@
 
 - 因为K8s中Pod是易变的, Pod IP在更新中会自动修改, 使用Service能使访问入口相对固定, 但是Service IP在集群外不能访问, 要对外提供访问, 只能把Service以NodePort, LoadBalancer这些方式Expose出去, 但是NodePort会与每一个Node主机绑定, 而LoadBalancer要云服务商提供相应的服务 (或自己安装)
 - Ingress 启动一个独立的Pod来运行七层代理, 可以是 Nginx, Traefik 或者是 Envoy. Ingress Pod会直接代理后端提供服务的Pod, 为了能监听后端Pod的变化, 需要一个 Headless Service 通过Selector选择指定的Pod, 并收集到Pod对应的IP. 一旦后端Pod产生变化, Headless Service 会自动根据变化更改配置文件并重载。如果使用的是 Nginx 类型的 Ingress Pod, 则每次变化后通过reload修改过的配置文件实现规则更新.
-- 集群内节点上运行web七层代理所对应的Pod, 由此Pod代理集群内部的Service, Service再把流量转发给集群内部对应的Pod, 这就叫做 Ingress Controller。
+- 集群内节点上运行web七层代理nginx所对应的Pod, 由nginx Pod代理到集群内部的Service, Service再把流量转发给集群内部对应的Pod, 这就叫做 Ingress Controller。
 
 
 # 下载
@@ -23,39 +23,57 @@ helm repo update ingress-nginx
 helm pull ingress-nginx/ingress-nginx --version "${INGRESS_NGINX_VERSION#helm-chart-}" #4.10.1
 ~~~
 
-# 配置
+# 配置hostnetwork模式
 
-- 参照mimer的ado上的配置代码
+- [Bare-metal considerations - Ingress-Nginx Controller](https://kubernetes.github.io/ingress-nginx/deploy/baremetal/#via-the-host-network)
 
-- 本地集群额外需要修改的地方：
+## hostnetwork
 
-  - `controller.service.type：cloud`上用的是LoadBalancer，本地集群上External IP会创建不出来；所以直接用NodePort
+- `controller.service.type：cloud`上用的是LoadBalancer，本地虚拟机集群上External IP会创建不出来；所以disable掉暂时不需要service。
+- `controller.hostNetwork=true，controller.hostPort.enabled=true`，ingress-nginx pod用宿主机网络栈，并且开启节点宿主机80、443端口，否则nginx会报404
 
-  - `controller.hostNetwork=true，controller.hostPort.enabled=true`，开启工作节点主机80 443端口，否则nginx会报404
+## DNS policy
 
-  - hosts文件还是配置任意工作节点IP
+[DNS for Services and Pods | Kubernetes](https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-s-dns-policy)
 
-    172.16.183.101 prometheus.hanxux.local alertmanager.hanxux.local grafana.hanxux.local
-    
-    > 注意：hosts文件里面写哪个host的IP取决于ingress-controller的pod调度到了哪个host上面，保险起见需要把`controller.sutoscaling`里面设置成3个replica,这样每个host都有pod可以接收80端口的请求。
+- `controller.dnsPolicy: ClusterFirstWithHostNet`，让ingress-nginx pod可以用kube-dns解析集群内的svc
+- 虚拟机和虚拟机外面的hosts文件还是配置任意工作节点IP
+
+> 注意：
+>
+> 1. hosts文件里面写哪个节点的IP取决于ingress-controller的pod调度到了哪个节点上面，保险起见可以这样做：
+>
+> - `controller.sutoscaling`里面设置至少3个replica，
+>
+> - 或者replicaCount设置为3。
+>
+> - 或者干脆直接把controller type设为daemonset
+>
+>   这样每个host都有pod可以接收80端口的请求。
+>
+> 2. 当 Pod 设置 hostNetwork: true 时：
+>
+>    - Pod 会使用宿主机的网络命名空间
+>
+>    - 默认情况下，Pod 会使用宿主机的 DNS 配置（/etc/resolv.conf）
+>
+>      这意味着 Pod 无法解析 Kubernetes 集群内部的服务名称，如：
+>
+>      kubernetes.default.svc.cluster.local
+>
+>      oauth2-proxy.oauth2-proxy.svc.cluster.local
+>
+>    - ClusterFirstWithHostNet 的解决方案：设置 dnsPolicy: ClusterFirstWithHostNet 后：
+>
+>      - 优先使用 CoreDNS（集群内部 DNS）来解析域名
+>      - 能够解析 Kubernetes 集群内部服务
+>      - 如果集群 DNS 解析失败，则回退到宿主机的 DNS
 
 # 安装
 
 ~~~sh
 helm upgrade -i ingress-nginx -n ingress-nginx . -f values.yaml --create-namespace
 ~~~
-
-# 集成oauth2proxy
-
-- 给ingress添加annotations：
-
-~~~yaml
-annotations:
-  nginx.ingress.kubernetes.io/auth-url: "https://oauth2proxy.hanxux.local/oauth2/auth"
-  nginx.ingress.kubernetes.io/auth-signin: "https://oauth2proxy.hanxux.local/oauth2/start?rd=https%3A%2F%2Fgrafana.hanxux.local"
-~~~
-
-- ingress可以配置的annotations：https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/，可以实现其他流量控制等功能。
 
 # 配置HTTPS访问
 
@@ -108,6 +126,223 @@ EOF
 ## Letsencrypt证书
 
 - 参考azure文档：https://learn.microsoft.com/en-us/previous-versions/azure/aks/ingress-tls?tabs=azure-cli#install-cert-manager
+
+# hostnetwork的流量代理过程
+
+基于当前的 ingress-nginx 配置，从 Windows 电脑访问 `grafana.hanxux.local` 到达 K8s 后端 Pod 的完整请求流程：
+
+1. **DNS 解析阶段**
+
+```sh
+Windows 电脑 → DNS 查询 grafana.hanxux.local
+```
+- Windows 电脑上的浏览器发起对 `grafana.hanxux.local` 的 DNS 查询
+- 需要在 Windows 的 `hosts` 文件或 DNS 服务器中配置该域名指向 VMware 虚拟机的 IP 地址
+- 例如：`192.168.x.x grafana.hanxux.local`（虚拟机的 IP）
+
+2. **网络路由阶段**
+
+```sh
+Windows 电脑 → VMware 虚拟网络 → K8s 节点
+```
+- 请求通过 VMware 的虚拟网络接口发送到虚拟机
+- 由于您配置了 `hostNetwork: true`，ingress-nginx Pod 直接使用宿主机的网络栈
+
+3. **Ingress Controller 接收阶段**
+
+**请求处理流程：**
+
+```sh
+Windows:浏览器 → VMware虚拟网络 → K8s节点:80端口 → ingress-nginx Pod
+```
+
+4. **Ingress 规则匹配阶段**
+
+- ingress-nginx Controller 接收到请求后，检查 HTTP Host 头部（`grafana.hanxux.local`）
+- 根据 Ingress 资源中定义的规则进行匹配
+- 找到对应的后端服务配置
+
+5. **DNS 解析后端服务阶段**
+
+由于配置了：
+```yaml
+dnsPolicy: ClusterFirstWithHostNet
+```
+
+- ingress-nginx Pod 使用 K8s 集群的 DNS（CoreDNS）来解析后端服务名
+- 例如解析 `grafana-service.monitoring.svc.cluster.local` 到对应的 Cluster IP
+
+6. **负载均衡转发阶段**
+
+```sh
+ingress-nginx → Grafana Service → Grafana Pod
+```
+
+- ingress-nginx 根据 Ingress 规则将请求转发给对应的 Service
+- Service 通过 iptables/ipvs 规则进行负载均衡
+- 最终请求到达 Grafana Pod
+
+**完整的数据流路径**
+
+```sh
+[Windows 电脑:浏览器]
+        ↓ HTTP请求 grafana.hanxux.local
+[VMware 虚拟网络层]
+        ↓ 网络包转发
+[K8s节点:80端口] (hostNetwork模式)
+        ↓ 端口绑定
+[ingress-nginx Pod] (DaemonSet)
+        ↓ Host头匹配 + 路由规则
+[Grafana Service] (ClusterIP)
+        ↓ 负载均衡
+[Grafana Pod] (目标容器)
+```
+
+**关键配置的作用**
+
+1. **`hostNetwork: true`** - 让 ingress-nginx 直接使用宿主机网络，避免额外的网络层转发
+2. **`hostPort.enabled: true`** - 直接绑定宿主机的 80/443 端口
+3. **`kind: DaemonSet`** - 确保每个节点都有 ingress controller
+4. **`service.enabled: false`** - 不需要 Service，因为使用了 hostNetwork 模式
+5. **`dnsPolicy: ClusterFirstWithHostNet`** - 确保能正确解析集群内服务名
+
+这种配置特别适合单节点或裸机部署，能够提供最直接的网络路径和最佳性能。
+
+# Nodeport模式的流量代理过程
+
+上面是采用hostNetwork模式，请求直接到达宿主机80/443端口，被ingress-controller pod接收。还可以给ingress controller开一个NodePort service，请求先到NodePort Service再给ingress-controller。
+
+需要将 `values.yaml` 修改为：
+
+````yaml
+controller:
+  # ...existing code...
+  
+  # 禁用 hostNetwork 模式
+  hostNetwork: false
+  # 移除 hostPort 配置
+  # hostPort:
+  #   enabled: true
+  #   ports:
+  #     http: 80
+  #     https: 443
+  
+  # 启用 Service 并配置为 NodePort
+  service:
+    enabled: true
+    type: NodePort
+    ports:
+      http: 80
+      https: 443
+    nodePorts:
+      http: 30080    # 指定 NodePort 端口
+      https: 30443   # 指定 NodePort 端口
+  
+  # DNS 策略可以改回默认值
+  dnsPolicy: ClusterFirst
+  
+  # ...existing code...
+````
+
+原有 hostNetwork 模式流程：
+
+```
+Windows电脑 → VMware虚拟网络 → K8s节点:80 → ingress-nginx Pod
+```
+
+NodePort 模式流程：
+
+```
+Windows电脑 → VMware虚拟网络 → K8s节点:30080 → NodePort Service → ingress-nginx Pod:80
+```
+
+**详细实现步骤**：
+
+1. **DNS 配置调整**
+
+在 Windows 的 `hosts` 文件中，需要指定端口：
+```sh
+# 方式1：在 hosts 文件中仍然指向虚拟机IP（需要端口转发）
+192.168.x.x grafana.hanxux.local
+
+# 方式2：直接在浏览器中访问带端口的URL
+http://grafana.hanxux.local:30080
+```
+
+2. **端口转发解决方案**
+
+由于域名访问默认使用 80/443 端口，有几种方案：
+
+**方案A：使用端口转发（推荐）**
+在 VMware 虚拟机或宿主机上配置端口转发：
+
+```bash
+# 在 Linux 虚拟机上使用 iptables
+sudo iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to-port 30080
+sudo iptables -t nat -A PREROUTING -p tcp --dport 443 -j REDIRECT --to-port 30443
+```
+
+**方案B：在 Windows 上使用 netsh**
+
+```powershell
+# 在 Windows 上配置端口转发
+netsh interface portproxy add v4tov4 listenport=80 listenaddress=0.0.0.0 connectport=30080 connectaddress=192.168.x.x
+netsh interface portproxy add v4tov4 listenport=443 listenaddress=0.0.0.0 connectport=30443 connectaddress=192.168.x.x
+```
+
+3. **网络流量路径**
+
+```
+[Windows 电脑:浏览器] 
+        ↓ HTTP请求 grafana.hanxux.local:80
+[端口转发规则] 
+        ↓ 80 → 30080 转发
+[VMware 虚拟网络层]
+        ↓ 网络包转发到 30080
+[K8s节点:30080] (NodePort)
+        ↓ iptables/kube-proxy 规则
+[ingress-nginx Service] (ClusterIP)
+        ↓ 负载均衡
+[ingress-nginx Pod:80] (容器端口)
+        ↓ Host头匹配 + 路由规则
+[Grafana Service] (ClusterIP)
+        ↓ 负载均衡
+[Grafana Pod] (目标容器)
+```
+
+**NodePort 模式的优缺点**
+
+优点：
+
+1. **标准 K8s 模式** - 更符合 Kubernetes 最佳实践
+2. **端口隔离** - 避免与宿主机其他服务的端口冲突
+3. **更好的可移植性** - 可以轻松迁移到云环境
+4. **支持多副本** - 不受 hostNetwork 的单节点限制
+
+缺点：
+
+1. **额外的网络跳转** - 性能略有损失
+2. **端口映射复杂性** - 需要配置端口转发
+3. **端口范围限制** - NodePort 默认范围 30000-32767
+
+特点：
+
+1. **保持现有的 hostNetwork 模式** - 对于单节点开发环境，性能和简洁性更佳
+2. **如果需要 NodePort 模式** - 使用方案A的 iptables 端口转发，配置简单且稳定
+
+# 集成oauth2proxy
+
+- 给ingress添加annotations：
+
+~~~yaml
+annotations:
+  nginx.ingress.kubernetes.io/auth-url: "https://oauth2proxy.hanxux.local/oauth2/auth"
+  nginx.ingress.kubernetes.io/auth-signin: "https://oauth2proxy.hanxux.local/oauth2/start?rd=https%3A%2F%2Fgrafana.hanxux.local"
+~~~
+
+- ingress可以配置的annotations：https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/，可以实现其他流量控制等功能。
+
+# 
 
 # 实战--流量复制/流量镜像
 
