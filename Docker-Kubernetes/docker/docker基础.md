@@ -22,6 +22,8 @@ sudo systemctl start docker
 
 ### 进阶版
 
+> 安装docker前可以配置docker阿里云的源：[docker-ce镜像_docker-ce下载地址_docker-ce安装教程-阿里巴巴开源镜像站](https://developer.aliyun.com/mirror/docker-ce)
+
 ```bash
 #配置主机名：
 hostnamectl set-hostname dockerlab && bash
@@ -122,10 +124,6 @@ Got permission denied while trying to connect to the Docker daemon socket at uni
 chmod 666 /var/run/docker.sock
 ```
 
-Docker镜像加速器：
-
-<img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202310141551863.png" alt="image-20231014155157774" style="zoom: 67%;" />
-
 ## docker安装-ubuntu
 
 ~~~sh
@@ -177,9 +175,22 @@ newgrp docker
 
 # docker基础
 
+## 基础架构演变
+
+1. 物理机：宕机风险高影响大，维护、扩展困难，资源利用率差，隔离性差。
+2. 虚拟机：一个物理机上创建多个虚拟机。维护扩展方便。但是多虚拟机管理不方便。
+3. 云计算：由平台管理多台虚拟机，降低维护难度。但是迁移性差、环境配置复杂。
+4. 容器：启动快，环境可移植，一次构建到处运行。多容器管理成为问题。
+5. 容器编排/容器云：负载均衡、高可用。下一代云计算技术。
+6. Serverless：函数即服务。公有云使用较多。
+
 ## docker介绍
 
-优点：
+**概念：**
+
+容器是一种轻量级虚拟化，用于将应用程序和依赖的组件打包在一起，以便在不同的环境中进行移植和运行。
+
+**优点：**
 
 - 基于work on my machine的问题，Docker应运而生，由dotCloud小公司开发，2013年开源，发展壮大。基于Go语言。
 - 只需要Linux核心环境，4M左右 + 其他环境。传统VM虚拟出整套硬件，运行完整操作系统，在这个系统上运行程序；而容器内的应用直接运行在宿主机的内核，没有自己的内核，不需要自己的OS和硬件，更轻便。
@@ -187,28 +198,156 @@ newgrp docker
 
 ![image-20240725230020449](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202407252300573.png)
 
-工作原理：
+**工作原理：**
 
 - docker 是一个client - server 结构的系统，docker的守护进程运行在主机上，通过socket从客户端访问server。server接到client的命令，再执行
 
 <img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202407252107550.png" alt="image-20240725210736431" style="zoom:50%;" />
 
+**docker的优点：**
+
+- 真正的一次构建、到处运行
+- 更强的一致性
+- 可移植性极强
+- 提升资源利用率
+- 创建和启动速度快
+- 更细粒度的隔离性
+
+**docker失宠，为什么还要用：**
+
+- docker依旧是产品交付的最佳实践
+- docker依旧是本地开发和测试的首选。兼容性非常强。
+- docker镜像和容器管理依旧最为灵活，构建镜像的功能非常完善，支持异构。
+- 没有使用k8s的企业还是会使用docker来做容器管理。
+
 ## docker镜像原理
 
-- 什么是docker镜像：轻量级、可运行的独立软件包，包含了软件运行所需的所有内容：代码、runtime、library、环境变量、配置文件等。runtime 是一个通用抽象的术语，指的是计算机程序运行的时候所需要的一切代码库，框架，平台等。
+docker镜像：轻量级、可运行的独立软件包，包含了软件运行所需的所有内容：代码、runtime、library、环境变量、配置文件等。runtime 是一个通用抽象的术语，指的是计算机程序运行的时候所需要的一切代码库，框架，平台等。
 
-联合文件系统-Union File System
+**联合文件系统-Union File System**
 
 - 分层、高性能、轻量级的文件系统。对文件系统的修改作为一次提交，一层一层的叠加。
 
 ![image-20240725215052857](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202407252150096.png)
 
-- 对于一个精简OS，rootfs可以很小，只需包含基本命令，工具和库。底层用的是宿主机的kernel，自己只需要提供rootfs即可。docker镜像的最底层是boofts。bootfs几乎是不变的，各种镜像bootfs是通用的。
+- 对于一个精简OS，rootfs可以很小，只需包含基本命令，工具和库。底层用的是宿主机的kernel，自己只需要提供**rootfs**即可。docker镜像的最底层是boofts。bootfs几乎是不变的，各种镜像bootfs是通用的。
 - docker镜像相当于一个只读的模板，每一次操作都在其上创建一层可写层。可写层：容器层；只读层：镜像层
 
 ## docker常用命令
 
-![image-20240725214230360](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202407252142602.png)
+- 查看docker版本
+
+~~~sh
+docker version
+Client: Docker Engine - Community
+ Version:           26.1.3
+ API version:       1.43 (downgraded from 1.45)
+ Go version:        go1.21.10
+ Git commit:        b72abbb
+ Built:             Thu May 16 08:34:39 2024
+ OS/Arch:           linux/amd64
+ Context:           default
+
+Server: Docker Engine - Community
+ Engine:
+  Version:          24.0.6
+  API version:      1.43 (minimum version 1.12)
+  Go version:       go1.20.7
+  Git commit:       1a79695
+  Built:            Mon Sep  4 12:32:10 2023
+  OS/Arch:          linux/amd64
+  Experimental:     false
+ containerd:
+  Version:          1.6.22
+  GitCommit:        8165feabfdfe38c65b599c4993d227328c231fca
+ runc:
+  Version:          1.1.8
+  GitCommit:        v1.1.8-0-g82f18fe
+ docker-init:
+  Version:          0.19.0
+  GitCommit:        de40ad0
+# OCI：Open Container Initiative的简称，由Linux基金会主导开发OCI规范和标准，目的是围绕容器格式和Runtime（运行时）制定的一个开放的工业化标准。
+# Containerd： Docker为了兼容OCI标准， 将容器Runtime及其管理功能从Docker守护进程中剥离出来，用于不启动Docker也能直接通过Containerd来管理容器。
+# RunC：Docker按照OCF（Open  Container  Format）开放容器格式标准制定的一个轻量级工具，可以使用RunC不通过Docker引擎即可实现容器的启动、停止和资源隔离等功能
+~~~
+
+- 查看docker详细信息
+
+~~~sh
+docker info
+Client: Docker Engine - Community
+ Version:    26.1.3
+ Context:    default
+ Debug Mode: false
+ Plugins:
+  buildx: Docker Buildx (Docker Inc.)
+    Version:  v0.14.0
+    Path:     /usr/libexec/docker/cli-plugins/docker-buildx
+  compose: Docker Compose (Docker Inc.)
+    Version:  v2.27.0
+    Path:     /usr/libexec/docker/cli-plugins/docker-compose
+# buildx支持异构镜像制作，比如在x86的机器上制作ARM的镜像
+# docker client自带docker-compose插件但是我们一般不用，一般是下载一个docker-compose二进制文件去运行
+Server:
+ Containers: 0
+  Running: 0
+  Paused: 0
+  Stopped: 0
+ Images: 8
+ Server Version: 24.0.6
+ Storage Driver: overlay2 # 存储驱动，一定要是overlay2。不能是device-mapper，不建议生产环境使用。
+  Backing Filesystem: xfs
+  Supports d_type: true
+  Using metacopy: false
+  Native Overlay Diff: true
+  userxattr: false
+ Logging Driver: json-file # docker日志驱动。json-file是本地存储日志。
+ Cgroup Driver: cgroupfs # cgroup驱动程序。新版用的是systemd
+ Cgroup Version: 1
+ Plugins:
+  Volume: local
+  Network: bridge host ipvlan macvlan null overlay
+  Log: awslogs fluentd gcplogs gelf journald json-file local logentries splunk syslog
+ Swarm: inactive
+ Runtimes: io.containerd.runc.v2 runc
+ Default Runtime: runc
+ Init Binary: docker-init
+ containerd version: 8165feabfdfe38c65b599c4993d227328c231fca
+ runc version: v1.1.8-0-g82f18fe
+ init version: de40ad0
+ Security Options:
+  seccomp
+   Profile: builtin
+ Kernel Version: 4.18.0-553.58.1.el8_10.x86_64
+ Operating System: Rocky Linux 8.10 (Green Obsidian)
+ OSType: linux
+ Architecture: x86_64
+ CPUs: 8
+ Total Memory: 5.767GiB
+ Name: rm1
+ ID: 54d52a93-dd74-4e92-a9a8-c69f744ef67c
+ Docker Root Dir: /var/lib/docker # docker数据目录
+ Debug Mode: false
+ Experimental: false
+ Insecure Registries:
+  172.16.183.100
+  harbor.hanxux.local
+  127.0.0.0/8
+ Registry Mirrors:
+  https://a88uijg4.mirror.aliyuncs.com/
+  https://docker.lmirror.top/
+  https://docker.m.daocloud.io/
+  https://hub.uuuadc.top/
+  https://docker.anyhub.us.kg/
+  https://dockerhub.jobcher.com/
+  https://dockerhub.icu/
+  https://docker.ckyl.me/
+  https://docker.awsl9527.cn/
+  https://docker.laoex.link/
+ Live Restore Enabled: false # true是重启docker进程的时候容器也跟着重启
+~~~
+
+- 容器相关命令
 
 ```bash
 docker run --name=hello -it centos /bin/bash
@@ -253,6 +392,19 @@ docker cp c6b838db2e40:/home/test.py /home
 #保存容器当前状态，commit，相当于保存到本地，就像快照一样。
 docker commit -a="xxxx" -m="add xxx to xxx dir"  原容器ID image-name:1.0
 ```
+
+## 镜像组成部分
+
+`gcr.k8s.io/coreos/prometheus-adapter:0.8`为例：
+
+- gcr.k8s.io：registry/镜像地址
+- coreos：repository/Project/命名空间/镜像目录。
+  - 这个目录可以有多级
+- prometheus-adapter：name/镜像名称
+  - 只有镜像名称没有registry和repo的时候，就默认是去`docker.io/library`去拉
+- 0.8：tag/版本号
+
+> 有些镜像如果docker.io没有，用bitnami的也行。bitnami也是比较可靠的镜像库
 
 # dockerfile基础
 
@@ -1049,7 +1201,7 @@ docker-compose使用的三个步骤：
 
 ## 安装
 
-- 直接随着docker安装
+- 直接随着docker安装--是基于插件的形式安装的，不推荐
 
 ~~~sh
 sudo yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
@@ -1057,7 +1209,7 @@ sudo yum install docker-ce docker-ce-cli containerd.io docker-compose-plugin
 #docker compose version就能看到已经安装了
 ~~~
 
-- github下载
+- github下载--自己下载二进制文件，推荐
 
 ~~~sh
 #https://github.com/docker/compose/releases下载安装包
@@ -1077,7 +1229,7 @@ chmod +x /usr/bin/docker-compose
 
 - 官网地址：https://github.com/goharbor/harbor
 
-## Harbor安装配置
+## Harbor安装配置-基于docker-compose
 
 1. 创建VM。为harbor创建自签发证书
 
