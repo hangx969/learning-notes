@@ -350,8 +350,8 @@ Server:
 - 容器相关命令
 
 ```bash
-docker run --name=hello -it centos /bin/bash
-#docker run运行并创建容器，--name 容器的名字，-i 交互式，-t 分配伪终端，centos: 启动docker需要的镜像，/bin/bash说明你的shell类型为bash
+docker run --name=hello -it --rm centos /bin/bash
+#docker run运行并创建容器，--name 容器的名字，-i 交互式，-t 分配伪终端，--rm 退出就删掉容器，centos: 启动docker需要的镜像，/bin/bash说明你的shell类型为bash
 exit
 #退出容器，退出之后容器也会停止，不会再前台运行
 
@@ -369,7 +369,7 @@ docker stop hello1
 #启动已经停止的容器
 docker start hello1
 #进入容器
-docker exec -it hello1 /bin/bash
+docker exec -it hello1 /bin/bash 
 docker attach 容器ID   #后面不需要加 /bin/bash
 ##docker exec进去之后打开新的终端，所以需要加/bin/bash，exit退出不会导致容器的停止
 ##docker attach进入容器正在执行的终端，不会启动新的进程。exit退出会导致容器的停止。
@@ -406,379 +406,16 @@ docker commit -a="xxxx" -m="add xxx to xxx dir"  原容器ID image-name:1.0
 
 > 有些镜像如果docker.io没有，用bitnami的也行。bitnami也是比较可靠的镜像库
 
-# dockerfile基础
-
-## dockerfile
-
-Dockerfile是一个用于定义Docker镜像的文本文件。它包含了一系列的指令和参数，用于指示Docker在构建镜像时应该执行哪些操作，例如基于哪个基础镜像、复制哪些文件到镜像中、运行哪些命令等等。通过Dockerfile，开发人员可以将应用程序和其所有依赖项打包在一起，创建出一个可移植的Docker镜像，使得这个应用程序可以在任何Docker环境中都能够快速部署和运行。
-
-示例
-
-```dockerfile
-FROM centos
-MAINTAINER xianchao
-RUN rm -rf /etc/yum.repos.d/*
-COPY Centos-vault-8.5.2111.repo /etc/yum.repos.d/
-RUN yum install wget -y
-RUN yum install nginx -y
-COPY index.html /usr/share/nginx/html/
-EXPOSE 80
-ENTRYPOINT ["/usr/sbin/nginx","-g","daemon off;"]
-```
-
-## dockerfile语法
-
-- FROM
-
-  - 指定基础镜像，必须是可以下载的镜像。
-
-  - 多行FROM命令只会执行最后一行。
-
-- RUN
-
-  - shell模式
-
-    ```bash
-    RUN yum install -y wget
-    ```
-
-  - exec模式
-
-    ```bash
-    RUN ["/bin/bash", "-c", "yum install -y wget"]
-    # -c是指定后面要运行的命令
-    ```
-
-  两种是等价的。
-
-- EXPOSE
-
-  仅仅只是声明端口。作用：
-
-  1、帮助镜像使用者理解这个镜像服务的守护端口，以方便配置映射。
-
-  2、在运行时使用随机端口映射时，也就是 docker run -P 时，会自动随机映射 EXPOSE 声明的端口。
-
-  3、可以是一个或者多个端口，也可以指定多个EXPOSE。格式：EXPOSE 80 8080。
-
-- CMD和ENTRYPOINT
-
-  - CMD
-
-    - 类似于 RUN 指令，用于设置默认的可执行命令或参数，但二者运行的时间点不同:
-
-      1、CMD 在docker run 时运行。是容器起来之后自启动的命令。
-
-      2、RUN 是在 docker build构建镜像时运行。
-
-    - CMD的命令会被docker run的命令行参数给覆盖掉
-
-    - CMD如果有多个，只有最后一行会生效。
-
-
-  - ENTRYPOINT
-
-    - 类似于 CMD 指令，但其不会被 docker run 的命令行参数指定的指令所覆盖，而且这些命令行参数会被当作参数送给 ENTRYPOINT 指令指定的程序。
-
-    - 但是, 如果运行 docker run 时使用了 --entrypoint 选项，将覆盖docker file的entrypoint
-
-    - 优点：在执行 docker run 的时候可以指定 ENTRYPOINT 运行所需的参数。
-
-    - 注意：存在多个 ENTRYPOINT 指令，仅最后一个生效。
-
-    格式：
-
-    ENTERYPOINT \[“executable”,“param1”,“param2”\](exec模式)
-
-    ENTERYPOINT command （shell模式）
-
-    - CMD和ENTRYPOINT配合使用举例
-
-      - 如果dockerfile中也有CMD指令，CMD中的参数会被附加到ENTRYPOINT 指令的后面。 如果这时docker run命令带了参数，这个参数会覆盖掉CMD指令的参数，并也会附加到ENTRYPOINT 指令的后面。这样当容器启动后，会执行ENTRYPOINT 指令的参数部分。
-      
-      ```bash
-      #dockerfile
-      FROM nginx
-      ENTRYPOINT ["nginx", "-c"] # 定参 # nginx是命令行工具，-c是指定基于哪个config文件运行
-      CMD ["/etc/nginx/nginx.conf"] # 变参 #这个参数可以被docker run 命令行所覆盖
-      
-      #建镜像
-      docker build -t nginx:test . --load
-      
-      #运行镜像，不传任何参数
-      docker run nginx:test
-      docker inspect containerid #看args字段
-      #默认就跑了 ENTRYPOINT和cmd组合起来的命令：nginx -c /etc/nginx/nginx.conf
-      
-      #运行镜像，传递新的参数
-      docker run --name nginx nginx:test /etc/nginx/new.conf
-      docker inspect #看到传了新的参数进去
-      ```
-
-    > 在pod中定义command和args时的规律如下：
-    >
-    > 1.如果command和args均没有写，那么用Dockerfile的配置。
-    >
-    > 2.如果command写了，但args没有写，那么Dockerfile中的entrypoint和cmd会被忽略，执行yaml中的command
-    >
-    > 3.如果command没写，但args写了，那么Dockerfile中配置的ENTRYPOINT的命令行会被执行，并且将args中填写的参数追加到ENTRYPOINT中。
-    >
-    > 4.如果command和args都写了，那么Dockerfile的配置被忽略，执行command并追加上args参数。
-    >
-    > 基于以上：建议不在dockerfile中定义任何cmd和entrypoint，在pod yaml文件中去定义command和args
-
-
-- COPY
-
-  - 复制指令，从当前dockerfile上下文目录中复制文件或者目录到容器里指定路径。
-
-  - 格式：
-
-    ```bash
-    COPY <src> <dest>
-    COPY [“<src>”, “<dest>”]
-    
-    #[--chown=<user>:<group>]：可选参数，改变复制到容器内文件的拥有者和属组。
-    COPY [--chown=<user>:<group>] <源路径1> <目标路径>
-    COPY [--chown=<user>:<group>] ["<源路径1>", "<目标路径>"]
-    ```
-
-    <源路径>：源文件或者源目录，这里可以是通配符表达式，其通配符规则要满足 Go 的 filepath.Match 规则。例如：
-
-    ```dockerfile
-    COPY hom\* /mydir/
-    COPY hom?.txt /mydir/
-    ```
-    
-    <目标路径>：容器内的指定路径，该路径不用事先建好，路径不存在的话，会自动创建。
-
-- ADD
-
-  ADD 指令和 COPY 的使用格式一致（同样需求下，官方推荐使用 COPY）。功能也类似，不同之处如下：
-
-  - ADD 的优点：在执行 <源文件> 为 tar 压缩文件的话，压缩格式为 gzip, bzip2 以及 xz 的情况下，会自动复制并解压到 <目标路径>。
-
-- VOLUME
-
-  - 定义匿名数据卷。在启动容器时忘记挂载数据卷，会自动挂载到匿名卷。
-
-  - 作用：
-
-    1、避免重要的数据，因容器重启而丢失，这是非常致命的。
-
-    2、避免容器不断变大。
-
-  - 格式：
-
-    VOLUME ["<路径1>", "<路径2>"...]
-
-    VOLUME <路径>
-
-    在启动容器 docker run 的时候，我们可以通过 -v 宿主机目录：容器目录 修改挂载点。(docker run -d -P --name volume-test -v /hangx:/data centos-volume-test)
-
-- WORKDIR
-
-  - 指定工作目录。用 WORKDIR 指定的工作目录，会在构建镜像的每一层中都存在。（WORKDIR 指定的工作目录，必须是提前创建好的）。
-
-  - docker build 构建镜像过程中，每一个 RUN 命令都是新建的一层。只有通过 WORKDIR 创建的目录才会一直存在。
-
-  - 用`docker exec -it /bin/bash`进去之后就是指定的工作目录路径。
-
-  - 格式：
-
-    WORKDIR <工作目录绝对路径>
-
-- ENV
-
-  - 设置环境变量
-
-    ENV \<key\> \<value\>
-
-    ENV \<key\>=\<value\>
-
-  - 示例：
-
-    以下示例设置 NODE_VERSION =6.6.6， 在后续的指令中可以通过 $NODE_VERSION 引用：
-
-    ENV NODE_VERSION 6.6.6
-
-    ```bash
-    RUN curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.xz" && curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/SHASUMS256.txt.asc"**
-    ```
-
-- USER
-
-  - 用于指定执行后续命令的用户和用户组，这边只是切换后续命令执行的用户（用户和用户组必须提前已经存在）。
-
-  - 格式：
-
-    USER <用户名>[:<用户组>]
-
-    ```bash
-    USER daemon
-    USER nginx
-    USER user    
-    USER uid
-    USER user:group 
-    USER uid:gid
-    USER user:gid  
-    USER uid:group
-    ```
-
-- ONBUILD
-
-  - Dockerfile 里用 ONBUILD 指定的命令，在本次构建镜像的过程中不会执行（假设镜像为 test-build）。当有新的 Dockerfile 使用了之前构建的镜像 FROM test-build ，这时执行新镜像的 Dockerfile 构建时候，会执行 test-build 的 Dockerfile 里的 ONBUILD 指定的命令。
-  - 格式：ONBUILD <其它指令>
-
-## dockerfile优化
-
-### image层数优化
-
-1. Dockerfile 的指令每执行一次都会在 docker 上新建一层。所以过多无意义的层，会造成镜像膨胀过大。
-
-```bash
-FROM centos
-RUN rm -rf /etc/yum.repos.d/*
-COPY Centos-vault-8.5.2111.repo /etc/yum.repos.d/
-RUN yum install wget -y
-RUN wget -O redis.tar.gz "http://download.redis.io/releases/redis-5.0.3.tar.gz"
-RUN tar -xvf redis.tar.gz
-```
-
-- 以上执行会创建 3 层镜像。可简化为以下格式：
-
-```bash
-FROM centos
-RUN rm -rf /etc/yum.repos.d/*
-COPY Centos-vault-8.5.2111.repo /etc/yum.repos.d/
-RUN yum install wget -y&& wget -O redis.tar.gz "http://download.redis.io/releases/redis-5.0.3.tar.gz" &&
-tar -xvf redis.tar.gz
-```
-
-2. 用安装完之后清理缓存
-
-   ```bash
-   FROM centos
-   RUN rm -rf /etc/yum.repos.d/*
-   COPY Centos-vault-8.5.2111.repo /etc/yum.repos.d/
-   RUN yum install epel-release -y && \
-   yum install -y gcc gcc-c++ make gd-devel libxml2-devel \
-   libcurl-devel libjpeg-devel libpng-devel openssl-devel \
-   libmcrypt-devel libxslt-devel libtidy-devel autoconf \
-   iproute net-tools telnet wget curl && \
-   yum clean all && \
-   rm -rf /var/cache/yum/*
-   ```
-
-   yum clean all && 和 rm -rf /var/cache/yum/* 可以清理掉yum缓存，节省image空间
-
-### 基础镜像优化
-
-- 从linux镜像开始构建：
-
-  ![image-20231025190807871](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202310251908952.png)
-
-- busybox
-  描述：可以将busybox理解为一个超级简化版嵌入式Linux系统。
-  官网：https://www.busybox.net/
-  镜像：https://hub.docker.com/_/busybox/
-  包管理命令：apk, lbu
-  包管理文档：https://wiki.alpinelinux.org/wiki/Alpine_Linux_package_management
-  
-- Alpine
-  描述：Alpine是一个面向安全的、轻量级的Linux系统，基于musl libc和busybox。
-  官网：https://www.alpinelinux.org/
-  镜像：https://hub.docker.com/_/alpine/
-  包管理命令：apk, lbu
-  包管理文档：https://wiki.alpinelinux.org/wiki/Alpine_Linux_package_management
-  
-- CentOS/rockylinux
-
-  ~~~sh
-  #centos7的yum源目前还可以用
-  FROM centos:centos7.9.2009
-  RUN yum install -y wget
-  
-  FROM docker.io/library/rockylinux:latest
-  RUN yum install -y wget
-  
-  #如果基础镜像用centos8，需要替换镜像源为Centos-vault-8.5.2111.repo
-  wget http://mirrors.aliyun.com/repo/Centos-vault-8.5.2111.repo -O /etc/yum.repos.d/Centos-vault-8.5.2111.repo
-  wget http://mirrors.aliyun.com/repo/epel-archive-8.repo -O /etc/yum.repos.d/epel-archive-8.repo
-  yum clean all && yum makecache
-  
-  FROM centos:latest
-  MAINTAINER xianchao
-  RUN rm -rf /etc/yum.repos.d/*
-  COPY Centos-vault-8.5.2111.repo /etc/yum.repos.d/
-  RUN yum install wget -y
-  ~~~
-
-### 制作支持多操作系统的镜像
-
-~~~sh
-docker build --platform linux/amd64,windows/amd64 -t myapp .
-~~~
-
-### 使用根文件系统镜像
-
-~~~sh
-#访问 Alpine 官方网站的 下载页面，找到并下载最新版本的根文件系统 tarball。你也可以使用以下命令直接下载（这里以 3.14 版本为例）
-wget https://dl-cdn.alpinelinux.org/alpine/v3.14/releases/x86_64/alpine-minirootfs-3.14.0-x86_64.tar.gz
-#使用下载的 tarball 创建 Docker 镜像：
-cat alpine-minirootfs-3.14.0-x86_64.tar.gz | docker import - alpine:3.14
-#验证镜像是否成功创建：
-docker images
-#运行 Docker 容器
-docker run -it alpine:3.14 /bin/sh
-~~~
-
-## dockerfile安全实践
-
-1. 注意不要使用臃肿或者未经验证的基础镜像
-
-- 使用大型或未验证的镜像会增加不必要的包和依赖项，从而增加攻击面。来自不可信来源的镜像可能包含恶意软件或漏洞，感染你的构建管道。
-
-- 使用 `ubuntu:latest` 意味着每次构建时可能会拉取不同的镜像，导致环境不一致。最好是将基础镜像固定到特定的、经过验证的版本，最好是经过安全优化的版本，比如`FROM ubuntu:20.04`
-
-2. 注意固定包的版本
-
-- 未固定包的版本会导致不可预测性。未来的构建可能会引入未经测试或存在漏洞的依赖项版本，破坏你的应用程序或暴露安全漏洞。
-- 错误示例：`RUN apt-get update && apt-get install -y curl`
-- 正确示例：`RUN apt-get update && apt-get install -y curl=7.68.0-1ubuntu2.12`
-
-3. 不要以root用户运行
-
-- 尽早切换到非 root 用户可以最大限度地减少容器以 root 用户运行的时间。这减少了 Dockerfile 中任何命令存在漏洞时的攻击面。
-
-4. 使用COPY而不是ADD
-
-- ADD 指令提供了额外的功能（例如，解压存档、从远程位置获取文件），这可能会引入意外行为或漏洞。可能出现的问题：如果攻击者攻破远程源，你的构建将包含恶意内容。存档可能会覆盖容器中的关键文件。
-- 错误示例：`ADD https://example.com/app.tar.gz /app/`
-- 正确示例：始终使用 `COPY` 处理本地文件。使用 `wget` 或 `curl` 进行远程下载，并结合校验和验证。
-
-5. 定义健康检查
-
-- 定义有意义的健康检查以确保容器始终处于运行状态。
-
-  ```sh
-  HEALTHCHECK --interval=30s --timeout=5s \
-    CMD curl -f http://localhost/health || exit 1
-  ```
-
-6. 定义限制性安全配置文件
-
-- 在没有限制性安全配置文件（如 Seccomp、AppArmor）的情况下运行容器，允许它们进行危险的系统调用，攻击者可能使用 `ptrace` 系统调用提取敏感进程数据。
-
-- 启用 Docker 的默认 Seccomp 配置文件或为你的应用程序定义自定义配置文件。
-
-  ```sh
-  docker run --security-opt seccomp=default.json myimage
-  ```
+## docker部署服务通用步骤
+
+1. 确认需要部署的服务
+2. 了解服务运行的基础配置（配置文件、数据目录在哪里、端口号等）
+3. 找到基础镜像、下载镜像
+4. 确认配置启动服务并验证
 
 # Docker数据持久化
 
-- 将主机目录挂载到容器内目录上，容器内可以对其进行修改。源文件是在宿主机上的。
+将主机目录直接挂载到容器内目录上，容器内可以对其进行修改。源文件是在宿主机上的。
 
 ## Docker数据卷
 
@@ -821,7 +458,7 @@ docker volume rm volume_name1 volume_name2
 - 指定路径和权限挂载
 
 ~~~sh
--v /宿主机路径:容器内路径  #指定路径挂载 
+-v 宿主机路径:容器内路径  #指定路径挂载 
 -v 卷名:容器内路径:ro （或者rw） #指定了容器对该目录的权限，如果是ro，目录内部文件只能在宿主机内改变，不能在容器内改变
 ~~~
 
@@ -1182,6 +819,620 @@ docker network ls
 docker network rm name
 ~~~
 
+# dockerfile基础
+
+## dockerfile定义
+
+Dockerfile是一个用于定义Docker镜像的文本文件。它包含了一系列的指令和参数，用于指示Docker在构建镜像时应该执行哪些操作，例如基于哪个基础镜像、复制哪些文件到镜像中、运行哪些命令等等。通过Dockerfile，开发人员可以将应用程序和其所有依赖项打包在一起，创建出一个可移植的Docker镜像，使得这个应用程序可以在任何Docker环境中都能够快速部署和运行。
+
+示例
+
+```sh
+FROM centos
+MAINTAINER xianchao
+RUN rm -rf /etc/yum.repos.d/*
+COPY Centos-vault-8.5.2111.repo /etc/yum.repos.d/
+RUN yum install wget -y
+RUN yum install nginx -y
+COPY index.html /usr/share/nginx/html/
+EXPOSE 80
+ENTRYPOINT ["/usr/sbin/nginx","-g","daemon off;"]
+```
+
+## dockerfile制作服务的过程
+
+如果是二进制部署服务：
+
+1. 先去安装操作系统
+2. 更改系统的源为国内的源
+3. 安装基础环境（jdk、python等）
+4. 启动服务（java -jar等）
+
+dockfile制作服务镜像：
+
+1. 先去找到一个基础镜像（包含了服务需要的基础环境）
+2. 配置系统的源为国内源
+3. 创建用户并分配权限
+4. 启动命令（CMD\ENTRYPOINT）
+
+## dockerfile语法
+
+- FROM
+
+  - 指定基础镜像，必须是可以下载的镜像。
+
+  - 多行FROM命令只会执行最后一行。
+
+- RUN
+
+  - shell模式
+
+    ```bash
+    RUN yum install -y wget
+    ```
+
+  - exec模式
+
+    ```bash
+    RUN ["/bin/bash", "-c", "yum install -y wget"]
+    # -c是指定后面要运行的命令
+    ```
+
+  两种是等价的。
+
+- EXPOSE
+
+  仅仅只是声明端口（不声明的话，端口服务也是暴露的，只是声明出来更直观）。作用：
+
+  1、帮助镜像使用者理解这个镜像服务的守护端口，以方便配置映射。
+
+  2、在运行时使用随机端口映射时，也就是 docker run -P 时，会自动随机映射 EXPOSE 声明的端口。
+
+  3、可以是一个或者多个端口，也可以指定多个EXPOSE。格式：EXPOSE 80 8080。
+
+- CMD和ENTRYPOINT
+
+  - CMD
+
+    - 类似于 RUN 指令，用于设置默认的可执行命令或参数，但二者运行的时间点不同:
+
+      1、CMD 在docker run 时运行。是容器起来之后自启动的命令。
+
+      2、RUN 是在 docker build构建镜像时运行。
+
+    - CMD的命令会被docker run的命令行参数给覆盖掉
+
+    - CMD如果有多个，只有最后一行会生效。
+
+
+  - ENTRYPOINT
+
+    - 类似于 CMD 指令，但其不会被 docker run 的命令行参数指定的指令所覆盖，而且这些命令行参数会被当作参数送给 ENTRYPOINT 指令指定的程序。
+
+    - 但是, 如果运行 docker run 时使用了 --entrypoint 选项，将覆盖docker file的entrypoint
+
+    - 优点：在执行 docker run 的时候可以指定 ENTRYPOINT 运行所需的参数。
+
+    - 注意：存在多个 ENTRYPOINT 指令，仅最后一个生效。
+
+    格式：
+
+    `ENTERYPOINT [“executable”,“param1”,“param2”]` (exec模式)
+
+    `ENTERYPOINT command` （shell模式）
+
+    - CMD和ENTRYPOINT配合使用举例
+
+      - 如果dockerfile中也有CMD指令，CMD中的参数会被附加到ENTRYPOINT 指令的后面。 如果这时docker run命令带了参数，这个参数会覆盖掉CMD指令的参数，并也会附加到ENTRYPOINT 指令的后面。这样当容器启动后，会执行ENTRYPOINT 指令的参数部分。
+
+      ```bash
+      #dockerfile
+      FROM nginx
+      ENTRYPOINT ["nginx", "-c"] # 定参 # nginx是命令行工具，-c是指定基于哪个config文件运行
+      CMD ["/etc/nginx/nginx.conf"] # 变参 #这个参数可以被docker run 命令行所覆盖
+      
+      #建镜像
+      docker build -t nginx:test . --load
+      
+      #运行镜像，不传任何参数
+      docker run nginx:test
+      docker inspect containerid #看args字段
+      #默认就跑了 ENTRYPOINT和cmd组合起来的命令：nginx -c /etc/nginx/nginx.conf
+      
+      #运行镜像，传递新的参数
+      docker run --name nginx nginx:test /etc/nginx/new.conf
+      docker inspect #看到传了新的参数进去
+      ```
+
+    > 在pod中定义command和args时的规律如下：
+    >
+    > 1.如果command和args均没有写，那么用Dockerfile的配置。
+    >
+    > 2.如果command写了，但args没有写，那么Dockerfile中的entrypoint和cmd会被忽略，执行yaml中的command
+    >
+    > 3.如果command没写，但args写了，那么Dockerfile中配置的ENTRYPOINT的命令行会被执行，并且将args中填写的参数追加到ENTRYPOINT中。
+    >
+    > 4.如果command和args都写了，那么Dockerfile的配置被忽略，执行command并追加上args参数。
+    >
+    > 基于以上：建议不在dockerfile中定义任何cmd和entrypoint，在pod yaml文件中去定义command和args
+
+
+- COPY
+
+  - 复制指令，从当前dockerfile上下文目录中复制文件或者目录到容器里指定路径。
+
+  - 格式：
+
+    ```bash
+    COPY <src> <dest>
+    COPY [“<src>”, “<dest>”]
+    
+    # [--chown=<user>:<group>]：可选参数，改变复制到容器内文件的拥有者和属组。
+    COPY [--chown=<user>:<group>] <源路径1> <目标路径>
+    COPY [--chown=<user>:<group>] <源路径1> <目标路径>
+    ```
+
+    <源路径>：源文件或者源目录，这里可以是通配符表达式，其通配符规则要满足 Go 的 filepath.Match 规则。例如：
+
+    ```dockerfile
+    COPY hom\* /mydir/
+    COPY hom?.txt /mydir/
+    ```
+
+    <目标路径>：容器内的指定路径，该路径不用事先建好，路径不存在的话，会自动创建。
+
+    注意：
+
+    1. COPY不包括本机目录：比如`COPY webroot /mnt`只会把webroot目录里面的内容复制到容器内，不包括webroot目录本身。如果希望把本级目录也拷贝进去，容器路径加一级同名子目录，可以不存在，会自动创建：`COPY webroot /mnt/webroot`
+    2. 如果希望在宿主机改好文件权限和属主属组再拷贝进容器，这样是不推荐的，docker的机制是执行docker build的时候用户是谁，容器内的文件权限和属主属组就是谁。所以还是得在dockerfile里面去改。
+    3. 注意拷贝目录内所有内容的时候不要用\*通配符，否则子目录不会被复制。`COPY xxx/*:/mnt/` --> 错误；`COPY xxx/:/mnt/` --> 正确
+
+- ADD
+
+  ADD 指令和 COPY 的使用格式一致（同样需求下，官方推荐使用 COPY）。功能也类似，不同之处如下：
+
+  - ADD 的优点：在执行 <源文件> 为 tar 压缩文件的话，压缩格式为 gzip, bzip2 以及 xz 的情况下，会自动复制并解压到 <目标路径>。
+
+- VOLUME
+
+  - 定义匿名数据卷。在启动容器时忘记挂载数据卷，会自动挂载到匿名卷。
+
+  - 作用：
+
+    1、避免重要的数据，因容器重启而丢失，这是非常致命的。
+
+    2、避免容器不断变大。
+
+  - 格式：
+
+    `VOLUME ["<路径1>", "<路径2>"...]`
+
+    `VOLUME <路径>`
+
+    在启动容器 docker run 的时候，我们可以通过 -v 宿主机目录：容器目录 修改挂载点。(docker run -d -P --name volume-test -v /hangx:/data centos-volume-test)
+
+- WORKDIR
+
+  - 指定工作目录。用 WORKDIR 指定的工作目录，会在构建镜像的每一层中都存在。（WORKDIR 指定的工作目录，必须是提前创建好的）。
+
+  - docker build 构建镜像过程中，每一个 RUN 命令都是新建的一层。只有通过 WORKDIR 创建的目录才会一直存在。
+
+  - 用`docker exec -it /bin/bash`进去之后就是指定的**工作目录路径**。一般都使用`容器用户的家目录`作为WORKDIR。
+
+  - 格式：
+
+    WORKDIR <工作目录绝对路径>
+
+- ENV
+
+  - 设置环境变量
+
+    `ENV \<key\> \<value\>`
+
+    `ENV \<key\>=\<value\>`
+
+  - 示例：
+
+    以下示例设置 NODE_VERSION=6.6.6， 在后续的指令中可以通过 $NODE_VERSION 引用：
+
+    ENV NODE_VERSION 6.6.6
+
+    ```bash
+    RUN curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.xz" && curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/SHASUMS256.txt.asc"**
+    ```
+
+- USER
+
+  - 用于指定执行后续命令的用户和用户组，这边只是切换后续命令执行的用户（用户和用户组必须提前已经存在）。
+
+  - 格式：`USER <用户名>[:<用户组>]`
+
+    ```sh
+    USER daemon
+    USER nginx
+    USER user    
+    USER uid
+    USER user:group 
+    USER uid:gid
+    USER user:gid  
+    USER uid:group
+    ```
+
+  - 一般推荐用uid `1000`或者`1001`作为容器启动用户。指定了非root用户后，端口监听可能没有权限监听1024以下的端口，一般设置为`8080`端口来启动。
+
+- ONBUILD
+
+  - Dockerfile 里用 ONBUILD 指定的命令，在本次构建镜像的过程中不会执行（假设镜像为 test-build）。当有新的 Dockerfile 使用了之前构建的镜像 FROM test-build ，这时执行新镜像的 Dockerfile 构建时候，会执行 test-build 的 Dockerfile 里的 ONBUILD 指定的命令。
+  - 格式：`ONBUILD <其它指令>`
+
+- ARG，使用 ARG 和 build-arg 传入动态变量：
+
+  ~~~sh
+  # base image
+  FROM registry.cn-beijing.aliyuncs.com/dotbalo/centos:7
+  ARG USERNAME
+  ARG DIR="defaultValue"
+  RUN useradd -m $USERNAME -u 1001 && mkdir $DIR
+  # 构建镜像
+  docker build --build-arg USERNAME="test_arg" -t test:arg .
+  ~~~
+
+  这样可以把dockerfile做成一个框架
+
+## dockerfile优化
+
+### image层数优化
+
+1. Dockerfile 的指令每执行一次都会在 docker 上新建一层。所以过多无意义的层，会造成镜像膨胀过大。
+
+```bash
+FROM centos
+RUN rm -rf /etc/yum.repos.d/*
+COPY Centos-vault-8.5.2111.repo /etc/yum.repos.d/
+RUN yum install wget -y
+RUN wget -O redis.tar.gz "http://download.redis.io/releases/redis-5.0.3.tar.gz"
+RUN tar -xvf redis.tar.gz
+```
+
+- 以上执行会创建 3 层镜像。可简化为以下格式：(dockerfile支持换行符)
+
+```bash
+FROM centos
+RUN rm -rf /etc/yum.repos.d/*
+COPY Centos-vault-8.5.2111.repo /etc/yum.repos.d/
+RUN yum install wget -y && \
+wget -O redis.tar.gz "http://download.redis.io/releases/redis-5.0.3.tar.gz" && \
+tar -xvf redis.tar.gz
+```
+
+2. 用安装完之后清理缓存
+
+   ```bash
+   FROM centos
+   RUN rm -rf /etc/yum.repos.d/*
+   COPY Centos-vault-8.5.2111.repo /etc/yum.repos.d/
+   RUN yum install epel-release -y && \
+   yum install -y gcc gcc-c++ make gd-devel libxml2-devel \
+   libcurl-devel libjpeg-devel libpng-devel openssl-devel \
+   libmcrypt-devel libxslt-devel libtidy-devel autoconf \
+   iproute net-tools telnet wget curl && \
+   yum clean all && \
+   rm -rf /var/cache/yum/*
+   ```
+
+   `yum clean all &&` 和 `rm -rf /var/cache/yum/*` 可以清理掉yum缓存，节省image空间
+
+3. 可以用`docker history <image id>`来看镜像每一层的大小。
+
+### 基础镜像优化
+
+制作业务镜像的时候，去找一个官方已经装好基础环境的镜像，比如python，jdk等。不需要基础环境的话，可以用一些精简的小镜像：
+
+- busybox
+  描述：可以将busybox理解为一个超级简化版嵌入式Linux系统。
+  官网：https://www.busybox.net/
+  镜像：https://hub.docker.com/_/busybox/
+  包管理命令：apk, lbu
+  包管理文档：https://wiki.alpinelinux.org/wiki/Alpine_Linux_package_management
+
+- Alpine
+  描述：Alpine是一个面向安全的、轻量级的Linux系统，基于musl libc和busybox。
+  官网：https://www.alpinelinux.org/
+  镜像：https://hub.docker.com/_/alpine/
+  包管理命令：apk, lbu
+  包管理文档：https://wiki.alpinelinux.org/wiki/Alpine_Linux_package_management
+
+  ~~~sh
+  # base image
+  FROM registry.cn-beijing.aliyuncs.com/dotbalo/alpine:3.20
+  MAINTAINER dot
+  # Alpine 镜像创建用户的命令为 adduser，-D 表示不设置密码
+  RUN adduser -D dot
+  ~~~
+
+### 容器外进行文件操作
+
+如果需要将某个压缩文件拷贝到镜像，并且需要更改文件夹权限，在构建之前先更改完毕，再进行构建镜像。不要在镜像里面用RUN去跑：
+
+~~~sh
+# 这两行命令如果放到FROM后面，用RUN来跑，每一行都会增加一层镜像大小
+tar xf xxx.tar.gz -C xxx
+chown -R 1001.1001 xxx
+FROM registry.cn-beijing.aliyuncs.com/dotbalo/alpine:3.20
+MAINTAINER dot
+COPY xxx /mnt/xxx
+~~~
+
+### 多阶段构建
+
+FROM之后还能继续用FROM
+
+以go程序为例，go build之后生成的二进制文件，不依赖与宿主机有go环境了，直接就可以运行了。
+
+当我们打包运行一个go服务的时候，我们希望的只是运行起来这个go二进制程序。而在go编译的时候会产生很大的缓存层
+
+~~~go
+# cat hw.go 
+package main
+import "fmt"
+func main() {
+fmt.Println("Hello World!")
+}
+~~~
+
+单阶段构建：产生的镜像大小300多MB
+
+~~~sh
+# build step
+FROM registry.cn-beijing.aliyuncs.com/dotbalo/golang:1.22.4-alpine3.20
+WORKDIR /opt
+COPY hw.go /opt
+RUN go build /opt/hw.go 
+CMD "./hw"
+~~~
+
+多阶段构建，在第一阶段用golang的基础镜像构建出二进制文件之后，第二阶段用一个apline小镜像去运行服务即可
+
+~~~sh
+# cat Dockerfile 
+# 构建过程，as builder是给第一阶段起了个名字
+FROM registry.cn-beijing.aliyuncs.com/dotbalo/golang:1.22.4-alpine3.20 AS builder
+WORKDIR /opt
+COPY hw.go /opt
+RUN go build /opt/hw.go 
+
+# 生成应用镜像过程
+FROM registry.cn-beijing.aliyuncs.com/dotbalo/alpine:3.20
+# 指定了builder，从上一阶段的镜像层复制文件过来
+COPY --from=builder /opt/hw . 
+CMD [ "./hw" ]
+~~~
+
+Java程序也一样，第一阶段builder，先找一个maven的基础镜像，maven clean install去构建；第二阶段用一个小镜像（openjdk），把jar包拷贝过来jave -jar运行即可。
+
+只要是需要编译 -- 运行的程序都可以拆分成两个阶段去构建镜像。
+
+### 制作支持多操作系统的镜像
+
+~~~sh
+docker build --platform linux/amd64,windows/amd64 -t myapp .
+~~~
+
+### 使用根文件系统镜像
+
+~~~sh
+#访问 Alpine 官方网站的 下载页面，找到并下载最新版本的根文件系统 tarball。你也可以使用以下命令直接下载（这里以 3.14 版本为例）
+wget https://dl-cdn.alpinelinux.org/alpine/v3.14/releases/x86_64/alpine-minirootfs-3.14.0-x86_64.tar.gz
+#使用下载的 tarball 创建 Docker 镜像：
+cat alpine-minirootfs-3.14.0-x86_64.tar.gz | docker import - alpine:3.14
+#验证镜像是否成功创建：
+docker images
+#运行 Docker 容器
+docker run -it alpine:3.14 /bin/sh
+~~~
+
+## dockerfile安全实践
+
+1. 注意不要使用臃肿或者未经验证的基础镜像
+
+- 使用大型或未验证的镜像会增加不必要的包和依赖项，从而增加攻击面。来自不可信来源的镜像可能包含恶意软件或漏洞，感染你的构建管道。
+
+- 使用 `ubuntu:latest` 意味着每次构建时可能会拉取不同的镜像，导致环境不一致。最好是将基础镜像固定到特定的、经过验证的版本，最好是经过安全优化的版本，比如`FROM ubuntu:20.04`
+
+2. 注意固定包的版本
+
+- 未固定包的版本会导致不可预测性。未来的构建可能会引入未经测试或存在漏洞的依赖项版本，破坏你的应用程序或暴露安全漏洞。
+- 错误示例：`RUN apt-get update && apt-get install -y curl`
+- 正确示例：`RUN apt-get update && apt-get install -y curl=7.68.0-1ubuntu2.12`
+
+3. 不要以root用户运行
+
+- 尽早切换到非 root 用户可以最大限度地减少容器以 root 用户运行的时间。这减少了 Dockerfile 中任何命令存在漏洞时的攻击面。
+
+  ~~~sh
+  # base image
+  FROM registry.cn-beijing.aliyuncs.com/dotbalo/centos:7
+  RUN useradd -m nginx -u 1001
+  WORKDIR /home/nginx
+  USER 1001
+  ~~~
+
+- 使用非root用户操作一些文件的时候可能报权限错误，这时候推荐把产生的文件放到容器用户家目录下，肯定有权限。
+
+- 使用非root用户启动服务监听端口的时候可能会报没有权限监听1024以下的端口。推荐用8080端口监听。
+
+4. 使用COPY而不是ADD
+
+- ADD 指令提供了额外的功能（例如，解压存档、从远程位置获取文件），这可能会引入意外行为或漏洞。可能出现的问题：如果攻击者攻破远程源，你的构建将包含恶意内容。存档可能会覆盖容器中的关键文件。
+- 错误示例：`ADD https://example.com/app.tar.gz /app/`
+- 正确示例：始终使用 `COPY` 处理本地文件。使用 `wget` 或 `curl` 进行远程下载，并结合校验和验证。
+
+5. 定义健康检查
+
+- 定义有意义的健康检查以确保容器始终处于运行状态。
+
+  ```sh
+  HEALTHCHECK --interval=30s --timeout=5s \
+    CMD curl -f http://localhost/health || exit 1
+  ```
+
+6. 定义限制性安全配置文件
+
+- 在没有限制性安全配置文件（如 Seccomp、AppArmor）的情况下运行容器，允许它们进行危险的系统调用，攻击者可能使用 `ptrace` 系统调用提取敏感进程数据。
+
+- 启用 Docker 的默认 Seccomp 配置文件或为你的应用程序定义自定义配置文件。
+
+  ```sh
+  docker run --security-opt seccomp=default.json myimage
+  ```
+
+## dockerfile制作异构镜像
+
+- docker支持异构，在AMD64上可以做ARM镜像，在ARM上可以做AMD64的镜像，这个插件叫buildx。
+- 架构列表：[docker-library/official-images: Primary source of truth for the Docker "Official Images" program](https://github.com/docker-library/official-images#architectures-other-than-amd64)
+- 注意：制作多架构镜像时，基础镜像也必须支持多架构，可以在dockerhub的镜像tag里面看到支持的镜像
+
+~~~sh
+# 查看所有构建器
+docker builder ls
+# 创建一个新的构建器：
+docker buildx create --name mybuilder --use --platform linux/amd64,linux/arm64 --driver docker-container
+# 查看新创建的构建器，是inactive状态
+docker builder ls
+# 启动新创建的构建器
+docker buildx inspect --bootstrap
+# 安装所有架构：
+docker run --privileged --rm tonistiigi/binfmt --install all
+
+# 如果基础镜像用的是自己私有仓库的镜像，推荐从dockerhub先拉基础镜像，用buildx构建并推送到私有镜像库来用。
+# 写一个dockerfile，只包含这个基础镜像
+FROM centos:7.9
+
+# 构建多架构镜像并上传：
+docker buildx build --platform linux/arm64,linux/amd64 -t registry.cnbeijing.aliyuncs.com/dotbalo/buildx:v2 --push -f ./Dockerfile .
+# 只构建不推送：
+docker buildx build --platform linux/arm64/v8 -t registry.cnbeijing.aliyuncs.com/dotbalo/buildx:armv2 -f ./Dockerfile . --load
+
+# 注意构建出来的异构镜像是只有一个tag但是支持多架构的，拉取的时候根据架构不同，用--platform来
+# 拉镜像指定架构
+docker pull xxx:tag --platform linux/arm64
+~~~
+
+## dockerfile实战
+
+### 制作 Vue/H5 前端镜像
+
+代码地址：https://gitee.com/dukuan/vue-project.git
+
+编译镜像步骤：运行包含构建环境的基础镜像，把宿主机的代码目录挂进去，进容器执行构建命令，构建结果就在宿主机上。
+
+1. 进入容器：
+
+~~~sh
+docker run -it --rm -v `pwd`/vueproject:/mnt/ registry.cn-beijing.aliyuncs.com/citools/node:lts bash
+~~~
+
+2. 容器内执行构建命令：
+
+~~~sh
+cd /mnt
+npm install --registry=https://registry.npmmirror.com/
+npm run build
+# 构建完宿主机工程目录会生成一个dist目录，里面有index.html和static目录。拷贝到nginx目录下就可以运行了
+~~~
+
+3. Dockerfile制作镜像：
+
+~~~sh
+# 把dockerfile放到代码工程目录
+mv Dockerfile vueproject/
+# 前端代码一般采用 nginx 进行部署
+FROM registry.cn-beijing.aliyuncs.com/dotbalo/nginx:1.15.12
+COPY dist/ /usr/share/nginx/html/
+# nginx镜像自带启动命令，所以可以不写CMD
+# 构建
+docker build -t xxx:xxx .
+~~~
+
+### 制作 Java 后端镜像
+
+代码地址：https://gitee.com/dukuan/spring-boot-project.git
+
+编译镜像：registry.cn-beijing.aliyuncs.com/citools/maven:3.5.3
+
+1. 进入容器：
+
+~~~sh
+# 对于java程序，默认有一个缓存目录/root/.m2，可以在宿主机的代码目录上创建一个m2目录挂进容器作为缓存。一些插件会缓存进去，下次构建的时候还能用。
+mkdir m2
+docker run -it --rm -v `pwd`/m2:/root/.m2 -v `pwd`/spring-boot-project:/mnt/ registry.cn-beijing.aliyuncs.com/citools/maven:3.5.3 bash
+~~~
+
+2. 容器内执行构建命令：
+
+~~~sh
+cd /mnt
+mvn clean install -DskipTests
+~~~
+
+3. Dockerfile制作镜像：
+
+~~~sh
+# 把dockerfile放到代码工程目录
+mv Dockerfile /spring-boot-project
+#  基础镜像可以按需修改，可以更改为公司自有镜像
+FROM registry.cn-beijing.aliyuncs.com/dotbalo/jre:8u211-data
+# jar 包名称改成实际的名称，本示例为 spring-cloud-eureka-0.0.1-SNAPSHOT.jar
+COPY target/spring-cloud-eureka-0.0.1-SNAPSHOT.jar ./app.jar
+#  启动 Jar 包
+CMD java -jar app.jar
+
+# 构建
+docker build -t xxx:xxx .
+~~~
+
+### 制作 golang 后端镜像
+
+代码地址：https://gitee.com/dukuan/go-project.git
+
+编译镜像：registry.cn-beijing.aliyuncs.com/citools/golang:1.15
+
+1. 进入容器：
+
+~~~sh
+# 对于go程序，默认有一个缓存目录/go/pkg，可以在宿主机的代码目录上创建一个pkg目录挂进容器作为缓存。一些插件会缓存进去，下次构建的时候还能用。
+# go代码默认放在/go/src下面
+mkdir pkg
+docker run -it --rm -v `pwd`/pkg:/go/pkg -v `pwd`/go-project:/go/src registry.cn-beijing.aliyuncs.com/citools/maven:3.5.3 bash
+~~~
+
+2. 容器内执行构建命令：
+
+~~~sh
+cd /go/src
+export GO111MODULE=on
+go env -w GOPROXY=https://goproxy.cn,direct
+go build
+~~~
+
+3. Dockerfile制作镜像：
+
+~~~sh
+# 把dockerfile放到代码工程目录
+mv Dockerfile /go-project
+
+FROM registry.cn-beijing.aliyuncs.com/dotbalo/alpine-glibc:alpine-3.9
+#  如果定义了单独的配置文件，可能需要拷贝到镜像中
+COPY conf/ ./conf 
+#  包名按照实际情况进行修改
+COPY ./go-project ./ 
+#  启动该应用，CMD 和 ENTRYPOINT 均可
+ENTRYPOINT [ "./go-project"]   
+
+# 构建
+docker build -t xxx:xxx .
+~~~
+
 # docker-compose
 
 ## 背景
@@ -1217,6 +1468,32 @@ mv docker-compose-Linux-x86_64.64 /usr/bin/docker-compose
 chmod +x /usr/bin/docker-compose
 ~~~
 
+# 阿里云镜像仓库使用
+
+官网：https://cr.console.aliyun.com/
+
+1. 使用阿里云镜像仓库第一步需要创建命名空间，相当于 repository
+
+2. 第二步需要创建一个仓库（可选，也可以不创建，直接推送也可以），注意镜像仓库的地区
+
+3. 实例创建固定密码
+
+4. 登录：
+
+   ~~~sh
+   docker login registry.cn-beijing.aliyuncs.com
+   Username (dotbalo):  输入用户名
+   Password:  输入仓库密码
+   Login Succeeded
+   ~~~
+
+5. 推送镜像
+
+   ~~~sh
+   docker tag centos:8 registry.cn-beijing.aliyuncs.com/dotbalo/centos:8
+   docker push registry.cn-beijing.aliyuncs.com/dotbalo/centos:8
+   ~~~
+
 
 
 # Docker私有镜像仓库harbor
@@ -1231,7 +1508,7 @@ chmod +x /usr/bin/docker-compose
 
 ## Harbor安装配置-基于docker-compose
 
-1. 创建VM。为harbor创建自签发证书
+1. 为harbor创建自签发证书
 
    ```bash
    #设置主机名
@@ -1256,9 +1533,7 @@ chmod +x /usr/bin/docker-compose
    openssl x509 -req -in harbor.csr -CA ca.pem -CAkey ca.key -CAcreateserial -out harbor.pem -days 3650
    ```
 
-2. 安装docker（harbor是基于）
-
-   #安装前面装docker的步骤
+2. 安装docker：前面装docker的步骤
 
 3. 安装harbor
 
@@ -1276,27 +1551,27 @@ chmod +x /usr/bin/docker-compose
    #/data/ssl目录下有如下文件：ca.key  ca.pem  ca.srl  harbor.csr  harbor.key  harbor.pem
    
    cd /data/install/
-   #把harbor的离线包harbor-offline-installer-v2.3.0-rc3.tgz上传到这个目录，离线包在课件里提供了
-   
+   #把harbor的离线包harbor-offline-installer-v2.3.0-rc3.tgz上传到这个目录
    #下载harbor离线包的地址：
    #https://github.com/goharbor/harbor
-   
    #解压：
    tar zxvf harbor-offline-installer-v2.3.0-rc3.tgz
    cd harbor
    cp harbor.yml.tmpl harbor.yml 
    
    vim harbor.yml
-   #修改配置文件：
+   # 修改配置文件：
    hostname:  harbor #修改hostname，跟上面签发的证书域名保持一致
-   #协议用https
+   # 协议用https
    certificate: /data/ssl/harbor.pem
    private_key: /data/ssl/harbor.key
-   #邮件和ldap不需要配置，在harbor的web界面可以配置，其他配置采用默认即可。
-   #注：harbor默认的账号密码：admin/Harbor12345
+   # 邮件和ldap不需要配置，在harbor的web界面可以配置，其他配置采用默认即可。
+   # 修改数据目录
+   data_volume: /data/harbor
+   # 注：harbor默认的账号密码：admin/Harbor12345
    ```
 
-4. 安装docker-compose
+4. 【可选】安装docker-compose
 
    docker-compose项目是Docker官方的开源项目，负责实现对Docker容器集群的快速编排。Docker-Compose的工程配置文件默认为docker-compose.yml，Docker-Compose运行目录下的必要有一个docker-compose.yml。docker-compose可以管理多个docker实例。
 
@@ -1307,9 +1582,6 @@ chmod +x /usr/bin/docker-compose
    
    #安装harbor依赖的的离线镜像包docker-harbor-2-3-0.tar.gz上传到harbor机器，通过docker load -i解压
    docker load -i docker-harbor-2-3-0.tar.gz 
-   cd /data/install/harbor
-   ./install.sh
-   #出现✔ ----Harbor has been installed and started successfully.---- 表明安装成功。
    ```
 
    > 注：
@@ -1317,8 +1589,19 @@ chmod +x /usr/bin/docker-compose
    > - docker-compose可以直接yum install docker-compose或者apt install docker-compose
    >
    > - 离线镜像包docker-harbor-2-3-0.tar.gz如果不上传，install.sh会自动拉取
+   >
+   > - 新版docker已经内置了docker-compose插件 docker compose就能直接用
 
-5. harbor启动和停止
+5. 启动harbor
+
+   ~~~sh
+   # 安装harbor
+   cd /data/install/harbor
+   ./install.sh
+   #出现✔ ----Harbor has been installed and started successfully.---- 表明安装成功。
+   ~~~
+
+6. harbor启动和停止
 
    ```bash
    #如何停掉harbor：
@@ -1329,7 +1612,7 @@ chmod +x /usr/bin/docker-compose
    docker-compose start
    ```
 
-6. 图形化界面访问harbor
+7. 图形化界面访问harbor
 
    - 在harbor同一个VNET下创建了一台Windows VM，在C:\Windows\System32\drivers\etc下修改hosts文件，添加 harbor 10.0.0.5。浏览器访问：https://harbor
    - Harbor VM NSG开放443端口，直接访问公网IP就行（https://20.205.104.235）
@@ -1364,4 +1647,19 @@ docker push 10.0.0.5/test/tomcat:v1
 docker rmi -f 10.0.0.5/test/tomcat:v1
 docker pull 10.0.0.5/test/tomcat:v1
 ```
+
+## 权限管理
+
+项目管理员、维护人员、开发者是三个最常用的角色。一般给一个维护人员就够了。
+
+## 垃圾回收
+
+- 每个项目需要配置策略，一般是配置保留最近推送的30个tag，每周执行。这里配置的策略仅仅是清理了tag，但是底层数据存储没有清理。
+- 系统管理中需要配置清理策略：
+  - 配置日志清理策略，比如每周清理日志
+  - 配置垃圾清理策略，比如每周运行，用一个线程清理即可，允许回收无tag的镜像
+
+## 复制管理
+
+可以把其他镜像仓库的镜像复制过来or同步harbor镜像到其他镜像仓库。
 
