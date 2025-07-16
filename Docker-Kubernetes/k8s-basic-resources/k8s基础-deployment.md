@@ -152,6 +152,10 @@ spec:
              path: /
 ```
 
+## 重启deployment
+
+`kubectl rollout restart deploy nginx`:会轮替重启deployment里面的pod
+
 ## 扩缩容
 
 - 修改yaml文件replicas的值，重新kubectl apply -f即可
@@ -213,76 +217,77 @@ kubectl rollout undo deploy dep-myapp-blue --to-revision=1
 
 ### 自定义更新策略
 
-- maxSurge和maxUnavailable用来控制滚动更新的更新策略
+maxSurge和maxUnavailable用来控制滚动更新的更新策略:
 
 1. maxUnavailable: [0, 副本数]
 
 2. maxSurge: [0, 副本数]
 
-​	注意：两者不能同时为0。
+注意：两者不能同时为0。
 
-- 比例
+比例:
 
 1. maxUnavailable: [0%, 100%] 向下取整，比如10个副本，5%的话==0.5个，但计算按照0个；
 
 2. maxSurge: [0%, 100%] 向上取整，比如10个副本，5%的话==0.5个，但计算按照1个；
 
-​	注意：两者不能同时为0。
+注意：两者不能同时为0。
 
-- 建议配置
+建议配置:
 
 1. maxUnavailable == 0
 
 2. maxSurge == 1
 
-​	这是我们生产环境提供给用户的默认配置。即“一上一下，先上后下”最平滑原则：1个新版本pod ready（结合readiness）后，才销毁旧版本pod。此配置适用场景是平滑更新、保证服务平稳，但也有缺点，就是“太慢”了。
+这是我们生产环境提供给用户的默认配置。即“一上一下，先上后下”最平滑原则：1个新版本pod ready（结合readiness）后，才销毁旧版本pod。此配置适用场景是平滑更新、保证服务平稳，但也有缺点，就是“太慢”了。
 
-- 总结：
+总结：
 
-  maxUnavailable：和期望的副本数比，不可用副本数最大比例（或最大值），这个值越小，越能保证服务稳定，更新越平滑；
+- maxUnavailable：和期望的副本数比，不可用副本数最大比例（或最大值），这个值越小，越能保证服务稳定，更新越平滑；
 
-  maxSurge：和期望的副本数比，超过期望副本数最大比例（或最大值），这个值调的越大，副本更新速度越快。
 
-- 修改deployment的更新策略
+- maxSurge：和期望的副本数比，超过期望副本数最大比例（或最大值），这个值调的越大，副本更新速度越快。
 
-  ```bash
-  #通过kubectl patch改
-  kubectl patch deployment myapp-v1 -p '{"spec":{"strategy":{"rollingUpdate": {"maxSurge":1,"maxUnavailable":0}}}}'
-  ```
+修改deployment的更新策略:
 
-  ```bash
-  #通过yaml文件改
-  kubectl explain deploy.spec.strategy
-  #yaml
-  apiVersion: apps/v1
-  kind: Deployment
-  metadata:
-    name: dep-myapp-blue
-  spec:
-    replicas: 4
-    strategy:
-      type: RollingUpdate
-      rollingUpdate:
-        maxSurge: 1
-        maxUnavailable: 0
-    selector:
-      matchLabels:
+```bash
+#通过kubectl patch改
+kubectl patch deployment myapp-v1 -p '{"spec":{"strategy":{"rollingUpdate": {"maxSurge":1,"maxUnavailable":0}}}}'
+```
+
+```bash
+#通过yaml文件改
+kubectl explain deploy.spec.strategy
+#yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dep-myapp-blue
+spec:
+  replicas: 4
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: myapp
+      version: v1
+  template:
+    metadata:
+      labels:
         app: myapp
         version: v1
-    template:
-      metadata:
-        labels:
-          app: myapp
-          version: v1
-      spec:
-        containers:
-        - name: myapp
-          image: janakiramm/myapp:v2
-          imagePullPolicy: IfNotPresent
-          ports:
-          - containerPort: 80
-          ...
-  ```
+    spec:
+      containers:
+      - name: myapp
+        image: janakiramm/myapp:v2
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 80
+        ...
+```
 
 ## 蓝绿部署
 

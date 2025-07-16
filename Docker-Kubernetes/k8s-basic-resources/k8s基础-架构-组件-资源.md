@@ -98,6 +98,8 @@ Kubernetes 的前身是谷歌内部的Borg系统，是基于谷歌15年生产环
 
 （kube-proxy、kubelet、runtime也都会在master上部署一份）
 
+> 以上四个系统组件，对于kubeadm安装的集群来说，他们是静态pod形式启动的，查看他们的yaml的时候，会看到一个字段：`staticPodPath: /etc/kubernetes/manifests`，在这个目录下存放着这些pod的yaml，kubelet启动的时候会把他们直接拉起来。这个目录里面的文件都会自动被kubelet启动。
+
 ### 工作节点
 
 #### Kube-proxy 
@@ -166,7 +168,7 @@ Kubernetes 的前身是谷歌内部的Borg系统，是基于谷歌15年生产环
   - DaemonSet：在集群中的指定Node上运行且仅运行一个副本，一般用于守护进程类的任务
   - Job：它创建出来的pod只要完成任务就立即退出，不需要重启或重建，用于执行一次性任务
   - Cronjob：它创建的Pod负责周期性任务控制，不需要持续后台运行
-  - StatefulSet：管理有状态应用
+  - StatefulSet：管理有状态应用。给每一个pod分配固定标识，直接访问。
 - controller和pod的关系
   - pod通过controller实现应用的运维，比如伸缩，回滚升级等
   - pod和controller通过label来建立关系
@@ -196,17 +198,12 @@ PV、PVC
 
 # kubectl命令
 
-- k8s中所有的内容都抽象为资源，可以通过kubectl api-resources 来查看
 
-
-- kubectl的运行是需要配置文件的，而这个配置文件是master节点上的 $HOME/.kube 目录下；如果要在node节点上运行此命令，需要将master节点上的.kube文件复制到node节点上，即在master节点上执行下面操作:
-
-
-```sh
-scp -r HOME/.kube node1:HOME/.kube
-```
+- kubectl的运行是需要配置文件的，配置文件一开始存在master节点上的`/etc/kubernetes/admin.conf`下，拷贝到`$HOME/.kube/config` 。如果要在其他地方运行此命令，需要将master节点上的config文件复制过去。
 
 # Api-resource类型
+
+k8s中所有的内容都抽象为资源，可以通过kubectl api-resources 来查看
 
 | **资源分类**  | **资源名称**             | **缩写** | **资源作用**    |
 | ------------- | ------------------------ | -------- | --------------- |

@@ -1,6 +1,6 @@
 # namespace介绍
 
-- Kubernetes 支持多个虚拟集群，它们底层依赖于同一个物理集群。 这些虚拟集群被称为命名空间。
+- Namespace提供了一种将集群资源逻辑上隔离的方式，允许在同一个集群中划分多个虚拟的、逻辑上独立的集群环境，相当于集群的“虚拟化”。
 
 - 命名空间namespace是k8s集群级别的资源，可以给不同的用户、租户、环境或项目创建对应的命名空间，例如，可以为test、devlopment、production环境分别创建各自的命名空间。
 
@@ -45,18 +45,25 @@ spec:
 - 需要手动结束finalizer
 
 ~~~sh
-#开启代理
+# 开启代理
 kubectl proxy
-#Starting to serve on 127.0.0.1:8001
-#新开终端
+# Starting to serve on 127.0.0.1:8001
+# 新开终端
 kubectl get namespace $NAMESPACE -o json > temp.json
-#编辑状态文件
+# 编辑状态文件
 vim temp.json
-#删掉以下三行：
+# 删掉以下三行：
 "finalizers": [
    "controller.cattle.io/namespace-auth"
 ],
-#发送状态文件
+# 发送状态文件
 curl -k -H "Content-Type: application/json" -X PUT --data-binary @temp.json 127.0.0.1:8001/api/v1/namespaces/$NAMESPACE/finalize
 ~~~
 
+不推荐，还是建议先回收其中的资源再删除ns。
+
+# 特殊namespace
+
+## kube-node-lease
+
+- 节点的心跳信息会存放在其中，api server去里面查看心跳信息，获取node状态。

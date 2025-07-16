@@ -3,18 +3,17 @@
 ## POD特点
 
 - 最小部署单元，里面有若干容器。（一般只有一个）其余功能都是为POD所服务的。pod由controller控制器部署管理。
-- 内部容器的网络互通，是共享的。
+- pod内部的容器共享存储、网络、PID、IPC等。容器之间可以通过localhost:port互相访问。可以通过volume实现数据共享。
 - 生命周期短暂，重启之后又变成新的POD。
 
 ## POD存在的意义
 
-1. 容器是单进程的，里面跑一个程序；pod是多进程的，可以运行多个应用程序
-2. 适应容器技术的变化。容器化技术不一定要用docker，换成别的也要支持。
-3. 亲密性应用
-   1. 两个应用之间交互、调用
-   2. 网络之间调用
+1. 对于多容器协作：pod的多容器管理更加高效，更加方便（比如pod内sidecar模式集成日志收集、服务网格等）
+2. 对于强依赖服务：pod把多容器放在一起，他们之间可以通过网络共享来通信，更加高效。
+3. 简化应用的生命周期管理：k8s对pod的readiness管理比容器完善。
+4. 兼容多种运行时：适应容器技术的变化。容器化技术不一定要用docker，换成别的也要支持。
 
-## POD组成
+## Pause容器
 
 - 每一个pod里面自动有一个根容器 pause（也叫infra容器），除此之外会有许多业务容器（用户容器）。
 
@@ -26,7 +25,8 @@
 
   - 以它为依据，评估其他容器的健康状态。
   - 启动Pod时，会先启动⼀个pause容器，然后将后续的所有容器都link到这个pause容器，以实现⽹络共享。给他设置一个IP地址（POD IP），其他容器通过此IP来进行内部通信。
-
+  - 存储共享、网络共享都是通过pause实现的。
+  
   <img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202310252236935.png" alt="image-20231025223642872" style="zoom:50%;" />
 
 ## POD中的容器
@@ -63,7 +63,7 @@ kubectl exec -it -c <container name> -- /bin/bash
 
 # POD生命周期
 
-> K8S文档：[Pod 的生命周期 | Kubernetes](https://kubernetes.io/zh-cn/docs/concepts/workloads/pods/pod-lifecycle/)
+K8S文档：[Pod 的生命周期 | Kubernetes](https://kubernetes.io/zh-cn/docs/concepts/workloads/pods/pod-lifecycle/)
 
 <img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202310252254552.png" alt="image-20231025225409474" style="zoom:50%;" />
 

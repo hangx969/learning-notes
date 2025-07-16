@@ -114,9 +114,13 @@ heima:
 
 ![image-20240725224115645](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202407252241732.png)
 
-# kubectl apply
+# kubectl apply --server-side
 
 - kubectl apply默认是client side apply和server side apply。
   - 不指定任何参数时是client-side apply，字段比较在客户端完成。
   - 可以指定`kubectl apply --server-side`使部署成为server side apply
   - 具体：https://juejin.cn/post/7173328614644006942，https://kubernetes.io/docs/reference/using-api/server-side-apply/
+
+# kubectl create -f --dry-run=client
+
+- 快速生成yaml文件：`kubectl create deploy nginx -n nginx --image=xxx:xxx --dry-run=client -o yaml > nginx.yaml`
