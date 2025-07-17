@@ -159,9 +159,7 @@ K8S文档：[Pod 的生命周期 | Kubernetes](https://kubernetes.io/zh-cn/docs/
 
 - apiServer开始生成pod对象的metadata，并将信息存入etcd，然后返回确认信息至客户端
 
-- apiServer开始反映etcd中的pod对象的变化，其它组件使用watch机制来跟踪检查apiServer上的变动
-
-- **scheduler发现有新的pod对象要创建，开始为Pod分配主机并将结果信息更新至apiServer**
+- 其它组件使用watch机制来跟踪检查apiServer上的变动。**scheduler发现有新的pod对象要创建，开始为Pod分配主机并将结果信息更新至apiServer**
 
 - node节点上的kubelet发现有pod调度过来，调用容器运行时启动容器，并将结果回送至apiServer
 
@@ -196,18 +194,19 @@ kuebctl delete po xxx --force --grace-period=0
 
 在`pod.spec.containers.lifecycle`下面定义
 
-- Post-start
+- PostStart
   - 启动后执行，如果执行失败，容器会按照重启策略重新启动。不需要传递任何参数。
   - 用于资源部署、环境准备等。
 
-- Pre-stop：
+  > 注意：postStart并不是在容器启动命令之前运行的，并不能保证。可以理解为是同时运行的。所以这个功能并不适合做初始化操作。初始化操作最好加一个initContianer。一些不影响程序启动的命令可以加到preStart里面
+  
+- PreStop：
   - 删除前执行，没执行完就会阻塞在这里
   - 用于优雅关闭应用程序、通知其他系统等。
 
-
 ### 优雅关闭
 
-当用户删除含有pod的资源对象时（如RC、deployment等），K8S为了让应用程序优雅关闭（即让应用程序完成正在处理的请求后，再关闭软件），K8S提供两种信息通知：
+当用户删除含有pod的资源对象时（如RC、deployment等），K8S为了让应用程序优雅关闭（即让**程序完成正在处理的请求后再关闭**），K8S提供两种信息通知：
 
 1. 默认：K8S通知node执行docker stop命令，docker会先向容器中PID为1的进程发送系统信号SIGTERM，然后等待容器中的应用程序终止执行，如果等待时间达到设定的超时时间，或者默认超时时间（30s），会继续发送SIGKILL的系统信号强行kill掉进程。
 
@@ -233,46 +232,13 @@ spec:
           command: ["/bin/sh", "-c","echo 'lifecycle hookshandler' > /usr/share/nginx/html/test.html"]
       preStop:
         exec:
-          command: ["/bin/sh", "-c", "nginx -s stop"]
+          command: ["/bin/sh", "-c", "sleep", "10"] # sleep是一个非常常用的preStop命令，就让容器等一段时间再退出。
+        # k8s 1.30以上可以直接用sleep作为preStop
+        # sleep:
+          # seconds: 60
 ```
 
-## POD状态
-
-### 第一阶段
-
-- Pending：
-  - apiserver创建了pod资源对象，卡在这个状态要检查镜像下载、存储挂载、调度情况。
-
-- Running：
-  - pod已经被调度到某个node，并且所有容器都被kubelet创建完成
-
-- Succeed：
-  - pod中所有的容器都成功终止，且不会被重启（容器一次性执行成功的意思）
-
-- Failed：
-  - 所有容器都已经终止，但是至少有一个终止失败；即容器返回了非0的退出状态。
-
-- Error
-  - 容器启动过程发生错误。
-
-- unknown：
-  - apiserver获取不到pod的状态，需要检查kubelet状态、pod和apiserver之间网络通信。
-
-
-### 第二阶段
-
-- Unschedulable：Pod不能被调度， scheduler没有匹配到合适的node节点
-- PodScheduled：pod正处于调度中，在scheduler刚开始调度的时候，还没有将pod分配到指定的node，在筛选出合适的节点后就会更新etcd数据，将pod分配到指定的node
-- Initialized：所有pod中的初始化容器已经完成了
-- ImagePullBackOff：Pod所在的node节点下载镜像失败
-
-### 其他
-
-- Evicted状态：出现这种情况，多见于系统内存或硬盘资源不足，可df-h查看docker存储所在目录的资源使用情况，如果百分比大于85%，就要及时清理下资源，尤其是一些大文件、docker镜像。
-
-- CrashLoopBackOff：
-  - 表示 Pod 中发生的重启循环：Pod 中的容器已启动，但崩溃然后又重新启动，一遍又一遍。CrashLoopBackOff 本身并不是一个错误，而是表明发生了一个错误，导致 Pod 无法正常启动。重启的原因是pod的重启策略设置为Always或者OnFailure。-- 这就是CrashLoop的含义。
-  - BackOff含义是：重启之间的指数延迟（10 秒、20 秒、40 秒……），上限为 5 分钟。当 Pod 状态显示 CrashLoopBackOff 时，表示它当前正在等待指示的时间，然后再重新启动 Pod。除非它被修复，否则它可能会再次失败。
+# Pod状态
 
 | 状态                          | 说明                                                         |
 | ----------------------------- | ------------------------------------------------------------ |
@@ -282,12 +248,13 @@ spec:
 | Failed/Error（失败）          | 所有容器都已终止，并且至少有一个容器以失败的方式终止，也就是说这个容器要么以非零状态退出，要么被系统终止，可以通过logs和describe查看Pod日志和状态 |
 | Unknown（未知）               | 通常是由于通信问题造成的无法获得Pod的状态                    |
 | ImagePullBackOff/ErrImagePull | 镜像拉取失败，一般是由于镜像不存在、网络不通或者需要登录认证引起的，可以使用describe命令查看具体原因 |
-| CrashLoopBackOff              | 容器启动失败，可以通过logs命令查看具体原因，一般为启动命令不正确，健康检查不通过等 |
+| CrashLoopBackOff              | 表示 Pod 中发生的重启循环：Pod 中的容器已启动，但崩溃然后又重新启动，一遍又一遍。<本身并不是一个错误，而是表明发生了一个错误，导致 Pod 无法正常启动。重启的原因是pod的重启策略设置为Always或者OnFailure，可以通过logs命令查看具体原因，一般为启动命令不正确，健康检查不通过等。<br />BackOff含义是：重启之间的指数延迟（10 秒、20 秒、40 秒……），上限为 5 分钟。当 Pod 状态显示 CrashLoopBackOff 时，表示它当前正在等待指示的时间，然后再重新启动 Pod。除非它被修复，否则它可能会再次失败。 |
 | OOMKilled                     | 容器内存溢出，一般是容器的内存Limit设置的过小，或者程序本身有内存溢出，可以通过logs查看程序启动日志 |
 | Terminating                   | Pod正在被删除，可以通过describe查看状态                      |
 | SysctlForbidden               | Pod自定义了内核配置，但kubelet没有添加内核配置或配置的内核参数不支持，可以通过describe查看具体原因 |
 | Completed                     | 容器内部主进程退出，一般计划任务执行结束会显示该状态，此时可以通过logs查看容器日志 |
 | ContainerCreating             | Pod正在创建，一般为正在下载镜像，或者有配置不当的地方，可以通过describe查看具体原因 |
+| Evited                        | 多见于系统内存或硬盘资源不足                                 |
 
 # InitContainer
 
@@ -354,7 +321,7 @@ pod-init   0/1     Init:0/2   0          7s
 - TCPSocket：将会尝试访问容器的`IP:端口`，如果能够建立这条连接（发现容器在监听这个端口），则认为程序正常，否则不正常。
 - HTTPGet：通过`容器IP+端口号+路径`，调用HTTP GET，如果返回的状态码在`200-399`之间，则认为程序正常，否则不正常。
 
-- gRPC：GRPC协议的健康检查，如果响应的状态是"SERVING"，则认为容器健康
+- gRPC：GRPC协议的健康检查，如果响应的状态是"SERVING"，则认为容器健康。
 
 ## 三种探针
 
@@ -646,7 +613,29 @@ spec:
     nodePort: 31181
 ```
 
-# 优化探针使用
+### grpc模式（k8s 1.24+）
+
+~~~yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: etcd-with-grpc
+spec:
+  containers:
+  - name: etcd
+    image: registry.cn-hangzhou.aliyuncs.com/google_containers/etcd:3.5.1-0
+    command: [ "/usr/local/bin/etcd", "--data-dir", "/var/lib/etcd", "--listen-client-urls", "http://0.0.0.0:2379", "--advertise-client-urls", "http://127.0.0.1:2379", "--log-level", "debug"]
+    ports:
+    - containerPort: 2379
+    livenessProbe:
+      grpc:
+        port: 2379 # 对于gRPC的服务，配一个gRPC的端口就行。
+      initialDelaySeconds: 10
+~~~
+
+# 生产环境建议
+
+## 探针参数配置
 
 > 在生产环境中，健康检查接口是一定要配置的，否则在deployment的滚动更新中，新起来的pod就会直接顶替原来的pod，造成宕机。
 
@@ -687,6 +676,28 @@ pod可以通过存活探测和就绪探测对容器进行健康检查：
 >   sleep 0.001  # 控制每次检测间隔为1ms
 > Done
 > ~~~
+
+## 宽限期设置
+
+宽限期默认就是30s，即使preStop设90s，也不行，等了30+2s宽限期过了之后，就强制kill pod了。
+
+但是对于一些特殊业务， 特别是有一次长连接的，就是需要等待超过30s处理完流量连接才能平滑退出。怎么办？
+
+改pod的宽限期：`pod.spec.terminationGracePeriodSeconds: 90`
+
+## 零宕机发版的注意事项
+
+1. 对于启动慢的程序，用startupProbe；对于所有程序，最好都加上livenessProbe和readinessProbe。
+2. 对于优雅退出，要用preStop等待程序真正执行完再退出。
+3. 对于springCloud框架，不推荐在k8s上使用，因为K8s可以平替掉springCloud。如果真的要在K8s上跑springCloud，注意：
+   - pod都是注册了Pod IP到Eureka/Nacos注册中心，其他pod从注册中心拿最新的IP注册表，实现pod间访问，而不走k8s的svc。
+   - 这样pod轮替更新之后，注册中心可能还没更新pod IP，或者其他服务还没拿到更新的pod IP，就会导致旧的IP仍在被访问。
+   - 解决1：pod下线之前，请求Eureka的接口，下线这个pod IP，而且再让eureka通知其他客户端刷新pod IP。问题：开发不愿意实现。
+   - 解决2：pod下线之前，给程序发下线信号，再加一个`preStop: sleep`的时间优雅退出。
+   - 解决3：当然还是迁移到k8s最好了。k8s svc endpoint的剔除、注册是非常快的。
+4. httpGet是比tcpSocket更可靠的检查方式：
+   - 对于Java程序，可能会假死：即使端口通着，内部逻辑不执行了（可能因为内存溢出等原因）。这样tcpSocket可能探测不出来，httpGet才能检测出来。
+   - 但是如果开发不想去实现httpGet的接口，退而求其次用tcpSocket。
 
 # POD调度
 
