@@ -1,30 +1,67 @@
 # 背景
 
+## 传统服务发布
+
+服务发布种类总结：
+
+1. 外部用户访问
+2. 服务间访问
+3. 基础组件访问（数据库等组件）
+
+在无注册中心的情况下：外部用户和服务间访问，往往通过一层代理层（Nginx/SLB）代理到后端服务；基础组件访问是直接配置数据库的IP+端口号来访问。
+
+<img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202507172057914.png" alt="image-20250717205717693" style="zoom:50%;" />
+
+在有注册中心的情况下：服务间访问，通过注册中心拿到其他服务的IP+端口号直接连。外部用户的请求通过代理层（nginx/SLB）转发请求给网关层（Gateway），网关层转发请求到各个服务。
+
+<img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202507172055211.png" alt="image-20250717205553958" style="zoom: 50%;" />
+
+k8s中（有注册中心，比如Eureka，虽然这样不推荐但是有时候没办法）：sts类型的服务把自己的headless svc写到注册中心就行了，不用写pod IP。deploy还是要写pod IP。网关也要写ingress暴露出去。
+
+<img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202507172058901.png" alt="image-20250717205802735" style="zoom:50%;" />
+
+K8s中（无注册中心）：服务间访问、基础组件访问走的是svc，外部用户访问走的是ingress-svc-pod。
+
+<img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202507172058270.png" alt="image-20250717205834038" style="zoom:50%;" />
+
+## pod ip访问
+
 - 虽然每个Pod都会分配一个单独的Pod IP，然而却存在如下两问题：
 
   -   Pod IP 会随着Pod的重建产生变化
 
   -   Pod IP 仅仅是**集群内可见的虚拟IP**，外部无法访问 
 
-- 这样对于访问这个服务带来了难度。因此，kubernetes设计了Service来解决这个问题，service在生命周期内，IP地址不会变。service通过标签选择器绑定相应的pod，可以通过访问service的ip来访问pod的服务。
+# service介绍
 
+- 这样对于访问这个服务带来了难度。因此，kubernetes设计了Service来解决这个问题，service在生命周期内，IP地址不会变。service通过标签选择器绑定相应的pod，可以通过访问service的ip来访问pod的服务。
 - Service可以看作是一组同类Pod对外的访问接口。借助Service，应用可以方便地实现服务发现和负载均衡。
 
-- k8s在创建Service时，会根据标签选择器selector(lable selector)来查找Pod，据此创建与Service同名的endpoint对象，当Pod 地址发生变化时，endpoint也会随之发生变化，service接收前端client请求的时候，就会通过endpoint，找到转发到哪个Pod进行访问的地址。(至于转发到哪个节点的Pod，由负载均衡kube-proxy决定)
+总结：svc为pod提供了一个抽象层，将一组具有相同功能的Pod抽象为一个逻辑上的服务。无论匹配的pod如何变化，比如重启、迁移、扩缩容等，service都能保持一个稳定的访问接口。我们不需要关心pod的具体IP和节点等细节。
+
+## endpoint
+
+k8s在创建Service时，会根据标签选择器(lableSelector)来查找Pod，据此创建与Service同名的endpoint对象。当Pod 地址发生变化时，endpoint也会随之发生变化。
+
+service只是过滤出来要把流量代理到哪些pod上，实际pod信息是endpoint保存的。
+
+service接收前端client请求的时候，就会通过endpoint，找到转发到哪个Pod进行访问的地址。(至于转发到哪个节点的Pod，由负载均衡kube-proxy决定)。
+
+
 
 # 实现原理
 
-- Service在很多情况下只是一个概念，真正起作用的其实是kube-proxy服务进程，每个Node节点上都运行着一个kube-proxy服务进程。
+- Service在很多情况下只是一个概念，真正起作用的其实是`kube-proxy`服务进程，每个Node节点上都运行着一个kube-proxy服务进程。
 
 - 当创建Service的时候会通过api-server向etcd写入创建的service的信息，而kube-proxy会基于watch的机制发现这种Service的变动，然后它会将最新的Service信息转换成对应的**转发规则**。
 
-- 也就是说，表面上看是创建了一个service，对应若干pod，但是底层会被kubeproxy转换成对应的访问规则，这种规则根据kubeproxy工作模式的不同，会有不同的规则，如iptables，ipvs规则等。实际工作的是访问规则。 
+- 也就是说，表面上看是创建了一个service，对应若干pod，但是**底层会被kubeproxy转换成对应的访问规则**，这种规则根据kubeproxy工作模式的不同，会有不同的规则，如iptables，ipvs规则等。实际工作的是访问规则。 
 
   ![image-20231111110951734](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202311111109863.png)
 
-# Kubeproxy工作模式
+## Kubeproxy工作模式
 
-## Userspace
+### Userspace
 
 - userspace模式下，kube-proxy会为每一个Service创建一个监听端口，发向Cluster IP的请求被Iptables规则重定向到kube-proxy监听的端口上，kube-proxy根据LB算法选择一个提供服务的Pod并和其建立链接，以将请求转发到Pod上。 该模式下，kube-proxy充当了一个四层负责均衡器的角色。由于kube-proxy运行在userspace中，在进行转发处理时会增加内核和用户空间之间的数据拷贝，虽然比较稳定，但是效率比较低。
 
@@ -32,7 +69,7 @@
 
    
 
-## iptables
+### iptables
 
 - iptables模式下，kube-proxy为service后端的每个Pod创建对应的iptables规则，直接将发向Cluster IP的请求重定向到一个Pod IP。 该模式下kube-proxy不承担四层负责均衡器的角色，只负责创建iptables规则。该模式的优点是较userspace模式效率更高，但不能提供灵活的LB策略，当后端Pod不可用时也无法进行重试。（采用线性表，从上到下一条一条查，性能很低）
 
@@ -40,13 +77,13 @@
 
 ![image-20231111111411881](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202311111114959.png)
 
-## ipvs
+### ipvs
 
 - ipvs模式和iptables类似，kube-proxy监控Pod的变化并创建相应的ipvs规则。ipvs相对iptables转发效率更高（采用hash表，性能达到一定规模时，hash表的优势就体现出来了）。除此以外，ipvs支持更多的LB算法。
 
   ![image-20231111111435638](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202311111114753.png)
 
-# 负载分发策略
+## 负载分发策略
 
 对Service的访问被分发到了后端的Pod上去，目前kubernetes提供了两种负载分发策略：
 
@@ -54,7 +91,7 @@
 -   基于**客户端地址的会话保持模式**，即来自**同一个客户端**发起的所有请求都会转发到固定的一个Pod上。
   - 此模式可以使在spec中添加**sessionAffinity:** **ClientIP**选项。意思是clientIP进来首次被分发到哪个POD，之后就一直保持与这个pod的会话。
 
-# SVC域名
+# svc域名
 
 - service只要创建完成，我们就可以直接解析它的域名，每一个服务创建完成后都会在集群dns中动态添加一个资源记录，添加完成后我们就可以解析了，资源记录格式是：
 
@@ -62,19 +99,17 @@
   #服务名.命名空间.[域名后缀]
   SVC_NAME.NS_NAME.[DOMAIN.LTD.]
   #集群默认的域名后缀是svc.cluster.local.
+  svc_name.ns_name.svc.cluster.local
   ```
-
+  
   ```bash
   #在pod里面curl svc的域名
   kubectl exec -it dep-nginx-57886b49fb-f2bk2 -- /bin/bash
   curl svc-nginx.default.svc.cluster.local
   ```
-
   
 
 # yaml字段
-
-
 
 ```yaml
 # spec
@@ -126,14 +161,15 @@ FIELDS:
    targetPort	<string> # targetPort是pod上的端口，从port和nodePort上来的流量，经过kube-proxy流入到后端pod的targetPort上，最后进入容器。
 ```
 
-# Svc分类
+> 注意Selector字段：svc通过selector选择对应标签的pod去代理流量。
 
-## clusterIP
+# svc分类
 
-- svc暴露的IP只能在集群内访问。
+## ClusterIP
+
+- svc暴露的IP，只能在集群内访问。
 
 ```yaml
-#deployment
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -141,7 +177,7 @@ metadata:
 spec:
   selector:
     matchLabels:
-      run: nginx
+      run: nginx # 标签要写pod的标签，也就是deployment的选择器匹配的标签，而不是deployment自己的标签。
   replicas: 3
   template:
     metadata:
@@ -154,32 +190,7 @@ spec:
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 80  #pod中的容器需要暴露的端口
-        startupProbe:
-           periodSeconds: 5
-           initialDelaySeconds: 60
-           timeoutSeconds: 10
-           httpGet:
-             scheme: HTTP
-             port: 80
-             path: /
-        livenessProbe:
-           periodSeconds: 5
-           initialDelaySeconds: 60
-           timeoutSeconds: 10
-           httpGet:
-             scheme: HTTP
-             port: 80
-             path: /
-        readinessProbe:
-           periodSeconds: 5
-           initialDelaySeconds: 60
-           timeoutSeconds: 10
-           httpGet:
-             scheme: HTTP
-             port: 80
-             path: /
 #---
-#service
 apiVersion: v1
 kind: Service
 metadata:
@@ -209,15 +220,19 @@ TCP  10.99.178.109:80 rr
 
 - **HeadLiness** Service：不想使用service提供的负载均衡，希望自己定策略。这种不分配cluster IP，只能通过service的域名来访问。yaml文件中将cluster IP设置为None即可。
 
+> 注意：clusterIP虽然在宿主机上能直接请求，但是svc的FQDN在宿主机上可能无法解析。因为宿主机的DNS不是CoreDNS。
+
 ## NodePort
 
-- 将pod通过node上的端口暴露给外部，可以在集群外访问服务，原理是将pod的端口（targetPort）映射到Node的一个端口（nodePort）上，通过NodeIP：NodePort来访问。NodePort 类型的服务将在**每个节点上公开一个端口**，并将流量路由到后端 Pod。
+- 将pod通过node上的端口暴露给外部，可以在集群外访问服务，原理是将pod的端口（targetPort）映射到Node的一个端口（nodePort）上（3000-32767，api-server的--service-node-port-range参数来控制的），通过NodeIP：NodePort来访问。NodePort 类型的服务将在**每个节点上公开一个端口**，并将流量路由到后端 Pod。
 
-- 注意是每个节点！当在Kubernetes中创建一个NodePort类型的Service时，Kubernetes会在每个Node上打开相同的端口。这样，无论你的请求发送到哪个Node，都可以通过这个端口访问到Service。这是通过Kubernetes的iptables规则或者IPVS来实现的。
+- 注意是**每个节点**！当在Kubernetes中创建一个NodePort类型的Service时，Kubernetes会在每个Node上打开相同的端口。这样，无论你的请求发送到哪个Node，都可以通过这个端口访问到Service。这是通过Kubernetes的iptables规则或者IPVS来实现的。
 
 - 访问链路：
 
   client -> nodeIP:nodePort -> node的docker0网卡 -> pod
+
+> 注意1.18之后的集群，这个NodePort不能用netstat或者ss探测到了，因为它仅仅是用iptables/ipvs建了一个映射，不是起了一个socket链接了。
 
 ```yaml
 apiVersion: v1
@@ -239,96 +254,109 @@ spec:
 
 ## ExternalName
 
-- 应用场景：跨名称空间访问
+是service的特例，没有selector、端口映射、endpoint。它是通过返回外部服务的别名来提供服务。类似于域名解析中的CNAME。
 
-- 需求：default名称空间下的client服务想要访问nginx-ns名称空间下的nginx-svc服务。
+比如可以定义一个 Service，后端设置为一个外部域名，这样通过 Service 的名称即可访问到该域名。使用 nslookup 解析以下文件定义的 Service ，集群的 DNS 服务将返回一个值为 www.taobao.com 的 CNAME 记录：
 
-- 解决：default名称空间下创建external name的svc，软链到nginx-ns名称空间下的nginx-svc。
+~~~yaml
+kind: Service
+apiVersion: v1
+metadata:
+  name: my-externalname
+spec:
+  type: ExternalName
+  externalName: www.taobao.com
+~~~
 
-  ```yaml
-  #在nginx-ns的namespace中创建deploy和svc：
-  apiVersion: apps/v1
-  kind: Deployment
-  metadata:
-    name: dep-nginx
-    namespace: nginx-ns
-  spec:
-    selector:
-      matchLabels:
-        run: nginx
-    replicas: 3
-    template:
-      metadata:
-        labels:
-          run: nginx
-      spec:
-        containers:
-        - name: nginx
-          image: docker.io/library/nginx:latest
-          imagePullPolicy: IfNotPresent
-          ports:
-          - containerPort: 80  #pod中的容器需要暴露的端口
-  ---
-  apiVersion: v1
-  kind: Service
-  metadata:
-    name: svc-nginx-clusterip
-    namespace: nginx-ns
-    labels:
-      run: nginx
-  spec:
-    selector:
-      run: nginx
-    type: ClusterIP
-    ports:
-    - name: port-svc-nginx
-      port: 80 # service 暴露的端口
-      protocol: TCP
-      targetPort: 80 # pod暴露的端口
-  ```
+使用场景案例：
 
-  ```yaml
-  #在default名称空间下创建deploy和svc
-  apiVersion: apps/v1
-  kind: Deployment
-  metadata:
-    name: client
-  spec: 
-    replicas: 1
-    selector:
-      matchLabels:
-        app: busybox
-    template:
-     metadata:
-      labels:
-        app: busybox
-     spec:
-       containers:
-       - name: busybox
-         image: busybox
-         imagePullPolicy: IfNotPresent
-         command: ["/bin/sh","-c","sleep 36000"]
-  ---
-  apiVersion: v1
-  kind: Service
-  metadata:
-    name: svc-client
-  spec:
-    type: ExternalName
-    externalName: svc-nginx-clusterip.nginx-ns.svc.cluster.local #软链到目标svc
-    ports:
-    - name: http
-      port: 80
-      targetPort: 80
-  ```
+假设某个项目具备 DEV/UAT 两个环境，每个环境需要链接指定的数据库等基础组件。基础组件同样也是在 K8s 中按照不同的环境进行划分和部署，比如 DEV 环境所用的基础组件均在basic-component-dev 命名空间下，以此类推。
 
-  ```bash
-  #进入到default下面的pod，curl请求externalName的domain，可以代理到nginx-ns里面的pod
-  k exec -it client -- /bin/sh
-  curl svc-client.default.svc.cluster.local
-  #或者直接请求nginx-ns里面的service的domain name，效果一样
-  curl svc-nginx-clusterip.dev.svc.cluster.local
-  ```
+为了降低配置文件的维护复杂度，准备使用 ExternalName 类型的 Service 对基础组件的连接地址进行映射，这样就可以用同名的 Service 区分不同的环境，从而降低配置文件维护的复杂度。
+
+比如配置了在同一个项目的不同环境里面都配置一个同名的 Redis Service，类型为ExternalName，并且按照不同环境指向不同的基础组件地址，这样每个项目的不同环境，都可以用 Redis 这一个地址就可以访问到不同基础组件。
+
+环境准备：
+
+~~~sh
+#  创建 Namespace
+kubectl create ns basic-component-dev
+kubectl create ns basic-component-uat
+#  创建服务
+kubectl create deploy redis -n basic-component-dev --image=registry.cn-beijing.aliyuncs.com/dotbalo/redis:7.2.5
+kubectl create deploy redis -n basic-component-uat --image=registry.cn-beijing.aliyuncs.com/dotbalo/redis:7.2.5
+#  创建 Service
+kubectl expose deploy redis --port 6379 -n basic-component-dev
+kubectl expose deploy redis --port 6379 -n basic-component-uat
+~~~
+
+访问测试：
+
+~~~sh
+#  创建一个专门用于测试的 Redis 客户端
+kubectl create deploy redis-cli --image=registry.cnbeijing.aliyuncs.com/dotbalo/redis:7.2.5
+#  测试每个环境的 Redis 基础组件
+kubectl exec -ti redis-cli-57cc5fd584-hvxzq -- bash
+redis-cli -h redis.basiccomponent-dev
+set a dev
+get a
+redis-cli -h redis.basiccomponent-uat
+set a uat
+get a
+~~~
+
+创建项目的两个环境
+
+~~~sh
+kubectl create ns projecta-dev
+kubectl create ns projecta-uat
+~~~
+
+在每个项目的环境下，创建一个 externalName 类型的 Service，用于连接到不同环境的基础组件。每个externalName的svc都叫redis，但是连接的是自己环境的对应redis svc。所以不同环境里面写代码的时候，直接写redis就能解析了。
+
+~~~yaml
+kind: Service
+apiVersion: v1
+metadata:
+  name: redis
+  namespace: projecta-dev
+spec:
+  type: ExternalName
+  externalName: redis.basic-component-dev.svc.cluster.local
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: redis
+  namespace: projecta-uat
+spec:
+  type: ExternalName
+  externalName: redis.basic-component-uat.svc.cluster.local
+~~~
+
+接下来在每个项目的环境下，创建两个 Redis 客户端，用于模拟需要链接 Redis 的应用程序：
+
+~~~sh
+kubectl create deploy usercenter --image=registry.cnbeijing.aliyuncs.com/dotbalo/redis:7.2.5 -n projecta-dev
+kubectl create deploy usercenter --image=registry.cnbeijing.aliyuncs.com/dotbalo/redis:7.2.5 -n projecta-uat
+~~~
+
+测试每个环境下的 externalName：
+
+~~~sh
+# DEV环境
+kubectl get po -n projecta-dev
+kubectl exec -ti usercenter-6685654cc4-pc6m9 -n projecta-dev -- bash 
+redis-cli -h redis
+get a
+"dev"
+# UAT 环境
+kubectl get po -n projecta-uat
+kubectl exec -ti usercenter-6685654cc4-m9wrb -n projecta-uat -- bash
+redis-cli -h redis
+get a
+"uat"
+~~~
 
 ## LoadBalancer
 
@@ -336,10 +364,22 @@ spec:
   - Azure文档中的LB：
     - Internal LB：[创建内部负载均衡器 - Azure Kubernetes Service | Azure Docs](https://docs.azure.cn/zh-cn/aks/internal-lb)
     - External LB：[在 Azure Kubernetes 服务 (AKS) 中使用公共负载均衡器 - Azure Kubernetes Service | Azure Docs](https://docs.azure.cn/zh-cn/aks/load-balancer-standard)
+- 通过一个外部LB，直接代理到pod上
 
 ![image-20231112160812381](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202311121608561.png)
 
 # 自定义endpoint资源
+
+service不仅仅可以用在集群内部pod上，也可以用在外部IP和域名上。比如外部有一个域名或者IP，可以创建一个svc来实现集群内服务去访问。这样更方便管理，这个后端服务变化，我们只需要去改service就行了，代码不用动。
+
+这种情况下，endpoint是需要我们手动去创建的。（默认情况下集群内部的服务，不需要手动维护endpoint；这种外部的，需要自己建endpoint）
+
+使用场景：
+
+- 希望在生产环境中使用某个固定的名称而非 IP 地址访问外部的中间件服务；
+- 希望 Service 指向另一个 Namespace 中或其他集群中的服务；
+- 正在将工作负载转移到 Kubernetes 集群，但是一部分服务仍运行在 Kubernetes 集群
+  之外的 backend。
 
 ## 示例：集群引用外部mysql数据库
 
@@ -352,7 +392,7 @@ spec:
   systemctl start mariadb
   ```
 
-- 创建mysql的svc
+- 创建mysql的svc，不定义selector
 
   ```yaml
   apiVersion: v1
@@ -363,7 +403,7 @@ spec:
     type: ClusterIP
     ports:
     - port: 3306
-  #这个service没有定义label selector，所以不会生成endpoint
+  # 这个service没有定义label selector，所以不会生成endpoint
   ```
 
 - 自定义一个endpoint
@@ -372,19 +412,21 @@ spec:
   apiVersion: v1
   kind: Endpoints
   metadata:
-    name: svc-mysql #ep的name必须和要手动关联的svc的name相同。
+    name: svc-mysql # ep的name必须和要手动关联的svc的name相同。
   subsets:
   - addresses: 
-    - ip: 192.168.40.5 #直接写上装了mysql的物理机ip
+    - ip: 192.168.40.5 # 直接写上装了mysql的物理机ip
     ports:
     - port: 3306 #暴露mysql的3306
-  #ep创建好之后，describe svc会自动关联上ep
-  #上面配置就是将外部IP地址和服务引入到k8s集群内部，由service作为一个代理来达到能够访问外部服务的目的。
+  # ep创建好之后，describe svc会自动关联上ep
+  # 上面配置就是将外部IP地址和服务引入到k8s集群内部，由service作为一个代理来达到能够访问外部服务的目的。
   ```
 
+  > endpoint必须和svc名称一样，二者才会自动关联。
+  
   # coredns组件 
 
-> CoreDNS 其实就是一个 DNS 服务，而 DNS 作为一种常见的服务发现手段，所以很多开源项目以及工程师都会使用 CoreDNS 为集群提供服务发现的功能，Kubernetes 就在集群中使用 CoreDNS 解决服务发现的问题。 
+CoreDNS 其实就是一个 DNS 服务，而 DNS 作为一种常见的服务发现手段，所以很多开源项目以及工程师都会使用 CoreDNS 为集群提供服务发现的功能，Kubernetes 就在集群中使用 CoreDNS 解决服务发现的问题。 
 
 # 自带svc：kubernetes
 
