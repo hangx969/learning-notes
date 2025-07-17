@@ -27,35 +27,11 @@ spec:
         imagePullPolicy: IfNotPresent
         ports: 
         - containerPort: 80
-        startupProbe:
-          initialDelaySeconds: 20
-          periodSeconds: 5
-          timeoutSeconds: 10
-          httpGet:
-            scheme: HTTP
-            port: 80
-            path: /
-        livenessProbe:
-          initialDelaySeconds: 20
-          periodSeconds: 5
-          timeoutSeconds: 10
-          httpGet:
-            scheme: HTTP
-            port: 80
-            path: /
-        readinessProbe:
-          initialDelaySeconds: 20
-          periodSeconds: 5
-          timeoutSeconds: 10
-          httpGet:
-            scheme: HTTP
-            port: 80
-            path: /
 ```
 
 ## 缺点
 
-- 更新管理上不如deployment灵活。
+- 更新管理上不如deployment灵活。现在不推荐使用。都使用deployment来管理。
 
 # deployment
 
@@ -68,12 +44,16 @@ spec:
 
 ### RS管理
 
-- Deployment控制器是建立在rs之上的一个控制器，可以管理多个rs，每次更新镜像版本，都会生成一个新的rs，把旧的rs替换掉，多个rs同时存在，但是只有一个rs运行。
-- 如下图：rs v1控制三个pod，删除一个pod，在rs v2上重新建立一个，依次类推，直到全部都是由rs v2控制，如果rs v2有问题，还可以回滚，Deployment是建构在rs之上的，多个rs组成一个Deployment，但是只有一个rs处于活跃状态.
+- Deployment控制器是建立在rs之上的一个控制器，可以管理多个rs：
+  - 每次更新，都会生成一个新的rs，把旧的rs替换掉；多个rs同时存在，但是只有一个rs运行。
+
+- 如下图：rs-v1控制三个pod，删除一个pod，在rs-v2上重新建立一个，依次类推，直到全部都是由rs-v2控制，如果rs-v2有问题，还可以回滚。Deployment是建构在rs之上的，多个rs组成一个Deployment，但是只有一个rs处于活跃状态。
 
 ![image-20231029220956699](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202310292209817.png)
 
 ### 更新管理
+
+> 只有在`deploytment.spec.template`产生变化之后，deployment才会触发更新，产生新的RS
 
 - 比如说Deployment控制5个pod副本，pod的期望值是5个，但是升级的时候需要额外多几个pod，控制器可以控制在5个pod副本之外还能再增加几个pod副本：
   - 比方说能多一个，但是不能少，那么升级的时候就是先增加一个，再删除一个，始终保持pod副本数是5个
@@ -86,12 +66,12 @@ spec:
   kubectl explain deploy.spec.strategy.rollingUpdate
   
      maxSurge	<string>
-  #我们更新的过程当中最多允许超出的指定的目标副本数有几个。
-  #它有两种取值方式，第一种直接给定数量；第二种根据百分比，如最多可以超出20%，滚动更新开始时，马上scale up pod数为120%。然后逐渐的kill旧的，创建新的。
-  #Absolute number is calculated from percentage by rounding up. ==> 出现小数向上取整
+  # 更新过程最多允许超出的指定的目标副本数有几个。
+  # 它有两种取值方式，第一种直接给定数量；第二种根据百分比，如最多可以超出20%，滚动更新开始时，马上scale up pod数为120%。然后逐渐的kill旧的，创建新的。
+  # Absolute number is calculated from percentage by rounding up. ==> 出现小数向上取整
      maxUnavailable	<string>
-  #最多允许几个不可用，数字或百分比。如果是30%，滚动更新开始，旧pod马上scale down到70%，然后随着新pod ready，旧pod再进一步scale down。
-  #Absolute number is calculated from percentage by rounding down. ==> 出现小数向下取整
+  # 最多允许几个不可用，数字或百分比。如果是30%，滚动更新开始，旧pod马上scale down到70%，然后随着新pod ready，旧pod再进一步scale down。
+  # Absolute number is calculated from percentage by rounding down. ==> 出现小数向下取整
   
   replicas： 5
   maxSurge: 25%         5*25%=1.25  ->5+2=7
@@ -126,39 +106,18 @@ spec:
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 80
-        startupProbe:
-           periodSeconds: 5
-           initialDelaySeconds: 20
-           timeoutSeconds: 10
-           httpGet:
-             scheme: HTTP
-             port: 80
-             path: /
-        livenessProbe:
-           periodSeconds: 5
-           initialDelaySeconds: 20
-           timeoutSeconds: 10
-           httpGet:
-             scheme: HTTP
-             port: 80
-             path: /
-        readinessProbe:
-           periodSeconds: 5
-           initialDelaySeconds: 20
-           timeoutSeconds: 10
-           httpGet:
-             scheme: HTTP
-             port: 80
-             path: /
 ```
 
 ## 重启deployment
 
-`kubectl rollout restart deploy nginx`:会轮替重启deployment里面的pod
+`kubectl rollout restart deploy nginx`: 会轮替重启deployment里面的pod
 
 ## 扩缩容
 
-- 修改yaml文件replicas的值，重新kubectl apply -f即可
+- 修改yaml文件replicas的值，重新kubectl apply -f
+- kubectl scale deploy --replicas=5
+
+注意不要盲目扩容，特别是对于后端服务，连了数据库的那种。如果访问慢的原因并不是由于并发数不够，而是由于后端数据库有压力，比如慢查询太多、数据库CPU内存满了，盲目扩容java程序可能会导致适得其反。所以要去分析慢的原因再看优化。
 
 ## 滚动更新
 
@@ -182,20 +141,19 @@ kubectl describe deploy
 
 ### 查看滚动更新历史版本
 
-- kubectl rollout： 版本升级相关功能，支持下面的选项：
-
+- `kubectl rollout <参数> deploy <deploy name>`： 版本升级相关功能，支持下面的选项：
   -   status 显示当前升级状态
-
+  
   -   history 显示 升级历史记录
-
+  
   -   pause 暂停版本升级过程
-
+  
   -   resume 继续已经暂停的版本升级过程
-
+  
   -   restart 重启版本升级过程
-
+  
   -   undo 回滚到上一级版本（可以使用--to-revision回滚到指定版本）
-    - --to-version：指的是rollout history里面显示的VERSION版本
+    - --to-version：指的是rollout history里面显示的`REVISION`字段
 
 ```bash
 kubectl rollout history deploy dep-myapp-blue 
@@ -208,12 +166,24 @@ REVISION  CHANGE-CAUSE
 kubectl get rs #能看到两个rs，有一个旧版本的rs都是0.
 ```
 
+- change cause字段:
+  - 如果用kubectl set --record去改，会自动帮你加上，内容就是这个命令本身。
+  - 也是可以自己指定的，在deploy的annotation里面写：`kubernetes.io/change-cause: kubectl set image deployment nginx nginx=registry.cn-beijing.aliyuncs.com/dotbalo/canary:v1 --record=true`
+
 ### 回滚到历史版本
 
 ```bash
 kubectl rollout undo deploy dep-myapp-blue --to-revision=1 
-#也是滚动的方式，ready一个新的干掉一个旧的。
+# 也是滚动的方式，ready一个新的干掉一个旧的。
 ```
+
+### 历史保留策略
+
+在默认情况下，revision 保留 10 个旧的 ReplicaSet，其余的将在后台进行垃圾回收.
+
+可以在`deploy.spec.revisionHistoryLimit` 设置保留 ReplicaSet 的个数。
+
+当设置为 0 时，不保留历史记录。
 
 ### 自定义更新策略
 
@@ -223,23 +193,11 @@ maxSurge和maxUnavailable用来控制滚动更新的更新策略:
 
 2. maxSurge: [0, 副本数]
 
-注意：两者不能同时为0。
-
 比例:
 
 1. maxUnavailable: [0%, 100%] 向下取整，比如10个副本，5%的话==0.5个，但计算按照0个；
 
 2. maxSurge: [0%, 100%] 向上取整，比如10个副本，5%的话==0.5个，但计算按照1个；
-
-注意：两者不能同时为0。
-
-建议配置:
-
-1. maxUnavailable == 0
-
-2. maxSurge == 1
-
-这是我们生产环境提供给用户的默认配置。即“一上一下，先上后下”最平滑原则：1个新版本pod ready（结合readiness）后，才销毁旧版本pod。此配置适用场景是平滑更新、保证服务平稳，但也有缺点，就是“太慢”了。
 
 总结：
 
@@ -247,6 +205,30 @@ maxSurge和maxUnavailable用来控制滚动更新的更新策略:
 
 
 - maxSurge：和期望的副本数比，超过期望副本数最大比例（或最大值），这个值调的越大，副本更新速度越快。
+- 建议采用百分比的形式设置两者的值。
+
+#### 最佳实践
+
+对于非常重要的服务比如网关，建议这样配置:
+
+1. 副本数低于5个：
+
+- maxUnavailable == 0
+
+- maxSurge == 1
+
+> 这是我们生产环境提供给用户的默认配置。即“一上一下，先上后下”最平滑原则：1个新版本pod ready（结合readiness）后，才销毁旧版本pod。此配置适用场景是平滑更新、保证服务平稳，但也有缺点，就是太慢了。
+>
+
+2. 副本数高于5个：这样设会稍微快一些
+
+- maxUnavailable == 0
+
+- maxSurge == 2-3
+
+对于普通服务，用默认的25%+25%就行了。
+
+#### 修改策略
 
 修改deployment的更新策略:
 
@@ -255,7 +237,7 @@ maxSurge和maxUnavailable用来控制滚动更新的更新策略:
 kubectl patch deployment myapp-v1 -p '{"spec":{"strategy":{"rollingUpdate": {"maxSurge":1,"maxUnavailable":0}}}}'
 ```
 
-```bash
+```yaml
 #通过yaml文件改
 kubectl explain deploy.spec.strategy
 #yaml
@@ -288,6 +270,23 @@ spec:
         - containerPort: 80
         ...
 ```
+
+### 暂停和恢复更新
+
+kubectl set命令去更改配置，更改后立即触发更新，大多数情况下可能需要针对一个资源文件更改多处地方，而并不需要多次触发更新。
+
+（如果使用的是 kubectl edit 命令，可以直接进行多次修改，无需暂停更新。有些场景，kubectl set 命令集成在 CICD 流水线中）：
+
+此时可以使用 Deployment 暂停功能，临时禁用更新操作，对 Deployment 进行多次修改后在进行更新。使用 `kubectl rollout pause` 命令即可暂停 Deployment 更新：
+
+~~~sh
+kubectl rollout pause deploy nginx
+deployment.extensions/nginx paused
+~~~
+
+然后对 Deployment 进行相关更新操作，比如先更新镜像，然后对其资源进行限制
+
+进行完最后一处配置更改后，使用 `kubectl rollout resume deploy nginx` 恢复 Deployment 更新
 
 ## 蓝绿部署
 
@@ -419,7 +418,7 @@ spec:
 
 > - 金丝雀发布的由来：17 世纪，英国矿井工人发现，金丝雀对瓦斯这种气体十分敏感。空气中哪怕有极其微量的瓦斯，金丝雀也会停止歌唱；当瓦斯含量超过一定限度时，虽然人类毫无察觉，金丝雀却早已毒发身亡。当时在采矿设备相对简陋的条件下，工人们每次下井都会带上一只金丝雀作为瓦斯检测指标，以便在危险状况下紧急撤离。
 >
-> - 金丝雀发布（又称灰度发布、灰度更新）：金丝雀发布一般先发1台，或者一个小比例，例如2%的服务器，主要做流量验证用，也称为金丝雀 (Canary) 测试 （国内常称灰度测试）。
+> - 金丝雀发布（又称灰度发布、灰度更新）：金丝雀发布一般先发1台，或者一个小比例，例如2%的服务器，主要做流量验证用，也称为金丝雀 **(Canary)** 测试 （国内常称**灰度测试**）。
 > - 简单的金丝雀测试一般通过手工测试验证，复杂的金丝雀测试需要比较完善的监控基础设施配合，通过监控指标反馈，观察金丝雀的健康状况，作为后续发布或回退的依据。 如果金丝测试通过，则把剩余的V1版本全部升级为V2版本。如果金丝雀测试失败，则直接回退金丝雀，发布失败。
 
 ![image-20231111103236653](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202311111032729.png)
@@ -427,13 +426,20 @@ spec:
 ### 实现
 
 ```yaml
-#创建deployment
+# 创建deployment
 kubectl apply -f dep-green.yaml
-#更新镜像，同时暂停rollout
+# 更新镜像 && 暂停rollout
 kubectl set image deployment myapp-v1 myapp=nginx:latest  -n blue-green && kubectl rollout pause deployment myapp-v1 -n blue-green
-#注：上面的解释说明把myapp这个容器的镜像更新到nginx:latest版本 更新镜像之后，创建一个新的pod就立即暂停，这就是我们说的金丝雀发布；如果暂停几个小时之后没有问题，那么取消暂停，就会依次执行后面步骤，把所有pod都升级。
-#取消暂停，让deployment执行完滚动更新
+# 注：把myapp这个容器的镜像更新到nginx:latest版本 更新镜像之后，创建一个新的pod就立即暂停，这就是我们说的金丝雀发布；如果暂停几个小时之后没有问题，那么取消暂停，就会依次执行后面步骤，把所有pod都升级。
+# 验证没问题，取消暂停更新，让deployment执行完滚动更新
 kubectl rollout resume deployment myapp-v1 -n blue-green
 ```
 
 > 金丝雀发布功能，用istio实现，更加方便
+
+# 迁移服务到k8s
+
+1. 查看镜像版本
+2. 查看暴露的端口号
+3. 查看是否需要配置环境变量、配置文件、启动参数等。（有些服务需要配置环境变量才能启动，比如mysql密码等）
+4. 查看数据目录，是否需要持久化数据目录

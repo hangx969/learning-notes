@@ -76,6 +76,7 @@ spec.containers.command和spec.containers.args两个字段，可以覆盖容器�
 ## resources
 
 - requests的资源是直接划分给pod的，即使pod没有使用，所以有时候即使宿主机有资源，但是不能分配了，是因为pod的request已经把资源划分完了，只不过还没实际使用。（`free -m`查看宿主机占用很小，但是实际上已经分配给了pod，所以新pod就pending了）
+- 注意：如果只配置了limits不配置requests，会自动帮你把request写成和limits一样的值。所以有时候看到没有配置requests，但是还是无法调度，可能就是这个原因。
 
 ## 环境变量
 
