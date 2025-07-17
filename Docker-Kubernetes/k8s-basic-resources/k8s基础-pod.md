@@ -2,7 +2,7 @@
 
 ## POD特点
 
-- 最小部署单元，里面有若干容器。（一般只有一个）其余功能都是为POD所服务的。pod由controller控制器部署管理。
+- K8s最小部署单元，里面封装了一个或多个容器。
 - pod内部的容器共享存储、网络、PID、IPC等。容器之间可以通过localhost:port互相访问。可以通过volume实现数据共享。
 - 生命周期短暂，重启之后又变成新的POD。
 
@@ -15,7 +15,7 @@
 
 ## Pause容器
 
-- 每一个pod里面自动有一个根容器 pause（也叫infra容器），除此之外会有许多业务容器（用户容器）。
+- 每一个pod里面自动有一个根容器 pause（也叫infra容器），除此之外有许多业务容器（用户容器）。
 
 
 - kubectl get pods 看到的 READY 1/1 说明该pod里面有1个容器（其实还有个根容器但是默认不显示）。
@@ -61,13 +61,89 @@ kubectl exec -it -c <container name> -- /bin/bash
 
    <img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202310261902236.png" alt="image-20231026190227168" style="zoom:50%;" />
 
+# Pod字段配置
+
+## 端口号
+
+容器的端口号`spec.containers.ports.containerPort`这个字段，仅仅是声明了容器暴露了哪个端口，方便查看。与实际容器里面程序暴露了什么端口没有关系。K8s并不知道程序暴露了哪个端口，并不是你pod设置了80端口，容器就暴露80，设置了81就暴露81。
+
+所以一个pod内多个容器暴露的端口在设计程序的时候就要注意不能冲突，不是pod字段里面声不一样的端口就能避免的，避免不了。
+
+## 启动命令
+
+spec.containers.command和spec.containers.args两个字段，可以覆盖容器内的entrypoint和cmd。
+
+## resources
+
+- requests的资源是直接划分给pod的，即使pod没有使用，所以有时候即使宿主机有资源，但是不能分配了，是因为pod的request已经把资源划分完了，只不过还没实际使用。（`free -m`查看宿主机占用很小，但是实际上已经分配给了pod，所以新pod就pending了）
+
+## 环境变量
+
+~~~yaml
+env:
+- name: path
+  value: test
+- name: POD_NAME
+  valuesFrom: 
+    fieldRef:
+      fieldPath: metadata.name
+- name: POD_IP
+  valueFrom:
+    fieldRef:
+      fieldPath: status.podIP
+- name: LABEL_APP
+  valueFrom:
+    fieldRef:
+      fieldPath: metadata.labels['run']
+~~~
+
+> fieldRef可选的字段：
+>
+> metadata.name
+> metadata.namespace
+> metadata.uid
+> metadata.labels[xxx]
+> metadata.annotations[xxx]
+> spec.nodeName
+> spec.serviceAccountName
+> status.hostIP
+> status.hostIPs
+> status.podIP
+> status.podIPs
+
+## POD重启策略
+
+`Pod.spec.restartPolicy`字段
+
+-   Always：kubelet会定期查询容器的状态，一旦某个容器处于**退出**状态（正常退出后是Completed状态），就对其执行重启操作，这是**默认值。**【保持Always就行】
+-   OnFailure：容器异常退出（也就是退出码不为0）时重启。正常退出不会重启。
+-   Never： 不论任何状态，都不重启该容器。
+
+测试yaml文件：
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: bb-rp
+  labels:
+    app: busybox
+spec:
+   containers:
+     - name: busybox
+       image: busybox:latest
+       command: ["/bin/sh"]
+       args: ["-c", "sleep 10, exit 1"]
+   restartPolicy: Always
+```
+
 # POD生命周期
 
 K8S文档：[Pod 的生命周期 | Kubernetes](https://kubernetes.io/zh-cn/docs/concepts/workloads/pods/pod-lifecycle/)
 
 <img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202310252254552.png" alt="image-20231025225409474" style="zoom:50%;" />
 
-- 创建pause根容器
+- kubelet创建pause根容器
 - 运行Initcontainer
   - 先于主容器运行一些自定义工具程序或自定义代码。串行进行，前一个失败不会运行后一个。
   - 作用在整个pod范围的。
@@ -77,7 +153,7 @@ K8S文档：[Pod 的生命周期 | Kubernetes](https://kubernetes.io/zh-cn/docs/
 - 停止前钩子 (每个container都可以定义各自的钩子)
 - pod终止过程
 
-### pod创建过程
+## pod创建过程
 
 - 用户通过kubectl或其他api客户端提交需要创建的pod信息给apiServer
 
@@ -93,20 +169,24 @@ K8S文档：[Pod 的生命周期 | Kubernetes](https://kubernetes.io/zh-cn/docs/
 
   ![image-20231026203326085](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202310262033218.png)
 
-### pod删除过程
+## Pod启动过程
+
+kubectl create pod -- pending -- ContainerCreating -- InitContainer -- Container Running -- `Startup Probe -- Liveness/Readiness Probes` -- Endpoint添加pod IP
+
+> Startup Probe是在另外两个之前运行的。
+
+## pod删除过程
 
 - 用户向apiServer发送删除pod的命令。
-- apiServcer中的pod信息会在宽限期内（默认30s）被视为dead。
-- 宽限期已过，将pod标记为terminating状态。
-- kubelet在监控到pod转为terminating状态，启动pod关闭过程。
-- **endpoint控制器**监控到pod关闭，将与pod与service匹配的endpoint列表中删除。
-- 如果当前pod对象定义了**preStop钩子处理器**，则在标记为terminating后，即同步执行。
-- pod对象中的容器进程收到停止信号。
-- 宽限期结束后，若pod中还存在仍在运行的进程，那么pod对象会收到立即终止SIGKILL的信号。
+- apiServcer中的pod信息会在宽限期内（默认30s）被视为dead。以下三个步骤同步执行：
+  - kubelet将pod转为Terminating状态
+  - **endpoint控制器**监控到pod关闭，将与pod IP剔除。
+  - 如果当前pod对象定义了`preStop钩子处理器`，terminating时同步执行。如果宽限期结束PreStop仍未结束，再获得两秒宽限期
+- 宽限期结束后，若pod中还存在仍在运行的进程，那么pod会收到立即终止`SIGKILL`的信号。
 - kubelet请求apiServer将此pod资源的宽限期设置为0从而完成删除操作，此时pod对于用户已不可见。
 
 ```bash
-#强制删除pod
+# 强制删除pod
 kuebctl delete po xxx --force --grace-period=0
 ```
 
@@ -114,13 +194,13 @@ kuebctl delete po xxx --force --grace-period=0
 
 ### 介绍
 
-在pod.spec.containers.lifecycle下面定义
+在`pod.spec.containers.lifecycle`下面定义
 
 - Post-start
   - 启动后执行，如果执行失败，容器会按照重启策略重新启动。不需要传递任何参数。
   - 用于资源部署、环境准备等。
 
-- Pre-start：
+- Pre-stop：
   - 删除前执行，没执行完就会阻塞在这里
   - 用于优雅关闭应用程序、通知其他系统等。
 
@@ -194,72 +274,20 @@ spec:
   - 表示 Pod 中发生的重启循环：Pod 中的容器已启动，但崩溃然后又重新启动，一遍又一遍。CrashLoopBackOff 本身并不是一个错误，而是表明发生了一个错误，导致 Pod 无法正常启动。重启的原因是pod的重启策略设置为Always或者OnFailure。-- 这就是CrashLoop的含义。
   - BackOff含义是：重启之间的指数延迟（10 秒、20 秒、40 秒……），上限为 5 分钟。当 Pod 状态显示 CrashLoopBackOff 时，表示它当前正在等待指示的时间，然后再重新启动 Pod。除非它被修复，否则它可能会再次失败。
 
-# 容器保持长时运行
-
-- 如果容器的主进程退出，Pod 通常会自动重启该容器。然而，在某些情况下，主进程的退出可能是不可避免的，这时我们需要确保容器通过其他方式持续运行。有以下几种思路：
-
-  1. 保持后台进程持续运行
-
-     ~~~yaml
-     apiVersion: v1
-     kind: Pod
-     metadata:
-       name: tail-pod
-     spec:
-       containers:
-       - name: nginx
-         image: nginx:latest
-         command: ["tail", "-f", "/dev/null"] 
-     # tail 命令进入了一个无限循环状态，持续读取一个始终为空的文件（/dev/null），从而保持容器的持续运行。不执行任何实际操作，因此不会占用大量系统资源。
-     ~~~
-
-  2. 保持容器无限暂停
-
-     ~~~yaml
-     apiVersion: v1
-     kind: Pod
-     metadata:
-       name: sleep-pod
-     spec:
-       containers:
-       - name: alpine
-         image: alpine:latest
-         command: ["sleep", "infinity"] 
-     # 容器会保持在一个无限期的休眠状态。这种方法非常轻量，因为 sleep 命令本身不消耗 CPU 资源，而仅仅占用少量内存
-     ~~~
-
-  3. 使用进程管理器保持容器运行
-
-     - 进程管理器是用于管理进程生命周期的工具，特别适用于需要在容器内运行多个进程的场景。Tini 是一种轻量级的进程管理器，设计用于在容器环境中运行，能够处理常见的 `PID 1` 问题，如信号处理、孤儿进程清理等。
-     - 在容器化环境中，通常只有一个进程（通常是 `PID 1`）被直接运行，并且由它来管理整个容器的生命周期。然而，某些情况下，`PID 1` 进程无法正常处理信号或清理子进程，从而导致容器中的进程管理混乱。Tini 作为容器的 `init` 系统，能够有效地接管 `PID 1` 的角色，处理信号转发、子进程清理等工作，从而保证容器内的多进程运行稳定。
-
-     - 构建镜像
-
-     ```sh
-     FROM ubuntu:latest
-     ADD https://github.com/krallin/tini/releases/download/v0.19.0/tini /tini
-     RUN chmod +x /tini
-     ENTRYPOINT ["/tini", "--"]
-     CMD ["your-main-process"]
-     
-     docker build -t your-image-with-tini .
-     ```
-
-     - 创建pod
-
-     ~~~yaml
-     apiVersion: v1
-     kind: Pod
-     metadata:
-       name: tini-pod
-     spec:
-       containers:
-       - name: my-container
-         image: your-image-with-tini
-         command: ["your-main-process"]
-     ~~~
-
-     
+| 状态                          | 说明                                                         |
+| ----------------------------- | ------------------------------------------------------------ |
+| Pending（挂起）               | Pod已被Kubernetes系统接收，但仍有一个或多个容器未被创建，可以通过kubectl describe查看处于Pending状态的原因 |
+| Running（运行中）             | Pod已经被绑定到一个节点上，并且所有的容器都已经被创建，而且至少有一个是运行状态，或者是正在启动或者重启，可以通过kubectl logs查看Pod的日志 |
+| Succeeded（成功）             | 所有容器执行成功并终止，并且不会再次重启，可以通过kubectl logs查看Pod日志 |
+| Failed/Error（失败）          | 所有容器都已终止，并且至少有一个容器以失败的方式终止，也就是说这个容器要么以非零状态退出，要么被系统终止，可以通过logs和describe查看Pod日志和状态 |
+| Unknown（未知）               | 通常是由于通信问题造成的无法获得Pod的状态                    |
+| ImagePullBackOff/ErrImagePull | 镜像拉取失败，一般是由于镜像不存在、网络不通或者需要登录认证引起的，可以使用describe命令查看具体原因 |
+| CrashLoopBackOff              | 容器启动失败，可以通过logs命令查看具体原因，一般为启动命令不正确，健康检查不通过等 |
+| OOMKilled                     | 容器内存溢出，一般是容器的内存Limit设置的过小，或者程序本身有内存溢出，可以通过logs查看程序启动日志 |
+| Terminating                   | Pod正在被删除，可以通过describe查看状态                      |
+| SysctlForbidden               | Pod自定义了内核配置，但kubelet没有添加内核配置或配置的内核参数不支持，可以通过describe查看具体原因 |
+| Completed                     | 容器内部主进程退出，一般计划任务执行结束会显示该状态，此时可以通过logs查看容器日志 |
+| ContainerCreating             | Pod正在创建，一般为正在下载镜像，或者有配置不当的地方，可以通过describe查看具体原因 |
 
 # InitContainer
 
@@ -273,7 +301,7 @@ spec:
 
   - 每个Init容器必须运行成功,下一个才能够运行。
 
-## 示例
+示例:
 
 ```yaml
 #主容器运行nginx服务，初始化容器用来给主容器生成index.html文件
@@ -320,15 +348,20 @@ pod-init   0/1     Init:0/2   0          7s
 > - 这三种probe需要在yaml文件里面自己配。
 > - StartupProbe探测成功后才会进行LivenessProbe和ReadinessProbe。后两者是并行的，没有先后关系。
 
-## Probe方法
+## 四种探测方法
 
-- Exec命令：在容器内执行指定命令，如果命令执行的退出码为0，则认为程序正常；退出码非0，则不正常。
-- TCPSocket：将会尝试访问容器的IP+**指定端口**，如果能够建立这条连接（发现容器在监听这个端口），则认为程序正常，否则不正常。
-- HTTPGet：通过容器IP+端口号+路径，调用HTTP GET，如果返回的状态码在200和399之间，则认为程序正常，否则不正常。
+- Exec命令：在容器内执行指定命令，如果命令执行的`退出码为0`，则认为程序正常；退出码非0，则不正常。
+- TCPSocket：将会尝试访问容器的`IP:端口`，如果能够建立这条连接（发现容器在监听这个端口），则认为程序正常，否则不正常。
+- HTTPGet：通过`容器IP+端口号+路径`，调用HTTP GET，如果返回的状态码在`200-399`之间，则认为程序正常，否则不正常。
 
-## StartupProbe
+- gRPC：GRPC协议的健康检查，如果响应的状态是"SERVING"，则认为容器健康
 
-- 是为了解决程序启动时间很长，启动慢等问题的，当配置了startupProbe启动探针，会先禁用其他探针，直到startupProbe探针成功，成功后将退出不在进行探测，如果startupProbe探针探测失败，pod将会根据重启策略重启。
+## 三种探针
+
+### StartupProbe
+
+- 是为了解决程序启动时间很长，启动慢问题的。如果不配这个，程序启动慢，端口起不来，livenessProbe检测不过，会一直重复被liveness探针重启，重启完程序又没启动完，又被重启了。进入CrashLookBackoff状态。（把initialDelaySeconds调高点也行，但是调高点又会造成服务漂移之后启动太慢。而且有时候服务启动的时间不固定，这样还是startupProbe更好用）
+- 当配置了startupProbe启动探针，会先禁用其他探针，直到startupProbe探针成功，成功后将退出不再进行探测；如果startupProbe探针探测失败，pod将会根据重启策略重启。
 - 如果容器没有提供启动探测，则默认状态为成功Success。
 
 **示例**
@@ -343,7 +376,7 @@ pod-init   0/1     Init:0/2   0          7s
   spec:
     containers:
     - name: startup
-      image: xianchao/tomcat-8.5-jre8:v1
+      image: tomcat-8.5-jre8:v1
       imagePullPolicy: IfNotPresent
       ports:
       - containerPort: 8080
@@ -362,15 +395,17 @@ pod-init   0/1     Init:0/2   0          7s
 
 - tcp socket模式
 
+  对于startupProbe，更推荐用tcpSocket方式，因为端口起来了说明程序没问题了。
+
   ```yaml
       startupProbe:
         tcpSocket:
           port: 8080
-        initialDelaySeconds: 20 #容器启动后多久开始探测
-        periodSeconds: 20 #执行探测的时间间隔
-        timeoutSeconds: 10 #探针执行检测请求后，等待响应的超时时间
+        initialDelaySeconds: 10 #容器启动后多久开始探测
+        periodSeconds: 5 #执行探测的时间间隔
+        timeoutSeconds: 2 #探针执行检测请求后，等待响应的超时时间
         successThreshold: 1 #成功多少次才算成功
-        failureThreshold: 3 #失败多少次才算失败
+        failureThreshold: 30 #失败多少次才算失败
   ```
 
 - http get模式
@@ -378,21 +413,27 @@ pod-init   0/1     Init:0/2   0          7s
   ```yaml
       startupProbe:
         httpGet:
-          path: /
+          path: /health # 检查路径
           port: 8080
-          #默认探测localhost:8080
-        initialDelaySeconds: 20 #容器启动后多久开始探测
+          scheme: HTTP
+          # httpHeaders: # 可选，请求头。可以传入一个token做一个简单认证。
+          # - name: end-user
+            # value: Jason
+          # 默认探测localhost:8080
+        initialDelaySeconds: 20 # 容器启动后多久开始探测。
         periodSeconds: 20 #执行探测的时间间隔
         timeoutSeconds: 10 #探针执行检测请求后，等待响应的超时时间
-        successThreshold: 1 #成功多少次才算成功
-        failureThreshold: 3 #失败多少次才算失败
+        successThreshold: 1 # 探测成功多少次才算成功
+        failureThreshold: 3 # 探测失败多少次才算失败
   ```
 
-## LivenessProbe
+### LivenessProbe
 
-- 用指定的方式（exec、tcp、http）检测pod中的容器是否正常运行，如果检测失败，则认为容器不健康，那么Kubelet将根据Pod中设置的 restartPolicy策略来判断Pod是否要重启，如果容器配置中没有配置 livenessProbe，Kubelet 将认为存活探针探测一直为success（成功）状态。
+- 用指定的方式（exec、tcp、http）检测pod中的**容器是否正常运行**。
+- 如果检测失败，则认为容器不健康，Kubelet杀死容器，根据restartPolicy判断是否重启。
+- 如果容器配置中没有配置 livenessProbe，Kubelet 将认为存活探针探测一直为success（成功）状态。
 
-> 存活探针是一种从应用故障中恢复的强劲方式，但应谨慎使用。 你必须仔细配置存活探针，确保它能真正标示出不可恢复的应用故障，例如死锁。
+> 存活探针是一种从应用故障中恢复的强劲方式，但应谨慎使用。你必须仔细配置存活探针，确保它能真正标示出不可恢复的应用故障，例如死锁。
 
 **示例**
 
@@ -422,7 +463,7 @@ pod-init   0/1     Init:0/2   0          7s
           - cat
           - /tmp/healthy
           
-  #容器在初始化后，首先创建一个 /tmp/healthy 文件，然后执行睡眠命令，睡眠 30 秒，到时间后执行删除 /tmp/healthy 文件命令。而设置的存活探针检检测方式为执行 shell 命令，用 cat 命令输出 healthy 文件的内容，如果能成功执行这条命令，存活探针就认为探测成功，否则探测失败。在前 30 秒内，由于文件存在，所以存活探针探测时执行 cat /tmp/healthy 命令成功执行。30 秒后 healthy 文件被删除，所以执行命令失败，Kubernetes 会根据 Pod 设置的重启策略来判断，是否重启 Pod。
+  # 容器在初始化后，首先创建一个 /tmp/healthy 文件，然后执行睡眠命令，睡眠 30 秒，到时间后执行删除 /tmp/healthy 文件命令。而设置的存活探针检检测方式为执行 shell 命令，用 cat 命令输出 healthy 文件的内容，如果能成功执行这条命令，存活探针就认为探测成功，否则探测失败。在前 30 秒内，由于文件存在，所以存活探针探测时执行 cat /tmp/healthy 命令成功执行。30 秒后 healthy 文件被删除，所以执行命令失败，Kubernetes 会根据 Pod 设置的重启策略来判断，是否重启 Pod。
   ```
 
 - http模式
@@ -475,16 +516,19 @@ pod-init   0/1     Init:0/2   0          7s
   #nginx -s stop ==> 会被存活探测自动重启。
   ```
 
-## ReadinessProbe
+### ReadinessProbe
 
-- 用于检测容器中的应用是否可以接受请求，当探测成功后才使Pod对外提供网络访问，将容器标记为就绪状态，可以加到pod前端负载，如果探测失败，则将容器标记为未就绪状态，会把pod从前端负载移除。
+- 用于检测容器中的应用是否可以接受请求，当探测成功后才使Pod对外提供网络访问，将容器标记为就绪状态，可以加到pod前端负载。
+
+- 如果探测失败，则将容器标记为未就绪状态，会把pod从endpoint中移除。
 
 - ReadinessProbe 和 livenessProbe 可以使用相同探测方式，只是对 Pod 的处置方式不同：
 
   - readinessProbe 当检测失败后，将 Pod 的 IP:Port 从对应的 EndPoint 列表中删除。
 
-  - livenessProbe 当检测失败后，将杀死容器并根据 Pod 的重启策略来决定作出对应的措施。
-- 在生产环境中，一般会让开发提供容器的健康检查接口，在spring boot已经有原生的健康检查接口，所有然开发定义健康检查接口后我们再使用http get方法来定义我们的探针。
+  - livenessProbe 当检测失败后，将杀死容器并根据 Pod 的重启策略来决定是否重启。
+
+注意：Readiness不重启容器，之后Liveness才会重启。
 
 **示例**
 
@@ -575,7 +619,7 @@ spec:
     startupProbe:
       initialDelaySeconds: 20
       periodSeconds: 5
-      timeoutSeconds: 10
+      timeoutSeconds: 2
       httpGet:
         scheme: HTTP
         port: 8081
@@ -604,6 +648,8 @@ spec:
 
 # 优化探针使用
 
+> 在生产环境中，健康检查接口是一定要配置的，否则在deployment的滚动更新中，新起来的pod就会直接顶替原来的pod，造成宕机。
+
 pod可以通过存活探测和就绪探测对容器进行健康检查：
 
 - 探测间隔时间太短，可能会增加集群的负载，并且可能会导致不必要的故障转移或服务中断
@@ -611,12 +657,17 @@ pod可以通过存活探测和就绪探测对容器进行健康检查：
 
 那如何设置探测时间、探测超时时间、探测失败次数，做到最大限度的做到业务无感知，需要根据具体的应用程序和环境来确定。以下是一些考虑因素和常见的最佳实践：
 
-1. 存活探测时间（livenessProbe）
+1. startupProbe
+   - 初始延迟（initialDelaySeconds）：默认是0s，但是建议设置为应用程序完成启动所需的时间，确保程序可以顺利完成初始化。一般设置为几秒就行。
+   - 探测间隔（periodSeconds）：默认10s，设短一些，5s
+   - 探测超时时间（timeoutSeconds）：默认1s，设置为应用正常响应的范围内即可，通常是1-5s。
+   - 连续失败阈值（failureThreshold）：设高一点，30次失败才认为程序没起来。这样相当于给了30*5=150s的时间启动，**只要启动起来了，就直接过了。**
+2. livenessProbe
    - 初始延迟（initialDelaySeconds）：默认是0s，但是建议设置为应用程序完成启动所需的时间，确保程序可以顺利完成初始化。一般设置为几秒到几分钟
    - 探测间隔（periodSeconds）：默认是10s，但是建议根据应用特点进行调整。轻量级应用，可以设置较短间隔（5-10s）；重型应用建议增加间隔（30-60s）
    - 探测超时时间（timeoutSeconds）：默认1s，设置为应用正常响应的范围内即可，通常是1-5s。
    - 连续失败阈值（failureThreshold）：一般连续2次失败即认为探测失败，减少因为短暂网络问题或偶发故障引起误报。
-2. 就绪探测时间（readinessProbe）
+3. readinessProbe
    - 其余参数和livenessProbe类似
    - 连续成功阈值（successThreshold）：一般设置1次成功即认为就绪，可以尽早把流量转发到已就绪的pod
 
@@ -636,49 +687,6 @@ pod可以通过存活探测和就绪探测对容器进行健康检查：
 >   sleep 0.001  # 控制每次检测间隔为1ms
 > Done
 > ~~~
-
-# POD重启策略
-
-**Pod.spec.restartPolicy**
-
--   Always：kubelet会定期查询容器的状态，一旦某个容器处于**退出**状态（正常退出后是Completed状态），就对其执行重启操作，这是**默认值。**
--   OnFailure：容器异常退出（也就是退出码不为0）时重启。
--   Never： 不论任何状态，都不重启该容器。
-
-测试yaml文件：
-
-```yaml
-apiVersion: v1
-kind: Pod
-metadata:
-  name: bb-rp
-  labels:
-    app: busybox
-spec:
-   containers:
-     - name: busybox
-       image: busybox:latest
-       command: ["/bin/sh"]
-       args: ["-c", "sleep 10, exit 1"]
-   restartPolicy: Always
-```
-
-# 查看pod日志
-
-```bash
-kubectl logs <pod name> 
-#当pod处于crash状态的时候，容器不断重启，此时用 kubelet logs 可能出现一直捕捉不到日志。kubelet会保持前几个失败的容器，用--previous就能看到其日志。
-kubectl logs --previous <pod name>
-
-#查看pod内容器的日志
-kubectl logs mypod --all-containers
-#查看pod内某个容器日志
-kubectl logs mypod -c container-name
-
-#查看kube events
-kubectl get events
-kubectl get events --field-selector involvedObject.name=podName
-```
 
 # POD调度
 
@@ -1060,3 +1068,86 @@ spec:
     tolerationSeconds: 3600 #NoExcute专用字段，通常情况下，如果给一个节点添加了一个 effect 值为 NoExecute 的污点，则任何不能容忍这个污点的 Pod 都会马上被驱逐，任何可以容忍这个污点的 Pod 都不会被驱逐。但是，如果 Pod 存在一个 effect 值为 NoExecute 的容忍度指定了可选属性 tolerationSeconds 的值，则表示在给节点添加了上述污点之后， Pod 还能继续在节点上运行的时间。3600这表示如果这个 Pod 正在运行，同时一个匹配的污点被添加到其所在的节点， 那么 Pod 还将继续在节点上运行 3600 秒，然后被驱逐。 如果在此之前上述污点被删除了，则 Pod 不会被驱逐。
 ```
 
+# 容器保持长时运行
+
+- 如果容器的主进程退出，Pod 通常会自动重启该容器。然而，在某些情况下，主进程的退出可能是不可避免的，这时我们需要确保容器通过其他方式持续运行。有以下几种思路：
+
+  1. 保持后台进程持续运行
+
+     ~~~yaml
+     apiVersion: v1
+     kind: Pod
+     metadata:
+       name: tail-pod
+     spec:
+       containers:
+       - name: nginx
+         image: nginx:latest
+         command: ["tail", "-f", "/dev/null"] 
+     # tail 命令进入了一个无限循环状态，持续读取一个始终为空的文件（/dev/null），从而保持容器的持续运行。不执行任何实际操作，因此不会占用大量系统资源。
+     ~~~
+
+  2. 保持容器无限暂停
+
+     ~~~yaml
+     apiVersion: v1
+     kind: Pod
+     metadata:
+       name: sleep-pod
+     spec:
+       containers:
+       - name: alpine
+         image: alpine:latest
+         command: ["sleep", "infinity"] 
+     # 容器会保持在一个无限期的休眠状态。这种方法非常轻量，因为 sleep 命令本身不消耗 CPU 资源，而仅仅占用少量内存
+     ~~~
+
+  3. 使用进程管理器保持容器运行
+
+     - 进程管理器是用于管理进程生命周期的工具，特别适用于需要在容器内运行多个进程的场景。Tini 是一种轻量级的进程管理器，设计用于在容器环境中运行，能够处理常见的 `PID 1` 问题，如信号处理、孤儿进程清理等。
+     - 在容器化环境中，通常只有一个进程（通常是 `PID 1`）被直接运行，并且由它来管理整个容器的生命周期。然而，某些情况下，`PID 1` 进程无法正常处理信号或清理子进程，从而导致容器中的进程管理混乱。Tini 作为容器的 `init` 系统，能够有效地接管 `PID 1` 的角色，处理信号转发、子进程清理等工作，从而保证容器内的多进程运行稳定。
+
+     - 构建镜像
+
+     ```sh
+     FROM ubuntu:latest
+     ADD https://github.com/krallin/tini/releases/download/v0.19.0/tini /tini
+     RUN chmod +x /tini
+     ENTRYPOINT ["/tini", "--"]
+     CMD ["your-main-process"]
+     
+     docker build -t your-image-with-tini .
+     ```
+
+     - 创建pod
+
+     ~~~yaml
+     apiVersion: v1
+     kind: Pod
+     metadata:
+       name: tini-pod
+     spec:
+       containers:
+       - name: my-container
+         image: your-image-with-tini
+         command: ["your-main-process"]
+     ~~~
+
+# 查看pod日志
+
+```bash
+kubectl logs <pod name> 
+# 当pod处于crash状态的时候，容器不断重启，此时用 kubelet logs 可能出现一直捕捉不到日志。kubelet会保持前几个失败的容器，用--previous就能看到其日志。
+kubectl logs --previous <pod name>
+
+#查看pod内容器的日志
+kubectl logs mypod --all-containers
+#查看pod内某个容器日志
+kubectl logs mypod -c container-name
+
+#查看kube events
+kubectl get events
+kubectl get events --field-selector involvedObject.name=podName
+```
+
+# 
