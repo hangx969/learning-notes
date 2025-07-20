@@ -1,12 +1,16 @@
 # Helm介绍
 
 - Helm是kubernetes的包管理工具，相当于linux环境下的yum/apt-get命令。
-
 - Helm可以解决的问题：运维人员写好资源文件模板，交给开发人员填写参数即可
-
 - Helm中的一些概念：
   - helm：命令行客户端工具，主要用于Kubernetes应用中的chart的创建、打包、发布和管理。
   - Chart：helm程序包，一系列用于描述k8s资源相关文件的集合，比方说我们部署nginx，需要deployment、svc的yaml，这两个清单文件就是一个helm程序包，在k8s中把这些yaml清单文件叫做chart图表。
+- 功能：
+  - 资源管理：helm chart预定义yaml文件，描述各个组件的配置和模板
+  - 版本控制：支持一键回滚到先前的版本
+  - 依赖管理：声明依赖关系，自动解析并安装这些依赖
+  - 模板化：charts可以受用go模板语言，动态生成资源文件
+
 
 ## 官网地址
 
@@ -116,6 +120,18 @@ helm repo remove aliyun
 #从指定仓库搜索chart
 helm search repo aliyun
 ~~~
+
+## 仓库类型
+
+### ChartMuseum
+
+- 访问方式：HTTP/HTTPS
+- 命令：helm repo add
+
+### OCI
+
+- 访问方式：OCI规范（helm 3.8之后加进来的，相当于用镜像仓库存储helm chart）
+- helm registry去登录，helm pull可以直接拉chart包
 
 # helm基本使用
 
