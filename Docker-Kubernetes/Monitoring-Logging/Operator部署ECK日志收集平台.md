@@ -207,6 +207,26 @@ spec:
     tls:
       selfSignedCertificate:
         disabled: true
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: kibana
+  namespace: logging
+spec:
+  ingressClassName: nginx-default
+  rules:
+  - host: kibana.hanxux.local
+    http:
+      paths:
+      - backend:
+          service:
+            name: kibana-kb-http
+            port:
+              number: 5601
+        path: /
+        pathType: ImplementationSpecific
 ~~~
 
 ~~~sh
@@ -259,9 +279,10 @@ spec:
           kafka {
             enable_auto_commit => true
             auto_commit_interval_ms => "1000"
-            bootstrap_servers => "my-cluster-kafka-bootstrap.kafka:9092"
+            bootstrap_servers => "my-cluster-kafka-bootstrap.kafka.svc:9092"
             topics => ["k8spodlogs"]
             codec => json
+            group_id => "logstash"
           }
         }
         output {
@@ -270,7 +291,7 @@ spec:
             index => "k8spodlogs-%{+YYYY.MM.dd}"
             ssl_enabled => true
             user => "elastic"
-            password => ""
+            password => "7JxHfm0659LLMPF6519aO5nu"
             ssl_certificate_authorities => "${ES_CLUSTER_ES_SSL_CERTIFICATE_AUTHORITY}"
           }
         }
@@ -299,6 +320,7 @@ apiVersion: beat.k8s.elastic.co/v1beta1
 kind: Beat
 metadata:
   name: filebeat
+  namespace: logging
 spec:
   type: filebeat
   version: 8.16.1
@@ -387,6 +409,60 @@ spec:
         - name: messages
           hostPath:
             path: /var/log/messages
+        tolerations:
+          - key: "node-role.kubernetes.io/control-plane"
+            operator: "Equal"
+            effect: "NoSchedule"
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: filebeat
+  namespace: logging
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: elastic-beat-autodiscover-binding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: elastic-beat-autodiscover
+subjects:
+- kind: ServiceAccount
+  name: filebeat
+  namespace: logging
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: elastic-beat-autodiscover
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - nodes
+  - namespaces
+  - events
+  - pods
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups: ["apps"]
+  resources:
+  - replicasets
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups: ["batch"]
+  resources:
+  - jobs
+  verbs:
+  - get
+  - list
+  - watch
 ~~~
 
 注意：
@@ -397,9 +473,10 @@ spec:
 
 ## 用Kibana UI查看日志
 
-1. 待所有的 Pod 启动完成后，即可使用 Kibana 查询日志。登录 Kibana 后，点击 Index Management，即可查看索引
-2. 之后点击 data views 创建一个 data view
-3. 然后就可以查看日志了
+1. 待所有的 Pod 启动完成后，即可使用 Kibana 查询日志。
+2. 用户名密码实在logstash的配置文件里面指定的（elastic/7JxHfm0659LLMPF6519aO5nu）登录 Kibana 后，搜索框搜索 Index Management，即可查看索引
+3. 之后点击 data views 创建一个 data view
+4. 然后就可以查看日志了
 
 ## Filebeat收集指定namespace的日志
 

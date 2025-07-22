@@ -3,9 +3,10 @@
 ## 介绍
 
 - Prometheus是一个开源的系统监控和报警系统，现在已经加入到CNCF基金会，成为继k8s之后第二个在CNCF托管的项目。
-
 - 在kubernetes容器管理系统中，通常会搭配prometheus进行监控，同时也支持多种exporter采集数据，还支持pushgateway进行数据上报，Prometheus性能足够支撑上万台规模的集群。
-- 其他监控服务比如：Zabbix、nagios、cattio、夜莺等，在k8s中，prometheus会更原生，配置起来更简便，修改配置文件即可部署监控。
+- 其他监控服务比如：Zabbix、nagios、cattio、夜莺等，在k8s中，prometheus会更原生，配置起来更简便，修改配置文件即可部署监控。prometheus同样可以监控宿主机、windows、交换机等等，但是反过来就不一定能实现了。
+
+- prometheus是监控平台，也是一个时序数据库，`TSDB`，专门存储大规模时间序列数据（性能指标、传感器数据、金融交易数据等），具有更高的效率和更好的性能。
 
 ## 配置文档
 
@@ -20,28 +21,29 @@
 
 1. 多维度数据模型
 
-   - 每一个时间序列数据都由metric度量指标名称和它的标签labels键值对集合唯一确定：
+   - 每一个时间序列数据，都有一个时间戳。可以通过指标名称和一大堆标签去做聚合、检索。
 
    - 比如：http_requests_total 接收http请求的总计数，度量名称为/api/tracks的http请求，可以打上不同的标签，获取不同的操作：method=POST的标签，method=GET的标签，查看不同的操作
    - 这个查询语言在这些度量和标签列表的基础上进行过滤和聚合。改变任何度量上的任何标签值，则会形成新的时间序列图。
-
 2. 灵活的查询语言（PromQL）
-   - 可以对采集的metrics指标进行加法，乘法，连接等操作；
+   - 可以对采集的metrics指标进行加法，乘法，连接等操作。实现可视化、告警。
+3. 存储简化：
+   - 可以直接在本地部署，不依赖其他分布式存储；因为prometheus本身就是一个数据库。（zabbix等还需要单独部署mysql去存数据）
+   - 部署多个prometheus实例，每个都是自治的独立的，都保存了完整的监控数据。一个挂了另外的还能独立工作。
+   - **高效的存储：每个采样数据占3.5 bytes左右。比如：300万的时间序列，30s间隔，保留60天，消耗磁盘大概200G。**
 
-3. 可以直接在本地部署，不依赖其他分布式存储；
+4. 拉取模式：
+   - prometheus服务端主动通过HTTP的pull方式采集时序数据；
+   - 也有push模式，客户端push到中间网关pushgateway临时存储一下，prometheus server端再从pushgateway拉取数据；
+   - 比如有一个`一次性/短生命周期的job`，运行完就退出了，pull模式不能持续的拉数据。这个时候可以让job主动把指标发到pushgateway，prometheus再从pushgateway去拉
 
-4. 通过基于HTTP的pull方式采集时序数据；
+5. 动态发现：
+   - 可通过服务发现或者静态配置来发现目标服务对象（targets）。比如：
+   - 基于k8s的服务发现，自动发现所有pod；基于文件的，比如某个文件写入了redis的ip和接口列表，能基于文件做服务发现；比如有很多台非K8s主机，可以部署一个consul，主机注册到consul，prometheus就能从consul上做服务发现。
 
-5. 可以通过中间网关pushgateway的方式把时间序列数据推送到prometheus server端；
-
-6. 可通过服务发现或者静态配置来发现目标服务对象（targets）。
-
-7. 有多种可视化图像界面，如Grafana等。
-
-8. **高效的存储：每个采样数据占3.5 bytes左右。比如：300万的时间序列，30s间隔，保留60天，消耗磁盘大概200G。**
-
-9. 做高可用，可以对数据做异地备份，联邦集群，部署多套prometheus，pushgateway上报数据：
+6. 做高可用，可以对数据做异地备份，联邦集群，部署多套prometheus，pushgateway上报数据：
    - 比如，自己开发的应用，官网肯定没有exporter，就可以写脚本采集相应数据，用pushgateway推送到prometheus。
+7. 可视化和告警支持
 
 ## schema
 
@@ -179,11 +181,14 @@
 
 2. Client Library: 客户端库，检测应用程序代码，当Prometheus抓取实例的HTTP端点时，客户端库会将所有跟踪的metrics指标的当前状态发送到prometheus server端。
 
-3. Exporters: prometheus支持多种exporter，通过exporter可以采集metrics数据，然后发送到prometheus server端，所有向promtheus server提供监控数据的程序都可以被称为exporter
+3. Exporters: 
+   - 有一些服务或者非云原生的组件没有metrics接口，不能直接拉数据，就需要单独的exporter去采集数据。prometheus支持多种exporter，通过exporter可以采集metrics数据，然后发送到prometheus server端，所有向promtheus server提供监控数据的程序都可以被称为exporter
+
+   - 大部分云原生组件是有metrics接口的，就不需要exporter了，比如etcd、api-server等。
 
 4. Alertmanager: 从 Prometheus server 端接收到 alerts 后，会进行去重，分组，并路由到相应的接收方，发出报警，常见的接收方式有：电子邮件，微信，钉钉, slack等。
 
-5. Grafana：监控仪表盘，可视化监控数据
+5. Grafana：监控仪表盘，可视化监控数据。安装prometheus的时候基本必装grafana。但是两者不是一个公司开发的。
 
 6. pushgateway: 各个目标主机可上报数据到pushgateway，然后prometheus server统一从pushgateway拉取数据。
 
@@ -206,6 +211,16 @@
 ## 与Zabbix对比
 
 ![image-20240103111904910](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202401031119014.png)
+
+
+
+# 安装方法
+
+1. 二进制安装：go语言开发的，安一个go包就行
+2. 容器安装
+3. k8s安装：kube-prometheus-stack helm包。非常全，所有组件一键安装。推荐。
+
+> 生产环境建议单独用一台工作节点去装prometheus
 
 # PromQL查询语言
 

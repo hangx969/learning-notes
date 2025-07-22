@@ -557,15 +557,36 @@ EOF
 
 # CRD资源使用
 
+## 常见CRD资源
+
+- Prometheus：定义prometheus实例，方便配置管理。（生产环境建议单独找一台机器安装）
+- alertmanager：定义alertmanager实例（体量比较小，直接部署即可，副本数设为3即可。）
+- ServiceMonitor：定义获取监控数据的service目标，Operator根据ServiceMonitor自动生成Prometheus配置
+- PodMonitor：监控一组动态的pod（可能因为这些pod没有前端svc），直接生成prometheus配置来进行监控。
+- Probe：定义静态目标，通常和BlackBox Exporter配合使用（比如，在用户角度去探测一个域名/tcp端口是不是可用，访问速度慢不慢等等）
+- ScrapeConfig：用于自定义监控目标，抓取K8s集群外部的目标
+- AlertmanagerConfig：定义Alertmenegr告警规则
+- PrometheusRule：定义告警规则（用promQL去写）
+
 ## service/pod monitor
 
-- Service Monitor 是 Prometheus Operator 提供的CRD，负责从其他service暴露的接口上抓取数据。介绍：https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack#prometheusioscrape
+Service Monitor 是 Prometheus Operator 提供的CRD，负责从其他service暴露的接口上抓取数据。可以动态生成prometheus配置，加载到prometheus当中。通过selector找到对应标签的service。
+
+> 注意：
+>
+> - service在哪个ns，serviceMonitor就创建到哪个ns下面，这是标准的配置。
+> - 有可能svc的metrics接口需要证书、认证等。可以配置secret去配置。
+
+- 介绍：https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack#prometheusioscrape
 
 - 使用说明：https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/user-guides/getting-started.md#include-servicemonitors （app需要用service暴露metrics接口，然后定义serviceMonitor资源去抓取接口数据）
 
-- pod monitor绕过了service，直接通过pod的label找到pod，抓取pod暴露的metrics接口：
 
-  https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/user-guides/getting-started.md#using-podmonitors
+pod monitor绕过了service，直接通过pod的label找到pod，抓取pod暴露的metrics接口：
+
+https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/user-guides/getting-started.md#using-podmonitors
+
+- podMonitor推荐创建在与pod位于同一个ns下面。（与pod同生命周期，防止产生很多垃圾资源）
 
 ## PrometheusRule
 
