@@ -475,8 +475,6 @@ v1.patch_namespaced_config_map(name='my-cm',namespace='default',body=updated_cm)
 v1.delete_namespaced_config_map(name='my-cm',namespace='default')
 ~~~
 
-
-
 # 案例：根据不同ns更新pod副本数
 
 假设在 k8s 集群中有三个名称空间，qatest、devlopment、production，这三个名称空间有三个 deployment 资源，叫做 my-deployment，我想要对 my-deployment 的 pod 副本数进行修改，如果对应的 my-deployment 存在，直接修改，不存在，创建新的 my-

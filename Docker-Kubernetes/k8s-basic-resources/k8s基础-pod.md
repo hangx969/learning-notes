@@ -781,5 +781,3 @@ kubectl logs mypod -c container-name
 kubectl get events
 kubectl get events --field-selector involvedObject.name=podName
 ```
-
-# 

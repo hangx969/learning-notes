@@ -1494,8 +1494,6 @@ chmod +x /usr/bin/docker-compose
    docker push registry.cn-beijing.aliyuncs.com/dotbalo/centos:8
    ~~~
 
-
-
 # Docker私有镜像仓库harbor
 
 ## Harbor介绍
