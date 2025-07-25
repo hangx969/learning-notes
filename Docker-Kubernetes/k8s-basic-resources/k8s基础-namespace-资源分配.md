@@ -152,11 +152,17 @@ requests:
   cpu: 100m
 ~~~
 
+> - 一般自己开发的无状态微服务，允许漂移的，可以设置成Burstable。
+> - 而且一般微服务CPU使用量低，所以CPU一般设置成小requests，可变得更大，这种模式就是Burstable。
+> - 对于Java，Xms和Xmx如果设置了，建议requests设成**Xmx+128Mi**，保证进程能起来，也给容器一些冗余。
+
 ## BestEffort
 
 BestEffort级别的Pod是最低优先级，Kubernetes不保证这些Pod获得任何资源，在资源紧张时，这些Pod最先被驱逐。同时Kubernetes调度器会尝试将这些Pod调度到任何节点上，但不保证节点上有足够的资源。
 
 配置BestEffort级别的Pod，不配置resources字段即可。
+
+> 生产环境不推荐使用，因为没有配置任何资源声明，可能会被调度到资源紧张的节点上，造成一些问题。
 
 
 
