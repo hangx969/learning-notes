@@ -142,7 +142,7 @@ spec:
     count: 1
     # 用initContainer设置了虚拟内存空间，这里就保持unset
     # https://www.elastic.co/docs/deploy-manage/deploy/cloud-on-k8s/virtual-memory
-    #config:
+    # config:
     #node.store.allow_mmap: true # 开启内存映射，提高查询速度
     volumeClaimTemplates:
     - metadata:
@@ -171,7 +171,7 @@ kubectl get es -n logging
 # HEALTH变成green说明起来了
 ~~~
 
-获取ES密码：
+获取ES密码（用户名是elastic）：
 
 ~~~sh
 PASSWORD=$(kubectl -n logging get secret es-cluster-es-elastic-user -o go-template='{{.data.elastic | base64decode}}') 
@@ -249,11 +249,84 @@ helm pull bitnami/zookeeper --version 13.8.5
 helm pull bitnami/kafka --version 32.3.6
 ~~~
 
-kafka安装完会有一个专门用于客户端连接的svc：kafka:9092
+注意：
+
+- 对于8.16的logstash，支持的是3.8.1的kakfa：https://www.elastic.co/guide/en/logstash/8.16/plugins-inputs-kafka.html#_description_35
+- 所以要去查一下哪个helm chart版本是3.8.1的kafka：[kafka 30.1.8 · bitnami/bitnami](https://artifacthub.io/packages/helm/bitnami/kafka/30.1.8)。（30.1.8）
+
+
+
+不需要单独部署zk，可以用bitname/kafka helm chart里面自带的zookeeper，kafka的values这样写：
+
+~~~yaml
+# 明确禁用 KRaft 模式
+kraft:
+  enabled: false
+
+# 配置控制器副本数为 0（使用 Zookeeper 模式时）
+controller:
+  replicaCount: 0
+
+# 配置 Broker（重要：Zookeeper 模式必需）
+broker:
+  replicaCount: 3
+  persistence:
+    enabled: true
+    storageClass: "sc-nfs"
+    accessModes:
+      - ReadWriteOnce
+    size: 3Gi
+
+# 禁用所有认证机制，使用 PLAINTEXT
+sasl:
+  enabled: false
+
+auth:
+  enabled: false
+
+listeners:
+  client:
+    containerPort: 9092
+    protocol: PLAINTEXT
+    name: CLIENT
+
+  controller:
+    name: CONTROLLER
+    containerPort: 9093
+    protocol: PLAINTEXT
+
+  interbroker:
+    containerPort: 9094
+    protocol: PLAINTEXT
+    name: INTERNAL
+
+  external:
+    containerPort: 9095
+    protocol: PLAINTEXT
+    name: EXTERNAL
+
+# 启用 Zookeeper 模式
+zookeeper:
+  enabled: true
+  replicaCount: 1
+  persistence:
+    enabled: true
+    storageClass: "sc-nfs"
+    accessModes:
+      - ReadWriteOnce
+    size: 300Mi
+~~~
+
+kafka安装完会有一个专门用于客户端连接的svc：kafka.logging.svc.cluster.local:9092，logstash和filebeat里面配置一下。
 
 ## 基于CRD部署Logstash
 
 Logstash的高级配置在这里：[Configuration | Elastic Docs](https://www.elastic.co/docs/deploy-manage/deploy/cloud-on-k8s/configuration-logstash)
+
+注意：
+
+1. 8.16的logstash，用的kafka版本为3.8.1:https://www.elastic.co/guide/en/logstash/8.16/plugins-inputs-kafka.html
+2. 3.8.1 kafka对应的bitnami/kafka helm chart版本为：
 
 ~~~yaml
 apiVersion: logstash.k8s.elastic.co/v1alpha1
@@ -279,7 +352,7 @@ spec:
           kafka {
             enable_auto_commit => true
             auto_commit_interval_ms => "1000"
-            bootstrap_servers => "my-cluster-kafka-bootstrap.kafka.svc:9092"
+            bootstrap_servers => "kafka:9092"
             topics => ["k8spodlogs"]
             codec => json
             group_id => "logstash"
@@ -327,7 +400,7 @@ spec:
   # image:
   config:
     output.kafka:
-      hosts: ["my-cluster-kafka-bootstrap.kafka:9092"]
+      hosts: ["kafka:9092"]
       topic: '%{[fields.log_topic]}'
       #topic: 'k8spodlogs'
     # 配置自动发现
@@ -467,15 +540,31 @@ rules:
 
 注意：
 
-- /var/log/containers软链到了/var/log/pods，两个都要挂进去。软链接的文件名可能会被解析一些字段。
+1. /var/log/containers软链到了/var/log/pods，两个都要挂进去。软链接的文件名可能会被解析一些字段。
+2. 这种配置把所有输出到控制台的容器日志一锅端全部收集走了。但是不能收集容器内的文件日志。
 
-- 这种配置把所有输出到控制台的容器日志一锅端全部收集走了。但是不能收集容器内的文件日志。
+### ns打标签
+
+由于filebeat配置了自动发现基于namespace，所以要给想收集日志的ns打标签
+
+~~~yaml
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: monitoring
+  labels:
+    filebeat: "true"
+~~~
+
+~~~sh
+kubectl label namespace kube-system filebeat=true
+~~~
 
 ## 用Kibana UI查看日志
 
 1. 待所有的 Pod 启动完成后，即可使用 Kibana 查询日志。
-2. 用户名密码实在logstash的配置文件里面指定的（elastic/7JxHfm0659LLMPF6519aO5nu）登录 Kibana 后，搜索框搜索 Index Management，即可查看索引
-3. 之后点击 data views 创建一个 data view
+2. 用户名密码是在logstash的配置文件里面指定的（elastic/7JxHfm0659LLMPF6519aO5nu）登录 Kibana 后，搜索框搜索 Index Management，即可查看索引
+3. 之后点击 Dashboards --> data views 创建一个 data view
 4. 然后就可以查看日志了
 
 ## Filebeat收集指定namespace的日志
