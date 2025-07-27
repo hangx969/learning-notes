@@ -120,7 +120,7 @@ helm install loki grafana/loki -n monitoring -f install-values.yaml --debug
           #     hosts:
           #       - "http://elasticsearch.kube-logging:9200"
           #     indexFormat: "kube-events-{2006-01-02}"
-    
+
           - name: "loki"
             webhook：
               endpoint: "http://loki.monitoring.svc.cluster.local:3100/loki/api/v1/push"
@@ -164,7 +164,7 @@ helm pull grafana/loki --version "${LOKI_VERSION#helm-loki-}" #5.48.0
 - 配置
 
   ~~~yaml
-  #这里仿照mimer的values.yaml进行了调整
+  #这里仿照azure_global的values.yaml进行了调整
   ~~~
 
   > loki的log volume没配置？
@@ -197,7 +197,7 @@ helm pull grafana/promtail --version "${PROMTAIL_VERSION#promtail-}" #6.15.5
 - 配置
 
 ~~~sh
-#同样采用mimer的values.yaml进行调整
+#同样采用azure_global的values.yaml进行调整
 ~~~
 
 - 安装
@@ -239,7 +239,7 @@ helm pull grafana/tempo --version "${TEMPO_VERSION#tempo-}" #1.8.0
 - 配置
 
 ~~~sh
-#同样采用mimer的values.yaml进行调整
+#同样采用azure_global的values.yaml进行调整
 ~~~
 
 - 安装

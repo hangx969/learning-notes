@@ -247,7 +247,7 @@ cd slurm-22.05.11
 sudo ./configure --prefix=/usr/local --disable-debug --sysconfdir=/etc/slurm
 
 #./configure --prefix=/usr/local --disable-dependency-tracking --disable-debug --disable-x11 --enable-really-no-cray --enable-salloc-kill-cmd --with-hdf5=no --sysconfdir=/etc/slurm --enable-pam --with-pam_dir={{ slurm_pam_lib_dir }} --with-shared-libslurm --without-rpath --with-pmix=/usr/local --with-hwloc=/opt/deepops/hwloc
-sudo make -j16 
+sudo make -j16
 sudo make install
 sudo cp -r ./etc/slurm*.service /etc/systemd/system/
 ~~~
@@ -344,16 +344,16 @@ PluginDir=/usr/local/lib/slurm
 # Basic job behavior
 ReturnToService=1 # 1: 仅当由于无响应而将DOWN节点设置为DOWN状态时，才可以当有效配置注册后使DOWN节点恢复服务。如节点由于任何其它原因（内存不足、意外重启等）被设置为DOWN，其状态将不会自动更改。当节点的内存、GRES、CPU计数等等于或大于slurm.conf中配置的值时，该节点才注册为有效配置。
 MpiDefault=none # https://slurm.schedmd.com/mpi_guide.html
-RebootProgram="/bin/systemctl reboot" 
+RebootProgram="/bin/systemctl reboot"
 ResumeTimeout=600 # Maximum time permitted (in seconds) between when a node resume request is issued and when the node is actually available for use.  Nodes which fail to respond  in  this  time frame will be marked DOWN and the jobs scheduled on the node requeued.
 PropagateResourceLimitsExcept=MEMLOCK #内存锁定（MEMLOCK）的限制不应该从提交作业的进程传播到作业的进程。这意味着作业的进程可以锁定任意量的数据在内存中，不受提交作业的进程的MEMLOCK限制的影响。
-#TaskPlugin=task/affinity - test option 
+#TaskPlugin=task/affinity - test option
 TaskPlugin=task/affinity,task/cgroup # affinity: CPU亲和（man srun查看其中--cpu-bind、--mem-bind和-E选项），cgroup: 强制采用Linux控制组cgroup分配资源（man group.conf查看帮助）
 #SlurmdUser=slurm #no this option in hal
 
 # Prolog/Epilog #前处理及后处理
-Prolog=/etc/slurm/prolog.d/50-zenseact
-Prolog=/etc/slurm/epilog.d/90-zenseact
+Prolog=/etc/slurm/prolog.d/50-zen
+Prolog=/etc/slurm/epilog.d/90-zen
 PrologFlags=Alloc,Serial,Contain
 BatchStartTimeout=120
 #MailProg=/usr/bin/s-nail
@@ -416,13 +416,13 @@ AccountingStorageEnforce=limits
 # Default MPI launcher
 # MpiDefault=pmix
 GresTypes=gpu
-#JobSubmitPlugins=lua 
+#JobSubmitPlugins=lua
 #Do not use this parameter because:
 ##slurmctld: error: Couldn't find the specified plugin name for job_submit/lua looking at all files
 ##slurmctld: error: cannot find job_submit plugin for job_submit/lua
 ##slurmctld: error: cannot create job_submit context for job_submit/lua
 
-# Zenseact's customization
+# zen's customization
 JobFileAppend=1
 JobRequeue=1
 TaskPluginParam=Cores
@@ -463,7 +463,7 @@ NodeName=cn01dl00[1-4] NodeAddr=10.21.105.[11-14] RealMemory=1031000 CPUs=128 So
 #PartitionName=su01 Nodes=dgx[001-020] Default=NO State=UNKNOWN OverSubscribe=EXCLUSIVE MaxTime=24:00:00 PreemptMode=OFF
 #PartitionName=su02 Nodes=dgx[021-040] Default=NO State=UNKNOWN OverSubscribe=EXCLUSIVE MaxTime=24:00:00 PreemptMode=OFF
 #
-## Zenseact partition setup
+## zen partition setup
 #
 PartitionName=zprodhigh Nodes=cn01dl00[1-4] DefMemPerGPU=80000 DefMemPerCPU=7812 MaxTime=INFINITE State=UP PriorityJobFactor=40000 PriorityTier=3 PreemptMode=OFF
 
@@ -518,7 +518,7 @@ PidFile=/var/run/slurmdbd.pid
 StorageType=accounting_storage/mysql
 StorageHost=localhost
 StoragePort=3306
-StoragePass=123456    
+StoragePass=123456
 StorageUser=slurm
 StorageLoc=slurm_acct_db
 ~~~
@@ -549,7 +549,7 @@ sudo chown slurm: /var/log/slurm
 #给所有用户添加环境变量
 su root
 vim /etc/profile
-# 添加 
+# 添加
 # export PATH=$PATH:/usr/local/bin
 # export PATH=$PATH:/usr/local/sbin
 source /etc/profile
@@ -679,7 +679,7 @@ done
 #给所有用户添加环境变量
 su root
 vim /etc/profile
-#添加 
+#添加
 export PATH=$PATH:/usr/local/bin
 export PATH=$PATH:/usr/local/sbin
 source /etc/profile
@@ -727,7 +727,7 @@ sudo ./configure --prefix=/usr/local --disable-debug --sysconfdir=/etc/slurm
 
 #./configure --prefix=/usr/local --disable-dependency-tracking --disable-debug --disable-x11 --enable-really-no-cray --enable-salloc-kill-cmd --with-hdf5=no --sysconfdir=/etc/slurm --enable-pam --with-pam_dir={{ slurm_pam_lib_dir }} --with-shared-libslurm --without-rpath --with-pmix=/usr/local --with-hwloc=/opt/deepops/hwloc
 
-sudo make -j16 
+sudo make -j16
 sudo make install
 sudo cp -r ./etc/slurm*.service /etc/systemd/system/
 ~~~
@@ -763,7 +763,7 @@ sudo chmod 644 /var/log/slurm/slurmd.log
 #给所有用户添加环境变量
 sudo su
 vim /etc/profile
-#添加 
+#添加
 export PATH=$PATH:/usr/local/bin
 export PATH=$PATH:/usr/local/sbin
 source /etc/profile
@@ -785,7 +785,7 @@ sinfo
 scontrol show partition
 scontrol show node
 
-# 提交作业 
+# 提交作业
 srun -N1 hostname
 scontrol show jobs
 
@@ -888,11 +888,11 @@ def main():
     t1.join()  # join() 等待线程终止，要不然一直挂起
     t2.join()
 
-    
+
 if __name__ == "__main__":
     main()
 scp thread_demo.py root@c1:/root
-srun python /root/thread_demo.py 
+srun python /root/thread_demo.py
 cpu-bind=MASK - c1, task  0  0 [8685]: mask 0x1 set
 ('---Start---', 1, 'time', 'Thu Jun 15 19:17:46 2023')
 ('---Start---', 2, 'time', 'Thu Jun 15 19:17:46 2023')
@@ -1017,17 +1017,17 @@ sacctmgr show ass format="Cluster,Account,User,Partition,QOS"
 
 ~~~sh
 mkdir -p /etc/slurm/prolog.d/
-tee /etc/slurm/prolog.d/50-zenseact <<'EOF'
+tee /etc/slurm/prolog.d/50-zen <<'EOF'
 #!/bin/bash
 if [ ! -d "/raid/localtmp/${SLURM_JOB_USER}/${SLURM_JOB_ID}" ]
 then
   mkdir -p /raid/localtmp/${SLURM_JOB_USER}/${SLURM_JOB_ID}
   chown ${SLURM_JOB_USER} /raid/localtmp/${SLURM_JOB_USER}/${SLURM_JOB_ID}
-fi 
+fi
 EOF
 
 chmod 777 /etc/slurm/prolog.d/
-chmod 777 /etc/slurm/prolog.d/50-zenseact
+chmod 777 /etc/slurm/prolog.d/50-zen
 ~~~
 
 - uncomment掉所有节点上/etc/slurm/slurm.conf上面的prolog配置
@@ -1035,7 +1035,7 @@ chmod 777 /etc/slurm/prolog.d/50-zenseact
 ~~~sh
 vim /etc/slurm/slurm.conf
 # Prolog/Epilog #前处理及后处理
-Prolog=/etc/slurm/prolog.d/50-zenseact
+Prolog=/etc/slurm/prolog.d/50-zen
 #Epilog=/etc/slurm/epilog.sh
 PrologFlags=Alloc,Serial,Contain
 BatchStartTimeout=120
@@ -1058,7 +1058,7 @@ ssh -t root@cn01dl00$i "mkdir -p /etc/slurm/epilog.d/";
 done
 
 #控制节点执行
-tee ./90-zenseact <<'EOF'
+tee ./90-zen <<'EOF'
 #!/bin/bash
 
 THISHOST=$(hostname)
@@ -1068,7 +1068,7 @@ RUNNING_CODE=/staging/ziit/slurm/running-code
 
 SAVE_FOR_REQUEUE=$(grep --count --max-count=1 -E "JOB $SLURM_JOB_ID ON .* CANCELLED AT .* DUE TO PREEMPTIONS" /var/log/slurm/slurmd.log)
 
-if [ -d $RUNNING_CODE/$SLURM_JOB_USER/job-$SLURM_JOB_ID ] && [ $SAVE_FOR_REQUEUE == 0 ] 
+if [ -d $RUNNING_CODE/$SLURM_JOB_USER/job-$SLURM_JOB_ID ] && [ $SAVE_FOR_REQUEUE == 0 ]
   then
     sudo -u $SLURM_JOB_USER rm -rf $RUNNING_CODE/$SLURM_JOB_USER/job-$SLURM_JOB_ID
 fi
@@ -1080,11 +1080,11 @@ fi
 EOF
 
 for i in `seq 1 4`; do
-scp ./90-zenseact root@cn01dl00$i:/etc/slurm/epilog.d/90-zenseact;
+scp ./90-zen root@cn01dl00$i:/etc/slurm/epilog.d/90-zen;
 done
 
 for i in `seq 1 4`; do
-ssh -t root@cn01dl00$i "chmod 777 /etc/slurm/epilog.d/90-zenseact;chmod 777 /etc/slurm/epilog.d/;chown root: /etc/slurm/epilog.d/;chown root: /etc/slurm/epilog.d/90-zenseact";
+ssh -t root@cn01dl00$i "chmod 777 /etc/slurm/epilog.d/90-zen;chmod 777 /etc/slurm/epilog.d/;chown root: /etc/slurm/epilog.d/;chown root: /etc/slurm/epilog.d/90-zen";
 done
 ~~~
 
@@ -1094,8 +1094,8 @@ done
 #控制节点上
 vim /etc/slurm/slurm.conf
 # Prolog/Epilog #前处理及后处理
-Prolog=/etc/slurm/prolog.d/50-zenseact
-Epilog=/etc/slurm/epilog.d/90-zenseact
+Prolog=/etc/slurm/prolog.d/50-zen
+Epilog=/etc/slurm/epilog.d/90-zen
 PrologFlags=Alloc,Serial,Contain
 BatchStartTimeout=120
 #MailProg=/usr/bin/s-nail
@@ -1116,6 +1116,6 @@ ssh -t ubuntu@cn01z99slu002 "scontrol reconfigure";
 
 for i in `seq 1 4`; do
 ssh -t root@cn01dl00$i "scontrol reconfigure";
-done 
+done
 ~~~
 

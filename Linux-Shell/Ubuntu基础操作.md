@@ -34,11 +34,11 @@ Ubuntu 2004配置静态IP: [为Ubuntu 20.04 设置静态IP简明教程（和把�
   >
   >   - 例如，如果你想要所有新用户都有一个特定的命令别名，你可以在 `/etc/skel/.bashrc` 文件中添加这个别名，然后所有新创建的用户都会在他们的 `.bashrc` 文件中有这个别名。
 
-- Create group zenseact with gid 2002 and add user into it
+- Create group zen with gid 2002 and add user into it
 
   ~~~sh
-  groupadd -g 2002 zenseact
-  usermod -aG zenseact hangx #`-aG`（指定要添加到的组）和用户名
+  groupadd -g 2002 zen
+  usermod -aG zen hangx #`-aG`（指定要添加到的组）和用户名
   ~~~
 
   > - 如何在 Ubuntu 中查看用户所属的用户组？
@@ -88,7 +88,7 @@ Ubuntu 2004配置静态IP: [为Ubuntu 20.04 设置静态IP简明教程（和把�
    > - `apt-cache policy package name` -- 查看一个包的可用版本
    > - `dpkg --get-selections`, `apt list --installed`可以查看已经安装的包
    > - `apt remove <package-name>` -- 卸载软件包，但是不会卸载配置文件
-   > - `apt purge <package name>` -- 卸载软件包，包括配置文件 
+   > - `apt purge <package name>` -- 卸载软件包，包括配置文件
 
 3. Update all packages, except Kernel headers
 
@@ -158,7 +158,7 @@ Ubuntu 2004配置静态IP: [为Ubuntu 20.04 设置静态IP简明教程（和把�
 
       ~~~sh
       ssh-keygen -t rsa
-      ssh-copy-id -i /root/.ssh/id_rsa.pub hangx@<VM IP> 
+      ssh-copy-id -i /root/.ssh/id_rsa.pub hangx@<VM IP>
       ~~~
 
    2. run fdisk -l
@@ -174,7 +174,7 @@ Ubuntu 2004配置静态IP: [为Ubuntu 20.04 设置静态IP简明教程（和把�
    lvdisplay
    ~~~
 
-2. Create a partition volume_zenseact of 2GB
+2. Create a partition volume_zen of 2GB
 
    ~~~sh
    fdisk /dev/sda
@@ -187,9 +187,9 @@ Ubuntu 2004配置静态IP: [为Ubuntu 20.04 设置静态IP简明教程（和把�
    #创建文件系统
    mkfs.ext4 /dev/sda1
    #挂载一个分区实际上就是让操作系统识别该分区的文件系统，从而可以在该分区上读写文件。如果一个分区没有文件系统，那么操作系统就无法识别和使用它。因此，通常在挂载一个分区之前，你需要先对其进行格式化，创建一个文件系统。在Linux中，常见的文件系统类型有ext4、ext3、xfs等。
-   
+
    #给磁盘打一个标签
-   e2label /dev/sda1 volume_zenseact
+   e2label /dev/sda1 volume_zen
    #lsblk -f 查看标签
    ~~~
 
@@ -197,7 +197,7 @@ Ubuntu 2004配置静态IP: [为Ubuntu 20.04 设置静态IP简明教程（和把�
 
    ~~~sh
    mkdir /mnt/datadisk1
-   mount LABEL=volume_zenseact /mnt/datadisk1/ #通过分区的标签挂载目录
+   mount LABEL=volume_zen /mnt/datadisk1/ #通过分区的标签挂载目录
    ~~~
 
 4. Extend this partition by 1GB
@@ -226,10 +226,10 @@ Ubuntu 2004配置静态IP: [为Ubuntu 20.04 设置静态IP简明教程（和把�
 
 ## Filesystem
 
-- Create a mount for a directory / volume_zenseact and export it
+- Create a mount for a directory / volume_zen and export it
 
   ~~~sh
-  mount LABEL=volume_zenseact /mnt/datadisk
+  mount LABEL=volume_zen /mnt/datadisk
   #安装nfs
   apt install -y nfs-kernel-server
   #配置nfs共享
@@ -276,7 +276,7 @@ Ubuntu 2004配置静态IP: [为Ubuntu 20.04 设置静态IP简明教程（和把�
 
   ~~~yaml
   vim /etc/netplan/01-netcfg.yaml
-  
+
   network:
     version: 2
     renderer: networkd
@@ -287,9 +287,9 @@ Ubuntu 2004配置静态IP: [为Ubuntu 20.04 设置静态IP简明教程（和把�
         gateway4: 192.168.1.1
         nameservers:
           addresses: [8.8.8.8,8.8.4.4]
-          
+
   netplan apply
-  
+
   #也可以用nmcli来改
   nmcli con show --active #查看当前的网络连接，其中的name就是网络连接名
   sudo nmcli con mod <网络连接名> ipv4.addresses "192.168.1.100/24"
@@ -308,7 +308,7 @@ Ubuntu 2004配置静态IP: [为Ubuntu 20.04 设置静态IP简明教程（和把�
 - Nslookup, A record CNAME
 
   ~~~sh
-  
+
   ~~~
 
   > **A记录**：A记录是将域名映射到对应的IPv4地址。例如，如果你有一个服务器的IP地址是`192.0.2.1`，并且你希望`www.example.com`指向这个IP地址，你可以设置一个A记录，将`www.example.com`映射到`192.0.2.1`。
@@ -319,12 +319,12 @@ Ubuntu 2004配置静态IP: [为Ubuntu 20.04 设置静态IP简明教程（和把�
 
   ~~~sh
   vim /etc/resolv.conf #修改nameserver
-  
+
   #也可以用nmcli修改
   nmcli con show --active #查看当前的网络连接，其中的name就是网络连接名
   nmcli con mod <网络连接名> ipv4.dns "8.8.8.8" #google dns是8.8.8.8,8.8.4.4
   sudo nmcli con down <网络连接名> && sudo nmcli con up <网络连接名>
-  
+
   #查看dns
   systemd-resolve --status #显示系统的DNS解析器状态，包括每个网络接口的DNS服务器。你可以在"DNS Servers"或"DNSSEC NTA"部分找到当前使用的DNS服务器地址。
   ~~~
@@ -358,11 +358,11 @@ sudo unattended-upgrade # 直接安装
 >     ~~~
 >
 >   - `/etc/apt/apt.conf.d/20auto-upgrades`
->     
+>
 >     ~~~sh
 >     sudo vim /etc/apt/apt.conf.d/20auto-upgrades
 >     ~~~
->     
+>
 >     - APT::Periodic::Update-Package-Lists "1"。表示每天都会更新包列表
 >     - APT::Periodic::Unattended-Upgrade "1"。表示每天都会运行`unattended-upgrades
 >     - （1=启用，0=禁止）
@@ -423,7 +423,7 @@ sudo unattended-upgrade # 直接安装
       sudo vim /etc/apt/apt.conf.d/20auto-upgrades
       APT::Periodic::Update-Package-Lists "1";
       APT::Periodic::Unattended-Upgrade "0";
-      
+
       sudo systemctl restart unattended-upgrades && sudo systemctl status unattended-upgrades
       ~~~
 

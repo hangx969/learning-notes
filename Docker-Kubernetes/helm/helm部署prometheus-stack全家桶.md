@@ -133,7 +133,7 @@ persistence:
 ~~~
 
 ~~~yaml
-#额外又根据mimer的配置进行了对应调整
+#额外又根据azure_global的配置进行了对应调整
 ~~~
 
 > 注意：
@@ -759,6 +759,6 @@ helm upgrade -i commoninfra-kube-prometheus-config -n kube-system . --values ./v
 
 For kube-prometheus-stack: CRDs are firstly extracted from helm charts then installed independently using kubectl apply, which is defined in pipelines.
 
-The reason for installing CRDs separately is that based on [helm document](https://helm.sh/docs/topics/charts/#limitations-on-crds), CRDs will only be installed one time on the fresh install, after which helm will not re-install nor upgrade them during helm chart upgrade. But Mimer considers that not updating CRDs is more breaking than doing it.
+The reason for installing CRDs separately is that based on [helm document](https://helm.sh/docs/topics/charts/#limitations-on-crds), CRDs will only be installed one time on the fresh install, after which helm will not re-install nor upgrade them during helm chart upgrade. But azure_global considers that not updating CRDs is more breaking than doing it.
 
 Then they suggests that CRDs can be extracted from the helm package and be installed using kubectl apply.

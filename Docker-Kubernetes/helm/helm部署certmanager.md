@@ -467,7 +467,7 @@ metadata:
 spec:
   acme:
     server: https://acme-v02.api.letsencrypt.org/directory
-    email: dl_team_mimer@zenseact.com
+    email: dl_team_xxx@xxxx.com
     privateKeySecretRef:
       name: letsencrypt-account-key
     solvers:

@@ -98,10 +98,95 @@ ECK的核心资源：
 - Beat：管理和部署Filebeat服务
 - Logstash：管理和部署Logstash服务
 
+## 部署Zookeeper+Kafka
+
+注意：
+
+- 对于8.16的logstash，支持的是3.8.1的kakfa：https://www.elastic.co/guide/en/logstash/8.16/plugins-inputs-kafka.html#_description_35
+- 所以要去查一下哪个helm chart版本是3.8.1的kafka：[kafka 30.1.8 · bitnami/bitnami](https://artifacthub.io/packages/helm/bitnami/kafka/30.1.8)。（helm chart版本：30.1.8）
+
+### 分别部署zk+kafka
+
+用helm分别部署zookeeper和kafka集群，用的是bitnami的chart：
+
+~~~sh
+helm repo add bitnami https://charts.bitnami.com/bitnami
+helm repo update bitnami
+helm search repo bitnami/zookeeper
+helm search repo bitnami/kafka
+helm pull bitnami/zookeeper --version 13.8.5
+helm pull bitnami/kafka --version 32.3.6
+~~~
+
+### 统一部署zk+kafka
+
+不需要单独部署zk，可以用bitname/kafka helm chart里面自带的zookeeper，kafka的values这样写：
+
+~~~yaml
+# 明确禁用 KRaft 模式
+kraft:
+  enabled: false
+
+# 配置控制器副本数为 0（使用 Zookeeper 模式时）
+controller:
+  replicaCount: 0
+
+# 配置 Broker（重要：Zookeeper 模式必需）
+broker:
+  replicaCount: 3
+  persistence:
+    enabled: true
+    storageClass: "sc-nfs"
+    accessModes:
+      - ReadWriteOnce
+    size: 3Gi
+
+# 禁用所有认证机制，使用 PLAINTEXT
+sasl:
+  enabled: false
+
+auth:
+  enabled: false
+
+listeners:
+  client:
+    containerPort: 9092
+    protocol: PLAINTEXT
+    name: CLIENT
+
+  controller:
+    name: CONTROLLER
+    containerPort: 9093
+    protocol: PLAINTEXT
+
+  interbroker:
+    containerPort: 9094
+    protocol: PLAINTEXT
+    name: INTERNAL
+
+  external:
+    containerPort: 9095
+    protocol: PLAINTEXT
+    name: EXTERNAL
+
+# 启用 Zookeeper 模式
+zookeeper:
+  enabled: true
+  replicaCount: 1
+  persistence:
+    enabled: true
+    storageClass: "sc-nfs"
+    accessModes:
+      - ReadWriteOnce
+    size: 300Mi
+~~~
+
+kafka安装完会有一个专门用于客户端连接的svc：`kafka.logging.svc.cluster.local:9092`，logstash和filebeat里面配置一下。
+
 ## ECK operator/CRD安装
 
 1. 需要K8s版本>1.28。
-2. operator最好单独放到一个namespace里面，不要把operator和资源都放一个namespace里面
+2. operator最好单独放到一个namespace里面，不要把operator和CRD资源都放一个namespace里面
 
 ### 方法1：yaml安装
 
@@ -181,152 +266,18 @@ echo $PASSWORD
 curl -u "elastic:$PASSWORD" https://<es-http-svc-IP>:9200/_cluster/health?pretty -k
 ~~~
 
-## 基于CRD部署Kibana
-
-注意Kibana一定要和ES版本一致。按照集群名称找到对应的ES集群。
-
-Kibana的高级配置在这里：[Kibana configuration | Elastic Docs](https://www.elastic.co/docs/deploy-manage/deploy/cloud-on-k8s/kibana-configuration)
-
-### yaml文件部署
-
-~~~yaml
-apiVersion: kibana.k8s.elastic.co/v1
-kind: Kibana
-metadata:
-  name: kibana
-  namespace: logging
-spec:
-  version: 8.16.1
-  count: 1
-  elasticsearchRef:
-    name: es-cluster
-  http:
-    service:
-      spec:
-        type: NodePort # default is ClusterIP
-    tls:
-      selfSignedCertificate:
-        disabled: true
-
----
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: kibana
-  namespace: logging
-spec:
-  ingressClassName: nginx-default
-  rules:
-  - host: kibana.hanxux.local
-    http:
-      paths:
-      - backend:
-          service:
-            name: kibana-kb-http
-            port:
-              number: 5601
-        path: /
-        pathType: ImplementationSpecific
-~~~
-
-~~~sh
-# 检查状态，变成green说明起来了
-kubectl get kibana -n logging
-~~~
-
-用户名密码和ES的一样
-
-## 部署Zookeeper+Kafka集群
-
-用helm分别部署zookeeper和kafka集群，用的是bitnami的chart：
-
-~~~sh
-helm repo add bitnami https://charts.bitnami.com/bitnami
-helm repo update bitnami
-helm search repo bitnami/zookeeper
-helm search repo bitnami/kafka
-helm pull bitnami/zookeeper --version 13.8.5
-helm pull bitnami/kafka --version 32.3.6
-~~~
-
-注意：
-
-- 对于8.16的logstash，支持的是3.8.1的kakfa：https://www.elastic.co/guide/en/logstash/8.16/plugins-inputs-kafka.html#_description_35
-- 所以要去查一下哪个helm chart版本是3.8.1的kafka：[kafka 30.1.8 · bitnami/bitnami](https://artifacthub.io/packages/helm/bitnami/kafka/30.1.8)。（30.1.8）
-
-
-
-不需要单独部署zk，可以用bitname/kafka helm chart里面自带的zookeeper，kafka的values这样写：
-
-~~~yaml
-# 明确禁用 KRaft 模式
-kraft:
-  enabled: false
-
-# 配置控制器副本数为 0（使用 Zookeeper 模式时）
-controller:
-  replicaCount: 0
-
-# 配置 Broker（重要：Zookeeper 模式必需）
-broker:
-  replicaCount: 3
-  persistence:
-    enabled: true
-    storageClass: "sc-nfs"
-    accessModes:
-      - ReadWriteOnce
-    size: 3Gi
-
-# 禁用所有认证机制，使用 PLAINTEXT
-sasl:
-  enabled: false
-
-auth:
-  enabled: false
-
-listeners:
-  client:
-    containerPort: 9092
-    protocol: PLAINTEXT
-    name: CLIENT
-
-  controller:
-    name: CONTROLLER
-    containerPort: 9093
-    protocol: PLAINTEXT
-
-  interbroker:
-    containerPort: 9094
-    protocol: PLAINTEXT
-    name: INTERNAL
-
-  external:
-    containerPort: 9095
-    protocol: PLAINTEXT
-    name: EXTERNAL
-
-# 启用 Zookeeper 模式
-zookeeper:
-  enabled: true
-  replicaCount: 1
-  persistence:
-    enabled: true
-    storageClass: "sc-nfs"
-    accessModes:
-      - ReadWriteOnce
-    size: 300Mi
-~~~
-
-kafka安装完会有一个专门用于客户端连接的svc：kafka.logging.svc.cluster.local:9092，logstash和filebeat里面配置一下。
-
 ## 基于CRD部署Logstash
+
+logstash在这里的作用：
+
+1. 数据质量：可以进行数据清洗和标准化
+2. 运维友好：按时间分片的索引便于管理
+3. 扩展性：未来可以轻松添加数据处理逻辑
 
 Logstash的高级配置在这里：[Configuration | Elastic Docs](https://www.elastic.co/docs/deploy-manage/deploy/cloud-on-k8s/configuration-logstash)
 
-注意：
-
-1. 8.16的logstash，用的kafka版本为3.8.1:https://www.elastic.co/guide/en/logstash/8.16/plugins-inputs-kafka.html
-2. 3.8.1 kafka对应的bitnami/kafka helm chart版本为：
+1. 8.16的logstash，官网说适配的kafka版本为3.8.1: https://www.elastic.co/guide/en/logstash/8.16/plugins-inputs-kafka.html
+2. 3.8.1 kafka对应的bitnami/kafka helm chart版本为：30.1.8
 
 ~~~yaml
 apiVersion: logstash.k8s.elastic.co/v1alpha1
@@ -352,10 +303,15 @@ spec:
           kafka {
             enable_auto_commit => true
             auto_commit_interval_ms => "1000"
-            bootstrap_servers => "kafka:9092"
+            bootstrap_servers => "kafka.logging.svc.cluster.local:9092"
             topics => ["k8spodlogs"]
             codec => json
             group_id => "logstash"
+            connections_max_idle_ms => 540000
+            session_timeout_ms => 30000
+            request_timeout_ms => 40000
+            retry_backoff_ms => 100
+            security_protocol => "PLAINTEXT"
           }
         }
         output {
@@ -388,6 +344,8 @@ Filebeat的高级配置在这里：
 - [Configuration | Elastic Docs](https://www.elastic.co/docs/deploy-manage/deploy/cloud-on-k8s/configuration-beats)
 - 自动发现：[Configuration | Elastic Docs](https://www.elastic.co/docs/deploy-manage/deploy/cloud-on-k8s/configuration-beats#k8s-beat-role-based-access-control-for-beats)
 
+### 收集文件日志和按照ns标签收集日志
+
 ~~~yaml
 apiVersion: beat.k8s.elastic.co/v1beta1
 kind: Beat
@@ -400,7 +358,7 @@ spec:
   # image:
   config:
     output.kafka:
-      hosts: ["kafka:9092"]
+      hosts: ["kafka.logging.svc.cluster.local:9092"]
       topic: '%{[fields.log_topic]}'
       #topic: 'k8spodlogs'
     # 配置自动发现
@@ -408,6 +366,7 @@ spec:
     - node: ${NODE_NAME}
       type: kubernetes
       templates:
+      # 这一段配置是针对系统日志保存在messages里面的系统，但是rockylinux日志是以二进制形式保存在/run/log/journal里面，这段配置暂时读取不到系统日志。
       - config:
         - paths:
           - /var/log/messages
@@ -416,6 +375,7 @@ spec:
           fields:
             log_topic: k8spodlogs
             log_type: system
+      # 这段配置是针对打了标签的ns里面的pod日志的。
       - config:
         - paths:
           - /var/log/containers/*${data.kubernetes.container.id}.log
@@ -560,12 +520,407 @@ metadata:
 kubectl label namespace kube-system filebeat=true
 ~~~
 
+### Filebeat收集指定namespace的日志
+
+有时候可能只需要收集部分空间的日志，而并不是收集所有的日志，此时通过修改Filebeat的配置，实现只收集部分空间的日志。
+
+这种方式需要重复往里添加config，对于一些比如不同环境的日志收集到不同topic下的情况，是有用的。
+
+比如只收集monitoring和kube-system空间下的日志：
+
+~~~yaml
+apiVersion: beat.k8s.elastic.co/v1beta1
+kind: Beat
+metadata:
+  name: filebeat
+  namespace: logging
+spec:
+  type: filebeat
+  version: 8.16.1
+  # image:
+  config:
+    output.kafka:
+      hosts: ["kafka.logging.svc.cluster.local:9092"]
+      topic: '%{[fields.log_topic]}'
+      #topic: 'k8spodlogs'
+    # 配置自动发现
+    filebeat.autodiscover.providers:
+    - node: ${NODE_NAME}
+      type: kubernetes
+      templates:
+      # 这一段配置是针对系统日志保存在messages里面的系统，但是rockylinux日志是以二进制形式保存在/run/log/journal里面，这段配置暂时读取不到系统日志。
+      # 这一段配置就是专门收集文件日志的。添加新的路径需要把这个路径挂载到filebeat sts里面。
+      - config:
+        - paths:
+          - /var/log/messages
+          tail_files: true
+          type: log
+          fields:
+            log_topic: k8spodlogs
+            log_type: system
+      # 这段配置是仅收集monitoring ns下的日志
+      - config:
+        - paths:
+          - /var/log/containers/*${data.kubernetes.container.id}.log
+          tail_files: true
+          type: container
+          fields:
+            log_topic: k8spodlogs
+          processors:
+          - add_cloud_metadata: {}
+          - add_host_metadata: {}
+        condition.equals.kubernetes.namespace: monitoring
+      # 这段配置是仅收集kube-system ns下的日志
+      - config:
+        - paths:
+          - /var/log/containers/*${data.kubernetes.container.id}.log
+          tail_files: true
+          type: container
+          fields:
+            log_topic: k8spodlogs
+          processors:
+          - add_cloud_metadata: {}
+          - add_host_metadata: {}
+        condition.equals.kubernetes.namespace: kube-system
+    # 全局设置，忽略filebeat容器自身的日志
+    processors:
+    - add_cloud_metadata: {}
+    - add_host_metadata: {}
+    - drop_event:
+        when:
+          or:
+          - equals:
+              kubernetes.container.name: "filebeat"
+  daemonSet:
+    podTemplate:
+      spec:
+        serviceAccountName: filebeat
+        automountServiceAccountToken: true
+        terminationGracePeriodSeconds: 30
+        dnsPolicy: ClusterFirstWithHostNet
+        hostNetwork: true # Allows to provide richer host metadata
+        containers:
+        - name: filebeat
+          securityContext:
+            runAsUser: 0
+            # If using Red Hat OpenShift uncomment this:
+            #privileged: true
+          volumeMounts:
+          - name: varlogcontainers
+            mountPath: /var/log/containers
+          - name: varlogpods
+            mountPath: /var/log/pods
+          - name: varlibdockercontainers
+            mountPath: /var/lib/docker/containers
+          - name: messages
+            mountPath: /var/log/messages
+          env:
+            - name: NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+        volumes:
+        - name: varlogcontainers
+          hostPath:
+            path: /var/log/containers
+        - name: varlogpods
+          hostPath:
+            path: /var/log/pods
+        - name: varlibdockercontainers
+          hostPath:
+            path: /var/lib/docker/containers
+        - name: messages
+          hostPath:
+            path: /var/log/messages
+        tolerations:
+          - key: "node-role.kubernetes.io/control-plane"
+            operator: "Equal"
+            effect: "NoSchedule"
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: filebeat
+  namespace: logging
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: elastic-beat-autodiscover-binding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: elastic-beat-autodiscover
+subjects:
+- kind: ServiceAccount
+  name: filebeat
+  namespace: logging
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: elastic-beat-autodiscover
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - nodes
+  - namespaces
+  - events
+  - pods
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups: ["apps"]
+  resources:
+  - replicasets
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups: ["batch"]
+  resources:
+  - jobs
+  verbs:
+  - get
+  - list
+  - watch
+~~~
+
+### 收集容器内日志
+
+有些程序在设计时，并没有符合云原生设计，也就是把程序的日志直接输出到了本地文件，此时如果也需要收集日志，可以在程序的Pod内，启动一个Filebeat的容器，用于收集日志。
+
+#### 应用程序
+
+这个app把日志写到容器里面的某个文件中了，这样kubectl log -f是看不到日志输出的。
+
+~~~yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app
+  labels:
+    app: app
+    env: release
+spec:
+  selector:
+    matchLabels:
+      app: app
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  # minReadySeconds: 30
+  template:
+    metadata:
+      labels:
+        app: app
+    spec:
+      containers:
+        - name: app
+          image: registry.cn-beijing.aliyuncs.com/dotbalo/alpine:3.6 
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+          - name: logpath
+            mountPath: /opt/
+          env:
+            - name: TZ
+              value: "Asia/Shanghai"
+            - name: LANG
+              value: C.UTF-8
+            - name: LC_ALL
+              value: C.UTF-8
+          command:
+            - sh
+            - -c
+            - while true; do date >> /opt/date.log; sleep 2;  done  
+      volumes:
+        - name: logpath
+          emptyDir: {}
+~~~
+
+#### 添加sidecar
+
+~~~yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app
+spec:
+  selector:
+    matchLabels:
+      app: app
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app: app
+    spec:
+      containers:
+        - name: filebeat                        
+          image: docker.elastic.co/beats/filebeat:8.16.1
+          args:
+          - -e
+          - -c
+          - /mnt/filebeat.yml
+          resources:
+            requests:
+              memory: "100Mi"
+              cpu: "10m"
+            limits:
+              cpu: "200m"
+              memory: "300Mi"
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: podIp
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: status.podIP
+            - name: podName
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.name
+            - name: podNamespace
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.namespace
+            - name: podDeployName
+              value: app
+            - name: NODE_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: spec.nodeName
+            - name: TZ
+              value: "Asia/Shanghai"
+          securityContext:
+            runAsUser: 0
+          volumeMounts:
+            - name: logpath
+              mountPath: /data/log/app/
+            - name: filebeatconf
+              mountPath: /mnt/
+        - name: app
+          image: registry.cn-beijing.aliyuncs.com/dotbalo/alpine:3.6 
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - name: logpath
+              mountPath: /opt/
+          env:
+            - name: TZ
+              value: "Asia/Shanghai"
+            - name: LANG
+              value: C.UTF-8
+            - name: LC_ALL
+              value: C.UTF-8
+          command:
+            - sh
+            - -c
+            - while true; do date >> /opt/date.log; sleep 2;  done 
+      volumes:
+        # sidecar通过emptyDir共享存储。这里把logpath挂到app的/opt/下作为日志路径。
+        # 同时也被filebeat sidecar挂到了/data/log/app/作为日志路径。filebeat的input配置就写/data/log/
+        - name: logpath
+          emptyDir: {}
+        - name: filebeatconf
+          configMap:
+            name: filebeatconf
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: filebeatconf
+data:
+  filebeat.yml: |-
+    filebeat.inputs:
+    - type: log
+      paths:
+        - /data/log/*/*.log
+      tail_files: true
+      fields:
+        kubernetes.pod.name: '${podName}'
+        kubernetes.pod.ip: '${podIp}'
+        kubernetes.labels.app: '${podDeployName}'
+        kubernetes.namespace: '${podNamespace}'
+      fields_under_root: true # 让上面的字段能在kibana的根路径搜索
+    output.kafka:
+      hosts: ["kafka.logging:9092"]
+      topic: 'k8spodlogs'
+      keep_alive: 30s
+~~~
+
+## 基于CRD部署Kibana
+
+注意Kibana一定要和ES版本一致。按照集群名称找到对应的ES集群。
+
+Kibana的高级配置在这里：[Kibana configuration | Elastic Docs](https://www.elastic.co/docs/deploy-manage/deploy/cloud-on-k8s/kibana-configuration)
+
+### yaml文件部署
+
+~~~yaml
+apiVersion: kibana.k8s.elastic.co/v1
+kind: Kibana
+metadata:
+  name: kibana
+  namespace: logging
+spec:
+  version: 8.16.1
+  count: 1
+  elasticsearchRef:
+    name: es-cluster
+  http:
+    service:
+      spec:
+        type: ClusterIP # default is ClusterIP
+    tls:
+      selfSignedCertificate:
+        disabled: true
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: kibana
+  namespace: logging
+spec:
+  ingressClassName: nginx-default
+  rules:
+  - host: kibana.hanxux.local
+    http:
+      paths:
+      - backend:
+          service:
+            name: kibana-kb-http
+            port:
+              number: 5601
+        path: /
+        pathType: ImplementationSpecific
+~~~
+
+~~~sh
+# 检查状态，变成green说明起来了
+kubectl get kibana -n logging
+~~~
+
+用户名密码和ES的一样
+
 ## 用Kibana UI查看日志
 
 1. 待所有的 Pod 启动完成后，即可使用 Kibana 查询日志。
-2. 用户名密码是在logstash的配置文件里面指定的（elastic/7JxHfm0659LLMPF6519aO5nu）登录 Kibana 后，搜索框搜索 Index Management，即可查看索引
-3. 之后点击 Dashboards --> data views 创建一个 data view
-4. 然后就可以查看日志了
-
-## Filebeat收集指定namespace的日志
+2. 用户名密码是在logstash的配置文件里面指定的（elastic/7JxHfm0659LLMPF6519aO5nu）登录 Kibana 。
+3. Stack Management --> Index Management，即可查看已经自动创建完成的索引
+4. 之后点击 Dashboards --> data views 创建一个 data view（Name随便写，Index Pattern写“k8spodlogs*”匹配已经存在的data view）
+5. 回到Discovery就可以查看日志了
 
