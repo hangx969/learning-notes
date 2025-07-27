@@ -588,6 +588,32 @@ https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentati
 
 - podMonitor推荐创建在与pod位于同一个ns下面。（与pod同生命周期，防止产生很多垃圾资源）
 
+## Probe
+
+serviceMonitor和PodMonitor属于白盒监控，监控svc和pod自己暴露出来的metrics接口。Probe属于黑盒监控。
+
+通常和BlackBox Exporter配合使用（比如，在用户角度去探测一个域名/tcp端口是不是可用，访问速度慢不慢等等）
+
+~~~yaml
+apiVersion: monitoring.coreos.com/v1
+kind: Probe
+metadata:
+  name: probe-test
+  namespace: monitoring
+spec:
+  jobName: probe-test
+  interval: 30s
+  module: http_2xx
+  prober:
+    url: http://blackbox-exporter.monitoring:9115/probe
+    scheme: http
+    path: /probe
+    params:
+      module: [http_2xx]
+~~~
+
+
+
 ## PrometheusRule
 
 PrometheusRule是Prometheus Operator中定义的CRD。有一个专门的网站可以查看各种各样的开源CRD的定义：https://operatorhub.io/operator/prometheus
