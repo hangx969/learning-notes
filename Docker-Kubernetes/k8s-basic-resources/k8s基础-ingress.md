@@ -716,9 +716,9 @@ spec:
 
 v2的灰度版本如何设置，才能获取到一小部分比例的流量：创建 v2 版本的 Ingress 时，需要添加两个注释:
 
-1. `nginx.ingress.kubernetes.io/canary`，表明是灰度环境，
+1. `nginx.ingress.kubernetes.io/canary`，表明是灰度环境，只接受部分流量
 
-2. `nginx.ingress.kubernetes.io/canary-weight` 表明切多少流量到该环境，本示例为10%：
+2. `nginx.ingress.kubernetes.io/canary-weight` 表明切多少流量到该环境，本示例为10%
 
 ~~~yaml
 apiVersion: networking.k8s.io/v1
@@ -732,7 +732,7 @@ metadata:
 spec:
   ingressClassName: ingress-nginx
   rules:
-  - host: canary.com
+  - host: canary.com # 用的是和v1同一个域名，但是后端svc是v2的svc。标注了是灰度环境，仅接收部分流量。
     http:
       paths:
       - backend:
@@ -975,16 +975,16 @@ upstream-keepalive-timeout: "100"
 
 - 部署ingress来切分流量，在ingress的metadata.annotations字段中，定义下列annotation，实现流量控制。假设有老版本和Canry
 
-  - nginx.ingress.kubernetes.io/canary-by-header：
+  - `nginx.ingress.kubernetes.io/canary-by-header`：
     - 基于Request Header的流量切分，适用于灰度发布以及 A/B 测试。当Request Header 设置为 always时，请求将会被一直发送到 Canary 版本；当 Request Header 设置为 never时，请求不会被发送到 Canary 入口。
 
-  - nginx.ingress.kubernetes.io/canary-by-header-value：
+  - `nginx.ingress.kubernetes.io/canary-by-header-value`：
     - 要匹配的 Request Header 的值，用于通知 Ingress 将请求路由到 Canary Ingress 中指定的服务。当 Request Header 设置为此值时，它将被路由到 Canary 入口。
 
-  - nginx.ingress.kubernetes.io/canary-weight：
+  - `nginx.ingress.kubernetes.io/canary-weight`：
     - 基于服务权重的流量切分，适用于蓝绿部署，权重范围 0 - 100 按百分比将请求路由到 Canary Ingress 中指定的服务。权重为 0 意味着该金丝雀规则不会向 Canary 入口的服务发送任何请求。权重为60意味着60%流量转到canary。权重为 100 意味着所有请求都将被发送到 Canary 入口。
 
-  - nginx.ingress.kubernetes.io/canary-by-cookie：
+  - `nginx.ingress.kubernetes.io/canary-by-cookie`：
     - 基于 Cookie 的流量切分，适用于灰度发布与 A/B 测试。用于通知 Ingress 将请求路由到 Canary Ingress 中指定的服务的cookie。当 cookie 值设置为 always时，它将被路由到 Canary 入口；当 cookie 值设置为 never时，请求不会被发送到 Canary 入口。
 
 - 注：以上的annotations是ingress nginx所官方支持的：
