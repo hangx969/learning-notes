@@ -1,19 +1,20 @@
 # 介绍
 
-- Prometheus Operator 也称为 Kube-Prometheus-Stack。prometheus-community/kube-prometheus-stack Helm Chart 提供了与 kube-prometheus 类似的功能集。该Chart由 Prometheus 社区维护。
+Prometheus Operator 也称为 Kube-Prometheus-Stack。prometheus-community/kube-prometheus-stack Helm Chart 提供了与 kube-prometheus 类似的功能集。该Chart由 Prometheus 社区维护。
 
-- 官网地址：https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack#kube-prometheus-stack
-  - releases page: https://github.com/prometheus-community/helm-charts/releases
+官网地址：https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack#kube-prometheus-stack
 
-  - artifact hub: https://artifacthub.io/packages/helm/prometheus-community/kube-prometheus-stack
+releases page: https://github.com/prometheus-community/helm-charts/releases
 
-- 通过一个prometheus-stack的chart，自动部署prometheus、prometheus rules、Alertmanager以及各种operator；还有kube-state-metrics、grafana、node-exporter。
+artifact hub: https://artifacthub.io/packages/helm/prometheus-community/kube-prometheus-stack
 
-  - 其中，kube-state-metrics、grafana、node-exporter是通过独立的helm chart安装的：https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack#dependencies
+通过一个prometheus-stack的chart，自动部署prometheus、prometheus rules、Alertmanager以及各种operator；还有kube-state-metrics、grafana、node-exporter。
 
-  - [prometheus-community/kube-state-metrics](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-state-metrics)
-  - [prometheus-community/prometheus-node-exporter](https://github.com/prometheus-community/helm-charts/tree/main/charts/prometheus-node-exporter)
-  - [grafana/grafana](https://github.com/grafana/helm-charts/tree/main/charts/grafana)
+- 其中，kube-state-metrics(采集容器指标)、node-exporter（采集宿主机指标）、grafana是通过独立的sub helm chart安装的：https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack#dependencies
+
+- [prometheus-community/kube-state-metrics](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-state-metrics)
+- [prometheus-community/prometheus-node-exporter](https://github.com/prometheus-community/helm-charts/tree/main/charts/prometheus-node-exporter)
+- [grafana/grafana](https://github.com/grafana/helm-charts/tree/main/charts/grafana)
 
 # 部署
 
@@ -35,7 +36,7 @@
 helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
 helm repo update
 helm pull prometheus-community/kube-prometheus-stack --version 59.1.0
-tar xzvf kube-prometheus-stack-52.1.0.tgz
+tar xzvf kube-prometheus-stack-59.1.0.tgz
 cd kube-prometheus-stack
 ~~~
 
@@ -130,10 +131,6 @@ persistence:
   --set grafana.ingress.hosts='{grafana.hanxux.local}' \
   --set grafana.ingress.paths='{/}' \
   --set grafana.ingress.pathType=Prefix . -f values.yaml
-~~~
-
-~~~yaml
-#额外又根据azure_global的配置进行了对应调整
 ~~~
 
 > 注意：
@@ -570,6 +567,8 @@ EOF
 
 ## service/pod monitor
 
+### serviceMonitor
+
 Service Monitor 是 Prometheus Operator 提供的CRD，负责从其他service暴露的接口上抓取数据。可以动态生成prometheus配置，加载到prometheus当中。通过selector找到对应标签的service。
 
 > 注意：
@@ -581,18 +580,25 @@ Service Monitor 是 Prometheus Operator 提供的CRD，负责从其他service暴
 
 - 使用说明：https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/user-guides/getting-started.md#include-servicemonitors （app需要用service暴露metrics接口，然后定义serviceMonitor资源去抓取接口数据）
 
+### podMonitor
+
 
 pod monitor绕过了service，直接通过pod的label找到pod，抓取pod暴露的metrics接口：
 
 https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/user-guides/getting-started.md#using-podmonitors
 
-- podMonitor推荐创建在与pod位于同一个ns下面。（与pod同生命周期，防止产生很多垃圾资源）
+podMonitor推荐创建在与pod位于同一个ns下面。（与pod同生命周期，防止产生很多垃圾资源）
+
+### 监控流程设计
+
+1. 云原生应用：`/metrics`（serviceMonitor用的比较多）
+2. 非云原生应用：部署`exporter`，exporter本身会暴露metrics接口
 
 ## Probe
 
-serviceMonitor和PodMonitor属于白盒监控，监控svc和pod自己暴露出来的metrics接口。Probe属于黑盒监控。
+serviceMonitor和PodMonitor属于白盒监控，监控svc和pod自己暴露出来的metrics接口。
 
-通常和BlackBox Exporter配合使用（比如，在用户角度去探测一个域名/tcp端口是不是可用，访问速度慢不慢等等）
+Probe属于黑盒监控。通常和BlackBox Exporter配合使用（比如，在用户角度去探测一个域名/tcp端口是不是可用，访问速度慢不慢等等。不关心内部逻辑，只关心表面状态）
 
 ~~~yaml
 apiVersion: monitoring.coreos.com/v1
@@ -605,20 +611,49 @@ spec:
   interval: 30s
   module: http_2xx
   prober:
-    url: http://blackbox-exporter.monitoring:9115/probe
+    url: http://blackbox-exporter.monitoring:9115/probe # 专门监控域名的exporter
     scheme: http
     path: /probe
     params:
       module: [http_2xx]
+  targets:
+    staticConfig:
+      static:
+      - https://www.kubeasy.com
 ~~~
 
+## ScrapeConfig
 
+有一些服务是安装在集群外部的，无法直接用podMonitor监控，serviceMonitor也得先创建一个指向外部的service，比较麻烦。Prometheus提供了ScrapeConfig可以采集外部服务的指标。
+
+~~~yaml
+apiVersion: monitoring.coreos.con/v1alpha1
+kind: ScrapeConfig
+metadata:
+  name: redis-exporter
+  namespace: monitoring
+spec:
+  scrapeInterval: 30s
+  jobName: redis-exporter
+  metricsPath: /scrape
+  scheme: HTTP
+  staticConfigs:
+  - targets:
+    - redis://redis.default:6379 # 写exporter的地址
+    labels:
+      env: test
+    relabelings: # 替换掉prometheus中默认的标签
+      - sourceLabels: [__address__]
+        targetLabel: __param_target
+      - sourceLabels: [__param_target]
+        targetLabel: instance
+      - targetLabel: __address__
+        replacement: redis-exporter.monitoring:9121
+~~~
 
 ## PrometheusRule
 
 PrometheusRule是Prometheus Operator中定义的CRD。有一个专门的网站可以查看各种各样的开源CRD的定义：https://operatorhub.io/operator/prometheus
-
-### PrometheusRule的作用
 
 #### Alerting Rule
 
@@ -653,8 +688,8 @@ metadata:
   name: loki
   namespace: monitoring
 spec:
-  groups:
-    - name: loki-prometheus #定义规则组的名称
+  groups: # 对不同类型的告警规则进行监控。建议对不同种类监控，直接创建新的prometheusRule yaml。
+    - name: loki-prometheus # 定义规则组的名称，建议同一个yaml里面就写一个group就行了
       rules: # 规则列表，定义具体的告警规则
         - alert: LokiStorageHigh #告警名称
           expr: kubelet_volume_stats_available_bytes{namespace="monitoring", persistentvolumeclaim=~"storage-loki.*"} / 1024 / 1024 / 1024 < 5 #PromQL表达式，描述触发告警的条件
@@ -780,6 +815,43 @@ helm upgrade -i commoninfra-kube-prometheus-config -n kube-system . --values ./v
 
   - prometheus-stack的values文件中有一个`ruleSelector`的选项，通过标签选择器来匹配PrometheusRule资源。
   - 默认情况下不做配置：匹配所有PrometheusRule资源
+
+## AlertmanagerConfig
+
+~~~yaml
+apiVersion: monitoring.coreos.con/v1alpha1
+kind: AlertmanagerConfig
+metadata:
+  name: example-alertmanagerconfig
+  namespace: monitoring
+spec:
+  route:
+    receiver: team-email # 根路由，默认receiver。如果没有被下面的routes匹配到，就往这里发
+    groupBy: [type] # 告警有不同的种类，比如cpu、内存等，他们都是属于某个节点的，就可以打包同一节点的告警（type=node），避免告警轰炸。
+    routes:
+    - matchers:
+      - matchType: =
+        name: serverity
+        value: critical
+      receiver: critical-email
+    - continue: true
+      matchers:
+      - name: slack
+        regex: true
+        value: ^[@#a-z0-9][a-z0-9._-]*$
+      receiver: slack-team-receiver
+  receivers: # 上面的receiver都需要在这里有定义
+  - name: team-email
+    emailConfigs:
+    - to: team@example.com
+      from: alertmanager@example.com
+      smarthost: smtp.example.com:587
+      authUsername: user
+      authPassword:
+        secretKeyRef:
+          name: email-secret
+          key: password
+~~~
 
 ## CRD更新说明
 

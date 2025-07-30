@@ -310,3 +310,308 @@ helm pull grafana/grafana-agent --version 0.42.0
 helm upgrade -i grafana-agent -n monitoring . -f ./values.yaml
 ~~~
 
+# python集成tempo
+
+对于 Python 应用对接 Tempo 收集 Trace 数据，主要有两种方式：**OpenTelemetry** (推荐) 和 **Jaeger Python SDK**。我推荐使用 OpenTelemetry，因为它是现代标准且与 Tempo 集成最好。
+
+## 方案 1: OpenTelemetry (推荐)
+
+**1. 安装依赖**
+
+```bash
+pip install opentelemetry-api \
+            opentelemetry-sdk \
+            opentelemetry-exporter-otlp \
+            opentelemetry-instrumentation-requests \
+            opentelemetry-instrumentation-flask \
+            opentelemetry-instrumentation-django \
+            opentelemetry-instrumentation-psycopg2
+```
+
+**2. 基础配置代码**
+
+```python
+# tracing.py
+from opentelemetry import trace
+from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
+from opentelemetry.sdk.trace import TracerProvider
+from opentelemetry.sdk.trace.export import BatchSpanProcessor
+from opentelemetry.sdk.resources import Resource
+from opentelemetry.instrumentation.requests import RequestsInstrumentor
+from opentelemetry.instrumentation.flask import FlaskInstrumentor
+import os
+
+def init_tracing():
+    # 配置资源信息
+    resource = Resource.create({
+        "service.name": "my-python-app",
+        "service.version": "1.0.0",
+        "deployment.environment": "production"
+    })
+    
+    # 创建 TracerProvider
+    trace.set_tracer_provider(TracerProvider(resource=resource))
+    
+    # 配置 OTLP 导出器 - 连接到 Tempo
+    otlp_exporter = OTLPSpanExporter(
+        endpoint="http://tempo.monitoring.svc.cluster.local:4317",  # Tempo gRPC 端点
+        insecure=True  # 在生产环境中应该使用 TLS
+    )
+    
+    # 添加批量处理器
+    span_processor = BatchSpanProcessor(otlp_exporter)
+    trace.get_tracer_provider().add_span_processor(span_processor)
+    
+    # 自动装载常用库
+    RequestsInstrumentor().instrument()
+    FlaskInstrumentor().instrument()  # 如果使用 Flask
+    
+    return trace.get_tracer(__name__)
+
+# 初始化追踪
+tracer = init_tracing()
+```
+
+**3. Flask 应用示例**
+
+```python
+# app.py
+from flask import Flask, request, jsonify
+from tracing import tracer
+import requests
+import time
+
+app = Flask(__name__)
+
+@app.route('/api/users/<user_id>')
+def get_user(user_id):
+    # 手动创建 span
+    with tracer.start_as_current_span("get_user") as span:
+        # 添加属性到 span
+        span.set_attribute("user.id", user_id)
+        span.set_attribute("http.method", request.method)
+        span.set_attribute("http.url", request.url)
+        
+        try:
+            # 模拟数据库查询
+            user_data = fetch_user_from_db(user_id)
+            
+            # 调用外部服务
+            profile_data = fetch_user_profile(user_id)
+            
+            span.set_attribute("user.found", True)
+            return jsonify({
+                "user": user_data,
+                "profile": profile_data
+            })
+            
+        except Exception as e:
+            # 记录错误
+            span.record_exception(e)
+            span.set_status(trace.Status(trace.StatusCode.ERROR, str(e)))
+            return jsonify({"error": str(e)}), 500
+
+def fetch_user_from_db(user_id):
+    """模拟数据库查询"""
+    with tracer.start_as_current_span("db.query.users") as span:
+        span.set_attribute("db.operation", "SELECT")
+        span.set_attribute("db.table", "users")
+        span.set_attribute("db.user.id", user_id)
+        
+        # 模拟数据库延迟
+        time.sleep(0.1)
+        
+        return {"id": user_id, "name": f"User {user_id}"}
+
+def fetch_user_profile(user_id):
+    """调用外部服务"""
+    with tracer.start_as_current_span("http.client.user_profile") as span:
+        span.set_attribute("http.method", "GET")
+        span.set_attribute("http.url", f"http://profile-service/users/{user_id}")
+        
+        # requests 会自动被装载，创建子 span
+        response = requests.get(f"http://profile-service/users/{user_id}")
+        
+        span.set_attribute("http.status_code", response.status_code)
+        return response.json()
+
+if __name__ == '__main__':
+    app.run(debug=True, port=5000)
+```
+
+**4. 环境变量配置方式**
+
+更简单的方式是使用环境变量：
+
+```yaml
+# Kubernetes Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: python-app
+spec:
+  template:
+    spec:
+      containers:
+      - name: app
+        image: my-python-app:latest
+        env:
+        # OpenTelemetry 环境变量
+        - name: OTEL_SERVICE_NAME
+          value: "my-python-app"
+        - name: OTEL_EXPORTER_OTLP_ENDPOINT
+          value: "http://tempo.monitoring.svc.cluster.local:4317"
+        - name: OTEL_EXPORTER_OTLP_INSECURE
+          value: "true"
+        - name: OTEL_RESOURCE_ATTRIBUTES
+          value: "service.version=1.0.0,deployment.environment=production"
+        # 自动装载
+        - name: OTEL_PYTHON_DISABLED_INSTRUMENTATIONS
+          value: ""  # 留空表示启用所有自动装载
+```
+
+```python
+# 简化的应用代码
+from opentelemetry.instrumentation.auto_instrumentation import sitecustomize
+
+# 只需要这一行，其他都自动配置！
+```
+
+**5. 使用自动装载启动**
+
+```bash
+# 使用 opentelemetry-instrument 启动应用
+opentelemetry-instrument python app.py
+
+# 或者在 Dockerfile 中
+CMD ["opentelemetry-instrument", "python", "app.py"]
+```
+
+## 方案 2: Jaeger Python SDK
+
+如果您更喜欢 Jaeger SDK：
+
+```python
+import opentracing
+from jaeger_client import Config
+
+def init_jaeger_tracer(service_name='my-python-app'):
+    config = Config(
+        config={
+            'sampler': {'type': 'const', 'param': 1},
+            'local_agent': {
+                'reporting_host': 'tempo.monitoring.svc.cluster.local',
+                'reporting_port': 6831,  # Jaeger UDP 端口
+            },
+            'logging': True,
+        },
+        service_name=service_name,
+    )
+    return config.initialize_tracer()
+
+tracer = init_jaeger_tracer()
+
+@app.route('/api/test')
+def test_endpoint():
+    with tracer.start_span('test_operation') as span:
+        span.set_tag('user.id', '12345')
+        span.log_kv({'event': 'processing request'})
+        
+        # 业务逻辑
+        result = do_something()
+        
+        span.set_tag('result.count', len(result))
+        return jsonify(result)
+```
+
+## 更新 Tempo 配置
+
+确保您的 Tempo 配置支持接收 OTLP 数据：
+
+```yaml
+# 添加到您的 tempo values.yaml
+tempo:
+  config: |
+    server:
+      http_listen_port: 3100
+      grpc_listen_port: 9095
+    
+    distributor:
+      receivers:
+        otlp:
+          protocols:
+            grpc:
+              endpoint: 0.0.0.0:4317
+            http:
+              endpoint: 0.0.0.0:4318
+        jaeger:
+          protocols:
+            grpc:
+              endpoint: 0.0.0.0:14250
+            thrift_http:
+              endpoint: 0.0.0.0:14268
+```
+
+## 验证追踪数据
+
+**1. 检查应用日志**
+
+```bash
+# 查看应用是否成功发送 spans
+kubectl logs -f deployment/python-app
+```
+
+**2. 在 Grafana 中查看**
+
+1. 打开 Grafana
+2. 切换到 Explore
+3. 选择 Tempo 数据源
+4. 输入 Trace ID 或使用查询语句
+
+**3. 查看生成的指标**
+
+由于您启用了 `metricsGenerator`，Tempo 会自动生成指标：
+```promql
+# 在 Prometheus 中查询
+tempo_traces_total{service_name="my-python-app"}
+tempo_traces_duration_seconds{service_name="my-python-app"}
+```
+
+## 最佳实践
+
+**1. Span 命名规范**
+
+```python
+# 好的命名
+with tracer.start_as_current_span("db.query.users"):
+with tracer.start_as_current_span("http.client.user_service"):
+with tracer.start_as_current_span("cache.get.user_profile"):
+
+# 避免的命名
+with tracer.start_as_current_span("function1"):
+with tracer.start_as_current_span("processing"):
+```
+
+**2. 关键属性设置**
+
+```python
+span.set_attribute("http.method", "GET")
+span.set_attribute("http.status_code", 200)
+span.set_attribute("db.statement", "SELECT * FROM users WHERE id = ?")
+span.set_attribute("user.id", user_id)
+span.set_attribute("error", True)  # 发生错误时
+```
+
+**3. 采样策略**
+
+```python
+# 在生产环境中设置采样率
+config = {
+    'sampler': {
+        'type': 'probabilistic',
+        'param': 0.1  # 10% 采样率
+    }
+}
+```
+
+这样配置后，您的 Python 应用就能够向 Tempo 发送详细的追踪数据，在 Grafana 中实现完整的分布式追踪可视化了。

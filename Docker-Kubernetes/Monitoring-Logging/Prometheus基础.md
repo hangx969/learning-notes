@@ -330,3 +330,25 @@ PromQL 表达式计算出来的值有以下几种类型：
   - delta()：计算区间向量里每一个时序第一个和最后一个的差值
 
   - sort()：排序
+
+# Relabel机制
+
+对监控目标的Label的重写，比如进行多重标记、过滤、分类等。（比如有些数据不想要了）
+
+常见Relabel配置：
+
+- 【必备】`source_labels:[meta_kubernetes_pod_name, meta_kubernetes_namespace]` 
+  - 源标签的key的列表
+  - 读取这些标签的key对应的值，作为relabel的输入。再把这些值赋值给targetLabel
+- 【必备】`target_label:[instance]` 
+  - 指定relabel处理之后，要写入或者修改的标签的key，并将处理后的值赋值给这个标签
+- separator：如果source_labels有多个，将他们的值合并。默认用;连接
+- regex：匹配源标签的值，默认为`(.*)`
+- replacement: 指定再进行标签重写时用的替换值，默认为$1
+- action:正则表达式匹配时执行的动作，默认为replace
+  - replace：替换标签值
+  - keep：保留匹配的目标，不匹配的丢弃
+  - drop：丢弃匹配的目标，保留未匹配的
+  - labelmap：对于匹配后的标签映射到新标签中
+  - labeldrop：删除某个标签
+  - labelkeep：只保留某个标签
