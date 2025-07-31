@@ -6,7 +6,7 @@
 
 - 安装nfs见CKA-storage-nfs章节
 
-~~~sh
+~~~yaml
 mkdir es
 cd es/
 tee es-storageclass.yaml <<'EOF'
@@ -30,7 +30,7 @@ kubectl create ns es
 
 - 创建cm
 
-~~~sh
+~~~yaml
 apiVersion: v1
 kind: ConfigMap
 metadata:
