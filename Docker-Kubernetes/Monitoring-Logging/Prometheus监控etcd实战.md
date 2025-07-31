@@ -149,6 +149,10 @@ spec:
       app: etcd-prom # 跟svc的lables保持一致 
   namespaceSelector: 
     matchNames: 
-      - kube-system
+    - kube-system
 ~~~
 
+# 验证
+
+1. 登录prometheus UI去查看target中的etcd是否是up状态。
+2. 可以去grafana官网搜索etcd下载对应的dashboard，比如：[Etcd by Prometheus | Grafana Labs](https://grafana.com/grafana/dashboards/3070-etcd/)
