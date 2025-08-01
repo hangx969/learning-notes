@@ -1,4 +1,4 @@
-# 监控etcd
+# 监控etcd-手动创建yaml
 
 ## etcd的metrics接口
 
@@ -72,50 +72,9 @@ kubectl create secret generic etcd-ssl -n monitoring --from-file=/etc/kubernetes
 
 ~~~yaml
 prometheus:
-  ingress:
-    enabled: true
-    ingressClassName: nginx-default
-    annotations: {}
-    labels: {}
-    hosts:
-      - prometheus.hanxux.local
-    pathType: Prefix
-    paths:
-      - /
-    tls: []
+...
   prometheusSpec:
-    enableRemoteWriteReceiver: true
-    ## If true, a nil or {} value for prometheus.prometheusSpec.ruleSelector will cause the
-    ## prometheus resource to be created with selectors based on values in the helm deployment,
-    ## which will also match the PrometheusRule resources created
-    ##
-    ruleSelectorNilUsesHelmValues: false
-
-    ## If true, a nil or {} value for prometheus.prometheusSpec.serviceMonitorSelector will cause the
-    ## prometheus resource to be created with selectors based on values in the helm deployment,
-    ## which will also match the servicemonitors created
-    ##
-    serviceMonitorSelectorNilUsesHelmValues: false
-
-    ## If true, a nil or {} value for prometheus.prometheusSpec.podMonitorSelector will cause the
-    ## prometheus resource to be created with selectors based on values in the helm deployment,
-    ## which will also match the podmonitors created
-    ##
-    podMonitorSelectorNilUsesHelmValues: false
-
-    retention: 7d
-
-    ## Enable compression of the write-ahead log using Snappy.
-    ##
-    walCompression: false
-    storageSpec:
-      volumeClaimTemplate:
-        spec:
-          storageClassName: sc-nfs
-          accessModes: ["ReadWriteOnce"]
-          resources:
-            requests:
-              storage: 1Gi
+  ...
     ## Secrets is a list of Secrets in the same namespace as the Prometheus object, which shall be mounted into the Prometheus Pods.
     ## The Secrets are mounted into /etc/prometheus/secrets/. Secrets changes after initial creation of a Prometheus object are not
     ## reflected in the running Pods. To change the secrets mounted into the Prometheus Pods, the object must be deleted and recreated
@@ -166,21 +125,49 @@ spec:
 - WAL fsync: 通常应该 < 10ms （测量将WAL条目从内存刷新到磁盘所需的时间）
 - Backend commit: 通常应该 < 25ms （测量将数据库事务提交到磁盘所需的时间）
 
+# 监控etcd-修改vaules
+
+kube-prometheus-stack的values文件里面会自动处理https的metrics接口认证。并且在开启etcd监控之后，会自动安装etcd dashboard。
+
+kube-prometheus-stack的配置如下：
+
+~~~yaml
+kubeEtcd:
+  enabled: true
+  endpoints:
+  - 192.168.40.180
+  service:
+    enabled: true
+    port: 2381
+    targetPort: 2381
+    selector:
+      component: etcd
+  serviceMonitor:
+    enabled: true
+    https: true
+    insecureSkipVerify: true
+    serverName: localhost
+    interval: 30s
+    metricRelabelings: []
+    relabelings: []
+~~~
+
 # 监控ControllerManager
 
 ## 修改配置
 
-对于kubeadm安装的集群，controller manager默认是绑定127.0.0.1，这样无法通过节点IP访问到，所以要改成0.0.0.0：
+对于kubeadm安装的集群，controller manager默认是绑定--bind-address=127.0.0.1，这样无法通过节点IP访问到，所以要改成0.0.0.0：
 
 ~~~sh
 vim /etc/kubernetes/manifests/kube-scheduler.yaml
 spec:
   containers:
   - command:
-    - kube-scheduler
-    - --bind-address=0.0.0.0  # 改为0.0.0.0
-    - --kubeconfig=/etc/kubernetes/scheduler.conf
-    - --leader-elect=true
+    - kube-controller-manager
+    - --allocate-node-cidrs=true
+    - --authentication-kubeconfig=/etc/kubernetes/controller-manager.conf
+    - --authorization-kubeconfig=/etc/kubernetes/controller-manager.conf
+    - --bind-address=0.0.0.0
 ~~~
 
 由于manifests目录下是以静态Pod运行在集群中的，所以只要修改静态Pod目录下对应的yaml文件即可。等待一会后，对应服务会自动重启，所以不需要我们手动重启。
@@ -196,16 +183,132 @@ curl --cert /etc/kubernetes/pki/apiserver-kubelet-client.crt \
      https://192.168.40.180:10257/metrics -k | 
 ~~~
 
-## 创建secret
+## 【可选】创建secret
 
-需要把admin证书创建secret并挂载进prometheus
+如果是用类似etcd一样，手动创建yaml文件的方式，那么需要把admin证书创建secret并挂载进prometheus
 
 ~~~sh
 kubectl create secret generic controller-manager-ssl -n monitoring --from-file=/etc/kubernetes/pki/apiserver-kubelet-client.crt --from-file=/etc/kubernetes/pki/apiserver-kubelet-client.key --from-file=/etc/kubernetes/pki/ca.crt
 ~~~
 
-## 配置prometheus
-
 ~~~yaml
+prometheus:
+  prometheusSpec:
+    secrets:
+    - etcd-ssl # 挂载etcd的证书，用于获取etcd metrics数据
+    - controller-manager-ssl # 挂载controller-manager的证书，用于获取metrics数据
 ~~~
 
+## 配置prometheus-stack yaml
+
+用helm部署的kube-prometheus-stack，就能自动处理 TLS 配置：通过 https: true 和 insecureSkipVerify: true。不用再
+
+使用内置的证书处理机制：Prometheus operator 会自动使用 ServiceAccount 的证书进行认证
+
+~~~yaml
+kubeControllerManager:
+  enabled: true
+  endpoints:
+  - 192.168.40.180
+  service:
+    enabled: true
+    port: 10257
+    targetPort: 10257
+    selector:
+      component: kube-controller-manager
+  serviceMonitor:
+    enabled: true
+    https: true
+    insecureSkipVerify: true
+    serverName: localhost
+    interval: 30s
+    metricRelabelings: []
+    relabelings: []
+~~~
+
+## 查看dashboard
+
+在kube-prometheus-stack中有自带的dashboard：Kubernetes / Controller Manager，需要在开启kubeControllerManager.enabled=true之后才会被创建。
+
+# 监控Scheduler
+
+## 修改监听配置
+
+对于kubeadm安装的集群，scheduler默认是绑定127.0.0.1，这样无法通过节点IP访问到，所以要改成0.0.0.0：
+
+~~~sh
+vim /etc/kubernetes/manifests/kube-scheduler.yaml
+spec:
+  containers:
+  - command:
+    - kube-scheduler
+    - --bind-address=0.0.0.0  # 改为0.0.0.0
+    - --kubeconfig=/etc/kubernetes/scheduler.conf
+    - --leader-elect=true
+~~~
+
+由于manifests目录下是以静态Pod运行在集群中的，所以只要修改静态Pod目录下对应的yaml文件即可。等待一会后，对应服务会自动重启，所以不需要我们手动重启。
+
+## 开启监控
+
+kube-prometheus-stack的配置如下：
+
+~~~yaml
+kubeScheduler:
+  enabled: true
+  endpoints:
+  - 192.168.40.180
+  service:
+    enabled: true
+    port: 10259
+    targetPort: 10259
+    selector:
+      component: kube-scheduler
+  serviceMonitor:
+    enabled: true
+    https: true
+    insecureSkipVerify: true
+    serverName: localhost
+    interval: 30s
+    metricRelabelings: []
+    relabelings: []
+~~~
+
+开启之后就会自动创建dashboard：Kubernetes / Scheduler
+
+# 监控kubeProxy
+
+## 修改configMap
+
+kubeProxy的配置卸载configMap中，默认没有开启metrics端口，给他开启：
+
+~~~sh
+k edit cm -n kube-system kube-proxy
+# 找到这个字段，打开。
+metricsBindAddress: 0.0.0.0:10249
+~~~
+
+可以删掉节点的kuibe-proxy pod重启。
+
+## 开启监控
+
+~~~yaml
+kubeProxy:
+  enabled: true
+  service:
+    enabled: true
+    port: 10249
+    targetPort: 10249
+    selector:
+      k8s-app: kube-proxy
+  serviceMonitor:
+    enabled: true
+    https: false
+    interval: 30s
+    metricRelabelings: []
+    relabelings: []
+~~~
+
+不用写endpoint列表，会自动发现。
+
+开启之后就会自动创建dashboard：Kubernetes / Proxy
