@@ -229,3 +229,37 @@ spec:
 
 资源创建后即可在Prometheus-targets搜blackbox，查看到监控目标，同样可以安装dashboard，Dashboard ID为：13659
 
+# 监控外部主机
+
+监控Linux 的Exporter 是：https://github.com/prometheus/node_exporter
+
+监控 Windows 主机的Exporter 是：https://github.com/prometheus-community/windows_exporter。  
+
+1. 首先下载对应的 Exporter 至 Windows 主机（ MSI 文 件 下 载 地 址 ： https://github.com/prometheus-community/windows_exporter/releases）
+
+2. 下载完成后，双击打开即可完成安装，之后可以在任务管理器上看到对应的进程
+
+3. Windows Exporter 会暴露一个9182端口，可以通过该端口访问到Windows的监控数据。 
+
+4. 创建一个Scrape即可监控外部的Windows机器：
+
+   ~~~yaml
+   apiVersion: monitoring.coreos.com/v1alpha1 
+   kind: ScrapeConfig 
+   metadata: 
+     name: windows-exporter  
+     namespace: monitoring 
+   spec: 
+     scrapeInterval: 30s 
+     jobName: windows-exporter 
+     metricsPath: /metrics 
+     scheme: HTTP 
+   staticConfigs: 
+   - targets: 
+     # 多个实例写多次即可 
+     - 192.168.1.104:9182  
+     labels: 
+       env: test
+   ~~~
+
+5. 最后在Grafana中导入模板（ID：20763）即可

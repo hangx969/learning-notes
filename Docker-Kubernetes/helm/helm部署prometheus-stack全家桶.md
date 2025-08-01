@@ -380,179 +380,7 @@ data:
 EOF
 ~~~
 
-# Alert-manager发送告警到slack
-
-> - prometheus与slack集成的配置文件说明：https://prometheus.io/docs/alerting/latest/configuration/#slack_config
-> - slack web API说明：https://api.slack.com/web
-> - slack web API认证：https://api.slack.com/web#authentication
-> - chat.postMessage API文档：https://api.slack.com/methods/chat.postMessage
-> - bot token: https://api.slack.com/concepts/token-types#bot
-
-## Slack端配置
-
-1. Slack workspace中安装一个App，拿到其Api token（bot token）
-2. 创建一个channel用来接收告警信息
-
-## alertmanager端配置
-
-1. 将bot token放到k8s里面：
-
-   - 如果是azure环境下，token被写入到azure keyvault中，k8s用SecretProviderClass将keyvault secret转换成k8s secret，示例如下：
-
-     ~~~yaml
-     apiVersion: secrets-store.csi.x-k8s.io/v1
-     kind: SecretProviderClass
-     metadata:
-       name: sp-alertmanager
-       namespace: monitoring
-     spec:
-       provider: azure
-       parameters:
-         usePodIdentity: "false"
-         useVMManagedIdentity: "true" #采用MI的认证方式，secretProviderClass在azure中有默认创建的MI以供使用
-         userAssignedIdentityID: <secretProviderIdentityId> # Set the clientID of the user-assigned managed identity to use, e.g. azurekeyvaultsecretsprovider-aks-commoninfra-dev-westeurope
-         keyvaultName: <keyvaultName>
-         cloudName: <cloudName>
-         objects:  |
-           array:
-             - |
-               objectName: <the object name of keyvault>
-               objectType: secret
-               objectVersion: ""
-
-         tenantId: "<tenant-id>"
-       # This creates an actual secret that we can use
-       secretObjects:
-       - secretName: <actual-secret-name>
-         data:
-         - key: <key-name-of-the-secret> # add a secret referencable with the same key as was in the keyvault
-           objectName: <same-object-name-with-above-objectName>
-         type: Opaque
-     ~~~
-
-   - 本地环境下，直接把token做成secret
-
-     ~~~sh
-     #Opaque类型的secret只接受base64类型的string，先转一下token到base64
-     echo -n 'xxxxx' | base64
-     ~~~
-
-     ~~~yaml
-     apiVersion: v1
-     kind: Secret
-     metadata:
-       name: <secret-name>
-       namespace: monitoring
-     type: Opaque
-     data:
-       token:
-     ~~~
-
-2. kube-prometheus-stack的values.yaml中alertmanager部分配置slack
-
-   ~~~yaml
-   alertmanager:
-   ...
-     ## Alertmanager configuration directives
-     ## ref: https://prometheus.io/docs/alerting/configuration/#configuration-file
-     ##      https://prometheus.io/webtools/alerting/routing-tree-editor/
-     ##
-     config:
-       global:
-         resolve_timeout: 5m
-         slack_api_url: https://slack.com/api/chat.postMessage
-         http_config:
-           authorization:
-             credentials_file: '/mnt/secrets-store/<key-name-of-secret>' #这里的文件名需要和secret的keyname相一致
-       inhibit_rules:
-         - source_matchers:
-             - 'severity = critical'
-           target_matchers:
-             - 'severity =~ warning|info'
-           equal:
-             - 'namespace'
-             - 'alertname'
-         - source_matchers:
-             - 'severity = warning'
-           target_matchers:
-             - 'severity = info'
-           equal:
-             - 'namespace'
-             - 'alertname'
-         - source_matchers:
-         # alertmanager自带一条alert: InfoInhibitor，作用是压制Info level的alert。
-         # 背景：info的alert正常情况下会noisy，但是每当有warning/critical的alert出现时，info又会提供有价值的信息。
-         # 在同一个namespace下，InfoInhibitor会在Info alert触发之后触发，压制Info alert；但又会在有warning/critical出现后停止触发，不压制那时的Info alert。
-         # Refer to: https://runbooks.prometheus-operator.dev/runbooks/general/infoinhibitor/
-             - 'alertname = InfoInhibitor'
-           target_matchers:
-             - 'severity = info'
-           equal:
-             - 'namespace'
-       route:
-         receiver: 'null'
-   ...
-       receivers:
-       - name: 'null'
-       - name: platform-slack
-         slack_configs:
-           - channel: '#<channel-name>'
-             send_resolved: true
-             title: '{{ template "slack.xxx.title" . }}'
-             text: '{{ template "slack.xxx.text" . }}'
-       - name: platform-slack-info
-         slack_configs:
-           - channel: '#<channel-name>'
-             send_resolved: true
-             title: '{{ template "slack.xxx.title" . }}'
-             text: '{{ template "slack.xxx.text" . }}'
-       templates:
-       - '/etc/alertmanager/config/*.tmpl'
-   ...
-     ## Alertmanager template files to format alerts
-     ## By default, templateFiles are placed in /etc/alertmanager/config/ and if
-     ## they have a .tmpl file suffix will be loaded. See config.templates above
-     ## to change, add other suffixes. If adding other suffixes, be sure to update
-     ## config.templates above to include those suffixes.
-     ## ref: https://prometheus.io/docs/alerting/notifications/
-     ##      https://prometheus.io/docs/alerting/notification_examples/
-     ##
-     templateFiles:
-       default_title.tmpl: |-
-         {{ define "slack.xxx.title" }}
-         {{ .CommonLabels.alertname }} - {{ .Alerts.Firing | len }} in {{ .CommonLabels.namespace }}
-         {{ end }}
-       default_text.tmpl: |-
-         {{ define "slack.xxx.text" }}
-         {{ range .Alerts }}
-         `{{ .Labels.severity }}` - {{ .Annotations.summary }}
-         *Description:* {{ .Annotations.description }}
-         {{ if match `^http.+` .GeneratorURL }}*Graph:* <{{ .GeneratorURL }}|:chart_with_upwards_trend:> {{ end }}{{ if .Annotations.runbook }}*Runbook:* <{{ .Annotations.runbook }}|:spiral_note_pad:>{{ end }}
-         *Details:*
-           {{ range .Labels.SortedPairs }} • *{{ .Name }}:* `{{ .Value }}`
-           {{ end }}
-         {{ end }}
-         {{ end }}
-
-       # Additional volumes on the output StatefulSet definition.
-       volumes:
-         - name: <volume-name>
-           csi:
-             driver: secrets-store.csi.k8s.io
-             readOnly: true
-             volumeAttributes:
-               secretProviderClass: "sp-alertmanager"
-
-       # Additional VolumeMounts on the output StatefulSet definition.
-       volumeMounts:
-         - name: <volume-name>
-           mountPath: "/mnt/secrets-store"
-           readOnly: true
-   ~~~
-
-3. 验证slack端是否可以接收到告警信息
-
-# CRD资源使用
+# prometheus CRD资源
 
 ## 常见CRD资源
 
@@ -588,6 +416,21 @@ pod monitor绕过了service，直接通过pod的label找到pod，抓取pod暴露
 https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/user-guides/getting-started.md#using-podmonitors
 
 podMonitor推荐创建在与pod位于同一个ns下面。（与pod同生命周期，防止产生很多垃圾资源）
+
+~~~yaml
+apiVersion: monitoring.coreos.com/v1 
+kind: PodMonitor 
+metadata: 
+  name: example-app 
+  labels: 
+    team: frontend 
+spec: 
+  selector: 
+    matchLabels: 
+      app: example-app 
+  podMetricsEndpoints: 
+  - targetPort: 8080 
+~~~
 
 ### 监控流程设计
 
@@ -860,3 +703,186 @@ For kube-prometheus-stack: CRDs are firstly extracted from helm charts then inst
 The reason for installing CRDs separately is that based on [helm document](https://helm.sh/docs/topics/charts/#limitations-on-crds), CRDs will only be installed one time on the fresh install, after which helm will not re-install nor upgrade them during helm chart upgrade. But azure_global considers that not updating CRDs is more breaking than doing it.
 
 Then they suggests that CRDs can be extracted from the helm package and be installed using kubectl apply.
+
+# 监控排查流程
+
+一般是从prometheus中看到target是down的状态。
+
+1. 首先看对应的pod是不是正常Running
+2. 看serviceMonitor，找到namespaceSelector、selector，去对应的ns里面找对应标签的svc
+3. 确认能通过svc访问到metrics接口
+4. 确认svc的端口和scheme、serviceMonitor的一致
+
+
+
+# Alert-manager发送告警到slack
+
+> - prometheus与slack集成的配置文件说明：https://prometheus.io/docs/alerting/latest/configuration/#slack_config
+> - slack web API说明：https://api.slack.com/web
+> - slack web API认证：https://api.slack.com/web#authentication
+> - chat.postMessage API文档：https://api.slack.com/methods/chat.postMessage
+> - bot token: https://api.slack.com/concepts/token-types#bot
+
+## Slack端配置
+
+1. Slack workspace中安装一个App，拿到其Api token（bot token）
+2. 创建一个channel用来接收告警信息
+
+## alertmanager端配置
+
+1. 将bot token放到k8s里面：
+
+   - 如果是azure环境下，token被写入到azure keyvault中，k8s用SecretProviderClass将keyvault secret转换成k8s secret，示例如下：
+
+     ~~~yaml
+     apiVersion: secrets-store.csi.x-k8s.io/v1
+     kind: SecretProviderClass
+     metadata:
+       name: sp-alertmanager
+       namespace: monitoring
+     spec:
+       provider: azure
+       parameters:
+         usePodIdentity: "false"
+         useVMManagedIdentity: "true" #采用MI的认证方式，secretProviderClass在azure中有默认创建的MI以供使用
+         userAssignedIdentityID: <secretProviderIdentityId> # Set the clientID of the user-assigned managed identity to use, e.g. azurekeyvaultsecretsprovider-aks-commoninfra-dev-westeurope
+         keyvaultName: <keyvaultName>
+         cloudName: <cloudName>
+         objects:  |
+           array:
+             - |
+               objectName: <the object name of keyvault>
+               objectType: secret
+               objectVersion: ""
+     
+         tenantId: "<tenant-id>"
+       # This creates an actual secret that we can use
+       secretObjects:
+       - secretName: <actual-secret-name>
+         data:
+         - key: <key-name-of-the-secret> # add a secret referencable with the same key as was in the keyvault
+           objectName: <same-object-name-with-above-objectName>
+         type: Opaque
+     ~~~
+
+   - 本地环境下，直接把token做成secret
+
+     ~~~sh
+     #Opaque类型的secret只接受base64类型的string，先转一下token到base64
+     echo -n 'xxxxx' | base64
+     ~~~
+
+     ~~~yaml
+     apiVersion: v1
+     kind: Secret
+     metadata:
+       name: <secret-name>
+       namespace: monitoring
+     type: Opaque
+     data:
+       token:
+     ~~~
+
+2. kube-prometheus-stack的values.yaml中alertmanager部分配置slack
+
+   ~~~yaml
+   alertmanager:
+   ...
+     ## Alertmanager configuration directives
+     ## ref: https://prometheus.io/docs/alerting/configuration/#configuration-file
+     ##      https://prometheus.io/webtools/alerting/routing-tree-editor/
+     ##
+     config:
+       global:
+         resolve_timeout: 5m
+         slack_api_url: https://slack.com/api/chat.postMessage
+         http_config:
+           authorization:
+             credentials_file: '/mnt/secrets-store/<key-name-of-secret>' #这里的文件名需要和secret的keyname相一致
+       inhibit_rules:
+         - source_matchers:
+             - 'severity = critical'
+           target_matchers:
+             - 'severity =~ warning|info'
+           equal:
+             - 'namespace'
+             - 'alertname'
+         - source_matchers:
+             - 'severity = warning'
+           target_matchers:
+             - 'severity = info'
+           equal:
+             - 'namespace'
+             - 'alertname'
+         - source_matchers:
+         # alertmanager自带一条alert: InfoInhibitor，作用是压制Info level的alert。
+         # 背景：info的alert正常情况下会noisy，但是每当有warning/critical的alert出现时，info又会提供有价值的信息。
+         # 在同一个namespace下，InfoInhibitor会在Info alert触发之后触发，压制Info alert；但又会在有warning/critical出现后停止触发，不压制那时的Info alert。
+         # Refer to: https://runbooks.prometheus-operator.dev/runbooks/general/infoinhibitor/
+             - 'alertname = InfoInhibitor'
+           target_matchers:
+             - 'severity = info'
+           equal:
+             - 'namespace'
+       route:
+         receiver: 'null'
+   ...
+       receivers:
+       - name: 'null'
+       - name: platform-slack
+         slack_configs:
+           - channel: '#<channel-name>'
+             send_resolved: true
+             title: '{{ template "slack.xxx.title" . }}'
+             text: '{{ template "slack.xxx.text" . }}'
+       - name: platform-slack-info
+         slack_configs:
+           - channel: '#<channel-name>'
+             send_resolved: true
+             title: '{{ template "slack.xxx.title" . }}'
+             text: '{{ template "slack.xxx.text" . }}'
+       templates:
+       - '/etc/alertmanager/config/*.tmpl'
+   ...
+     ## Alertmanager template files to format alerts
+     ## By default, templateFiles are placed in /etc/alertmanager/config/ and if
+     ## they have a .tmpl file suffix will be loaded. See config.templates above
+     ## to change, add other suffixes. If adding other suffixes, be sure to update
+     ## config.templates above to include those suffixes.
+     ## ref: https://prometheus.io/docs/alerting/notifications/
+     ##      https://prometheus.io/docs/alerting/notification_examples/
+     ##
+     templateFiles:
+       default_title.tmpl: |-
+         {{ define "slack.xxx.title" }}
+         {{ .CommonLabels.alertname }} - {{ .Alerts.Firing | len }} in {{ .CommonLabels.namespace }}
+         {{ end }}
+       default_text.tmpl: |-
+         {{ define "slack.xxx.text" }}
+         {{ range .Alerts }}
+         `{{ .Labels.severity }}` - {{ .Annotations.summary }}
+         *Description:* {{ .Annotations.description }}
+         {{ if match `^http.+` .GeneratorURL }}*Graph:* <{{ .GeneratorURL }}|:chart_with_upwards_trend:> {{ end }}{{ if .Annotations.runbook }}*Runbook:* <{{ .Annotations.runbook }}|:spiral_note_pad:>{{ end }}
+         *Details:*
+           {{ range .Labels.SortedPairs }} • *{{ .Name }}:* `{{ .Value }}`
+           {{ end }}
+         {{ end }}
+         {{ end }}
+   
+       # Additional volumes on the output StatefulSet definition.
+       volumes:
+         - name: <volume-name>
+           csi:
+             driver: secrets-store.csi.k8s.io
+             readOnly: true
+             volumeAttributes:
+               secretProviderClass: "sp-alertmanager"
+   
+       # Additional VolumeMounts on the output StatefulSet definition.
+       volumeMounts:
+         - name: <volume-name>
+           mountPath: "/mnt/secrets-store"
+           readOnly: true
+   ~~~
+
+3. 验证slack端是否可以接收到告警信息
