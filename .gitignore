@@ -4,6 +4,7 @@ Python/python-manuscripts/**/*.log
 Python/python-manuscripts/**/*.yaml
 Python/python-manuscripts/**/*.json
 Python/python-manuscripts/**/*.xlsx
+Python/python-manuscripts/**/*.docx
 Python/python-manuscripts/**/kubeconfig-local
 Python/python-manuscripts/**/*.sqlite3
 Python/python-manuscripts/**/staticfiles
