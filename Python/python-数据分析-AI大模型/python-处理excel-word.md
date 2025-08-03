@@ -189,13 +189,168 @@ plt.show()
 
 # word文件处理
 
+- docx 是一个操作 Word 文档的库，提供了创建、读取和修改 .docx 文件的功能。
+- Document 是文档操作的核心类，用于创建和操作 Word 文档对象。
+
 ## 安装
 
 ~~~sh
 pip3 install -i https://pypi.tuna.tsinghua.edu.cn/simple python-docx
 ~~~
 
-## 生成word报告
+## 生成word文档
 
 ~~~python
+from docx import Document
+
+# 从模板生成一个简单的 Linux 运维报告模板，包含服务器名称、CPU 使用率、内存使用率等基本信息。
+
+# 创建word文档对象
+doc = Document()
+# 添加一级标题
+doc.add_heading("Linux Operation Report", level=1)
+# 添加段落信息
+doc.add_paragraph("Server Name: ")
+doc.add_paragraph("CPU usage:")
+doc.add_paragraph("Memory usage:")
+
+# 保存文档
+doc.save(r".\data-ai\report_template.docx")
+~~~
+
+## 批量生成服务器健康检查报告
+
+~~~python
+from docx import Document
+
+# 从服务器信息中生成一个简单的 Linux 运维报告，包含服务器名称、CPU 使用率、内存使用率等基本信息。
+# 服务器清单
+servers = [
+    {"name": "server01", "cpu": "30%", "memory": "60%"},
+    {"name": "server02", "cpu": "50%", "memory": "75%"},
+    {"name": "server03", "cpu": "20%", "memory": "55%"}
+]
+
+# 创建word文档对象
+doc = Document()
+# 添加一级标题
+doc.add_heading("Server Check Report", level=1)
+# 添加段落信息
+
+for server in servers:
+    doc.add_heading(f"Server Name: {server['name']}", level=2)
+    doc.add_paragraph(f"CPU usage: {server['cpu']}")
+    doc.add_paragraph(f"Memory usage: {server['memory']}")
+    doc.add_paragraph("-"*20)
+
+# 保存文档
+doc.save(r".\data-ai\report_batch.docx")
+~~~
+
+## 用word表格展示每台服务器磁盘使用情况
+
+~~~python
+from docx import Document
+
+# 创建磁盘报告
+disk_data = {
+    "server01": [
+        {"mount": "/", "size": "50G", "used": "20G", "free": "30G", "usage": "58%"},
+        {"mount": "/home", "size": "100G", "used": "80G", "free": "20G", "usage": "80%"}
+    ],
+    "server02": [
+        {"mount": "/", "size": "70G", "used": "30G", "free": "40G", "usage": "68%"},
+        {"mount": "/var", "size": "200G", "used": "150G", "free": "50G", "usage": "78%"}
+    ]
+}
+
+doc = Document()
+doc.add_heading("Disk report", level=1)
+
+# 循环生成每台服务器磁盘信息
+for server, disks in disk_data.items():
+    doc.add_heading(f"Server Name: {server}", level=2)
+    # 创建表格存放磁盘数据，先只创建一个表头，后面的内容动态去创建
+    table = doc.add_table(rows=1, cols=5)
+    #设置表头. 会把第一行的每个单元格打包成元组
+    hdr_cells = table.rows[0].cells
+    # 给元组赋值，相当于给表头的的每个单元格赋值
+    hdr_cells[0].text = "Mount Point"
+    hdr_cells[1].text = "Total Size"
+    hdr_cells[2].text = "Used"
+    hdr_cells[3].text = "Free"
+    hdr_cells[4].text = "Used Precent"
+
+    for disk in disks:
+        # .cells获取新增行的单元格
+        row_cells = table.add_row().cells
+        row_cells[0].text = disk['mount']
+        row_cells[1].text = disk['size']
+        row_cells[2].text = disk['used']
+        row_cells[3].text = disk['free']
+        row_cells[4].text = disk['usage']
+
+doc.save(r".\data-ai\disk-usage-report.docx")
+~~~
+
+## 从日志文件动态生成问题分析报告
+
+~~~python
+from docx import Document
+
+# 提前有一个日志文件，设置变量
+log_file = r".\data-ai\system.log"
+
+# 创建word文档对象
+doc = Document()
+
+doc.add_heading("System log analyis report", level=1)
+doc.add_paragraph("Below are the error messages in log files")
+doc.add_paragraph("-"*30)
+
+# 读取日志文件
+with open(log_file, 'r') as f:
+    for line in f:
+        if "ERROR" in line or "WARNING" in line:
+            doc.add_paragraph(line.strip())
+
+doc.save(r".\data-ai\Error-analysis.docx")
+~~~
+
+## 生成性能趋势报告
+
+~~~python
+from docx import Document
+import matplotlib.pyplot as plt
+# 控制word中的图标大小
+from docx.shared import Inches
+
+plt.rcParams['font.family'] = ['Consolas']
+
+# 性能数据
+performance_data = {
+    "CPU": [20, 40, 60, 80, 50, 30],
+    "Memory": [30, 50, 70, 60, 40, 20],
+    "Time": ["10:00", "10:05", "10:10", "10:15", "10:20", "10:25"]
+}
+
+# 绘制图表
+plt.plot(performance_data['Time'], performance_data['CPU'], label="CPU Usage", marker='o')
+plt.plot(performance_data['Time'], performance_data['Memory'], label="Memory Usage", marker='x')
+
+plt.xlabel("Time")
+plt.ylabel("Usage%")
+plt.title("Performance Monitor")
+# 添加图例
+plt.legend()
+# 保存图片
+plt.savefig(r".\data-ai\performance_trend.png")
+
+# 创建word文档
+doc = Document()
+doc.add_heading("Server performence trand", level=1)
+doc.add_paragraph("Below are the cpu and memory usage trend:")
+doc.add_picture(r".\data-ai\performance_trend.png", width=Inches(5))
+doc.save(r".\data-ai\monitoring-trend.docx")
+~~~
 
