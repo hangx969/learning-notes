@@ -1,25 +1,36 @@
 # ConfigMap
 
+我们在部署服务的时候，每个服务都有自己的配置文件，如果一台服务器上部署多个服务：nginx、tomcat、apache等，那么这些配置都存在这个节点上，假如一台服务器不能满足线上高并发的要求，需要对服务器扩容，扩容之后的服务器还是需要部署多个服务：nginx、tomcat、apache，新增加的服务器上还是要管理这些服务的配置，如果有一个服务出现问题，需要修改配置文件，每台物理节点上的配置都需要修改，这种方式肯定满足不了线上大批量的配置变更要求。
+
+所以，k8s中引入了Configmap资源对象，可以挂载到pod中，实现统一的配置管理。
+
 ## 概念
 
-- Configmap是k8s中的资源对象，用于保存非机密性的配置的，数据可以用key/value键值对的形式保存，也可通过文件的形式保存。
-- 我们在部署服务的时候，每个服务都有自己的配置文件，如果一台服务器上部署多个服务：nginx、tomcat、apache等，那么这些配置都存在这个节点上，假如一台服务器不能满足线上高并发的要求，需要对服务器扩容，扩容之后的服务器还是需要部署多个服务：nginx、tomcat、apache，新增加的服务器上还是要管理这些服务的配置，如果有一个服务出现问题，需要修改配置文件，每台物理节点上的配置都需要修改，这种方式肯定满足不了线上大批量的配置变更要求。所以，k8s中引入了Configmap资源对象，可以当成volume挂载到pod中，实现统一的配置管理。
-- 官网地址：https://kubernetes.io/docs/concepts/configuration/configmap/
+Configmap是k8s中的资源对象，用于保存非机密性的配置的，数据可以用key/value键值对的形式保存，也可通过文件的形式保存。
+
+官网地址：https://kubernetes.io/docs/concepts/configuration/configmap/
 
 <img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202311151711600.png" alt="image-20231115171130386" style="zoom:67%;" />
 
-## 应用场景
+### 应用场景
 
-- 使用k8s部署应用，当你将应用配置写进代码中，更新配置时也需要打包镜像，不方便。
-- configmap可以将配置信息和docker镜像解耦，以便实现镜像的可移植性和可复用性。因为一个configMap其实就是一系列配置信息的集合，可直接注入到Pod中给容器使用。使用微服务架构的话，存在多个服务共用配置的情况，如果每个服务中单独一份配置的话，那么更新配置就很麻烦，使用configmap可以友好的进行配置共享。
-- configmap注入方式有两种，一种将configMap做为存储卷，一种是将configMap通过env中configMapKeyRef注入到容器中。
+有哪些配置需要管理：
 
-## 局限性
+1. 程序配置文件
+2. 环境变量
+
+优势：
+
+1. 使用k8s部署应用，当你将应用配置写进代码中，更新配置时也需要打包镜像，不方便。
+2. configmap可以将配置信息和镜像解耦，以便实现镜像的可移植性和可复用性。因为一个configMap其实就是一系列配置信息的集合，可直接注入到Pod中给容器使用。使用微服务架构的话，存在多个服务共用配置的情况，如果每个服务中单独一份配置的话，那么更新配置就很麻烦，使用configmap可以友好的进行配置共享。
+3. configmap注入方式有两种，一种将configMap做为存储卷，一种是将configMap通过env中configMapKeyRef注入到容器中。
+
+### 局限性
 
 - ConfigMap在设计上不是用来保存大量数据的。在ConfigMap中保存的数据不可超过1 MiB。
 - 如果你需要保存超出此尺寸限制的数据，可以考虑挂载存储卷或者使用独立的数据库或者文件服务。
 
-## 创建
+## 创建configMap
 
 ### 命令行
 
@@ -92,8 +103,21 @@ server-id=2
 
 ### 基于yaml文件
 
+单个k-v创建
+
+~~~yaml
+apiVersion: v1 
+kind: ConfigMap 
+metadata: 
+  name: basic-config 
+data: 
+  key1: value1 
+  key2: value2 
+~~~
+
+多行k-v创建（只有最外层的文件名是key，下面的全是value）
+
 ```yaml
-#k explain cm
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -101,7 +125,7 @@ metadata:
   labels:
     app: mysql
 data:
-  master.cnf: |  #文件名称后面需要加上 | 以表示此yaml文件中的每一行就是挂载进去的文件的一行
+  master.cnf: |  # 文件名称后面需要加上 | 以表示此yaml文件中的每一行就是挂载进去的文件的一行
     [mysqld]
     log-bin
     log_bin_trust_function_creators=1
@@ -263,23 +287,35 @@ log     lower   my.cnf
 - 要使用 secret，pod 需要引用 secret。Pod 可以用两种方式使用 secret：作为 volume 中的文件被挂载到 pod 中的一个或者多个容器里，或者当 kubelet 为 pod 拉取镜像时使用。
 
 - kubectl create secret可选参数有三种:
-  - generic:
-    - 通用类型，通常用于存储密码数据。
-  - tls
-    - 此类型仅用于存储私钥和证书。
-  - docker-registry
-    -  若要保存docker仓库的认证信息的话，就必须使用此种类型来创建。
-
+  - generic: 通用类型，通常用于存储密码数据。
+  - tls：此类型仅用于存储私钥和证书。
+  - docker-registry：若要保存docker仓库的认证信息的话，就必须使用此种类型来创建。
+  
 - yaml文件中的Secret类型：（k explain secret.type）
 
   [Secrets | Kubernetes](https://kubernetes.io/docs/concepts/configuration/secret/#secret-types)
 
-  - Service Account
-    - 用于被 serviceaccount 引用。serviceaccout 创建时 Kubernetes 会默认创建对应的 secret。Pod 如果使用了 serviceaccount，对应的 secret 会自动挂载到 Pod 的 /run/secrets/kubernetes.io/serviceaccount 目录中。 
-  - Opaque
-    - base64编码格式的Secret，用来存储密码、秘钥等。可以通过base64 --decode解码获得原始数据，因此安全性弱
-  - kubernetes.io/dockerconfigjson
-    - 用来存储私有docker registry的认证信息。
+  - `Opaque`
+    
+    通用型，base64编码格式的Secret，用来存储密码、秘钥等。可以通过base64 --decode解码获得原始数据，因此安全性弱
+    
+  - `kubernetes.io/dockerconfigjson`
+    
+    用来存储私有镜像仓库用户名密码的认证信息。和宿主机的/root/.docker/config.json一致，宿主机只要登录过私有镜像库就会产生该文件，记录私有镜像库用户名密码。
+    
+  - `kubernetes.io/tls`
+  
+    存储HTTPS域名证书，可以被ingress使用
+  
+  主要使用上面三种，下面的不太常用
+  
+  - bootstrap.kubernetes.io/token
+  
+  - kubernetes.io/basic-auth
+  
+  - kubernetes.io/service-account-token
+  
+    用于被 serviceaccount 引用。serviceaccout 创建时 Kubernetes 会默认创建对应的 secret。Pod 如果使用了 serviceaccount，对应的 secret 会自动挂载到 Pod 的 /run/secrets/kubernetes.io/serviceaccount 目录中。 
 
 ## 使用secret
 
