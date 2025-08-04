@@ -115,7 +115,7 @@ data:
   key2: value2 
 ~~~
 
-多行k-v创建（只有最外层的文件名是key，下面的全是value）
+多行k-v创建（只有最外层的文件名是key，下面的内容全是value）
 
 ```yaml
 apiVersion: v1
@@ -161,6 +161,31 @@ data:
 > 这将创建一个字符串，其中包含“key1: value1\nkey2: value2”，注意这里没有尾随的换行符。
 >
 > 总的来说，`|` 和 `|-` 都用于表示多行字符串，但 `|-` 会删除尾随的换行符。
+
+### 基于环境变量
+
+有时候一个文件里面保存着标准k-v格式的环境变量，希望转换成cm之后，每个key都是环境变量的name，每个value都是环境变量的value；而不是文件名作为key，所有内容整体作为value。应该怎么做？
+
+~~~sh
+tee env-file <<'EOF'  
+DB_HOST=localhost 
+DB_PORT=3306 
+DB_USER=root 
+DB_PASS=password
+EOF
+
+# 创建cm
+kubectl create cm env-cm --from-env-file=env-file
+~~~
+
+### 基于literal创建
+
+直接在命令行传入k-v创建cm。这种方式用得不多，因为环境变量一个一个打字太麻烦。
+
+~~~sh
+kubectl create configmap example-config --from-literal=key1=config1 --from
+literal=key2=config2 
+~~~
 
 ## 挂载cm
 
