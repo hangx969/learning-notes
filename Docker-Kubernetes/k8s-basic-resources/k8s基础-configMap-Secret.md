@@ -189,7 +189,7 @@ literal=key2=config2
 
 ## 挂载cm
 
-### 环境变量引入--configMapKeyRef
+### 环境变量引入-configMapKeyRef
 
 ~~~yaml
 #写yaml文件创建cm
@@ -233,7 +233,7 @@ k exec -it pod-cm-mysql -- /bin/sh
 printenv
 ~~~
 
-### 环境变量引入--envFrom
+### 环境变量引入-envFrom
 
 ~~~yaml
 #创建pod
@@ -252,7 +252,7 @@ spec:
   restartPolicy: Never 
 ~~~
 
-### volume引入
+### 以文件形式挂载-volume
 
 ~~~yaml
 #创建cm
@@ -287,21 +287,104 @@ spec:
       mountPath: /tmp/config
   volumes:
   - name: volume-cm-mysql 
-    configMap: #直接把configMap做成卷了
+    configMap: # 直接把configMap做成卷了 
       name: cm-mysql
-
-#进pod去看
-k exec -it pod-cm-mysql -- /bin/sh
-#每个cm里面的k-v变成文件放到/tmp/config里面了
-ls
-log     lower   my.cnf
-#printenv再看的话，环境变量是没有自动加载进去的。
 ~~~
 
-## cm热更新
+#### 自定义挂载文件名
+
+默认的挂载进容器的文件名就是cm的key名。挂载的时候可以指定文件名：
+
+~~~yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-cm-mysql
+spec:
+  containers:
+  - name: mysql
+    image: busybox
+    command:
+    - "/bin/sh"
+    - "-c"
+    - "sleep 36000"
+    volumeMounts:
+    - name: volume-cm-mysql
+      mountPath: /tmp/config
+  volumes:
+  - name: volume-cm-mysql 
+    configMap: 
+      name: cm-mysql
+      items: # 在这里指定cm的挂载文件名
+      - key: my.cnf
+        path: test.cnf
+      optional: true # 即使items的key名写错了，也不影响pod启动
+~~~
+
+> 注意如果cm里面有多个key，并且指定了items，那么只有指定了items的key会被挂进去，没指定的就不挂载进去。所以如果需要挂载所有的key，就指定所有的items。
+
+#### 自定义挂载权限
+
+cm和secret挂载时，默认的挂载权限是644
+
+~~~yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-cm-mysql
+spec:
+  containers:
+  - name: mysql
+    image: busybox
+    command:
+    - "/bin/sh"
+    - "-c"
+    - "sleep 36000"
+    volumeMounts:
+    - name: volume-cm-mysql
+      mountPath: /tmp/config
+  volumes:
+  - name: volume-cm-mysql 
+    configMap: 
+      name: cm-mysql
+      items: # 在这里指定cm的挂载文件名
+      - key: my.cnf
+        path: test.cnf
+        mode: 0777 # 局部权限，只对单个item配置权限，八进制前面要加0。局部的优先级高于全部的
+      optional: true # 即使items的key名写错了，也不影响pod启动
+      defaultMode: 0644 # 默认权限，对所有items生效。八进制。
+~~~
+
+#### 文件挂载覆盖问题
+
+
+
+### 热更新
 
 - 挂载成volume的cm，如果更改cm里面的k-v之后，过几分钟之后，会自动热加载到pod的volumeMount里面。
 - 如果是采用configMapKeyRef或者envFrom注入的cm，如果更改cm，已经挂载进去的env不会自动更新。一开始挂进去什么k-v就还是什么。
+
+## 更新configMap
+
+可以通过kubectl edit修改，可以通过yaml文件kubectl apply -f修改，但是修改方式要统一，防止数据不一致。
+
+### 通过源文件更新
+
+有时候就需要基于某个已存在的配置文件，更新配置文件之后，直接更新对应的configMap。这时候kubectl apply/replace都不行了。可以用dry-run参数基于源配置文件导出新的yaml，再replace
+
+~~~sh
+# 示例：修改原配置文件
+cat nginx.conf  
+user xxx; 
+# 先转成yaml再进行replace 
+kubectl create cm nginx-conf --from-file=nginx.conf=nginx.conf --dry-run=client -o yaml | kubectl replace -f -
+~~~
+
+基于literal的方式类似：
+
+~~~sh
+kubectl create configmap example-config --from-literal=key1=config1 --from-literal=key2=config2 --dry-run=client -oyaml | kubectl replace -f -
+~~~
 
 # Secret
 
