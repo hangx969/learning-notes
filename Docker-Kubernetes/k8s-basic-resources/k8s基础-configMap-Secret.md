@@ -189,69 +189,6 @@ literal=key2=config2
 
 ## 挂载cm
 
-### 环境变量引入-configMapKeyRef
-
-~~~yaml
-#写yaml文件创建cm
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: cm-mysql
-  labels:
-    app: mysql
-data:
-  log: "1" #key是log，value是1
-  lower: "1"
-
-#创建pod
-apiVersion: v1
-kind: Pod
-metadata:
-  name: mysql-pod
-spec:
-  containers:
-  - name: mysql
-    image: busybox
-    command: [ "/bin/sh", "-c", "sleep 3600" ]
-    env:
-    - name: log_bin   #定义环境变量log_bin
-      valueFrom: 
-        configMapKeyRef:
-          name: cm-mysql     #指定configmap的名字
-          key: log #指定configmap中的key
-    - name: lower   #定义环境变量lower
-      valueFrom:
-        configMapKeyRef:
-          name: cm-mysql
-          key: lower #指定configmap中的key
-  restartPolicy: Never
-~~~
-
-~~~bash
-#进入pod查看env
-k exec -it pod-cm-mysql -- /bin/sh
-printenv
-~~~
-
-### 环境变量引入-envFrom
-
-~~~yaml
-#创建pod
-apiVersion: v1
-kind: Pod
-metadata:
-  name: mysql-pod
-spec:
-  containers:
-  - name: mysql
-    image: busybox
-    command: [ "/bin/sh", "-c", "sleep 3600" ]
-    envFrom: #这个configMap里面所有的k-v都被一键做成了环境变量
-    - configMapRef:
-        name: myconfigmap    
-  restartPolicy: Never 
-~~~
-
 ### 以文件形式挂载-volume
 
 ~~~yaml
@@ -357,17 +294,91 @@ spec:
 
 #### 文件挂载覆盖问题
 
+cm和secret挂载的时候，会直接覆盖掉原目录的内容。所以挂载的时候要注意目录之前有没有文件。
+
+比如要挂载nginx.conf的时候，如果直接挂载到/etc/nginx，就会导致nginx无法启动。
+
+解决：mountPath指定具体的文件路径, subPath指定文件名
+
 ~~~yaml
+    volumeMounts:
+    - name: volume-nginx
+      mountPath: /etc/nginx/nginx.conf
+      subPath: nginx.conf
 ~~~
 
+> 用subPath挂载进去的cm文件，不会热更新
 
+### 单一挂载环境变量-configMapKeyRef
+
+~~~yaml
+#写yaml文件创建cm
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cm-mysql
+  labels:
+    app: mysql
+data:
+  log: "1" #key是log，value是1
+  lower: "1"
+
+#创建pod
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mysql-pod
+spec:
+  containers:
+  - name: mysql
+    image: busybox
+    command: [ "/bin/sh", "-c", "sleep 3600" ]
+    env:
+    - name: log_bin   # 定义挂载进pod里面的环境变量的名称
+      valueFrom: 
+        configMapKeyRef:
+          name: cm-mysql     #指定configmap的名字
+          key: log # 指定configmap中的key
+    - name: lower   #定义环境变量lower
+      valueFrom:
+        configMapKeyRef:
+          name: cm-mysql
+          key: lower #指定configmap中的key
+~~~
+
+> 这种方式一个一个导入env，不是很灵活。在大部分情况下环境变量很多，需要批量导入。
+
+### 批量挂载环境变量-envFrom
+
+1. envFrom和env是平级字段，env优先级更高。
+2. 这种方式，更改configMap之后，pod不会自动热更新。
+
+~~~yaml
+#创建pod
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mysql-pod
+spec:
+  containers:
+  - name: mysql
+    image: busybox
+    command: [ "/bin/sh", "-c", "sleep 3600" ]
+    envFrom: # 这个configMap里面所有的k-v都被全部打包做成了环境变量。所以不能在这里直接改变环境变量名称。
+    - configMapRef:
+        name: myconfigmap
+      prefix: DM_ # 这个字段可以给所有挂载进pod的env在key的基础上加一个前缀
+  restartPolicy: Never 
+~~~
 
 ### 热更新
 
-- 挂载成volume的cm，如果更改cm里面的k-v之后，过几分钟之后，会自动热加载到pod的volumeMount里面。
-- 如果是采用configMapKeyRef或者envFrom注入的cm，如果更改cm，已经挂载进去的env不会自动更新。一开始挂进去什么k-v就还是什么。
+- 挂载成volume的cm，如果更改cm里面的k-v之后，过几分钟之后（默认5分钟），会自动热加载到pod的volumeMount里面。
+- 如果是采用configMapKeyRef或者envFrom注入的cm，如果更改cm，已经挂载进去的env不会自动更新。一开始挂进去什么k-v就还是什么。需要热更新还是得手动删掉pod重建才行。
 
 ## 更新configMap
+
+### 命令行更新
 
 可以通过kubectl edit修改，可以通过yaml文件kubectl apply -f修改，但是修改方式要统一，防止数据不一致。
 
@@ -408,7 +419,7 @@ kubectl create configmap example-config --from-literal=key1=config1 --from-liter
 
   - `Opaque`
     
-    通用型，base64编码格式的Secret，用来存储密码、秘钥等。可以通过base64 --decode解码获得原始数据，因此安全性弱
+    通用型，base64编码格式的Secret，用来存储密码、秘钥等。可以通过base64 --decode解码获得原始数据，因此安全性弱。
     
   - `kubernetes.io/dockerconfigjson`
     
@@ -428,12 +439,54 @@ kubectl create configmap example-config --from-literal=key1=config1 --from-liter
   
     用于被 serviceaccount 引用。serviceaccout 创建时 Kubernetes 会默认创建对应的 secret。Pod 如果使用了 serviceaccount，对应的 secret 会自动挂载到 Pod 的 /run/secrets/kubernetes.io/serviceaccount 目录中。 
 
-## 使用secret
+## 创建secret
 
-~~~bash
+### 基于literal
+
+~~~sh
 #命令创建secret
 kubectl create secret generic mysql-password --from-literal=password=123
+# 可以创建多key secret
+kubectl create secret generic basic-auth-secret \ 
+--from-literal=username=admin \ 
+--from-literal=password=securepassword
 ~~~
+
+### 基于yaml文件
+
+但是预先需要把字符串base64加密一下
+
+~~~yaml
+apiVersion: v1 
+kind: Secret 
+data: 
+  ssh-key: ZGFyM2FkYWRhCg== 
+metadata: 
+  name: secret2 
+  namespace: default 
+type: Opaque
+~~~
+
+可以不预先base64加密，用stringData明文创建就行。这也是更推荐的方式。
+
+~~~yaml
+apiVersion: v1 
+kind: Secret 
+stringData: 
+  ssh-key: password 
+metadata: 
+  name: string-data 
+  namespace: default 
+type: Opaque 
+~~~
+
+### 基于文件和目录
+
+~~~sh
+
+~~~
+
+## 使用secret
 
 ### 环境变量引入--secretKeyRef
 
