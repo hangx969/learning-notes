@@ -439,7 +439,7 @@ kubectl create configmap example-config --from-literal=key1=config1 --from-liter
   
     用于被 serviceaccount 引用。serviceaccout 创建时 Kubernetes 会默认创建对应的 secret。Pod 如果使用了 serviceaccount，对应的 secret 会自动挂载到 Pod 的 /run/secrets/kubernetes.io/serviceaccount 目录中。 
 
-## 创建secret
+## 创建通用secret
 
 ### 基于literal
 
@@ -482,13 +482,100 @@ type: Opaque
 
 ### 基于文件和目录
 
-~~~sh
+与configMap相比多了一个generic的指定类型
 
+~~~sh
+kubectl create secret generic nginxconf --from-file=conf/nginx.conf
+kubectl create secret generic createbydir --from-file=conf/
 ~~~
 
-## 使用secret
+## 创建docker-registry类型secret
 
-### 环境变量引入--secretKeyRef
+如果需要拉取私有仓库的镜像，需要给deploy等资源配置镜像仓库的密钥，此时可以先创建镜像仓库的密钥：
+
+~~~sh
+kubectl create secret docker-registry myregistrykey \ 
+--docker-server=DOCKER_REGISTRY_SERVER \ 
+--docker-username=DOCKER_USER \ 
+--docker-password=DOCKER_PASSWORD \ 
+--docker-email=DOCKER_EMAIL
+~~~
+
+- docker-registry：指定Secret的类型
+- myregistrykey：Secret名称
+- DOCKER_REGISTRY_SERVER：镜像仓库IP:端口号（harbor、阿里云等私有仓库都可以支持）
+- DOCKER_USER：镜像仓库用户名，需要有拉取镜像的权限
+- DOCKER_PASSWORD：镜像仓库密码
+- DOCKER_EMAIL：邮箱信息，可以为空
+
+之后就可以在pod字段添加imagePullSecret，secret里面已经包含了server、username、password。 
+
+~~~yaml
+spec: 
+  imagePullSecrets: 
+  - name: myregistrykey
+  containers:
+  ......
+~~~
+
+## 创建域名证书secret
+
+Secret可以使用kubernetes.io/tls类型管理域名的证书，然后用于Ingress： 
+
+~~~sh
+# 生成测试证书 
+openssl req -x509 -nodes -days 365 \ 
+-newkey rsa:2048 -keyout tls.key -out tls.crt -subj "/CN=test.com" 
+# 创建Secret 
+kubectl -n default create secret tls nginx-test-tls --key=tls.key --cert=tls.crt 
+~~~
+
+tls.key和tls.crt如果是买的证书，在对应网站上可以下载这两个文件。
+
+之后就可以用于ingress配置：
+
+~~~yaml
+ tls: 
+   - secretName: nginx-test-tls 
+~~~
+
+## 挂载secret
+
+与挂载configMap类似
+
+### 以文件形式挂载
+
+~~~yaml
+apiVersion: apps/v1 
+kind: Deployment 
+metadata: 
+  name: nginx-test-cm 
+  namespace: default 
+  labels: 
+    app: nginx-test-cm 
+spec: 
+  replicas: 1 
+  selector: 
+    matchLabels: 
+      app: nginx-test-cm 
+  template: 
+    metadata: 
+      labels: 
+        app: nginx-test-cm 
+    spec: 
+      containers: 
+        - name: nginx-test-cm 
+          image: nginx:1.15.12 
+          volumeMounts: 
+            - name: nginxconfsecret 
+              mountPath: /mnt 
+      volumes: 
+        - name: nginxconfsecret 
+          secret: # 与configMap的不同点就在这里，指定是secret
+            secretName: nginxconf # 挂载进去的secret文件会被解密
+~~~
+
+### 环境变量挂载
 
 ~~~yaml
 #pod注入secret
@@ -496,67 +583,84 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: pod-secret
-  labels:
-     app: myapp
 spec:
   containers:
   - name: myapp
     image: nginx
-    ports:
-    - name: http
-      containerPort: 80
-    env:
-     - name: MYSQL_ROOT_PASSWORD   #它是Pod启动成功后,Pod中容器的环境变量名.
-       valueFrom:
-          secretKeyRef:
-            name: mysql-password  #这是secret的对象名
-            key: password      #它是secret中的key名
+    envFrom: # 批量生成env
+    - prefix: SECRET_ 
+      secretRef: 
+        name: basic-auth-secret # secret自己的name
+    env: # 单个挂载env
+    - name: USERNAME # 自己指定pod里面的env名字
+      valueFrom: 
+        secretKeyRef: 
+          name: basic-auth-secret # secret自己的name
+          key: username # secret里面的key名字
 ~~~
 
-### volume引入
+# 使用secret拉取私有仓库镜像
 
-~~~bash
-#创建base64加密的secret
-echo -n 'admin' | base64
-YWRtaW4=
-echo -n '123' | base64
-MTIz
-#解码：
-echo YWRtaW4= | base64 -d
+假设有个镜像在私有仓库中，未使用账号密码是无法拉取镜像的，此时可以在部署资源中，添加docker-registry类型的Secret。 
+
+## 创建secret
+
+~~~sh
+kubectl create secret docker-registry myregistrykey \ 
+--docker-server=harbor.hanxux.local \ 
+--docker-username=admin \ 
+--docker-password=Harbor12345 \ 
+--docker-email=xxx@qq.com 
 ~~~
+
+## 创建deployment
 
 ~~~yaml
-#创建secret
-apiVersion: v1
-kind: Secret
-metadata:
-  name: mysecret
-type: Opaque
-data:
-  username: YWRtaW4=
-  password: MTIz
-  
-#创建pod
-apiVersion: v1
-kind: Pod
-metadata:
-  name: pod-secret
-  labels:
-     app: myapp
-spec:
-  containers:
-  - name: myapp
-    image: nginx
-    ports:
-    - name: http
-      containerPort: 80
-    volumeMounts:
-    - name: mysql-secert
-      mountPath: /etc/secret
-      readOnly: true
-  volumes:
-  - name: mysql-secert
-    secret:
-      secretName: mysecret
+apiVersion: apps/v1 
+kind: Deployment 
+metadata: 
+  name: test 
+  namespace: default 
+spec: 
+  replicas: 1 
+  selector: 
+    matchLabels: 
+      app: test 
+template: 
+  metadata: 
+    labels: 
+      app: test 
+  spec: 
+    containers: 
+    - name: test 
+      image: harbor.hanxux.local/nginx:v1 
+      imagePullSecrets: 
+      - name: myregistrykey  
 ~~~
 
+# cm和secret设置只读
+
+ConfigMap和Secret可以使用immutable字段把资源设置为只读模式，这样就不能在更新data下的任何数据，如果想变更data，需要删除重建。
+
+~~~yaml
+apiVersion: v1 
+immutable: true 
+kind: ConfigMap 
+metadata: 
+  name: env-cm 
+data: 
+  DB_HOST: localhost 
+  DB_PASS: password 
+  DB_PORT: "3306" 
+  DB_USER: root
+~~~
+
+# 最佳实践
+
+- 需提前创建ConfigMap和Secret，pod创建是依赖这俩的，必须先创建好
+- ConfigMap和Secret必须要和Pod或者是引用它资源在同一个命名空间
+- 如果引用了某个key，需要确保引用的Key必须存在
+- envFrom、valueFrom 无法热更新环境变量，subPath也是无法热更新的
+- envFrom配置环境变量，如果key是无效的，它会忽略掉无效的key
+- ConfigMap和Secret最好不要太大（etcd有限制，不能超过1Mi，否则etcd同步数据速度会受到影响）
+- ConfigMap和Secret支持热更新，但是程序未必支持！（比如nginx需要重启或者reload才会重新加载配置文件） 

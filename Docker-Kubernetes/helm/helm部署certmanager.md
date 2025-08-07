@@ -7,6 +7,14 @@
 - pod间TLS通信：https://www.youtube.com/watch?v=uTaXgZWwXzs&list=PLpbcUe4chE79sB7Jg7B4z3HytqUUEwcNE&index=93
 - certmanager教程：https://www.youtube.com/watch?v=rOe9UpHcnKk&list=PLpbcUe4chE79sB7Jg7B4z3HytqUUEwcNE&index=96
 
+## 证书分类
+
+| 证书类型                                | 用途                   | 特征                           |
+| --------------------------------------- | ---------------------- | ------------------------------ |
+| **Root CA证书**                         | 证书链的根，签发中间CA | 自签名，无域名限制             |
+| **中间CA证书**                          | 签发终端实体证书       | 由Root CA签发，无域名限制      |
+| **终端实体证书** End-entity Certificate | 实际服务使用           | 绑定具体域名，不能签发其他证书 |
+
 # 拉取
 
 ~~~sh
@@ -39,6 +47,8 @@ kubectl wait --for=condition=Ready pods --all -n cert-manager
 ## 使用Self-signed certificate
 
 ### 创建self-signed cluster issuer
+
+clusterIssuer文件是证书颁发者的配置模板，用于告诉 cert-manager 如何从Let's Encrypt等CA机构申请证书，而不是证书本身。它定义了申请 SSL/TLS 证书的方法和参数。
 
 - Lab为简化处理，不去连接CA机构，用自签证书代替。https://github.com/HoussemDellai/aks-course/blob/main/34_https_pod_certmanager_letsencrypt/certificate.yaml
 
@@ -205,6 +215,8 @@ EOF
 ### 校验原理
 
 Let’s Encrypt CA 利用 ACME (Automated Certificate Management Environment，自动证书管理) 协议校验域名的归属，校验成功后可以自动颁发免费证书。免费证书有效期只有 90 天，需在到期前再校验一次实现续期。使用 cert-manager 可以自动续期，即实现永久使用免费证书。
+
+Let's Encrypt 不颁发CA证书，只颁发终端实体证书。
 
 校验域名归属的两种方式分别是 HTTP-01 和 DNS-01，校验原理详情可参见 [Let's Encrypt 的运作方式](https://letsencrypt.org/zh-cn/how-it-works/)
 
