@@ -90,9 +90,7 @@ yum install nfs-utils
 helm repo add nfs-subdir-external-provisioner https://kubernetes-sigs.github.io/nfs-subdir-external-provisioner
 ```
 
-- 创建 NameSpace
-
-**可选配置，主要是方便资源管理**。
+- 创建 NameSpace（可选配置，主要是方便资源管理。）
 
 ```shell
 kubectl create ns nfs-system
