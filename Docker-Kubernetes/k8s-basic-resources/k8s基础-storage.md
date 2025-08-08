@@ -72,28 +72,40 @@ spec:
 
 <img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202311141720686.png" alt="image-20231114172051513" style="zoom:50%;" />
 
-- 测试：
+### 容器共享数据
 
+~~~yaml
+apiVersion: apps/v1 
+kind: Deployment 
+metadata: 
+  name: emptydir 
+spec: 
+  replicas: 1
+  selector: 
+    matchLabels: 
+      app: emptydir 
+  template: 
+    metadata: 
+      labels: 
+        app: emptydir 
+    spec: 
+      containers: 
+      - image: nginx:1.15.12 
+        name: nginx 
+        volumeMounts: 
+        - name: share-volume # 挂载了emptyDir volume
+          mountPath: /opt  
+      - image: redis:7.2.5 
+        name: redis 
+        volumeMounts: 
+        - name: share-volume # 挂载了emptyDir volume
+          mountPath: /mnt      
+      volumes: # 这个volume同时给两个容器用
+      - name: share-volume 
+        emptyDir: {} 
+~~~
 
-```yaml
-apiVersion: v1
-kind: Pod
-metadata:
-  name: pod-emptydir
-spec:
-  containers:
-  - name: container-emptydir
-    image: nginx
-    imagePullPolicy: IfNotPresent
-    volumeMounts:
-    - name: volume-cache
-      mountPath: /cache
-  volumes:
-  - name: volume-cache
-    emptyDir: {}
-```
-
-- 怎么查看emptyDir挂载到了宿主机的哪个目录
+### 查看挂载到的宿主机路径
 
 
 ```bash
@@ -114,7 +126,7 @@ tree /var/lib/kubelet/pods/e948ebb2-50f2-4884-a16c-2c0dd7b3f1de
 │           └── ready
 └── volumes
     ├── kubernetes.io~empty-dir
-    │   └── volume-cache #这就是pod emptydir的挂载路径
+    │   └── volume-cache # 这就是pod emptydir的挂载路径
     └── kubernetes.io~projected
         └── kube-api-access-kdqtk
             ├── ca.crt -> ..data/ca.crt
@@ -124,41 +136,91 @@ tree /var/lib/kubelet/pods/e948ebb2-50f2-4884-a16c-2c0dd7b3f1de
 cd /var/lib/kubelet/pods/e948ebb2-50f2-4884-a16c-2c0dd7b3f1de/volumes/kubernetes.io~empty-dir/volume-cache
 ```
 
-## hoatPath
+### 使用内存tempfs挂载
 
-- hostPath Volume是指Pod挂载宿主机上的目录或文件，使得容器可以使用宿主机的文件系统进行存储，
+EmptyDir可以绑定主机上的硬盘和内存作为Volume，比如把 `emptyDir.medium` 字段设置为`Memory`，就可以让Kubernetes使用tmpfs（内存支持的文件系统）。
 
-- pod被删除这个存储卷还是存在的。所以只要同一个pod被调度到同一个节点上来，对应的数据依然是存在的。
+虽然tmpfs非常快，但是设置的大小会被计入到Container的内存限制当中。一些memcached、redis等服务可能会用到。其他情况用得不多。
 
-  <img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202311141722615.png" alt="image-20231114172218560" style="zoom:50%;" />
+~~~yaml
+# 使用内存作为EmptyDir，只需要把medium改为Memory即可： 
+    spec: 
+      containers: 
+      - image: nginx:1.15.12 
+        name: nginx 
+        volumeMounts: 
+        - mountPath: /opt 
+          name: share-volume
+      volumes: 
+      - name: share-volume 
+        emptyDir: 
+          medium: Memory
+~~~
 
-- 测试
+创建Pod，即可在Pod的容器内看到使用tmpfs挂载的/opt目录：
 
-  ```yaml
-  apiVersion: v1
-  kind: Pod
-  metadata:
-    name: pod-hostpath
-  spec:
-    containers:
-    - name: nginx-hostpath
-      image: nginx
-      imagePullPolicy: IfNotPresent
-      volumeMounts:
-      - name: volume-cache
-        mountPath: /test-nginx
-    - name: tomcat-hostpath
-      image: tomcat
-      imagePullPolicy: IfNotPresent
-      volumeMounts:
-      - name: volume-cache
-        mountPath: /test-tomcat
-    volumes:
+~~~sh
+tmpfs                   tmpfs    3.5G     0  3.5G   0% /opt
+~~~
+
+### 限制大小
+
+两种类型的EmptyDir都支持限制卷的大小，只需要添加sizeLimit字段即可。
+
+1. 磁盘类型的emptyDir，限制大小后不会显示具体限制的大小
+2. 磁盘类型的超出最大限制时，Pod将会变成Completed状态，同时将会创建一个Pod
+3. 内存类型的emptyDir不会超出限制的大小，如不限制将会使用机器内存的最大值，或容器内存限制之和的最大值
+
+~~~yaml
+volumes: 
+- name: share-volume 
+  emptyDir: 
+    medium: Memory # 可选
+    sizeLimit: 10Mi
+~~~
+
+这种方式适用于某些非云原生设计的应用，他们会把日志写到本地文件，随着时间推移会把宿主机空间占满，是个定时炸弹。可以通过限制emptyDir的大小，挂载到容器内日志输出目录，这样当日志文件超过limit，pod就变成Completed状态，同时创建一个新的pod出来。
+
+## hostPath
+
+hostPath是指Pod挂载宿主机上的目录或文件，使得容器可以使用宿主机的文件系统进行存储。pod被删除这个存储卷还是存在的。所以只要同一个pod被调度到同一个节点上来，对应的数据依然是存在的。
+
+<img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202311141722615.png" alt="image-20231114172218560" style="zoom:50%;" />
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-hostpath
+spec:
+  containers:
+  - name: nginx-hostpath
+    image: nginx
+    volumeMounts:
     - name: volume-cache
-      hostPath:
-        path: /data
-        type: DirectoryOrCreate #type的定义：https://kubernetes.io/docs/concepts/storage/volumes/#hostpath
-  ```
+      mountPath: /test-nginx
+  - name: tomcat-hostpath
+    image: tomcat
+    volumeMounts:
+    - name: volume-cache
+      mountPath: /test-tomcat # 容器内目录，可以是不存在的，会自动创建
+  volumes:
+  - name: volume-cache
+    hostPath:
+      path: /data # 宿主机目录
+      type: DirectoryOrCreate # type的定义：https://kubernetes.io/docs/concepts/storage/volumes/#hostpath
+```
+
+hostPath.type字段说明:
+
+- type为空字符串：默认选项，意味着挂载hostPath卷之前不会执行任何检查。
+- DirectoryOrCreate：如果给定的hostPath.path不存在任何东西，那么将根据需要创建一个权限为0755的空目录，和Kubelet具有相同的组和权限（如果kubelet是root启动的，目录属主就是root）。
+- Directory：hostPath.path目录必须存在于宿主机上，否则pod起不来。
+- File：文件类型，必须存在于给定路径中。如果想要挂载文件，必须指定type为File，否则如果文件不存在，就会变成自动创建文件同名的目录。
+- FileOrCreate：如果给定的hostPath.path文件内容不存在，则会根据需要创建一个空文件，权限设置为0644，和Kubelet具有相同的组和所有权。 
+- Socket：UNIX 套接字，如某个程序的socket文件，必须存在于给定路径中。
+- CharDevice：字符设备，如串行端口、声卡、摄像头等，必须存在于给定路径中，且只有Linux 支持。
+- BlockDevice：块设备，如硬盘等，必须存在于给定路径中，且只有Linux支持。
 
 > 注：
 >
@@ -276,52 +338,70 @@ spec:
 
 > github上有一个开源工具：https://github.com/kubernetes-sigs/sig-storage-local-static-provisioner/blob/master/docs/getting-started.md。自动把指定的local路径做成PV。
 
-## NFS
+## NFS/NAS
 
-- HostPath可以解决数据持久化的问题，但是一旦Node节点故障了，Pod如果转移到了别的节点，又会出现问题了，此时需要准备单独的网络存储系统，比较常用的有NFS、CIFS。
+HostPath可以解决数据持久化的问题，但是一旦Node节点故障了，Pod如果转移到了别的节点，又会出现问题了，此时需要准备单独的网络存储系统，比较常用的有NFS（云平台上叫NAS）、CIFS。
 
-- 搭建一台NFS服务器，然后将Pod中的存储直接连接到NFS系统上，无论Pod在节点上怎么转移，只要Node跟NFS的对接没问题，数据就可以成功访问
+搭建一台NFS服务器，然后将Pod中的存储直接连接到NFS系统上，无论Pod在节点上怎么转移，只要Node跟NFS的对接没问题，数据就可以成功访问。
 
-  <img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202311141723114.png" alt="image-20231114172333052" style="zoom:50%;" />
+<img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202311141723114.png" alt="image-20231114172333052" style="zoom:50%;" />
 
-- NFS的访问权限控制：NFS的用户认证和权限控制基于RPC，在nfs3和nfs4版本中，最常用的认证机制是AUTH_UNIX。客户端上的UID/GID通过RPC传递到服务端，然后对这些ID做权限校验，这就要求客户端、服务端的UID/GID必须相同。同时，NFS支持在其文件夹上通过以下配置来设置文件夹的访问权限：
-  - all_squash: 将所有用户和组映射为匿名用户和组。默认为nfsnobody用户（UID：65534）、nfsnobody组（GID：65534），也可以通过anonuid、anongid指定。
-  - no_all_squash：访问用户先与本机用户通过ID匹配，能匹配上就用；匹配不上再映射为匿名用户和组。这是默认选项。
-  - root_squash: 将来访的root用户（UID=0）映射为匿名用户。这是默认行为。可以通过设置no_root_squash取消这种映射，保持root用户。
+### NFS访问权限
+
+NFS的用户认证和权限控制基于RPC，在nfs3和nfs4版本中，最常用的认证机制是AUTH_UNIX。客户端上的UID/GID通过RPC传递到服务端，然后对这些ID做权限校验，这就要求客户端、服务端的UID/GID必须相同。同时，NFS支持在其文件夹上通过以下配置来设置文件夹的访问权限：
+
+- all_squash: 将所有用户和组映射为匿名用户和组。默认为nfsnobody用户（UID：65534）、nfsnobody组（GID：65534），也可以通过`anonuid、anongid`指定。
+- no_all_squash：访问用户先与本机用户通过ID匹配，能匹配上就用；匹配不上再映射为匿名用户和组。这是默认选项。
+- root_squash: 将来访的root用户（UID=0）映射为匿名用户。这是默认行为。可以通过设置no_root_squash取消这种映射，保持root用户。
 
 Lab
 
 - 搭建NFS服务
 
   ```bash
-  #在master-01上搭建NFS作为服务端
+  # 安装nfs服务端
+  # centos\rocky
   yum install nfs-utils -y
-  mkdir /data/volumes -pv
-  systemctl start nfs
-  #rockylinux中
-  sudo systemctl start rpcbind
-  sudo systemctl enable rpcbind
-  sudo systemctl start nfs-server
-  sudo systemctl enable nfs-server
+  # ubuntu
+  apt install nfs-kernel-server -y 
   
-  #配置nfs共享服务器上的/data/volumes目录
+  # 创建共享目录，实际使用中建议对不同用途的nfs目录分别创建子目录分开挂载，便于管理。
+  mkdir /data/volumes -pv
+  
+  # 启动nfs服务
+  # centos\rockylinux中
+  sudo systemctl enable --now rpcbind nfs-server
+  # ubuntu中
+  systemctl enable --now nfs-kernel-server 
+  
+  # 配置nfs服务端export
   vim /etc/exports
-  /data/volumes *(rw,no_root_squash)
-  #rw 该主机对该共享目录有读写权限
+  /data/volumes *(rw,sync,no_subtree_check,no_root_squash)
+  # rw 该主机对该共享目录有读写权限
   # no_root_squash 登入 NFS 主机使用分享目录的使用者，如果是 root 的话，那么对于这个分享的目录来说，他就具有 root 的权限。根用户在 NFS 客户端上拥有和服务器上相同的权限。
   
-  #使NFS配置生效
+  # 加载NFS配置生效
   exportfs -arv
-  service nfs restart
-  systemctl enable nfs && systemctl status nfs
-  
-  #测试挂载
-  mkdir /nfs-test 
-  mount 192.168.40.4:/data/volumes /nfs-test/
-  df -h /nfs-test/
-  #卸载挂载
-  umount /nfs-test
   ```
+
+- 客户端挂载测试：
+
+  不测试也需要宿主机安装nfs客户端，因为pod挂载nfs也是需要先挂载到宿主机再挂载进pod的。如果工作节点没有安装nfs客户端，就会报错：
+
+  Output: mount: /var/lib/kubelet/pods/faae4701-1c1d-4a2d-a16efa76c64a7ae7/volumes/kubernetes.io~nfs/nfs-volume: bad option; for several filesystems (e.g. nfs, cifs) you might need a /sbin/mount. helper program. 
+
+  ~~~sh
+  # CentOS、Rocky系列 
+  yum install nfs-utils -y 
+  # Ubuntu系列 
+  apt install nfs-common -y 
+  
+  mkdir /nfs-test 
+  mount -t nfs 192.168.40.4:/data/volumes /nfs-test/
+  df -Th  | grep nfs-test 
+  # 卸载挂载
+  umount /nfs-test
+  ~~~
 
 - 测试pod挂载
 
@@ -331,7 +411,7 @@ Lab
   metadata:
     name: dep-nfs
   spec:
-    replicas: 3
+    replicas: 1
     selector:
       matchLabels:
         storage: nfs
@@ -343,10 +423,6 @@ Lab
         containers:
         - name: test-nfs
           image: nginx
-          imagePullPolicy: IfNotPresent
-          ports:
-          - containerPort: 80
-            protocol: TCP
           volumeMounts:
           - name: test-nginx-volume
             mountPath: /usr/share/nginx/html
@@ -376,19 +452,31 @@ Lab
 
 # PV/PVC
 
+为什么引入PV/PVC，因为只用volume手动做存储，无法实现以下：
+
+1. 当某个数据卷不再被挂载使用时，里面的数据如何处理？（生命周期管理）
+2. 如果想要实现只读挂载怎么处理？
+3. 如果想要只能一个pod挂载如何处理？
+4. 如何只允许某个pod使用10G空间？
+5. 同一个应用的不同副本如何使用不同的数据目录？（statefulset主从pod需要各自独立的存储）
+
+从用户角度考虑，比如使用NFS volume存储，此时就要求用户会搭建NFS系统，并且会在yaml配置nfs。由于kubernetes支持的存储系统有很多，要求客户全都掌握，显然不现实。站在用户的角度，只需要提出自己需要多少存储资源，并不管关心存储的底层实现。底层由专业人员来维护即可。
+
+从k8s开发者角度考虑，volume的配置是在k8s原生的体系当中的，每兼容一种存储，就需要增加一些volume原生代码开发，复杂度高，不符合云原生原则。
+
 ## PV
 
-- 使用NFS提供存储，此时就要求用户会搭建NFS系统，并且会在yaml配置nfs。由于kubernetes支持的存储系统有很多，要求客户全都掌握，显然不现实。站在用户的角度，只需要提出自己需要多少存储资源，并不管关心存储的底层实现。底层由专业人员来维护即可。
+为了能够屏蔽底层存储实现的细节，方便用户使用，kubernetes引入**PV**和**PVC**两种资源对象。
 
-- 为了能够屏蔽底层存储实现的细节，方便用户使用， kubernetes引入**PV**和**PVC**两种资源对象。
+![image-20231114172731738](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202311141727818.png)
 
-  ![image-20231114172731738](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202311141727818.png)
+PersistentVolume（PV）是对底层的共享存储的一种抽象。由管理员配置，或使用存储类动态配置，它与底层具体的共享存储技术有关，并通过**插件**完成与共享存储的对接。
 
-- PersistentVolume（PV）是对底层的共享存储的一种抽象。由管理员配置或使用存储类动态配置，它与底层具体的共享存储技术有关，并通过**插件**完成与共享存储的对接。
-- 它是集群中的资源，其生命周期独立于使用PV的任何单个pod。PV通过yaml文件部署；PV是node级别的，不能配namespace。
-- PV供应方式：
-  - 静态：集群管理员创建了许多PV。它们包含可供群集用户使用的实际存储的详细信息。它们存在于Kubernetes API中，可供使用。
-  - 动态：当管理员创建的静态PV都不匹配用户的PersistentVolumeClaim时，群集可能会尝试为PVC专门动态配置卷。此配置基于StorageClasses，PVC必须请求存储类，管理员必须创建并配置该类，以便进行动态配置。
+它是集群中的资源，其生命周期独立于使用PV的任何单个pod。PV通过yaml文件部署；PV是node级别的，不能配namespace。
+
+PV供应方式：
+- 静态：集群管理员创建了许多PV。它们包含可供群集用户使用的实际存储的详细信息。它们存在于Kubernetes API中，可供使用。
+- 动态：当管理员创建的静态PV都不匹配用户的PersistentVolumeClaim时，集群可能会尝试为PVC专门动态配置卷。此配置基于StorageClasses，PVC必须请求存储类，管理员必须创建并配置该存储类，以便进行动态配置。
 
 ## PVC
 
@@ -397,6 +485,57 @@ Lab
 - 绑定：
 
   - 用户创建pvc并指定需要的资源和访问模式。在找到可用pv之前，pvc会保持未绑定状态。
+
+  - PVC怎么找到对应的PV？通过PVC指定storageClassName为xxx，他就会找到同样有xxx这个名字的PV来绑定：
+
+    ~~~yaml
+    ---
+    # PV
+    apiVersion: v1
+    kind: PersistentVolume
+    metadata:
+      name: ceph-rbd-pv
+    spec:
+      storageClassName: ceph-fast # 在手动绑定PV和PVC的场景下，这个字段是可以随便写的。
+      accessMode:
+      - ReadWriteOnce
+      capacity:
+        storage: 3Gi
+      rbd:
+        monitors:
+        - 192.168.40.180:6789
+        - 192.168.40.181:6789
+        - 192.168.40.182:6789
+        pool: rbd
+        image: ceph-rnd-pv-test
+        user: admin
+        secretRef:
+          name: ceph-secret
+        fsType: ext4
+        readOnly: false
+    ---
+    # PVC
+    apiVersion: v1
+    kind: PersistentVolumeClaim
+    metadata:
+      name: ceph-rbd-pvc
+    spec:
+      storageClassName: ceph-fast # 需要保证PVC的这个字段和PV一致才能被匹配
+      accessMode:
+      - ReadWriteOnce # 挂载模式也需要也要匹配，PVC的是PV的子集即可，
+      resource:
+        requests:
+          storage: 3Gi # PVC的申请存储需要<=PV配置的存储大小
+    ---
+    # pod
+    ...
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: ceph-rbd-pvc # pod和PVC的绑定是通过PVC的名称来匹配的
+    ~~~
+
+    
 
 - 使用：
 
