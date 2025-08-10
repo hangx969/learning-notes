@@ -535,25 +535,43 @@ PV供应方式：
           claimName: ceph-rbd-pvc # pod和PVC的绑定是通过PVC的名称来匹配的
     ~~~
 
-    
-
 - 使用：
 
   a）需要找一个存储服务器，把它划分成多个存储空间；
 
   b）k8s管理员可以把这些存储空间定义成多个pv；
 
-  c）在pod中使用pvc类型的存储卷之前需要先创建pvc，通过定义需要使用的pv的大小和对应的访问模式，找到合适的pv；
+  c）在pod中使用pvc类型的存储卷之前需要先创建pvc，通过定义需要使用的pv的大小、对应的访问模式、storageClassName或者Label，找到合适的pv；
 
   d）pvc被创建之后，就可以当成存储卷来使用了，我们在定义pod时就可以使用这个pvc的存储卷
 
-  e）pvc和pv它们是一一对应的关系，pv如果被pvc绑定了，就不能被其他pvc使用了；
+  e）pvc和pv它们是一一对应的关系，pv如果被pvc绑定了，就不能被其他pvc绑定了；
 
   f）我们在创建pvc的时候，应该确保和底下的pv能绑定，如果没有合适的pv，那么pvc就会处于pending状态。
 
 ## Lab
 
-- 创建pod，使用pvc作为持久化存储卷
+### HostPath PV
+
+~~~yaml
+kind: PersistentVolume 
+apiVersion: v1 
+metadata: 
+  name: task-pv-volume 
+  labels: 
+    type: local 
+spec: 
+  storageClassName: hostpath 
+  volumeMode: Filesystem # 只有未格式化的硬盘才用Block，其余都用filesystem
+  capacity: 
+    storage: 10Gi # HostPath和NFS目前都不支持限制存储大小
+  accessModes: 
+  - ReadWriteOnce 
+  hostPath: 
+    path: "/mnt/data" 
+~~~
+
+### NFS PV
 
 ```bash
 #master-01创建nfs共享目录
@@ -626,37 +644,7 @@ spec:
     storage: 1Gi
 ```
 
-> - accessMode的官网解释：https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes
->
-> - ａｃｃｅｓｓＭｏｄｅ
->
->   ```
->   ReadWriteOnce
->   ```
->
->   the volume can be mounted as **read-write by a single node**. ReadWriteOnce access mode still can allow multiple pods to access the volume when the pods are running on the same node.
->
->   ```
->   ReadOnlyMany
->   ```
->
->   the volume can be mounted as **read-only by many nodes**.
->
->   ```
->   ReadWriteMany
->   ```
->
->   the volume can be mounted as **read-write by many nodes**.
->
->   ```
->   ReadWriteOncePod
->   ```
->
->   **FEATURE STATE:** `Kubernetes v1.27 [beta]`
->
->   the volume can be mounted as **read-write by a single Pod.** Use ReadWriteOncePod access mode if you want to ensure that only one pod across the whole cluster can read that PVC or write to it. This is only supported for CSI volumes and Kubernetes version 1.22+.
-
-- 写ｐｖｃ　ｙａｍｌ文件
+- 写pvc yaml文件
 
 ```yaml
 apiVersion: v1
@@ -704,70 +692,324 @@ spec:
 
 - 用pod挂载pvc：
 
-  ```yaml
-  apiVersion: apps/v1
-  kind: Deployment
-  metadata:
-    name: dep-pvc-nfs-test
-  spec:
-    replicas: 3
-    selector:
-      matchLabels:
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dep-pvc-nfs-test
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      storage: pvc
+  template: 
+    metadata:
+      labels:
         storage: pvc
-    template: 
-      metadata:
-        labels:
-          storage: pvc
-      spec:
-        containers:
-        - name: test-pvc
-          image: nginx
-          imagePullPolicy: IfNotPresent
-          ports:
-          - containerPort: 80
-            protocol: TCP
-          volumeMounts:
-          - name: nginx-html
-            mountPath: /usr/share/nginx/html
-        volumes:
+    spec:
+      containers:
+      - name: test-pvc
+        image: nginx
+        volumeMounts:
         - name: nginx-html
-          persistentVolumeClaim:
-            claimName: pvc-nfs-v2
-  ```
+          mountPath: /usr/share/nginx/html
+      volumes:
+      - name: nginx-html
+        persistentVolumeClaim:
+          claimName: pvc-nfs-v2
+```
+
+## 访问策略
+
+accessMode的官网解释：https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes
+
+### ReadWriteOnce
+
+the volume can be mounted as **read-write by a single node**. 单节点读写，只要pod在同一个节点上就可以读写。
+
+ReadWriteOnce access mode still can allow multiple pods to access the volume when the pods are running on the same node.
+
+### ReadOnlyMany
+
+the volume can be mounted as **read-only by many nodes**. 多节点只读挂载
+
+### ReadWriteMany
+
+the volume can be mounted as **read-write by many nodes**. 多节点读写挂载
+
+### ReadWriteOncePod
+
+the volume can be mounted as **read-write by a single Pod.** 单Pod读写挂载
+
+Use ReadWriteOncePod access mode if you want to ensure that only one pod across the whole cluster can read that PVC or write to it. 
+
+This is only supported for CSI volumes and Kubernetes version 1.22+.
+
+（截止1.30暂时没有ReadOnlyOncePod模式）
+
+> 是否能用以上这几种访问模式，要取决于后端对接的存储是否支持这种模式。
 
 ## 回收策略
 
-- 定义：pv.spec.persistentVolumeReclaimPolicy
+定义：pv.spec.persistentVolumeReclaimPolicy
 
-- 当我们创建pod时如果使用pvc做为存储卷，那么它会和pv绑定，当删除pod，pvc和pv绑定就会解除，解除之后和pvc绑定的pv卷里的数据需要怎么处理，目前，卷可以保留，回收或删除：
+当我们创建pod时如果使用pvc做为存储卷，那么它会和pv绑定，当删除pod，pvc和pv绑定就会解除，解除之后和pvc绑定的pv卷里的数据需要怎么处理，目前，卷可以保留，回收或删除：
 
-  - Retain：
-    - `"Retain"` means the volume will be left in its current phase (Released) for manual reclamation by the administrator. The default policy is Retain.
-    - 当删除pvc的时候，pv仍然存在，处于released状态，但是它不能被其他pvc绑定使用，里面的数据还是存在的。
-    - 我们想要继续使用这个pv，需要手动删除pv。删除pv，不会删除pv后端存储里的数据。再重建pv，当重新创建pvc时还会和这个最匹配的pv绑定。
-  - Recycle （不推荐使用，1.15可能被废弃了）
-  - Delete：
-    - `"Delete"` means the volume will be deleted from Kubernetes on release from its claim. The **volume plugin must support Deletion**.
-    - 删除pvc时即会从Kubernetes中移除PV，也会从相关的外部设施中删除存储。当然这常见于云服务商的存储服务。
+1. Retain：【管理员手动维护的PV、生产环境 推荐使用】
+  - `"Retain"` means the volume will be left in its current phase (Released) for manual reclamation by the administrator. The default policy is Retain.
+  - 当删除pvc的时候，pv仍然存在，处于released状态，但是它不能被其他pvc绑定使用，里面的数据还是存在的。
+  - 我们想要继续使用这个pv，需要手动删除pv。删除pv，不会删除pv后端存储里的数据。再重建pv，当重新创建pvc时还会和这个最匹配的pv绑定。
+2. Delete：【动态存储建议用，因为PV不是管理员手动维护的】
+  - 如果存储插件支持，删除PVC的时候，PV会一起被删除。动态存储默认为Delete。
+  - 必须所有pod都没有挂载这个PVC的时候才能删掉，否则会卡住删不动。
+3. Recycle：（不推荐使用，1.15可能被废弃了）
 
-# StorageClass
+## PVC创建失败的原因
 
-## 背景
+PVC一直Pending的原因：
 
-- 上面介绍的PV和PVC模式都是需要先创建好PV，然后定义好PVC和pv进行一对一的Bond，但是如果PVC请求成千上万，那么就需要创建成千上万的PV，对于运维人员来说维护成本很高。
+1. PVC空间申请的大小高于PV的大小
+2. PVC的storageClass名称和PV的一致
+3. PVC的accessMode和PV的不一致
+4. PV并不是空闲状态，已经被其他PVC绑定了
 
-- Kubernetes提供一种自动创建PV的机制，叫StorageClass，它的作用就是创建PV的模板。k8s集群管理员通过创建storageclass可以动态生成一个存储卷pv供k8s pvc使用。
+挂载PVC的pod一直处于pending：
 
-- 每个StorageClass都包含字段provisioner，parameters和reclaimPolicy。 
+1. PVC不存在
+2. PVC和pod不在同一namespace
 
-  - 具体来说，StorageClass会定义以下两部分：
+# 动态存储
 
-    1、PV的属性：比如存储的大小、类型等；
+上面介绍的PV和PVC模式都是需要先创建好PV，然后定义好PVC和pv进行一对一的绑定。但是大规模集群PVC请求成千上万，那么就需要创建成千上万的PV，对于运维人员来说维护成本很高。这时候需要动态存储自动创建PV。
 
-    2、创建这种PV需要使用到的存储插件：比如Ceph、NFS等
+动态存储依赖StorageClass和CSI实现。当创建PVC时，storageClass指定动态存储类，该类指向不同的CSI存储供应商，之后通过该CSI对接到后端存储，就可以完成PV的自动创建。
 
-  - 有了这两部分信息，Kubernetes就能够根据用户提交的PVC，找到对应的StorageClass，然后Kubernetes就会调用 StorageClass声明的存储插件，创建出需要的PV。
+## storageClass
 
+Kubernetes提供一种动态创建PV的机制，即创建PV的模板。k8s集群管理员通过创建storageclass可以动态生成pv供pvc使用。
+
+每个StorageClass都包含字段provisioner，parameters和reclaimPolicy。 
+
+具体来说，StorageClass会定义以下两部分：
+
+1. PV的属性：比如存储的大小、类型等；
+2. 创建PV用的CSI存储插件：比如Ceph、NFS等。
+
+有了这两部分信息，Kubernetes就能够根据用户提交的PVC，找到对应的StorageClass，然后Kubernetes就会调用 StorageClass声明的存储插件，创建出需要的PV。
+
+## CSI
+
+CSI是一个标准化的存储接口，用于在容器环境集成外部存储系统，提供了统一的方式来集成各种存储系统，无论是云供应商的存储还是本地自检存储，都可以通过CSI对接到容器平台中。
+
+在同一个集群中，可以同时存在多个CSI对接不同的存储平台，之后可以通过StorageClass的provisioner字段声明该clss对接哪一种存储平台。
+
+## NFS存储类-基于nfs-subdir插件
+
+> 安装 **nfs-subdir-external-provisioner** ，它是一个存储资源自动调配器，它可将现有的NFS服务器通过持久卷声明来支持 Kubernetes 持久卷的动态分配。
+>
+> 该组件是对 Kubernetes NFS-Client Provisioner 的扩展， **nfs-client-provisioner** 已经不提供更新，而且 [Github 仓库](https://cloud.tencent.com/developer/tools/blog-entry?target=https%3A%2F%2Fgithub.com%2Fkubernetes-retired%2Fexternal-storage%2Ftree%2Fmaster%2Fnfs-client&source=article&objectId=2365976) 也已经处于归档状态，已经迁移到 [nfs-subdir-external-provisioner](https://cloud.tencent.com/developer/tools/blog-entry?target=https%3A%2F%2Fgithub.com%2Fkubernetes-sigs%2Fnfs-subdir-external-provisioner&source=article&objectId=2365976) 的仓库。
+
+使用NFS作为provisioner，用storageClass自动生成PV：
+
+```bash
+# 上传nfs-client的自动装载程序，称之为provisioner，这个程序会使用我们已经配置好的NFS服务器自动创建持久卷，也就是自动帮我们创建PV
+# 所有节点需要预先安装nfs-utils
+yum install nfs-utils
+```
+
+```bash
+#给nfs-provisioner配置空间
+mkdir /data/nfs_pro -p
+echo "/data/nfs_pro *(rw,no_root_squash)" >> /etc/exports #注：这里如果配置可访问的网段，要写宿主机网段而非pod网段，因为pv本质是挂载到宿主机上再挂载到pod上。
+exportfs -arv
+```
+
+```yaml
+---
+#创建sa，给provisioner来用
+#serviceaccount是为了方便Pod里面的进程调用Kubernetes API或其他外部服务而设计的。
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: nfs-provisioner
+  
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: nfs-provisioner-clusterrolebinding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+- kind: ServiceAccount
+  name: nfs-provisioner
+  namespace: default
+
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: nfs-provisioner
+spec:
+  selector:
+    matchLabels:
+       app: nfs-provisioner
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: nfs-provisioner
+    spec:
+      serviceAccount: nfs-provisioner
+      containers:
+        - name: nfs-provisioner
+          image: registry.cn-beijing.aliyuncs.com/mydlq/nfs-subdir-external-provisioner:v4.0.0
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - name: nfs-client-root
+              mountPath: /persistentvolumes
+          env:
+            - name: PROVISIONER_NAME
+              value: rm1.com/nfs
+            - name: NFS_SERVER
+              value: 172.16.183.100
+            - name: NFS_PATH
+              value: /data/nfs_pro/
+      volumes:
+        - name: nfs-client-root
+          nfs:
+            server: 172.16.183.100
+            path: /data/nfs_pro/
+            
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata: 
+  name: sc-nfs
+provisioner: rm1.com/nfs
+```
+
+```yaml
+#创建pvc，引用sc
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: pvc-sc-nfs
+spec:
+  accessModes:
+  - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName:  sc-nfs
+
+#创建pod，挂载pvc
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dep-pvc-nfs-test
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      storage: pvc
+  template: 
+    metadata:
+      labels:
+        storage: pvc
+    spec:
+      containers:
+      - name: test-pvc
+        image: nginx
+        volumeMounts:
+        - name: nginx-html
+          mountPath: /usr/share/nginx/html
+      volumes:
+      - name: nginx-html
+        persistentVolumeClaim:
+          claimName: pvc-sc-nfs
+```
+
+## NFS存储类-基于CSI
+
+github地址：[kubernetes-csi/csi-driver-nfs: This driver allows Kubernetes to access NFS server on Linux node.](https://github.com/kubernetes-csi/csi-driver-nfs)
+
+安装说明：[kubernetes-csi/csi-driver-nfs: This driver allows Kubernetes to access NFS server on Linux node.](https://github.com/kubernetes-csi/csi-driver-nfs?tab=readme-ov-file#install-driver-on-a-kubernetes-cluster)
+
+这里采用local install模式：
+
+~~~sh
+cd csi-driver-nfs/ 
+sed -i "s#registry.k8s.io#k8s.m.daocloud.io#g" deploy/v4.11.0/*.yaml 
+./deploy/install-driver.sh v4.11.0 local 
+~~~
+
+### 创建存储类
+
+~~~yaml
+apiVersion: storage.k8s.io/v1 
+kind: StorageClass 
+metadata: 
+  name: nfs-csi 
+provisioner: nfs.csi.k8s.io 
+parameters: 
+  server: 192.168.40.180 
+  share: /data/nfs_pro # 指定主目录，会自动在里面创建子目录作为每个PV
+  # csi.storage.k8s.io/provisioner-secret is only needed for providing mountOptions in DeleteVolume 
+  # csi.storage.k8s.io/provisioner-secret-name: "mount-options" 
+  # csi.storage.k8s.io/provisioner-secret-namespace: "default" 
+reclaimPolicy: Delete 
+volumeBindingMode: Immediate 
+mountOptions: 
+  - nfsvers=4.1 
+~~~
+
+### 挂载测试
+
+~~~yaml
+# PVC
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pvc-nfs-dynamic
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 10Gi
+  storageClassName: nfs-csi
+# pod
+---
+kind: Pod
+apiVersion: v1
+metadata:
+  name: nginx-nfs
+spec:
+  containers:
+    - image: mcr.microsoft.com/oss/nginx/nginx:1.19.5
+      name: nginx-nfs
+      command:
+        - "/bin/bash"
+        - "-c"
+        - set -euo pipefail; while true; do echo $(date) >> /mnt/nfs/outfile; sleep 1; done
+      volumeMounts:
+        - name: persistent-storage
+          mountPath: "/mnt/nfs"
+          readOnly: false
+  volumes:
+    - name: persistent-storage
+      persistentVolumeClaim:
+        claimName: pvc-nfs-dynamic
+~~~
+
+> 注意：一般NFS/NAS高可用和性能不是很好，一些数据库、缓存、消息队列服务尽量不要使用NFS，生产环境中推荐使用分布式存储。如果实在没有分布式存储，那就不要部署在k8s中了。
 
 ## 默认存储类
 
@@ -801,139 +1043,259 @@ spec:
   EOF
   ~~~
 
-## Lab - NFS Storage Class
+# sts的volumeClaimTemplates 
 
-> 安装 **nfs-subdir-external-provisioner** ，它是一个存储资源自动调配器，它可将现有的 NFS 服务器通过持久卷声明来支持 Kubernetes 持久卷的动态分配。
->
-> 该组件是对 Kubernetes NFS-Client Provisioner 的扩展， **nfs-client-provisioner** 已经不提供更新，而且 [Github 仓库](https://cloud.tencent.com/developer/tools/blog-entry?target=https%3A%2F%2Fgithub.com%2Fkubernetes-retired%2Fexternal-storage%2Ftree%2Fmaster%2Fnfs-client&source=article&objectId=2365976) 也已经处于归档状态，已经迁移到 [nfs-subdir-external-provisioner](https://cloud.tencent.com/developer/tools/blog-entry?target=https%3A%2F%2Fgithub.com%2Fkubernetes-sigs%2Fnfs-subdir-external-provisioner&source=article&objectId=2365976) 的仓库。
+使用StatefulSet部署有状态服务时，可以使用`volumeClaimTemplates`自动为每个Pod生成 PVC，并挂载至容器中，大大降低了手动创建管理存储的难度和复杂度。
 
-- 使用NFS作为provisioner，用storageClass自动生成PV：
+假设需要搭建一个三节点的RabbitMQ集群到K8s中，并且需要实现数据的持久化，此时可以通StatefulSet创建三个副本，并且通过volumeClaimTemplates自动绑定各自的存储。 
 
-  ```bash
-  #上传nfs-client的自动装载程序，称之为provisioner，这个程序会使用我们已经配置好的NFS服务器自动创建持久卷，也就是自动帮我们创建PV
-  ctr -n=k8s.io images import nfs-subdir-external-provisioner.tar.gz
-  #所有节点需要预先安装nfs-utils
-  yum install nfs-utils
-  ```
-  
-  ```bash
-  #给nfs-provisioner配置空间
-  mkdir /data/nfs_pro -p
-  echo "/data/nfs_pro *(rw,no_root_squash)" >> /etc/exports #注：这里如果配置可访问的网段，要写宿主机网段而非pod网段，因为pv本质是挂载到宿主机上再挂载到pod上。
-  exportfs -arv
-  ```
-  
-  ```yaml
-  ---
-  #创建sa，给provisioner来用
-  #serviceaccount是为了方便Pod里面的进程调用Kubernetes API或其他外部服务而设计的。
-  apiVersion: v1
-  kind: ServiceAccount
-  metadata:
-    name: nfs-provisioner
-    
-  ---
-  apiVersion: rbac.authorization.k8s.io/v1
-  kind: ClusterRoleBinding
-  metadata:
-    name: nfs-provisioner-clusterrolebinding
-  roleRef:
-    apiGroup: rbac.authorization.k8s.io
-    kind: ClusterRole
-    name: cluster-admin
-  subjects:
-  - kind: ServiceAccount
-    name: nfs-provisioner
-    namespace: default
-  
-  ---
-  kind: Deployment
-  apiVersion: apps/v1
-  metadata:
-    name: nfs-provisioner
-  spec:
-    selector:
-      matchLabels:
-         app: nfs-provisioner
-    replicas: 1
-    strategy:
-      type: Recreate
-    template:
-      metadata:
-        labels:
-          app: nfs-provisioner
+## sts
+
+~~~yaml
+kind: StatefulSet
+apiVersion: apps/v1
+metadata:
+  labels:
+    app: rmq-cluster
+  name: rmq-cluster
+  namespace: public-service
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: rmq-cluster
+  serviceName: rmq-cluster
+  template:
+    metadata:
+      labels:
+        app: rmq-cluster
+    spec:
+      containers:
+      - args:
+        - -c
+        - cp -v /etc/rabbitmq/rabbitmq.conf ${RABBITMQ_CONFIG_FILE}; exec docker-entrypoint.sh
+          rabbitmq-server
+        command:
+        - sh
+        env:
+        - name: RABBITMQ_DEFAULT_USER
+          valueFrom:
+            secretKeyRef:
+              key: username
+              name: rmq-cluster-secret
+        - name: RABBITMQ_DEFAULT_PASS
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: rmq-cluster-secret
+        - name: RABBITMQ_ERLANG_COOKIE
+          valueFrom:
+            secretKeyRef:
+              key: cookie
+              name: rmq-cluster-secret
+        - name: K8S_SERVICE_NAME
+          value: rmq-cluster
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: RABBITMQ_USE_LONGNAME
+          value: "true"
+        - name: RABBITMQ_NODENAME
+          value: rabbit@$(POD_NAME).rmq-cluster.$(POD_NAMESPACE).svc.cluster.local
+        - name: RABBITMQ_CONFIG_FILE
+          value: /var/lib/rabbitmq/rabbitmq.conf
+        image: registry.cn-beijing.aliyuncs.com/dotbalo/rabbitmq:3.13.6-management-alpine
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          exec:
+            command:
+            - rabbitmqctl
+            - status
+          initialDelaySeconds: 30
+          timeoutSeconds: 10
+        name: rabbitmq
+        ports:
+        - containerPort: 15672
+          name: http
+          protocol: TCP
+        - containerPort: 5672
+          name: amqp
+          protocol: TCP
+        readinessProbe:
+          exec:
+            command:
+            - rabbitmqctl
+            - status
+          initialDelaySeconds: 10
+          timeoutSeconds: 10
+        volumeMounts:
+        - mountPath: /etc/rabbitmq
+          name: config-volume
+          readOnly: false
+        - mountPath: /var/lib/rabbitmq
+          name: rabbitmq-storage
+          readOnly: false
+      serviceAccountName: rmq-cluster
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - configMap:
+          items:
+          - key: rabbitmq.conf
+            path: rabbitmq.conf
+          - key: enabled_plugins
+            path: enabled_plugins
+          name: rmq-cluster-config
+        name: config-volume
+    volumeClaimTemplates: # 在这里写存储模板，指定存储类
+    - metadata:
+        name: rabbitmq-storage
       spec:
-        serviceAccount: nfs-provisioner
-        containers:
-          - name: nfs-provisioner
-            image: registry.cn-beijing.aliyuncs.com/mydlq/nfs-subdir-external-provisioner:v4.0.0
-            imagePullPolicy: IfNotPresent
-            volumeMounts:
-              - name: nfs-client-root
-                mountPath: /persistentvolumes
-            env:
-              - name: PROVISIONER_NAME
-                value: rm1.com/nfs
-              - name: NFS_SERVER
-                value: 172.16.183.100
-              - name: NFS_PATH
-                value: /data/nfs_pro/
-        volumes:
-          - name: nfs-client-root
-            nfs:
-              server: 172.16.183.100
-              path: /data/nfs_pro/
-              
-  ---
-  apiVersion: storage.k8s.io/v1
-  kind: StorageClass
-  metadata: 
-    name: sc-nfs
-  provisioner: rm1.com/nfs
-  ```
-  
-  ```yaml
-  #创建pvc，引用sc
-  kind: PersistentVolumeClaim
-  apiVersion: v1
-  metadata:
-    name: pvc-sc-nfs
-  spec:
-    accessModes:
-    - ReadWriteMany
+        accessModes:
+        - ReadWriteOnce
+        storageClassName: "nfs-csi"
+        resources:
+          requests:
+            storage: 4Gi
+~~~
+
+## svc-clusterIP
+
+~~~yaml
+kind: Service
+apiVersion: v1
+metadata:
+  labels:
+    app: rmq-cluster
+  name: rmq-cluster
+  namespace: public-service
+spec:
+  clusterIP: None
+  ports:
+  - name: amqp
+    port: 5672
+    targetPort: 5672
+  selector:
+    app: rmq-cluster
+~~~
+
+## svc-LB
+
+~~~yaml
+kind: Service
+apiVersion: v1
+metadata:
+  labels:
+    app: rmq-cluster
+    type: LoadBalancer
+  name: rmq-cluster-balancer
+  namespace: public-service
+spec:
+  ports:
+  - name: http
+    port: 15672
+    protocol: TCP
+    targetPort: 15672
+  - name: amqp
+    port: 5672
+    protocol: TCP
+    targetPort: 5672
+  selector:
+    app: rmq-cluster
+  type: NodePort
+~~~
+
+## cm
+
+~~~yaml
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: rmq-cluster-config
+  namespace: public-service
+  labels:
+    addonmanager.kubernetes.io/mode: Reconcile
+data:
+    enabled_plugins: |
+      [rabbitmq_management,rabbitmq_peer_discovery_k8s].
+    rabbitmq.conf: |
+      loopback_users.guest = false
+
+      default_user = RABBITMQ_USER
+      default_pass = RABBITMQ_PASS
+      ## Clustering
+      cluster_formation.peer_discovery_backend = rabbit_peer_discovery_k8s
+      cluster_formation.k8s.host = kubernetes.default.svc.cluster.local
+      cluster_formation.k8s.address_type = hostname
+      #################################################
+      # public-service is rabbitmq-cluster's namespace#
+      #################################################
+      cluster_formation.k8s.hostname_suffix = .rmq-cluster.public-service.svc.cluster.local
+      cluster_formation.node_cleanup.interval = 10
+      cluster_formation.node_cleanup.only_log_warning = true
+      cluster_partition_handling = autoheal
+      ## queue master locator
+      queue_master_locator=min-masters
+~~~
+
+## secret
+
+~~~yaml
+kind: Secret
+apiVersion: v1
+metadata:
+  name: rmq-cluster-secret
+  namespace: public-service
+stringData:
+  cookie: ERLANG_COOKIE
+  password: RABBITMQ_PASS
+  url: amqp://RABBITMQ_USER:RABBITMQ_PASS@rmq-cluster-balancer
+  username: RABBITMQ_USER
+type: Opaque
+~~~
+
+## rbac
+
+~~~yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: rmq-cluster
+  namespace: public-service
+---
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: rmq-cluster
+  namespace: public-service
+rules:
+  - apiGroups:
+      - ""
     resources:
-      requests:
-        storage: 1Gi
-    storageClassName:  sc-nfs
-  
-  #创建pod，挂载pvc
-  apiVersion: apps/v1
-  kind: Deployment
-  metadata:
-    name: dep-pvc-nfs-test
-  spec:
-    replicas: 3
-    selector:
-      matchLabels:
-        storage: pvc
-    template: 
-      metadata:
-        labels:
-          storage: pvc
-      spec:
-        containers:
-        - name: test-pvc
-          image: nginx
-          imagePullPolicy: IfNotPresent
-          ports:
-          - containerPort: 80
-            protocol: TCP
-          volumeMounts:
-          - name: nginx-html
-            mountPath: /usr/share/nginx/html
-        volumes:
-        - name: nginx-html
-          persistentVolumeClaim:
-            claimName: pvc-sc-nfs
-  ```
-  
+      - endpoints
+    verbs:
+      - get
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: rmq-cluster
+  namespace: public-service
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: rmq-cluster
+subjects:
+- kind: ServiceAccount
+  name: rmq-cluster
+  namespace: public-service
+~~~
+
