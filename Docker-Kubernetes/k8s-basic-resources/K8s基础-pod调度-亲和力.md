@@ -1,10 +1,30 @@
 # 拓扑域和拓扑键
 
-拓扑域Topology Domain通常用于标识一组相似属性、相似网络特性的节点。这些节点一般位于同一个物理位置或者网络子网中。拓扑域一般用于亲和力配置。
+拓扑域Topology Domain：
 
-在一个超大的规模集群中，可以使用拓扑域来标记几点所在的机房、子网等信息。拓扑域的划分很简单，给节点打上标签即可。标签的k、v都相同，就表示属于同一个拓扑域。
+- 通常用于标识一组相似属性、相似网络特性的节点。这些节点一般位于同一个物理位置或者网络子网中。拓扑域一般用于亲和力配置。
+- 在一个超大的规模集群中，可以使用拓扑域来标记几点所在的机房、子网等信息。
+- 拓扑域的划分很简单，给节点打上标签即可；标签的k、v都相同，就表示属于同一个拓扑域。
 
-拓扑键Topology Key：用于指定拓扑域，其实就是标签的key。
+拓扑键Topology Key：
+
+- 用于指定拓扑域，其实就是标签的key。
+
+## 划分拓扑域
+
+### 基于主机
+
+k8s每个节点都有一个标签标识节点名称：`kubernetes.io/hostname=k9s-master01`。所以每一个节点都是一个拓扑域。
+
+### 基于多区域
+
+比如集群在不同物理区域有节点分布。给节点打上`region=beijing`，`region=nanjing`这样的标签。
+
+### 基于数据中心
+
+按照数据中心的位置，打上`zone=chaoyang`，`zone=haidian`的标签
+
+### 基于子网
 
 # POD调度
 
@@ -144,7 +164,7 @@ kubectl explain pods.spec.affinity
 - 亲和性：如果两个应用**频繁交互**，那就有必要利用亲和性让两个应用的尽可能的靠近，这样可以减少因网络通信而带来的性能损耗。
 - 反亲和性：当应用的采用**多副本部署**时，有必要采用**反亲和性**让各个应用实例打散分布在各个node上，这样可以提高服务的高可用性。
 
-### nodeAffinity
+### 节点亲和性调度nodeAffinity
 
 ```bash
 kubectl explain pods.spec.affinity.nodeAffinity
@@ -173,14 +193,14 @@ metadata:
 spec:
   affinity:
     nodeAffinity:
-     requiredDuringSchedulingIgnoredDuringExecution:
-       nodeSelectorTerms:
-       - matchExpressions:
-         - key: zone # 硬亲和性 - 必须调度到label是zone=foo或zone=bar的node
-           operator: In
-           values: 
-           - foo
-           - bar
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: zone # 硬亲和性 - 必须调度到label是zone=foo或zone=bar的node
+            operator: In
+            values: 
+            - foo
+            - bar
   containers:
   - name: busybox
     image: busybox:latest
@@ -215,12 +235,12 @@ metadata:
 spec:
   affinity:
     nodeAffinity:
-      preferredDuringSchedulingIgnoredDuringExecution: # 是一个对象列表[]objects，他下面的要用 - 划分字段。
+      preferredDuringSchedulingIgnoredDuringExecution: 
       - preference:
-          matchExpressions: # 是一个[]object，下面字段用 - 
+          matchExpressions:
           - key: zone1
             operator: In
-            values: # 是一个字符串列表，下面用 - 连接
+            values: 
             - foo1
             - bar1
         weight: 10
@@ -249,7 +269,11 @@ spec:
 > 3.  如果一个nodeSelectorTerms中有多个matchExpressions ，则一个节点必须满足所有的才能匹配成功
 > 4.  如果一个pod所在的Node在Pod运行期间其标签发生了改变，不再符合该Pod的节点亲和性需求，则系统将忽略此变化
 
-### podAffinity 
+注意节点亲和性没有反亲和性配置，实现反亲和性无非就是pod不想调度到某些pod，就写operator: NotIn某些values就行了。
+
+### pod亲和性调度
+
+#### podAffinity 
 
 ```bash
 kubectl explain pods.spec.affinity.podAffinity
@@ -303,11 +327,11 @@ kubectl explain pods.spec.affinity.podAffinity
   spec:
     affinity:
       podAffinity:
-        requiredDuringSchedulingIgnoredDuringExecution:
+        requiredDuringSchedulingIgnoredDuringExecution: # 硬亲和性，匹配出来的pod必须在同一位置
         - labelSelector: # 这个pod要跟app=bb的pod做亲和性
             matchExpressions:
             - {key: app, operator: In, values: ["bb"]}
-          topologyKey: kubernetes.io/hostname # 怎么定义同一个位置？对于key=kubernetes.io/hostname的node，value相同就算同一位置。==> 也就是跟匹配的pod在相同的node上算相同的位置。
+          topologyKey: kubernetes.io/hostname # 怎么定义同一个位置？对于key=kubernetes.io/hostname的node，value相同就算同一位置 ==> 也就是跟匹配的pod在相同的node上算相同的位置。
     containers:
     - name: busybox
       image: busybox:latest
@@ -318,12 +342,48 @@ kubectl explain pods.spec.affinity.podAffinity
       - "while true; do echo hello; sleep 10; done"
   ```
 
-### podAntiAffinity
+#### podAntiAffinity
 
 跟podAffinity相反，yaml上同样要定义出两个信息：
 
 - 后来的pod跟啥pod做亲和？-- labelSelector
-- 依据什么条件判断是同一位置还是不同位置？--topologyKey
+- 依据什么条件判断是同一位置还是不同位置？-- topologyKey
+
+~~~yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-podAffinity-2
+  namespace: default
+  labels:
+    app: bb
+    tier: ft
+spec:
+  affinity:
+    podAntiAffinity:
+      perferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 100 # 软亲和性才有的权重属性。当具有多个软亲和性规则的时候，优先满足高权重的规则。
+        podAffinityTerm:
+          labelSelector: # 这个pod要跟app=bb的pod做反亲和性
+            matchExpressions:
+            - key: app
+              operator: In
+              values: ["bb"]
+        namespaces: # 和哪些ns下的pod进行匹配。通常设置为当前ns，扫描整个集群比较消耗性能。
+        - default
+        namespaceSelector: {} # 也可以在这里通过标签匹配ns
+        topologyKey: kubernetes.io/hostname # 怎么定义同一个位置？对于key=kubernetes.io/hostname的node，value相同就算同一位置 ==> 也就是跟匹配的pod在相同的node上算相同的位置。
+  containers:
+  - name: busybox
+    image: busybox:latest
+    imagePullPolicy: IfNotPresent
+    command:
+    - "/bin/sh"
+    - "-c"
+    - "while true; do echo hello; sleep 10; done"
+~~~
+
+
 
 ## 污点调度
 
@@ -386,4 +446,218 @@ spec:
     tolerationSeconds: 3600 # NoExcute专用字段，通常情况下，如果给一个节点添加了一个 effect 值为 NoExecute 的污点，则任何不能容忍这个污点的 Pod 都会马上被驱逐，任何可以容忍这个污点的 Pod 都不会被驱逐。但是，如果 Pod 存在一个 effect 值为 NoExecute 的容忍度指定了可选属性 tolerationSeconds 的值，则表示在给节点添加了上述污点之后， Pod 还能继续在节点上运行的时间。3600这表示如果这个 Pod 正在运行，同时一个匹配的污点被添加到其所在的节点， 那么 Pod 还将继续在节点上运行 3600 秒，然后被驱逐。 如果在此之前上述污点被删除了，则 Pod 不会被驱逐。
 ```
 
-# 
+# 实战示例
+
+## 同一个应用必须部署在不同的宿主机
+
+~~~yaml
+kind: Deployment 
+metadata: 
+  name: diff-nodes 
+spec: 
+  selector: 
+    matchLabels: 
+      app: diff-nodes 
+  replicas: 2 
+  template: 
+    metadata: 
+      labels: 
+        app: diff-nodes 
+    spec: 
+      affinity: 
+        podAntiAffinity: 
+          requiredDuringSchedulingIgnoredDuringExecution: 
+            - labelSelector: 
+                matchExpressions: 
+                  - key: app 
+                    operator: In 
+                    values: 
+                      - diff-nodes # 当前ns中具有app=diff-nodes标签的pod不允许被调度到hostname相同的节点上 
+              topologyKey: kubernetes.io/hostname 
+              namespaces: [] # 空表示当前namespace
+      containers: 
+        - name: diff-nodes 
+          image: nginx:1.15.12 
+~~~
+
+## 同一个应用尽量部署在不同的宿主机
+
+~~~yaml
+apiVersion: apps/v1 
+kind: Deployment 
+metadata: 
+  name: diff-nodes 
+spec: 
+  selector: 
+    matchLabels: 
+      app: diff-nodes 
+  replicas: 2 
+  template: 
+    metadata: 
+      labels: 
+        app: diff-nodes 
+    spec: 
+      affinity: 
+        podAntiAffinity: 
+          preferredDuringSchedulingIgnoredDuringExecution: 
+            - podAffinityTerm: 
+                labelSelector: 
+                  matchExpressions: 
+                    - key: app 
+                      operator: In 
+                      values: 
+                        - diff-nodes 
+                topologyKey: kubernetes.io/hostname 
+                namespaces: []
+              weight: 100 
+      containers: 
+      - name: diff-nodes 
+        image: nginx:1.15.12 
+~~~
+
+## 同一个应用尽量分布在不同的机房
+
+~~~yaml
+apiVersion: apps/v1 
+kind: Deployment 
+metadata: 
+  name: diff-zone 
+spec: 
+  selector: 
+    matchLabels:  
+      app: diff-zone 
+  replicas: 3 
+  template: 
+    metadata: 
+      labels: 
+        app: diff-zone 
+    spec: 
+      affinity: 
+        podAntiAffinity: 
+          preferredDuringSchedulingIgnoredDuringExecution: 
+            - podAffinityTerm: 
+                labelSelector: 
+                  matchExpressions: 
+                    - key: app 
+                      operator: In 
+                      values: 
+                        - diff-zone 
+                topologyKey: zone 
+                namespaces: [] 
+              weight: 100 
+      containers: 
+        - name: diff-nodes 
+          image: nginx:1.15.12 
+~~~
+
+## 应用和缓存尽量部署在同一个可用域
+
+~~~yaml
+apiVersion: apps/v1 
+kind: Deployment 
+metadata: 
+  name: my-app 
+spec: 
+  replicas: 2 
+  selector: 
+    matchLabels: 
+      app: my-app 
+  template: 
+    metadata: 
+      labels: 
+        app: my-app 
+    spec: 
+      affinity: 
+        podAffinity: 
+          preferredDuringSchedulingIgnoredDuringExecution: 
+          - weight: 100 
+            podAffinityTerm: 
+              labelSelector: 
+                matchExpressions: # 这个deployment的pod尽量和app=cache的pod分布在zone标签和值相同的节点上
+                - key: app 
+                  operator: In 
+                  values: 
+                  - cache 
+              topologyKey: zone
+      containers: 
+      - name: my-app 
+        image: registry.cn-beijing.aliyuncs.com/dotbalo/nginx:1.15.12 
+~~~
+
+缓存服务的deployment尽量也要设置成和这个my-app的pod亲和性
+
+## 计算服务必须部署至高性能机器
+
+假设集群中有一批机器是高性能机器，而有一些需要密集计算的服务，需要部署至这些机器，以提高计算性能，此时可以使用节点亲和力来控制Pod尽量或者必须部署至这些节点上。
+
+比如计算服务只能部署在ssd或nvme的节点上：
+
+~~~yaml
+apiVersion: apps/v1 
+kind: Deployment 
+metadata: 
+  name: compute 
+spec: 
+  replicas: 2 
+  selector: 
+    matchLabels: 
+      app: compute 
+  template: 
+    metadata: 
+      labels: 
+        app: compute 
+    spec: 
+      affinity: 
+        nodeAffinity: 
+          requiredDuringSchedulingIgnoredDuringExecution: 
+            nodeSelectorTerms: 
+            - matchExpressions: 
+              - key: disktype 
+                operator: In 
+                values: 
+                - ssd 
+                - nvme 
+      containers: 
+      - name: compute 
+        image: registry.cn-beijing.aliyuncs.com/dotbalo/nginx:1.15.12 
+~~~
+
+## 计算服务尽量部署到高性能机器
+
+如果不强制要求，可以让计算服务尽量部署至高性能机器： 
+
+~~~yaml
+   nodeAffinity: 
+          preferredDuringSchedulingIgnoredDuringExecution: 
+          - weight: 100 
+            preference: 
+              matchExpressions: 
+              - key: disktype 
+                operator: In 
+                values: 
+                - ssd 
+                - nvme 
+~~~
+
+同时还可以配置优先使用ssd的机器： 
+
+~~~yaml
+affinity: 
+  nodeAffinity: 
+    preferredDuringSchedulingIgnoredDuringExecution: 
+    - weight: 100 
+      preference: 
+        matchExpressions: 
+        - key: disktype 
+          operator: In 
+          values: 
+          - ssd 
+    - weight: 50 
+      preference: 
+        matchExpressions: 
+        - key: disktype 
+          operator: In 
+          values: 
+          - nvme
+~~~
+
