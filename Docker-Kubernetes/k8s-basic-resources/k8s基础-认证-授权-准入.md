@@ -690,6 +690,8 @@ kubectl create rolebinding app-view \
 
 而后创建pod的时候，在spec.serviceaccountname字段指定sa为app-view即可。
 
+> 注：ns中的默认sa名为default，不推荐直接授权给default，因为把所有要用到的权限都一股脑授权给default，所有ns中的pod都能用，不安全。安全的做法是每有一个授权需求，就创建一个新的sa单独授权。
+
 # 访问apiserver的认证
 
 ## 客户端认证
