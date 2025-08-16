@@ -10,9 +10,9 @@ kubernetes主要通过API server对外提供服务，那么就需要对访问api
 
 # Account
 
-## UserAccount
+kubernetes中账户分为：UserAccounts（用户账户）和 ServiceAccounts（服务账户）两种。
 
-kubernetes中账户分为：UserAccounts（用户账户）和 ServiceAccounts（服务账户）两种：
+## UserAccount
 
 1. UserAccount是给kubernetes集群外部用户使用的，如kubectl访问k8s集群要用useraccount用户，kubeadm安装的k8s，默认的useraccount用户是kubernetes-admin
 2. 使用kubeadm安装的K8s，会在用户家目录下创建一个认证配置文件 .kube/config 这里面保存了客户端访问API Server的密钥相关信息，当用kubectl访问k8s时，它就会自动读取该配置文件，向API Server发起认证，然后完成操作请求。
@@ -29,11 +29,11 @@ K8s 1.24之前，在ns中创建了一个sa，就会自动生成一个secret叫sa
 
 K8s 1.24之后，为了安全性起见，不会自动创建这个secret了。
 
-### ServiceAccount供用户使用
+### sa供用户使用
 
 可以专门创建一个namespace，比如叫kube-users，里面创建一些serviceAccount作为用户登录账号，分配好各种权限，创建kuneconfig文件。让这个用户通过分配给他的kubeconfig来登录集群。
 
-#### 命令行创建token
+#### 基于命令行创建token
 
 ~~~sh
 # 先创建sa
@@ -42,7 +42,7 @@ kubectl create sa hangx
 kubectl create token dukuan --duration=99999h
 ~~~
 
-#### secret创建token
+#### 基于secret创建token
 
 因为1.24之后已经默认不会去创建sa的secret了，需要手动创建secret保存token。token是secret自动生成出来的。这个token是永久有效的。
 
@@ -59,15 +59,75 @@ metadata:
 kubectl get secret hangx-token-secret
 ~~~
 
-#### 基于sa生成kubeconfig
+#### 基于sa生成kubeconfig给用户登录
 
 基于ServiceAccount生成Kubeconfig，需要先为ServiceAccount生成一个Token，可以使 用保存在Secret中的Token。 
 
-~~~sh
+1. 获取api server地址
 
-~~~
+   方法1：
 
-### pod使用ServiceAccount
+   ~~~sh
+   serverAddr=`kubectl cluster-info | grep --color=never \ 
+   -Eo -m 1 "https://.*" | \ 
+   sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g"`
+   
+   echo $serverAddr
+   ~~~
+
+   方法2：
+
+   ~~~sh
+   kubectl cluster-info
+   # 直接看
+   # https://192.168.40.180:6443 
+   ~~~
+
+2. 获取sa、sa token secret、ca
+
+   ~~~sh
+   serviceaccountName="hangx" 
+   secretName="dukuan-token-secret" 
+   ca=$(kubectl get secret/$secretName -o jsonpath='{.data.ca\.crt}') 
+   token=$(kubectl get secret/$secretName -o jsonpath='{.data.token}' | base64 --decode)
+   ~~~
+
+3. 生成kubeconfig
+
+   ~~~sh
+   cat <<EOF > ${serviceaccountName}-kubeconfig.yaml 
+   apiVersion: v1 
+   kind: Config 
+   clusters: 
+   - name: default-cluster 
+     cluster: 
+       server: ${serverAddr} 
+       certificate-authority-data: ${ca} 
+   users: 
+   - name: ${serviceaccountName} 
+     user: 
+       token: ${token} 
+   contexts: 
+   - name: ${serviceaccountName}-context 
+     context: 
+       cluster: default-cluster 
+       user: ${serviceaccountName} 
+       namespace: default 
+   current-context: ${serviceaccountName}-context 
+   EOF 
+   ~~~
+
+   想要添加多集群，就在kubeconfig文件里面，分别在clusters、users、contexts字段下面进去就行。
+
+4. 生成之后就可以使用新的kubeconfig操作集群：
+
+   ~~~sh
+   kubectl get po --kubeconfig dukuan-kubeconfig.yaml
+   # 如果没有权限，可以临时做一个授权
+   kubectl create rolebinding hangx-view --clusterrole=view --serviceaccount=default:hangx
+   ~~~
+
+### sa供pod使用
 
 ServiceAccount是Pod使用的账号，Pod容器的进程需要访问API Server时用的就是ServiceAccount账户。
 
@@ -293,7 +353,7 @@ curl --cacert ./ca.crt  -H "Authorization: Bearer $(cat ./token)"  https://kuber
 将Role或者ClusterRole绑定到用户、组、或者ServiceAccount上，必须指定namespace。绑定后，用户只具备该namespace的权限。
 
 ~~~yaml
-#将在rbac命名空间中把pod-read角色授予用户es
+# 将在rbac命名空间中把pod-read角色授予用户es
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
@@ -329,7 +389,29 @@ roleRef:
   name: cluster-admin
 ~~~
 
+## kubectl管理RBAC
+
+~~~sh
+# 创建一个可以查询Pod的Role： 
+kubectl create role pod-reader --verb=get --verb=list --verb=watch --resource=pods 
+# 创建一个对rs有权限的role。指定非核心组，需要写上组名apps
+kubectl create role rs-role --verb=get,list,watch --resource=replicasets.apps 
+# 创建一个可以查询Pod的ClusterRole： 
+kubectl create clusterrole pod-reader --verb=get,list,watch --resource=pods 
+
+# 创建一个RoleBinding，把pod-reader 绑定至default 空间下的用户： 
+kubectl create rolebinding hangx-pod-reader --clusterrole=pod-reader --serviceaccount=default:hangx 
+# 创建一个ClusterRoleBinding，把 admin 权限绑定至default 空间下的用户： 
+kubectl create rolebinding hangx-admin-binding --clusterrole=admin --serviceaccount=default:hangx
+
+# 验证某个用户是否具有某个权限： 
+kubectl auth can-i get configmaps -n default --as=system:serviceaccount:default:hangx 
+kubectl auth can-i get configmaps --as=system:serviceaccount:default:hangx -n kube-system 
+~~~
+
 ## 常见的rolebinding示例
+
+### 基于user、group、sa
 
 - 用户名alice    
 
@@ -381,7 +463,232 @@ roleRef:
 
 <img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202311161418465.png" alt="image-20231116141855404" style="zoom:67%;" />
 
-# 
+## 生产环境通用权限管理
+
+### ns查询权限
+
+~~~yaml
+apiVersion: rbac.authorization.k8s.io/v1 
+kind: ClusterRole 
+metadata: 
+  name: namespace-readonly 
+rules: 
+- apiGroups: 
+  - "" 
+  resources: 
+  - namespaces 
+  verbs: 
+  - get 
+  - list 
+  - watch 
+- apiGroups: 
+  - metrics.k8s.io
+  resources: 
+  - pods 
+  verbs: 
+  - get 
+  - list 
+  - watch 
+~~~
+
+### pod删除权限
+
+~~~yaml
+apiVersion: rbac.authorization.k8s.io/v1 
+kind: ClusterRole 
+metadata: 
+  name: pod-delete 
+rules: 
+- apiGroups: 
+  - "" 
+  resources: 
+  - pods 
+  - pods/status 
+  verbs: 
+  - get 
+  - list 
+  - delete 
+~~~
+
+### 执行命令权限
+
+~~~yaml
+apiVersion: rbac.authorization.k8s.io/v1 
+kind: ClusterRole 
+metadata: 
+  name: pod-exec 
+rules: 
+- apiGroups: 
+  - "" 
+  resources: 
+  - pods 
+  - pods/status 
+  verbs: 
+  - get 
+  - list 
+- apiGroups: 
+  - "" 
+  resources: 
+  - pods/exec 
+  verbs: 
+  - create
+~~~
+
+### 查看日志权限
+
+~~~yaml
+apiVersion: rbac.authorization.k8s.io/v1 
+kind: ClusterRole 
+metadata: 
+  name: pod-log 
+rules: 
+- apiGroups: 
+  - "" 
+  resources: 
+  - pods 
+  - pods/log 
+  - pods/status 
+  verbs: 
+  - get 
+  - list 
+  - watch
+~~~
+
+### 资源编辑权限
+
+~~~yaml
+apiVersion: rbac.authorization.k8s.io/v1 
+kind: ClusterRole 
+metadata: 
+  name: configmap-deployment-manager 
+rules: 
+- apiGroups: [""] 
+  resources: ["configmaps"] 
+  verbs: ["get", "list", "watch", "create", "update", "patch"] 
+- apiGroups: ["apps"] 
+  resources: ["deployments"] 
+  verbs: ["get", "list", "watch", "create", "update", "patch"] 
+~~~
+
+### 用户授权
+
+~~~sh
+# 创建一个专用于存储用户的Namespace 
+kubectl create ns kube-users 
+
+# 因为在这个场景下，所有用户都是用过sa来作为用户登录的。
+# 授权kube-users空间下的所有sa都有查看Namespace的权限
+kubectl create clusterrolebinding namespace-readonly \ 
+--clusterrole=namespace-readonly  \ 
+--group=system:serviceaccounts:kube-users
+
+# 创建多个用户模拟不同的场景： 
+kubectl create sa project-a-develop -n kube-users 
+kubectl create sa project-a-ops -n kube-users 
+
+# 创建Namespace 模拟不同的环境： 
+kubectl create ns project-a-dev 
+kubectl create ns project-a-test 
+kubectl create ns project-a-prod
+~~~
+
+### 非生产环境管理
+
+在非生产环境，可以针对开发和测试人员开放查看日志和执行命令的权限，方便排查问题等。
+
+授权project-a-develop用户对project-a-dev和project-a-test两个空间可以有查看日志和执行命令的权限：
+
+~~~sh
+kubectl create rolebinding develop-pod-log \ 
+--clusterrole=pod-log \ 
+--serviceaccount=kube-users:project-a-develop \
+-n project-a-dev 
+
+kubectl create rolebinding develop-pod-exec \ 
+--clusterrole=pod-exec \ 
+--serviceaccount=kube-users:project-a-develop \
+-n project-a-dev 
+
+kubectl create rolebinding develop-pod-log \ 
+--clusterrole=pod-log  \ 
+--serviceaccount=kube-users:project-a-develop \
+-n project-a-test 
+
+kubectl create rolebinding develop-pod-exec \ 
+--clusterrole=pod-exec \ 
+--serviceaccount=kube-users:project-a-develop \
+-n project-a-test
+
+# 创建token测试
+kubectl create token project-a-develop -n kube-users 
+# 之后可以登录到dashboard测试权限或者生成kubeconfig进行测试
+~~~
+
+### 生产环境管理
+
+在生产环境，通常不允许其他用户有特别大的权限，此时可以限制只能查看日志。
+
+授权开发人员只能查看生产环境的日志权限：
+
+~~~sh
+kubectl create rolebinding develop-pod-log \ 
+--clusterrole=pod-log \ 
+--serviceaccount=kube-users:project-a-develop \
+-n project-a-prod
+~~~
+
+### 开发人员可以修改资源
+
+有时候开发人员需要修改程序的配置用来测试新功能或者排查故障，此时可以给开发人员授权可以编辑部分的资源，比如 ConfigMap（配置是cm注入的）或者 Deployment（配置是env注入的）。
+
+~~~sh
+kubectl create rolebinding develop-configmap-deployment-manager \ 
+--clusterrole=configmap-deployment-manager \ 
+--serviceaccount=kube-users:project-a-develop \
+-n project-a-dev
+~~~
+
+### 多租户具备受限管理员权限
+
+如果集群中分配了多个租户和运维人员，此时租户和运维人员应当具备指定空间的所有权限，此时可以直接使用admin或者edit的ClusterRole进行授权。
+
+比如授权project-a-ops 用户可以操作project-a-dev、test、prod 空间下的所有资源：
+
+~~~sh
+kubectl create rolebinding ops-edit \ 
+--clusterrole=edit \ 
+--serviceaccount=kube-users:project-a-ops \
+-n project-a-dev 
+
+kubectl create rolebinding ops-edit \ 
+--clusterrole=edit \ 
+--serviceaccount=kube-users:project-a-ops \
+-n project-a-test 
+
+kubectl create rolebinding ops-edit \ 
+--clusterrole=edit \ 
+--serviceaccount=kube-users:project-a-ops \
+-n project-a-prod
+~~~
+
+此时使用project-a-ops用户登录集群，即可操作上述空间的大部分资源。 
+
+### 应用程序访问集群资源
+
+有时候需要对部署在集群中的服务进行授权，使其可以访问资源的某些资源。比如获取集群中的 Pod 状态等，此时可以授权给某个 ServiceAccount，然后让 Pod 挂载该 ServiceAccount，此时该Pod内的程序即可具备相关的权限。
+
+比如要实现某个程序具备view的权限，可以用如下方式进行授权。首先创建一个用于该程序的ServiceAccount： 
+
+~~~sh
+kubectl create sa app-view -n project-a-dev 
+# 给这个sa授权
+kubectl create rolebinding app-view \ 
+--clusterrole=view \ 
+--serviceaccount=project-a-dev:app-view \
+-n project-a-dev
+~~~
+
+而后创建pod的时候，在spec.serviceaccountname字段指定sa为app-view即可。
 
 # 访问apiserver的认证
 
