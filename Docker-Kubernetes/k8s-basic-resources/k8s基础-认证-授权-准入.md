@@ -154,30 +154,20 @@ spec:
     - "/bin/sh"
     - "-c"
     - "sleep 36000"
-#进入pod
+# 进入pod
 k exec -it pod-busybox -- /bin/sh
 cd /var/run/secrets/kubernetes.io/serviceaccount/
-#手动请求apiserver接口，报403，是因为这个role还没有任何权限
-curl --cacert ./ca.crt  -H "Authorization: Bearer $(cat ./token)"  https://kubernetes/api/v1/namespaces/kube-system
+# 手动请求apiserver接口，报403，是因为这个role还没有任何权限
+curl --cacert ./ca.crt  -H "Authorization: Bearer $(cat ./token)" https://kubernetes/api/v1/namespaces/kube-system
 
-{
-  "kind": "Status",
-  "apiVersion": "v1",
-  "metadata": {},
-  "status": "Failure",
-  "message": "namespaces \"kube-system\" is forbidden: User \"system:serviceaccount:default:sa-test\" cannot get resource \"namespaces\" in API group \"\" in the namespace \"kube-system\"",
-  "reason": "Forbidden",
-  "details": {
-    "name": "kube-system",
-    "kind": "namespaces"
-  },
-  "code": 403
-  
 # 给这个role通过clusterrolebinding授予cluster-admin权限
 kubectl create clusterrolebinding sa-test-admin --clusterrole=cluster-admin  --serviceaccount=default:sa-test
+
 # 再去请求接口就成功了，请求pod信息可以看到所有namespace的信息。
 curl --cacert ./ca.crt  -H "Authorization: Bearer $(cat ./token)"  https://kubernetes/api/v1/pods
 ~~~
+
+> 注意：pod中挂载了sa，会在`/var/run/secrets/kubernetes.io/serviceaccount/`路径下生成ca.crt, namesapce, token等信息。如果这个pod里面有kubectl命令或者sdk（比如client-go），就能直接用，他会自动找到这个路径下的这些文件。
 
 ### 给ns中的所有sa同时授权
 
