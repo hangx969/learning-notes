@@ -86,7 +86,7 @@
    - 推荐的做法是通过`hostNetwork: true`，controller直接在宿主机上监听80和443端口。性能是最好的。
    - daemonset去部署controller，通过daemonset的nodeSelector去部署
 
-3. 前端的网关（F5、阿里云SLB、LVS、HAProxy），配置IP和upstream代理到这几个节点的80和443端口即可。这些网关服务都有健康检查机制，不需要再搞一个keepalived+VIP了。因为VIP同时只能绑在一个节点上，总是只有一个节点再高负载工作。不推荐这种架构。
+3. 前端的网关（F5、阿里云SLB、LVS、HAProxy），配置IP和upstream代理到这几个节点的80和443端口即可。这些网关服务都有健康检查机制，不需要再搞一个keepalived+VIP了。因为VIP同时只能绑在一个节点上，总是只有一个节点在高负载工作。不推荐这种架构。
 
 4. 在测试环境没有前端网关的时候，把ingress域名解析到任一个ingress-controller的节点IP即可（hosts文件手动加解析）。
 

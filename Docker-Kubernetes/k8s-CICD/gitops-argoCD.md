@@ -6,6 +6,8 @@ Argo CD 的核心思想是将 Git 仓库作为应用部署和基础设施配置�
 
 它自动同步 Git 仓库中定义的期望应用状态（通常是 Kubernetes 清单 YAML 文件、Helm Charts、Kustomize 目录等）与目标 Kubernetes 集群中的实际运行状态，确保两者始终保持一致。这种模式被称为 GitOps。
 
+官网地址：[Argo CD 中文文档 平台工程 Devops](https://argocd.devops.gold/)
+
 ## 核心概念与工作原理
 
 1. **声明式配置：** 用户通过在 Git 仓库中定义应用程序的期望状态（使用 YAML、Helm、Kustomize     等）。Argo CD 不关心 *如何* 达到这个状态，只关心集群当前状态是否与 Git 中定义的期望状态匹配。
@@ -77,6 +79,10 @@ kubectl get secret argocd-initial-admin-secret -n argocd -o jsonpath="{.data.pas
 
 # 安装ArgoCD-基于helm chart
 
+> 注意：目前argocd helm chart仅支持非高可用安装方式。
+>
+> 如需高可用安装，参考：[ArgoCD-HA](https://argocd.devops.gold/operator-manual/installation/#_4)
+
 github release：[argoproj/argo-helm: ArgoProj Helm Charts](https://github.com/argoproj/argo-helm)
 
 artifactHub：[argo-cd 3.9.0 · argoproj/argo](https://artifacthub.io/packages/helm/argo/argo-cd/3.9.0)
@@ -84,6 +90,17 @@ artifactHub：[argo-cd 3.9.0 · argoproj/argo](https://artifacthub.io/packages/h
 ~~~sh
 helm repo add argo https://argoproj.github.io/argo-helm
 helm repo update argo
-helm pull argo/argo-cd --ver
+helm pull argo/argo-cd --version 8.3.0
 ~~~
+
+修改values.yaml文件：
+
+~~~yaml
+~~~
+
+# 基本使用
+
+## 基于gitee仓库部署yaml
+
+参考官网教程部署示例：https://argocd.devops.gold/getting_started/
 
