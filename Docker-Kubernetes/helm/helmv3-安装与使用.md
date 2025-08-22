@@ -41,10 +41,11 @@
 ### Linux安装
 
 ~~~sh
-#对于k8s 1.23版本，小于等于3.11.x版本的helm是支持的
-tar zxvf helm-v3.11.3-linux-amd64.tar.gz
+# 对于k8s 1.23版本，小于等于3.11.x版本的helm是支持的
+wget https://get.helm.sh/helm-v3.16.2-linux-amd64.tar.gz 
+tar zxvf helm-v3.16.2-linux-amd64.tar.gz
 cp linux-amd64/helm /bin/  #/bin/是默认的环境变量路径之一，所以移动后你可以在任何位置运行这个二进制文件。
-#查看helm版本
+# 查看helm版本
 helm version
 ~~~
 
@@ -96,7 +97,28 @@ Scoop添加软件仓库的命令是`scoop bucket add bucketname (+ url可选)`�
 
 一行命令安装：`scoop install helm`
 
-## 配置chart仓库
+# helm仓库类型
+
+## ChartMuseum
+
+- 访问方式：HTTP/HTTPS
+- 命令：helm repo add添加仓库，helm install安装应用
+
+## OCI
+
+- 访问方式：OCI规范（helm 3.8之后加进来的，相当于用镜像仓库存储helm chart）
+
+- helm registry去登录仓库，登录完用helm pull可以直接拉chart包，或者helm install安装
+
+  ~~~sh
+  helm pull oci://registry-1.docker.io/bitnamicharts/schema-registry
+  ~~~
+
+  > 官方仓库：https://artifacthub.io
+
+# helm基本使用
+
+## 添加chart仓库
 
 - 配置国内存放chart仓库的地址:
 
@@ -121,19 +143,13 @@ helm repo remove aliyun
 helm search repo aliyun
 ~~~
 
-## 仓库类型
+- chart仓库保存位置
 
-### ChartMuseum
+  如果需要转移到另一台机器，复制这个文件即可
 
-- 访问方式：HTTP/HTTPS
-- 命令：helm repo add
-
-### OCI
-
-- 访问方式：OCI规范（helm 3.8之后加进来的，相当于用镜像仓库存储helm chart）
-- helm registry去登录，helm pull可以直接拉chart包
-
-# helm基本使用
+  ~~~sh
+  cat /root/.config/helm/repositories.yaml 
+  ~~~
 
 ## 搜索和下载chart
 
@@ -141,6 +157,7 @@ helm search repo aliyun
 
 ~~~sh
 helm search repo aliyun | grep memcached
+helm search repo aliyun/memcached -l # 查看chart所有版本
 ~~~
 
 - 查看chart信息
@@ -154,11 +171,6 @@ helm show chart aliyun/memcached
 ~~~sh
 helm pull aliyun/memcached
 tar zxvf memcached-2.0.1.tgz
-cd memcached
-ls
-#Chart.yaml: chart的基本信息，包括版本名字之类
-#templates: 存放k8s的部署资源模板，通过渲染变量得到部署文件
-#values.yaml：存放全局变量，templates下的文件可以调用
 ~~~
 
 - 一键下载helm chart并解压
@@ -169,131 +181,33 @@ helm fetch stable/mysql --version 0.2.8 --untar
 
 ## 部署chart
 
-### 方式
-
 ~~~sh
-#指定chart: 
+# 指定chart: 
 helm install stable/mariadb
-#指定打包的chart: 
+# 指定打包的chart: 
 helm install ./nginx-1.2.3.tgz
-#指定打包目录: 
+# 指定打包目录: 
 helm install ./nginx
-#指定chart包URL: 
+# 当前已经在chart目录里面了，直接在当前目录部署helm chart
+helm install .
+# 指定chart包URL: 
 helm install https://example.com/charts/nginx-1.2.3.tgz
 ~~~
 
-### 示例-helm部署memcached服务
+## release管理
 
 ~~~sh
-docker load -i memcache_1_4_36.tar.gz
-#如果k8s用的是docker做容器运行时，用docker load -i导出镜像
-#如果k8s用的是containerd做容器运行时，用ctr -n=k8s.io images导出镜像
-#修改statefulset.yaml文件
-cd memcached
-rm -f templates/pdb.yaml
-cat templates/statefulset.yaml
-#apiVersion后面的value值变成apps/v1
-#spec下添加selector字段
-selector:
-  matchLabels:
-    app: {{ template "memcached.fullname" . }}  # template与include作用类似，都是从helpers.tpl中获取模板值
-    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
-    release: "{{ .Release.Name }}"
-    heritage: "{{ .Release.Service }}"
-#删除spec.affinity亲和性配置
-#部署
-helm install memcached ./
-#验证服务可用性
-yum install nc -y
-#If you'd like to test your instance, forward the port locally:
-export POD_NAME=$(kubectl get pods --namespace default -l "app=memcached-memcached" -o jsonpath="{.items[0].metadata.name}")
-kubectl port-forward $POD_NAME 11211
-#In another tab, attempt to set a key:
-echo -e 'set mykey 0 60 5\r\nhello\r' | nc localhost 11211
-#You should see:
-#STORED
-~~~
-
-- statefulset的yaml文件
-
-~~~yaml
-apiVersion: apps/v1
-kind: StatefulSet
-metadata:
-  name: {{ template "memcached.fullname" . }}
-  labels:
-    app: {{ template "memcached.fullname" . }}
-    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
-    release: "{{ .Release.Name }}"
-    heritage: "{{ .Release.Service }}"
-spec:
-  selector:
-    matchLabels:
-      app: {{ template "memcached.fullname" . }}
-      chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
-      release: "{{ .Release.Name }}"
-      heritage: "{{ .Release.Service }}"
-  serviceName: {{ template "memcached.fullname" . }}
-  replicas: {{ .Values.replicaCount }}
-  template:
-    metadata:
-      labels:
-        app: {{ template "memcached.fullname" . }}
-        chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
-        release: "{{ .Release.Name }}"
-        heritage: "{{ .Release.Service }}"
-    spec:
-      containers:
-      - name: {{ template "memcached.fullname" . }}
-        image: {{ .Values.image }}
-        imagePullPolicy: {{ default "" .Values.imagePullPolicy | quote }}
-        command:
-        - memcached
-        - -m {{ .Values.memcached.maxItemMemory  }}
-        {{- if .Values.memcached.extendedOptions }}
-        - -o
-        - {{ .Values.memcached.extendedOptions }}
-        {{- end }}
-        {{- if .Values.memcached.verbosity }}
-        - -{{ .Values.memcached.verbosity }}
-        {{- end }}
-        ports:
-        - name: memcache
-          containerPort: 11211
-        livenessProbe:
-          tcpSocket:
-            port: memcache
-          initialDelaySeconds: 30
-          timeoutSeconds: 5
-        readinessProbe:
-          tcpSocket:
-            port: memcache
-          initialDelaySeconds: 5
-          timeoutSeconds: 1
-        resources:
-{{ toYaml .Values.resources | indent 10 }}
-~~~
-
-> - 这句 Helm 模板代码 `name: {{ template "memcached.fullname" . }}` 是在调用一个名为 "memcached.fullname" 的模板。
->
-> - 在 Helm 中，你可以定义自己的模板，并在其他地方调用。这些自定义模板通常定义在 `_helpers.tpl` 文件中。例如，"memcached.fullname" 可能在 `_helpers.tpl` 文件中定义如下：
->
-> ```yaml
-> {{- define "memcached.fullname" -}}
-> {{- printf "%s-%s" .Release.Name .Chart.Name | trunc 63 | trimSuffix "-" -}}
-> {{- end -}}
-> ```
->
-> - 这个模板会生成一个由 Helm 的 release 名称和 chart 名称组成的字符串，然后将其长度截断到 63 个字符，并去除末尾的 "-"。
->
-> - 当你在其他地方使用 `{{ template "memcached.fullname" . }}` 时，Helm 会找到这个 "memcached.fullname" 模板，并用当前的上下文（`.`）来渲染它。这样，你就可以在多个地方复用这个模板，而不需要每次都写出完整的逻辑。
-
-## release操作
-
-~~~sh
-#查看release发布状态
+# 查看release发布状态
 helm list
-#删除release，会把release对应的资源全部删除
+# 查看release提示信息
+helm status memcached
+# 查看release历史版本
+helm history memcached
+# 查看修改了哪些values（仅在使用了--set设置values的情况下才会显示）
+helm get values memcached
+# 回滚到指定版本
+helm rollback memcached 3
+# 删除release，会把release对应的资源全部删除
 helm uninstall memcached
 ~~~
 
@@ -307,11 +221,11 @@ helm uninstall memcached
 
 > 不像大部分的Kubernetes对象，CRD是全局安装的。因此Helm管理CRD时会采取非常谨慎的方式。 CRD受到以下限制：
 >
-> - CRD从不重新安装。 如果Helm确定`crds/`目录中的CRD已经存在（忽略版本），Helm不会安装或升级。
+> - CRD从不重新安装。如果Helm确定`crds/`目录中的CRD已经存在（忽略版本），Helm不会安装或升级。
 > - CRD从不会在升级或回滚时安装。Helm只会在安装时创建CRD。
 > - CRD从不会被删除。自动删除CRD会删除集群中所有命名空间中的所有CRD内容。因此Helm不会删除CRD。
 
-## 给资源加入helm管理
+## 把k8s资源加入helm管理
 
 - 某项资源是手动创建出来的，现在需要加到某个helm release里面，变成helm去管理，需要给这个资源加上label和annotations：
   - `label： "app.kubernetes.io/managed-by"="Helm"`
@@ -333,7 +247,7 @@ kubectl get crd --no-headers -o custom-columns=":metadata.name" | grep kyverno |
 
 # 自定义chart模板
 
-## 创建模板
+## helm chart目录结构
 
 ~~~sh
 #当我们安装好helm之后我们可以开始自定义chart，那么我们需要先创建出一个模板如下：
@@ -341,17 +255,23 @@ helm create myapp
 cd myapp/
 tree ./
 
-├── charts # 用于存放所依赖的子chart
+├── charts # 用于存放依赖的子chart
 ├── Chart.yaml # 描述这个 Chart 的相关信息、包括名字、描述信息、版本等
+|     apiVersion # Chart的apiVersion，目前默认都是v2
+|     name # chart的名称
+|     type # Chart的类型，一般都用application
+|     version # Chart自己的版本号
+|     appVersion # Chart内应用的版本号
+|     description # Chart的描述信息
 ├── templates # 模板目录，保留创建k8s的资源清单文件
 │   ├── deployment.yaml # deployment资源的go模板文件
-│   ├── _helpers.tpl # 模板助手文件，定义的值可在模板中使用
+│   ├── _helpers.tpl # 自定义的模板或者函数
 │   ├── hpa.yaml 
 │   ├── ingress.yaml
-│   ├── NOTES.txt #做补充说明的notes
+│   ├── NOTES.txt # Chart安装完成后输出到控制台的提示信息
 │   ├── serviceaccount.yaml
 │   ├── service.yaml
-│   └── tests
+│   └── tests # 存放测试文件的目录
 │       └── test-connection.yaml
 └── values.yaml # 模板的值文件，这些值会在安装时应用到 GO 模板生成部署文件
 ~~~
@@ -632,7 +552,143 @@ cd ~/myapp/
 helm install nginx ./ #Chart.yaml在当前目录下，就用 ./去部署
 ~~~
 
-# Lab-自定义chart部署flask应用并推送到harbor
+# Helm常用命令演示
+
+- 官网地址：[Helm | Helm](https://helm.sh/zh/docs/helm/helm/)
+
+## helm调试命令
+
+### helm template
+
+- 如果想根据Chart导出yaml，可以使用template字段，一键导出所有部署的yaml文件
+
+  ~~~sh
+  helm template mamcached . --output-dir yaml # 导出所有
+  helm template cert-manager jetstack/cert-manager -n cert-manager -f values.yaml > cert-manager.yaml # 导出单个
+  ~~~
+
+### helm diff
+
+- 用于展示helm upgrade将会带来哪些变化：https://github.com/databus23/helm-diff?tab=readme-ov-file
+
+  ~~~sh
+  #比较升级会带来哪些变化
+  helm diff upgrade <release name> -n <namespace> <source-chart-location> --version $VERSION -f values.yaml --set xxx=$xxx
+  #比较两个chart版本的变化
+  helm diff revision nginx-chart 1 2
+  ~~~
+
+### helm lint
+
+- 用来检查chart格式是否有问题
+
+  ~~~sh
+  helm lint mysql
+  helm lint /root/myapp/
+  
+  ==> Linting /root/myapp/
+  [INFO] Chart.yaml: icon is recommended
+  
+  1 chart(s) linted, 0 chart(s) failed
+  ~~~
+
+### helm install --dry-run
+
+- 模拟安装到集群中，看看是否会有报错
+
+## 部署chart
+
+~~~sh
+#指定chart: 
+helm install stable/mariadb
+#指定打包的chart: 
+helm install ./nginx-1.2.3.tgz
+#指定打包目录: 
+helm install ./nginx
+#指定chart包URL: 
+helm install https://example.com/charts/nginx-1.2.3.tgz
+~~~
+
+## 调整参数
+
+~~~sh
+helm upgrade --set service.type="NodePort" nginx .
+~~~
+
+> - 在 Helm 命令中，`.` 表示当前目录。
+>
+> - 命令 `helm upgrade --set service.type="NodePort" nginx .` 中，`.` 表示 Helm chart 的位置是当前目录。Helm 将在这个目录下查找 `Chart.yaml` 文件以及其他相关的模板文件来部署或升级你的应用。
+
+## 回滚版本
+
+~~~sh
+#查看历史版本号
+helm history nginx
+#简写为hist
+helm hist nginx
+# 回滚到指定版本号
+helm rollback nginx 1
+~~~
+
+## 查看部署状态
+
+~~~sh
+helm status nginx
+~~~
+
+## 打包chart
+
+~~~sh
+helm package /root/myapp/
+~~~
+
+## 查看chart
+
+~~~sh
+#inspect和show互为alias
+helm inspect chart ~/myapp/
+helm show chart ~/myapp/
+~~~
+
+# 可视化管理工具-helm dashboard
+
+- 一款开源helm ui插件：https://github.com/komodorio/helm-dashboard
+
+- 安装插件
+
+  ~~~sh
+  helm plugin install https://github.com/komodorio/helm-dashboard.git
+  ~~~
+
+- 更新插件
+
+  ~~~sh
+  helm plugin update dashboard
+  ~~~
+
+- 卸载
+
+  ~~~sh
+  helm plugin uninstall dashboard
+  ~~~
+
+- 使用插件
+
+  ~~~sh
+   设置服务运行绑定 ipv4 ,否则只能本地访问
+  export HD_BIND=0.0.0.0
+  # 设置 web 端口，默认8080
+  export HD_PORT=9000
+  
+  # 设置1是不打开浏览器，否则默认打开浏览器
+  #export HD_NOBROWSER=1
+  # 后台运行
+  setsid helm dashboard &
+  ~~~
+
+> helm安装helm dashboard：https://github.com/komodorio/helm-charts/tree/master/charts/helm-dashboard
+
+# 实战-自定义chart部署flask应用并推送到harbor
 
 ## 应用代码
 
@@ -858,143 +914,3 @@ cat my-hello/templates/NOTES.txt
 helm ls
 helm uninstall my-hello
 ~~~
-
-# Helm常用命令演示
-
-- 官网地址：[Helm | Helm](https://helm.sh/zh/docs/helm/helm/)
-
-## helm调试命令
-
-### helm template
-
-- 输出部署文件
-
-~~~sh
-helm template cert-manager jetstack/cert-manager -n cert-manager -f values.yaml > cert-manager.yaml
-~~~
-
-### helm diff
-
-- 用于展示helm upgrade将会带来哪些变化：https://github.com/databus23/helm-diff?tab=readme-ov-file
-
-  ~~~sh
-  #比较升级会带来哪些变化
-  helm diff upgrade <release name> -n <namespace> <source-chart-location> --version $VERSION -f values.yaml --set xxx=$xxx
-  #比较两个chart版本的变化
-  helm diff revision nginx-chart 1 2
-  ~~~
-
-### helm lint
-
-- 用来检查chart格式是否有问题
-
-  ~~~sh
-  helm lint mysql
-  helm lint /root/myapp/
-  
-  ==> Linting /root/myapp/
-  [INFO] Chart.yaml: icon is recommended
-  
-  1 chart(s) linted, 0 chart(s) failed
-  ~~~
-
-
-### helm get values
-
-- 输出实际部署到charts中的values值
-
-### helm install --dry-run
-
-- 模拟安装到集群中，看看是否会有报错
-
-## 部署chart
-
-~~~sh
-#指定chart: 
-helm install stable/mariadb
-#指定打包的chart: 
-helm install ./nginx-1.2.3.tgz
-#指定打包目录: 
-helm install ./nginx
-#指定chart包URL: 
-helm install https://example.com/charts/nginx-1.2.3.tgz
-~~~
-
-## 调整参数
-
-~~~sh
-helm upgrade --set service.type="NodePort" nginx .
-~~~
-
-> - 在 Helm 命令中，`.` 表示当前目录。
->
-> - 命令 `helm upgrade --set service.type="NodePort" nginx .` 中，`.` 表示 Helm chart 的位置是当前目录。Helm 将在这个目录下查找 `Chart.yaml` 文件以及其他相关的模板文件来部署或升级你的应用。
-
-## 回滚版本
-
-~~~sh
-#查看历史版本号
-helm history nginx
-#简写为hist
-helm hist nginx
-# 回滚到指定版本号
-helm rollback nginx 1
-~~~
-
-## 查看部署状态
-
-~~~sh
-helm status nginx
-~~~
-
-## 打包chart
-
-~~~sh
-helm package /root/myapp/
-~~~
-
-## 查看chart
-
-~~~sh
-#inspect和show互为alias
-helm inspect chart ~/myapp/
-helm show chart ~/myapp/
-~~~
-
-# 可视化管理工具-helm dashboard
-
-- 一款开源helm ui插件：https://github.com/komodorio/helm-dashboard
-
-- 安装插件
-
-  ~~~sh
-  helm plugin install https://github.com/komodorio/helm-dashboard.git
-  ~~~
-
-- 更新插件
-
-  ~~~sh
-  helm plugin update dashboard
-  ~~~
-
-- 卸载
-
-  ~~~sh
-  helm plugin uninstall dashboard
-  ~~~
-
-- 使用插件
-
-  ~~~sh
-   设置服务运行绑定 ipv4 ,否则只能本地访问
-  export HD_BIND=0.0.0.0
-  # 设置 web 端口，默认8080
-  export HD_PORT=9000
-  
-  # 设置1是不打开浏览器，否则默认打开浏览器
-  #export HD_NOBROWSER=1
-  # 后台运行
-  setsid helm dashboard &
-  ~~~
-
-> helm安装helm dashboard：https://github.com/komodorio/helm-charts/tree/master/charts/helm-dashboard
