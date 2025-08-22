@@ -245,13 +245,115 @@ kubectl get crd --no-headers -o custom-columns=":metadata.name" | grep kyverno |
 kubectl get crd --no-headers -o custom-columns=":metadata.name" | grep kyverno | xargs -I {} kubectl label crd {} app.kubernetes.io/managed-by=Helm
 ~~~
 
-# 自定义chart模板
+# Helm常用命令演示
 
-## helm chart目录结构
+- 官网地址：[Helm | Helm](https://helm.sh/zh/docs/helm/helm/)
+
+## helm调试命令
+
+### helm template
+
+- 如果想根据Chart导出yaml，可以使用template字段，一键导出所有部署的yaml文件
+
+  ~~~sh
+  helm template mamcached . --output-dir yaml # 导出所有
+  helm template cert-manager jetstack/cert-manager -n cert-manager -f values.yaml > cert-manager.yaml # 导出单个
+  ~~~
+
+### helm diff
+
+- 用于展示helm upgrade将会带来哪些变化：https://github.com/databus23/helm-diff?tab=readme-ov-file
+
+  ~~~sh
+  #比较升级会带来哪些变化
+  helm diff upgrade <release name> -n <namespace> <source-chart-location> --version $VERSION -f values.yaml --set xxx=$xxx
+  #比较两个chart版本的变化
+  helm diff revision nginx-chart 1 2
+  ~~~
+
+### helm lint
+
+- 用来检查chart格式是否有问题
+
+  ~~~sh
+  helm lint mysql
+  helm lint /root/myapp/
+  
+  ==> Linting /root/myapp/
+  [INFO] Chart.yaml: icon is recommended
+  
+  1 chart(s) linted, 0 chart(s) failed
+  ~~~
+
+### helm install --dry-run
+
+- 模拟安装到集群中，看看是否会有报错
+
+## 部署chart
 
 ~~~sh
-#当我们安装好helm之后我们可以开始自定义chart，那么我们需要先创建出一个模板如下：
+#指定chart: 
+helm install stable/mariadb
+#指定打包的chart: 
+helm install ./nginx-1.2.3.tgz
+#指定打包目录: 
+helm install ./nginx
+#指定chart包URL: 
+helm install https://example.com/charts/nginx-1.2.3.tgz
+~~~
+
+## 调整参数
+
+~~~sh
+helm upgrade --set service.type="NodePort" nginx .
+~~~
+
+> - 在 Helm 命令中，`.` 表示当前目录。
+>
+> - 命令 `helm upgrade --set service.type="NodePort" nginx .` 中，`.` 表示 Helm chart 的位置是当前目录。Helm 将在这个目录下查找 `Chart.yaml` 文件以及其他相关的模板文件来部署或升级你的应用。
+
+## 回滚版本
+
+~~~sh
+#查看历史版本号
+helm history nginx
+#简写为hist
+helm hist nginx
+# 回滚到指定版本号
+helm rollback nginx 1
+~~~
+
+## 查看部署状态
+
+~~~sh
+helm status nginx
+~~~
+
+## 打包chart
+
+~~~sh
+helm package /root/myapp/
+~~~
+
+## 查看chart
+
+~~~sh
+#inspect和show互为alias
+helm inspect chart ~/myapp/
+helm show chart ~/myapp/
+~~~
+
+# 自定义chart模板
+
+## 生成chart目录模板
+
+~~~sh
 helm create myapp
+~~~
+
+## chart目录结构
+
+~~~sh
 cd myapp/
 tree ./
 
@@ -292,21 +394,22 @@ tree ./
 >
 > ```yaml
 > image: 
->     tag: "v1.0.0"
+>  tag: "v1.0.0"
 > ```
 >
 > 这样，Helm 在安装 chart 时，会将模板中的 `{{ .Values.image.tag }}` 替换为 "v1.0.0"，生成最终的 Kubernetes 配置文件。
 
 ~~~yaml
-apiVersion: v2 #Helm Chart的API版本，这里使用的是v2版本。在 v2 版本的 Helm 中，apiVersion 是 v1，而在 v3 版本的 Helm 中，apiVersion 升级为 v2
-name: myapp # 指定Chart的名称，这个名称将用于在Helm中引用这个Chart
+# Helm Chart的API版本，这里使用的是v2版本。在 v2 版本的 Helm 中，apiVersion 是 v1，而在 v3 版本的 Helm 中，apiVersion 升级为 v2
+apiVersion: v2 
+# 指定Chart的名称，这个名称将用于在Helm中引用这个Chart
+name: myapp 
 description: A Helm chart for Kubernetes
-version: 0.0.1 # Chart的版本号。每当对Chart和其模板（templates）进行更改时，包括应用版本，都应该递增这个版本号。版本号遵循语义化版本（Semantic Versioning）规范
-appVersion: "latest" #镜像标签的版本号
-type: application #指定Chart的类型，可以是'application'或'library'。在这个示例中，类型为'application'，意味着这是一个可以部署的应用程序Chart
-maintainers:
-- name: xxx
-  wechat: xxx #自定义联系方式
+# Chart的版本号。每当对Chart和其模板（templates）进行更改时，包括应用版本，都应该递增这个版本号。版本号遵循语义化版本（Semantic Versioning）规范
+version: 0.0.1 
+appVersion: "latest" # 镜像标签的版本号
+# 指定Chart的类型，可以是'application'或'library'。在这个示例中，类型为'application'，意味着这是一个可以部署的应用程序Chart
+type: application
 ~~~
 
 ## 编写deployment.yaml
@@ -464,19 +567,15 @@ Create the name of the service account to use
 # Default values for myapp.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
-
 replicaCount: 1
-
 image:
   repository: nginx
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: "latest"
-
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
-
 serviceAccount:
   # Specifies whether a service account should be created
   create: true
@@ -485,12 +584,9 @@ serviceAccount:
   # The name of the service account to use.
   # If not set and create is true, a name is generated using the fullname template
   name: ""
-
 podAnnotations: {}
-
 podSecurityContext: {}
   # fsGroup: 2000
-
 securityContext: {}
   # capabilities:
   #   drop:
@@ -498,11 +594,9 @@ securityContext: {}
   # readOnlyRootFilesystem: true
   # runAsNonRoot: true
   # runAsUser: 1000
-
 service:
   type: ClusterIP
   port: 80
-
 ingress:
   enabled: false
   className: ""
@@ -518,7 +612,6 @@ ingress:
   #  - secretName: chart-example-tls
   #    hosts:
   #      - chart-example.local
-
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
   # choice for the user. This also increases chances charts run on environments with little
@@ -530,18 +623,14 @@ resources: {}
   # requests:
   #   cpu: 100m
   #   memory: 128Mi
-
 autoscaling:
   enabled: false
   minReplicas: 1
   maxReplicas: 100
   targetCPUUtilizationPercentage: 80
   # targetMemoryUtilizationPercentage: 80
-
 nodeSelector: {}
-
 tolerations: []
-
 affinity: {}
 ~~~
 
@@ -552,103 +641,177 @@ cd ~/myapp/
 helm install nginx ./ #Chart.yaml在当前目录下，就用 ./去部署
 ~~~
 
-# Helm常用命令演示
+# Helm Chart开发语法
 
-- 官网地址：[Helm | Helm](https://helm.sh/zh/docs/helm/helm/)
-
-## helm调试命令
-
-### helm template
-
-- 如果想根据Chart导出yaml，可以使用template字段，一键导出所有部署的yaml文件
-
-  ~~~sh
-  helm template mamcached . --output-dir yaml # 导出所有
-  helm template cert-manager jetstack/cert-manager -n cert-manager -f values.yaml > cert-manager.yaml # 导出单个
-  ~~~
-
-### helm diff
-
-- 用于展示helm upgrade将会带来哪些变化：https://github.com/databus23/helm-diff?tab=readme-ov-file
-
-  ~~~sh
-  #比较升级会带来哪些变化
-  helm diff upgrade <release name> -n <namespace> <source-chart-location> --version $VERSION -f values.yaml --set xxx=$xxx
-  #比较两个chart版本的变化
-  helm diff revision nginx-chart 1 2
-  ~~~
-
-### helm lint
-
-- 用来检查chart格式是否有问题
-
-  ~~~sh
-  helm lint mysql
-  helm lint /root/myapp/
-  
-  ==> Linting /root/myapp/
-  [INFO] Chart.yaml: icon is recommended
-  
-  1 chart(s) linted, 0 chart(s) failed
-  ~~~
-
-### helm install --dry-run
-
-- 模拟安装到集群中，看看是否会有报错
-
-## 部署chart
+## 常用内置变量
 
 ~~~sh
-#指定chart: 
-helm install stable/mariadb
-#指定打包的chart: 
-helm install ./nginx-1.2.3.tgz
-#指定打包目录: 
-helm install ./nginx
-#指定chart包URL: 
-helm install https://example.com/charts/nginx-1.2.3.tgz
+Release.Name # 实例的名称，helm install指定的名字
+Release.Namespace # 实例对应的名称空间
+Release.IsUpgrade # 如果当前对实例的操作是更新或者回滚，这个变量就是true
+Release.IsInstall # 如果当前对实例的操作是安装，这个变量就是true
+Release.Revision # 此次修订的版本号，从1开始，每次升级回滚都会+1
+Chart # 用来取Chart.yaml文件中的内容，可以使用Chart.Version表示应用版本，Chart.Name表示Chart的名称
 ~~~
 
-## 调整参数
+## 常用函数
+
+### 字符串函数
 
 ~~~sh
-helm upgrade --set service.type="NodePort" nginx .
+trim # 去除字符串两边的空格
+trimAll # 从字符串中移除给定的字符
+trimPrefix # 从字符串前面移除某个字符
+trimSuffix # 从字符串后面移除某个字符
+lower # 转成小写
+upper # 转成大写
+title # 首字母大写
+repeat # 重复产生字符串
+nospace # 去除所有空格
+contains # 判断是否包含某个值
+hasPrefix # 判断是否以什么开头
+hasSuffix # 判断是否以什么结尾
+quote # 使用双引号括起来字符串
+squote # 使用单引号括起来字符串
+cat # 字符串使用空格连接
+indent # 已制定的长度缩进
+nindent # 缩进，并添加新的一行
+substr # 截取字符串，从哪里到哪里
+trunc # 阶段字符串，从前或者从后
+print # 组合字符串
+println # 和print效果一样，但是会在某位新加一行
+printf # 格式化字符串，用占位符实现：printf "%s has %d dots" .Name .NumberDots
 ~~~
 
-> - 在 Helm 命令中，`.` 表示当前目录。
->
-> - 命令 `helm upgrade --set service.type="NodePort" nginx .` 中，`.` 表示 Helm chart 的位置是当前目录。Helm 将在这个目录下查找 `Chart.yaml` 文件以及其他相关的模板文件来部署或升级你的应用。
-
-## 回滚版本
+### 类型转换函数
 
 ~~~sh
-#查看历史版本号
-helm history nginx
-#简写为hist
-helm hist nginx
-# 回滚到指定版本号
-helm rollback nginx 1
+atoi # 字符串转成整型
+toString # 转换为字符串：12345这种数值、true/false这种布尔值，最需要转成字符串来使用，才能在yaml中作为key或者value来使用。
+toStrings # 转换为字符串列表
+toYaml # 将列表、切片、数组、字典等，转换成已缩进的yaml块。对于整块存在的多项配置，用这个一起打包转成yaml快很好用
 ~~~
 
-## 查看部署状态
+### 逻辑比较函数
 
 ~~~sh
-helm status nginx
+and # 且，多个条件必须同时成立
+or # 或，多个条件成立一个即可
+not # 取反
+eq # 判断是否相等
+ne # 判断是否不相等
+lt # 是否小于
+le # 是否小于等于
+gt # 是否大于
+ge # 是否大于等于
+default # 设置默认值
+empty # 判断是否为空
 ~~~
 
-## 打包chart
+## 管道符
 
-~~~sh
-helm package /root/myapp/
+helm的管道符用 | 来表示，可以按顺序完成一系列任务，比如：
+
+~~~yaml
+data:
+  v1: {{ .Values.env.v1 | repeat 5 | quote }}
+  v2: {{ .Values.env.v2 | upper | quote }}
 ~~~
 
-## 查看chart
+## 流控制
 
-~~~sh
-#inspect和show互为alias
-helm inspect chart ~/myapp/
-helm show chart ~/myapp/
+### 条件语句if/else
+
+~~~yaml
+{{ if PIPELINE }}
+  # Do something
+{{ if OTHER PIPELINE }}
+  # Do something else
+{{ else }}
+  # Default case
+{{ end }}
 ~~~
+
+~~~yaml
+{{- if eq.Values.data.v1 "test" }}
+env: "test"
+{{ end }}
+~~~
+
+> {{- 是为了去掉渲染之后的 `env:test` 这一行的上面的空行
+
+## 循环语句range
+
+~~~yaml
+{{ range xxx }}
+  # Do something
+{{ end }}
+~~~
+
+### 循环遍历列表
+
+~~~yaml
+# 假设values.yaml中有这样一行列表配置：
+pizzaToppings:
+- mushrooms
+- cheese
+- peppers
+- onions
+
+# 在模板中可以这样生成一段字符串列表配置：
+toppings: |-
+  {{- range .Values.pizzaToppings }}
+  - {{ . | title | quote }} # . 代表每次循环的当前上下文的值
+  {{- end }}
+
+# 渲染出来结果就是：
+toppings: |-
+  - "Mushrooms"
+  - "Cheese"
+  - "Peppers"
+  - "Onions"
+~~~
+
+### 循环遍历字典kv
+
+~~~yaml
+# 假设values.yaml中有一个字典
+favorite:
+  drink: coffee
+  food: pizza
+
+# 在模板中可以这样来渲染成字符串的k-v
+{{- range $key. $val := .Values.favorite }}
+  {{ $key }}: {{ $val | quote }}
+{{- end }}
+
+# 结果就是
+favorite: |-
+  drink: "coffee"
+  food: "pizza"
+~~~
+
+## 更改取值作用域with
+
+主要用于values中有多层的值，取值非常麻烦，非常长，而且如果改掉values中的母值，模板中的母值就都要改。用with把取值作用域框在母值下面，就方便很多：
+
+~~~yaml
+{{ with PIPELINE }}
+ # restricted scope
+{{ end }}
+
+# 使用之前的取值
+drink: {{ .Values.favorite.drink | default "tea" | quote }}
+food: {{ .Values.favorite.food | upper | quote }}
+
+# 更改作用域之后
+{{- with .Values.favorite }}
+drink: {{ .drink | default "tea" | quote }}
+food: {{ .food | upper | quote }}
+{{- end }}
+~~~
+
+注意：在更改作用域的范围内，如果想要再取到其他外面的变量，需要指定$符，比如：`{{ $.Release.Name }}`
 
 # 可视化管理工具-helm dashboard
 
