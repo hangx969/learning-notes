@@ -57,52 +57,6 @@ Operator的控制器，监视CRD的状态，根据用户配置执行相应的操
 3. 创建CRD
 4. 创建自定义资源（创建yaml文件，kind: CRD的类型，部署即可）
 
-# 通过operator安装redis集群
-
-## 找到官网
-
-- 进入operator官网找到Redis Operator：[OperatorHub.io | The registry for Kubernetes Operators](https://operatorhub.io/operator/redis-operator)
-- 找到Redis Operator的官网：[Redis Operator | Redis Operator](https://ot-redis-operator.netlify.app/docs/)
-
-- 推荐Cluster模式（集群模式）去部署redis（或者单节点模式，或者哨兵模式其次，不推荐主从模式replication，在k8s中会有问题，主从切换不是那么很及时）
-
-> Redis Cluster 是 Redis 的分布式部署模式，可以让多个 Redis 实例以集群的方式运行，从而提供高可用性、水平扩展和数据冗余的能力。Redis  Cluster 通过分片（Sharding ）和复制（Replication）技术，确保数据可以在多个节点之间分布，并且在节点故障时能够自动恢复。
->
-> 注意Redis集群**最少也要6个实例**（3主3从），6个已经可以满足大部分需求了。
->
-> <img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202507192047321.png" alt="image-20250719204700161" style="zoom:50%;" />
-
-## helm安装operator
-
-[Installation | Redis Operator](https://ot-redis-operator.netlify.app/docs/installation/installation/#helm-installation)
-
-~~~sh
-helm repo add ot-helm https://ot-container-kit.github.io/helm-charts/
-helm install redis-operator ot-helm/redis-operator --namespace ot-operators
-~~~
-
-装完之后集群里就有RedisCluster这个CRD资源了。
-
-## 部署cluster模式redis集群
-
-[Cluster | Redis Operator](https://ot-redis-operator.netlify.app/docs/getting-started/cluster/)
-
-### helm部署
-
-~~~sh
-helm install redis-cluster ot-helm/redis-cluster --set redisCluster.clusterSize=3 --namespace ot-operators
-~~~
-
-### yaml文件部署
-
-[Cluster | Redis Operator](https://ot-redis-operator.netlify.app/docs/getting-started/cluster/#yaml-installation)
-
-最少只需要一个yaml文件去部署即可，不需要helm去管理。
-
-装完之后，集群里面就起来了3主3从的Redis集群了。
-
-（Redis pod如果报错pv没有权限的话，去nfs节点把pv目录改成777, 1000.1000）
-
 # 自定义CRD资源-crontab
 
 - 定义
