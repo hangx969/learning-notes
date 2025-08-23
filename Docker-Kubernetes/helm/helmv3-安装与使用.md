@@ -378,6 +378,8 @@ tree ./
 └── values.yaml # 模板的值文件，这些值会在安装时应用到 GO 模板生成部署文件
 ~~~
 
+> 注意：Chart.yaml中的version什么时候需要改：如果只是更新了values.yaml里面的经常变更的配置，不需要改version；如果更新了template/目录里面的模板文件的配置，一般需要把version升级一个版本。
+
 ## 编写Chart.yaml
 
 > Helm 使用的 Go 模板是 Go 语言的一个内置包，它提供了数据驱动的模板，用于生成可读的输出。这种模板语言被广泛应用于 Go web 框架和生成文本文件。

@@ -166,7 +166,7 @@ helm upgrade -i harbor -n harbor . -f values.yaml
 
 ## 推送Helm Chart到harbor
 
-harbor版本大于等于2.8，按照下面的命令直接推送chart即可。Harbor中Charts与Image保存在相同目录下，没有单独的页面。
+harbor版本大于等于2.8，支持OCI格式直接推送helm chart。按照下面的命令直接推送chart即可。Harbor中Charts与Image保存在相同目录下，没有单独的页面。
 
 ```sh
 # 登录helm仓库
@@ -178,7 +178,8 @@ helm push commoninfra-0.0.1.tgz oci://harbor.hanxux.local/platform-external/
 #Error: failed to do request: Head "https://harbor.hanxux.local/v2/library/my-hello/blobs/sha256:0db1fb6272f773572edb9ebad8c7fb902a76166bf14d896d3790f2a82f524838": tls: failed to verify certificate: x509: certificate signed by unknown authority
 # --insecure-skip-tls-verify跳过tls验证
 helm push commoninfra-0.0.1.tgz oci://harbor.hanxux.local/platform-external/ --insecure-skip-tls-verify
-# 下载chart执行下面命令，命令可以从harbor界面复制
+helm push commoninfra-0.0.1.tgz oci://harbor.hanxux.local/platform-external/ --plain-http # 也可以
+# 下载chart：执行下面命令，命令可以从harbor界面复制
 helm pull oci://harbor.hanxux.local/platform-external/commoninfra --version 0.0.1 -insecure-skip-tls-verify
 ```
 
