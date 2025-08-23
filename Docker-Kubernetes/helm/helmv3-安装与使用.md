@@ -480,80 +480,43 @@ spec:
       {{- end }}
 ~~~
 
-## helpers.hpl
+## _helpers.hpl
+
+_helpers.tpl是helm中的一个重要组成部分，通常用来定义可以被其他模板文件复用的辅助函数、片段或者变量等。
+
+可以把常用的、可重复用的代码片段和逻辑放进去，保持模板文件的整洁。
 
 ~~~yaml
-{{/*
-Expand the name of the chart.
-*/}} # Helm 模板中的注释标记
-{{- define "myapp.name" -}} #使用 define 定义了一个名为 "myapp.name" 的模板函数。它意味着我们正在创建一个可以在其他模板中调用的函数，并且函数名是 "myapp.name"
-{{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
-{{- end }} # 模板函数的结束标记，表示 "myapp.name" 模板函数的定义结束
-
-{{/*
-Create a default fully qualified app name.
-We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
-If release name contains chart name it will be used as a full name.
-*/}}
-{{- define "myapp.fullname" -}}
-{{- if .Values.fullnameOverride }}
-# 使用 if 语句检查是否在 Helm 部署时提供了 .Values.fullnameOverride。如果提供了，将会使用这个值来覆盖生成的应用名称。
-{{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
-# 如果生成的名称超过了 63 个字符，这一步会截断名称，确保它不会超过 Kubernetes 资源名称的长度限制。如果名称末尾有 - 符号，则会将其删除
-{{- else }}
-{{- $name := default .Chart.Name .Values.nameOverride }}
-#使用 Helm 模板函数的 default 来选择默认值。它会先尝试使用 .Values.nameOverride，如果未定义，则使用 .Chart.Name作为默认值。
-{{- if contains $name .Release.Name }} #检查 .Release.Name 是否包含在名称中，如果包含，说明 .Release.Name 已经在名称中，不需要重复添加。
-{{- .Release.Name | trunc 63 | trimSuffix "-" }} # 如果 .Release.Name 已经在名称中，就直接使用 .Release.Name 作为完整名称。Release是helm install的时候的实例名称。
-{{- else }}
-{{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" }}
-# 如果 .Release.Name 不包含在名称中，就使用 .Release.Name 和 $name 的组合来生成一个完整的名称，确保不超过 63 个字符
-# printf "%s-%s"：这是一个格式化字符串的函数，它将 .Chart.Name和 .Chart.Version连接在一起，中间用 "-" 分隔。
-# 注意：release name只有在helm install部署完之后才指定了release name
-{{- end }}
-{{- end }}
+# 定义模板 
+# _helpers.tpl
+{{- define "myapp.fullname" -}} # 这是定义了这个模板的名称为myapp.fullname
+{{- printf "%s-%s" .Release.Name .Chart.Name | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
-{{/*
-Create chart name and version as used by the chart label.
-*/}}
-{{- define "myapp.chart" -}} # 生成 Chart 的名称和版本的组合，作为一个通用的标签。
-{{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }} #将 Chart 的名称和版本用 - 符号连接在一起，并将版本中的 + 替换为 _，
-{{- end }}
+# 使用模板，用include来引用。
+# templates/api-development.yaml
+apiVersion: apps/v1
+kind: deployment
+metadata:
+  name: {{ include "myapp.fullname" . }}-api
 
-{{/*
-Common labels
-*/}}
-{{- define "myapp.labels" -}}
-helm.sh/chart: {{ include "myapp.chart" . }} # 这里直接定义key: value。将之前定义的"myapp.chart"模板函数的结果作为 helm.sh/chart的value。
-{{ include "myapp.selectorLabels" . }}
-{{- if .Chart.AppVersion }} # 检查 .Chart.AppVersion 是否存在
-app.kubernetes.io/version: {{ .Chart.AppVersion | quote }} #如果应用版本存在，这一行生成一个标签，将应用版本作为 app.kubernetes.io/version 标签的value，并使用 quote 函数将值引用起来。这个标签用于表示应用程序的版本。
-{{- end }}
-app.kubernetes.io/managed-by: {{ .Release.Service }}
-{{- end }}
+#  {{ include "myapp.fullname" . }} 里面的 . 意思是传递当前上下文给helpers.tpl
+# 因为这个模板函数需要访问 .Release.Name 和 .Chart.Name，所以调用时必须传递包含这些信息的上下文
+# 不写 . ，模板函数内部就无法访问 .Release.Name 和 .Chart.Name，会导致渲染错误。
+~~~
 
-{{/*
-Selector labels
-*/}}
-{{- define "myapp.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "myapp.name" . }}
-app.kubernetes.io/instance: {{ .Release.Name }}
-{{- end }}
+## NOTES.txt
 
-{{/*
-Create the name of the service account to use
-*/}}
-{{- define "myapp.serviceAccountName" -}}
-{{- if .Values.serviceAccount.create }}
-#用条件语句来检查是否应该创建服务账户。这里是根据用户在value中是否设置了 .Values.serviceAccount.create 来判断是否需要创建。
-{{- default (include "myapp.fullname" .) .Values.serviceAccount.name }}
-# 如果需要创建服务账户，将 .Values.serviceAccount.name 作为服务账户的名称。如果没有提供这个值，将使用默认值 myapp.fullname
-{{- else }}
-{{- default "default" .Values.serviceAccount.name }}
-# 将 .Values.serviceAccount.name 作为服务账户的名称。如果没有提供这个值，将使用默认值 "default"。
-{{- end }}
-{{- end }}
+安装说明文件，再执行helm install/upgrade之后，helm会打印出这些信息，比如使用说明等。
+
+NOTES文件同样可以使用template语法进行生成，比如：
+
+~~~yaml
+Thank you for installing {{ .Chart.Name }}.
+Your release is named {{ .Release.Name }}.
+To learn about the release, run:
+ $ helm status {{ .Release.Name }}
+ $ helm get all {{ .Release.Name }}
 ~~~
 
 ## values.yaml
@@ -642,6 +605,8 @@ helm install nginx ./ #Chart.yaml在当前目录下，就用 ./去部署
 ~~~
 
 # Helm Chart开发语法
+
+> 注意：template/xxx.yaml里面的Go template语法，# 注释是不生效的。意思是即使你注释了一段Go template，里面的语法也是会被渲染生效的。所以不需要某段Go template的话就直接删掉。
 
 ## 常用内置变量
 
