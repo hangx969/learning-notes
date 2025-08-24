@@ -25,6 +25,12 @@ Horizonal Pod Autoscaling，pod水平自动伸缩。一般是扩缩容deployment
 > 1. 必须安装metrics-server或者其他自定义metrics-server
 > 2. pod必须配置requests。因为HPA就是根据requests来计算使用率的
 
+### 工作原理
+
+- HPA的实现是一个控制循环，由controller manager的--horizontal-pod-autoscaler-sync-period参数指定周期（默认值为15秒）。每个周期内，controller manager根据每个HorizontalPodAutoscaler定义中指定的指标查询资源利用率。controller manager可以从resource metrics API（pod 资源指标）和custom metrics API（自定义指标）获取指标。
+- 然后，通过现有pods的CPU使用率的平均值（计算方式是最近的pod使用量（最近一分钟的平均值，从metrics-server中获得）除以设定的每个Pod的CPU使用率限额）跟目标使用率进行比较。
+- 计算扩容后Pod的个数：sum(最近一分钟内某个Pod的CPU使用率的平均值)/CPU使用上限的整数+1。并且在扩容时，还要遵循预先设定的副本数限制：MinReplicas <= Replicas <= MaxReplicas。
+
 ## VPA
 
 - Vertical Pod Autoscaler，垂直 Pod 自动扩缩容，VPA会基于Pod的资源使用情况自动为设置资源占用的request，从而让集群将Pod调度到有足够资源的最佳节点上。
@@ -85,35 +91,7 @@ Horizonal Pod Autoscaling，pod水平自动伸缩。一般是扩缩容deployment
 
 ## HPA基于CPU实现pod扩缩容
 
-### HPA
-
-- HPA由Kubernetes API资源和控制器实现。控制器会周期性的获取平均CPU利用率，并与目标值相比较后调整deployment中的副本数量。
-- K8S从1.8版本开始，CPU、内存等资源的metrics信息可以通过 Metrics API来获取，用户可以直接获取这些metrics信息（例如通过执行kubect top命令），HPA使用这些metics信息来实现动态伸缩。
-
-### 版本
-
-- 查看当前支持的api version
-
-~~~sh
-kubectl api-versions | grep autoscal
-autoscaling/v1
-autoscaling/v2
-autoscaling/v2beta1
-autoscaling/v2beta2
-~~~
-
-- autoscaling/v2beta1支持Resource Metrics（资源指标，如pod内存）和Custom Metrics（自定义指标）的缩放
-- autoscaling/v2beta2支持Resource Metrics（资源指标，如pod内存）和Custom Metrics（自定义指标）和 ExternalMetrics（额外指标）的缩放。
-
-### 工作原理
-
-- HPA的实现是一个控制循环，由controller manager的--horizontal-pod-autoscaler-sync-period参数指定周期（默认值为15秒）。每个周期内，controller manager根据每个HorizontalPodAutoscaler定义中指定的指标查询资源利用率。controller manager可以从resource metrics API（pod 资源指标）和custom metrics API（自定义指标）获取指标。
-- 然后，通过现有pods的CPU使用率的平均值（计算方式是最近的pod使用量（最近一分钟的平均值，从metrics-server中获得）除以设定的每个Pod的CPU使用率限额）跟目标使用率进行比较。
-- 计算扩容后Pod的个数：sum(最近一分钟内某个Pod的CPU使用率的平均值)/CPU使用上限的整数+1。并且在扩容时，还要遵循预先设定的副本数限制：MinReplicas <= Replicas <= MaxReplicas。
-
-## HPA基于内存实现pod扩缩容
-
-### kubectl创建nginx pod
+### 创建deployment
 
 ~~~yaml
 tee deploy-nginx.yaml <<'EOF' 
@@ -141,10 +119,10 @@ spec:
           protocol: TCP
         resources:
           requests:
-            cpu: 0.01
+            cpu: 10m
             memory: 25Mi
           limits:
-            cpu: 0.05
+            cpu: 50m
             memory: 60Mi
 ---
 apiVersion: v1
@@ -166,7 +144,30 @@ EOF
 kubectl apply -f deploy-nginx.yaml
 ~~~
 
-> 注意：pod定义中必须要有memory的requests、limits，HPA才能检测得到指标从而起作用
+> 注意：pod定义中必须要有对应指标的requests，HPA才能检测得到指标从而起作用
+
+### 创建HPA
+
+~~~sh
+kubectl autoscale deployment nginx-hpa --cpu-percent=10 --min=1 --max=10
+~~~
+
+cpu-percent=10怎么计算出来的：kubectl top po能获取pod的当前cpu使用率，除以cpu的request，就得到平均使用率。
+
+平均使用率超过10%，就直接扩容。
+
+### 压测
+
+~~~sh
+kubectl get svc # 获取nginx svc IP
+while true; do wget -q -O- http://10.109.68.255 > /dev/null; done
+~~~
+
+## HPA基于内存实现pod扩缩容
+
+> 注意：生产环境中尽量避免使用基于内存的HPA。
+>
+> 因为内存是不可压缩资源；不像cpu一样一会高一会低，一般内存使用量升高是因为程序存在bug，升上去是降不下来的。
 
 ### yaml文件创建HPA
 
@@ -554,18 +555,18 @@ kubectl get event -n vpa
 
 ## 部署
 
-~~~sh
-#可选：上传镜像registry.cn-hangzhou.aliyuncs.com/google_containers/metrics-server:v0.6.1并在所有节点解压
-docker load -i registry.cn-hangzhou.aliyuncs.com/google_containers/metrics-server:v0.6.1
+可以通过top node验证是否安装了metrics-server：`kubectl top node`
 
-#master节点上修改apiserver参数，允许在不修改Kubernetes核心代码的同时扩展Kubernetes API。
+~~~sh
+# 可选：上传镜像registry.cn-hangzhou.aliyuncs.com/google_containers/metrics-server:v0.6.1并在所有节点解压
+docker load -i registry.cn-hangzhou.aliyuncs.com/google_containers/metrics-server:v0.6.1
+# master节点上修改apiserver参数，允许在不修改Kubernetes核心代码的同时扩展Kubernetes API。
 vim /etc/kubernetes/manifests/kube-apiserver.yaml
 #增加如下内容：
 - --enable-aggregator-routing=true
-
-#使配置生效，在所有节点上
+# 使配置生效，在所有节点上
 systemctl restart kubelet
-#这个操作重启apiserver，会影响业务，最好在装集群的时候就配置好
+# 这个操作重启apiserver，会影响业务，最好在装集群的时候就配置好
 ~~~
 
 > - --enable-aggregator-routing=true 是 Kubernetes API 服务器的一个配置参数。当设置为 true 时，它告诉 API 服务器通过 Kubernetes 服务 IP 路由到扩展 API 服务器，而不是直接路由到扩展 API 服务器的 Pod IP。这是在 Kubernetes 集群中使用 API 聚合层（API Aggregation Layer）时的一个重要配置。
@@ -573,7 +574,6 @@ systemctl restart kubelet
 > - API 聚合层允许 Kubernetes 提供更丰富和更复杂的 API，而无需将所有这些功能添加到 Kubernetes 核心 API 中。例如，服务目录 API、自定义资源定义 API 和其他扩展 API 都可以通过 API 聚合层提供。
 
 ~~~yaml
-tee components.yaml <<'EOF'
 apiVersion: v1
 kind: ServiceAccount
 metadata:
@@ -770,7 +770,6 @@ spec:
     namespace: kube-system
   version: v1beta1
   versionPriority: 100
-EOF
 ~~~
 
 ~~~sh
