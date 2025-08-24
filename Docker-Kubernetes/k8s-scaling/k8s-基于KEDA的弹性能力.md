@@ -175,7 +175,7 @@ github release: [Releases · kedacore/keda](https://github.com/kedacore/keda/rel
 ~~~sh
 helm repo add kedacore https://kedacore.github.io/charts 
 helm repo update kedacore
-helm pull kedacore/keda --version 
+helm pull kedacore/keda --version 2.17.
 ~~~
 
 ## 安装
