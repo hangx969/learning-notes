@@ -1,18 +1,18 @@
-# 自动扩缩容
+# 自动扩缩容工具
 
 ## HPA
 
+Horizonal Pod Autoscaling，pod水平自动伸缩。一般是扩缩容deployment和statefulset。
+
 ### 根据什么指标
 
-- Horizonal Pod Autoscaling，pod水平自动伸缩。通过此功能，只需简单的配置，便可以利用监控指标（cpu使用率、磁盘、自定义的等）自动的扩容或缩容服务中Pod数量，当业务需求增加时，系统将无缝地自动增加适量pod容器，提高系统稳定性。
-- HPA v1版本只能基于CPU使用率来进行自动扩缩容：
-  - 但是并非所有的系统都可以仅依靠CPU或者Memory指标来扩容，对于大多数 Web 应用的后端来说，基于每秒的请求数量进行弹性伸缩来处理突发流量会更加的靠谱，所以对于一个自动扩缩容系统来说，我们不能局限于CPU、Memory基础监控数据，每秒请求数RPS等自定义指标也是十分重要。
-- HPA v2版本可以根据基于内存或者自定义的指标进行自动扩缩容
+通过此功能，可以利用监控指标（cpu使用率、磁盘、自定义等）自动的扩容或缩容服务中Pod数量。
 
-### 怎么采集指标
+当业务需求增加时，系统将无缝地自动增加适量pod容器，提高系统稳定性。
 
-- 如果我们的系统默认依赖Prometheus，自定义的Metrics指标则可以从各种数据源或者exporter中获取，基于拉模型的Prometheus会定期从数据源中拉取数据。
-- 也可以基于metrics-server自动获取节点和pod的资源指标。这个用的比较多。
+### 指标怎么获取
+
+基于metrics-server自动获取节点和pod的资源指标。
 
 ### 怎么实现扩缩容
 
@@ -20,13 +20,10 @@
 - 同时，为了避免过于频繁的扩缩容，默认在5min内没有重新扩缩容的情况下，才会触发扩缩容。
 - HPA本身的算法相对比较保守，可能并不适用于很多场景。例如，一个快速的流量突发场景，如果正处在5min内的HPA稳定期，这个时候根据HPA的策略，会导致无法扩容。
 
-## KPA
-
-- Knative Pod Autoscaler：基于请求数对Pod自动扩缩容，KPA 的主要限制在于它不支持基于 CPU 的自动扩缩容。
-- 支持根据并发请求数实现自动扩缩容；支持设置扩缩容上下限。可以和HPA混合使用。
-- Github： https://knative.dev/docs/install/
-
-- 安装参考：https://knative.dev/docs/install/install-serving-with-yaml/
+> 注意：针对原生HPA
+>
+> 1. 必须安装metrics-server或者其他自定义metrics-server
+> 2. pod必须配置requests。因为HPA就是根据requests来计算使用率的
 
 ## VPA
 
@@ -41,7 +38,15 @@
 >
 > VPA是Kubernetes比较新的功能，还没有在生产环境大规模实践过，不建议在线上环境使用自动更新模式，但是使用推荐模式你可以更好了解服务的资源使用情况。
 
-# cluster-autoscaler
+## KPA
+
+- Knative Pod Autoscaler：基于请求数对Pod自动扩缩容，KPA 的主要限制在于它不支持基于 CPU 的自动扩缩容。
+- 支持根据并发请求数实现自动扩缩容；支持设置扩缩容上下限。可以和HPA混合使用。
+- Github： https://knative.dev/docs/install/
+
+- 安装参考：https://knative.dev/docs/install/install-serving-with-yaml/
+
+## cluster-autoscaler
 
 - 什么是cluster autoscaler
 
@@ -76,15 +81,16 @@
   - Hetzner https://github.com/kubernetes/autoscaler/blob/master/cluster-autoscaler/cloudprovider/hetzner/README.md
   - Cluster API  https://github.com/kubernetes/autoscaler/blob/master/cluster-autoscaler/cloudprovider/clusterapi/README.md
 
-# HPA基于CPU实现pod自动扩缩容
+# HPA自动扩缩容实战
 
-## HPA
+## HPA基于CPU实现pod扩缩容
+
+### HPA
 
 - HPA由Kubernetes API资源和控制器实现。控制器会周期性的获取平均CPU利用率，并与目标值相比较后调整deployment中的副本数量。
-- pod自动缩放不适用于无法缩放的对象，比如DaemonSets。
 - K8S从1.8版本开始，CPU、内存等资源的metrics信息可以通过 Metrics API来获取，用户可以直接获取这些metrics信息（例如通过执行kubect top命令），HPA使用这些metics信息来实现动态伸缩。
 
-## 版本
+### 版本
 
 - 查看当前支持的api version
 
@@ -99,11 +105,440 @@ autoscaling/v2beta2
 - autoscaling/v2beta1支持Resource Metrics（资源指标，如pod内存）和Custom Metrics（自定义指标）的缩放
 - autoscaling/v2beta2支持Resource Metrics（资源指标，如pod内存）和Custom Metrics（自定义指标）和 ExternalMetrics（额外指标）的缩放。
 
-## 工作原理
+### 工作原理
 
 - HPA的实现是一个控制循环，由controller manager的--horizontal-pod-autoscaler-sync-period参数指定周期（默认值为15秒）。每个周期内，controller manager根据每个HorizontalPodAutoscaler定义中指定的指标查询资源利用率。controller manager可以从resource metrics API（pod 资源指标）和custom metrics API（自定义指标）获取指标。
 - 然后，通过现有pods的CPU使用率的平均值（计算方式是最近的pod使用量（最近一分钟的平均值，从metrics-server中获得）除以设定的每个Pod的CPU使用率限额）跟目标使用率进行比较。
 - 计算扩容后Pod的个数：sum(最近一分钟内某个Pod的CPU使用率的平均值)/CPU使用上限的整数+1。并且在扩容时，还要遵循预先设定的副本数限制：MinReplicas <= Replicas <= MaxReplicas。
+
+## HPA基于内存实现pod扩缩容
+
+### kubectl创建nginx pod
+
+~~~yaml
+tee deploy-nginx.yaml <<'EOF' 
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-hpa
+spec:
+  selector:
+    matchLabels:
+      app: nginx
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.9.1
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 80
+          name: http
+          protocol: TCP
+        resources:
+          requests:
+            cpu: 0.01
+            memory: 25Mi
+          limits:
+            cpu: 0.05
+            memory: 60Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx
+  labels:
+    app: nginx
+spec:
+  selector:
+    app: nginx
+  type: NodePort
+  ports:
+  - name: http
+    protocol: TCP
+    port: 80
+    targetPort: 80
+EOF
+kubectl apply -f deploy-nginx.yaml
+~~~
+
+> 注意：pod定义中必须要有memory的requests、limits，HPA才能检测得到指标从而起作用
+
+### yaml文件创建HPA
+
+~~~yaml
+tee hpa-mem.yaml <<'EOF'
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: nginx-hpa
+spec:
+    maxReplicas: 10
+    minReplicas: 1
+    scaleTargetRef:
+      apiVersion: apps/v1
+      kind: Deployment
+      name: nginx-hpa
+    metrics:
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          averageUtilization: 60
+          type: Utilization
+EOF
+kubectl apply -f hpa-mem.yaml
+~~~
+
+### 压测
+
+~~~sh
+kubectl exec -it nginx-hpa-7f5d6fbfd9-s8wbh  -- /bin/sh
+#压测
+dd if=/dev/zero of=/tmp/a
+~~~
+
+> 查看某个版本的hpa的字段定义
+>
+> ~~~sh
+> kubectl get hpa.v2beta2.autoscaling -o yaml > 1.yaml
+> ~~~
+
+## 利用HPA扩缩容PHP服务
+
+- 官网示例：[HorizontalPodAutoscaler 演练 | Kubernetes](https://kubernetes.io/zh-cn/docs/tasks/run-application/horizontal-pod-autoscale-walkthrough/)
+
+### dockerfile构建PHP服务
+
+- 准备镜像
+
+~~~sh
+#使用dockerfile构建一个新的镜像，在k8s的xianchaomaster1节点构建
+docker load -i php.tar.gz
+mkdir php && cd php/
+
+tee dockerfile <<'EOF' 
+FROM php:5-apache
+ADD index.php /var/www/html/index.php
+RUN chmod a+rx index.php
+EOF
+
+tee index.php <<'EOF' 
+<?php
+$x = 0.0001;
+for ($i = 0; $i <= 1000000;$i++) {
+$x += sqrt($x);
+  }
+ echo "OK!";
+?>
+EOF
+#构建镜像
+docker build -t k8s.gcr.io/hpa-example:v1 .
+#打包镜像
+docker save -o hpa-example.tar.gz k8s.gcr.io/hpa-example:v1
+~~~
+
+- 部署镜像
+
+~~~sh
+#拷贝到工作节点并解压
+scp hpa-example.tar.gz node1:/root/
+docker load -i hpa-example.tar.gz
+~~~
+
+~~~yaml
+tee php-apache.yaml <<'EOF' 
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+  name: php-apache
+spec:
+  selector:
+    matchLabels:
+      run: php-apache
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        run: php-apache
+    spec:
+      containers:
+      - name: php-apache
+        image: k8s.gcr.io/hpa-example:v1
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 80
+        resources:
+          limits:
+            cpu: 500m
+          requests:
+            cpu: 200m
+---
+apiVersion: v1
+kind: Service
+metadata:
+    name: php-apache
+    labels:
+      run: php-apache
+spec:
+  ports:
+  - port: 80
+  selector:
+   run: php-apache
+EOF
+kubectl apply -f php-apache.yaml
+~~~
+
+> 注意：pod定义中必须要有CPU的requests、limits，HPA才能检测得到指标从而起作用
+
+### 创建HPA
+
+~~~sh
+#1）让副本数维持在1-10个之间（这里副本数指的是通过deployment部署的pod的副本数）
+#2）将所有Pod的平均CPU使用率维持在50％（每个pod如果requests了200毫核，那么目标就是让平均CPU利用率为100毫核）
+kubectl autoscale deployment php-apache --cpu-percent=50 --min=1 --max=10
+k get hpa
+#由于我们没有向服务器发送任何请求，因此当前CPU消耗为0％（TARGET列显示了由相应的deployment控制的所有Pod的平均值）。
+~~~
+
+### 压测
+
+~~~sh
+#busybox.tar.gz和nginx-1-9-1.tar.gz上传
+docker load -i busybox.tar.gz 
+docker load -i nginx-1-9-1.tar.gz
+#启动一个容器，并将无限查询循环发送到php-apache服务
+kubectl run stress-test -it --image=busybox --image-pull-policy=IfNotPresent /bin/sh
+while true; do wget -q -O- http://php-apache.default.svc.cluster.local; done
+~~~
+
+# VPA实现pod垂直扩缩容
+
+- Vertical Pod Autoscaler（VPA）：垂直Pod自动扩缩容，用户无需为其pods中的容器设置最新的资源request。配置后，它将根据使用情况自动设置request，从而允许在节点上进行适当的调度，以便为每个pod提供适当的资源量。
+
+工作原理：
+
+![img](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202502141048078.png)
+
+## 安装VPA
+
+~~~sh
+docker load -i vpa-admission_0.10.0.tar.gz && docker load -i vpa-recommender_0.10.0.tar.gz && docker load -i vpa-updater_0.10.0.tar.gz #可选，这些镜像是后面的安装yaml文件里面定义的镜像
+#master节点上
+tar zxvf autoscaler-master.tar.gz
+#升级openssl：
+yum install gcc gcc-c++ -y
+wget https://www.openssl.org/source/openssl-1.1.1k.tar.gz --no-check-certificate && tar zxf openssl-1.1.1k.tar.gz && cd openssl-1.1.1k
+./config
+make && make install
+mv /usr/local/bin/openssl /usr/local/bin/openssl.bak && mv apps/openssl /usr/local/bin
+rm -rf /usr/lib64/libssl.so.1.1 && ln -s /usr/local/lib64/libssl.so.1.1 /usr/lib64/libssl.so.1.1
+rm -rf /usr/lib64/libcrypto.so.1.1 && ln -s /usr/local/lib64/libcrypto.so.1.1 /usr/lib64/libcrypto.so.1.1
+cd /root/autoscaler-master/vertical-pod-autoscaler/hack
+./vpa-up.sh
+kubectl get pods -n kube-system | grep vpa
+~~~
+
+## 部署nginx
+
+~~~sh
+mkdir vpa && cd vpa/
+kubectl create ns vpa
+~~~
+
+~~~yaml
+tee deploy-nginx.yaml <<'EOF'
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx
+  namespace: vpa
+  labels:
+    app: nginx
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - image: nginx
+        name: nginx
+        imagePullPolicy: IfNotPresent
+        resources:
+          requests:
+            cpu: 200m
+            memory: 300Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx
+  namespace: vpa
+spec:
+  selector:
+    app: nginx
+  type: NodePort
+  ports:
+  - port: 80
+    targetPort: 80
+EOF
+kubectl apply -f deploy-nginx.yaml
+~~~
+
+## 创建VPA
+
+- updateMode:”Off”模式，这种模式仅获取资源推荐值，但是不更新Pod
+
+~~~yaml
+tee vpa-nginx.yaml <<'EOF' 
+apiVersion: autoscaling.k8s.io/v1beta2
+kind: VerticalPodAutoscaler
+metadata:
+  name: nginx-vpa
+  namespace: vpa
+spec:
+  targetRef:
+    apiVersion: "apps/v1"
+    kind: Deployment
+    name: nginx
+  updatePolicy:
+    updateMode: "Off"
+  resourcePolicy:
+    containerPolicies:
+    - containerName: "nginx"
+      minAllowed: #Specifies the minimal amount of resources that will be recommended for the container. The default is no minimum.
+        cpu: "500m"
+        memory: "100Mi"
+      maxAllowed:
+        cpu: "2000m"
+        memory: "2600Mi"
+EOF
+kubectl apply -f vpa-nginx.yaml
+~~~
+
+- 查看VPA
+
+~~~yaml
+kubectl describe vpa nginx-vpa -n vpa
+
+Status:
+  Conditions:
+    Last Transition Time:  2024-05-19T09:13:42Z
+    Status:                True
+    Type:                  RecommendationProvided
+  Recommendation:
+    Container Recommendations:
+      Container Name:  nginx
+      #VPA去调整requests字段值的上下限和推荐值
+      Lower Bound: #下限值
+        Cpu:     500m
+        Memory:  262144k
+      Target: #推荐值
+        Cpu:     500m
+        Memory:  262144k #256Mi
+      Uncapped Target:
+        Cpu:     25m
+        Memory:  262144k
+      Upper Bound: #上限值
+        Cpu:     576m
+        Memory:  602928571
+Events:          <none>
+~~~
+
+- describe的结果表示：推荐的 Pod 的 CPU 请求为 500m，推荐的内存请求为 262144k 字节（256Mi）。
+
+## 压测nginx
+
+~~~sh
+#使用ab作为压测工具
+yum -y install httpd-tools
+ab -c 100 -n 10000000 http://192.168.40.180:30327/
+#VPA对于requests的推荐值的变化
+kubectl describe vpa nginx-vpa -n vpa
+~~~
+
+- 修改updateMode:”Auto”
+
+~~~yaml
+tee vpa-nginx.yaml <<'EOF' 
+apiVersion: autoscaling.k8s.io/v1beta2
+kind: VerticalPodAutoscaler
+metadata:
+  name: nginx-vpa
+  namespace: vpa
+spec:
+  targetRef:
+    apiVersion: "apps/v1"
+    kind: Deployment
+    name: nginx
+  updatePolicy:
+    updateMode: "Auto"
+  resourcePolicy:
+    containerPolicies:
+    - containerName: "nginx"
+      minAllowed: #Specifies the minimal amount of resources that will be recommended for the container. The default is no minimum.
+        cpu: "500m"
+        memory: "100Mi"
+      maxAllowed:
+        cpu: "2000m"
+        memory: "2600Mi"
+EOF
+kubectl apply -f vpa-nginx.yaml
+~~~
+
+~~~yaml
+tee deploy-nginx.yaml <<'EOF' 
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: nginx
+  name: nginx
+  namespace: vpa
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - image: nginx
+        imagePullPolicy: IfNotPresent
+        name: nginx
+        resources:
+          requests:
+            cpu: 100m
+            memory: 50Mi
+EOF
+kubectl apply -f deploy-nginx.yaml
+~~~
+
+~~~sh
+ab -c 100 -n 10000000 http://192.168.40.180:30327/
+#VPA对于requests的推荐值的变化
+kubectl describe vpa nginx-vpa -n vpa
+~~~
+
+- 查看event的扩缩容事件
+
+~~~sh
+kubectl get event -n vpa
+#vpa执行了EvictedByVPA，自动停掉了nginx，然后使用 VPA推荐的资源启动了新的nginx
+#随着服务的负载的变化，VPA的推荐值也会不断变化。当目前运行的pod的资源达不到VPA的推荐值，就会执行pod驱逐，重新部署新的足够资源的服务。
+~~~
 
 # metrics-server
 
@@ -345,433 +780,3 @@ kubectl apply -f components.yaml
 kubectl top nodes
 kubectl top pods -n kube-system
 ~~~
-
-# 利用HPA扩缩容PHP服务
-
-- 官网示例：[HorizontalPodAutoscaler 演练 | Kubernetes](https://kubernetes.io/zh-cn/docs/tasks/run-application/horizontal-pod-autoscale-walkthrough/)
-
-## dockerfile构建PHP服务
-
-- 准备镜像
-
-~~~sh
-#使用dockerfile构建一个新的镜像，在k8s的xianchaomaster1节点构建
-docker load -i php.tar.gz
-mkdir php && cd php/
-
-tee dockerfile <<'EOF' 
-FROM php:5-apache
-ADD index.php /var/www/html/index.php
-RUN chmod a+rx index.php
-EOF
-
-tee index.php <<'EOF' 
-<?php
-$x = 0.0001;
-for ($i = 0; $i <= 1000000;$i++) {
-$x += sqrt($x);
-  }
- echo "OK!";
-?>
-EOF
-#构建镜像
-docker build -t k8s.gcr.io/hpa-example:v1 .
-#打包镜像
-docker save -o hpa-example.tar.gz k8s.gcr.io/hpa-example:v1
-~~~
-
-- 部署镜像
-
-~~~sh
-#拷贝到工作节点并解压
-scp hpa-example.tar.gz node1:/root/
-docker load -i hpa-example.tar.gz
-~~~
-
-~~~yaml
-tee php-apache.yaml <<'EOF' 
-apiVersion: apps/v1
-kind: Deployment
-metadata: 
-  name: php-apache
-spec:
-  selector:
-    matchLabels:
-      run: php-apache
-  replicas: 1
-  template:
-    metadata:
-      labels:
-        run: php-apache
-    spec:
-      containers:
-      - name: php-apache
-        image: k8s.gcr.io/hpa-example:v1
-        imagePullPolicy: IfNotPresent
-        ports:
-        - containerPort: 80
-        resources:
-          limits:
-            cpu: 500m
-          requests:
-            cpu: 200m
----
-apiVersion: v1
-kind: Service
-metadata:
-    name: php-apache
-    labels:
-      run: php-apache
-spec:
-  ports:
-  - port: 80
-  selector:
-   run: php-apache
-EOF
-kubectl apply -f php-apache.yaml
-~~~
-
-> 注意：pod定义中必须要有CPU的requests、limits，HPA才能检测得到指标从而起作用
-
-## 创建HPA
-
-~~~sh
-#1）让副本数维持在1-10个之间（这里副本数指的是通过deployment部署的pod的副本数）
-#2）将所有Pod的平均CPU使用率维持在50％（每个pod如果requests了200毫核，那么目标就是让平均CPU利用率为100毫核）
-kubectl autoscale deployment php-apache --cpu-percent=50 --min=1 --max=10
-k get hpa
-#由于我们没有向服务器发送任何请求，因此当前CPU消耗为0％（TARGET列显示了由相应的deployment控制的所有Pod的平均值）。
-~~~
-
-## 压测
-
-~~~sh
-#busybox.tar.gz和nginx-1-9-1.tar.gz上传
-docker load -i busybox.tar.gz 
-docker load -i nginx-1-9-1.tar.gz
-#启动一个容器，并将无限查询循环发送到php-apache服务
-kubectl run stress-test -it --image=busybox --image-pull-policy=IfNotPresent /bin/sh
-while true; do wget -q -O- http://php-apache.default.svc.cluster.local; done
-~~~
-
-# 利用HPA基于内存实现pod扩缩容
-
-## kubectl创建nginx pod
-
-~~~yaml
-tee deploy-nginx.yaml <<'EOF' 
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: nginx-hpa
-spec:
-  selector:
-    matchLabels:
-      app: nginx
-  replicas: 1
-  template:
-    metadata:
-      labels:
-        app: nginx
-    spec:
-      containers:
-      - name: nginx
-        image: nginx:1.9.1
-        imagePullPolicy: IfNotPresent
-        ports:
-        - containerPort: 80
-          name: http
-          protocol: TCP
-        resources:
-          requests:
-            cpu: 0.01
-            memory: 25Mi
-          limits:
-            cpu: 0.05
-            memory: 60Mi
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: nginx
-  labels:
-    app: nginx
-spec:
-  selector:
-    app: nginx
-  type: NodePort
-  ports:
-  - name: http
-    protocol: TCP
-    port: 80
-    targetPort: 80
-EOF
-kubectl apply -f deploy-nginx.yaml
-~~~
-
-> 注意：pod定义中必须要有memory的requests、limits，HPA才能检测得到指标从而起作用
-
-## yaml文件创建HPA
-
-~~~yaml
-tee hpa-mem.yaml <<'EOF'
-apiVersion: autoscaling/v2
-kind: HorizontalPodAutoscaler
-metadata:
-  name: nginx-hpa
-spec:
-    maxReplicas: 10
-    minReplicas: 1
-    scaleTargetRef:
-      apiVersion: apps/v1
-      kind: Deployment
-      name: nginx-hpa
-    metrics:
-    - type: Resource
-      resource:
-        name: memory
-        target:
-          averageUtilization: 60
-          type: Utilization
-EOF
-kubectl apply -f hpa-mem.yaml
-~~~
-
-## 压测
-
-~~~sh
-kubectl exec -it nginx-hpa-7f5d6fbfd9-s8wbh  -- /bin/sh
-#压测
-dd if=/dev/zero of=/tmp/a
-~~~
-
-> 查看某个版本的hpa的字段定义
->
-> ~~~sh
-> kubectl get hpa.v2beta2.autoscaling -o yaml > 1.yaml
-> ~~~
-
-# VPA实现pod自动扩缩容
-
-- Vertical Pod Autoscaler（VPA）：垂直Pod自动扩缩容，用户无需为其pods中的容器设置最新的资源request。配置后，它将根据使用情况自动设置request，从而允许在节点上进行适当的调度，以便为每个pod提供适当的资源量。
-
-工作原理：
-
-![img](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202502141048078.png)
-
-## 安装VPA
-
-~~~sh
-docker load -i vpa-admission_0.10.0.tar.gz && docker load -i vpa-recommender_0.10.0.tar.gz && docker load -i vpa-updater_0.10.0.tar.gz #可选，这些镜像是后面的安装yaml文件里面定义的镜像
-#master节点上
-tar zxvf autoscaler-master.tar.gz
-#升级openssl：
-yum install gcc gcc-c++ -y
-wget https://www.openssl.org/source/openssl-1.1.1k.tar.gz --no-check-certificate && tar zxf openssl-1.1.1k.tar.gz && cd openssl-1.1.1k
-./config
-make && make install
-mv /usr/local/bin/openssl /usr/local/bin/openssl.bak && mv apps/openssl /usr/local/bin
-rm -rf /usr/lib64/libssl.so.1.1 && ln -s /usr/local/lib64/libssl.so.1.1 /usr/lib64/libssl.so.1.1
-rm -rf /usr/lib64/libcrypto.so.1.1 && ln -s /usr/local/lib64/libcrypto.so.1.1 /usr/lib64/libcrypto.so.1.1
-cd /root/autoscaler-master/vertical-pod-autoscaler/hack
-./vpa-up.sh
-kubectl get pods -n kube-system | grep vpa
-~~~
-
-## 部署nginx
-
-~~~sh
-mkdir vpa && cd vpa/
-kubectl create ns vpa
-~~~
-
-~~~yaml
-tee deploy-nginx.yaml <<'EOF'
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: nginx
-  namespace: vpa
-  labels:
-    app: nginx
-spec:
-  replicas: 2
-  selector:
-    matchLabels:
-      app: nginx
-  template:
-    metadata:
-      labels:
-        app: nginx
-    spec:
-      containers:
-      - image: nginx
-        name: nginx
-        imagePullPolicy: IfNotPresent
-        resources:
-          requests:
-            cpu: 200m
-            memory: 300Mi
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: nginx
-  namespace: vpa
-spec:
-  selector:
-    app: nginx
-  type: NodePort
-  ports:
-  - port: 80
-    targetPort: 80
-EOF
-kubectl apply -f deploy-nginx.yaml
-~~~
-
-## 创建VPA
-
-- updateMode:”Off”模式，这种模式仅获取资源推荐值，但是不更新Pod
-
-~~~yaml
-tee vpa-nginx.yaml <<'EOF' 
-apiVersion: autoscaling.k8s.io/v1beta2
-kind: VerticalPodAutoscaler
-metadata:
-  name: nginx-vpa
-  namespace: vpa
-spec:
-  targetRef:
-    apiVersion: "apps/v1"
-    kind: Deployment
-    name: nginx
-  updatePolicy:
-    updateMode: "Off"
-  resourcePolicy:
-    containerPolicies:
-    - containerName: "nginx"
-      minAllowed: #Specifies the minimal amount of resources that will be recommended for the container. The default is no minimum.
-        cpu: "500m"
-        memory: "100Mi"
-      maxAllowed:
-        cpu: "2000m"
-        memory: "2600Mi"
-EOF
-kubectl apply -f vpa-nginx.yaml
-~~~
-
-- 查看VPA
-
-~~~yaml
-kubectl describe vpa nginx-vpa -n vpa
-
-Status:
-  Conditions:
-    Last Transition Time:  2024-05-19T09:13:42Z
-    Status:                True
-    Type:                  RecommendationProvided
-  Recommendation:
-    Container Recommendations:
-      Container Name:  nginx
-      #VPA去调整requests字段值的上下限和推荐值
-      Lower Bound: #下限值
-        Cpu:     500m
-        Memory:  262144k
-      Target: #推荐值
-        Cpu:     500m
-        Memory:  262144k #256Mi
-      Uncapped Target:
-        Cpu:     25m
-        Memory:  262144k
-      Upper Bound: #上限值
-        Cpu:     576m
-        Memory:  602928571
-Events:          <none>
-~~~
-
-- describe的结果表示：推荐的 Pod 的 CPU 请求为 500m，推荐的内存请求为 262144k 字节（256Mi）。
-
-## 压测nginx
-
-~~~sh
-#使用ab作为压测工具
-yum -y install httpd-tools
-ab -c 100 -n 10000000 http://192.168.40.180:30327/
-#VPA对于requests的推荐值的变化
-kubectl describe vpa nginx-vpa -n vpa
-~~~
-
-- 修改updateMode:”Auto”
-
-~~~yaml
-tee vpa-nginx.yaml <<'EOF' 
-apiVersion: autoscaling.k8s.io/v1beta2
-kind: VerticalPodAutoscaler
-metadata:
-  name: nginx-vpa
-  namespace: vpa
-spec:
-  targetRef:
-    apiVersion: "apps/v1"
-    kind: Deployment
-    name: nginx
-  updatePolicy:
-    updateMode: "Auto"
-  resourcePolicy:
-    containerPolicies:
-    - containerName: "nginx"
-      minAllowed: #Specifies the minimal amount of resources that will be recommended for the container. The default is no minimum.
-        cpu: "500m"
-        memory: "100Mi"
-      maxAllowed:
-        cpu: "2000m"
-        memory: "2600Mi"
-EOF
-kubectl apply -f vpa-nginx.yaml
-~~~
-
-~~~yaml
-tee deploy-nginx.yaml <<'EOF' 
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  labels:
-    app: nginx
-  name: nginx
-  namespace: vpa
-spec:
-  replicas: 2
-  selector:
-    matchLabels:
-      app: nginx
-  template:
-    metadata:
-      labels:
-        app: nginx
-    spec:
-      containers:
-      - image: nginx
-        imagePullPolicy: IfNotPresent
-        name: nginx
-        resources:
-          requests:
-            cpu: 100m
-            memory: 50Mi
-EOF
-kubectl apply -f deploy-nginx.yaml
-~~~
-
-~~~sh
-ab -c 100 -n 10000000 http://192.168.40.180:30327/
-#VPA对于requests的推荐值的变化
-kubectl describe vpa nginx-vpa -n vpa
-~~~
-
-- 查看event的扩缩容事件
-
-~~~sh
-kubectl get event -n vpa
-#vpa执行了EvictedByVPA，自动停掉了nginx，然后使用 VPA推荐的资源启动了新的nginx
-#随着服务的负载的变化，VPA的推荐值也会不断变化。当目前运行的pod的资源达不到VPA的推荐值，就会执行pod驱逐，重新部署新的足够资源的服务。
-~~~
-
