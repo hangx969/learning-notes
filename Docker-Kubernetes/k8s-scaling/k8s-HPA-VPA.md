@@ -141,7 +141,6 @@ spec:
     port: 80
     targetPort: 80
 EOF
-kubectl apply -f deploy-nginx.yaml
 ~~~
 
 > 注意：pod定义中必须要有对应指标的requests，HPA才能检测得到指标从而起作用
@@ -772,7 +771,7 @@ spec:
   versionPriority: 100
 ~~~
 
-~~~sh
+~~~lssh
 #部署metrics-server pod
 kubectl apply -f components.yaml
 #测试
