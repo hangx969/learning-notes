@@ -84,7 +84,7 @@ ServiceMesh将程序开发的网络功能和程序本身解耦，网络功能下
 - 因为有大厂支持和背书，是现在服务网格产品的首选。
 - 很多云计算大厂的k8s产品带的服务网格功能，底层也是接入的istio。
 
-# Istio功能
+# istio功能
 
 ## 文档
 
@@ -216,7 +216,7 @@ Pilot主要用于监听API Server，动态获取集群中的svc和endpoint信息
 8. 策略执行：在进行服务访问时，通过Mixer连接后端服务来控制服务间的访问，判断对访问是放行还是拒绝。上图中，Mixer 后端可以对接一个限流服务对从frontend服务到forecast服务的访问进行速率控制等操作。 
 9. 外部访问：在网格的入口处有一个Envoy扮演入口网关的角 色。上图中，外部服务通过Gateway访问入口服务 frontend，对 frontend服务的负载均衡和一些流量治理策略都在这个Gateway上执行。
 
-# Istio核心资源
+# istio核心资源
 
 ## DestinationRule
 
@@ -267,6 +267,355 @@ Istio集群的出入口网关，处理对外的流量。通常和VirtualService�
 
 ![image-20250826154253315](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202508261542496.png)
 
-- DestinationRule：定义服务子集和流量策略，路由的最终目标
+- DestinationRule：定义服务子集和流量策略，路由的最终目标。
 - VirtualService：路由规则的核心，控制流量去向。
-- Gateway：管理外部流量入口和出口，与VS协同实现内外流量统一治理
+- Gateway：管理外部流量入口和出口，与VS协同实现内外流量统一治理。（只是声明对外暴露哪些域名和端口，实际路由转发规则是VS定义的）
+
+三者可以单独使用也可以配合使用。
+
+以上三种资源不是实际存在的，只是一些配置，Istio拿到这些资源，翻译成Envoy认识的配置，实际本质上起作用的还是Envoy、IngressGateway。
+
+## 核心资源定义
+
+官网文档：[Istio / Traffic Management](https://istio.io/latest/docs/reference/config/networking/)
+
+### DestinationRule
+
+[Istio / Destination Rule](https://istio.io/latest/docs/reference/config/networking/destination-rule/)
+
+~~~yaml
+apiVersion: networking.istio.io/v1
+kind: DestinationRule
+metadata:
+  name: bookinfo-ratings
+spec:
+  host: ratings.prod.svc.cluster.local # 路由规则的目标。客户端向服务端发送请求时用的地址。一般是写svc FQDN
+  trafficPolicy: # 针对这一个svc，配置流量规则配置
+    loadbalancer:
+      simple: LEAST_REQUEST # 最小请求算法
+  subsets: # 版本划分
+  - name: v3 # 自己起一个版本名称
+    labels:
+      version: v3
+    trafficPolicy: # 还可以对不同版本的服务做配置，这里的会覆盖掉外面的trafficPolicy
+      loadbalancer:
+        simple: ROUND_ROBIN # 轮询算法
+~~~
+
+### VirtualService
+
+[Istio / Virtual Service](https://istio.io/latest/docs/reference/config/networking/virtual-service/)
+
+~~~yaml
+apiVersion: networking.istio.io/v1
+kind: VirtualService
+metadata:
+  name: ProductPage
+  namespace: nsA
+spec:
+  hosts:
+  # 路由规则的目标，客户端向服务端发动请求时使用的地址。
+  # 如果是管理南北流量，写域名；管理东西流量，写svc的FQDN
+  - bookinfo.com
+  gateways:
+  # 管理南北流量，写当前域名绑定的gateway的名称。
+  # 管理东西流量，可以不用写
+  - my-gateway
+  http: # 配置七层代理规则 - 某个路径路由到哪个服务
+  - match:
+    - url:
+        prefix: /productpage/v1/
+    route:
+    - destination:
+        host: productpage-v1.nsA.svc.cluster.local
+  # 请求匹配到bookinfo.com/productpage/v1/，就走上面的svc
+  # 没匹配到，就走这个默认的svc。下面的默认配置也可以不写。
+  - route:
+    - destination:
+        host: productpage.nsA.svc.cluster.local
+~~~
+
+### Gateway
+
+[Istio / Gateway](https://istio.io/latest/docs/reference/config/networking/gateway/)
+
+~~~yaml
+apiVersion: networking.istio.io/v1
+kind: Gateway
+metadata:
+  name: my-gateway
+  namespace: nsA
+spec:
+  selector: # 选择运行此网关配置的istio ingress gateway pod（一般一个集群内装一个ingress gateway）
+    app:  my-gateway-controller
+  servers:
+  - port:
+      name: http
+      number: 80
+      protocol: HTTP
+    hosts:
+    - "bookinfo.com"
+~~~
+
+推荐给每一个ns创建一个Gateway，单独管理这个ns里面的服务暴露的域名。
+
+不推荐把所有的域名全放在一个Gateway资源里面，这样翻译出来的Envoy配置文件会变得很大。
+
+# istio生产环境高可用架构
+
+回顾Ingress Controller的高可用架构：ingress Controller的pod所在的宿主机暴露80/443端口，前端有个负载均衡器LB（F5、SLB、LVS、HAProxy等），购买的公网域名绑定到LB的IP上。LB配置80/443端口，解析到ingress-conrtoller的节点的80/443上，ingress-controller再把流量代理到后端svc-pod。
+
+## istio gateway架构
+
+对于istio也是类似的：
+
+<img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202508261729606.png" alt="image-20250826172950474" style="zoom: 67%;" />
+
+Istio Gateway和ingress-controller一样，也是有一个端口在宿主机上暴露，这个端口是内网访问的入口。
+
+服务发布到公网，需要在前端LB上配置IP或者代理，指向后端的istio gateway的端口号，由istio gateway再代理到后端服务。
+
+## 设备选型问题
+
+istio gateway和ingress controller功能一样，实际使用中用哪个？
+
+在功能层面，istio gateway完全覆盖ingress controller的功能（反之则不行）。所以建议网关直接用istio gateway。
+
+# itsio部署
+
+## 版本release表
+
+官网版本支持表：[Istio / Supported Releases](https://istio.io/latest/docs/releases/supported-releases/#support-status-of-istioreleases)
+
+github release：[Releases · istio/istio](https://github.com/istio/istio/releases)
+
+## 安装istioctl
+
+Istio自带istioctl工具，用来操作istio。
+
+~~~sh
+#首先下载Istio的安装包： 
+wget https://github.com/istio/istio/releases/download/1.27.0/istio-1.27.0-linux-amd64.tar.gz 
+#解压后，将Istio的客户端工具istioctl，移动到/usr/local/bin 目录下： 
+tar xf istio-1.27.0-linux-amd64.tar.gz 
+cd istio-1.27.0 
+mv bin/istioctl /usr/local/bin/ 
+istioctl version 
+~~~
+
+## 声明istioOperator资源 - 测试环境
+
+对于istio安装，也是建议用istioctl工具安装，首先需要声明istioOperator的配置：
+
+### 创建istio-system ns
+
+~~~sh
+kubectl create ns istio-system
+~~~
+
+### 声明istioOperator配置
+
+~~~yaml
+apiVersion: install.istio.io/v1alpha1 
+kind: IstioOperator 
+metadata: 
+  name: example-istio 
+  namespace: istio-system 
+spec: 
+  hub: m.daocloud.io/docker.io/istio # 修改镜像地址
+  meshConfig: 
+    accessLogEncoding: JSON 
+    accessLogFile: /dev/stdout 
+  # https://istio.io/latest/docs/setup/additional-setup/config-profiles/
+  profile: default # 生产环境建议直接用default就行。
+  components: 
+    base: 
+      enabled: true 
+    cni: 
+      enabled: false 
+    egressGateways: 
+    - enabled: false 
+      name: istio-egressgateway 
+    ingressGateways: 
+    - enabled: true 
+      name: istio-ingressgateway 
+      k8s: # ingressgateway自己的pod端口配置
+        service:      # 将Service类型改成NodePort 
+          type: NodePort 
+          ports: 
+          - name: status-port
+            port: 15020 
+            nodePort: 30520  
+          - name: http2 
+            port: 80  # 流量入口80端口映射到NodePort的30080，之后通过节点IP+30080即可访问Istio服务 
+            nodePort: 30080 
+            targetPort: 8080 
+          - name: https 
+            port: 443 
+            nodePort: 30443 
+            targetPort: 8443 
+~~~
+
+### 安装istio
+
+~~~sh
+istioctl install -f istio-operator.yaml
+# This will install the Istio 1.26.0 profile "default" into the cluster. 
+# Proceed? (y/N) y 
+~~~
+
+## 声明istioOperator资源 - 生产环境
+
+测试环境安装出来的isitio和ingressgateway只有一个副本。生产环境建议两个以上的服务。
+
+### 创建istio-system ns
+
+~~~sh
+kubectl create ns istio-system
+~~~
+
+### 声明istioOperator配置
+
+~~~yaml
+apiVersion: install.istio.io/v1alpha1 
+kind: IstioOperator 
+metadata: 
+  name: example-istio 
+  namespace: istio-system 
+spec: 
+  hub: m.daocloud.io/docker.io/istio 
+  meshConfig: 
+    accessLogEncoding: JSON 
+    accessLogFile: /dev/stdout
+  components: 
+    base: 
+      enabled: true 
+    cni: 
+      enabled: false 
+    egressGateways: 
+    - enabled: false 
+      name: istio-egressgateway 
+    pilot: 
+      k8s: 
+        hpaSpec: 
+          minReplicas: 2  # 默认为1 
+          maxReplicas: 5 # 默认为5 
+        resources: 
+          limits: 
+            memory: 2Gi 
+            cpu: "2" 
+          requests: 
+            memory: 128Mi # 生产环境调整为2 Gi 
+            cpu: "100m" # 生产环境调整为2 
+    ingressGateways: 
+    - enabled: true 
+      name: istio-ingressgateway 
+      k8s: 
+        hpaSpec: 
+          minReplicas: 2  # default 1 
+          maxReplicas: 5 # default 5 
+        resources: 
+          limits: 
+            memory: 2Gi 
+            cpu: "2" 
+          requests: 
+            memory: 128Mi # 生产环境调整为2 Gi 
+            cpu: "100m" # 生产环境调整为2 
+        service:      # 将Service类型改成NodePort 
+          type: NodePort 
+          ports: 
+          - port: 15020 
+            nodePort: 30520 
+            name: status-port 
+          - port: 80  # 流量入口80端口映射到NodePort的30080，之后通过节点IP+30080即可访问Istio服务 
+            nodePort: 30080 
+            name: http2 
+            targetPort: 8080 
+          - port: 443 
+            nodePort: 30443 
+            name: https 
+            targetPort: 8443
+~~~
+
+### 安装istio
+
+~~~sh
+istioctl install -f istio-operator.yaml 
+# This will install the Istio 1.26.0 profile "default" into the cluster. 
+# Proceed? (y/N) y 
+~~~
+
+# istio自动注入sidecar
+
+istio自动注入sidecar的方式有两种：
+
+1. Namespace级别：添加`istio-injection=enabled`（disabled就关闭自动注入）的标签到指定的namespace，那么该namespace下的pod1都会被自动注入一个Sidecar。
+2. Pod级别：添加`sidecar.istio.io/inject=true`（false就关闭自动注入）的标签到指定的pod，那么该pod会被注入sidecar。
+
+## 测试sidecar注入
+
+创建测试ns：
+
+~~~sh
+kubectl create ns istio-test
+kubectl label namespace istio-test istio-injection=enabled
+~~~
+
+切换目录至 istio 的安装包解压目录，里面有自带的测试用pod。然后创建测试应用，此时创建的 Pod 会被自动注入一个 istio proxy 的容器（因为这个pod创建在了开启sidecar注入的ns下面）：
+
+~~~sh
+cd istio-1.27.0/sample/sleep/
+# 更改测试服务的镜像地址：
+vim sleep.yaml
+image: m.daocloud.io/docker.io/curlimages/curl 
+# 创建测试服务：
+kubectl apply -f sleep.yaml -n istio-test 
+~~~
+
+如果需要给Pod单独添加istio-proxy，可以给Pod添加sidecar.istio.io/inject=true标签即可：
+
+~~~yaml
+  template: 
+    metadata: 
+      labels: 
+        app: sleep 
+        sidecar.istio.io/inject: "true" 
+~~~
+
+## 关闭sidecar注入
+
+如果某个服务不想被注入sidecar，可以添加`sidecar.istio.io/inject=false`的标签即可：
+
+~~~sh
+cd istio-1.27.0/samples/curl
+vim curl.yaml
+~~~
+
+~~~yaml
+template: 
+  metadata: 
+    labels: 
+      app: curl 
+      sidecar.istio.io/inject: "false" 
+  spec: 
+    terminationGracePeriodSeconds: 0 
+    serviceAccountName: curl 
+    containers: 
+    - name: curl 
+      image: m.daocloud.io/docker.io/curlimages/curl 
+~~~
+
+如果想要关闭该Namespace的自动注入，直接去除标签即可（已注入的Pod不受影响，下次重建后，不再有isito-proxy的容器）
+
+~~~sh
+kubectl label namespace istio-test istio-injection-
+~~~
+
+> 最常用的的方式：
+>
+> - 打开某个ns的istio sidecar注入，其中个别pod不需要sidecar，就打标签关闭注入。
+> - 单独开某几个pod的情况比较少
+
+# istio可视化工具Kiali
+
+Kiali为Istio提供了可视化的界面，可以在Kiali上进行观测流量的走向、调用链，同时还可 以使用Kiali进行配置管理，给用户带来了很好的体验。
