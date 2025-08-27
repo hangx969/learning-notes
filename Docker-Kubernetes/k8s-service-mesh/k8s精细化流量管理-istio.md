@@ -625,7 +625,7 @@ Kiali为Istio提供了可视化的界面，可以在Kiali上进行观测流量�
 kiali就在istio的安装包中，service改成NodePort，直接安装即可
 
 ~~~yaml
-vim istio-1.27/samples/addons/kiali.yaml
+vim ./istio-1.27/samples/addons/kiali.yaml
 
 apiVersion: v1 
 kind: Service 
@@ -634,18 +634,209 @@ metadata:
   namespace: "istio-system" 
 spec: 
   type: NodePort
+  
+# 安装
+kubectl apply -f ./istio-1.27/samples/addons/kiali.yaml
+# 通过NodePort高位端口访问UI界面
 ~~~
 
-# 链路追踪jaeger
+# 安装链路追踪jaeger
 
 除了Kiali 之外，还可以安装一个链路追踪的工具，安装该工具可以在Kiali的Workloads页面，查看某个服务的Traces信息：
 
 ~~~yaml
-cd istio-1.27.0/samples/addons
+cd ./istio-1.27.0/samples/addons
+
 # 首先更改镜像地址 
 vim samples/addons/jaeger.yaml 
 image: "m.daocloud.io/docker.io/jaegertracing/all-in-one:1.67.0"
+
+# 更改名称为tracing的svc为NodePort
+vim samples/addons/jaeger.yaml 
+apiVersion: v1
+kind: Service
+metadata:
+  name: tracing
+  namespace: istio-system
+  labels:
+    app: jaeger
+spec:
+  type: NodePort
+  ports:
+    - name: http-query
+      port: 80
+      protocol: TCP
+      targetPort: 16686
+    # Note: Change port name if you add '--query.grpc.tls.enabled=true'
+    - name: grpc-query
+      port: 16685
+      protocol: TCP
+      targetPort: 16685
+  selector:
+    app: jaeger
+
 # 创建
 kubectl create -f samples/addons/jaeger.yaml
+
+# 通过NodePort高位端口访问UI界面
 ~~~
 
+> 注意：公司如果真需要上链路追踪，建议用更专业的Skywalking。jaeger这个比较简单而且也不太好用。
+
+# 集成prometheus+grafana
+
+Istio 默认暴露了很多监控指标，比如请求数量统计、请求持续时间以及Service和工作负载的指标，这些指标可以使用Prometheus进行收集，Grafana进行展示。
+
+Istio 内置了Prometheus和Grafana的安装文件，直接安装即可。
+
+> 也可以使用外置的Prometheus和Grafana。
+>
+> 但是建议istio的prometheus和grafana单独安装，因为集群自己的prometheus需要监控很多集群其他指标，不建议再接入istio的指标。istio用自己独立的prometheus和grafana即可。
+
+## 安装
+
+~~~sh
+# 同样需要修改镜像地址 
+vim samples/addons/grafana.yaml 
+image: "m.daocloud.io/docker.io/grafana/grafana:11.3.1" 
+vim samples/addons/prometheus.yaml
+image: "m.daocloud.io/docker.io/prom/prometheus:v3.2.1" 
+
+# 修改svc为NodePort
+vim samples/addons/grafana.yaml # 修改name为grafana的svc
+vim samples/addons/prometheus.yaml # 修改名为prometheus的svc
+
+# 安装
+kubectl create -f samples/addons/prometheus.yaml -f samples/addons/grafana.yaml 
+# 完成后通过NodePort高位端口访问grafana
+~~~
+
+## Grafana dashboard
+
+进入到Grafana dashboard可以看到默认已经加进去了istio相关的dashboard。
+
+进入Istio Control Plane Dashboard：
+
+1. 有一个指标叫：“**Push Erros**”，代表当前的配置分发到数据平面有没有报错。可以着重看这个指标
+
+进入Istio Mesh Dashboard：
+
+1. 这是全局监控面板，如果出现性能问题，可以在其中查看相关指标。
+
+进入Istio Performance Dashboard：
+
+1. 这里面显示了istio的资源使用情况。出现性能问题同样可以在其中查看。
+
+进入Istio Service Dashboard和Istio Workload Dashboard：
+
+1. 可以看到服务间访问的链路情况。
+
+# istio流量治理实践
+
+istio官网提供了BookInfo项目：https://istio.io/latest/docs/examples/bookinfo/
+
+## 部署bookinfo项目
+
+创建ns并添加自动注入标签：
+
+~~~sh
+kubectl create ns bookinfo
+kubectl label ns bookinfo istio-injection=enabled
+~~~
+
+修改项目里面的镜像地址：
+
+~~~sh
+vim samples/bookinfo/platform/kube/bookinfo.yaml
+image: m.daocloud.io/docker.io/istio/examples-bookinfo-details-v1:1.20.3 
+image: m.daocloud.io/docker.io/istio/examples-bookinfo-ratings-v1:1.20.3 
+image: m.daocloud.io/docker.io/istio/examples-bookinfo-reviews-v1:1.20.3 
+image: m.daocloud.io/docker.io/istio/examples-bookinfo-reviews-v2:1.20.3 
+image: m.daocloud.io/docker.io/istio/examples-bookinfo-reviews-v3:1.20.3 
+image: m.daocloud.io/docker.io/istio/examples-bookinfo-productpage-v1:1.20.3 
+~~~
+
+部署服务：
+
+~~~sh
+kubectl apply -f samples/bookinfo/platform/kube/bookinfo.yaml -n bookinfo 
+~~~
+
+## 使用域名发布服务
+
+接下来创建Istio的Gateway和VirtualService实现域名访问Bookinfo项目。
+
+### 创建Gateway
+
+首先创建Gateway，假设发布的域名是`bookinfo.kubeasy.com`。Gateway配置如下所示：
+
+~~~yaml
+apiVersion: networking.istio.io/v1 
+kind: Gateway 
+metadata: 
+  name: bookinfo-gateway 
+spec:
+  # The selector matches the ingress gateway pod labels.
+  # If you installed Istio using Helm following the standard documentation, this would be "istio=ingress"
+  selector: 
+    istio: ingressgateway # 使用默认的istio ingress gateway 
+  servers: 
+  - port: 
+      number: 80 
+      name: http 
+      protocol: HTTP 
+    hosts: 
+    - "bookinfo.kubeasy.com" # 发布域名
+~~~
+
+### 创建VirtualService
+
+接下来创建VirtualService，实现对不同微服务的访问
+
+~~~yaml
+--- 
+apiVersion: networking.istio.io/v1 
+kind: VirtualService 
+metadata: 
+  name: bookinfo 
+spec: 
+  hosts: 
+  - "bookinfo.kubeasy.com" 
+  gateways: 
+  - bookinfo-gateway 
+  http: 
+  - match: 
+    - uri: 
+        exact: /productpage 
+    - uri: 
+        prefix: /static 
+    - uri: 
+        exact: /login 
+    - uri: 
+        exact: /logout 
+    - uri: 
+        prefix: /api/v1/products 
+    route: 
+    - destination: 
+        host: productpage 
+        port: 
+          number: 9080 
+~~~
+
+部署Gateway和VS：
+
+~~~sh
+kubectl apply -
+~~~
+
+
+
+### 发布域名
+
+接下来将域名bookinfo.kubeasy.com解析至集群任意一个安装了kube-proxy的节点IP上，然后通过ingressgateway的Service的NodePort即可访问到Bookinfo：
+
+~~~sh
+kubectl get svc -n istio-system istio-ingressgateway
+~~~
+
+绑定hosts后，通过bookinfo.kubeasy.com+ingressgateway 80 端口的 NodePort 即可访问该服 务，比如本次示例的bookinfo.kubeasy.com:30080/productpage： 
