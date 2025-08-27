@@ -618,4 +618,21 @@ kubectl label namespace istio-test istio-injection-
 
 # istio可视化工具Kiali
 
-Kiali为Istio提供了可视化的界面，可以在Kiali上进行观测流量的走向、调用链，同时还可 以使用Kiali进行配置管理，给用户带来了很好的体验。
+Kiali为Istio提供了可视化的界面，可以在Kiali上进行观测流量的走向、调用链，同时还可以使用Kiali进行配置管理。
+
+## 安装
+
+kiali就在istio的安装包中，service改成NodePort，直接安装即可
+
+~~~yaml
+vim istio-1.27/samples/addons/kiali.yaml
+
+apiVersion: v1 
+kind: Service 
+metadata: 
+  name: kiali 
+  namespace: "istio-system" 
+spec: 
+  type: NodePort
+~~~
+
