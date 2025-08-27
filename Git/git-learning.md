@@ -516,6 +516,8 @@ git clone https://github.com/cengxiye/sid.github.io.git
 
 # Troubleshooting
 
+## 大文件上传报错
+
 - 目录中有大文件，push的时候显示超过100MB不能上传，删除这个文件之后，push仍然会提交这个文件报错。
 
   - 解决：要从所有commit中把这个文件删掉，再push
@@ -546,3 +548,49 @@ git clone https://github.com/cengxiye/sid.github.io.git
     git config --global http.postBuffer 524288000
     ~~~
 
+## 22端口连接报错
+
+以Windows系统为例进行说明，在个人电脑上使用[Git](https://zhida.zhihu.com/search?content_id=203985854&content_type=Article&match_order=1&q=Git&zd_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ6aGlkYV9zZXJ2ZXIiLCJleHAiOjE3NTY0MzUzNTEsInEiOiJHaXQiLCJ6aGlkYV9zb3VyY2UiOiJlbnRpdHkiLCJjb250ZW50X2lkIjoyMDM5ODU4NTQsImNvbnRlbnRfdHlwZSI6IkFydGljbGUiLCJtYXRjaF9vcmRlciI6MSwiemRfdG9rZW4iOm51bGx9.h-I3dlo-ib5YFrapPGueFbAMugsU6KzUoIoIGOY7VVI&zhida_source=entity)命令来操作[GitHub](https://zhida.zhihu.com/search?content_id=203985854&content_type=Article&match_order=1&q=GitHub&zd_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ6aGlkYV9zZXJ2ZXIiLCJleHAiOjE3NTY0MzUzNTEsInEiOiJHaXRIdWIiLCJ6aGlkYV9zb3VyY2UiOiJlbnRpdHkiLCJjb250ZW50X2lkIjoyMDM5ODU4NTQsImNvbnRlbnRfdHlwZSI6IkFydGljbGUiLCJtYXRjaF9vcmRlciI6MSwiemRfdG9rZW4iOm51bGx9.-Y0FJU1F9Re3chaSQK2HXLvatrYlgGfi04phWxHMdn0&zhida_source=entity)上的项目，本来都很正常，突然某一天开始，会提示如下错误`ssh: connect to host github.com port 22: Connection Timeout`。
+
+1. 先查看下具体ssh报错：
+
+~~~sh
+ssh -vT git@github.com
+~~~
+
+2. 结果会显示使用的ssh配置文件，以及连接github 22端口超时：
+
+~~~sh
+OpenSSH_for_Windows_9.5p1, LibreSSL 3.8.2
+debug1: Reading configuration data C:\\Users\\xuhan/.ssh/config
+debug1: C:\\Users\\xuhan/.ssh/config line 1: Applying options for github.com
+debug1: Connecting to ssh.github.com [20.205.243.160] port 22.
+~~~
+
+**GitHub 的标准 SSH 端口是 22。但在某些网络环境中（公司防火墙、ISP限制等），端口 22 可能被封锁。GitHub 提供了替代方案：通过 ssh.github.com 的 443 端口（HTTPS 端口）来进行 SSH 连接**。
+
+3. 修改这个ssh配置文件，改成连接ssh的443端口：
+
+~~~sh
+gsudo notepad C:\\Users\\xuhan/.ssh/config
+
+Host github.com
+  Hostname ssh.github.com
+  Port 443
+~~~
+
+4. 修改完成后测试连接github：
+
+~~~sh
+ssh -T git@github.com
+~~~
+
+结果显示：``Hi xxxxx! You've successfully authenticated, but GitHub does not provide shell access.`就表示一切正常了。
+
+5. 再次尝试上传下载github文件，结果显示正常：
+
+~~~sh
+git add .
+git commit -m "Update"
+git push origin main
+~~~
