@@ -638,3 +638,14 @@ spec:
 
 # 链路追踪jaeger
 
+除了Kiali 之外，还可以安装一个链路追踪的工具，安装该工具可以在Kiali的Workloads页面，查看某个服务的Traces信息：
+
+~~~yaml
+cd istio-1.27.0/samples/addons
+# 首先更改镜像地址 
+vim samples/addons/jaeger.yaml 
+image: "m.daocloud.io/docker.io/jaegertracing/all-in-one:1.67.0"
+# 创建
+kubectl create -f samples/addons/jaeger.yaml
+~~~
+
