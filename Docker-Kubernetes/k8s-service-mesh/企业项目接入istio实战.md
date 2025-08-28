@@ -174,22 +174,20 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /$2
-  name: demo-receive
+  name: demo-order
   namespace: demo
 spec:
-  ingressClassName: nginx-default
+  ingressClassName: nginx
   rules:
   - host: demo.test.com
     http:
       paths:
       - backend:
           service:
-            name: demo-receive
+            name: order
             port:
-              number: 8080
-        path: /receiveapi(/|$)(.*)
+              number: 80
+        path: /orders
         pathType: ImplementationSpecific
 ~~~
 
@@ -270,7 +268,7 @@ spec:
     metadata:
       labels:
         app: demo-receive
-        version: v1
+        version: v1 # istio改造，加上版本标签
     spec:
       containers:
       - name: demo-receive
@@ -298,8 +296,309 @@ spec:
             port: 8080
           timeoutSeconds: 2
 ---
-
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    # 将用户请求路径重写为第二个捕获组 (.*) 的内容，去掉 /receiveapi 前缀，转发给后端demo-receive服务
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+  name: demo-receive
+  namespace: demo
+spec:
+  ingressClassName: nginx-default
+  rules:
+  - host: demo.test.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: demo-receive
+            port:
+              number: 8080
+        path: /receiveapi(/|$)(.*)
+        pathType: ImplementationSpecific
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: demo-receive
+  namespace: demo
+spec:
+  selector:
+    app: demo-receive
+  ports:
+  - name: http-web
+    port: 8080
+    protocol: TCP
+    targetPort: 8080
 ~~~
 
+### 前端UI
 
+~~~yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: demo-ui
+  namespace: demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: demo-ui
+  template:
+    metadata:
+      labels:
+        app: demo-ui
+        version: v1 # istio项目改造，加上版本标签
+    spec:
+      containers:
+      - name: demo-ui
+        image: registry.cn-beijing.aliyuncs.com/dotbalo/demo-ui:sw
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          failureThreshold: 2
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          successThreshold: 1
+          tcpSocket:
+            port: 80
+          timeoutSeconds: 2
+        readinessProbe:
+          failureThreshold: 2
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          successThreshold: 1
+          tcpSocket:
+            port: 80
+          timeoutSeconds: 2
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: demo-ui
+  namespace: demo
+spec:
+  ingressClassName: nginx-default
+  rules:
+  - host: demo.test.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: demo-ui
+            port:
+              number: 80
+        path: /
+        pathType: ImplementationSpecific
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: demo-ui
+  name: demo-ui
+  namespace: demo
+spec:
+  selector:
+    app: demo-ui
+  ports:
+  - name: http-web
+    port: 80
+    protocol: TCP
+    targetPort: 80
+~~~
 
+### 访问项目
+
+宿主机添加host，通过前端UI的ingress访问：`demo.test.com`
+
+## 接入istio南北流量改造
+
+如果想要使用Istio管理南北流量，建议服务的入口使用IngressGateway进行管理，也就是需要把之前由其他控制器管理的Ingress改造为由Istio Gateway管理（新项目直接创建即可，无需改造）。 
+
+### 确认待改造ingress
+
+首先确认当前项目的ingress配置有哪些：
+
+~~~sh
+kubectl get ingress -n demo
+
+NAME           CLASS           HOSTS           
+demo-order     nginx-default   demo.test.com
+demo-receive   nginx-default   demo.test.com
+demo-ui        nginx-default   demo.test.com
+~~~
+
+建议先改造后端再改造前端
+
+### 为项目创建Gateway
+
+~~~yaml
+apiVersion: networking.istio.io/v1 
+kind: Gateway 
+metadata: 
+  name: demo-gateway
+  namespace: demo
+spec: 
+  selector: 
+    istio: ingressgateway # 使用默认的istio ingress gateway 
+  servers: 
+  - port: 
+      number: 80 
+      name: http
+      protocol: HTTP 
+    hosts: 
+    - "demo.test.com" # 发布域名 
+~~~
+
+### 创建VirtualService
+
+接下来需要创建VirtualService和Gateway绑定
+
+#### order服务
+
+看demo-order的ingress定义，把/orders路径转发到order svc，端口号是80。创建同样规则的VirtualService：
+
+~~~yaml
+--- 
+apiVersion: networking.istio.io/v1 
+kind: VirtualService 
+metadata: 
+  name: demo-order
+  namespace: demo
+spec: 
+  hosts: 
+  - "demo.test.com" 
+  gateways: 
+  - demo-gateway 
+  http: 
+  - match: 
+    - uri: 
+        prefix: /orders 
+    route: 
+    - destination:
+        host: order.demo.svc.cluster.local
+        port: 
+          number: 80 
+~~~
+
+vs创建完成后就可以通过域名+ingressGateway端口号访问到服务了：`demo.test.com:30080/orders`
+
+#### receive服务
+
+看receive服务的ingress定义，里面有路径重写，将用户请求路径重写为第二个捕获组 (.*) 的内容，去掉 /receiveapi 前缀，转发给后端demo-receive服务的8080端口。
+
+创建同样规则的VirtualService：
+
+~~~yaml
+--- 
+apiVersion: networking.istio.io/v1 
+kind: VirtualService 
+metadata: 
+  name: demo-receive
+  namespace: demo
+spec: 
+  hosts: 
+  - "demo.test.com" 
+  gateways: 
+  - demo-gateway 
+  http: 
+  - match: 
+    - uri: 
+        prefix: /receiveapi/ # 注意rewtire时前端路径要把最后的/写上，全部rewrite成/。这样后端服务就不会多一个/了
+    rewrite: 
+      uri: /
+    route: 
+    - destination: 
+        host: demo-receive.demo.svc.cluster.local
+        port: 
+          number: 8080
+~~~
+
+#### 前端ui服务
+
+~~~yaml
+--- 
+apiVersion: networking.istio.io/v1 
+kind: VirtualService 
+metadata: 
+  name: demo-ui 
+  namespace: demo
+spec: 
+  hosts: 
+  - "demo.test.com" 
+  gateways: 
+  - demo-gateway 
+  http: 
+  - match: 
+    - uri: 
+        prefix: / 
+    route: 
+    - destination: 
+        host: demo-ui 
+        port: 
+          number: 80
+~~~
+
+创建完成后，访问根路径`demo.test.com:30080/`验证。
+
+#### 删除ingress
+
+验证VirtualService和Gateway可以访问到发布的域名之后，就可以删掉现存的ingress了。
+
+## 接入istio东西流量改造
+
+如果需要istio管理东西流量，需要istio的sidecar注入，然后再通过DR和VS控制内部流量。
+
+### ns添加istio注入标签
+
+首先向demo命名空间添加istio标签：
+
+~~~sh
+kubectl label ns demo istio-injection=enabled
+~~~
+
+### 重建pod
+
+rollout restart所有deployment和sts，滚动更新之后，istio sidecar会加到pod里面。
+
+### 创建dr和vs
+
+之后给需要管理东西流量的Service创建VirtualService和DestinationRule，方便更细力度控制流量。
+
+比如handler服务是对内暴露的，可以进行东西流量改造。对handler服务创建VirtualService和DestinationRule：
+
+~~~yaml
+apiVersion: networking.istio.io/v1 
+kind: DestinationRule 
+metadata: 
+  name: handler
+  namespace: demo
+spec: 
+  host: handler.demo.svc.cluster.local
+  subsets: 
+  - name: v1 
+    labels: 
+      version: v1 
+~~~
+
+~~~yaml
+apiVersion: networking.istio.io/v1 
+kind: VirtualService 
+metadata: 
+  name: handler 
+  namespace: demo 
+spec: 
+  hosts: 
+  - handler.demo.svc.cluster.local
+  http: 
+  - route: 
+    - destination: 
+        host: handler.demo.svc.cluster.local
+        port: 
+          number: 80 
+        subset: v1 # 流量指向v1
+~~~
+
+改造完成后可以在kiali界面查看流量图：`http://192.168.40.180:31096/kiali/console/graph/`
