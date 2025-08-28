@@ -464,6 +464,30 @@ istioctl install -f istio-operator.yaml
 # Proceed? (y/N) y 
 ~~~
 
+#### profile选项
+
+- 使用 `istioctl` 安装 Istio 时，会根据指定的 profile 来选择使用的 Istio 配置文件。
+
+- profile 参数是一个预定义的配置选项，用于快速设置 Istio 的安装配置。每个 profile 都对应一个特定的 YAML 配置文件，其中包含了一组预定义的配置选项。
+
+- 在 Istio 的安装过程中，profile 参数可以指定为以下一些值：
+
+  - demo：适用于**生产环境**，包含`istiod`、`ingressgateway`、`egressgateway`
+
+  - default：这是一个最小配置，仅包含最基本的组件，如`istiod`和`ingressgateway` 
+
+  - minimal：这个配置相对更加精简，只包含了必需的组件，适用于资源受限或轻量级的环境。只会安装`istiod`。
+
+- istioctl install 本质上是根据选择的 profile 来加载对应的 YAML 配置文件，并将配置部署到 Kubernetes 集群中。
+
+- 如果你想查看 demo 配置文件的内容，可以通过以下命令查找 Istio 的安装目录并找到对应的文件：
+
+  ```sh
+  istioctl profile dump demo
+  ```
+
+  这将打印出 demo 配置的完整内容，包括各个组件的配置选项。你也可以在 Istio 官方文档中找到各种预定义的 profile 配置选项的详细信息。
+
 ## 声明istioOperator资源 - 生产环境
 
 测试环境安装出来的isitio和ingressgateway只有一个副本。生产环境建议两个以上的服务。
@@ -475,6 +499,8 @@ kubectl create ns istio-system
 ~~~
 
 ### 声明istioOperator配置
+
+istio组件的
 
 ~~~yaml
 apiVersion: install.istio.io/v1alpha1 
@@ -495,32 +521,32 @@ spec:
     egressGateways: 
     - enabled: false 
       name: istio-egressgateway 
-    pilot: 
+    pilot: # istiod组件的hpa
       k8s: 
         hpaSpec: 
           minReplicas: 2  # 默认为1 
           maxReplicas: 5 # 默认为5 
         resources: 
-          limits: 
+          limits: # 生产环境建议4C4G/4C8G
             memory: 2Gi 
             cpu: "2" 
-          requests: 
-            memory: 128Mi # 生产环境调整为2 Gi 
-            cpu: "100m" # 生产环境调整为2 
+          requests: # 生产环境建议4C4G/4C8G（和limit一样，提高QoS）
+            memory: 128Mi
+            cpu: "100m" 
     ingressGateways: 
     - enabled: true 
       name: istio-ingressgateway 
-      k8s: 
+      k8s: # ingressGateway的hpa配置
         hpaSpec: 
           minReplicas: 2  # default 1 
           maxReplicas: 5 # default 5 
         resources: 
-          limits: 
+          limits: # 生产环境建议4C4G/4C8G
             memory: 2Gi 
             cpu: "2" 
-          requests: 
-            memory: 128Mi # 生产环境调整为2 Gi 
-            cpu: "100m" # 生产环境调整为2 
+          requests: # 生产环境建议4C4G/4C8G（和limit一样，提高QoS）
+            memory: 128Mi 
+            cpu: "100m" 
         service:      # 将Service类型改成NodePort 
           type: NodePort 
           ports: 
@@ -818,7 +844,7 @@ spec:
         prefix: /api/v1/products 
     route: 
     - destination: 
-        host: productpage 
+        host: pproductpage.bookinfo.svc.cluster.local 
         port: 
           number: 9080 
 ~~~
@@ -826,10 +852,8 @@ spec:
 部署Gateway和VS：
 
 ~~~sh
-kubectl apply -
+kubectl apply -f bookinfo-gateway.yaml -f bookinfo-vs.yaml -n bookinfo
 ~~~
-
-
 
 ### 发布域名
 
@@ -839,4 +863,468 @@ kubectl apply -
 kubectl get svc -n istio-system istio-ingressgateway
 ~~~
 
-绑定hosts后，通过bookinfo.kubeasy.com+ingressgateway 80 端口的 NodePort 即可访问该服 务，比如本次示例的bookinfo.kubeasy.com:30080/productpage： 
+1. 绑定hosts后，通过bookinfo.kubeasy.com +【ingressgateway 80 端口对应的NodePort（30080）】即可访问该服务，比如本次示例：`bookinfo.kubeasy.com:30080/productpage`
+
+(实际生产环境中有前端LB，外部用户要访问的话需要把域名解析到前端LB的IP，默认是80/443端口，就不用写端口号了。由LB再把请求转发到后端ingressgateway上面)
+
+2. 多访问几次，可以看到Reviewer处的星星会在黑色、红色和消失之间来回替换，是因为部署了三个不同版本的reviews，每个版本具有不同的显示效果。
+
+3. 然后去kiali - traffic graph里面看到流量链路图。
+
+## 地址重写和重定向
+
+Istio 同样支持访问地址的重写和重定向，这个功能一般用于新旧域名的替换和移动端、桌面端互相跳转。效果是访问某个域名的某个路径时，自动跳转到另一个域名的另一个路径。
+
+详细配置文档：https://istio.io/latest/docs/reference/config/networking/virtual-service/#HTTPRedirect 
+
+### 域名重定向
+
+比如将`bookinfo.kubeasy.com/hangx`跳转到` edu.51cto.com/lecturer/11062970.html`，在VS里面配置：
+
+~~~yaml
+--- 
+apiVersion: networking.istio.io/v1 
+kind: VirtualService 
+metadata: 
+  name: bookinfo 
+spec: 
+  hosts: 
+  - "bookinfo.kubeasy.com" 
+  gateways: 
+  - bookinfo-gateway 
+  http: 
+  - match: 
+    - uri: 
+        prefix: /hangx # 匹配/hangx
+    redirect: 
+      authority: edu.51cto.com  # 跳转的域名 
+      uri: /lecturer/11062970.html  # 跳转的路径
+  - match: 
+    - uri: 
+        exact: /productpage 
+    - uri: 
+        prefix: /static 
+    - uri: 
+        exact: /login 
+    - uri: 
+        exact: /logout 
+    - uri: 
+        prefix: /api/v1/products 
+    route: 
+    - destination: 
+        host: productpage.bookinfo.svc.cluster.local
+        port: 
+          number: 9080 
+~~~
+
+~~~sh
+kubectl apply -f bookinfo-vs.yaml -n bookinfo
+~~~
+
+### 地址重写
+
+地址重写的一个典型应用场景就是：
+
+1. 同一个域名代理了很多后端服务，比如：test.com --> a、b、b三个服务，需要通过test.com/a、test.com/b、test.com/c来路由到不同后端服务
+2. 但是对于a、b、c服务的三个后端pod，开发出来对外暴露的接口都是/api。你直接访问test.com/a报404，因为pod根本没暴露这个接口，人家暴露的是/api
+3. 这就需要根据域名/路径，重定向到后端服务。比如将test.com/a重写为test.com/api，route配置为a服务的svc。
+
+我们上面bookinfo项目默认根路径是报错404的：`bookinfo.kubeasy.com:30080/`，我们可以配置根路径访问到/productpage页面。在VS中配置：
+
+~~~yaml
+--- 
+apiVersion: networking.istio.io/v1 
+kind: VirtualService 
+metadata: 
+  name: bookinfo 
+spec: 
+  hosts: 
+  - "bookinfo.kubeasy.com" 
+  gateways: 
+  - bookinfo-gateway
+  http: 
+  - match:
+    - uri:
+        exact: / # 匹配根路径
+    rewrite: # 地址重写为/productpage
+      uri: /productpage
+    route: # 指定rewrite到哪个
+    - destination:
+        host: productpage.bookinfo.svc.cluster.local
+        port:
+          number: 9080
+  - match: 
+    - uri: 
+        exact: /productpage 
+    - uri: 
+        prefix: /static 
+    - uri: 
+        exact: /login 
+    - uri: 
+        exact: /logout 
+    - uri: 
+        prefix: /api/v1/products 
+    route: 
+    - destination: 
+        host: productpage.bookinfo.svc.cluster.local
+        port: 
+          number: 9080 
+~~~
+
+~~~sh
+kubectl apply -f bookinfo-vs.yaml -n bookinfo
+~~~
+
+## istio实现灰度发布
+
+使用Istio进行细粒度的流量管理，步骤如下：
+
+1. 创建DR划分subset
+2. 创建VS将100%流量导向旧版本
+3. 部署新版本
+4. 使用VS逐渐切换比例流量到新版本
+
+### 创建DR划分子集
+
+在bookinfo项目中，有三个版本的reviews服务（pod打好了标签version=v1、v2、v3）。首先通过DestinationRule将reviews分成三个版本：
+
+~~~yaml
+apiVersion: networking.istio.io/v1 
+kind: DestinationRule 
+metadata: 
+  name: reviews 
+spec: 
+  host: reviews.bookinfo.svc.cluster.local
+  subsets: 
+  - name: v1 
+    labels: 
+      version: v1 # subset v1指向具有version=v1的Pod 
+  - name: v2 
+    labels: 
+      version: v2 # subset v2指向具有version=v2的Pod 
+  - name: v3 
+    labels: 
+      version: v3 # subset v3指向具有version=v3的Pod 
+~~~
+
+~~~sh
+kubectl apply -f bookinfo-canary-dr.yaml -n bookinfo
+~~~
+
+### 创建VS路由流量
+
+1. 首先将所有流量路由到v1：
+
+~~~yaml
+apiVersion: networking.istio.io/v1 
+kind: VirtualService 
+metadata: 
+  name: reviews 
+spec: 
+  hosts: 
+  - reviews.bookinfo.svc.cluster.local 
+  http: 
+  - route: 
+    - destination: 
+        host: reviews.bookinfo.svc.cluster.local 
+        subset: v1 # 将流量全部指向v1
+~~~
+
+~~~sh
+kubectl apply -f vs-reviews-v1-all.yaml -n bookinfo
+~~~
+
+2. 开发了v2版本上线，现在把20%流量切到v2作为灰度发布：
+
+~~~yaml
+apiVersion: networking.istio.io/v1 
+kind: VirtualService 
+metadata: 
+  name: reviews 
+spec: 
+  hosts: 
+  - reviews.bookinfo.svc.cluster.local 
+  http: 
+  - route: 
+      - weight: 80
+        destination: 
+          host: reviews.bookinfo.svc.cluster.local 
+          subset: v1
+      - weight: 20
+        destination: 
+          host: reviews.bookinfo.svc.cluster.local
+          subset: v2    
+~~~
+
+~~~sh
+kubectl apply -f vs-reviews-v1-all.yaml -n bookinfo
+~~~
+
+3. 将流量全部导向v2
+
+~~~yaml
+apiVersion: networking.istio.io/v1 
+kind: VirtualService 
+metadata: 
+  name: reviews 
+spec: 
+  hosts: 
+  - reviews.bookinfo.svc.cluster.local 
+  http: 
+  - route:
+    - destination: 
+        host: reviews.bookinfo.svc.cluster.local
+        subset: v2
+~~~
+
+~~~sh
+kubectl apply -f vs-reviews-v1-all.yaml -n bookinfo
+~~~
+
+## istio实现A/B测试
+
+Istio也支持基于请求头、uri、schema等方式的细粒度流量管理，这种路由方式比较适用于新版本上线时的AB测试。
+
+Istio请求头匹配介绍：https://istio.io/latest/docs/reference/config/networking/virtual-service/#HTTPMatchRequest 
+
+假如bookinfo项目又开发了一个新版v3，此时只想要公司内部的测试组先进行测试，可以配置VirtualService指定部分用户访问新版本。 
+
+1. 再次修改reviews的VirtualService，将jason用户指向v3，其他用户依旧使用v2版本：
+
+~~~yaml 
+apiVersion: networking.istio.io/v1 
+kind: VirtualService 
+metadata: 
+  name: reviews 
+spec: 
+  hosts: 
+  - reviews.bookinfo.svc.cluster.local 
+  http: 
+  - match: 
+    - headers: # 匹配请求头 
+        end-user: # 匹配请求头的key为end-user。根据实际情况填写合适的header头
+          exact: jason # value 为jason，也支持prefix、regex 
+    route: 
+    - destination: 
+        host: reviews.bookinfo.svc.cluster.local
+        subset: v3 # 匹配到end-user=jason路由至v3版本
+  - route: 
+    - destination: 
+        host: reviews.bookinfo.svc.cluster.local
+        subset: v2 # 其余用户路由到v2版本
+~~~
+
+~~~sh
+kubectl apply -f vs-ab-json-v3.yaml -n bookinfo
+~~~
+
+在bookinfo.kubeasy.com:30080/productpage页面上登录，user为jason，密码随便写。登录后可以发现使用的是v3版本的reviews（星星颜色为红色）
+
+2. 当AB测试完成后，可以再接上一个灰度发布，20%到v3，80%到v2。
+3. 灰度发布完成后，再完全切换流量到v3
+
+## istio负载均衡算法
+
+k8s原生可以调整节点级别kube-proxy ipvs的负载均衡算法，但是不支持精细化到pod级别的负载均衡算法，Istio可以。
+
+Istio原生支持多种负载均衡算法，比如ROUND_ROBIN、LEAST_REQUEST、LEAST_CONN、RANDOM等。假如一个应用存在多个副本（Pod），可以使用上述算法对多个Pod进行定制化的负载均衡配置。
+
+常见的负载均衡策略如下：
+
+1. ROUND_ROBIN：轮询算法，将请求依次分配给每一个实例，不推荐使用。
+
+   > 只要涉及到负载均衡算法，都不推荐使用轮询，已经被证实存在很多问题，比如：某个节点由于性能问题（比如cpu、内存高），导致上面pod处理请求比较慢，但是轮询是感知不到的。会导致请求不断还是会继续发送到这个节点的pod上，导致这个pod一直cpu飚高，但是其他pod空闲。
+
+2. LEAST_REQUEST：最小链接算法，从池中随机选择两个实例pod，并将请求路由给当前活跃请求数较少的那个主机。`【生产环境建议】`
+
+3. RANDOM：随机算法，将请求随机分配给其中一个实例。
+
+4. PASSTHROUGH：将连接转发到调用者请求的原始 IP 地址，而不进行任何形式的负载均衡，目前不推荐使用。
+
+5. UNSPECIFIED：未指定负载均衡算法，Istio将选择一个合适的默认算法，不推荐使用。
+
+### 更改负载均衡算法
+
+更改负载均衡算法需要在DR上配置，因为DR才是控制流量作用到pod上的。
+
+~~~yaml
+apiVersion: networking.istio.io/v1 
+kind: DestinationRule 
+metadata: 
+  name: reviews 
+spec: 
+  trafficPolicy:  # 添加路由策略，在spec下对所有的subset生效，也可以在subset中配置
+    loadBalancer: # 配置负载均衡
+      simple: RANDOM # 策略为RANDOM
+  host: reviews.bookinfo.svc.cluster.local
+  subsets: 
+  - name: v1 
+    labels: 
+      version: v1 # subset v1指向具有version=v1的Pod 
+    trafficPolicy: # 对于v1的所有pod配置单独的负载均衡算法
+      loadBalancer: # 配置负载均衡
+        simple: LEAST_REQUEST # 策略为RANDOM
+  - name: v2 
+    labels: 
+      version: v2 # subset v2指向具有version=v2的Pod 
+  - name: v3 
+    labels: 
+      version: v3 # subset v3指向具有version=v3的Pod 
+~~~
+
+~~~sh
+kubectl apply -f bookinfo-canary-dr.yaml -n bookinfo
+~~~
+
+## istio熔断配置
+
+Istio支持熔断机制，可以实现在高并发时对服务进行过载保护。比如部署了一个大模型服务，只能同时支持100用户请求。此时来了高于100个请求，就会造成服务宕机，影响前100个正常用户的访问。这样影响太大。可以设置熔断，超过最大并发量的时候，新进来的请求返回一个“当前繁忙，请稍后再试”之类的友好提示。
+
+假设对ratings进行熔断，希望在并发请求数超过3，并且存在1个以上的待处理请求，就触发熔断。因为熔断也是在最终实例pod上生效的，也是在DR上配置的。
+
+### DR配置熔断
+
+此时可以配置ratings的DestinationRule如下所示： 
+
+~~~yaml
+# vim ratings-dr.yaml  
+apiVersion: networking.istio.io/v1 
+kind: DestinationRule 
+metadata: 
+  name: ratings 
+  namespace: bookinfo 
+spec: 
+  host: ratings.bookinfo.svc.cluster.local
+  trafficPolicy: # trafficPolicy配置，也可以配置在subsets级别 
+    connectionPool: # 连接池配置，可以单独使用限制程序的并发数 
+      tcp: 
+        maxConnections: 3 # 最大并发数为3 
+      http: 
+        http1MaxPendingRequests: 1 # 最大的待处理请求。
+        # 假如有2个待处理请求，就触发了熔断，不让你排队了，因为排队也没有用了
+    outlierDetection:  # 熔断探测配置 
+      consecutive5xxErrors: 1  # 如果连续出现的5xx错误超过1次，就会被熔断 
+      interval: 10s # 每10秒探测一次后端实例 
+      baseEjectionTime: 3m  # 熔断的时间。某个后端pod触发熔断后，也不能一直不接受请求。3分钟之后，估算着请求应该都处理完成了，重新接受请求。
+      maxEjectionPercent: 100 # 被熔断实例最大的百分比。比如10个pod，10个都能触发熔断就是100。测试用写100。实际写50就可以，太高会造成其他实例出现性能问题。
+  subsets: 
+  - name: v1
+    labels: 
+      version: v1 
+~~~
+
+### fortio压测
+
+istio安装包提供了压测工具fortio，先部署一下：
+
+~~~sh
+# 修改镜像
+vim samples/httpbin/sample-client/fortio-deploy.yaml
+
+# 部署
+kubectl apply -f samples/httpbin/sample-client/fortio-deploy.yaml -n bookinfo
+~~~
+
+获取容器ID并发送请求：
+
+~~~sh
+FORTIO_POD=$(kubectl get pod -n bookinfo | grep fortio | awk '{ print $1 }') 
+echo $FORTIO_POD
+
+kubectl exec -ti $FORTIO_POD -n bookinfo -- fortio load -curl http://ratings:9080/ratings/0
+~~~
+
+接下来更改为两个并发连接（-c 2），发送20请求（-n 20）:
+
+~~~sh
+kubectl exec -ti $FORTIO_POD -n bookinfo -- fortio load -c 2 -qps 0 -n 20 -loglevel Warning http://ratings:9080/ratings/0 | grep Code 
+~~~
+
+可以看到请求都是成功的，说明pod处理这些请求速度很快，请求没有排队待处理
+
+提高并发量，会触发熔断：
+
+~~~sh
+kubectl exec -ti $FORTIO_POD -n bookinfo -- fortio load -c 20 -qps 0 -n 20 -loglevel Warning  http://ratings:9080/ratings/0 | grep Code
+
+Code 200 : 5 (25.0 %)
+Code 503 : 15 (75.0 %)
+~~~
+
+说明触发了熔断，pod没有直接挂掉，实现了过载保护。
+
+## istio故障注入
+
+### 延迟
+
+主要用来测试链路可靠性，比如三个服务A-B-C，由于偶发网络延迟高，C服务响应变慢，是否会影响A、B服务？这是链路可靠性的问题，需要我们进行测试。
+
+首先创建测试工具，测试访问details服务的时间：
+
+~~~sh
+kubectl create deploy -n bookinfo debug-tools --image=registry.cn-beijing.aliyuncs.com/dotbalo/debug-tools -- sleep 36000
+
+kubectl exec -ti debug-tools-5887bf6774-598tc  -n bookinfo –- bash
+time curl -I -s details:9080
+~~~
+
+不添加任何故障延迟时，0.02秒左右就会返回结果。接下来注入一个5s的延迟。由于故障注入属于service级别，所以是在vs上配置：
+
+~~~yaml
+# vim details-delay.yaml  
+apiVersion: networking.istio.io/v1 
+kind: VirtualService 
+metadata: 
+  name: details 
+spec: 
+  hosts: 
+  - details.bookinfo.svc.cluster.local
+  http: 
+  - fault: # 添加一个错误 
+      delay: # 添加类型为delay的故障 
+        percentage: # 故障注入的百分比 
+          value: 100 # 对所有请求注入故障 
+        fixedDelay: 5s # 注入的延迟时间 
+    route: 
+    - destination: 
+        host: details 
+~~~
+
+~~~sh
+kubectl create -f details-delay.yaml -n bookinfo
+~~~
+
+再返回测试工具进行测试，响应时间变成了5s：
+
+~~~sh
+time curl -I -s details:9080
+~~~
+
+假设我们有A服务去访问details服务，设置的超时时间为2s，这样通过延迟故障注入，我们可以测试这个超时时间配置是否生效。
+
+### 中断
+
+注入中断故障，可以模拟服务返回指定的状态码（400、503等），上游服务的处理是否符合预期。（上游服务如果接收到异常状态码，也抛出异常，那就不正确了；需要配置上异常处理才算是合理的代码）
+
+中断故障注入只需要将fault 的delay更改为abort即可： 
+
+~~~yaml
+# vim details-abort.yaml 
+apiVersion: networking.istio.io/v1 
+kind: VirtualService 
+metadata: 
+  name: details 
+spec: 
+  hosts: 
+  - details 
+  http: 
+  - fault: 
+      abort: # 更改为abort类型的故障 
+        percentage: 
+          value: 100 
+        httpStatus: 400 # 故障状态码 
+     route: 
+     - destination: 
+         host: details 
+~~~
+
