@@ -211,6 +211,10 @@ fdisk -l | grep dev/sd
 # Disk /dev/sdb: 6 GiB, 6442450944 bytes, 12582912 sectors
 ~~~
 
+> 注意：磁盘可用空间必须大于10G，否则磁盘会被cubeFS标记为ReadOnly，并且空间计算也会不准确。
+>
+> [[Bug\]: the datanodes is not WRITABLE · Issue #3173 · cubefs/cubefs](https://github.com/cubefs/cubefs/issues/3173#issuecomment-1986599468)
+
 格式化磁盘并挂载：
 
 ~~~sh
@@ -223,8 +227,9 @@ mount /dev/sdb /data0
 
 # 开机自动挂载
 blkid /dev/sdb # 获取磁盘UUID
-vim /etc/fstab 
-UUID=1c6fa33b-2901-4a9b-8c8c-ea70f265e26d   /data0   xfs    defaults  0 0
+tee -a /etc/fstab <<'EOF' 
+UUID=f3a1fd89-ff67-4512-b2d3-e914440d4b84   /data0   xfs    defaults  0 0
+EOF
 mount -a 
 ~~~
 
@@ -328,9 +333,10 @@ metanode:
 ~~~yaml
 # 数据盘配置 
 # datanode.disks字段用于配置数据的挂载点，同时可以为每个磁盘保留一定的空间 
-  disks: 
-    # 默认是给磁盘预留20G空间防止爆盘 - /data0:2147483648
-    - /data0:536870912 # 这里给了0.5G
+  disks:
+    # 格式: 挂载点:保留的空间
+    # 保留的空间: 单位字节，当磁盘剩余空间小于该值时将不会再在该磁盘上写入数据
+    - /data0:536870912
 # 资源配置：
   resources:
     enabled: true
@@ -363,7 +369,7 @@ domains: "objectcfs.cubefs.io,objectnode.cubefs.io"
 
 ~~~sh
 cd ./cubefs-helm/cubefs
-helm upgrade --i cubefs -n cubefs --create-namespace . 
+helm upgrade -i cubefs -n cubefs . --create-namespace -f values.yaml 
 ~~~
 
 > 2025-08-28 安装的3.3.2.150.0 Release版本，有个bug：
@@ -378,11 +384,327 @@ helm upgrade --i cubefs -n cubefs --create-namespace .
 
 如果遇到启动失败的，可以在对应的节点上，查看/var/log/cubefs下的日志。
 
-## CubeFS客户端部署
+# CubeFS客户端部署使用
+
+官网：[CubeFS | A Cloud Native Distributed Storage System](https://www.cubefs.io/zh/docs/master/user-guide/cli/overview.html)
+
+## 下载工具包
 
 ~~~sh
 https://github.com/cubefs/cubefs/releases/ 
 tar xf cubefs-3.5.0-linux-amd64.tar.gz 
 cd build/bin 
+cp ./cfs-cli /usr/local/bin/
+cfs-cli --version
+~~~
+
+## 客户端配置
+
+~~~sh
+cfs-cli cluster info
+# 报错解析不了域名
+# 修改配置
+vim ~/.cfs-cli.json
+# 更改masterAddr为master service的svc ip 
+{ 
+  "masterAddr": [ 
+    "10.99.61.70:17010" 
+  ], 
+  "timeout": 60 
+} 
+# 查询集群状态
+./cfs-cli cluster info
+~~~
+
+## 集群管理
+
+~~~sh
+# 查看集群信息
+cfs-cli cluster info
+# 获取集群状态
+cfs-cli cluster stat 
+~~~
+
+Metanode的Total为最大可用内存，由所有metanode的MaxMemAvailWeight之和计算得来。
+
+设置卷删除延迟的时间，表示卷被删除多久才会被彻底删除，默认48h，在此之前可以恢复：
+
+~~~sh
+cfs-cli cluster volDeletionDelayTime 72 
+~~~
+
+## 元数据节点管理
+
+列出所有的元数据节点，包括ID、地址、读写状态及存活状态等：
+
+~~~sh
+cfs-cli metanode list
+~~~
+
+查看某个节点的详细信息：
+
+~~~sh
+cfs-cli metanode info rn1:17210
+~~~
+
+## 数据节点管理
+
+列举所有的数据节点，包括ID、地址、读写状态和存活状态： 
+
+~~~sh
+cfs-cli datanode list
+~~~
+
+展示某个节点的详细信息： 
+
+~~~sh
+cfs-cli datanode info rn2:17310
+~~~
+
+下线数据节点，下线之后该该节点的数据会自动迁移到其他数据节点。
+
+~~~sh
+cfs-cli datanode decommission rn2:17310
+# 下线之后，该节点无法查看，可用数据空间也降低
+cfs-cli datanode info rn2:17310
+cfs-cli cluster stat
+~~~
+
+该下线节点的datanode pod不会被删除，删掉pod重建之后，这个数据节点就会重新加入，数据空间恢复。
+
+## 数据卷管理
+
+数据卷可以给服务使用或者挂载到宿主机。如果是外部服务需要使用cubeFS，那就需要创建卷给外部服务用。如果存储是在k8s内部，那么就不需要创建卷了，直接用csi管理。
+
+列出所有的卷：
+
+~~~sh
+cfs-cli volume list
+~~~
+
+创建一个卷：
+
+~~~sh
+# 命令格式：cfs-cli volume create [VOLUME NAME] [USER ID] [flags] 
+# user id可以随便写，会自动创建这个用户
+cfs-cli volume create volume-test test --capacity 1
+~~~
+
+列出卷：
+
+~~~sh
+cfs-cli volume list
+~~~
+
+查看某个卷的详细信息：
+
+~~~sh
+cfs-cli volume info volume-test
+~~~
+
+禁用卷、取消禁用
+
+~~~sh
+cfs-cli volume set-forbidden volume-test true 
+cfs-cli volume info volume-test | grep -i Forbidden 
+# 取消禁用
+cfs-cli volume set-forbidden volume-test false 
+cfs-cli volume info volume-test | grep -i Forbidden
+~~~
+
+卷扩容、更新卷：
+
+~~~sh
+cfs-cli volume update volume-test --capacity 2
+cfs-cli volume list
+~~~
+
+添加空间限制（空间满了之后就不允许写入了）：
+
+~~~sh
+cfs-cli volume update volume-test --readonly-when-full true 
+~~~
+
+删除卷：
+
+~~~sh
+cfs-cli volume delete volume-test -y
+~~~
+
+# CubeFS用户管理
+
+CubeFS支持多用户，可以为每个用户对每个卷分配不同的权限，同时也可为对象存储提供用户认证。
+
+主要应用场景是对象存储给不同程序去用的时候，不同的卷权限不同，用户名密码也不同。
+
+~~~sh
+cfs-cli user create -h 
+# 创建用户
+cfs-cli user create hangx
+# 获取用户信息
+cfs-cli user info hangx
+# 列举所有用户
+cfs-cli user list
+# 删除用户
+cfs-cli user delete hangx --yes
+~~~
+
+# CubeFS挂载测试
+
+如果k8s集群外部裸机或者虚机部署的服务也想挂载cubeFS，也是可以的，挂载完成就等于访问一个本地文件夹一样了。
+
+测试在K8s宿主机挂载cubeFS文件。由于masterAddr可以通过svc访问，就直接用svc地址了。如果对集群外部访问的话需要把master-service这个svc通过NodePort或者域名暴露出去。
+
+客户端安装fuse：
+
+~~~sh
+yum install fuse -y 
+~~~
+
+cubeFS创建volume：
+
+~~~sh
+# 创建卷
+cfs-cli volume create volume-test ltptest --capacity 1
+~~~
+
+客户端创建配置文件：
+
+~~~sh
+cat volume-test-client.conf  
+{ 
+  "mountPoint": "/volume-test", 
+  "volName": "volume-test", 
+  "owner": "ltptest", 
+  "masterAddr": "10.99.61.70:17010", 
+  "logDir": "/cfs/client/log", 
+  "logLevel": "info", 
+  "profPort": "27510" 
+} 
+~~~
+
+执行挂载：
+
+~~~sh
+# 用的是另一个叫cfs-client的客户端工具
+cp /root/cubefs-client/build/bin/cfs-client /usr/local/bin/
+cfs-client -c volume-test-client.conf
+df -Th | grep volume-test
+~~~
+
+测试写入数据：
+
+~~~sh
+dd if=/dev/zero of=./testdata bs=1M count=512
+dd if=/dev/zero of=./testdata2 bs=128M count=4
+# 查看卷使用
+cfs-cli volume list
+~~~
+
+# CubeFS扩容
+
+## 新加磁盘
+
+如果CubeFS是部署在K8s中的，扩容时需要给每个datanode都添加同样的磁盘。要注意新加的盘要和原来的盘大小、性能、型号一样，这样集群的balance不会受到影响。
+
+~~~sh
+# 加完盘进系统，格式化
+mkfs.xfs -f /dev/sdc
+# 创建挂载目录，如果机器上存在多个需要挂载的数据磁盘，则每个磁盘按以上步骤进行格式化和挂载磁盘，挂载目录按照data0/data1/../data999的顺序命名 
+mkdir /data1 
+# 挂载磁盘 
+mount /dev/sdc /data1
+blkid /dev/sdc
+tee -a /etc/fstab <<'EOF' 
+UUID=f3a1fd89-ff67-4512-b2d3-e914440d4b84   /data0   xfs    defaults  0 0
+EOF
+mount -a 
+~~~
+
+更新helm配置：
+
+~~~yaml
+  disks:
+    # 格式: 挂载点:保留的空间
+    # 保留的空间: 单位字节，当磁盘剩余空间小于该值时将不会再在该磁盘上写入数据
+    - /data0:536870912
+    - /data1:536870912
+~~~
+
+~~~sh
+helm upgrade -i cubefs -n cubefs . --create-namespace -f values.yaml
+~~~
+
+触发datanode pod重启：
+
+~~~sh
+kubectl delete po -n cubefs -l app.kubernetes.io/component=datanode
+~~~
+
+查看集群状态：
+
+~~~sh
+cfs-cli cluster stat 
+~~~
+
+## 基于主机的扩容
+
+基于主机的扩容，需要通过添加datanode节点来完成。  
+
+1. 添加一个新节点，已有节点可以忽略
+
+2. 在新节点上添加和当前配置一样的硬盘并挂载
+
+3. 在新节点上打`component.cubefs.io/datanode=enabled`标签即可:
+
+   ~~~sh 
+   kubectl label node xxx component.cubefs.io/datanode=enabled
+   ~~~
+
+# CubeFS对象存储
+
+## 对象存储基本使用
+
+下载Minio对象存储客户端：
+
+~~~sh
+curl https://dl.minio.org.cn/client/mc/release/linux-amd64/mc --create-dirs -o /usr/local/bin/mc
+chmod +x /usr/local/bin/mc 
+~~~
+
+配置对象存储：
+
+~~~sh
+mc config host add cubefstest http://10.100.82.212:1601 2ZNTw38gsPHpXWqu 0QHNqNoWRwpCrEWdWv7CqpKnC4XT0rRf
+~~~
+
+创建桶：
+
+~~~sh
+mc mb cubefstest/buckettest 
+~~~
+
+查看桶：
+
+~~~sh
+mc ls cubefstest/
+~~~
+
+上传文件：
+
+~~~sh
+mc cp cubefs-3.5.0-linux-amd64.tar.gz cubefstest/buckettest/ 
+~~~
+
+查看文件：
+
+~~~sh
+mc ls cubefstest/buckettest/ 
+~~~
+
+删除文件：
+
+~~~sh
+mc rm cubefstest/buckettest/cubefs-3.5.0-linux-amd64.tar.gz 
 ~~~
 
