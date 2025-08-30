@@ -113,7 +113,9 @@ helm chart github：[apache/skywalking-helm at v4.7.0](https://github.com/apache
 # 添加Skywalking Helm源：
 helm repo add skywalking https://apache.jfrog.io/artifactory/skywalking-helm
 helm repo update skywalking
-helm pull skywalking/skywalking --version 4.7.0
+helm pull skywalking/skywalking --version 4.3.0
+# 新版skywalking迁移到了OCI仓库
+helm pull oci://registry-1.docker.io/apache/skywalking-helm --version 4.7.0
 ~~~
 
 ## 配置
