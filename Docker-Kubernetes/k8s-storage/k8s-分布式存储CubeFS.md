@@ -651,9 +651,9 @@ cfs-cli cluster stat
 
 基于主机的扩容，需要通过添加datanode节点来完成。  
 
-1. 添加一个新节点，已有节点可以忽略
+1. 添加一个新节点（k8s层面先加上），已有节点可以忽略
 
-2. 在新节点上添加和当前配置一样的硬盘并挂载
+2. 在新节点上添加和当前配置、数量、大小一样的硬盘，并挂载
 
 3. 在新节点上打`component.cubefs.io/datanode=enabled`标签即可:
 
@@ -663,48 +663,102 @@ cfs-cli cluster stat
 
 # CubeFS对象存储
 
+程序直接连接到存储平台对文件读写操作，不需要挂载、不需要创建PV、PVC。
+
 ## 对象存储基本使用
 
-下载Minio对象存储客户端：
+要测试对象存储，可以自己写程序，或者用一些对象存储客户端工具。CubeFS自己没没有提供对象存储的客户端工具，得用别的。
+
+下载Minio对象存储客户端：（Minio也是提供对象存储的平台，但是只提供对象存储。但是不论使用哪个平台，协议都是s3。）
 
 ~~~sh
 curl https://dl.minio.org.cn/client/mc/release/linux-amd64/mc --create-dirs -o /usr/local/bin/mc
 chmod +x /usr/local/bin/mc 
 ~~~
 
-配置对象存储：
+创建volume：
 
 ~~~sh
-mc config host add cubefstest http://10.100.82.212:1601 2ZNTw38gsPHpXWqu 0QHNqNoWRwpCrEWdWv7CqpKnC4XT0rRf
+cfs-cli volume create volume-obj test --capacity 1
 ~~~
+
+配置对象存储：添加 MinIO/S3 服务器
+
+~~~sh
+# host add test是user的name
+# 对象存储的入口：objectnode-service的svc的clusterIP
+# 后面是cubefs的user的access key和secret key。这其实就是对象存储的用户名和密码
+mc alias set test http://10.104.157.128:1601 NSwS4hTkT43TW903 uY9Hg8IgyW2awnRF3XpaAK8Da91c8RG7
+# 验证连接
+mc ls test
+~~~
+
+> 1. **旧版本语法**：`mc config host add` 是旧版本的语法
+> 2. **新版本语法**：`mc alias set` 是新版本的正确语法
 
 创建桶：
 
 ~~~sh
-mc mb cubefstest/buckettest 
+mc mb test/buckettest 
 ~~~
 
 查看桶：
 
 ~~~sh
-mc ls cubefstest/
+mc ls test/
 ~~~
 
 上传文件：
 
 ~~~sh
-mc cp cubefs-3.5.0-linux-amd64.tar.gz cubefstest/buckettest/ 
+mc cp cubefs-3.5.0-linux-amd64.tar.gz test/buckettest/ 
+# 上传文件夹(不会自动创建目录，需要指定子目录名称)
+mc cp templates/ test/buckettest/templates
 ~~~
 
 查看文件：
 
 ~~~sh
-mc ls cubefstest/buckettest/ 
+mc ls test/buckettest/ 
 ~~~
 
 删除文件：
 
 ~~~sh
-mc rm cubefstest/buckettest/cubefs-3.5.0-linux-amd64.tar.gz 
+mc rm test/buckettest/cubefs-3.5.0-linux-amd64.tar.gz 
 ~~~
+
+删除桶：
+
+~~~sh
+mc rb test/buckettest
+~~~
+
+删除服务器：
+
+~~~sh
+mc alias rm test
+~~~
+
+## 对象存储项目管理
+
+为每个项目创建用户：
+
+~~~sh
+cfs-cli user create projecta
+~~~
+
+添加项目的host：
+
+~~~sh
+mc config host add projecta http://10.100.82.212:1601 sTnnilRm1YPuohs0 ayIjC5uZYdRmVRFYey8lDy73Whdg716l
+~~~
+
+这个项目可能会有很多微服务，这些微服务就共用同一套用户名密码。为每个微服务单独创建不同的桶。（共享数据的微服务就共用同一个桶）
+
+~~~sh
+mc mb projecta/appa
+~~~
+
+# CubeFS对接K8s
 
