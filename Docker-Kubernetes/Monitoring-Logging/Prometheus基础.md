@@ -224,7 +224,7 @@
 
 # PromQL查询语言
 
-- PromQL（Prometheus Query Language）是 Prometheus 自己开发的表达式语言，语言表现力很丰富，内置函数也很多。使用它可以对时序数据进行筛选和聚合。
+PromQL（Prometheus Query Language）是 Prometheus 自己开发的表达式语言，语言表现力很丰富，内置函数也很多。使用它可以对时序数据进行筛选和聚合。
 
 ## 数据类型
 
@@ -269,67 +269,101 @@ PromQL 表达式计算出来的值有以下几种类型：
 
 ## 聚合操作符
 
-- PromQL 的聚合操作符用来将向量里的元素聚合得更少。总共有下面这些聚合操作符：
+PromQL 的聚合操作符用来将向量里的元素聚合得更少。总共有下面这些聚合操作符：
 
-  - sum：求和
+- sum：求和
 
-  - min：最小值
+- min：最小值
 
-  - max：最大值
+- max：最大值
 
-  - avg：平均值
+- avg：平均值
 
-  - stddev：标准差
+- stddev：标准差
 
-  - stdvar：方差
+- stdvar：方差
 
-  - count：元素个数
+- count：元素个数
 
-  - count_values：等于某值的元素个数
+- count_values：等于某值的元素个数
 
-  - bottomk：最小的 k 个元素
+- bottomk：最小的 k 个元素
 
-  - topk：最大的 k 个元素
+- topk：最大的 k 个元素
 
-  - quantile：分位数
+- quantile：分位数
 
-- 如：
+示例：
 
-  - 计算xianchaomaster1节点所有容器总计内存
+- 计算master1节点所有容器总计内存
 
-    `sum(container_memory_usage_bytes{instance=~"xianchaomaster1"})/1024/1024/1024` 
+  `sum(container_memory_usage_bytes{instance=~"master1"})/1024/1024/1024` 
 
-  - 计算xianchaomaster1节点最近1m所有容器cpu使用率
+- 计算master1节点最近1m所有容器cpu使用率
 
-    `sum (rate (container_cpu_usage_seconds_total{instance=~"xianchaomaster1"}[1m])) / sum (machine_cpu_cores{ instance =~"xianchaomaster1"}) * 100`
+  `sum (rate (container_cpu_usage_seconds_total{instance=~"master1"}[1m])) / sum (machine_cpu_cores{ instance =~"master1"}) * 100`
 
-  - 计算最近1m所有容器cpu使用率的总和
+- 计算最近1m所有容器cpu使用率的总和
 
-    `sum (rate (container_cpu_usage_seconds_total{id!="/"}[1m])) by (id)`\#把id会打印出来
+  `sum (rate (container_cpu_usage_seconds_total{id!="/"}[1m])) by (id)`\#把id会打印出来
 
-  > `rate()`函数用于计算时间序列数据的平均速率。这个函数通常用于处理计数器类型的指标
+> `rate()`函数用于计算时间序列数据的平均速率。这个函数通常用于处理计数器类型的指标
 
 ## 函数
 
-- Prometheus 内置了一些函数来辅助计算，下面介绍一些典型的。
+Prometheus 内置了一些函数来辅助计算，下面介绍一些典型的。
 
-  - abs()：绝对值
+- abs()：绝对值
 
-  - sqrt()：平方根
+- sqrt()：平方根
 
-  - exp()：指数计算
+- exp()：指数计算
 
-  - ln()：自然对数
+- ln()：自然对数
 
-  - ceil()：向上取整
+- ceil()：向上取整
 
-  - floor()：向下取整
+- floor()：向下取整
 
-  - round()：四舍五入取整
+- round()：四舍五入取整
 
-  - delta()：计算区间向量里每一个时序第一个和最后一个的差值
+- delta()：计算区间向量里每一个时序第一个和最后一个的差值
 
-  - sort()：排序
+- sort()：排序
+
+- 函数predict_linear 可以用于预测分析和预测性告警，比如可以根据一天的数据，预测4个 小时后，磁盘分区的空间会不会小于0：
+
+  ~~~sh
+  predict_linear(node_filesystem_files_free{mountpoint="/"}[1d], 4*3600) < 0
+  ~~~
+
+除了上述的函数，还有几个比较重要的函数，比如increase、rate、irate。
+
+其中increase是计算在一段时间范围内数据的增长（只能计算count类型的数据），rate和irate是计算平均增长率和瞬时增长率。
+
+比如查询某个请求在1小时的时间增长了多少：
+
+~~~sh
+increase(prometheus_http_requests_total{handler="/-/healthy"}[1h])
+~~~
+
+将1h增长的数量除以该时间即为增长率：
+
+~~~sh
+increase(prometheus_http_requests_total{handler="/-/healthy"}[1h]) / 3600 
+~~~
+
+相对于increase，rate 可以直接计算出某个指标在给定时间范围内的增长率，比如还是计算 1h 的增长率，可以用rate函数进行计算： 
+
+~~~sh
+rate(prometheus_http_requests_total{handler="/-/healthy"}[1h]) 
+~~~
+
+如果需要计算瞬时增长率，可以使用irate（irate 是计算最接近当前时间的两个数据点之间 的增长率，即瞬时增长率）：
+
+~~~sh
+irate(prometheus_http_requests_total{handler="/-/healthy"}[1h]) 
+~~~
 
 # Relabel机制
 
@@ -352,3 +386,39 @@ PromQL 表达式计算出来的值有以下几种类型：
   - labelmap：对于匹配后的标签映射到新标签中
   - labeldrop：删除某个标签
   - labelkeep：只保留某个标签
+
+# PromQL语法实战
+
+## Web UI入口
+
+PromQL Web UI 的Graph选项卡提供了简单的用于查询数据的入口，对于PromQL的编写和校验都可以在此位置。
+
+想查看指标但是不知道都有哪些指标名称？麻烦的方法是去请求node_exporter的svc会返回所有的指标名称；简单的方法是直接在查询框里面输入前缀，想查pod就输入pod，下面会出现补全后的指标名称；想查node就输入node，以此类推。
+
+## 常用监控指标
+
+查看磁盘空间：
+
+~~~sh
+# 查询分区不是/boot，且磁盘是/dev/开头的分区大小（结果不再展示）： 
+node_filesystem_size_bytes{device=~"/dev/.*", mountpoint!="/boot"}
+
+# 查询主机k8s-master01在最近5分钟可用的磁盘空间变化：
+node_filesystem_avail_bytes{instance="k8s-master01", mountpoint="/", 
+device="/dev/mapper/centos-root"}[5m] 
+
+# 查询10分钟之前磁盘可用空间，只需要指定offset参数即可：
+node_filesystem_avail_bytes{instance="k8s-master01", mountpoint="/", 
+device="/dev/mapper/centos-root"} offset 10m 
+
+# 将结果的字节转换为GB
+node_filesystem_avail_bytes{instance="k8s-master01", mountpoint="/", 
+device="/dev/mapper/centos-root"} / (1024 ^ 3)
+~~~
+
+查询所有主机根分区的可用率：
+
+~~~sh
+node_filesystem_avail_bytes{mountpoint="/"} / node_filesystem_size_bytes{mountpoint="/"} * 100
+~~~
+

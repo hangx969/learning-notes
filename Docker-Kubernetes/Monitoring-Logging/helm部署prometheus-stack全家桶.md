@@ -393,6 +393,14 @@ EOF
 - AlertmanagerConfig：定义Alertmenegr告警规则
 - PrometheusRule：定义告警规则（用promQL去写）
 
+## CRD更新说明
+
+For kube-prometheus-stack: CRDs are firstly extracted from helm charts then installed independently using kubectl apply, which is defined in pipelines.
+
+The reason for installing CRDs separately is that based on [helm document](https://helm.sh/docs/topics/charts/#limitations-on-crds), CRDs will only be installed one time on the fresh install, after which helm will not re-install nor upgrade them during helm chart upgrade. But azure_global considers that not updating CRDs is more breaking than doing it.
+
+Then they suggests that CRDs can be extracted from the helm package and be installed using kubectl apply.
+
 ## service/pod monitor
 
 ### serviceMonitor
@@ -498,31 +506,29 @@ spec:
 
 PrometheusRule是Prometheus Operator中定义的CRD。有一个专门的网站可以查看各种各样的开源CRD的定义：https://operatorhub.io/operator/prometheus
 
-#### Alerting Rule
+- Alerting Rule：定义监控数据的条件，当这些条件满足时触发告警。
+- Recording Rule：定期将复杂规则的查询结果保存成一个新的时间序列，为了优化查询性能。比如，将一段时间内的平均CPU使用率保存为一个新指标。
 
-定义监控数据的条件，当这些条件满足时触发告警。
+### 自带PrometheusRule
 
-#### Recording Rule
+kube-prometheus-stack的helm chart自带一些PrometheusRUle，模板文件保存在：kube-prometheus-stack/templates/prometheus/rules-1.14目录下，如果有想去掉的rule就在里面删掉。
 
-- 定期将复杂规则的查询结果保存成一个新的时间序列，为了优化查询性能。
-- 比如，将一段时间内的平均CPU使用率保存为一个新指标
+这些告警的激活情况可以在prometheus UI界面的Alerts里面查看。 
 
-### helm安装PrometheusRule
+### helm安装自定义PrometheusRule
 
-#### 自定义helm chart
+./Chart.yaml文件
 
-- ./Chart.yaml文件
+~~~yaml
+apiVersion: v2
+name: commoninfra-kube-prometheus-config
+description: A Helm chart for kube prometheus configurations
+type: application
+version: 1.0.0
+appVersion: "1.0.0"
+~~~
 
-  ~~~yaml
-  apiVersion: v2
-  name: commoninfra-kube-prometheus-config
-  description: A Helm chart for kube prometheus configurations
-  type: application
-  version: 1.0.0
-  appVersion: "1.0.0"
-  ~~~
-
-- ./templates/PrometheusRule-monitoring.yaml：
+./templates/PrometheusRule-monitoring.yaml：
 
 ~~~yaml
 apiVersion: monitoring.coreos.com/v1
@@ -572,7 +578,7 @@ spec:
             runbook: https://xxxxx
 ~~~
 
-- ./templates/PrometheusRule-ArgoCD.yaml
+./templates/PrometheusRule-ArgoCD.yaml
 
 ~~~yaml
 apiVersion: monitoring.coreos.com/v1
@@ -592,7 +598,7 @@ spec:
     # ArgoCD Application Controller 高延迟告警
     - alert: ArgoCDApplicationControllerHighLatency
       expr: histogram_quantile(0.95, rate(argocd_app_controller_reconciliation_duration_seconds_bucket[5m])) > 1
-      for: 2m #持续时长为2min才会触发告警
+      for: 2m # 持续时长为2min才会触发告警
       labels:
         severity: warning
       annotations:
@@ -639,8 +645,6 @@ spec:
         summary: "ArgoCD Applications Out of Sync ({{ $labels.namespace }})"
         description: "There are applications in ArgoCD that are not in a healthy state for more than 5 minutes."
 ~~~
-
-#### 安装
 
 ~~~sh
 helm upgrade -i commoninfra-kube-prometheus-config -n kube-system . --values ./values/dev.chinanorth3.yaml
@@ -696,15 +700,7 @@ spec:
           key: password
 ~~~
 
-## CRD更新说明
-
-For kube-prometheus-stack: CRDs are firstly extracted from helm charts then installed independently using kubectl apply, which is defined in pipelines.
-
-The reason for installing CRDs separately is that based on [helm document](https://helm.sh/docs/topics/charts/#limitations-on-crds), CRDs will only be installed one time on the fresh install, after which helm will not re-install nor upgrade them during helm chart upgrade. But azure_global considers that not updating CRDs is more breaking than doing it.
-
-Then they suggests that CRDs can be extracted from the helm package and be installed using kubectl apply.
-
-# 监控排查流程
+# target down排查流程
 
 一般是从prometheus中看到target是down的状态。
 
@@ -713,9 +709,364 @@ Then they suggests that CRDs can be extracted from the helm package and be insta
 3. 确认能通过svc访问到metrics接口
 4. 确认svc的端口和scheme、serviceMonitor的一致
 
+# 告警规则实战
+
+## 使用技巧
+
+有很多监控语法可能比较复杂，此时可以借助现有的Dashboard编写PrometheusRule。比如想要实现主机内存的监控，可以先从面板点击edit获取PromQL语法，复制出来稍加改动就能获取到PromQL的计算公式。再去放到PrometheusRule里面就行。
+
+## 常用监控告警文件
+
+~~~yaml
+    groups:
+    - name: example
+      rules:
+      - alert: HighNginxServerRequests
+        expr: sum(irate(nginx_server_requests{instance=~"192.168.40.180:9913", code="2xx"}[5m])) by (code)>1000
+        for: 2s
+        labels:
+          severity: critical
+        annotations:
+          summary: "High Nginx Server Requests"
+          description: "在最近2s钟时间,nginx服务请求数达到了1000次"
+    - name: 物理节点状态-监控告警
+      rules:
+      - alert: 物理节点cpu使用率
+        expr: 100-avg(irate(node_cpu_seconds_total{mode="idle"}[5m])) by(instance)*100 > 20
+        for: 2s
+        labels:
+          severity: ccritical
+        annotations:
+          summary: "{{ $labels.instance }}cpu使用率过高"
+          description: "{{ $labels.instance }}的cpu使用率超过20%,当前使用率[{{ $value }}],需要排查处理" 
+      - alert: 物理节点内存使用率
+        expr: (node_memory_MemTotal_bytes - (node_memory_MemFree_bytes + node_memory_Buffers_bytes + node_memory_Cached_bytes)) / node_memory_MemTotal_bytes * 100 > 50
+        for: 2s
+        labels:
+          severity: critical
+        annotations:
+          summary: "{{ $labels.instance }}内存使用率过高"
+          description: "{{ $labels.instance }}的内存使用率超过60%,当前使用率[{{ $value }}],需要排查处理"
+      - alert: InstanceDown
+        expr: up == 0
+        for: 2s
+        labels:
+          severity: critical
+        annotations:   
+          summary: "{{ $labels.instance }}: 服务器宕机"
+          description: "{{ $labels.instance }}: 服务器延时超过2分钟"
+      - alert: 物理节点磁盘的IO性能
+        expr: 100-(avg(irate(node_disk_io_time_seconds_total[1m])) by(instance)* 100) < 60
+        for: 2s
+        labels:
+          severity: critical
+        annotations:
+          summary: "{{$labels.mountpoint}} 流入磁盘IO使用率过高！"
+          description: "{{$labels.mountpoint }} 流入磁盘IO大于60%(目前使用:{{$value}})"
+      - alert: 入网流量带宽
+        expr: ((sum(rate (node_network_receive_bytes_total{device!~'tap.*|veth.*|br.*|docker.*|virbr*|lo*'}[5m])) by (instance)) / 100) > 102400
+        for: 2s
+        labels:
+          severity: critical
+        annotations:
+          summary: "{{$labels.mountpoint}} 流入网络带宽过高！"
+          description: "{{$labels.mountpoint }}流入网络带宽持续5分钟高于100M. RX带宽使用率{{$value}}"
+      - alert: 出网流量带宽
+        expr: ((sum(rate (node_network_transmit_bytes_total{device!~'tap.*|veth.*|br.*|docker.*|virbr*|lo*'}[5m])) by (instance)) / 100) > 102400
+        for: 2s
+        labels:
+          severity: critical
+        annotations:
+          summary: "{{$labels.mountpoint}} 流出网络带宽过高！"
+          description: "{{$labels.mountpoint }}流出网络带宽持续5分钟高于100M. RX带宽使用率{{$value}}"
+      - alert: TCP会话
+        expr: node_netstat_Tcp_CurrEstab > 1000
+        for: 2s
+        labels:
+          severity: critical
+        annotations:
+          summary: "{{$labels.mountpoint}} TCP_ESTABLISHED过高！"
+          description: "{{$labels.mountpoint }} TCP_ESTABLISHED大于1000%(目前使用:{{$value}}%)"
+      - alert: 磁盘容量
+        expr: 100-(node_filesystem_free_bytes{fstype=~"ext4|xfs"}/node_filesystem_size_bytes {fstype=~"ext4|xfs"}*100) > 80
+        for: 2s
+        labels:
+          severity: critical
+        annotations:
+          summary: "{{$labels.mountpoint}} 磁盘分区使用率过高！"
+          description: "{{$labels.mountpoint }} 磁盘分区使用大于80%(目前使用:{{$value}}%)"
+      - alert: apiserver的cpu使用率大于90%
+        expr: rate(process_cpu_seconds_total{job=~"kubernetes-apiserver"}[1m]) * 100 > 0
+        for: 2s
+        labels:
+          severity: warnning
+        annotations:
+          description: "{{$labels.instance}}的{{$labels.job}}组件的cpu使用率超过80%"
+      - alert: 容器内存使用率
+        expr: (container_memory_usage_bytes / container_spec_memory_limit_bytes) * 100 > 0
+        for: 2s
+        labels:
+          severity: critical
+        annotations:
+          summary: "High Container Memory Usage"
+          description: "Container memory usage is above 90%."
+~~~
+
+> - https://github.com/samber/awesome-prometheus-alerts
+>
+>   这个项目中包含了常见组件的prometheus alerts
+
+## 域名访问延迟及故障告警
+
+~~~yaml
+apiVersion: monitoring.coreos.com/v1 
+kind: PrometheusRule 
+metadata: 
+  name: blackbox  
+  namespace: monitoring 
+  labels: 
+    app.kubernetes.io/component: exporter 
+    app.kubernetes.io/name: blackbox-exporter 
+    prometheus: k8s 
+    role: alert-rules 
+spec: 
+  groups: 
+  - name: blackbox-exporter 
+    rules: 
+    - alert: DomainCannotAccess 
+      annotations: 
+        description:  域名：{{ $labels.instance }} 不可达 # 从指标的label中取值
+        summary: 域名探测失败
+      expr: probe_success == 0 
+      for: 1m 
+      labels: 
+        severity: critical 
+        type: blackbox 
+    - alert: DomainAccessDelayExceeds1s 
+      annotations: 
+        description:  域名：{{ $labels.instance }} 探测延迟大于1秒，当前延迟为：{{ $value }} 
+        summary: 域名探测，访问延迟超过1秒  
+      expr: sum(probe_http_duration_seconds{job=~"blackbox"}) by (instance) > 1  
+      for: 1m 
+      labels: 
+        severity: warning 
+        type: blackbox 
+~~~
+
+## 应用活性探测
+
+针对基础组件也可以实现活性探测，用exporter采集数据的组件，比如MySQL和Redis监控，可以通过up指标进行监控：
+
+~~~yaml
+apiVersion: monitoring.coreos.com/v1 
+kind: PrometheusRule 
+metadata: 
+  labels: 
+    prometheus: k8s 
+    role: alert-rules 
+  name: basic 
+  namespace: monitoring 
+spec: 
+  groups: 
+  - name: mysql # 按照组件类型去分组
+    rules: 
+    - alert: MySQLStatus 
+      annotations: 
+        description:  实例：{{ $labels.instance }} 故障 
+        summary: MySQL 服务宕机 
+      expr: mysql_up == 0 
+      for: 1m 
+      labels: 
+        severity: critical 
+        type: basic 
+        component: mysql 
+  - name: redis 
+    rules: 
+    - alert: RedisStatus 
+      annotations: 
+        description:  实例：{{ $labels.instance }} 故障 
+        summary: Redis 服务宕机 
+      expr: redis_up == 0 
+      for: 1m 
+      labels: 
+        severity: critical 
+        type: basic 
+        component: redis 
+~~~
+
+# Alertmanager配置与实战
+
+示例文件：[alertmanager/doc/examples/simple.yml at main · prometheus/alertmanager](https://github.com/prometheus/alertmanager/blob/main/doc/examples/simple.yml)
+
+官网说明：[Alerting Routes - Prometheus Operator](https://prometheus-operator.dev/docs/developer/alerting/)
+
+## 模板字段
+
+~~~yaml
+# Global：全局配置，主要用来配置一些通用的配置，比如邮件通知的账号、密码、SMTP服务器、微信告警等。Global 块配置下的配置选项在本配置文件内的所有配置项下可见，但是文件内其它位置的子配置可以覆盖Global配置
+global: 
+  resolve_timeout: 5m 
+  ... 
+# Route：告警路由配置，用于告警信息的分组路由，可以将不同分组的告警发送给不同的收件人。比如将数据库告警发送给DBA，服务器告警发送给OPS
+route: 
+  receiver: Default 
+  group_by: 
+  - namespace 
+  - job 
+  - alertname 
+  group_wait: 30s 
+  group_interval: 5m 
+  repeat_interval: 10m 
+  routes: 
+    - matchers: 
+        - service=~"foo1|foo2|baz" 
+      receiver: team-X-mails 
+      routes: 
+        - matchers: 
+            - severity="critical" 
+          receiver: team-X-pager 
+# Inhibit_rules：告警抑制，主要用于减少告警的次数，防止“告警轰炸”。比如某个宿主机宕机，可能会引起容器重建、漂移、服务不可用等一系列问题，如果每个异常均有告警，会一次性发送很多告警，造成告警轰炸，并且也会干扰定位问题的思路，所以可以使用告警抑制，屏蔽由宿主机宕机引来的其他问题，只发送宿主机宕机的消息即可
+inhibit_rules: 
+  - source_matchers: [severity="critical"] 
+    target_matchers: [severity="warning"] 
+    equal: [alertname, cluster, service] 
+#eceivers：告警收件人配置，每个receiver都有一个名字，经过route分组并且路由后需要指定一个receiver，就是在此位置配置的
+receivers: 
+- name: Default 
+  email_configs: 
+  - send_resolved: true 
+    to: kubernetes_guide@163.com 
+    from: kubernetes_guide@163.com 
+    hello: 163.com 
+    smarthost: smtp.163.com:465 
+    auth_username: kubernetes_guide@163.com 
+    auth_password: <secret> 
+    headers: 
+      From: kubernetes_guide@163.com 
+      Subject: '{{ template "email.default.subject" . }}' 
+      To: kubernetes_guide@163.com 
+    html: '{{ template "email.default.html" . }}' 
+    require_tls: false 
+  - name: Watchdog 
+  - name: Critical 
+# Templates：用于放置自定义模板的位置
+ templates: [] 
+~~~
+
+## Route路由规则
+
+~~~yaml
+route: 
+  # 告警的通知目标，需要和 receivers 配置中 name 进行匹配。、
+  # 需要注意的是route.routes下也可以有receiver配置，优先级高于route.receiver配置的默认接收人。当告警没有匹配到子路由时，会使用route.receiver进行通知
+  receiver: Default 
+  # 分组配置，值类型为列表。比如配置成['job', 'severity']，代表告警信息包含job和severity标签的会进行分组，且标签的key和value都相同才会被分到一组
+  group_by: 
+  - namespace 
+  - job 
+  - alertname 
+  routes: # 子路由树，用于详细的告警路由
+  - matchers: # matchers：匹配规则
+    - owner="team-X" 
+    receiver: team-X-pager # 局部收件人 
+    continue: false # 决定匹配到该路由后，是否继续后续匹配。默认为false，即匹配到后停止继续匹配
+  - matchers: 
+    - owner="team-Y" 
+    receiver: team-Y-pager  
+  group_wait: 30s # 告警通知等待。若一组新的告警产生，则会等group_wait后再发送通知，该功能主要用于当告警在很短时间内接连产生时，在group_wait内合并为单一的告警后再发送，防止告警过多，默认值30s
+  group_interval: 5m # 同一组告警通知后，如果有新的告警添加到该组中，不会立即发送。而是等一段时间再发送。默认值为5m 
+  repeat_interval: 10m # 如果一条告警通知已成功发送，且在间隔 repeat_interval 后，该告警仍然未被设置为resolved，则会再次发送该告警通知，默认值4h
+~~~
+
+## Slience
+
+比如晚上一段时间进行例行维护，肯定会引发一些告警，但是我们希望在这段维护窗口不发送告警，可以在alertmanager UI界面的Silence里面，配置matcher匹配哪些标签的告警不发送，配置多长的时间段。
+
+## 发送告警到邮件
+
+邮件通知需要先开启邮箱服务的IMAP/SMTP服务。
+
+### 基于yaml文件配置邮件告警
+
+找到Alertmanager的配置文件，添加邮箱服务配置：
+
+~~~yaml
+# cat alertmanager-secret.yaml 
+ alertmanager.yaml: |- 
+    "global": 
+      "resolve_timeout": "5m" 
+      smtp_from: "xxx@163.com" 
+      smtp_smarthost: "smtp.163.com:465" 
+      smtp_hello: "163.com" 
+      smtp_auth_username: "xxx@163.com" 
+      smtp_auth_password: "xxx" 
+      smtp_require_tls: false
+~~~
+
+之后将名称为Default的receiver配置更改为邮件通知，修改alertmanager-secret.yaml文件 的receivers配置如下：
+
+~~~yaml
+"receivers": 
+- "name": "Default" 
+   "email_configs": # 代表使用邮件通知
+   - to: "xxx@163.com" # 收件人，可以配置多个，逗号隔开
+     send_resolved: true # 告警如果被解决是否发送解决通知
+~~~
+
+加载配置：
+
+~~~sh
+kubectl replace -f alertmanager-secret.yaml
+~~~
+
+稍等几分钟即可在Alertmanager的Web界面看到更改的配置（Status）
+
+### AlertmanagerConfig实现邮件告警
+
+前面的配置都是在添加邮件告警的服务配置，路由规则等。没有涉及具体的告警指标。如果需要将西定义的告警发送至邮件，可以使用AlertmanagerConfig进行单独配置，比如将Blackbox的告警发送至邮箱。
+
+首先更改Alertmanager的配置。要配置成写了alertmanagerConfig=example的告警规则才会被alertmanager加载。 
+
+~~~yaml
+vim kube-prometheus/manifests/alertmanager-alertmanager.yaml 
+replicas: 1 
+alertmanagerConfigSelector: 
+  matchLabels: 
+    alertmanagerConfig: example 
+~~~
+
+接下来添加AlertmanagerConfig：
+
+~~~yaml
+apiVersion: monitoring.coreos.com/v1alpha1 
+kind: AlertmanagerConfig 
+metadata: 
+  name: blackbox 
+  namespace: monitoring
+  labels: 
+    alertmanagerConfig: example
+spec: 
+  route: 
+    groupBy: ['type'] # 因为产生的告警是有type标签的，用他来进行分组
+    groupWait: 30s 
+    groupInterval: 5m 
+    repeatInterval: 12h 
+    routes: 
+    - matchers: 
+      - matchType: = 
+        name: type 
+        value: blackbox 
+      receiver: Default # 只有type=blackbox的告警，才会被Default这个receiver进行通知
+  receivers: 
+  - name: Default 
+    emailConfigs: 
+    - to: xxx@163.com 
+      sendResolved: true
+~~~
 
 
-# Alert-manager发送告警到slack
+
+## 发送告警到slack
 
 > - prometheus与slack集成的配置文件说明：https://prometheus.io/docs/alerting/latest/configuration/#slack_config
 > - slack web API说明：https://api.slack.com/web
@@ -723,12 +1074,12 @@ Then they suggests that CRDs can be extracted from the helm package and be insta
 > - chat.postMessage API文档：https://api.slack.com/methods/chat.postMessage
 > - bot token: https://api.slack.com/concepts/token-types#bot
 
-## Slack端配置
+### Slack端配置
 
 1. Slack workspace中安装一个App，拿到其Api token（bot token）
 2. 创建一个channel用来接收告警信息
 
-## alertmanager端配置
+### alertmanager端配置
 
 1. 将bot token放到k8s里面：
 
@@ -886,3 +1237,245 @@ Then they suggests that CRDs can be extracted from the helm package and be insta
    ~~~
 
 3. 验证slack端是否可以接收到告警信息
+
+### 发送告警到企业微信
+
+#### 企业微信配置
+
+1. 首先需要在企业微信官网注册企业微信账号：https://work.weixin.qq.com/。
+2. 注册完成后进行登录，登录后点击我的企业。
+3. 在页面的最下面找到企业ID（corp_id）并记录，稍后会用到。
+4. 之后创建一个部门，用于接收告警通知。
+5. 查看该部门ID（to_party）并记录。
+6. 之后创建机器人应用，首先点击应用管理→应用创建，选择一个logo，输入应用名称和选择可见范围。
+7. 创建完成后，查看AgentId和Secret（api_secret）并记录。点击查看Secret，企业微信会将Secret发送至企业微信。
+
+接下来需要在企业微信添加可信域名，并且需要完成网页授权。网页授权的条件如下：
+
+1. 必须要有一个公网可以访问的域名（需要是已经备案的域名）：开发者接口 - 设置可信域名
+1. 将授权文件放在域名的根目录下，也就是通过http(s)://你的域名/xxx.txt可以直接访问到该文件 。
+
+最后还需要添加信任IP（是alertmanager所在的主机的出口公网IP地址），首先在所有的K8s节点上获取公网IP：`curl ifconfig.me`，在开发者接口 - 企业可信IP添加进去。
+
+#### Alertmanager配置
+
+企业微信配置完成后，修改Alertmanager配置文件，添加企业微信告警。
+
+首先修改Global，添加一些通用配置，wechat_api_url是固定配置，corp_id为企业ID：
+
+~~~yaml
+   "global": 
+      "resolve_timeout": "5m" 
+     ... 
+      wechat_api_url: "https://qyapi.weixin.qq.com/cgi-bin/"  
+      wechat_api_corp_id: "wwef86a30130f04f2b"
+
+# kubectl replace -f kube-prometheus/manifests/alertmanager-secret.yaml 
+~~~
+
+#### AlertmanagerConfig配置告警通知
+
+首先需要创建的微信密钥的Secret：
+
+~~~sh
+kubectl create secret generic webchat-secret --from-literal=secret=xxx -n monitoring
+~~~
+
+示例，将mysql和redis的告警发送至企业微信：
+
+~~~yaml
+apiVersion: monitoring.coreos.com/v1alpha1 
+kind: AlertmanagerConfig 
+metadata: 
+  name: basic
+  namespace: monitoring
+  labels: 
+    alertmanagerConfig: example 
+spec: 
+  route: 
+    groupBy: ['type'] 
+    groupWait: 30s 
+    groupInterval: 5m 
+    repeatInterval: 12h 
+    routes: 
+    - matchers: 
+      - matchType: =  
+        name: type 
+        value: "basic" 
+      receiver: Wechat 
+  receivers: 
+  - name: Wechat 
+    wechatConfigs: 
+      - sendResolved: true 
+        toParty: "4" 
+        toUser: '@all' 
+        agentID: "1000008" 
+        apiSecret:  
+          key: "secret" 
+          name: "webchat-secret" 
+~~~
+
+此处配置的receiver名字为wechat，toUser为@all，代表发送给所有人，也可以只发送给 部门的某一个人，只需要将此处改为USER_ID即可。
+
+#### 自定义微信告警信息
+
+首先修改alertmanager的全局配置文件alertmanager-secret.yaml，在stringData下面新添加一个自定义模板： 
+
+~~~yaml
+app.kubernetes.io/part-of: kube-prometheus 
+app.kubernetes.io/version: 0.21.0 
+name: alertmanager-main 
+namespace: monitoring 
+stringData: 
+  wechat.tmpl: |- 
+    {{ define "wechat.default.message" }} 
+    {{- if gt (len .Alerts.Firing) 0 -}} 
+    {{- range $index, $alert := .Alerts -}} 
+    {{- if eq $index 0 }} 
+    ==========异常告警========== 
+    告警类型: {{ $alert.Labels.alertname }} 
+    告警级别: {{ $alert.Labels.severity }} 
+    告警详情: {{ $alert.Annotations.message }}{{ $alert.Annotations.description}};{{$alert .Annotations.summary}} 
+    故障时间: {{ ($alert.StartsAt.Add 28800e9).Format "2006-01-02 15:04:05" }} 
+{{- if gt (len $alert.Labels.instance) 0 }} 
+    实例信息: {{ $alert.Labels.instance }} 
+    {{- end }} 
+    {{- if gt (len $alert.Labels.namespace) 0 }} 
+    命名空间: {{ $alert.Labels.namespace }} 
+    {{- end }} 
+    {{- if gt (len $alert.Labels.node) 0 }} 
+    节点信息: {{ $alert.Labels.node }} 
+    {{- end }} 
+    {{- if gt (len $alert.Labels.pod) 0 }} 
+    实例名称: {{ $alert.Labels.pod }} 
+    {{- end }} 
+    ============END============ 
+    {{- end }} 
+    {{- end }} 
+    {{- end }} 
+    {{- if gt (len .Alerts.Resolved) 0 -}} 
+    {{- range $index, $alert := .Alerts -}} 
+    {{- if eq $index 0 }} 
+    ==========异常恢复========== 
+    告警类型: {{ $alert.Labels.alertname }} 
+    告警级别: {{ $alert.Labels.severity }} 
+    告警详情: {{ $alert.Annotations.message }}{{ $alert.Annotations.description}};{{$alert .Annotations.summary}} 
+    故障时间: {{ ($alert.StartsAt.Add 28800e9).Format "2006-01-02 15:04:05" }} 
+    恢复时间: {{ ($alert.EndsAt.Add 28800e9).Format "2006-01-02 15:04:05" }} 
+    {{- if gt (len $alert.Labels.instance) 0 }} 
+    实例信息: {{ $alert.Labels.instance }} 
+    {{- end }} 
+    {{- if gt (len $alert.Labels.namespace) 0 }} 
+    命名空间: {{ $alert.Labels.namespace }} 
+    {{- end }} 
+    {{- if gt (len $alert.Labels.node) 0 }} 
+    节点信息: {{ $alert.Labels.node }} 
+    {{- end }} 
+    {{- if gt (len $alert.Labels.pod) 0 }} 
+    实例名称: {{ $alert.Labels.pod }} 
+    {{- end }} 
+    ============END============ 
+    {{- end }} 
+    {{- end }} 
+    {{- end }} 
+    {{- end }} 
+  alertmanager.yaml: |- 
+    "global": 
+      "resolve_timeout": "5m" 
+      ......
+~~~
+
+在template字段添加模板位置：
+
+~~~yaml
+    templates: 
+    - '/etc/alertmanager/config/*.tmpl' 
+    "inhibit_rules": 
+    ......
+~~~
+
+加载配置文件：
+
+~~~sh
+kubectl replace -f alertmanager-secret.yaml -n monitoring 
+~~~
+
+接下来在AlertmanagerConfig配置中指定这个自定义模板：
+
+~~~yaml
+  receivers: 
+  - name: Wechat 
+    wechatConfigs: 
+      - sendResolved: true 
+        toParty: "4" 
+        toUser: '@all' 
+        agentID: "1000008" 
+        apiSecret:  
+          key: "secret" 
+          name: "webchat-secret" 
+        message: '{{ template "wechat.default.message" . }}'
+~~~
+
+~~~sh
+kubectl replace -f basic-alertmanagerconfig.yaml  -n monitoring
+~~~
+
+> 注意：{{ template "wechat.default.message" . }} 配置的 wechat.default.message，是模板文件里面通过 define 定义的名称：{{ define "wechat.default.message" }}，并非文件名称。 
+
+## 发送告警到钉钉
+
+alertmanager原生不支持钉钉，所以用webhook去发送告警
+
+使用钉钉告警，需要先创建一个群聊，然后添加一个自定义机器人： 
+
+1. 安全设置 - 加签的值复制出来
+2. 添加完成后，webhook地址复制出来
+
+下载钉钉Webhook服务部署文件：
+
+~~~sh
+git clone https://github.com/timonwong/prometheus-webhook-dingtalk.git
+cd prometheus-webhook-dingtalk/contrib/k8s/ 
+# 修改配置
+vim config/config.yaml
+# targets.webhook1.url写上webhook的url
+# targets.webhook1.secret写上加签的值 （webhook1就写这俩字段）
+# 如果有很多个钉钉群，就写上webhook2、3、4以此类推
+~~~
+
+安装：
+
+~~~sh
+kubectl kustomize | kubectl apply -f - -n monitoring
+~~~
+
+pod创建完成之后就可以创建alertmanagerConfig：
+
+~~~yaml
+apiVersion: monitoring.coreos.com/v1alpha1 
+kind: AlertmanagerConfig 
+metadata: 
+  name: dingding
+  namespace: monitoring
+  labels: 
+    alertmanagerConfig: example 
+spec: 
+  route: 
+    groupBy: ['alertname'] 
+    groupWait: 1m 
+    groupInterval: 1m 
+    repeatInterval: 1m 
+    routes: 
+    - matchers: 
+      - matchType: "=" 
+        name: alertname 
+        value: "Watchdog" 
+      receiver: dingding-webhook1 
+  receivers: 
+  - name: dingding-webhook1 
+    webhookConfigs: 
+      - sendResolved: true 
+        # 给webhook的pod的svc发请求即可
+        url: http://alertmanager-webhook-dingtalk.monitoring.svc.cluster.local/dingtalk/webhook1/send
+~~~
+
