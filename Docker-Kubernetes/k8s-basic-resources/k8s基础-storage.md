@@ -1025,6 +1025,12 @@ spec:
   kubectl patch storageclass ceph-rbd-storage -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
   ~~~
 
+- 取消一个存储类的默认：
+
+  ~~~sh
+  kubectl patch storageclass sc-nfs -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"false"}}}'
+  ~~~
+
 - 创建pvc时无需指定sc即可
 
   ~~~yaml

@@ -589,8 +589,14 @@ cat volume-test-client.conf
 # 用的是另一个叫cfs-client的客户端工具
 cp /root/cubefs-client/build/bin/cfs-client /usr/local/bin/
 cfs-client -c volume-test-client.conf
+# 这会：
+# 1. 读取配置文件中的集群连接信息
+# 2. 通过 FUSE 创建一个虚拟文件系统挂载点
+# 3. 将文件系统操作转换为网络请求发送给 CubeFS 集群
 df -Th | grep volume-test
 ~~~
+
+> 这种挂载方式使用的是传统的POSIX。CubeFS 客户端通过 FUSE (Filesystem in Userspace) 提供标准的 POSIX 文件系统语义
 
 测试写入数据：
 
@@ -676,12 +682,6 @@ curl https://dl.minio.org.cn/client/mc/release/linux-amd64/mc --create-dirs -o /
 chmod +x /usr/local/bin/mc 
 ~~~
 
-创建volume：
-
-~~~sh
-cfs-cli volume create volume-obj test --capacity 1
-~~~
-
 配置对象存储：添加 MinIO/S3 服务器
 
 ~~~sh
@@ -689,17 +689,17 @@ cfs-cli volume create volume-obj test --capacity 1
 # 对象存储的入口：objectnode-service的svc的clusterIP
 # 后面是cubefs的user的access key和secret key。这其实就是对象存储的用户名和密码
 mc alias set test http://10.104.157.128:1601 NSwS4hTkT43TW903 uY9Hg8IgyW2awnRF3XpaAK8Da91c8RG7
-# 验证连接
+# 查看alias
 mc ls test
 ~~~
 
 > 1. **旧版本语法**：`mc config host add` 是旧版本的语法
 > 2. **新版本语法**：`mc alias set` 是新版本的正确语法
 
-创建桶：
+创建桶：（创建桶的本质就是在cubeFS中创建了一个volume）
 
 ~~~sh
-mc mb test/buckettest 
+mc mb test/buckettest
 ~~~
 
 查看桶：
@@ -713,7 +713,7 @@ mc ls test/
 ~~~sh
 mc cp cubefs-3.5.0-linux-amd64.tar.gz test/buckettest/ 
 # 上传文件夹(不会自动创建目录，需要指定子目录名称)
-mc cp templates/ test/buckettest/templates
+mc cp templates/ test/buckettest/templates -r
 ~~~
 
 查看文件：
@@ -748,7 +748,7 @@ mc alias rm test
 cfs-cli user create projecta
 ~~~
 
-添加项目的host：
+添加项目的host：（生产环境使用需要配置域名）
 
 ~~~sh
 mc config host add projecta http://10.100.82.212:1601 sTnnilRm1YPuohs0 ayIjC5uZYdRmVRFYey8lDy73Whdg716l
@@ -762,3 +762,271 @@ mc mb projecta/appa
 
 # CubeFS对接K8s
 
+## 部署cubeFS csi
+
+首先给需要使用cubeFS存储的节点打上CSI的标签（一般直接给所有节点打上标签即可）：
+
+~~~sh
+kubectl label node component.cubefs.io/csi=enabled --all
+~~~
+
+配置values，开启csi安装：
+
+~~~yaml
+component: 
+  master: true
+  datanode: true
+  metanode: true
+  objectnode: true
+  client: false
+  csi: true
+~~~
+
+执行安装：
+
+~~~sh
+helm upgrade -i cubefs -n cubefs . --create-namespace -f values.yaml
+~~~
+
+> 注意：
+>
+> 1. 如果values里面配置了tolerations，渲染模板会报错：
+>    ~~~sh
+>    Error: UPGRADE FAILED: YAML parse error on cubefs/templates/csi-controller-deployment.yaml: error converting YAML to JSON: yaml: line 21: did not find expected key
+>    
+>    Error: UPGRADE FAILED: YAML parse error on cubefs/templates/csi-node-daemonset.yaml: error converting YAML to JSON: yaml: line 21: did not find expected key
+>    ~~~
+>
+>    cubefs/templates/csi-controller-deployment.yaml
+>
+>    cubefs/templates/csi-node-daemonset.yaml
+>
+>    这两个文件都有spec.tolerations字段的缩进问题
+>
+> 2. 用helm template输出报错的模板：
+>
+>    ~~~sh
+>    helm template cubefs -n cubefs . -f values.yaml --debug > error-template.yaml
+>    ~~~
+>
+> 3. 分析可知模板中的tolerations字段缩进有问题：
+>
+>    原始文件（错的）
+>
+>    ~~~yaml
+>        {{- with .Values.csi.controller.nodeSelector }}
+>          nodeSelector:
+>    {{ toYaml . | indent 8 }}
+>        {{- end }}
+>          {{- with .Values.csi.controller.tolerations }}
+>            tolerations:
+>          {{ toYaml . | indent 8 }}
+>    ~~~
+>
+>    改为正确缩进：
+>
+>    ~~~yaml
+>        {{- with .Values.csi.controller.nodeSelector }}
+>          nodeSelector:
+>    {{ toYaml . | indent 8 }}
+>        {{- end }}
+>        {{- with .Values.csi.controller.tolerations }}
+>          tolerations:
+>    {{ toYaml . | indent 8 }}
+>    ~~~
+>
+> 4. 改完之后可以成功安装
+>
+> 5. 在其他模板中又发现了更多缩进错误，我提了一个github issue：[Indent Error found in spec.tolerations for some templates · Issue #53 · cubefs/cubefs-helm](https://github.com/cubefs/cubefs-helm/issues/53)
+
+## PV/PVC测试
+
+创建pvc:
+
+~~~yaml
+apiVersion: v1 
+kind: PersistentVolumeClaim 
+metadata: 
+  name: cubefs-test 
+  namespace: default 
+spec: 
+  accessModes: 
+    - ReadWriteMany # Once也可以，单节点读写
+  resources: 
+    requests: 
+      storage: 1Gi
+  storageClassName: cfs-sc 
+  volumeMode: Filesystem
+~~~
+
+创建之后就能看到自动创建了PV。下面可以创建服务来挂载PVC：
+
+~~~yaml
+apiVersion: apps/v1 
+kind: Deployment 
+metadata: 
+  name: cfs-csi-demo 
+  namespace: default 
+spec: 
+  replicas: 1 
+  selector: 
+    matchLabels: 
+      app: cfs-csi-demo-pod 
+  template: 
+    metadata: 
+      labels: 
+        app: cfs-csi-demo-pod 
+    spec: 
+      # 只有安装了CSI驱动的才可以挂载存储 
+      nodeSelector: 
+        component.cubefs.io/csi: enabled
+      volumes: 
+        - name: mypvc
+          persistentVolumeClaim: 
+            claimName: cubefs-test
+      containers: 
+        - name: cfs-csi-demo 
+          image: registry.cn-beijing.aliyuncs.com/dotbalo/rabbitmq:3.6.12-management  
+          imagePullPolicy: "IfNotPresent" 
+          ports: 
+            - containerPort: 15672 
+              name: "http-server" 
+          volumeMounts: 
+            - mountPath: "/var/lib/rabbitmq" 
+              name: mypvc 
+~~~
+
+## 在线扩容
+
+支持不停机扩容，直接把PVC的request改大，等待一段时间就生效了。Pod是不会收到影响的。
+
+~~~yaml
+spec: 
+  accessModes: 
+  - ReadWriteMany 
+  resources: 
+    requests: 
+      storage: 2Gi 
+  storageClassName: cfs-sc 
+~~~
+
+## CubeFS为基础组件提供存储
+
+### mysql单实例
+
+单实例手动创建PVC。如果是多实例就需要用集群模式或者主从模式，用helm或者Operator去部署，在模板里面直接写storageclass就行
+
+~~~yaml
+apiVersion: v1 
+kind: PersistentVolumeClaim 
+metadata: 
+  name: mysql 
+  namespace: default 
+spec: 
+  resources: 
+    requests: 
+      storage: 1Gi 
+  volumeMode: Filesystem 
+  storageClassName: cfs-sc 
+  accessModes: 
+    - ReadWriteOnce
+---
+apiVersion: apps/v1 
+kind: Deployment 
+metadata: 
+  name: mysql 
+  namespace: default 
+spec: 
+  replicas: 1 
+  selector: 
+    matchLabels: 
+      app: mysql 
+  strategy:
+    type: Recreate # 不能用滚动更新，因为。两个mysql不能同时使用一块存储。
+  template: 
+    metadata: 
+      labels: 
+        app: mysql 
+      annotations: 
+        app: mysql 
+    spec: 
+      volumes: 
+        - name: data 
+          persistentVolumeClaim: 
+            claimName: mysql 
+      containers: 
+        - name: mysql 
+          image: registry.cn-beijing.aliyuncs.com/dotbalo/mysql:8.0.20 
+          ports: 
+            - name: tcp-3306 
+              containerPort: 3306 
+              protocol: TCP 
+          volumeMounts: 
+            - name: data 
+              mountPath: /var/lib/mysql 
+          env: 
+            - name: MYSQL_ROOT_PASSWORD 
+              value: mysql
+~~~
+
+## CubeFS为大模型提供存储
+
+CubeFS对AI训练、模型存储及分发、IO加速等需求做了专门优化。所以可以直接把CubeFS作为大模型的数据存储底座。 
+
+很多位置去启动大模型服务，可以共享同一个大模型的存储。
+
+### ollama
+
+~~~yaml
+apiVersion: v1 
+kind: PersistentVolumeClaim 
+metadata: 
+  name: ollama-data 
+  namespace: default 
+spec: 
+  resources: 
+    requests: 
+      storage: 10Gi
+  volumeMode: Filesystem 
+  storageClassName: cfs-sc 
+  accessModes: 
+  - ReadWriteMany 
+---
+apiVersion: apps/v1 
+kind: Deployment 
+metadata: 
+  name: ollama 
+  namespace: default 
+spec: 
+  selector: 
+    matchLabels: 
+      app: ollama 
+  replicas: 1 
+  template: 
+    metadata: 
+      labels: 
+        app: ollama 
+      annotations: 
+        app: ollama 
+    spec: 
+      volumes: 
+      - name: data 
+        persistentVolumeClaim: 
+          claimName: ollama-data 
+          readonly: false 
+      containers: 
+      - name: ollama 
+        image: registry.cn-beijing.aliyuncs.com/dotbalo/ollama
+        imagePullPolicy: IfNotPresent 
+        volumeMounts: 
+        - name: data 
+          mountPath: /data/models 
+          readonly: false 
+        env: 
+        - name: OLLAMA_MODELS 
+          value: /data/models 
+~~~
+
+部署完成后进入pod下载模型`ollama pull deepseek-r1:1.5b`
+
+下载完成之后启动模型：`ollama run deepseek-r1:1.5b`
