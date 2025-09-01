@@ -192,3 +192,10 @@ helm upgrade -i skywalking -n skywalking . --create-namespace -f values.yaml
 
 通过NodePort访问skywalking UI
 
+# skywalking数据接入方案
+
+## 获取agent镜像
+
+## Java接入方案
+
+## Go接入方案
