@@ -153,8 +153,6 @@ node('linux-agent'){
 
 ### Pipeline声明式语法
 
-#### 结构
-
 Pipeline定义了包含了整个流水线的所有内容和指令，也是声明式流水线的开始，包含三个层级结构：
 
 1. Sections：包含Agent、Stages、Post、Directives和Steps的代码区域块。（即第一层缩进的字段）
@@ -184,28 +182,149 @@ pipeline{
 }
 ~~~
 
-- stages: 阶段集合，包裹所有的阶段（例如：打包，部署等各个阶段）
-- stage: 阶段，被stages包裹，一个stages可以有多个stage
-- steps: 步骤,为每个阶段的最小执行单元,被stage包裹
-- post:  执行构建后的操作，根据构建结果来执行对应的操作
+### Sections
+
+声明式流水线中的Sections 不是一个关键字或指令，而是包含一个或多个Agent、Stages、 Post、Directives 和 Steps 的代码区域块。
+
+#### Agent
+
+Agent表示整个流水线或特定阶段中的步骤和命令执行的位置，该部分可以在pipeline块的顶层被定义，也可以在stage中再次定义，也可以同时在两处定义。 
+
+- any：在任何可用的代理上执行流水线，配置语法：
+
+  ~~~groovy
+  pipeline { 
+  	agent any 
+  }
+  ~~~
+
+- none：表示该Pipeline脚本没有全局的agent配置。当顶层的agent配置为none时，可以为每个stage配置局部的agent。配置语法：
+
+  ~~~groovy
+  pipeline { 
+  	agent none 
+  	stages { 
+  		stage('Stage For Build'){ 
+  			agent any 
+  		} 
+  	} 
+  }
+  ~~~
+
+- label：选择某个具体的节点执行Pipeline命令，例如：`agent { label 'my-slave-label' }`。如果这个标签的agent不存在，任务会一直处于等待agent状态。配置语法：
+
+  ~~~groovy
+  pipeline { 
+  	agent none 
+  	stages { 
+  		stage('Stage For Build'){ 
+  			agent { label 'my-slave-label' } 
+  		} 
+  	} 
+  } 
+  ~~~
+
+- docker：agent支持直接使用镜像作为agent，这也是比较推荐的方式。直接用带基础环境的镜像，可以避免处理编译环境或者slave的版本问题。比如Java编译，可以直接使用maven镜像启动slave，之后进行打包，同时可以指定args：
+
+  ~~~groovy
+  agent{ 
+  	docker{ 
+  		image 'registry.cn-beijing.aliyuncs.com/dotbalo/maven:3.5.3' 
+  		args '-v /tmp:/tmp' 
+  	} 
+  } 
+  ~~~
+
+- kubernetes：Jenkins 也支持使用Kubernetes创建Slave，也就是动态Slave。配置示例如下： 
+
+  ~~~groovy
+  agent { 
+  	kubernetes { 
+  		label podlabel 
+  		yaml """ 
+  kind: Pod 
+  metadata: 
+    name: jenkins-agent 
+  spec: 
+    containers: 
+    - name: kaniko 
+      image: gcr.io/kaniko-project/executor:debug 
+      imagePullPolicy: Always 
+      command: 
+      - /busybox/cat 
+      tty: true 
+      volumeMounts: 
+      - name: aws-secret 
+        mountPath: /root/.aws/ 
+      - name: docker-registry-config 
+        mountPath: /kaniko/.docker 
+    restartPolicy: Never 
+    volumes: 
+    - name: aws-secret 
+      secret: 
+        secretName: aws-secret 
+    - name: docker-registry-config 
+      configMap: 
+        name: docker-registry-config 
+  """ 
+  } 
+  ~~~
+
+#### stages
+
+阶段集合，包裹所有的阶段（例如：打包，部署等各个阶段）。stage: 阶段，被stages包裹，一个stages可以有多个stage
 
 ~~~groovy
-pipeline{ //作用域，应用于全局最外层，表明该脚本为声明式pipeline
-    agent any //运行在任意的可用节点上
-    stages{
-        stage("This is first stage"){
-            steps("This is first step"){
-                echo "I am xianchao"
-            }
-        }
-    }
-    post{
-        always{
-            echo "The process is ending"
-        }
-    }
-}
+pipeline { 
+    agent any 
+    stages {  
+        stage('Example') { 
+            steps { 
+                echo 'Hello World' 
+            } 
+        } 
+    } 
+} 
 ~~~
+
+#### steps
+
+Steps部分在给定的stage指令中执行的一个或多个步骤，比如在steps定义执行一条shell命令：
+
+~~~groovy 
+pipeline { 
+    agent any 
+    stages { 
+        stage('Example') { 
+            steps {  
+                echo 'Hello World' 
+            } 
+        } 
+    } 
+} 
+~~~
+
+也可以执行多条shell：
+
+~~~groovy
+pipeline { 
+    agent any 
+    stages { 
+        stage('Example') { 
+            steps {  
+                sh """ 
+                 echo 'Execute building...' 
+                 mvn clean install 
+                 """ 
+            } 
+        } 
+    } 
+} 
+~~~
+
+#### post
+
+执行构建后的操作，根据构建结果来执行对应的操作
 
 #### environment
 
@@ -429,12 +548,10 @@ INFO: Jenkins is fully up and running
    Docker 
    Docker Slaves 
    Docker Pipeline 
-   Role-based Authorization Strategy 
+   Role-based Authorization Strategy
    ~~~
 
-   
-
-# Jenkins插件离线安装
+## Jenkins插件离线安装
 
 1. Jenkins离线插件下载地址:http://mirrors.tuna.tsinghua.edu.cn/jenkins/plugins/，可以在Jenkins官网上搜索想要下载的插件，点击“Download”按钮下载.hpi文件。
 
@@ -442,7 +559,7 @@ INFO: Jenkins is fully up and running
    1. 方法一：在Jenkins管理页面点几“系统管理” -> “插件管理” -> “高级”。选择“上传插件”，并选择下载的.hpi文件。点击“上传”按钮，等待插件安装完成。
    2. 方法二：将下载的.hpi文件放到Jenkins的安装目录下的“plugins”文件夹中。重启Jenkins，等待插件安装完成。
 
-# Jenkins版本升级
+## Jenkins版本升级
 
 Jenkins 版本升级通常分为以下几个步骤：
 

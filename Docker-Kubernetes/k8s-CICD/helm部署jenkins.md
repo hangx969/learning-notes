@@ -11,7 +11,7 @@
 ~~~sh
 helm repo add jenkins https://charts.jenkins.io
 helm repo update jenkins
-helm pull jenkins/jenkins --version 5.8.61
+helm pull jenkins/jenkins --version 5.8.68
 ~~~
 
 # 配置文件
@@ -47,6 +47,27 @@ controller:
   prometheus:
     enabled: true
 
+  JCasC:
+    defaultConfig: true
+    overwriteConfiguration: false
+    configScripts:
+      # 配置插件更新源
+      update-center: |
+        jenkins:
+          updateCenter:
+            sites:
+              - id: "default"
+                url: "https://mirrors.huaweicloud.com/jenkins/updates/update-center.json"
+
+  installPlugins:
+    - kubernetes:4358.vcfd9c5a_0a_f51
+    - workflow-aggregator:608.v67378e9d3db_1
+    - git:5.7.0
+    - configuration-as-code:1985.vdda_32d0c4ea_b_
+
+  installLatestPlugins: true
+  installLatestSpecifiedPlugins: true
+
 agent:
   enabled: true
   namespace: "jenkins"
@@ -66,8 +87,8 @@ agent:
     hostPath: /usr/bin/docker
     mountPath: /usr/bin/docker
   - type: HostPath
-    hostPath: /usr/local/bin/kubectl
-    mountPath: /usr/local/bin/kubectl
+    hostPath: /usr/bin/kubectl
+    mountPath: /usr/bin/kubectl
   - type: HostPath
     hostPath: /etc/docker/daemon.json
     mountPath: /etc/docker/daemon.json
@@ -82,10 +103,15 @@ agent:
     # -- Namespaces to look at for garbage collection, in addition to the default namespace defined for the cloud. One namespace per line.
     namespaces: "jenkins"
 
+  serviceAccount: jenkins
+
+
 persistence:
   enabled: true
-  storageClass: "sc-nfs"
+  storageClass: "cfs-sc"
   size: "1Gi"
+
+
 ~~~
 
 配置文件里面把docker和kubectl通过host path挂进slave pod里面了，需要修改一下权限否则slave pod中会报错permission denied：
@@ -319,3 +345,35 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
    ~~~
 
    jenkins helm chart从5.8.61升级到5.8.68问题自动消失。可能是旧版本的 config-reload-init 容器对证书验证要求过于严格或者无法处理缺少 Authority Key Identifier 扩展的证书。
+
+2. 对于jenkins helm 5.8.68，init pod启动失败：
+
+   ~~~sh
+   init Plugin git:5.7.0 (via git-client:6.3.3) depends on configuration-as-code:1985.vdda_32d0c4ea_b_, but there is an older version defined on the top level
+   ~~~
+
+   在默认values.yaml中定义的是旧版本的configuration-as-code：
+
+   ~~~yaml
+   controller:
+     installPlugins:
+       - kubernetes:4358.vcfd9c5a_0a_f51
+       - workflow-aggregator:608.v67378e9d3db_1
+       - git:5.7.0
+       - configuration-as-code:1971.vf9280461ea_89
+   ~~~
+
+   更改为：
+
+   ~~~yaml
+   controller:
+     installPlugins:
+       - kubernetes:4358.vcfd9c5a_0a_f51
+       - workflow-aggregator:608.v67378e9d3db_1
+       - git:5.7.0
+       - configuration-as-code:1985.vdda_32d0c4ea_b_
+     installLatestPlugins: true
+     installLatestSpecifiedPlugins: true
+   ~~~
+
+   
