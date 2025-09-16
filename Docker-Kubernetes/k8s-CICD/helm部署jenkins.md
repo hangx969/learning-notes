@@ -47,24 +47,11 @@ controller:
   prometheus:
     enabled: true
 
-  JCasC:
-    defaultConfig: true
-    overwriteConfiguration: false
-    configScripts:
-      # 配置插件更新源
-      update-center: |
-        jenkins:
-          updateCenter:
-            sites:
-              - id: "default"
-                url: "https://mirrors.huaweicloud.com/jenkins/updates/update-center.json"
-
   installPlugins:
     - kubernetes:4358.vcfd9c5a_0a_f51
     - workflow-aggregator:608.v67378e9d3db_1
     - git:5.7.0
     - configuration-as-code:1985.vdda_32d0c4ea_b_
-
   installLatestPlugins: true
   installLatestSpecifiedPlugins: true
 
@@ -374,6 +361,15 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
        - configuration-as-code:1985.vdda_32d0c4ea_b_
      installLatestPlugins: true
      installLatestSpecifiedPlugins: true
+   ~~~
+
+3. 如果由于插件下载太慢导致pod startupProbe失败，可以关闭插件安装：
+
+   ~~~yaml
+   controller:
+     installPlugins: false
+     # installLatestPlugins: true
+     # installLatestSpecifiedPlugins: true
    ~~~
 
    

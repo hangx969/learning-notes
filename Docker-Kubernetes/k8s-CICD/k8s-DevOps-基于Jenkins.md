@@ -509,7 +509,7 @@ m.daocloud.io/docker.io/bitnami/jenkins:2.504.3-debian-12-r1
 查看jenkins日志：
 
 ~~~sh
-docker logs -f  Jenkins 
+docker logs -f jenkins 
 # 查看到这条日志说明Jenkins已完成启动 
 INFO: Jenkins is fully up and running
 ~~~
@@ -525,6 +525,8 @@ INFO: Jenkins is fully up and running
 2. 在Available Plugins里面可以看到所有的可用插件，安装这些：
 
    ~~~sh
+   configuration-as-code
+   workflow-aggregator # 搜出来名字叫 Pipeline
    Git 
    Git Parameter 
    Git Pipeline for Blue Ocean 
