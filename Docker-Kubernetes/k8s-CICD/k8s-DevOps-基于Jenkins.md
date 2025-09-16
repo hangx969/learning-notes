@@ -227,15 +227,30 @@ Agent表示整个流水线或特定阶段中的步骤和命令执行的位置，
 - docker：agent支持直接使用镜像作为agent，这也是比较推荐的方式。直接用带基础环境的镜像，可以避免处理编译环境或者slave的版本问题。比如Java编译，可以直接使用maven镜像启动slave，之后进行打包，同时可以指定args：
 
   ~~~groovy
-  agent{ 
-  	docker{ 
-  		image 'registry.cn-beijing.aliyuncs.com/dotbalo/maven:3.5.3' 
-  		args '-v /tmp:/tmp' 
-  	} 
-  } 
+  pipeline{ 
+      agent any
+      stages{ 
+          stage('Build'){
+              agent {
+                  docker {
+                      image 'registry.cn-beijing.aliyuncs.com/dotbalo/maven:3.5.3'
+                      args '-v /tmp:/tmp'
+                  }
+              }
+              steps{ 
+                  echo 'Hello World'
+                  sh 'pwd'
+                  sh 'hostname'
+                  sh 'mvn -version'
+              }
+          }
+      }
+  }
   ~~~
 
 - kubernetes：Jenkins 也支持使用Kubernetes创建Slave，也就是动态Slave。配置示例如下： 
+
+  官网文档：https://plugins.jenkins.io/kubernetes/#plugin-content-configuration-reference 
 
   ~~~groovy
   agent { 
@@ -324,43 +339,104 @@ pipeline {
 
 #### post
 
-执行构建后的操作，根据构建结果来执行对应的操作
+Post一般用于流水线结束之后的进一步处理，比如错误通知等。Post可以针对流水线不同的结果做出不同的处理，就像开发程序的错误处理。比如python中的try catch。Post可以定义在PIpeline或stage中。支持以下条件：
 
-#### environment
+- always：无论Pipeline或stage的完成状态如何，都会执行post中定义的指令
+- changed：只有当前Pipeline或stage的完成状态与他之前的运行不同时，才执行post部分
+- fixed：本次Pipeline或stage成功，且上一次构建是失败或不稳定的时候，才执行post部分
+- regression：当本次Pipeline或stage状态为失败、不稳定或终止，且上一次构建成功时，才执行post部分
+- failure：当前pipeline或stage状态为失败，才执行post。通常失败会在web中显示为红色
+- success：当前状态为成功，才执行post步骤，web中显示为蓝色或绿色。
+- unstable：当前状态为不稳定，执行post步骤，通常由于测试失败或代码违规等造成，在Web界面中显示为黄色
+- aborted：当前状态为终止（aborted），执行该post步骤，通常由于流水线被手动终止触发，这时在Web界面中显示为灰色
+- unsuccessful：当前状态不是success时，执行该post步骤；
+- cleanup：无论pipeline或stage的完成状态如何，都允许运行该post中定义的指令。和always的区别在于，cleanup会在其它执行之后执行。 
 
-- environment指令指定一系列键值对，这些键值对将被定义为所有step或stage-specific step的环境变量，具体取决于environment指令在Pipeline中的位置。
-- 该指令支持一种特殊的方法credentials()，可以通过其在Jenkins环境中的标识符来访问预定义的凭据。
-- 对于类型为“Secret Text”的凭据，该 credentials()方法将确保指定的环境变量包含Secret Text内容；对于“标准用户名和密码”类型的凭证，指定的环境变量将被设置为username:password并且将自动定义两个附加的环境变量：`MYVARNAME_USR`和`MYVARNAME_PSW`。
+示例：一般情况下，post部分都是放在流水线的底部:
 
 ~~~groovy
+// 写在pipeline里面
 pipeline {
     agent any
-    environment {  
-        CC = 'clang' 
-    }
     stages {
-        stage('Example') {
+        stage('Build') {
             steps {
-                sh 'printenv'
+                echo 'Hello World'
+            }
+        }
+    }
+    post {
+        always {
+            echo 'This is post message'
+        }
+    }
+}
+
+// 也可以写在某个stage里面
+pipeline {
+    agent any
+    stages {
+        stage('Build') {
+            steps {
+                sh 'EXECUTE_COMMAND'
+            }
+            post {
+                failure {
+                    echo 'Pipeline failure'
+                }
             }
         }
     }
 }
 ~~~
 
+### Directives
+
+Directives可用于执行stage时的一些条件判断或者预处理一些数据，他也不是一个关键字或指令，而是包含了environment、options、parameters、triggers、stage、tools、input、when等配置。
+
+#### environment
+
+用于在流水线中配置一些环境变量，根据配置的位置决定环境变量的作用域。在pipeline中定义就作为全局环境变量，也可以配置在stage中作为该stage的环境变量。
+
+假设需要定义一个变量名为cc的全局变量和一个局部变量，可以通过以下方式定义：
+
+~~~groovy
+pipeline {
+    agent any
+    environment {  
+        CC = 'global' 
+    }
+    stages {
+        stage('local env') {
+            environment {
+                CC2 = 'local'
+            }
+            steps {
+                sh """
+                  echo CC2: $CC2
+                  echo CC: $CC
+                """
+            }
+        }
+    }
+}
+~~~
+
+推荐把镜像tag作为环境变量放进去。
+
 #### options
 
-- options指令允许在Pipeline本身内配置Pipeline专用选项。Pipeline本身提供了许多选项，例如buildDiscarder，但它们也可能由插件提供，例如 timestamps。
+options指令允许在Pipeline中配置Pipeline专用选项。Pipeline本身提供了许多选项，例如buildDiscarder，但它们也可能由插件提供，例如 timestamps。
 
 - 可用指令：
 
-  - buildDiscarder：pipeline保持构建的最大个数。用于保存Pipeline最近几次运行的数据，例如：options { buildDiscarder(logRotator(numToKeepStr: '1')) }
-  - disableConcurrentBuilds：不允许并行执行Pipeline,可用于防止同时访问共享资源等。例如：options { disableConcurrentBuilds() }
-  - skipDefaultCheckout：跳过默认设置的代码check out。例如：options { skipDefaultCheckout() }
-  - skipStagesAfterUnstable：一旦构建状态进入了“Unstable”状态，就跳过此stage。例如：options { skipStagesAfterUnstable() }
-  - timeout：设置Pipeline运行的超时时间，超过超时时间，job会自动被终止，例如：options { timeout(time: 1, unit: 'HOURS') }
-  - retry：失败后，重试整个Pipeline的次数。例如：options { retry(3) }
-  - timestamps： 预定义由Pipeline生成的所有控制台输出时间。例如：options { timestamps() }
+  - `buildDiscarder`：pipeline保持构建的最大个数。用于保存Pipeline最近几次运行的数据，例如：options { buildDiscarder(logRotator(numToKeepStr: '1')) }
+  - `disableConcurrentBuilds`：不允许并行执行Pipeline,可用于防止同时访问共享资源等。例如：options { disableConcurrentBuilds() }
+  - `skipDefaultCheckout`：跳过默认设置的代码check out。例如：options { skipDefaultCheckout() }
+  - `skipStagesAfterUnstable`：一旦构建状态进入了“Unstable”状态，就跳过此stage。例如：options { skipStagesAfterUnstable() }
+  - `timeout`：设置Pipeline运行的超时时间，超过超时时间，job会自动被终止，例如：options { timeout(time: 1, unit: 'HOURS') }
+  - `retry`：失败后，重试整个Pipeline的次数。例如：options { retry(3) }
+  - `timestamps`： 预定义由Pipeline生成的所有控制台输出时间。例如：options { timestamps() }
 
   ~~~groovy
   pipeline {
@@ -383,17 +459,17 @@ pipeline {
 - parameters指令提供用户在触发Pipeline时的参数列表。这些参数值通过该params对象可用于Pipeline stage中，作用域：被最外层pipeline所包裹，并且只能出现一次，参数可被全局使用
 
   ~~~groovy
-  pipeline{
+  pipeline {
       agent any
       parameters {
-          string(name: 'xianchao', defaultValue: 'my name is xianchao', description: 'My name is xiancaho')
-          booleanParam(name: 'luckylucky421302', defaultValue: true, description: 'This is my wechat')
+          string(name: 'myName', defaultValue: 'Bob', description: 'My name is Bob')
+          booleanParam(name: 'wechat', defaultValue: true, description: 'This is my wechat')
       }
-      stages{
-          stage("stage1"){
-              steps{
-                  echo "$xianchao"
-                  echo "$luckylucky421302"
+      stages {
+          stage("stage1") {
+              steps {
+                  echo "$myName"
+                  echo "$wechat"
               }
           }
       }
@@ -448,9 +524,9 @@ pipeline {
             input {
                 message "Should we continue?"
                 ok "Yes, we should."
-                submitter "xianchao,lucky"
+                submitter "myName,lucky"
                 parameters {
-                    string(name: 'PERSON', defaultValue: 'xianchao', description: 'Who should I say hello to?')
+                    string(name: 'PERSON', defaultValue: 'myName', description: 'Who should I say hello to?')
                 }
             }
             steps {
@@ -461,15 +537,135 @@ pipeline {
 }
 ~~~
 
+## Agent配置示例
+
+### 基于docker slave
+
+1. 假设有一个Java项目，需要用到mvn命令进行编译，此时可以用maven基础镜像作为agent，配置如下：
+
+   ~~~groovy
+   pipeline { 
+       agent {
+           docker {
+               image 'registry.cn-beijing.aliyuncs.com/dotbalo/maven:3.5.3'
+               args '-v /tmp:/tmp'
+           }
+       }
+       stages{ 
+           stage('Build'){
+               steps{ 
+                   sh 'mvn -v'
+               }
+           }
+       }
+   }
+   ~~~
+
+2. 有多个stage，需要不同的agent，就把顶层agent设为none，具体agent配置在每个stage里面：
+
+   ~~~groovy
+   pipeline{ 
+       agent none
+       stages{ 
+           stage('Build'){
+               agent {
+                   docker {
+                       image 'registry.cn-beijing.aliyuncs.com/dotbalo/maven:3.5.3'
+                       args '-v /tmp:/tmp'
+                   }
+               }
+               steps{ 
+                   sh 'mvn -v'
+               }
+               stage('Test') {
+                   agent {
+                       docker {
+                           image 'registry.cn-beijing.aliyuncs.com/dotbalo/jre:8u211-data'
+                       }
+                   }
+                   steps {
+                       sh 'java -version'
+                   }
+               }
+           }
+       }
+   }
+   ~~~
+
+### 基于k8s slave
+
+上述示例可以用K8s slave pod实现。比定义具有3个容器的pod，分别为jnlp（负责与jenkins master通信）、build（执行构建命令）、kubectl（执行k8s命令）。在steps中，可以通过containers字段，选择在某个容器内执行命令.
+
+Kubernetes Agent详细语法：https://plugins.jenkins.io/kubernetes/#plugin-content-configuration-reference
+
+注：dockerhub上的镜像地址：
+
+```bash
+jenkins/jnlp-agent-docker:latest
+maven:3.5.3
+bitnami/kubectl:latest
+```
+
+~~~groovy
+pipeline{ 
+    agent {
+        kubernetes {
+            cloud 'kubernetes-default' 
+            slaveConnectTimeout 1200 
+            yaml '''
+apiVersion: v1 
+kind: Pod 
+spec: 
+  containers: 
+  - name: jnlp
+    image: 'registry.cn-beijing.aliyuncs.com/dotbalo/jnlp-agent-docker:latest'  
+    imagePullPolicy: IfNotPresent       
+    args: [\'$(JENKINS_SECRET)\', \'$(JENKINS_NAME)\'] 
+  - name: "build"
+    image: "registry.cn-beijing.aliyuncs.com/dotbalo/maven:3.5.3" 
+    imagePullPolicy: "IfNotPresent" 
+    command: 
+    - "cat" 
+    tty: true 
+  - name: "kubectl" 
+    command: 
+    - "cat" 
+    image: "registry.cn-beijing.aliyuncs.com/dotbalo/kubectl:latest" 
+    imagePullPolicy: "IfNotPresent" 
+    tty: true 
+'''          
+        }
+    }
+    stages{ 
+        stage('Build'){
+            steps{ 
+                container(name: 'build')
+                sh 'mvn -v'
+            }
+            stage('Deploy') {
+                steps {
+                    container(name: 'kubectl')
+                    sh 'kubectl get node'
+                }
+            }
+        }
+    }
+}
+~~~
+
+
+
+
+
 # Jenkins部署使用
 
 Jenkins主节点可以采用Docker、K8s或者war包进行部署。如果K8s中没有安装分布式可靠存储，建议直接采用Docker安装，slave从节点可以在k8s中部署。
 
 ## Docker安装jenkins
 
-首先需要一个Linux服务器，配置不低于2C4G和40G硬盘。
+1. 首先需要一个Linux服务器，配置不低于2C4G和40G硬盘。
 
-先装Docker：
+2. 装Docker：
 
 ~~~sh
 # 在rockylinux上：
@@ -479,16 +675,26 @@ yum install docker-ce docker-ce-cli -y
 systemctl daemon-reload && systemctl enable --now docker
 ~~~
 
-创建Jenkins 的数据目录，防止容器重启后数据丢失：
+3. 创建Jenkins 的数据目录，防止容器重启后数据丢失：
 
 ~~~sh
 mkdir /data/jenkins_data -p
 chmod -R 777 /data/jenkins_data
 ~~~
 
-启动Jenkins，并配置管理员账号密码为admin/admin123：
+4. **【可选】**如果后面有需求要用到docker slave的话，需要修改宿主机docker.sock权限
 
-其中8080端口为Jenkins Web界面的端口，50000是jnlp使用的端口，后期Jenkins Slave需要使用50000端口和Jenkins主节点通信。 
+~~~sh
+chown 1000:1000  /var/run/docker.sock
+chmod 777  /var/run/docker.sock
+chmod 777 /usr/bin/docker
+chown -R 1000.1000  /usr/bin/docker
+~~~
+
+5. 启动Jenkins，并配置管理员账号密码为admin/admin123：
+
+- 其中8080端口为Jenkins Web界面的端口，50000是jnlp使用的端口，后期Jenkins Slave需要使用50000端口和Jenkins主节点通信。 
+- 把宿主机的docker挂进主节点了，后面如果有需求要用docker slave，将会调用宿主机的docker。
 
 ~~~sh
 # 用的镜像是：docker.io/bitnami/jenkins:2.504.3-debian-12-r1
@@ -506,7 +712,7 @@ docker run -d \
 m.daocloud.io/docker.io/bitnami/jenkins:2.504.3-debian-12-r1 
 ~~~
 
-查看jenkins日志：
+6. 查看jenkins日志：
 
 ~~~sh
 docker logs -f jenkins 
@@ -514,7 +720,7 @@ docker logs -f jenkins
 INFO: Jenkins is fully up and running
 ~~~
 
-安装完成后可以通过Jenkins宿主机IP:8080端口访问UI界面。
+7. 安装完成后可以通过Jenkins宿主机IP:8080端口访问UI界面。admin/admin123。
 
 ## 插件安装
 
@@ -552,6 +758,8 @@ INFO: Jenkins is fully up and running
    Docker Pipeline 
    Role-based Authorization Strategy
    ~~~
+
+3. 也可以手动重启jenkins：`192.168.49.180:8080/restart`
 
 ## Jenkins插件离线安装
 
