@@ -927,6 +927,26 @@ pipeline {
 
 #### 加密文件
 
+如果需要加密某个文件，可以使用credential，比如连接到k8s集群的kubeconfig文件等。
+
+首先创建文本形式的凭证：类型选择Secret file，上传文件，设置ID。接下来可以在pipeline中引用：
+
+~~~groovy
+pipeline { 
+    agent any 
+    environment { 
+        KUBECONFIG_LOCAL = credentials('KUBECONFIG_LOCAL') 
+    } 
+    stages { 
+        stage('Secret File') { 
+            steps { 
+                sh "cat $KUBECONFIG_LOCAL" 
+            } 
+        } 
+    } 
+}
+~~~
+
 ## Agent配置示例
 
 ### 基于docker slave
