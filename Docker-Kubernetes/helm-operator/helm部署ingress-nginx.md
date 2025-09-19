@@ -25,7 +25,7 @@ helm pull ingress-nginx/ingress-nginx --version "${INGRESS_NGINX_VERSION#helm-ch
 
 # 配置hostnetwork模式
 
-- [Bare-metal considerations - Ingress-Nginx Controller](https://kubernetes.github.io/ingress-nginx/deploy/baremetal/#via-the-host-network)
+[Bare-metal considerations - Ingress-Nginx Controller](https://kubernetes.github.io/ingress-nginx/deploy/baremetal/#via-the-host-network)
 
 ## hostnetwork
 
@@ -68,6 +68,138 @@ helm pull ingress-nginx/ingress-nginx --version "${INGRESS_NGINX_VERSION#helm-ch
 >      - 优先使用 CoreDNS（集群内部 DNS）来解析域名
 >      - 能够解析 Kubernetes 集群内部服务
 >      - 如果集群 DNS 解析失败，则回退到宿主机的 DNS
+
+~~~yaml
+controller:
+  name: controller
+  kind: DaemonSet
+  image:
+    image: ingress-nginx/controller
+    tag: "v1.12.1"
+    digest: ""
+  enableAnnotationValidations: false
+  config:
+    proxy-buffer-size: "16k"
+    enable-modsecurity: "false"
+    enable-owasp-modsecurity-crs: "false"
+    modsecurity-snippet: |
+      # Enable prevention mode. Can be any of: DetectionOnly,On,Off (default is DetectionOnly)
+      SecRuleEngine DetectionOnly
+      # Enable scanning of the request body
+      SecRequestBodyAccess On
+      # Max request sizes in bytes (with/without files)
+      # Note NGINX Ingress has its own annotations, keep in sync!
+      SecRequestBodyLimit 20971520 # 20Mb (default is 12.5Mb)
+      SecRequestBodyNoFilesLimit 262144 # 250Kb (default is 128Kb)
+      SecRequestBodyLimitAction Reject # Reject if larger (we could also let it pass with ProcessPartial)
+      # Update config to include PUT/PATCH/DELETE in the allowed HTTP methods (instead of fully disabling 911100)
+      SecAction "id:900200,phase:1,nolog,pass,t:none,\
+        setvar:tx.allowed_methods=GET HEAD POST OPTIONS PUT PATCH DELETE"
+      # Send ModSecurity audit logs to the stdout (only for rejected requests)
+      SecAuditLog /dev/stdout
+      SecAuditLogFormat JSON
+      SecAuditEngine RelevantOnly # could be On/Off/RelevantOnly
+      # Enable XML and JSON parsing
+      SecRule REQUEST_HEADERS:Content-Type "(?:application(?:/soap\+|/)|text/)xml" \
+          "id:200000,phase:1,t:none,t:lowercase,pass,nolog,\
+          ctl:requestBodyProcessor=XML"
+      SecRule REQUEST_HEADERS:Content-Type "application/json" \
+          "id:200001,phase:1,t:none,t:lowercase,pass,nolog,\
+          ctl:requestBodyProcessor=JSON"
+      # Rule syntax https://malware.expert/tutorial/writing-modsecurity-rules/
+      # Important that the new ids created (1000x) are new
+      # Remove rule that checks for connecting to raw ip, very spammy and not useful
+      SecRuleRemoveById 920350
+      # Remove php injection attack against prometheus endpoint, not php and not an attack
+      SecRule REQUEST_URI "@beginsWith /api/ds/query" \
+          "id:10000,phase:1,pass,nolog,ctl:ruleRemoveById=933210"
+      # Remove php injection attack against prometheus endpoint, not php and not an attack
+      SecRule REQUEST_URI "@beginsWith /api/ds/query" \
+          "id:10001,phase:1,pass,nolog,ctl:ruleRemoveById=949110"
+
+  admissionWebhooks:
+    patch:
+      image:
+        image: ingress-nginx/kube-webhook-certgen
+        tag: v1.5.2
+        digest: ""
+
+  watchIngressWithoutClass: true
+  ingressClassByName: true
+
+  # Pods configured with hostNetwork: true do not use the internal DNS resolver (i.e. kube-dns or CoreDNS)
+  # unless their dnsPolicy spec field is set to ClusterFirstWithHostNet.
+  # Consider using this setting if NGINX is expected to resolve internal names for any reason.
+  # https://kubernetes.github.io/ingress-nginx/deploy/baremetal/#via-the-host-network
+  # https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-s-dns-policy
+  hostNetwork: true
+  dnsPolicy: ClusterFirstWithHostNet
+  hostPort:
+    enabled: true
+    ports:
+      http: 80
+      https: 443
+
+  # Explicitly set the DNS configuration for the controller pods.
+  # If not, the ingress pod's /etc/resolv.conf will only include CoreDNS, no host DNS.
+  # dnsConfig:
+  #   nameservers:
+  #   - "10.96.0.10"      # CoreDNS
+  #   - "192.168.40.2"    # host DNS
+  #   searches:
+  #   - "ingress-nginx.svc.cluster.local"
+  #   - "svc.cluster.local"
+  #   - "cluster.local"
+  #   options:
+  #   - name: ndots
+  #     value: "5"
+  #   - name: timeout
+  #     value: "2"
+
+  ingressClassResource:
+    name: nginx-default
+    # -- Create the IngressClass or not
+    enabled: true
+    # -- If true, Ingresses without `ingressClassName` get assigned to this IngressClass on creation.
+    # Ingress creation gets rejected if there are multiple default IngressClasses.
+    # Ref: https://kubernetes.io/docs/concepts/services-networking/ingress/#default-ingress-class
+    default: true
+  ingressClass: nginx-default
+
+  tolerations:
+    - key: "node-role.kubernetes.io/control-plane"
+      operator: "Equal"
+      effect: "NoSchedule"
+  # replicaCount: 3
+  # autoscaling:
+  #   enabled: false
+  #   minReplicas: 3
+  #   maxReplicas: 3
+  #   targetCPUUtilizationPercentage: 80
+  #   targetMemoryUtilizationPercentage: 80
+
+  resources:
+    limits:
+      cpu: 300m
+      memory: 300Mi
+    requests:
+      cpu: 100m
+      memory: 90Mi
+
+  service:
+    enabled: false
+    type: NodePort
+
+  metrics:
+    enabled: true
+    service:
+      enabled: true
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "10254"
+    serviceMonitor:
+      enabled: true
+~~~
 
 # 安装
 

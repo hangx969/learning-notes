@@ -8,7 +8,7 @@
 - 安装 NFS 服务端软件包
 
 ```shell
-yum install nfs-utils
+yum install nfs-utils -y
 systemctl start rpcbind
 systemctl enable rpcbind
 systemctl start nfs-server
@@ -20,7 +20,8 @@ systemctl enable nfs-server
 ```shell
 #给nfs-provisioner配置空间
 mkdir /data/nfs_pro -p
-echo "/data/nfs_pro *(rw,no_root_squash)" >> /etc/exports #注：这里如果配置可访问的网段，要写宿主机网段而非pod网段，因为pv本质是挂载到宿主机上再挂载到pod上。
+echo "/data/nfs_pro *(rw,no_root_squash)" >> /etc/exports 
+# 注：这里如果配置可访问的网段，要写宿主机网段而非pod网段，因为pv本质是挂载到宿主机上再挂载到pod上。
 exportfs -arv
 ```
 
@@ -37,7 +38,7 @@ mkdir /mnt/nfs
 - 安装 NFS 软件包（一定要安装，否则无法识别 nfs 类型的存储）
 
 ```shell
-yum install nfs-utils
+yum install nfs-utils -y
 ```
 
 - 挂载 NFS 共享目录
@@ -98,8 +99,6 @@ kubectl create ns nfs-system
 
 ### Option1:命令行快速安装NFS Provisioner
 
-**（首选方案，使用命令行设置变量参数）**
-
 ```shell
 helm install nfs-subdir-external-provisioner nfs-subdir-external-provisioner/nfs-subdir-external-provisioner --set storageClass.name=nfs-sc --set nfs.server=192.168.40.180 --set nfs.path=/data/k8s -n nfs-system
 ```
@@ -121,65 +120,17 @@ helm install nfs-subdir-external-provisioner nfs-subdir-external-provisioner/nfs
 有更多定制化需求时可以选择自定义 `values.yaml` 的方式进行安装，实际使用中与命令行安装 NFS Subdir External Provisioner 的方式**二选一**即可。
 
 ```shell
-#下载解压Charts
-helm pull nfs-subdir-external-provisioner/nfs-subdir-external-provisioner
+# 下载解压Charts
+helm repo add nfs-subdir-external-provisioner https://kubernetes-sigs.github.io/nfs-subdir-external-provisioner
+helm repo update nfs-subdir-external-provisioner
+helm pull nfs-subdir-external-provisioner/nfs-subdir-external-provisioner --version 4.0.18
 tar xvf nfs-subdir-external-provisioner-4.0.18.tgz
-```
-
-```yaml
-#编辑values.yaml
-replicaCount: 1
-strategyType: Recreate
-image:
-  repository: registry.k8s.io/sig-storage/nfs-subdir-external-provisioner
-  tag: v4.0.2
-  pullPolicy: IfNotPresent
-imagePullSecrets: []
-nfs:
-  server:
-  path: /nfs-storage
-  mountOptions:
-  volumeName: nfs-subdir-external-provisioner-root
-  reclaimPolicy: Retain
-storageClass:
-  create: true
-  defaultClass: false
-  name: nfs-client
-  allowVolumeExpansion: true
-  reclaimPolicy: Delete
-  archiveOnDelete: true
-  onDelete:
-  pathPattern:
-  accessModes: ReadWriteOnce
-  volumeBindingMode: Immediate
-  annotations: {}
-leaderElection:
-  enabled: true
-rbac:
-  create: true
-podSecurityPolicy:
-  enabled: false
-podAnnotations: {}
-podSecurityContext: {}
-securityContext: {}
-serviceAccount:
-  create: true
-  annotations: {}
-  name:
-resources: {}
-nodeSelector: {}
-tolerations: []
-affinity: {}
-labels: {}
-podDisruptionBudget:
-  enabled: false
-  maxUnavailable: 1
 ```
 
 - 根据实际情况修改 `nfs-subdir-external-provisioner/values.yaml`
 
 ```yaml
-replicaCount: 2
+replicaCount: 1
 
 nfs:
   server: 192.168.40.180
@@ -187,7 +138,7 @@ nfs:
 
 storageClass:
   create: true
-  defaultClass: true
+  defaultClass: falsep
   name: sc-nfs
 
 resources:
@@ -197,13 +148,12 @@ resources:
   requests:
    cpu: 100m
    memory: 128Mi
-
 ```
 
 - 安装 NFS Subdir External Provisioner
 
 ```shell
-helm install nfs-subdir-external-provisioner nfs-subdir-external-provisioner/nfs-subdir-external-provisioner -f nfs-subdir-external-provisioner/values.yaml -n nfs-system
+helm install nfs-subdir-external-provisioner -n nfs-system . -f values.yaml -f values.dev.yaml --create-namespace
 ```
 
 ## 验证pod挂载

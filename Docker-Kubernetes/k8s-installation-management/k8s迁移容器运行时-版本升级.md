@@ -151,6 +151,16 @@ kubeadm upgrade node
 
 # k8s patch版本升级-1.30.0-1.30.12
 
+参考：[Upgrading kubeadm clusters | Kubernetes](https://kubernetes.io/docs/tasks/administer-cluster/kubeadm/kubeadm-upgrade/)
+
+首先需要查看都有哪些patch版本可以升级：
+
+~~~sh
+yum list --showduplicates kubeadm --disableexcludes=kubernetes
+# 找到类似这样的一行：
+# kubeadm.x86_64  1.33.5-150500.1.1  kubernetes
+~~~
+
 ## 控制节点
 
 1. 封锁排空控制节点
@@ -165,19 +175,18 @@ kubeadm upgrade node
    ~~~sh
    yum install -y kubeadm-'1.31.12-0' --disableexcludes=kubernetes
    kubeadm upgrade plan
-   kubeadm upgrade apply v1.31.12
+   kubeadm upgrade apply v1.31.12 #--ignore-preflight-errors=SystemVerification
    ~~~
 
 3. 升级kubelet和kubectl
 
    ~~~sh
    yum install -y kubelet-1.30.12-150500.1.1 kubectl-1.30.12-150500.1.1 --disableexcludes=kubernetes
-   systemctl daemon-reload
-   systemctl restart kubelet
+   systemctl daemon-reload && systemctl restart kubelet
    # 重启kubelet之后，node才会显示新版本
    kubectl get nodes
    ~~~
-
+   
 4. 恢复节点
 
    ~~~sh
@@ -200,7 +209,7 @@ kubeadm upgrade node
    # 登录到工作节点上
    yum list --showduplicates kubeadm --disableexcludes=kubernetes
    yum install -y kubeadm-'1.30.12-150500.1.1' --disableexcludes=kubernetes
-   kubeadm upgrade node
+   kubeadm upgrade node #--ignore-preflight-errors=SystemVerification
    ~~~
 
 3. 升级kubelet和kubectl
@@ -208,10 +217,9 @@ kubeadm upgrade node
    ~~~sh
    # 工作节点上
    yum install -y kubelet-1.30.12-150500.1.1 kubectl-1.30.12-150500.1.1 --disableexcludes=kubernetes
-   systemctl daemon-reload
-   systemctl restart kubelet
+   systemctl daemon-reload && systemctl restart kubelet
    ~~~
-
+   
 4. 恢复节点
 
    ~~~sh
