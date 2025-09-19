@@ -153,7 +153,7 @@ resources:
 - 安装 NFS Subdir External Provisioner
 
 ```shell
-helm install nfs-subdir-external-provisioner -n nfs-system . -f values.yaml -f values.dev.yaml --create-namespace
+helm upgrade -i nfs-subdir-external-provisioner -n nfs-system . -f values.yaml -f values.dev.yaml --create-namespace
 ```
 
 ## 验证pod挂载
