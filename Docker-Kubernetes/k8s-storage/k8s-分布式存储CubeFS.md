@@ -185,7 +185,7 @@ CubeFS是新一代云原生存储产品，目前已经是CNCF毕业的开源项�
 
 CubeFS 安装时会根据这些标签通过`nodeSelector`进行匹配，然后在机器创建起对应的`Pod`。
 
-实验环境下就三个节点，所有节点都用做所有三个角色：
+实验环境下就三个节点，所有节点都用作所有三个角色：
 
 ~~~sh
 # Master 节点，至少三个，建议为奇数个 
@@ -228,7 +228,7 @@ mount /dev/sdb /data0
 # 开机自动挂载
 blkid /dev/sdb # 获取磁盘UUID
 tee -a /etc/fstab <<'EOF' 
-UUID=f3a1fd89-ff67-4512-b2d3-e914440d4b84   /data0   xfs    defaults  0 0
+UUID=c94b2053-bf99-4268-8255-bcbe4e6e4b7f   /data0   xfs    defaults  0 0
 EOF
 mount -a 
 ~~~
@@ -793,7 +793,7 @@ helm upgrade -i cubefs -n cubefs . --create-namespace -f values.yaml
 > 1. 如果values里面配置了tolerations，渲染模板会报错：
 >    ~~~sh
 >    Error: UPGRADE FAILED: YAML parse error on cubefs/templates/csi-controller-deployment.yaml: error converting YAML to JSON: yaml: line 21: did not find expected key
->    
+>       
 >    Error: UPGRADE FAILED: YAML parse error on cubefs/templates/csi-node-daemonset.yaml: error converting YAML to JSON: yaml: line 21: did not find expected key
 >    ~~~
 >

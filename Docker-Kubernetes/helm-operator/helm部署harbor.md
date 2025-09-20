@@ -32,7 +32,7 @@
 ~~~sh
 helm repo add harbor https://helm.goharbor.io
 helm repo update harbor
-helm pull harbor/harbor
+helm pull harbor/harbor --version 1.18.0
 ~~~
 
 # 配置

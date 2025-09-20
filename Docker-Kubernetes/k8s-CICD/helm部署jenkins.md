@@ -47,13 +47,18 @@ controller:
   prometheus:
     enabled: true
 
-  installPlugins:
-    - kubernetes:4358.vcfd9c5a_0a_f51
-    - workflow-aggregator:608.v67378e9d3db_1
-    - git:5.7.0
-    - configuration-as-code:1985.vdda_32d0c4ea_b_
-  installLatestPlugins: true
-  installLatestSpecifiedPlugins: true
+  installPlugins: false
+    # - kubernetes:4358.vcfd9c5a_0a_f51
+    # - workflow-aggregator:608.v67378e9d3db_1
+    # - git:5.7.0
+    # - configuration-as-code:1985.vdda_32d0c4ea_b_
+
+  # installLatestPlugins: true
+  # installLatestSpecifiedPlugins: true
+
+  probes:
+    startupProbe:
+      timeoutSeconds: 60
 
 agent:
   enabled: true
@@ -92,13 +97,10 @@ agent:
 
   serviceAccount: jenkins
 
-
 persistence:
   enabled: true
   storageClass: "cfs-sc"
-  size: "1Gi"
-
-
+  size: "5Gi"
 ~~~
 
 配置文件里面把docker和kubectl通过host path挂进slave pod里面了，需要修改一下权限否则slave pod中会报错permission denied：
@@ -108,14 +110,14 @@ persistence:
 chown 1000:1000  /var/run/docker.sock
 chmod 777  /var/run/docker.sock
 chmod 777 /usr/bin/docker
-chown -R 1000.1000  /usr/bin/docker
+chown -R 1000:1000  /usr/bin/docker
 chmod 777 /usr/bin/kubectl
-chown -R 1000.1000 /usr/bin/kubectl
+chown -R 1000:1000 /usr/bin/kubectl
 # 把kubeconfig复制到工作节点
 # 控制节点上
 scp -r /root/.kube/  rn1:/root/
 # 工作节点上
-chown -R 1000.1000 /root/.kube/
+chown -R 1000:1000 /root/.kube/
 ~~~
 
 # 安装

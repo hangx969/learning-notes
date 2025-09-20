@@ -39,19 +39,42 @@ helm pull gitlab/gitlab --version 9.3.2
 # - PersistentVolume configuration
 
 global:
-  ingress:
-    configureCertmanager: false
   edition: ce
+
+  # 主机域名配置
+  hosts:
+    domain: hanxux.clocal       # 主域名，所有服务将基于此域名生成子域名
+    https: false             # 是否启用HTTPS（全局开关）
+    # 各子组件域名配置（均继承全局HTTPS设置）
+    gitlab:
+      name: gitlab.hanxux.local    # GitLab核心服务域名
+    minio:
+      name: gitlab-minio.hanxux.local  # MinIO对象存储服务域名
+    registry:
+      name: gitlab-registry.hanxux.local  # 容器镜像仓库域名
+    kas:
+      name: gitlab-kas.hanxux.local  # Kubernetes Agent Server域名
+
+  # Ingress全局配置
+  ingress:
+    enabled: true                    # 是否启用Ingress控制器
+    configureCertmanager: false      # 是否自动申请TLS证书（需要预先安装Cert-Manager）
+    class: nginx-default             # 指定Ingress控制器类型为nginx
+    tls:
+      enabled: false                 # 是否启用TLS终止（HTTPS）
+
+  # 初始管理员密码配置（安全建议：部署后应立即修改）
+  initialRootPassword:
+    secret: gitlab-initial-root-password  # 存储密码的Secret名称
+    key: password                         # Secret中的键名
 
 installCertmanager: false
 certmanager:
   installCRDs: false
 
-nginx-ingress: &nginx-ingress
+nginx-ingress:
   enabled: false
-
 nginx-ingress-geo:
-  <<: *nginx-ingress
   enabled: false
 
 ## Installation & configuration of stable/prometheus
@@ -73,7 +96,9 @@ certmanager-issuer:
 # 安装
 
 ~~~sh
-helm uprade -i gitlab -n gitlab . --create-namespace -f values.yaml -f values.dev.yaml
+helm upgrade -i gitlab -n gitlab . --create-namespace -f values.yaml -f values.dev.yaml
 ~~~
 
-装完之后，gitlab-sidekiq-all-in-1-v2和gitlab-webservice-default这两个deployment会莫名其妙的CrashLoopBackOff起不来。调高虚拟机内存到12G也不行。报错信息非常隐晦根本看不出问题。
+首先要检查gitlab-migrations-0dd894d-lqzmq这个job的pod状态是否是Completions，如果还是Running，那么gitlab-sidekiq-all-in-1-v2和gitlab-webservice-default这两个deployment会一直卡在CrashLoopBackOff。
+
+部署完成后，gitlab识别不了自行创建的secret，导致一直无法用root/admin123456登录。重建redis和pgsql就会导致pgsql pod一直起不来。并且gitaly这个pod申请PVC要50G，但是values里面根本没法改。非常不方便。遂放弃这种部署方式。
