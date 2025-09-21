@@ -893,7 +893,7 @@ pipeline {
 
 ~~~groovy
 environment { 
-	HARBOR_ACCOUNT = credentials('HARBOR_USER_PASSWORD') 
+	HARBOR_ACCOUNT = credentials('HARBOR_USER_PASSWD') 
 } 
 ~~~
 

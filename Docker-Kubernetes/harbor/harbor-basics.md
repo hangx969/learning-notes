@@ -599,7 +599,7 @@ version = 2
       [plugins."io.containerd.grpc.v1.cri".registry.mirrors]
          [plugins."io.containerd.grpc.v1.cri".registry.mirrors."harbor.hanxux.local"]
             endpoint = ["http://harbor.hanxux.local"]
-          [plugins."io.containerd.grpc.v1.cri".registry.mirrors."docker.io"]
+           [plugins."io.containerd.grpc.v1.cri".registry.mirrors."docker.io"]
              endpoint = ["https://y8y6vosv.mirror.aliyuncs.com","https://docker.lmirror.top","https://docker.m.daocloud.io", "https://hub.uuuadc.top","https://docker.anyhub.us.kg","https://dockerhub.jobcher.com","https://dockerhub.icu","https://docker.ckyl.me","https://docker.awsl9527.cn","https://docker.laoex.link"]
 #==================================
     [plugins."io.containerd.grpc.v1.cri".x509_key_pair_streaming]
@@ -762,14 +762,16 @@ cat > /etc/docker/daemon.json <<EOF
   "insecure-registries":["10.0.0.5","harbor"], 
 }
 EOF
+
+systemctl daemon-reload && systemctl restart docker
 ~~~
 
 ## 配置hosts
 
 ~~~sh
-#每台机器的/etc/hosts文件加上harbor地址
+# 每台机器的/etc/hosts文件加上harbor地址
 vim /etc/hosts
-#10.0.0.5 harbor
+# 10.0.0.5 harbor
 ~~~
 
 ## 创建secret
