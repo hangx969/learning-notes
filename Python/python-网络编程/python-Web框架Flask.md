@@ -301,3 +301,227 @@ if __name__ == '__main__':
     app.run(host='0.0.0.0',port=5000)
 ~~~
 
+# 案例：系统资源监控Web应用
+
+我们需要完成以下功能：
+
+- 使用 Python 获取系统资源信息：CPU 使用率、内存使用率、根磁盘使用率和网络带宽。
+- 使用 Flask 框架提供一个 Web 前端页面，显示这些实时信息。
+- 使用 systemctl 将 Flask 应用作为服务启动。
+- 使用 Docker 容器化 Flask 应用。
+- 使用 Kubernetes 部署 Flask 应用。
+
+## 编写后端接口
+
+~~~python
+from flask import Flask, render_template, jsonify
+import psutil, time
+
+# 获取系统指标
+def get_cpu_usage():
+    return psutil.cpu_percent(interval=1)
+
+def get_memory_usage():
+    memory = psutil.virtual_memory()
+    return memory.percent
+
+
+def get_disk_usage():
+    disk = psutil.disk_usage('/')
+    return disk.percent
+
+def get_network_usage():
+    net_io = psutil.net_io_counters()
+    return {
+        'bytes_sent': net_io.bytes_sent,
+        'bytes_recv': net_io.bytes_recv
+    }
+
+
+# 创建flask应用
+app = Flask(__name__)
+
+@app.route('/')
+def index():
+    return render_template("index.html")
+
+@app.route('/get_system_info')
+def get_system_info():
+    system_info = {
+        'cpu': get_cpu_usage(),
+        'memory': get_memory_usage(),
+        'disk': get_disk_usage(),
+        'network': get_network_usage()
+    }
+    return jsonify(system_info)
+
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000)
+~~~
+
+## 编写前端页面
+
+前端页面文件名为index.html，放到app.py同级目录的子目录templates/里面
+
+~~~html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Monitoring Dashboard</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .status { font-size: 20px; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+    <h1>System Monitoring Dashboard</h1>
+
+    <div class="status">
+        <strong>CPU Usage:</strong> <span id="cpu">Loading...</span>%
+    </div>
+    <div class="status">
+        <strong>Memory Usage:</strong> <span id="memory">Loading...</span>%
+    </div>
+    <div class="status">
+        <strong>Disk Usage:</strong> <span id="disk">Loading...</span>%
+    </div>
+    <div class="status">
+        <strong>Network Sent:</strong> <span id="net_sent">Loading...</span> bytes
+    </div>
+    <div class="status">
+        <strong>Network Received:</strong> <span id="net_recv">Loading...</span> bytes
+    </div>
+
+    <script>
+        function updateSystemInfo() {
+            fetch('/get_system_info')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('cpu').innerText = data.cpu;
+                    document.getElementById('memory').innerText = data.memory;
+                    document.getElementById('disk').innerText = data.disk;
+                    document.getElementById('net_sent').innerText = data.network.bytes_sent;
+                    document.getElementById('net_recv').innerText = data.network.bytes_recv;
+                });
+        }
+
+        setInterval(updateSystemInfo, 1000);
+        updateSystemInfo();
+    </script>
+</body>
+</html>
+
+
+~~~
+
+## linux机器安装依赖
+
+~~~sh
+# reuiqrements.txt
+Flask==2.2.3
+psutil==5.9.4
+
+# 安装依赖
+yum install  python3.12-devel libffi-devel -y
+pip3 install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
+pip3 install --upgrade Flask Werkzeug -i https://pypi.tuna.tsinghua.edu.cn/simple
+~~~
+
+## 配置systemd启动
+
+~~~sh
+chown -R root:root /data/monitor-app
+chmod -R 755 /data/monitor-app
+
+# 为了让 Flask 应用作为 Linux 服务运行，创建 app.service 文件。/etc/systemd/system/app.service：systemd 服务配置
+tee /usr/lib/systemd/system/app.service <<'EOF'
+[Unit]
+Description=System Monitoring Flask App
+After=network.target
+
+[Service]
+[Service]
+User=root
+WorkingDirectory=/data/monitor-app
+ExecStart=/usr/bin/python /data/monitor-app/app.py
+Restart=always
+Environment=FLASK_APP=/data/monitor-app/app.py
+StandardOutput=file:/data/monitor-app/app.log
+StandardError=file:/data/monitor-app/app_error.log
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+#启动服务
+systemctl daemon-reload
+systemctl start app.service
+systemctl status app.service
+~~~
+
+## docker运行
+
+~~~sh
+tee Dockerfile <<'EOF'
+# 使用官方 Python 镜像
+FROM python:3.7
+# 设置工作目录
+WORKDIR /app
+# 复制项目文件到容器内
+COPY . /app
+# 安装依赖
+RUN pip3 install --no-cache-dir -r requirements.txt
+RUN pip3 install --upgrade Flask Werkzeug
+# 开放 5000 端口
+EXPOSE 5000
+# 启动 Flask 应用
+CMD ["python", "app.py"]
+EOF
+
+# 做镜像
+docker build -t system-monitoring-app:v1 .
+# 启动容器
+docker run -d -p 15000:5000 system-monitoring-app:v1
+~~~
+
+## K8s运行
+
+~~~yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: python-flask-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: python-flask-app
+  template:
+    metadata:
+      labels:
+        app: python-flask-app
+    spec:
+      containers:
+      - name: python-flask-app
+        image: system-monitoring-app:v1
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 5000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: python-flask-app-service
+spec:
+  selector:
+    app: python-flask-app
+  ports:
+    - protocol: TCP
+      port: 80          # 服务暴露的端口
+      targetPort: 5000   # 容器内运行的端口
+      nodePort: 30080    # (可选)指定 NodePort 的端口号，通常在 30000-32767 范围内
+  type: NodePort         # 设置服务类型为 NodePort
+~~~
