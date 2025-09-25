@@ -135,6 +135,24 @@ PyTorch是由Facebook开发的深度学习框架，以动态图（Dynamic Comput
 
 循环神经网络（RNN）适用于处理时序数据，如文本生成、语音识别等。
 
+# AI在运维中的应用场景
+
+**智能监控**
+
+通过AI模型分析系统性能数据（如CPU使用率、内存占用、网络流量等），预测潜在的资源瓶颈，并触发自动化调整策略，保证系统的稳定运行。
+
+**自动化故障排查**
+
+结合机器学习模型对系统日志进行分类和异常检测，快速识别问题根因，减少人工分析的时间和错误率。
+
+**资源使用优化**
+
+基于AI模型对历史数据的学习，自动调度云服务器资源，实现高效分配和稳定运行，提升整体资源利用率。
+
+**日志分析与自动化运维**
+
+运用自然语言处理（NLP）技术对日志数据进行分析，提取关键问题并生成对应的运维脚本，实现问题解决的全流程自动化。
+
 # 项目实战
 
 ## 预测linux机器cpu使用率
@@ -660,6 +678,101 @@ upload_btn.pack(pady=20)
 
 # 运行主循环
 window.mainloop()
-
 ~~~
 
+## 异常日志检测
+
+**背景**：运维系统需要对海量日志进行实时分析，快速定位异常。
+
+**解决方案**：
+
+1. 使用Scikit-learn构建分类模型，将日志分为正常和异常两类。
+2. 通过特征提取技术（如TF-IDF）提取日志文本中的关键特征。
+3. 利用训练好的模型实时检测异常日志，并触发报警。
+
+~~~python
+import sys
+import io
+# 将stdout的编码设置为utf-8
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+
+import os  # 用于操作文件和目录
+import pandas as pd  # 用于数据处理和分析
+from sklearn.feature_extraction.text import TfidfVectorizer  # 用于文本特征提取，将文本转换为TF-IDF特征
+from sklearn.model_selection import train_test_split  # 用于将数据集划分为训练集和测试集
+from sklearn.ensemble import RandomForestClassifier  # 随机森林分类器，用于构建分类模型
+from sklearn.metrics import classification_report  # 用于评估分类模型的性能，包括精确率、召回率等指标
+
+# Step 1: 数据预处理与加载日志文件
+def load_logs(log_file_path):
+    if not os.path.exists(log_file_path):
+        raise FileNotFoundError(f"Log file '{log_file_path}' not found.")
+
+    # 假设每行是一条日志
+    with open(log_file_path, 'r', encoding='utf-8') as file:
+        logs = file.readlines()
+    return logs
+
+# Step 2: 构建示例数据集并标记数据（真实场景需根据具体情况标注）
+def create_dataset():
+    data = {
+        'log': [
+            'User login successful',
+            'Disk space running low',
+            'Error: Unable to connect to database',
+            'Backup completed successfully',
+            'Warning: High memory usage detected',
+            'User logout',
+            'Critical: System crash',
+            'Service restarted',
+        ],
+        'label': [0, 1, 1, 0, 1, 0, 1, 0]  # 0: 正常, 1: 异常
+    }
+    return pd.DataFrame(data)
+
+# Step 3: TF-IDF 特征提取与模型训练
+def train_model(dataset):
+    vectorizer = TfidfVectorizer()
+    X = vectorizer.fit_transform(dataset['log'])
+    y = dataset['label']
+
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+    model = RandomForestClassifier(random_state=42)
+    model.fit(X_train, y_train)
+
+    y_pred = model.predict(X_test)
+    print("Classification Report:\n", classification_report(y_test, y_pred))
+
+    return model, vectorizer
+
+# Step 4: 实时检测日志
+def detect_anomalies(logs, model, vectorizer):
+    features = vectorizer.transform(logs)
+    predictions = model.predict(features)
+    for log, label in zip(logs, predictions):
+        status = "异常" if label == 1 else "正常"
+        print(f"日志: {log.strip()} -> 检测结果: {status}")
+
+# 示例用法
+def main():
+    # 创建训练数据
+    dataset = create_dataset()
+
+    # 训练模型
+    model, vectorizer = train_model(dataset)
+
+    # 加载实际日志文件（替换为自己的日志文件路径）
+    log_file_path = r'F:\\1-Python 全栈运维开发：从基础到企业级实战\\班级直播主题内容\\第5场直播：Python赋能AI：在DevOps领域的应用与实践\\path_to_your_log_file.log'  # 修改为实际路径
+    try:
+        logs = load_logs(log_file_path)
+    except FileNotFoundError as e:
+        print(e)
+        return
+
+    # 实时检测
+    detect_anomalies(logs, model, vectorizer)
+
+if __name__ == "__main__":
+    main()
+~~~
