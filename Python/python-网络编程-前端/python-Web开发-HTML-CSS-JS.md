@@ -569,3 +569,535 @@ a {
 
 ~~~
 
+### 后代选择器
+
+选择嵌套在另一个元素内的元素
+
+~~~css
+/* 选择 #container 元素内部的所有 p 元素，并将它们的颜色设置为红色 */
+#container p {
+    color: red;
+}
+
+/* 选择 #container 元素内部的 .content 元素内部的 p 元素，并将它们的字体设置为斜体 */
+#container .content p {
+    font-style: italic;
+}
+~~~
+
+~~~html
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>CSS后代选择器示例</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="container">
+        <h1>标题</h1>
+        <div class="content">
+            <p>这是第一段内容。</p>
+            <p>这是第二段内容。</p>
+        </div>
+        <div >
+            <p>这是侧边栏内容。</p>
+        </div>
+    </div>
+</body>
+</html>
+~~~
+
+### 相邻兄弟选择器
+
+选择紧接在另一个元素后面的兄弟元素
+
+~~~css
+/* 选择紧接在 h2 元素后面的 p 元素，并将它们的字体样式设置为斜体 */
+h2 + p {
+    font-style: italic;
+}
+~~~
+
+~~~html
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>相邻兄弟选择器示例</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h2>标题1</h2>
+    <p>这是段落1。</p>
+    <p>这是段落2。</p>
+    <h2>标题2</h2>
+    <p>这是段落3。</p>
+    <p>这是段落4。</p>
+</body>
+</html>
+~~~
+
+### 通用选择器
+
+选择所有元素
+
+~~~css
+/* 选择HTML页面上的所有元素，并将它们的边框样式设置为红色 */
+* {
+    border: 1px solid red;
+}
+~~~
+
+~~~html
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>通用选择器示例</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div>
+        <h2>这是标题</h2>
+        <p>这是段落1。</p>
+        <p>这是段落2。</p>
+    </div>
+    <div>
+        <h2>这是另一个标题</h2>
+        <p>这是段落3。</p>
+        <p>这是段落4。</p>
+    </div>
+</body>
+</html>
+~~~
+
+### 属性选择器
+
+选择具有特定属性的元素
+
+~~~css
+/* 选择具有 href 属性且属性值为 "#" 的 <a> 元素，并将它们的文字颜色设置为蓝色 */
+a[href="#"] {
+    color:brown;
+}
+~~~
+
+~~~html
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>属性选择器示例</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div>
+    <a href="#">百度</a>
+    </div>
+    <div>
+    <a href="#">课程</a>
+    </div>
+</body>
+</html>
+~~~
+
+### 伪类选择器
+
+选择元素的特殊状态
+
+~~~css
+/* 选择鼠标悬停在 <a> 元素上时的状态，并将其文字颜色设置为红色 */
+a:hover {
+    color: red;
+}
+~~~
+
+~~~html
+<!DOCTYPE html>
+<html>
+<link href="style.css" rel="stylesheet">
+<body>
+    <div>
+        <a href="https://baike.baidu.com/">介绍</a>
+    </div>
+    <div>
+        <a href="https://gitee.com/">gitee地址</a>
+    </div>
+    <div>
+        <a href="https://edu.51cto.com/">课程</a>
+    </div>
+    <div>
+        <a href="https://www.tup.tsinghua.edu.cn/">清华</a>
+    </div>
+</body>
+</html>
+~~~
+
+### 伪元素选择器
+
+选择元素的特殊部分
+
+~~~css
+/* 选择html文档每个 <p> 元素的第一行文字，并将其文字样式设置为斜体 */
+p::first-line {
+    font-style: italic;
+}
+~~~
+
+~~~html
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>伪元素选择器示例</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <p>这是一段文字<br/>
+       你好
+    </p>
+</body>
+</html>
+~~~
+
+## 样式表
+
+### 外部样式表
+
+CSS外部样式表是一种将 CSS规则集中存放在单独的文件中，链接到 HTML 页面的方式来应用样式的方法。这种方法使得可以将样式与HTML文档内容分离，提高了代码的可维护性和可重用性。
+
+前面讲选择器的时候都是用的CSS外部样式表。
+
+~~~css
+h2 {
+    color: blue;
+}
+
+p {
+    font-size: 20px;
+}
+
+a {
+    color:black;
+    background-color: azure;
+    font-size: 30px;
+}
+~~~
+
+~~~html
+<!DOCTYPE html>
+<html>
+<head>
+    <link href="style.css" rel="stylesheet" />
+</head>
+<body>
+    <div>
+    <h2>我</h2>
+    <p>主页</p>
+    <a href="https://edu.51cto.com" target="_blank">欢迎</a>
+</div>
+</body>
+</html>
+~~~
+
+使用场景：
+
+1. 多页面网站：对于包含多个页面的网站，外部样式表更适合用于统一管理整个网站的样式，可以通过在每个页面引入同一个外部样式表来保持样式的一致性。
+
+2. 大型项目：对于较大的项目或团队开发，外部样式表更容易维护和管理，可以将样式规则集中存放在单独的样式文件中，方便团队协作和版本控制。
+
+3. 性能优化：外部样式表可以利用浏览器的缓存机制，当多个页面共享同一个外部样式表时，可以减少页面加载时间，提高网站性能。
+
+### 内部样式表
+
+CSS内部样式表是一种将CSS规则集直接写在HTML文件内部的方法，而不是将样式规则放在外部的CSS文件中。通过在HTML文件的\<style>标签内部编写CSS代码，可以直接为HTML文档中的元素指定样式。
+
+~~~html
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>内部样式表示例</title>
+    <style>
+        /* 在 <style> 标签中定义内部样式表 */
+        h1 {
+            color: blue;
+            font-size: 20px;
+        }
+
+        p {
+            font-size: 18px;
+            color: black;
+        }
+    </style>
+</head>
+<body>
+    <h1>这是一个标题</h1>
+    <p>这是一个段落。</p>
+</body>
+</html>
+~~~
+
+使用场景：
+1.	特定页面样式：对于只需要在特定页面或特定部分应用样式的情况，内部样式表更适合，可以直接在HTML文件内部定义样式，避免了引入外部文件的额外开销。
+2.	临时样式调整：在开发阶段或调试过程中，如果需要临时调整某个页面或元素的样式，可以直接在HTML文件内部使用内部样式表进行修改，而不必修改外部样式文件。
+3.	样式独立性：对于特定的样式定义，如果不希望其他页面或元素受到影响，可以将样式规则直接嵌入到HTML文件内部，确保样式的独立性和局部性。
+
+在实际应用中，外部样式表的使用频率更高一些，特别是对于大型项目和多页面网站。外部样式表可以提高代码的可维护性和可重用性，更适合用于统一管理整个项目的样式。而内部样式表通常用于一些特定的场景，如临时样式调整或特定页面样式定义，使用频率相对较低。
+
+### 内联样式表
+
+CSS内联样式表是一种直接将 CSS 样式规则写在 HTML 元素的 style 属性中的方法。这种方法使得可以为特定的 HTML 元素指定个性化的样式，而不必将样式规则放在外部的 CSS 文件或 HTML 文件的 \<style> 标签中。
+
+~~~html
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>内联样式表示例</title>
+</head>
+<body>
+    <h1 style="color: blue; font-size: 20px;">这是一个标题</h1>
+    <p style="font-size: 50px; color: black;">这是一个段落。</p>
+</body>
+</html>
+~~~
+
+内联样式表的使用相对较少，通常只在一些特定的场景下使用。以下是内联样式表的主要使用场景：
+1.	个性化样式：当需要为特定的 HTML 元素指定个性化的样式时，可以使用内联样式表。例如，如果只需要为某个元素添加临时的样式调整，而不想修改外部或内部样式表，就可以使用内联样式表。
+2.	邮件和简单页面：在编写邮件或简单的静态页面时，为了简化样式管理，有时会直接使用内联样式表。这样可以避免引入外部样式表或在 HTML 文件中定义样式。
+3.	单个样式元素：当只需要对单个元素应用样式，并且该样式不会被其他元素共享时，可以考虑使用内联样式表。这样可以将样式与特定元素绑定在一起，提高了样式的局部性和可读性。
+
+在大多数情况下，外部样式表或内部样式表更适合用于统一管理和维护整个网站或项目的样式。内联样式表用的相对会少一些。
+
+## 字体设置
+
+~~~html
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CSS字体样式设置</title>
+    <style>
+        /* 设置字体颜色为红色、背景色为浅灰色、字体大小为24像素、边框为1像素实线红色 */
+        .red-text {
+            color: red;
+            background-color: lightgray;
+            font-size: 24px;
+            border: 1px solid red;
+            margin: 10px;
+        }
+
+/*
+border：
+1px：边框像素
+solid：实线边框，除了实线边框，还有如下几种：
+dashed：虚线边框。
+dotted：点线边框。
+double：双线边框。
+groove：3D凹陷边框。
+ridge：3D凸起边框。
+inset：3D内嵌边框。
+outset：3D外嵌边框。
+none：无边框。
+此外，还可以使用 border-top-style、border-right-style、
+border-bottom-style、border-left-style 分别设置上、右、下、左边框的样式。
+*/
+        /* 设置字体颜色为白色、背景色为黑色、字体大小为18像素、边框为2像素实线白色 */
+        .white-text {
+            color: white;
+            background-color: black;
+            font-size: 18px;
+            border: 5px dashed red;
+            margin: 10px;
+        }
+
+        /* 设置字体颜色为黑色、背景色为橙色、字体大小为20像素、边框为3像素实线黑色 */
+        .black-text {
+            color: black;
+            background-color: orange;
+            font-size: 20px;
+            border: 3px dotted red;
+            margin: 10px;
+        }
+
+        /* 设置字体颜色为橙色、背景色为白色、字体大小为22像素、边框为4像素实线橙色 */
+        .orange-text {
+            color: orange;
+            background-color: white;
+            font-size: 22px;
+            border: 4px double orange;
+            margin: 10px;
+        }
+        .green-text{
+            color: green;
+            background-color: red;
+            font-size: 22px;
+            border: 5px black;
+            border-top-style:  dashed;
+            border-right-style: double;
+            border-bottom-style: groove;
+            border-left-style: solid;
+        }
+    </style>
+</head>
+<body>
+    <!-- 红色字体 -->
+    <div class="red-text">红色字体</div>
+    <!-- 白色字体 -->
+    <div class="white-text">白色字体</div>
+    <!-- 黑色字体 -->
+    <div class="black-text">黑色字体</div>
+    <!-- 橙色字体 -->
+    <div class="orange-text">橙色字体</div>
+    <div class="green-text">绿色字体</div>
+</body>
+</html>
+~~~
+
+## 背景图片
+
+~~~html
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body {
+  color: red;
+  font-size: 20px;
+  background-image: url("./领奖.png"); /*默认情况下，图像在水平和垂直方向上都重复，以覆盖整个元素。*/
+  background-repeat: no-repeat; /*图像不重复*/
+  background-position: center; /* 将背景图片在窗口中水平和垂直居中 */
+  background-size: contain;/*背景图片会被等比例缩放，以完全包含在背景区域内，并且不会变形。*/
+  background-attachment: fixed; /* 将背景图片固定在窗口中，不随元素滚动而滚动 注释掉这一行就会随着页面滚动而滚动 */
+}
+</style>
+</head>
+<body>
+
+<h1>全球大会</h1>
+
+<p>领奖</p>
+
+</body>
+</html>
+~~~
+
+~~~html
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body {
+  color: red;
+  font-size: 20px;
+  background-image: url("./领奖.png"); /*默认情况下，图像在水平和垂直方向上都重复，以覆盖整个元素。*/
+  background-repeat: no-repeat; /*图像不重复*/
+  background-position: right top; /* 背景图像不会随页面的其余部分一起滚动*/
+  background-attachment: fixed; /* 将背景图片固定在窗口中，不随元素滚动而滚动 */
+}
+</style>
+</head>
+<body>
+
+<h1>全球大会</h1>
+
+<p>领奖</p>
+<p>领奖</p>
+<p>领奖</p>
+<p>领奖</p>
+<p>领奖</p>
+<p>领奖</p>
+<p>领奖</p>
+<p>领奖</p>
+<p>领奖</p>
+<p>领奖</p>
+<p>领奖</p>
+<p>领奖</p>
+<p>领奖</p>
+<p>领奖</p>
+<p>领奖</p>
+<p>领奖</p>
+<p>领奖</p>
+<p>领奖</p>
+<p>领奖</p>
+<p>领奖</p>
+<p>领奖</p>
+<p>领奖</p>
+</body>
+</html>
+~~~
+
+## 内外边距
+
+1. 内边距：控制元素内部内容与其边框之间的距离。
+2. 外边距：控制元素与其相邻元素之间的距离。
+
+内边距padding基本语法：
+
+| 属性               | 用法                               | 描述                                   |
+| ------------------ | ---------------------------------- | -------------------------------------- |
+| padding            | **padding: 20px;**                 | 内边距上下左右都是20                   |
+| padding            | **padding: 10px 20px 15px  25px;** | 内边距顺序是上右下左                   |
+| padding            | **padding: 10px 20px ;**           | 上下内边距为 10px，左右内边距为 20px。 |
+| **padding-top**    | **padding-top: 10px;**             | 上内边距像素是10                       |
+| **padding-right**  | **padding-right: 10px;**           | 右内边距像素是10                       |
+| **padding-bottom** | **padding-bottom****：10px**       | 下内边距像素是10                       |
+| **padding-left**   | **padding-left****：10px**         | 左内边距像素是10                       |
+
+外边距margin基本语法：
+
+| 属性              | 用法                                  | 描述                                          |
+| ----------------- | ------------------------------------- | --------------------------------------------- |
+| margin            | margin**: 20px;**                     | 外边距上下左右都是20                          |
+| margin            | margin**: 10px 20px 15px 25px;**      | 外边距顺序是上右下左                          |
+| margin            | margin**: 10px 20px ;**               | 上下外边距为 10px，左右外边距为 20px。        |
+| margin**-top**    | margin**-top: 10px;**                 | 上外边距像素是10                              |
+| margin**-right**  | margin**-right: 10px;**               | 右外边距像素是10                              |
+| margin**-bottom** | margin**-bottom**：10px               | 下外边距像素是10                              |
+| margin**-left**   | margin**-left**：10px                 | 左外边距像素是10                              |
+|                   | margin-left: auto; margin-right: auto | 元素会水平居中，因为左右外边距都设置为 auto。 |
+
+~~~html
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Padding and Margin Example</title>
+  <style>
+    .container {
+      width: 600px;
+      margin: 0 auto; /* 居中显示 */
+      background-color: #f0f0f0;
+      padding: 20px; /* 容器内边距 */
+    }
+    .item {
+      width: 100px;
+      height: 100px;
+      background-color: #ccc;
+      margin: 20px; /* 项目外边距 */
+    }
+/*
+.container 类：
+width: 600px;：设置容器的宽度为 600 像素。
+margin: 0 auto;：将容器水平居中显示，这是通过将左右外边距设为 auto 实现的。
+background-color: #f0f0f0;：设置容器的背景颜色为浅灰色。
+padding: 20px;：给容器设置了上、右、下、左各 20px 的内边距。
+
+.item 类：
+width: 100px;、height: 100px;：设置每个项目的宽度和高度均为 100 像素。
+background-color: #ccc;：设置项目的背景颜色为灰色。
+margin: 20px;：给每个项目设置了上、右、下、左各 20px 的外边距。
+
+这段代码创建了一个宽度为 600px 的容器，容器内部有 20px 的内边距。
+在容器中包含多个宽高均为 100px 的项目，相邻项目之间有 20px 的外边距，
+从而在视觉上形成了一种间隔。整个容器会水平居中显示在页面上，并且背景为浅灰色。
+
+*/
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="item">1</div>
+    <div class="item">2</div>
+    <div class="item">3</div>
+    <!-- 更多项目 -->
+  </div>
+</body>
+</html>
+~~~
+
