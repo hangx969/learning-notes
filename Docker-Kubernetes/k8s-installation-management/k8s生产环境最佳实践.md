@@ -312,6 +312,12 @@ https://kubernetes.io/zh-cn/docs/concepts/scheduling-eviction/scheduler-perf-tun
 
    所以192.0.0.0/16这样的网段，是包含了一部分公网IP的，不能用作k8s网段，会和公网IP冲突。
 
+3. 对于keepalived的VIP：
+
+   - 不能和公司内网IP重复，需要用一个不存在的，并且属于局域网内的IP。提前ping一下，ping不通才能用。
+   - 私有云上搭建需要问管理员是否支持VIP。（比如某些Openstack集群可能不支持VIP）
+
+
 # 企业级高可用架构落地实战
 
 ## 节点准备
@@ -329,6 +335,22 @@ https://kubernetes.io/zh-cn/docs/concepts/scheduling-eviction/scheduler-perf-tun
 ~~~sh
 fdisk -l # 查看新增磁盘
 ~~~
+
+## 实验环境规划
+
+| 主机名  | IP                              | 备注                                                         |
+| ------- | ------------------------------- | ------------------------------------------------------------ |
+| m01~m03 | 192.168.40.190 ~ 192.168.40.192 | master节点*3                                                 |
+| n01~n03 | 192.168.40.193 ~ 192.168.40.195 | worker节点*3                                                 |
+| /       | 192.168.40.199                  | keepalived VIP<br />注：<br />1. 不能和公司内网IP重复，需要用一个不存在的，并且属于局域网内的IP。提前ping一下，ping不通才能用。<br />2. 私有云上搭建需要问管理员是否支持VIP |
+
+| 配置信息    | 备注                                                         |
+| ----------- | ------------------------------------------------------------ |
+| OS Version  | Rocky Linux 9                                                |
+| containerd  | latest                                                       |
+| kubernetes  | 1.17+都适用。<br />注意：生产环境建议用小版本>5的，比如1.28.5以后才建议用于生产环境 |
+| Pod网段     | 172.16.0.0/16                                                |
+| Service网段 | 10.96.0.0/16                                                 |
 
 ## 节点磁盘挂载
 
@@ -394,19 +416,266 @@ ln -s /data/kubelet /var/lib/kubelet
 ln -s /data/containers /var/lib/containers
 ~~~
 
-## 环境配置
+## 基本配置
 
-| 主机名  | IP                              | 备注                                                         |
-| ------- | ------------------------------- | ------------------------------------------------------------ |
-| m01~m03 | 192.168.40.190 ~ 192.168.40.192 | master节点*3                                                 |
-| n01~n03 | 192.168.40.193 ~ 192.168.40.195 | worker节点*3                                                 |
-| /       | 192.168.40.199                  | keepalived VIP<br />注：<br />1. 不能和公司内网IP重复，需要用一个不存在的，并且属于局域网内的IP。提前ping一下，ping不通才能用。<br />2. 私有云上搭建需要问管理员是否支持VIP |
+所有节点更改主机名:
 
-| 配置信息    | 备注                                                         |
-| ----------- | ------------------------------------------------------------ |
-| OS Version  | Rocky Linux 9                                                |
-| containerd  | latest                                                       |
-| kubernetes  | 1.17+都适用。<br />注意：生产环境建议用小版本>5的，比如1.28.5以后才建议用于生产环境 |
-| Pod网段     | 172.16.0.0/16                                                |
-| Service网段 | 10.96.0.0/16                                                 |
+~~~sh
+hostnamectl set-hostname m01
+~~~
+
+所有节点更改hosts
+
+~~~sh
+tee -a /etc/hosts <<'EOF'
+192.168.40.190   m01  
+192.168.40.191   m02
+192.168.40.192   m03
+192.168.40.193   n01
+192.168.40.194   n02
+192.168.40.195   n03
+EOF
+~~~
+
+所有节点配置默认yum源：
+
+~~~sh
+sed -e 's|^mirrorlist=|#mirrorlist=|g' \
+    -e 's|^#baseurl=http://dl.rockylinux.org/$contentdir|baseurl=https://mirrors.aliyun.com/rockylinux|g' \
+    -i.bak \
+    /etc/yum.repos.d/rocky-*.repo
+
+dnf makecache
+yum makecache
+~~~
+
+所有节点安装基本软件包：
+
+~~~sh
+yum update -y
+yum install -y yum-utils device-mapper-persistent-data lvm2 wget net-tools nfs-utils lrzsz gcc gcc-c++ make cmake libxml2-devel openssl-devel curl curl-devel unzip sudo libaio-devel vim ncurses-devel autoconf automake epel-release openssh-server telnet coreutils iputils iproute nmap-ncat jq psmisc git bash-completion rsyslog
+~~~
+
+所有节点关闭防火墙、selinux、swap、dnsmasq，开启rsyslog：
+
+~~~sh
+systemctl disable --now firewalld
+systemctl disable --now dnsmasq
+
+setenforce 0
+sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config
+sed -i 's#SELINUX=enforcing#SELINUX=disabled#g' /etc/sysconfig/selinux
+
+systemctl enbable --now rsyslog
+
+swapoff -a && sysctl -w vm.swappiness=0
+sed -ri '/^[^#]*swap/s@^@#@' /etc/fstab
+systemctl daemon-reload && mount -a
+~~~
+
+所有节点安装ntpdate：(实际生产使用中发现chrony没有ntpdate可靠)
+
+~~~sh
+dnf install -y epel-release
+dnf config-manager --set-enabled epel
+dnf install ntpsec
+~~~
+
+所有节点同步时间并配置上海时区：
+
+~~~sh
+ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+echo 'Asia/Shanghai' > /etc/timezone
+ntpdate time2.aliyun.com
+
+# 加入到crontab
+crontab -e
+*/5 * * * * /usr/sbin/ntpdate time2.aliyun.com
+~~~
+
+所有节点配置limit：
+
+~~~sh
+ulimit -SHn 65535
+tee -a /etc/security/limits.conf <<'EOF'
+* soft nofile 65536
+* hard nofile 131072
+* soft nproc 65535
+* hard nproc 655350
+* soft memlock unlimited
+* hard memlock unlimited
+~~~
+
+m01免密登录其他节点（安装过程中的各种配置文件均在m01上操作），集群管理也在m01上操作
+
+~~~sh
+ssh-keygen -t rsa
+for i in m01 m02 m03 n01 n02 n03;do ssh-copy-id -i .ssh/id_rsa.pub $i;done
+~~~
+
+## 内核优化
+
+所有节点安装ipvsadm：
+
+~~~sh
+yum install -y ipvsadm ipset sysstat conntrack libsecomp -y
+~~~
+
+所有节点配置ipvs模块：
+
+~~~sh
+modprobe -- ip vs
+modprobe -- ip vs rr
+modprobe -- ip vs wrr
+modprobe -- ip vs sh
+modprobe -- nf conntrack
+~~~
+
+所有节点创建/etc/modules-load.d/ipvs.conf，并配置开机自动加载：
+
+~~~sh
+tee /etc/modules-load.d/ipvs.conf <<'EOF'
+ip_vs
+ip_vs_lc
+ip_vs_wlc
+ip_vs_rr
+ip_vs_wrr
+ip_vs_lblc
+ip_vs_lblcr
+ip_vs_dh
+ip_vs_sh
+ip_vs_fo
+ip_vs_nq
+ip_vs_sed
+ip_vs_ftp
+nf_conntrack
+ip_tables
+ip_set
+xt_set
+ipt_set
+ipt_rpfilter
+ipt_REJECT
+ipip
+EOF
+~~~
+
+~~~sh
+systemctl enable --now systemd-modules-load.service
+# 如有报错可以忽略
+~~~
+
+所有节点内核优化配置：【针对4C4G虚拟机】
+
+~~~sh
+cat <<EOF > /etc/sysctl.d/k8s.conf
+net.ipv4.ip_forward = 1
+net.bridge.bridge-nf-call-ip6tables = 1
+net.bridge.bridge-nf-call-iptables = 1
+fs.may_detach_mounts = 1
+net.ipv4.conf.all.route_localnet = 1
+vm.overcommit_memory = 1
+vm.panic_on_oom = 0
+fs.inotify.max_user_watches = 89100
+fs.file-max = 52706963
+fs.nr_open = 52706963
+net.netfilter.nf_conntrack_max = 2310720
+
+net.ipv4.tcp_keepalive_time = 600
+net.ipv4.tcp_keepalive_probes = 3
+net.ipv4.tcp_keepalive_intvl = 15
+net.ipv4.tcp_max_tw_buckets = 36000
+net.ipv4.tcp_tw_reuse = 1
+net.ipv4.tcp_max_orphans = 327680
+net.ipv4.tcp_orphan_retries = 3
+net.ipv4.tcp_syncookies = 1
+net.ipv4.tcp_max_syn_backlog = 16384
+net.ipv4.tcp_timestamps = 0
+net.core.somaxconn = 16384
+EOF
+~~~
+
+加载新参数：
+
+~~~sh
+modprobe br_netfilter
+modprobe nf_conntrack
+sysctl --system
+reboot
+# 检查内核模块是否加载
+lsmod | grep --color=auto -e ip_vs -e nf_conntrack
+~~~
+
+## 高可用组件安装
+
+> 注意：
+>
+> 1. 如果安装的不是高可用集群，不需要安装haproxy和keepalived
+> 2. 公有云上自建集群，用公有云的SLB服务即可代替haproxy和keepalived。因为公有云大多数不支持keepalived VIP漂移
+
+### haproxy和keepalived
+
+所有master节点上安装：
+
+~~~sh
+yum install -y haproxy keepalived
+~~~
+
+所有master节点配置haproxy：
+
+~~~sh
+mkdir /etc/haproxy
+# 清空原配置，添加新配置
+tee /etc/haproxy/haproxy.cfg <<'EOF'
+global
+  maxconn 2000
+  ulimit-n 16384
+  log 127.0.0.1 local0 err
+  stats timeout 30s
+defaults
+  log global
+  mode http
+  option httplog
+  timeout connect 5000
+  timeout client 50000
+  timeout server 50000
+  timeout http-request 15s
+  timeout http-keep-alive 15s
+  
+frontend k8s-master
+  bind 0.0.0.0:16443
+  bind 127.0.0.1:16443
+  mode tcp
+  option tcplog
+  tcp-request inspect-delay 5s
+  default_backend k8s-master
+
+backend k8s-master
+  mode tcp
+  option tcplog
+  option tcp-check
+  balance roundrobin
+  default-server inter 10s downinter 5s rise 2 fail 2 slowstart 60s maxconn 250 maxqueue 256 weight 100
+  server k8s-master01  192.168.40.190:6443  check
+  server k8s-master02  192.168.40.191:6443  check
+  server k8s-master03  192.168.40.192:6443  check
+EOF
+~~~
+
+> 注意这段配置：
+>
+>   server k8s-master01  192.168.40.190:6443  check
+>   server k8s-master02  192.168.40.191:6443  check
+>   server k8s-master03  192.168.40.192:6443  check
+>
+> 只写上实际IP地址，主机名不是k8s-master01也没关系，只要IP地址正确即可
+
+配置keepalived：
+
+~~~sh
+mkdir /etc/keepalived
+# 清空原配置，添加新配置
+tee /etc/keepalived/keepalived.conf <<'EOF'
+! Configuration File for keepalived
+EOF
+~~~
 
