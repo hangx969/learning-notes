@@ -407,10 +407,260 @@ func main() {
 
 ## 继承
 
+继承可以解决代码复用，让我们的编程更加靠近人类思维。当多个结构体存在相同的属性(字段)和方法时，可以从这些结构体中抽象出结构体
 
+其它的结构体不需要重新定义这些属性(字段)和方法，只需嵌套一个匿名结构体即可。如果一个 struct 嵌套了另一个匿名结构体，那么这个结构体可以直接访问匿名结构体的字段和方法，从而实现了继承特性。
+
+~~~go
+package main
+
+import "fmt"
+
+
+type Student struct {
+	Name string
+    Age int
+    Score int
+}
+
+// 定义小学生，嵌入了Student匿名结构体
+type Pupil struct{
+    Student
+}
+
+// 定义大学生，嵌入了Student匿名结构体
+type Graduate struct{
+    Student
+}
+
+//Student的构造函数（工厂函数）
+func (stu *Student) SetScore(score int) {
+    stu.Score = score
+}
+
+// Student的方法，Pupil和Graduate都可以使用
+func (stu Student) CalSum(x int, y int) int {
+    return x + y
+}
+
+//将Pupil 和 Graduate 共有的方法也绑定到 *Student
+func (stu *Student) ShowInfo() {
+    fmt.Printf("Name is %v, age is %v, score is %v", stu.Name, stu.Age, stu.Score)
+}
+
+//Pupil特有的方法
+func (pup *Pupil) ShowPupil() {
+    fmt.Println("This is a pupil")
+}
+
+//Graduate特有的方法
+func (gra *Graduate) ShowGraduate() {
+    fmt.Println("This is a graduate")
+}
+
+func main() {
+
+    pupil1 := &Pupil{}
+    pupil1.Student.Name = "Bob"
+    pupil1.Student.Age = 10
+    pupil1.ShowPupil()
+    pupil1.Student.SetScore(90)
+    pupil1.Student.ShowInfo()
+    fmt.Println("\nUse method for Student and get sum:", pupil1.Student.CalSum(1, 2))
+
+    gra1 := &Graduate{}
+    gra1.Student.Name = "Tom"
+    gra1.Student.Age = 19
+    gra1.ShowGraduate()
+    gra1.Student.SetScore(88)
+    gra1.Student.ShowInfo()
+    fmt.Println("\nUse method for Student and get sum:", pupil1.Student.CalSum(3, 4))
+}
+~~~
 
 ## 多态
 
-# 接口
+### 接口
 
-# 类型断言
+~~~go
+package main
+
+import "fmt"
+
+// 1) 接口中的方法没有具体实现（没有方法体），只定义方法名和参数列表。
+// 2) 接口体现了多态（同一接口，不同实现）和高内聚低耦合（调用方只依赖接口，不依赖具体实现）。
+// 3) Go语言的接口是隐式实现的：只要某个类型实现了接口中的所有方法，就认为它实现了该接口，无需像Java那样用implement关键字。
+type Usb interface {
+	// Usb接口，定义了两个方法：Start和Stop。
+	Start() // 启动设备的方法
+	Stop()  // 停止设备的方法
+}
+
+// PowerBank结构体，表示充电宝。
+// PowerBank可以为实现了Usb接口的设备充电。
+type PowerBank struct {
+}
+
+// CharingDevice方法为PowerBank绑定。
+// 参数usb为Usb接口类型，表示任何实现了Usb接口的设备。
+// 只要传入的对象实现了Start和Stop方法，都可以被PowerBank充电，实现多态。
+func (pb PowerBank) CharingDevice(usb Usb) {
+	usb.Start() // 启动充电
+	fmt.Println("Charing for 5 minutes")
+	usb.Stop() // 停止充电
+}
+
+// Phone结构体，表示手机。
+// 下面会为Phone实现Usb接口要求的Start和Stop方法。
+type Phone struct {
+}
+
+// 为Phone类型绑定Start方法，实现Usb接口的Start方法。
+func (pho *Phone) Start() {
+	fmt.Println("Phone is now recharging")
+}
+
+// 为Phone类型绑定Stop方法，实现Usb接口的Stop方法。
+func (pho *Phone) Stop() {
+	fmt.Println("Phone has stopped recharging")
+}
+
+// Pad结构体，表示平板。
+// 下面会为Pad实现Usb接口要求的Start和Stop方法。
+type Pad struct {
+}
+
+// 为Pad类型绑定Start方法，实现Usb接口的Start方法。
+func (pad *Pad) Start() {
+	fmt.Println("pad is now recharing")
+}
+
+// 为Pad类型绑定Stop方法，实现Usb接口的Stop方法。
+func (pad *Pad) Stop() {
+	fmt.Println("pad has stopped recharing")
+}
+
+// main函数是程序的入口。
+func main() {
+	pb1 := &PowerBank{} // 创建一个PowerBank实例
+	pho1 := &Phone{}    // 创建一个Phone实例
+	pad1 := &Pad{}      // 创建一个Pad实例
+
+	// 通过PowerBank的CharingDevice方法，给Phone和Pad充电。
+	// 这里体现了接口的多态性：CharingDevice方法只依赖Usb接口，不关心具体是Phone还是Pad。
+	pb1.CharingDevice(pho1)
+	pb1.CharingDevice(pad1)
+}
+~~~
+
+### 多态
+
+在 Go 语言，多态特征是通过接口实现的。可以按照统一的接口来调用不同的实现。这时接口变量就呈现不同的形态。
+
+在前面的 Usb 接口案例，usb Usb ，既可以接收手机变量，又可以接收Pad变量，就体现了Usb 接口的多态特性。
+
+### 类型断言
+
+Go中的类型断言（type assertion）是用于将接口类型的变量转换为具体类型的语法。它的作用是：在已知接口变量的实际底层类型时，将其还原为具体类型，以便访问该类型特有的方法或字段。
+
+为什么需要类型断言：实际开发中，很多场景下你拿到的是接口类型变量，而不是具体类型的结构体变量。接口变量无法调用某个具体类型结构体的独有方法。这时候就需要类型断言，将接口变量还原成具体类型，就能调用他的独有方法了
+
+~~~go
+package main
+
+import "fmt"
+
+// 1) 接口中的方法没有具体实现（没有方法体），只定义方法名和参数列表。
+// 2) 接口体现了多态（同一接口，不同实现）和高内聚低耦合（调用方只依赖接口，不依赖具体实现）。
+// 3) Go语言的接口是隐式实现的：只要某个类型实现了接口中的所有方法，就认为它实现了该接口，无需像Java那样用implement关键字。
+type Usb interface {
+	// Usb接口，定义了两个方法：Start和Stop。
+	Start() // 启动设备的方法
+	Stop()  // 停止设备的方法
+}
+
+// PowerBank结构体，表示充电宝。
+// PowerBank可以为实现了Usb接口的设备充电。
+type PowerBank struct {
+}
+
+// CharingDevice方法为PowerBank绑定。
+// 参数usb为Usb接口类型，表示任何实现了Usb接口的设备。
+// 只要传入的对象实现了Start和Stop方法，都可以被PowerBank充电，实现多态。
+func (pb PowerBank) CharingDevice(usb Usb) {
+	usb.Start() // 启动充电
+	fmt.Println("Charing for 5 minutes")
+	usb.Stop() // 停止充电
+}
+
+// Phone结构体，表示手机。
+// 下面会为Phone实现Usb接口要求的Start和Stop方法。
+type Phone struct {
+}
+
+// 假设Phone有一个特有方法SendMessage
+func (pho *Phone) SendMessage(msg string) {
+	fmt.Println("Phone send message:", msg)
+}
+
+// 为Phone类型绑定Start方法，实现Usb接口的Start方法。
+func (pho *Phone) Start() {
+	fmt.Println("Phone is now recharging")
+}
+
+// 为Phone类型绑定Stop方法，实现Usb接口的Stop方法。
+func (pho *Phone) Stop() {
+	fmt.Println("Phone has stopped recharging")
+}
+
+// Pad结构体，表示平板。
+// 下面会为Pad实现Usb接口要求的Start和Stop方法。
+type Pad struct {
+}
+
+// 为Pad类型绑定Start方法，实现Usb接口的Start方法。
+func (pad *Pad) Start() {
+	fmt.Println("pad is now recharing")
+}
+
+// 为Pad类型绑定Stop方法，实现Usb接口的Stop方法。
+func (pad *Pad) Stop() {
+	fmt.Println("pad has stopped recharing")
+}
+
+// main函数是程序的入口。
+func main() {
+	pb1 := &PowerBank{} // 创建一个PowerBank实例
+	pho1 := &Phone{}    // 创建一个Phone实例
+	pad1 := &Pad{}      // 创建一个Pad实例
+
+	// 通过PowerBank的CharingDevice方法，给Phone和Pad充电。
+	// 这里体现了接口的多态性：CharingDevice方法只依赖Usb接口，不关心具体是Phone还是Pad。
+	pb1.CharingDevice(pho1)
+	pb1.CharingDevice(pad1)
+
+	// ----------- 实际开发场景：只拿到接口类型变量 -----------
+	// 假设我们有一个Usb接口类型的切片，里面存放了多种实现Usb接口的设备
+	devices := []Usb{pho1, pad1}
+
+	for _, dev := range devices {
+		dev.Start() // 只能调用Usb接口声明的方法
+		// dev.SendMessage("hello") // 编译报错：Usb接口没有SendMessage方法
+
+		// 如果需要调用Phone特有的方法，需要先做类型断言
+		// 类型断言的安全写法：if ... ok
+		if phone, ok := dev.(*Phone); ok {
+			fmt.Println("发现Phone类型，调用其特有方法SendMessage：")
+			phone.SendMessage("hello world!")
+		}
+		// 如果直接写 phone := dev.(*Phone) ，当dev不是*Phone类型时会直接panic，程序崩溃：
+		// phone := dev.(*Phone) // 不安全写法，断言失败会panic
+		// 推荐用上面的if ... ok写法，保证程序健壮性
+		dev.Stop()
+	}
+
+	// 这样可以体现：实际开发中我们经常只拿到接口类型变量，
+	// 只有通过类型断言才能访问具体类型的特有功能。
+}
+~~~
+
