@@ -890,6 +890,14 @@ networking:
   serviceSubnet: 10.96.0.0/16
 proxy: {}         
 scheduler: {}
+---
+apiVersion: kubeproxy.config.k8s.io/v1alpha1
+kind: KubeProxyConfiguration
+mode: ipvs
+---
+apiVersion: kubelet.config.k8s.io/v1beta1
+kind: KubeletConfiguration
+cgroupDriver: systemd
 ~~~
 
 2. 更新kubeadm文件：
@@ -938,7 +946,7 @@ kubeadm join 192.168.40.199:16443 --token xxx \
 kubeadm token create --print-join-command
 ~~~
 
-1. 在Master02和03上运行join命令加入集群
+1. 在Master02和03上运行join命令加入集群（用带--control-plane的join命令）
 2. 在Worker nodes上运行join命令加入集群
 
 ### 创建kubeconfig
@@ -994,7 +1002,7 @@ tail -f /var/log/messages | grep -v "not found"
 
 ## 安装网络插件Calico
 
-所有节点禁止NetworkManager管理Calico的网络接口，防止有冲突或干扰：
+1. 所有节点禁止NetworkManager管理Calico的网络接口，防止有冲突或干扰：
 
 ~~~sh
 cat >>/etc/NetworkManager/conf.d/calico.conf<<EOF
@@ -1002,7 +1010,1029 @@ cat >>/etc/NetworkManager/conf.d/calico.conf<<EOF
 unmanaged-devices=interface-name:cali*;interface-name:tunl*;interface-name:vxlan.calico;interface-name:vxlan-v6.calico;interface-name:wireguard.cali;interface-name:wg-v6.cali
 EOF
 
-systemctl daemon-reload
-systemctl restart NetworkManager
+systemctl daemon-reload && systemctl restart NetworkManager
 ~~~
+
+2. 从官网找到最新版calico的yaml链接（在manifest一栏中找到`Download the Calico networking manifest for the Kubernetes API datastore.`）：https://docs.tigera.io/calico/latest/getting-started/kubernetes/self-managed-onprem/onpremises#install-calico
+
+3. 下载yaml文件部署
+
+~~~sh
+# 修改calico.yaml中网卡名称
+# - name: CLUSTER_TYPE
+#   value: "k8s,bgp"
+# 找到上面这一段，在它的下面添加网卡名称字段：（指定calico从ens33跨节点通信，不指定的话，会走lo的IP，没办法跨节点通信，也就没办法给pod划分IP）
+- name: IP_AUTODETECTION_METHOD
+  value: "interface=ens160"
+  
+kubectl apply -f calico.yaml
+~~~
+
+~~~sh
+#测试网络访问
+kubectl run busybox --image busybox:1.28  --image-pull-policy=IfNotPresent --restart=Never --rm -it busybox -- sh
+ping www.baidu.com
+nslookup kubernetes.default.svc.cluster.local
+~~~
+
+## 配置优化
+
+### 使用ipvs
+
+将Kube-proxy改为ipvs模式，如果在初始化集群的时候注释了ipvs配置，所以需要自行修改一下：
+
+~~~sh
+# 在master01节点执行：
+kubectl edit cm kube-proxy -n kube-system
+
+mode: ipvs
+
+# 更新Kube-Proxy的Pod：
+kubectl patch daemonset kube-proxy -p "{\"spec\":{\"template\":{\"metadata\":{\"annotations\":{\"date\":\"`date +'%s'`\"}}}}}" -n kube-system
+
+# 验证Kube-Proxy模式
+curl 127.0.0.1:10249/proxyMode
+~~~
+
+### 延长k8s证书
+
+#### 查看证书过期时间
+
+~~~sh
+#在master节点上执行
+openssl x509 -in /etc/kubernetes/pki/ca.crt -noout -text | grep -i Not
+openssl x509 -in /etc/kubernetes/pki/apiserver.crt -noout -text | grep -i Not
+~~~
+
+#### 延长证书有效期的脚本
+
+文件命名为：update-kubeadm-cert.sh
+
+~~~sh
+#!/bin/bash
+set -o errexit
+set -o pipefail
+# set -o xtrace
+
+log::err() {
+  printf "[$(date +'%Y-%m-%dT%H:%M:%S.%N%z')]: \033[31mERROR: \033[0m$@\n"
+}
+
+log::info() {
+  printf "[$(date +'%Y-%m-%dT%H:%M:%S.%N%z')]: \033[32mINFO: \033[0m$@\n"
+}
+
+log::warning() {
+  printf "[$(date +'%Y-%m-%dT%H:%M:%S.%N%z')]: \033[33mWARNING: \033[0m$@\n"
+}
+
+check_file() {
+  if [[ ! -r  ${1} ]]; then
+    log::err "can not find ${1}"
+    exit 1
+  fi
+}
+
+# get x509v3 subject alternative name from the old certificate
+cert::get_subject_alt_name() {
+  local cert=${1}.crt
+  check_file "${cert}"
+  local alt_name=$(openssl x509 -text -noout -in ${cert} | grep -A1 'Alternative' | tail -n1 | sed 's/[[:space:]]*Address//g')
+  printf "${alt_name}\n"
+}
+
+# get subject from the old certificate
+cert::get_subj() {
+  local cert=${1}.crt
+  check_file "${cert}"
+  local subj=$(openssl x509 -text -noout -in ${cert}  | grep "Subject:" | sed 's/Subject:/\//g;s/\,/\//;s/[[:space:]]//g')
+  printf "${subj}\n"
+}
+
+cert::backup_file() {
+  local file=${1}
+  if [[ ! -e ${file}.old-$(date +%Y%m%d) ]]; then
+    cp -rp ${file} ${file}.old-$(date +%Y%m%d)
+    log::info "backup ${file} to ${file}.old-$(date +%Y%m%d)"
+  else
+    log::warning "does not backup, ${file}.old-$(date +%Y%m%d) already exists"
+  fi
+}
+
+# generate certificate whit client, server or peer
+# Args:
+#   $1 (the name of certificate)
+#   $2 (the type of certificate, must be one of client, server, peer)
+#   $3 (the subject of certificates)
+#   $4 (the validity of certificates) (days)
+#   $5 (the x509v3 subject alternative name of certificate when the type of certificate is server or peer)
+cert::gen_cert() {
+  local cert_name=${1}
+  local cert_type=${2}
+  local subj=${3}
+  local cert_days=${4}
+  local alt_name=${5}
+  local cert=${cert_name}.crt
+  local key=${cert_name}.key
+  local csr=${cert_name}.csr
+  local csr_conf="distinguished_name = dn\n[dn]\n[v3_ext]\nkeyUsage = critical, digitalSignature, keyEncipherment\n"
+
+  check_file "${key}"
+  check_file "${cert}"
+
+  # backup certificate when certificate not in ${kubeconf_arr[@]}
+  # kubeconf_arr=("controller-manager.crt" "scheduler.crt" "admin.crt" "kubelet.crt")
+  # if [[ ! "${kubeconf_arr[@]}" =~ "${cert##*/}" ]]; then
+  #   cert::backup_file "${cert}"
+  # fi
+
+  case "${cert_type}" in
+    client)
+      openssl req -new  -key ${key} -subj "${subj}" -reqexts v3_ext \
+        -config <(printf "${csr_conf} extendedKeyUsage = clientAuth\n") -out ${csr}
+      openssl x509 -in ${csr} -req -CA ${CA_CERT} -CAkey ${CA_KEY} -CAcreateserial -extensions v3_ext \
+        -extfile <(printf "${csr_conf} extendedKeyUsage = clientAuth\n") -days ${cert_days} -out ${cert}
+      log::info "generated ${cert}"
+    ;;
+    server)
+      openssl req -new  -key ${key} -subj "${subj}" -reqexts v3_ext \
+        -config <(printf "${csr_conf} extendedKeyUsage = serverAuth\nsubjectAltName = ${alt_name}\n") -out ${csr}
+      openssl x509 -in ${csr} -req -CA ${CA_CERT} -CAkey ${CA_KEY} -CAcreateserial -extensions v3_ext \
+        -extfile <(printf "${csr_conf} extendedKeyUsage = serverAuth\nsubjectAltName = ${alt_name}\n") -days ${cert_days} -out ${cert}
+      log::info "generated ${cert}"
+    ;;
+    peer)
+      openssl req -new  -key ${key} -subj "${subj}" -reqexts v3_ext \
+        -config <(printf "${csr_conf} extendedKeyUsage = serverAuth, clientAuth\nsubjectAltName = ${alt_name}\n") -out ${csr}
+      openssl x509 -in ${csr} -req -CA ${CA_CERT} -CAkey ${CA_KEY} -CAcreateserial -extensions v3_ext \
+        -extfile <(printf "${csr_conf} extendedKeyUsage = serverAuth, clientAuth\nsubjectAltName = ${alt_name}\n") -days ${cert_days} -out ${cert}
+      log::info "generated ${cert}"
+    ;;
+    *)
+      log::err "unknow, unsupported etcd certs type: ${cert_type}, supported type: client, server, peer"
+      exit 1
+  esac
+
+  rm -f ${csr}
+}
+
+cert::update_kubeconf() {
+  local cert_name=${1}
+  local kubeconf_file=${cert_name}.conf
+  local cert=${cert_name}.crt
+  local key=${cert_name}.key
+
+  # generate  certificate
+  check_file ${kubeconf_file}
+  # get the key from the old kubeconf
+  grep "client-key-data" ${kubeconf_file} | awk {'print$2'} | base64 -d > ${key}
+  # get the old certificate from the old kubeconf
+  grep "client-certificate-data" ${kubeconf_file} | awk {'print$2'} | base64 -d > ${cert}
+  # get subject from the old certificate
+  local subj=$(cert::get_subj ${cert_name})
+  cert::gen_cert "${cert_name}" "client" "${subj}" "${CAER_DAYS}"
+  # get certificate base64 code
+  local cert_base64=$(base64 -w 0 ${cert})
+
+  # backup kubeconf
+  # cert::backup_file "${kubeconf_file}"
+
+  # set certificate base64 code to kubeconf
+  sed -i 's/client-certificate-data:.*/client-certificate-data: '${cert_base64}'/g' ${kubeconf_file}
+
+  log::info "generated new ${kubeconf_file}"
+  rm -f ${cert}
+  rm -f ${key}
+
+  # set config for kubectl
+  if [[ ${cert_name##*/} == "admin" ]]; then
+    mkdir -p ~/.kube
+    cp -fp ${kubeconf_file} ~/.kube/config
+    log::info "copy the admin.conf to ~/.kube/config for kubectl"
+  fi
+}
+
+cert::update_etcd_cert() {
+  PKI_PATH=${KUBE_PATH}/pki/etcd
+  CA_CERT=${PKI_PATH}/ca.crt
+  CA_KEY=${PKI_PATH}/ca.key
+
+  check_file "${CA_CERT}"
+  check_file "${CA_KEY}"
+
+  # generate etcd server certificate
+  # /etc/kubernetes/pki/etcd/server
+  CART_NAME=${PKI_PATH}/server
+  subject_alt_name=$(cert::get_subject_alt_name ${CART_NAME})
+  cert::gen_cert "${CART_NAME}" "peer" "/CN=etcd-server" "${CAER_DAYS}" "${subject_alt_name}"
+
+  # generate etcd peer certificate
+  # /etc/kubernetes/pki/etcd/peer
+  CART_NAME=${PKI_PATH}/peer
+  subject_alt_name=$(cert::get_subject_alt_name ${CART_NAME})
+  cert::gen_cert "${CART_NAME}" "peer" "/CN=etcd-peer" "${CAER_DAYS}" "${subject_alt_name}"
+
+  # generate etcd healthcheck-client certificate
+  # /etc/kubernetes/pki/etcd/healthcheck-client
+  CART_NAME=${PKI_PATH}/healthcheck-client
+  cert::gen_cert "${CART_NAME}" "client" "/O=system:masters/CN=kube-etcd-healthcheck-client" "${CAER_DAYS}"
+
+  # generate apiserver-etcd-client certificate
+  # /etc/kubernetes/pki/apiserver-etcd-client
+  check_file "${CA_CERT}"
+  check_file "${CA_KEY}"
+  PKI_PATH=${KUBE_PATH}/pki
+  CART_NAME=${PKI_PATH}/apiserver-etcd-client
+  cert::gen_cert "${CART_NAME}" "client" "/O=system:masters/CN=kube-apiserver-etcd-client" "${CAER_DAYS}"
+
+  # restart etcd
+  docker ps | awk '/k8s_etcd/{print$1}' | xargs -r -I '{}' docker restart {} || true
+  log::info "restarted etcd"
+}
+
+cert::update_master_cert() {
+  PKI_PATH=${KUBE_PATH}/pki
+  CA_CERT=${PKI_PATH}/ca.crt
+  CA_KEY=${PKI_PATH}/ca.key
+
+  check_file "${CA_CERT}"
+  check_file "${CA_KEY}"
+
+  # generate apiserver server certificate
+  # /etc/kubernetes/pki/apiserver
+  CART_NAME=${PKI_PATH}/apiserver
+  subject_alt_name=$(cert::get_subject_alt_name ${CART_NAME})
+  cert::gen_cert "${CART_NAME}" "server" "/CN=kube-apiserver" "${CAER_DAYS}" "${subject_alt_name}"
+
+  # generate apiserver-kubelet-client certificate
+  # /etc/kubernetes/pki/apiserver-kubelet-client
+  CART_NAME=${PKI_PATH}/apiserver-kubelet-client
+  cert::gen_cert "${CART_NAME}" "client" "/O=system:masters/CN=kube-apiserver-kubelet-client" "${CAER_DAYS}"
+
+  # generate kubeconf for controller-manager,scheduler,kubectl and kubelet
+  # /etc/kubernetes/controller-manager,scheduler,admin,kubelet.conf
+  cert::update_kubeconf "${KUBE_PATH}/controller-manager"
+  cert::update_kubeconf "${KUBE_PATH}/scheduler"
+  cert::update_kubeconf "${KUBE_PATH}/admin"
+  set +e
+  grep kubelet-client-current.pem /etc/kubernetes/kubelet.conf > /dev/null 2>&1
+  kubelet_cert_auto_update=$?
+  set -e
+  if [[ "$kubelet_cert_auto_update" == "0" ]]; then
+    log::warning "does not need to update kubelet.conf"
+  else
+    cert::update_kubeconf "${KUBE_PATH}/kubelet"
+  fi
+
+  # generate front-proxy-client certificate
+  # use front-proxy-client ca
+  CA_CERT=${PKI_PATH}/front-proxy-ca.crt
+  CA_KEY=${PKI_PATH}/front-proxy-ca.key
+  check_file "${CA_CERT}"
+  check_file "${CA_KEY}"
+  CART_NAME=${PKI_PATH}/front-proxy-client
+  cert::gen_cert "${CART_NAME}" "client" "/CN=front-proxy-client" "${CAER_DAYS}"
+
+  # restart apiserve, controller-manager, scheduler and kubelet
+  docker ps | awk '/k8s_kube-apiserver/{print$1}' | xargs -r -I '{}' docker restart {} || true
+  log::info "restarted kube-apiserver"
+  docker ps | awk '/k8s_kube-controller-manager/{print$1}' | xargs -r -I '{}' docker restart {} || true
+  log::info "restarted kube-controller-manager"
+  docker ps | awk '/k8s_kube-scheduler/{print$1}' | xargs -r -I '{}' docker restart {} || true
+  log::info "restarted kube-scheduler"
+  systemctl restart kubelet
+  log::info "restarted kubelet"
+}
+
+main() {
+  local node_tpye=$1
+  
+  KUBE_PATH=/etc/kubernetes
+  CAER_DAYS=36500
+
+  # backup $KUBE_PATH to $KUBE_PATH.old-$(date +%Y%m%d)
+  cert::backup_file "${KUBE_PATH}"
+
+  case ${node_tpye} in
+    etcd)
+	  # update etcd certificates
+      cert::update_etcd_cert
+    ;;
+    master)
+	  # update master certificates and kubeconf
+      cert::update_master_cert
+    ;;
+    all)
+      # update etcd certificates
+      cert::update_etcd_cert
+      # update master certificates and kubeconf
+      cert::update_master_cert
+    ;;
+    *)
+      log::err "unknow, unsupported certs type: ${cert_type}, supported type: all, etcd, master"
+      printf "Documentation:
+  example:
+    '\033[32m./update-kubeadm-cert.sh all\033[0m' update all etcd certificates, master certificates and kubeconf
+      /etc/kubernetes
+      ├── admin.conf
+      ├── controller-manager.conf
+      ├── scheduler.conf
+      ├── kubelet.conf
+      └── pki
+          ├── apiserver.crt
+          ├── apiserver-etcd-client.crt
+          ├── apiserver-kubelet-client.crt
+          ├── front-proxy-client.crt
+          └── etcd
+              ├── healthcheck-client.crt
+              ├── peer.crt
+              └── server.crt
+
+    '\033[32m./update-kubeadm-cert.sh etcd\033[0m' update only etcd certificates
+      /etc/kubernetes
+      └── pki
+          ├── apiserver-etcd-client.crt
+          └── etcd
+              ├── healthcheck-client.crt
+              ├── peer.crt
+              └── server.crt
+
+    '\033[32m./update-kubeadm-cert.sh master\033[0m' update only master certificates and kubeconf
+      /etc/kubernetes
+      ├── admin.conf
+      ├── controller-manager.conf
+      ├── scheduler.conf
+      ├── kubelet.conf
+      └── pki
+          ├── apiserver.crt
+          ├── apiserver-kubelet-client.crt
+          └── front-proxy-client.crt
+"
+      exit 1
+    esac
+}
+
+main "$@"
+~~~
+
+#### 运行脚本
+
+~~~sh
+chmod +x update-kubeadm-cert.sh
+./update-kubeadm-cert.sh all
+
+#检查kube-system pod
+kubectl get pods -n kube-system
+
+#检查证书有效期
+#在master节点上
+openssl x509 -in /etc/kubernetes/pki/ca.crt -noout -text | grep -i Not
+openssl x509 -in /etc/kubernetes/pki/apiserver.crt -noout -text | grep -i Not
+~~~
+
+## 【可选】安装其他插件
+
+~~~sh
+# 杜宽老师的Addon仓库
+git clone https://gitee.com/dukuan/k8s-ha-install.git
+cd k8s-ha-install/
+# 查看分支
+git branch -a
+git checkout manual-installation-v1.33.x # 切换到对应版本的分支（改minorversion数字即可。.x不用改）
+cd single/
+# 里面有calico、metrics-server、dashboard、krm（杜宽老师开发的多集群管理工具）
+kubectl apply -f dashboard-user.yaml dashboard.yaml krm.yaml
+# krm默认用户名密码是admin/admin，进去之后在集群管理里面添加集群
+~~~
+
+## 【可选】部署Metrics-server
+
+在新版的Kubernetes中系统资源的采集均使用Metrics-server，可以通过Metrics采集节点和Pod的内存、磁盘、CPU和网络的使用率。
+
+1. 将Master01节点的front-proxy-ca.crt复制到所有Node节点：
+
+~~~sh
+scp /etc/kubernetes/pki/front-proxy-ca.crt k8s-node01:/etc/kubernetes/pki/front-proxy-ca.crt
+~~~
+
+2. 在master01上执行，安装metrics server：
+
+~~~sh
+cd /root/k8s-ha-install/kubeadm-metrics-server
+kubectl create -f comp.yaml 
+~~~
+
+安装完之后就能用：**kubectl top node** 查看节点资源使用情况。
+
+# 集群可用性验证
+
+1. 节点均正常：
+
+   ~~~sh
+   kubectl get nodes
+   ~~~
+
+2. pod正常：
+
+   ~~~sh
+   kubectl get pods -A
+   ~~~
+
+3. 集群svc、pod、node网段无任何冲突: 
+
+   ~~~sh
+   kubectl get svc
+   kubectl get po -A -owide | grep coredns
+   kubectl get nodes -owide
+   # 按上面正常配置，node是192.168，svc是10.96，pod是172.16
+   # 具体要看子网掩码的配置
+   ~~~
+
+   如果发现集群网段冲突，只能推翻重建集群。
+
+4. 能够正常创建资源: 
+
+   ~~~sh
+   kubectl create deploy cluster test image=registry.cn-beijing.aliyuncs.com/dotbalo/debug-tools sleep 3600
+   ~~~
+
+5. Pod必须能够解析Service（同namespace和跨namespace）
+
+   ~~~sh
+   # 进入上一步创建的debug-tools pod
+   kubectl exec -it <pod-name> --bash
+   
+   ~~~
+
+6. 每个节点都必须要能访问Kubernetes的kubernetes svc 443和kube-dns的service 53
+
+   ~~~sh
+   # ssh到每个节点
+   kubectl get svc # 找到默认的kubernetes名称的svc
+   curl https://10.96.0.1:443 -k # 出现403 forbidden报错说明网络是通的
+   curl https://10.96.0.10:53 -k # 出现（52）empty from server说明网络是通的
+   ~~~
+
+7. Pod和Pod之间可以正常通讯（同namespace和跨namespace；同节点和跨节点）
+
+   ~~~sh
+   # 进入创建的debug-tools pod
+   kubectl exec -it <pod-name> --bash
+   # 找到同ns和跨ns的两个pod，分别ping pod-IP看看通不通
+   # 找到同node和跨node的两个pod，分别ping pod-IP看看通不通
+   ~~~
+
+8. 节点和Pod可以正常通信：在所有节点上ping一个Pod IP看看通不通
+
+# 集群维护
+
+## 节点下线
+
+如果某个节点需要下线，可以使用如下步骤平滑下线：
+1.	添加污点禁止调度：
+2.	查询节点是否有重要服务，漂移重要服务至其它节点
+3.	确认是否是ingress入口，端口流量
+4.	使用drain设置为驱逐状态
+5.	再次检查节点上的其它服务，基础组件等
+6.	查看有无异常的Pod：有无Pending/非Running状态的Pod
+7.	使用delete删除节点
+8.	节点下线：
+   1.	kubeadm reset -f
+   2.	systemctl disable --now kubelet
+
+## 添加节点
+
+## 集群升级
+
+# 制作k8s安装需要的离线yum源
+
+> 要全内网环境安装docker、k8s和相关依赖，需要在内部提供安装k8s、docker需要的yum源。首先需要在联网机器上把镜像拉下来。
+
+## 制作安装docker需要的离线yum源
+
+1、添加docker在线源
+
+```bash
+yum-config-manager --add-repo https://download.docker.com/linux/centos/dockerce.repo
+```
+
+2、通过如下命令download远程yum源文件，建立本地docker repo库
+
+```bash
+yum install --downloadonly --downloaddir=/mnt/docker-ce docker-ce
+createrepo -d /mnt/docker-ce
+```
+
+3、把/mnt/docker-c下自动下载的rpm打包，传到内网机器，用过如下方法安装：
+
+```bash
+rpm -Uvh *.rpm --nodeps --force #这是强制安装当前文件夹中所有的rpm包，忽略依赖去安装
+```
+
+## 制作安装k8s命令行工具需要的离线yum源
+
+1、添加k8s在线源
+
+```bash
+cat <<EOF > /etc/yum.repos.d/kubernetes.repo
+[kubernetes]
+name=Kubernetes
+baseurl=https://mirrors.aliyun.com/kubernetes/yum/repos/kubernetes-el7-x86_64
+enabled=1
+gpgcheck=1
+repo_gpgcheck=1
+gpgkey=https://mirrors.aliyun.com/kubernetes/yum/doc/yum-key.gpg
+https://mirrors.aliyun.com/kubernetes/yum/doc/rpm-package-key.gpg
+EOF
+```
+
+2、通过如下命令download远程yum源文件，建立本地k8s repo库
+
+```bash
+yum install --downloadonly --resolve kubeadm kubelet kubectl --destdir /mnt/k8s
+createrepo -d /mnt/k8s
+```
+
+3、把/mnt/k8s下自动下载的rpm打包，传到内网机器，用过如下方法安装：
+
+```bash
+rpm -Uvh *.rpm --nodeps --force #这是强制安装当前文件夹中所有的rpm包，忽略依赖去安装
+```
+
+## 制作不同版本k8s集群需要的离线镜像
+
+```bash
+#如果用docker做容器，按照下面方面制作离线镜像
+kubeadm config print init-defaults > kubeadm.yaml
+#修改kubeadm.yaml配置文件如下：
+imageRepository: registry.cn-hangzhou.aliyuncs.com/google_containers
+#上述配置表示，安装k8s需要的镜像要从阿里云镜像仓库拉取
+
+#通过如下命令下载镜像：
+kubeadm config images pull --config kubeadm.yaml
+#然后把下载好的镜像打包镜像：
+docker save -o a.tar.gz registry.aliyuncs.com/google_containers/pause:3.7 jenkins/jenkins:latest ....
+#传到内网k8s节点，通过如下命令导出镜像：
+ctr -n=k8s.io images import a.tar.gz
+docker load -i a.tar.gz
+```
+
+```bash
+#如果用containerd做容器，按照下面方面制作离线镜像
+kubeadm config print init-defaults > kubeadm.yaml
+#修改kubeadm.yaml配置文件如下：
+imageRepository: registry.cn-hangzhou.aliyuncs.com/google_containers
+#上述配置表示，安装k8s需要的镜像要从阿里云镜像仓库拉取
+#通过如下命令下载镜像：
+kubeadm config images pull --config kubeadm.yaml
+
+ctr -n=k8s.io images ls
+#ls出来的的所有镜像做到离线文件里
+ctr -n=k8s.io images export k8s1.28.0.tar.gz
+#导入到内网环境解压
+ctr -n=k8s.io images import k8s1.28.0.tar.gz
+```
+
+# Windows下安装kubectl
+
+推荐使用scoop安装：
+
+1. 安装scoop参考[scoop安装helm部分](../helm/helmv3-安装与使用.md)
+2. 安装kubectl：`scoop install kubectl kubelogin`
+
+# 安装k9s
+
+- kubectl可视化插件：https://github.com/derailed/k9s
+- 安装指南：https://k9scli.io/topics/install/
+
+## 在线安装
+
+1. 方法1：via [webi](https://webinstall.dev/) (在现在rockylinux vm上使用的方法)
+
+   ~~~sh
+   curl -sS https://webinstall.dev/k9s | bash
+   ~~~
+
+2. 方法2：在ubuntu上
+
+   ~~~sh
+   wget https://github.com/derailed/k9s/releases/download/v0.40.5/k9s_linux_amd64.deb && apt install ./k9s_linux_amd64.deb && rm k9s_linux_amd64.deb
+   ~~~
+
+3. 方法3：via snap
+
+   ~~~sh
+   snap install k9s --devmode
+   ~~~
+
+## 离线安装
+
+### 下载安装包
+
+1. 先从github下载amd64版本安装包：[Releases · derailed/k9s](https://github.com/derailed/k9s/releases)
+2. 安装包放到/root/下
+
+### 本地安装脚本
+
+~~~sh
+#!/bin/bash
+
+############################################################
+# K9s Local Installation Script
+# Modified to install from local tar.gz file instead of downloading
+############################################################
+
+# Configuration for local installation
+K9S_LOCAL_ARCHIVE="/root/k9s_Linux_amd64.tar.gz"
+INSTALL_DIR="$HOME/.local/bin"
+
+# Check if local archive exists, if so use local installation
+if [ -f "$K9S_LOCAL_ARCHIVE" ]; then
+    echo "Found local k9s archive, installing from: $K9S_LOCAL_ARCHIVE"
+
+    # Create installation directory
+    mkdir -p "$INSTALL_DIR"
+
+    # Create temporary directory for extraction
+    TEMP_DIR=$(mktemp -d)
+
+    # Extract and install
+    echo "Extracting k9s from local archive..."
+    tar -xzf "$K9S_LOCAL_ARCHIVE" -C "$TEMP_DIR"
+
+    if [ -f "$TEMP_DIR/k9s" ]; then
+        echo "Installing k9s to $INSTALL_DIR/k9s"
+        cp "$TEMP_DIR/k9s" "$INSTALL_DIR/k9s"
+        chmod +x "$INSTALL_DIR/k9s"
+
+        # Clean up
+        rm -rf "$TEMP_DIR"
+
+        echo "k9s installed successfully to $INSTALL_DIR/k9s"
+        echo "Make sure $INSTALL_DIR is in your PATH to use k9s command"
+        exit 0
+    else
+        echo "Error: k9s binary not found in archive"
+        rm -rf "$TEMP_DIR"
+        exit 1
+    fi
+fi
+
+# Fallback to original webi installation if local archive not found
+echo "Local archive not found at $K9S_LOCAL_ARCHIVE, falling back to webi installation..."
+
+export WEBI_PKG='k9s@stable'
+export WEBI_HOST='https://webi.sh'
+export WEBI_CHECKSUM='adad246e'
+
+#########################################
+#                                       #
+# Display Debug Info in Case of Failure #
+#                                       #
+#########################################
+
+fn_show_welcome() { (
+    echo ""
+    echo ""
+    # invert t_task and t_pkg for top-level welcome message
+    printf -- ">>> %s %s  <<<\n" \
+        "$(t_pkg 'Welcome to') $(t_task 'Webi')$(t_pkg '!')" \
+        "$(t_dim "- modern tools, instant installs.")"
+    echo "    We expect your experience to be $(t_em 'absolutely perfect')!"
+    echo ""
+    echo "    $(t_attn 'Success')? Star it!   $(t_url 'https://github.com/webinstall/webi-installers')"
+    echo "    $(t_attn 'Problem')? Report it: $(t_url 'https://github.com/webinstall/webi-installers/issues')"
+    echo "                        $(t_dim "(your system is") $(t_host "$(fn_get_os)")/$(t_host "$(uname -m)") $(t_dim "with") $(t_host "$(fn_get_libc)") $(t_dim "&") $(t_host "$(fn_get_http_client_name)")$(t_dim ")")"
+
+    sleep 0.2
+); }
+
+fn_get_os() { (
+    # Ex:
+    #     GNU/Linux
+    #     Android
+    #     Linux (often Alpine, musl)
+    #     Darwin
+    b_os="$(uname -o 2> /dev/null || echo '')"
+    b_sys="$(uname -s)"
+    if test -z "${b_os}" || test "${b_os}" = "${b_sys}"; then
+        # ex: 'Darwin' (and plain, non-GNU 'Linux')
+        echo "${b_sys}"
+        return 0
+    fi
+
+    if echo "${b_os}" | grep -q "${b_sys}"; then
+        # ex: 'GNU/Linux'
+        echo "${b_os}"
+        return 0
+    fi
+
+    # ex: 'Android/Linux'
+    echo "${b_os}/${b_sys}"
+); }
+
+fn_get_libc() { (
+    # Ex:
+    #     musl
+    #     libc
+    if ldd /bin/ls 2> /dev/null | grep -q 'musl' 2> /dev/null; then
+        echo 'musl'
+    elif fn_get_os | grep -q 'GNU|Linux'; then
+        echo 'gnu'
+    else
+        echo 'libc'
+    fi
+); }
+
+fn_get_http_client_name() { (
+    # Ex:
+    #     curl
+    #     curl+wget
+    b_client=""
+    if command -v curl > /dev/null; then
+        b_client="curl"
+    fi
+    if command -v wget > /dev/null; then
+        if test -z "${b_client}"; then
+            b_client="wget"
+        else
+            b_client="curl+wget"
+        fi
+    fi
+
+    echo "${b_client}"
+); }
+
+#########################################
+#                                       #
+#      For Making the Display Nice      #
+#                                       #
+#########################################
+
+# Term Types
+t_cmd() { (fn_printf '\e[2m\e[35m%s\e[39m\e[22m' "${1}"); }
+t_host() { (fn_printf '\e[2m\e[33m%s\e[39m\e[22m' "${1}"); }
+t_link() { (fn_printf '\e[1m\e[36m%s\e[39m\e[22m' "${1}"); }
+t_path() { (fn_printf '\e[2m\e[32m%s\e[39m\e[22m' "${1}"); }
+t_pkg() { (fn_printf '\e[1m\e[32m%s\e[39m\e[22m' "${1}"); }
+t_task() { (fn_printf '\e[36m%s\e[39m' "${1}"); }
+t_url() { (fn_printf '\e[2m%s\e[22m' "${1}"); }
+
+# Levels
+t_info() { (fn_printf '\e[1m\e[36m%s\e[39m\e[22m' "${1}"); }
+t_attn() { (fn_printf '\e[1m\e[33m%s\e[39m\e[22m' "${1}"); }
+t_warn() { (fn_printf '\e[1m\e[33m%s\e[39m\e[22m' "${1}"); }
+t_err() { (fn_printf '\e[31m%s\e[39m' "${1}"); }
+
+# Styles
+t_bold() { (fn_printf '\e[1m%s\e[22m' "${1}"); }
+t_dim() { (fn_printf '\e[2m%s\e[22m' "${1}"); }
+t_em() { (fn_printf '\e[3m%s\e[23m' "${1}"); }
+t_under() { (fn_printf '\e[4m%s\e[24m' "${1}"); }
+
+# FG Colors
+t_cyan() { (fn_printf '\e[36m%s\e[39m' "${1}"); }
+t_green() { (fn_printf '\e[32m%s\e[39m' "${1}"); }
+t_magenta() { (fn_printf '\e[35m%s\e[39m' "${1}"); }
+t_yellow() { (fn_printf '\e[33m%s\e[39m' "${1}"); }
+
+fn_printf() { (
+    a_style="${1}"
+    a_text="${2}"
+    if fn_is_tty; then
+        #shellcheck disable=SC2059
+        printf -- "${a_style}" "${a_text}"
+    else
+        printf -- '%s' "${a_text}"
+    fi
+); }
+
+fn_sub_home() { (
+    my_rel=${HOME}
+    my_abs=${1}
+    echo "${my_abs}" | sed "s:^${my_rel}:~:"
+); }
+
+###################################
+#                                 #
+#       Detect HTTP Client        #
+#                                 #
+###################################
+
+fn_wget() { (
+    # Doc:
+    #     Downloads the file at the given url to the given path
+    a_url="${1}"
+    a_path="${2}"
+
+    cmd_wget="wget -c -q --user-agent"
+    if fn_is_tty; then
+        cmd_wget="wget -c -q --show-progress --user-agent"
+    fi
+    # busybox wget doesn't support --show-progress
+    # See
+    if readlink "$(command -v wget)" | grep -q busybox; then
+        cmd_wget="wget --user-agent"
+    fi
+
+    b_triple_ua="$(fn_get_target_triple_user_agent)"
+    b_agent="webi/wget ${b_triple_ua}"
+    if command -v curl > /dev/null; then
+        b_agent="webi/wget+curl ${b_triple_ua}"
+    fi
+
+    if ! $cmd_wget "${b_agent}" "${a_url}" -O "${a_path}"; then
+        echo >&2 "    $(t_err "failed to download (wget)") '$(t_url "${a_url}")'"
+        echo >&2 "    $cmd_wget '${b_agent}' '${a_url}' -O '${a_path}'"
+        echo >&2 "    $(wget -V)"
+        return 1
+    fi
+); }
+
+fn_curl() { (
+    # Doc:
+    #     Downloads the file at the given url to the given path
+    a_url="${1}"
+    a_path="${2}"
+
+    cmd_curl="curl -f -sSL -#"
+    if fn_is_tty; then
+        cmd_curl="curl -f -sSL"
+    fi
+
+    b_triple_ua="$(fn_get_target_triple_user_agent)"
+    b_agent="webi/curl ${b_triple_ua}"
+    if command -v wget > /dev/null; then
+        b_agent="webi/curl+wget ${b_triple_ua}"
+    fi
+
+    if ! $cmd_curl -A "${b_agent}" "${a_url}" -o "${a_path}"; then
+        echo >&2 "    $(t_err "failed to download (curl)") '$(t_url "${a_url}")'"
+        echo >&2 "    $cmd_curl -A '${b_agent}' '${a_url}' -o '${a_path}'"
+        echo >&2 "    $(curl -V)"
+        return 1
+    fi
+); }
+
+fn_get_target_triple_user_agent() { (
+    # Ex:
+    #     x86_64/unknown GNU/Linux/5.15.107-2-pve gnu
+    #     arm64/unknown Darwin/22.6.0 libc
+    echo "$(uname -m)/unknown $(fn_get_os)/$(uname -r) $(fn_get_libc)"
+); }
+
+fn_download_to_path() { (
+    a_url="${1}"
+    a_path="${2}"
+
+    mkdir -p "$(dirname "${a_path}")"
+    if command -v curl > /dev/null; then
+        fn_curl "${a_url}" "${a_path}.part"
+    elif command -v wget > /dev/null; then
+        fn_wget "${a_url}" "${a_path}.part"
+    else
+        echo >&2 "    $(t_err "failed to detect HTTP client (curl, wget)")"
+        return 1
+    fi
+    mv "${a_path}.part" "${a_path}"
+); }
+
+##############################################
+#                                            #
+# Install or Update Webi and Install Package #
+#                                            #
+##############################################
+
+webi_bootstrap() { (
+    a_path="${1}"
+
+    echo ""
+    echo "$(t_task 'Bootstrapping') $(t_pkg 'Webi')"
+
+    b_path_rel="$(fn_sub_home "${a_path}")"
+    b_checksum=""
+    if test -r "${a_path}"; then
+        b_checksum="$(fn_checksum "${a_path}")"
+    fi
+    if test "$b_checksum" = "${WEBI_CHECKSUM}"; then
+        echo "    $(t_dim 'Found') $(t_path "${b_path_rel}")"
+        sleep 0.1
+        return 0
+    fi
+
+    b_webi_file_url="${WEBI_HOST}/packages/webi/webi.sh"
+    b_tmp=''
+    if test -r "${a_path}"; then
+        b_ts="$(date -u '+%s')"
+        b_tmp="${a_path}.${b_ts}.bak"
+        mv "${a_path}" "${b_tmp}"
+        echo "    Updating $(t_path "${b_path_rel}")"
+    fi
+
+    echo "    Downloading $(t_url "${b_webi_file_url}")"
+    echo "        to $(t_path "${b_path_rel}")"
+    fn_download_to_path "${b_webi_file_url}" "${a_path}"
+    chmod u+x "${a_path}"
+
+    if test -r "${b_tmp}"; then
+        rm -f "${b_tmp}"
+    fi
+); }
+
+fn_checksum() {
+    a_filepath="${1}"
+
+    if command -v sha1sum > /dev/null; then
+        sha1sum "${a_filepath}" | cut -d' ' -f1 | cut -c 1-8
+        return 0
+    fi
+
+    if command -v shasum > /dev/null; then
+        shasum "${a_filepath}" | cut -d' ' -f1 | cut -c 1-8
+        return 0
+    fi
+
+    if command -v sha1 > /dev/null; then
+        sha1 "${a_filepath}" | cut -d'=' -f2 | cut -c 2-9
+        return 0
+    fi
+
+    echo >&2 "    warn: no sha1 sum program"
+    date '+%F %H:%M'
+}
+
+##############################################
+#                                            #
+#          Detect TTY and run main           #
+#                                            #
+##############################################
+
+fn_is_tty() {
+    if test "${WEBI_TTY}" = 'tty'; then
+        return 0
+    fi
+    return 1
+}
+
+fn_detect_tty() { (
+    # stdin will NOT be a tty if it's being piped
+    # stdout & stderr WILL be a tty even when piped
+    # they are not a tty if being captured or redirected
+    # 'set -i' is NOT available in sh
+    if test -t 1 && test -t 2; then
+        return 0
+    fi
+
+    return 1
+); }
+
+main() { (
+    set -e
+    set -u
+
+    WEBI_TTY="${WEBI_TTY:-}"
+    if test -z "${WEBI_TTY}"; then
+        if fn_detect_tty; then
+            WEBI_TTY="tty"
+        fi
+        export WEBI_TTY
+    fi
+
+    if test -z "${WEBI_WELCOME:-}"; then
+        fn_show_welcome
+    fi
+    export WEBI_WELCOME='shown'
+
+    # note: we may support custom locations in the future
+    export WEBI_HOME="${HOME}/.local"
+    b_home="$(fn_sub_home "${WEBI_HOME}")"
+    b_webi_path="${WEBI_HOME}/bin/webi"
+    b_webi_path_rel="${b_home}/bin/webi"
+
+    WEBI_CURRENT="${WEBI_CURRENT:-}"
+    if test "${WEBI_CURRENT}" != "${WEBI_CHECKSUM}"; then
+        webi_bootstrap "${b_webi_path}"
+        export WEBI_CURRENT="${WEBI_CHECKSUM}"
+    fi
+
+    echo "    Running $(t_cmd "${b_webi_path_rel} ${WEBI_PKG}")"
+    echo ""
+
+    "${b_webi_path}" "${WEBI_PKG}"
+); }
+
+main
+~~~
+
+### 安装
+
+~~~sh
+chmod +x k9s-local-install.sh
+./k9s0local-install.sh
+
+echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
+source ~/.bashrc
+~~~
+
+再新开一个terminal就可以运行K9s了
 
