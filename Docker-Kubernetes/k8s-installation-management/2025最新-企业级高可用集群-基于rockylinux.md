@@ -648,6 +648,10 @@ telnet 192.168.40.199 16443
 > 2.	是否是私有云机器（类似OpenStack）
 > 3.	上述公有云一般都是不支持keepalived，私有云可能也有限制，需要和自己的私有云管理员咨询
 
+### 快照
+
+完成keepalived测试之后，可以把所有VM关机拍快照。
+
 ## Runtime安装
 
 如果安装的版本低于1.24，选择Docker和Containerd均可，高于1.24建议选择Containerd作为Runtime，不再推荐使用Docker作为Runtime。
@@ -789,7 +793,7 @@ crictl info
 
 ## K8s组件安装
 
-1. 所有节点配置源：==注意这里需要更改k8s版本号==
+1. 所有节点配置源：==注意这里需要更改k8s版本号，只用写minor version，不用写patch版本==
 
 ~~~sh
 cat <<EOF | tee /etc/yum.repos.d/kubernetes.repo
@@ -825,7 +829,7 @@ systemctl enable --now kubelet
 
 ## 集群初始化
 
-1. 以下操作在Master01节点执行：
+1. 以下操作在Master01节点执行。集群初始化只在master01执行一遍，其余节点都是join过来的。
 
 ~~~sh
 vim kubeadm-config.yaml
@@ -843,13 +847,13 @@ bootstrapTokens:
   - authentication
 kind: InitConfiguration
 localAPIEndpoint:
-  advertiseAddress: 192.168.181.130
+  advertiseAddress: 192.168.181.130 # master01地址
   bindPort: 6443
 nodeRegistration:
   criSocket: unix:///var/run/containerd/containerd.sock
   imagePullPolicy: IfNotPresent
   imagePullSerial: true
-  name: k8s-master01
+  name: m01 # hostname
   taints:
   - effect: NoSchedule
     key: node-role.kubernetes.io/control-plane
@@ -864,27 +868,141 @@ timeouts:
 ---
 apiServer:
   certSANs:
-  - 192.168.181.236
+  - 192.168.40.199 # VIP
 apiVersion: kubeadm.k8s.io/v1beta4
 caCertificateValidityPeriod: 876000h0m0s
 certificateValidityPeriod: 876000h0m0s
 certificatesDir: /etc/kubernetes/pki
 clusterName: kubernetes
-controlPlaneEndpoint: 192.168.181.236:16443
+controlPlaneEndpoint: 192.168.40.199:16443 # VIP
 controllerManager: {}
 dns: {}
 encryptionAlgorithm: RSA-2048
 etcd:
   local:
-    dataDir: /var/lib/etcd
+    dataDir: /var/lib/etcd # 设置为提前挂载好的磁盘位置
 imageRepository: registry.cn-hangzhou.aliyuncs.com/google_containers
 kind: ClusterConfiguration
-kubernetesVersion: v1.33.4
+kubernetesVersion: v1.33.4 # 要与kubeadm version的patch版本保持一致
 networking:
   dnsDomain: cluster.local
   podSubnet: 172.16.0.0/16
   serviceSubnet: 10.96.0.0/16
-proxy: {}
+proxy: {}         
 scheduler: {}
+~~~
+
+2. 更新kubeadm文件：
+
+~~~sh
+kubeadm config migrate --old-config kubeadm-config.yaml --new-config kubeadm-config-new.yaml
+# 进入kubeadm-config-new.yaml文件，修改一个字段：
+timeouts:
+  controlPlaneComponentHealthCheck: 4m0s
+~~~
+
+3. 复制到其他master节点：==其他节点配置文件不需要更改，包括IP地址也不需要更改==
+
+~~~sh
+for i in m02 m03; do scp kubeadm-config-new.yaml $i:/root/; done
+~~~
+
+4. 所有Master节点提前下载镜像，可以节省初始化时间：
+
+~~~sh
+kubeadm config images pull --config /root/kubeadm-config-new.yaml
+~~~
+
+5. 在Master01节点初始化集群，初始化以后会在/etc/kubernetes目录下生成对应的证书和配置文件，之后其他Master节点加入Master01即可：==初始化操作仅在master01节点执行，其它任何节点勿操作==
+
+~~~sh
+kubeadm init --config /root/kubeadm-config-new.yaml --upload-certs --ignore-preflight-errors=SystemVerification
+~~~
+
+6. 初始化成功以后，控制台输出里面，会产生两个join命令，一个是给control plane用，一个是给data node用：
+
+~~~sh
+kubeadm join 192.168.40.199:16443 --token xxx \
+--discovery-token-ca-cert-hash sha256:xxx \
+--control-plane --certificate-key xxx
+
+kubeadm join 192.168.40.199:16443 --token xxx \
+	--discovery-token-ca-cert-hash xxx
+~~~
+
+### 加入节点
+
+如果join命令没保存，在master01运行：
+
+~~~sh
+kubeadm token create --print-join-command
+~~~
+
+1. 在Master02和03上运行join命令加入集群
+2. 在Worker nodes上运行join命令加入集群
+
+### 创建kubeconfig
+
+admin.conf是集群的钥匙，安全起见最好是仅在这一台master上执行。如需在其他节点运行，需要拷贝admin.conf到对应节点。
+
+~~~sh
+mkdir -p $HOME/.kube
+cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+chown $(id -u):$(id -g) $HOME/.kube/config
+
+# 1. 设置kubectl的alias为k：
+whereis kubectl ## kubectl: /usr/bin/kubectl
+echo "alias k=/usr/bin/kubectl">>/etc/profile
+source /etc/profile
+
+# 2. 设置alias的自动补全：
+source <(kubectl completion bash | sed 's/kubectl/k/g')
+
+# 3. 解决每次启动k都会失效，要重新刷新环境变量（source /etc/profile）的问题：在~/.bashrc文件中添加以下代码：source /etc/profile
+echo "source /etc/profile" >> ~/.bashrc
+
+# 4. 给alias k也配置补全
+tee -a ~/.bashrc <<'EOF'
+alias k='kubectl'
+complete -o default -F __start_kubectl k
+source <(kubectl completion bash)
+EOF
+
+# 使命令生效
+source ~/.bashrc
+~~~
+
+### 问题排查
+
+如果初始化失败，使用如下命令重置后再次初始化，命令如下（没有失败不要执行）：
+
+~~~sh
+kubeadm reset -f ; ipvsadm --clear  ; rm -rf ~/.kube
+~~~
+
+如果多次尝试都是初始化失败，需要看系统日志，CentOS/RockyLinux日志路径:/var/log/messages，Ubuntu系列日志路径/var/log/syslog：
+
+~~~sh
+tail -f /var/log/messages | grep -v "not found"
+~~~
+
+经常出错的原因：
+1.	Containerd的配置文件修改的不对，自行参考《安装containerd》小节核对。（一般伴有PLEG报错信息）
+2.	kubeadm yaml配置问题，比如非高可用集群忘记修改16443端口为6443
+3.	kubeadm yaml配置问题，三个网段有交叉，出现IP地址冲突
+4.	VIP不通导致无法初始化成功，此时messages日志会有VIP超时的报错
+
+## 安装网络插件Calico
+
+所有节点禁止NetworkManager管理Calico的网络接口，防止有冲突或干扰：
+
+~~~sh
+cat >>/etc/NetworkManager/conf.d/calico.conf<<EOF
+[keyfile]
+unmanaged-devices=interface-name:cali*;interface-name:tunl*;interface-name:vxlan.calico;interface-name:vxlan-v6.calico;interface-name:wireguard.cali;interface-name:wg-v6.cali
+EOF
+
+systemctl daemon-reload
+systemctl restart NetworkManager
 ~~~
 
