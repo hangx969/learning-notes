@@ -773,7 +773,7 @@ tar zxvf /usr/local/bin/crictl -C /usr/local/bin
 chmod +x /usr/local/bin/crictl
 ~~~
 
-9. 【可选】所有节点配置crictl客户端连接的运行时位置：
+10. 【可选】所有节点配置crictl客户端连接的运行时位置：
 
 ~~~sh
 cat > /etc/crictl.yaml <<EOF
@@ -789,6 +789,15 @@ systemctl restart containerd
 # 验证配置
 containerd --version
 crictl info
+~~~
+
+11. 【可选】检查containerd插件情况
+
+~~~sh
+ctr plugin ls
+# 下面这两项都要是ok才行
+io.containerd.snapshotter.v1
+io.containerd.grpc.v1     
 ~~~
 
 ## K8s组件安装
@@ -947,7 +956,12 @@ kubeadm token create --print-join-command
 ~~~
 
 1. 在Master02和03上运行join命令加入集群（用带--control-plane的join命令）
-2. 在Worker nodes上运行join命令加入集群
+2. 在Worker nodes上运行join命令加入集群（用短的join命令）
+3. Worker Node打标签：
+
+~~~sh
+kubectl label nodes node01 node-role.kubernetes.io/work=worker
+~~~
 
 ### 创建kubeconfig
 
@@ -1486,23 +1500,66 @@ kubectl create -f comp.yaml
 
 # 集群维护
 
+## 节点关机
+
+1. 公司服务器对于关机和异常断电的容忍度还是很高的。
+2. 自己笔记本的集群：
+   1. 异常断电可能会导致etcd数据丢失，集群起不来，尽量避免。
+   2. 尽量避免挂起或者暂停。因为也可能会导致集群故障
+   3. 不用了关机就用`shutdown -h now`。关机拍快照还节省空间。
+
 ## 节点下线
 
 如果某个节点需要下线，可以使用如下步骤平滑下线：
-1.	添加污点禁止调度：
-2.	查询节点是否有重要服务，漂移重要服务至其它节点
-3.	确认是否是ingress入口，端口流量
-4.	使用drain设置为驱逐状态
-5.	再次检查节点上的其它服务，基础组件等
-6.	查看有无异常的Pod：有无Pending/非Running状态的Pod
-7.	使用delete删除节点
-8.	节点下线：
-   1.	kubeadm reset -f
-   2.	systemctl disable --now kubelet
+1. 添加污点禁止调度：
+
+   ~~~sh
+   kubectl cordon node k8s-node02
+   # 手动自己打污点也行
+   # kubectl taint node k8s-node02 offline=true:NoSchedule
+   ~~~
+
+2. 查询节点是否有重要服务，漂移重要服务至其它节点
+
+   ~~~sh
+   kubectl get po -A -owide | grep k8s-node02
+   # 假设coredns为重要服务，使用rollout重新调度该服务（如果副本多，也可以直接删除Pod，防止全部pod重建）
+   kubectl rollout restart deploy coredns -n kube-system
+   ~~~
+
+3. 确认是否是ingress入口：
+
+   1.	如果就这一个入口，先把入口漂移到其他节点
+   2.	如果很多入口，前端有个LB代理，在LB上把这个节点入口下线
+
+4. 使用drain设置为驱逐状态：
+
+   ~~~sh
+   kubectl drain k8s-node02 --ignore-daemonsets --delete-emptydir-data
+   ~~~
+
+5. 再次检查节点上的其它服务，基础组件等
+
+6. 查看有无异常的Pod：有无Pending/非Running状态的Pod
+
+7. 使用delete删除节点：
+
+   ~~~sh
+   kubectl delete node k8s-node02
+   ~~~
+
+8. 节点下线：
+
+   ~~~sh
+   kubeadm reset -f
+   systemctl disable --now kubelet
+   ~~~
 
 ## 添加节点
 
-## 集群升级
+1. 一个全新的节点，按照上面的安装步骤，完成基础配置、内核优化、Runtime安装、K8s组件安装
+2. Master节点上运行：`kubeadm token create --print-join-command` 打印加入节点命令
+3. 新节点上join集群，打上标签`kubectl label nodes node01 node-role.kubernetes.io/work=worker`
 
 # 制作k8s安装需要的离线yum源
 

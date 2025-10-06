@@ -229,6 +229,41 @@ yum list --showduplicates kubeadm --disableexcludes=kubernetes
 
 # k8s minor版本升级-1.30-1.31
 
+## 升级前检查
+
+节点需要先下线，可以使用如下步骤平滑下线：
+
+1. 添加污点禁止调度：
+
+   ~~~sh
+   kubectl cordon node k8s-node02
+   # 手动自己打污点也行
+   # kubectl taint node k8s-node02 offline=true:NoSchedule
+   ~~~
+
+2. 查询节点是否有重要服务，漂移重要服务至其它节点
+
+   ~~~sh
+   kubectl get po -A -owide | grep k8s-node02
+   # 假设coredns为重要服务，使用rollout重新调度该服务（如果副本多，也可以直接删除Pod，防止全部pod重建）
+   kubectl rollout restart deploy coredns -n kube-system
+   ~~~
+
+3. 确认是否是ingress入口：
+
+   1.	如果就这一个入口，先把入口漂移到其他节点
+   2.	如果很多入口，前端有个LB代理，在LB上把这个节点入口下线
+
+4. 使用drain设置为驱逐状态：
+
+   ~~~sh
+   kubectl drain k8s-node02 --ignore-daemonsets --delete-emptydir-data
+   ~~~
+
+5. 再次检查节点上的其它服务，基础组件等
+
+6. 查看有无异常的Pod：有无Pending/非Running状态的Pod
+
 ## 控制节点
 
 1. 封锁排空控制节点
