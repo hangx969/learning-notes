@@ -17,6 +17,16 @@ kubectl drain master1  --delete-emptydir-data  --force --ignore-daemonsets
 #--ignore-daemonsets：如果有mount local volume的pod，会强制驱逐pod
 ~~~
 
+注意：生产环境建议不用cordon命令，可以自己手动打污点：
+
+~~~sh
+# 手动自己打污点
+kubectl taint node k8s-node02 offline=true:NoSchedule
+# 去掉污点
+# 手动自己打污点
+kubectl taint node k8s-node02 offline=true:NoSchedule-
+~~~
+
 ## 停止并卸载docker
 
 ~~~sh
@@ -109,6 +119,16 @@ kubectl cordon master1
 kubectl drain master1 --delete-emptydir-data --force --ignore-daemonsets
 ~~~
 
+注意：生产环境建议不用cordon命令，可以自己手动打污点：
+
+~~~sh
+# 手动自己打污点
+kubectl taint node k8s-node02 offline=true:NoSchedule
+# 去掉污点
+# 手动自己打污点
+kubectl taint node k8s-node02 offline=true:NoSchedule-
+~~~
+
 ## 升级控制节点
 
 - 升级kubeadm
@@ -170,6 +190,16 @@ yum list --showduplicates kubeadm --disableexcludes=kubernetes
    kubectl drain rm1 --delete-emptydir-data --force --ignore-daemonsets
    ~~~
 
+   注意：生产环境建议不用cordon命令，可以自己手动打污点：
+
+   ~~~sh
+   # 手动自己打污点
+   kubectl taint node k8s-node02 offline=true:NoSchedule
+   # 去掉污点
+   # 手动自己打污点
+   kubectl taint node k8s-node02 offline=true:NoSchedule-
+   ~~~
+
 2. 升级kubeadm
 
    ~~~sh
@@ -186,7 +216,7 @@ yum list --showduplicates kubeadm --disableexcludes=kubernetes
    # 重启kubelet之后，node才会显示新版本
    kubectl get nodes
    ~~~
-   
+
 4. 恢复节点
 
    ~~~sh
@@ -271,6 +301,16 @@ yum list --showduplicates kubeadm --disableexcludes=kubernetes
    ~~~sh
    kubectl cordon rm1
    kubectl drain rm1 --delete-emptydir-data --force --ignore-daemonsets
+   ~~~
+
+   注意：生产环境建议不用cordon命令，可以自己手动打污点：
+
+   ~~~sh
+   # 手动自己打污点
+   kubectl taint node k8s-node02 offline=true:NoSchedule
+   # 去掉污点
+   # 手动自己打污点
+   kubectl taint node k8s-node02 offline=true:NoSchedule-
    ~~~
 
 2. 升级kubeadm

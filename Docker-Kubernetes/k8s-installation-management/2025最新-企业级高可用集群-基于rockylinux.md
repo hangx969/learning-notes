@@ -1514,9 +1514,10 @@ kubectl create -f comp.yaml
 1. 添加污点禁止调度：
 
    ~~~sh
+   # 手动自己打污点
+   kubectl taint node k8s-node02 offline=true:NoSchedule
+   # cordon也可以实现，但是生产环境不建议用
    kubectl cordon node k8s-node02
-   # 手动自己打污点也行
-   # kubectl taint node k8s-node02 offline=true:NoSchedule
    ~~~
 
 2. 查询节点是否有重要服务，漂移重要服务至其它节点
