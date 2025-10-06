@@ -1516,7 +1516,7 @@ kubectl create -f comp.yaml
    ~~~sh
    # 手动自己打污点
    kubectl taint node k8s-node02 offline=true:NoSchedule
-   # cordon也可以实现，但是生产环境不建议用
+   # cordon也可以实现
    kubectl cordon node k8s-node02
    ~~~
 
@@ -1528,7 +1528,7 @@ kubectl create -f comp.yaml
    kubectl rollout restart deploy coredns -n kube-system
    ~~~
 
-3. 确认是否是ingress入口：
+3. 确认是否是ingress入口：(ingress-controller或者istio gateway)
 
    1.	如果就这一个入口，先把入口漂移到其他节点
    2.	如果很多入口，前端有个LB代理，在LB上把这个节点入口下线
