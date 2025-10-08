@@ -398,8 +398,7 @@ Istio自带istioctl工具，用来操作istio。
 wget https://github.com/istio/istio/releases/download/1.27.0/istio-1.27.0-linux-amd64.tar.gz 
 #解压后，将Istio的客户端工具istioctl，移动到/usr/local/bin 目录下： 
 tar xf istio-1.27.0-linux-amd64.tar.gz 
-cd istio-1.27.0 
-mv bin/istioctl /usr/local/bin/ 
+cd istio-1.27.0 && mv bin/istioctl /usr/local/bin/ 
 istioctl version 
 ~~~
 
@@ -414,6 +413,8 @@ kubectl create ns istio-system
 ~~~
 
 ### 声明istioOperator配置
+
+创建istio-operator.yaml：
 
 ~~~yaml
 apiVersion: install.istio.io/v1alpha1 
