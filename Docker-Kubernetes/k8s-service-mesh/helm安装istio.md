@@ -106,3 +106,4 @@ _internal_defaults_do_not_set:
 helm upgrade -i gateway -n istio-system . -f values.yaml -f values.dev.yaml
 ~~~
 
+注：istio的其他addons比如jaeger、kiali、prometheus、grafana等，暂时没找到helm chart里面自带的安装方式。还是用istioctl安装更加方便和全面。
