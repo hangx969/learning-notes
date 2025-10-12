@@ -153,14 +153,14 @@ Istio从逻辑上分为数据平面和控制平面：
 
 | 对比项   | 对比维度     | Sidecar                              | Ambient                                                      |
 | -------- | ------------ | ------------------------------------ | ------------------------------------------------------------ |
-| 核心架构 | 代理部署方式 | 每个pod注入一个Envoy Sidecar容器     | 分层部署：<br />L4：每个节点部署一个Ztunnel代理<br />L7：每个ns不是一个或多个Waypoint代理 |
+| 核心架构 | 代理部署方式 | 每个pod注入一个Envoy Sidecar容器     | 分层部署：<br />L4：每个节点部署一个Ztunnel代理<br />L7：每个ns部署一个或多个Waypoint代理 |
 |          | 流量管理     | 通过iptables/IPVS规则劫持pod进出流量 | 四层由Ztunnel处理，七层由Waypoint处理                        |
 |          | 覆盖范围     | 所有注入Sidecar的pod                 | 默认纳入所有pod，无需添加annotation（灵活性较差）            |
 |          | 故障可用性   | 只影响某个故障的pod                  | 影响当前节点或当前空间的所有服务（影响较大）                 |
 | 资源开销 | 代理数量     | 每个pod一个Envoy                     | Ztunnel：每个节点一个代理<br />Wayponit：通常一个ns一个或多个 |
 |          | 内存/CPU消耗 | 较高（也要看开启了多少sidecar）      | 较低（也要看实际使用量）                                     |
 |          | 启动延迟     | pod启动时需要等待Sidecar就绪         | Pod启动无需等待代理，延迟更低                                |
-| 性能对比 | 调用延迟     | 每个请求经过两此Envoy代理            | 四层经过Ztunnel，七层经过Waypoint。（跨ns、跨节点时，经过多跳Ztunnel和Waypoint，延迟可能更多） |
+| 性能对比 | 调用延迟     | 每个请求经过两次Envoy代理            | 四层经过Ztunnel，七层经过Waypoint。（跨ns、跨节点时，经过多跳Ztunnel和Waypoint，延迟可能更多） |
 
 Sidecar模式官方也是推荐在生产环境中使用，非常成熟稳定，而且服务网格大部分功能都支持。
 
