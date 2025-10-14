@@ -220,7 +220,7 @@ Pilot主要用于监听API Server，动态获取集群中的svc和endpoint信息
 
 ## DestinationRule
 
-目标规则，将服务划分为副歌版本（子集），同时可以对不同版本进行配置负载均衡和连接池等策略。
+目标规则，将服务划分为多个版本（子集），同时可以对不同版本进行配置负载均衡和连接池等策略。
 
 使用场景：
 
@@ -840,12 +840,12 @@ spec:
     - uri: 
         exact: /login 
     - uri: 
-        exact: /logout 
+        exact: /logout
     - uri: 
         prefix: /api/v1/products 
     route: 
     - destination: 
-        host: pproductpage.bookinfo.svc.cluster.local 
+        host: productpage.bookinfo.svc.cluster.local 
         port: 
           number: 9080 
 ~~~
@@ -858,7 +858,7 @@ kubectl apply -f bookinfo-gateway.yaml -f bookinfo-vs.yaml -n bookinfo
 
 ### 发布域名
 
-接下来将域名bookinfo.kubeasy.com解析至集群任意一个安装了kube-proxy的节点IP上，然后通过ingressgateway的Service的NodePort即可访问到Bookinfo：
+接下来，在宿主机上将域名bookinfo.kubeasy.com解析至集群任意一个安装了kube-proxy的节点IP上。通过ingressgateway的Service的NodePort即可访问到Bookinfo：
 
 ~~~sh
 kubectl get svc -n istio-system istio-ingressgateway
@@ -987,7 +987,9 @@ kubectl apply -f bookinfo-vs.yaml -n bookinfo
 
 ### 创建DR划分子集
 
-在bookinfo项目中，有三个版本的reviews服务（pod打好了标签version=v1、v2、v3）。首先通过DestinationRule将reviews分成三个版本：
+在bookinfo项目中，有三个版本的reviews服务（svc只有一个，pod有三个版本的共存；每组的pod都打好了标签version=v1、v2、v3）。
+
+首先通过DestinationRule将reviews分成三个版本：
 
 ~~~yaml
 apiVersion: networking.istio.io/v1 
