@@ -241,7 +241,7 @@ setenforce 0
 sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config
 sed -i 's#SELINUX=enforcing#SELINUX=disabled#g' /etc/sysconfig/selinux
 
-systemctl enbable --now rsyslog
+systemctl enable --now rsyslog
 
 swapoff -a && sysctl -w vm.swappiness=0
 sed -ri '/^[^#]*swap/s@^@#@' /etc/fstab
@@ -279,6 +279,7 @@ tee -a /etc/security/limits.conf <<'EOF'
 * hard nproc 655350
 * soft memlock unlimited
 * hard memlock unlimited
+EOF
 ~~~
 
 m01免密登录其他节点（安装过程中的各种配置文件均在m01上操作），集群管理也在m01上操作
@@ -299,11 +300,11 @@ yum install -y ipvsadm ipset sysstat conntrack libsecomp -y
 所有节点配置ipvs模块：
 
 ~~~sh
-modprobe -- ip vs
-modprobe -- ip vs rr
-modprobe -- ip vs wrr
-modprobe -- ip vs sh
-modprobe -- nf conntrack
+modprobe -- ip_vs
+modprobe -- ip_vs_rr
+modprobe -- ip_vs_wrr
+modprobe -- ip_vs_sh
+modprobe -- nf_conntrack
 ~~~
 
 所有节点创建/etc/modules-load.d/ipvs.conf，并配置开机自动加载：
