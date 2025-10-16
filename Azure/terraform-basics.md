@@ -297,6 +297,36 @@ module "StorageAccount" {
 
 - 在generated_resources.tf中即可看到资源定义
 
+# Terraform源参数
+
+Terraform 为所有资源类型提供了一组通用的元参数,包括:
+
+- count - 控制资源实例的数量
+- for_each - 基于集合创建多个实例
+- depends_on - 显式声明依赖关系
+- provider - 指定使用的 provider
+- lifecycle - 控制资源生命周期行为
+
+示例：`count` 的工作原理，条件创建逻辑:
+
+- **当 `count = 1`** (vpc_cen_grant 不为 null)
+  - 创建 **1个** 资源实例
+  - 资源引用: `alicloud_cen_transit_router_grant_attachment.vpc_cen_grant[0]`
+- **当 `count = 0`** (vpc_cen_grant 为 null)
+  - 创建 **0个** 资源实例
+  - 相当于此资源**不存在**,Terraform 跳过此资源
+
+~~~sh
+resource "alicloud_cen_transit_router_grant_attachment" "vpc_cen_grant" {
+  count = var.vpc.vpc_cen_grant != null ? 1 : 0
+  # ... 其他属性
+}
+~~~
+
+count 是 Terraform 核心功能,与具体的云资源类型无关。任何 Terraform 资源(AWS、Azure、阿里云等)都可以使用 count 来控制创建数量, 包括 0 个(即不创建)。
+
+
+
 # terraform questions
 
 Basic：
