@@ -294,7 +294,7 @@ for i in m01 m02 m03 n01 n02 n03;do ssh-copy-id -i .ssh/id_rsa.pub $i;done
 所有节点安装ipvsadm：
 
 ~~~sh
-yum install -y ipvsadm ipset sysstat conntrack libsecomp -y
+yum install -y ipvsadm ipset sysstat conntrack libseccomp -y
 ~~~
 
 所有节点配置ipvs模块：
