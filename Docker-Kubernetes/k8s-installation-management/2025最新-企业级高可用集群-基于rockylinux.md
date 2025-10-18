@@ -939,11 +939,11 @@ kind: KubeletConfiguration
 cgroupDriver: systemd
 ~~~
 
-2. 更新kubeadm文件：
+2. 更新kubeadm文件，把旧版本格式的 kubeadm 配置文件转换成当前版本接受的格式
 
 ~~~sh
 kubeadm config migrate --old-config kubeadm-config.yaml --new-config kubeadm-config-new.yaml
-# 进入kubeadm-config-new.yaml文件，修改一个字段：
+# 格式转换完，这个字段会被改。进入kubeadm-config-new.yaml文件，修改这个字段：
 timeouts:
   controlPlaneComponentHealthCheck: 4m0s
 ~~~
