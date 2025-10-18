@@ -963,7 +963,10 @@ kubeadm config images pull --config /root/kubeadm-config-new.yaml
 5. 在Master01节点初始化集群，初始化以后会在/etc/kubernetes目录下生成对应的证书和配置文件，之后其他Master节点加入Master01即可：==初始化操作仅在master01节点执行，其它任何节点勿操作==
 
 ~~~sh
+# 高可用master节点初始化
 kubeadm init --config /root/kubeadm-config-new.yaml --upload-certs --ignore-preflight-errors=SystemVerification
+# 单master节点初始化
+kubeadm init --config /root/kubeadm-config-new.yaml --ignore-preflight-errors=SystemVerification
 ~~~
 
 6. 初始化成功以后，控制台输出里面，会产生两个join命令，一个是给control plane用，一个是给data node用：
