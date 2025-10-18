@@ -801,7 +801,7 @@ tar zxvf /usr/local/bin/crictl -C /usr/local/bin
 chmod +x /usr/local/bin/crictl
 ~~~
 
-10. 【可选】所有节点配置crictl客户端连接的运行时位置：
+10. 所有节点配置crictl客户端连接的运行时位置：
 
 ~~~sh
 cat > /etc/crictl.yaml <<EOF
@@ -819,13 +819,13 @@ containerd --version
 crictl info
 ~~~
 
-11. 【可选】检查containerd插件情况
+11. 检查containerd插件情况
 
 ~~~sh
 ctr plugin ls
 # 下面这两项都要是ok才行
-io.containerd.snapshotter.v1
-io.containerd.grpc.v1     
+io.containerd.snapshotter.v1          overlayfs                linux/amd64    ok
+io.containerd.grpc.v1                 cri                      linux/amd64    ok            
 ~~~
 
 ## K8s组件安装
