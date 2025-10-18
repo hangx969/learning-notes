@@ -990,11 +990,6 @@ kubeadm token create --print-join-command
 
 1. 在Master02和03上运行join命令加入集群（用带--control-plane的join命令，后面加上--ignore-preflight-errors=SystemVerification）
 2. 在Worker nodes上运行join命令加入集群（用短的join命令，后面加上--ignore-preflight-errors=SystemVerification）
-3. Worker Node打标签：
-
-~~~sh
-kubectl label nodes node01 node-role.kubernetes.io/work=worker
-~~~
 
 ### 创建kubeconfig
 
@@ -1025,6 +1020,12 @@ EOF
 
 # 使命令生效
 source ~/.bashrc
+~~~
+
+### Worker node打标签
+
+~~~sh
+kubectl label nodes node01 node-role.kubernetes.io/work=worker
 ~~~
 
 ### 问题排查
