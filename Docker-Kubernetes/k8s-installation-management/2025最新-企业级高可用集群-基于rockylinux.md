@@ -224,6 +224,33 @@ dnf makecache
 yum makecache
 ~~~
 
+安装epel源并替换为清华epel源：
+
+~~~sh
+dnf install yum-utils
+dnf install https://mirrors.tuna.tsinghua.edu.cn/epel/epel-release-latest-9.noarch.rpm
+dnf install https://mirrors.tuna.tsinghua.edu.cn/epel/epel-next-release-latest-9.noarch.rpm
+~~~
+
+~~~sh
+sed -e 's|^metalink=|#metalink=|g' \
+    -e 's|^#baseurl=|baseurl=|g' \
+    -e 's|https\?://download\.fedoraproject\.org/pub/epel|https://mirrors.tuna.tsinghua.edu.cn/epel|g' \
+    -e 's|https\?://download\.example/pub/epel|https://mirrors.tuna.tsinghua.edu.cn/epel|g' \
+    -i.bak /etc/yum.repos.d/epel{,-testing}.repo
+ 
+# 禁用 epel-cisco-openh264.repo
+sed -i "s/enabled=1/enabled=0/g" /etc/yum.repos.d/epel-cisco-openh264.repo
+ 
+# 清除并重建缓存
+dnf clean all
+dnf makecache
+~~~
+
+> 注：由于无法同步，所有 EPEL 镜像站都不包含 EPEL Cisco OpenH264 仓库（epel-cisco-openh264.repo），如果不需要可手动将其改为 enabled=0。
+>
+> 参考文档：https://www.rockylinux.cn/notes/zai-rocky-linux-9-shang-qi-yong-epel-he-remi-cang-ku.html
+
 所有节点安装基本软件包：
 
 ~~~sh

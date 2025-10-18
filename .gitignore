@@ -13,3 +13,4 @@ Python/python-manuscripts/**/__pycache__
 Python/python-manuscripts/**/*.pyc
 Python/python-manuscripts/**/*.env
 Python/python-manuscripts/**/venv
+.obsidian/*
