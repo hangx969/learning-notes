@@ -872,8 +872,11 @@ systemctl enable --now kubelet
 vim kubeadm-config.yaml
 ~~~
 
+高可用Master节点配置：(v1beta4参数说明：https://kubernetes.io/docs/reference/config-api/kubeadm-config.v1beta4/)
+
 ~~~yaml
 apiVersion: kubeadm.k8s.io/v1beta4
+kind: InitConfiguration
 bootstrapTokens:
 - groups:
   - system:bootstrappers:kubeadm:default-node-token
@@ -882,7 +885,6 @@ bootstrapTokens:
   usages:
   - signing
   - authentication
-kind: InitConfiguration
 localAPIEndpoint:
   advertiseAddress: 192.168.181.130 # master01地址
   bindPort: 6443
