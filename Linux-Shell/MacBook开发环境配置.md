@@ -166,12 +166,3 @@ source <(kubectl completion zsh)
 ~~~
 
 1. 测试`k v`看能不能补全和运行
-
-## Test Outliner
-
-- 111
-- 222
-- 333
-	- 444
-- 555
-- 777
