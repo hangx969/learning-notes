@@ -166,3 +166,14 @@ source <(kubectl completion zsh)
 ~~~
 
 1. 测试`k v`看能不能补全和运行
+
+# 安装Obsidian
+官网下载安装包安装即可。
+## 插件
+1. Editing Toolbar
+2. Outliner
+3. Git
+
+## 主题
+- Baseline
+- Blue Topaz
