@@ -1078,7 +1078,7 @@ kubectl apply -f calico.yaml
 
 ~~~sh
 #测试网络访问
-kubectl run busybox --image busybox:1.28  --image-pull-policy=IfNotPresent --restart=Never --rm -it busybox -- sh
+kubectl run busybox --image busybox:1.28  --image-pull-policy=IfNotPresent --restart=Never --rm -it -- sh
 ping www.baidu.com
 nslookup kubernetes.default.svc.cluster.local
 ~~~
