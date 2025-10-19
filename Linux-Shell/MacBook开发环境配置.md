@@ -173,6 +173,7 @@ source <(kubectl completion zsh)
 1. Editing Toolbar
 2. Outliner
 3. Git
+4. awesome image 
 
 ## 主题
 - Baseline
