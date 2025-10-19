@@ -1081,6 +1081,11 @@ kubectl apply -f calico.yaml
 kubectl run busybox --image busybox:1.28  --image-pull-policy=IfNotPresent --restart=Never --rm -it -- sh
 ping www.baidu.com
 nslookup kubernetes.default.svc.cluster.local
+
+# 注：如果是在Mac上运行的虚拟机，uname -m 看到是aarch64架构，busybox:1.28 arm64的镜像可能无法运行起来。换用alpine:latest就行：
+kubectl run alpine --image alpine  --image-pull-policy=IfNotPresent --restart=Never --rm -it -- sh
+ping www.baidu.com
+nslookup kubernetes.default.svc.cluster.local
 ~~~
 
 ## 配置优化
@@ -1501,7 +1506,7 @@ kubectl create -f comp.yaml
 4. 能够正常创建资源: 
 
    ~~~sh
-   kubectl create deploy cluster test image=registry.cn-beijing.aliyuncs.com/dotbalo/debug-tools sleep 3600
+   kubectl create deploy cluster-test --image=registry.cn-beijing.aliyuncs.com/dotbalo/debug-tools -- sleep 3600
    ~~~
 
 5. Pod必须能够解析Service（同namespace和跨namespace）
