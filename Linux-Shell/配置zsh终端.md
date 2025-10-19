@@ -1,6 +1,6 @@
 # zsh
 
-- 上面提到了Zsh，它是Linux命令解释器的一种，CentOS默认的命令解释器是Bash，常用的还有sh、csh和tcsh。对比默认的Bash，Zsh的功能更强大，拥有大量插件，可以实现更强大的命令补全，命令高亮等功能。
+- 是Linux命令解释器的一种，CentOS默认的命令解释器是Bash，常用的还有sh、csh和tcsh。对比默认的Bash，Zsh的功能更强大，拥有大量插件，可以实现更强大的命令补全，命令高亮等功能。
 
 # ohmyzsh
 
