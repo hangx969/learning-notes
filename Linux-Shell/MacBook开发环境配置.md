@@ -178,3 +178,7 @@ source <(kubectl completion zsh)
 ## 主题
 - Baseline
 - Blue Topaz
+
+## 不同Vault配置
+每个vault下面会有一个.obsidian目录，保存了所有主题、插件等设置。
+更换其他vault打开之后，由于换了新的.obsidian配置目录，所以原先的配置并不存在。此时将一个配置好的vault的.obsidian目录里面的所有内容复制到新vault即可。
