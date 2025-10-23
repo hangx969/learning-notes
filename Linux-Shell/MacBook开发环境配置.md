@@ -116,6 +116,19 @@ echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zshrc
 source ~/.zshrc
 ~~~
 
+## homebrew换源
+中国内地用户可能由于网络问题无法安装，可尝试修改Homebrew安装源以解决此问题。以使用中科大开源镜像站为例：
+
+**设置Hombrew安装源为科大源**
+Homebrew支持通过修改环境变量设置安装源，首次安装Homebrew时也可以通过此方式加速下载过程。
+```bash
+export HOMEBREW_INSTALL_FROM_API=1
+export HOMEBREW_BREW_GIT_REMOTE="https://mirrors.ustc.edu.cn/brew.git"
+export HOMEBREW_CORE_GIT_REMOTE="https://mirrors.ustc.edu.cn/homebrew-core.git"
+export HOMEBREW_BOTTLE_DOMAIN="https://mirrors.ustc.edu.cn/homebrew-bottles"
+export HOMEBREW_API_DOMAIN="https://mirrors.ustc.edu.cn/homebrew-bottles/api"
+brew update
+```
 # 安装git
 
 用homebrew安装：
