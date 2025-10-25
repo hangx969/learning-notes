@@ -14,3 +14,4 @@ Python/python-manuscripts/**/*.pyc
 Python/python-manuscripts/**/*.env
 Python/python-manuscripts/**/venv
 .obsidian/*
+.DS_Store
