@@ -1305,7 +1305,7 @@ tagFilter: '*', type: 'PT_BRANCH')
 
 ## 创建Dockerfile
 
-创建到代码仓库根目录。Golang编译后生成一个二进制文件，可以直接执行，所以基础镜像用一个alpine或者其他小镜像即可。
+创建到代码仓库根目录。pipeline agent拉完代码，执行go build编译后，在代码目录会生成一个二进制文件。拷贝到一个linux环境就可以直接执行，所以基础镜像用一个alpine或者其他小镜像即可。
 
 ~~~sh
 FROM registry.cn-beijing.aliyuncs.com/dotbalo/alpine-glibc:alpine-3.9 
