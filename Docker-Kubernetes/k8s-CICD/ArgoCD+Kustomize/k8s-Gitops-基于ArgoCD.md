@@ -532,7 +532,136 @@ Argo CD 中的项目（Project）可以用来对 Application 进行分组，不�
 
 比如我们这里创建一个名为 `demo` 的项目，将该应用创建到该项目下，只需创建一个如下所示的 `AppProject` 对象即可：
 
+~~~yaml
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: demo
+  namespace: argocd
+  annotations:
+    # 同步波次：控制 ArgoCD 同步顺序，数字越小越先执行
+    # "1" 表示此项目会在第一波被创建，确保项目在应用之前就绪
+    argocd.argoproj.io/sync-wave: "1"
 
+  # 终结器（Finalizer）：防止项目被意外删除
+  # 确保在删除项目之前，所有引用此项目的应用都已被删除
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+
+spec:
+  description: Demo project for learning ArgoCD features.
+  # 说明：定义允许从哪些仓库部署应用清单（manifests），只有列在这里的仓库才能作为 ArgoCD 应用的源
+  sourceRepos:
+    # 允许从此 Git 仓库拉取应用配置
+    - https://gitee.com/cnych/argocd-example-apps
+    # 也可以使用通配符允许所有仓库（生产环境不推荐）
+    # - '*'
+
+  # 说明：定义应用可以部署到哪些集群和命名空间
+  # 目标集群可以通过 'server'（API Server URL）或 'name'（集群名称）来识别
+  destinations:
+    # 允许部署到任意命名空间（'*' 表示通配符）
+    - namespace: "*"
+      # 允许部署到当前集群（ArgoCD 所在的集群）
+      server: https://kubernetes.default.svc
+    # 也可以使用集群名称代替 server
+    # - namespace: "*"
+    #   name: in-cluster
+
+  # 说明：定义允许创建哪些集群级别的资源（非命名空间资源）
+  # 默认情况下会拒绝所有集群范围资源，除非在此列出
+  # 集群资源包括：Namespace、ClusterRole、ClusterRoleBinding、CRD 等
+  clusterResourceWhitelist:
+    - group: '*'  # 允许所有 API 组的资源
+      kind: '*'   # 允许所有资源类型
+  # 生产环境建议明确指定允许的资源类型，例如：
+  # - group: ''
+  #   kind: Namespace
+  # - group: 'rbac.authorization.k8s.io'
+  #   kind: ClusterRole
+
+  # ============================================================
+  # 命名空间范围资源白名单（可选）
+  # ============================================================
+  # 说明：定义允许在命名空间中创建哪些资源
+  # 如果不设置此字段，默认允许所有命名空间资源
+  # namespaceResourceWhitelist:
+  #   - group: '*'
+  #     kind: '*'
+
+  # ============================================================
+  # 资源黑名单（可选）
+  # ============================================================
+  # 说明：明确禁止创建的资源类型，优先级高于白名单
+  # namespaceResourceBlacklist:
+  #   - group: ''
+  #     kind: ResourceQuota
+  # clusterResourceBlacklist:
+  #   - group: ''
+  #     kind: Namespace
+
+  # ============================================================
+  # 孤立资源监控
+  # ============================================================
+  # 说明：启用对命名空间中孤立资源的监控
+  # 孤立资源是指存在于集群中但不在 Git 仓库中定义的资源
+  # 这有助于发现手动创建或遗留的资源
+  orphanedResources:
+    warn: true  # 启用警告模式：发现孤立资源时会显示警告，但不会自动删除
+    # ignore: []  # 可选：忽略某些孤立资源，不显示警告
+
+  # ============================================================
+  # 项目范围集群限制
+  # ============================================================
+  # 说明：控制应用是否只能部署到此项目范围内的集群
+  # false：允许应用部署到 destinations 字段指定的任何集群
+  # true：限制应用只能部署到显式绑定到此项目的集群（更严格的安全控制）
+  permitOnlyProjectScopedClusters: false
+
+  # ============================================================
+  # 角色和权限（可选）
+  # ============================================================
+  # 说明：定义项目级别的 RBAC 权限，控制谁可以访问此项目
+  # roles:
+  #   # 定义一个只读角色
+  #   - name: read-only
+  #     description: Read-only privileges to the demo project
+  #     policies:
+  #       - p, proj:demo:read-only, applications, get, demo/*, allow
+  #     groups:
+  #       - demo-viewers
+  #   # 定义一个管理员角色
+  #   - name: admin
+  #     description: Admin privileges to the demo project
+  #     policies:
+  #       - p, proj:demo:admin, applications, *, demo/*, allow
+  #     groups:
+  #       - demo-admins
+
+  # ============================================================
+  # 同步窗口（可选）
+  # ============================================================
+  # 说明：定义允许或禁止同步的时间窗口，用于变更管理
+  # syncWindows:
+  #   # 定义一个允许同步的时间窗口
+  #   - kind: allow
+  #     schedule: '0 9 * * 1-5'  # Cron 表达式：工作日早上9点
+  #     duration: 8h             # 持续8小时
+  #     applications:
+  #       - '*'                  # 应用于所有应用
+  #     manualSync: true         # 允许手动同步
+  #   # 定义一个禁止同步的时间窗口（例如：生产环境变更冻结期）
+  #   - kind: deny
+  #     schedule: '0 0 * * 0,6'  # Cron 表达式：周末
+  #     duration: 24h
+  #     applications:
+  #       - '*'
+~~~
+
+更多配置信息可以前往文档 https://argo-cd.readthedocs.io/en/stable/operator-manual/declarative-setup/ 查看.
+
+## 创建Application
+项目创建完成后，在该项目下创建一个 Application，代表环境中部署的应用程序实例。
 
 # 基于gitee仓库部署yaml
 
