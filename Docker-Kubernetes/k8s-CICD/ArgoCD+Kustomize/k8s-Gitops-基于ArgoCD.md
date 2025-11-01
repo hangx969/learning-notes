@@ -374,6 +374,9 @@ argocd app sync argocd/guestbook
 - 方法2: 直接点击 UI 界面上应用的 `Sync` 按钮也可开始同步
 
 ### 自动同步
+
+设置sync policy参数就是自动同步
+
 ~~~yaml
 apiVersion: argoproj.io/v1alpha1
 kind: Application
@@ -662,6 +665,35 @@ spec:
 
 ## 创建Application
 项目创建完成后，在该项目下创建一个 Application，代表环境中部署的应用程序实例。
+
+~~~yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: gitops-demo
+  namespace: argocd
+spec:
+  destination:
+    namespace: default
+    server: "https://kubernetes.default.svc"
+  project: demo
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+  source:
+    path: helm-guestbook # 从 Helm 存储库创建应用程序时，chart 必须指定 path
+    repoURL: "https://github.com/argoproj/argocd-example-apps"
+    targetRevision: HEAD
+    helm:
+      parameters:
+        - name: replicaCount
+          value: "2"
+      valueFiles:
+        - values.yaml
+~~~
+
+
 
 # 基于gitee仓库部署yaml
 
