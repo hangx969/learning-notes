@@ -99,6 +99,13 @@ helm pull argo/argo-cd --version 8.3.0
 
 ~~~
 
+安装：
+~~~sh
+cd argo-cd
+helm install argocd . -n argocd --create-namespace --set server.service.type=NodePort
+~~~
+
+
 # 基本使用
 
 ## 基于gitee仓库部署yaml
