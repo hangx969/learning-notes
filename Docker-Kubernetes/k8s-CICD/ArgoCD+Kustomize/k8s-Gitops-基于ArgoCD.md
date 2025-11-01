@@ -107,6 +107,44 @@ helm install argocd . -n argocd --create-namespace --set server.service.type=Nod
 
 
 # 基本使用
+## 安装argocd cli【可选】
+```sh
+curl -sSL -o argocd-linux-amd64 https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
+```
+常用命令：
+~~~sh
+# 登录命令
+領菘项argocd login localhost:8080#假设通过 8080 端口转发
+#创建新的 Argo CD 应用8
+argocd app create myapp --repo https://your-git-repo.com/repo.git --pa拗4
+#列出所有已管理的应用筈5
+argocd app list6
+#获取指定应用的详细信息
+argocd app get <app-name>S
+#手动同步应用，使其与 Git 中定义的状态一致9
+argocd app sync <app-name>
+#删除一个 ArgoCD 应用
+argocd app delete <app-name>
+#列出Argo CD 当前管理的所有 Kubernetes 集群
+argocd cluster list14
+#将 kubeconfig 中的集群上下文添加到 Argo CD 进行管理15
+argocd cluster add <context-name>
+#更新当前登录用户的密码17
+argocd account update-password
+#显示 Argo CD 客户端和服务器的版本信息19
+argocd version
+#查看所有命令的帮助信息
+argocd help
+#生成 Bash 自动补全脚本
+argocd completion bash
+~~~
+
+## 访问web-UI
+获取初始密码：
+```sh
+kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
+```
+
 
 ## 基于gitee仓库部署yaml
 
