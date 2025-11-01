@@ -62,10 +62,14 @@ Argo CD 的核心思想是将 Git 仓库作为应用部署和基础设施配置�
 ## 安装
 ~~~sh
 kubectl create namespace argocd
-kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
-
+kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/v3.1.9/manifests/install.yaml
 ~~~
+> 如果你对 UI、SSO、多集群管理这些特性不感兴趣，只想把应用变更同步到集群中，那么可以直接安装核心组件即可：
+>
+> `kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/v3.1.9/manifests/core-install.yaml`
+
 ## 访问UI
+
 ### 方法1: NodePort
 用NodePort svc访问UI界面：
 
@@ -85,6 +89,10 @@ kubectl get secret argocd-initial-admin-secret -n argocd -o jsonpath="{.data.pas
 
 # 安装ArgoCD-HA
 高可用安装参考： https://argocd.devops.gold/operator-manual/installation/#_4
+~~~sh
+kubectl create namespace argocd
+kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/v3.1.9/manifests/ha/install.yaml
+~~~
 
 # 安装ArgoCD-基于helm chart
 
@@ -177,11 +185,110 @@ kubectl get secret argocd-initial-admin-secret -n argocd -o jsonpath="{.data.pas
 - 默认用户名admin，密码获取：
 ~~~sh
 kubectl get secret argocd-initial-admin-secret -n argocd -o jsonpath="{.data.password}" | base64 -d
-~~~  
+~~~
+
+# argocd ingress说明
+Argo CD 会运行一个 gRPC 服务（由 CLI 使用）和 HTTP/HTTPS 服务（由 UI 使用），这两种协议都由 `argocd-server` 服务在以下端口进行暴露：
+- 443 - gRPC/HTTPS
+- 80 - HTTP（重定向到 HTTPS）
+
+我们可以通过配置 Ingress 的方式来对外暴露服务，其他 Ingress 控制器的配置可以参考官方文档 https://argo-cd.readthedocs.io/en/stable/operator-manual/ingress/ 进行配置。
+
+Argo CD 在同一端口 (443) 上提供多个协议 (gRPC/HTTPS)，所以当我们为 argocd 服务定义单个 nginx ingress 对象和规则的时候有点麻烦，因为 `nginx.ingress.kubernetes.io/backend-protocol` 这个 annotation 只能接受一个后端协议（例如 HTTP、HTTPS、GRPC、GRPCS）。
+## 方法1: SSL PassThrough
+为了使用单个 ingress 规则和主机名来暴露 Argo CD APIServer，必须使用 `nginx.ingress.kubernetes.io/ssl-passthrough` 这个 `annotation` 来传递 TLS 连接并校验 Argo CD APIServer 上的 TLS。
+~~~yaml
+apiVersion: networking.k8s.io/v1  
+kind: Ingress  
+metadata:  
+  name: argocd-server-ingress  
+  namespace: argocd  
+  annotations:  
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"  
+    nginx.ingress.kubernetes.io/ssl-passthrough: "true"  
+spec:  
+  ingressClassName: nginx-default
+  rules:  
+    - host: argocd.hanxux.local  
+      http:  
+        paths:  
+          - path: /  
+            pathType: Prefix  
+            backend:  
+              service:  
+                name: argocd-server  
+                port:  
+                  name: https
+~~~
+
+上述规则在 Argo CD APIServer 上校验 TLS，该服务器检测到正在使用的协议，并做出适当的响应。**请注意，`nginx.ingress.kubernetes.io/ssl-passthrough` 注解要求将 `--enable-ssl-passthrough` 标志添加到 `nginx-ingress-controller` 的命令行参数中。**
+
+## 方法2: 多个ingress
+由于 `ingress-nginx` 的每个 Ingress 对象仅支持一个协议，因此另一种方法是定义两个 Ingress 对象。一个用于 HTTP/HTTPS，另一个用于 gRPC。
+
+如下所示为 HTTP/HTTPS 的 Ingress 对象：
+~~~yaml
+apiVersion: networking.k8s.io/v1  
+kind: Ingress  
+metadata:  
+  name: argocd-server-http-ingress  
+  namespace: argocd  
+  annotations:  
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"  
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"  
+spec:  
+  ingressClassName: nginx  
+  rules:  
+    - http:  
+        paths:  
+          - path: /  
+            pathType: Prefix  
+            backend:  
+              service:  
+                name: argocd-server  
+                port:  
+                  name: http  
+      host: argocd.k8s.local  
+  tls:  
+    - hosts:  
+        - argocd.k8s.local  
+      secretName: argocd-secret # do not change, this is provided by Argo CD
+~~~
+
+gRPC 协议对应的 Ingress 对象如下所示:
+~~~yaml
+apiVersion: networking.k8s.io/v1  
+kind: Ingress  
+metadata:  
+  name: argocd-server-grpc-ingress  
+  namespace: argocd  
+  annotations:  
+    nginx.ingress.kubernetes.io/backend-protocol: "GRPC"  
+spec:  
+  ingressClassName: nginx  
+  rules:  
+    - http:  
+        paths:  
+          - path: /  
+            pathType: Prefix  
+            backend:  
+              service:  
+                name: argocd-server  
+                port:  
+                  name: https  
+      host: grpc.argocd.k8s.local  
+  tls:  
+    - hosts:  
+        - grpc.argocd.k8s.local  
+      secretName: argocd-secret # do not change, this is provided by Argo CD
+~~~
+
 # 基本使用
 ## 安装argocd cli【可选】
+可以在本地安装argocd cli方便管理
 ```sh
-curl -sSL -o argocd-linux-amd64 https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
+curl -sSL -o /usr/local/bin/argocd https://github.com/argoproj/argo-cd/releases/download/v3.1.9/argocd-linux-amd64
+chmod +x /usr/local/bin/argocd
 ```
 常用命令：
 ~~~sh
