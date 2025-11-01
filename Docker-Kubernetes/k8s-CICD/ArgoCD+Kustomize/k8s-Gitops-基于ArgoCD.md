@@ -55,17 +55,18 @@ Argo CD 的核心思想是将 Git 仓库作为应用部署和基础设施配置�
 10. Webhook 集成：支持 Git 仓库的 Webhook（如 GitHub, GitLab, Bitbucket），在代码推送后立即触发同步，实现更快的反馈循环。
 11. 项目组织： 通过 Projects 对应用进行逻辑分组，并应用共享的策略（如源仓库白名单、目标集群/命名空间白名单、角色权限）。
 
-# 安装ArgoCD-基于yaml
-
+# 安装ArgoCD-基于yaml-非HA
+## 文档
 参考：[快速开始 - Argo CD 中文文档 平台工程 Devops](https://argocd.devops.gold/getting_started/#1-argo-cd)
 
+## 安装
 ~~~sh
 kubectl create namespace argocd
 kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 
-# 高可用安装参考：https://argocd.devops.gold/operator-manual/installation/#_4
 ~~~
-
+## 访问UI
+### 方法1: NodePort
 用NodePort svc访问UI界面：
 
 ~~~sh
@@ -73,11 +74,17 @@ kubectl edit svc argocd-server -n argocd
 # type: ClusterIP改成type: NodePort
 ~~~
 
-查看该svc的高位端口，访问登录界面。默认用户名admin，密码获取：
+查看该svc的高位端口，访问登录界面。
 
+默认用户名admin，密码获取：
 ~~~sh
 kubectl get secret argocd-initial-admin-secret -n argocd -o jsonpath="{.data.password}" | base64 -d
 ~~~
+### 方法2: Istio
+官网提供了基于yaml安装的argocd，用istio访问UI的配置方法： https://argocd.devops.gold/operator-manual/ingress/#istio
+
+# 安装ArgoCD-HA
+高可用安装参考： https://argocd.devops.gold/operator-manual/installation/#_4
 
 # 安装ArgoCD-基于helm chart
 
@@ -85,31 +92,92 @@ kubectl get secret argocd-initial-admin-secret -n argocd -o jsonpath="{.data.pas
 >
 > 如需高可用安装，参考：[ArgoCD-HA](https://argocd.devops.gold/operator-manual/installation/#_4)
 
+## 文档
 github release：[argoproj/argo-helm: ArgoProj Helm Charts](https://github.com/argoproj/argo-helm)
 artifactHub：[argo-cd 3.9.0 · argoproj/argo](https://artifacthub.io/packages/helm/argo/argo-cd/3.9.0)
 
+## 下载
 ~~~sh
 helm repo add argo https://argoproj.github.io/argo-helm
 helm repo update argo
 helm pull argo/argo-cd --version 8.3.0
 ~~~
 
+## 配置
 修改values.yaml文件【暂无，直接装】：
 
 ~~~yaml
 
 ~~~
 
-安装：
+## 安装
 ~~~sh
 cd argo-cd
 helm upgrade -i argocd . -n argocd --create-namespace
 ~~~
 
-# 访问UI
-方法1：将argo-server这个svc改成NodePort，用节点IP+高位端口访问。
-方法2：集群安装了istio，自定义一套gateway和virtual service访问：
+## 访问UI
+argocd默认开了tls，svc的80端口会被重定向到443端口。
+### 方法1：NodePort
+- 将argo-server这个svc改成NodePort，用http://节点IP+高位端口访问。（弹证书信任，直接点信任证书就行）
+- 默认用户名admin，密码获取：
+~~~sh
+kubectl get secret argocd-initial-admin-secret -n argocd -o jsonpath="{.data.password}" | base64 -d
+~~~
 
+### 方法2：Istio
+集群安装了istio，自定义一套gateway和virtual service访问。
+- 首先需要把argocd的tls关掉：
+	- 找到cm：`kubectl edit cm -n argocd argocd-cmd-params-cm`
+	- 加一项data：`server.insecure: "true"`
+	- rollout restart deployment argocd-server
+- 创建gateway：
+  ~~~yaml
+  apiVersion: networking.istio.io/v1 
+  kind: Gateway 
+  metadata: 
+    name: argocd-gateway 
+    namespace: argocd
+  spec:
+    # The selector matches the ingress gateway pod labels.
+    # If you installed Istio using Helm following the standard documentation, this would be "istio=ingress"
+    selector: 
+      istio: gateway # 匹配的是ingressgateway pod的label 
+    servers: 
+    - port: 
+        number: 80 
+        name: http 
+        protocol: HTTP 
+      hosts: 
+      - "argocd.hanxux.local" # 发布域名
+  ~~~
+- 创建virtual service：
+  ~~~yaml
+  apiVersion: networking.istio.io/v1 
+  kind: VirtualService 
+  metadata: 
+    name: argocd-vs
+    namespace: argocd
+  spec: 
+    hosts: 
+    - "argocd.hanxux.local" 
+    gateways: 
+    - argocd-gateway 
+    http: 
+    - match:
+      - uri:
+          prefix: /
+      route: 
+      - destination: 
+          host: argocd-server.argocd.svc.cluster.local 
+          port: 
+            number: 80
+  ~~~
+- 宿主机加上hosts解析，通过 域名 + [istio ingress gateway高位端口] 访问（argocd.hanxux.local:30080）
+- 默认用户名admin，密码获取：
+~~~sh
+kubectl get secret argocd-initial-admin-secret -n argocd -o jsonpath="{.data.password}" | base64 -d
+~~~  
 # 基本使用
 ## 安装argocd cli【可选】
 ```sh
@@ -143,14 +211,12 @@ argocd help
 argocd completion bash
 ~~~
 
-## 访问web-UI
-获取初始密码：
+## 登录web-UI
+默认用户名admin，获取初始密码：
 ```sh
-kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
+kubectl get secret -n argocd argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
 ```
 
-
 ## 基于gitee仓库部署yaml
-
 参考官网教程部署示例：https://argocd.devops.gold/getting_started/
 
