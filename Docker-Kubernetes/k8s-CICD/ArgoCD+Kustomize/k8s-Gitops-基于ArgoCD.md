@@ -301,28 +301,28 @@ chmod +x /usr/local/bin/argocd
 ~~~sh
 # 登录命令
 argocd login grpc.argocd.hanxux.local
-#创建新的 Argo CD 应用8
-argocd app create myapp --repo https://your-git-repo.com/repo.git --pa拗4
-#列出所有已管理的应用筈5
-argocd app list6
-#获取指定应用的详细信息
-argocd app get <app-name>S
-#手动同步应用，使其与 Git 中定义的状态一致9
-argocd app sync <app-name>
-#删除一个 ArgoCD 应用
-argocd app delete <app-name>
-#列出Argo CD 当前管理的所有 Kubernetes 集群
-argocd cluster list14
-#将 kubeconfig 中的集群上下文添加到 Argo CD 进行管理15
+#将 kubeconfig 中的集群上下文添加到 Argo CD 进行管理
 argocd cluster add <context-name>
-#更新当前登录用户的密码17
+#更新当前登录用户的密码
 argocd account update-password
-#显示 Argo CD 客户端和服务器的版本信息19
+#显示 Argo CD 客户端和服务器的版本信息
 argocd version
 #查看所有命令的帮助信息
 argocd help
 #生成 Bash 自动补全脚本
 argocd completion bash
+#创建新的 Argo CD 应用
+argocd app create myapp --repo https://your-git-repo.com/repo.git --pa拗4
+#列出所有已管理的应用筈
+argocd app list6
+#获取指定应用的详细信息
+argocd app get <app-name>S
+#手动同步应用，使其与 Git 中定义的状态一致
+argocd app sync <app-name>
+#删除一个 ArgoCD 应用
+argocd app delete <app-name>
+#列出Argo CD 当前管理的所有 Kubernetes 集群
+argocd cluster list
 ~~~
 
 ## 登录web-UI
@@ -330,6 +330,12 @@ argocd completion bash
 ```sh
 kubectl get secret -n argocd argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
 ```
+
+## 配置集群
+### 外部集群：
+- 由于 Argo CD 支持部署应用到多集群，所以如果你要将应用部署到外部集群的时候，需要先将外部集群的认证信息注册到 Argo CD 中。
+### 内部集群：
+- 如果是在内部部署（运行 Argo CD 的同一个集群，默认不需要配置），直接使用 `https://kubernetes.default.svc` 作为应用的 K8S APIServer 地址即可。
 
 ## 基于gitee仓库部署yaml
 参考官网教程部署示例：https://argocd.devops.gold/getting_started/
