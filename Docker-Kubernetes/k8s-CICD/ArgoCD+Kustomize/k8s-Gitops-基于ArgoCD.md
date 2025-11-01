@@ -299,8 +299,10 @@ chmod +x /usr/local/bin/argocd
 ```
 常用命令：
 ~~~sh
-# 登录命令
+# 登录命令 -- 在宿主机
 argocd login grpc.argocd.hanxux.local
+# 登录命令 -- 在master节点
+argocd login 10.96.23.131
 #将 kubeconfig 中的集群上下文添加到 Argo CD 进行管理
 argocd cluster add <context-name>
 #更新当前登录用户的密码
@@ -336,6 +338,29 @@ kubectl get secret -n argocd argocd-initial-admin-secret -o jsonpath="{.data.pas
 - 由于 Argo CD 支持部署应用到多集群，所以如果你要将应用部署到外部集群的时候，需要先将外部集群的认证信息注册到 Argo CD 中。
 ### 内部集群：
 - 如果是在内部部署（运行 Argo CD 的同一个集群，默认不需要配置），直接使用 `https://kubernetes.default.svc` 作为应用的 K8S APIServer 地址即可。
+
+# 应用部署示例
+Git 仓库 https://github.com/argoproj/argocd-example-apps.git 是一个包含留言簿应用程序的示例库，我们可以用该应用来演示 Argo CD 的工作原理。
+
+## 创建Application
+~~~yaml
+apiVersion: argoproj.io/v1alpha1  
+kind: Application  
+metadata:  
+  name: guestbook  
+spec:  
+  destination:  
+    namespace: default  
+    server: "https://kubernetes.default.svc"  
+  source:  
+    path: guestbook  
+    repoURL: "https://github.com/cnych/argocd-example-apps"  
+    targetRevision: HEAD  
+  project: default  
+  syncPolicy:  
+    automated: null
+~~~
+
 
 ## 基于gitee仓库部署yaml
 参考官网教程部署示例：https://argocd.devops.gold/getting_started/
