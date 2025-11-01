@@ -802,6 +802,7 @@ apiVersion: networking.istio.io/v1
 kind: Gateway 
 metadata: 
   name: bookinfo-gateway 
+  namespace: bookinfo 
 spec:
   # The selector matches the ingress gateway pod labels.
   # If you installed Istio using Helm following the standard documentation, this would be "istio=ingress"
@@ -826,6 +827,7 @@ apiVersion: networking.istio.io/v1
 kind: VirtualService 
 metadata: 
   name: bookinfo 
+  namespace: bookinfo 
 spec: 
   hosts: 
   - "bookinfo.kubeasy.com" 
@@ -864,7 +866,7 @@ kubectl apply -f bookinfo-gateway.yaml -f bookinfo-vs.yaml -n bookinfo
 kubectl get svc -n istio-system istio-ingressgateway
 ~~~
 
-1. 绑定hosts后，通过bookinfo.kubeasy.com +【ingressgateway 80 端口对应的NodePort（30080）】即可访问该服务，比如本次示例：`bookinfo.kubeasy.com:30080/productpage`
+1. 绑定hosts后，通过bookinfo.kubeasy.com +【ingressgateway 80 端口对应的NodePort（30080）】即可访问该服务。注意加上接口路径。比如本次示例：`bookinfo.kubeasy.com:30080/productpage`
 
 (实际生产环境中有前端LB，外部用户要访问的话需要把域名解析到前端LB的IP，默认是80/443端口，就不用写端口号了。由LB再把请求转发到后端ingressgateway上面)
 
