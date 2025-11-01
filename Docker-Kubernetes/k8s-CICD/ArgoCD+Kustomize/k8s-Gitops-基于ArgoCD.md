@@ -339,10 +339,11 @@ kubectl get secret -n argocd argocd-initial-admin-secret -o jsonpath="{.data.pas
 ### 内部集群：
 - 如果是在内部部署（运行 Argo CD 的同一个集群，默认不需要配置），直接使用 `https://kubernetes.default.svc` 作为应用的 K8S APIServer 地址即可。
 
-# 应用部署示例
+# 应用部署示例 -- 基于yaml
 Git 仓库 https://github.com/argoproj/argocd-example-apps.git 是一个包含留言簿应用程序的示例库，我们可以用该应用来演示 Argo CD 的工作原理。
 
 ## 创建Application
+### 手动同步
 ~~~yaml
 apiVersion: argoproj.io/v1alpha1  
 kind: Application  
@@ -358,10 +359,182 @@ spec:
     targetRevision: HEAD  
   project: default  
   syncPolicy:  
-    automated: null
+    automated: null # null 表示手动同步
+~~~
+#### 查看状态
+- 创建完可以在UI上看到状态。
+- 也可以用命令行：`argocd app get argocd/guestbook`。
+应用程序状态为初始 `OutOfSync` 状态，因为应用程序尚未部署，并且尚未创建任何 Kubernetes 资源。
+#### 执行Sync
+- 方法1: 要同步（部署）应用程序，可以执行如下所示命令：
+~~~sh
+argocd app sync argocd/guestbook
 ~~~
 
+- 方法2: 直接点击 UI 界面上应用的 `Sync` 按钮也可开始同步
 
-## 基于gitee仓库部署yaml
+### 自动同步
+~~~yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: guestbook
+  # Application 所在的命名空间，通常是 argocd
+  namespace: argocd
+  labels:
+    app: guestbook
+    env: dev
+  annotations:
+    # 通知配置，当应用状态变化时发送通知
+    notifications.argoproj.io/subscribe.on-sync-succeeded.slack: my-channel
+  # Finalizers 确保在删除 Application 时同时删除相关资源
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  # 目标集群和命名空间配置
+  destination:
+    # 目标命名空间，应用将部署到这个命名空间
+    namespace: guestbook
+    # 目标 Kubernetes 集群的 API Server 地址
+    # 使用 "https://kubernetes.default.svc" 表示 ArgoCD 所在的集群
+    server: "https://kubernetes.default.svc"
+    # 也可以使用集群名称代替 server
+    # name: in-cluster
+
+  # Git 仓库源配置
+  source:
+    # Git 仓库路径，指向应用的 manifests 所在目录
+    path: guestbook
+    # Git 仓库 URL
+    repoURL: "https://github.com/argoproj/argocd-example-apps"
+    # 目标版本：可以是分支名、标签或 commit SHA
+    # HEAD 表示跟踪默认分支（通常是 main 或 master）的最新提交
+    # 也可以指定具体的分支名（如 "main"）、标签（如 "v1.0.0"）或 commit SHA（如 "abc123"）
+    targetRevision: HEAD
+
+    # Helm 配置（如果使用 Helm Chart）
+    # helm:
+    #   # values 文件路径
+    #   valueFiles:
+    #     - values.yaml
+    #     - values-prod.yaml
+    #   # 覆盖 values 参数
+    #   parameters:
+    #     - name: image.tag
+    #       value: "1.0.0"
+    #   # 直接指定 values（会覆盖 values 文件）
+    #   values: |
+    #     replicaCount: 2
+    #     image:
+    #       tag: "1.0.0"
+    #   # Release 名称
+    #   releaseName: my-release
+    #   # 跳过 CRD 安装
+    #   skipCrds: false
+
+    # Kustomize 配置（如果使用 Kustomize）
+    # kustomize:
+    #   # kustomization.yaml 所在路径
+    #   namePrefix: prod-
+    #   nameSuffix: -v1
+    #   images:
+    #     - name: myapp
+    #       newTag: v1.0.0
+    #   commonLabels:
+    #     env: production
+
+    # 目录配置（用于纯 YAML manifests）
+    # directory:
+    #   recurse: true  # 递归查找子目录
+    #   jsonnet: {}    # Jsonnet 配置
+
+  # 所属项目，用于 RBAC 和多租户管理
+  project: default
+
+  # 同步策略配置
+  syncPolicy:
+    # 自动同步配置（null 表示手动同步）
+    automated:
+      # 自动修剪：删除 Git 中不存在的资源
+      prune: true
+      # 自动自愈：当资源在集群中被修改时，自动恢复到 Git 状态
+      selfHeal: true
+      # 允许清空：允许删除所有资源
+      allowEmpty: false
+
+    # 同步选项
+    syncOptions:
+      # 创建命名空间（如果不存在）
+      - CreateNamespace=true
+      # 验证资源
+      - Validate=true
+      # 使用 kubectl apply 而不是 kubectl create/patch
+      - ApplyOutOfSyncOnly=false
+      # PrunePropagationPolicy: 资源删除策略
+      - PrunePropagationPolicy=foreground
+      # PruneLast: 最后删除资源
+      - PruneLast=true
+      # Replace: 使用 kubectl replace 而不是 apply（谨慎使用）
+      # - Replace=true
+      # ServerSideApply: 使用服务端应用
+      # - ServerSideApply=true
+      # RespectIgnoreDifferences: 尊重忽略差异配置
+      - RespectIgnoreDifferences=true
+
+    # 重试策略：同步失败时的重试配置
+    retry:
+      # 最大重试次数
+      limit: 5
+      # 退避策略
+      backoff:
+        # 初始重试间隔
+        duration: 5s
+        # 最大重试间隔
+        maxDuration: 3m
+        # 重试间隔增长因子
+        factor: 2
+
+  # 忽略差异配置：某些字段在集群中可能被修改，忽略这些差异
+  ignoreDifferences:
+    - group: apps
+      kind: Deployment
+      jsonPointers:
+        - /spec/replicas  # 忽略副本数差异（例如 HPA 修改）
+    # - group: "*"
+    #   kind: "*"
+    #   managedFieldsManagers:
+    #     - kube-controller-manager  # 忽略某些管理器的修改
+
+  # 信息配置：在 UI 中显示的额外信息
+  info:
+    - name: "Owner"
+      value: "platform-team"
+
+  # 修订历史限制：保留的历史版本数量
+  revisionHistoryLimit: 10
+
+  # 健康评估配置
+  # sources: []  # 多源支持（高级功能，用于从多个仓库部署）
+~~~
+
+# 应用部署示例 --- 基于helm
+
+## 创建AppProject
+如果有多个团队，每个团队都要在同一集群内维护大量的应用，就需要用到 Argo CD 的另一个概念：项目（Project）。
+
+Argo CD 中的项目（Project）可以用来对 Application 进行分组，不同的团队使用不同的项目，这样就实现了多租户环境。
+
+项目还支持更细粒度的访问权限控制：
+- 限制部署内容（受信任的 Git 仓库）；
+- 限制目标部署环境（目标集群和 namespace）；
+- 限制部署的资源类型（例如 RBAC、CRD、DaemonSets、NetworkPolicy 等）；
+- 定义项目角色，为 Application 提供 RBAC（例如 OIDC group 或者 JWT 令牌绑定）。
+
+比如我们这里创建一个名为 `demo` 的项目，将该应用创建到该项目下，只需创建一个如下所示的 `AppProject` 对象即可：
+
+
+
+# 基于gitee仓库部署yaml
+
 参考官网教程部署示例：https://argocd.devops.gold/getting_started/
 
