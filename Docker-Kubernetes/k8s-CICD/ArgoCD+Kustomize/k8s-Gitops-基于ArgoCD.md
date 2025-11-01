@@ -294,7 +294,7 @@ spec:
 ## 安装argocd cli【可选】
 可以在本地安装argocd cli方便管理
 ```sh
-curl -sSL -o /usr/local/bin/argocd https://github.com/argoproj/argo-cd/releases/download/v3.1.9/argocd-linux-amd64
+curl -sSL -o /usr/local/bin/argocd https://github.com/argoproj/argo-cd/releases/download/v3.1.9/argocd-darwin-arm64
 chmod +x /usr/local/bin/argocd
 ```
 常用命令：
