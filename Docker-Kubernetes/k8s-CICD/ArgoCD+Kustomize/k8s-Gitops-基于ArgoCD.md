@@ -62,6 +62,8 @@ Argo CD 的核心思想是将 Git 仓库作为应用部署和基础设施配置�
 ~~~sh
 kubectl create namespace argocd
 kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+
+# 高可用安装参考：https://argocd.devops.gold/operator-manual/installation/#_4
 ~~~
 
 用NodePort svc访问UI界面：
@@ -84,7 +86,6 @@ kubectl get secret argocd-initial-admin-secret -n argocd -o jsonpath="{.data.pas
 > 如需高可用安装，参考：[ArgoCD-HA](https://argocd.devops.gold/operator-manual/installation/#_4)
 
 github release：[argoproj/argo-helm: ArgoProj Helm Charts](https://github.com/argoproj/argo-helm)
-
 artifactHub：[argo-cd 3.9.0 · argoproj/argo](https://artifacthub.io/packages/helm/argo/argo-cd/3.9.0)
 
 ~~~sh
@@ -93,7 +94,7 @@ helm repo update argo
 helm pull argo/argo-cd --version 8.3.0
 ~~~
 
-修改values.yaml文件：
+修改values.yaml文件【暂无，直接装】：
 
 ~~~yaml
 
@@ -102,9 +103,13 @@ helm pull argo/argo-cd --version 8.3.0
 安装：
 ~~~sh
 cd argo-cd
-helm install argocd . -n argocd --create-namespace --set server.service.type=NodePort
+helm upgrade -i argocd . -n argocd --create-namespace
 ~~~
 
+访问：
+~~~sh
+# 方法1:将argo-server的svc改成NodePort
+~~~
 
 # 基本使用
 ## 安装argocd cli【可选】
