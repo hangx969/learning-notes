@@ -106,10 +106,9 @@ cd argo-cd
 helm upgrade -i argocd . -n argocd --create-namespace
 ~~~
 
-访问：
-~~~sh
-# 方法1:将argo-server的svc改成NodePort
-~~~
+# 访问UI
+方法1：将argo-server这个svc改成NodePort，用节点IP+高位端口访问。
+方法2：集群安装了istio，自定义一套gateway和virtual service访问：
 
 # 基本使用
 ## 安装argocd cli【可选】
