@@ -283,6 +283,13 @@ spec:
       secretName: argocd-secret # do not change, this is provided by Argo CD
 ~~~
 
+## 禁用TLS
+然后我们需要在禁用 TLS 的情况下运行 APIServer：
+- 方法1：编辑 argocd-server 这个 Deployment 以将 `--insecure` 标志添加到 argocd-server 命令
+- 方法2：在 `argocd-cmd-params-cm` ConfigMap 中设置 `server.insecure: "true"` 即可。
+
+创建完成后，我们就可以通过 `argocd.k8s.local` 来访问 Argo CD 服务了，不过需要注意我们这里配置的证书是自签名的，所以在第一次访问的时候会提示不安全，强制跳转即可。
+
 # 基本使用
 ## 安装argocd cli【可选】
 可以在本地安装argocd cli方便管理
@@ -293,7 +300,7 @@ chmod +x /usr/local/bin/argocd
 常用命令：
 ~~~sh
 # 登录命令
-領菘项argocd login localhost:8080#假设通过 8080 端口转发
+argocd login grpc.argocd.hanxux.local
 #创建新的 Argo CD 应用8
 argocd app create myapp --repo https://your-git-repo.com/repo.git --pa拗4
 #列出所有已管理的应用筈5
