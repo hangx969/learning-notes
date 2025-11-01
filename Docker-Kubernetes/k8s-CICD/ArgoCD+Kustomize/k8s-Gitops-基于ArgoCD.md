@@ -96,6 +96,7 @@ helm pull argo/argo-cd --version 8.3.0
 修改values.yaml文件：
 
 ~~~yaml
+
 ~~~
 
 # 基本使用
