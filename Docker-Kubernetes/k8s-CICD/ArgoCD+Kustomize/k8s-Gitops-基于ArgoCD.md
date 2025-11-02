@@ -558,7 +558,7 @@ spec:
   # 说明：定义允许从哪些仓库部署应用清单（manifests），只有列在这里的仓库才能作为 ArgoCD 应用的源
   sourceRepos:
     # 允许从此 Git 仓库拉取应用配置
-    - https://github.com/hangx969/local-k8s-platform-tools
+    - "https://github.com/argoproj/argocd-example-apps"
     # 也可以使用通配符允许所有仓库（生产环境不推荐）
     # - '*'
 
@@ -747,41 +747,229 @@ stringData:
 # ApplicationSet
 `ApplicationSet` 用于简化多集群应用编排，它可以基于单一应用编排并根据用户的编排内容自动生成一个或多个 `Application`。
 
+核心概念：
+- ApplicationSet：ArgoCD 的"应用工厂"，可以根据模板批量创建 Application
+- 一个 ApplicationSet 可以生成多个 Application（每个对应一个环境）
+- 使用生成器（Generators）自动发现或定义需要部署的应用
+
 ~~~yaml
-# applicationset.yaml
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: guestbook
+  name: appset-guestbook
+  labels:
+    app: guestbook      # 应用标识
+    deployment: helm    # 部署类型：使用 Helm
+  annotations:
+    # 同步波次：控制 ArgoCD 同步顺序，数字越小越先执行
+    # 0 表示默认优先级，业务应用通常使用默认值或正数
+    # 基础设施组件使用负数（如 -100）确保优先部署
+    argocd.argoproj.io/sync-wave: "0"
+
 spec:
-  goTemplate: true # 使用 go template 模板
-  goTemplateOptions: ["missingkey=error"] # 当模板中缺少键时，抛出错误
-  generators: # 生成器，用于生成参数
-    - list: # 列表生成器
-        elements: # 元素
-          - cluster: dev
-            url: https://1.2.3.4
+  # ============================================================
+  # 模板引擎配置
+  # ============================================================
+  goTemplate: true  # 启用 Go 模板语法（推荐，功能更强大）
+  goTemplateOptions: ["missingkey=error"]  # 严格模式：如果模板变量缺失则报错，避免静默失败
+
+  # ============================================================
+  # 生成器配置（Generators）
+  # ============================================================
+  # 生成器的作用：定义如何生成 Application 列表
+  # 每个生成器会产生一组参数，这些参数会被传递给下面的 template
+  generators:
+    # --------------------------------------------------
+    # 列表生成器（List Generator）
+    # --------------------------------------------------
+    # 作用：手动定义一个静态列表，每个元素代表一个要创建的 Application
+    # 适用场景：环境数量固定且不常变化
+    - list:
+        elements:  # 元素列表：每个元素会生成一个 Application
+          # 开发环境
+          - cluster: dev           # 集群/环境名称
+            url: https://1.2.3.4   # 集群 API Server 地址
+            env: development       # 环境标识
+
+          # 预发布环境
           - cluster: staging
             url: https://9.8.7.6
+            env: staging
+
+          # 生产环境
           - cluster: prod
-            url: https://kubernetes.default.svc
+            url: https://kubernetes.default.svc  # 使用集群内部地址
+            env: production
+
+  # ============================================================
+  # 应用模板（Template）
+  # ============================================================
+  # 这个模板会被应用到生成器产生的每个元素上
+  # 例如：上面定义了 3 个环境，会生成 3 个 Application
   template:
     metadata:
+      # 应用名称：使用集群名称作为前缀
+      # 生成的应用名称示例：
+      #   - dev-guestbook
+      #   - staging-guestbook
+      #   - prod-guestbook
       name: "{{.cluster}}-guestbook"
+      labels:
+        cluster: "{{.cluster}}"  # 集群标识
+        env: "{{.env}}"          # 环境标识
+        app: guestbook           # 应用名称
+
+      # 终结器（Finalizer）
+      # 作用：确保删除 Application 时会先删除所有部署的资源
+      # 防止孤立资源残留在集群中
+      finalizers:
+        - resources-finalizer.argocd.argoproj.io
+
     spec:
-      project: demo
+      # 引用之前定义的 AppProject，继承其权限和限制
+      # 确保应用只能访问项目允许的仓库和集群
+      project: appprj-demo
+
+      # 定义应用的来源：从哪里获取 Kubernetes 资源定义
       source:
-        repoURL: https://gitee.com/cnych/argocd-example-apps
+        # Git 仓库 URL
+        repoURL: "https://github.com/argoproj/argocd-example-apps"
+        # 目标版本：可以是分支名、标签或 commit SHA
+        # HEAD 表示跟踪默认分支（通常是 main 或 master）的最新提交
         targetRevision: HEAD
+        # Helm Chart 所在路径
         path: helm-guestbook
+
+        # --------------------------------------------------
+        # Helm 配置
+        # --------------------------------------------------
         helm:
+          # Helm Release 名称：指定 Helm 安装时的 release 名称
+          # 如果不指定，默认使用 Application 名称
+          releaseName: guestbook
+
+          # 值文件（Values Files）加载顺序
+          # 后面的文件会覆盖前面的配置
           valueFiles:
-            - "{{.cluster}}.yaml"
-      syncPolicy:
-        syncOptions:
-          - CreateNamespace=true
+            - "values.yaml"         # 1. 默认值文件（所有环境通用）
+            - "{{.cluster}}.yaml"   # 2. 环境特定值文件（如 dev.yaml, prod.yaml）
+                                    #    如果存在，会覆盖 values.yaml 中的配置
+
+          # 如果指定的 values 文件不存在，不报错
+          # 允许某些环境没有特定配置文件
+          ignoreMissingValueFiles: true
+
+          # 可选：通过参数直接覆盖 values
+          # parameters:
+          #   - name: image.tag
+          #     value: "{{.version}}"
+          #   - name: replicaCount
+          #     value: "{{.replicas}}"
+
+          # 可选：直接指定 values（优先级最高）
+          # values: |
+          #   replicaCount: 3
+          #   image:
+          #     tag: latest
+
+      # --------------------------------------------------
+      # 目标配置（Destination）
+      # --------------------------------------------------
+      # 定义应用部署到哪个集群的哪个命名空间
       destination:
+        # 目标集群的 API Server 地址（从生成器元素中获取）
         server: "{{.url}}"
+        # 也可以使用集群名称代替 server
+        # name: "{{.cluster}}"
+
+        # 目标命名空间
         namespace: guestbook
+
+      # --------------------------------------------------
+      # 同步策略（Sync Policy）
+      # --------------------------------------------------
+      # 定义如何将 Git 中的配置同步到集群
+      syncPolicy:
+        # 自动同步配置
+        automated:
+          # 自动修剪：删除 Git 中不存在的资源
+          prune: true
+          # 自动自愈：当资源在集群中被修改时，自动恢复到 Git 状态
+          selfHeal: true
+          # 允许清空：允许删除所有资源
+          allowEmpty: false
+
+        # 同步选项
+        syncOptions:
+          # 创建命名空间（如果不存在）
+          - CreateNamespace=true
+          # 仅应用不同步的资源：只更新有变化的资源，减少不必要的操作
+          - ApplyOutOfSyncOnly=true
+          # 验证资源
+          - Validate=true
+          # 资源删除策略：前台删除（等待依赖资源先删除）
+          - PrunePropagationPolicy=foreground
+
+        # 重试策略：同步失败时的重试配置
+        retry:
+          # 最大重试次数
+          limit: 5
+          # 退避策略
+          backoff:
+            # 初始重试间隔
+            duration: 5s
+            # 最大重试间隔
+            maxDuration: 3m
+            # 重试间隔增长因子
+            factor: 2
+
+      # --------------------------------------------------
+      # 忽略差异配置（可选）
+      # --------------------------------------------------
+      # 某些字段在集群中可能被其他控制器修改，忽略这些差异
+      # ignoreDifferences:
+      #   - group: apps
+      #     kind: Deployment
+      #     jsonPointers:
+      #       - /spec/replicas  # 忽略副本数差异（例如 HPA 修改）
+
+      # --------------------------------------------------
+      # 信息配置（可选）
+      # --------------------------------------------------
+      # 在 ArgoCD UI 中显示的额外信息
+      # info:
+      #   - name: "Environment"
+      #     value: "{{.env}}"
+      #   - name: "Owner"
+      #     value: "platform-team"
+
+  # ============================================================
+  # 模板补丁（Template Patch）- 可选
+  # ============================================================
+  # 针对特定应用添加额外配置（条件性补丁）
+  # 根据生成器参数的值，为特定环境添加特殊配置
+  # templatePatch: |
+  #   # 如果是生产环境，添加更严格的配置
+  #   {{ if eq .cluster "prod" }}
+  #     spec:
+  #       # 生产环境禁用自动同步，需要手动审批
+  #       syncPolicy:
+  #         automated: null
+  #       # 忽略某些字段的差异
+  #       ignoreDifferences:
+  #         - group: apps
+  #           kind: Deployment
+  #           jsonPointers:
+  #             - /spec/replicas
+  #   {{- end }}
+  #
+  #   # 如果是开发环境，允许更激进的自动化
+  #   {{ if eq .cluster "dev" }}
+  #     spec:
+  #       syncPolicy:
+  #         automated:
+  #           prune: true
+  #           selfHeal: true
+  #   {{- end }}
 ~~~
 
