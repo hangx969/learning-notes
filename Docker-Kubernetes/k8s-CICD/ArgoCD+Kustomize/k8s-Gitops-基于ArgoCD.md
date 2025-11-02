@@ -520,6 +520,8 @@ spec:
   # sources: []  # 多源支持（高级功能，用于从多个仓库部署）
 ~~~
 
+> guestbook这个镜像有问题，在arm64机器上拉下来的镜像，docker inspect里面居然是"Architecture": "amd64"，pod根本跑不起来：exec /usr/local/bin/docker-php-entrypoint: exec format error
+
 # 应用部署示例 --- 基于helm
 
 ## 创建AppProject
@@ -679,8 +681,8 @@ spec:
   project: demo
   syncPolicy:
     automated:
-      prune: true
-      selfHeal: true
+      prune:  # git repo里面删资源，自动在环境中删资源
+      selfHeal: true # 强制以 Git Repo 状态为准，手动在环境中修改不会生效
   source:
     path: helm-guestbook # 从 Helm 存储库创建应用程序时，chart 必须指定 path
     repoURL: "https://github.com/argoproj/argocd-example-apps"
@@ -693,9 +695,52 @@ spec:
         - values.yaml
 ~~~
 
+# 配置git webhook
+由于 Argo CD 默认并不是实时去监测 Config Repo 的变化的，如果要更快的检测到变化我们可以使用 Git Webhook 的方式。默认情况下 Argo CD 每三分钟轮询一次 Git 存储库，以检测清单的更改。为了消除轮询延迟，可以将 API 服务器配置为接收 Webhook 事件。
 
+## 支持的provider
+Argo CD 支持来自 GitHub、GitLab、Bitbucket、Bitbucket Server 和 Gogs 的 Git webhook 通知。
+然后在 `argocd-secret` 这个 Kubernetes Secret 中，使用上面配置的 Git 提供商的 Webhook 密钥配置以下密钥之一。
 
-# 基于gitee仓库部署yaml
+| Provider         | k8s 密钥                           |
+|------------------|------------------------------------|
+| GitHub           | `webhook.github.secret`            |
+| GitLab           | `webhook.gitlab.secret`            |
+| BitBucket        | `webhook.bitbucket.uuid`           |
+| BitBucketServer  | `webhook.bitbucketserver.secret`   |
+| Gogs             | `webhook.gogs.secret`              |
+| Azure DevOps     | `webhook.azuredevops.username`     |
+| Azure DevOps     | `webhook.azuredevops.password`     |
+## 添加secret
+为了方便输入秘密，Kubernetes 支持在 `stringData` 字段中输入秘密，这样就省去了对值进行 base64 编码并复制到 `data` 字段的麻烦。
+只需将步创建的共享 webhook key复制到 `stringData` 字段下相应的 GitHub/GitLab/BitBucket 密钥中即可：
 
-参考官网教程部署示例：https://argocd.devops.gold/getting_started/
+~~~yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: argocd-secret
+  namespace: argocd
+type: Opaque
+data:
+...
+stringData:
+  # github webhook secret
+  webhook.github.secret: shhhh! it's a GitHub secret
+  # gitlab webhook secret
+  webhook.gitlab.secret: shhhh! it's a GitLab secret
+  # bitbucket webhook secret
+  webhook.bitbucket.uuid: your-bitbucket-uuid
+  # bitbucket server webhook secret
+  webhook.bitbucketserver.secret: shhhh! it's a Bitbucket server secret
+  # gogs server webhook secret
+  webhook.gogs.secret: shhhh! it's a gogs server secret
+  # azuredevops username and password
+  webhook.azuredevops.username: admin
+  webhook.azuredevops.password: secret-password
+~~~
+
+保存后自动生效。
+## 基于gitee仓库部署yaml
+参考官网教程部署示例： https://argocd.devops.gold/getting_started/
 
