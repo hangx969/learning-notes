@@ -541,7 +541,7 @@ Argo CD 中的项目（Project）可以用来对 Application 进行分组，不�
 apiVersion: argoproj.io/v1alpha1
 kind: AppProject
 metadata:
-  name: demo
+  name: appprj-demo
   namespace: argocd
   annotations:
     # 同步波次：控制 ArgoCD 同步顺序，数字越小越先执行
@@ -558,7 +558,7 @@ spec:
   # 说明：定义允许从哪些仓库部署应用清单（manifests），只有列在这里的仓库才能作为 ArgoCD 应用的源
   sourceRepos:
     # 允许从此 Git 仓库拉取应用配置
-    - https://gitee.com/cnych/argocd-example-apps
+    - https://github.com/hangx969/local-k8s-platform-tools
     # 也可以使用通配符允许所有仓库（生产环境不推荐）
     # - '*'
 
