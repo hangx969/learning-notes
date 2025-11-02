@@ -423,4 +423,8 @@ spec:
 
 推送新的镜像后，然后 `Argo CD Image Updater` 将会每 2 分钟从镜像仓库去检索镜像版本变化，一旦发现有新的镜像版本，它将自动使用新版本来更新集群内工作负载的镜像，并将镜像版本回写到 Git 仓库中去，我们可以去查看 Argo CD Image Updater 的日志变化：`kubectl logs -f argocd-image-updater-57b7-d45 -n argocd`
 
+## 自动Git提交
 然后在 Git 仓库中我们也可以看到有一条新的 commit 提交记录，可以看到在回写时，`ArgoCD Image Updater` 并不会直接修改仓库的 `values.yaml` 文件，而是会创建一个专门用于覆盖 Helm Chart `values.yaml` 的 `.argocd-source-devops-demo.yaml` 文件。
+
+另外我们可以注意到每次 Git 提交都与作者的姓名和电子邮件地址相关联。如果未配置，Argo CD 镜像更新程序执行的提交将使用 `argocd-image-updater <noreply@argoproj.io>` 作为作者。您可以使用 `--git-commit-user` 和 `--git-commit-email` 命令行开关覆盖作者，或在 `argocd-image-updater-config ConfigMap` 中设置 `git.user` 和 `git.email` 即可。
+
