@@ -428,3 +428,14 @@ spec:
 
 另外我们可以注意到每次 Git 提交都与作者的姓名和电子邮件地址相关联。如果未配置，Argo CD 镜像更新程序执行的提交将使用 `argocd-image-updater <noreply@argoproj.io>` 作为作者。您可以使用 `--git-commit-user` 和 `--git-commit-email` 命令行开关覆盖作者，或在 `argocd-image-updater-config ConfigMap` 中设置 `git.user` 和 `git.email` 即可。
 
+同样我们可以将 Argo CD Image Updater 使用的默认提交消息更改为适合你的方式。可以创建一个简单的模板（使用 Golang Template），并通过将 `argocd-image-updater-config` ConfigMap 中的密钥 `git.commit-message-template` 设置为模板的内容来使其可用，例如：
+
+~~~yaml
+data:  
+  git.commit-message-template: |  
+    build: automatic update of {{ .AppName }}  
+  
+    {{ range .AppChanges -}}  
+    updates image {{ .Image }} tag '{{ .OldTag }}' to '{{ .NewTag }}'  
+    {{ end -}}
+~~~
