@@ -130,7 +130,283 @@ echo "someuser:s0m3p4ssw0rd"
    ~~~
 
    指定了 GitHub 镜像仓库的凭据为 `pullsecret:argocd/ghcr-secret`，这样 ArgoCD Image Updater 在访问 `ghcr.io` 时就会使用这个凭据。
-3. 还需要将 ArgoCD Image Updater 与 Git 集成，这也是重点，这样 ArgoCD Image Updater 就可以将镜像更新直接提交回源 Git 仓库。可以在 ArgoCD 的 Dashboard 中先添加一个 Git 仓库 `https://github.com/hangx969/local-k8s-platform-tools#`
 
-   
-4. 
+3. 还需要将 ArgoCD Image Updater 与 Git 集成。这样 ArgoCD Image Updater 就可以将镜像更新直接提交回源 Git 仓库。
+
+   - 可以在 ArgoCD 的 Dashboard 中先添加一个 Git 仓库 `https://github.com/hangx969/local-k8s-platform-tools`
+
+   - 输入用户名和PAT
+
+## 创建ApplicationProject
+
+~~~yaml
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: appprj-demo
+  namespace: argocd
+  annotations:
+    # 同步波次：控制 ArgoCD 同步顺序，数字越小越先执行
+    # "1" 表示此项目会在第一波被创建，确保项目在应用之前就绪
+    argocd.argoproj.io/sync-wave: "1"
+
+  # 终结器（Finalizer）：防止项目被意外删除
+  # 确保在删除项目之前，所有引用此项目的应用都已被删除
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+
+spec:
+  description: Demo project for learning ArgoCD features.
+  # 说明：定义允许从哪些仓库部署应用清单（manifests），只有列在这里的仓库才能作为 ArgoCD 应用的源
+  sourceRepos:
+    # 允许从此 Git 仓库拉取应用配置
+    - "https://github.com/argoproj/argocd-example-apps"
+    # 也可以使用通配符允许所有仓库（生产环境不推荐）
+    # - '*'
+
+  # 说明：定义应用可以部署到哪些集群和命名空间
+  # 目标集群可以通过 'server'（API Server URL）或 'name'（集群名称）来识别
+  destinations:
+    # 允许部署到任意命名空间（'*' 表示通配符）
+    - namespace: "*"
+      # 允许部署到当前集群（ArgoCD 所在的集群）
+      server: https://kubernetes.default.svc
+    # 也可以使用集群名称代替 server
+    # - namespace: "*"
+    #   name: in-cluster
+
+  # 说明：定义允许创建哪些集群级别的资源（非命名空间资源）
+  # 默认情况下会拒绝所有集群范围资源，除非在此列出
+  # 集群资源包括：Namespace、ClusterRole、ClusterRoleBinding、CRD 等
+  clusterResourceWhitelist:
+    - group: '*'  # 允许所有 API 组的资源
+      kind: '*'   # 允许所有资源类型
+  # 生产环境建议明确指定允许的资源类型，例如：
+  # - group: ''
+  #   kind: Namespace
+  # - group: 'rbac.authorization.k8s.io'
+  #   kind: ClusterRole
+
+  # ============================================================
+  # 命名空间范围资源白名单（可选）
+  # ============================================================
+  # 说明：定义允许在命名空间中创建哪些资源
+  # 如果不设置此字段，默认允许所有命名空间资源
+  # namespaceResourceWhitelist:
+  #   - group: '*'
+  #     kind: '*'
+
+  # ============================================================
+  # 资源黑名单（可选）
+  # ============================================================
+  # 说明：明确禁止创建的资源类型，优先级高于白名单
+  # namespaceResourceBlacklist:
+  #   - group: ''
+  #     kind: ResourceQuota
+  # clusterResourceBlacklist:
+  #   - group: ''
+  #     kind: Namespace
+
+  # ============================================================
+  # 孤立资源监控
+  # ============================================================
+  # 说明：启用对命名空间中孤立资源的监控
+  # 孤立资源是指存在于集群中但不在 Git 仓库中定义的资源
+  # 这有助于发现手动创建或遗留的资源
+  orphanedResources:
+    warn: true  # 启用警告模式：发现孤立资源时会显示警告，但不会自动删除
+    # ignore: []  # 可选：忽略某些孤立资源，不显示警告
+
+  # ============================================================
+  # 项目范围集群限制
+  # ============================================================
+  # 说明：控制应用是否只能部署到此项目范围内的集群
+  # false：允许应用部署到 destinations 字段指定的任何集群
+  # true：限制应用只能部署到显式绑定到此项目的集群（更严格的安全控制）
+  permitOnlyProjectScopedClusters: false
+
+  # ============================================================
+  # 角色和权限（可选）
+  # ============================================================
+  # 说明：定义项目级别的 RBAC 权限，控制谁可以访问此项目
+  # roles:
+  #   # 定义一个只读角色
+  #   - name: read-only
+  #     description: Read-only privileges to the demo project
+  #     policies:
+  #       - p, proj:demo:read-only, applications, get, demo/*, allow
+  #     groups:
+  #       - demo-viewers
+  #   # 定义一个管理员角色
+  #   - name: admin
+  #     description: Admin privileges to the demo project
+  #     policies:
+  #       - p, proj:demo:admin, applications, *, demo/*, allow
+  #     groups:
+  #       - demo-admins
+
+  # ============================================================
+  # 同步窗口（可选）
+  # ============================================================
+  # 说明：定义允许或禁止同步的时间窗口，用于变更管理
+  # syncWindows:
+  #   # 定义一个允许同步的时间窗口
+  #   - kind: allow
+  #     schedule: '0 9 * * 1-5'  # Cron 表达式：工作日早上9点
+  #     duration: 8h             # 持续8小时
+  #     applications:
+  #       - '*'                  # 应用于所有应用
+  #     manualSync: true         # 允许手动同步
+  #   # 定义一个禁止同步的时间窗口（例如：生产环境变更冻结期）
+  #   - kind: deny
+  #     schedule: '0 0 * * 0,6'  # Cron 表达式：周末
+  #     duration: 24h
+  #     applications:
+  #       - '*'
+~~~
+
+## 创建Application
+
+注意：在需要部署应用的namespace中添加Image Pull Secret才能从ghcr下载镜像
+
+~~~yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: guestbook
+  # Application 所在的命名空间，通常是 argocd
+  namespace: argocd
+  labels:
+    app: guestbook
+    env: dev
+  annotations:
+    # 通知配置，当应用状态变化时发送通知
+    notifications.argoproj.io/subscribe.on-sync-succeeded.slack: my-channel
+  # Finalizers 确保在删除 Application 时同时删除相关资源
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  # 目标集群和命名空间配置
+  destination:
+    # 目标命名空间，应用将部署到这个命名空间
+    namespace: guestbook
+    # 目标 Kubernetes 集群的 API Server 地址
+    # 使用 "https://kubernetes.default.svc" 表示 ArgoCD 所在的集群
+    server: "https://kubernetes.default.svc"
+    # 也可以使用集群名称代替 server
+    # name: in-cluster
+
+  # Git 仓库源配置
+  source:
+    # Git 仓库路径，指向应用的 manifests 所在目录
+    path: guestbook-helm
+    # Git 仓库 URL
+    repoURL: "https://github.com/argoproj/argocd-example-apps"
+    # 目标版本：可以是分支名、标签或 commit SHA
+    # HEAD 表示跟踪默认分支（通常是 main 或 master）的最新提交
+    # 也可以指定具体的分支名（如 "main"）、标签（如 "v1.0.0"）或 commit SHA（如 "abc123"）
+    targetRevision: HEAD
+    helm:
+      # values 文件路径
+      valueFiles:
+        - values.yaml
+        - values-prod.yaml
+      # 覆盖 values 参数
+      parameters:
+        - name: image.tag
+          value: "1.0.0"
+      # 直接指定 values（会覆盖 values 文件）
+      values: |
+        replicaCount: 2
+        image:
+          tag: "1.0.0"
+      # Release 名称
+      releaseName: my-release
+      # 跳过 CRD 安装
+      skipCrds: false
+
+    # Kustomize 配置（如果使用 Kustomize）
+    # kustomize:
+    #   # kustomization.yaml 所在路径
+    #   namePrefix: prod-
+    #   nameSuffix: -v1
+    #   images:
+    #     - name: myapp
+    #       newTag: v1.0.0
+    #   commonLabels:
+    #     env: production
+
+    # 目录配置（用于纯 YAML manifests）
+    # directory:
+    #   recurse: true  # 递归查找子目录
+    #   jsonnet: {}    # Jsonnet 配置
+
+  # 所属项目，用于 RBAC 和多租户管理
+  project: default
+
+  # 同步策略配置
+  syncPolicy:
+    # 自动同步配置（null 表示手动同步）
+    automated:
+      # 自动修剪：删除 Git 中不存在的资源
+      prune: true
+      # 自动自愈：当资源在集群中被修改时，自动恢复到 Git 状态
+      selfHeal: true
+      # 允许清空：允许删除所有资源
+      allowEmpty: false
+
+    # 同步选项
+    syncOptions:
+      # 创建命名空间（如果不存在）
+      - CreateNamespace=true
+      # 验证资源
+      - Validate=true
+      # 使用 kubectl apply 而不是 kubectl create/patch
+      - ApplyOutOfSyncOnly=false
+      # PrunePropagationPolicy: 资源删除策略
+      - PrunePropagationPolicy=foreground
+      # PruneLast: 最后删除资源
+      - PruneLast=true
+      # Replace: 使用 kubectl replace 而不是 apply（谨慎使用）
+      # - Replace=true
+      # ServerSideApply: 使用服务端应用
+      # - ServerSideApply=true
+      # RespectIgnoreDifferences: 尊重忽略差异配置
+      - RespectIgnoreDifferences=true
+
+    # 重试策略：同步失败时的重试配置
+    retry:
+      # 最大重试次数
+      limit: 5
+      # 退避策略
+      backoff:
+        # 初始重试间隔
+        duration: 5s
+        # 最大重试间隔
+        maxDuration: 3m
+        # 重试间隔增长因子
+        factor: 2
+
+  # 忽略差异配置：某些字段在集群中可能被修改，忽略这些差异
+  ignoreDifferences:
+    - group: apps
+      kind: Deployment
+      jsonPointers:
+        - /spec/replicas  # 忽略副本数差异（例如 HPA 修改）
+    # - group: "*"
+    #   kind: "*"
+    #   managedFieldsManagers:
+    #     - kube-controller-manager  # 忽略某些管理器的修改
+
+  # 信息配置：在 UI 中显示的额外信息
+  info:
+    - name: "Owner"
+      value: "platform-team"
+
+  # 修订历史限制：保留的历史版本数量
+  revisionHistoryLimit: 10
+
+  # 健康评估配置
+  # sources: []  # 多源支持（高级功能，用于从多个仓库部署）
+~~~
+

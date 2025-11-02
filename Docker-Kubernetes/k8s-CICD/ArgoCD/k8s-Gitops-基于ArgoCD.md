@@ -673,6 +673,7 @@ spec:
 更多配置信息可以前往文档 https://argo-cd.readthedocs.io/en/stable/operator-manual/declarative-setup/ 查看.
 
 ## 创建Application
+
 项目创建完成后，在该项目下创建一个 Application，代表环境中部署的应用程序实例。
 
 ~~~yaml
@@ -980,3 +981,7 @@ spec:
   #   {{- end }}
 ~~~
 
+# argocd健康检查机制
+部署应用之后，应用虽然已经是 `Synced` 状态，但是 `APP HEALTH` 一直显示为 `Progressing` 状态。
+
+这是因为 ArgoCD 的健康状态机制引起的，我们可以在源码 https://github.com/argoproj/gitops-engine/blob/master/pkg/health/health_ingress.go#L7 中看到健康状态的检查逻辑。
