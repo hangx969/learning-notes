@@ -85,7 +85,10 @@ kubectl edit svc argocd-server -n argocd
 kubectl get secret argocd-initial-admin-secret -n argocd -o jsonpath="{.data.password}" | base64 -d
 ~~~
 ### 方法2: Istio
-官网提供了基于yaml安装的argocd，用istio访问UI的配置方法： https://argocd.devops.gold/operator-manual/ingress/#istio
+官网提供了基于yaml安装的argocd用istio访问UI的配置方法： https://argocd.devops.gold/operator-manual/ingress/#istio
+
+### 方法3：端口转发
+可以使用`kubectl` 端口转发功能连接到 API 服务器，而无需暴露服务：`kubectl port-forward svc/argocd-server -n argocd 8080:443`。然后可以通过`https://localhost:8080` 访问 API 服务器。
 
 # 安装ArgoCD-HA
 高可用安装参考： https://argocd.devops.gold/operator-manual/installation/#_4
@@ -187,6 +190,9 @@ kubectl get secret argocd-initial-admin-secret -n argocd -o jsonpath="{.data.pas
 kubectl get secret argocd-initial-admin-secret -n argocd -o jsonpath="{.data.password}" | base64 -d
 ~~~
 
+### 方法3：端口转发
+可以使用`kubectl` 端口转发功能连接到 API 服务器，而无需暴露服务：`kubectl port-forward svc/argocd-server -n argocd 8080:443`。然后可以通过`https://localhost:8080` 访问 API 服务器。
+
 # argocd ingress说明
 Argo CD 会运行一个 gRPC 服务（由 CLI 使用）和 HTTP/HTTPS 服务（由 UI 使用），这两种协议都由 `argocd-server` 服务在以下端口进行暴露：
 - 443 - gRPC/HTTPS
@@ -195,7 +201,7 @@ Argo CD 会运行一个 gRPC 服务（由 CLI 使用）和 HTTP/HTTPS 服务（�
 我们可以通过配置 Ingress 的方式来对外暴露服务，其他 Ingress 控制器的配置可以参考官方文档 https://argo-cd.readthedocs.io/en/stable/operator-manual/ingress/ 进行配置。
 
 Argo CD 在同一端口 (443) 上提供多个协议 (gRPC/HTTPS)，所以当我们为 argocd 服务定义单个 nginx ingress 对象和规则的时候有点麻烦，因为 `nginx.ingress.kubernetes.io/backend-protocol` 这个 annotation 只能接受一个后端协议（例如 HTTP、HTTPS、GRPC、GRPCS）。
-## 方法1: SSL PassThrough
+## 方法1: 单个Ingress+SSL PassThrough
 为了使用单个 ingress 规则和主机名来暴露 Argo CD APIServer，必须使用 `nginx.ingress.kubernetes.io/ssl-passthrough` 这个 `annotation` 来传递 TLS 连接并校验 Argo CD APIServer 上的 TLS。
 ~~~yaml
 apiVersion: networking.k8s.io/v1  
@@ -306,6 +312,7 @@ argocd login 10.96.23.131
 #将 kubeconfig 中的集群上下文添加到 Argo CD 进行管理
 argocd cluster add <context-name>
 #更新当前登录用户的密码
+#在更改密码后，您应该从 argocd 命名空间中删除 `argocd-initial-admin-secret`。该 Secret 除存储初始生成的明文密码外没有其他用途，可以随时安全删除。如果需要重新生成管理员密码，argocd 将按需重新创建该Secret。
 argocd account update-password
 #显示 Argo CD 客户端和服务器的版本信息
 argocd version
