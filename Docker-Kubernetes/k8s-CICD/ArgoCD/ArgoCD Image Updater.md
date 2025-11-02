@@ -439,3 +439,4 @@ data:
     updates image {{ .Image }} tag '{{ .OldTag }}' to '{{ .NewTag }}'  
     {{ end -}}
 ~~~
+
