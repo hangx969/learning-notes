@@ -984,4 +984,43 @@ spec:
 # argocd健康检查机制
 部署应用之后，应用虽然已经是 `Synced` 状态，但是 `APP HEALTH` 一直显示为 `Progressing` 状态。
 
-这是因为 ArgoCD 的健康状态机制引起的，我们可以在源码 https://github.com/argoproj/gitops-engine/blob/master/pkg/health/health_ingress.go#L7 中看到健康状态的检查逻辑。
+这是因为 ArgoCD 的健康状态机制引起的，我们可以在源码 https://github.com/argoproj/gitops-engine/blob/master/pkg/health/health_ingress.go#L7 中看到健康状态的检查逻辑：
+~~~go
+func getIngressHealth(obj *unstructured.Unstructured) (*HealthStatus, error) {  
+ ingresses, _, _ := unstructured.NestedSlice(obj.Object, "status", "loadBalancer", "ingress")  
+ health := HealthStatus{}  
+ if len(ingresses) > 0 {  
+  health.Status = HealthStatusHealthy  
+ } else {  
+  health.Status = HealthStatusProgressing  
+ }  
+ return &health, nil  
+}
+~~~
+
+他需要检查 Ingress 资源对象的 `status.loadBalancer.ingress` 字段是否为空，如果为空则表示健康状态为 `Progressing`，否则为 `Healthy`。
+但并不是所有的 Ingress 资源对象都会自动生成 `status.loadBalancer.ingress` 字段。
+
+这个时候我们可以通过配置 `argocd-cm` 的配置资源来修改健康状态检查逻辑，添加如下所示的配置：
+
+~~~yaml
+apiVersion: v1  
+kind: ConfigMap  
+metadata:  
+  name: argocd-cm  
+  namespace: argocd  
+data:  
+  resource.customizations: |  
+    networking.k8s.io/Ingress:  
+      health.lua: |  
+        hs = {}  
+        if obj.metadata ~= nil and obj.metadata.creationTimestamp ~= nil then  
+          hs.status = "Healthy"  
+          hs.message = "Ingress 已创建"  
+        else  
+          hs.status = "Progressing"  
+          hs.message = "Ingress 正在创建中"  
+        end  
+        return hs
+~~~
+
