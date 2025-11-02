@@ -1,13 +1,6 @@
-argocd 端：
-- application project
-- application set
+## Troubleshooting
+创建完applicationset之后，无法创建application，去看k describe applicationset appset-helm -n argocd的时候看到网络连接问题：Client.Timeout exceeded while awaiting headers。
+解决：删掉当前appset，换个名字再重新创建一个。
+
   
-helm端：
-- 先部署harbor
-- helm chart存放到harbor
-
-集成：
-- argocd配置从harbor拉取helm chart
-- argocd配置连接github仓库
-
 
