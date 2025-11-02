@@ -323,9 +323,9 @@ argocd completion bash
 #创建新的 Argo CD 应用
 argocd app create myapp --repo https://your-git-repo.com/repo.git --pa拗4
 #列出所有已管理的应用筈
-argocd app list6
+argocd app list
 #获取指定应用的详细信息
-argocd app get <app-name>S
+argocd app get <app-name>
 #手动同步应用，使其与 Git 中定义的状态一致
 argocd app sync <app-name>
 #删除一个 ArgoCD 应用
