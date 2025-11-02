@@ -1024,3 +1024,4 @@ data:
         return hs
 ~~~
 
+上面的配置表示如果 Ingress 资源对象的 `metadata.creationTimestamp` 字段不为空，则表示健康状态为 `Healthy`，否则为 `Progressing`，更新上面的配置后，我们再次查看应用的健康状态就会发现已经变成了 `Healthy` 状态。

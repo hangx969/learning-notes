@@ -280,8 +280,16 @@ metadata:
     app: guestbook
     env: dev
   annotations:
-    # 通知配置，当应用状态变化时发送通知
-    notifications.argoproj.io/subscribe.on-sync-succeeded.slack: my-channel
+    notifications.argoproj.io/subscribe.on-sync-succeeded.slack: my-channel # 通知配置，当应用状态变化时发送通知
+    argocd-image-updater.argoproj.io/image-list: myalias=ghcr.io/hanx969/gitops-demo # 指定镜像仓库  
+    argocd-image-updater.argoproj.io/myalias.allow-tags: regexp:^.*$ # 允许所有标签  
+    argocd-image-updater.argoproj.io/myalias.pull-secret: pullsecret:argocd/ghcr-secret # 指定凭据  
+    argocd-image-updater.argoproj.io/myalias.update-strategy: latest # 指定更新策略  
+    # argocd-image-updater.argoproj.io/myalias.ignore-tags: latest, master # 指定忽略的标签  
+    argocd-image-updater.argoproj.io/write-back-method: git # 指定写回方法  
+    argocd-image-updater.argoproj.io/git-branch: main # 指定 Git 分支  
+    argocd-image-updater.argoproj.io/myalias.force-update: "true" # 强制更新
+    
   # Finalizers 确保在删除 Application 时同时删除相关资源
   finalizers:
     - resources-finalizer.argocd.argoproj.io
@@ -410,3 +418,9 @@ spec:
   # sources: []  # 多源支持（高级功能，用于从多个仓库部署）
 ~~~
 
+## 自动更新镜像
+接下来我们只需要重新推送一个新的镜像到 GitHub Container Registry 即可自动触发 ArgoCD Image Updater 更新镜像。
+
+推送新的镜像后，然后 `Argo CD Image Updater` 将会每 2 分钟从镜像仓库去检索镜像版本变化，一旦发现有新的镜像版本，它将自动使用新版本来更新集群内工作负载的镜像，并将镜像版本回写到 Git 仓库中去，我们可以去查看 Argo CD Image Updater 的日志变化：`kubectl logs -f argocd-image-updater-57b7-d45 -n argocd`
+
+然后在 Git 仓库中我们也可以看到有一条新的 commit 提交记录，可以看到在回写时，`ArgoCD Image Updater` 并不会直接修改仓库的 `values.yaml` 文件，而是会创建一个专门用于覆盖 Helm Chart `values.yaml` 的 `.argocd-source-devops-demo.yaml` 文件。
