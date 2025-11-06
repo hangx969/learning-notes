@@ -303,7 +303,7 @@ spec:
 curl -sSL -o /usr/local/bin/argocd https://github.com/argoproj/argo-cd/releases/download/v3.1.9/argocd-darwin-arm64
 chmod +x /usr/local/bin/argocd
 ```
-常用命令：
+## 常用命令
 ~~~sh
 # 登录命令 -- 在宿主机
 argocd login grpc.argocd.hanxux.local
