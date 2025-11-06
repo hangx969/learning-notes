@@ -1,3 +1,6 @@
+- 学习链接Kustomize: 
+	- [ ] https://mp.weixin.qq.com/s/syrr1tJ5ZWOBOYVXOOqZ-Q
+	- [ ] https://mp.weixin.qq.com/s/ENsUUS6aTItESgXy-EzRXA
 # kustomize介绍
 
 Kustomize是一个无需模板的配置定制工具，专门用于k8s资源管理。与传统的基于模板的引擎helm不同，他直接操作k8s原生资源文件，通过叠加（overlay）和变异（mutation）等机制，让用户以声明式的风格对资源进行个性化定制。
