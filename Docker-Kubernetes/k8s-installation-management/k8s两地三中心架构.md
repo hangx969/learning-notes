@@ -77,6 +77,8 @@
 课程演示在腾讯云上：
 - 三个区域分别部署三个集群。
 - 每个集群通过ingress暴露svc，（服务器不能直接暴露公网端口）。
-- 购买CLB。创建监听器，选TCP类型，监听ingress-controller的80端口（不选HTTP是因为ingress-controller已经实现了七层分发，要是CLB选了HTTP，每新加域名都得在这里加）
-- 购买GTM服务。
+- 购买CLB。
+	- 创建监听器，选TCP类型，监听80端口（不选HTTP是因为ingress-controller已经实现了七层分发，要是CLB选了HTTP，每新加域名都得在这里加）
+	- 后段实例选到ingress-controller节点
+- 购买GTM服务。把域名解析到LB的地址。
 
