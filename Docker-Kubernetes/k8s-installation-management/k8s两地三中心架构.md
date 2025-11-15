@@ -1,4 +1,5 @@
 # 两地三中心架构
+两地三中心是一种主备模式，
 
 ![image-20251115095329861](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202511150953992.png)
 
