@@ -2,6 +2,10 @@
 
 ![image-20251115095329861](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202511150953992.png)
 
+- A是生产中心。A和B是同城双中心。A的数据会实时同步到B同城灾备中心，专线连接速度会很快。
+- B的配置可能和A一样，准备随时接收流量进来。B也可能是双活，接收20%流量。
+- C是灾备中心。配置较低，平常闲置。不会接收生产流量进来。
+
 # 异地多活
 
 ![image-20251115095652754](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202511150956881.png)
