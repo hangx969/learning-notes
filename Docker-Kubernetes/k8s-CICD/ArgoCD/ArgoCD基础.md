@@ -378,7 +378,7 @@ helm upgrade -i argocd . -n argocd --create-namespace
 ## 访问UI
 argocd默认开了tls，svc的80端口会被重定向到443端口。
 ### 方法1：NodePort
-- 将argo-server这个svc改成NodePort，用http://节点IP+高位端口访问。（弹证书信任，直接点信任证书就行）
+- 将argocd-server这个svc改成NodePort，用http://节点IP+高位端口访问。（弹证书信任，直接点信任证书就行）
 - 默认用户名admin，密码获取：
 ~~~sh
 kubectl get secret argocd-initial-admin-secret -n argocd -o jsonpath="{.data.password}" | base64 -d
@@ -581,7 +581,7 @@ argocd app delete <app-name>
 #列出Argo CD 当前管理的所有 Kubernetes 集群
 argocd cluster list
 ~~~
-
+ 
 ## 登录web-UI
 默认用户名admin，获取初始密码：
 ```sh
