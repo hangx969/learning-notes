@@ -1114,7 +1114,59 @@ data:
 上面的配置表示如果 Ingress 资源对象的 `metadata.creationTimestamp` 字段不为空，则表示健康状态为 `Healthy`，否则为 `Progressing`，更新上面的配置后，我们再次查看应用的健康状态就会发现已经变成了 `Healthy` 状态。
 
 # 集群个性化设置
-ApplicationSet多集群部署的配置如果不统一，
+ApplicationSet多集群部署的配置如果不统一，可以利用ApplicationSet的parameters字段实现个性化配置。
+
+在elements中定义不同环境的个性值：
+
+```yaml
+  generators:
+    # --------------------------------------------------
+    # 列表生成器（List Generator）
+    # --------------------------------------------------
+    # 作用：手动定义一个静态列表，每个元素代表一个要创建的 Application
+    # 适用场景：环境数量固定且不常变化
+    - list:
+        elements:  # 元素列表：每个元素会生成一个 Application
+          # 开发环境
+          - cluster: dev           # 集群名称，与ArgoCD中注册的集群名称一致
+            url: https://1.2.3.4   # 集群 API Server 地址
+            env: development       # 环境标识
+            replicaCount: "1"
+
+          # 预发布环境
+          - cluster: staging
+            url: https://9.8.7.6
+            env: staging
+            replicaCount: "2"
+
+          # 生产环境
+          - cluster: prod
+            url: https://kubernetes.default.svc  # 使用集群内部地址
+            env: production
+            replicaCount: "3"
+
+```
+
+在后面的helm字段配置参数：
+
+```yaml
+        helm:
+          # Helm Release 名称：指定 Helm 安装时的 release 名称
+          # 如果不指定，默认使用 Application 名称
+          releaseName: guestbook
+
+          # 值文件（Values Files）加载顺序
+          # 后面的文件会覆盖前面的配置
+          valueFiles:
+            - "values.yaml"         # 1. 默认值文件（所有环境通用）
+            - "{{.cluster}}.yaml"   # 2. 环境特定值文件（如 dev.yaml, prod.yaml）
+                                    #    如果存在，会覆盖 values.yaml 中的配置
+          parameters:
+          # name为values中的参数名字，支持a.b.c引用格式。和--set设置字段方式一样
+          - name: "replicaCount"
+            value: '{{ replicaCount }}'
+
+```
 
 # Troubleshooting
 创建完applicationset之后，无法创建application，去看k describe applicationset appset-helm -n argocd的时候看到网络连接问题：Client.Timeout exceeded while awaiting headers。
