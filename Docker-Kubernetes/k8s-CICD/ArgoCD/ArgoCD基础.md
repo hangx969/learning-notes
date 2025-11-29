@@ -1172,6 +1172,65 @@ ApplicationSet多集群部署的配置如果不统一，可以利用ApplicationS
 - 需要部署多个微服务，每个微服务用一个helm chart打包，用一个单独的appSet部署。
 - 所有的appProject、appSet都最好部署在argocd namespace里面。因为之前的版本是不支持创建到每个app的ns中的，新版本支持了，但是不是非常稳定，所以还是推荐将appSet创建到和ArgoCD Server一样的ns中。
 
+# 接入CICD
+接入流程：
+1. 发布到测试环境：
+	1. CI工具制作镜像并推送到仓库
+	2. CI工具把镜像tag更新至Git
+	3. CI工具调用acgocd cli命令Sync变更
+2. 发布到生产环境：
+	1. 发版平台选择已经测试过的镜像
+	2. CI工具把镜像更新至Git
+	3. CI工具使用ArgoCD命令同步数据
+
+## jenkins示例
+
+```groovy
+pipeline {
+agent any // 使用任何可用的代理执行流水线
+environment {
+// 定义一些环境变量，比如镜像地址、ArgoCD仓库地址等
+IMAGE_ADDRESS = "xxx:xxx"
+GIT_REPO = 'https://xxx.git'
+ARGOCD_APP_NAME = 'xxx'
+}
+stages {
+stage('Checkout') {
+steps {
+// 1. 拉取最新代码
+git branch: 'main', url: 'https://your-git-repo.com/your-
+username/your-app-code.git'
+}
+}
+stage('Update Deployment Manifest') {
+steps {
+script {
+// 2. 更新 Git 仓库中的镜像地址
+sh """
+cd ${ARGOCD_APP_NAME}
+sed -i 's|image: your-image:.*|image:
+${IMAGE_ADDRESS}|' values.yaml
+"""
+// 提交更改
+sh """
+git config user.email "dotbalo"
+git config user.name "dukuan"
+git add .
+git commit -m "Update image to
+${IMAGE_ADDRESS}"
+git push origin main
+"""
+}
+}
+}
+stage('Sync ArgoCD Application') {
+steps {
+script {
+// 3. 触发 ArgoCD 同步应用
+withCredentials([string(credentialsId:
+"${env.ARGOCD_CREDENTIALS_ID}", variable: 'ARGOCD_TOKEN')]) {
+```
+
 # Troubleshooting
 创建完applicationset之后，无法创建application，去看k describe applicationset appset-helm -n argocd的时候看到网络连接问题：Client.Timeout exceeded while awaiting headers。
 解决：删掉当前appset，换个名字再重新创建一个。
