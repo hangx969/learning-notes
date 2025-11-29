@@ -2,9 +2,9 @@
 
 Argo CD 是一个专为 Kubernetes 环境设计的声明式、GitOps 持续交付 (CD) 工具。它隶属于 [CNCF](https://www.cncf.io/) 旗下的 [Argo 项目](https://argoproj.github.io/)，是一个被广泛采用的开源项目。
 
-Argo CD 的核心思想是将 Git 仓库作为应用部署和基础设施配置的**唯一事实来源** (Single Source of Truth)。
+Argo CD 的核心思想是将 Git 仓库作为应用部署和基础设施配置的**唯一事实来源** (Single Source of Truth)。-- GitOps理念
 
-它自动同步 Git 仓库中定义的期望应用状态（通常是 Kubernetes 清单 YAML 文件、Helm Charts、Kustomize 目录等）与目标 Kubernetes 集群中的实际运行状态，确保两者始终保持一致。这种模式被称为 GitOps。
+它自动同步 Git 仓库中定义的期望应用状态（通常是 Kubernetes 清单 YAML 文件、Helm Charts、Kustomize 目录等），与目标 Kubernetes 集群中的实际运行状态，用一些自动化工具，确保两者始终保持一致。这种模式被称为 GitOps。
 
 官网地址：[Argo CD 中文文档 平台工程 Devops](https://argocd.devops.gold/)
 
@@ -37,23 +37,21 @@ Argo CD 的核心思想是将 Git 仓库作为应用部署和基础设施配置�
    - 自定义配置管理工具插件
 5. 回滚与历史记录：利用 Git 的版本控制能力，轻松回滚到任何先前提交的应用状态。
 6. 访问控制与安全性：
-
-- 基于角色的访问控制 (RBAC)：精细控制用户/组对项目和应用的访问权限。
-- 单点登录 (SSO) 集成：支持 OIDC (如 Google, GitHub, GitLab, Dex, Keycloak)、SAML 2.0、LDAP。
-- Git 仓库认证：支持 HTTPS (用户名/密码)、SSH 私钥等方式安全访问源仓库。
-- 集群访问管理：安全地存储和管理目标集群的访问凭证。
-
+	- 基于角色的访问控制 (RBAC)：精细控制用户/组对项目和应用的访问权限。
+	- 单点登录 (SSO) 集成：支持 OIDC (如 Google, GitHub, GitLab, Dex, Keycloak)、SAML 2.0、LDAP。
+	- Git 仓库认证：支持 HTTPS (用户名/密码)、SSH 私钥等方式安全访问源仓库。
+	- 集群访问管理：安全地存储和管理目标集群的访问凭证。
 7. 同步策略与钩子：
-
-- 自动/手动同步：可配置为自动应用 Git 更改，或需要手动审批。
-- 同步波次 (Sync Waves)：控制资源同步的顺序（例如，先创建 CRD，再创建依赖它的 CR）。
-- 同步钩子 (Sync Hooks)：在同步操作的生命周期中（PreSync, Sync, PostSync, SyncFail）执行自定义操作（如数据库迁移、通知）。
-
+	- 自动/手动同步：可配置为自动应用 Git 更改，或需要手动审批。
+	- 同步波次 (Sync Waves)：控制资源同步的顺序（例如，先创建 CRD，再创建依赖它的 CR）。
+	- 同步钩子 (Sync Hooks)：在同步操作的生命周期中（PreSync, Sync, PostSync, SyncFail）执行自定义操作（如数据库迁移、通知）。
 8. 应用健康状态分析：内置对常见 Kubernetes 资源（Deployment, StatefulSet, DaemonSet, Service, Ingress 等）的健康检查，支持自定义健康检查逻辑。
-
 9. 参数覆盖：支持在 Argo CD 层面覆盖 Helm/Kustomize 参数，便于管理不同环境（如 values-production.yaml）的差异化配置，而无需修改主 Git 仓库。
 10. Webhook 集成：支持 Git 仓库的 Webhook（如 GitHub, GitLab, Bitbucket），在代码推送后立即触发同步，实现更快的反馈循环。
 11. 项目组织： 通过 Projects 对应用进行逻辑分组，并应用共享的策略（如源仓库白名单、目标集群/命名空间白名单、角色权限）。
+
+## 组件
+
 
 # 安装ArgoCD-基于yaml-非HA
 ## 文档
