@@ -51,7 +51,12 @@ Argo CD 的核心思想是将 Git 仓库作为应用部署和基础设施配置�
 11. 项目组织： 通过 Projects 对应用进行逻辑分组，并应用共享的策略（如源仓库白名单、目标集群/命名空间白名单、角色权限）。
 
 ## 组件
+### API Server
 
+
+### Repository
+
+### Application Controller
 
 # 安装ArgoCD-基于yaml-非HA
 ## 文档
