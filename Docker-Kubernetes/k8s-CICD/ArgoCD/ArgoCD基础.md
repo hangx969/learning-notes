@@ -302,6 +302,8 @@ spec:
 ~~~
 
 # 安装ArgoCD-基于yaml-非HA
+公司中建议将ArgoCD部署到专门的基础设施集群中，通过拿到其他集群的kubeconfig来访问其他集群的api-server，基础设施集群需要能够访问到其他集群apiserver的6443端口。
+
 ## 文档
 参考：[快速开始 - Argo CD 中文文档 平台工程 Devops](https://argocd.devops.gold/getting_started/#1-argo-cd)
 
