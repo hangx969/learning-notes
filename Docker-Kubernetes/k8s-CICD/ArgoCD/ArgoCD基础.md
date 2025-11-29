@@ -67,7 +67,8 @@ ArgoCD入口，控制中枢，接收外部请求和内部调用，处理身份�
 - 规定应用只能部署到哪些集群和ns
 - 精确控制可以访问的资源类型（比如Deployment）
 - 与ArgoCD自身的RBAC集成，控制用户或组对项目内资源的操作权限
-###  
+
+###  Application
 
 
 # 安装ArgoCD-基于yaml-非HA
