@@ -1168,6 +1168,10 @@ ApplicationSet多集群部署的配置如果不统一，可以利用ApplicationS
 
 ```
 
+# 最佳实践
+- 需要部署多个微服务，每个微服务用一个helm chart打包，用一个单独的appSet部署。
+- 所有的appProject、appSet都最好部署在argocd namespace里面。因为之前的版本是不支持创建到每个app的ns中的，新版本支持了，但是不是非常稳定，所以还是推荐将appSet创建到和ArgoCD Server一样的ns中。
+
 # Troubleshooting
 创建完applicationset之后，无法创建application，去看k describe applicationset appset-helm -n argocd的时候看到网络连接问题：Client.Timeout exceeded while awaiting headers。
 解决：删掉当前appset，换个名字再重新创建一个。
