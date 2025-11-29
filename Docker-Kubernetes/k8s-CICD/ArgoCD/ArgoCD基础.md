@@ -598,8 +598,8 @@ kubectl get secret -n argocd argocd-initial-admin-secret -o jsonpath="{.data.pas
 ```sh
 # 将 kubeconfig 中的集群上下文添加到 Argo CD 进行管理
 argocd cluster add <context-name>
-argocd cluster add kubernetes-admin@kubernetes
-
+argocd cluster add kubernetes-admin@kubernetes --name k8s-bj-cluster
+argocd cluster list  
 ```
 
 ## 配置仓库
