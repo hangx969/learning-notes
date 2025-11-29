@@ -52,11 +52,23 @@ Argo CD 的核心思想是将 Git 仓库作为应用部署和基础设施配置�
 
 ## 组件
 ### API Server
+ArgoCD入口，控制中枢，接收外部请求和内部调用，处理身份验证和权限控制。
 
-
-### Repository
+### Repository Server
+内部服务，负责维护Git本地缓存，作为ArgoCD的资料源。
 
 ### Application Controller
+监听正在运行的应用，将当前状态和期望状态对比。是自动化引擎。
+
+## CRD资源
+### AppProject
+提供逻辑分组能力。比如多个团队共同使用ArgoCD时，实现权限分配和隔离。
+- 规定项目下的应用只能从哪些Git/helm仓库获取资源
+- 规定应用只能部署到哪些集群和ns
+- 精确控制可以访问的资源类型（比如Deployment）
+- 与ArgoCD自身的RBAC集成，控制用户或组对项目内资源的操作权限
+###  
+
 
 # 安装ArgoCD-基于yaml-非HA
 ## 文档
