@@ -789,6 +789,9 @@ spec:
 > guestbook这个镜像有问题，在arm64机器上拉下来的镜像，docker inspect里面居然是"Architecture": "amd64"，pod根本跑不起来：exec /usr/local/bin/docker-php-entrypoint: exec format error
 
 # 应用部署示例 --- 基于helm
+什么时候直接用yaml文件，什么时候用helm？
+- 像是一些通用的配置文件，每个集群都一样，可以用yaml+AgroCD
+- 只要是每个集群有不一样的地方，就推荐用helm
 
 ## 创建AppProject
 如果有多个团队，每个团队都要在同一集群内维护大量的应用，就需要用到 Argo CD 的另一个概念：项目（Project）。
