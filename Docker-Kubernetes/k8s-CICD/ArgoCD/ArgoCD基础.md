@@ -559,9 +559,6 @@ argocd login grpc.argocd.hanxux.local
 # 登录之后，相关配置保存在~/.config/argocd/config中
 argocd login 10.96.23.131
 
-# 将 kubeconfig 中的集群上下文添加到 Argo CD 进行管理
-argocd cluster add <context-name>
-
 #更新当前登录用户的密码
 #在更改密码后，您应该从 argocd 命名空间中删除 `argocd-initial-admin-secret`。该 Secret 除存储初始生成的明文密码外没有其他用途，可以随时安全删除。如果需要重新生成管理员密码，argocd 将按需重新创建该Secret。
 argocd account update-password
@@ -597,6 +594,13 @@ kubectl get secret -n argocd argocd-initial-admin-secret -o jsonpath="{.data.pas
 - 由于 Argo CD 支持部署应用到多集群，所以如果你要将应用部署到外部集群的时候，需要先将外部集群的认证信息注册到 Argo CD 中。
 ### 内部集群
 - 如果是在内部部署（运行 Argo CD 的同一个集群，默认不需要配置，默认名称叫in-cluster），直接使用 `https://kubernetes.default.svc` 作为应用的 K8S APIServer 地址即可。
+### CLI添加集群
+```sh
+# 将 kubeconfig 中的集群上下文添加到 Argo CD 进行管理
+argocd cluster add <context-name>
+argocd cluster add kubernetes-admin@kubernetes
+
+```
 
 ## 配置仓库
 UI界面 -- Setting -- Repositories直接添加
