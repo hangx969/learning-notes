@@ -1173,22 +1173,23 @@ ApplicationSet多集群部署的配置如果不统一，可以利用ApplicationS
 - 所有的appProject、appSet都最好部署在argocd namespace里面。因为之前的版本是不支持创建到每个app的ns中的，新版本支持了，但是不是非常稳定，所以还是推荐将appSet创建到和ArgoCD Server一样的ns中。
 
 # 接入CICD
+
 接入流程：
 1. 发布到测试环境：
 	1. CI工具制作镜像并推送到仓库
 	2. CI工具把镜像tag更新至Git
-	3. CI工具调用acgocd cli命令Sync变更
+	3. CI 工具使用 ArgoCD 命令同步数据
 2. 发布到生产环境：
 	1. 发版平台选择已经测试过的镜像
 	2. CI工具把镜像更新至Git
-	3. CI工具使用ArgoCD命令同步数据
+	3. CI 工具使用 ArgoCD 命令同步数据
 
-## jenkins示例
+## Jenkins示例
+中间build image、推送image的过程省略。
 
 ```groovy
 pipeline {
     agent any
-
     environment {
         IMAGE_ADDRESS = "xxx:xxx"
         GIT_REPO = 'https://xxx.git'
@@ -1213,8 +1214,8 @@ pipeline {
                     """
                     // 提交更改
                     sh """
-                        git config user.email "xxx"
-                        git config user.name "xxx"
+                        git config user.email "dotbalo"
+                        git config user.name "dukuan"
                         git add .
                         git commit -m "Update image to ${IMAGE_ADDRESS}"
                         git push origin main
@@ -1229,20 +1230,14 @@ pipeline {
                     // 3. 触发 ArgoCD 同步应用
                     withCredentials([string(credentialsId: "${env.ARGOCD_CREDENTIALS_ID}", variable: 'ARGOCD_TOKEN')]) {
                         sh """
-                            argocd app sync ${ARGOCD_APP_NAME} --auth-token ${ARGOCD_TOKEN}
+                            argocd login ARGOCD_ADDRESS --auth-token ${ARGOCD_TOKEN}  # 用户名密码
+                            argocd app sync -l app=${ARGOCD_APP_NAME}
+                            # 可选：等待应用健康
+                            argocd app wait -l app=${ARGOCD_APP_NAME} --health --timeout 300
                         """
                     }
                 }
             }
-        }
-    }
-
-    post {
-        success {
-            echo 'Pipeline completed successfully!'
-        }
-        failure {
-            echo 'Pipeline failed!'
         }
     }
 }
@@ -1250,10 +1245,79 @@ pipeline {
 
 ## Tekton示例
 
-```yaml
+更改镜像的task：
 
+```yaml
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+  name: update-deployment-manifest
+spec:
+  params:
+    - name: gitRepo
+      type: string
+      description: ArgoCD资源文件仓库地址
+    - name: imageAddress
+      type: string
+      description: 镜像地址
+    - name: pathToManifests
+      type: string
+      description: 当前服务的文件路径
+  steps:
+    - name: update-and-push
+      image: alpine/git  # 使用包含 git 和必要工具（如 sed, yq）的镜像
+      script: |
+        # 克隆仓库
+        git clone $(params.gitRepo) deployment-repo
+        cd deployment-repo/$(params.pathToManifests)
+        # 更新镜像标签，例如在 values.yaml 中
+        sed -i "s|image: your-image:.*|image: $(params.imageAddress)|" values.yaml
+        # 配置 git 并提交推送
+        git config user.email "dotbalo@example.com"
+        git config user.name "dukuan"
+        git add .
+        git commit -m "Update image to $(params.imageAddress)"
+        git push
 ```
 
+调用argocd更新应用的task：
+
+```yaml
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+  name: argocd-sync
+spec:
+  params:
+    - name: argocdServer
+      type: string
+      description: ArgoCD 服务器地址
+      default: "argocd-server.argocd.svc.cluster.local:443"
+    - name: argocdAppName
+      type: string
+      description: ArgoCD 应用名称
+    - name: argocdToken
+      type: string
+      description: ArgoCD 认证令牌，或者用户名密码
+  steps:
+    - name: sync-application
+      image: argoproj/argocd-cli:v2.7.6  # 包含 argocd CLI 的镜像
+      script: |
+        # ArgoCD 登录
+        argocd login $(params.argocdServer) \
+          --auth-token "$(params.argocdToken)" \
+          --grpc-web
+        # 同步应用
+        echo "正在同步应用: $(params.argocdAppName)"
+        argocd app sync -l app=$(params.argocdAppName)
+        # 等待应用健康状态
+        echo "等待应用同步成功..."
+        argocd app wait -l app=$(params.argocdAppName) --health --timeout 300
+```
+
+
+
 # Troubleshooting
+
 创建完applicationset之后，无法创建application，去看k describe applicationset appset-helm -n argocd的时候看到网络连接问题：Client.Timeout exceeded while awaiting headers。
 解决：删掉当前appset，换个名字再重新创建一个。
