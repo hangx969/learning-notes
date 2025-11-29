@@ -1187,48 +1187,71 @@ ApplicationSet多集群部署的配置如果不统一，可以利用ApplicationS
 
 ```groovy
 pipeline {
-agent any // 使用任何可用的代理执行流水线
-environment {
-// 定义一些环境变量，比如镜像地址、ArgoCD仓库地址等
-IMAGE_ADDRESS = "xxx:xxx"
-GIT_REPO = 'https://xxx.git'
-ARGOCD_APP_NAME = 'xxx'
+    agent any
+
+    environment {
+        IMAGE_ADDRESS = "xxx:xxx"
+        GIT_REPO = 'https://xxx.git'
+        ARGOCD_APP_NAME = 'xxx'
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                // 1. 拉取最新代码
+                git branch: 'main', url: 'https://your-git-repo.com/your-username/your-app-code.git'
+            }
+        }
+
+        stage('Update Deployment Manifest') {
+            steps {
+                script {
+                    // 2. 更新 Git 仓库中的镜像地址
+                    sh """
+                        cd ${ARGOCD_APP_NAME}
+                        sed -i 's|image: your-image:.*|image: ${IMAGE_ADDRESS}|' values.yaml
+                    """
+                    // 提交更改
+                    sh """
+                        git config user.email "xxx"
+                        git config user.name "xxx"
+                        git add .
+                        git commit -m "Update image to ${IMAGE_ADDRESS}"
+                        git push origin main
+                    """
+                }
+            }
+        }
+
+        stage('Sync ArgoCD Application') {
+            steps {
+                script {
+                    // 3. 触发 ArgoCD 同步应用
+                    withCredentials([string(credentialsId: "${env.ARGOCD_CREDENTIALS_ID}", variable: 'ARGOCD_TOKEN')]) {
+                        sh """
+                            argocd app sync ${ARGOCD_APP_NAME} --auth-token ${ARGOCD_TOKEN}
+                        """
+                    }
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Pipeline completed successfully!'
+        }
+        failure {
+            echo 'Pipeline failed!'
+        }
+    }
 }
-stages {
-stage('Checkout') {
-steps {
-// 1. 拉取最新代码
-git branch: 'main', url: 'https://your-git-repo.com/your-
-username/your-app-code.git'
-}
-}
-stage('Update Deployment Manifest') {
-steps {
-script {
-// 2. 更新 Git 仓库中的镜像地址
-sh """
-cd ${ARGOCD_APP_NAME}
-sed -i 's|image: your-image:.*|image:
-${IMAGE_ADDRESS}|' values.yaml
-"""
-// 提交更改
-sh """
-git config user.email "dotbalo"
-git config user.name "dukuan"
-git add .
-git commit -m "Update image to
-${IMAGE_ADDRESS}"
-git push origin main
-"""
-}
-}
-}
-stage('Sync ArgoCD Application') {
-steps {
-script {
-// 3. 触发 ArgoCD 同步应用
-withCredentials([string(credentialsId:
-"${env.ARGOCD_CREDENTIALS_ID}", variable: 'ARGOCD_TOKEN')]) {
+```
+
+## Tekton示例
+
+```yaml
+
 ```
 
 # Troubleshooting
