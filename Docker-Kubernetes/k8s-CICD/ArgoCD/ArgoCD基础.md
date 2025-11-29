@@ -72,6 +72,8 @@ ArgoCD入口，控制中枢，接收外部请求和内部调用，处理身份�
 该资源用于创建和部署应用程序，建立了Git仓库和目标集群之间的桥梁。
 spec.syncPolicy.selfHeal：当集群状态和git不一致时，是否自动修复。生产环境建议关闭。手动同步更加稳妥。
 
+> 不推荐使用application创建资源，即使当前只有一个集群去部署，也用applicationSet，方便后续扩展多集群部署
+
 ### ApplicationSet
 `ApplicationSet` 用于简化多集群应用编排，它可以基于单一应用编排并根据不同的变量自动生成一个或多个 `Application`。
 
@@ -552,6 +554,8 @@ curl -sSL -o /usr/local/bin/argocd https://github.com/argoproj/argo-cd/releases/
 chmod +x /usr/local/bin/argocd
 ```
 ## 常用命令
+平时并不会用CLI直接管理applicationSet之类的资源。但是如果有一些CI工具，需要显式触发同步的话，可以用cli命令来实现。
+
 ~~~sh
 # 登录命令 -- 在宿主机
 argocd login grpc.argocd.hanxux.local
@@ -581,8 +585,12 @@ argocd app sync <app-name>
 argocd app delete <app-name>
 #列出Argo CD 当前管理的所有 Kubernetes 集群
 argocd cluster list
+
+# AppProject管理
+argocd proj list
+
 ~~~
- 
+
 ## 登录web-UI
 默认用户名admin，获取初始密码：
 ```sh
@@ -595,15 +603,63 @@ kubectl get secret -n argocd argocd-initial-admin-secret -o jsonpath="{.data.pas
 ### 内部集群
 - 如果是在内部部署（运行 Argo CD 的同一个集群，默认不需要配置，默认名称叫in-cluster），直接使用 `https://kubernetes.default.svc` 作为应用的 K8S APIServer 地址即可。
 ### CLI添加集群
+在argocd中注册一个新集群，首先拿到kubeconfig文件：
 ```sh
-# 将 kubeconfig 中的集群上下文添加到 Argo CD 进行管理
-argocd cluster add <context-name>
-argocd cluster add kubernetes-admin@kubernetes --name k8s-bj-cluster
+mv kubeconfig nj-kubeconfig
+# 获取context name
+kubectl context get-contexts -o name --kubeconfig nj-kubeconfig
+```
+
+将 kubeconfig 中的集群上下文添加到 Argo CD 进行管理：
+```sh
+# argocd cluster add <context-name>
+argocd cluster add kubernetes-admin@kubernetes --name k8s-nj-cluster
 argocd cluster list  
 ```
 
+删除集群：注意删除集群操作不会引起pod被删除，除非是把argocd的资源删掉了
+```sh
+argocd cluster rm k8s-nj-cluster
+```
+
 ## 配置仓库
-UI界面 -- Setting -- Repositories直接添加
+- UI界面 -- Setting -- Repositories直接添加
+- CLI管理:
+```sh
+# 查看仓库
+argocd repo list
+# 获取仓库详情。argocd是以仓库的URL来作为唯一标识
+argocd repo get https://github.com/argoproj/argocd-example-apps.git
+# 删除仓库
+argocd repo rm https://github.com/argoproj/argocd-example-apps.git
+
+# https协议
+argocd repo add https://github.com/argoproj/argocd-example-apps.git --username git --password secret --insecure-skip-server-verification --name test-repo
+
+argocd repo add https://oauth:TOKEN@git.example.com/repos/repo.git
+
+# ssh协议
+argocd repo add git@git.example.com:repos/repo --insecure-ignore-host-key --ssh-private-key-path ~/id_rsa --name test-repo
+```
+
+
+## 回滚
+UI界面的History and Rollback功能可以一键回滚。但是任何非紧急问题，都建议在git仓库源端回滚代码，要不然任何在UI上的变更都会引起argocd out of sync
+
+# 应用管理
+CLI管理应用的方式可以在devops中使用：
+
+```sh
+# 获取应用列表
+argocd app list
+kubectl get app -n argocd
+
+# 查看某个应用
+argocd app get argocd/bookinfo
+
+# 同步应用
+argocd app sync argocd/bookinfo
+```
 
 # 应用部署示例 -- 基于yaml
 Git 仓库 https://github.com/argoproj/argocd-example-apps.git 是一个包含留言簿应用程序的示例库，我们可以用该应用来演示 Argo CD 的工作原理。
@@ -640,7 +696,6 @@ argocd app sync argocd/guestbook
 - 方法2: 直接点击 UI 界面上应用的 `Sync` 按钮也可开始同步
 
 ### 自动同步
-
 设置sync policy参数就是自动同步
 
 ~~~yaml
@@ -935,7 +990,6 @@ spec:
 更多配置信息可以前往文档 https://argo-cd.readthedocs.io/en/stable/operator-manual/declarative-setup/ 查看.
 
 ## 创建Application
-
 项目创建完成后，在该项目下创建一个 Application，代表环境中部署的应用程序实例。
 
 ~~~yaml
@@ -948,7 +1002,7 @@ spec:
   destination:
     namespace: default
     server: "https://kubernetes.default.svc"
-  project: demo
+  project: appprj-demo
   syncPolicy:
     automated:
       prune:  # git repo里面删资源，自动在环境中删资源
@@ -1059,6 +1113,9 @@ data:
 
 上面的配置表示如果 Ingress 资源对象的 `metadata.creationTimestamp` 字段不为空，则表示健康状态为 `Healthy`，否则为 `Progressing`，更新上面的配置后，我们再次查看应用的健康状态就会发现已经变成了 `Healthy` 状态。
 
-## Troubleshooting
+# 集群个性化设置
+ApplicationSet多集群部署的配置如果不统一，
+
+# Troubleshooting
 创建完applicationset之后，无法创建application，去看k describe applicationset appset-helm -n argocd的时候看到网络连接问题：Client.Timeout exceeded while awaiting headers。
 解决：删掉当前appset，换个名字再重新创建一个。
