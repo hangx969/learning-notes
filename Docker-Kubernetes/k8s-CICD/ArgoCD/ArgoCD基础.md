@@ -235,7 +235,7 @@ spec:
           - ApplyOutOfSyncOnly=true
           # 验证资源
           - Validate=true
-          # 资源删除策略：前台删除（等待依赖资源先删除）
+          # 资源删除策略：前台删除（等待依赖资源先删除，比如要删除deploy，先去删除pod再删deploy）
           - PrunePropagationPolicy=foreground
 
         # 重试策略：同步失败时的重试配置
@@ -248,7 +248,7 @@ spec:
             duration: 5s
             # 最大重试间隔
             maxDuration: 3m
-            # 重试间隔增长因子
+            # 重试间隔增长因子，每次间隔越来越长，防止重启风暴
             factor: 2
 
       # --------------------------------------------------
