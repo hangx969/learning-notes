@@ -149,9 +149,10 @@ kubectl get BackupStorageLocation -n velero
 ```
 
 # 测试备份
+## 创建测试资源 
 创建测试ns：`kubectl create ns test`
 
-部署资源：
+部署测试deployment：
 
 ```yaml
 apiVersion: apps/v1
@@ -205,6 +206,105 @@ spec:
   type: ClusterIP
 ```
 
+# 运行备份
 备份：`velero backup create test-backup`
 
 查看备份：`velero backup get`
+
+当你运行 `velero backup create test-backup` 且**不带任何其他参数**时，Velero 的默认行为是：**“尽可能备份集群内的所有 Kubernetes 资源对象（Metadata）”**。
+
+结合你之前提供的安装命令（特别是 `--use-volume-snapshots=false`），这个备份的具体内容如下：
+
+## 1. 备份了什么（Yes）
+
+它备份的是 **Kubernetes 的“配置”和“状态描述”**（也就是你通常用 `kubectl get ... -o yaml` 看到的那些东西）：
+
+- **所有命名空间 (Namespaces)**：包括 `default`、`kube-system` 以及你自己创建的所有 namespace。
+- **工作负载 (Workloads)**：Deployments, StatefulSets, DaemonSets, ReplicaSets, Pods, Jobs, CronJobs 等。
+- **配置与密钥**: ConfigMaps, Secrets。
+- **网络配置**: Services, Ingress, NetworkPolicies。
+- **存储定义 (注意是定义)**: PersistentVolumeClaims (PVC), PersistentVolumes (PV), StorageClasses。
+- **权限控制**: ServiceAccounts, Roles, RoleBindings, ClusterRoles, ClusterRoleBindings。
+- **自定义资源 (CRDs)**: 集群内安装的所有 CRD 定义及其 CR (Custom Resources)。
+
+**简单来说：** 如果你的集群炸了，用这个备份还原，你的 K8s 会恢复出所有的 Deployment、Service 和 PVC 的**定义**。
+
+---
+
+## 2. 没备份什么（No）—— ⚠️ 重点警告
+
+基于你之前的安装命令 `velero install ... --use-volume-snapshots=false`，**这个备份极其重要的一点缺失是：**
+
+- ❌ **持久化数据（Persistent Volume Data）没有被备份！**
+
+**这是什么意思？**  
+假设你在集群里运行了一个 MySQL 数据库，挂载了一个 PVC 存数据。
+
+- Velero 会备份：“这里有一个 MySQL Deployment” 和 “这里有一个 10GB 的 PVC 申请” 这两张“图纸”。
+- Velero **不会**备份：MySQL 数据库里存储的用户表、订单表等实际**文件数据**。
+
+**原因**：  
+Velero 备份数据主要有两种方式：
+
+1. **存储卷快照 (Volume Snapshots)**：你显式禁用了它 (`false`)，而且 MinIO/本地环境通常也没有云厂商那种一键快照能力。
+2. **文件系统备份 (FSB / Restic / Kopia)**：这需要你显式启用 Node Agent，并在备份时指定（或者给 Pod 加注解）。你的 `velero install` 命令里没有启用这个组件，`backup` 命令里也没指定。
+
+---
+
+## 3. 还有哪些通常被排除？
+
+默认情况下，Velero 还会自动排除一些不适合备份或不需要备份的数据：
+
+- **Kubernetes Events**: 集群事件日志通常不备份。
+- **Node 信息**: 因为 Node 是基础设施，还原时通常是还原到新的一组 Node 上。
+- **临时数据**: 挂载了 `emptyDir` 的卷里的数据。
+
+---
+
+## 4. 如何验证备份了什么？
+
+你可以运行以下命令来查看这次备份的详情：
+
+**查看备份概览：**
+
+```bash
+velero backup describe test-backup --details
+kubectl get backup -n velero
+```
+
+你会看到 Resource List，列出了它找到了多少个 Deployment、多少个 Pod 等。
+
+**查看具体的备份日志（排查是否有 Error）：**
+
+```bash
+velero backup logs test-backup
+```
+
+**下载备份文件看看（硬核验证）：**
+
+1. 去你的 MinIO 控制台 (`http://<IP>:9001`)。
+2. 进入 `velerobackup` 存储桶。
+3. 你会看到 `backups/test-backup/` 目录。
+4. 下载那个 `test-backup.tar.gz` 文件并解压。
+5. 你会发现里面全是 JSON 文件，对应你集群里的每一个资源对象。
+
+## 总结建议
+
+如果你只是想备份 **YAML 配置**（GitOps 风格），目前的备份是够用的。  
+如果你想备份 **数据库里的实际数据**，你需要：
+
+1. 在 `velero install` 时启用 `--use-node-agent`。
+2. 在备份命令中指定对特定 PVC 使用文件系统备份，或者给 Pod 打注解 `backup.velero.io/backup-volumes=my-volume-name`。
+
+# 测试还原
+先删掉test ns：`kubectl delete ns test`
+
+velero还原：`velero restore create test-restore --from-backup test-backup --include-namespaces test`
+
+查看恢复状态：
+
+```sh
+velero restore get
+kubectl get restore -n velero test-restore
+kubectl get restore -n velero test-restore -oyaml
+```
