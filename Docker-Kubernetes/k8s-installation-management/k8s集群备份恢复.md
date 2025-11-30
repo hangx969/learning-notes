@@ -101,7 +101,7 @@ EOF
 ```sh
 velero install \
 --provider aws \
---plugins registry.cn-beijing.aliyuncs.com/dotbalo/velero-plugin-for-aws:latest \
+--plugins velero/velero-plugin-for-aws:v1.13.1 \
 --image velero/velero:v1.17.1 \
 --bucket velerobackup \
 --secret-file ./user-minio \
