@@ -299,7 +299,7 @@ velero backup logs test-backup
 # 测试还原
 先删掉test ns：`kubectl delete ns test`
 
-velero还原：`velero restore create test-restore --from-backup test-backup --include-namespaces test`
+velero还原，仅还原test ns：`velero restore create test-restore --from-backup test-backup --include-namespaces test`
 
 查看恢复状态：
 
@@ -308,3 +308,7 @@ velero restore get
 kubectl get restore -n velero test-restore
 kubectl get restore -n velero test-restore -oyaml
 ```
+
+# 企业实战场景
+
+## 周期性备份任务
