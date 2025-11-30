@@ -42,6 +42,7 @@
 Velero会把备份文件上传至对象存储，可以使用公有云存储或者Minio作为存储后端。
 本次实验采用docker部署Minio：
 
+使用Bitnami镜像：（bitnami的minio的Arm64镜像无法拉取，dockerhub里面已经找不到任何tag）
 ```sh
 mkdir -p /data/minio && chmod -R 777 /data/minio
 docker run -d --name minio-server --restart=always \
@@ -53,5 +54,22 @@ docker run -d --name minio-server --restart=always \
   -v /data/minio:/bitnami/minio/data \
   bitnami/minio:latest
 ```
+
+使用官方镜像：
+```sh
+mkdir -p /data/minio && chmod -R 777 /data/minio
+docker run -d --name minio-server --restart=always \ 
+-p 9000:9000 \ 
+-p 9001:9001 \ 
+-e MINIO_ROOT_USER="user" \ 
+-e MINIO_ROOT_PASSWORD="password" \ 
+-v /data/minio:/data \ 
+minio/minio:latest server /data --console-address ":9001"
+```
+
+注意：
+1. **`server /data --console-address ":9001"`**: 这是官方镜像必须的启动参数。如果不加 `--console-address`，Web 控制台端口可能会随机分配，导致你无法通过 9001 访问。
+2. `MINIO_DEFAULT_BUCKETS` 是 Bitnami 镜像特有的环境变量。**官方镜像不支持通过环境变量自动创建 Bucket**。你需要启动后手动创建。
+3. 在界面左侧点击 "Buckets"，然后点击 "Create Bucket" 创建名为 `velerobackup` 的存储桶。
 
 访问宿主机IP+9001可以访问Minio UI界面
