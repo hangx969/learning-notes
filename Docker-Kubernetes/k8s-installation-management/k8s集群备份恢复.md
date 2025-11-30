@@ -33,7 +33,23 @@
 - BackupStorageLocation：备份存储位置，用于指定备份文件的存储位置，比如aws、minio等。同时可以指定对象存储的bucket和prefix。
 ## 工作原理
 ### 备份过程
-手动或自动备份 -- 创建backup资源 -- 服务端处理 -- 执行钩子 -- 收集资源 -- 上传至
+手动或自动备份 -- 创建backup资源 -- 服务端处理 -- 执行钩子 -- 收集资源（创建json文件和一些压缩包） -- 上传至对象存储 -- 返回结果 -- 更新bakcup状态
 
 ### 还原过程
 执行还原 -- 创建Restore资源 -- 服务端处理 -- 下载备份文件 -- 创建k8s资源 -- 返回结果 -- 更新Restore状态
+
+# 部署对象存储Minio
+Velero会把备份文件上传至对象存储，可以使用公有云存储或者Minio作为存储后端。
+本次实验采用docker部署Minio：
+
+```sh
+mkdir -p /data/minio && chmod -R 777 /data/minio
+docker run -d --name minio-server --restart=always \
+  --env MINIO_ROOT_USER="user" \
+  --env MINIO_ROOT_PASSWORD="password" \
+  --env MINIO_DEFAULT_BUCKETS="velerobackup" \
+  --publish 9000:9000 \
+  --publish 9001:9001 \
+  -v /data/minio:/bitnami/minio/data \
+  registry.cn-beijing.aliyuncs.com/dotbalo/minio:latest
+```
