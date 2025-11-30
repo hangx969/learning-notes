@@ -42,7 +42,7 @@
 Velero会把备份文件上传至对象存储，可以使用公有云存储或者Minio作为存储后端。
 本次实验采用docker部署Minio：
 
-使用Bitnami镜像：（bitnami的minio的Arm64镜像无法拉取，dockerhub里面已经找不到任何tag）
+❌ 使用Bitnami镜像：（bitnami的minio的Arm64镜像无法拉取，dockerhub里面已经找不到任何tag，遂放弃）
 ```sh
 mkdir -p /data/minio && chmod -R 777 /data/minio
 docker run -d --name minio-server --restart=always \
@@ -54,22 +54,58 @@ docker run -d --name minio-server --restart=always \
   -v /data/minio:/bitnami/minio/data \
   bitnami/minio:latest
 ```
+访问宿主机IP+9001可以访问Minio UI界面。
 
-使用官方镜像：
+✅ 使用官方镜像：
 ```sh
 mkdir -p /data/minio && chmod -R 777 /data/minio
-docker run -d --name minio-server --restart=always \ 
--p 9000:9000 \ 
--p 9001:9001 \ 
--e MINIO_ROOT_USER="user" \ 
--e MINIO_ROOT_PASSWORD="password" \ 
--v /data/minio:/data \ 
-minio/minio:latest server /data --console-address ":9001"
+docker run -d --name minio-server --restart=always -p 9000:9000 -p 9001:9001 -e MINIO_ROOT_USER="user" -e MINIO_ROOT_PASSWORD="password" -v /data/minio:/data minio/minio:latest server /data --console-address ":9001"
 ```
 
 注意：
 1. **`server /data --console-address ":9001"`**: 这是官方镜像必须的启动参数。如果不加 `--console-address`，Web 控制台端口可能会随机分配，导致你无法通过 9001 访问。
 2. `MINIO_DEFAULT_BUCKETS` 是 Bitnami 镜像特有的环境变量。**官方镜像不支持通过环境变量自动创建 Bucket**。你需要启动后手动创建。
-3. 在界面左侧点击 "Buckets"，然后点击 "Create Bucket" 创建名为 `velerobackup` 的存储桶。
+3. 访问宿主机IP+9001可以访问Minio UI界面，在界面左侧点击 "Buckets"，然后点击 "Create Bucket" 创建名为 `velerobackup` 的存储桶。
 
-访问宿主机IP+9001可以访问Minio UI界面
+# 部署Velero
+## 版本确认及下载
+部署 Velero 之前，需要找到适合的版本和插件的版本：
+- Velero 版 本 选 择 ： https://github.com/vmware-tanzu/velero?tab=readme-ov-file#velero-compatibility-matrix
+- 插 件 版 本 选 择 ： https://github.com/vmware-tanzu/velero-plugin-for-aws?tab=readme-ov-file#compatibility
+- 接下来下载客户端工具： https://github.com/vmware-tanzu/velero/releases/
+
+K8s集群版本是1.34 -- Velero版本用1.17 -- 插件版本选1.13
+
+## 安装客户端工具
+客户端工具选：1.17.1 (release里面选择最新的patch版本下载)：
+https://github.com/vmware-tanzu/velero/releases
+
+```sh
+tar xf velero-v1.17.1-linux-arm64.tar.gz
+mv velero-v1.17.1-linux-arm64/velero /usr/local/bin/
+chmod +x /usr/local/bin/velero
+velero version
+```
+
+## 创建对象存储密码文件
+```sh
+cat > user-minio << EOF
+[default]
+aws_access_key_id=user
+aws_secret_access_key=password
+EOF
+```
+
+## 安装服务端
+
+```sh
+velero install \
+--provider aws \
+--plugins registry.cn-beijing.aliyuncs.com/dotbalo/velero-plugin-for-aws:latest \
+--image velero/velero:v1.17.1 \
+--bucket velerobackup \
+--secret-file ./user-minio \
+--use-volume-snapshots=false \
+--backup-location-config region=minio,s3ForcePathStyle="true",s3Url=http://192.168.181.134:9000 \
+--namespace velero
+```
