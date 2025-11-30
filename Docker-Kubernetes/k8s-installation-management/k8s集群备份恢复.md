@@ -51,5 +51,7 @@ docker run -d --name minio-server --restart=always \
   --publish 9000:9000 \
   --publish 9001:9001 \
   -v /data/minio:/bitnami/minio/data \
-  registry.cn-beijing.aliyuncs.com/dotbalo/minio:latest
+  minio/minio:latest
 ```
+
+访问宿主机IP+9001可以访问Minio UI界面
