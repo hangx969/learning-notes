@@ -148,8 +148,7 @@ velero install \
 kubectl get BackupStorageLocation -n velero
 ```
 
-# 测试备份
-## 创建测试资源 
+# 创建测试资源 
 创建测试ns：`kubectl create ns test`
 
 部署测试deployment：
@@ -299,7 +298,11 @@ velero backup logs test-backup
 # 测试还原
 先删掉test ns：`kubectl delete ns test`
 
-velero还原，仅还原test ns：`velero restore create test-restore --from-backup test-backup --include-namespaces test`
+velero还原，仅还原test ns：
+
+```sh
+velero restore create test-restore --from-backup test-backup --include-namespaces test
+````
 
 查看恢复状态：
 
@@ -316,11 +319,11 @@ kubectl get restore -n velero test-restore -oyaml
 Velero支持定期备份集群，建议为每个集群创建一个每天备份的任务：
 
 ```sh
-velero schedule create daily-cluster-backup \  
-  --schedule="0 13 * * *" \  
-  --include-namespaces="*" \  
-  --exclude-namespaces="velero,kube-system" \  
-  --ttl=720h0m0s
+velero schedule create daily-cluster-backup \
+--schedule="0 13 * * *" \
+--include-namespaces="*" \
+--exclude-namespaces="velero,kube-system" \
+--ttl=720h0m0s
 ```
 
 **参数说明：**
@@ -336,219 +339,223 @@ velero schedule create daily-cluster-backup \
 
 **查看备份任务：**
 
+```sh
 velero schedule get
-
-输出示例：
-
-NAME                  STATUS   CREATED   SCHEDULE      BACKUP TTL   LAST BACKUP   SELECTOR   PAUSED  
-daily-cluster-backup  Enabled  CST       0 13 * * *    720h0m0s     2m ago        <none>     false
+```
 
 **暂停备份任务：**
 
+```sh
 velero schedule pause daily-cluster-backup
+```
 
 **恢复备份任务：**
 
+```sh
 velero schedule unpause daily-cluster-backup
+```
 
-**基于schedule立即创建备份任务：**
+**基于schedule立即手动创建备份任务：**
 
+```sh
 velero backup create --from-schedule daily-cluster-backup
+```
 
 查看备份：
 
+```sh
 velero backup get
+```
 
-输出示例：
+### 1. 为什么要排除 `velero` 命名空间？
 
-NAME                                STATUS      ERRORS   WARNINGS   CREATED                          EXPIRES   STORAGE LOCATION   SELECTOR  
-daily-cluster-backup-20251112130727 Completed   0        0          2025-11-12 21:07:27 +0800 CST   29d       default            <none>
+**关键词：避免“死循环”和“自我覆盖”**
 
-## 1.3.2 保留 NodePort 端口号
+- **鸡生蛋问题**：  
+    当你的集群崩溃需要灾难恢复时，你做的第一件事通常是**重新安装 Velero**。  
+    既然你已经安装了一个全新的 Velero 来执行还原操作，如果你从备份里强行还原旧的 `velero` 命名空间，就会把当前正在干活的 Velero 覆盖掉或搞挂。这就像是在做手术的时候，突然把医生的脑子换掉了。
+    
+- **数据并不在 Pod 里**：  
+    Velero 的核心数据（备份记录、元数据）其实都保存在 MinIO（对象存储）里。只要你重新安装 Velero 并连上同一个 Bucket，历史备份记录会自动同步回来。因此，备份 Velero 自身的 Pod 和 Deployment 是多余且危险的。
+    
 
-Velero恢复数据时，Service的NodePort端口会重新分配，如果用到了Service的NodePort会造成一些故障，此时可以使用`--preserve-nodeports`参数保留原端口（生产环境建议每次还原都使用该端口）。
+### 2. 为什么要排除 `kube-system` 命名空间？
+
+**关键词：避免“环境冲突”和“破坏基础设施”**
+
+- **每个集群的“指纹”不同**：  
+    `kube-system` 里运行着 Kubernetes 的核心组件（如 CoreDNS, kube-proxy, CNI 网络插件等）。这些组件的配置通常与**当前集群的具体环境**（IP地址、节点信息、网络网段）深度绑定。  
+    如果你把**旧集群**（或备份时的状态）的 `kube-system` 还原到**新集群**（或升级后的集群）里，极大概率会导致网络瘫痪、DNS 解析失效，甚至集群彻底不可用。
+    
+- **ETCD 才是正解**：  
+    如果你真的想备份集群的核心状态（Node 信息、集群证书等），应该使用 **ETCD 备份**，而不是用 Velero。  
+    Velero 的设计定位是备份 **“用户的工作负载”**（你的应用、Service、PVC），而不是备份 **“Kubernetes 自身”**。
+
+## 保留 NodePort 端口号
+
+Velero恢复数据时，**Service的NodePort端口会重新分配**，如果用到了Service的NodePort会造成一些故障，此时可以使用`--preserve-nodeports`参数保留原端口（生产环境建议每次还原都使用该端口）。
+
+也有可能要还原的集群中已经有占用原来NodePort的服务了，这时还原的时候会提示端口号冲突。建议先把新集群的这个服务的端口号改了，还原过去之后再交换。
+velero也支持指定参数但是要写很多正则表达式非常麻烦。
 
 **查看当前NodePort：**
 
+```sh
 kubectl get svc -n test
-
-输出示例：
-
-NAME   TYPE       CLUSTER-IP       EXTERNAL-IP   PORT(S)        AGE  
-krm    NodePort   10.99.235.230    <none>        80:30802/TCP   10m
+```
 
 **创建备份：**
 
+```sh
 velero backup create test-backup2
+```
 
 **删除数据（也可以只删除Service资源）：**
 
+```sh
 kubectl delete ns test
+```
 
 **还原数据：**
 
-velero restore create test-restore-with-nodeport \  
-  --from-backup test-backup2 \  
-  --include-namespaces test \  
-  --preserve-nodeports
+```sh
+velero restore create test-restore-with-nodeport \
+--from-backup test-backup2 \
+--include-namespaces test \
+--preserve-nodeports
+```
 
 **查看还原的数据：**
 
+```sh
 kubectl get svc -n test
+```
 
-输出示例：
-
-NAME   TYPE       CLUSTER-IP        EXTERNAL-IP   PORT(S)        AGE  
-krm    NodePort   10.103.219.74     <none>        80:30802/TCP   82s
-
-可以看到端口号保持为 `30802`，没有重新分配。
-
-## 1.3.3 误删资源恢复
+## 误删资源恢复
 
 假如K8s的资源被误删除，也可以通过Velero进行恢复。
 
-**模拟删除资源：**
+**模拟删除deployment：**
 
+```sh
 kubectl delete deploy -n test --all
+```
 
-**使用Velero还原数据（建议最小化执行）：**
+**使用Velero还原deployment（建议最小化执行）：**
 
-velero restore create test-ns-restore-deployments \  
-  --from-backup daily-cluster-backup-20251112130727 \  
-  --include-namespaces=test \  
-  --include-resources=deployments \  
-  --preserve-nodeports
+```sh
+velero restore create test-ns-restore-deployments \
+--from-backup test-backup \
+--include-namespaces=test \
+--include-resources=deployments \
+--preserve-nodeports
+```
+
+注意：无法指定还原特定资源，比如无法指定还原某个特定的deployment，只支持还原所有的deployment。但是集群中已经存在的资源是不会受到影响的。
 
 **查看还原的数据：**
 
+```sh
 kubectl get deploy -n test
+```
 
-输出示例：
-
-NAME   READY   UP-TO-DATE   AVAILABLE   AGE  
-krm    1/1     1            1           38s
-
-## 1.3.4 重大上线变更提前备份
+## 重大上线变更提前备份
 
 如果要对一个系统进行非常大的变更，建议在变更之前提前对某个系统进行全量备份，假设变更失败，可以一键回滚资源。
 
-假如test项目今天需要进行上线，可以提前对test项目进行备份，命名方式建议 `nsName1-nsName2-ns-backup`：
+假如test项目今天需要进行变更上线，可以提前对test项目进行备份，命名方式建议 `nsName1-nsName2-ns-backup`：
 
+```sh
 velero backup create test-ns-backup --include-namespaces=test
+```
 
 查看备份：
 
+```sh
 velero backup get test-ns-backup
+```
 
-输出示例：
+**模拟变更服务，假设变更出错：**
 
-NAME             STATUS      ERRORS   WARNINGS   CREATED   EXPIRES   STORAGE LOCATION   SELECTOR  
-test-ns-backup   Completed   0        0
-
-**模拟变更服务：**
-
+```sh
 # 修改镜像为不存在的版本  
 kubectl edit deploy -n test krm  
-# image: registry.cn-beijing.aliyuncs.com/dotbalo/krm:xxx  
+# image: registry.cn-beijing.aliyuncs.com/krm:xxx  
+```
 ​  
+```sh
 # 删除服务  
 kubectl delete svc -n test --all
-
-查看变更后的状态：
-
-kubectl get po -n test
-
-输出示例：
-
-NAME                   READY   STATUS             RESTARTS   AGE  
-krm-7687f887f-2s8xz    0/1     ImagePullBackOff   0          45s  
-krm-978cdf5dd-5nzkr    1/1     Running            1          3d23h
-
-kubectl get svc -n test
-
-输出：
-
-No resources found in test namespace.
+```
 
 **还原数据：**
 
-velero restore create test-ns-restore \  
-  --from-backup test-ns-backup \  
-  --include-namespaces=test \  
-  --preserve-nodeports
+```sh
+velero restore create test-ns-restore \
+--from-backup test-ns-backup \
+--include-namespaces=test \
+--preserve-nodeports
+```
 
 **查看还原信息：**
 
+```sh
 velero restore get
+```
 
 此时可能有两个警告，可以通过describe查看详情：
 
+```sh
 velero restore describe test-ns-restore
+```
 
 输出示例：
 
+```sh
 Namespaces:  
   test: could not restore, Pod:krm-978cdf5dd-5nzkr already exists.  
         Warning: the in-cluster version is different than the backed-up version  
         could not restore, Deployment:krm already exists.  
         Warning: the in-cluster version is different than the backed-up version
+```
 
-此时Service已还原，但是Deployment并未恢复（Velero默认不还原已经存在的数据）：
+此时Service已还原，但是Deployment并未被Velero恢复（Velero默认不还原已经存在的数据）：
 
+```sh
 kubectl get svc -n test
-
-输出：
-
-NAME   TYPE       CLUSTER-IP      EXTERNAL-IP   PORT(S)        AGE  
-krm    NodePort   10.109.83.76    <none>        80:30802/TCP   107s
-
 kubectl get po -n test
-
-输出：
-
-NAME                   READY   STATUS             RESTARTS   AGE  
-krm-7687f887f-2s8xz    0/1     ImagePullBackOff   0          6m23s  
-krm-978cdf5dd-5nzkr    1/1     Running            1          3d23h
+```
 
 **为了还原已存在的数据，可以使用 `--existing-resource-policy=update`：**
 
-velero restore create test-ns-restore-update \  
-  --from-backup test-ns-backup \  
-  --include-namespaces=test \  
-  --preserve-nodeports \  
-  --existing-resource-policy=update
+```sh
+velero restore create test-ns-restore-update \
+--from-backup test-ns-backup \
+--include-namespaces=test \
+--preserve-nodeports \
+--existing-resource-policy=update
+```
 
 **查看还原的数据：**
 
+```sh
 kubectl get po -n test
-
-输出：
-
-NAME                  READY   STATUS    RESTARTS   AGE  
-krm-978cdf5dd-5nzkr   1/1     Running   1          3d23h
-
 kubectl get svc -n test
+```
 
-输出：
-
-NAME   TYPE       CLUSTER-IP      EXTERNAL-IP   PORT(S)        AGE  
-krm    NodePort   10.109.83.76    <none>        80:30802/TCP   3m19s
-
-## 1.3.5 多集群备份
+## 多集群备份
 
 针对不同的集群备份时，不建议备份到同一个位置，可以采用如下方式进行隔离：
 
 - 不同的Minio
-    
-- 同一个Minio，不同的Bucket
-    
+- 同一个Minio，不同的Bucket 【更推荐】
 - 同一个Bucket，不同的目录
-    
 
 假设对其它集群备份，可以参考如下步骤。
 
 **上传velero客户端（velero指定其它集群的Kubeconfig也可以）：**
 
+```sh
 # 上传离线包并解压  
 ls  
 # velero-v1.17.1-linux-amd64.tar.gz  
@@ -557,189 +564,117 @@ tar xf velero-v1.17.1-linux-amd64.tar.gz
 mv velero-v1.17.1-linux-amd64/velero /usr/local/bin/  
 chmod +x /usr/local/bin/velero  
 velero version
-
-输出：
-
-Client:  
-  Version: v1.17.1
+```
 
 **配置对象存储密码文件：**
 
+```sh
 cat > user-minio << EOF  
 [default]  
 aws_access_key_id=user  
 aws_secret_access_key=password  
 EOF
+```
 
 **创建新的Bucket**（在Minio中创建）
 
 **安装Velero服务端：**
 
-velero install \  
-  --provider aws \  
-  --plugins registry.cn-beijing.aliyuncs.com/dotbalo/velero-plugin-for-aws:latest \  
-  --image registry.cn-beijing.aliyuncs.com/dotbalo/velero:latest \  
-  --bucket velerobackup-nj \  
-  --prefix k8s-nj \  
-  --secret-file ./user-minio \  
-  --use-volume-snapshots=false \  
-  --backup-location-config region=minio,s3ForcePathStyle="true",s3Url=http://192.168.181.134:9000 \  
-  --namespace velero
+```sh
+velero install \
+--provider aws \
+--plugins velero/velero-plugin-for-aws:v1.13.1 \
+--image velero/velero:v1.17.1 \
+--bucket velerobackup-nj \
+--prefix k8s-nj \
+--secret-file ./user-minio \
+--use-volume-snapshots=false \
+--backup-location-config region=minio,s3ForcePathStyle="true",s3Url=http://172.16.35.120:9000 \
+--namespace velero
+```
 
-> 如果是同一个桶，也可以用 `--prefix` 指定不同的目录。
-
-**查看安装进度：**
-
-kubectl get po -n velero
-
-输出：
-
-NAME                      READY   STATUS     RESTARTS   AGE  
-velero-5c474bdd76-8xszq   0/1     Init:0/1   0          7s
+> 如果是同一个桶，也可以用 `--prefix` 指定不同的目录。prefix的值会在桶里创建一个顶级目录，在里面再创建backup子目录存放备份数据
 
 **检查后端存储是否正常：**
 
+```sh
 kubectl get BackupStorageLocation -n velero
+```
 
-输出：
-
-NAME      PHASE       LAST VALIDATED   AGE    DEFAULT  
-default   Available   19s              23s    true
-
-**备份测试：**
-
-创建一个测试的Namespace：
-
-kubectl create ns test
-
-创建测试服务：
-
-kubectl create deploy krm \  
-  --image=registry.cn-beijing.aliyuncs.com/dotbalo/krm:demo -n test  
-kubectl expose deploy krm --port 80 --type NodePort -n test
-
-备份集群：
-
-velero backup create test-backup
-
-其它的操作，如创建周期性备份均一致。
-
-## 1.3.6 跨集群恢复/数据迁移
+## 跨集群恢复/数据迁移
 
 Velero支持把数据恢复到不同的集群，通常用于创建新环境、迁移和数据恢复，只需要能看到备份文件即可。
 
 **备份数据共享的方式一般有两个：**
 
-- 多集群备份至同一个位置（不推荐）
-    
+- 多集群备份至同一个位置，即同一个bucket的同一个目录（不推荐）
 - 手动处理备份文件
-    
 
 接下来演示把bj集群的备份数据恢复到nj集群。
 
 **在源集群（bj）创建备份：**
 
-首先创建一个模拟的Namespace：
-
-kubectl create ns demo
-
-创建测试服务：
-
-kubectl create deploy krm \  
-  --image=registry.cn-beijing.aliyuncs.com/dotbalo/krm:demo -n demo  
-kubectl expose deploy krm --port 80 --type NodePort -n demo
-
-备份集群：
-
+```sh
 velero backup create demo-backup
+```
 
 **复制备份文件到目标集群存储：**
 
-接下来只需要把文件复制一份到nj的备份目录即可，可以使用mc命令，或者通过minio页面下载再上传均可。
+接下来只需要把bj的备份文件复制一份到nj的备份目录即可。可以使用mc命令，或者通过minio页面下载再上传均可。
 
 本次采用mc命令复制数据：
 
+```sh
 docker ps  
 # 找到minio容器  
 docker exec -ti <minio容器ID> bash
+```
 
 通过mc命令查看备份文件：
 
+```sh
 mc ls local/
-
-输出：
-
-0B velerobackup/  
-0B velerobackup-nj/
-
 mc ls local/velerobackup/backups/demo-backup
-
-输出：
-
-29B   STANDARD demo-backup-csi-volumesnapshotclasses.json.gz  
-27B   STANDARD demo-backup-itemoperations.json.gz  
-24KiB STANDARD demo-backup-logs.gz  
-29B   STANDARD demo-backup-podvolumebackups.json.gz  
-3.8KiB STANDARD demo-backup-resource-list.json.gz  
-49B   STANDARD demo-backup-results.gz  
-27B   STANDARD demo-backup-volumeinfo.json.gz  
-29B   STANDARD demo-backup-volumesnapshots.json.gz  
-124KiB STANDARD demo-backup.tar.gz  
-3.3KiB STANDARD velero-backup.json
+```
 
 **拷贝数据：**
 
-mc cp -r local/velerobackup/backups/demo-backup \  
-  local/velerobackup-nj/k8s-nj/backups/
+把一个集群的bucket中的backups目录中的某个备份的子目录，拷贝到另一个集群的bucket中的backups目录中。（子目录会自动创建）
+
+```sh
+mc cp -r local/velerobackup/backups/demo-backup local/velerobackup-nj/k8s-nj/backups/
+```
 
 **查看数据：**
 
+```sh
 mc ls local/velerobackup-nj/k8s-nj/backups/
-
-输出：
-
-0B demo-backup/  
-0B test-backup/
+```
 
 数据复制后，velero会读取该备份文件，并且会生成对应的Backup资源：
 
 **在目标集群（nj）查看备份：**
 
+```sh
 velero backup get
-
-输出：
-
-NAME          STATUS      ERRORS   WARNINGS   CREATED   EXPIRES   STORAGE LOCATION   SELECTOR  
-demo-backup   Completed   0        0          CST       29d       default            <none>
+```
 
 **直接还原：**
 
-velero restore create demo-restore-with-nodeport \  
-  --from-backup demo-backup \  
-  --include-namespaces demo \  
-  --preserve-nodeports
+```sh
+velero restore create demo-restore-with-nodeport \
+--from-backup demo-backup \
+--include-namespaces demo \
+--preserve-nodeports
+```
 
 **查看还原状态：**
 
+```sh
 velero restore get
+```
 
-输出：
-
-NAME                         BACKUP        STATUS      STARTED   COMPLETED   ERRORS   WARNINGS   CREATED   SELECTOR  
-demo-restore-with-nodeport   demo-backup   Completed
-
-**查看数据：**
-
-kubectl get po -n demo
-
-输出：
-
-NAME                  READY   STATUS    RESTARTS   AGE  
-krm-978cdf5dd-gdc2x   1/1     Running   0          53s
-
-kubectl get svc -n demo
-
-输出：
-
-NAME   TYPE       CLUSTER-IP        EXTERNAL-IP   PORT(S)        AGE  
-krm    NodePort   10.109.138.171    <none>        80:30096/TCP   56s
+# Velero 卸载
+```sh
+velero uninstall -n velero --force
+```
