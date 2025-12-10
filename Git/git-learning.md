@@ -301,7 +301,9 @@ git checkout dev
 git fetch origin
 
 # 3. 合并 main 分支到当前分支
-git merge origin/main
+git rebase origin/main # 推荐，保留历史整洁
+# 或者
+git merge origin/main # 保留完整历史
 
 # 后续可以继续进行commit和push
 ```
