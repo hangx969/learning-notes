@@ -234,6 +234,10 @@ git remote set-url origin git@ssh.xxxx
 
 ```bash
 git add .
+
+# 如果只提交部分文件
+git status
+git add xxx.yaml 
 ```
 
 - 提交暂存区的内容到本地仓库
@@ -255,8 +259,7 @@ git push origin aaa-bbb-ccc
 # git -u: 第一次加了参数-u后，以后即可直接用git push代替git push origin main
 ```
 
-- 忽略文件
-  - 被忽略的文件在 .gitignore里面，可以配置正则规则配置哪些文件不会被push到远端仓库
+- 忽略文件: 被忽略的文件在 .gitignore里面，可以配置正则规则配置哪些文件不会被push到远端仓库
 
 ## Merge PR
 
@@ -284,6 +287,23 @@ git push origin aaa-bbb-ccc
 git checkout main
 git branch -D aaa-bbb-ccc
 git pull --rebase origin main
+```
+
+## Merge main到开发分支
+
+比如我正在一个dev分支上开发，此时远程main分支有别人提交了新改动，我在dev分支完成开发，push之前，需要同步远程main的改动：
+
+```sh
+# 1. 确保当前在 dev 分支
+git checkout dev
+
+# 2. 获取远程最新代码
+git fetch origin
+
+# 3. 合并 main 分支到当前分支
+git merge origin/main
+
+# 后续可以继续进行commit和push
 ```
 
 # 清理操作
