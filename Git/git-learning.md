@@ -308,6 +308,23 @@ git merge origin/main # 保留完整历史
 # 后续可以继续进行commit和push
 ```
 
+## 给commit打tag
+有时候我们推送上去的commit需要打一个tag，这个tag往往会代表一个breaking change的标记。推送commit和推送tag分开操作：
+
+```sh
+# 推送开发分支
+git checkout -b feat/xxx
+git add .
+git commit -m "update for breaking changes"
+git push origin feat/xxx
+# 远程仓库先merge
+# 切到main打tag再单独推送tag
+git checkout main
+git pull --rebase origin main
+git tag 0.4.1
+git push origin 0.4.1
+```
+
 # 清理操作
 
 ## 清除github repo的commit记录
