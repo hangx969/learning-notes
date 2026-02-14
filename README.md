@@ -53,7 +53,7 @@ A comprehensive knowledge base covering Kubernetes ecosystem and cloud-native te
 
 - [Azure Kubernetes basics](./Azure/AKS-basics)
 - [Azure Devops](./Azure/Azure-devops-basics)
-- [Terraform](./Azure/terraform-basics)
+- [Terraform](terraform-basics.md)
 
 ## 📚 Linux
 
