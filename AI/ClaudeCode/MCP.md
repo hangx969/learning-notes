@@ -195,6 +195,8 @@ claude mcp add deepwiki -- npx -y mcp-deepwiki
 场景: 聚合某个库的完整文档站点，比context7更全面但速度慢一些
 
 ## drawio
+仓库： https://github.com/jgraph/drawio-mcp
+
 Draw.io 的这个 MCP 工具（`drawio-mcp`），走了一条非常聪明的路子。它不是自己在后台“画”一张图，而是 **把 AI 生成的逻辑（Mermaid、CSV、XML）瞬间转换成 Draw.io 的专用链接**。
 
 简单来说，流程变成了这样：
@@ -220,7 +222,7 @@ Draw.io 的这个 MCP 工具（`drawio-mcp`），走了一条非常聪明的路�
 ```
 
 使用：使用 draw.io MCP 工具 open_drawio_mermaid 制作展示 OAuth2 流程的时序图
-导出：export成xml格式，在confluence page上创建一个draw.io
+导出：export成xml格式，在confluence page上创建一个draw.io diagram
 
 
 ## 更多MCP
