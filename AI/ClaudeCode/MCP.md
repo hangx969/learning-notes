@@ -103,7 +103,9 @@ claude mcp add mcp-sequentialthinking-tools -- npx -y mcp-sequentialthinking-too
 ## memory
 长期记忆
 安装：
+```
 claude mcp add memory -- npx -y @modelcontextprotocol/server-memory
+```
 
 场景: 记住项目约定(命名规范、错误码、配置路径)、记住团队踩过的坑(某个库的bug、某个配置的坑)、记住重要决策(为什么选这个方案、权衡了什么)。
 
@@ -145,7 +147,9 @@ claude mcp add playwright -- npx -y @executeautomation/playwright-mcp-server
 ## filesystem 
 本地文件操作
 
+```
 claude mcp add filesystem -- npx -y @modelcontextprotocol/server-filesystem /path/to/project
+```
 
 场景: 读写配置、批量处理文件、项目初始化脚本
 注意: 指定允许访问的路径,避免权限过大。
@@ -188,7 +192,7 @@ claude mcp add exa -e EXA_API_KEY="" -- npx -y exa-mcp-server
 claude mcp add deepwiki -- npx -y mcp-deepwiki
 ```
 
-场景: 聚合某个库的完整文档站点,比context7更全面但速度慢一些
+场景: 聚合某个库的完整文档站点，比context7更全面但速度慢一些
 
 ## 更多MCP
 官方列表:  https://github.com/modelcontextprotocol/servers
