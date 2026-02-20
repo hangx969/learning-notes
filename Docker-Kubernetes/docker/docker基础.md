@@ -863,7 +863,40 @@ docker network rm name
 ~~~
 
 ## 清理none镜像
+接手一个docker环境，发现其中有大量的none镜像。none镜像不是异常镜像，而是被新镜像顶掉tag的旧镜像。怎么产生的：
 
+1. 反复build
+   在build的时候使用latest标签，第二次build的时候新镜像tag顶掉旧镜像，旧镜像就变成none了。
+
+2. docker-compose/CI pipeline每次自动build
+   流水线设置tag为latest也会产生大量none镜像
+   
+3. 构建失败
+   镜像层已经生成，但是构建失败，没有打上tag
+   
+4. 手动tag/删除tag
+   这种情况比较少，手动把镜像tag弄没了。
+
+用docker rmi删掉了none镜像，但是磁盘占用并没有下降。原因是：
+
+> 被删除的镜像层并没有真正被删除，而是从镜像层变为了Build Cache层
+
+现在docker默认使用BuildKit构建镜像。当你使用docker rmi删除镜像时，docker会识别到这些镜像层来自之前的docker build，正好作为下次构建的缓存，所以BuildKit就把这些镜像收编为Build Cache，用命令查看docker的缓存占用空间
+
+```sh
+docker system df
+```
+
+如何正确删除：
+1. 建议先打一个快照
+2. 删除停止容器：`docker container prune`
+3. 删除none镜像: `docker image prune`
+4. 删除build cache: `docker builder prune`
+5. 验证空间: `docker system df`
+
+避坑：
+1. 不能直接执行`docker system prune -a` 因为会将所有没被容器使用的镜像全部删除（包括有tag的）
+2. 不要手动删除`/var/lib/docker/overlay2` ，直接破坏了docker数据层，导致docker故障
 
 # dockerfile基础
 
