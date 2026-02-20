@@ -207,8 +207,15 @@ Draw.io 的这个 MCP 工具（`drawio-mcp`），走了一条非常聪明的路�
   "mcpServers": {  
     "drawio-mcp": {  
       "command": "npx",  
-      "args": ["-y", "@drawio/mcp"]  
+      "args": ["-y", "@drawio/mcp"],
+      "env": {},
+      "type": "stdio"
     }
+```
+
+使用：使用 draw.io MCP 工具 open_drawio_mermaid 制作展示 OAuth2 流程的时序图
+
+
 ```
 
 ## 更多MCP
