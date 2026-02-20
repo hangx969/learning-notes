@@ -194,6 +194,23 @@ claude mcp add deepwiki -- npx -y mcp-deepwiki
 
 场景: 聚合某个库的完整文档站点，比context7更全面但速度慢一些
 
+## drawio
+Draw.io 的这个 MCP 工具（`drawio-mcp`），走了一条非常聪明的路子。它不是自己在后台“画”一张图，而是 **把 AI 生成的逻辑（Mermaid、CSV、XML）瞬间转换成 Draw.io 的专用链接**。
+
+简单来说，流程变成了这样：
+1. 你告诉 AI：“画个 OAuth2 流程图”。
+2. AI 生成结构化数据
+3. MCP 工具把数据压缩、编码。
+4. 浏览器自动弹出一个 Draw.io 编辑页面，图已经画好了，每一个节点都能拖、能改、能换色。
+
+```json
+  "mcpServers": {  
+    "drawio-mcp": {  
+      "command": "npx",  
+      "args": ["-y", "@drawio/mcp"]  
+    }
+```
+
 ## 更多MCP
 官方列表:  https://github.com/modelcontextprotocol/servers
 社区精选: https://github.com/wong2/awesome-mcp-servers
