@@ -862,6 +862,9 @@ docker network ls
 docker network rm name
 ~~~
 
+## 清理none镜像
+
+
 # dockerfile基础
 
 ## dockerfile定义
