@@ -298,3 +298,17 @@ team-skills/
 Antrophic官方有一个帮助创建Skill的Skill： https://github.com/anthropics/skills/tree/main/skills/skill-creator
 
 告诉claude code基于当前的Skill草稿，调用skill-creator来创建一个完成的skill，名称为xxx。
+
+# Obsidian Skill
+https://github.com/kepano/obsidian-skills
+
+obsidian-skills直接把Obsidian专家集成在 Claude Code 里，仓库包含三个核心技能Skill:
+- **obsidian-markdown** Obsidian 风格的 Markdown计写，各种专有格式都支持。
+- **obsidian-bases**  .base 类数据库视图支持过滤、公式、汇总。
+- **json-canvas**  .canvas无限画布文件格式可以实现点、连线、分组。
+
+## 安装
+```
+/plugin marketplace add kepano/obsidian-skills
+/plugin install obsidian@obsidian-skills
+```
