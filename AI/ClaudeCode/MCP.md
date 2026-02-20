@@ -203,6 +203,12 @@ Draw.io 的这个 MCP 工具（`drawio-mcp`），走了一条非常聪明的路�
 3. MCP 工具把数据压缩、编码。
 4. 浏览器自动弹出一个 Draw.io 编辑页面，图已经画好了，每一个节点都能拖、能改、能换色。
 
+根据 GitHub 上的官方文档，这个 MCP Server 目前支持三种核心模式：
+- **Mermaid 转图 (`open_drawio_mermaid`)**：这是最常用的。AI 写 Mermaid 逻辑最强，Draw.io 负责渲染和二次编辑，绝配。
+- **CSV 转图 (`open_drawio_csv`)**：适合画组织架构图、网络拓扑图。你扔给 AI 一堆人员名单和汇报关系，它能瞬间生成树状图。
+- **XML 原生格式 (`open_drawio_xml`)**：如果你有现成的 Draw.io XML 数据，或者让 AI 学习了 XML 结构，可以直接生成最复杂的图表。
+
+安装：
 ```json
   "mcpServers": {  
     "drawio-mcp": {  
