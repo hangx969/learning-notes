@@ -93,3 +93,15 @@ npm install -g openclaw@v2026.3.2
 由于要安装几百个依赖，所以还是需要等待一段时间。
 
 > 也可以用docker/k8s安装，但是由于openclaw的很多组件是需要数据持久化的，如果没有配置正确存储的话，重启容器/pod，数据就丢失了。
+
+## OpenClaw初始化引导配置
+
+```sh
+openclaw onboard 
+# 需要做成守护进程就加参数 --install-daemon
+
+# onboarding mode选quick start
+# model选择custom provider
+# 填入base url
+# 
+```
