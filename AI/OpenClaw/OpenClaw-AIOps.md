@@ -99,9 +99,49 @@ npm install -g openclaw@v2026.3.2
 ```sh
 openclaw onboard 
 # 需要做成守护进程就加参数 --install-daemon
-
-# onboarding mode选quick start
-# model选择custom provider
-# 填入base url
-# 
 ```
+
+- onboarding mode选quick start
+- model选择custom provider
+- 填入base url（从魔塔获取的url）
+- 填入api key
+- 接口协议选OpenAI
+- 填入模型ID（也可以从示例代码中找到）：以deepseek-ai/DeepSeek-V3.2为示例
+- 由于网络问题，先跳过Channel、Skills、Hooks配置（选Skip for now，按空格+回车选中选项）
+- hatch your bot选择Open the Web UI
+- 引导完成后会自动启动Gateway并且打开浏览器，概览中看到状态正常即可。
+
+# Linux安装OpenClaw
+
+
+
+
+# OpenClaw基础使用
+
+- 开启工具权限：（或者在webUI - 代理中打开工具权限）
+```sh
+openclaw config set tools.profile "full"
+```
+
+- 手动开启gateway：
+```sh
+openclaw gateway
+# 浏览器访问127.0.0.1:18789
+```
+
+- 配置gateway token
+	- 概览中配置gateway token - 连接
+	- gateway的token也是明文保存在openclaw.json文件下，gateway字段下。
+
+> openclaw的所有配置都是以文件的形式保存在C盘用户家目录中的.openclaw目录下。后面的配置修改都建议修改配置文件或者用命令行修改。
+
+- 初始角色定义：
+	- “记住这个：你是xxx，我是xxx，你是我的个人助理”。（记住这个后面的内容会被自动加载到memory中）
+
+# 添加多供应商多模型
+## 手动添加
+
+
+# 多Agent
+可以创建多个Agent，每个Agent绑定的模型、配置等都可以不同。
+如果创建了多个Agent，每个Agent建议保存在不同的工作目录。
