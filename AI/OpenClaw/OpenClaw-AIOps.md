@@ -62,8 +62,21 @@ OpenClaw是需要接入大模型API的，如果选择免费版的大模型API，
 # Windows安装OpenClaw
 
 ## Nodejs安装
-
+- 需要>22版本。安装包下载地址： https://nodejs.org/en/download 
+- 安装，保持默认配置即可
+- 配置国内阿里云npm仓库:
+```powershell
+npm -v
+npm config get registry
+npm config set registry https://registry.npmmirror.com/
+npm config get registry
+```
 
 ## Python安装
+- 安装包下载地址： https://www.python.org/downloads/windows/
+- 配置国内pip源：
+```powershell
+pip config set global.index-url https://mirrors.aliyun.com/pypi/simple/
+```
 
 ## OpenClaw安装
