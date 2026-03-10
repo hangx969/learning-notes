@@ -25,4 +25,18 @@ clawhub install pdf
 - https://clawhub.ai/ 上找到想要的，下载到 openclaw 的工作目录下的 skills 目录下即可。（没有就创建一个）
 - 可以在WebUI的技能中查看到安装的Skills
 
+> 注意：第一次运行某个新skill的时候可能速度会比较慢，因为会安装一些依赖包。
+
+
+# 办公Skills
+下载了如下skills：
+- https://clawhub.ai/ivangdavila/powerpoint-pptx
+- https://clawhub.ai/awspace/pdf
+- https://clawhub.ai/guohongbin-git/xlsx-cn
+
+解压拷贝到.openclaw/skills目录下。
+
+## 总结pdf内容
+总结 PDF 时，需要给予 openclaw 具体的 pdf 路径或者文件名，否则会全盘扫描。
+
 
