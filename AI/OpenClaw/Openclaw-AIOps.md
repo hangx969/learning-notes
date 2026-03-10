@@ -40,14 +40,15 @@ bash setup.sh
 ## 巡检k8s并发送邮件通知
 - 定制开发一个巡检k8s的skill： 
 - 安装依赖：`pip install -r /root/.openclaw/skills/k8s-report/requirements.txt` （不装也行，第一次运行会自动装）
-- 测试效果： 帮我生成一个当前k8s集群的巡检报告，并且把报告发送到xxx邮箱。
+- 测试效果： 帮我生成一个当前k8s集群的巡检报告，并且把报告发送到xxx邮箱。（请帮我分析一下巡检报告，并放到邮件结尾）
 
 ### 做成定时任务
 自然语言：
 - 把这个任务做成计划任务，按照北京时间，Asia/Shanghai时区在每天的凌晨1点执行
+- 但是有失败几率，因为大概率他会直接在linux中生成一个crontab，而不是直接添加在openclaw的定时任务中。
 
 命令行执行：
-注意，添加的任务可能是宿主机的 Crontab，建议使用 openclaw 客户端添加任务。比如添加一个巡检的计划任务：
+建议使用 openclaw 客户端添加任务，直接添加到openclaw中。比如添加一个巡检的计划任务：
 
 ```sh
 openclaw cron add \
