@@ -291,13 +291,10 @@ openclaw configure
 ```
 
 ## 添加github copilot订阅
-### GitHub Copilot Enterprise 订阅能在 OpenClaw 中使用吗？
-
+GitHub Copilot Enterprise 订阅能在 OpenClaw 中使用吗？
 **可以！但不是通过传统的 API Key，而是通过 GitHub 设备登录流程（Device Flow）。**
 
 ---
-
-### 关键说明
 
 GitHub Copilot（包括 Enterprise 版）**不提供独立的 API Key**。它的认证方式是通过 GitHub OAuth 令牌交换实现的。但好消息是，**OpenClaw 内置了对 GitHub Copilot 的原生支持**，会自动处理整个令牌交换和刷新流程。
 
