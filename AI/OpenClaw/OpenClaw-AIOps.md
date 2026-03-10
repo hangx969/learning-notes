@@ -59,6 +59,8 @@ OpenClaw是需要接入大模型API的，如果选择免费版的大模型API，
 - https://platform.deepseek.com/ 创建账户
 - 创建长期有效的API key，复制保存到其他地方。
 - 实名认证并充值（20RMB就够用实验了）
+- 获取base url： https://api-docs.deepseek.com/zh-cn/
+- 获取model id：deepseek-chat
 
 # Windows安装OpenClaw
 
@@ -101,12 +103,13 @@ openclaw onboard
 # 需要做成守护进程就加参数 --install-daemon
 ```
 
+以魔塔免费API为例：
 - onboarding mode选quick start
 - model选择custom provider
 - 填入base url（从魔塔获取的url）
 - 填入api key
 - 接口协议选OpenAI
-- 填入模型ID（也可以从示例代码中找到）：以deepseek-ai/DeepSeek-V3.2为示例
+- 填入模型ID（也可以从示例代码中找到）：deepseek-ai/DeepSeek-V3.2
 - 由于网络问题，先跳过Channel、Skills、Hooks配置（选Skip for now，按空格+回车选中选项）
 - hatch your bot选择Open the Web UI
 - 引导完成后会自动启动Gateway并且打开浏览器，概览中看到状态正常即可。
@@ -177,12 +180,13 @@ openclaw config set tools.profile "full"
 openclaw onboard --install-daemon
 ```
 
+以deepweek-chat为例
 - onboarding mode选quick start
 - model选择custom provider
-- 填入base url（从魔塔获取的url）
+- 填入base url： https://api.deepseek.com/v1
 - 填入api key
 - 接口协议选OpenAI
-- 填入模型ID（也可以从示例代码中找到）：以deepseek-ai/DeepSeek-V3.2为示例
+- 填入模型ID：deepseek-chat
 - 由于网络问题，先跳过Channel、Skills、Hooks配置（选Skip for now，按空格+回车选中选项）
 - hatch your bot选择Open the Web UI
 - 引导完成后会自动启动Gateway并且打开浏览器，概览中看到状态正常即可。
