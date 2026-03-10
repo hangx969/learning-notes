@@ -350,26 +350,6 @@ openclaw models auth login-github-copilot --profile-id github-copilot:enterprise
 
 > ⚠️ 具体可用模型取决于你的 Enterprise 订阅计划。如果某个模型被拒绝，换一个试试。
 
----
-
-### 工作原理
-
-```
-你的 GitHub 账户 (Copilot Enterprise)
-        ↓ 设备授权流程
-GitHub OAuth Token（存储在 auth-profiles.json）
-        ↓ 自动交换
-Copilot API Token（每小时过期，OpenClaw 自动刷新）
-        ↓
-OpenClaw 使用 Copilot API 调用模型
-```
-
-OpenClaw 会**自动管理令牌刷新**：Copilot API 令牌每小时过期，OpenClaw 会在过期前 5 分钟自动刷新，无需手动干预。
-
----
-
-**总结：不需要 API Key，直接用 `openclaw models auth login-github-copilot` 登录你的 GitHub 账户即可，OpenClaw 会自动利用你的 Copilot Enterprise 订阅。**
-
 # 多Agent
 可以创建多个Agent，每个Agent绑定的模型、配置等都可以不同。
 如果创建了多个Agent，每个Agent建议保存在不同的工作目录。
