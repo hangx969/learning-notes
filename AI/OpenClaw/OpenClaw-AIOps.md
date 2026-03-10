@@ -115,14 +115,63 @@ openclaw onboard
 ## 安装nodejs
 
 ```sh
+curl -fsSL https://rpm.nodesource.com/setup_24.x | sudo bash -
+dnf install -y nodejs
+npm -v
+node -v
 
+# 配置国内源
+npm config get registry
+npm config set registry https://registry.npmmirror.com/
+npm config get registry
 ```
 
 ## 安装python
 
+Linux自带python，直接配置国内源即可：
+```sh
+pip config set global.index-url https://mirrors.aliyun.com/pypi/simple/
+```
+
 ## 安装Openclaw
 
+安装编译工具：
+```sh
+yum install cmake gcc* -y
+```
 
+npm安装OpenClaw：
+```sh
+npm install -g openclaw@latest
+# 指定版本
+npm install -g openclaw@v2026.3.2
+```
+
+开启工具权限：
+```sh
+openclaw config set tools.profile "full"
+```
+
+## OpenClaw引导配置
+```sh
+openclaw onboard --install-daemon
+```
+
+引导结束后，可以查看openclaw进程：
+```sh
+netstat -lntp | grep open
+```
+
+由于安全问题，如果需要浏览器访问，需要在Windows上通过SSH隧道访问：
+```sh
+ssh -N -L 18789:127.0.0.1:18789 root@IP
+```
+宿主机通过：http://localhost:18789/访问即可。
+
+启停服务：
+```sh
+openclaw gateway stop/start
+```
 
 # OpenClaw基础使用
 
