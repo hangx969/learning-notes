@@ -151,6 +151,22 @@ npm install -g openclaw@latest
 npm install -g openclaw@v2026.3.2
 ```
 
+注：2026.03.10，用`npm install -g openclaw@latest` 安装的时候会报错：
+````
+git@github.com: Permission denied (publickey).
+fatal: Could not read from remote repository.
+````
+这是一个已知问题，某个依赖包被强制使用ssh连接github地址了，而非https。
+github上有issue和PR，PR还没Merge。
+- https://github.com/openclaw/openclaw/issues/40684
+- https://github.com/openclaw/openclaw/pull/40721
+所以暂时用这个命令修复：
+```sh
+git config --global url."https://github.com/".insteadOf "ssh://git@github.com/"
+git config --global url."https://github.com/".insteadOf "git+ssh://git@github.com/"
+git config --global url."https://github.com/".insteadOf "git+ssh://git@github.com:"
+```
+
 开启工具权限：
 ```sh
 openclaw config set tools.profile "full"
