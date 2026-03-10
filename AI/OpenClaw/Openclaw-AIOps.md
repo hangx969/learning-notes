@@ -59,3 +59,6 @@ openclaw cron add \
 箱，注意报告的html直接作为邮件正文发送" \
 --model "deepseek-chat"
 ```
+任务执行时，会创建一个隔离的会话处理该任务。
+
+更多定时任务： https://docs.openclaw.ai/zh-CN/automation/cron-jobs
