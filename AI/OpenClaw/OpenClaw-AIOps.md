@@ -123,7 +123,7 @@ openclaw onboard
 openclaw config set tools.profile "full"
 ```
 
-- 手动开启gateway：
+- 手动开启gateway / 重启gateway：
 ```sh
 openclaw gateway
 # 浏览器访问127.0.0.1:18789
@@ -169,7 +169,7 @@ openclaw gateway
 },
 ```
 
-更改智能体默认模型为deepseek模型：
+需要把配置的模型添加到agents.models里面，而且更改智能体默认模型为deepseek模型。格式为provider name/model id：
 ```json
 "agents": {
     "defaults": {
@@ -185,7 +185,7 @@ openclaw gateway
         },
 ```
 
-## 自然语言自动添 加
+## 自然语言自动添加
 直接让openclaw自己添加模型，输入提示词：
 
 ```
