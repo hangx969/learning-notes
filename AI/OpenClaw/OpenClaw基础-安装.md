@@ -376,3 +376,32 @@ OpenClaw 会**自动管理令牌刷新**：Copilot API 令牌每小时过期，O
 # 多Agent
 可以创建多个Agent，每个Agent绑定的模型、配置等都可以不同。
 如果创建了多个Agent，每个Agent建议保存在不同的工作目录。
+
+# 卸载
+一行命令即可卸载：
+```sh
+openclaw uninstall
+openclaw uninstall --all --yes --non-interactive
+```
+但是要注意观察执行命令后的输出结果，有些内容可能不会自动删除。
+
+完全干净卸载：
+- Mac / Linux 用户：
+```sh
+openclaw gateway stop  
+openclaw gateway uninstall  
+rm -rf "${OPENCLAW_STATE_DIR:-$HOME/.openclaw}"  
+npm rm -g openclaw || pnpm remove -g openclaw  
+rm -rf /Applications/OpenClaw.app
+```
+
+- Windows 用户（在 PowerShell 中执行）：
+```sh
+openclaw gateway stop  
+openclaw gateway uninstall  
+schtasks /Delete /F /TN "OpenClaw Gateway"  
+Remove-Item -Recurse -Force "$env:USERPROFILE\.openclaw"  
+Remove-Item -Force "$env:USERPROFILE\.openclaw\gateway.cmd" -ErrorAction SilentlyContinue  
+npm rm -g openclaw  
+# 如果你是用 pnpm 安装的，改为执行：pnpm remove -g openclaw
+```
