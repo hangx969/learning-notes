@@ -94,7 +94,7 @@ npm install -g openclaw@v2026.3.2
 
 > 也可以用docker/k8s安装，但是由于openclaw的很多组件是需要数据持久化的，如果没有配置正确存储的话，重启容器/pod，数据就丢失了。
 
-## OpenClaw初始化引导配置
+## OpenClaw引导配置
 
 ```sh
 openclaw onboard 
@@ -110,6 +110,9 @@ openclaw onboard
 - 由于网络问题，先跳过Channel、Skills、Hooks配置（选Skip for now，按空格+回车选中选项）
 - hatch your bot选择Open the Web UI
 - 引导完成后会自动启动Gateway并且打开浏览器，概览中看到状态正常即可。
+
+## 配置飞书
+
 
 # Linux安装OpenClaw
 ## 安装nodejs
@@ -130,6 +133,7 @@ npm config get registry
 
 Linux自带python，直接配置国内源即可：
 ```sh
+yum install -y pip
 pip config set global.index-url https://mirrors.aliyun.com/pypi/simple/
 ```
 
@@ -157,21 +161,30 @@ openclaw config set tools.profile "full"
 openclaw onboard --install-daemon
 ```
 
+- onboarding mode选quick start
+- model选择custom provider
+- 填入base url（从魔塔获取的url）
+- 填入api key
+- 接口协议选OpenAI
+- 填入模型ID（也可以从示例代码中找到）：以deepseek-ai/DeepSeek-V3.2为示例
+- 由于网络问题，先跳过Channel、Skills、Hooks配置（选Skip for now，按空格+回车选中选项）
+- hatch your bot选择Open the Web UI
+- 引导完成后会自动启动Gateway并且打开浏览器，概览中看到状态正常即可。
+
 引导结束后，可以查看openclaw进程：
 ```sh
 netstat -lntp | grep open
 ```
 
-由于安全问题，如果需要浏览器访问，需要在Windows上通过SSH隧道访问：
+## 浏览器访问
+如果linux是虚拟机安装在windows宿主机上，由于安全问题，如果需要宿主机上的浏览器访问，需要在Windows上通过SSH隧道访问：
 ```sh
 ssh -N -L 18789:127.0.0.1:18789 root@IP
 ```
 宿主机通过：http://localhost:18789/访问即可。
 
-启停服务：
-```sh
-openclaw gateway stop/start
-```
+## 配置飞书
+
 
 # OpenClaw基础使用
 
@@ -183,10 +196,14 @@ openclaw config set tools.profile "full"
 - 手动开启gateway / 重启gateway：
 ```sh
 openclaw gateway
-# 浏览器访问127.0.0.1:18789
 ```
 
-- 配置gateway token
+- 启停服务：
+```sh
+openclaw gateway stop/start
+```
+
+- 配置gateway token：
 	- 概览中配置gateway token - 连接
 	- gateway的token也是明文保存在openclaw.json文件下，gateway字段下。
 
