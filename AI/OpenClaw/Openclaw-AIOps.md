@@ -10,7 +10,7 @@
 
 # 基于飞书+OpenClaw巡检K8s集群
 ## 配置邮箱服务
-首先需要自行开通邮箱 SMTP 和 IMAP 服务，并且记录授权码，可以选择 163、qq 等邮箱。
+首先需要自行开通邮箱 SMTP 和 IMAP 服务，并且记录授权码，可以选择 163、qq 等邮箱。这个邮箱会作为发件人被openclaw使用。
 
 ## 配置邮箱Skills
 - 下载邮箱Skills： https://clawhub.ai/gzlicanyi/imap-smtp-email
@@ -19,3 +19,22 @@
 bash setup.sh
 ```
 - 把skill放到openclaw/skills目录
+- 把Skills.md中一些不需要的变量给删掉，否则WebUI中的skills状态显示为不可用：
+```markdown
+      env:
+        - IMAP_HOST
+        - IMAP_USER
+        - IMAP_PASS
+        - SMTP_HOST
+        - SMTP_USER
+        - SMTP_PASS
+```
+- `npm install` 安装一下这个Skill
+- 去WebUI - 技能找到imap-smtp-email，在API Key中填入邮箱授权码-保存。
+- 让openclaw记住使用这个skills：
+```
+记住这个：邮件的管理请使用imap-smtp-email这个skill，不要用其他skill，它的安装目录在/root/.openclaw/skills/imap-smtp-email-0.0.9，同时该目录下有一个.env文件存储了邮箱相关变量
+```
+- 可以简单测试一下发送邮件给另一个邮箱。
+
+## 巡检k8s并发送邮件通知
