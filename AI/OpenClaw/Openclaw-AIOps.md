@@ -38,3 +38,24 @@ bash setup.sh
 - 可以简单测试一下发送邮件给另一个邮箱。
 
 ## 巡检k8s并发送邮件通知
+- 定制开发一个巡检k8s的skill： 
+- 安装依赖：`pip install -r /root/.openclaw/skills/k8s-report/requirements.txt` （不装也行，第一次运行会自动装）
+- 测试效果： 帮我生成一个当前k8s集群的巡检报告，并且把报告发送到xxx邮箱。
+
+### 做成定时任务
+自然语言：
+- 把这个任务做成计划任务，按照北京时间，Asia/Shanghai时区在每天的凌晨1点执行
+
+命令行执行：
+注意，添加的任务可能是宿主机的 Crontab，建议使用 openclaw 客户端添加任务。比如添加一个巡检的计划任务：
+
+```sh
+openclaw cron add \
+--name "K8s每日巡检" \
+--cron "0 11 * * *" \
+--tz "Asia/Shanghai" \
+--session isolated \
+--message "帮我生成一份当前k8s集群的巡检报告，并且把报告发送至xxx邮
+箱，注意报告的html直接作为邮件正文发送" \
+--model "deepseek-chat"
+```
