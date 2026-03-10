@@ -282,6 +282,90 @@ openclaw gateway stop/start
 帮我新增一个模型，provider为 deepseek，模型名字和ID是 deepseek-reasoner，该模型的 base url是 https://api.deepseek.com/v1，api key是 xxxxx，该模型是openai标准协议的模型，配置时，需要限制最大 token为 32768，上下文窗口为 64k。Openclaw配置文件路径：C:\Users\xxx\.openclaw\openclaw.json
 ```
 
+## 添加github copilot订阅
+### GitHub Copilot Enterprise 订阅能在 OpenClaw 中使用吗？
+
+**可以！但不是通过传统的 API Key，而是通过 GitHub 设备登录流程（Device Flow）。**
+
+---
+
+### 关键说明
+
+GitHub Copilot（包括 Enterprise 版）**不提供独立的 API Key**。它的认证方式是通过 GitHub OAuth 令牌交换实现的。但好消息是，**OpenClaw 内置了对 GitHub Copilot 的原生支持**，会自动处理整个令牌交换和刷新流程。
+
+---
+
+### 配置步骤
+
+#### 1. 登录 GitHub Copilot
+
+在你安装好 OpenClaw 的 Rocky Linux 服务器上执行：
+
+```bash
+openclaw models auth login-github-copilot
+```
+
+该命令会启动 GitHub 设备授权流程：
+- 终端会显示一个 **URL** 和一个 **一次性验证码**
+- 在浏览器中打开该 URL，输入验证码，授权 OpenClaw 使用你的 GitHub 账户
+- 保持终端打开直到授权完成
+
+#### 2. 设置默认模型
+
+登录成功后，设置你想用的模型：
+
+```bash
+# 设置默认模型（根据你的 Enterprise 订阅可用的模型选择）
+openclaw models set github-copilot/claude-sonnet-4.6
+
+# 或者使用 GPT 系列
+openclaw models set github-copilot/gpt-4.1
+```
+
+#### 3. 可选：指定认证配置文件 ID
+
+```bash
+openclaw models auth login-github-copilot --profile-id github-copilot:enterprise
+```
+
+---
+
+### Enterprise 订阅可用的模型
+
+根据你的 GitHub Copilot Enterprise 计划，通常可以使用以下模型：
+
+| 模型 ID | 说明 |
+|---------|------|
+| `github-copilot/claude-sonnet-4.6` | Claude Sonnet 4.6 |
+| `github-copilot/claude-sonnet-4.5` | Claude Sonnet 4.5 |
+| `github-copilot/gpt-4o` | GPT-4o |
+| `github-copilot/gpt-4.1` | GPT-4.1 |
+| `github-copilot/gpt-4.1-mini` | GPT-4.1 Mini |
+| `github-copilot/o3-mini` | O3 Mini |
+
+> ⚠️ 具体可用模型取决于你的 Enterprise 订阅计划。如果某个模型被拒绝，换一个试试。
+
+---
+
+### 工作原理
+
+```
+你的 GitHub 账户 (Copilot Enterprise)
+        ↓ 设备授权流程
+GitHub OAuth Token（存储在 auth-profiles.json）
+        ↓ 自动交换
+Copilot API Token（每小时过期，OpenClaw 自动刷新）
+        ↓
+OpenClaw 使用 Copilot API 调用模型
+```
+
+OpenClaw 会**自动管理令牌刷新**：Copilot API 令牌每小时过期，OpenClaw 会在过期前 5 分钟自动刷新，无需手动干预。
+
+---
+
+**总结：不需要 API Key，直接用 `openclaw models auth login-github-copilot` 登录你的 GitHub 账户即可，OpenClaw 会自动利用你的 Copilot Enterprise 订阅。**
+
 # 多Agent
 可以创建多个Agent，每个Agent绑定的模型、配置等都可以不同。
 如果创建了多个Agent，每个Agent建议保存在不同的工作目录。
+
