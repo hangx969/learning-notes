@@ -39,4 +39,12 @@ clawhub install pdf
 ## 总结pdf内容
 总结 PDF 时，需要给予 openclaw 具体的 pdf 路径或者文件名，否则会全盘扫描。
 
+## 生成excel表
+提供一些源数据，生成一个excel文件：
+- 请帮我根据这些信息生成一个 Excel文件，需要包含图表，并存储在桌面的"xxx.xlsx"文件内
+
+## 生成PPT
+帮我生成一个 PPT，这个 PPT是关于 openclaw介绍相关的，只需要生成三页 PPT即可，注意你需要先列出来大纲，然后再生成 PPT。请注意你需要使用桌面的 openclaw.pptx 模版进行生成。
+
+
 
