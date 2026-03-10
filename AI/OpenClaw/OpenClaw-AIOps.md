@@ -197,9 +197,11 @@ netstat -lntp | grep open
 ```
 
 ## 浏览器访问
-如果linux是虚拟机安装在windows宿主机上，由于安全问题，如果需要宿主机上的浏览器访问，需要在Windows上通过SSH隧道访问：
+如果linux是虚拟机安装在windows宿主机上。由于安全问题，openclaw监听的是127.0.0.1，直接用虚拟机IP:18789端口是访问不通的。
+
+如果需要宿主机上的浏览器访问，需要在Windows上z执行一下命令，通过SSH隧道访问：
 ```sh
-ssh -N -L 18789:127.0.0.1:18789 root@IP
+ssh -N -L 18789:127.0.0.1:18789 root@<虚拟机-IP>
 ```
 宿主机通过：http://localhost:18789/访问即可。
 
