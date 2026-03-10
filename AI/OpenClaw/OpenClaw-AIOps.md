@@ -139,8 +139,58 @@ openclaw gateway
 	- “记住这个：你是xxx，我是xxx，你是我的个人助理”。（记住这个后面的内容会被自动加载到memory中）
 
 # 添加多供应商多模型
-## 手动添加
+## 手动添加(推荐)
+- openclaw的所有配置都是以文件的形式保存在C盘用户家目录中的.openclaw目录下。
+- 修改配置文件，添加到 models.providers
+- 以deepseek为例，base url，版本等信息都可以在API文档中找到： https://api-docs.deepseek.com/zh-cn/quick_start/pricing
+```json
+"deepseek": {
+    "baseUrl": "https://api.deepseek.com/v1",
+    "apiKey": "",
+    "api": "openai-completions",
+    "models": [
+        {
+            "id": "deepseek-chat",
+            "name": "deepseek-chat",
+            "reasoning": false,
+            "input": [
+                "text"
+            ],
+            "cost": {
+                "input": 0,
+                "output": 0,
+                "cacheRead": 0,
+                "cacheWrite": 0
+            },
+            "contextWindow": 131072,
+            "maxTokens": 32768
+        }
+    ]
+},
+```
 
+更改智能体默认模型为deepseek模型：
+```json
+"agents": {
+    "defaults": {
+        "model": {
+            "primary": "deepseek/deepseek-chat"
+        },
+        "models": {
+            "custom-api-inference-modelscope-cn/deepseek-ai/DeepSeek-V3.2": {
+                "alias": "ms-deepseek-v32"
+            },
+            "custom-api-inference-modelscope-cn/Qwen/Qwen3-235B-A22B-Instruct-2507": {},
+            "deepseek/deepseek-chat": {}
+        },
+```
+
+## 自然语言自动添 加
+直接让openclaw自己添加模型，输入提示词：
+
+```
+帮我新增一个模型，provider为 deepseek，模型名字和ID是 deepseek-reasoner，该模型的 base url是 https://api.deepseek.com/v1，api key是 xxxxx，该模型是openai标准协议的模型，配置时，需要限制最大 token为 32768，上下文窗口为 64k。Openclaw配置文件路径：C:\Users\xxx\.openclaw\openclaw.json
+```
 
 # 多Agent
 可以创建多个Agent，每个Agent绑定的模型、配置等都可以不同。
