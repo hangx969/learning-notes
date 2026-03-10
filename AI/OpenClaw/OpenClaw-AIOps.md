@@ -112,7 +112,15 @@ openclaw onboard
 - 引导完成后会自动启动Gateway并且打开浏览器，概览中看到状态正常即可。
 
 # Linux安装OpenClaw
+## 安装nodejs
 
+```sh
+
+```
+
+## 安装python
+
+## 安装Openclaw
 
 
 
