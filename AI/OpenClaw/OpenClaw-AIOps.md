@@ -112,10 +112,10 @@ openclaw onboard
 - 填入模型ID（也可以从示例代码中找到）：deepseek-ai/DeepSeek-V3.2
 - 由于网络问题，先跳过Channel、Skills、Hooks配置（选Skip for now，按空格+回车选中选项）
 - hatch your bot选择Open the Web UI
-- 引导完成后会自动启动Gateway并且打开浏览器，概览中看到状态正常即可。
-
-## 配置飞书
-
+- 引导完成后会自动启动Gateway并且打开浏览器。初次访问会显示unauthorized。
+- 配置gateway token：
+	- gateway的token也是明文保存在openclaw.json文件下，gateway.token字段下。
+	- 填进去，连接，看到状态正常即可。
 
 # Linux安装OpenClaw
 ## 安装nodejs
@@ -203,10 +203,10 @@ netstat -lntp | grep open
 ```sh
 ssh -N -L 18789:127.0.0.1:18789 root@<虚拟机-IP>
 ```
-宿主机通过：http://localhost:18789/访问即可。
+没有返回说明连接成功，然后宿主机通过：127.0.0.1:18789 访问。
 
-## 配置飞书
-
+初次访问，进去会看到unauthorized报错，需要去openclaw配置文件中拿gateway token：`/root/.openclaw/openclaw.json` 中的 `"gateway"."token"` 字段。
+填入概览-网关令牌中，点击连接，看到状态是正常的即可。
 
 # OpenClaw基础使用
 
@@ -225,9 +225,11 @@ openclaw gateway
 openclaw gateway stop/start
 ```
 
-- 配置gateway token：
-	- 概览中配置gateway token - 连接
-	- gateway的token也是明文保存在openclaw.json文件下，gateway字段下。
+- CLI修改配置
+```sh
+openclaw configure
+```
+
 
 > openclaw的所有配置都是以文件的形式保存在C盘用户家目录中的.openclaw目录下。后面的配置修改都建议修改配置文件或者用命令行修改。
 
@@ -375,3 +377,27 @@ OpenClaw 会**自动管理令牌刷新**：Copilot API 令牌每小时过期，O
 可以创建多个Agent，每个Agent绑定的模型、配置等都可以不同。
 如果创建了多个Agent，每个Agent建议保存在不同的工作目录。
 
+# 配置Channel
+
+## 飞书
+下载app： https://www.feishu.cn/download
+参考文档： https://docs.openclaw.ai/zh-CN/channels/feishu
+### 自动安装
+2026.3.8版本的openclaw已经支持直接配置飞书插件了。可以在线安装或者选择已经下载好的本地插件文件。
+
+```sh
+openclaw configure
+# 选择Channel - Feishu/Lark (飞书)
+```
+
+### 手动安装
+- 插件： https://github.com/openclaw/openclaw/tree/main/extensions
+- git clone 到本地，把feishu目录拷贝到openclaw的安装目录的extension目录下。
+- 在extension目录下手动安装：`npm install`
+- 重启openclaw：`openclaw restart`
+
+### 配置飞书机器人
+按照教程： https://docs.openclaw.ai/zh-CN/channels/feishu#%E7%AC%AC%E4%B8%80%E6%AD%A5%EF%BC%9A%E5%88%9B%E5%BB%BA%E9%A3%9E%E4%B9%A6%E5%BA%94%E7%94%A8
+来配置即可。
+
+拿到App Secret，在Channel中
