@@ -400,4 +400,20 @@ openclaw configure
 按照教程： https://docs.openclaw.ai/zh-CN/channels/feishu#%E7%AC%AC%E4%B8%80%E6%AD%A5%EF%BC%9A%E5%88%9B%E5%BB%BA%E9%A3%9E%E4%B9%A6%E5%BA%94%E7%94%A8
 来配置即可。
 
-拿到App Secret，在Channel中
+1. 下载登录飞书
+2. 创建企业应用，拿到app secret和app id
+3. 按照教程配置权限
+4. 按照教程配置机器人
+5. 回到openclaw，配置channel，`openclaw configure` ，填入app id和app secret
+6. connection mode选Websocket
+7. domain选Feishu-China
+8. Group chat policy选Open
+9. 选Finished
+10. DM access policies选No
+11. accounts选No
+12. Agents选Yes
+13. 回到飞书开放平台，按照教程配置事件与回调 - 事件配置 - 订阅方式 - 长连接
+14. 添加事件：`im.message.receive_v1`（接收消息）
+15. 创建版本 - 发布版本
+16. 在飞书对话框中看到提示，点击打开应用，尝试第一次对话。
+17. 第一次对话弹出一个pairing命令，去openclaw那边执行一下。
