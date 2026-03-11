@@ -7,7 +7,7 @@
 2026.3.8版本的openclaw已经支持直接配置飞书插件了。可以在线安装或者选择已经下载好的本地插件文件。
 
 ```sh
-openclaw configure
+openclaw channels add
 # 选择Channel - Feishu/Lark (飞书)
 ```
 
