@@ -39,6 +39,31 @@ openclaw channels add
 16. 在飞书对话框中看到提示，点击打开应用，尝试第一次对话。
 17. 第一次对话弹出一个pairing命令，去openclaw那边执行一下。
 
+### troubleshooting
+#### 代理环境变量导致通信问题
+开着代理，设置过http proxy，然后安装的openclaw和飞书插件，结果关掉代理之后，从飞书机器人无法正常与openclaw通信，报错：
+
+```
+connect ECONNREFUSED 127.0.0.1:7897'
+```
+
+查看openclaw的服务文件，可以看到环境变量配置：
+
+```yaml
+Environment=http_proxy=http://127.0.0.1:7897
+Environment=https_proxy=http://127.0.0.1:7897
+Environment=all_proxy=socks5://127.0.0.1:7897
+```
+
+删掉即可：
+
+```sh
+sed -i '/^Environment=http_proxy=/d; /^Environment=https_proxy=/d; /^Environment=all_proxy=/d' ~/.config/systemd/user/openclaw-gateway.service
+
+systemctl --user daemon-reload
+openclaw gateway restart
+```
+
 # QQ
 腾讯出手，专门为 OpenClaw 搞了一个快捷接入通道，几步就能搞定！
 
