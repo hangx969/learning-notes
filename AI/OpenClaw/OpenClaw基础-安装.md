@@ -125,9 +125,8 @@ openclaw onboard
 curl -fsSL https://rpm.nodesource.com/setup_24.x | sudo bash -
 dnf install -y nodejs
 # DEB版
-curl -fsSL https://deb.nodesource.com/setup_24.x | sudo bash -
 sudo apt install -y nodejs
-sudo apt install -y npm
+sudo corepack enable npm
 
 npm -v
 node -v
