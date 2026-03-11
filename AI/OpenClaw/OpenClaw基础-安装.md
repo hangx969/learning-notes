@@ -145,6 +145,8 @@ pip config set global.index-url https://mirrors.aliyun.com/pypi/simple/
 安装编译工具：
 ```sh
 yum install cmake gcc* -y
+# ubuntu下直接装gcc*，包太多了放不下
+sudo apt install -y cmake gcc g++ make build-essential
 ```
 
 npm安装OpenClaw：
