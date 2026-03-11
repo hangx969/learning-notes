@@ -237,7 +237,6 @@ openclaw gateway stop/start
 openclaw configure
 ```
 
-
 > openclaw的所有配置都是以文件的形式保存在C盘用户家目录中的.openclaw目录下。后面的配置修改都建议修改配置文件或者用命令行修改。
 
 - 初始角色定义：
