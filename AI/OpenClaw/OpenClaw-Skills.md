@@ -27,7 +27,6 @@ clawhub install pdf
 
 > 注意：第一次运行某个新skill的时候可能速度会比较慢，因为会安装一些依赖包。
 
-
 # 办公Skills
 下载了如下skills：
 - https://clawhub.ai/ivangdavila/powerpoint-pptx
