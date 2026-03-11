@@ -43,4 +43,4 @@ openclaw configure
 腾讯出手，专门为 OpenClaw 搞了一个快捷接入通道，几步就能搞定！
 
 - 打开 QQ 机器人 OpenClaw 接入页面，用 QQ 扫码登录： https://q.qq.com/qqbot/openclaw/index.html
-- 创建机器人，拿到接入命令，去openclaw运行一下，直接接入即可。
+- 创建机器人，拿到接入命令，去openclaw运行一下接入即可。
