@@ -85,13 +85,13 @@ Agent-browser是Vercel Labs用Rust写的无头浏览器自动化CLI，GitHub 196
 
 ```sh
 npm install -g agent-browser
-agent-browser install  # 下载Chromium
+agent-browser install  # 下载Chromium，linux下加上 --with-deps 安装依赖
+npx skills add vercel-labs/agent-browser
 ```
 
 claude code和openclaw都能用。
 
-场景：Web数据采集
-
+**场景：Web数据采集**
 需要从某个网站收集一些公开信息？以前要么手动复制，要么让AI写爬虫脚本。
 现在可以让AI直接用agent-browser操作：打开页面、获取元素、提取文本，整个流程在对话中就能完成。
 
