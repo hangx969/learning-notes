@@ -45,6 +45,8 @@ clawhub install pdf
 ## 生成PPT
 帮我生成一个 PPT，这个 PPT是关于 openclaw介绍相关的，只需要生成三页 PPT即可，注意你需要先列出来大纲，然后再生成 PPT。请注意你需要使用桌面的 openclaw.pptx 模版进行生成。
 
+# 自我进化Skills
+
 
 # 记忆插件
 https://memos-claw.openmem.net/docs/index.html#quickstart
