@@ -330,9 +330,11 @@ openclaw models set github-copilot/gpt-4.1
 openclaw models auth login-github-copilot --profile-id github-copilot:enterprise
 ```
 
-# 多Agent
+## 多Agent
 可以创建多个Agent，每个Agent绑定的模型、配置等都可以不同。
 如果创建了多个Agent，每个Agent建议保存在不同的工作目录。
+
+
 
 # 卸载
 一行命令即可卸载：
@@ -362,3 +364,4 @@ Remove-Item -Force "$env:USERPROFILE\.openclaw\gateway.cmd" -ErrorAction Silentl
 npm rm -g openclaw  
 # 如果你是用 pnpm 安装的，改为执行：pnpm remove -g openclaw
 ```
+
