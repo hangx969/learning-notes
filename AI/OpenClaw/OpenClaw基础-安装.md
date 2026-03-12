@@ -242,6 +242,13 @@ openclaw configure
 - 初始角色定义：
 	- “记住这个：你是xxx，我是xxx，你是我的个人助理”。（记住这个后面的内容会被自动加载到memory中）
 
+- 升级
+```sh
+npm i -g openclaw@2026.3.11
+openclaw doctor
+openclaw gateway restart
+```
+
 # 添加多供应商多模型
 ## 手动添加(推荐)
 - openclaw的所有配置都是以文件的形式保存在C盘用户家目录中的.openclaw目录下。
