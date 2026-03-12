@@ -46,6 +46,17 @@ clawhub install pdf
 帮我生成一个 PPT，这个 PPT是关于 openclaw介绍相关的，只需要生成三页 PPT即可，注意你需要先列出来大纲，然后再生成 PPT。请注意你需要使用桌面的 openclaw.pptx 模版进行生成。
 
 # 自我进化Skills
+这个 skill 不是“多了一个命令”，而是给 agent 加了一套行为模式：
+
+> **做事 → 复盘 → 记录纠正 → 沉淀经验 → 下次改进**
+> **当 agent 出错、被纠正、完成重要任务、或发现更优方法时，让它主动复盘并把经验沉淀为长期规则。**
+
+它的目标不是单次答对，而是**越用越会做**。
+
+用法：
+1. 用法 1：出现错误时直接触发
+2. 用法 2：做完一个重要任务后让它复盘
+3. 用法 3：把你的偏好沉淀进去
 
 
 # 记忆插件
@@ -54,6 +65,6 @@ https://memos-claw.openmem.net/docs/index.html#quickstart
 OpenClaw 自己本身也有内建 memory 机制（MEMORY.md / memory*.md + memory_search）。
 而这个 `memos-local-openclaw-plugin` 是 **memory 类插件**，**本地 SQLite 存储**
 
-
+部署完成后可以可视化看大存储起来的memory（127.0.0.1:18799）
 
 
