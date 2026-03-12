@@ -249,6 +249,7 @@ openclaw doctor
 openclaw gateway restart
 ```
 
+- 开启一段新对话：`/new`
 # 添加多供应商多模型
 ## 手动添加(推荐)
 - openclaw的所有配置都是以文件的形式保存在C盘用户家目录中的.openclaw目录下。
