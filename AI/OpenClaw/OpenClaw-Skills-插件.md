@@ -67,4 +67,41 @@ OpenClaw 自己本身也有内建 memory 机制（MEMORY.md / memory*.md + memor
 
 部署完成后可以可视化看大存储起来的memory（127.0.0.1:18799）
 
+# 安全审计-skill-vetter
+这个skill是spclaudehome做的，下载量30000+，LobeHub评分4.96/5。它本身是一个纯文档型skill，没有任何可执行代码，说白了就是一套安全审查协议。装上之后，每次你要安装新的skill，它会引导你走四步审查流程：先查来源（作者信誉、GitHub活跃度、Star数量），然后做代码审查（扫描数据外泄模式、credential访问、eval()调用、可疑网络请求），再分析权限范围，最后给出风险评级，分LOW、MEDIUM、HIGH、EXTREME四个等级。
 
+# 浏览器搜索和互联网平台信息抓取
+Agent-browser & Agent-Reach
+AI Agent最大的痛点是什么？看不到外面的世界。这两个配合起来，基本上让你的OpenClaw长出了眼睛和手。
+
+## Agent-broswer
+https://github.com/vercel-labs/agent-browser
+
+Agent-browser是Vercel Labs用Rust写的无头浏览器自动化CLI，GitHub 19600+ stars。Agent-browser其实不算是Skill，本质上是个无头浏览器工具。
+
+跟传统的浏览器自动化工具比（Puppeteer、Playwright），它最大的不同在于用accessibility-tree快照生成稳定的元素引用，类似@e1、@e2这种标记。传统CSS选择器在页面变动时很容易失效，但这种基于accessibility-tree的引用要稳定得多，对AI Agent来说简直是刚需。
+
+除了基本的页面导航和元素交互，它还支持截图、PDF生成、网络请求拦截、视频录制，甚至能做像素级diff对比。
+
+```sh
+npm install -g agent-browser
+agent-browser install  # 下载Chromium
+```
+
+claude code和openclaw都能用。
+
+场景：Web数据采集
+
+需要从某个网站收集一些公开信息？以前要么手动复制，要么让AI写爬虫脚本。
+现在可以让AI直接用agent-browser操作：打开页面、获取元素、提取文本，整个流程在对话中就能完成。
+
+## Agent-Reach
+这个skill解决的是另一个大问题：让AI Agent免费访问各大平台的内容。Twitter/X、Reddit、YouTube、GitHub、B站、小红书，都能通过它来搜索和读取，关键是不需要任何API key。
+
+它背后用的是xreach CLI读Twitter、yt-dlp读视频、Jina Reader读网页，这些都是成熟的开源工具。写文章做调研的时候就靠它，先跑一下 agent-reach doctor 检查哪些渠道可用，然后按需调用。
+
+claude code和openclaw都能用：
+```
+帮我安装 Agent Reach：
+https://raw.githubusercontent.com/Panniantong/agent-reach/main/docs/install.md
+```
