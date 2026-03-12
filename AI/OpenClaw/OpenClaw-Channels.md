@@ -4,7 +4,7 @@
 下载app： https://www.feishu.cn/download
 参考文档： https://docs.openclaw.ai/zh-CN/channels/feishu
 ### 自动安装
-2026.3.8版本的openclaw已经支持直接配置飞书插件了。可以在线安装或者选择已经下载好的本地插件文件。
+2026.3.8版本的openclaw已经支持直接配置飞书插件了。可以在线安装或者选择已经下载好的本地插件文件。（openclaw自带飞书插件，不要选择npm install @openclaw/feishu，否则后面会一直报插件重复）
 
 ```sh
 openclaw channels add
