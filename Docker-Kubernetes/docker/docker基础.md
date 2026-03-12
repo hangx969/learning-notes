@@ -147,11 +147,11 @@ docker -v
 systemctl enable docker.service && systemctl start docker.service && systemctl status docker.service
 ~~~
 
-- If docker service failed to start with error: "systemd[1]: Job docker.service/start failed with result 'dependency'.", start docker with below command:
+- If docker service failed to start with error: "systemd: Job docker.service/start failed with result 'dependency'.", start docker with below command:
 
 ```sh
 /usr/bin/dockerd -H unix://
-sytemctl status docker
+systemctl status docker
 ```
 
 - User permission: by default, users in group named docker will have permission to use docker-cli, follow below steps to configure:
