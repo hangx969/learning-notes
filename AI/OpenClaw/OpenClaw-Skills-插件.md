@@ -105,3 +105,33 @@ claude code和openclaw都能用：
 帮我安装 Agent Reach：
 https://raw.githubusercontent.com/Panniantong/agent-reach/main/docs/install.md
 ```
+
+## 百度搜索skill
+### 背景
+Browser Agent、Playwright ：帮我登录公众号排版，帮我登录 12306 买票。但现实是，所有平台都非常介意这种事。
+严重一点直接封号。小红书已经封过一批了。公众号都只敢拿小号。
+所以 Browser Agent 之类 Skill 看起来很酷，但目前很多场景其实不敢用。
+
+我反而认为最重要的一个 Skill，是搜索。为什么？因为如果不装搜索 Skill 的话，模型是没有最新知识的。
+
+模型不是也有搜索能力吗？我们在 ChatGPT 或者其他 Chat 产品里不都能用搜索吗？
+
+是这样没错。
+
+但 OpenClaw 接模型的方式是通过 API，API 里是没有搜索的。搜索是 Chat 产品层额外做了一层插件。现在没有哪个模型有原生搜索的能力。
+
+所以如果你在 OpenClaw 里不装搜索 Skill，模型就是个半瞎子。
+
+因为模型的知识是有截止日期的。很多最新的信息，比如新闻、公司动态、产品更新，模型基本上都不知道。所以有的时候它就会一本正经地胡说八道。
+
+这也是为什么在 OpenClaw 生态里，搜索类的 Skill 下载量一直非常高。
+
+大家都意识到了，Agent 只要你想让它真正干活，它必须得有眼睛。就像我们自己，现在干活要是没有搜索引擎的话，基本上就没办法干了。
+
+而搜索类 Skill，我强烈推荐国内用户还是用百度的 Skill。之前我也装过 Brave Search Skill，但真实的体感是中文领域的搜索效果，百度仍然最好。
+
+### skill地址
+https://clawhub.ai/ide-rea/baidu-search
+
+装完之后，需要配一个 API Key，可以在下面的地址申请。目前每天有免费额度福利，也不需要绑定信用卡，还是很方便的。
+https://console.bce.baidu.com/qianfan/ais/console/apiKey
