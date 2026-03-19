@@ -138,3 +138,9 @@ https://console.bce.baidu.com/qianfan/ais/console/apiKey
 
 # 可视化面板
 这个比较好看： https://github.com/ClawDeckX/ClawDeckX/tree/main
+```sh
+systemctl --user status clawdeckx
+systemctl --user stop clawdeckx
+systemctl --user start clawdeckx
+```
+
