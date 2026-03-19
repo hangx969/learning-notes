@@ -135,3 +135,6 @@ https://clawhub.ai/ide-rea/baidu-search
 
 装完之后，需要配一个 API Key，可以在下面的地址申请。目前每天有免费额度福利，也不需要绑定信用卡，还是很方便的。
 https://console.bce.baidu.com/qianfan/ais/console/apiKey
+
+# 可视化面板
+这个比较好看： https://github.com/ClawDeckX/ClawDeckX/tree/main
