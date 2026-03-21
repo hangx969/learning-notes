@@ -28,35 +28,6 @@
   - 协同方法：一个人改了文件A，另一个人也改了文件A，互相把修改推送给对方就可以看到对方的修改。
   - git是本地代码库，局域网联网就可以进行多人开发，把最终版本提价到远程即可。
 
-# Git配置
-
--  查看所有git 配置：
-
-  ```shell
-  git config -l
-  ```
-
-- 查看git系统配置：
-
-  ```shell
-  git config --system --list
-  git config --system -e #直接打开配置文件
-  ```
-
--  查看git本地配置：
-
-  ```shell
-  git config --global --list
-  git config --global -e #直接打开配置文件
-  ```
-
-- 下载git bash之后首先要配的：用户名和邮箱
-
-  ```shell
-   git config --global user.email ""
-   git config --global user.name ""
-  ```
-
 # Git基本理论
 
 ## 基本组成
@@ -111,6 +82,35 @@
 git status [filename]
 git status
 ```
+
+# Git配置
+
+-  查看所有git 配置：
+
+  ```shell
+  git config -l
+  ```
+
+- 查看git系统配置：
+
+  ```shell
+  git config --system --list
+  git config --system -e #直接打开配置文件
+  ```
+
+-  查看git本地配置：
+
+  ```shell
+  git config --global --list
+  git config --global -e #直接打开配置文件
+  ```
+
+- 下载git bash之后首先要配的：用户名和邮箱
+
+  ```shell
+   git config --global user.email ""
+   git config --global user.name ""
+  ```
 
 # Git项目搭建
 
@@ -181,8 +181,19 @@ git branch -a
 
 ## 获取远程分支
 ```sh
+# 从远程拉取最新的分支/标签信息到本地，顺手清理本地那些“远程已经删除”的origin/xxx分支
 git fetch -p
 ```
+
+## 删除分支
+
+```sh
+git branch -d xxx
+```
+
+注意：
+- -d：安全删除，只有当这个分支的提交已经被合并到当前分支，或者 Git 认为它的改动不会丢时，才会删。
+- -D：强制删除，
 
 ## 工作流程
 
