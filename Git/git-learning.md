@@ -50,11 +50,11 @@
   git config --global -e #直接打开配置文件
   ```
 
-- 必须要配的：用户名和邮箱
+- 下载git bash之后首先要配的：用户名和邮箱
 
   ```shell
    git config --global user.email ""
-   git config --global user.name "" 
+   git config --global user.name ""
   ```
 
 # Git基本理论
@@ -160,7 +160,7 @@ git remote set-url origin git@ssh.xxxx
 - git remote add采用ssh的link
 
   ~~~sh
-  git remote add origin git@github.com:hangx969/k8s-platform-tools.git】
+  git remote add origin git@github.com:hangx969/k8s-platform-tools.git
   git add .
   git commit -m "xxx"
   git checkout -b xxx
@@ -203,8 +203,6 @@ git remote set-url origin git@ssh.xxxx
      ```bash
      git commit -m "描述您的更改"
      ```
-
-     这里的 "描述您的更改" 应该替换为具体描述您所做更改的信息，帮助其他开发者理解此次提交的目的。
 
   5. 将 "dev" 分支推送到远程仓库：
 
@@ -414,7 +412,7 @@ Host github.com
 - fork
 - sourceTree
 - git graph (vscode插件)
-- 学习git：https://learngitbranching.js.org/?locale=zh_CN
+- 学习git： https://learngitbranching.js.org/?locale=zh_CN
 
 # Lab
 
