@@ -453,6 +453,7 @@ Host github.com
 - sourceTree
 - git graph (vscode插件)
 - 学习git： https://learngitbranching.js.org/?locale=zh_CN
+- alias： https://github.com/ahmetb/kubectl-aliases
 
 # Lab
 
