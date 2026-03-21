@@ -249,7 +249,18 @@ git push origin --delete feature-x
 ```sh
 # 查看代码提交记录
 git log
-
+# 查看当前环境文件变更状态
+git status
+# 查看某个文件的diff
+git diff xxx.md
+# 撤销单个文件的修改
+git checkout - xxx.md
+# 撤销所有文件的修改 (谨慎)
+git reset --hard
+# 回滚到某个commit版本（谨慎）
+git reset --hard <commit-id>
+# 回滚完之后push会被拒绝，加force（谨慎）
+git push origin feature-x --force
 ```
 
 # 开发常用流程
@@ -453,7 +464,7 @@ Host github.com
 - sourceTree
 - git graph (vscode插件)
 - 学习git： https://learngitbranching.js.org/?locale=zh_CN
-- alias： https://github.com/ahmetb/kubectl-aliases
+- alias： zsh自带git插件
 
 # Lab
 
