@@ -169,6 +169,22 @@ git remote set-url origin git@ssh.xxxx
 
 
 # Git分支管理
+## 查看操作
+```sh
+# 查看本地分支
+git branch
+# 查看远程分支
+git branch -r
+# 查看本地远程所有分支的汇总
+git branch -a
+```
+
+## 获取远程分支
+```sh
+git fetch -p
+```
+
+## 工作流程
 
 - master主分支应该非常稳定，用来发布新版本，一般情况下不允许在上面工作。
 
