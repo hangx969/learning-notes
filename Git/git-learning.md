@@ -245,6 +245,13 @@ git push origin --delete feature-x
 
      如果是第一次将这个分支推送到远程仓库，Git 会创建远程的 "dev" 分支。
 
+# Git版本管理
+```sh
+# 查看代码提交记录
+git log
+
+```
+
 # 开发常用流程
 
 ## 初始化本地仓库并拉取远程仓库
