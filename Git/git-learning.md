@@ -185,7 +185,7 @@ git branch -a
 git fetch -p
 ```
 
-## 删除分支
+## 删除本地分支
 
 ```sh
 git branch -d xxx
@@ -193,7 +193,13 @@ git branch -d xxx
 
 注意：
 - -d：安全删除，只有当这个分支的提交已经被合并到当前分支，或者 Git 认为它的改动不会丢时，才会删。
-- -D：强制删除，
+- -D：强制删除。如果这么分支上还有没合并的提交，就丢失了
+
+## 删除远程分支
+
+```sh
+git push origin --delete feature-x
+```
 
 ## 工作流程
 
