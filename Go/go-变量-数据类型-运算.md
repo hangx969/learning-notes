@@ -226,7 +226,7 @@ func main() {
 	str2 := "abc\nabc"
 	fmt.Println(str2)
 
-	//(2) 反引号``，以字符串的原生形式输出，包括换行和特殊字符，可以实现防止攻击、输出源代码等效果
+	//(2) 反引号``，以字符串的原生形式输出，包括换行和特殊字符，可以实现防止攻击、输出源代码等效果，比如/n就保持/n，/t就保持/t
 	str3 := `
     package main
     import (
@@ -351,20 +351,20 @@ func main(){
    
    	// 字符串转布尔
    	// 1. strconv.ParseBool(str) 函数会返回两个值 (value bool, err error)
-   	// 2. 只想获取到 value bool ,不想获取 err 所以用_忽略
+   	// 2. 只想获取到 value bool, 不想获取 err 所以用_忽略
    	var d bool
    	var str1 string = "true"
    	d, _ = strconv.ParseBool(str1)
    	fmt.Printf("Type of d: %T, b=%v \n", d, d)
    
    	// 字符串转整型
-   	//参数str1表示数字的字符串形式
-   	//参数10表示数字的字符串进制
-   	//参数64表示返回结果的bit大小，如int8、int16、int32
+   	// 参数str1表示数字的字符串形式
+   	// 参数10表示数字的字符串进制
+   	// 参数64表示返回结果的bit大小，如int8、int16、int32
    	var str2 string = "12"
    	var a int64
    	a, _ = strconv.ParseInt(str2, 10, 64)
-   	// a, _ = strconv.Atoi(str2) 这个也行，比较简洁
+   	// a, _ = strconv.Atoi(str2) 这个更好，比较简洁
    	fmt.Printf("Type of a: %T, a=%v \n", a, a)
    
    	// 整型互转
