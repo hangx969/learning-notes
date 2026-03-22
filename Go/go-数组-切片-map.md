@@ -358,5 +358,5 @@ func main() {
 
 - 值类型：复制变量的时候是深拷贝，值类型包括：int、float、string、struct、array、bool
 - 引用类型：复制变量的时候是浅拷贝，引用类型包括：slice、map、channel、interface。
-	- 想要深拷贝，用 `copy(new, old)`
+	- 想要深拷贝切片，用 `copy(new, old)`
 
