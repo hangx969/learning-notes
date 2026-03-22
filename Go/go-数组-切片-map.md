@@ -81,6 +81,7 @@ func main() {
     // len : 切片元素的个数
     // cap ：指定切片容量，可选， 如果你分配了 cap,则要求 cap>=len.
     var slc []float64 = make([]float64, 5, 10)
+    slc2 := make([]int, 5, 10)
     slc[0] = 1.0
     slc[1] = 2.0
     fmt.Println("slc=", slc)
