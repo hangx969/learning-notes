@@ -311,7 +311,45 @@ func main() {
 }
 ~~~
 
-## 对象取值
+## 安全取值
+
+如果取到了一个集合中不存在的值，不会报错，而是返回一个空值，所以我们要自己处理这种异常情况，用**双返回值模式（comma ok idiom）**。
+
+这是 Go 中访问 map 的**惯用写法**，建议始终使用双返回值模式来安全地检查 key 是否存在。
+
+```go
+package main
+
+import (
+	"fmt"
+)
+
+func main() {
+	nameLists := make(map[string]string)
+	nameLists["Bob"] = "Engineer"
+	nameLists["Tom"] = "Doctor"
+	nameLists["Alice"] = "Teacher"
+
+  // profession - key 对应的 value。如果 key 不存在，返回零值（""）
+  // ok - key 是否存在。true = 找到，false = 未找到
+	profession, ok := nameLists["Bob"]
+	if ok {
+		fmt.Printf("Bob's profession is %s\n", profession)
+	} else {
+		fmt.Println("Bob's profession not found")
+	}
+
+	profession, ok = nameLists["Charlie"]
+	if ok {
+		fmt.Printf("Charlie's profession is %s\n", profession)
+	} else {
+		fmt.Println("Charlie is not found")
+	}
+}
+
+```
+
+
 
 # 深浅拷贝-引用和值
 
