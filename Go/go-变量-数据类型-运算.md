@@ -253,6 +253,46 @@ func main() {
 strings有很多方法：
 
 ```go
+package main
+
+import (
+	"fmt"
+	"strings"
+)
+
+func main() {
+	s := "gocodelearn"
+
+	// 转大小写
+	fmt.Println(strings.ToUpper(s))
+	fmt.Println(strings.ToLower(s))
+
+	// 是否包含某个元素
+	fmt.Println(strings.Contains(s, "code"))
+	// 是否包含任意一个元素
+	fmt.Println(strings.ContainsAny(s, "xyzcode"))
+
+	// 前缀和后缀
+	fmt.Println(strings.HasPrefix(s, "go"))
+	fmt.Println(strings.HasSuffix(s, "learn"))
+
+	// 切割字符串，返回一个字符串切片
+	fmt.Println(strings.Split(s, "code"))
+  fmt.Println(strings.Split(s, " "))
+
+	// 替换字符串
+	fmt.Println(strings.ReplaceAll(s, "code", "programming"))
+
+	// 字符串连接
+	fmt.Println(strings.Join([]string{"go", "code", "learn"}, "-"))
+
+	//统计某个子串在字符串中出现的次数
+	fmt.Println(strings.Count(s, "o"))
+
+	//字符串修建，去掉字符串两端的空白字符
+	fmt.Println(strings.TrimSpace("  zxcv.  "))
+}
+
 ```
 
 
