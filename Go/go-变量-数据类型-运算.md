@@ -364,12 +364,18 @@ func main(){
    	var str2 string = "12"
    	var a int64
    	a, _ = strconv.ParseInt(str2, 10, 64)
+   	// a, _ = strconv.Atoi(str2) 这个也行，比较简洁
    	fmt.Printf("Type of a: %T, a=%v \n", a, a)
    
    	// 整型互转
    	var a1 int
    	a1 = int(a)
    	fmt.Printf("Type of a1: %T, a1=%v \n", a1, a1)
+   
+   // 整型转字符串
+   i := 7277
+   sn := strconv.Itoa(i)
+   fmt.Printf("Type of sn", reflect.TypeOf(sn))
    
    	// 字符串转浮点数
    	var b float64
