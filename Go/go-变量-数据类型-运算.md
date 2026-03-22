@@ -503,5 +503,36 @@ func main() {
 # 获取时间
 
 ```go
+package main
+
+import (
+	"fmt"
+	"time"
+)
+
+func main() {
+	now := time.Now()
+	fmt.Println(now) // 默认格式时间
+
+	// 获取常见部分
+	fmt.Println("当前时间:", now)
+	fmt.Println("时间戳(秒):", now.Unix())
+	fmt.Println("时间戳(毫秒):", now.UnixMilli())
+	fmt.Println("年:", now.Year())
+	fmt.Println("月:", now.Month())
+	fmt.Println("日:", now.Day())
+	fmt.Println("时:", now.Hour())
+	fmt.Println("分:", now.Minute())
+	fmt.Println("秒:", now.Second())
+
+	// 格式化时间
+	// Go 没用 YYYY-MM-DD HH:mm:ss 这种占位符风格，而是用了一个固定参考时间来表示格式。
+	// 这是Go语言的诞生时间
+	fmt.Println(now.Format("2006-01-02 15:04:05"))
+
+	// 获取北京时间
+	loc, _ := time.LoadLocation("Asia/Shanghai")
+	fmt.Println(time.Now().In(loc).Format("2006-01-02 15:04:05"))
+}
 ```
 
