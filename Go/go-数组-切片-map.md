@@ -123,6 +123,10 @@ func main() {
     slice = append(slice, 18)
     fmt.Println("intArr=", intArr)
     fmt.Println("slice 的元素是 =", slice) // 11 66 18
+    //删除元素，没有实现具体方法，用切片实现
+    slice = slice[1:] //删头
+    slice = slice[:len(slice)-1] //删尾
+    slice = append(slice[:2], slice[3:]...) //删中间，靠拼接实现
 
 }
 ~~~
@@ -304,4 +308,6 @@ func main() {
 	b = make(map[string]string)
 }
 ~~~
+
+# 深浅拷贝
 
