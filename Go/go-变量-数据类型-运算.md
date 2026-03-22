@@ -55,7 +55,7 @@ func main() {
 
 ## 短变量声明
 
-在函数内部，可以使用更简略的 := 方式声明并初始化变量。
+在函数内部，可以使用更简略的 := 方式声明并初始化变量。这属于语法糖的形式，go会自动识别变量类型。
 
 ~~~go
 package main
@@ -249,6 +249,7 @@ func main() {
 
 ## 查看类型和字节数
 
+%T 查看：
 ~~~go
 package main
 import (
@@ -262,6 +263,22 @@ func main(){
 	fmt.Printf("Byte size of i: %d \n", unsafe.Sizeof(i))
 }
 ~~~
+
+reflect查看：
+
+```go
+package main
+
+import (
+	"fmt"
+	"reflect"
+)
+
+func main() {
+	var name string = "HX"
+	fmt.Printf("name's type is: %s", reflect.TypeOf(name))
+}
+```
 
 ## 各种类型的默认值
 
