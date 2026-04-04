@@ -163,7 +163,7 @@ export GITHUB_PERSONAL_ACCESS_TOKEN="your_token_here"
 claude mcp add github -- npx -y @modelcontextprotocol/server-github
 ```
 
-## exa
+## exa 【依赖axios包】
 智能搜索（需要官网key）: 
 
 github: https://github.com/exa-labs/exa-mcp-server
