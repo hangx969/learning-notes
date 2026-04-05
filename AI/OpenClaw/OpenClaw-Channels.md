@@ -71,6 +71,7 @@ openclaw gateway restart
 
 # 飞书【飞书官方版】
 飞书推出了一个官方开发的插件： https://bytedance.larkoffice.com/docx/MFK7dDFLFoVlOGxWCv5cTXKmnMh
+一键扫码配置，很方便。
 
 # QQ
 腾讯出手，专门为 OpenClaw 搞了一个快捷接入通道，几步就能搞定！
