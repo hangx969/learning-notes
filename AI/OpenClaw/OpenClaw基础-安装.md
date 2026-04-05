@@ -258,6 +258,7 @@ openclaw gateway restart
 ```
 
 - 开启一段新对话：`/new`
+
 # 添加多供应商多模型
 ## 手动添加(推荐)
 - openclaw的所有配置都是以文件的形式保存在C盘用户家目录中的.openclaw目录下。
@@ -317,7 +318,7 @@ openclaw gateway restart
 GitHub Copilot（包括 Enterprise 版）**不提供独立的 API Key**。它的认证方式是通过 GitHub OAuth 令牌交换实现的。但好消息是，**OpenClaw 内置了对 GitHub Copilot 的原生支持**，会自动处理整个令牌交换和刷新流程。
 
  1. 登录 GitHub Copilot
-在你安装好 OpenClaw 的 Rocky Linux 服务器上执行：
+在你安装好 OpenClaw 的服务器上执行：
 
 ```bash
 openclaw models auth login-github-copilot
