@@ -1,6 +1,8 @@
 # 配置Channel
 
-## 飞书【】
+## 飞书【自带版】
+这里是用的openclaw自带的飞书插件
+
 下载app： https://www.feishu.cn/download
 参考文档： 
 - https://docs.openclaw.ai/zh-CN/channels/feishu
@@ -66,6 +68,9 @@ sed -i '/^Environment=http_proxy=/d; /^Environment=https_proxy=/d; /^Environment
 systemctl --user daemon-reload
 openclaw gateway restart
 ```
+
+# 飞书【飞书官方版】
+飞书推出了一个官方开发的插件： https://bytedance.larkoffice.com/docx/MFK7dDFLFoVlOGxWCv5cTXKmnMh
 
 # QQ
 腾讯出手，专门为 OpenClaw 搞了一个快捷接入通道，几步就能搞定！
