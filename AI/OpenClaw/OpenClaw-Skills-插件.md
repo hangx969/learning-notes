@@ -47,6 +47,7 @@ clawhub install pdf
 帮我生成一个 PPT，这个 PPT是关于 openclaw介绍相关的，只需要生成三页 PPT即可，注意你需要先列出来大纲，然后再生成 PPT。请注意你需要使用桌面的 openclaw.pptx 模版进行生成。
 
 # 自我进化Skills
+self-improving
 这个 skill 不是“多了一个命令”，而是给 agent 加了一套行为模式：
 
 > **做事 → 复盘 → 记录纠正 → 沉淀经验 → 下次改进**
