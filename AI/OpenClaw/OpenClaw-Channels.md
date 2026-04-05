@@ -1,6 +1,6 @@
 # 配置Channel
 
-## 飞书
+## 飞书【】
 下载app： https://www.feishu.cn/download
 参考文档： 
 - https://docs.openclaw.ai/zh-CN/channels/feishu
