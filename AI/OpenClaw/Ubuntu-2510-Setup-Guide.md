@@ -101,29 +101,6 @@ sudo apt update
 
 ## 4. 安装常用开发工具包
 
-以下为 Rocky Linux 常用包在 Ubuntu 上的对照及安装命令。
-
-### 4.1 包名对照表
-
-| Rocky Linux | Ubuntu | 备注 |
-|---|---|---|
-| `yum-utils` | ❌ 不需要 | yum 专用 |
-| `epel-release` | ❌ 不需要 | RHEL 专用仓库 |
-| `device-mapper-persistent-data` | `thin-provisioning-tools` | 替换 |
-| `nfs-utils` | `nfs-common` | 替换 |
-| `gcc-c++` | `g++` | 替换 |
-| `libxml2-devel` | `libxml2-dev` | 替换 |
-| `openssl-devel` | `libssl-dev` | 替换 |
-| `curl-devel` | `libcurl4-openssl-dev` | 替换 |
-| `libaio-devel` | `libaio-dev` | 替换 |
-| `ncurses-devel` | `libncurses-dev` | 替换 |
-| `iputils` | `iputils-ping` | 替换 |
-| `iproute` | `iproute2` | 替换 |
-| `nmap-ncat` | `ncat` | 替换 |
-| 其余包 | ✅ 同名可用 | — |
-
-### 4.2 一键安装命令
-
 ```bash
 sudo apt install -y \
   thin-provisioning-tools \
