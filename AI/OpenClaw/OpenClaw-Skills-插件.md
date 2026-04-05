@@ -47,7 +47,8 @@ clawhub install pdf
 帮我生成一个 PPT，这个 PPT是关于 openclaw介绍相关的，只需要生成三页 PPT即可，注意你需要先列出来大纲，然后再生成 PPT。请注意你需要使用桌面的 openclaw.pptx 模版进行生成。
 
 # 自我进化Skills
-self-improving
+https://clawhub.ai/pskoett/self-improving-agent
+
 这个 skill 不是“多了一个命令”，而是给 agent 加了一套行为模式：
 
 > **做事 → 复盘 → 记录纠正 → 沉淀经验 → 下次改进**
@@ -70,6 +71,7 @@ OpenClaw 自己本身也有内建 memory 机制（MEMORY.md / memory*.md + memor
 部署完成后可以可视化看大存储起来的memory（127.0.0.1:18799）
 
 # 安全审计-skill-vetter
+https://clawhub.ai/spclaudehome/skill-vetter
 这个skill是spclaudehome做的，下载量30000+，LobeHub评分4.96/5。它本身是一个纯文档型skill，没有任何可执行代码，说白了就是一套安全审查协议。装上之后，每次你要安装新的skill，它会引导你走四步审查流程：先查来源（作者信誉、GitHub活跃度、Star数量），然后做代码审查（扫描数据外泄模式、credential访问、eval()调用、可疑网络请求），再分析权限范围，最后给出风险评级，分LOW、MEDIUM、HIGH、EXTREME四个等级。
 
 # 浏览器搜索和互联网平台信息抓取
