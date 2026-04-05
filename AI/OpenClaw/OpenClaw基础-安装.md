@@ -141,7 +141,7 @@ npm config get registry
 
 Linux自带python，直接配置国内源即可：
 ```sh
-yum install -y pip
+apt install -y pip
 pip config set global.index-url https://mirrors.aliyun.com/pypi/simple/
 ```
 
