@@ -124,10 +124,18 @@ openclaw onboard
 # RPM版
 curl -fsSL https://rpm.nodesource.com/setup_24.x | sudo bash -
 dnf install -y nodejs
-# DEB版
-sudo apt install -y nodejs
-sudo corepack enable npm
 
+# DEB版
+# 安装 nvm（如果还没装）
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
+source ~/.bashrc
+
+# 安装并使用 Node 24（openclaw 推荐）
+nvm install 24
+nvm use 24
+nvm alias default 24
+
+# 验证
 npm -v
 node -v
 
