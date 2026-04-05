@@ -20,7 +20,8 @@ clawhub search "pdf"
 clawhub install pdf
 ```
 
-> 注意：用clawhub安装的Skills默认是装在当前Agent的工作目录中的Skills里，是局部的。想要装成全局Skills，需要手动安装到
+> 注意：用clawhub安装的Skills默认是装在当前Agent的工作目录中的Skills里，是局部的。想要装成全局Skills，需要手动安装
+
 # 手动下载Skills
 - https://clawhub.ai/ 上找到想要的，下载到 openclaw 的工作目录下的 skills 目录下即可。（没有就创建一个）
 - 可以在WebUI的技能中查看到安装的Skills
