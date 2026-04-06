@@ -1890,7 +1890,7 @@ vim /etc/containerd/config.toml文件
 mkdir /etc/containerd/certs.d/docker.io/ -p
 vim /etc/containerd/certs.d/docker.io/hosts.toml
 #写入如下内容：
-[host."https://vh3bm52y.mirror.aliyuncs.com",host."https://registry.docker-cn.com"]
+[host."https://docker.m.daocloud.io"]
   capabilities = ["pull"]
 #重启containerd：
 systemctl restart containerd
@@ -1928,7 +1928,7 @@ systemctl enable docker --now
 vim /etc/docker/daemon.json
 #写入如下内容：
 {
- "registry-mirrors":["https://vh3bm52y.mirror.aliyuncs.com","https://registry.docker-cn.com","https://docker.mirrors.ustc.edu.cn","https://dockerhub.azk8s.cn","http://hub-mirror.c.163.com"]
+ "registry-mirrors":["https://docker.m.daocloud.io"]
 } 
 #重启docker：
 systemctl restart docker
