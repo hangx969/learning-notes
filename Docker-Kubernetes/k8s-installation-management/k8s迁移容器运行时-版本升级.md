@@ -52,7 +52,7 @@ vim /etc/containerd/config.toml
 #在[plugins."io.containerd.grpc.v1.cri".registry.mirrors]这一行下面配置endpoint
 [plugins."io.containerd.grpc.v1.cri".registry.mirrors]
   [plugins."io.containerd.grpc.v1.cri".registry.mirrors."docker.io"]
-    endpoint = ["https://rsbud4vc.mirror.aliyuncs.com"]
+    endpoint = ["https://docker.m.daocloud.io"]
 
 #修改：
 sandbox_image = "registry.aliyuncs.com/google_containers/pause:3.7"
