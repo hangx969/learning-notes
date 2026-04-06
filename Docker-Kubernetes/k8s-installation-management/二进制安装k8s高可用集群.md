@@ -297,7 +297,7 @@ systemctl start docker && systemctl enable docker.service && systemctl status do
 ~~~sh
 tee /etc/docker/daemon.json << 'EOF'
 {
- "registry-mirrors":["https://rsbud4vc.mirror.aliyuncs.com","https://registry.docker-cn.com","https://docker.mirrors.ustc.edu.cn","https://dockerhub.azk8s.cn","http://hub-mirror.c.163.com","http://qtid6917.mirror.aliyuncs.com", "https://rncxm540.mirror.aliyuncs.com"],
+ "registry-mirrors":["https://docker.m.daocloud.io"],
   "exec-opts": ["native.cgroupdriver=systemd"]
 } 
 EOF

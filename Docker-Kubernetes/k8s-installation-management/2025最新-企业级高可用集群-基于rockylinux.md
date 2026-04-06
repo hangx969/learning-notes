@@ -701,7 +701,7 @@ systemctl enable docker --now
 # 配置docker镜像加速器，k8s所有节点均按照以下配置
 tee /etc/docker/daemon.json <<'EOF'
 {
- "registry-mirrors":["https://x6j7eqtq.mirror.aliyuncs.com","https://docker.lmirror.top","https://docker.m.daocloud.io", "https://hub.uuuadc.top","https://docker.anyhub.us.kg","https://dockerhub.jobcher.com","https://dockerhub.icu","https://docker.ckyl.me","https://docker.awsl9527.cn","https://docker.laoex.link"]
+ "registry-mirrors":["https://docker.m.daocloud.io"]
 } 
 EOF
 #重启docker：
@@ -782,7 +782,7 @@ sed -i 's#registry.k8s.io/pause#registry.cn-hangzhou.aliyuncs.com/google_contain
          [plugins."io.containerd.grpc.v1.cri".registry.mirrors."harbor.hanxux.local"]
             endpoint = ["http://harbor.hanxux.local"]
           [plugins."io.containerd.grpc.v1.cri".registry.mirrors."docker.io"]
-             endpoint = ["https://x6j7eqtq.mirror.aliyuncs.com","https://docker.lmirror.top","https://docker.m.daocloud.io", "https://hub.uuuadc.top","https://docker.anyhub.us.kg","https://dockerhub.jobcher.com","https://dockerhub.icu","https://docker.ckyl.me","https://docker.awsl9527.cn","https://docker.laoex.link"]
+             endpoint = ["https://docker.m.daocloud.io"]
 ~~~
 
 8. 所有节点启动Containerd，并配置开机自启动：
