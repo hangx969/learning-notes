@@ -561,7 +561,7 @@ chmod +x /usr/local/bin/argocd
 ~~~sh
 # 登录命令 -- 在宿主机
 argocd login grpc.argocd.hanxux.local
-# 登录命令 -- 在master节点
+# 登录命令 -- 在master节点,找argocd-server svc的clusterIP
 # 登录之后，相关配置保存在~/.config/argocd/config中
 argocd login 10.96.23.131
 
