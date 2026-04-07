@@ -603,7 +603,7 @@ kubectl get secret -n argocd argocd-initial-admin-secret -o jsonpath="{.data.pas
 ### 外部集群
 - 由于 Argo CD 支持部署应用到多集群，所以如果你要将应用部署到外部集群的时候，需要先将外部集群的认证信息注册到 Argo CD 中。
 ### 内部集群
-- 如果是在内部部署（运行 Argo CD 的同一个集群，默认不需要配置，默认名称叫in-cluster），直接使用 `https://kubernetes.default.svc` 作为应用的 K8S APIServer 地址即可。
+- 如果是在内部部署（运行 Argo CD 的同一个集群，默认不需要配置，默认名称叫in-cluster，已经加好了），直接使用默认的 `https://kubernetes.default.svc` 作为应用的 K8S APIServer 地址即可。
 ### CLI添加集群
 在argocd中注册一个新集群，首先拿到kubeconfig文件：
 ```sh
