@@ -152,13 +152,12 @@ openclaw agents add frontend-engineer --workspace ~/.openclaw/workspace-frontend
 ```
 
 ### Channel配置：openclaw自带飞书插件
-
-```sh
-
-```
+- https://docs.openclaw.ai/zh-CN/channels/feishu
+- 自己创建多个飞书app，拿appid和appsecret
 
 ### Channel配置：飞书官方插件
 
 ```sh
 
 ```
+
