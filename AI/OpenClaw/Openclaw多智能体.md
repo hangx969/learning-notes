@@ -165,3 +165,8 @@ openclaw agents add frontend-engineer --workspace ~/.openclaw/workspace-frontend
 2. 自动审批之后，在开发者小助手里面，会有消息：你的应用“Backend”已通过管理员审批并发布成功！，打开应用就会进到对话页面。
 
 ### 角色定义
+#### 架构师
+AGENTS.md：
+```
+
+```
