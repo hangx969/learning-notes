@@ -161,5 +161,5 @@ openclaw agents add frontend-engineer --workspace ~/.openclaw/workspace-frontend
 飞书官方插件文档中有说明：
 - https://bytedance.larkoffice.com/docx/WNNXdhKxmo8KDJxMM9dc0GD5nFf
 
-1. 在一键创建新机器人： https://open.feishu.cn/page/openclaw?form=multiAgent
+1. 在飞书开发者后台，一键创建新机器人 https://open.feishu.cn/page/openclaw?form=multiAgent 并记录App ID和 App Secret
 
