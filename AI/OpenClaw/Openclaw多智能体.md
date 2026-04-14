@@ -343,7 +343,8 @@ openclaw agents add frontend-engineer --workspace ~/.openclaw/workspace-frontend
 - `groups`
 - `connectionMode: "websocket"`
 
-### 
+### 创建群组
+
 
 ### 角色定义
 #### 架构师
