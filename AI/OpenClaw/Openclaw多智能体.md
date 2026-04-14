@@ -169,52 +169,8 @@ openclaw agents add frontend-engineer --workspace ~/.openclaw/workspace-frontend
 ~/.openclaw/openclaw.json
 ```
 
-###  agents.list
 
-新增了多个独立 agent：
-- `architect`
-- `pm`
-- `backend-engineer`
-- `frontend-engineer`
-
-每个 agent 都配置了自己的：
-- `id`
-- `workspace`
-- `agentDir`
-
-示例：
-
-```json
-"agents": {
-  "list": [
-    { "id": "main" },
-    {
-      "id": "architect",
-      "workspace": "/home/hx-ai/.openclaw/workspace-architect",
-      "agentDir": "/home/hx-ai/.openclaw/agents/architect/agent"
-    },
-    {
-      "id": "pm",
-      "workspace": "/home/hx-ai/.openclaw/workspace-pm",
-      "agentDir": "/home/hx-ai/.openclaw/agents/pm/agent"
-    },
-    {
-      "id": "backend-engineer",
-      "workspace": "/home/hx-ai/.openclaw/workspace-backend",
-      "agentDir": "/home/hx-ai/.openclaw/agents/backend-engineer/agent"
-    },
-    {
-      "id": "frontend-engineer",
-      "workspace": "/home/hx-ai/.openclaw/workspace-frontend",
-      "agentDir": "/home/hx-ai/.openclaw/agents/frontend-engineer/agent"
-    }
-  ]
-}
-```
-
----
-
-### 2. `channels.feishu.accounts`
+### 2. channels.feishu.accounts
 
 在 Feishu channel 下新增了多账号配置，每个账号对应一个独立 bot / 飞书应用：
 
