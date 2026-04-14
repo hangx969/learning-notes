@@ -229,10 +229,7 @@ openclaw agents add frontend-engineer --workspace ~/.openclaw/workspace-frontend
 - 当前 **没有** 启用 `peer.kind=direct/group` 的细粒度路由
 - 当前场景下只靠 `accountId` 路由就够用
 
----
-
-### 4. `session.dmScope`
-
+### session.dmScope
 为了让不同 Feishu account 的私聊上下文互相隔离，设置了：
 
 ```json
@@ -242,15 +239,11 @@ openclaw agents add frontend-engineer --workspace ~/.openclaw/workspace-frontend
 ```
 
 作用：
-
 - 同一个用户分别和不同 bot 私聊时
 - 会话按 `account + channel + peer` 维度隔离
 - 避免不同 bot 的 DM 上下文串掉
 
----
-
-### 5. `secrets.providers`
-
+### secrets.providers
 主配置里启用了 file-based secret provider：
 
 ```json
@@ -265,17 +258,13 @@ openclaw agents add frontend-engineer --workspace ~/.openclaw/workspace-frontend
 ```
 
 作用：
-
 - Feishu 多账号的 `appSecret` 不直接写死在 `openclaw.json`
 - 改为通过 `lark-secrets` provider 从 secrets 文件读取
 
----
-
-### 6. `tools`
-
+### tools
 为了支持 **agent 与 agent 互相调用**，后续修改了 `tools` 段，增加了以下配置。
 
-#### 6.1 `tools.sessions.visibility`
+#### tools.sessions.visibility
 
 ```json
 "tools": {
@@ -290,7 +279,7 @@ openclaw agents add frontend-engineer --workspace ~/.openclaw/workspace-frontend
 - 允许 session 工具看到更大范围的 session
 - 为 `sessions_list / sessions_history / sessions_send` 的跨 agent 协作做准备
 
-#### 6.2 `tools.agentToAgent`
+#### tools.agentToAgent
 
 ```json
 "tools": {
@@ -313,13 +302,10 @@ openclaw agents add frontend-engineer --workspace ~/.openclaw/workspace-frontend
 - 允许这些 agent 之间用 session 工具互相调用
 
 说明：
-
 - 这部分是为“`architect` 作为总控，调用 `pm` / `frontend-engineer` / `backend-engineer`”的模式准备的
 - `maxPingPongTurns` 目前 **暂未添加**
 
----
-
-### 7. `channels.feishu` 顶层已有配置（继续保留）
+### channels.feishu 顶层已有配置（继续保留）
 
 以下 Feishu 顶层行为配置在多 agent 改造后仍继续保留：
 
