@@ -170,10 +170,8 @@ openclaw agents add frontend-engineer --workspace ~/.openclaw/workspace-frontend
 ```
 
 
-### 2. channels.feishu.accounts
-
+### channels.feishu.accounts
 在 Feishu channel 下新增了多账号配置，每个账号对应一个独立 bot / 飞书应用：
-
 - `architect`
 - `pm`
 - `backend-engineer`
