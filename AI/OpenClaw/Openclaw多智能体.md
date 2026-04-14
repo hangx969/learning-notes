@@ -182,7 +182,6 @@ openclaw agents add frontend-engineer --workspace ~/.openclaw/workspace-frontend
 - `appSecret`
 
 最终采用的是 **SecretRef** 写法，而不是明文。
-
 示例：
 
 ```json
@@ -202,8 +201,6 @@ openclaw agents add frontend-engineer --workspace ~/.openclaw/workspace-frontend
   }
 }
 ```
-
----
 
 ### 3. `bindings`
 
