@@ -158,7 +158,9 @@ openclaw agents add frontend-engineer --workspace ~/.openclaw/workspace-frontend
 - 再用 bindings 把每个 accountId 绑定到一个 agent
 
 ### Channel配置：飞书官方插件
-飞书官方插件文档中有
+飞书官方插件文档中有说明：
+- https://bytedance.larkoffice.com/docx/WNNXdhKxmo8KDJxMM9dc0GD5nFf
+- 可以在网页上一键创建新机器人： https://open.feishu.cn/page/openclaw?form=multiAgent
 
 ```sh
 openclaw channels login --channel feishu --account architect
