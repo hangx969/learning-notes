@@ -161,6 +161,9 @@ openclaw agents add frontend-engineer --workspace ~/.openclaw/workspace-frontend
 
 
 ```sh
-
+openclaw channels login --channel feishu --account architect
+openclaw channels login --channel feishu --account pm
+openclaw channels login --channel feishu --account backend-engineer
+openclaw channels login --channel feishu --account frontend-engineer
 ```
 
