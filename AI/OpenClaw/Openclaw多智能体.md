@@ -348,6 +348,7 @@ openclaw agents add frontend-engineer --workspace ~/.openclaw/workspace-frontend
 
 ### 角色定义
 #### 架构师
+##### P
 ##### AGENTS.md
 ```
 # AGENTS.md - 程序开发架构师的工作空间
