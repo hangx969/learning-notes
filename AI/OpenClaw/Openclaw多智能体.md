@@ -344,7 +344,8 @@ openclaw agents add frontend-engineer --workspace ~/.openclaw/workspace-frontend
 - `connectionMode: "websocket"`
 
 ### 创建群组
-
+飞书上创建群组，把各个机器人拉进来。
+注意这只是为了更方便的对话。不创建群组、甚至不配飞书Channel，直接在openclaw UI上也可以实现多智能体协同对话。
 
 ### 角色定义
 推荐用大模型来生成
