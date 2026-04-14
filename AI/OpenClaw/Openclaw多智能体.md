@@ -165,6 +165,424 @@ openclaw agents add frontend-engineer --workspace ~/.openclaw/workspace-frontend
 #### 配置更新
 
 
+## 一、主配置文件
+
+文件路径：
+
+```text
+~/.openclaw/openclaw.json
+```
+
+### 1. `agents.list`
+
+新增了多个独立 agent：
+
+- `architect`
+- `pm`
+- `backend-engineer`
+- `frontend-engineer`
+
+每个 agent 都配置了自己的：
+
+- `id`
+- `workspace`
+- `agentDir`
+
+示例：
+
+```json
+"agents": {
+  "list": [
+    { "id": "main" },
+    {
+      "id": "architect",
+      "workspace": "/home/hx-ai/.openclaw/workspace-architect",
+      "agentDir": "/home/hx-ai/.openclaw/agents/architect/agent"
+    },
+    {
+      "id": "pm",
+      "workspace": "/home/hx-ai/.openclaw/workspace-pm",
+      "agentDir": "/home/hx-ai/.openclaw/agents/pm/agent"
+    },
+    {
+      "id": "backend-engineer",
+      "workspace": "/home/hx-ai/.openclaw/workspace-backend",
+      "agentDir": "/home/hx-ai/.openclaw/agents/backend-engineer/agent"
+    },
+    {
+      "id": "frontend-engineer",
+      "workspace": "/home/hx-ai/.openclaw/workspace-frontend",
+      "agentDir": "/home/hx-ai/.openclaw/agents/frontend-engineer/agent"
+    }
+  ]
+}
+```
+
+---
+
+### 2. `channels.feishu.accounts`
+
+在 Feishu channel 下新增了多账号配置，每个账号对应一个独立 bot / 飞书应用：
+
+- `architect`
+- `pm`
+- `backend-engineer`
+- `frontend-engineer`
+
+每个账号都配置了：
+
+- `name`
+- `appId`
+- `appSecret`
+
+最终采用的是 **SecretRef** 写法，而不是明文。
+
+示例：
+
+```json
+"channels": {
+  "feishu": {
+    "accounts": {
+      "architect": {
+        "name": "architect",
+        "appId": "cli_xxx",
+        "appSecret": {
+          "source": "file",
+          "provider": "lark-secrets",
+          "id": "/lark/architect/appSecret"
+        }
+      }
+    }
+  }
+}
+```
+
+---
+
+### 3. `bindings`
+
+新增并确认了多 agent 的 Feishu 路由绑定。
+
+当前路由方式是：
+
+- 按 `channel + accountId` 路由
+- 一个 Feishu bot/account 对应一个 agent
+
+当前映射关系：
+
+- `default` → `main`
+- `architect` → `architect`
+- `pm` → `pm`
+- `backend-engineer` → `backend-engineer`
+- `frontend-engineer` → `frontend-engineer`
+
+示例：
+
+```json
+"bindings": [
+  { "agentId": "main", "match": { "channel": "feishu", "accountId": "default" } },
+  { "agentId": "architect", "match": { "channel": "feishu", "accountId": "architect" } },
+  { "agentId": "pm", "match": { "channel": "feishu", "accountId": "pm" } },
+  { "agentId": "backend-engineer", "match": { "channel": "feishu", "accountId": "backend-engineer" } },
+  { "agentId": "frontend-engineer", "match": { "channel": "feishu", "accountId": "frontend-engineer" } }
+]
+```
+
+说明：
+
+- 当前 **没有** 启用 `peer.kind=direct/group` 的细粒度路由
+- 当前场景下只靠 `accountId` 路由就够用
+
+---
+
+### 4. `session.dmScope`
+
+为了让不同 Feishu account 的私聊上下文互相隔离，设置了：
+
+```json
+"session": {
+  "dmScope": "per-account-channel-peer"
+}
+```
+
+作用：
+
+- 同一个用户分别和不同 bot 私聊时
+- 会话按 `account + channel + peer` 维度隔离
+- 避免不同 bot 的 DM 上下文串掉
+
+---
+
+### 5. `secrets.providers`
+
+主配置里启用了 file-based secret provider：
+
+```json
+"secrets": {
+  "providers": {
+    "lark-secrets": {
+      "source": "file",
+      "path": "~/.openclaw/credentials/lark.secrets.json"
+    }
+  }
+}
+```
+
+作用：
+
+- Feishu 多账号的 `appSecret` 不直接写死在 `openclaw.json`
+- 改为通过 `lark-secrets` provider 从 secrets 文件读取
+
+---
+
+### 6. `tools`
+
+为了支持 **agent 与 agent 互相调用**，后续修改了 `tools` 段，增加了以下配置。
+
+#### 6.1 `tools.sessions.visibility`
+
+```json
+"tools": {
+  "sessions": {
+    "visibility": "all"
+  }
+}
+```
+
+作用：
+
+- 允许 session 工具看到更大范围的 session
+- 为 `sessions_list / sessions_history / sessions_send` 的跨 agent 协作做准备
+
+#### 6.2 `tools.agentToAgent`
+
+```json
+"tools": {
+  "agentToAgent": {
+    "enabled": true,
+    "allow": [
+      "main",
+      "architect",
+      "pm",
+      "backend-engineer",
+      "frontend-engineer"
+    ]
+  }
+}
+```
+
+作用：
+
+- 打开跨 agent 通信能力
+- 允许这些 agent 之间用 session 工具互相调用
+
+说明：
+
+- 这部分是为“`architect` 作为总控，调用 `pm` / `frontend-engineer` / `backend-engineer`”的模式准备的
+- `maxPingPongTurns` 目前 **暂未添加**
+
+---
+
+### 7. `channels.feishu` 顶层已有配置（继续保留）
+
+以下 Feishu 顶层行为配置在多 agent 改造后仍继续保留：
+
+- `streaming: true`
+- `footer.elapsed: true`
+- `footer.status: true`
+- `requireMention: true`
+- `groupPolicy`
+- `allowFrom`
+- `groupAllowFrom`
+- `groups`
+- `connectionMode: "websocket"`
+
+重点：
+
+- **默认会话的流式输出配置还在**
+- 多 account 改造没有把 `streaming` 配置弄丢
+
+---
+
+## 二、Feishu secrets 文件
+
+文件路径：
+
+```text
+~/.openclaw/credentials/lark.secrets.json
+```
+
+### 1. 从错误的平铺结构，改成了正确的嵌套结构
+
+之前错误示例：
+
+```json
+{
+  "/lark/architect/appSecret": "xxx"
+}
+```
+
+这种写法会导致 JSON Pointer 解析失败。
+
+现在正确写法：
+
+```json
+{
+  "lark": {
+    "appSecret": "默认bot的secret",
+    "architect": {
+      "appSecret": "architect的secret"
+    },
+    "pm": {
+      "appSecret": "pm的secret"
+    },
+    "backend-engineer": {
+      "appSecret": "backend的secret"
+    },
+    "frontend-engineer": {
+      "appSecret": "frontend的secret"
+    }
+  }
+}
+```
+
+作用：
+
+- 正确匹配这些 SecretRef 路径：
+  - `/lark/appSecret`
+  - `/lark/architect/appSecret`
+  - `/lark/pm/appSecret`
+  - `/lark/backend-engineer/appSecret`
+  - `/lark/frontend-engineer/appSecret`
+
+---
+
+## 三、配置备份文件
+
+在修改 agent-to-agent 配置前，备份了当前主配置文件：
+
+```text
+/home/hx-ai/.openclaw/backups/openclaw.json.pre-agent-to-agent-20260414-144515
+```
+
+作用：
+
+- 在引入 `tools.sessions` / `tools.agentToAgent` 之前保留回滚点
+
+---
+
+## 四、工作区记忆与经验沉淀文件
+
+这些不是 Feishu 运行配置本身，但记录了本次多 agent / SecretRef 的经验。
+
+### 1. 日志记忆
+
+```text
+~/.openclaw/workspace/memory/2026-04-14.md
+```
+
+记录了：
+
+- 多 bot / 多 agent 方案
+- SecretRef 的正确写法
+- 修改后要用 `openclaw status` 和 `openclaw channels status --probe` 验证
+
+### 2. Self-improving 记忆
+
+初始化并写入了：
+
+```text
+~/self-improving/memory.md
+~/self-improving/corrections.md
+~/self-improving/index.md
+~/self-improving/heartbeat-state.md
+```
+
+记录了关键经验：
+
+- SecretRef 的 JSON Pointer 必须对应嵌套 JSON
+- 多账号 / secrets 改动后必须做 probe 验证
+
+### 3. 为了启用 self-improving，工作区文件也做了接入修改
+
+修改过：
+
+```text
+~/.openclaw/workspace/AGENTS.md
+~/.openclaw/workspace/SOUL.md
+~/.openclaw/workspace/HEARTBEAT.md
+```
+
+这些改动和 Feishu 多 agent 本身不是同一层配置，但和“记住这次配置经验”有关。
+
+---
+
+## 五、当前 Feishu 多 Agent 配置的核心结论
+
+目前为止，Feishu 多 agent 相关的**关键配置面**主要是这 6 块：
+
+1. `agents.list`
+2. `channels.feishu.accounts`
+3. `bindings`
+4. `session.dmScope`
+5. `secrets.providers`
+6. `~/.openclaw/credentials/lark.secrets.json`
+
+如果要支持 **agent 之间互相调用**，则再加：
+
+7. `tools.sessions.visibility`
+8. `tools.agentToAgent`
+
+---
+
+## 六、补充说明：`match` 字段的含义
+
+`bindings` 中的 `match` 表示 **入站消息路由条件**。
+
+常见字段：
+
+- `channel`：渠道，例如 `feishu`
+- `accountId`：哪个 bot/account 收到的消息
+- `peer`：消息来自哪个用户或哪个群
+
+在当前场景中：
+
+- 只使用了 `channel + accountId`
+- **没有** 用 `peer.kind=direct/group` 进行按用户或按群分流
+
+当前设计下这已经足够，因为是 **一个 bot 对应一个 agent**。
+
+---
+
+## 七、当前推荐的工作模式
+
+当前设想的工作模式为：
+
+- `architect` 作为总控
+- `architect` 调用：
+  - `pm`
+  - `frontend-engineer`
+  - `backend-engineer`
+- `main` 继续作为默认入口/通用助手
+
+群组配置目前 **暂时不改**，`maxPingPongTurns` 目前 **暂时不加**。
+
+---
+
+## 八、验证建议
+
+每次修改完 Feishu 多 agent 配置后，建议至少执行：
+
+```bash
+openclaw status
+openclaw channels status --probe
+```
+
+重点检查：
+
+- Feishu channel 是否 `ON / OK`
+- 各 account 是否 `works`
+- 是否仍然保持默认 streaming 正常
  
 
 ### 角色定义
