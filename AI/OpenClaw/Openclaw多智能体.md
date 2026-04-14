@@ -164,7 +164,6 @@ openclaw agents add frontend-engineer --workspace ~/.openclaw/workspace-frontend
 
 #### 配置更新
 文件路径：
-
 ```text
 ~/.openclaw/openclaw.json
 ```
@@ -183,7 +182,6 @@ openclaw agents add frontend-engineer --workspace ~/.openclaw/workspace-frontend
 
 最终采用的是 **SecretRef** 写法，而不是明文。
 示例：
-
 ```json
 "channels": {
   "feishu": {
@@ -202,17 +200,13 @@ openclaw agents add frontend-engineer --workspace ~/.openclaw/workspace-frontend
 }
 ```
 
-### 3. `bindings`
-
+### bindings
 新增并确认了多 agent 的 Feishu 路由绑定。
-
 当前路由方式是：
-
 - 按 `channel + accountId` 路由
 - 一个 Feishu bot/account 对应一个 agent
 
 当前映射关系：
-
 - `default` → `main`
 - `architect` → `architect`
 - `pm` → `pm`
@@ -232,7 +226,6 @@ openclaw agents add frontend-engineer --workspace ~/.openclaw/workspace-frontend
 ```
 
 说明：
-
 - 当前 **没有** 启用 `peer.kind=direct/group` 的细粒度路由
 - 当前场景下只靠 `accountId` 路由就够用
 
