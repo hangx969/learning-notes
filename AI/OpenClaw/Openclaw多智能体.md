@@ -164,6 +164,10 @@ openclaw agents add frontend-engineer --workspace ~/.openclaw/workspace-frontend
 1. 在飞书开发者后台，一键创建新机器人 https://open.feishu.cn/page/openclaw?form=multiAgent 并记录App ID和 App Secret。（事件回调、权限配置都自动配好了）
 2. 自动审批之后，在开发者小助手里面，会有消息：你的应用“Backend”已通过管理员审批并发布成功！，打开应用就会进到对话页面。
 
+```json
+
+```
+
 ### 角色定义
 #### 架构师
 ##### AGENTS.md
@@ -272,13 +276,19 @@ frontend-engineer 立即实现此函数，并稍后向您展示结果。”
 - 你的进化方向是更精准的“任务拆解能力”和更高效的“多智能体编排策略”。
 ```
 
-### PM
+#### PM
 ##### AGENTS.md
 ##### IDENTITY.md
 ##### SOUL.md
 
-###  前端
+####  前端
 ##### AGENTS.md
 ##### IDENTITY.md
 ##### SOUL.md
+
+#### 后端
+##### AGENTS.md
+##### IDENTITY.md
+##### SOUL.md
+
 
