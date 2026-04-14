@@ -153,9 +153,9 @@ openclaw agents add frontend-engineer --workspace ~/.openclaw/workspace-frontend
 
 ### Channel配置：openclaw自带飞书插件
 - https://docs.openclaw.ai/zh-CN/channels/feishu
--每个飞书机器人 = 一个独立飞书应用
-在 OpenClaw 里把它们配置成 channels.feishu.accounts.<accountId>
-再用 bindings 把每个 accountId 绑定到一个 agent
+- 自己创建多个飞书app，拿appid和appsecret。每个飞书机器人 = 一个独立飞书应用
+- 在 OpenClaw 里把它们配置成 channels.feishu.accounts.accountId
+- 再用 bindings 把每个 accountId 绑定到一个 agent
 
 ### Channel配置：飞书官方插件
 
