@@ -161,7 +161,7 @@ openclaw agents add frontend-engineer --workspace ~/.openclaw/workspace-frontend
 飞书官方插件文档中有说明： https://bytedance.larkoffice.com/docx/WNNXdhKxmo8KDJxMM9dc0GD5nFf
 1. 在飞书开发者后台，一键创建新机器人 https://open.feishu.cn/page/openclaw?form=multiAgent 并记录App ID和 App Secret。（事件回调、权限配置都自动配好了）
 2. 自动审批之后，在开发者小助手里面，会有消息：你的应用“Backend”已通过管理员审批并发布成功！，打开应用就会进到对话页面。
-
+3. 配置文件更新：
 文件路径：
 ```text
 ~/.openclaw/openclaw.json
@@ -228,7 +228,7 @@ openclaw agents add frontend-engineer --workspace ~/.openclaw/workspace-frontend
 - 当前 **没有** 启用 `peer.kind=direct/group` 的细粒度路由
 - 当前场景下只靠 `accountId` 路由就够用
 
-#### session.dmScope
+##### session.dmScope
 为了让不同 Feishu account 的私聊上下文互相隔离，设置了：
 
 ```json
@@ -242,7 +242,7 @@ openclaw agents add frontend-engineer --workspace ~/.openclaw/workspace-frontend
 - 会话按 `account + channel + peer` 维度隔离
 - 避免不同 bot 的 DM 上下文串掉
 
-#### secrets.providers
+##### secrets.providers
 主配置里启用了 file-based secret provider：
 
 ```json
@@ -260,7 +260,7 @@ openclaw agents add frontend-engineer --workspace ~/.openclaw/workspace-frontend
 - Feishu 多账号的 `appSecret` 不直接写死在 `openclaw.json`
 - 改为通过 `lark-secrets` provider 从 secrets 文件读取
 
-### tools
+##### tools
 为了支持 **agent 与 agent 互相调用**，后续修改了 `tools` 段，增加了以下配置。
 
 #### tools.sessions.visibility
