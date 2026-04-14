@@ -163,27 +163,21 @@ openclaw agents add frontend-engineer --workspace ~/.openclaw/workspace-frontend
 2. 自动审批之后，在开发者小助手里面，会有消息：你的应用“Backend”已通过管理员审批并发布成功！，打开应用就会进到对话页面。
 
 #### 配置更新
-
-
-## 一、主配置文件
-
 文件路径：
 
 ```text
 ~/.openclaw/openclaw.json
 ```
 
-### 1. `agents.list`
+###  agents.list
 
 新增了多个独立 agent：
-
 - `architect`
 - `pm`
 - `backend-engineer`
 - `frontend-engineer`
 
 每个 agent 都配置了自己的：
-
 - `id`
 - `workspace`
 - `agentDir`
