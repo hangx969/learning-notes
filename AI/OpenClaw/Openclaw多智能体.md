@@ -260,6 +260,36 @@ openclaw agents add frontend-engineer --workspace ~/.openclaw/workspace-frontend
 - Feishu 多账号的 `appSecret` 不直接写死在 `openclaw.json`
 - 改为通过 `lark-secrets` provider 从 secrets 文件读取
 
+正确写法：
+
+```json
+{
+  "lark": {
+    "appSecret": "默认bot的secret",
+    "architect": {
+      "appSecret": "architect的secret"
+    },
+    "pm": {
+      "appSecret": "pm的secret"
+    },
+    "backend-engineer": {
+      "appSecret": "backend的secret"
+    },
+    "frontend-engineer": {
+      "appSecret": "frontend的secret"
+    }
+  }
+}
+```
+
+作用：
+- 正确匹配这些 SecretRef 路径：
+  - `/lark/appSecret`
+  - `/lark/architect/appSecret`
+  - `/lark/pm/appSecret`
+  - `/lark/backend-engineer/appSecret`
+  - `/lark/frontend-engineer/appSecret`
+
 为了支持 **agent 与 agent 互相调用**，后续修改了 `tools` 段，增加了以下配置。
 #### tools.sessions.visibility
 
@@ -312,40 +342,6 @@ openclaw agents add frontend-engineer --workspace ~/.openclaw/workspace-frontend
 - `groupAllowFrom`
 - `groups`
 - `connectionMode: "websocket"`
-
-重点：
-- **默认会话的流式输出配置还在**
-
-正确写法：
-
-```json
-{
-  "lark": {
-    "appSecret": "默认bot的secret",
-    "architect": {
-      "appSecret": "architect的secret"
-    },
-    "pm": {
-      "appSecret": "pm的secret"
-    },
-    "backend-engineer": {
-      "appSecret": "backend的secret"
-    },
-    "frontend-engineer": {
-      "appSecret": "frontend的secret"
-    }
-  }
-}
-```
-
-作用：
-
-- 正确匹配这些 SecretRef 路径：
-  - `/lark/appSecret`
-  - `/lark/architect/appSecret`
-  - `/lark/pm/appSecret`
-  - `/lark/backend-engineer/appSecret`
-  - `/lark/frontend-engineer/appSecret`
 
 ### 角色定义
 #### 架构师
@@ -457,6 +453,10 @@ frontend-engineer 立即实现此函数，并稍后向您展示结果。”
 
 #### PM
 ##### AGENTS.md
+```
+
+```
+
 ##### IDENTITY.md
 ##### SOUL.md
 
