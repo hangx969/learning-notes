@@ -260,9 +260,7 @@ openclaw agents add frontend-engineer --workspace ~/.openclaw/workspace-frontend
 - Feishu 多账号的 `appSecret` 不直接写死在 `openclaw.json`
 - 改为通过 `lark-secrets` provider 从 secrets 文件读取
 
-##### tools
 为了支持 **agent 与 agent 互相调用**，后续修改了 `tools` 段，增加了以下配置。
-
 #### tools.sessions.visibility
 
 ```json
@@ -274,11 +272,10 @@ openclaw agents add frontend-engineer --workspace ~/.openclaw/workspace-frontend
 ```
 
 作用：
-
 - 允许 session 工具看到更大范围的 session
 - 为 `sessions_list / sessions_history / sessions_send` 的跨 agent 协作做准备
 
-#### tools.agentToAgent
+##### tools.agentToAgent
 
 ```json
 "tools": {
@@ -296,7 +293,6 @@ openclaw agents add frontend-engineer --workspace ~/.openclaw/workspace-frontend
 ```
 
 作用：
-
 - 打开跨 agent 通信能力
 - 允许这些 agent 之间用 session 工具互相调用
 
@@ -304,8 +300,7 @@ openclaw agents add frontend-engineer --workspace ~/.openclaw/workspace-frontend
 - 这部分是为“`architect` 作为总控，调用 `pm` / `frontend-engineer` / `backend-engineer`”的模式准备的
 - `maxPingPongTurns` 目前 **暂未添加**
 
-### channels.feishu 顶层已有配置（继续保留）
-
+##### channels.feishu 顶层已有配置（继续保留）
 以下 Feishu 顶层行为配置在多 agent 改造后仍继续保留：
 
 - `streaming: true`
@@ -319,11 +314,7 @@ openclaw agents add frontend-engineer --workspace ~/.openclaw/workspace-frontend
 - `connectionMode: "websocket"`
 
 重点：
-
 - **默认会话的流式输出配置还在**
-- 多 account 改造没有把 `streaming` 配置弄丢
-
----
 
 ## 二、Feishu secrets 文件
 
