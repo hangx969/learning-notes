@@ -160,12 +160,6 @@ openclaw agents add frontend-engineer --workspace ~/.openclaw/workspace-frontend
 ### Channel配置：飞书官方插件
 飞书官方插件文档中有说明：
 - https://bytedance.larkoffice.com/docx/WNNXdhKxmo8KDJxMM9dc0GD5nFf
-- 可以在网页上一键创建新机器人： https://open.feishu.cn/page/openclaw?form=multiAgent
 
-```sh
-openclaw channels login --channel feishu --account architect
-openclaw channels login --channel feishu --account pm
-openclaw channels login --channel feishu --account backend-engineer
-openclaw channels login --channel feishu --account frontend-engineer
-```
+1. 在一键创建新机器人： https://open.feishu.cn/page/openclaw?form=multiAgent
 
