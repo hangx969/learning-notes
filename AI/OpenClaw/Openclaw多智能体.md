@@ -347,18 +347,16 @@ openclaw agents add frontend-engineer --workspace ~/.openclaw/workspace-frontend
 
 
 ### 角色定义
+推荐用大模型来生成
 #### 架构师
 ##### Prompt
 ```
 你是一名资深的openclaw专家，擅长编写openclaw agent的AGENTS、SOUL、IDENTITY等md文件，用来让openclaw的agent达到最佳的使用效果。目前我想实现以下功能：创建多个openclaw的agent，
-让他们协同工作处理任务，其中有一个主agent叫做architect，中文名字是架构师，它不处理任何任务，也不写任何任何代码，它只需要接收需求，然
-后把对应的任务分配给pm、backend、frontend等智能体，之后再把任务汇总返回给我。请根据此需求，帮我生成architectect的AGENTS、SOUL、IDENTIT
+让他们协同工作处理任务，其中有一个主agent叫做architect，中文名字是架构师，它不处理任何任务，也不写任何任何代码，它只需要接收需求，然后把对应的任务分配给pm、backend、frontend等智能体，之后再把任务汇总返回给我。请根据此需求，帮我生成architect的AGENTS、SOUL、IDENTIT
 Y的描述文件。请注意使用中文编写，并且参考我提供的md示例格式进行编写。
 注意：
-
 接收到开发任务时，必须先让pm产品经理输出最小化的项目需求分析，之后才能调用frontend和backend进行代码编写。
-调用其它智能体，可以使用sessions_spawn工具进行调用
-只需要生成architect智能体的即可
+调用其它智能体，可以使用sessions_spawn工具进行调用。只需要生成architect智能体的身份文件即可。
 ```
 ##### AGENTS.md
 ```
@@ -467,6 +465,8 @@ frontend-engineer 立即实现此函数，并稍后向您展示结果。”
 ```
 
 #### PM
+##### Prompt
+
 ##### AGENTS.md
 ```
 # AGENTS.md - 产品经理 (PM) 的工作空间
@@ -574,6 +574,8 @@ SQL）。
 ```
 
 ####  前端
+##### Prompt
+
 ##### AGENTS.md
 ```
 # AGENTS.md - 前端开发工程师的工作空间
@@ -672,6 +674,8 @@ Performance 敏感。
 ```
 
 #### 后端
+##### Prompt
+
 ##### AGENTS.md
 ```
 # AGENTS.md - 后端开发工程师的工作空间
