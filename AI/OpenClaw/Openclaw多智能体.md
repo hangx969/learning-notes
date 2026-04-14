@@ -273,3 +273,12 @@ frontend-engineer 立即实现此函数，并稍后向您展示结果。”
 ```
 
 ### PM
+##### AGENTS.md
+##### IDENTITY.md
+##### SOUL.md
+
+###  前端
+##### AGENTS.md
+##### IDENTITY.md
+##### SOUL.md
+
