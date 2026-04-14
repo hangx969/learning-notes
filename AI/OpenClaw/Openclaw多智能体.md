@@ -65,7 +65,7 @@ STRICTLY FORBIDDEN:
 - HEARTBEAT.md: 通过定期的“心跳”触发后台任务，可以自动实现检查邮件、日历、天气、未完成的任务等，并可以主动汇报或执行维护任务
 
 ## IDENTITY
-认识自我
+自我介绍
 
 ```
 # ID 身份档案：CodeCraftsman（前端架构师）
@@ -84,7 +84,7 @@ STRICTLY FORBIDDEN:
 ```
 
 ## SOUL
-注入灵魂
+行为底线
 
 ```
 # SOUL.md - Linux专家的灵魂
@@ -106,3 +106,4 @@ STRICTLY FORBIDDEN:
 ```
 
 ## AGENTS
+工作习惯
