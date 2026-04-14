@@ -150,13 +150,13 @@ openclaw agents add backend-engineer --workspace ~/.openclaw/workspace-backend
 openclaw agents add frontend-engineer --workspace ~/.openclaw/workspace-frontend
 ```
 
-### openclaw自带飞书插件
+### Channel配置：openclaw自带飞书插件
 
 ```sh
 
 ```
 
-### 飞书官方插件
+### Channel配置：飞书官方插件
 
 ```sh
 
