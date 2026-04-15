@@ -829,10 +829,10 @@ Architecture, Microservices.
 ## openclaw创建多智能体
 
 ```sh
-openclaw agents add architect --workspace ~/.openclaw/workspace-architect
-openclaw agents add pm --workspace ~/.openclaw/workspace-pm
-openclaw agents add backend-engineer --workspace ~/.openclaw/workspace-backend
-openclaw agents add frontend-engineer --workspace ~/.openclaw/workspace-frontend
+openclaw agents add aiops --workspace ~/.openclaw/workspace-aiops
+openclaw agents add linux --workspace ~/.openclaw/workspace-linux
+openclaw agents add container --workspace ~/.openclaw/workspacecontainer
+openclaw agents add k8s --workspace ~/.openclaw/workspace-k8s
 ```
 
 ## Channel配置
