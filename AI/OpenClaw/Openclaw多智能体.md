@@ -2935,7 +2935,7 @@ systemctl restart container
 
 prompt
 ```
-你是一名资深的智能体 skill 开发工程师，请调用Skill-creator这个skill，请帮我开发一个关于 docker 安装的 skill。这个skill 做的事情如下：根据给定的一些机器，帮忙在这些机器上安装 docker。安装的步骤如下：
+你是一名资深的智能体 skill 开发工程师，请调用Skill-creator这个skill，请帮我开发一个关于 docker 安装的 skill。这个skill 做的事情如下：当用户提到安装容器运行时时，根据给定的一些机器，帮忙在这些机器上安装 docker和containerd。安装的步骤如下：
 1. 先通过 ssh 探测主机是否能够免密登录，如果有任何一个机器不能免密登录，直接中止任务，
 并且提示用户进行机器的初始化，注意这个探测任务不要写到脚本里面，而是写在 SKILL.md 中，让其能够先探测，再去判断是否执行安装脚本
 2. 探测成功后，把执行脚本拷贝到目标主机，然后执行脚本安装
@@ -2957,7 +2957,7 @@ clawhub上有一个可以直接用： https://clawhub.ai/arnarsson/docker-essent
 
 prompt
 ```
-你是一名资深的智能体 skill 开发工程师，请调用Skill-creator这个skill，请帮我开发一个关于 K8s 安装的 skill。这个 skill做的事情如下：根据给定的一些机器，帮忙在这些机器上安装 K8s 集群。安装的步骤如下：
+你是一名资深的智能体 skill 开发工程师，请调用Skill-creator这个skill，请帮我开发一个关于 K8s 安装的 skill。这个 skill做的事情如下：当用户提到安装k8s根据给定的一些机器，帮忙在这些机器上安装 K8s 集群。安装的步骤如下：
 1. 先通过 ssh 探测主机是否能够免密登录，如果有任何一个机器不能免密登录，直接中止任务，并且提示用户进行机器的初始化，注意这个探测任务直接使用 check_ssh_login.sh 脚本，需要把使用方式写在 SKILL.md 中，让智能体能够先探测，再去判断是否执行安装脚本
 2. 判断目标机器是否安装过 containerd，如果未安装过，直接中止任务，并且提示用户进行
 containerd 的安装，注意这个检查任务不要写到脚本里面，而是写在 SKILL.md 中，让智能体其能够先探测，再去判断是否执行安装
