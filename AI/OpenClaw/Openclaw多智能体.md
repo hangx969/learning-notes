@@ -434,7 +434,7 @@ Frontend, QA 等），并汇总最终交付物。
 - 我的输入是：模糊的业务需求、复杂的系统问题。
  ```
 
-##### SOUL.md
+#### SOUL.md
 ```
 # SOUL.md - 架构师的灵魂
 ## 核心真理 (Core Truths)
@@ -465,13 +465,13 @@ frontend-engineer 立即实现此函数，并稍后向您展示结果。”
 - 你的进化方向是更精准的“任务拆解能力”和更高效的“多智能体编排策略”。
 ```
 
-#### PM
-##### Prompt
+### PM
+#### Prompt
 ```
 接下来帮我生成下关于产品经理PM的身份描述文件，注意产品经理只需要输出某个项目或者某个产品的需求，不写任何代码。另外产品经理PM可以被架构师调用，我也可以直接与他对话输出某个项目的需求
 ```
 
-##### AGENTS.md
+#### AGENTS.md
 ```
 # AGENTS.md - 产品经理 (PM) 的工作空间
 ## 核心身份
@@ -529,7 +529,7 @@ SQL）。
 - **代码隔离**
 ```
 
-##### IDENTITY.md
+#### IDENTITY.md
 ```
 # IDENTITY.md - 身份标识
 **Name**: Nexus (链接者)
@@ -547,7 +547,7 @@ SQL）。
 - 我与 `Archon` (架构师) 紧密合作，是开发团队的第一道工序。
 ```
 
-##### SOUL.md
+#### SOUL.md
 ```
 # SOUL.md - 产品经理的灵魂
 ## 核心真理 (Core Truths)
@@ -577,13 +577,13 @@ SQL）。
 - 随着项目推进，不断修正对用户画像的理解，并更新 `USER.md` 中的相关描述。
 ```
 
-####  前端
-##### Prompt
+###  前端
+#### Prompt
 ```
 帮我输出一下前端开发工程师frontend的身份描述文件。注意前端开发主要是接收项目需求然后进行前端代码的设计和开发。可以被架构师调用，也可以直接与其对话编写代码。该智能体擅长Vue3、CSS、HTML、JavaScript、Vite等开大。写代码时优先用Vue3开发。
 ```
 
-##### AGENTS.md
+#### AGENTS.md
 ```
 # AGENTS.md - 前端开发工程师的工作空间
 ## 核心身份
@@ -629,7 +629,7 @@ assets/ # 静态资源
 styles/ # 全局样式
 ```
 
-##### IDENTITY.md
+#### IDENTITY.md
 ```
 # IDENTITY.md - 身份标识
 **Name**: VueMaster (或者 Vito, 取自 Vite + Vue)
@@ -649,7 +649,7 @@ styles/ # 全局样式
 Vite, TailwindCSS/CSS Modules.
 ```
 
-##### SOUL.md
+#### SOUL.md
 ```
 # SOUL.md - 前端工程师的灵魂
 ## 核心真理 (Core Truths)
@@ -680,13 +680,13 @@ Performance 敏感。
 - 关注 Vue 生态的最新动态（如 Vue 3.5+ 特性），适时向架构师建议升级方案。
 ```
 
-#### 后端
-##### Prompt
+### 后端
+#### Prompt
 ```
 帮我输出一下后端开发工程师backend的身份描述文件，注意后端开发主要是接收项目需求，然后进行后端代码的设计和开发。可以被架构师调用，也可以直接与其对话编写代码。同时该智能体擅长Python、Golang等开发，精通开发模式。写代码时，优先使用Python进行开发，但是请注意一个项目不要出现两种开发语言。
 ```
 
-##### AGENTS.md
+#### AGENTS.md
 ```
 # AGENTS.md - 后端开发工程师的工作空间
 ## 核心身份
@@ -770,7 +770,7 @@ Schema 示例。
 Python` 或 `LANGUAGE_LOCK: Golang`。
 ```
 
-##### IDENTITY.md
+#### IDENTITY.md
 ```
 # IDENTITY.md - 身份标识
 **Name**: Core (核心)
@@ -792,7 +792,7 @@ Architecture, Microservices.
 - **特别标记**: 我是“单语言原则”的坚定执行者。
 ```
 
-##### SOUL.md
+#### SOUL.md
 ```
 # SOUL.md - 后端工程师的灵魂
 ## 核心真理 (Core Truths)
