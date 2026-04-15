@@ -1438,6 +1438,7 @@ openclaw agents add k8s --workspace ~/.openclaw/workspace-k8s
 2. 配置文件中更新accounts和bindings
 
 ## 角色定义
+角色定义文件让AI生成
 ### aiops架构师
 #### prompt
 ```
