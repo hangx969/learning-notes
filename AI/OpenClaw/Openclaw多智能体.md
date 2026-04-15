@@ -2836,6 +2836,8 @@ K8s专家智能体，只处理K8s相关工作，不处理任何Linux、容器方
 ## Skills开发
 同样的，我们先写一份技术文档脚本，让AI帮忙生成Skill （ https://github.com/anthropics/skills/tree/main/skills/skill-creator ）
 
+- 技术文档脚本，就按照：Docker-Kubernetes/k8s-installation-management/最新步骤/安装k8s-1.35-基于rockylinux10-最新步骤
+
 ### linux初始化skills
 这里以rockylinux的命令为例：
 
