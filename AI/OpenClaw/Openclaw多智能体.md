@@ -2837,7 +2837,47 @@ K8s专家智能体，只处理K8s相关工作，不处理任何Linux、容器方
 同样的，我们先写一份技术文档脚本，让AI帮忙生成Skill （ https://github.com/anthropics/skills/tree/main/skills/skill-creator ）
 ### linux初始化skills
 
+init.md
 ```
+## 基础环境配置
+
+systemctl disable --now firewalld 
+systemctl disable --now dnsmasq
+setenforce 0
+sed -i 's#SELINUX=enforcing#SELINUX=disabled#g' /etc/sysconfig/selinux
+sed -i 's#SELINUX=enforcing#SELINUX=disabled#g' /etc/selinux/config
+swapoff -a && sysctl -w vm.swappiness=0
+sed -ri '/^[^#]*swap/s@^@#@' /etc/fstab
+
+## 基础包安装
+
+sed -e 's|^mirrorlist=|#mirrorlist=|g' \
+-e 
+'s|^#baseurl=http://dl.rockylinux.org/$contentdir|baseurl=https://mirrors.aliyun.com/rockylinux|g' \
+-i.bak \
+/etc/yum.repos.d/*.repo
+dnf makecache
+yum install wget jq psmisc vim net-tools telnet yum-utils device-mapper-persistent-data lvm2 git -y
+
+## 内核升级
+
+dnf update -y
+rpm --import https://www.elrepo.org/RPM-GPG-KEY-elrepo.org
+dnf install -y https://www.elrepo.org/elrepo-release-9.el9.elrepo.noarch.rpm
+sudo dnf --enablerepo=elrepo-kernel install -y \
+kernel-ml \
+kernel-ml-core \
+kernel-ml-modules \
+kernel-ml-modules-extra \
+kernel-ml-devel
+grubby --set-default 0
+
+## 内核升级后重启
+reboot
 
 ```
 
+prompt
+```
+
+```
