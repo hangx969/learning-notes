@@ -1437,3 +1437,9 @@ openclaw agents add k8s --workspace ~/.openclaw/workspace-k8s
 1. 一键创建新机器人 https://open.feishu.cn/page/openclaw?form=multiAget
 2. 配置文件中更新accounts和bindings
 
+## 角色定义
+### aiops
+#### prompt
+```
+
+```
