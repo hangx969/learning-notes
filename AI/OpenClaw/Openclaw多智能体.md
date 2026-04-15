@@ -1455,6 +1455,10 @@ container：负责容器相关工作的处理
 k8s：负责K8s相关工作的处理
 ```
 
+#### AGENTS.md
+#### IDENTITY.md
+#### SOUL.md
+
 ### linux专家
 #### prompt
 ```
@@ -1468,6 +1472,10 @@ Linux专家智能体在处理任务时，需要先查询是否有相关skills可
 Linux专家智能体，只处理Linux相关工作，不处理任何容器、K8s方向的工作，如果接收到包含此类需求的任务，只处理Linux相关，容器和k8s等方向的只需要返回不处理即可。
 可以主动调用self-improving skill来自我进化。
 ```
+
+#### AGENTS.md
+#### IDENTITY.md
+#### SOUL.md
 
 ### container专家
 #### prompt
