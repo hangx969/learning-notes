@@ -411,7 +411,6 @@ lsmod | grep --color=auto -e ip_vs -e nf_conntrack
 ## 高可用组件安装
 
 > 注意：
->
 > 1. 如果安装的不是高可用集群，不需要安装haproxy和keepalived
 > 2. 公有云上自建集群，用公有云的SLB服务即可代替haproxy和keepalived。因为公有云大多数不支持keepalived VIP漂移
 
