@@ -2870,40 +2870,6 @@ SKILL.md 中描述脚本如何使用即可，绝对不能把脚本内容在 SKIL
 
 ### 容器运行时安装Skill
 
-install.md
-```
-## docker 安装步骤
-
-yum-config-manager --add-repo https://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
-yum install docker-ce containerd.io -y
-# 启动 Docker
-systemctl daemon-reload
-systemctl enable --now docker
-cat <<EOF | sudo tee /etc/modules-load.d/containerd.conf
-overlay
-br_netfilter
-EOF
-sudo modprobe overlay
-sudo modprobe br_netfilter
-cat <<EOF | sudo tee /etc/sysctl.d/99-kubernetes-cri.conf
-net.bridge.bridge-nf-call-iptables = 1
-net.ipv4.ip_forward = 1
-net.bridge.bridge-nf-call-ip6tables = 1
-EOF
-sudo sysctl --system
-sudo mkdir -p /etc/containerd
-containerd config default | sudo tee /etc/containerd/config.toml
-sed -i 's#SystemdCgroup = false#SystemdCgroup = true#g' 
-/etc/containerd/config.toml
-sed -i 's#k8s.gcr.io/pause#registry.cn-hangzhou.aliyuncs.com/google_containers/pause#g' /etc/containerd/config.toml
-sed -i 's#registry.gcr.io/pause#registry.cn-hangzhou.aliyuncs.com/google_containers/pause#g' /etc/containerd/config.toml
-sed -i 's#registry.k8s.io/pause#registry.cn-hangzhou.aliyuncs.com/google_containers/pause#g' /etc/containerd/config.toml
-# 启动 Containerd
-systemctl daemon-reload
-systemctl enable --now containerd
-systemctl restart container
-```
-
 prompt
 ```
 你是一名资深的智能体 skill 开发工程师，请调用Skill-creator这个skill，请帮我开发一个关于 docker 安装的 skill。这个skill 做的事情如下：当用户提到安装容器运行时时，根据给定的一些机器，帮忙在这些机器上安装 docker和containerd。安装的步骤如下：
