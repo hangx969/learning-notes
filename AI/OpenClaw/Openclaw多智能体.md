@@ -2879,6 +2879,11 @@ reboot
 
 ```
 
+T.md
+```
+
+```
+
 prompt
 ```
 你是一名资深的智能体 skill 开发工程师，请调用Skill-creator这个skill，帮我开发一个关于 linux 初始化的 skill。这个skill 的功能如下：根据给定的一些机器，帮忙初始化一批 linux 机器。初始化的步骤如下：
