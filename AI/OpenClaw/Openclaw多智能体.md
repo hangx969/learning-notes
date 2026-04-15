@@ -2844,6 +2844,7 @@ init.md
 ## 基础环境配置
 
 systemctl disable --now firewalld 
+if
 systemctl disable --now dnsmasq
 setenforce 0
 sed -i 's#SELINUX=enforcing#SELINUX=disabled#g' /etc/sysconfig/selinux
