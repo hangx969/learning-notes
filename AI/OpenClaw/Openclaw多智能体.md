@@ -2837,19 +2837,27 @@ K8s专家智能体，只处理K8s相关工作，不处理任何Linux、容器方
 同样的，我们先写一份技术文档脚本，让AI帮忙生成Skill （ https://github.com/anthropics/skills/tree/main/skills/skill-creator ）
 
 - 技术文档脚本，就按照：/Users/hang.xu/github-repo/learning-notes/Docker-Kubernetes/k8s-installation-management/最新步骤/安装k8s-1.35-基于rockylinux10-最新步骤.md 拆分出来的linux初始化、容器运行时安装、k8s安装这几个模块拆分出来的步骤去喂给AI。
-- 
+
 ### linux初始化skills
 这里以rockylinux的命令为例：
 
 prompt
 ```
-你是一名资深的智能体 skill 开发工程师，请调用Skill-creator这个skill，帮我开发一个关于 linux 初始化的 skill。这个skill 的功能如下：当用户提到初始化linux机器时，触发skill，初始化给定的linux机器。
+你是一名资深的智能体 skill 开发工程师，请调用Skill-creator这个skill，帮我开发一个关于 linux 初始化的 skill。这个skill 的功能如下：
+当用户提到初始化linux机器时，触发skill，初始化给定的linux机器。
+
+技术文档路径：
+
 初始化的步骤如下：
 1. 首先查看当前机器有没有生成 ssh 的 key，如果有则忽略，没有则使用 ssh-keygen -t rsa -C "1003665363@qq.com"生成 ssh key
+   
 2. 然后根据用户提供的主机列表（包含 IP、用户名、密码）配置免密钥登录，如果用户未提供用户名密码，那么先使用 ssh 探测是否可以通过 root 登录远程主机，如果不能登录直接中止任务，并提示用户提供 root 密码，这个探测请直接写到 SKILL.md 中，由智能体触发，不要写到任何脚本里面
-3. 初始化主机的命令过程严格参考 init.md，不要添加该文件以外的任何步骤或者脚本。注意这仅仅是一个临时文件，请不要在任何地方引用该文件，因为这个文件不存在于 skill 目录，仅供当前环境参考使用
+   
+3. 初始化主机的命令过程严格参考技术文档，不要添加该文件以外的任何步骤或者脚本。注意这仅仅是一个临时文件，请不要在任何地方引用该文件，因为这个文件不存在于 skill 目录，仅供当前环境参考使用
+   
 4. 可以编写相关脚本，但是需要把脚本放在 scripts 目录下，切记生成脚本后，只需要在
-SKILL.md 中描述脚本如何使用即可，绝对不能把脚本内容在 SKILL.md 中再写一遍。同时这个脚本只需要包含 init.md 的安装步骤，该脚本的执行是 scp 到目标主机，然后执行，不是用来循环安装的脚本，循环的操作放到 SKILL.md 中。
+SKILL.md 中描述脚本如何使用即可，绝对不能把脚本内容在 SKILL.md 中再写一遍。同时这个脚本只需要包含 技术文档 的安装步骤，该脚本的执行是 scp 到目标主机，然后执行，不是用来循环安装的脚本，循环的操作放到 SKILL.md 中。
+
 注意：
 5. 开发的 skill 需要遵循 skill 开发规范。
 6. 不需要考虑 Windows，所有的环境都是基于 linux 的。
