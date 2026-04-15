@@ -158,7 +158,10 @@ openclaw agents add frontend-engineer --workspace ~/.openclaw/workspace-frontend
 - 再用 bindings 把每个 accountId 绑定到一个 agent
 
 ## Channel配置：飞书官方插件
-飞书官方插件文档中有说明： https://bytedance.larkoffice.com/docx/WNNXdhKxmo8KDJxMM9dc0GD5nFf
+飞书官方插件文档中有说明： 
+- https://bytedance.larkoffice.com/docx/WNNXdhKxmo8KDJxMM9dc0GD5nFf
+- https://bytedance.larkoffice.com/docx/MFK7dDFLFoVlOGxWCv5cTXKmnMh
+
 1. 在飞书开发者后台，一键创建新机器人 https://open.feishu.cn/page/openclaw?form=multiAget 并记录App ID和 App Secret。（事件回调、权限配置都自动配好了）
 2. 自动审批之后，在开发者小助手里面，会有消息：你的应用“Backend”已通过管理员审批并发布成功！，打开应用就会进到对话页面。
 3. 配置文件更新：
