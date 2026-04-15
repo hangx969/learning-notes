@@ -2881,7 +2881,7 @@ reboot
 
 prompt
 ```
-你是一名资深的智能体 skill 开发工程师，请调用Skill-creator这个skill，帮我开发一个关于 linux 初始化的 skill。这个skill 的功能如下：当用户提到初始化linux机器时，chu fa帮忙初始化给定的linux机器。
+你是一名资深的智能体 skill 开发工程师，请调用Skill-creator这个skill，帮我开发一个关于 linux 初始化的 skill。这个skill 的功能如下：当用户提到初始化linux机器时，触发skill，初始化给定的linux机器。
 初始化的步骤如下：
 1. 首先查看当前机器有没有生成 ssh 的 key，如果有则忽略，没有则使用 ssh-keygen -t rsa -C "1003665363@qq.com"生成 ssh key
 2. 然后根据用户提供的主机列表（包含 IP、用户名、密码）配置免密钥登录，如果用户未提供用户名密码，那么先使用 ssh 探测是否可以通过 root 登录远程主机，如果不能登录直接中止任务，并提示用户提供 root 密码，这个探测请直接写到 SKILL.md 中，由智能体触发，不要写到任何脚本里面
