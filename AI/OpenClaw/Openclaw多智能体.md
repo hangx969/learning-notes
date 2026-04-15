@@ -2835,6 +2835,7 @@ K8s专家智能体，只处理K8s相关工作，不处理任何Linux、容器方
 
 ## Skills开发
 同样的，我们先写一份技术文档脚本，让AI帮忙生成Skill （ https://github.com/anthropics/skills/tree/main/skills/skill-creator ）
+
 ### linux初始化skills
 这里以rockylinux的命令为例：
 
@@ -2893,3 +2894,5 @@ SKILL.md 中描述脚本如何使用即可，决不能把脚本内容在 SKILL.m
 7. 主机列表没有固定格式，可能就是 1.1.1.1 root password 这种格式，换行分割，你只需要在 skill.md 列举出需要的格式即可，由智能体转换为标准格式。
 8. 要求智能体严格参考该 SKILL 使用文件，不要让智能体自由发挥，以及任意增加命令或添加任何脚本。
 ```
+
+### 容器Skill
