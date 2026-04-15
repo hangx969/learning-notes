@@ -2901,8 +2901,55 @@ SKILL.md 中描述脚本如何使用即可，决不能把脚本内容在 SKILL.m
 
 install.md
 ```
+## docker 安装步骤
 
+yum-config-manager --add-repo https://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
+yum install docker-ce containerd.io -y
+# 启动 Docker
+systemctl daemon-reload
+systemctl enable --now docker
+cat <<EOF | sudo tee /etc/modules-load.d/containerd.conf
+overlay
+br_netfilter
+EOF
+sudo modprobe overlay
+sudo modprobe br_netfilter
+cat <<EOF | sudo tee /etc/sysctl.d/99-kubernetes-cri.conf
+net.bridge.bridge-nf-call-iptables = 1
+net.ipv4.ip_forward = 1
+net.bridge.bridge-nf-call-ip6tables = 1
+EOF
+sudo sysctl --system
+sudo mkdir -p /etc/containerd
+containerd config default | sudo tee /etc/containerd/config.toml
+sed -i 's#SystemdCgroup = false#SystemdCgroup = true#g' 
+/etc/containerd/config.toml
+sed -i 's#k8s.gcr.io/pause#registry.cn-hangzhou.aliyuncs.com/google_containers/pause#g' /etc/containerd/config.toml
+sed -i 's#registry.gcr.io/pause#registry.cn-hangzhou.aliyuncs.com/google_containers/pause#g' /etc/containerd/config.toml
+sed -i 's#registry.k8s.io/pause#registry.cn-hangzhou.aliyuncs.com/google_containers/pause#g' /etc/containerd/config.toml
+# 启动 Containerd
+systemctl daemon-reload
+systemctl enable --now containerd
+systemctl restart container
 ```
 
+prompt
+```
+你是一名资深的智能体 skill 开发工程师，请调用Skill-creator这个skill，请帮我开发一个关于 docker 安装的 skill。这个skill 做的事情如下：根据给定的一些机器，帮忙在这些机器上安装 docker。安装的步骤如下：
+1. 先通过 ssh 探测主机是否能够免密登录，如果有任何一个机器不能免密登录，直接中止任务，
+并且提示用户进行机器的初始化，注意这个探测任务不要写到脚本里面，而是写在 SKILL.md 中，让其能够先探测，再去判断是否执行安装脚本
+2. 探测成功后，把执行脚本拷贝到目标主机，然后执行脚本安装
+3. 安装步骤要严格参考 install.md 文件，不要添加该文件以外的任何步骤或者脚本。注意这仅仅是一个临时文件，请不要在任何其它文件中引用该文件，因为这个文件不存在于 skill 目录，仅供当前环境参考使用
+4. 可以编写相关脚本，但是需要把脚本放在 scripts 目录下，切记生成脚本后，只需要在
+SKILL.md 中描述脚本如何使用即可，决不能把脚本内容在 SKILL.md 中再写一遍。同时这个脚本只需要包含 install.md 的安装步骤，该脚本的执行是 scp 到目标主机，然后执行，不是用来循环安装的脚本，循环的操作放到 SKILL.md 中
+注意：
+5. 开发的 skill 需要遵循 skill 开发规范，包含 SKILL.md，元数据严格参考 T.md。
+6. 不需要考虑 Windows，所有的环境都是基于 linux 的。
+7. 主机列表是 1.1.1.1 这种格式，换行分割，你只需要在 skill.md 列举出需要的格式即可，由
+智能体转换为标准格式。
+8. 要求智能体严格参考该 SKILL 使用文件，不要让智能体自由发挥，以及任意增加命令或添加任
+何脚本。
+
+```
 ### docker使用skill
 clawhub上有一个可以直接用： https://clawhub.ai/arnarsson/docker-essentials
