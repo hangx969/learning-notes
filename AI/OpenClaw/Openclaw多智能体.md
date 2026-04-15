@@ -824,3 +824,17 @@ Architecture, Microservices.
 化。
 ```
 
+# 实现多智能体AIOps团队
+
+## openclaw创建多智能体
+
+```sh
+openclaw agents add architect --workspace ~/.openclaw/workspace-architect
+openclaw agents add pm --workspace ~/.openclaw/workspace-pm
+openclaw agents add backend-engineer --workspace ~/.openclaw/workspace-backend
+openclaw agents add frontend-engineer --workspace ~/.openclaw/workspace-frontend
+```
+
+## Channel配置
+按照上面飞书官方插件的配置。
+
