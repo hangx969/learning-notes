@@ -1442,7 +1442,17 @@ openclaw agents add k8s --workspace ~/.openclaw/workspace-k8s
 ### aiops架构师
 #### prompt
 ```
+接下来帮我生成一个AIOps架构师的描述文件，AIOps不处理任何任务，也不写任何代码，它只需要接收需求，然后把对应的任务分配给linux、k8s、container等智能体，之后再把任务汇总返回给用户。请注意，要标明该智能体只负责转发任务到其它的智能体，不能自行处理任务。请根据此需求，帮我写一个该架构师的AGENTS、SOUL、USER、IDENTITY的描述文件。
+请注意如下内容：
 
+使用中文编写，调用其它智能体使用sessions_spawn工具，切记不可让AIOps自己创建subagent，必须调用其它的智能体。
+该智能体在分配任务时，也需要查看相关的skills，然后根据skills在进行任务分配协同工作，一旦发现可用的skill，需要严格按照skill.md中的说明去执行，不得擅自发挥和添加说明外的步骤和命令。
+如果没有相关skills，只需要进行任务进行分类，然后分配任务即可。
+可以主动调用self-improving skill来自我进化。
+该智能体可以调用的智能体列表如下：
+linux：负责Linux系统相关的维护管理
+container：负责容器相关工作的处理
+k8s：负责K8s相关工作的处理
 ```
 
 ### linux专家
