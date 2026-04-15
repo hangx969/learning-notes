@@ -1445,8 +1445,20 @@ openclaw agents add k8s --workspace ~/.openclaw/workspace-k8s
 ```
 
 ### linux专家
-
+#### prompt
+```
+```
 
 ### container专家
+#### prompt
+```
+
+```
 
 ### k8s专家
+#### prompt
+```
+
+```
+
+## linux专家skills开发
