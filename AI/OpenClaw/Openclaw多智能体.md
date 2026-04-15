@@ -837,5 +837,6 @@ openclaw agents add k8s --workspace ~/.openclaw/workspace-k8s
 
 ## Channel配置
 按照上面飞书官方插件的配置：
-1. 添加机器人。配置文件中更新accounts和bindings
+1. 一键创建新机器人 https://open.feishu.cn/page/openclaw?form=multiAget
+2. 配置文件中更新accounts和bindings
 
