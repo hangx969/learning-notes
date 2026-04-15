@@ -2903,3 +2903,6 @@ install.md
 ```
 
 ```
+
+### docker使用skill
+clawhub上有一个可以直接用： https://clawhub.ai/arnarsson/docker-essentials
