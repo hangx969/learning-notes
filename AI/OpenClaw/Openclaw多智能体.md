@@ -1495,4 +1495,5 @@ K8s专家智能体，只处理K8s相关工作，不处理任何Linux、容器方
 可以主动调用self-improving skill来自我进化。
 ```
 
-## linux专家skills开发
+## Skills开发
+### linux专家skills
