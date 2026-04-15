@@ -159,7 +159,7 @@ openclaw agents add frontend-engineer --workspace ~/.openclaw/workspace-frontend
 
 ## Channel配置：飞书官方插件
 飞书官方插件文档中有说明： https://bytedance.larkoffice.com/docx/WNNXdhKxmo8KDJxMM9dc0GD5nFf
-1. 在飞书开发者后台，一键创建新机器人 https://open.feishu.cn/page/openclaw?form=multiAgent 并记录App ID和 App Secret。（事件回调、权限配置都自动配好了）
+1. 在飞书开发者后台，一键创建新机器人 https://open.feishu.cn/page/openclaw?form=multiAget 并记录App ID和 App Secret。（事件回调、权限配置都自动配好了）
 2. 自动审批之后，在开发者小助手里面，会有消息：你的应用“Backend”已通过管理员审批并发布成功！，打开应用就会进到对话页面。
 3. 配置文件更新：
 文件路径：
@@ -836,5 +836,6 @@ openclaw agents add k8s --workspace ~/.openclaw/workspace-k8s
 ```
 
 ## Channel配置
-按照上面飞书官方插件的配置：添加机器人，配置文件中更新accounts和bindings
+按照上面飞书官方插件的配置：
+1. 添加机器人。配置文件中更新accounts和bindings
 
