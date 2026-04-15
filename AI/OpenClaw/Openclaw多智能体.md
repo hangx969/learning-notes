@@ -2831,4 +2831,5 @@ K8s专家智能体，只处理K8s相关工作，不处理任何Linux、容器方
 ```
 
 ## Skills开发
+同样的，我们xian xie yi fen
 ### linux专家skills
