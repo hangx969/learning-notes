@@ -292,15 +292,12 @@ func main() {
 	//字符串修建，去掉字符串两端的空白字符
 	fmt.Println(strings.TrimSpace("  zxcv.  "))
 }
-
 ```
-
-
-
 
 ## 查看类型和字节数
 
 %T 查看：
+
 ~~~go
 package main
 import (
@@ -356,18 +353,18 @@ func main(){
 
    ~~~go
    package main
-   
+
    import (
    	"fmt"
    )
-   
+
    func main() {
    	var a int = 1
    	var b float64 = 8.6
    	var c byte = 'a'
    	var d bool = true
    	var str string
-   
+
    	//使用Sprintf方法转成字符串
    	//参数的类型要和原值的类型保持一致，比如%d和a int
    	// 整型转字符串
@@ -391,14 +388,14 @@ func main(){
 
    ~~~go
    package main
-   
+
    import (
    	"fmt"
    	"strconv"
    )
-   
+
    func main() {
-   
+
    	// 字符串转布尔
    	// 1. strconv.ParseBool(str) 函数会返回两个值 (value bool, err error)
    	// 2. 只想获取到 value bool, 不想获取 err 所以用_忽略
@@ -406,7 +403,7 @@ func main(){
    	var str1 string = "true"
    	d, _ = strconv.ParseBool(str1)
    	fmt.Printf("Type of d: %T, b=%v \n", d, d)
-   
+
    	// 字符串转整型
    	// 参数str1表示数字的字符串形式
    	// 参数10表示数字的字符串进制
@@ -416,25 +413,25 @@ func main(){
    	a, _ = strconv.ParseInt(str2, 10, 64)
    	// a, _ = strconv.Atoi(str2) 这个更好，比较简洁
    	fmt.Printf("Type of a: %T, a=%v \n", a, a)
-   
+
    	// 整型互转
    	var a1 int
    	a1 = int(a)
    	fmt.Printf("Type of a1: %T, a1=%v \n", a1, a1)
-   
+
    // 整型转字符串
    i := 7277
    sn := strconv.Itoa(i)
    fmt.Printf("Type of sn", reflect.TypeOf(sn))
-   
+
    	// 字符串转浮点数
    	var b float64
    	var str3 string = "8.5"
    	b, _ = strconv.ParseFloat(str3, 64)
    	fmt.Printf("Type of b: %T, a1=%v \n", b, b)
-   
+
    }
-   
+
    //注意：
    //在将 String 类型转成 基本数据类型时，要确保 String 类型能够
    //转成有效的数据，比如 我们可以把 "123" , 转成一个整数，但是
@@ -450,7 +447,7 @@ func main(){
 
 - **当一个指针被定义后没有分配到任何变量时，它的默认值为 nil**。指针变量通常缩写为 ptr。
 
-- 每个变量在运行时都拥有一个地址，这个地址代表变量在内存中的位置。Go语言中使用在变量名前面添加&操作符（前缀）来获取变量的内存地址（取地址操作），格式如下： 
+- 每个变量在运行时都拥有一个地址，这个地址代表变量在内存中的位置。Go语言中使用在变量名前面添加&操作符（前缀）来获取变量的内存地址（取地址操作），格式如下：
 
 ~~~go
 var i int = 10
@@ -539,7 +536,7 @@ func main() {
 4. /=
 5. <<= 按位左移后赋值
 6. \>\>= 按位右移后赋值
-7. &= 按位与后赋值 
+7. &= 按位与后赋值
 8. |= 按位或后赋值
 9. ^= 按位异或后赋值
 
@@ -591,4 +588,3 @@ func main() {
 	fmt.Println(time.Now().In(loc).Format("2006-01-02 15:04:05"))
 }
 ```
-

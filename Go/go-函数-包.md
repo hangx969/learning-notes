@@ -118,7 +118,7 @@ func main(){
 }
 ~~~
 
- ## 函数return
+## 函数return
 
 Go的函数可以返回多个值。在调用函数接收返回值时，希望忽略某个返回值，则使用下划线表示占位忽略。
 
@@ -191,13 +191,13 @@ func main() {
     a := func (n1 int, n2 int) int {
         return n1 - n2
     }
-    
+
     res2 := a(50, 60)
     fmt.Println("res2=", res2)
-    
+
     res3 := a(90, 60)
     fmt.Println("res3=", res3)
-    
+
     //全局匿名函数的使用
     res4 := Fun1(6, 9)
     fmt.Println("res4=", res4)

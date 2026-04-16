@@ -159,7 +159,7 @@ import "fmt"
 
 func main() {
 	var str string = "Hello World, 欢迎"
-    
+
 	// 传统下标遍历字符串。输出中文时会乱码
 	for i := 0; i < len(str); i++ {
 		fmt.Printf("%c\n", str[i])
@@ -176,7 +176,7 @@ func main() {
 	for index, val := range str{
 		fmt.Printf("index is %d, value is %c \n", index, val)
 	}
-} 
+}
 ~~~
 
 用for实现while：

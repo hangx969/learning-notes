@@ -1,7 +1,18 @@
+---
+title: Terraform-docs 文档生成工具
+tags:
+  - IaC
+  - terraform
+  - terraform-docs
+aliases:
+  - Terraform Docs
+  - terraform-docs
+---
+
 # 介绍
 
-- github地址：https://github.com/terraform-docs/terraform-docs。
-- 官网地址：https://terraform-docs.io/user-guide/configuration/content/
+- github地址：[terraform-docs/terraform-docs (GitHub)](https://github.com/terraform-docs/terraform-docs)
+- 官网地址：[terraform-docs 配置指南](https://terraform-docs.io/user-guide/configuration/content/)
 
 terraform-docs可以生成terraform module的说明文档，可以以markdown的形式输出。
 

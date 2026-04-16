@@ -1,12 +1,26 @@
+---
+title: 深入剖析Kubernetes
+tags:
+  - cloud-computing
+  - kubernetes
+  - container
+  - docker
+  - namespace
+  - cgroup
+aliases:
+  - K8s深入剖析
+  - 深入剖析K8s
+---
+
 # 容器技术入门
 
 ## 1 从进程说开去
 
+> [!abstract] 核心概念
 > - 容器技术的兴起源于PaaS技术的普及
 > - Docker公司发布的Docker项目具有里程碑式的意义，通过容器镜像，解决了应用打包的根本难题。
-> - 容器技术的核心功能，就是通过约束、修改进程的动态表现，为其创造出一个“边界”。
-> - 对于 Docker 等大多数 Linux 容器来说，**Cgroups** 技术是用来制造约束的主要手段，而
->   **Namespace** 技术则是用来修改进程视图的主要方法。
+> - 容器技术的核心功能，就是通过约束、修改进程的动态表现，为其创造出一个”边界”。
+> - 对于 Docker 等大多数 Linux 容器来说，**Cgroups** 技术是用来制造约束的主要手段，而 **Namespace** 技术则是用来修改进程视图的主要方法。
 
 ### Namespace
 

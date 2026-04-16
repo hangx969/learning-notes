@@ -1,3 +1,14 @@
+---
+title: Terraform 基础
+tags:
+  - IaC
+  - terraform
+  - azure
+aliases:
+  - Terraform基础
+  - Terraform入门
+---
+
 # 介绍
 
 - ARM template和Bicep都是仅用于Azure的
@@ -249,6 +260,7 @@ module "StorageAccount" {
 
 # backend状态文件存储
 
+> [!info] Terraform 状态文件
 > Terraform的状态文件（通常命名为`terraform.tfstate`）是Terraform管理和跟踪资源的关键组件。Terraform使用这个文件来记录它所管理的各种资源的信息，以及这些资源的配置和属性。
 >
 > 以下是Terraform状态文件的主要用途：
@@ -270,7 +282,7 @@ module "StorageAccount" {
 
   所以，Terraform 是支持在远端存储状态文件，也就是在 Azure Storage Account 中存储远端状态文件，Terraform 状态的存储是由一个称之为Backend的组件决定的，local state使用的是local backend。并且其他所有的Backend在使用之前都需要在模板中显式定义并通过 **terraform init** 来实现加载和配置。
 
-- 可以把terraform状态文件保存到存储账户中: https://www.cnblogs.com/AllenMaster/p/14274731.html
+- 可以把terraform状态文件保存到存储账户中：[Terraform 远端存储状态文件到 Azure Storage](https://www.cnblogs.com/AllenMaster/p/14274731.html)
 
 - 当你运行`terraform init`命令时，Terraform会初始化后端，并将本地状态文件迁移到远程状态存储。在后续的`terraform apply`或`terraform destroy`操作中，Terraform会直接从远程状态存储读取和写入状态。
 - 如果你想从远程状态存储拉取最新的状态，你可以运行`terraform refresh`命令。如果你想将远程状态下载到本地，你可以运行`terraform state pull`命令。如果你想将本地状态推送到远程存储，你可以运行`terraform state push`命令。
