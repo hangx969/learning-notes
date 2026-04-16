@@ -11,36 +11,36 @@ pip3 install -i https://pypi.tuna.tsinghua.edu.cn/simple openpyxl
 
 ## dataframe和series
 
-**Series 是 pandas 中的一维数据结构，类似于带标签的数组或字典。**
+**Series 是 pandas 中的一维数据结构,类似于带标签的数组或字典。**
 
-特点：
+特点:
 
-- 一维数据：只有一列数据
-- 带索引：每个元素都有一个标签（索引）
-- 同类型数据：通常包含相同数据类型的元素
+- 一维数据:只有一列数据
+- 带索引:每个元素都有一个标签(索引)
+- 同类型数据:通常包含相同数据类型的元素
 - 类似列表和字典的结合体
 
-作用：
+作用:
 
-- 存储单列数据（如一列数字、字符串、日期等）
+- 存储单列数据(如一列数字、字符串、日期等)
 - 支持快速的数据访问和操作
 - 可以进行数学运算、统计分析等
 
-**DataFrame 是 pandas 中的二维数据结构，可以理解为多个 Series 的集合。**
+**DataFrame 是 pandas 中的二维数据结构,可以理解为多个 Series 的集合。**
 
-特点：
+特点:
 
-- 二维数据：有行和列的表格结构
-- 多列数据：每列可以是不同的数据类型
-- 带标签：行索引和列索引都有标签
+- 二维数据:有行和列的表格结构
+- 多列数据:每列可以是不同的数据类型
+- 带标签:行索引和列索引都有标签
 - 类似 Excel 表格或 SQL 表
 
-作用：
+作用:
 
 - 存储和操作结构化数据
 - 数据清洗、转换、分析
 - 数据可视化的基础
-- 与各种数据源（Excel、CSV、数据库等）交互
+- 与各种数据源(Excel、CSV、数据库等)交互
 
 ## 读取excel数据
 
@@ -50,7 +50,7 @@ import pandas as pd
 # 将标准输出的编码设置为utf-8,这样控制台就能处理中文字符了
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
-# 读取excel文件，路径加r保持原值原样的路径输出
+# 读取excel文件,路径加r保持原值原样的路径输出
 data = pd.read_excel(r"E:\work\KEEP-WORKING\CS-Learning\git-repo\python-operation-scripts\python-data-ai\sales_data.xlsx")
 # 带索引输出表格数据前10行
 print(data.head(10))
@@ -70,9 +70,9 @@ sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 # 读取excel文件
 data = pd.read_excel(r"E:\work\KEEP-WORKING\CS-Learning\git-repo\python-operation-scripts\python-data-ai\sales_data.xlsx")
 
-# 统计每个产品总销量，按照Product来分组。
-# ['Sales'].sum() 分组之后的sum聚合操作，只应用在Sales这一列。
-# reset_index() 结果重新转换为新的索引，不按照原来的索引
+# 统计每个产品总销量,按照Product来分组。
+# ['Sales'].sum() 分组之后的sum聚合操作,只应用在Sales这一列。
+# reset_index() 结果重新转换为新的索引,不按照原来的索引
 product_sales = data.groupby('Product')['Sales'].sum().reset_index()
 print(product_sales)
 
@@ -127,18 +127,18 @@ plt.rcParams['font.family']=['Consolas']
 # 正常显示负号
 plt.rcParams['axes.unicode_minus'] = False
 
-# 创建图形窗口，设置长和宽像素
+# 创建图形窗口,设置长和宽像素
 plt.figure(figsize=(10,6))
 
 # 将product这个列设置为索引
-# 谁要当横轴，就把这个值设置为索引
+# 谁要当横轴,就把这个值设置为索引
 sales_by_product = product_sales_sorted.set_index('Product')
 # print(sales_by_product)
 
-# 绘制柱状图，索引是Product，值是Sales
+# 绘制柱状图,索引是Product,值是Sales
 sales_by_product['Sales'].plot(kind='bar', color='skyblue')
 
-# 设置x轴和y轴坐标，和标题
+# 设置x轴和y轴坐标,和标题
 plt.xlabel('Products')
 plt.ylabel('Total Sales')
 plt.title("Total Sales by every product")
@@ -171,13 +171,13 @@ data = pd.read_excel(r"E:\work\KEEP-WORKING\CS-Learning\git-repo\python-operatio
 # 转换成pandas日期格式
 data['Date'] = pd.to_datetime(data['Date'])
 
-# 汇总每日销量，按照日期聚合，聚合操作是把Sales相加
+# 汇总每日销量,按照日期聚合,聚合操作是把Sales相加
 daily_sales = data.groupby('Date')['Sales'].sum().reset_index()
 
 # 绘制折线图
-# 创建图形窗口，设置长和宽像素
+# 创建图形窗口,设置长和宽像素
 plt.figure(figsize=(12,6))
-# 线条之间用圆点标记，蓝色线条，实线连接
+# 线条之间用圆点标记,蓝色线条,实线连接
 plt.plot(daily_sales['Date'], daily_sales['Sales'], marker='o', color='blue', linestyle='-')
 plt.xlabel("Date")
 plt.ylabel('Total Sales')
@@ -189,8 +189,8 @@ plt.show()
 
 # word文件处理
 
-- docx 是一个操作 Word 文档的库，提供了创建、读取和修改 .docx 文件的功能。
-- Document 是文档操作的核心类，用于创建和操作 Word 文档对象。
+- docx 是一个操作 Word 文档的库,提供了创建、读取和修改 .docx 文件的功能。
+- Document 是文档操作的核心类,用于创建和操作 Word 文档对象。
 
 ## 安装
 
@@ -203,7 +203,7 @@ pip3 install -i https://pypi.tuna.tsinghua.edu.cn/simple python-docx
 ~~~python
 from docx import Document
 
-# 从模板生成一个简单的 Linux 运维报告模板，包含服务器名称、CPU 使用率、内存使用率等基本信息。
+# 从模板生成一个简单的 Linux 运维报告模板,包含服务器名称、CPU 使用率、内存使用率等基本信息。
 
 # 创建word文档对象
 doc = Document()
@@ -223,7 +223,7 @@ doc.save(r".\data-ai\report_template.docx")
 ~~~python
 from docx import Document
 
-# 从服务器信息中生成一个简单的 Linux 运维报告，包含服务器名称、CPU 使用率、内存使用率等基本信息。
+# 从服务器信息中生成一个简单的 Linux 运维报告,包含服务器名称、CPU 使用率、内存使用率等基本信息。
 # 服务器清单
 servers = [
     {"name": "server01", "cpu": "30%", "memory": "60%"},
@@ -270,11 +270,11 @@ doc.add_heading("Disk report", level=1)
 # 循环生成每台服务器磁盘信息
 for server, disks in disk_data.items():
     doc.add_heading(f"Server Name: {server}", level=2)
-    # 创建表格存放磁盘数据，先只创建一个表头，后面的内容动态去创建
+    # 创建表格存放磁盘数据,先只创建一个表头,后面的内容动态去创建
     table = doc.add_table(rows=1, cols=5)
     #设置表头. 会把第一行的每个单元格打包成元组
     hdr_cells = table.rows[0].cells
-    # 给元组赋值，相当于给表头的的每个单元格赋值
+    # 给元组赋值,相当于给表头的的每个单元格赋值
     hdr_cells[0].text = "Mount Point"
     hdr_cells[1].text = "Total Size"
     hdr_cells[2].text = "Used"
@@ -298,7 +298,7 @@ doc.save(r".\data-ai\disk-usage-report.docx")
 ~~~python
 from docx import Document
 
-# 提前有一个日志文件，设置变量
+# 提前有一个日志文件,设置变量
 log_file = r".\data-ai\system.log"
 
 # 创建word文档对象
@@ -353,4 +353,3 @@ doc.add_paragraph("Below are the cpu and memory usage trend:")
 doc.add_picture(r".\data-ai\performance_trend.png", width=Inches(5))
 doc.save(r".\data-ai\monitoring-trend.docx")
 ~~~
-
