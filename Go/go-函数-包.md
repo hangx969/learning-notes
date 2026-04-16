@@ -1,4 +1,18 @@
-# 函数
+---
+title: Go函数与包
+tags:
+  - go/basics
+  - go/functions
+  - go/packages
+aliases:
+  - Go函数
+  - Go包管理
+date: 2026-04-16
+---
+
+# Go函数与包
+
+## 函数
 
 基本使用：
 
@@ -45,14 +59,15 @@ func main() {
 }
 ~~~
 
+---
+
 ## 函数包调用
 
 1. 在实际的开发中，我们往往需要在不同的文件中，去调用其它文件定义的函数，比如 main.go 中，去使用 utils.go  文件中的函数，如何实现？ 通过包实现
 2. 现在有两个程序员共同开发一个 Go 项目，程序员A希望定义函数 Cal，程序员B也想定义函数也叫 Cal。怎么办? 通过包实现
 
-包的基本介绍：
-
-包的本质实际上就是创建不同的文件夹，来存放程序文件。go 的每一个文件都是属于一个包的，也就是说 go 是以包的形式来管理文件和项目目录结构的。
+> [!info] 包的基本介绍
+> 包的本质实际上就是创建不同的文件夹，来存放程序文件。go 的每一个文件都是属于一个包的，也就是说 go 是以包的形式来管理文件和项目目录结构的。
 
 ### 包的基本使用
 
@@ -118,9 +133,14 @@ func main(){
 }
 ~~~
 
+> [!tip] 跨包访问规则
+> Go 中==大写开头==的函数名和变量名可以被其他包访问，==小写开头==的只能在包内使用。这是 Go 的访问控制机制。
+
+---
+
 ## 函数return
 
-Go的函数可以返回多个值。在调用函数接收返回值时，希望忽略某个返回值，则使用下划线表示占位忽略。
+Go的函数可以返回==多个值==。在调用函数接收返回值时，希望忽略某个返回值，则使用==下划线==表示占位忽略。
 
 ~~~go
 package main
@@ -140,9 +160,11 @@ func main() {
 }
 ~~~
 
+---
+
 ## init函数
 
-每一个源文件都可以包含一个 init 函数，该函数会在 main 函数执行前，被 Go 运行框架调用，也就是说 init 会在 main 函数前被调用
+每一个源文件都可以包含一个 ==init 函数==，该函数会在 main 函数执行前，被 Go 运行框架调用，也就是说 init 会在 main 函数前被调用
 
 ~~~go
 package main
@@ -160,9 +182,11 @@ func main() {
 }
 ~~~
 
+---
+
 ## 匿名函数
 
-Go 支持匿名函数，匿名函数就是没有名字的函数，如果我们某个函数只是希望使用一次，可以考虑使用匿名函数，匿名函数也可以实现多次调用。
+Go 支持==匿名函数==，匿名函数就是没有名字的函数，如果我们某个函数只是希望使用一次，可以考虑使用匿名函数，匿名函数也可以实现多次调用。
 
 ~~~go
 package main
@@ -204,9 +228,11 @@ func main() {
 }
 ~~~
 
+---
+
 ## 闭包
 
-闭包就是一个函数和与其相关的引用环境组合的一个整体
+==闭包==就是一个函数和与其相关的引用环境组合的一个整体
 
 ~~~go
 package main
@@ -233,42 +259,46 @@ func main() {
 }
 ~~~
 
-~~~go
-package main
+> [!example] 闭包实际应用 - 文件后缀名处理
+> ~~~go
+> package main
+> 
+> import (
+> 	"fmt"
+> 	"strings"
+> )
+> 
+> // 1)编写一个函数 makeSuffix(suffix string)  可以接收一个文件后缀名(比如.jpg)，并返回一个闭包
+> // 2)调用闭包，可以传入一个文件名，如果该文件名没有指定的后缀(比如.jpg) ,则返回 文件名.jpg , 如果已经有.jpg后缀，则返回原文件名。
+> 
+> func makeSuffix(suffix string) func(string) string {
+> 
+> 	return func(name string) string {
+> 		if !strings.HasSuffix(name, suffix) {
+> 			return name + suffix
+> 		}
+> 		return name
+> 	}
+> }
+> 
+> func main() {
+> 	f := makeSuffix(".jpg")
+> 	fmt.Println("After Handling file name:", f("test"))
+> 	fmt.Println("After Handling file name:", f("demo.jpg"))
+> }
+> // 闭包的好处，如果使用传统的函数，也可以轻松实现这个功能，但是传统方法需要每次都传入后缀名
+> // 而闭包因为可以保留上次引用的某个值，所以我们传入一次就可以反复使用。
+> ~~~
 
-import (
-	"fmt"
-	"strings"
-)
+---
 
-// 1)编写一个函数 makeSuffix(suffix string)  可以接收一个文件后缀名(比如.jpg)，并返回一个闭包
-// 2)调用闭包，可以传入一个文件名，如果该文件名没有指定的后缀(比如.jpg) ,则返回 文件名.jpg , 如果已经有.jpg后缀，则返回原文件名。
+## defer机制
 
-func makeSuffix(suffix string) func(string) string {
+在函数中，程序员经常需要创建资源(比如：数据库连接、文件句柄、锁等) ，为了在函数执行完毕后，及时的释放资源，Go 的设计者提供 ==defer== (延时机制)。
 
-	return func(name string) string {
-		if !strings.HasSuffix(name, suffix) {
-			return name + suffix
-		}
-		return name
-	}
-}
-
-func main() {
-	f := makeSuffix(".jpg")
-	fmt.Println("After Handling file name:", f("test"))
-	fmt.Println("After Handling file name:", f("demo.jpg"))
-}
-// 闭包的好处，如果使用传统的函数，也可以轻松实现这个功能，但是传统方法需要每次都传入后缀名
-// 而闭包因为可以保留上次引用的某个值，所以我们传入一次就可以反复使用。
-~~~
-
-# defer机制
-
-在函数中，程序员经常需要创建资源(比如：数据库连接、文件句柄、锁等) ，为了在函数执行完毕后，及时的释放资源，Go 的设计者提供 defer (延时机制)。
-
-1. 当 go 执行到一个 defer 时，不会立即执行 defer 后的语句，而是将 defer 后的语句压入到一个栈中, 然后继续执行函数下一个语句。
-2. 当函数执行完毕后，在从 defer 栈中，依次从栈顶取出语句执行 (注：遵守栈先入后出的机制)
+> [!important] defer 的执行规则
+> 1. 当 go 执行到一个 defer 时，不会立即执行 defer 后的语句，而是将 defer 后的语句压入到一个==栈==中, 然后继续执行函数下一个语句。
+> 2. 当函数执行完毕后，在从 defer 栈中，依次从栈顶取出语句执行 (注：遵守栈==先入后出==的机制)
 
 基本使用：
 
@@ -297,16 +327,14 @@ func main() {
 }
 ~~~
 
-最佳实践：
-
-defer 最主要的价值是，当函数执行完毕后，可以及时的释放函数创建的资源。
-
-在 golang 编程中的通常做法是：
-
-1. 创建资源后，比如打开了文件，获取了数据库的链接，或者是锁资源，可以执行 defer file.Close() defer connect.Close()
-2. 在 defer 后，可以继续使用创建资源
-3. 当函数完毕后，系统会依次从 defer 栈中，取出语句，关闭资源
-4. 这种机制，非常简洁，程序员不用再为在什么时机关闭资源而烦心
+> [!tip] defer 最佳实践
+> defer 最主要的价值是，当函数执行完毕后，可以及时的释放函数创建的资源。
+>
+> 在 golang 编程中的通常做法是：
+> 1. 创建资源后，比如打开了文件，获取了数据库的链接，或者是锁资源，可以执行 `defer file.Close()` `defer connect.Close()`
+> 2. 在 defer 后，可以继续使用创建资源
+> 3. 当函数完毕后，系统会依次从 defer 栈中，取出语句，关闭资源
+> 4. 这种机制，非常简洁，程序员不用再为在什么时机关闭资源而烦心
 
 ~~~go
 func test(){
@@ -319,3 +347,7 @@ func dbconn(){
     defer connect.close()
 }
 ~~~
+
+---
+
+**相关笔记：** [[go-01-环境配置-基础]] | [[go-变量-数据类型-运算]] | [[go-分支-循环]] | [[go-错误处理]] | [[go-面向对象]]

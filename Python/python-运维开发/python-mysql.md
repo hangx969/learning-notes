@@ -1,20 +1,37 @@
-# Mysql介绍
+---
+title: Python MySQL操作
+tags:
+  - python/devops
+  - python/mysql
+  - python/database
+aliases:
+  - Python MySQL
+  - mysql-connector-python
+date: 2026-04-16
+---
 
-MySQL 是一种开源的关系型数据库管理系统(RDBMS),数据库就是用来存储和管理数据的地方,而 MySQL 则是一种专门用来管理这些数据的软件。
+# Python MySQL操作
 
-**为什么使用 MySQL?**
+## Mysql介绍
 
-1. 存储数据:MySQL 能帮助我们把数据存储在一个结构化的表格中。比如,你有一个网站,可以用 MySQL 来存储用户信息、订单数据、商品信息等。
-2. 数据查询:你可以用 MySQL 的查询语言(SQL)快速找到你想要的数据,比如查找某个用户的订单记录。
-3. 数据安全:MySQL 提供了各种安全功能,防止未经授权的用户访问你的数据。
-4. 多用户并发:MySQL 支持多个用户同时操作数据,不会互相干扰,适合企业级应用。
+==MySQL== 是一种开源的关系型数据库管理系统(RDBMS),数据库就是用来存储和管理数据的地方,而 MySQL 则是一种专门用来管理这些数据的软件。
 
-**MySQL 的核心概念:**
+> [!tip] 为什么使用 MySQL?
+> 1. 存储数据:MySQL 能帮助我们把数据存储在一个结构化的表格中。比如,你有一个网站,可以用 MySQL 来存储用户信息、订单数据、商品信息等。
+> 2. 数据查询:你可以用 MySQL 的查询语言(SQL)快速找到你想要的数据,比如查找某个用户的订单记录。
+> 3. 数据安全:MySQL 提供了各种安全功能,防止未经授权的用户访问你的数据。
+> 4. 多用户并发:MySQL 支持多个用户同时操作数据,不会互相干扰,适合企业级应用。
 
-1. 数据库(Database):这是存储数据的容器。一个数据库可以包含多个表。
-2. 表(Table):表就像一个 Excel 表格,它有行和列。每个表格中的数据都有明确的格式。
-3. 行和列(Rows and Columns):行代表一条数据记录,列则是数据的属性。例如,在用户表里,列可以是姓名、邮箱,行则是每个用户的具体信息。
-4. SQL(结构化查询语言):这是与 MySQL 互动的语言。通过 SQL,你可以进行数据的插入、删除、更新和查询。
+### MySQL 的核心概念
+
+1. ==数据库(Database)==:这是存储数据的容器。一个数据库可以包含多个表。
+2. ==表(Table)==:表就像一个 Excel 表格,它有行和列。每个表格中的数据都有明确的格式。
+3. ==行和列(Rows and Columns)==:行代表一条数据记录,列则是数据的属性。例如,在用户表里,列可以是姓名、邮箱,行则是每个用户的具体信息。
+4. ==SQL(结构化查询语言)==:这是与 MySQL 互动的语言。通过 SQL,你可以进行数据的插入、删除、更新和查询。
+
+相关笔记: [[python-postgresql]] | [[MySQL入门]]
+
+---
 
 ## 安装Mysql
 
@@ -25,6 +42,7 @@ yum install mysql-server -y
 chown mysql:mysql -R /var/lib/mysql
 ```
 
+> [!warning] 兼容性问题
 > 注:这个教程在RockyLinux8.10上无法启动mysql。
 >
 > 尝试使用[helm安装mysql](../../Docker-Kubernetes/helm/helm部署mysql)
@@ -44,6 +62,8 @@ mysql -uroot -p111111
 mysql> grant all on *.* to 'root'@'%' identified by '111111'; # 在mysql pod中直接用grant all on *.* to 'root'@'%'
 flush privileges;
 ```
+
+---
 
 ## 增删改查
 
@@ -90,22 +110,23 @@ mysql> DROP TABLE shop.items;
 mysql>DROP DATABASE shop;
 ```
 
-# mysql-connector-python库
+---
 
-## 功能
+## mysql-connector-python库
 
-mysql-connector-python 是一个官方提供的 Python 库,用于与 MySQL 数据库进行交互。它为 Python 应用程序提供了简单而强大的 API,使开发者能够轻松执行数据库操作,如连接数据库、执行 SQL 查询、处理结果集等。
+### 功能
 
-主要功能:
+==mysql-connector-python== 是一个官方提供的 Python 库,用于与 MySQL 数据库进行交互。它为 Python 应用程序提供了简单而强大的 API,使开发者能够轻松执行数据库操作,如连接数据库、执行 SQL 查询、处理结果集等。
 
-1. 数据库连接: 通过该库,用户可以方便地连接到 MySQL 数据库,支持使用主机名、端口、用户名和密码等信息进行连接。
-2. 执行 SQL 语句: 提供游标对象,允许用户执行各种 SQL 语句,包括 SELECT、INSERT、UPDATE 和 DELETE 等。
-3. 处理结果集: 可以轻松获取查询结果并以各种方式进行处理,比如获取所有结果、逐行遍历结果集等。
-4. 事务管理: 支持事务处理,用户可以通过提交或回滚操作来管理数据的一致性。
-5. 错误处理: 提供详细的异常和错误处理机制,方便开发者定位问题。
-6. 适用于多种平台: 该库可以在不同操作系统上使用,如 Windows、Linux 和 macOS。
+> [!summary] 主要功能
+> 1. 数据库连接: 通过该库,用户可以方便地连接到 MySQL 数据库,支持使用主机名、端口、用户名和密码等信息进行连接。
+> 2. 执行 SQL 语句: 提供游标对象,允许用户执行各种 SQL 语句,包括 SELECT、INSERT、UPDATE 和 DELETE 等。
+> 3. 处理结果集: 可以轻松获取查询结果并以各种方式进行处理,比如获取所有结果、逐行遍历结果集等。
+> 4. 事务管理: 支持事务处理,用户可以通过提交或回滚操作来管理数据的一致性。
+> 5. 错误处理: 提供详细的异常和错误处理机制,方便开发者定位问题。
+> 6. 适用于多种平台: 该库可以在不同操作系统上使用,如 Windows、Linux 和 macOS。
 
-## 安装
+### 安装
 
 ```sh
 pip3 install mysql-connector-python
@@ -113,36 +134,40 @@ pip3 install mysql-connector-python
 pip3 install -i https://pypi.tuna.tsinghua.edu.cn/simple mysql-connector-python
 ```
 
-## 使用
+---
 
-### 连接mysql数据库
+### 使用
+
+#### 连接mysql数据库
 
 使用 `mysql.connector.connect`() 函数可以创建一个与 MySQL 数据库的连接。需要提供以下参数:
 
-- host: 数据库主机地址。
-- user: 数据库用户名。
-- password: 数据库用户的密码。
-- database: 要连接的数据库名称。
+- ==host==: 数据库主机地址。
+- ==user==: 数据库用户名。
+- ==password==: 数据库用户的密码。
+- ==database==: 要连接的数据库名称。
 
-### 创建cursor对象
+#### 创建cursor对象
 
-通过连接对象创建游标 (cursor) 对象,游标用于执行 SQL 语句并获取结果。
+通过连接对象创建游标 (==cursor==) 对象,游标用于执行 SQL 语句并获取结果。
 
-### 执行SQL语句
+#### 执行SQL语句
 
-使用游标的 execute() 方法可以执行 SQL 语句,例如 INSERT, UPDATE, DELETE, 和 SELECT。
+使用游标的 ==execute()== 方法可以执行 SQL 语句,例如 INSERT, UPDATE, DELETE, 和 SELECT。
 
-### 提交更改
+#### 提交更改
 
-对于 INSERT, UPDATE, 和 DELETE 操作,必须使用连接对象的 commit() 方法来保存更改。
+对于 INSERT, UPDATE, 和 DELETE 操作,必须使用连接对象的 ==commit()== 方法来保存更改。
 
-### 关闭连接
+#### 关闭连接
 
-完成操作后,使用 close() 方法关闭游标和数据库连接,以释放资源。
+完成操作后,使用 ==close()== 方法关闭游标和数据库连接,以释放资源。
 
-## 实战案例
+---
 
-### 创建数据库和表
+### 实战案例
+
+#### 创建数据库和表
 
 在开始编写 Python 代码之前,我们需要在 MySQL 中创建一个数据库和一个表。假设我们创建一个名为 test_db 的数据库,并在其中创建一个名为 users 的表。
 
@@ -156,7 +181,7 @@ age INT
 );
 ```
 
-### 对表进行增删改查
+#### 对表进行增删改查
 
 ```python
 import mysql.connector
@@ -231,9 +256,11 @@ if __name__ == '__main__':
     db.close()
 ```
 
+---
+
 ### %s占位符的作用
 
-在 MySQL 的 Python 客户端中,`%s` 是一种占位符,用于参数化 SQL 查询。它的主要作用是将用户输入的值安全地绑定到 SQL 语句中,而不是直接拼接到 SQL 字符串中。这种机制可以有效地防止 SQL 注入攻击。
+在 MySQL 的 Python 客户端中,==%s== 是一种占位符,用于参数化 SQL 查询。它的主要作用是将用户输入的值安全地绑定到 SQL 语句中,而不是直接拼接到 SQL 字符串中。这种机制可以有效地防止 ==SQL 注入攻击==。
 
 #### `%s` 的工作原理
 
@@ -260,13 +287,14 @@ if __name__ == '__main__':
 
 #### 为什么 `%s` 能阻止 SQL 注入攻击?
 
-SQL 注入攻击的核心是通过恶意输入将额外的 SQL 代码插入到查询中,从而改变查询的逻辑。例如:
-
-```sql
-SELECT * FROM users WHERE name = 'Alice'; DROP TABLE users; --'
-```
-
-如果直接拼接用户输入到 SQL 中,攻击者可以通过输入类似 `"Alice'; DROP TABLE users; --"` 来破坏数据库。
+> [!warning] SQL 注入攻击
+> SQL 注入攻击的核心是通过恶意输入将额外的 SQL 代码插入到查询中,从而改变查询的逻辑。例如:
+>
+> ```sql
+> SELECT * FROM users WHERE name = 'Alice'; DROP TABLE users; --'
+> ```
+>
+> 如果直接拼接用户输入到 SQL 中,攻击者可以通过输入类似 `"Alice'; DROP TABLE users; --"` 来破坏数据库。
 
 使用 `%s` 占位符可以防止这种情况,原因如下:
 

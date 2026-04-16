@@ -1,20 +1,35 @@
-# Flask介绍
+---
+title: Python Web框架Flask
+tags:
+  - python/web
+  - python/flask
+  - python/api
+  - python/backend
+  - python/docker
+  - python/kubernetes
+aliases:
+  - Flask框架
+  - Flask Web开发
+  - Flask API
+date: 2026-04-16
+---
 
-Flask 是一个用 Python 编写的轻量级 Web 框架,主要用于快速开发 Web 应用程序和 API。
+# Python Web框架Flask
 
-**什么是 Flask?**
+## Flask介绍
 
-Flask 就像一个工具箱,可以帮助你搭建网站或 Web 应用。它提供了一些基本的功能,让你可以快速开始,而不需要从头写很多代码。
+==Flask== 是一个用 Python 编写的轻量级 Web 框架,主要用于快速开发 Web 应用程序和 API。
+
+> [!info] 什么是Flask?
+> Flask 就像一个工具箱,可以帮助你搭建网站或 Web 应用。它提供了一些基本的功能,让你可以快速开始,而不需要从头写很多代码。
 
 **核心功能**:
 
-- 路由:Flask 允许你定义 URL 路径(例如 http://你的网址/home),并将其映射到处理请求的函数上。
+- ==路由==:Flask 允许你定义 URL 路径(例如 http://你的网址/home),并将其映射到处理请求的函数上。
+- ==请求处理==:Flask 能接收用户发送的数据(比如表单输入)并做出相应的处理。
+- ==返回响应==:Flask 可以返回网页内容、JSON 数据或其他类型的信息给用户。
 
-- 请求处理:Flask 能接收用户发送的数据(比如表单输入)并做出相应的处理。
-
-- 返回响应:Flask 可以返回网页内容、JSON 数据或其他类型的信息给用户。
-
-**安装:**
+> [!important] 安装
 
 ```sh
 pip3 install Flask
@@ -22,7 +37,7 @@ pip3 install Flask
 pip install -i https://pypi.tuna.tsinghua.edu.cn/simple Flask
 ```
 
-示例:
+> [!example] 基础示例
 
 ```python
 from flask import Flask
@@ -37,11 +52,11 @@ if __name__ == "__main__": # 只有在直接运行这个文件的时候才会执
     app.run(debug=True)
 ```
 
-## 路由Routes
+---
+
+### 路由Routes
 
 路由是指用户访问某个特定 URL 时,Flask 应该执行的代码。你可以为每个页面定义不同的路由。
-
-示例:
 
 ```python
 @app.route('/about')
@@ -49,11 +64,11 @@ def about():
     return 'This is the About page.'
 ```
 
-## 请求Requests
+---
+
+### 请求Requests
 
 处理一个用户登录表单,接收用户输入的用户名,并返回一个带有用户名的欢迎信息。
-
-示例:
 
 ```python
 from flask import request, Flask # request是flask提供的对象,用来获取用户发送的数据
@@ -64,11 +79,11 @@ def login():
     return f'Welcome, {username}.' # 返回欢迎信息
 ```
 
-## 返回响应Responses
+---
+
+### 返回响应Responses
 
 Flask 的处理函数可以返回文本、HTML 或 JSON 数据。
-
-示例:
 
 ```python
 @app.route('/json')
@@ -76,13 +91,15 @@ def json_response():
     return {'message': 'Hello, JSON!'} # 返回JSON格式的数据
 ```
 
-# 案例:监控服务器健康状态
+---
 
-在现代 IT 环境中,确保服务器的稳定性和性能至关重要。监控服务器的健康状态可以帮助运维团队及时发现和解决潜在问题,从而避免系统宕机、数据丢失或性能下降等严重后果。通过开发一个**健康状态监控 API**,可以实现以下目标:
+## 案例:监控服务器健康状态
 
-1. 自动化监控:定期检查服务器资源使用情况,自动记录和响应异常状态。
-2. 实时告警:在资源使用超过设定阈值时及时告警,确保运维人员可以迅速采取措施。
-3. 数据可视化:生成健康状态报告,为后续的性能分析和资源规划提供数据支持。
+> [!summary] 需求概述
+> 开发一个**健康状态监控 API**,实现以下目标:
+> 1. ==自动化监控==:定期检查服务器资源使用情况,自动记录和响应异常状态。
+> 2. ==实时告警==:在资源使用超过设定阈值时及时告警。
+> 3. ==数据可视化==:生成健康状态报告,为后续的性能分析和资源规划提供数据支持。
 
 步骤:
 
@@ -128,7 +145,9 @@ if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
 ```
 
-# 案例:监控服务器状态并输出到日志
+---
+
+## 案例:监控服务器状态并输出到日志
 
 基于上面的flask接口,希望把服务器的状态信息记录到日志文件中,那么在app.py同级目录再创建一个monitor.py
 
@@ -186,17 +205,14 @@ if __name__ == '__main__':
     check_health()
 ```
 
-# 案例:自动检查并重启服务
+---
 
-某个关键服务在服务器上运行,当该服务异常停止时,需要通过 API 检查并自动重启该服务。
+## 案例:自动检查并重启服务
 
-步骤:
+> [!summary] 需求
+> 某个关键服务在服务器上运行,当该服务异常停止时,需要通过 API 检查并自动重启该服务。
 
-1. 通过 API 获取服务状态。
-2. 如果服务停止,则通过 API 重启服务。
-3. 确认重启操作是否成功。
-
-## 判断逻辑
+### 判断逻辑
 
 ```python
 import requests
@@ -227,19 +243,19 @@ else:
     print('Cannot obtain service status.')
 ```
 
-## API接口定义
+---
 
-上面脚本中的status_url和restart_url都需要在flask应用中预先定义好。
+### API接口定义
 
-通过 Flask 来实现服务状态的检查和重启操作,特别是针对 Nginx 服务的监控。可以使用Flask 来创建这两个 API (/service/status 和 /service/restart) 并结合系统命令来获取和重启Nginx 服务。
-
-以下是一个示例,展示如何通过 Flask 实现该需求:
+> [!note] 实现说明
+> 上面脚本中的status_url和restart_url都需要在flask应用中预先定义好。
+> 通过 Flask 来实现服务状态的检查和重启操作,特别是针对 ==Nginx== 服务的监控。
 
 实现步骤:
 
-1. 获取 Nginx 服务状态:使用 systemctl 命令来检查 Nginx 服务是否在运行。
+1. 获取 Nginx 服务状态:使用 ==systemctl== 命令来检查 Nginx 服务是否在运行。
 1. 重启 Nginx 服务:通过 systemctl 命令来重启 Nginx。
-1. 通过 Flask 暴露 API:创建 /service/status 和 /service/restart 两个 API。
+1. 通过 Flask 暴露 API:创建 `/service/status` 和 `/service/restart` 两个 API。
 
 ```python
 from flask import Flask, jsonify, request
@@ -303,17 +319,18 @@ if __name__ == '__main__':
     app.run(host='0.0.0.0',port=5000)
 ```
 
-# 案例:系统资源监控Web应用
+---
 
-我们需要完成以下功能:
+## 案例:系统资源监控Web应用
 
-- 使用 Python 获取系统资源信息:CPU 使用率、内存使用率、根磁盘使用率和网络带宽。
-- 使用 Flask 框架提供一个 Web 前端页面,显示这些实时信息。
-- 使用 systemctl 将 Flask 应用作为服务启动。
-- 使用 Docker 容器化 Flask 应用。
-- 使用 Kubernetes 部署 Flask 应用。
+> [!summary] 功能需求
+> - 使用 Python 获取系统资源信息:CPU 使用率、内存使用率、根磁盘使用率和网络带宽。
+> - 使用 Flask 框架提供一个 Web 前端页面,显示这些实时信息。
+> - 使用 ==systemctl== 将 Flask 应用作为服务启动。
+> - 使用 ==Docker== 容器化 Flask 应用。
+> - 使用 ==Kubernetes== 部署 Flask 应用。
 
-## 编写后端接口
+### 编写后端接口
 
 ```python
 from flask import Flask, render_template, jsonify
@@ -359,7 +376,9 @@ if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
 ```
 
-## 编写前端页面
+---
+
+### 编写前端页面
 
 前端页面文件名为index.html,放到app.py同级目录的子目录templates/里面
 
@@ -414,7 +433,9 @@ if __name__ == '__main__':
 </html>
 ```
 
-## linux机器安装依赖
+---
+
+### Linux机器安装依赖
 
 ```sh
 # reuiqrements.txt
@@ -427,7 +448,9 @@ pip3 install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
 pip3 install --upgrade Flask Werkzeug -i https://pypi.tuna.tsinghua.edu.cn/simple
 ```
 
-## 配置systemd启动
+---
+
+### 配置systemd启动
 
 ```sh
 chown -R root:root /data/monitor-app
@@ -459,7 +482,9 @@ systemctl start app.service
 systemctl status app.service
 ```
 
-## docker运行
+---
+
+### Docker运行
 
 ```sh
 tee Dockerfile <<'EOF'
@@ -484,7 +509,9 @@ docker build -t system-monitoring-app:v1 .
 docker run -d -p 15000:5000 system-monitoring-app:v1
 ```
 
-## K8s运行
+---
+
+### K8s运行
 
 ```yaml
 apiVersion: apps/v1
@@ -522,3 +549,12 @@ spec:
       nodePort: 30080    # (可选)指定 NodePort 的端口号,通常在 30000-32767 范围内
   type: NodePort         # 设置服务类型为 NodePort
 ```
+
+---
+
+## 相关笔记
+
+- [[python-Web框架Django]] - Django Web框架
+- [[python-request-module]] - requests HTTP库
+- [[python-Web开发-HTML-CSS-JS]] - HTML/CSS/JS前端开发
+- [[python-socket-module]] - Socket网络编程

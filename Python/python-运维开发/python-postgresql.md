@@ -1,8 +1,28 @@
-# PostgreSQL介绍
+---
+title: Python PostgreSQL操作
+tags:
+  - python/devops
+  - python/postgresql
+  - python/database
+aliases:
+  - Python PostgreSQL
+  - psycopg2操作
+  - SQLAlchemy PostgreSQL
+date: 2026-04-16
+---
 
-PostgreSQL 是一个开源的关系型数据库管理系统(RDBMS),它遵循 SQL 标准,并且支持多种高级功能,如事务管理、外键、视图、触发器等。PostgreSQL 被广泛应用于各种场景,尤其适用于需要处理复杂查询和事务的应用程序。它的特点包括支持 JSON 数据类型、强大的查询优化器、并行查询等。
+# Python PostgreSQL操作
 
-**PostgreSQL 更注重标准符合性、功能丰富性和扩展性(支持复杂类型、自定义函数等),适合复杂查询和高级应用;MySQL 更侧重简单易用、读写速度快和成熟稳定,尤其擅长高并发 OLTP 场景(如 Web 应用)。**
+## PostgreSQL介绍
+
+==PostgreSQL== 是一个开源的关系型数据库管理系统(RDBMS),它遵循 SQL 标准,并且支持多种高级功能,如事务管理、外键、视图、触发器等。PostgreSQL 被广泛应用于各种场景,尤其适用于需要处理复杂查询和事务的应用程序。它的特点包括支持 JSON 数据类型、强大的查询优化器、并行查询等。
+
+> [!tip] PostgreSQL vs MySQL
+> **PostgreSQL 更注重标准符合性、功能丰富性和扩展性(支持复杂类型、自定义函数等),适合复杂查询和高级应用;MySQL 更侧重简单易用、读写速度快和成熟稳定,尤其擅长高并发 OLTP 场景(如 Web 应用)。**
+
+相关笔记: [[python-mysql]] | [[MySQL入门]]
+
+---
 
 ## 安装
 
@@ -43,6 +63,8 @@ GRANT ALL PRIVILEGES ON DATABASE mydatabase TO myuser;
 #退出psql并返回普通用户:exit
 ~~~
 
+---
+
 ## 基本增删改查
 
 ~~~sh
@@ -68,15 +90,17 @@ DROP TABLE <表名>
 DROP DATABASE <数据库名>;
 ~~~
 
-# Postgresql操作
+---
 
-## 安装psycopg2
+## Postgresql操作
+
+### 安装psycopg2
 
 ~~~sh
 pip3 install -i https://pypi.tuna.tsinghua.edu.cn/simple psycopg2
 ~~~
 
-## python实现增删改查
+### python实现增删改查
 
 ~~~python
 import psycopg2
@@ -142,17 +166,19 @@ cur.close()
 conn.close()
 ~~~
 
-# SQLAlchemy与ORM框架操作Postgresql
+---
 
-SQLAlchemy 是一个 Python 的 ORM(对象关系映射)框架,它提供了简洁且强大的方式来操作关系型数据库。通过 SQLAlchemy,开发者可以使用 Python 对象来表示数据库中的表和数据,而不必直接编写 SQL 语句。
+## SQLAlchemy与ORM框架操作Postgresql
 
-## 安装sqlalchemy
+==SQLAlchemy== 是一个 Python 的 ORM(对象关系映射)框架,它提供了简洁且强大的方式来操作关系型数据库。通过 SQLAlchemy,开发者可以使用 Python 对象来表示数据库中的表和数据,而不必直接编写 SQL 语句。
+
+### 安装sqlalchemy
 
 ~~~python
 pip3 install -i https://pypi.tuna.tsinghua.edu.cn/simple sqlalchemy
 ~~~
 
-## 代码
+### 代码
 
 ~~~python
 # create_engine是sqlalchemy终的一个函数,用于创建一个数据库引擎,负责与数据库连接,并执行SQL语句

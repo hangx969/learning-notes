@@ -1,4 +1,18 @@
-# if分支控制
+---
+title: Go分支与循环控制
+tags:
+  - go/basics
+  - go/control-flow
+aliases:
+  - Go分支控制
+  - Go循环
+  - Go跳转控制
+date: 2026-04-16
+---
+
+# Go分支与循环控制
+
+## if分支控制
 
 基本使用示例：
 
@@ -55,16 +69,17 @@ func main() {
 }
 ~~~
 
-# switch分支控制
+---
+
+## switch分支控制
 
 switch 语句用于基于不同条件执行不同动作，每一个 case 分支都是唯一的，从上到下逐一测试，直到匹配为止。
 
-switch 的执行的流程是：
-
-1. 先执行表达式，得到值，然后和 case 的表达式进行比较，如果相等就匹配到，然后执行对应的 case 的语句块，然后退出 switch 控制。
-2. 如果 switch 的表达式的值没有和任何的 case 的表达式匹配成功，则执行 default 的语句块。执行后退出 switch 的控制.
-3. golang 的 case 后的表达式可以有多个，使用 逗号 间隔
-4. golang 中的 case 语句块不需要写 break , 因为默认会有,即在默认情况下，当程序执行完 case 语句块后，就直接退出该 switch 控制结构。
+> [!info] switch 执行流程
+> 1. 先执行表达式，得到值，然后和 case 的表达式进行比较，如果相等就匹配到，然后执行对应的 case 的语句块，然后退出 switch 控制。
+> 2. 如果 switch 的表达式的值没有和任何的 case 的表达式匹配成功，则执行 default 的语句块。执行后退出 switch 的控制.
+> 3. golang 的 case 后的表达式可以有多个，使用 逗号 间隔
+> 4. golang 中的 case 语句块==不需要写 break==，因为默认会有,即在默认情况下，当程序执行完 case 语句块后，就直接退出该 switch 控制结构。
 
 switch带表达式：
 
@@ -111,14 +126,15 @@ func main() {
 }
 ~~~
 
-用switch还是if：
+> [!tip] switch vs if 的选择
+> 1. 如果判断的具体数值不多，而且符合整数、浮点数、字符、字符串这几种类型。建议使用 swtich语句，简洁高效。
+> 2. 对区间判断和结果为 bool 类型的判断使用 if，if 的使用范围更广。
 
-1. 如果判断的具体数值不多，而且符合整数、浮点数、字符、字符串这几种类型。建议使用 swtich语句，简洁高效。
-2. 对区间判断和结果为 bool 类型的判断使用 if，if 的使用范围更广。
+---
 
-# for循环
+## for循环
 
-与多数语言不同的是，Go语言中的循环语句只支持 for 关键字，而不支持 while 和 do-while 结构，关键字 for 的基本使用方法与C语言和 C++ 中非常接近。
+与多数语言不同的是，Go语言中的循环语句==只支持 for 关键字==，而不支持 while 和 do-while 结构，关键字 for 的基本使用方法与C语言和 C++ 中非常接近。
 
 基本使用：在for内定义循环变量
 
@@ -150,7 +166,9 @@ func main() {
 }
 ~~~
 
-for-range遍历字符串和数组：
+### for-range遍历
+
+==for-range== 遍历字符串和数组：
 
 ~~~go
 package main
@@ -179,7 +197,7 @@ func main() {
 }
 ~~~
 
-用for实现while：
+### 用for实现while
 
 ~~~go
 package main
@@ -200,7 +218,9 @@ func main() {
 }
 ~~~
 
-用for实现do while循环：就是把if break放后面
+### 用for实现do while循环
+
+就是把if break放后面
 
 ~~~go
 package main
@@ -222,7 +242,7 @@ func main() {
 }
 ~~~
 
-嵌套for循环：
+### 嵌套for循环
 
 ~~~go
 package main
@@ -240,9 +260,11 @@ func main() {
 }
 ~~~
 
-# 跳转控制语句
+---
 
-## break
+## 跳转控制语句
+
+### break
 
 中断for循环，或者跳出当前switch语句
 
@@ -272,11 +294,11 @@ func main() {
 }
 ~~~
 
-## continue
+### continue
 
-continue 语句用于结束本次循环，继续执行下一次循环。
+==continue== 语句用于结束本次循环，继续执行下一次循环。
 
-continue 语句出现在多层嵌套的循环语句体中时，可以通过标签指明要跳过的是哪一层循环, 和前面的 break 标签的使用的规则一样.
+continue 语句出现在多层嵌套的循环语句体中时，可以通过==标签==指明要跳过的是哪一层循环, 和前面的 break 标签的使用的规则一样.
 
 ~~~go
 package main
@@ -299,7 +321,7 @@ func main() {
 }
 ~~~
 
-## goto
+### goto
 
 Go 语言的goto语句可以无条件地转移到程序中指定的行。
 
@@ -328,9 +350,13 @@ func main() {
 }
 ~~~
 
-## return
+### return
 
-return 使用在方法或者函数中，表示跳出所在的方法或函数
+==return== 使用在方法或者函数中，表示跳出所在的方法或函数
 
 1. 如果 return 是在普通的函数，则表示跳出该函数，即不再执行函数中 return 后面代码，也可以理解成终止函数。
 2. 如果 return  是在 main 函数，表示终止 main 函数，也就是说终止程序。
+
+---
+
+**相关笔记：** [[go-01-环境配置-基础]] | [[go-变量-数据类型-运算]] | [[go-函数-包]] | [[go-数组-切片-map]]

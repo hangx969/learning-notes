@@ -1,14 +1,28 @@
-# Nginx介绍
+---
+title: Python Nginx运维自动化
+tags:
+  - python/devops
+  - python/nginx
+aliases:
+  - Python Nginx管理
+  - Nginx自动化运维
+date: 2026-04-16
+---
 
-Nginx(发音为"Engine-X")是一个开源的高性能 HTTP 和反向代理服务器,具有轻量级和高效的特点。它由 Igor Sysoev 于 2002 年首次发布,主要用于处理高负载的 HTTP 请求,并且能够作为反向代理、负载均衡器和 HTTP 缓存使用。
+# Python Nginx运维自动化
 
-主要特点:
+## Nginx介绍
 
-- 高性能:Nginx 设计用于处理大量并发连接,适合高流量网站。
-- 高可用性:可以作为负载均衡器,将流量分配到多个服务器,提升系统的可用性。
-- 反向代理:可以转发客户端请求到后端服务器,并将响应返回给客户端。
-- 低资源消耗:内存和 CPU 占用较低,适合资源有限的环境。
-- 灵活配置:支持模块化配置和多种扩展功能。
+==Nginx==(发音为"Engine-X")是一个开源的高性能 HTTP 和反向代理服务器,具有轻量级和高效的特点。它由 Igor Sysoev 于 2002 年首次发布,主要用于处理高负载的 HTTP 请求,并且能够作为反向代理、负载均衡器和 HTTP 缓存使用。
+
+> [!summary] 主要特点
+> - ==高性能==:Nginx 设计用于处理大量并发连接,适合高流量网站。
+> - ==高可用性==:可以作为负载均衡器,将流量分配到多个服务器,提升系统的可用性。
+> - ==反向代理==:可以转发客户端请求到后端服务器,并将响应返回给客户端。
+> - ==低资源消耗==:内存和 CPU 占用较低,适合资源有限的环境。
+> - ==灵活配置==:支持模块化配置和多种扩展功能。
+
+---
 
 ## 安装
 
@@ -32,9 +46,13 @@ systemctl stop firewalld
 systemctl disable firewalld
 ~~~
 
-# 案例:检查Nginx配置文件语法
+---
+
+## 案例:检查Nginx配置文件语法
 
 在对 Nginx 进行配置更改后,检查配置文件的语法是一个关键步骤。这可以通过 Python 脚本自动化完成:
+
+相关笔记: [[python-Linux-operation]] | [[python-GUI-tkinter]]
 
 ~~~python
 import subprocess
@@ -51,7 +69,9 @@ if __name__ == '__main__':
     check_nginx_config()
 ~~~
 
-# 案例:自动重启nginx服务
+---
+
+## 案例:自动重启nginx服务
 
 检测 nginx 是否处于运行状态,如果 nginx 没运行需要执行脚本自动重启 nginx 服务。
 
@@ -80,7 +100,9 @@ if __name__ == '__main__':
         print('Nginx is already running.')
 ~~~
 
-# 案例:更新nginx配置文件
+---
+
+## 案例:更新nginx配置文件
 
 使用 Python 脚本动态更新 Nginx 配置文件(例如添加一个新的 server 块)。默认的配置文件在`/etc/nginx/nginx.conf`。
 
