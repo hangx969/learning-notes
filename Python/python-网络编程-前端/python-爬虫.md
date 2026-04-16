@@ -1,25 +1,39 @@
-# 爬虫
+---
+title: Python爬虫
+tags:
+  - python/web
+  - python/scraping
+  - python/beautifulsoup
+  - python/requests
+  - python/selenium
+aliases:
+  - Python爬虫
+  - Web Scraping
+  - 网页抓取
+date: 2026-04-16
+---
 
-爬虫(Web Scraping / Web Crawling)是一种自动化程序,按照特定规则从网络上抓取信息。
+# Python爬虫
 
-**工作原理:**
+==爬虫==(Web Scraping / Web Crawling)是一种自动化程序,按照特定规则从网络上抓取信息。
+
+> [!info] 工作原理
 
 1. 发送请求:向目标网站发送HTTP请求。
-
 2. 获取响应:接收服务器返回的HTML文档或数据。
-
-3. 解析数据:使用解析库(如BeautifulSoup、lxml)提取所需数据。
-
+3. 解析数据:使用解析库(如==BeautifulSoup==、lxml)提取所需数据。
 4. 存储数据:将提取的数据存储到本地文件、数据库等。
 
-**常用工具与库:**
+> [!tip] 常用工具与库
 
-- Requests:用于发送HTTP请求。
-- BeautifulSoup:用于解析HTML和XML文档。
-- Scrapy:功能强大的爬虫框架,支持数据抓取、存储和调度。
-- Selenium:用于处理动态网页(如JavaScript生成的内容)。
+- ==Requests==:用于发送HTTP请求。
+- ==BeautifulSoup==:用于解析HTML和XML文档。
+- ==Scrapy==:功能强大的爬虫框架,支持数据抓取、存储和调度。
+- ==Selenium==:用于处理动态网页(如JavaScript生成的内容)。
 
-## scrapy和Requests+BeautifulSoup对比
+---
+
+## Scrapy和Requests+BeautifulSoup对比
 
 | 特性     | Scrapy                                         | Requests + BeautifulSoup     |
 | -------- | ---------------------------------------------- | ---------------------------- |
@@ -29,19 +43,24 @@
 | 数据存储 | 自动处理数据存储,支持多种格式                 | 需要手动实现数据存储         |
 | 资源使用 | 支持多线程和多进程                             | 需要自己实现多线程,管理复杂 |
 
+---
+
 ## 反爬虫
 
-反爬虫是网站采用的一系列技术和策略,以防止爬虫抓取其数据。
+> [!warning] 反爬虫机制
+> 反爬虫是网站采用的一系列技术和策略,以防止爬虫抓取其数据。
 
 常见反爬虫技术:
 
-1. IP封禁:频繁的请求会导致 IP 被临时或永久封禁。
-2. 验证码:通过图形验证码或滑动验证码阻止自动化请求。
-3. User-Agent检测:网站可以通过检查请求中的 User-Agent 头部来判断请求是否来自浏览器,非浏览器的请求可能会被拒绝。
-4. 请求频率限制:网站限制单位时间内的请求次数,超过限制会返回错误。
-5. 动态内容加载:使用 AJAX 或其他技术动态加载内容,爬虫难以直接抓取。
-6. 内容混淆:通过 JavaScript 加密或动态生成内容,爬虫难以解析。
-7. Cookie 验证:网站要求用户登录后才能访问内容,爬虫需要管理和维护会话 cookie。
+1. ==IP封禁==:频繁的请求会导致 IP 被临时或永久封禁。
+2. ==验证码==:通过图形验证码或滑动验证码阻止自动化请求。
+3. ==User-Agent检测==:网站可以通过检查请求中的 User-Agent 头部来判断请求是否来自浏览器,非浏览器的请求可能会被拒绝。
+4. ==请求频率限制==:网站限制单位时间内的请求次数,超过限制会返回错误。
+5. ==动态内容加载==:使用 AJAX 或其他技术动态加载内容,爬虫难以直接抓取。
+6. ==内容混淆==:通过 JavaScript 加密或动态生成内容,爬虫难以解析。
+7. ==Cookie 验证==:网站要求用户登录后才能访问内容,爬虫需要管理和维护会话 cookie。
+
+---
 
 ### IP封禁+请求速率限制
 
@@ -110,16 +129,20 @@ location = /auth {
 }
 ```
 
+---
+
 ## 突破反爬限制
 
-1. IP 代理池:使用代理 IP 进行请求,避免频繁使用同一 IP。可以使用免费的代理服务,或购买代理服务来确保可用性和速度。
-2. 随机 User-Agent:使用多个 User-Agent 字符串,随机选择在请求中使用,模拟不同的浏览器和设备请求。
-3. 请求间隔控制:添加随机延迟,控制请求的频率,以避免触发频率限制。
-4. 验证码处理:使用 OCR(光学字符识别)技术来识别验证码,或者使用第三方服务进行验证码识别。对于简单验证码,可以尝试手动解决,但对于复杂的验证码,可能需要其他手段。
-5. JavaScript 渲染:使用 Selenium、Playwright 或 Puppeteer 等工具来处理需要执行 JavaScript 的网页,从而抓取动态加载的内容。
-6. 会话管理:使用 requests 库中的会话功能,保持登录状态并管理 cookie,以模拟正常用户的访问行为。
-7. 分布式爬虫:构建分布式爬虫架构,将请求分发到不同的机器上,避免单一机器的 IP 被封。
-8. API 使用:查找是否有公开的 API 可以使用。许多网站提供 RESTful API 来供用户访问数据。
+> [!tip] 常用突破方法
+
+1. ==IP 代理池==:使用代理 IP 进行请求,避免频繁使用同一 IP。可以使用免费的代理服务,或购买代理服务来确保可用性和速度。
+2. ==随机 User-Agent==:使用多个 User-Agent 字符串,随机选择在请求中使用,模拟不同的浏览器和设备请求。
+3. ==请求间隔控制==:添加随机延迟,控制请求的频率,以避免触发频率限制。
+4. ==验证码处理==:使用 OCR(光学字符识别)技术来识别验证码,或者使用第三方服务进行验证码识别。
+5. ==JavaScript 渲染==:使用 Selenium、Playwright 或 Puppeteer 等工具来处理需要执行 JavaScript 的网页。
+6. ==会话管理==:使用 requests 库中的会话功能,保持登录状态并管理 cookie,以模拟正常用户的访问行为。
+7. ==分布式爬虫==:构建分布式爬虫架构,将请求分发到不同的机器上,避免单一机器的 IP 被封。
+8. ==API 使用==:查找是否有公开的 API 可以使用。许多网站提供 RESTful API 来供用户访问数据。
 
 ### IP封禁
 
@@ -143,7 +166,7 @@ response = requests.get('http://example.com', proxies=proxy)
 
 反爬机制:网站会检查请求的 User-Agent 字段,过滤掉非浏览器的请求。
 
-解决方案:随机 User-Agent:使用 fake-useragent 库随机选择 User-Agent。
+解决方案:随机 User-Agent:使用 ==fake-useragent== 库随机选择 User-Agent。
 
 ```python
 from fake_useragent import UserAgent
@@ -156,7 +179,7 @@ response = requests.get('http://example.com', headers=headers)
 
 反爬机制:网站限制单位时间内的请求次数,超过限制会返回错误。
 
-解决方案:设置请求间隔:使用 time.sleep() 函数来控制请求频率。
+解决方案:设置请求间隔:使用 ==time.sleep()== 函数来控制请求频率。
 
 ```python
 import time
@@ -170,7 +193,7 @@ for _ in range(10):  # 发起10次请求
 
 反爬机制:使用 AJAX 技术动态加载内容,直接请求 HTML 无法获取数据。
 
-解决方案:使用 Selenium 模拟浏览器行为加载动态内容。
+解决方案:使用 ==Selenium== 模拟浏览器行为加载动态内容。
 
 ```python
 from selenium import webdriver
@@ -182,11 +205,13 @@ print(content)
 driver.quit()
 ```
 
-# 基于Requests+BeautifulSoup的爬虫案例
+---
 
-## 爬取测试网站html标签
+## 基于Requests+BeautifulSoup的爬虫案例
 
-### 搭建测试网站
+### 爬取测试网站HTML标签
+
+#### 搭建测试网站
 
 安装django
 
@@ -201,13 +226,17 @@ pip3 install -i https://pypi.tuna.tsinghua.edu.cn/simple django
 python ./manage.py runserver
 ```
 
-### 爬取网页标签
+---
+
+#### 爬取网页标签
 
 安装beautifulsoup4
 
 ```python
 pip3 install -i https://pypi.tuna.tsinghua.edu.cn/simple beautifulsoup4
 ```
+
+> [!example] 爬取li标签并保存到CSV
 
 ```python
 import requests
@@ -248,9 +277,12 @@ else:
     print(f"Request failed, status code: {response.status_code}")
 ```
 
-## 爬取github上的devops项目
+---
 
-需求:从 GitHub API 获取与"DevOps"相关的项目信息,并将这些信息输出到控制台和保存到一个名为 devops.txt 的文件中。
+### 爬取GitHub上的DevOps项目
+
+> [!summary] 需求
+> 从 GitHub API 获取与"DevOps"相关的项目信息,并将这些信息输出到控制台和保存到文件中。
 
 ```python
 import requests # 发送http请求
@@ -291,7 +323,9 @@ else:
     print(f"Request failed: {response.status_code}.\n")
 ```
 
-## 爬取各个国家的天气
+---
+
+### 爬取各个国家的天气
 
 用的是openweathermap.org网站的api。需要注册帐号获取自己的api_key
 
@@ -345,7 +379,9 @@ except Exception as e:
     print(f"Error: {str(e)}")
 ```
 
-## 爬取全球头条新闻
+---
+
+### 爬取全球头条新闻
 
 使用[NewsAPI](https://newsapi.org/)网站的API,需要注册帐号并获取api key
 
@@ -376,91 +412,64 @@ if __name__ == '__main__':
     fetch_news("xxxx")
 ```
 
-# 网站爬虫协议robot.txt
+---
 
-## 什么是 robots.txt 协议
+## 网站爬虫协议robots.txt
 
-- **`robots.txt`** 是一种用于网站的标准文件,称为 **"机器人排除标准"**(Robots Exclusion Protocol,简称 REP)。
-- 它是网站管理员用来告诉搜索引擎爬虫(如 Googlebot)或其他网络爬虫,哪些页面或资源可以被抓取,哪些不可以被抓取。
-- 该文件通常位于网站的根目录下,访问路径为:
+### 什么是robots.txt协议
 
-  ```sh
-  https://example.com/robots.txt
-  ```
+> [!info] robots.txt简介
+> ==robots.txt== 是一种用于网站的标准文件,称为 **"机器人排除标准"**(Robots Exclusion Protocol,简称 REP)。
+> 它是网站管理员用来告诉搜索引擎爬虫(如 Googlebot)或其他网络爬虫,哪些页面或资源可以被抓取,哪些不可以被抓取。
+> 该文件通常位于网站的根目录下,访问路径为:
+> ```sh
+> https://example.com/robots.txt
+> ```
 
-### robots.txt 的作用
+#### robots.txt的作用
 
 1. **限制爬虫访问**:
 
-   - 网站管理员可以通过 `robots.txt` 限制爬虫访问某些敏感或不必要的页面(如后台管理页面、用户隐私数据等)。
-   - 例如:
+   网站管理员可以通过 `robots.txt` 限制爬虫访问某些敏感或不必要的页面(如后台管理页面、用户隐私数据等)。
 
-     ```sh
-     User-agent: *
-     Disallow: /admin/
-     Disallow: /private/
-     ```
-
-     上述规则禁止所有爬虫访问 `/admin/` 和 `/private/` 路径。
+   ```sh
+   User-agent: *
+   Disallow: /admin/
+   Disallow: /private/
+   ```
 
 2. **优化爬虫行为**:
 
-   - 通过指定允许抓取的路径,减少爬虫对服务器的负载。
-   - 例如:
+   通过指定允许抓取的路径,减少爬虫对服务器的负载。
 
-     ```sh
-     User-agent: Googlebot
-     Allow: /public/
-     ```
+   ```sh
+   User-agent: Googlebot
+   Allow: /public/
+   ```
 
 3. **防止重复内容抓取**:
 
-   - 避免爬虫抓取重复内容,影响 SEO(搜索引擎优化)。
+   避免爬虫抓取重复内容,影响 SEO(搜索引擎优化)。
 
-### robots.txt 的基本语法
+---
 
-1. **`User-agent`**:
+#### robots.txt的基本语法
 
-   - 指定爬虫的名称。
-   - 例如:
+1. **==User-agent==**: 指定爬虫的名称。
 
-     ```sh
-     User-agent: Googlebot
-     ```
+2. **==Disallow==**: 指定禁止爬虫访问的路径。
 
-     表示规则仅适用于 Google 的爬虫。
-
-2. **`Disallow`**:
-
-   - 指定禁止爬虫访问的路径。
-   - 例如:
-
-     ```txt
-     Disallow: /private/
-     ```
-
-     禁止访问 `/private/` 路径。
-
-3. **`Allow`**:
-
-   - 指定允许爬虫访问的路径(通常用于更精细的控制)。
-   - 例如:
-
-     ```sh
-     Allow: /public/
-     ```
+3. **==Allow==**: 指定允许爬虫访问的路径(通常用于更精细的控制)。
 
 4. **`*` 和 `$` 通配符**:
-
    - `*` 表示任意字符。
    - `$` 表示路径的结尾。
-   - 例如:
 
-     ```sh
-     Disallow: /*.pdf$
-     ```
+   ```sh
+   Disallow: /*.pdf$
+   ```
 
-     禁止访问所有以 `.pdf` 结尾的文件。
+   禁止访问所有以 `.pdf` 结尾的文件。
 
 5. **示例完整文件**:
 
@@ -470,7 +479,11 @@ if __name__ == '__main__':
    Allow: /public/
    ```
 
-### robots.txt 的局限性
+---
+
+#### robots.txt的局限性
+
+> [!warning] 注意事项
 
 1. **非强制性**:
    - `robots.txt` 是一种约定,而不是强制执行的规则。
@@ -480,12 +493,14 @@ if __name__ == '__main__':
    - `robots.txt` 仅用于告诉爬虫不要抓取某些内容,但这些内容仍然可以通过直接访问 URL 获取。
    - 如果需要保护敏感数据,应使用身份验证或其他安全措施。
 
-## 如何在爬虫中处理 robots.txt
+---
+
+### 如何在爬虫中处理robots.txt
 
 1. **遵守 robots.txt**:
 
-   - 在编写爬虫时,建议遵守目标网站的 `robots.txt` 文件,避免抓取被禁止的内容。
-   - 可以使用 Python 的 `robotparser` 模块检查 URL 是否允许抓取:
+   在编写爬虫时,建议遵守目标网站的 `robots.txt` 文件,避免抓取被禁止的内容。
+   可以使用 Python 的 ==robotparser== 模块检查 URL 是否允许抓取:
 
      ```python
      from urllib.robotparser import RobotFileParser
@@ -503,11 +518,23 @@ if __name__ == '__main__':
 
 2. **忽略 robots.txt**:
 
-   - 如果爬虫是用于合法目的(如数据分析),且目标网站允许抓取,可以选择忽略 `robots.txt`。
-   - 但在抓取前,建议与网站管理员沟通,确保不会违反法律或道德规范。
+   如果爬虫是用于合法目的(如数据分析),且目标网站允许抓取,可以选择忽略 `robots.txt`。
+   但在抓取前,建议与网站管理员沟通,确保不会违反法律或道德规范。
 
-## 总结
+---
 
-- **robots.txt** 是一种用于限制爬虫行为的协议,帮助网站管理员管理爬虫访问。
-- 它通过简单的规则指定哪些路径可以被抓取,哪些不能。
-- 在编写爬虫时,建议遵守目标网站的 `robots.txt` 文件,以避免不必要的法律或道德问题。
+### 总结
+
+> [!summary] robots.txt要点
+> - **robots.txt** 是一种用于限制爬虫行为的协议,帮助网站管理员管理爬虫访问。
+> - 它通过简单的规则指定哪些路径可以被抓取,哪些不能。
+> - 在编写爬虫时,建议遵守目标网站的 `robots.txt` 文件,以避免不必要的法律或道德问题。
+
+---
+
+## 相关笔记
+
+- [[python-request-module]] - requests HTTP库
+- [[python-Web框架Django]] - Django Web框架
+- [[python-Web框架Flask]] - Flask Web框架
+- [[python-socket-module]] - Socket网络编程
