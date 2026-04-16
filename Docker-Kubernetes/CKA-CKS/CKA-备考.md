@@ -141,8 +141,7 @@ EOF
 apt-get update
 ~~~
 
-> 报错如下：
->
+> [!warning] 报错处理
 > ![image-20240109072509367](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202401090725553.png)
 >
 > 解决方案：
@@ -309,7 +308,8 @@ kubectl create rolebinding -n app-team1 --clusterrole=deployment-clusterrole --s
 kubectl describe rolebinding cicd-token-binding -n app-team1
 ~~~
 
-> - 注意资源要变复数
+> [!warning] 注意
+> - 资源要变复数
 > - sa要带着ns，--serviceaccount=`app-team1`:cicd-token
 
 # 2 node节点不可用
@@ -384,7 +384,8 @@ kubectl get nodes
 
 ## 题目
 
-> （真实考试时，第3题是“升级集群”那道题。建议真正考试时，前4道题按照顺序做，特别是第4题，且做完后不要再修改，做完第3道题，如果没有exit退出到student@node-1，则无法执行etcdctl命令，另外这道题没有切换集群，用的是第3道题的集群，所以，这道题做完就不要在回来检查或者操作了，etcd不建议放到最后做，如果最后做，etcd备份还原可能把所有pod都清空了，有可能会出现，所以前4道题按照顺序做）
+> [!warning] 考试注意
+> 真实考试时，第3题是”升级集群”那道题。建议真正考试时，前4道题按照顺序做，特别是第4题，且做完后不要再修改，做完第3道题，如果没有exit退出到student@node-1，则无法执行etcdctl命令，另外这道题没有切换集群，用的是第3道题的集群，所以，这道题做完就不要在回来检查或者操作了，etcd不建议放到最后做，如果最后做，etcd备份还原可能把所有pod都清空了，有可能会出现，所以前4道题按照顺序做。
 
 - 首先，为运行在https://27.0.0.1:2379 上的现有 etcd 实例创建快照并将快照保存到 /srv/data/etcd-snapshot.db 文件。为给定实例创建快照预计能在几秒钟内完成。 如果该操作似乎挂起，则命令可能有问题。用 CTRL + C 来取消操作，然后重试。
 - 然后还原位于/var/lib/backup/etcd-snapshot-previous.db的现有先前快照。提供了以下TLS证书和密钥，以通过etcdctl连接到服务器。
@@ -394,6 +395,7 @@ kubectl get nodes
 
 ## 解答
 
+> [!tip] 自建环境准备
 > 自己的环境先安装etcdctl：上传etcd-v3.4.13-linux-amd64.tar.gz
 >
 > ~~~sh
@@ -445,7 +447,8 @@ ETCDCTL_API=3 etcdctl --endpoints=https://127.0.0.1:2379 \
 
 - kubernetes.io中搜network policies
 
-> #注意vim中 :set paste，防止yaml文件空格错序。
+> [!tip] 提示
+> vim中 `:set paste`，防止yaml文件空格错序。
 
 ~~~sh
 #自己环境
@@ -654,6 +657,7 @@ kubectl describe nodes ckanode1 | grep -i Taint | grep -v NoSchedule | wc -l
 echo x > /opt/KUSC00402/kusc00402.txt
 ~~~
 
+> [!info] 参数说明
 > `-i` 参数使搜索变为不区分大小写。这个命令的目的是从 kubectl 的输出中找出包含 "Taint" 的行。
 >
 > `-v` 参数让 grep 只输出不匹配的行，`-c` 参数让 grep 输出匹配的行数。这个命令的目的是计数不包含 "NoSchedule" 的行
@@ -850,6 +854,7 @@ kubectl top pod -A -l name=cpu-user --sort-by=cpu
 echo "pod name" > /opt/KUTR00401/KUTR00401.txt
 ~~~
 
+> [!tip] 前置条件
 > 用kubectl top前提是有metrics-server这个组件，可以部署一下：
 >
 > 上传课件两个文件：
