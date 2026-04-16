@@ -9,12 +9,12 @@
 claude插件； https://github.com/YishenTu/claudian
 - 在release中下载main.js，manifest.json，styles.css，放到.obsidian/plugin/claudian/里面。
 - 重启obsidian就能在插件页面找到claudian，设置里面配置claude code相关的环境变量。
-- 侧边栏打开claudian
+- 侧边栏打开claudian就可以用了。
 
 # 2. obsidian skills
 skills： https://github.com/kepano/obsidian-skills
 
-下载skills，放到 vault 的 .claude/ 目录下，Claude Code 就能理解 Obsidian 的格式——双向链接、标签、属性、嵌入，全都认得。
+- 下载skills，放到 vault 的 .claude/ 目录下，Claude Code 就能理解 Obsidian 的格式——双向链接、标签、属性、嵌入，全都认得。
 
 # 3. obsidian local api和claude mcp
 GitHub 上的 mcp-obsidian 项目。配好之后，Claude Code 可以直接搜索、读取、创建、修改你的笔记。不用你手动复制粘贴，AI 直接操作你的知识库。
