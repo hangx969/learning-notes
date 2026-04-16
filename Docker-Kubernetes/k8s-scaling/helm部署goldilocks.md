@@ -86,8 +86,8 @@ helm upgrade -i goldilocks fairwinds-stable/goldilocks --namespace goldilocks \
 
 生成recommendation的原理：goldilock从vpa的recommender读取资源值
 
-https://goldilocks.docs.fairwinds.com/faq/#how-does-goldilocks-generate-recommendations
+[How Does Goldilocks Generate Recommendations](https://goldilocks.docs.fairwinds.com/faq/#how-does-goldilocks-generate-recommendations)
 
 ## 切换updateMode
 
-默认情况下是采用off mode，可以通过给某个namespace加label来对其中的pod改用Auto模式：https://goldilocks.docs.fairwinds.com/advanced/#cli-usage-not-recommended
+默认情况下是采用off mode，可以通过给某个namespace加label来对其中的pod改用Auto模式：[Goldilocks Advanced Usage](https://goldilocks.docs.fairwinds.com/advanced/#cli-usage-not-recommended)

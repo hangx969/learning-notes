@@ -28,6 +28,7 @@ aliases:
 
 sts是k8s的有状态资源调度器。部署有状态且需要有序启动的服务，比如mysql、zookeeper、eureka、nacos、MongoDB、ES、redis、kafka等。
 
+> [!tip] 提示
 > 生产环境部署这些集群，推荐用operator/helm去部署，因为一些复杂集群操作（扩缩容、rebalance等）官方在里面都封装好了，自己手写yaml文件，很难实现。
 
 sts基于headless svc给每一个pod分配一个唯一且固定的网络标识符，各pod之间通过这个标识符来通信。

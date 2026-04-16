@@ -1,3 +1,14 @@
+---
+title: K8s HPA与VPA
+tags:
+  - kubernetes
+  - scaling
+  - hpa
+  - vpa
+aliases:
+  - HPA-VPA自动扩缩容
+---
+
 # 自动扩缩容工具
 
 ## HPA
@@ -20,7 +31,7 @@ Horizonal Pod Autoscaling，pod水平自动伸缩。一般是扩缩容deployment
 - 同时，为了避免过于频繁的扩缩容，默认在5min内没有重新扩缩容的情况下，才会触发扩缩容。
 - HPA本身的算法相对比较保守，可能并不适用于很多场景。例如，一个快速的流量突发场景，如果正处在5min内的HPA稳定期，这个时候根据HPA的策略，会导致无法扩容。
 
-> 注意：针对原生HPA
+> [!warning] 注意：针对原生HPA
 >
 > 1. 必须安装metrics-server或者其他自定义metrics-server
 > 2. pod必须配置requests。因为HPA就是根据requests来计算使用率的

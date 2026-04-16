@@ -1,3 +1,13 @@
+---
+title: 发布Go/Python/Java代码到K8S环境
+tags:
+  - kubernetes
+  - cicd
+  - docker
+aliases:
+  - K8S应用部署示例
+---
+
 # 发布go代码到k8s-示例1
 
 ## 部署go源码和镜像

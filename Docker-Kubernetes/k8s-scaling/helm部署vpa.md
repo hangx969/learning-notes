@@ -1,3 +1,13 @@
+---
+title: Helm部署VPA
+tags:
+  - kubernetes
+  - scaling
+  - vpa
+aliases:
+  - vpa垂直扩缩容
+---
+
 # 介绍
 
 VPA可以让用户无需手动设置resource request，VPA会帮助检测并且自动设置合理的request。
@@ -8,16 +18,16 @@ VPA helm chart默认包含三个组件：Updater、Admission Controller、Recomm
 
 VPA有两种安装方式：
 
-1. 手动下载安装脚本安装：https://github.com/kubernetes/autoscaler/blob/master/vertical-pod-autoscaler/docs/installation.md
+1. 手动下载安装脚本安装：[VPA Installation](https://github.com/kubernetes/autoscaler/blob/master/vertical-pod-autoscaler/docs/installation.md)
 
-2. 通过Fairwinds helm chart部署：https://github.com/FairwindsOps/charts/tree/master/stable/vpa
+2. 通过Fairwinds helm chart部署：[Fairwinds VPA Chart](https://github.com/FairwindsOps/charts/tree/master/stable/vpa)
 
 这里通过helm chart方式部署。
 
 helm chart版本发布：
 
-- release page: https://github.com/kubernetes/autoscaler/releases
-- artifact hub: https://artifacthub.io/packages/helm/fairwinds-stable/vpa
+- release page: [Autoscaler Releases](https://github.com/kubernetes/autoscaler/releases)
+- artifact hub: [vpa helm chart](https://artifacthub.io/packages/helm/fairwinds-stable/vpa)
 
 # 下载
 
@@ -33,7 +43,7 @@ helm pull fairwinds-stable/vpa --version 4.7.1
 
 - prerequisites
 
-  注意VPA必须要求metrics server已经安装：https://github.com/kubernetes/autoscaler/blob/master/vertical-pod-autoscaler/docs/installation.md#prerequisites
+  注意VPA必须要求metrics server已经安装：[VPA Prerequisites](https://github.com/kubernetes/autoscaler/blob/master/vertical-pod-autoscaler/docs/installation.md#prerequisites)
 
 - values文件
 
@@ -70,7 +80,7 @@ helm upgrade -i vpa fairwinds-stable/vpa \
 
 > "Failed to scrape node" err="Get \"https://172.16.183.100:10250/metrics/resource\": dial tcp 172.16.183.100:10250: connect: no route to host" node="rm1"
 
-这个问题在github issue上有讨论：https://github.com/kubernetes-sigs/metrics-server/issues/196
+这个问题在github issue上有讨论：[metrics-server#196](https://github.com/kubernetes-sigs/metrics-server/issues/196)
 
 问题原因如[kubernetes官网](https://kubernetes.io/docs/tasks/administer-cluster/kubeadm/kubeadm-certs/#kubelet-serving-certs)所述：
 
@@ -87,8 +97,8 @@ helm upgrade -i vpa fairwinds-stable/vpa \
 
 # helm安装metrics-server
 
-- github链接：https://github.com/kubernetes-sigs/metrics-server
-- 安装指南：https://artifacthub.io/packages/helm/metrics-server/metrics-server
+- github链接：[kubernetes-sigs/metrics-server](https://github.com/kubernetes-sigs/metrics-server)
+- 安装指南：[metrics-server helm chart](https://artifacthub.io/packages/helm/metrics-server/metrics-server)
 - 注意metrics-server仅被用作HPA和VPA的CPU/Memory自动监测的用途，不支持用作获取准确监控数据的用途
 
 ## 下载
@@ -114,7 +124,7 @@ helm upgrade --install metrics-server . -f values.yaml
 
 # 使用
 
-https://github.com/kubernetes/autoscaler/blob/master/vertical-pod-autoscaler/docs/quickstart.md#quick-start
+[VPA Quick Start](https://github.com/kubernetes/autoscaler/blob/master/vertical-pod-autoscaler/docs/quickstart.md#quick-start)
 
 - VPA helm chart部署好之后，需要手动创建VerticalPodAutoscaler资源来监控指定的container。例如：
 
@@ -144,11 +154,11 @@ https://github.com/kubernetes/autoscaler/blob/master/vertical-pod-autoscaler/doc
 
 - 安装了goldilock之后，goldilock可以自动生成vpa资源，UI dashboard显示推荐值
 
-> 注意vpa的update不会去更改deployment的template里面的值，而是去更改pod的request
+> [!warning] 注意vpa的update不会去更改deployment的template里面的值，而是去更改pod的request
 
 ## demo pod
 
-- https://github.com/kubernetes/autoscaler/blob/master/vertical-pod-autoscaler/docs/quickstart.md#test-your-installation：vpa github提供了一个示例deployment来测试vpa是否正常工作。
+- [Test Your Installation](https://github.com/kubernetes/autoscaler/blob/master/vertical-pod-autoscaler/docs/quickstart.md#test-your-installation)：vpa github提供了一个示例deployment来测试vpa是否正常工作。
 - 这个deployment设置了pod request cpu是100m，但是实际pod会用到500m以上，过几分钟之后就会看到pod被删掉重新创建了，request cpu的值被改到600m多
 
 ~~~yaml

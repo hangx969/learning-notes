@@ -231,15 +231,15 @@ hostPath.type字段说明:
 - CharDevice：字符设备，如串行端口、声卡、摄像头等，必须存在于给定路径中，且只有Linux 支持。
 - BlockDevice：块设备，如硬盘等，必须存在于给定路径中，且只有Linux支持。
 
-> 注：
+> [!warning] 注意
 >
-> - 根据官网说明：https://kubernetes.io/docs/concepts/storage/volumes/#hostpath，hostPath方式存在安全隐患，需要小心使用。更推荐使用local类型volume
+> - 根据官网说明：[Kubernetes Volumes - hostPath](https://kubernetes.io/docs/concepts/storage/volumes/#hostpath)，hostPath方式存在安全隐患，需要小心使用。更推荐使用local类型volume
 
 ## local
 
 - 官网链接：
-  - https://kubernetes.io/docs/concepts/storage/volumes/#local
-  - https://kubernetes.io/docs/concepts/storage/storage-classes/#local
+  - [Kubernetes Volumes - local](https://kubernetes.io/docs/concepts/storage/volumes/#local)
+  - [Kubernetes StorageClasses - local](https://kubernetes.io/docs/concepts/storage/storage-classes/#local)
 - 创建local需要的sc，这个sc的作用是确保pod在创建出来后才会绑定pv和pvc
 
 ~~~yaml
@@ -345,7 +345,8 @@ spec:
             name: local-storage-volume
 ~~~
 
-> github上有一个开源工具：https://github.com/kubernetes-sigs/sig-storage-local-static-provisioner/blob/master/docs/getting-started.md。自动把指定的local路径做成PV。
+> [!tip] 提示
+> github上有一个开源工具：[sig-storage-local-static-provisioner](https://github.com/kubernetes-sigs/sig-storage-local-static-provisioner/blob/master/docs/getting-started.md)，自动把指定的local路径做成PV。
 
 ## NFS/NAS
 
@@ -731,7 +732,7 @@ spec:
 
 ## 访问策略
 
-accessMode的官网解释：https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes
+accessMode的官网解释：[Kubernetes PV Access Modes](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes)
 
 ### ReadWriteOnce
 
@@ -1018,15 +1019,16 @@ spec:
         claimName: pvc-nfs-dynamic
 ~~~
 
-> 注意：一般NFS/NAS高可用和性能不是很好，一些数据库、缓存、消息队列服务尽量不要使用NFS，生产环境中推荐使用分布式存储。如果实在没有分布式存储，那就不要部署在k8s中了。
+> [!warning] 注意
+> 一般NFS/NAS高可用和性能不是很好，一些数据库、缓存、消息队列服务尽量不要使用NFS，生产环境中推荐使用分布式存储。如果实在没有分布式存储，那就不要部署在k8s中了。
 
 ## 默认存储类
 
 - 默认StorageClass是指当用户创建PVC时未显式指定StorageClass的情况下，Kubernetes将自动使用该StorageClass来动态配置存储卷。这大大简化了用户的操作，并确保了一致性和可靠性。文档：
 
-  - https://kubernetes.io/zh-cn/docs/concepts/storage/storage-classes/#default-storageclass
+  - [Kubernetes默认StorageClass](https://kubernetes.io/zh-cn/docs/concepts/storage/storage-classes/#default-storageclass)
 
-  - https://kubernetes.io/zh-cn/docs/tasks/administer-cluster/change-default-storage-class/
+  - [更改默认StorageClass](https://kubernetes.io/zh-cn/docs/tasks/administer-cluster/change-default-storage-class/)
 
 - 给一个Storage class设置为默认存储类：
 

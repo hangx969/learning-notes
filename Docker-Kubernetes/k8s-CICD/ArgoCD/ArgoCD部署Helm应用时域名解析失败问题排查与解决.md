@@ -18,7 +18,7 @@ aliases:
 
 ArgoCD Application 报错：
 
-```
+```text
 ComparisonError: Failed to load target state: failed to generate manifest for source 1 of 1:
 rpc error: code = Unknown desc = Manifest generation error (cached):
 `helm dependency build` failed exit status 1:
@@ -34,7 +34,7 @@ dial tcp: lookup charts.external-secrets.io on 10.96.0.10:53: no such host
 
 **重启 CoreDNS 后**上游转发恢复，但紧接着暴露了第二个问题：
 
-```
+```text
 ComparisonError: Failed to load target state: failed to generate manifest for source 1 of 1:
 rpc error: code = Unknown desc = Manifest generation error (cached):
 `helm dependency build` failed exit status 1:
@@ -64,7 +64,7 @@ dial tcp [2606:50c0:8003::154]:443: connect: network is unreachable
 
 CoreDNS 的 forward 插件默认配置为：
 
-```
+```text
 forward . /etc/resolv.conf
 ```
 
@@ -213,7 +213,7 @@ kubectl -n argocd patch deployment argocd-repo-server --type strategic -p '{
 
 DNS 问题解决后，ArgoCD 同步 external-secrets 时又遇到了一个新错误：
 
-```
+```text
 CustomResourceDefinition.apiextensions.k8s.io "clustersecretstores.external-secrets.io" is invalid:
 metadata.annotations: Too long: may not be more than 262144 bytes
 ```

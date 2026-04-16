@@ -1,3 +1,15 @@
+---
+title: K8s监控Prometheus(v2.33.5)+Grafana(v8.4.5)
+tags:
+  - kubernetes
+  - monitoring
+  - prometheus
+  - grafana
+  - node-exporter
+aliases:
+  - K8s部署Prometheus v2.33.5和Grafana v8.4.5
+---
+
 # Prometheus v2.33.5部署
 
 ## 部署node-exporter

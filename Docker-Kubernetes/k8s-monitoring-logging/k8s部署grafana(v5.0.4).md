@@ -167,7 +167,7 @@ spec:
 
 #### 创建sa并授权
 
-~~~sh
+~~~yaml
 ---
 apiVersion: v1
 kind: ServiceAccount

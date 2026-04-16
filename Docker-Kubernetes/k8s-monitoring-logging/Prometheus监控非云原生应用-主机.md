@@ -1,3 +1,17 @@
+---
+title: Prometheus监控非云原生应用-主机
+tags:
+  - kubernetes
+  - monitoring
+  - prometheus
+  - exporter
+  - serviceMonitor
+  - scrapeConfig
+  - blackbox
+aliases:
+  - Prometheus监控外部服务和主机
+---
+
 # 使用exporter监控服务
 
 如果想要监控一些未提供Metrics接口的服务，比如MySQL、Redis等，需要安装对应的Exporter才能进行监控。
@@ -197,9 +211,9 @@ spec:
 
 # 使用Probe黑盒监控
 
-参考文档：https://github.com/prometheus/blackbox_exporter
+参考文档：[blackbox_exporter (GitHub)](https://github.com/prometheus/blackbox_exporter)
 
-CRD 文档：https://github.com/prometheus-operator/kube-prometheus/blob/main/docs/blackbox-exporter.md  
+CRD 文档：[blackbox-exporter docs (GitHub)](https://github.com/prometheus-operator/kube-prometheus/blob/main/docs/blackbox-exporter.md)
 
 Probe 类型的监控通常都会和Blackbox配合使用，用于监控域名的可用性。
 
@@ -231,11 +245,11 @@ spec:
 
 # 监控外部主机
 
-监控Linux 的Exporter 是：https://github.com/prometheus/node_exporter
+监控Linux 的Exporter 是：[node_exporter (GitHub)](https://github.com/prometheus/node_exporter)
 
-监控 Windows 主机的Exporter 是：https://github.com/prometheus-community/windows_exporter。  
+监控 Windows 主机的Exporter 是：[windows_exporter (GitHub)](https://github.com/prometheus-community/windows_exporter)。  
 
-1. 首先下载对应的 Exporter 至 Windows 主机（ MSI 文 件 下 载 地 址 ： https://github.com/prometheus-community/windows_exporter/releases）
+1. 首先下载对应的 Exporter 至 Windows 主机（MSI文件下载地址：[windows_exporter Releases](https://github.com/prometheus-community/windows_exporter/releases)）
 
 2. 下载完成后，双击打开即可完成安装，之后可以在任务管理器上看到对应的进程
 
