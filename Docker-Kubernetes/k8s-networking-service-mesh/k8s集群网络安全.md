@@ -1,3 +1,13 @@
+---
+title: K8s集群网络安全
+tags:
+  - kubernetes
+  - networking
+  - security
+aliases:
+  - k8s网络安全
+---
+
 # Docker容器逃逸
 
 ## 漏洞描述
@@ -188,19 +198,19 @@ kubescape scan framework nsa
   kubectl --kubeconfig=./test_token get pods -n default
   ~~~
 
-> 总结：
+> [!warning] 总结
 >
 > 1. 管理员给system:anonymous开放cluster-admin之后，攻击者可以通过接口看到所有的ns以及里面的secrets。
 > 2. 管理员又给某个ns的default sa绑定了token，并且赋予了cluster-admin的权限。攻击者可以直接通过anonymous用户访问api接口，一个一个ns来试，看看哪个ns的sa绑定了token。
 > 3. 拿到token之后，就能用绑这个有大权限的token，以default这个sa的身份去做任何操作了。
 >
-> 最佳实践：
+> **最佳实践：**
 >
 > - 有时候不可避免需要给匿名用户开放权限，让集群外用户去操作集群资源。建议单独创建ns来给有需求的用户使用，授权也仅在这个ns中给admin的权限。
 
 # 模拟攻击kubelet
 
-> kubelet默认开了三个端口：
+> [!info] kubelet默认开了三个端口
 >
 > 1. 10250：
 >    - 作用：这是kubelet的主要监听端口，用于与API服务器通信，接收来自API服务器的指令，并提供节点的状态信息。

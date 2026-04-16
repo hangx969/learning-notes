@@ -388,13 +388,13 @@ controller:
 
 原有 hostNetwork 模式流程：
 
-```
+```text
 Windows电脑 → VMware虚拟网络 → K8s节点:80 → ingress-nginx Pod
 ```
 
 NodePort 模式流程：
 
-```
+```text
 Windows电脑 → VMware虚拟网络 → K8s节点:30080 → NodePort Service → ingress-nginx Pod:80
 ```
 
@@ -434,7 +434,7 @@ netsh interface portproxy add v4tov4 listenport=443 listenaddress=0.0.0.0 connec
 
 3. **网络流量路径**
 
-```
+```text
 [Windows 电脑:浏览器]
         ↓ HTTP请求 grafana.hanxux.local:80
 [端口转发规则]
@@ -539,7 +539,7 @@ data:
 1. 流量百分比取值范围：(0, 100]，百分比总和必须不大于100%。
 2. 支持同时配置多个不同的复制流量接收目标应用。
 
-> Q：这里是在哪个环境的ingress操作的？？
+> [!question] Q：这里是在哪个环境的ingress操作的？？
 
 ### 步骤2-配置prod的ingress
 

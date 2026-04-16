@@ -15,7 +15,7 @@ artifactHub地址：[bitnami/mysql - ArtifactHub](https://artifacthub.io/package
 
 # 下载
 
-~~~python
+~~~sh
 helm repo add bitnami https://charts.bitnami.com/bitnami
 helm repo update bitnami
 helm pull bitnami/mysql --version 13.0.2 
@@ -35,10 +35,8 @@ helm pull bitnami/mysql --version 13.0.2
 
 这里简单配置，用standalone模式，只有一个statefulset会被创建。service用NodePort，暴露端口30006。
 
-> 注意：
->
+> [!warning] 生产环境注意
 > - 生产环境中不推荐使用nfs，由于其单点无高可用、性能也有问题。如果k8s中没有配置ceph等分布式储，那就不推荐把mysql等需要持久化数据的服务部署到k8s中。
->
 > - 这里学习环境可以使用nfs。
 
 ~~~yaml
@@ -92,7 +90,8 @@ primary:
 
 # 配置-主从模式
 
-> 注意：生产环境也不推荐主从模式，建议用集群模式（用operator安装集群模式比较方便）
+> [!warning] 注意
+> 生产环境也不推荐主从模式，建议用集群模式（用operator安装集群模式比较方便）
 
 ~~~yaml
 global:
@@ -183,7 +182,7 @@ To connect to your database:
 
 ### 通过mysql client cli连接
 
-~~~python
+~~~sh
 # Ubuntu上安装mysql client
 sudo apt install mysql-client-core-8.0
 # 登陆mysql

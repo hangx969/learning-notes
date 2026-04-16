@@ -1,3 +1,13 @@
+---
+title: 二进制安装GitLab(17.9.8)
+tags:
+  - kubernetes
+  - cicd
+  - gitlab
+aliases:
+  - GitLab二进制安装
+---
+
 # 部署
 
 GitLab 在企业内经常用于代码的版本控制，也是DevOps平台中尤为重要的一个工具。

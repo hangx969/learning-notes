@@ -1,3 +1,13 @@
+---
+title: K8s部署GitLab(11.8.1)-基于YAML
+tags:
+  - kubernetes
+  - cicd
+  - gitlab
+aliases:
+  - K8s部署GitLab YAML
+---
+
 # 搭建nfs供应商
 
 ~~~sh

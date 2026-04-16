@@ -78,6 +78,7 @@ spec:
             storage: 1Gi
 ~~~
 
+> [!tip] PV权限问题
 > Redis pod如果报错pv没有permission的话: 去nfs节点把pv数据目录改成chmod -R 777, chown -R 1000.1000
 >
 > 本质是因为存储平台没有配置默认权限，需要挨个pod去配置对应的pv目录权限。

@@ -1,3 +1,14 @@
+---
+title: k8s故障排查指南
+tags:
+  - kubernetes
+  - k8s-installation
+  - 故障排查
+aliases:
+  - k8s troubleshooting
+  - pod故障排查
+---
+
 # pod状态异常
 
 ~~~sh

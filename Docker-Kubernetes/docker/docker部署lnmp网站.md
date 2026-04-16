@@ -77,7 +77,7 @@ docker load -i mysql.tar.gz
 docker load -i php.tar.gz
 ~~~
 
-> docker-compose常用的命令
+> [!tip] docker-compose常用的命令
 >
 > ```sh
 > #启动并后台运行所有的服务 

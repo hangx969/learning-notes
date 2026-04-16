@@ -1,6 +1,22 @@
+---
+title: Helm部署Loki+Promtail+Tempo+GrafanaAgent全家桶
+tags:
+  - kubernetes
+  - monitoring
+  - logging
+  - loki
+  - promtail
+  - tempo
+  - grafana
+  - helm
+  - tracing
+aliases:
+  - Loki+Promtail+Tempo全家桶
+---
+
 # loki日志查询
 
-参考：https://mp.weixin.qq.com/s?__biz=Mzk0NzIyMDA4MA==&mid=2247484579&idx=1&sn=3b2be6ca22c78aae1112601341bb80e9&chksm=c37b7fbcf40cf6aab13c14177d0e0a15d97ee6f3ef1aad00e08ba7e18ff4fae84476dce61434&cur_album_id=3143335204699504647&scene=189#wechat_redirect
+参考：[Loki日志查询](https://mp.weixin.qq.com/s?__biz=Mzk0NzIyMDA4MA==&mid=2247484579&idx=1&sn=3b2be6ca22c78aae1112601341bb80e9&chksm=c37b7fbcf40cf6aab13c14177d0e0a15d97ee6f3ef1aad00e08ba7e18ff4fae84476dce61434&cur_album_id=3143335204699504647&scene=189#wechat_redirect)
 
 # kubernetes events
 
@@ -23,7 +39,7 @@
 - 收集log的组件很多，EFK比较常用，但是ES太重了。这里推荐Loki，一个高效的日志聚合器，适用于收集和存储日志数据，还非常轻量化，非常适合用于聚合存储Kubernetes Events。
 
 - 采集k8s events的组件也有很多:
-  - grafana-agent: https://grafana.com/docs/agent/latest/static/configuration/integrations/integrations-next/eventhandler-config/?pg=blog&plcmt=body-txt
+  - grafana-agent: [Grafana Agent EventHandler](https://grafana.com/docs/agent/latest/static/configuration/integrations/integrations-next/eventhandler-config/?pg=blog&plcmt=body-txt)
   - k8s-event-logger
   - evetns-operator
 
@@ -147,10 +163,11 @@ helm install loki grafana/loki -n monitoring -f install-values.yaml --debug
 
 ## Loki
 
-- 文档：https://grafana.com/docs/loki/latest/setup/install/helm/install-monolithic/#deploying-the-helm-chart-for-development-and-testing
-- github release: https://github.com/grafana/loki/releases
-- artifact hub: https://artifacthub.io/packages/helm/grafana/loki
+- 文档：[Loki Helm Install](https://grafana.com/docs/loki/latest/setup/install/helm/install-monolithic/#deploying-the-helm-chart-for-development-and-testing)
+- github release: [Loki Releases](https://github.com/grafana/loki/releases)
+- artifact hub: [Loki on ArtifactHub](https://artifacthub.io/packages/helm/grafana/loki)
 
+> [!info]
 > Grafana生态中日志存储的后端，其单机模式支持直接使用文件存储，而多副本模式依赖对象存储来对数据进行持久化。Grafana内置了Loki数据源类型，在配置相应的数据源后可以通过Grafana Explore页面进行日志查询。
 
 - 下载
@@ -180,11 +197,11 @@ helm upgrade -i loki -n monitoring . -f values.yaml
 
 ## Promtail
 
-- 文档：https://grafana.com/docs/loki/latest/send-data/promtail/
+- 文档：[Promtail Docs](https://grafana.com/docs/loki/latest/send-data/promtail/)
 
-- github release: https://github.com/grafana/loki/releases
+- github release: [Loki Releases](https://github.com/grafana/loki/releases)
 
-- artifact hub: https://artifacthub.io/packages/helm/grafana/promtail
+- artifact hub: [Promtail on ArtifactHub](https://artifacthub.io/packages/helm/grafana/promtail)
 
 - 下载
 
@@ -209,10 +226,10 @@ helm upgrade -i promtail -n monitoring . -f values.yaml
 ## tempo
 
 - 文档：
-  - https://grafana.org.cn/docs/tempo/latest/introduction/telemetry/
-  - https://grafana.com/docs/tempo/latest/getting-started/tempo-in-grafana/
-- release page: https://github.com/grafana/tempo/releases
-- artifact hub: https://artifacthub.io/packages/helm/grafana/tempo
+  - [Tempo Telemetry](https://grafana.org.cn/docs/tempo/latest/introduction/telemetry/)
+  - [Tempo in Grafana](https://grafana.com/docs/tempo/latest/getting-started/tempo-in-grafana/)
+- release page: [Tempo Releases](https://github.com/grafana/tempo/releases)
+- artifact hub: [Tempo on ArtifactHub](https://artifacthub.io/packages/helm/grafana/tempo)
 
 > 遵循OTel协议的Trace数据存储后端服务，包含若干组件：
 >
@@ -248,7 +265,8 @@ helm pull grafana/tempo --version "${TEMPO_VERSION#tempo-}" #1.8.0
 helm upgrade -i tempo -n monitoring . -f values.yaml
 ~~~
 
-> 注：部署完loki和tempo，去prometheus-stack的grafana配置里面加上additionalDataSource：
+> [!note]
+> 部署完loki和tempo，去prometheus-stack的grafana配置里面加上additionalDataSource：
 >
 > ~~~yaml
 >   additionalDataSources:

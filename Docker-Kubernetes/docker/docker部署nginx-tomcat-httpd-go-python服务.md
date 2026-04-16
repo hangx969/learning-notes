@@ -1,3 +1,18 @@
+---
+title: Docker部署Nginx-Tomcat-Httpd-Go-Python服务
+tags:
+  - docker
+  - container
+  - nginx
+  - tomcat
+  - httpd
+  - golang
+  - python
+  - dockerfile
+aliases:
+  - Docker部署Web服务
+---
+
 # docker部署nginx服务
 
 - 用centos作为基础镜像，在里面部署并配置nginx服务
@@ -58,7 +73,7 @@ docker inspect nginx
 
 - 原理
 
-  ```
+  ```sh
   ip addr
   1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
       link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
@@ -151,7 +166,7 @@ docker run --name tomcat8 -d -p 8080 tomcat8:v1
 
 # dockerfile构建httpd镜像
 
-- httpd镜像可以直接从官网下载：https://httpd.apache.org/download.cgi
+- httpd镜像可以直接从官网下载：[Apache httpd下载页面](https://httpd.apache.org/download.cgi)
 - 准备dockerfile
 
 ~~~sh
@@ -292,4 +307,3 @@ docker build -t hello-python:v1
 docker run -d --name python -p 5000  hello-python:v1
 ```
 
-## 

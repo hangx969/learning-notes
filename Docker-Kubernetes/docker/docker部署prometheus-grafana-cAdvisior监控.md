@@ -1,12 +1,25 @@
+---
+title: Docker部署Prometheus-Grafana-cAdvisor监控
+tags:
+  - docker
+  - container
+  - prometheus
+  - grafana
+  - cadvisor
+  - monitoring
+aliases:
+  - Prometheus监控部署
+---
+
 # 环境准备
 
-- 参考：https://www.aiwanyun.cn/archives/174
+- 参考：[aiwanyun部署文档](https://www.aiwanyun.cn/archives/174)
 
 - rockylinux-8.10 (IP： 172.16.183.80)，安装docker、prometheus、grafana、node_exporter
 
 # 被监控端安装node_exporter
 
-- 可以从GitHub上的Prometheus项目页面下载node_exporter：https://github.com/prometheus/node_exporter/releases。
+- 可以从GitHub上的Prometheus项目页面下载node_exporter：[node_exporter releases](https://github.com/prometheus/node_exporter/releases)。
 - 建议选择一个稳定但不是最新版本的node_exporter进行下载，以避免潜在的问题。下载完成后，将其上传到服务器上。
 
 ~~~sh
@@ -210,7 +223,7 @@ docker run -i --restart=always \
   - 仪表板-右上角导入仪表板-（提供三个好看的面板，分别是8919，9276，11074）
   - 点击load可以加载面板
 
-> dashboard可以在这里查找、下载：https://grafana.com/grafana/dashboards/
+> [!tip] dashboard可以在这里查找、下载：[Grafana Dashboards](https://grafana.com/grafana/dashboards/)
 
 # docker部署alertmanager
 

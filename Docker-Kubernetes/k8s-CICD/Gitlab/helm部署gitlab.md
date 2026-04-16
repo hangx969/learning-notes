@@ -1,3 +1,14 @@
+---
+title: Helm部署GitLab
+tags:
+  - kubernetes
+  - cicd
+  - gitlab
+  - helm
+aliases:
+  - GitLab Helm部署
+---
+
 # 介绍
 
 - 官网：[Deploy the GitLab Helm chart | GitLab Docs](https://docs.gitlab.com/charts/installation/deployment/)

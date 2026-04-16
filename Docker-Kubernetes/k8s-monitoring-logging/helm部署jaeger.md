@@ -80,9 +80,8 @@ query:
   enabled: false
 ~~~
 
-> 注：
->
-> - Badger是jaeger自带的k-v数据库：https://www.jaegertracing.io/docs/2.5/badger/
+> [!note]
+> Badger是jaeger自带的k-v数据库：[Jaeger Badger](https://www.jaegertracing.io/docs/2.5/badger/)
 
 # 安装
 

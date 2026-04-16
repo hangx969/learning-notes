@@ -1,3 +1,14 @@
+---
+title: k8s两地三中心架构
+tags:
+  - kubernetes
+  - k8s-installation
+  - 高可用
+aliases:
+  - 两地三中心
+  - 异地多活
+---
+
 # 两地三中心架构
 
 ![image-20251115095329861](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202511150953992.png)

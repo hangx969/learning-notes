@@ -1,3 +1,14 @@
+---
+title: ArgoCD部署Helm应用时域名解析失败问题排查与解决
+tags:
+  - kubernetes
+  - cicd
+  - argocd
+  - troubleshooting
+  - dns
+aliases:
+  - ArgoCD DNS解析问题
+---
 
 ## 问题背景
 

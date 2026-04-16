@@ -1,9 +1,21 @@
+---
+title: Docker部署Loki日志系统
+tags:
+  - docker
+  - container
+  - loki
+  - grafana
+  - logging
+aliases:
+  - Loki部署
+---
+
 # Loki简介
 
 - 最主流的 ELK 或者 EFK 比较重，再加上现阶段对于 ES 复杂的搜索功能很多都用不上。最终选择Grafana开源的Loki日志系统。
 
 - Loki 的第一个稳定版本于 2019 年 11 月 19 日发布，是 Grafana Labs 团队最新的开源项目，是一个水平可扩展，高可用性，多租户的日志聚合系统。Loki 是专门用于聚集日志数据，重点是高可用性和可伸缩性。与竞争对手不同的是，它确实易于安装且资源效率极高。
-- 项目地址：https://github.com/grafana/loki/
+- 项目地址：[Grafana Loki GitHub](https://github.com/grafana/loki/)
 
 ## 特性
 
@@ -166,4 +178,4 @@ docker compose up -d
 - 查询日志
   - `(job=“mysql”)|=“password”`
 
-> 这篇doc并无法正常工作。待排查。。。
+> [!warning] 这篇doc并无法正常工作。待排查。。。

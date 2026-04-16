@@ -1,3 +1,13 @@
+---
+title: K8s精细化流量管理-Istio
+tags:
+  - kubernetes
+  - networking
+  - istio
+aliases:
+  - istio流量管理
+---
+
 # 服务网格背景
 
 ## 为什么要用服务网格

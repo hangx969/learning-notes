@@ -1,3 +1,14 @@
+---
+title: k8s多集群kubeconfig管理
+tags:
+  - kubernetes
+  - k8s-installation
+  - kubeconfig
+aliases:
+  - 多集群管理
+  - kubeconfig管理
+---
+
 # 多集群管理
 
 - 在实际生产环境中，往往需要维护多个k8s集群，如何实现在一台机器上操作多个集群。通过设置kubeconfig文件来实现。

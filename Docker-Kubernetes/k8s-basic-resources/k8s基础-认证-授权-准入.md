@@ -176,7 +176,8 @@ kubectl create clusterrolebinding sa-test-admin --clusterrole=cluster-admin  --s
 curl --cacert ./ca.crt  -H "Authorization: Bearer $(cat ./token)"  https://kubernetes/api/v1/pods
 ~~~
 
-> 注意：pod中挂载了sa，会在`/var/run/secrets/kubernetes.io/serviceaccount/`路径下生成ca.crt, namesapce, token等信息。如果这个pod里面有kubectl命令或者sdk（比如client-go），就能直接用，他会自动找到这个路径下的这些文件。
+> [!warning] 注意
+> pod中挂载了sa，会在`/var/run/secrets/kubernetes.io/serviceaccount/`路径下生成ca.crt, namesapce, token等信息。如果这个pod里面有kubectl命令或者sdk（比如client-go），就能直接用，他会自动找到这个路径下的这些文件。
 
 ### 给ns中的所有sa同时授权
 

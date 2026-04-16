@@ -34,10 +34,10 @@ aliases:
 
 - 生产环境推荐的kafka部署方式为operator方式部署，Strimzi是目前最主流的operator方案。集群数据量较小的话，可以采用NFS共享存储，数据量较大的话可使用local pv存储。
 
-- 官网地址：https://strimzi.io/docs/operators/latest/deploying.html#deploying-cluster-operator-helm-chart-str
+- 官网地址：[Strimzi Deploying Guide](https://strimzi.io/docs/operators/latest/deploying.html#deploying-cluster-operator-helm-chart-str)
 
-  - release page：https://github.com/strimzi/strimzi-kafka-operator/releases
-  - artifact hub: https://artifacthub.io/packages/helm/strimzi-kafka-operator/strimzi-kafka-operator
+  - release page：[strimzi-kafka-operator Releases - GitHub](https://github.com/strimzi/strimzi-kafka-operator/releases)
+  - artifact hub: [strimzi-kafka-operator - ArtifactHub](https://artifacthub.io/packages/helm/strimzi-kafka-operator/strimzi-kafka-operator)
 
 - cluster operator部署出来之后，再去手动创建kafka cluster、topic operator、user operator等CRD资源。
 
@@ -58,13 +58,13 @@ aliases:
 
 ## kafka-ui
 
-- 官网地址：https://docs.kafka-ui.provectus.io/
-- release page: https://github.com/provectus/kafka-ui/releases
-- artifact hub: https://artifacthub.io/packages/helm/kafka-ui/kafka-ui
+- 官网地址：[Kafka UI Documentation](https://docs.kafka-ui.provectus.io/)
+- release page: [kafka-ui Releases - GitHub](https://github.com/provectus/kafka-ui/releases)
+- artifact hub: [kafka-ui - ArtifactHub](https://artifacthub.io/packages/helm/kafka-ui/kafka-ui)
 
 ## kafka-mirror-maker
 
-- 官网地址：https://strimzi.io/docs/operators/latest/deploying.html#kafka-mirror-maker-str
+- 官网地址：[Strimzi - Kafka Mirror Maker](https://strimzi.io/docs/operators/latest/deploying.html#kafka-mirror-maker-str)
 
 - 解决 Kafka 集群之间数据复制和数据同步的问题而诞生的 Kafka 官方的数据复制工具。在实际生产中，经常被用来实现 Kafka 数据的备份，迁移和灾备等目的。其实现原理是通过从Source Cluster消费消息，然后将消息生产到Target Cluster，即普通的消息生产和消费。用户只要通过简单的consumer配置和producer配置，启动Mirror，就可以实现准实时的数据同步。
 
@@ -100,9 +100,9 @@ kubectl delete crd kafkabridges kafkaconnectors kafkaconnects kafkamirrormaker2s
 
 注意，strimzi-kafka-operator对kafka的版本是有要求的，升级strimzi的时候，需要检查现有的kafka版本是否适配：
 
-- 说明：https://strimzi.io/docs/operators/0.45.0/deploying.html#Strimzi%20upgrade%20paths
+- 说明：[Strimzi Upgrade Paths](https://strimzi.io/docs/operators/0.45.0/deploying.html#Strimzi%20upgrade%20paths)
 
-- strimzi和kafka的supported version对应表：https://strimzi.io/downloads/
+- strimzi和kafka的supported version对应表：[Strimzi Downloads](https://strimzi.io/downloads/)
 
 如果希望升级到的strimzi版本，不支持现在的kafka版本，那么需要先把strimzi升级到支持当前kafka版本的最低版本。然后把kafka升级到新版，再升级strimzi到最新版。
 
@@ -805,7 +805,7 @@ helm upgrade -i kafka-ui -n kafka . --values values.yaml
 
 - 通过values.yaml环境变量来配置的。
   - ado里面配置的使用kafka-ui-client的secret做认证，在本地部署有点问题，遂添加AUTH_TYPE=DISABLED参数，在UI上就能看到online的cluster了。这样部署的话前面的kafka-ui-config就暂时不需要了。
-- 配置方法可以参考官网：https://docs.kafka-ui.provectus.io/configuration/configuration-file
+- 配置方法可以参考官网：[Kafka UI Configuration](https://docs.kafka-ui.provectus.io/configuration/configuration-file)
 
 ~~~yaml
 env:

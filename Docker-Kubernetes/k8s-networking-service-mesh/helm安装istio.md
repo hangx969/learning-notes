@@ -1,3 +1,13 @@
+---
+title: Helm安装Istio
+tags:
+  - kubernetes
+  - networking
+  - istio
+aliases:
+  - istio-helm安装
+---
+
 # 下载
 
 - 官网教程：[Istio / 使用 Helm 安装](https://istio.io/latest/zh/docs/setup/install/helm/)
