@@ -8,7 +8,7 @@ date: 2026-04-16
 # 🔗 断链报告
 
 > [!info] 扫描日期：2026-04-16
-> 扫描范围：`KnowledgeBase/` 目录下所有 `[[wikilink]]`
+> 扫描范围：`KnowledgeBase/` 目录下所有 `[wikilink](../../wikilink.md)`
 > - **总唯一链接数**：321 个
 > - **匹配文件数**：338 个
 > - **断链数**：==0 个==（创建本文件后全部链接已有对应页面）
@@ -27,10 +27,10 @@ date: 2026-04-16
 
 | 断链 | 状态 | 对应文件 |
 |------|:----:|----------|
-| `[[KnowledgeBase/maintenance/broken-links-report]]` | ✅ 已修复 | 本文件 |
-| `[[KnowledgeBase/maintenance/naming-normalization]]` | ✅ 已修复 | [[KnowledgeBase/maintenance/naming-normalization]] |
-| `[[KnowledgeBase/maintenance/update-workflow]]` | ✅ 已修复 | [[KnowledgeBase/maintenance/update-workflow]] |
-| `[[KnowledgeBase/concepts/]]` | ⚠️ 文件夹链接 | Obsidian 中可点击打开文件夹 |
+| `[broken-links-report](broken-links-report.md)` | ✅ 已修复 | 本文件 |
+| `[naming-normalization](naming-normalization.md)` | ✅ 已修复 | [naming-normalization](naming-normalization.md) |
+| `[update-workflow](update-workflow.md)` | ✅ 已修复 | [update-workflow](update-workflow.md) |
+| `[](../concepts/)` | ⚠️ 文件夹链接 | Obsidian 中可点击打开文件夹 |
 
 ---
 

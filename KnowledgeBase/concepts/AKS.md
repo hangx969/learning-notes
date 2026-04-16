@@ -14,19 +14,19 @@ Azure Kubernetes Service（AKS）是 Microsoft Azure 提供的托管 Kubernetes 
 主要出现在 `Azure/` 目录中与 AKS 相关的文章，同时与 `Docker-Kubernetes/` 下的 Kubernetes 基础资源、网络、监控等内容紧密关联。
 
 ## 相关文章
-- [[Azure/2_AKS-basics]]
-- [[Azure/3_AKS-workload-identity]]
-- [[Azure/4_AKS-SecretProviderClass-KeyVault]]
-- [[Azure/7_ACR-ACI]]
-- [[Azure/6_Azure-Networking]]
+- [2_AKS-basics](../../Azure/2_AKS-basics.md)
+- [3_AKS-workload-identity](../../Azure/3_AKS-workload-identity.md)
+- [4_AKS-SecretProviderClass-KeyVault](../../Azure/4_AKS-SecretProviderClass-KeyVault.md)
+- [7_ACR-ACI](../../Azure/7_ACR-ACI.md)
+- [6_Azure-Networking](../../Azure/6_Azure-Networking.md)
 
 ## 关联概念
-- [[KnowledgeBase/concepts/Azure]]
-- [[KnowledgeBase/concepts/CICD]]
-- [[KnowledgeBase/concepts/Observability]]
-- [[KnowledgeBase/concepts/服务网格]]
-- [[KnowledgeBase/concepts/容器运行时]]
-- [[KnowledgeBase/concepts/Terraform]]
+- [Azure](Azure.md)
+- [CICD](CICD.md)
+- [Observability](Observability.md)
+- [服务网格](服务网格.md)
+- [容器运行时](容器运行时.md)
+- [Terraform](Terraform.md)
 
 ## 可延展方向
 - AKS 集群升级与节点池管理策略

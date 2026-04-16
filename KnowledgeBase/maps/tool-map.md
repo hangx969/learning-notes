@@ -18,51 +18,51 @@ date: 2026-04-16
 
 ### Claude Code
 **相关文档（7 篇）：**
-- [[AI/ClaudeCode/ClaudeCode基础指南]] ⭐ 推荐入口
-- [[AI/ClaudeCode/MCP]] — MCP 协议配置
-- [[AI/ClaudeCode/Plugin]] — 插件系统
-- [[AI/ClaudeCode/Skills]] — Skills 机制
-- [[AI/ClaudeCode/Slash Command]] — 斜杠命令
-- [[AI/ClaudeCode/Subagents]] — 子智能体
-- [[AI/ClaudeCode/obsidian-claude-搭建个人知识库]] — 搭建知识库方法论
+- [ClaudeCode基础指南](../../AI/ClaudeCode/ClaudeCode基础指南.md) ⭐ 推荐入口
+- [MCP](../../AI/ClaudeCode/MCP.md) — MCP 协议配置
+- [Plugin](../../AI/ClaudeCode/Plugin.md) — 插件系统
+- [Skills](../../AI/ClaudeCode/Skills.md) — Skills 机制
+- [Slash Command](../../AI/ClaudeCode/Slash%20Command.md) — 斜杠命令
+- [Subagents](../../AI/ClaudeCode/Subagents.md) — 子智能体
+- [obsidian-claude-搭建个人知识库](../../AI/ClaudeCode/obsidian-claude-搭建个人知识库.md) — 搭建知识库方法论
 
-**概念页：** [[KnowledgeBase/concepts/Claude-Code]]
+**概念页：** [Claude-Code](../concepts/Claude-Code.md)
 
 ---
 
 ### OpenClaw
 **相关文档（7 篇）：**
-- [[AI/OpenClaw/OpenClaw-基础-安装]] ⭐ 推荐入口
-- [[AI/OpenClaw/OpenClaw-Channels]] — Channel 配置
-- [[AI/OpenClaw/OpenClaw-Skills-插件]] — Skills 与插件
-- [[AI/OpenClaw/Openclaw-AIOps]] — AIOps 场景
-- [[AI/OpenClaw/Openclaw-多智能体]] — 多智能体（2974 行）
-- [[AI/OpenClaw/CoPaw]] — CoPaw 工具
-- [[AI/OpenClaw/Ubuntu-2510-Setup-Guide]] — Ubuntu 环境搭建
+- [OpenClaw-基础-安装](../../AI/OpenClaw/OpenClaw-基础-安装.md) ⭐ 推荐入口
+- [OpenClaw-Channels](../../AI/OpenClaw/OpenClaw-Channels.md) — Channel 配置
+- [OpenClaw-Skills-插件](../../AI/OpenClaw/OpenClaw-Skills-插件.md) — Skills 与插件
+- [Openclaw-AIOps](../../AI/OpenClaw/Openclaw-AIOps.md) — AIOps 场景
+- [Openclaw-多智能体](../../AI/OpenClaw/Openclaw-多智能体.md) — 多智能体（2974 行）
+- [CoPaw](../../AI/OpenClaw/CoPaw.md) — CoPaw 工具
+- [Ubuntu-2510-Setup-Guide](../../AI/OpenClaw/Ubuntu-2510-Setup-Guide.md) — Ubuntu 环境搭建
 
-**概念页：** [[KnowledgeBase/concepts/OpenClaw]]
+**概念页：** [OpenClaw](../concepts/OpenClaw.md)
 
 ---
 
 ### MCP (Model Context Protocol)
 **相关文档：**
-- [[AI/ClaudeCode/MCP]] ⭐ 推荐入口
+- [MCP](../../AI/ClaudeCode/MCP.md) ⭐ 推荐入口
 
-**概念页：** [[KnowledgeBase/concepts/MCP]]
+**概念页：** [MCP](../concepts/MCP.md)
 
 ---
 
 ### Obsidian
 **相关文档：**
-- [[AI/ClaudeCode/obsidian-claude-搭建个人知识库]] ⭐ 推荐入口
+- [obsidian-claude-搭建个人知识库](../../AI/ClaudeCode/obsidian-claude-搭建个人知识库.md) ⭐ 推荐入口
 
-**概念页：** [[KnowledgeBase/concepts/Obsidian]]
+**概念页：** [Obsidian](../concepts/Obsidian.md)
 
 ---
 
 ### GitHub Copilot
 **相关文档：**
-- [[AI/GithubCopilot/Copilot CLI]]
+- [Copilot CLI](../../AI/GithubCopilot/Copilot%20CLI.md)
 
 ---
 
@@ -70,65 +70,65 @@ date: 2026-04-16
 
 ### Docker
 **相关文档（12+ 篇）：**
-- [[Docker-Kubernetes/docker/docker基础]] ⭐ 推荐入口
-- [[Docker-Kubernetes/docker/docker配置NVIDIA GPU]]
-- [[Docker-Kubernetes/docker/docker配置代理]]
-- [[Docker-Kubernetes/docker/docker部署gitlab]]
-- [[Docker-Kubernetes/docker/docker部署loki]]
-- [[Docker-Kubernetes/docker/docker部署prometheus-grafana-cAdvisior监控]]
-- [[Docker-Kubernetes/docker/docker部署nginx-tomcat-httpd-go-python服务]]
-- [[Docker-Kubernetes/docker/docker部署lnmp网站]]
+- [docker基础](../../Docker-Kubernetes/docker/docker基础.md) ⭐ 推荐入口
+- [docker配置NVIDIA GPU](../../Docker-Kubernetes/docker/docker配置NVIDIA%20GPU.md)
+- [docker配置代理](../../Docker-Kubernetes/docker/docker配置代理.md)
+- [docker部署gitlab](../../Docker-Kubernetes/docker/docker部署gitlab.md)
+- [docker部署loki](../../Docker-Kubernetes/docker/docker部署loki.md)
+- [docker部署prometheus-grafana-cAdvisior监控](../../Docker-Kubernetes/docker/docker部署prometheus-grafana-cAdvisior监控.md)
+- [docker部署nginx-tomcat-httpd-go-python服务](../../Docker-Kubernetes/docker/docker部署nginx-tomcat-httpd-go-python服务.md)
+- [docker部署lnmp网站](../../Docker-Kubernetes/docker/docker部署lnmp网站.md)
 - 及更多部署实战...
 
-**概念页：** [[KnowledgeBase/concepts/Docker]]
+**概念页：** [Docker](../concepts/Docker.md)
 
 ---
 
 ### Kubernetes
 **相关文档（130+ 篇）：**
-- [[Docker-Kubernetes/k8s-basic-resources/k8s基础-架构-组件-资源]] ⭐ 推荐入口
-- [[Docker-Kubernetes/k8s-installation-management/latest-version/安装k8s-1.35-基于rockylinux10-最新步骤]] — 最新安装
-- 完整目录参见 [[KnowledgeBase/maps/kubernetes-map]]
+- [k8s基础-架构-组件-资源](../../Docker-Kubernetes/k8s-basic-resources/k8s基础-架构-组件-资源.md) ⭐ 推荐入口
+- [安装k8s-1.35-基于rockylinux10-最新步骤](../../Docker-Kubernetes/k8s-installation-management/latest-version/安装k8s-1.35-基于rockylinux10-最新步骤) — 最新安装
+- 完整目录参见 [kubernetes-map](kubernetes-map.md)
 
-**概念页：** [[KnowledgeBase/concepts/Kubernetes]]
+**概念页：** [Kubernetes](../concepts/Kubernetes.md)
 
 ---
 
 ### Helm
 **相关文档（20+ 篇）：**
-- [[Docker-Kubernetes/helm-operator/helmv3-安装与使用]] ⭐ 推荐入口
-- [[Docker-Kubernetes/harbor/helm部署harbor]]
-- [[Docker-Kubernetes/k8s-monitoring-logging/helm部署prometheus-stack全家桶]]
-- [[Docker-Kubernetes/k8s-monitoring-logging/helm部署Loki-promtail-tempo-grafanaAgent全家桶]]
-- [[Docker-Kubernetes/k8s-CICD/Jenkins/helm部署jenkins]]
-- [[Docker-Kubernetes/k8s-networking-service-mesh/helm部署ingress-nginx]]
-- [[Docker-Kubernetes/k8s-networking-service-mesh/helm安装istio]]
-- [[Docker-Kubernetes/k8s-security-auth/helm部署certmanager]]
+- [helmv3-安装与使用](../../Docker-Kubernetes/helm-operator/helmv3-安装与使用.md) ⭐ 推荐入口
+- [helm部署harbor](../../Docker-Kubernetes/harbor/helm部署harbor.md)
+- [helm部署prometheus-stack全家桶](../../Docker-Kubernetes/k8s-monitoring-logging/helm部署prometheus-stack全家桶.md)
+- [helm部署Loki-promtail-tempo-grafanaAgent全家桶](../../Docker-Kubernetes/k8s-monitoring-logging/helm部署Loki-promtail-tempo-grafanaAgent全家桶.md)
+- [helm部署jenkins](../../Docker-Kubernetes/k8s-CICD/Jenkins/helm部署jenkins.md)
+- [helm部署ingress-nginx](../../Docker-Kubernetes/k8s-networking-service-mesh/helm部署ingress-nginx.md)
+- [helm安装istio](../../Docker-Kubernetes/k8s-networking-service-mesh/helm安装istio.md)
+- [helm部署certmanager](../../Docker-Kubernetes/k8s-security-auth/helm部署certmanager.md)
 - 及更多 Helm 部署实战...
 
-**概念页：** [[KnowledgeBase/concepts/Helm]]
+**概念页：** [Helm](../concepts/Helm.md)
 
 ---
 
 ### Istio
 **相关文档（7 篇）：**
-- [[Docker-Kubernetes/k8s-networking-service-mesh/k8s精细化流量管理-istio]] ⭐ 推荐入口
-- [[Docker-Kubernetes/k8s-networking-service-mesh/helm安装istio]]
-- [[Docker-Kubernetes/k8s-networking-service-mesh/k8s部署istio(1.13.1)]]
-- [[Docker-Kubernetes/k8s-networking-service-mesh/企业项目接入istio实战]]
-- [[Docker-Kubernetes/k8s-networking-service-mesh/k8s集群网络安全]]
-- [[Docker-Kubernetes/k8s-networking-service-mesh/helm部署external-dns]]
-- [[Docker-Kubernetes/k8s-networking-service-mesh/helm部署ingress-nginx]]
+- [k8s精细化流量管理-istio](../../Docker-Kubernetes/k8s-networking-service-mesh/k8s精细化流量管理-istio.md) ⭐ 推荐入口
+- [helm安装istio](../../Docker-Kubernetes/k8s-networking-service-mesh/helm安装istio.md)
+- [k8s部署istio(1.13.1)](../../Docker-Kubernetes/k8s-networking-service-mesh/k8s部署istio(1.13.1))
+- [企业项目接入istio实战](../../Docker-Kubernetes/k8s-networking-service-mesh/企业项目接入istio实战.md)
+- [k8s集群网络安全](../../Docker-Kubernetes/k8s-networking-service-mesh/k8s集群网络安全.md)
+- [helm部署external-dns](../../Docker-Kubernetes/k8s-networking-service-mesh/helm部署external-dns.md)
+- [helm部署ingress-nginx](../../Docker-Kubernetes/k8s-networking-service-mesh/helm部署ingress-nginx.md)
 
-**概念页：** [[KnowledgeBase/concepts/Istio]]
+**概念页：** [Istio](../concepts/Istio.md)
 
 ---
 
 ### Harbor
 **相关文档：**
-- [[Docker-Kubernetes/harbor/harbor-basics]] ⭐ 推荐入口
-- [[Docker-Kubernetes/harbor/helm部署harbor]]
-- [[Docker-Kubernetes/kubeblocks/kubeblocks部署高可用harbor集群]]
+- [harbor-basics](../../Docker-Kubernetes/harbor/harbor-basics.md) ⭐ 推荐入口
+- [helm部署harbor](../../Docker-Kubernetes/harbor/helm部署harbor.md)
+- [kubeblocks部署高可用harbor集群](../../Docker-Kubernetes/kubeblocks/kubeblocks部署高可用harbor集群.md)
 
 ---
 
@@ -136,47 +136,47 @@ date: 2026-04-16
 
 ### Prometheus
 **相关文档（10+ 篇）：**
-- [[Docker-Kubernetes/k8s-monitoring-logging/Prometheus基础]] ⭐ 推荐入口
-- [[Docker-Kubernetes/k8s-monitoring-logging/helm部署prometheus-stack全家桶]]
-- [[Docker-Kubernetes/k8s-monitoring-logging/Prometheus监控k8s系统组件]]
-- [[Docker-Kubernetes/k8s-monitoring-logging/Prometheus监控外部k8s集群]]
-- [[Docker-Kubernetes/k8s-monitoring-logging/Prometheus监控非云原生应用-主机]]
-- [[Docker-Kubernetes/k8s-monitoring-logging/k8s监控Prometheus(v2.33.5)+Grafana(v8.4.5)]]
-- [[Docker-Kubernetes/k8s-monitoring-logging/二进制部署Prometheus(v2.32.1)联邦集群]]
-- [[Docker-Kubernetes/k8s-monitoring-logging/二进制部署prometheus-grafana-nodeexporter]]
-- [[Docker-Kubernetes/docker/docker部署prometheus-grafana-cAdvisior监控]]
-- [[HPC/Slurm-node-exporter]]
+- [Prometheus基础](../../Docker-Kubernetes/k8s-monitoring-logging/Prometheus基础.md) ⭐ 推荐入口
+- [helm部署prometheus-stack全家桶](../../Docker-Kubernetes/k8s-monitoring-logging/helm部署prometheus-stack全家桶.md)
+- [Prometheus监控k8s系统组件](../../Docker-Kubernetes/k8s-monitoring-logging/Prometheus监控k8s系统组件.md)
+- [Prometheus监控外部k8s集群](../../Docker-Kubernetes/k8s-monitoring-logging/Prometheus监控外部k8s集群.md)
+- [Prometheus监控非云原生应用-主机](../../Docker-Kubernetes/k8s-monitoring-logging/Prometheus监控非云原生应用-主机.md)
+- [k8s监控Prometheus(v2.33.5)+Grafana(v8.4.5)](../../Docker-Kubernetes/k8s-monitoring-logging/k8s监控Prometheus(v2.33.5)+Grafana(v8.4.5))
+- [二进制部署Prometheus(v2.32.1)联邦集群](../../Docker-Kubernetes/k8s-monitoring-logging/二进制部署Prometheus(v2.32.1)联邦集群)
+- [二进制部署prometheus-grafana-nodeexporter](../../Docker-Kubernetes/k8s-monitoring-logging/二进制部署prometheus-grafana-nodeexporter.md)
+- [docker部署prometheus-grafana-cAdvisior监控](../../Docker-Kubernetes/docker/docker部署prometheus-grafana-cAdvisior监控.md)
+- [Slurm-node-exporter](../../HPC/Slurm-node-exporter.md)
 
-**概念页：** [[KnowledgeBase/concepts/Prometheus]]
+**概念页：** [Prometheus](../concepts/Prometheus.md)
 
 ---
 
 ### Grafana
 **相关文档：**
-- [[Docker-Kubernetes/k8s-monitoring-logging/k8s部署grafana(v5.0.4)]] ⭐
-- [[Docker-Kubernetes/k8s-monitoring-logging/helm部署prometheus-stack全家桶]]
-- [[Docker-Kubernetes/k8s-monitoring-logging/二进制部署prometheus-grafana-nodeexporter]]
-- [[GPU-DeepLearning/GPU-exporter-grafana]]
+- [k8s部署grafana(v5.0.4)](../../Docker-Kubernetes/k8s-monitoring-logging/k8s部署grafana(v5.0.4)) ⭐
+- [helm部署prometheus-stack全家桶](../../Docker-Kubernetes/k8s-monitoring-logging/helm部署prometheus-stack全家桶.md)
+- [二进制部署prometheus-grafana-nodeexporter](../../Docker-Kubernetes/k8s-monitoring-logging/二进制部署prometheus-grafana-nodeexporter.md)
+- [GPU-exporter-grafana](../../GPU-DeepLearning/GPU-exporter-grafana.md)
 
-**概念页：** [[KnowledgeBase/concepts/Grafana]]
+**概念页：** [Grafana](../concepts/Grafana.md)
 
 ---
 
 ### Elasticsearch / EFK
 **相关文档：**
-- [[Docker-Kubernetes/k8s-monitoring-logging/k8s部署elasticsearch集群]] ⭐
-- [[Docker-Kubernetes/k8s-monitoring-logging/k8s监控ES(7.2)+Kibana(7.2)+Fluentd(v1.4.2)]]
-- [[Docker-Kubernetes/k8s-monitoring-logging/k8s监控EFK+logstash+kafka]]
-- [[Docker-Kubernetes/k8s-monitoring-logging/二进制部署efk+logstash+kafka日志收集平台]]
-- [[Docker-Kubernetes/k8s-monitoring-logging/基于helm+operator部署ECK日志收集平台]]
-- [[Python/python-运维开发/python-elasticsearch]]
+- [k8s部署elasticsearch集群](../../Docker-Kubernetes/k8s-monitoring-logging/k8s部署elasticsearch集群.md) ⭐
+- [k8s监控ES(7.2)+Kibana(7.2)+Fluentd(v1.4.2)](../../Docker-Kubernetes/k8s-monitoring-logging/k8s监控ES(7.2)+Kibana(7.2)+Fluentd(v1.4.2))
+- [k8s监控EFK+logstash+kafka](../../Docker-Kubernetes/k8s-monitoring-logging/k8s监控EFK+logstash+kafka.md)
+- [二进制部署efk+logstash+kafka日志收集平台](../../Docker-Kubernetes/k8s-monitoring-logging/二进制部署efk+logstash+kafka日志收集平台.md)
+- [基于helm+operator部署ECK日志收集平台](../../Docker-Kubernetes/k8s-monitoring-logging/基于helm+operator部署ECK日志收集平台.md)
+- [python-elasticsearch](../../Python/python-运维开发/python-elasticsearch.md)
 
 ---
 
 ### Loki
 **相关文档：**
-- [[Docker-Kubernetes/k8s-monitoring-logging/helm部署Loki-promtail-tempo-grafanaAgent全家桶]] ⭐
-- [[Docker-Kubernetes/docker/docker部署loki]]
+- [helm部署Loki-promtail-tempo-grafanaAgent全家桶](../../Docker-Kubernetes/k8s-monitoring-logging/helm部署Loki-promtail-tempo-grafanaAgent全家桶.md) ⭐
+- [docker部署loki](../../Docker-Kubernetes/docker/docker部署loki.md)
 
 ---
 
@@ -184,41 +184,41 @@ date: 2026-04-16
 
 ### ArgoCD
 **相关文档（4 篇）：**
-- [[Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD基础]] ⭐ 推荐入口
-- [[Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD Image Updater]]
-- [[Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD部署Helm应用时域名解析失败问题排查与解决]]
-- [[Docker-Kubernetes/k8s-CICD/ArgoCD/学习链接]]
+- [ArgoCD基础](../../Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD基础.md) ⭐ 推荐入口
+- [ArgoCD Image Updater](../../Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD%20Image%20Updater.md)
+- [ArgoCD部署Helm应用时域名解析失败问题排查与解决](../../Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD部署Helm应用时域名解析失败问题排查与解决.md)
+- [学习链接](../../Docker-Kubernetes/k8s-CICD/ArgoCD/学习链接.md)
 
-**概念页：** [[KnowledgeBase/concepts/ArgoCD]]
+**概念页：** [ArgoCD](../concepts/ArgoCD.md)
 
 ---
 
 ### Jenkins
 **相关文档（7 篇）：**
-- [[Docker-Kubernetes/k8s-CICD/Jenkins/k8s-Devops平台落地-基于jenkins]] ⭐ 推荐入口
-- [[Docker-Kubernetes/k8s-CICD/Jenkins/Jenkins语法-基于docker部署]]
-- [[Docker-Kubernetes/k8s-CICD/Jenkins/helm部署jenkins]]
-- [[Docker-Kubernetes/k8s-CICD/Jenkins/docker部署jenkins]]
-- [[Docker-Kubernetes/k8s-CICD/Jenkins/二进制安装Jenkins(2.319)]]
+- [k8s-Devops平台落地-基于jenkins](../../Docker-Kubernetes/k8s-CICD/Jenkins/k8s-Devops平台落地-基于jenkins.md) ⭐ 推荐入口
+- [Jenkins语法-基于docker部署](../../Docker-Kubernetes/k8s-CICD/Jenkins/Jenkins语法-基于docker部署.md)
+- [helm部署jenkins](../../Docker-Kubernetes/k8s-CICD/Jenkins/helm部署jenkins.md)
+- [docker部署jenkins](../../Docker-Kubernetes/k8s-CICD/Jenkins/docker部署jenkins.md)
+- [二进制安装Jenkins(2.319)](../../Docker-Kubernetes/k8s-CICD/Jenkins/二进制安装Jenkins(2.319))
 - 及 K8s 部署 Jenkins DevOps 工具链 2 篇
 
-**概念页：** [[KnowledgeBase/concepts/Jenkins]]
+**概念页：** [Jenkins](../concepts/Jenkins.md)
 
 ---
 
 ### GitLab
 **相关文档：**
-- [[Docker-Kubernetes/k8s-CICD/Gitlab/二进制安装Gitlab(17.9.8)]] ⭐
-- [[Docker-Kubernetes/k8s-CICD/Gitlab/helm部署gitlab]]
-- [[Docker-Kubernetes/k8s-CICD/Gitlab/k8s部署Gitlab(11.8.1)-基于yaml]]
-- [[Docker-Kubernetes/docker/docker部署gitlab]]
+- [二进制安装Gitlab(17.9.8)](../../Docker-Kubernetes/k8s-CICD/Gitlab/二进制安装Gitlab(17.9.8)) ⭐
+- [helm部署gitlab](../../Docker-Kubernetes/k8s-CICD/Gitlab/helm部署gitlab.md)
+- [k8s部署Gitlab(11.8.1)-基于yaml](../../Docker-Kubernetes/k8s-CICD/Gitlab/k8s部署Gitlab(11.8.1)-基于yaml)
+- [docker部署gitlab](../../Docker-Kubernetes/docker/docker部署gitlab.md)
 
 ---
 
 ### Tekton
 **相关文档：**
-- [[Docker-Kubernetes/k8s-CICD/Tekton/基于Tekton的云原生平台落地]] ⭐
-- [[Docker-Kubernetes/k8s-CICD/Tekton/k8s部署原生的CICD工具Tekton-基于yaml]]
+- [基于Tekton的云原生平台落地](../../Docker-Kubernetes/k8s-CICD/Tekton/基于Tekton的云原生平台落地.md) ⭐
+- [k8s部署原生的CICD工具Tekton-基于yaml](../../Docker-Kubernetes/k8s-CICD/Tekton/k8s部署原生的CICD工具Tekton-基于yaml.md)
 
 ---
 
@@ -226,16 +226,16 @@ date: 2026-04-16
 
 ### Terraform
 **相关文档：**
-- [[IaC/terraform-basics]] ⭐ 推荐入口
-- [[IaC/terraform-docs]]
+- [terraform-basics](../../IaC/terraform-basics.md) ⭐ 推荐入口
+- [terraform-docs](../../IaC/terraform-docs.md)
 
-**概念页：** [[KnowledgeBase/concepts/Terraform]]
+**概念页：** [Terraform](../concepts/Terraform.md)
 
 ---
 
 ### Ansible
 **相关文档：**
-- [[Linux-Shell/ansible安装-rockylinux8]] ⭐
+- [ansible安装-rockylinux8](../../Linux-Shell/ansible安装-rockylinux8.md) ⭐
 
 ---
 
@@ -243,33 +243,33 @@ date: 2026-04-16
 
 ### Azure
 **相关文档（21 篇）：**
-- [[Azure/2_AKS-basics]] ⭐ 推荐入口（AKS）
-- [[Azure/0_Azure-VM-VMSS]] — 虚拟机
-- [[Azure/8_Azure-devops-basics]] — DevOps
-- 完整列表参见 [[KnowledgeBase/maps/cloud-platform-map]]
+- [2_AKS-basics](../../Azure/2_AKS-basics.md) ⭐ 推荐入口（AKS）
+- [0_Azure-VM-VMSS](../../Azure/0_Azure-VM-VMSS.md) — 虚拟机
+- [8_Azure-devops-basics](../../Azure/8_Azure-devops-basics.md) — DevOps
+- 完整列表参见 [cloud-platform-map](cloud-platform-map.md)
 
-**概念页：** [[KnowledgeBase/concepts/Azure]]
+**概念页：** [Azure](../concepts/Azure.md)
 
 ---
 
 ### Aliyun
 **相关文档（19 篇）：**
-- [[Aliyun/网络/VPC]] ⭐ 推荐入口
-- [[Aliyun/计算/ECS]] — 弹性计算
-- [[Aliyun/网络/负载均衡SLB]] — 负载均衡
-- 完整列表参见 [[KnowledgeBase/maps/cloud-platform-map]]
+- [VPC](../../Aliyun/网络/VPC.md) ⭐ 推荐入口
+- [ECS](../../Aliyun/计算/ECS.md) — 弹性计算
+- [负载均衡SLB](../../Aliyun/网络/负载均衡SLB.md) — 负载均衡
+- 完整列表参见 [cloud-platform-map](cloud-platform-map.md)
 
-**概念页：** [[KnowledgeBase/concepts/Aliyun]]
+**概念页：** [Aliyun](../concepts/Aliyun.md)
 
 ---
 
 ### AKS (Azure Kubernetes Service)
 **相关文档：**
-- [[Azure/2_AKS-basics]] ⭐
-- [[Azure/3_AKS-workload-identity]]
-- [[Azure/4_AKS-SecretProviderClass-KeyVault]]
+- [2_AKS-basics](../../Azure/2_AKS-basics.md) ⭐
+- [3_AKS-workload-identity](../../Azure/3_AKS-workload-identity.md)
+- [4_AKS-SecretProviderClass-KeyVault](../../Azure/4_AKS-SecretProviderClass-KeyVault.md)
 
-**概念页：** [[KnowledgeBase/concepts/AKS]]
+**概念页：** [AKS](../concepts/AKS.md)
 
 ---
 
@@ -277,16 +277,16 @@ date: 2026-04-16
 
 ### Python
 **相关文档（27 篇）：**
-- [[Python/python-基础/python-basics]] ⭐ 推荐入口
-- 完整列表参见 [[KnowledgeBase/maps/python-devops-map]]
+- [python-basics](../../Python/python-基础/python-basics.md) ⭐ 推荐入口
+- 完整列表参见 [python-devops-map](python-devops-map.md)
 
-**概念页：** [[KnowledgeBase/concepts/Python运维开发]]
+**概念页：** [Python运维开发](../concepts/Python运维开发.md)
 
 ---
 
 ### Go
 **相关文档（9 篇）：**
-- [[Go/go-01-环境配置-基础]] ⭐ 推荐入口
+- [go-01-环境配置-基础](../../Go/go-01-环境配置-基础.md) ⭐ 推荐入口
 
 ---
 
@@ -294,62 +294,62 @@ date: 2026-04-16
 
 ### Slurm
 **相关文档（5 篇）：**
-- [[HPC/CentOS7-slurm23.02-二进制安装]] ⭐ 推荐入口
-- [[HPC/Ubuntu2204-slurm-22.05.11-二进制安装]]
-- [[HPC/Ubuntu-2204-slurm-22.05.11-binary-installation]]
-- [[HPC/Ubuntu2204-slurm- 23.11-deb安装]]
-- [[HPC/Slurm-node-exporter]]
+- [CentOS7-slurm23.02-二进制安装](../../HPC/CentOS7-slurm23.02-二进制安装) ⭐ 推荐入口
+- [Ubuntu2204-slurm-22.05.11-二进制安装](../../HPC/Ubuntu2204-slurm-22.05.11-二进制安装)
+- [Ubuntu-2204-slurm-22.05.11-binary-installation](../../HPC/Ubuntu-2204-slurm-22.05.11-binary-installation)
+- [Ubuntu2204-slurm- 23.11-deb安装](../../HPC/Ubuntu2204-slurm-%2023.11-deb安装)
+- [Slurm-node-exporter](../../HPC/Slurm-node-exporter.md)
 
-**概念页：** [[KnowledgeBase/concepts/Slurm]]
+**概念页：** [Slurm](../concepts/Slurm.md)
 
 ---
 
 ### PBS
 **相关文档：**
-- [[HPC/PBS]] ⭐
-- [[HPC/PBS-cases]]
+- [PBS](../../HPC/PBS.md) ⭐
+- [PBS-cases](../../HPC/PBS-cases.md)
 
 ---
 
 ## 消息中间件
 
 ### Kafka
-- [[Middlewares/Kafka]] ⭐
-- [[Docker-Kubernetes/k8s-db-middleware/helm部署strimzi-kafka]]
-- [[Docker-Kubernetes/k8s-monitoring-logging/k8s监控EFK+logstash+kafka]]
+- [Kafka](../../Middlewares/Kafka.md) ⭐
+- [helm部署strimzi-kafka](../../Docker-Kubernetes/k8s-db-middleware/helm部署strimzi-kafka.md)
+- [k8s监控EFK+logstash+kafka](../../Docker-Kubernetes/k8s-monitoring-logging/k8s监控EFK+logstash+kafka.md)
 
 ### RabbitMQ
-- [[Middlewares/RabbitMQ]] ⭐
+- [RabbitMQ](../../Middlewares/RabbitMQ.md) ⭐
 
 ### RocketMQ
-- [[Middlewares/RocketMQ]] ⭐
+- [RocketMQ](../../Middlewares/RocketMQ.md) ⭐
 
 ---
 
 ## 数据库
 
 ### MySQL
-- [[Database/MySQL入门]] ⭐
-- [[Database/MGR部署MySQL5.7]]
-- [[Docker-Kubernetes/k8s-db-middleware/helm部署mysql]]
-- [[Docker-Kubernetes/k8s-db-middleware/Operator部署mysql集群]]
-- [[Docker-Kubernetes/k8s-db-middleware/k8s基于yaml部署mysql主从高可用]]
-- [[Python/python-运维开发/python-mysql]]
+- [MySQL入门](../../Database/MySQL入门.md) ⭐
+- [MGR部署MySQL5.7](../../Database/MGR部署MySQL5.7)
+- [helm部署mysql](../../Docker-Kubernetes/k8s-db-middleware/helm部署mysql.md)
+- [Operator部署mysql集群](../../Docker-Kubernetes/k8s-db-middleware/Operator部署mysql集群.md)
+- [k8s基于yaml部署mysql主从高可用](../../Docker-Kubernetes/k8s-db-middleware/k8s基于yaml部署mysql主从高可用.md)
+- [python-mysql](../../Python/python-运维开发/python-mysql.md)
 
 ### Redis
-- [[Database/源码安装redis-6.2.6-centos7]] ⭐
-- [[Docker-Kubernetes/k8s-db-middleware/Operator部署Redis集群]]
-- [[Docker-Kubernetes/k8s-db-middleware/k8s基于yaml部署redis集群]]
+- [源码安装redis-6.2.6-centos7](../../Database/源码安装redis-6.2.6-centos7) ⭐
+- [Operator部署Redis集群](../../Docker-Kubernetes/k8s-db-middleware/Operator部署Redis集群.md)
+- [k8s基于yaml部署redis集群](../../Docker-Kubernetes/k8s-db-middleware/k8s基于yaml部署redis集群.md)
 
 ### PostgreSQL
-- [[Docker-Kubernetes/k8s-db-middleware/helm部署postgreSQL]] ⭐
-- [[Python/python-运维开发/python-postgresql]]
+- [helm部署postgreSQL](../../Docker-Kubernetes/k8s-db-middleware/helm部署postgreSQL.md) ⭐
+- [python-postgresql](../../Python/python-运维开发/python-postgresql.md)
 
 ---
 
 ## GPU / NVIDIA
-- [[GPU-DeepLearning/GPU-basics]] ⭐
-- [[GPU-DeepLearning/GPU-exporter-grafana]]
-- [[GPU-DeepLearning/NVIDIA-GPU-开启persistent mode]]
-- [[Docker-Kubernetes/docker/docker配置NVIDIA GPU]]
-- [[Docker-Kubernetes/k8s-ai-gpu/k8s配置NVIDIA GPU]]
+- [GPU-basics](../../GPU-DeepLearning/GPU-basics.md) ⭐
+- [GPU-exporter-grafana](../../GPU-DeepLearning/GPU-exporter-grafana.md)
+- [NVIDIA-GPU-开启persistent mode](../../GPU-DeepLearning/NVIDIA-GPU-开启persistent%20mode.md)
+- [docker配置NVIDIA GPU](../../Docker-Kubernetes/docker/docker配置NVIDIA%20GPU.md)
+- [k8s配置NVIDIA GPU](../../Docker-Kubernetes/k8s-ai-gpu/k8s配置NVIDIA%20GPU.md)

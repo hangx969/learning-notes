@@ -58,7 +58,7 @@ date: 2026-04-16
 - 双链率极低（仅 5%），145 篇文档之间几乎没有交叉引用
 - 缺少总览性导航页面，读者难以快速定位
 
-**关联领域：** [[CloudComputing/云原生]]、[[Python/python-运维开发/python-kubernetes-module]]、[[Azure/2_AKS-basics]]、[[GPU-DeepLearning/GPU-basics]]
+**关联领域：** [云原生](../../CloudComputing/云原生.md)、[python-kubernetes-module](../../Python/python-运维开发/python-kubernetes-module.md)、[2_AKS-basics](../../Azure/2_AKS-basics.md)、[GPU-basics](../../GPU-DeepLearning/GPU-basics.md)
 
 ---
 
@@ -76,7 +76,7 @@ date: 2026-04-16
 - 网络架构理解深刻（VPC、CEN-TR、VPN-专线）
 - 安全产品矩阵完整
 
-**关联领域：** [[Azure/6_Azure-Networking]]（对标）、[[Networking/计算机网络基础]]（理论基础）
+**关联领域：** [6_Azure-Networking](../../Azure/6_Azure-Networking.md)（对标）、[计算机网络基础](../../Networking/计算机网络基础.md)（理论基础）
 
 ---
 
@@ -87,7 +87,7 @@ date: 2026-04-16
 **内容特点：**
 - 四大分支清晰：基础(8) → 网络编程前端(6) → ==运维开发(10)== → 数据分析(2)
 - 运维开发是核心亮点：subprocess、psutil、paramiko、fabric、K8s API、MySQL/PG/ES 自动化
-- 有一个完整的实际项目案例：[[Python/电池参数提取统计工具开发/实验室电池参数一键统计工具开发]]
+- 有一个完整的实际项目案例：[实验室电池参数一键统计工具开发](../../Python/电池参数提取统计工具开发/实验室电池参数一键统计工具开发.md)
 - ==双链率 100%==
 
 **强项：**
@@ -112,7 +112,7 @@ date: 2026-04-16
 - AKS 与安全集成（Workload Identity + KeyVault）是高价值实战内容
 - 排障工具矩阵在其他云平台笔记中没有对标
 
-**关联领域：** [[Docker-Kubernetes/k8s-basic-resources/k8s基础-架构-组件-资源]]（K8s 通用概念）、[[Aliyun/计算/ECS]]（对标 Azure VM）
+**关联领域：** [k8s基础-架构-组件-资源](../../Docker-Kubernetes/k8s-basic-resources/k8s基础-架构-组件-资源.md)（K8s 通用概念）、[ECS](../../Aliyun/计算/ECS.md)（对标 Azure VM）
 
 ---
 
@@ -166,7 +166,7 @@ date: 2026-04-16
 - 按学习顺序编排：环境 → 变量 → 分支循环 → 函数 → 数组 → OOP → 错误处理 → Web → 云原生
 - ==双链率 100%==，9 篇文档互相引用
 
-**关联领域：** [[CloudComputing/云原生]]、[[Docker-Kubernetes/k8s-CICD/发布go-python-java代码到K8S环境]]
+**关联领域：** [云原生](../../CloudComputing/云原生.md)、[发布go-python-java代码到K8S环境](../../Docker-Kubernetes/k8s-CICD/发布go-python-java代码到K8S环境.md)
 
 ---
 
@@ -190,7 +190,7 @@ date: 2026-04-16
 - 多版本、多平台覆盖：CentOS7 + Ubuntu 22.04，Slurm 22.05/23.02/23.11
 - 含 PBS vs Slurm 对比
 
-**关联领域：** [[GPU-DeepLearning/GPU-basics]]（GPU 集群常用 Slurm）
+**关联领域：** [GPU-basics](../../GPU-DeepLearning/GPU-basics.md)（GPU 集群常用 Slurm）
 
 ---
 

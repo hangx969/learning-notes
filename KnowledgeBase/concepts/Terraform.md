@@ -11,17 +11,17 @@ date: 2026-04-16
 Terraform 是 HashiCorp 开发的基础设施即代码（Infrastructure as Code, IaC）工具，使用声明式的 HCL（HashiCorp Configuration Language）语言来定义和管理云资源及本地基础设施的完整生命周期。
 
 ## 在本仓库中的位置
-主要出现在 `IaC/` 目录下，涵盖 Terraform 基础用法和文档编写。与 [[KnowledgeBase/concepts/Azure]] 和 [[KnowledgeBase/concepts/Aliyun]] 等云平台配合使用，实现多云环境的自动化资源编排。
+主要出现在 `IaC/` 目录下，涵盖 Terraform 基础用法和文档编写。与 [Azure](Azure.md) 和 [Aliyun](Aliyun.md) 等云平台配合使用，实现多云环境的自动化资源编排。
 
 ## 相关文章
-- [[IaC/terraform-basics]]
-- [[IaC/terraform-docs]]
+- [terraform-basics](../../IaC/terraform-basics.md)
+- [terraform-docs](../../IaC/terraform-docs.md)
 
 ## 关联概念
-- [[KnowledgeBase/concepts/Azure]]
-- [[KnowledgeBase/concepts/Aliyun]]
-- [[KnowledgeBase/concepts/自动化运维]]
-- [[KnowledgeBase/concepts/AKS]]
+- [Azure](Azure.md)
+- [Aliyun](Aliyun.md)
+- [自动化运维](自动化运维.md)
+- [AKS](AKS.md)
 
 ## 可延展方向
 - Terraform Module 开发与最佳实践

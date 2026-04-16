@@ -14,32 +14,32 @@ date: 2026-04-16
 主要集中在 `Docker-Kubernetes/k8s-monitoring-logging/` 目录下，共 20 篇文章，涵盖指标监控、日志收集、全链路追踪三大方向。
 
 ## 相关文章
-- [[Docker-Kubernetes/k8s-monitoring-logging/Prometheus基础]]
-- [[Docker-Kubernetes/k8s-monitoring-logging/Prometheus监控k8s系统组件]]
-- [[Docker-Kubernetes/k8s-monitoring-logging/Prometheus监控外部k8s集群]]
-- [[Docker-Kubernetes/k8s-monitoring-logging/Prometheus监控非云原生应用-主机]]
-- [[Docker-Kubernetes/k8s-monitoring-logging/helm部署prometheus-stack全家桶]]
-- [[Docker-Kubernetes/k8s-monitoring-logging/二进制部署Prometheus(v2.32.1)联邦集群]]
-- [[Docker-Kubernetes/k8s-monitoring-logging/二进制部署prometheus-grafana-nodeexporter]]
-- [[Docker-Kubernetes/k8s-monitoring-logging/k8s监控Prometheus(v2.2.1)]]
-- [[Docker-Kubernetes/k8s-monitoring-logging/k8s监控Prometheus(v2.33.5)+Grafana(v8.4.5)]]
-- [[Docker-Kubernetes/k8s-monitoring-logging/k8s监控alertmanager(v0.14.0)]]
-- [[Docker-Kubernetes/k8s-monitoring-logging/k8s部署grafana(v5.0.4)]]
-- [[Docker-Kubernetes/k8s-monitoring-logging/helm部署Loki-promtail-tempo-grafanaAgent全家桶]]
-- [[Docker-Kubernetes/k8s-monitoring-logging/helm部署jaeger]]
-- [[Docker-Kubernetes/k8s-monitoring-logging/k8s部署全链路追踪-Skywalking]]
-- [[Docker-Kubernetes/k8s-monitoring-logging/k8s日志管理]]
-- [[Docker-Kubernetes/k8s-monitoring-logging/k8s监控EFK+logstash+kafka]]
-- [[Docker-Kubernetes/k8s-monitoring-logging/k8s监控ES(7.2)+Kibana(7.2)+Fluentd(v1.4.2)]]
-- [[Docker-Kubernetes/k8s-monitoring-logging/k8s部署elasticsearch集群]]
-- [[Docker-Kubernetes/k8s-monitoring-logging/二进制部署efk+logstash+kafka日志收集平台]]
-- [[Docker-Kubernetes/k8s-monitoring-logging/基于helm+operator部署ECK日志收集平台]]
+- [Prometheus基础](../../Docker-Kubernetes/k8s-monitoring-logging/Prometheus基础.md)
+- [Prometheus监控k8s系统组件](../../Docker-Kubernetes/k8s-monitoring-logging/Prometheus监控k8s系统组件.md)
+- [Prometheus监控外部k8s集群](../../Docker-Kubernetes/k8s-monitoring-logging/Prometheus监控外部k8s集群.md)
+- [Prometheus监控非云原生应用-主机](../../Docker-Kubernetes/k8s-monitoring-logging/Prometheus监控非云原生应用-主机.md)
+- [helm部署prometheus-stack全家桶](../../Docker-Kubernetes/k8s-monitoring-logging/helm部署prometheus-stack全家桶.md)
+- [二进制部署Prometheus(v2.32.1)联邦集群](../../Docker-Kubernetes/k8s-monitoring-logging/二进制部署Prometheus(v2.32.1)联邦集群)
+- [二进制部署prometheus-grafana-nodeexporter](../../Docker-Kubernetes/k8s-monitoring-logging/二进制部署prometheus-grafana-nodeexporter.md)
+- [k8s监控Prometheus(v2.2.1)](../../Docker-Kubernetes/k8s-monitoring-logging/k8s监控Prometheus(v2.2.1))
+- [k8s监控Prometheus(v2.33.5)+Grafana(v8.4.5)](../../Docker-Kubernetes/k8s-monitoring-logging/k8s监控Prometheus(v2.33.5)+Grafana(v8.4.5))
+- [k8s监控alertmanager(v0.14.0)](../../Docker-Kubernetes/k8s-monitoring-logging/k8s监控alertmanager(v0.14.0))
+- [k8s部署grafana(v5.0.4)](../../Docker-Kubernetes/k8s-monitoring-logging/k8s部署grafana(v5.0.4))
+- [helm部署Loki-promtail-tempo-grafanaAgent全家桶](../../Docker-Kubernetes/k8s-monitoring-logging/helm部署Loki-promtail-tempo-grafanaAgent全家桶.md)
+- [helm部署jaeger](../../Docker-Kubernetes/k8s-monitoring-logging/helm部署jaeger.md)
+- [k8s部署全链路追踪-Skywalking](../../Docker-Kubernetes/k8s-monitoring-logging/k8s部署全链路追踪-Skywalking.md)
+- [k8s日志管理](../../Docker-Kubernetes/k8s-monitoring-logging/k8s日志管理.md)
+- [k8s监控EFK+logstash+kafka](../../Docker-Kubernetes/k8s-monitoring-logging/k8s监控EFK+logstash+kafka.md)
+- [k8s监控ES(7.2)+Kibana(7.2)+Fluentd(v1.4.2)](../../Docker-Kubernetes/k8s-monitoring-logging/k8s监控ES(7.2)+Kibana(7.2)+Fluentd(v1.4.2))
+- [k8s部署elasticsearch集群](../../Docker-Kubernetes/k8s-monitoring-logging/k8s部署elasticsearch集群.md)
+- [二进制部署efk+logstash+kafka日志收集平台](../../Docker-Kubernetes/k8s-monitoring-logging/二进制部署efk+logstash+kafka日志收集平台.md)
+- [基于helm+operator部署ECK日志收集平台](../../Docker-Kubernetes/k8s-monitoring-logging/基于helm+operator部署ECK日志收集平台.md)
 
 ## 关联概念
-- [[KnowledgeBase/concepts/日志系统]]
-- [[KnowledgeBase/concepts/AKS]]
-- [[KnowledgeBase/concepts/服务网格]]
-- [[KnowledgeBase/concepts/CICD]]
+- [日志系统](日志系统.md)
+- [AKS](AKS.md)
+- [服务网格](服务网格.md)
+- [CICD](CICD.md)
 
 ## 可延展方向
 - OpenTelemetry 统一采集标准

@@ -19,9 +19,9 @@ date: 2026-04-16
 - 缺少理论框架：声明式基础设施、Git 作为唯一真实来源、自动漂移检测
 
 **与当前仓库的关系：**
-- [[Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD基础]] — 已有 GitOps 工具
-- [[Docker-Kubernetes/k8s-CICD/Kustomize/k8s配置定制工具-kustomize]] — 配置管理
-- [[Docker-Kubernetes/helm-operator/helmv3-安装与使用]] — Helm 管理
+- [ArgoCD基础](../../Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD基础.md) — 已有 GitOps 工具
+- [k8s配置定制工具-kustomize](../../Docker-Kubernetes/k8s-CICD/Kustomize/k8s配置定制工具-kustomize.md) — 配置管理
+- [helmv3-安装与使用](../../Docker-Kubernetes/helm-operator/helmv3-安装与使用.md) — Helm 管理
 
 **能补上的空白：** GitOps 理论 → ArgoCD 实践的衔接层
 
@@ -34,9 +34,9 @@ date: 2026-04-16
 - 已有丰富的监控和故障排查文档，缺少 SRE 思维框架
 
 **与当前仓库的关系：**
-- [[Docker-Kubernetes/k8s-monitoring-logging/Prometheus基础]] — 指标体系
-- [[Docker-Kubernetes/k8s-installation-management/k8s故障排查指南]] — 故障处理
-- [[Docker-Kubernetes/k8s-installation-management/k8s生产环境优化与最佳实践]] — 生产优化
+- [Prometheus基础](../../Docker-Kubernetes/k8s-monitoring-logging/Prometheus基础.md) — 指标体系
+- [k8s故障排查指南](../../Docker-Kubernetes/k8s-installation-management/k8s故障排查指南.md) — 故障处理
+- [k8s生产环境优化与最佳实践](../../Docker-Kubernetes/k8s-installation-management/k8s生产环境优化与最佳实践.md) — 生产优化
 
 **能补上的空白：** 从"会用监控"到"用好监控"的方法论
 
@@ -49,8 +49,8 @@ date: 2026-04-16
 - 告警规则是运维核心，当前只有 Alertmanager 部署
 
 **与当前仓库的关系：**
-- [[Docker-Kubernetes/k8s-monitoring-logging/helm部署prometheus-stack全家桶]]
-- [[Docker-Kubernetes/k8s-monitoring-logging/k8s监控alertmanager(v0.14.0)]]
+- [helm部署prometheus-stack全家桶](../../Docker-Kubernetes/k8s-monitoring-logging/helm部署prometheus-stack全家桶.md)
+- [k8s监控alertmanager(v0.14.0)](../../Docker-Kubernetes/k8s-monitoring-logging/k8s监控alertmanager(v0.14.0))
 
 **能补上的空白：** 可观测性体系中"查询与告警"的核心技能
 
@@ -63,8 +63,8 @@ date: 2026-04-16
 - 混沌工程是验证系统韧性的标准实践
 
 **与当前仓库的关系：**
-- [[Docker-Kubernetes/k8s-installation-management/k8s生产环境优化与最佳实践]]
-- [[Docker-Kubernetes/k8s-installation-management/etcd高可用配置以及模拟集群故障和恢复]]
+- [k8s生产环境优化与最佳实践](../../Docker-Kubernetes/k8s-installation-management/k8s生产环境优化与最佳实践.md)
+- [etcd高可用配置以及模拟集群故障和恢复](../../Docker-Kubernetes/k8s-installation-management/etcd高可用配置以及模拟集群故障和恢复.md)
 
 **能补上的空白：** 从"搭建高可用"到"验证高可用"的闭环
 
@@ -77,9 +77,9 @@ date: 2026-04-16
 - 与 Terraform 形成 IaC 双翼
 
 **与当前仓库的关系：**
-- [[Linux-Shell/ansible安装-rockylinux8]]
-- [[IaC/terraform-basics]]
-- [[Python/python-运维开发/python-fabric高级用法]] — 类似工具
+- [ansible安装-rockylinux8](../../Linux-Shell/ansible安装-rockylinux8.md)
+- [terraform-basics](../../IaC/terraform-basics.md)
+- [python-fabric高级用法](../../Python/python-运维开发/python-fabric高级用法.md) — 类似工具
 
 **能补上的空白：** 自动化运维工具链中 Ansible 的深度内容
 
@@ -92,9 +92,9 @@ date: 2026-04-16
 - 安全左移是行业趋势
 
 **与当前仓库的关系：**
-- [[Docker-Kubernetes/k8s-security-auth/helm部署trivy-operator]]
-- [[Docker-Kubernetes/k8s-security-auth/helm部署kyverno和policy-reporter]]
-- [[Docker-Kubernetes/k8s-basic-resources/k8s基础-认证-授权-准入]]
+- [helm部署trivy-operator](../../Docker-Kubernetes/k8s-security-auth/helm部署trivy-operator.md)
+- [helm部署kyverno和policy-reporter](../../Docker-Kubernetes/k8s-security-auth/helm部署kyverno和policy-reporter.md)
+- [k8s基础-认证-授权-准入](../../Docker-Kubernetes/k8s-basic-resources/k8s基础-认证-授权-准入.md)
 
 **能补上的空白：** 从"部署安全工具"到"实施安全策略"的升级
 
@@ -107,9 +107,9 @@ date: 2026-04-16
 - Go + K8s API + Operator SDK 是高阶 K8s 技能
 
 **与当前仓库的关系：**
-- [[Docker-Kubernetes/k8s-basic-resources/k8s基础-自定义CRD资源]]
-- [[Docker-Kubernetes/k8s-db-middleware/Operator部署Redis集群]]
-- [[Go/云原生开发-基础]]
+- [k8s基础-自定义CRD资源](../../Docker-Kubernetes/k8s-basic-resources/k8s基础-自定义CRD资源.md)
+- [Operator部署Redis集群](../../Docker-Kubernetes/k8s-db-middleware/Operator部署Redis集群.md)
+- [云原生开发-基础](../../Go/云原生开发-基础.md)
 
 **能补上的空白：** Go 语言在云原生场景的实际工程应用
 
@@ -122,9 +122,9 @@ date: 2026-04-16
 - AIOps 是 AI 目录最大的价值落地方向
 
 **与当前仓库的关系：**
-- [[AI/OpenClaw/Openclaw-AIOps]]
-- [[AI/ClaudeCode/ClaudeCode基础指南]]
-- [[Python/python-运维开发/python-Linux-operation]]
+- [Openclaw-AIOps](../../AI/OpenClaw/Openclaw-AIOps.md)
+- [ClaudeCode基础指南](../../AI/ClaudeCode/ClaudeCode基础指南.md)
+- [python-Linux-operation](../../Python/python-运维开发/python-Linux-operation.md)
 
 **能补上的空白：** AI 工具从"会用"到"用好"的实战桥梁
 
@@ -137,9 +137,9 @@ date: 2026-04-16
 - FinOps 是企业刚需
 
 **与当前仓库的关系：**
-- [[Aliyun/网络/VPC]] + [[Azure/6_Azure-Networking]] — 网络对标
-- [[Azure/2_AKS-basics]] — K8s 托管对标
-- [[Aliyun/资源管理/Landing Zone]] — 资源治理
+- [VPC](../../Aliyun/网络/VPC.md) + [6_Azure-Networking](../../Azure/6_Azure-Networking.md) — 网络对标
+- [2_AKS-basics](../../Azure/2_AKS-basics.md) — K8s 托管对标
+- [Landing Zone](../../Aliyun/资源管理/Landing%20Zone.md) — 资源治理
 
 **能补上的空白：** 多云治理和成本优化的系统视角
 
@@ -152,9 +152,9 @@ date: 2026-04-16
 - 理论补强可以提升对实操的理解深度
 
 **与当前仓库的关系：**
-- [[Docker-Kubernetes/k8s-installation-management/etcd高可用配置以及模拟集群故障和恢复]]
-- [[Database/MGR部署MySQL5.7]]
-- [[Database/源码安装redis-6.2.6-centos7]]
+- [etcd高可用配置以及模拟集群故障和恢复](../../Docker-Kubernetes/k8s-installation-management/etcd高可用配置以及模拟集群故障和恢复.md)
+- [MGR部署MySQL5.7](../../Database/MGR部署MySQL5.7)
+- [源码安装redis-6.2.6-centos7](../../Database/源码安装redis-6.2.6-centos7)
 
 **能补上的空白：** 理解分布式中间件行为的理论基础
 

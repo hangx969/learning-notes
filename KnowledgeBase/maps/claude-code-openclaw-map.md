@@ -40,9 +40,9 @@ ClaudeCode基础指南
 ```
 
 **核心文章：**
-- [[AI/ClaudeCode/ClaudeCode基础指南]] — 从零开始
-- [[AI/ClaudeCode/MCP]] — ==MCP 是 Claude Code 连接外部世界的桥梁==
-- [[AI/ClaudeCode/Subagents]] — 并行任务处理
+- [ClaudeCode基础指南](../../AI/ClaudeCode/ClaudeCode基础指南.md) — 从零开始
+- [MCP](../../AI/ClaudeCode/MCP.md) — ==MCP 是 Claude Code 连接外部世界的桥梁==
+- [Subagents](../../AI/ClaudeCode/Subagents.md) — 并行任务处理
 
 ---
 
@@ -59,9 +59,9 @@ OpenClaw-基础-安装
 ```
 
 **核心文章：**
-- [[AI/OpenClaw/OpenClaw-基础-安装]] — 从零开始
-- [[AI/OpenClaw/Openclaw-多智能体]] — ==多智能体是 OpenClaw 的核心架构==（2974 行）
-- [[AI/OpenClaw/Openclaw-AIOps]] — AIOps 运维落地
+- [OpenClaw-基础-安装](../../AI/OpenClaw/OpenClaw-基础-安装.md) — 从零开始
+- [Openclaw-多智能体](../../AI/OpenClaw/Openclaw-多智能体.md) — ==多智能体是 OpenClaw 的核心架构==（2974 行）
+- [Openclaw-AIOps](../../AI/OpenClaw/Openclaw-AIOps.md) — AIOps 运维落地
 
 ---
 
@@ -69,9 +69,9 @@ OpenClaw-基础-安装
 
 | 概念 | Claude Code | OpenClaw |
 |------|-------------|----------|
-| **Skills** | [[AI/ClaudeCode/Skills]] | [[AI/OpenClaw/OpenClaw-Skills-插件]] |
-| **Agent/多智能体** | [[AI/ClaudeCode/Subagents]] | [[AI/OpenClaw/Openclaw-多智能体]] |
-| **扩展接口** | [[AI/ClaudeCode/MCP]] + [[AI/ClaudeCode/Plugin]] | [[AI/OpenClaw/OpenClaw-Channels]] |
+| **Skills** | [Skills](../../AI/ClaudeCode/Skills.md) | [OpenClaw-Skills-插件](../../AI/OpenClaw/OpenClaw-Skills-插件.md) |
+| **Agent/多智能体** | [Subagents](../../AI/ClaudeCode/Subagents.md) | [Openclaw-多智能体](../../AI/OpenClaw/Openclaw-多智能体.md) |
+| **扩展接口** | [MCP](../../AI/ClaudeCode/MCP.md) + [Plugin](../../AI/ClaudeCode/Plugin.md) | [OpenClaw-Channels](../../AI/OpenClaw/OpenClaw-Channels.md) |
 
 ---
 
@@ -85,8 +85,8 @@ OpenClaw-基础-安装
 ---
 
 ## 🔗 关联概念
-- [[KnowledgeBase/concepts/Claude-Code]]
-- [[KnowledgeBase/concepts/OpenClaw]]
-- [[KnowledgeBase/concepts/MCP]]
-- [[KnowledgeBase/concepts/Obsidian]]
-- [[KnowledgeBase/concepts/自动化运维]]
+- [Claude-Code](../concepts/Claude-Code.md)
+- [OpenClaw](../concepts/OpenClaw.md)
+- [MCP](../concepts/MCP.md)
+- [Obsidian](../concepts/Obsidian.md)
+- [自动化运维](../concepts/自动化运维.md)

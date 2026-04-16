@@ -14,15 +14,15 @@ Model Context Protocol（模型上下文协议）是连接 AI 模型与外部工
 主要出现在 `AI/ClaudeCode/MCP.md`，是 Claude Code 生态的核心协议之一。也与 Obsidian 知识库搭建场景相关。
 
 ## 相关文章
-- [[AI/ClaudeCode/MCP]]
-- [[AI/ClaudeCode/Plugin]]
-- [[AI/ClaudeCode/Skills]]
-- [[AI/ClaudeCode/obsidian-claude-搭建个人知识库]]
+- [MCP](../../AI/ClaudeCode/MCP.md)
+- [Plugin](../../AI/ClaudeCode/Plugin.md)
+- [Skills](../../AI/ClaudeCode/Skills.md)
+- [obsidian-claude-搭建个人知识库](../../AI/ClaudeCode/obsidian-claude-搭建个人知识库.md)
 
 ## 关联概念
-- [[KnowledgeBase/concepts/Claude-Code]]
-- [[KnowledgeBase/concepts/Obsidian]]
-- [[KnowledgeBase/concepts/OpenClaw]]
+- [Claude-Code](Claude-Code.md)
+- [Obsidian](Obsidian.md)
+- [OpenClaw](OpenClaw.md)
 
 ## 可延展方向
 - 自定义 MCP Server 开发指南
