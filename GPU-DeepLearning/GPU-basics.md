@@ -39,14 +39,10 @@ nvidia-smi：
 
 # 环境配置
 
-> - 对于裸机环境，只需要安装对应的 GPU Driver 以及 CUDA Toolkit 。
->
->
-> - 对应 Docker 环境，需要额外安装 nvidia-container-toolkit 并配置 docker 使用 nvidia runtime。
->
->
-> - 对应 k8s 环境，需要额外安装对应的 device-plugin 使得 kubelet 能够感知到节点上的 GPU 设备，以便 k8s 能够进行 GPU 管理。注：一般在 k8s 中使用都会直接使用 gpu-operator 方式进行安装，
->
+> [!info] 不同环境的 GPU 配置要求
+> - 对于裸机环境，只需要安装对应的 GPU Driver 以及 CUDA Toolkit。
+> - 对于 Docker 环境，需要额外安装 nvidia-container-toolkit 并配置 docker 使用 nvidia runtime。
+> - 对于 k8s 环境，需要额外安装对应的 device-plugin 使得 kubelet 能够感知到节点上的 GPU 设备，以便 k8s 能够进行 GPU 管理。注：一般在 k8s 中使用都会直接使用 gpu-operator 方式进行安装。
 
 ## 裸机环境配置NVIDIA GPU
 
@@ -160,6 +156,7 @@ python3 check_cuda_pytorch.py
 
 - NVIDIA Container Toolkit 的主要作用是将 NVIDIA GPU 设备挂载到容器中。
 
+> [!info] 兼容性
 > 兼容生态系统中的任意容器运行时，docker、containerd、cri-o 等。
 
 - NVIDIA 官方安装文档：[NVIDIA Container Toolkit Install Guide](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html)
@@ -326,9 +323,9 @@ spec:
 
 - 需要在节点上安装 GPU Driver、Container Toolkit 等组件，当集群规模较大时还是比较麻烦的。为了解决这个问题，NVIDIA 推出了 GPU Operator，旨在简化在 Kubernetes 环境中使用 GPU 的过程，通过自动化的方式处理 GPU 驱动程序安装、Controller Toolkit、Device-Plugin 、监控等组件。[NVIDIA/gpu-operator (GitHub)](https://github.com/NVIDIA/gpu-operator)
 
+> [!tip] GPU Operator 优势
 > 基本上把需要手动安装、配置的地方全部自动化处理了，极大简化了 k8s 环境中的 GPU 使用。
->
-> ps：只有 NVIDIA GPU 可以使用，其他厂家现在基本还是手动安装。
+> 注：只有 NVIDIA GPU 可以使用，其他厂家现在基本还是手动安装。
 
 ### 组件介绍
 
@@ -343,8 +340,8 @@ NVIDIA GPU Operator 总共包含如下的几个组件：
 - **GFD(GPU Feature Discovery)**：
 
   - 用于收集节点的 GPU 设备属性（GPU 驱动版本、GPU 型号等），并将这些属性以节点标签的方式透出。
-  - 在 k8s 集群中以 DaemonSet 方式部署，只有节点拥有标签`nvidia.com/gpu.present=true`时，DaemonSet 控制的 Pod 才会在该节点上运行。*https://github.com/NVIDIA/gpu-feature-discovery*
-  - 新版本 GFD 迁移到了 **NVIDIA/k8s-device-plugin**：*https://github.com/NVIDIA/k8s-device-plugin/tree/main/docs/gpu-feature-discovery*
+  - 在 k8s 集群中以 DaemonSet 方式部署，只有节点拥有标签`nvidia.com/gpu.present=true`时，DaemonSet 控制的 Pod 才会在该节点上运行。[NVIDIA/gpu-feature-discovery (GitHub)](https://github.com/NVIDIA/gpu-feature-discovery)
+  - 新版本 GFD 迁移到了 **NVIDIA/k8s-device-plugin**：[GFD 文档](https://github.com/NVIDIA/k8s-device-plugin/tree/main/docs/gpu-feature-discovery)
 
 - **NVIDIA Driver Installer**：
 
@@ -357,13 +354,13 @@ NVIDIA GPU Operator 总共包含如下的几个组件：
 - **NVIDIA Device Plugin**：
 
   - NVIDIA Device Plugin 用于实现将 GPU 设备以 Kubernetes 扩展资源的方式供用户使用，在 k8s 集群中以 DaemonSet 方式部署，只有节点拥有标签`nvidia.com/gpu.present=true`时，DaemonSet 控制的 Pod 才会在该节点上运行。
-  - *https://github.com/NVIDIA/k8s-device-plugin*
+  - [NVIDIA/k8s-device-plugin (GitHub)](https://github.com/NVIDIA/k8s-device-plugin)
 
 - **DCGM Exporter**：
 
   - 周期性的收集节点 GPU 设备的状态（当前温度、总的显存、已使用显存、使用率等）并暴露 Metrics，结合 Prometheus 和 Grafana 使用。
   - 在 k8s 集群中以 DaemonSet 方式部署，只有节点拥有标签`nvidia.com/gpu.present=true`时，DaemonSet 控制的 Pod 才会在该节点上运行。
-  - *https://github.com/NVIDIA/dcgm-exporter*
+  - [NVIDIA/dcgm-exporter (GitHub)](https://github.com/NVIDIA/dcgm-exporter)
 
 ### 工作原理
 
@@ -375,6 +372,7 @@ NVIDIA GPU Operator 总共包含如下的几个组件：
 
 - 最后的 exporter 则是采集 GPU 监控并以 Prometheus Metrics 格式暴露，用于做 GPU 监控。
 
+> [!tip] 自动化
 > 这些组件基本就把需要手动配置的东西都自动化了。
 
 NVIDIA GPU Operator 依如下的顺序部署各个组件，并且如果前一个组件部署失败，那么其后面的组件将停止部署：
@@ -443,7 +441,8 @@ nvidia.com/gpu.memory=15360
 
   GPU Operator 会自动根据节点上的内核版本和操作系统生成 DaemonSet 镜像，因为是以 DaemonSet 方式运行的，所有节点上都是跑的同一个 Pod，**==因此要限制集群中的所有 GPU 节点操作系统和内核版本必须一致==**。
 
-  > ps：如果提前手动在节点上安装 GPU 驱动，那么 GPU Operator 检测到之后就不会在该节点上启动 Installer Pod，这样该节点就可以不需要管操作系统和内核版本。
+  > [!tip] 手动安装驱动的节点
+  > 如果提前手动在节点上安装 GPU 驱动，那么 GPU Operator 检测到之后就不会在该节点上启动 Installer Pod，这样该节点就可以不需要管操作系统和内核版本。
 
 ### NVIDIA Container Toolkit Installer
 
@@ -459,11 +458,11 @@ nvidia.com/gpu.memory=15360
 - 将容器中 NVIDIA Container Toolkit 组件所涉及的命令行工具和库文件移动到/usr/local/nvidia/toolkit 目录下
 - 在 /usr/local/nvidia/toolkit/.config/nvidia-container-runtime 创建 nvidia-container-runtime 的配置文件 config.toml，并设置 nvidia-container-cli.root 的值为/run/nvidia/driver。
 
-> 详细工作原理：https://mp.weixin.qq.com/s/vAPL48cs8pBzsqwlUi1-wA
+> 详细工作原理：[Container Toolkit 工作原理详解](https://mp.weixin.qq.com/s/vAPL48cs8pBzsqwlUi1-wA)
 
 ### 要求
 
-> *https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/getting-started.html#operator-install-guide*
+> [GPU Operator 安装指南](https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/getting-started.html#operator-install-guide)
 
 1. GPU 节点必须运行相同的操作系统，
 
@@ -489,7 +488,7 @@ kubectl get nodes -o json | jq '.items[].metadata.labels | keys | any(startswith
 
 ### helm部署
 
-> *https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/getting-started.html#operator-install-guide*
+> [GPU Operator 安装指南](https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/getting-started.html#operator-install-guide)
 
 ~~~sh
 # 添加 nvidia helm 仓库并更新
@@ -512,7 +511,7 @@ helm install --wait --generate-name \
 - 没安装驱动的节点会打上 `nvidia.com/gpu.deploy.driver=true` ,表示需要安装驱动
 - 已经手动安装过驱动的节点会打上`nvidia.com/gpu.deploy.driver=pre-install`,Daemonset 则不会在该节点上运行
 
-> 当然，并不是每个操作系统+内核版本的组合，NVIDIA 都提供了对应的镜像，可以提前在 **NVIDIA/driver tags**查看当前 NVIDIA 提供的驱动版本。*https://catalog.ngc.nvidia.com/orgs/nvidia/containers/driver/tags*
+> 当然，并不是每个操作系统+内核版本的组合，NVIDIA 都提供了对应的镜像，可以提前在 **NVIDIA/driver tags** 查看当前 NVIDIA 提供的驱动版本。[NVIDIA Driver Tags (NGC)](https://catalog.ngc.nvidia.com/orgs/nvidia/containers/driver/tags)
 
 ### 测试
 
