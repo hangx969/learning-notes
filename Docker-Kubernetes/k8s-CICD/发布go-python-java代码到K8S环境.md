@@ -532,3 +532,4 @@ spec:
 
 - 创建之后，kubectl get ingress 查看域名绑定的IP地址。在内网环境，配了hosts文件建立域名和IP映射之后，内网浏览器可以直接访问java.hangxu.cn/hello
 
+

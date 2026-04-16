@@ -417,4 +417,5 @@ kubectl apply -f gitlab.yaml
 
 - 初次登录需要Register，username和password随便起。
 
+
   ![image-20240428220506815](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202404282205114.png)

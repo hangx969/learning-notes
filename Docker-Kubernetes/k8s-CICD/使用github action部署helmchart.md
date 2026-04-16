@@ -222,3 +222,4 @@ jobs:
 
 - 按照文档方法移除runner：[Configuring the self-hosted runner application as a service](https://docs.github.com/en/actions/how-tos/hosting-your-own-runners/managing-self-hosted-runners/configuring-the-self-hosted-runner-application-as-a-service)
 - 有时候github上的runner会莫名其妙消失，这时候需要在本地暴力移除runner，直接删掉actions-runner目录即可
+
