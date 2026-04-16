@@ -866,14 +866,12 @@ from time import sleep, ctime
 
 sys.path.append(os.getcwd())
 
-
 class MyClass(object):
 
     def func(self, name, sec):
         print('---Start---', name, 'time', ctime())
         sleep(sec)
         print('***End***', name, 'time', ctime())
-
 
 def main():
     # 创建 Thread 实例
@@ -887,7 +885,6 @@ def main():
     # 等待所有线程执行完毕
     t1.join()  # join() 等待线程终止，要不然一直挂起
     t2.join()
-
 
 if __name__ == "__main__":
     main()
