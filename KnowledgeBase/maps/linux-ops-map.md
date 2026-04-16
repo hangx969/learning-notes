@@ -98,8 +98,8 @@ date: 2026-04-16
 ### HPC 调度
 | 文章 | 主题 |
 |------|------|
-| [CentOS7-slurm23.02-二进制安装](../../HPC/CentOS7-slurm23.02-二进制安装) | Slurm CentOS |
-| [Ubuntu2204-slurm-22.05.11-二进制安装](../../HPC/Ubuntu2204-slurm-22.05.11-二进制安装) | Slurm Ubuntu |
+| [CentOS7-slurm23.02-二进制安装](../../HPC/CentOS7-slurm23.02-二进制安装.md) | Slurm CentOS |
+| [Ubuntu2204-slurm-22.05.11-二进制安装](../../HPC/Ubuntu2204-slurm-22.05.11-二进制安装.md) | Slurm Ubuntu |
 | [PBS](../../HPC/PBS.md) | PBS 调度 |
 | [Slurm-node-exporter](../../HPC/Slurm-node-exporter.md) | Slurm 监控 |
 

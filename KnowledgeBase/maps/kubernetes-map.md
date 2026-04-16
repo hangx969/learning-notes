@@ -44,7 +44,7 @@ date: 2026-04-16
 10. [k8s基础-storage](../../Docker-Kubernetes/k8s-basic-resources/k8s基础-storage.md) — 存储
 
 ### 第三阶段：安装部署
-11. [安装k8s-1.35-基于rockylinux10-最新步骤](../../Docker-Kubernetes/k8s-installation-management/latest-version/安装k8s-1.35-基于rockylinux10-最新步骤) — 最新版安装
+11. [安装k8s-1.35-基于rockylinux10-最新步骤](../../Docker-Kubernetes/k8s-installation-management/latest-version/安装k8s-1.35-基于rockylinux10-最新步骤.md) — 最新版安装
 12. [2025最新-企业级高可用集群-基于rockylinux](../../Docker-Kubernetes/k8s-installation-management/2025最新-企业级高可用集群-基于rockylinux.md) — 企业级高可用
 13. [二进制安装k8s高可用集群](../../Docker-Kubernetes/k8s-installation-management/二进制安装k8s高可用集群.md) — 二进制安装
 
@@ -83,7 +83,7 @@ date: 2026-04-16
 ### 安装与运维管理（16 篇）
 | 主题 | 文章 |
 |------|------|
-| 最新版 | [安装k8s-1.35-基于rockylinux10-最新步骤](../../Docker-Kubernetes/k8s-installation-management/latest-version/安装k8s-1.35-基于rockylinux10-最新步骤) |
+| 最新版 | [安装k8s-1.35-基于rockylinux10-最新步骤](../../Docker-Kubernetes/k8s-installation-management/latest-version/安装k8s-1.35-基于rockylinux10-最新步骤.md) |
 | 企业级 | [2025最新-企业级高可用集群-基于rockylinux](../../Docker-Kubernetes/k8s-installation-management/2025最新-企业级高可用集群-基于rockylinux.md) |
 | 二进制 | [二进制安装k8s高可用集群](../../Docker-Kubernetes/k8s-installation-management/二进制安装k8s高可用集群.md) |
 | 历史版本 | 1.20.6 / 1.23 / 1.26-1.27 / 1.28 / 1.30 / 1.32 / 1.33（7 篇） |
@@ -103,7 +103,7 @@ date: 2026-04-16
 |------|--------|------|
 | Jenkins | 7 | [k8s-Devops平台落地-基于jenkins](../../Docker-Kubernetes/k8s-CICD/Jenkins/k8s-Devops平台落地-基于jenkins.md) |
 | ArgoCD | 4 | [ArgoCD基础](../../Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD基础.md) |
-| GitLab | 3 | [二进制安装Gitlab(17.9.8)](../../Docker-Kubernetes/k8s-CICD/Gitlab/二进制安装Gitlab(17.9.8)) |
+| GitLab | 3 | [二进制安装Gitlab(17.9.8)](../../Docker-Kubernetes/k8s-CICD/Gitlab/二进制安装Gitlab(17.9.8.md)) |
 | Tekton | 2 | [基于Tekton的云原生平台落地](../../Docker-Kubernetes/k8s-CICD/Tekton/基于Tekton的云原生平台落地.md) |
 | Kustomize | 1 | [k8s配置定制工具-kustomize](../../Docker-Kubernetes/k8s-CICD/Kustomize/k8s配置定制工具-kustomize.md) |
 | 其他 | 2 | GitHub Actions、发布代码到 K8S |
@@ -111,7 +111,7 @@ date: 2026-04-16
 ### 网络与服务网格（7 篇）
 - [k8s精细化流量管理-istio](../../Docker-Kubernetes/k8s-networking-service-mesh/k8s精细化流量管理-istio.md)
 - [helm安装istio](../../Docker-Kubernetes/k8s-networking-service-mesh/helm安装istio.md)
-- [k8s部署istio(1.13.1)](../../Docker-Kubernetes/k8s-networking-service-mesh/k8s部署istio(1.13.1))
+- [k8s部署istio(1.13.1)](../../Docker-Kubernetes/k8s-networking-service-mesh/k8s部署istio(1.13.1.md))
 - [企业项目接入istio实战](../../Docker-Kubernetes/k8s-networking-service-mesh/企业项目接入istio实战.md)
 - [helm部署ingress-nginx](../../Docker-Kubernetes/k8s-networking-service-mesh/helm部署ingress-nginx.md)
 - [helm部署external-dns](../../Docker-Kubernetes/k8s-networking-service-mesh/helm部署external-dns.md)
@@ -148,7 +148,7 @@ MySQL(3)、Redis(2)、PostgreSQL、Kafka(Strimzi)、MongoDB、httpd、SpringClou
 - **云平台 K8s 托管服务：** [2_AKS-basics](../../Azure/2_AKS-basics.md)、[ECS](../../Aliyun/计算/ECS.md)
 - **理论基础：** [深入剖析Kubernetes](../../CloudComputing/深入剖析Kubernetes.md)、[云原生](../../CloudComputing/云原生.md)
 - **编程自动化：** [python-kubernetes-module](../../Python/python-运维开发/python-kubernetes-module.md)、[云原生开发-基础](../../Go/云原生开发-基础.md)
-- **HPC 调度对比：** [CentOS7-slurm23.02-二进制安装](../../HPC/CentOS7-slurm23.02-二进制安装)
+- **HPC 调度对比：** [CentOS7-slurm23.02-二进制安装](../../HPC/CentOS7-slurm23.02-二进制安装.md)
 - **认证考试：** [CKA-备考](../../Docker-Kubernetes/CKA-CKS/CKA-备考.md)、[CKS-备考](../../Docker-Kubernetes/CKA-CKS/CKS-备考.md)
 
 ---

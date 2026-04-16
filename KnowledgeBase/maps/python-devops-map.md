@@ -104,7 +104,7 @@ date: 2026-04-16
 ## 🔗 与其他领域的连接
 
 - **K8s 方向：** [Python调用k8s-api实现资源管理](../../Docker-Kubernetes/k8s-basic-resources/Python调用k8s-api实现资源管理.md) — K8s API 调用
-- **数据库方向：** [MySQL入门](../../Database/MySQL入门.md)、[源码安装redis-6.2.6-centos7](../../Database/源码安装redis-6.2.6-centos7) — 数据库知识基础
+- **数据库方向：** [MySQL入门](../../Database/MySQL入门.md)、[源码安装redis-6.2.6-centos7](../../Database/源码安装redis-6.2.6-centos7.md) — 数据库知识基础
 - **Linux 方向：** [shell-scripts](../../Linux-Shell/shell-scripts.md) — Shell vs Python 运维对比
 - **CI/CD 方向：** [发布go-python-java代码到K8S环境](../../Docker-Kubernetes/k8s-CICD/发布go-python-java代码到K8S环境.md) — 代码发布
 

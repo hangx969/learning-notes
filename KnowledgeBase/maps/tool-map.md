@@ -87,7 +87,7 @@ date: 2026-04-16
 ### Kubernetes
 **相关文档（130+ 篇）：**
 - [k8s基础-架构-组件-资源](../../Docker-Kubernetes/k8s-basic-resources/k8s基础-架构-组件-资源.md) ⭐ 推荐入口
-- [安装k8s-1.35-基于rockylinux10-最新步骤](../../Docker-Kubernetes/k8s-installation-management/latest-version/安装k8s-1.35-基于rockylinux10-最新步骤) — 最新安装
+- [安装k8s-1.35-基于rockylinux10-最新步骤](../../Docker-Kubernetes/k8s-installation-management/latest-version/安装k8s-1.35-基于rockylinux10-最新步骤.md) — 最新安装
 - 完整目录参见 [kubernetes-map](kubernetes-map.md)
 
 **概念页：** [Kubernetes](../concepts/Kubernetes.md)
@@ -114,7 +114,7 @@ date: 2026-04-16
 **相关文档（7 篇）：**
 - [k8s精细化流量管理-istio](../../Docker-Kubernetes/k8s-networking-service-mesh/k8s精细化流量管理-istio.md) ⭐ 推荐入口
 - [helm安装istio](../../Docker-Kubernetes/k8s-networking-service-mesh/helm安装istio.md)
-- [k8s部署istio(1.13.1)](../../Docker-Kubernetes/k8s-networking-service-mesh/k8s部署istio(1.13.1))
+- [k8s部署istio(1.13.1)](../../Docker-Kubernetes/k8s-networking-service-mesh/k8s部署istio(1.13.1.md))
 - [企业项目接入istio实战](../../Docker-Kubernetes/k8s-networking-service-mesh/企业项目接入istio实战.md)
 - [k8s集群网络安全](../../Docker-Kubernetes/k8s-networking-service-mesh/k8s集群网络安全.md)
 - [helm部署external-dns](../../Docker-Kubernetes/k8s-networking-service-mesh/helm部署external-dns.md)
@@ -141,8 +141,8 @@ date: 2026-04-16
 - [Prometheus监控k8s系统组件](../../Docker-Kubernetes/k8s-monitoring-logging/Prometheus监控k8s系统组件.md)
 - [Prometheus监控外部k8s集群](../../Docker-Kubernetes/k8s-monitoring-logging/Prometheus监控外部k8s集群.md)
 - [Prometheus监控非云原生应用-主机](../../Docker-Kubernetes/k8s-monitoring-logging/Prometheus监控非云原生应用-主机.md)
-- [k8s监控Prometheus(v2.33.5)+Grafana(v8.4.5)](../../Docker-Kubernetes/k8s-monitoring-logging/k8s监控Prometheus(v2.33.5)+Grafana(v8.4.5))
-- [二进制部署Prometheus(v2.32.1)联邦集群](../../Docker-Kubernetes/k8s-monitoring-logging/二进制部署Prometheus(v2.32.1)联邦集群)
+- [k8s监控Prometheus(v2.33.5)+Grafana(v8.4.5)](../../Docker-Kubernetes/k8s-monitoring-logging/k8s监控Prometheus(v2.33.5.md)+Grafana(v8.4.5))
+- [二进制部署Prometheus(v2.32.1)联邦集群](../../Docker-Kubernetes/k8s-monitoring-logging/二进制部署Prometheus(v2.32.1.md)联邦集群)
 - [二进制部署prometheus-grafana-nodeexporter](../../Docker-Kubernetes/k8s-monitoring-logging/二进制部署prometheus-grafana-nodeexporter.md)
 - [docker部署prometheus-grafana-cAdvisior监控](../../Docker-Kubernetes/docker/docker部署prometheus-grafana-cAdvisior监控.md)
 - [Slurm-node-exporter](../../HPC/Slurm-node-exporter.md)
@@ -153,7 +153,7 @@ date: 2026-04-16
 
 ### Grafana
 **相关文档：**
-- [k8s部署grafana(v5.0.4)](../../Docker-Kubernetes/k8s-monitoring-logging/k8s部署grafana(v5.0.4)) ⭐
+- [k8s部署grafana(v5.0.4)](../../Docker-Kubernetes/k8s-monitoring-logging/k8s部署grafana(v5.0.4.md)) ⭐
 - [helm部署prometheus-stack全家桶](../../Docker-Kubernetes/k8s-monitoring-logging/helm部署prometheus-stack全家桶.md)
 - [二进制部署prometheus-grafana-nodeexporter](../../Docker-Kubernetes/k8s-monitoring-logging/二进制部署prometheus-grafana-nodeexporter.md)
 - [GPU-exporter-grafana](../../GPU-DeepLearning/GPU-exporter-grafana.md)
@@ -165,7 +165,7 @@ date: 2026-04-16
 ### Elasticsearch / EFK
 **相关文档：**
 - [k8s部署elasticsearch集群](../../Docker-Kubernetes/k8s-monitoring-logging/k8s部署elasticsearch集群.md) ⭐
-- [k8s监控ES(7.2)+Kibana(7.2)+Fluentd(v1.4.2)](../../Docker-Kubernetes/k8s-monitoring-logging/k8s监控ES(7.2)+Kibana(7.2)+Fluentd(v1.4.2))
+- [k8s监控ES(7.2)+Kibana(7.2)+Fluentd(v1.4.2)](../../Docker-Kubernetes/k8s-monitoring-logging/k8s监控ES(7.2.md)+Kibana(7.2)+Fluentd(v1.4.2))
 - [k8s监控EFK+logstash+kafka](../../Docker-Kubernetes/k8s-monitoring-logging/k8s监控EFK+logstash+kafka.md)
 - [二进制部署efk+logstash+kafka日志收集平台](../../Docker-Kubernetes/k8s-monitoring-logging/二进制部署efk+logstash+kafka日志收集平台.md)
 - [基于helm+operator部署ECK日志收集平台](../../Docker-Kubernetes/k8s-monitoring-logging/基于helm+operator部署ECK日志收集平台.md)
@@ -199,7 +199,7 @@ date: 2026-04-16
 - [Jenkins语法-基于docker部署](../../Docker-Kubernetes/k8s-CICD/Jenkins/Jenkins语法-基于docker部署.md)
 - [helm部署jenkins](../../Docker-Kubernetes/k8s-CICD/Jenkins/helm部署jenkins.md)
 - [docker部署jenkins](../../Docker-Kubernetes/k8s-CICD/Jenkins/docker部署jenkins.md)
-- [二进制安装Jenkins(2.319)](../../Docker-Kubernetes/k8s-CICD/Jenkins/二进制安装Jenkins(2.319))
+- [二进制安装Jenkins(2.319)](../../Docker-Kubernetes/k8s-CICD/Jenkins/二进制安装Jenkins(2.319.md))
 - 及 K8s 部署 Jenkins DevOps 工具链 2 篇
 
 **概念页：** [Jenkins](../concepts/Jenkins.md)
@@ -208,9 +208,9 @@ date: 2026-04-16
 
 ### GitLab
 **相关文档：**
-- [二进制安装Gitlab(17.9.8)](../../Docker-Kubernetes/k8s-CICD/Gitlab/二进制安装Gitlab(17.9.8)) ⭐
+- [二进制安装Gitlab(17.9.8)](../../Docker-Kubernetes/k8s-CICD/Gitlab/二进制安装Gitlab(17.9.8.md)) ⭐
 - [helm部署gitlab](../../Docker-Kubernetes/k8s-CICD/Gitlab/helm部署gitlab.md)
-- [k8s部署Gitlab(11.8.1)-基于yaml](../../Docker-Kubernetes/k8s-CICD/Gitlab/k8s部署Gitlab(11.8.1)-基于yaml)
+- [k8s部署Gitlab(11.8.1)-基于yaml](../../Docker-Kubernetes/k8s-CICD/Gitlab/k8s部署Gitlab(11.8.1.md)-基于yaml)
 - [docker部署gitlab](../../Docker-Kubernetes/docker/docker部署gitlab.md)
 
 ---
@@ -294,10 +294,10 @@ date: 2026-04-16
 
 ### Slurm
 **相关文档（5 篇）：**
-- [CentOS7-slurm23.02-二进制安装](../../HPC/CentOS7-slurm23.02-二进制安装) ⭐ 推荐入口
-- [Ubuntu2204-slurm-22.05.11-二进制安装](../../HPC/Ubuntu2204-slurm-22.05.11-二进制安装)
-- [Ubuntu-2204-slurm-22.05.11-binary-installation](../../HPC/Ubuntu-2204-slurm-22.05.11-binary-installation)
-- [Ubuntu2204-slurm- 23.11-deb安装](../../HPC/Ubuntu2204-slurm-%2023.11-deb安装)
+- [CentOS7-slurm23.02-二进制安装](../../HPC/CentOS7-slurm23.02-二进制安装.md) ⭐ 推荐入口
+- [Ubuntu2204-slurm-22.05.11-二进制安装](../../HPC/Ubuntu2204-slurm-22.05.11-二进制安装.md)
+- [Ubuntu-2204-slurm-22.05.11-binary-installation](../../HPC/Ubuntu-2204-slurm-22.05.11-binary-installation.md)
+- [Ubuntu2204-slurm- 23.11-deb安装](../../HPC/Ubuntu2204-slurm-%2023.11-deb安装.md)
 - [Slurm-node-exporter](../../HPC/Slurm-node-exporter.md)
 
 **概念页：** [Slurm](../concepts/Slurm.md)
@@ -330,14 +330,14 @@ date: 2026-04-16
 
 ### MySQL
 - [MySQL入门](../../Database/MySQL入门.md) ⭐
-- [MGR部署MySQL5.7](../../Database/MGR部署MySQL5.7)
+- [MGR部署MySQL5.7](../../Database/MGR部署MySQL5.7.md)
 - [helm部署mysql](../../Docker-Kubernetes/k8s-db-middleware/helm部署mysql.md)
 - [Operator部署mysql集群](../../Docker-Kubernetes/k8s-db-middleware/Operator部署mysql集群.md)
 - [k8s基于yaml部署mysql主从高可用](../../Docker-Kubernetes/k8s-db-middleware/k8s基于yaml部署mysql主从高可用.md)
 - [python-mysql](../../Python/python-运维开发/python-mysql.md)
 
 ### Redis
-- [源码安装redis-6.2.6-centos7](../../Database/源码安装redis-6.2.6-centos7) ⭐
+- [源码安装redis-6.2.6-centos7](../../Database/源码安装redis-6.2.6-centos7.md) ⭐
 - [Operator部署Redis集群](../../Docker-Kubernetes/k8s-db-middleware/Operator部署Redis集群.md)
 - [k8s基于yaml部署redis集群](../../Docker-Kubernetes/k8s-db-middleware/k8s基于yaml部署redis集群.md)
 

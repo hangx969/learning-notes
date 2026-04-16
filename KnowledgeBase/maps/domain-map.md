@@ -28,7 +28,7 @@ date: 2026-04-16
 
 **代表性文章：**
 - [k8s基础-架构-组件-资源](../../Docker-Kubernetes/k8s-basic-resources/k8s基础-架构-组件-资源.md) — K8s 架构总览
-- [安装k8s-1.35-基于rockylinux10-最新步骤](../../Docker-Kubernetes/k8s-installation-management/latest-version/安装k8s-1.35-基于rockylinux10-最新步骤) — 最新版安装
+- [安装k8s-1.35-基于rockylinux10-最新步骤](../../Docker-Kubernetes/k8s-installation-management/latest-version/安装k8s-1.35-基于rockylinux10-最新步骤.md) — 最新版安装
 - [helm部署prometheus-stack全家桶](../../Docker-Kubernetes/k8s-monitoring-logging/helm部署prometheus-stack全家桶.md) — 可观测性全家桶
 - [ArgoCD基础](../../Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD基础.md) — GitOps 核心
 - [k8s精细化流量管理-istio](../../Docker-Kubernetes/k8s-networking-service-mesh/k8s精细化流量管理-istio.md) — 服务网格
@@ -143,7 +143,7 @@ date: 2026-04-16
 **覆盖范围：** Slurm 和 PBS 作业调度系统，覆盖 CentOS 7 / Ubuntu 22.04 多版本部署。
 
 **代表性文章：**
-- [CentOS7-slurm23.02-二进制安装](../../HPC/CentOS7-slurm23.02-二进制安装) — 最全面的 Slurm 部署指南（1449 行）
+- [CentOS7-slurm23.02-二进制安装](../../HPC/CentOS7-slurm23.02-二进制安装.md) — 最全面的 Slurm 部署指南（1449 行）
 - [PBS](../../HPC/PBS.md) — PBS 调度系统
 
 **关联领域：** [GPU-basics](../../GPU-DeepLearning/GPU-basics.md)、[Linux-learning-notes](../../Linux-Shell/Linux-learning-notes.md)
@@ -155,7 +155,7 @@ date: 2026-04-16
 | 领域 | 篇数 | 核心文章 | 关联 |
 |------|------|----------|------|
 | GPU-DeepLearning | 4 | [GPU-basics](../../GPU-DeepLearning/GPU-basics.md) | HPC、Docker |
-| Database | 3 | [MySQL入门](../../Database/MySQL入门.md)、[源码安装redis-6.2.6-centos7](../../Database/源码安装redis-6.2.6-centos7) | Python 运维 |
+| Database | 3 | [MySQL入门](../../Database/MySQL入门.md)、[源码安装redis-6.2.6-centos7](../../Database/源码安装redis-6.2.6-centos7.md) | Python 运维 |
 | Middlewares | 3 | [Kafka](../../Middlewares/Kafka.md)、[RabbitMQ](../../Middlewares/RabbitMQ.md) | K8s 中间件部署 |
 | OS | 3 | [OS](../../OS/OS.md)、[计算机组成原理](../../OS/计算机组成原理.md) | 理论基础 |
 | Networking | 2 | [计算机网络基础](../../Networking/计算机网络基础.md)、[HTTP基础](../../Networking/HTTP基础.md) | 云网络基础 |

@@ -50,7 +50,7 @@ date: 2026-04-16
 
 **与当前仓库的关系：**
 - [helm部署prometheus-stack全家桶](../../Docker-Kubernetes/k8s-monitoring-logging/helm部署prometheus-stack全家桶.md)
-- [k8s监控alertmanager(v0.14.0)](../../Docker-Kubernetes/k8s-monitoring-logging/k8s监控alertmanager(v0.14.0))
+- [k8s监控alertmanager(v0.14.0)](../../Docker-Kubernetes/k8s-monitoring-logging/k8s监控alertmanager(v0.14.0.md))
 
 **能补上的空白：** 可观测性体系中"查询与告警"的核心技能
 
@@ -153,8 +153,8 @@ date: 2026-04-16
 
 **与当前仓库的关系：**
 - [etcd高可用配置以及模拟集群故障和恢复](../../Docker-Kubernetes/k8s-installation-management/etcd高可用配置以及模拟集群故障和恢复.md)
-- [MGR部署MySQL5.7](../../Database/MGR部署MySQL5.7)
-- [源码安装redis-6.2.6-centos7](../../Database/源码安装redis-6.2.6-centos7)
+- [MGR部署MySQL5.7](../../Database/MGR部署MySQL5.7.md)
+- [源码安装redis-6.2.6-centos7](../../Database/源码安装redis-6.2.6-centos7.md)
 
 **能补上的空白：** 理解分布式中间件行为的理论基础
 

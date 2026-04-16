@@ -174,14 +174,14 @@ date: 2026-04-16
 | [helm部署jaeger](../../Docker-Kubernetes/k8s-monitoring-logging/helm部署jaeger.md) | Jaeger | ✅ | ❌ |
 | [k8s日志管理](../../Docker-Kubernetes/k8s-monitoring-logging/k8s日志管理.md) | 日志管理 | ✅ | ❌ |
 | [k8s监控EFK+logstash+kafka](../../Docker-Kubernetes/k8s-monitoring-logging/k8s监控EFK+logstash+kafka.md) | EFK+Logstash+Kafka | ✅ | ❌ |
-| [k8s监控ES(7.2)+Kibana(7.2)+Fluentd(v1.4.2)](../../Docker-Kubernetes/k8s-monitoring-logging/k8s监控ES(7.2)+Kibana(7.2)+Fluentd(v1.4.2)) | ES+Kibana+Fluentd | ✅ | ❌ |
-| [k8s监控Prometheus(v2.2.1)](../../Docker-Kubernetes/k8s-monitoring-logging/k8s监控Prometheus(v2.2.1)) | Prometheus(v2.2.1) | ✅ | ❌ |
-| [k8s监控Prometheus(v2.33.5)+Grafana(v8.4.5)](../../Docker-Kubernetes/k8s-monitoring-logging/k8s监控Prometheus(v2.33.5)+Grafana(v8.4.5)) | Prometheus+Grafana | ✅ | ❌ |
-| [k8s监控alertmanager(v0.14.0)](../../Docker-Kubernetes/k8s-monitoring-logging/k8s监控alertmanager(v0.14.0)) | Alertmanager | ✅ | ❌ |
+| [k8s监控ES(7.2)+Kibana(7.2)+Fluentd(v1.4.2)](../../Docker-Kubernetes/k8s-monitoring-logging/k8s监控ES(7.2.md)+Kibana(7.2)+Fluentd(v1.4.2)) | ES+Kibana+Fluentd | ✅ | ❌ |
+| [k8s监控Prometheus(v2.2.1)](../../Docker-Kubernetes/k8s-monitoring-logging/k8s监控Prometheus(v2.2.1.md)) | Prometheus(v2.2.1) | ✅ | ❌ |
+| [k8s监控Prometheus(v2.33.5)+Grafana(v8.4.5)](../../Docker-Kubernetes/k8s-monitoring-logging/k8s监控Prometheus(v2.33.5.md)+Grafana(v8.4.5)) | Prometheus+Grafana | ✅ | ❌ |
+| [k8s监控alertmanager(v0.14.0)](../../Docker-Kubernetes/k8s-monitoring-logging/k8s监控alertmanager(v0.14.0.md)) | Alertmanager | ✅ | ❌ |
 | [k8s部署elasticsearch集群](../../Docker-Kubernetes/k8s-monitoring-logging/k8s部署elasticsearch集群.md) | Elasticsearch集群 | ✅ | ❌ |
-| [k8s部署grafana(v5.0.4)](../../Docker-Kubernetes/k8s-monitoring-logging/k8s部署grafana(v5.0.4)) | Grafana | ✅ | ❌ |
+| [k8s部署grafana(v5.0.4)](../../Docker-Kubernetes/k8s-monitoring-logging/k8s部署grafana(v5.0.4.md)) | Grafana | ✅ | ❌ |
 | [k8s部署全链路追踪-Skywalking](../../Docker-Kubernetes/k8s-monitoring-logging/k8s部署全链路追踪-Skywalking.md) | Skywalking | ✅ | ❌ |
-| [二进制部署Prometheus(v2.32.1)联邦集群](../../Docker-Kubernetes/k8s-monitoring-logging/二进制部署Prometheus(v2.32.1)联邦集群) | Prometheus联邦集群 | ✅ | ❌ |
+| [二进制部署Prometheus(v2.32.1)联邦集群](../../Docker-Kubernetes/k8s-monitoring-logging/二进制部署Prometheus(v2.32.1.md)联邦集群) | Prometheus联邦集群 | ✅ | ❌ |
 | [二进制部署efk+logstash+kafka日志收集平台](../../Docker-Kubernetes/k8s-monitoring-logging/二进制部署efk+logstash+kafka日志收集平台.md) | 二进制EFK | ✅ | ❌ |
 | [二进制部署prometheus-grafana-nodeexporter](../../Docker-Kubernetes/k8s-monitoring-logging/二进制部署prometheus-grafana-nodeexporter.md) | 二进制Prometheus | ✅ | ❌ |
 | [基于helm+operator部署ECK日志收集平台](../../Docker-Kubernetes/k8s-monitoring-logging/基于helm+operator部署ECK日志收集平台.md) | ECK日志平台 | ✅ | ❌ |
@@ -195,15 +195,15 @@ date: 2026-04-16
 | [ArgoCD部署Helm应用时域名解析失败问题排查与解决](../../Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD部署Helm应用时域名解析失败问题排查与解决.md) | ArgoCD域名问题排查 | ✅ | ❌ |
 | [学习链接](../../Docker-Kubernetes/k8s-CICD/ArgoCD/学习链接.md) | ArgoCD学习链接 | ✅ | ❌ |
 | [k8s-Devops平台落地-基于jenkins](../../Docker-Kubernetes/k8s-CICD/Jenkins/k8s-Devops平台落地-基于jenkins.md) | K8s DevOps平台落地 | ✅ | ❌ |
-| [k8s部署基于Jenkins(2.394)的DevOps工具链-基于yaml](../../Docker-Kubernetes/k8s-CICD/Jenkins/k8s部署基于Jenkins(2.394)的DevOps工具链-基于yaml) | Jenkins 2.394 DevOps | ✅ | ❌ |
-| [k8s部署基于Jenkins(2.426.3)的Devops工具链-基于yaml](../../Docker-Kubernetes/k8s-CICD/Jenkins/k8s部署基于Jenkins(2.426.3)的Devops工具链-基于yaml) | Jenkins 2.426.3 DevOps | ✅ | ❌ |
+| [k8s部署基于Jenkins(2.394)的DevOps工具链-基于yaml](../../Docker-Kubernetes/k8s-CICD/Jenkins/k8s部署基于Jenkins(2.394.md)的DevOps工具链-基于yaml) | Jenkins 2.394 DevOps | ✅ | ❌ |
+| [k8s部署基于Jenkins(2.426.3)的Devops工具链-基于yaml](../../Docker-Kubernetes/k8s-CICD/Jenkins/k8s部署基于Jenkins(2.426.3.md)的Devops工具链-基于yaml) | Jenkins 2.426.3 DevOps | ✅ | ❌ |
 | [Jenkins语法-基于docker部署](../../Docker-Kubernetes/k8s-CICD/Jenkins/Jenkins语法-基于docker部署.md) | Jenkins语法 | ✅ | ❌ |
 | [docker部署jenkins](../../Docker-Kubernetes/k8s-CICD/Jenkins/docker部署jenkins.md) | Docker部署Jenkins | ✅ | ❌ |
 | [helm部署jenkins](../../Docker-Kubernetes/k8s-CICD/Jenkins/helm部署jenkins.md) | Helm部署Jenkins | ✅ | ❌ |
-| [二进制安装Jenkins(2.319)](../../Docker-Kubernetes/k8s-CICD/Jenkins/二进制安装Jenkins(2.319)) | 二进制安装Jenkins | ✅ | ❌ |
+| [二进制安装Jenkins(2.319)](../../Docker-Kubernetes/k8s-CICD/Jenkins/二进制安装Jenkins(2.319.md)) | 二进制安装Jenkins | ✅ | ❌ |
 | [helm部署gitlab](../../Docker-Kubernetes/k8s-CICD/Gitlab/helm部署gitlab.md) | Helm部署GitLab | ✅ | ❌ |
-| [k8s部署Gitlab(11.8.1)-基于yaml](../../Docker-Kubernetes/k8s-CICD/Gitlab/k8s部署Gitlab(11.8.1)-基于yaml) | K8s部署GitLab | ✅ | ❌ |
-| [二进制安装Gitlab(17.9.8)](../../Docker-Kubernetes/k8s-CICD/Gitlab/二进制安装Gitlab(17.9.8)) | 二进制安装GitLab | ✅ | ❌ |
+| [k8s部署Gitlab(11.8.1)-基于yaml](../../Docker-Kubernetes/k8s-CICD/Gitlab/k8s部署Gitlab(11.8.1.md)-基于yaml) | K8s部署GitLab | ✅ | ❌ |
+| [二进制安装Gitlab(17.9.8)](../../Docker-Kubernetes/k8s-CICD/Gitlab/二进制安装Gitlab(17.9.8.md)) | 二进制安装GitLab | ✅ | ❌ |
 | [k8s部署原生的CICD工具Tekton-基于yaml](../../Docker-Kubernetes/k8s-CICD/Tekton/k8s部署原生的CICD工具Tekton-基于yaml.md) | Tekton部署 | ✅ | ❌ |
 | [基于Tekton的云原生平台落地](../../Docker-Kubernetes/k8s-CICD/Tekton/基于Tekton的云原生平台落地.md) | Tekton云原生平台 | ✅ | ❌ |
 | [k8s配置定制工具-kustomize](../../Docker-Kubernetes/k8s-CICD/Kustomize/k8s配置定制工具-kustomize.md) | Kustomize | ✅ | ❌ |
@@ -214,7 +214,7 @@ date: 2026-04-16
 
 | 文件 | 标题 | FM | 链 |
 |------|------|:--:|:--:|
-| [安装k8s-1.35-基于rockylinux10-最新步骤](../../Docker-Kubernetes/k8s-installation-management/latest-version/安装k8s-1.35-基于rockylinux10-最新步骤) | K8s 1.35 (最新) | ✅ | ✅ |
+| [安装k8s-1.35-基于rockylinux10-最新步骤](../../Docker-Kubernetes/k8s-installation-management/latest-version/安装k8s-1.35-基于rockylinux10-最新步骤.md) | K8s 1.35 (最新) | ✅ | ✅ |
 | [2025最新-企业级高可用集群-基于rockylinux](../../Docker-Kubernetes/k8s-installation-management/2025最新-企业级高可用集群-基于rockylinux.md) | 企业级高可用集群 | ✅ | ✅ |
 | [二进制安装k8s高可用集群](../../Docker-Kubernetes/k8s-installation-management/二进制安装k8s高可用集群.md) | 二进制安装高可用 | ✅ | ❌ |
 | [etcd高可用配置以及模拟集群故障和恢复](../../Docker-Kubernetes/k8s-installation-management/etcd高可用配置以及模拟集群故障和恢复.md) | etcd高可用 | ✅ | ❌ |
@@ -223,13 +223,13 @@ date: 2026-04-16
 | [k8s故障排查指南](../../Docker-Kubernetes/k8s-installation-management/k8s故障排查指南.md) | 故障排查 | ✅ | ❌ |
 | [k8s生产环境优化与最佳实践](../../Docker-Kubernetes/k8s-installation-management/k8s生产环境优化与最佳实践.md) | 生产环境优化 | ✅ | ❌ |
 | [k8s迁移容器运行时-版本升级](../../Docker-Kubernetes/k8s-installation-management/k8s迁移容器运行时-版本升级.md) | 运行时迁移 | ✅ | ❌ |
-| [安装k8s-1.20.6-高可用](../../Docker-Kubernetes/k8s-installation-management/legacy-versions/安装k8s-1.20.6-高可用) | K8s 1.20.6 | ✅ | ❌ |
-| [安装k8s-1.23](../../Docker-Kubernetes/k8s-installation-management/legacy-versions/安装k8s-1.23) | K8s 1.23 | ✅ | ❌ |
-| [安装k8s-1.26-1.27](../../Docker-Kubernetes/k8s-installation-management/legacy-versions/安装k8s-1.26-1.27) | K8s 1.26-1.27 | ✅ | ❌ |
-| [安装k8s-1.28](../../Docker-Kubernetes/k8s-installation-management/legacy-versions/安装k8s-1.28) | K8s 1.28 | ✅ | ❌ |
-| [安装k8s-1.30-基于rockylinux](../../Docker-Kubernetes/k8s-installation-management/legacy-versions/安装k8s-1.30-基于rockylinux) | K8s 1.30 | ✅ | ❌ |
-| [安装k8s-1.32-基于rockylinux](../../Docker-Kubernetes/k8s-installation-management/legacy-versions/安装k8s-1.32-基于rockylinux) | K8s 1.32 | ✅ | ✅ |
-| [安装k8s-1.33-基于rockylinux-最新步骤](../../Docker-Kubernetes/k8s-installation-management/legacy-versions/安装k8s-1.33-基于rockylinux-最新步骤) | K8s 1.33 | ✅ | ✅ |
+| [安装k8s-1.20.6-高可用](../../Docker-Kubernetes/k8s-installation-management/legacy-versions/安装k8s-1.20.6-高可用.md) | K8s 1.20.6 | ✅ | ❌ |
+| [安装k8s-1.23](../../Docker-Kubernetes/k8s-installation-management/legacy-versions/安装k8s-1.23.md) | K8s 1.23 | ✅ | ❌ |
+| [安装k8s-1.26-1.27](../../Docker-Kubernetes/k8s-installation-management/legacy-versions/安装k8s-1.26-1.27.md) | K8s 1.26-1.27 | ✅ | ❌ |
+| [安装k8s-1.28](../../Docker-Kubernetes/k8s-installation-management/legacy-versions/安装k8s-1.28.md) | K8s 1.28 | ✅ | ❌ |
+| [安装k8s-1.30-基于rockylinux](../../Docker-Kubernetes/k8s-installation-management/legacy-versions/安装k8s-1.30-基于rockylinux.md) | K8s 1.30 | ✅ | ❌ |
+| [安装k8s-1.32-基于rockylinux](../../Docker-Kubernetes/k8s-installation-management/legacy-versions/安装k8s-1.32-基于rockylinux.md) | K8s 1.32 | ✅ | ✅ |
+| [安装k8s-1.33-基于rockylinux-最新步骤](../../Docker-Kubernetes/k8s-installation-management/legacy-versions/安装k8s-1.33-基于rockylinux-最新步骤.md) | K8s 1.33 | ✅ | ✅ |
 
 ### docker/（12 篇）
 
@@ -253,7 +253,7 @@ date: 2026-04-16
 | 子目录 | 篇数 | 代表性文章 |
 |--------|------|-----------|
 | k8s-db-middleware/ | 10 | [Operator部署mysql集群](../../Docker-Kubernetes/k8s-db-middleware/Operator部署mysql集群.md)、[helm部署strimzi-kafka](../../Docker-Kubernetes/k8s-db-middleware/helm部署strimzi-kafka.md) |
-| k8s-UI-tools/ | 8 | [kubectl-可视化插件k9s-stern](../../Docker-Kubernetes/k8s-UI-tools/kubectl-可视化插件k9s-stern.md)、[rancher(v2.6.4)管理k8s集群](../../Docker-Kubernetes/k8s-UI-tools/rancher(v2.6.4)管理k8s集群) |
+| k8s-UI-tools/ | 8 | [kubectl-可视化插件k9s-stern](../../Docker-Kubernetes/k8s-UI-tools/kubectl-可视化插件k9s-stern.md)、[rancher(v2.6.4)管理k8s集群](../../Docker-Kubernetes/k8s-UI-tools/rancher(v2.6.4.md)管理k8s集群) |
 | k8s-networking-service-mesh/ | 7 | [k8s精细化流量管理-istio](../../Docker-Kubernetes/k8s-networking-service-mesh/k8s精细化流量管理-istio.md)、[helm部署ingress-nginx](../../Docker-Kubernetes/k8s-networking-service-mesh/helm部署ingress-nginx.md) |
 | k8s-security-auth/ | 7 | [helm部署certmanager](../../Docker-Kubernetes/k8s-security-auth/helm部署certmanager.md)、[helm部署kyverno和policy-reporter](../../Docker-Kubernetes/k8s-security-auth/helm部署kyverno和policy-reporter.md) |
 | helm-operator/ | 6 | [helmv3-安装与使用](../../Docker-Kubernetes/helm-operator/helmv3-安装与使用.md) |
@@ -384,10 +384,10 @@ date: 2026-04-16
 
 | 文件 | 标题 |
 |------|------|
-| [CentOS7-slurm23.02-二进制安装](../../HPC/CentOS7-slurm23.02-二进制安装) | CentOS7 Slurm 23.02 |
-| [Ubuntu2204-slurm-22.05.11-二进制安装](../../HPC/Ubuntu2204-slurm-22.05.11-二进制安装) | Ubuntu 22.04 Slurm 22.05 |
-| [Ubuntu-2204-slurm-22.05.11-binary-installation](../../HPC/Ubuntu-2204-slurm-22.05.11-binary-installation) | Slurm 22.05 (English) |
-| [Ubuntu2204-slurm- 23.11-deb安装](../../HPC/Ubuntu2204-slurm-%2023.11-deb安装) | Slurm 23.11 deb |
+| [CentOS7-slurm23.02-二进制安装](../../HPC/CentOS7-slurm23.02-二进制安装.md) | CentOS7 Slurm 23.02 |
+| [Ubuntu2204-slurm-22.05.11-二进制安装](../../HPC/Ubuntu2204-slurm-22.05.11-二进制安装.md) | Ubuntu 22.04 Slurm 22.05 |
+| [Ubuntu-2204-slurm-22.05.11-binary-installation](../../HPC/Ubuntu-2204-slurm-22.05.11-binary-installation.md) | Slurm 22.05 (English) |
+| [Ubuntu2204-slurm- 23.11-deb安装](../../HPC/Ubuntu2204-slurm-%2023.11-deb安装.md) | Slurm 23.11 deb |
 | [PBS](../../HPC/PBS.md) | PBS 作业调度 |
 | [PBS-cases](../../HPC/PBS-cases.md) | PBS 实际案例 |
 | [Slurm-node-exporter](../../HPC/Slurm-node-exporter.md) | Slurm Node Exporter |
@@ -406,8 +406,8 @@ date: 2026-04-16
 | 文件 | 标题 |
 |------|------|
 | [MySQL入门](../../Database/MySQL入门.md) | MySQL入门 |
-| [MGR部署MySQL5.7](../../Database/MGR部署MySQL5.7) | MGR部署MySQL5.7 |
-| [源码安装redis-6.2.6-centos7](../../Database/源码安装redis-6.2.6-centos7) | 源码安装Redis |
+| [MGR部署MySQL5.7](../../Database/MGR部署MySQL5.7.md) | MGR部署MySQL5.7 |
+| [源码安装redis-6.2.6-centos7](../../Database/源码安装redis-6.2.6-centos7.md) | 源码安装Redis |
 
 ### Middlewares（3 篇，⚠️ 无 Frontmatter）
 
