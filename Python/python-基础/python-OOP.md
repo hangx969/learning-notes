@@ -58,7 +58,6 @@ class Friend:
     def introduce(self):
         return f"I am {self.name}, {self.age} years old, I like {self.hobby}"
 
-
 bob = Friend('Bob', 12, "travel")
 alice = Friend('Alice', 15, 'movie')
 
@@ -85,7 +84,6 @@ class Friend:
 
     def introduce(self, greeting):
         return f"{greeting}. I am {self.name}, {self.age} years old, I like {self.hobby}"
-
 
 bob = Friend('Bob', 12, "travel")
 alice = Friend('Alice', 15, 'movie')
@@ -350,7 +348,6 @@ def require_permission(permission): # 装饰器工厂,可以接受参数。即�
 
         return Wrapped # 返回一个预先内置了[permission参数]和[父类]的类
     return decorator # 返回一个预先内置了传入参数的装饰器
-
 
 @require_permission('admin')
 class Friend:

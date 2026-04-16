@@ -468,7 +468,6 @@ def make_log_praser(service_name):
             'user_agent': parts[11][1:-1]
         }
 
-
     def messages_praser(line):
         # 日期、时间、主机名、服务信息、日志消息
         #['Aug', '30', '18:08', 'myhost sshd[1234]: Accepted password for user from 192.168.1.2 port 22 ssh2']

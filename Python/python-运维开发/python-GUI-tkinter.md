@@ -138,7 +138,6 @@ def view_nginx_logs():
         # 将文本框布局到窗口中,fill='both' 表示文本框会填满窗口的水平和垂直方向,expand=True 文本框会随着窗口的大小变化而扩展。
         logs_text.pack(fill='both', expand=True)
 
-
 if __name__ == '__main__':
     # 创建一个顶层窗口对象 root,这是整个图形界面的主窗口。
     root = tk.Tk()
@@ -357,7 +356,6 @@ def check_mysql_status():
     else:
         status_label.config(text='Mysql status: stopped', fg='red')
     output_text.insert(tk.END, f"Mysql status checking result:\n{result}\n")
-
 
 def start_mysql():
     result = execute_ssh_command('systemctl start mysqld')
@@ -622,7 +620,6 @@ def view_log():
             log_text.pack()
             log_text.insert(tk.END, log_content)
         client.close()
-
 
 if __name__ == '__main__':
     root = tk.Tk()

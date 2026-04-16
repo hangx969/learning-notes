@@ -103,7 +103,6 @@ print(results)
 for connection, result in results.items():
      print("{0.host}: {1.stdout}".format(connection, result))
 
-
 web1: Linux
 web2: Linux
 mac1: Darwin
@@ -189,7 +188,6 @@ def traverse_remote_files(remote_path: Path, local_path: Path):
         else:
             yield remote
 
-
 def remote_isdir(remote_path):
     """
     检查一个远程路径是否为目录
@@ -198,7 +196,6 @@ def remote_isdir(remote_path):
     """
     attr = sftp.lstat(normpath(remote_path))
     return stat.S_ISDIR(attr.st_mode)
-
 
 def get(remote_path, local_path):
     local_path, remote_path = Path(local_path), Path(remote_path)
@@ -263,8 +260,6 @@ conn.run(f"fab -c /home/yuqiuwen/PythonProjects/zhongxin/fab task1 --param '{now
 
 >>> output: hello world, today is 2022-10-30 14:19:23
 
-
-
 """通过本地调用本地的脚本"""
 
 from invoke import run
@@ -287,7 +282,6 @@ from fabric import Connection
 from pathlib import Path
 import stat
 import logging
-
 
 class FabConnection:
     def __init__(self, host, user, password, port=22, mylogger=None):
@@ -440,7 +434,6 @@ class FabConnection:
     def sudo_pass(self):
         sudopass = Responder(pattern=fr'[sudo] password for {self._user}:', response=f'{self._password}\n', )
         return sudopass
-
 
     def run(self, cmd, hide=False, warn=True, pty=False, watchers=None):
         # hide=True控制台不打印运行信息,当out_stream不为空时,hide参数无效

@@ -1493,7 +1493,6 @@ print(f"Average Memory Usage: {avg_mem}%")
 # 用户信息列表
 users = []
 
-
 def user_register():
     name = input("Please input name:")
     age = input("Please input age:")
@@ -1511,7 +1510,6 @@ def user_register():
     users.append(user)
     print(f"User {name} registered successfully.")
 
-
 def user_search():
     phone = input("Please enter phone number to search:")
     for user in users:
@@ -1520,13 +1518,11 @@ def user_search():
             return
     print("User not found.")
 
-
 def user_lists():
     if not users:
         print("No users registered.")
     for user in users:
         print(f"User name: {user['name']}, age: {user['age']}, phone number: {user['phone']}")
-
 
 def main():
     while True:
