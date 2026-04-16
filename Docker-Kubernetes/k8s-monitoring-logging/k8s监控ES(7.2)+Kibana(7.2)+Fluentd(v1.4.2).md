@@ -1,3 +1,17 @@
+---
+title: K8s监控ES(7.2)+Kibana(7.2)+Fluentd(v1.4.2)
+tags:
+  - kubernetes
+  - logging
+  - elasticsearch
+  - kibana
+  - fluentd
+  - elk
+  - nfs
+aliases:
+  - K8s部署EFK日志收集
+---
+
 # 日志简介
 
 ## 日志的常见级别

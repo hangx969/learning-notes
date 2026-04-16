@@ -42,5 +42,5 @@ docker run -d --restart=unless-stopped --name=kuboard -p 10080:80/tcp -p 10081:1
 
 - 创建deploy：[https://kuboard.cn/learning/k8s-basics/deploy-app.html#%E5%AE%9E%E6%88%98-%E9%83%A8%E7%BD%B2-nginx-deployment](https://kuboard.cn/learning/k8s-basics/deploy-app.html#实战-部署-nginx-deployment)
 
-- 创建svc：https://kuboard.cn/learning/k8s-basics/expose.html
+- 创建svc：[Kuboard 创建 Service](https://kuboard.cn/learning/k8s-basics/expose.html)
 

@@ -17,7 +17,7 @@ aliases:
 
 # 下载
 
-~~~python
+~~~sh
 helm repo add bitnami https://charts.bitnami.com/bitnami
 helm repo update bitnami
 helm pull bitnami/tomcat --version 11.7.12

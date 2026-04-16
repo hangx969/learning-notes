@@ -12,11 +12,11 @@ aliases:
 
 - 官网地址：[Reloader GitHub](https://github.com/stakater/Reloader)
 
-- 教程：https://zhuanlan.zhihu.com/p/669681298
+- 教程：[Reloader 使用教程](https://zhuanlan.zhihu.com/p/669681298)
 
-- github release： https://github.com/stakater/Reloader/releases
+- github release：[Reloader Releases](https://github.com/stakater/Reloader/releases)
 
-- artifact hub： https://artifacthub.io/packages/helm/stakater/reloader
+- artifact hub：[Reloader on ArtifactHub](https://artifacthub.io/packages/helm/stakater/reloader)
 
 - configMap和secret有两种方式赋值：
 

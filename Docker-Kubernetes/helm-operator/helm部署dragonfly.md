@@ -185,4 +185,4 @@ Dragonfly 采用 BitTorrent-like 的分块（Piece）分发机制：
 ```
 
 # Helm Chart地址
-https://github.com/dragonflyoss/helm-charts/releases
+[Dragonfly Helm Charts Releases](https://github.com/dragonflyoss/helm-charts/releases)

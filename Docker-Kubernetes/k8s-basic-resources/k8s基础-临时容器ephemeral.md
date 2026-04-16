@@ -1,3 +1,12 @@
+---
+title: K8s基础-临时容器Ephemeral
+tags:
+  - kubernetes
+  - k8s-basics
+aliases:
+  - k8s临时容器
+---
+
 # 临时容器
 
 在Kubernetes中，Ephemeral容器（临时容器）是一种特殊类型的容器，它是为了在正在运行的Pod中临时执行诊断和调试操作而设计的。临时容器可以在Pod的生命周期中的任何时刻被添加，而无需重新启动Pod或改变现有容器的定义。
@@ -24,8 +33,9 @@ kubectl debug [POD_NAME] -it --image=busybox --target=[POD_NAME]
 
 这条命令会向指定的Pod添加一个以busybox镜像运行的临时容器，并提供交互式终端。
 
+> [!info] 参考
 > - 官方文档：[Ephemeral Containers | Kubernetes](https://kubernetes.io/docs/concepts/workloads/pods/ephemeral-containers/)
-> - 教程示例：https://kubernetes.io/docs/tasks/debug/debug-application/debug-running-pod/#ephemeral-container
+> - 教程示例：[调试运行中的Pod](https://kubernetes.io/docs/tasks/debug/debug-application/debug-running-pod/#ephemeral-container)
 > - 临时容器在1.25版本开始变成stable
 
 # 开启临时容器功能
@@ -97,6 +107,7 @@ systemctl restart kubelet
 kubectl get pods -n kube-system #检查pod正常工作
 ~~~
 
+> [!warning] 注意
 > 重启apiserver会影响业务，最好集群创建完就配置上；或者配置高可用master节点
 
 # 使用临时容器
@@ -199,7 +210,7 @@ kubectl attach -it -c debugger tomcat-test
 
 - 有时AKS中的pod与azure交互出现问题需要排查，我们可以在pod上attach一个azcli的debug容器
 
-- 获取azure官方azcli容器：https://learn.microsoft.com/zh-cn/cli/azure/run-azure-cli-docker#run-the-docker-container-with-a-specific-version-of-the-azure-cli
+- 获取azure官方azcli容器：[Azure CLI Docker容器](https://learn.microsoft.com/zh-cn/cli/azure/run-azure-cli-docker#run-the-docker-container-with-a-specific-version-of-the-azure-cli)
 
 ~~~sh
 #镜像上传到ACR
@@ -213,7 +224,7 @@ kubectl debug -it <pod name> -n <ns name> --image=<acr name>/azure-cli:2.66.0-cb
 
 - 目前临时容器存在一个bug：
 
-  在pod中添加临时容器之后，目前还无法删除，同时如果这时候临时容器已经退出，会导致无法再次attach，也不会被重启（临时容器不支持probe什么的），相关的issue：https://github.com/kubernetes/kubernetes/issues/84764
+  在pod中添加临时容器之后，目前还无法删除，同时如果这时候临时容器已经退出，会导致无法再次attach，也不会被重启（临时容器不支持probe什么的），相关的issue：[kubernetes#84764](https://github.com/kubernetes/kubernetes/issues/84764)
 
 - 此时，如果要重复上述步骤再次进行调试，需要用新name创建一个新的临时容器，保留原有的配置，否则k8s会拒绝新的配置。
 

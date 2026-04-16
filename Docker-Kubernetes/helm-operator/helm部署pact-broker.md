@@ -33,8 +33,8 @@ aliases:
 
 ## Pact
 
-- 官网链接：https://docs.pact.io/pact_broker/kubernetes/readme
-- github地址：https://github.com/pact-foundation/pact-broker-chart
+- 官网链接：[Pact Broker K8s 文档](https://docs.pact.io/pact_broker/kubernetes/readme)
+- github地址：[Pact Broker Chart GitHub](https://github.com/pact-foundation/pact-broker-chart)
 
 **Pact 工具的核心逻辑**
 
@@ -142,7 +142,7 @@ pact-broker/pact-broker \
 
 注意由于我们安装的时候是采用默认的postgres password，不是使用已有password，所以升级的时候会被要求提供这个数据库password，获取方式如下：
 
-https://docs.pact.io/pact_broker/kubernetes/readme#configuration-and-installation-details
+[Pact Broker 配置详情](https://docs.pact.io/pact_broker/kubernetes/readme#configuration-and-installation-details)
 
 ~~~sh
 export POSTGRES_PASSWORD=$(kubectl get secret --namespace "observability" pact-broker-postgresql --kubeconfig $KUBECONFIG -o jsonpath="{.data.postgres-password}" | base64 -d)

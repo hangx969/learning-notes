@@ -871,8 +871,8 @@ systemctl enable --now kubelet
 
 4. 【离线安装方法】如果安装报找不到指定的源，可以按照下面的网址，下载指定版本的rpm文件，传到linux机器：
 
-   - https://mirrors.aliyun.com/kubernetes-new/core/stable/v1.33
-   - https://mirrors.aliyun.com/kubernetes-new/core/stable/v1.33/rpm/x86_64/?spm=a2c6h.25603864.0.0.7ced7af3l8FcI0
+   - [阿里云k8s仓库](https://mirrors.aliyun.com/kubernetes-new/core/stable/v1.33)
+   - [阿里云k8s rpm x86_64](https://mirrors.aliyun.com/kubernetes-new/core/stable/v1.33/rpm/x86_64/?spm=a2c6h.25603864.0.0.7ced7af3l8FcI0)
 
    基于上面下载到linux机器的rpm文件，手动安装：`rpm -ivh ./*`
 

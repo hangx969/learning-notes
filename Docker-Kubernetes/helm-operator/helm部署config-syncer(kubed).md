@@ -13,9 +13,9 @@ aliases:
 将configMap和secret同步到其他namespace的工具
 
 - 官网地址：
-  - https://github.com/config-syncer/config-syncer
-  - https://config-syncer.com/docs/v0.15.2/guides/config-syncer/
-  - artifact hub: https://artifacthub.io/packages/helm/appscode/kubed
+  - [Config Syncer GitHub](https://github.com/config-syncer/config-syncer)
+  - [Config Syncer 文档](https://config-syncer.com/docs/v0.15.2/guides/config-syncer/)
+  - artifact hub: [Kubed on ArtifactHub](https://artifacthub.io/packages/helm/appscode/kubed)
 
 
 # 下载helm chart
@@ -28,7 +28,7 @@ helm pull appscode/kubed --version 0.13.2
 
 # 构建镜像
 
-由于在2024年2月，Appscode将config-syncer的镜像从docker.io移除了（https://github.com/bytebuilders/community/discussions/62），突然没有任何事先通知的移除dockerhub image，使得许多用户遭受了downtime。
+由于在2024年2月，Appscode将config-syncer的镜像从docker.io移除了（[相关讨论](https://github.com/bytebuilders/community/discussions/62)），突然没有任何事先通知的移除dockerhub image，使得许多用户遭受了downtime。
 
 他们仍然在Apache 2.0 Open Source license下，所以我们可以自行通过dockerfile制作镜像，推送到我们的私有仓库中以供使用。步骤如下：
 
@@ -66,7 +66,7 @@ docker save -o './kubed-image.tar' 'appscode/kubed:v0.13.2_linux_amd64'
 >
 > 这样就会加载预先解压到本地的镜像了
 
-> 在github上有用户提到了config-syncer的替代品：https://github.com/mittwald/kubernetes-replicator，后面可以尝试一下。
+> 在github上有用户提到了config-syncer的替代品：[kubernetes-replicator](https://github.com/mittwald/kubernetes-replicator)，后面可以尝试一下。
 
 # 推送镜像到harbor
 
@@ -402,7 +402,7 @@ oci://$harbor_host/$harbor_project/$helm_chart_file_name \
 
 # 使用
 
-- 参考官网：https://config-syncer.com/docs/v0.15.2/guides/config-syncer/intra-cluster/#namespace-selector
+- 参考官网：[Config Syncer Namespace Selector](https://config-syncer.com/docs/v0.15.2/guides/config-syncer/intra-cluster/#namespace-selector)
 
 - 将configMap同步到其他namespace：
 

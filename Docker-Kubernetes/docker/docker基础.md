@@ -1414,7 +1414,7 @@ docker pull xxx:tag --platform linux/arm64
 
 ### 制作 Vue/H5 前端镜像
 
-代码地址：https://gitee.com/dukuan/vue-project.git
+代码地址：[vue-project](https://gitee.com/dukuan/vue-project.git)
 
 编译镜像步骤：运行包含构建环境的基础镜像，把宿主机的代码目录挂进去，进容器执行构建命令，构建结果就在宿主机上。
 
@@ -1448,7 +1448,7 @@ docker build -t xxx:xxx .
 
 ### 制作 Java 后端镜像
 
-代码地址：https://gitee.com/dukuan/spring-boot-project.git
+代码地址：[spring-boot-project](https://gitee.com/dukuan/spring-boot-project.git)
 
 编译镜像：registry.cn-beijing.aliyuncs.com/citools/maven:3.5.3
 
@@ -1485,7 +1485,7 @@ docker build -t xxx:xxx .
 
 ### 制作 golang 后端镜像
 
-代码地址：https://gitee.com/dukuan/go-project.git
+代码地址：[go-project](https://gitee.com/dukuan/go-project.git)
 
 编译镜像：registry.cn-beijing.aliyuncs.com/citools/golang:1.15
 
@@ -1562,7 +1562,7 @@ chmod +x /usr/bin/docker-compose
 
 # 阿里云镜像仓库使用
 
-官网：https://cr.console.aliyun.com/
+官网：[阿里云容器镜像服务](https://cr.console.aliyun.com/)
 
 1. 使用阿里云镜像仓库第一步需要创建命名空间，相当于 repository
 
@@ -1594,7 +1594,7 @@ chmod +x /usr/bin/docker-compose
 
 - Harbor是由VMware公司开源的企业级的Docker Registry管理项目，它包括权限管理(RBAC)、LDAP、日志审核、管理界面、自我注册、镜像复制和中文支持等功能。
 
-- 官网地址：https://github.com/goharbor/harbor
+- 官网地址：[Harbor GitHub](https://github.com/goharbor/harbor)
 
 ## Harbor安装配置-基于docker-compose
 
@@ -1674,7 +1674,7 @@ chmod +x /usr/bin/docker-compose
    docker load -i docker-harbor-2-3-0.tar.gz 
    ```
 
-   > 注：
+   > [!tip] 注：
    >
    > - docker-compose可以直接yum install docker-compose或者apt install docker-compose
    >

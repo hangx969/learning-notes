@@ -19,8 +19,8 @@ aliases:
 - 安装krew
 
   - 是一个管理kubectl插件的工具：
-  - https://github.com/kubernetes-sigs/krew
-  - https://krew.sigs.k8s.io/docs/user-guide/quickstart/
+  - [Krew GitHub](https://github.com/kubernetes-sigs/krew)
+  - [Krew 快速入门](https://krew.sigs.k8s.io/docs/user-guide/quickstart/)
 
   ~~~SH
   (

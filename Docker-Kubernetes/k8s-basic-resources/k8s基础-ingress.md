@@ -1,3 +1,12 @@
+---
+title: K8s基础-Ingress
+tags:
+  - kubernetes
+  - k8s-basics
+aliases:
+  - k8sIngress
+---
+
 # Ingress和 Ingress Controller概述
 
 ## OSI七层模型
@@ -62,7 +71,8 @@
 
 ![image-20231209111616791](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202312091116867.png)
 
-> 注意：上图其实能看出来，svc只是起到了分组的作用，ingress controller里面的nginx通过label直接找到了pod，流量不经过service直接到了pod上！
+> [!warning] 注意
+> 上图其实能看出来，svc只是起到了分组的作用，ingress controller里面的nginx通过label直接找到了pod，流量不经过service直接到了pod上！
 
 # 生产环境推荐架构
 
@@ -448,7 +458,7 @@ spec:
 
 再次访问 nginx.test.com/api-a 即可访问到后端服务。
 
-> 注：
+> [!info] 说明
 >
 > - 如果希望把/api-a重写为/api，annotation就写`nginx.ingress.kubernetes.io/rewrite-target: /api/$2`
 > - 这个ingress里面配了rewrite，里面所有的host都会被重写。所以需要rewrite的不需要rewrite的ingress要分开创建ingress.yaml
@@ -712,6 +722,7 @@ spec:
 
 - 蓝绿发布：v2版本部署之后，直接把流量全切到v2上面去，有问题再切回v1。同时存在两个版本。
 
+> [!tip] 提示
 > 灰度发布里面可以通过请求头设置一部分测试用户的流量可以进来，是更加稳妥的做法。
 
 v2的灰度版本如何设置，才能获取到一小部分比例的流量：创建 v2 版本的 Ingress 时，需要添加两个注释:
@@ -804,7 +815,7 @@ ruby test-canary.rb
 
 504 一般是代理的服务处理请求的时间过长，导致 Nginx 等待超时，此时需要确认服务的处理时长，或者查看服务是否有问题。或者可能是网络不通（比如代理了外部的地址）。
 
-也可以根据调整超时时间：（https://kubernetes.github.io/ingress-nginx/userguide/nginx-configuration/annotations/#custom-timeouts）
+也可以根据调整超时时间：（[Ingress Nginx超时配置](https://kubernetes.github.io/ingress-nginx/userguide/nginx-configuration/annotations/#custom-timeouts)）
 
 ~~~yaml
 annotations:
@@ -819,7 +830,7 @@ annotations:
 
 如果浏览器有如下报错，说明被跨域给拦截了，可以添加跨域配置。
 
-官方文档：https://kubernetes.github.io/ingress-nginx/user-guide/nginxconfiguration/annotations/#enable-cors
+官方文档：[Ingress Nginx CORS配置](https://kubernetes.github.io/ingress-nginx/user-guide/nginxconfiguration/annotations/#enable-cors)
 
 应该是去跨到别人那里的域名的ingress上添加允许跨域配置。
 
@@ -942,7 +953,7 @@ spec:
 
 - 有一个业务应用部署在kubernetes中，如果将该应用以Kubernetes Service NodePort暴露出来，压测可以发现页面响应性能较高，可以达到10w多的QPS；而将这个Kubernetes用Ingress暴露出来，压测只能响应5w多的QPS了。
 
-- 参考文档:shttps://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/configmap/
+- 参考文档：[Ingress Nginx ConfigMap配置](https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/configmap/)
 
 ~~~sh
 #upstream中的keepalive、keepalive_requests、keepalive_timeout这些配置项可以优化下
@@ -1317,11 +1328,12 @@ ctr -n=k8s.io images import kube-webhook-certgen-v1.1.0.tar.gz
 
 ### 部署 ingress-controller
 
-> 注意：k8s官方维护的叫`ingress-nginx`，nginx维护的叫`nginx-ingress`
+> [!warning] 注意
+> k8s官方维护的叫`ingress-nginx`，nginx维护的叫`nginx-ingress`
 
 - nginx-ingress-controller是以pod形式部署，demo的yaml文件从github下载：
 
-  https://github.com/kubernetes/ingress-nginx/tree/main/deploy/static/provider/baremetal
+  [ingress-nginx baremetal部署](https://github.com/kubernetes/ingress-nginx/tree/main/deploy/static/provider/baremetal)
 
   (不做高可用的话直接在这里下载apply就行)
 
@@ -2025,7 +2037,8 @@ spec:
 - 部署完会在两个worker node上建出来两个pod：ingress-nginx-controller-64bdc78c96-8t25x
 - ingress-nginx-admission-create-2qqzl和ingress-nginx-admission-patch-8nzwm是生成证书用的两个一次性pod
 
-> - 如果部署完ingress，访问ingress的80端口被拒绝，原因一般是： ingress-controller的官方yaml默认注释了hostNetwork 工作方式，以防止端口的在宿主机的冲突，没有绑定到宿主机 80 端口。需要在ingress-class的deployment.spec.template.spec中加上hostNetwork: true
+> [!warning] 注意
+> 如果部署完ingress，访问ingress的80端口被拒绝，原因一般是： ingress-controller的官方yaml默认注释了hostNetwork 工作方式，以防止端口的在宿主机的冲突，没有绑定到宿主机 80 端口。需要在ingress-class的deployment.spec.template.spec中加上hostNetwork: true
 
 ### 安装配置nginx和keeplived
 

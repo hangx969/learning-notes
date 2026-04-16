@@ -205,20 +205,20 @@ EOF
             - kyverno.hanxux.local
   ~~~
 
-> 注意：pod只能挂载位于同一个namespace下的secret
+> [!warning] 注意：pod只能挂载位于同一个namespace下的secret
 
 ## 使用Letsencrypt certificate
 
 ### 参考
 
-- azure文档：https://learn.microsoft.com/en-us/previous-versions/azure/aks/ingress-tls?tabs=azure-cli#install-cert-manager
-- letsencrypt官网：https://letsencrypt.org/getting-started/
-- challenge的方式：https://letsencrypt.org/docs/challenge-types/#dns-01-challenge
-- 创建Issuer和ClusterIssuer可以去官网找例子：https://cert-manager.io/docs/configuration/acme/dns01/
+- azure文档：[AKS Ingress TLS](https://learn.microsoft.com/en-us/previous-versions/azure/aks/ingress-tls?tabs=azure-cli#install-cert-manager)
+- letsencrypt官网：[Let's Encrypt Getting Started](https://letsencrypt.org/getting-started/)
+- challenge的方式：[Challenge Types - DNS-01](https://letsencrypt.org/docs/challenge-types/#dns-01-challenge)
+- 创建Issuer和ClusterIssuer可以去官网找例子：[ACME DNS01](https://cert-manager.io/docs/configuration/acme/dns01/)
 
 ### 过期时间
 
-参考：https://letsencrypt.org/zh-cn/docs/faq/#let-s-encrypt-%E8%AF%81%E4%B9%A6%E7%9A%84%E6%9C%89%E6%95%88%E6%9C%9F%E6%9C%89%E5%A4%9A%E9%95%BF-%E8%83%BD%E5%A4%9F%E4%BD%BF%E7%94%A8%E5%A4%9A%E4%B9%85
+参考：[Let's Encrypt FAQ - 证书有效期](https://letsencrypt.org/zh-cn/docs/faq/#let-s-encrypt-%E8%AF%81%E4%B9%A6%E7%9A%84%E6%9C%89%E6%95%88%E6%9C%9F%E6%9C%89%E5%A4%9A%E9%95%BF-%E8%83%BD%E5%A4%9F%E4%BD%BF%E7%94%A8%E5%A4%9A%E4%B9%85)
 
 有效期90天，无法更改，建议每60天更新一次证书
 
@@ -230,6 +230,7 @@ Let's Encrypt 不颁发CA证书，只颁发终端实体证书。
 
 校验域名归属的两种方式分别是 HTTP-01 和 DNS-01，校验原理详情可参见 [Let's Encrypt 的运作方式](https://letsencrypt.org/zh-cn/how-it-works/)
 
+> [!info] 校验流程
 > - 用户向clusterissuer提出申请证书请求，clusterissuer向letsencrypt机构申请证书，letsencrypt机构进行审核，假如申请的域名为www.xxx.com，机构会审核www.xxx.com这个站点是不是你的？审核的方式有：http01和dns01。
 >   - 使用http01的审核方式：letsencrypt机构让你往网站的某个路径里面写一个文件。然后他登录到www.xxx.com，看看能不能访问成功，访问成功就证明是你的网站。
 >     - 这种方式对于内网web环境，letsencrypt访问不了。
@@ -240,11 +241,11 @@ Let's Encrypt 不颁发CA证书，只颁发终端实体证书。
 
 ### 使用cloudflare作为dns resolver
 
-参考：https://www.cnblogs.com/renshengdezheli/p/18211540
+参考：[Cloudflare DNS配置](https://www.cnblogs.com/renshengdezheli/p/18211540)
 
 #### 获取cloudflare的API Token
 
-- 公网域名注册可以使用[cloudflare](https://www.cloudflare.com/zh-cn/)，拿到cloudflare的API token。
+- 公网域名注册可以使用[Cloudflare](https://www.cloudflare.com/zh-cn/)，拿到cloudflare的API token。
 
 - 测试API Token：
 
@@ -413,10 +414,11 @@ spec:
 
 - 证书到期之后，clusterissuers会自动续约。
 
-> 注：为配置certificate自动续约，可以给ingress添加annotation
+> [!tip] 自动续约
+> 为配置certificate自动续约，可以给ingress添加annotation
 >
-> - ingress支持的annotation：https://cert-manager.io/docs/usage/ingress/#supported-annotations
-> - How it works： https://cert-manager.io/docs/usage/ingress/#how-it-works
+> - ingress支持的annotation：[Supported Annotations](https://cert-manager.io/docs/usage/ingress/#supported-annotations)
+> - How it works：[Ingress - How it works](https://cert-manager.io/docs/usage/ingress/#how-it-works)
 
 ~~~yaml
 apiVersion: networking.k8s.io/v1
@@ -477,7 +479,7 @@ spec:
 
 ### 使用azure dns作为dns resolver
 
-cert-manager官网教程：https://cert-manager.io/docs/tutorials/getting-started-aks-letsencrypt/#part-2
+cert-manager官网教程：[Getting Started with AKS and Let's Encrypt](https://cert-manager.io/docs/tutorials/getting-started-aks-letsencrypt/#part-2)
 
 - cluster issuer中的dns配置为azureDNS
 
@@ -516,12 +518,13 @@ serviceAccount:
     azure.workload.identity/client-id:
 ~~~
 
-> 注：对于azureDNS，cert-manager定义了一个staging server用于前期测试，避免对于一个domain用尽cert的quota：
+> [!tip] Staging Server
+> 对于azureDNS，cert-manager定义了一个staging server用于前期测试，避免对于一个domain用尽cert的quota：
 >
 > 参考：
 >
-> - cert-manager教程：https://cert-manager.io/docs/tutorials/getting-started-aks-letsencrypt/#create-a-clusterissuer-for-lets-encrypt-staging
-> - letsencrypt教程：https://letsencrypt.org/docs/staging-environment/
+> - cert-manager教程：[Create a ClusterIssuer for Let's Encrypt Staging](https://cert-manager.io/docs/tutorials/getting-started-aks-letsencrypt/#create-a-clusterissuer-for-lets-encrypt-staging)
+> - letsencrypt教程：[Staging Environment](https://letsencrypt.org/docs/staging-environment/)
 >
 > 流程如下：
 >

@@ -1,3 +1,18 @@
+---
+title: K8s监控EFK+logstash+kafka
+tags:
+  - kubernetes
+  - logging
+  - elk
+  - fluentd
+  - kafka
+  - logstash
+  - elasticsearch
+  - kibana
+aliases:
+  - EFK+logstash+kafka高吞吐量日志收集
+---
+
 # EFK+logstash+kafka高吞吐量日志收集
 
 - fluentd采集日志数据 --> kafka缓冲 --> logstash消费数据-格式转换 --> elasticsearch --> kibana
@@ -5,7 +20,7 @@
 
 ## 部署fluentd
 
-- https://github.com/kubernetes/kubernetes/blob/master/cluster/addons/fluentd-elasticsearch/fluentd-es-ds.yaml
+- [fluentd-es-ds.yaml (GitHub)](https://github.com/kubernetes/kubernetes/blob/master/cluster/addons/fluentd-elasticsearch/fluentd-es-ds.yaml)
 
 - 给想要收日志的节点打标签，给ds的标签选择器来调度
 
@@ -555,7 +570,7 @@ output {
 - Elasticsearch 是一个分布式搜索和分析引擎，可以将大量的结构化和非结构化数据存储到一个地方，并支持实时搜索和分析。Kibana 是一个用于 Elasticsearch 的开源分析和可视化平台，可以帮助您快速理解和探索 Elasticsearch 中的数据。
 - 首先，需要创建一个 Elasticsearch 集群。可以使用 Docker Compose 快速搭建一个本地 Elasticsearch 环境。下面是一个简单的 Docker Compose 文件，它定义了一个包含三个 Elasticsearch 节点的 Elasticsearch 集群。
 
-~~~sh
+~~~yaml
 version: '3'
 services:
   elasticsearch1:
