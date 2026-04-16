@@ -1,12 +1,26 @@
-# Python数据类型、运算符
+---
+title: Python 数据类型、运算符与基础语法
+tags:
+  - python/basics
+  - python/data-types
+  - python/string
+  - python/file-io
+  - python/regex
+aliases:
+  - Python 基础
+  - Python Basics
+date: 2026-04-16
+---
+
+# Python 数据类型、运算符与基础语法
 
 ## 数据类型
 
-- 整型(int)
+- ==整型(int)==
 
-- 浮点数(float)
+- ==浮点数(float)==
 
-- 字符串(str)
+- ==字符串(str)==
 
   - 多行字符串
 
@@ -26,17 +40,22 @@
     """
     ```
 
-- 布尔值(bool)
+- ==布尔值(bool)==
+
+---
 
 ## 运算符
 
-- 算术运算:+,-,*,/,%(取模)
+- 算术运算:`+`,`-`,`*`,`/`,`%`(取模)
 
-- 比较运算符:==,!=,>=,<=
+- 比较运算符:`==`,`!=`,`>=`,`<=`
 
-- 逻辑运算符:and(&&), or(|), not(!)
+- 逻辑运算符:`and`(&&), `or`(|), `not`(!)
 
-  > 短路逻辑:在多个and or连接的判断语句中,前面的判断只要是能确定了整个句子的true false,就不会继续去算后面的逻辑。
+  > [!tip] 短路逻辑
+  > 在多个 and or 连接的判断语句中,前面的判断只要是能确定了整个句子的 true false,就不会继续去算后面的逻辑。
+
+---
 
 ## 索引操作/切片
 
@@ -64,13 +83,15 @@
   time[3][1:] # 10:00:00
   ```
 
-# 列表、元组、字典、集合
+---
 
-## 列表(List)
+## 列表、元组、字典、集合
+
+### 列表(List)
 
 列表是有序的,索引从0开始,可以随时修改。
 
-### 列表操作
+#### 列表操作
 
 ```python
 # 获取元素个数
@@ -81,7 +102,7 @@ max(list) / min(list)
 sum(list)
 ```
 
-### 列表方法
+#### 列表方法
 
 ```python
 # 添加元素
@@ -96,10 +117,11 @@ list.index("元素值")
 list.reverse()
 ```
 
+> [!note] 中文排序规则
 > - 中文排序是按照每个字符的unicode编码,从小到大排序。Unicode 对应的汉字编码是一种国际标准,用于为每个汉字分配一个唯一的编码值。由于汉字数量庞大,这些编码值范围从较低的数值到较高的数值。常见汉字的 Unicode 编码大多集中在 U+4E00 到 U+9FFF 之间
 > - 查看unicode编码:访问 https://www.unicode.org/charts/,找到 CJK Unified Ideographs (Han)
 
-### 列表嵌套访问
+#### 列表嵌套访问
 
 ```python
 nested=[[1,2,3],[4,5,6],[7,8,9]]
@@ -107,10 +129,10 @@ nested[1] # [1,2,3]
 nested[1,1] # [5]
 ```
 
-### 列表拼接
+#### 列表拼接
 
-- join() 是一个字符串方法,它用于将一个可迭代的对象(如列表、元组等,**元素必须是字符串**)中的元素用某个连接符连接成一个字符串。
-- 语法:separator.join(iterable),其中 separator 是连接各元素的分隔符,iterable 是要被拼接的元素(如列表)
+- `join()` 是一个字符串方法,它用于将一个可迭代的对象(如列表、元组等,**元素必须是字符串**)中的元素用某个连接符连接成一个字符串。
+- 语法:`separator.join(iterable)`,其中 separator 是连接各元素的分隔符,iterable 是要被拼接的元素(如列表)
 
 ```python
 words = ["a", "b", "c"]
@@ -119,21 +141,22 @@ words = ["a", "b", "c"]
 "-".join(words) # "a-b-c"
 ```
 
-- 案例:处理时间戳
+> [!example] 案例:处理时间戳
+> ```python
+> time_stamps=['2028','08','08','T10:00:00','Z']
+> # 提取日期和时间部分分别提取出来,拼接成新的字符串,日期部分为'2028-08-08',时间部分为'10:00:00 Z'
+> date = '-'.join(time_stamps[:3])
+> time = time_stamps[3][1:]+ ' ' + time_stamps[-1]
+> # ' '.join(time_stamps[3:])).lstrip('T')也行
+> ```
 
-```python
-time_stamps=['2028','08','08','T10:00:00','Z']
-# 提取日期和时间部分分别提取出来,拼接成新的字符串,日期部分为'2028-08-08',时间部分为'10:00:00 Z'
-date = '-'.join(time_stamps[:3])
-time = time_stamps[3][1:]+ ' ' + time_stamps[-1]
-# ' '.join(time_stamps[3:])).lstrip('T')也行
-```
+---
 
-## 元组(Tuple)
+### 元组(Tuple)
 
-元组是一个有序、不可变的元素集合。一旦创建,元组中的元素不能被修改。这种特性使得元组适用于存储那些不希望被改变的数据。
+元组是一个有序、==不可变==的元素集合。一旦创建,元组中的元素不能被修改。这种特性使得元组适用于存储那些不希望被改变的数据。
 
-### 元组赋值
+#### 元组赋值
 
 ```python
 product = ('1123','abc',10)
@@ -145,7 +168,9 @@ print (f"price is {price}")
 # print中可以用f"{variable}",在双引号中格式化变量的值
 ```
 
-## 字典(Dict)
+---
+
+### 字典(Dict)
 
 字典是一种无序的、键值对形式的容器。
 
@@ -181,7 +206,7 @@ isbn = '978-3-16-148410-0'
 print (library_books[isbn]['available'])
 ```
 
-### 字典赋值
+#### 字典赋值
 
 - 直接赋值
 
@@ -211,7 +236,7 @@ dir.update({
 })
 ```
 
-### 字典排序
+#### 字典排序
 
 比较常见的情况是字典的key存某种属性,value存该属性的值。我们经常需要对值进行排序:
 
@@ -237,9 +262,11 @@ for k, v in sorted_list[:2]:
     print(f"{k}:{v}")
 ```
 
-## 集合(Set)
+---
 
-集合是一个无序、不重复的元素集合。它有点像数学中的集合概念,特别适合用于去重或检查某个元素是否在集合中。
+### 集合(Set)
+
+集合是一个无序、==不重复==的元素集合。它有点像数学中的集合概念,特别适合用于去重或检查某个元素是否在集合中。
 
 集合可以当成一个函数来用做去重:
 
@@ -260,7 +287,7 @@ email_check = "alice@example.com"
 is_in = email_check in unique_list
 ```
 
-### 集合方法
+#### 集合方法
 
 ```python
 seta = {"a","b","c"}
@@ -269,7 +296,9 @@ setb = {"c","d","e"}
 seta.intersection(setb)
 ```
 
-# 条件判断语句if
+---
+
+## 条件判断语句if
 
 ```python
 # 语法格式
@@ -284,40 +313,41 @@ else:
 result = "x>5" if x>5 else "x<=5"
 ```
 
-案例:验证用户信息
+> [!example] 案例:验证用户信息
+> ```python
+> # phone number validation
+> phone = input ("Enter your phone number: ")
+> 
+> if len(phone) == 11 and phone.isdigit():
+>     print("Valid phone number")
+> else:
+>     print("Invalid phone number. Please enter an 11-digit number.")
+> 
+> # name validation
+> name = input("Enter your name: ")
+> 
+> if len(name)>=2 and len(name)<=20 and all ('/u4e00' <= char <= '/u9fa5' for char in name):
+>     print("Valid name")
+> else:
+>     print("Invalid name. Please enter a name with 2 to 20 characters, using Chinese characters only.")
+> 
+> # id validation
+> # 15位或者18位,18位的最后一位可以是X
+> id_number = input("Enter your ID number: ")
+> 
+> if (len(id_number) == 15 and id_number.isdigit()) or (len(id_number)==17 and id_number[:17].isdigit() and (id_number[-1].isdigit() or id_number[-1]=='X')):
+>     print("Valid ID number")
+> else:
+>     print("Invalid ID number. Please enter a 15-digit or 18-digit ID number, with the last character being a digit or 'X'.")
+> ```
 
-```python
-# phone number validation
-phone = input ("Enter your phone number: ")
+---
 
-if len(phone) == 11 and phone.isdigit():
-    print("Valid phone number")
-else:
-    print("Invalid phone number. Please enter an 11-digit number.")
+## 循环语句for/while
 
-# name validation
-name = input("Enter your name: ")
+==for==: 用于已知循环次数。==while==:用于循环次数未知,但是知道终止条件,循环到终止条件被满足。
 
-if len(name)>=2 and len(name)<=20 and all ('/u4e00' <= char <= '/u9fa5' for char in name):
-    print("Valid name")
-else:
-    print("Invalid name. Please enter a name with 2 to 20 characters, using Chinese characters only.")
-
-# id validation
-# 15位或者18位,18位的最后一位可以是X
-id_number = input("Enter your ID number: ")
-
-if (len(id_number) == 15 and id_number.isdigit()) or (len(id_number)==17 and id_number[:17].isdigit() and (id_number[-1].isdigit() or id_number[-1]=='X')):
-    print("Valid ID number")
-else:
-    print("Invalid ID number. Please enter a 15-digit or 18-digit ID number, with the last character being a digit or 'X'.")
-```
-
-# 循环语句for/while
-
-for: 用于已知循环次数。while:用于循环次数未知,但是知道终止条件,循环到终止条件被满足。
-
-## 案例1:批量数据备份与恢复
+### 案例1:批量数据备份与恢复
 
 `os.listdir`, `os.path.join`的使用
 
@@ -339,7 +369,7 @@ for file_name in os.listdir(config_dir):
         print(f"Backup of {file_path} completed to {backup_path}")
 ```
 
-## 案例2:旧日志数据管理与清理
+### 案例2:旧日志数据管理与清理
 
 `os.path.join`, `os.path.getmtime`的使用
 
@@ -372,17 +402,15 @@ for file_name in os.listdir(log_dir):
                 print(f"Error deleting file {file_path}: {e}")
 ```
 
-## 案例3:服务器运行状态定期检查
+### 案例3:服务器运行状态定期检查
 
-`subprocess.run([],)`的使用:
-
-subprocess.run 是一个用于执行外部命令的函数。
-
-- []内放需要执行的命令和参数
-- capture_output=True,捕获命令执行时的标准输出(stdout)和标准错误输出(stderr)。不使用 capture_output=True,标准输出和标准错误输出会直接显示在你的终端或命令行界面上。使用 capture_output=True 后,这些输出会被捕获并存储在 result 对象的属性中,供后续使用。
-- text=True 指示 subprocess.run 将捕获到的输出解码为文本字符串,而不是默认的字节对象。
-  - 默认情况下,subprocess.run 会返回字节对象(bytes),对于处理文本输出来说不够方便。如`b'PING google.com (172.217.14.206): 56 data bytes'`
-  - 使用 text=True 后,输出会自动解码为字符串(str),这使得处理和操作输出更为直观和方便,如`PING google.com (172.217.14.206): 56 data bytes'`
+> [!info] subprocess.run 用法
+> `subprocess.run` 是一个用于执行外部命令的函数。
+> - `[]`内放需要执行的命令和参数
+> - `capture_output=True`,捕获命令执行时的标准输出(stdout)和标准错误输出(stderr)。不使用 capture_output=True,标准输出和标准错误输出会直接显示在你的终端或命令行界面上。使用 capture_output=True 后,这些输出会被捕获并存储在 result 对象的属性中,供后续使用。
+> - `text=True` 指示 subprocess.run 将捕获到的输出解码为文本字符串,而不是默认的字节对象。
+>   - 默认情况下,subprocess.run 会返回字节对象(bytes),对于处理文本输出来说不够方便。如`b'PING google.com (172.217.14.206): 56 data bytes'`
+>   - 使用 text=True 后,输出会自动解码为字符串(str),这使得处理和操作输出更为直观和方便,如`PING google.com (172.217.14.206): 56 data bytes'`
 
 ```python
 import time
@@ -406,7 +434,7 @@ while True:
     print("Waiting for the next check...\n")
 ```
 
-## 案例4:根分区空间监控
+### 案例4:根分区空间监控
 
 `shutil.disk_usage`的使用
 
@@ -422,7 +450,7 @@ while True:
     time.sleep(check_interval)
 ```
 
-## 案例5:服务状态监控
+### 案例5:服务状态监控
 
 `os.system`的使用
 
@@ -440,7 +468,7 @@ while True:
         time.sleep(CHECK_INT)
 ```
 
-## 案例6:多台服务器上执行命令
+### 案例6:多台服务器上执行命令
 
 `os.system()`的使用
 
@@ -454,11 +482,13 @@ for server in servers:
     os.system(f"ssh root@{server} '{command}'")
 ```
 
-## 扩展:循环中的海象运算符:=
+---
 
-`:=` 运算符,也称为"海象运算符"(Walrus Operator),是 Python 3.8 引入的一种语法,用于在表达式中进行赋值操作。它允许在一个表达式中同时完成变量赋值和使用赋值结果,从而提高代码的简洁性和可读性。
+### 扩展:循环中的海象运算符:=
 
-### 特点
+==`:=` 运算符==,也称为"==海象运算符=="(Walrus Operator),是 Python 3.8 引入的一种语法,用于在表达式中进行赋值操作。它允许在一个表达式中同时完成变量赋值和使用赋值结果,从而提高代码的简洁性和可读性。
+
+#### 特点
 
 1. **赋值与返回值结合**:
 
@@ -491,7 +521,7 @@ for server in servers:
    - **条件判断**: 在 `if` 或 `while` 中直接使用赋值结果。
    - **列表推导**: 在列表推导中保存中间结果以避免重复计算。
 
-### 示例
+#### 示例
 
 在循环中使用:
 
@@ -511,15 +541,17 @@ if (result := expensive_function()) > 0:
 
 - `result := expensive_function()` 调用函数并将结果赋值给 `result`,同时返回结果以供 `if` 判断。
 
-# 字符串操作
+---
 
-## 访问/修改/切片
+## 字符串操作
 
-### 访问
+### 访问/修改/切片
+
+#### 访问
 
 可以通过索引下标来访问到字符串的某个元素。
 
-### 修改
+#### 修改
 
 字符串创建之后就不支持修改,但是可以通过切片重新分配来修改字符串
 
@@ -528,13 +560,13 @@ var1 = 'hello'
 var1 = var1[:] + ' ' + 'world'
 ```
 
-### 切片
+#### 切片
 
-是索引的扩展形式,语法[start​​\:end\:step],用于从序列中提取一个子集
+是索引的扩展形式,语法`[start:end:step]`,用于从序列中提取一个子集
 
-- start:切片的起始索引,包含在结果中,如果省略,默认从 0 开始
-- end:切片的结束索引,不包含在结果中,如果省略,则一直切到序列末尾 (左闭右开)
-- step:切片的步长,默认是 1,如果设置成了负数,表示从右向左取元素。-1表示最后一个元素
+- ==start==:切片的起始索引,包含在结果中,如果省略,默认从 0 开始
+- ==end==:切片的结束索引,不包含在结果中,如果省略,则一直切到序列末尾 (左闭右开)
+- ==step==:切片的步长,默认是 1,如果设置成了负数,表示从右向左取元素。-1表示最后一个元素
 
 ```python
 text="Hello,world!"
@@ -544,7 +576,9 @@ numbers=[1,2,3,4,5]
 numbers[:-1] # [1,2,3,4] 表示去掉最后一个元素
 ```
 
-## 运算符
+---
+
+### 运算符
 
 ```python
 a = 'Hello'
@@ -564,13 +598,17 @@ print (f"H is in {a}") if 'H' in a
 len(a)
 ```
 
-## 转义字符
+---
+
+### 转义字符
 
 <img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202505311736560.png" style="zoom:67%;" />
 
 取消转义用r,`print(r"\n")`
 
-## 格式化
+---
+
+### 格式化
 
 字符串中%用于定义占位符,后面跟着一个格式化字符,用于指定变量的类型。例如:
 
@@ -597,7 +635,9 @@ print('PI\'s vaule is:%.2f' % 3.1415926)
 print('PI\'s vaule is:%-10.2f' % 3.1415926)
 ```
 
-## 字符串方法
+---
+
+### 字符串方法
 
 ```python
 text = "Hello, world!"
@@ -651,15 +691,17 @@ text.lstrip()
 text.rstrip()
 ```
 
-# 文件处理
+---
 
-## 读取
+## 文件处理
+
+### 读取
 
 在 Python 中,文件操作是通过内置的 `open()` 函数来实现的。你可以使用不同的模式打开文件,如:
 
-- 'r' 只读模式
-- 'w' 写入模式(会覆盖原有内容)
-- 'a' 追加模式
+- `'r'` 只读模式
+- `'w'` 写入模式(会覆盖原有内容)
+- `'a'` 追加模式
 
 操作完成后必须关闭文件,释放系统资源。Python 提供了 `file.close()` 方法:
 
@@ -677,7 +719,7 @@ with open('example.txt', 'r') as file:
     content = file.read()
 ```
 
-### 读取全部内容
+#### 读取全部内容
 
 ```python
 with open('example.txt', 'r') as file:
@@ -685,18 +727,12 @@ with open('example.txt', 'r') as file:
     content = file.read()
 ```
 
-`file.read()`:
+> [!tip] file.read() 特点
+> - **优点**:操作简单,适合处理文件内容较小的情况。
+> - **缺点**:如果文件很大,可能会占用大量内存,因为整个文件内容都会被加载到内存中。
+> - **适用场景**:文件大小适中,能够完全载入内存时使用。当你需要对整个文件的内容进行处理或分析时使用。
 
-优点:操作简单,适合处理文件内容较小的情况。
-
-缺点:如果文件很大,可能会占用大量内存,因为整个文件内容都会被加载到内存中。
-
-适用场景:
-
-- 文件大小适中,能够完全载入内存时使用。
-- 当你需要对整个文件的内容进行处理或分析时使用。
-
-### 逐行读取
+#### 逐行读取
 
 ```python
 with open('example.txt', 'r') as file:
@@ -705,18 +741,13 @@ with open('example.txt', 'r') as file:
         print(line, end='')
 ```
 
-`for line in file`:逐行读取文件的内容。file 对象是一个**`可迭代对象`**,每次迭代返回一行文本。
+> [!tip] for line in file 特点
+> `for line in file`:逐行读取文件的内容。file 对象是一个**可迭代对象**,每次迭代返回一行文本。
+> - **优点**:适合处理大文件,因为不会一次性将整个文件加载到内存中。逐行读取会将当前行加载到内存,而不是整个文件。
+> - **缺点**:处理文件时,每次读取一行,可能会稍微增加处理时间。
+> - **适用场景**:文件较大时,逐行处理可以有效减少内存使用。你需要处理文件的每一行,可能会根据每行内容执行不同操作。
 
-优点:适合处理大文件,因为不会一次性将整个文件加载到内存中。逐行读取会将当前行加载到内存,而不是整个文件.
-
-缺点:处理文件时,每次读取一行,可能会稍微增加处理时间
-
-适用场景:
-
-- 文件较大时,逐行处理可以有效减少内存使用。
-- 你需要处理文件的每一行,可能会根据每行内容执行不同操作。
-
-### 读取每行到列表
+#### 读取每行到列表
 
 ```python
 with open('example.txt', 'r') as file:
@@ -726,21 +757,17 @@ for line in lines
 	print(line, end='')
 ```
 
-`file.readlines()`:读取文件中的所有行,并将每一行作为列表中的一个元素返回。
+> [!tip] file.readlines() 特点
+> `file.readlines()`:读取文件中的所有行,并将每一行作为列表中的一个元素返回。
+> - **优点**:能够在内存中以列表的形式处理文件的每一行,可以随机访问每一行。
+> - **缺点**:会一次性将整个文件加载到内存中,因此适用于文件较小的情况。对于大文件,可能会导致高内存使用。
+> - **适用场景**:文件大小适中,能够完全载入内存时使用。需要多次访问文件中的不同部分或行时使用,因为你可以通过列表索引来访问特定的行。
 
-优点:能够在内存中以列表的形式处理文件的每一行,可以随机访问每一行。
+---
 
-缺点:会一次性将整个文件加载到内存中,因此适用于文件较小的情况。对于大文件,可能会导致高内存使用。
+### 写入
 
-适用场景:
-
-- 文件大小适中,能够完全载入内存时使用。
-
-- 需要多次访问文件中的不同部分或行时使用,因为你可以通过列表索引来访问特定的行。
-
-## 写入
-
-### 覆盖模式w
+#### 覆盖模式w
 
 ```python
 with open('example.txt', 'w') as file:
@@ -748,7 +775,7 @@ with open('example.txt', 'w') as file:
     file.write("Hello from Python\n")
 ```
 
-### 追加模式a
+#### 追加模式a
 
 ```python
 with open('example.txt', 'a') as file:
@@ -756,7 +783,7 @@ with open('example.txt', 'a') as file:
     file.write("Hello from Python\n")
 ```
 
-### 写入多行
+#### 写入多行
 
 ```python
 lines = ['Line1\n', 'Line2\n']
@@ -765,11 +792,13 @@ with open('example.txt', 'w') as file:
     file.writelines(lines)
 ```
 
-## 文件目录管理
+---
 
-Python 的 os 和 shutil 模块提供了文件和目录的管理功能,包括创建、删除、重命名文件和目录等。
+### 文件目录管理
 
-### 重命名文件
+Python 的 `os` 和 `shutil` 模块提供了文件和目录的管理功能,包括创建、删除、重命名文件和目录等。
+
+#### 重命名文件
 
 ```python
 import os
@@ -787,7 +816,7 @@ else:
     print("Rename failed")
 ```
 
-### 复制文件
+#### 复制文件
 
 ```python
 import os, shutil
@@ -804,7 +833,7 @@ else:
     print("Copy failed")
 ```
 
-### 移动文件
+#### 移动文件
 
 ```python
 import os, shutil
@@ -821,7 +850,7 @@ else:
     print("Move failed")
 ```
 
-### 删除文件
+#### 删除文件
 
 ```python
 import os
@@ -836,7 +865,7 @@ else:
 	print("Delete file failed")
 ```
 
-### 创建/删除目录
+#### 创建/删除目录
 
 ```python
 import os
@@ -863,11 +892,14 @@ else:
     print("Dir created failed")
 ```
 
-## 案例:处理大文件
+---
+
+### 案例:处理大文件
 
 处理大文件时,直接将整个文件读入内存可能会导致内存不足或程序变得非常慢。因此,逐块读取文件内容是一种更有效的方式,这样可以逐步处理文件内容,而不是一次性加载整个文件。这种方法特别适合处理大型日志文件、大型数据文件等。
 
-- 重点:`file.read(chuck_size)`参数
+> [!important] 重点
+> `file.read(chuck_size)` 参数控制每次读取的字节数。
 
 ```python
 import os
@@ -889,14 +921,16 @@ with open ('example.txt', 'r') as file:
         print(chunk[:100])  # 打印前100个字符
 ```
 
-## 案例:备份数据到目录
+---
 
-- 重点:
-  - `os.path.exists()` 判断路径是否存在
-  - `os.makedirs()` 创建目录
-  - `os.path.isdir()` 判断是否是目录
-  - `shutil.copytree(src, dest, dirs_exist_ok=True, copy_function=shutil.copy2)` 复制目录及metadata,并默认覆盖已存在
-  - `shutil.copy2(src, dest)`复制文件以及metadata
+### 案例:备份数据到目录
+
+> [!important] 重点
+> - `os.path.exists()` 判断路径是否存在
+> - `os.makedirs()` 创建目录
+> - `os.path.isdir()` 判断是否是目录
+> - `shutil.copytree(src, dest, dirs_exist_ok=True, copy_function=shutil.copy2)` 复制目录及metadata,并默认覆盖已存在
+> - `shutil.copy2(src, dest)` 复制文件以及metadata
 
 ```python
 import os, shutil
@@ -952,11 +986,13 @@ for item in os.listdir(src_dir):
 print(f"Backup completed successfully to {backup_dir}")
 ```
 
-## 案例:清理过期日志文件
+---
 
-- 重点:
-  - `os.path.isfile()` 判断是否是文件
-  - `os.path.getmtime` 获取文件最后修改时间
+### 案例:清理过期日志文件
+
+> [!important] 重点
+> - `os.path.isfile()` 判断是否是文件
+> - `os.path.getmtime` 获取文件最后修改时间
 
 ```sh
 # 模拟生成日志文件
@@ -994,11 +1030,13 @@ for file in os.listdir(log_dir):
                 print(f"Error deleting {file_path}: {e}")
 ```
 
-## 案例:批量重命名文件
+---
 
-- 重点:
-  - `file.endswith()` 检测文件扩展名
-  - `os.path.splitext()` 分离文件名和扩展名,[0]是文件名,[1]是扩展名
+### 案例:批量重命名文件
+
+> [!important] 重点
+> - `file.endswith()` 检测文件扩展名
+> - `os.path.splitext()` 分离文件名和扩展名,[0]是文件名,[1]是扩展名
 
 ```python
 import os
@@ -1018,14 +1056,16 @@ for file in os.listdir(file_dir):
         print(f'Renamed {old_file_path} to {new_file_path}')
 ```
 
-# 正则表达式
+---
 
-## 规则
+## 正则表达式
+
+### 规则
 
 正则表达式的基本组成部分:
 
-1. 普通字符:直接匹配自身的字符,如 `a` 匹配字符`'a'`。
-2. 元字符(Metacharacters):具有特殊含义的字符。
+1. **普通字符**:直接匹配自身的字符,如 `a` 匹配字符`'a'`。
+2. **元字符(Metacharacters)**:具有特殊含义的字符。
   - `.` 匹配除换行符外的任何单个字符。
   - `^` 匹配字符串的开始。
   - `$` 匹配字符串的结束。
@@ -1035,23 +1075,24 @@ for file in os.listdir(file_dir):
   - `[]` 匹配括号内的任何一个字符,如`[abc]`匹配`'a'`、`'b'`或`'c'`。`[^abc]`匹配除了abc之外的字符。
   - `|` 表示逻辑或(OR)如 `a|b` 匹配`'a'`或`'b'`。
   - `()` 用于分组,提取子字符串或改变运算的优先级。
-3. 转义字符:用于将元字符当作普通字符对待,通常使用反斜杠`\`,如`\.`匹配一个点。
-4. 量词(Quantifiers):指定匹配的数量。
+3. **转义字符**:用于将元字符当作普通字符对待,通常使用反斜杠`\`,如`\.`匹配一个点。
+4. **量词(Quantifiers)**:指定匹配的数量。
   - `{n}`: 精确匹配 `n` 次。
   - `{n,}`: 至少匹配 `n` 次。
   - `{n,m}`: 匹配 `n` 到 `m` 次。
 
-示例:从You can contact us at info@example.com or support@service.org.中匹配出邮箱地址,可以用
+> [!example] 示例:匹配邮箱地址
+> 从`You can contact us at info@example.com or support@service.org.`中匹配出邮箱地址,可以用
+> ```python
+> [A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}
+> ```
+> - `[A-Za-z0-9._%+-]+`:匹配邮箱的用户名部分,允许字母、数字和一些特殊符号(如.\_%+-等)
+> - `@`:匹配邮箱的@符号。
+> - `[A-Za-z0-9.-]+`:匹配邮箱的域名部分(如"example"或"service")。
+> - `\.`:匹配`"."`符号。
+> - `[A-Za-z]{2,4}`:匹配域名的后缀部分(如"com"或"org")
 
-```python
-[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}
-```
-
-- `[A-Za-z0-9._%+-]+`:匹配邮箱的用户名部分,允许字母、数字和一些特殊符号(如.\_%+-等)
-- `@`:匹配邮箱的@符号。
-- `[A-Za-z0-9.-]+`:匹配邮箱的域名部分(如"example"或"service")。
-- `\.`:匹配`"."`符号。
-- `[A-Za-z]{2,4}`:匹配域名的后缀部分(如"com"或"org")
+---
 
 ### 字符匹配
 
@@ -1090,18 +1131,17 @@ if re.match(pattern, text):
 
 ### 重复匹配
 
-`+`:匹配前面的模式一次或多次,换言之必须得有。
+==`+`==:匹配前面的模式一次或多次,换言之必须得有。
 
-`*`:匹配前面的模式零次或多次,换言之有没有都行。
+==`*`==:匹配前面的模式零次或多次,换言之有没有都行。
 
-`?`:匹配前面的模式零次或一次。
+==`?`==:匹配前面的模式零次或一次。
 
-> - `+`和`*`会尽可能多的匹配字符,即贪婪模式。
->
-> - 在`+`或`*`后面加上`?`表示从贪婪模式转变为非贪婪模式,最小匹配。
+> [!tip] 贪婪模式与非贪婪模式
+> - `+`和`*`会尽可能多的匹配字符,即==贪婪模式==。
+> - 在`+`或`*`后面加上`?`表示从贪婪模式转变为==非贪婪模式==,最小匹配。
 >
 > 例如:
->
 > ```python
 > text = '<h1>RUNOOB-菜鸟教程</h1>'
 > pattern = '<.*>' # 匹配到整个'<h1>RUNOOB-菜鸟教程</h1>'
@@ -1119,13 +1159,10 @@ print(re.match(pattern, 'ac').group())
 
 ### 特殊字符匹配
 
-`\d`:匹配数字
-
-`\s`:匹配空白字符
-
-`\S`:匹配非空白字符
-
-`\w`:匹配字母/数字/下划线任一种
+- ==`\d`==:匹配数字
+- ==`\s`==:匹配空白字符
+- ==`\S`==:匹配非空白字符
+- ==`\w`==:匹配字母/数字/下划线任一种
 
 ```python
 import re
@@ -1136,7 +1173,7 @@ print(re.match(pattern, text).group())
 
 ### 边界匹配
 
-`^`:匹配以某个字符串开头,^后面的字符串都参与判断。
+==`^`==:匹配以某个字符串开头,^后面的字符串都参与判断。
 
 ```python
 import re
@@ -1144,11 +1181,11 @@ pattern = '^hello'
 print(re.match(pattern, 'hello world').group())
 ```
 
-`$`:匹配字符结尾
+==`$`==:匹配字符结尾
 
-`\b`:匹配单词边界。单词边界是单词和空格之间的位置。单词边界确保匹配的字符串是一个完整的"单词"部分。
+==`\b`==:匹配单词边界。单词边界是单词和空格之间的位置。单词边界确保匹配的字符串是一个完整的"单词"部分。
 
-`\B`:匹配非单词边界,是除了单词边界(空格、标点、特殊字符)任何其他位置。
+==`\B`==:匹配非单词边界,是除了单词边界(空格、标点、特殊字符)任何其他位置。
 
 ```python
 text1 = 'hello 192.168.1.1 world'
@@ -1158,11 +1195,13 @@ result = re.match(pattern, text1) # 可以匹配上,因为前后都是空格
 result = re.match(pattern, text2) # 匹配不上,因为前后都是字母,不满足单词边界
 ```
 
+---
+
 ### 捕获组/非捕获组
 
 #### 捕获组
 
-捕获组是由圆括号 `()` 包围的部分,会把每个分组里面匹配到的值保存起来,通过group(n)来查看,表示第n个捕获组的内容。
+==捕获组==是由圆括号 `()` 包围的部分,会把每个分组里面匹配到的值保存起来,通过`group(n)`来查看,表示第n个捕获组的内容。
 
 例如,在正则表达式 `r'(foo)(bar)'` 中:
 
@@ -1183,7 +1222,7 @@ if match:
 
 #### 非捕获组
 
-如果你不需要保存单个`()`匹配的子串,可以使用非捕获组。非捕获组用 `(?:...)` 表示,不会保存单个`()`匹配的内容。
+如果你不需要保存单个`()`匹配的子串,可以使用==非捕获组==。非捕获组用 `(?:...)` 表示,不会保存单个`()`匹配的内容。
 
 例如:`pattern = r'(?:\d{2})-(?:\d{4})'`:
 
@@ -1203,12 +1242,10 @@ if match:
     print(match.groups()) # 输出 ('0.',) 只保存了最后一次捕获
 ```
 
-- 发生了什么?
-  1. 正则表达式 `([0-9]{1,3}\.){3}` 包含一个捕获组 `([0-9]{1,3}\.)",它会捕获 1 到 3 位数字,后面跟一个点号。
-
-  2. `{3}` 表示这个捕获组会重复三次,也就是说它会尝试匹配三段类似于 `192.`、`168.`、`0.`的内容。
-
-  3. 为什么只显示最后一次的捕获? 在正则表达式中,捕获组在每次匹配时会覆盖之前的匹配结果。由于捕获组会被最后一次匹配的内容覆盖,最终 `groups()` 只返回最后一次匹配到的 `0.`
+> [!note] 为什么只显示最后一次的捕获？
+> 1. 正则表达式 `([0-9]{1,3}\.){3}` 包含一个捕获组 `([0-9]{1,3}\.)`,它会捕获 1 到 3 位数字,后面跟一个点号。
+> 2. `{3}` 表示这个捕获组会重复三次,也就是说它会尝试匹配三段类似于 `192.`、`168.`、`0.`的内容。
+> 3. 在正则表达式中,捕获组在每次匹配时会覆盖之前的匹配结果。由于捕获组会被最后一次匹配的内容覆盖,最终 `groups()` 只返回最后一次匹配到的 `0.`
 
 **使用非捕获组:**
 
@@ -1223,13 +1260,15 @@ if match:
 
 只需要对 1-3 位数字 + 一个点号 的模式进行三次重复匹配,而不需要保存每次匹配的内容,因此用到了非捕获组 `(?:[0-9]{1,3}\.)`,输出了全部匹配。
 
-## 正则表达式函数
+---
 
-### 查找
+### 正则表达式函数
 
-#### re.match()
+#### 查找
 
-- 从字符串的开头匹配,开头匹配不上就直接失败。
+##### re.match()
+
+- 从字符串的==开头==匹配,开头匹配不上就直接失败。
 
 ```python
 import re
@@ -1239,9 +1278,9 @@ print(re.match(pattern, '12345-45678').group())
 print(re.match(pattern, 'w123-45678').group())
 ```
 
-#### re.search()
+##### re.search()
 
-- 可以从字符串的任意位置截取符合模式的子串。
+- 可以从字符串的==任意位置==截取符合模式的子串。
 
 - 但是只会匹配从前往后首次出现的匹配项。
 
@@ -1253,7 +1292,7 @@ result = re.search(pattern, text)
 print(f"Match well {result.group()}") if result else print("Match failed")
 ```
 
-#### re.findall()
+##### re.findall()
 
 - 查找字符串中所有**非重叠**的匹配项,并以列表形式返回。
 
@@ -1265,23 +1304,23 @@ result = re.findall(pattern, text) # result返回列表,直接print就行,不用
 print(f"Match well {result}") if result else print("Match failed")
 ```
 
-什么叫非重叠?
+> [!note] 什么叫非重叠？
+> ```python
+> import re
+> pattern = 'aba'
+> text = 'ababa'
+> result = re.findall(pattern, text)
+> print(f"Match well {result}") if result else print("Match failed")
+> ```
+> 在字符串 "ababa" 中,虽然有两个 "aba" 出现的可能性(第一个从索引 0 开始,第二个从索引 2 开始),但 re.findall() 只会匹配第一次出现的 "aba",然后继续从匹配后的字符(即从索引 3 开始)进行查找。由于从索引 3 开始再没有 "aba" 出现,所以结果中只有一个匹配。
 
-```python
-import re
-pattern = 'aba'
-text = 'ababa'
-result = re.findall(pattern, text)
-print(f"Match well {result}") if result else print("Match failed")
-```
+---
 
-在字符串 "ababa" 中,虽然有两个 "aba" 出现的可能性(第一个从索引 0 开始,第二个从索引 2 开始),但 re.findall() 只会匹配第一次出现的 "aba",然后继续从匹配后的字符(即从索引 3 开始)进行查找。由于从索引 3 开始再没有 "aba" 出现,所以结果中只有一个匹配。
+#### 替换/拆分/预编译
 
-### 替换/拆分/预编译
+##### re.sub()
 
-#### re.sub()
-
-- re.sub() 方法用于替换字符串中所有匹配的子串。
+- `re.sub()` 方法用于替换字符串中所有匹配的子串。
 
 - 语法为 `re.sub(pattern, repl, string, count=0)`,
   - `pattern` 是正则表达式
@@ -1297,7 +1336,7 @@ new_text = re.sub(pattern,'xxx-xxxx',text)
 print(new_text)
 ```
 
-#### re.split()
+##### re.split()
 
 - 根据模式中的匹配项来拆分字符串,并返回拆分后的列表。
 
@@ -1309,10 +1348,10 @@ result = re.split(pattern,text)
 print(result)
 ```
 
-#### re.compile()
+##### re.compile()
 
 - 预编译正则表达式。预编译的正则表达式对象可以复用,以提高效率,特别是在多次使用同一正则表达式时。
-- re.compile() 返回一个正则表达式对象,该对象可以使用 `match(), search(), findall(), sub()` 等方法。
+- `re.compile()` 返回一个正则表达式对象,该对象可以使用 `match(), search(), findall(), sub()` 等方法。
 
 ```python
 import re
@@ -1324,7 +1363,9 @@ result = pattern.findall(text)
 result = pattern.sub('xxx-xxxx',text)
 ```
 
-## 案例:解析日志文件中的IP地址
+---
+
+### 案例:解析日志文件中的IP地址
 
 有一个log文件,需要提取出IP地址:
 
@@ -1346,13 +1387,14 @@ with open(log_file, 'r') as f:
         print(ip)
 ```
 
-重点:
+> [!important] 重点
+> - 用`\b`匹配单词边界
+> - `(?:[0-9]{1,3}\.){3}`非捕获组匹配重复的3个数字和`\.` 作为IP地址的前三位。
+> - IP地址的最后一位要单独匹配,仅是三位数字没有点
 
-- 用`\b`匹配单词边界
-- `(?:[0-9]{1,3}\.){3}`非捕获组匹配重复的3个数字和`\.` 作为IP地址的前三位。
-- IP地址的最后一位要单独匹配,仅是三位数字没有点
+---
 
-## 案例:批量替换配置文件中的某个配置项
+### 案例:批量替换配置文件中的某个配置项
 
 有多个配置文件,你需要将 user1 改为 admin_user。
 
@@ -1380,13 +1422,15 @@ for file in config_files:
     print(f"Updated {file}")
 ```
 
-- 重点:
-  - 因为要替换这一句中间的内容,所以要把整个句子拆分成三部分,将匹配到的user1部分替换成新的值,再拼接起来。
-  - 匹配 `:` 前面的一段用户名: `[^:]+` 非冒号的字符出现一次或多次
-  - 匹配 `"` 前面的一段db名: `[^"]+` 非双引号的字符出现一次或多次
-  - `r'\1'` 代表第一个捕获组(第一个`()`)匹配到的值,`r'\3'` 代表第三个捕获组(第三个`()`)匹配到的值
+> [!important] 重点
+> - 因为要替换这一句中间的内容,所以要把整个句子拆分成三部分,将匹配到的user1部分替换成新的值,再拼接起来。
+> - 匹配 `:` 前面的一段用户名: `[^:]+` 非冒号的字符出现一次或多次
+> - 匹配 `"` 前面的一段db名: `[^"]+` 非双引号的字符出现一次或多次
+> - `r'\1'` 代表第一个捕获组(第一个`()`)匹配到的值,`r'\3'` 代表第三个捕获组(第三个`()`)匹配到的值
 
-## 案例:检查配置文件中的缺失项
+---
+
+### 案例:检查配置文件中的缺失项
 
 检查某些配置文件,确保它们包含所需的所有配置项。比如,你需要确认所有配置文件都包含 max_connections 这个设置项。
 
@@ -1413,7 +1457,9 @@ for file in config_files:
         print(f"{file} is missing required parameter \'{required_para}\'")
 ```
 
-## 案例:提取分析系统资源使用情况
+---
+
+### 案例:提取分析系统资源使用情况
 
 从系统生成的资源监控报告中提取 CPU 和内存的使用情况,并求平均值。
 
@@ -1475,7 +1521,9 @@ print(f"Average CPU Usage: {avg_cpu}%")
 print(f"Average Memory Usage: {avg_mem}%")
 ```
 
-# 练习:用户管理系统
+---
+
+## 练习:用户管理系统
 
 题目:开发一个用户管理系统:
 

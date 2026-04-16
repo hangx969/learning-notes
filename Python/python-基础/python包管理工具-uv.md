@@ -1,16 +1,33 @@
-# 什么是uv
+---
+title: Python 包管理工具 uv
+tags:
+  - python/tools
+  - python/package-management
+  - python/venv
+aliases:
+  - uv 包管理
+  - Python uv
+date: 2026-04-16
+---
 
-简单来说,`uv` 是一个用 Rust 语言编写的、超级快的 Python 包安装和项目管理工具。你可以把它看作是 `pip`(我们常用的包安装工具)和 `venv`(创建虚拟环境的工具)的 "高速合体版"!
+# Python 包管理工具 uv
 
-1. 节省时间:安装包的速度真的快到飞起!尤其是在安装很多包或者大型包(比如数据科学库)时,感受会非常明显。告别漫长的等待!
-2. 简化操作:以前可能需要先用 `venv` 创建环境,再用 `pip` 安装包。`uv` 把这些常用操作整合起来了,一个命令就能搞定很多事。
+## 什么是uv
+
+简单来说,==`uv`== 是一个用 Rust 语言编写的、超级快的 Python 包安装和项目管理工具。你可以把它看作是 `pip`(我们常用的包安装工具)和 `venv`(创建虚拟环境的工具)的 "高速合体版"!
+
+> [!tip] 为什么选择 uv
+> 1. **节省时间**:安装包的速度真的快到飞起!尤其是在安装很多包或者大型包(比如数据科学库)时,感受会非常明显。告别漫长的等待!
+> 2. **简化操作**:以前可能需要先用 `venv` 创建环境,再用 `pip` 安装包。`uv` 把这些常用操作整合起来了,一个命令就能搞定很多事。
 
 官网地址:
 
 - Astral (uv 的开发公司) 官网: https://astral.sh/
 - uv GitHub 仓库: https://github.com/astral-sh/uv
 
-# 安装uv
+---
+
+## 安装uv
 
 安装 `uv` 非常简单。打开你的终端(Windows 用户可能是 CMD 或 PowerShell,Mac/Linux 用户是 Terminal):
 
@@ -38,16 +55,19 @@ powershell -ExecutionPolicy Bypass -c "irm https://gitee.com/jk01/uv/releases/do
 uv --version
 ```
 
-> 注意:
->
-> - windows上使用uv时,在pycharm创建新项目时,"解释器类型"选择"自定义环境","类型"选择"uv",基础python选择uv安装的python路径
-> - vscode中:按 Ctrl+Shift+P (或 Cmd+Shift+P on Mac) 打开命令面板,输入 Python: Select Interpreter (Python: 选择解释器)。在弹出的列表中,选择你用 uv 安装的 Python 3.10 版本。VS Code 通常会自动检测到。如果没找到,可以手动 "Enter interpreter path..." 指定路径。然后在终端中输入`uv venv`来激活虚拟环境。
+> [!note] IDE 配置说明
+> - **Windows + PyCharm**:创建新项目时,"解释器类型"选择"自定义环境","类型"选择"uv",基础python选择uv安装的python路径
+> - **VS Code**:按 Ctrl+Shift+P (或 Cmd+Shift+P on Mac) 打开命令面板,输入 Python: Select Interpreter (Python: 选择解释器)。在弹出的列表中,选择你用 uv 安装的 Python 3.10 版本。VS Code 通常会自动检测到。如果没找到,可以手动 "Enter interpreter path..." 指定路径。然后在终端中输入`uv venv`来激活虚拟环境。
 
-# 实战入门
+相关内容参见 [[windows配置python开发环境|Windows 配置 Python 开发环境]] 和 [[rockylinux配置python开发环境|RockyLinux 配置 Python 开发环境]]
+
+---
+
+## 实战入门
 
 `uv` 的设计目标之一就是尽量兼容 `pip` 的使用习惯。让我们看看最常见的操作怎么用 `uv` 实现。
 
-## 安装python
+### 安装python
 
 首先,用uv安装Python,以便后续创建虚拟环境,安装过程可能需要10分钟。
 
@@ -55,11 +75,13 @@ uv --version
 uv python install 3.10
 ```
 
-> 建议安装3.10版本,3.11、3.12也可以,根据实际需要,后续文章会逐步讲
+> [!tip] 建议安装3.10版本,3.11、3.12也可以,根据实际需要,后续文章会逐步讲
 
-## 创建venv
+---
 
-想象一下,你在同时做好几个 Python 项目,每个项目可能需要不同版本的库。为了不让它们互相"打架",我们需要为每个项目创建一个独立的"隔离区",这就是 虚拟环境。
+### 创建venv
+
+想象一下,你在同时做好几个 Python 项目,每个项目可能需要不同版本的库。为了不让它们互相"打架",我们需要为每个项目创建一个独立的"隔离区",这就是==虚拟环境==。
 
 以前我们用:`python -m venv .venv` (`.venv` 是通常的虚拟环境文件夹名)
 
@@ -69,11 +91,13 @@ uv python install 3.10
 uv venv
 ```
 
-这条命令会在你的当前目录下创建一个名为 `.venv` 的文件夹,里面包含了特定于这个项目的 Python 解释器和包。是不是更简洁了?
+这条命令会在你的当前目录下创建一个名为 `.venv` 的文件夹,里面包含了特定于这个项目的 Python 解释器和包。是不是更简洁了？
 
-## 激活venv
+---
 
-创建好环境后,你需要"走进去"才能使用它。这叫 激活 环境。
+### 激活venv
+
+创建好环境后,你需要"走进去"才能使用它。这叫==激活==环境。
 
 - macOS / Linux (Bash/Zsh):
 
@@ -97,7 +121,9 @@ uv venv
 
 激活成功后,你会看到命令行提示符前面多了 `(.venv)` 的字样,表示你现在在这个虚拟环境里了。
 
-## 安装python包
+---
+
+### 安装python包
 
 假设你想安装一个用于网络请求的常用库 `requests`。
 
@@ -111,15 +137,17 @@ uv pip install requests
 
 `uv` 可能在几秒甚至更短的时间内就完成了 `pip` 可能需要几十秒甚至几分钟的工作!
 
-想一次安装多个包?
+想一次安装多个包？
 
 ```sh
 uv pip install requests beautifulsoup4 pandas
 ```
 
-## 管理项目依赖
+---
 
-当你的项目越来越复杂,或者你想分享给别人时,需要一个清单告诉大家你用了哪些包。这个清单通常是 `requirements.txt` 文件。
+### 管理项目依赖
+
+当你的项目越来越复杂,或者你想分享给别人时,需要一个清单告诉大家你用了哪些包。这个清单通常是 ==`requirements.txt`== 文件。
 
 - 生成依赖清单 (冻结环境):
   以前:`pip freeze > requirements.txt`
@@ -146,9 +174,11 @@ uv pip install requests beautifulsoup4 pandas
 
   `uv` 会读取文件内容,并飞快地帮你装好所有依赖!
 
-## 查看已安装的包
+---
 
-想看看当前环境里都装了哪些依赖?
+### 查看已安装的包
+
+想看看当前环境里都装了哪些依赖？
 
 以前:`pip list`
 
@@ -158,7 +188,9 @@ uv pip install requests beautifulsoup4 pandas
 uv pip list
 ```
 
-## 退出venv
+---
+
+### 退出venv
 
 当你完成了在这个项目上的工作,想要退出虚拟环境时:
 
@@ -168,14 +200,16 @@ deactivate
 
 命令行前面的 `(.venv)` 就会消失。
 
-# 对比
+---
+
+## 对比
 
 | 功能         | `pip` + `venv` (`python -m venv`) | `uv`                       | 优势 (uv)            |
 | ------------ | --------------------------------- | -------------------------- | -------------------- |
 | 创建虚拟环境 | `python -m venv .venv`            | `uv venv`                  | 命令更短             |
-| 安装包       | `pip install <package>`           | `uv pip install <package>` | 速度极快 🚀           |
-| 从文件安装   | `pip install -r requirements.txt` | `uv pip install -r ...`    | 速度极快 🚀           |
+| 安装包       | `pip install <package>`           | `uv pip install <package>` | 速度极快             |
+| 从文件安装   | `pip install -r requirements.txt` | `uv pip install -r ...`    | 速度极快             |
 | 生成依赖文件 | `pip freeze > requirements.txt`   | `uv pip freeze > ...`      | 速度快               |
 | 查看已安装包 | `pip list`                        | `uv pip list`              | 速度快               |
 | 工具         | 两个独立工具 (`pip`, `venv`)      | 一个统一工具 (`uv`)        | 更整合,可能更简单   |
-| 底层实现     | Python                            | Rust                       | 性能优势(通常更快) |
+| 底层实现     | Python                            | Rust                       | 性能优势(通常更快） |
