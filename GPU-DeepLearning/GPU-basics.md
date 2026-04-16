@@ -56,9 +56,9 @@ nvidia-smi：
 
 - GPU 作为一个 PCIE 设备，只要安装好之后，在系统中就可以通过 lspci 命令查看到，先确认机器上是否有 GPU：
 
-~~~sh
+```sh
 lspci|grep NVIDIA
-~~~
+```
 
 ### 安装驱动
 
@@ -66,9 +66,7 @@ lspci|grep NVIDIA
 
 - 最终下载得到的是一个.run 文件，例如 NVIDIA-Linux-x86_64-550.54.14.run。
 
-
 - 然后直接 sh 方式运行该文件即可
-
 
 ```sh
 sh NVIDIA-Linux-x86_64-550.54.14.run
@@ -84,12 +82,11 @@ sh NVIDIA-Linux-x86_64-550.54.14.run
 
 - 对于深度学习程序，一般都要依赖 CUDA 环境，因此需要在机器上安装 CUDA Toolkit。
 
-
 - 也是到NVIDIA官网下载对应的安装包，选择操作系统和安装方式即可：[CUDA Toolkit Archive](https://developer.nvidia.com/cuda-toolkit-archive)
 
 - 也是.run文件直接安装即可
 
-~~~sh
+```sh
 # 下载安装文件
 wget https://developer.download.nvidia.com/compute/cuda/12.2.0/local_installers/cuda_12.2.0_535.54.03_linux.run
 # 开始安装
@@ -102,7 +99,7 @@ export PATH=/usr/local/cuda-12.2/bin:$PATH
 export LD_LIBRARY_PATH=/usr/local/cuda-12.2/lib64:$LD_LIBRARY_PATH
 #验证安装
 nvcc -V
-~~~
+```
 
 ### 测试程序
 
@@ -112,7 +109,7 @@ nvcc -V
 
   ![Image](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202408301002317.webp)
 
-~~~sh
+```sh
 vim check_cuda_pytorch.py
 import torch
 
@@ -136,13 +133,13 @@ def check_cuda_with_pytorch():
 
 if __name__ == "__main__":
     check_cuda_with_pytorch()
-~~~
+```
 
-~~~sh
+```sh
 #安装torch
 pip install torch
 python3 check_cuda_pytorch.py
-~~~
+```
 
 ## docker环境配置NVIDIA GPU
 
@@ -223,14 +220,14 @@ sudo systemctl daemon-reload && systemctl restart docker
 
 - 最后我们启动一个 Docker 容器进行测试，其中命令中增加 --gpu参数来指定要分配给容器的 GPU。
 
-~~~sh
+```sh
 #--gpu 参数可选值：
 #--gpus all：表示将所有 GPU 都分配给该容器
 #--gpus "device=<id>[,<id>...]"：对于多 GPU 场景，可以通过 id 指定分配给容器的 GPU，例如 --gpu "device=0" 表示只分配 0 号 GPU 给该容器, GPU 编号则是通过nvidia-smi 命令进行查看
 #这里我们直接使用一个带 cuda 的镜像来测试，启动该容器并执行nvidia-smi 命令
 docker run --rm --gpus all  nvidia/cuda:12.0.1-runtime-ubuntu22.04 nvidia-smi
 #正常情况下应该是可以打印出容器中的 GPU 信息的。
-~~~
+```
 
 ## k8s配置NVIDIA GPU--手动安装
 
@@ -302,7 +299,7 @@ curl -sL http://127.0.0.1:8080/metrics
 
 - 在 k8s 创建 Pod 要使用 GPU 资源很简单，和 cpu、memory 等常规资源一样，在 resource 中 申请即可。比如，下面这个 yaml 里面我们就通过 resource.limits 申请了该 Pod 要使用 1 个 GPU。
 
-~~~yaml
+```yaml
 apiVersion: v1
 kind: Pod
 metadata:
@@ -315,7 +312,7 @@ spec:
       resources:
         limits:
           nvidia.com/gpu: 1 # requesting 1 GPU
-~~~
+```
 
 - 这样 kueb-scheduler 在调度该 Pod 时就会考虑到这个情况，将其调度到有 GPU 资源的节点。
 
@@ -421,16 +418,16 @@ nvidia.com/gpu.memory=15360
 
 - NVIDIA 官方提供了一种基于容器安装 NVIDIA 驱动的方式，GPU Operator 安装 nvidia 驱动也是采用的这种方式。
 
-- 当 NVIDIA 驱动基于容器化安装后，整个架构将演变成图中描述的样子：
+- 当 NVIDIA 驱动基于容器化安装后,整个架构将演变成图中描述的样子：
 
 ![Image](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202408301046058.webp)
 
 - Driver Installer 组件对应的 DaemonSet 就是`nvidia-driver-daemonset-5.15.0-105-generic-ubuntu22.04`，对应的镜像：
 
-  ~~~sh
+  ```sh
   k get ds nvidia-driver-daemonset-5.15.0-105-generic-ubuntu22.04 -oyaml|grep image
           image: nvcr.io/nvidia/driver:535-5.15.0-105-generic-ubuntu22.04
-  ~~~
+  ```
 
 - 其中 DaemonSet 名称/镜像由几部分组件：
 
@@ -490,7 +487,7 @@ kubectl get nodes -o json | jq '.items[].metadata.labels | keys | any(startswith
 
 > [GPU Operator 安装指南](https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/getting-started.html#operator-install-guide)
 
-~~~sh
+```sh
 # 添加 nvidia helm 仓库并更新
 helm repo add nvidia https://helm.ngc.nvidia.com/nvidia \
     && helm repo update
@@ -504,7 +501,7 @@ helm install --wait --generate-name \
      -n gpu-operator --create-namespace \
      nvidia/gpu-operator \
      --set driver.enabled=false
-~~~
+```
 
 完成后 会启动 Pod 安装驱动，如果节点上已经安装了驱动了，那么 gpu-operaotr 就不会启动安装驱动的 Pod,通过 label 进行筛选。
 
@@ -540,14 +537,12 @@ helm install --wait --generate-name \
 
 - 正常pod日志如下：
 
-  ~~~sh
-  kubectl logs pod/cuda-vectoradd
-  [Vector addition of 50000 elements]
-  Copy input data from the host memory to the CUDA device
-  CUDA kernel launch with 196 blocks of 256 threads
-  Copy output data from the CUDA device to the host memory
-  Test PASSED
+  ```sh
+  kubectl logs pod/cuda-vectoradd
+  [Vector addition of 50000 elements]
+  Copy input data from the host memory to the CUDA device
+  CUDA kernel launch with 196 blocks of 256 threads
+  Copy output data from the CUDA device to the host memory
+  Test PASSED
   Done
-  ~~~
-
-  
+  ```

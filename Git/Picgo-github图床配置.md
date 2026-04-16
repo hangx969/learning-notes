@@ -73,6 +73,8 @@ github、picgo、typora都需要配置。
 ![image-20220911132923566](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202209111329625.png)
 
 可点击验证图片选项，测试上传是否能成功。
+### obsidian配置
+装一个Image auto upload 插件，配置github仓库di
 
 ### Troubleshooting
 
