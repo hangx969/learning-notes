@@ -14,7 +14,11 @@ skills： https://github.com/kepano/obsidian-skills
 下载skills，放到 vault 的 .claude/ 目录下，Claude Code 就能理解 Obsidian 的格式——双向链接、标签、属性、嵌入，全都认得。
 
 # 3. obsidian local api和claude mcp
+GitHub 上的 mcp-obsidian 项目。配好之后，Claude Code 可以直接搜索、读取、创建、修改你的笔记。不用你手动复制粘贴，AI 直接操作你的知识库。
+
+- 依赖local api： https://github.com/coddingtonbear/obsidian-local-rest-api
+	- 插件市场直接搜Local REST API，下载并开启
+	- 
 - https://github.com/MarkusPfundstein/mcp-obsidian
-- local api： https://github.com/coddingtonbear/obsidian-local-rest-api
 
 
