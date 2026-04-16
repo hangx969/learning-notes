@@ -319,9 +319,9 @@ openclaw gateway restart
 ```
 
 ## 自然语言自动添加
-直接让openclaw自己添加模型，输入提示词：
+直接让 OpenClaw 自己添加模型，输入提示词：
 
-```
+```text
 帮我新增一个模型，provider为 deepseek，模型名字和ID是 deepseek-reasoner，该模型的 base url是 https://api.deepseek.com/v1，api key是 xxxxx，该模型是openai标准协议的模型，配置时，需要限制最大 token为 32768，上下文窗口为 64k。Openclaw配置文件路径：C:\Users\xxx\.openclaw\openclaw.json
 ```
 
@@ -382,7 +382,7 @@ rm -rf /Applications/OpenClaw.app
 ```
 
 - Windows 用户（在 PowerShell 中执行）：
-```sh
+```powershell
 openclaw gateway stop  
 openclaw gateway uninstall  
 schtasks /Delete /F /TN "OpenClaw Gateway"  
