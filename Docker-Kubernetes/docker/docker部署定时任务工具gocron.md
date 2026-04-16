@@ -11,9 +11,9 @@ aliases:
 
 # 介绍
 
-基于Go语言驱动、Vue.js构建前端的全栈项目，带可视化界面的cronjob调度系统
+基于Go语言驱动、Vue.js构建前端的全栈项目,带可视化界面的cronjob调度系统
 
-- 官网：[GoCron GitHub](https://github.com/flohoss/gocron)
+- 官网:[GoCron GitHub](https://github.com/flohoss/gocron)
 
 # 部署
 
@@ -64,7 +64,7 @@ jobs:
         value: '$BASE_REPOSITORY/Backups'
     commands:
       - command: echo $RESTIC_PASSWORD_FILE
-      - command: echo $RESTIC_REPOSITORY   
+      - command: echo $RESTIC_REPOSITORY
 EOF
 ~~~
 
@@ -81,4 +81,3 @@ docker run -it --rm \
   -v ./gocron-config/:/app/config/ \
   ghcr.io/flohoss/gocron:latest
 ~~~
-

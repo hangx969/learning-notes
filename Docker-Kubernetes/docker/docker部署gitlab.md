@@ -31,11 +31,11 @@ services:
     environment:
       TZ: 'Asia/Shanghai'
       GITLAB_OMNIBUS_CONFIG: |
-        # web站点访问地址 
-        external_url 'http://172.16.183.80:18090'  
+        # web站点访问地址
+        external_url 'http://172.16.183.80:18090'
         gitlab_rails['gitlab_shell_ssh_port'] = 18222
     ports:
-      - '18090:18090' # 注意宿主机和容器内部的端口要一致，否则external_url无法访问
+      - '18090:18090' # 注意宿主机和容器内部的端口要一致,否则external_url无法访问
       - '8443:443'
       - '18222:22'
     volumes:
@@ -51,14 +51,14 @@ services:
 - 启动容器
 
 ~~~sh
-docker-compose up -d 
+docker-compose up -d
 ~~~
 
-- 浏览器访问IP:18090端口 (出现502说明gitlab启动较慢，需要等)
+- 浏览器访问IP:18090端口 (出现502说明gitlab启动较慢,需要等)
 - [可选]优化启动速度
 
 ~~~sh
-#docker版本的gitlab会自动启动prometheus|grafana|alertmanager和一系列exporter，非常占用资源，且导致启动比较慢，因此我们可以通过修改 /etc/gitlab/gitlab.rb 来关闭该功能。
+#docker版本的gitlab会自动启动prometheus|grafana|alertmanager和一系列exporter,非常占用资源,且导致启动比较慢,因此我们可以通过修改 /etc/gitlab/gitlab.rb 来关闭该功能。
 #查看启动的服务
 ps -ef | grep -E 'prome|exporter|alert|graf'
 #修改配置文件
@@ -89,11 +89,11 @@ cat /root/gitlab/config/initial_root_password
 #修改默认密码
 docker exec -it gitlab /bin/bash
 gitlab-rails console -e production
-user=User.find(1)                            
-user.password='azsxdc1122'                  
-user.password_confirmation='azsxdc1122'           
-user.send_only_admin_changed_your_password_notification!  
-user.save! 
+user=User.find(1)
+user.password='azsxdc1122'
+user.password_confirmation='azsxdc1122'
+user.send_only_admin_changed_your_password_notification!
+user.save!
 #退出
 exit
 ~~~
@@ -106,7 +106,7 @@ exit
 ssk-keygen
 ~~~
 
-- 复制本地ssh-key（~/.ssh/id_rsa.pub）
+- 复制本地ssh-key(~/.ssh/id_rsa.pub)
 - gitlab中user settings - ssh keys - add an ssh key添加自己本地的key
 - 本地git客户端直接拉取代码即可
 
@@ -118,9 +118,8 @@ ssk-keygen
 docker exec -t gitlab gitlab-backup create
 ```
 
-- 要恢复 GitLab 实例，请将备份文件复制到 /data/gitlab/data/backups 目录，然后运行以下命令
+- 要恢复 GitLab 实例,请将备份文件复制到 /data/gitlab/data/backups 目录,然后运行以下命令
 
 ```sh
 docker exec -t gitlab gitlab-backup restore BACKUP=<your_backup_filename>
 ```
-
