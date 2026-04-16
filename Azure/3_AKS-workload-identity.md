@@ -1,21 +1,44 @@
-# AKS中开启workload identity
+---
+title: AKS Workload Identity
+tags:
+  - azure/aks
+  - azure/identity
+  - azure/workload-identity
+aliases:
+  - Workload Identity
+  - AKS WI
+date: 2026-04-16
+---
 
-- AKS开启Workload Identity的依赖项
+# AKS Workload Identity
 
-[在 Azure Kubernetes 服务 (AKS) 上使用 Azure AD 工作负载标识（预览版） - Azure Kubernetes Service | Azure Docs](https://nam06.safelinks.protection.outlook.com/?url=https%3A%2F%2Furldefense.com%2Fv3%2F__https%3A%2Fnam06.safelinks.protection.outlook.com%2F%3Furl%3Dhttps*3A*2F*2Furldefense.com*2Fv3*2F__https*3A*2Fdocs.azure.cn*2Fzh-cn*2Faks*2Fworkload-identity-overview*dependencies__*3BIw!!BBM_p3AAtQ!NxzuIBoFPildEvnwnfh55GoLZkGnbcJAQdPlwJEwpvD2I9K1r99RJX96GW7zgNkFvTZoiilY51qzaQAWpQ*24%26data%3D05*7C01*7Changx*40microsoft.com*7Cf505418627d3425733ca08daeef0e160*7C72f988bf86f141af91ab2d7cd011db47*7C1*7C0*7C638085015645861271*7CUnknown*7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0*3D*7C3000*7C*7C*7C%26sdata%3D*2FsUw2MMtYdsdxYj9PQNpxg2ev2jXlif1l5RwpX81ZV4*3D%26reserved%3D0__%3BJSUlJSUlJSUlJSolJSUlJSUlJSUlJSUlJSUlJSUl!!BBM_p3AAtQ!M9iewh_14uLGYpxt93mW8SG-fkyTvOkfj2X_Y-B86-CjFxO7QPipcIJmzRT2SnLK_GSg__odw_eAp8Mxog%24&data=05|01|hangx@microsoft.com|60cfa8df43df4f270e4c08daeeffa413|72f988bf86f141af91ab2d7cd011db47|1|0|638085079067176601|Unknown|TWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D|3000|||&sdata=k0JxgkojpWQ%2BoXE8Rs%2BV8ut2y2oTg82MJdzcl3SPZYo%3D&reserved=0)
+## Related Notes
 
-- 安装Az Cli 2.40.0或更高版本
+- [[Azure/2_AKS-basics]]
+- [[Azure/4_AKS-SecretProviderClass-KeyVault]]
 
-[如何安装 Azure CLI | Microsoft Learn](https://nam06.safelinks.protection.outlook.com/?url=https%3A%2F%2Furldefense.com%2Fv3%2F__https%3A%2Fnam06.safelinks.protection.outlook.com%2F%3Furl%3Dhttps*3A*2F*2Furldefense.com*2Fv3*2F__https*3A*2Flearn.microsoft.com*2Fzh-cn*2Fcli*2Fazure*2Finstall-azure-cli__*3B!!BBM_p3AAtQ!NxzuIBoFPildEvnwnfh55GoLZkGnbcJAQdPlwJEwpvD2I9K1r99RJX96GW7zgNkFvTZoiilY51qcCZ0IBw*24%26data%3D05*7C01*7Changx*40microsoft.com*7Cf505418627d3425733ca08daeef0e160*7C72f988bf86f141af91ab2d7cd011db47*7C1*7C0*7C638085015645861271*7CUnknown*7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0*3D*7C3000*7C*7C*7C%26sdata%3D*2F4UsOHbatRfkZYVTqGJeEvFh681RX*2FY*2BRtc*2BOhrC6Uo*3D%26reserved%3D0__%3BJSUlJSUlJSUlJSUlJSUlJSUlJSUlJSUlJSUlJSUlJSUl!!BBM_p3AAtQ!M9iewh_14uLGYpxt93mW8SG-fkyTvOkfj2X_Y-B86-CjFxO7QPipcIJmzRT2SnLK_GSg__odw_fs5rqqnQ%24&data=05|01|hangx@microsoft.com|60cfa8df43df4f270e4c08daeeffa413|72f988bf86f141af91ab2d7cd011db47|1|0|638085079067176601|Unknown|TWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D|3000|||&sdata=EX8gQIlf8lTqL0c3nqMjeqndcpEO4yOI5r5UI%2BfPcYY%3D&reserved=0)
+---
 
-- 安装 aks-preview Extension
+## Enable Workload Identity in AKS
+
+- AKS Workload Identity dependencies:
+
+[在 Azure Kubernetes 服务 (AKS) 上使用 Azure AD 工作负载标识（预览版） - Azure Kubernetes Service | Azure Docs](https://docs.azure.cn/zh-cn/aks/workload-identity-overview)
+
+### Prerequisites
+
+- Install ==Az CLI 2.40.0== or higher
+
+  [如何安装 Azure CLI | Microsoft Learn](https://learn.microsoft.com/zh-cn/cli/azure/install-azure-cli)
+
+- Install aks-preview Extension
 
 ```sh
 az extension add --name aks-preview
 az extension update --name aks-preview 
 ```
 
-- 登录az cli
+- Login az cli
 
 ```sh
 az cloud set -n AzureChinaCloud
@@ -23,7 +46,9 @@ az account set --subscription <name or id>
 az login
 ```
 
-- 注册“EnableWorkloadIdentityPreview”功能标志
+### Register Feature Flag
+
+- Register ==EnableWorkloadIdentityPreview== feature flag
 
 ```sh
 #注册
@@ -36,20 +61,26 @@ az feature list -o table --query "[?contains(name, 'Microsoft.ContainerService/E
 az provider register --namespace Microsoft.ContainerService
 ```
 
-- 更新集群，启用oidc-issuer和workload-identity
+### Update Cluster
+
+- Update cluster to enable ==oidc-issuer== and ==workload-identity==
 
 ```sh
 az aks update -g <resource group name> -n <cluster name> --enable-oidc-issuer --enable-workload-identity
 ```
 
-- 获取 OIDC 颁发者 URL 并将其保存到环境变量
+### Get OIDC Issuer URL
+
+- Get the OIDC issuer URL and save to environment variable
 
 ```sh
 az aks show -g <resource group name> -n <cluster name> --query "oidcIssuerProfile.issuerUrl"
 export AKS_OIDC_ISSUER="$(az aks show -g <resource group name> -n <cluster name> --query "oidcIssuerProfile.issuerUrl" -otsv)"
 ```
 
-- 创建managed identity（测试以managed identity为例，也可以使用AAD application） 
+### Create Managed Identity
+
+- Create managed identity (using managed identity as example, can also use AAD application)
 
 ```sh
 export SUBSCRIPTION_ID="$(az account show --query id --output tsv)" 
@@ -59,7 +90,7 @@ export LOCATION="chinanorth"
 az identity create --name "${USER_ASSIGNED_IDENTITY_NAME}" --resource-group "${RG_NAME}" --location "${LOCATION}" --subscription "${SUBSCRIPTION_ID}"
 ```
 
-- 创建Kubernetes service account
+### Create Kubernetes Service Account
 
 ```sh
 az aks get-credentials -g <resource group name> -n <cluster name>
@@ -81,15 +112,17 @@ metadata:
 EOF
 ```
 
-- 建立联合标识凭据
+### Create Federated Identity Credential
 
 ```sh
 az identity federated-credential create --name <federated Identity name> --identity-name "${USER_ASSIGNED_IDENTITY_NAME}"--resource-group "${RG_NAME}" --issuer "${AKS_OIDC_ISSUER}" --subject system:serviceaccount:"${SERVICE_ACCOUNT_NAMESPACE}":"${SERVICE_ACCOUNT_NAME}"
 ```
 
-# Lab-pod挂载workload identity访问keyvault
+---
 
-- Set Environment
+## Lab - Pod with Workload Identity Accessing KeyVault
+
+### Set Environment
 
 ```sh
 # environment variables for the Azure Key Vault resource
@@ -108,7 +141,7 @@ export SERVICE_ACCOUNT_NAME="hangwi1"
 export SERVICE_ACCOUNT_ISSUER="https://chinanorth2.oic.prod-aks.azure.cn/xxxxxx/" 
 ```
 
-- Create key vault
+### Create Key Vault
 
 ```sh
 az keyvault create --resource-group "${RESOURCE_GROUP}" --location "${LOCATION}" --name "${KEYVAULT_NAME}"
@@ -116,15 +149,15 @@ export USER_ASSIGNED_IDENTITY_CLIENT_ID="$(az identity show --name "${USER_ASSIG
 export KEYVAULT_URL="$(az keyvault show -g ${RESOURCE_GROUP} -n ${KEYVAULT_NAME} --query properties.vaultUri -o tsv)"
 ```
 
-- Set policy
+### Set Policy
 
 ```sh
 az keyvault set-policy --name "${KEYVAULT_NAME}" \ --secret-permissions get \ --spn "${USER_ASSIGNED_IDENTITY_CLIENT_ID}" 
 ```
 
-- Create workload (a pod)
+### Create Workload (a Pod)
 
-~~~yaml
+```yaml
 cat <<EOF | kubectl apply -f -
 apiVersion: v1
 kind: Pod
@@ -146,13 +179,15 @@ spec:
   nodeSelector:
     kubernetes.io/os: linux
 EOF
-~~~
+```
 
-# Lab-pod挂载WI获取AccessToken
+---
 
-- [sample-dotnet-worker-servicebus-queue/deploy-app-with-workload-identity.yaml at main · kedacore/sample-dotnet-worker-servicebus-queue · GitHub](https://github.com/kedacore/sample-dotnet-worker-servicebus-queue/blob/main/deploy/workload-identity/deploy-app-with-workload-identity.yaml)
+## Lab - Pod with WI Getting AccessToken
 
-~~~yaml
+- [sample-dotnet-worker-servicebus-queue/deploy-app-with-workload-identity.yaml at main](https://github.com/kedacore/sample-dotnet-worker-servicebus-queue/blob/main/deploy/workload-identity/deploy-app-with-workload-identity.yaml)
+
+```yaml
 cat order-processor.yaml <<'EOF'
 apiVersion: apps/v1
 kind: Deployment
@@ -182,28 +217,32 @@ spec:
         - name: KEDA_SERVICEBUS_QUEUE_NAME
           value: orders
 EOF
-~~~
+```
 
-- 获取pod中挂进去的azure identity token，可以在[jwt.ms: Welcome!](https://jwt.ms/)中decode：
+- Get the Azure identity token mounted in the pod, decode at [jwt.ms](https://jwt.ms/):
 
-~~~sh
+```sh
 k exec -it order-processor-8649d8cbb8-mn6mg /bin/sh
 cat /run/secrets/azure/tokens/azure-identity-token
-~~~
+```
 
-- 可以拿identity token，通过postman去兑换access token
+> [!tip] Exchange Token
+> You can take the identity token and exchange it for an access token via Postman.
 
 ![image-20241010100053457](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202410101000598.png)
 
-POST的endpoint可以在AAD - App registration - endpoints里面找
+POST endpoint can be found in AAD - App registration - endpoints.
 
-client_id 使用的下划线而不是短杠
+> [!warning]
+> `client_id` uses underscores, not hyphens.
 
-# Lab-pod挂载WI直接拿到access token
+---
 
-- 挂载service account进去，在cat /run/secrets/azure/tokens/azure-identity-token里面就能看到azure access token：
+## Lab - Pod with WI Directly Getting Access Token
 
-~~~yaml
+- Mount service account, the Azure access token is available at `cat /run/secrets/azure/tokens/azure-identity-token`:
+
+```yaml
 apiVersion: v1
 kind: Pod
 metadata:
@@ -217,11 +256,10 @@ spec:
       image: dockerhub.azk8s.cn/library/centos:latest
       command: ["/bin/sh"]
       args: ["-c", "while true; do echo hello; sleep 10;done"]
-~~~
+```
 
 ```sh
 k exec -it centos-workload-identity -- /bin/bash
 #查看token
 cat /run/secrets/azure/tokens/azure-identity-token
 ```
-

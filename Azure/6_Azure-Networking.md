@@ -1,21 +1,46 @@
-# 测试网络连通性命令
+---
+title: Azure Networking
+tags:
+  - azure/networking
+  - azure/VNet
+  - azure/NSG
+  - azure/load-balancer
+aliases:
+  - Azure Network
+  - VNet
+  - NSG
+date: 2026-04-16
+---
 
-## psping
+# Azure Networking
 
-tcp连接，测试端口开没开：[PsPing - Sysinternals | Microsoft Learn](https://learn.microsoft.com/en-us/sysinternals/downloads/psping)
+## Related Notes
 
+- [[Azure/0_Azure-VM-VMSS]]
+- [[Azure/2_AKS-basics]]
+
+---
+
+## Network Connectivity Testing Commands
+
+### psping
+
+TCP connection, test if port is open: [PsPing - Sysinternals | Microsoft Learn](https://learn.microsoft.com/en-us/sysinternals/downloads/psping)
+
+```bash
 psping <source machine_ip>: 443 和 9443 
+```
 
-## telnet
+### telnet
 
 ```bash
 虚拟机连不上，可以用telnet来看一下端口可达性
 telnet 168.63.129.16 80
 ```
 
-## nc
+### nc
 
-测试tcp连接 
+Test TCP connection:
 
 ```bash
 nc -vz mcr.azk8s.cn 443
@@ -23,46 +48,45 @@ nc -vz mcr.azk8s.cn 443
 -v, --verbose Set verbosity level (can be used several times)
 ```
 
-## dig
+### dig
 
-dig（域信息搜索器）命令是一个用于询问 DNS 域名服务器的灵活的工具。它执行 DNS 搜索，显示从受请求的域名服务器返回的答复。
+dig (Domain Information Groper) is a flexible tool for interrogating DNS domain name servers. It performs DNS lookups and displays answers from queried name servers.
 
 ```bash
 dig mcr.azk8s.cn 443
 dig mcr.azk8s.cn 
 ```
 
-Dig工具使用：
+Dig usage:
 
-- @来指定域名服务器、
-- -t 指定要解析的类型
-
-- A 为解析类型 ，A记录：解析域名到IP
+- `@` to specify the name server
+- `-t` to specify the record type to resolve
+- `A` is the record type: resolves domain name to IP
 
 ```bash
 dig -t A svc-sts-nginx.default.svc.cluster.local @10.0.0.10
 ```
 
-## curl
+### curl
 
-- 测试连接外网连通性。不带有任何参数时，curl 就是发出 GET 请求。
-  - curl myip.ipip.net（只能说明对外网访问没问题）
+- Test external network connectivity. Without parameters, curl sends a GET request.
+  - `curl myip.ipip.net` (only proves outbound internet access works)
 
 ![image-20231030202611975](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202310302026034.png)
 
-- curl ipconfig.me：也能查看本机IP
+- `curl ipconfig.me`: also shows your public IP
 
-## siege 
+### siege
 
-- 可以产生持续的访问请求，用于压测。
+- Generates sustained access requests, used for ==load testing==.
 
 ```bash
 siege -c 15 -t 20m https://fibonnodeis.chinacloudsites.cn
 ```
 
-## tcpdump
+### tcpdump
 
-1. 网络包收集，Linux平台我们通常使用tcpdump进行收集，方法如下
+Network packet capture, on Linux we typically use ==tcpdump==:
 
 ```bash
 tcpdump -i any host <Pod-IP> -C 10 -W 10 -w 31983.pcap
@@ -73,9 +97,9 @@ tcpdump -i any host <Pod-IP> -C 10 -W 10 -w 31983.pcap
 #考虑到网络包通常都很大，所以我们应该需要设置一个监控脚本来监控应用日志，如果发现应用日志有相关报错，我们可以kill掉tcpdump的收集进程
 ```
 
-## windows抓网络包
+### Windows Network Capture
 
-1. 使用管理员权限打开cmd，然后运行如下命令，其中C:\temp\netshtrace.etl是文件保存路径
+1. Run as admin in cmd, `C:\temp\netshtrace.etl` is the output path:
 
    ```bash
    netsh.exe trace start capture=yes maxsize=500M overwrite=yes tracefile=C:\temp\netshtrace.etl
@@ -83,9 +107,9 @@ tcpdump -i any host <Pod-IP> -C 10 -W 10 -w 31983.pcap
 
    ![image-20231030203953076](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202310302039136.png)
 
-2. 复现问题
+2. Reproduce the issue
 
-3. 运行如下命令停止抓包
+3. Stop capture:
 
    ```bash
    netsh.exe trace stop
@@ -93,88 +117,110 @@ tcpdump -i any host <Pod-IP> -C 10 -W 10 -w 31983.pcap
 
 ![image-20231030204052140](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202310302040199.png)
 
-# Azure Networking
+---
 
 ## VNET
 
-- VNet 允许许多类型的 Azure 资源（例如 Azure 虚拟机 (VM)）以安全方式彼此通信、与 Internet 通信，以及与本地网络通信。
+- VNet allows many types of Azure resources (e.g., Azure VMs) to securely communicate with each other, the Internet, and on-premises networks.
 
   From <https://docs.azure.cn/zh-cn/virtual-network/virtual-networks-overview>
 
-- 虚拟网络是通过互联网在设备、服务器、虚拟机之间进行的通信。同样，Azure 虚拟网络 （VNet） 是一个专用网络，具有互连的 Azure 资源，如 Azure 虚拟机、基础结构和网络。它支持通过 Internet 在各种 Azure 资源之间进行通信。在虚拟网络中，连续的 IP 地址块用于创建多个子网网络。From <https://k21academy.com/microsoft-azure/az-303/azure-networking/>
+- A virtual network is communication between devices, servers, and virtual machines over the Internet. Azure Virtual Network (VNet) is a private network with interconnected Azure resources such as Azure VMs, infrastructure, and networking. It supports communication between various Azure resources over the Internet. In a virtual network, contiguous IP address blocks are used to create multiple subnet networks. From <https://k21academy.com/microsoft-azure/az-303/azure-networking/>
 
-- 当VNET里面的资源没有Public IP的时候，能访问Internet吗？
-  - 答案：YES。通过Private IP，通过VNET向外发送数据的时候，会用NAT将Private IP转换为Public IP，照样访问。入站流量也会将NAT转换为Private IP
+> [!tip] VNet Outbound Without Public IP
+> When resources in a VNet don't have a Public IP, can they access the Internet? ==YES==. Through Private IP, when sending data externally through the VNet, NAT translates Private IP to Public IP. Inbound traffic is also NAT-translated to Private IP.
 
-## Public IP 和 Private IP
+---
 
-- **专用** – 专用 IP 地址允许在 Azure资源组中通信资源。换句话说，资源无法访问网络外部的专用 IP。可以使用专用地址连接的资源包括 VM 网络接口、ILB（内部负载均衡器）和应用程序网关。
-- **公共** – 公共 IP 地址允许 Azure资源通过 Internet 与面向公众的 Azure 服务进行通信。换句话说，资源可以访问网络外部的公共 IP。可以使用公共地址连接的一些资源包括VM 网络接口、面向公众的 ILB、应用程序网关、VPN 网关和 Azure 防火墙。
+## Public IP and Private IP
+
+- **Private** -- Private IP addresses allow communication between resources within an Azure resource group. Resources cannot access the private IP from outside the network. Resources that can connect using private addresses include VM network interfaces, ILB (internal load balancers), and application gateways.
+- **Public** -- Public IP addresses allow Azure resources to communicate with public-facing Azure services over the Internet. Resources that can connect using public addresses include VM network interfaces, public-facing ILB, application gateways, VPN gateways, and Azure Firewall.
 
 From <https://k21academy.com/microsoft-azure/az-303/azure-networking/>
+
+---
 
 ## Subnet
 
-- 众所周知，子网是覆盖一系列 IP 地址的网络的一部分。在 Azure 中，VNet 可以划分为组织的较小子网。在 Azure 中创建 VNet 时，需要指定子网范围和拓扑。在“子网”中，“IP 地址”范围将是虚拟网络 （VNet） 中使用的一大块 IP 地址的子部分。将为网络中的虚拟机和资源分配这些子网中的 IP 地址。
+- A subnet is a portion of a network covering a range of IP addresses. In Azure, a VNet can be divided into smaller subnets. When creating a VNet in Azure, you need to specify the subnet range and topology. The IP address range in a subnet will be a sub-portion of the larger block of IP addresses used in the VNet. VMs and resources in the network will be assigned IP addresses from these subnets.
 
-- Azure会在每个子网中保留前四个IP和最后一个IP以供自己使用
-
-From <https://k21academy.com/microsoft-azure/az-303/azure-networking/> 
-
-## NSG
-
-- 网络安全组在网络级别充当防火墙。它会筛选通过虚拟网络中的 Azure 资源传递的流量。NSG 是一组安全规则，用于定义优先级、源或目标、协议、方向、端口范围和操作。使用这些规则，NSG 允许或拒绝入站和出站流量。
+> [!important] Azure Reserved IPs
+> Azure reserves the ==first four IPs== and the ==last IP== in each subnet for its own use.
 
 From <https://k21academy.com/microsoft-azure/az-303/azure-networking/>
 
-## 网关
+---
 
-- 网关实质上是一个网络通向其他网络的IP地址。
+## NSG
 
-- 比如有网络A和网络B，网络A的IP地址范围为 “192.168.1.1~192. 168.1.254”，子网掩码为255.255.255.0;网络B的IP地址范围为“192.168.2.1~192.168.2.254”，子网掩 码为255.255.255.0。在没有路由器的情况下，两个网络之间是不能进行TCP/IP通信的，即使是两个网络连接在同一台交换机(或集线器) 上，TCP/IP协议也会根据子网掩码(255.255.255.0)判定两个网络中的主机处在不同的网络里。
+- A Network Security Group acts as a firewall at the network level. It filters traffic passing through Azure resources in a virtual network. NSG is a set of security rules that define priority, source/destination, protocol, direction, port range, and action. Using these rules, NSG allows or denies inbound and outbound traffic.
 
-- 而要实现这两个网络之间的通信，则必须通过网关。如果网络A中的主机发现数据包的目的主机不在本地网络中，就把数据包转发给它自己的网关，再由网关转发给网络B的网关，网络B的网关再转发给网络B的某个主机。网络B向网络A转发数据包的过程也是如此。
-- 所以说，只有设置好网关的IP地址，TCP/IP协议才能实现不同网络之间的相互通信。
-- 那么这个IP地址是哪台机器的IP地址呢? 网关的IP地址是具有路由功能的设备的IP地址，具有路由功能的设备有路由器、启用了路由协议的服务器(实质上相当于一台路由器)、代理服务器(也相当于一台路由器)!
+From <https://k21academy.com/microsoft-azure/az-303/azure-networking/>
+
+---
+
+## Gateway
+
+- A gateway is essentially the IP address through which one network accesses other networks.
+
+- For example, with Network A (IP range `192.168.1.1~192.168.1.254`, subnet mask `255.255.255.0`) and Network B (IP range `192.168.2.1~192.168.2.254`, subnet mask `255.255.255.0`), without a router, TCP/IP communication between the two networks is impossible, even if connected to the same switch/hub. TCP/IP protocol uses the subnet mask to determine hosts are on different networks.
+
+- To enable communication between these networks, a ==gateway== is required. If a host in Network A finds the destination is not on the local network, it forwards the packet to its own gateway, which forwards to Network B's gateway, which then delivers to the destination host.
+
+- So, only by setting the gateway IP address correctly can TCP/IP enable inter-network communication.
+
+- The gateway IP address belongs to a device with routing capability: a router, a server with routing protocol enabled, or a proxy server.
+
+---
 
 ## Azure Relay
 
 [什么是 Azure 中继？ - Azure Relay | Azure Docs](https://docs.azure.cn/zh-cn/azure-relay/relay-what-is-it)
 
-## Private and service endpoint
+---
 
-Azure 中的专用终结点（Private Endpoint）和服务终结点（Service Endpoint）都可以用于加强安全性和控制网络访问。它们的区别在于：
+## Private and Service Endpoint
 
-1. 定义和范围：专用终结点是针对单个 Azure 资源（例如虚拟机、存储帐户等）的，而服务终结点是针对服务标识符（例如 Azure 存储、Azure SQL 数据库等）的。
-2. 网络路径：专用终结点通过在 VNet 中创建一个专用 IP 地址，将 Azure 资源直接连接到 VNet 中的子网。这样，资源就可以通过 VNet 的私有 IP 地址进行访问，而无需通过公共 Internet。服务终结点则是通过 Azure 资源的虚拟网络服务终结点连接到服务标识符。
-3. 安全性：专用终结点通过将网络流量限制为 Azure 资源的专用 IP 地址来提高安全性。服务终结点通过将网络流量限制为特定服务的 IP 地址范围来提高安全性。在访问受服务终结点保护的服务时，如果网络流量来自未经授权的 IP 地址，则服务将被拒绝。
+Azure Private Endpoints and Service Endpoints can both be used to enhance security and control network access. Key differences:
 
-综上所述，专用终结点和服务终结点都是提高安全性和控制网络访问的重要工具。选择使用哪种终结点取决于需要保护的资源类型和服务类型。
+1. **Definition and Scope**: Private Endpoints target individual Azure resources (e.g., VMs, storage accounts), while Service Endpoints target service identifiers (e.g., Azure Storage, Azure SQL Database).
 
-- 存储账户配置了private endpoint的时候，如果从subnet内访问，那么azure dns也先去解析公共终结点（例如artifactorysa.file.core.chinacloudapi.cn），通过cname记录解析到private endpoint（例如artifactorysa.privatelink.file.core.chinacloudapi.cn），再由private endpoint解析成内网IP。
-- 自己本地DNS需要设置把公共终结点forward到azure dns上来做解析。或者直接在/etc/hosts上把公共终结点配置为终结点的私有IP
+2. **Network Path**: Private Endpoints create a ==private IP address== in the VNet, connecting Azure resources directly to a subnet. Resources can be accessed via the VNet's private IP without going through the public Internet. Service Endpoints connect through the Azure resource's virtual network service endpoint to the service identifier.
+
+3. **Security**: Private Endpoints improve security by restricting traffic to the Azure resource's private IP address. Service Endpoints improve security by restricting traffic to the specific service's IP address range.
+
+> [!note] Private Endpoint DNS Resolution
+> When a storage account has a private endpoint configured, DNS resolution from within the subnet first resolves the public endpoint (e.g., `artifactorysa.file.core.chinacloudapi.cn`) via CNAME to the private endpoint (e.g., `artifactorysa.privatelink.file.core.chinacloudapi.cn`), which then resolves to the private IP.
+>
+> Your local DNS needs to forward the public endpoint to Azure DNS for resolution, or you can directly configure the public endpoint to the private IP in `/etc/hosts`.
+
+---
 
 ## Loadbalancer
 
-- Load balancer 工作在传输层 
+- ==Load Balancer== works at the transport layer
 
-- 访问VMSS的方法：
+- Methods to access VMSS:
 
-  - 为每个VM提供自己的公共IP，比较贵
+  - Assign each VM its own public IP (expensive)
 
-  - 可以使用Load Balancer 与 NAT结合使用：
-    - 系统将公共 IP 地址分配给LB，由LB将流量路由，通过每个VM的端口，分配到各个VM instance。 
-    - 默认情况下，会将网络地址转换(NAT) 规则添加到LB，由后者将远程连接流量转发给给定端口上的每个 VM。
+  - Use Load Balancer with NAT:
+    - Assign public IP to LB, LB routes traffic through each VM's port to individual VM instances
+    - By default, NAT rules are added to LB, forwarding remote connection traffic to each VM on given ports
 
-## VM内网访问方案
+---
 
-多台虚拟机都分配公网Ip的风险是容易被端口扫描，暴力破解
+## VM Internal Network Access Options
 
-- 方案1：
-  - VNET里面部署很多台VM，但只有一台跳板机开了公网IP，通过这一台的网卡来连到其他虚拟机的网卡，来访问其他虚拟机。
+> [!warning] Security Risk
+> Assigning public IPs to multiple VMs risks port scanning and brute force attacks.
 
-- 方案2：
-  - 公司内网和VNET，两边搭gateway，通过VPN来连到虚拟机
+- **Option 1:**
+  - Deploy many VMs in a VNet, but only one jump box VM has a public IP. Connect to other VMs through this jump box VM's NIC to reach other VMs' NICs.
 
-- 方案3：
-  - 直接买专线，内网到数据中心专线访问。
+- **Option 2:**
+  - Set up gateways on both the corporate network and the VNet, connect to VMs via ==VPN==.
+
+- **Option 3:**
+  - Purchase a ==dedicated line== (ExpressRoute) for direct private access from on-premises to the datacenter.

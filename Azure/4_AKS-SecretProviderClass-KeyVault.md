@@ -1,21 +1,45 @@
-# 介绍
+---
+title: AKS SecretProviderClass with KeyVault
+tags:
+  - azure/aks
+  - azure/keyvault
+  - azure/secrets
+aliases:
+  - SecretProviderClass
+  - AKS KeyVault Integration
+date: 2026-04-16
+---
 
-- secretProviderClass是AKS提供的一个插件，负责将Azure Keyvault secret转换为Kubernetes Secret
-- 参考文档：
-  - Azure文档：https://docs.azure.cn/en-us/aks/csi-secrets-store-configuration-options
-  - SecretProviderClass支持的参数：https://github.com/Azure/secrets-store-csi-driver-provider-azure/blob/master/website/content/en/getting-started/usage/_index.md
+# AKS SecretProviderClass with KeyVault
 
-# 部署
+## Related Notes
 
-## 前提条件
+- [[Azure/2_AKS-basics]]
+- [[Azure/3_AKS-workload-identity]]
 
-1. 创建一个user-assigned managed identity （或者配置workload identity）
-2. 对Azure Keyvault赋予identity读取Secret的权限（Access Policy或者RBAC）
-3. 复制identity的client id
+---
 
-## 创建SecretProviderClass
+## Introduction
 
-~~~yaml
+- ==SecretProviderClass== is an AKS plugin responsible for converting Azure Key Vault secrets into Kubernetes Secrets
+- Reference docs:
+  - Azure docs: https://docs.azure.cn/en-us/aks/csi-secrets-store-configuration-options
+  - SecretProviderClass supported parameters: https://github.com/Azure/secrets-store-csi-driver-provider-azure/blob/master/website/content/en/getting-started/usage/_index.md
+
+---
+
+## Deployment
+
+### Prerequisites
+
+> [!important] Required Steps Before Deployment
+> 1. Create a ==user-assigned managed identity== (or configure workload identity)
+> 2. Grant the identity permission to read Secrets on Azure Key Vault (Access Policy or RBAC)
+> 3. Copy the identity's client ID
+
+### Create SecretProviderClass
+
+```yaml
 apiVersion: secrets-store.csi.x-k8s.io/v1
 kind: SecretProviderClass
 metadata:
@@ -44,5 +68,7 @@ spec:
     - key: <key-name> # add a secret referencable with the same key as was in the keyvault
       objectName: <keep-the-same-of-"spec.parameters.objects.objectName">
     type: Opaque
-~~~
+```
 
+> [!note] Namespace
+> The namespace of the newly created Kubernetes secret will be the same as the SecretProviderClass.
