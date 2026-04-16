@@ -608,6 +608,8 @@ echo "统计访问页面状态码数量"
 awk '{a[$7" "$9]++}END{for(v in a){if(a[v]>5)print v,a[v]}}'
 ~~~
 
+---
+
 # 查看网卡实时流量
 
 ~~~sh
@@ -626,6 +628,8 @@ while true; do
     sleep 1
 done
 ~~~
+
+---
 
 # 批量检查网站是否异常并发邮件
 
@@ -651,6 +655,8 @@ for URL in $URL_LIST; do
 done
 ~~~
 
+---
+
 # 目录入侵检测与告警
 
 ~~~sh
@@ -665,6 +671,8 @@ while read files; do
    #echo "$(date +'%F %T') create $files" | mail -s "dir monitor" xxx@163.com
 done
 ~~~
+
+---
 
 # 一键查看服务器利用率
 
@@ -706,6 +714,8 @@ disk
 tcp_status
 ~~~
 
+---
+
 # 以sudo运行整个shell脚本
 
 - 将 sudo 放在 shell 脚本的首中，会以 root 身份运行整个程序。 例如自动化系统升级或包管理器包装器——不再需要用 sudo 预先准备一切
@@ -713,6 +723,8 @@ tcp_status
 ```sh
 #!/usr/bin/sudo /bin/bash
 ```
+
+---
 
 # 将视频转换为gif动图
 
@@ -729,6 +741,8 @@ ffmpeg -ss 00:00:03 -t 3 -i test.mov -s 640x360 -r  15  dongtu.gif
 - `-s 640x360` 是 GIF 的分辨率，视频分辨率可能是 1080p，但你制作的 GIF 可以转为 720p 等，允许自定义，分辨率越高体积越大，如果不加该命令，则保持分辨率不变； 
 - `-r “15”` 表示帧率，网上下载的视频帧率通常为 24，设为 15 效果挺好了，帧率越高体积越大，如果不加该命令，则保持帧率不变；
 - dongtu.gif：就是你要输出的文件，你也可以把它命名为 hello.gif 等等。
+
+---
 
 # 批量监控服务器磁盘使用率
 
@@ -763,6 +777,8 @@ done
 172.16.183.75 root 22
 172.16.183.76 root 22
 ~~~
+
+---
 
 # 使用rsync备份目录
 
@@ -830,11 +846,15 @@ if [ $(ls -d "$SNAPSHOT_DIR"/"$YESTERDAY"* 2> /dev/null | wc -l) -ne 0 ]; then
 fi
 ~~~
 
+---
+
 # 创建指定大小的单个测试文件
 
 ```sh
 dd if=/dev/zero of=testfile bs=1G count=200
 ```
+
+---
 
 # 创建多个指定大小的测试文件
 
@@ -846,6 +866,8 @@ do
    dd if=/dev/zero of=testfile$i bs=1M count=1
 done
 ```
+
+---
 
 # 后台运行命令
 
