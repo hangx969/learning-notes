@@ -140,7 +140,7 @@ STRICTLY FORBIDDEN:
 # Openclaw实现多智能体
 单个openclaw示例启动多个智能体：
 - 主智能体，子智能体
-- 每个智能体有自己的IDENEITY、SOUL、AGENTS、角色定义、Skills
+- 每个智能体有自己的 IDENTITY、SOUL、AGENTS、角色定义、Skills
 - 全局Skills可以作用到每一个智能体
 - 可以拉一个飞书群聊把人类用户、智能体都拉进去。也可以直接在openclaw UI上对话。
 

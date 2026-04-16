@@ -43,8 +43,7 @@ apt-get update && sudo apt-get install -y apt-transport-https ca-certificates cu
 apt-get update && sudo apt-get install -y apt-transport-https ca-certificates curl software-properties-common gnupg2
 ~~~
 
-> 如果报错如下：
->
+> [!warning] 报错处理
 > ![img](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202401081901198.jpg)
 >
 > 解决方法如下：

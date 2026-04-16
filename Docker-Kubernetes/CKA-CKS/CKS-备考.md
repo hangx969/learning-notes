@@ -622,9 +622,8 @@ kubectl create role test-role-2  -n db --resource=namespaces --verb=patch
 k create rolebinding -n db --role=test-role-2 --serviceaccount=db:test-sa-3
 ~~~
 
-> 注意：
->
-> - 答完题看一下pod的yaml字段是不是有serviceAccountName字段，没有的话要加上。
+> [!warning] 注意
+> 答完题看一下pod的yaml字段是不是有serviceAccountName字段，没有的话要加上。
 
 # 10 kube-apiserver审计日志记录采集
 
@@ -719,8 +718,7 @@ systemctl restart kubelet
 #exit回到login node查看集群状态
 ~~~
 
-> 注意：
->
+> [!warning] 注意
 > - 记得查看kube-apiserver是否配置了volumeMount和volume。log是挂目录，policy是直接挂文件。
 >
 > - 应用这个audit policy就是systemctl daemon-reload，systemctl restart kubelet
@@ -825,9 +823,8 @@ spec:
 k apply -f secret-pod.yaml
 ~~~
 
-> 注意：
->
-> - 参考官网的secret、Managing Secrets using kubectl两个页面
+> [!tip] 注意
+> 参考官网的secret、Managing Secrets using kubectl两个页面
 
 # 12 dockefile和deployment优化
 
@@ -892,9 +889,8 @@ USER nobody
  k apply -f /home/candidate/KSSC00301/deployment.yaml
  ~~~
 
-> 注意：
->
-> - deployment资源中的spec.selector和template.metadata中的label是否对应了，题目中会出现不对应的情况。
+> [!warning] 注意
+> deployment资源中的spec.selector和template.metadata中的label是否对应了，题目中会出现不对应的情况。
 
 # 13 镜像安全ImagePolicyWebhook
 
@@ -983,6 +979,7 @@ systemctl restart kubelet
 kubectl apply -f /root/KSSC00202/vulnerable-resource.yml
 ~~~
 
+> [!tip] 要点总结
 > - admission_configuration里面修改defaultAllow false
 > - kubeconfig里面修改扫描器endpoint
 > - kube-apiserver.yaml里面：
@@ -1043,8 +1040,7 @@ spec:
 k apply -f la.yaml
 ~~~
 
-> 注意：
->
+> [!warning] 注意
 > - securityContext在两个位置都有：
 >
 >   - po.spec.securityContext
@@ -1130,8 +1126,7 @@ k get clusterrolebinding system:anonymous
 k delete clusterrolebinding system:anynomous
 ~~~
 
-> 注意：
->
+> [!warning] 注意
 > - apiserver配置修改完之后，login node就用不了kubectl了。按照题目提示，可以在master上：
 >
 >   `kubectl get nodes --kubeconfig=/etc/kubernetes/admin.conf`继续操作kubectl

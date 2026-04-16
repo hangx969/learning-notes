@@ -599,7 +599,7 @@ kubectl apply -f prometheus-alertmanager-deploy.yaml
   vim /usr/local/nginx/conf/nginx.conf
   ~~~
 
-  ~~~json
+  ~~~nginx
   //server下添加如下：
   location /status {
           vhost_traffic_status_display;
