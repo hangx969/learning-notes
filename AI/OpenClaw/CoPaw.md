@@ -12,14 +12,14 @@ aliases:
 
 阿里对标的产品。
 
-- CoPaw 文档：[https://copaw.agentscope.io/docs/intro](https://copaw.agentscope.io/docs/intro)
-- GitHub：[https://github.com/agentscope-ai/CoPaw](https://github.com/agentscope-ai/CoPaw)
+- CoPaw 文档:[https://copaw.agentscope.io/docs/intro](https://copaw.agentscope.io/docs/intro)
+- GitHub:[https://github.com/agentscope-ai/CoPaw](https://github.com/agentscope-ai/CoPaw)
 
 ---
 
 ## 安装与启动
 
-使用 PIP 一键安装：
+使用 PIP 一键安装:
 
 ```sh
 pip install copaw

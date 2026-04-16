@@ -84,3 +84,4 @@ systemctl enable jenkins
 5. 测试连接kubernetes集群（**注：**Kubernetes Namespace值添加~/.kube/config文件中cluster部分中name的内容）
 
    ![image-20240619212409671](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202406192124714.png)
+

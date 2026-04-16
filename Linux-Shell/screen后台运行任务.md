@@ -28,16 +28,16 @@ screen -S baidudl
 
 ## 退出会话
 
-~~~sh
+```sh
 #方法一：
 exit
 #方法二：
 screen -S 209684.baidudl -X quit
-~~~
+```
 
 ## 分离会话
 
-- screen -r进入不了会话，报错：“There is no screen to be resumed matching”，这通常意味着该会话正在被另一个终端使用，或者没有被正确分离（Detached）。
+- screen -r进入不了会话，报错："There is no screen to be resumed matching"，这通常意味着该会话正在被另一个终端使用，或者没有被正确分离（Detached）。
 
 - 如果确定会话没有被其他用户使用，可以尝试强制分离当前会话并重新附加：
 
@@ -47,7 +47,6 @@ screen -D -r 209652
 
 ## 保存日志
 
-~~~sh
+```sh
 screen -L -S download //就会在当前目录创建一个screenlog.0日志
-~~~
-
+```

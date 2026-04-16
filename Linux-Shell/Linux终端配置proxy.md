@@ -12,7 +12,7 @@ aliases:
 
 # 编写脚本
 
-~~~sh
+```sh
 tee netowkr_proxy.sh <<'EOF'
 function proxy_on() {
     export http_proxy=http://127.0.0.1:7890
@@ -25,11 +25,11 @@ function proxy_off(){
     echo -e "终端代理已关闭。"
 }
 EOF
-~~~
+```
 
 # 脚本路径添加到bash_profile
 
-~~~sh
+```sh
 tee -a ~/.bash_profile <<'EOF'
 function proxy_on() {
     export http_proxy=http://127.0.0.1:7890
@@ -42,7 +42,7 @@ function proxy_off(){
     echo -e "终端代理已关闭。"
 }
 EOF
-~~~
+```
 
 # 执行函数
 

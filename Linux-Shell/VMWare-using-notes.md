@@ -16,12 +16,10 @@ aliases:
 
 - 根据这篇KB：https://zhuanlan.zhihu.com/p/650638983，在客户机运行以下命令：
 
-  ~~~sh
-  sudo mount -t fuse.vmhgfs-fuse .host:/ /mnt/hgfs -o allow_other
-  #/mnt/hgfs/ 是挂载点，我们也可以修改为其它挂载点
-  #-o allow_other 表示普通用户也能访问共享目录。
-  cd /mnt/hgfs
-  #注意：如果虚拟机重启，需要再次挂载共享文件夹。
-  ~~~
-
-  
+```sh
+sudo mount -t fuse.vmhgfs-fuse .host:/ /mnt/hgfs -o allow_other
+#/mnt/hgfs/ 是挂载点，我们也可以修改为其它挂载点
+#-o allow_other 表示普通用户也能访问共享目录。
+cd /mnt/hgfs
+#注意：如果虚拟机重启，需要再次挂载共享文件夹。
+```
