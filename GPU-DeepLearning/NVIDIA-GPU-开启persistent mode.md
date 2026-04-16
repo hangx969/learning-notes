@@ -1,4 +1,16 @@
-- 以下为利用GPU驱动自带工具配置GPU驱动内存常驻模式开机自启动，该脚本需要系统下预安装sed、useradd、userdel、id命令，否则会执行失败。
+---
+title: NVIDIA GPU 开启 Persistent Mode
+tags:
+  - GPU
+  - NVIDIA
+  - persistent-mode
+aliases:
+  - GPU Persistent Mode
+---
+
+# NVIDIA GPU 开启 Persistent Mode
+
+以下为利用GPU驱动自带工具配置GPU驱动内存常驻模式开机自启动，该脚本需要系统下预安装sed、useradd、userdel、id命令，否则会执行失败。
 
 ~~~sh
 cd /usr/share/doc/NVIDIA_GLX-1.0/samples/

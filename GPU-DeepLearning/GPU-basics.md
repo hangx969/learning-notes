@@ -1,3 +1,16 @@
+---
+title: GPU 基础与环境配置
+tags:
+  - GPU
+  - NVIDIA
+  - CUDA
+  - kubernetes
+  - docker
+aliases:
+  - GPU基础
+  - GPU环境配置
+---
+
 # 教程文章
 
 GPU介绍：

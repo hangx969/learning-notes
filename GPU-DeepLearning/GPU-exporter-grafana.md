@@ -1,3 +1,16 @@
+---
+title: GPU Exporter 与 Grafana 监控
+tags:
+  - GPU
+  - NVIDIA
+  - prometheus
+  - grafana
+  - monitoring
+aliases:
+  - GPU监控
+  - GPU Exporter
+---
+
 # 部署开源gpu_exporter
 
 - 这里在宿主机上部署exporter，在vmware虚机上的prometheus抓数据
