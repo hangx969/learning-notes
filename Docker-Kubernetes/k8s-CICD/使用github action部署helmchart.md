@@ -1,11 +1,22 @@
+---
+title: 使用GitHub Action部署Helm Chart
+tags:
+  - kubernetes
+  - cicd
+  - github-actions
+  - helm
+aliases:
+  - GitHub Actions Helm部署
+---
+
 # 准备工作
 
 ## 配置github self-hosted runner-Linux
 
-https://docs.github.com/en/actions/hosting-your-own-runners
+[GitHub self-hosted runners文档](https://docs.github.com/en/actions/hosting-your-own-runners)
 
 - 我的K8S测试环境搭建在本地VMWare的虚拟机中，kube-api-server没有公网IP，只能在自己电脑上通过内网IP访问到。所以计划将自己电脑配置为self-hosted github action runner。
-- 在Add new self-host runner中配置runner：https://github.com/hangx969/local-k8s-platform-tools/settings/actions/runners/new
+- 在Add new self-host runner中配置runner：[Add new self-hosted runner](https://github.com/hangx969/local-k8s-platform-tools/settings/actions/runners/new)
 - self-hosted agent安装完成之后会有配置选项：
 
 ~~~sh
@@ -30,7 +41,8 @@ Enter name of work folder: [press Enter for _work]
 √ Settings Saved.
 ~~~
 
-> 注意在上面“Enter name of work folder”，设定了默认的工作目录是`actions-runner/_work`，也就是说workflow中使用checkout@4，会把代码下载到这个工作目录去执行。
+> [!note] 说明
+> 在上面”Enter name of work folder”，设定了默认的工作目录是`actions-runner/_work`，也就是说workflow中使用checkout@4，会把代码下载到这个工作目录去执行。
 
 - 配置完成之后可以在pipeline中引用
 
@@ -111,7 +123,7 @@ sudo ./svc.sh uninstall
 
 4. workflow中用base64解密，输出到一个临时文件中，设为环境变量以供helm和kubectl使用。
 
-参考：https://dev.to/richicoder1/how-we-connect-to-kubernetes-pods-from-github-actions-1mg
+参考：[How we connect to Kubernetes Pods from GitHub Actions](https://dev.to/richicoder1/how-we-connect-to-kubernetes-pods-from-github-actions-1mg)
 
 测试用workflow的示例如下：
 
@@ -141,7 +153,7 @@ jobs:
 
 ## secert在workflow中的使用
 
-参考：https://docs.github.com/en/actions/sharing-automations/reusing-workflows#using-inputs-and-secrets-in-a-reusable-workflow
+参考：[GitHub Reusable Workflows - Using inputs and secrets](https://docs.github.com/en/actions/sharing-automations/reusing-workflows#using-inputs-and-secrets-in-a-reusable-workflow)
 
 ### 直接在workflow文件中使用secret
 
@@ -199,14 +211,12 @@ jobs:
 
 # 编写github action workflow
 
-> 参考文档：
->
-> - 配置self-hosted runner：https://docs.github.com/zh/actions/hosting-your-own-runners/managing-self-hosted-runners/adding-self-hosted-runners
-> - github workflow中的默认环境变量：https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/store-information-in-variables#default-environment-variables
->
-> - 创建repo secret：https://docs.github.com/zh/actions/security-for-github-actions/security-guides/using-secrets-in-github-actions#creating-secrets-for-a-repository
-> - workflow的触发条件：https://docs.github.com/zh/actions/writing-workflows/choosing-when-your-workflow-runs/triggering-a-workflow
-> - reusable workflow调用：https://docs.github.com/zh/actions/sharing-automations/reusing-workflows
+> [!note] 参考文档
+> - 配置self-hosted runner：[添加self-hosted runners](https://docs.github.com/zh/actions/hosting-your-own-runners/managing-self-hosted-runners/adding-self-hosted-runners)
+> - github workflow中的默认环境变量：[Store information in variables](https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/store-information-in-variables#default-environment-variables)
+> - 创建repo secret：[Using secrets in GitHub Actions](https://docs.github.com/zh/actions/security-for-github-actions/security-guides/using-secrets-in-github-actions#creating-secrets-for-a-repository)
+> - workflow的触发条件：[Triggering a workflow](https://docs.github.com/zh/actions/writing-workflows/choosing-when-your-workflow-runs/triggering-a-workflow)
+> - reusable workflow调用：[Reusing workflows](https://docs.github.com/zh/actions/sharing-automations/reusing-workflows)
 
 # 卸载runner
 

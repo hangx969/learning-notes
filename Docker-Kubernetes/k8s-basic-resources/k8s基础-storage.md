@@ -1,3 +1,12 @@
+---
+title: K8s基础-Storage
+tags:
+  - kubernetes
+  - k8s-basics
+aliases:
+  - k8sStorage
+---
+
 # 持久化数据
 
 应用场景：

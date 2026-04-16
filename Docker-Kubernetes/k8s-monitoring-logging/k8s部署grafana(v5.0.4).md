@@ -1,3 +1,15 @@
+---
+title: K8s部署Grafana(v5.0.4)
+tags:
+  - kubernetes
+  - monitoring
+  - grafana
+  - prometheus
+  - kube-state-metrics
+aliases:
+  - K8s部署Grafana监控面板
+---
+
 # Grafana
 
 ## Grafana简介
@@ -119,8 +131,7 @@ spec:
 
 - 导入监控模板：
 
-  - 监控模板可以在官网下载：
-     https://grafana.com/dashboards?dataSource=prometheus&search=kubernetes
+  - 监控模板可以在官网下载：[Grafana Dashboards](https://grafana.com/dashboards?dataSource=prometheus&search=kubernetes)
 
   - 在左侧filter中筛选，一个个测试
 

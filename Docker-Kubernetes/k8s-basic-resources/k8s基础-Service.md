@@ -1,3 +1,12 @@
+---
+title: K8s基础-Service
+tags:
+  - kubernetes
+  - k8s-basics
+aliases:
+  - k8sService
+---
+
 # 背景
 
 ## 传统服务发布

@@ -1,3 +1,12 @@
+---
+title: K8s基础-YAML
+tags:
+  - kubernetes
+  - k8s-basics
+aliases:
+  - k8sYAML
+---
+
 # yaml文件
 
 ## 语法格式

@@ -1,3 +1,12 @@
+---
+title: K8s基础-Pod
+tags:
+  - kubernetes
+  - k8s-basics
+aliases:
+  - k8sPod
+---
+
 # POD介绍
 
 ## POD特点
@@ -313,6 +322,7 @@ pod-init   0/1     Init:0/2   0          7s
 
 [https://gitee.com/hangxu969/golang/blob/main/k8s%E8%AF%A6%E7%BB%86%E6%95%99%E7%A8%8B/Kubernetes%E8%AF%A6%E7%BB%86%E6%95%99%E7%A8%8B.md#534-%E5%AE%B9%E5%99%A8%E6%8E%A2%E6%B5%8B](https://gitee.com/hangxu969/golang/blob/main/k8s详细教程/Kubernetes详细教程.md#534-容器探测)
 
+> [!info] 说明
 > - 这三种probe需要在yaml文件里面自己配。
 > - StartupProbe探测成功后才会进行LivenessProbe和ReadinessProbe。后两者是并行的，没有先后关系。
 
@@ -401,6 +411,7 @@ pod-init   0/1     Init:0/2   0          7s
 - 如果检测失败，则认为容器不健康，Kubelet杀死容器，根据restartPolicy判断是否重启。
 - 如果容器配置中没有配置 livenessProbe，Kubelet 将认为存活探针探测一直为success（成功）状态。
 
+> [!warning] 注意
 > 存活探针是一种从应用故障中恢复的强劲方式，但应谨慎使用。你必须仔细配置存活探针，确保它能真正标示出不可恢复的应用故障，例如死锁。
 
 **示例**
@@ -638,6 +649,7 @@ spec:
 
 ## 探针参数配置
 
+> [!warning] 注意
 > 在生产环境中，健康检查接口是一定要配置的，否则在deployment的滚动更新中，新起来的pod就会直接顶替原来的pod，造成宕机。
 
 pod可以通过存活探测和就绪探测对容器进行健康检查：

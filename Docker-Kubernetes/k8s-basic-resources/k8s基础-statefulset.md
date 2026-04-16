@@ -1,3 +1,12 @@
+---
+title: K8s基础-StatefulSet
+tags:
+  - kubernetes
+  - k8s-basics
+aliases:
+  - k8sStatefulSet
+---
+
 # 应用的状态
 
 - 无状态和有状态应用区别

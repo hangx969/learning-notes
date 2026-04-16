@@ -1,12 +1,22 @@
+---
+title: Helm部署Goldilocks
+tags:
+  - kubernetes
+  - scaling
+  - vpa
+aliases:
+  - goldilocks资源推荐
+---
+
 # 介绍
 
-goldilick是一个开源工具，帮助确定资源的resource request/limit
+goldilocks是一个开源工具，帮助确定资源的resource request/limit
 
-- 官网链接：https://goldilocks.docs.fairwinds.com/#how-can-this-help-with-my-resource-settings
+- 官网链接：[Goldilocks - Resource Settings](https://goldilocks.docs.fairwinds.com/#how-can-this-help-with-my-resource-settings)
 
-- github link: https://github.com/FairwindsOps/goldilocks
-- release page: https://github.com/FairwindsOps/goldilocks/releases
-- artifact hub: https://artifacthub.io/packages/helm/fairwinds-stable/goldilocks
+- github link: [FairwindsOps/goldilocks](https://github.com/FairwindsOps/goldilocks)
+- release page: [Goldilocks Releases](https://github.com/FairwindsOps/goldilocks/releases)
+- artifact hub: [goldilocks helm chart](https://artifacthub.io/packages/helm/fairwinds-stable/goldilocks)
 
 # 下载
 
@@ -47,7 +57,7 @@ dashboard:
       nginx.ingress.kubernetes.io/auth-signin: "https://oauth2proxy.hanxux.local/oauth2/start?rd=https%3A%2F%2Fgoldilocks.hanxux.local"
 ~~~
 
-- 配置namespace: https://goldilocks.docs.fairwinds.com/advanced/#cli-usage-not-recommended
+- 配置namespace: [Goldilocks CLI Usage](https://goldilocks.docs.fairwinds.com/advanced/#cli-usage-not-recommended)
 
   在goldilocks controller的配置下添加args：
 

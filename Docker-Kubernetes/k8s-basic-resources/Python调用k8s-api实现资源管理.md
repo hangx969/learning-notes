@@ -1,3 +1,12 @@
+---
+title: Python调用K8s-API实现资源管理
+tags:
+  - kubernetes
+  - k8s-basics
+aliases:
+  - Pythonk8sAPI
+---
+
 # 前置条件
 
 - 安装python（pycharm）

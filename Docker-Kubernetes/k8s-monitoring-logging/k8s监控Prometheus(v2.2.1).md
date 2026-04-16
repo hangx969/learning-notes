@@ -1,3 +1,17 @@
+---
+title: K8s监控Prometheus(v2.2.1)
+tags:
+  - kubernetes
+  - monitoring
+  - prometheus
+  - grafana
+  - node-exporter
+  - pushgateway
+  - promql
+aliases:
+  - K8s部署Prometheus v2.2.1
+---
+
 # Prometheus高可用部署方案
 
 ## 基本HA模式
@@ -355,7 +369,7 @@ spec:
 
 ## tomcat
 
-- tomcat_exporter地址：https://github.com/nlighten/tomcat_exporter
+- tomcat_exporter地址：[tomcat_exporter (GitHub)](https://github.com/nlighten/tomcat_exporter)
 
 - 下载相关包
 
@@ -438,7 +452,7 @@ spec:
 
 ## redis
 
-- 笔记地址：https://note.youdao.com/ynoteshare/index.html?id=b9f87092ce8859cd583967677ea332df&type=note
+- 笔记地址：[有道云笔记 - Redis监控](https://note.youdao.com/ynoteshare/index.html?id=b9f87092ce8859cd583967677ea332df&type=note)
 
 - 部署redis pod
 
@@ -712,6 +726,7 @@ docker run -d --name pushgateway -p 9091:9091 prom/pushgateway
       honor_labels: true
 ~~~
 
+> [!note] honor_labels配置说明
 > 在 Prometheus 的配置中，`honor_labels: true` 是一个特殊的选项，它影响 Prometheus 如何处理冲突的标签。
 >
 > - 在默认情况下（即 `honor_labels` 为 `false` 或未设置时），如果 Prometheus 从目标实例抓取的指标数据中的标签和 Prometheus 服务器中已经存在的标签冲突，Prometheus 会保留已经存在的标签，并且添加一个新的标签 `exported_` 来保存抓取的标签。

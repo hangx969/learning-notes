@@ -259,7 +259,7 @@ dnf clean all
 dnf makecache
 ~~~
 
-> 注：由于无法同步，所有 EPEL 镜像站都不包含 EPEL Cisco OpenH264 仓库（epel-cisco-openh264.repo），如果不需要可手动将其改为 enabled=0。
+> [!info] 由于无法同步，所有 EPEL 镜像站都不包含 EPEL Cisco OpenH264 仓库（epel-cisco-openh264.repo），如果不需要可手动将其改为 enabled=0。
 >
 > 参考文档：[在Rocky Linux 9上启用EPEL和Remi仓库](https://www.rockylinux.cn/notes/zai-rocky-linux-9-shang-qi-yong-epel-he-remi-cang-ku.html)
 
@@ -1615,7 +1615,7 @@ kubectl create -f comp.yaml
 
 # 制作k8s安装需要的离线yum源
 
-> 要全内网环境安装docker、k8s和相关依赖，需要在内部提供安装k8s、docker需要的yum源。首先需要在联网机器上把镜像拉下来。
+> [!info] 要全内网环境安装docker、k8s和相关依赖，需要在内部提供安装k8s、docker需要的yum源。首先需要在联网机器上把镜像拉下来。
 
 ## 制作安装docker需要的离线yum源
 
