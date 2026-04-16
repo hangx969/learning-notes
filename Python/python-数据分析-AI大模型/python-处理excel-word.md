@@ -1,17 +1,39 @@
-# excel表格操作
+---
+title: Python处理Excel与Word文档
+tags:
+  - python/data-science
+  - python/pandas
+  - python/openpyxl
+  - python/matplotlib
+  - python/docx
+  - python/automation
+aliases:
+  - Python Excel处理
+  - Python Word处理
+  - pandas数据分析
+date: 2026-04-16
+---
 
-## 安装
+# Python处理Excel与Word文档
 
-需要安装pandas和openpyxl
+## Excel表格操作
+
+### 安装
+
+> [!important] 依赖安装
+> 需要安装 ==pandas== 和 ==openpyxl==
 
 ~~~sh
 pip3 install -i https://pypi.tuna.tsinghua.edu.cn/simple pandas
 pip3 install -i https://pypi.tuna.tsinghua.edu.cn/simple openpyxl
 ~~~
 
-## dataframe和series
+---
 
-**Series 是 pandas 中的一维数据结构,类似于带标签的数组或字典。**
+### DataFrame和Series
+
+> [!info] Series
+> ==Series== 是 pandas 中的一维数据结构,类似于带标签的数组或字典。
 
 特点:
 
@@ -26,7 +48,8 @@ pip3 install -i https://pypi.tuna.tsinghua.edu.cn/simple openpyxl
 - 支持快速的数据访问和操作
 - 可以进行数学运算、统计分析等
 
-**DataFrame 是 pandas 中的二维数据结构,可以理解为多个 Series 的集合。**
+> [!info] DataFrame
+> ==DataFrame== 是 pandas 中的二维数据结构,可以理解为多个 Series 的集合。
 
 特点:
 
@@ -42,7 +65,9 @@ pip3 install -i https://pypi.tuna.tsinghua.edu.cn/simple openpyxl
 - 数据可视化的基础
 - 与各种数据源(Excel、CSV、数据库等)交互
 
-## 读取excel数据
+---
+
+### 读取Excel数据
 
 ~~~python
 import sys, io
@@ -58,7 +83,15 @@ print(data.head(10))
 print(data.head(10).to_string(index=False))
 ~~~
 
-## 分析表格数据
+---
+
+### 分析表格数据
+
+> [!tip] 常用分析方法
+> - ==groupby()== 分组聚合
+> - ==sort_values()== 排序
+> - ==idxmax()== 获取最大值索引
+> - ==loc[]== 按索引定位
 
 ~~~python
 import sys, io
@@ -91,17 +124,24 @@ top_product = data.groupby('Product')['Sales'].sum().idxmax()
 print(f"Highest product by sales: {top_product}")
 ~~~
 
-# 绘图操作
+---
 
-## 绘制柱状图
+## 绘图操作
 
-### 安装
+### 绘制柱状图
+
+#### 安装
 
 ~~~sh
 pip3 install -i https://pypi.tuna.tsinghua.edu.cn/simple matplotlib
 ~~~
 
-### 绘图
+---
+
+#### 绘图
+
+> [!example] 柱状图绘制
+> 使用 ==matplotlib== 绘制产品销量柱状图,并按总销量降序排列。
 
 ~~~python
 import sys, io
@@ -148,7 +188,12 @@ plt.tight_layout()
 plt.show()
 ~~~
 
-## 绘制折线图
+---
+
+### 绘制折线图
+
+> [!example] 折线图绘制
+> 按日期统计销量趋势,使用 ==pd.to_datetime()== 转换日期格式。
 
 ~~~python
 import sys, io
@@ -187,18 +232,23 @@ plt.tight_layout()
 plt.show()
 ~~~
 
-# word文件处理
+---
 
-- docx 是一个操作 Word 文档的库,提供了创建、读取和修改 .docx 文件的功能。
-- Document 是文档操作的核心类,用于创建和操作 Word 文档对象。
+## Word文件处理
 
-## 安装
+> [!info] python-docx库
+> - ==docx== 是一个操作 Word 文档的库,提供了创建、读取和修改 `.docx` 文件的功能。
+> - ==Document== 是文档操作的核心类,用于创建和操作 Word 文档对象。
+
+### 安装
 
 ~~~sh
 pip3 install -i https://pypi.tuna.tsinghua.edu.cn/simple python-docx
 ~~~
 
-## 生成word文档
+---
+
+### 生成Word文档
 
 ~~~python
 from docx import Document
@@ -218,7 +268,9 @@ doc.add_paragraph("Memory usage:")
 doc.save(r".\data-ai\report_template.docx")
 ~~~
 
-## 批量生成服务器健康检查报告
+---
+
+### 批量生成服务器健康检查报告
 
 ~~~python
 from docx import Document
@@ -247,7 +299,9 @@ for server in servers:
 doc.save(r".\data-ai\report_batch.docx")
 ~~~
 
-## 用word表格展示每台服务器磁盘使用情况
+---
+
+### 用Word表格展示每台服务器磁盘使用情况
 
 ~~~python
 from docx import Document
@@ -293,7 +347,9 @@ for server, disks in disk_data.items():
 doc.save(r".\data-ai\disk-usage-report.docx")
 ~~~
 
-## 从日志文件动态生成问题分析报告
+---
+
+### 从日志文件动态生成问题分析报告
 
 ~~~python
 from docx import Document
@@ -317,7 +373,12 @@ with open(log_file, 'r') as f:
 doc.save(r".\data-ai\Error-analysis.docx")
 ~~~
 
-## 生成性能趋势报告
+---
+
+### 生成性能趋势报告
+
+> [!tip] 图表嵌入Word
+> 使用 ==docx.shared.Inches== 控制 Word 中图片的大小。
 
 ~~~python
 from docx import Document
@@ -353,3 +414,11 @@ doc.add_paragraph("Below are the cpu and memory usage trend:")
 doc.add_picture(r".\data-ai\performance_trend.png", width=Inches(5))
 doc.save(r".\data-ai\monitoring-trend.docx")
 ~~~
+
+---
+
+## 相关笔记
+
+- [[python-机器学习与预测]] - 机器学习与数据预测
+- [[python-basics]] - Python基础语法
+- [[python-Web框架Flask]] - Flask Web框架

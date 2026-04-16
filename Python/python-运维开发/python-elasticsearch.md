@@ -1,25 +1,39 @@
-# es介绍
+---
+title: Python Elasticsearch运维
+tags:
+  - python/devops
+  - python/elasticsearch
+aliases:
+  - Python ES运维
+  - Elasticsearch自动化
+date: 2026-04-16
+---
 
-Elasticsearch 是一个分布式搜索和存储引擎,专门用于处理海量数据的实时搜索、分析任务。它采用开源、RESTful 风格,以快速、高效著称,广泛应用于企业的日志分析、全文搜索和实时监控等场景。
+# Python Elasticsearch运维
+
+## es介绍
+
+==Elasticsearch== 是一个分布式搜索和存储引擎,专门用于处理海量数据的实时搜索、分析任务。它采用开源、RESTful 风格,以快速、高效著称,广泛应用于企业的日志分析、全文搜索和实时监控等场景。
 
 简单来说,Elasticsearch 就像一个企业内部的互联网搜索引擎,帮助你从大量数据中迅速找到所需内容。它不仅能搜索,还能对存储的数据进行实时分析,适合处理复杂的查询需求和大规模数据分析。
 
-**为什么选择 Elasticsearch?**
+> [!tip] 为什么选择 Elasticsearch?
+> 当你的数据量非常大(比如上亿条记录),你需要从中快速查找有用的信息,这时候传统数据库的查询可能会变得非常慢。而 Elasticsearch 就像一个强大的 "搜索超人",它能够在海量数据中秒级返回结果,这是它最大的亮点。
 
-当你的数据量非常大(比如上亿条记录),你需要从中快速查找有用的信息,这时候传统数据库的查询可能会变得非常慢。而 Elasticsearch 就像一个强大的 "搜索超人",它能够在海量数据中秒级返回结果,这是它最大的亮点。
+### Elasticsearch 的核心概念
 
-**Elasticsearch 的核心概念**
-
-1. 索引(Index):
+1. ==索引(Index)==:
    - 索引类似于传统数据库中的表,是用来存储数据的地方。每个索引包含许多文档。
-2. 文档(Document):
+2. ==文档(Document)==:
    - 文档是 Elasticsearch 中存储数据的基本单位。每个文档以 JSON 格式存储,类似于数据库中的一行记录。例如,一条用户信息、产品信息或日志记录都可以作为一个文档存储在 Elasticsearch 中。
-3. 字段(Field):
+3. ==字段(Field)==:
    - 每个文档由多个字段组成,字段相当于数据库记录中的列。例如,一个用户文档可以有名字、年龄、地址等字段。
-4. 倒排索引(Inverted Index):
+4. ==倒排索引(Inverted Index)==:
    - 这是 Elasticsearch 快速搜索的核心技术。它会对存储的数据进行索引,把每个字段中的关键词和文档关联起来,这样就能快速找到包含特定关键词的文档。
-5. 分片(Shard)和副本(Replica):
+5. ==分片(Shard)和副本(Replica)==:
    - 为了处理海量数据,Elasticsearch 会把索引分成多个分片,每个分片可以存储在不同的服务器上。这种方式不仅提升了存储能力,也提高了查询速度。此外,每个分片还可以有一个或多个副本,保证数据安全,即使某个服务器宕机,数据也不会丢失。
+
+---
 
 ## 安装
 
@@ -92,6 +106,8 @@ curl -X GET "<VM IP>:9200/"
 }
 ```
 
+---
+
 ## 常用命令和API
 
 1. 查看集群健康状态
@@ -162,14 +178,17 @@ curl -X POST "172.16.8183.80:9200/articles/_doc/1" -H "Content-Type: application
 curl -X GET http://172.16.8183.80:9200/articles/_doc/1
 ```
 
-# 案例:检测es是否运行并根据情况重启服务
+---
 
-检测 Elasticsearch 是否在运行,每分钟检测一次,并根据情况重启 Elasticsearch,可以通过 requests 模块
-与 subprocess 模块相结合来实现:
+## 案例:检测es是否运行并根据情况重启服务
+
+检测 Elasticsearch 是否在运行,每分钟检测一次,并根据情况重启 Elasticsearch,可以通过 ==requests== 模块与 ==subprocess== 模块相结合来实现:
 
 1. 检测 Elasticsearch 是否运行:可以通过请求 Elasticsearch 的 HTTP 接口,例如
    http://localhost:9200/,来检查是否有响应。如果没有响应,则认为 Elasticsearch 没有运行。
 2. 重启 Elasticsearch:可以通过 subprocess 模块调用系统命令来重启 Elasticsearch 服务。
+
+相关笔记: [[python-Linux-operation]]
 
 ```python
 import subprocess, time, requests
