@@ -67,7 +67,7 @@ aliases:
 
 - main.tf文件
 
-~~~sh
+~~~hcl
 terraform {
   required_providers {
     azurerm = {
@@ -103,7 +103,7 @@ terraform apply "./tf-plan"
 
 - main.tf
 
-~~~sh
+~~~hcl
 # 3 Files
 # main.tf – The main configuration file for resource deployment.
 # variables.tf – The file for variables used for the deployment.
@@ -151,7 +151,7 @@ resource "azurerm_storage_account" "storageaccount" {
 
 - variable.tf
 
-~~~sh
+~~~hcl
 # Variables can be in main.tf, but it's a mess, so we seperated it
 
 variable "location" {
@@ -174,7 +174,7 @@ variable "stgactname" {
 
 - terraform.tfvars
 
-~~~sh
+~~~hcl
 # 虽然我们可以通过这种方式指定variable，terraform plan -var="stgactname=cirtest332244423"
 # 但很不方便，所以我们创建terraform.tfvars文件
 
@@ -328,7 +328,7 @@ Terraform 为所有资源类型提供了一组通用的元参数,包括:
   - 创建 **0个** 资源实例
   - 相当于此资源**不存在**,Terraform 跳过此资源
 
-~~~sh
+~~~hcl
 resource "alicloud_cen_transit_router_grant_attachment" "vpc_cen_grant" {
   count = var.vpc.vpc_cen_grant != null ? 1 : 0
   # ... 其他属性

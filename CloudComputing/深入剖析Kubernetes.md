@@ -78,23 +78,28 @@ aliases:
 
 #### Namespace的弊端
 
+> [!warning] 隔离不彻底
 > 基于 Linux Namespace 的隔离机制相比于虚拟化技术也有很多不足之处，其中最主要的问题就是：隔离得不彻底。
 > 首先，既然容器只是运行在宿主机上的一种特殊的进程，那么多个容器之间使用的就还是同一个宿主机的操作系统内核。
 
 - 尽管你可以在容器里通过 Mount Namespace 单独挂载其他不同版本的操作系统文件，比如 CentOS 或者 Ubuntu，但这并不能改变**共享宿主机内核**的事实。
   - 这意味着，如果你要在 Windows 宿主机上运行 Linux 容器，或者在低版本的 Linux 宿主机上运行高版本的Linux 容器，都是行不通的。
 
+> [!warning] 不能被Namespace化的资源
 > 其次，在 Linux 内核中，有很多资源和对象是不能被 Namespace 化的，最典型的例子就是：时间。
 
 - 如果你的容器中的程序使用 settimeofday(2) 系统调用修改了时间，整个宿主机的时间都会被随之修改，这显然不符合用户的预期。相比于在虚拟机里面可以随便折腾的自由度，在容器里部署应用的时候，“什么能做，什么不能做”，就是用户必须考虑的一个问题。
+
+---
 
 ## 2 隔离与限制
 
 ### Cgroup
 
+> [!info] Cgroups
 > - Linux Cgroups 就是 Linux 内核中用来为进程设置资源限制的一个重要功能。
 > - 它最主要的作用，就是限制一个进程组能够使用的资源上限，包括 CPU、内存、磁盘、网络带宽等等。
-> - Cgroups 还能够对进程进行优先级设置、审计，以及将进程挂起和恢复等操作。 
+> - Cgroups 还能够对进程进行优先级设置、审计，以及将进程挂起和恢复等操作。
 
 ![image-20240725224401832](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202407252244962.png)
 
@@ -165,7 +170,9 @@ aliases:
   - 你如果在容器里执行 top 指令，就会发现，它显示的信息居然是宿主机的 CPU 和内存数据，而不是当前容器的数据。
   - 造成这个问题的原因就是，/proc 文件系统并不知道用户通过 Cgroups 给这个容器做了什么样的资源限制，即：/proc 文件系统不了解 Cgroups限制的存在。
   - lxcfs工具的出现解决了这个问题：[lxcfs 是什么？ lxcfs 实现对容器资源视图隔离的最佳实践 - 掘金 (juejin.cn)](https://juejin.cn/post/6847902216511356936)
-- cgroup只能限制上限，不能规定下限。这就是为啥需要kubernetes容器编排。	
+- cgroup只能限制上限，不能规定下限。这就是为啥需要kubernetes容器编排。
+
+---
 
 ## 3 深入理解容器镜像
 
@@ -199,21 +206,17 @@ aliases:
   - 在Linux中，这两部分是分开存放的，操作系统只有在开机启动时才会加载指定版本的内核镜像。
   - 所以rootfs只包含躯壳，没包含灵魂。实际上，同一台宿主机上的容器，都共享同一个宿主机的操作系统内核。
 
-> 对于容器来说，核心就是为容器进程设置：
->
+> [!tip] 容器核心三步
 > 1. 启用Linux Namespace配置
->
 > 2. 设置指定的Cgroup参数
->
 > 3. 切换进程的根目录（chroot）
 >
->    （Docker 项目在最后一步的切换上会优先使用pivot_root 系统调用，如果系统不支持，才会使用 chroot。这两个系统调用虽然功能类似，但是也有细微的区别）
+> Docker 项目在最后一步的切换上会优先使用pivot_root 系统调用，如果系统不支持，才会使用 chroot。这两个系统调用虽然功能类似，但是也有细微的区别。
 
-### union FS/layer
+### Union FS / Layer
 
-> 教程文章：
->
-> - https://mp.weixin.qq.com/s/0enVkNjDMDh68WMNb2sEpQ
+> [!tip] 参考文章
+> - [Union FS 教程](https://mp.weixin.qq.com/s/0enVkNjDMDh68WMNb2sEpQ)
 
 - 容器直接打包整个操作系统作为应用的依赖库，实现了一致性。问题是：每一次打包容器，都需要重复制作rootfs吗？答案是：不需要。
 - 一个base rootfs，以增量的方式做修改，制作镜像的每一步操作，都生成一个layer，也就是一个增量rootfs。所有人只需要维护基于base rootfs的增量内容即可。不同的layer通过UnionFS挂载到同一个目录。
@@ -297,8 +300,9 @@ aliases:
   CMD ["python", "python-helloworld-app.py"]
   ```
   
+  > [!note] Dockerfile 原语说明
   > - Dockerfile 的设计思想，是使用一些标准的原语（即大写的词语），描述我们所要构建的 Docker 镜像。并且这些原语，都是按顺序处理的。
-  > - 在使用 Dockerfile 时，你可能还会看到一个叫作 ENTRYPOINT 的原语。实际上，它和 CMD 都是 Docker 容器进程启动所必需的参数，完整执行格式是：“ENTRYPOINT CMD”。
+  > - 在使用 Dockerfile 时，你可能还会看到一个叫作 ENTRYPOINT 的原语。实际上，它和 CMD 都是 Docker 容器进程启动所必需的参数，完整执行格式是：”ENTRYPOINT CMD”。
   > - 但是，默认情况下，Docker 会为你提供一个隐含的 ENTRYPOINT，即：**/bin/sh -c**。所以，在不指定 ENTRYPOINT 时，比如在我们这个例子里，实际上运行在容器里的完整进程是：/bin/sh -c “python app.py”，即 CMD 的内容就是 ENTRYPOINT 的参数。
   > - Dockerfile 里的原语并不都是指对容器内部的操作。就比如 ADD，它指的是把当前目录（即 Dockerfile 所在的目录）里的文件，复制到指定容器内的目录当中。
   
@@ -393,8 +397,8 @@ aliases:
 
 ### Volume
 
+> [!question] Volume 解决的问题
 > - 容器内的文件、目录，如何让宿主机读取到？
->
 > - 宿主机的文件、目录，如何让容器读取到？
 >
 > Volume 机制，允许你将宿主机上指定的目录或者文件，挂载到容器里面进行读取和修改操作。
