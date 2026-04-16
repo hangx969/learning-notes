@@ -1,3 +1,15 @@
+---
+title: Shell 脚本
+tags:
+  - linux
+  - shell
+  - scripting
+  - bash
+aliases:
+  - Shell脚本
+  - Bash脚本
+---
+
 # 删除用户脚本
 
 ~~~sh
@@ -249,6 +261,8 @@ echo "User account, $USER_ACCOUNT, has been removed"
 echo
 ~~~
 
+---
+
 # 当服务器线程数超过2500时自动dump线程数最高的java进程的内存及线程栈
 
 ~~~sh
@@ -272,6 +286,8 @@ nohup jmap -dump:format=b,file=java_app_mem_dump_${cur_date}_pid_${most_thread_n
 
 exit 0
 ~~~
+
+---
 
 # 查看磁盘目录使用并排序
 
@@ -308,6 +324,8 @@ do
 done                #End of for loop for du directories
 ~~~
 
+---
+
 # 查看某目录使用量
 
 ~~~sh
@@ -317,7 +335,7 @@ exclude_dir=$(df |awk 'NR>1 {print $6}' | grep -wv ${dir} | awk '{print "--exclu
 du -h --max-depth=${depth} ${exclude_dir} ${dir} 2>/dev/null | awk '$1~/G$/{print $0}'
 ~~~
 
-
+---
 
 # 根据PID过滤进程信息
 
@@ -343,6 +361,8 @@ echo "进程虚拟内存：`ps -aux| awk '$2~/^'$P'$/{print $5}'`"
 echo "进程共享内存：`ps -aux| awk '$2~/^'$P'$/{print $6}'`"
 echo "--------------------------------"
 ~~~
+
+---
 
 # 根据进程名显示所有线程
 
@@ -372,6 +392,8 @@ do
 done
 ~~~
 
+---
+
 # 根据用户名查询用户信息
 
 ~~~sh
@@ -399,6 +421,8 @@ else
   fi
 fi
 ~~~
+
+---
 
 # 加固用户密码配置
 
@@ -491,11 +515,15 @@ case $i in
 esac
 ~~~
 
+---
+
 # 列出排名前10的内存占用进程
 
 ~~~sh
 ps aux | sort -rk 4,4 | head -n 10
 ~~~
+
+---
 
 # iptables自动屏蔽访问网站频繁的IP
 
@@ -514,6 +542,8 @@ for IP in $ABNORMAL_IP; do
     fi
 done
 ```
+
+---
 
 # 自动发布 Java 项目（Tomcat）
 
@@ -553,6 +583,8 @@ TOMCAT_PID=$(ps -ef |grep "$TOMCAT_NAME" |egrep -v "grep|$$" |awk 'NR==1{print $
 unzip $WORK_DIR/$PROJECT_NAME/target/*.war -d $ROOT
 $TOMCAT_DIR/bin/startup.sh
 ~~~
+
+---
 
 # Nginx日志分析
 
