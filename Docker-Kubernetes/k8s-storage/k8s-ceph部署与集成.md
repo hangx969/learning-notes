@@ -1,6 +1,14 @@
-> 注：
->
-> - 生产环境中如果要用ceph，一定要非常专业精通、可以troubleshooting才能去用；而且建议二进制安装在服务器上，不要装在k8s中。否则出问题之后因为ceph是分块存储，数据非常难以还原，有极大的丢失风险。
+---
+title: K8s Ceph部署与集成
+tags:
+  - kubernetes
+  - storage/ceph
+aliases:
+  - K8s Ceph部署
+---
+
+> [!warning] 生产环境注意
+> 生产环境中如果要用ceph，一定要非常专业精通、可以troubleshooting才能去用；而且建议二进制安装在服务器上，不要装在k8s中。否则出问题之后因为ceph是分块存储，数据非常难以还原，有极大的丢失风险。
 
 # ceph简介
 

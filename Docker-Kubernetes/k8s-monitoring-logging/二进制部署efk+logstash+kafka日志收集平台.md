@@ -1,3 +1,18 @@
+---
+title: 二进制部署EFK+Logstash+Kafka日志收集平台
+tags:
+  - kubernetes
+  - logging
+  - elk
+  - kafka
+  - logstash
+  - filebeat
+  - elasticsearch
+  - kibana
+aliases:
+  - EFK+Logstash+Kafka日志平台
+---
+
 # 流程设计
 
 - Filebeat采集日志 --> kafka topic保存日志 --> logstash从kafka读取日志、格式转换 --> elasticsearch --> kibana
@@ -360,10 +375,10 @@ docker restart kibana
 
 ~~~sh
 #配置kibana ui界面
-http://172.16.183.191:5601/app/home
+# 访问 http://172.16.183.191:5601/app/home
 #选择explore on my own
 #Kibana添加索引
-http://172.16.183.191:5601/app/management/kibana/indexPatterns
+# 访问 http://172.16.183.191:5601/app/management/kibana/indexPatterns
 #需要再次curl访问nginx，才能产生日志
 #选择create index pattern
 ~~~

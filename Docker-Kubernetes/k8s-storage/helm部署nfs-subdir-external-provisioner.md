@@ -1,7 +1,16 @@
+---
+title: Helm部署NFS Subdir External Provisioner
+tags:
+  - kubernetes
+  - storage/nfs
+aliases:
+  - Helm部署NFS Provisioner
+---
+
 # helm部署nfs provisioner
 
-- github release: https://github.com/kubernetes-sigs/nfs-subdir-external-provisioner
-- artifacthub: https://artifacthub.io/packages/helm/nfs-subdir-external-provisioner/nfs-subdir-external-provisioner
+- github release: [nfs-subdir-external-provisioner - GitHub](https://github.com/kubernetes-sigs/nfs-subdir-external-provisioner)
+- artifacthub: [nfs-subdir-external-provisioner - ArtifactHub](https://artifacthub.io/packages/helm/nfs-subdir-external-provisioner/nfs-subdir-external-provisioner)
 
 ## NFS 服务器部署
 

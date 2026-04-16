@@ -1,3 +1,12 @@
+---
+title: K8s基础-认证-授权-准入
+tags:
+  - kubernetes
+  - k8s-basics
+aliases:
+  - k8s认证授权准入
+---
+
 # 概述
 
 ## 认证

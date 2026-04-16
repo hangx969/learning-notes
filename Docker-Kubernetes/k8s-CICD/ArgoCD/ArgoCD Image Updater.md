@@ -1,3 +1,14 @@
+---
+title: ArgoCD Image Updater
+tags:
+  - kubernetes
+  - cicd
+  - argocd
+  - image-updater
+aliases:
+  - Image Updater
+---
+
 # 介绍
 `Argo CD Image Updater` 是一种自动更新由 Argo CD 管理的 k8s 容器镜像的工具。
 该工具可以检查与 Kubernetes 工作负载一起部署的容器镜像的新版本，并使用 Argo CD 自动将其更新到允许的最新版本。它通过为 Argo CD 应用程序设置适当的应用程序参数来工作，类似于 `argocd app set --helm-set image.tag=v1.0.1`，但以完全自动化的方式。

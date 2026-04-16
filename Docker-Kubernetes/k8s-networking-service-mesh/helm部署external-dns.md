@@ -1,13 +1,23 @@
+---
+title: Helm部署External-DNS
+tags:
+  - kubernetes
+  - networking
+  - ingress
+aliases:
+  - external-dns部署
+---
+
 # 介绍
 
-- github地址：https://github.com/kubernetes-sigs/external-dns
-- release pages: https://github.com/kubernetes-sigs/external-dns/releases
-- artifact hub: https://artifacthub.io/packages/helm/external-dns/external-dns
+- github地址：[external-dns](https://github.com/kubernetes-sigs/external-dns)
+- release pages: [external-dns releases](https://github.com/kubernetes-sigs/external-dns/releases)
+- artifact hub: [external-dns helm chart](https://artifacthub.io/packages/helm/external-dns/external-dns)
 
-> - external-dns配置azure dns教程：https://kubernetes-sigs.github.io/external-dns/v0.13.6/tutorials/azure/
-> - 视频教程：https://www.youtube.com/watch?v=VSn6DPKIhM8&list=PLpbcUe4chE79sB7Jg7B4z3HytqUUEwcNE，https://github.com/HoussemDellai/aks-course/tree/main/61_external_dns
-> - github示例：https://github.com/HoussemDellai/aks-course/tree/main/61_external_dns
-> 
+> [!tip] 参考资料
+> - external-dns配置azure dns教程：[Azure Tutorial](https://kubernetes-sigs.github.io/external-dns/v0.13.6/tutorials/azure/)
+> - 视频教程：[YouTube - External DNS](https://www.youtube.com/watch?v=VSn6DPKIhM8&list=PLpbcUe4chE79sB7Jg7B4z3HytqUUEwcNE)，[GitHub示例](https://github.com/HoussemDellai/aks-course/tree/main/61_external_dns)
+> - github示例：[aks-course/61_external_dns](https://github.com/HoussemDellai/aks-course/tree/main/61_external_dns)
 
 - AKS中的app，通过ingress暴露了一个IP以供访问，需要配置一个域名绑定IP方便访问，往往公司已经有了一个注册域名，这个app一般会用公司域名下的custom sub-domain name，例如app1.mycompany.com。公司域名的解析可能已经用了一个外部DNS提供商比如AzureDNS，我们就需要把app1.mycompany.com这个域名解析记录添加到外部DNS提供商。
 
@@ -23,7 +33,7 @@ helm pull external-dns/external-dns --version 1.14.4
 
 # 配置
 
-> 以Azure作为外部DNS为例：https://kubernetes-sigs.github.io/external-dns/v0.13.6/tutorials/azure/#managed-identity-using-workload-identity
+> [!info] 以Azure作为外部DNS为例：[Managed Identity Using Workload Identity](https://kubernetes-sigs.github.io/external-dns/v0.13.6/tutorials/azure/#managed-identity-using-workload-identity)
 
 - Azure DNS托管域名的大致过程：
 

@@ -1,3 +1,13 @@
+---
+title: Docker部署GitLab
+tags:
+  - docker
+  - container
+  - gitlab
+aliases:
+  - GitLab部署
+---
+
 # docker-compose部署gitlab
 
 - gitlab要求至少4G内存

@@ -1,4 +1,16 @@
-Reference: https://mp.weixin.qq.com/s/pkpDv1nBjiEiCMeGPSwPeA
+---
+title: Docker部署Portainer与Redis-Sentinel
+tags:
+  - docker
+  - container
+  - portainer
+  - redis
+aliases:
+  - Portainer部署
+  - Redis-Sentinel部署
+---
+
+Reference: [Portainer与Redis-Sentinel部署参考](https://mp.weixin.qq.com/s/pkpDv1nBjiEiCMeGPSwPeA)
 
 # 部署portainer工具
 
@@ -23,7 +35,7 @@ docker-compose -f portainer.yml up -d
 ~~~
 
 - 访问宿主机IP:9876端口(username: admin, passwd: 26bN87:KP>?TzW:)
-- 点击local进行本地容器管理。更多文档参考：https://www.portainer.io/take-5
+- 点击local进行本地容器管理。更多文档参考：[Portainer官方文档](https://www.portainer.io/take-5)
 
 # portainer添加environment
 
@@ -161,6 +173,7 @@ sentinel deny-scripts-reconfig yes
 EOF
 ~~~
 
+> [!info] master节点IP地址来源
 > 将master节点命名为redis-master，然后网络配置为172.19.0.2这个值是从哪里来的呢？
 >
 > - 我们点击redis-master即redis主节点容器管理界面，在ip address一栏看到master节点的容器ip地址，因为哨兵节点和主从节点都处于redis-sentinel这个网络中，所以172.19.0.x这个网络是互通的，在bridge模式下配置这个ip地址是完全没有问题的。

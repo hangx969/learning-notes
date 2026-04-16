@@ -1,6 +1,14 @@
-> 注：
->
-> - 如果需要mysq对性能要求很高，建议不要在k8s中部署，还是建议直接在服务器上部署
+---
+title: K8s基于YAML部署MySQL主从高可用
+tags:
+  - kubernetes
+  - database/mysql
+aliases:
+  - K8s部署MySQL主从
+---
+
+> [!warning] 注意
+> 如果需要mysql对性能要求很高，建议不要在k8s中部署，还是建议直接在服务器上部署
 
 # 部署nfs
 

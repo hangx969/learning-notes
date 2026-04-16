@@ -1,3 +1,12 @@
+---
+title: Helm部署PostgreSQL
+tags:
+  - kubernetes
+  - database/postgresql
+aliases:
+  - Helm部署PostgreSQL
+---
+
 # 介绍
 
 github地址：[charts/bitnami/postgresql at main · bitnami/charts](https://github.com/bitnami/charts/tree/main/bitnami/postgresql)

@@ -1,12 +1,21 @@
+---
+title: Operator部署MySQL NDB集群
+tags:
+  - kubernetes
+  - database/mysql
+aliases:
+  - NDB Operator部署MySQL集群
+---
+
 # NDB Operator
 
 MySQL NDB Cluster 是一个分布式、高可用的数据库系统，适用于需要高并发读写、低延迟和高可用性的应用场景。MySQL NDB Cluster基于 NDB（Network Database）存储引擎，并通过多个节点协同工作来提供数据的分布存储和故障恢复能力。
 
 这里推荐使用ndb-operator，这是mysql官方维护的operator，可以方便启动mysql集群。
 
-- 在Operatorhub中找到ndb-mysql的operator：https://operatorhub.io/operator/ndb-operator
+- 在Operatorhub中找到ndb-mysql的operator：[NDB Operator - OperatorHub](https://operatorhub.io/operator/ndb-operator)
 - ndb-operator官网：[MySQL :: NDB Operator 8.4 Manual](https://dev.mysql.com/doc/ndb-operator/8.4/en/)
-- github仓库：https://github.com/mysql/mysql-ndb-operator
+- github仓库：[mysql-ndb-operator - GitHub](https://github.com/mysql/mysql-ndb-operator)
 
 # 架构组件
 

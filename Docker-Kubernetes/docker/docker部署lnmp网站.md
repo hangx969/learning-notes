@@ -1,3 +1,16 @@
+---
+title: Docker部署LNMP网站
+tags:
+  - docker
+  - container
+  - nginx
+  - mysql
+  - php
+  - lnmp
+aliases:
+  - LNMP部署
+---
+
 # LNMP
 
 - LNMP指的是Linux、Nginx、MySQL和PHP的组合，通常用于搭建和运行网站。

@@ -1,13 +1,23 @@
+---
+title: Helm部署Ingress-Nginx
+tags:
+  - kubernetes
+  - networking
+  - ingress
+aliases:
+  - ingress-nginx部署
+---
+
 # 介绍
 
 - 官网地址：
-  - https://kubernetes.github.io/ingress-nginx/deploy/
-  - releases page: https://github.com/kubernetes/ingress-nginx/releases
-  - artifactHub: https://artifacthub.io/packages/helm/ingress-nginx/ingress-nginx
+  - [Ingress-Nginx Deploy](https://kubernetes.github.io/ingress-nginx/deploy/)
+  - releases page: [ingress-nginx releases](https://github.com/kubernetes/ingress-nginx/releases)
+  - artifactHub: [ingress-nginx helm chart](https://artifacthub.io/packages/helm/ingress-nginx/ingress-nginx)
 
 - azure文档：
-  - https://learn.microsoft.com/en-us/troubleshoot/azure/azure-kubernetes/load-bal-ingress-c/create-unmanaged-ingress-controller?tabs=azure-cli#create-an-ingress-controller-using-an-internal-ip-address
-  - https://learn.microsoft.com/en-us/previous-versions/azure/aks/ingress-tls?tabs=azure-cli#install-cert-manager
+  - [Create an unmanaged ingress controller](https://learn.microsoft.com/en-us/troubleshoot/azure/azure-kubernetes/load-bal-ingress-c/create-unmanaged-ingress-controller?tabs=azure-cli#create-an-ingress-controller-using-an-internal-ip-address)
+  - [Ingress TLS](https://learn.microsoft.com/en-us/previous-versions/azure/aks/ingress-tls?tabs=azure-cli#install-cert-manager)
 
 - 因为K8s中Pod是易变的, Pod IP在更新中会自动修改, 使用Service能使访问入口相对固定, 但是Service IP在集群外不能访问, 要对外提供访问, 只能把Service以NodePort, LoadBalancer这些方式Expose出去, 但是NodePort会与每一个Node主机绑定, 而LoadBalancer要云服务商提供相应的服务 (或自己安装)
 - Ingress 启动一个独立的Pod来运行七层代理, 可以是 Nginx, Traefik 或者是 Envoy. Ingress Pod会直接代理后端提供服务的Pod, 为了能监听后端Pod的变化, 需要一个 Headless Service 通过Selector选择指定的Pod, 并收集到Pod对应的IP. 一旦后端Pod产生变化, Headless Service 会自动根据变化更改配置文件并重载。如果使用的是 Nginx 类型的 Ingress Pod, 则每次变化后通过reload修改过的配置文件实现规则更新.
@@ -39,7 +49,7 @@ helm pull ingress-nginx/ingress-nginx --version "${INGRESS_NGINX_VERSION#helm-ch
 - `controller.dnsPolicy: ClusterFirstWithHostNet`，让ingress-nginx pod可以用kube-dns解析集群内的svc
 - 虚拟机和虚拟机外面的hosts文件还是配置任意工作节点IP
 
-> 注意：
+> [!warning] 注意
 >
 > 1. hosts文件里面写哪个节点的IP取决于ingress-controller的pod调度到了哪个节点上面，保险起见可以这样做：
 >
@@ -257,7 +267,7 @@ EOF
 
 ## Letsencrypt证书
 
-- 参考azure文档：https://learn.microsoft.com/en-us/previous-versions/azure/aks/ingress-tls?tabs=azure-cli#install-cert-manager
+- 参考azure文档：[AKS Ingress TLS](https://learn.microsoft.com/en-us/previous-versions/azure/aks/ingress-tls?tabs=azure-cli#install-cert-manager)
 
 # hostnetwork的流量代理过程
 
@@ -472,9 +482,10 @@ annotations:
   nginx.ingress.kubernetes.io/auth-signin: "https://oauth2proxy.hanxux.local/oauth2/start?rd=https%3A%2F%2Fgrafana.hanxux.local"
 ~~~
 
-> 注意这里的auth-url写的是oauth2proxy的svc地址。而不是oauth的ingress url（oauth2proxy.hanxux.local），是因为这个auth-url是在ingress pod内部去请求的，来找oauth获取是否认证的信息。如果写oauth2proxy.hanxux.local，pod内部用的是coreDNS，解析不了。写svc地址就可以解析了。
+> [!warning] 注意
+> 这里的auth-url写的是oauth2proxy的svc地址。而不是oauth的ingress url（oauth2proxy.hanxux.local），是因为这个auth-url是在ingress pod内部去请求的，来找oauth获取是否认证的信息。如果写oauth2proxy.hanxux.local，pod内部用的是coreDNS，解析不了。写svc地址就可以解析了。
 
-- ingress可以配置的annotations：https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/，可以实现其他流量控制等功能。
+- ingress可以配置的annotations：[Nginx Ingress Annotations](https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/)，可以实现其他流量控制等功能。
 
 # 实战--流量复制/流量镜像
 

@@ -1,3 +1,11 @@
+---
+title: K8s部署SpringCloud电商项目
+tags:
+  - kubernetes
+aliases:
+  - K8s部署SpringCloud项目
+---
+
 # 部署Harbor
 
 ## 环境规划

@@ -1,3 +1,12 @@
+---
+title: 基于Operator部署Redis集群
+tags:
+  - kubernetes
+  - database/redis
+aliases:
+  - Operator部署Redis集群
+---
+
 # 基于operator部署redis集群
 
 ## 找到官网

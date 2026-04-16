@@ -1,6 +1,14 @@
+---
+title: K8s基于YAML部署httpd服务
+tags:
+  - kubernetes
+aliases:
+  - K8s部署httpd
+---
+
 # 镜像准备
 
-- httpd镜像可以直接从官网下载：https://httpd.apache.org/download.cgi
+- httpd镜像可以直接从官网下载：[Apache HTTP Server Download](https://httpd.apache.org/download.cgi)
 - 准备dockerfile
 
 ~~~sh

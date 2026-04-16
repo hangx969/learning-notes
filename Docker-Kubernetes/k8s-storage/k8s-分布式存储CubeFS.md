@@ -1,3 +1,12 @@
+---
+title: K8s分布式存储CubeFS
+tags:
+  - kubernetes
+  - storage
+aliases:
+  - CubeFS部署
+---
+
 # 存储架构对比
 
 ## 单节点存储

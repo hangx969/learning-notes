@@ -1,3 +1,14 @@
+---
+title: CKS 备考
+tags:
+  - kubernetes
+  - cks
+  - certification
+  - security
+aliases:
+  - CKS备考
+---
+
 # 1 AppArmor
 
 ## AppArmor介绍

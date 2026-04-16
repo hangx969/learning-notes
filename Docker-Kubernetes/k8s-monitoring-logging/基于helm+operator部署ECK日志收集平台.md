@@ -1,3 +1,20 @@
+---
+title: 基于Helm+Operator部署ECK日志收集平台
+tags:
+  - kubernetes
+  - logging
+  - elk
+  - elasticsearch
+  - kibana
+  - filebeat
+  - logstash
+  - kafka
+  - helm
+  - operator
+aliases:
+  - ECK日志收集平台
+---
+
 # 云原生日志收集
 
 ## 哪些日志需要收集
@@ -102,7 +119,7 @@ ECK的核心资源：
 
 注意：
 
-- 对于8.16的logstash，支持的是3.8.1的kakfa：https://www.elastic.co/guide/en/logstash/8.16/plugins-inputs-kafka.html#_description_35
+- 对于8.16的logstash，支持的是3.8.1的kakfa：[Logstash Kafka Plugin](https://www.elastic.co/guide/en/logstash/8.16/plugins-inputs-kafka.html#_description_35)
 - 所以要去查一下哪个helm chart版本是3.8.1的kafka：[kafka 30.1.8 · bitnami/bitnami](https://artifacthub.io/packages/helm/bitnami/kafka/30.1.8)。（helm chart版本：30.1.8）
 
 ### 分别部署zk+kafka
@@ -276,7 +293,7 @@ logstash在这里的作用：
 
 Logstash的高级配置在这里：[Configuration | Elastic Docs](https://www.elastic.co/docs/deploy-manage/deploy/cloud-on-k8s/configuration-logstash)
 
-1. 8.16的logstash，官网说适配的kafka版本为3.8.1: https://www.elastic.co/guide/en/logstash/8.16/plugins-inputs-kafka.html
+1. 8.16的logstash，官网说适配的kafka版本为3.8.1: [Logstash Kafka Plugin](https://www.elastic.co/guide/en/logstash/8.16/plugins-inputs-kafka.html)
 2. 3.8.1 kafka对应的bitnami/kafka helm chart版本为：30.1.8
 
 ~~~yaml

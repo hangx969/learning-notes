@@ -1,8 +1,17 @@
+---
+title: Helm部署MySQL
+tags:
+  - kubernetes
+  - database/mysql
+aliases:
+  - Helm部署MySQL
+---
+
 # 介绍
 
-github地址：https://github.com/bitnami/charts/tree/main/bitnami/mysql
+github地址：[bitnami/mysql - GitHub](https://github.com/bitnami/charts/tree/main/bitnami/mysql)
 
-artifactHub地址：https://artifacthub.io/packages/helm/bitnami/mysql
+artifactHub地址：[bitnami/mysql - ArtifactHub](https://artifacthub.io/packages/helm/bitnami/mysql)
 
 # 下载
 

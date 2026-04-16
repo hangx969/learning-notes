@@ -1,3 +1,12 @@
+---
+title: K8s集群备份恢复 - Velero
+tags:
+  - kubernetes
+  - backup/velero
+aliases:
+  - Velero备份恢复
+---
+
 # 方案对比
 ## Etcd
 优点：全量备份，包含集群所有资源；备份不依赖于任何K8s API和版本，可用于灾难恢复。

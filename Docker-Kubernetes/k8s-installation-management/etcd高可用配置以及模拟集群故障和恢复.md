@@ -1,3 +1,14 @@
+---
+title: etcd高可用配置以及模拟集群故障和恢复
+tags:
+  - kubernetes
+  - k8s-installation
+  - etcd
+aliases:
+  - etcd高可用
+  - etcd故障恢复
+---
+
 # etcd高可用配置
 
 - kubeadm安装的多master集群中，可以将etcd做成高可用集群

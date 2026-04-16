@@ -1,3 +1,13 @@
+---
+title: CKA 备考
+tags:
+  - kubernetes
+  - cka
+  - certification
+aliases:
+  - CKA备考
+---
+
 # Ubuntu模拟环境准备
 
 ## 虚拟机创建

@@ -1,6 +1,15 @@
+---
+title: K8s基于YAML部署Redis集群
+tags:
+  - kubernetes
+  - database/redis
+aliases:
+  - K8s部署Redis集群
+---
+
 # redis
 
-- 参考地址：https://github.com/zuxqoj/kubernetes-redis-cluster
+- 参考地址：[kubernetes-redis-cluster - GitHub](https://github.com/zuxqoj/kubernetes-redis-cluster)
 - Redis是一个开源的、基于内存的、高性能的key-value数据库。支持数据的持久化，可以将内存中的数据保存在磁盘中，重启的时候可以再次加载进行使用。
 
 - Redis不仅仅支持简单的key-value类型的数据，同时还提供list，set，zset，hash等数据结构的存储。

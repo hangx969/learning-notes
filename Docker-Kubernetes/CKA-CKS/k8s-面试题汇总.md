@@ -1,3 +1,12 @@
+---
+title: K8s 面试题汇总
+tags:
+  - kubernetes
+  - interview
+aliases:
+  - k8s面试题
+---
+
 # pod调度问题
 
 1. 在一个只有两个节点的集群中，一个节点有pod，另一个节点没有，新的pod会被调度到哪个节点？

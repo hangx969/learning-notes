@@ -1,3 +1,13 @@
+---
+title: Helm部署Strimzi Kafka
+tags:
+  - kubernetes
+  - database/kafka
+aliases:
+  - Helm部署Kafka
+  - Strimzi Kafka Operator
+---
+
 # 介绍
 
 ## Kafka

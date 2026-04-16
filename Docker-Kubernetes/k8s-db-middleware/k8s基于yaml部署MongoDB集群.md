@@ -1,3 +1,12 @@
+---
+title: K8s基于YAML部署MongoDB集群
+tags:
+  - kubernetes
+  - database/mongodb
+aliases:
+  - K8s部署MongoDB
+---
+
 # MongoDB介绍
 
 - MongoDB是一款为web应用程序和互联网基础设施设计的数据库管理系统。是NoSQL类型的数据库。

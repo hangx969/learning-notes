@@ -1,9 +1,21 @@
+---
+title: Helm部署Jaeger
+tags:
+  - kubernetes
+  - monitoring
+  - jaeger
+  - tracing
+  - helm
+aliases:
+  - Jaeger部署
+---
+
 # 介绍
 
 - Jaeger是一个开源的分布式追踪系统，最初由Uber开发并开源，现在是CNCF的项目之一。主要用于监控和体哦按是分布式系统中的事务。
-- 官网：https://www.jaegertracing.io/
-- helm chart github地址：https://github.com/jaegertracing/helm-charts/tree/v2
-- ArtifactHub地址：https://artifacthub.io/packages/helm/jaegertracing/jaeger
+- 官网：[Jaeger](https://www.jaegertracing.io/)
+- helm chart github地址：[Jaeger Helm Charts](https://github.com/jaegertracing/helm-charts/tree/v2)
+- ArtifactHub地址：[Jaeger on ArtifactHub](https://artifacthub.io/packages/helm/jaegertracing/jaeger)
 
 # 下载
 
