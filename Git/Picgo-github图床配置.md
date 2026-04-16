@@ -1,4 +1,16 @@
-# Picogo-github图床配置
+---
+title: PicGo-GitHub 图床配置
+tags:
+  - git
+  - github
+  - picgo
+  - typora
+aliases:
+  - PicGo图床配置
+  - GitHub图床
+---
+
+# PicGo-GitHub 图床配置
 
 ## 背景
 
@@ -64,12 +76,13 @@ github、picgo、typora都需要配置。
 
 ### Troubleshooting
 
-根据我配置中遇到的报错经验：
+> [!warning] 常见报错
+> 根据配置中遇到的报错经验：
+> - PicGo 设置中的 repo 路径有空格，会导致 404 报错。
+> - PicGo 设置中的时间戳命名如果没开的话，会导致文件名重复，typora 上传失败，picgo 日志中会有 detect second instance 信息。
 
-- Picgo设置中的repo路径有空格，会导致404报错。
-- Picgo设置中的时间戳命名如果没开的话，会导致文件名重复，typora上传失败，picgo日志中会有detect second instance信息。
-
-- typora中图片上传成功，但是typora中不显示。可能是github图片被屏蔽；解决办法是修改host文件(C:\Windows\System32\drivers\etc\hosts)，加上：
+> [!tip] 图片不显示
+> typora 中图片上传成功，但是 typora 中不显示。可能是 GitHub 图片被屏蔽；解决办法是修改 host 文件（`C:\Windows\System32\drivers\etc\hosts`），加上：
 
   ```shell
   185.199.108.133 raw.githubusercontent.com

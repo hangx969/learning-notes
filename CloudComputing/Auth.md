@@ -174,8 +174,8 @@ aliases:
 - 加一个授权码的中间层，当用户跳转到认证中心登录的时候，不直接颁发token，颁发一个授权码返回给redirect_URL。
 - app端拿到授权码之后，去找认证中心兑换token（**这个过程需要客户端的后端服务器去找认证中心认证**），拿到token之后就可以用api访问服务了。
 
-> 关于为何要用authorization code，这涉及到安全原因：
->
+> [!important] 为何要用Authorization Code
+> 这涉及到安全原因：
 > 1. front-end channel - 浏览器前端 - less secure
 > 2. backend channel - 后端服务器 - more secure
 >
@@ -235,8 +235,7 @@ aliases:
 
 # OIDC
 
-> 参考视频：
->
+> [!tip] 参考视频
 > - https://www.youtube.com/watch?v=t18YB3xDfXI，https://developer.okta.com/blog/2019/10/21/illustrated-guide-to-oauth-and-oidc
 > - https://www.youtube.com/watch?v=996OiexHze0&t=7s, https://speakerdeck.com/nbarbettini/oauth-and-openid-connect-in-plain-english?slide=33
 

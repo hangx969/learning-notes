@@ -1,3 +1,13 @@
+---
+title: Git 学习笔记
+tags:
+  - git
+  - github
+  - version-control
+aliases:
+  - Git学习
+  - Git基础
+---
 
 # 版本控制
 
@@ -191,9 +201,9 @@ git fetch -p
 git branch -d xxx
 ```
 
-注意：
-- -d：安全删除，只有当这个分支的提交已经被合并到当前分支，或者 Git 认为它的改动不会丢时，才会删。
-- -D：强制删除。如果这么分支上还有没合并的提交，就丢失了
+> [!warning] 注意
+> - `-d`：安全删除，只有当这个分支的提交已经被合并到当前分支，或者 Git 认为它的改动不会丢时，才会删。
+> - `-D`：强制删除。如果这个分支上还有没合并的提交，就丢失了。
 
 ## 删除远程分支
 
@@ -445,7 +455,7 @@ git config --global --unset http.proxy
 git config --global --unset https.proxy
 ~~~
 
-## gir clone ssh设置代理
+## git clone ssh设置代理
 
 ~~~sh
 vim ~/.ssh/config
@@ -463,7 +473,7 @@ Host github.com
 - fork
 - sourceTree
 - git graph (vscode插件)
-- 学习git： https://learngitbranching.js.org/?locale=zh_CN
+- 学习git：[Learn Git Branching](https://learngitbranching.js.org/?locale=zh_CN)
 - alias： zsh自带git插件
 
 # Lab
@@ -656,7 +666,8 @@ debug1: C:\\Users\\xuhan/.ssh/config line 1: Applying options for github.com
 debug1: Connecting to ssh.github.com [20.205.243.160] port 22.
 ~~~
 
-**GitHub 的标准 SSH 端口是 22。但在某些网络环境中（公司防火墙、ISP限制等），端口 22 可能被封锁。GitHub 提供了替代方案：通过 ssh.github.com 的 443 端口（HTTPS 端口）来进行 SSH 连接**。
+> [!info] SSH 端口说明
+> GitHub 的标准 SSH 端口是 22。但在某些网络环境中（公司防火墙、ISP限制等），端口 22 可能被封锁。GitHub 提供了替代方案：通过 ssh.github.com 的 443 端口（HTTPS 端口）来进行 SSH 连接。
 
 3. 修改这个ssh配置文件，改成连接ssh的443端口：
 
