@@ -9,7 +9,7 @@
 - Subject：学科
 - ID：书籍ID
 
-结构体成员是由一系列的成员变量构成，这些成员变量也被称为“字段”。字段有以下特性： 
+结构体成员是由一系列的成员变量构成，这些成员变量也被称为"字段"。字段有以下特性：
 
 1. 字段拥有自己的类型和值。
 2. 字段名必须唯一。
@@ -56,10 +56,10 @@ func main() {
 
     cat1 := Cat{}
     cat1.Name = "Bob"
-    
+
     cat1.slc = make([]string, 0, 10) // 初始化一个空切片
     cat1.slc = append(cat1.slc, "test") // 添加一个元素
-    
+
     cat1.mp = make(map[string]string, 10) // 初始化一个map
     cat1.mp["a"] = "yes" // 添加一个元素
 
@@ -120,7 +120,7 @@ func main() {
 
 ~~~
 
-(cal Calculator) 是 Go 方法的“接收者”（receiver），表示这两个函数是 Calculator 结构体的方法。含义和作用如下：
+(cal Calculator) 是 Go 方法的"接收者"（receiver），表示这两个函数是 Calculator 结构体的方法。含义和作用如下：
 
 - (cal Calculator) 表示该方法属于 Calculator 类型，只有 Calculator 类型的变量才能调用这个方法。
 
@@ -663,4 +663,3 @@ func main() {
 	// 只有通过类型断言才能访问具体类型的特有功能。
 }
 ~~~
-

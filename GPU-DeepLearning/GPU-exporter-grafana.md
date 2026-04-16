@@ -46,7 +46,7 @@ curl localhost:9835/metrics
 
 - 添加job
 
-~~~sh
+~~~yaml
 - job_name: "gpu-exporter"  
   static_configs:
   - targets: 
@@ -60,6 +60,7 @@ curl localhost:9835/metrics
 
 # grafana数据展示
 
-- https://grafana.com/grafana/dashboards/14574-nvidia-gpu-metrics/
+- [NVIDIA GPU Metrics Dashboard](https://grafana.com/grafana/dashboards/14574-nvidia-gpu-metrics/)
 
-> 注意：prometheus抓取的数据非常依赖于系统时间准确，grafana server需要同步时间
+> [!warning] 时间同步
+> Prometheus 抓取的数据非常依赖于系统时间准确，Grafana server 需要同步时间。

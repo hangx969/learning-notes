@@ -10,7 +10,7 @@ aliases:
 
 # 服务器入门
 
-- https://mp.weixin.qq.com/s/ud7ITi-bTYA6AteBkY1Zsw
+- [服务器入门介绍](https://mp.weixin.qq.com/s/ud7ITi-bTYA6AteBkY1Zsw)
 
 # SSD硬盘
 
