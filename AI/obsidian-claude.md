@@ -9,7 +9,7 @@ claude插件； https://github.com/YishenTu/claudian
 # 2. obsidian skills
 skills： https://github.com/kepano/obsidian-skills
 
-mcp：
+# 3. obsidian local api和claude mcp
 - https://github.com/MarkusPfundstein/mcp-obsidian
 - local api： https://github.com/coddingtonbear/obsidian-local-rest-api
 
