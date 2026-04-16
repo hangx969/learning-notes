@@ -1,102 +1,129 @@
-# 存储类型
+---
+title: Azure Storage
+tags:
+  - azure/storage
+  - azure/blob
+  - azure/disk
+aliases:
+  - Azure Storage
+  - Blob Storage
+  - Managed Disk
+date: 2026-04-16
+---
+
+# Azure Storage
+
+## Related Notes
+
+- [[Azure/0_Azure-VM-VMSS]]
+- [[Azure/2_AKS-basics]]
+
+---
+
+## Storage Types
 
 ![image-20241214113847766](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202412141138840.png)
 
-- 每一种存储类型的访问，都是要通过存储账户来进行
+- Access to each storage type is through a ==storage account==
 
-# 存储冗余
+---
+
+## Storage Redundancy
 
 ![image-20241214110808699](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202412141108871.png)
 
-- LRS：本地冗余，单个数据中心内三份副本，读写的时候在三份里面balancing，但是数据中心故障会带来风险
-- GRS：异地冗余，Region不同，主要区域存3个副本；向次要区域异步创建3个副本，但是次要区域的不能读写，除非是启动了故障转移
-- RA-GRS：与GRS相比，次要区域的3个副本也是可读的
-- ZRS：数据在同一个Region里面不同的Availability Zone里面进行备份，三个副本分布在三个Availability Zone里
-- GZRS：在ZRS基础上，在另一个region上开启三个备份副本
+- ==LRS==: Local redundancy, 3 copies within a single datacenter, read/write balanced across the 3 copies. Datacenter failure poses risk.
+- ==GRS==: Geo-redundant, different regions. Primary region has 3 copies; secondary region gets 3 async copies, but secondary is not readable/writable unless failover is initiated.
+- ==RA-GRS==: Compared to GRS, secondary region's 3 copies are also readable.
+- ==ZRS==: Data replicated across different Availability Zones within the same region, 3 copies across 3 AZs.
+- ==GZRS==: ZRS + 3 backup copies in another region.
 
-# 存储账户终结点
+---
 
-存储帐户在 Azure 中为数据提供唯一的命名空间。 存储在 Azure 存储中的每个对象都有一个地址，其中包含唯一的帐户名称。 将帐户名称与 Azure 存储服务终结点组合在一起，即可构成适用于存储帐户的终结点。构造用于访问存储帐户中某个对象的 URL，方法是：将对象在存储帐户中的位置追加到终结点。 例如，blob 的 URL 类似于：`http://mystorageaccount.blob.core.chinacloudapi.cn/mycontainer/myblob`
+## Storage Account Endpoints
 
-# Azure Blob
+Storage accounts provide a unique namespace for data in Azure. Each object has an address that includes the unique account name. Combine the account name with the Azure Storage service endpoint to form the storage account endpoint. Construct the URL to access an object by appending the object's location to the endpoint. For example, a blob URL: `http://mystorageaccount.blob.core.chinacloudapi.cn/mycontainer/myblob`
 
-- binary large object，是Azure的适用于云的对象存储解决方案，适用于存储大量二进制对象。使用场景：
+---
 
-  - 直接向浏览器提供图像和文档分布式访问
+## Azure Blob
 
-  - 视频音频流式处理
+==Binary Large Object== - Azure's object storage solution for the cloud, suitable for storing large amounts of binary objects. Use cases:
 
-  - 备份 还原 灾难恢复 存档
+- Serve images and documents directly to browsers for distributed access
+- Video and audio streaming
+- Backup, restore, disaster recovery, archiving
+- Azure managed service analytics
 
-  - Azure托管服务分析
+Blob has three types:
 
-- blob有三种类型：
-  - block blob：存储文本和二进制数据
-  - append blob：对追加操作进行了优化，适合存储来自虚拟机的数据
-  - page blob：存储较大的随机访问文件，适合存储VHD作为VM的磁盘
+- ==Block Blob==: Stores text and binary data
+- ==Append Blob==: Optimized for append operations, suitable for storing data from VMs
+- ==Page Blob==: Stores large random-access files, suitable for storing VHD as VM disks
 
-## blob中的access tier
+### Blob Access Tiers
 
-- Hot tier：适用频繁访问的数据
-- Cool tier：不常使用但是要立刻访问的数据（短时备份和灾难恢复）至少存储30天
-- archive access tier：离线层，对访问很少的数据进行了存储优化。要读取或修改，则要重新rehydrate到cool/hot tier。至少存储180天，否则额外收钱。
+- ==Hot tier==: Frequently accessed data
+- ==Cool tier==: Infrequently used but immediately accessible data (short-term backup and DR). Minimum ==30 days== storage.
+- ==Archive access tier==: Offline tier, optimized for rarely accessed data. Must rehydrate to cool/hot tier for read/modify. Minimum ==180 days== storage, otherwise extra charges.
 
-# Azure Managed Disk
+---
 
-- 是Azure托管，并与Azure VM一起使用的存储，类似于本地服务器中的物理磁盘，不过是虚拟化的。分为Premium SSD，standard SSD，standard HDD。
+## Azure Managed Disk
 
-## disk功能种类
+Azure managed, used with Azure VMs. Analogous to physical disks in on-premises servers but virtualized. Types: ==Premium SSD==, ==Standard SSD==, ==Standard HDD==.
 
-1. OS disk
+### Disk Types
 
-预装了OS，包含启动卷
+1. **OS Disk**: Pre-installed OS, contains boot volume
 
-2. Data disk
-3. Temporary disk
+2. **Data Disk**
 
-大部分VM都包含这个，它不是托管磁盘。用于存储系统分页文件（内存交换分区），是用宿主机上的disk，在Linux中通常为/dev/sdb，默认挂载点
+3. **Temporary Disk**
+   - Most VMs include this; it is NOT a managed disk
+   - Used for page files (memory swap partition), uses host machine disk
+   - On Linux typically `/dev/sdb`, default mount point `/mnt/resource`
+   - On Windows typically `D:\`
 
-位/mnt/resource，windows上通常会是D:\。在VM故障时，临时存储不会迁移。所以不能在临时存储中存放重要数据。
+> [!warning] Temporary Disk Data Loss
+> During VM failure, temporary storage does NOT migrate. Never store important data on temporary disk.
 
-# 授权
+---
 
-## Access Key
+## Authorization
 
-- 创建存储帐户时，Azure 会生成两个 512 位存储帐户访问密钥。这些密钥可用于通过共享密钥授权来授予对你存储帐户中数据的访问权限。
+### Access Key
 
-- Access Keys相当于是根密码，可以获取**所有服务的所有访问权限**。
+- When creating a storage account, Azure generates two ==512-bit== storage account access keys
+- These keys authorize access to data via shared key authorization
+- Access Keys are essentially root passwords, providing **all access to all services**
+- Use either key; typically use the first and reserve the second for key rotation
 
-- 可以使用这两个密钥中的任何一个来访问 Azure 存储，但通常情况下，最好使用第一个密钥，并保留第二个密钥在轮换密钥时使用。
+### SAS Token
 
-## SAS Token
+- ==SAS== (Shared Access Signature) grants limited access to **containers and blobs** in a storage account
+- When creating SAS, specify constraints: which storage resources, what permissions, and the validity period
+- SAS is signed using access keys, two methods:
+  - Signed with AAD-provided keys = ==User Delegation SAS==
+  - Signed with storage account keys = Service SAS / Account SAS
 
-- SAS可以授予对存储帐户中**container和****blob**的有限访问权限。创建 SAS 时，需要指定其约束条件，包括允许客户端访问哪些存储资源、资源具有哪些权限，以及SAS的有效期。
+### Management Plane and Data Plane
 
-- SAS均使用access Keys进行签名，两种方式：
+- [控制平面和数据平面操作 - Azure 资源管理器 | 微软文档](https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/control-plane-and-data-plane)
 
-  - 使用AAD提供的keys进行签名，则称为用户委托SAS
+---
 
-  - 使用存储账户keys进行签名。服务SAS和账户SAS均使用存储账户签名
+## Logging
 
-## management plane and data plane
+- Enable analytics logging for blob, queue, and table in Portal -> Diagnostics -> set Logging content and retention period
+- Logs are stored in the ==`$logs`== container, downloadable via azcopy/explorer
+- Log analysis:
+  - [存储分析日志格式 (REST API) | Microsoft Docs](https://docs.microsoft.com/zh-cn/rest/api/storageservices/storage-analytics-log-format)
+  - [存储分析记录的操作和状态消息 (REST API) | Microsoft Docs](https://docs.microsoft.com/zh-cn/rest/api/storageservices/storage-analytics-logged-operations-and-status-messages)
 
-- [控制平面和数据平面操作 - Azure 资源管理器|微软文档 (microsoft.com)](https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/control-plane-and-data-plane)
+> [!example] Convert Storage Logs with PowerShell
 
-# Logging
-
-- 可以为blob queue和table启用分析日志，在portal -> diagnotics里面直接设置Logging，可以设置日志记录的内容，和保存时间
-- 日志放在名为 $logs 的container中，可以用azcopy / explorer下载下来看
-- 日志分析：
-
-[存储分析日志格式 (REST API) - Azure 存储 | Microsoft Docs](https://docs.microsoft.com/zh-cn/rest/api/storageservices/storage-analytics-log-format)
-
-[存储分析记录的操作和状态消息 (REST API) - Azure 存储 | Microsoft Docs](https://docs.microsoft.com/zh-cn/rest/api/storageservices/storage-analytics-logged-operations-and-status-messages)
-
-[存储分析记录的操作和状态消息 (REST API) - Azure 存储 | Microsoft Docs](https://docs.microsoft.com/zh-cn/rest/api/storageservices/storage-analytics-logged-operations-and-status-messages)
-
-- 使用powershell脚本将存储日志转换为
-
-~~~powershell
+```powershell
 $Columns = 
      (   "version-number",
          "request-start-time",
@@ -133,120 +160,125 @@ $Columns =
 $logs = Import-Csv "C:\Users\v-hangx.FAREAST\Desktop\000000.log" -Delimiter ";" -Header $Columns
 
 $logs | Out-GridView -Title "Storage Analytic Log Parser"
-~~~
+```
 
-# 性能分析
+---
 
-- 性能指标：
-  - IOPS：每秒输入输出，应用程序每秒发送到存储磁盘的请求数。对于联机事务处理型（OLTP）程序，比如在线零售网站，对高并发的要求较高，是插入更新密集型数据库事务。对IOPS指标有要求。
-  - 吞吐量（throughput）：应用程序在指定时间间隔内发送到磁盘的数据量。对于数据仓库应用，单次请求访问大量数据，是扫描密集型应用
-  - IOPS和吞吐量之间存在如下关系：
-    - IOPS * IO Size = 吞吐量
+## Performance Analysis
 
-- IOPS分析工具：
-  - 将 **PerfMon** 用于 Windows，将 **iostat** 用于 Linux [iostat(1) - Linux man page (die.net)](https://linux.die.net/man/1/iostat)，[性能计数器 - Win32 apps | Microsoft Docs](https://docs.microsoft.com/zh-cn/windows/win32/perfctrs/performance-counters-portal)
+- **Performance metrics:**
+  - ==IOPS==: Input/Output per second. For OLTP applications (e.g., online retail), high concurrency demands with insert/update-intensive transactions.
+  - ==Throughput==: Data volume sent to disk in a given time interval. For data warehouse applications, single requests access large data volumes (scan-intensive).
+  - Relationship: ==IOPS * IO Size = Throughput==
 
-- 优化
+- **IOPS analysis tools:**
+  - Use **PerfMon** for Windows, **iostat** for Linux
+    - [iostat(1) - Linux man page](https://linux.die.net/man/1/iostat)
+    - [性能计数器 - Win32 apps | Microsoft Docs](https://docs.microsoft.com/zh-cn/windows/win32/perfctrs/performance-counters-portal)
 
-  - IO请求是应用程序执行输入输出的操作单元。
-    - 对于联机事务型，会产生大量随机IO；
-    - 对于数仓型，产生大型顺序IO；
-    - 要对应用程序结构进行设计。如果应用程序可以更改IO大小，可以降低IO size以提高IOPS：如对OLTP采用8KB的IO size；也可以提高IO size以提高吞吐量，如对数仓采用1024 KB的IO size
+- **Optimization:**
+  - IO requests are the unit of input/output operations for applications
+    - OLTP: large amounts of random IO
+    - Data warehouse: large sequential IO
+  - Reduce IO size to improve IOPS (e.g., 8KB for OLTP); increase IO size for throughput (e.g., 1024KB for data warehouse)
+  - Cache has separate IOPS and throughput tied to VM size; as read time extends, cache warms up. Azure Premium Storage VMs use ==BlobCache== (host RAM + local SSD combination).
 
-  - 缓存具有单独的IOPS和吞吐量，与VM size有关；随着读取时间的延长，缓存得到预热，可以为磁盘提供更多的IOPS和吞吐量。利用 Azure 高级存储的高规格 VM 使用名为 BlobCache 的多层缓存技术。Blob Cache 使用主机 RAM 和本地 SSD 的组合进行缓存。
+---
 
-# 缓存
+## Caching
 
-缓存都是存储在物理节点宿主机上的disk，由Compute 计算资源提供，performance比较好
+Cache is stored on physical host machine disk, provided by Compute resources, with good performance.
 
-- ReadOnly：
-  - 降低读取延迟，获得较高的IOPS和吞吐量。
-  - 通过缓存执行的读取操作，发生在本地VM和本地SSD上，速度要远远快于从数据磁盘上的读取操作，后者发生在Blob上
+- ==ReadOnly==:
+  - Reduces read latency, achieves higher IOPS and throughput
+  - Cached reads happen on local VM and local SSD, much faster than data disk reads (which happen on Blob)
 
-- ReadWrite
-  - OS默认开启
-  - 采取适当方法将数据从缓存写入永久磁盘
+- ==ReadWrite==:
+  - Default for OS disk
+  - Uses appropriate methods to write data from cache to permanent disk
 
-- 无
-  - 只有数据磁盘支持，OS磁盘不支持，若将OS盘缓存设为无，则会内部覆盖为ReadOnly
+- ==None==:
+  - Only data disks support this; OS disks do not
+  - Setting OS disk cache to None will internally override to ReadOnly
 
-举例来说，可以通过执行以下操作将这些准则应用到在高级存储上运行的 SQL Server：
+> [!example] SQL Server on Premium Storage
+> 1. Configure ==ReadOnly== cache on premium storage disks hosting **data files**
+>    - Fast cache reads shorten SQL Server query time
+>    - Reading from cache provides more throughput for SQL Server for backup/restore, bulk load, index rebuild
+> 2. Configure ==None== cache on premium storage disks hosting **log files**
+>    - Log files primarily have frequent write operations; ReadOnly cache is not beneficial
 
-1. 在托管**数据文件**的高级存储磁盘上配置“ReadOnly”缓存。
-   1.  从缓存快速读取可以缩短 SQL Server 查询时间，因为从缓存检索数据页的速度要大大快于直接从数据磁盘进行检索的速度。
-   2. 从缓存进行读取意味着可以从高级数据磁盘获得更多的吞吐量。SQL Server 可以利用这额外的吞吐量来检索更多数据页和执行其他操作，例如备份/还原、批量加载以及索引重建。
+---
 
-2. 在托管**日志文件**的高级存储磁盘上将缓存配置为“无”。
-   1. 日志文件主要是进行频繁的写入操作。因此，将缓存设置为ReadOnly 对其无用。
+## Queue Depth
 
-# 队列深度
+- Queue depth is closely related to multi-threading. Queue depth indicates the degree of parallelism an application can achieve.
+- High queue depth allows more operations to queue on disk. The disk can plan ahead and process optimally.
+- Too high queue depth can negatively impact application latency.
+- Formula: ==IOPS * Latency = Queue Depth==
+- Striped volumes should maintain enough queue depth so each disk has its own peak queue depth. For example, if queue depth is 2 with 4 striped disks, only 2 disks will be busy. Configure queue depth to keep all disks busy.
 
-- 队列深度和多线程处理密切相关。队列深度值表示应用程序可以实现的多线程处理的程度。如果队列深度很大，则应用程序可以并行执行更多的操作。
-- 高队列深度可以让更多操作在磁盘上排队。 磁盘可以提前知道其队列中的下一个请求。 因此，磁盘可以提前计划操作，按最佳顺序对其进行处理。
-- 队列深度值过高也有其缺点。如果队列深度值过高，则应用程序会尝试实现非常高的 IOPS，可能对应用程序延迟造成负面影响。以下公式显示了 IOPS、延迟和队列深度之间的关系：
-  - IOPS * Latency = Queue Depth
+---
 
-- 条带化卷应保持足够高的队列深度，使得每个磁盘都有各自的高峰队列深度。 例如，应用程序所推送的队列深度为 2，条带中有四个磁盘。 两个 IO 请求会发送到两个磁盘中，剩下两个磁盘会处于空闲状态。 因此，将队列深度配置为让所有磁盘都能够处于繁忙状态。
+## AKS Upload Files to Storage
 
-# AKS上传文件到storage
+### curl Test Pod Connecting to Storage
 
-## curl测试pod连接storage
-
-~~~sh
+```sh
 kubectl run curl-testing --image curl:latest  --image-pull-policy=IfNotPresent --restart=Never --rm -it curl-testing -- curl "https://<sa name>.blob.core.chinacloudapi.cn/<container name>/<file name>?<sas>"
 curl: (7) Failed to connect to curl-testing port 80: Connection refused
 curl: (6) Could not resolve host: curl
 ########################################
 ## Testing Connection Success
 ########################################
-~~~
+```
 
-## 上传文件的方案--azcopy
+---
 
-### VM中测试
+### Upload via azcopy
 
-- apt安装azcopy：https://learn.microsoft.com/zh-cn/azure/storage/common/storage-use-azcopy-v10?tabs=apt#install-azcopy-on-linux-by-using-a-package-manager
+#### VM Testing
 
-~~~sh
+- apt install azcopy: https://learn.microsoft.com/zh-cn/azure/storage/common/storage-use-azcopy-v10?tabs=apt#install-azcopy-on-linux-by-using-a-package-manager
+
+```sh
 #curl -sSL -O https://packages.microsoft.com/config/ubuntu/22.04/packages-microsoft-prod.deb
 #dpkg -i packages-microsoft-prod.deb && rm packages-microsoft-prod.deb
 #apt-get update && apt-get install azcopy
 wget -O azcopy_v10.tar.gz https://aka.ms/downloadazcopy-v10-linux && tar -xf azcopy_v10.tar.gz --strip-components=1
-~~~
+```
 
-- 上传文件，不带sas -- 失败 需要认证
+- Upload without SAS -- **fails** (needs authentication):
 
-~~~sh
+```sh
 ./azcopy copy 'test.log' 'https://<sa name>.blob.core.chinacloudapi.cn/<container name>/test.log'
-~~~
+```
 
-- 上传文件，带container level的sas -- 成功
+- Upload with container-level SAS -- **success**:
 
-~~~sh
+```sh
 ./azcopy copy 'test.log' 'https://<sa name>.blob.core.chinacloudapi.cn/<container name>?<sas>'
-~~~
+```
 
-- 上传文件，用vm的system-assigned identity
+- Upload with VM's ==system-assigned identity==:
+  - Grant identity ==Storage Blob Contributor== on the storage account
+  - Upload directly without SAS token:
 
-  - 给identity赋予storage account的storage blob contributor
-
-  - 直接上传文件无需sas token
-
-    ~~~sh
+    ```sh
     ./azcopy copy 'test.log' 'https://<sa name>.blob.core.chinacloudapi.cn/<container name>'
-    ~~~
+    ```
 
-### AKS pod中测试
+#### AKS Pod Testing
 
-- 先在pod中获取到azcopy -- busybox和alpine的image下载了azcopy之后均无法运行
+- Get azcopy in pod -- busybox and alpine images cannot run azcopy after download:
 
-  ~~~sh
+  ```sh
   kubectl run apline --image apline:latest  --image-pull-policy=IfNotPresent --restart=Never --rm -it -- sh
-  ~~~
+  ```
 
-- 尝试ubuntu，容器有root -- 成功
+- Try ubuntu, container has root -- **success**:
 
-  ~~~sh
+  ```sh
   kubectl run ubuntu --image ubuntu:22.04  --image-pull-policy=IfNotPresent --restart=Never --rm -it -- /bin/bash
   
   ./azcopy login --identity --identity-client-id <client id>
@@ -254,28 +286,27 @@ wget -O azcopy_v10.tar.gz https://aka.ms/downloadazcopy-v10-linux && tar -xf azc
   #测试上传
   echo "tesetingfromakspod" >> test.log
   ./azcopy copy 'test.log' 'https://<sa name>.blob.core.chinacloudapi.cn/<container name>'
-  ~~~
+  ```
 
-  - aks kubelet identity: https://techcommunity.microsoft.com/t5/fasttrack-for-azure/aks-review-2-1-identity-amp-access-control-cluster-operator-amp/ba-p/3716906
+  - AKS kubelet identity: https://techcommunity.microsoft.com/t5/fasttrack-for-azure/aks-review-2-1-identity-amp-access-control-cluster-operator-amp/ba-p/3716906
 
-- pod中运行的完整命令
+- Full commands to run in pod:
 
-
-~~~sh
+```sh
 apt-get update && apt-get install -y wget
 wget -O azcopy_v10.tar.gz https://aka.ms/downloadazcopy-v10-linux && tar -xf azcopy_v10.tar.gz --strip-components=1
 ./azcopy login --identity --identity-client-id <client-id> #--aad-endpoint https://login.partner.microsoftonline.cn
 ./azcopy copy '<file name>' 'https://<sa name>.blob.core.chinacloudapi.cn/<container name>'
-~~~
+```
 
-### workload identity with azcopy
+#### Workload Identity with azcopy
 
-前面是用kubelet identity。尝试用workload identity登录azcopy(直接挂service account就行，不需要指定uai id)
+Previously used kubelet identity. Now test with ==workload identity== (just mount the service account, no need to specify UAI ID).
 
-azcopy 10.25+已经support login with workload identity： 
+azcopy 10.25+ supports login with workload identity:
 
 - https://github.com/Azure/azure-storage-azcopy/issues/2545#issuecomment-2136833573
-- azcopy环境变量说明： https://learn.microsoft.com/zh-cn/azure/storage/common/storage-ref-azcopy-configuration-settings?toc=%2Fazure%2Fstorage%2Fblobs%2Ftoc.json&bc=%2Fazure%2Fstorage%2Fblobs%2Fbreadcrumb%2Ftoc.json#azcopy-v10-environment-variables
+- azcopy env vars: https://learn.microsoft.com/zh-cn/azure/storage/common/storage-ref-azcopy-configuration-settings
 
 ```yaml
 tee pod-wi-ubuntu.yaml <<'EOF'
@@ -323,25 +354,23 @@ wget -O azcopy_v10.tar.gz https://aka.ms/downloadazcopy-v10-linux && tar -xf azc
 ./azcopy copy '<file name>' 'https://<sa name>.blob.core.chinacloudapi.cn/<container name>' --put-md5
 ```
 
-> - azure blob的md5，对于大文件上传时需要手动指定：
->
->   https://learn.microsoft.com/en-us/answers/questions/282572/md5-hash-calculation-for-large-files
->
->   https://technet2.github.io/Wiki/blogs/windowsazurestorage/windows-azure-blob-md5-overview.html
->
->   https://azure.rvr.cloud/azcopy-sync.html
+> [!note] Blob MD5 for Large Files
+> Azure Blob's MD5 for large file uploads needs to be manually specified:
+> - https://learn.microsoft.com/en-us/answers/questions/282572/md5-hash-calculation-for-large-files
+> - https://technet2.github.io/Wiki/blogs/windowsazurestorage/windows-azure-blob-md5-overview.html
+> - https://azure.rvr.cloud/azcopy-sync.html
 
-### workload identity with az login
+#### Workload Identity with az login
 
-- directly install az cli in main container (up to 700 MB will be installed, too big, the pod will crash during installation)
+- Directly install az cli in main container (up to 700 MB will be installed, too big, the pod will crash during installation)
 
   https://learn.microsoft.com/zh-cn/cli/azure/install-azure-cli-linux?pivots=apt
 
-- sidecar container
+- Sidecar container approach:
 
   https://learn.microsoft.com/zh-cn/cli/azure/run-azure-cli-docker
 
-``` yaml
+```yaml
 tee pod-sidecar.yaml <<'EOF'
 apiVersion: v1
 kind: Pod
@@ -381,29 +410,25 @@ spec:
 EOF
 ```
 
-> - 每个pod都有wi的环境变量
+> [!info] Workload Identity Environment Variables
+> Every pod with WI has these environment variables:
+> ```sh
+> Environment:
+>       AZURE_CLIENT_ID:             <client id>
+>       AZURE_TENANT_ID:             <tenant id>
+>       AZURE_FEDERATED_TOKEN_FILE:  /var/run/secrets/azure/tokens/azure-identity-token
+>       AZURE_AUTHORITY_HOST:        https://login.chinacloudapi.cn
+> ```
 >
->   ```sh
->   Environment:
->         AZURE_CLIENT_ID:             <client id>
->         AZURE_TENANT_ID:             <tenant id>
->         AZURE_FEDERATED_TOKEN_FILE:  /var/run/secrets/azure/tokens/azure-identity-token
->         AZURE_AUTHORITY_HOST:        https://login.chinacloudapi.cn
->   ```
+> Login command:
+> ```sh
+> az cloud set --name AzureChinaCloud && az login --service-principal --username "${AZURE_CLIENT_ID}" --tenant "${AZURE_TENANT_ID}" --federated-token "$(cat $AZURE_FEDERATED_TOKEN_FILE)" 
+> ```
 >
-> - login command
->
->   https://github.com/Azure/azure-cli/issues/24756
->
->   ```sh
->   az cloud set --name AzureChinaCloud && az login --service-principal --username "${AZURE_CLIENT_ID}" --tenant "${AZURE_TENANT_ID}" --federated-token "$(cat $AZURE_FEDERATED_TOKEN_FILE)" 
->   ```
->
-> - upload command
->
->   ```sh
->   az storage blob upload --account-name <sa name> --container-name <container name> --name test.txt --file /mnt/test.txt --auth-mode login
->   ```
+> Upload command:
+> ```sh
+> az storage blob upload --account-name <sa name> --container-name <container name> --name test.txt --file /mnt/test.txt --auth-mode login
+> ```
 
 ```yaml
 #azcli pod单独测试
@@ -425,19 +450,22 @@ spec:
 EOF
 ```
 
-> issue: MS提供的azcli container运行az命令会直接崩溃，原因是container的cpu memory需要指定稍微大一些：request 200m cpu和500Mi memory即可运行。
+> [!warning] AZ CLI Container Resource Requirements
+> The MS-provided azcli container will crash when running az commands if CPU/memory is too low. Set request to at least ==200m CPU== and ==500Mi memory==.
 
-## 上传文件的方案 -- pv挂载blob
+---
 
-- 创建secret
+### Upload via PV Mounting Blob
 
-~~~sh
+- Create secret:
+
+```sh
 kubectl create secret generic <secret name> --from-literal sazurestorageaccountname=<sa name> --from-literal azurestorageaccountkey="<key value>" --type=Opaque
-~~~
+```
 
-- 创建PV
+- Create PV:
 
-~~~yaml
+```yaml
 tee pv-download.yaml <<'EOF'
 apiVersion: v1
 kind: PersistentVolume
@@ -466,11 +494,11 @@ spec:
       name: <secret name>
       namespace: default
 EOF
-~~~
+```
 
-- 创建PVC
+- Create PVC:
 
-~~~yaml
+```yaml
 tee pvc-download.yaml <<'EOF'
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -485,13 +513,13 @@ spec:
   volumeName: pv-blob-download
   storageClassName: managed-blobfuse-premium-lrs
 EOF
-~~~
+```
 
-### workload identity with pv
+#### Workload Identity with PV
 
-- 测试简单pod挂载
+- Test simple pod mount:
 
-~~~yaml
+```yaml
 tee pod-wi-ubuntu.yaml <<'EOF'
 apiVersion: v1
 kind: Pod
@@ -512,13 +540,13 @@ EOF
 k exec -it pod-test-wi -n <ns name> -- /bin/bash
 #查看token
 cat /run/secrets/azure/tokens/azure-identity-token
-~~~
+```
 
-- 测试job挂载blob 
+- Test job mounting blob
 
-pv:
+PV:
 
-~~~yaml
+```yaml
 tee pv-upload.yaml <<'EOF'
 apiVersion: v1
 kind: PersistentVolume
@@ -550,11 +578,11 @@ spec:
       AzureStorageIdentityResourceID: <uai id>
       #MSIEndpoint: 
 EOF
-~~~
+```
 
-pvc:
+PVC:
 
-~~~yaml
+```yaml
 tee pvc-download.yaml <<'EOF'
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -570,11 +598,11 @@ spec:
   volumeName: pv-blob-upload
   storageClassName: managed-blobfuse-premium-lrs
 EOF
-~~~
+```
 
-测试动态预配pv:
+Dynamic PV provisioning test:
 
-~~~yaml
+```yaml
 tee pod-wi-ubuntu.yaml <<'EOF'
 ---
 apiVersion: v1
@@ -613,21 +641,23 @@ spec:
       storage: 10Gi
   storageClassName: managed-blobfuse-premium-lrs
 EOF
-~~~
+```
 
-# 下载文件-获取md5
+---
 
-- 看一下container level的sas token怎么做到下载文件？
+## Download Files - Get MD5
 
-  直接url后缀加上文件名即可。需要两边同步好文件名
+- How to download files using container-level SAS token?
 
-- 看一下blob md5的值怎么获取？
+  Simply append the filename to the URL. Both sides need to sync the filename.
 
-  sas url的reponse header里就带着了，”Content-MD5”字段，curl -i就能直接查看
+- How to get blob MD5 value?
+
+  The SAS URL response header contains ==Content-MD5== field. Use `curl -i` to view it directly.
 
   ![image-20241010170509800](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202410101725170.png)
 
-~~~sh
+```sh
 curl -i "https://<sa name>.blob.core.chinacloudapi.cn/<container name>/values.yaml?xxxxxxxxxx"
 HTTP/1.1 200 OK
 Content-Length: 111
@@ -644,41 +674,43 @@ x-ms-lease-status: unlocked
 x-ms-lease-state: available
 x-ms-blob-type: BlockBlob
 x-ms-server-encrypted: true
-~~~
+```
 
-# 自动化下载blob脚本建议
+---
 
-相关背景说明：
+## Automated Blob Download Script Recommendations
 
-1. 文件上传到azure storage account存储中，每次更新都会在同一目录下创建新的blob文件以供下载。
-2. 基于此，提供一个目录级别的长期有效的SAS Token。可以用这个SAS Token来list出目录中所有文件，以及每个文件的创建时间、MD5校验值等。
+Background:
 
-使用SAS Token来list所有文件及信息的方法：
+1. Files are uploaded to Azure Storage Account. Each update creates a new blob file in the same directory for download.
+2. A long-lived directory-level SAS Token is provided. It can list all files in the directory along with creation time, MD5 checksums, etc.
 
-1. 提供一个格式如下的SAS URL：
+### List All Files with SAS Token
 
-~~~sh
+1. SAS URL format:
+
+```sh
 https://<sa name>.blob.core.chinacloudapi.cn/<container name>?sp=rl&st=2024-10-11T06:04:27Z&se=2024-10-11T14:04:27Z&sip=101.95.105.42&spr=https&sv=2022-11-02&sr=c&sig=xxx
-~~~
+```
 
-其中：
+Where:
 
-- “https://<sa name>.blob.core.chinacloudapi.cn/<container>”部分是存储目录的路径
-- “sp=rl&st=2024-10-11T06:04:27Z&se=2024-10-11T14:04:27Z&sip=101.95.105.42&spr=https&sv=2022-11-02&sr=c&sig=xxx”部分是SAS Token的值。
+- `https://<sa name>.blob.core.chinacloudapi.cn/<container>` is the storage directory path
+- `sp=rl&st=...&sig=xxx` is the SAS Token value
 
-2. 可以在目录路径和SAS Token中间添加“**restype=container&comp=list&**”参数，来获取到目录下所有文件及信息。
+2. Add ==`restype=container&comp=list&`== between the directory path and SAS Token to list all files and info:
 
-   - 拼接后的URL为：“https://<sa name>.blob.core.chinacloudapi.cn/<container name>?restype=container&comp=list&sp=rl&st=2024-10-11T06:04:27Z&se=2024-10-11T14:04:27Z&sip=101.95.105.42&spr=https&sv=2022-11-02&sr=c&sig=xxx”
+   - Assembled URL: `https://<sa name>.blob.core.chinacloudapi.cn/<container name>?restype=container&comp=list&sp=rl&st=2024-10-11T06:04:27Z&se=2024-10-11T14:04:27Z&sip=101.95.105.42&spr=https&sv=2022-11-02&sr=c&sig=xxx`
 
-   - 请求命令示例：
+   - Example command:
 
-     ~~~sh
-     curl -X GET “https://<sa name>.blob.core.chinacloudapi.cn/<container name>?restype=container&comp=list&sp=rl&st=2024-10-11T06:04:27Z&se=2024-10-11T14:04:27Z&sip=101.95.105.42&spr=https&sv=2022-11-02&sr=c&sig=xxx”
-     ~~~
+     ```sh
+     curl -X GET "https://<sa name>.blob.core.chinacloudapi.cn/<container name>?restype=container&comp=list&sp=rl&st=2024-10-11T06:04:27Z&se=2024-10-11T14:04:27Z&sip=101.95.105.42&spr=https&sv=2022-11-02&sr=c&sig=xxx"
+     ```
 
-   - 返回值为xml格式，示例：
+   - Returns XML format:
 
-     ~~~xml
+     ```xml
      <?xml version="1.0" encoding="utf-8"?>
      <EnumerationResults ServiceEndpoint="https://<sa name>.blob.core.chinacloudapi.cn/" ContainerName="<container name>">
          <Blobs>
@@ -707,15 +739,12 @@ https://<sa name>.blob.core.chinacloudapi.cn/<container name>?sp=rl&st=2024-10-1
              </Blob>
          <NextMarker />
      </EnumerationResults>
-     ~~~
+     ```
 
+### Download Files with SAS URL
 
-   使用SAS URL来下载文件的方法：
+1. Append the blob filename (obtained from listing) to the SAS URL container path:
 
-   1. 在提供的SAS URL的container路径后面加上前一个步骤获取到的blob文件名即可，例如：     
-
-   ```sh
-   curl "https://<sa name>.blob.core.chinacloudapi.cn/<container name>/test.log?sp=rl&st=2024-10-11T06:04:27Z&se=2024-10-11T14:04:27Z&sip=101.95.105.42&spr=https&sv=2022-11-02&sr=c&sig=xxx"
-   ```
-
-   # 
+```sh
+curl "https://<sa name>.blob.core.chinacloudapi.cn/<container name>/test.log?sp=rl&st=2024-10-11T06:04:27Z&se=2024-10-11T14:04:27Z&sip=101.95.105.42&spr=https&sv=2022-11-02&sr=c&sig=xxx"
+```
