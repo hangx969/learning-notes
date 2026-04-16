@@ -2,28 +2,28 @@
 
 ## 介绍
 
-tkinter 是 Python 的标准 GUI（图形用户界面）库，它提供了创建窗口、按钮、文本框、菜单等 GUI 组件的功能。tkinter 是一个跨平台的工具，可以在 Windows、macOS 和 Linux 等操作系统上运行，使得开发者可以方便地创建桌面应用程序。主要特点：
+tkinter 是 Python 的标准 GUI（图形用户界面）库,它提供了创建窗口、按钮、文本框、菜单等 GUI 组件的功能。tkinter 是一个跨平台的工具,可以在 Windows、macOS 和 Linux 等操作系统上运行,使得开发者可以方便地创建桌面应用程序。主要特点:
 
-1. 易于使用：tkinter 提供了简单的 API，适合初学者和希望快速开发 GUI 应用程序的
+1. 易于使用:tkinter 提供了简单的 API,适合初学者和希望快速开发 GUI 应用程序的
 开发者。
-2. 跨平台：应用程序可以在不同操作系统上运行，提供一致的用户体验。
-3. 丰富的组件：支持多种 GUI 组件，如按钮、标签、文本框、菜单、框架、画布等，能够满足大多数桌面应用的需求。
-4. 支持事件驱动编程：可以轻松处理用户输入和事件，例如鼠标点击、键盘输入等。
+2. 跨平台:应用程序可以在不同操作系统上运行,提供一致的用户体验。
+3. 丰富的组件:支持多种 GUI 组件,如按钮、标签、文本框、菜单、框架、画布等,能够满足大多数桌面应用的需求。
+4. 支持事件驱动编程:可以轻松处理用户输入和事件,例如鼠标点击、键盘输入等。
 
-5. 可扩展性：虽然 tkinter 是一个轻量级的库，但它也允许开发者通过其他 Python 库进行扩展。
+5. 可扩展性:虽然 tkinter 是一个轻量级的库,但它也允许开发者通过其他 Python 库进行扩展。
 
 ## 基本组件
 
-- 窗口（Tk）：应用程序的主窗口。
-- 标签（Label）：用于显示文本或图像。
-- 按钮（Button）：可点击的按钮。
-- 文本框（Entry 和 Text）：用于单行或多行文本输入。
-- 框架（Frame）：用于组织和布局其他组件。
-- 菜单（Menu）：用于创建应用程序的菜单栏。
+- 窗口(Tk):应用程序的主窗口。
+- 标签(Label):用于显示文本或图像。
+- 按钮(Button):可点击的按钮。
+- 文本框(Entry 和 Text):用于单行或多行文本输入。
+- 框架(Frame):用于组织和布局其他组件。
+- 菜单(Menu):用于创建应用程序的菜单栏。
 
 ## pyinstaller打包
 
-首先需要安装 pyinstaller，可以通过以下命令安装：
+首先需要安装 pyinstaller,可以通过以下命令安装:
 
 ```sh
 pip3 install pyinstaller
@@ -31,30 +31,30 @@ pip3 install pyinstaller
 pip3 install -i https://pypi.tuna.tsinghua.edu.cn/simple pyinstaller
 ```
 
-pyinstaller：可以把 python 代码打包成 windows 的 exe 程序。
+pyinstaller:可以把 python 代码打包成 windows 的 exe 程序。
 
 ```sh
-# 进入你的脚本目录，然后运行以下命令打包为可执行文件：
+# 进入你的脚本目录,然后运行以下命令打包为可执行文件:
 pyinstaller --onefile --windowed .\nginx-gui.py
 ```
 
 - --onefile: 将所有依赖打包成一个单独的文件。
-- --windowed: 不显示命令行窗口（适用于 GUI 程序）。
+- --windowed: 不显示命令行窗口(适用于 GUI 程序)。
 
-# 案例：GUI界面自动管理nginx
+# 案例:GUI界面自动管理nginx
 
-基于 Python 开发的 Windows GUI 应用程序，用于远程管理 Nginx 服务。它利用 paramiko 库通过 SSH 连接到远程安装 nginx 的服务器，实现对 Nginx 服务的状态监控和基本操作，如启动、停止、重启 Nginx 服务以及查看 Nginx 错误日志。用户可以通过简洁的图形界面操作Nginx 服务，方便地维护和监控远程服务器上的服务状态。
+基于 Python 开发的 Windows GUI 应用程序,用于远程管理 Nginx 服务。它利用 paramiko 库通过 SSH 连接到远程安装 nginx 的服务器,实现对 Nginx 服务的状态监控和基本操作,如启动、停止、重启 Nginx 服务以及查看 Nginx 错误日志。用户可以通过简洁的图形界面操作Nginx 服务,方便地维护和监控远程服务器上的服务状态。
 
 > ```python
 > import tkinter as tk
 > from tkinter import messagebox
 > ```
 >
-> messagebox是tkinter中单独的子模块，并不包含在tkinter的主命名空间中。如果只import tk，不能直接用messagebox，得`tk.messagebox.showinfo`才能调用。
+> messagebox是tkinter中单独的子模块,并不包含在tkinter的主命名空间中。如果只import tk,不能直接用messagebox,得`tk.messagebox.showinfo`才能调用。
 >
-> 而`from ... import ...`会将messagebox直接导入到当前命名空间中，可以`messagebox.showinfo`直接调用。
+> 而`from ... import ...`会将messagebox直接导入到当前命名空间中,可以`messagebox.showinfo`直接调用。
 
-~~~python
+```python
 import tkinter as tk
 from tkinter import messagebox
 import paramiko
@@ -89,9 +89,9 @@ def get_nginx_status():
 # 自动更新nginx状态的标签
 def update_status_label():
     status = get_nginx_status()
-    # 动态更新状态标签的文本。status_label是一个全局变量，所以可以直接在函数里使用
+    # 动态更新状态标签的文本。status_label是一个全局变量,所以可以直接在函数里使用
     status_label.config(text=f"Nginx Status: {status}")
-    # tkinter定时器函数，每5秒再次调用函数
+    # tkinter定时器函数,每5秒再次调用函数
     root.after(5000, update_status_label)
 
 # 启动nginx服务
@@ -128,26 +128,26 @@ def view_nginx_logs():
     if error:
         messagebox.showerror("Error", f"Failed to get nginx log: {error}")
     else:
-        # 创建文本框子窗口，把日志放进去
+        # 创建文本框子窗口,把日志放进去
         logs_window = tk.Toplevel(root)
         logs_window.title("Nginx Log")
-        # 在这个窗口中创建一个文本框 (Text)，wrap='word' 意味着在文本过长时会自动换行。
+        # 在这个窗口中创建一个文本框 (Text),wrap='word' 意味着在文本过长时会自动换行。
         logs_text = tk.Text(logs_window, wrap='word')
-        # 将 Nginx 日志（即 output）插入到文本框中，tk.END 表示将内容插入到文本框的末尾。
+        # 将 Nginx 日志(即 output)插入到文本框中,tk.END 表示将内容插入到文本框的末尾。
         logs_text.insert(tk.END, output)
-        # 将文本框布局到窗口中，fill='both' 表示文本框会填满窗口的水平和垂直方向，expand=True 文本框会随着窗口的大小变化而扩展。
+        # 将文本框布局到窗口中,fill='both' 表示文本框会填满窗口的水平和垂直方向,expand=True 文本框会随着窗口的大小变化而扩展。
         logs_text.pack(fill='both', expand=True)
 
 
 if __name__ == '__main__':
-    # 创建一个顶层窗口对象 root，这是整个图形界面的主窗口。
+    # 创建一个顶层窗口对象 root,这是整个图形界面的主窗口。
     root = tk.Tk()
     root.title("Nginx manager")
 
     # 显示nginx状态的标签
     status_label = tk.Label(root, text="Nginx Status: Checking...", font=('Arial', 12))
-    # pack() 是用来布局组件的方法之一，它把标签添加到窗口中并设置布局
-    # padx=10, pady=10: 这是为标签设置的内边距，padx 是水平方向的间距，pady 是垂直方向的间距，值为 10，表示标签与窗口边缘或其他组件之间有 10 个像素的间距。
+    # pack() 是用来布局组件的方法之一,它把标签添加到窗口中并设置布局
+    # padx=10, pady=10: 这是为标签设置的内边距,padx 是水平方向的间距,pady 是垂直方向的间距,值为 10,表示标签与窗口边缘或其他组件之间有 10 个像素的间距。
     status_label.pack(padx=10, pady=10)
 
     # 创建启动按钮
@@ -168,29 +168,29 @@ if __name__ == '__main__':
 
     update_status_label()
 
-    # 启动 tkinter 的主事件循环，使应用程序保持运行并响应用户输入。
+    # 启动 tkinter 的主事件循环,使应用程序保持运行并响应用户输入。
     root.mainloop()
-~~~
+```
 
-# 案例：GUI界面自动管理Tomcat
+# 案例:GUI界面自动管理Tomcat
 
-**项目描述：**
+**项目描述:**
 
-Tomcat 管理助手是一款基于图形用户界面的轻量化管理工具，旨在帮助用户通过简单的操作界面，控制 Tomcat 服务的启动、停止、重启等基本操作。同时，该工具还集成了日志监控功能，实时跟踪 Tomcat 的运行状态，以便用户快速掌握服务情况。工具主要通过与系统命令的交互，实现对Tomcat 进程的管理，并支持通过图形界面展示日志内容，帮助运维人员高效管理和诊断 Tomcat 服务。
+Tomcat 管理助手是一款基于图形用户界面的轻量化管理工具,旨在帮助用户通过简单的操作界面,控制 Tomcat 服务的启动、停止、重启等基本操作。同时,该工具还集成了日志监控功能,实时跟踪 Tomcat 的运行状态,以便用户快速掌握服务情况。工具主要通过与系统命令的交互,实现对Tomcat 进程的管理,并支持通过图形界面展示日志内容,帮助运维人员高效管理和诊断 Tomcat 服务。
 
-**项目功能：**
+**项目功能:**
 
-1、启动 Tomcat: 一键启动 Tomcat 服务，并显示启动状态。
+1、启动 Tomcat: 一键启动 Tomcat 服务,并显示启动状态。
 
-2、停止 Tomcat: 快速停止 Tomcat 服务，避免手动操作繁琐。
+2、停止 Tomcat: 快速停止 Tomcat 服务,避免手动操作繁琐。
 
-3、重启 Tomcat: 提供一键重启服务的功能，确保服务平稳重启。
+3、重启 Tomcat: 提供一键重启服务的功能,确保服务平稳重启。
 
-4、查看服务状态: 实时监控 Tomcat 的运行状态，通过抓取进程信息来判断服务是否运行。
+4、查看服务状态: 实时监控 Tomcat 的运行状态,通过抓取进程信息来判断服务是否运行。
 
-5、日志监控: 实时查看 Tomcat 的日志文件，方便用户掌握服务运行的详细情况。
+5、日志监控: 实时查看 Tomcat 的日志文件,方便用户掌握服务运行的详细情况。
 
-~~~python
+```python
 import tkinter as tk
 from tkinter import messagebox, scrolledtext
 import paramiko
@@ -208,22 +208,22 @@ def connect_ssh():
         client = paramiko.SSHClient()
         client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         client.connect(HOST, username=USERNAME, password=PASSWD)
-        # 函数返回SSH客户端对象，以便后面用来执行命令
+        # 函数返回SSH客户端对象,以便后面用来执行命令
         return client
     except Exception as e:
-        # insert方法会将信息插入到一个文本区域中（（例如ScrolledText组件））
+        # insert方法会将信息插入到一个文本区域中((例如ScrolledText组件))
         log_text.insert(tk.END, f"Connection failed: {str(e)}\n")
         return None
 
 def start_tomcat():
     client = connect_ssh()
-    # 检查ssh连接是否有效，连接成功才往后执行
+    # 检查ssh连接是否有效,连接成功才往后执行
     if client:
         try:
             stdin, stdout, stderr = client.exec_command(TOMCAT_START_CMD)
-            # 从标准错误读取结果，decode解码成字符串
+            # 从标准错误读取结果,decode解码成字符串
             error = stderr.read().decode()
-            # 如果 error 不为空，表示启动过程中出现了错误，将错误信息插入到文本区域
+            # 如果 error 不为空,表示启动过程中出现了错误,将错误信息插入到文本区域
             if error:
                 log_text.insert(tk.END, f"Failed to start tomcat: {error}\n")
             else:
@@ -254,7 +254,7 @@ def check_status():
             if error:
                 log_text.insert(tk.END, f"Failed to check tomcat status: {error}\n")
             else:
-                # 如果有输出，表示tomcat正在运行
+                # 如果有输出,表示tomcat正在运行
                 if output.strip():
                     log_text.insert(tk.END, 'Tomcat is running\n')
                 else:
@@ -265,7 +265,7 @@ def check_status():
 
 if __name__ == '__main__':
     # 创建一个 Tk 类的实例。
-    # Tk 是 tkinter 模块中的一个类，代表一个窗口或应用程序的主窗口。通过创建这个实例，程序将显示一个新的窗口。
+    # Tk 是 tkinter 模块中的一个类,代表一个窗口或应用程序的主窗口。通过创建这个实例,程序将显示一个新的窗口。
     window = tk.Tk()
     # 窗口标题
     window.title('Tomcat Manager')
@@ -289,13 +289,13 @@ if __name__ == '__main__':
 
     # 滚动日志窗口
     # ScrolledText 是 tkinter.scrolledtext 模块中的一个类
-    # 它扩展了 Text 控件，添加了滚动条功能，方便用户查看长文本内容
+    # 它扩展了 Text 控件,添加了滚动条功能,方便用户查看长文本内容
     # width=80: 设置文本区域的宽度为 80 个字符单位。
     # height=20: 设置文本区域的高度为 20 行文本。
     log_text = scrolledtext.ScrolledText(window, width=80, height=20)
-    # columnspan=2: log_text 文本区域将占用从指定的列（column=0）开始的两个连续列。
-    # 这意味着它不仅会占用第 0 列，还会占用第 1 列。
-    # 通过让文本区域跨越两列，控件的宽度会变得更大，这样可以在文本区域内部显示更多的内容，减少用户需要滚动的频率。
+    # columnspan=2: log_text 文本区域将占用从指定的列(column=0)开始的两个连续列。
+    # 这意味着它不仅会占用第 0 列,还会占用第 1 列。
+    # 通过让文本区域跨越两列,控件的宽度会变得更大,这样可以在文本区域内部显示更多的内容,减少用户需要滚动的频率。
     log_text.grid(row=2, column=0 ,columnspan=2, padx=10, pady=10)
 
     # 退出按钮
@@ -303,19 +303,19 @@ if __name__ == '__main__':
     exit_button.grid(row=1, column=1, padx=10, pady=10)
 
     window.mainloop()
-~~~
+```
 
-# 案例：GUI界面自动管理Mysql
+# 案例:GUI界面自动管理Mysql
 
-通过 Tkinter 构建图形用户界面 (GUI)，结合 Paramiko 和 PyMySQL 实现对远程 MySQL 数据库的管理功能，包括： 
+通过 Tkinter 构建图形用户界面 (GUI),结合 Paramiko 和 PyMySQL 实现对远程 MySQL 数据库的管理功能,包括:
 
-1. 通过 SSH 管理 MySQL 服务（启动、停止、查看状态）。 
-2. 创建数据库。 
-3. 创建数据表。 
-4. 向表中插入数据。 
+1. 通过 SSH 管理 MySQL 服务(启动、停止、查看状态)。
+2. 创建数据库。
+3. 创建数据表。
+4. 向表中插入数据。
 5. 在操作结果框中查看执行结果。
 
-~~~python
+```python
 import tkinter as tk
 from tkinter import messagebox, scrolledtext
 import paramiko, pymysql
@@ -443,13 +443,13 @@ if __name__ == '__main__':
     root = tk.Tk()
     root.title('Mysql Manager')
 
-    #LabelFrame是带有标题的框架，标题会放在框架的顶端。通常用于将相关的控件放到一起。
+    #LabelFrame是带有标题的框架,标题会放在框架的顶端。通常用于将相关的控件放到一起。
     ssh_frame = tk.LabelFrame(root, text='Mysql Management', padx=10, pady=10)
-    # 创建之后需要用布局管理器如pack，将其添加到窗口上，否则不显示。
-    # fill=x 表示控件会在水平方向上填满父容器的宽度，垂直方向上保持默认高度。如果需要同时填满水平和垂直，用fill='both'
+    # 创建之后需要用布局管理器如pack,将其添加到窗口上,否则不显示。
+    # fill=x 表示控件会在水平方向上填满父容器的宽度,垂直方向上保持默认高度。如果需要同时填满水平和垂直,用fill='both'
     ssh_frame.pack(padx=10, pady=10, fill='x')
 
-    # Label就是一个简单控件，用于显示文本或图像，其中不能包含子控件
+    # Label就是一个简单控件,用于显示文本或图像,其中不能包含子控件
     status_label = tk.Label(ssh_frame, text='Mysql Status: Unknown', fg='blue')
     status_label.pack()
 
@@ -484,53 +484,53 @@ if __name__ == '__main__':
     output_text.pack(fill='both', expand=True)
 
     root.mainloop()
-~~~
+```
 
-# 案例：GUI界面自动管理httpd
+# 案例:GUI界面自动管理httpd
 
 **介绍**
 
-httpd 服务是 Apache HTTP Server 的一个守护进程，用于运行在服务器上，它是世界上最流行的 Web 服务器软件之一，通常简称为 Apache。httpd（HTTP Daemon）是负责处理 HTTP 请求和响应的守护进程，主要用于部署和运行网站和 Web 应用程序。
+httpd 服务是 Apache HTTP Server 的一个守护进程,用于运行在服务器上,它是世界上最流行的 Web 服务器软件之一,通常简称为 Apache。httpd(HTTP Daemon)是负责处理 HTTP 请求和响应的守护进程,主要用于部署和运行网站和 Web 应用程序。
 
-你可以把它想象成一个“门卫”，它负责接收来自互联网的请求，查看请求的内容，然后将相应的网页或文件发回给请求的人。
+你可以把它想象成一个"门卫",它负责接收来自互联网的请求,查看请求的内容,然后将相应的网页或文件发回给请求的人。
 
-当你在浏览器中输入一个网址（比如 www.example.com）时，你的电脑会发送一个请求到该网站的服务器。`httpd` 就是处理这个请求的程序。
+当你在浏览器中输入一个网址(比如 www.example.com)时,你的电脑会发送一个请求到该网站的服务器。`httpd` 就是处理这个请求的程序。
 
-它会找到你请求的网页内容，然后把它发送回你的浏览器，这样你就能看到你想要的网页。
+它会找到你请求的网页内容,然后把它发送回你的浏览器,这样你就能看到你想要的网页。
 
 **基本功能**
 
-1. 处理 HTTP 请求：httpd 服务基于 HTTP 协议，处理客户端（如浏览器）发送的请求，并返回相应的内容（如 HTML 页面、图像、文件等）。
-2. 跨平台支持：Apache HTTP Server 可以运行在各种操作系统上，包括 Linux、Windows、macOS 等，是一个跨平台的 Web 服务器。
-3. 模块化设计：httpd 支持通过模块（modules）扩展功能，例如支持 mod_ssl 模块来实现 HTTPS 协议，或者通过 mod_rewrite 实现 URL 重写。
-4. 虚拟主机支持：Apache 支持在同一台服务器上运行多个网站，通过虚拟主机（Virtual Hosts）功能，允许不同的域名或 IP 地址指向同一台服务器。
-5. 高性能和稳定性：作为开源的 Web 服务器，Apache 以其稳定性和高性能著称，能够处理大量并发请求。
-6. 可扩展性：用户可以根据需要加载或卸载特定功能的模块，灵活扩展 Apache 的能力。
-7. 日志管理：Apache 提供了详细的访问日志和错误日志功能，方便管理员对服务器进行监控、调试和优化。
+1. 处理 HTTP 请求:httpd 服务基于 HTTP 协议,处理客户端(如浏览器)发送的请求,并返回相应的内容(如 HTML 页面、图像、文件等)。
+2. 跨平台支持:Apache HTTP Server 可以运行在各种操作系统上,包括 Linux、Windows、macOS 等,是一个跨平台的 Web 服务器。
+3. 模块化设计:httpd 支持通过模块(modules)扩展功能,例如支持 mod_ssl 模块来实现 HTTPS 协议,或者通过 mod_rewrite 实现 URL 重写。
+4. 虚拟主机支持:Apache 支持在同一台服务器上运行多个网站,通过虚拟主机(Virtual Hosts)功能,允许不同的域名或 IP 地址指向同一台服务器。
+5. 高性能和稳定性:作为开源的 Web 服务器,Apache 以其稳定性和高性能著称,能够处理大量并发请求。
+6. 可扩展性:用户可以根据需要加载或卸载特定功能的模块,灵活扩展 Apache 的能力。
+7. 日志管理:Apache 提供了详细的访问日志和错误日志功能,方便管理员对服务器进行监控、调试和优化。
 
 **使用场景**
 
-1. 网站托管：httpd 是运行和托管静态网站或动态 Web 应用的核心服务之一。
-2. Web 应用服务器：通过结合 PHP、Python 或 Perl 等动态编程语言，httpd 可以作为 Web 应用的服务器。
-3. 反向代理服务器：使用 httpd 的代理模块，可以将其配置为反向代理服务器，转发请求到后端服务器。
+1. 网站托管:httpd 是运行和托管静态网站或动态 Web 应用的核心服务之一。
+2. Web 应用服务器:通过结合 PHP、Python 或 Perl 等动态编程语言,httpd 可以作为 Web 应用的服务器。
+3. 反向代理服务器:使用 httpd 的代理模块,可以将其配置为反向代理服务器,转发请求到后端服务器。
 
 **安装和管理http服务**
 
-1. 安装：
+1. 安装:
 
 ```sh
 yum install httpd -y
 ```
 
-2. 启动httpd服务：
+2. 启动httpd服务:
 
 ```sh
-# 编辑 systemd 服务文件：
+# 编辑 systemd 服务文件:
 sudo vim /lib/systemd/system/httpd.service
-# 修改 ExecStart 行，将 -D FOREGROUND 添加到命令中：
-# 找到类似以下的行：
+# 修改 ExecStart 行,将 -D FOREGROUND 添加到命令中:
+# 找到类似以下的行:
 ExecStart=/usr/sbin/httpd $OPTIONS -k start
-#修改为：
+#修改为:
 ExecStart=/usr/sbin/httpd -D FOREGROUND $OPTIONS
 #保存并退出编辑器。
 systemctl daemon-reload
@@ -545,9 +545,9 @@ systemctl enable httpd
 
 **GUI管理工具**
 
-该项目是一个使用 Tkinter 创建的图形用户界面（GUI）工具，用于远程管理 HTTPD（Apache HTTP Server）服务。该工具利用 Paramiko 库实现 SSH 连接，允许用户通过简单的按钮操作来检查服务状态、启动或停止服务，以及查看服务日志。该工具适用于需要远程管理 Web 服务器的系统管理员或运维人员。
+该项目是一个使用 Tkinter 创建的图形用户界面(GUI)工具,用于远程管理 HTTPD(Apache HTTP Server)服务。该工具利用 Paramiko 库实现 SSH 连接,允许用户通过简单的按钮操作来检查服务状态、启动或停止服务,以及查看服务日志。该工具适用于需要远程管理 Web 服务器的系统管理员或运维人员。
 
-~~~python
+```python
 import tkinter as tk
 from tkinter import messagebox, scrolledtext
 import paramiko
@@ -646,22 +646,21 @@ if __name__ == '__main__':
     log_button.pack()
 
     root.mainloop()
+```
 
-~~~
+# 案例:GUI管理k8s资源
 
-# 案例：GUI管理k8s资源
-
-通过python脚本开发一个GUI，并封装成windows程序，能够通过点击图标启动gui界面，可以实现：
+通过python脚本开发一个GUI,并封装成windows程序,能够通过点击图标启动gui界面,可以实现:
 
 1. 从k8s集群中选择需要操作的命名空间。
 
-2. 选择资源类型（Deployment 和 StatefulSet）。
+2. 选择资源类型(Deployment 和 StatefulSet)。
 
 3. 选择资源名称。
 
 4. 输入需要修改的副本数并提交。
 
-~~~python
+```python
 import tkinter as tk
 from tkinter import messagebox, scrolledtext
 from kubernetes import client, config
@@ -676,8 +675,8 @@ core_v1 = client.CoreV1Api()
 
 # 获取集群namespace
 def get_namespace():
-    # list_namespace返回的是对象，包含所有ns的属性
-    # .items是转成列表，可以直接遍历每一个ns的json属性
+    # list_namespace返回的是对象,包含所有ns的属性
+    # .items是转成列表,可以直接遍历每一个ns的json属性
     return [ns.metadata.name for ns in core_v1.list_namespace().items]
 
 # 获取集群deployment和statefulset
@@ -689,7 +688,7 @@ def get_resources(namespace):
     statefulset_list = [ s.metadata.name for s in statefulsets ]
     return deployment_list, statefulset_list
 
-# 更新资源名称下拉菜单。当用户选择了namespace和resource type后，自动列出这个namespace中的deployment或者statefulset
+# 更新资源名称下拉菜单。当用户选择了namespace和resource type后,自动列出这个namespace中的deployment或者statefulset
 def update_resources_menu(*args):
     # 从下拉菜单变量获取到选择好的namespace和resource type
     namespace = ns_var.get().strip()
@@ -707,11 +706,11 @@ def update_resources_menu(*args):
             # 先设默认值
             resource_name_var.set(deployment_list[0])
         else:
-            # 列表为空说明对应namespace没这种资源，变量返回空值。不显示。
+            # 列表为空说明对应namespace没这种资源,变量返回空值。不显示。
             resource_name_var.set('')
         # 往下拉菜单中添加所有resource name
         for name in deployment_list:
-            # ['menu‘]访问OptionMenu的菜单部分，add_command添加菜单元素，label指定新条目的值，setit将label的值赋值给变量
+            # ['menu']访问OptionMenu的菜单部分,add_command添加菜单元素,label指定新条目的值,setit将label的值赋值给变量
             resource_name_menu['menu'].add_command(label=name, command=tk._setit(resource_name_var, name))
 
     elif resource_type == 'Statefulset':
@@ -758,11 +757,11 @@ if __name__ == '__main__':
     valid_ns_list = get_namespace()
     # namespace下拉菜单的文本标签
     tk.Label(root, text='Namespace:').grid(row=0, column=0, padx=10, pady=10)
-    # 创建一个字符串变量，是根据用户选择动态更新的
+    # 创建一个字符串变量,是根据用户选择动态更新的
     ns_var = tk.StringVar(root)
     # 默认值为namespace列表首元素
     ns_var.set(valid_ns_list[0])
-    # 定义下拉菜单，* 是解包操作符，用于将列表中的每个元素作为单独的参数传递给OptionMenu。这些选项就会在下拉菜单中以供选择
+    # 定义下拉菜单,* 是解包操作符,用于将列表中的每个元素作为单独的参数传递给OptionMenu。这些选项就会在下拉菜单中以供选择
     ns_menu = tk.OptionMenu(root, ns_var, *valid_ns_list)
     ns_menu.grid(row=0, column=1, padx=10, pady=10)
 
@@ -779,7 +778,7 @@ if __name__ == '__main__':
     resource_name_menu = tk.OptionMenu(root, resource_name_var, '')
     resource_name_menu.grid(row=2, column=1, padx=10, pady=10)
 
-    # 当ns_var和resource_type_var发生写入时，调用指定的回调函数，更新资源名称下拉菜单内容
+    # 当ns_var和resource_type_var发生写入时,调用指定的回调函数,更新资源名称下拉菜单内容
     ns_var.trace_add('write', update_resources_menu)
     resource_type_var.trace_add('write', update_resources_menu)
 
@@ -788,12 +787,11 @@ if __name__ == '__main__':
     replicas_entry = tk.Entry(root)
     replicas_entry.grid(row=3, column=1, padx=10, pady=10)
 
-    # 提交按钮。点击提交，触发更新副本数的函数
+    # 提交按钮。点击提交,触发更新副本数的函数
     submit_button = tk.Button(root, text='Submit', command=update_replicas)
     submit_button.grid(row=4, column=1, padx=10, pady=10)
 
-    # 在程序启动时就 根据默认值填充资源列表，从而确保用户在第一次操作时能看到可选的资源。
+    # 在程序启动时就 根据默认值填充资源列表,从而确保用户在第一次操作时能看到可选的资源。
     update_resources_menu()
     tk.mainloop()
-~~~
-
+```
