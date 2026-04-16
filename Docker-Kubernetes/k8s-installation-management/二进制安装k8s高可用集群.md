@@ -1,3 +1,14 @@
+---
+title: 二进制安装k8s高可用集群
+tags:
+  - kubernetes
+  - k8s-installation
+  - 二进制安装
+aliases:
+  - 二进制安装k8s
+  - binary install k8s
+---
+
 # 二进制安装 vs kubeadm安装
 
 - kubeadm是官方提供的开源工具，用于快速搭建kubernetes集群，相当于用程序脚本帮我们装好了集群，属于自动部署，简化部署操作，自动部署屏蔽了很多细节，使得对各个模块感知很少，如果对k8s架构组件理解不深的话，遇到问题比较难排查。Kubeadm初始化k8s，所有的组件都是以pod形式运行的，具备故障自恢复能力。kubeadm适合需要经常部署k8s，或者对自动化要求比较高的场景下使用。
@@ -18,7 +29,7 @@
 
 - 配置：4Gib内存/4vCPU/50G硬盘
 
-  > 如果VM是从20G磁盘扩容到了50G，那么在VMWare上加完磁盘容量后需要扩容文件系统。由于使用的镜像的根分区是用的LVM，所以需要LVM扩容。参考文档：https://blog.csdn.net/yangfenggh/article/details/130475248
+  > [!tip] 如果VM是从20G磁盘扩容到了50G，那么在VMWare上加完磁盘容量后需要扩容文件系统。由于使用的镜像的根分区是用的LVM，所以需要LVM扩容。参考文档：[LVM扩容指南](https://blog.csdn.net/yangfenggh/article/details/130475248)
 
 - 网络：NAT
 
@@ -629,7 +640,7 @@ echo $ETCDCTL_API
 
 ### 下载安装包
 
-- 二进制包所在的github地址如下：https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/，可以按照版本下载二进制包。控制节点组件，找到Server Binaries，下载amd64版本的。server binaries二进制包里面就包含了：controller-manager，apiserver，scheduler等控制平面组件。其实也包含了工作节点需要的kubelet和kubeproxy
+- 二进制包所在的github地址如下：[Kubernetes CHANGELOG](https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/)，可以按照版本下载二进制包。控制节点组件，找到Server Binaries，下载amd64版本的。server binaries二进制包里面就包含了：controller-manager，apiserver，scheduler等控制平面组件。其实也包含了工作节点需要的kubelet和kubeproxy
 - 这里下载的是1.20.7版本
 
 ~~~sh
@@ -1749,7 +1760,7 @@ systemctl restart kubelet kube-proxy
 
 ## 下载二进制包
 
-- 二进制包所在的github地址如下：https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/，可以按照版本下载二进制包。控制节点组件，找到Server Binaries，下载amd64版本的。server binaries二进制包里面就包含了：controller-manager，apiserver，scheduler等控制平面组件。其实也包含了工作节点需要的kubelet和kubeproxy
+- 二进制包所在的github地址如下：[Kubernetes CHANGELOG](https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/)，可以按照版本下载二进制包。控制节点组件，找到Server Binaries，下载amd64版本的。server binaries二进制包里面就包含了：controller-manager，apiserver，scheduler等控制平面组件。其实也包含了工作节点需要的kubelet和kubeproxy
 
 ## master节点升级
 
@@ -1898,7 +1909,7 @@ systemctl restart containerd
 
 ## 安装crictl
 
-- 安装包可以从这里下载：https://github.com/kubernetes-sigs/cri-tools/releases/
+- 安装包可以从这里下载：[cri-tools releases](https://github.com/kubernetes-sigs/cri-tools/releases/)
 
 ~~~sh
 #所有节点

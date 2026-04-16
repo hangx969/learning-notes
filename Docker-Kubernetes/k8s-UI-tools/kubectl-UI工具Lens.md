@@ -1,3 +1,13 @@
+---
+title: kubectl UI 工具 Lens
+tags:
+  - kubernetes
+  - lens
+  - tools
+aliases:
+  - lens
+---
+
 # 介绍
 
 ## 优点

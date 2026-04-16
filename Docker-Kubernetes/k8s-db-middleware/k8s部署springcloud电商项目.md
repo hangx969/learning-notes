@@ -257,7 +257,7 @@ docker pull 172.16.183.74/test/tomcat:v1
 
 ## 安装ingress controller
 
-Ingress-controller官网： [ingress-nginx - GitHub](https://github.com/kubernetes/ingress-nginx/)
+Ingress-controller官网：[ingress-nginx - GitHub](https://github.com/kubernetes/ingress-nginx/)
 
 ```sh
 #把kube-webhook-certgen-v1.1.1.tar.gz和ingress-nginx-controllerv1.1.1.tar.gz镜像上传到xianchaonode1节点，手动解压镜像：

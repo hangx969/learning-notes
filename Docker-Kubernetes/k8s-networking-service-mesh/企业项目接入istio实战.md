@@ -1,3 +1,13 @@
+---
+title: 企业项目接入Istio实战
+tags:
+  - kubernetes
+  - networking
+  - istio
+aliases:
+  - istio企业接入
+---
+
 # 企业内项目接入istio流程
 
 企业内接入istio常见有两种情况：

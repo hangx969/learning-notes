@@ -1,7 +1,18 @@
+---
+title: kubectl 可视化插件 k9s 和 stern
+tags:
+  - kubernetes
+  - k9s
+  - stern
+  - tools
+aliases:
+  - k9s-stern
+---
+
 # k9s
 
-- kubectl可视化插件：https://github.com/derailed/k9s
-- 安装指南：https://k9scli.io/topics/install/
+- kubectl可视化插件：[k9s GitHub](https://github.com/derailed/k9s)
+- 安装指南：[k9s 安装文档](https://k9scli.io/topics/install/)
 
 # 在线安装
 

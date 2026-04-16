@@ -1,3 +1,15 @@
+---
+title: 2025最新-企业级高可用集群-基于rockylinux
+tags:
+  - kubernetes
+  - k8s-installation
+  - 高可用
+  - rockylinux
+aliases:
+  - 企业级高可用集群
+  - kubeadm高可用安装
+---
+
 # 企业级高可用集群架构设计
 
 ## 架构图
@@ -249,7 +261,7 @@ dnf makecache
 
 > 注：由于无法同步，所有 EPEL 镜像站都不包含 EPEL Cisco OpenH264 仓库（epel-cisco-openh264.repo），如果不需要可手动将其改为 enabled=0。
 >
-> 参考文档：https://www.rockylinux.cn/notes/zai-rocky-linux-9-shang-qi-yong-epel-he-remi-cang-ku.html
+> 参考文档：[在Rocky Linux 9上启用EPEL和Remi仓库](https://www.rockylinux.cn/notes/zai-rocky-linux-9-shang-qi-yong-epel-he-remi-cang-ku.html)
 
 所有节点安装基本软件包：
 

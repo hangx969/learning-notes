@@ -1,3 +1,13 @@
+---
+title: KubeBlocks 部署高可用 Harbor 集群
+tags:
+  - kubernetes
+  - kubeblocks
+  - harbor
+aliases:
+  - kubeblocks-harbor
+---
+
 # 背景
 
 ## harbor

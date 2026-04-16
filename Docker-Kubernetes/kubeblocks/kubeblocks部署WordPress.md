@@ -1,3 +1,13 @@
+---
+title: KubeBlocks 部署 WordPress
+tags:
+  - kubernetes
+  - kubeblocks
+  - wordpress
+aliases:
+  - kubeblocks-wordpress
+---
+
 # 背景
 
 ## WordPress

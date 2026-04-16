@@ -1,3 +1,13 @@
+---
+title: K8s日志管理
+tags:
+  - kubernetes
+  - logging
+  - kubelet
+aliases:
+  - K8s容器日志管理
+---
+
 Kubernetes 容器日志的保存时长并非固定值，而是由**节点本地默认策略**、**日志输出方式**和**持久化方案**共同决定。
 
 # 节点本地默认日志保存机制 - kubelet管控

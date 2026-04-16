@@ -825,9 +825,8 @@ spec:
           description: "Container memory usage is above 90%."
 ~~~
 
-> - https://github.com/samber/awesome-prometheus-alerts
->
->   这个项目中包含了常见组件的prometheus alerts
+> [!tip]
+> [awesome-prometheus-alerts](https://github.com/samber/awesome-prometheus-alerts) 这个项目中包含了常见组件的prometheus alerts
 
 ## 域名访问延迟及故障告警
 
@@ -1081,11 +1080,12 @@ spec:
 
 ## 发送告警到slack
 
-> - prometheus与slack集成的配置文件说明：https://prometheus.io/docs/alerting/latest/configuration/#slack_config
-> - slack web API说明：https://api.slack.com/web
-> - slack web API认证：https://api.slack.com/web#authentication
-> - chat.postMessage API文档：https://api.slack.com/methods/chat.postMessage
-> - bot token: https://api.slack.com/concepts/token-types#bot
+> [!info]
+> - prometheus与slack集成的配置文件说明：[slack_config](https://prometheus.io/docs/alerting/latest/configuration/#slack_config)
+> - slack web API说明：[Slack Web API](https://api.slack.com/web)
+> - slack web API认证：[Slack Web Authentication](https://api.slack.com/web#authentication)
+> - chat.postMessage API文档：[chat.postMessage](https://api.slack.com/methods/chat.postMessage)
+> - bot token: [Bot Token Types](https://api.slack.com/concepts/token-types#bot)
 
 ### Slack端配置
 
@@ -1255,7 +1255,7 @@ spec:
 
 #### 企业微信配置
 
-1. 首先需要在企业微信官网注册企业微信账号：https://work.weixin.qq.com/。
+1. 首先需要在企业微信官网注册企业微信账号：[企业微信](https://work.weixin.qq.com/)。
 2. 注册完成后进行登录，登录后点击我的企业。
 3. 在页面的最下面找到企业ID（corp_id）并记录，稍后会用到。
 4. 之后创建一个部门，用于接收告警通知。

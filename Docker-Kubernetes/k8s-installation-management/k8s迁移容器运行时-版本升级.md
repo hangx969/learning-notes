@@ -333,11 +333,11 @@ yum list --showduplicates kubeadm --disableexcludes=kubernetes
    kubeadm upgrade apply v1.31.8
    ~~~
 
-   > 如果yum install报错找不到包，两种方式解决：
+   > [!tip] 如果yum install报错找不到包，两种方式解决
    >
    > **方法1：**
    >
-   > - 可以直接去repo下载rpm文件：https://mirrors.aliyun.com/kubernetes-new/core/stable/v1.31/rpm/x86_64/
+   > - 可以直接去repo下载rpm文件：[阿里云k8s rpm仓库](https://mirrors.aliyun.com/kubernetes-new/core/stable/v1.31/rpm/x86_64/)
    > - 安装命令：`rpm -ivh xxx.rpm`
    >
    > **方法2：**
@@ -402,11 +402,11 @@ yum list --showduplicates kubeadm --disableexcludes=kubernetes
    kubeadm upgrade node
    ~~~
 
-   > 如果yum install报错找不到包，两种方式解决：
+   > [!tip] 如果yum install报错找不到包，两种方式解决
    >
    > **方法1：**
    >
-   > - 可以直接去repo下载rpm文件：https://mirrors.aliyun.com/kubernetes-new/core/stable/v1.31/rpm/x86_64/
+   > - 可以直接去repo下载rpm文件：[阿里云k8s rpm仓库](https://mirrors.aliyun.com/kubernetes-new/core/stable/v1.31/rpm/x86_64/)
    > - 安装命令：`rpm -ivh xxx.rpm`
    >
    > **方法2：**

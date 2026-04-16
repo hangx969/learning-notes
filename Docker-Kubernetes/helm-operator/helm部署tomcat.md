@@ -1,8 +1,18 @@
+---
+title: Helm 部署 Tomcat
+tags:
+  - kubernetes
+  - helm
+  - tomcat
+aliases:
+  - tomcat部署
+---
+
 # 介绍
 
-- github地址：https://github.com/bitnami/charts/blob/main/bitnami/tomcat/README.md
+- github地址：[Bitnami Tomcat Chart](https://github.com/bitnami/charts/blob/main/bitnami/tomcat/README.md)
 
-- artifactHub地址：https://artifacthub.io/packages/helm/bitnami/tomcat
+- artifactHub地址：[Tomcat on ArtifactHub](https://artifacthub.io/packages/helm/bitnami/tomcat)
 
 
 # 下载

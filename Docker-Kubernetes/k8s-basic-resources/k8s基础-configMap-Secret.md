@@ -17,7 +17,7 @@ aliases:
 
 Configmap是k8s中的资源对象，用于保存非机密性的配置的，数据可以用key/value键值对的形式保存，也可通过文件的形式保存。
 
-官网地址：https://kubernetes.io/docs/concepts/configuration/configmap/
+官网地址：[Kubernetes ConfigMap文档](https://kubernetes.io/docs/concepts/configuration/configmap/)
 
 <img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202311151711600.png" alt="image-20231115171130386" style="zoom:67%;" />
 
@@ -145,6 +145,7 @@ data:
     log_bin_trust_function_creators=1
 ```
 
+> [!info] 说明
 > 在 Kubernetes 的 ConfigMap 中，`|` 和 `| -` 的主要区别在于它们处理多行字符串的方式。
 >
 > `|` 是一个块标识符，它会保留换行符和（除最后一行外的）尾随空格。例如：
@@ -156,7 +157,7 @@ data:
 >   key2: value2
 > ```
 >
-> 这将创建一个字符串，其中包含“key1: value1\nkey2: value2\n”。
+> 这将创建一个字符串，其中包含”key1: value1\nkey2: value2\n”。
 >
 > `|-` 也是一个块标识符，但它会剥离掉尾随的换行符。例如：
 >
@@ -167,7 +168,7 @@ data:
 >   key2: value2
 > ```
 >
-> 这将创建一个字符串，其中包含“key1: value1\nkey2: value2”，注意这里没有尾随的换行符。
+> 这将创建一个字符串，其中包含”key1: value1\nkey2: value2”，注意这里没有尾随的换行符。
 >
 > 总的来说，`|` 和 `|-` 都用于表示多行字符串，但 `|-` 会删除尾随的换行符。
 
@@ -267,7 +268,8 @@ spec:
       optional: true # 即使items的key名写错了，也不影响pod启动
 ~~~
 
-> 注意如果cm里面有多个key，并且指定了items，那么只有指定了items的key会被挂进去，没指定的就不挂载进去。所以如果需要挂载所有的key，就指定所有的items。
+> [!warning] 注意
+> 如果cm里面有多个key，并且指定了items，那么只有指定了items的key会被挂进去，没指定的就不挂载进去。所以如果需要挂载所有的key，就指定所有的items。
 
 #### 自定义挂载权限
 
@@ -316,6 +318,7 @@ cm和secret挂载的时候，会直接覆盖掉原目录的内容。所以挂载
       subPath: nginx.conf
 ~~~
 
+> [!warning] 注意
 > 用subPath挂载进去的cm文件，不会热更新
 
 ### 单一挂载环境变量-configMapKeyRef
@@ -355,6 +358,7 @@ spec:
           key: lower #指定configmap中的key
 ~~~
 
+> [!tip] 提示
 > 这种方式一个一个导入env，不是很灵活。在大部分情况下环境变量很多，需要批量导入。
 
 ### 批量挂载环境变量-envFrom

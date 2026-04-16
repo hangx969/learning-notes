@@ -1,3 +1,12 @@
+---
+title: K8s 部署 Dashboard UI
+tags:
+  - kubernetes
+  - dashboard
+aliases:
+  - k8s-dashboard
+---
+
 # Dashboard安装
 
 ## 镜像准备

@@ -1,7 +1,18 @@
+---
+title: kubectl 插件 krew 和 rolesum
+tags:
+  - kubernetes
+  - krew
+  - rbac
+  - tools
+aliases:
+  - krew-rolesum
+---
+
 # 介绍
 
 - 一个可视化查看k8s RBAC role的kubectl插件
-- 官网地址：https://github.com/Ladicle/kubectl-rolesum
+- 官网地址：[kubectl-rolesum GitHub](https://github.com/Ladicle/kubectl-rolesum)
 
 # 安装
 

@@ -1,7 +1,16 @@
+---
+title: K8s 部署 Kuboard
+tags:
+  - kubernetes
+  - kuboard
+aliases:
+  - kuboard部署
+---
+
 # kuboard
 
-- 官网地址：https://www.kuboard.cn/
-- 安装kuboard参考：https://www.kuboard.cn/v4/install/
+- 官网地址：[Kuboard 官网](https://www.kuboard.cn/)
+- 安装kuboard参考：[Kuboard 安装文档](https://www.kuboard.cn/v4/install/)
 
 # 部署kuboard
 

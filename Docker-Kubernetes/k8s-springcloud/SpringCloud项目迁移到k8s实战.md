@@ -1,3 +1,12 @@
+---
+title: SpringCloud 项目迁移到 K8s 实战
+tags:
+  - kubernetes
+  - springcloud
+aliases:
+  - springcloud迁移k8s
+---
+
 # SpringCloud项目架构
 
 1. 有一个SpringCloud项目需要迁移至K8s，该项目采用Eureka注册中心，采用前后端分离框架。

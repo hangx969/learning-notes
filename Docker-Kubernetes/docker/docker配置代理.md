@@ -1,9 +1,20 @@
+---
+title: Docker配置代理
+tags:
+  - docker
+  - container
+  - proxy
+aliases:
+  - Docker代理配置
+---
+
 # docker pull配置代理
 
 ## 背景
 
 关于 docker 配置代理服务器的 [官方文档](https://docs.docker.com/network/proxy/#configure-the-docker-client) ：
 
+> [!info] 官方文档说明
 > If your container needs to use an HTTP, HTTPS, or FTP proxy server, you can configure it in different ways: Configure the Docker client On the Docker client, create or edit the file ~/.docker/config.json in the home directory of the user that starts containers. 
 >
 > ...
@@ -22,6 +33,7 @@
 
 ## 配置方法
 
+> [!info] systemd配置说明
 > The Docker daemon uses the HTTP_PROXY, HTTPS_PROXY, and NO_PROXY environmental variables in its start-up environment to configure HTTP or HTTPS proxy behavior. You cannot configure these environment variables using the daemon.json file.
 >
 > This example overrides the default docker.service file.
@@ -65,6 +77,6 @@
 
 从Chrome中移除，在浏览器上模拟docker pull命令直接下载镜像tar包到本地。
 
-插件地址：https://chromewebstore.google.com/detail/dfpojffmnkiglpjpjodlpmoejdcfobnd?utm_source=item-share-cb
+插件地址：[Docker Image Downloader Chrome扩展](https://chromewebstore.google.com/detail/dfpojffmnkiglpjpjodlpmoejdcfobnd?utm_source=item-share-cb)
 
 可用于docker.io, gcr.io等

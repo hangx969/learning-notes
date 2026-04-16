@@ -98,14 +98,14 @@ docker run --rm --gpus all nvidia/cuda:10.2-base nvidia-smi
 
 如果输出跟直接在宿主机上执行 `nvidia-smi` 一致则说明安装成功。如果跑的深度学习模型使用的是 tensorflow 可以在容器里执行:
 
-```sh
+```python
 import tensorflow as tf
 tf.contrib.eager.num_gpus()
 ```
 
 如果输出了宿主机上的 Nvidia 显卡数量，则模型能使用到显卡加速。如果使用的是 pytorch 可以在容器里执行：
 
-```sh
+```python
 import torch
 torch.cuda.is_available()
 ```

@@ -669,7 +669,8 @@ parameters:
   imageFeatures: "layering" #这个参数指定了RBD镜像的特性。"layering"表示启用了层次化存储特性。层次化存储允许镜像共享相同的数据块，可以节省存储空间，并且可以更快地创建新的镜像和快照。
 ~~~
 
-> k8s1.20版本通过rbd  provisioner动态生成pv会报错:
+> [!warning] K8s 1.20版本兼容问题
+> k8s1.20版本通过rbd provisioner动态生成pv会报错:
 >
 > ```sh
 > kubectl logs rbd-provisioner-685746688f-8mbz
@@ -694,7 +695,7 @@ parameters:
 > - --feature-gates=RemoveSelfLink=false
 > ```
 >
-> 重启lubelet
+> 重启kubelet
 >
 > ~~~sh
 > systemctl restart kubelet

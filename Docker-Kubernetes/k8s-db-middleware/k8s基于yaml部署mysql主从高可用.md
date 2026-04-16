@@ -384,8 +384,7 @@ spec:
           name: mysql
 ~~~
 
-> xtrabackup容器启动命令解释：
->
+> [!info] xtrabackup容器启动命令解释
 > 首先通过检查备份信息文件（如 xtrabackup_slave_info 和 xtrabackup_binlog_info）来确定备份的来源，然后根据不同情况分别处理这些备份信息。
 >
 > 具体实现步骤如下：

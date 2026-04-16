@@ -1,3 +1,12 @@
+---
+title: K8s基础-自定义CRD资源
+tags:
+  - kubernetes
+  - k8s-basics
+aliases:
+  - k8s自定义CRD
+---
+
 # Operator
 
 ## 什么是operator

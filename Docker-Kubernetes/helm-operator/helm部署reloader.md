@@ -1,6 +1,16 @@
+---
+title: Helm 部署 Reloader
+tags:
+  - kubernetes
+  - helm
+  - reloader
+aliases:
+  - reloader部署
+---
+
 # 介绍
 
-- 官网地址：https://github.com/stakater/Reloader
+- 官网地址：[Reloader GitHub](https://github.com/stakater/Reloader)
 
 - 教程：https://zhuanlan.zhihu.com/p/669681298
 

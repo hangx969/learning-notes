@@ -1,4 +1,14 @@
-参考：https://mp.weixin.qq.com/s/FXQRAqp8mpuWsBbEY9ZJdw
+---
+title: K8s 配置 NVIDIA GPU
+tags:
+  - kubernetes
+  - gpu
+  - nvidia
+aliases:
+  - k8s-nvidia-gpu
+---
+
+参考：[K8s 配置 NVIDIA GPU 实践指南](https://mp.weixin.qq.com/s/FXQRAqp8mpuWsBbEY9ZJdw)
 
 设置裸金属 Kubernetes 上的 NVIDIA RTX GPU，涵盖 Ubuntu 22.04 上的驱动程序安装、配置和故障排除。
 

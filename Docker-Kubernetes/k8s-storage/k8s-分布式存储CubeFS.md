@@ -220,9 +220,10 @@ fdisk -l | grep dev/sd
 # Disk /dev/sdb: 6 GiB, 6442450944 bytes, 12582912 sectors
 ~~~
 
-> 注意：磁盘可用空间必须大于10G，否则磁盘会被cubeFS标记为ReadOnly，并且空间计算也会不准确。
+> [!warning] 磁盘空间要求
+> 磁盘可用空间必须大于10G，否则磁盘会被cubeFS标记为ReadOnly，并且空间计算也会不准确。
 >
-> [[Bug\]: the datanodes is not WRITABLE · Issue #3173 · cubefs/cubefs](https://github.com/cubefs/cubefs/issues/3173#issuecomment-1986599468)
+> 参考：[[Bug]: the datanodes is not WRITABLE - Issue #3173](https://github.com/cubefs/cubefs/issues/3173#issuecomment-1986599468)
 
 格式化磁盘并挂载：
 
@@ -242,7 +243,8 @@ EOF
 mount -a 
 ~~~
 
-> 注意：如果有多个数据节点，需要保证每个数据节点的磁盘数量、大小等配置是完全一致的。因为后面配置数据节点的时候，是所有数据节点统一配置的。这样出错的概率小。
+> [!warning] 注意
+> 如果有多个数据节点，需要保证每个数据节点的磁盘数量、大小等配置是完全一致的。因为后面配置数据节点的时候，是所有数据节点统一配置的。这样出错的概率小。
 
 ## helm安装
 
@@ -381,6 +383,7 @@ cd ./cubefs-helm/cubefs
 helm upgrade -i cubefs -n cubefs . --create-namespace -f values.yaml 
 ~~~
 
+> [!bug] 版本Bug
 > 2025-08-28 安装的3.3.2.150.0 Release版本，有个bug：
 >
 > 在`cubefs-helm/cubefs/templates/statefulset-master.yaml`文件的第80行，需要把：
@@ -605,6 +608,7 @@ cfs-client -c volume-test-client.conf
 df -Th | grep volume-test
 ~~~
 
+> [!info] 挂载协议
 > 这种挂载方式使用的是传统的POSIX。CubeFS 客户端通过 FUSE (Filesystem in Userspace) 提供标准的 POSIX 文件系统语义
 
 测试写入数据：
@@ -797,8 +801,7 @@ component:
 helm upgrade -i cubefs -n cubefs . --create-namespace -f values.yaml
 ~~~
 
-> 注意：
->
+> [!bug] tolerations缩进问题
 > 1. 如果values里面配置了tolerations，渲染模板会报错：
 >    ~~~sh
 >    Error: UPGRADE FAILED: YAML parse error on cubefs/templates/csi-controller-deployment.yaml: error converting YAML to JSON: yaml: line 21: did not find expected key
@@ -846,7 +849,7 @@ helm upgrade -i cubefs -n cubefs . --create-namespace -f values.yaml
 >
 > 4. 改完之后可以成功安装
 >
-> 5. 在其他模板中又发现了更多缩进错误，我提了一个github issue：[Indent Error found in spec.tolerations for some templates · Issue #53 · cubefs/cubefs-helm](https://github.com/cubefs/cubefs-helm/issues/53)
+> 5. 在其他模板中又发现了更多缩进错误，我提了一个github issue：[Indent Error found in spec.tolerations for some templates - Issue #53](https://github.com/cubefs/cubefs-helm/issues/53)
 
 ## PV/PVC测试
 

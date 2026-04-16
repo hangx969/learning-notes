@@ -1,3 +1,16 @@
+---
+title: Docker基础
+tags:
+  - docker
+  - container
+  - dockerfile
+  - docker-compose
+  - harbor
+aliases:
+  - Docker入门
+  - Docker基础教程
+---
+
 # 实验环境搭建
 
 ## 虚拟机搭建
@@ -10,7 +23,7 @@
 
 ### 简洁版
 
-https://docs.docker.com/engine/install/centos/
+[Docker官方安装文档](https://docs.docker.com/engine/install/centos/)
 
 ```bash
 sudo yum install -y yum-utils
@@ -22,7 +35,7 @@ sudo systemctl start docker
 
 ### 进阶版
 
-> 安装docker前可以配置docker阿里云的源：[docker-ce镜像_docker-ce下载地址_docker-ce安装教程-阿里巴巴开源镜像站](https://developer.aliyun.com/mirror/docker-ce)
+> [!tip] 安装docker前可以配置docker阿里云的源：[docker-ce镜像_docker-ce下载地址_docker-ce安装教程-阿里巴巴开源镜像站](https://developer.aliyun.com/mirror/docker-ce)
 
 ```bash
 #配置主机名：
@@ -447,7 +460,7 @@ docker commit -a="xxxx" -m="add xxx to xxx dir"  原容器ID image-name:1.0
   - 只有镜像名称没有registry和repo的时候，就默认是去`docker.io/library`去拉
 - 0.8：tag/版本号
 
-> 有些镜像如果docker.io没有，用bitnami的也行。bitnami也是比较可靠的镜像库
+> [!tip] 有些镜像如果docker.io没有，用bitnami的也行。bitnami也是比较可靠的镜像库
 
 ## docker部署服务通用步骤
 

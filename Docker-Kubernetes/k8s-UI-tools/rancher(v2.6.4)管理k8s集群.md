@@ -1,8 +1,17 @@
+---
+title: Rancher (v2.6.4) 管理 K8s 集群
+tags:
+  - kubernetes
+  - rancher
+aliases:
+  - rancher管理k8s
+---
+
 # Rancher介绍
 
 - Rancher是一个开源的企业级多集群Kubernetes管理平台，实现了Kubernetes集群在混合云+本地数据中心的集中部署与管理，以确保集群的安全性，加速企业数字化转型。
 
-- Rancher官方文档：https://docs.rancher.cn/
+- Rancher官方文档：[Rancher 文档](https://docs.rancher.cn/)
 
 - Rancher和k8s的区别
   - Rancher和k8s都是用来作为容器的调度与编排系统。但是rancher不仅能够管理应用容器，更重要的一点是能够管理k8s集群。Rancher2.x底层基于k8s调度引擎，通过Rancher的封装，用户可以在不熟悉k8s概念的情况下轻松的通过Rancher来部署容器到k8s集群当中。

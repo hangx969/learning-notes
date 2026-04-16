@@ -1,3 +1,16 @@
+---
+title: K8s部署全链路追踪-Skywalking
+tags:
+  - kubernetes
+  - monitoring
+  - skywalking
+  - tracing
+  - apm
+  - helm
+aliases:
+  - Skywalking全链路追踪
+---
+
 # 链路追踪介绍
 
 为什么要用全链路追踪工具：
@@ -213,7 +226,8 @@ helm upgrade -i skywalking -n skywalking . --create-namespace -f values.yaml
 
 通过NodePort访问skywalking UI
 
-> 注：如果oap server pod始终起不来，报错是liveness probe失败，log里面没看到任何ERROR信息，可能是因为默认的liveness probe太严格了，oap启动比较慢，还没完全起来就被linevess探测给重启了。
+> [!warning]
+> 如果oap server pod始终起不来，报错是liveness probe失败，log里面没看到任何ERROR信息，可能是因为默认的liveness probe太严格了，oap启动比较慢，还没完全起来就被linevess探测给重启了。
 >
 > 去看template发现liveness probe是写死的，给他时间改长一点：
 >
@@ -231,11 +245,11 @@ helm upgrade -i skywalking -n skywalking . --create-namespace -f values.yaml
 
 # skywalking数据接入方案
 
-其它Agent参考文档：https://skywalking.apache.org/docs/ 
+其它Agent参考文档：[SkyWalking Docs](https://skywalking.apache.org/docs/) 
 
 ## Java接入方案
 
-Java Agent 参考文档：https://skywalking.apache.org/docs/skywalking-java/v9.4.0/en/setup/service-agent/java-agent/containerization/#kubernetes
+Java Agent 参考文档：[SkyWalking Java Agent Containerization](https://skywalking.apache.org/docs/skywalking-java/v9.4.0/en/setup/service-agent/java-agent/containerization/#kubernetes)
 
 接入Java程序，是需要一个java agent镜像注入到程序里面的。
 
@@ -289,7 +303,7 @@ spec:
 - SW_AGENT_INSTANCE_NAME：实例名称，通常用于表示同一个服务不同的示例，默认为UUID@hostname，推荐使用Pod名称作为实例名称
 - SW_AGENT_COLLECTOR_BACKEND_SERVICES：Skywalking OAP svc地址
 
-其他变量可以参考：https://skywalking.apache.org/docs/skywalking-java/v9.4.0/en/setup/service-agent/java-agent/configurations/
+其他变量可以参考：[SkyWalking Java Agent Configurations](https://skywalking.apache.org/docs/skywalking-java/v9.4.0/en/setup/service-agent/java-agent/configurations/)
 
 ### 实战示例
 
@@ -432,7 +446,7 @@ Go程序接入skywalking，也是两种方法：
 
 其它变量可以参考：
 
-- https://skywalking.apache.org/docs/skywalking-go/v0.5.0/en/advanced-features/settings-override/
+- [SkyWalking Go Settings Override](https://skywalking.apache.org/docs/skywalking-go/v0.5.0/en/advanced-features/settings-override/)
 
 ### 实战示例
 

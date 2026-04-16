@@ -149,7 +149,8 @@ containers:
 "CrossSubnet"，CALICO_NETWORKING_BACKEND修改为"bird"，表示启用BGP模式。
 ~~~
 
-> 备注：当CALICO_IPV4POOL_IPIP被设置为“CrossSubnet”时，Calico可以为不同子网中的节点创建IPIP隧道，以便它们可以通过隧道相互通信。在 BGP 模式下，IPIP 仍然是 Calico 网络的一部分，用于支持 Kubernetes 网络的内部通信，因此仍需要设置CALICO_IPV4POOL_IPIP 参数。设置为 “CrossSubnet” 表示启用 IPIP 模式，且IPIP 模式的隧道可以跨越多个子网，而不仅仅是在同一子网内（子网值物理机网络）。这有助于支持更大规模的Kubernetes 网络，其中节点分布在多个子网中。
+> [!info] 备注
+> 当CALICO_IPV4POOL_IPIP被设置为”CrossSubnet”时，Calico可以为不同子网中的节点创建IPIP隧道，以便它们可以通过隧道相互通信。在 BGP 模式下，IPIP 仍然是 Calico 网络的一部分，用于支持 Kubernetes 网络的内部通信，因此仍需要设置CALICO_IPV4POOL_IPIP 参数。设置为 “CrossSubnet” 表示启用 IPIP 模式，且IPIP 模式的隧道可以跨越多个子网，而不仅仅是在同一子网内（子网值物理机网络）。这有助于支持更大规模的Kubernetes 网络，其中节点分布在多个子网中。
 
 ## 配置VXLAN模式
 
@@ -179,7 +180,7 @@ containers:
 
 ## 安装calico-deployment部署
 
-1. 从官网找到最新版calico的yaml链接：https://docs.tigera.io/calico/latest/getting-started/kubernetes/self-managed-onprem/onpremises#install-calico
+1. 从官网找到最新版calico的yaml链接：[Calico安装文档](https://docs.tigera.io/calico/latest/getting-started/kubernetes/self-managed-onprem/onpremises#install-calico)
 2. 下载yaml文件部署
 
 # 其他常用网络插件
@@ -192,5 +193,6 @@ containers:
 
 4、Cilium：是一个支持L3、L4和L7网络安全的CNI插件，具有网络和安全功能集成，使用eBPF技术，可以实现更好的性能和可观测性。
 
+> [!tip] 提示
 > 对于小规模的Kubernetes集群，Flannel和Weave Net比较适合，而对于大规模的集群，Calico、Cilium则是一个更好的选择。
 
