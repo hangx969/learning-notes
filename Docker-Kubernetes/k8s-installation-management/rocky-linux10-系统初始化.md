@@ -92,8 +92,6 @@ dnf install -y wget net-tools nfs-utils lrzsz gcc gcc-c++ make cmake \
   telnet coreutils iputils iproute nmap-ncat jq psmisc git bash-completion \
   yum-utils device-mapper-persistent-data lvm2 bind-utils
 
-# 开启 WebUI 控制台（可选，通过 IP:9090 端口访问）
-systemctl enable --now cockpit.socket
 ```
 
 ### 3. 配置网络
