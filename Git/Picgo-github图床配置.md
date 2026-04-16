@@ -66,13 +66,13 @@ github、picgo、typora都需要配置。
 
   ![image-20220911132544225](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202209111325254.png)
 
-  ### Typora配置
+### Typora配置
 
-  偏好设置 - 图像：
+偏好设置 - 图像：
 
-  ![image-20220911132923566](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202209111329625.png)
+![image-20220911132923566](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202209111329625.png)
 
-  可点击验证图片选项，测试上传是否能成功。
+可点击验证图片选项，测试上传是否能成功。
 
 ### Troubleshooting
 
@@ -84,11 +84,9 @@ github、picgo、typora都需要配置。
 > [!tip] 图片不显示
 > typora 中图片上传成功，但是 typora 中不显示。可能是 GitHub 图片被屏蔽；解决办法是修改 host 文件（`C:\Windows\System32\drivers\etc\hosts`），加上：
 
-  ```shell
-  185.199.108.133 raw.githubusercontent.com
-  185.199.109.133 raw.githubusercontent.com
-  185.199.110.133 raw.githubusercontent.com
-  185.199.111.133 raw.githubusercontent.com
-  ```
-
-  
+```shell
+185.199.108.133 raw.githubusercontent.com
+185.199.109.133 raw.githubusercontent.com
+185.199.110.133 raw.githubusercontent.com
+185.199.111.133 raw.githubusercontent.com
+```

@@ -14,15 +14,15 @@ aliases:
 
 ## 部署node-exporter
 
-- node-exporter可以采集机器（物理机、虚拟机、云主机等）的监控指标数据，能够采集到的指标包括CPU, 内存，磁盘，网络，文件数等信息。
+- node-exporter可以采集机器(物理机、虚拟机、云主机等)的监控指标数据,能够采集到的指标包括CPU, 内存,磁盘,网络,文件数等信息。
 
 ### 安装node-exporter
 
-~~~sh
+```sh
 kubectl create ns monitor-sa
-~~~
+```
 
-~~~yaml
+```yaml
 apiVersion: apps/v1
 kind: DaemonSet  #可以保证k8s集群的每个节点都运行完全一样的pod
 metadata:
@@ -41,8 +41,8 @@ spec:
     spec:
       hostPID: true
       hostIPC: true
-      hostNetwork: true #表示这个pod不用网络插件划分Ip，共享宿主机IP，调度到哪个node上，就用哪个node的IP。
-      # hostNetwork、hostIPC、hostPID都为True时，表示这个Pod里的所有容器，会直接使用宿主机的网络，直接与宿主机进行IPC（进程间通信）通信，可以看到宿主机里正在运行的所有进程。加入了hostNetwork:true会直接将我们的宿主机的9100端口映射出来，从而不需要创建service在宿主机上就会有一个9100的端口
+      hostNetwork: true #表示这个pod不用网络插件划分Ip,共享宿主机IP,调度到哪个node上,就用哪个node的IP。
+      # hostNetwork、hostIPC、hostPID都为True时,表示这个Pod里的所有容器,会直接使用宿主机的网络,直接与宿主机进行IPC(进程间通信)通信,可以看到宿主机里正在运行的所有进程。加入了hostNetwork:true会直接将我们的宿主机的9100端口映射出来,从而不需要创建service在宿主机上就会有一个9100的端口
       containers:
       - name: node-exporter
         image: prom/node-exporter:v0.16.0
@@ -53,16 +53,16 @@ spec:
           requests:
             cpu: 0.15  #这个容器运行至少需要0.15核cpu
         securityContext:
-          privileged: true  #开启特权模式，任何在容器内运行的进程都将拥有几乎与主机上运行的进程相同的权限。这意味着这些进程可以访问主机的所有资源，包括操作系统和硬件设备。
+          privileged: true  #开启特权模式,任何在容器内运行的进程都将拥有几乎与主机上运行的进程相同的权限。这意味着这些进程可以访问主机的所有资源,包括操作系统和硬件设备。
         args:
-        - --path.procfs  #配置挂载宿主机（node节点）的路径
+        - --path.procfs  #配置挂载宿主机(node节点)的路径
         - /host/proc
-        - --path.sysfs  #配置挂载宿主机（node节点）的路径
+        - --path.sysfs  #配置挂载宿主机(node节点)的路径
         - /host/sys
         - --collector.filesystem.ignored-mount-points
-        - '"^/(sys|proc|dev|host|etc)($|/)"' #node-exporter在收集文件系统指标时，将忽略挂载点路径以/sys、/proc、/dev、/host或/etc开头的文件系统。这些路径通常包含的是操作系统和运行环境的数据，而不是用户数据，因此通常不需要监控它们的文件系统使用情况。忽略这些路径可以减少node-exporter的输出，使得输出的指标更加关注于对用户更有价值的数据。
+        - '"^/(sys|proc|dev|host|etc)($|/)"' #node-exporter在收集文件系统指标时,将忽略挂载点路径以/sys、/proc、/dev、/host或/etc开头的文件系统。这些路径通常包含的是操作系统和运行环境的数据,而不是用户数据,因此通常不需要监控它们的文件系统使用情况。忽略这些路径可以减少node-exporter的输出,使得输出的指标更加关注于对用户更有价值的数据。
         volumeMounts:
-        #将主机/dev、/proc、/sys这些目录挂到容器中，这是因为我们采集的很多节点数据都是通过这些文件来获取系统信息的。
+        #将主机/dev、/proc、/sys这些目录挂到容器中,这是因为我们采集的很多节点数据都是通过这些文件来获取系统信息的。
         - name: dev
           mountPath: /host/dev
         - name: proc
@@ -88,41 +88,41 @@ spec:
         - name: rootfs
           hostPath:
             path: /
-~~~
+```
 
 ### 验证exporter数据采集
 
-~~~sh
+```sh
 #查看宿主机的9100端口占用
 ss -antulp | grep :9100
 #查看exporter采集到的数据
 curl http://192.168.40.5:9100/metrics
-~~~
+```
 
 ## 部署prometheus
 
 ### 创建sa并授权
 
-~~~sh
+```sh
 kubectl create serviceaccount monitor -n monitor-sa
-#给sa和sa用户都授权，防止prometheus报错--user=system:serviceaccount:monitor:monitor-sa没有权限。
+#给sa和sa用户都授权,防止prometheus报错--user=system:serviceaccount:monitor:monitor-sa没有权限。
 kubectl create clusterrolebinding monitor-clusterrolebinding -n monitor-sa --clusterrole=cluster-admin  --serviceaccount=monitor-sa:monitor
 
 kubectl create clusterrolebinding monitor-clusterrolebinding-1 -n monitor-sa --clusterrole=cluster-admin --user=system:serviceaccount:monitor:monitor-sa
-#将cluster-admin这个ClusterRole绑定到了一个特定的用户，这个用户是monitor命名空间下的monitor-sa这个ServiceAccount。这里的--user参数的值system:serviceaccount:monitor:monitor-sa是Kubernetes内部用来表示ServiceAccount的一种格式。
-~~~
+#将cluster-admin这个ClusterRole绑定到了一个特定的用户,这个用户是monitor命名空间下的monitor-sa这个ServiceAccount。这里的--user参数的值system:serviceaccount:monitor:monitor-sa是Kubernetes内部用来表示ServiceAccount的一种格式。
+```
 
-> 这两条命令的主要区别在于它们绑定的对象不同，第一条命令是直接绑定到一个`ServiceAccount`，而第二条命令是绑定到一个表示`ServiceAccount`的用户。在实际使用中，这两种方式的效果是相同的，都是将`cluster-admin`这个`ClusterRole`的权限赋予了`monitor`命名空间下的`monitor-sa`这个`ServiceAccount`。
+> 这两条命令的主要区别在于它们绑定的对象不同,第一条命令是直接绑定到一个`ServiceAccount`,而第二条命令是绑定到一个表示`ServiceAccount`的用户。在实际使用中,这两种方式的效果是相同的,都是将`cluster-admin`这个`ClusterRole`的权限赋予了`monitor`命名空间下的`monitor-sa`这个`ServiceAccount`。
 
-> yaml格式的：
+> yaml格式的:
 >
-> ~~~yaml
+> ```yaml
 > apiVersion: v1
 > kind: ServiceAccount
 > metadata:
 >   name: monitor
 >   namespace: monitor-sa
->   
+>
 > ---
 > apiVersion: rbac.authorization.k8s.io/v1
 > kind: ClusterRoleBinding
@@ -149,21 +149,21 @@ kubectl create clusterrolebinding monitor-clusterrolebinding-1 -n monitor-sa --c
 > - apiGroup: rbac.authorization.k8s.io
 >   kind: User
 >   name: system:serviceaccount:monitor:monitor-sa
-> ~~~
+> ```
 
 ### 创建数据存储目录
 
-~~~sh
-#在node-1上创建数据目录并给满权限（否则prometheus写不进去数据）
+```sh
+#在node-1上创建数据目录并给满权限(否则prometheus写不进去数据)
 mkdir /data
 chmod 777 /data/
-~~~
+```
 
 ### 安装prometheus server服务
 
 #### 创建configmap存储配置
 
-~~~yaml
+```yaml
 ---
 kind: ConfigMap
 apiVersion: v1
@@ -244,24 +244,24 @@ data:
         target_label: kubernetes_namespace
       - source_labels: [__meta_kubernetes_service_name]
         action: replace
-        target_label: kubernetes_name 
-~~~
+        target_label: kubernetes_name
+```
 
-> summary：
+> summary:
 >
-> job_name: 'kubernetes-node' ：访问node exporter，获取物理机监控数据
+> job_name: 'kubernetes-node' :访问node exporter,获取物理机监控数据
 >
-> job_name: 'kubernetes-node-cadvisor'：可以请求到node上的kubelet的cAdvisior里面的监控数据
+> job_name: 'kubernetes-node-cadvisor':可以请求到node上的kubelet的cAdvisior里面的监控数据
 >
-> job_name: 'kubernetes-apiserver' ：采集apiserver 6443端口获取到的监控数据
+> job_name: 'kubernetes-apiserver' :采集apiserver 6443端口获取到的监控数据
 >
-> job_name: 'kubernetes-service-endpoints' ：创建svc的时候加一个annotation，svc就能被这个job监控到
+> job_name: 'kubernetes-service-endpoints' :创建svc的时候加一个annotation,svc就能被这个job监控到
 
 #### 创建prometheus pod
 
 - 通过deployment把prometheus server调度到有数据目录的node-1上面
 
-  ~~~yaml
+  ```yaml
   ---
   apiVersion: apps/v1
   kind: Deployment
@@ -315,11 +315,11 @@ data:
             hostPath:
              path: /data
              type: Directory
-  ~~~
-  
-  > 如果集群搭建了nfs供应商，可以用nfs存储
+  ```
+
+  > 如果集群搭建了nfs供应商,可以用nfs存储
   >
-  > ~~~yaml
+  > ```yaml
   > #......
   >      volumes:
   >         - name: prometheus-config
@@ -328,7 +328,7 @@ data:
   >         - name: prometheus-storage-volume
   >           persistentVolumeClaim:
   >             claimName: pvc-prometheus
-  > 
+  >
   > ---
   > kind: PersistentVolumeClaim
   > apiVersion: v1
@@ -342,11 +342,11 @@ data:
   >     requests:
   >       storage: 1Gi
   >   storageClassName:  sc-nfs
-  > ~~~
+  > ```
 
 #### 创建svc代理prometheus server
 
-~~~yaml
+```yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -363,21 +363,21 @@ spec:
   - port: 9090
     targetPort: 9090
     protocol: TCP
-~~~
+```
 
 # Grafana v8.4.5部署
 
 ## 部署Grafana服务
 
-~~~sh
+```sh
 #grafana用到的镜像为k8s.gcr.io/heapster-grafana-amd64:v5.0.4
-#可以创建pod的时候拉取，也可以先上传到node上
+#可以创建pod的时候拉取,也可以先上传到node上
 docker load -i grafana_8.4.5.tar.gz
 #上传grafana的yaml文件
 kubectl apply -f dep-grafana.yaml
-~~~
+```
 
-~~~yaml
+```yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -462,11 +462,11 @@ spec:
   selector:
     k8s-app: grafana
   type: NodePort
-~~~
+```
 
-> 部署了nfs供应商的集群里面可以直接用：
+> 部署了nfs供应商的集群里面可以直接用:
 >
-> ~~~yaml
+> ```yaml
 >      volumes:
 >       - name: ca-certificates
 >         hostPath:
@@ -488,7 +488,7 @@ spec:
 >   - ReadWriteMany
 >   resources:
 >     requests:
->       storage: 200Mi 
+>       storage: 200Mi
 >   storageClassName:  sc-nfs
 > ---
 > kind: PersistentVolumeClaim
@@ -501,13 +501,13 @@ spec:
 >   - ReadWriteMany
 >   resources:
 >     requests:
->       storage: 200Mi 
+>       storage: 200Mi
 >   storageClassName:  sc-nfs
-> ~~~
+> ```
 
 ## 接入prometheus服务
 
-- 通过nodeIP:nodeport登陆grafana，在浏览器访问UI
+- 通过nodeIP:nodeport登陆grafana,在浏览器访问UI
 
 - 默认admin/admin
 
@@ -525,5 +525,4 @@ spec:
 
 ## 导入监控模板
 
-- import **node_exporter.json**、**docker_rev1.json** (ID为：8919，9276，11074)
-
+- import **node_exporter.json**、**docker_rev1.json** (ID为:8919,9276,11074)

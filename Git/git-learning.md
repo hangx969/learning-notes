@@ -11,7 +11,7 @@ aliases:
 
 # 版本控制
 
-## 版本控制工具 
+## 版本控制工具
 
 主流版本：
 
@@ -27,7 +27,7 @@ aliases:
 
 - 集中版本控制：SVN
 
-  - 版本都保存在服务器上。用户需要联网从中央服务器上拉下来最新版本再修改提交。必须联网才能工作，对带宽要求比较高。
+  - 版本都保存在服务器上。用户需要联网从中央服务器上拉下来最新版本再修改提交。必须联网才能工作,对带宽要求比较高。
 
   - 用户自己电脑上只有某一部分文件。
 
@@ -84,7 +84,6 @@ aliases:
 
 - Staged
   - 暂存状态，文件已经暂存到暂存区。执行git commit则将修改同步到本地仓库中, 这时本地仓库中的文件和工作区文件变为一致, 文件为Unmodified状态. 执行git reset HEAD filename取消暂存, 文件状态为Modified
-
 
  查看文件状态
 
@@ -152,12 +151,12 @@ git remote add origin https://github.com/hangx969/Scripts.git
 
 有时候在一开始添加remote的时候添加的是https url，后面希望更换成ssh url：
 
-~~~sh
+```sh
 # 查看当前remote
 git remote -v
 # 切换remote
 git remote set-url origin git@ssh.xxxx
-~~~
+```
 
 ## 免密码登录git
 
@@ -169,17 +168,18 @@ git remote set-url origin git@ssh.xxxx
 
 - git remote add采用ssh的link
 
-  ~~~sh
+  ```sh
   git remote add origin git@github.com:hangx969/k8s-platform-tools.git
   git add .
   git commit -m "xxx"
   git checkout -b xxx
   git push origin xxx
-  ~~~
-
+  ```
 
 # Git分支管理
+
 ## 查看操作
+
 ```sh
 # 查看本地分支
 git branch
@@ -190,8 +190,9 @@ git branch -a
 ```
 
 ## 获取远程分支
+
 ```sh
-# 从远程拉取最新的分支/标签信息到本地，顺手清理本地那些“远程已经删除”的origin/xxx分支
+# 从远程拉取最新的分支/标签信息到本地，顺手清理本地那些"远程已经删除"的origin/xxx分支
 git fetch -p
 ```
 
@@ -256,6 +257,7 @@ git push origin --delete feature-x
      如果是第一次将这个分支推送到远程仓库，Git 会创建远程的 "dev" 分支。
 
 # Git版本管理
+
 ```sh
 # 查看代码提交记录
 git log
@@ -302,14 +304,14 @@ git add xxx.yaml
 - 提交暂存区的内容到本地仓库
 
 ```bash
-git commit -m “comments”
+git commit -m "comments"
 ```
 
 - 新建分支
 
-~~~sh
+```sh
 git checkout -b aaa-bbb-ccc
-~~~
+```
 
 - 提交至远程仓库的新分支
 
@@ -324,14 +326,14 @@ git push origin aaa-bbb-ccc
 
 推送新分支到远程仓库之后，在远程仓库上会执行创建Pull Request、Merge Pull Request等操作。
 
-- 在github上一般采用“Merge and rebase”方式来merge PR：
+- 在github上一般采用"Merge and rebase"方式来merge PR：
 
   1. 先对PR分支执行rebase，PR分支的commit会加到main分支的最新状态上
   2. 再通过merge commit将PR的更改合并到main上
 
   这样main分支上会保留一个merge commit。
 
-- azure devops上一般采用“Rebase and fast-forward”：
+- azure devops上一般采用"Rebase and fast-forward"：
 
   1. 对 PR 的分支执行一个 rebase 操作，将 PR 分支上的提交重新应用到目标分支的最新状态上。
   2. 然后通过 fast-forward merge 将这些提交直接添加到目标分支中，不会创建 merge commit。
@@ -368,6 +370,7 @@ git merge origin/main # 保留完整历史
 ```
 
 ## 给commit打tag
+
 有时候我们推送上去的commit需要打一个tag，这个tag往往会代表一个breaking change的标记。推送commit和推送tag分开操作：
 
 ```sh
@@ -407,7 +410,7 @@ git push -f origin main
 
 ## 清除所有git history并覆盖到远端仓库
 
-~~~sh
+```sh
 cd <repo dir>
 rm -rf ./git
 git init
@@ -418,7 +421,7 @@ git commit -m "initial commit with cleaned history"
 # git branch -M main
 git remote add origin <remote-repo-url> # 去github repo上copy ssh url
 git push -f origin main
-~~~
+```
 
 此操作会覆盖掉远程仓库的历史记录。完成之后，repo就只会有一个干净的提交记录，所有历史记录都会被清除。
 
@@ -426,7 +429,7 @@ git push -f origin main
 
 有时候有些文件已经被git add和commit了，但是后面在gitignore中配置忽略他们。这时需要重新track文件：
 
-~~~sh
+```sh
 # 先更改.gitignore文件
 # 取消track
 git rm --cached -r Python/python-manuscripts
@@ -437,15 +440,13 @@ git add .
 git commit -m "re-track files"
 git push origin main
 # 完成后，git将不再追踪这些后来配置的忽略文件
-~~~
-
-
+```
 
 # git配置代理
 
 ## git代理
 
-~~~sh
+```sh
 # 设置
 git config --global http.proxy 'socks5://127.0.0.1:7890' 
 git config --global https.proxy 'socks5://127.0.0.1:7890'
@@ -453,18 +454,18 @@ git config --global https.proxy 'socks5://127.0.0.1:7890'
 # 恢复
 git config --global --unset http.proxy
 git config --global --unset https.proxy
-~~~
+```
 
 ## git clone ssh设置代理
 
-~~~sh
+```sh
 vim ~/.ssh/config
 # 全局
 # ProxyCommand nc -X 5 -x 127.0.0.1:7890 %h %p
 # 只为特定域名设定
 Host github.com
     ProxyCommand nc -X 5 -x 127.0.0.1:7890 %h %p
-~~~
+```
 
 # 实用git工具
 
@@ -478,7 +479,7 @@ Host github.com
 
 # Lab
 
-~~~sh
+```sh
 # 基于以下内容创作本代码，用于讲解DevOps精讲课Git与Github章节
 # https://www.bookstack.cn/read/backlog-git-tutorial/35.md
 # https://www.youtube.com/watch?v=tRZGeaHPoaw&ab_channel=KevinStratvert
@@ -611,7 +612,7 @@ git clone https://github.com/cengxiye/sid.github.io.git
 # 操作对象：git pull 操作的对象是当前分支上的远程变更
 # 执行时机：git clone 只需要执行一次，创建本地仓库的拷贝
 # 执行时机：git pull 需要在你想要获取远程仓库变更时执行
-~~~
+```
 
 # Troubleshooting
 
@@ -627,17 +628,17 @@ git clone https://github.com/cengxiye/sid.github.io.git
 
 - git pull时如果遇到报错
 
-  ~~~sh
+  ```sh
   fetch-pack: unexpected disconnect while reading sideband packet
   fatal: early EOF
   fatal: fetch-pack: invalid index-pack output
-  ~~~
+  ```
 
   - 原因：远程仓库的文件过大，需要设置本地仓库大小。
 
   - 解决：
 
-    ~~~sh
+    ```sh
     git config http.sslVerify "false"
     #若出现下列错误：
     git config http.sslVerify "false" fatal: not in a git directory
@@ -645,7 +646,7 @@ git clone https://github.com/cengxiye/sid.github.io.git
     git config --global http.sslVerify "false"
     #文件大小的上限设置：
     git config --global http.postBuffer 524288000
-    ~~~
+    ```
 
 ## 22端口连接报错
 
@@ -653,44 +654,44 @@ git clone https://github.com/cengxiye/sid.github.io.git
 
 1. 先查看下具体ssh报错：
 
-~~~sh
+```sh
 ssh -vT git@github.com
-~~~
+```
 
 2. 结果会显示使用的ssh配置文件，以及连接github 22端口超时：
 
-~~~sh
+```sh
 OpenSSH_for_Windows_9.5p1, LibreSSL 3.8.2
 debug1: Reading configuration data C:\\Users\\xuhan/.ssh/config
 debug1: C:\\Users\\xuhan/.ssh/config line 1: Applying options for github.com
 debug1: Connecting to ssh.github.com [20.205.243.160] port 22.
-~~~
+```
 
 > [!info] SSH 端口说明
 > GitHub 的标准 SSH 端口是 22。但在某些网络环境中（公司防火墙、ISP限制等），端口 22 可能被封锁。GitHub 提供了替代方案：通过 ssh.github.com 的 443 端口（HTTPS 端口）来进行 SSH 连接。
 
 3. 修改这个ssh配置文件，改成连接ssh的443端口：
 
-~~~sh
+```sh
 gsudo notepad C:\\Users\\xuhan/.ssh/config
 
 Host github.com
   Hostname ssh.github.com
   Port 443
-~~~
+```
 
 4. 修改完成后测试连接github：
 
-~~~sh
+```sh
 ssh -T git@github.com
-~~~
+```
 
 结果显示：``Hi xxxxx! You've successfully authenticated, but GitHub does not provide shell access.`就表示一切正常了。
 
 5. 再次尝试上传下载github文件，结果显示正常：
 
-~~~sh
+```sh
 git add .
 git commit -m "Update"
 git push origin main
-~~~
+```
