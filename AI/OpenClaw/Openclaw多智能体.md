@@ -333,6 +333,9 @@ openclaw agents add frontend-engineer --workspace ~/.openclaw/workspace-frontend
 - 这部分是为“`architect` 作为总控，调用 `pm` / `frontend-engineer` / `backend-engineer`”的模式准备的
 - `maxPingPongTurns` 目前 **暂未添加**
 
+- tools.agentToAgent.allow：只是更外层的 agent-to-agent 能力开关
+- agents.*.subagents.allowAgents：才是 sessions_spawn 真正看的目标 agent allowlist
+
 ### channels.feishu 顶层已有配置（继续保留）
 以下 Feishu 顶层行为配置在多 agent 改造后仍继续保留：
 
