@@ -1,3 +1,14 @@
+---
+title: Ubuntu修改启动内核
+tags:
+  - linux
+  - ubuntu
+  - kernel
+  - grub
+aliases:
+  - Ubuntu修改启动内核
+---
+
 - 检查已安装的内核
 
   ~~~sh

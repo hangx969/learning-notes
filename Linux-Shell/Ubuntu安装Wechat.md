@@ -1,3 +1,13 @@
+---
+title: Ubuntu安装Wechat
+tags:
+  - linux
+  - ubuntu
+  - wechat
+aliases:
+  - Ubuntu安装微信
+---
+
 Ubuntu 22.04.4 LTS版本，安装方法： 
 
 1. 先安装星火商店：https://flatpak.org/setup/Ubuntu 

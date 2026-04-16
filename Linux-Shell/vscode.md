@@ -1,3 +1,13 @@
+---
+title: VSCode命令行安装插件
+tags:
+  - linux
+  - vscode
+  - plugin
+aliases:
+  - VSCode插件安装
+---
+
 # 命令行安装插件
 
 - 在vsode plugin market下载插件安装包到home目录

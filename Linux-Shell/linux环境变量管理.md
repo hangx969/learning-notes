@@ -1,3 +1,13 @@
+---
+title: Linux环境变量管理
+tags:
+  - linux
+  - direnv
+  - environment-variables
+aliases:
+  - direnv环境变量管理
+---
+
 # 概述
 
 direnv是一个环境变量管理工具，它可以扩展你的shell的环境变量。它的工作原理是根据当前目录动态地改变环境变量。具体来说，当你进入一个目录时，它会加载该目录下的.envrc文件来改变环境变量，这个过程被称为"装载"（loading）。相反，当你离开该目录时，它会卸载这些环境变量，这个过程被称为"卸载"（unloading）。

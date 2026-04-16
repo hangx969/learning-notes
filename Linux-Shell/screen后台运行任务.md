@@ -1,3 +1,13 @@
+---
+title: screen后台运行任务
+tags:
+  - linux
+  - screen
+  - terminal
+aliases:
+  - screen会话管理
+---
+
 一些任务需要在一个终端运行，能够保留运行日志，并不随着终端的关闭而终止。这个时候，就需要screen命令来执行这样的事。
 
 # screen命令后台运行

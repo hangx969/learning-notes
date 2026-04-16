@@ -1,3 +1,14 @@
+---
+title: nmcli管理网络配置
+tags:
+  - linux
+  - nmcli
+  - network
+  - NetworkManager
+aliases:
+  - nmcli网络管理
+---
+
 # 背景
 
 - 在Linux操作系统中，我们经常通过修改网卡的配置文件来修改IP地址，这个方法确实非常的方便。但在高版本Linux中，特别是在CentOS8、RHEL8等系统中，已经完全采用NetworkManager服务来管理网络，network服务已经被废弃了，所以最好的方式就是采用nmcli命令来配置IP地址信息。

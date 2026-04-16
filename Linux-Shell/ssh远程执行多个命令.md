@@ -1,3 +1,13 @@
+---
+title: SSH远程执行多个命令
+tags:
+  - linux
+  - ssh
+  - remote-execution
+aliases:
+  - SSH批量执行命令
+---
+
 # ssh到单台服务器
 
 ~~~sh

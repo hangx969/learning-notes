@@ -1,3 +1,14 @@
+---
+title: Ubuntu安装显卡驱动
+tags:
+  - linux
+  - ubuntu
+  - nvidia
+  - GPU
+aliases:
+  - Ubuntu安装NVIDIA显卡驱动
+---
+
 1.先检查系统有没有安装好GPU驱动
 
 ```sh

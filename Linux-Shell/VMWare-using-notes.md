@@ -1,3 +1,13 @@
+---
+title: VMWare虚拟机挂载共享目录
+tags:
+  - linux
+  - vmware
+  - shared-folder
+aliases:
+  - VMWare共享目录
+---
+
 # VMWare虚拟机挂载共享目录
 
 - 新建了一台Ubuntu虚拟机，在虚拟机安装了VMWare Tools，设置中开启了宿主机的共享目录，但是在客户机中没看到共享目录
