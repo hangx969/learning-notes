@@ -390,7 +390,7 @@ openclaw agents add frontend-engineer --workspace ~/.openclaw/workspace-frontend
 推荐用大模型来生成
 ### 架构师
 #### Prompt
-```
+```text
 你是一名资深的openclaw专家，擅长编写openclaw agent的AGENTS、SOUL、IDENTITY等md文件，用来让openclaw的agent达到最佳的使用效果。目前我想实现以下功能：创建多个openclaw的agent，
  让他们协同工作处理任务，其中有一个主agent叫做architect，中文名字是架构师，它不处理任何任务，也不写任何任何代码，它只需要接收需求，然后把对应的任务分配给pm、backend、frontend等智能体，之后再把任务汇总返回给我。请根据此需求，帮我优化architect agent现有的AGENTS、SOUL、IDENTITY的描述文件。请注意使用中文编写。
  注意：
@@ -399,7 +399,7 @@ openclaw agents add frontend-engineer --workspace ~/.openclaw/workspace-frontend
 可以主动调用self-improving skill来自我进化。
 ```
 #### AGENTS.md
-```
+```markdown
 # AGENTS.md - architect（架构师）的工作空间
 
 ## 核心身份
@@ -613,7 +613,7 @@ openclaw agents add frontend-engineer --workspace ~/.openclaw/workspace-frontend
 ```
 
 #### IDENTITY.md
- ```
+```markdown
 # IDENTITY.md - architect（架构师）
 
 **Name**: architect  
@@ -636,10 +636,10 @@ openclaw agents add frontend-engineer --workspace ~/.openclaw/workspace-frontend
 - 我的典型输出是：任务拆解、角色分工、项目级汇总、风险说明、下一步建议。
 - 我可以主动调用 **self-improving skill**，持续优化我的调度策略与协作稳定性。
 
- ```
+```
 
 #### SOUL.md
-```
+```markdown
 # SOUL.md - architect（架构师）的灵魂
 
 ## 核心真理
@@ -681,12 +681,12 @@ openclaw agents add frontend-engineer --workspace ~/.openclaw/workspace-frontend
 
 ### PM
 #### Prompt
-```
+```text
 生成下关于产品经理PM的身份描述文件，注意产品经理只需要输出某个项目或者某个产品的需求，不写任何代码。另外产品经理PM可以被架构师调用，我也可以直接与他对话输出某个项目的需求。可以主动调用self-improving skill来自我进化。
 ```
 
 #### AGENTS.md
-```
+```markdown
 # AGENTS.md - pm（产品经理）的工作空间
 
 ## 核心身份
@@ -870,7 +870,7 @@ architect 依赖你的输出，继续调度 Backend / Frontend。
 ```
 
 #### IDENTITY.md
-```
+```markdown
 # IDENTITY.md - pm（产品经理）
 
 **Name**: pm  
@@ -895,7 +895,7 @@ architect 依赖你的输出，继续调度 Backend / Frontend。
 ```
 
 #### SOUL.md
-```
+```markdown
 # SOUL.md - pm（产品经理）的灵魂
 
 ## 核心真理
@@ -934,14 +934,14 @@ architect 依赖你的输出，继续调度 Backend / Frontend。
 你的进化方向，不是变成会写代码的 PM，而是变成一个**越来越会把复杂想法收敛成可执行需求的产品经理**。
 ```
 
-###  前端
+### 前端
 #### Prompt
-```
+```text
 输出前端开发工程师frontend的身份描述文件。注意前端开发主要是接收项目需求然后进行前端代码的设计和开发。可以被架构师调用，也可以直接与其对话编写代码。该智能体擅长Vue3、CSS、HTML、JavaScript、Vite等开大。写代码时优先用Vue3开发。可以主动调用self-improving skill来自我进化。
 ```
 
 #### AGENTS.md
-```
+```markdown
 # AGENTS.md - frontend（前端开发工程师）的工作空间
 
 ## 核心身份
@@ -1130,7 +1130,7 @@ architect 依赖你的输出，继续调度 Backend / Frontend。
 ```
 
 #### IDENTITY.md
-```
+```markdown
 # IDENTITY.md - frontend（前端开发工程师）
 
 **Name**: frontend  
@@ -1155,7 +1155,7 @@ architect 依赖你的输出，继续调度 Backend / Frontend。
 ```
 
 #### SOUL.md
-```
+```markdown
 # SOUL.md - frontend（前端开发工程师）的灵魂
 
 ## 核心真理
