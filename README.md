@@ -1,6 +1,6 @@
-# Cloud-Native & Infrastructure Learning Notes
+# 云原生与基础设施学习笔记
 
-A comprehensive knowledge base covering cloud-native technologies, infrastructure automation, programming languages, AI/ML, and modern DevOps practices.
+涵盖云原生技术、基础设施自动化、编程语言、AI/ML 和现代 DevOps 实践的综合知识库。
 
 > **297 篇文档 · 17 个技术领域 · 42 篇知识编译层文件**
 
@@ -31,148 +31,148 @@ A comprehensive knowledge base covering cloud-native technologies, infrastructur
 
 ---
 
-## 📚 Container Orchestration & Kubernetes
+## 📚 容器编排与 Kubernetes
 
 - [Docker](./Docker-Kubernetes/docker)
-  - Docker fundamentals and best practices
-  - Containerized service deployment
+  - Docker 基础与最佳实践
+  - 容器化服务部署
 
-- [Kubernetes Foundations](./Docker-Kubernetes/k8s-installation-management)
-  - Installation methods (kubeadm, binary)
-  - Cluster upgrades and version management
-  - Troubleshooting guides
+- [Kubernetes 基础](./Docker-Kubernetes/k8s-installation-management)
+  - 安装方式（kubeadm、二进制）
+  - 集群升级与版本管理
+  - 故障排查指南
 
-- [Kubernetes Core Resources](./Docker-Kubernetes/k8s-basic-resources)
-  - System components and architecture
-  - Workload resources (Pod, Deployment, DaemonSet, StatefulSet)
-  - Job scheduling (Job, CronJob)
-  - Networking (Service, Ingress)
-  - Configuration management (ConfigMap, Secrets)
-  - Access control (Authentication, Authorization)
-  - Storage (Volumes, PV, PVC)
-  - Auto-scaling (HPA, VPA)
+- [Kubernetes 核心资源](./Docker-Kubernetes/k8s-basic-resources)
+  - 系统组件与架构
+  - 工作负载资源（Pod、Deployment、DaemonSet、StatefulSet）
+  - 任务调度（Job、CronJob）
+  - 网络（Service、Ingress）
+  - 配置管理（ConfigMap、Secrets）
+  - 访问控制（认证、授权、准入）
+  - 存储（Volumes、PV、PVC）
+  - 自动伸缩（HPA、VPA）
 
-- [Kubernetes Advanced Topics](./Docker-Kubernetes/)
-  - [Service Mesh](./Docker-Kubernetes/k8s-service-mesh)
-  - [Security & Authentication](./Docker-Kubernetes/k8s-security-auth)
-  - [Storage Solutions](./Docker-Kubernetes/k8s-storage)
-  - [Scaling Strategies](./Docker-Kubernetes/k8s-scaling)
-  - [AI & GPU Workloads](./Docker-Kubernetes/k8s-ai-gpu)
-  - [Database & Middleware on K8s](./Docker-Kubernetes/k8s-db-middleware)
+- [Kubernetes 进阶主题](./Docker-Kubernetes/)
+  - [服务网格](./Docker-Kubernetes/k8s-service-mesh)
+  - [安全与认证](./Docker-Kubernetes/k8s-security-auth)
+  - [存储方案](./Docker-Kubernetes/k8s-storage)
+  - [弹性伸缩](./Docker-Kubernetes/k8s-scaling)
+  - [AI 与 GPU 工作负载](./Docker-Kubernetes/k8s-ai-gpu)
+  - [数据库与中间件](./Docker-Kubernetes/k8s-db-middleware)
   - [Spring Cloud on K8s](./Docker-Kubernetes/k8s-springcloud)
 
-- [Observability & Monitoring](./Docker-Kubernetes/k8s-monitoring-logging)
-  - Prometheus, Grafana, AlertManager
-  - Logging: EFK/ELK Stack
+- [可观测性与监控](./Docker-Kubernetes/k8s-monitoring-logging)
+  - Prometheus、Grafana、AlertManager
+  - 日志：EFK/ELK Stack
 
-- [CI/CD Pipelines](./Docker-Kubernetes/k8s-CICD)
-  - GitLab, Jenkins, GitHub Actions
+- [CI/CD 流水线](./Docker-Kubernetes/k8s-CICD)
+  - GitLab、Jenkins、GitHub Actions
 
-- [Package Management & Operators](./Docker-Kubernetes/)
-  - [Helm & Helm Operators](./Docker-Kubernetes/helm-operator)
+- [包管理与 Operator](./Docker-Kubernetes/)
+  - [Helm 与 Helm Operator](./Docker-Kubernetes/helm-operator)
   - [KubeBlocks](./Docker-Kubernetes/kubeblocks)
 
-- [Container Registries & Platforms](./Docker-Kubernetes/)
+- [容器镜像仓库与平台](./Docker-Kubernetes/)
   - [Harbor](./Docker-Kubernetes/harbor)
-  - [Container Platforms](./Docker-Kubernetes/container-platform) (OpenShift, K3S)
+  - [容器平台](./Docker-Kubernetes/container-platform)（OpenShift、K3S）
 
-- [Kubernetes Tools & UI](./Docker-Kubernetes/k8s-UI-tools)
-  - K9S, Lens, Dashboard, Rancher
+- [Kubernetes 工具与 UI](./Docker-Kubernetes/k8s-UI-tools)
+  - K9S、Lens、Dashboard、Rancher
 
-- [CKA + CKS Certification](./Docker-Kubernetes/CKA-CKS)
+- [CKA + CKS 认证](./Docker-Kubernetes/CKA-CKS)
 
-## ☁️ Cloud Platforms
+## ☁️ 云平台
 
 ### Azure
-- [Virtual Machines & Scale Sets](./Azure/0_Azure-VM-VMSS.md)
+- [虚拟机与规模集](./Azure/0_Azure-VM-VMSS.md)
 - [Azure Kubernetes Service (AKS)](./Azure/)
-  - [AKS Basics](./Azure/2_AKS-basics.md)
-  - [Workload Identity](./Azure/3_AKS-workload-identity.md)
-  - [Key Vault Integration](./Azure/4_AKS-SecretProviderClass-KeyVault.md)
-- [Azure Storage](./Azure/5_Azure-Storage.md)
-- [Azure Networking](./Azure/6_Azure-Networking.md)
-- [Container Services](./Azure/7_ACR-ACI.md)
+  - [AKS 基础](./Azure/2_AKS-basics.md)
+  - [工作负载身份](./Azure/3_AKS-workload-identity.md)
+  - [Key Vault 集成](./Azure/4_AKS-SecretProviderClass-KeyVault.md)
+- [Azure 存储](./Azure/5_Azure-Storage.md)
+- [Azure 网络](./Azure/6_Azure-Networking.md)
+- [容器服务](./Azure/7_ACR-ACI.md)
 - [Azure DevOps](./Azure/)
-  - [DevOps Basics](./Azure/8_Azure-devops-basics.md)
-  - [Self-hosted Agents](./Azure/9_Azure-devops-self-host-agents.md)
-  - [Agent Pool Management](./Azure/10_Azure-devops-agent-pool-management.md)
-- [Azure Policy](./Azure/11_Azure-Policy.md)
-- [Troubleshooting & Tools](./Azure/)
-  - Linux VM troubleshooting
-  - Monitoring tools (Kusto Query, Fiddler, Postman, PerfMon)
-- [Customer Support Resources](./Azure/Customer%20Support)
+  - [DevOps 基础](./Azure/8_Azure-devops-basics.md)
+  - [自托管代理](./Azure/9_Azure-devops-self-host-agents.md)
+  - [代理池管理](./Azure/10_Azure-devops-agent-pool-management.md)
+- [Azure 策略](./Azure/11_Azure-Policy.md)
+- [排障与工具](./Azure/)
+  - Linux 虚拟机排障
+  - 监控工具（Kusto Query、Fiddler、Postman、PerfMon）
+- [客户支持资源](./Azure/Customer%20Support)
 
-### Alibaba Cloud (Aliyun)
-- [ACP Certification](./Aliyun/ACP认证.md)
-- [Compute Services](./Aliyun/计算)
-- [Networking](./Aliyun/网络)
-- [Storage Solutions](./Aliyun/存储)
-- [Database Services](./Aliyun/数据库)
-- [Resource Management](./Aliyun/资源管理)
+### 阿里云（Aliyun）
+- [ACP 认证](./Aliyun/ACP认证.md)
+- [计算服务](./Aliyun/计算)
+- [网络](./Aliyun/网络)
+- [存储方案](./Aliyun/存储)
+- [数据库服务](./Aliyun/数据库)
+- [资源管理](./Aliyun/资源管理)
 
-## 🏗️ Infrastructure as Code
+## 🏗️ 基础设施即代码
 
 - [Terraform](./IaC/)
-  - [Terraform Basics](./IaC/terraform-basics.md)
-  - [Terraform Documentation](./IaC/terraform-docs.md)
+  - [Terraform 基础](./IaC/terraform-basics.md)
+  - [Terraform 文档](./IaC/terraform-docs.md)
 
-## 💻 Programming Languages
+## 💻 编程语言
 
 ### Python
-- [Python Fundamentals](./Python/python-基础)
-- [Data Analysis & AI/ML](./Python/python-数据分析-AI大模型)
-- [Network Programming & Frontend](./Python/python-网络编程-前端)
-- [DevOps Development](./Python/python-运维开发)
-- [Python Manuscripts & Projects](./Python/python-manuscripts)
+- [Python 基础](./Python/python-基础)
+- [数据分析与 AI 大模型](./Python/python-数据分析-AI大模型)
+- [网络编程与前端](./Python/python-网络编程-前端)
+- [运维开发](./Python/python-运维开发)
+- [Python 手稿与项目](./Python/python-manuscripts)
 
 ### Go
-- [Go Programming](./Go/)
+- [Go 编程](./Go/)
 
 ### C++
-- [C++ Development](./C++/)
+- [C++ 开发](./C++/)
 
-## 🤖 AI & Machine Learning
+## 🤖 AI 与机器学习
 
-- [AI Tools & Workflows](./AI/)
+- [AI 工具与工作流](./AI/)
   - [Claude Code](./AI/ClaudeCode)
   - [GitHub Copilot CLI](Copilot%20CLI.md)
-  - [Prompt Engineering](提示词.md)
+  - [提示词工程](提示词.md)
 
-- [GPU Computing & Deep Learning](./GPU-DeepLearning/)
+- [GPU 计算与深度学习](./GPU-DeepLearning/)
 
-## 💾 Data Infrastructure
+## 💾 数据基础设施
 
-### Databases
-- [MySQL Deployment & Management](./Database/)
-  - MySQL MGR Cluster
-  - MySQL Fundamentals
+### 数据库
+- [MySQL 部署与管理](./Database/)
+  - MySQL MGR 集群
+  - MySQL 基础
 - [Redis](./Database/)
-  - Source installation and configuration
+  - 源码安装与配置
 
-### Message Queues & Middleware
+### 消息队列与中间件
 - [Kafka](./Middlewares/Kafka.md)
 - [RabbitMQ](./Middlewares/RabbitMQ.md)
 - [RocketMQ](./Middlewares/RocketMQ.md)
 
-## 🖥️ System Operations & Computing
+## 🖥️ 系统运维与计算
 
-- [Linux & Shell](./Linux-Shell/)
-  - Linux fundamentals
-  - Shell scripting
-  - Ubuntu system management
-  - Configuration management
+- [Linux 与 Shell](./Linux-Shell/)
+  - Linux 基础
+  - Shell 脚本
+  - Ubuntu 系统管理
+  - 配置管理
 
-- [Operating Systems](./OS/)
+- [操作系统](./OS/)
 
-- [High Performance Computing](./HPC/)
+- [高性能计算](./HPC/)
 
-- [Networking](./Networking/)
+- [网络](./Networking/)
 
-- [Cloud Computing Fundamentals](./CloudComputing/)
+- [云计算基础](./CloudComputing/)
 
-## 🛠️ Development Tools & Testing
+## 🛠️ 开发工具与测试
 
 - [Git](./Git/git-learning)
-  - Git fundamentals and workflows
+  - Git 基础与工作流
 
-- [Software Testing](./SoftwareTesting/)
+- [软件测试](./SoftwareTesting/)
