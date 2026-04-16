@@ -1,20 +1,34 @@
+---
+title: 认证协议与SSO
+tags:
+  - cloud-computing
+  - authentication
+  - authorization
+  - OAuth
+  - OIDC
+  - SAML
+aliases:
+  - Auth协议
+  - 认证授权
+---
+
 # 认证基础
 
-### **Authentication - AuthN -** **认证**
+## Authentication - AuthN - 认证
 
 - Authentication - AuthN - 认证：侧重于证明某实体（如用户或服务）确实是其所称的身份。
 
-### **Authorization - AuthZ -** **授权**
+## Authorization - AuthZ - 授权
 
 - Authorization - AuthZ - 授权：用于设置权限，这些权限用于评估对资源或功能的访问权限。
 
-### Permission vs previlege vs scopes
+## Permission vs Privilege vs Scopes
 
 - permission: 是对resource而言的，代表这个resource能被执行什么操作。
-- previlege：是给某个user授予某资源的permission，这个user就有了previlege
+- privilege：是给某个user授予某资源的permission，这个user就有了privilege
 - scopes: define what an app can do on behalf of the user. (OAuth2里面用的)
 
-
+---
 
 # 基于CAS的SSO
 
@@ -74,15 +88,18 @@
     
         ![image-20230829214800669](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202308292148791.png)
 
+---
+
 # OAuth
 
 ## 简介
 
 - 是一种授权协议，主要解决：第三方应用如何被授权访问资源服务器。（delegated authorization）
 
-- 认证部分在Oauth中没怎么涉及，基本是由厂商自己解决。目前比较流行的认证的协议是用的OIDC。
+- 认证部分在OAuth中没怎么涉及，基本是由厂商自己解决。目前比较流行的认证的协议是用的OIDC。
 
-  > OIDC是基于OAuth2.0扩展出来的协议，除了能够实现OAuth2.0的的Authorization场景，也额外定义了Authentication的场景。
+  > [!info] OIDC与OAuth的关系
+  > OIDC是基于OAuth2.0扩展出来的协议，除了能够实现OAuth2.0的Authorization场景，也额外定义了Authentication的场景。
 
 - OAuth在RFC6749文档中提出来的（[RFC 6749: The OAuth 2.0 Authorization Framework (rfc-editor.org)](https://www.rfc-editor.org/rfc/rfc6749.html)），RFC中的OAuth的workflow如下：
 
@@ -214,6 +231,8 @@
   - 这种情况，没有back channel，怎么安全兑换token？==》PKCE（proof key for code exchange）
     - PKCE是一种cipher，由client生成，在一开始的AuthN request通过Https发送给了IdP，后续兑换token的时候也带着，证明app的身份。
 
+---
+
 # OIDC
 
 > 参考视频：
@@ -224,9 +243,7 @@
 ## 简介
 
 - OAuth只负责完成了授权部分，返回给client的access token，client不懂，也不知道这个token包含的是哪个用户，只是发给resource server来获取信息。
-
-- Oauth2.0授权服务器能够对用户进行身份验证，但该框架也没有提供一种标准的方法来将经过身份验证的用户的身份安全地传递给应用程序。OIDC为这一需求提供了解决方案。OIDC被设计为OAuth2.0协议之上的一个层，以标准格式向应用程序提供有关经过身份验证的用户的身份的信息。这为用户身份验证和API授权的应用程序提供了一个解决方案。
-
+- OAuth2.0授权服务器能够对用户进行身份验证，但该框架也没有提供一种标准的方法来将经过身份验证的用户的身份安全地传递给应用程序。OIDC为这一需求提供了解决方案。OIDC被设计为OAuth2.0协议之上的一个层，以标准格式向应用程序提供有关经过身份验证的用户的身份的信息。这为用户身份验证和API授权的应用程序提供了一个解决方案。
 - OIDC在OAuth基础上增加了login和profile的功能，可以让client建立一个login session来认证。
 
   <img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202308301838405.png" alt="image-20230830183814266"  />
@@ -264,6 +281,8 @@
 
     - JWT里面的data被称为**claim**
     - client可以拿着access token再去IdP拿一些其他用户信息
+
+---
 
 # SAML
 
@@ -318,6 +337,8 @@
 
 - WS-Fed - SAML 1.0
 - SAML - SAML 2.0
+
+---
 
 # WS-FED
 
