@@ -59,23 +59,23 @@ OpenClaw是需要接入大模型API的，如果选择免费版的大模型API，
 ## 魔塔API注册使用
 由于 openclaw 需要接入模型，可以先临时选择魔塔的免费 API（每日免费调用 2000 次）。
 
-- 首先访问 https://www.modelscope.cn/models
+- 首先访问 [魔塔模型库](https://www.modelscope.cn/models)
 - 注册登录
 - 新建一个长期有效的token：个人设置-访问控制-新建访问令牌
 - 选择模型库-->支持体验-->推理 API
 - 选择一个模型 - 查看代码实例 - api key选择刚创建的长期有效的那个 - 拿到base url和api key
 
 ## Deepseek API准备
-- https://platform.deepseek.com/ 创建账户
-- 创建长期有效的API key，复制保存到其他地方。
+- [Deepseek 平台](https://platform.deepseek.com/) 创建账户
+- 创建长期有效的API key，复制保存到其他地方
 - 实名认证并充值（20RMB就够用实验了）
-- 获取base url： https://api-docs.deepseek.com/zh-cn/
-- 获取model id：deepseek-chat
+- 获取 base url：[Deepseek API 文档](https://api-docs.deepseek.com/zh-cn/)
+- 获取 model id：`deepseek-chat`
 
 # Windows安装OpenClaw
 
 ## Nodejs安装
-- 需要>22版本。安装包下载地址： https://nodejs.org/en/download 
+- 需要 >22 版本。安装包下载地址：[Node.js Downloads](https://nodejs.org/en/download)
 - 安装，保持默认配置即可
 - 配置国内阿里云npm仓库:
 ```powershell
@@ -86,15 +86,14 @@ npm config get registry
 ```
 
 ## Python安装
-- 安装包下载地址： https://www.python.org/downloads/windows/
+- 安装包下载地址：[Python for Windows](https://www.python.org/downloads/windows/)
 - 配置国内阿里云pip源：
 ```powershell
 pip config set global.index-url https://mirrors.aliyun.com/pypi/simple/
 ```
 
 ## OpenClaw安装
-官网上有一键安装脚本，但是国内网络环境大概率会遇到timeout。所以用我们配置好国内源的npm来安装：
-https://docs.openclaw.ai/zh-CN#%E5%BF%AB%E9%80%9F%E5%BC%80%E5%A7%8B
+官网上有一键安装脚本，但是国内网络环境大概率会遇到timeout。所以用我们配置好国内源的npm来安装：[快速开始](https://docs.openclaw.ai/zh-CN#%E5%BF%AB%E9%80%9F%E5%BC%80%E5%A7%8B)
 
 用管理员打开powershell：
 ```sh
@@ -104,7 +103,8 @@ npm install -g openclaw@v2026.3.2
 ```
 由于要安装几百个依赖，所以还是需要等待一段时间。
 
-> 也可以用docker/k8s安装，但是由于openclaw的很多组件是需要数据持久化的，如果没有配置正确存储的话，重启容器/pod，数据就丢失了。
+> [!warning] Docker/K8s 安装注意
+> 也可以用 Docker/K8s 安装，但是由于 OpenClaw 的很多组件是需要数据持久化的，如果没有配置正确存储的话，重启容器/Pod，数据就丢失了。
 
 ## OpenClaw引导配置
 
@@ -179,16 +179,17 @@ npm install -g openclaw@latest
 npm install -g openclaw@v2026.3.2
 ```
 
-注：2026.03.10，用`npm install -g openclaw@latest` 安装的时候会报错：
-````
-git@github.com: Permission denied (publickey).
-fatal: Could not read from remote repository.
-````
-这是一个已知问题，某个依赖包被强制使用ssh连接github地址了，而非https。
-github上有issue和PR，PR还没Merge。
-- https://github.com/openclaw/openclaw/issues/40684
-- https://github.com/openclaw/openclaw/pull/40721
-所以暂时用这个命令修复：
+> [!bug] 已知问题（2026.03.10）
+> 用 `npm install -g openclaw@latest` 安装时可能报错：
+> ```
+> git@github.com: Permission denied (publickey).
+> fatal: Could not read from remote repository.
+> ```
+> 这是一个已知问题，某个依赖包被强制使用 SSH 连接 GitHub 地址了，而非 HTTPS。
+> - [Issue #40684](https://github.com/openclaw/openclaw/issues/40684)
+> - [PR #40721](https://github.com/openclaw/openclaw/pull/40721)
+
+临时修复命令：
 ```sh
 git config --global url."https://github.com/".insteadOf "ssh://git@github.com/"
 git config --global url."https://github.com/".insteadOf "git+ssh://git@github.com/"
@@ -205,7 +206,7 @@ openclaw config set tools.profile "full"
 openclaw onboard --install-daemon
 ```
 
-以deepweek-chat为例
+以 deepseek-chat 为例
 - onboarding mode选quick start
 - model选择custom provider
 - 填入base url： https://api.deepseek.com/v1
@@ -224,7 +225,7 @@ netstat -lntp | grep open
 ## 浏览器访问
 如果linux是虚拟机安装在windows宿主机上。由于安全问题，openclaw监听的是127.0.0.1，直接用虚拟机IP:18789端口是访问不通的。
 
-如果需要宿主机上的浏览器访问，需要在Windows上z执行一下命令，通过SSH隧道访问：
+如果需要宿主机上的浏览器访问，需要在 Windows 上执行以下命令，通过SSH隧道访问：
 ```sh
 ssh -N -L 18789:127.0.0.1:18789 root@<虚拟机-IP>
 ```
@@ -255,7 +256,8 @@ openclaw gateway stop/start
 openclaw configure
 ```
 
-> openclaw的所有配置都是以文件的形式保存在C盘用户家目录中的.openclaw目录下。后面的配置修改都建议修改配置文件或者用命令行修改。
+> [!info] 配置文件路径
+> OpenClaw 的所有配置都是以文件的形式保存在用户家目录中的 `.openclaw` 目录下。后面的配置修改都建议修改配置文件或者用命令行修改。
 
 - 初始角色定义：
 	- “记住这个：你是xxx，我是xxx，你是我的个人助理”。（记住这个后面的内容会被自动加载到memory中）
@@ -273,7 +275,7 @@ openclaw gateway restart
 ## 手动添加(推荐)
 - openclaw的所有配置都是以文件的形式保存在C盘用户家目录中的.openclaw目录下。
 - 修改配置文件，添加到 models.providers
-- 以deepseek为例，base url，版本等信息都可以在API文档中找到： https://api-docs.deepseek.com/zh-cn/quick_start/pricing
+- 以 deepseek 为例，base url、版本等信息都可以在 [API 文档](https://api-docs.deepseek.com/zh-cn/quick_start/pricing) 中找到
 ```json
 "deepseek": {
     "baseUrl": "https://api.deepseek.com/v1",
