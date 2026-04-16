@@ -7,8 +7,9 @@
 
 # 1. claudian插件
 claude插件； https://github.com/YishenTu/claudian
-- 在release中下载main.js，manifest.json，styles.css，放到
-
+- 在release中下载main.js，manifest.json，styles.css，放到.obsidian/plugin/claudian/里面。
+- 重启obsidian就能在插件页面找到claudian，设置里面配置claude code相关的环境变量。
+- 侧边栏打开claudian
 
 # 2. obsidian skills
 skills： https://github.com/kepano/obsidian-skills
