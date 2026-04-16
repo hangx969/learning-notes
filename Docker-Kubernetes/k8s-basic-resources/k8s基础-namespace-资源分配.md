@@ -1,3 +1,12 @@
+---
+title: K8s基础-namespace-资源分配
+tags:
+  - kubernetes
+  - k8s-basics
+aliases:
+  - k8sNamespace资源分配
+---
+
 # namespace介绍
 
 Namespace提供了一种将集群资源逻辑上隔离的方式，允许在同一个集群中划分多个虚拟的、逻辑上独立的集群环境，相当于集群的“虚拟化”。
@@ -64,7 +73,7 @@ spec:
 > - 如果是request.cpu: 0.5 --> 那就是请求0.5个核
 > - 如果是request.cpu: 500m --> 那是500毫核 --> 也就是0.5核
 
-> 注意:
+> [!warning] 注意
 >
 > - ns指定了ResourceQuota之后，如果创建的deployment没有显式指定requests和limits，那么pod会创建不出来。此时的状态就是deployment正常，但是pod实际数量为0，可以describe rs来看，也可以get events来看。
 > - 新创建的resourceQuota，不会影响已经在运行的服务，但是一旦出发更新或者删除，那么就会产生影响，超过的就创建不出来了
@@ -107,7 +116,7 @@ spec:
       storage: 1Gi
 ~~~
 
-> 注意：
+> [!warning] 注意
 >
 > 1. limitRange是针对pod去修改的，deployment的yaml不会被修改。
 

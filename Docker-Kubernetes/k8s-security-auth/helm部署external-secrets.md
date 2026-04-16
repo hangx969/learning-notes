@@ -1,8 +1,18 @@
+---
+title: Helm部署External-Secrets
+tags:
+  - kubernetes
+  - security
+  - auth
+aliases:
+  - external-secrets部署
+---
+
 # 介绍
 
-- 官网地址：https://external-secrets.io/latest/
-- release pages: https://github.com/external-secrets/external-secrets/releases
-- artifact hub: https://artifacthub.io/packages/helm/external-secrets-operator/external-secrets
+- 官网地址：[External Secrets Operator](https://external-secrets.io/latest/)
+- release pages: [External Secrets Releases](https://github.com/external-secrets/external-secrets/releases)
+- artifact hub: [external-secrets helm chart](https://artifacthub.io/packages/helm/external-secrets-operator/external-secrets)
 - 作用是从外部secrets提供商读取secrets，写入到k8s secrets
 
 # 下载
@@ -25,7 +35,7 @@ helm upgrade -i external-secrets -n external-secrets . -f values.yaml --create-n
 
 # 集成Azure Key Vault
 
-参考文档：https://external-secrets.io/latest/provider/azure-key-vault/
+参考文档：[Azure Key Vault Provider](https://external-secrets.io/latest/provider/azure-key-vault/)
 
 ## 前提条件
 

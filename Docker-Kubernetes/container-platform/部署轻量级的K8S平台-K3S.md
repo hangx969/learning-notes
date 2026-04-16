@@ -403,8 +403,8 @@ EOF
 
 # 部署高可用k3s集群
 
-- 将k3s进行高可用部署。官方提供了两种部署方式，一种是连接外部数据库如：mysql，然后部署多个k3s server端再进行负载均衡，还有一种是官方提供的高可用方式，参考：https://docs.rancher.cn/docs/k3s/installation/ha-embedded/_index/
-- k3s配置etcd高可用，参考文档：https://docs.k3s.io/zh/datastore/ha-embedded
+- 将k3s进行高可用部署。官方提供了两种部署方式，一种是连接外部数据库如：mysql，然后部署多个k3s server端再进行负载均衡，还有一种是官方提供的高可用方式，参考：[K3s 嵌入式 HA 安装](https://docs.rancher.cn/docs/k3s/installation/ha-embedded/_index/)
+- k3s配置etcd高可用，参考文档：[K3s HA 嵌入式数据库](https://docs.k3s.io/zh/datastore/ha-embedded)
 
 - 安装2 master 1 worker：
 

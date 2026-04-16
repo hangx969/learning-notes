@@ -32,7 +32,7 @@ aliases:
 
 ## 迁移Eureka集群
 
-- 代码地址：https://gitee.com/dukuan/demo-eureka
+- 代码地址：[demo-eureka](https://gitee.com/dukuan/demo-eureka)
 - 构建命令：mvn clean package
 - Java 版本：jdk 1.8
 - 构建镜像：registry.cn-beijing.aliyuncs.com/citools/maven:3.5.3
@@ -180,7 +180,7 @@ spec:
 
 ## 迁移网关服务
 
-代码地址：https://gitee.com/dukuan/demo-receive
+代码地址：[demo-receive](https://gitee.com/dukuan/demo-receive)
 
 构建命令：mvn clean package
 
@@ -307,7 +307,7 @@ spec:
 
 ## 迁移handler服务
 
-代码地址：https://gitee.com/dukuan/demo-handler
+代码地址：[demo-handler](https://gitee.com/dukuan/demo-handler)
 
 构建命令：mvn clean package
 
@@ -411,7 +411,7 @@ replicas: 1
 
 ## 迁移前端服务
 
-代码地址：https://gitee.com/dukuan/demo-ui
+代码地址：[demo-ui](https://gitee.com/dukuan/demo-ui)
 
 构建命令：npm install --registry=https://registry.npmmirror.com && npm run build
 

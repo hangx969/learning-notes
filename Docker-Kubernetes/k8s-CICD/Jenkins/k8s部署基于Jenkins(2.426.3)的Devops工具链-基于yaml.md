@@ -1,3 +1,14 @@
+---
+title: K8s部署基于Jenkins(2.426.3)的DevOps工具链-基于YAML
+tags:
+  - kubernetes
+  - cicd
+  - jenkins
+  - devops
+aliases:
+  - Jenkins 2.426.3 DevOps工具链
+---
+
 # 部署Jenkins
 
 ## 安装nfs服务
@@ -131,6 +142,7 @@ spec:
           claimName: jenkins-k8s-pvc
 ~~~
 
+> [!warning] 权限问题
 > 报错显示没有权限操作/var/jenkins_home/copy_reference_file.log文件:
 >
 > touch: cannot touch '/var/jenkins_home/copy_reference_file.log': Permission denied

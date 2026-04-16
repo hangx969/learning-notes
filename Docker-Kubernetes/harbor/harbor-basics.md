@@ -91,7 +91,7 @@ aliases:
    #出现✔ ----Harbor has been installed and started successfully.---- 表明安装成功。
    ```
 
-   > 注：
+   > [!note] 注
    >
    > - docker-compose可以直接yum install docker-compose或者apt install docker-compose
    >
@@ -710,7 +710,7 @@ version = 2
   uid = 0
 ~~~
 
-> 注意：所有k8s节点都需要在/etc/hosts里面加上harbor域名和node ip的映射。
+> [!warning] 注意：所有k8s节点都需要在/etc/hosts里面加上harbor域名和node ip的映射。
 
 ## 配置docker
 
@@ -962,7 +962,7 @@ helm upgrade --install harbor harbor-1.15.0.tgz --namespace harbor --create-name
 
 # nginx实现harbor双向认证 -- 方案失败不可用
 
-> 双向认证方案：使用 Nginx 代理 Harbor镜像仓库，Nginx开启双向认证
+> [!note] 双向认证方案：使用 Nginx 代理 Harbor镜像仓库，Nginx开启双向认证
 
 ## 环境配置
 
@@ -1150,7 +1150,7 @@ nginx -t
 nginx -s reload
 ~~~
 
-> nginx配置下发不下去，因为harbor的部署已经有nginx的容器在跑了，端口80会冲突，无法刷新自己装的nginx的配置
+> [!warning] nginx配置下发不下去，因为harbor的部署已经有nginx的容器在跑了，端口80会冲突，无法刷新自己装的nginx的配置
 
 ## 容器环境证书配置
 

@@ -1,3 +1,13 @@
+---
+title: Helm部署OAuth2-Proxy
+tags:
+  - kubernetes
+  - security
+  - auth
+aliases:
+  - oauth2proxy部署
+---
+
 # 介绍
 
 - 是一款对k8s应用做身份验证的反向代理。工作模式有两种：
@@ -6,13 +16,13 @@
 
   在我们的示例中，使用的是右边的middleware模式，作用于ingress-nginx。
 
-- 官网：https://oauth2-proxy.github.io/oauth2-proxy/installation/
+- 官网：[OAuth2 Proxy Installation](https://oauth2-proxy.github.io/oauth2-proxy/installation/)
 
-- github：https://github.com/oauth2-proxy/oauth2-proxy
+- github：[oauth2-proxy/oauth2-proxy](https://github.com/oauth2-proxy/oauth2-proxy)
 
-- releases page: https://github.com/oauth2-proxy/manifests/releases
+- releases page: [OAuth2 Proxy Manifests Releases](https://github.com/oauth2-proxy/manifests/releases)
 
-- artifact hub: https://artifacthub.io/packages/helm/oauth2-proxy/oauth2-proxy
+- artifact hub: [oauth2-proxy helm chart](https://artifacthub.io/packages/helm/oauth2-proxy/oauth2-proxy)
 
 # 下载
 
@@ -37,7 +47,7 @@ kubectl annotate secrets oauth2-proxy-redis -n oauth2-proxy "meta.helm.sh/releas
 kubectl annotate secrets oauth2-proxy-redis -n oauth2-proxy "meta.helm.sh/release-namespace"="oauth2-proxy"
 ~~~
 
-> sessionStorage负责认证状态维护
+> [!info] sessionStorage负责认证状态维护
 >
 > ```yaml
 > sessionStorage:
@@ -292,7 +302,7 @@ OAuth2 Proxy 的作用：
 
 # 使用oauth2proxy保护其他app
 
-- 在其他应用的ingress中添加annotations，详细说明参考ingress官网：https://kubernetes.github.io/ingress-nginx/examples/auth/oauth-external-auth/
+- 在其他应用的ingress中添加annotations，详细说明参考ingress官网：[OAuth External Auth](https://kubernetes.github.io/ingress-nginx/examples/auth/oauth-external-auth/)
 - 这两个annotations会将请求redirect到oauth2proxy，由oauth2proxy将请求转发到配置的3rd party认证endpoint (github)
 
 ~~~yaml

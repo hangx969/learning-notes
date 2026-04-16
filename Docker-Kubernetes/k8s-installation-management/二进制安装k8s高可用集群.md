@@ -147,7 +147,7 @@ mv /etc/yum.repos.d/* /root/repo.bak/
 vi /etc/yum.repos.d/CentOS-Base.repo
 ~~~
 
-~~~yaml
+~~~ini
 # CentOS-Base.repo
 #
 # The mirror system uses the connecting IP address of the client and the

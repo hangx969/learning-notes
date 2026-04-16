@@ -1,3 +1,12 @@
+---
+title: K8s基础-kubeadm
+tags:
+  - kubernetes
+  - k8s-basics
+aliases:
+  - k8skubeadm
+---
+
 # kubeadm基础
 
 ## 流程
@@ -175,4 +184,4 @@ kubeadm 在执行安装之前进行了相当细致的环境检测：
 
 # kubeadm安装的k8s集群升级
 
-参考官网：http://kubernetes.io/docs/tasks/administer-cluster/kubeadm/kubeadm-upgrade
+参考官网：[kubeadm集群升级文档](http://kubernetes.io/docs/tasks/administer-cluster/kubeadm/kubeadm-upgrade)

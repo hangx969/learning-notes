@@ -1,3 +1,13 @@
+---
+title: 二进制安装Jenkins(2.319)
+tags:
+  - kubernetes
+  - cicd
+  - jenkins
+aliases:
+  - Jenkins二进制安装
+---
+
 # 安装JDK11
 
 ~~~sh
@@ -41,9 +51,9 @@ systemctl enable jenkins
 # 内网环境安装jenkins离线插件
 
 - 离线插件安装地址
-  - http://mirrors.tuna.tsinghua.edu.cn/jenkins/plugins/
-  - http://updates.jenkins-ci.org/download/plugins/
-  - 可以在Jenkins官网上搜索想要下载的插件，点击“Download”按钮下载.hpi文件。
+  - [清华大学Jenkins插件镜像](http://mirrors.tuna.tsinghua.edu.cn/jenkins/plugins/)
+  - [Jenkins官方插件下载](http://updates.jenkins-ci.org/download/plugins/)
+  - 可以在Jenkins官网上搜索想要下载的插件，点击”Download”按钮下载.hpi文件。
 - Jenkins离线插件安装方法：
   1. 方法一：
   1.在Jenkins管理页面点几“系统管理” -> “插件管理” -> “高级”。

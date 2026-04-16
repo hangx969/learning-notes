@@ -1205,20 +1205,17 @@ git push -u origin master
 
 - 流水线立即构建
 
-  > - 构建的时候到连接harbor这一步，docker login 192.168.40.181 -u -p 命令登录harbor会报错：，报错：“tls: failed to verify certificate: x509: cannot validate certificate for 192.168.40.181 because it doesn't contain any IP SANs
+  > [!warning] TLS证书验证失败
+  > 构建的时候到连接harbor这一步，docker login 192.168.40.181 -u -p 命令登录harbor会报错：”tls: failed to verify certificate: x509: cannot validate certificate for 192.168.40.181 because it doesn't contain any IP SANs”
   >
-  > - 解决办法：
+  > 解决办法：Docker 客户端在尝试验证服务器的 SSL 证书时，没有找到任何 IP 主题备用名称（IP SANs）。这通常发生在使用自签名证书的情况下。解决这个问题的一种方法是在 Docker 客户端配置中禁用对该服务器的 TLS 验证。这可以通过在 Docker 客户端的 `daemon.json` 文件中添加 `insecure-registries` 来完成。
   >
-  >   - Docker 客户端在尝试验证服务器的 SSL 证书时，没有找到任何 IP 主题备用名称（IP SANs）。这通常发生在使用自签名证书的情况下。
-  >
-  >   - 解决这个问题的一种方法是在 Docker 客户端配置中禁用对该服务器的 TLS 验证。这可以通过在 Docker 客户端的 `daemon.json` 文件中添加 `insecure-registries` 来完成。
-  >
-  >     ~~~sh
-  >     vim /etc/docker/daemon.json
-  >     #添加
-  >     "insecure-registries" : ["192.168.40.181"]
-  >     systemctl restart docker
-  >     ~~~
+  > ~~~sh
+  > vim /etc/docker/daemon.json
+  > #添加
+  > “insecure-registries” : [“192.168.40.181”]
+  > systemctl restart docker
+  > ~~~
 
 - jenkins和gitlab、harbor比较吃资源，VMWare VM给3G内存容易OOM，20G磁盘容器用光。
 

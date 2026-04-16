@@ -1,12 +1,22 @@
+---
+title: Helm部署Kyverno和Policy-Reporter
+tags:
+  - kubernetes
+  - security
+  - auth
+aliases:
+  - kyverno策略引擎
+---
+
 # kyverno
 
 ## 介绍
 
-- 官网：https://kyverno.io/docs/
+- 官网：[Kyverno Docs](https://kyverno.io/docs/)
 
-- release page: https://github.com/kyverno/kyverno/releases
+- release page: [Kyverno Releases](https://github.com/kyverno/kyverno/releases)
 
-- artifacthub: https://artifacthub.io/packages/helm/kyverno/kyverno/
+- artifacthub: [kyverno helm chart](https://artifacthub.io/packages/helm/kyverno/kyverno/)
 
 - kyverno是希腊语的govern之意。是原生为K8s开发的策略引擎。
 
@@ -38,7 +48,7 @@ helm upgrade -i kyverno -n kyverno --create-namespace . -f values.yaml
 
 ## 语法规则
 
-https://mp.weixin.qq.com/s/5tANwfzp8C0O2GS8fkXErA
+[Kyverno Policy语法规则](https://mp.weixin.qq.com/s/5tANwfzp8C0O2GS8fkXErA)
 
 ## 安装policy
 
@@ -56,10 +66,10 @@ fi
 ## 介绍
 
 - kyverno自带的一个GUI界面，官网：
-  - https://kyverno.io/docs/kyverno-policy-reporter/
-  - https://kyverno.github.io/policy-reporter/
-- release page: https://github.com/kyverno/policy-reporter/releases
-- artifact hub: https://artifacthub.io/packages/helm/policy-reporter/policy-reporter
+  - [Kyverno Policy Reporter](https://kyverno.io/docs/kyverno-policy-reporter/)
+  - [Policy Reporter Docs](https://kyverno.github.io/policy-reporter/)
+- release page: [Policy Reporter Releases](https://github.com/kyverno/policy-reporter/releases)
+- artifact hub: [policy-reporter helm chart](https://artifacthub.io/packages/helm/policy-reporter/policy-reporter)
 
 ## 下载
 
@@ -140,7 +150,7 @@ helm upgrade -i policy-reporter -n policy-reporter . -f values.yaml
 
 ## 配置告警
 
-- 可以配置往loki和slack发消息：https://kyverno.github.io/policy-reporter/guide/helm-chart-core#enable-targets-notification
+- 可以配置往loki和slack发消息：[Enable Targets Notification](https://kyverno.github.io/policy-reporter/guide/helm-chart-core#enable-targets-notification)
 
 ## 访问
 

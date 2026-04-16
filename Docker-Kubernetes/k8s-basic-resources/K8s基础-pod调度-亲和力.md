@@ -1,3 +1,12 @@
+---
+title: K8s基础-Pod调度-亲和力
+tags:
+  - kubernetes
+  - k8s-basics
+aliases:
+  - k8sPod调度亲和力
+---
+
 # 拓扑域和拓扑键
 
 拓扑域Topology Domain：
@@ -142,6 +151,7 @@ kubectl get nodes --show-labels #看node标签
 kubectl label nodes node-01 disk=ceph #给node打标签
 ```
 
+> [!warning] 注意
 > - 如果nodeName和nodeSelector都写上，并且这两个配置的调度node冲突，就会报错：Predictate NodeAffnity Failed.
 > - NodeName优先级高，在master节点有污点的情况下，如果定义nodename=master，则会强制调度上去。
 
@@ -262,7 +272,7 @@ spec:
     - "while true; do echo hello; sleep 10; done"
 ```
 
-> NodeAffinity的注意事项：
+> [!info] NodeAffinity注意事项
 >
 > 1.  如果同时定义了nodeSelector和nodeAffinity，那么必须两个条件都得到满足，Pod才能运行在指定的Node上
 > 2.  如果nodeAffinity指定了多个nodeSelectorTerms，那么只需要其中一个能够匹配成功即可
@@ -673,7 +683,7 @@ spec:
 
 # 污点与容忍
 
-官网链接：https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/
+官网链接：[Kubernetes污点与容忍](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/)
 
 前面的亲和性调度是站在pod的角度上，通过对pod的属性添加，来决定调度到什么node上。也可以站在node的角度上，在node上添加污点属性，决定是否允许pod调度进来。
 

@@ -190,7 +190,7 @@ iptables -L -n -v
 
 2. 在临时容器中测试外网
 
-   ~~~SH
+   ~~~sh
    # 测试 HTTP 访问
    curl -I https://www.google.com
    # 测试 DNS 解析

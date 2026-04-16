@@ -1,3 +1,13 @@
+---
+title: 基于Tekton的云原生平台落地
+tags:
+  - kubernetes
+  - cicd
+  - tekton
+aliases:
+  - Tekton云原生CICD平台
+---
+
 # Tekton介绍
 
 Tekton是一个云原生的CICD解决方案，是CNCF很流行的开源项目之一。Tekton以K8s CRD资源的形式部署在集群上。

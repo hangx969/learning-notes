@@ -1,3 +1,13 @@
+---
+title: K8s部署原生的CICD工具Tekton-基于YAML
+tags:
+  - kubernetes
+  - cicd
+  - tekton
+aliases:
+  - Tekton YAML部署
+---
+
 # Tekton
 
 ## 介绍
@@ -1505,7 +1515,7 @@ kubectl api-versions
 
 # 测试Tekton构建CICD流水线
 
-- 我们测试一个简单的golang程序。应用程序代码，测试及dockerfile文件可在如下地址获取：https://github.com/luckylucky421/tekton-demo
+- 我们测试一个简单的golang程序。应用程序代码，测试及dockerfile文件可在如下地址获取：[tekton-demo](https://github.com/luckylucky421/tekton-demo)
 
 ## 创建task任务
 

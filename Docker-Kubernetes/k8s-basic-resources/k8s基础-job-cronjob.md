@@ -1,3 +1,12 @@
+---
+title: K8s基础-Job-CronJob
+tags:
+  - kubernetes
+  - k8s-basics
+aliases:
+  - k8sJobCronJob
+---
+
 # Job
 
 ## 状态
@@ -135,6 +144,7 @@ CronJob默认的执行记录保留方式如下：
 
 在Kubernetes 1.25 版本时，CronJob 增加了`.spec.timeZone`的字段用于配置CronJob的调度时区。在1.27版本达到稳定，可以直接使用。
 
+> [!info] 说明
 > 1.25~1.27（不包括1.27）版本之间需要打开`kube-apiserver`的featuregates特性，比如：`--feature-gates=CronJobTimeZone=true` ，1.27及1.27之后不用打开直接用就行。
 
 ~~~yaml

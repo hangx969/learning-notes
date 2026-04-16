@@ -501,7 +501,8 @@ ansible-playbook -i /etc/ansible/hosts openshift-ansible-release-3.10/playbooks/
 ansible-playbook -i /etc/ansible/hosts openshift-ansible-release-3.10/playbooks/deploy_cluster.yml
 ~~~
 
-> - 执行deploy时主机dns导致连外网失败（在执行上面deploy时，需要在每个节点ping www.baidu.com，如果ping不通，解决方案如下）
+> [!warning] DNS 问题解决
+> 执行deploy时主机dns导致连外网失败（在执行上面deploy时，需要在每个节点ping www.baidu.com，如果ping不通，解决方案如下）
 >
 >   ```sh
 >   echo nameserver 8.8.8.8 >>/etc/resolv.conf
@@ -851,7 +852,7 @@ Git Repository：写自己的github/gitee项目地址
   ~~~
 
 
-> 非特权版本的nginx容器监听8080端口而非80，需要在containerPort和svc的targetport中修改为8080才能访问通
+> [!note] 非特权版本的nginx容器监听8080端口而非80，需要在containerPort和svc的targetport中修改为8080才能访问通
 
 # 常用命令介绍
 

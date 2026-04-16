@@ -1,70 +1,107 @@
-Skill (技能) 是自动触发的能力包,2025年10月发布。
-https://code.claude.com/docs/zh-CN/skills
+---
+title: Claude Code Skills
+tags:
+  - AI
+  - claude-code
+  - skills
+aliases:
+  - CC Skills
+  - 技能包
+---
 
-和MCP有啥区别：Skills的范围更大，Skills可以调用mcp。Skills还可以包含python脚本，功能更灵活丰富。
+# Skill（技能）
 
-单个Skill是能力,多个Skill编排是流程,Skill+MCP+SubAgent是智能体
+Skill（技能）是自动触发的能力包，2025 年 10 月发布。
+
+> [!info] 官方文档
+> [Claude Code Skills](https://code.claude.com/docs/zh-CN/skills)
+
+和 MCP 有啥区别：Skills 的范围更大，Skills 可以调用 MCP。Skills 还可以包含 Python 脚本，功能更灵活丰富。
+
+单个 Skill 是能力，多个 Skill 编排是流程，Skill + MCP + SubAgent 是智能体。
 
 简单说，**Skills 就是给 Claude 安装的"专业技能包"**。
+
 **技术上**，一个 Skill 就是一个文件夹，里面包含技能的描述、相关脚本、示例代码等等。
 
-比如你搞了一个 Skill.md 文件，里面放了 AI 生成 PPT 固定流程的指令。你给 Claude 说：帮我生成 PPT，这个 Skill 就能激活。你就不需要每次都把你的要求写出来。
+比如你搞了一个 `SKILL.md` 文件，里面放了 AI 生成 PPT 固定流程的指令。你给 Claude 说：帮我生成 PPT，这个 Skill 就能激活。你就不需要每次都把你的要求写出来。
 
-# 解决痛点
+---
+
+## 解决痛点
+
 你是不是经常遇到这种情况：
+
 每次让 Claude 生成 Git commit message，都要像念咒语一样重复：
+
 - "用现在时"
 - "50 字以内"
 - "说 what 和 why，不说 how"
 - "要包含影响的组件"
 
 或者让 Claude 帮你写 API 文档，每次都要解释：
+
 - "用 Markdown 格式"
 - "包含请求示例和响应示例"
 - "标注必填参数"
 
-痛点 1：重复劳动
-**之前**：每次都像教小孩一样解释规则  
-**现在**：打包成 Skill，说一句话自动应用
+### 痛点 1：重复劳动
 
-痛点 2：团队协作混乱
-**场景**：10 个人用 10 种方式让 Claude 生成文档，格式五花八门。
-**解决**：
-1. 把 Skill 提交到项目代码库：`.claude/skills/company-doc-generator/`
-2. 团队成员 `git pull` 后自动同步
-3. 全员统一规范 
+- **之前**：每次都像教小孩一样解释规则
+- **现在**：打包成 Skill，说一句话自动应用
 
-痛点 3：知识无法沉淀
-**之前**：老员工调试 API 的技巧藏在脑子里  
-**现在**：写成 Skill，新人克隆代码立刻获得团队智慧
+### 痛点 2：团队协作混乱
 
-### Skills的核心设计：渐进式披露机制
+- **场景**：10 个人用 10 种方式让 Claude 生成文档，格式五花八门
+- **解决**：
+  1. 把 Skill 提交到项目代码库：`.claude/skills/company-doc-generator/`
+  2. 团队成员 `git pull` 后自动同步
+  3. 全员统一规范
 
-这个设计是Skills高效的核心：
+### 痛点 3：知识无法沉淀
 
-- **初始加载**：Claude只需记住每个Skill的元数据，包括：名称+描述，大概占几十个Token
-- **按需触发**：当你的请求匹配某个Skill的描述时，Claude才会加载完整的指令和脚本
-- **分模块读取**：复杂Skill可拆分多个文件，Claude只会读取当前任务所需的部分
+- **之前**：老员工调试 API 的技巧藏在脑子里
+- **现在**：写成 Skill，新人克隆代码立刻获得团队智慧
 
-按照这种设计让你可以安装或者设计上百个Skills，却不会占用大量上下文或影响交互的性能。
+### Skills 的核心设计：渐进式披露机制
 
-# 组成结构
-一个Skill文件夹通常包含这几部分：
+这个设计是 Skills 高效的核心：
 
-- SKILL.md ：核心文件。用YAML写元数据（名字、描述），用Markdown写详细的指令，告诉Claude在什么情况下、以及如何使用这个Skill。
-- scripts/ ：存放可执行的 Python、Shell脚本。
-- references/ ：存放 参考文档（如API文档、数据库Schema、公司政策等），作为给Claude看的知识库。
-- assets/ ：存放 资源文件（如PPT模板、Logo、项目脚架等），供Claude在执行任务时直接使用。
+- **初始加载**：Claude 只需记住每个 Skill 的元数据，包括：名称 + 描述，大概占几十个 Token
+- **按需触发**：当你的请求匹配某个 Skill 的描述时，Claude 才会加载完整的指令和脚本
+- **分模块读取**：复杂 Skill 可拆分多个文件，Claude 只会读取当前任务所需的部分
 
-# 手动安装
-skills存放位置：
-- 个人 Skills (`~/.claude/skills/`)
-- 项目 Skills (`.claude/skills/`)
+按照这种设计让你可以安装或者设计上百个 Skills，却不会占用大量上下文或影响交互的性能。
+
+---
+
+## 组成结构
+
+一个 Skill 文件夹通常包含这几部分：
+
+- **SKILL.md**：核心文件。用 YAML 写元数据（名字、描述），用 Markdown 写详细的指令，告诉 Claude 在什么情况下、以及如何使用这个 Skill
+- **scripts/**：存放可执行的 Python、Shell 脚本
+- **references/**：存放参考文档（如 API 文档、数据库 Schema、公司政策等），作为给 Claude 看的知识库
+- **assets/**：存放资源文件（如 PPT 模板、Logo、项目脚架等），供 Claude 在执行任务时直接使用
+
+---
+
+## 手动安装
+
+Skills 存放位置：
+
+- 个人 Skills：`~/.claude/skills/`
+- 项目 Skills：`.claude/skills/`
+
 创建方法：
-- 创建一个子目录和skill同名即可
-- 在子目录中创建SKILL.md，其中是skill的prompt。
 
-# market安装
+- 创建一个子目录和 skill 同名即可
+- 在子目录中创建 `SKILL.md`，其中是 skill 的 prompt
+
+---
+
+## Marketplace 安装
+
 ```sh
 /plugin marketplace add anthropics/skills
 /plugin
@@ -75,60 +112,74 @@ skills存放位置：
 3. Select **document-skills or example-skills**
 4. Select **Install now**
 
-# 打包Skill
-claude可以打包skill变成一个xxx.skill文件，可以分享给其他人安装。
+---
 
-打包方法：skill-creator中提供了python脚本一键打包：
-  python3 /Users/hang.xu/.claude/skills/skill-creator/scripts/package_skill.py \
-    /Users/hang.xu/.claude/skills/gitops-code-review \
-    /Users/hang.xu/.claude/skills
+## 打包 Skill
 
-安装方法：
-在Claude Code中：Install skill from /path/to/gitops-code-review.skill
+Claude 可以打包 skill 变成一个 `xxx.skill` 文件，可以分享给其他人安装。
 
-# 各种skill仓库
-**官方skills git 仓库：** https://github.com/anthropics/skills.git
+**打包方法**：skill-creator 中提供了 Python 脚本一键打包：
 
-**开源skills仓库：**
-该项目收集了各种实用 Skill，采用模块化设计。比如文档处理、开发、数据分析、营销、写作创意啥的都有： https://github.com/ComposioHQ/awesome-claude-skills ， https://github.com/BehiSecc/awesome-claude-skills
+```sh
+python3 /Users/hang.xu/.claude/skills/skill-creator/scripts/package_skill.py \
+  /Users/hang.xu/.claude/skills/gitops-code-review \
+  /Users/hang.xu/.claude/skills
+```
 
-传统的 Claude Code Skill 需要你手动记忆和调用，而这个项目通过创新的钩子机制，实现了 Skill 的智能自动触发。当你输入提示或操作文件时，系统会自动分析上下文，并建议最相关的技能： https://github.com/diet103/claude-code-infrastructure-showcase
+**安装方法**：
 
-开发者 @obra 觉得现在的 AI 写代码太随意了，所以他写了一组 Skills，**强迫** Claude 按照**世界级高级工程师**的标准流程来工作： https://github.com/obra/superpowers
-装了之后，Claude 的模式就是：**收到需求 -> 先头脑风暴 -> 制定详细计划 -> 写测试用例（TDD） -> 写代码通过测试 -> 检查质量**。
+在 Claude Code 中：`Install skill from /path/to/gitops-code-review.skill`
 
-# 使用
-## 第一层: 工程化单点突破 (把说明书变技能包)
-把最烦人的重复劳动自动化。少写废话提示词,让Claude自动识别场景。
+---
 
-### 简单测试：Pre-commit Review
+## 各种 Skill 仓库
 
-在.claude/skills/目录下创建pre-commit-check/SKILL.md:
+**官方 Skills Git 仓库**：[anthropics/skills](https://github.com/anthropics/skills.git)
+
+**开源 Skills 仓库**：
+
+- 该项目收集了各种实用 Skill，采用模块化设计。比如文档处理、开发、数据分析、营销、写作创意啥的都有：[ComposioHQ/awesome-claude-skills](https://github.com/ComposioHQ/awesome-claude-skills)、[BehiSecc/awesome-claude-skills](https://github.com/BehiSecc/awesome-claude-skills)
+- 传统的 Claude Code Skill 需要你手动记忆和调用，而这个项目通过创新的钩子机制，实现了 Skill 的智能自动触发。当你输入提示或操作文件时，系统会自动分析上下文，并建议最相关的技能：[claude-code-infrastructure-showcase](https://github.com/diet103/claude-code-infrastructure-showcase)
+- 开发者 @obra 觉得现在的 AI 写代码太随意了，所以他写了一组 Skills，**强迫** Claude 按照**世界级高级工程师**的标准流程来工作：[obra/superpowers](https://github.com/obra/superpowers)。装了之后，Claude 的模式就是：**收到需求 → 先头脑风暴 → 制定详细计划 → 写测试用例（TDD）→ 写代码通过测试 → 检查质量**
+
+---
+
+## 使用
+
+### 第一层：工程化单点突破（把说明书变技能包）
+
+把最烦人的重复劳动自动化。少写废话提示词，让 Claude 自动识别场景。
+
+#### 简单测试：Pre-commit Review
+
+在 `.claude/skills/` 目录下创建 `pre-commit-check/SKILL.md`：
 
 ```markdown
-# 名称  
-pre-commit-check  
-  
-# 描述  
-代码提交前的标准检查:格式化、Lint、测试  
-  
-# 触发  
-当用户提到"提交""commit""推送"时自动触发  
-  
-# 执行逻辑  
-1、运行代码格式化  
-2、运行Lint检查  
-3、运行相关测试  
-4、生成检查报告  
-  
-# 输出  
+# 名称
+pre-commit-check
+
+# 描述
+代码提交前的标准检查:格式化、Lint、测试
+
+# 触发
+当用户提到"提交""commit""推送"时自动触发
+
+# 执行逻辑
+1、运行代码格式化
+2、运行Lint检查
+3、运行相关测试
+4、生成检查报告
+
+# 输出
 分级报告:阻断问题、警告问题、通过项
 ```
 
-### 案例1: 智能代码审查
-smart-code-review:
+#### 案例 1：智能代码审查
 
-效果: 以前代码审查靠人工挑毛病,经常遗漏关键问题。现在说"review这个PR",自动按文件类型做专项检查,该找的坑一个不漏。团队线上事故率下降60%。
+`smart-code-review`：
+
+> [!success] 效果
+> 以前代码审查靠人工挑毛病，经常遗漏关键问题。现在说"review 这个 PR"，自动按文件类型做专项检查，该找的坑一个不漏。团队线上事故率下降 60%。
 
 ```markdown
 # 名称
@@ -157,10 +208,12 @@ smart-code-review
 分级报告 + 修复建议 + 参考文档链接
 ```
 
-### 案例2: 依赖升级风险评估
-dependency-upgrade-check:
+#### 案例 2：依赖升级风险评估
 
-效果: 以前升级依赖全靠运气,升了才知道炸不炸。现在每次升级前先跑一遍评估,该注意的点全列出来,升级有底气。
+`dependency-upgrade-check`：
+
+> [!success] 效果
+> 以前升级依赖全靠运气，升了才知道炸不炸。现在每次升级前先跑一遍评估，该注意的点全列出来，升级有底气。
 
 ~~~markdown
 # 触发
@@ -193,14 +246,18 @@ dependency-upgrade-check:
 [如果升级出问题,怎么快速回退]
 ~~~
 
-## 第二层: 编排型工作流 (参数化+链式调用)
+---
 
-一个技能适配多项目,多个技能串成流水线。
+### 第二层：编排型工作流（参数化 + 链式调用）
 
-### 案例: 生产事故应急响应
-incident-response:
+一个技能适配多项目，多个技能串成流水线。
 
-效果: 以前线上出问题,团队一片慌乱,排查靠经验靠猜。现在说"线上订单服务挂了",5分钟内给出完整分析+3套止损方案。平均故障恢复时间从45分钟降到12分钟。
+#### 案例：生产事故应急响应
+
+`incident-response`：
+
+> [!success] 效果
+> 以前线上出问题，团队一片慌乱，排查靠经验靠猜。现在说"线上订单服务挂了"，5 分钟内给出完整分析 + 3 套止损方案。平均故障恢复时间从 45 分钟降到 12 分钟。
 
 ~~~markdown
 # 触发
@@ -220,9 +277,9 @@ incident-response:
 
 ## 阶段3:止损方案(基于根因)
 - 自动生成3个止损方案:
-  1、 最快方案(回滚、降级、限流)
-  2、 最稳方案(修复根因,重新发布)
-  3、 临时方案(绕过问题点,保持可用)
+  1、 最快方案(回滚、降级、限流)
+  2、 最稳方案(修复根因,重新发布)
+  3、 临时方案(绕过问题点,保持可用)
 - 对比每个方案的:恢复时间、风险、副作用
 
 ## 阶段4:执行确认
@@ -247,70 +304,86 @@ incident-response:
 如何预防类似问题再次发生
 ~~~
 
-## 第三层: 团队智能体 (知识沉淀+自进化)
-案例: 技术债追踪助手
+---
 
-效果: 不再是"想起来就还",而是每周有明确的3个小目标。结合SonarQube等专业工具，Skill负责排优先级和生成报告。
+### 第三层：团队智能体（知识沉淀 + 自进化）
 
-tech-debt-tracker:
+#### 案例：技术债追踪助手
+
+> [!success] 效果
+> 不再是"想起来就还"，而是每周有明确的 3 个小目标。结合 SonarQube 等专业工具，Skill 负责排优先级和生成报告。
+
+`tech-debt-tracker`：
 
 ```markdown
-# 名称  
-tech-debt-tracker  
-  
-# 描述  
-每周帮助团队识别和追踪最重要的技术债  
-  
-# 触发  
-用户提到"技术债""代码坏味道""重构计划"时  
-  
-# 执行逻辑  
-1、集成SonarQube API,获取现有扫描结果  
-2、按影响面排序(修改频率高 + bug数多 = 优先级高)  
-3、生成本周TOP 3待还技术债清单  
-4、每项包含:位置、问题描述、建议方案、预估工作量  
-  
-# 输出  
-Markdown周报:  
-- TOP 3技术债(本周建议优先处理)  
-- 已还技术债(上周完成的3项)  
+# 名称
+tech-debt-tracker
+
+# 描述
+每周帮助团队识别和追踪最重要的技术债
+
+# 触发
+用户提到"技术债""代码坏味道""重构计划"时
+
+# 执行逻辑
+1、集成SonarQube API,获取现有扫描结果
+2、按影响面排序(修改频率高 + bug数多 = 优先级高)
+3、生成本周TOP 3待还技术债清单
+4、每项包含:位置、问题描述、建议方案、预估工作量
+
+# 输出
+Markdown周报:
+- TOP 3技术债(本周建议优先处理)
+- 已还技术债(上周完成的3项)
 - 决策记录(为什么选这些,存入memory)
 ```
 
-## 高级: 版本治理+回滚
-目标: 把Skills当团队资产,能升级、能回退、可审计。
-案例: 技能版本化
-落地做法:
-1. 小范围灰度两版,对比"查出率、耗时、误报率"。
-2. 确定没问题再全量,有问题立即回滚。
-3. 预期效果: 两周内误报率从18%压到6%。
-   
-```markdown
-team-skills/  
-  code-review/  
-    v1.0.0/Skill.md  
-    v1.1.0/Skill.md  
-    v2.0.0/Skill.md  # 当前版本
+---
+
+### 高级：版本治理 + 回滚
+
+**目标**：把 Skills 当团队资产，能升级、能回退、可审计。
+
+**案例**：技能版本化
+
+**落地做法**：
+
+1. 小范围灰度两版，对比"查出率、耗时、误报率"
+2. 确定没问题再全量，有问题立即回滚
+3. 预期效果：两周内误报率从 18% 压到 6%
+
+```
+team-skills/
+  code-review/
+    v1.0.0/Skill.md
+    v1.1.0/Skill.md
+    v2.0.0/Skill.md  # 当前版本
 ```
 
-# 用Skill创建Skill
+---
 
-Antrophic官方有一个帮助创建Skill的Skill： https://github.com/anthropics/skills/tree/main/skills/skill-creator
+## 用 Skill 创建 Skill
 
-告诉claude code基于当前的Skill草稿，调用skill-creator来创建一个完成的skill，名称为xxx。
+Anthropic 官方有一个帮助创建 Skill 的 Skill：[skill-creator](https://github.com/anthropics/skills/tree/main/skills/skill-creator)
 
-# Obsidian Skill
-https://github.com/kepano/obsidian-skills
+告诉 Claude Code 基于当前的 Skill 草稿，调用 skill-creator 来创建一个完整的 skill，名称为 xxx。
 
-obsidian-skills直接把Obsidian专家集成在 Claude Code 里，仓库包含三个核心技能Skill:
-- **obsidian-markdown** Obsidian 风格的 Markdown计写，各种专有格式都支持。
-- **obsidian-bases**  .base 类数据库视图支持过滤、公式、汇总。
-- **json-canvas**  .canvas无限画布文件格式可以实现点、连线、分组。
+---
 
-## 安装
-```
+## Obsidian Skill
+
+> [!info] 仓库地址
+> [kepano/obsidian-skills](https://github.com/kepano/obsidian-skills)
+
+obsidian-skills 直接把 Obsidian 专家集成在 Claude Code 里，仓库包含三个核心技能 Skill：
+
+- **obsidian-markdown**：Obsidian 风格的 Markdown 书写，各种专有格式都支持
+- **obsidian-bases**：`.base` 类数据库视图，支持过滤、公式、汇总
+- **json-canvas**：`.canvas` 无限画布文件格式，可以实现点、连线、分组
+
+### 安装
+
+```sh
 /plugin marketplace add kepano/obsidian-skills
 /plugin install obsidian@obsidian-skills
 ```
-
-
