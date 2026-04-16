@@ -1,30 +1,34 @@
-# 实验机器规划
+---
+title: Ubuntu 22.04 Slurm 23.11 deb安装
+tags:
+  - hpc/slurm
+  - linux/ubuntu
+  - hpc/munge
+aliases:
+  - Ubuntu Slurm 23.11 deb安装
+  - Slurm deb包安装
+date: 2026-04-16
+---
 
-- OS:[ubuntu-22.04.4-live-server-amd64.iso](https://mirrors.tuna.tsinghua.edu.cn/ubuntu-releases/22.04/ubuntu-22.04.4-live-server-amd64.iso)
+# Ubuntu 22.04 Slurm 23.11 deb安装
 
-- 2vcpu,4GB内存。
+> [!info] 实验机器规划
+> - OS: [ubuntu-22.04.4-live-server-amd64.iso](https://mirrors.tuna.tsinghua.edu.cn/ubuntu-releases/22.04/ubuntu-22.04.4-live-server-amd64.iso)
+> - 2vcpu, 4GB内存
+> - User: hangx hangx / root root
+> - IP地址规划:
+>   - ==172.16.183.130== um1
+>   - ==172.16.183.131== uc1
+>   - ==172.16.183.132== ul1
 
-- User:
+---
 
-  - hangx hangx
-  - root root
-
-- IP地址规划
-
-  - 172.16.183.130 um1
-
-  - 172.16.183.131 uc1
-
-  - 172.16.183.132 ul1
-
-# 环境准备
+## 环境准备
 
 - IP配置
 
   - Ubuntu系统安装时,可以在网卡配置页面,将ens33设置为静态IP。
-
   - Gateway: 172.16.183.2
-
   - name servers: 8.8.8.8,114.114.114.114
 
 ~~~sh
@@ -103,9 +107,11 @@ ssh-copy-id -i ~/.ssh/id_rsa.pub uc1
 ssh-copy-id -i ~/.ssh/id_rsa.pub ul1
 ~~~
 
-# 配置munge
+---
 
-- Munge用户要确保Master Node和Compute Nodes的UID和GID相同,**所有节点**都需要安装Munge;
+## 配置munge
+
+> [!important] Munge用户要确保Master Node和Compute Nodes的==UID和GID相同==,**所有节点**都需要安装Munge。
 
 ~~~sh
 #所有节点上
@@ -218,7 +224,9 @@ munge -n | ssh ul1 unmunge
 remunge
 ```
 
-# 配置slurm
+---
+
+## 配置slurm
 
 - 创建slurm用户
 
@@ -253,25 +261,25 @@ mk-build-deps -i debian/control
 debuild -b -uc -us
 ~~~
 
-- The packages will be in the parent directory after debuild completes.
-
-  ~~~sh
-  #um1上
-  cd ..
-  dpkg -i slurm-smd_23.11.4-1_amd64.deb
-  dpkg -i slurm-smd-slurmctld_23.11.4-1_amd64.deb
-  dpkg -i slurm-smd-client_23.11.4-1_amd64.deb
-  dpkg -i slurm-smd-slurmdbd_23.11.4-1_amd64.deb
-  #uc1上
-  cd ..
-  dpkg -i slurm-smd_23.11.4-1_amd64.deb
-  dpkg -i slurm-smd-slurmd_23.11.4-1_amd64.deb
-  dpkg -i slurm-smd-client_23.11.4-1_amd64.deb
-  #ul1上
-  cd ..
-  dpkg -i slurm-smd_23.11.4-1_amd64.deb
-  dpkg -i slurm-smd-client_23.11.4-1_amd64.deb
-  ~~~
+> [!tip] 各节点安装不同的deb包
+> The packages will be in the parent directory after debuild completes.
+> ~~~sh
+> #um1上
+> cd ..
+> dpkg -i slurm-smd_23.11.4-1_amd64.deb
+> dpkg -i slurm-smd-slurmctld_23.11.4-1_amd64.deb
+> dpkg -i slurm-smd-client_23.11.4-1_amd64.deb
+> dpkg -i slurm-smd-slurmdbd_23.11.4-1_amd64.deb
+> #uc1上
+> cd ..
+> dpkg -i slurm-smd_23.11.4-1_amd64.deb
+> dpkg -i slurm-smd-slurmd_23.11.4-1_amd64.deb
+> dpkg -i slurm-smd-client_23.11.4-1_amd64.deb
+> #ul1上
+> cd ..
+> dpkg -i slurm-smd_23.11.4-1_amd64.deb
+> dpkg -i slurm-smd-client_23.11.4-1_amd64.deb
+> ~~~
 
 - 配置控制节点slurm
 
@@ -461,7 +469,9 @@ mkdir -p /var/log/slurm;done
 chown slurm: /var/log/slurm
 ~~~
 
-# 启动服务
+---
+
+## 启动服务
 
 ~~~sh
 #um1上
@@ -474,9 +484,11 @@ systemctl start slurmd
 systemctl status slurmd
 ~~~
 
-# 常用命令
+---
 
-## 查看集群状态
+## 常用命令
+
+### 查看集群状态
 
 ~~~sh
 # 查看集群
@@ -492,7 +504,7 @@ scontrol show jobs
 squeue -a
 ~~~
 
-## 交互式提交作业
+### 交互式提交作业
 
 ~~~sh
 # --mem=5M表示申请5MB内存,-c 1表示申请1个核心。
@@ -514,7 +526,7 @@ squeue -o "%.5i %.10u %.2t %.10M %.6D %.4C %.7m   %R"
 sacct  -o jobid,jobname,partition,alloccpus,state,reqmem,averss,maxrss,exitcode  -j jobid
 ```
 
-## sbatch提交作业
+### sbatch提交作业
 
 ~~~sh
 #!/bin/bash
@@ -533,7 +545,7 @@ hostname                    # 执行我的hostname命令
 sacct  -o jobid,jobname,partition,alloccpus,state,reqmem,averss,maxrss,exitcode  -j job-id
 ```
 
-## 示例python作业
+### 示例python作业
 
 ~~~python
 #!/usr/bin/python3
@@ -624,7 +636,7 @@ subprocess.call(['sbatch', 'job.sh'])
 sacct -j ID-number
 ~~~
 
-## 分配模式salloc提交作业
+### 分配模式salloc提交作业
 
 ~~~sh
 #使用salloc命令提交。为需实时处理的作业分配资源,典型场景为分配资源并启动一个shell,然 后用此shell执行srun命令去执行并行任务。
@@ -643,7 +655,7 @@ scancel 71
 squeue -j 71
 ~~~
 
-## 常见命令
+### 常见命令
 
 ~~~sh
 scontrol show nodes #显示所有计算节点
@@ -663,8 +675,18 @@ scontrol show node | grep CPU   #查看各节点cpu状态
 scontrol show node node-name | grep CPU #查看指定节点cpu状态
 ~~~
 
-## PBS vs Slurm
+### PBS vs Slurm
 
 ![image-20240322155447470](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202403221554549.png)
 
 [HPC调度基础:slurm集群的部署与配置-天翼云开发者社区 - 天翼云 (ctyun.cn)](https://www.ctyun.cn/developer/article/363542369067077)
+
+---
+
+## 相关笔记
+
+- [[CentOS7-slurm23.02-二进制安装]] - CentOS7 Slurm部署
+- [[Ubuntu2204-slurm-22.05.11-二进制安装]] - Ubuntu Slurm 22.05 二进制安装
+- [[Ubuntu-2204-slurm-22.05.11-binary-installation]] - Ubuntu Slurm 22.05 生产环境安装
+- [[Slurm-node-exporter]] - Slurm监控
+- [[PBS]] - PBS作业调度系统

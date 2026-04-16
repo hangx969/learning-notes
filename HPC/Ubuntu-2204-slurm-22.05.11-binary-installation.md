@@ -1,17 +1,34 @@
-# 实验环境
+---
+title: Ubuntu 22.04 Slurm 22.05.11 Binary Installation (Production)
+tags:
+  - hpc/slurm
+  - linux/ubuntu
+  - hpc/munge
+  - hpc/slurmdbd
+  - hpc/gpu
+aliases:
+  - Ubuntu Slurm 22.05 Production
+  - Slurm H800 GPU Cluster
+date: 2026-04-16
+---
 
-| Roles           | Hostname      | IP           |
-| --------------- | ------------- | ------------ |
-| Management node | CN01Z99SLU001 | 10.21.105.20 |
-| Login node      | CN01Z99SLU002 | 10.21.105.21 |
-| Compute node    | cn01dl001     | 10.21.105.11 |
-| Compute node    | cn01dl002     | 10.21.105.12 |
-| Compute node    | cn01dl003     | 10.21.105.13 |
-| Compute node    | cn01dl004     | 10.21.105.14 |
+# Ubuntu 22.04 Slurm 22.05.11 Binary Installation (Production)
 
-# management/login node安装munge
+> [!info] 实验环境
+> | Roles           | Hostname      | IP           |
+> | --------------- | ------------- | ------------ |
+> | Management node | CN01Z99SLU001 | 10.21.105.20 |
+> | Login node      | CN01Z99SLU002 | 10.21.105.21 |
+> | Compute node    | cn01dl001     | 10.21.105.11 |
+> | Compute node    | cn01dl002     | 10.21.105.12 |
+> | Compute node    | cn01dl003     | 10.21.105.13 |
+> | Compute node    | cn01dl004     | 10.21.105.14 |
 
-- Munge用户要确保Master/login Nodes和Compute Nodes的UID和GID相同，**所有节点**都需要安装Munge;
+---
+
+## management/login node安装munge
+
+> [!important] Munge用户要确保Master/login Nodes和Compute Nodes的==UID和GID相同==，**所有节点**都需要安装Munge。
 
 ~~~sh
 #所有节点上
@@ -131,7 +148,9 @@ munge -n | ssh cn01z99slu002 unmunge
 remunge
 ```
 
-# compute node安装munge
+---
+
+## compute node安装munge
 
 ~~~sh
 #ssh远程命令的语法，不需要sudo时
@@ -212,9 +231,11 @@ ssh test@cn01dl00$i "munge -n | ssh ubuntu@cn01z99slu001 unmunge";
 done
 ~~~
 
-# management node安装slurm
+---
 
-## 创建slurm用户
+## management node安装slurm
+
+### 创建slurm用户
 
 ~~~sh
 getent group 1109
@@ -229,7 +250,7 @@ sudo useradd -m -c "Slurm manager" -d /var/lib/slurm -u 1109 -g slurm -s /bin/ba
 id slurm
 ~~~
 
-## 编译安装slurm
+### 编译安装slurm
 
 https://slurm.schedmd.com/quickstart_admin.html#debuild
 
@@ -252,7 +273,7 @@ sudo make install
 sudo cp -r ./etc/slurm*.service /etc/systemd/system/
 ~~~
 
-## 配置数据库
+### 配置数据库
 
 ```sh
 sudo systemctl enable mariadb
@@ -269,9 +290,9 @@ grant all on slurm_acct_db.* to 'slurm'@'localhost' identified by '123456' with 
 exit;
 ```
 
-## slurm配置文件
+### slurm配置文件
 
-### cgroup.conf
+#### cgroup.conf
 
 ~~~sh
 #配置文件是放在--sysconfdir=/etc/slurm下
@@ -298,7 +319,7 @@ ConstrainRAMSpace=yes
 EOF
 ~~~
 
-### slurm.conf
+#### slurm.conf
 
 ~~~sh
 #查看CPUs
@@ -309,6 +330,13 @@ lscpu
 free -m
 #
 ~~~
+
+> [!tip] slurm.conf 关键参数说明
+> - ==ProctrackType=proctrack/cgroup==: 采用Linux cgroup来生成作业容器并追踪进程
+> - ==ReturnToService=1==: 仅当由于无响应而将DOWN节点设置为DOWN状态时，才可以当有效配置注册后使DOWN节点恢复服务
+> - ==TaskPlugin=task/affinity,task/cgroup==: affinity用于CPU亲和，cgroup用于强制采用Linux控制组分配资源
+> - ==SchedulerType=sched/backfill==: 使用后填充调度器，优先运行队列中等待时间最长的作业
+> - ==SelectType=select/cons_tres==: 单个的CPU核、内存、GPU及其它可追踪资源作为可消费资源
 
 ~~~sh
 sudo tee /etc/slurm/slurm.conf << 'EOF'
@@ -484,7 +512,7 @@ PartitionName=zprodcpu Nodes=cn01dl004 DefMemPerCPU=80000 MaxTime=INFINITE State
 EOF
 ~~~
 
-### gres.conf
+#### gres.conf
 
 - 控制节点/etc/slurm/下新建gres.conf，空白文件
 
@@ -492,7 +520,7 @@ EOF
 sudo touch gres.conf
 ~~~
 
-### slurmdbd.conf
+#### slurmdbd.conf
 
 - 管理节点/etc/slurm/下
 
@@ -531,7 +559,7 @@ sudo touch /var/log/slurm/slurmdbd.log
 sudo chown slurm: /var/log/slurm/slurmdbd.log
 ~~~
 
-## 配置同步/权限修改
+### 配置同步/权限修改
 
 ~~~sh
 sudo mkdir -p /var/spool/slurm/ctld
@@ -543,7 +571,7 @@ sudo chown -R slurm:slurm /var/spool/slurm
 sudo chown slurm: /var/log/slurm
 ~~~
 
-## 配置slurm环境变量
+### 配置slurm环境变量
 
 ~~~sh
 #给所有用户添加环境变量
@@ -555,7 +583,7 @@ vim /etc/profile
 source /etc/profile
 ~~~
 
-## 启动服务
+### 启动服务
 
 ~~~sh
 sudo systemctl enable slurmdbd
@@ -567,9 +595,11 @@ sudo systemctl start slurmctld
 sudo systemctl status slurmctld
 ~~~
 
-# compute node安装slurm
+---
 
-## 创建slurm用户
+## compute node安装slurm
+
+### 创建slurm用户
 
 ~~~sh
 for i in `seq 1 4`; do
@@ -581,7 +611,7 @@ ssh -t test@cn01dl00$i "sudo groupadd -g 1109 slurm;sudo useradd -m -c \"Slurm m
 done
 ~~~
 
-## 编译安装slurm
+### 编译安装slurm
 
 https://slurm.schedmd.com/quickstart_admin.html#debuild
 
@@ -616,9 +646,9 @@ ssh -t test@cn01dl00$i "cd ~/slurm-22.05.11;sudo cp -r ./etc/slurm*.service /etc
 done
 ~~~
 
-## slurm配置文件
+### slurm配置文件
 
-### cgroup.conf
+#### cgroup.conf
 
 ~~~sh
 #配置文件是放在--sysconfdir=/etc/slurm下
@@ -645,7 +675,7 @@ ConstrainRAMSpace=no
 EOF
 ~~~
 
-### slurm.conf
+#### slurm.conf
 
 - 复制控制节点的配置文件过来
 
@@ -656,7 +686,7 @@ scp slurm.conf test@cn01dl00$i:/etc/slurm/;
 done
 ~~~
 
-### gres.conf
+#### gres.conf
 
 - 客户端/etc/slurm/下新建gres.conf
 
@@ -665,7 +695,7 @@ done
 Name=gpu Type=H800 File=/dev/nvidia[0-7]
 ~~~
 
-## 配置同步/权限修改
+### 配置同步/权限修改
 
 ~~~sh
 for i in `seq 1 4`; do
@@ -673,7 +703,7 @@ ssh -t test@cn01dl00$i "sudo mkdir -p /var/spool/slurm/d;sudo chmod 0755 /var/sp
 done
 ~~~
 
-## 配置slurm环境变量
+### 配置slurm环境变量
 
 ~~~sh
 #给所有用户添加环境变量
@@ -685,7 +715,7 @@ export PATH=$PATH:/usr/local/sbin
 source /etc/profile
 ~~~
 
-## 启动服务
+### 启动服务
 
 ~~~sh
 for i in `seq 1 4`; do
@@ -693,9 +723,11 @@ ssh -t test@cn01dl00$i "sudo systemctl enable slurmd;sudo systemctl start slurmd
 done
 ~~~
 
-# login node安装slurm
+---
 
-## 创建slurm用户
+## login node安装slurm
+
+### 创建slurm用户
 
 ~~~sh
 getent group 1109
@@ -710,7 +742,7 @@ sudo useradd -m -c "Slurm manager" -d /var/lib/slurm -u 1109 -g slurm -s /bin/ba
 id slurm
 ~~~
 
-## 编译安装slurm
+### 编译安装slurm
 
 https://slurm.schedmd.com/quickstart_admin.html#debuild
 
@@ -732,7 +764,7 @@ sudo make install
 sudo cp -r ./etc/slurm*.service /etc/systemd/system/
 ~~~
 
-## slurm配置文件
+### slurm配置文件
 
 ```sh
 #配置文件是放在--sysconfdir=/etc/slurm下
@@ -740,11 +772,11 @@ sudo mkdir -p /etc/slurm/
 cd /etc/slurm/
 ```
 
-### slurm.conf
+#### slurm.conf
 
 - 复制management node的slurm.conf
 
-## 配置同步/权限修改
+### 配置同步/权限修改
 
 ~~~sh
 sudo mkdir -p /var/spool/slurm/d
@@ -757,7 +789,7 @@ sudo chown slurm: /var/log/slurm
 sudo chmod 644 /var/log/slurm/slurmd.log
 ~~~
 
-## 配置slurm环境变量
+### 配置slurm环境变量
 
 ~~~sh
 #给所有用户添加环境变量
@@ -769,15 +801,17 @@ export PATH=$PATH:/usr/local/sbin
 source /etc/profile
 ~~~
 
-## 启动服务
+### 启动服务
 
 ~~~sh
 #login node上不需要启动daemon，二进制安装完，维护同样的slurm.conf就行
 ~~~
 
-# 作业调度测试
+---
 
-## 查看集群状态
+## 作业调度测试
+
+### 查看集群状态
 
 ~~~sh
 # 查看集群
@@ -807,7 +841,7 @@ systemctl daemon-reload && systemctl restart slurmd && systemctl status slurmd
 scontrol update nodename=c1 state=resume
 ~~~
 
-## 交互式提交作业
+### 交互式提交作业
 
 ~~~sh
 # --mem=5M表示申请5MB内存，-c 1表示申请1个核心。
@@ -829,7 +863,7 @@ squeue -o "%.5i %.10u %.2t %.10M %.6D %.4C %.7m   %R"
 sacct  -o jobid,jobname,partition,alloccpus,state,reqmem,averss,maxrss,exitcode  -j jobid
 ```
 
-## sbatch提交作业
+### sbatch提交作业
 
 ~~~sh
 #!/bin/bash
@@ -850,7 +884,7 @@ sbatch test.sh #提交作业
 sacct  -o jobid,jobname,partition,alloccpus,state,reqmem,averss,maxrss,exitcode  -j job-id
 ```
 
-## 示例python作业
+### 示例python作业
 
 ~~~python
 #!/usr/bin/python3
@@ -941,7 +975,7 @@ subprocess.call(['sbatch', 'job.sh'])
 sacct -j ID-number
 ~~~
 
-## 分配模式salloc提交作业
+### 分配模式salloc提交作业
 
 ~~~sh
 #使用salloc命令提交。为需实时处理的作业分配资源，典型场景为分配资源并启动一个shell，然 后用此shell执行srun命令去执行并行任务。
@@ -960,7 +994,7 @@ scancel 71
 squeue -j 71
 ~~~
 
-## 常见命令
+### 常见命令
 
 ~~~sh
 scontrol show nodes #显示所有计算节点
@@ -984,7 +1018,9 @@ scontrol show node | grep CPU   #查看各节点cpu状态
 scontrol show node node-name | grep CPU #查看指定节点cpu状态
 ~~~
 
-# 配置account和user
+---
+
+## 配置account和user
 
 - 增加slurm账号
 
@@ -1008,7 +1044,9 @@ sacctmgr show ass format="Cluster,Account,User,Partition,QOS"
 
 - qos配置 https://icode.pku.edu.cn/SCOW/docs/slurm
 
-# 配置prolog
+---
+
+## 配置prolog
 
 - 所有计算节点上创建prolog目录和脚本
 
@@ -1044,7 +1082,9 @@ BatchStartTimeout=120
 scontrol reconfigure
 ~~~
 
-# 配置epilog
+---
+
+## 配置epilog
 
 - 所有节点创建epilog目录和脚本
 
@@ -1115,3 +1155,13 @@ for i in `seq 1 4`; do
 ssh -t root@cn01dl00$i "scontrol reconfigure";
 done
 ~~~
+
+---
+
+## 相关笔记
+
+- [[CentOS7-slurm23.02-二进制安装]] - CentOS7 Slurm部署
+- [[Ubuntu2204-slurm-22.05.11-二进制安装]] - Ubuntu Slurm 22.05 测试环境部署
+- [[Ubuntu2204-slurm- 23.11-deb安装]] - Ubuntu Slurm 23.11 deb安装
+- [[Slurm-node-exporter]] - Slurm监控
+- [[PBS]] - PBS作业调度系统

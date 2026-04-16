@@ -1,38 +1,56 @@
-# PBS介绍
+---
+title: PBS 作业调度系统
+tags:
+  - hpc/pbs
+  - hpc/pbs-pro
+  - hpc/torque
+  - hpc/job-scheduling
+aliases:
+  - PBS Pro
+  - Portable Batch System
+  - Torque
+date: 2026-04-16
+---
 
-- PBS(Portable Batch System)是一个常用的作业调度系统,用于管理和调度计算集群中的作业。它允许用户提交作业并有效地利用集群资源,使得多个用户能够共享计算资源并按照优先级执行他们的作业。
+# PBS 作业调度系统
+
+- ==PBS(Portable Batch System)==是一个常用的作业调度系统,用于管理和调度计算集群中的作业。它允许用户提交作业并有效地利用集群资源,使得多个用户能够共享计算资源并按照优先级执行他们的作业。
 
 - 背景:PBS最初由NASA开发,旨在管理和调度超级计算机集群中的作业。它的设计目标是提供一个可移植、灵活和可扩展的作业管理系统,使得用户可以方便地提交、管理和跟踪作业的执行。
 
 - 作用:PBS的主要功能是管理和调度计算集群中的作业。它允许用户提交作业描述,包括作业需要的资源、执行命令、作业优先级等信息。PBS根据资源可用性、作业优先级和调度策略等因素来决定作业的执行顺序,并负责分配计算资源给作业使用。同时,PBS还提供了查询作业状态、取消作业、节点管理等功能。
 
+---
+
 ## 版本分支
 
-PBS的目前包括openPBS, PBS Pro和Torque三个主要分支.
+PBS的目前包括==openPBS==, ==PBS Pro==和==Torque==三个主要分支.
 
 - 其中OpenPBS是最早的PBS系统, 目前已经没有太多后续开发。
-
 - PBS pro是PBS的商业版本, 功能最为丰富。
-
 - Torque是Clustering公司接过了OpenPBS, 并给与后续支持的一个开源版本。
+
+---
 
 ## 工作流程
 
-1. 作业提交:用户使用qsub命令提交作业到PBS系统,包括作业描述和执行脚本。
+1. 作业提交:用户使用==qsub==命令提交作业到PBS系统,包括作业描述和执行脚本。
 2. 作业排队:提交的作业被放置在队列中等待调度执行。
 3. 资源分配:PBS根据作业需求、可用资源和调度策略,选择合适的节点分配资源。
-4. 作业执行:作业在分配的节点上执行,执行期间可以通过qstat查看作业状态。
+4. 作业执行:作业在分配的节点上执行,执行期间可以通过==qstat==查看作业状态。
 5. 作业完成:作业执行完成后,输出结果被返回给用户。
 
-# PBS命令介绍
+---
 
-## 查看节点情况-pbsnodes
+## PBS命令介绍
+
+### 查看节点情况-pbsnodes
 
 1. `pbsnodes -a`:这个命令将显示所有节点的详细信息,包括节点的状态、空闲核数、总核数等。
 2. `pbsnodes -l free`:这个命令将列出所有空闲的节点。
 3. `pbsnodes -l`:这个命令将列出所有节点的状态,包括空闲节点和正在运行的节点。
 
-## 提交作业-qsub
+### 提交作业-qsub
 
 - qsub 命令:用于提交作业脚本
 
@@ -46,9 +64,9 @@ $qsub -a date_time [-C directive_prefix]
 #参数说明:因为所采用的选项一般放在pbs 脚本中提交,所以具体见PBS 脚本选项。
 ```
 
-## 提交作业-脚本
+### 提交作业-脚本
 
-- 当使用PBS管理作业时,需要编写PBS脚本文件来描述作业的要求、资源需求以及作业的执行流程。PBS脚本是一个文本文件,通常以.pbs为扩展名。它包含了用于描述作业要求的指令、环境设置和作业执行命令。
+- 当使用PBS管理作业时,需要编写PBS脚本文件来描述作业的要求、资源需求以及作业的执行流程。PBS脚本是一个文本文件,通常以`.pbs`为扩展名。它包含了用于描述作业要求的指令、环境设置和作业执行命令。
 
 - 脚本结构:
 
@@ -69,55 +87,52 @@ cd $PBS_O_WORKDIR
 <command_to_execute>
 ~~~
 
-- 示例1 - 运行shell命令
+> [!example] 示例1 - 运行shell命令
+> ~~~sh
+> #!/bin/bash
+> #PBS -N myjob
+> #PBS -l nodes=1:ppn=2
+> #PBS -l walltime=00:01:00
+> #PBS -q batch
+> 
+> cd $PBS_O_WORKDIR
+> 
+> echo "Hello, PBS! This is my job."
+> ~~~
 
-  ~~~sh
-  #!/bin/bash
-  #PBS -N myjob
-  #PBS -l nodes=1:ppn=2
-  #PBS -l walltime=00:01:00
-  #PBS -q batch
-  
-  cd $PBS_O_WORKDIR
-  
-  echo "Hello, PBS! This is my job."
-  ~~~
+> [!example] 示例2 - 运行python脚本
+> ~~~sh
+> #!/bin/bash
+> #PBS -N python_job
+> #PBS -l nodes=1:ppn=4
+> #PBS -l walltime=01:00:00
+> #PBS -q batch
+> 
+> module load python
+> 
+> cd $PBS_O_WORKDIR
+> 
+> python myscript.py
+> ~~~
 
-- 示例2 - 运行pthon脚本
-
-  ~~~sh
-  #!/bin/bash
-  #PBS -N python_job
-  #PBS -l nodes=1:ppn=4
-  #PBS -l walltime=01:00:00
-  #PBS -q batch
-  
-  module load python
-  
-  cd $PBS_O_WORKDIR
-  
-  python myscript.py
-  ~~~
-
-- 示例3 - 使用MPI运行并行作业
-
-  ~~~sh
-  #!/bin/bash
-  #PBS -N mpi_job
-  #PBS -l nodes=4:ppn=2
-  #PBS -l walltime=02:00:00
-  #PBS -q batch
-  
-  module load mpi
-  
-  cd $PBS_O_WORKDIR
-  
-  mpirun -np 8 my_mpi_program
-  ~~~
+> [!example] 示例3 - 使用MPI运行并行作业
+> ~~~sh
+> #!/bin/bash
+> #PBS -N mpi_job
+> #PBS -l nodes=4:ppn=2
+> #PBS -l walltime=02:00:00
+> #PBS -q batch
+> 
+> module load mpi
+> 
+> cd $PBS_O_WORKDIR
+> 
+> mpirun -np 8 my_mpi_program
+> ~~~
 
 qsub test.sh即可提交作业脚本
 
-## 查看作业状态-qstat
+### 查看作业状态-qstat
 
 - qstat 命令:用于查询作业状态信息
 
@@ -137,7 +152,7 @@ qsub test.sh即可提交作业脚本
   #X  只用于子任务,表示子任务完成
   ```
 
-## 删除作业-qdel
+### 删除作业-qdel
 
 - qdel 命令:用于删除已提交的作业
 
@@ -148,9 +163,9 @@ qdel [-W 间隔时间] 作业号
 qdel -W force jobid #强制删除作业
 ```
 
-## 队列管理-qmgr
+### 队列管理-qmgr
 
-- qmgr 命令—用于队列管理
+- qmgr 命令---用于队列管理
 
 ```sh
 qmgr -c "create queue batch queue_type=execution"
@@ -161,23 +176,25 @@ qmgr -c "set queue batch resources_default.walltime=3600"
 qmgr -c "set server default_queue=batch"
 ```
 
-# PBS pro学习
+---
 
-## 组件
+## PBS pro学习
 
-- Server
+### 组件
+
+- ==Server==
   - 管理job,queue;处理命令
-  - 守护进程是pbs_server.bin
-- Scheduler
+  - 守护进程是`pbs_server.bin`
+- ==Scheduler==
   - 负责调度job
-  - 守护进程是pbs_sched
-- MoM
+  - 守护进程是`pbs_sched`
+- ==MoM==
   - 执行job
-  - 守护进程是pbs_mom
+  - 守护进程是`pbs_mom`
 
 可以将3个组件全部部署在一台服务器上;更通用的方法是将Server+scheduler部署到一台管理节点,然后部署多台MoM节点。
 
-## 工作流程
+### 工作流程
 
 1. User submits job
 2. PBS server returns a job ID (数字+head node的hostname)
@@ -190,13 +207,13 @@ qmgr -c "set server default_queue=batch"
 9. When job is completed PBS MoM kills the job script
 10. PBS server de-queues job from PBS complex
 
-## 提交作业
+### 提交作业
 
 - 命令行方式
 
   ~~~sh
   su pbsuser1
-  qsub –l select=1:ncpus=1:mem=1gb –l walltime=10:00:00 -- /bin/sleep 100
+  qsub -l select=1:ncpus=1:mem=1gb -l walltime=10:00:00 -- /bin/sleep 100
   ~~~
 
 - ctrl+d提交
@@ -212,8 +229,8 @@ qmgr -c "set server default_queue=batch"
   ~~~sh
   cat pbs_script.sh
   #!/bin/bash
-  #PBS –l select=1:ncpus=1:mem=1gb
-  #PBS –l walltime=00:01:00
+  #PBS -l select=1:ncpus=1:mem=1gb
+  #PBS -l walltime=00:01:00
   /bin/sleep 100
   ~~~
 
@@ -229,27 +246,27 @@ qmgr -c "set server default_queue=batch"
   #会直接给一个到计算节点的终端,可以交互式输入命令。适用于debug。
   ~~~
 
-## 作业参数设置
+### 作业参数设置
 
-- 可以通过qsub参数指定 qsub -N job_name job_script
+- 可以通过qsub参数指定 `qsub -N job_name job_script`
 
 - 可以在脚本中指定
 
   ~~~sh
   #!/bin/bash
-  #PBS –N test_run_01
-  #PBS –l select=2:ncpus=2:mem=1GB
-  #PBS –l place=scatter
+  #PBS -N test_run_01
+  #PBS -l select=2:ncpus=2:mem=1GB
+  #PBS -l place=scatter
   #PBS -j oe
-  #PBS –o /home/pbsuser1/OUTPUTS
+  #PBS -o /home/pbsuser1/OUTPUTS
   ## this is a comment
   /bin/sleep 60
   ~~~
 
-  - #PBS –l select=2:ncpus=2:mem=1GB 指定需要2个chuck,每个chunk都需要2个核心,1GB内存来处理这个任务。
-  - #PBS –l place=scatter 加了这个参数,倾向于把两个chunk分散到多个node去执行
+  - `#PBS -l select=2:ncpus=2:mem=1GB` 指定需要==2个chunk==,每个chunk都需要2个核心,1GB内存来处理这个任务。
+  - `#PBS -l place=scatter` 加了这个参数,倾向于把两个chunk分散到多个node去执行
 
-### 数组作业
+#### 数组作业
 
 - 数组作业是一种特殊类型的作业,它允许你一次提交多个相似的作业。使用一个脚本来提交多个相似的作业,而不需要为每个作业都写一个单独的脚本。这对于需要运行大量相似作业的情况非常有用,例如参数扫描或蒙特卡洛模拟。
 
@@ -262,29 +279,26 @@ qmgr -c "set server default_queue=batch"
   qstat -p #Shows the % completed
   ~~~
 
-- 数组作业的脚本示例
+> [!example] 数组作业的脚本示例
+> Submit 5 jobs with odd indices (1,3,5,7,9):
+> ~~~sh
+> #!/bin/sh
+> #PBS -N SimOddJobs
+> #PBS -J 1-10:2
+> echo "Main script: index " $PBS_ARRAY_INDEX
+> /opt/AppA -input /home/user01/odd/scriptlet_$PBS_ARRAY_INDEX
+> ~~~
+>
+> Submit 10 jobs with consecutive index numbers:
+> ~~~sh
+> #!/bin/sh
+> #PBS -N Simn1010Jobs
+> #PBS -J 1-10
+> echo "Main script: index " $PBS_ARRAY_INDEX
+> /opt/AppA -input /home/pbsuser1/runcase1/scriptlet_$PBS_ARRAY_INDEX
+> ~~~
 
-  - Submit 5 jobs with odd indices (1,3,5,7,9)
-
-  ~~~sh
-  #!/bin/sh
-  #PBS -N SimOddJobs
-  #PBS -J 1-10:2
-  echo "Main script: index " $PBS_ARRAY_INDEX
-  /opt/AppA –input /home/user01/odd/scriptlet_$PBS_ARRAY_INDEX
-  ~~~
-
-  - Submit 10 jobs with consecutive index numbers
-
-  ~~~sh
-  #!/bin/sh
-  #PBS -N Simn1010Jobs
-  #PBS -J 1-10
-  echo "Main script: index " $PBS_ARRAY_INDEX
-  /opt/AppA –input /home/pbsuser1/runcase1/scriptlet_$PBS_ARRAY_INDEX
-  ~~~
-
-### 作业环境变量
+#### 作业环境变量
 
 - 作业提交之后,PBS会自动指定一些环境变量,这些变量可以被利用为参数写到脚本里
 
@@ -293,40 +307,40 @@ qmgr -c "set server default_queue=batch"
   ~~~sh
   #!/bin/bash
   #PBS -l select=8:ncpus=16:mem=32GB
-  #PBS –l place=scatter,walltime=5:00:00
-  #PBS –N sim_run_01
+  #PBS -l place=scatter,walltime=5:00:00
+  #PBS -N sim_run_01
   #PBS -M user01@altair.com
   #PBS -m abe
   #PBS -e pbsworks:/scratch/${PBS_JOBNAME}.e${PBS_JOBID}
   #PBS -o pbsworks:/scratch/${PBS_JOBNAME}.o${PBS_JOBID}
   cd $PBS_TMPDIR
-  mpirun –np 128 my_script.sh
+  mpirun -np 128 my_script.sh
   ~~~
 
-### 作业输出
+#### 作业输出
 
-- 作业的STDOUT和STDERR可以定义,默认$PBS_O_WORKDIR。
+- 作业的STDOUT和STDERR可以定义,默认`$PBS_O_WORKDIR`。
 
 - 有两种方式指定
 
-  - -o \<host>:\<path>\<filename>,-e \<host>:\<path>\<filename>
+  - `-o <host>:<path><filename>`, `-e <host>:<path><filename>`
 
-  - -k
+  - `-k`
 
     <img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202402051030441.png" alt="image-20240205103046334" style="zoom:50%;" />
 
   - 默认的job staging目录是user的home directory
 
-### 作业sandbox
+#### 作业sandbox
 
 <img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202402051047262.png" alt="image-20240205104714155" style="zoom:50%;" />
 
-### 作业dependency
+#### 作业dependency
 
-- qsub -W depend=afterok:1.trainta01:2.trainta01  my_script
-- 有dependency的job会被置于H状态
+- `qsub -W depend=afterok:1.trainta01:2.trainta01  my_script`
+- 有dependency的job会被置于==H状态==
 
-## 查看作业状态
+### 查看作业状态
 
 ~~~sh
 qstat -answ1 #查看当前所有作业详细信息
@@ -343,7 +357,8 @@ $PBS_EXEC/unsupported/pbs_dtj 3.pbs1
 
 <img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202402041408776.png" alt="image-20240204140817880" style="zoom:50%;" />
 
-E: 说明job在exit状态,可能正在复制结果回来。如果长时间卡在E说明可能server之间的passwordless  ssh或者scp有问题。
+> [!warning] E状态
+> 说明job在exit状态,可能正在复制结果回来。如果长时间卡在E说明可能server之间的==passwordless ssh或者scp有问题==。
 
 - 作业历史
 
@@ -367,13 +382,13 @@ E: 说明job在exit状态,可能正在复制结果回来。如果长时间卡在
 - 筛选出特定作业 - `qselect`
 
   ~~~sh
-  qselect –u user01 #列出属于某用户的job id
-  qselect –s R –l ncpus.gt.4 #在running job中找出需求cpu大于4的job
-  qstat `qselect –s E` #联合使用,找出状态是E的job,列出详细信息。
+  qselect -u user01 #列出属于某用户的job id
+  qselect -s R -l ncpus.gt.4 #在running job中找出需求cpu大于4的job
+  qstat `qselect -s E` #联合使用,找出状态是E的job,列出详细信息。
   qselect -ts.gt.09251200 -ts.lt.09251500 #列出某时间段内的job
   ~~~
 
-## 作业其他操作
+### 作业其他操作
 
 - 删除作业 - `qdel`
 - 重新排队一个正在运行的job - `qrerun`
@@ -381,26 +396,26 @@ E: 说明job在exit状态,可能正在复制结果回来。如果长时间卡在
 - 定时启动任务 - `qsub -a <date time>`
 - 作业提交之后,其需求的资源仍可被改变 - `qalter -l select=1:ncpus=3 0.pbs1`
 
-## 查看节点状态
+### 查看节点状态
 
 ~~~sh
 pbsnodes -aSjv
 qstat -Bf
 ~~~
 
-## 查看queue
+### 查看queue
 
 ~~~sh
 qstat -q
 ~~~
 
-## 查看节点资源
+### 查看节点资源
 
 ~~~sh
 pbsnodes pbs2 #指定节点名查看节点资源情况
 ~~~
 
-- 提交作业的时候,通过-l参数指定对资源的要求
+- 提交作业的时候,通过`-l`参数指定对资源的要求
 
   ~~~sh
   qsub -l vnode=pbs3 -- /bin/sleep 100 #指定在pbs3上运行
@@ -409,73 +424,62 @@ pbsnodes pbs2 #指定节点名查看节点资源情况
   qsub -l select=2:ncpus=2:mem=1GB -- /bin/sleep 100
   ~~~
 
-- What are "chunks"?
-
-  - Set of resources that are allocated as a unit to a job
-
-  - Smallest set of resources that are allocated to a job,For example: ncpus, mem
-
-  - Requested in a "select" statement
-
-    ```sh
-    qsub –l select=<#>:ncpus=<#>:mem=<#>
-    #举例子:如果一个job需要总计4个相同chunk,共计32核心CPU,64GB内存,那么:
-    qsub –l select=4:ncpus=8:mem=16GB xxx.sh
-    ```
+> [!info] What are "chunks"?
+> - Set of resources that are allocated as a unit to a job
+> - Smallest set of resources that are allocated to a job, For example: ncpus, mem
+> - Requested in a "select" statement
+> ```sh
+> qsub -l select=<#>:ncpus=<#>:mem=<#>
+> #举例子:如果一个job需要总计4个相同chunk,共计32核心CPU,64GB内存,那么:
+> qsub -l select=4:ncpus=8:mem=16GB xxx.sh
+> ```
 
 - 提交job的位置参数,决定了不同的chunk怎么分配给job
 
   ![image-20240204163420516](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202402041634602.png)
 
-- 节点资源分为node-wide和job-wide两类
+- 节点资源分为==node-wide==和==job-wide==两类
 
   - node-wide比如cpu核心数、内存、gpu数量等;job-wide比如walltime(job预计的执行时间)、cput等。
 
   - job-wide的资源也可以指定:
 
     ~~~sh
-    qsub –l select=1:ncpus=1:mem=100MB –l walltime=01:00:00 #指定1h的执行时间。如果超过这个时间还没执行完,pbs会kill掉这个job
-    qsub –l select=1:ncpus=1:mem=100MB –l cput=03:00:00,walltime=02:00:00
+    qsub -l select=1:ncpus=1:mem=100MB -l walltime=01:00:00 #指定1h的执行时间。如果超过这个时间还没执行完,pbs会kill掉这个job
+    qsub -l select=1:ncpus=1:mem=100MB -l cput=03:00:00,walltime=02:00:00
     ~~~
 
-## troubleshooting
+### troubleshooting
 
 - 获取job为什么没能运行的相关信息。需要以root运行
 
   ~~~sh
-  pbs_snapshot –o /tmp
+  pbs_snapshot -o /tmp
   # 30 days of accounting logs
   # 5 days of daemon logs from the server host
   ~~~
 
-- job退出码
+> [!summary] job退出码
+> - ==0==代表成功完成
+> - ==1-127==代表是job自己call exit(),终止了自己
+> - ==129-255==代表UNIX signal
 
-  - 0代表成功完成
-  - 1-127代表是job自己call exit(),终止了自己
-  - 129-255代表UNIX signal
+> [!summary] job状态含义
+> - **Q**: 当前资源不足以调度任务 / queue没有启动 / 当前用户超出了资源限额
+> - **W**: job等待input文件拷贝到job执行目录,卡在这里可能是因为pbs server和MoM之间的无密码ssh/scp有问题 / 用户没有权限拷贝文件到job执行目录
+> - **H**: user在计算节点上的认证问题(有可能是home目录没挂载) / 可能是手动qhold了这个job,或者依赖于其他job完成
+> - **E**: 计算节点到pbs server的无密码ssh/scp有问题,或者权限问题,导致结果传不回来
 
-- job状态含义
-  - Q
-    - 当前资源不足以调度任务
-    - queue没有启动
-    - 当前用户超出了资源限额
-  - W
-    - job等待input文件拷贝到job执行目录,卡在这里可能是因为pbs server和MoM之间的无密码ssh/scp有问题
-    - 用户没有权限拷贝文件到job执行目录
-  - H
-    - user在计算节点上的认证问题:有可能是home目录没挂载
-    - 可能是手动qhold了这个job,或者依赖于其他job完成
-  - E
-    - 计算节点到pbs server的无密码ssh/scp有问题,或者权限问题,导致结果传不回来
+---
 
-# docker容器部署pbspro多节点
+## docker容器部署pbspro多节点
 
 参考教程:https://blog.csdn.net/u012460749/article/details/78583063
 
 机器配置:
 
-- Ubuntu 2204 - s0001969,s0001969
-- 通过docker容器,安装3个pbs节点,版本为pbspro 19.0.0
+- ==Ubuntu 2204== - s0001969,s0001969
+- 通过docker容器,安装3个pbs节点,版本为==pbspro 19.0.0==
 
 进环境:
 
@@ -485,7 +489,7 @@ docker ps -a
 docker exec -it pbs1 /bin/bash
 ~~~
 
-## 配置静态IP
+### 配置静态IP
 
 https://cloud.tencent.com/developer/article/1933335
 
@@ -506,7 +510,7 @@ network:
         addresses: [8.8.8.8, 114.114.114.114] #dns
 ~~~
 
-## 安装docker
+### 安装docker
 
 ~~~sh
 sudo apt-get update
@@ -600,13 +604,13 @@ sudo systemctl daemon-reload
 sudo systemctl restart docker
 ~~~
 
-## 拉取pbspro镜像
+### 拉取pbspro镜像
 
 ~~~sh
 docker pull
 ~~~
 
-## 运行容器
+### 运行容器
 
 | 容器名称 | 容器hostname | ip         |
 | -------- | ------------ | ---------- |
@@ -624,7 +628,7 @@ docker run -tid --name pbs2 -h pbs2 --add-host pbs1:172.19.0.3 --add-host pbs2:1
 docker run -tid --name pbs3 -h pbs3 --add-host pbs1:172.19.0.3 --add-host pbs2:172.19.0.4 --add-host pbs3:172.19.0.5 --net=mynetwork --ip=172.19.0.5 pbspro/pbspro bash
 ~~~
 
-## 配置容器间ssh互信
+### 配置容器间ssh互信
 
 https://www.jianshu.com/p/fcbd57ae5d3b
 
@@ -710,16 +714,14 @@ scp authorized_keys root@pbs2:~/.ssh/
 scp authorized_keys root@pbs3:~/.ssh/
 ~~~
 
-> note:
->
-> - 容器启动的时候,需要重新开启ssh
->
->   ~~~sh
->   /usr/sbin/sshd
->   ps -ef | grep ssh
->   ~~~
+> [!note] 容器启动注意
+> 容器启动的时候,需要重新开启ssh:
+> ~~~sh
+> /usr/sbin/sshd
+> ps -ef | grep ssh
+> ~~~
 
-## 配置管理节点
+### 配置管理节点
 
 ~~~sh
 #登录管理节点pbs1,然后以root用户运行,修改/etc/pbs.conf
@@ -734,11 +736,11 @@ vi /var/spool/pbs/mom_priv/config
 $clienthost pbs1
 ~~~
 
-> - PBS_START_MOM 参数用于控制是否启动 MOM (Message Oriented Middleware) 服务。MOM 是 PBS Pro 系统中的一个组件,它在每个计算节点上运行,负责管理和监控该节点上的作业。
->
-> - 如果 PBS_START_MOM 设置为 1,那么在 PBS Pro 系统启动时,MOM 服务也会被启动(表明主节点也会承担计算任务)。如果设置为 0,那么 MOM 服务不会被启动。
+> [!info] PBS_START_MOM参数
+> - ==PBS_START_MOM== 参数用于控制是否启动 MOM (Message Oriented Middleware) 服务。MOM 是 PBS Pro 系统中的一个组件,它在每个计算节点上运行,负责管理和监控该节点上的作业。
+> - 如果 PBS_START_MOM 设置为 ==1==,那么在 PBS Pro 系统启动时,MOM 服务也会被启动(表明主节点也会承担计算任务)。如果设置为 0,那么 MOM 服务不会被启动。
 
-## 配置计算节点
+### 配置计算节点
 
 ~~~sh
 #分别登录计算节点pbs2和pbs3,然后以root用户运行,修改/etc/pbs.conf
@@ -748,7 +750,7 @@ PBS_SERVER=pbs1
 PBS_START_MOM=1
 ~~~
 
-## 启动pbs
+### 启动pbs
 
 ~~~sh
 #3个节点上分别启动
@@ -762,7 +764,7 @@ PBS_START_MOM=1
 > /etc/init.d/pbs status   #查看pbs状态
 > ```
 
-## 节点扩容
+### 节点扩容
 
 ~~~sh
 . /etc/profile.d/pbs.sh
@@ -772,7 +774,7 @@ qmgr -c "create node pbs3"
 pbsnodes -a
 ~~~
 
-## 测试作业提交
+### 测试作业提交
 
 ~~~sh
 #在管理节点创建user,提交作业,状态显示R为任务正在运行。同时也需要在其他计算节点也添加相同的用户,使其UID、GID一样
@@ -786,34 +788,32 @@ qstat -a #查询集群中所有作业
 tracejob 0.pbs1 #使用tracejob JobID查看作业的进度
 ~~~
 
-> tracejob查询到结果:
->
+> [!note] tracejob查询结果示例
 > ```sh
 > 01/18/2024 09:30:33  S    Obit received momhop:1 serverhop:1 state:4 substate:42
 > ```
->
 > - `Obit received` 表示作业已经结束,PBS 集群已经收到了作业结束的通知。
 > - `momhop:1` 和 `serverhop:1` 是内部的计数器,用于跟踪作业在集群中的移动。通常情况下,这些值对于用户来说并不重要。
 > - `state:4` 表示作业的当前状态。在 PBS 中,状态 4 通常表示作业已经完成。
 > - `substate:42` 是作业的子状态,它提供了关于作业状态的更多细节。不同的 PBS 版本可能会有不同的子状态代码,你可能需要查阅你的 PBS 版本的文档来了解子状态 42 的具体含义。
 
-# CentOS虚拟机部署torque
+---
+
+## CentOS虚拟机部署torque
 
 - 参考教程:https://www.cnblogs.com/liu-shaobo/p/13526084.html
-- 3台centos机器上部署torque-6.1.3
+- 3台centos机器上部署==torque-6.1.3==
 
-## 环境准备
+### 环境准备
 
 - CentOS 7 - root - root
-- pbs1:172.16.183.60/24
-- pbs2:172.16.183.61/24
-- pbs3:172.16.183.62/24
-
+- pbs1:==172.16.183.60/24==
+- pbs2:==172.16.183.61/24==
+- pbs3:==172.16.183.62/24==
 - gateway:172.16.183.2
-
 - DNS1: 172.16.183.2
 
-## 部署虚拟机
+### 部署虚拟机
 
 - 在pbs1上配置静态IP:
 
@@ -863,7 +863,7 @@ tracejob 0.pbs1 #使用tracejob JobID查看作业的进度
   yum install -y device-mapper-persistent-data lvm2 wget net-tools nfs-utils lrzsz gcc gcc-c++ make cmake libxml2-devel openssl-devel curl curl-devel unzip sudo ntp libaio-devel wget vim ncurses-devel autoconf automake zlib-devel  python-devel epel-release openssh-server socat  ipvsadm conntrack telnet ipvsadm openssh-clients
   ~~~
 
-## 配置ssh互信
+### 配置ssh互信
 
 ~~~sh
 #修改hostname
@@ -881,7 +881,7 @@ ssh-copy-id pbs2
 ssh-copy-id pbs3
 ~~~
 
-## 配置时间同步
+### 配置时间同步
 
 ~~~sh
 #安装ntpdate命令
@@ -895,7 +895,7 @@ crontab -e
 service crond restart
 ~~~
 
-## 修改资源限制
+### 修改资源限制
 
 ~~~sh
 vim /etc/security/limits.conf
@@ -907,7 +907,7 @@ vim /etc/security/limits.conf
 * hard memlock unlimited
 ~~~
 
-## 配置nfs
+### 配置nfs
 
 ~~~sh
 #pbs1上
@@ -932,22 +932,21 @@ vim /etc/fstab
 pbs1:/software       /software              nfs     defaults        0 0
 ~~~
 
-## 部署Torque管理节点
+### 部署Torque管理节点
 
-Torque由四个服务组成:
+> [!info] Torque由四个服务组成
+> - ==pbs_server== :资源管理系统的服务器,根据调度进程提供的可用节点资源清单进行作业分发和回收;
+> - ==pbs_mom==  :客户端,监视各计算节点的资源使用情况;
+> - ==trqauthd==   :用于授权pbs_mom进程与pbs_server进程之间建立互信连接;
+> - ==pbs_sched== :任务调度器;
 
-- pbs_server :资源管理系统的服务器,根据调度进程提供的可用节点资源清单进行作业分发和回收;
-- pbs_mom  :客户端,监视各计算节点的资源使用情况;
-- trqauthd   :用于授权pbs_mom进程与pbs_server进程之间建立互信连接;
-- pbs_sched :任务调度器;
-
-### 安装依赖
+#### 安装依赖
 
 ~~~sh
 yum install -y libtool openssl-devel libxml2-devel boost-devel gcc gcc-c++ hwloc hwloc-devel
 ~~~
 
-### 安装torque
+#### 安装torque
 
 ~~~sh
 wget http://wpfilebase.s3.amazonaws.com/torque/torque-6.1.3.tar.gz
@@ -973,7 +972,7 @@ yum install -y libtool
 libtool --finish /usr/local/torque/lib
 ```
 
-### 配置torque服务端
+#### 配置torque服务端
 
 - 添加环境变量
 
@@ -997,7 +996,7 @@ systemctl enable trqauthd
 systemctl start trqauthd
 ```
 
-## 部署torque计算节点
+### 部署torque计算节点
 
 1、安装客户端
 将torque文件夹的安装包复制到计算节点,或复制到NFS目录
@@ -1027,7 +1026,7 @@ systemctl enable trqauthd
 systemctl start trqauthd
 ```
 
-4、确保servern_name文件内容为管理节点名
+4、确保server_name文件内容为管理节点名
 
 ```sh
 cat /var/spool/torque/server_name
@@ -1056,18 +1055,15 @@ for i in pbs_server pbs_sched pbs_mom trqauthd; do service $i restart; done
 #for i in pbs_mom trqauthd; do service $i start; done
 ```
 
-> journalctl -xe或者message日志中如果出现如下报错:2
->
+> [!warning] 日志报错排查
+> journalctl -xe或者message日志中如果出现如下报错:
 > ```sh
 > PBS_Server;Svr;PBS_Server;LOG_ERROR::is_request, bad attempt to connect from  (address not trusted - check entry in server_priv/nodes
 > ```
->
-> - 原因是,这个节点启用了pbs_mom但在主节点的/var/spool/torque/server_priv/nodes中并没有将其归入。
->
->
-> - 解决方法:如果不需要归入就什么都别改,如果需要这些节点进行运算,就在/var/spool/torque/server_priv/nodes中写入这些节点名
+> - 原因是,这个节点启用了pbs_mom但在主节点的`/var/spool/torque/server_priv/nodes`中并没有将其归入。
+> - 解决方法:如果不需要归入就什么都别改,如果需要这些节点进行运算,就在`/var/spool/torque/server_priv/nodes`中写入这些节点名
 
-## **管理节点配置调度器**
+### 管理节点配置调度器
 
 1、启动调度器
 
@@ -1090,7 +1086,7 @@ qmgr -c 'set queue batch enabled=true'
 qmgr -c 'set queue batch resources_default.nodes=1'# qmgr -c 'set server scheduling=true'
 ```
 
-## 配置节点cpu信息
+### 配置节点cpu信息
 
 ~~~sh
 #在管理节点上
@@ -1106,7 +1102,7 @@ service pbs_server restart
 service pbs_sched restart
 ~~~
 
-## 测试作业提交
+### 测试作业提交
 
 ~~~sh
 #在管理节点创建user,提交作业。同时也需要在其他计算节点也添加相同的用户,使其UID、GID一样。
@@ -1122,7 +1118,9 @@ qstat -a #查询集群中所有作业
 tracejob 0.pbs1 #使用tracejob JobID查看作业的进度
 ~~~
 
-# pestat安装问题
+---
+
+## pestat安装问题
 
 问题:
 
@@ -1135,3 +1133,11 @@ tracejob 0.pbs1 #使用tracejob JobID查看作业的进度
 但是无法安装,报错如图。
 
 ![2024-01-20_17-56](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202401201757319.png)
+
+---
+
+## 相关笔记
+
+- [[PBS-cases]] - PBS实际案例和故障排除
+- [[CentOS7-slurm23.02-二进制安装]] - Slurm vs PBS 对比
+- [[Slurm-node-exporter]] - HPC集群监控
