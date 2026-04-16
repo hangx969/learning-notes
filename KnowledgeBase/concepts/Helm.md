@@ -17,7 +17,7 @@ Helm 基础位于 `Docker-Kubernetes/helm-operator/`，同时大量 helm 部署�
 - [helmv3-安装与使用](../../Docker-Kubernetes/helm-operator/helmv3-安装与使用.md)
 - [helm部署dragonfly](../../Docker-Kubernetes/helm-operator/helm部署dragonfly.md)
 - [helm部署reloader](../../Docker-Kubernetes/helm-operator/helm部署reloader.md)
-- [helm部署config-syncer(kubed)](../../Docker-Kubernetes/helm-operator/helm部署config-syncer(kubed).md)
+- [helm部署config-syncer(kubed)](../../Docker-Kubernetes/helm-operator/helm部署config-syncer(kubed.md).md)
 - [helm部署tomcat](../../Docker-Kubernetes/helm-operator/helm部署tomcat.md)
 - [helm部署pact-broker](../../Docker-Kubernetes/helm-operator/helm部署pact-broker.md)
 - [helm部署prometheus-stack全家桶](../../Docker-Kubernetes/k8s-monitoring-logging/helm部署prometheus-stack全家桶.md)
