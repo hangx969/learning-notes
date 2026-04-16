@@ -15,7 +15,7 @@ aliases:
 
 - 这里在宿主机上部署exporter，在vmware虚机上的prometheus抓数据
 
-~~~sh
+```sh
 #下载解压二进制包
 #https://github.com/utkuozdemir/nvidia_gpu_exporter/releases/tag/v1.2.1
 wget https://github.com/utkuozdemir/nvidia_gpu_exporter/releases/download/v1.2.1/nvidia_gpu_exporter_1.2.1_linux_x86_64.tar.gz
@@ -40,13 +40,13 @@ systemctl enable nvidia-gpu-exporter.service --now
 systemctl restart nvidia-gpu-exporter.service
 #检查指标
 curl localhost:9835/metrics
-~~~
+```
 
 # prometheus抓取数据
 
 - 添加job
 
-~~~yaml
+```yaml
 - job_name: "gpu-exporter"  
   static_configs:
   - targets: 
@@ -54,7 +54,7 @@ curl localhost:9835/metrics
     labels:
       gpu: nvidia-rtx2000-ada
       app: gpu-exporter
-~~~
+```
 
 有个问题是宿主机内网IP会变，用hostname的话prometheus会报解析失败。我的思路：建一个pushgateway，宿主机推送到上面，prometheus去上面拉数据。
 

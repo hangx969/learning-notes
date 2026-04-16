@@ -74,7 +74,7 @@ github、picgo、typora都需要配置。
 
 可点击验证图片选项，测试上传是否能成功。
 ### obsidian配置
-装一个Image auto upload 插件，配置github仓库di
+装一个Image auto upload 插件，配置github仓库地址，token，picgo监听端口。即可粘贴图片的同时自动上传。
 
 ### Troubleshooting
 
