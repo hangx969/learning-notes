@@ -18,7 +18,6 @@ aliases:
 
   - OS: rocky Linux 8
 
-
   | 主机名  | IP            | 角色       |
   | ------- | ------------- | ---------- |
   | rocky-1 | 172.16.183.80 | controller |
@@ -26,61 +25,61 @@ aliases:
 
 - 配置网络(虚机安装时可以预配，没有的话就装好再配)
 
-~~~sh
+```sh
 nmcli connection modify ens160 ipv4.method manual connection.autoconnect yes #修改IP地址为手动配置，并且设置开机启动
 nmcli connection modify ens160 ipv4.addresses 172.16.183.81/24 #修改IP地址和掩码
 nmcli connection modify ens160 ipv4.gateway 172.16.183.2 #修改网关
 nmcli connection modify ens160 ipv4.dns 172.16.183.2 #修改DNS，多个DNS以逗号分隔
 nmcli connection down ens160 #关闭网卡
 nmcli connection up ens160 #启用网卡
-~~~
+```
 
 - 配置hosts
 
-~~~sh
+```sh
 #两台虚机上
 tee -a /etc/hosts <<'EOF'
 172.16.183.80 rocky-1
 172.16.183.81 rocky-2
 EOF
-~~~
+```
 
 - 配置ssh互信
 
-~~~sh
+```sh
 ssh-keygen
 ssh-copy-id root@rocky-1
 ssh-copy-id root@rocky-2
-~~~
+```
 
 - 配置防火墙和selinux
 
-~~~sh
+```sh
 systemctl stop firewalld && systemctl disable firewalld
 #安装iptables防火墙
 yum install iptables-services -y
 #禁用iptables
 service iptables stop && systemctl disable iptables
 #清空防火墙规则
-iptables -F 
+iptables -F
 #关闭selinux
 setenforce 0
 sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config
-~~~
+```
 
 - 安装软件包
 
-~~~sh
+```sh
 yum update -y
 yum install -y wget net-tools nfs-utils lrzsz gcc gcc-c++ make cmake libxml2-devel openssl-devel curl curl-devel unzip sudo libaio-devel wget vim ncurses-devel autoconf automake zlib-devel epel-release openssh-server socat ipvsadm conntrack yum-utils chrony
 yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
-~~~
+```
 
 ---
 
 # 主控节点安装ansible
 
-~~~sh
+```sh
 yum install -y ansible
 ansible --version
 ##############
@@ -94,7 +93,7 @@ ansible [core 2.16.3]
   jinja version = 3.1.2
   libyaml = True
 #####################
-~~~
+```
 
 ---
 
@@ -104,7 +103,7 @@ ansible [core 2.16.3]
 
 > [!warning] 生产中会配置特定的用户，不使用root用户来做
 
-~~~sh
+```sh
 #所有节点上加用户
 adduser --uid 2001 hangx
 passwd hangx #hangx
@@ -119,26 +118,26 @@ hangx  ALL=(ALL)       ALL
 tee /etc/sudoers.d/hangx <<'EOF'
 hangx  ALL=(ALL) NOPASSWD:ALL
 EOF
-~~~
+```
 
 - 配置hangx普通用户ssh互信
 
-~~~sh
+```sh
 su hangx
 ssh-keygen
 ssh-copy-id hangx@rocky-1
 ssh-copy-id hangx@rocky-2
-~~~
+```
 
 - 主配置文件`ansible.cfg`编写
 
-~~~sh
+```sh
 #主控节点上
 su hangx
 cd
 mkdir ansible
 cd ansible
-tee ansible.cfg <<'EOF' 
+tee ansible.cfg <<'EOF'
 [defaults]
 # 主机清单文件，就是要控制的主机列表
 inventory=inventory
@@ -153,11 +152,11 @@ become_method=sudo
 become_user=root
 become_ask_pass=False
 EOF
-~~~
+```
 
 - 主机清单文件
 
-~~~sh
+```sh
 #主控节点上。主机清单填被控节点
 tee /home/hangx/ansible/inventory <<'EOF'
 [nodes]
@@ -166,7 +165,7 @@ EOF
 
 ansible all --list-hosts
 ansible nodes --list-hosts
-~~~
+```
 
 ---
 

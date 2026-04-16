@@ -35,7 +35,7 @@ sudo apt-get install direnv
 安装完成后，你需要在你的shell配置文件（如.bashrc或.zshrc）中添加以下行来启用direnv：
 
 ```sh
-eval "$(direnv hook bash)" 
+eval "$(direnv hook bash)"
 ```
 
 ## 创建.envrc文件

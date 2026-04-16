@@ -54,8 +54,7 @@ systemd service successfully installed.
 ~~~
 
 ~~~sh
-#通过以下命令检查服务状态是否正常，并执行nvidia-smi确认Persistence-M状态为on
+#通过以下命令检查服务状态是否正常,并执行nvidia-smi确认Persistence-M状态为on
 systemctl status nvidia-persistenced.service
 #配置完成后重启OS验证systemctl status nvidia-persistenced.service是否正常启动
 ~~~
-
