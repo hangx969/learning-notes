@@ -1800,6 +1800,8 @@ setenforce 1 # temporarily enable enforcing
   netstat -tulpn | grep -i ssh
   ```
 
+---
+
 ## rpm包管理
 
 ### 介绍
@@ -1916,6 +1918,8 @@ Fedora推出的免费软件包的源
   ```
 
 
+---
+
 ## 打印服务
 
 Common UNIX Printer System （CUPS）
@@ -1923,6 +1927,8 @@ Common UNIX Printer System （CUPS）
 - Package name
 
   cups
+
+---
 
 ## 系统信息查看
 
@@ -1996,6 +2002,8 @@ sar
   sysctl -a
   ```
 
+---
+
 ## 默认kernel变更
 
 - 启动时，如果有多个kernel存在，可以选择用哪个。通过GRUB（grand unified bootloader），GRUB配置文件：/boot/grub/grub.conf或者/boot/grub2/grub.cfg
@@ -2034,6 +2042,8 @@ sar
   reboot
   uname -r
   ```
+
+---
 
 ## 日志管理
 
@@ -2075,6 +2085,8 @@ sar
   - 有一部分日志是先写到内存里，还没写到文件里；内存日志重启就清空了
   - journalctl -o verbose
 
+---
+
 ## 数据备份dump
 
 ### 语法说明
@@ -2083,6 +2095,8 @@ sar
   - -0123456789 ：备份层级，0为最完整备份，>0是增量备份，指定最多备份几次。
 
 - 注意：xfs文件系统要用xfsdump；ext4才能用dump命令
+
+---
 
 ## Shell 编程
 
@@ -2359,6 +2373,8 @@ find ${BACKUP} -atime +10 -name "*.tar.gz" -exec rm {} \;
 echo "Backup completed"
 ```
 
+---
+
 ## Ubuntu
 
 ### root用户
@@ -2415,6 +2431,8 @@ echo "Backup completed"
 
 
 
+---
+
 # Redhat Enterprise Administrator Guide
 
 ## Chapter 1
@@ -2423,6 +2441,8 @@ echo "Backup completed"
 
 - stored in /etc/locale.conf
 - system locale and keyboard can be configured by **localectl**
+
+---
 
 ## Chapter 2
 
@@ -2440,6 +2460,8 @@ echo "Backup completed"
 - if NTP is used, hardware clock automatically synchronized every 11 mins.
 
 - Recommand to keep the hardware clock in UTC.
+
+---
 
 ## Chapter 3
 
@@ -2507,6 +2529,8 @@ ls -ld /myproject
 usermod -aG myproject username # add user into myproject group 
 ```
 
+---
+
 ## Chapter 4
 
 ### gain privilege
@@ -2554,6 +2578,8 @@ usermod -aG myproject username # add user into myproject group
     - sudoers' passwd intervals can also be managed.
 
 
+---
+
 ## Chapter 5
 
 ### Registering
@@ -2574,6 +2600,8 @@ usermod -aG myproject username # add user into myproject group
   - find serial number
   - **subscription-manager remove --serial= *serial_number***
 
+---
+
 ## Chapter 6
 
 ### Redhat support tool
@@ -2584,6 +2612,8 @@ usermod -aG myproject username # add user into myproject group
 
 - Open and update
 - viewing cases
+
+---
 
 ## Chapter 9
 
@@ -2612,6 +2642,8 @@ Previously insecure port connections between systems can be mapped to specific S
 
 - yum group install X windows system
 - X11 forwarding
+
+---
 
 ## Chapter 12
 
