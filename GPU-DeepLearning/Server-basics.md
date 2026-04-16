@@ -1,3 +1,13 @@
+---
+title: 服务器入门基础
+tags:
+  - server
+  - hardware
+  - SSD
+aliases:
+  - 服务器基础
+---
+
 # 服务器入门
 
 - https://mp.weixin.qq.com/s/ud7ITi-bTYA6AteBkY1Zsw

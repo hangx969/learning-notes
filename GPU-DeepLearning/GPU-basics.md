@@ -15,27 +15,27 @@ aliases:
 
 GPU介绍：
 
-- https://mp.weixin.qq.com/s/V4mMjzQ261kk6qmyH-STUQ
-- https://mp.weixin.qq.com/s/nfDY6DezdsN0VHDmRbA9pw
+- [GPU 入门介绍（一）](https://mp.weixin.qq.com/s/V4mMjzQ261kk6qmyH-STUQ)
+- [GPU 入门介绍（二）](https://mp.weixin.qq.com/s/nfDY6DezdsN0VHDmRbA9pw)
 
 各种型号GPU：
 
-- https://mp.weixin.qq.com/s/W--q1TZ38p83VTrSEQNqmQ
-- https://mp.weixin.qq.com/s/w5vTAG8Wy13VJhH9f7xiWg
+- [各种型号GPU介绍（一）](https://mp.weixin.qq.com/s/W--q1TZ38p83VTrSEQNqmQ)
+- [各种型号GPU介绍（二）](https://mp.weixin.qq.com/s/w5vTAG8Wy13VJhH9f7xiWg)
 
 CUDA环境安装：
 
-- https://mp.weixin.qq.com/s?__biz=MzAwMDQyOTcwOA==&mid=2247485712&idx=1&sn=0209d54687ae5f729d3a254e89f7d043&chksm=9ae852f3ad9fdbe5a8a4df3cba7cb88833635e3a908318f2f2e04fde4bd89de0b8910200df51&cur_album_id=3097728928959414276&scene=189#wechat_redirect
-- https://mp.weixin.qq.com/s?__biz=MzAwMDQyOTcwOA==&mid=2247485768&idx=1&sn=e1d4a6ae7dd65307f9a11e4ae278ce92&chksm=9ae852abad9fdbbdb30766aeb7a975e4ab2dea906eaaa705119aa509c5948f1f60a48fa140ef&cur_album_id=3097728928959414276&scene=189#wechat_redirect
-- https://mp.weixin.qq.com/s?__biz=MzAwMDQyOTcwOA==&mid=2247485778&idx=1&sn=9b69e83eb5f313e8cf25f513a9fe902f&chksm=9ae852b1ad9fdba7bd20d9ed97904121402b1e4fb34d01c30060e839a520926716d5343cfdb8&cur_album_id=3097728928959414276&scene=189#wechat_redirect
+- [CUDA 环境安装（一）](https://mp.weixin.qq.com/s?__biz=MzAwMDQyOTcwOA==&mid=2247485712&idx=1&sn=0209d54687ae5f729d3a254e89f7d043&chksm=9ae852f3ad9fdbe5a8a4df3cba7cb88833635e3a908318f2f2e04fde4bd89de0b8910200df51&cur_album_id=3097728928959414276&scene=189#wechat_redirect)
+- [CUDA 环境安装（二）](https://mp.weixin.qq.com/s?__biz=MzAwMDQyOTcwOA==&mid=2247485768&idx=1&sn=e1d4a6ae7dd65307f9a11e4ae278ce92&chksm=9ae852abad9fdbbdb30766aeb7a975e4ab2dea906eaaa705119aa509c5948f1f60a48fa140ef&cur_album_id=3097728928959414276&scene=189#wechat_redirect)
+- [CUDA 环境安装（三）](https://mp.weixin.qq.com/s?__biz=MzAwMDQyOTcwOA==&mid=2247485778&idx=1&sn=9b69e83eb5f313e8cf25f513a9fe902f&chksm=9ae852b1ad9fdba7bd20d9ed97904121402b1e4fb34d01c30060e839a520926716d5343cfdb8&cur_album_id=3097728928959414276&scene=189#wechat_redirect)
 
 CUDA Hello-world
 
-- https://mp.weixin.qq.com/s?__biz=MzAwMDQyOTcwOA==&mid=2247485742&idx=1&sn=6babcfdbf75aa43555a3a457a4a42c69&chksm=9ae852cdad9fdbdbff41a2e8c9bf89f2100d0704524267bbee6e4536c44aaa1307142faa4e75&cur_album_id=3097728928959414276&scene=189#wechat_redirect
+- [CUDA Hello-world 示例](https://mp.weixin.qq.com/s?__biz=MzAwMDQyOTcwOA==&mid=2247485742&idx=1&sn=6babcfdbf75aa43555a3a457a4a42c69&chksm=9ae852cdad9fdbdbff41a2e8c9bf89f2100d0704524267bbee6e4536c44aaa1307142faa4e75&cur_album_id=3097728928959414276&scene=189#wechat_redirect)
 
 nvidia-smi：
 
-- https://mp.weixin.qq.com/s?__biz=MzAwMDQyOTcwOA==&mid=2247485728&idx=1&sn=d4bb3891dd1ccb855cbc94beeb55410a&chksm=9ae852c3ad9fdbd509e2496aad06e2c3aec731d5586be9d95ce85f0bbef6a1ba6127bf02565a&cur_album_id=3097728928959414276&scene=189#wechat_redirect
+- [nvidia-smi 使用说明](https://mp.weixin.qq.com/s?__biz=MzAwMDQyOTcwOA==&mid=2247485728&idx=1&sn=d4bb3891dd1ccb855cbc94beeb55410a&chksm=9ae852c3ad9fdbd509e2496aad06e2c3aec731d5586be9d95ce85f0bbef6a1ba6127bf02565a&cur_album_id=3097728928959414276&scene=189#wechat_redirect)
 
 # 环境配置
 
@@ -66,7 +66,7 @@ lspci|grep NVIDIA
 
 ### 安装驱动
 
-- NVIDIA官网下载驱动：*https://www.nvidia.cn/Download/index.aspx?lang=cn#*
+- NVIDIA官网下载驱动：[NVIDIA 驱动下载](https://www.nvidia.cn/Download/index.aspx?lang=cn#)
 
 - 最终下载得到的是一个.run 文件，例如 NVIDIA-Linux-x86_64-550.54.14.run。
 
@@ -89,7 +89,7 @@ sh NVIDIA-Linux-x86_64-550.54.14.run
 - 对于深度学习程序，一般都要依赖 CUDA 环境，因此需要在机器上安装 CUDA Toolkit。
 
 
-- 也是到NVIDIA官网下载对应的安装包，选择操作系统和安装方式即可：*https://developer.nvidia.com/cuda-toolkit-archive*
+- 也是到NVIDIA官网下载对应的安装包，选择操作系统和安装方式即可：[CUDA Toolkit Archive](https://developer.nvidia.com/cuda-toolkit-archive)
 
 - 也是.run文件直接安装即可
 
@@ -162,7 +162,7 @@ python3 check_cuda_pytorch.py
 
 > 兼容生态系统中的任意容器运行时，docker、containerd、cri-o 等。
 
-- NVIDIA 官方安装文档：*https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html*
+- NVIDIA 官方安装文档：[NVIDIA Container Toolkit Install Guide](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html)
 
 - 对于 Ubuntu 系统，安装命令如下：
 
@@ -257,7 +257,7 @@ docker run --rm --gpus all  nvidia/cuda:12.0.1-runtime-ubuntu22.04 nvidia-smi
 
 ### 安装device-plugin
 
-- device-plugin 一般由对应的 GPU 厂家提供，比如 NVIDIA 的：*https://github.com/NVIDIA/k8s-device-plugin*。安装其实很简单，将对应的 yaml apply 到集群即可。
+- device-plugin 一般由对应的 GPU 厂家提供，比如 NVIDIA 的：[NVIDIA/k8s-device-plugin](https://github.com/NVIDIA/k8s-device-plugin)。安装其实很简单，将对应的 yaml apply 到集群即可。
 
 ```sh
 kubectl create -f https://raw.githubusercontent.com/NVIDIA/k8s-device-plugin/v0.15.0/deployments/static/nvidia-device-plugin.yml
@@ -282,7 +282,7 @@ kubectl create -f https://raw.githubusercontent.com/NVIDIA/k8s-device-plugin/v0.
 
 ### 安装GPU监控
 
-- 除此之外，如果你需要监控集群 GPU 资源使用情况，你可能还需要安装 **DCCM exporter**：*https://github.com/NVIDIA/dcgm-exporter* ，结合 Prometheus 输出 GPU 资源监控信息。
+- 除此之外，如果你需要监控集群 GPU 资源使用情况，你可能还需要安装 **DCGM exporter**：[NVIDIA/dcgm-exporter](https://github.com/NVIDIA/dcgm-exporter)，结合 Prometheus 输出 GPU 资源监控信息。
 
 ```sh
 helm repo add gpu-helm-charts \
@@ -324,7 +324,7 @@ spec:
 
 ## k8s配置NVIDIA GPU--operator
 
-- 需要在节点上安装 GPU Driver、Container Toolkit 等组件，当集群规模较大时还是比较麻烦的。为了解决这个问题，NVIDIA 推出了 GPU Operator，旨在简化在 Kubernetes 环境中使用 GPU 的过程，通过自动化的方式处理 GPU 驱动程序安装、Controller Toolkit、Device-Plugin 、监控等组件。*https://github.com/NVIDIA/gpu-operator*
+- 需要在节点上安装 GPU Driver、Container Toolkit 等组件，当集群规模较大时还是比较麻烦的。为了解决这个问题，NVIDIA 推出了 GPU Operator，旨在简化在 Kubernetes 环境中使用 GPU 的过程，通过自动化的方式处理 GPU 驱动程序安装、Controller Toolkit、Device-Plugin 、监控等组件。[NVIDIA/gpu-operator (GitHub)](https://github.com/NVIDIA/gpu-operator)
 
 > 基本上把需要手动安装、配置的地方全部自动化处理了，极大简化了 k8s 环境中的 GPU 使用。
 >
@@ -338,7 +338,7 @@ NVIDIA GPU Operator 总共包含如下的几个组件：
 
   - 用于给节点打上某些标签，这些标签包括 cpu id、内核版本、操作系统版本、是不是 GPU 节点等，其中需要关注的标签是`nvidia.com/gpu.present=true`，如果节点存在该标签，那么说明该节点是 GPU 节点。
 
-  - *https://github.com/kubernetes-sigs/node-feature-discovery*
+  - [kubernetes-sigs/node-feature-discovery (GitHub)](https://github.com/kubernetes-sigs/node-feature-discovery)
 
 - **GFD(GPU Feature Discovery)**：
 
