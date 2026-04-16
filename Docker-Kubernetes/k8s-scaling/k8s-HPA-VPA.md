@@ -49,6 +49,7 @@ Horizonal Pod Autoscaling，pod水平自动伸缩。一般是扩缩容deployment
 - 既可以缩小过度请求资源的容器，也可以根据其使用情况随时提升资源不足的容量。
 - 不能与HPA一起使用。
 
+> [!info] VPA优势
 > Pod 资源用其所需，所以集群节点使用效率高。Pod 会被安排到具有适当可用资源的节点上。
 >
 > 不必运行基准测试任务来确定 CPU 和内存请求的合适值。VPA 可以随时调整 CPU 和内存请求，无需人为操作，因此可以减少维护时间。
@@ -59,9 +60,9 @@ Horizonal Pod Autoscaling，pod水平自动伸缩。一般是扩缩容deployment
 
 - Knative Pod Autoscaler：基于请求数对Pod自动扩缩容，KPA 的主要限制在于它不支持基于 CPU 的自动扩缩容。
 - 支持根据并发请求数实现自动扩缩容；支持设置扩缩容上下限。可以和HPA混合使用。
-- Github： https://knative.dev/docs/install/
+- Github：[Knative Install](https://knative.dev/docs/install/)
 
-- 安装参考：https://knative.dev/docs/install/install-serving-with-yaml/
+- 安装参考：[Knative Serving Installation](https://knative.dev/docs/install/install-serving-with-yaml/)
 
 ## cluster-autoscaler
 
@@ -69,7 +70,7 @@ Horizonal Pod Autoscaling，pod水平自动伸缩。一般是扩缩容deployment
 
   - Cluster Autoscaler (CA)是一个独立程序，是用来弹性伸缩kubernetes集群的。它可以自动根据部署应用所请求的资源量来动态的伸缩集群。当集群容量不足时，它会自动去 Cloud Provider （支持 GCE、GKE 和 AWS）创建新的 Node，而在 Node 长时间资源利用率很低时自动将其删除以节省开支。
 
-  - 项目地址：https://github.com/kubernetes/autoscaler
+  - 项目地址：[kubernetes/autoscaler](https://github.com/kubernetes/autoscaler)
 
 - 什么时候集群节点不会被 CA 删除?
 
@@ -154,7 +155,7 @@ spec:
 EOF
 ~~~
 
-> 注意：pod定义中必须要有对应指标的requests，HPA才能检测得到指标从而起作用
+> [!warning] 注意：pod定义中必须要有对应指标的requests，HPA才能检测得到指标从而起作用
 
 ### 创建HPA
 
@@ -175,7 +176,7 @@ while true; do wget -q -O- http://10.109.68.255 > /dev/null; done
 
 ## HPA基于内存实现pod扩缩容
 
-> 注意：生产环境中尽量避免使用基于内存的HPA。
+> [!warning] 注意：生产环境中尽量避免使用基于内存的HPA。
 >
 > 因为内存是不可压缩资源；不像cpu一样一会高一会低，一般内存使用量升高是因为程序存在bug，升上去是降不下来的。
 
@@ -304,7 +305,7 @@ EOF
 kubectl apply -f php-apache.yaml
 ~~~
 
-> 注意：pod定义中必须要有CPU的requests、limits，HPA才能检测得到指标从而起作用
+> [!warning] 注意：pod定义中必须要有CPU的requests、limits，HPA才能检测得到指标从而起作用
 
 ### 创建HPA
 
@@ -559,9 +560,9 @@ kubectl get event -n vpa
 
 - Github地址：
 
-  https://github.com/kubernetes-sigs/metrics-server/
+  [kubernetes-sigs/metrics-server](https://github.com/kubernetes-sigs/metrics-server/)
 
-  https://github.com/kubernetes-sigs/metrics-server/releases/tag/v0.6.1
+  [metrics-server v0.6.1](https://github.com/kubernetes-sigs/metrics-server/releases/tag/v0.6.1)
 
 ## 部署
 
@@ -782,7 +783,7 @@ spec:
   versionPriority: 100
 ~~~
 
-~~~lssh
+~~~sh
 #部署metrics-server pod
 kubectl apply -f components.yaml
 #测试

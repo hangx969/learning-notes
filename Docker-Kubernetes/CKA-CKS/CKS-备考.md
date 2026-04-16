@@ -13,8 +13,8 @@ aliases:
 
 ## AppArmor介绍
 
-- k8s文档：https://kubernetes.io/docs/tutorials/security/apparmor/
-- AppArmor官网：https://wiki.ubuntu.com/AppArmor/
+- k8s文档：[AppArmor - Kubernetes](https://kubernetes.io/docs/tutorials/security/apparmor/)
+- AppArmor官网：[AppArmor - Ubuntu Wiki](https://wiki.ubuntu.com/AppArmor/)
 - AppArmor（Application Armor）是一种在Linux环境中用于增强系统安全的软件。它通过使用Linux内核的安全模块（LSM）来限制程序的能力，防止系统受到恶意软件或者非授权操作的影响。AppArmor通过定义一套简单的配置文件来指定程序能够访问哪些文件和功能。这种机制被称为强制访问控制（MAC），它与传统的基于用户权限的访问控制（DAC）不同，可以更精细地控制应用程序的行为，提高系统的安全性。与SELinux相比，AppArmor的策略更加简洁易懂，易于配置和管理。
 - AppArmor的策略通常定义在 /etc/apparmor.d/ 目录下，每个策略文件对应一个程序，通过规定哪些文件路径可以访问以及可执行哪些操作（如读取、写入、执行、打开网络端口等）来控制程序的行为。目前Apparmor已经整合到了Linux 2.6内核中，Ubuntu系统自带Apparmor。
 - Apparmor两种工作模式：
@@ -71,8 +71,7 @@ annotations:
 sudo kubectl apply -f /home/candidate/KSSH00401/nginx-deploy.yaml
 ~~~
 
-> 注意：
->
+> [!warning] 注意
 > - cat /etc/apparmor.d/nginx_apparmor配置文件中查看profile的名称
 > - yaml文件中的deployments.spec.template.metadata.annotations中写annotation
 > - annotation中的container name记得要改
@@ -197,8 +196,7 @@ kubectl get nodes
 #这个过程比较慢，估计需要几分钟才可以启动
 ~~~
 
-> 注意：
->
+> [!warning] 注意
 > - 这些字段可能默认没有，需要自己添加
 >
 > ~~~yaml
@@ -248,8 +246,7 @@ k describe po trivy-1 -n yavin
 k delete po trivy-1 -n trivy --force --grace-period=0
 ~~~
 
-> 注意：
->
+> [!warning] 注意
 > - 原始终端才能执行kubectl命令，exit退回到原始终端之后，需要重新执行kubectl use-context切换到集群环境。
 > - trivy命令需要ssh登录到master节点才能执行
 
@@ -257,7 +254,7 @@ k delete po trivy-1 -n trivy --force --grace-period=0
 
 ## 介绍
 
-- Sysdig官网：www.sysdig.org
+- Sysdig官网：[Sysdig](https://www.sysdig.org)
   - sysdig的定位是系统监控、分析和排障的工具
 
 - Falco 是一个云原生运行时安全系统，可与容器和原始 Linux 主机一起使用。它由 Sysdig 开发，是 Cloud Native Computing Foundation（云原生计算基金会）的一个沙箱项目。
@@ -313,7 +310,8 @@ sysdig -M 120 -p "%evt.time,%user.uid,%proc.name" --cri unix:///run/containerd/c
 #sysdig -M 120 -p "*%evt.time,%user.uid,%proc.name" --cri unix:///run/containerd/containerd.sock container.name=redis > /opt/KSRS00101/events/details
 ~~~
 
-> - 注意一定去工作节点上运行sysdig，因为pod跑在工作节点上，在控制节点上sysdig没有输出的。
+> [!warning] 注意
+> 一定去工作节点上运行sysdig，因为pod跑在工作节点上，在控制节点上sysdig没有输出的。
 
 # 5 service account
 
@@ -385,8 +383,7 @@ kubectl get po -n dev
 k get po -n dev -o yaml | grep serviceAccountName:
 ~~~
 
-> 注意：
->
+> [!warning] 注意
 > - 创建sa的时候一定注意加上**metadata.namespace**，否则后面的pod创建不出来
 > - default这个sa不用删除，会自动生成的。
 > - 如果pod删除较慢，直接`kubectl delete po xxx --force --grace-period=0`强制删除
@@ -439,8 +436,7 @@ kubectl config use-context KSMV00401
 k get nodes -n kube-system
 ~~~
 
-> 注意：
->
+> [!warning] 注意
 > - etcd的参数文档上没有，记住是比apiserver上少了tls（- --cipher-suites）
 > - apiserver和etcd的要求的cipher不一定相同，注意甄别。
 > - 重启kubelet完之后，可能会花费几分钟才能显示出k get nodes的结果
@@ -483,8 +479,7 @@ spec:
 k apply -f network-policy.yaml
 ~~~
 
-> 注意：
->
+> [!warning] 注意
 > - 看清题目要求的限制的类型，如果是仅限制ingress/egress，从官网复制对应的条目即可：
 >   - Default deny all egress traffic
 >   - Default deny all ingress traffic
@@ -545,8 +540,7 @@ spec:
           environment: testing
 ~~~
 
-> 注意：
->
+> [!warning] 注意
 > - network policies要限制哪个namespace里面的pod被访问，就将其创建到哪个namespace
 >
 > - labels要改成xxx: xx这种格式

@@ -1,3 +1,14 @@
+---
+title: 二进制部署Prometheus(v2.32.1)联邦集群
+tags:
+  - monitoring
+  - prometheus
+  - federation
+  - node-exporter
+aliases:
+  - Prometheus联邦集群部署
+---
+
 # prometheus联邦集群方案
 
 - 对于大部分监控规模而言，我们只需要在每一个数据中心 (例如：EC2可用区，Kubernetes集群)安装一个Prometheus Server实例，就可以在各个数据中心处理上千规模的集群。同时将Prometheus Server部署到不同的数据中心可以避免网络配置的复杂性

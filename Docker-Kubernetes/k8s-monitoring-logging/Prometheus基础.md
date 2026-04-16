@@ -1,3 +1,14 @@
+---
+title: Prometheus基础
+tags:
+  - monitoring
+  - prometheus
+  - promql
+  - relabel
+aliases:
+  - Prometheus基础知识
+---
+
 # Prometheus简介
 
 ## 介绍
@@ -10,12 +21,12 @@
 
 ## 配置文档
 
-- Prometheus配置：https://prometheus.io/docs/prometheus/latest/configuration/configuration/
+- Prometheus配置：[Prometheus Configuration Docs](https://prometheus.io/docs/prometheus/latest/configuration/configuration/)
 
-- Prometheus监控组件对应的exporter部署地址: https://prometheus.io/docs/instrumenting/exporters/
+- Prometheus监控组件对应的exporter部署地址: [Prometheus Exporters](https://prometheus.io/docs/instrumenting/exporters/)
   - 可以通过官网给出的不同的exporter来采集不同的指标（比如采集mysql、redis等软件的指标，采集GPU等硬件指标，采集node的OS指标，官网都给出了不同的exporter）
 
-- Prometheus基于k8s服务发现参考: https://github.com/prometheus/prometheus/blob/release-2.31/documentation/examples/prometheus-kubernetes.yml
+- Prometheus基于k8s服务发现参考: [prometheus-kubernetes.yml (GitHub)](https://github.com/prometheus/prometheus/blob/release-2.31/documentation/examples/prometheus-kubernetes.yml)
 
 ## 特点
 
@@ -220,6 +231,7 @@
 2. 容器安装
 3. k8s安装：kube-prometheus-stack helm包。非常全，所有组件一键安装。推荐。
 
+> [!tip] 
 > 生产环境建议单独用一台工作节点去装prometheus
 
 # PromQL查询语言

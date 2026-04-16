@@ -1,3 +1,13 @@
+---
+title: K8s基于KEDA的弹性能力
+tags:
+  - kubernetes
+  - scaling
+  - hpa
+aliases:
+  - KEDA事件驱动扩缩容
+---
+
 # KEDA介绍
 
 文档1：[Getting Started | KEDA](https://keda.sh/docs/2.17/)
@@ -164,11 +174,11 @@ spec:
 
 # 基于helm部署KEDA
 
-官网安装说明：[Deploying KEDA | KEDA](https://keda.sh/docs/2.17/deploy/#helm)
+官网安装说明：[Deploying KEDA](https://keda.sh/docs/2.17/deploy/#helm)
 
-artifacthub：[keda 2.17.2 · helm/kedacore](https://artifacthub.io/packages/helm/kedacore/keda)
+artifacthub：[keda helm chart](https://artifacthub.io/packages/helm/kedacore/keda)
 
-github release: [Releases · kedacore/keda](https://github.com/kedacore/keda/releases)
+github release: [KEDA Releases](https://github.com/kedacore/keda/releases)
 
 ## 下载helm chart
 
@@ -373,7 +383,7 @@ spec:
 
 ### 创建scaledObject
 
-配置参数参考：[RabbitMQ Queue | KEDA](https://keda.sh/docs/2.17/scalers/rabbitmq-queue/)
+配置参数参考：[RabbitMQ Queue Scaler](https://keda.sh/docs/2.17/scalers/rabbitmq-queue/)
 
 ~~~yaml
 --- 

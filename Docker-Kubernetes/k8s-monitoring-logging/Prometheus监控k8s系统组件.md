@@ -1,3 +1,18 @@
+---
+title: Prometheus监控K8s系统组件
+tags:
+  - kubernetes
+  - monitoring
+  - prometheus
+  - etcd
+  - kube-proxy
+  - kube-scheduler
+  - kube-controller-manager
+  - serviceMonitor
+aliases:
+  - Prometheus监控K8s控制面组件
+---
+
 # 监控etcd-手动创建yaml
 
 ## etcd的metrics接口

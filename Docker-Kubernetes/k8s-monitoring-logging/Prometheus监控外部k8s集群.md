@@ -1,3 +1,14 @@
+---
+title: Prometheus监控外部K8s集群
+tags:
+  - kubernetes
+  - monitoring
+  - prometheus
+  - kube-state-metrics
+aliases:
+  - Prometheus远程监控K8s
+---
+
 - prometheus装到单独的机器上，需要监控外部k8s集群
 
 # 配置k8s的sa和授权

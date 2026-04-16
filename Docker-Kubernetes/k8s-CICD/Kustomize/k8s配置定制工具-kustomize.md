@@ -103,6 +103,7 @@ data:
 
 在 dev 目录下，kustomization.yaml 示例如下：
 
+> [!note] 说明
 > 这里通过 patches 对 Deployment 的副本数进行了修改，同时利用 configMapGenerator 更新了 ConfigMap 中的环境变量，开启调试模式，以适应开发环境的需求。
 
 ~~~yaml
@@ -160,6 +161,7 @@ EOF
 
 完成基础配置和覆盖层的创建后，就可以使用 kubectl 来应用配置了。在对应的覆盖层目录下，执行命令：
 
+> [!note] 说明
 > 这个命令会根据当前目录下的 kustomization.yaml 以及相关的基础配置，生成最终的 Kubernetes 资源清单，并将其应用到集群中。如果后续需要更新配置，只需修改覆盖层的相应内容，再次执行该命令即可，Kustomize 会智能地处理资源的变更，确保平滑过渡。
 
 ~~~sh
@@ -229,6 +231,7 @@ configMapGenerator:
   - module-config.properties #加载一个specific的configMap合并进去
 ~~~
 
+> [!note] 说明
 > 这里不仅引用了基础目录下的资源，还生成了一个新的 `module-specific-config`，并将本地的 `module-config.properties` 文件内容合并进去，使得应用能够一站式获取所需的所有配置，减少了配置分散带来的管理难题。
 
 ## Generator和Transformer
@@ -247,4 +250,5 @@ imageTagTransformer:
   newTag: v2.0
 ~~~
 
+> [!note] 说明
 > 这个配置会自动查找所有引用 my-app-image 的资源，并将其镜像标签更新为 v2.0，大大简化了版本升级的流程，确保了整个应用集群的一致性更新。同时，你还可以根据自己的需求编写自定义的生成器和变压器，深度定制 Kustomize 的功能，满足复杂多变的业务场景。

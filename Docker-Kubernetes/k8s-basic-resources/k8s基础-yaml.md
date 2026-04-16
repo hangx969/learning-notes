@@ -128,7 +128,7 @@ heima:
 - kubectl apply默认是client side apply和server side apply。
   - 不指定任何参数时是client-side apply，字段比较在客户端完成。
   - 可以指定`kubectl apply --server-side`使部署成为server side apply
-  - 具体：https://juejin.cn/post/7173328614644006942，https://kubernetes.io/docs/reference/using-api/server-side-apply/
+  - 具体：[Server Side Apply详解](https://juejin.cn/post/7173328614644006942)，[Server Side Apply官方文档](https://kubernetes.io/docs/reference/using-api/server-side-apply/)
 
 # kubectl create -f --dry-run=client
 
