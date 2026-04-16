@@ -1,4 +1,13 @@
-﻿ 
+﻿---
+title: HTTP 基础
+tags:
+  - networking
+  - HTTP
+  - HTTPS
+aliases:
+  - HTTP基础
+  - 图解HTTP
+---
 
 # 图解HTTP
 
@@ -19,13 +28,13 @@
 
 - HTTP作为正式标准公布：1996.5，命名为HTTP1.0
 
-  http://www.ietf.org/rfc/rfc1945.txt
+  [RFC 1945](http://www.ietf.org/rfc/rfc1945.txt)
 
 #### HTTP 1.1
 
 - HTTP 1.1在1997.1公布，现在的修订版是RFC2616
 
-  http://www.ietf.org/rfc/rfc2616.txt
+  [RFC 2616](http://www.ietf.org/rfc/rfc2616.txt)
 
 ## HTTP特点
 
@@ -213,7 +222,8 @@
 
   当使用no-store时，按时请求或响应中包含机密信息。该指令规定不能保存为缓存
 
-  > 注意no-cache和no-store的区别：no-cache只是确保不接收过期的缓存，而no-store才是不能缓存。
+  > [!warning] 注意
+  > no-cache和no-store的区别：no-cache只是确保不接收过期的缓存，而no-store才是不能缓存。
 
 ### 请求首部字段
 
@@ -331,7 +341,8 @@ CA机构颁发公钥证书来证明公钥合法性。
 - 服务器就会把公钥证书发送给客户端。
 - 客户端接收到证书，会用CA机构的公开密钥来验证签名。验证通过后就可证明：1. CA机构的证书真实有效，2. 服务端的公钥有效。
 
-> 大部分CA机构的公开密钥已经被提前植入到浏览器中
+> [!info] CA 公钥
+> 大部分CA机构的公开密钥已经被提前植入到浏览器中。
 
 #### 自签名证书
 
@@ -347,7 +358,8 @@ CA机构颁发公钥证书来证明公钥合法性。
 
   - 应对重放攻击，可以采用不重数方法：A给B发送的报文包含A的用户名和一个随机数Ra，B收到后发送响应报文，其中用对称密钥加密随机数Ra，同时给出自己的随机数Rb，A收到后也给出响应报文，包含对称加密的Rb。
 
-    > 这种使用随机数（不重数）进行实体鉴别的方法称为 Challenge - Response 协议
+    > [!info] Challenge-Response 协议
+    > 这种使用随机数（不重数）进行实体鉴别的方法称为 Challenge - Response 协议。
 
     <img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202212112350507.png" alt="image-20221211235025426" style="zoom:50%;" />
 
@@ -428,6 +440,7 @@ BASIC认证密码不经加密，不安全；除此之外如果想再进行一次
   - uri：digest-rui，就是request-uri的值，考虑到request-uri的值可能会被代理改变，提前复制一份在这里。
   - response：就是返回的响应值，也叫Request-Digest；一般是经过MD5运算的密码字符串。
 
+> [!warning] Digest 认证局限性
 > Digest可以避免密码暴露，但是不能防止用户伪装；所以使用仍不广泛。
 
 #### SSL客户端认证
