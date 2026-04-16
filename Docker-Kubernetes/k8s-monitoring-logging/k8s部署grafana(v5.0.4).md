@@ -14,19 +14,19 @@ aliases:
 
 ## Grafana简介
 
-- Grafana是一个跨平台的开源的度量分析和可视化工具，可以将采集的数据可视化的展示，并及时通知给告警接收方。（自带alert功能，但是不常用，一般用专业alert服务比如alertmanager）
+- Grafana是一个跨平台的开源的度量分析和可视化工具,可以将采集的数据可视化的展示,并及时通知给告警接收方。(自带alert功能,但是不常用,一般用专业alert服务比如alertmanager)
 
 ## 部署Grafana服务
 
-~~~sh
+```sh
 #grafana用到的镜像为k8s.gcr.io/heapster-grafana-amd64:v5.0.4
-#可以创建pod的时候拉取，也可以先上传到node上
+#可以创建pod的时候拉取,也可以先上传到node上
 docker load -i k8s.gcr.io/heapster-grafana-amd64:v5.0.4
 #上传grafana的yaml文件
 kubectl apply -f dep-grafana.yaml
-~~~
+```
 
-~~~yaml
+```yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -105,7 +105,7 @@ spec:
   selector:
     k8s-app: grafana
   type: NodePort
-~~~
+```
 
 ## 接入prometheus服务
 
@@ -115,31 +115,31 @@ spec:
 
 - 选择Create your first data source
 
-  - Name: Prometheus 
+  - Name: Prometheus
 
   - Type: Prometheus
 
-  - HTTP 处的URL：http://prometheus.monitor-sa.svc.cluster.local:9090
+  - HTTP 处的URL:http://prometheus.monitor-sa.svc.cluster.local:9090
 
-- 配置好的整体页面如下：
+- 配置好的整体页面如下:
 
   <img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202401041805114.png" alt="image-20240104162026461" style="zoom:67%;" />
 
-- 点击左下角Save & Test，出现如下Data source is working，说明prometheus数据源成功的被grafana接入了
+- 点击左下角Save & Test,出现如下Data source is working,说明prometheus数据源成功的被grafana接入了
 
 ### 部署模板
 
-- 导入监控模板：
+- 导入监控模板:
 
-  - 监控模板可以在官网下载：[Grafana Dashboards](https://grafana.com/dashboards?dataSource=prometheus&search=kubernetes)
+  - 监控模板可以在官网下载:[Grafana Dashboards](https://grafana.com/dashboards?dataSource=prometheus&search=kubernetes)
 
-  - 在左侧filter中筛选，一个个测试
+  - 在左侧filter中筛选,一个个测试
 
     <img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202401041802433.png" alt="image-20240104180259270" style="zoom:50%;" />
 
-    - 比如node-exporter：[Node Exporter Full | Grafana Labs](https://grafana.com/grafana/dashboards/1860-node-exporter-full/)
+    - 比如node-exporter:[Node Exporter Full | Grafana Labs](https://grafana.com/grafana/dashboards/1860-node-exporter-full/)
 
-  - 在左侧Create-Import中导入json文件，这里导入了docker_rev1.json和node_exporter.json两个文件。
+  - 在左侧Create-Import中导入json文件,这里导入了docker_rev1.json和node_exporter.json两个文件。
 
 ### 查看表的query
 
@@ -149,25 +149,25 @@ spec:
 
 ![image-20240104163832044](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202401041638122.png)
 
-- 如果某个指标或者table没数：
+- 如果某个指标或者table没数:
 
-  - 可以通过edit找到这个指标名称，放到prometheus中execute查一下，如果prometheus中都没数据，说明这个指标没被采集。可以从后往前删，看看是不是因为版本问题导致的拼写差异。找到prometheus中正确的写法之后，再修改grafana中的query。
+  - 可以通过edit找到这个指标名称,放到prometheus中execute查一下,如果prometheus中都没数据,说明这个指标没被采集。可以从后往前删,看看是不是因为版本问题导致的拼写差异。找到prometheus中正确的写法之后,再修改grafana中的query。
 
   ![image-20240104164035604](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202401041805995.png)
 
-## 监控pod：kube-state-metrics组件
+## 监控pod:kube-state-metrics组件
 
 ### ksm简介
 
-- kube-state-metrics监听API Server生成有关资源对象的状态指标，比如Node、Pod。
-- 需要注意的是kube-state-metrics只是简单的提供一个metrics数据，并不会存储这些指标数据，所以我们可以使用Prometheus来抓取这些数据然后存储。
-- 主要关注的是业务相关的元数据，比如Pod副本状态；调度了多少个replicas；现在可用的有几个；多少个Pod是running/stopped/terminated状态；Pod重启了多少次；有多少job在运行中。
+- kube-state-metrics监听API Server生成有关资源对象的状态指标,比如Node、Pod。
+- 需要注意的是kube-state-metrics只是简单的提供一个metrics数据,并不会存储这些指标数据,所以我们可以使用Prometheus来抓取这些数据然后存储。
+- 主要关注的是业务相关的元数据,比如Pod副本状态;调度了多少个replicas;现在可用的有几个;多少个Pod是running/stopped/terminated状态;Pod重启了多少次;有多少job在运行中。
 
 ### 部署ksm
 
 #### 创建sa并授权
 
-~~~yaml
+```yaml
 ---
 apiVersion: v1
 kind: ServiceAccount
@@ -208,14 +208,14 @@ subjects:
 - kind: ServiceAccount
   name: kube-state-metrics
   namespace: kube-system
-~~~
+```
 
 #### 部署ksm pod
 
-- 上传并解压quay.io/coreos/kube-state-metrics:v1.9.0镜像（不上传也能拉下来）
+- 上传并解压quay.io/coreos/kube-state-metrics:v1.9.0镜像(不上传也能拉下来)
 - 创建deployment
 
-~~~yaml
+```yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -238,11 +238,11 @@ spec:
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8080
-~~~
+```
 
 - 创建svc
 
-  ~~~yaml
+  ```yaml
   apiVersion: v1
   kind: Service
   metadata:
@@ -259,13 +259,10 @@ spec:
     - name: kube-state-metrics
       port: 8080
       protocol: TCP
-  ~~~
+  ```
 
 ### grafana基于ksm监控pod信息
 
-- ksm部署好之后，可以在grafana中导入以下两个json：
+- ksm部署好之后,可以在grafana中导入以下两个json:
   - Kubernetes Cluster (Prometheus)-1577674936972.json
   - Kubernetes cluster monitoring (via Prometheus) (k8s 1.16)-1577691996738.json
-
-
-
