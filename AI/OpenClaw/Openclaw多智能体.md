@@ -37,7 +37,7 @@ aliases:
 - 输出格式约束：结构化输出。比如：必须包含json格式
 
 示例：
-```
+```text
 1. Identity Definition
 你是一位拥有20年经验的资深后端架构师，擅长高并发、分布式系统设计（Python/Go）。你的代码风格以“健壮、高性能、可维护”著称。你不仅是代码生成者，更是系统稳定性的守护者。
 
@@ -74,7 +74,7 @@ STRICTLY FORBIDDEN:
 ## IDENTITY
 自我介绍
 
-```
+```markdown
 # ID 身份档案：CodeCraftsman（前端架构师）
 
 ## 基本属性
@@ -93,7 +93,7 @@ STRICTLY FORBIDDEN:
 ## SOUL
 行为底线
 
-```
+```markdown
 # SOUL.md - Linux专家的灵魂
 
 ## 核心真理 (Core Truths)
@@ -115,7 +115,7 @@ STRICTLY FORBIDDEN:
 ## AGENTS
 工作习惯
 
-```
+```markdown
 # 📚 前端代理运行手册
 
 ## 1. 代码生成规范
@@ -165,17 +165,17 @@ openclaw agents add frontend-engineer --workspace ~/.openclaw/workspace-frontend
 ```
 
 ## Channel配置：openclaw自带飞书插件
-- https://docs.openclaw.ai/zh-CN/channels/feishu
+- [OpenClaw 飞书插件文档](https://docs.openclaw.ai/zh-CN/channels/feishu)
 - 自己创建多个飞书app，拿appid和appsecret。每个飞书机器人 = 一个独立飞书应用
 - 在 OpenClaw 里把它们配置成 channels.feishu.accounts.accountId
 - 再用 bindings 把每个 accountId 绑定到一个 agent
 
 ## Channel配置：飞书官方插件
-飞书官方插件文档中有说明： 
-- https://bytedance.larkoffice.com/docx/WNNXdhKxmo8KDJxMM9dc0GD5nFf
-- https://bytedance.larkoffice.com/docx/MFK7dDFLFoVlOGxWCv5cTXKmnMh
+飞书官方插件文档中有说明：
+- [飞书官方插件配置文档 1](https://bytedance.larkoffice.com/docx/WNNXdhKxmo8KDJxMM9dc0GD5nFf)
+- [飞书官方插件配置文档 2](https://bytedance.larkoffice.com/docx/MFK7dDFLFoVlOGxWCv5cTXKmnMh)
 
-1. 在飞书开发者后台，一键创建新机器人 https://open.feishu.cn/page/openclaw?form=multiAget 并记录App ID和 App Secret。（事件回调、权限配置都自动配好了）
+1. 在飞书开发者后台，[一键创建新机器人](https://open.feishu.cn/page/openclaw?form=multiAget)，并记录 App ID 和 App Secret。（事件回调、权限配置都自动配好了）
 2. 自动审批之后，在开发者小助手里面，会有消息：你的应用“Backend”已通过管理员审批并发布成功！，打开应用就会进到对话页面。
 3. 配置文件更新：
 文件路径：
@@ -2870,7 +2870,7 @@ K8s专家智能体，只处理K8s相关工作，不处理任何Linux、容器方
 ```
 
 ## Skills开发
-同样的，我们先写一份技术文档脚本，让AI帮忙生成Skill （ https://github.com/anthropics/skills/tree/main/skills/skill-creator ）
+同样的，我们先写一份技术文档脚本，让 AI 帮忙生成 Skill（参考 [skill-creator](https://github.com/anthropics/skills/tree/main/skills/skill-creator)）
 
 - 技术文档脚本，就按照：/Users/hang.xu/github-repo/learning-notes/Docker-Kubernetes/k8s-installation-management/最新步骤/安装k8s-1.35-基于rockylinux10-最新步骤.md 拆分出来的linux初始化、容器运行时安装、k8s安装这几个模块拆分出来的步骤去喂给AI。
 
@@ -2928,7 +2928,7 @@ SKILL.md 中描述脚本如何使用即可，决不能把脚本内容在 SKILL.m
 ```
 
 ### docker使用skill
-clawhub上有一个可以直接用： https://clawhub.ai/arnarsson/docker-essentials
+ClaWHub 上有一个可以直接用：[docker-essentials](https://clawhub.ai/arnarsson/docker-essentials)
 
 ### k8s安装skill
 
