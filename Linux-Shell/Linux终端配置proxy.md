@@ -1,4 +1,14 @@
-通过设置http_proxy、https_proxy，可以让终端走指定的代理。 配置脚本如下，在终端直接执行，只会临时生效。
+---
+title: Linux终端配置代理
+tags:
+  - linux
+  - proxy
+  - network
+aliases:
+  - 终端代理配置
+---
+
+通过设置http_proxy、https_proxy，可以让终端走指定的代理。配置脚本如下，在终端直接执行，只会临时生效。
 
 # 编写脚本
 

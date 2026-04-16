@@ -1,9 +1,18 @@
-> 
+---
+title: LVM 与 RAID
+tags:
+  - linux
+  - storage
+  - LVM
+  - RAID
+aliases:
+  - LVM-RAID
+---
 
 # LVM基本概念
 
+> [!info] LVM 简介
 > - 在 GNU/Linux 环境中，LVM（Logical Volume Management）或逻辑卷管理是一种通过虚拟块轻松管理块设备的解决方案。Linux 环境中使用 LVM 的磁盘管理提供了系统上存在的磁盘结构的高级视图，为应用程序和用户分配存储提供了更大的灵活性。使用 LVM 创建的卷几乎可以随意调整大小和移动，使得存储空间的管理变得更加简便和高效。
->
 > - LVM 的三个重要元素：物理卷（PV）、卷组（VG）和逻辑卷（LV）。
 
 ## 物理卷（Physical Volume）
@@ -258,6 +267,8 @@ lvconvert --merge /dev/vg_data/lv_data_snapshot
 lvcreate -L 100G -m1 -n lv_data_mirror vg_data /dev/sdd1
 ```
 
+---
+
 # Difference about RAID and LVM
 
 ## RAID
@@ -274,6 +285,8 @@ lvcreate -L 100G -m1 -n lv_data_mirror vg_data /dev/sdd1
 ## Difference
 
 - RAID is a disk management technology to improve IO performance by combining several disks to one array, while LVM is another disk management technology which allow users to adjust volume of partition dynamically by creating PV, VG and LV. 
+
+---
 
 # How to add a disk on Azure VM
 
@@ -319,6 +332,8 @@ vim /etc/fstab  # It's important to use UUID instead of disk name in VM
 ```shell
 mount -a 
 ```
+
+---
 
 # Configure LVM in centos
 
@@ -416,7 +431,9 @@ vgremove vg1 # delete the VG
 pvremove /dev/sde1 # delete the PV
 ```
 
-# Configure RAID0 
+---
+
+# Configure RAID0
 
 Get two new disks on Azure Portal
 

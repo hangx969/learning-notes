@@ -1,3 +1,15 @@
+---
+title: MacBook 开发环境配置
+tags:
+  - macOS
+  - homebrew
+  - zsh
+  - kubectl
+  - obsidian
+aliases:
+  - Mac开发环境
+---
+
 # 配置oh-my-zsh
 
 MacOS 15中zsh已经是默认的命令行终端。只需要配一个oh-my-zsh。
@@ -89,6 +101,8 @@ git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-m
 
 - 然后修改配置文件`.zshrc`，在plugins中添加插件`zsh-autosuggestions`；
 - 此时我们输入命令前缀就会直接提示命令，然后按方向键`→`就可以实现自动补全了。
+
+---
 
 # 安装homebrew
 
