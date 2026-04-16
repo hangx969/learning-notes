@@ -419,14 +419,15 @@ aliases:
   - 而宿主机上的文件系统，也自然包括了我们要使用的容器镜像。这个镜像的各个层，保存在/var/lib/docker/aufs/diff 目录下，在容器进程启动后，它们会被联合挂载在**/var/lib/docker/aufs/mnt/**目录中，这样容器所需的 rootfs 就准备好了。
   - 只需要在 rootfs 准备好之后，在执行 chroot 之前，把 Volume 指定的宿主机目录（比如 /home 目录），挂载到指定的容器目录（比如 /test目录）**在宿主机上对应的目录**（即 /var/lib/docker/aufs/mnt/[可读写层 ID]/test）上，这个 Volume 的挂载工作就完成了。
 
-## 4 谈谈kubernetes的本质
+---
 
-> 对于容器来说由两部分组成
+## 4 谈谈Kubernetes的本质
+
+> [!abstract] 容器的两部分
+> 1. 一组联合挂载在 /var/lib/docker/aufs/mnt 上的 rootfs，这一部分我们称为”容器镜像”（Container Image），是容器的静态视图。
+> 2. 一个由 Namespace+Cgroups 构成的隔离环境，这一部分我们称为”容器运行时”（Container Runtime），是容器的动态视图。
 >
-> 1. 一组联合挂载在 /var/lib/docker/aufs/mnt 上的 rootfs，这一部分我们称为“容器镜像”（Container Image），是容器的静态视图。
-> 2. 一个由 Namespace+Cgroups 构成的隔离环境，这一部分我们称为“容器运行时”（Container Runtime），是容器的动态视图。
->
-> 作为一名开发者，并不关心容器运行时，在开发-测试=发布过程中，承载信息的是容器镜像。正因为如此，docker项目出现不久，就走向了容器编排技术的上层建筑。
+> 作为一名开发者，并不关心容器运行时，在开发-测试-发布过程中，承载信息的是容器镜像。正因为如此，Docker项目出现不久，就走向了容器编排技术的上层建筑。
 
 ### kubernetes组件简介
 
@@ -465,7 +466,9 @@ aliases:
 - 实际上，过去很多的集群管理项目（比如 Yarn、Mesos，以及 Swarm）所擅长的，都是把一个容器，按照某种规则，放置在某个最佳节点上运行起来。这种功能，我们称为“调度”。
 - 而 Kubernetes 项目所擅长的，是按照用户的意愿和整个系统的规则，完全自动化地处理好容器之间的各种关系。这种功能，就是我们经常听到的一个概念：编排。
 
-# 5 k8s集群搭建实践
+---
+
+# 5 K8s集群搭建实践
 
 ## kubeadm
 
@@ -494,9 +497,8 @@ aliases:
 5. token生成之后，kubeadm会将master节点的重要信息，通过configmap方式保存在etcd中，以供后续部署节点使用。这个configmap的名字是cluster-info。
 6. 安装默认插件：kube-proxy和DNS必须安装。
 
-> - kubeadm的源代码就在kubernetes/cmd/kubeadm下，其中/app/phases文件夹下面的代码就代表了以上的每一个步骤
->
->   （？在实验环境没找到）
+> [!note] 源代码位置
+> kubeadm的源代码就在kubernetes/cmd/kubeadm下，其中/app/phases文件夹下面的代码就代表了以上的每一个步骤（？在实验环境没找到）
 
 ### yaml文件与容器化应用
 
@@ -531,11 +533,14 @@ template: #以下都是pod的模板
   - metadata是API对象的标识。
   - 与metadata同级的字段annotation，专门用来携带k-v格式的内部信息，供k8s使用的，一般是在pod运行后加到这个API对象上。
 
-  # 6 容器编排和作业管理
+---
+
+# 6 容器编排和作业管理
 
 ## 为什么需要pod
 
-> - 容器的本质就是云计算系统中的进程，容器镜像就是这个系统中的.exe安装包；而k8s就是操作系统。
+> [!note]
+> 容器的本质就是云计算系统中的进程，容器镜像就是这个系统中的.exe安装包；而K8s就是操作系统。
 
 ### pod的实现原理
 
@@ -559,9 +564,10 @@ template: #以下都是pod的模板
     - k8s只要把volume定义在pod层面即可，
     - 这样，一个 Volume 对应的宿主机目录对于 Pod 来说就只有一个，Pod 里的容器只要声明挂载这个 Volume，就一定可以共享这个 Volume 对应的宿主机目录。
 
-### pod的意义-容器设计原理-sidecar
+### Pod的意义 - 容器设计原理 - Sidecar
 
-> Pod 这种“超亲密关系”容器的设计思想，实际上就是希望，当用户想在一个容器里跑多个功能并不相关的应用时，应该优先考虑它们是不是更应该被描述成一个 Pod 里的多个容器。
+> [!tip] Sidecar设计思想
+> Pod 这种”超亲密关系”容器的设计思想，实际上就是希望，当用户想在一个容器里跑多个功能并不相关的应用时，应该优先考虑它们是不是更应该被描述成一个 Pod 里的多个容器。
 
 1. 一个典型例子：有一个 Java Web 应用的 WAR 包，它需要被放在 Tomcat 的 webapps 目录下运行起来。
 
@@ -616,7 +622,8 @@ template: #以下都是pod的模板
 
 ### pod基本概念
 
-> 可以把pod看作是传统环境里面的“机器”，而容器是这个机器里面的用户程序。所以，凡是调度、网络、存储、安全相关的属性，基本都是pod级别的。
+> [!tip] Pod的理解
+> 可以把Pod看作是传统环境里面的”机器”，而容器是这个机器里面的用户程序。所以，凡是调度、网络、存储、安全相关的属性，基本都是Pod级别的。
 
 - pod中的几个重要字段
 
@@ -670,13 +677,12 @@ template: #以下都是pod的模板
   - Unknown
     - pod状态不能持续的被kubelet报告给api server。有可能是kubelet与master通信出了问题。
 
-### pod进阶使用
+### Pod进阶使用
 
-> k8s中有几种特殊的volume，作用是为容器提供预先定义好的数据，又叫做Projected volume。
+> [!info] Projected Volume
+> K8s中有几种特殊的volume，作用是为容器提供预先定义好的数据，又叫做Projected Volume。
 >
-> Project Volume一共有四种:
->
-> Secret、ConfigMap、Downward API、ServiceAccountToken
+> Projected Volume一共有四种：Secret、ConfigMap、Downward API、ServiceAccountToken
 
 - Secret
 
