@@ -2562,7 +2562,6 @@ let person = {
     city: "China"
 };
 
-
 // 访问对象的属性并打印输出
 console.log(person.name); // 输出: zhangsan
 console.log(person.age);  // 输出: 30
