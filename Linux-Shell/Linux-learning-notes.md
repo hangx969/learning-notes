@@ -420,6 +420,7 @@ Azure 用的是 Bourne Again shell （Bash）
 - help 查看 shell 内置指令的帮助
 
 
+> [!tip] 查看命令常用方法
 > curl cheat.sh/tree #可以查看命令的常用方法
 
 ### 快捷键
@@ -1008,6 +1009,7 @@ XFS ：large data files
 
 ### 开机检测程序
 
+> [!info] BIOS/UEFI 简介
 > **即基本输入输出系统，是服务器启动后最先运行的软件。它包括基本输入输出控制程序、上电自检程序、系统启动自举程序、系统设置信息。**BIOS是服务器硬件和OS之间的抽象层，用来设置硬件，为OS运行做准备。**BIOS设置程序是储存在BIOS芯片中的。BIOS的进化版本是UEFI（Unified Extensible FirmwareInterface），即统一的可扩展固定接口。**这种接口用于操作系统自动从预启动的操作环境，加载到一种操作系统上，从而使开机程序化繁为简，节省时间。
 
 #### BIOS
