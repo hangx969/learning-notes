@@ -1,7 +1,19 @@
+---
+title: inotifywait监控文件变化
+tags:
+  - linux
+  - inotifywait
+  - rsync
+  - systemd
+aliases:
+  - inotifywait文件监控同步
+---
+
 # inotifywait
 
 - 有时候我们常需要当文件变化的时候便触发某些脚本操作，比如说有文件更新了就同步文件到远程机器。在实现这个操作上，主要用到两个工具，一个是rsync，一个是inotifywait。inotifywait的作用是监控文件夹变化，rsync是用来同步，可同步到本机的其他目录或者远程服务器上。
 
+> [!info] inotify相关工具
 > - inotify 是一个 Linux 内核提供的 API，它可以监视文件系统事件，比如文件或目录的创建、删除、修改等。
 >
 >
@@ -66,6 +78,8 @@ nohup sh inotifywait.sh > /dev/null 2>&1
 #如果想生成日志
 nohup sh inotifywait.sh > output.log 2>&1
 ~~~
+
+---
 
 # systemd管理rsync同步任务
 

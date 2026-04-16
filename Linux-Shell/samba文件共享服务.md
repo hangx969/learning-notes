@@ -1,8 +1,21 @@
+---
+title: Samba文件共享服务
+tags:
+  - linux
+  - samba
+  - SMB
+  - file-sharing
+aliases:
+  - Samba SMB文件共享
+---
+
 # 背景
 
 - 1987年，微软公司和英特尔公司共同制定了SMB（server Messages Block）协议用来解决局域网内的文件或打印机等的资源共享问题。但是这时后还是解决不了跨系统之间的文件共享。直到1991年，在读大学的Tridgwell基于SMB协议开发能够解决Linux系统和windows系统之间的文件的问题——也就是SMB Server服务。后来被命名为samba（根据一个拉丁舞名字）。如今，samba服务测序成为了在Linux和windows系统之间共享文件的最佳选择。
 
-  # samba
+---
+
+# samba
 
 介绍:
 
@@ -19,6 +32,8 @@
 
 1. smb服务：管理SAMBA服务器共享什么目录、文件、打印机
 2. nmb服务：管理群组和netbios name解析
+
+---
 
 # 搭建samba环境
 

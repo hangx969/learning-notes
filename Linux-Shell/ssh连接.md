@@ -1,4 +1,13 @@
-
+---
+title: SSH连接
+tags:
+  - linux
+  - ssh
+  - scp
+  - vscode
+aliases:
+  - SSH配置与使用
+---
 
 # SSH
 
@@ -72,9 +81,12 @@ OpenSSH提供了工具 `ssh-keygen`命令用来生成密钥，采用默认的`rs
 `scp`语法类似于`cp`的语法： `scp source destination`
 如：`scp user@host: example.txt  temp.txt` 将远程主机主目录下的`example.txt`复制为本机当前目录的`temp.txt`，注意主机和文件之间要用冒号分隔
 
+---
+
 # Vscode配置远程服务器免密连接
 
-> 参考文档：[VSCode——SSH免密登录_vscode免密登录ssh_Irving.Gao的博客-CSDN博客](https://blog.csdn.net/qq_45779334/article/details/129308235)
+> [!info] 参考文档
+> [VSCode——SSH免密登录_vscode免密登录ssh_Irving.Gao的博客-CSDN博客](https://blog.csdn.net/qq_45779334/article/details/129308235)
 
 1. 首先需要在vscode电脑上生成公钥私钥对：
 
@@ -124,6 +136,8 @@ OpenSSH提供了工具 `ssh-keygen`命令用来生成密钥，采用默认的`rs
 
 此时可以vscode免密远程登录到虚拟机。
 
+---
+
 # Troubleshooting
 
 - windows从公司账户切换到个人账户后，将公司账户配置文件里面的/.ssh/config文件拷贝到了个人账户的/.ssh中，在个人账户的vscode中尝试ssh连接时，报错：`Bad owner or permissions on C:\\Users\\xuhan/.ssh/config`
@@ -146,6 +160,8 @@ OpenSSH提供了工具 `ssh-keygen`命令用来生成密钥，采用默认的`rs
     #把GSSAPIAuthentication yes 改成 no
     systemctl restart sshd
     ```
+
+---
 
 # How to change ssh port on Azure
 
