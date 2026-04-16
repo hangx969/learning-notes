@@ -191,7 +191,7 @@ mount 172.16.183.70:/software /software
 groupadd -g 1108 munge
 useradd -m -c "Munge Uid 'N' Gid Emporium" -d /var/lib/munge -u 1108 -g munge -s /sbin/nologin munge
 #-m：这个选项告诉 useradd 命令为新用户创建一个主目录。
-#-c "Munge Uid 'N' Gid Emporium"：这个选项用于设置新用户的注释字段，通常用于存储用户的全名或其他信息。在这里，它被设置为 "Munge Uid 'N' Gid Emporium"。
+#-c "Munge Uid 'N' Gid Emporium"：这个选项用于设置新用户的注释字段，通常用于存储用户的全名或其他信息。在这里,它被设置为 "Munge Uid 'N' Gid Emporium"。
 #-d /var/lib/munge：这个选项用于指定新用户的主目录。在这里，主目录被设置为 /var/lib/munge。
 #-u 1108：这个选项用于指定新用户的用户 ID（UID） 被设置为 1108。
 #-g munge：这个选项用于指定新用户的初始登录组，被设置为 munge。
@@ -738,7 +738,6 @@ systemctl enable slurmd
 
   - name servers: 8.8.8.8,114.114.114.114
 
-
 ~~~sh
 sudo vim /etc/netplan/00-installer-config.yaml
 # This is the network config written by 'subiquity'
@@ -762,7 +761,6 @@ network:
   - Ubuntu系统安装时，在mirror address页面上，配置为清华镜像源： https://mirrors.tuna.tsinghua.edu.cn/help/ubuntu/
 
   - 设置主机名
-
 
 ~~~sh
 sudo hostnamectl set-hostname um1 && bash
@@ -1000,6 +998,7 @@ debuild -b -uc -us
   lscpu
   #查看RealMemory
   free -m
+  #
   ~~~
 
 ~~~sh
@@ -1302,7 +1301,7 @@ def main():
     t1.join()  # join() 等待线程终止，要不然一直挂起
     t2.join()
 
-    
+
 if __name__ == "__main__":
     main()
 scp thread_demo.py root@c1:/root
@@ -1410,8 +1409,6 @@ sacctmgr list assoc
 #查看账户和分区的关联
 sacctmgr show associations
 ~~~
-
-
 
 # PBS vs Slurm
 

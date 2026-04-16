@@ -1,10 +1,25 @@
+---
+title: 配置zsh终端
+tags:
+  - linux
+  - zsh
+  - oh-my-zsh
+  - terminal
+aliases:
+  - zsh和oh-my-zsh配置
+---
+
 # zsh
 
 - 是Linux命令解释器的一种，CentOS默认的命令解释器是Bash，常用的还有sh、csh和tcsh。对比默认的Bash，Zsh的功能更强大，拥有大量插件，可以实现更强大的命令补全，命令高亮等功能。
 
+---
+
 # ohmyzsh
 
 - OhMyZsh是一款开源工具，可以用于管理Zsh（Linux命令解释器的一种）的配置。使用OhMyZsh可以让你看起来像有10年工作经验的程序员，OhMyZsh有几百种插件可以供你使用，还有各种炫酷的主题。OhMyZsh非常流行，在Github上已经有`137K+`Star！
+
+---
 
 # 安装zsh
 
@@ -56,6 +71,8 @@ vim /etc/shells
 ```sh
 zsh --version
 ```
+
+---
 
 # 安装onmyzsh
 
@@ -128,7 +145,7 @@ source ~/.zshrc
 
 ### zsh-syntax-highlighting
 
-> 平时我们输入Linux命令的时候，只有在执行的时候才知道输错命令了，这款插件可以实时检测命令是否出错。
+> [!tip] 平时我们输入Linux命令的时候，只有在执行的时候才知道输错命令了，这款插件可以实时检测命令是否出错。
 
 - 下载插件到指定目录，使用如下命令即可；
 
@@ -149,7 +166,7 @@ plugins=(
 
 ### zsh-autosuggestions
 
-> 自动补全插件，输入命令后会自动提示相关命令，使用方向键`→`可以实现自动补全。
+> [!tip] 自动补全插件，输入命令后会自动提示相关命令，使用方向键`→`可以实现自动补全。
 
 - 下载插件到指定目录，使用如下命令即可；
 
@@ -162,7 +179,7 @@ git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-m
 
 ### zsh-history-substring-search
 
-> 可以搜索命令历史的插件，使用`Ctrl+R`快捷键触发，模糊搜索历时使用的命令。
+> [!tip] 可以搜索命令历史的插件，使用`Ctrl+R`快捷键触发，模糊搜索历时使用的命令。
 
 - 下载插件到指定目录，使用如下命令即可；
 
@@ -175,14 +192,14 @@ git clone https://github.com/zsh-users/zsh-history-substring-search ${ZSH_CUSTOM
 
 ### docker
 
-> 自带插件，可以实现docker命令补全和自动提示。
+> [!tip] 自带插件，可以实现docker命令补全和自动提示。
 
 - 作为自带插件无需下载，直接修改配置文件`.zshrc`，在plugins中添加插件`docker`；
 - 当我们输入docker开头的命令时，使用`Tab`键可以出现提示并自动补全。
 
 #### git
 
-> 自带插件，添加了很多git的快捷命令。
+> [!tip] 自带插件，添加了很多git的快捷命令。
 
 - 直接修改配置文件`.zshrc`，在plugins中添加插件`git`；
 - 该插件对于Git命令提供了非常多的快捷使用方式，比如下面的常用命令；
@@ -201,7 +218,7 @@ git clone https://github.com/zsh-users/zsh-history-substring-search ${ZSH_CUSTOM
 
 #### z
 
-> 自带插件，可以快速跳转到上个cd的目录下。
+> [!tip] 自带插件，可以快速跳转到上个cd的目录下。
 
 - 直接修改配置文件`.zshrc`，在plugins中添加插件`z`，最终配置效果如下；
 

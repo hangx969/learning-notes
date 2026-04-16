@@ -371,7 +371,7 @@ InactiveLimit=0 #The  interval,  in  seconds,  after which a non-responsive job 
 MinJobAge=300 #Slurm控制器在等待作业结束多少秒后清理其记录
 KillWait=60 #在作业到达其时间限制前等待多少秒后在发送SIGKILLL信号之前发送TERM信号以优雅地终止
 Waittime=0 #在一个作业步的第一个任务结束后等待多少秒后结束所有其它任务，0表示无限长等待
-UnkillableStepTimeout=300 #表示如果一个作业步骤在收到结束信号后300秒内仍然没有结束，那么它将被标记为“不可杀死”。
+UnkillableStepTimeout=300 #表示如果一个作业步骤在收到结束信号后300秒内仍然没有结束，那么它将被标记为"不可杀死"。
 
 # SCHEDULING
 SchedulerType=sched/backfill #使用后填充调度器，是先进先出（FIFO）调度器，优先运行队列中等待时间最长的作业。与普通的FIFO调度器不同，后填充调度器会尝试找到可以在不延迟当前等待时间最长的作业的情况下运行的较小作业。后填充调度器需要预测作业的运行时间。如果作业的实际运行时间超过预测的运行时间，那么可能会影响后续作业的调度。因此，你应该尽可能准确地指定作业的运行时间。
@@ -1118,4 +1118,3 @@ for i in `seq 1 4`; do
 ssh -t root@cn01dl00$i "scontrol reconfigure";
 done
 ~~~
-
