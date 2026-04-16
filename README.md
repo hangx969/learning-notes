@@ -10,18 +10,18 @@
 
 **→ [进入知识库首页](./KnowledgeBase/INDEX.md)**
 
-| 类型 | 说明 | 入口 |
-|------|------|------|
-| 📋 全库盘点 | 297 篇文档逐一索引 | [repository-inventory](./KnowledgeBase/inventory/repository-inventory.md) |
-| 🗺️ 领域地图 | 按技术领域导航 | [domain-map](./KnowledgeBase/maps/domain-map.md) |
-| 🔧 工具地图 | 按工具/平台聚合 | [tool-map](./KnowledgeBase/maps/tool-map.md) |
-| ☸️ K8s 专题 | 145 篇 K8s 生态导航 | [kubernetes-map](./KnowledgeBase/maps/kubernetes-map.md) |
-| 🤖 AI 专题 | Claude Code + OpenClaw | [ai-workflow-map](./KnowledgeBase/maps/ai-workflow-map.md) |
-| ☁️ 云平台专题 | Aliyun vs Azure 对标 | [cloud-platform-map](./KnowledgeBase/maps/cloud-platform-map.md) |
-| 🐧 Linux 运维 | 系统管理 + HPC + GPU | [linux-ops-map](./KnowledgeBase/maps/linux-ops-map.md) |
-| 🐍 Python 运维 | 27 篇 Python 开发导航 | [python-devops-map](./KnowledgeBase/maps/python-devops-map.md) |
-| 📈 覆盖分析 | 主题深度与缺口识别 | [topic-coverage-analysis](./KnowledgeBase/analysis/topic-coverage-analysis.md) |
-| ✏️ 写作建议 | 10 个推荐补写方向 | [next-writing-suggestions](./KnowledgeBase/analysis/next-writing-suggestions.md) |
+| 类型           | 说明                     | 入口                                                                               |
+| ------------ | ---------------------- | -------------------------------------------------------------------------------- |
+| 📋 全库盘点      | 297 篇文档逐一索引            | [repository-inventory](./KnowledgeBase/inventory/repository-inventory.md)        |
+| 🗺️ 领域地图     | 按技术领域导航                | [domain-map](./KnowledgeBase/maps/domain-map.md)                                 |
+| 🔧 工具地图      | 按工具/平台聚合               | [tool-map](./KnowledgeBase/maps/tool-map.md)                                     |
+| ☸️ K8s 专题    | 145 篇 K8s 生态导航         | [kubernetes-map](./KnowledgeBase/maps/kubernetes-map.md)                         |
+| 🤖 AI 专题     | Claude Code + OpenClaw | [ai-workflow-map](./KnowledgeBase/maps/ai-workflow-map.md)                       |
+| ☁️ 云平台专题     | Aliyun vs Azure 对标     | [cloud-platform-map](./KnowledgeBase/maps/cloud-platform-map.md)                 |
+| 🐧 Linux 运维  | 系统管理 + HPC + GPU       | [linux-ops-map](./KnowledgeBase/maps/linux-ops-map.md)                           |
+| 🐍 Python 运维 | 27 篇 Python 开发导航       | [python-devops-map](./KnowledgeBase/maps/python-devops-map.md)                   |
+| 📈 覆盖分析      | 主题深度与缺口识别              | [topic-coverage-analysis](./KnowledgeBase/analysis/topic-coverage-analysis.md)   |
+| ✏️ 写作建议      | 10 个推荐补写方向             | [next-writing-suggestions](./KnowledgeBase/analysis/next-writing-suggestions.md) |
 
 ### 推荐阅读路径
 
