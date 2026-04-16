@@ -174,7 +174,7 @@ sudo lspci | grep NVIDIA
 
 一切正常！输出：
 
-```
+```text
 2f:00.0 VGA compatible controller: NVIDIA Corporation GA106 [GeForce RTX 3060 Lite Hash Rate] (rev a1)
 ```
 
@@ -451,7 +451,7 @@ nvidia-operator-validator-jhz6j                              1/1     Running    
 
 ### 验证 GPU Operator
 
-```
+```sh
 kubectl -n gpu-operator logs deployment/gpu-operator | grep GPU
 ```
 

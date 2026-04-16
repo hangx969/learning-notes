@@ -13,9 +13,9 @@ CORS 是一种基于 **HTTP 头部** 的机制，它允许**浏览器**打破“
 互联网有一个核心安全规则叫 **同源策略 (Same-Origin Policy)**。
 
 - **规定**：浏览器出于安全考虑，默认禁止 `a.com` 的网页通过 JS 代码去读取 `b.com` 的数据。
-- **什么是“同源”**：协议（http/https）、域名（example.com）、端口（80/443）必须完全一致。
+- **什么是”同源”**：协议（http/https）、域名（example.com）、端口（80/443）必须完全一致。
 
-**运维场景：**  
+**运维场景：**
 现在的架构大多是前后端分离：
 
 - **前端静态资源** 部署在 S3/CDN 上，域名是 `www.example.com`。
@@ -86,7 +86,7 @@ server {
         add_header 'Access-Control-Allow-Origin' '*';
         add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS';
         add_header 'Access-Control-Allow-Headers' 'DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,Authorization';
-        
+
         # 处理 OPTIONS 预检请求，直接返回 204，不转发给后端代码
         if ($request_method = 'OPTIONS') {
             add_header 'Access-Control-Allow-Origin' '*';
@@ -97,7 +97,7 @@ server {
             add_header 'Content-Length' 0;
             return 204;
         }
-        
+
         proxy_pass http://backend_upstream;
     }
 }
@@ -107,11 +107,11 @@ server {
 
 ### 5. 运维常见故障与排查 (Troubleshooting)
 
-当前端喊“CORS 报错了”，你该怎么办？不要只听前端截图，用命令行工具验证。
+当前端喊”CORS 报错了”，你该怎么办？不要只听前端截图，用命令行工具验证。
 
 **工具：`curl`**
 
-**1. 模拟请求：**  
+**1. 模拟请求：**
 使用 `-H` 伪造 Origin 头部，看服务器回不回 `Access-Control-Allow-Origin`。
 
 ```bash
@@ -123,18 +123,18 @@ curl -I -X POST \
 **2. 常见错误及原因：**
 
 - **错误：`No 'Access-Control-Allow-Origin' header is present`**
-    
+
     - **原因**：Nginx/网关没配置，或者后端代码没处理。
 - **错误：`The 'Access-Control-Allow-Origin' header contains multiple values`**
-    
+
     - **原因**：**重复配置**。比如 Nginx 加了一次，后端代码（如 SpringBoot/Node.js）又加了一次。浏览器看到两个头就会报错。**解决办法：只在一个层级配置（建议在网关层统一处理）。**
 - **错误：`Method not supported`**
-    
+
     - **原因**：Nginx 拦截了 `OPTIONS` 请求并返回了 403/404，或者 `Access-Control-Allow-Methods` 里没包含当前用的方法。
 - **CDN 缓存坑**
-    
+
     - 如果你更新了 CORS 配置但没生效，记得刷新 CDN 缓存。
 
 ### 总结
 
-CORS 本质上是**浏览器**用来防范恶意网站窃取数据的盾牌，但它需要**服务端（运维侧）**发放“通行证”（Header）。你的任务就是确保你的基础设施（Nginx/CDN/S3）在收到合法的跨域请求时，能正确返回这些 Header。
+CORS 本质上是**浏览器**用来防范恶意网站窃取数据的盾牌，但它需要**服务端（运维侧）**发放”通行证”（Header）。你的任务就是确保你的基础设施（Nginx/CDN/S3）在收到合法的跨域请求时，能正确返回这些 Header。
