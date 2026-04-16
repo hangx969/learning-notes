@@ -1,3 +1,14 @@
+---
+title: Ubuntu部署vsftpd
+tags:
+  - linux
+  - ubuntu
+  - FTP
+  - vsftpd
+aliases:
+  - vsftpd部署配置
+---
+
 # FTP和vftpd介绍
 
 ## vftpd
@@ -193,6 +204,8 @@ pam_service_name=vsftpd
 tcp_wrappers=YES
 # 这两个配置使用默认生成的选项即可，不用做任何修改
 ```
+
+---
 
 # Ubuntu部署vftpd服务端
 
@@ -411,7 +424,7 @@ pasv_max_port=<port number>          #设置被动模式下，建立数据传输
 2. 输入例外用户名单。此名单中的用户不会被锁定在主目录，可以访问其他目录。
 3. `chmod 644 /etc/vsftpd/chroot_list`赋权
 
-> 说明 没有例外用户时，也必须创建chroot_list文件，内容可为空。
+> [!note] 没有例外用户时，也必须创建chroot_list文件，内容可为空。
 
 4. 重启vsftpd服务。
 
@@ -473,8 +486,7 @@ ftp 172.16.183.130 48888
 
 
 
-> 参考文档：
+> [!info] 参考文档
 >
-> https://zhuanlan.zhihu.com/p/111582376
->
-> https://www.cnblogs.com/wanng/p/how-to-install-ftp-server.html
+> - [vsftpd详解 - 知乎](https://zhuanlan.zhihu.com/p/111582376)
+> - [FTP服务器安装教程 - 博客园](https://www.cnblogs.com/wanng/p/how-to-install-ftp-server.html)

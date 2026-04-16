@@ -1,4 +1,16 @@
+---
+title: Ansible安装 - Rocky Linux 8
+tags:
+  - linux
+  - ansible
+  - rocky-linux
+aliases:
+  - Ansible安装配置
+---
+
 - 参考：https://mp.weixin.qq.com/s/ls2Tv9_X9M_iWphTUUIjpQ
+
+---
 
 # 实验环境搭建
 
@@ -64,6 +76,8 @@ yum install -y wget net-tools nfs-utils lrzsz gcc gcc-c++ make cmake libxml2-dev
 yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
 ~~~
 
+---
+
 # 主控节点安装ansible
 
 ~~~sh
@@ -81,6 +95,8 @@ ansible [core 2.16.3]
   libyaml = True
 #####################
 ~~~
+
+---
 
 # ansible环境配置
 
@@ -151,6 +167,8 @@ EOF
 ansible all --list-hosts
 ansible nodes --list-hosts
 ~~~
+
+---
 
 # 测试临时命令
 
