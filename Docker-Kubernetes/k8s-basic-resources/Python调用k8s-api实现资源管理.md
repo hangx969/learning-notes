@@ -9,7 +9,7 @@ aliases:
 
 # 前置条件
 
-- 安装python（pycharm）
+- 安装python(pycharm)
 
 - 安装kubernetes包
 
@@ -70,7 +70,7 @@ from kubernetes import client, config
 
 config.kube_config.load_kube_config(config_file='E:\work\KEEP-WORKING\CS-Learning\python\python-k8s\config')
 
-# 获取CoreV1API版本对象，是client.CoreV1Api()的实例，可以操作k8s中的资源对象。
+# 获取CoreV1API版本对象,是client.CoreV1Api()的实例,可以操作k8s中的资源对象。
 v1 = client.CoreV1Api()
 
 # 列出k8s中的所有名称空间
@@ -90,7 +90,7 @@ pods = v1.list_pod_for_all_namespaces()
 for i in pods.items:
     print("%s\t%s\t%s" % (i.status.pod_ip, i.metadata.namespace, i.metadata.name))
 
-# client.AppsV1Api对象可以操作跟k8s中控制器相关资源对象，下面演示的是列举所有名称空间的deployment
+# client.AppsV1Api对象可以操作跟k8s中控制器相关资源对象,下面演示的是列举所有名称空间的deployment
 v1_deploy = client.AppsV1Api()
 deploys = v1_deploy.list_deployment_for_all_namespaces()
 print("print deploy\n")
@@ -142,7 +142,7 @@ def main():
     #patch pod
     new_resp=k8s_core_v1.patch_namespaced_pod(namespace='default',name='po-nginx',body=old_resp)
     print(new_resp.spec.containers[0].image)
-        
+
 if __name__=='__main__':
     main()
 ~~~
@@ -159,10 +159,7 @@ def main():
     k8s_core_v1=client.CoreV1Api()
     resp=k8s_core_v1.delete_namespaced_pod(namespace='default',name='po-nginx')
     print('delete pod')
-    
+
 if __name__=='__main__':
     main()
 ~~~
-
-
-
