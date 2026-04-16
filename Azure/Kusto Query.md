@@ -1,6 +1,35 @@
-# VM ID and Nodes
+---
+title: Kusto Query Language (KQL) Reference
+tags:
+  - azure/monitoring
+  - azure/kusto
+  - azure/KQL
+  - azure/diagnostics
+aliases:
+  - KQL
+  - Kusto Query
+  - KQL Reference
+date: 2026-04-16
+---
 
-~~~sh
+# Kusto Query Language (KQL) Reference
+
+## Related Notes
+
+- [[Azure/0_Azure-VM-VMSS]]
+- [[Azure/2_AKS-basics]]
+
+> [!info]
+> This file contains a collection of KQL queries for Azure diagnostics and troubleshooting across various services including VM/Node management, AKS, Storage, ACR/ACI, CRP, Backup/ASR, Monitoring, AAD, and Health Events.
+
+---
+
+## VM ID and Nodes
+
+> [!tip]
+> Key tables: ==LogContainerSnapshot==, ==LogNodeSnapshot==, ==LogContainerHealthSnapshot==, ==TMMgmtNodeEventsEtwTable==, ==RdmResourceSnapshot==
+
+```sh
 //---------------------- Query all kind of IDs -------------------------------------------------------
 //Azurecm - azurecm
 //看node和container id
@@ -535,17 +564,23 @@ LogNodeSnapshot
 LiveMigrationSessionCompleteLog
 | where vmUniqueId == "fd02e94b-13a5-4e4e-938a-16a457286d12"
 | project PreciseTimeStamp, sourceNodeId, sourceContainerId, destinationContainerId, destinationNodeId, tenantName, triggerType, status, Role, RoleInstance, resourceId
-~~~
+```
 
-# AKS
+---
 
-~~~sh
-//rp service分前后端，前端是frontend* 后端是async*
-//frontendqos是 用户发来的request； asyncqos是前段发给后端的request，是内部实现用的
-//blackbox不是rp的组件，是monitoring的组件，会不停扫描用户的master pod状态， blackbox跟用户的请求没有直接关系
-//ServiceRequestId in ARM EventServices == OperationID in AKS RP QOS tables
-//OperationID in AKS RP QOS tables  == OperationID in ContextActivity
+## AKS
 
+> [!tip]
+> Key tables: ==FrontEndQoSEvents==, ==AsyncQoSEvents==, ==BlackboxMonitoringActivity==, ==ControlPlaneEvents==, ==RemediatorEvent==, ==AutoUpgraderEvents==
+
+> [!info]
+> - rp service分前后端，前端是frontend* 后端是async*
+> - frontendqos是用户发来的request；asyncqos是前段发给后端的request，是内部实现用的
+> - blackbox不是rp的组件，是monitoring的组件，会不停扫描用户的master pod状态，blackbox跟用户的请求没有直接关系
+> - ==ServiceRequestId== in ARM EventServices == ==OperationID== in AKS RP QOS tables
+> - ==OperationID== in AKS RP QOS tables == ==OperationID== in ContextActivity
+
+```sh
 	//AKS operations
 	//cluster创建失败：get operation id by filter failed!!!，cluster级别的一些操作升级也可以，看AKS RP收到的request
 	//获取 operation ID
@@ -993,11 +1028,16 @@ cluster('icmcluster.kusto.windows.net').database('AzNSPROD').AzNSTransmissionsMo
 | where SubscriptionId == "db543b1a-3be0-4754-88ef-03578fd4013c"
 | sort by CreatedTime desc
 | project CreatedTime, NotificationState, MechanismType, WebhookHostUrl, FailureReason, AdditionalInfo, AssociatedGroupId
-~~~
+```
 
-# Storage
+---
 
-~~~sh
+## Storage
+
+> [!tip]
+> Key tables: ==EventServiceEntries==, ==HttpIncomingRequests==, ==StorageAccountStatisticsRecord==, ==AccountTransactionsHourly==, ==DiskRPResourceLifecycleEvent==
+
+```sh
 	// ARM - Armmcadx - armmc
 	EventServiceEntries
 	| where TIMESTAMP between(datetime(2023-08-12 00:00)..datetime(2023-08-14 23:00))
@@ -1152,11 +1192,16 @@ AccountTransactionsDaily
 | where BilledSubscription contains "0bcf6f7f-0e7a-46e1-8f53-0fc387882f2f"
 | where AccountName contains "ce2cnepbstopdgem1"
 | project TimePeriod, RequestType, AccessTier, TransactionType, TransactionCount, BillableTransactionCount  
-~~~
+```
 
-# ACR
+---
 
-~~~sh
+## ACR
+
+> [!tip]
+> Key tables: ==RegistryActivity==, ==WorkerServiceActivity==, ==ContainerVA_ImageScanLifeCycleEvents==
+
+```sh
 //Acrmc2
 RegistryActivity
 | where PreciseTimeStamp > ago(5h) //and PreciseTimeStamp < ago(d)
@@ -1220,12 +1265,16 @@ cluster('acimooncake.chinaeast2.kusto.chinacloudapi.cn').database('acimooncake')
 //| where httpMethod == "PUT"
 | sort by PreciseTimeStamp asc nulls last
 | project PreciseTimeStamp, TaskName, durationInMilliseconds, errorMessage, errorCode, httpMethod, operationName, serviceRequestId, httpStatusCode, subscriptionId, ActivityId, targetUri, correlationId, exceptionMessage, clientIpAddress
+```
 
-~~~
+---
 
-# MDC
+## MDC
 
-~~~sh
+> [!tip]
+> Key tables: ==ServiceFabricIfxTraceEvent==, ==AssessmentsNonAggregatedStatusSnapshot==, ==SubscriptionActivityQueryOE==
+
+```sh
 //List successfully created exemptions
 cluster('rometelemetrydata.kusto.windows.net').database('RomeTelemetryProd').GetRomeClientTelemetry()  
 | where timestamp  > ago(5d)  
@@ -1293,11 +1342,16 @@ AssessmentsNonAggregatedStatusSnapshot
 
 RecommendationsData(31d,0d)
  | where AssessmentDisplayName has "Cognitive Services accounts should enable data encryption with a customer-managed key (CMK)"
-~~~
+```
 
-# CRP
+---
 
-~~~sh
+## CRP
+
+> [!tip]
+> Key tables: ==ApiQosEvent==, ==ContextActivity==, ==VMApiQosEvent==, ==DCMNMAgentProgrammingDurationEtwTable==
+
+```sh
 
 //----------------CRP operation---------------------------------------------------
 // Check VM deployment time
@@ -1354,11 +1408,16 @@ cluster("https://azurecm.chinanorth2.kusto.chinacloudapi.cn").database("azurecm"
 | where interfaceId contains queryContainerId
 | project PreciseTimeStamp, nodeId, interfaceId, message
 | order by PreciseTimeStamp asc
-~~~
+```
 
-# backup+ASR
+---
 
-~~~sh
+## Backup + ASR
+
+> [!tip]
+> Key tables: ==BMSProtectionStats==, ==SRSShoeboxEvent==, ==SRSOperationEvent==, ==HvrDsTelemetryStats==
+
+```sh
 //=======backup=================
 let _resId="/subscriptions/8fc622eb-ff9b-43a5-834b-da271f8e9b4d/resourceGroups/Backup/providers/Microsoft.RecoveryServices/vaults/AzureCloudBackup";
 union cluster('mabprod1').database('MABKustoProd1').BMSProtectionStats, 
@@ -1639,11 +1698,16 @@ cluster('asradxclusmc.chinanorth2.kusto.chinacloudapi.cn').database('ASRKustoDB'
 //| where Message contains "8c44b33c-f9ca-4dc1-a028-e35e7c6a7598"  //continuation id of above query
 | project  PreciseTimeStamp, Message, Level 
 | sort by PreciseTimeStamp asc
-~~~
+```
 
-# Monitor+Automation
+---
 
-~~~sh
+## Monitor + Automation
+
+> [!tip]
+> Key tables: ==LogContainerSnapshot==, ==WindowsEventTable==, ==TMMgmtNodeTraceEtwTable==, ==ControlPlaneEvents==, ==ApiQosEvent_nonGet==
+
+```sh
 //---------------------- Query all kind of IDs -------------------------------------------------------
 //Azurecm - azurecm
 //看node和container id
@@ -1975,11 +2039,16 @@ union ControlPlaneEvents, ControlPlaneEventsNonShoebox
 
 cluster("sparkle.eastus").database("defaultdb").WheaXPFMCAFull
 | limit 10
-~~~
+```
 
-# AAD
+---
 
-~~~sh
+## AAD
+
+> [!tip]
+> Key tables: ==EventServiceEntries==, ==PerRequestTableIfx==, ==IfxUlsEvents==, ==IfxBECAuthorizationManager==
+
+```sh
 
 // Connection = https://armmcadx.chinaeast2.kusto.chinacloudapi.cn
 // Role assignment creation or deletions
@@ -2026,11 +2095,16 @@ IfxBECAuthorizationManager
 | where userObjectId contains "6a3524a8-abcf-4310-b40d-3c3a257c35c1"
 | where env_time > datetime(2023-10-19 00:30) and env_time < datetime(2023-10-20 02:56)
 | project env_time, internalCorrelationId, result, parameters, task, scopeClaim, userObjectId, servicePrincipalObjectId, isAppGrantedAccess
-~~~
+```
 
-# Health Event
+---
 
-~~~sh
+## Health Event
+
+> [!tip]
+> Key tables: ==ServiceHealthPublisherCommunications==, ==ServiceHealthTargets==
+
+```sh
 // Check ServiceHealth
 // https://icmcluster.kusto.windows.net | database("ACM.Publisher")
 ServiceHealthPublisherCommunications | where TrackingId == 'NL9G-JP8'
@@ -2040,11 +2114,16 @@ ServiceHealthPublisherCommunications | where TrackingId == 'NL9G-JP8'
 // https://icmcluster.kusto.windows.net | database("ACM.Publisher")
 ServiceHealthTargets
 |  where CommunicationId == '11000098746714'
-~~~
+```
 
-# AH2021 patch
+---
 
-~~~sh
+## AH2021 Patch
+
+> [!tip]
+> Key tables: ==OsConfigTable==, ==WindowsEventTable==, ==TMMgmtNodeEventsEtwTable==, ==IridiasTargets==
+
+```sh
 //Azurecm - azurecm
 //看node和container id
 LogContainerSnapshot
@@ -2126,4 +2205,4 @@ cluster('icmcluster.kusto.windows.net').database("ACM.Publisher").
 IridiasTargets 
 | where TrackingId contains "2K1S-390"
 | where Subscriptions contains "0050641c-cefb-4119-b748-c6cc4556a027"
-~~~
+```
