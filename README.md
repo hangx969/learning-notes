@@ -107,7 +107,7 @@ A comprehensive knowledge base covering cloud-native technologies, infrastructur
 - [AI Tools & Workflows](./AI/)
   - [Claude Code](./AI/ClaudeCode)
   - [GitHub Copilot CLI](Copilot%20CLI.md)
-  - [Prompt Engineering](./AI/提示词集合.md)
+  - [Prompt Engineering](提示词.md)
 
 - [GPU Computing & Deep Learning](./GPU-DeepLearning/)
 
