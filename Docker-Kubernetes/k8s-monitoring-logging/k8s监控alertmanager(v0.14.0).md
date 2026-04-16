@@ -1,3 +1,14 @@
+---
+title: K8s监控Alertmanager(v0.14.0)
+tags:
+  - kubernetes
+  - monitoring
+  - prometheus
+  - alertmanager
+aliases:
+  - Alertmanager部署配置
+---
+
 # Alertmanager
 
 ## 作用
@@ -675,9 +686,9 @@ spec:
 
 - 打开电脑版钉钉，创建一个群，创建自定义机器人，按如下步骤创建
 
-  https://ding-doc.dingtalk.com/doc#/serverapi2/qf2nxq
+  [钉钉自定义机器人](https://ding-doc.dingtalk.com/doc#/serverapi2/qf2nxq)
 
-  https://developers.dingtalk.com/document/app/custom-robot-access
+  [钉钉自定义机器人接入](https://developers.dingtalk.com/document/app/custom-robot-access)
 
 - 创建的机器人如下：
 
@@ -735,7 +746,7 @@ data:
 
 ### 注册企业微信 
 
-- 登陆网址：https://work.weixin.qq.com/
+- 登陆网址：[企业微信](https://work.weixin.qq.com/)
 
 ### 创建应用
 

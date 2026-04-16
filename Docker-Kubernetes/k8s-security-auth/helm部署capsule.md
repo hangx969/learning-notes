@@ -1,12 +1,22 @@
+---
+title: Helm部署Capsule
+tags:
+  - kubernetes
+  - security
+  - auth
+aliases:
+  - capsule多租户
+---
+
 # 介绍
 
 - 官网：
-  - https://github.com/projectcapsule/capsule/blob/main/docs/content/general/tutorial.md
-  - https://capsule.clastix.io/docs/#kubernetes-multi-tenancy-made-easy
-  - capsule release note：https://github.com/projectcapsule/capsule/releases/
+  - [Capsule Tutorial](https://github.com/projectcapsule/capsule/blob/main/docs/content/general/tutorial.md)
+  - [Kubernetes Multi-Tenancy Made Easy](https://capsule.clastix.io/docs/#kubernetes-multi-tenancy-made-easy)
+  - capsule release note：[Capsule Releases](https://github.com/projectcapsule/capsule/releases/)
   
-- helm参数含义：https://github.com/projectcapsule/capsule/blob/main/charts/capsule/README.md#customize-the-installation
-- 升级到capsule 0.7.x带来的crd管理方式改变：https://github.com/projectcapsule/capsule/blob/main/charts/capsule/README.md#upgrading-to-07x （CRDs可以随helm chart更新了）
+- helm参数含义：[Customize the Installation](https://github.com/projectcapsule/capsule/blob/main/charts/capsule/README.md#customize-the-installation)
+- 升级到capsule 0.7.x带来的crd管理方式改变：[Upgrading to 0.7.x](https://github.com/projectcapsule/capsule/blob/main/charts/capsule/README.md#upgrading-to-07x) （CRDs可以随helm chart更新了）
 - Tenant: capsule是管理multi tenant的工具，什么是tenant？tenant在capsule的语境下可以理解为：一组namespace，可以对其做RBAC授权、设置resource quota、network policy等。
 
 # 下载
@@ -419,7 +429,7 @@ EOF
 
 ## tenant层面的配置
 
-- resource、ingress、priority class、storage class、network policies、image registries、label/annotations等等都可以在tenant层面进行配置。详见官网：https://capsule.clastix.io/docs/general/tutorial/
+- resource、ingress、priority class、storage class、network policies、image registries、label/annotations等等都可以在tenant层面进行配置。详见官网：[Capsule Tutorial](https://capsule.clastix.io/docs/general/tutorial/)
 
 - 值得注意的是，PVC是namespaces-scoped的资源，但是PV不是；在一个tenant下创建的PVC只能挂载本tenant下的PV，怎么给PV指定tenant呢?
 
@@ -436,7 +446,7 @@ EOF
 
 ## dashboard
 
-- 对于已经部署好prometheus stack的集群来说，可以直接在capsule的helm中开启service monitor功能，配置prometheus抓取数据、grafana展示，详情参考：https://capsule.clastix.io/docs/guides/monitoring#quick-start
+- 对于已经部署好prometheus stack的集群来说，可以直接在capsule的helm中开启service monitor功能，配置prometheus抓取数据、grafana展示，详情参考：[Capsule Monitoring Quick Start](https://capsule.clastix.io/docs/guides/monitoring#quick-start)
 
 # webhook
 

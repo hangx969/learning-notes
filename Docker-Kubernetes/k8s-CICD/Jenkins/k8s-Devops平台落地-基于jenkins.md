@@ -1,3 +1,14 @@
+---
+title: K8s DevOps平台落地-基于Jenkins
+tags:
+  - kubernetes
+  - cicd
+  - jenkins
+  - devops
+aliases:
+  - Jenkins DevOps平台
+---
+
 # Devops平台建设
 
 ## 通用流程
@@ -459,7 +470,7 @@ EOF
 
 ## 创建Java测试用例
 
-这里用一个示例项目：https://gitee.com/dukuan/spring-boot-project.git。需要导入到gitlab中
+这里用一个示例项目：[spring-boot-project](https://gitee.com/dukuan/spring-boot-project.git)。需要导入到gitlab中
 
 1. 找到之前创建的Gitlab Group: local-k8s-platform-tools
 2. 点New Project - Import Project - Repository by URL
@@ -622,6 +633,7 @@ CMD java -jar spring-cloud-eureka-0.0.1-SNAPSHOT.jar
 
 5. Credentials: 选之前配置过的gitlab-key，即jenkins节点服务器私钥。
 
+   > [!tip] 提示
    > 这一步如果有报错：Host key verification failed. 去Manage Jenkins - Security里面把Host Key Verification Strategy改成No Verification。回去重新创建Pipeline就可以了。
 
 6. Script Path改成项目中的jenkinsfile文件地址
@@ -636,7 +648,7 @@ CMD java -jar spring-cloud-eureka-0.0.1-SNAPSHOT.jar
 
 ## 创建测试项目
 
-测试项目地址在：https://gitee.com/dukuan/vue-project.git。需要导入到Gitlab的group中：New Project - Import Project
+测试项目地址在：[vue-project](https://gitee.com/dukuan/vue-project.git)。需要导入到Gitlab的group中：New Project - Import Project
 
 ## 定义deployment
 
@@ -981,7 +993,7 @@ pipeline创建好之后直接Build。
 
 ## 创建测试项目
 
-测试项目地址：https://gitee.com/dukuan/go-project.git。导入到Gitlab中
+测试项目地址：[go-project](https://gitee.com/dukuan/go-project.git)。导入到Gitlab中
 
 ## 创建deployment
 

@@ -1,3 +1,12 @@
+---
+title: K8s基础-DaemonSet
+tags:
+  - kubernetes
+  - k8s-basics
+aliases:
+  - k8sDaemonSet
+---
+
 # DaemonSet控制器：概念、原理
 
 ## 概念
@@ -61,6 +70,7 @@ spec:
           path: /var/lib/docker/containers
 ```
 
+> [!info] 说明
 > ds和deployment yaml文件的区别：
 >
 > 1. kind变成daemonSet
@@ -78,6 +88,7 @@ nodeSelector:
   gpu: "true" # 注意布尔值需要设成字符串
 ~~~
 
+> [!info] 说明
 > 如果添加了新节点或修改了节点标签（Label），DaemonSet 将立刻向新匹配上的节点添加Pod，同时删除不能匹配的节点上的 Pod。
 
 # ds滚动更新
@@ -90,7 +101,8 @@ kubectl explain ds.spec.updateStrategy.rollingUpdate
 
 2. **maxSurge（最大增长）：** 它定义了在滚动更新期间可以同时创建的新 Pods 的最大数量。这个参数允许你一次性引入一定数量的新 Pods，以加速更新过程，同时仍然受到 `maxUnavailable` 的限制，确保不会一次性影响太多的旧 Pods。
 
-   > 注意：只有maxUnavailable为0的时候，才允许设置maxSurge的值
+   > [!warning] 注意
+   > 只有maxUnavailable为0的时候，才允许设置maxSurge的值
 
 3. **逐步替换：** DaemonSet 滚动更新通过逐步替换的方式进行，首先在节点上启动新的 Pod，然后停止旧的 Pod。这样可以确保在更新的过程中，每个节点都保持有一个 Pod 在运行。
 

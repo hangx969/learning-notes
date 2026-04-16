@@ -33,9 +33,9 @@ aliases:
   - 同样的，harbor作为是一款云原生制品仓库，可以存储和管理容器镜像、Helm Chart 等 Artifact，同样启用了OCI支持。
 
 
-- 文档：https://goharbor.io/docs/main/working-with-projects/working-with-oci/working-with-helm-oci-charts/
-- github release: https://github.com/goharbor/harbor-helm/releases
-- artifact hub: https://artifacthub.io/packages/helm/harbor/harbor
+- 文档：[Harbor OCI Charts 文档](https://goharbor.io/docs/main/working-with-projects/working-with-oci/working-with-helm-oci-charts/)
+- github release: [Harbor Helm Releases](https://github.com/goharbor/harbor-helm/releases)
+- artifact hub: [Harbor on ArtifactHub](https://artifacthub.io/packages/helm/harbor/harbor)
 
 # 下载
 

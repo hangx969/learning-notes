@@ -107,7 +107,7 @@ exportfs -arv
 
 - redis pod创建6个，三个master三个salve，每一个Redis Pod都需要一个独立的PV来存储自己的数据
 
-~~~sh
+~~~yaml
 apiVersion: v1
 kind: PersistentVolume
 metadata:

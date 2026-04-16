@@ -1140,8 +1140,8 @@ url: jdbc:mysql://172.16.183.75:3306/tb_order?characterEncoding=utf-8
 
 - 修改配置，指定pinpoint服务端
 
-> - 源代码包里面的pinpoint包是怎么来的？
-> - 部署完pinpoint,在右侧设置里面点击installation,会给pinpoint的github链接，下载下来解压出来一个pinpoint目录，放到你的项目源码路径下
+> [!tip] pinpoint包来源
+> 部署完pinpoint,在右侧设置里面点击installation,会给pinpoint的github链接，下载下来解压出来一个pinpoint目录，放到你的项目源码路径下
 
 ~~~sh
 cd  /root/microservic-test-dev1/product-service/product-service-biz/pinpoint

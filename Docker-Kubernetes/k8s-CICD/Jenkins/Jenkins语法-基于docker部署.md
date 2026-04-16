@@ -525,7 +525,8 @@ tagFilter: '*', type: 'PT_BRANCH')
 
 在Pipeline中可以用Triggers实现自动触发流水线，可以通过Webhook、Cron、pollSCM、upstream等方式触发流水线。
 
-> 注意：一般情况下triggers不会在pipeline中写，一般在界面中去配置。因为很多情况下pipeline是一个模板，针对不同的服务。一般是对每个job在ui上设置触发器。
+> [!warning] 注意
+> 一般情况下triggers不会在pipeline中写，一般在界面中去配置。因为很多情况下pipeline是一个模板，针对不同的服务。一般是对每个job在ui上设置触发器。
 
 示例：
 

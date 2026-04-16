@@ -422,7 +422,7 @@ lsmod | grep --color=auto -e ip_vs -e nf_conntrack
 
 ## 高可用组件安装
 
-> 注意：
+> [!warning] 注意
 > 1. 如果安装的不是高可用集群，不需要安装haproxy和keepalived
 > 2. 公有云上自建集群，用公有云的SLB服务即可代替haproxy和keepalived。因为公有云大多数不支持keepalived VIP漂移
 
@@ -673,7 +673,8 @@ ping 192.168.40.199 -c 4
 telnet 192.168.40.199 16443
 ~~~
 
-> 如果ping不通且telnet没有出现 ] ，则认为VIP不同，不可继续安装。需要排查keepalived的问题，比如防火墙和selinux，haproxy和keepalived的状态，监听端口等。排查步骤：
+> [!warning] 如果ping不通且telnet没有出现 ] ，则认为VIP不通，不可继续安装
+> 需要排查keepalived的问题，比如防火墙和selinux，haproxy和keepalived的状态，监听端口等。排查步骤：
 >
 > 1.	确认VIP是否正确
 > 2.	所有节点查看防火墙状态必须为disable和inactive：systemctl status firewalld
@@ -883,7 +884,7 @@ systemctl enable --now kubelet
 vim kubeadm-config.yaml
 ~~~
 
-高可用Master节点配置：(v1beta4参数说明：https://kubernetes.io/docs/reference/config-api/kubeadm-config.v1beta4/)
+高可用Master节点配置：([v1beta4参数说明](https://kubernetes.io/docs/reference/config-api/kubeadm-config.v1beta4/))
 
 ~~~yaml
 apiVersion: kubeadm.k8s.io/v1beta4
@@ -1072,7 +1073,7 @@ EOF
 systemctl daemon-reload && systemctl restart NetworkManager
 ~~~
 
-2. 从官网找到最新版calico的yaml链接（在manifest一栏中找到`Download the Calico networking manifest for the Kubernetes API datastore.`）：https://docs.tigera.io/calico/latest/getting-started/kubernetes/self-managed-onprem/onpremises#install-calico
+2. 从官网找到最新版calico的yaml链接（在manifest一栏中找到`Download the Calico networking manifest for the Kubernetes API datastore.`）：[Calico安装文档](https://docs.tigera.io/calico/latest/getting-started/kubernetes/self-managed-onprem/onpremises#install-calico)
 
 3. 下载yaml文件部署
 
@@ -1710,8 +1711,8 @@ ctr -n=k8s.io images import k8s1.28.0.tar.gz
 
 # 安装k9s
 
-- kubectl可视化插件：https://github.com/derailed/k9s
-- 安装指南：https://k9scli.io/topics/install/
+- kubectl可视化插件：[k9s GitHub](https://github.com/derailed/k9s)
+- 安装指南：[k9s安装指南](https://k9scli.io/topics/install/)
 
 ## 在线安装
 

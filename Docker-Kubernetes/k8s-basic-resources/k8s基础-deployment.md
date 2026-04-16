@@ -1,3 +1,12 @@
+---
+title: K8s基础-Deployment
+tags:
+  - kubernetes
+  - k8s-basics
+aliases:
+  - k8sDeployment
+---
+
 # ReplicaSet - rs
 
 ## 示例
@@ -53,6 +62,7 @@ spec:
 
 ### 更新管理
 
+> [!info] 说明
 > 只有在`deploytment.spec.template`产生变化之后，deployment才会触发更新，产生新的RS
 
 - 比如说Deployment控制5个pod副本，pod的期望值是5个，但是升级的时候需要额外多几个pod，控制器可以控制在5个pod副本之外还能再增加几个pod副本：
@@ -217,8 +227,9 @@ maxSurge和maxUnavailable用来控制滚动更新的更新策略:
 
 - maxSurge == 1
 
-> 这是我们生产环境提供给用户的默认配置。即“一上一下，先上后下”最平滑原则：1个新版本pod ready（结合readiness）后，才销毁旧版本pod。此配置适用场景是平滑更新、保证服务平稳，但也有缺点，就是太慢了。
->
+> [!tip] 最佳实践
+> 这是我们生产环境提供给用户的默认配置。即”一上一下，先上后下”最平滑原则：1个新版本pod ready（结合readiness）后，才销毁旧版本pod。此配置适用场景是平滑更新、保证服务平稳，但也有缺点，就是太慢了。
+
 
 2. 副本数高于5个：这样设会稍微快一些
 
@@ -435,6 +446,7 @@ kubectl set image deployment myapp-v1 myapp=nginx:latest  -n blue-green && kubec
 kubectl rollout resume deployment myapp-v1 -n blue-green
 ```
 
+> [!tip] 提示
 > 金丝雀发布功能，用istio实现，更加方便
 
 # 迁移服务到k8s

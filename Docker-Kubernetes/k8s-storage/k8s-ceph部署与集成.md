@@ -58,7 +58,7 @@ aliases:
 - node1-monitor是监控节点：192.168.40.8
 - node2-osd是对象存储节点：192.168.40.9
 
-~~~yaml
+~~~ini
 #修改/etc/sysconfig/network-scripts/ifcfg-ens33文件，变成如下：
 TYPE=Ethernet
 PROXY_METHOD=none
@@ -137,7 +137,7 @@ rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-7
 rm /etc/yum.repos.d/dl.fedoraproject.org*
 ~~~
 
-~~~xml
+~~~ini
 vim /etc/yum.repos.d/ceph.repo
 
 [Ceph]
@@ -308,7 +308,7 @@ ceph -s
 
 ## 安装前置软件
 
-~~~yaml
+~~~sh
 # kubernetes要想使用ceph，需要在k8s的每个node节点安装ceph-common的驱动  。
 #把ceph节点上的ceph.repo文件拷贝到k8s各个节点/etc/yum.repos.d/目录下，然后在k8s的各个节点yum install ceph-common -y
 scp /etc/yum.repos.d/ceph.repo 192.168.40.4:/etc/yum.repos.d/

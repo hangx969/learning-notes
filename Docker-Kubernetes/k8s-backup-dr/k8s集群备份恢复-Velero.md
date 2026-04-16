@@ -28,7 +28,8 @@ aliases:
 
 - 怎么备份应用数据：用数据库自己的工具，比如mysqldump、pgdump等。能保证应用一致性
 
-> 总之，这些约束是应用层的逻辑，文件系统级的备份工具（如 Velero）无法理解和保证，所以必须使用数据库自己的备份工具（如mysqldump、pg_dump），它们从应用层理解这些约束，才能保证备份的可靠性。
+> [!warning] 应用数据备份
+> 这些约束是应用层的逻辑，文件系统级的备份工具（如 Velero）无法理解和保证，所以必须使用数据库自己的备份工具（如mysqldump、pg_dump），它们从应用层理解这些约束，才能保证备份的可靠性。
 
 
 # Velero介绍
@@ -311,7 +312,7 @@ velero还原，仅还原test ns：
 
 ```sh
 velero restore create test-restore --from-backup test-backup --include-namespaces test
-````
+```
 
 查看恢复状态：
 

@@ -16,7 +16,7 @@ aliases:
 
 - Harbor是由VMware公司开源的企业级的Docker Registry管理项目，它包括权限管理(RBAC)、LDAP、日志审核、管理界面、自我注册、镜像复制和中文支持等功能。
 
-- 官网地址：https://github.com/goharbor/harbor
+- 官网地址：[Harbor GitHub](https://github.com/goharbor/harbor)
 
 ## Harbor安装配置
 
@@ -1057,7 +1057,7 @@ openssl x509 -inform PEM -in client.crt -out client.cert
 
 ## 安装配置harbor
 
-（下载地址：https://github.com/goharbor/harbor/releases/tag/v2.10.3）
+（下载地址：[Harbor v2.10.3 Release](https://github.com/goharbor/harbor/releases/tag/v2.10.3)）
 
 ~~~sh
 tar zxvf harbor-offline-installer-v2.10.3.tgz

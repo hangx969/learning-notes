@@ -112,17 +112,12 @@ kubectl create ns nfs-system
 helm install nfs-subdir-external-provisioner nfs-subdir-external-provisioner/nfs-subdir-external-provisioner --set storageClass.name=nfs-sc --set nfs.server=192.168.40.180 --set nfs.path=/data/k8s -n nfs-system
 ```
 
-> **说明：**
->
-> --set storageClass.name=nfs-sc：指定 storageClass 的名字 
->
-> --set nfs.server=192.168.40.180：指定 NFS 服务器的地址 
->
-> --set nfs.path=/data/k8s：指定 NFS 导出的共享数据目录 
->
-> --set storageClass.defaultClass=true：指定为默认的 sc，**本示例没使用** 
->
-> -n nfs-system：指定命名空间
+> [!info] 参数说明
+> - `--set storageClass.name=nfs-sc`：指定 storageClass 的名字 
+> - `--set nfs.server=192.168.40.180`：指定 NFS 服务器的地址 
+> - `--set nfs.path=/data/k8s`：指定 NFS 导出的共享数据目录 
+> - `--set storageClass.defaultClass=true`：指定为默认的 sc，**本示例没使用** 
+> - `-n nfs-system`：指定命名空间
 
 ### Option2:自定义values安装 NFS Provisioner
 
@@ -209,6 +204,7 @@ spec:
 kubectl exec test-nfs-pod -n nfs-system -- df -h
 ~~~
 
+> [!warning] NFS存储注意事项
 > - 在输出结果中我们可以看到挂载的 NFS 存储的可用空间是大于PVC中分配的 1G。
 > - 实际测试写入2G 的数据量，已经超过了我们创建的 PVC 1G 的限制。因此，要特别注意，使用 NFS 存储时无法限制存储使用量。 
 > - **PV** 名称格式是 pv+随机字符串，所以，每次只要不删除 PVC，那么 Kubernetes 中 PV 与存储绑定将不会丢失，要是删除 PVC 也就意味着删除了绑定的文件夹，下次就算重新创建相同名称的 PVC，生成的文件夹名称也不会一致，因为 **PV** 名是随机生成的字符串，而文件夹命名又跟 PV 有关，所以删除 PVC 需谨慎。

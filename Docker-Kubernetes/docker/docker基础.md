@@ -700,7 +700,7 @@ docker run --help | grep cpu-shares
 
 ### CPU core核心限制
 
-> 从系统架构来看，目前的商用服务器大体可以分为三类架构：
+> [!info] 从系统架构来看，目前的商用服务器大体可以分为三类架构：
 >
 > 1. 即对称多处理器结构(SMP：Symmetric Multi-Processor) 例： x86 服务器，双路服务器。主板上有两个物理cpu
 >
@@ -714,7 +714,7 @@ docker run --help | grep cpu-shares
 
 ### Lab
 
-> stress 压测工具参数
+> [!info] stress 压测工具参数
 > -?        显示帮助信息
 > -v        显示版本号
 > -q       不显示运行信息
@@ -798,7 +798,7 @@ mkdir -p /var/www/html/
 docker run -itd -v /var/www/html/:/var/www/html --device /dev/sda:/dev/sda --device-write-bps /dev/sda:2mb centos  /bin/bash
 ```
 
-> #用time dd测试磁盘io: time有计时作用，dd用于复制，从if读出，写到of
+> [!info] 用time dd测试磁盘io: time有计时作用，dd用于复制，从if读出，写到of
 > 注：dd 参数：
 > direct：读写数据采用直接IO方式，不走缓存。直接从内存写硬盘上。
 > nonblock：读写数据采用非阻塞IO方式，优先写dd命令的数据
@@ -892,7 +892,7 @@ docker network rm name
 
 用docker rmi删掉了none镜像，但是磁盘占用并没有下降。原因是：
 
-> 被删除的镜像层并没有真正被删除，而是从镜像层变为了Build Cache层
+> [!warning] 被删除的镜像层并没有真正被删除，而是从镜像层变为了Build Cache层
 
 现在docker默认使用BuildKit构建镜像。当你使用docker rmi删除镜像时，docker会识别到这些镜像层来自之前的docker build，正好作为下次构建的缓存，所以BuildKit就把这些镜像收编为Build Cache，用命令查看docker的缓存占用空间
 
@@ -1036,7 +1036,7 @@ dockfile制作服务镜像：
       docker inspect #看到传了新的参数进去
       ```
 
-    > 在pod中定义command和args时的规律如下：
+    > [!tip] 在pod中定义command和args时的规律如下：
     >
     > 1.如果command和args均没有写，那么用Dockerfile的配置。
     >
@@ -1222,17 +1222,17 @@ tar -xvf redis.tar.gz
 
 - busybox
   描述：可以将busybox理解为一个超级简化版嵌入式Linux系统。
-  官网：https://www.busybox.net/
-  镜像：https://hub.docker.com/_/busybox/
+  官网：[busybox.net](https://www.busybox.net/)
+  镜像：[Docker Hub - busybox](https://hub.docker.com/_/busybox/)
   包管理命令：apk, lbu
-  包管理文档：https://wiki.alpinelinux.org/wiki/Alpine_Linux_package_management
+  包管理文档：[Alpine包管理](https://wiki.alpinelinux.org/wiki/Alpine_Linux_package_management)
 
 - Alpine
   描述：Alpine是一个面向安全的、轻量级的Linux系统，基于musl libc和busybox。
-  官网：https://www.alpinelinux.org/
-  镜像：https://hub.docker.com/_/alpine/
+  官网：[alpinelinux.org](https://www.alpinelinux.org/)
+  镜像：[Docker Hub - alpine](https://hub.docker.com/_/alpine/)
   包管理命令：apk, lbu
-  包管理文档：https://wiki.alpinelinux.org/wiki/Alpine_Linux_package_management
+  包管理文档：[Alpine包管理](https://wiki.alpinelinux.org/wiki/Alpine_Linux_package_management)
 
   ~~~sh
   # base image

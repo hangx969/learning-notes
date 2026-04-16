@@ -1,11 +1,21 @@
+---
+title: Helm部署Cert-Manager
+tags:
+  - kubernetes
+  - security
+  - auth
+aliases:
+  - cert-manager部署
+---
+
 # 介绍
 
 - 使用 HTTPS 需要向CA申请证书，并且需要付出一定的成本，如果需求数量多，则开支也相对增加。[cert-manager](https://cert-manager.io/docs/) 是 Kubernetes 上的全能证书管理工具，支持利用 cert-manager 基于 [ACME](https://tools.ietf.org/html/rfc8555) 协议与[Let's Encrypt CA](https://letsencrypt.org/) 签发免费证书并为证书自动续期，实现永久免费使用证书。
-- certmanager官网：https://cert-manager.io/docs/installation/helm/
-- helm chart官网：https://artifacthub.io/packages/helm/cert-manager/cert-manager
-- release note: https://github.com/cert-manager/cert-manager/releases/tag/v1.17.1
-- pod间TLS通信：https://www.youtube.com/watch?v=uTaXgZWwXzs&list=PLpbcUe4chE79sB7Jg7B4z3HytqUUEwcNE&index=93
-- certmanager教程：https://www.youtube.com/watch?v=rOe9UpHcnKk&list=PLpbcUe4chE79sB7Jg7B4z3HytqUUEwcNE&index=96
+- certmanager官网：[Cert-Manager Helm Installation](https://cert-manager.io/docs/installation/helm/)
+- helm chart官网：[cert-manager helm chart](https://artifacthub.io/packages/helm/cert-manager/cert-manager)
+- release note: [cert-manager v1.17.1](https://github.com/cert-manager/cert-manager/releases/tag/v1.17.1)
+- pod间TLS通信：[YouTube - Pod TLS](https://www.youtube.com/watch?v=uTaXgZWwXzs&list=PLpbcUe4chE79sB7Jg7B4z3HytqUUEwcNE&index=93)
+- certmanager教程：[YouTube - Cert-Manager](https://www.youtube.com/watch?v=rOe9UpHcnKk&list=PLpbcUe4chE79sB7Jg7B4z3HytqUUEwcNE&index=96)
 
 ## 证书分类
 
@@ -40,7 +50,7 @@ kubectl wait --for=condition=Ready pods --all -n cert-manager
 
 # 使用
 
-- cert-manager服务部署好之后，可以创建issuer和certificate资源：（refer: https://todoit.tech/k8s/cert/#%E5%88%9B%E5%BB%BA-issuer）
+- cert-manager服务部署好之后，可以创建issuer和certificate资源：（refer: [创建 Issuer](https://todoit.tech/k8s/cert/#%E5%88%9B%E5%BB%BA-issuer)）
   - issuer/clusterissuer是让cert-manager认出证书颁发机构，比如指定letsencrypt
   - certificate资源就是绑定issuer，创建存放certificate的k8s secret
 
@@ -50,7 +60,7 @@ kubectl wait --for=condition=Ready pods --all -n cert-manager
 
 clusterIssuer文件是证书颁发者的配置模板，用于告诉 cert-manager 如何从Let's Encrypt等CA机构申请证书，而不是证书本身。它定义了申请 SSL/TLS 证书的方法和参数。
 
-- Lab为简化处理，不去连接CA机构，用自签证书代替。https://github.com/HoussemDellai/aks-course/blob/main/34_https_pod_certmanager_letsencrypt/certificate.yaml
+- Lab为简化处理，不去连接CA机构，用自签证书代替。[Certificate示例](https://github.com/HoussemDellai/aks-course/blob/main/34_https_pod_certmanager_letsencrypt/certificate.yaml)
 
 ~~~yaml
 tee cluster-issuer-selfsigned <<'EOF'
@@ -65,7 +75,7 @@ EOF
 
 ### 创建Certificate颁发给svc
 
-> 注意：cerfiticate和他生成的secret是一定在同一个namespace的
+> [!warning] 注意：certificate和它生成的secret是一定在同一个namespace的
 
 ~~~yaml
 tee certificate-app01.yaml <<'EOF'

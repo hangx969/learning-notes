@@ -1,8 +1,19 @@
+---
+title: Helm部署Jenkins
+tags:
+  - kubernetes
+  - cicd
+  - jenkins
+  - helm
+aliases:
+  - Jenkins Helm部署
+---
+
 # 介绍
 
-- 官网安装说明：https://www.jenkins.io/doc/book/installing/kubernetes/#install-jenkins-with-helm-v3
-- github地址：https://github.com/jenkinsci/helm-charts/tree/main/charts/jenkins
-- artifacthub地址：https://artifacthub.io/packages/helm/jenkinsci/jenkins
+- 官网安装说明：[Jenkins Helm安装文档](https://www.jenkins.io/doc/book/installing/kubernetes/#install-jenkins-with-helm-v3)
+- github地址：[jenkinsci/helm-charts](https://github.com/jenkinsci/helm-charts/tree/main/charts/jenkins)
+- artifacthub地址：[Jenkins Helm Chart](https://artifacthub.io/packages/helm/jenkinsci/jenkins)
 
 # 下载
 
@@ -191,8 +202,7 @@ helm upgrade -i jenkins -n jenkins --create-namespace . -f values.yaml
 
 2. 新建一个任务-->输入任务名称jenkins-harbor-->流水线-->确定-->在Pipeline script处写入脚本：
 
-   > 注意：
-   >
+   > [!note] 说明
    > 1. `node(‘jenkins-jenkins-agent’)`是匹配标签为jenkins-jenkins-agent的pod template。
    > 2. 已经把宿主机的`/etc/docker/daemon.json`挂进slave pod中了，里面配置了harbor的insecure registry，所以在pipeline里面docker login直接登录不需要--insecure选项
 

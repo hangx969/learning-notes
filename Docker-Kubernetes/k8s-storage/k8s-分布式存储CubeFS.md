@@ -706,6 +706,7 @@ mc alias set test http://10.104.157.128:1601 NSwS4hTkT43TW903 uY9Hg8IgyW2awnRF3X
 mc ls test
 ~~~
 
+> [!info] mc命令版本差异
 > 1. **旧版本语法**：`mc config host add` 是旧版本的语法
 > 2. **新版本语法**：`mc alias set` 是新版本的正确语法
 

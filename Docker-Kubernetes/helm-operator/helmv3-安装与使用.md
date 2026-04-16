@@ -23,17 +23,17 @@ aliases:
 
 ## 官网地址
 
-- 中文：https://v3.helm.sh/zh/docs/
+- 中文：[Helm 中文文档](https://v3.helm.sh/zh/docs/)
 
-- 英文：https://helm.sh/
+- 英文：[Helm 官网](https://helm.sh/)
 
-- helm 官方的chart站点：https://hub.kubeapps.com/
+- helm 官方的chart站点：[Helm Hub](https://hub.kubeapps.com/)
 
 - helm与k8s的版本支持策略：[Helm | Helm版本支持策略](https://helm.sh/zh/docs/topics/version_skew/)
 
 ## 教程文章
 
-- https://mp.weixin.qq.com/s/S_4QK6pLSrmu0PgShOZEjw
+- [Helm 教程文章](https://mp.weixin.qq.com/s/S_4QK6pLSrmu0PgShOZEjw)
 
 ## Helm v3版本变化
 
@@ -45,7 +45,7 @@ aliases:
 
 ## 下载安装包
 
-- 下载地址：https://github.com/helm/helm/releases
+- 下载地址：[Helm Releases](https://github.com/helm/helm/releases)
 
 ### Linux安装
 
@@ -222,11 +222,11 @@ helm uninstall memcached
 
 ## helm管理crds
 
-- crd在helm中的管理过程：https://helm.sh/zh/docs/topics/charts/#%E7%94%A8%E6%88%B7%E8%87%AA%E5%AE%9A%E4%B9%89%E8%B5%84%E6%BA%90crd
+- crd在helm中的管理过程：[Helm CRD 管理](https://helm.sh/zh/docs/topics/charts/#%E7%94%A8%E6%88%B7%E8%87%AA%E5%AE%9A%E4%B9%89%E8%B5%84%E6%BA%90crd)
 
-- crd不会被升级的说明：https://helm.sh/zh/docs/topics/charts/#crd%E7%9A%84%E9%99%90%E5%88%B6
+- crd不会被升级的说明：[CRD 限制](https://helm.sh/zh/docs/topics/charts/#crd%E7%9A%84%E9%99%90%E5%88%B6)
 
-- crd最佳实践说明：https://helm.sh/docs/chart_best_practices/custom_resource_definitions/#some-caveats-and-explanations
+- crd最佳实践说明：[CRD 最佳实践](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/#some-caveats-and-explanations)
 
 > 不像大部分的Kubernetes对象，CRD是全局安装的。因此Helm管理CRD时会采取非常谨慎的方式。 CRD受到以下限制：
 >
@@ -271,7 +271,7 @@ kubectl get crd --no-headers -o custom-columns=":metadata.name" | grep kyverno |
 
 ### helm diff
 
-- 用于展示helm upgrade将会带来哪些变化：https://github.com/databus23/helm-diff?tab=readme-ov-file
+- 用于展示helm upgrade将会带来哪些变化：[helm-diff GitHub](https://github.com/databus23/helm-diff?tab=readme-ov-file)
 
   ~~~sh
   #比较升级会带来哪些变化
@@ -791,7 +791,7 @@ food: {{ .food | upper | quote }}
 
 # 可视化管理工具-helm dashboard
 
-- 一款开源helm ui插件：https://github.com/komodorio/helm-dashboard
+- 一款开源helm ui插件：[Helm Dashboard GitHub](https://github.com/komodorio/helm-dashboard)
 
 - 安装插件
 
@@ -825,7 +825,7 @@ food: {{ .food | upper | quote }}
   setsid helm dashboard &
   ~~~
 
-> helm安装helm dashboard：https://github.com/komodorio/helm-charts/tree/master/charts/helm-dashboard
+> helm安装helm dashboard：[Helm Dashboard Chart](https://github.com/komodorio/helm-charts/tree/master/charts/helm-dashboard)
 
 # 实战-自定义chart部署flask应用并推送到harbor
 

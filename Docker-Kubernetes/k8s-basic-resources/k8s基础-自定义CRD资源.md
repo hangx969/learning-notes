@@ -31,7 +31,7 @@ Operator是一种用于扩展Kubernetes API的自定义控制器，可以实现*
 
 ### CRD
 
-https://mp.weixin.qq.com/s/Ts9MxQOpQVaUtw6YbHXogw
+[CRD详解-微信文章](https://mp.weixin.qq.com/s/Ts9MxQOpQVaUtw6YbHXogw)
 
 Operator使用CRD去定义一个新的资源类型。比如定义一个叫database的CRD，一键启动一组高可用数据库实例。
 
@@ -136,7 +136,7 @@ kubectl get CronTab
 
 # 自定义CRD-MongoDB
 
-- 项目地址：https://github.com/mongodb/mongodb-kubernetes-operator.git （使用0.5.0版本）
+- 项目地址：[MongoDB Kubernetes Operator](https://github.com/mongodb/mongodb-kubernetes-operator.git) （使用0.5.0版本）
 - 下载operator压缩包mongodb-kubernetes-operator-0.5.0.zip
 - 创建crd
 
@@ -293,6 +293,7 @@ spec:
 
 # 自定义CRD资源-Etcd
 
+> [!info] 说明
 > Etcd是一个分布式键值存储系统，常用于存储共享配置和服务发现等场景。Etcd Operator是一个基于Operator模式开发的控制器，用于在Kubernetes上管理和运行Etcd集群。
 >
 > 1. 自定义资源定义（CRD）：Etcd Operator定义了一个自定义资源类型EtcdCluster，用于描述Etcd集群的配置和规模。这个CRD定义了Etcd集群的规格，包括节点数量、存储大小、版本等信息。
@@ -482,4 +483,5 @@ spec:
 EOF
 ~~~
 
-> 注：一般而言k8s自带的api-resources够用，自定义CRD开发难度较大；一般二次开发是对coreDNS、kube-proxy做开发。
+> [!info] 说明
+> 一般而言k8s自带的api-resources够用，自定义CRD开发难度较大；一般二次开发是对coreDNS、kube-proxy做开发。
