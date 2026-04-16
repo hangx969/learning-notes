@@ -7,7 +7,7 @@
 
 # 1. claudian插件
 claude插件； https://github.com/YishenTu/claudian
-- 在release中
+- 在release中下载
 
 # 2. obsidian skills
 skills： https://github.com/kepano/obsidian-skills
