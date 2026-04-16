@@ -1,12 +1,36 @@
-# Jfrog Artifactory
+---
+title: JFrog Artifactory on Azure
+tags:
+  - azure/container
+  - azure/jfrog
+  - azure/artifactory
+  - azure/aks
+aliases:
+  - JFrog Artifactory
+  - Artifactory AKS
+  - Artifactory Deployment
+date: 2026-04-16
+---
+
+# JFrog Artifactory on Azure
+
+## Related Notes
+
+- [[Azure/2_AKS-basics]]
+- [[Azure/7_ACR-ACI]]
+- [[Azure/5_Azure-Storage]]
+
+---
+
+## JFrog Artifactory Overview
 
 - 官网：https://jfrog.com/help/r/jfrog-installation-setup-documentation/installation-configuration
 
 - 目录结构
-  - app是程序目录，包含Artifactory应用程序的二进制文件和配置文件。它通常包括软件本身、所需的库（libraries）、脚本以及其他与应用程序运行相关的文件，一般不需要持久化
-  - var是数据目录，这个目录包含了所有的用户数据，需要持久化
+  - ==app==是程序目录，包含Artifactory应用程序的二进制文件和配置文件。它通常包括软件本身、所需的库（libraries）、脚本以及其他与应用程序运行相关的文件，一般不需要持久化
+  - ==var==是数据目录，这个目录包含了所有的用户数据，需要持久化
 
-~~~sh
+```sh
 JFROG_HOME
   └── <product>
      ├── app
@@ -41,21 +65,23 @@ JFROG_HOME
         │       └── <archived service logs>
         └── work
             └── <service>
-~~~
+```
 
-# Artifactory部署到ACI
+---
 
-## Prepare Vnet
+## Artifactory部署到ACI
+
+### Prepare Vnet
 
 - Create Vnet with address range 10.225.130.0/24, create 2 subnets
   - subnet-aci: 10.225.130.64/26
   - subnet-artifactory: 10.225.130.0/26
 
-## Prepare Image
+### Prepare Image
 
 - create ACR：acrcdstest
 
-~~~sh
+```sh
 az cloud set --name AzureChinaCloud 
 az login -t <tenant-id>
 az acr list
@@ -64,15 +90,15 @@ docker pull releases-docker.jfrog.io/jfrog/artifactory-oss:latest
 #pulled 7.90.9
 docker tag releases-docker.jfrog.io/jfrog/artifactory-oss:latest acrcdstest.azurecr.cn/artifactory:latest
 docker push acrcdstest.azurecr.cn/artifactory:latest
-~~~
+```
 
-## Prepare Storage
+### Prepare Storage
 
 - ACI mount azure file：https://docs.azure.cn/zh-cn/container-instances/container-instances-volume-azure-files#deploy-container-and-mount-volume---yaml
 
 - Create sa and file share
 
-~~~sh
+```sh
 # Change these four parameters as needed
 ACI_PERS_RESOURCE_GROUP=rg-artifactory-demo
 ACI_PERS_STORAGE_ACCOUNT_NAME=artisa
@@ -91,13 +117,13 @@ az storage share create --name $ACI_PERS_SHARE_NAME --account-name $ACI_PERS_STO
 STORAGE_KEY=$(az storage account keys list --resource-group $ACI_PERS_RESOURCE_GROUP --account-name $ACI_PERS_STORAGE_ACCOUNT_NAME --query "[0].value" --output tsv)
 #STORAGE_KEY=$(az storage account keys list --resource-group rg-artifactory-cds-test --account-name artifactorysatest --query "[0].value" --output tsv)
 echo $STORAGE_KEY
-~~~
+```
 
-- create a folder named “etc” in fileshare.
+- create a folder named "etc" in fileshare.
 - create config file locally and upload to azure file share/etc
   - url can be obtained from azure portal - postgresql - connect - connect from your app - JDBC
 
-~~~yaml
+```yaml
 shared:
   database:
     driver: org.postgresql.Driver
@@ -105,22 +131,21 @@ shared:
     url: jdbc:postgresql://pg-artifactory.postgres.database.chinacloudapi.cn:5432/postgres?user=artifactory&password=Passw0rd&sslmode=require
     username: artifactory
     password: Passw0rd
-~~~
+```
 
-## Prepare postgresql
+### Prepare PostgreSQL
 
 - Create a postgresql in a VNET
 - admin - Passw0rd
 
-## ACI deployment
+### ACI Deployment
 
-> Best Practices:
->
+> [!tip] Best Practices
 > - 容器组 IP 地址在创建或删除后可能会发生更改。 建议不要让应用程序代码依赖于容器组的 IP 地址。 如果想维护静态 IP 地址，还建议使用 [NAT 网关](https://docs.azure.cn/zh-cn/container-instances/container-instances-nat-gateway)或[应用程序网关](https://docs.azure.cn/zh-cn/container-instances/container-instances-application-gateway)。
-> - ACI 服务保留以下服务功能端口：22、1025-1027、3389-3399、9999、19000、19080、19390、19100、20000-30000、49152-65534。 请避免在容器组定义中使用这些端口。
-> - 可在 Azure 容器实例上部署的容器映像的最大大小为 15 GB。根据部署时的确切可用性，你也许可以部署更大的映像，但不能保证映像大小更大。
+> - ACI 服务保留以下服务功能端口：==22、1025-1027、3389-3399、9999、19000、19080、19390、19100、20000-30000、49152-65534==。 请避免在容器组定义中使用这些端口。
+> - 可在 Azure 容器实例上部署的容器映像的最大大小为 ==15 GB==。根据部署时的确切可用性，你也许可以部署更大的映像，但不能保证映像大小更大。
 
-~~~sh
+```sh
 az container create \
     --resource-group $ACI_PERS_RESOURCE_GROUP \
     --name artifactory \
@@ -137,25 +162,25 @@ az container create \
     --azure-file-volume-account-key $STORAGE_KEY \
     --azure-file-volume-share-name $ACI_PERS_SHARE_NAME \
     --azure-file-volume-mount-path /var/opt/jfrog/artifactory 
-~~~
+```
 
 - login UI using containerIP:8082/ui (default username: admin, passwd: password)
   - edit admin password after logged in
 
+> [!warning]
 > ACI部署artifactory会出现各种各样的artifactory报错，导致容器起不来。遂放弃。
 
-# Artifactory-docker部署到azure vm
+---
+
+## Artifactory-Docker部署到Azure VM
 
 https://jfrog.com/help/r/jfrog-installation-setup-documentation/install-artifactory-single-node-with-docker
 
 - VM environment
-
   - Ubuntu 22.04
-
   - docker version: 27.2.1
 
-- Artifactory requirement: 
-
+- Artifactory requirement:
   https://jfrog.com/help/r/jfrog-installation-setup-documentation/install-artifactory-single-node-with-helm-charts?section=UUID-5a5bc1a4-b867-9be2-2902-04b3ce759902_UUID-6560a094-94c2-ca03-359f-ccb55be0e480
 
 - Create a postgresql flexible server
@@ -164,18 +189,18 @@ https://jfrog.com/help/r/jfrog-installation-setup-documentation/install-artifact
   - create a data disk (32G), format to ext4 and mount it to /app/jfrog as data store path.
   - configure fstab
 
-~~~sh
+```sh
 mkdir /app/jfrog
 export JFROG_HOME=/app/jfrog
 mkdir -p $JFROG_HOME/artifactory/var/etc/
 cd $JFROG_HOME/artifactory/var/etc/
 touch ./system.yaml
 chown -R 1030:1030 $JFROG_HOME/artifactory/var
-~~~
+```
 
 - setup pgsql connection
 
-~~~yaml
+```yaml
 tee $JFROG_HOME/artifactory/var/etc/system.yaml <<'EOF'
 shared:
     database:
@@ -185,37 +210,37 @@ shared:
         username: <username>
         password: <password>
 EOF
-~~~
+```
 
 - run container
 
-~~~sh
+```sh
 docker run --name artifactory -v $JFROG_HOME/artifactory/var/:/var/opt/jfrog/artifactory -d -p 8081:8081 -p 80:8082 acrcdstest.azurecr.cn/artifactory:latest 
-~~~
+```
 
 - visit home page: http://\<VM-IP\>/ui/ with username admin/passwd Passw0rd
 
-# Artifactory-deppoyment-部署到AKS
+---
+
+## Artifactory Deployment部署到AKS
 
 - Create private aks cluster
 
 - use external pgsql:
-
   name: artipgsql
-
-  database: artifactory-aks 
+  database: artifactory-aks
 
 - ns
 
-  ~~~sh
+  ```sh
   k create ns artifactory
-  ~~~
+  ```
 
 - Create an azure file share as data path, mount it to aks
 
   https://docs.azure.cn/zh-cn/aks/azure-csi-files-storage-provision#using-azure-tags
 
-~~~sh
+```sh
 # Change these four parameters as needed
 ACI_PERS_RESOURCE_GROUP=rg-artifactory-demo
 ACI_PERS_STORAGE_ACCOUNT_NAME=artifactorysa
@@ -237,9 +262,9 @@ echo $STORAGE_KEY
 
 # Create secret
 kubectl create secret generic azurefile-secret --namespace artifactory --from-literal=azurestorageaccountname=$ACI_PERS_STORAGE_ACCOUNT_NAME --from-literal=azurestorageaccountkey=$STORAGE_KEY
-~~~
+```
 
-~~~yaml
+```yaml
 tee azurefile-pv-pvc.yaml <<'EOF'
 apiVersion: v1
 kind: PersistentVolume
@@ -290,11 +315,11 @@ spec:
       storage: 10Gi
       
 EOF
-~~~
+```
 
 - config file upload to file share
 
-~~~yaml
+```yaml
 tee system.yaml <<'EOF'
 shared:
     database:
@@ -304,22 +329,22 @@ shared:
         username: <username>
         password: <password>
 EOF
-~~~
+```
 
 - copy system.yaml from VM which has mounted the file share
 
-~~~sh
+```sh
 mkdir /mnt/artishare/etc/security/ -p
 cp ./system.yaml /mnt/artishare/etc/
 #尝试提前写入两个key
 mkdir /mnt/artishare/etc/security -p
 openssl rand -hex 32 > /mnt/artishare/etc/security/master.key
 openssl rand -hex 32 > /mnt/artishare/etc/security/join.key
-~~~
+```
 
 - pod
 
-~~~yaml
+```yaml
 tee deploy-artifactory.yaml <<'EOF'
 apiVersion: apps/v1
 kind: Deployment
@@ -367,58 +392,58 @@ spec:
         #configMap:
           #name: artifactory-config
 EOF
-~~~
+```
 
+> [!warning]
 > 总是报错：
->
 > - Caught exception in GET /artifactory/api/system/ping
->
 > - Missing required services: [jffe]
 > - 即使把key文件放到指定位置了也识别不到，遂放弃。
 
-# Artifactory-helm部署到AKS
+---
+
+## Artifactory-Helm部署到AKS
 
 - add helm repo
 
-~~~sh
+```sh
 helm repo add jfrog https://charts.jfrog.io
 helm repo update
-~~~
+```
 
 - create master key as k8s secret
 
-~~~sh
+```sh
 # Create a key
 export MASTER_KEY=$(openssl rand -hex 32)
 echo ${MASTER_KEY}
  
 # Create a secret containing the key. The key in the secret must be named master-key
 kubectl create secret generic masterkey-secret -n artifactory --from-literal=master-key=${MASTER_KEY}
-~~~
+```
 
-> In either case, make sure to pass the same master key on all future calls to Helm install and Helm upgrade. This means always passing 
-> --set artifactory.masterKey=${MASTER_KEY}
->  (for the custom master key) or 
-> --set artifactory.masterKeySecretName=my-masterkey-secret
->  (for the manual secret) and verifying that the contents of the secret remain unchanged.
+> [!important]
+> In either case, make sure to pass the same master key on all future calls to Helm install and Helm upgrade. This means always passing
+> `--set artifactory.masterKey=${MASTER_KEY}` (for the custom master key) or
+> `--set artifactory.masterKeySecretName=my-masterkey-secret` (for the manual secret) and verifying that the contents of the secret remain unchanged.
 
 - create join key as k8s secret
 
-~~~sh
+```sh
 # Create a key
 export JOIN_KEY=$(openssl rand -hex 32)
 echo ${JOIN_KEY}
  
 # Create a secret containing the key. The key in the secret must be named join-key
 kubectl create secret generic joinkey-secret -n artifactory --from-literal=join-key=${JOIN_KEY}
-~~~
+```
 
 - configure pgsql in helm
   - https://jfrog.com/help/r/jfrog-installation-setup-documentation/configure-artifactory-to-use-postgresql-single-node
   - artifactory-oss/charts/artifactory/values.yaml的1645行修改
 - install
 
-~~~sh
+```sh
 #这个命令无效
 helm upgrade --install artifactory --set artifactory.masterKeySecretName=masterkey-secret --set artifactory.joinKeySecretName=joinkey-secret --namespace artifactory --create-namespace jfrog/artifactory
 
@@ -482,45 +507,50 @@ helm install artifactory-oss \
 jfrog/artifactory-oss -n artifactory -f values.yaml --dry-run --debug > result.txt
 
 ##！！！initcontainer的image始终没办法修改成ACR里面的。。。
-~~~
+```
 
 - uninstall
 
-
-~~~sh
+```sh
 helm uninstall jfrog/artifactory-oss && sleep 90 && kubectl delete pvc -l app=artifactory
-~~~
+```
 
 - delete artifactory
 
-
-Deleting Artifactory will also delete your data volumes and you will lose all of your data. You must back up all this information before deletion. You do not need to uninstall Artifactory before deleting it.
+> [!warning]
+> Deleting Artifactory will also delete your data volumes and you will lose all of your data. You must back up all this information before deletion. You do not need to uninstall Artifactory before deleting it.
 
 ```sh
 helm delete jfrog/artifactory-oss --namespace artifactory
 ```
 
-# rancher安装artifactory
+---
+
+## Rancher安装Artifactory
 
 - 单独开一台虚机，启动rancher容器
 
-> 注意：Ubuntu 2204有bug起导致容器中的K3S起不来：https://github.com/rancher/rancher/issues/36238
+> [!note]
+> 注意：Ubuntu 2204有bug导致容器中的K3S起不来：https://github.com/rancher/rancher/issues/36238
 
-~~~sh
+```sh
 #ubuntu 2004上安装latest rancher可以起来
 docker run -d --restart=unless-stopped -p 80:80 -p 443:443 --privileged acrcdstest.azurecr.cn/rancher:latest
 #按照提示获取登录密码
-~~~
+```
 
 - azure 创建 sp
 
-~~~sh
+```sh
 az ad sp create-for-rbac --scope <rg-resource-id> --role Contributor
-~~~
+```
 
+> [!warning]
 > rancher无法导入AKS集群，他会默认集群在china east，导致无法获取到api version，但是这个配置无处改变，遂放弃
 
-# Artifactory-cpp-ce-helm部署到AKS
+---
+
+## Artifactory-cpp-ce-Helm部署到AKS
 
 - 外部azure pgsql先创建好
 
@@ -529,8 +559,7 @@ az ad sp create-for-rbac --scope <rg-resource-id> --role Contributor
   - 配置system.yaml中的database字段到外部azure pgsql（参数配置要找到对应的values.yaml），
   - 配置关闭nginx、内部pgsql等功能（找到外部和内部两个values.yaml）
 
-
-~~~sh
+```sh
 #key用手动生成的
 export MASTER_KEY=$(openssl rand -hex 32)
 export JOIN_KEY=$(openssl rand -hex 32)
@@ -566,13 +595,13 @@ helm install artifactory-cpp-ce  ./ \
 --set artifactory.artifactory.resources.requests.memory="1Gi" \
 --set artifactory.artifactory.resources.limits.memory="4Gi" \
 -n artifactory -f values.yaml
-~~~
+```
 
 - internal LB代理pod，selector复制helm里面的tag进来。注意后面tag变化之后也要修改iLB的selector
 
   doc: https://docs.azure.cn/zh-cn/aks/internal-lb?tabs=set-service-annotations
 
-~~~yaml
+```yaml
 tee iLB.yaml <<'EOF'
 apiVersion: v1
 kind: Service
@@ -592,23 +621,23 @@ spec:
     component: artifactory
     release: artifactory-cpp-ce
 EOF
-~~~
+```
 
 - 查看release
 
-~~~sh
+```sh
 helm list -n artifactory
-~~~
+```
 
 - 升级release
 
-~~~sh
+```sh
 #cd到helm项目目录
 helm upgrade artifactory-cpp-ce -n artifactory .
-~~~
+```
 
 - 卸载release
 
-~~~sh
+```sh
 helm uninstall artifactory-cpp-ce -n artifactory
-~~~
+```

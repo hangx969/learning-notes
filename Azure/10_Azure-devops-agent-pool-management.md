@@ -1,47 +1,70 @@
-# az devops cli
+---
+title: Azure DevOps Agent Pool Management
+tags:
+  - azure/devops
+  - azure/agents
+  - azure/automation
+  - azure/VMSS
+aliases:
+  - Agent Pool Management
+  - DevOps CLI
+  - DevOps REST API
+date: 2026-04-16
+---
 
-## 登录devops
+# Azure DevOps Agent Pool Management
+
+## Related Notes
+
+- [[Azure/8_Azure-devops-basics]]
+- [[Azure/9_Azure-devops-self-host-agents]]
+
+---
+
+## Az DevOps CLI
+
+### 登录DevOps
 
 https://learn.microsoft.com/en-us/azure/devops/cli/log-in-via-pat?view=azure-devops&tabs=windows
 
-~~~sh
+```sh
 echo "xxx" | az devops login --organization https://dev.azure.com/xxx
 cat PAT.txt | az devops login --organization https://dev.azure.com/xxx
-~~~
+```
 
-## 操作agent pool
+### 操作Agent Pool
 
 https://learn.microsoft.com/en-us/cli/azure/pipelines/pool?view=azure-cli-latest
 
 - 获取pool id
 
-~~~sh
+```sh
 az pipelines pool list  > pools.json
-~~~
+```
 
 - 显示pool具体信息
 
-  ~~~sh
+  ```sh
   az pipelines pool show	--id 56
-  ~~~
+  ```
 
-## 操作agents
+### 操作Agents
 
 https://learn.microsoft.com/en-us/cli/azure/pipelines/agent?view=azure-cli-latest
 
 - list
 
-  ~~~sh
+  ```sh
   az pipelines agent show --id 77315 --pool-id 56 --include-assigned-request true --include-last-completed-request true --output jsonc
-  ~~~
+  ```
 
 - detect status
 
 - delete: azcli没有提供删除agent的命令，只能通过REST API来操作
 
-## 检测agent current status
+### 检测Agent Current Status
 
-~~~sh
+```sh
 az pipelines agent show \
 --id 77398 \
 --pool-id 56 \
@@ -49,11 +72,11 @@ az pipelines agent show \
 --include-last-completed-request true \
 --output jsonc
 # --debug 可以看到azcli发送REST API的具体过程和参数
-~~~
+```
 
-- 有job在跑的agent，返回值带有一大段“assignedRequest”字段：
+- 有job在跑的agent，返回值带有一大段`assignedRequest`字段：
 
-  ~~~json
+  ```json
   {
       "accessPoint": "CodexAccessMapping",
       "assignedAgentCloudRequest": null,
@@ -67,22 +90,24 @@ az pipelines agent show \
         },
   ......
     }
-  ~~~
+  ```
 
-- idle的agent，返回值里面assigned request是null。（注意：如果这个agent上面有job已经跑完了，则assigned request仍然是null）
+- idle的agent，返回值里面==assigned request是null==。（注意：如果这个agent上面有job已经跑完了，则assigned request仍然是null）
 
-  ~~~json
+  ```json
   {
       "accessPoint": "CodexAccessMapping",
       "assignedAgentCloudRequest": null,
       "assignedRequest": null,
   ......
   }
-  ~~~
+  ```
 
-# Azure devops REST API
+---
 
-## 删除offline的agent
+## Azure DevOps REST API
+
+### 删除Offline的Agent
 
 shell脚本实现
 
@@ -93,9 +118,10 @@ shell脚本实现
 3. REST API可以附加的参数：https://learn.microsoft.com/en-us/rest/api/azure/devops/distributedtask/agents/get-agent?view=azure-devops-rest-7.1#uri-parameters
 4. PAT document：https://learn.microsoft.com/en-us/azure/devops/organizations/accounts/use-personal-access-tokens-to-authenticate?view=azure-devops&tabs=Linux#q-why-did-my-pat-stop-working
 
-==一定注意：curl传递的authorization header是在原有token前面加了个:==
+> [!warning]
+> ==一定注意：curl传递的authorization header是在原有token前面加了个:==
 
-~~~sh
+```sh
 #!/usr/bin/env bash
 
 # Set your Azure DevOps organization URL and PAT token (Note that PAT should be encoded with base64)
@@ -123,19 +149,19 @@ do
     curl -s -X DELETE -H "Authorization: Basic $PAT_TOKEN_B64" "${ORG_URL}/_apis/distributedtask/pools/${POOL_ID}/agents/${AGENT}?api-version=${API_VERSION}"
   fi
 done
-~~~
+```
 
-~~~sh
+```sh
 chmod +x azure-devops-delete-offline-agents.sh
 # To run the script, pass the agent pool ID as an argument.
 ./azure-devops-delete-offline-agents.sh <pool_id>
-~~~
+```
 
-## 检测agent current status
+### 检测Agent Current Status
 
 用Get Agent API检查每个具体agent信息：
 
-~~~sh
+```sh
 # Set your Azure DevOps organization URL and PAT token
 ORG_URL="https://dev.azure.com/xxx"
 PAT_TOKEN_B64=""
@@ -145,32 +171,27 @@ POOL_ID="56"
 API_VERSION="7.1"
 
 curl -s -H "Authorization: Basic $PAT_TOKEN_B64" "${ORG_URL}/_apis/distributedtask/pools/${POOL_ID}/agents/${AGENT_ID}?includeAssignedRequest=true&includeCapabilities=true&api-version=${API_VERSION}" > agent-info.json
-~~~
+```
 
-## 脚本逻辑
+### 脚本逻辑
 
-> 注意：
->
-> - azcli pod中需要先安装gawk：`yum install gawk -y`，也可以东dockerfile做一个提前安装好gawk的azcli-gawk image以供使用。
+> [!note]
+> 注意：azcli pod中需要先安装gawk：`yum install gawk -y`，也可以东dockerfile做一个提前安装好gawk的azcli-gawk image以供使用。
 
 1. 根据pool name获取pool id
 2. 获取这个pool中的所有agent id和agent count
 3. 删掉offline的agent，检测对应的vm instance如果有就删掉（防止后面scale out出新的时候，与已经offline的冲突）
-5. 过滤出：
-
+4. 过滤出：
    - 状态为online
-
    - assignedRequest字段不存在
-
    - created-on时间距今已超过5天
-
 
    提取出这些agent的computerName。
 
-6. scale-in: 用azcli删掉这些agent对应的VM instance
-7. scale-out：判断剩余agent数量是否小于4个，如果是，就scale out到4个。
+5. scale-in: 用azcli删掉这些agent对应的VM instance
+6. scale-out：判断剩余agent数量是否小于4个，如果是，就scale out到4个。
 
-~~~sh
+```sh
 #!/bin/bash
 
 yum install -y gawk
@@ -292,44 +313,50 @@ if [ $AGENT_COUNTS -lt ${EXPECTED_COUNT} ]; then
     echo "Scaling out VMSS $VMSS_NAME to ${EXPECTED_COUNT} instances"
     az vmss scale --resource-group $RG_NAME --name $VMSS_NAME --new-capacity ${EXPECTED_COUNT}
 fi
-~~~
+```
 
+> [!note]
 > - 需要检测offline的agent同时，也检测对应VM instance也删掉
 > - 遇到被disable的agent，即使是offline的也删不掉。后面可以测试一下disabled的agent怎么
 
-# Azure VMSS Cli
+---
 
-## scale
+## Azure VMSS CLI
 
-~~~sh
+### Scale
+
+```sh
 az vmss scale \
     --resource-group myResourceGroup \
     --name myScaleSet \
     --new-capacity 5
-~~~
+```
 
-注意：有个问题就是如果定期用azcli直接scale VMSS，那么无法识别这个VMSS是否有CICD任务在运行，容易误伤。还是需要想办法通过azure devops RESI API来检测agent是否是idle。
+> [!warning]
+> 有个问题就是如果定期用azcli直接scale VMSS，那么无法识别这个VMSS是否有CICD任务在运行，容易误伤。还是需要想办法通过azure devops REST API来检测agent是否是idle。
 
-## extension
+### Extension
 
 https://docs.azure.cn/zh-cn/virtual-machines/extensions/custom-script-linux
 
 https://learn.microsoft.com/en-us/azure/virtual-machines/extensions/custom-script-linux
 
-## 替换image
+### 替换Image
 
 https://learn.microsoft.com/en-us/azure/devops/pipelines/agents/scale-set-agents?view=azure-devops#update-an-existing-scale-set-with-a-new-custom-image
 
-# helm chart部署
+---
 
-~~~sh
+## Helm Chart部署
+
+```sh
 # 部署到dev环境
 kubectl config use-context aks-commoninfra-dev-chinanorth3
 cd ~/Cloud/devops-management/devops-agent-management
 helm upgrade -i devops-agent-management -n devops-agent-management --create-namespace . -f ./values.yaml
-~~~
+```
 
-## 测试pod里运行az devops
+### 测试Pod里运行az devops
 
 - 用预装了azcli的pod，导入到ACR
   - 截止2025/04/09，最新版本2.71.0：https://learn.microsoft.com/zh-cn/cli/azure/release-notes-azure-cli#april-01-2025
@@ -340,7 +367,7 @@ az acr import --name <ACR> --source mcr.microsoft.com/azure-cli:2.71.0-cbl-marin
 
 - 创建测试pod，exec进去看看能不能登录azure devops
 
-  ~~~yaml
+  ```yaml
   apiVersion: v1
   kind: Pod
   metadata:
@@ -367,46 +394,44 @@ az acr import --name <ACR> --source mcr.microsoft.com/azure-cli:2.71.0-cbl-marin
     - name: azure-devops-pat
       secret:
         secretName: azure-devops-pat
-  ~~~
+  ```
 
-  ~~~sh
+  ```sh
   #测试登录
   base64 -d /etc/secret-vol/token > pat.txt
   cat pat.txt | az devops login --organization <ORG>
   
   # 或者在容器内执行
   kubectl exec -n devops-agent-management pod-test-azcli -- bash -c "base64 -d /etc/secret-vol/token > pat.txt"
-  ~~~
+  ```
 
   > az devops extension装不上： network issue
-  >
-  
+
 - 预先build一个带有az devops extension的镜像：
 
-  ~~~dockerfile
+  ```dockerfile
   FROM mcr.microsoft.com/azure-cli:2.71.0-cbl-mariner2.0
   
   RUN az extension add --upgrade --name azure-devops --yes \
       && az --version
-  ~~~
+  ```
 
   进pod里面登录az devops，报错：
 
-  ~~~sh
+  ```sh
   cli.azext_devops.dev.common.credential_store: Failed to store PAT using keyring; falling back to file storage.
-  ~~~
+  ```
 
-  这个报错看起来是az devops cli的bug，还没修复：
-
-  https://github.com/Azure/azure-cli/issues/26731
-
+  > [!warning]
+  > 这个报错看起来是az devops cli的bug，还没修复：https://github.com/Azure/azure-cli/issues/26731
+  >
   > 到此基本判断pod中运行az devops cli不可行。还是需要用REST API实现
 
-## 测试pod中请求REST API
+### 测试Pod中请求REST API
 
-### 测试pod
+#### 测试Pod
 
-~~~yaml
+```yaml
 ---
 apiVersion: v1
 kind: Pod
@@ -434,17 +459,17 @@ spec:
   - name: azure-devops-pat
     secret:
       secretName: azure-devops-pat
-~~~
+```
 
 alpine镜像默认不带curl，可以进容器安装一下：
 
-~~~sh
+```sh
 apk add --no-cache curl
-~~~
+```
 
 测试成功，可以获取到json格式agent信息。
 
-~~~sh
+```sh
 ORG_URL="https://dev.azure.com/xxxx"
 PAT_TOKEN=$(cat /etc/secret-vol/token)
 PAT_TOKEN_B64=$(printf "%s"":$PAT_TOKEN" | base64 -w0)
@@ -455,17 +480,18 @@ curl -s -H "Authorization: Basic $PAT_TOKEN_B64" "${ORG_URL}/_apis/distributedta
 
 AGENT_ID=77399
 curl -s -H "Authorization: Basic $PAT_TOKEN_B64" "${ORG_URL}/_apis/distributedtask/pools/${POOL_ID}/agents/${AGENT_ID}?includeAssignedRequest=true&includeCapabilities=true&api-version=${API_VERSION}"
-~~~
+```
 
-> 注意：如果一个agent处于idle状态，REST API返回值中不存在“assignedRequest”字段。如果有任务在运行，那么会返回“assignedRequest”字段及其详细信息。
+> [!info]
+> 注意：如果一个agent处于idle状态，REST API返回值中不存在"assignedRequest"字段。如果有任务在运行，那么会返回"assignedRequest"字段及其详细信息。
 
-## pod中登录azcli-sp
+### Pod中登录azcli-sp
 
 参考： https://learn.microsoft.com/en-us/cli/azure/authenticate-azure-cli-service-principal
 
 - client位于AKS中，VMSS位于另一个tenant中。看起来managed identity用不了，试试用VMSS的tenant中的sp，在AKS中用sp登录
 
-  ~~~yaml
+  ```yaml
   apiVersion: v1
   kind: Pod
   metadata:
@@ -484,9 +510,9 @@ curl -s -H "Authorization: Basic $PAT_TOKEN_B64" "${ORG_URL}/_apis/distributedta
           limits:
             cpu: 800m
             memory: 500Mi
-  ~~~
+  ```
 
-  ~~~sh
+  ```sh
   az cloud set --name AzureChinaCloud
   
   TENANT_ID="xxx"
@@ -495,17 +521,17 @@ curl -s -H "Authorization: Basic $PAT_TOKEN_B64" "${ORG_URL}/_apis/distributedta
   
   echo "Logging in with service principal"
   az login --service-principal --username $CLIENT_ID --tenant $TENANT_ID --password $CLIENT_SECRET
-  ~~~
+  ```
 
   登录是成功的
 
-## pod登录azcli-workload identity
+### Pod登录azcli-Workload Identity
 
 参考：https://learn.microsoft.com/zh-cn/entra/workload-id/workload-identity-federation-config-app-trust-managed-identity?tabs=microsoft-entra-admin-center
 
 - 在ns中创建service account
 
-  ~~~yaml
+  ```yaml
   apiVersion: v1
   kind: ServiceAccount
   metadata:
@@ -516,23 +542,24 @@ curl -s -H "Authorization: Basic $PAT_TOKEN_B64" "${ORG_URL}/_apis/distributedta
       azure.workload.identity/use: "true"
     name: "sa-devops-agent-management"
     namespace: "devops-agent-management"
-  ~~~
+  ```
 
 - 获取clusterIssuer
 
-  ~~~sh
+  ```sh
   AKS_RG_NAME="myResourceGroup"
   CLUSTER_NAME="myCluster"
   az aks show -g $AKS_RG_NAME -n $CLUSTER_NAME --query "oidcIssuerProfile.issuerUrl" -otsv
-  ~~~
+  ```
 
 - 前往sp的federated secrets界面，基于已经创建的sa、AKS的OIDC issuer URL，创建一个新的federated credential
 
-  ==注意在Audience字段中不能带China，要改成 api://AzureADTokenExchange。否则在后面pod中登录的时候会报错：AADSTS700212: No matching federated identity record found for presented assertion audience 'api://AzureADTokenExchange'.==
+  > [!warning]
+  > ==注意在Audience字段中不能带China，要改成 api://AzureADTokenExchange。否则在后面pod中登录的时候会报错：AADSTS700212: No matching federated identity record found for presented assertion audience 'api://AzureADTokenExchange'.==
 
 - 创建pod挂载workload identity和sa
 
-  ~~~yaml
+  ```yaml
   apiVersion: v1
   kind: Pod
   metadata:
@@ -554,32 +581,29 @@ curl -s -H "Authorization: Basic $PAT_TOKEN_B64" "${ORG_URL}/_apis/distributedta
           limits:
             cpu: 800m
             memory: 500Mi
-  ~~~
+  ```
 
 - describe pod检查这几个环境变量：
 
-  ~~~sh
+  ```sh
   AZURE_CLIENT_ID:             
   AZURE_TENANT_ID:             
   AZURE_FEDERATED_TOKEN_FILE:  /var/run/secrets/azure/tokens/azure-identity-token
   AZURE_AUTHORITY_HOST:        https://login.chinacloudapi.cn/
   
   cat /var/run/secrets/azure/tokens/azure-identity-token
-  ~~~
+  ```
 
 - 利用workload identity登录
 
-  ~~~sh
+  ```sh
   az cloud set --name AzureChinaCloud && az login --service-principal --username "${AZURE_CLIENT_ID}" --tenant "${AZURE_TENANT_ID}" --federated-token "$(cat $AZURE_FEDERATED_TOKEN_FILE)"
-  ~~~
+  ```
 
 - 尝试scale VMSS -- 成功
 
-  ~~~sh
+  ```sh
   rgname=""
   vmssname=""
   az vmss scale --resource-group $rgname --name $vmssname --new-capacity 4
-  ~~~
-
-  
-
+  ```
