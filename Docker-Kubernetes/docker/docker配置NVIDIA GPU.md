@@ -1,3 +1,14 @@
+---
+title: Docker配置NVIDIA GPU
+tags:
+  - docker
+  - container
+  - nvidia
+  - gpu
+aliases:
+  - Docker GPU配置
+---
+
 在 Linux 服务器上使用 GPU 跑深度学习的模型很正常不过。如果我们想用 Docker 实现同样的需求，就需要做些额外的工作。本质上就是我们要在容器里能看到并且使用宿主机上的显卡。在这篇文章里我们就介绍一下 Docker 使用 GPU 的环境搭建。
 
 
@@ -14,7 +25,7 @@ sudo apt install gcc kernel-dev -y
 
 ## 安装 Nvidia 驱动
 
-1. 访问 https://www.nvidia.com/Download/Find.aspx
+1. 访问 [NVIDIA驱动下载页面](https://www.nvidia.com/Download/Find.aspx)
 2. 选择对应操作系统和安装包，并单击 [SEARCH] 搜寻驱动，选择要下载的驱动版本
 
 3. 在宿主机上下载并执行对应版本安装脚本
@@ -32,7 +43,7 @@ chmod +x NVIDIA-Linux-x86_64-450.80.02.run && ./NVIDIA-Linux-x86_64-450.80.02.ru
 
 CUDA（Compute Unified Device Architecture）是显卡厂商 NVIDIA 推出的运算平台。`CUDA™`是一种由 NVIDIA 推出的通用并行计算架构，该架构使 GPU 能够解决复杂的计算问题。它包含了 CUDA 指令集架构（ISA）以及 GPU 内部的并行计算引擎。这里安装的方式和显卡驱动安装类似。
 
-1. 访问官网下载对应版本安装包，https://developer.nvidia.com/cuda-toolkit-archive，可以看nvidia-smi输出的CUDA版本。
+1. 访问官网下载对应版本安装包，[CUDA Toolkit Archive](https://developer.nvidia.com/cuda-toolkit-archive)，可以看nvidia-smi输出的CUDA版本。
 
 2. 配置环境变量
 

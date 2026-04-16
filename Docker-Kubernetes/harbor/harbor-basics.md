@@ -1,3 +1,13 @@
+---
+title: Harbor 基础
+tags:
+  - kubernetes
+  - harbor
+  - docker
+aliases:
+  - harbor基础
+---
+
 # Docker私有镜像仓库harbor
 
 ## Harbor介绍

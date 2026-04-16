@@ -1,7 +1,18 @@
+---
+title: Docker部署NextTrace路由监控工具
+tags:
+  - docker
+  - container
+  - nexttrace
+  - network
+aliases:
+  - NextTrace部署
+---
+
 # 项目地址
 
-- GitHub：https://github.com/nxtrace/NTrace-core
-- 项目官网：https://www.nxtrace.org/
+- GitHub：[NTrace-core](https://github.com/nxtrace/NTrace-core)
+- 项目官网：[NextTrace官网](https://www.nxtrace.org/)
 
 - NextTrace 是一个由 Go开发的可视路由工具。支持 IPv4 和 IPv6 ，特别适合网络和IT工作者。
 

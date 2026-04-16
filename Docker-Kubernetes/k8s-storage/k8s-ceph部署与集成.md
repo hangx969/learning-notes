@@ -852,9 +852,9 @@ spec:
 
 ## 安装ceph
 
-参考：https://rook.github.io/docs/rook/v1.12/Getting-Started/quickstart/#cluster-environments
+参考：[Rook Quickstart Guide](https://rook.github.io/docs/rook/v1.12/Getting-Started/quickstart/#cluster-environments)
 
-- 下载ceph安装包：https://github.com/rook/rook
+- 下载ceph安装包：[rook/rook - GitHub](https://github.com/rook/rook)
 
 ~~~sh
 unzip rook-master.zip

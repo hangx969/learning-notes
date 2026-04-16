@@ -1,3 +1,14 @@
+---
+title: k8s生产环境优化与最佳实践
+tags:
+  - kubernetes
+  - k8s-installation
+  - 性能优化
+aliases:
+  - k8s生产优化
+  - apiserver优化
+---
+
 # k8s高可用和节点规划
 
 ## 节点数量规划
@@ -97,7 +108,7 @@
 
 # apiserver优化
 
-kube-apiserver是整个集群的所有请求的入口，apiserver不可用会导致集群失效。可以从以下几个方面优化：https://kubernetes.io/docs/reference/command-line-tools-reference/kube-apiserver/，参数优化需要在`/etc/kubernetes/manifests/kube-apiserver.yaml`文件中编辑参数
+kube-apiserver是整个集群的所有请求的入口，apiserver不可用会导致集群失效。可以从以下几个方面优化：[kube-apiserver参考文档](https://kubernetes.io/docs/reference/command-line-tools-reference/kube-apiserver/)，参数优化需要在`/etc/kubernetes/manifests/kube-apiserver.yaml`文件中编辑参数
 
 1. apiserver部署多个实例，前端用SLB做负载均衡，提供可用性。
 2. 参数优化：`--max-requests-inflight`=1500
@@ -124,9 +135,8 @@ kube-apiserver是整个集群的所有请求的入口，apiserver不可用会导
 
 # controller-manager优化
 
-> https://kubernetes.io/docs/reference/command-line-tools-reference/kube-controller-manager/
->
-> 负责处理各种资源的自动化控制，如Deployment、DaemonSet等。优化Controller Manager的参数可以提高Kubernetes的性能和稳定性
+> [!info] controller-manager参考文档
+> [kube-controller-manager](https://kubernetes.io/docs/reference/command-line-tools-reference/kube-controller-manager/) - 负责处理各种资源的自动化控制，如Deployment、DaemonSet等。优化Controller Manager的参数可以提高Kubernetes的性能和稳定性
 
 1. `--controllers`参数：
    - 可以通过该参数限制Controller Manager启动的控制器数量。默认情况下，Controller Manager会启动所有控制器，但在实际情况中，可能只需要启动一部分控制器。
@@ -145,7 +155,7 @@ kube-apiserver是整个集群的所有请求的入口，apiserver不可用会导
 
 # kubelet优化
 
-https://kubernetes.io/zh-cn/docs/concepts/architecture/nodes/
+[kubelet节点参考文档](https://kubernetes.io/zh-cn/docs/concepts/architecture/nodes/)
 
 1. 使用 Node Status Update Frequency减少心跳上报频率
    - Kubelet 心跳上报频率可以通过调整 --node-status-update-frequency 参数来进行优化。
@@ -169,7 +179,7 @@ https://kubernetes.io/zh-cn/docs/concepts/architecture/nodes/
 
 # kube-scheduler优化
 
-https://kubernetes.io/zh-cn/docs/concepts/scheduling-eviction/scheduler-perf-tuning/
+[scheduler性能调优参考文档](https://kubernetes.io/zh-cn/docs/concepts/scheduling-eviction/scheduler-perf-tuning/)
 
 1. `--percentage-of-nodes-to-score`
    - 是kube-scheduler的一个配置参数，用于设置每次调度器评分时要评估的节点百分比。这个参数的作用是优化调度器的性能，减少评估所有节点的时间和资源消耗。

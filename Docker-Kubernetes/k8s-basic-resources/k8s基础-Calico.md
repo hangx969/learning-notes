@@ -1,3 +1,12 @@
+---
+title: K8s基础-Calico
+tags:
+  - kubernetes
+  - k8s-basics
+aliases:
+  - k8sCalico
+---
+
 # Calico基础
 
 - Calico是一个开源的网络和安全解决方案，它为容器、虚拟机、主机、k8s提供了高效、可扩展和安全的网络连接和策略管理。

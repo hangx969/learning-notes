@@ -21,8 +21,7 @@ helm repo update bitnami
 helm pull bitnami/mysql --version 13.0.2 
 ~~~
 
-> 注：
->
+> [!tip] 提示
 > - bitnami/mysql如果网络问题pull不下来就直接从bitnami github上clone下来源码，里面就有mysql的helm chart。
 >
 >   ~~~sh

@@ -1,3 +1,12 @@
+---
+title: 部署 OpenShift (3.10)
+tags:
+  - kubernetes
+  - openshift
+aliases:
+  - openshift部署
+---
+
 # Openshift基础
 
 ## 介绍

@@ -184,7 +184,8 @@ helm pull grafana/loki --version "${LOKI_VERSION#helm-loki-}" #5.48.0
   #这里仿照azure_global的values.yaml进行了调整
   ~~~
 
-  > loki的log volume没配置？
+  > [!warning]
+> loki的log volume没配置？
 
 - 安装
 
@@ -295,10 +296,10 @@ helm upgrade -i tempo -n monitoring . -f values.yaml
 
 ## 介绍
 
-- github release: https://github.com/grafana/agent/releases
-- artifacthub: https://artifacthub.io/packages/helm/grafana/grafana-agent
+- github release: [Grafana Agent Releases](https://github.com/grafana/agent/releases)
+- artifacthub: [Grafana Agent on ArtifactHub](https://artifacthub.io/packages/helm/grafana/grafana-agent)
 
-Refer：https://mp.weixin.qq.com/s?__biz=Mzk0NzIyMDA4MA==&mid=2247484542&idx=1&sn=02cba4c7dd124a06afa97104c2d50bca&chksm=c37b7f61f40cf677ae5b0aa9dfef3a39a6c945aa6f68379d1f81ccfe54d2cd706aa481efa08b&cur_album_id=3143335204699504647&scene=189#wechat_redirect
+Refer：[Grafana Agent参考](https://mp.weixin.qq.com/s?__biz=Mzk0NzIyMDA4MA==&mid=2247484542&idx=1&sn=02cba4c7dd124a06afa97104c2d50bca&chksm=c37b7f61f40cf677ae5b0aa9dfef3a39a6c945aa6f68379d1f81ccfe54d2cd706aa481efa08b&cur_album_id=3143335204699504647&scene=189#wechat_redirect)
 
 - Tempo服务是可以直接通过Tempo-distributor组件或者使用TempoGateWay直接接收Trace数据的，是无需部署Grafana Agent组件的。
 

@@ -1,3 +1,12 @@
+---
+title: Helm v3 安装与使用
+tags:
+  - kubernetes
+  - helm
+aliases:
+  - helm安装使用
+---
+
 # Helm介绍
 
 - Helm是kubernetes的包管理工具，相当于linux环境下的yum/apt-get命令。

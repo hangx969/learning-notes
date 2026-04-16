@@ -1,3 +1,14 @@
+---
+title: k8s迁移容器运行时与版本升级
+tags:
+  - kubernetes
+  - k8s-installation
+  - 版本升级
+aliases:
+  - 容器运行时迁移
+  - k8s版本升级
+---
+
 # 将容器运行时从docker迁移到containerd
 
 ## 实验环境

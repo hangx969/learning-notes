@@ -1,8 +1,19 @@
+---
+title: Docker部署GoCron定时任务工具
+tags:
+  - docker
+  - container
+  - gocron
+  - cronjob
+aliases:
+  - GoCron部署
+---
+
 # 介绍
 
 基于Go语言驱动、Vue.js构建前端的全栈项目，带可视化界面的cronjob调度系统
 
-- 官网：https://github.com/flohoss/gocron
+- 官网：[GoCron GitHub](https://github.com/flohoss/gocron)
 
 # 部署
 

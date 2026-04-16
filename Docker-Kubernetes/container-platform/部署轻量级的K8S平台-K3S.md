@@ -1,3 +1,12 @@
+---
+title: 部署轻量级 K8S 平台 - K3S
+tags:
+  - kubernetes
+  - k3s
+aliases:
+  - k3s部署
+---
+
 # 边缘计算
 
 ![image-20240514212240562](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202405142122675.png)

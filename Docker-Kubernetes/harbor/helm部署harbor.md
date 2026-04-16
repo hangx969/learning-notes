@@ -1,3 +1,13 @@
+---
+title: Helm 部署 Harbor
+tags:
+  - kubernetes
+  - harbor
+  - helm
+aliases:
+  - helm部署harbor
+---
+
 # 介绍
 
 - 基于OCI的注册中心

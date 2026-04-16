@@ -1,3 +1,12 @@
+---
+title: K8s基础-容器运行时-containerd
+tags:
+  - kubernetes
+  - k8s-basics
+aliases:
+  - k8s容器运行时containerd
+---
+
 # 容器运行时接口CRI
 
 CRI（Container Runtime Interface）是Kubernetes中用于实现容器运行时和Kubernetes之间交互的标准化接口。

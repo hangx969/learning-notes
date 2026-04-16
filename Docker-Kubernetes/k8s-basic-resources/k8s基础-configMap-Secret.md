@@ -1,3 +1,12 @@
+---
+title: K8s基础-configMap-Secret
+tags:
+  - kubernetes
+  - k8s-basics
+aliases:
+  - k8sconfigMapSecret
+---
+
 # ConfigMap
 
 我们在部署服务的时候，每个服务都有自己的配置文件，如果一台服务器上部署多个服务：nginx、tomcat、apache等，那么这些配置都存在这个节点上，假如一台服务器不能满足线上高并发的要求，需要对服务器扩容，扩容之后的服务器还是需要部署多个服务：nginx、tomcat、apache，新增加的服务器上还是要管理这些服务的配置，如果有一个服务出现问题，需要修改配置文件，每台物理节点上的配置都需要修改，这种方式肯定满足不了线上大批量的配置变更要求。

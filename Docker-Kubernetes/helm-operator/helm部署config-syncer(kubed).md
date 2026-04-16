@@ -1,3 +1,13 @@
+---
+title: Helm 部署 Config Syncer (Kubed)
+tags:
+  - kubernetes
+  - helm
+  - config-syncer
+aliases:
+  - config-syncer部署
+---
+
 # 介绍
 
 将configMap和secret同步到其他namespace的工具

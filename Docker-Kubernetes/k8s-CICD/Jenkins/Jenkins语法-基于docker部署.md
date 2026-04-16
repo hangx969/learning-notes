@@ -1,3 +1,14 @@
+---
+title: Jenkins语法-基于Docker部署
+tags:
+  - kubernetes
+  - cicd
+  - jenkins
+  - pipeline
+aliases:
+  - Jenkins Pipeline语法
+---
+
 # DevOps
 
 ## 定义
@@ -129,7 +140,7 @@ Jenkins架构是主从架构：
 
 声明式流水线采用结构化语法实现，格式固定、易读性强，并且内置错误处理机制，可以不需要掌握Groovy即可完成编写。同时可以与Blue Ocean结合实现可视化，是目前官网推荐的方式。
 
-声明式pipeline语法，官网：https://www.jenkins.io/doc/book/pipeline/syntax/
+声明式pipeline语法，官网：[Jenkins Pipeline语法](https://www.jenkins.io/doc/book/pipeline/syntax/)
 
 声明式流水线和脚本式流水线比较容易区别：
 
@@ -250,7 +261,7 @@ Agent表示整个流水线或特定阶段中的步骤和命令执行的位置，
 
 - kubernetes：Jenkins 也支持使用Kubernetes创建Slave，也就是动态Slave。配置示例如下： 
 
-  官网文档：https://plugins.jenkins.io/kubernetes/#plugin-content-configuration-reference 
+  官网文档：[Kubernetes Plugin配置参考](https://plugins.jenkins.io/kubernetes/#plugin-content-configuration-reference) 
 
   ~~~groovy
   agent { 
@@ -1006,7 +1017,7 @@ pipeline {
 
 上述示例可以用K8s slave pod实现。比定义具有3个容器的pod，分别为jnlp（负责与jenkins master通信）、build（执行构建命令）、kubectl（执行k8s命令）。在steps中，可以通过containers字段，选择在某个容器内执行命令.
 
-Kubernetes Agent详细语法：https://plugins.jenkins.io/kubernetes/#plugin-content-configuration-reference
+Kubernetes Agent详细语法：[Kubernetes Plugin配置参考](https://plugins.jenkins.io/kubernetes/#plugin-content-configuration-reference)
 
 注：dockerhub上的镜像地址：
 

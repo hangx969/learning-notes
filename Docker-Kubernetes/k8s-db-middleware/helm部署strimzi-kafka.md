@@ -578,10 +578,9 @@ commoninfra:
         memory: 2Gi
 ~~~
 
-> 注：
->
+> [!tip] 提示
 > - 上面的是仿照ado中的配置，但是在本地nodepool创建不出来。
-> - 下面用官网给的示例可以成功创建：https://github.com/strimzi/strimzi-kafka-operator/blob/0.44.0/examples/kafka/kraft/kafka-single-node.yaml
+> - 下面用官网给的示例可以成功创建：[kafka-single-node.yaml - GitHub](https://github.com/strimzi/strimzi-kafka-operator/blob/0.44.0/examples/kafka/kraft/kafka-single-node.yaml)
 
 ~~~yaml
 apiVersion: kafka.strimzi.io/v1beta2

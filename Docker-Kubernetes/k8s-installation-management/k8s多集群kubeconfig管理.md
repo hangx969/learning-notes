@@ -56,7 +56,7 @@ export KUBECONFIG=~/.kube/config:~/another-config-file-location
 
 ## 方案3：`flatten`
 
-```
+```sh
 export KUBECONFIG=~/.kube/config:~/anotherconfig 
 kubectl config view --flatten
 ```
@@ -77,6 +77,6 @@ kubectl krew install konfig
 
 `krew `插件 `konfig` 可以帮助你管理 `~/.kube/config`，使用 `konfig` 插件的语法如下:
 
-```
+```sh
 kubectl konfig import -s new.yaml
 ```

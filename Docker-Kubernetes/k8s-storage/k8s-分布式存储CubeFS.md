@@ -84,7 +84,7 @@ aliases:
 
 # CubeFS介绍
 
-官网：[CubeFS | A Cloud Native Distributed Storage System](https://www.cubefs.io/zh/docs/master/overview/introduction.html)
+官网：[CubeFS - 云原生分布式存储系统](https://www.cubefs.io/zh/docs/master/overview/introduction.html)
 
 CubeFS是新一代云原生存储产品，目前已经是CNCF毕业的开源项目。兼容S3、POSIX、HDFS等多种访问协议，支持多副本与纠删码两种存储引擎，提供多租户、多AZ部署以及跨区域复制等多种特性。广泛应用于大数据、AI、容器平台、数据库、中间件存算分离、数据共享以及数据保护等场景。
 
@@ -246,9 +246,9 @@ mount -a
 
 ## helm安装
 
-官网指南：[CubeFS | A Cloud Native Distributed Storage System](https://www.cubefs.io/zh/docs/master/deploy/k8s.html)
+官网指南：[CubeFS K8s部署指南](https://www.cubefs.io/zh/docs/master/deploy/k8s.html)
 
-github地址：[cubefs/cubefs-helm: The cubefs-helm project helps deploy a CubeFS cluster orchestrated by Kubernetes.](https://github.com/cubefs/cubefs-helm)
+github地址：[cubefs-helm - GitHub](https://github.com/cubefs/cubefs-helm)
 
 ### 下载helm包
 
@@ -395,12 +395,12 @@ helm upgrade -i cubefs -n cubefs . --create-namespace -f values.yaml
 
 # CubeFS客户端部署使用
 
-官网：[CubeFS | A Cloud Native Distributed Storage System](https://www.cubefs.io/zh/docs/master/user-guide/cli/overview.html)
+官网：[CubeFS CLI概览](https://www.cubefs.io/zh/docs/master/user-guide/cli/overview.html)
 
 ## 下载工具包
 
 ~~~sh
-https://github.com/cubefs/cubefs/releases/ 
+# 下载地址: https://github.com/cubefs/cubefs/releases/ 
 tar xf cubefs-3.5.0-linux-amd64.tar.gz 
 cd build/bin 
 cp ./cfs-cli /usr/local/bin/

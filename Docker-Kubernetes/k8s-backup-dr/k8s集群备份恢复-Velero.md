@@ -95,15 +95,15 @@ docker run -d --name minio-server --restart=always -p 9000:9000 -p 9001:9001 -e 
 ## 版本确认及下载
 
 部署 Velero 之前，需要找到适合的版本和插件的版本：
-- Velero 版 本 选 择 (需要下载docker image)： https://github.com/vmware-tanzu/velero?tab=readme-ov-file#velero-compatibility-matrix
-- 插 件 版 本 选 择（需要下载docker image）： https://github.com/vmware-tanzu/velero-plugin-for-aws?tab=readme-ov-file#compatibility
-- 接下来下载客户端工具（下载安装包）： https://github.com/vmware-tanzu/velero/releases/
+- Velero 版 本 选 择 (需要下载docker image)： [Velero Compatibility Matrix - GitHub](https://github.com/vmware-tanzu/velero?tab=readme-ov-file#velero-compatibility-matrix)
+- 插 件 版 本 选 择（需要下载docker image）： [velero-plugin-for-aws Compatibility - GitHub](https://github.com/vmware-tanzu/velero-plugin-for-aws?tab=readme-ov-file#compatibility)
+- 接下来下载客户端工具（下载安装包）： [Velero Releases - GitHub](https://github.com/vmware-tanzu/velero/releases/)
 
 K8s集群版本是1.34 -- Velero版本用1.17 -- 插件版本选1.13
 
 ## 安装客户端工具
 客户端工具选：1.17.1 (release里面选择最新的patch版本下载)：
-https://github.com/vmware-tanzu/velero/releases
+[Velero Releases - GitHub](https://github.com/vmware-tanzu/velero/releases)
 
 ```sh
 tar xf velero-v1.17.1-linux-arm64.tar.gz

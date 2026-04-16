@@ -1,16 +1,30 @@
+---
+title: Helm部署Prometheus-Stack全家桶
+tags:
+  - kubernetes
+  - monitoring
+  - prometheus
+  - grafana
+  - alertmanager
+  - helm
+  - operator
+aliases:
+  - Prometheus-Stack全家桶
+---
+
 # 介绍
 
 Prometheus Operator 也称为 Kube-Prometheus-Stack。prometheus-community/kube-prometheus-stack Helm Chart 提供了与 kube-prometheus 类似的功能集。该Chart由 Prometheus 社区维护。
 
-官网地址：https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack#kube-prometheus-stack
+官网地址：[kube-prometheus-stack](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack#kube-prometheus-stack)
 
-releases page: https://github.com/prometheus-community/helm-charts/releases
+releases page: [Helm Charts Releases](https://github.com/prometheus-community/helm-charts/releases)
 
-artifact hub: https://artifacthub.io/packages/helm/prometheus-community/kube-prometheus-stack
+artifact hub: [kube-prometheus-stack on ArtifactHub](https://artifacthub.io/packages/helm/prometheus-community/kube-prometheus-stack)
 
 通过一个prometheus-stack的chart，自动部署prometheus、prometheus rules、Alertmanager以及各种operator；还有kube-state-metrics、grafana、node-exporter。
 
-- 其中，kube-state-metrics(采集容器指标)、node-exporter（采集宿主机指标）、grafana是通过独立的sub helm chart安装的：https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack#dependencies
+- 其中，kube-state-metrics(采集容器指标)、node-exporter（采集宿主机指标）、grafana是通过独立的sub helm chart安装的：[Dependencies](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack#dependencies)
 
 - [prometheus-community/kube-state-metrics](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-state-metrics)
 - [prometheus-community/prometheus-node-exporter](https://github.com/prometheus-community/helm-charts/tree/main/charts/prometheus-node-exporter)
@@ -21,11 +35,11 @@ artifact hub: https://artifacthub.io/packages/helm/prometheus-community/kube-pro
 ## 前提条件
 
 1. 准备storage class提供数据持久化，实验环境下事先部署了nfs-client的sc，并设置为default storage class
-   - 默认存储类：https://kubernetes.io/zh-cn/docs/concepts/storage/storage-classes/#default-storageclass
+   - 默认存储类：[StorageClass](https://kubernetes.io/zh-cn/docs/concepts/storage/storage-classes/#default-storageclass)
 
 
 2. 提前配置ingress controller和ingress class
-   - ingress controller yaml: https://github.com/kubernetes/ingress-nginx/tree/main/deploy/static/provider/baremetal
+   - ingress controller yaml: [ingress-nginx baremetal](https://github.com/kubernetes/ingress-nginx/tree/main/deploy/static/provider/baremetal)
    - ingressController的deployment中配置hostnetwork=true
 
 ## 下载
@@ -133,8 +147,7 @@ persistence:
   --set grafana.ingress.pathType=Prefix . -f values.yaml
 ~~~
 
-> 注意：
->
+> [!warning]
 > 后面单独部署了loki和tempo之后，要去prometheus-stack的values里面加上grafana.additaionalDataSources字段：
 >
 > ~~~yaml
@@ -412,16 +425,16 @@ Service Monitor 是 Prometheus Operator 提供的CRD，负责从其他service暴
 > - service在哪个ns，serviceMonitor就创建到哪个ns下面，这是标准的配置。
 > - 有可能svc的metrics接口需要证书、认证等。可以配置secret去配置。
 
-- 介绍：https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack#prometheusioscrape
+- 介绍：[prometheus.io/scrape](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack#prometheusioscrape)
 
-- 使用说明：https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/user-guides/getting-started.md#include-servicemonitors （app需要用service暴露metrics接口，然后定义serviceMonitor资源去抓取接口数据）
+- 使用说明：[ServiceMonitors Getting Started](https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/user-guides/getting-started.md#include-servicemonitors) （app需要用service暴露metrics接口，然后定义serviceMonitor资源去抓取接口数据）
 
 ### podMonitor
 
 
 pod monitor绕过了service，直接通过pod的label找到pod，抓取pod暴露的metrics接口：
 
-https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/user-guides/getting-started.md#using-podmonitors
+[PodMonitors Getting Started](https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/user-guides/getting-started.md#using-podmonitors)
 
 podMonitor推荐创建在与pod位于同一个ns下面。（与pod同生命周期，防止产生很多垃圾资源）
 
@@ -504,7 +517,7 @@ spec:
 
 ## PrometheusRule
 
-PrometheusRule是Prometheus Operator中定义的CRD。有一个专门的网站可以查看各种各样的开源CRD的定义：https://operatorhub.io/operator/prometheus
+PrometheusRule是Prometheus Operator中定义的CRD。有一个专门的网站可以查看各种各样的开源CRD的定义：[OperatorHub - Prometheus](https://operatorhub.io/operator/prometheus)
 
 - Alerting Rule：定义监控数据的条件，当这些条件满足时触发告警。
 - Recording Rule：定期将复杂规则的查询结果保存成一个新的时间序列，为了优化查询性能。比如，将一段时间内的平均CPU使用率保存为一个新指标。

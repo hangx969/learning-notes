@@ -1052,17 +1052,17 @@ version = 2
 ## 常见工具
 
 - Zipkin
-  - **github：**https://github.com/openzipkin/zipkin
+  - **github：**[openzipkin/zipkin - GitHub](https://github.com/openzipkin/zipkin)
   - zipkin是一个分布式的追踪系统，它能够帮助你收集服务架构中解决问题需要的时间数据，功能包括收集和查找这些数据。如果日志文件中有跟踪ID，可以直接跳转到它。否则，可以根据服务、操作名称、标记和持续时间等属性进行查询。例如在服务中花费的时间百分比，以及哪些环节操作失败。特点是轻量，使用部署简单。zipkin还提供了一个UI界面，它能够显示通过每个应用程序的跟踪请求数。这有助于识别聚合行为，包括错误路径或对不推荐使用的服务的调用。
 
 
 - Skywalking
-  - github: https://github.com/apache/incubator-skywalking
+  - github: [apache/incubator-skywalking - GitHub](https://github.com/apache/incubator-skywalking)
   - skywalking是本土开源的调用链追踪系统，包括监控、跟踪、诊断功能，目前已加入Apache孵化器，专门为微服务、云本地和基于容器（Docker、Kubernetes、Mesos）架构设计。
 
 - Pinpoint
 
-  - github: https://github.com/naver/pinpoint
+  - github: [naver/pinpoint - GitHub](https://github.com/naver/pinpoint)
 
   - pinpoint是韩国人开源的基于字节码注入的调用链分析，以及应用监控分析工具。Pinpoint提供了一个解决方案，可以帮助分析系统的整体结构，以及通过跟踪分布式应用程序中的事务来分析其中的组件是如何相互连接的。
   - 对代码无侵入，把pinpoint代理包放到源码路径下面，编译就行。

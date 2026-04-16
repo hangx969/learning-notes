@@ -1,3 +1,12 @@
+---
+title: K8s基础-架构-组件-资源
+tags:
+  - kubernetes
+  - k8s-basics
+aliases:
+  - k8s架构组件资源
+---
+
 # K8s基本概念
 
 Kubernetes（简称K8s，希腊语，意为舵手）是一个开源的容器编排系统，用于容器的自动化部署、扩展，以及提供高可用和负载均衡的运行环境。
@@ -88,6 +97,7 @@ Kubernetes 的前身是谷歌内部的Borg系统，是基于谷歌15年生产环
 - 状态管理器，保证pod等资源达到期望状态。
 - 如果资源未达到目标状态，会尝试自动修复并达到期望状态。
 
+> [!info] 说明
 > - scheduler和controller manager是有状态组件，只有一个主节点在工作。
 > - 主节点信息保存在了leases资源中，可以通过`kubectl get leases -n kube-system`获取，也可以进行横向扩容，选主过程无需人工干预
 
@@ -98,6 +108,7 @@ Kubernetes 的前身是谷歌内部的Borg系统，是基于谷歌15年生产环
 
 （kube-proxy、kubelet、runtime也都会在master上部署一份）
 
+> [!info] 说明
 > 以上四个系统组件，对于kubeadm安装的集群来说，他们是静态pod形式启动的，查看他们的yaml的时候，会看到一个字段：`staticPodPath: /etc/kubernetes/manifests`，在这个目录下存放着这些pod的yaml，kubelet启动的时候会把他们直接拉起来。这个目录里面的文件都会自动被kubelet启动。
 
 ### 工作节点
@@ -110,6 +121,7 @@ Kubernetes 的前身是谷歌内部的Borg系统，是基于谷歌15年生产环
 - 负责维护svc和pod之间的请求路由和流量转发。
 - 容器对外提供服务的网络入口
 
+> [!tip] 提示
 > 如果使用Cilium作为CNI组件，可以不安装Proxy。
 
 #### Kubelet
