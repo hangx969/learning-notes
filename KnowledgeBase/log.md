@@ -12,7 +12,27 @@ date: 2026-04-17
 
 ---
 
-## [2026-04-17] ingest | 自研 k8s-report-skills Skill
+## [2026-04-17] create | 自研 k8s-inspect-skills Skill（Shell 版）
+
+- **来源**：基于 [[Docker-Kubernetes/k8s-monitoring-logging/K8s全面巡检脚本-生成HTML健康报告]] 的 Shell 脚本改造
+- **新建目录**：`AI/skills/k8s-inspect-skills/`（含 SKILL.md + k8s_inspect.sh）
+- **AI 适配改造**：
+  - 新增 `--kubeconfig` / `--output-dir` 参数解析
+  - 新增集群连接预检（`check_connection`）
+  - 日志输出重定向到 stderr，stdout 仅输出结构化摘要 + 报告路径
+  - 输出 `INSPECTION SUMMARY` 文本块供 Agent 解析
+  - 修复 DaemonSet/Deployment 列格式差异（CoreDNS 误判）和事件字段位移
+  - macOS/Linux 日期命令兼容
+- **实测**：v1.35.3 集群（3 节点 / 43 Pod / 13 NS / 38 Warning Events）通过
+- **知识库更新**：
+  - `sources/k8s-report-skills-summary.md` — 扩展为合并摘要页，覆盖 Python + Shell 两个 Skill
+  - `entities/Claude-Code.md` — 新增 sources 引用和覆盖列表条目
+  - `index.md` — 新增 Shell 版条目，AI 篇数 17→18
+  - `inventory/repository-inventory.md` — 新增 k8s-inspect-skills 目录盘点
+
+---
+
+## [2026-04-17] ingest | 自研 k8s-report-skills Skill（Python 版）
 
 - **操作**：创建 `AI/skills/` 自研技能目录，从 `/Users/hang.xu/Downloads/skills/k8s-report-skills/` 拷入首个自研 Skill
 - **新建目录**：`AI/skills/k8s-report-skills/`（含 SKILL.md、k8s_inspector.py、requirements.txt、templates/report.html）
