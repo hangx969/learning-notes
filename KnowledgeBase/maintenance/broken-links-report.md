@@ -2,53 +2,91 @@
 title: 断链报告
 tags:
   - knowledgebase/maintenance
-date: 2026-04-16
+date: 2026-04-17
 ---
 
 # 🔗 断链报告
 
-> [!info] 扫描日期：2026-04-16
-> 扫描范围：`KnowledgeBase/` 目录下所有 `[wikilink](../../wikilink.md)`
-> - **总唯一链接数**：321 个
-> - **匹配文件数**：338 个
-> - **断链数**：==0 个==（创建本文件后全部链接已有对应页面）
+> [!info] 扫描日期：2026-04-17（首次 Lint）
 
 ---
 
-## 扫描结果
+## 总览
 
-✅ **所有 321 个 wikilink 均有对应的 Markdown 文件。** 无需修复。
-
----
-
-## 初始断链（已修复）
-
-以下链接在知识库构建过程中被暂时标记为断链，创建对应文件后已全部修复：
-
-| 断链 | 状态 | 对应文件 |
-|------|:----:|----------|
-| `[broken-links-report](broken-links-report.md)` | ✅ 已修复 | 本文件 |
-| `[naming-normalization](naming-normalization.md)` | ✅ 已修复 | [[KnowledgeBase/maintenance/naming-normalization|naming-normalization]] |
-| `[update-workflow](update-workflow.md)` | ✅ 已修复 | [[KnowledgeBase/maintenance/update-workflow|update-workflow]] |
-| `[](../concepts/)` | ⚠️ 文件夹链接 | Obsidian 中可点击打开文件夹 |
+| 指标 | 数值 |
+|------|------|
+| 总 wikilink 目标 | 609 |
+| 有效链接 | 370（61%） |
+| 断链（红链） | 236 |
+| 孤儿页面 | 0 ✅ |
 
 ---
 
-## 高频链接统计
+## 已修复的问题
 
-> [!note] 以下是 KnowledgeBase 中被引用最多的目标文件（前 10）
+### 错误分类链接（5 个 → 已修复 ✅）
 
-基于全库扫描，被引用最频繁的文档主要集中在：
+以下实体在 Phase 1 中从 `concepts/` 移到 `entities/`，但部分文件仍引用旧路径：
 
-1. Docker-Kubernetes 核心文档（架构、Ingress、Prometheus Stack）
-2. AI 工具文档（Claude Code 基础指南、OpenClaw 基础安装）
-3. 云平台文档（Aliyun VPC、Azure AKS）
-4. KnowledgeBase 概念页之间的互引
+| 错误路径 | 正确路径 | 所在文件 |
+|----------|---------|---------|
+| `concepts/Kubernetes` | `entities/Kubernetes` | `maintenance/naming-normalization.md` |
+| `concepts/Helm` | `entities/Helm` | `maintenance/naming-normalization.md` |
+| `concepts/Istio` | `entities/Istio` | `maintenance/naming-normalization.md` |
+| `concepts/ArgoCD` | `entities/ArgoCD` | `maintenance/naming-normalization.md` |
+| `concepts/Ingress` | `entities/Ingress` | `sources/k8s-networking-service-mesh-batch-summary.md` |
+
+### 高频红链 → 已创建 stub 页面（6 个）
+
+| 实体 | 引用次数 | 状态 |
+|------|:--------:|------|
+| Harbor | 8 | ✅ stub 已创建 |
+| Redis | 6 | ✅ stub 已创建 |
+| GitLab | 5 | ✅ stub 已创建 |
+| Kafka | 5 | ✅ stub 已创建 |
+| Loki | 5 | ✅ stub 已创建 |
+| MySQL | 5 | ✅ stub 已创建 |
 
 ---
 
-## 建议
+## 剩余红链
 
-1. **定期巡检频率**：每月 1 次，或每次批量新增/删除文件后
-2. **高频断链处理**：如果某个概念被 3+ 处引用但无对应页面，应立即补建
-3. **低频断链处理**：记录观察，下次写作时顺带处理
+### 建议优先创建的概念页（引用 ≥2 次）
+
+| 概念 | 引用次数 |
+|------|:--------:|
+| StorageClass | 3 |
+| CRD | 2 |
+| Operator模式 | 2 |
+| RBAC | 2 |
+| ServiceMesh | 2 |
+| 联邦集群 | 2 |
+| 高可用架构 | 2 |
+
+### 建议优先创建的实体页（引用 ≥3 次）
+
+| 实体 | 引用次数 |
+|------|:--------:|
+| NVIDIA | 4 |
+| PBS | 4 |
+| containerd | 4 |
+| CUDA | 3 |
+| Calico | 3 |
+| Docker Compose | 3 |
+| Kustomize | 3 |
+| NFS | 3 |
+| Nginx | 3 |
+| PostgreSQL | 3 |
+| Rancher | 3 |
+
+### 低频红链统计
+
+| 类别 | 引用 2 次 | 引用 1 次 |
+|------|:---------:|:---------:|
+| concepts/ | 7 | 62 |
+| entities/ | 50 | 111 |
+
+> [!note] 处理策略
+> - 引用 ≥3 次：建议在下次 Ingest 或维护中创建 stub 页面
+> - 引用 1-2 次：Obsidian 原生支持红链显示，保持现状即可
+> - 后续新增文档摄入时会自然消化部分红链

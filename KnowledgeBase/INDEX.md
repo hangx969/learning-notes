@@ -62,6 +62,12 @@ date: 2026-04-17
 | [[KnowledgeBase/entities/OpenClaw\|OpenClaw]] | 开源 AI 工具平台 |
 | [[KnowledgeBase/entities/Obsidian\|Obsidian]] | 知识管理与笔记工具 |
 | [[KnowledgeBase/entities/Slurm\|Slurm]] | HPC 作业调度系统 |
+| [[KnowledgeBase/entities/Harbor\|Harbor]] | 企业级容器镜像仓库（stub） |
+| [[KnowledgeBase/entities/Redis\|Redis]] | 高性能键值数据库（stub） |
+| [[KnowledgeBase/entities/GitLab\|GitLab]] | DevOps 全生命周期平台（stub） |
+| [[KnowledgeBase/entities/Kafka\|Kafka]] | 分布式消息队列/事件流平台（stub） |
+| [[KnowledgeBase/entities/Loki\|Loki]] | 轻量级日志聚合系统（stub） |
+| [[KnowledgeBase/entities/MySQL\|MySQL]] | 开源关系型数据库（stub） |
 
 ---
 

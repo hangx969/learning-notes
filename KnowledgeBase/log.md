@@ -12,6 +12,43 @@ date: 2026-04-17
 
 ---
 
+## [2026-04-17] lint | 首次全库健康检查
+
+### 检查结果
+
+| 检查项 | 结果 |
+|--------|------|
+| 总 wikilink 数 | 609 个唯一目标 |
+| 有效链接 | 370 个（61%） |
+| 孤儿页面 | 0 个 ✅ |
+| 错误分类链接 | 5 个 → 已修复 ✅ |
+| 缺失 concepts/ 页面 | 69 个（红链） |
+| 缺失 entities/ 页面 | 167 个（红链） |
+| 原始来源断链 | 0 个 ✅ |
+
+### 修复操作
+
+1. **修复 5 个错误分类链接**：ArgoCD/Helm/Ingress/Istio/Kubernetes 从 `concepts/` 改为 `entities/`
+   - `maintenance/naming-normalization.md`（4 处）
+   - `sources/k8s-networking-service-mesh-batch-summary.md`（1 处）
+
+2. **创建 6 个高频引用的 stub 实体页**（引用 ≥5 次）：
+   - `entities/Harbor.md`（8 次引用）
+   - `entities/Redis.md`（6 次引用）
+   - `entities/GitLab.md`（5 次引用）
+   - `entities/Kafka.md`（5 次引用）
+   - `entities/Loki.md`（5 次引用）
+   - `entities/MySQL.md`（5 次引用）
+
+### 剩余红链说明
+
+236 个红链（引用了尚未创建独立页面的概念/实体）属于正常现象：
+- 批量摘要中对工具和概念的引用超出了当前实体页覆盖范围
+- Obsidian 原生支持红链，可在后续 Ingest 中按需创建页面
+- 建议：引用 ≥3 次的概念/实体在后续维护中逐步补建页面
+
+---
+
 ## [2026-04-17] ingest | 全库剩余领域摄入（103 篇）
 
 - **摄入来源**：Python(27) + Linux-Shell(24) + AI-OpenClaw(9) + Go(9) + HPC(7) + CloudComputing(7) + GPU-DeepLearning(4) + Database(3) + Middlewares(3) + OS(3) + Networking(2) + IaC(2) + Git(2) + C++(1) + SoftwareTesting(2)
