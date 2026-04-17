@@ -27,13 +27,13 @@ date: 2026-04-16
 - `k8s-networking-service-mesh/`（7 篇）— Istio、Ingress-Nginx、NetworkPolicy
 
 **代表性文章：**
-- [k8s基础-架构-组件-资源](../../Docker-Kubernetes/k8s-basic-resources/k8s基础-架构-组件-资源.md) — K8s 架构总览
-- [安装k8s-1.35-基于rockylinux10-最新步骤](../../Docker-Kubernetes/k8s-installation-management/latest-version/安装k8s-1.35-基于rockylinux10-最新步骤.md) — 最新版安装
-- [helm部署prometheus-stack全家桶](../../Docker-Kubernetes/k8s-monitoring-logging/helm部署prometheus-stack全家桶.md) — 可观测性全家桶
-- [ArgoCD基础](../../Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD基础.md) — GitOps 核心
-- [k8s精细化流量管理-istio](../../Docker-Kubernetes/k8s-networking-service-mesh/k8s精细化流量管理-istio.md) — 服务网格
+- [[Docker-Kubernetes/k8s-basic-resources/k8s基础-架构-组件-资源|k8s基础-架构-组件-资源]] — K8s 架构总览
+- [[Docker-Kubernetes/k8s-installation-management/latest-version/安装k8s-1.35-基于rockylinux10-最新步骤|安装k8s-1.35-基于rockylinux10-最新步骤]] — 最新版安装
+- [[Docker-Kubernetes/k8s-monitoring-logging/helm部署prometheus-stack全家桶|helm部署prometheus-stack全家桶]] — 可观测性全家桶
+- [[Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD基础|ArgoCD基础]] — GitOps 核心
+- [[Docker-Kubernetes/k8s-networking-service-mesh/k8s精细化流量管理-istio|k8s精细化流量管理-istio]] — 服务网格
 
-**关联领域：** [云原生](../../CloudComputing/云原生.md)、[2_AKS-basics](../../Azure/2_AKS-basics.md)、[python-kubernetes-module](../../Python/python-运维开发/python-kubernetes-module.md)、[GPU-basics](../../GPU-DeepLearning/GPU-basics.md)
+**关联领域：** [[CloudComputing/云原生|云原生]]、[[Azure/2_AKS-basics|2_AKS-basics]]、[[Python/python-运维开发/python-kubernetes-module|python-kubernetes-module]]、[[GPU-DeepLearning/GPU-basics|GPU-basics]]
 
 ---
 
@@ -48,11 +48,11 @@ date: 2026-04-16
 - `python-数据分析-AI大模型/`（2 篇）— Excel/Word 处理、机器学习
 
 **代表性文章：**
-- [python-Linux-operation](../../Python/python-运维开发/python-Linux-operation.md) — Linux 运维核心模块（1737 行）
-- [python-kubernetes-module](../../Python/python-运维开发/python-kubernetes-module.md) — K8s API 自动化
-- [python-Web框架Django](../../Python/python-网络编程-前端/python-Web框架Django.md) — Django 全栈
+- [[Python/python-运维开发/python-Linux-operation|python-Linux-operation]] — Linux 运维核心模块（1737 行）
+- [[Python/python-运维开发/python-kubernetes-module|python-kubernetes-module]] — K8s API 自动化
+- [[Python/python-网络编程-前端/python-Web框架Django|python-Web框架Django]] — Django 全栈
 
-**关联领域：** [Python调用k8s-api实现资源管理](../../Docker-Kubernetes/k8s-basic-resources/Python调用k8s-api实现资源管理.md)、[MySQL入门](../../Database/MySQL入门.md)、[shell-scripts](../../Linux-Shell/shell-scripts.md)
+**关联领域：** [[Docker-Kubernetes/k8s-basic-resources/Python调用k8s-api实现资源管理|Python调用k8s-api实现资源管理]]、[[Database/MySQL入门|MySQL入门]]、[[Linux-Shell/shell-scripts|shell-scripts]]
 
 ---
 
@@ -61,10 +61,10 @@ date: 2026-04-16
 **覆盖范围：** Linux 系统管理、Shell 脚本、SSH、网络配置、Ubuntu 运维、开发环境搭建。
 
 **代表性文章：**
-- [Linux-learning-notes](../../Linux-Shell/Linux-learning-notes.md) — Linux 全面学习笔记（2688 行）
-- [shell-scripts](../../Linux-Shell/shell-scripts.md) — Shell 脚本实战
-- [ansible安装-rockylinux8](../../Linux-Shell/ansible安装-rockylinux8.md) — Ansible 自动化
-- [开源堡垒机jumpserver部署](../../Linux-Shell/开源堡垒机jumpserver部署.md) — 安全运维
+- [[Linux-Shell/Linux-learning-notes|Linux-learning-notes]] — Linux 全面学习笔记（2688 行）
+- [[Linux-Shell/shell-scripts|shell-scripts]] — Shell 脚本实战
+- [[Linux-Shell/ansible安装-rockylinux8|ansible安装-rockylinux8]] — Ansible 自动化
+- [[Linux-Shell/开源堡垒机jumpserver部署|开源堡垒机jumpserver部署]] — 安全运维
 
 **关联领域：** 所有技术领域的基础底盘，特别是 Docker-Kubernetes、HPC、Python
 
@@ -75,12 +75,12 @@ date: 2026-04-16
 **覆盖范围：** Azure VM/VMSS、AKS、DevOps、存储、网络、安全策略、排障工具链。
 
 **代表性文章：**
-- [2_AKS-basics](../../Azure/2_AKS-basics.md) — AKS 基础
-- [3_AKS-workload-identity](../../Azure/3_AKS-workload-identity.md) — Workload Identity
-- [8_Azure-devops-basics](../../Azure/8_Azure-devops-basics.md) — Azure DevOps
-- [Kusto Query](../../Azure/Kusto%20Query.md) — KQL 查询语言（2208 行）
+- [[Azure/2_AKS-basics|2_AKS-basics]] — AKS 基础
+- [[Azure/3_AKS-workload-identity|3_AKS-workload-identity]] — Workload Identity
+- [[Azure/8_Azure-devops-basics|8_Azure-devops-basics]] — Azure DevOps
+- [[Azure/Kusto Query|Kusto Query]] — KQL 查询语言（2208 行）
 
-**关联领域：** [ECS](../../Aliyun/计算/ECS.md)（对标 VM）、[k8s基础-架构-组件-资源](../../Docker-Kubernetes/k8s-basic-resources/k8s基础-架构-组件-资源.md)
+**关联领域：** [[Aliyun/计算/ECS|ECS]]（对标 VM）、[[Docker-Kubernetes/k8s-basic-resources/k8s基础-架构-组件-资源|k8s基础-架构-组件-资源]]
 
 ---
 
