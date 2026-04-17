@@ -16,8 +16,8 @@ date: 2026-04-16
 ---
 
 ## 核心概念
-- [Python运维开发](../concepts/Python运维开发.md)
-- [自动化运维](../concepts/自动化运维.md)
+- [[KnowledgeBase/concepts/Python运维开发|Python运维开发]]
+- [[KnowledgeBase/concepts/自动化运维|自动化运维]]
 
 ---
 
