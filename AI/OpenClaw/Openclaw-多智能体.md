@@ -1584,6 +1584,7 @@ K8s专家智能体，只处理K8s相关工作，不处理任何Linux、容器方
 
 ### linux初始化skills
 这里以rockylinux的命令为例：
+→ 生成的 Skill 文件：[[AI/agents/linux/skills/rocky-linux10-init/SKILL.md]]
 
 #### Prompt
 ```text
