@@ -1614,6 +1614,8 @@ K8s专家智能体，只处理K8s相关工作，不处理任何Linux、容器方
 
 ### 容器运行时安装Skill
 
+→ 生成的 Skill 文件：[[AI/agents/container/skills/docker-runtime-install/SKILL.md]]
+
 #### Prompt
 ```text
 你是一名资深的智能体 skill 开发工程师，请调用Skill-creator这个skill，请帮我开发一个关于 docker 安装的 skill。这个skill 做的事情如下：当用户提到安装容器运行时时，根据给定的一些机器，帮忙在这些机器上安装 docker和containerd。
@@ -1641,6 +1643,8 @@ ClaWHub 上有一个可以直接用：[docker-essentials](https://clawhub.ai/arn
 
 ### k8s安装skill
 
+→ 生成的 Skill 文件：[[AI/agents/k8s/skills/k8s-cluster-install/SKILL.md]]
+
 #### Prompt
 ```text
 你是一名资深的智能体 skill 开发工程师，请调用Skill-creator这个skill，请帮我开发一个关于 K8s 安装的 skill。这个 skill做的事情如下：当用户提到安装k8s根据给定的一些机器，帮忙在这些机器上安装 K8s 集群。
@@ -1665,6 +1669,8 @@ ClaWHub 上有一个可以直接用：[docker-essentials](https://clawhub.ai/arn
 ```
 
 ### 任务编排skill
+
+→ 生成的 Skill 文件：[[AI/agents/aiops/skills/k8s-install-orchestrator/SKILL.md]]
 
 #### Prompt
 ```text
