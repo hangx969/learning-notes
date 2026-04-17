@@ -31,7 +31,7 @@ date: 2026-04-16
 3. [[AI/ClaudeCode/Skills|Skills]] — Skills 机制
 4. [[AI/ClaudeCode/Plugin|Plugin]] — 插件扩展
 5. [[AI/ClaudeCode/MCP|MCP]] — MCP 协议（核心）
-6. [[AI/ClaudeCode/Subagents|Subagents]] — 子智能体
+6. [[AI/ClaudeCode/多智能体协作-Subagents与Agent-Teams|多智能体协作]] — Subagents 与 Agent Teams
 7. [[AI/ClaudeCode/obsidian-claude-搭建个人知识库|obsidian-claude-搭建个人知识库]] — 实战：搭建知识库
 
 ### OpenClaw 路径
@@ -60,7 +60,7 @@ date: 2026-04-16
 | [[AI/ClaudeCode/Plugin|Plugin]] | 插件系统 | 扩展能力 |
 | [[AI/ClaudeCode/Skills|Skills]] | Skills | 可复用技能包 |
 | [[AI/ClaudeCode/Slash Command|Slash Command]] | 斜杠命令 | 快捷操作 |
-| [[AI/ClaudeCode/Subagents|Subagents]] | 子智能体 | 并行任务、后台 agent |
+| [[AI/ClaudeCode/多智能体协作-Subagents与Agent-Teams|多智能体协作]] | Subagents 与 Agent Teams | 并行任务、团队协作 |
 | [[AI/ClaudeCode/obsidian-claude-搭建个人知识库|obsidian-claude-搭建个人知识库]] | 知识库搭建 | Obsidian + Claude Code 集成 |
 
 ### OpenClaw（7 篇）

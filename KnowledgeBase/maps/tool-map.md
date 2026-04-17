@@ -23,7 +23,7 @@ date: 2026-04-16
 - [[AI/ClaudeCode/Plugin|Plugin]] — 插件系统
 - [[AI/ClaudeCode/Skills|Skills]] — Skills 机制
 - [[AI/ClaudeCode/Slash Command|Slash Command]] — 斜杠命令
-- [[AI/ClaudeCode/Subagents|Subagents]] — 子智能体
+- [[AI/ClaudeCode/多智能体协作-Subagents与Agent-Teams|多智能体协作]] — Subagents 与 Agent Teams
 - [[AI/ClaudeCode/obsidian-claude-搭建个人知识库|obsidian-claude-搭建个人知识库]] — 搭建知识库方法论
 
 **概念页：** [[KnowledgeBase/entities/Claude-Code|Claude-Code]]

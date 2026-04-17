@@ -35,14 +35,14 @@ ClaudeCode基础指南
     ├── Skills (可复用技能包)
     ├── Plugin (插件扩展)
     ├── MCP (模型上下文协议) ← 核心
-    ├── Subagents (子智能体)
+    ├── 多智能体协作 (Subagents + Agent Teams)
     └── obsidian-claude-搭建个人知识库 (实战)
 ```
 
 **核心文章：**
 - [[AI/ClaudeCode/ClaudeCode基础指南|ClaudeCode基础指南]] — 从零开始
 - [[AI/ClaudeCode/MCP|MCP]] — ==MCP 是 Claude Code 连接外部世界的桥梁==
-- [[AI/ClaudeCode/Subagents|Subagents]] — 并行任务处理
+- [[AI/ClaudeCode/多智能体协作-Subagents与Agent-Teams|多智能体协作]] — Subagents + Agent Teams
 
 ---
 
@@ -70,7 +70,7 @@ OpenClaw-基础-安装
 | 概念 | Claude Code | OpenClaw |
 |------|-------------|----------|
 | **Skills** | [[AI/ClaudeCode/Skills|Skills]] | [[AI/OpenClaw/OpenClaw-Skills-插件|OpenClaw-Skills-插件]] |
-| **Agent/多智能体** | [[AI/ClaudeCode/Subagents|Subagents]] | [[AI/OpenClaw/Openclaw-多智能体|Openclaw-多智能体]] |
+| **Agent/多智能体** | [[AI/ClaudeCode/多智能体协作-Subagents与Agent-Teams|多智能体协作]] | [[AI/OpenClaw/Openclaw-多智能体|Openclaw-多智能体]] |
 | **扩展接口** | [[AI/ClaudeCode/MCP|MCP]] + [[AI/ClaudeCode/Plugin|Plugin]] | [[AI/OpenClaw/OpenClaw-Channels|OpenClaw-Channels]] |
 
 ---

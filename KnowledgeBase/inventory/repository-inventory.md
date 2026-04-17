@@ -27,7 +27,7 @@ date: 2026-04-16
 | [[AI/ClaudeCode/Plugin|Plugin]] | Claude Code Plugin | ✅ | ❌ |
 | [[AI/ClaudeCode/Skills|Skills]] | Claude Code Skills | ✅ | ❌ |
 | [[AI/ClaudeCode/Slash Command|Slash Command]] | Claude Code Slash Command | ✅ | ❌ |
-| [[AI/ClaudeCode/Subagents|Subagents]] | Claude Code SubAgents | ✅ | ❌ |
+| [[AI/ClaudeCode/多智能体协作-Subagents与Agent-Teams|多智能体协作]] | Subagents 与 Agent Teams | ✅ | ❌ |
 | [[AI/ClaudeCode/obsidian-claude-搭建个人知识库|obsidian-claude-搭建个人知识库]] | Obsidian + Claude Code 搭建 AI 知识库 | ✅ | ✅ |
 
 ### GithubCopilot/（1 篇）

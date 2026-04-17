@@ -12,6 +12,15 @@ date: 2026-04-17
 
 ---
 
+## [2026-04-17] restructure | Subagents + Agent Teams 合并为一篇
+
+- **操作**：将 `AI/ClaudeCode/Subagents.md` 和 `AI/ClaudeCode/Agent Teams.md` 合并为 `AI/ClaudeCode/多智能体协作-Subagents与Agent-Teams.md`
+- **删除文件**：`Subagents.md`、`Agent Teams.md`、`sources/Subagents-summary.md`、`sources/AgentTeams-summary.md`
+- **新建文件**：`sources/多智能体协作-summary.md`（合并后的摘要页）
+- **引用更新**：`entities/Claude-Code.md`、`INDEX.md`、`maps/tool-map.md`、`maps/ai-workflow-map.md`、`maps/claude-code-openclaw-map.md`、`inventory/repository-inventory.md` 中的所有链接已更新
+
+---
+
 ## [2026-04-17] ingest | Agent Teams 文档摄入
 
 - **摄入来源**：`AI/ClaudeCode/Agent Teams.md`（基于官方文档 https://code.claude.com/docs/en/agent-teams 撰写的中文使用指南）
