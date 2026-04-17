@@ -12,6 +12,55 @@ date: 2026-04-17
 
 ---
 
+## [2026-04-17] ingest | Docker-Kubernetes 全量摄入（145 篇）
+
+- **摄入来源**：`Docker-Kubernetes/` 全部子目录，共 145 篇原始文档
+- **来源摘要页（10 篇新建，按子目录批量摘要）**：
+  - `sources/docker-batch-summary.md`（12 篇）
+  - `sources/k8s-basic-resources-batch-summary.md`（20 篇）
+  - `sources/k8s-installation-management-batch-summary.md`（16 篇）
+  - `sources/k8s-monitoring-logging-batch-summary.md`（20 篇）
+  - `sources/k8s-CICD-batch-summary.md`（19 篇）
+  - `sources/k8s-networking-service-mesh-batch-summary.md`（7 篇）
+  - `sources/k8s-security-auth-batch-summary.md`（7 篇）
+  - `sources/k8s-scaling-storage-batch-summary.md`（7 篇）
+  - `sources/k8s-db-middleware-UI-batch-summary.md`（18 篇）
+  - `sources/k8s-misc-batch-summary.md`（18 篇：Helm/CKA-CKS/KubeBlocks/Harbor/K3S/Velero/GPU）
+- **实体页增强（9 篇重写或增强）**：
+  - `entities/Kubernetes.md`：从文章索引升级为知识编译页——核心架构、9 大子领域覆盖地图
+  - `entities/Docker.md`：补充核心功能、部署实践总结
+  - `entities/Helm.md`：补充 v3 架构、OCI 支持、Helm vs Kustomize 对比
+  - `entities/ArgoCD.md`：补充架构细节、Image Updater、GitOps 理念
+  - `entities/Jenkins.md`：补充 4 种部署方式、企业 DevOps 落地模式
+  - `entities/Prometheus.md`：补充数据模型、3 种 HA 模式、联邦架构、5 层监控体系
+  - `entities/Grafana.md`：补充统一可视化定位、LGTM 轻量级可观测性栈
+  - `entities/Istio.md`：补充数据面/控制面架构、流量管理、企业落地模式
+  - `entities/Ingress.md`：补充 hostNetwork 部署、DNS 解析链
+- **INDEX.md 更新**：Sources 区域新增 Docker-Kubernetes 10 篇批量摘要表格
+
+---
+
+## [2026-04-17] ingest | Azure 全量摄入（21 篇）
+
+- **摄入来源**：`Azure/` 目录，共 21 篇原始文档
+- **来源摘要页**：`sources/azure-batch-summary.md`
+- **实体页增强**：
+  - `entities/Azure.md`：补充 7 大服务子领域、实践亮点、知识空白
+  - `entities/AKS.md`：添加 sources 字段
+- **INDEX.md 更新**：Sources 区域新增 Azure 摘要表格
+
+---
+
+## [2026-04-17] ingest | Aliyun 全量摄入（19 篇）
+
+- **摄入来源**：`Aliyun/` 目录（计算/网络/存储/数据库/资源管理），共 19 篇原始文档
+- **来源摘要页**：`sources/aliyun-batch-summary.md`
+- **实体页增强**：
+  - `entities/Aliyun.md`：补充 5 大服务子领域、安全纵深链、与 Azure 对比视角
+- **INDEX.md 更新**：Sources 区域新增 Aliyun 摘要表格
+
+---
+
 ## [2026-04-17] ingest | AI/ClaudeCode 试点摄入（7 篇）
 
 - **摄入来源**：`AI/ClaudeCode/` 目录下 7 篇原始文档（跳过改造计划元文档）

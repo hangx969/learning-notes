@@ -81,8 +81,35 @@ date: 2026-04-17
 | [[KnowledgeBase/sources/Plugin-summary\|Plugin]] | [[AI/ClaudeCode/Plugin]] | 应用级打包容器、组成上限、团队分发实践 |
 | [[KnowledgeBase/sources/obsidian-claude-搭建个人知识库-summary\|Obsidian+Claude知识库]] | [[AI/ClaudeCode/obsidian-claude-搭建个人知识库]] | 3 种集成工具（Claudian、Skills、MCP）、知识库架构选型 |
 
+### Docker-Kubernetes（已摄入 ✅）
+
+| 页面 | 覆盖文档数 | 摘要 |
+|------|:---------:|------|
+| [[KnowledgeBase/sources/docker-batch-summary\|Docker]] | 12 | Docker 基础、GPU 配置、服务部署实战（GitLab/Prometheus/Loki 等） |
+| [[KnowledgeBase/sources/k8s-basic-resources-batch-summary\|K8s 基础资源]] | 20 | Pod/Deployment/Service/Ingress/ConfigMap/Storage/RBAC/CRD/Operator |
+| [[KnowledgeBase/sources/k8s-installation-management-batch-summary\|K8s 安装管理]] | 16 | v1.20→v1.35 安装演进、企业高可用、etcd HA、运行时迁移 |
+| [[KnowledgeBase/sources/k8s-monitoring-logging-batch-summary\|K8s 监控日志]] | 20 | Prometheus 全栈、EFK/Loki 日志、Jaeger/SkyWalking 链路追踪 |
+| [[KnowledgeBase/sources/k8s-CICD-batch-summary\|K8s CI/CD]] | 19 | Jenkins/ArgoCD/GitLab CI/Tekton/Kustomize/GitHub Actions |
+| [[KnowledgeBase/sources/k8s-networking-service-mesh-batch-summary\|K8s 网络与服务网格]] | 7 | Ingress-Nginx/External-DNS/Calico/Istio 流量管理 |
+| [[KnowledgeBase/sources/k8s-security-auth-batch-summary\|K8s 安全认证]] | 7 | Cert-Manager/External Secrets/Kyverno/OAuth2 Proxy/Trivy/SonarQube |
+| [[KnowledgeBase/sources/k8s-scaling-storage-batch-summary\|K8s 扩缩容与存储]] | 7 | HPA/VPA/KEDA/Karpenter 扩缩容 + NFS/Longhorn/Rook-Ceph 存储 |
+| [[KnowledgeBase/sources/k8s-db-middleware-UI-batch-summary\|K8s 中间件与 UI]] | 18 | Redis/MySQL/PostgreSQL/Kafka 部署 + Dashboard/Rancher/k9s 管理工具 |
+| [[KnowledgeBase/sources/k8s-misc-batch-summary\|K8s 杂项]] | 18 | Helm 工具链/CKA-CKS/KubeBlocks/Harbor/K3S/Velero/GPU |
+
+### Azure（已摄入 ✅）
+
+| 页面 | 覆盖文档数 | 摘要 |
+|------|:---------:|------|
+| [[KnowledgeBase/sources/azure-batch-summary\|Azure]] | 21 | VM/VMSS、AKS 全栈、网络/存储、DevOps Pipeline、Policy 治理、诊断工具链 |
+
+### Aliyun（已摄入 ✅）
+
+| 页面 | 覆盖文档数 | 摘要 |
+|------|:---------:|------|
+| [[KnowledgeBase/sources/aliyun-batch-summary\|Aliyun]] | 19 | ECS/ESS 计算、VPC/SLB/WAF/DDoS 网络安全纵深、OSS 存储、RDS/DTS 数据库、Landing Zone |
+
 > [!note] 待摄入领域
-> Docker-Kubernetes（145 篇）、Azure（21 篇）、Aliyun（19 篇）、Python（27 篇）等。
+> Python（27 篇）、Linux-Shell（24 篇）、Go（9 篇）、HPC（7 篇）、CloudComputing（7 篇）等。
 
 ---
 
