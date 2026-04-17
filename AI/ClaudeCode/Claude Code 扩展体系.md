@@ -869,7 +869,7 @@ Plugin（插件）是应用级打包容器，用来打包其他四个工具。
 
 ## 开源 Plugin 推荐
 
-### andrej-karpathy-skills（⭐ 46.5K）
+### andrej-karpathy-skills
 
 > [!info] 仓库
 > [forrestchang/andrej-karpathy-skills](https://github.com/forrestchang/andrej-karpathy-skills) — 仅 2.3K 的 CLAUDE.md 文件，GitHub 全球热榜，46.5K 星。
