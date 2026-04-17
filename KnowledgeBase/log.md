@@ -12,6 +12,25 @@ date: 2026-04-17
 
 ---
 
+## [2026-04-17] ingest | 全库剩余领域摄入（103 篇）
+
+- **摄入来源**：Python(27) + Linux-Shell(24) + AI-OpenClaw(9) + Go(9) + HPC(7) + CloudComputing(7) + GPU-DeepLearning(4) + Database(3) + Middlewares(3) + OS(3) + Networking(2) + IaC(2) + Git(2) + C++(1) + SoftwareTesting(2)
+- **来源摘要页（6 篇新建）**：
+  - `sources/python-batch-summary.md`（27 篇）
+  - `sources/linux-shell-batch-summary.md`（24 篇）
+  - `sources/ai-openclaw-misc-batch-summary.md`（9 篇：OpenClaw + Copilot + 提示词）
+  - `sources/go-batch-summary.md`（9 篇）
+  - `sources/hpc-cloud-gpu-batch-summary.md`（18 篇：HPC + CloudComputing + GPU）
+  - `sources/misc-domains-batch-summary.md`（18 篇：Database/Middlewares/OS/Networking/IaC/Git/C++/SoftwareTesting）
+- **实体页增强（3 篇）**：
+  - `entities/OpenClaw.md`：补充 Skills 生态、Channels、AIOps、多智能体、CoPaw 对比
+  - `entities/Terraform.md`：补充三阶段工作流、核心文件结构、ARM Template 对比
+  - `entities/Slurm.md`：补充集群架构、4 种安装方式、GPU GRES 调度、Prometheus 监控集成
+- **INDEX.md 更新**：Sources 区域新增 6 个领域摘要表格，标记"全部领域已摄入完成"
+- 🎉 **里程碑**：全库 17 个领域、~350 篇原始文档已全部摄入 wiki 编译层
+
+---
+
 ## [2026-04-17] ingest | Docker-Kubernetes 全量摄入（145 篇）
 
 - **摄入来源**：`Docker-Kubernetes/` 全部子目录，共 145 篇原始文档

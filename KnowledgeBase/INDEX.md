@@ -108,8 +108,44 @@ date: 2026-04-17
 |------|:---------:|------|
 | [[KnowledgeBase/sources/aliyun-batch-summary\|Aliyun]] | 19 | ECS/ESS 计算、VPC/SLB/WAF/DDoS 网络安全纵深、OSS 存储、RDS/DTS 数据库、Landing Zone |
 
-> [!note] 待摄入领域
-> Python（27 篇）、Linux-Shell（24 篇）、Go（9 篇）、HPC（7 篇）、CloudComputing（7 篇）等。
+### Python（已摄入 ✅）
+
+| 页面 | 覆盖文档数 | 摘要 |
+|------|:---------:|------|
+| [[KnowledgeBase/sources/python-batch-summary\|Python]] | 27 | 基础语法、运维开发（SSH/subprocess/K8s API）、网络编程/前端、数据分析/AI、项目实战 |
+
+### Linux-Shell（已摄入 ✅）
+
+| 页面 | 覆盖文档数 | 摘要 |
+|------|:---------:|------|
+| [[KnowledgeBase/sources/linux-shell-batch-summary\|Linux-Shell]] | 24 | 系统管理、Shell 脚本、SSH/网络、存储/LVM/NFS、zsh/vim/rsync 工具链 |
+
+### AI - OpenClaw 与其他（已摄入 ✅）
+
+| 页面 | 覆盖文档数 | 摘要 |
+|------|:---------:|------|
+| [[KnowledgeBase/sources/ai-openclaw-misc-batch-summary\|AI-OpenClaw]] | 9 | OpenClaw 全栈（安装/Skills/Channels/AIOps/多智能体）、Copilot CLI、提示词工程 |
+
+### Go（已摄入 ✅）
+
+| 页面 | 覆盖文档数 | 摘要 |
+|------|:---------:|------|
+| [[KnowledgeBase/sources/go-batch-summary\|Go]] | 9 | 环境配置→变量→控制流→函数→数据结构→OOP→错误处理→云原生选型 |
+
+### HPC / CloudComputing / GPU（已摄入 ✅）
+
+| 页面 | 覆盖文档数 | 摘要 |
+|------|:---------:|------|
+| [[KnowledgeBase/sources/hpc-cloud-gpu-batch-summary\|HPC-Cloud-GPU]] | 18 | Slurm 调度/PBS/GPU 管理、云原生/微服务/ServiceMesh、GPU 硬件/CUDA/驱动 |
+
+### 杂项领域（已摄入 ✅）
+
+| 页面 | 覆盖文档数 | 摘要 |
+|------|:---------:|------|
+| [[KnowledgeBase/sources/misc-domains-batch-summary\|杂项]] | 18 | Database(MySQL/Redis/MongoDB) + Middlewares(Kafka/RabbitMQ/RocketMQ) + OS + Networking + IaC(Terraform) + Git + C++ + SoftwareTesting |
+
+> [!success] 全部领域已摄入完成
+> 共 17 个领域、~350 篇原始文档已全部摄入 wiki 编译层。
 
 ---
 
