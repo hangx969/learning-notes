@@ -16,36 +16,36 @@ date: 2026-04-16
 ---
 
 ## 核心概念
-- [Claude-Code](../concepts/Claude-Code.md) — AI 编码与知识管理助手
-- [OpenClaw](../concepts/OpenClaw.md) — AI 多智能体运维平台
-- [MCP](../concepts/MCP.md) — Model Context Protocol
-- [Obsidian](../concepts/Obsidian.md) — 知识管理工具
+- [[KnowledgeBase/entities/Claude-Code|Claude-Code]] — AI 编码与知识管理助手
+- [[KnowledgeBase/entities/OpenClaw|OpenClaw]] — AI 多智能体运维平台
+- [[KnowledgeBase/entities/MCP|MCP]] — Model Context Protocol
+- [[KnowledgeBase/entities/Obsidian|Obsidian]] — 知识管理工具
 
 ---
 
 ## 📖 推荐阅读顺序
 
 ### Claude Code 路径
-1. [ClaudeCode基础指南](../../AI/ClaudeCode/ClaudeCode基础指南.md) — 入门必读
-2. [Slash Command](../../AI/ClaudeCode/Slash%20Command.md) — 命令系统
-3. [Skills](../../AI/ClaudeCode/Skills.md) — Skills 机制
-4. [Plugin](../../AI/ClaudeCode/Plugin.md) — 插件扩展
-5. [MCP](../../AI/ClaudeCode/MCP.md) — MCP 协议（核心）
-6. [Subagents](../../AI/ClaudeCode/Subagents.md) — 子智能体
-7. [obsidian-claude-搭建个人知识库](../../AI/ClaudeCode/obsidian-claude-搭建个人知识库.md) — 实战：搭建知识库
+1. [[AI/ClaudeCode/ClaudeCode基础指南|ClaudeCode基础指南]] — 入门必读
+2. [[AI/ClaudeCode/Slash Command|Slash Command]] — 命令系统
+3. [[AI/ClaudeCode/Skills|Skills]] — Skills 机制
+4. [[AI/ClaudeCode/Plugin|Plugin]] — 插件扩展
+5. [[AI/ClaudeCode/MCP|MCP]] — MCP 协议（核心）
+6. [[AI/ClaudeCode/Subagents|Subagents]] — 子智能体
+7. [[AI/ClaudeCode/obsidian-claude-搭建个人知识库|obsidian-claude-搭建个人知识库]] — 实战：搭建知识库
 
 ### OpenClaw 路径
-1. [OpenClaw-基础-安装](../../AI/OpenClaw/OpenClaw-基础-安装.md) — 入门安装
-2. [OpenClaw-Channels](../../AI/OpenClaw/OpenClaw-Channels.md) — Channel 配置
-3. [OpenClaw-Skills-插件](../../AI/OpenClaw/OpenClaw-Skills-插件.md) — Skills 插件开发
-4. [CoPaw](../../AI/OpenClaw/CoPaw.md) — CoPaw 工具
-5. [Openclaw-AIOps](../../AI/OpenClaw/Openclaw-AIOps.md) — AIOps 运维场景
-6. [Openclaw-多智能体](../../AI/OpenClaw/Openclaw-多智能体.md) — 多智能体架构（2974 行，全库最大文档）
-7. [Ubuntu-2510-Setup-Guide](../../AI/OpenClaw/Ubuntu-2510-Setup-Guide.md) — Ubuntu 环境搭建
+1. [[AI/OpenClaw/OpenClaw-基础-安装|OpenClaw-基础-安装]] — 入门安装
+2. [[AI/OpenClaw/OpenClaw-Channels|OpenClaw-Channels]] — Channel 配置
+3. [[AI/OpenClaw/OpenClaw-Skills-插件|OpenClaw-Skills-插件]] — Skills 插件开发
+4. [[AI/OpenClaw/CoPaw|CoPaw]] — CoPaw 工具
+5. [[AI/OpenClaw/Openclaw-AIOps|Openclaw-AIOps]] — AIOps 运维场景
+6. [[AI/OpenClaw/Openclaw-多智能体|Openclaw-多智能体]] — 多智能体架构（2974 行，全库最大文档）
+7. [[AI/OpenClaw/Ubuntu-2510-Setup-Guide|Ubuntu-2510-Setup-Guide]] — Ubuntu 环境搭建
 
 ### 补充
-- [Copilot CLI](../../AI/GithubCopilot/Copilot%20CLI.md) — GitHub Copilot CLI
-- [提示词](../../AI/提示词.md) — 提示词工程
+- [[AI/GithubCopilot/Copilot CLI|Copilot CLI]] — GitHub Copilot CLI
+- [[AI/提示词|提示词]] — 提示词工程
 
 ---
 
@@ -55,36 +55,36 @@ date: 2026-04-16
 
 | 文章 | 主题 | 关键词 |
 |------|------|--------|
-| [ClaudeCode基础指南](../../AI/ClaudeCode/ClaudeCode基础指南.md) | 全面指南 | 安装、配置、使用场景 |
-| [MCP](../../AI/ClaudeCode/MCP.md) | MCP 协议 | 工具连接、外部数据源 |
-| [Plugin](../../AI/ClaudeCode/Plugin.md) | 插件系统 | 扩展能力 |
-| [Skills](../../AI/ClaudeCode/Skills.md) | Skills | 可复用技能包 |
-| [Slash Command](../../AI/ClaudeCode/Slash%20Command.md) | 斜杠命令 | 快捷操作 |
-| [Subagents](../../AI/ClaudeCode/Subagents.md) | 子智能体 | 并行任务、后台 agent |
-| [obsidian-claude-搭建个人知识库](../../AI/ClaudeCode/obsidian-claude-搭建个人知识库.md) | 知识库搭建 | Obsidian + Claude Code 集成 |
+| [[AI/ClaudeCode/ClaudeCode基础指南|ClaudeCode基础指南]] | 全面指南 | 安装、配置、使用场景 |
+| [[AI/ClaudeCode/MCP|MCP]] | MCP 协议 | 工具连接、外部数据源 |
+| [[AI/ClaudeCode/Plugin|Plugin]] | 插件系统 | 扩展能力 |
+| [[AI/ClaudeCode/Skills|Skills]] | Skills | 可复用技能包 |
+| [[AI/ClaudeCode/Slash Command|Slash Command]] | 斜杠命令 | 快捷操作 |
+| [[AI/ClaudeCode/Subagents|Subagents]] | 子智能体 | 并行任务、后台 agent |
+| [[AI/ClaudeCode/obsidian-claude-搭建个人知识库|obsidian-claude-搭建个人知识库]] | 知识库搭建 | Obsidian + Claude Code 集成 |
 
 ### OpenClaw（7 篇）
 
 | 文章 | 主题 | 关键词 |
 |------|------|--------|
-| [OpenClaw-基础-安装](../../AI/OpenClaw/OpenClaw-基础-安装.md) | 基础安装 | 环境搭建、配置 |
-| [OpenClaw-Channels](../../AI/OpenClaw/OpenClaw-Channels.md) | Channel | 通信通道、集成 |
-| [OpenClaw-Skills-插件](../../AI/OpenClaw/OpenClaw-Skills-插件.md) | Skills 插件 | 自定义能力 |
-| [CoPaw](../../AI/OpenClaw/CoPaw.md) | CoPaw | 交互式工具 |
-| [Openclaw-AIOps](../../AI/OpenClaw/Openclaw-AIOps.md) | AIOps | 智能运维 |
-| [Openclaw-多智能体](../../AI/OpenClaw/Openclaw-多智能体.md) | 多智能体 | Agent 协作、工作流编排 |
-| [Ubuntu-2510-Setup-Guide](../../AI/OpenClaw/Ubuntu-2510-Setup-Guide.md) | Ubuntu 配置 | 开发环境 |
+| [[AI/OpenClaw/OpenClaw-基础-安装|OpenClaw-基础-安装]] | 基础安装 | 环境搭建、配置 |
+| [[AI/OpenClaw/OpenClaw-Channels|OpenClaw-Channels]] | Channel | 通信通道、集成 |
+| [[AI/OpenClaw/OpenClaw-Skills-插件|OpenClaw-Skills-插件]] | Skills 插件 | 自定义能力 |
+| [[AI/OpenClaw/CoPaw|CoPaw]] | CoPaw | 交互式工具 |
+| [[AI/OpenClaw/Openclaw-AIOps|Openclaw-AIOps]] | AIOps | 智能运维 |
+| [[AI/OpenClaw/Openclaw-多智能体|Openclaw-多智能体]] | 多智能体 | Agent 协作、工作流编排 |
+| [[AI/OpenClaw/Ubuntu-2510-Setup-Guide|Ubuntu-2510-Setup-Guide]] | Ubuntu 配置 | 开发环境 |
 
 ---
 
 ## 🔗 与其他领域的连接
 
-- **K8s 自动化：** AI 辅助 K8s 资源管理 → [python-kubernetes-module](../../Python/python-运维开发/python-kubernetes-module.md)
-- **监控告警：** AI 辅助告警分析 → [Prometheus基础](../../Docker-Kubernetes/k8s-monitoring-logging/Prometheus基础.md)
+- **K8s 自动化：** AI 辅助 K8s 资源管理 → [[Python/python-运维开发/python-kubernetes-module|python-kubernetes-module]]
+- **监控告警：** AI 辅助告警分析 → [[Docker-Kubernetes/k8s-monitoring-logging/Prometheus基础|Prometheus基础]]
 - **知识管理：** Obsidian 知识库 → 本知识库（KnowledgeBase/）
-- **日常运维：** AI 辅助 Linux 运维 → [python-Linux-operation](../../Python/python-运维开发/python-Linux-operation.md)
+- **日常运维：** AI 辅助 Linux 运维 → [[Python/python-运维开发/python-Linux-operation|python-Linux-operation]]
 
 ---
 
 ## 🛠️ 相关工具
-[Claude-Code](../concepts/Claude-Code.md)、[OpenClaw](../concepts/OpenClaw.md)、[MCP](../concepts/MCP.md)、[Obsidian](../concepts/Obsidian.md)
+[[KnowledgeBase/entities/Claude-Code|Claude-Code]]、[[KnowledgeBase/entities/OpenClaw|OpenClaw]]、[[KnowledgeBase/entities/MCP|MCP]]、[[KnowledgeBase/entities/Obsidian|Obsidian]]

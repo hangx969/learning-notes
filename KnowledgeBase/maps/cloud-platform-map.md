@@ -16,9 +16,9 @@ date: 2026-04-16
 ---
 
 ## 核心概念
-- [Aliyun](../concepts/Aliyun.md)
-- [Azure](../concepts/Azure.md)
-- [AKS](../concepts/AKS.md)
+- [[KnowledgeBase/entities/Aliyun|Aliyun]]
+- [[KnowledgeBase/entities/Azure|Azure]]
+- [[KnowledgeBase/entities/AKS|AKS]]
 
 ---
 

@@ -40,9 +40,9 @@ ClaudeCode基础指南
 ```
 
 **核心文章：**
-- [ClaudeCode基础指南](../../AI/ClaudeCode/ClaudeCode基础指南.md) — 从零开始
-- [MCP](../../AI/ClaudeCode/MCP.md) — ==MCP 是 Claude Code 连接外部世界的桥梁==
-- [Subagents](../../AI/ClaudeCode/Subagents.md) — 并行任务处理
+- [[AI/ClaudeCode/ClaudeCode基础指南|ClaudeCode基础指南]] — 从零开始
+- [[AI/ClaudeCode/MCP|MCP]] — ==MCP 是 Claude Code 连接外部世界的桥梁==
+- [[AI/ClaudeCode/Subagents|Subagents]] — 并行任务处理
 
 ---
 
@@ -59,9 +59,9 @@ OpenClaw-基础-安装
 ```
 
 **核心文章：**
-- [OpenClaw-基础-安装](../../AI/OpenClaw/OpenClaw-基础-安装.md) — 从零开始
-- [Openclaw-多智能体](../../AI/OpenClaw/Openclaw-多智能体.md) — ==多智能体是 OpenClaw 的核心架构==（2974 行）
-- [Openclaw-AIOps](../../AI/OpenClaw/Openclaw-AIOps.md) — AIOps 运维落地
+- [[AI/OpenClaw/OpenClaw-基础-安装|OpenClaw-基础-安装]] — 从零开始
+- [[AI/OpenClaw/Openclaw-多智能体|Openclaw-多智能体]] — ==多智能体是 OpenClaw 的核心架构==（2974 行）
+- [[AI/OpenClaw/Openclaw-AIOps|Openclaw-AIOps]] — AIOps 运维落地
 
 ---
 
@@ -69,9 +69,9 @@ OpenClaw-基础-安装
 
 | 概念 | Claude Code | OpenClaw |
 |------|-------------|----------|
-| **Skills** | [Skills](../../AI/ClaudeCode/Skills.md) | [OpenClaw-Skills-插件](../../AI/OpenClaw/OpenClaw-Skills-插件.md) |
-| **Agent/多智能体** | [Subagents](../../AI/ClaudeCode/Subagents.md) | [Openclaw-多智能体](../../AI/OpenClaw/Openclaw-多智能体.md) |
-| **扩展接口** | [MCP](../../AI/ClaudeCode/MCP.md) + [Plugin](../../AI/ClaudeCode/Plugin.md) | [OpenClaw-Channels](../../AI/OpenClaw/OpenClaw-Channels.md) |
+| **Skills** | [[AI/ClaudeCode/Skills|Skills]] | [[AI/OpenClaw/OpenClaw-Skills-插件|OpenClaw-Skills-插件]] |
+| **Agent/多智能体** | [[AI/ClaudeCode/Subagents|Subagents]] | [[AI/OpenClaw/Openclaw-多智能体|Openclaw-多智能体]] |
+| **扩展接口** | [[AI/ClaudeCode/MCP|MCP]] + [[AI/ClaudeCode/Plugin|Plugin]] | [[AI/OpenClaw/OpenClaw-Channels|OpenClaw-Channels]] |
 
 ---
 
@@ -85,8 +85,8 @@ OpenClaw-基础-安装
 ---
 
 ## 🔗 关联概念
-- [Claude-Code](../concepts/Claude-Code.md)
-- [OpenClaw](../concepts/OpenClaw.md)
-- [MCP](../concepts/MCP.md)
-- [Obsidian](../concepts/Obsidian.md)
-- [自动化运维](../concepts/自动化运维.md)
+- [[KnowledgeBase/entities/Claude-Code|Claude-Code]]
+- [[KnowledgeBase/entities/OpenClaw|OpenClaw]]
+- [[KnowledgeBase/entities/MCP|MCP]]
+- [[KnowledgeBase/entities/Obsidian|Obsidian]]
+- [[KnowledgeBase/concepts/自动化运维|自动化运维]]
