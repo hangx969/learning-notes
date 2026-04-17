@@ -23,7 +23,7 @@ date: 2026-04-16
 | **核心能力** | 代码生成/修改、MCP 工具调用、知识库构建 | AIOps、多智能体协作、Channel 集成 |
 | **扩展机制** | Skills + Plugin + MCP | Skills + Channels + CoPaw |
 | **运维场景** | 代码审查、文档整理、脚本编写 | 智能告警、自动修复、运维编排 |
-| **文档量** | 7 篇 | 7 篇 |
+| **文档量** | 5 篇（MCP/Skills/SlashCmd/Plugin 已合并） | 7 篇 |
 
 ---
 
@@ -31,17 +31,14 @@ date: 2026-04-16
 
 ```
 ClaudeCode基础指南
-    ├── Slash Command (快捷命令)
-    ├── Skills (可复用技能包)
-    ├── Plugin (插件扩展)
-    ├── MCP (模型上下文协议) ← 核心
+    ├── Claude Code 扩展体系 (MCP + Skills + Slash Commands + Plugin)
     ├── 多智能体协作 (Subagents + Agent Teams)
     └── obsidian-claude-搭建个人知识库 (实战)
 ```
 
 **核心文章：**
 - [[AI/ClaudeCode/ClaudeCode基础指南|ClaudeCode基础指南]] — 从零开始
-- [[AI/ClaudeCode/MCP|MCP]] — ==MCP 是 Claude Code 连接外部世界的桥梁==
+- [[AI/ClaudeCode/Claude Code 扩展体系|扩展体系]] — ==MCP、Skills、Slash Commands、Plugin 四层扩展机制全解==
 - [[AI/ClaudeCode/多智能体协作-Subagents与Agent-Teams|多智能体协作]] — Subagents + Agent Teams
 
 ---
@@ -69,9 +66,9 @@ OpenClaw-基础-安装
 
 | 概念 | Claude Code | OpenClaw |
 |------|-------------|----------|
-| **Skills** | [[AI/ClaudeCode/Skills|Skills]] | [[AI/OpenClaw/OpenClaw-Skills-插件|OpenClaw-Skills-插件]] |
+| **Skills** | [[AI/ClaudeCode/Claude Code 扩展体系|扩展体系（Skills 章节）]] | [[AI/OpenClaw/OpenClaw-Skills-插件|OpenClaw-Skills-插件]] |
 | **Agent/多智能体** | [[AI/ClaudeCode/多智能体协作-Subagents与Agent-Teams|多智能体协作]] | [[AI/OpenClaw/Openclaw-多智能体|Openclaw-多智能体]] |
-| **扩展接口** | [[AI/ClaudeCode/MCP|MCP]] + [[AI/ClaudeCode/Plugin|Plugin]] | [[AI/OpenClaw/OpenClaw-Channels|OpenClaw-Channels]] |
+| **扩展接口** | [[AI/ClaudeCode/Claude Code 扩展体系|MCP + Skills + Slash Commands + Plugin]] | [[AI/OpenClaw/OpenClaw-Channels|OpenClaw-Channels]] |
 
 ---
 

@@ -12,6 +12,20 @@ date: 2026-04-17
 
 ---
 
+## [2026-04-17] restructure | Claude Code 扩展体系文章合并
+
+- **操作**：将 4 篇独立文章合并为 1 篇 `AI/ClaudeCode/Claude Code 扩展体系.md`
+  - 合并来源：`MCP.md`、`Skills.md`、`Slash Command.md`、`Plugin.md`（已删除）
+  - 按四层架构重新组织：MCP（外部工具）→ Skills（自动能力包）→ Slash Commands（手动工作流）→ Plugin（打包分发）
+  - 新增总览对比表和"一句话总结"帮助快速理解四层定位
+- **知识库更新**：
+  - 来源摘要页：4 篇旧摘要合并为 `sources/Claude-Code扩展体系-summary.md`（已删除旧文件）
+  - 实体页：`entities/Claude-Code.md`、`entities/MCP.md` — 更新 sources 字段和覆盖列表
+  - 地图：`maps/claude-code-openclaw-map.md` — 更新知识体系树和共同概念表
+  - INDEX.md — 更新来源摘要表格和推荐阅读路径
+
+---
+
 ## [2026-04-17] restructure | Subagents + Agent Teams 合并为一篇
 
 - **操作**：将 `AI/ClaudeCode/Subagents.md` 和 `AI/ClaudeCode/Agent Teams.md` 合并为 `AI/ClaudeCode/多智能体协作-Subagents与Agent-Teams.md`
