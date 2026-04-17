@@ -15,10 +15,11 @@ date: 2026-04-17
 ## [2026-04-18] update | Openclaw-多智能体 内联代码块替换为 wikilinks
 
 - **来源**：[[AI/OpenClaw/Openclaw-多智能体]]（Raw Source，应用户明确要求修改）
-- **操作**：将"实现多智能体AIOps团队"章节中的内联身份文件和 Skill 文件替换为 wikilinks
-  - **角色定义**：12 个内联代码块（aiops/linux/container/k8s × IDENTITY.md/SOUL.md/AGENTS.md）→ 替换为 `→ [[AI/agents/xxx/FILE.md]]` wikilinks
+- **操作**：将两个多智能体章节中的内联身份文件和 Skill 文件替换为 wikilinks
+  - **"实现多智能体程序开发团队"章节**：12 个内联代码块（architect/pm/frontend-engineer/backend-engineer × AGENTS.md/IDENTITY.md/SOUL.md）→ wikilinks，节省约 13,700 字符
+  - **"实现多智能体AIOps团队"章节**：12 个内联代码块（aiops/linux/container/k8s × AGENTS.md/IDENTITY.md/SOUL.md）→ wikilinks
   - **Skills开发**：4 个 Skill 子章节添加 `→ 生成的 Skill 文件：[[AI/agents/xxx/skills/yyy/SKILL.md]]` 链接
-- **效果**：文档减少约 1400 行重复内容，身份文件和 Skill 定义由 `AI/agents/` 目录统一管理
+- **效果**：文档共减少约 2800 行重复内容，身份文件和 Skill 定义由 `AI/agents/` 目录统一管理
 
 ---
 
