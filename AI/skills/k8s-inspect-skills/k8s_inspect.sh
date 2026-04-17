@@ -540,18 +540,12 @@ EOF
 
     log_info "✅ 巡检完成！"
 
-    # ── 结构化摘要输出（供 AI Agent 解析）──────────────────
-    ALL_PODS=$(kubectl get pods --all-namespaces --no-headers 2>/dev/null)
-    ABNORMAL_PODS=$(echo "$ALL_PODS" | grep -c "CrashLoopBackOff\|Error\|OOMKilled" || true)
-    PENDING_PODS=$(echo "$ALL_PODS" | grep -c "Pending" || true)
-    WARNING_EVENTS=$(kubectl get events --all-namespaces --field-selector type=Warning \
-        --no-headers 2>/dev/null | wc -l | tr -d ' ')
-
+    # ── 结构化摘要输出（供 AI Agent 解析，复用巡检模块已采集的数据）──
     echo ""
     echo "===== INSPECTION SUMMARY ====="
     echo "Nodes: ${NODE_TOTAL} total, ${NODE_READY} ready"
-    echo "Pods: ${POD_TOTAL} total, ${ABNORMAL_PODS} abnormal, ${PENDING_PODS} pending"
-    echo "Warning Events: ${WARNING_EVENTS}"
+    echo "Pods: ${POD_TOTAL} total, ${G_POD_CRASH} abnormal, ${G_POD_PENDING} pending"
+    echo "Warning Events: ${G_WARNING_COUNT}"
     echo "Report: ${REPORT_FILE}"
     echo "==============================="
 }
