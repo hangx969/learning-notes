@@ -106,7 +106,7 @@ date: 2026-04-16
 
 ---
 
-## LLM Wiki 模式：让 AI 维护你的知识库
+# LLM Wiki 模式：让 AI 维护你的知识库
 
 > [!abstract] 核心理念
 > 基于 [Karpathy LLM Wiki](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f) 模式：**你永远不自己写 wiki——LLM 写并维护全部内容。你负责：策划来源、探索方向、提出好问题。LLM 负责：总结、交叉引用、归档和簿记。**
