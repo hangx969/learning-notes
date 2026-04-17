@@ -217,8 +217,8 @@ date: 2026-04-16
 
 ### Tekton
 **相关文档：**
-- [基于Tekton的云原生平台落地](../../Docker-Kubernetes/k8s-CICD/Tekton/基于Tekton的云原生平台落地.md) ⭐
-- [k8s部署原生的CICD工具Tekton-基于yaml](../../Docker-Kubernetes/k8s-CICD/Tekton/k8s部署原生的CICD工具Tekton-基于yaml.md)
+- [[Docker-Kubernetes/k8s-CICD/Tekton/基于Tekton的云原生平台落地|基于Tekton的云原生平台落地]] ⭐
+- [[Docker-Kubernetes/k8s-CICD/Tekton/k8s部署原生的CICD工具Tekton-基于yaml|k8s部署原生的CICD工具Tekton-基于yaml]]
 
 ---
 
@@ -226,16 +226,16 @@ date: 2026-04-16
 
 ### Terraform
 **相关文档：**
-- [terraform-basics](../../IaC/terraform-basics.md) ⭐ 推荐入口
-- [terraform-docs](../../IaC/terraform-docs.md)
+- [[IaC/terraform-basics|terraform-basics]] ⭐ 推荐入口
+- [[IaC/terraform-docs|terraform-docs]]
 
-**概念页：** [Terraform](../concepts/Terraform.md)
+**概念页：** [[KnowledgeBase/entities/Terraform|Terraform]]
 
 ---
 
 ### Ansible
 **相关文档：**
-- [ansible安装-rockylinux8](../../Linux-Shell/ansible安装-rockylinux8.md) ⭐
+- [[Linux-Shell/ansible安装-rockylinux8|ansible安装-rockylinux8]] ⭐
 
 ---
 
@@ -243,33 +243,33 @@ date: 2026-04-16
 
 ### Azure
 **相关文档（21 篇）：**
-- [2_AKS-basics](../../Azure/2_AKS-basics.md) ⭐ 推荐入口（AKS）
-- [0_Azure-VM-VMSS](../../Azure/0_Azure-VM-VMSS.md) — 虚拟机
-- [8_Azure-devops-basics](../../Azure/8_Azure-devops-basics.md) — DevOps
-- 完整列表参见 [cloud-platform-map](cloud-platform-map.md)
+- [[Azure/2_AKS-basics|2_AKS-basics]] ⭐ 推荐入口（AKS）
+- [[Azure/0_Azure-VM-VMSS|0_Azure-VM-VMSS]] — 虚拟机
+- [[Azure/8_Azure-devops-basics|8_Azure-devops-basics]] — DevOps
+- 完整列表参见 [[KnowledgeBase/maps/cloud-platform-map|cloud-platform-map]]
 
-**概念页：** [Azure](../concepts/Azure.md)
+**概念页：** [[KnowledgeBase/entities/Azure|Azure]]
 
 ---
 
 ### Aliyun
 **相关文档（19 篇）：**
-- [VPC](../../Aliyun/网络/VPC.md) ⭐ 推荐入口
-- [ECS](../../Aliyun/计算/ECS.md) — 弹性计算
-- [负载均衡SLB](../../Aliyun/网络/负载均衡SLB.md) — 负载均衡
-- 完整列表参见 [cloud-platform-map](cloud-platform-map.md)
+- [[Aliyun/网络/VPC|VPC]] ⭐ 推荐入口
+- [[Aliyun/计算/ECS|ECS]] — 弹性计算
+- [[Aliyun/网络/负载均衡SLB|负载均衡SLB]] — 负载均衡
+- 完整列表参见 [[KnowledgeBase/maps/cloud-platform-map|cloud-platform-map]]
 
-**概念页：** [Aliyun](../concepts/Aliyun.md)
+**概念页：** [[KnowledgeBase/entities/Aliyun|Aliyun]]
 
 ---
 
 ### AKS (Azure Kubernetes Service)
 **相关文档：**
-- [2_AKS-basics](../../Azure/2_AKS-basics.md) ⭐
-- [3_AKS-workload-identity](../../Azure/3_AKS-workload-identity.md)
-- [4_AKS-SecretProviderClass-KeyVault](../../Azure/4_AKS-SecretProviderClass-KeyVault.md)
+- [[Azure/2_AKS-basics|2_AKS-basics]] ⭐
+- [[Azure/3_AKS-workload-identity|3_AKS-workload-identity]]
+- [[Azure/4_AKS-SecretProviderClass-KeyVault|4_AKS-SecretProviderClass-KeyVault]]
 
-**概念页：** [AKS](../concepts/AKS.md)
+**概念页：** [[KnowledgeBase/entities/AKS|AKS]]
 
 ---
 
@@ -277,16 +277,16 @@ date: 2026-04-16
 
 ### Python
 **相关文档（27 篇）：**
-- [python-basics](../../Python/python-基础/python-basics.md) ⭐ 推荐入口
-- 完整列表参见 [python-devops-map](python-devops-map.md)
+- [[Python/python-基础/python-basics|python-basics]] ⭐ 推荐入口
+- 完整列表参见 [[KnowledgeBase/maps/python-devops-map|python-devops-map]]
 
-**概念页：** [Python运维开发](../concepts/Python运维开发.md)
+**概念页：** [[KnowledgeBase/concepts/Python运维开发|Python运维开发]]
 
 ---
 
 ### Go
 **相关文档（9 篇）：**
-- [go-01-环境配置-基础](../../Go/go-01-环境配置-基础.md) ⭐ 推荐入口
+- [[Go/go-01-环境配置-基础|go-01-环境配置-基础]] ⭐ 推荐入口
 
 ---
 
@@ -294,62 +294,62 @@ date: 2026-04-16
 
 ### Slurm
 **相关文档（5 篇）：**
-- [CentOS7-slurm23.02-二进制安装](../../HPC/CentOS7-slurm23.02-二进制安装.md) ⭐ 推荐入口
-- [Ubuntu2204-slurm-22.05.11-二进制安装](../../HPC/Ubuntu2204-slurm-22.05.11-二进制安装.md)
-- [Ubuntu-2204-slurm-22.05.11-binary-installation](../../HPC/Ubuntu-2204-slurm-22.05.11-binary-installation.md)
-- [Ubuntu2204-slurm- 23.11-deb安装](../../HPC/Ubuntu2204-slurm-%2023.11-deb安装.md)
-- [Slurm-node-exporter](../../HPC/Slurm-node-exporter.md)
+- [[HPC/CentOS7-slurm23.02-二进制安装|CentOS7-slurm23.02-二进制安装]] ⭐ 推荐入口
+- [[HPC/Ubuntu2204-slurm-22.05.11-二进制安装|Ubuntu2204-slurm-22.05.11-二进制安装]]
+- [[HPC/Ubuntu-2204-slurm-22.05.11-binary-installation|Ubuntu-2204-slurm-22.05.11-binary-installation]]
+- [[HPC/Ubuntu2204-slurm- 23.11-deb安装|Ubuntu2204-slurm- 23.11-deb安装]]
+- [[HPC/Slurm-node-exporter|Slurm-node-exporter]]
 
-**概念页：** [Slurm](../concepts/Slurm.md)
+**概念页：** [[KnowledgeBase/entities/Slurm|Slurm]]
 
 ---
 
 ### PBS
 **相关文档：**
-- [PBS](../../HPC/PBS.md) ⭐
-- [PBS-cases](../../HPC/PBS-cases.md)
+- [[HPC/PBS|PBS]] ⭐
+- [[HPC/PBS-cases|PBS-cases]]
 
 ---
 
 ## 消息中间件
 
 ### Kafka
-- [Kafka](../../Middlewares/Kafka.md) ⭐
-- [helm部署strimzi-kafka](../../Docker-Kubernetes/k8s-db-middleware/helm部署strimzi-kafka.md)
-- [k8s监控EFK+logstash+kafka](../../Docker-Kubernetes/k8s-monitoring-logging/k8s监控EFK+logstash+kafka.md)
+- [[Middlewares/Kafka|Kafka]] ⭐
+- [[Docker-Kubernetes/k8s-db-middleware/helm部署strimzi-kafka|helm部署strimzi-kafka]]
+- [[Docker-Kubernetes/k8s-monitoring-logging/k8s监控EFK+logstash+kafka|k8s监控EFK+logstash+kafka]]
 
 ### RabbitMQ
-- [RabbitMQ](../../Middlewares/RabbitMQ.md) ⭐
+- [[Middlewares/RabbitMQ|RabbitMQ]] ⭐
 
 ### RocketMQ
-- [RocketMQ](../../Middlewares/RocketMQ.md) ⭐
+- [[Middlewares/RocketMQ|RocketMQ]] ⭐
 
 ---
 
 ## 数据库
 
 ### MySQL
-- [MySQL入门](../../Database/MySQL入门.md) ⭐
-- [MGR部署MySQL5.7](../../Database/MGR部署MySQL5.7.md)
-- [helm部署mysql](../../Docker-Kubernetes/k8s-db-middleware/helm部署mysql.md)
-- [Operator部署mysql集群](../../Docker-Kubernetes/k8s-db-middleware/Operator部署mysql集群.md)
-- [k8s基于yaml部署mysql主从高可用](../../Docker-Kubernetes/k8s-db-middleware/k8s基于yaml部署mysql主从高可用.md)
-- [python-mysql](../../Python/python-运维开发/python-mysql.md)
+- [[Database/MySQL入门|MySQL入门]] ⭐
+- [[Database/MGR部署MySQL5.7|MGR部署MySQL5.7]]
+- [[Docker-Kubernetes/k8s-db-middleware/helm部署mysql|helm部署mysql]]
+- [[Docker-Kubernetes/k8s-db-middleware/Operator部署mysql集群|Operator部署mysql集群]]
+- [[Docker-Kubernetes/k8s-db-middleware/k8s基于yaml部署mysql主从高可用|k8s基于yaml部署mysql主从高可用]]
+- [[Python/python-运维开发/python-mysql|python-mysql]]
 
 ### Redis
-- [源码安装redis-6.2.6-centos7](../../Database/源码安装redis-6.2.6-centos7.md) ⭐
-- [Operator部署Redis集群](../../Docker-Kubernetes/k8s-db-middleware/Operator部署Redis集群.md)
-- [k8s基于yaml部署redis集群](../../Docker-Kubernetes/k8s-db-middleware/k8s基于yaml部署redis集群.md)
+- [[Database/源码安装redis-6.2.6-centos7|源码安装redis-6.2.6-centos7]] ⭐
+- [[Docker-Kubernetes/k8s-db-middleware/Operator部署Redis集群|Operator部署Redis集群]]
+- [[Docker-Kubernetes/k8s-db-middleware/k8s基于yaml部署redis集群|k8s基于yaml部署redis集群]]
 
 ### PostgreSQL
-- [helm部署postgreSQL](../../Docker-Kubernetes/k8s-db-middleware/helm部署postgreSQL.md) ⭐
-- [python-postgresql](../../Python/python-运维开发/python-postgresql.md)
+- [[Docker-Kubernetes/k8s-db-middleware/helm部署postgreSQL|helm部署postgreSQL]] ⭐
+- [[Python/python-运维开发/python-postgresql|python-postgresql]]
 
 ---
 
 ## GPU / NVIDIA
-- [GPU-basics](../../GPU-DeepLearning/GPU-basics.md) ⭐
-- [GPU-exporter-grafana](../../GPU-DeepLearning/GPU-exporter-grafana.md)
-- [NVIDIA-GPU-开启persistent mode](../../GPU-DeepLearning/NVIDIA-GPU-开启persistent%20mode.md)
-- [docker配置NVIDIA GPU](../../Docker-Kubernetes/docker/docker配置NVIDIA%20GPU.md)
-- [k8s配置NVIDIA GPU](../../Docker-Kubernetes/k8s-ai-gpu/k8s配置NVIDIA%20GPU.md)
+- [[GPU-DeepLearning/GPU-basics|GPU-basics]] ⭐
+- [[GPU-DeepLearning/GPU-exporter-grafana|GPU-exporter-grafana]]
+- [[GPU-DeepLearning/NVIDIA-GPU-开启persistent mode|NVIDIA-GPU-开启persistent mode]]
+- [[Docker-Kubernetes/docker/docker配置NVIDIA GPU|docker配置NVIDIA GPU]]
+- [[Docker-Kubernetes/k8s-ai-gpu/k8s配置NVIDIA GPU|k8s配置NVIDIA GPU]]
