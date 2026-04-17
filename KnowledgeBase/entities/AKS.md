@@ -2,7 +2,9 @@
 title: AKS
 tags:
   - knowledgebase/entity
-date: 2026-04-16
+date: 2026-04-17
+sources:
+  - "[[KnowledgeBase/sources/azure-batch-summary|Azure 来源批量摘要]]"
 ---
 
 # AKS

@@ -2,13 +2,38 @@
 title: Grafana
 tags:
   - knowledgebase/entity
-date: 2026-04-16
+date: 2026-04-17
+sources:
+  - "[[KnowledgeBase/sources/k8s-monitoring-logging-batch-summary|k8s-monitoring-logging 来源批量摘要]]"
 ---
 
 # Grafana
 
 ## 定义
 Grafana 是开源的数据可视化与仪表盘平台，常与 Prometheus、Loki 等数据源配合使用，提供丰富的图表、告警与面板功能。本仓库中 Grafana 始终与 Prometheus 成对出现，同时也涉及 GPU Exporter 监控场景。
+
+## 编译知识
+
+### 部署方式
+- **K8s Deployment 部署**（v5.0.4，heapster-grafana-amd64 镜像）
+- **Helm 部署**：作为 kube-prometheus-stack 的子 Chart 一键安装
+- **二进制部署**：与 [[KnowledgeBase/entities/Prometheus|Prometheus]]、Node Exporter 配合的独立监控栈
+- **Docker 部署**：与 Prometheus + cAdvisor 组合的容器监控方案
+
+### 在可观测性体系中的定位
+- Grafana 是可观测性三大支柱的**统一可视化层**：
+  - **监控（Metrics）**: Prometheus 数据源
+  - **日志（Logging）**: Loki 数据源
+  - **链路追踪（Tracing）**: Tempo 数据源
+- Grafana Agent 可作为轻量级采集代理，替代独立部署多个采集组件
+
+### 告警能力
+- Grafana 自带告警功能，但生产环境推荐使用 Alertmanager（更灵活的分组、路由和去重机制）
+
+### Loki + Promtail + Tempo 全家桶
+- 通过 [[KnowledgeBase/entities/Helm|Helm]] 部署的轻量级可观测性方案
+- Loki 轻量化且高效，适合聚合存储 K8s Events
+- K8s Events 默认只保留一小时，通过 k8s-event-logger + Promtail 持久化到 Loki
 
 ## 在本仓库中的位置
 主要出现在 `Docker-Kubernetes/k8s-monitoring-logging/` 目录，以及 Docker 部署场景中。
