@@ -12,6 +12,15 @@ date: 2026-04-17
 
 ---
 
+## [2026-04-17] ingest | Agent Teams 文档摄入
+
+- **摄入来源**：`AI/ClaudeCode/Agent Teams.md`（基于官方文档 https://code.claude.com/docs/en/agent-teams 撰写的中文使用指南）
+- **来源摘要页**：`sources/AgentTeams-summary.md`
+- **实体页增强**：`entities/Claude-Code.md` — 新增 5.5 Agent Teams 层级（与 SubAgents 对比表、核心组件说明），更新 sources 字段和覆盖列表，消除"多人协作"知识空白
+- **INDEX.md 更新**：AI/ClaudeCode Sources 表格新增 Agent Teams 行
+
+---
+
 ## [2026-04-17] restructure | INDEX.md 链接格式改造（wikilink → markdown link）
 
 - **目的**：让 INDEX.md 在 GitHub 上也能点击跳转，同时 Obsidian 中保持可用

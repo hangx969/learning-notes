@@ -97,6 +97,7 @@ date: 2026-04-17
 | [Slash Command](sources/Slash-Command-summary.md) | [AI/ClaudeCode/Slash Command](../AI/ClaudeCode/Slash%20Command.md) | 手动触发工作流快捷方式、与 Skills 的注入方式区别 |
 | [Plugin](sources/Plugin-summary.md) | [AI/ClaudeCode/Plugin](../AI/ClaudeCode/Plugin.md) | 应用级打包容器、组成上限、团队分发实践 |
 | [Obsidian+Claude知识库](sources/obsidian-claude-搭建个人知识库-summary.md) | [AI/ClaudeCode/obsidian-claude-搭建个人知识库](../AI/ClaudeCode/obsidian-claude-搭建个人知识库.md) | 3 种集成工具（Claudian、Skills、MCP）、知识库架构选型 |
+| [Agent Teams](sources/AgentTeams-summary.md) | [AI/ClaudeCode/Agent Teams](../AI/ClaudeCode/Agent%20Teams.md) | 多智能体团队协作，Team Lead/Teammates/Task List/Mailbox 架构 |
 
 ### Docker-Kubernetes（已摄入 ✅）
 
