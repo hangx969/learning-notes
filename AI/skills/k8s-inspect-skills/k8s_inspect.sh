@@ -113,25 +113,22 @@ check_nodes() {
 <th>CPU 使用</th><th>内存使用</th><th>运行时间</th><th>内核版本</th></tr>
 EOF
 
-    local ALL_NODE_TOP
-    ALL_NODE_TOP=$(kubectl top nodes --no-headers 2>/dev/null || true)
-    local ALL_NODE_KERNELS
-    ALL_NODE_KERNELS=$(kubectl get nodes -o custom-columns='NAME:.metadata.name,KERNEL:.status.nodeInfo.kernelVersion' --no-headers 2>/dev/null)
-
     while IFS= read -r line; do
         [[ -z "$line" ]] && continue
         NODE_NAME=$(echo "$line" | awk '{print $1}')
         NODE_STATUS=$(echo "$line" | awk '{print $2}')
-        NODE_ROLE=$(echo "$line" | awk '{print $3}')
-        [[ "$NODE_ROLE" == "<none>" ]] && NODE_ROLE="worker"
+        NODE_ROLE=$(kubectl get node "$NODE_NAME" \
+            --no-headers -o jsonpath='{.metadata.labels}' 2>/dev/null \
+            | grep -o '"node-role[^"]*"' | sed 's/.*\///' | sed 's/"//' | head -1)
+        [[ -z "$NODE_ROLE" ]] && NODE_ROLE="worker"
         K8S_VER=$(echo "$line" | awk '{print $5}')
         UPTIME=$(echo "$line" | awk '{print $4}')
 
-        CPU_USAGE=$(echo "$ALL_NODE_TOP" | awk -v n="$NODE_NAME" '$1==n{print $2}')
-        MEM_USAGE=$(echo "$ALL_NODE_TOP" | awk -v n="$NODE_NAME" '$1==n{print $4}')
-        [[ -z "$CPU_USAGE" ]] && CPU_USAGE="N/A"
-        [[ -z "$MEM_USAGE" ]] && MEM_USAGE="N/A"
-        KERNEL=$(echo "$ALL_NODE_KERNELS" | awk -v n="$NODE_NAME" '$1==n{print $2}')
+        CPU_USAGE=$(kubectl top node "$NODE_NAME" --no-headers 2>/dev/null \
+            | awk '{print $2}' || echo "N/A")
+        MEM_USAGE=$(kubectl top node "$NODE_NAME" --no-headers 2>/dev/null \
+            | awk '{print $4}' || echo "N/A")
+        KERNEL=$(kubectl get node "$NODE_NAME" -o jsonpath='{.status.nodeInfo.kernelVersion}' 2>/dev/null)
 
         if [[ "$NODE_STATUS" == "Ready" ]]; then
             STATUS_CLASS="ok"
@@ -244,12 +241,16 @@ EOF
         [[ -z "$line" ]] && continue
         NS=$(echo "$line" | awk '{print $1}')
         QN=$(echo "$line" | awk '{print $2}')
-        QUOTA_DESC=$(kubectl describe resourcequota "$QN" -n "$NS" 2>/dev/null)
-        CPU_REQ=$(echo "$QUOTA_DESC" | grep "requests.cpu" | awk '{print $2"/"$3}')
-        MEM_REQ=$(echo "$QUOTA_DESC" | grep "requests.memory" | awk '{print $2"/"$3}')
-        CPU_LIM=$(echo "$QUOTA_DESC" | grep "limits.cpu" | awk '{print $2"/"$3}')
-        MEM_LIM=$(echo "$QUOTA_DESC" | grep "limits.memory" | awk '{print $2"/"$3}')
-        PODS=$(echo "$QUOTA_DESC" | grep "^ pods" | awk '{print $2"/"$3}')
+        CPU_REQ=$(kubectl describe resourcequota "$QN" -n "$NS" 2>/dev/null \
+            | grep "requests.cpu" | awk '{print $2"/"$3}')
+        MEM_REQ=$(kubectl describe resourcequota "$QN" -n "$NS" 2>/dev/null \
+            | grep "requests.memory" | awk '{print $2"/"$3}')
+        CPU_LIM=$(kubectl describe resourcequota "$QN" -n "$NS" 2>/dev/null \
+            | grep "limits.cpu" | awk '{print $2"/"$3}')
+        MEM_LIM=$(kubectl describe resourcequota "$QN" -n "$NS" 2>/dev/null \
+            | grep "limits.memory" | awk '{print $2"/"$3}')
+        PODS=$(kubectl describe resourcequota "$QN" -n "$NS" 2>/dev/null \
+            | grep "^ pods" | awk '{print $2"/"$3}')
 
         cat >> "$REPORT_FILE" << RQEOF
 <tr><td>${NS}</td><td>${QN}</td><td>${CPU_REQ:-N/A}</td>
@@ -540,12 +541,18 @@ EOF
 
     log_info "✅ 巡检完成！"
 
-    # ── 结构化摘要输出（供 AI Agent 解析，复用巡检模块已采集的数据）──
+    # ── 结构化摘要输出（供 AI Agent 解析）──────────────────
+    ALL_PODS=$(kubectl get pods --all-namespaces --no-headers 2>/dev/null)
+    ABNORMAL_PODS=$(echo "$ALL_PODS" | grep -c "CrashLoopBackOff\|Error\|OOMKilled" || true)
+    PENDING_PODS=$(echo "$ALL_PODS" | grep -c "Pending" || true)
+    WARNING_EVENTS=$(kubectl get events --all-namespaces --field-selector type=Warning \
+        --no-headers 2>/dev/null | wc -l | tr -d ' ')
+
     echo ""
     echo "===== INSPECTION SUMMARY ====="
     echo "Nodes: ${NODE_TOTAL} total, ${NODE_READY} ready"
-    echo "Pods: ${POD_TOTAL} total, ${G_POD_CRASH} abnormal, ${G_POD_PENDING} pending"
-    echo "Warning Events: ${G_WARNING_COUNT}"
+    echo "Pods: ${POD_TOTAL} total, ${ABNORMAL_PODS} abnormal, ${PENDING_PODS} pending"
+    echo "Warning Events: ${WARNING_EVENTS}"
     echo "Report: ${REPORT_FILE}"
     echo "==============================="
 }
