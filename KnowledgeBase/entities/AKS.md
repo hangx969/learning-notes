@@ -1,7 +1,7 @@
 ---
 title: AKS
 tags:
-  - knowledgebase/concept
+  - knowledgebase/entity
 date: 2026-04-16
 ---
 
@@ -14,19 +14,19 @@ Azure Kubernetes Service（AKS）是 Microsoft Azure 提供的托管 Kubernetes 
 主要出现在 `Azure/` 目录中与 AKS 相关的文章，同时与 `Docker-Kubernetes/` 下的 Kubernetes 基础资源、网络、监控等内容紧密关联。
 
 ## 相关文章
-- [2_AKS-basics](../../Azure/2_AKS-basics.md)
-- [3_AKS-workload-identity](../../Azure/3_AKS-workload-identity.md)
-- [4_AKS-SecretProviderClass-KeyVault](../../Azure/4_AKS-SecretProviderClass-KeyVault.md)
-- [7_ACR-ACI](../../Azure/7_ACR-ACI.md)
-- [6_Azure-Networking](../../Azure/6_Azure-Networking.md)
+- [[Azure/2_AKS-basics|2_AKS-basics]]
+- [[Azure/3_AKS-workload-identity|3_AKS-workload-identity]]
+- [[Azure/4_AKS-SecretProviderClass-KeyVault|4_AKS-SecretProviderClass-KeyVault]]
+- [[Azure/7_ACR-ACI|7_ACR-ACI]]
+- [[Azure/6_Azure-Networking|6_Azure-Networking]]
 
 ## 关联概念
-- [Azure](Azure.md)
-- [CICD](CICD.md)
-- [Observability](Observability.md)
-- [服务网格](服务网格.md)
-- [容器运行时](容器运行时.md)
-- [Terraform](Terraform.md)
+- [[KnowledgeBase/entities/Azure|Azure]]
+- [[KnowledgeBase/concepts/CICD|CICD]]
+- [[KnowledgeBase/concepts/Observability|Observability]]
+- [[KnowledgeBase/concepts/服务网格|服务网格]]
+- [[KnowledgeBase/concepts/容器运行时|容器运行时]]
+- [[KnowledgeBase/entities/Terraform|Terraform]]
 
 ## 可延展方向
 - AKS 集群升级与节点池管理策略

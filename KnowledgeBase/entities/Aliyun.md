@@ -1,7 +1,7 @@
 ---
 title: Aliyun
 tags:
-  - knowledgebase/concept
+  - knowledgebase/entity
 date: 2026-04-16
 ---
 
@@ -14,30 +14,30 @@ date: 2026-04-16
 主要集中在 `Aliyun/` 目录下，按计算、网络、存储、数据库、资源管理等子目录组织，共 19 篇文章。
 
 ## 相关文章
-- [ACP考试](../../Aliyun/ACP考试.md)
-- [ECS](../../Aliyun/计算/ECS.md)
-- [弹性伸缩ESS](../../Aliyun/计算/弹性伸缩ESS.md)
-- [云盘-快照-镜像](../../Aliyun/计算/云盘-快照-镜像.md)
-- [主机迁移工具SMC](../../Aliyun/计算/主机迁移工具SMC.md)
-- [VPC](../../Aliyun/网络/VPC.md)
-- [负载均衡SLB](../../Aliyun/网络/负载均衡SLB.md)
-- [WAF](../../Aliyun/网络/WAF.md)
-- [DDoS高防](../../Aliyun/网络/DDoS高防.md)
-- [DNS-CDN-SSL](../../Aliyun/网络/DNS-CDN-SSL.md)
-- [CEN-TR](../../Aliyun/网络/CEN-TR.md)
-- [网关-VPN-专线](../../Aliyun/网络/网关-VPN-专线.md)
-- [云安全中心-云防火墙](../../Aliyun/网络/云安全中心-云防火墙.md)
-- [对象存储OSS](../../Aliyun/存储/对象存储OSS.md)
-- [数据湖-HDFS-POSIX](../../Aliyun/存储/数据湖-HDFS-POSIX.md)
-- [跨域共享CORS](../../Aliyun/存储/跨域共享CORS.md)
-- [关系型数据库RDS](../../Aliyun/数据库/关系型数据库RDS.md)
-- [数据传输服务DTS](../../Aliyun/数据库/数据传输服务DTS.md)
-- [Landing Zone](../../Aliyun/资源管理/Landing%20Zone.md)
+- [[Aliyun/ACP考试|ACP考试]]
+- [[Aliyun/计算/ECS|ECS]]
+- [[Aliyun/计算/弹性伸缩ESS|弹性伸缩ESS]]
+- [[Aliyun/计算/云盘-快照-镜像|云盘-快照-镜像]]
+- [[Aliyun/计算/主机迁移工具SMC|主机迁移工具SMC]]
+- [[Aliyun/网络/VPC|VPC]]
+- [[Aliyun/网络/负载均衡SLB|负载均衡SLB]]
+- [[Aliyun/网络/WAF|WAF]]
+- [[Aliyun/网络/DDoS高防|DDoS高防]]
+- [[Aliyun/网络/DNS-CDN-SSL|DNS-CDN-SSL]]
+- [[Aliyun/网络/CEN-TR|CEN-TR]]
+- [[Aliyun/网络/网关-VPN-专线|网关-VPN-专线]]
+- [[Aliyun/网络/云安全中心-云防火墙|云安全中心-云防火墙]]
+- [[Aliyun/存储/对象存储OSS|对象存储OSS]]
+- [[Aliyun/存储/数据湖-HDFS-POSIX|数据湖-HDFS-POSIX]]
+- [[Aliyun/存储/跨域共享CORS|跨域共享CORS]]
+- [[Aliyun/数据库/关系型数据库RDS|关系型数据库RDS]]
+- [[Aliyun/数据库/数据传输服务DTS|数据传输服务DTS]]
+- [[Aliyun/资源管理/Landing Zone|Landing Zone]]
 
 ## 关联概念
-- [Azure](Azure.md)
-- [Terraform](Terraform.md)
-- [自动化运维](自动化运维.md)
+- [[KnowledgeBase/entities/Azure|Azure]]
+- [[KnowledgeBase/entities/Terraform|Terraform]]
+- [[KnowledgeBase/concepts/自动化运维|自动化运维]]
 
 ## 可延展方向
 - 阿里云容器服务 ACK 与 Kubernetes 实践

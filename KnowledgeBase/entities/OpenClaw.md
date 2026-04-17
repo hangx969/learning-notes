@@ -1,7 +1,7 @@
 ---
 title: OpenClaw
 tags:
-  - knowledgebase/concept
+  - knowledgebase/entity
 date: 2026-04-16
 ---
 

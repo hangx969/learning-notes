@@ -1,7 +1,7 @@
 ---
 title: ArgoCD
 tags:
-  - knowledgebase/concept
+  - knowledgebase/entity
 date: 2026-04-16
 ---
 
@@ -14,16 +14,16 @@ ArgoCD 是基于 GitOps 理念的 Kubernetes 持续交付（CD）工具，通过
 主要集中在 `Docker-Kubernetes/k8s-CICD/ArgoCD/` 目录，共 4 篇文章。
 
 ## 相关文章
-- [ArgoCD基础](../../Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD基础.md)
-- [ArgoCD Image Updater](../../Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD%20Image%20Updater.md)
-- [ArgoCD部署Helm应用时域名解析失败问题排查与解决](../../Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD部署Helm应用时域名解析失败问题排查与解决.md)
-- [学习链接](../../Docker-Kubernetes/k8s-CICD/ArgoCD/学习链接.md)
+- [[Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD基础|ArgoCD基础]]
+- [[Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD Image Updater|ArgoCD Image Updater]]
+- [[Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD部署Helm应用时域名解析失败问题排查与解决|ArgoCD部署Helm应用时域名解析失败问题排查与解决]]
+- [[Docker-Kubernetes/k8s-CICD/ArgoCD/学习链接|学习链接]]
 
 ## 关联概念
-- [Kubernetes](Kubernetes.md)
-- [Helm](Helm.md)
-- [Jenkins](Jenkins.md)
-- [Docker](Docker.md)
+- [[KnowledgeBase/entities/Kubernetes|Kubernetes]]
+- [[KnowledgeBase/entities/Helm|Helm]]
+- [[KnowledgeBase/entities/Jenkins|Jenkins]]
+- [[KnowledgeBase/entities/Docker|Docker]]
 
 ## 可延展方向
 - ArgoCD ApplicationSet 多环境管理
