@@ -12,6 +12,21 @@ date: 2026-04-17
 
 ---
 
+## [2026-04-17] ingest | K8s 全面巡检脚本
+
+- **来源**：`0raw/K8s 全面巡检脚本：一键生成炫酷 HTML 健康报告.md`（微信公众号文章剪藏）
+- **操作**：清理网页扒取的混乱格式（转义字符、断行、HTML 残留），整理为标准 Markdown + 干净代码块
+- **新建文件**：`Docker-Kubernetes/k8s-monitoring-logging/K8s全面巡检脚本-生成HTML健康报告.md`
+  - 7 大巡检模块的完整 Shell 脚本（节点/Pod/资源/证书/网络/组件/事件）
+  - HTML 报告模板（深色仪表盘风格）
+  - CronJob 定时执行 + Dockerfile + RBAC
+  - 钉钉/企微告警集成
+- **知识库更新**：
+  - `sources/k8s-monitoring-logging-batch-summary.md` — 新增文档摘要，文档数 20→21
+  - `index.md` — 更新监控日志摘要描述
+
+---
+
 ## [2026-04-17] update | 开源 Plugin 推荐（andrej-karpathy-skills）
 
 - **来源**：`0raw/2.3K 小文件拿到 4 万星，它让你的 Claude Code 乖乖听话.md` + GitHub 仓库 forrestchang/andrej-karpathy-skills
