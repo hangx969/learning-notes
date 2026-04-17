@@ -112,7 +112,7 @@ date: 2026-04-16
 - AKS 与安全集成（Workload Identity + KeyVault）是高价值实战内容
 - 排障工具矩阵在其他云平台笔记中没有对标
 
-**关联领域：** [k8s基础-架构-组件-资源](../../Docker-Kubernetes/k8s-basic-resources/k8s基础-架构-组件-资源.md)（K8s 通用概念）、[ECS](../../Aliyun/计算/ECS.md)（对标 Azure VM）
+**关联领域：** [[Docker-Kubernetes/k8s-basic-resources/k8s基础-架构-组件-资源|k8s基础-架构-组件-资源]]（K8s 通用概念）、[[Aliyun/计算/ECS|ECS]]（对标 Azure VM）
 
 ---
 
@@ -166,7 +166,7 @@ date: 2026-04-16
 - 按学习顺序编排：环境 → 变量 → 分支循环 → 函数 → 数组 → OOP → 错误处理 → Web → 云原生
 - ==双链率 100%==，9 篇文档互相引用
 
-**关联领域：** [云原生](../../CloudComputing/云原生.md)、[发布go-python-java代码到K8S环境](../../Docker-Kubernetes/k8s-CICD/发布go-python-java代码到K8S环境.md)
+**关联领域：** [[CloudComputing/云原生|云原生]]、[[Docker-Kubernetes/k8s-CICD/发布go-python-java代码到K8S环境|发布go-python-java代码到K8S环境]]
 
 ---
 
@@ -190,7 +190,7 @@ date: 2026-04-16
 - 多版本、多平台覆盖：CentOS7 + Ubuntu 22.04，Slurm 22.05/23.02/23.11
 - 含 PBS vs Slurm 对比
 
-**关联领域：** [GPU-basics](../../GPU-DeepLearning/GPU-basics.md)（GPU 集群常用 Slurm）
+**关联领域：** [[GPU-DeepLearning/GPU-basics|GPU-basics]]（GPU 集群常用 Slurm）
 
 ---
 
