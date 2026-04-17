@@ -50,7 +50,7 @@ date: 2026-04-16
 **4. 容器安全深入**
 - 现状：仅有 Trivy/SonarQube 工具安装，缺少安全扫描策略、镜像签名、运行时安全
 - 价值：安全左移是云原生趋势
-- 关联：[helm部署trivy-operator](../../Docker-Kubernetes/k8s-security-auth/helm部署trivy-operator.md)
+- 关联：[[Docker-Kubernetes/k8s-security-auth/helm部署trivy-operator|helm部署trivy-operator]]
 
 **5. FinOps / 云成本优化**
 - 现状：完全空白
@@ -61,19 +61,19 @@ date: 2026-04-16
 
 **6. K8s Operator 开发**
 - 现状：有 CRD 基础 + Operator 部署 MySQL/Redis，但无自定义 Operator 开发
-- 关联：[k8s基础-自定义CRD资源](../../Docker-Kubernetes/k8s-basic-resources/k8s基础-自定义CRD资源.md)
+- 关联：[[Docker-Kubernetes/k8s-basic-resources/k8s基础-自定义CRD资源|k8s基础-自定义CRD资源]]
 
 **7. Go 并发与微服务**
 - 现状：Go 基础完整，但缺少 goroutine、channel、微服务框架
-- 关联：[云原生开发-基础](../../Go/云原生开发-基础.md)
+- 关联：[[Go/云原生开发-基础|云原生开发-基础]]
 
 **8. API Gateway**
 - 现状：有 Ingress-Nginx 和 Istio，但无 Kong/APISIX/Traefik 等 API 网关
-- 关联：[k8s基础-ingress](../../Docker-Kubernetes/k8s-basic-resources/k8s基础-ingress.md)
+- 关联：[[Docker-Kubernetes/k8s-basic-resources/k8s基础-ingress|k8s基础-ingress]]
 
 **9. 分布式系统理论**
 - 现状：有 etcd 高可用，但缺 CAP/Raft/Paxos 理论基础
-- 关联：[etcd高可用配置以及模拟集群故障和恢复](../../Docker-Kubernetes/k8s-installation-management/etcd高可用配置以及模拟集群故障和恢复.md)
+- 关联：[[Docker-Kubernetes/k8s-installation-management/etcd高可用配置以及模拟集群故障和恢复|etcd高可用配置以及模拟集群故障和恢复]]
 
 ---
 
@@ -83,13 +83,13 @@ date: 2026-04-16
 
 | 孤岛 | 内容价值 | 连接缺失 |
 |------|----------|----------|
-| [深入剖析Kubernetes](../../CloudComputing/深入剖析Kubernetes.md) | K8s 理论深入 | 未被 145 篇 K8s 实操文档引用 |
-| [Auth](../../CloudComputing/Auth.md) | OAuth/OIDC/SAML/SSO | 未连接到 Azure AD、K8s RBAC |
-| [简历指南](../../Docker-Kubernetes/简历指南.md) | 求职实用 | 孤立文档 |
-| [Linux-learning-notes](../../Linux-Shell/Linux-learning-notes.md) | 2688 行 Linux 知识 | 未连接到任何其他文档 |
-| [k8s两地三中心架构](../../Docker-Kubernetes/k8s-installation-management/k8s两地三中心架构.md) | 高可用架构 | 未连接到 Aliyun/Azure 多地域 |
-| [Server-basics](../../GPU-DeepLearning/Server-basics.md) | 服务器硬件知识 | 未连接到 HPC、GPU |
-| [Kafka](../../Middlewares/Kafka.md) + [RabbitMQ](../../Middlewares/RabbitMQ.md) + [RocketMQ](../../Middlewares/RocketMQ.md) | 消息中间件对比 | 无 Frontmatter，无双链，三者之间也无互引 |
+| [[CloudComputing/深入剖析Kubernetes|深入剖析Kubernetes]] | K8s 理论深入 | 未被 145 篇 K8s 实操文档引用 |
+| [[CloudComputing/Auth|Auth]] | OAuth/OIDC/SAML/SSO | 未连接到 Azure AD、K8s RBAC |
+| [[Docker-Kubernetes/简历指南|简历指南]] | 求职实用 | 孤立文档 |
+| [[Linux-Shell/Linux-learning-notes|Linux-learning-notes]] | 2688 行 Linux 知识 | 未连接到任何其他文档 |
+| [[Docker-Kubernetes/k8s-installation-management/k8s两地三中心架构|k8s两地三中心架构]] | 高可用架构 | 未连接到 Aliyun/Azure 多地域 |
+| [[GPU-DeepLearning/Server-basics|Server-basics]] | 服务器硬件知识 | 未连接到 HPC、GPU |
+| [[Middlewares/Kafka|Kafka]] + [[Middlewares/RabbitMQ|RabbitMQ]] + [[Middlewares/RocketMQ|RocketMQ]] | 消息中间件对比 | 无 Frontmatter，无双链，三者之间也无互引 |
 
 ---
 

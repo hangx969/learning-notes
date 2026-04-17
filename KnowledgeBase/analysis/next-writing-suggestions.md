@@ -19,9 +19,9 @@ date: 2026-04-16
 - 缺少理论框架：声明式基础设施、Git 作为唯一真实来源、自动漂移检测
 
 **与当前仓库的关系：**
-- [ArgoCD基础](../../Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD基础.md) — 已有 GitOps 工具
-- [k8s配置定制工具-kustomize](../../Docker-Kubernetes/k8s-CICD/Kustomize/k8s配置定制工具-kustomize.md) — 配置管理
-- [helmv3-安装与使用](../../Docker-Kubernetes/helm-operator/helmv3-安装与使用.md) — Helm 管理
+- [[Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD基础|ArgoCD基础]] — 已有 GitOps 工具
+- [[Docker-Kubernetes/k8s-CICD/Kustomize/k8s配置定制工具-kustomize|k8s配置定制工具-kustomize]] — 配置管理
+- [[Docker-Kubernetes/helm-operator/helmv3-安装与使用|helmv3-安装与使用]] — Helm 管理
 
 **能补上的空白：** GitOps 理论 → ArgoCD 实践的衔接层
 
@@ -34,9 +34,9 @@ date: 2026-04-16
 - 已有丰富的监控和故障排查文档，缺少 SRE 思维框架
 
 **与当前仓库的关系：**
-- [Prometheus基础](../../Docker-Kubernetes/k8s-monitoring-logging/Prometheus基础.md) — 指标体系
-- [k8s故障排查指南](../../Docker-Kubernetes/k8s-installation-management/k8s故障排查指南.md) — 故障处理
-- [k8s生产环境优化与最佳实践](../../Docker-Kubernetes/k8s-installation-management/k8s生产环境优化与最佳实践.md) — 生产优化
+- [[Docker-Kubernetes/k8s-monitoring-logging/Prometheus基础|Prometheus基础]] — 指标体系
+- [[Docker-Kubernetes/k8s-installation-management/k8s故障排查指南|k8s故障排查指南]] — 故障处理
+- [[Docker-Kubernetes/k8s-installation-management/k8s生产环境优化与最佳实践|k8s生产环境优化与最佳实践]] — 生产优化
 
 **能补上的空白：** 从"会用监控"到"用好监控"的方法论
 
@@ -49,8 +49,8 @@ date: 2026-04-16
 - 告警规则是运维核心，当前只有 Alertmanager 部署
 
 **与当前仓库的关系：**
-- [helm部署prometheus-stack全家桶](../../Docker-Kubernetes/k8s-monitoring-logging/helm部署prometheus-stack全家桶.md)
-- [k8s监控alertmanager(v0.14.0)](../../Docker-Kubernetes/k8s-monitoring-logging/k8s监控alertmanager(v0.14.0.md))
+- [[Docker-Kubernetes/k8s-monitoring-logging/helm部署prometheus-stack全家桶|helm部署prometheus-stack全家桶]]
+- [[Docker-Kubernetes/k8s-monitoring-logging/k8s监控alertmanager(v0.14.0)|k8s监控alertmanager(v0.14.0)]]
 
 **能补上的空白：** 可观测性体系中"查询与告警"的核心技能
 
@@ -63,8 +63,8 @@ date: 2026-04-16
 - 混沌工程是验证系统韧性的标准实践
 
 **与当前仓库的关系：**
-- [k8s生产环境优化与最佳实践](../../Docker-Kubernetes/k8s-installation-management/k8s生产环境优化与最佳实践.md)
-- [etcd高可用配置以及模拟集群故障和恢复](../../Docker-Kubernetes/k8s-installation-management/etcd高可用配置以及模拟集群故障和恢复.md)
+- [[Docker-Kubernetes/k8s-installation-management/k8s生产环境优化与最佳实践|k8s生产环境优化与最佳实践]]
+- [[Docker-Kubernetes/k8s-installation-management/etcd高可用配置以及模拟集群故障和恢复|etcd高可用配置以及模拟集群故障和恢复]]
 
 **能补上的空白：** 从"搭建高可用"到"验证高可用"的闭环
 
@@ -77,9 +77,9 @@ date: 2026-04-16
 - 与 Terraform 形成 IaC 双翼
 
 **与当前仓库的关系：**
-- [ansible安装-rockylinux8](../../Linux-Shell/ansible安装-rockylinux8.md)
-- [terraform-basics](../../IaC/terraform-basics.md)
-- [python-fabric高级用法](../../Python/python-运维开发/python-fabric高级用法.md) — 类似工具
+- [[Linux-Shell/ansible安装-rockylinux8|ansible安装-rockylinux8]]
+- [[IaC/terraform-basics|terraform-basics]]
+- [[Python/python-运维开发/python-fabric高级用法|python-fabric高级用法]] — 类似工具
 
 **能补上的空白：** 自动化运维工具链中 Ansible 的深度内容
 
