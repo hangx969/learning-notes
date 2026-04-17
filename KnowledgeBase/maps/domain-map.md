@@ -89,12 +89,12 @@ date: 2026-04-16
 **覆盖范围：** 阿里云全产品线 — 计算(ECS/ESS/SMC)、网络(VPC/SLB/WAF/DDoS)、存储(OSS/CORS)、数据库(RDS/DTS)、资源管理。
 
 **代表性文章：**
-- [VPC](../../Aliyun/网络/VPC.md) — 专有网络架构
-- [负载均衡SLB](../../Aliyun/网络/负载均衡SLB.md) — CLB/ALB/NLB 全家族
-- [WAF](../../Aliyun/网络/WAF.md) + [DDoS高防](../../Aliyun/网络/DDoS高防.md) — 安全矩阵
-- [ACP考试](../../Aliyun/ACP考试.md) — ACP 认证备考
+- [[Aliyun/网络/VPC|VPC]] — 专有网络架构
+- [[Aliyun/网络/负载均衡SLB|负载均衡SLB]] — CLB/ALB/NLB 全家族
+- [[Aliyun/网络/WAF|WAF]] + [[Aliyun/网络/DDoS高防|DDoS高防]] — 安全矩阵
+- [[Aliyun/ACP考试|ACP考试]] — ACP 认证备考
 
-**关联领域：** [6_Azure-Networking](../../Azure/6_Azure-Networking.md)、[计算机网络基础](../../Networking/计算机网络基础.md)
+**关联领域：** [[Azure/6_Azure-Networking|6_Azure-Networking]]、[[Networking/计算机网络基础|计算机网络基础]]
 
 ---
 
@@ -107,9 +107,9 @@ date: 2026-04-16
 - `OpenClaw/`（7 篇）— 基础安装、Channels、Skills、AIOps、多智能体、CoPaw
 
 **代表性文章：**
-- [ClaudeCode基础指南](../../AI/ClaudeCode/ClaudeCode基础指南.md) — Claude Code 全面指南
-- [OpenClaw-基础-安装](../../AI/OpenClaw/OpenClaw-基础-安装.md) — OpenClaw 入门
-- [Openclaw-多智能体](../../AI/OpenClaw/Openclaw-多智能体.md) — 多智能体架构（2974 行，全库最大）
+- [[AI/ClaudeCode/ClaudeCode基础指南|ClaudeCode基础指南]] — Claude Code 全面指南
+- [[AI/OpenClaw/OpenClaw-基础-安装|OpenClaw-基础-安装]] — OpenClaw 入门
+- [[AI/OpenClaw/Openclaw-多智能体|Openclaw-多智能体]] — 多智能体架构（2974 行，全库最大）
 
 **关联领域：** 与所有领域潜在交叉（AI 辅助编码、运维、知识管理）
 
@@ -119,9 +119,9 @@ date: 2026-04-16
 
 **覆盖范围：** Go 语言完整学习路径 + 云原生开发基础。
 
-**推荐顺序：** [go-01-环境配置-基础](../../Go/go-01-环境配置-基础.md) → [go-变量-数据类型-运算](../../Go/go-变量-数据类型-运算.md) → [go-分支-循环](../../Go/go-分支-循环.md) → [go-函数-包](../../Go/go-函数-包.md) → [go-数组-切片-map](../../Go/go-数组-切片-map.md) → [go-面向对象](../../Go/go-面向对象.md) → [go-错误处理](../../Go/go-错误处理.md) → [go-web开发](../../Go/go-web开发.md) → [云原生开发-基础](../../Go/云原生开发-基础.md)
+**推荐顺序：** [[Go/go-01-环境配置-基础|go-01-环境配置-基础]] → [[Go/go-变量-数据类型-运算|go-变量-数据类型-运算]] → [[Go/go-分支-循环|go-分支-循环]] → [[Go/go-函数-包|go-函数-包]] → [[Go/go-数组-切片-map|go-数组-切片-map]] → [[Go/go-面向对象|go-面向对象]] → [[Go/go-错误处理|go-错误处理]] → [[Go/go-web开发|go-web开发]] → [[Go/云原生开发-基础|云原生开发-基础]]
 
-**关联领域：** [云原生](../../CloudComputing/云原生.md)、[发布go-python-java代码到K8S环境](../../Docker-Kubernetes/k8s-CICD/发布go-python-java代码到K8S环境.md)
+**关联领域：** [[CloudComputing/云原生|云原生]]、[[Docker-Kubernetes/k8s-CICD/发布go-python-java代码到K8S环境|发布go-python-java代码到K8S环境]]
 
 ---
 
@@ -130,9 +130,9 @@ date: 2026-04-16
 **覆盖范围：** 云计算架构理论、云原生概念、OpenStack、K8s 深入剖析、认证协议（SSO/OAuth）。
 
 **代表性文章：**
-- [云原生](../../CloudComputing/云原生.md) — 云原生哲学
-- [深入剖析Kubernetes](../../CloudComputing/深入剖析Kubernetes.md) — K8s 理论深入
-- [Auth](../../CloudComputing/Auth.md) — 认证协议
+- [[CloudComputing/云原生|云原生]] — 云原生哲学
+- [[CloudComputing/深入剖析Kubernetes|深入剖析Kubernetes]] — K8s 理论深入
+- [[CloudComputing/Auth|Auth]] — 认证协议
 
 **关联领域：** Docker-Kubernetes（实操对照）、Aliyun/Azure（云平台实践）
 
@@ -143,10 +143,10 @@ date: 2026-04-16
 **覆盖范围：** Slurm 和 PBS 作业调度系统，覆盖 CentOS 7 / Ubuntu 22.04 多版本部署。
 
 **代表性文章：**
-- [CentOS7-slurm23.02-二进制安装](../../HPC/CentOS7-slurm23.02-二进制安装.md) — 最全面的 Slurm 部署指南（1449 行）
-- [PBS](../../HPC/PBS.md) — PBS 调度系统
+- [[HPC/CentOS7-slurm23.02-二进制安装|CentOS7-slurm23.02-二进制安装]] — 最全面的 Slurm 部署指南（1449 行）
+- [[HPC/PBS|PBS]] — PBS 调度系统
 
-**关联领域：** [GPU-basics](../../GPU-DeepLearning/GPU-basics.md)、[Linux-learning-notes](../../Linux-Shell/Linux-learning-notes.md)
+**关联领域：** [[GPU-DeepLearning/GPU-basics|GPU-basics]]、[[Linux-Shell/Linux-learning-notes|Linux-learning-notes]]
 
 ---
 
@@ -154,12 +154,12 @@ date: 2026-04-16
 
 | 领域 | 篇数 | 核心文章 | 关联 |
 |------|------|----------|------|
-| GPU-DeepLearning | 4 | [GPU-basics](../../GPU-DeepLearning/GPU-basics.md) | HPC、Docker |
-| Database | 3 | [MySQL入门](../../Database/MySQL入门.md)、[源码安装redis-6.2.6-centos7](../../Database/源码安装redis-6.2.6-centos7.md) | Python 运维 |
-| Middlewares | 3 | [Kafka](../../Middlewares/Kafka.md)、[RabbitMQ](../../Middlewares/RabbitMQ.md) | K8s 中间件部署 |
-| OS | 3 | [OS](../../OS/OS.md)、[计算机组成原理](../../OS/计算机组成原理.md) | 理论基础 |
-| Networking | 2 | [计算机网络基础](../../Networking/计算机网络基础.md)、[HTTP基础](../../Networking/HTTP基础.md) | 云网络基础 |
-| IaC | 2 | [terraform-basics](../../IaC/terraform-basics.md) | 自动化运维 |
-| Git | 2 | [git-learning](../../Git/git-learning.md) | 开发工具 |
-| SoftwareTesting | 2 | [软件工程基础](../../SoftwareTesting/软件工程基础.md) | 软件工程 |
-| C++ | 1 | [C++LearningNotes](../../C++/C++LearningNotes.md) | 编程语言 |
+| GPU-DeepLearning | 4 | [[GPU-DeepLearning/GPU-basics|GPU-basics]] | HPC、Docker |
+| Database | 3 | [[Database/MySQL入门|MySQL入门]]、[[Database/源码安装redis-6.2.6-centos7|源码安装redis-6.2.6-centos7]] | Python 运维 |
+| Middlewares | 3 | [[Middlewares/Kafka|Kafka]]、[[Middlewares/RabbitMQ|RabbitMQ]] | K8s 中间件部署 |
+| OS | 3 | [[OS/OS|OS]]、[[OS/计算机组成原理|计算机组成原理]] | 理论基础 |
+| Networking | 2 | [[Networking/计算机网络基础|计算机网络基础]]、[[Networking/HTTP基础|HTTP基础]] | 云网络基础 |
+| IaC | 2 | [[IaC/terraform-basics|terraform-basics]] | 自动化运维 |
+| Git | 2 | [[Git/git-learning|git-learning]] | 开发工具 |
+| SoftwareTesting | 2 | [[SoftwareTesting/软件工程基础|软件工程基础]] | 软件工程 |
+| C++ | 1 | [[C++/C++LearningNotes|C++LearningNotes]] | 编程语言 |

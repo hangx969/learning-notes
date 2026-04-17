@@ -16,52 +16,52 @@ date: 2026-04-16
 ---
 
 ## 核心概念
-- [Kubernetes](../concepts/Kubernetes.md) — K8s 概念页
-- [Docker](../concepts/Docker.md) — 容器基础
-- [Helm](../concepts/Helm.md) — 包管理
-- [Ingress](../concepts/Ingress.md) — 流量入口
-- [容器运行时](../concepts/容器运行时.md) — containerd/Docker Engine
-- [服务网格](../concepts/服务网格.md) — Istio
-- [Observability](../concepts/Observability.md) — 可观测性
-- [CICD](../concepts/CICD.md) — 持续交付
+- [[KnowledgeBase/entities/Kubernetes|Kubernetes]] — K8s 概念页
+- [[KnowledgeBase/entities/Docker|Docker]] — 容器基础
+- [[KnowledgeBase/entities/Helm|Helm]] — 包管理
+- [[KnowledgeBase/entities/Ingress|Ingress]] — 流量入口
+- [[KnowledgeBase/concepts/容器运行时|容器运行时]] — containerd/Docker Engine
+- [[KnowledgeBase/concepts/服务网格|服务网格]] — Istio
+- [[KnowledgeBase/concepts/Observability|Observability]] — 可观测性
+- [[KnowledgeBase/concepts/CICD|CICD]] — 持续交付
 
 ---
 
 ## 📖 推荐阅读顺序
 
 ### 第一阶段：容器基础
-1. [docker基础](../../Docker-Kubernetes/docker/docker基础.md) — Docker 核心概念
-2. [k8s基础-容器运行时-containerd](../../Docker-Kubernetes/k8s-basic-resources/k8s基础-容器运行时-containerd.md) — containerd
+1. [[Docker-Kubernetes/docker/docker基础|docker基础]] — Docker 核心概念
+2. [[Docker-Kubernetes/k8s-basic-resources/k8s基础-容器运行时-containerd|k8s基础-容器运行时-containerd]] — containerd
 
 ### 第二阶段：K8s 核心资源
-3. [k8s基础-架构-组件-资源](../../Docker-Kubernetes/k8s-basic-resources/k8s基础-架构-组件-资源.md) — 架构总览
-4. [k8s基础-yaml](../../Docker-Kubernetes/k8s-basic-resources/k8s基础-yaml.md) — YAML 编写
-5. [k8s基础-pod](../../Docker-Kubernetes/k8s-basic-resources/k8s基础-pod.md) — Pod
-6. [k8s基础-deployment](../../Docker-Kubernetes/k8s-basic-resources/k8s基础-deployment.md) — Deployment
-7. [k8s基础-Service](../../Docker-Kubernetes/k8s-basic-resources/k8s基础-Service.md) — Service
-8. [k8s基础-ingress](../../Docker-Kubernetes/k8s-basic-resources/k8s基础-ingress.md) — Ingress（2399 行深度文章）
-9. [k8s基础-configMap-Secret](../../Docker-Kubernetes/k8s-basic-resources/k8s基础-configMap-Secret.md) — 配置管理
-10. [k8s基础-storage](../../Docker-Kubernetes/k8s-basic-resources/k8s基础-storage.md) — 存储
+3. [[Docker-Kubernetes/k8s-basic-resources/k8s基础-架构-组件-资源|k8s基础-架构-组件-资源]] — 架构总览
+4. [[Docker-Kubernetes/k8s-basic-resources/k8s基础-yaml|k8s基础-yaml]] — YAML 编写
+5. [[Docker-Kubernetes/k8s-basic-resources/k8s基础-pod|k8s基础-pod]] — Pod
+6. [[Docker-Kubernetes/k8s-basic-resources/k8s基础-deployment|k8s基础-deployment]] — Deployment
+7. [[Docker-Kubernetes/k8s-basic-resources/k8s基础-Service|k8s基础-Service]] — Service
+8. [[Docker-Kubernetes/k8s-basic-resources/k8s基础-ingress|k8s基础-ingress]] — Ingress（2399 行深度文章）
+9. [[Docker-Kubernetes/k8s-basic-resources/k8s基础-configMap-Secret|k8s基础-configMap-Secret]] — 配置管理
+10. [[Docker-Kubernetes/k8s-basic-resources/k8s基础-storage|k8s基础-storage]] — 存储
 
 ### 第三阶段：安装部署
-11. [安装k8s-1.35-基于rockylinux10-最新步骤](../../Docker-Kubernetes/k8s-installation-management/latest-version/安装k8s-1.35-基于rockylinux10-最新步骤.md) — 最新版安装
-12. [2025最新-企业级高可用集群-基于rockylinux](../../Docker-Kubernetes/k8s-installation-management/2025最新-企业级高可用集群-基于rockylinux.md) — 企业级高可用
-13. [二进制安装k8s高可用集群](../../Docker-Kubernetes/k8s-installation-management/二进制安装k8s高可用集群.md) — 二进制安装
+11. [[Docker-Kubernetes/k8s-installation-management/latest-version/安装k8s-1.35-基于rockylinux10-最新步骤|安装k8s-1.35-基于rockylinux10-最新步骤]] — 最新版安装
+12. [[Docker-Kubernetes/k8s-installation-management/2025最新-企业级高可用集群-基于rockylinux|2025最新-企业级高可用集群-基于rockylinux]] — 企业级高可用
+13. [[Docker-Kubernetes/k8s-installation-management/二进制安装k8s高可用集群|二进制安装k8s高可用集群]] — 二进制安装
 
 ### 第四阶段：监控与日志
-14. [helm部署prometheus-stack全家桶](../../Docker-Kubernetes/k8s-monitoring-logging/helm部署prometheus-stack全家桶.md) — Prometheus 全家桶
-15. [helm部署Loki-promtail-tempo-grafanaAgent全家桶](../../Docker-Kubernetes/k8s-monitoring-logging/helm部署Loki-promtail-tempo-grafanaAgent全家桶.md) — Loki + Tempo
-16. [k8s日志管理](../../Docker-Kubernetes/k8s-monitoring-logging/k8s日志管理.md) — 日志架构
+14. [[Docker-Kubernetes/k8s-monitoring-logging/helm部署prometheus-stack全家桶|helm部署prometheus-stack全家桶]] — Prometheus 全家桶
+15. [[Docker-Kubernetes/k8s-monitoring-logging/helm部署Loki-promtail-tempo-grafanaAgent全家桶|helm部署Loki-promtail-tempo-grafanaAgent全家桶]] — Loki + Tempo
+16. [[Docker-Kubernetes/k8s-monitoring-logging/k8s日志管理|k8s日志管理]] — 日志架构
 
 ### 第五阶段：CI/CD
-17. [ArgoCD基础](../../Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD基础.md) — GitOps
-18. [k8s-Devops平台落地-基于jenkins](../../Docker-Kubernetes/k8s-CICD/Jenkins/k8s-Devops平台落地-基于jenkins.md) — Jenkins DevOps
-19. [基于Tekton的云原生平台落地](../../Docker-Kubernetes/k8s-CICD/Tekton/基于Tekton的云原生平台落地.md) — 云原生 CI/CD
+17. [[Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD基础|ArgoCD基础]] — GitOps
+18. [[Docker-Kubernetes/k8s-CICD/Jenkins/k8s-Devops平台落地-基于jenkins|k8s-Devops平台落地-基于jenkins]] — Jenkins DevOps
+19. [[Docker-Kubernetes/k8s-CICD/Tekton/基于Tekton的云原生平台落地|基于Tekton的云原生平台落地]] — 云原生 CI/CD
 
 ### 第六阶段：高级特性
-20. [k8s精细化流量管理-istio](../../Docker-Kubernetes/k8s-networking-service-mesh/k8s精细化流量管理-istio.md) — 服务网格
-21. [k8s-HPA-VPA](../../Docker-Kubernetes/k8s-scaling/k8s-HPA-VPA.md) — 自动扩缩容
-22. [helm部署kyverno和policy-reporter](../../Docker-Kubernetes/k8s-security-auth/helm部署kyverno和policy-reporter.md) — 策略管理
+20. [[Docker-Kubernetes/k8s-networking-service-mesh/k8s精细化流量管理-istio|k8s精细化流量管理-istio]] — 服务网格
+21. [[Docker-Kubernetes/k8s-scaling/k8s-HPA-VPA|k8s-HPA-VPA]] — 自动扩缩容
+22. [[Docker-Kubernetes/k8s-security-auth/helm部署kyverno和policy-reporter|helm部署kyverno和policy-reporter]] — 策略管理
 
 ---
 
