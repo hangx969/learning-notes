@@ -31,7 +31,7 @@ k8s-report-skills 是一个自研的 Claude Code Skill，使用 Python kubernete
 3. **双模式连接**：支持 kubeconfig 文件（本地/远程）和 InCluster ServiceAccount（集群内 Pod 运行）两种认证方式
 4. **HTML 报告特性**：带进度条的集群资源使用率仪表盘、异常资源高亮（红色/橙色状态标记）、响应式布局适合邮件发送
 5. **Agent 集成设计**：提供 `run_k8s_inspection_skill()` 顶层接口返回 HTML 字符串，也暴露 `K8sReportSkill` 类的细粒度方法供 Agent 获取原始数据（JSON/Dict）
-6. **附带 kubectl Skill 模板**：SKILL_TEMP.md 是一个通用的 kubectl 操作技能模板，覆盖资源查询、部署更新、调试排错、配置管理等常见 kubectl 操作模式
+6. **依赖精简**：仅需 kubernetes（≥28.1.0）和 Jinja2（≥3.1.2）两个 Python 包，部署门槛低
 
 ## 涉及的概念与实体
 

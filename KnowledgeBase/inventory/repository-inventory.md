@@ -27,12 +27,11 @@ date: 2026-04-16
 | [[AI/ClaudeCode/多智能体协作-Subagents与Agent-Teams|多智能体协作]] | Subagents 与 Agent Teams | ✅ | ❌ |
 | [[AI/ClaudeCode/obsidian-claude-搭建个人知识库|obsidian-claude-搭建个人知识库]] | Obsidian + Claude Code 搭建 AI 知识库 | ✅ | ✅ |
 
-### skills/k8s-report-skills/（自研 Skill，4 篇）
+### skills/k8s-report-skills/（自研 Skill，3 篇）
 
 | 文件 | 标题 | Frontmatter | 双链 |
 |------|------|:-----------:|:----:|
 | [[AI/skills/k8s-report-skills/SKILL.md|SKILL.md]] | K8s Inspector Skill 定义 | ✅ | ❌ |
-| [[AI/skills/k8s-report-skills/SKILL_TEMP.md|SKILL_TEMP.md]] | kubectl Skill 模板 | ✅ | ❌ |
 | [[AI/skills/k8s-report-skills/k8s_inspector.py|k8s_inspector.py]] | K8s 巡检 Python 主脚本 | — | — |
 | [[AI/skills/k8s-report-skills/templates/report.html|report.html]] | Jinja2 HTML 报告模板 | — | — |
 
