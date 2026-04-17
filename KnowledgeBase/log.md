@@ -12,6 +12,24 @@ date: 2026-04-17
 
 ---
 
+## [2026-04-18] ingest | OpenClaw 多智能体定义文件导出
+
+- **来源**：`/Users/hang.xu/Downloads/agents-export-20260417-235735/`（从 [[AI/OpenClaw/Openclaw-多智能体]] 导出）
+- **操作**：创建 `AI/agents/` 目录，拷入 8 个智能体完整定义文件集
+  - **调度核心**：aiops（AIOps 架构师，纯路由型）
+  - **基础设施层**：linux / container / k8s（三个运维执行专家）
+  - **开发层**：architect / backend-engineer / frontend-engineer
+  - **管理层**：pm（产品经理）
+  - 每个智能体含 IDENTITY.md + SOUL.md + AGENTS.md + HEARTBEAT.md
+  - 4 个附带 Skills：k8s-install-orchestrator、docker-runtime-install、k8s-cluster-install、rocky-linux10-init
+- **知识库更新**：
+  - 新建 `sources/openclaw-agents-export-summary.md` — 来源摘要页
+  - `entities/OpenClaw.md` — 新增 sources 引用 + 智能体定义文件表格
+  - `index.md` — 新增"AI/agents"分区，AI 篇数 18→26
+  - `inventory/repository-inventory.md` — 新增 agents 目录盘点
+
+---
+
 ## [2026-04-17] create | 自研 k8s-inspect-skills Skill（Shell 版）
 
 - **来源**：基于 [[Docker-Kubernetes/k8s-monitoring-logging/K8s全面巡检脚本-生成HTML健康报告]] 的 Shell 脚本改造
