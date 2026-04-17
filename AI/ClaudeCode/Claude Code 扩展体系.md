@@ -500,17 +500,20 @@ python3 /path/to/skill-creator/scripts/package_skill.py \
 
 ## 各种 Skill 推荐
 
-**官方 Skills Git 仓库**：[anthropics/skills](https://github.com/anthropics/skills.git)
+### 官方 Skills仓库：
+[anthropics/skills](https://github.com/anthropics/skills.git)
 
-**开源 Skills 仓库**：
+### 开源 Skills 仓库：
 
 - 该项目收集了各种实用 Skill，采用模块化设计。比如文档处理、开发、数据分析、营销、写作创意啥的都有：[ComposioHQ/awesome-claude-skills](https://github.com/ComposioHQ/awesome-claude-skills)、[BehiSecc/awesome-claude-skills](https://github.com/BehiSecc/awesome-claude-skills)
 - 传统的 Claude Code Skill 需要你手动记忆和调用，而这个项目通过创新的钩子机制，实现了 Skill 的智能自动触发。当你输入提示或操作文件时，系统会自动分析上下文，并建议最相关的技能：[claude-code-infrastructure-showcase](https://github.com/diet103/claude-code-infrastructure-showcase)
 - 开发者 @obra 觉得现在的 AI 写代码太随意了，所以他写了一组 Skills，**强迫** Claude 按照**世界级高级工程师**的标准流程来工作：[obra/superpowers](https://github.com/obra/superpowers)。装了之后，Claude 的模式就是：**收到需求 → 先头脑风暴 → 制定详细计划 → 写测试用例（TDD）→ 写代码通过测试 → 检查质量**
+### 用 Skill 创建 Skill
 
----
+Anthropic 官方有一个帮助创建 Skill 的 Skill：[skill-creator](https://github.com/anthropics/skills/tree/main/skills/skill-creator)
+告诉 Claude Code 基于当前的 Skill 草稿，调用 skill-creator 来创建一个完整的 skill，名称为 xxx。
 
-## Obsidian Skill
+### Obsidian Skill
 
 > [!info] 仓库地址
 > [kepano/obsidian-skills](https://github.com/kepano/obsidian-skills)
@@ -743,14 +746,6 @@ team-skills/
     v1.1.0/Skill.md
     v2.0.0/Skill.md  # 当前版本
 ```
-
----
-
-## 用 Skill 创建 Skill
-
-Anthropic 官方有一个帮助创建 Skill 的 Skill：[skill-creator](https://github.com/anthropics/skills/tree/main/skills/skill-creator)
-
-告诉 Claude Code 基于当前的 Skill 草稿，调用 skill-creator 来创建一个完整的 skill，名称为 xxx。
 
 ---
 
