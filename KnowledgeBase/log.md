@@ -12,6 +12,27 @@ date: 2026-04-17
 
 ---
 
+## [2026-04-17] create | 批量补建高频红链 stub 实体页（11 个）
+
+- **触发**：用户请求补建引用 ≥3 次的实体红链
+- **新建 stub 实体页（11 篇）**：
+  - `entities/NVIDIA.md`（4 次引用）— GPU 硬件厂商
+  - `entities/PBS.md`（4 次引用）— HPC 作业调度系统
+  - `entities/containerd.md`（4 次引用）— K8s 默认容器运行时
+  - `entities/CUDA.md`（3 次引用）— NVIDIA GPU 计算平台
+  - `entities/Calico.md`（3 次引用）— K8s CNI 网络插件
+  - `entities/Docker-Compose.md`（3 次引用）— 单机多容器编排工具
+  - `entities/Kustomize.md`（3 次引用）— K8s 原生配置管理工具
+  - `entities/NFS.md`（3 次引用）— 网络文件系统存储
+  - `entities/Nginx.md`（3 次引用）— Web 服务器与反向代理
+  - `entities/PostgreSQL.md`（3 次引用）— 开源关系型数据库
+  - `entities/Rancher.md`（3 次引用）— K8s 多集群管理平台
+- **INDEX.md 更新**：实体表格新增 11 行
+- **断链报告更新**：红链从 236 降至 225，有效链接从 370 升至 381（63%）
+- 累计实体页：35 个（18 原始 + 6 首次 lint stub + 11 本次 stub）
+
+---
+
 ## [2026-04-17] lint | 首次全库健康检查
 
 ### 检查结果

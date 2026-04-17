@@ -16,8 +16,8 @@ date: 2026-04-17
 | 指标 | 数值 |
 |------|------|
 | 总 wikilink 目标 | 609 |
-| 有效链接 | 370（61%） |
-| 断链（红链） | 236 |
+| 有效链接 | 381（63%） |
+| 断链（红链） | 225 |
 | 孤儿页面 | 0 ✅ |
 
 ---
@@ -36,7 +36,7 @@ date: 2026-04-17
 | `concepts/ArgoCD` | `entities/ArgoCD` | `maintenance/naming-normalization.md` |
 | `concepts/Ingress` | `entities/Ingress` | `sources/k8s-networking-service-mesh-batch-summary.md` |
 
-### 高频红链 → 已创建 stub 页面（6 个）
+### 高频红链 → 已创建 stub 页面（17 个）
 
 | 实体 | 引用次数 | 状态 |
 |------|:--------:|------|
@@ -46,6 +46,17 @@ date: 2026-04-17
 | Kafka | 5 | ✅ stub 已创建 |
 | Loki | 5 | ✅ stub 已创建 |
 | MySQL | 5 | ✅ stub 已创建 |
+| NVIDIA | 4 | ✅ stub 已创建 |
+| PBS | 4 | ✅ stub 已创建 |
+| containerd | 4 | ✅ stub 已创建 |
+| CUDA | 3 | ✅ stub 已创建 |
+| Calico | 3 | ✅ stub 已创建 |
+| Docker Compose | 3 | ✅ stub 已创建 |
+| Kustomize | 3 | ✅ stub 已创建 |
+| NFS | 3 | ✅ stub 已创建 |
+| Nginx | 3 | ✅ stub 已创建 |
+| PostgreSQL | 3 | ✅ stub 已创建 |
+| Rancher | 3 | ✅ stub 已创建 |
 
 ---
 
@@ -63,21 +74,7 @@ date: 2026-04-17
 | 联邦集群 | 2 |
 | 高可用架构 | 2 |
 
-### 建议优先创建的实体页（引用 ≥3 次）
-
-| 实体 | 引用次数 |
-|------|:--------:|
-| NVIDIA | 4 |
-| PBS | 4 |
-| containerd | 4 |
-| CUDA | 3 |
-| Calico | 3 |
-| Docker Compose | 3 |
-| Kustomize | 3 |
-| NFS | 3 |
-| Nginx | 3 |
-| PostgreSQL | 3 |
-| Rancher | 3 |
+### ~~建议优先创建的实体页（引用 ≥3 次）~~ → 已全部创建 ✅
 
 ### 低频红链统计
 

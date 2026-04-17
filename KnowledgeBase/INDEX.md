@@ -68,6 +68,17 @@ date: 2026-04-17
 | [[KnowledgeBase/entities/Kafka\|Kafka]] | 分布式消息队列/事件流平台（stub） |
 | [[KnowledgeBase/entities/Loki\|Loki]] | 轻量级日志聚合系统（stub） |
 | [[KnowledgeBase/entities/MySQL\|MySQL]] | 开源关系型数据库（stub） |
+| [[KnowledgeBase/entities/NVIDIA\|NVIDIA]] | GPU 硬件厂商（stub） |
+| [[KnowledgeBase/entities/PBS\|PBS]] | HPC 作业调度系统（stub） |
+| [[KnowledgeBase/entities/containerd\|containerd]] | K8s 默认容器运行时（stub） |
+| [[KnowledgeBase/entities/CUDA\|CUDA]] | NVIDIA GPU 计算平台（stub） |
+| [[KnowledgeBase/entities/Calico\|Calico]] | K8s CNI 网络插件（stub） |
+| [[KnowledgeBase/entities/Docker-Compose\|Docker Compose]] | 单机多容器编排工具（stub） |
+| [[KnowledgeBase/entities/Kustomize\|Kustomize]] | K8s 原生配置管理工具（stub） |
+| [[KnowledgeBase/entities/NFS\|NFS]] | 网络文件系统存储（stub） |
+| [[KnowledgeBase/entities/Nginx\|Nginx]] | Web 服务器与反向代理（stub） |
+| [[KnowledgeBase/entities/PostgreSQL\|PostgreSQL]] | 开源关系型数据库（stub） |
+| [[KnowledgeBase/entities/Rancher\|Rancher]] | K8s 多集群管理平台（stub） |
 
 ---
 
