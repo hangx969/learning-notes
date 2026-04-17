@@ -18,15 +18,12 @@ date: 2026-04-16
 
 ## AI（16 篇）
 
-### ClaudeCode/（7 篇）
+### ClaudeCode/（5 篇）
 
 | 文件 | 标题 | Frontmatter | 双链 |
 |------|------|:-----------:|:----:|
 | [[AI/ClaudeCode/ClaudeCode基础指南|ClaudeCode基础指南]] | Claude Code 使用指南 | ✅ | ✅ |
-| [[AI/ClaudeCode/MCP|MCP]] | Claude Code MCP 配置 | ✅ | ❌ |
-| [[AI/ClaudeCode/Plugin|Plugin]] | Claude Code Plugin | ✅ | ❌ |
-| [[AI/ClaudeCode/Skills|Skills]] | Claude Code Skills | ✅ | ❌ |
-| [[AI/ClaudeCode/Slash Command|Slash Command]] | Claude Code Slash Command | ✅ | ❌ |
+| [[AI/ClaudeCode/Claude Code 扩展体系|扩展体系]] | MCP + Skills + Slash Commands + Plugin | ✅ | ❌ |
 | [[AI/ClaudeCode/多智能体协作-Subagents与Agent-Teams|多智能体协作]] | Subagents 与 Agent Teams | ✅ | ❌ |
 | [[AI/ClaudeCode/obsidian-claude-搭建个人知识库|obsidian-claude-搭建个人知识库]] | Obsidian + Claude Code 搭建 AI 知识库 | ✅ | ✅ |
 
