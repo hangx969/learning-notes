@@ -351,3 +351,4 @@ Have them each review and report findings.
 | 队友遇错停止 | 查看输出，给额外指令或生成替代队友 |
 | Lead 提前结束 | 告诉 Lead 继续等待 |
 | 孤儿 tmux 会话 | `tmux ls` → `tmux kill-session -t <name>` |
+# 开源Agents推荐
