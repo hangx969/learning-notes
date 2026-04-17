@@ -113,22 +113,25 @@ check_nodes() {
 <th>CPU 使用</th><th>内存使用</th><th>运行时间</th><th>内核版本</th></tr>
 EOF
 
+    local ALL_NODE_TOP
+    ALL_NODE_TOP=$(kubectl top nodes --no-headers 2>/dev/null || true)
+    local ALL_NODE_KERNELS
+    ALL_NODE_KERNELS=$(kubectl get nodes -o custom-columns='NAME:.metadata.name,KERNEL:.status.nodeInfo.kernelVersion' --no-headers 2>/dev/null)
+
     while IFS= read -r line; do
         [[ -z "$line" ]] && continue
         NODE_NAME=$(echo "$line" | awk '{print $1}')
         NODE_STATUS=$(echo "$line" | awk '{print $2}')
-        NODE_ROLE=$(kubectl get node "$NODE_NAME" \
-            --no-headers -o jsonpath='{.metadata.labels}' 2>/dev/null \
-            | grep -o '"node-role[^"]*"' | sed 's/.*\///' | sed 's/"//' | head -1)
-        [[ -z "$NODE_ROLE" ]] && NODE_ROLE="worker"
+        NODE_ROLE=$(echo "$line" | awk '{print $3}')
+        [[ "$NODE_ROLE" == "<none>" ]] && NODE_ROLE="worker"
         K8S_VER=$(echo "$line" | awk '{print $5}')
         UPTIME=$(echo "$line" | awk '{print $4}')
 
-        CPU_USAGE=$(kubectl top node "$NODE_NAME" --no-headers 2>/dev/null \
-            | awk '{print $2}' || echo "N/A")
-        MEM_USAGE=$(kubectl top node "$NODE_NAME" --no-headers 2>/dev/null \
-            | awk '{print $4}' || echo "N/A")
-        KERNEL=$(kubectl get node "$NODE_NAME" -o jsonpath='{.status.nodeInfo.kernelVersion}' 2>/dev/null)
+        CPU_USAGE=$(echo "$ALL_NODE_TOP" | awk -v n="$NODE_NAME" '$1==n{print $2}')
+        MEM_USAGE=$(echo "$ALL_NODE_TOP" | awk -v n="$NODE_NAME" '$1==n{print $4}')
+        [[ -z "$CPU_USAGE" ]] && CPU_USAGE="N/A"
+        [[ -z "$MEM_USAGE" ]] && MEM_USAGE="N/A"
+        KERNEL=$(echo "$ALL_NODE_KERNELS" | awk -v n="$NODE_NAME" '$1==n{print $2}')
 
         if [[ "$NODE_STATUS" == "Ready" ]]; then
             STATUS_CLASS="ok"
