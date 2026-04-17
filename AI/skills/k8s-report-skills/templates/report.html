@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>Kubernetes 集群巡检报告</title>
+    <style>
+        body { font-family: "SF Pro Text", -apple-system, BlinkMacSystemFont, Roboto, "Segoe UI", Helvetica, Arial, sans-serif; margin: 30px; color: #333; line-height: 1.6; background-color: #f9fbff; }
+        .container { max-width: 1100px; margin: 0 auto; background: #fff; padding: 40px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        h1 { color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px; text-align: center; margin-bottom: 5px; }
+        h2 { color: #2980b9; margin-top: 30px; border-left: 4px solid #2980b9; padding-left: 10px; }
+        .timestamp { text-align: center; color: #7f8c8d; font-size: 0.9em; margin-bottom: 30px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; margin-bottom: 20px; font-size: 0.95em; }
+        th, td { border: 1px solid #e1e8ed; padding: 12px 15px; text-align: left; }
+        th { background-color: #f4f6f8; font-weight: 600; color: #2c3e50; }
+        tr:nth-child(even) { background-color: #fdfdfe; }
+        tr:hover { background-color: #f1f4f9; }
+        .status-good { color: #27ae60; font-weight: bold; }
+        .status-bad { color: #c0392b; font-weight: bold; }
+        .status-warning { color: #f39c12; font-weight: bold; }
+        .summary-box { background: #e8f4f8; padding: 15px; border-radius: 5px; margin-bottom: 20px; border-left: 4px solid #3498db; }
+        .grid-info { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        /* 进度条样式 */
+        .progress-container { width: 100%; background-color: #e1e8ed; border-radius: 4px; margin-top: 5px; overflow: hidden; height: 20px;}
+        .progress-bar { height: 100%; text-align: center; line-height: 20px; color: white; font-size: 12px; font-weight: bold; transition: width 0.4s ease; }
+        .progress-bar.safe { background-color: #2ecc71; }
+        .progress-bar.warning { background-color: #f1c40f; }
+        .progress-bar.danger { background-color: #e74c3c; }
+        .usage-item { margin-bottom: 20px; }
+        .usage-label { display: flex; justify-content: space-between; font-weight: bold; color: #2c3e50; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Kubernetes 集群定期巡检报告</h1>
+        <div class="timestamp">报告生成时间: <strong>{{ data.generated_at }}</strong></div>
+
+        <!-- 集群资源使用率 (进度条) -->
+        <div class="section">
+            <h2>集群整体资源使用率</h2>
+            <div class="summary-box">
+                {% set cpu_pct = (data.nodes.totals.cpu_usage / data.nodes.totals.cpu_alloc * 100) if data.nodes.totals.cpu_alloc > 0 else 0 %}
+                {% set mem_pct = (data.nodes.totals.mem_usage / data.nodes.totals.mem_alloc * 100) if data.nodes.totals.mem_alloc > 0 else 0 %}
+                {% set pod_pct = (data.nodes.totals.pods_usage / data.nodes.totals.pods_alloc * 100) if data.nodes.totals.pods_alloc > 0 else 0 %}
+                
+                <div class="usage-item">
+                    <div class="usage-label">
+                        <span>CPU 使用率</span>
+                        <span>{{ "%.2f"|format(data.nodes.totals.cpu_usage) }} / {{ "%.2f"|format(data.nodes.totals.cpu_alloc) }} Cores ({{ "%.1f"|format(cpu_pct) }}%)</span>
+                    </div>
+                    <div class="progress-container">
+                        <div class="progress-bar {% if cpu_pct > 85 %}danger{% elif cpu_pct > 70 %}warning{% else %}safe{% endif %}" style="width: {{ cpu_pct }}%;"></div>
+                    </div>
+                </div>
+
+                <div class="usage-item">
+                    <div class="usage-label">
+                        <span>内存 使用率</span>
+                        <span>{{ "%.2f"|format(data.nodes.totals.mem_usage) }} / {{ "%.2f"|format(data.nodes.totals.mem_alloc) }} GiB ({{ "%.1f"|format(mem_pct) }}%)</span>
+                    </div>
+                    <div class="progress-container">
+                        <div class="progress-bar {% if mem_pct > 85 %}danger{% elif mem_pct > 70 %}warning{% else %}safe{% endif %}" style="width: {{ mem_pct }}%;"></div>
+                    </div>
+                </div>
+
+                <div class="usage-item">
+                    <div class="usage-label">
+                        <span>Pod 数量使用率</span>
+                        <span>{{ data.nodes.totals.pods_usage|int }} / {{ data.nodes.totals.pods_alloc|int }} 实列 ({{ "%.1f"|format(pod_pct) }}%)</span>
+                    </div>
+                    <div class="progress-container">
+                        <div class="progress-bar {% if pod_pct > 85 %}danger{% elif pod_pct > 70 %}warning{% else %}safe{% endif %}" style="width: {{ pod_pct }}%;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 1. 集群基本信息 -->
+        <div class="section">
+            <h2>1. 集群概况</h2>
+            <div class="summary-box grid-info">
+                <div><strong>Kubernetes 版本:</strong> <span style="float: right;">{{ data.cluster_info.git_version }}</span></div>
+                <div><strong>底层平台:</strong> <span style="float: right;">{{ data.cluster_info.platform }}</span></div>
+                <div><strong>相关 Go 版本:</strong> <span style="float: right;">{{ data.cluster_info.go_version }}</span></div>
+                <div><strong>命名空间数量 (近似):</strong> <span style="float: right;">{{ data.namespaces|length }}</span></div>
+            </div>
+        </div>
+
+        <!-- 2. 节点状态 -->
+        <div class="section">
+            <h2>2. 节点状态 (Nodes)</h2>
+            <p><strong>异常节点数:</strong> 
+                {% set not_ready = data.nodes.list | selectattr('status', 'equalto', 'NotReady') | list | length %}
+                <span class="{% if not_ready > 0 %}status-bad{% else %}status-good{% endif %}">{{ not_ready }}</span>
+            </p>
+            <table>
+                <tr>
+                    <th>节点名称</th>
+                    <th>角色</th>
+                    <th>状态</th>
+                    <th>CPU (已用 / 等效最大)</th>
+                    <th>内存 (已用 / 等效最大)</th>
+                    <th>Pod (已用 / 等效最大)</th>
+                    <th>Kubelet 版本</th>
+                </tr>
+                {% for node in data.nodes.list %}
+                <tr>
+                    <td>{{ node.name }}</td>
+                    <td>{{ node.roles | join(', ') }}</td>
+                    <td class="{% if node.status == 'Ready' %}status-good{% else %}status-bad{% endif %}">{{ node.status }}</td>
+                    <td>{{ node.cpu_usage }}</td>
+                    <td>{{ node.memory_usage }}</td>
+                    <td>{{ node.pods_usage }}</td>
+                    <td>{{ node.kubelet_version }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+
+        <!-- 3. Pod 状态 -->
+        <div class="section">
+            <h2>3. Pod 状态巡检</h2>
+            <div class="summary-box">
+                <strong>总计 Pods:</strong> {{ data.pods.total }} 个 | 
+                <strong>正常运行:</strong> <span class="status-good">{{ data.pods.normal|length }}</span> 个 | 
+                <strong>异常/挂起:</strong> <span class="{% if data.pods.abnormal|length > 0 %}status-bad{% else %}status-good{% endif %}">{{ data.pods.abnormal|length }}</span> 个
+            </div>
+            
+            {% if data.pods.abnormal|length > 0 %}
+            <h3>异常 Pods 列表</h3>
+            <table>
+                <tr>
+                    <th>命名空间</th>
+                    <th>名称</th>
+                    <th>当前状态 & 原因</th>
+                    <th>累计重启次数</th>
+                </tr>
+                {% for pod in data.pods.abnormal %}
+                <tr>
+                    <td>{{ pod.namespace }}</td>
+                    <td>{{ pod.name }}</td>
+                    <td class="status-bad">{{ pod.reason }}</td>
+                    <td class="{% if pod.restarts > 5 %}status-warning{% endif %}">{{ pod.restarts }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+            {% else %}
+            <p class="status-good">所有的 Pods 均运行正常，没有被检测为异常或高频重启的实例！</p>
+            {% endif %}
+        </div>
+
+        <!-- 4. Deployment 异常状态 -->
+        <div class="section">
+            <h2>4. 异常 Deployments (副本数不足)</h2>
+            <p><strong>总计 Deployments:</strong> {{ data.deployments.total }} 个</p>
+            {% if data.deployments.abnormal|length > 0 %}
+            <table>
+                <tr>
+                    <th>命名空间</th>
+                    <th>Deployment 名称</th>
+                    <th>期望副本数 (Desired)</th>
+                    <th>可用副本数 (Available)</th>
+                </tr>
+                {% for dep in data.deployments.abnormal %}
+                <tr>
+                    <td>{{ dep.namespace }}</td>
+                    <td>{{ dep.name }}</td>
+                    <td>{{ dep.desired }}</td>
+                    <td class="status-bad">{{ dep.available }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+            {% else %}
+            <p class="status-good">所有的 Deployments 副本均已达到期望可用状态！</p>
+            {% endif %}
+        </div>
+
+        <!-- 5. PV & PVC 状态 -->
+        <div class="section">
+            <h2>5. 存储卷异常检测 (PV & PVC)</h2>
+            <div class="summary-box">
+                <strong>总计 PVs:</strong> {{ data.storage.pvs.total }} 个 |
+                <strong>总计 PVCs:</strong> {{ data.storage.pvcs.total }} 个
+            </div>
+            
+            {% if data.storage.pvcs.abnormal|length > 0 %}
+            <h3>异常 PVCs 列表</h3>
+            <table>
+                <tr>
+                    <th>命名空间</th>
+                    <th>PVC 名称</th>
+                    <th>状态</th>
+                    <th>请求容量</th>
+                    <th>绑定 PV</th>
+                </tr>
+                {% for pvc in data.storage.pvcs.abnormal %}
+                <tr>
+                    <td>{{ pvc.namespace }}</td>
+                    <td>{{ pvc.name }}</td>
+                    <td class="status-bad">{{ pvc.status }}</td>
+                    <td>{{ pvc.request }}</td>
+                    <td>{{ pvc.volume }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+            {% else %}
+            <p class="status-good">未检测到处于 Pending 或 Lost 状态的异常 PVC！</p>
+            {% endif %}
+
+            {% if data.storage.pvs.abnormal|length > 0 %}
+            <h3>异常 PVs 列表</h3>
+            <table>
+                <tr>
+                    <th>PV 名称</th>
+                    <th>状态</th>
+                    <th>总容量</th>
+                    <th>关联声明 (Claim)</th>
+                </tr>
+                {% for pv in data.storage.pvs.abnormal %}
+                <tr>
+                    <td>{{ pv.name }}</td>
+                    <td class="status-warning">{{ pv.status }}</td>
+                    <td>{{ pv.capacity }}</td>
+                    <td>{{ pv.claim }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+            {% else %}
+            <p class="status-good">未检测到处于 Failed 或 Released 状态的异常 PV！</p>
+            {% endif %}
+        </div>
+
+        <!-- 6. 警告事件 (最近 1 小时) -->
+        <div class="section">
+            <h2>6. 警告事件 (Warning Events - 最近1小时)</h2>
+            {% if data.warnings|length > 0 %}
+            <table>
+                <tr>
+                    <th>时间 (UTC)</th>
+                    <th>命名空间</th>
+                    <th>资源类型</th>
+                    <th>资源名称</th>
+                    <th>原因</th>
+                    <th width="35%">详细信息</th>
+                </tr>
+                {% for event in data.warnings %}
+                <tr>
+                    <td>{{ event.time }}</td>
+                    <td>{{ event.namespace }}</td>
+                    <td>{{ event.kind }}</td>
+                    <td>{{ event.name }}</td>
+                    <td class="status-warning">{{ event.reason }}</td>
+                    <td><span style="font-size: 0.85em;">{{ event.message }}</span></td>
+                </tr>
+                {% endfor %}
+            </table>
+            {% else %}
+            <p class="status-good">集群在该时段内未产生新的警告事件。</p>
+            {% endif %}
+        </div>
+        
+    </div>
+</body>
+</html>
