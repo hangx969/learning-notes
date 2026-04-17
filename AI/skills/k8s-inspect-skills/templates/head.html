@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>K8s 巡检报告</title>
+<style>
+:root{--ok:#00d084;--warn:#f59e0b;--err:#ef4444;--bg:#0f172a;--card:#1e293b;}
+body{margin:0;font-family:system-ui;background:var(--bg);color:#e2e8f0;}
+.header{background:linear-gradient(135deg,#1e3a5f,#0f172a);
+  padding:32px;text-align:center;border-bottom:1px solid #334155;}
+.title{font-size:28px;font-weight:900;color:#38bdf8;margin-bottom:8px;}
+.subtitle{color:#94a3b8;font-size:14px;}
+.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;
+  padding:24px;max-width:1200px;margin:0 auto;}
+.stat{background:var(--card);border-radius:12px;padding:20px;text-align:center;
+  border:1px solid #334155;}
+.stat-num{font-size:36px;font-weight:900;margin-bottom:4px;}
+.stat-label{font-size:12px;color:#94a3b8;}
+.section{max-width:1200px;margin:0 auto 24px;padding:0 24px;}
+.section-title{font-size:18px;font-weight:700;color:#38bdf8;
+  padding:12px 0;border-bottom:2px solid #334155;margin-bottom:16px;}
+table{width:100%;border-collapse:collapse;background:var(--card);
+  border-radius:10px;overflow:hidden;}
+th{background:#1e3a5f;color:#94a3b8;font-size:12px;padding:10px 14px;text-align:left;}
+td{padding:10px 14px;font-size:13px;border-bottom:1px solid #334155;}
+tr:last-child td{border-bottom:none;}
+.ok{color:var(--ok);font-weight:700;}
+.warn{color:var(--warn);font-weight:700;}
+.err{color:var(--err);font-weight:700;}
+.badge{display:inline-block;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:700;}
+.badge-ok{background:rgba(0,208,132,0.15);color:#00d084;}
+.badge-warn{background:rgba(245,158,11,0.15);color:#f59e0b;}
+.badge-err{background:rgba(239,68,68,0.15);color:#ef4444;}
+</style></head>
+<body>

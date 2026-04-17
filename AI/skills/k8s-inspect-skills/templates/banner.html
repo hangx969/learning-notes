@@ -1,0 +1,14 @@
+<div class="header">
+    <div class="title">🔍 K8s 集群巡检报告</div>
+    <div class="subtitle">生成时间：{{TIMESTAMP}} | KUBECONFIG: {{KUBECONFIG}}</div>
+</div>
+<div class="summary">
+    <div class="stat"><div class="stat-num" style="color:#38bdf8">{{NODE_TOTAL}}</div>
+        <div class="stat-label">总节点数</div></div>
+    <div class="stat"><div class="stat-num ok">{{NODE_READY}}</div>
+        <div class="stat-label">就绪节点</div></div>
+    <div class="stat"><div class="stat-num" style="color:#a78bfa">{{POD_TOTAL}}</div>
+        <div class="stat-label">总 Pod 数</div></div>
+    <div class="stat"><div class="stat-num" style="color:#fb923c">{{NS_TOTAL}}</div>
+        <div class="stat-label">命名空间数</div></div>
+</div>
