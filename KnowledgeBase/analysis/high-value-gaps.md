@@ -35,17 +35,17 @@ date: 2026-04-16
 **1. GitOps 方法论**
 - 现状：ArgoCD 工具使用有 4 篇，但 GitOps 理论、最佳实践、工作流设计为零
 - 价值：GitOps 是云原生 CI/CD 的核心范式
-- 关联：[ArgoCD基础](../../Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD基础.md)
+- 关联：[[Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD基础|ArgoCD基础]]
 
 **2. SRE 实践与可靠性工程**
 - 现状：完全空白。有故障排查指南和生产优化，但无 SRE 体系
 - 价值：SLO/SLI/Error Budget 是运维工程师核心技能
-- 关联：[k8s故障排查指南](../../Docker-Kubernetes/k8s-installation-management/k8s故障排查指南.md)、[Observability](../concepts/Observability.md)
+- 关联：[[Docker-Kubernetes/k8s-installation-management/k8s故障排查指南|k8s故障排查指南]]、[[KnowledgeBase/concepts/Observability|Observability]]
 
 **3. 混沌工程**
 - 现状：完全空白
 - 价值：Chaos Mesh / Litmus 是 K8s 生态重要组成
-- 关联：[k8s生产环境优化与最佳实践](../../Docker-Kubernetes/k8s-installation-management/k8s生产环境优化与最佳实践.md)
+- 关联：[[Docker-Kubernetes/k8s-installation-management/k8s生产环境优化与最佳实践|k8s生产环境优化与最佳实践]]
 
 **4. 容器安全深入**
 - 现状：仅有 Trivy/SonarQube 工具安装，缺少安全扫描策略、镜像签名、运行时安全
