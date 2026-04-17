@@ -102,7 +102,7 @@ date: 2026-04-17
 | [Docker](sources/docker-batch-summary.md) | 12 | Docker 基础、GPU 配置、服务部署实战（GitLab/Prometheus/Loki 等） |
 | [K8s 基础资源](sources/k8s-basic-resources-batch-summary.md) | 20 | Pod/Deployment/Service/Ingress/ConfigMap/Storage/RBAC/CRD/Operator |
 | [K8s 安装管理](sources/k8s-installation-management-batch-summary.md) | 16 | v1.20→v1.35 安装演进、企业高可用、etcd HA、运行时迁移 |
-| [K8s 监控日志](sources/k8s-monitoring-logging-batch-summary.md) | 20 | Prometheus 全栈、EFK/Loki 日志、Jaeger/SkyWalking 链路追踪 |
+| [K8s 监控日志](sources/k8s-monitoring-logging-batch-summary.md) | 21 | Prometheus 全栈、EFK/Loki 日志、Jaeger/SkyWalking 链路追踪、集群巡检脚本 |
 | [K8s CI/CD](sources/k8s-CICD-batch-summary.md) | 19 | Jenkins/ArgoCD/GitLab CI/Tekton/Kustomize/GitHub Actions |
 | [K8s 网络与服务网格](sources/k8s-networking-service-mesh-batch-summary.md) | 7 | Ingress-Nginx/External-DNS/Calico/Istio 流量管理 |
 | [K8s 安全认证](sources/k8s-security-auth-batch-summary.md) | 7 | Cert-Manager/External Secrets/Kyverno/OAuth2 Proxy/Trivy/SonarQube |

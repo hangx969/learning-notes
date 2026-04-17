@@ -25,13 +25,14 @@ sources:
   - "[[Docker-Kubernetes/k8s-monitoring-logging/helm部署Loki-promtail-tempo-grafanaAgent全家桶]]"
   - "[[Docker-Kubernetes/k8s-monitoring-logging/k8s部署全链路追踪-Skywalking]]"
   - "[[Docker-Kubernetes/k8s-monitoring-logging/helm部署jaeger]]"
+  - "[[Docker-Kubernetes/k8s-monitoring-logging/K8s全面巡检脚本-生成HTML健康报告]]"
 ---
 
 # k8s-monitoring-logging 来源批量摘要
 
 ## 元信息
 - **原始目录**：`Docker-Kubernetes/k8s-monitoring-logging/`
-- **文档数量**：20 篇
+- **文档数量**：21 篇
 - **领域**：Docker-Kubernetes
 - **摄入日期**：2026-04-17
 
@@ -187,6 +188,14 @@ sources:
   - all-in-one 模式适合测试和小规模部署
   - 使用 Badger 本地存储替代 Cassandra/ES，配置 TTL 72 小时
   - 支持 OTLP gRPC 和 HTTP 协议接收追踪数据
+
+### [[Docker-Kubernetes/k8s-monitoring-logging/K8s全面巡检脚本-生成HTML健康报告|K8s 全面巡检脚本]]
+- 核心内容：模块化 Shell 巡检脚本，一键检查集群健康状态并生成深色仪表盘风格的 HTML 报告，支持 CronJob 定时执行和钉钉/企微告警推送。
+- 关键知识点：
+  - 7 大巡检模块：节点健康、Pod 状态、资源配额与 PVC、证书安全、网络组件、系统组件、近期异常事件
+  - 可配置告警阈值：CPU 80%、内存 80%、磁盘 85%、Pod 重启 5 次、证书到期 30 天
+  - 自动化部署：Dockerfile 打包 + CronJob 每日定时执行 + PVC 持久化报告 + RBAC 只读权限
+  - 告警集成：钉钉 Webhook + 企业微信 Webhook，异常 Pod 数 > 0 自动推送
 
 ## 涉及的概念与实体
 - [[KnowledgeBase/entities/Prometheus|Prometheus]]
