@@ -98,17 +98,17 @@ learning-notes/          ← Obsidian vault, git 仓库
 
 ### 与 Karpathy 模式的差距
 
-| 维度 | Karpathy 模式 | 当前状态 | 差距 |
-|------|--------------|---------|------|
-| 原始来源不可变性 | raw/ 目录只读 | 无 raw/，笔记随时可编辑 | 需明确原始来源层 |
-| wiki 编译层 | LLM 生成的结构化 wiki 目录 | KnowledgeBase/ 有雏形但不完整 | 需扩充为完整 wiki 层 |
-| Schema 文件 | CLAUDE.md 定义结构和工作流 | 无专门 schema | 需创建 |
-| index.md | 全 wiki 目录，每页一行摘要 | KnowledgeBase/INDEX.md 有但粒度粗 | 需细化 |
-| log.md | 仅追加操作日志 | 不存在 | 需创建 |
-| Ingest 流程 | 标准化：读源→写摘要→更新索引→更新实体/概念页 | 无标准流程 | 需定义 |
-| Query 归档 | 好答案归档回 wiki | 不存在 | 需定义 |
-| Lint 流程 | 定期检查矛盾、孤儿页、缺失概念 | maintenance/ 有断链报告 | 需扩展 |
-| 交叉引用 | 系统化的 `[[wikilink]]` 网络 | 部分存在但不系统 | 需加强 |
+| 维度        | Karpathy 模式              | 当前状态                         | 差距            |
+| --------- | ------------------------ | ---------------------------- | ------------- |
+| 原始来源不可变性  | raw/ 目录只读                | 无 raw/，笔记随时可编辑               | 需明确原始来源层      |
+| wiki 编译层  | LLM 生成的结构化 wiki 目录       | KnowledgeBase/ 有雏形但不完整       | 需扩充为完整 wiki 层 |
+| Schema 文件 | CLAUDE.md 定义结构和工作流       | 无专门 schema                   | 需创建           |
+| index.md  | 全 wiki 目录，每页一行摘要         | KnowledgeBase/INDEX.md 有但粒度粗 | 需细化           |
+| log.md    | 仅追加操作日志                  | 不存在                          | 需创建           |
+| Ingest 流程 | 标准化：读源→写摘要→更新索引→更新实体/概念页 | 无标准流程                        | 需定义           |
+| Query 归档  | 好答案归档回 wiki              | 不存在                          | 需定义           |
+| Lint 流程   | 定期检查矛盾、孤儿页、缺失概念          | maintenance/ 有断链报告           | 需扩展           |
+| 交叉引用      | 系统化的 `[[wikilink]]` 网络   | 部分存在但不系统                     | 需加强           |
 
 ---
 
