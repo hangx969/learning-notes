@@ -391,13 +391,14 @@ check_network() {
 EOF
 
     for comp in coredns kube-proxy calico-node flannel cilium; do
-        kubectl get daemonset,deployment --all-namespaces --no-headers \
-            2>/dev/null | grep "$comp" | while IFS= read -r line; do
+        # DaemonSet 检查
+        kubectl get daemonset --all-namespaces --no-headers 2>/dev/null \
+            | grep "$comp" | while IFS= read -r line; do
             [[ -z "$line" ]] && continue
             NS=$(echo "$line" | awk '{print $1}')
             NAME=$(echo "$line" | awk '{print $2}')
             DESIRED=$(echo "$line" | awk '{print $3}')
-            READY=$(echo "$line" | awk '{print $4}' 2>/dev/null || echo "?")
+            READY=$(echo "$line" | awk '{print $5}')
 
             if [[ "$DESIRED" == "$READY" ]]; then
                 CLS="ok"; STATUS_TEXT="正常"
@@ -406,7 +407,30 @@ EOF
             fi
 
             cat >> "$REPORT_FILE" << NETEOF
-<tr><td>${NAME}</td><td>${NS}</td><td>${DESIRED}</td>
+<tr><td>ds/${NAME}</td><td>${NS}</td><td>${DESIRED}</td>
+    <td class='${CLS}'>${READY}</td>
+    <td><span class='badge badge-${CLS}'>${STATUS_TEXT}</span></td></tr>
+NETEOF
+        done
+
+        # Deployment 检查
+        kubectl get deployment --all-namespaces --no-headers 2>/dev/null \
+            | grep "$comp" | while IFS= read -r line; do
+            [[ -z "$line" ]] && continue
+            NS=$(echo "$line" | awk '{print $1}')
+            NAME=$(echo "$line" | awk '{print $2}')
+            READY_STR=$(echo "$line" | awk '{print $3}')  # format: "2/2"
+            DESIRED=$(echo "$READY_STR" | cut -d'/' -f2)
+            READY=$(echo "$READY_STR" | cut -d'/' -f1)
+
+            if [[ "$DESIRED" == "$READY" ]]; then
+                CLS="ok"; STATUS_TEXT="正常"
+            else
+                CLS="warn"; STATUS_TEXT="降级"
+            fi
+
+            cat >> "$REPORT_FILE" << NETEOF
+<tr><td>deploy/${NAME}</td><td>${NS}</td><td>${DESIRED}</td>
     <td class='${CLS}'>${READY}</td>
     <td><span class='badge badge-${CLS}'>${STATUS_TEXT}</span></td></tr>
 NETEOF
@@ -434,10 +458,10 @@ EOF
     while IFS= read -r line; do
         [[ -z "$line" ]] && continue
         NS=$(echo "$line" | awk '{print $1}')
-        LAST=$(echo "$line" | awk '{print $3}')
+        LAST=$(echo "$line" | awk '{print $2}')
         OBJ=$(echo "$line" | awk '{print $5}')
-        REASON=$(echo "$line" | awk '{print $6}')
-        MSG=$(echo "$line" | awk '{for(i=7;i<=NF;i++) printf $i" "; print ""}' | cut -c1-80)
+        REASON=$(echo "$line" | awk '{print $4}')
+        MSG=$(echo "$line" | awk '{for(i=6;i<=NF;i++) printf $i" "; print ""}' | cut -c1-80)
         G_WARNING_COUNT=$((G_WARNING_COUNT + 1))
 
         cat >> "$REPORT_FILE" << EVTEOF
