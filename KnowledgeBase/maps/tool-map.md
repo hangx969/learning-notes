@@ -18,51 +18,51 @@ date: 2026-04-16
 
 ### Claude Code
 **相关文档（7 篇）：**
-- [ClaudeCode基础指南](../../AI/ClaudeCode/ClaudeCode基础指南.md) ⭐ 推荐入口
-- [MCP](../../AI/ClaudeCode/MCP.md) — MCP 协议配置
-- [Plugin](../../AI/ClaudeCode/Plugin.md) — 插件系统
-- [Skills](../../AI/ClaudeCode/Skills.md) — Skills 机制
-- [Slash Command](../../AI/ClaudeCode/Slash%20Command.md) — 斜杠命令
-- [Subagents](../../AI/ClaudeCode/Subagents.md) — 子智能体
-- [obsidian-claude-搭建个人知识库](../../AI/ClaudeCode/obsidian-claude-搭建个人知识库.md) — 搭建知识库方法论
+- [[AI/ClaudeCode/ClaudeCode基础指南|ClaudeCode基础指南]] ⭐ 推荐入口
+- [[AI/ClaudeCode/MCP|MCP]] — MCP 协议配置
+- [[AI/ClaudeCode/Plugin|Plugin]] — 插件系统
+- [[AI/ClaudeCode/Skills|Skills]] — Skills 机制
+- [[AI/ClaudeCode/Slash Command|Slash Command]] — 斜杠命令
+- [[AI/ClaudeCode/Subagents|Subagents]] — 子智能体
+- [[AI/ClaudeCode/obsidian-claude-搭建个人知识库|obsidian-claude-搭建个人知识库]] — 搭建知识库方法论
 
-**概念页：** [Claude-Code](../concepts/Claude-Code.md)
+**概念页：** [[KnowledgeBase/entities/Claude-Code|Claude-Code]]
 
 ---
 
 ### OpenClaw
 **相关文档（7 篇）：**
-- [OpenClaw-基础-安装](../../AI/OpenClaw/OpenClaw-基础-安装.md) ⭐ 推荐入口
-- [OpenClaw-Channels](../../AI/OpenClaw/OpenClaw-Channels.md) — Channel 配置
-- [OpenClaw-Skills-插件](../../AI/OpenClaw/OpenClaw-Skills-插件.md) — Skills 与插件
-- [Openclaw-AIOps](../../AI/OpenClaw/Openclaw-AIOps.md) — AIOps 场景
-- [Openclaw-多智能体](../../AI/OpenClaw/Openclaw-多智能体.md) — 多智能体（2974 行）
-- [CoPaw](../../AI/OpenClaw/CoPaw.md) — CoPaw 工具
-- [Ubuntu-2510-Setup-Guide](../../AI/OpenClaw/Ubuntu-2510-Setup-Guide.md) — Ubuntu 环境搭建
+- [[AI/OpenClaw/OpenClaw-基础-安装|OpenClaw-基础-安装]] ⭐ 推荐入口
+- [[AI/OpenClaw/OpenClaw-Channels|OpenClaw-Channels]] — Channel 配置
+- [[AI/OpenClaw/OpenClaw-Skills-插件|OpenClaw-Skills-插件]] — Skills 与插件
+- [[AI/OpenClaw/Openclaw-AIOps|Openclaw-AIOps]] — AIOps 场景
+- [[AI/OpenClaw/Openclaw-多智能体|Openclaw-多智能体]] — 多智能体（2974 行）
+- [[AI/OpenClaw/CoPaw|CoPaw]] — CoPaw 工具
+- [[AI/OpenClaw/Ubuntu-2510-Setup-Guide|Ubuntu-2510-Setup-Guide]] — Ubuntu 环境搭建
 
-**概念页：** [OpenClaw](../concepts/OpenClaw.md)
+**概念页：** [[KnowledgeBase/entities/OpenClaw|OpenClaw]]
 
 ---
 
 ### MCP (Model Context Protocol)
 **相关文档：**
-- [MCP](../../AI/ClaudeCode/MCP.md) ⭐ 推荐入口
+- [[AI/ClaudeCode/MCP|MCP]] ⭐ 推荐入口
 
-**概念页：** [MCP](../concepts/MCP.md)
+**概念页：** [[KnowledgeBase/entities/MCP|MCP]]
 
 ---
 
 ### Obsidian
 **相关文档：**
-- [obsidian-claude-搭建个人知识库](../../AI/ClaudeCode/obsidian-claude-搭建个人知识库.md) ⭐ 推荐入口
+- [[AI/ClaudeCode/obsidian-claude-搭建个人知识库|obsidian-claude-搭建个人知识库]] ⭐ 推荐入口
 
-**概念页：** [Obsidian](../concepts/Obsidian.md)
+**概念页：** [[KnowledgeBase/entities/Obsidian|Obsidian]]
 
 ---
 
 ### GitHub Copilot
 **相关文档：**
-- [Copilot CLI](../../AI/GithubCopilot/Copilot%20CLI.md)
+- [[AI/GithubCopilot/Copilot CLI|Copilot CLI]]
 
 ---
 
