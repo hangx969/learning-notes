@@ -351,4 +351,216 @@ Have them each review and report findings.
 | 队友遇错停止 | 查看输出，给额外指令或生成替代队友 |
 | Lead 提前结束 | 告诉 Lead 继续等待 |
 | 孤儿 tmux 会话 | `tmux ls` → `tmux kill-session -t <name>` |
-# 开源Agents推荐
+# 开源 Agents 推荐
+
+## wshobson/agents
+
+> [!info] 仓库
+> [wshobson/agents](https://github.com/wshobson/agents) — Claude Code 的大型 Plugin Marketplace，包含 **72 个插件、112 个专业 Agent、146 个 Skills、16 个多智能体编排器**。
+
+### 项目定位
+
+这是目前最大的 Claude Code Agent 开源集合，目标是为软件开发提供**细粒度自动化和多智能体编排**。核心设计理念：
+
+- **按需加载**：安装 marketplace 后不会加载任何 agent，安装具体插件才加载对应能力
+- **23 个领域覆盖**：从架构设计到 SEO 优化，覆盖软件开发全生命周期
+- **四级模型策略**：根据任务复杂度分配 Opus/Sonnet/Haiku，兼顾质量和成本
+
+### 安装
+
+```sh
+# 第一步：添加 marketplace（使所有 72 个插件可用，不加载任何 agent）
+/plugin marketplace add wshobson/agents
+
+# 第二步：安装具体插件（按需）
+/plugin install agent-teams@claude-code-workflows
+/plugin install backend-development@claude-code-workflows
+```
+
+### 全部 Agent 分类
+
+#### 架构与系统设计
+
+| Agent | 模型 | 描述 |
+|-------|------|------|
+| `backend-architect` | opus | RESTful API 设计、微服务边界、数据库 schema |
+| `frontend-developer` | sonnet | React 组件、响应式布局、客户端状态管理 |
+| `graphql-architect` | opus | GraphQL schema、resolver、联邦架构 |
+| `architect-reviewer` | opus | 架构一致性分析和模式验证 |
+| `cloud-architect` | opus | AWS/Azure/GCP 基础设施设计和成本优化 |
+| `hybrid-cloud-architect` | opus | 多云策略（云 + 本地混合） |
+| `kubernetes-architect` | opus | 云原生基础设施、Kubernetes + GitOps |
+| `service-mesh-expert` | opus | Istio/Linkerd 服务网格、mTLS、流量管理 |
+| `event-sourcing-architect` | opus | 事件溯源、CQRS 模式、Saga 编排 |
+| `monorepo-architect` | opus | Nx/Turborepo/Bazel 单体仓库工具链优化 |
+
+#### UI/UX 与移动端
+
+| Agent | 模型 | 描述 |
+|-------|------|------|
+| `ui-designer` | opus | 移动端和 Web UI/UX 设计 |
+| `accessibility-expert` | opus | WCAG 合规、无障碍审计、包容性设计 |
+| `design-system-architect` | opus | Design Token、组件库、主题系统 |
+| `ui-ux-designer` | sonnet | 界面设计、线框图、设计系统 |
+| `ui-visual-validator` | sonnet | 视觉回归测试和 UI 验证 |
+| `mobile-developer` | sonnet | React Native / Flutter 开发 |
+| `ios-developer` | sonnet | Swift/SwiftUI 原生 iOS 开发 |
+| `flutter-expert` | sonnet | Flutter 高级开发与状态管理 |
+
+#### 编程语言
+
+**系统级：**
+
+| Agent | 模型 | 描述 |
+|-------|------|------|
+| `c-pro` | sonnet | 系统编程、内存管理、OS 接口 |
+| `cpp-pro` | sonnet | 现代 C++、RAII、智能指针、STL |
+| `rust-pro` | sonnet | 内存安全系统编程、所有权模式 |
+| `golang-pro` | sonnet | 并发编程、goroutine、channel |
+
+**Web 与应用：**
+
+| Agent | 模型 | 描述 |
+|-------|------|------|
+| `javascript-pro` | sonnet | 现代 JS（ES6+）、异步模式、Node.js |
+| `typescript-pro` | sonnet | 高级 TypeScript、类型系统、泛型 |
+| `python-pro` | sonnet | Python 高级特性与优化 |
+| `temporal-python-pro` | sonnet | Temporal 工作流编排（Python SDK） |
+| `ruby-pro` | sonnet | Ruby 元编程、Rails 模式 |
+| `php-pro` | sonnet | 现代 PHP 框架与性能优化 |
+
+**企业级 / JVM：**
+
+| Agent | 模型 | 描述 |
+|-------|------|------|
+| `java-pro` | sonnet | 现代 Java、Stream、并发、JVM 优化 |
+| `scala-pro` | sonnet | 企业级 Scala、函数式编程 |
+| `csharp-pro` | sonnet | C# + .NET 框架与模式 |
+
+**专业平台：**
+
+| Agent | 模型 | 描述 |
+|-------|------|------|
+| `elixir-pro` | sonnet | Elixir + OTP + Phoenix |
+| `django-pro` | sonnet | Django ORM + 异步视图 |
+| `fastapi-pro` | sonnet | FastAPI 异步模式 + Pydantic |
+| `haskell-pro` | sonnet | 强类型函数式编程 |
+| `unity-developer` | sonnet | Unity 游戏开发与优化 |
+| `minecraft-bukkit-pro` | sonnet | Minecraft 服务端插件开发 |
+| `sql-pro` | sonnet | 复杂 SQL 查询与数据库优化 |
+
+#### 基础设施与运维
+
+| Agent | 模型 | 描述 |
+|-------|------|------|
+| `devops-troubleshooter` | sonnet | 生产环境调试、日志分析、部署排错 |
+| `deployment-engineer` | sonnet | CI/CD 流水线、容器化、云部署 |
+| `terraform-specialist` | sonnet | Terraform 模块与状态管理 |
+| `dx-optimizer` | sonnet | 开发者体验优化与工具链改进 |
+| `database-optimizer` | sonnet | 查询优化、索引设计、迁移策略 |
+| `database-admin` | sonnet | 数据库运维、备份、复制、监控 |
+| `database-architect` | opus | 数据库从零设计、选型、schema 建模 |
+| `incident-responder` | opus | 生产事故管理与恢复 |
+| `network-engineer` | sonnet | 网络调试、负载均衡、流量分析 |
+| `conductor-validator` | opus | Conductor 项目产物完整性验证 |
+
+#### 安全与质量保障
+
+| Agent | 模型 | 描述 |
+|-------|------|------|
+| `code-reviewer` | opus | 安全聚焦的代码审查 |
+| `security-auditor` | opus | 漏洞评估与 OWASP 合规 |
+| `backend-security-coder` | opus | 后端安全编码、API 安全 |
+| `frontend-security-coder` | opus | XSS 防护、CSP、客户端安全 |
+| `mobile-security-coder` | opus | 移动安全模式、WebView 安全 |
+| `threat-modeling-expert` | opus | STRIDE 威胁建模、攻击树 |
+| `test-automator` | sonnet | 全面测试套件（单元/集成/E2E） |
+| `tdd-orchestrator` | sonnet | TDD 方法论指导 |
+| `debugger` | sonnet | 错误解决与测试失败分析 |
+| `error-detective` | sonnet | 日志分析与错误模式识别 |
+| `performance-engineer` | opus | 应用性能分析与优化 |
+| `observability-engineer` | opus | 生产监控、分布式追踪、SLI/SLO |
+| `search-specialist` | haiku | 高级 Web 搜索与信息综合 |
+
+#### 数据与 AI
+
+| Agent | 模型 | 描述 |
+|-------|------|------|
+| `data-scientist` | opus | 数据分析、SQL 查询、BigQuery |
+| `data-engineer` | sonnet | ETL 流水线、数据仓库、流式架构 |
+| `ai-engineer` | opus | LLM 应用、RAG 系统、Prompt 流水线 |
+| `ml-engineer` | opus | ML 流水线、模型服务、特征工程 |
+| `mlops-engineer` | opus | ML 基础设施、实验追踪、模型注册 |
+| `prompt-engineer` | opus | LLM Prompt 优化与工程 |
+| `vector-database-engineer` | opus | 向量数据库、Embedding、语义检索 |
+
+#### 文档与技术写作
+
+| Agent | 模型 | 描述 |
+|-------|------|------|
+| `docs-architect` | opus | 综合技术文档生成 |
+| `api-documenter` | sonnet | OpenAPI/Swagger 规范与开发者文档 |
+| `reference-builder` | haiku | 技术参考与 API 文档 |
+| `tutorial-engineer` | sonnet | 分步教程与教学内容 |
+| `mermaid-expert` | sonnet | 图表创建（流程图、时序图、ERD） |
+| `c4-code` | haiku | C4 代码级文档 |
+| `c4-component` | sonnet | C4 组件级架构文档 |
+| `c4-container` | sonnet | C4 容器级架构文档 |
+| `c4-context` | sonnet | C4 上下文级系统文档 |
+
+#### 商业与运营
+
+| Agent | 模型 | 描述 |
+|-------|------|------|
+| `business-analyst` | sonnet | 指标分析、报告、KPI 追踪 |
+| `quant-analyst` | opus | 金融建模、交易策略、市场分析 |
+| `risk-manager` | sonnet | 投资组合风险监控与管理 |
+| `content-marketer` | sonnet | 博客、社交媒体、邮件营销 |
+| `sales-automator` | haiku | 冷邮件、跟进、提案生成 |
+| `customer-support` | sonnet | 工单、FAQ、客户沟通 |
+| `hr-pro` | opus | HR 运营、政策、员工关系 |
+| `legal-advisor` | opus | 隐私政策、服务条款、法律文档 |
+
+#### SEO 优化（10 个）
+
+| Agent | 模型 | 描述 |
+|-------|------|------|
+| `seo-content-auditor` | sonnet | 内容质量分析、E-E-A-T 信号评估 |
+| `seo-meta-optimizer` | sonnet | 元标签优化 |
+| `seo-keyword-strategist` | sonnet | 关键词策略 |
+| `seo-structure-architect` | sonnet | SEO 结构优化 |
+| `seo-snippet-hunter` | sonnet | 精选摘要优化 |
+| `seo-content-refresher` | sonnet | 内容刷新与更新 |
+| `seo-cannibalization-detector` | sonnet | 关键词蚕食检测 |
+| `seo-authority-builder` | sonnet | 权威性建设 |
+| `seo-content-writer` | sonnet | SEO 内容创作 |
+| `seo-content-planner` | sonnet | SEO 内容规划 |
+
+#### 专业领域
+
+| Agent | 模型 | 描述 |
+|-------|------|------|
+| `gallery-researcher` | sonnet | 视觉素材搜索（MeiGen gallery） |
+| `image-generator` | sonnet | AI 图片生成（MeiGen MCP） |
+| `arm-cortex-expert` | sonnet | ARM Cortex-M 固件与外设驱动开发 |
+| `blockchain-developer` | sonnet | Web3 应用、智能合约、DeFi 协议 |
+| `payment-integration` | sonnet | 支付集成（Stripe/PayPal） |
+| `legacy-modernizer` | sonnet | 遗留代码重构与现代化 |
+| `context-manager` | haiku | 多智能体上下文管理 |
+
+#### 多智能体团队
+
+| Agent | 模型 | 描述 |
+|-------|------|------|
+| `team-lead` | opus | 团队编排、任务分解、生命周期管理、结果综合 |
+| `team-reviewer` | opus | 多维度代码审查 |
+| `team-debugger` | sonnet | 假设驱动的调查取证式调试 |
+| `team-implementer` | sonnet | 在严格文件所有权边界内实现功能 |
+
+### 模型分配策略
+
+| 模型 | 定位 | 典型任务 |
+|------|------|---------|
+| **Opus** | 关键决策层 | 架构设计、安全审计、生产代码审查、事故响应 |
+| **Sonnet** | 主力执行层 | 编码实现、测试编写、文档生成、DevOps 操作 |
+| **Haiku** | 快速操作层 | 代码生成（有明确 spec）、参考文档构建、搜索 |

@@ -12,6 +12,18 @@ date: 2026-04-17
 
 ---
 
+## [2026-04-17] update | wshobson/agents 开源 Agent 生态摄入
+
+- **操作**：在 `AI/ClaudeCode/多智能体协作-Subagents与Agent-Teams.md` 的"开源 Agents 推荐"章节新增 wshobson/agents 仓库完整介绍
+  - 项目定位：72 个插件、112 个 Agent、146 个 Skills、16 个编排器
+  - 全部 Agent 分类表（10 大类、112 个 Agent 含模型分配和一行描述）
+  - 安装方式和模型分配策略
+- **知识库更新**：
+  - `sources/多智能体协作-summary.md` — 新增开源 Agent 生态知识点（4 条）
+  - `entities/Claude-Code.md` — 更新覆盖列表，标注 wshobson/agents 内容
+
+---
+
 ## [2026-04-17] restructure | Claude Code 扩展体系文章合并
 
 - **操作**：将 4 篇独立文章合并为 1 篇 `AI/ClaudeCode/Claude Code 扩展体系.md`

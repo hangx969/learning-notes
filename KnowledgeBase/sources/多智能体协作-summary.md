@@ -47,9 +47,16 @@ Claude Code 提供两种多智能体并行工作机制。**Subagents** 是独立
 - [[KnowledgeBase/entities/Claude-Code|Claude Code]]：Subagents 和 Agent Teams 的宿主平台
 - [[KnowledgeBase/entities/MCP|MCP]]：队友从项目设置加载 MCP 服务器
 
+### 开源 Agent 生态
+17. [wshobson/agents](https://github.com/wshobson/agents)：最大的 Claude Code Plugin Marketplace，72 个插件、112 个 Agent、146 个 Skills、16 个编排器
+18. 覆盖 23 个领域：架构设计、编程语言（16 种）、基础设施运维、安全审计、数据 AI、文档写作、商业运营、SEO 等
+19. 四级模型策略：Opus（架构/安全/事故响应）、Sonnet（编码/测试/DevOps）、Haiku（文档/搜索/代码生成）
+20. 安装方式：`/plugin marketplace add wshobson/agents` → `/plugin install <plugin>@claude-code-workflows`
+
 ## 值得注意
 
 - Agent Teams 的**辩论结构**（competing hypotheses）是独有的高价值模式——利用多个独立调查者互相推翻理论避免锚定效应，SubAgents 无法实现（因不通信）
 - SubAgent 的无状态特性使其不适合迭代调试，这是重要的架构限制
 - 可复用已有 Subagent 定义来创建 Agent Teams 队友，实现角色复用
 - GitHub 上的 [awesome-claude-code-subagents](https://github.com/VoltAgent/awesome-claude-code-subagents) 包含 100+ 个现成 Agent
+- [wshobson/agents](https://github.com/wshobson/agents) 是目前最大的 Claude Code Agent 开源集合（112 个 Agent），按需加载设计避免上下文膨胀
