@@ -92,7 +92,7 @@ sources:
 ## 涉及的概念与实体
 
 - [[KnowledgeBase/concepts/ServiceMesh]]: 服务网格架构，流量治理下沉到基础设施
-- [[KnowledgeBase/concepts/Ingress]]: K8s 七层代理入口，南北流量管理
+- [[KnowledgeBase/entities/Ingress|Ingress]]: K8s 七层代理入口，南北流量管理
 - [[KnowledgeBase/concepts/Sidecar]]: Envoy 代理注入模式
 - [[KnowledgeBase/concepts/流量管理]]: 熔断、超时、重试、金丝雀发布、蓝绿部署
 - [[KnowledgeBase/entities/Istio]]: 服务网格平台

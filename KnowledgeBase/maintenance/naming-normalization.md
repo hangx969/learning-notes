@@ -84,9 +84,9 @@ date: 2026-04-16
 | SLB / CLB / ALB / NLB | [[Aliyun/网络/负载均衡SLB|负载均衡SLB]] |
 | 对象存储 | [[Aliyun/存储/对象存储OSS|对象存储OSS]] |
 | 弹性计算 | [[Aliyun/计算/ECS|ECS]] |
-| 容器编排 | [[KnowledgeBase/concepts/Kubernetes|Kubernetes]] |
+| 容器编排 | [[KnowledgeBase/entities/Kubernetes|Kubernetes]] |
 | 服务发现 | [[Docker-Kubernetes/k8s-basic-resources/k8s基础-Service|k8s基础-Service]] |
-| 包管理器 | [[KnowledgeBase/concepts/Helm|Helm]] |
+| 包管理器 | [[KnowledgeBase/entities/Helm|Helm]] |
 | 可观测性 / Observability | [[KnowledgeBase/concepts/Observability|Observability]] |
-| 流量管理 | [[KnowledgeBase/concepts/Istio|Istio]] |
-| GitOps | [[KnowledgeBase/concepts/ArgoCD|ArgoCD]] |
+| 流量管理 | [[KnowledgeBase/entities/Istio|Istio]] |
+| GitOps | [[KnowledgeBase/entities/ArgoCD|ArgoCD]] |
