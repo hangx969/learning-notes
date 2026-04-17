@@ -15,8 +15,8 @@ date: 2026-04-17
 > 本知识库基于 [Karpathy LLM Wiki 模式](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f) 构建。
 > 原始来源（顶层主题目录）只读不改，LLM 在本目录中生成和维护所有编译内容。
 >
-> - **Schema 文件**：[[CLAUDE.md]]
-> - **操作日志**：[[KnowledgeBase/log]]
+> - **Schema 文件**：[CLAUDE.md](../CLAUDE.md)
+> - **操作日志**：[log.md](log.md)
 > - **扫描日期**：2026-04-17
 > - **核心定位**：云原生运维工程师的全栈技术知识库
 
@@ -28,13 +28,13 @@ date: 2026-04-17
 
 | 页面 | 摘要 |
 |------|------|
-| [[KnowledgeBase/concepts/CICD\|CICD]] | 持续集成与持续交付，覆盖 Jenkins、ArgoCD、GitLab CI、Tekton 等工具链 |
-| [[KnowledgeBase/concepts/Observability\|Observability]] | 可观测性三大支柱：日志、指标、链路追踪 |
-| [[KnowledgeBase/concepts/日志系统\|日志系统]] | EFK/ELK、Loki 等日志采集与分析方案 |
-| [[KnowledgeBase/concepts/服务网格\|服务网格]] | Istio 为代表的服务网格架构与流量管理 |
-| [[KnowledgeBase/concepts/容器运行时\|容器运行时]] | containerd、Docker Engine 等容器运行时技术 |
-| [[KnowledgeBase/concepts/自动化运维\|自动化运维]] | Ansible、Python 脚本、Terraform 等自动化运维实践 |
-| [[KnowledgeBase/concepts/Python运维开发\|Python运维开发]] | Python 在运维场景中的应用：自动化脚本、Web 运维平台、API 调用 |
+| [CICD](concepts/CICD.md) | 持续集成与持续交付，覆盖 Jenkins、ArgoCD、GitLab CI、Tekton 等工具链 |
+| [Observability](concepts/Observability.md) | 可观测性三大支柱：日志、指标、链路追踪 |
+| [日志系统](concepts/日志系统.md) | EFK/ELK、Loki 等日志采集与分析方案 |
+| [服务网格](concepts/服务网格.md) | Istio 为代表的服务网格架构与流量管理 |
+| [容器运行时](concepts/容器运行时.md) | containerd、Docker Engine 等容器运行时技术 |
+| [自动化运维](concepts/自动化运维.md) | Ansible、Python 脚本、Terraform 等自动化运维实践 |
+| [Python运维开发](concepts/Python运维开发.md) | Python 在运维场景中的应用：自动化脚本、Web 运维平台、API 调用 |
 
 ---
 
@@ -44,41 +44,41 @@ date: 2026-04-17
 
 | 页面 | 摘要 |
 |------|------|
-| [[KnowledgeBase/entities/Kubernetes\|Kubernetes]] | 容器编排平台，145 篇文章覆盖全生命周期 |
-| [[KnowledgeBase/entities/Docker\|Docker]] | 容器运行时，12 篇覆盖基础与服务部署实战 |
-| [[KnowledgeBase/entities/Helm\|Helm]] | Kubernetes 包管理器 |
-| [[KnowledgeBase/entities/ArgoCD\|ArgoCD]] | GitOps 持续交付工具 |
-| [[KnowledgeBase/entities/Jenkins\|Jenkins]] | CI/CD 自动化服务器 |
-| [[KnowledgeBase/entities/Prometheus\|Prometheus]] | 云原生监控系统 |
-| [[KnowledgeBase/entities/Grafana\|Grafana]] | 可视化与仪表盘平台 |
-| [[KnowledgeBase/entities/Istio\|Istio]] | 服务网格平台 |
-| [[KnowledgeBase/entities/Ingress\|Ingress]] | Kubernetes 入口控制器 |
-| [[KnowledgeBase/entities/Azure\|Azure]] | Microsoft 公有云平台 |
-| [[KnowledgeBase/entities/AKS\|AKS]] | Azure 托管 Kubernetes 服务 |
-| [[KnowledgeBase/entities/Aliyun\|Aliyun]] | 阿里云公有云平台 |
-| [[KnowledgeBase/entities/Terraform\|Terraform]] | 基础设施即代码工具 |
-| [[KnowledgeBase/entities/Claude-Code\|Claude-Code]] | AI 编程助手 |
-| [[KnowledgeBase/entities/MCP\|MCP]] | Model Context Protocol |
-| [[KnowledgeBase/entities/OpenClaw\|OpenClaw]] | 开源 AI 工具平台 |
-| [[KnowledgeBase/entities/Obsidian\|Obsidian]] | 知识管理与笔记工具 |
-| [[KnowledgeBase/entities/Slurm\|Slurm]] | HPC 作业调度系统 |
-| [[KnowledgeBase/entities/Harbor\|Harbor]] | 企业级容器镜像仓库（stub） |
-| [[KnowledgeBase/entities/Redis\|Redis]] | 高性能键值数据库（stub） |
-| [[KnowledgeBase/entities/GitLab\|GitLab]] | DevOps 全生命周期平台（stub） |
-| [[KnowledgeBase/entities/Kafka\|Kafka]] | 分布式消息队列/事件流平台（stub） |
-| [[KnowledgeBase/entities/Loki\|Loki]] | 轻量级日志聚合系统（stub） |
-| [[KnowledgeBase/entities/MySQL\|MySQL]] | 开源关系型数据库（stub） |
-| [[KnowledgeBase/entities/NVIDIA\|NVIDIA]] | GPU 硬件厂商（stub） |
-| [[KnowledgeBase/entities/PBS\|PBS]] | HPC 作业调度系统（stub） |
-| [[KnowledgeBase/entities/containerd\|containerd]] | K8s 默认容器运行时（stub） |
-| [[KnowledgeBase/entities/CUDA\|CUDA]] | NVIDIA GPU 计算平台（stub） |
-| [[KnowledgeBase/entities/Calico\|Calico]] | K8s CNI 网络插件（stub） |
-| [[KnowledgeBase/entities/Docker-Compose\|Docker Compose]] | 单机多容器编排工具（stub） |
-| [[KnowledgeBase/entities/Kustomize\|Kustomize]] | K8s 原生配置管理工具（stub） |
-| [[KnowledgeBase/entities/NFS\|NFS]] | 网络文件系统存储（stub） |
-| [[KnowledgeBase/entities/Nginx\|Nginx]] | Web 服务器与反向代理（stub） |
-| [[KnowledgeBase/entities/PostgreSQL\|PostgreSQL]] | 开源关系型数据库（stub） |
-| [[KnowledgeBase/entities/Rancher\|Rancher]] | K8s 多集群管理平台（stub） |
+| [Kubernetes](entities/Kubernetes.md) | 容器编排平台，145 篇文章覆盖全生命周期 |
+| [Docker](entities/Docker.md) | 容器运行时，12 篇覆盖基础与服务部署实战 |
+| [Helm](entities/Helm.md) | Kubernetes 包管理器 |
+| [ArgoCD](entities/ArgoCD.md) | GitOps 持续交付工具 |
+| [Jenkins](entities/Jenkins.md) | CI/CD 自动化服务器 |
+| [Prometheus](entities/Prometheus.md) | 云原生监控系统 |
+| [Grafana](entities/Grafana.md) | 可视化与仪表盘平台 |
+| [Istio](entities/Istio.md) | 服务网格平台 |
+| [Ingress](entities/Ingress.md) | Kubernetes 入口控制器 |
+| [Azure](entities/Azure.md) | Microsoft 公有云平台 |
+| [AKS](entities/AKS.md) | Azure 托管 Kubernetes 服务 |
+| [Aliyun](entities/Aliyun.md) | 阿里云公有云平台 |
+| [Terraform](entities/Terraform.md) | 基础设施即代码工具 |
+| [Claude-Code](entities/Claude-Code.md) | AI 编程助手 |
+| [MCP](entities/MCP.md) | Model Context Protocol |
+| [OpenClaw](entities/OpenClaw.md) | 开源 AI 工具平台 |
+| [Obsidian](entities/Obsidian.md) | 知识管理与笔记工具 |
+| [Slurm](entities/Slurm.md) | HPC 作业调度系统 |
+| [Harbor](entities/Harbor.md) | 企业级容器镜像仓库（stub） |
+| [Redis](entities/Redis.md) | 高性能键值数据库（stub） |
+| [GitLab](entities/GitLab.md) | DevOps 全生命周期平台（stub） |
+| [Kafka](entities/Kafka.md) | 分布式消息队列/事件流平台（stub） |
+| [Loki](entities/Loki.md) | 轻量级日志聚合系统（stub） |
+| [MySQL](entities/MySQL.md) | 开源关系型数据库（stub） |
+| [NVIDIA](entities/NVIDIA.md) | GPU 硬件厂商（stub） |
+| [PBS](entities/PBS.md) | HPC 作业调度系统（stub） |
+| [containerd](entities/containerd.md) | K8s 默认容器运行时（stub） |
+| [CUDA](entities/CUDA.md) | NVIDIA GPU 计算平台（stub） |
+| [Calico](entities/Calico.md) | K8s CNI 网络插件（stub） |
+| [Docker Compose](entities/Docker-Compose.md) | 单机多容器编排工具（stub） |
+| [Kustomize](entities/Kustomize.md) | K8s 原生配置管理工具（stub） |
+| [NFS](entities/NFS.md) | 网络文件系统存储（stub） |
+| [Nginx](entities/Nginx.md) | Web 服务器与反向代理（stub） |
+| [PostgreSQL](entities/PostgreSQL.md) | 开源关系型数据库（stub） |
+| [Rancher](entities/Rancher.md) | K8s 多集群管理平台（stub） |
 
 ---
 
@@ -90,76 +90,76 @@ date: 2026-04-17
 
 | 页面 | 原始来源 | 摘要 |
 |------|---------|------|
-| [[KnowledgeBase/sources/ClaudeCode基础指南-summary\|ClaudeCode基础指南]] | [[AI/ClaudeCode/ClaudeCode基础指南]] | 3 种模式、Extended Thinking、Claude.md、Spec 工作流、5 大实战场景 |
-| [[KnowledgeBase/sources/MCP配置-summary\|MCP配置]] | [[AI/ClaudeCode/MCP]] | 10 个 MCP 服务器安装配置、场景组合推荐 |
-| [[KnowledgeBase/sources/Skills-summary\|Skills]] | [[AI/ClaudeCode/Skills]] | 渐进式加载设计、3 层使用模式、代码审查与事故响应实战 |
-| [[KnowledgeBase/sources/Subagents-summary\|Subagents]] | [[AI/ClaudeCode/Subagents]] | 独立 Claude 副本、5 组件架构、并行执行与适用场景评级 |
-| [[KnowledgeBase/sources/Slash-Command-summary\|Slash Command]] | [[AI/ClaudeCode/Slash Command]] | 手动触发工作流快捷方式、与 Skills 的注入方式区别 |
-| [[KnowledgeBase/sources/Plugin-summary\|Plugin]] | [[AI/ClaudeCode/Plugin]] | 应用级打包容器、组成上限、团队分发实践 |
-| [[KnowledgeBase/sources/obsidian-claude-搭建个人知识库-summary\|Obsidian+Claude知识库]] | [[AI/ClaudeCode/obsidian-claude-搭建个人知识库]] | 3 种集成工具（Claudian、Skills、MCP）、知识库架构选型 |
+| [ClaudeCode基础指南](sources/ClaudeCode基础指南-summary.md) | [AI/ClaudeCode/ClaudeCode基础指南](../AI/ClaudeCode/ClaudeCode基础指南.md) | 3 种模式、Extended Thinking、Claude.md、Spec 工作流、5 大实战场景 |
+| [MCP配置](sources/MCP配置-summary.md) | [AI/ClaudeCode/MCP](../AI/ClaudeCode/MCP.md) | 10 个 MCP 服务器安装配置、场景组合推荐 |
+| [Skills](sources/Skills-summary.md) | [AI/ClaudeCode/Skills](../AI/ClaudeCode/Skills.md) | 渐进式加载设计、3 层使用模式、代码审查与事故响应实战 |
+| [Subagents](sources/Subagents-summary.md) | [AI/ClaudeCode/Subagents](../AI/ClaudeCode/Subagents.md) | 独立 Claude 副本、5 组件架构、并行执行与适用场景评级 |
+| [Slash Command](sources/Slash-Command-summary.md) | [AI/ClaudeCode/Slash Command](../AI/ClaudeCode/Slash%20Command.md) | 手动触发工作流快捷方式、与 Skills 的注入方式区别 |
+| [Plugin](sources/Plugin-summary.md) | [AI/ClaudeCode/Plugin](../AI/ClaudeCode/Plugin.md) | 应用级打包容器、组成上限、团队分发实践 |
+| [Obsidian+Claude知识库](sources/obsidian-claude-搭建个人知识库-summary.md) | [AI/ClaudeCode/obsidian-claude-搭建个人知识库](../AI/ClaudeCode/obsidian-claude-搭建个人知识库.md) | 3 种集成工具（Claudian、Skills、MCP）、知识库架构选型 |
 
 ### Docker-Kubernetes（已摄入 ✅）
 
 | 页面 | 覆盖文档数 | 摘要 |
 |------|:---------:|------|
-| [[KnowledgeBase/sources/docker-batch-summary\|Docker]] | 12 | Docker 基础、GPU 配置、服务部署实战（GitLab/Prometheus/Loki 等） |
-| [[KnowledgeBase/sources/k8s-basic-resources-batch-summary\|K8s 基础资源]] | 20 | Pod/Deployment/Service/Ingress/ConfigMap/Storage/RBAC/CRD/Operator |
-| [[KnowledgeBase/sources/k8s-installation-management-batch-summary\|K8s 安装管理]] | 16 | v1.20→v1.35 安装演进、企业高可用、etcd HA、运行时迁移 |
-| [[KnowledgeBase/sources/k8s-monitoring-logging-batch-summary\|K8s 监控日志]] | 20 | Prometheus 全栈、EFK/Loki 日志、Jaeger/SkyWalking 链路追踪 |
-| [[KnowledgeBase/sources/k8s-CICD-batch-summary\|K8s CI/CD]] | 19 | Jenkins/ArgoCD/GitLab CI/Tekton/Kustomize/GitHub Actions |
-| [[KnowledgeBase/sources/k8s-networking-service-mesh-batch-summary\|K8s 网络与服务网格]] | 7 | Ingress-Nginx/External-DNS/Calico/Istio 流量管理 |
-| [[KnowledgeBase/sources/k8s-security-auth-batch-summary\|K8s 安全认证]] | 7 | Cert-Manager/External Secrets/Kyverno/OAuth2 Proxy/Trivy/SonarQube |
-| [[KnowledgeBase/sources/k8s-scaling-storage-batch-summary\|K8s 扩缩容与存储]] | 7 | HPA/VPA/KEDA/Karpenter 扩缩容 + NFS/Longhorn/Rook-Ceph 存储 |
-| [[KnowledgeBase/sources/k8s-db-middleware-UI-batch-summary\|K8s 中间件与 UI]] | 18 | Redis/MySQL/PostgreSQL/Kafka 部署 + Dashboard/Rancher/k9s 管理工具 |
-| [[KnowledgeBase/sources/k8s-misc-batch-summary\|K8s 杂项]] | 18 | Helm 工具链/CKA-CKS/KubeBlocks/Harbor/K3S/Velero/GPU |
+| [Docker](sources/docker-batch-summary.md) | 12 | Docker 基础、GPU 配置、服务部署实战（GitLab/Prometheus/Loki 等） |
+| [K8s 基础资源](sources/k8s-basic-resources-batch-summary.md) | 20 | Pod/Deployment/Service/Ingress/ConfigMap/Storage/RBAC/CRD/Operator |
+| [K8s 安装管理](sources/k8s-installation-management-batch-summary.md) | 16 | v1.20→v1.35 安装演进、企业高可用、etcd HA、运行时迁移 |
+| [K8s 监控日志](sources/k8s-monitoring-logging-batch-summary.md) | 20 | Prometheus 全栈、EFK/Loki 日志、Jaeger/SkyWalking 链路追踪 |
+| [K8s CI/CD](sources/k8s-CICD-batch-summary.md) | 19 | Jenkins/ArgoCD/GitLab CI/Tekton/Kustomize/GitHub Actions |
+| [K8s 网络与服务网格](sources/k8s-networking-service-mesh-batch-summary.md) | 7 | Ingress-Nginx/External-DNS/Calico/Istio 流量管理 |
+| [K8s 安全认证](sources/k8s-security-auth-batch-summary.md) | 7 | Cert-Manager/External Secrets/Kyverno/OAuth2 Proxy/Trivy/SonarQube |
+| [K8s 扩缩容与存储](sources/k8s-scaling-storage-batch-summary.md) | 7 | HPA/VPA/KEDA/Karpenter 扩缩容 + NFS/Longhorn/Rook-Ceph 存储 |
+| [K8s 中间件与 UI](sources/k8s-db-middleware-UI-batch-summary.md) | 18 | Redis/MySQL/PostgreSQL/Kafka 部署 + Dashboard/Rancher/k9s 管理工具 |
+| [K8s 杂项](sources/k8s-misc-batch-summary.md) | 18 | Helm 工具链/CKA-CKS/KubeBlocks/Harbor/K3S/Velero/GPU |
 
 ### Azure（已摄入 ✅）
 
 | 页面 | 覆盖文档数 | 摘要 |
 |------|:---------:|------|
-| [[KnowledgeBase/sources/azure-batch-summary\|Azure]] | 21 | VM/VMSS、AKS 全栈、网络/存储、DevOps Pipeline、Policy 治理、诊断工具链 |
+| [Azure](sources/azure-batch-summary.md) | 21 | VM/VMSS、AKS 全栈、网络/存储、DevOps Pipeline、Policy 治理、诊断工具链 |
 
 ### Aliyun（已摄入 ✅）
 
 | 页面 | 覆盖文档数 | 摘要 |
 |------|:---------:|------|
-| [[KnowledgeBase/sources/aliyun-batch-summary\|Aliyun]] | 19 | ECS/ESS 计算、VPC/SLB/WAF/DDoS 网络安全纵深、OSS 存储、RDS/DTS 数据库、Landing Zone |
+| [Aliyun](sources/aliyun-batch-summary.md) | 19 | ECS/ESS 计算、VPC/SLB/WAF/DDoS 网络安全纵深、OSS 存储、RDS/DTS 数据库、Landing Zone |
 
 ### Python（已摄入 ✅）
 
 | 页面 | 覆盖文档数 | 摘要 |
 |------|:---------:|------|
-| [[KnowledgeBase/sources/python-batch-summary\|Python]] | 27 | 基础语法、运维开发（SSH/subprocess/K8s API）、网络编程/前端、数据分析/AI、项目实战 |
+| [Python](sources/python-batch-summary.md) | 27 | 基础语法、运维开发（SSH/subprocess/K8s API）、网络编程/前端、数据分析/AI、项目实战 |
 
 ### Linux-Shell（已摄入 ✅）
 
 | 页面 | 覆盖文档数 | 摘要 |
 |------|:---------:|------|
-| [[KnowledgeBase/sources/linux-shell-batch-summary\|Linux-Shell]] | 24 | 系统管理、Shell 脚本、SSH/网络、存储/LVM/NFS、zsh/vim/rsync 工具链 |
+| [Linux-Shell](sources/linux-shell-batch-summary.md) | 24 | 系统管理、Shell 脚本、SSH/网络、存储/LVM/NFS、zsh/vim/rsync 工具链 |
 
 ### AI - OpenClaw 与其他（已摄入 ✅）
 
 | 页面 | 覆盖文档数 | 摘要 |
 |------|:---------:|------|
-| [[KnowledgeBase/sources/ai-openclaw-misc-batch-summary\|AI-OpenClaw]] | 9 | OpenClaw 全栈（安装/Skills/Channels/AIOps/多智能体）、Copilot CLI、提示词工程 |
+| [AI-OpenClaw](sources/ai-openclaw-misc-batch-summary.md) | 9 | OpenClaw 全栈（安装/Skills/Channels/AIOps/多智能体）、Copilot CLI、提示词工程 |
 
 ### Go（已摄入 ✅）
 
 | 页面 | 覆盖文档数 | 摘要 |
 |------|:---------:|------|
-| [[KnowledgeBase/sources/go-batch-summary\|Go]] | 9 | 环境配置→变量→控制流→函数→数据结构→OOP→错误处理→云原生选型 |
+| [Go](sources/go-batch-summary.md) | 9 | 环境配置→变量→控制流→函数→数据结构→OOP→错误处理→云原生选型 |
 
 ### HPC / CloudComputing / GPU（已摄入 ✅）
 
 | 页面 | 覆盖文档数 | 摘要 |
 |------|:---------:|------|
-| [[KnowledgeBase/sources/hpc-cloud-gpu-batch-summary\|HPC-Cloud-GPU]] | 18 | Slurm 调度/PBS/GPU 管理、云原生/微服务/ServiceMesh、GPU 硬件/CUDA/驱动 |
+| [HPC-Cloud-GPU](sources/hpc-cloud-gpu-batch-summary.md) | 18 | Slurm 调度/PBS/GPU 管理、云原生/微服务/ServiceMesh、GPU 硬件/CUDA/驱动 |
 
 ### 杂项领域（已摄入 ✅）
 
 | 页面 | 覆盖文档数 | 摘要 |
 |------|:---------:|------|
-| [[KnowledgeBase/sources/misc-domains-batch-summary\|杂项]] | 18 | Database(MySQL/Redis/MongoDB) + Middlewares(Kafka/RabbitMQ/RocketMQ) + OS + Networking + IaC(Terraform) + Git + C++ + SoftwareTesting |
+| [杂项](sources/misc-domains-batch-summary.md) | 18 | Database(MySQL/Redis/MongoDB) + Middlewares(Kafka/RabbitMQ/RocketMQ) + OS + Networking + IaC(Terraform) + Git + C++ + SoftwareTesting |
 
 > [!success] 全部领域已摄入完成
 > 共 17 个领域、~350 篇原始文档已全部摄入 wiki 编译层。
@@ -170,14 +170,14 @@ date: 2026-04-17
 
 | 页面 | 摘要 |
 |------|------|
-| [[KnowledgeBase/maps/domain-map\|领域地图]] | 按技术领域导航全库 |
-| [[KnowledgeBase/maps/tool-map\|工具地图]] | 按工具/平台聚合知识 |
-| [[KnowledgeBase/maps/kubernetes-map\|Kubernetes 专题]] | 145 篇 K8s 生态知识导航 |
-| [[KnowledgeBase/maps/ai-workflow-map\|AI 工作流专题]] | Claude Code + OpenClaw + AI 辅助运维 |
-| [[KnowledgeBase/maps/claude-code-openclaw-map\|Claude Code & OpenClaw 专题]] | AI 编程与开源 AI 工具 |
-| [[KnowledgeBase/maps/cloud-platform-map\|云平台专题]] | Aliyun + Azure 对标 |
-| [[KnowledgeBase/maps/linux-ops-map\|Linux 运维专题]] | Linux 系统管理与 Shell 脚本 |
-| [[KnowledgeBase/maps/python-devops-map\|Python 运维开发专题]] | Python 运维场景应用 |
+| [领域地图](maps/domain-map.md) | 按技术领域导航全库 |
+| [工具地图](maps/tool-map.md) | 按工具/平台聚合知识 |
+| [Kubernetes 专题](maps/kubernetes-map.md) | 145 篇 K8s 生态知识导航 |
+| [AI 工作流专题](maps/ai-workflow-map.md) | Claude Code + OpenClaw + AI 辅助运维 |
+| [Claude Code & OpenClaw 专题](maps/claude-code-openclaw-map.md) | AI 编程与开源 AI 工具 |
+| [云平台专题](maps/cloud-platform-map.md) | Aliyun + Azure 对标 |
+| [Linux 运维专题](maps/linux-ops-map.md) | Linux 系统管理与 Shell 脚本 |
+| [Python 运维开发专题](maps/python-devops-map.md) | Python 运维场景应用 |
 
 ---
 
@@ -185,9 +185,9 @@ date: 2026-04-17
 
 | 页面 | 摘要 |
 |------|------|
-| [[KnowledgeBase/analysis/topic-coverage-analysis\|主题覆盖分析]] | 17 个领域的覆盖度评估 |
-| [[KnowledgeBase/analysis/high-value-gaps\|高价值知识缺口]] | 优先填补的知识空白 |
-| [[KnowledgeBase/analysis/next-writing-suggestions\|后续写作建议]] | 推荐下一步写作方向 |
+| [主题覆盖分析](analysis/topic-coverage-analysis.md) | 17 个领域的覆盖度评估 |
+| [高价值知识缺口](analysis/high-value-gaps.md) | 优先填补的知识空白 |
+| [后续写作建议](analysis/next-writing-suggestions.md) | 推荐下一步写作方向 |
 
 ---
 
@@ -195,11 +195,11 @@ date: 2026-04-17
 
 | 页面 | 摘要 |
 |------|------|
-| [[KnowledgeBase/inventory/repository-inventory\|全库文档盘点]] | 全部文档逐一列出 |
-| [[KnowledgeBase/inventory/domain-summary\|领域内容特点分析]] | 17 个领域的成熟度与优先级 |
-| [[KnowledgeBase/maintenance/broken-links-report\|断链报告]] | wikilink 有效性检查 |
-| [[KnowledgeBase/maintenance/naming-normalization\|命名规范]] | 文件命名约定 |
-| [[KnowledgeBase/maintenance/update-workflow\|增量维护流程]] | 新增文档后的更新步骤 |
+| [全库文档盘点](inventory/repository-inventory.md) | 全部文档逐一列出 |
+| [领域内容特点分析](inventory/domain-summary.md) | 17 个领域的成熟度与优先级 |
+| [断链报告](maintenance/broken-links-report.md) | wikilink 有效性检查 |
+| [命名规范](maintenance/naming-normalization.md) | 文件命名约定 |
+| [增量维护流程](maintenance/update-workflow.md) | 新增文档后的更新步骤 |
 
 ---
 
@@ -207,40 +207,40 @@ date: 2026-04-17
 
 | 领域 | 篇数 | 成熟度 | 入口 |
 |------|------|:------:|------|
-| Docker-Kubernetes | 145 | 🟢 | [[KnowledgeBase/maps/kubernetes-map\|kubernetes-map]] |
-| Python | 27 | 🟢 | [[KnowledgeBase/maps/python-devops-map\|python-devops-map]] |
-| Linux-Shell | 24 | 🟡 | [[KnowledgeBase/maps/linux-ops-map\|linux-ops-map]] |
-| Azure | 21 | 🟢 | [[KnowledgeBase/maps/cloud-platform-map\|cloud-platform-map]] |
-| Aliyun | 19 | 🟢 | [[KnowledgeBase/maps/cloud-platform-map\|cloud-platform-map]] |
-| AI | 16 | 🟡 | [[KnowledgeBase/maps/ai-workflow-map\|ai-workflow-map]] |
-| Go | 9 | 🟡 | [[Go/go-01-环境配置-基础]] |
-| CloudComputing | 7 | 🟡 | [[CloudComputing/云原生]] |
-| HPC | 7 | 🟡 | [[HPC/CentOS7-slurm23.02-二进制安装]] |
-| GPU-DeepLearning | 4 | 🟠 | [[GPU-DeepLearning/GPU-basics]] |
-| Database | 3 | 🟡 | [[Database/MySQL入门]] |
-| Middlewares | 3 | 🔴 | [[Middlewares/Kafka]] |
-| OS | 3 | 🟠 | [[OS/OS]] |
-| Networking | 2 | 🟠 | [[Networking/计算机网络基础]] |
-| IaC | 2 | 🟠 | [[IaC/terraform-basics]] |
+| Docker-Kubernetes | 145 | 🟢 | [kubernetes-map](maps/kubernetes-map.md) |
+| Python | 27 | 🟢 | [python-devops-map](maps/python-devops-map.md) |
+| Linux-Shell | 24 | 🟡 | [linux-ops-map](maps/linux-ops-map.md) |
+| Azure | 21 | 🟢 | [cloud-platform-map](maps/cloud-platform-map.md) |
+| Aliyun | 19 | 🟢 | [cloud-platform-map](maps/cloud-platform-map.md) |
+| AI | 16 | 🟡 | [ai-workflow-map](maps/ai-workflow-map.md) |
+| Go | 9 | 🟡 | [go-01-环境配置-基础](../Go/go-01-环境配置-基础.md) |
+| CloudComputing | 7 | 🟡 | [云原生](../CloudComputing/云原生.md) |
+| HPC | 7 | 🟡 | [CentOS7-slurm23.02-二进制安装](../HPC/CentOS7-slurm23.02-二进制安装.md) |
+| GPU-DeepLearning | 4 | 🟠 | [GPU-basics](../GPU-DeepLearning/GPU-basics.md) |
+| Database | 3 | 🟡 | [MySQL入门](../Database/MySQL入门.md) |
+| Middlewares | 3 | 🔴 | [Kafka](../Middlewares/Kafka.md) |
+| OS | 3 | 🟠 | [OS](../OS/OS.md) |
+| Networking | 2 | 🟠 | [计算机网络基础](../Networking/计算机网络基础.md) |
+| IaC | 2 | 🟠 | [terraform-basics](../IaC/terraform-basics.md) |
 
 ---
 
 ## ⭐ 推荐优先阅读
 
 ### 云原生核心路径
-1. [[CloudComputing/云原生]] → 理解云原生哲学
-2. [[Docker-Kubernetes/docker/docker基础]] → 容器基础
-3. [[Docker-Kubernetes/k8s-basic-resources/k8s基础-架构-组件-资源]] → K8s 架构
-4. [[Docker-Kubernetes/k8s-installation-management/latest-version/安装k8s-1.35-基于rockylinux10-最新步骤]] → 最新版安装
-5. [[Docker-Kubernetes/k8s-monitoring-logging/helm部署prometheus-stack全家桶]] → 可观测性
+1. [云原生](../CloudComputing/云原生.md) → 理解云原生哲学
+2. [docker基础](../Docker-Kubernetes/docker/docker基础.md) → 容器基础
+3. [k8s基础-架构-组件-资源](../Docker-Kubernetes/k8s-basic-resources/k8s基础-架构-组件-资源.md) → K8s 架构
+4. [安装k8s-1.35-基于rockylinux10-最新步骤](../Docker-Kubernetes/k8s-installation-management/latest-version/安装k8s-1.35-基于rockylinux10-最新步骤.md) → 最新版安装
+5. [helm部署prometheus-stack全家桶](../Docker-Kubernetes/k8s-monitoring-logging/helm部署prometheus-stack全家桶.md) → 可观测性
 
 ### AI 赋能运维
-1. [[AI/ClaudeCode/ClaudeCode基础指南]] → Claude Code 入门
-2. [[AI/ClaudeCode/MCP]] → MCP 协议
-3. [[AI/OpenClaw/OpenClaw-基础-安装]] → OpenClaw 入门
-4. [[AI/ClaudeCode/obsidian-claude-搭建个人知识库]] → 知识库搭建方法论
+1. [ClaudeCode基础指南](../AI/ClaudeCode/ClaudeCode基础指南.md) → Claude Code 入门
+2. [MCP](../AI/ClaudeCode/MCP.md) → MCP 协议
+3. [OpenClaw-基础-安装](../AI/OpenClaw/OpenClaw-基础-安装.md) → OpenClaw 入门
+4. [obsidian-claude-搭建个人知识库](../AI/ClaudeCode/obsidian-claude-搭建个人知识库.md) → 知识库搭建方法论
 
 ### 云平台实战
-1. [[Aliyun/网络/VPC]] + [[Azure/6_Azure-Networking]] → 云网络对比
-2. [[Aliyun/网络/负载均衡SLB]] + [[Azure/2_AKS-basics]] → 负载均衡与 K8s 托管服务
-3. [[Python/python-运维开发/python-Linux-operation]] → 自动化运维脚本
+1. [VPC](../Aliyun/网络/VPC.md) + [Azure-Networking](../Azure/6_Azure-Networking.md) → 云网络对比
+2. [负载均衡SLB](../Aliyun/网络/负载均衡SLB.md) + [AKS-basics](../Azure/2_AKS-basics.md) → 负载均衡与 K8s 托管服务
+3. [python-Linux-operation](../Python/python-运维开发/python-Linux-operation.md) → 自动化运维脚本
