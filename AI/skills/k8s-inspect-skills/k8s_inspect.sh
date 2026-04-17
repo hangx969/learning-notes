@@ -244,16 +244,12 @@ EOF
         [[ -z "$line" ]] && continue
         NS=$(echo "$line" | awk '{print $1}')
         QN=$(echo "$line" | awk '{print $2}')
-        CPU_REQ=$(kubectl describe resourcequota "$QN" -n "$NS" 2>/dev/null \
-            | grep "requests.cpu" | awk '{print $2"/"$3}')
-        MEM_REQ=$(kubectl describe resourcequota "$QN" -n "$NS" 2>/dev/null \
-            | grep "requests.memory" | awk '{print $2"/"$3}')
-        CPU_LIM=$(kubectl describe resourcequota "$QN" -n "$NS" 2>/dev/null \
-            | grep "limits.cpu" | awk '{print $2"/"$3}')
-        MEM_LIM=$(kubectl describe resourcequota "$QN" -n "$NS" 2>/dev/null \
-            | grep "limits.memory" | awk '{print $2"/"$3}')
-        PODS=$(kubectl describe resourcequota "$QN" -n "$NS" 2>/dev/null \
-            | grep "^ pods" | awk '{print $2"/"$3}')
+        QUOTA_DESC=$(kubectl describe resourcequota "$QN" -n "$NS" 2>/dev/null)
+        CPU_REQ=$(echo "$QUOTA_DESC" | grep "requests.cpu" | awk '{print $2"/"$3}')
+        MEM_REQ=$(echo "$QUOTA_DESC" | grep "requests.memory" | awk '{print $2"/"$3}')
+        CPU_LIM=$(echo "$QUOTA_DESC" | grep "limits.cpu" | awk '{print $2"/"$3}')
+        MEM_LIM=$(echo "$QUOTA_DESC" | grep "limits.memory" | awk '{print $2"/"$3}')
+        PODS=$(echo "$QUOTA_DESC" | grep "^ pods" | awk '{print $2"/"$3}')
 
         cat >> "$REPORT_FILE" << RQEOF
 <tr><td>${NS}</td><td>${QN}</td><td>${CPU_REQ:-N/A}</td>
