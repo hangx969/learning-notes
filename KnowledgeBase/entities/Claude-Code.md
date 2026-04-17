@@ -14,18 +14,18 @@ Claude Code 是 Anthropic 推出的 AI 编程助手，以 CLI 形式运行，支
 主要集中在 `AI/ClaudeCode/` 目录，共 7 篇文章，覆盖基础使用到高级扩展。
 
 ## 相关文章
-- [ClaudeCode基础指南](../../AI/ClaudeCode/ClaudeCode基础指南.md)
-- [MCP](../../AI/ClaudeCode/MCP.md)
-- [Skills](../../AI/ClaudeCode/Skills.md)
-- [Plugin](../../AI/ClaudeCode/Plugin.md)
-- [Subagents](../../AI/ClaudeCode/Subagents.md)
-- [Slash Command](../../AI/ClaudeCode/Slash%20Command.md)
-- [obsidian-claude-搭建个人知识库](../../AI/ClaudeCode/obsidian-claude-搭建个人知识库.md)
+- [[AI/ClaudeCode/ClaudeCode基础指南|ClaudeCode基础指南]]
+- [[AI/ClaudeCode/MCP|MCP]]
+- [[AI/ClaudeCode/Skills|Skills]]
+- [[AI/ClaudeCode/Plugin|Plugin]]
+- [[AI/ClaudeCode/Subagents|Subagents]]
+- [[AI/ClaudeCode/Slash Command|Slash Command]]
+- [[AI/ClaudeCode/obsidian-claude-搭建个人知识库|obsidian-claude-搭建个人知识库]]
 
 ## 关联概念
-- [MCP](MCP.md)
-- [Obsidian](Obsidian.md)
-- [OpenClaw](OpenClaw.md)
+- [[KnowledgeBase/entities/MCP|MCP]]
+- [[KnowledgeBase/entities/Obsidian|Obsidian]]
+- [[KnowledgeBase/entities/OpenClaw|OpenClaw]]
 
 ## 可延展方向
 - Claude Code 与 CI/CD 流水线的集成
