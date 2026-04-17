@@ -49,6 +49,10 @@ sources:
 19. 适合团队标准化分发，个人用全局配置更简洁
 20. 建议不超过 3 个插件，避免启动卡顿和功能重复
 
+### 开源 Plugin 生态
+21. andrej-karpathy-skills（⭐46.5K）：仅 2.3K 的 CLAUDE.md，4 条行为准则（Think Before Coding / Simplicity First / Surgical Changes / Goal-Driven Execution）解决 LLM 编程三大祖传毛病（默默假设/过度复杂/乱改代码）
+22. wshobson/agents：最大的 Plugin Marketplace（72 插件、112 Agent），详见多智能体协作文档
+
 ## 涉及的概念与实体
 - [[KnowledgeBase/entities/Claude-Code|Claude-Code]]
 - [[KnowledgeBase/entities/MCP|MCP]]
@@ -60,3 +64,4 @@ sources:
 - "单个 Skill = 能力 → 多个 Skill 编排 = 工作流 → Skill + MCP + SubAgent = 智能体"是理解扩展体系的关键公式
 - Skills 与 MCP 的关系是包含而非替代——Skill 可调用 MCP，但 MCP 不能调用 Skill
 - Plugin 本质是分发机制而非能力机制——不创造新能力，只打包已有能力
+- andrej-karpathy-skills 以 2.3K 文件拿到 46.5K star，验证了"LLM 表现高度依赖上下文质量"——与其期待模型变聪明，不如学会更精确地表达需求

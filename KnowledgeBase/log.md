@@ -12,6 +12,16 @@ date: 2026-04-17
 
 ---
 
+## [2026-04-17] update | 开源 Plugin 推荐（andrej-karpathy-skills）
+
+- **来源**：`0raw/2.3K 小文件拿到 4 万星，它让你的 Claude Code 乖乖听话.md` + GitHub 仓库 forrestchang/andrej-karpathy-skills
+- **操作**：在 `AI/ClaudeCode/Claude Code 扩展体系.md` Plugin 章节新增"开源 Plugin 推荐"
+  - andrej-karpathy-skills（⭐46.5K）：4 条行为准则、3 种安装方式、效果判断标准
+  - wshobson/agents：交叉引用到多智能体协作文档
+- **知识库更新**：`sources/Claude-Code扩展体系-summary.md` 新增 2 条知识点 + 1 条"值得注意"
+
+---
+
 ## [2026-04-17] update | wshobson/agents 开源 Agent 生态摄入
 
 - **操作**：在 `AI/ClaudeCode/多智能体协作-Subagents与Agent-Teams.md` 的"开源 Agents 推荐"章节新增 wshobson/agents 仓库完整介绍

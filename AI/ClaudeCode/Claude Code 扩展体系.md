@@ -864,3 +864,59 @@ Plugin（插件）是应用级打包容器，用来打包其他四个工具。
 
 > [!tip] 建议
 > 个人用全局配置，团队用 Plugins 打包分发。别超过 3 个，够用就行。
+
+---
+
+## 开源 Plugin 推荐
+
+### andrej-karpathy-skills（⭐ 46.5K）
+
+> [!info] 仓库
+> [forrestchang/andrej-karpathy-skills](https://github.com/forrestchang/andrej-karpathy-skills) — 仅 2.3K 的 CLAUDE.md 文件，GitHub 全球热榜，46.5K 星。
+
+这个项目把 Andrej Karpathy 观察到的 LLM 编程三大祖传毛病，浓缩成 4 条行为准则，写进 CLAUDE.md 让 Claude Code "乖乖听话"。
+
+**LLM 编码三大痛点**：
+
+1. **默默做错误假设**：不确定的地方不问你，自己猜，猜完接着写，bug 就埋进去了
+2. **把简单问题复杂化**：50 行能搞定的事，整出 200 行抽象 API
+3. **乱改不相干的代码**：让它修一个函数，它顺便把隔壁的注释删了，格式也"优化"了
+
+**四条核心原则**：
+
+| 原则 | 要点 |
+|------|------|
+| **Think Before Coding** | 不确定就问，不要闷头猜。主动说"这里我假设了 X，你确认吗" |
+| **Simplicity First** | 不加没人要求的功能，不为只用一次的代码建抽象，200 行能写成 50 行就重写 |
+| **Surgical Changes** | 只动必须改的地方，不"顺便优化"相邻代码，不重构没坏的东西 |
+| **Goal-Driven Execution** | 给目标而非命令。"添加验证" → "为无效输入写测试，然后让它们通过" |
+
+**效果判断标准**：
+- PR 的 diff 变干净了，没有莫名其妙的格式改动
+- 代码第一次就足够简单，不用返工
+- Claude 开始在动手之前先问问题
+- PR 不再附带一堆"顺手重构"
+
+**安装**：
+
+```sh
+# 方式一：Plugin 安装（全局生效）
+/plugin marketplace add forrestchang/andrej-karpathy-skills
+/plugin install andrej-karpathy-skills@karpathy-skills
+
+# 方式二：单个项目生效（下载到项目根目录）
+curl -o CLAUDE.md https://raw.githubusercontent.com/forrestchang/andrej-karpathy-skills/main/CLAUDE.md
+
+# 方式三：追加到已有 CLAUDE.md
+echo "" >> CLAUDE.md
+curl https://raw.githubusercontent.com/forrestchang/andrej-karpathy-skills/main/CLAUDE.md >> CLAUDE.md
+```
+
+### wshobson/agents
+
+最大的 Claude Code Plugin Marketplace，详见 [[AI/ClaudeCode/多智能体协作-Subagents与Agent-Teams#开源 Agents 推荐|多智能体协作 — 开源 Agents 推荐]]。
+
+```sh
+/plugin marketplace add wshobson/agents
+/plugin install <plugin-name>@claude-code-workflows
+```
