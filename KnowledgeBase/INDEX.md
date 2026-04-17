@@ -95,6 +95,12 @@ date: 2026-04-17
 | [多智能体协作](sources/多智能体协作-summary.md) | [AI/ClaudeCode/多智能体协作-Subagents与Agent-Teams](../AI/ClaudeCode/多智能体协作-Subagents与Agent-Teams.md) | Subagents（5 组件、适用场景评级）+ Agent Teams（Team Lead/Teammates/Task List/Mailbox） |
 | [Obsidian+Claude知识库](sources/obsidian-claude-搭建个人知识库-summary.md) | [AI/ClaudeCode/obsidian-claude-搭建个人知识库](../AI/ClaudeCode/obsidian-claude-搭建个人知识库.md) | 3 种集成工具（Claudian、Skills、MCP）、知识库架构选型 |
 
+### AI/skills（自研 Skills ✅）
+
+| 页面 | 原始来源 | 摘要 |
+|------|---------|------|
+| [k8s-report-skills](sources/k8s-report-skills-summary.md) | [AI/skills/k8s-report-skills](../AI/skills/k8s-report-skills/SKILL.md) | 自研 K8s 巡检 Skill：Python kubernetes 客户端 + Jinja2 HTML 报告，6 大巡检维度 |
+
 ### Docker-Kubernetes（已摄入 ✅）
 
 | 页面 | 覆盖文档数 | 摘要 |
@@ -209,7 +215,7 @@ date: 2026-04-17
 | Linux-Shell | 24 | 🟡 | [linux-ops-map](maps/linux-ops-map.md) |
 | Azure | 21 | 🟢 | [cloud-platform-map](maps/cloud-platform-map.md) |
 | Aliyun | 19 | 🟢 | [cloud-platform-map](maps/cloud-platform-map.md) |
-| AI | 16 | 🟡 | [ai-workflow-map](maps/ai-workflow-map.md) |
+| AI | 17 | 🟡 | [ai-workflow-map](maps/ai-workflow-map.md) |
 | Go | 9 | 🟡 | [go-01-环境配置-基础](../Go/go-01-环境配置-基础.md) |
 | CloudComputing | 7 | 🟡 | [云原生](../CloudComputing/云原生.md) |
 | HPC | 7 | 🟡 | [CentOS7-slurm23.02-二进制安装](../HPC/CentOS7-slurm23.02-二进制安装.md) |

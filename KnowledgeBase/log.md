@@ -12,6 +12,18 @@ date: 2026-04-17
 
 ---
 
+## [2026-04-17] ingest | 自研 k8s-report-skills Skill
+
+- **操作**：创建 `AI/skills/` 自研技能目录，从 `/Users/hang.xu/Downloads/skills/k8s-report-skills/` 拷入首个自研 Skill
+- **新建目录**：`AI/skills/k8s-report-skills/`（含 SKILL.md、SKILL_TEMP.md、k8s_inspector.py、requirements.txt、templates/report.html）
+- **Skill 功能**：Python kubernetes 客户端 + Jinja2 渲染 K8s 集群巡检 HTML 报告（6 大维度：集群信息/节点/Pod/Deployment/存储/事件）
+- **知识库更新**：
+  - 新建 `sources/k8s-report-skills-summary.md` — 来源摘要页
+  - `entities/Claude-Code.md` — 新增 sources 引用和覆盖列表条目
+  - `index.md` — 新增"AI/skills（自研 Skills）"分区，AI 篇数 16→17
+
+---
+
 ## [2026-04-17] ingest | K8s 全面巡检脚本
 
 - **来源**：`0raw/K8s 全面巡检脚本：一键生成炫酷 HTML 健康报告.md`（微信公众号文章剪藏）
