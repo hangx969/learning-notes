@@ -365,6 +365,7 @@ Have them each review and report findings.
 - **按需加载**：安装 marketplace 后不会加载任何 agent，安装具体插件才加载对应能力
 - **23 个领域覆盖**：从架构设计到 SEO 优化，覆盖软件开发全生命周期
 - **四级模型策略**：根据任务复杂度分配 Opus/Sonnet/Haiku，兼顾质量和成本
+- 可以支持agent teams
 
 安装：
 
@@ -376,3 +377,4 @@ Have them each review and report findings.
 /plugin install agent-teams@claude-code-workflows
 /plugin install backend-development@claude-code-workflows
 ```
+
