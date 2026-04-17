@@ -16,7 +16,7 @@ date: 2026-04-16
 
 ---
 
-## AI（18 篇）
+## AI（26 篇）
 
 ### ClaudeCode/（5 篇）
 
@@ -41,6 +41,19 @@ date: 2026-04-16
 |------|------|:-----------:|:----:|
 | [[AI/skills/k8s-inspect-skills/SKILL.md|SKILL.md]] | K8s Inspect Skill 定义 | ✅ | ❌ |
 | [[AI/skills/k8s-inspect-skills/k8s_inspect.sh|k8s_inspect.sh]] | K8s 巡检 Shell 脚本 | — | — |
+
+### agents/（8 个智能体定义，含 4 个 Skills）
+
+| 智能体 | 核心文件 | 附带 Skills |
+|--------|---------|-------------|
+| aiops | IDENTITY.md / SOUL.md / AGENTS.md / HEARTBEAT.md | k8s-install-orchestrator |
+| architect | IDENTITY.md / SOUL.md / AGENTS.md / HEARTBEAT.md | — |
+| backend-engineer | IDENTITY.md / SOUL.md / AGENTS.md / HEARTBEAT.md | — |
+| container | IDENTITY.md / SOUL.md / AGENTS.md / HEARTBEAT.md | docker-runtime-install（含脚本） |
+| frontend-engineer | IDENTITY.md / SOUL.md / AGENTS.md / HEARTBEAT.md | — |
+| k8s | IDENTITY.md / SOUL.md / AGENTS.md / HEARTBEAT.md | k8s-cluster-install |
+| linux | IDENTITY.md / SOUL.md / AGENTS.md / HEARTBEAT.md | rocky-linux10-init（含脚本） |
+| pm | IDENTITY.md / SOUL.md / AGENTS.md / HEARTBEAT.md | — |
 
 ### GithubCopilot/（1 篇）
 

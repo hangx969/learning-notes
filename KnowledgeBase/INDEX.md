@@ -102,6 +102,12 @@ date: 2026-04-17
 | [k8s-report-skills](sources/k8s-report-skills-summary.md) | [AI/skills/k8s-report-skills](../AI/skills/k8s-report-skills/SKILL.md) | Python 版：kubernetes 客户端 + Jinja2，6 大巡检维度，Agent API 集成 |
 | ↑ 同上 | [AI/skills/k8s-inspect-skills](../AI/skills/k8s-inspect-skills/SKILL.md) | Shell 版：kubectl + 深色仪表盘 HTML，7 大模块含证书/网络检查 |
 
+### AI/agents（OpenClaw 多智能体定义 ✅）
+
+| 页面 | 原始来源 | 摘要 |
+|------|---------|------|
+| [多智能体定义导出](sources/openclaw-agents-export-summary.md) | [AI/agents/](../AI/agents/) | 8 个智能体（aiops/linux/container/k8s/architect/backend/frontend/pm）完整定义文件 + 4 个 Skills |
+
 ### Docker-Kubernetes（已摄入 ✅）
 
 | 页面 | 覆盖文档数 | 摘要 |
@@ -216,7 +222,7 @@ date: 2026-04-17
 | Linux-Shell | 24 | 🟡 | [linux-ops-map](maps/linux-ops-map.md) |
 | Azure | 21 | 🟢 | [cloud-platform-map](maps/cloud-platform-map.md) |
 | Aliyun | 19 | 🟢 | [cloud-platform-map](maps/cloud-platform-map.md) |
-| AI | 18 | 🟡 | [ai-workflow-map](maps/ai-workflow-map.md) |
+| AI | 26 | 🟡 | [ai-workflow-map](maps/ai-workflow-map.md) |
 | Go | 9 | 🟡 | [go-01-环境配置-基础](../Go/go-01-环境配置-基础.md) |
 | CloudComputing | 7 | 🟡 | [云原生](../CloudComputing/云原生.md) |
 | HPC | 7 | 🟡 | [CentOS7-slurm23.02-二进制安装](../HPC/CentOS7-slurm23.02-二进制安装.md) |
