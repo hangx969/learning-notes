@@ -91,11 +91,8 @@ date: 2026-04-17
 | 页面 | 原始来源 | 摘要 |
 |------|---------|------|
 | [ClaudeCode基础指南](sources/ClaudeCode基础指南-summary.md) | [AI/ClaudeCode/ClaudeCode基础指南](../AI/ClaudeCode/ClaudeCode基础指南.md) | 3 种模式、Extended Thinking、Claude.md、Spec 工作流、5 大实战场景 |
-| [MCP配置](sources/MCP配置-summary.md) | [AI/ClaudeCode/MCP](../AI/ClaudeCode/MCP.md) | 10 个 MCP 服务器安装配置、场景组合推荐 |
-| [Skills](sources/Skills-summary.md) | [AI/ClaudeCode/Skills](../AI/ClaudeCode/Skills.md) | 渐进式加载设计、3 层使用模式、代码审查与事故响应实战 |
+| [扩展体系](sources/Claude-Code扩展体系-summary.md) | [AI/ClaudeCode/Claude Code 扩展体系](../AI/ClaudeCode/Claude%20Code%20扩展体系.md) | 四层扩展机制全解：MCP（10+ 服务器）、Skills（3 层模式）、Slash Commands、Plugin |
 | [多智能体协作](sources/多智能体协作-summary.md) | [AI/ClaudeCode/多智能体协作-Subagents与Agent-Teams](../AI/ClaudeCode/多智能体协作-Subagents与Agent-Teams.md) | Subagents（5 组件、适用场景评级）+ Agent Teams（Team Lead/Teammates/Task List/Mailbox） |
-| [Slash Command](sources/Slash-Command-summary.md) | [AI/ClaudeCode/Slash Command](../AI/ClaudeCode/Slash%20Command.md) | 手动触发工作流快捷方式、与 Skills 的注入方式区别 |
-| [Plugin](sources/Plugin-summary.md) | [AI/ClaudeCode/Plugin](../AI/ClaudeCode/Plugin.md) | 应用级打包容器、组成上限、团队分发实践 |
 | [Obsidian+Claude知识库](sources/obsidian-claude-搭建个人知识库-summary.md) | [AI/ClaudeCode/obsidian-claude-搭建个人知识库](../AI/ClaudeCode/obsidian-claude-搭建个人知识库.md) | 3 种集成工具（Claudian、Skills、MCP）、知识库架构选型 |
 
 ### Docker-Kubernetes（已摄入 ✅）
@@ -236,7 +233,7 @@ date: 2026-04-17
 
 ### AI 赋能运维
 1. [ClaudeCode基础指南](../AI/ClaudeCode/ClaudeCode基础指南.md) → Claude Code 入门
-2. [MCP](../AI/ClaudeCode/MCP.md) → MCP 协议
+2. [扩展体系](../AI/ClaudeCode/Claude%20Code%20扩展体系.md) → MCP、Skills、Slash Commands、Plugin
 3. [OpenClaw-基础-安装](../AI/OpenClaw/OpenClaw-基础-安装.md) → OpenClaw 入门
 4. [obsidian-claude-搭建个人知识库](../AI/ClaudeCode/obsidian-claude-搭建个人知识库.md) → 知识库搭建方法论
 
