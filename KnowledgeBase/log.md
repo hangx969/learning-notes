@@ -12,6 +12,17 @@ date: 2026-04-17
 
 ---
 
+## [2026-04-17] restructure | INDEX.md 链接格式改造（wikilink → markdown link）
+
+- **目的**：让 INDEX.md 在 GitHub 上也能点击跳转，同时 Obsidian 中保持可用
+- **方案**：仅改造 INDEX.md（导航门面页），其他 wiki 内部页面保持 `[[wikilink]]` 不变
+- **改动**：将 INDEX.md 中所有 `[[wikilink|显示名]]` 转换为 `[显示名](relative-path.md)` 格式
+  - KnowledgeBase 内部链接使用相对路径：`entities/Docker.md`、`concepts/CICD.md`
+  - 原始来源链接使用上级目录：`../AI/ClaudeCode/ClaudeCode基础指南.md`
+- **影响范围**：仅 INDEX.md 一个文件，其他 70+ 个 wiki 页面不受影响
+
+---
+
 ## [2026-04-17] create | 批量补建高频红链 stub 实体页（11 个）
 
 - **触发**：用户请求补建引用 ≥3 次的实体红链
