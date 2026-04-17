@@ -12,6 +12,26 @@ date: 2026-04-17
 
 ---
 
+## [2026-04-17] ingest | AI/ClaudeCode 试点摄入（7 篇）
+
+- **摄入来源**：`AI/ClaudeCode/` 目录下 7 篇原始文档（跳过改造计划元文档）
+- **来源摘要页（7 篇新建）**：
+  - `sources/ClaudeCode基础指南-summary.md`
+  - `sources/MCP配置-summary.md`
+  - `sources/Skills-summary.md`
+  - `sources/Subagents-summary.md`
+  - `sources/Slash-Command-summary.md`
+  - `sources/Plugin-summary.md`
+  - `sources/obsidian-claude-搭建个人知识库-summary.md`
+- **实体页增强（3 篇重写）**：
+  - `entities/Claude-Code.md`：从文章索引升级为 7 层架构知识编译页（+sources 字段、核心架构、工作流模式、最佳实践、知识空白）
+  - `entities/MCP.md`：补充 10 个 MCP 服务器详细信息、推荐组合、安装方式
+  - `entities/Obsidian.md`：补充 3 种 Claude Code 集成方案、知识库架构实践
+- **INDEX.md 更新**：Sources 区域从"待摄入"更新为 7 篇摘要表格
+- 本次 Ingest 是 Phase 2 试点，验证完整 Ingest 流程
+
+---
+
 ## [2026-04-17] restructure | Phase 0 + Phase 1 改造
 
 - 创建 `CLAUDE.md` schema 文件，定义三层架构、页面模板、操作流程

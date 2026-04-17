@@ -67,8 +67,22 @@ date: 2026-04-17
 
 ## 📄 来源摘要（Sources）
 
-> [!note] 待摄入
-> 来源摘要页在 Ingest 流程中逐步生成。试点领域：AI/ClaudeCode/。
+每篇原始来源文档的知识提炼摘要。
+
+### AI/ClaudeCode（已摄入 ✅）
+
+| 页面 | 原始来源 | 摘要 |
+|------|---------|------|
+| [[KnowledgeBase/sources/ClaudeCode基础指南-summary\|ClaudeCode基础指南]] | [[AI/ClaudeCode/ClaudeCode基础指南]] | 3 种模式、Extended Thinking、Claude.md、Spec 工作流、5 大实战场景 |
+| [[KnowledgeBase/sources/MCP配置-summary\|MCP配置]] | [[AI/ClaudeCode/MCP]] | 10 个 MCP 服务器安装配置、场景组合推荐 |
+| [[KnowledgeBase/sources/Skills-summary\|Skills]] | [[AI/ClaudeCode/Skills]] | 渐进式加载设计、3 层使用模式、代码审查与事故响应实战 |
+| [[KnowledgeBase/sources/Subagents-summary\|Subagents]] | [[AI/ClaudeCode/Subagents]] | 独立 Claude 副本、5 组件架构、并行执行与适用场景评级 |
+| [[KnowledgeBase/sources/Slash-Command-summary\|Slash Command]] | [[AI/ClaudeCode/Slash Command]] | 手动触发工作流快捷方式、与 Skills 的注入方式区别 |
+| [[KnowledgeBase/sources/Plugin-summary\|Plugin]] | [[AI/ClaudeCode/Plugin]] | 应用级打包容器、组成上限、团队分发实践 |
+| [[KnowledgeBase/sources/obsidian-claude-搭建个人知识库-summary\|Obsidian+Claude知识库]] | [[AI/ClaudeCode/obsidian-claude-搭建个人知识库]] | 3 种集成工具（Claudian、Skills、MCP）、知识库架构选型 |
+
+> [!note] 待摄入领域
+> Docker-Kubernetes（145 篇）、Azure（21 篇）、Aliyun（19 篇）、Python（27 篇）等。
 
 ---
 
