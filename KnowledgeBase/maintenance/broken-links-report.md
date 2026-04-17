@@ -28,8 +28,8 @@ date: 2026-04-16
 | 断链 | 状态 | 对应文件 |
 |------|:----:|----------|
 | `[broken-links-report](broken-links-report.md)` | ✅ 已修复 | 本文件 |
-| `[naming-normalization](naming-normalization.md)` | ✅ 已修复 | [naming-normalization](naming-normalization.md) |
-| `[update-workflow](update-workflow.md)` | ✅ 已修复 | [update-workflow](update-workflow.md) |
+| `[naming-normalization](naming-normalization.md)` | ✅ 已修复 | [[KnowledgeBase/maintenance/naming-normalization|naming-normalization]] |
+| `[update-workflow](update-workflow.md)` | ✅ 已修复 | [[KnowledgeBase/maintenance/update-workflow|update-workflow]] |
 | `[](../concepts/)` | ⚠️ 文件夹链接 | Obsidian 中可点击打开文件夹 |
 
 ---

@@ -92,9 +92,9 @@ date: 2026-04-16
 - 安全左移是行业趋势
 
 **与当前仓库的关系：**
-- [helm部署trivy-operator](../../Docker-Kubernetes/k8s-security-auth/helm部署trivy-operator.md)
-- [helm部署kyverno和policy-reporter](../../Docker-Kubernetes/k8s-security-auth/helm部署kyverno和policy-reporter.md)
-- [k8s基础-认证-授权-准入](../../Docker-Kubernetes/k8s-basic-resources/k8s基础-认证-授权-准入.md)
+- [[Docker-Kubernetes/k8s-security-auth/helm部署trivy-operator|helm部署trivy-operator]]
+- [[Docker-Kubernetes/k8s-security-auth/helm部署kyverno和policy-reporter|helm部署kyverno和policy-reporter]]
+- [[Docker-Kubernetes/k8s-basic-resources/k8s基础-认证-授权-准入|k8s基础-认证-授权-准入]]
 
 **能补上的空白：** 从"部署安全工具"到"实施安全策略"的升级
 
@@ -107,9 +107,9 @@ date: 2026-04-16
 - Go + K8s API + Operator SDK 是高阶 K8s 技能
 
 **与当前仓库的关系：**
-- [k8s基础-自定义CRD资源](../../Docker-Kubernetes/k8s-basic-resources/k8s基础-自定义CRD资源.md)
-- [Operator部署Redis集群](../../Docker-Kubernetes/k8s-db-middleware/Operator部署Redis集群.md)
-- [云原生开发-基础](../../Go/云原生开发-基础.md)
+- [[Docker-Kubernetes/k8s-basic-resources/k8s基础-自定义CRD资源|k8s基础-自定义CRD资源]]
+- [[Docker-Kubernetes/k8s-db-middleware/Operator部署Redis集群|Operator部署Redis集群]]
+- [[Go/云原生开发-基础|云原生开发-基础]]
 
 **能补上的空白：** Go 语言在云原生场景的实际工程应用
 
@@ -122,9 +122,9 @@ date: 2026-04-16
 - AIOps 是 AI 目录最大的价值落地方向
 
 **与当前仓库的关系：**
-- [Openclaw-AIOps](../../AI/OpenClaw/Openclaw-AIOps.md)
-- [ClaudeCode基础指南](../../AI/ClaudeCode/ClaudeCode基础指南.md)
-- [python-Linux-operation](../../Python/python-运维开发/python-Linux-operation.md)
+- [[AI/OpenClaw/Openclaw-AIOps|Openclaw-AIOps]]
+- [[AI/ClaudeCode/ClaudeCode基础指南|ClaudeCode基础指南]]
+- [[Python/python-运维开发/python-Linux-operation|python-Linux-operation]]
 
 **能补上的空白：** AI 工具从"会用"到"用好"的实战桥梁
 
@@ -137,9 +137,9 @@ date: 2026-04-16
 - FinOps 是企业刚需
 
 **与当前仓库的关系：**
-- [VPC](../../Aliyun/网络/VPC.md) + [6_Azure-Networking](../../Azure/6_Azure-Networking.md) — 网络对标
-- [2_AKS-basics](../../Azure/2_AKS-basics.md) — K8s 托管对标
-- [Landing Zone](../../Aliyun/资源管理/Landing%20Zone.md) — 资源治理
+- [[Aliyun/网络/VPC|VPC]] + [[Azure/6_Azure-Networking|6_Azure-Networking]] — 网络对标
+- [[Azure/2_AKS-basics|2_AKS-basics]] — K8s 托管对标
+- [[Aliyun/资源管理/Landing Zone|Landing Zone]] — 资源治理
 
 **能补上的空白：** 多云治理和成本优化的系统视角
 
@@ -152,9 +152,9 @@ date: 2026-04-16
 - 理论补强可以提升对实操的理解深度
 
 **与当前仓库的关系：**
-- [etcd高可用配置以及模拟集群故障和恢复](../../Docker-Kubernetes/k8s-installation-management/etcd高可用配置以及模拟集群故障和恢复.md)
-- [MGR部署MySQL5.7](../../Database/MGR部署MySQL5.7.md)
-- [源码安装redis-6.2.6-centos7](../../Database/源码安装redis-6.2.6-centos7.md)
+- [[Docker-Kubernetes/k8s-installation-management/etcd高可用配置以及模拟集群故障和恢复|etcd高可用配置以及模拟集群故障和恢复]]
+- [[Database/MGR部署MySQL5.7|MGR部署MySQL5.7]]
+- [[Database/源码安装redis-6.2.6-centos7|源码安装redis-6.2.6-centos7]]
 
 **能补上的空白：** 理解分布式中间件行为的理论基础
 

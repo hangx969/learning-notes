@@ -58,7 +58,7 @@ date: 2026-04-16
 - 双链率极低（仅 5%），145 篇文档之间几乎没有交叉引用
 - 缺少总览性导航页面，读者难以快速定位
 
-**关联领域：** [云原生](../../CloudComputing/云原生.md)、[python-kubernetes-module](../../Python/python-运维开发/python-kubernetes-module.md)、[2_AKS-basics](../../Azure/2_AKS-basics.md)、[GPU-basics](../../GPU-DeepLearning/GPU-basics.md)
+**关联领域：** [[CloudComputing/云原生|云原生]]、[[Python/python-运维开发/python-kubernetes-module|python-kubernetes-module]]、[[Azure/2_AKS-basics|2_AKS-basics]]、[[GPU-DeepLearning/GPU-basics|GPU-basics]]
 
 ---
 
@@ -76,7 +76,7 @@ date: 2026-04-16
 - 网络架构理解深刻（VPC、CEN-TR、VPN-专线）
 - 安全产品矩阵完整
 
-**关联领域：** [6_Azure-Networking](../../Azure/6_Azure-Networking.md)（对标）、[计算机网络基础](../../Networking/计算机网络基础.md)（理论基础）
+**关联领域：** [[Azure/6_Azure-Networking|6_Azure-Networking]]（对标）、[[Networking/计算机网络基础|计算机网络基础]]（理论基础）
 
 ---
 
@@ -87,7 +87,7 @@ date: 2026-04-16
 **内容特点：**
 - 四大分支清晰：基础(8) → 网络编程前端(6) → ==运维开发(10)== → 数据分析(2)
 - 运维开发是核心亮点：subprocess、psutil、paramiko、fabric、K8s API、MySQL/PG/ES 自动化
-- 有一个完整的实际项目案例：[实验室电池参数一键统计工具开发](../../Python/电池参数提取统计工具开发/实验室电池参数一键统计工具开发.md)
+- 有一个完整的实际项目案例：[[Python/电池参数提取统计工具开发/实验室电池参数一键统计工具开发|实验室电池参数一键统计工具开发]]
 - ==双链率 100%==
 
 **强项：**

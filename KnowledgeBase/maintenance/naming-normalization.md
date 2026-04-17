@@ -80,13 +80,13 @@ date: 2026-04-16
 
 | 搜索词 | 应定位到 |
 |--------|----------|
-| 负载均衡 | [负载均衡SLB](../../Aliyun/网络/负载均衡SLB.md) |
-| SLB / CLB / ALB / NLB | [负载均衡SLB](../../Aliyun/网络/负载均衡SLB.md) |
-| 对象存储 | [对象存储OSS](../../Aliyun/存储/对象存储OSS.md) |
-| 弹性计算 | [ECS](../../Aliyun/计算/ECS.md) |
-| 容器编排 | [Kubernetes](../concepts/Kubernetes.md) |
-| 服务发现 | [k8s基础-Service](../../Docker-Kubernetes/k8s-basic-resources/k8s基础-Service.md) |
-| 包管理器 | [Helm](../concepts/Helm.md) |
-| 可观测性 / Observability | [Observability](../concepts/Observability.md) |
-| 流量管理 | [Istio](../concepts/Istio.md) |
-| GitOps | [ArgoCD](../concepts/ArgoCD.md) |
+| 负载均衡 | [[Aliyun/网络/负载均衡SLB|负载均衡SLB]] |
+| SLB / CLB / ALB / NLB | [[Aliyun/网络/负载均衡SLB|负载均衡SLB]] |
+| 对象存储 | [[Aliyun/存储/对象存储OSS|对象存储OSS]] |
+| 弹性计算 | [[Aliyun/计算/ECS|ECS]] |
+| 容器编排 | [[KnowledgeBase/concepts/Kubernetes|Kubernetes]] |
+| 服务发现 | [[Docker-Kubernetes/k8s-basic-resources/k8s基础-Service|k8s基础-Service]] |
+| 包管理器 | [[KnowledgeBase/concepts/Helm|Helm]] |
+| 可观测性 / Observability | [[KnowledgeBase/concepts/Observability|Observability]] |
+| 流量管理 | [[KnowledgeBase/concepts/Istio|Istio]] |
+| GitOps | [[KnowledgeBase/concepts/ArgoCD|ArgoCD]] |
