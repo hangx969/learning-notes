@@ -12,6 +12,14 @@ date: 2026-04-17
 
 ---
 
+## [2026-04-18] update | K8s Namespace Terminating 强制删除脚本
+
+- **来源**：[[Clippings/实用脚本：强制删除K8s命名空间（Terminating状态）]]（微信公众号文章）
+- **操作**：将自动化删除脚本整合到 [[Docker-Kubernetes/k8s-basic-resources/k8s基础-namespace-资源分配]] 的"ns删除后卡在Terminating状态"章节
+- **改动**：原有手动步骤保留，新增原理说明 + 完整自动化脚本（含参数交互和结果验证）
+
+---
+
 ## [2026-04-18] ingest | Istio Sidecar vs Ambient 模式对比
 
 - **来源**：[[0raw/Istio Sidecar vs Ambient：不是"谁先进"，而是"谁更省、谁更稳、谁更适合你现在"]]（微信公众号文章）
