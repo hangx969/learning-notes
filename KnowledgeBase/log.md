@@ -12,6 +12,16 @@ date: 2026-04-17
 
 ---
 
+## [2026-04-18] ingest | Istio Sidecar vs Ambient 模式对比
+
+- **来源**：[[0raw/Istio Sidecar vs Ambient：不是"谁先进"，而是"谁更省、谁更稳、谁更适合你现在"]]（微信公众号文章）
+- **操作**：简化整理为 [[Docker-Kubernetes/k8s-networking-service-mesh/Istio-Sidecar-vs-Ambient]]
+- **知识库更新**：
+  - `entities/Istio.md` — 新增 Sidecar vs Ambient 模块 + sources 引用 + 相关文章链接
+  - "可延展方向"中 Ambient Mesh 条目已标记为已覆盖
+
+---
+
 ## [2026-04-18] create | OpenClaw Workspace 运维实战文章
 
 - **来源**：[[0raw/牛逼干货分享！OpenClaw Workspace 运维实战手册]]（微信公众号文章，1500+ 行）
