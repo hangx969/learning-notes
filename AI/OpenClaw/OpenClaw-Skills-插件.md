@@ -80,6 +80,30 @@ clawhub install pdf
 
 ---
 
+## 手绘架构图 - excalidraw-diagram-generator
+
+> [!info] 地址
+> - GitHub：[github/awesome-copilot - excalidraw-diagram-generator](https://github.com/github/awesome-copilot/blob/main/skills/excalidraw-diagram-generator/)
+> - Skills 市场：[skills.sh](https://skills.sh/github/awesome-copilot/excalidraw-diagram-generator) | [skillsmp.com](https://skillsmp.com/zh/skills/github-awesome-copilot-skills-excalidraw-diagram-generator-skill-md)
+
+一句话用自然语言生成可编辑的 Excalidraw 手绘风格图，支持流程图、架构图、思维导图、时序图、ER 图、泳道图、类图、数据流图等。
+
+```sh
+npx skills add https://github.com/github/awesome-copilot --skill excalidraw-diagram-generator
+```
+
+**工作原理**：分析需求 → 提取节点与关系 → 匹配 8 个内置模板之一 → 生成符合 Excalidraw 规范的 JSON → 输出 `.excalidraw` 文件（可用 VS Code Excalidraw 扩展直接打开编辑）。
+
+**用法示例**：
+```
+生成一个用户登录流程图
+```
+
+> [!note]
+> 图的质量取决于模型能力，建议搭配较强的大模型使用。Claude Code 和 OpenClaw 都可用。
+
+---
+
 ## 自我进化 Skills
 
 > [!info] 地址

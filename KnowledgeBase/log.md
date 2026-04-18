@@ -12,6 +12,14 @@ date: 2026-04-17
 
 ---
 
+## [2026-04-18] update | OpenClaw Skills 新增 excalidraw-diagram-generator
+
+- **来源**：[[0raw/用这个 Skill，直接一句话生成手绘架构图，省时省力～]]（微信公众号文章，菜鸟教程）
+- **操作**：整理简化后添加到 [[AI/OpenClaw/OpenClaw-Skills-插件]] 的开源 Skill 推荐部分
+- **知识库更新**：`entities/OpenClaw.md` Skills 插件生态新增 excalidraw-diagram-generator 条目
+
+---
+
 ## [2026-04-18] update | Openclaw-多智能体 内联代码块替换为 wikilinks
 
 - **来源**：[[AI/OpenClaw/Openclaw-多智能体]]（Raw Source，应用户明确要求修改）
