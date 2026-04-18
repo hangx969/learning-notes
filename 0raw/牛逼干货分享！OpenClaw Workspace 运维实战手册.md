@@ -9,29 +9,7 @@ description:
 tags:
   - "clippings"
 ---
-点击关注👉 *2026年4月5日 22:57*
 
-**戳下方名片，关注并** **星标** **！**
-
-**回复“** **1024** **”获取** **2TB** **学习资源！**
-
-👉 **体系化学习：** **[运维工程师打怪升级进阶之路 4.0](http://mp.weixin.qq.com/s?__biz=MzI0MDQ4MTM5NQ==&mid=2247549854&idx=1&sn=3708d573b5ee2b2e775a29e452b3305f&chksm=e9186682de6fef9479e1fe1af0f4cb2ec1e7821dcbd9ff774fd5074f91713f0cd6500fff7e61&scene=21#wechat_redirect)**
-
-— ****特色专栏**** —
-
-[MySQL](https://mp.weixin.qq.com/mp/appmsgalbum?__biz=MzI0MDQ4MTM5NQ==&action=getalbum&album_id=2796093473857929216#wechat_redirect) / [PostgreSQL](https://mp.weixin.qq.com/mp/appmsgalbum?__biz=MzI0MDQ4MTM5NQ==&action=getalbum&album_id=2977746367114936326#wechat_redirect) / [MongoDB](https://mp.weixin.qq.com/mp/appmsgalbum?__biz=MzI0MDQ4MTM5NQ==&action=getalbum&album_id=2893529094972538880#wechat_redirect)
-
-[ElasticSearch](https://mp.weixin.qq.com/mp/appmsgalbum?__biz=MzI0MDQ4MTM5NQ==&action=getalbum&album_id=2931171682919415809#wechat_redirect) / [Hadoop](https://mp.weixin.qq.com/mp/appmsgalbum?__biz=MzI0MDQ4MTM5NQ==&action=getalbum&album_id=2957050176765198340#wechat_redirect) / [Redis](https://mp.weixin.qq.com/mp/appmsgalbum?__biz=MzI0MDQ4MTM5NQ==&action=getalbum&album_id=2859886684946333701#wechat_redirect)
-
-[Kubernetes](https://mp.weixin.qq.com/mp/appmsgalbum?__biz=MzI0MDQ4MTM5NQ==&action=getalbum&album_id=1790241575034290179#wechat_redirect) / [Docker](https://mp.weixin.qq.com/mp/appmsgalbum?__biz=MzI0MDQ4MTM5NQ==&action=getalbum&album_id=1479950328543444997#wechat_redirect) / [DevOps](https://mp.weixin.qq.com/mp/appmsgalbum?__biz=MzI0MDQ4MTM5NQ==&action=getalbum&album_id=3110611013500174336#wechat_redirect)
-
-[Kafka](https://mp.weixin.qq.com/mp/appmsgalbum?__biz=MzI0MDQ4MTM5NQ==&action=getalbum&album_id=3002038547455180802#wechat_redirect) / [RabbitMQ](https://mp.weixin.qq.com/mp/appmsgalbum?__biz=MzI0MDQ4MTM5NQ==&action=getalbum&album_id=3091862520287756292#wechat_redirect) / [Zookeeper](https://mp.weixin.qq.com/mp/appmsgalbum?__biz=MzI0MDQ4MTM5NQ==&action=getalbum&album_id=3065821236393705475#wechat_redirect)
-
-[监控平台](https://mp.weixin.qq.com/mp/appmsgalbum?__biz=MzI0MDQ4MTM5NQ==&action=getalbum&album_id=3095510929230036998#wechat_redirect) / [应用与服务](https://mp.weixin.qq.com/mp/appmsgalbum?__biz=MzI0MDQ4MTM5NQ==&action=getalbum&album_id=3191844532553023488#wechat_redirect) / [集群管理](https://mp.weixin.qq.com/mp/appmsgalbum?__biz=MzI0MDQ4MTM5NQ==&action=getalbum&album_id=3218136782744354820#wechat_redirect)
-
-[Nginx](https://mp.weixin.qq.com/mp/appmsgalbum?__biz=MzI0MDQ4MTM5NQ==&action=getalbum&album_id=1463291332122017795#wechat_redirect) / [Git](https://mp.weixin.qq.com/mp/appmsgalbum?__biz=MzI0MDQ4MTM5NQ==&action=getalbum&album_id=1790418411420778499#wechat_redirect) / [Tools](https://mp.weixin.qq.com/mp/appmsgalbum?__biz=MzI0MDQ4MTM5NQ==&action=getalbum&album_id=1790352360813232129#wechat_redirect) / [OpenStack](https://mp.weixin.qq.com/mp/appmsgalbum?__biz=MzI0MDQ4MTM5NQ==&action=getalbum&album_id=3110612136701231107#wechat_redirect)
-
-大家好，我是民工哥！
 
 ## 前言
 
