@@ -972,6 +972,36 @@ npx claude-code-templates@latest --template=react --yes
 
 **附带工具**：`--analytics` 实时监控开发会话、`--chats` 移动端查看对话、`--health-check` 环境诊断、`--plugins` 插件管理面板。
 
+### shanraisshan/claude-code-best-practice
+
+> [!info] 仓库
+> [shanraisshan/claude-code-best-practice](https://github.com/shanraisshan/claude-code-best-practice) — Claude Code 生产级最佳实践参考实现
+
+这个项目不是简单的 Plugin，而是一套**从 Vibe Coding 到 Agentic Engineering 的完整进阶指南**，通过一个 TodoApp 示例项目演示如何用 Claude Code 的全部扩展机制构建生产级工作流。
+
+**4 级进阶路径**：Low → Medium → High → Pro，逐级引入 Claude Code 的配置能力。
+
+**核心架构模式**：**Command → Agent → Skill** 三层编排
+
+| 层级 | 目录 | 作用 |
+|------|------|------|
+| Commands | `.claude/commands/` | 斜杠命令编排工作流入口 |
+| Agents | `.claude/agents/` | 约束工具集 + 预加载 Skills 的专业子智能体 |
+| Skills | `.claude/skills/` | YAML frontmatter 定义的可复用领域知识包 |
+| Rules | `.claude/rules/*.md` | 路径匹配的自动生效编码规范 |
+| Hooks | `.claude/hooks/` | 事件驱动脚本（如提交前通知） |
+
+**进阶工作流**：
+- **RPI（Research-Plan-Implement）**：复杂任务的三阶段多智能体协作流程
+- **Cross-Model Development**：跨模型协作（规划 / QA / 实现 / 验证分别用不同模型）
+- **Phase-Gated Development**：`/plan` 先只读探索设计，再进入编码阶段
+
+**亮点**：
+- 5 级配置优先级体系（全局 → 项目 → 本地覆盖）
+- Agent 的 `MEMORY.md` 持久化学习机制
+- 附带交互式幻灯片演示（`presentation/index.html`）
+- 包含 Claude Agent SDK 与 CLI 系统提示词的对比分析报告
+
 ### wshobson/agents
 
 最大的 Claude Code Plugin Marketplace，详见 [[AI/ClaudeCode/多智能体协作-Subagents与Agent-Teams#开源 Agents 推荐|多智能体协作 — 开源 Agents 推荐]]。

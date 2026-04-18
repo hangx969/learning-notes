@@ -12,6 +12,14 @@ date: 2026-04-17
 
 ---
 
+## [2026-04-18] update | Claude Code Plugin 新增 shanraisshan/claude-code-best-practice
+
+- **来源**：[shanraisshan/claude-code-best-practice](https://github.com/shanraisshan/claude-code-best-practice)（通过 DeepWiki 获取仓库信息）
+- **操作**：整理简化后添加到 [[AI/ClaudeCode/Claude Code 扩展体系]] 的"开源 Plugin 推荐"部分
+- **内容**：Vibe Coding → Agentic Engineering 进阶指南，Command→Agent→Skill 三层编排模式 + RPI/Cross-Model 等工作流
+
+---
+
 ## [2026-04-18] update | Claude Code Plugin 新增 davila7/claude-code-templates
 
 - **来源**：[davila7/claude-code-templates](https://github.com/davila7/claude-code-templates)（通过 DeepWiki 获取仓库信息）
