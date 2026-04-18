@@ -12,6 +12,25 @@ date: 2026-04-17
 
 ---
 
+## [2026-04-18] create | OpenClaw Workspace 运维实战文章
+
+- **来源**：[[0raw/牛逼干货分享！OpenClaw Workspace 运维实战手册]]（微信公众号文章，1500+ 行）
+- **操作**：简化整理为 [[AI/OpenClaw/OpenClaw-Workspace-运维]]（约 400 行），保留核心运维知识，去除冗余示例和重复内容
+- **核心内容**：
+  - 配置与内容文件体系分离架构
+  - 标准目录布局与多 Agent 环境隔离策略
+  - 核心配置文件速查（openclaw.json / TOOLS.md 权限分级）
+  - 记忆系统运维（builtin vs qmd、污染处理、清理策略）
+  - Skill 三级加载层级
+  - 故障排查清单（7 类问题）
+  - 备份恢复与灾难恢复（RTO/RPO）
+  - 安全加固（权限基线、敏感信息管理、审计日志）
+- **知识库更新**：
+  - `entities/OpenClaw.md` — 新增 sources 引用 + Workspace 运维模块
+  - `index.md` — 新增 OpenClaw Workspace 运维条目
+
+---
+
 ## [2026-04-18] update | Claude Code Plugin 新增 obra/superpowers
 
 - **来源**：[obra/superpowers](https://github.com/obra/superpowers)（通过 DeepWiki 获取仓库信息）

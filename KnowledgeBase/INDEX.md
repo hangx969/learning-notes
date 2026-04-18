@@ -152,6 +152,7 @@ date: 2026-04-17
 | 页面 | 覆盖文档数 | 摘要 |
 |------|:---------:|------|
 | [AI-OpenClaw](sources/ai-openclaw-misc-batch-summary.md) | 9 | OpenClaw 全栈（安装/Skills/Channels/AIOps/多智能体）、Copilot CLI、提示词工程 |
+| [[AI/OpenClaw/OpenClaw-Workspace-运维]] | 1 | Workspace 运维实战——目录规划、多 Agent 隔离、记忆管理、故障排查、安全加固、备份恢复 |
 
 ### Go（已摄入 ✅）
 

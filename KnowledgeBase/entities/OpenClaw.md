@@ -78,6 +78,7 @@ OpenClaw 和 [[KnowledgeBase/entities/Claude-Code|Claude Code]] 同属 AI Agent 
 - [[AI/OpenClaw/OpenClaw-Channels|OpenClaw-Channels]]
 - [[AI/OpenClaw/OpenClaw-Skills-插件|OpenClaw-Skills-插件]]
 - [[AI/OpenClaw/CoPaw|CoPaw]]
+- [[AI/OpenClaw/OpenClaw-Workspace-运维|OpenClaw-Workspace-运维]]
 - [[AI/OpenClaw/Ubuntu-2510-Setup-Guide|Ubuntu-2510-Setup-Guide]]
 
 ## 智能体定义文件（AI/agents/）
