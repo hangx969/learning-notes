@@ -931,6 +931,47 @@ echo "" >> CLAUDE.md
 curl https://raw.githubusercontent.com/forrestchang/andrej-karpathy-skills/main/CLAUDE.md >> CLAUDE.md
 ```
 
+### davila7/claude-code-templates
+
+> [!info] 仓库
+> [davila7/claude-code-templates](https://github.com/davila7/claude-code-templates) — 500+ 组件的 Claude Code 模板市场，Web 界面：[aitmpl.com](https://aitmpl.com)
+
+一个 CLI 工具 + 组件市场，提供 Agents、Commands、MCPs、Settings、Hooks、Skills、Templates 七大类组件，可按需安装到项目中。
+
+**内置 Plugin 套件**：
+
+| Plugin | 用途 | 包含组件 |
+|--------|------|---------|
+| **git-workflow** | Git 工作流自动化 | feature/release/hotfix 命令 + git-flow-manager Agent |
+| **supabase-toolkit** | Supabase 全流程 | 备份/迁移/性能优化命令 + data-engineer Agent + PostgreSQL/MySQL MCP |
+| **nextjs-vercel-pro** | Next.js + Vercel 开发 | 脚手架/组件生成/部署优化命令 + fullstack-developer Agent + Vercel MCP |
+| **testing-suite** | 测试自动化 | E2E/单元/集成/视觉测试 |
+| **documentation-toolkit** | 文档生成 | API 文档/用户指南/Changelog + technical-writer Agent |
+| **performance-optimizer** | 性能优化 | Bundle 分析/缓存/图片优化/懒加载命令 |
+| **project-management-suite** | 项目管理 | Sprint 规划/任务拆解/站会/复盘命令 |
+
+**项目模板**：Common（通用）、JavaScript/TypeScript（React/Vue/Angular/Node.js）、Python（Django/Flask/FastAPI）、Ruby。
+
+**安装**：
+
+```sh
+# 交互式浏览安装
+npx claude-code-templates@latest
+
+# 安装单个组件
+npx claude-code-templates@latest --agent development-team/frontend-developer --yes
+npx claude-code-templates@latest --command testing/generate-tests --yes
+
+# Plugin 方式安装
+/plugin marketplace add https://github.com/davila7/claude-code-templates
+/plugin install plugin-name@claude-code-templates
+
+# 安装项目模板
+npx claude-code-templates@latest --template=react --yes
+```
+
+**附带工具**：`--analytics` 实时监控开发会话、`--chats` 移动端查看对话、`--health-check` 环境诊断、`--plugins` 插件管理面板。
+
 ### wshobson/agents
 
 最大的 Claude Code Plugin Marketplace，详见 [[AI/ClaudeCode/多智能体协作-Subagents与Agent-Teams#开源 Agents 推荐|多智能体协作 — 开源 Agents 推荐]]。

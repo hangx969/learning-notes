@@ -12,6 +12,14 @@ date: 2026-04-17
 
 ---
 
+## [2026-04-18] update | Claude Code Plugin 新增 davila7/claude-code-templates
+
+- **来源**：[davila7/claude-code-templates](https://github.com/davila7/claude-code-templates)（通过 DeepWiki 获取仓库信息）
+- **操作**：整理简化后添加到 [[AI/ClaudeCode/Claude Code 扩展体系]] 的"开源 Plugin 推荐"部分
+- **内容**：500+ 组件的模板市场，含 7 个内置 Plugin 套件（git-workflow、supabase-toolkit、nextjs-vercel-pro 等）+ 多语言项目模板 + 附带工具
+
+---
+
 ## [2026-04-18] update | Claude Code Skills 新增 excalidraw-diagram-generator
 
 - **来源**：[[0raw/用这个 Skill，直接一句话生成手绘架构图，省时省力～]]（微信公众号文章，菜鸟教程）
