@@ -507,7 +507,7 @@ python3 /path/to/skill-creator/scripts/package_skill.py \
 
 - 该项目收集了各种实用 Skill，采用模块化设计。比如文档处理、开发、数据分析、营销、写作创意啥的都有：[ComposioHQ/awesome-claude-skills](https://github.com/ComposioHQ/awesome-claude-skills)、[BehiSecc/awesome-claude-skills](https://github.com/BehiSecc/awesome-claude-skills)
 - 传统的 Claude Code Skill 需要你手动记忆和调用，而这个项目通过创新的钩子机制，实现了 Skill 的智能自动触发。当你输入提示或操作文件时，系统会自动分析上下文，并建议最相关的技能：[claude-code-infrastructure-showcase](https://github.com/diet103/claude-code-infrastructure-showcase)
-- 开发者 @obra 觉得现在的 AI 写代码太随意了，所以他写了一组 Skills，**强迫** Claude 按照**世界级高级工程师**的标准流程来工作：[obra/superpowers](https://github.com/obra/superpowers)。装了之后，Claude 的模式就是：**收到需求 → 先头脑风暴 → 制定详细计划 → 写测试用例（TDD）→ 写代码通过测试 → 检查质量**
+- 强迫 Claude 按高级工程师标准流程工作的 Skills 套件，详见下方"开源 Plugin 推荐"中的 [obra/superpowers](#obra/superpowers) 章节
 ### 用 Skill 创建 Skill
 
 Anthropic 官方有一个帮助创建 Skill 的 Skill：[skill-creator](https://github.com/anthropics/skills/tree/main/skills/skill-creator)
@@ -887,6 +887,64 @@ Plugin（插件）是应用级打包容器，用来打包其他四个工具。
 ---
 
 ## 开源 Plugin 推荐
+
+### obra/superpowers
+
+> [!info] 仓库
+> [obra/superpowers](https://github.com/obra/superpowers) — 强迫 AI 按高级工程师标准流程工作的 Skills 套件
+
+Superpowers 的核心理念：**AI 写代码太随意，需要用结构化流程约束它**。安装后 Claude 的行为模式变为：收到需求 → 头脑风暴 → 制定计划 → TDD 写测试 → 写代码通过测试 → 代码审查 → 验证完成。
+
+**强制工作流**（每个阶段必须完成才能进入下一个）：
+
+1. **Brainstorming** — 头脑风暴，拒绝直接写代码，必须先出设计方案并获批准
+2. **Git Worktrees** — 在独立分支上创建隔离工作区
+3. **Writing Plans** — 将设计拆解为细粒度任务，假设执行者零上下文
+4. **Subagent-Driven Development** — 子智能体隔离执行，双阶段审查（规格合规 + 代码质量）
+5. **Test-Driven Development** — 强制 RED → GREEN → REFACTOR 循环
+6. **Code Review** — 提交前对照计划自查
+7. **Finishing Branch** — 验证测试通过，决定合并或 PR
+
+**Skills 全表**：
+
+| 分类 | Skill | 作用 |
+|------|-------|------|
+| 测试 | test-driven-development | 强制 TDD RED-GREEN-REFACTOR |
+| 测试 | writing-skills | 用 TDD 方式编写新 Skill 文档 |
+| 调试 | systematic-debugging | 4 阶段根因分析（定位/追踪/防御/条件等待） |
+| 调试 | verification-before-completion | 修复后必须彻底验证才能标记完成 |
+| 协作 | brainstorming | 想法 → 设计文档，设有 hard-gate 禁止跳过 |
+| 协作 | writing-plans | 输出零上下文可执行的详细任务计划 |
+| 协作 | executing-plans | 分批执行计划（无子智能体平台的降级方案） |
+| 协作 | subagent-driven-development | 子智能体隔离开发 + 双阶段审查 |
+| 协作 | dispatching-parallel-agents | 多子智能体并行工作流管理 |
+| 协作 | requesting-code-review | 提交前自查清单 |
+| 协作 | receiving-code-review | 响应审查反馈的规范流程 |
+| 协作 | using-git-worktrees | Git worktree 并行开发 |
+| 协作 | finishing-a-development-branch | 分支完成验证与合并/PR 决策 |
+| 思维 | collision-zone-thinking | 跨领域概念碰撞产生洞见 |
+| 思维 | inversion-exercise | 反转假设发现隐藏约束 |
+| 思维 | meta-pattern-recognition | 识别跨领域通用模式 |
+| 思维 | scale-game | 极端条件测试暴露本质问题 |
+| 思维 | simplification-cascades | 寻找能消除多个组件的简化洞见 |
+| 思维 | when-stuck | 卡住时分派到合适的思维技巧 |
+| 研究 | tracing-knowledge-lineages | 追溯想法的演进脉络 |
+| 架构 | preserving-productive-tensions | 维持多种有效方案，避免过早收敛 |
+| 元技能 | using-superpowers | 1% 规则：有丝毫可能就必须调用对应 Skill |
+
+**安装**：
+
+```sh
+# Claude Code 官方市场
+/plugin install superpowers@claude-plugins-official
+
+# 或通过 Plugin Marketplace
+/plugin marketplace add obra/superpowers-marketplace
+/plugin install superpowers@superpowers-marketplace
+```
+
+> [!note]
+> 跨平台支持：除 Claude Code 外还支持 Cursor、Codex、OpenCode、GitHub Copilot CLI、Gemini CLI。
 
 ### andrej-karpathy-skills
 

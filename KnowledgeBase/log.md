@@ -12,6 +12,14 @@ date: 2026-04-17
 
 ---
 
+## [2026-04-18] update | Claude Code Plugin 新增 obra/superpowers
+
+- **来源**：[obra/superpowers](https://github.com/obra/superpowers)（通过 DeepWiki 获取仓库信息）
+- **操作**：从"开源 Skills 仓库"一句话提及扩展为"开源 Plugin 推荐"独立章节，含 22 个 Skill 全表、强制工作流 7 步说明、安装方式
+- **内容**：强迫 AI 按高级工程师标准流程工作的 Skills 套件——TDD + 头脑风暴 + 子智能体隔离开发 + 代码审查
+
+---
+
 ## [2026-04-18] update | Claude Code Plugin 新增 shanraisshan/claude-code-best-practice
 
 - **来源**：[shanraisshan/claude-code-best-practice](https://github.com/shanraisshan/claude-code-best-practice)（通过 DeepWiki 获取仓库信息）
