@@ -333,8 +333,28 @@ claude mcp add datadog --scope user -- ~/.local/bin/datadog_mcp_cli
 }
 ```
 
+**认证方式**：默认使用 OAuth 2.0（远程 HTTP 连接时自动触发浏览器登录）。如果无法走 OAuth 流程（如服务器环境），可以通过 API Key + Application Key 以 HTTP Header 方式认证：
+
+```json
+{
+  "mcpServers": {
+    "datadog": {
+      "type": "http",
+      "url": "https://mcp.datadoghq.com/api/unstable/mcp-server/mcp",
+      "headers": {
+        "DD_API_KEY": "<YOUR_API_KEY>",
+        "DD_APPLICATION_KEY": "<YOUR_APPLICATION_KEY>"
+      }
+    }
+  }
+}
+```
+
+> [!tip] 安全建议
+> 建议使用 [Service Account](https://docs.datadoghq.com/account_management/org_settings/service_accounts/) 创建的 scoped API Key 和 Application Key，仅赋予所需权限。
+
 > [!warning] 权限
-> 需要 Datadog 用户角色具备 `mcp_read` 和 `mcp_write` 权限（Standard Role 默认包含）。除此之外还需要对应资源的标准权限（如读 Monitor 需要 Monitors Read）。
+> 需要 Datadog 用户角色具备 `mcp_read` 和 `mcp_write` 权限（Standard Role 默认包含）。除此之外还需要对应资源的标准权限（如读 Monitor 需要 Monitors Read）。如使用自定义角色，需在 [Organization Settings > Roles](https://app.datadoghq.com/organization-settings/roles) 中手动勾选 **MCP Read** 和 **MCP Write**。
 
 **Toolset 机制**：Datadog MCP 支持按产品域选择性加载工具集，通过 URL query 参数 `toolsets` 控制，节省 context window 空间：
 

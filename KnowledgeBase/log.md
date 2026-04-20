@@ -12,6 +12,14 @@ date: 2026-04-17
 
 ---
 
+## [2026-04-20] update | Claude Code 扩展体系 - Datadog MCP 配置
+
+- **来源**：[[0raw/Set Up the Datadog MCP Server 1]]（Datadog 官方文档）
+- **操作**：在 [[AI/ClaudeCode/Claude Code 扩展体系]] MCP 章节新增 Datadog MCP Server 配置
+- **内容**：Claude Code 两种配置方式（远程 HTTP / 本地二进制）、权限要求、Toolset 按需加载机制、18 个 Toolset 完整列表（16 GA + 2 Preview）
+
+---
+
 ## [2026-04-20] update | OpenClaw second-brain 知识管理插件
 
 - **来源**：[[0raw/Openclaw帮你管理个人知识库]]（微信公众号文章）
