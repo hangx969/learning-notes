@@ -12,6 +12,42 @@ date: 2026-04-17
 
 ---
 
+## [2026-04-20] update | OpenClaw second-brain 知识管理插件
+
+- **来源**：[[0raw/Openclaw帮你管理个人知识库]]（微信公众号文章）
+- **操作**：将 second-brain 插件内容整合到 [[AI/OpenClaw/OpenClaw-Skills-插件]] 的"记忆插件"章节前，新增"个人知识库 - second-brain"章节
+- **改动**：安装配置命令、6 种使用场景表格、核心能力总结、与记忆插件的区别说明
+- **实体更新**：[[KnowledgeBase/entities/OpenClaw]] Skills 插件生态新增 second-brain 条目
+
+---
+
+## [2026-04-20] update | AI做PPT - ppt-master 补充完整内容
+
+- **来源**：[[Clippings/这才是AI做ppt的正确姿势 ！ 1]]（完整版微信公众号文章）
+- **操作**：根据完整原文更新 [[AI/AI做PPT-ppt-master]]
+- **新增内容**：与现有工具对比表（Gamma/Beautiful.ai/Copilot）、SVG→DrawingML 原生转换原理、双文件输出机制、强制顺序生成设计、内置资源数量（20 布局 + 52 可视化 + 6700 图标 + 12 图像后端）、公司模板支持、15 个官方案例（229 页）、作者背景与项目动机
+
+---
+
+## [2026-04-20] create | AI做PPT - ppt-master
+
+- **来源**：[[0raw/这才是AI做ppt的正确姿势 ！]]（微信公众号文章）+ [hugohe3/ppt-master](https://github.com/hugohe3/ppt-master) 仓库
+- **操作**：在 AI 目录下新建 [[AI/AI做PPT-ppt-master]] 文章
+- **内容**：ppt-master 项目简介、核心特性（多格式/多风格/CRAP 设计原则）、AI 角色系统（Strategist→Executor→Optimizer 管道）、7 步使用流程、技术栈
+
+---
+
+## [2026-04-18] update | Containerd V2 私有仓库配置整合
+
+- **来源**：[[0raw/V2 版 Containerd 配置私有仓库和镜像加速]]（微信公众号文章）
+- **操作**：将 V2 版 containerd 私有仓库配置内容整合到 [[Docker-Kubernetes/k8s-installation-management/latest-version/安装k8s-1.35-基于rockylinux10-最新步骤]] 的 containerd 配置章节
+- **改动**：
+  - 新增 `config_path` 与 `mirrors` 互斥警告 callout，含 V1/V2 插件路径差异说明
+  - 将原有 Harbor 私有仓库示例扩展为两种方式：跳过证书校验（测试环境）+ 自签 CA 证书验证（生产环境推荐）
+  - 新增 Authorization header 认证配置和 crictl 验证命令
+
+---
+
 ## [2026-04-18] update | K8s Namespace Terminating 强制删除脚本
 
 - **来源**：[[Clippings/实用脚本：强制删除K8s命名空间（Terminating状态）]]（微信公众号文章）
