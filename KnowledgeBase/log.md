@@ -12,6 +12,15 @@ date: 2026-04-17
 
 ---
 
+## [2026-04-21] create | Awesome DESIGN.md 前端设计提示词集合
+
+- **来源**：[VoltAgent/awesome-design-md](https://github.com/VoltAgent/awesome-design-md) 仓库
+- **操作**：将 67 个品牌的 DESIGN.md 设计系统文件添加到 `AI/awesome-design-md/` 子目录
+- **内容**：每个品牌目录保留 DESIGN.md + README.md + preview.html + preview-dark.html（共 268 个文件）
+- **新建**：[[AI/awesome-design-md/README|导航首页]]，含 DESIGN.md 概念说明、使用方法、按 8 大分类的品牌 wikilink 目录
+
+---
+
 ## [2026-04-20] update | Claude Code 扩展体系 - Datadog MCP 配置
 
 - **来源**：[[0raw/Set Up the Datadog MCP Server 1]]（Datadog 官方文档）
