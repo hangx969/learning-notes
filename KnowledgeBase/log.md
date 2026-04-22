@@ -12,6 +12,18 @@ date: 2026-04-17
 
 ---
 
+## [2026-04-22] update | Claude Code 并行开发：Git Worktree + 工作流编排 + Routines
+
+- **来源**：[[0raw/Claude Code 并行开发完全指南：Subagents + Agent Teams + Git Worktree + 工作流编排实战]]（微信公众号文章）
+- **操作**：将 Git Worktree、工作流编排、Routines 三块新内容整合到 [[AI/ClaudeCode/多智能体协作-Subagents与Agent-Teams]]
+- **新增内容**：
+  - 第三部分：Git Worktree 并行开发（命令、实战、与 Agent Teams 对比选型表）
+  - 第四部分：工作流编排（Plan 模式嵌入、5 阶段 Multi-Agent 工作流模板、CLAUDE.md 固化）
+  - Routines 定时自动执行（3 种触发方式、配置示例、与 Agent Teams 无人值守流水线）
+  - 常见坑汇总（4 类）、全局选型决策表（6 场景）
+
+---
+
 ## [2026-04-21] create | Awesome DESIGN.md 前端设计提示词集合
 
 - **来源**：[VoltAgent/awesome-design-md](https://github.com/VoltAgent/awesome-design-md) 仓库

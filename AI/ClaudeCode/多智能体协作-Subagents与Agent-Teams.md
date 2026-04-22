@@ -6,8 +6,12 @@ tags:
   - subagent
   - agent-teams
   - multi-agent
+  - git-worktree
+  - workflow
 date: 2026-04-17
-source: "https://code.claude.com/docs/en/agent-teams"
+source:
+  - "https://code.claude.com/docs/en/agent-teams"
+  - "https://mp.weixin.qq.com/s/g8wc2ULicc0djeOkRN5WvA"
 aliases:
   - 子智能体
   - Agent Teams
@@ -351,6 +355,221 @@ Have them each review and report findings.
 | 队友遇错停止 | 查看输出，给额外指令或生成替代队友 |
 | Lead 提前结束 | 告诉 Lead 继续等待 |
 | 孤儿 tmux 会话 | `tmux ls` → `tmux kill-session -t <name>` |
+
+---
+
+# 第三部分：Git Worktree 并行开发
+
+> 来源：[Claude Code 并行开发完全指南](https://mp.weixin.qq.com/s/g8wc2ULicc0djeOkRN5WvA)
+
+当需要在同一个项目里**同时处理多个不兼容的改动**时，Git Worktree 比 Agent Teams 更底层、更稳定——它提供的是**分支级别的文件系统硬隔离**。
+
+## 适用场景
+
+- 同时做 Feature A 和 Refactor B，两者改动重叠，不能在同一分支串行
+- 保持当前工作目录干净的同时并行处理紧急 Bugfix
+- 多人协作避免合并冲突
+
+## 基础命令
+
+```bash
+# 查看当前所有 Worktree
+git worktree list
+
+# 创建新 Worktree（同时创建新分支）
+git worktree add ../feature-auth -b feature/auth
+git worktree add ../bugfix-urgent -b bugfix/urgent
+
+# 在新目录里启动 Claude Code
+cd ../feature-auth
+claude
+
+# 工作完成后合并回主分支
+git checkout main
+git merge feature/auth
+git worktree remove ../feature-auth
+git branch -d feature/auth
+```
+
+## 实战：结合 Claude Code 并行开发
+
+```bash
+# 场景：同时处理新功能 + 重构
+
+# 1. 主分支继续开发新功能
+cd ~/projects/myapp
+claude
+
+# 2. 创建 Worktree 做重构（隔离）
+git worktree add ../refactor-db -b refactor/db
+cd ../refactor-db
+claude
+# 新会话里专门做数据库重构，不影响主分支
+
+# 3. 两边并行做完，合并
+git checkout main
+git merge refactor/db
+git worktree remove ../refactor-db
+```
+
+## Git Worktree vs Agent Teams 怎么选
+
+| 维度 | Git Worktree | Agent Teams |
+|------|-------------|-------------|
+| 隔离级别 | 分支级别（文件系统） | 上下文级别（内存） |
+| 适用场景 | 大范围重构、并行分支开发 | 快速探索、多角色协作 |
+| 多人协作 | 支持 | 主要单人使用 |
+| 上手难度 | ★★ | ★★★ |
+
+- **用 Git Worktree**：改动会相互冲突、需要硬隔离、多人协作场景
+- **用 Agent Teams**：需要快速并行探索、多个角色同时讨论方案
+
+---
+
+# 第四部分：工作流编排
+
+前面三种方案解决的是"怎么并行"，工作流编排解决的是"多个工作单元怎么有序配合"。
+
+## Plan 模式：动手前的任务分解
+
+Claude Code 内置 `/plan` 命令，是一个**任务规划工具**——把"想清楚做什么"和"动手做"分开。
+
+```text
+/plan
+# Claude 分析项目结构和任务需求
+# 输出分步骤计划，等待确认后才执行
+```
+
+> [!tip] 什么时候用 Plan
+> **多模块重构、新技术引入、架构调整**时用 Plan；常规 CRUD、小需求直接做。
+
+## 在工作流中嵌入 Plan 模式
+
+```text
+architect（Agent Team）：用 /plan 分析 src/modules 的依赖关系，给出重构优先级。
+
+architect 的 plan 确认后，分配给 frontend-dev 和 backend-dev 各自执行。
+
+backend-dev：
+/plan
+根据 architect 的分析结果，设计 database schema 迁移方案。
+```
+
+每个 Agent 动手前都有一次"想清楚"的环节，减少返工。
+
+## Multi-Agent 协作工作流模板
+
+```
+阶段一：任务分解（Plan 模式）
+├─ 主会话：定义项目范围和目标
+├─ /plan：拆解为具体模块
+└─ 输出：完整的任务分解清单
+
+阶段二：角色分配（Agent Teams）
+├─ architect：架构设计和方案评审
+├─ frontend-dev：前端实现
+└─ backend-dev：后端实现
+
+阶段三：并行执行
+├─ 各 Agent 独立工作
+├─ 通过共享上下文通信
+└─ architect 协调冲突
+
+阶段四：整合与 Review（Subagents）
+├─ code-reviewer：全面代码审查
+├─ test-writer：生成测试用例
+└─ architect：最终架构评审
+
+阶段五：合并（Git Worktree）
+├─ 合并各分支到 main
+└─ 运行集成测试
+```
+
+## 把工作流固化到 CLAUDE.md
+
+将团队配置和工作流模板写入项目的 `CLAUDE.md`，Claude Code 启动时自动加载，新成员 clone 即可复用：
+
+```markdown
+# 项目 AI 团队配置
+
+## 默认团队
+| 角色 | 职责 |
+|------|------|
+| architect | 架构设计和技术方案评审 |
+| frontend-dev | 前端开发，React/TypeScript/Tailwind CSS |
+| backend-dev | 后端开发，Node.js/Python + PostgreSQL |
+| code-reviewer | 代码审查，安全和质量问题 |
+
+## 工作流规范
+1. 涉及多模块时，先用 /plan 拆解，确认后再执行
+2. architect 评审通过的技术方案，才能分配给前端/后端
+3. 所有代码合并前必须经过 code-reviewer 审查
+```
+
+## Routines：定时自动执行
+
+Routines 把"一次 prompt + 代码仓库 + 触发条件"打包成配置，在 Anthropic 云端运行，不需要电脑保持开机。
+
+**三种触发方式**：
+
+| 触发方式 | 说明 | 典型场景 |
+|---------|------|---------|
+| **定时触发** | cron 表达式 | 每天早上自动跑代码审查 |
+| **API 触发** | REST 接口 | 外部系统触发 CI/CD 流水线 |
+| **GitHub 事件** | PR opened、push 等 | PR 创建时自动 code review |
+
+**配置示例**：
+
+```bash
+/claude routine create \
+  --name "morning-review" \
+  --prompt "审查昨晚到现在的所有 commits，重点关注：安全漏洞、性能问题、测试覆盖率" \
+  --trigger "0 8 * * *" \
+  --repo ./my-project
+```
+
+**与 Agent Teams 配合——无人值守流水线**：
+
+```
+Routines（定时 08:00）
+  └─→ 触发 Agent Teams
+        ├─ architect：代码审查
+        ├─ backend-dev：Bug 修复
+        └─ frontend-dev：依赖检查
+  └─→ 审查结果自动发 PR comment 或邮件通知
+```
+
+> [!warning] 当前限制
+> - Routines 处于**研究预览阶段**
+> - 仅支持 Claude 官方模型，不支持第三方 API 路由
+> - 部分触发器需要配置 webhook 回调地址
+
+## 常见坑
+
+| 坑 | 说明 |
+|----|------|
+| Subagent 记忆不共享 | 跨 Subagent 传递信息需要在主会话中转 |
+| Agent Teams 上下文竞争 | 多 Agent 共享上下文窗口，每个 Agent 指令里限制输出长度 |
+| Git Worktree 合并冲突 | 合并前确保主分支没有未提交的改动 |
+| Plan 模式太慢 | 只在多模块重构/架构调整时使用，小需求直接做 |
+
+---
+
+# 全局选型决策表
+
+| 场景 | 推荐方案 |
+|------|---------|
+| 同项目多工种分工（review + test） | Subagents |
+| 真正多 Agent 同时工作 | Agent Teams |
+| 长时重构、多分支并行 | Git Worktree |
+| 复杂任务分解 + 协调 | 工作流编排（Plan + Teams） |
+| 定时自动跑任务（无人值守） | Routines + Agent Teams |
+| 快速小需求、单人单线程 | 单个 Claude 实例足够 |
+
+> 这四条路不矛盾，一个项目里往往组合着用：Subagents 定义角色，Agent Teams 处理并行部分，Git Worktree 做分支硬隔离，工作流编排把全局串起来。
+
+---
+
 # 开源 Agents 推荐
 
 ## wshobson/agents
