@@ -12,6 +12,19 @@ date: 2026-04-17
 
 ---
 
+## [2026-04-23] update | Skill 质量治理：7 类失效模式与 Skill Craft
+
+- **来源**：[[0raw/我做了一个 Claude Skill 质检工具：专门解决 Claude Skill 的不触发、乱触发、越用越跑偏]]（微信公众号文章）
+- **操作**：将 Skill 失效模式分析和 Skill Craft 工具整合到 [[AI/ClaudeCode/Claude Code 扩展体系]] 的 Skills 章节
+- **新增内容**：
+  - 7 类系统性失效模式（约束衰减、工具漂移、输出膨胀、依赖链断裂、并行孤岛、触发模糊、幻觉填充）
+  - Skill Craft 质检工具 4 种模式（check/fix/create/audit）
+  - 3 层评估体系（8 结构模块 + 7 反模式 + 3 完整性原则）
+  - fix 模式的 4 类关联检查机制
+- **关联更新**：[[KnowledgeBase/entities/Claude-Code]] Skills 章节补充质量治理说明
+
+---
+
 ## [2026-04-23] update | Obsidian 微信公众号发布插件
 
 - **来源**：[[0raw/告别公众号排版烦恼：Obsidian一键发布插件使用指南]]（微信公众号文章）
