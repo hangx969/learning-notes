@@ -9,15 +9,6 @@ description:
 tags:
   - "clippings"
 ---
-海笑 *2025年9月10日 08:00*
-
-欢迎点击下方👇关注我，记得星标哟~
-
-文末会有 **重磅福利** 赠送
-
-在云原生应用的生命周期里，“如何安全、可审计、可扩展地管理敏感配置（API Key、数据库密码、令牌等）”始终是核心议题。传统方式（直接写进 Deployment、ConfigMap、.env 文件、Git 仓库）不仅存在泄露风险，也难以做到集中治理与轮换。  
-
-![图片](https://mmbiz.qpic.cn/sz_mmbiz_png/Lcribm9SHtlIaGCHfrs7x8k72BxeoibkaRu4hjswVJ6fiaTIZlGb4ogUrtSn0ibzlO9Ggq0ySGRibV8RfzxI53lEpMA/640?wx_fmt=png&from=appmsg&watermark=1&tp=webp&wxfrom=5&wx_lazy=1#imgIndex=0)
 
 External Secrets Operator（简称 ESO）提供了一种“声明式桥接”——让 Kubernetes 自动从外部密钥管理服务（如 AWS Secrets Manager、HashiCorp Vault、Azure Key Vault 等）同步数据到集群内的 Kubernetes Secret，从而实现统一源、最小暴露面与自动更新。
 
