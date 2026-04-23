@@ -12,10 +12,25 @@ date: 2026-04-17
 
 ---
 
+## [2026-04-23] restructure + create | AI-视觉目录整合 + html-ppt-skill
+
+- **来源**：[[0raw/一句话生成PPT，已经能用了：html-ppt-skill实测指南]]（微信公众号文章）
+- **操作**：
+  1. 创建 `AI/AI-视觉/` 目录，将 PPT/HTML 视觉生成类文章归集
+  2. 移动 [[AI/AI-视觉/AI做PPT-ppt-master]] 和 [[AI/AI-视觉/AI-Animation-Skill-科普动画]] 至新目录
+  3. 创建 [[AI/AI-视觉/html-ppt-skill-实测指南]] 新文章
+  4. 修复所有跨文件 wikilink 引用（OpenClaw 实体、log.md、文章间交叉引用）
+- **新增内容**：
+  - html-ppt-skill：36 主题 + 31 布局 + 14 deck + 47 动画的 HTML 幻灯片生成系统
+  - 3 组实测场景（技术分享 cyberpunk / 融资路演 / 小红书图文）
+  - 三款工具（PPT Master / AI-Animation-Skill / html-ppt-skill）横向定位对比
+
+---
+
 ## [2026-04-23] create | AI-Animation-Skill HTML 科普动画生成
 
 - **来源**：[[0raw/扔掉PPT，用这44个HTML动画模板，让AI帮你做科普视频]]（微信公众号文章）
-- **操作**：创建 [[AI/AI-Animation-Skill-科普动画]] 新文章
+- **操作**：创建 [[AI/AI-视觉/AI-Animation-Skill-科普动画]] 新文章
 - **新增内容**：
   - 项目简介：单 HTML 文件输出、零依赖、完全离线
   - 与 Gamma / Beautiful.ai 对比表
@@ -94,7 +109,7 @@ date: 2026-04-17
 ## [2026-04-20] update | AI做PPT - ppt-master 补充完整内容
 
 - **来源**：[[Clippings/这才是AI做ppt的正确姿势 ！ 1]]（完整版微信公众号文章）
-- **操作**：根据完整原文更新 [[AI/AI做PPT-ppt-master]]
+- **操作**：根据完整原文更新 [[AI/AI-视觉/AI做PPT-ppt-master]]
 - **新增内容**：与现有工具对比表（Gamma/Beautiful.ai/Copilot）、SVG→DrawingML 原生转换原理、双文件输出机制、强制顺序生成设计、内置资源数量（20 布局 + 52 可视化 + 6700 图标 + 12 图像后端）、公司模板支持、15 个官方案例（229 页）、作者背景与项目动机
 
 ---
@@ -102,7 +117,7 @@ date: 2026-04-17
 ## [2026-04-20] create | AI做PPT - ppt-master
 
 - **来源**：[[0raw/这才是AI做ppt的正确姿势 ！]]（微信公众号文章）+ [hugohe3/ppt-master](https://github.com/hugohe3/ppt-master) 仓库
-- **操作**：在 AI 目录下新建 [[AI/AI做PPT-ppt-master]] 文章
+- **操作**：在 AI 目录下新建 [[AI/AI-视觉/AI做PPT-ppt-master]] 文章
 - **内容**：ppt-master 项目简介、核心特性（多格式/多风格/CRAP 设计原则）、AI 角色系统（Strategist→Executor→Optimizer 管道）、7 步使用流程、技术栈
 
 ---
