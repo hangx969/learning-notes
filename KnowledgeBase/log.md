@@ -12,6 +12,20 @@ date: 2026-04-17
 
 ---
 
+## [2026-04-23] update | Obsidian 微信公众号发布插件
+
+- **来源**：[[0raw/告别公众号排版烦恼：Obsidian一键发布插件使用指南]]（微信公众号文章）
+- **操作**：将插件功能、安装配置、使用方法整合到 [[KnowledgeBase/entities/Obsidian]] 的"实用社区插件"章节
+- **新增内容**：
+  - Wechat Public Platform 插件介绍（作者 ai-chen2050）
+  - 7 项核心功能表（上传素材、添加草稿、发布文章、群发消息、下载素材、百家号分发、数据统计）
+  - 安装与配置步骤（AppID / AppSecret / IP 白名单）
+  - Frontmatter 发布参数示例（封面图三级优先级）
+  - 权限说明（个人订阅号 vs 认证公众号）
+- **知识空白更新**：移除"Obsidian 插件开发与定制"条目
+
+---
+
 ## [2026-04-22] update | Claude Code 并行开发：Git Worktree + 工作流编排 + Routines
 
 - **来源**：[[0raw/Claude Code 并行开发完全指南：Subagents + Agent Teams + Git Worktree + 工作流编排实战]]（微信公众号文章）
