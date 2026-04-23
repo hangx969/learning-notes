@@ -13,10 +13,6 @@ tags:
 
 前面写了一篇K8S部署的文章被吐槽了，文章如下：
 
-[领导让我部署一套Kubernetes集群，我咔咔咔给他搞定（1.32无坑版）](https://mp.weixin.qq.com/s?__biz=MzkxNTU3MzUyMg==&mid=2247495273&idx=1&sn=b4e8be569042a7c0eb2332acdc1f6206&scene=21#wechat_redirect)
-
-![图片](https://mmbiz.qpic.cn/sz_mmbiz_png/86HCic5IM7OclWMV6Ll6jG9DOicoHz6iadDia1kVlNuV93uzWdvsiaBRxjF5ic5CJ5dyNkWBISdRCOq9icUT7KXRpd3kg/640?wx_fmt=png&from=appmsg&watermark=1&tp=webp&wxfrom=5&wx_lazy=1#imgIndex=0)
-
 ```
 systemctl disable --now firewalld
 ```
@@ -189,40 +185,6 @@ kubectl get node
 # 检查Pod状态
 kubectl get pod -A
 ```
-![图片](data:image/svg+xml,%3C%3Fxml version='1.0' encoding='UTF-8'%3F%3E%3Csvg width='1px' height='1px' viewBox='0 0 1 1' version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'%3E%3Ctitle%3E%3C/title%3E%3Cg stroke='none' stroke-width='1' fill='none' fill-rule='evenodd' fill-opacity='0'%3E%3Cg transform='translate(-249.000000, -126.000000)' fill='%23FFFFFF'%3E%3Crect x='249' y='126' width='1' height='1'%3E%3C/rect%3E%3C/g%3E%3C/g%3E%3C/svg%3E)
 
-![图片](data:image/svg+xml,%3C%3Fxml version='1.0' encoding='UTF-8'%3F%3E%3Csvg width='1px' height='1px' viewBox='0 0 1 1' version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'%3E%3Ctitle%3E%3C/title%3E%3Cg stroke='none' stroke-width='1' fill='none' fill-rule='evenodd' fill-opacity='0'%3E%3Cg transform='translate(-249.000000, -126.000000)' fill='%23FFFFFF'%3E%3Crect x='249' y='126' width='1' height='1'%3E%3C/rect%3E%3C/g%3E%3C/g%3E%3C/svg%3E)
 
 可以看到节点和Pod都是正常运行，需要注意的是：如果后续你发布了服务，需要根据对应的端口进行开放，不然就会导致服务不能访问。
-
-**如果有错漏，敬请斧正！如果觉得有用，别忘了点赞和关注！**
-
-**END**
-
-关注我，回复【 **666** 】获取海量Linux运维资料包，资料持续更新！
-
-如果需要提供技术支持或添加交流群，加V：lige\_linux
-
-往期推荐
-
-| 1 | [二进制方式部署Kubernetes高可用集群（3master，无坑超详细）](https://mp.weixin.qq.com/s?__biz=MzkxNTU3MzUyMg==&mid=2247496827&idx=1&sn=16dd0dd2ca4a6b07c2e17bfb5077ede2&scene=21#wechat_redirect) |
-| --- | --- |
-| 2 | [部署一套企业级Kubernetes高可用用集群(3master，1.33版）](https://mp.weixin.qq.com/s?__biz=MzkxNTU3MzUyMg==&mid=2247496491&idx=1&sn=5583af41dc2542c78a6275919896feed&scene=21#wechat_redirect) |
-| 3 | [万字长文：K8S命令详解汇总【自用珍藏版】](https://mp.weixin.qq.com/s?__biz=MzkxNTU3MzUyMg==&mid=2247485432&idx=1&sn=70b69c277478ab0a9e6b7a3426ba73dd&scene=21#wechat_redirect) |
-
-| 4 | [领导让我部署一套Kubernetes集群，我咔咔咔给他搞定（1.32无坑版）](https://mp.weixin.qq.com/s?__biz=MzkxNTU3MzUyMg==&mid=2247495273&idx=1&sn=b4e8be569042a7c0eb2332acdc1f6206&scene=21#wechat_redirect) |
-| --- | --- |
-| 5 | [交流群2.0｜拒绝闲聊，只聊实战与成长，运维同行欢迎来撩](https://mp.weixin.qq.com/s?__biz=MzkxNTU3MzUyMg==&mid=2247493992&idx=1&sn=b361265b0091920590b9ea82f12045f5&scene=21#wechat_redirect) |
-| 6 | [Linux的150个常用命令汇总，运维大神不一定全部掌握！](https://mp.weixin.qq.com/s?__biz=MzkxNTU3MzUyMg==&mid=2247486282&idx=1&sn=7a341c161fbba65f3fb933b554bfe875&scene=21#wechat_redirect) |
-
-**微信扫一扫赞赏作者**
-
-kubernetes系列 · 目录
-
-作者提示: 个人观点，仅供参考
-
-继续滑动看下一个
-
-运维李哥不背锅
-
-向上滑动看下一个

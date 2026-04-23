@@ -12,6 +12,18 @@ date: 2026-04-17
 
 ---
 
+## [2026-04-23] ingest | K8s 部署防火墙端口配置
+
+- **来源**：[[0raw/部署K8S时关闭防火墙被吐槽了，我连夜整理全部需要开放的端口]]（微信公众号文章）
+- **操作**：创建 [[Docker-Kubernetes/k8s-installation-management/k8s部署防火墙端口配置]] 新文章
+- **新增内容**：
+  - 生产环境正确做法：保留 firewalld + 精准开放端口（而非关闭防火墙）
+  - 各组件端口详解：kubeadm 核心、kubelet、kube-proxy、Calico、Ingress
+  - Master / Worker 节点分别的 firewalld 配置命令
+  - 端口速查总结表（组件 × Master/Worker × 是否必需）
+
+---
+
 ## [2026-04-23] ingest | K8s 1.35 EnvFiles（fileKeyRef）
 
 - **来源**：[[0raw/k8s 1.35 版本 Pod环境变量配置]]（微信公众号文章）
