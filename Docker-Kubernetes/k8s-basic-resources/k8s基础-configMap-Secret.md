@@ -743,4 +743,11 @@ spec:
 - envFrom、valueFrom 无法热更新环境变量，subPath也是无法热更新的
 - envFrom配置环境变量，如果key是无效的，它会忽略掉无效的key
 - ConfigMap和Secret最好不要太大（etcd有限制，不能超过1Mi，否则etcd同步数据速度会受到影响）
-- ConfigMap和Secret支持热更新，但是程序未必支持！（比如nginx需要重启或者reload才会重新加载配置文件） 
+- ConfigMap和Secret支持热更新，但是程序未必支持！（比如nginx需要重启或者reload才会重新加载配置文件）
+
+## 环境变量管理规范
+
+- **分层管理**：通用配置用 ConfigMap，敏感信息用 Secret，固定不变的值直接在 Pod spec 中定义
+- **命名规范**：环境变量名统一使用**大写 + 下划线**（如 `DB_HOST`），代码中一眼可辨识
+- **设置默认值**：应用代码中必须给环境变量设置默认值，避免配置缺失导致启动失败
+- **文档化**：项目根目录放置 `env.example` 文件，列出所有环境变量及说明，方便新人上手

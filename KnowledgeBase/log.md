@@ -12,6 +12,18 @@ date: 2026-04-17
 
 ---
 
+## [2026-04-23] ingest | K8s 1.35 EnvFiles（fileKeyRef）
+
+- **来源**：[[0raw/k8s 1.35 版本 Pod环境变量配置]]（微信公众号文章）
+- **操作**：将 K8s 1.35 新特性 EnvFiles 整合到现有文档 [[Docker-Kubernetes/k8s-basic-resources/k8s基础-configMap-Secret]]
+- **新增内容**：
+  - K8s 1.35 `fileKeyRef` 机制：从 emptyDir 卷文件加载环境变量，主容器无需挂载
+  - initContainer 生成配置 → kubelet 启动时注入的工作流
+  - 5 种环境变量注入方式对比表
+  - 环境变量管理规范（分层管理、命名规范、默认值、文档化）
+
+---
+
 ## [2026-04-23] ingest | FinOps 云成本优化实战
 
 - **来源**：[[0raw/老杨的压箱底的技能聊聊FinOps]]（微信公众号文章）
