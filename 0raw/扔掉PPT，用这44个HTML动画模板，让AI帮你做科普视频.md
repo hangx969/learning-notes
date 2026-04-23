@@ -189,13 +189,3 @@ GitHub地址：
 https://github.com/Unclecheng-li/AI-Animation-Skill
 
 MIT 协议，随便用。
-
-往期PPT agent资源
-
-[一句话生成PPT，已经能用了：html-ppt-skill实测指南](https://mp.weixin.qq.com/s?__biz=MzUxNDAxMzQyMw==&mid=2247496098&idx=1&sn=41b4a48a760b8c205993ccdd3e00c451&scene=21#wechat_redirect)
-
-继续滑动看下一个
-
-有料黑科技
-
-向上滑动看下一个
