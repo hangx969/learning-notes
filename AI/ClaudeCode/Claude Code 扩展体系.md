@@ -1128,17 +1128,31 @@ Superpowers 的核心理念：**AI 写代码太随意，需要用结构化流程
 **安装**：
 
 ```sh
-# 方式一：Plugin 安装（全局生效）
+# 方式一：Plugin 安装（注册为按需 Skill，不自动生效）
 /plugin marketplace add forrestchang/andrej-karpathy-skills
 /plugin install andrej-karpathy-skills@karpathy-skills
 
-# 方式二：单个项目生效（下载到项目根目录）
+# 方式二：全局生效（写入用户级 CLAUDE.md，所有项目自动加载）— 推荐
+curl -s https://raw.githubusercontent.com/forrestchang/andrej-karpathy-skills/main/CLAUDE.md > ~/.claude/CLAUDE.md
+
+# 方式三：单个项目生效（下载到项目根目录）
 curl -o CLAUDE.md https://raw.githubusercontent.com/forrestchang/andrej-karpathy-skills/main/CLAUDE.md
 
-# 方式三：追加到已有 CLAUDE.md
+# 方式四：追加到已有项目 CLAUDE.md
 echo "" >> CLAUDE.md
-curl https://raw.githubusercontent.com/forrestchang/andrej-karpathy-skills/main/CLAUDE.md >> CLAUDE.md
+curl -s https://raw.githubusercontent.com/forrestchang/andrej-karpathy-skills/main/CLAUDE.md >> CLAUDE.md
 ```
+
+> [!warning] Plugin 安装 ≠ 自动生效
+> 实测发现：方式一（Plugin）安装后，Karpathy 准则只是**注册在可用 Skill 列表中**，不会自动注入 system prompt。只有显式调用 `/karpathy-guidelines` 时才加载——日常编码不会自动约束。
+>
+> **如果想让准则始终生效，必须写进 CLAUDE.md。** CLAUDE.md 分两级：
+> - **用户级** `~/.claude/CLAUDE.md`：全局生效，所有项目自动加载（推荐方式二）
+> - **项目级** 项目根目录 `CLAUDE.md`：仅对当前项目生效（方式三/四）
+>
+> CLAUDE.md 在每次会话启动时自动作为 system prompt 加载，4 条准则会成为 Claude 所有行为的底线约束。
+>
+> 这揭示了 Skills 的一个重要机制差异：**Skills 是"可用"不是"始终激活"**，而 CLAUDE.md 是"始终激活"。对于行为准则型约束，CLAUDE.md 是唯一可靠的注入方式。
 
 ### davila7/claude-code-templates
 
