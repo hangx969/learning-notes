@@ -668,7 +668,74 @@ data:
   DB_USER: root
 ~~~
 
+# K8s 1.35 新特性：EnvFiles（fileKeyRef）
+
+> 来源：[k8s 1.35 版本 Pod环境变量配置](https://mp.weixin.qq.com/s/Nv4qVlJDC_yNO8y8guoGkA)
+
+## 背景
+
+传统方式使用 ConfigMap/Secret 设置环境变量，需要**分别管理**工作负载 Pod 和配置资源，还要确保两者有序更新。对于供应商容器需要的一次性令牌、许可证密钥等临时配置，创建 ConfigMap 又显得过重。
+
+K8s 1.35 引入了 **EnvFiles** 功能：允许 kubelet 直接从 `emptyDir` 卷中的文件加载环境变量，**主容器无需挂载该卷**。典型用法是 initContainer 生成配置文件 → kubelet 在主容器启动时读取并注入。
+
+## 核心机制
+
+使用新的 `fileKeyRef` 字段（与 `configMapKeyRef`、`secretKeyRef` 平级）：
+
+```yaml
+apiVersion: v1
+kind: Pod
+spec:
+  initContainers:
+  - name: generate-config
+    image: busybox
+    command: ['sh', '-c', 'echo "CONFIG_VAR=HELLO" > /config/config.env']
+    volumeMounts:
+    - name: config-volume
+      mountPath: /config
+  containers:
+  - name: app-container
+    image: gcr.io/distroless/static
+    env:
+    - name: CONFIG_VAR
+      valueFrom:
+        fileKeyRef:             # 新字段：从文件读取环境变量
+          path: config.env      # 文件路径（相对于卷根目录）
+          volumeName: config-volume  # 引用的卷名
+          key: CONFIG_VAR       # 文件中要提取的 key
+  volumes:
+  - name: config-volume
+    emptyDir: {}
+```
+
+**要点**：
+- `fileKeyRef` 指向一个 emptyDir 卷中的文件，文件格式为标准 `KEY=VALUE`
+- 主容器**不需要 volumeMounts**——kubelet 在启动时直接读取文件并注入环境变量
+- 文件通常由 initContainer 动态生成，适合运行时才能确定的配置（如从 Vault 拉取密钥、根据节点信息生成配置等）
+- 文件生命周期与 Pod 一致（emptyDir），Pod 销毁后自动清理
+
+## 与传统方式对比
+
+| 方式 | 适用场景 | 热更新 | 额外资源 |
+|------|----------|--------|----------|
+| 直接定义 `env.value` | 固定不变的值（应用名、版本号） | ✗ | 无 |
+| `configMapKeyRef` / `envFrom` | 经常变动的配置 | ✗（需重建 Pod） | ConfigMap |
+| `secretKeyRef` | 敏感信息（密码、密钥） | ✗（需重建 Pod） | Secret |
+| `--from-env-file` → ConfigMap | 批量导入 .env 文件 | ✗（需重建 Pod） | ConfigMap |
+| **`fileKeyRef`（1.35 新增）** | 运行时动态生成的配置 | ✗ | 无（emptyDir） |
+
+## 典型应用场景
+
+1. **initContainer 从 Vault/外部服务拉取密钥**，写入 emptyDir → 主容器通过 fileKeyRef 读取
+2. **根据节点/集群信息动态生成配置**，避免为每个环境维护单独的 ConfigMap
+3. **供应商容器**需要许可证密钥或一次性令牌，不想硬编码也不想创建额外资源
+
+> [!tip] 建议
+> K8s 1.35+ 新集群可优先使用 fileKeyRef 替代 ConfigMap 管理环境变量，减少配置资源的维护负担。对于仍在低版本集群的场景，继续使用 ConfigMap + envFrom 的方式。
+
 # 最佳实践
+
+## ConfigMap 和 Secret 操作规范
 
 - 需提前创建ConfigMap和Secret，pod创建是依赖这俩的，必须先创建好
 - ConfigMap和Secret必须要和Pod或者是引用它资源在同一个命名空间
