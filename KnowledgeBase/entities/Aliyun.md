@@ -71,13 +71,14 @@ sources:
 - **DTS** 提供数据同步、迁移、集成、订阅、加工、校验六大功能。同步适合长期实时双向，迁移适合短期单向；不停机迁移需同时选择结构迁移+全量迁移+增量迁移
 - 详见 [[Aliyun/数据库/关系型数据库RDS|RDS]]、[[Aliyun/数据库/数据传输服务DTS|DTS]]
 
-### 资源管理：Landing Zone
+### 资源管理：Landing Zone / FinOps
 
 - 企业上云框架 Landing Zone 涵盖资源规划、财务管理、网络规划、身份权限、安全防护、合规审计、运维管理、自动化八大模块
 - CAF（云采用框架）四阶段：上云战略 → 上云准备 → 应用上云 → 运营治理
 - 核心原则：**网络先行**——先确定 Region，再规划 VPC 互通/隔离，最后确定云上云下互联方式
 - Landing Zone 的八大模块恰好对应了仓库中其他文档中各产品的具体实现
-- 详见 [[Aliyun/资源管理/Landing Zone|Landing Zone]]
+- **FinOps 成本优化**：先量化（三个月账单基线）→ 再优化（夜间关机、降配、存储分层、EIP 回收）→ 再固化（预算告警、Infracost PR 卡点、Prometheus 账单看板）。覆盖阿里云/腾讯云/华为云三家 CLI 操作
+- 详见 [[Aliyun/资源管理/Landing Zone|Landing Zone]]、[[Aliyun/资源管理/FinOps-云成本优化实战|FinOps]]
 
 ## 实践亮点
 
