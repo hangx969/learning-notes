@@ -173,37 +173,3 @@ spec:
 ### 总结
 
 Argo Rollouts 为 Kubernetes 提供了更安全、更自动化的部署方式。通过蓝绿部署和金丝雀部署，结合自动化测试与回滚机制，它可以显著降低生产环境变更的风险，同时让平台团队能够轻松管理大规模的集群和应用。
-
-无论您是初次接触 GitOps，还是希望提升现有部署的安全性，Argo Rollouts 都是一个值得尝试的工具。赶快试试吧！
-
-[加](http://mp.weixin.qq.com/s?__biz=MzkxNzAyMzA3Nw==&mid=2247485016&idx=1&sn=f97eb3faad3330fd169d687fd08be53c&chksm=c147b652f6303f44718c9b6fa402033e9f7400bc08e0df64cb3c486fa8881e7ba74f0a7a1241&scene=21#wechat_redirect) [入知识星球，共同探索云原](http://mp.weixin.qq.com/s?__biz=MzkxNzAyMzA3Nw==&mid=2247485016&idx=1&sn=f97eb3faad3330fd169d687fd08be53c&chksm=c147b652f6303f44718c9b6fa402033e9f7400bc08e0df64cb3c486fa8881e7ba74f0a7a1241&scene=21#wechat_redirect) [生学习之旅！](http://mp.weixin.qq.com/s?__biz=MzkxNzAyMzA3Nw==&mid=2247485016&idx=1&sn=f97eb3faad3330fd169d687fd08be53c&chksm=c147b652f6303f44718c9b6fa402033e9f7400bc08e0df64cb3c486fa8881e7ba74f0a7a1241&scene=21#wechat_redirect)
-
-![图片](https://mmbiz.qpic.cn/sz_mmbiz_png/Lcribm9SHtlLymvGIoIYY6oCVsx3bqduLGXbJdvvSO6TcO3qC8OKKBkTyTwjV73PuOf4SgyNSPvDVNbeWsHrZ8A/640?wx_fmt=png&from=appmsg&wxfrom=5&wx_lazy=1&wx_co=1&tp=webp#imgIndex=3)
-
-更多云架构、K8S学习资料以及CKA、Azure考试认证资料，星球内可免费领取哦！
-
-##### 往期回顾
-
-[K8S工具推荐： 使用 Kubemark 进行 Kubernetes 大规模集群模拟实践](https://mp.weixin.qq.com/s?__biz=MzkxNzAyMzA3Nw==&mid=2247485727&idx=1&sn=65c3d50d36899a805c87c17ca650a010&scene=21#wechat_redirect)
-
-[K8S工具推荐：资源编排新利器：三大云厂商联合推出 KRO](https://mp.weixin.qq.com/s?__biz=MzkxNzAyMzA3Nw==&mid=2247485719&idx=1&sn=cc7fe428cb840c21576129d48986b70e&scene=21#wechat_redirect)
-
-[K8S工具推荐：告别复杂认证！Kubernetes登录神器kubelogin指南](https://mp.weixin.qq.com/s?__biz=MzkxNzAyMzA3Nw==&mid=2247485698&idx=1&sn=47443ce3322a407525cd6ccdffbffb29&scene=21#wechat_redirect)
-
-[K8S工具推荐：Kubernetes资源优化神器KRR：一键诊断集群资源浪费](https://mp.weixin.qq.com/s?__biz=MzkxNzAyMzA3Nw==&mid=2247485685&idx=1&sn=6ced5d257f3c3e93383a63ef6802edaf&scene=21#wechat_redirect)
-
-[Kubernetes工具推荐：使用 k8s-pod-restart-info-collector简化故障排查](https://mp.weixin.qq.com/s?__biz=MzkxNzAyMzA3Nw==&mid=2247485663&idx=1&sn=c0f05332e39e5b59793afd2a82326f55&scene=21#wechat_redirect)
-
-[K8S工具推荐：动态无缝的Kubernetes多集群解决方案-Liqo](https://mp.weixin.qq.com/s?__biz=MzkxNzAyMzA3Nw==&mid=2247485739&idx=1&sn=cd7e35bbf22ca3077fbec318bb714d00&scene=21#wechat_redirect)
-
-[K8S学习路线2025](https://mp.weixin.qq.com/s?__biz=MzkxNzAyMzA3Nw==&mid=2247485579&idx=1&sn=993a46217ed2d8190851715afb5134d0&scene=21#wechat_redirect)
-
-[𝙺̲𝚞̲𝚋̲𝚎̲𝚛̲𝚗̲𝚎̲𝚝̲𝚎̲𝚜̲ 管理的最佳实践（2025）](https://mp.weixin.qq.com/s?__biz=MzkxNzAyMzA3Nw==&mid=2247485744&idx=1&sn=43dc3d501156461591903118b264a998&scene=21#wechat_redirect)
-
-K8S工具 · 目录
-
-继续滑动看下一个
-
-云原生SRE
-
-向上滑动看下一个
