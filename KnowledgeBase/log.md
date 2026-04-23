@@ -12,6 +12,19 @@ date: 2026-04-17
 
 ---
 
+## [2026-04-23] ingest | kubelogin OIDC 认证
+
+- **来源**：[[0raw/K8S工具推荐：告别复杂认证！Kubernetes登录神器kubelogin指南]]（微信公众号文章）
+- **操作**：整合到现有文档 [[Docker-Kubernetes/k8s-installation-management/k8s多集群kubeconfig管理]]，新增"OIDC 认证：kubelogin"章节
+- **新增内容**：
+  - kubelogin 核心特性（浏览器登录、短期令牌、自动刷新、加密存储）
+  - 安装方式（brew / choco / krew）
+  - kubeconfig exec 模式配置示例
+  - 适用场景（企业 SSO、多团队共享、合规审计）
+- **决策**：原文内容较轻，不足以独立成文，整合到已有 kubeconfig 管理文章中更自然
+
+---
+
 ## [2026-04-23] ingest | Client-Go K8s 客户端开发
 
 - **来源**：[[0raw/初始K8S客户端工具Client-Go]]（微信公众号文章）
