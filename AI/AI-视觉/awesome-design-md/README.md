@@ -51,36 +51,36 @@ aliases:
 
 ### AI & LLM
 
-[[AI/awesome-design-md/claude/DESIGN|Claude]] · [[AI/awesome-design-md/cohere/DESIGN|Cohere]] · [[AI/awesome-design-md/elevenlabs/DESIGN|ElevenLabs]] · [[AI/awesome-design-md/minimax/DESIGN|MiniMax]] · [[AI/awesome-design-md/mistral.ai/DESIGN|Mistral AI]] · [[AI/awesome-design-md/ollama/DESIGN|Ollama]] · [[AI/awesome-design-md/opencode.ai/DESIGN|OpenCode AI]] · [[AI/awesome-design-md/replicate/DESIGN|Replicate]] · [[AI/awesome-design-md/runwayml/DESIGN|RunwayML]] · [[AI/awesome-design-md/together.ai/DESIGN|Together AI]] · [[AI/awesome-design-md/voltagent/DESIGN|VoltAgent]] · [[AI/awesome-design-md/x.ai/DESIGN|xAI]]
+[[AI/AI-视觉/awesome-design-md/claude/DESIGN|Claude]] · [[AI/AI-视觉/awesome-design-md/cohere/DESIGN|Cohere]] · [[AI/AI-视觉/awesome-design-md/elevenlabs/DESIGN|ElevenLabs]] · [[AI/AI-视觉/awesome-design-md/minimax/DESIGN|MiniMax]] · [[AI/AI-视觉/awesome-design-md/mistral.ai/DESIGN|Mistral AI]] · [[AI/AI-视觉/awesome-design-md/ollama/DESIGN|Ollama]] · [[AI/AI-视觉/awesome-design-md/opencode.ai/DESIGN|OpenCode AI]] · [[AI/AI-视觉/awesome-design-md/replicate/DESIGN|Replicate]] · [[AI/AI-视觉/awesome-design-md/runwayml/DESIGN|RunwayML]] · [[AI/AI-视觉/awesome-design-md/together.ai/DESIGN|Together AI]] · [[AI/AI-视觉/awesome-design-md/voltagent/DESIGN|VoltAgent]] · [[AI/AI-视觉/awesome-design-md/x.ai/DESIGN|xAI]]
 
 ### 开发工具
 
-[[AI/awesome-design-md/cursor/DESIGN|Cursor]] · [[AI/awesome-design-md/expo/DESIGN|Expo]] · [[AI/awesome-design-md/lovable/DESIGN|Lovable]] · [[AI/awesome-design-md/raycast/DESIGN|Raycast]] · [[AI/awesome-design-md/superhuman/DESIGN|Superhuman]] · [[AI/awesome-design-md/vercel/DESIGN|Vercel]] · [[AI/awesome-design-md/warp/DESIGN|Warp]]
+[[AI/AI-视觉/awesome-design-md/cursor/DESIGN|Cursor]] · [[AI/AI-视觉/awesome-design-md/expo/DESIGN|Expo]] · [[AI/AI-视觉/awesome-design-md/lovable/DESIGN|Lovable]] · [[AI/AI-视觉/awesome-design-md/raycast/DESIGN|Raycast]] · [[AI/AI-视觉/awesome-design-md/superhuman/DESIGN|Superhuman]] · [[AI/AI-视觉/awesome-design-md/vercel/DESIGN|Vercel]] · [[AI/AI-视觉/awesome-design-md/warp/DESIGN|Warp]]
 
 ### 后端 / 数据库 / DevOps
 
-[[AI/awesome-design-md/clickhouse/DESIGN|ClickHouse]] · [[AI/awesome-design-md/composio/DESIGN|Composio]] · [[AI/awesome-design-md/hashicorp/DESIGN|HashiCorp]] · [[AI/awesome-design-md/mongodb/DESIGN|MongoDB]] · [[AI/awesome-design-md/posthog/DESIGN|PostHog]] · [[AI/awesome-design-md/sanity/DESIGN|Sanity]] · [[AI/awesome-design-md/sentry/DESIGN|Sentry]] · [[AI/awesome-design-md/supabase/DESIGN|Supabase]]
+[[AI/AI-视觉/awesome-design-md/clickhouse/DESIGN|ClickHouse]] · [[AI/AI-视觉/awesome-design-md/composio/DESIGN|Composio]] · [[AI/AI-视觉/awesome-design-md/hashicorp/DESIGN|HashiCorp]] · [[AI/AI-视觉/awesome-design-md/mongodb/DESIGN|MongoDB]] · [[AI/AI-视觉/awesome-design-md/posthog/DESIGN|PostHog]] · [[AI/AI-视觉/awesome-design-md/sanity/DESIGN|Sanity]] · [[AI/AI-视觉/awesome-design-md/sentry/DESIGN|Sentry]] · [[AI/AI-视觉/awesome-design-md/supabase/DESIGN|Supabase]]
 
 ### 生产力 / SaaS
 
-[[AI/awesome-design-md/cal/DESIGN|Cal.com]] · [[AI/awesome-design-md/intercom/DESIGN|Intercom]] · [[AI/awesome-design-md/linear.app/DESIGN|Linear]] · [[AI/awesome-design-md/mintlify/DESIGN|Mintlify]] · [[AI/awesome-design-md/notion/DESIGN|Notion]] · [[AI/awesome-design-md/resend/DESIGN|Resend]] · [[AI/awesome-design-md/zapier/DESIGN|Zapier]]
+[[AI/AI-视觉/awesome-design-md/cal/DESIGN|Cal.com]] · [[AI/AI-视觉/awesome-design-md/intercom/DESIGN|Intercom]] · [[AI/AI-视觉/awesome-design-md/linear.app/DESIGN|Linear]] · [[AI/AI-视觉/awesome-design-md/mintlify/DESIGN|Mintlify]] · [[AI/AI-视觉/awesome-design-md/notion/DESIGN|Notion]] · [[AI/AI-视觉/awesome-design-md/resend/DESIGN|Resend]] · [[AI/AI-视觉/awesome-design-md/zapier/DESIGN|Zapier]]
 
 ### 设计 / 创意
 
-[[AI/awesome-design-md/airtable/DESIGN|Airtable]] · [[AI/awesome-design-md/clay/DESIGN|Clay]] · [[AI/awesome-design-md/figma/DESIGN|Figma]] · [[AI/awesome-design-md/framer/DESIGN|Framer]] · [[AI/awesome-design-md/miro/DESIGN|Miro]] · [[AI/awesome-design-md/webflow/DESIGN|Webflow]]
+[[AI/AI-视觉/awesome-design-md/airtable/DESIGN|Airtable]] · [[AI/AI-视觉/awesome-design-md/clay/DESIGN|Clay]] · [[AI/AI-视觉/awesome-design-md/figma/DESIGN|Figma]] · [[AI/AI-视觉/awesome-design-md/framer/DESIGN|Framer]] · [[AI/AI-视觉/awesome-design-md/miro/DESIGN|Miro]] · [[AI/AI-视觉/awesome-design-md/webflow/DESIGN|Webflow]]
 
 ### 金融 / 加密
 
-[[AI/awesome-design-md/binance/DESIGN|Binance]] · [[AI/awesome-design-md/coinbase/DESIGN|Coinbase]] · [[AI/awesome-design-md/kraken/DESIGN|Kraken]] · [[AI/awesome-design-md/revolut/DESIGN|Revolut]] · [[AI/awesome-design-md/stripe/DESIGN|Stripe]] · [[AI/awesome-design-md/wise/DESIGN|Wise]]
+[[AI/AI-视觉/awesome-design-md/binance/DESIGN|Binance]] · [[AI/AI-视觉/awesome-design-md/coinbase/DESIGN|Coinbase]] · [[AI/AI-视觉/awesome-design-md/kraken/DESIGN|Kraken]] · [[AI/AI-视觉/awesome-design-md/revolut/DESIGN|Revolut]] · [[AI/AI-视觉/awesome-design-md/stripe/DESIGN|Stripe]] · [[AI/AI-视觉/awesome-design-md/wise/DESIGN|Wise]]
 
 ### 电商 / 零售
 
-[[AI/awesome-design-md/airbnb/DESIGN|Airbnb]] · [[AI/awesome-design-md/meta/DESIGN|Meta]] · [[AI/awesome-design-md/nike/DESIGN|Nike]] · [[AI/awesome-design-md/shopify/DESIGN|Shopify]]
+[[AI/AI-视觉/awesome-design-md/airbnb/DESIGN|Airbnb]] · [[AI/AI-视觉/awesome-design-md/meta/DESIGN|Meta]] · [[AI/AI-视觉/awesome-design-md/nike/DESIGN|Nike]] · [[AI/AI-视觉/awesome-design-md/shopify/DESIGN|Shopify]]
 
 ### 媒体 / 消费科技
 
-[[AI/awesome-design-md/apple/DESIGN|Apple]] · [[AI/awesome-design-md/ibm/DESIGN|IBM]] · [[AI/awesome-design-md/nvidia/DESIGN|NVIDIA]] · [[AI/awesome-design-md/pinterest/DESIGN|Pinterest]] · [[AI/awesome-design-md/playstation/DESIGN|PlayStation]] · [[AI/awesome-design-md/spacex/DESIGN|SpaceX]] · [[AI/awesome-design-md/spotify/DESIGN|Spotify]] · [[AI/awesome-design-md/theverge/DESIGN|The Verge]] · [[AI/awesome-design-md/uber/DESIGN|Uber]] · [[AI/awesome-design-md/wired/DESIGN|WIRED]]
+[[AI/AI-视觉/awesome-design-md/apple/DESIGN|Apple]] · [[AI/AI-视觉/awesome-design-md/ibm/DESIGN|IBM]] · [[AI/AI-视觉/awesome-design-md/nvidia/DESIGN|NVIDIA]] · [[AI/AI-视觉/awesome-design-md/pinterest/DESIGN|Pinterest]] · [[AI/AI-视觉/awesome-design-md/playstation/DESIGN|PlayStation]] · [[AI/AI-视觉/awesome-design-md/spacex/DESIGN|SpaceX]] · [[AI/AI-视觉/awesome-design-md/spotify/DESIGN|Spotify]] · [[AI/AI-视觉/awesome-design-md/theverge/DESIGN|The Verge]] · [[AI/AI-视觉/awesome-design-md/uber/DESIGN|Uber]] · [[AI/AI-视觉/awesome-design-md/wired/DESIGN|WIRED]]
 
 ### 汽车
 
-[[AI/awesome-design-md/bmw/DESIGN|BMW]] · [[AI/awesome-design-md/bugatti/DESIGN|Bugatti]] · [[AI/awesome-design-md/ferrari/DESIGN|Ferrari]] · [[AI/awesome-design-md/lamborghini/DESIGN|Lamborghini]] · [[AI/awesome-design-md/renault/DESIGN|Renault]] · [[AI/awesome-design-md/tesla/DESIGN|Tesla]]
+[[AI/AI-视觉/awesome-design-md/bmw/DESIGN|BMW]] · [[AI/AI-视觉/awesome-design-md/bugatti/DESIGN|Bugatti]] · [[AI/AI-视觉/awesome-design-md/ferrari/DESIGN|Ferrari]] · [[AI/AI-视觉/awesome-design-md/lamborghini/DESIGN|Lamborghini]] · [[AI/AI-视觉/awesome-design-md/renault/DESIGN|Renault]] · [[AI/AI-视觉/awesome-design-md/tesla/DESIGN|Tesla]]

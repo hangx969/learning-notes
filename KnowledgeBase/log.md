@@ -12,6 +12,22 @@ date: 2026-04-17
 
 ---
 
+## [2026-04-23] restructure | AI-视觉目录：提示词抽离 + awesome-design-md 归集
+
+- **操作**：
+  1. 从 [[AI/提示词]] 抽离"作图"、"PPT"、"Claude Design 系统提示词"三个视觉设计章节，合并为 [[AI/AI-视觉/视觉设计提示词]]
+  2. 将 `AI/awesome-design-md/`（67 个品牌 DESIGN.md）整体移入 `AI/AI-视觉/awesome-design-md/`
+  3. 原 提示词.md 中保留交叉引用指向新文件
+  4. 修复所有 wikilink 引用（README.md 中 67 个品牌链接 + log.md）
+- **AI-视觉 目录当前内容**：
+  - `AI做PPT-ppt-master.md` — SVG → PPTX 原生生成
+  - `AI-Animation-Skill-科普动画.md` — 44 个 HTML 科普动画模板
+  - `html-ppt-skill-实测指南.md` — HTML 幻灯片生成系统
+  - `视觉设计提示词.md` — 作图/PPT/Claude Design 系统提示词
+  - `awesome-design-md/` — 67 个品牌 DESIGN.md 前端设计系统
+
+---
+
 ## [2026-04-23] restructure + create | AI-视觉目录整合 + html-ppt-skill
 
 - **来源**：[[0raw/一句话生成PPT，已经能用了：html-ppt-skill实测指南]]（微信公众号文章）
@@ -83,9 +99,9 @@ date: 2026-04-17
 ## [2026-04-21] create | Awesome DESIGN.md 前端设计提示词集合
 
 - **来源**：[VoltAgent/awesome-design-md](https://github.com/VoltAgent/awesome-design-md) 仓库
-- **操作**：将 67 个品牌的 DESIGN.md 设计系统文件添加到 `AI/awesome-design-md/` 子目录
+- **操作**：将 67 个品牌的 DESIGN.md 设计系统文件添加到 `AI/AI-视觉/awesome-design-md/` 子目录
 - **内容**：每个品牌目录保留 DESIGN.md + README.md + preview.html + preview-dark.html（共 268 个文件）
-- **新建**：[[AI/awesome-design-md/README|导航首页]]，含 DESIGN.md 概念说明、使用方法、按 8 大分类的品牌 wikilink 目录
+- **新建**：[[AI/AI-视觉/awesome-design-md/README|导航首页]]，含 DESIGN.md 概念说明、使用方法、按 8 大分类的品牌 wikilink 目录
 
 ---
 
