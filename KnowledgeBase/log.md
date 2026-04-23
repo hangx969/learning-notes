@@ -12,6 +12,21 @@ date: 2026-04-17
 
 ---
 
+## [2026-04-23] ingest | External Secrets Operator 进阶
+
+- **来源**：[[0raw/K8S实战教程 如何使用 External Secrets Operator 管理 Kubernetes密钥]]（微信公众号文章）
+- **操作**：整合到现有文档 [[Docker-Kubernetes/k8s-security-auth/helm部署external-secrets]]
+- **新增内容**：
+  - "为什么需要 ESO" 对比表 + 工作原理架构说明 + 核心 CRD 对照表
+  - AWS Secrets Manager 集成（第三个 Provider，补充 Azure KV 和 Vault）
+  - 进阶用法：精细字段映射、模板渲染、creationPolicy 策略、GitOps 集成
+  - 监控与可观测性（Prometheus Metrics、告警）
+  - 五方案横向对比（原生 Secret / Sealed Secrets / SOPS / CSI / ESO）
+  - 生产落地六步路线
+- **决策**：已有 external-secrets 部署文章覆盖 Azure KV + Vault，新文章补充架构原理和进阶特性，合并避免内容分裂
+
+---
+
 ## [2026-04-23] ingest | kubelogin OIDC 认证
 
 - **来源**：[[0raw/K8S工具推荐：告别复杂认证！Kubernetes登录神器kubelogin指南]]（微信公众号文章）
