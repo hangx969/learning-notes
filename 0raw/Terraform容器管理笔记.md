@@ -9,7 +9,7 @@ description: "容器（Container）已经成为现代软件交付的核心。"
 tags:
   - "clippings"
 ---
-Hank *2025年9月6日 08:08*
+
 
 容器（Container）已经成为现代软件交付的核心。无论是 Docker 还是 Kubernetes，Terraform 都能通过 Provider 插件实现资源的统一管理，将容器基础设施纳入基础设施即代码（IaC）的体系中。这样不仅能带来一致性，还能借助版本控制、自动化测试与审查机制，大大提升团队的交付效率。
 
@@ -367,11 +367,3 @@ Nomad 更适合混合调度（容器+非容器化应用）。
 - • 网络策略（NetworkPolicy）、注解（Annotation）、环境变量等，都能通过 Terraform 精细化管理。
 - • Helm Provider 将 Helm Chart 纳入 Terraform 生命周期。
 - • Terraform 的统一入口让 **容器编排与基础设施管理一致化** ，非常适合企业 DevOps 流程。
-
-DevOps · 目录
-
-继续滑动看下一个
-
-科学随想录
-
-向上滑动看下一个
