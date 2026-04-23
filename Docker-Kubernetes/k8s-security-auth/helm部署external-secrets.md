@@ -54,10 +54,6 @@ helm repo update external-secrets
 helm pull external-secrets/external-secrets --version 0.10.5
 ~~~
 
-# 配置
-
-- 根据ado的配置添加了一些resource limits
-
 # 安装
 
 ~~~sh
