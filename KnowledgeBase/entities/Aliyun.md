@@ -12,6 +12,7 @@ sources:
   - "[[Aliyun/存储/对象存储OSS]]"
   - "[[Aliyun/数据库/关系型数据库RDS]]"
   - "[[Aliyun/资源管理/Landing Zone]]"
+  - "[[Aliyun/资源管理/FinOps-云成本优化实战]]"
   - "[[KnowledgeBase/sources/aliyun-batch-summary]]"
 ---
 
@@ -125,4 +126,4 @@ sources:
 - **日志服务 SLS**：缺少阿里云可观测性体系（SLS、ARMS、Prometheus 集成）
 - **RAM 权限管理**：缺少 RAM 用户/角色/策略的安全合规实践
 - **Serverless**：缺少函数计算 FC、Serverless 应用引擎 SAE 等无服务器产品
-- **成本优化**：缺少 FinOps 实践，如预留实例、节省计划的详细使用策略
+- ~~**成本优化**：缺少 FinOps 实践~~ → 已补充 [[Aliyun/资源管理/FinOps-云成本优化实战|FinOps 实战]]

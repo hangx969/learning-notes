@@ -12,6 +12,21 @@ date: 2026-04-17
 
 ---
 
+## [2026-04-23] ingest | FinOps 云成本优化实战
+
+- **来源**：[[0raw/老杨的压箱底的技能聊聊FinOps]]（微信公众号文章）
+- **操作**：创建 [[Aliyun/资源管理/FinOps-云成本优化实战]] 新文章
+- **新增内容**：
+  - FinOps 方法论（量化→优化→固化）
+  - 多云账单 CLI（阿里云 BSS OpenAPI / 腾讯云 tccli / 华为云 BSS v2）
+  - 4 类浪费场景（低 CPU / 闲置 EIP / 存储无生命周期 / K8s 过配）
+  - 4 个即时优化动作（夜间关机、降配、冷热分层、包年包月）
+  - 预算告警 + Prometheus 账单看板 + Infracost PR 级成本评估
+  - 实战案例：三步 30% 降本
+- **关联更新**：[[KnowledgeBase/entities/Aliyun]] 资源管理章节补充 FinOps，知识空白标记已填补
+
+---
+
 ## [2026-04-23] restructure | AI-视觉目录：提示词抽离 + awesome-design-md 归集
 
 - **操作**：
