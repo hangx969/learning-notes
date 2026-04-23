@@ -45,7 +45,8 @@ sources:
 - **NAT 网关**提供 SNAT（出）和 DNAT（入），支持多台 ECS 共用，与 EIP（只能绑一台）形成互补
 - **连接本地 IDC**：VPN 网关、高速通道（运营商专线）、智能接入网关 SAG
 - **DNS/CDN/SSL**：云解析 DNS 是唯一提供 100% SLA 的服务，TTL 最快 1 秒全球生效；CDN 将源站资源缓存到全球加速节点
-- 详见 [[Aliyun/网络/VPC|VPC]]、[[Aliyun/网络/CEN-TR|CEN-TR]]、[[Aliyun/网络/负载均衡SLB|SLB]]、[[Aliyun/网络/网关-VPN-专线|网关-VPN-专线]]、[[Aliyun/网络/DNS-CDN-SSL|DNS-CDN-SSL]]
+- **ACK 网络规划**：Pod/Service CIDR 设计直接影响成本（IP 不足→集群重建、CIDR 重叠→跨 AZ 绕路），网络插件 Flannel（轻量）vs Terway（ENI 弹性）按集群规模选型
+- 详见 [[Aliyun/网络/VPC|VPC]]、[[Aliyun/网络/CEN-TR|CEN-TR]]、[[Aliyun/网络/负载均衡SLB|SLB]]、[[Aliyun/网络/网关-VPN-专线|网关-VPN-专线]]、[[Aliyun/网络/DNS-CDN-SSL|DNS-CDN-SSL]]、[[Aliyun/网络/ACK网络规划与成本优化|ACK 网络规划]]
 
 **安全防护形成多层纵深联动**：
 
@@ -120,7 +121,7 @@ sources:
 
 ## 知识空白
 
-- **容器服务 ACK**：缺少阿里云 Kubernetes 服务的实践记录，无法与 Azure AKS 形成对比
+- **容器服务 ACK**：已有网络规划与成本优化（[[Aliyun/网络/ACK网络规划与成本优化|ACK 网络规划]]），但缺少 ACK 集群部署、运维、与 AKS 对比等完整实践
 - **Terraform Provider**：缺少阿里云 Terraform 资源编排实践
 - **多云/混合云架构**：缺少 Azure + Aliyun 混合云设计方案
 - **日志服务 SLS**：缺少阿里云可观测性体系（SLS、ARMS、Prometheus 集成）
