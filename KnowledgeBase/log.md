@@ -12,6 +12,20 @@ date: 2026-04-17
 
 ---
 
+## [2026-04-23] create | AI-Animation-Skill HTML 科普动画生成
+
+- **来源**：[[0raw/扔掉PPT，用这44个HTML动画模板，让AI帮你做科普视频]]（微信公众号文章）
+- **操作**：创建 [[AI/AI-Animation-Skill-科普动画]] 新文章
+- **新增内容**：
+  - 项目简介：单 HTML 文件输出、零依赖、完全离线
+  - 与 Gamma / Beautiful.ai 对比表
+  - 44 个模板详解（26 PPT Level2 + 4 基础 + 14 流程图动画）
+  - 安装使用流程（OpenClaw / WorkBuddy / QClaw）
+  - 与 PPT Master 的定位对比
+- **关联更新**：[[KnowledgeBase/entities/OpenClaw]] Skills 插件生态补充 AI-Animation-Skill 条目
+
+---
+
 ## [2026-04-23] update | Skill 质量治理：7 类失效模式与 Skill Craft
 
 - **来源**：[[0raw/我做了一个 Claude Skill 质检工具：专门解决 Claude Skill 的不触发、乱触发、越用越跑偏]]（微信公众号文章）
