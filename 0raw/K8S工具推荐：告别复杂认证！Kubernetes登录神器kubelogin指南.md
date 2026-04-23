@@ -9,13 +9,11 @@ description:
 tags:
   - "clippings"
 ---
-海笑 *2025年2月26日 07:01*
 
-欢迎点击下方👇关注我，记得星标哟~
-
-文末会有 **重磅福利** 赠送
 
 作为Kubernetes开发者，你是否还在为集群认证头疼？今天给大家介绍一款开源神器—— **kubelogin** ，让你像登录网站一样轻松访问K8s集群！
+
+
 
 ![Diagram of the credential plugin](https://mmbiz.qpic.cn/mmbiz_svg/uHwLXtyH4IWv32UlgRwr21ibraZLujAicpYFYNSsX8nUUrWcVmmunT8oUCxgBd0twApwFkzVmWJF17ARticUWujC5mPSE8cicH2a/640?wx_fmt=svg&from=appmsg&tp=webp&wxfrom=5&wx_lazy=1#imgIndex=0)
 
