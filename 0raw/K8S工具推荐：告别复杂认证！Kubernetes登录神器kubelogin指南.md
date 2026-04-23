@@ -13,11 +13,8 @@ tags:
 
 作为Kubernetes开发者，你是否还在为集群认证头疼？今天给大家介绍一款开源神器—— **kubelogin** ，让你像登录网站一样轻松访问K8s集群！
 
+![image.png](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260423231430572.png)
 
-
-![Diagram of the credential plugin](https://mmbiz.qpic.cn/mmbiz_svg/uHwLXtyH4IWv32UlgRwr21ibraZLujAicpYFYNSsX8nUUrWcVmmunT8oUCxgBd0twApwFkzVmWJF17ARticUWujC5mPSE8cicH2a/640?wx_fmt=svg&from=appmsg&tp=webp&wxfrom=5&wx_lazy=1#imgIndex=0)
-
-Diagram of the credential plugin
 
 ### 🔑 什么是kubelogin？
 
