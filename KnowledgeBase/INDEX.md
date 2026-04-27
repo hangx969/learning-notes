@@ -199,6 +199,7 @@ date: 2026-04-17
 | [主题覆盖分析](analysis/topic-coverage-analysis.md) | 17 个领域的覆盖度评估 |
 | [高价值知识缺口](analysis/high-value-gaps.md) | 优先填补的知识空白 |
 | [后续写作建议](analysis/next-writing-suggestions.md) | 推荐下一步写作方向 |
+| [多Agent vs 单Agent架构决策分析](analysis/multi-agent-vs-single-agent.md) | 分析多Agent何时是伪需求，提出信息隔离与并发需求的决策框架 |
 
 ---
 

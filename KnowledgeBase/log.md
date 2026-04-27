@@ -615,3 +615,12 @@ date: 2026-04-17
 
 - 创建全部知识编译层：盘点(2) + 地图(8) + 概念(25) + 分析(3) + 维护(3)
 - 创建 INDEX.md 导航入口
+
+
+## [2026-04-27] create | 多Agent vs 单Agent架构决策分析
+
+- 创建 `analysis/multi-agent-vs-single-agent.md` 分析页
+- 核心论点：多Agent在现阶段很多时候是伪需求，提出信息隔离与并发需求两个决策维度
+- 内容涵盖：决策框架表格、信息损失分析、模型注意力论证、多Agent身份切换的真正价值
+- 关联页面：[[KnowledgeBase/sources/多智能体协作-summary]]、[[KnowledgeBase/entities/Claude-Code]]
+- 更新 INDEX.md 分析报告分类，新增第 4 条条目
