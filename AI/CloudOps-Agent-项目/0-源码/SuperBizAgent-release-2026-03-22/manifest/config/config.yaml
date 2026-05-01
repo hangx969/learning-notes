@@ -1,0 +1,30 @@
+# https://goframe.org/docs/web/server-config-file-template
+server:
+  address: ":8000"
+  openapiPath: "/api.json"
+  swaggerPath: "/swagger"
+
+# https://goframe.org/docs/core/glog-config
+logger:
+  level: "all"
+  stdout: true
+
+ds_think_chat_model:
+  api_key: "xxxxxx"
+  base_url: "https://ark.cn-beijing.volces.com/api/v3"
+  model: "deepseek-v3-1-terminus"
+
+ds_quick_chat_model:
+  api_key: "xxxxxx"
+  base_url: "https://ark.cn-beijing.volces.com/api/v3"
+  model: "deepseek-v3-1-terminus"
+
+# 豆包embedding下架，下面的api key和base url换成阿里云的
+doubao_embedding_model:
+  api_key: "这里使用阿里百炼的api"
+  base_url: "https://dashscope.aliyuncs.com/compatible-mode/v1"
+  model: "text-embedding-v4"
+
+file_dir: "/你的路径/SuperBizAgent/internal/ai/cmd/knowledge_cmd/docs"
+
+mcp_url: "https://mcp-api.tencent-cloud.com/sse/XXXX"

@@ -1,0 +1,33 @@
+{
+  "name": "superbizagent-frontend",
+  "version": "1.0.0",
+  "description": "SuperBizAgent 前端对话界面",
+  "main": "index.html",
+  "scripts": {
+    "start": "python3 -m http.server 8080",
+    "serve": "python3 -m http.server 8080",
+    "dev": "python3 -m http.server 8080"
+  },
+  "keywords": [
+    "chat",
+    "ai",
+    "conversation",
+    "sse",
+    "streaming"
+  ],
+  "author": "SuperBizAgent Team",
+  "license": "MIT",
+  "devDependencies": {},
+  "dependencies": {},
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-org/SuperBizAgentFrontend.git"
+  },
+  "bugs": {
+    "url": "https://github.com/your-org/SuperBizAgentFrontend/issues"
+  },
+  "homepage": "https://github.com/your-org/SuperBizAgentFrontend#readme"
+}

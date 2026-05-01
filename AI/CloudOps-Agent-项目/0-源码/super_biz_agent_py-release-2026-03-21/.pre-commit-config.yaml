@@ -1,0 +1,105 @@
+# Pre-commit hooks 配置
+# 在提交代码前自动运行代码格式化和检查
+
+repos:
+  # 通用 pre-commit hooks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: trailing-whitespace        # 删除行尾空格
+      - id: end-of-file-fixer          # 确保文件以换行符结尾
+      - id: check-yaml                 # 检查 YAML 语法
+      - id: check-json                 # 检查 JSON 语法
+      - id: check-added-large-files    # 防止提交大文件
+        args: ['--maxkb=1000']
+      - id: check-merge-conflict       # 检查合并冲突标记
+      - id: check-case-conflict        # 检查文件名大小写冲突
+      - id: detect-private-key         # 检测私钥泄露
+      - id: mixed-line-ending          # 统一换行符
+        args: ['--fix=lf']
+
+  # Python import 排序 - isort
+  - repo: https://github.com/pycqa/isort
+    rev: 5.13.2
+    hooks:
+      - id: isort
+        name: isort (python)
+        args: ["--profile", "black", "--line-length", "100"]
+
+  # Python 代码格式化 - Black
+  - repo: https://github.com/psf/black
+    rev: 23.12.1
+    hooks:
+      - id: black
+        language_version: python3.10
+        args: ["--line-length", "100"]
+
+  # Python 代码检查 - Ruff (更快的 flake8 替代品)
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.1.9
+    hooks:
+      - id: ruff
+        args: [--fix, --exit-non-zero-on-fix]
+
+  # Python 代码安全检查 - Bandit
+  - repo: https://github.com/PyCQA/bandit
+    rev: 1.7.6
+    hooks:
+      - id: bandit
+        args: ["-c", "pyproject.toml"]
+        additional_dependencies: ["bandit[toml]"]
+        exclude: ^tests/
+
+  # Python docstring 格式化
+  - repo: https://github.com/PyCQA/docformatter
+    rev: v1.7.5
+    hooks:
+      - id: docformatter
+        args: [--in-place, --wrap-summaries=100, --wrap-descriptions=100]
+
+  # Markdown 格式化
+  - repo: https://github.com/executablebooks/mdformat
+    rev: 0.7.17
+    hooks:
+      - id: mdformat
+        additional_dependencies:
+          - mdformat-gfm
+          - mdformat-black
+        args: ["--wrap", "80"]
+
+  # 提交信息检查
+  - repo: https://github.com/commitizen-tools/commitizen
+    rev: v3.13.0
+    hooks:
+      - id: commitizen
+        stages: [commit-msg]
+
+# 配置
+default_language_version:
+  python: python3.10
+
+# 排除的文件和目录
+exclude: |
+  (?x)^(
+      \.git/|
+      \.venv/|
+      venv/|
+      __pycache__/|
+      \.pytest_cache/|
+      \.mypy_cache/|
+      logs/|
+      uploads/|
+      \.egg-info/|
+      poetry\.lock|
+      \.pyc$
+  )
+
+# CI 模式（可选）
+ci:
+  autofix_commit_msg: |
+    [pre-commit.ci] auto fixes from pre-commit.com hooks
+  autofix_prs: true
+  autoupdate_commit_msg: '[pre-commit.ci] pre-commit autoupdate'
+  autoupdate_schedule: weekly
+  skip: []
+  submodules: false
