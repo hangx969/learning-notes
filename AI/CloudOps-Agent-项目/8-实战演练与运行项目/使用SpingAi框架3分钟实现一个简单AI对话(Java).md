@@ -8,7 +8,7 @@
 
 对于有编程基础的同学，请看官方文档学习：
 
-1. &#x20;https://java2ai.com/&#x20;
+1.  https://java2ai.com/ 
 
 2. https://github.com/spring-ai-alibaba/examples/blob/main/spring-ai-alibaba-helloworld/README.md
 
@@ -86,7 +86,7 @@ public class App {
 
 # 4. 定义请求 & 响应模型
 
-**ChatRequest&#x20;**—— 接收用户提问：
+**ChatRequest **—— 接收用户提问：
 
 ```java
 package com.example.model;
@@ -102,7 +102,7 @@ public class ChatRequest {
 }
 ```
 
-**ChatResponse&#x20;**—— 封装模型回答：
+**ChatResponse **—— 封装模型回答：
 
 ```java
 package com.example.model;
@@ -119,7 +119,7 @@ public class ChatResponse {
 }
 ```
 
-**Result&#x20;**—— 统一响应包装：
+**Result **—— 统一响应包装：
 
 ```java
 package com.example.model;
@@ -148,7 +148,7 @@ public class Result<T> {
 
 # 5. 编写对话接口（核心）
 
-这是整个项目最核心的部分，也是 Spring AI Alibaba 真正展现威力的地方—— **只需 3 行代码就能完成一次大模型对话&#x20;**：
+这是整个项目最核心的部分，也是 Spring AI Alibaba 真正展现威力的地方—— **只需 3 行代码就能完成一次大模型对话 **：
 
 ```java
 package com.example.controller;
@@ -189,7 +189,7 @@ public class ChatController {
 | `.call()`                     | 同步调用大模型，等待返回结果                                                    |
 | `.content()`                  | 提取大模型返回的文本内容                                                      |
 
-整个调用链路一气呵成： **构造 prompt → 调用模型 → 提取回答&#x20;**，一行代码搞定。
+整个调用链路一气呵成： **构造 prompt → 调用模型 → 提取回答 **，一行代码搞定。
 
 # 6. 启动 & 测试
 

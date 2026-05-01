@@ -1,6 +1,6 @@
 上一章讲完了 Function Calling，大模型通过标准化的 JSON 格式，告诉 Agent 要调哪个工具、传什么参数。到这里，你已经理解了工具是什么、工具怎么被调用起来。
 
-但实际开发 Agent 的时候，你会很快遇到下一个麻烦： **工具集成本身，是个无底洞。&#x20;**
+但实际开发 Agent 的时候，你会很快遇到下一个麻烦： **工具集成本身，是个无底洞。 **
 
 ***
 
@@ -32,7 +32,7 @@
 
 ## MCP 的出现：给 AI 工具世界定一个标准
 
-这就是 Anthropic 在 2024 年 11 月推出 **MCP（Model Context Protocol，模型上下文协议）&#x20;**&#x7684;背景。
+这就是 Anthropic 在 2024 年 11 月推出 **MCP（Model Context Protocol，模型上下文协议） **的背景。
 
 MCP 要解决的核心问题，可以用一句话概括： **把工具的「写好」和「用起来」彻底拆开。**
 
@@ -86,15 +86,15 @@ Server 和 Host 可以运行在同一台机器上（本地 Server），也可以
 
 学到这里，很多同学脑子里会冒出一个问题：上一章学了 Function Calling，说大模型通过 Function Calling 告诉 Agent 调哪个工具；这章又学了 MCP，说 Agent 通过 MCP 来调用工具。这两个东西，到底有什么区别？MCP 是不是把 Function Calling 给替代了？
 
-完全不是。 **Function Calling 和 MCP 解决的是不同层面的问题，它们是配合关系，不是替代关系。&#x20;**&#x6211;们来一步步理清楚。
+完全不是。 **Function Calling 和 MCP 解决的是不同层面的问题，它们是配合关系，不是替代关系。 **我们来一步步理清楚。
 
 **第一步：确认 Function Calling 工作在哪个层面**
 
-Function Calling 解决的问题是：大模型做出「要调这个工具」的决策之后，怎么把这个决策用标准化 JSON 格式传给 Agent。这是 **大模型和 Agent 之间&#x20;**&#x7684;通信协议，负责「大模型怎么开口下指令」这一段。
+Function Calling 解决的问题是：大模型做出「要调这个工具」的决策之后，怎么把这个决策用标准化 JSON 格式传给 Agent。这是 **大模型和 Agent 之间 **的通信协议，负责「大模型怎么开口下指令」这一段。
 
 **第二步：确认 MCP 工作在哪个层面**
 
-MCP 解决的问题是：工具怎么被统一注册、统一发现、统一调用。这是 **Agent 和工具服务之间&#x20;**&#x7684;连接协议，负责「Agent 怎么找到并执行工具」这一段。
+MCP 解决的问题是：工具怎么被统一注册、统一发现、统一调用。这是 **Agent 和工具服务之间 **的连接协议，负责「Agent 怎么找到并执行工具」这一段。
 
 **第三步：看两者怎么配合**
 
@@ -110,9 +110,9 @@ MCP 负责下半段：Agent 通过 MCP 协议，找到对应的 MCP Server，把
 
 还是查天气的场景，用户问「上海明天天气怎样」：
 
-1. 大模型通过 **Function Calling&#x20;**&#x8FD4;回调用指令，「调 check\_weather，city=上海」。这是 Function Calling 层，大模型在开口下指令。
+1. 大模型通过 **Function Calling **返回调用指令，「调 check\_weather，city=上海」。这是 Function Calling 层，大模型在开口下指令。
 
-2. Agent 里的 MCP Client 收到这条 Function Calling 指令，通过 **MCP 协议&#x20;**&#x627E;到天气 MCP Server，把请求路由过去。这是 MCP 层，Agent 在找到并执行工具。
+2. Agent 里的 MCP Client 收到这条 Function Calling 指令，通过 **MCP 协议 **找到天气 MCP Server，把请求路由过去。这是 MCP 层，Agent 在找到并执行工具。
 
 3) 天气 MCP Server 调用真实的天气 API，拿到结果，按 MCP 格式回传。
 
@@ -128,13 +128,13 @@ MCP 负责下半段：Agent 通过 MCP 协议，找到对应的 MCP Server，把
 
 ### Tools（工具）
 
-这是 MCP Server 最核心的能力，也是和上一章讲的工具概念最直接对应的部分。Tools 就是 AI 可以主动 **调用执行&#x20;**&#x7684;函数，发邮件、查数据库、提交代码、搜索网页，都属于 Tool。
+这是 MCP Server 最核心的能力，也是和上一章讲的工具概念最直接对应的部分。Tools 就是 AI 可以主动 **调用执行 **的函数，发邮件、查数据库、提交代码、搜索网页，都属于 Tool。
 
 AI 调用 Tool 的机制，底层就是 Function Calling，MCP 在这之上做了一层标准化封装，让你不需要手写每个 Tool 的 Function Calling 定义，MCP Server 会自动按标准格式对外声明工具清单。
 
 ### Resources（资源）
 
-Resources 是 AI 可以 **读取访问&#x20;**&#x7684;数据，文件内容、数据库记录、代码仓库、网页内容等。
+Resources 是 AI 可以 **读取访问 **的数据，文件内容、数据库记录、代码仓库、网页内容等。
 
 Tools 和 Resources 的区别在于：Tools 是「做一件事」，有副作用，会改变外部状态；Resources 是「读一份数据」，只读，不会改变任何东西。这个区分很重要，因为 AI 系统通常对「会产生副作用的操作」需要更谨慎的权限控制，读数据和写数据，应该分开授权。
 
@@ -150,19 +150,19 @@ Prompts 是预定义的可复用提示词模板。当你有一些常用的、固
 
 ![](images/什么是MCP？-5f1c866d5bd35e64c756dd9f6ed5ee51.png)
 
-1. **用户提问&#x20;**：在 Host（比如 Claude Desktop）里输入「帮我查一下 React 仓库最近的 commit」
+1. **用户提问 **：在 Host（比如 Claude Desktop）里输入「帮我查一下 React 仓库最近的 commit」
 
-2. **Host 分析任务&#x20;**：大模型判断需要调用 GitHub 工具，生成 Function Call 格式的调用指令
+2. **Host 分析任务 **：大模型判断需要调用 GitHub 工具，生成 Function Call 格式的调用指令
 
-3) **Client 接收指令&#x20;**：Host 把调用指令交给内置的 MCP Client
+3) **Client 接收指令 **：Host 把调用指令交给内置的 MCP Client
 
-4) **Client 路由到对应 Server&#x20;**：Client 根据工具名，找到负责 GitHub 能力的 MCP Server，把请求发过去
+4) **Client 路由到对应 Server **：Client 根据工具名，找到负责 GitHub 能力的 MCP Server，把请求发过去
 
-5. **Server 执行&#x20;**：GitHub MCP Server 调用 GitHub API，拿到最近的 commit 列表
+5. **Server 执行 **：GitHub MCP Server 调用 GitHub API，拿到最近的 commit 列表
 
-6. **结果回传&#x20;**：Server 把结果按 MCP 协议格式回传给 Client，Client 转交给 Host
+6. **结果回传 **：Server 把结果按 MCP 协议格式回传给 Client，Client 转交给 Host
 
-7) **Host 生成回复&#x20;**：大模型拿到结果，整理成自然语言回复给用户
+7) **Host 生成回复 **：大模型拿到结果，整理成自然语言回复给用户
 
 整个过程中，Host 和背后的大模型完全不需要知道 GitHub API 的任何细节，它只管说「我要调 GitHub 工具」，剩下的事情 MCP Server 全权负责。这就是「解耦」的价值：工具的实现细节，和 AI 的调用决策，完全分离。
 
@@ -185,15 +185,15 @@ Prompts 是预定义的可复用提示词模板。当你有一些常用的、固
 
 整理一下这一章的核心认知：
 
-* **MCP 是什么&#x20;**：Anthropic 推出的开放标准协议，定义了 AI 应用和工具服务之间如何标准化通信，是 AI 工具世界的「USB-C」。
+* **MCP 是什么 **：Anthropic 推出的开放标准协议，定义了 AI 应用和工具服务之间如何标准化通信，是 AI 工具世界的「USB-C」。
 
-* **为什么需要它&#x20;**：没有统一标准时，每个工具都要自己写集成，多模型场景下是 N×M 的重复工作量；MCP 把这个问题变成 N+M，工具写一次，全平台可用。
+* **为什么需要它 **：没有统一标准时，每个工具都要自己写集成，多模型场景下是 N×M 的重复工作量；MCP 把这个问题变成 N+M，工具写一次，全平台可用。
 
-* **三大角色&#x20;**：Host（AI 应用）通过内置的 Client（连接器）调用 MCP Server（工具服务），职责清晰，完全解耦。
+* **三大角色 **：Host（AI 应用）通过内置的 Client（连接器）调用 MCP Server（工具服务），职责清晰，完全解耦。
 
-* **三种能力&#x20;**：Tools（可执行操作）、Resources（可读取数据）、Prompts（可复用模板），覆盖 AI 在工具调用场景下的所有需求。
+* **三种能力 **：Tools（可执行操作）、Resources（可读取数据）、Prompts（可复用模板），覆盖 AI 在工具调用场景下的所有需求。
 
 后续章节呼应：
 
-* **RAG&#x20;**：解决「大模型看不到你私有数据」的问题，把知识库检索封装成工具，让 Agent 能随时访问私有知识，是 Agent 开发中最常见的能力之一
+* **RAG **：解决「大模型看不到你私有数据」的问题，把知识库检索封装成工具，让 Agent 能随时访问私有知识，是 Agent 开发中最常见的能力之一
 
