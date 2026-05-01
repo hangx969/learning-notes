@@ -82,11 +82,11 @@ def index_single_file(self, file_path: str):
 
 文档分块使用 LangChain 提供的分割器，分为三个阶段：
 
-1. **第一阶段 **：按 Markdown 标题（ `#` 、 `##` ）切分，将文档分割成多个章节
+1. **第一阶段**：按 Markdown 标题（ `#` 、 `##` ）切分，将文档分割成多个章节
 
-1) **第二阶段 **：对每个章节使用 `RecursiveCharacterTextSplitter` 进行二次分割，超过 `chunk_size * 2` 的章节会被拆分
+1) **第二阶段**：对每个章节使用 `RecursiveCharacterTextSplitter` 进行二次分割，超过 `chunk_size * 2` 的章节会被拆分
 
-1. **第三阶段 **：合并过小的分片（< 300 字符），避免过度碎片化，同时通过 `chunk_overlap` 保持分片间的上下文语义连贯
+1. **第三阶段**：合并过小的分片（< 300 字符），避免过度碎片化，同时通过 `chunk_overlap` 保持分片间的上下文语义连贯
 
 `DocumentSplitterService` 初始化时会配置好这两个分割器：
 

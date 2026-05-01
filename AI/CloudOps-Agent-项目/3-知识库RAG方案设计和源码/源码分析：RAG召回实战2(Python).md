@@ -115,7 +115,7 @@ results = collection.search(
 )
 ```
 
-搜索结果封装到 `SearchResult` 对象中， `score` 为 L2 欧氏距离， **越小表示越相似 **：
+搜索结果封装到 `SearchResult` 对象中， `score` 为 L2 欧氏距离， **越小表示越相似**：
 
 ```python
 class SearchResult:
