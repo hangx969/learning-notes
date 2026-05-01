@@ -102,7 +102,7 @@ type Response struct {
 
 `go run main.go` 看到route里面有刚才写的接口就说明成功了，赶快试一试吧～
 
-![](<images/使用goframe框架3分钟实现一个http接口（Go）-61ead1a65bda083445566c1419a90672.png >)
+![](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260501135155973.png)
 
 ![](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260501134543949.png)
 
