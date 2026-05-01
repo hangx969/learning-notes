@@ -23,7 +23,7 @@ cd demo && gf run main.go
 
 1. 首先，我们在api目录下依葫芦画瓢创建chat/v1目录，并编写Chat接口
 
-![](images/使用goframe框架3分钟实现一个http接口（Go）-e231f510cca9eda56839cb66c7525ae7.png)
+![](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260501134532346.png)
 
 
 
@@ -41,7 +41,7 @@ type ChatRes struct {
 
 2. Ctrl+S保存，此时框架会自动帮我们生成internal/controller/chat控制层的代码。我们返回一个chat demo字符串回去
 
-![](images/使用goframe框架3分钟实现一个http接口（Go）-23e88e63b762b2491dbd644388f214de.png)
+![](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260501134535293.png)
 
 
 
@@ -53,11 +53,11 @@ func (c *ControllerV1) Chat(ctx context.Context, req *v1.ChatReq) (res *v1.ChatR
 
 3. 将我们刚才写的chat控制器绑定上去
 
-![](images/使用goframe框架3分钟实现一个http接口（Go）-6868d29d259713041e36c2094153f060.png)
+![](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260501134538336.png)
 
 4. 最后，我们需要将collector层的返回值返回出去
 
-![](images/使用goframe框架3分钟实现一个http接口（Go）-f621a60d538c103a8db415dec6723546.png)
+![](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260501134541274.png)
 
 
 
@@ -104,5 +104,5 @@ type Response struct {
 
 ![](<images/使用goframe框架3分钟实现一个http接口（Go）-61ead1a65bda083445566c1419a90672.png >)
 
-![](images/使用goframe框架3分钟实现一个http接口（Go）-6478bf62a45e9023bc4957ed4fc3e37b.png)
+![](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260501134543949.png)
 
