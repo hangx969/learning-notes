@@ -1,0 +1,214 @@
+| ![](images/源码分析：对话Agent代码实现\(Python\)-48497b1a8d3846ca003822ae690035c2.png) | ![](images/源码分析：对话Agent代码实现\(Python\)-d2808df12fe8619eb0f496cccb4d91a7.png) |
+| --------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+
+# 前言
+
+这部分代码在： `app/api/chat.py` 和 `app/services/rag_agent_service.py`
+
+![](images/源码分析：对话Agent代码实现\(Python\)-41aade2018b861553a5fd10085a8858f.png)
+
+# 流程梳理
+
+对话 Agent 的核心目标是结合外部知识（RAG 召回）与工具调用能力（ReAct 模式），解决复杂问题。
+
+整体流程可概括为：
+
+1. 用户输入 → embedding → 向量数据库召回
+
+1) 将召回内容作为上下文注入 prompt
+
+1. LangGraph ReAct 模式多轮工具调用
+
+1) 流式输出最终答案
+
+# 实战
+
+### 消息召回
+
+召回通过 `retrieve_knowledge` 工具实现，Agent 在推理时会自动判断是否需要调用该工具检索知识库。工具内部通过 `VectorStoreManager.similarity_search` 完成向量检索，详见 RAG 召回章节。
+
+```python
+# retrieve_knowledge 工具挂载到 Agent 上
+self.tools = [retrieve_knowledge, get_current_time]
+```
+
+### 构建 prompt
+
+系统提示词在 `_build_system_prompt` 中构建，描述 Agent 的角色定位和行为准则。与工具列表无关——LangChain 框架会自动将工具信息传递给大模型，prompt 中无需手动列举：
+
+```python
+def _build_system_prompt(self) -> str:
+    from textwrap import dedent
+    return dedent("""
+        你是一个专业的AI助手，能够使用多种工具来帮助用户解决问题。
+
+        工作原则:
+        1. 理解用户需求，选择合适的工具来完成任务
+        2. 当需要获取实时信息或专业知识时，主动使用相关工具
+        3. 基于工具返回的结果提供准确、专业的回答
+        4. 如果工具无法提供足够信息，请诚实地告知用户
+
+        回答要求:
+        - 保持友好、专业的语气
+        - 回答简洁明了，重点突出
+        - 基于事实，不编造信息
+        - 如有不确定的地方，明确说明
+
+        请根据用户的问题，灵活使用可用工具，提供高质量的帮助。
+    """).strip()
+```
+
+会话历史由 LangGraph 的 `MemorySaver` checkpointer 自动管理，每次调用时传入相同的 `thread_id` （即 `session_id` ）即可自动携带上下文，无需手动拼接历史消息到 prompt。
+
+### 创建 ReAct Agent
+
+使用 LangChain 的 `create_agent` 创建 Agent，绑定 `ChatQwen` 模型、工具列表和 `MemorySaver` 检查点。MCP 工具（腾讯云 CLS 日志、监控告警等）在首次请求时异步加载，与本地工具合并后一起绑定：
+
+```python
+class RagAgentService:
+    def __init__(self, streaming: bool = True):
+        self.model = ChatQwen(
+            model=config.rag_model,        # 默认 qwen-max
+            api_key=config.dashscope_api_key,
+            temperature=0.7,
+            streaming=streaming,
+        )
+
+        # 本地工具：RAG 知识检索 + 时间查询
+        self.tools = [retrieve_knowledge, get_current_time]
+
+        # 会话持久化（基于内存的 checkpointer）
+        self.checkpointer = MemorySaver()
+
+        self.agent = None  # 延迟初始化（等待 MCP 工具加载完成）
+
+    async def _initialize_agent(self):
+        """异步初始化 Agent（包括 MCP 工具）"""
+        if self._agent_initialized:
+            return
+
+        # 加载 MCP 工具（CLS 日志服务 + 监控告警）
+        mcp_client = await get_mcp_client_with_retry()
+        mcp_tools = await mcp_client.get_tools()
+
+        # 合并所有工具
+        all_tools = self.tools + mcp_tools
+
+        self.agent = create_agent(
+            self.model,
+            tools=all_tools,
+            checkpointer=self.checkpointer,
+        )
+        self._agent_initialized = True
+```
+
+### 执行 ReAct Agent
+
+#### 非流式调用
+
+调用 `agent.ainvoke` ，等待 Agent 完成全部推理和工具调用后一次性返回结果：
+
+```python
+async def query(self, question: str, session_id: str) -> str:
+    await self._initialize_agent()
+
+    messages = [
+        SystemMessage(content=self.system_prompt),
+        HumanMessage(content=question)
+    ]
+
+    result = await self.agent.ainvoke(
+        input={"messages": messages},
+        config={"configurable": {"thread_id": session_id}},
+    )
+
+    # 取最后一条消息作为最终答案
+    last_message = result["messages"][-1]
+    return last_message.content
+```
+
+#### 流式调用
+
+调用 `agent.astream` ，使用 `stream_mode="messages"` 逐 token 输出，配合 FastAPI 的 SSE 接口实时推送给前端：
+
+```python
+async def query_stream(self, question: str, session_id: str) -> AsyncGenerator:
+    await self._initialize_agent()
+
+    messages = [
+        SystemMessage(content=self.system_prompt),
+        HumanMessage(content=question)
+    ]
+
+    async for token, metadata in self.agent.astream(
+        input={"messages": messages},
+        config={"configurable": {"thread_id": session_id}},
+        stream_mode="messages",
+    ):
+        if type(token).__name__ in ("AIMessage", "AIMessageChunk"):
+            content_blocks = getattr(token, 'content_blocks', None)
+            if content_blocks:
+                for block in content_blocks:
+                    if isinstance(block, dict) and block.get('type') == 'text':
+                        text = block.get('text', '')
+                        if text:
+                            yield {"type": "content", "data": text}
+
+    yield {"type": "complete"}
+```
+
+#### SSE 接口层
+
+`chat_stream` 接口将 `query_stream` 产生的事件包装成 SSE 格式推送给客户端，不同类型的事件对应不同的前端展示逻辑：
+
+```python
+@router.post("/chat_stream")
+async def chat_stream(request: ChatRequest):
+    async def event_generator():
+        async for chunk in rag_agent_service.query_stream(request.question, session_id=request.id):
+            chunk_type = chunk.get("type")
+
+            if chunk_type == "content":
+                # 逐 token 文本内容
+                yield {
+                    "event": "message",
+                    "data": json.dumps({"type": "content", "data": chunk["data"]}, ensure_ascii=False)
+                }
+            elif chunk_type == "tool_call":
+                # 工具调用状态（前端可展示"正在检索知识库..."等提示）
+                yield {
+                    "event": "message",
+                    "data": json.dumps({"type": "tool_call", "data": chunk["data"]}, ensure_ascii=False)
+                }
+            elif chunk_type == "complete":
+                # 完成信号
+                yield {
+                    "event": "message",
+                    "data": json.dumps({"type": "done", "data": chunk.get("data")}, ensure_ascii=False)
+                }
+            elif chunk_type == "error":
+                yield {
+                    "event": "message",
+                    "data": json.dumps({"type": "error", "data": str(chunk["data"])}, ensure_ascii=False)
+                }
+
+    return EventSourceResponse(event_generator())
+```
+
+curl 调用示例：
+
+```bash
+# 非流式对话
+curl -X POST http://localhost:8000/api/chat \
+  -H "Content-Type: application/json" \
+  -d '{"id": "session-001", "question": "CPU 使用率过高怎么排查？"}'
+
+# 流式对话（SSE）
+curl -X POST http://localhost:8000/api/chat_stream \
+  -H "Content-Type: application/json" \
+  -d '{"id": "session-001", "question": "CPU 使用率过高怎么排查？"}'
+```
+
+# 总结
+
+至此，对话 Agent 的核心流程——RAG 召回与 ReAct 模式的代码就讲完了。框架帮我们做了很多事情：LangChain 负责工具绑定与调用，LangGraph 负责多轮推理的状态流转， `MemorySaver` 负责会话历史管理。核心是要搞懂设计原理：RAG 补充外部知识，ReAct 让模型具备多步骤工具调用能力。

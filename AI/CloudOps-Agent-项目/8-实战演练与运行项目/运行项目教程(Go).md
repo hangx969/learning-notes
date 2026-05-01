@@ -1,0 +1,102 @@
+# 配置修改
+
+配置文件路径： **`SuperBizAgent/manifest/config/config.yaml`**
+
+按照《环境准备教程-项目配置》的步骤，修改配置文件
+
+
+
+# 启动向量数据库milvus
+
+```bash
+# 进入manifest/docker目录
+cd manifest/docker
+# 一键启动所有依赖
+docker compose up -d
+# 如果想要停止，则在这个目录使用 docker compose down
+```
+
+![](images/运行项目教程\(Go\)-5f7912e2dba1ec16bec9fd23ccb4d8ee.png)
+
+# 启动后端
+
+```bash
+go run main.go
+```
+
+![](images/运行项目教程\(Go\)-cdb7d4e8f91377f2a3df5138188446ec.png)
+
+# 启动前端
+
+```bash
+cd SuperBizAgent/SuperBizAgentFrontend
+chmod +x start.sh
+./start.sh
+```
+
+![](images/运行项目教程\(Go\)-6f638371619b4a142d87bd85a90e5e6a.png)
+
+1. 打开前端地址： http://localhost:8080/ （后续不会对前端进行讲解，前端是用 cursor 根据http://127.0.0.1:6872/api.json 写的）
+
+![](images/运行项目教程\(Go\)-75d618dff0b1fa0377353dde076ebf8f.png)
+
+# 整体目录结构
+
+先看看整体目录结构，分为几个大块：
+
+1. `SuperBizAgent/internal/ai/agent` ：存放我们agent的目录
+
+2. `SuperBizAgent/internal/ai/cmd` ：单独运行agent的目录，方便测试
+
+3) `SuperBizAgent/internal/controller/chat` ：对外api接口的核心实现目录
+
+4) `SuperBizAgent/manifest` ：存放配置文件和一键启动依赖的docker-compose
+
+5. `SuperBizAgent/SuperBizAgentFrontend` ：前端代码目录，通过start.sh启动前端
+
+```bash
+ ➜  SuperBizAgent git:(main) tree
+.
+├── SuperBizAgentFrontend # 存放前端的目录
+├── api # 对外api接口定义的目录
+├── docs # 存放用户上传文件的目录
+├── internal
+│   ├── ai
+│   │   ├── agent
+│   │   │   ├── chat_pipeline # 对话agent核心代码目录
+│   │   │   ├── knowledge_index_pipeline # 知识库agent核心代码目录
+│   │   │   └── plan_execute_replan # 运维agent核心代码目录
+│   │   ├── cmd
+│   │   │   ├── ai_ops_cmd # 运维agent独立运行目录，便于测试使用
+│   │   │   ├── knowledge_cmd # 知识库agent独立运行目录，便于测试使用
+│   │   │   └── recall_cmd # 召回知识库内容独立运行目录，便于测试使用
+│   │   └── tools # 工具集目录
+│   │       ├── get_current_time.go
+│   │       ├── mysql_crud.go
+│   │       ├── query_internal_docs.go
+│   │       ├── query_log.go
+│   │       └── query_metrics_alerts.go
+│   ├── controller
+│   │   └── chat
+│   │       ├── chat_v1_ai_ops.go # 运维api核心代码
+│   │       ├── chat_v1_chat.go # 对话api核心代码
+│   │       ├── chat_v1_chat_stream.go # 流式对话api核心代码
+│   │       └── chat_v1_file_upload.go # 上传文档到知识库核心代码
+├── main.go # 项目启动处
+├── manifest
+│   ├── config
+│   │   └── config.yaml # 配置文件
+│   └── docker
+│       ├── docker-compose.yml # 启动依赖的地方
+```
+
+
+
+# 单独运行某个Agent
+
+注意，如果你想单独运行 `SuperBizAgent/internal/ai/cmd` 下的某个Agent，需要把config文件复制到对应目录下。
+
+![](images/运行项目教程\(Go\)-21a40b42492247e747d15cab99aea3c2.png)
+
+
+

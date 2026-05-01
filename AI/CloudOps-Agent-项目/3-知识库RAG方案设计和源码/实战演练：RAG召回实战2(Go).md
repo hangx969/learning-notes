@@ -1,0 +1,132 @@
+| ![](images/实战演练：RAG召回实战2\(Go\)-3b954008b068c5ff42836afaaa834a69.png) | ![](images/实战演练：RAG召回实战2\(Go\)-b84313e9bba5352c278fe2720ff5e02f.png) |
+| -------------------------------------------------------------------- | -------------------------------------------------------------------- |
+
+
+
+**<span style="color: inherit; background-color: rgba(255,246,122,0.8)">注意，运行程序之前请先看：</span>**
+
+* [ 环境准备教程](https://my.feishu.cn/wiki/S9prwa5tAiL7iekcOrzczuJznWc)
+
+* [ 运行项目教程(Go)](https://my.feishu.cn/wiki/JdFowqP0bilV8EkCvgUcCNDPnTh)
+
+# 前言
+
+上一节我们实现了知识库Agent的上半部分，这一节我们来实现知识库的召回功能。
+
+核心代码： `SuperBizAgent/internal/ai/cmd/recall_cmd/main.go`
+
+![](images/实战演练：RAG召回实战2\(Go\)-74330c4b0863995ad7e8c4eeae40fcc3.png)
+
+# 实战
+
+观察代码，首先创建retriever组件，然后调用它的Retrieve方法进行查询，最后打印召回的内容。
+
+我们直接先运行代码，来看看执行后的效果。
+
+```go
+func main() {
+    ctx := context.Background()
+    r, err := retriever2.NewMilvusRetriever(ctx)
+    if err != nil {
+       panic(err)
+    }
+    query := "服务下线是什么原因"
+    docs, err := r.Retrieve(ctx, query)
+    if err != nil {
+       panic(err)
+    }
+    fmt.Println("Q：", query)
+    for _, doc := range docs {
+       fmt.Println("A：", doc.Content)
+    }
+}
+```
+
+
+
+通过输出可以看到，确实召回了我们上一节上传的文件内容。下面我们就来看看核心组件Retrieve到底做了什么。
+
+```bash
+(base) ➜  recall_cmd git:(main) ✗ go run main.go
+Q： 服务下线是什么原因
+A： # 服务下线
+告警解释：服务下线可能因为服务panic，导致pod重启造成的
+解决方案：
+1. 根据关键字"panic"进行最近1小时的日志搜索
+2. 根据panic日志内容分析是什么bug导致的panic
+```
+
+
+
+# 召回-Retriever组件
+
+我们之前是将文档存储到了Milvus向量数据库里面，所以召回的时候也是从这个数据库去查询。
+
+首先我们对Milvus客户端进行一些配置，指定向量字段为vector，需要返回的字段有id、content、metadata。
+
+```go
+func NewMilvusRetriever(ctx context.Context) (rtr retriever.Retriever, err error) {
+    r, err := milvus.NewRetriever(ctx, &milvus.RetrieverConfig{
+       Client:      client.NewMilvusClient(ctx),
+       Collection:  common.MilvusCollectionName,
+       VectorField: "vector",
+       OutputFields: []string{
+          "id",
+          "content",
+          "metadata",
+       },
+       TopK:      10,
+       Embedding: embedder.DoubaoEmbedding(ctx),
+    })
+    if err != nil {
+       return nil, err
+    }
+    return r, nil
+}
+```
+
+在Eino框架里面， `Retriever` 组件是用来实现召回的，所以我们来看看 `Retriever` 这个接口。可以看到返回值是一个 `Retriever接口` ，需要实现这个接口的 `Retrieve方法` ：
+
+1. 对输入的问题进行向量化，计算出向量
+
+2. 调用Milvus数据库sdk的相似度查询接口
+
+3) 构造返回结构体，返回
+
+```go
+func (r *Retriever) Retrieve(ctx context.Context, query string, opts ...retriever.Option) (docs []*schema.Document, err error) {
+    // 1. 首先对输入的问题进行向量化
+    // embedding the query
+    vectors, err := emb.EmbedStrings(r.makeEmbeddingCtx(ctx, emb), []string{query})
+    // 2. 调用Milvus的相似度查询接口
+    results, err = r.config.Client.Search(
+       r.config.OutputFields,
+       // 查询的向量
+       vectors,
+       // 向量字段
+       r.config.VectorField,
+       // 查询相似度前多少个
+       *co.TopK,
+    )
+    // convert the search result to schema.Document
+    documents := make([]*schema.Document, 0, len(results))
+    for _, result := range results {
+       // 3. 构造结构体
+       document, err := r.config.DocumentConverter(ctx, result)
+       documents = append(documents, document...)
+    }
+    // 4. 返回
+    return documents, nil
+}
+
+type Retriever interface {
+    Retrieve(ctx context.Context, query string, opts ...Option) ([]*schema.Document, error)
+}
+```
+
+
+
+# 总结
+
+至此，RAG的 `分片、索引、召回` 功能我们都实现完了。后续会介绍其他Agent是怎么使用知识库，怎么结合 **召回&#x20;**&#x6765;与大模型进行交互的。
+

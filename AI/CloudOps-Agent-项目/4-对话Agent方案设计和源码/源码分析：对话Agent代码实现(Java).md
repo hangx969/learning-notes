@@ -1,0 +1,118 @@
+| ![](images/源码分析：对话Agent代码实现\(Java\)-48497b1a8d3846ca003822ae690035c2.png) | ![](images/源码分析：对话Agent代码实现\(Java\)-d2808df12fe8619eb0f496cccb4d91a7.png) |
+| ------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+
+# 前言
+
+这部分代码在： `SuperBizAgent/src/main/java/org/example/controller/ChatController.java`
+
+![](images/源码分析：对话Agent代码实现\(Java\)-41aade2018b861553a5fd10085a8858f.png)
+
+# 流程梳理
+
+对话Agent的核心目标是结合外部知识（RAG召回）与工具调用能力（ReAct模式），解决复杂问题。
+
+整体流程可概括为：
+
+1. 用户输入 -> embedding -> 向量数据库召回
+
+2. 构建带上下文(召回的内容)的 prompt
+
+3) ReAct模式多轮交互
+
+4) 最终输出答案
+
+
+
+# 实战
+
+## 消息召回
+
+这里留一个预召回的TODO给同学完成，代码实现非常简单，在召回实战章节其实已有介绍 (searchSimilarDocuments)
+
+
+
+## 构建prompt
+
+```java
+/**
+ * 构建系统提示词（包含历史消息）
+ * @param history 历史消息列表
+ * @return 完整的系统提示词
+ */
+public String buildSystemPrompt(List<Map<String, String>> history) {
+    StringBuilder systemPromptBuilder = new StringBuilder();
+    // 基础系统提示
+    systemPromptBuilder.append("你是一个专业的智能助手，可以获取当前时间、查询天气信息、搜索内部文档知识库，以及查询 Prometheus 告警信息。\n");
+    systemPromptBuilder.append("当用户询问时间相关问题时，使用 getCurrentDateTime 工具。\n");
+    systemPromptBuilder.append("当用户需要查询公司内部文档、流程、最佳实践或技术指南时，使用 queryInternalDocs 工具。\n");
+    systemPromptBuilder.append("当用户需要查询 Prometheus 告警、监控指标或系统告警状态时，使用 queryPrometheusAlerts 工具。\n");
+    systemPromptBuilder.append("当用户需要查询腾讯云日志时，请调用腾讯云mcp服务查询,默认查询地域ap-guangzhou,查询时间范围为近一个月。\n\n");
+    
+    // 添加历史消息
+    if (!history.isEmpty()) {
+        systemPromptBuilder.append("--- 对话历史 ---\n");
+        for (Map<String, String> msg : history) {
+            String role = msg.get("role");
+            String content = msg.get("content");
+            if ("user".equals(role)) {
+                systemPromptBuilder.append("用户: ").append(content).append("\n");
+            } else if ("assistant".equals(role)) {
+                systemPromptBuilder.append("助手: ").append(content).append("\n");
+            }
+        }
+        systemPromptBuilder.append("--- 对话历史结束 ---\n\n");
+    }
+    
+    systemPromptBuilder.append("请基于以上对话历史，回答用户的新问题。");
+    
+    return systemPromptBuilder.toString();
+}
+```
+
+
+
+## 创建ReAct Agent
+
+因为我们这里使用了Spring AI alibaba框架，所以不需要我们自己从0到1去实现，只需要按照sdk的要求使用，即可返回给我们一个可以执行的Agent
+
+API使用文档： https://java2ai.com/docs/frameworks/agent-framework/tutorials/agents
+
+```java
+public ReactAgent createReactAgent(DashScopeChatModel chatModel, String systemPrompt) {
+    return ReactAgent.builder()
+            .name("intelligent_assistant")
+            .model(chatModel)
+            .systemPrompt(systemPrompt)
+            .methodTools(buildMethodToolsArray())
+            .tools(getToolCallbacks())
+            .build();
+}
+```
+
+
+
+## 执行ReAct Agent
+
+```java
+// 执行对话
+String fullAnswer = chatService.executeChat(agent, request.getQuestion());
+/**
+ * 执行 ReactAgent 对话（非流式）
+ * @param agent ReactAgent 实例
+ * @param question 用户问题
+ * @return AI 回复
+ */
+public String executeChat(ReactAgent agent, String question) throws GraphRunnerException {
+    logger.info("执行 ReactAgent.call() - 自动处理工具调用");
+    var response = agent.call(question);
+    String answer = response.getText();
+    logger.info("ReactAgent 对话完成，答案长度: {}", answer.length());
+    return answer;
+}
+```
+
+
+
+# 总结
+
+至此，对话Agent的核心流程RAG召回与ReAct模式的代码就讲完了。如果你一篇一篇看下来，会发现其实代码实现真的不难，而且也不重要，框架帮我们做了很多事情。 **核心是要搞懂我们的设计原理：RAG、ReAct。**

@@ -1,0 +1,252 @@
+项目使用goframe作为web框架，如果想了解API定义到提供服务的流程，先看： [ 使用goframe框架3分钟实现一个http接口（Go）](https://my.feishu.cn/wiki/Pibrwnm9qiKVRAkgYERciBfhnne)
+
+
+
+# AI运维接口
+
+AI运维接口，调用后会自动查询现在活跃的告警，并判断根因
+
+**请求方法&#x20;**: `POST /api/ai_ops`
+
+**请求字段:**
+
+| 字段名 | 类型 | 描述 |
+| --- | -- | -- |
+|     |    |    |
+
+**响应字段:**
+
+| 字段名    | 类型        | 描述     |
+| ------ | --------- | ------ |
+| Result | string    | 结果     |
+| Detail | \[]string | 详细信息列表 |
+
+**示例：**
+
+```bash
+curl -X POST http://localhost:6872/api/ai_ops \
+  -H "Content-Type: application/json"
+  
+# 响应
+{
+  "message": "OK",
+  "data": {
+    "result": "汇总的分析结果...",
+    "detail": [
+      "执行步骤1...",
+      "执行步骤2...",
+      "..."
+    ]
+  }
+} 
+ 
+```
+
+
+
+# AI运维接口核心实现(Go)
+
+代码路径： `SuperBizAgent/internal/controller/chat/chat_v1_ai_ops.go`
+
+1. 因为我们这个Agent比较特殊，有Replan功能，所以我们可以直接让Agent主动查询活跃的告警，如果有告警则让它查询内部文档，自己去规划执行步骤。
+
+2. 所以重点就在我们的prompt设计上，我们需要稍微的指导一下大模型该怎么制定计划。
+
+3) 至于如果有告警该怎么执行，那就看你上传的告警处理手册中写的步骤，写的怎么处理，就会怎么执行。
+
+```go
+func (c *ControllerV1) AIOps(ctx context.Context, req *v1.AIOpsReq) (res *v1.AIOpsRes, err error) {
+    query := `
+"1. 你是一个智能的服务告警运维分析助手,首先调用工具query_prometheus_alerts获取所有活跃的告警。"
+"2. 分别根据告警的名称调用工具query_internal_docs，获取告警名对应的处理方案。"
+"3. 完全遵循内部文档的内容进行查询和分析,不允许使用文档外的任何信息。"
+"4. 涉及到时间的参数都需要先通过工具get_current_time获取当前时间,再结合用户的时间要求进行传参。"
+"5. 涉及到日志的查询,需要先通过日志工具获取相关日志信息，参数必须携带地域和日志主题。"
+"6. 分别将告警对应查询到的信息进行总结分析,最后汇总所有告警和总结。"`
+    resp, detail, err := plan_execute_replan.BuildPlanAgent(ctx, query)
+    if err != nil {
+       return nil, err
+    }
+    if resp == "" {
+       return nil, errors.New("内部错误")
+    }
+    res = &v1.AIOpsRes{
+       Result: resp,
+       Detail: detail,
+    }
+    return res, nil
+
+}
+```
+
+
+
+# AI运维接口核心实现(Java)
+
+1. 前面我们讲解了SupervisorAgent的作用以及他们的prompt
+
+2. 所以在API接口使用层面，build出来后直接调用
+
+3) 然后把输出返回出去即可
+
+```java
+/**
+ * AI 智能运维接口（SSE 流式模式）- 自动分析告警并生成运维报告
+ * 无需用户输入，自动执行告警分析流程
+ */
+@PostMapping(value = "/ai_ops", produces = "text/event-stream;charset=UTF-8")
+public SseEmitter aiOps() {
+    SseEmitter emitter = new SseEmitter(600000L); // 10分钟超时（告警分析可能较慢）
+    executor.execute(() -> {
+        try {
+            // 调用 AiOpsService 执行分析流程
+            Optional<OverAllState> overAllStateOptional = aiOpsService.executeAiOpsAnalysis(chatModel, toolCallbacks);
+            OverAllState state = overAllStateOptional.get();
+            logger.info("AI Ops 编排完成，开始提取最终报告...");
+
+            // 提取最终报告
+            Optional<String> finalReportOptional = aiOpsService.extractFinalReport(state);
+            // 输出最终报告
+            if (finalReportOptional.isPresent()) {
+                // 发送
+            }
+        }
+    });
+    return emitter;
+}
+
+public Optional<OverAllState> executeAiOpsAnalysis(DashScopeChatModel chatModel, ToolCallback[] toolCallbacks) throws GraphRunnerException {
+    logger.info("开始执行 AI Ops 多 Agent 协作流程");
+    // 构建 Planner 和 Executor Agent
+    ReactAgent plannerAgent = buildPlannerAgent(chatModel, toolCallbacks);
+    ReactAgent executorAgent = buildExecutorAgent(chatModel, toolCallbacks);
+    // 构建 Supervisor Agent
+    SupervisorAgent supervisorAgent = SupervisorAgent.builder()
+            .name("ai_ops_supervisor")
+            .description("负责调度 Planner 与 Executor 的多 Agent 控制器")
+            .model(chatModel)
+            .systemPrompt(buildSupervisorSystemPrompt())
+            .subAgents(List.of(plannerAgent, executorAgent))
+            .build();
+
+    String taskPrompt = "你是企业级 SRE，接到了自动化告警排查任务。请结合工具调用，执行**规划→执行→再规划**的闭环，并最终按照固定模板输出《告警分析报告》。禁止编造虚假数据，如连续多次查询失败需诚实反馈无法完成的原因。";
+    return supervisorAgent.invoke(taskPrompt);
+}
+```
+
+
+
+# AI运维接口核心实现(Python)
+
+代码路径：app/api/aiops.py 和 app/services/aiops\_service.py
+
+1\. 接口无需用户传入具体问题，Agent 自己主动查询活跃告警，prompt 中已嵌入了完整的诊断任务描述
+
+2\. 接口调用 aiops\_service.diagnose，内部使用固定的 AIOps 任务描述启动 Plan-Execute-Replan 工作流
+
+3\. 工作流通过 graph.astream 流式执行，每个节点完成后立即通过 SSE 推送事件给前端
+
+4\. 接收到 complete 或 error 事件后，关闭 SSE 流
+
+```python
+@router.post("/aiops")
+async def diagnose_stream(request: AIOpsRequest):
+    session_id = request.session_id or "default"
+    logger.info(f"[会话 {session_id}] 收到 AIOps 诊断请求（流式）")
+
+    async def event_generator():
+        try:
+            async for event in aiops_service.diagnose(session_id=session_id):
+                # 将每个节点产生的事件序列化后推送给前端
+                yield {
+                    "event": "message",
+                    "data": json.dumps(event, ensure_ascii=False)
+                }
+                # complete 或 error 时结束流
+                if event.get("type") in ["complete", "error"]:
+                    break
+
+        except Exception as e:
+            yield {
+                "event": "message",
+                "data": json.dumps({
+                    "type": "error",
+                    "stage": "exception",
+                    "message": f"诊断异常: {str(e)}"
+                }, ensure_ascii=False)
+            }
+
+    return EventSourceResponse(event_generator())
+```
+
+
+
+\`diagnose\` 方法内部构造固定的 AIOps 任务描述，将其传入通用的 \`execute\` 方法启动工作流。任务描述中已明确告知 Agent 该做什么，无需用户填写——这就是这个接口不需要请求参数的原因：
+
+
+
+```python
+async def diagnose(self, session_id: str) -> AsyncGenerator:
+    aiops_task = """诊断当前系统是否存在告警，如果存在告警请详细分析告警原因并生成诊断报告，诊断报告输出格式要求：
+    # 告警分析报告
+    ## 📋 活跃告警清单
+    | 告警名称 | 级别 | 目标服务 | 首次触发时间 | 最新触发时间 | 状态 |
+    ...
+    ## 🔍 告警根因分析N - [告警名称]
+    ...
+    ## 🛠️ 处理方案执行N - [告警名称]
+    ...
+    ## 📊 结论
+    ...
+
+    重要提醒：所有内容必须基于工具查询的真实数据，严禁编造"""
+
+    async for event in self.execute(aiops_task, session_id):
+        # 将 complete 事件转换为包含 diagnosis 字段的格式
+        if event.get("type") == "complete":
+            yield {
+                "type": "complete",
+                "stage": "diagnosis_complete",
+                "message": "诊断流程完成",
+                "diagnosis": {
+                    "status": "completed",
+                    "report": event.get("response", "")
+                }
+            }
+        else:
+            yield event
+```
+
+
+
+\`execute\` 方法以固定的初始状态启动 LangGraph 工作流，通过 \`stream\_mode="updates"\` 实时推送各节点的执行结果：
+
+
+
+```python
+async def execute(self, user_input: str, session_id: str) -> AsyncGenerator:
+    initial_state: PlanExecuteState = {
+        "input": user_input,
+        "plan": [],
+        "past_steps": [],
+        "response": ""
+    }
+
+    async for event in self.graph.astream(
+        input=initial_state,
+        config={"configurable": {"thread_id": session_id}},
+        stream_mode="updates"
+    ):
+        for node_name, node_output in event.items():
+            if node_name == "planner":
+                yield self._format_planner_event(node_output)    # type=plan
+            elif node_name == "executor":
+                yield self._format_executor_event(node_output)   # type=step_complete
+            elif node_name == "replanner":
+                yield self._format_replanner_event(node_output)  # type=report/status
+
+    # 流程结束，推送最终报告
+    final_state = self.graph.get_state({"configurable": {"thread_id": session_id}})
+    final_response = final_state.values.get("response", "") if final_state else ""
+    yield {"type": "complete", "stage": "complete", "response": final_response}
+```

@@ -1,0 +1,133 @@
+| ![](images/源码分析：RAG召回实战2\(Python\)-3b954008b068c5ff42836afaaa834a69.png) | ![](images/源码分析：RAG召回实战2\(Python\)-b84313e9bba5352c278fe2720ff5e02f.png) |
+| ------------------------------------------------------------------------ | ------------------------------------------------------------------------ |
+
+# 前言
+
+上一节我们实现了知识库Agent的上半部分，这一节我们来实现知识库的召回功能。
+
+核心代码分布在： `app/services/vector_search_service.py` — 使用原生 PyMilvus 执行向量检索
+
+![](images/源码分析：RAG召回实战2\(Python\)-74330c4b0863995ad7e8c4eeae40fcc3.png)
+
+# 召回
+
+我们之前已经将文档向量化存储到了 Milvus，所以召回时也从这个数据库去查询。流程分两步：
+
+1. 将查询文本向量化
+
+1) 相似度查询
+
+`search_similar_documents`  是底层召回的完整实现：
+
+```python
+def search_similar_documents(self, query: str, top_k: int = 3) -> List[SearchResult]:
+    """
+    搜索相似文档
+
+    Args:
+        query: 查询文本
+        top_k: 返回最相似的K个结果
+
+    Returns:
+        List[SearchResult]: 搜索结果列表
+    """
+    logger.info(f"开始搜索相似文档, 查询: {query}, topK: {top_k}")
+
+    # 1. 将查询文本向量化
+    query_vector = vector_embedding_service.embed_query(query)
+    logger.debug(f"查询向量生成成功, 维度: {len(query_vector)}")
+
+    # 2. 获取 collection
+    collection: Collection = milvus_manager.get_collection()
+
+    # 3. 构建搜索参数
+    search_params = {
+        "metric_type": "L2",   # 欧氏距离，与入库时的索引类型保持一致
+        "params": {"nprobe": 10},
+    }
+
+    # 4. 执行搜索
+    results = collection.search(
+        data=[query_vector],
+        anns_field="vector",
+        param=search_params,
+        limit=top_k,
+        output_fields=["id", "content", "metadata"],
+    )
+
+    # 5. 解析搜索结果
+    search_results = []
+    for hits in results:
+        for hit in hits:
+            result = SearchResult(
+                id=hit.entity.get("id"),
+                content=hit.entity.get("content"),
+                score=hit.distance,   # L2 距离，越小越相似
+                metadata=hit.entity.get("metadata", {}),
+            )
+            search_results.append(result)
+
+    logger.info(f"搜索完成, 找到 {len(search_results)} 个相似文档")
+    return search_results
+```
+
+## 查询文本向量化
+
+首先对用户问题进行向量化，调用 `DashScopeEmbeddings.embed_query` ，通过 DashScope OpenAI 兼容接口获取 1024 维向量：
+
+```python
+# 1. 将查询文本向量化
+query_vector = vector_embedding_service.embed_query(query)
+```
+
+`embed_query` 的实现（复用入库时相同的 API，无额外开销）：
+
+```python
+def embed_query(self, text: str) -> List[float]:
+    """嵌入单个查询文本，返回单条向量"""
+    response = self.client.embeddings.create(
+        model=self.model,          # text-embedding-v4
+        input=text,
+        dimensions=self.dimensions,  # 1024
+        encoding_format="float"
+    )
+    return response.data[0].embedding
+```
+
+## 构建搜索参数并执行向量检索
+
+然后使用 PyMilvus 的 `collection.search` 进行相似度查询，获取距离最近的向量数据：
+
+```python
+# 构建搜索参数
+search_params = {
+    "metric_type": "L2",       # 欧氏距离
+    "params": {"nprobe": 10},  # 搜索时探测的 cluster 数量，越大越精确但越慢
+}
+
+# 执行搜索
+results = collection.search(
+    data=[query_vector],                       # 查询向量（批量，这里只有一条）
+    anns_field="vector",                       # 向量字段名，与入库时一致
+    param=search_params,
+    limit=top_k,                               # 返回最相似的前 K 条
+    output_fields=["id", "content", "metadata"],  # 需要返回的字段
+)
+```
+
+搜索结果封装到 `SearchResult` 对象中， `score` 为 L2 欧氏距离， **越小表示越相似&#x20;**：
+
+```python
+class SearchResult:
+    def __init__(self, id: str, content: str, score: float, metadata: Dict[str, Any]):
+        self.id = id
+        self.content = content
+        self.score = score     # L2 距离，越小越相似
+        self.metadata = metadata
+```
+
+
+
+# 总结
+
+至此，RAG 的分片、索引、召回功能都已实现完毕。后续会介绍 RAG Agent 是怎么使用知识库、怎么结合召回来与大模型进行交互的。

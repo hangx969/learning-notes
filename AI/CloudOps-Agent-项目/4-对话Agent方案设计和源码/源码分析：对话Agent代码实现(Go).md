@@ -1,0 +1,1942 @@
+| ![](images/源码分析：对话Agent代码实现\(Go\)-48497b1a8d3846ca003822ae690035c2.png) | ![](images/源码分析：对话Agent代码实现\(Go\)-d2808df12fe8619eb0f496cccb4d91a7.png) |
+| ----------------------------------------------------------------------- | ----------------------------------------------------------------------- |
+
+**<span style="color: inherit; background-color: rgba(255,246,122,0.8)">注意，运行程序之前请先看：</span>**
+
+* [ 环境准备教程](https://my.feishu.cn/wiki/S9prwa5tAiL7iekcOrzczuJznWc)
+
+* [ 运行项目教程(Go)](https://my.feishu.cn/wiki/JdFowqP0bilV8EkCvgUcCNDPnTh)
+
+# 前言
+
+这部分代码在：SuperBizAgent/internal/ai/agent/chat\_pipeline
+
+运行的代码在：SuperBizAgent/internal/ai/cmd/chat\_cmd/main.go
+
+![](images/源码分析：对话Agent代码实现\(Go\)-41aade2018b861553a5fd10085a8858f.png)
+
+# 流程梳理
+
+对话Agent的核心目标是结合外部知识（RAG召回）与工具调用能力（ReAct模式），解决复杂问题。
+
+整体流程可概括为：
+
+1. 用户输入 -> embedding -> 向量数据库召回
+
+2. 构建带上下文(召回的内容)的 prompt
+
+3) ReAct模式多轮交互
+
+4) 最终输出答案
+
+
+
+我们继续使用eino的可视化编排插件，来进行流程的编排：
+
+1. 首先在Goland里面安装eino-dev的插件
+
+2. 打开插件，按照下图进行编排(或者使用右下角的导入功能，直接导入 `SuperBizAgent/internal/ai/cmd/chat_cmd/workflow.json` )
+
+```sql
+{
+  "name": "EinoAgent",
+  "node_trigger_mode": "AllPredecessor",
+  "input_type": {
+    "title": "*UserMessage"
+  },
+  "output_type": {
+    "title": "*schema.Message",
+    "description": "github.com/cloudwego/eino/schema"
+  },
+  "gen_local_state": {
+    "output_type": {}
+  },
+  "id": "0ijYA1",
+  "component": "Graph",
+  "nodes": [
+    {
+      "id": "start",
+      "key": "start",
+      "name": "Start",
+      "type": "start",
+      "layoutData": {
+        "position": {
+          "x": 80,
+          "y": 682
+        }
+      }
+    },
+    {
+      "id": "end",
+      "key": "end",
+      "name": "End",
+      "type": "end",
+      "layoutData": {
+        "position": {
+          "x": 1988.99,
+          "y": 476.79
+        }
+      }
+    },
+    {
+      "id": "8AgKo6",
+      "key": "InputToRag",
+      "name": "UserMessageToQuery",
+      "type": "Lambda",
+      "component_schema": {
+        "name": "Lambda",
+        "component": "Lambda",
+        "component_source": "custom",
+        "input_type": {
+          "title": "*UserMessage",
+          "description": ""
+        },
+        "output_type": {
+          "title": "string",
+          "description": ""
+        },
+        "extra_property": {
+          "schema": {
+            "type": "object",
+            "description": "",
+            "properties": {
+              "has_option": {
+                "type": "boolean",
+                "description": ""
+              },
+              "interaction_type": {
+                "type": "string",
+                "description": "",
+                "enum": [
+                  "invoke",
+                  "stream",
+                  "collect",
+                  "transform"
+                ]
+              },
+              "option_package_path": {
+                "type": "string",
+                "description": ""
+              },
+              "option_type_name": {
+                "type": "string",
+                "description": ""
+              }
+            },
+            "required": [
+              "interaction_type",
+              "has_option"
+            ]
+          },
+          "extra_property_input": "{\"has_option\":true,\"interaction_type\":\"invoke\"}"
+        },
+        "is_io_type_mutable": true,
+        "version": "1.0.0"
+      },
+      "layoutData": {
+        "position": {
+          "x": 359.58,
+          "y": 808.45
+        }
+      },
+      "node_option": {}
+    },
+    {
+      "id": "A7z9_b",
+      "key": "ChatTemplate",
+      "name": "",
+      "type": "ChatTemplate",
+      "component_schema": {
+        "name": "chatTemplate",
+        "component": "ChatTemplate",
+        "component_source": "official",
+        "identifier": "github.com/cloudwego/eino/components/prompt",
+        "input_type": {
+          "title": "map[string]any",
+          "description": ""
+        },
+        "output_type": {
+          "title": "[]*schema.Message",
+          "description": ""
+        },
+        "config": {
+          "description": "github.com/cloudwego/eino/blob/main/components/prompt/chat_template.go",
+          "schema": {
+            "type": "object",
+            "description": "",
+            "properties": {
+              "FormatType": {
+                "type": "number",
+                "description": "",
+                "enum": [
+                  "0",
+                  "1",
+                  "2"
+                ],
+                "goDefinition": {
+                  "libraryRef": {
+                    "version": "",
+                    "module": "",
+                    "pkgPath": ""
+                  },
+                  "typeName": "schema.FormatType",
+                  "kind": "uint8",
+                  "isPtr": false
+                }
+              }
+            },
+            "propertyOrder": [
+              "FormatType"
+            ],
+            "goDefinition": {
+              "libraryRef": {
+                "version": "",
+                "module": "",
+                "pkgPath": ""
+              },
+              "typeName": "Config",
+              "kind": "struct",
+              "isPtr": false
+            }
+          },
+          "config_input": "{\"FormatType\":1}"
+        },
+        "is_io_type_mutable": false,
+        "version": "1.0.0"
+      },
+      "layoutData": {
+        "position": {
+          "x": 947.68,
+          "y": 516.3
+        }
+      },
+      "node_option": {}
+    },
+    {
+      "id": "CDNTqO",
+      "key": "ReactAgent",
+      "name": "ReAct Agent",
+      "type": "Lambda",
+      "component_schema": {
+        "name": "react",
+        "component": "Lambda",
+        "component_source": "official",
+        "identifier": "github.com/cloudwego/eino/flow/agent/react",
+        "input_type": {
+          "title": "[]*schema.Message",
+          "description": ""
+        },
+        "output_type": {
+          "title": "*schema.Message",
+          "description": ""
+        },
+        "slots": [
+          {
+            "component": "ChatModel",
+            "field_loc_path": "Model",
+            "multiple": false,
+            "required": false,
+            "component_items": [
+              {
+                "name": "openai",
+                "component": "ChatModel",
+                "component_source": "official",
+                "identifier": "github.com/cloudwego/eino-ext/components/model/openai",
+                "input_type": {
+                  "title": "[]*schema.Message",
+                  "description": ""
+                },
+                "output_type": {
+                  "title": "*schema.Message",
+                  "description": ""
+                },
+                "config": {
+                  "description": "github.com/cloudwego/eino-ext/blob/main/components/model/openai/chatmodel.go",
+                  "schema": {
+                    "type": "object",
+                    "description": "",
+                    "properties": {
+                      "APIKey": {
+                        "type": "string",
+                        "description": "",
+                        "goDefinition": {
+                          "libraryRef": {
+                            "version": "",
+                            "module": "",
+                            "pkgPath": ""
+                          },
+                          "typeName": "string",
+                          "kind": "string",
+                          "isPtr": false
+                        }
+                      },
+                      "APIVersion": {
+                        "type": "string",
+                        "description": "",
+                        "goDefinition": {
+                          "libraryRef": {
+                            "version": "",
+                            "module": "",
+                            "pkgPath": ""
+                          },
+                          "typeName": "string",
+                          "kind": "string",
+                          "isPtr": false
+                        }
+                      },
+                      "BaseURL": {
+                        "type": "string",
+                        "description": "",
+                        "goDefinition": {
+                          "libraryRef": {
+                            "version": "",
+                            "module": "",
+                            "pkgPath": ""
+                          },
+                          "typeName": "string",
+                          "kind": "string",
+                          "isPtr": false
+                        }
+                      },
+                      "ByAzure": {
+                        "type": "boolean",
+                        "description": "",
+                        "goDefinition": {
+                          "libraryRef": {
+                            "version": "",
+                            "module": "",
+                            "pkgPath": ""
+                          },
+                          "typeName": "bool",
+                          "kind": "bool",
+                          "isPtr": false
+                        }
+                      },
+                      "FrequencyPenalty": {
+                        "type": "number",
+                        "description": "",
+                        "goDefinition": {
+                          "libraryRef": {
+                            "version": "",
+                            "module": "",
+                            "pkgPath": ""
+                          },
+                          "typeName": "float32",
+                          "kind": "float32",
+                          "isPtr": true
+                        }
+                      },
+                      "LogitBias": {
+                        "type": "object",
+                        "description": "",
+                        "additionalProperties": {
+                          "type": "number",
+                          "description": "",
+                          "goDefinition": {
+                            "libraryRef": {
+                              "version": "",
+                              "module": "",
+                              "pkgPath": ""
+                            },
+                            "typeName": "int",
+                            "kind": "int",
+                            "isPtr": false
+                          }
+                        },
+                        "goDefinition": {
+                          "libraryRef": {
+                            "version": "",
+                            "module": "",
+                            "pkgPath": ""
+                          },
+                          "typeName": "map[string]int",
+                          "kind": "map",
+                          "isPtr": false
+                        }
+                      },
+                      "MaxTokens": {
+                        "type": "number",
+                        "description": "",
+                        "goDefinition": {
+                          "libraryRef": {
+                            "version": "",
+                            "module": "",
+                            "pkgPath": ""
+                          },
+                          "typeName": "int",
+                          "kind": "int",
+                          "isPtr": true
+                        }
+                      },
+                      "Model": {
+                        "type": "string",
+                        "description": "",
+                        "goDefinition": {
+                          "libraryRef": {
+                            "version": "",
+                            "module": "",
+                            "pkgPath": ""
+                          },
+                          "typeName": "string",
+                          "kind": "string",
+                          "isPtr": false
+                        }
+                      },
+                      "PresencePenalty": {
+                        "type": "number",
+                        "description": "",
+                        "goDefinition": {
+                          "libraryRef": {
+                            "version": "",
+                            "module": "",
+                            "pkgPath": ""
+                          },
+                          "typeName": "float32",
+                          "kind": "float32",
+                          "isPtr": true
+                        }
+                      },
+                      "ResponseFormat": {
+                        "type": "object",
+                        "description": "",
+                        "properties": {
+                          "Type": {
+                            "type": "string",
+                            "description": "",
+                            "goDefinition": {
+                              "libraryRef": {
+                                "version": "v0.0.0-20250106073650-ed838398894a",
+                                "module": "github.com/cloudwego/eino-ext/libs/acl/openai",
+                                "pkgPath": "github.com/cloudwego/eino-ext/libs/acl/openai"
+                              },
+                              "typeName": "openai.ChatCompletionResponseFormatType",
+                              "kind": "string",
+                              "isPtr": false
+                            }
+                          }
+                        },
+                        "propertyOrder": [
+                          "Type"
+                        ],
+                        "goDefinition": {
+                          "libraryRef": {
+                            "version": "v0.0.0-20250106073650-ed838398894a",
+                            "module": "github.com/cloudwego/eino-ext/libs/acl/openai",
+                            "pkgPath": "github.com/cloudwego/eino-ext/libs/acl/openai"
+                          },
+                          "typeName": "openai.ChatCompletionResponseFormat",
+                          "kind": "struct",
+                          "isPtr": true
+                        }
+                      },
+                      "Seed": {
+                        "type": "number",
+                        "description": "",
+                        "goDefinition": {
+                          "libraryRef": {
+                            "version": "",
+                            "module": "",
+                            "pkgPath": ""
+                          },
+                          "typeName": "int",
+                          "kind": "int",
+                          "isPtr": true
+                        }
+                      },
+                      "Stop": {
+                        "type": "array",
+                        "description": "",
+                        "items": {
+                          "type": "string",
+                          "description": "",
+                          "goDefinition": {
+                            "libraryRef": {
+                              "version": "",
+                              "module": "",
+                              "pkgPath": ""
+                            },
+                            "typeName": "string",
+                            "kind": "string",
+                            "isPtr": false
+                          }
+                        },
+                        "goDefinition": {
+                          "libraryRef": {
+                            "version": "",
+                            "module": "",
+                            "pkgPath": ""
+                          },
+                          "typeName": "[]string",
+                          "kind": "slice",
+                          "isPtr": false
+                        }
+                      },
+                      "Temperature": {
+                        "type": "number",
+                        "description": "",
+                        "goDefinition": {
+                          "libraryRef": {
+                            "version": "",
+                            "module": "",
+                            "pkgPath": ""
+                          },
+                          "typeName": "float32",
+                          "kind": "float32",
+                          "isPtr": true
+                        }
+                      },
+                      "Timeout": {
+                        "type": "number",
+                        "description": "",
+                        "goDefinition": {
+                          "libraryRef": {
+                            "version": "",
+                            "module": "time",
+                            "pkgPath": "time"
+                          },
+                          "typeName": "time.Duration",
+                          "kind": "int64",
+                          "isPtr": false
+                        }
+                      },
+                      "TopP": {
+                        "type": "number",
+                        "description": "",
+                        "goDefinition": {
+                          "libraryRef": {
+                            "version": "",
+                            "module": "",
+                            "pkgPath": ""
+                          },
+                          "typeName": "float32",
+                          "kind": "float32",
+                          "isPtr": true
+                        }
+                      },
+                      "User": {
+                        "type": "string",
+                        "description": "",
+                        "goDefinition": {
+                          "libraryRef": {
+                            "version": "",
+                            "module": "",
+                            "pkgPath": ""
+                          },
+                          "typeName": "string",
+                          "kind": "string",
+                          "isPtr": true
+                        }
+                      }
+                    },
+                    "propertyOrder": [
+                      "ByAzure",
+                      "BaseURL",
+                      "APIVersion",
+                      "APIKey",
+                      "Timeout",
+                      "Model",
+                      "MaxTokens",
+                      "Temperature",
+                      "TopP",
+                      "Stop",
+                      "PresencePenalty",
+                      "ResponseFormat",
+                      "Seed",
+                      "FrequencyPenalty",
+                      "LogitBias",
+                      "User"
+                    ],
+                    "goDefinition": {
+                      "libraryRef": {
+                        "version": "",
+                        "module": "",
+                        "pkgPath": ""
+                      },
+                      "typeName": "openai.ChatModelConfig",
+                      "kind": "struct",
+                      "isPtr": false
+                    }
+                  },
+                  "config_input": ""
+                },
+                "is_io_type_mutable": false,
+                "version": "1.0.0",
+                "id": "SwlhKV",
+                "layoutData": {
+                  "isSlotNode": true,
+                  "position": {
+                    "x": 1715.05,
+                    "y": 585.92
+                  }
+                }
+              }
+            ],
+            "go_definition": {
+              "libraryRef": {
+                "version": "v0.3.4",
+                "module": "github.com/cloudwego/eino",
+                "pkgPath": "github.com/cloudwego/eino/components/model"
+              },
+              "typeName": "model.ChatModel",
+              "kind": "interface",
+              "isPtr": false
+            }
+          },
+          {
+            "component": "Tool",
+            "field_loc_path": "ToolsConfig.Tools",
+            "multiple": true,
+            "required": true,
+            "component_items": [
+              {
+                "name": "duckduckgo",
+                "component": "Tool",
+                "component_source": "official",
+                "identifier": "github.com/cloudwego/eino-ext/components/tool/duckduckgo",
+                "input_type": {
+                  "title": "string",
+                  "description": ""
+                },
+                "output_type": {
+                  "title": "string",
+                  "description": ""
+                },
+                "config": {
+                  "description": "github.com/cloudwego/eino-ext/blob/main/components/tool/duckduckgo/search.go",
+                  "schema": {
+                    "type": "object",
+                    "description": "",
+                    "properties": {
+                      "DDGConfig": {
+                        "type": "object",
+                        "description": "",
+                        "properties": {
+                          "Cache": {
+                            "type": "boolean",
+                            "description": "",
+                            "goDefinition": {
+                              "libraryRef": {
+                                "version": "",
+                                "module": "github.com/cloudwego/eino-ext/components/tool/duckduckgo",
+                                "pkgPath": "github.com/cloudwego/eino-ext/components/tool/duckduckgo/ddgsearch"
+                              },
+                              "typeName": "bool",
+                              "kind": "bool",
+                              "isPtr": false
+                            }
+                          },
+                          "Headers": {
+                            "type": "object",
+                            "description": "",
+                            "additionalProperties": {
+                              "type": "string",
+                              "description": "",
+                              "goDefinition": {
+                                "libraryRef": {
+                                  "version": "",
+                                  "module": "",
+                                  "pkgPath": ""
+                                },
+                                "typeName": "string",
+                                "kind": "string",
+                                "isPtr": false
+                              }
+                            },
+                            "goDefinition": {
+                              "libraryRef": {
+                                "version": "",
+                                "module": "github.com/cloudwego/eino-ext/components/tool/duckduckgo",
+                                "pkgPath": "github.com/cloudwego/eino-ext/components/tool/duckduckgo/ddgsearch"
+                              },
+                              "typeName": "map[string]string",
+                              "kind": "map",
+                              "isPtr": false
+                            }
+                          },
+                          "MaxRetries": {
+                            "type": "number",
+                            "description": "",
+                            "goDefinition": {
+                              "libraryRef": {
+                                "version": "",
+                                "module": "github.com/cloudwego/eino-ext/components/tool/duckduckgo",
+                                "pkgPath": "github.com/cloudwego/eino-ext/components/tool/duckduckgo/ddgsearch"
+                              },
+                              "typeName": "int",
+                              "kind": "int",
+                              "isPtr": false
+                            }
+                          },
+                          "Proxy": {
+                            "type": "string",
+                            "description": "",
+                            "goDefinition": {
+                              "libraryRef": {
+                                "version": "",
+                                "module": "github.com/cloudwego/eino-ext/components/tool/duckduckgo",
+                                "pkgPath": "github.com/cloudwego/eino-ext/components/tool/duckduckgo/ddgsearch"
+                              },
+                              "typeName": "string",
+                              "kind": "string",
+                              "isPtr": false
+                            }
+                          },
+                          "Timeout": {
+                            "type": "number",
+                            "description": "",
+                            "goDefinition": {
+                              "libraryRef": {
+                                "version": "",
+                                "module": "time",
+                                "pkgPath": "time"
+                              },
+                              "typeName": "time.Duration",
+                              "kind": "int64",
+                              "isPtr": false
+                            }
+                          }
+                        },
+                        "propertyOrder": [
+                          "Headers",
+                          "Proxy",
+                          "Timeout",
+                          "Cache",
+                          "MaxRetries"
+                        ],
+                        "goDefinition": {
+                          "libraryRef": {
+                            "version": "",
+                            "module": "github.com/cloudwego/eino-ext/components/tool/duckduckgo",
+                            "pkgPath": "github.com/cloudwego/eino-ext/components/tool/duckduckgo/ddgsearch"
+                          },
+                          "typeName": "ddgsearch.Config",
+                          "kind": "struct",
+                          "isPtr": true
+                        }
+                      },
+                      "MaxResults": {
+                        "type": "number",
+                        "description": "",
+                        "goDefinition": {
+                          "libraryRef": {
+                            "version": "",
+                            "module": "",
+                            "pkgPath": ""
+                          },
+                          "typeName": "int",
+                          "kind": "int",
+                          "isPtr": false
+                        }
+                      },
+                      "Region": {
+                        "type": "string",
+                        "description": "",
+                        "goDefinition": {
+                          "libraryRef": {
+                            "version": "",
+                            "module": "github.com/cloudwego/eino-ext/components/tool/duckduckgo",
+                            "pkgPath": "github.com/cloudwego/eino-ext/components/tool/duckduckgo/ddgsearch"
+                          },
+                          "typeName": "ddgsearch.Region",
+                          "kind": "string",
+                          "isPtr": false
+                        }
+                      },
+                      "SafeSearch": {
+                        "type": "string",
+                        "description": "",
+                        "goDefinition": {
+                          "libraryRef": {
+                            "version": "",
+                            "module": "github.com/cloudwego/eino-ext/components/tool/duckduckgo",
+                            "pkgPath": "github.com/cloudwego/eino-ext/components/tool/duckduckgo/ddgsearch"
+                          },
+                          "typeName": "ddgsearch.SafeSearch",
+                          "kind": "string",
+                          "isPtr": false
+                        }
+                      },
+                      "TimeRange": {
+                        "type": "string",
+                        "description": "",
+                        "goDefinition": {
+                          "libraryRef": {
+                            "version": "",
+                            "module": "github.com/cloudwego/eino-ext/components/tool/duckduckgo",
+                            "pkgPath": "github.com/cloudwego/eino-ext/components/tool/duckduckgo/ddgsearch"
+                          },
+                          "typeName": "ddgsearch.TimeRange",
+                          "kind": "string",
+                          "isPtr": false
+                        }
+                      },
+                      "ToolDesc": {
+                        "type": "string",
+                        "description": "",
+                        "goDefinition": {
+                          "libraryRef": {
+                            "version": "",
+                            "module": "",
+                            "pkgPath": ""
+                          },
+                          "typeName": "string",
+                          "kind": "string",
+                          "isPtr": false
+                        }
+                      },
+                      "ToolName": {
+                        "type": "string",
+                        "description": "",
+                        "goDefinition": {
+                          "libraryRef": {
+                            "version": "",
+                            "module": "",
+                            "pkgPath": ""
+                          },
+                          "typeName": "string",
+                          "kind": "string",
+                          "isPtr": false
+                        }
+                      }
+                    },
+                    "propertyOrder": [
+                      "ToolName",
+                      "ToolDesc",
+                      "Region",
+                      "MaxResults",
+                      "SafeSearch",
+                      "TimeRange",
+                      "DDGConfig"
+                    ],
+                    "goDefinition": {
+                      "libraryRef": {
+                        "version": "",
+                        "module": "",
+                        "pkgPath": ""
+                      },
+                      "typeName": "duckduckgo.Config",
+                      "kind": "struct",
+                      "isPtr": false
+                    }
+                  },
+                  "config_input": "{}"
+                },
+                "is_io_type_mutable": false,
+                "version": "1.0.0",
+                "id": "Hw6TpP",
+                "layoutData": {
+                  "isSlotNode": true,
+                  "position": {
+                    "x": 1706.34,
+                    "y": 789.11
+                  }
+                }
+              },
+              {
+                "name": "Tool",
+                "component": "Tool",
+                "component_source": "custom",
+                "extra_property": {
+                  "schema": {
+                    "type": "object",
+                    "description": "",
+                    "properties": {
+                      "interaction_type": {
+                        "type": "string",
+                        "description": "",
+                        "enum": [
+                          "invoke",
+                          "stream"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "interaction_type"
+                    ]
+                  },
+                  "extra_property_input": "{\"interaction_type\":\"invoke\"}"
+                },
+                "is_io_type_mutable": false,
+                "version": "1.0.0",
+                "id": "vrHZ5I",
+                "layoutData": {
+                  "isSlotNode": true,
+                  "position": {
+                    "x": 1357.18,
+                    "y": 788.41
+                  }
+                }
+              },
+              {
+                "name": "Tool",
+                "component": "Tool",
+                "component_source": "custom",
+                "extra_property": {
+                  "schema": {
+                    "type": "object",
+                    "description": "",
+                    "properties": {
+                      "interaction_type": {
+                        "type": "string",
+                        "description": "",
+                        "enum": [
+                          "invoke",
+                          "stream"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "interaction_type"
+                    ]
+                  },
+                  "extra_property_input": "{\"interaction_type\":\"invoke\"}"
+                },
+                "is_io_type_mutable": false,
+                "version": "1.0.0",
+                "id": "mEukD2",
+                "layoutData": {
+                  "isSlotNode": true,
+                  "position": {
+                    "x": 1357.38,
+                    "y": 974.77
+                  }
+                }
+              },
+              {
+                "name": "googlesearch",
+                "component": "Tool",
+                "component_source": "official",
+                "identifier": "github.com/cloudwego/eino-ext/components/tool/googlesearch",
+                "input_type": {
+                  "title": "string",
+                  "description": ""
+                },
+                "output_type": {
+                  "title": "string",
+                  "description": ""
+                },
+                "config": {
+                  "description": "github.com/cloudwego/eino-ext/blob/main/components/tool/googlesearch/google_search.go",
+                  "schema": {
+                    "type": "object",
+                    "description": "",
+                    "properties": {
+                      "APIKey": {
+                        "type": "string",
+                        "description": "",
+                        "goDefinition": {
+                          "libraryRef": {
+                            "version": "",
+                            "module": "",
+                            "pkgPath": ""
+                          },
+                          "typeName": "string",
+                          "kind": "string",
+                          "isPtr": false
+                        }
+                      },
+                      "BaseURL": {
+                        "type": "string",
+                        "description": "",
+                        "goDefinition": {
+                          "libraryRef": {
+                            "version": "",
+                            "module": "",
+                            "pkgPath": ""
+                          },
+                          "typeName": "string",
+                          "kind": "string",
+                          "isPtr": false
+                        }
+                      },
+                      "Lang": {
+                        "type": "string",
+                        "description": "",
+                        "goDefinition": {
+                          "libraryRef": {
+                            "version": "",
+                            "module": "",
+                            "pkgPath": ""
+                          },
+                          "typeName": "string",
+                          "kind": "string",
+                          "isPtr": false
+                        }
+                      },
+                      "Num": {
+                        "type": "number",
+                        "description": "",
+                        "goDefinition": {
+                          "libraryRef": {
+                            "version": "",
+                            "module": "",
+                            "pkgPath": ""
+                          },
+                          "typeName": "int",
+                          "kind": "int",
+                          "isPtr": false
+                        }
+                      },
+                      "SearchEngineID": {
+                        "type": "string",
+                        "description": "",
+                        "goDefinition": {
+                          "libraryRef": {
+                            "version": "",
+                            "module": "",
+                            "pkgPath": ""
+                          },
+                          "typeName": "string",
+                          "kind": "string",
+                          "isPtr": false
+                        }
+                      },
+                      "ToolDesc": {
+                        "type": "string",
+                        "description": "",
+                        "goDefinition": {
+                          "libraryRef": {
+                            "version": "",
+                            "module": "",
+                            "pkgPath": ""
+                          },
+                          "typeName": "string",
+                          "kind": "string",
+                          "isPtr": false
+                        }
+                      },
+                      "ToolName": {
+                        "type": "string",
+                        "description": "",
+                        "goDefinition": {
+                          "libraryRef": {
+                            "version": "",
+                            "module": "",
+                            "pkgPath": ""
+                          },
+                          "typeName": "string",
+                          "kind": "string",
+                          "isPtr": false
+                        }
+                      }
+                    },
+                    "propertyOrder": [
+                      "APIKey",
+                      "SearchEngineID",
+                      "BaseURL",
+                      "Num",
+                      "Lang",
+                      "ToolName",
+                      "ToolDesc"
+                    ],
+                    "goDefinition": {
+                      "libraryRef": {
+                        "version": "",
+                        "module": "",
+                        "pkgPath": ""
+                      },
+                      "typeName": "googlesearch.Config",
+                      "kind": "struct",
+                      "isPtr": false
+                    }
+                  },
+                  "config_input": ""
+                },
+                "is_io_type_mutable": false,
+                "version": "1.0.0",
+                "id": "lEtK7G",
+                "layoutData": {
+                  "isSlotNode": true,
+                  "position": {
+                    "x": 1710.54,
+                    "y": 974.57
+                  }
+                }
+              }
+            ],
+            "go_definition": {
+              "libraryRef": {
+                "version": "v0.3.4",
+                "module": "github.com/cloudwego/eino",
+                "pkgPath": "github.com/cloudwego/eino/components/tool"
+              },
+              "typeName": "tool.BaseTool",
+              "kind": "interface",
+              "isPtr": false
+            }
+          }
+        ],
+        "config": {
+          "description": "github.com/cloudwego/eino/blob/main/flow/agent/react/react.go",
+          "schema": {
+            "type": "object",
+            "description": "",
+            "properties": {
+              "MaxStep": {
+                "type": "number",
+                "description": "",
+                "goDefinition": {
+                  "libraryRef": {
+                    "version": "",
+                    "module": "",
+                    "pkgPath": ""
+                  },
+                  "typeName": "int",
+                  "kind": "int",
+                  "isPtr": false
+                }
+              },
+              "ToolReturnDirectly": {
+                "type": "object",
+                "description": "",
+                "additionalProperties": {
+                  "type": "object",
+                  "description": "",
+                  "goDefinition": {
+                    "libraryRef": {
+                      "version": "",
+                      "module": "",
+                      "pkgPath": ""
+                    },
+                    "typeName": "struct{}",
+                    "kind": "struct",
+                    "isPtr": false
+                  }
+                },
+                "goDefinition": {
+                  "libraryRef": {
+                    "version": "",
+                    "module": "",
+                    "pkgPath": ""
+                  },
+                  "typeName": "map[string]struct{}",
+                  "kind": "map",
+                  "isPtr": false
+                }
+              }
+            },
+            "propertyOrder": [
+              "MaxStep",
+              "ToolReturnDirectly"
+            ],
+            "goDefinition": {
+              "libraryRef": {
+                "version": "",
+                "module": "",
+                "pkgPath": ""
+              },
+              "typeName": "react.AgentConfig",
+              "kind": "struct",
+              "isPtr": false
+            }
+          },
+          "config_input": "{\"ToolReturnDirectly\":{\"einoAdditionalPropertyInput\":[]},\"MaxStep\":25}"
+        },
+        "is_io_type_mutable": false,
+        "version": "1.0.0"
+      },
+      "layoutData": {
+        "position": {
+          "x": 1361.89,
+          "y": 450.95
+        }
+      },
+      "node_option": {}
+    },
+    {
+      "id": "iunICK",
+      "key": "MilvusRetriever",
+      "name": "",
+      "type": "Retriever",
+      "component_schema": {
+        "name": "redis",
+        "component": "Retriever",
+        "component_source": "official",
+        "identifier": "github.com/cloudwego/eino-ext/components/retriever/redis",
+        "slots": [
+          {
+            "component": "Embedding",
+            "field_loc_path": "Embedding",
+            "multiple": false,
+            "required": false,
+            "component_items": [
+              {
+                "name": "openai",
+                "component": "Embedding",
+                "component_source": "official",
+                "identifier": "github.com/cloudwego/eino-ext/components/embedding/openai",
+                "input_type": {
+                  "title": "[]string",
+                  "description": ""
+                },
+                "output_type": {
+                  "title": "[][]float64",
+                  "description": ""
+                },
+                "config": {
+                  "description": "github.com/cloudwego/eino-ext/blob/main/components/embedding/openai/embedding.go",
+                  "schema": {
+                    "type": "object",
+                    "description": "",
+                    "properties": {
+                      "APIKey": {
+                        "type": "string",
+                        "description": "",
+                        "goDefinition": {
+                          "libraryRef": {
+                            "version": "",
+                            "module": "",
+                            "pkgPath": ""
+                          },
+                          "typeName": "string",
+                          "kind": "string",
+                          "isPtr": false
+                        }
+                      },
+                      "APIVersion": {
+                        "type": "string",
+                        "description": "",
+                        "goDefinition": {
+                          "libraryRef": {
+                            "version": "",
+                            "module": "",
+                            "pkgPath": ""
+                          },
+                          "typeName": "string",
+                          "kind": "string",
+                          "isPtr": false
+                        }
+                      },
+                      "BaseURL": {
+                        "type": "string",
+                        "description": "",
+                        "goDefinition": {
+                          "libraryRef": {
+                            "version": "",
+                            "module": "",
+                            "pkgPath": ""
+                          },
+                          "typeName": "string",
+                          "kind": "string",
+                          "isPtr": false
+                        }
+                      },
+                      "ByAzure": {
+                        "type": "boolean",
+                        "description": "",
+                        "goDefinition": {
+                          "libraryRef": {
+                            "version": "",
+                            "module": "",
+                            "pkgPath": ""
+                          },
+                          "typeName": "bool",
+                          "kind": "bool",
+                          "isPtr": false
+                        }
+                      },
+                      "Dimensions": {
+                        "type": "number",
+                        "description": "",
+                        "goDefinition": {
+                          "libraryRef": {
+                            "version": "",
+                            "module": "",
+                            "pkgPath": ""
+                          },
+                          "typeName": "int",
+                          "kind": "int",
+                          "isPtr": true
+                        }
+                      },
+                      "EncodingFormat": {
+                        "type": "string",
+                        "description": "",
+                        "goDefinition": {
+                          "libraryRef": {
+                            "version": "v0.0.0-20250106073650-ed838398894a",
+                            "module": "github.com/cloudwego/eino-ext/libs/acl/openai",
+                            "pkgPath": "github.com/cloudwego/eino-ext/libs/acl/openai"
+                          },
+                          "typeName": "openai.EmbeddingEncodingFormat",
+                          "kind": "string",
+                          "isPtr": true
+                        }
+                      },
+                      "Model": {
+                        "type": "string",
+                        "description": "",
+                        "goDefinition": {
+                          "libraryRef": {
+                            "version": "",
+                            "module": "",
+                            "pkgPath": ""
+                          },
+                          "typeName": "string",
+                          "kind": "string",
+                          "isPtr": false
+                        }
+                      },
+                      "Timeout": {
+                        "type": "number",
+                        "description": "",
+                        "goDefinition": {
+                          "libraryRef": {
+                            "version": "",
+                            "module": "time",
+                            "pkgPath": "time"
+                          },
+                          "typeName": "time.Duration",
+                          "kind": "int64",
+                          "isPtr": false
+                        }
+                      },
+                      "User": {
+                        "type": "string",
+                        "description": "",
+                        "goDefinition": {
+                          "libraryRef": {
+                            "version": "",
+                            "module": "",
+                            "pkgPath": ""
+                          },
+                          "typeName": "string",
+                          "kind": "string",
+                          "isPtr": true
+                        }
+                      }
+                    },
+                    "propertyOrder": [
+                      "ByAzure",
+                      "BaseURL",
+                      "APIVersion",
+                      "APIKey",
+                      "Timeout",
+                      "Model",
+                      "EncodingFormat",
+                      "Dimensions",
+                      "User"
+                    ],
+                    "goDefinition": {
+                      "libraryRef": {
+                        "version": "",
+                        "module": "",
+                        "pkgPath": ""
+                      },
+                      "typeName": "openai.EmbeddingConfig",
+                      "kind": "struct",
+                      "isPtr": false
+                    }
+                  },
+                  "config_input": ""
+                },
+                "is_io_type_mutable": false,
+                "version": "1.0.0",
+                "id": "RvASK3",
+                "layoutData": {
+                  "isSlotNode": true,
+                  "position": {
+                    "x": 654.92,
+                    "y": 969.1
+                  }
+                }
+              }
+            ],
+            "go_definition": {
+              "libraryRef": {
+                "version": "v0.3.6",
+                "module": "github.com/cloudwego/eino",
+                "pkgPath": "github.com/cloudwego/eino/components/embedding"
+              },
+              "typeName": "embedding.Embedder",
+              "kind": "interface",
+              "isPtr": false
+            }
+          }
+        ],
+        "config": {
+          "description": "github.com/cloudwego/eino-ext/blob/main/components/retriever/redis/retriever.go",
+          "schema": {
+            "type": "object",
+            "description": "",
+            "properties": {
+              "Dialect": {
+                "type": "number",
+                "description": "",
+                "goDefinition": {
+                  "libraryRef": {
+                    "version": "",
+                    "module": "",
+                    "pkgPath": ""
+                  },
+                  "typeName": "int",
+                  "kind": "int",
+                  "isPtr": false
+                }
+              },
+              "DistanceThreshold": {
+                "type": "number",
+                "description": "",
+                "goDefinition": {
+                  "libraryRef": {
+                    "version": "",
+                    "module": "",
+                    "pkgPath": ""
+                  },
+                  "typeName": "float64",
+                  "kind": "float64",
+                  "isPtr": true
+                }
+              },
+              "Index": {
+                "type": "string",
+                "description": "",
+                "goDefinition": {
+                  "libraryRef": {
+                    "version": "",
+                    "module": "",
+                    "pkgPath": ""
+                  },
+                  "typeName": "string",
+                  "kind": "string",
+                  "isPtr": false
+                }
+              },
+              "ReturnFields": {
+                "type": "array",
+                "description": "",
+                "items": {
+                  "type": "string",
+                  "description": "",
+                  "goDefinition": {
+                    "libraryRef": {
+                      "version": "",
+                      "module": "",
+                      "pkgPath": ""
+                    },
+                    "typeName": "string",
+                    "kind": "string",
+                    "isPtr": false
+                  }
+                },
+                "goDefinition": {
+                  "libraryRef": {
+                    "version": "",
+                    "module": "",
+                    "pkgPath": ""
+                  },
+                  "typeName": "[]string",
+                  "kind": "slice",
+                  "isPtr": false
+                }
+              },
+              "TopK": {
+                "type": "number",
+                "description": "",
+                "goDefinition": {
+                  "libraryRef": {
+                    "version": "",
+                    "module": "",
+                    "pkgPath": ""
+                  },
+                  "typeName": "int",
+                  "kind": "int",
+                  "isPtr": false
+                }
+              },
+              "VectorField": {
+                "type": "string",
+                "description": "",
+                "goDefinition": {
+                  "libraryRef": {
+                    "version": "",
+                    "module": "",
+                    "pkgPath": ""
+                  },
+                  "typeName": "string",
+                  "kind": "string",
+                  "isPtr": false
+                }
+              }
+            },
+            "propertyOrder": [
+              "Index",
+              "VectorField",
+              "DistanceThreshold",
+              "Dialect",
+              "ReturnFields",
+              "TopK"
+            ],
+            "goDefinition": {
+              "libraryRef": {
+                "version": "",
+                "module": "",
+                "pkgPath": ""
+              },
+              "typeName": "redis.RetrieverConfig",
+              "kind": "struct",
+              "isPtr": false
+            }
+          },
+          "config_input": "{}"
+        },
+        "is_io_type_mutable": false,
+        "version": "1.0.0",
+        "input_type": {},
+        "output_type": {}
+      },
+      "layoutData": {
+        "position": {
+          "x": 657.12,
+          "y": 812.29
+        }
+      },
+      "node_option": {
+        "output_key": "documents"
+      }
+    },
+    {
+      "id": "lJ0-pN",
+      "key": "InputToChat",
+      "name": "UserMessageToVariables",
+      "type": "Lambda",
+      "component_schema": {
+        "name": "Lambda",
+        "component": "Lambda",
+        "component_source": "custom",
+        "input_type": {
+          "title": "*UserMessage",
+          "description": ""
+        },
+        "output_type": {
+          "title": "map[string]any",
+          "description": ""
+        },
+        "extra_property": {
+          "schema": {
+            "type": "object",
+            "description": "",
+            "properties": {
+              "has_option": {
+                "type": "boolean",
+                "description": ""
+              },
+              "interaction_type": {
+                "type": "string",
+                "description": "",
+                "enum": [
+                  "invoke",
+                  "stream",
+                  "collect",
+                  "transform"
+                ]
+              },
+              "option_package_path": {
+                "type": "string",
+                "description": ""
+              },
+              "option_type_name": {
+                "type": "string",
+                "description": ""
+              }
+            },
+            "required": [
+              "interaction_type",
+              "has_option"
+            ]
+          },
+          "extra_property_input": "{\"has_option\":true,\"interaction_type\":\"invoke\"}"
+        },
+        "is_io_type_mutable": true,
+        "version": "1.0.0"
+      },
+      "layoutData": {
+        "position": {
+          "x": 355.65,
+          "y": 411.61
+        }
+      },
+      "node_option": {}
+    }
+  ],
+  "edges": [
+    {
+      "id": "",
+      "name": "",
+      "sourceWorkflowNodeId": "start",
+      "targetWorkflowNodeId": "8AgKo6",
+      "source_node_key": "start",
+      "target_node_key": "InputToRag"
+    },
+    {
+      "id": "",
+      "name": "",
+      "sourceWorkflowNodeId": "start",
+      "targetWorkflowNodeId": "lJ0-pN",
+      "source_node_key": "start",
+      "target_node_key": "InputToChat"
+    },
+    {
+      "id": "",
+      "name": "",
+      "sourceWorkflowNodeId": "CDNTqO",
+      "targetWorkflowNodeId": "end",
+      "source_node_key": "ReactAgent",
+      "target_node_key": "end"
+    },
+    {
+      "id": "",
+      "name": "",
+      "sourceWorkflowNodeId": "8AgKo6",
+      "targetWorkflowNodeId": "iunICK",
+      "source_node_key": "InputToRag",
+      "target_node_key": "MilvusRetriever"
+    },
+    {
+      "id": "",
+      "name": "",
+      "sourceWorkflowNodeId": "iunICK",
+      "targetWorkflowNodeId": "A7z9_b",
+      "source_node_key": "MilvusRetriever",
+      "target_node_key": "ChatTemplate"
+    },
+    {
+      "id": "",
+      "name": "",
+      "sourceWorkflowNodeId": "lJ0-pN",
+      "targetWorkflowNodeId": "A7z9_b",
+      "source_node_key": "InputToChat",
+      "target_node_key": "ChatTemplate"
+    },
+    {
+      "id": "",
+      "name": "",
+      "sourceWorkflowNodeId": "A7z9_b",
+      "targetWorkflowNodeId": "CDNTqO",
+      "source_node_key": "ChatTemplate",
+      "target_node_key": "ReactAgent"
+    }
+  ],
+  "branches": [],
+  "nodeCounter": {
+    "Lambda": 8,
+    "ChatModel": 4,
+    "Tool": 3,
+    "default": 3
+  }
+}
+```
+
+3. 最后 点击生成代码 ，生成到目标目录
+
+![](images/源码分析：对话Agent代码实现\(Go\)-94c9b3d03a53f8674f170977d6dce4c0.png)
+
+生成完后，会在目标目录看到生成出来的这些组件，下面我们来逐个介绍
+
+![](images/源码分析：对话Agent代码实现\(Go\)-6c154d487ae22b29f504892a649fa9e1.png)
+
+
+
+# 实战
+
+注意，在运行代码之前，务必先看
+
+* [【飞书文档】环境准备教程](https://icnaxnmh86kx.feishu.cn/wiki/BFDRwJd8liUzyikoNKecgv5mnvh)
+
+* [【飞书文档】运行项目教程](https://icnaxnmh86kx.feishu.cn/wiki/BdaHwmg4Ei1bjmklkCkcGPWtnrh)
+
+## Runnable执行器
+
+### 运行Agent看看输出
+
+```bash
+# 运行代码
+cd SuperBizAgent/internal/ai/cmd/chat_cmd
+# 输出
+(base) ➜  chat_cmd git:(main) ✗ go run main.go
+Q: 你好
+A: 你好！我是你的对话小助手，很高兴为你服务！
+
+我可以帮助你：
+- 理解和处理对话上下文
+- 搜索网络获取信息
+- 查询数据库
+- 检查系统警报状态
+- 搜索内部文档
+
+请告诉我你需要什么帮助，我会尽力为你提供支持！
+2025/11/30 21:46:45 Getting current time: 2025-11-30 21:46:45.704387
+2025/11/30 21:46:45 Current time: Seconds=1764510405, Milliseconds=1764510405704, Microseconds=1764510405704387
+----------------
+Q: 现在是几点
+A: 现在是 2025年11月30日 21:46:45
+
+如果需要更精确的时间，我可以提供毫秒或微秒级别的时间信息。
+```
+
+
+
+### 执行代码研究
+
+好，执行完成后。我们来看看具体的代码实现是怎么样的。我们来重点看下面高亮的代码行：
+
+* 首先调用 `chat_pipeline.BuildChatAgent` 创建了一个runner执行器。
+
+* 调用 `runner` 的 `Invoke` 方法，入参是 `UserMessage` 。
+
+```go
+func main() {
+    ctx := context.Background()
+    id := "111"
+    userMessage := &chat_pipeline.UserMessage{
+       ID:      id,
+       Query:   "你好",
+       History: mem.GetSimpleMemory(id).GetMessages(),
+    }
+    runner, err := chat_pipeline.BuildChatAgent(ctx)
+    if err != nil {
+       panic(err)
+    }
+    // 第一次对话
+    out, err := runner.Invoke(ctx, userMessage)
+    if err != nil {
+       panic(err)
+    }
+    answer := out.Content
+    fmt.Println("Q: 你好")
+    fmt.Println("A:", answer)
+    mem.GetSimpleMemory(id).SetMessages(schema.UserMessage("你好"))
+    mem.GetSimpleMemory(id).SetMessages(schema.SystemMessage(out.Content))
+    // 第二次对话
+    userMessage = &chat_pipeline.UserMessage{
+       ID:      id,
+       Query:   "现在是几点",
+       History: mem.GetSimpleMemory(id).GetMessages(),
+    }
+    out, err = runner.Invoke(ctx, userMessage)
+    if err != nil {
+       panic(err)
+    }
+    answer = out.Content
+    fmt.Println("----------------")
+    fmt.Println("Q: 现在是几点")
+    fmt.Println("A:", answer)
+}
+```
+
+
+
+## BuildChatAgent研究
+
+我们重点来看一下第一个返回值， `r compose.Runnable[*UserMessage, *schema.Message]` ，这个返回值代表返回一个可以执行的执行器。
+
+其中 `[*UserMessage, *schema.Message]` 对应着下面的Runnable接口的 `[I, O any]` 。
+
+这是一个泛型，I代表Input，输入；O代表output输出。
+
+总结一下 `BuildChatAgent` ：返回一个执行器，这个执行器的入参是我们自定义的一个UserMessage结构体，出参是框架定义的schema.Message。
+
+```go
+func BuildChatAgent(ctx context.Context) (r compose.Runnable[*UserMessage, *schema.Message], err error) {
+    ///
+}
+
+// Runnable is the interface for an executable object. Graph, Chain can be compiled into Runnable.
+// runnable is the core conception of eino, we do downgrade compatibility for four data flow patterns,
+// and can automatically connect components that only implement one or more methods.
+// eg, if a component only implements Stream() method, you can still call Invoke() to convert stream output to invoke output.
+type Runnable[I, O any] interface {
+    Invoke(ctx context.Context, input I, opts ...Option) (output O, err error)
+    Stream(ctx context.Context, input I, opts ...Option) (output *schema.StreamReader[O], err error)
+}
+
+type UserMessage struct {
+    ID      string            `json:"id"`
+    Query   string            `json:"query"`
+    History []*schema.Message `json:"history"`
+}
+```
+
+
+
+我们继续看看编排代码 `BuildChatAgent` 的其他流程。
+
+里面有很多AddEdge，这里面的点、边连接顺序，其实就是上面我们用eino-dev插件编排的顺序。
+
+![](images/源码分析：对话Agent代码实现\(Go\)-ef26a048bc792c2e81a05e7bfdc6910c.png)
+
+也就是说： `BuildChatAgent` 返回的执行器，在调用后会按照这个顺序执行。
+
+下面我们继续来看看每个节点具体做了什么？
+
+```go
+func BuildChatAgent(ctx context.Context) (r compose.Runnable[*UserMessage, *schema.Message], err error) {
+    _ = g.AddEdge(compose.START, InputToRag)
+    _ = g.AddEdge(compose.START, InputToChat)
+    _ = g.AddEdge(ReactAgent, compose.END)
+    _ = g.AddEdge(InputToRag, MilvusRetriever)
+    _ = g.AddEdge(MilvusRetriever, ChatTemplate)
+    _ = g.AddEdge(InputToChat, ChatTemplate)
+    _ = g.AddEdge(ChatTemplate, ReactAgent)
+    r, err = g.Compile(ctx, compose.WithGraphName("ChatAgent"), compose.WithNodeTriggerMode(compose.AllPredecessor))
+    return r, err
+}
+```
+
+
+
+## 召回组件1—InputToRag lambda node
+
+观察lambda的输入和输出，user message是我们构造的，然后输出一个string，这个string就是用于RAG做召回使用的
+
+```go
+/ newInputToRagLambda component initialization function of node 'InputToQuery' in graph 'EinoAgent'
+func newInputToRagLambda(ctx context.Context, input *UserMessage, opts ...any) (output string, err error) {
+    return input.Query, nil
+}
+```
+
+
+
+## 召回组件2—InputToRag  -> Retriever
+
+这里的详细在 《RAG召回实战2》讲了，这里就不赘述了
+
+需要注意的一点，在 orchestration.go 中，我们将输出放到了map\["documents"]中。从向量数据库中召回的内容，会放到一个map里面，并且其key为documents。value就是召回的内容
+
+```go
+_ = g.AddRetrieverNode(MilvusRetriever, Retriever, compose.WithOutputKey("documents"))
+```
+
+
+
+## 接收用户输入的组件—InputToChat  lambda node
+
+观察lambda的输入和输出，user message 是我们构造的。输出是一个map，这个map在chatTemplate里面会用到
+
+```python
+// newInputToChatLambda component initialization function of node 'InputToHistory' in graph 'EinoAgent'
+func newInputToChatLambda(ctx context.Context, input *UserMessage, opts ...any) (output map[string]any, err error) {
+    return map[string]any{
+       "content": input.Query,
+       "history": input.History,
+       "date":    time.Now().Format("2006-01-02 15:04:05"),
+    }, nil
+}
+```
+
+
+
+## 动态拼接上下文与对话历史Prompt构建—ChatTemplate
+
+我们先来观察一下ChatTemplate节点，它有两个输入，一个是InputToChat的输出，另一个是Retriever的输出。所以ChatTemplate的输入可以看作是前面两个节点输出的并集。分别是：
+
+* content : input.Query ---用户的输入
+
+* history : input.History ---历史的输入和输出
+
+* date : time.Now() ---当前时间
+
+* documents : \[]\*.schema.document ---召回的内容
+
+![](images/源码分析：对话Agent代码实现\(Go\)-c242462d9c798d97fe32a4269f8ce518.png)
+
+有了这个map，怎么用呢？我们继续往下看， `FormatType: schema.FString`  代表使用{}作为占位符。那么{date} {content} {documents} 这三个比较好理解，框架自动将这三个key的value填充进去。
+
+
+
+`history` 是什么意思,为什么没有加 `{}` 占位符呢？是因为history的值是 `[]*schema.Message` 类型。本质是自定义结构体切片，比如：
+
+```go
+"history": []*schema.Message{
+    {Role: "user", Content: "what is eino?"},
+    {Role: "assistant", Content: "eino is a great freamwork to build llm apps"}
+}
+```
+
+`MessagesPlaceholder` 的意思就是占位，如果map里面有history，直接将其value append进行即可。这里可能有点绕，什么是直接添加进去？
+
+注意这一行： `Templates: []schema.MessagesTemplate{}` ,说明 `Templates` 本质也是一个自定义结构体切片。所有直接添加进去的意思就是，把 `Templates` 和 `history` 这两个切片合并起来。从2个小切片合并成一个大切片。
+
+```go
+// newChatTemplate component initialization function of node 'ChatTemplate' in graph 'EinoAgent'
+func newChatTemplate(ctx context.Context) (ctp prompt.ChatTemplate, err error) {
+    config := &ChatTemplateConfig{
+       FormatType: schema.FString,
+       Templates: []schema.MessagesTemplate{
+          schema.SystemMessage(systemPrompt),
+          schema.MessagesPlaceholder("history", false),
+          schema.UserMessage("{content}"),
+       },
+    }
+    ctp = prompt.FromMessages(config.FormatType, config.Templates...)
+    return ctp, nil
+}
+
+var systemPrompt = `
+# 角色：对话小助手
+## 核心能力
+- 上下文理解与对话
+## 互动指南
+- 在回复前，请确保你：
+  • 完全理解用户的需求和问题，如果有不清楚的地方，要向用户确认
+## 输出要求：
+  • 易读，结构良好，必要时换行
+## 上下文信息
+- 当前日期：{date}
+- 相关文档：|-
+==== 文档开始 ====
+  {documents}
+==== 文档结束 ====
+`
+```
+
+
+
+## 让Agent学会"思考-行动"循环——ReAct组件
+
+![](images/源码分析：对话Agent代码实现\(Go\)-f160f40555a2390336e7bef332c0760d.png)
+
+就跟编排图中的ReAct组件一样，它有几个插口，我们需要给它装一个model，以及多个tool工具。
+
+这个 `react.NewAgent` 是eino框架提供的接口，我们不需要从0到1实现ReAct，只需要使用eino提供的sdk即可。（但是原理要知道，前面重点介绍了原理！本质就是通过大模型的输出来判断要不要调用工具）
+
+```go
+func newReactAgentLambda(ctx context.Context) (lba *compose.Lambda, err error) {
+    config := &react.AgentConfig{
+       MaxStep:            25,
+       ToolReturnDirectly: map[string]struct{}{}}
+    chatModelIns11, err := newChatModel(ctx)
+    if err != nil {
+       return nil, err
+    }
+    // 1. 安装模型
+    config.ToolCallingModel = chatModelIns11
+    mcpTool, err := tools.GetLogMcpTool()
+    if err != nil {
+       return nil, err
+    }
+    // 2. 安装工具
+    config.ToolsConfig.Tools = mcpTool
+    config.ToolsConfig.Tools = append(config.ToolsConfig.Tools, tools.NewPrometheusAlertsQueryTool())
+    config.ToolsConfig.Tools = append(config.ToolsConfig.Tools, tools.NewMysqlCrudTool())
+    config.ToolsConfig.Tools = append(config.ToolsConfig.Tools, tools.NewGetCurrentTimeTool())
+    config.ToolsConfig.Tools = append(config.ToolsConfig.Tools, tools.NewQueryInternalDocsTool())
+    // 3. 创建ReAct Agent
+    ins, err := react.NewAgent(ctx, config)
+    if err != nil {
+       return nil, err
+    }
+    lba, err = compose.AnyLambda(ins.Generate, ins.Stream, nil, nil)
+    if err != nil {
+       return nil, err
+    }
+    return lba, nil
+}
+```
+
+
+
+# 总结
+
+至此，对话Agent的核心流程RAG召回与ReAct模式的代码就讲完了。如果你一篇一篇看下来，会发现其实代码实现真的不难，而且也不重要，框架帮我们做了很多事情。 **核心是要搞懂我们的设计原理：RAG、ReAct。**

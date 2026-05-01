@@ -1,0 +1,211 @@
+| ![](images/源码分析：RAG代码实战1\(Java\)-3b954008b068c5ff42836afaaa834a69.png) | ![](images/源码分析：RAG代码实战1\(Java\)-b84313e9bba5352c278fe2720ff5e02f.png) |
+| ---------------------------------------------------------------------- | ---------------------------------------------------------------------- |
+
+
+
+# 前言
+
+本节我们来实现知识库Agent的上半部分，即将文件向量化后存储到数据库中。
+
+这部分代码在： `SuperBizAgent/src/main/java/org/example/service/VectorIndexService.java`
+
+![](images/源码分析：RAG代码实战1\(Java\)-a07efb00177ba68d5207d3bfd7b76d81.png)
+
+# 流程梳理
+
+我们的目标是将文件向量化后存储到数据库中，这里面具体步骤：
+
+1. 读取文件
+
+2. 切分文件
+
+3) 索引（Embedding和存储）
+
+
+
+## 读取文件
+
+我们直接传入文件路径path，调用Files.readString读取文件内容到内存
+
+```java
+// 读取文件
+String content = Files.readString(path);
+
+/**
+ * 索引单个文件
+ * 
+ * @param filePath 文件路径
+ * @throws Exception 索引失败时抛出异常
+ */
+public void indexSingleFile(String filePath) throws Exception {
+    // 1. 读取文件内容
+    String content = Files.readString(path);
+    logger.info("读取文件: {}, 内容长度: {} 字符", path, content.length());
+    // 2. 删除该文件的旧数据（如果存在）
+    deleteExistingData(path.toString());
+    // 3. 文档分片
+    List<DocumentChunk> chunks = chunkService.chunkDocument(content, path.toString());
+    logger.info("文档分片完成: {} -> {} 个分片", filePath, chunks.size());
+    // 4. 为每个分片生成向量并插入 Milvus
+    for (int i = 0; i < chunks.size(); i++) {
+        DocumentChunk chunk = chunks.get(i);
+        try {
+            // 生成向量
+            List<Float> vector = embeddingService.generateEmbedding(chunk.getContent());
+            // 构建元数据（包含文件信息）
+            Map<String, Object> metadata = buildMetadata(path.toString(), chunk, chunks.size());
+            // 插入到 Milvus
+            insertToMilvus(chunk.getContent(), vector, metadata, chunk.getChunkIndex());
+        }
+    }
+    logger.info("文件索引完成: {}, 共 {} 个分片", filePath, chunks.size());
+}
+```
+
+## 文件分块
+
+1. 第一层按照Markdown的标题#切分，将文档按照标题分割成多个章节Section
+
+2. 第二层对每个章节进行分配，如果章节小于MaxSize，则直接将这个章节作为一个分配。
+
+3) 如果章节大于MaxSize，则对段落边界进行切分
+
+4) 对于对段落边界进行切分的地方，还会根据Overlap，实现段落间内容重叠，来保持段落之间的上下文语义连贯
+
+```java
+// 文档分片
+List<DocumentChunk> chunks = chunkService.chunkDocument(content, path.toString());
+logger.info("文档分片完成: {} -> {} 个分片", filePath, chunks.size());
+// 核心实现
+public List<DocumentChunk> chunkDocument(String content, String filePath) {
+    List<DocumentChunk> chunks = new ArrayList<>();
+    // 1. 首先尝试按标题分割（Markdown格式）
+    List<Section> sections = splitByHeadings(content);
+    // 2. 对每个章节进行进一步分片
+    int globalChunkIndex = 0;
+    for (Section section : sections) {
+        List<DocumentChunk> sectionChunks = chunkSection(section, globalChunkIndex);
+        chunks.addAll(sectionChunks);
+        globalChunkIndex += sectionChunks.size();
+    }
+    logger.info("文档分片完成: {} -> {} 个分片", filePath, chunks.size());
+    return chunks;
+}
+// 对单个章节进行分片
+private List<DocumentChunk> chunkSection(Section section, int startChunkIndex) {
+    List<DocumentChunk> chunks = new ArrayList<>();
+    String content = section.content;
+    String title = section.title;
+    // 如果章节内容小于最大尺寸，直接作为一个分片
+    if (content.length() <= chunkConfig.getMaxSize()) {
+       //
+    }
+    // 章节内容较长，需要进一步分片
+    // 优先在段落边界分割
+    List<String> paragraphs = splitByParagraphs(content);
+    StringBuilder currentChunk = new StringBuilder();
+    int currentStartIndex = section.startIndex;
+    int chunkIndex = startChunkIndex;
+    for (String paragraph : paragraphs) {
+        // 如果当前分片加上新段落超过最大尺寸
+        if (currentChunk.length() > 0 && 
+            currentChunk.length() + paragraph.length() > chunkConfig.getMaxSize()) {
+            // 保存当前分片
+            // 开始新分片，包含重叠部分
+        }
+        currentChunk.append(paragraph).append("\n\n");
+    }
+    return chunks;
+}
+```
+
+## 文件索引(向量化和存储到数据库)
+
+1. 首先对所有分片进行向量化，获取向量数组
+
+2. 构造符合milvus表记录的结构体。id、content、vector、metadata
+
+3) 构造完记录后，插入到数据库中
+
+```java
+// 4. 为每个分片生成向量并插入 Milvus
+for (int i = 0; i < chunks.size(); i++) {
+    DocumentChunk chunk = chunks.get(i);
+    try {
+        // 生成向量
+        List<Float> vector = embeddingService.generateEmbedding(chunk.getContent());
+        // 构建元数据（包含文件信息）
+        Map<String, Object> metadata = buildMetadata(path.toString(), chunk, chunks.size());
+        // 插入到 Milvus
+        insertToMilvus(chunk.getContent(), vector, metadata, chunk.getChunkIndex());
+        logger.info("✓ 分片 {}/{} 索引成功", i + 1, chunks.size());
+    }
+}
+/**
+ * 生成向量嵌入
+ * 调用阿里云 DashScope Text Embedding API
+ * 
+ * @param content 文本内容
+ * @return 向量嵌入（浮点数列表）
+ */
+public List<Float> generateEmbedding(String content) {
+    try {
+        // 构建请求参数
+        TextEmbeddingParam param = TextEmbeddingParam
+                .builder()
+                .model(model)
+                .texts(Collections.singletonList(content))
+                .build();
+        // 调用 API
+        TextEmbeddingResult result = textEmbedding.call(param);
+        // 检查结果
+        List<Float> floatEmbedding = getFloats(result);
+        return floatEmbedding;
+    }
+}
+
+/**
+ * 插入向量到 Milvus
+ */
+private void insertToMilvus(String content, List<Float> vector, 
+                            Map<String, Object> metadata, int chunkIndex) throws Exception {
+    try {
+        // 生成唯一 ID（使用 _source + 分片索引）
+        String source = (String) metadata.get("_source");
+        String id = UUID.nameUUIDFromBytes((source + "_" + chunkIndex).getBytes()).toString();
+        // 构建字段数据
+        List<InsertParam.Field> fields = new ArrayList<>();
+        // ID 字段
+        fields.add(new InsertParam.Field("id", Collections.singletonList(id)));
+        // content 字段
+        fields.add(new InsertParam.Field("content", Collections.singletonList(content)));
+        // vector 字段
+        fields.add(new InsertParam.Field("vector", Collections.singletonList(vector)));
+        // metadata 字段（JSON 对象）
+        com.google.gson.Gson gson = new com.google.gson.Gson();
+        com.google.gson.JsonObject metadataJson = gson.toJsonTree(metadata).getAsJsonObject();
+        fields.add(new InsertParam.Field("metadata", Collections.singletonList(metadataJson)));
+        // 构建插入参数
+        InsertParam insertParam = InsertParam.newBuilder()
+                .withCollectionName(MilvusConstants.MILVUS_COLLECTION_NAME)
+                .withFields(fields)
+                .build();
+        // 执行插入
+        R<MutationResult> insertResponse = milvusClient.insert(insertParam);
+        if (insertResponse.getStatus() != 0) {
+            throw new RuntimeException("插入向量失败: " + insertResponse.getMessage());
+        }
+        logger.debug("向量插入成功: id={}, source={}, chunk={}", id, source, chunkIndex);
+    } catch (Exception e) {
+        logger.error("插入向量到 Milvus 失败", e);
+        throw e;
+    }
+}
+```
+
+# 总结
+
+到这里，提问前数据准备的三个流程就讲完了。其实代码实现并不难，核心是要搞懂这3个步骤里面都做了什么事情，以及代码是怎么讲流程串联起来的。
+
+
+

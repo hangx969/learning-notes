@@ -1,0 +1,190 @@
+# 对话接口
+
+与大模型对话，相同Id的对话带有上下文记忆功能
+
+**请求方法&#x20;**: `POST /api/chat`
+
+**请求字段:**
+
+| 字段名      | 类型     | 描述      |
+| -------- | ------ | ------- |
+| Id       | string | 对话的唯一标识 |
+| Question | string | 用户提问    |
+
+**响应字段:**
+
+| 字段名    | 类型     | 描述   |
+| ------ | ------ | ---- |
+| Answer | string | 系统回答 |
+
+**示例：**
+
+```bash
+# 示例：快速对话
+curl -X POST http://localhost:6872/api/chat \
+  -H "Content-Type: application/json" \
+  -d '{
+    "Id": "session-001",
+    "Question": "什么是人工智能？"
+  }'
+  
+# 响应
+{
+  "message": "OK",
+  "data": {
+    "answer": "AI 的回答内容..."
+  }
+}
+```
+
+
+
+# 流式对话接口
+
+与大模型对话，相同Id的对话带有上下文记忆功能，通过SSE实现流式输出回答
+
+**请求方法&#x20;**: `POST /api/chat_stream`
+
+**请求字段:**
+
+| 字段名      | 类型     | 描述      |
+| -------- | ------ | ------- |
+| Id       | string | 对话的唯一标识 |
+| Question | string | 用户提问    |
+
+**响应字段:**
+
+| 字段名 | 类型 | 描述 |
+| --- | -- | -- |
+|     |    |    |
+
+**SSE响应格式：**
+
+| event类型   | 含义            |
+| --------- | ------------- |
+| connected | 代表连接建立成功      |
+| message   | 回复的文本片段，会多次发送 |
+| error     | 连接异常，断开连接     |
+| done      | 消息推送完毕，断开连接   |
+
+示例：
+
+```bash
+# 示例：流式对话
+curl -X POST http://localhost:6872/api/chat_stream \
+  -H "Content-Type: application/json" \
+  -d '{
+    "Id": "session-001",
+    "Question": "什么是人工智能？"
+  }'
+  
+# 响应  
+id: <timestamp>
+event: connected
+data: {"status": "connected", "client_id": "session-001"}
+
+id: <timestamp>
+event: message
+data: 人工智能（AI）
+
+id: <timestamp>
+event: message
+data: 的发展历史
+
+id: <timestamp>
+event: message
+data: 可以追溯到...
+
+id: <timestamp>
+event: done
+data: Stream completed
+```
+
+
+
+
+
+# AI运维接口
+
+AI运维接口，调用后会自动查询现在活跃的告警，并判断根因
+
+**请求方法&#x20;**: `POST /api/ai_ops`
+
+**请求字段:**
+
+| 字段名 | 类型 | 描述 |
+| --- | -- | -- |
+|     |    |    |
+
+**响应字段:**
+
+| 字段名    | 类型        | 描述     |
+| ------ | --------- | ------ |
+| Result | string    | 结果     |
+| Detail | \[]string | 详细信息列表 |
+
+**示例：**
+
+```bash
+curl -X POST http://localhost:6872/api/ai_ops \
+  -H "Content-Type: application/json"
+  
+# 响应
+{
+  "message": "OK",
+  "data": {
+    "result": "汇总的分析结果...",
+    "detail": [
+      "执行步骤1...",
+      "执行步骤2...",
+      "..."
+    ]
+  }
+} 
+ 
+```
+
+
+
+# 文件上传接口
+
+该接口用于上传文档到知识库中，便于后续召回使用
+
+**请求方法：&#x20;**`POST` `/api` `/upload` （ `multipart/form-data` ）
+
+`multipart/form-data` ：是 HTTP 请求的一种内容类型（Content-Type），用于在表单中上传文件或二进制数据。
+
+**请求字段：**
+
+| 字段名 | 类型 | 描述 |
+| --- | -- | -- |
+|     |    |    |
+
+**响应字段：**
+
+| 字段名      | 类型     | 描述       |
+| -------- | ------ | -------- |
+| fileName | string | 保存的文件名   |
+| filePath | string | 文件保存路径   |
+| fileSize | int64  | 文件大小（字节） |
+
+**示例：**
+
+```bash
+# 用curl上传一个 Markdown 文件
+# -F 参数会自动设置 multipart/form-data 格式
+# @ 符号后面跟文件的绝对路径或相对路径
+curl -X POST http://localhost:6872/api/upload \
+  -F "file=@README.md"
+  
+# 响应
+ {
+  "message": "OK",
+  "data": {
+    "fileName": "README.md",
+    "filePath": "/path/to/saved/file/example.txt",
+    "fileSize": 1024
+  }
+}
+```
+

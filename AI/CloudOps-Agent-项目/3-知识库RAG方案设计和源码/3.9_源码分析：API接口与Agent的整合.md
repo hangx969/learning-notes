@@ -1,0 +1,310 @@
+项目使用goframe作为web框架，如果想了解API定义到提供服务的流程，先看： [ 使用goframe框架3分钟实现一个http接口（Go）](https://my.feishu.cn/wiki/Pibrwnm9qiKVRAkgYERciBfhnne)
+
+# 文件上传接口的定义
+
+该接口用于上传文档到知识库中，便于后续召回使用
+
+**请求方法：&#x20;**`POST` `/api` `/upload` （ `multipart/form-data` ）
+
+`multipart/form-data` ：是 HTTP 请求的一种内容类型（Content-Type）， **<span style="color: inherit; background-color: rgba(255,246,122,0.8)">用于在表单中上传文件或二进制数据。</span>**
+
+**请求字段：**
+
+| 字段名 | 类型 | 描述 |
+| --- | -- | -- |
+|     |    |    |
+
+**响应字段：**
+
+| 字段名      | 类型     | 描述       |
+| -------- | ------ | -------- |
+| fileName | string | 保存的文件名   |
+| filePath | string | 文件保存路径   |
+| fileSize | int64  | 文件大小（字节） |
+
+**示例：**
+
+```bash
+# 用curl上传一个 Markdown 文件
+# -F 参数会自动设置 multipart/form-data 格式
+# @ 符号后面跟文件的绝对路径或相对路径
+curl -X POST http://localhost:6872/api/upload \
+  -F "file=@README.md"
+  
+# 响应
+ {
+  "message": "OK",
+  "data": {
+    "fileName": "README.md",
+    "filePath": "/path/to/saved/file/example.txt",
+    "fileSize": 1024
+  }
+}
+```
+
+
+
+# 文件上传接口的核心实现(Go)
+
+代码路径： `SuperBizAgent/internal/controller/chat/chat_v1_file_upload.go`
+
+1. 首先将用户上传到文件保存到本地
+
+2. `buildIntoIndex` 然后去数据库中查找是否有元数据一样的文件，如果一样，则说明用户是 更新文档，则先删除原来的数据。
+
+3) 调用 `knowledge_index_pipeline.BuildKnowledgeIndexing(ctx)` 创建知识库Agent的执行器
+
+4) 调用 `r.Invoke` 执行Agent，将文件向量化。（ `BuildKnowledgeIndexing` 在《RAG代码实战1》里有详细解释）
+
+5. 最后构造返回结构体返回请求
+
+```go
+func (c *ControllerV1) FileUpload(ctx context.Context, req *v1.FileUploadReq) (res *v1.FileUploadRes, err error) {
+    // 从请求中获取上传的文件
+    r := g.RequestFromCtx(ctx)
+    uploadFile := r.GetUploadFile("file")
+    if uploadFile == nil {
+       return nil, gerror.New("请上传文件")
+    }
+    // 确保保存目录存在
+    if !gfile.Exists(common.FileDir) {
+       if err := gfile.Mkdir(common.FileDir); err != nil {
+          return nil, gerror.Wrapf(err, "创建目录失败: %s", common.FileDir)
+       }
+    }
+    // 获取原始文件名
+    newFileName := uploadFile.Filename
+    // 完整的保存路径
+    savePath := filepath.Join(common.FileDir)
+    // 保存文件
+    _, err = uploadFile.Save(savePath, false)
+    if err != nil {
+       return nil, gerror.Wrapf(err, "保存文件失败")
+    }
+    // 获取文件信息
+    fileInfo, err := os.Stat(savePath)
+    if err != nil {
+       return nil, gerror.Wrapf(err, "获取文件信息失败")
+    }
+    res = &v1.FileUploadRes{
+       FileName: newFileName,
+       FilePath: savePath,
+       FileSize: fileInfo.Size(),
+    }
+    err = buildIntoIndex(ctx, common.FileDir+"/"+newFileName)
+    if err != nil {
+       return nil, gerror.Wrapf(err, "构建知识库失败")
+    }
+    return res, nil
+}
+
+func buildIntoIndex(ctx context.Context, path string) error {
+    r, err := knowledge_index_pipeline.BuildKnowledgeIndexing(ctx)
+    // 删除biz数据metadata中_source一样的数据
+    loader, err := loader2.NewFileLoader(ctx)
+    if err != nil {
+       return err
+    }
+    // 加载文件到内存
+    docs, err := loader.Load(ctx, document.Source{URI: path})
+    if err != nil {
+       return err
+    }
+    cli, err := client.NewMilvusClient(ctx)
+    if err != nil {
+       return err
+    }
+    // 查询所有metadata中_source一样的数据并删除
+    expr := fmt.Sprintf(`metadata["_source"] == "%s"`, docs[0].MetaData["_source"])
+    queryResult, err := cli.Query(ctx, common.MilvusCollectionName, []string{}, expr, []string{"id"})
+    if err != nil {
+       return err
+    } else if len(queryResult) > 0 {
+       // 提取所有需要删除的id
+       var idsToDelete []string
+       for _, column := range queryResult {
+          if column.Name() == "id" {
+             for i := 0; i < column.Len(); i++ {
+                id, err := column.GetAsString(i)
+                if err == nil {
+                   idsToDelete = append(idsToDelete, id)
+                }
+             }
+          }
+       }
+       // 删除这些数据
+       if len(idsToDelete) > 0 {
+          deleteExpr := fmt.Sprintf(`id in ["%s"]`, strings.Join(idsToDelete, `","`))
+          err = cli.Delete(ctx, common.MilvusCollectionName, "", deleteExpr)
+          if err != nil {
+             fmt.Printf("[warn] delete existing data failed: %v\n", err)
+          } else {
+             fmt.Printf("[info] deleted %d existing records with _source: %s\n", len(idsToDelete), docs[0].MetaData["_source"])
+          }
+       }
+    }
+    // 重新构建
+    ids, err := r.Invoke(ctx, document.Source{URI: path}, compose.WithCallbacks(log_call_back.LogCallback(nil)))
+    if err != nil {
+       return fmt.Errorf("invoke index graph failed: %w", err)
+    }
+    fmt.Printf("[done] indexing file: %s, len of parts: %d\n", path, len(ids))
+    return nil
+}
+```
+
+
+
+# 文件上传接口的核心实现(Java)
+
+代码路径：SuperBizAgent/src/main/java/org/example/controller/FileUploadController.java
+
+1. 首先将用户上传到文件保存到本地
+
+2. 调用vectorIndexService.indexSingleFile对文件进行索引存储
+
+3) 最后构造返回结构体返回请求
+
+```typescript
+@PostMapping(value = "/api/upload", consumes = "multipart/form-data")
+public ResponseEntity<?> upload(@RequestParam("file") MultipartFile file) {
+    try {
+        // 1. 首先将用户上传到文件保存到本地
+        Files.copy(file.getInputStream(), filePath);
+        logger.info("文件上传成功: {}", filePath);
+        // 文件上传成功后，自动调用向量索引服务
+        try {
+            logger.info("开始为上传文件创建向量索引: {}", filePath);
+            vectorIndexService.indexSingleFile(filePath.toString());
+            logger.info("向量索引创建成功: {}", filePath);
+        }
+        FileUploadRes response = new FileUploadRes(
+                originalFilename,
+                filePath.toString(),
+                file.getSize()
+        );
+        return ResponseEntity.ok(apiResponse);
+    }
+}
+
+public void indexSingleFile(String filePath) throws Exception {
+    // 1. 读取文件内容
+    String content = Files.readString(path);
+    logger.info("读取文件: {}, 内容长度: {} 字符", path, content.length());
+    // 2. 删除该文件的旧数据（如果存在）
+    deleteExistingData(path.toString());
+    // 3. 文档分片
+    List<DocumentChunk> chunks = chunkService.chunkDocument(content, path.toString());
+    logger.info("文档分片完成: {} -> {} 个分片", filePath, chunks.size());
+    // 4. 为每个分片生成向量并插入 Milvus
+    for (int i = 0; i < chunks.size(); i++) {
+        DocumentChunk chunk = chunks.get(i);
+        try {
+            // 生成向量
+            List<Float> vector = embeddingService.generateEmbedding(chunk.getContent());
+            // 构建元数据（包含文件信息）
+            Map<String, Object> metadata = buildMetadata(path.toString(), chunk, chunks.size());
+            // 插入到 Milvus
+            insertToMilvus(chunk.getContent(), vector, metadata, chunk.getChunkIndex());
+        }
+    }
+    logger.info("文件索引完成: {}, 共 {} 个分片", filePath, chunks.size());
+}
+```
+
+# 文件上传接口的核心实现（Python）
+
+代码路径：app/api/file.py
+
+1. 验证文件名和扩展名（只允许 .txt / .md），规范化文件名（空格转下划线，过滤特殊字符）
+
+1) 将文件内容保存到本地 uploads/ 目录，如果同名文件已存在则先删除（覆盖更新）
+
+1. 调用 vector\_index\_service.index\_single\_file 对文件进行向量化索引存储
+
+1) 构造响应结构体返回请求
+
+```python
+@router.post("/upload")
+async def upload_file(file: UploadFile = File(...)):
+    # 1. 验证文件名
+    if not file.filename:
+        raise HTTPException(status_code=400, detail="文件名不能为空")
+
+    # 2. 规范化文件名（去除空格和特殊字符）
+    safe_filename = _sanitize_filename(file.filename)
+
+    # 3. 验证文件扩展名（仅支持 txt / md）
+    file_extension = _get_file_extension(safe_filename)
+    if file_extension not in ALLOWED_EXTENSIONS:
+        raise HTTPException(status_code=400, detail=f"不支持的文件格式，仅支持: {', '.join(ALLOWED_EXTENSIONS)}")
+
+    # 4. 确保上传目录存在
+    UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
+
+    # 5. 保存文件（如果已存在则覆盖）
+    file_path = UPLOAD_DIR / safe_filename
+    if file_path.exists():
+        logger.info(f"文件已存在，将覆盖: {file_path}")
+        file_path.unlink()
+
+    content = await file.read()
+    if len(content) > MAX_FILE_SIZE:  # 最大 10MB
+        raise HTTPException(status_code=400, detail="文件大小超过限制（最大 10MB）")
+
+    file_path.write_bytes(content)
+    logger.info(f"文件上传成功: {file_path}")
+
+    # 6. 自动创建向量索引（即使索引失败文件上传依然成功）
+    try:
+        vector_index_service.index_single_file(str(file_path))
+        logger.info(f"向量索引创建成功: {file_path}")
+    except Exception as e:
+        logger.error(f"向量索引创建失败: {file_path}, 错误: {e}")
+
+    # 7. 返回响应
+    return JSONResponse(status_code=200, content={
+        "code": 200,
+        "message": "success",
+        "data": {
+            "filename": safe_filename,
+            "file_path": str(file_path),
+            "size": len(content),
+        },
+    })
+```
+
+index\_single\_file 是向量索引的核心，接收文件路径后完成读取 → 删旧 → 分片 → 入库全流程：
+
+```python
+def index_single_file(self, file_path: str):
+    path = Path(file_path).resolve()
+
+    # 1. 读取文件内容
+    content = path.read_text(encoding="utf-8")
+    logger.info(f"读取文件: {path}, 内容长度: {len(content)} 字符")
+
+    # 2. 删除该文件的旧数据（按 metadata["_source"] 匹配删除）
+    normalized_path = path.as_posix()
+    vector_store_manager.delete_by_source(normalized_path)
+
+    # 3. 文档分片（Markdown 按标题两阶段切分 + 合并小片）
+    documents = document_splitter_service.split_document(content, normalized_path)
+    logger.info(f"文档分割完成: {file_path} -> {len(documents)} 个分片")
+
+    # 4. 批量向量化并写入 Milvus（LangChain 自动处理，无需手动循环）
+    if documents:
+        vector_store_manager.add_documents(documents)
+        logger.info(f"文件索引完成: {file_path}, 共 {len(documents)} 个分片")
+```
+
+
+
+
+
+
+
+
+
+
+

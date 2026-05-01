@@ -1,0 +1,68 @@
+![](images/源码分析：运维Agent代码实现\(Java\)-27ea0522204dee9bf18b248eaedc2ecd.png)
+
+# 前言
+
+关键代码：SuperBizAgent/src/main/java/org/example/service/AiOpsService.java
+
+![](images/源码分析：运维Agent代码实现\(Java\)-c1b0d24eca7ab84db06d141679cfff36.png)
+
+# 流程梳理
+
+运维Agent的核心目标是 规划->执行->评估->调整。整体流程就是三个步骤：
+
+1. **Planer：拆解排查步骤**
+
+2. **Executer：执行计划第一步**
+
+3) **Replaner：评估结果并调整计划**
+
+![](images/源码分析：运维Agent代码实现\(Java\)-958831379f44191f0911623c71062d66.png)
+
+# 实战
+
+## 创建Plan、Executer Agent
+
+1. 首先我们先使用Spring AI创建两个ReAct类型的Agent
+
+2. Replanner可以创建新的Agent，也可以复用Plan Agent。因为他们两个做的事情都是规划，我们代码简单点，复用Plan
+
+
+
+## 构建 Supervisor Agent
+
+Plan- Execute设计模式本质上就是多个Agent进行协作，这里我们使用框架里的Supervisor来完成。
+
+Multi-agent： https://java2ai.com/docs/frameworks/agent-framework/advanced/multi-agent
+
+![](images/源码分析：运维Agent代码实现\(Java\)-a750f0ae3aea8759e844dd69b1160db9.png)
+
+使用框架的 Supervisor Agent 能力，可以自动的帮助我们管理Plan Agent和Executor Agent之间的执行扭转
+
+
+
+## Plan Agent Prompt
+
+## Executor Agent Prompt
+
+## Supervisor Agent Prompt
+
+
+
+# 总结
+
+通过上面的分析，我们已经了解了Planner、Executer、Replanner的作用和相关prompt。但是你可能会有一种意犹未尽的感觉，因为我们在这里全部都是调用sdk，实际代码只是组装而已。不要慌，我们再回过头来看看Plan-Execute-Replan的流程。
+
+1. 首先用Planner Agent生成了一份计划
+
+2. 将计划发送给Executor Agent，让Executor按照计划执行
+
+3) 每次执行完，都将计划和执行结果一起发送给Replanner评估
+
+4) Replanner评估后决定修改计划还是决定已完成
+
+其实 Planner、Executer、Replanner 之间的交互逻辑很简单，就是上面的4个步骤，只要你搞明白了这4个步骤。我们自己用代码实现这个workflow流程也很简单， **<span style="color: inherit; background-color: rgba(255,246,122,0.8)">其核心就是流程控制，与Plan对象在整个流程中的传递而已。</span>**
+
+所以无需担心，面试会问到的所有细节，在面试攻略篇章全部为你准备好了。（想想gorm，jdbc这些数据库sdk，我们也只是使用而已，会用即可，只要八股文准备的好，无需紧张～）
+
+![](images/源码分析：运维Agent代码实现\(Java\)-958831379f44191f0911623c71062d66-1.png)
+

@@ -1,0 +1,101 @@
+![](images/源码分析：运维Agent代码实现\(Python\)-27ea0522204dee9bf18b248eaedc2ecd.png)
+
+# 前言
+
+关键代码： `app/agent/aiops/` 目录下的 `state.py` 、 `planner.py` 、 `executor.py` 、 `replanner.py` ，以及 `app/services/aiops_service.py` 。
+
+![](images/源码分析：运维Agent代码实现\(Python\)-c1b0d24eca7ab84db06d141679cfff36.png)
+
+# 流程梳理
+
+运维 Agent 的核心目标是 **规划 → 执行 → 评估 → 调整&#x20;**。整体流程就是三个节点：
+
+1. **Planner&#x20;**：拆解排查步骤，生成执行计划
+
+1) **Executor&#x20;**：从计划中取出第一个步骤，调用工具执行
+
+1. **Replanner&#x20;**：评估执行结果，决定继续、调整计划还是生成最终报告
+
+三个节点通过 LangGraph `StateGraph` 串联，共享同一份 `PlanExecuteState` 状态对象在整个流程中传递。
+
+![](images/源码分析：运维Agent代码实现\(Python\)-958831379f44191f0911623c71062d66.png)
+
+# 实战
+
+## 状态定义
+
+整个 Plan-Execute-Replan 流程的数据流通过 `PlanExecuteState` 承载，字段设计非常简洁：
+
+`past_steps` 使用 `Annotated[List[tuple], operator.add]` 声明，LangGraph 会将每次节点返回的 `past_steps` 自动追加到列表中，而不是覆盖，无需手动维护历史。
+
+### Planner 节点
+
+Planner 负责制定执行计划，输出一个结构化的步骤列表。核心流程：
+
+1. 先调用 `retrieve_knowledge` 查询知识库，寻找历史经验文档
+
+1) 获取所有可用工具（本地工具 + MCP 工具），格式化为文字描述
+
+1. 将工具列表和经验文档注入 prompt，调用 LLM 生成结构化计划
+
+计划的输出格式用 Pydantic `Plan` 模型约束，通过 `llm.with_structured_output(Plan)` 保证 LLM 的输出可以直接解析为步骤列表：
+
+### Planner Prompt
+
+Planner 的系统提示词要求模型将任务分解为逻辑独立的步骤，每步指明使用哪个工具及所需参数。如果查到了经验文档，也会作为参考注入：
+
+### Executor 节点
+
+Executor 每次只执行计划中的 **第一个步骤&#x20;**，使用 LangGraph 的 `ToolNode` 自动处理工具调用，执行完后将该步骤从 `plan` 中移除，并将执行结果追加到 `past_steps` ：
+
+### Replanner 节点
+
+Replanner 根据原始任务、已执行步骤和剩余计划做出三选一的决策：
+
+| 决策         | 含义            | 触发条件                  |
+| ---------- | ------------- | --------------------- |
+| `respond`  | 信息充足，立即生成最终报告 | 最高优先级，已执行 ≥ 3 步且有关键信息 |
+| `continue` | 当前计划合理，继续执行   | 剩余步骤确实必要              |
+| `replan`   | 调整计划，替换剩余步骤   | 最低优先级，计划有重大偏差时才使用     |
+
+决策同样用 Pydantic 模型约束输出：
+
+Replanner 核心逻辑（含安全限制）：
+
+当决定 `respond` 时， `_generate_response` 会整理所有执行历史，生成结构化的 Markdown 报告：
+
+### 构建 LangGraph 工作流
+
+三个节点通过 `StateGraph` 连接， `replanner` 之后根据状态中是否存在 `response` 进行条件路由：
+
+工作流结构如下：
+
+### 执行工作流（流式输出）
+
+`AIOpsService.execute` 使用 `graph.astream(stream_mode="updates")` 流式执行，每个节点完成后立即产生事件，可以实时推送给前端展示执行进度：
+
+流式事件类型说明：
+
+| `type`          | `stage`         | 含义                |
+| --------------- | --------------- | ----------------- |
+| `plan`          | `plan_created`  | Planner 生成了执行计划   |
+| `step_complete` | `step_executed` | Executor 执行完一个步骤  |
+| `report`        | `final_report`  | Replanner 生成了最终报告 |
+| `status`        | 各节点名            | 节点运行中的状态通知        |
+| `complete`      | `complete`      | 整个工作流结束           |
+| `error`         | `error`         | 执行出错              |
+
+# 总结
+
+通过上面的分析，我们已经了解了 Planner、Executor、Replanner 的作用和相关 prompt。代码的核心是 LangGraph 的 `StateGraph` 管理节点间的状态流转， `PlanExecuteState` 在整个流程中传递，三个节点各司其职：
+
+1. Planner 查询知识库获取经验，生成结构化步骤列表
+
+1) Executor 取出第一步，通过 `ToolNode` 自动执行工具调用，返回结果并移除该步
+
+1. Replanner 评估已执行结果，决定是继续、调整还是收敛生成最终报告
+
+框架帮我们处理了节点间的数据传递、条件路由和流式输出，核心还是要搞懂设计原理： **Plan-Execute-Replan 本质上是一个带反馈的闭环调度器&#x20;**，Replanner 的收敛策略决定了整个流程的质量与效率。
+
+![](images/源码分析：运维Agent代码实现\(Python\)-958831379f44191f0911623c71062d66-1.png)
+

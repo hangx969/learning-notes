@@ -1,0 +1,99 @@
+| ![](images/源码分析：RAG召回实战2\(Java\)-3b954008b068c5ff42836afaaa834a69.png) | ![](images/源码分析：RAG召回实战2\(Java\)-b84313e9bba5352c278fe2720ff5e02f.png) |
+| ---------------------------------------------------------------------- | ---------------------------------------------------------------------- |
+
+# 前言
+
+上一节我们实现了知识库Agent的上半部分，这一节我们来实现知识库的召回功能。
+
+核心代码： `SuperBizAgent/src/main/java/org/example/service/VectorSearchService.java`
+
+![](images/源码分析：RAG召回实战2\(Java\)-74330c4b0863995ad7e8c4eeae40fcc3.png)
+
+# 召回
+
+我们之前是将文档存储到了Milvus向量数据库里面，所以召回的时候也是从这个数据库去查询。
+
+1. 将 查询文本 向量化
+
+2. 相似度查询
+
+```java
+/**
+ * 搜索相似文档
+ * 
+ * @param query 查询文本
+ * @param topK 返回最相似的K个结果
+ * @return 搜索结果列表
+ */
+public List<SearchResult> searchSimilarDocuments(String query, int topK) {
+    try {
+        logger.info("开始搜索相似文档, 查询: {}, topK: {}", query, topK);
+        // 1. 将查询文本向量化
+        List<Float> queryVector = embeddingService.generateQueryVector(query);
+        // 2. 构建搜索参数
+        SearchParam searchParam = SearchParam.newBuilder()build();
+        // 3. 执行搜索
+        R<SearchResults> searchResponse = milvusClient.search(searchParam);
+        // 4. 解析搜索结果
+        SearchResultsWrapper wrapper = new SearchResultsWrapper(searchResponse.getData().getResults());
+        List<SearchResult> results = new ArrayList<>();
+        for (int i = 0; i < wrapper.getRowRecords(0).size(); i++) {
+            ///            
+            results.add(result);
+        }
+        return results;
+    }
+}
+```
+
+首先我们对问题进行向量化，按照Spring AI 的sdk要求，拼接请求参数，然后调用
+
+```java
+/**
+ * 生成向量嵌入
+ * 调用阿里云 DashScope Text Embedding API
+ * 
+ * @param content 文本内容
+ * @return 向量嵌入（浮点数列表）
+ */
+public List<Float> generateEmbedding(String content) {
+    try {
+        // 构建请求参数
+        TextEmbeddingParam param = TextEmbeddingParam
+                .builder()
+                .model(model)
+                .texts(Collections.singletonList(content))
+                .build();
+        // 调用 API
+        TextEmbeddingResult result = textEmbedding.call(param);
+        // 检查结果
+        List<Float> floatEmbedding = getFloats(result);
+        return floatEmbedding;
+    } 
+}
+```
+
+然后我们使用Milvus的sdk，进行相似度，获取相似的向量数据
+
+```java
+// 2. 构建搜索参数
+SearchParam searchParam = SearchParam.newBuilder()
+        .withCollectionName(MilvusConstants.MILVUS_COLLECTION_NAME)
+        .withVectorFieldName("vector")
+        .withVectors(Collections.singletonList(queryVector))
+        .withTopK(topK)
+        .withMetricType(io.milvus.param.MetricType.L2)
+        .withOutFields(List.of("id", "content", "metadata"))
+        .withParams("{\"nprobe\":10}")
+        .build();
+
+// 3. 执行搜索
+R<SearchResults> searchResponse = milvusClient.search(searchParam);
+```
+
+
+
+# 总结
+
+至此，RAG的 `分片、索引、召回` 功能我们都实现完了。后续会介绍其他Agent是怎么使用知识库，怎么结合 **召回&#x20;**&#x6765;与大模型进行交互的。
+

@@ -1,0 +1,597 @@
+项目使用goframe作为web框架，如果想了解API定义到提供服务的流程，先看： [ 使用goframe框架3分钟实现一个http接口（Go）](https://my.feishu.cn/wiki/Pibrwnm9qiKVRAkgYERciBfhnne)
+
+# 对话接口的定义
+
+## 快速对话接口
+
+与大模型对话，相同Id的对话带有上下文记忆功能
+
+**请求方法&#x20;**: `POST /api/chat`
+
+**请求字段:**
+
+| 字段名      | 类型     | 描述      |
+| -------- | ------ | ------- |
+| Id       | string | 对话的唯一标识 |
+| Question | string | 用户提问    |
+
+**响应字段:**
+
+| 字段名    | 类型     | 描述   |
+| ------ | ------ | ---- |
+| Answer | string | 系统回答 |
+
+**示例：**
+
+```bash
+# 示例：快速对话
+curl -X POST http://localhost:6872/api/chat \
+  -H "Content-Type: application/json" \
+  -d '{
+    "Id": "session-001",
+    "Question": "什么是人工智能？"
+  }'
+  
+# 响应
+{
+  "message": "OK",
+  "data": {
+    "answer": "AI 的回答内容..."
+  }
+}
+```
+
+
+
+## 流式对话接口
+
+与大模型对话，相同Id的对话带有上下文记忆功能，通过SSE实现流式输出回答
+
+**请求方法&#x20;**: `POST /api/chat_stream`
+
+**请求字段:**
+
+| 字段名      | 类型     | 描述      |
+| -------- | ------ | ------- |
+| Id       | string | 对话的唯一标识 |
+| Question | string | 用户提问    |
+
+**响应字段:**
+
+| 字段名 | 类型 | 描述 |
+| --- | -- | -- |
+|     |    |    |
+
+**SSE响应格式：**
+
+| event类型   | 含义            |
+| --------- | ------------- |
+| connected | 代表连接建立成功      |
+| message   | 回复的文本片段，会多次发送 |
+| error     | 连接异常，断开连接     |
+| done      | 消息推送完毕，断开连接   |
+
+示例：
+
+```bash
+# 示例：流式对话
+curl -X POST http://localhost:6872/api/chat_stream \
+  -H "Content-Type: application/json" \
+  -d '{
+    "Id": "session-001",
+    "Question": "什么是人工智能？"
+  }'
+  
+# 响应  
+id: <timestamp>
+event: connected
+data: {"status": "connected", "client_id": "session-001"}
+
+id: <timestamp>
+event: message
+data: 人工智能（AI）
+
+id: <timestamp>
+event: message
+data: 的发展历史
+
+id: <timestamp>
+event: message
+data: 可以追溯到...
+
+id: <timestamp>
+event: done
+data: Stream completed
+```
+
+
+
+# 快速对话接口的核心实现(Go)
+
+代码路径： `SuperBizAgent/internal/controller/chat/chat_v1_chat.go`
+
+1. 根据用户id查询历史对话，并构造用户消息结构体
+
+2. 创建对话Agent的执行器
+
+3) 执行对话Agent，获得大模型的返回消息
+
+4) 将本轮对话的问题和答案存入记忆系统中
+
+5. 构造结构体，返回消息
+
+```go
+func (c *ControllerV1) Chat(ctx context.Context, req *v1.ChatReq) (res *v1.ChatRes, err error) {
+    id := req.Id
+    msg := req.Question
+    // 1. 构造结构体
+    userMessage := &chat_pipeline.UserMessage{
+       ID:      id,
+       Query:   msg,
+       History: mem.GetSimpleMemory(id).GetMessages(),
+    }
+    // 2. 创建对话Agent的执行器
+    runner, err := chat_pipeline.BuildChatAgent(ctx)
+    if err != nil {
+       return nil, err
+    }
+    // 3. 执行
+    out, err := runner.Invoke(ctx, userMessage, compose.WithCallbacks(log_call_back.LogCallback(nil)))
+    if err != nil {
+       return nil, err
+    }
+
+    // 4. 将本轮对话存入系统
+    mem.GetSimpleMemory(id).SetMessages(schema.UserMessage(msg))
+    mem.GetSimpleMemory(id).SetMessages(schema.SystemMessage(out.Content))
+    
+    // 5. 返回消息
+    res = &v1.ChatRes{
+       Answer: out.Content,
+    }
+    return res, nil
+}
+
+func (c *SimpleMemory) SetMessages(msg *schema.Message) {
+    c.mu.Lock()
+    defer c.mu.Unlock()
+    c.Messages = append(c.Messages, msg)
+    // TODO 这里可以考虑对前面的对话进行总结，压缩
+    if len(c.Messages) > c.MaxWindowSize {
+       // 只保留最近的，把前面的丢掉
+       c.Messages = c.Messages[len(c.Messages)-c.MaxWindowSize-1:]
+    }
+}
+func (c *SimpleMemory) GetMessages() []*schema.Message {
+    c.mu.Lock()
+    defer c.mu.Unlock()
+
+    return c.Messages
+}
+```
+
+
+
+# 流式对话接口的核心实现(Go)
+
+sse返回的消息event类型：
+
+| event类型   | 含义            |
+| --------- | ------------- |
+| connected | 代表连接建立成功      |
+| message   | 回复的文本片段，会多次发送 |
+| error     | 连接异常，断开连接     |
+| done      | 消息推送完毕，断开连接   |
+
+1. 流式对话的核心是sse，首先我们创建sse客户端
+
+2. 然后agent我们使用流式输出模式
+
+3) 最后每次我们从流中读到内容，就通过see发送给用户
+
+```go
+func (c *ControllerV1) ChatStream(ctx context.Context, req *v1.ChatStreamReq) (res *v1.ChatStreamRes, err error) {
+    id := req.Id
+    msg := req.Question
+
+    ctx = context.WithValue(ctx, "client_id", req.Id)
+    // 1. 创建流式对话客户端
+    client, err := c.service.Create(ctx, g.RequestFromCtx(ctx))
+    if err != nil {
+       return nil, err
+    }
+    userMessage := &chat_pipeline.UserMessage{
+       ID:      id,
+       Query:   msg,
+       History: mem.GetSimpleMemory(id).GetMessages(),
+    }
+    runner, err := chat_pipeline.BuildChatAgent(ctx)
+    // 2. 使用stream流式输出模式
+    sr, err := runner.Stream(ctx, userMessage, compose.WithCallbacks(log_call_back.LogCallback(nil)))
+    if err != nil {
+       client.SendToClient("error", err.Error())
+       return nil, err
+    }
+    defer sr.Close()
+    for {
+       // 从流中读取消息
+       chunk, err := sr.Recv()
+       if errors.Is(err, io.EOF) {
+          client.SendToClient("done", "Stream completed")
+          return &v1.ChatStreamRes{}, nil
+       }
+       if err != nil {
+          client.SendToClient("error", err.Error())
+          return &v1.ChatStreamRes{}, nil
+       }
+       // 发送消息
+       client.SendToClient("message", chunk.Content)
+    }
+}
+```
+
+SSE客户端创建也很简单，就是按照SSE协议的要求，修改HTTP头部字段即可
+
+```go
+// Create 创建SSE连接
+func (s *Service) Create(ctx context.Context, r *ghttp.Request) (*Client, error) {
+    // 设置SSE必要的HTTP头
+    r.Response.Header().Set("Content-Type", "text/event-stream")
+    r.Response.Header().Set("Cache-Control", "no-cache")
+    r.Response.Header().Set("Connection", "keep-alive")
+    r.Response.Header().Set("Access-Control-Allow-Origin", "*")
+    // 创建新客户端
+    clientId := r.Get("client_id", guid.S()).String()
+    client := &Client{
+       Id:          clientId,
+       Request:     r,
+       messageChan: make(chan string, 100),
+    }
+    // 发送连接成功消息
+    r.Response.Writefln("id: %s", clientId)
+    r.Response.Writefln("event: connected")
+    r.Response.Writefln("data: {\"status\": \"connected\", \"client_id\": \"%s\"}\n", clientId)
+    r.Response.Flush()
+    return client, nil
+}
+```
+
+
+
+# 快速对话接口的核心实现(Java)
+
+1. 根据用户id查询历史对话
+
+2. 构造prompt
+
+3) 创建ReActAgent并执行
+
+4) 将本轮的问答存入历史对话中
+
+```java
+/**
+ * 普通对话接口（支持工具调用）
+ */
+@PostMapping("/chat")
+public ResponseEntity<ApiResponse<ChatResponse>> chat(@RequestBody ChatRequest request) {
+    try {
+        // 1.1获取或创建会话
+        SessionInfo session = getOrCreateSession(request.getId());        
+        // 1.2获取历史消息
+        List<Map<String, String>> history = session.getHistory();
+        logger.info("会话历史消息对数: {}", history.size() / 2);
+        // 创建 DashScope API 和 ChatModel
+        DashScopeApi dashScopeApi = chatService.createDashScopeApi();
+        DashScopeChatModel chatModel = chatService.createStandardChatModel(dashScopeApi);
+        // 记录可用工具
+        chatService.logAvailableTools();
+        // 2. 构建系统提示词（包含历史消息）
+        String systemPrompt = chatService.buildSystemPrompt(history);
+        // 3. 创建 ReactAgent
+        ReactAgent agent = chatService.createReactAgent(chatModel, systemPrompt);
+        // 执行对话
+        String fullAnswer = chatService.executeChat(agent, request.getQuestion());
+        // 4. 更新会话历史
+        session.addMessage(request.getQuestion(), fullAnswer);
+        logger.info("已更新会话历史 - SessionId: {}, 当前消息对数: {}", 
+            request.getId(), session.getMessagePairCount());
+        return ResponseEntity.ok(ApiResponse.success(ChatResponse.success(fullAnswer)));
+    }
+}
+```
+
+
+
+# 流式对话接口的核心实现(Java)
+
+sse返回的消息event类型：
+
+| event类型   | 含义            |
+| --------- | ------------- |
+| connected | 代表连接建立成功      |
+| message   | 回复的文本片段，会多次发送 |
+| error     | 连接异常，断开连接     |
+| done      | 消息推送完毕，断开连接   |
+
+1. 流式对话的核心是SSE，首先我们创建sse客户端
+
+2. 然后agent我们使用流式输出模式
+
+3) 最后每次从流中读到内容，就通过sse发送给用户
+
+```java
+/**
+ * ReactAgent 对话接口（SSE 流式模式，支持多轮对话，支持自动工具调用，例如获取当前时间，查询日志，告警等）
+ * 支持 session 管理，保留对话历史
+ */
+@PostMapping(value = "/chat_stream", produces = "text/event-stream;charset=UTF-8")
+public SseEmitter chatStream(@RequestBody ChatRequest request) {
+    SseEmitter emitter = new SseEmitter(300000L); // 5分钟超时
+    executor.execute(() -> {
+        try {
+            // 获取或创建会话
+            // 获取历史消息
+            // 创建 DashScope API 和 ChatModel
+            // 记录可用工具
+            // 构建系统提示词（包含历史消息）
+            // 创建 ReactAgent
+            ReactAgent agent = chatService.createReactAgent(chatModel, systemPrompt);
+            // 用于累积完整答案
+            StringBuilder fullAnswerBuilder = new StringBuilder();
+            // 使用 agent.stream() 进行流式对话
+            Flux<NodeOutput> stream = agent.stream(request.getQuestion());
+            stream.subscribe(
+                output -> {
+                    try {
+                        // 检查是否为 StreamingOutput 类型
+                        if (output instanceof StreamingOutput streamingOutput) {
+                            OutputType type = streamingOutput.getOutputType();
+                            // 处理模型推理的流式输出
+                            if (type == OutputType.AGENT_MODEL_STREAMING) {
+                                // 流式增量内容，逐步显示
+                                String chunk = streamingOutput.message().getText();
+                                if (chunk != null && !chunk.isEmpty()) {
+                                    fullAnswerBuilder.append(chunk);
+                                    // 实时发送到前端
+                                    emitter.send(SseEmitter.event()
+                                            .name("message")
+                                            .data(SseMessage.content(chunk), MediaType.APPLICATION_JSON));
+                                    logger.info("发送流式内容: {}", chunk);
+                                }
+                            }
+                        }
+                    }
+                },
+                error -> {
+                    // 错误处理
+                    logger.error("ReactAgent 流式对话失败", error);
+                    try {
+                        emitter.send(SseEmitter.event()
+                                .name("message")
+                                .data(SseMessage.error(error.getMessage()), MediaType.APPLICATION_JSON));
+                    } catch (IOException ex) {
+                        logger.error("发送错误消息失败", ex);
+                    }
+                    emitter.completeWithError(error);
+                },
+                () -> {
+                    // 完成处理
+                    try {
+                        String fullAnswer = fullAnswerBuilder.toString();
+                        logger.info("ReactAgent 流式对话完成 - SessionId: {}, 答案长度: {}", 
+                            request.getId(), fullAnswer.length());
+                        // 更新会话历史
+                        session.addMessage(request.getQuestion(), fullAnswer);
+                        logger.info("已更新会话历史 - SessionId: {}, 当前消息对数: {}", 
+                            request.getId(), session.getMessagePairCount());
+                        
+                        // 发送完成标记
+                        emitter.send(SseEmitter.event()
+                                .name("message")
+                                .data(SseMessage.done(), MediaType.APPLICATION_JSON));
+                        emitter.complete();
+                    } catch (IOException e) {
+                        logger.error("发送完成消息失败", e);
+                        emitter.completeWithError(e);
+                    }
+                }
+            );
+
+        }
+    });
+
+    return emitter;
+}
+```
+
+
+
+# 快速对话接口的核心实现(Python)
+
+代码路径：app/api/chat.py 和 app/services/rag\_agent\_service.py
+
+1. 接收请求，取出 id（session\_id）和 question
+
+1) 调用 rag\_agent\_service.query 执行 Agent 推理，thread\_id 即 session\_id
+
+1. LangGraph MemorySaver 自动完成历史消息的读取与写入，无需手动管理
+
+1) 返回答案
+
+```python
+@router.post("/chat")
+async def chat(request: ChatRequest):
+    logger.info(f"[会话 {request.id}] 收到快速对话请求: {request.question}")
+
+    # 直接调用 Agent，thread_id 决定会话隔离，历史消息由 MemorySaver 自动维护
+    answer = await rag_agent_service.query(
+        request.question,
+        session_id=request.id
+    )
+
+    return {
+        "code": 200,
+        "message": "success",
+        "data": {
+            "success": True,
+            "answer": answer,
+            "errorMessage": None
+        }
+    }
+```
+
+
+
+`query` 方法内部将系统提示 + 用户问题包装成消息列表，通过 `agent.ainvoke` 执行完整的 ReAct 推理链，并从最后一条消息中取出答案。 `thread_id` 与 `MemorySaver` 配合，让相同 id 的请求自动携带历史上下文：
+
+
+
+```python
+async def query(self, question: str, session_id: str) -> str:
+    await self._initialize_agent()
+
+    messages = [
+        SystemMessage(content=self.system_prompt),
+        HumanMessage(content=question)
+    ]
+
+    # thread_id 相同则自动读取 MemorySaver 中的历史消息
+    result = await self.agent.ainvoke(
+        input={"messages": messages},
+        config={"configurable": {"thread_id": session_id}},
+    )
+
+    # 取最后一条消息作为最终答案
+    last_message = result["messages"][-1]
+    return last_message.content
+```
+
+
+
+会话历史的消息裁剪由 `trim_messages_middleware` 节点负责 ，策略是保留第一条系统消息 + 最近 6 条消息（约 3 轮对话），防止多轮对话超出大模型的上下文窗口：
+
+
+
+```python
+def trim_messages_middleware(state: AgentState):
+    messages = state["messages"]
+    if len(messages) <= 7:
+        return None  # 消息较少，无需裁剪
+
+    first_msg = messages[0]  # 保留系统消息
+    recent_messages = messages[-6:] if len(messages) % 2 == 0 else messages[-7:]
+
+    return {
+        "messages": [
+            RemoveMessage(id=REMOVE_ALL_MESSAGES),  # 清空所有旧消息
+            *([first_msg] + list(recent_messages))  # 写入保留的消息
+        ]
+    }
+```
+
+
+
+# 流式对话接口的核心实现(Python)
+
+SSE 返回的消息 event 类型：
+
+| event 类型                  | 含义            |
+| ------------------------- | ------------- |
+| message (type=content)    | 回复的文本片段，会多次发送 |
+| message (type=tool\_call) | 工具调用状态通知      |
+| message (type=done)       | 消息推送完毕        |
+| message (type=error)      | 发生异常          |
+
+1. 流式对话的核心是 SSE，FastAPI 通过 `EventSourceResponse` 实现，无需手动设置 HTTP 头
+
+1) Agent 使用 `agent.astream` 的 `stream_mode="messages"` 模式，逐 token 产生输出
+
+1. 每次从流中读到文本内容，就通过 SSE 发送给客户端
+
+```python
+@router.post("/chat_stream")
+async def chat_stream(request: ChatRequest):
+    async def event_generator():
+        async for chunk in rag_agent_service.query_stream(
+            request.question, session_id=request.id
+        ):
+            chunk_type = chunk.get("type")
+
+            if chunk_type == "content":
+                # 逐 token 文本片段，实时推送
+                yield {
+                    "event": "message",
+                    "data": json.dumps(
+                        {"type": "content", "data": chunk["data"]},
+                        ensure_ascii=False
+                    )
+                }
+            elif chunk_type == "tool_call":
+                # 工具调用状态（前端可展示"正在检索知识库..."等提示）
+                yield {
+                    "event": "message",
+                    "data": json.dumps(
+                        {"type": "tool_call", "data": chunk.get("data")},
+                        ensure_ascii=False
+                    )
+                }
+            elif chunk_type == "complete":
+                # 推送完成信号
+                yield {
+                    "event": "message",
+                    "data": json.dumps({"type": "done", "data": None}, ensure_ascii=False)
+                }
+            elif chunk_type == "error":
+                yield {
+                    "event": "message",
+                    "data": json.dumps(
+                        {"type": "error", "data": str(chunk.get("data"))},
+                        ensure_ascii=False
+                    )
+                }
+
+    # EventSourceResponse 自动处理 SSE 协议头和连接管理
+    return EventSourceResponse(event_generator())
+```
+
+
+
+`query_stream` 方法使用 `agent.astream` 的 `stream_mode="messages"` 模式，每个 token 触发一次回调，从 `content_blocks` 中提取文本块后 yield 给上层：
+
+
+
+```python
+async def query_stream(self, question: str, session_id: str) -> AsyncGenerator:
+    await self._initialize_agent()
+
+    messages = [
+        SystemMessage(content=self.system_prompt),
+        HumanMessage(content=question)
+    ]
+
+    async for token, metadata in self.agent.astream(
+        input={"messages": messages},
+        config={"configurable": {"thread_id": session_id}},
+        stream_mode="messages",   # 逐 token 输出模式
+    ):
+        if type(token).__name__ in ("AIMessage", "AIMessageChunk"):
+            content_blocks = getattr(token, 'content_blocks', None)
+            if content_blocks:
+                for block in content_blocks:
+                    if isinstance(block, dict) and block.get('type') == 'text':
+                        text = block.get('text', '')
+                        if text:
+                            yield {"type": "content", "data": text}
+
+    yield {"type": "complete"}
+```
+
+
+
+# TODO挑战
+
+流式对话代码里预留的两个Todo给有能力的同学实现。只要你把下面两个Todo实现了，说明这个项目你已经完成搞明白了：
+
+1. Go语言代码熟悉：流式对话接口里面没有增加记忆功能，可以参考对话接口的记忆功能来实现，代码是可复用的。
+
+2. 总结Agent实战：现在的记忆设计是放到先进先出的队列里面。其实我们可以考虑对前面的对话进行总结，压缩(避免多轮对话导致超过大模型的上下文窗口)。你可以尝试实现一个“总结对话Agent”，输入就是历史对话，输出就是大模型的总结内容，那么在对话超过5轮的时候， 就调用总结对话Agent ，把前5轮的历史对话替换成总结内容。

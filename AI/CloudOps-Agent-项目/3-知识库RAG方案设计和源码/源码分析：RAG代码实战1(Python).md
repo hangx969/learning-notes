@@ -1,0 +1,274 @@
+| ![](images/源码分析：RAG代码实战1\(Python\)-3b954008b068c5ff42836afaaa834a69.png) | ![](images/源码分析：RAG代码实战1\(Python\)-b84313e9bba5352c278fe2720ff5e02f.png) |
+| ------------------------------------------------------------------------ | ------------------------------------------------------------------------ |
+
+
+
+# 前言
+
+本节我们来实现知识库Agent的上半部分，即将 文件向量化 后存储到数据库中。
+
+这部分代码在： `app/services/vector_index_service.py`
+
+![](images/源码分析：RAG代码实战1\(Python\)-a07efb00177ba68d5207d3bfd7b76d81.png)
+
+
+
+# 流程梳理
+
+我们的目标是将文件向量化后存储到数据库中，具体步骤如下：
+
+1. 读取文件
+
+1) 切分文件
+
+1. 索引（Embedding 和存储）
+
+## 读取文件
+
+我们直接传入文件路径 `file_path` ，使用 `pathlib.Path` 读取文件内容到内存：
+
+```python
+# index_single_file函数读取文件内容
+content = path.read_text(encoding="utf-8")
+```
+
+`index_single_file` 是索引单个文件的入口方法，完整实现如下：
+
+```python
+def index_single_file(self, file_path: str):
+    """
+    索引单个文件 (使用新的 LangChain 分割器)
+
+    Args:
+        file_path: 文件路径
+
+    Raises:
+        ValueError: 文件不存在时抛出
+        RuntimeError: 索引失败时抛出
+    """
+    path = Path(file_path).resolve()
+
+    if not path.exists() or not path.is_file():
+        raise ValueError(f"文件不存在: {file_path}")
+
+    logger.info(f"开始索引文件: {path}")
+
+    try:
+        # 1. 读取文件内容
+        content = path.read_text(encoding="utf-8")
+        logger.info(f"读取文件: {path}, 内容长度: {len(content)} 字符")
+
+        # 2. 删除该文件的旧数据（如果存在）
+        normalized_path = path.as_posix()
+        vector_store_manager.delete_by_source(normalized_path)
+
+        # 3. 使用文档分割器切分文档
+        documents = document_splitter_service.split_document(content, normalized_path)
+        logger.info(f"文档分割完成: {file_path} -> {len(documents)} 个分片")
+
+        # 4. 添加文档到向量存储（自动完成 Embedding + 入库）
+        if documents:
+            vector_store_manager.add_documents(documents)
+            logger.info(f"文件索引完成: {file_path}, 共 {len(documents)} 个分片")
+        else:
+            logger.warning(f"文件内容为空或无法分割: {file_path}")
+
+    except Exception as e:
+        logger.error(f"索引文件失败: {file_path}, 错误: {e}")
+        raise RuntimeError(f"索引文件失败: {e}") from e
+```
+
+## 文件分块
+
+文档分块使用 LangChain 提供的分割器，分为三个阶段：
+
+1. **第一阶段&#x20;**：按 Markdown 标题（ `#` 、 `##` ）切分，将文档分割成多个章节
+
+1) **第二阶段&#x20;**：对每个章节使用 `RecursiveCharacterTextSplitter` 进行二次分割，超过 `chunk_size * 2` 的章节会被拆分
+
+1. **第三阶段&#x20;**：合并过小的分片（< 300 字符），避免过度碎片化，同时通过 `chunk_overlap` 保持分片间的上下文语义连贯
+
+`DocumentSplitterService` 初始化时会配置好这两个分割器：
+
+```python
+class DocumentSplitterService:
+    def __init__(self):
+        self.chunk_size = config.chunk_max_size    # 默认 800
+        self.chunk_overlap = config.chunk_overlap  # 默认 100
+
+        # 第一阶段：Markdown 标题分割器（按 # 和 ## 切分）
+        self.markdown_splitter = MarkdownHeaderTextSplitter(
+            headers_to_split_on=[
+                ("#", "h1"),
+                ("##", "h2"),
+            ],
+            strip_headers=False,  # 保留标题在内容中
+        )
+
+        # 第二阶段：递归字符分割器（用于二次分割）
+        self.text_splitter = RecursiveCharacterTextSplitter(
+            chunk_size=self.chunk_size * 2,  # 加倍 chunk_size，减少分片数
+            chunk_overlap=self.chunk_overlap,
+            length_function=len,
+            is_separator_regex=False,
+        )
+```
+
+Markdown 文档完整的三阶段分割逻辑：
+
+```python
+def split_markdown(self, content: str, file_path: str = "") -> List[Document]:
+    """分割 Markdown 文档 (两阶段分割 + 合并小片段)"""
+    # 第一阶段：按标题分割
+    md_docs = self.markdown_splitter.split_text(content)
+
+    # 第二阶段：按大小进一步分割
+    docs_after_split = self.text_splitter.split_documents(md_docs)
+
+    # 第三阶段：合并太小的分片（< 300 字符）
+    final_docs = self._merge_small_chunks(docs_after_split, min_size=300)
+
+    # 添加文件路径元数据
+    for doc in final_docs:
+        doc.metadata["_source"] = file_path
+        doc.metadata["_extension"] = ".md"
+        doc.metadata["_file_name"] = Path(file_path).name
+
+    logger.info(f"Markdown 分割完成: {file_path} -> {len(final_docs)} 个分片")
+    return final_docs
+```
+
+合并小分片的逻辑（ `_merge_small_chunks` ）：遍历所有分片，若当前分片小于 `min_size` 且合并后不超限，则将其追加到上一个分片中：
+
+```python
+def _merge_small_chunks(self, documents: List[Document], min_size: int = 300) -> List[Document]:
+    merged_docs = []
+    current_doc = None
+
+    for doc in documents:
+        doc_size = len(doc.page_content)
+
+        if current_doc is None:
+            current_doc = doc
+        elif doc_size < min_size and len(current_doc.page_content) < self.chunk_size * 2:
+            # 当前分片太小且合并后不会太大，则合并
+            current_doc.page_content += "\n\n" + doc.page_content
+        else:
+            # 保存当前文档，开始新文档
+            merged_docs.append(current_doc)
+            current_doc = doc
+
+    if current_doc is not None:
+        merged_docs.append(current_doc)
+
+    return merged_docs
+```
+
+## 文件索引（向量化和存储到数据库）
+
+### Embedding 生成
+
+`DashScopeEmbeddings` 实现了 LangChain 标准的 `Embeddings` 接口，通过阿里云 DashScope 的 OpenAI 兼容模式调用 `text-embedding-v4` 模型，生成 1024 维向量：
+
+```python
+class DashScopeEmbeddings(Embeddings):
+    def __init__(self, api_key: str, model: str = "text-embedding-v4", dimensions: int = 1024):
+        self.client = OpenAI(
+            api_key=api_key,
+            base_url="https://dashscope.aliyuncs.com/compatible-mode/v1"
+        )
+        self.model = model
+        self.dimensions = dimensions
+```
+
+批量向量化文档（ `embed_documents` ）和单条查询向量化（ `embed_query` ）分别对应入库和检索场景：
+
+```python
+def embed_documents(self, texts: List[str]) -> List[List[float]]:
+    """批量嵌入文档列表，返回向量列表"""
+    response = self.client.embeddings.create(
+        model=self.model,
+        input=texts,
+        dimensions=self.dimensions,
+        encoding_format="float"
+    )
+    return [item.embedding for item in response.data]
+
+def embed_query(self, text: str) -> List[float]:
+    """嵌入单个查询文本，返回单条向量"""
+    response = self.client.embeddings.create(
+        model=self.model,
+        input=text,
+        dimensions=self.dimensions,
+        encoding_format="float"
+    )
+    return response.data[0].embedding
+```
+
+### 向量存储到 Milvus
+
+`VectorStoreManager` 封装了 `langchain_milvus.Milvus` ，将 LangChain `Document` 对象直接批量写入 Milvus，字段映射关系如下：
+
+| LangChain 字段   | Milvus Collection 字段 | 说明                                     |
+| -------------- | -------------------- | -------------------------------------- |
+| `page_content` | `content`            | 文本内容                                   |
+| 向量（自动计算）       | `vector`             | 1024 维 float 向量                        |
+| `id` （UUID）    | `id`                 | 主键                                     |
+| `metadata`     | `metadata`           | JSON 元数据（含 `_source` 、 `_file_name` 等） |
+
+初始化时连接 Milvus：
+
+```python
+self.vector_store = Milvus(
+    embedding_function=vector_embedding_service,  # 自动调用 embed_documents
+    collection_name="biz",
+    connection_args={"host": config.milvus_host, "port": config.milvus_port},
+    auto_id=False,       # 使用自定义 UUID
+    drop_old=False,
+    text_field="content",
+    vector_field="vector",
+    primary_field="id",
+    metadata_field="metadata",
+)
+```
+
+批量入库时，LangChain 会自动调用 `embed_documents` 完成向量化，无需手动循环处理每个分片：
+
+```python
+def add_documents(self, documents: List[Document]) -> List[str]:
+    """批量添加文档到向量存储（自动批量向量化）"""
+    import time, uuid
+
+    start_time = time.time()
+
+    # 为每个文档生成唯一 UUID（auto_id=False 时必须手动提供）
+    ids = [str(uuid.uuid4()) for _ in documents]
+
+    # LangChain Milvus 的 add_documents 自动调用 embedding_function 批量向量化并写入
+    result_ids = self.vector_store.add_documents(documents, ids=ids)
+
+    elapsed = time.time() - start_time
+    logger.info(
+        f"批量添加 {len(documents)} 个文档完成, "
+        f"耗时: {elapsed:.2f}秒, 平均: {elapsed/len(documents):.2f}秒/个"
+    )
+    return result_ids
+```
+
+在重新索引同一个文件前，会先按 `_source` 路径删除旧数据：
+
+```python
+def delete_by_source(self, file_path: str) -> int:
+    """删除指定文件的所有文档"""
+    collection = milvus_manager.get_collection()
+    # metadata 是 JSON 字段，使用 JSON 路径查询语法
+    expr = f'metadata["_source"] == "{file_path}"'
+    result = collection.delete(expr)
+    deleted_count = result.delete_count if hasattr(result, "delete_count") else 0
+    logger.info(f"删除文件旧数据: {file_path}, 删除数量: {deleted_count}")
+    return deleted_count
+```
+
+# 总结
+
+到这里，提问前数据准备的三个流程就讲完了。其实代码实现并不难，核心是要搞懂这 3 个步骤里面都做了什么事情，以及代码是怎么将流程串联起来的。

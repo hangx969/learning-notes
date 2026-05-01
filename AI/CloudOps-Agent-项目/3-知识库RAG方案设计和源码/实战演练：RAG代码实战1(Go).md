@@ -1,0 +1,452 @@
+| ![](images/实战演练：RAG代码实战1\(Go\)-3b954008b068c5ff42836afaaa834a69.png) | ![](images/实战演练：RAG代码实战1\(Go\)-b84313e9bba5352c278fe2720ff5e02f.png) |
+| -------------------------------------------------------------------- | -------------------------------------------------------------------- |
+
+
+
+**<span style="color: inherit; background-color: rgba(255,246,122,0.8)">注意，运行程序之前请先看：</span>**
+
+* [ 环境准备教程](https://my.feishu.cn/wiki/S9prwa5tAiL7iekcOrzczuJznWc)
+
+* [ 运行项目教程(Go)](https://my.feishu.cn/wiki/JdFowqP0bilV8EkCvgUcCNDPnTh)
+
+# 前言
+
+本节我们来实现知识库Agent的上半部分，即将 文件向量化 后存储到数据库中。
+
+这部分代码在：SuperBizAgent/internal/ai/agent/knowledge\_index\_pipeline
+
+运行的代码在：SuperBizAgent/internal/ai/cmd/knowledge\_cmd/main.go
+
+![](images/实战演练：RAG代码实战1\(Go\)-a07efb00177ba68d5207d3bfd7b76d81.png)
+
+
+
+# 流程梳理
+
+我们的目标是将文件向量化后存储到数据库中，这里面具体步骤：
+
+1. 读取文件
+
+2. 切分文件
+
+3) 索引（Embedding和存储）
+
+既然有3个步骤，我们可以使用eino的可视化编排插件，来进行流程的编排：
+
+1. 首先在Goland里面安装eino-dev的插件。
+
+2. 打开插件，点击右上角的add node， 按照下图进行编排 。(或者使用右下角的导入功能， `直接导入SuperBizAgent/internal/ai/cmd/knowledge_cmd/workflow.json` )
+
+3) 最后点击生成代码，插件会自动生成代码到你输入目标目录。
+
+![](images/实战演练：RAG代码实战1\(Go\)-67635eded3a37138f45736ad9b380a4a.png)
+
+生成完后，会在目标目录看到生成出来的这些组件，下面我们来逐个介绍，注意看代码注释！
+
+![](images/实战演练：RAG代码实战1\(Go\)-df64595c03b08ab39b40e9c5d5708930.png)
+
+
+
+# 实战
+
+注意，在运行代码之前，务必先看 [【飞书文档】运行项目教程(Go)](https://icnaxnmh86kx.feishu.cn/wiki/BdaHwmg4Ei1bjmklkCkcGPWtnrh)
+
+
+
+在运行之前，请在这个目录（ `SuperBizAgent/internal/ai/cmd/knowledge_cmd/docs` ）下，随便放几个markdown文件。
+
+向量数据库前端地址： http://localhost:8000/#/databases/agent/biz/data
+
+
+
+## Runnable执行器
+
+### 运行前与运行后
+
+在运行之前，我们先 进入向量数据库页面 观察一下，可以看到现在是没有数据的。
+
+![](images/实战演练：RAG代码实战1\(Go\)-c25e8fb3299fae5b7c2654ee0787a060.png)
+
+运行代码，将你docs目录下的md文件向量化到数据库中。
+
+```bash
+# 运行代码
+cd SuperBizAgent/internal/ai/cmd/knowledge_cmd
+go run main.go
+
+# 我的docs目录下有一个告警处理手册.md
+(base) ➜  knowledge_cmd git:(main) ✗ tree                                      
+.
+├── config
+│   └── config.yaml
+├── docs
+│   └── 告警处理手册.md
+├── main.go
+└── workflow.json
+```
+
+运行后，看到\[done]就说明我们执行成功了。 通过最后一行日志可以看到我们将文档切分成了5个分片 。
+
+```sql
+(base) ➜  knowledge_cmd git:(main) ✗ go run main.go
+[start] indexing file: docs/告警处理手册.md
+[view start]:[Graph::KnowledgeIndexing]
+{"URI":"docs/告警处理手册.md"}
+[view start]:[Loader:FileLoader:]
+{"Source":{"URI":"docs/告警处理手册.md"},"Extra":null}
+[view end]:[Loader:FileLoader:]
+[view start]:[DocumentTransformer:MarkdownHeaderSplitter:]
+[{"id":"","content":"# XXXX","meta_data":{"_extension":".md","_file_name":"告警处理手册.md","_source":"docs/告警处理手册.md"}}]
+[view end]:[DocumentTransformer:MarkdownHeaderSplitter:]
+[view start]:[Indexer:Milvus:]
+{"Docs":[{"id":"1129d47f-7f1d-47f3-96f2-2f82444811ab","content":"# 服务下线","meta_data":","_source":"docs/告警处理手册.md","title":"服务下线"}},{"id":"d5c0c309-4e7e-4728-ac65-9345fb5f0836","content":"# 接口失败率过高\n告警解释：接口失败率过高可能是由于服务调用异常或者下游服务不可用导致的\n解决方案：\n1. 根据接口名和\"response\"关键词进行sion":".md","_file_name":"告警处理手册.md","_source":"docs/告警处理手册.md","title":"接口失败率过高"}},{"id":"b243b1fa-de01-4f7c-8070-9bb19c5b45d4","content":"# 与下游对账发现差异\n告警解释：与下游对账发现差异可能是由于数据同步异常或者计算错误导致的\据关键字\"error\"和\"reconciliation\"进行最近1小时的日志搜索\n2. 根据查询到的日志内容分析是什么原因导致的对账差异","meta_data":{"_extension":".md","_file_name":"告警处理手册.md","_source":"docs/告警处理手册.md","title":"与下游对账发现差异"}},{"id":"e不匹配\n问题解释：在计费数据处理中，我们发现部分业务由于使用了错误的MQ队列把资源事件错投递到其他地域，造成资源所在地域与计费的服务地域不匹配。\n解决方案：\n1. 根据关键字\"region mismatch\"进行最近1小时的日志搜索\n2. 根据查询到的日志内容，汇总出调用方与资源地域不匹配"}},{"id":"fb9784cf-efeb-4af9-ab03-ce70af4a1958","content":"# 服务错误码与常见原因\n- 12000000001：调用接口参数错误（如:类型不匹配）\n- 12000000002：数据库更新失败（数据库的问题，建议排查日志）\n- 12000000003：下游接口错误（下游接口报"_extension":".md","_file_name":"告警处理手册.md","_source":"docs/告警处理手册.md","title":"服务错误码与常见原因"}}],"Extra":null}
+[view start]:[Embedding:Ark:ArkEmbedding]
+{"Texts":["# 服务下线\nXXXXXX"],"Config":{"Model":"doubao-embedding-text-240715","EncodingFormat":"float"},"Extra":null}
+[view end]:[Embedding:Ark:ArkEmbedding]
+[view end]:[Indexer:Milvus:]
+[view end]:[Graph::KnowledgeIndexing]
+[done] indexing file: docs/告警处理手册.md, len of parts: 5
+```
+
+数据库前端页面也可以看到，我们存储了5行记录 。
+
+![](images/实战演练：RAG代码实战1\(Go\)-ac60a16953217335db77a60d89f1a94b.png)
+
+### 执行代码研究
+
+好，执行完成后。我们来看看具体的代码实现是怎么样的。我们来重点看下面高亮的代码行：
+
+* 首先调用 `knowledge_index_pipeline.BuildKnowledgeIndexing` 创建了一个runner执行器。
+
+* 调用 `runner` 的 `Invoke` 方法，入参是文件的地址。
+
+```go
+func main() {
+    ctx := context.Background()
+    r, err := knowledge_index_pipeline.BuildKnowledgeIndexing(ctx)
+    if err != nil {
+       return
+    }
+    err = filepath.WalkDir("./docs", func(path string, d fs.DirEntry, err error) error {
+       ///
+       fmt.Printf("[start] indexing file: %s\n", path)
+       // 重新构建
+       ids, err := r.Invoke(ctx, document.Source{URI: path}, compose.WithCallbacks(log_call_back.LogCallback(nil)))
+       if err != nil {
+          return fmt.Errorf("invoke index graph failed: %w", err)
+       }
+       fmt.Printf("[done] indexing file: %s, len of parts: %d\n", path, len(ids))
+       return nil
+    })
+}
+```
+
+
+
+## `BuildKnowledgeIndexing` 研究
+
+我们重点来看一下第一个返回值， `r compose.Runnable[document.Source, []string]` ，这个返回值代表返回一个可以执行的执行器。
+
+其中 `[document.Source, []string]` 对应着下面的Runnable接口的 `[I, O any]` 。
+
+这是一个泛型，I代表Input，输入；O代表output输出。
+
+所以这里我们输入了 document.Source，其内部就是一个URI字段，存放路径。
+
+通过注释我们可以知道， `Invoke` 方法就是直接输出的意思，Stream方法是流式输出的意思。
+
+总结一下 `BuildKnowledgeIndexing` ：返回一个执行器，这个执行器的入参是文件地址，出参是一个string切片。
+
+```go
+func BuildKnowledgeIndexing(ctx context.Context) (r compose.Runnable[document.Source, []string], err error) {
+    ///
+}
+
+// Runnable is the interface for an executable object. Graph, Chain can be compiled into Runnable.
+// runnable is the core conception of eino, we do downgrade compatibility for four data flow patterns,
+// and can automatically connect components that only implement one or more methods.
+// eg, if a component only implements Stream() method, you can still call Invoke() to convert stream output to invoke output.
+type Runnable[I, O any] interface {
+    Invoke(ctx context.Context, input I, opts ...Option) (output O, err error)
+    Stream(ctx context.Context, input I, opts ...Option) (output *schema.StreamReader[O], err error)
+}
+
+type Source struct {
+    URI string
+}
+```
+
+
+
+我们继续看看编排代码 `BuildKnowledgeIndexing` 的其他流程。
+
+里面有很多AddEdge，这里面的点、边连接顺序，其实就是上面我们用eino-dev插件编排的顺序。
+
+执行顺序： `START -> FileLoader -> MarkdownSplitter -> MilvusIndexer -> END`
+
+也就是说： `BuildKnowledgeIndexing` 返回的执行器，在调用后会按照这个顺序执行。
+
+下面我们继续来看看每个节点( `FileLoader` , `MarkdownSplitter` , `MilvusIndexer` )具体做了什么？
+
+```go
+func BuildKnowledgeIndexing(ctx context.Context) (r compose.Runnable[document.Source, []string], err error) {
+    //
+    _ = g.AddEdge(compose.START, FileLoader)
+    _ = g.AddEdge(FileLoader, MarkdownSplitter)
+    _ = g.AddEdge(MarkdownSplitter, MilvusIndexer)
+    _ = g.AddEdge(MilvusIndexer, compose.END)
+    r, err = g.Compile(ctx, compose.WithGraphName("KnowledgeIndexing"), compose.WithNodeTriggerMode(compose.AnyPredecessor))
+    if err != nil {
+       return nil, err
+    }
+    return r, err
+}
+```
+
+
+
+## 文件加载-Loader组件
+
+我们先来观察下默认代码和返回值，可以看到返回值是一个 `document.Loader` 接口，这个接口需要实现Load方法。也就是说，我们需要在newLoader函数里面，去返回一个实现了Load方法的类。
+
+至于什么时候调用Load方法，框架编排后会自动帮我们调用。 **<span style="color: inherit; background-color: rgba(255,246,122,0.8)">所以我们不需要考虑调用顺序的事情（因为你在编排graph的时候就包含了顺序），只需要考虑具体的功能实现</span>**
+
+```go
+// newLoader component initialization function of node 'FileLoader' in graph 'KnowledgeIndexing'
+func newLoader(ctx context.Context) (ldr document.Loader, err error) {
+    // TODO Modify component configuration here.
+    config := &file.FileLoaderConfig{}
+    ldr, err = file.NewFileLoader(ctx, config)
+    if err != nil {
+       return nil, err
+    }
+    return ldr, nil
+}
+
+// Loader is a document loader.
+type Loader interface {
+    Load(ctx context.Context, src Source, opts ...LoaderOption) ([]*schema.Document, error)
+}
+```
+
+这里我们使用官方默认实现的 `file loader（file.NewFileLoader）`
+
+我们来看看 file loader 的Load方法怎么写的：
+
+1. 打开文件：openFile
+
+2. 记录文件元数据信息
+
+3) 将文件内容读到内存中
+
+4) 构造返回值，返回
+
+```go
+func (f *FileLoader) Load(ctx context.Context, src document.Source, opts ...document.LoaderOption) (docs []*schema.Document, err error) {
+    // 1. 打开文件
+    file, err := openFile(src.URI)
+    // 2. 记录文件元数据
+    name := filepath.Base(src.URI)
+    ext := filepath.Ext(src.URI)
+    meta := map[string]any{
+       MetaKeyExtension: ext,
+       MetaKeyFileName:  name,
+       MetaKeySource:    src.URI,
+    }
+    // 3. f.Parser.Parse对文件做了什么？实际上就是把文件从磁盘读到内存里，并构造返回的结构体
+    docs, err = f.Parser.Parse(ctx, file, append([]parser.Option{parser.WithURI(src.URI), parser.WithExtraMeta(meta)}, o.ParserOptions...)...)
+    // 4. 返回
+    return docs, nil
+}
+
+// Parse reads the text from a reader and returns a single document.
+func (dp TextParser) Parse(ctx context.Context, reader io.Reader, opts ...Option) ([]*schema.Document, error) {
+    // 3.1 首先从文件读出所有内容到内存中
+    data, err := io.ReadAll(reader)
+    if err != nil {
+       return nil, err
+    }
+    // 3.2 构建元数据
+    meta := make(map[string]any)
+    meta[MetaKeySource] = opt.URI
+    for k, v := range opt.ExtraMeta {
+       meta[k] = v
+    }
+    // 3.3 构造返回值
+    doc := &schema.Document{
+       Content:  string(data),
+       MetaData: meta,
+    }
+
+    return []*schema.Document{doc}, nil
+}
+```
+
+
+
+## 文件分块-DocumentTransformer组件
+
+我们依旧来观察一下默认的代码和返回值。返回值是 `document.Transformer接口` ，这个接口需要实现 `Transform方法` 。
+
+```go
+// newDocumentTransformer component initialization function of node 'MarkdownSplitter' in graph 'KnowledgeIndexing'
+func newDocumentTransformer(ctx context.Context) (tfr document.Transformer, err error) {
+    config := &markdown.HeaderConfig{
+       Headers: map[string]string{
+          "#": "title",
+       },
+       IDGenerator: func(ctx context.Context, originalID string, splitIndex int) string {
+          return uuid.New().String()
+       },
+    }
+    tfr, err = markdown.NewHeaderSplitter(ctx, config)
+    return tfr, nil
+}
+// Transformer is to convert documents, such as split or filter.
+type Transformer interface {
+    Transform(ctx context.Context, src []*schema.Document, opts ...TransformerOption) ([]*schema.Document, error)
+}
+```
+
+我们进一步看看这个 `markdown.NewHeaderSplitter` 的 `Transform` 方法是怎么写的
+
+1. 将文件内容，按照标题#进行切分
+
+2. 每个切分出来的分片，都赋予一个唯一的uuid
+
+3) 对每个分片都增加元数据信息
+
+4) 构造返回值，返回
+
+```go
+func (h *headerSplitter) Transform(ctx context.Context, docs []*schema.Document, opts ...document.TransformerOption) ([]*schema.Document, error) {
+    var ret []*schema.Document
+    for _, doc := range docs {
+       // 1. 将文件按照标题#进行切分
+       result := h.splitText(ctx, doc.Content)
+       for i := range result {
+          // 2. 对每个分片，赋予唯一的uuid
+          nDoc := &schema.Document{
+             ID:       h.idGenerator(ctx, doc.ID, i),
+             Content:  result[i].chunk,
+             MetaData: deepCopyAnyMap(doc.MetaData),
+          }
+          for k, v := range result[i].meta {
+             nDoc.MetaData[k] = v
+          }
+          // 3. append
+          ret = append(ret, nDoc)
+       }
+    }
+    // 4. 返回所有分片
+    return ret, nil
+}
+
+func (h *headerSplitter) splitText(ctx context.Context, text string) []splitResult {
+/*
+ 举个例子，假设有文本：
+   # Title1
+   Content1
+   # Title2
+   Content2
+
+  分割后，第一个块包含"# Title1"和"Content1"。第二个块包含"# Title2"和"Content2"
+ */
+}
+```
+
+
+
+## 文件索引(向量化和存储到数据库)-Indexer组件
+
+文档分块之后，就要对每个块进行embedding了。我们还是先来看一下代码，主要实现 `Index接口` 的 `Store方法`
+
+```go
+func NewMilvusIndexer(ctx context.Context) (idr indexer.Indexer, err error) {
+    config := &milvus.IndexerConfig{
+       Client:     client.NewMilvusClient(ctx),
+       Collection: embedder2.DoubaoEmbedding(ctx),
+       Fields:     fields,
+       Embedding:  eb,
+    }
+    indexer, err := milvus.NewIndexer(ctx, config)
+    if err != nil {
+       return nil, err
+    }
+    return indexer, nil
+}
+
+type Indexer interface {
+    // Store stores the documents.
+    Store(ctx context.Context, docs []*schema.Document, opts ...Option) (ids []string, err error) // invoke
+}
+```
+
+进一步查看 `milvus.NewIndexer` 实现的 `Store方法` ：
+
+1. 首先对所有分片进行向量化，获取向量数组
+
+2. 构造符合milvus表记录的结构体。id、content、vector、metadata
+
+3) 构造完记录后，插入到数据库中。最后返回所有的id
+
+```go
+// Store stores the documents into the indexer.
+func (i *Indexer) Store(ctx context.Context, docs []*schema.Document, opts ...indexer.Option) (ids []string, err error) {
+    // 1. 调用embedding模型的能力，对所有分块进行向量化。获得向量数组vectors
+    // embedding
+    vectors, err := emb.EmbedStrings(makeEmbeddingCtx(ctx, emb), texts)
+    
+    // 2. 主要就是构成符合insert的结构体
+    // load documents content
+    rows, err := i.config.DocumentConverter(ctx, docs, vectors)
+
+    // 3. 将记录插入到数据库中
+    // store documents into milvus
+    results, err := i.config.Client.InsertRows(ctx, i.config.Collection, io.Partition, rows)
+    
+    ids = make([]string, results.Len())
+    for idx := 0; idx < results.Len(); idx++ {
+       ids[idx], err = results.GetAsString(idx)
+       if err != nil {
+          return nil, fmt.Errorf("[Indexer.Store] failed to get id: %w", err)
+       }
+    }
+    // 4. 返回主键id
+    return ids, nil
+}
+
+func (i *IndexerConfig) getDefaultDocumentConvert() func(ctx context.Context, docs []*schema.Document, vectors [][]float64) ([]interface{}, error) {
+    return func(ctx context.Context, docs []*schema.Document, vectors [][]float64) ([]interface{}, error) {
+       for _, doc := range docs {
+          em = append(em, defaultSchema{
+             // 列id：分块的id
+             ID:       doc.ID,
+             // 列content：分块的正文
+             Content:  doc.Content,
+             Vector:   nil,
+             // 列Metadata：分块的元数据
+             Metadata: doc.metadata,
+          })
+          texts = append(texts, doc.Content)
+       }
+       
+       // build embedding documents for storing
+       for idx, vec := range vectors {
+          // 列vector：embedding出来的向量
+          em[idx].Vector = vector2Bytes(vec)
+          rows = append(rows, &em[idx])
+       }
+       return rows, nil
+    }
+}
+```
+
+
+
+# 总结
+
+到这里，提问前数据准备的三个流程就讲完了。其实代码实现并不难，核心是要搞懂这3个步骤里面都做了什么事情，以及代码是怎么讲流程串联起来的。
+
+
+
