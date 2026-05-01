@@ -85,5 +85,5 @@ func main() {
 }
 ```
 
-![](images/使用eino框架3分钟实现一个简单AI对话\(Go\)-34cace64229b41fbba6013571ae576b2.png)
+![](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260501135045082.png)
 
