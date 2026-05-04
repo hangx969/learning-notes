@@ -94,7 +94,7 @@ CLI 和 Gateway 两个入口共享同一套 Agent 核心，只是交互方式不
 - **acp_adapter/**：VS Code / Zed / JetBrains 编辑器集成
 - **environments/**：终端后端——local、Docker、SSH、Modal、Daytona、Singularity
 
-![](https://p1-hera.feishucdn.com/tos-cn-i-jbbdkfciu3/hera-doc/UU9CbZONhoHYc9xjiUjcgCt3ntf.png~tplv-jbbdkfciu3-image:0:0.image)
+![](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260504234800261.png)
 
 ---
 
@@ -188,7 +188,7 @@ hermes setup
 
 1. 是否导入 OpenClaw → 可选否（N）
 
-![](https://p1-hera.feishucdn.com/tos-cn-i-jbbdkfciu3/hera-doc/U5uCbXVVNo1eThxgdDicik8ynBb.png~tplv-jbbdkfciu3-image:0:0.image)
+![](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260504234828996.png)
 
 2. 选择快速安装 → 选择模型 → 配置模型 API
 
