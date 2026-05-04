@@ -12,6 +12,20 @@ date: 2026-04-17
 
 ---
 
+## [2026-05-04] ingest | AI 新项目 + IaC Terraform 容器管理
+
+- **操作**：批量摄入 4 个新来源项目到 wiki 编译层
+- **新增来源摘要页**：
+  - [[KnowledgeBase/sources/cloudops-agent-batch-summary|CloudOps-Agent 批量摘要]] — 57 篇，AI/CloudOps-Agent-项目，三语言智能 OnCall Agent
+  - [[KnowledgeBase/sources/rag-agent-batch-summary|RAG-Agent 批量摘要]] — 33 篇，AI/RAG-Agent，Spring Boot + ES 混合检索企业 RAG 系统
+  - [[KnowledgeBase/sources/hermes-agent-batch-summary|Hermes-agent 批量摘要]] — 2 篇，AI/Hermes-agent，Hermes Agent 安装与资源合集
+  - [[KnowledgeBase/sources/iac-terraform-container-summary|Terraform 容器管理摘要]] — 1 篇，IaC/terraform-container-management
+- **更新页面**：
+  - [[KnowledgeBase/index|index.md]] — 新增 4 个来源分组，AI 领域篇数 26→118，IaC 领域 2→3
+- **影响范围**：AI 领域覆盖率从 12% 提升至 ~90%，IaC 领域新增 Terraform 容器管理专题
+
+---
+
 ## [2026-04-23] ingest | External Secrets Operator 进阶
 
 - **来源**：[[0raw/K8S实战教程 如何使用 External Secrets Operator 管理 Kubernetes密钥]]（微信公众号文章）
