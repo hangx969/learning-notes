@@ -12,6 +12,22 @@ date: 2026-04-17
 
 ---
 
+## [2026-05-04] create | 补建高频缺失概念页面
+
+- **操作**：创建 7 个被多页面引用但不存在的概念页面
+- **新增概念页**：
+  - [[KnowledgeBase/concepts/StorageClass]] — K8s 动态存储分配（4 处引用）
+  - [[KnowledgeBase/concepts/ServiceMesh]] — 服务网格别名页，指向 [[KnowledgeBase/concepts/服务网格]]（3 处引用）
+  - [[KnowledgeBase/concepts/高可用架构]] — HA 冗余与故障切换（3 处引用）
+  - [[KnowledgeBase/concepts/CRD]] — K8s 自定义资源定义（2 处引用）
+  - [[KnowledgeBase/concepts/Operator模式]] — CRD + Controller 模式（2 处引用）
+  - [[KnowledgeBase/concepts/RBAC]] — 基于角色的访问控制（2 处引用）
+  - [[KnowledgeBase/concepts/联邦集群]] — 多集群联邦管理（2 处引用）
+- **更新页面**：[[KnowledgeBase/index|index.md]] — 概念页表格新增 7 行
+- **影响**：消除 16 处断链引用
+
+---
+
 ## [2026-05-04] ingest | AI 新项目 + IaC Terraform 容器管理
 
 - **操作**：批量摄入 4 个新来源项目到 wiki 编译层
