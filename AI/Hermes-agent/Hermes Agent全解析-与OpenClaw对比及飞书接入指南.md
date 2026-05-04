@@ -242,7 +242,7 @@ hermes setup
 
 14. 在终端对话完成配对
 
-![](https://p1-hera.feishucdn.com/tos-cn-i-jbbdkfciu3/hera-doc/MlpybrfUUogaIGxRzmHcN2mDnJg.png~tplv-jbbdkfciu3-image:0:0.image)
+![](https://raw.githubusercontent.com/hangx969/upload-images-md/main/hermes-agent-16-20260504235626.png)
 
 **第三步：安装飞书 CLI**
 
