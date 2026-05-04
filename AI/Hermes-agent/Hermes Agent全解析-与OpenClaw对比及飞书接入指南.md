@@ -192,15 +192,15 @@ hermes setup
 
 2. 选择快速安装 → 选择模型 → 配置模型 API
 
-![](https://p1-hera.feishucdn.com/tos-cn-i-jbbdkfciu3/hera-doc/Wr3nbxRECoPRFFxnTj2cyliUnjh.png~tplv-jbbdkfciu3-image:0:0.image)
+![](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260504234849499.png)
 
 3. 选择配置 IM 工具
 
-![](https://p1-hera.feishucdn.com/tos-cn-i-jbbdkfciu3/hera-doc/FqaGbKFT3ogJtkxBhiac0o4InD6.png~tplv-jbbdkfciu3-image:0:0.image)
+![](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260504234910996.png)
 
 4. 选择飞书（空格选中，Enter 下一步）
 
-![](https://p1-hera.feishucdn.com/tos-cn-i-jbbdkfciu3/hera-doc/GMDObpkgJo4O7ZxjtricItbDnce.png~tplv-jbbdkfciu3-image:0:0.image)
+![](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260504234930025.png)
 
 5. 选择飞书扫码连接飞书
 
