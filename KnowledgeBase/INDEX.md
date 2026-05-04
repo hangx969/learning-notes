@@ -154,6 +154,30 @@ date: 2026-04-17
 | [AI-OpenClaw](sources/ai-openclaw-misc-batch-summary.md) | 9 | OpenClaw 全栈（安装/Skills/Channels/AIOps/多智能体）、Copilot CLI、提示词工程 |
 | [[AI/OpenClaw/OpenClaw-Workspace-运维]] | 1 | Workspace 运维实战——目录规划、多 Agent 隔离、记忆管理、故障排查、安全加固、备份恢复 |
 
+### AI/CloudOps-Agent（已摄入 ✅）
+
+| 页面 | 覆盖文档数 | 摘要 |
+|------|:---------:|------|
+| [CloudOps-Agent](sources/cloudops-agent-batch-summary.md) | 57 | 三语言（Go/Java/Python）智能 OnCall Agent，RAG/ReAct/Plan-Execute-Replan 架构，Eino/Spring AI Alibaba/LangChain 框架 |
+
+### AI/RAG-Agent（已摄入 ✅）
+
+| 页面 | 覆盖文档数 | 摘要 |
+|------|:---------:|------|
+| [RAG-Agent](sources/rag-agent-batch-summary.md) | 33 | 企业级 RAG 知识库系统，Spring Boot 3.4.2 + ES 8.10 混合检索 + Kafka 异步处理 + MinIO 存储 |
+
+### AI/Hermes-agent（已摄入 ✅）
+
+| 页面 | 覆盖文档数 | 摘要 |
+|------|:---------:|------|
+| [Hermes-agent](sources/hermes-agent-batch-summary.md) | 2 | Hermes Agent 安装指南（Ubuntu 25.10）与资源合集，持久记忆与自我进化能力 |
+
+### IaC/Terraform 容器管理（已摄入 ✅）
+
+| 页面 | 覆盖文档数 | 摘要 |
+|------|:---------:|------|
+| [Terraform 容器管理](sources/iac-terraform-container-summary.md) | 1 | Docker/Kubernetes/Helm/Nomad Provider 统一容器编排，YAML/HCL/Helm 三种声明方式 |
+
 ### Go（已摄入 ✅）
 
 | 页面 | 覆盖文档数 | 摘要 |
@@ -173,7 +197,7 @@ date: 2026-04-17
 | [杂项](sources/misc-domains-batch-summary.md) | 18 | Database(MySQL/Redis/MongoDB) + Middlewares(Kafka/RabbitMQ/RocketMQ) + OS + Networking + IaC(Terraform) + Git + C++ + SoftwareTesting |
 
 > [!success] 全部领域已摄入完成
-> 共 17 个领域、~350 篇原始文档已全部摄入 wiki 编译层。
+> 共 17 个领域、~440 篇原始文档已全部摄入 wiki 编译层。
 
 ---
 
