@@ -501,12 +501,6 @@ hermes gateway
 - 查看 Hermes Gateway 日志是否有 Feishu/Lark 连接成功信息
 - 确认不会和 OpenClaw 使用同一个 Bot 同时在线处理消息
 
----
-
-## 6. 推荐落地流程
-
-![[AI/Hermes-agent/hermes-agent-deploy-flow.png]]
-
 ### 最小命令合集
 
 ```bash
