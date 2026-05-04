@@ -177,7 +177,7 @@ date: 2026-04-17
 
 | 页面 | 覆盖文档数 | 摘要 |
 |------|:---------:|------|
-| [Hermes-agent](sources/hermes-agent-batch-summary.md) | 2 | Hermes Agent 安装指南（Ubuntu 25.10）与资源合集，持久记忆与自我进化能力 |
+| [Hermes-agent](sources/hermes-agent-batch-summary.md) | 3 | Hermes Agent 安装指南（Ubuntu 25.10）、资源合集、架构解析与 OpenClaw 对比，持久记忆与自我进化能力 |
 
 ### IaC/Terraform 容器管理（已摄入 ✅）
 

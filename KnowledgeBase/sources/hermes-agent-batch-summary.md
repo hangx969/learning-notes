@@ -41,6 +41,15 @@ Hermes Agent 是 Nous Research 推出的 AI Agent 框架，具备持久记忆、
   - OpenClaw 迁移：`hermes claw migrate --preset full --migrate-secrets`
   - 飞书集成推荐 WebSocket 模式，无需公网 Webhook
 
+### [[AI/Hermes-agent/Hermes Agent全解析-与OpenClaw对比及飞书接入指南|架构解析与对比]]
+- 核心内容：Hermes Agent 五层架构深度解析（入口/编排层、Agent 核心层、工具注册层、状态/持久层、平台适配层）、记忆系统设计（MEMORY.md/USER.md 分离、冻结快照、前缀缓存优化）、子代理委托机制（隔离原则、深度限制 2、ThreadPoolExecutor 并行 max 3）、与 OpenClaw 六维对比、飞书 Bot 接入指南
+- 关键知识点：
+  - 五层架构：入口/编排 → Agent 核心 → 工具注册 → 状态/持久 → 平台适配，层间单向依赖
+  - 记忆系统采用冻结快照模式，MEMORY.md ~2200 字符 / USER.md ~1375 字符，利用前缀缓存降低推理成本
+  - 子代理委托深度限制 2 层，ThreadPoolExecutor 最多 3 并行，子代理无权修改父级记忆
+  - 与 OpenClaw 对比：Python 轻量后端 vs TypeScript 全平台产品；自注册 vs 插件生态；有机记忆 vs 模块化
+  - 飞书接入：`hermes setup` 向导式配置，DM 配对，Feishu CLI 提供上下文+操作能力
+
 ## 涉及的概念与实体
 - [[KnowledgeBase/entities/OpenClaw|OpenClaw]]
 - Hermes Agent（无独立实体页）

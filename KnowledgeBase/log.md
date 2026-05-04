@@ -12,6 +12,18 @@ date: 2026-04-17
 
 ---
 
+## [2026-05-04] ingest | Hermes Agent 架构解析文章
+
+- **来源**：`0raw/Hermes Agent全解析：与OpenClaw对比及飞书接入指南 - 飞书官网.md`
+- **操作**：
+  - 清理格式后放置到 `AI/Hermes-agent/Hermes Agent全解析-与OpenClaw对比及飞书接入指南.md`
+  - 更新 `sources/hermes-agent-batch-summary.md`：文档数 2→3，新增第三篇摘要（五层架构、记忆系统、子代理委托、OpenClaw 六维对比、飞书接入）
+  - 更新 `entities/OpenClaw.md`：新增"与 Hermes Agent 的对比"章节
+  - 更新 `index.md`：Hermes-agent 覆盖文档数 2→3
+- **新增知识点**：Hermes 五层架构、冻结快照记忆、子代理深度限制 2 / 并行 max 3、Hermes vs OpenClaw 六维对比
+
+---
+
 ## [2026-05-04] update | 消除孤儿来源页面
 
 - **操作**：为 15 个无入站链接的 sources/ 页面添加来自 entities/concepts/maps 的引用
