@@ -35,6 +35,13 @@ date: 2026-04-17
 | [容器运行时](concepts/容器运行时.md) | containerd、Docker Engine 等容器运行时技术 |
 | [自动化运维](concepts/自动化运维.md) | Ansible、Python 脚本、Terraform 等自动化运维实践 |
 | [Python运维开发](concepts/Python运维开发.md) | Python 在运维场景中的应用：自动化脚本、Web 运维平台、API 调用 |
+| [StorageClass](concepts/StorageClass.md) | Kubernetes 动态存储分配：Provisioner、回收策略、PV/PVC 绑定 |
+| [高可用架构](concepts/高可用架构.md) | 消除单点故障的冗余与故障切换架构设计 |
+| [CRD](concepts/CRD.md) | Kubernetes 自定义资源定义，扩展 API 的核心机制 |
+| [Operator模式](concepts/Operator模式.md) | CRD + Controller 模式，自动化有状态应用运维 |
+| [RBAC](concepts/RBAC.md) | Kubernetes 基于角色的访问控制 |
+| [联邦集群](concepts/联邦集群.md) | Kubernetes 多集群统一管理与跨集群调度 |
+| [ServiceMesh](concepts/ServiceMesh.md) | → 服务网格（别名页）|
 
 ---
 
