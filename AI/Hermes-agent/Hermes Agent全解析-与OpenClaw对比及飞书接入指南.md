@@ -228,17 +228,17 @@ hermes setup
 
 11. 定时任务推送群（可先跳过）
 
-![](https://p1-hera.feishucdn.com/tos-cn-i-jbbdkfciu3/hera-doc/MP4tbbNk0ozLdDxPITDcJedvnSb.png~tplv-jbbdkfciu3-image:0:0.image)
+![](https://raw.githubusercontent.com/hangx969/upload-images-md/main/hermes-agent-12-20260504235440.png)
 
 12. 重启网关、启动 Hermes 对话
 
-![](https://p1-hera.feishucdn.com/tos-cn-i-jbbdkfciu3/hera-doc/IyQCbOHVUoQ4Mkxg8Ylc3qUonue.png~tplv-jbbdkfciu3-image:0:0.image)
+![](https://raw.githubusercontent.com/hangx969/upload-images-md/main/hermes-agent-13-20260504235514.png)
 
-![](https://p1-hera.feishucdn.com/tos-cn-i-jbbdkfciu3/hera-doc/IHvObjsMOo7fLtxLEsHc9kCYnjc.png~tplv-jbbdkfciu3-image:0:0.image)
+![](https://raw.githubusercontent.com/hangx969/upload-images-md/main/hermes-agent-14-20260504235536.png)
 
 13. 在飞书中搜索 Bot 打招呼，获得配对码
 
-![](https://p1-hera.feishucdn.com/tos-cn-i-jbbdkfciu3/hera-doc/A0iwbhMVDoerVLxaLyvcXfAZn0o.png~tplv-jbbdkfciu3-image:0:0.image)
+![](https://raw.githubusercontent.com/hangx969/upload-images-md/main/hermes-agent-15-20260504235606.png)
 
 14. 在终端对话完成配对
 
