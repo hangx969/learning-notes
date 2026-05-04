@@ -12,6 +12,24 @@ date: 2026-04-17
 
 ---
 
+## [2026-05-04] update | 消除孤儿来源页面
+
+- **操作**：为 15 个无入站链接的 sources/ 页面添加来自 entities/concepts/maps 的引用
+- **修改文件**：
+  - `entities/Claude-Code.md` — +3 refs（基础指南、扩展体系、知识库搭建摘要）
+  - `entities/OpenClaw.md` — +2 refs（OpenClaw 批量摘要、多智能体导出摘要）
+  - `entities/Terraform.md` — +1 ref（容器管理摘要）
+  - `entities/Helm.md` — +1 ref（Terraform Helm Provider）
+  - `entities/Slurm.md` — +1 ref（HPC-Cloud-GPU 摘要）
+  - `concepts/Python运维开发.md` — +1 ref（Python 批量摘要）
+  - `entities/Kafka.md`、`entities/Redis.md`、`entities/MySQL.md` — 各 +1 ref（杂项领域摘要）
+  - `maps/linux-ops-map.md` — +2 refs（Linux-Shell、HPC-Cloud-GPU 摘要）
+  - `maps/ai-workflow-map.md` — +4 refs（CloudOps-Agent、RAG-Agent、Hermes-agent、k8s-report-skills 摘要）
+  - `maps/domain-map.md` — +3 refs（Go、杂项领域、IaC 摘要）
+- **影响**：孤儿来源页面从 15 个减少到 0 个
+
+---
+
 ## [2026-05-04] update | 修复链接格式问题
 
 - **操作**：修复 Docker Compose 命名不一致（空格 → 连字符）

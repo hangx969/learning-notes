@@ -121,6 +121,8 @@ date: 2026-04-16
 
 **推荐顺序：** [[Go/go-01-环境配置-基础|go-01-环境配置-基础]] → [[Go/go-变量-数据类型-运算|go-变量-数据类型-运算]] → [[Go/go-分支-循环|go-分支-循环]] → [[Go/go-函数-包|go-函数-包]] → [[Go/go-数组-切片-map|go-数组-切片-map]] → [[Go/go-面向对象|go-面向对象]] → [[Go/go-错误处理|go-错误处理]] → [[Go/go-web开发|go-web开发]] → [[Go/云原生开发-基础|云原生开发-基础]]
 
+**来源摘要：** [[KnowledgeBase/sources/go-batch-summary|Go 批量摘要]]
+
 **关联领域：** [[CloudComputing/云原生|云原生]]、[[Docker-Kubernetes/k8s-CICD/发布go-python-java代码到K8S环境|发布go-python-java代码到K8S环境]]
 
 ---
@@ -159,7 +161,9 @@ date: 2026-04-16
 | Middlewares | 3 | [[Middlewares/Kafka|Kafka]]、[[Middlewares/RabbitMQ|RabbitMQ]] | K8s 中间件部署 |
 | OS | 3 | [[OS/OS|OS]]、[[OS/计算机组成原理|计算机组成原理]] | 理论基础 |
 | Networking | 2 | [[Networking/计算机网络基础|计算机网络基础]]、[[Networking/HTTP基础|HTTP基础]] | 云网络基础 |
-| IaC | 2 | [[IaC/terraform-basics|terraform-basics]] | 自动化运维 |
+| IaC | 3 | [[IaC/terraform-basics|terraform-basics]] | 自动化运维 |
 | Git | 2 | [[Git/git-learning|git-learning]] | 开发工具 |
 | SoftwareTesting | 2 | [[SoftwareTesting/软件工程基础|软件工程基础]] | 软件工程 |
+
+**来源摘要：** [[KnowledgeBase/sources/misc-domains-batch-summary|杂项领域批量摘要]]、[[KnowledgeBase/sources/iac-terraform-container-summary|Terraform 容器管理摘要]]
 | C++ | 1 | [[C++/C++LearningNotes|C++LearningNotes]] | 编程语言 |
