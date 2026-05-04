@@ -79,7 +79,9 @@ sudo cp /etc/apt/sources.list.d/ubuntu.sources /etc/apt/sources.list.d/ubuntu.so
 sudo sed -i 's|https://cn.archive.ubuntu.com/ubuntu|https://mirrors.aliyun.com/ubuntu|g; s|http://security.ubuntu.com/ubuntu|https://mirrors.aliyun.com/ubuntu|g' /etc/apt/sources.list.d/ubuntu.sources
 
 # arm64
-sudo sed -i 's|http://ports.ubuntu.com/ubuntu-ports|https://mirrors.aliyun.com/ubuntu-ports|g; s|https://ports.ubuntu.com/ubuntu-ports|https://mirrors.aliyun.com/ubuntu-ports|g' /etc/apt/sources.list.d/ubuntu.sources
+sudo sed -i \
+  's|^URIs: .*ubuntu-ports/.*|URIs: https://mirrors.aliyun.com/ubuntu-ports/|' \
+  /etc/apt/sources.list.d/ubuntu.sources
 ```
 
 ### 3.3 替换为清华 TUNA 源(可选)
