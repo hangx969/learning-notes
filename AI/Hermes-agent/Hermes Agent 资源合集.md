@@ -20,16 +20,16 @@ tags:
 
 ## 中文资源
 
-| 资源类型 | 资源名称 | 链接 |
-| --- | --- | --- |
-| 官方资源 | Hermes Agent 主仓库 | https://github.com/NousResearch/hermes-agent |
-| 官方资源 | Hermes Agent 官方文档 | https://hermes-agent.nousresearch.com/docs |
-| 官方资源 | Nous Research 网站 | https://nousresearch.com/ |
-| 官方资源 | Hermes Agent 官网 | https://hermes-agent.nousresearch.com/ |
-| 技术社区 | Hermes Agent 中文站 | https://hermesagentai.cn/ |
-| 技术社区 | Hermes Agent 中文社区 | https://hermesagent.org.cn/ |
-| 技术博客 | OpenClaw 中文社区论坛 | https://clawd.org.cn/forum/ |
-| 技术博客 | Hermes Agent 深度教程 | https://ha.aialiang.com/index.html |
+| 资源类型 | 资源名称                | 链接                                           |
+| ---- | ------------------- | -------------------------------------------- |
+| 官方资源 | Hermes Agent 主仓库    | https://github.com/NousResearch/hermes-agent |
+| 官方资源 | Hermes Agent 官方文档   | https://hermes-agent.nousresearch.com/docs   |
+| 官方资源 | Nous Research 网站    | https://nousresearch.com/                    |
+| 官方资源 | Hermes Agent 官网     | https://hermes-agent.nousresearch.com/       |
+| 技术社区 | Hermes Agent 中文站    | https://hermesagentai.cn/                    |
+| 技术社区 | Hermes Agent 中文社区   | https://hermesagent.org.cn/                  |
+| 技术博客 | OpenClaw 中文社区论坛     | https://clawd.org.cn/forum/                  |
+| 技术博客 | Hermes Agent 深度教程   | https://ha.aialiang.com/index.html           |
 | 技术博客 | Hermes Agent 从入门到精通 | https://pan.quark.cn/s/c2f5c0a9d48e?pwd=prVM |
 
 ---
