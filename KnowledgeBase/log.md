@@ -624,3 +624,46 @@ date: 2026-04-17
 - 内容涵盖：决策框架表格、信息损失分析、模型注意力论证、多Agent身份切换的真正价值
 - 关联页面：[[KnowledgeBase/sources/多智能体协作-summary]]、[[KnowledgeBase/entities/Claude-Code]]
 - 更新 INDEX.md 分析报告分类，新增第 4 条条目
+
+
+## [2026-05-04] lint | 知识库全面健康检查
+
+### 1. 断链检查
+- 共检查 2,458 个 wikilink，发现 346 个断链（273 个唯一目标）
+- **15 个格式错误链接**：`entities/OpenClaw.md` 和 `entities/Azure.md` 中有尾部反斜杠 `\` 的畸形 wikilink
+- **1 个命名不一致**：`Docker Compose`（空格）→ 实际文件名 `Docker-Compose`（连字符）
+- **9 个路径错误**：链接指向 `KnowledgeBase/entities/X` 但实际文件在 Raw Source 目录（ECS、VPC、WAF、Fiddler、Landing Zone、OpenStack、RabbitMQ、RocketMQ、VSCode）
+- **217 个缺失 KB 页面**：被引用但从未创建的概念/实体页（66 个概念 + 151 个实体），高频缺失：StorageClass(4次)、ServiceMesh(3次)、高可用架构(3次)
+- **19 个死链**：`log.md` 中引用的 `0raw/` 路径，文件已移动或删除
+
+### 2. 孤儿页检查（无入链页面）
+- 总计 83 个 wiki 页面，25 个孤儿页（30%）
+- concepts/ 和 entities/：**0 孤儿**（核心知识页全部互联良好）
+- sources/：11 个孤儿（50%）— 无概念/实体页链回这些摘要
+- maps/：5 个孤儿（63%）
+- analysis/：4 个孤儿（100%）
+- inventory/：2 个孤儿（100%）
+- maintenance/：3 个孤儿（100%）
+
+### 3. Raw Source 覆盖检查
+- 16 个 Raw Source 目录已 100% 覆盖（Docker-Kubernetes、Aliyun、Azure、Go、Python、Linux-Shell 等）
+- **AI/ 目录严重欠缺**：301 个文件仅 37 个被引用（12%覆盖）
+  - CloudOps-Agent-项目/（74 文件）：完全未摄入
+  - RAG-Agent-项目/（33 文件）：完全未摄入
+  - Hermes-agent/（2 文件）：完全未摄入
+  - AI-视觉/awesome-design-md/（135 文件）：完全未摄入
+- **IaC/**：`terraform-container-management.md` 新增未摄入（1 文件）
+
+### 4. Frontmatter 规范检查
+- 80 个 wiki 页面全部通过：title、tags（含 `knowledgebase/*`）、date — **100% 合规**
+- **aliases 字段缺失**：58 个文件（72.5%）缺少 aliases
+
+### 5. Index 完整性检查
+- index.md 与磁盘文件 **完全同步**：82 个条目全部对应实际文件，无缺失、无多余
+
+### 建议优先修复项
+1. 修复 15 个反斜杠畸形链接（OpenClaw.md、Azure.md）
+2. 修复 Docker Compose 命名不一致
+3. 摄入 AI/ 下新增项目（CloudOps-Agent、RAG-Agent、Hermes-agent）
+4. 为 sources/ 页面建立入链（从 concepts/entities 页面链回）
+5. 补充高频缺失概念页（StorageClass、ServiceMesh、高可用架构）
