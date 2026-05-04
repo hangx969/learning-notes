@@ -73,6 +73,10 @@ OpenClaw 和 [[KnowledgeBase/entities/Claude-Code|Claude Code]] 同属 AI Agent 
 ## 在本仓库中的位置
 主要集中在 `AI/OpenClaw/` 目录（8 篇文章）和 `AI/agents/` 目录（8 个智能体定义文件集）。
 
+## 在本仓库中的覆盖
+- [[KnowledgeBase/sources/ai-openclaw-misc-batch-summary|AI-OpenClaw 批量摘要]] — OpenClaw 全栈（安装/Skills/Channels/AIOps/多智能体）、Copilot CLI、提示词工程
+- [[KnowledgeBase/sources/openclaw-agents-export-summary|多智能体定义导出摘要]] — 8 个智能体完整定义文件 + 4 个 Skills
+
 ## 相关文章
 - [[AI/OpenClaw/OpenClaw-基础-安装|OpenClaw-基础-安装]]
 - [[AI/OpenClaw/Openclaw-多智能体|Openclaw-多智能体]]
