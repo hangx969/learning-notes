@@ -78,7 +78,7 @@ sudo cp /etc/apt/sources.list.d/ubuntu.sources /etc/apt/sources.list.d/ubuntu.so
 # amd64
 sudo sed -i 's|https://cn.archive.ubuntu.com/ubuntu|https://mirrors.aliyun.com/ubuntu|g; s|http://security.ubuntu.com/ubuntu|https://mirrors.aliyun.com/ubuntu|g' /etc/apt/sources.list.d/ubuntu.sources
 
-# arm64
+# arm64 应该用 ports 仓库镜像，阿里云地址一般是：https://mirrors.aliyun.com/ubuntu-ports/
 sudo sed -i \
   's|^URIs: .*ubuntu-ports/.*|URIs: https://mirrors.aliyun.com/ubuntu-ports/|' \
   /etc/apt/sources.list.d/ubuntu.sources
