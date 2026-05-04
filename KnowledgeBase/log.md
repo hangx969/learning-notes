@@ -12,6 +12,16 @@ date: 2026-04-17
 
 ---
 
+## [2026-05-04] update | 修复链接格式问题
+
+- **操作**：修复 Docker Compose 命名不一致（空格 → 连字符）
+- **修改文件**：
+  - `entities/Docker.md` — 2 处 `Docker Compose` → `Docker-Compose`
+  - `sources/docker-batch-summary.md` — 1 处同上
+- **说明**：`\|` 在表格内的 wikilink 是正确的 Markdown 转义，非错误，无需修复
+
+---
+
 ## [2026-05-04] create | 补建高频缺失概念页面
 
 - **操作**：创建 7 个被多页面引用但不存在的概念页面

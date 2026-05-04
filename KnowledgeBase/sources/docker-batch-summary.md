@@ -123,7 +123,7 @@ sources:
 
 ## 涉及的概念与实体
 - [[KnowledgeBase/entities/Docker|Docker]]
-- [[KnowledgeBase/entities/Docker Compose|Docker Compose]]
+- [[KnowledgeBase/entities/Docker-Compose|Docker Compose]]
 - [[KnowledgeBase/entities/Dockerfile|Dockerfile]]
 - [[KnowledgeBase/entities/Nginx|Nginx]]
 - [[KnowledgeBase/entities/Prometheus|Prometheus]]
