@@ -94,7 +94,7 @@ CLI 和 Gateway 两个入口共享同一套 Agent 核心，只是交互方式不
 - **acp_adapter/**：VS Code / Zed / JetBrains 编辑器集成
 - **environments/**：终端后端——local、Docker、SSH、Modal、Daytona、Singularity
 
-![Hermes Agent 五层架构](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260504234248525.png)
+![](https://p1-hera.feishucdn.com/tos-cn-i-jbbdkfciu3/hera-doc/UU9CbZONhoHYc9xjiUjcgCt3ntf.png~tplv-jbbdkfciu3-image:0:0.image)
 
 ---
 
@@ -187,17 +187,62 @@ hermes setup
 跟着向导操作：
 
 1. 是否导入 OpenClaw → 可选否（N）
+
+![](https://p1-hera.feishucdn.com/tos-cn-i-jbbdkfciu3/hera-doc/U5uCbXVVNo1eThxgdDicik8ynBb.png~tplv-jbbdkfciu3-image:0:0.image)
+
 2. 选择快速安装 → 选择模型 → 配置模型 API
-3. 选择配置 IM 工具 → 选择飞书（空格选中，Enter 下一步）
-4. 选择飞书扫码连接飞书
-5. 链接复制到浏览器或扫码配置飞书
-6. 选择新建飞书机器人或使用已有机器人
-7. 设置消息配对方式（默认：私信配对）
-8. 设置群响应方式（默认：需 @bot）
-9. 定时任务推送群（可先跳过）
-10. 重启网关、启动 Hermes 对话
-11. 在飞书中搜索 Bot 打招呼，获得配对码
-12. 在终端对话完成配对
+
+![](https://p1-hera.feishucdn.com/tos-cn-i-jbbdkfciu3/hera-doc/Wr3nbxRECoPRFFxnTj2cyliUnjh.png~tplv-jbbdkfciu3-image:0:0.image)
+
+3. 选择配置 IM 工具
+
+![](https://p1-hera.feishucdn.com/tos-cn-i-jbbdkfciu3/hera-doc/FqaGbKFT3ogJtkxBhiac0o4InD6.png~tplv-jbbdkfciu3-image:0:0.image)
+
+4. 选择飞书（空格选中，Enter 下一步）
+
+![](https://p1-hera.feishucdn.com/tos-cn-i-jbbdkfciu3/hera-doc/GMDObpkgJo4O7ZxjtricItbDnce.png~tplv-jbbdkfciu3-image:0:0.image)
+
+5. 选择飞书扫码连接飞书
+
+![](https://p1-hera.feishucdn.com/tos-cn-i-jbbdkfciu3/hera-doc/YtE2bqwMmopDNhx8WKicUPs2nGg.png~tplv-jbbdkfciu3-image:0:0.image)
+
+6. 链接复制到浏览器或扫码配置飞书
+
+![](https://p1-hera.feishucdn.com/tos-cn-i-jbbdkfciu3/hera-doc/L2K2bCQIzouwaqxy0oucQJsQn2g.png~tplv-jbbdkfciu3-image:0:0.image)
+
+7. 选择新建飞书机器人或使用已有机器人
+
+![](https://p1-hera.feishucdn.com/tos-cn-i-jbbdkfciu3/hera-doc/XI0EbziiooWkApxiDyNc8bIinHc.png~tplv-jbbdkfciu3-image:0:0.image)
+
+8. 看到提示后，回到终端
+
+![](https://p1-hera.feishucdn.com/tos-cn-i-jbbdkfciu3/hera-doc/RCrJbpuchou9VuxhEvPcdmFqnzh.png~tplv-jbbdkfciu3-image:0:0.image)
+
+9. 设置消息配对方式（默认：私信配对）
+
+![](https://p1-hera.feishucdn.com/tos-cn-i-jbbdkfciu3/hera-doc/KYXFblxCVowD5KxzIDTcbcFlnDg.png~tplv-jbbdkfciu3-image:0:0.image)
+
+10. 设置群响应方式（默认：需 @bot）
+
+![](https://p1-hera.feishucdn.com/tos-cn-i-jbbdkfciu3/hera-doc/UQhIblkgqo7DEuxd2V0cafkAn4g.png~tplv-jbbdkfciu3-image:0:0.image)
+
+11. 定时任务推送群（可先跳过）
+
+![](https://p1-hera.feishucdn.com/tos-cn-i-jbbdkfciu3/hera-doc/MP4tbbNk0ozLdDxPITDcJedvnSb.png~tplv-jbbdkfciu3-image:0:0.image)
+
+12. 重启网关、启动 Hermes 对话
+
+![](https://p1-hera.feishucdn.com/tos-cn-i-jbbdkfciu3/hera-doc/IyQCbOHVUoQ4Mkxg8Ylc3qUonue.png~tplv-jbbdkfciu3-image:0:0.image)
+
+![](https://p1-hera.feishucdn.com/tos-cn-i-jbbdkfciu3/hera-doc/IHvObjsMOo7fLtxLEsHc9kCYnjc.png~tplv-jbbdkfciu3-image:0:0.image)
+
+13. 在飞书中搜索 Bot 打招呼，获得配对码
+
+![](https://p1-hera.feishucdn.com/tos-cn-i-jbbdkfciu3/hera-doc/A0iwbhMVDoerVLxaLyvcXfAZn0o.png~tplv-jbbdkfciu3-image:0:0.image)
+
+14. 在终端对话完成配对
+
+![](https://p1-hera.feishucdn.com/tos-cn-i-jbbdkfciu3/hera-doc/MlpybrfUUogaIGxRzmHcN2mDnJg.png~tplv-jbbdkfciu3-image:0:0.image)
 
 **第三步：安装飞书 CLI**
 
