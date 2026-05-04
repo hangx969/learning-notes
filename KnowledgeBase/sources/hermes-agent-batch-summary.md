@@ -7,6 +7,7 @@ date: 2026-05-04
 sources:
   - "[[AI/Hermes-agent/Hermes Agent 资源合集]]"
   - "[[AI/Hermes-agent/Ubuntu 25.10 安装与使用 Hermes Agent 指南]]"
+  - "[[AI/Hermes-agent/Hermes Agent全解析-与OpenClaw对比及飞书接入指南]]"
 aliases:
   - Hermes Agent摘要
 ---
@@ -15,12 +16,12 @@ aliases:
 
 ## 元信息
 - **原始目录**：`AI/Hermes-agent/`
-- **文档数量**：2 篇
+- **文档数量**：3 篇
 - **领域**：AI Agent 框架
 - **摄入日期**：2026-05-04
 
 ## 整体概述
-Hermes Agent 是 Nous Research 推出的 AI Agent 框架，具备持久记忆、自动技能提炼、跨会话成长等自我进化能力。本批次包含一份资源合集（官方文档、中文社区、生态工具）和一份 Ubuntu 25.10 完整部署指南（安装、Web Dashboard、OpenClaw 迁移、升级、飞书集成）。
+Hermes Agent 是 Nous Research 推出的 AI Agent 框架，具备持久记忆、自动技能提炼、跨会话成长等自我进化能力。本批次包含一份资源合集（官方文档、中文社区、生态工具）、一份 Ubuntu 25.10 完整部署指南（安装、Web Dashboard、OpenClaw 迁移、升级、飞书集成），以及一份深度架构解析文章（五层架构、记忆系统、子代理委托、与 OpenClaw 对比、飞书接入）。
 
 ## 各文档摘要
 
