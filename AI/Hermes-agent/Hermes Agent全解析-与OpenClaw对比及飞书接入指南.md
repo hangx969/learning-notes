@@ -94,6 +94,8 @@ CLI 和 Gateway 两个入口共享同一套 Agent 核心，只是交互方式不
 - **acp_adapter/**：VS Code / Zed / JetBrains 编辑器集成
 - **environments/**：终端后端——local、Docker、SSH、Modal、Daytona、Singularity
 
+![Hermes Agent 五层架构](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260504234248525.png)
+
 ---
 
 ## 三、记忆系统：为何"越用越聪明"
