@@ -216,15 +216,15 @@ hermes setup
 
 8. 看到提示后，回到终端
 
-![](https://p1-hera.feishucdn.com/tos-cn-i-jbbdkfciu3/hera-doc/RCrJbpuchou9VuxhEvPcdmFqnzh.png~tplv-jbbdkfciu3-image:0:0.image)
+![](https://raw.githubusercontent.com/hangx969/upload-images-md/main/hermes-agent-09-20260504235211.png)
 
 9. 设置消息配对方式（默认：私信配对）
 
-![](https://p1-hera.feishucdn.com/tos-cn-i-jbbdkfciu3/hera-doc/KYXFblxCVowD5KxzIDTcbcFlnDg.png~tplv-jbbdkfciu3-image:0:0.image)
+![](https://raw.githubusercontent.com/hangx969/upload-images-md/main/hermes-agent-10-20260504235340.png)
 
 10. 设置群响应方式（默认：需 @bot）
 
-![](https://p1-hera.feishucdn.com/tos-cn-i-jbbdkfciu3/hera-doc/UQhIblkgqo7DEuxd2V0cafkAn4g.png~tplv-jbbdkfciu3-image:0:0.image)
+![](https://raw.githubusercontent.com/hangx969/upload-images-md/main/hermes-agent-11-20260504235409.png)
 
 11. 定时任务推送群（可先跳过）
 
