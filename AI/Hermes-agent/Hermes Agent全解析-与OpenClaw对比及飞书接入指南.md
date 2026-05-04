@@ -204,15 +204,15 @@ hermes setup
 
 5. 选择飞书扫码连接飞书
 
-![](https://p1-hera.feishucdn.com/tos-cn-i-jbbdkfciu3/hera-doc/YtE2bqwMmopDNhx8WKicUPs2nGg.png~tplv-jbbdkfciu3-image:0:0.image)
+![](https://raw.githubusercontent.com/hangx969/upload-images-md/main/hermes-agent-06-20260504235113.png)
 
 6. 链接复制到浏览器或扫码配置飞书
 
-![](https://p1-hera.feishucdn.com/tos-cn-i-jbbdkfciu3/hera-doc/L2K2bCQIzouwaqxy0oucQJsQn2g.png~tplv-jbbdkfciu3-image:0:0.image)
+![](https://raw.githubusercontent.com/hangx969/upload-images-md/main/hermes-agent-07-20260504235138.png)
 
 7. 选择新建飞书机器人或使用已有机器人
 
-![](https://p1-hera.feishucdn.com/tos-cn-i-jbbdkfciu3/hera-doc/XI0EbziiooWkApxiDyNc8bIinHc.png~tplv-jbbdkfciu3-image:0:0.image)
+![](https://raw.githubusercontent.com/hangx969/upload-images-md/main/hermes-agent-08-20260504235158.png)
 
 8. 看到提示后，回到终端
 
