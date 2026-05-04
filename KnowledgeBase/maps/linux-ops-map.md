@@ -114,6 +114,12 @@ date: 2026-04-16
 
 ---
 
+## 📑 来源摘要
+- [[KnowledgeBase/sources/linux-shell-batch-summary|Linux-Shell 批量摘要]] — 24 篇系统管理、Shell 脚本、SSH/网络、存储/LVM/NFS
+- [[KnowledgeBase/sources/hpc-cloud-gpu-batch-summary|HPC-Cloud-GPU 批量摘要]] — Slurm/PBS/GPU 管理全栈
+
+---
+
 ## 🔗 关联领域
 - [[KnowledgeBase/maps/python-devops-map|python-devops-map]] — Python 运维自动化
 - [[KnowledgeBase/maps/kubernetes-map|kubernetes-map]] — K8s 依赖 Linux 底盘
