@@ -75,7 +75,7 @@ sudo cp /etc/apt/sources.list.d/ubuntu.sources /etc/apt/sources.list.d/ubuntu.so
 ### 3.2 替换为阿里云源
 
 ```bash
-sudo
+sudo sed -i 's|https://cn.archive.ubuntu.com/ubuntu|https://mirrors.aliyun.com/ubuntu|g; s|http://security.ubuntu.com/ubuntu|https://mirrors.aliyun.com/ubuntu|g' /etc/apt/sources.list.d/ubuntu.sources
 ```
 
 ### 3.3 替换为清华 TUNA 源(可选)
