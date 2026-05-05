@@ -74,7 +74,7 @@ date: 2026-04-16
 ## 📑 来源摘要
 - [[KnowledgeBase/sources/cloudops-agent-batch-summary|CloudOps-Agent 批量摘要]] — 57 篇，三语言智能 OnCall Agent
 - [[KnowledgeBase/sources/rag-agent-batch-summary|RAG-Agent 批量摘要]] — 33 篇，企业 RAG 知识库系统
-- [[KnowledgeBase/sources/hermes-agent-batch-summary|Hermes-agent 批量摘要]] — 2 篇，Hermes Agent 安装与资源合集
+- [[KnowledgeBase/sources/hermes-agent-batch-summary|Hermes-agent 批量摘要]] — 3 篇，Hermes Agent 安装、资源合集与架构解析
 - [[KnowledgeBase/sources/k8s-report-skills-summary|K8s 巡检 Skills 摘要]] — K8s 集群巡检 Python/Shell 技能
 
 ---
