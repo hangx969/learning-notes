@@ -278,7 +278,7 @@ date: 2026-04-17
 ## [2026-04-20] update | OpenClaw second-brain 知识管理插件
 
 - **来源**：[[0raw/Openclaw帮你管理个人知识库]]（微信公众号文章）
-- **操作**：将 second-brain 插件内容整合到 [[AI/OpenClaw/OpenClaw-Skills-插件]] 的"记忆插件"章节前，新增"个人知识库 - second-brain"章节
+- **操作**：将 second-brain 插件内容整合到 [[OpenClaw-Skills-Plugins]] 的"记忆插件"章节前，新增"个人知识库 - second-brain"章节
 - **改动**：安装配置命令、6 种使用场景表格、核心能力总结、与记忆插件的区别说明
 - **实体更新**：[[KnowledgeBase/entities/OpenClaw]] Skills 插件生态新增 second-brain 条目
 

@@ -31,7 +31,7 @@ date: 2026-04-16
 **相关文档（7 篇）：**
 - [[AI/OpenClaw/OpenClaw-基础-安装|OpenClaw-基础-安装]] ⭐ 推荐入口
 - [[AI/OpenClaw/OpenClaw-Channels|OpenClaw-Channels]] — Channel 配置
-- [[AI/OpenClaw/OpenClaw-Skills-插件|OpenClaw-Skills-插件]] — Skills 与插件
+- [[OpenClaw-Skills-Plugins|OpenClaw-Skills-Plugins]] — Skills 与插件
 - [[AI/OpenClaw/Openclaw-AIOps|Openclaw-AIOps]] — AIOps 场景
 - [[AI/OpenClaw/Openclaw-多智能体|Openclaw-多智能体]] — 多智能体（2974 行）
 - [[AI/OpenClaw/CoPaw|CoPaw]] — CoPaw 工具

@@ -7,7 +7,7 @@ date: 2026-05-04
 sources:
   - "[[AI/Hermes-agent/Hermes Agent 资源合集]]"
   - "[[AI/Hermes-agent/Ubuntu 25.10 安装与使用 Hermes Agent 指南]]"
-  - "[[AI/Hermes-agent/Hermes Agent全解析-与OpenClaw对比及飞书接入指南]]"
+  - "[[Hermes与OpenClaw对比及飞书接入指南]]"
 aliases:
   - Hermes Agent摘要
 ---
@@ -41,7 +41,7 @@ Hermes Agent 是 Nous Research 推出的 AI Agent 框架，具备持久记忆、
   - OpenClaw 迁移：`hermes claw migrate --preset full --migrate-secrets`
   - 飞书集成推荐 WebSocket 模式，无需公网 Webhook
 
-### [[AI/Hermes-agent/Hermes Agent全解析-与OpenClaw对比及飞书接入指南|架构解析与对比]]
+### [[Hermes与OpenClaw对比及飞书接入指南|架构解析与对比]]
 - 核心内容：Hermes Agent 五层架构深度解析（入口/编排层、Agent 核心层、工具注册层、状态/持久层、平台适配层）、记忆系统设计（MEMORY.md/USER.md 分离、冻结快照、前缀缓存优化）、子代理委托机制（隔离原则、深度限制 2、ThreadPoolExecutor 并行 max 3）、与 OpenClaw 六维对比、飞书 Bot 接入指南
 - 关键知识点：
   - 五层架构：入口/编排 → Agent 核心 → 工具注册 → 状态/持久 → 平台适配，层间单向依赖
