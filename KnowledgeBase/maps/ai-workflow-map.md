@@ -34,7 +34,7 @@ date: 2026-04-16
 ### OpenClaw 路径
 1. [[AI/OpenClaw/OpenClaw-基础-安装|OpenClaw-基础-安装]] — 入门安装
 2. [[AI/OpenClaw/OpenClaw-Channels|OpenClaw-Channels]] — Channel 配置
-3. [[OpenClaw-Skills-Plugins|OpenClaw-Skills-Plugins]] — Skills 插件开发
+3. [[AI/OpenClaw/OpenClaw-Skills-Plugins|OpenClaw-Skills-Plugins]] — Skills 插件开发
 4. [[AI/OpenClaw/CoPaw|CoPaw]] — CoPaw 工具
 5. [[AI/OpenClaw/Openclaw-AIOps|Openclaw-AIOps]] — AIOps 运维场景
 6. [[AI/OpenClaw/Openclaw-多智能体|Openclaw-多智能体]] — 多智能体架构（2974 行，全库最大文档）
@@ -63,7 +63,7 @@ date: 2026-04-16
 |------|------|--------|
 | [[AI/OpenClaw/OpenClaw-基础-安装|OpenClaw-基础-安装]] | 基础安装 | 环境搭建、配置 |
 | [[AI/OpenClaw/OpenClaw-Channels|OpenClaw-Channels]] | Channel | 通信通道、集成 |
-| [[AI/OpenClaw/OpenClaw-Skills-插件|OpenClaw-Skills-插件]] | Skills 插件 | 自定义能力 |
+| [[AI/OpenClaw/OpenClaw-Skills-Plugins|OpenClaw-Skills-Plugins]] | Skills 插件 | 自定义能力 |
 | [[AI/OpenClaw/CoPaw|CoPaw]] | CoPaw | 交互式工具 |
 | [[AI/OpenClaw/Openclaw-AIOps|Openclaw-AIOps]] | AIOps | 智能运维 |
 | [[AI/OpenClaw/Openclaw-多智能体|Openclaw-多智能体]] | 多智能体 | Agent 协作、工作流编排 |
