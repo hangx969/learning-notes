@@ -12,6 +12,22 @@ date: 2026-04-17
 
 ---
 
+## [2026-05-05] ingest | Harness 实战文章摄入
+
+- **来源**：`0raw/Harness 实战：从零搭建最小可用的 Harness 系统.md`（微信公众号剪藏）
+- **清洗**：去除作者署名行、微信赞赏/滑动导航、SVG 占位图，保留全部技术内容（四层架构、三个拦截器完整代码、编排流程、踩坑经验、组件清单表）
+- **新建文件**：
+  - `AI/ClaudeCode/Claude-Code-Harness实战-最小可用系统.md` — 清洗后的技术文章
+  - `KnowledgeBase/sources/harness-system-summary.md` — 来源摘要页
+- **更新页面**：
+  - `entities/Claude-Code.md`：新增 sources 引用 + 覆盖条目 + 标记 Hooks 知识空白已填补
+  - `maps/ai-workflow-map.md`：Claude Code 路径新增第 5 步 + 文档表 4→5 篇 + 总数 17→18
+  - `maps/tool-map.md`：Claude Code 相关文档 6→7 篇
+  - `INDEX.md`：新增来源摘要条目
+  - `inventory/repository-inventory.md`：ClaudeCode/ 4→5 篇
+
+---
+
 ## [2026-05-05] ingest | Skill Craft 质检工具文章摄入
 
 - **来源**：`0raw/我做了一个 Claude Skill 质检工具：专门解决 Claude Skill 的不触发、乱触发、越用越跑偏.md`（微信公众号剪藏）
