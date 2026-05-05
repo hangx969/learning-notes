@@ -12,6 +12,29 @@ date: 2026-04-17
 
 ---
 
+## [2026-05-05] ingest | Skill Craft 质检工具文章摄入
+
+- **来源**：`0raw/我做了一个 Claude Skill 质检工具：专门解决 Claude Skill 的不触发、乱触发、越用越跑偏.md`（微信公众号剪藏）
+- **清洗**：去除营销文案（01 节引入语、10 节目标受众推荐、11 节关注引导、页脚），保留技术内容（7 类失效模式、三层评估体系、四模式详解）
+- **新建文件**：
+  - `AI/ClaudeCode/Claude-Skill质检工具-SkillCraft.md` — 清洗后的技术文章
+  - `KnowledgeBase/sources/skill-craft-summary.md` — 来源摘要页
+- **更新页面**：
+  - `entities/Claude-Code.md`：新增 sources 引用 + 覆盖条目
+  - `maps/ai-workflow-map.md`：Claude Code 路径新增第 4 步 + 文档表 3→4 篇
+  - `maps/tool-map.md`：Claude Code 相关文档 5→6 篇
+  - `INDEX.md`：新增来源摘要条目
+  - `inventory/repository-inventory.md`：ClaudeCode/ 3→4 篇
+
+---
+
+## [2026-05-05] update | CLAUDE.md 新增原始文章清洗准则
+
+- 在操作流程 Ingest 节新增 Step 0："清洗原始文章"——去除营销内容，仅保留技术内容
+- 明确列出需要去除的内容类型：引流话术、关注/转发引导、评论区互动、广告/赞助、页脚导航
+
+---
+
 ## [2026-05-05] ingest | Hermes 满配指南文章摄入
 
 - **来源**：`0raw/装完 Hermes 一定要配置这五套系统，秒变满配版，能力提升数倍不止.md`（微信公众号剪藏）
