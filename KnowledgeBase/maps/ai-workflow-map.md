@@ -11,7 +11,7 @@ date: 2026-04-16
 # 🤖 AI 工作流专题地图
 
 > [!info] 专题范围
-> 覆盖 AI/ 目录下 ==16 篇文档==，聚焦 Claude Code、OpenClaw 两大 AI 工具平台及其在运维场景中的应用。
+> 覆盖 AI/ 目录下 ==17 篇文档==，聚焦 Claude Code、OpenClaw 两大 AI 工具平台及其在运维场景中的应用。
 
 ---
 
@@ -29,6 +29,7 @@ date: 2026-04-16
 1. [[AI/ClaudeCode/ClaudeCode基础指南|ClaudeCode基础指南]] — 入门必读
 2. [[AI/ClaudeCode/Claude Code 扩展体系|扩展体系]] — MCP + Skills + Slash Commands + Plugin 四层扩展机制
 3. [[AI/ClaudeCode/多智能体协作-Subagents与Agent-Teams|多智能体协作]] — Subagents 与 Agent Teams
+4. [[AI/ClaudeCode/Claude-Skill质检工具-SkillCraft|Skill Craft 质检工具]] — 7 类失效模式 + 三层评估 + 四模式质量工程
 
 ### OpenClaw 路径
 1. [[AI/OpenClaw/OpenClaw-基础-安装|OpenClaw-基础-安装]] — 入门安装
@@ -54,13 +55,14 @@ date: 2026-04-16
 
 ## 📂 全部文档
 
-### Claude Code（3 篇）
+### Claude Code（4 篇）
 
 | 文章 | 主题 | 关键词 |
 |------|------|--------|
 | [[AI/ClaudeCode/ClaudeCode基础指南|ClaudeCode基础指南]] | 全面指南 | 安装、配置、使用场景 |
 | [[AI/ClaudeCode/Claude Code 扩展体系|扩展体系]] | 四层扩展机制 | MCP、Skills、Slash Commands、Plugin |
 | [[AI/ClaudeCode/多智能体协作-Subagents与Agent-Teams|多智能体协作]] | Subagents 与 Agent Teams | 并行任务、团队协作 |
+| [[AI/ClaudeCode/Claude-Skill质检工具-SkillCraft|Skill Craft 质检工具]] | Skill 质量工程 | 7 类失效模式、三层评估、check/fix/create/audit |
 
 ### Obsidian 知识库（3 篇）
 
