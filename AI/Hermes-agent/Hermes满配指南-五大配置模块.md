@@ -164,7 +164,7 @@ pip install -e ".[dev]"
 
 ## 生态入口
 
-| 资源 | 说明 |
-|------|------|
-| **awesome-hermes-agent** | 一站式资源汇总 |
-| **hermes-ecosystem** | 80+ 工具可视化地图 |
+| 资源                       | 说明          |
+| ------------------------ | ----------- |
+| **awesome-hermes-agent** | 一站式资源汇总     |
+| **hermes-ecosystem**     | 80+ 工具可视化地图 |
