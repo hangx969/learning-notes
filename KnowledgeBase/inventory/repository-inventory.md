@@ -62,6 +62,15 @@ date: 2026-04-16
 | linux | IDENTITY.md / SOUL.md / AGENTS.md / HEARTBEAT.md | rocky-linux10-init（含脚本） |
 | pm | IDENTITY.md / SOUL.md / AGENTS.md / HEARTBEAT.md | — |
 
+### Hermes-agent/（4 篇）
+
+| 文件 | 标题 | Frontmatter | 双链 |
+|------|------|:-----------:|:----:|
+| [[AI/Hermes-agent/Hermes Agent 资源合集|资源合集]] | Hermes Agent 中文/全球资源合集 | ✅ | ❌ |
+| [[AI/Hermes-agent/Ubuntu 25.10 安装与使用 Hermes Agent 指南|Ubuntu 安装指南]] | Ubuntu 25.10 部署 Hermes Agent | ✅ | ❌ |
+| [[AI/Hermes-agent/Hermes与OpenClaw对比及飞书接入指南|架构解析与对比]] | 五层架构、记忆系统、飞书接入 | ✅ | ❌ |
+| [[AI/Hermes-agent/Hermes满配指南-五大配置模块|满配指南]] | 五大配置模块实操 | ✅ | ❌ |
+
 ### GithubCopilot/（1 篇）
 
 | 文件 | 标题 | Frontmatter | 双链 |

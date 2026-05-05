@@ -68,6 +68,7 @@ date: 2026-04-17
 | [MCP](entities/MCP.md) | Model Context Protocol |
 | [OpenClaw](entities/OpenClaw.md) | 开源 AI 工具平台 |
 | [Obsidian](entities/Obsidian.md) | 知识管理与笔记工具 |
+| [Hermes-Agent](entities/Hermes-Agent.md) | AI Agent 框架（持久记忆、自我进化） |
 | [Slurm](entities/Slurm.md) | HPC 作业调度系统 |
 | [Harbor](entities/Harbor.md) | 企业级容器镜像仓库（stub） |
 | [Redis](entities/Redis.md) | 高性能键值数据库（stub） |
@@ -179,6 +180,7 @@ date: 2026-04-17
 | 页面 | 覆盖文档数 | 摘要 |
 |------|:---------:|------|
 | [Hermes-agent](sources/hermes-agent-batch-summary.md) | 3 | Hermes Agent 安装指南（Ubuntu 25.10）、资源合集、架构解析与 OpenClaw 对比，持久记忆与自我进化能力 |
+| [Hermes满配指南](sources/hermes-config-summary.md) | 1 | 五大配置模块实操：Hindsight 记忆、网页抓取、搜索文档、语音图片、Token 管控 |
 
 ### AI/HarnessKit（已摄入 ✅）
 

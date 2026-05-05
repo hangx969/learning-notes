@@ -12,6 +12,22 @@ date: 2026-04-17
 
 ---
 
+## [2026-05-05] ingest | Hermes 满配指南文章摄入
+
+- **来源**：`0raw/装完 Hermes 一定要配置这五套系统，秒变满配版，能力提升数倍不止.md`（微信公众号剪藏）
+- **清洗**：去除营销文案，保留五大配置模块技术内容及安装命令
+- **新建文件**：
+  - `AI/Hermes-agent/Hermes满配指南-五大配置模块.md` — 清洗后的技术文章
+  - `KnowledgeBase/sources/hermes-config-summary.md` — 来源摘要页
+  - `KnowledgeBase/entities/Hermes-Agent.md` — 新建实体页（4 篇文档达到 ≥3 阈值）
+- **更新页面**：
+  - `sources/hermes-agent-batch-summary.md`：更新实体引用（去掉"无独立实体页"备注）
+  - `maps/ai-workflow-map.md`：新增 Hermes Agent 路径（4 篇）+ 相关工具列表
+  - `INDEX.md`：新增实体条目 + 来源摘要条目
+  - `inventory/repository-inventory.md`：新增 Hermes-agent/ 子节（4 篇）
+
+---
+
 ## [2026-05-05] ingest | Obsidian 可视化 Skills 文章摄入
 
 - **来源**：`0raw/这个 Skills 让 Obsidian 画图门槛降到了零.md`（微信公众号剪藏）

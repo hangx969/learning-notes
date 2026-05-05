@@ -52,7 +52,7 @@ Hermes Agent 是 Nous Research 推出的 AI Agent 框架，具备持久记忆、
 
 ## 涉及的概念与实体
 - [[KnowledgeBase/entities/OpenClaw|OpenClaw]]
-- Hermes Agent（无独立实体页）
+- [[KnowledgeBase/entities/Hermes-Agent|Hermes Agent]]
 - Nous Research、飞书/Lark
 
 ## 交叉主题发现

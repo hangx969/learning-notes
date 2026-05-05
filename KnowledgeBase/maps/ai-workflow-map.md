@@ -39,6 +39,12 @@ date: 2026-04-16
 6. [[AI/OpenClaw/Openclaw-多智能体|Openclaw-多智能体]] — 多智能体架构（2974 行，全库最大文档）
 7. [[AI/OpenClaw/Ubuntu-2510-Setup-Guide|Ubuntu-2510-Setup-Guide]] — Ubuntu 环境搭建
 
+### Hermes Agent 路径
+1. [[AI/Hermes-agent/Hermes Agent 资源合集|资源合集]] — 中文/全球资源索引
+2. [[AI/Hermes-agent/Ubuntu 25.10 安装与使用 Hermes Agent 指南|Ubuntu 安装指南]] — 部署与 OpenClaw 迁移
+3. [[AI/Hermes-agent/Hermes与OpenClaw对比及飞书接入指南|架构解析与对比]] — 五层架构、记忆系统、飞书接入
+4. [[AI/Hermes-agent/Hermes满配指南-五大配置模块|满配指南]] — 五大配置模块实操
+
 ### 补充
 - [[AI/HarnessKit|HarnessKit]] — AI 编码智能体统一管理工具（Skills/MCP/Plugins/Hooks 跨 Agent 管理）
 - [[AI/GithubCopilot/Copilot CLI|Copilot CLI]] — GitHub Copilot CLI
@@ -96,4 +102,4 @@ date: 2026-04-16
 ---
 
 ## 🛠️ 相关工具
-[[KnowledgeBase/entities/Claude-Code|Claude-Code]]、[[KnowledgeBase/entities/OpenClaw|OpenClaw]]、[[KnowledgeBase/entities/MCP|MCP]]、[[KnowledgeBase/entities/Obsidian|Obsidian]]、[[AI/HarnessKit|HarnessKit]]
+[[KnowledgeBase/entities/Claude-Code|Claude-Code]]、[[KnowledgeBase/entities/OpenClaw|OpenClaw]]、[[KnowledgeBase/entities/Hermes-Agent|Hermes Agent]]、[[KnowledgeBase/entities/MCP|MCP]]、[[KnowledgeBase/entities/Obsidian|Obsidian]]、[[AI/HarnessKit|HarnessKit]]
