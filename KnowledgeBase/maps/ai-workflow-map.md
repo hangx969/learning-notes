@@ -29,7 +29,7 @@ date: 2026-04-16
 1. [[AI/ClaudeCode/ClaudeCode基础指南|ClaudeCode基础指南]] — 入门必读
 2. [[AI/ClaudeCode/Claude Code 扩展体系|扩展体系]] — MCP + Skills + Slash Commands + Plugin 四层扩展机制
 3. [[AI/ClaudeCode/多智能体协作-Subagents与Agent-Teams|多智能体协作]] — Subagents 与 Agent Teams
-4. [[AI/ClaudeCode/obsidian-claude-搭建个人知识库|obsidian-claude-搭建个人知识库]] — 实战：搭建知识库
+4. [[AI/Obsidian/obsidian-claude-搭建个人知识库|obsidian-claude-搭建个人知识库]] — 实战：搭建知识库
 
 ### OpenClaw 路径
 1. [[AI/OpenClaw/OpenClaw-基础-安装|OpenClaw-基础-安装]] — 入门安装
@@ -56,7 +56,7 @@ date: 2026-04-16
 | [[AI/ClaudeCode/ClaudeCode基础指南|ClaudeCode基础指南]] | 全面指南 | 安装、配置、使用场景 |
 | [[AI/ClaudeCode/Claude Code 扩展体系|扩展体系]] | 四层扩展机制 | MCP、Skills、Slash Commands、Plugin |
 | [[AI/ClaudeCode/多智能体协作-Subagents与Agent-Teams|多智能体协作]] | Subagents 与 Agent Teams | 并行任务、团队协作 |
-| [[AI/ClaudeCode/obsidian-claude-搭建个人知识库|obsidian-claude-搭建个人知识库]] | 知识库搭建 | Obsidian + Claude Code 集成 |
+| [[AI/Obsidian/obsidian-claude-搭建个人知识库|obsidian-claude-搭建个人知识库]] | 知识库搭建 | Obsidian + Claude Code 集成 |
 
 ### OpenClaw（7 篇）
 

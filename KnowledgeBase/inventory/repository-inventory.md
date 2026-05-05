@@ -25,7 +25,7 @@ date: 2026-04-16
 | [[AI/ClaudeCode/ClaudeCode基础指南|ClaudeCode基础指南]] | Claude Code 使用指南 | ✅ | ✅ |
 | [[AI/ClaudeCode/Claude Code 扩展体系|扩展体系]] | MCP + Skills + Slash Commands + Plugin | ✅ | ❌ |
 | [[AI/ClaudeCode/多智能体协作-Subagents与Agent-Teams|多智能体协作]] | Subagents 与 Agent Teams | ✅ | ❌ |
-| [[AI/ClaudeCode/obsidian-claude-搭建个人知识库|obsidian-claude-搭建个人知识库]] | Obsidian + Claude Code 搭建 AI 知识库 | ✅ | ✅ |
+| [[AI/Obsidian/obsidian-claude-搭建个人知识库|obsidian-claude-搭建个人知识库]] | Obsidian + Claude Code 搭建 AI 知识库 | ✅ | ✅ |
 
 ### skills/k8s-report-skills/（自研 Skill - Python 版，3 篇）
 
