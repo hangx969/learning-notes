@@ -48,7 +48,7 @@ ClaudeCode基础指南
 ```
 OpenClaw-基础-安装
     ├── OpenClaw-Channels (通信通道)
-    ├── OpenClaw-Skills-插件 (能力扩展)
+    ├── OpenClaw-Skills-Plugins (能力扩展)
     ├── CoPaw (交互式工具)
     ├── Openclaw-AIOps (智能运维)
     ├── Openclaw-多智能体 (工作流编排) ← 核心
@@ -66,7 +66,7 @@ OpenClaw-基础-安装
 
 | 概念 | Claude Code | OpenClaw |
 |------|-------------|----------|
-| **Skills** | [[AI/ClaudeCode/Claude Code 扩展体系|扩展体系（Skills 章节）]] | [[AI/OpenClaw/OpenClaw-Skills-插件|OpenClaw-Skills-插件]] |
+| **Skills** | [[AI/ClaudeCode/Claude Code 扩展体系|扩展体系（Skills 章节）]] | [[AI/OpenClaw/OpenClaw-Skills-Plugins|OpenClaw-Skills-Plugins]] |
 | **Agent/多智能体** | [[AI/ClaudeCode/多智能体协作-Subagents与Agent-Teams|多智能体协作]] | [[AI/OpenClaw/Openclaw-多智能体|Openclaw-多智能体]] |
 | **扩展接口** | [[AI/ClaudeCode/Claude Code 扩展体系|MCP + Skills + Slash Commands + Plugin]] | [[AI/OpenClaw/OpenClaw-Channels|OpenClaw-Channels]] |
 

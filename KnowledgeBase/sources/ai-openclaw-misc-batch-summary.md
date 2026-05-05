@@ -9,7 +9,7 @@ tags:
 date: 2026-04-17
 sources:
   - "[[AI/OpenClaw/OpenClaw-基础-安装]]"
-  - "[[OpenClaw-Skills-Plugins]]"
+  - "[[AI/OpenClaw/OpenClaw-Skills-Plugins]]"
   - "[[AI/OpenClaw/OpenClaw-Channels]]"
   - "[[AI/OpenClaw/Openclaw-AIOps]]"
   - "[[AI/OpenClaw/Openclaw-多智能体]]"
@@ -41,7 +41,7 @@ sources:
   - GitHub Copilot 原生支持，通过 OAuth 设备授权流程接入
   - 配置文件位于 `~/.openclaw/openclaw.json`，gateway token 用于 WebUI 认证
 
-### [[OpenClaw-Skills-Plugins|OpenClaw-Skills-Plugins]]
+### [[AI/OpenClaw/OpenClaw-Skills-Plugins|OpenClaw-Skills-Plugins]]
 
 - **核心内容**：Skills 生态与管理工具 Clawhub、办公类 Skills（PDF/Excel/PPT）、自我进化 Skill、记忆插件、安全审计 skill-vetter、浏览器自动化（Agent-browser/Agent-Reach）、百度搜索 Skill、可视化面板 ClawDeckX
 - **关键知识点**：

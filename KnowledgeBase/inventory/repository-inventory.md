@@ -67,7 +67,7 @@ date: 2026-04-16
 |------|------|:-----------:|:----:|
 | [[AI/OpenClaw/CoPaw|CoPaw]] | CoPaw | ✅ | ❌ |
 | [[AI/OpenClaw/OpenClaw-Channels|OpenClaw-Channels]] | OpenClaw Channel 配置 | ✅ | ❌ |
-| [[AI/OpenClaw/OpenClaw-Skills-插件|OpenClaw-Skills-插件]] | OpenClaw Skills 与插件 | ✅ | ❌ |
+| [[AI/OpenClaw/OpenClaw-Skills-Plugins|OpenClaw-Skills-Plugins]] | OpenClaw Skills 与插件 | ✅ | ❌ |
 | [[AI/OpenClaw/OpenClaw-基础-安装|OpenClaw-基础-安装]] | OpenClaw 基础与安装 | ✅ | ❌ |
 | [[AI/OpenClaw/Openclaw-AIOps|Openclaw-AIOps]] | OpenClaw AIOps | ✅ | ❌ |
 | [[AI/OpenClaw/Openclaw-多智能体|Openclaw-多智能体]] | OpenClaw 多智能体 | ✅ | ❌ |
