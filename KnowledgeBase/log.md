@@ -12,6 +12,22 @@ date: 2026-04-17
 
 ---
 
+## [2026-05-05] ingest | Obsidian 可视化 Skills 文章摄入
+
+- **来源**：`0raw/这个 Skills 让 Obsidian 画图门槛降到了零.md`（微信公众号剪藏）
+- **清洗**：去除营销内容（作者介绍、关注提示、往期推荐、赞赏等），保留技术内容
+- **新建文件**：
+  - `AI/Obsidian/Obsidian可视化Skills-Excalidraw-Mermaid-Canvas.md` — 清洗后的技术文章
+  - `KnowledgeBase/sources/obsidian-visual-skills-summary.md` — 来源摘要页
+- **更新页面**：
+  - `entities/Obsidian.md`：新增覆盖条目
+  - `maps/ai-workflow-map.md`：Obsidian 区块 2→3 篇
+  - `maps/tool-map.md`：Obsidian 区块新增文档
+  - `INDEX.md`：新增来源摘要条目
+  - `inventory/repository-inventory.md`：Obsidian/ 篇数 2→3
+
+---
+
 ## [2026-05-05] restructure | Obsidian 知识库文章从 ClaudeCode 目录迁移到独立目录
 
 - **操作**：将 `AI/ClaudeCode/` 中 2 篇 Obsidian 知识库主题文章迁移到新建的 `AI/Obsidian/` 目录

@@ -26,12 +26,13 @@ date: 2026-04-16
 | [[AI/ClaudeCode/Claude Code 扩展体系|扩展体系]] | MCP + Skills + Slash Commands + Plugin | ✅ | ❌ |
 | [[AI/ClaudeCode/多智能体协作-Subagents与Agent-Teams|多智能体协作]] | Subagents 与 Agent Teams | ✅ | ❌ |
 
-### Obsidian/（2 篇）
+### Obsidian/（3 篇）
 
 | 文件 | 标题 | Frontmatter | 双链 |
 |------|------|:-----------:|:----:|
 | [[AI/Obsidian/obsidian-claude-搭建个人知识库|obsidian-claude-搭建个人知识库]] | Obsidian + Claude Code 搭建 AI 知识库 | ✅ | ✅ |
 | [[AI/Obsidian/karpathy-llm-wiki-改造计划|karpathy-llm-wiki-改造计划]] | Karpathy LLM Wiki 改造计划 | ✅ | ❌ |
+| [[AI/Obsidian/Obsidian可视化Skills-Excalidraw-Mermaid-Canvas|Obsidian可视化Skills]] | AI Skills 生成可编辑图表（Excalidraw/Mermaid/Canvas） | ✅ | ❌ |
 
 ### skills/k8s-report-skills/（自研 Skill - Python 版，3 篇）
 

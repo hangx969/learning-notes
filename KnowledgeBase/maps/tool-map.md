@@ -52,6 +52,7 @@ date: 2026-04-16
 ### Obsidian
 **相关文档：**
 - [[AI/Obsidian/obsidian-claude-搭建个人知识库|obsidian-claude-搭建个人知识库]] ⭐ 推荐入口
+- [[AI/Obsidian/Obsidian可视化Skills-Excalidraw-Mermaid-Canvas|Obsidian可视化Skills]] — AI 生成可编辑图表（Excalidraw/Mermaid/Canvas）
 
 **概念页：** [[KnowledgeBase/entities/Obsidian|Obsidian]]
 
