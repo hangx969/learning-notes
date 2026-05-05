@@ -29,7 +29,9 @@ source: "https://mp.weixin.qq.com/s/-1CQxvdc1bDMrPzIHFPpbA"
 
 使用 **agency-agents-zh** 中文角色模板库，包含 211 个中文角色模板 + 46 个中国市场原创智能体。
 
-- GitHub：https://github.com/jnMetaCode/agency-agents-zh
+- GitHub：
+	- https://github.com/jnMetaCode/agency-agents-zh
+	- https://github.com/jnMetaCode/agency-orchestrator
 - 角色按 18 个部门分类（工程、设计、营销、产品、游戏、安全、金融、HR 等）
 - 每个角色为独立 `.md` 文件，包含完整人设、专业流程和可交付成果
 - 使用时直接告诉 Hermes 要激活哪个角色即可
