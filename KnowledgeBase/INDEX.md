@@ -179,6 +179,12 @@ date: 2026-04-17
 |------|:---------:|------|
 | [Hermes-agent](sources/hermes-agent-batch-summary.md) | 3 | Hermes Agent 安装指南（Ubuntu 25.10）、资源合集、架构解析与 OpenClaw 对比，持久记忆与自我进化能力 |
 
+### AI/HarnessKit（已摄入 ✅）
+
+| 页面 | 覆盖文档数 | 摘要 |
+|------|:---------:|------|
+| [HarnessKit](sources/harnesskit-summary.md) | 1 | AI 编码智能体统一管理工具，Rust 编写，支持 7 种 Agent 的 Skills/MCP/Plugins/Hooks 跨平台管理与安全审计 |
+
 ### IaC/Terraform 容器管理（已摄入 ✅）
 
 | 页面 | 覆盖文档数 | 摘要 |

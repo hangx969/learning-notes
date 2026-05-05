@@ -41,6 +41,7 @@ date: 2026-04-16
 7. [[AI/OpenClaw/Ubuntu-2510-Setup-Guide|Ubuntu-2510-Setup-Guide]] — Ubuntu 环境搭建
 
 ### 补充
+- [[AI/HarnessKit|HarnessKit]] — AI 编码智能体统一管理工具（Skills/MCP/Plugins/Hooks 跨 Agent 管理）
 - [[AI/GithubCopilot/Copilot CLI|Copilot CLI]] — GitHub Copilot CLI
 - [[AI/提示词|提示词]] — 提示词工程
 
@@ -89,4 +90,4 @@ date: 2026-04-16
 ---
 
 ## 🛠️ 相关工具
-[[KnowledgeBase/entities/Claude-Code|Claude-Code]]、[[KnowledgeBase/entities/OpenClaw|OpenClaw]]、[[KnowledgeBase/entities/MCP|MCP]]、[[KnowledgeBase/entities/Obsidian|Obsidian]]
+[[KnowledgeBase/entities/Claude-Code|Claude-Code]]、[[KnowledgeBase/entities/OpenClaw|OpenClaw]]、[[KnowledgeBase/entities/MCP|MCP]]、[[KnowledgeBase/entities/Obsidian|Obsidian]]、[[AI/HarnessKit|HarnessKit]]

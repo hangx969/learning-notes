@@ -767,3 +767,15 @@ date: 2026-04-17
 
 ### 4. 残留历史链接（不修改）
 - `log.md` 中 3 处历史记录引用旧文件名（`Hermes Agent全解析-与OpenClaw对比及飞书接入指南`、`[[OpenClaw-Skills-Plugins]]` 短路径），属于历史快照不做修改
+
+
+---
+
+## [2026-05-05] ingest | HarnessKit — AI 编码智能体统一管理工具
+
+- **来源**：GitHub 仓库 https://github.com/RealZST/HarnessKit（README + API 元数据）
+- **操作**：
+  - 新建 [[AI/HarnessKit]]：工具介绍文章（功能特性、支持的 Agent、安装使用、安全审计、与其他 AI 工具的关系）
+  - 新建 [[KnowledgeBase/sources/harnesskit-summary]]：来源摘要页
+  - 更新 [[KnowledgeBase/maps/ai-workflow-map]]：补充阅读列表 + 相关工具
+  - 更新 [[KnowledgeBase/INDEX.md]]：新增 HarnessKit 来源摘要条目
