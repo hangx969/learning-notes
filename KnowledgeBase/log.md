@@ -737,3 +737,33 @@ date: 2026-04-17
 3. 摄入 AI/ 下新增项目（CloudOps-Agent、RAG-Agent、Hermes-agent）
 4. 为 sources/ 页面建立入链（从 concepts/entities 页面链回）
 5. 补充高频缺失概念页（StorageClass、ServiceMesh、高可用架构）
+
+
+---
+
+## [2026-05-05] lint | 文件重命名后断链修复
+
+- **触发**：用户更新了文章标题（`OpenClaw-Skills-插件` → `OpenClaw-Skills-Plugins`，`Hermes Agent全解析-与OpenClaw对比及飞书接入指南` → `Hermes与OpenClaw对比及飞书接入指南`）
+- **检查范围**：KnowledgeBase/ 全部 93 个页面，748 个 wikilink
+
+### 1. 断链修复（12 处）
+
+| 文件 | 修复内容 |
+|------|----------|
+| [[KnowledgeBase/maps/ai-workflow-map.md\|ai-workflow-map]] | `OpenClaw-Skills-插件` → `OpenClaw-Skills-Plugins`（2 处）；Hermes 摘要篇数 2→3 |
+| [[KnowledgeBase/maps/claude-code-openclaw-map.md\|claude-code-openclaw-map]] | `OpenClaw-Skills-插件` → `OpenClaw-Skills-Plugins`（3 处：代码块 + 表格） |
+| [[KnowledgeBase/inventory/repository-inventory.md\|repository-inventory]] | `OpenClaw-Skills-插件` → `OpenClaw-Skills-Plugins`（2 处） |
+| [[KnowledgeBase/sources/hermes-agent-batch-summary.md\|hermes-agent-batch-summary]] | 补全路径 `AI/Hermes-agent/Hermes与OpenClaw对比及飞书接入指南`（frontmatter + 正文，2 处） |
+| [[KnowledgeBase/entities/OpenClaw.md\|OpenClaw]] | 补全路径 `AI/OpenClaw/OpenClaw-Skills-Plugins`（frontmatter + 正文，2 处）；补全 `AI/Hermes-agent/` 前缀（1 处） |
+| [[KnowledgeBase/sources/ai-openclaw-misc-batch-summary.md\|ai-openclaw-misc-batch-summary]] | 补全路径 `AI/OpenClaw/OpenClaw-Skills-Plugins`（frontmatter + 正文，2 处） |
+
+### 2. 孤儿页检查
+- **结果**：0 个孤儿页。所有 93 个 KB 页面至少有 1 个入链（主要来自 INDEX.md 和 maps/）
+
+### 3. 概念覆盖差距（≥3 篇引用但无独立页面）
+- Tekton（11 篇）、Ansible（11 篇）、Kyverno（7 篇）、Velero（6 篇）、Skywalking（6 篇）、VPA（6 篇）
+- Hermes Agent（5 篇）、RAG（5 篇）、KEDA（5 篇）、HPA（5 篇）
+- 飞书/Lark（4 篇）
+
+### 4. 残留历史链接（不修改）
+- `log.md` 中 3 处历史记录引用旧文件名（`Hermes Agent全解析-与OpenClaw对比及飞书接入指南`、`[[OpenClaw-Skills-Plugins]]` 短路径），属于历史快照不做修改
