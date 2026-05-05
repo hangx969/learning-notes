@@ -12,6 +12,20 @@ date: 2026-04-17
 
 ---
 
+## [2026-05-05] restructure | Obsidian 知识库文章从 ClaudeCode 目录迁移到独立目录
+
+- **操作**：将 `AI/ClaudeCode/` 中 2 篇 Obsidian 知识库主题文章迁移到新建的 `AI/Obsidian/` 目录
+  - `obsidian-claude-搭建个人知识库.md` → `AI/Obsidian/`
+  - `karpathy-llm-wiki-改造计划.md` → `AI/Obsidian/`
+- **引用修复**：更新 9 个 KB 文件中的 wikilink 路径（entities/Claude-Code、entities/Obsidian、entities/MCP、maps/tool-map、maps/ai-workflow-map、maps/claude-code-openclaw-map、INDEX、inventory/repository-inventory、sources/obsidian-claude-搭建个人知识库-summary）
+- **结构调整**：
+  - `ai-workflow-map.md`：Claude Code 篇数 5→3，新增 Obsidian 知识库区块（2 篇）
+  - `claude-code-openclaw-map.md`：更新目录树和文档计数
+  - `repository-inventory.md`：ClaudeCode 篇数 5→3，新增 Obsidian/ 子节（2 篇）
+- **目的**：使目录结构更清晰——ClaudeCode/ 保留纯 Claude Code 文章，Obsidian/ 独立存放知识库主题文章
+
+---
+
 ## [2026-05-04] ingest | Hermes Agent 架构解析文章
 
 - **来源**：`0raw/Hermes Agent全解析：与OpenClaw对比及飞书接入指南 - 飞书官网.md`

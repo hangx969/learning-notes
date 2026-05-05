@@ -23,7 +23,7 @@ date: 2026-04-16
 | **核心能力** | 代码生成/修改、MCP 工具调用、知识库构建 | AIOps、多智能体协作、Channel 集成 |
 | **扩展机制** | Skills + Plugin + MCP | Skills + Channels + CoPaw |
 | **运维场景** | 代码审查、文档整理、脚本编写 | 智能告警、自动修复、运维编排 |
-| **文档量** | 5 篇（MCP/Skills/SlashCmd/Plugin 已合并） | 7 篇 |
+| **文档量** | 3 篇（MCP/Skills/SlashCmd/Plugin 已合并） | 7 篇 |
 
 ---
 
@@ -32,8 +32,7 @@ date: 2026-04-16
 ```
 ClaudeCode基础指南
     ├── Claude Code 扩展体系 (MCP + Skills + Slash Commands + Plugin)
-    ├── 多智能体协作 (Subagents + Agent Teams)
-    └── obsidian-claude-搭建个人知识库 (实战)
+    └── 多智能体协作 (Subagents + Agent Teams)
 ```
 
 **核心文章：**
