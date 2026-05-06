@@ -184,6 +184,12 @@ date: 2026-04-17
 | [Hermes-agent](sources/hermes-agent-batch-summary.md) | 3 | Hermes Agent 安装指南（Ubuntu 25.10）、资源合集、架构解析与 OpenClaw 对比，持久记忆与自我进化能力 |
 | [Hermes满配指南](sources/hermes-config-summary.md) | 1 | 五大配置模块实操：Hindsight 记忆、网页抓取、搜索文档、语音图片、Token 管控 |
 
+### AI/行业动态（已摄入 ✅）
+
+| 页面 | 原始来源 | 摘要 |
+|------|---------|------|
+| [Boris Cherny 红杉大会](sources/boris-cherny-sequoia-summary.md) | [AI/行业动态/Claude-Code创始人红杉大会七个判断](../AI/行业动态/Claude-Code创始人红杉大会七个判断.md) | Claude Code 创始人 7 个行业判断：代码民主化、MCP 定位、SaaS 护城河瓦解、创业黄金期 |
+
 ### AI/HarnessKit（已摄入 ✅）
 
 | 页面 | 覆盖文档数 | 摘要 |
@@ -266,7 +272,7 @@ date: 2026-04-17
 | Linux-Shell | 24 | 🟡 | [linux-ops-map](maps/linux-ops-map.md) |
 | Azure | 21 | 🟢 | [cloud-platform-map](maps/cloud-platform-map.md) |
 | Aliyun | 19 | 🟢 | [cloud-platform-map](maps/cloud-platform-map.md) |
-| AI | 118 | 🟢 | [ai-workflow-map](maps/ai-workflow-map.md) |
+| AI | 119 | 🟢 | [ai-workflow-map](maps/ai-workflow-map.md) |
 | Go | 9 | 🟡 | [go-01-环境配置-基础](../Go/go-01-环境配置-基础.md) |
 | CloudComputing | 7 | 🟡 | [云原生](../CloudComputing/云原生.md) |
 | HPC | 7 | 🟡 | [CentOS7-slurm23.02-二进制安装](../HPC/CentOS7-slurm23.02-二进制安装.md) |

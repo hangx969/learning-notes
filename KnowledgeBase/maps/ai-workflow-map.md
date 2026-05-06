@@ -11,7 +11,7 @@ date: 2026-04-16
 # 🤖 AI 工作流专题地图
 
 > [!info] 专题范围
-> 覆盖 AI/ 目录下 ==18 篇文档==，聚焦 Claude Code、OpenClaw 两大 AI 工具平台及其在运维场景中的应用。
+> 覆盖 AI/ 目录下 ==19 篇文档==，聚焦 Claude Code、OpenClaw 两大 AI 工具平台及其在运维场景中的应用，并收录 AI 行业动态分析。
 
 ---
 
@@ -46,6 +46,9 @@ date: 2026-04-16
 2. [[AI/Hermes-agent/Ubuntu 25.10 安装与使用 Hermes Agent 指南|Ubuntu 安装指南]] — 部署与 OpenClaw 迁移
 3. [[AI/Hermes-agent/Hermes与OpenClaw对比及飞书接入指南|架构解析与对比]] — 五层架构、记忆系统、飞书接入
 4. [[AI/Hermes-agent/Hermes满配指南-五大配置模块|满配指南]] — 五大配置模块实操
+
+### AI 行业动态
+1. [[AI/行业动态/Claude-Code创始人红杉大会七个判断|Boris Cherny 红杉大会七个判断]] — 代码价值重估、MCP 定位、SaaS 护城河瓦解、创业机会窗口
 
 ### 补充
 - [[AI/HarnessKit|HarnessKit]] — AI 编码智能体统一管理工具（Skills/MCP/Plugins/Hooks 跨 Agent 管理）
@@ -85,6 +88,12 @@ date: 2026-04-16
 | [[AI/OpenClaw/Openclaw-AIOps|Openclaw-AIOps]] | AIOps | 智能运维 |
 | [[AI/OpenClaw/Openclaw-多智能体|Openclaw-多智能体]] | 多智能体 | Agent 协作、工作流编排 |
 | [[AI/OpenClaw/Ubuntu-2510-Setup-Guide|Ubuntu-2510-Setup-Guide]] | Ubuntu 配置 | 开发环境 |
+
+### 行业动态（1 篇）
+
+| 文章 | 主题 | 关键词 |
+|------|------|--------|
+| [[AI/行业动态/Claude-Code创始人红杉大会七个判断\|Boris Cherny 红杉大会七个判断]] | AI 行业趋势 | 代码民主化、MCP 定位、SaaS 瓦解、创业机会、Computer Use |
 
 ---
 

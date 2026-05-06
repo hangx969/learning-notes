@@ -12,6 +12,23 @@ date: 2026-04-17
 
 ---
 
+## [2026-05-06] ingest | Boris Cherny 红杉大会七个判断 + AI 行业动态目录
+
+- **来源**：微信公众号文章（原始视频 https://www.youtube.com/watch?v=SlGRN8jh2RI）
+- **清洗**：去除作者署名行、#01 章节标记、AI Maker Summit 广告（419元报名）、SVG 占位图、微信页脚导航，保留全部 7 个行业判断及分析
+- **新建目录**：`AI/行业动态/` — AI 行业趋势与洞察专题目录
+- **新建文件**：
+  - `AI/行业动态/Claude-Code创始人红杉大会七个判断.md` — 清洗后的文章
+  - `KnowledgeBase/sources/boris-cherny-sequoia-summary.md` — 来源摘要页
+- **更新页面**：
+  - `entities/Claude-Code.md`：新增 sources 引用 + 覆盖条目（行业判断 + 摘要）
+  - `entities/MCP.md`：新增 sources 引用 + 覆盖条目 + 新增"行业观点"章节（Boris Cherny 的 MCP 定位论述）
+  - `maps/ai-workflow-map.md`：新增"AI 行业动态"阅读路径 + 文档表（1 篇）+ 总数 18→19
+  - `INDEX.md`：新增"AI/行业动态"来源摘要分区 + AI 领域篇数 118→119
+  - `inventory/repository-inventory.md`：新增行业动态/ 子节（1 篇）+ AI 总数 26→27
+
+---
+
 ## [2026-05-05] ingest | Harness 实战文章摄入
 
 - **来源**：`0raw/Harness 实战：从零搭建最小可用的 Harness 系统.md`（微信公众号剪藏）
