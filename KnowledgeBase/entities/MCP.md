@@ -8,6 +8,7 @@ sources:
   - "[[AI/ClaudeCode/Claude Code 扩展体系]]"
   - "[[AI/ClaudeCode/ClaudeCode基础指南]]"
   - "[[AI/Obsidian/obsidian-claude-搭建个人知识库]]"
+  - "[[AI/行业动态/Claude-Code创始人红杉大会七个判断]]"
 ---
 
 # MCP
@@ -82,6 +83,12 @@ Model Context Protocol（模型上下文协议）是连接 AI 模型与外部工
 - [[AI/ClaudeCode/Claude Code 扩展体系]]：10 个 MCP 服务器的安装配置、使用场景、完整 JSON 配置模板
 - [[AI/ClaudeCode/ClaudeCode基础指南]]：MCP 在实战场景中的应用（事故响应、技术选型、文档查询）
 - [[AI/Obsidian/obsidian-claude-搭建个人知识库]]：mcp-obsidian 的配置与 Obsidian 集成
+
+## 行业观点
+
+> Boris Cherny（Claude Code 创始人）将 API 称为 **Human Developer Interface**，将 MCP 称为 **Model Interface Protocol**。API 是给人类开发者设计的，MCP 是给模型设计的——模型可以直接读懂并调用，中间不需要程序员翻译。他认为 AI 时代所有服务默认要 MCP 化，就像移动互联网时代默认要 API 化一样。
+>
+> — [[AI/行业动态/Claude-Code创始人红杉大会七个判断]]
 
 ## 知识空白
 
