@@ -34,7 +34,11 @@ source: "https://mp.weixin.qq.com/s/-1CQxvdc1bDMrPzIHFPpbA"
 	- https://github.com/jnMetaCode/agency-orchestrator
 - 角色按 18 个部门分类（工程、设计、营销、产品、游戏、安全、金融、HR 等）
 - 每个角色为独立 `.md` 文件，包含完整人设、专业流程和可交付成果
-- 使用时直接告诉 Hermes 要激活哪个角色即可
+- 使用时直接告诉 Hermes 要激活哪个角色即可：
+	- /personality + SOUL.md
+	- Hermes 启动时会读取 SOUL.md 文件，里面写的内容会永久成为你Agent的“灵魂”和语气。
+/personality 命令可以随时切换预设人格。
+别再每次聊天都打“你是一位资深 X 专家”了，一次性写进 SOUL.md 就行。
 
 ### 1.2 Hindsight 替换内置 MEMORY
 
