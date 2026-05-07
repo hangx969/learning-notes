@@ -12,6 +12,22 @@ date: 2026-04-17
 
 ---
 
+## [2026-05-07] ingest | Kyverno 1.18 新特性 + Kyverno 实体页
+
+- **来源**：CNCF 官方博客，微信公众号转载
+- **清洗**：去除微信公众号图片横幅、KubeCon 广告区块、CNCF 基金会介绍模板、页脚导航（"继续滑动看下一个"），保留全部技术内容与参考链接
+- **新建文件**：
+  - `Docker-Kubernetes/k8s-security-auth/Kyverno-1.18-新特性.md` — 清洗后的文章
+  - `KnowledgeBase/sources/kyverno-1.18-summary.md` — 来源摘要页
+  - `KnowledgeBase/entities/Kyverno.md` — Kyverno 实体页（新建，含部署+1.18双文档覆盖）
+- **更新页面**：
+  - `sources/k8s-security-auth-batch-summary.md`：文档数 7→8，新增 Kyverno 1.18 小节
+  - `maps/kubernetes-map.md`：总数 145→146，安全与认证 7→8 篇，阅读顺序新增第 23 步
+  - `INDEX.md`：K8s 安全认证 7→8，Docker-Kubernetes 145→146，实体表新增 Kyverno
+  - `inventory/repository-inventory.md`：总数 297→298，k8s-security-auth/ 7→8
+
+---
+
 ## [2026-05-06] ingest | Boris Cherny 红杉大会七个判断 + AI 行业动态目录
 
 - **来源**：微信公众号文章（原始视频 https://www.youtube.com/watch?v=SlGRN8jh2RI）
