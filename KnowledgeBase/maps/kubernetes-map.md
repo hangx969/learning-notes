@@ -11,7 +11,7 @@ date: 2026-04-16
 # ☸️ Kubernetes 专题地图
 
 > [!info] 专题范围
-> 覆盖 Docker-Kubernetes 目录下 ==146 篇文档==，从容器基础到企业级 K8s 全生命周期管理。
+> 覆盖 Docker-Kubernetes 目录下 ==145 篇文档==，从容器基础到企业级 K8s 全生命周期管理。
 
 ---
 
@@ -61,8 +61,7 @@ date: 2026-04-16
 ### 第六阶段：高级特性
 20. [[Docker-Kubernetes/k8s-networking-service-mesh/k8s精细化流量管理-istio|k8s精细化流量管理-istio]] — 服务网格
 21. [[Docker-Kubernetes/k8s-scaling/k8s-HPA-VPA|k8s-HPA-VPA]] — 自动扩缩容
-22. [[Docker-Kubernetes/k8s-security-auth/helm部署kyverno和policy-reporter|helm部署kyverno和policy-reporter]] — 策略管理
-23. [[Docker-Kubernetes/k8s-security-auth/Kyverno-1.18-新特性|Kyverno-1.18-新特性]] — CNCF 毕业后首版，安全加固与 CEL 演进
+22. [[Docker-Kubernetes/k8s-security-auth/helm部署kyverno和policy-reporter|helm部署kyverno和policy-reporter]] — 策略管理（含 1.18 新特性）
 
 ---
 
@@ -118,8 +117,8 @@ date: 2026-04-16
 - [[Docker-Kubernetes/k8s-networking-service-mesh/helm部署external-dns|helm部署external-dns]]
 - [[Docker-Kubernetes/k8s-networking-service-mesh/k8s集群网络安全|k8s集群网络安全]]
 
-### 安全与认证（8 篇）
-Cert-Manager、External-Secrets、Kyverno+Policy-Reporter、Kyverno 1.18 新特性、OAuth2-Proxy、Capsule、SonarQube、Trivy-Operator
+### 安全与认证（7 篇）
+Cert-Manager、External-Secrets、Kyverno+Policy-Reporter（含 1.18 新特性）、OAuth2-Proxy、Capsule、SonarQube、Trivy-Operator
 
 ### 扩缩容（4 篇）
 HPA-VPA、KEDA、Goldilocks、VPA Helm

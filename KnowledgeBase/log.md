@@ -16,15 +16,16 @@ date: 2026-04-17
 
 - **来源**：CNCF 官方博客，微信公众号转载
 - **清洗**：去除微信公众号图片横幅、KubeCon 广告区块、CNCF 基金会介绍模板、页脚导航（"继续滑动看下一个"），保留全部技术内容与参考链接
+- **操作方式**：清洗后的 1.18 新特性内容追加到已有文档 `helm部署kyverno和policy-reporter.md` 末尾，未新增独立文件
 - **新建文件**：
-  - `Docker-Kubernetes/k8s-security-auth/Kyverno-1.18-新特性.md` — 清洗后的文章
   - `KnowledgeBase/sources/kyverno-1.18-summary.md` — 来源摘要页
-  - `KnowledgeBase/entities/Kyverno.md` — Kyverno 实体页（新建，含部署+1.18双文档覆盖）
+  - `KnowledgeBase/entities/Kyverno.md` — Kyverno 实体页（新建，CNCF 毕业项目）
 - **更新页面**：
-  - `sources/k8s-security-auth-batch-summary.md`：文档数 7→8，新增 Kyverno 1.18 小节
-  - `maps/kubernetes-map.md`：总数 145→146，安全与认证 7→8 篇，阅读顺序新增第 23 步
-  - `INDEX.md`：K8s 安全认证 7→8，Docker-Kubernetes 145→146，实体表新增 Kyverno
-  - `inventory/repository-inventory.md`：总数 297→298，k8s-security-auth/ 7→8
+  - `Docker-Kubernetes/k8s-security-auth/helm部署kyverno和policy-reporter.md`：追加 Kyverno 1.18 全部新特性内容
+  - `sources/k8s-security-auth-batch-summary.md`：Kyverno 小节新增 1.18 要点
+  - `maps/kubernetes-map.md`：安全认证条目标注"含 1.18 新特性"
+  - `INDEX.md`：实体表新增 Kyverno，安全认证条目标注含 1.18
+  - `inventory/repository-inventory.md`：无文件数变更
 
 ---
 
