@@ -9,6 +9,7 @@ sources:
   - "[[Docker-Kubernetes/k8s-security-auth/helm部署certmanager]]"
   - "[[Docker-Kubernetes/k8s-security-auth/helm部署external-secrets]]"
   - "[[Docker-Kubernetes/k8s-security-auth/helm部署kyverno和policy-reporter]]"
+  - "[[Docker-Kubernetes/k8s-security-auth/Kyverno-1.18-新特性]]"
   - "[[Docker-Kubernetes/k8s-security-auth/helm部署oauth2proxy]]"
   - "[[Docker-Kubernetes/k8s-security-auth/helm部署sonarqube]]"
   - "[[Docker-Kubernetes/k8s-security-auth/helm部署trivy-operator]]"
@@ -17,7 +18,7 @@ sources:
 ## 元信息
 
 - **原始目录**: `Docker-Kubernetes/k8s-security-auth/`
-- **文档数量**: 7 篇
+- **文档数量**: 8 篇
 - **领域**: Kubernetes 安全、认证授权、证书管理、策略引擎、代码质量与镜像扫描
 - **摄入日期**: 2026-04-17
 
