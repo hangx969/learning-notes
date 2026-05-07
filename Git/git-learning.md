@@ -695,3 +695,67 @@ git add .
 git commit -m "Update"
 git push origin main
 ```
+
+## 多GitHub账号SSH密钥冲突导致push报错
+
+### 问题背景
+
+在同一台机器上配置了多个 GitHub 账号的 SSH 密钥（例如工作账号 `ds-hangxu` 和个人账号 `hangx969`），push 个人仓库时报错：
+
+```
+ERROR: Permission to hangx969/learning-notes.git denied to ds-hangxu.
+fatal: Could not read from remote repository.
+Please make sure you have the correct access rights and the repository exists.
+```
+
+原因是 `~/.ssh/config` 中 `Host github.com` 下配置了多个 `IdentityFile`，SSH 连接时优先使用了第一个密钥（工作账号），GitHub 将你识别为工作账号用户，而该用户没有个人仓库的权限。
+
+### 解决办法
+
+1. 修改 `~/.ssh/config`，为不同账号配置不同的 Host 别名，并加上 `IdentitiesOnly yes` 确保只使用指定密钥：
+
+```ssh-config
+# 工作账号
+Host github.com
+    HostName github.com
+    User git
+    IdentityFile ~/.ssh/id_ed25519_ds_github
+    IdentitiesOnly yes
+
+# 个人账号
+Host github-personal
+    HostName github.com
+    User git
+    IdentityFile ~/.ssh/id_ed25519
+    IdentitiesOnly yes
+```
+
+2. 将个人仓库的 remote URL 改为使用别名：
+
+```sh
+cd ~/github-repo/learning-notes
+git remote set-url origin git@github-personal:hangx969/learning-notes.git
+```
+
+3. 验证连接身份：
+
+```sh
+# 验证工作账号
+ssh -T git@github.com
+# Hi ds-hangxu! You've successfully authenticated...
+
+# 验证个人账号
+ssh -T git@github-personal
+# Hi hangx969! You've successfully authenticated...
+```
+
+4. 推送测试：
+
+```sh
+git push origin main
+```
+
+> [!tip] 关键点
+> - `IdentitiesOnly yes` 是关键配置，确保 SSH 只使用指定的密钥文件，不会尝试 ssh-agent 中的其他密钥。
+> - Host 别名（如 `github-personal`）仅用于 SSH 路由，Git 实际连接的仍然是 `github.com`。
+> - 所有使用个人账号的仓库都需要将 remote URL 中的 `github.com` 替换为 `github-personal`。
