@@ -87,6 +87,7 @@ date: 2026-04-17
 | [Nginx](entities/Nginx.md) | Web 服务器与反向代理（stub） |
 | [PostgreSQL](entities/PostgreSQL.md) | 开源关系型数据库（stub） |
 | [Rancher](entities/Rancher.md) | K8s 多集群管理平台（stub） |
+| [Kyverno](entities/Kyverno.md) | K8s 原生策略引擎（CNCF 毕业项目） |
 
 ---
 
@@ -129,7 +130,7 @@ date: 2026-04-17
 | [K8s 监控日志](sources/k8s-monitoring-logging-batch-summary.md) | 21 | Prometheus 全栈、EFK/Loki 日志、Jaeger/SkyWalking 链路追踪、集群巡检脚本 |
 | [K8s CI/CD](sources/k8s-CICD-batch-summary.md) | 19 | Jenkins/ArgoCD/GitLab CI/Tekton/Kustomize/GitHub Actions |
 | [K8s 网络与服务网格](sources/k8s-networking-service-mesh-batch-summary.md) | 7 | Ingress-Nginx/External-DNS/Calico/Istio 流量管理 |
-| [K8s 安全认证](sources/k8s-security-auth-batch-summary.md) | 7 | Cert-Manager/External Secrets/Kyverno/OAuth2 Proxy/Trivy/SonarQube |
+| [K8s 安全认证](sources/k8s-security-auth-batch-summary.md) | 8 | Cert-Manager/External Secrets/Kyverno(含1.18新特性)/OAuth2 Proxy/Trivy/SonarQube |
 | [K8s 扩缩容与存储](sources/k8s-scaling-storage-batch-summary.md) | 7 | HPA/VPA/KEDA/Karpenter 扩缩容 + NFS/Longhorn/Rook-Ceph 存储 |
 | [K8s 中间件与 UI](sources/k8s-db-middleware-UI-batch-summary.md) | 18 | Redis/MySQL/PostgreSQL/Kafka 部署 + Dashboard/Rancher/k9s 管理工具 |
 | [K8s 杂项](sources/k8s-misc-batch-summary.md) | 18 | Helm 工具链/CKA-CKS/KubeBlocks/Harbor/K3S/Velero/GPU |
@@ -267,7 +268,7 @@ date: 2026-04-17
 
 | 领域 | 篇数 | 成熟度 | 入口 |
 |------|------|:------:|------|
-| Docker-Kubernetes | 145 | 🟢 | [kubernetes-map](maps/kubernetes-map.md) |
+| Docker-Kubernetes | 146 | 🟢 | [kubernetes-map](maps/kubernetes-map.md) |
 | Python | 27 | 🟢 | [python-devops-map](maps/python-devops-map.md) |
 | Linux-Shell | 24 | 🟡 | [linux-ops-map](maps/linux-ops-map.md) |
 | Azure | 21 | 🟢 | [cloud-platform-map](maps/cloud-platform-map.md) |

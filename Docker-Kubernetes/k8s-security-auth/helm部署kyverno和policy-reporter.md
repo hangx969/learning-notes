@@ -162,7 +162,7 @@ https://kyverno.hanxux.local
 
 ~~~yaml
 cat disallow_any_repo.yaml <<'EOF'
-apiVersion : kyverno.io/v1
+apiVersion: kyverno.io/v1
 kind: ClusterPolicy # 该策略的类型为ClusterPolicy，意思是在集群范围内部署
 metadata:
   name: check-images

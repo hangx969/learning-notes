@@ -64,6 +64,18 @@ sources:
 - Policy 可按 common 和 region 分目录管理，递归应用
 - Policy Reporter 提供策略执行结果的 GUI 界面
 
+### [[Docker-Kubernetes/k8s-security-auth/Kyverno-1.18-新特性|Kyverno 1.18 新特性]]
+
+**核心内容**: Kyverno 1.18 是 CNCF 毕业后的首个版本，重点强化安全、CLI 能力和策略引擎可靠性，继续向 CEL 策略类型演进。
+
+- HTTP 调用安全加固：阻止列表/允许列表防 SSRF，作用域 token 替代控制器 token（CVE-2026-4789 / CVE-2026-41323）
+- CLI 扩展：`kyverno apply/test` 支持 Cleanup policies、HTTP/Envoy 授权策略、mutateExisting 规则
+- 策略引擎增强：`successEventActions` 事件过滤、基于内存的 HPA、`/metrics` TLS、并发改进
+- CEL 演进：新增 gzip CEL 库、改进策略变量编译求值
+- 镜像验证：`imageRegistryCredentials.secrets` 支持 namespace/name、imagePullSecrets 自动使用
+- N-1 支持模型：约 3 个月社区补丁支持窗口
+- ClusterPolicy 弃用：迁移至 ValidatingPolicy / MutatingPolicy / GeneratingPolicy / ImageValidatingPolicy / DeletingPolicy
+
 ### [[Docker-Kubernetes/k8s-security-auth/helm部署oauth2proxy|Helm 部署 OAuth2 Proxy]]
 
 **核心内容**: OAuth2 Proxy 是 K8s 应用的身份认证反向代理，支持 Middleware 模式作用于 Ingress-Nginx，集成 GitHub 等 OAuth 提供商。
