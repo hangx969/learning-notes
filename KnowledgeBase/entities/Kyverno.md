@@ -7,7 +7,7 @@ tags:
 date: 2026-05-07
 sources:
   - "[[Docker-Kubernetes/k8s-security-auth/helm部署kyverno和policy-reporter]]"
-  - "[[Docker-Kubernetes/k8s-security-auth/Kyverno-1.18-新特性]]"
+  - "[[Docker-Kubernetes/k8s-security-auth/helm部署kyverno和policy-reporter]]"
 aliases:
   - Kyverno 策略引擎
 ---
@@ -66,7 +66,7 @@ Kyverno 正从传统的 ClusterPolicy 向新的策略类型迁移：
 ## 在本仓库中的覆盖
 
 - [[Docker-Kubernetes/k8s-security-auth/helm部署kyverno和policy-reporter]]：Helm 部署 Kyverno 和 Policy Reporter 完整流程，包含 values 配置、策略语法、实战示例（强制使用 Harbor 镜像）
-- [[Docker-Kubernetes/k8s-security-auth/Kyverno-1.18-新特性]]：1.18 版本新特性——安全加固、CLI 扩展、CEL 演进、N-1 支持模型、ClusterPolicy 弃用迁移路径
+- [[Docker-Kubernetes/k8s-security-auth/helm部署kyverno和policy-reporter]]：1.18 版本新特性——安全加固、CLI 扩展、CEL 演进、N-1 支持模型、ClusterPolicy 弃用迁移路径
 - [[KnowledgeBase/sources/kyverno-1.18-summary|Kyverno 1.18 摘要]]：版本摘要与关键知识点提炼
 - [[KnowledgeBase/sources/k8s-security-auth-batch-summary|安全认证批量摘要]]：Kyverno 在 K8s 安全工具链中的定位
 

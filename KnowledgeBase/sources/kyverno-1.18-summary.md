@@ -6,7 +6,7 @@ tags:
   - kyverno
 date: 2026-05-07
 sources:
-  - "[[Docker-Kubernetes/k8s-security-auth/Kyverno-1.18-新特性]]"
+  - "[[Docker-Kubernetes/k8s-security-auth/helm部署kyverno和policy-reporter]]"
 aliases:
   - Kyverno 1.18 Summary
 ---
@@ -14,7 +14,7 @@ aliases:
 # Kyverno 1.18 新特性摘要
 
 ## 元信息
-- **原始文档**：[[Docker-Kubernetes/k8s-security-auth/Kyverno-1.18-新特性]]
+- **原始文档**：[[Docker-Kubernetes/k8s-security-auth/helm部署kyverno和policy-reporter]]
 - **领域**：Kubernetes 安全 / 策略引擎
 - **摄入日期**：2026-05-07
 - **原文来源**：https://www.cncf.io/blog/2026/05/05/announcing-kyverno-release-1-18/

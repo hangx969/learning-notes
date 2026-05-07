@@ -9,7 +9,6 @@ sources:
   - "[[Docker-Kubernetes/k8s-security-auth/helm部署certmanager]]"
   - "[[Docker-Kubernetes/k8s-security-auth/helm部署external-secrets]]"
   - "[[Docker-Kubernetes/k8s-security-auth/helm部署kyverno和policy-reporter]]"
-  - "[[Docker-Kubernetes/k8s-security-auth/Kyverno-1.18-新特性]]"
   - "[[Docker-Kubernetes/k8s-security-auth/helm部署oauth2proxy]]"
   - "[[Docker-Kubernetes/k8s-security-auth/helm部署sonarqube]]"
   - "[[Docker-Kubernetes/k8s-security-auth/helm部署trivy-operator]]"
@@ -18,7 +17,7 @@ sources:
 ## 元信息
 
 - **原始目录**: `Docker-Kubernetes/k8s-security-auth/`
-- **文档数量**: 8 篇
+- **文档数量**: 7 篇
 - **领域**: Kubernetes 安全、认证授权、证书管理、策略引擎、代码质量与镜像扫描
 - **摄入日期**: 2026-04-17
 
@@ -63,18 +62,7 @@ sources:
 - 支持验证（validate）、变更（mutate）、生成（generate）策略
 - Policy 可按 common 和 region 分目录管理，递归应用
 - Policy Reporter 提供策略执行结果的 GUI 界面
-
-### [[Docker-Kubernetes/k8s-security-auth/Kyverno-1.18-新特性|Kyverno 1.18 新特性]]
-
-**核心内容**: Kyverno 1.18 是 CNCF 毕业后的首个版本，重点强化安全、CLI 能力和策略引擎可靠性，继续向 CEL 策略类型演进。
-
-- HTTP 调用安全加固：阻止列表/允许列表防 SSRF，作用域 token 替代控制器 token（CVE-2026-4789 / CVE-2026-41323）
-- CLI 扩展：`kyverno apply/test` 支持 Cleanup policies、HTTP/Envoy 授权策略、mutateExisting 规则
-- 策略引擎增强：`successEventActions` 事件过滤、基于内存的 HPA、`/metrics` TLS、并发改进
-- CEL 演进：新增 gzip CEL 库、改进策略变量编译求值
-- 镜像验证：`imageRegistryCredentials.secrets` 支持 namespace/name、imagePullSecrets 自动使用
-- N-1 支持模型：约 3 个月社区补丁支持窗口
-- ClusterPolicy 弃用：迁移至 ValidatingPolicy / MutatingPolicy / GeneratingPolicy / ImageValidatingPolicy / DeletingPolicy
+- **1.18 新特性**：HTTP 调用安全加固（SSRF 防护 + 作用域 token）、CLI 扩展（支持现代策略类型测试）、CEL 演进、N-1 支持模型、ClusterPolicy 弃用迁移路径
 
 ### [[Docker-Kubernetes/k8s-security-auth/helm部署oauth2proxy|Helm 部署 OAuth2 Proxy]]
 
