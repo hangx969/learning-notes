@@ -12,6 +12,22 @@ date: 2026-04-17
 
 ---
 
+## [2026-05-08] ingest | Helm 部署 RabbitMQ HA
+
+- **来源**：微信公众号"爱踢人生sre"
+- **清洗**：去除公众号作者名片、SVG 占位图片、页脚导航（"继续滑动看下一个"）、"微信扫一扫赞赏作者"，保留全部技术内容
+- **新建文件**：
+  - `Docker-Kubernetes/k8s-db-middleware/helm部署rabbitmq-ha.md` — 清洗后的原始来源文档
+  - `KnowledgeBase/sources/rabbitmq-ha-summary.md` — 来源摘要页
+- **更新页面**：
+  - `sources/k8s-db-middleware-UI-batch-summary.md`：frontmatter 新增 source、文档数 18→19（中间件 10→11）、正文新增 RabbitMQ HA 小节
+  - `maps/kubernetes-map.md`：总篇数 145→146、中间件 10→11、列表新增 RabbitMQ HA
+  - `INDEX.md`：K8s 中间件批量摘要 18→19、Kubernetes 实体 145→146、领域导航 145→146
+  - `inventory/repository-inventory.md`：总文档数 297→298、Docker-Kubernetes 145→146、k8s-db-middleware/ 10→11
+- **备注**：aliyun/rabbitmq-ha Chart 版本较旧（1.0.0，RabbitMQ 3.7），需手动修复 API 版本兼容性，生产环境建议评估 bitnami/rabbitmq
+
+---
+
 ## [2026-05-07] ingest | Kyverno 1.18 新特性 + Kyverno 实体页
 
 - **来源**：CNCF 官方博客，微信公众号转载
