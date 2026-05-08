@@ -16,6 +16,7 @@ sources:
   - "[[Docker-Kubernetes/k8s-db-middleware/k8s基于yaml部署mysql主从高可用]]"
   - "[[Docker-Kubernetes/k8s-db-middleware/k8s基于yaml部署redis集群]]"
   - "[[Docker-Kubernetes/k8s-db-middleware/k8s部署springcloud电商项目]]"
+  - "[[Docker-Kubernetes/k8s-db-middleware/helm部署rabbitmq-ha]]"
   - "[[Docker-Kubernetes/k8s-UI-tools/k8s-API检查工具kubent]]"
   - "[[Docker-Kubernetes/k8s-UI-tools/k8s-小工具集合]]"
   - "[[Docker-Kubernetes/k8s-UI-tools/k8s部署-Dashboard-UI]]"
@@ -29,7 +30,7 @@ sources:
 ## 元信息
 
 - **原始目录**: `Docker-Kubernetes/k8s-db-middleware/`、`Docker-Kubernetes/k8s-UI-tools/`
-- **文档数量**: 18 篇（数据库中间件 10 篇 + UI 工具 8 篇）
+- **文档数量**: 19 篇（数据库中间件 11 篇 + UI 工具 8 篇）
 - **领域**: Kubernetes 上部署数据库/中间件服务、集群可视化与管理工具
 - **摄入日期**: 2026-04-17
 
