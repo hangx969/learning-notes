@@ -11,7 +11,7 @@ date: 2026-04-16
 # ☸️ Kubernetes 专题地图
 
 > [!info] 专题范围
-> 覆盖 Docker-Kubernetes 目录下 ==145 篇文档==，从容器基础到企业级 K8s 全生命周期管理。
+> 覆盖 Docker-Kubernetes 目录下 ==146 篇文档==，从容器基础到企业级 K8s 全生命周期管理。
 
 ---
 
@@ -126,8 +126,8 @@ HPA-VPA、KEDA、Goldilocks、VPA Helm
 ### 存储（3 篇）
 NFS Provisioner、Ceph、CubeFS
 
-### 中间件部署（10 篇）
-MySQL(3)、Redis(2)、PostgreSQL、Kafka(Strimzi)、MongoDB、httpd、SpringCloud
+### 中间件部署（11 篇）
+MySQL(3)、Redis(2)、PostgreSQL、Kafka(Strimzi)、RabbitMQ HA、MongoDB、httpd、SpringCloud
 
 ### 其他
 | 子目录 | 篇数 | 代表 |

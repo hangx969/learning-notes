@@ -8,7 +8,7 @@ date: 2026-04-16
 # 全库文档盘点
 
 > [!info] 统计概览
-> - **总文档数**：297 个 Markdown 文件（不含 README 和本知识库）
+> - **总文档数**：298 个 Markdown 文件（不含 README 和本知识库）
 > - **顶层目录**：17 个主题领域
 > - **有 Frontmatter**：294 个（99%）
 > - **有 Wikilink 双链**：92 个（31%）
@@ -181,7 +181,7 @@ date: 2026-04-16
 
 ---
 
-## Docker-Kubernetes（145 篇）
+## Docker-Kubernetes（146 篇）
 
 > [!note] 仓库最大领域，占全库 48.5%，覆盖 19 个子目录
 
@@ -301,7 +301,7 @@ date: 2026-04-16
 
 | 子目录 | 篇数 | 代表性文章 |
 |--------|------|-----------|
-| k8s-db-middleware/ | 10 | [[Docker-Kubernetes/k8s-db-middleware/Operator部署mysql集群|Operator部署mysql集群]]、[[Docker-Kubernetes/k8s-db-middleware/helm部署strimzi-kafka|helm部署strimzi-kafka]] |
+| k8s-db-middleware/ | 11 | [[Docker-Kubernetes/k8s-db-middleware/Operator部署mysql集群|Operator部署mysql集群]]、[[Docker-Kubernetes/k8s-db-middleware/helm部署strimzi-kafka|helm部署strimzi-kafka]]、[[Docker-Kubernetes/k8s-db-middleware/helm部署rabbitmq-ha|helm部署rabbitmq-ha]] |
 | k8s-UI-tools/ | 8 | [[Docker-Kubernetes/k8s-UI-tools/kubectl-可视化插件k9s-stern|kubectl-可视化插件k9s-stern]]、[[Docker-Kubernetes/k8s-UI-tools/rancher(v2.6.4)管理k8s集群|rancher(v2.6.4)管理k8s集群]] |
 | k8s-networking-service-mesh/ | 7 | [[Docker-Kubernetes/k8s-networking-service-mesh/k8s精细化流量管理-istio|k8s精细化流量管理-istio]]、[[Docker-Kubernetes/k8s-networking-service-mesh/helm部署ingress-nginx|helm部署ingress-nginx]] |
 | k8s-security-auth/ | 7 | [[Docker-Kubernetes/k8s-security-auth/helm部署certmanager|helm部署certmanager]]、[[Docker-Kubernetes/k8s-security-auth/helm部署kyverno和policy-reporter|helm部署kyverno和policy-reporter]] |
