@@ -16,7 +16,7 @@
 | 🗺️ 领域地图     | 按技术领域导航                | [domain-map](./KnowledgeBase/maps/domain-map.md)                                 |
 | 🔧 工具地图      | 按工具/平台聚合               | [tool-map](./KnowledgeBase/maps/tool-map.md)                                     |
 | ☸️ K8s 专题    | 146 篇 K8s 生态导航         | [kubernetes-map](./KnowledgeBase/maps/kubernetes-map.md)                         |
-| 🤖 AI 专题     | Claude Code + OpenClaw | [ai-workflow-map](./KnowledgeBase/maps/ai-workflow-map.md)                       |
+| 🤖 AI 专题     | Claude Code + OpenClaw + Hermes Agent | [ai-workflow-map](./KnowledgeBase/maps/ai-workflow-map.md)                       |
 | ☁️ 云平台专题     | Aliyun vs Azure 对标     | [cloud-platform-map](./KnowledgeBase/maps/cloud-platform-map.md)                 |
 | 🐧 Linux 运维  | 系统管理 + HPC + GPU       | [linux-ops-map](./KnowledgeBase/maps/linux-ops-map.md)                           |
 | 🐍 Python 运维 | 27 篇 Python 开发导航       | [python-devops-map](./KnowledgeBase/maps/python-devops-map.md)                   |
