@@ -83,6 +83,16 @@ sources:
   - Kafka 核心概念：Broker、Topic、Partition、Producer、Consumer、Offset
   - Mirror Maker 用于跨集群数据复制和灾备
 
+### [[Docker-Kubernetes/k8s-db-middleware/helm部署rabbitmq-ha|Helm部署RabbitMQ HA]]
+
+- **核心内容**: 使用 aliyun/rabbitmq-ha Helm Chart 在 K8s 上部署 RabbitMQ 高可用集群（StatefulSet 模式），包含 Chart 配置修改和 API 版本兼容性修复。
+- **关键知识点**:
+  - 使用 `aliyun/rabbitmq-ha` Chart（版本 1.0.0），基于 rabbitmq:3.7-alpine 镜像
+  - 旧版 Chart 需手动修改 API 版本：`rbac.authorization.k8s.io/v1beta1` → `v1`、`apps/v1beta1` → `apps/v1`
+  - StatefulSet 需补充 `spec.selector.matchLabels` 字段
+  - 通过 NodePort 暴露管理界面，默认关闭持久化存储
+  - Chart 版本较旧，生产环境建议评估 Bitnami 维护的 `bitnami/rabbitmq`
+
 ### [[Docker-Kubernetes/k8s-db-middleware/k8s基于yaml部署MongoDB集群|K8s基于YAML部署MongoDB集群]]
 
 - **核心内容**: 通过原生 YAML 文件在 K8s 上部署 MongoDB 集群，涉及 NFS 存储和 ConfigMap 配置。
