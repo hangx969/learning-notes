@@ -931,3 +931,21 @@ date: 2026-04-17
   - 新建 [[KnowledgeBase/sources/harnesskit-summary]]：来源摘要页
   - 更新 [[KnowledgeBase/maps/ai-workflow-map]]：补充阅读列表 + 相关工具
   - 更新 [[KnowledgeBase/INDEX.md]]：新增 HarnessKit 来源摘要条目
+
+
+---
+
+## [2026-05-09] ingest | Obsidian + Claude Code AI 知识库完整指南（三文合并）
+
+- **来源**：[[AI/Obsidian/obsidian-claude-code-AI知识库完整指南]]
+- **操作**：
+  - 将三篇文章合并为一篇完整指南：
+    - `karpathy-llm-wiki-改造计划`（内部规划文档，含差距分析与行动计划）
+    - `obsidian-claude-搭建karpathy-wiki知识库`（工具搭建方法论，含六大操作谱系）
+    - `obsidian-claude-code-AI知识管家`（公众号文章，含 Markdown 母语论证与实践判断）
+  - 删除三篇原始文件（内容已完整保留在合并文章中）
+  - 删除两个旧来源摘要页：`obsidian-claude-搭建个人知识库-summary.md`、`obsidian-claude-code-AI知识管家-summary.md`
+  - 新建 [[KnowledgeBase/sources/obsidian-claude-AI知识库完整指南-summary.md]]：合并后的来源摘要
+  - 更新 [[KnowledgeBase/index.md]]：替换两个旧条目为一个新条目
+  - 更新 [[AI/index.md]]：Obsidian 子目录条目从 4 篇→2 篇，关键入口更新
+
