@@ -12,6 +12,23 @@ date: 2026-04-17
 
 ---
 
+## [2026-05-09] ingest | Claude Code+Obsidian 知识管家实践
+
+- **来源**：微信公众号"强西"，2026-05-06 发布
+- **清洗**：去除作者署名行、3 个 SVG 占位图片、页脚营销（微信扫一扫赞赏、继续滑动看下一个），保留全部技术内容
+- **新建文件**：
+  - `AI/Obsidian/obsidian-claude-code-AI知识管家.md` — 清洗后的原始来源文档
+  - `KnowledgeBase/sources/obsidian-claude-code-AI知识管家-summary.md` — 来源摘要页
+- **更新页面**：
+  - `entities/Obsidian.md`：frontmatter 新增 source、覆盖条目新增知识管家文章
+  - `entities/Claude-Code.md`：frontmatter 新增 source、覆盖条目新增知识管家文章
+  - `maps/ai-workflow-map.md`：总篇数 19→20、Obsidian 节 3→4 篇、新增推荐阅读条目和来源摘要引用
+  - `INDEX.md`：新增来源摘要条目、AI 领域篇数 119→120
+  - `inventory/repository-inventory.md`：总文档数 298→299、AI 27→28 篇、Obsidian/ 3→4 篇
+- **核心知识**：Markdown 是 LLM 母语（Token 效率优 30-50%）、三大 $1B+ 项目殊途同归于 .md（Manus/OpenClaw/Claude Code）、30 分钟四步上手、Karpathy Wiki 模式、自动 backlinks 进阶方向
+
+---
+
 ## [2026-05-08] ingest | Helm 部署 RabbitMQ HA
 
 - **来源**：微信公众号"爱踢人生sre"

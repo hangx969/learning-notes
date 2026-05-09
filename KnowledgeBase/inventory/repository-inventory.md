@@ -8,7 +8,7 @@ date: 2026-04-16
 # 全库文档盘点
 
 > [!info] 统计概览
-> - **总文档数**：298 个 Markdown 文件（不含 README 和本知识库）
+> - **总文档数**：299 个 Markdown 文件（不含 README 和本知识库）
 > - **顶层目录**：17 个主题领域
 > - **有 Frontmatter**：294 个（99%）
 > - **有 Wikilink 双链**：92 个（31%）
@@ -16,7 +16,7 @@ date: 2026-04-16
 
 ---
 
-## AI（27 篇）
+## AI（28 篇）
 
 ### 行业动态/（1 篇）
 
@@ -34,13 +34,14 @@ date: 2026-04-16
 | [[AI/ClaudeCode/Claude-Skill质检工具-SkillCraft|Skill Craft 质检工具]] | Skill 质量工程（7 类失效模式 + 三层评估） | ✅ | ❌ |
 | [[AI/ClaudeCode/Claude-Code-Harness实战-最小可用系统|Harness 实战]] | 四层安全约束架构 + Hooks 拦截器 + Git 门禁 | ✅ | ❌ |
 
-### Obsidian/（3 篇）
+### Obsidian/（4 篇）
 
 | 文件 | 标题 | Frontmatter | 双链 |
 |------|------|:-----------:|:----:|
 | [[AI/Obsidian/obsidian-claude-搭建个人知识库|obsidian-claude-搭建个人知识库]] | Obsidian + Claude Code 搭建 AI 知识库 | ✅ | ✅ |
 | [[AI/Obsidian/karpathy-llm-wiki-改造计划|karpathy-llm-wiki-改造计划]] | Karpathy LLM Wiki 改造计划 | ✅ | ❌ |
 | [[AI/Obsidian/Obsidian可视化Skills-Excalidraw-Mermaid-Canvas|Obsidian可视化Skills]] | AI Skills 生成可编辑图表（Excalidraw/Mermaid/Canvas） | ✅ | ❌ |
+| [[AI/Obsidian/obsidian-claude-code-AI知识管家|Claude Code+Obsidian 知识管家]] | 为什么 Obsidian+Claude Code 是最优解、30 分钟上手 | ✅ | ❌ |
 
 ### skills/k8s-report-skills/（自研 Skill - Python 版，3 篇）
 
