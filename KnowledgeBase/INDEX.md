@@ -104,6 +104,7 @@ date: 2026-04-17
 | [多智能体协作](sources/多智能体协作-summary.md) | [AI/ClaudeCode/多智能体协作-Subagents与Agent-Teams](../AI/ClaudeCode/多智能体协作-Subagents与Agent-Teams.md) | Subagents（5 组件、适用场景评级）+ Agent Teams（Team Lead/Teammates/Task List/Mailbox） |
 | [Obsidian+Claude知识库](sources/obsidian-claude-搭建个人知识库-summary.md) | [AI/Obsidian/obsidian-claude-搭建个人知识库](../AI/Obsidian/obsidian-claude-搭建个人知识库.md) | 3 种集成工具（Claudian、Skills、MCP）、知识库架构选型 |
 | [Obsidian可视化Skills](sources/obsidian-visual-skills-summary.md) | [AI/Obsidian/Obsidian可视化Skills](../AI/Obsidian/Obsidian可视化Skills-Excalidraw-Mermaid-Canvas.md) | AI Skills 生成可编辑图表：Excalidraw/Mermaid/Canvas 三种格式 |
+| [AI知识管家](sources/obsidian-claude-code-AI知识管家-summary.md) | [AI/Obsidian/obsidian-claude-code-AI知识管家](../AI/Obsidian/obsidian-claude-code-AI知识管家.md) | Markdown 母语论证、30 分钟四步上手、Karpathy Wiki 模式、自动 backlinks |
 | [Skill Craft](sources/skill-craft-summary.md) | [AI/ClaudeCode/Claude-Skill质检工具-SkillCraft](../AI/ClaudeCode/Claude-Skill质检工具-SkillCraft.md) | Skill 质量工程：7 类失效模式、三层评估体系、check/fix/create/audit 四模式 |
 | [Harness 实战](sources/harness-system-summary.md) | [AI/ClaudeCode/Claude-Code-Harness实战-最小可用系统](../AI/ClaudeCode/Claude-Code-Harness实战-最小可用系统.md) | Harness 四层安全约束：约束层/工具层/中间件层/编排层 + Hooks 拦截器 + Git 门禁 |
 
