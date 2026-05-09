@@ -12,10 +12,10 @@ aliases:
   - Claude Code Obsidian 集成
   - Karpathy LLM Wiki 改造
 date: 2026-05-09
-sources:
-  - "[[AI/Obsidian/karpathy-llm-wiki-改造计划]]"
-  - "[[AI/Obsidian/obsidian-claude-搭建karpathy-wiki知识库]]"
-  - "[[AI/Obsidian/obsidian-claude-code-AI知识管家]]"
+merged_from:
+  - karpathy-llm-wiki-改造计划
+  - obsidian-claude-搭建karpathy-wiki知识库
+  - obsidian-claude-code-AI知识管家
 ---
 
 # Obsidian + Claude Code：AI 驱动的知识库完整指南
