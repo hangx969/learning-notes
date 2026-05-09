@@ -11,7 +11,7 @@ date: 2026-04-16
 # 🤖 AI 工作流专题地图
 
 > [!info] 专题范围
-> 覆盖 AI/ 目录下 ==19 篇文档==，聚焦 Claude Code、OpenClaw 两大 AI 工具平台及其在运维场景中的应用，并收录 AI 行业动态分析。
+> 覆盖 AI/ 目录下 ==20 篇文档==，聚焦 Claude Code、OpenClaw 两大 AI 工具平台及其在运维场景中的应用，并收录 AI 行业动态分析。
 
 ---
 
@@ -69,11 +69,12 @@ date: 2026-04-16
 | [[AI/ClaudeCode/Claude-Skill质检工具-SkillCraft|Skill Craft 质检工具]] | Skill 质量工程 | 7 类失效模式、三层评估、check/fix/create/audit |
 | [[AI/ClaudeCode/Claude-Code-Harness实战-最小可用系统|Harness 实战]] | 安全约束系统 | 四层架构、Hooks 拦截器、规范先行、Git 门禁 |
 
-### Obsidian 知识库（3 篇）
+### Obsidian 知识库（4 篇）
 
 | 文章 | 主题 | 关键词 |
 |------|------|--------|
 | [[AI/Obsidian/obsidian-claude-搭建个人知识库|obsidian-claude-搭建个人知识库]] | 知识库搭建 | Obsidian + Claude Code 集成 |
+| [[AI/Obsidian/obsidian-claude-code-AI知识管家|Claude Code+Obsidian 知识管家]] | 为什么+上手 | Markdown 母语、30 分钟四步、自动 backlinks |
 | [[AI/Obsidian/karpathy-llm-wiki-改造计划|karpathy-llm-wiki-改造计划]] | Wiki 改造 | Karpathy LLM Wiki 模式落地 |
 | [[AI/Obsidian/Obsidian可视化Skills-Excalidraw-Mermaid-Canvas|Obsidian可视化Skills]] | AI 可视化 | Excalidraw、Mermaid、Canvas、Skills |
 
@@ -102,6 +103,7 @@ date: 2026-04-16
 - [[KnowledgeBase/sources/rag-agent-batch-summary|RAG-Agent 批量摘要]] — 33 篇，企业 RAG 知识库系统
 - [[KnowledgeBase/sources/hermes-agent-batch-summary|Hermes-agent 批量摘要]] — 3 篇，Hermes Agent 安装、资源合集与架构解析
 - [[KnowledgeBase/sources/k8s-report-skills-summary|K8s 巡检 Skills 摘要]] — K8s 集群巡检 Python/Shell 技能
+- [[KnowledgeBase/sources/obsidian-claude-code-AI知识管家-summary|AI 知识管家摘要]] — Obsidian+Claude Code 最优解论证与上手路径
 
 ---
 
