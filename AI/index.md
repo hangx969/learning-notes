@@ -8,7 +8,7 @@
 |--------|------|------|
 | ClaudeCode/ | 5 | Claude Code 基础指南、扩展体系、多智能体协作、Skill 质检、Harness 安全约束 |
 | OpenClaw/ | 7 | 安装、Channels、Skills 插件、CoPaw、AIOps、多智能体、Ubuntu 环境 |
-| Obsidian/ | 4 | Obsidian+Claude Code 知识库搭建、Wiki 改造计划、可视化 Skills、AI 知识管家 |
+| Obsidian/ | 2 | AI 知识库完整指南（三文合并）、可视化 Skills |
 | Hermes-agent/ | 4 | 资源合集、Ubuntu 安装、架构解析与 OpenClaw 对比、满配指南 |
 | AI-视觉/ | 4+67 | PPT Master、HTML 动画、html-ppt-skill + awesome-design-md（67 品牌设计系统） |
 | skills/ | 2 套 | 自研 K8s 巡检 Skills（Python 版 + Shell 版） |
@@ -23,7 +23,7 @@
 - [[AI/ClaudeCode/ClaudeCode基础指南]] — Claude Code 入门必读
 - [[AI/ClaudeCode/Claude Code 扩展体系]] — MCP/Skills/Slash Commands/Plugin 四层扩展
 - [[AI/OpenClaw/OpenClaw-基础-安装]] — OpenClaw 入门
-- [[AI/Obsidian/obsidian-claude-code-AI知识管家]] — Obsidian+Claude Code 知识管理最优解
+- [[AI/Obsidian/obsidian-claude-code-AI知识库完整指南]] — Obsidian+Claude Code 知识库完整指南（理念+搭建+操作+计划）
 - [[AI/HarnessKit]] — AI 编码智能体统一管理工具
 
 ## 知识库导航

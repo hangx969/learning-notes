@@ -7,7 +7,7 @@ date: 2026-04-17
 sources:
   - "[[AI/ClaudeCode/Claude Code 扩展体系]]"
   - "[[AI/ClaudeCode/ClaudeCode基础指南]]"
-  - "[[obsidian-claude-搭建karpathy-wiki知识库]]"
+  - "[[AI/Obsidian/obsidian-claude-code-AI知识库完整指南]]"
   - "[[AI/行业动态/Claude-Code创始人红杉大会七个判断]]"
 ---
 
@@ -82,7 +82,7 @@ Model Context Protocol（模型上下文协议）是连接 AI 模型与外部工
 
 - [[AI/ClaudeCode/Claude Code 扩展体系]]：10 个 MCP 服务器的安装配置、使用场景、完整 JSON 配置模板
 - [[AI/ClaudeCode/ClaudeCode基础指南]]：MCP 在实战场景中的应用（事故响应、技术选型、文档查询）
-- [[obsidian-claude-搭建karpathy-wiki知识库]]：mcp-obsidian 的配置与 Obsidian 集成
+- [[AI/Obsidian/obsidian-claude-code-AI知识库完整指南]]：mcp-obsidian 的配置与 Obsidian 集成
 - [[AI/行业动态/Claude-Code创始人红杉大会七个判断]]：Boris Cherny 对 MCP 的行业定位——"Model Interface Protocol"，AI 时代的软件连接层
 
 ## 行业观点
