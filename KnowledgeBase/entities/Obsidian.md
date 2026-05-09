@@ -7,7 +7,6 @@ date: 2026-04-17
 sources:
   - "[[AI/Obsidian/obsidian-claude-code-AI知识库完整指南]]"
   - "[[AI/ClaudeCode/Claude Code 扩展体系]]"
-  - "[[AI/Obsidian/obsidian-claude-code-AI知识库完整指南]]"
 ---
 
 # Obsidian

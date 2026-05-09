@@ -73,9 +73,7 @@ date: 2026-04-16
 
 | 文章 | 主题 | 关键词 |
 |------|------|--------|
-| [[AI/Obsidian/obsidian-claude-搭建个人知识库|obsidian-claude-搭建个人知识库]] | 知识库搭建 | Obsidian + Claude Code 集成 |
-| [[AI/Obsidian/obsidian-claude-code-AI知识管家|Claude Code+Obsidian 知识管家]] | 为什么+上手 | Markdown 母语、30 分钟四步、自动 backlinks |
-| [[AI/Obsidian/karpathy-llm-wiki-改造计划|karpathy-llm-wiki-改造计划]] | Wiki 改造 | Karpathy LLM Wiki 模式落地 |
+| [[AI/Obsidian/obsidian-claude-code-AI知识库完整指南|AI知识库完整指南]] | 完整指南 | Markdown 母语、三层架构、30 分钟上手、六大操作、改造计划（三文合并） |
 | [[AI/Obsidian/Obsidian可视化Skills-Excalidraw-Mermaid-Canvas|Obsidian可视化Skills]] | AI 可视化 | Excalidraw、Mermaid、Canvas、Skills |
 
 ### OpenClaw（7 篇）
@@ -103,7 +101,7 @@ date: 2026-04-16
 - [[KnowledgeBase/sources/rag-agent-batch-summary|RAG-Agent 批量摘要]] — 33 篇，企业 RAG 知识库系统
 - [[KnowledgeBase/sources/hermes-agent-batch-summary|Hermes-agent 批量摘要]] — 3 篇，Hermes Agent 安装、资源合集与架构解析
 - [[KnowledgeBase/sources/k8s-report-skills-summary|K8s 巡检 Skills 摘要]] — K8s 集群巡检 Python/Shell 技能
-- [[KnowledgeBase/sources/obsidian-claude-code-AI知识管家-summary|AI 知识管家摘要]] — Obsidian+Claude Code 最优解论证与上手路径
+- [[KnowledgeBase/sources/obsidian-claude-AI知识库完整指南-summary|AI知识库完整指南摘要]] — Obsidian+Claude Code 完整指南（理念+工具+操作+计划）
 
 ---
 

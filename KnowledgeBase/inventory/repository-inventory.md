@@ -38,10 +38,8 @@ date: 2026-04-16
 
 | 文件 | 标题 | Frontmatter | 双链 |
 |------|------|:-----------:|:----:|
-| [[AI/Obsidian/obsidian-claude-搭建个人知识库|obsidian-claude-搭建个人知识库]] | Obsidian + Claude Code 搭建 AI 知识库 | ✅ | ✅ |
-| [[AI/Obsidian/karpathy-llm-wiki-改造计划|karpathy-llm-wiki-改造计划]] | Karpathy LLM Wiki 改造计划 | ✅ | ❌ |
+| [[AI/Obsidian/obsidian-claude-code-AI知识库完整指南|AI知识库完整指南]] | Obsidian+Claude Code AI 驱动的知识库完整指南（三文合并） | ✅ | ✅ |
 | [[AI/Obsidian/Obsidian可视化Skills-Excalidraw-Mermaid-Canvas|Obsidian可视化Skills]] | AI Skills 生成可编辑图表（Excalidraw/Mermaid/Canvas） | ✅ | ❌ |
-| [[AI/Obsidian/obsidian-claude-code-AI知识管家|Claude Code+Obsidian 知识管家]] | 为什么 Obsidian+Claude Code 是最优解、30 分钟上手 | ✅ | ❌ |
 
 ### skills/k8s-report-skills/（自研 Skill - Python 版，3 篇）
 

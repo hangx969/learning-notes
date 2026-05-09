@@ -299,7 +299,7 @@ date: 2026-04-17
 1. [ClaudeCode基础指南](../AI/ClaudeCode/ClaudeCode基础指南.md) → Claude Code 入门
 2. [扩展体系](../AI/ClaudeCode/Claude%20Code%20扩展体系.md) → MCP、Skills、Slash Commands、Plugin
 3. [OpenClaw-基础-安装](../AI/OpenClaw/OpenClaw-基础-安装.md) → OpenClaw 入门
-4. [obsidian-claude-搭建karpathy-wiki知识库](obsidian-claude-搭建karpathy-wiki知识库.md) → 知识库搭建方法论
+4. [[AI/Obsidian/obsidian-claude-code-AI知识库完整指南]] → 知识库完整指南（三文合并）
 
 ### 云平台实战
 1. [VPC](../Aliyun/网络/VPC.md) + [Azure-Networking](../Azure/6_Azure-Networking.md) → 云网络对比

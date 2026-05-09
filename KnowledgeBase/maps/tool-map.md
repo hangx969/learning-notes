@@ -23,7 +23,7 @@ date: 2026-04-16
 - [[AI/ClaudeCode/多智能体协作-Subagents与Agent-Teams|多智能体协作]] — Subagents 与 Agent Teams
 - [[AI/ClaudeCode/Claude-Skill质检工具-SkillCraft|Skill Craft 质检工具]] — Skill 质量工程（7 类失效模式 + 三层评估）
 - [[AI/ClaudeCode/Claude-Code-Harness实战-最小可用系统|Harness 实战]] — 四层安全约束架构 + Git 门禁
-- [[obsidian-claude-搭建karpathy-wiki知识库|obsidian-claude-搭建karpathy-wiki知识库]] — 搭建知识库方法论
+- [[AI/Obsidian/obsidian-claude-code-AI知识库完整指南|AI知识库完整指南]] — 搭建知识库方法论（三文合并）
 
 **概念页：** [[KnowledgeBase/entities/Claude-Code|Claude-Code]]
 
@@ -53,7 +53,7 @@ date: 2026-04-16
 
 ### Obsidian
 **相关文档：**
-- [[obsidian-claude-搭建karpathy-wiki知识库|obsidian-claude-搭建karpathy-wiki知识库]] ⭐ 推荐入口
+- [[AI/Obsidian/obsidian-claude-code-AI知识库完整指南|AI知识库完整指南]] ⭐ 推荐入口
 - [[AI/Obsidian/Obsidian可视化Skills-Excalidraw-Mermaid-Canvas|Obsidian可视化Skills]] — AI 生成可编辑图表（Excalidraw/Mermaid/Canvas）
 
 **概念页：** [[KnowledgeBase/entities/Obsidian|Obsidian]]
