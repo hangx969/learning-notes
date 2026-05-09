@@ -5,13 +5,13 @@ tags:
   - ai/claude-code
 date: 2026-04-17
 sources:
-  - "[[AI/Obsidian/obsidian-claude-搭建个人知识库]]"
+  - "[[obsidian-claude-搭建karpathy-wiki知识库]]"
 ---
 
 # obsidian-claude-搭建个人知识库
 
 ## 元信息
-- **原始文档**：[[AI/Obsidian/obsidian-claude-搭建个人知识库]]
+- **原始文档**：[[obsidian-claude-搭建karpathy-wiki知识库]]
 - **领域**：AI / Claude Code
 - **摄入日期**：2026-04-17
 

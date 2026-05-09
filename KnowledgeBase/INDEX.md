@@ -102,7 +102,7 @@ date: 2026-04-17
 | [ClaudeCode基础指南](sources/ClaudeCode基础指南-summary.md) | [AI/ClaudeCode/ClaudeCode基础指南](../AI/ClaudeCode/ClaudeCode基础指南.md) | 3 种模式、Extended Thinking、Claude.md、Spec 工作流、5 大实战场景 |
 | [扩展体系](sources/Claude-Code扩展体系-summary.md) | [AI/ClaudeCode/Claude Code 扩展体系](../AI/ClaudeCode/Claude%20Code%20扩展体系.md) | 四层扩展机制全解：MCP（10+ 服务器）、Skills（3 层模式）、Slash Commands、Plugin |
 | [多智能体协作](sources/多智能体协作-summary.md) | [AI/ClaudeCode/多智能体协作-Subagents与Agent-Teams](../AI/ClaudeCode/多智能体协作-Subagents与Agent-Teams.md) | Subagents（5 组件、适用场景评级）+ Agent Teams（Team Lead/Teammates/Task List/Mailbox） |
-| [Obsidian+Claude知识库](sources/obsidian-claude-搭建个人知识库-summary.md) | [AI/Obsidian/obsidian-claude-搭建个人知识库](../AI/Obsidian/obsidian-claude-搭建个人知识库.md) | 3 种集成工具（Claudian、Skills、MCP）、知识库架构选型 |
+| [Obsidian+Claude知识库](sources/obsidian-claude-搭建个人知识库-summary.md) | [AI/Obsidian/obsidian-claude-搭建个人知识库](obsidian-claude-搭建karpathy-wiki知识库.md) | 3 种集成工具（Claudian、Skills、MCP）、知识库架构选型 |
 | [Obsidian可视化Skills](sources/obsidian-visual-skills-summary.md) | [AI/Obsidian/Obsidian可视化Skills](../AI/Obsidian/Obsidian可视化Skills-Excalidraw-Mermaid-Canvas.md) | AI Skills 生成可编辑图表：Excalidraw/Mermaid/Canvas 三种格式 |
 | [AI知识管家](sources/obsidian-claude-code-AI知识管家-summary.md) | [AI/Obsidian/obsidian-claude-code-AI知识管家](../AI/Obsidian/obsidian-claude-code-AI知识管家.md) | Markdown 母语论证、30 分钟四步上手、Karpathy Wiki 模式、自动 backlinks |
 | [Skill Craft](sources/skill-craft-summary.md) | [AI/ClaudeCode/Claude-Skill质检工具-SkillCraft](../AI/ClaudeCode/Claude-Skill质检工具-SkillCraft.md) | Skill 质量工程：7 类失效模式、三层评估体系、check/fix/create/audit 四模式 |
@@ -300,7 +300,7 @@ date: 2026-04-17
 1. [ClaudeCode基础指南](../AI/ClaudeCode/ClaudeCode基础指南.md) → Claude Code 入门
 2. [扩展体系](../AI/ClaudeCode/Claude%20Code%20扩展体系.md) → MCP、Skills、Slash Commands、Plugin
 3. [OpenClaw-基础-安装](../AI/OpenClaw/OpenClaw-基础-安装.md) → OpenClaw 入门
-4. [obsidian-claude-搭建个人知识库](../AI/Obsidian/obsidian-claude-搭建个人知识库.md) → 知识库搭建方法论
+4. [obsidian-claude-搭建karpathy-wiki知识库](obsidian-claude-搭建karpathy-wiki知识库.md) → 知识库搭建方法论
 
 ### 云平台实战
 1. [VPC](../Aliyun/网络/VPC.md) + [Azure-Networking](../Azure/6_Azure-Networking.md) → 云网络对比
