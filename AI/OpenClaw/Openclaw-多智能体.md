@@ -454,10 +454,10 @@ openclaw agents add frontend-engineer --workspace ~/.openclaw/workspace-frontend
 
 # 实现多智能体AIOps团队
 
-## openclaw创建多智能体
+## openclaw创建多智能体dd d d d
 
 ```sh
-openclaw agents add aiops --workspace ~/.openclaw/workspace-aiops
+d d d d d d d
 openclaw agents add linux --workspace ~/.openclaw/workspace-linux
 openclaw agents add container --workspace ~/.openclaw/workspacecontainer
 openclaw agents add k8s --workspace ~/.openclaw/workspace-k8s
