@@ -182,8 +182,7 @@ date: 2026-04-17
 
 | 页面 | 覆盖文档数 | 摘要 |
 |------|:---------:|------|
-| [Hermes-agent](sources/hermes-agent-batch-summary.md) | 3 | Hermes Agent 安装指南（Ubuntu 25.10）、资源合集、架构解析与 OpenClaw 对比，持久记忆与自我进化能力 |
-| [Hermes满配指南](sources/hermes-config-summary.md) | 1 | 五大配置模块实操：Hindsight 记忆、网页抓取、搜索文档、语音图片、Token 管控 |
+| [Hermes-agent](sources/hermes-agent-batch-summary.md) | 3 | 满配指南与生态资源（两篇合并）、Ubuntu 安装、架构解析与 OpenClaw 对比，持久记忆与自我进化能力 |
 
 ### AI/行业动态（已摄入 ✅）
 

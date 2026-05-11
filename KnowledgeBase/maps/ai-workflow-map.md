@@ -42,10 +42,9 @@ date: 2026-04-16
 7. [[AI/OpenClaw/Ubuntu-2510-Setup-Guide|Ubuntu-2510-Setup-Guide]] — Ubuntu 环境搭建
 
 ### Hermes Agent 路径
-1. [[AI/Hermes-agent/Hermes Agent 资源合集|资源合集]] — 中文/全球资源索引
+1. [[AI/Hermes-agent/Hermes-Agent-满配指南与生态资源|满配指南与生态资源]] — 五大配置模块 + 高阶进化 + 资源合集（两篇合并）
 2. [[AI/Hermes-agent/Ubuntu 25.10 安装与使用 Hermes Agent 指南|Ubuntu 安装指南]] — 部署与 OpenClaw 迁移
 3. [[AI/Hermes-agent/Hermes与OpenClaw对比及飞书接入指南|架构解析与对比]] — 五层架构、记忆系统、飞书接入
-4. [[AI/Hermes-agent/Hermes满配指南-五大配置模块|满配指南]] — 五大配置模块实操
 
 ### AI 行业动态
 1. [[AI/行业动态/Claude-Code创始人红杉大会七个判断|Boris Cherny 红杉大会七个判断]] — 代码价值重估、MCP 定位、SaaS 护城河瓦解、创业机会窗口

@@ -5,7 +5,7 @@ tags:
   - AI/hermes-agent
 date: 2026-05-04
 sources:
-  - "[[AI/Hermes-agent/Hermes Agent 资源合集]]"
+  - "[[AI/Hermes-agent/Hermes-Agent-满配指南与生态资源]]"
   - "[[AI/Hermes-agent/Ubuntu 25.10 安装与使用 Hermes Agent 指南]]"
   - "[[AI/Hermes-agent/Hermes与OpenClaw对比及飞书接入指南]]"
 aliases:
@@ -21,17 +21,19 @@ aliases:
 - **摄入日期**：2026-05-04
 
 ## 整体概述
-Hermes Agent 是 Nous Research 推出的 AI Agent 框架，具备持久记忆、自动技能提炼、跨会话成长等自我进化能力。本批次包含一份资源合集（官方文档、中文社区、生态工具）、一份 Ubuntu 25.10 完整部署指南（安装、Web Dashboard、OpenClaw 迁移、升级、飞书集成），以及一份深度架构解析文章（五层架构、记忆系统、子代理委托、与 OpenClaw 对比、飞书接入）。
+Hermes Agent 是 Nous Research 推出的 AI Agent 框架，具备持久记忆、自动技能提炼、跨会话成长等自我进化能力。本批次包含一份满配指南与生态资源合集（五大配置模块实操 + 中文社区 + 生态工具，由两篇合并）、一份 Ubuntu 25.10 完整部署指南（安装、Web Dashboard、OpenClaw 迁移、升级、飞书集成），以及一份深度架构解析文章（五层架构、记忆系统、子代理委托、与 OpenClaw 对比、飞书接入）。
 
 ## 各文档摘要
 
-### [[AI/Hermes-agent/Hermes Agent 资源合集|资源合集]]
-- 核心内容：Hermes Agent 的中文和全球资源合集，分四个层级：入门（官方文档/仓库）、进阶（Wiki、生态地图、Control Interface）、高阶（Skill Factory、Maestro 协作框架、Camel 安全框架）、工具增强（HUD 监控、Alpha 部署、Awesome 列表）
+### [[AI/Hermes-agent/Hermes-Agent-满配指南与生态资源|满配指南与生态资源]]（两篇合并）
+- 核心内容：五大配置模块实操（身份与记忆/感知/搜索/表达/效率）+ 高阶进化工具（Skill Factory/Maestro/Camel/Control Interface）+ 工具增强（HUD/Wiki/Alpha）+ 官方与中文社区资源合集
 - 关键知识点：
-  - Hermes Agent GitHub 主仓库：https://github.com/NousResearch/hermes-agent
+  - **Hindsight vs 内置 MEMORY**：内置仅 ~2200 字符线性文本，Hindsight 无上限、知识图谱组织
+  - **RTK（Rust Token Killer）**：零依赖 CLI 代理，减少 60-90% Token 消耗
+  - **agency-agents-zh**：211 个中文角色模板 + 46 个中国市场原创智能体
+  - **Self-evolution**：DSPy + GEPA 遗传算法自动优化 Skill/System Prompt/工具描述
   - Skill Factory 实现任务复盘后自动生成新技能
   - Maestro 基于 Beads 架构支持跨 Agent 协作
-  - Camel 内置信任边界与安全协议，适合生产环境
 
 ### [[AI/Hermes-agent/Ubuntu 25.10 安装与使用 Hermes Agent 指南|Ubuntu 安装指南]]
 - 核心内容：Hermes Agent 在 Ubuntu 25.10 上的完整生命周期管理：一行命令安装、Web Dashboard 访问、OpenClaw 配置迁移、版本升级、飞书 Channel 集成
@@ -59,3 +61,4 @@ Hermes Agent 是 Nous Research 推出的 AI Agent 框架，具备持久记忆、
 - **Agent 自我进化**：Hermes 的 Skill Factory + 持久记忆机制是 Agent 系统从"工具"走向"自主助手"的关键特征
 - **OpenClaw → Hermes 生态迁移**：反映 AI Agent 框架的快速迭代与社区整合趋势
 - **WebSocket 模式的普适性**：飞书集成推荐 WebSocket 而非 Webhook，适合内网/NAT 环境，与企业运维场景高度契合
+- **RTK 的跨平台价值**：终端输出压缩思路可应用于任何 AI 编码助手（Claude Code 等），不限于 Hermes
