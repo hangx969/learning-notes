@@ -12,6 +12,26 @@ date: 2026-04-17
 
 ---
 
+## [2026-05-11] restructure | Hermes Agent 两篇合并 + KB 同步
+
+- **操作**：将 `Hermes Agent 资源合集` 与 `Hermes满配指南-五大配置模块` 合并为一篇
+- **新建文件**：
+  - `AI/Hermes-agent/Hermes-Agent-满配指南与生态资源.md` — 合并后文章（八大章节：配置总览 + 五大模块 + 高阶玩法 + 工具增强 + 生态资源）
+- **删除文件**：
+  - `AI/Hermes-agent/Hermes Agent 资源合集.md`
+  - `AI/Hermes-agent/Hermes满配指南-五大配置模块.md`
+  - `KnowledgeBase/sources/hermes-config-summary.md`（孤儿摘要页，内容已吸收入 batch summary）
+- **更新页面**：
+  - `sources/hermes-agent-batch-summary.md`：资源合集条目替换为合并文章，新增五大配置模块要点
+  - `entities/Hermes-Agent.md`：sources 4→3、覆盖条目 4→3
+  - `maps/ai-workflow-map.md`：Hermes 路径 4 条→3 条
+  - `inventory/repository-inventory.md`：Hermes-agent/ 4 篇→3 篇
+  - `INDEX.md`：删除 hermes-config-summary 行，更新 batch summary 描述
+  - `AI/index.md`：Hermes-agent/ 4→3 篇
+  - `AI/HarnessKit.md`：修复因删除产生的断链（资源合集→满配指南与生态资源）
+
+---
+
 ## [2026-05-09] ingest | Claude Code+Obsidian 知识管家实践
 
 - **来源**：微信公众号"强西"，2026-05-06 发布

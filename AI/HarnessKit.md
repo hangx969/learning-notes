@@ -153,7 +153,7 @@ hk serve
 |------|------|------|
 | [[AI/ClaudeCode/ClaudeCode基础指南\|Claude Code]] | AI 编码助手 | HarnessKit 管理其 Skills/MCP/Plugins/Hooks/Rules |
 | [[AI/OpenClaw/OpenClaw-基础-安装\|OpenClaw]] | AI 多智能体运维平台 | HarnessKit 路线图计划支持 |
-| [[AI/Hermes-agent/Hermes Agent 资源合集\|Hermes Agent]] | AI Agent 框架 | HarnessKit 路线图计划支持 |
+| [[AI/Hermes-agent/Hermes-Agent-满配指南与生态资源\|Hermes Agent]] | AI Agent 框架 | HarnessKit 路线图计划支持 |
 | [[AI/GithubCopilot/Copilot CLI\|Copilot CLI]] | GitHub Copilot | HarnessKit 已支持 Copilot 扩展管理 |
 
 HarnessKit 不替代任何 Agent，而是作为**元管理层**运行在所有 Agent 之上，解决多 Agent 并存时的扩展碎片化问题。
