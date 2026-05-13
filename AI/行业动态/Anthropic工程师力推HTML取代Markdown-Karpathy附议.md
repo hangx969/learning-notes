@@ -35,6 +35,7 @@ Claude Code 在 Markdown 里用 ASCII 码画流程图，或用 Unicode 色块去
 Thariq 一直这么觉得，超过 100 行的 Markdown 文件，他基本就不读了。更别提让团队里其他人去读。
 
 但 HTML 应该会好一点。AI 可以把同样的信息组织成带标签页、带导航、带折叠区块的页面，甚至可以做成响应式的，手机上看也舒服。
+![image.png](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260513140545223.png)
 
 ### 3、分享成本几乎为零
 
@@ -51,6 +52,7 @@ HTML 是可以交互的。
 - 让 Claude 给设计稿加上滑块和旋钮，拖一拖就能调整参数
 - 让它做一个可拖拽的看板来重新排列任务优先级
 - 让它做一个实时预览的 Prompt 编辑器——左边改 Prompt，右边立即看到填充效果，改完了点一个 Copy 按钮，把参数直接粘贴 Claude Code
+![image.png](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260513140603256.png)
 
 ### 5、快乐
 
@@ -71,6 +73,8 @@ HTML 是可以交互的。
 Prompt 参考：
 
 > 我不确定入门引导页该怎么做。生成 6 种完全不同的方案——布局、语气、信息密度都要有差异——放在一个 HTML 文件里用网格排列，让我能并排比较。每种方案标注它做了什么取舍。
+
+![image.png](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260513140627890.png)
 
 ### 2、代码审查
 
