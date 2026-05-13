@@ -182,7 +182,7 @@ date: 2026-04-17
 
 | 页面 | 覆盖文档数 | 摘要 |
 |------|:---------:|------|
-| [Hermes-agent](sources/hermes-agent-batch-summary.md) | 3 | 满配指南与生态资源（两篇合并）、Ubuntu 安装、架构解析与 OpenClaw 对比，持久记忆与自我进化能力 |
+| [Hermes-agent](sources/hermes-agent-batch-summary.md) | 4 | 满配指南与生态资源（两篇合并）、Ubuntu 安装、架构解析与 OpenClaw 对比、Curator Skill 膨胀治理 |
 
 ### AI/行业动态（已摄入 ✅）
 

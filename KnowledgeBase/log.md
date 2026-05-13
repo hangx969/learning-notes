@@ -12,6 +12,21 @@ date: 2026-04-17
 
 ---
 
+## [2026-05-13] ingest | Hermes Curator — Skill 膨胀治理
+
+- **来源**：AI技术立文，2026-05-07，微信公众号
+- **清洗**：去除作者署名行、SVG 占位图片（2 张）、页脚营销（赞赏/滑动导航）
+- **新建文件**：
+  - `AI/Hermes-agent/Hermes-Curator-Skill膨胀治理.md` — 清洗后技术文章
+- **更新页面**：
+  - `sources/hermes-agent-batch-summary.md`：frontmatter 新增 source、文档数 3→4、正文新增 Curator 小节
+  - `entities/Hermes-Agent.md`：新增 Curator 核心功能条目、sources 引用、覆盖条目；移除"Skill Factory 质量评估"知识空白（已覆盖）
+  - `maps/ai-workflow-map.md`：Hermes 路径 3→4 步、来源摘要 3→4 篇
+  - `index.md`：Hermes-agent 批量摘要 3→4 篇
+- **核心知识**：Curator 四步工作流（监测/降级/复盘/锁定）、Skill 膨胀数学（365→36 条/年）、Skill vs 记忆区别、Agent 四种记忆类型（工作/语义/情景/程序性）
+
+---
+
 ## [2026-05-13] ingest | K8s CGroup v2 深度解析：资源隔离原理、迁移实战与避坑指南
 
 - **来源**：WAKEUP技术，2026-05-12，微信公众号
