@@ -25,7 +25,7 @@ Hermes Curator 是一个后台维护系统，专门管理 Agent 自己创建的 
 它的存在，是为了防止通过自我改进循环创建的 Skill 无限堆积。
 
 ## 1. Curator 如何管理 Skill？
-![Uploading file...plh38]()
+![image.png](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260513144312972.png)
 
 Hermes Agent 会将 Skill 保存为文件，伴随 Agent 一起学习。每个"Agent 创建"的已保存 Skill 都会成为 Skill 文件夹里的一个文件。没有维护，这个文件夹就会无限膨胀——Agent 每次提示都要加载更多内容，Skill 目录变成了噪音。
 
@@ -76,6 +76,7 @@ hermes curator restore <skill>     # 将已归档Skill移回活跃状态
 日常最有用的命令是 `hermes curator status`。它会列出五个最近最少使用的 Skill，这是快速判断哪些最可能下一步变为陈旧的方法。
 
 ## 3. Skill 膨胀的数学
+![image.png](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260513144340320.png)
 
 数学很简单。即使每天保存一个新 Skill，Skill 目录一个月就会达到 30 条，一年达到 365 条。通过 Curator 复盘合并近似重复项，每月大约只存活 3 条唯一 Skill。也就是说一年大约 36 条，而不是 365 条。
 
@@ -89,6 +90,7 @@ hermes curator restore <skill>     # 将已归档Skill移回活跃状态
 有时它选错了。有时它会尝试同时使用两个。无论哪种情况，目录越大，Agent 越慢、越笨。
 
 ## 4. Skill 与记忆的区别
+![image.png](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260513144354594.png)
 
 有必要精确区分 Curator 处理的"记忆"类型。
 
