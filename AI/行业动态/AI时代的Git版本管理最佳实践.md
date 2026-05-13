@@ -477,6 +477,9 @@ gh stack submit
 
 修改底层分支时，GitButler 自动 rebase 上层所有分支，无需手动操作。
 
+![image.png](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260513141832506.png)
+
+
 ### 4.3 工具选择建议
 
 Jujutsu 和 GitButler 并不互斥，也不取代 Git 生态：它们都以 Git 仓库作为后端，与 GitHub、GitLab 及现有 CI/CD 管道完全兼容。在团队中，可以让更熟悉这些工具的成员选择使用，其他成员继续使用 Git，不会产生协作障碍。
