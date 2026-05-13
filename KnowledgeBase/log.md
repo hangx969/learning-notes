@@ -12,6 +12,20 @@ date: 2026-04-17
 
 ---
 
+## [2026-05-13] ingest | AI 行业动态：HTML 取代 Markdown
+
+- **来源**：量子位 QbitAI（Jay），2026-05-12，Anthropic 工程师 Thariq 长文 + Karpathy 回应
+- **清洗**：去除公众号引流、广告、AIGC 峰会推广、评论区引导、页脚导航
+- **新建文件**：
+  - `AI/行业动态/Anthropic工程师力推HTML取代Markdown-Karpathy附议.md` — 清洗后技术文章
+  - `KnowledgeBase/sources/html-vs-markdown-summary.md` — 来源摘要页
+- **更新页面**：
+  - `maps/ai-workflow-map.md`：行业动态 1→2 篇，推荐阅读顺序新增条目
+  - `index.md`：行业动态表格新增一行
+  - `AI/index.md`：行业动态/ 1→2 篇
+
+---
+
 ## [2026-05-11] restructure | Hermes Agent 两篇合并 + KB 同步
 
 - **操作**：将 `Hermes Agent 资源合集` 与 `Hermes满配指南-五大配置模块` 合并为一篇

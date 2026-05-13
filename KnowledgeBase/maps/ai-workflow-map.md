@@ -48,6 +48,7 @@ date: 2026-04-16
 
 ### AI 行业动态
 1. [[AI/行业动态/Claude-Code创始人红杉大会七个判断|Boris Cherny 红杉大会七个判断]] — 代码价值重估、MCP 定位、SaaS 护城河瓦解、创业机会窗口
+2. [[AI/行业动态/Anthropic工程师力推HTML取代Markdown-Karpathy附议|HTML 取代 Markdown]] — Anthropic 工程师 5 大论据 + Karpathy 进化路线 + 哥白尼式智能观
 
 ### 补充
 - [[AI/HarnessKit|HarnessKit]] — AI 编码智能体统一管理工具（Skills/MCP/Plugins/Hooks 跨 Agent 管理）
@@ -87,11 +88,12 @@ date: 2026-04-16
 | [[AI/OpenClaw/Openclaw-多智能体|Openclaw-多智能体]] | 多智能体 | Agent 协作、工作流编排 |
 | [[AI/OpenClaw/Ubuntu-2510-Setup-Guide|Ubuntu-2510-Setup-Guide]] | Ubuntu 配置 | 开发环境 |
 
-### 行业动态（1 篇）
+### 行业动态（2 篇）
 
 | 文章 | 主题 | 关键词 |
 |------|------|--------|
 | [[AI/行业动态/Claude-Code创始人红杉大会七个判断\|Boris Cherny 红杉大会七个判断]] | AI 行业趋势 | 代码民主化、MCP 定位、SaaS 瓦解、创业机会、Computer Use |
+| [[AI/行业动态/Anthropic工程师力推HTML取代Markdown-Karpathy附议\|HTML 取代 Markdown]] | AI 输出格式 | HTML vs Markdown、信息密度、交互性、一次性编辑器、哥白尼式智能观 |
 
 ---
 

@@ -189,6 +189,7 @@ date: 2026-04-17
 | 页面 | 原始来源 | 摘要 |
 |------|---------|------|
 | [Boris Cherny 红杉大会](sources/boris-cherny-sequoia-summary.md) | [AI/行业动态/Claude-Code创始人红杉大会七个判断](../AI/行业动态/Claude-Code创始人红杉大会七个判断.md) | Claude Code 创始人 7 个行业判断：代码民主化、MCP 定位、SaaS 护城河瓦解、创业黄金期 |
+| [HTML 取代 Markdown](sources/html-vs-markdown-summary.md) | [AI/行业动态/Anthropic工程师力推HTML取代Markdown-Karpathy附议](../AI/行业动态/Anthropic工程师力推HTML取代Markdown-Karpathy附议.md) | Anthropic 工程师 5 大论据力推 HTML、Karpathy 附议进化路线、Token 成本权衡、哥白尼式智能观 |
 
 ### AI/HarnessKit（已摄入 ✅）
 
