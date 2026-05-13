@@ -51,7 +51,7 @@ date: 2026-04-17
 
 | 页面 | 摘要 |
 |------|------|
-| [Kubernetes](entities/Kubernetes.md) | 容器编排平台，146 篇文章覆盖全生命周期 |
+| [Kubernetes](entities/Kubernetes.md) | 容器编排平台，147 篇文章覆盖全生命周期 |
 | [Docker](entities/Docker.md) | 容器运行时，12 篇覆盖基础与服务部署实战 |
 | [Helm](entities/Helm.md) | Kubernetes 包管理器 |
 | [ArgoCD](entities/ArgoCD.md) | GitOps 持续交付工具 |
@@ -126,7 +126,7 @@ date: 2026-04-17
 |------|:---------:|------|
 | [Docker](sources/docker-batch-summary.md) | 12 | Docker 基础、GPU 配置、服务部署实战（GitLab/Prometheus/Loki 等） |
 | [K8s 基础资源](sources/k8s-basic-resources-batch-summary.md) | 20 | Pod/Deployment/Service/Ingress/ConfigMap/Storage/RBAC/CRD/Operator |
-| [K8s 安装管理](sources/k8s-installation-management-batch-summary.md) | 16 | v1.20→v1.35 安装演进、企业高可用、etcd HA、运行时迁移 |
+| [K8s 安装管理](sources/k8s-installation-management-batch-summary.md) | 17 | v1.20→v1.35 安装演进、企业高可用、etcd HA、运行时迁移、cgroup v2 |
 | [K8s 监控日志](sources/k8s-monitoring-logging-batch-summary.md) | 21 | Prometheus 全栈、EFK/Loki 日志、Jaeger/SkyWalking 链路追踪、集群巡检脚本 |
 | [K8s CI/CD](sources/k8s-CICD-batch-summary.md) | 19 | Jenkins/ArgoCD/GitLab CI/Tekton/Kustomize/GitHub Actions |
 | [K8s 网络与服务网格](sources/k8s-networking-service-mesh-batch-summary.md) | 7 | Ingress-Nginx/External-DNS/Calico/Istio 流量管理 |
@@ -269,7 +269,7 @@ date: 2026-04-17
 
 | 领域 | 篇数 | 成熟度 | 入口 |
 |------|------|:------:|------|
-| Docker-Kubernetes | 146 | 🟢 | [kubernetes-map](maps/kubernetes-map.md) |
+| Docker-Kubernetes | 147 | 🟢 | [kubernetes-map](maps/kubernetes-map.md) |
 | Python | 27 | 🟢 | [python-devops-map](maps/python-devops-map.md) |
 | Linux-Shell | 24 | 🟡 | [linux-ops-map](maps/linux-ops-map.md) |
 | Azure | 21 | 🟢 | [cloud-platform-map](maps/cloud-platform-map.md) |

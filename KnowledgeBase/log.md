@@ -12,6 +12,23 @@ date: 2026-04-17
 
 ---
 
+## [2026-05-13] ingest | K8s CGroup v2 深度解析：资源隔离原理、迁移实战与避坑指南
+
+- **来源**：WAKEUP技术，2026-05-12，微信公众号
+- **清洗**：去除作者署名行、页脚营销（关注/赞赏/滑动导航）、列表序号冗余格式
+- **新建文件**：
+  - `Docker-Kubernetes/k8s-installation-management/k8s-cgroup-v2深度解析-迁移实战与避坑指南.md` — 清洗后技术文章
+  - `KnowledgeBase/sources/k8s-cgroup-v2-summary.md` — 来源摘要页
+- **更新页面**：
+  - `sources/k8s-installation-management-batch-summary.md`：frontmatter 新增 source、文档数 16→17、正文新增 cgroup v2 小节
+  - `entities/Kubernetes.md`：新增 cgroup v2 资源隔离章节、sources 引用、篇数 145→147
+  - `entities/containerd.md`：新增核心功能章节（含 cgroup v2 支持说明）、覆盖条目
+  - `maps/kubernetes-map.md`：总篇数 146→147、安装运维 16→17 篇、列表新增 cgroup v2
+  - `index.md`：安装管理批量摘要 16→17、Kubernetes 实体 146→147、领域导航 146→147
+- **核心知识**：cgroup v2 统一层次树、CPU Burst（P99 降 30-50%）、memory.high 双层限制、MemoryQoS（v1.27 Beta）、5 个生产踩坑案例、3 条 Prometheus 告警规则
+
+---
+
 ## [2026-05-13] ingest | AI 行业动态：AI 时代 Git 版本管理最佳实践
 
 - **来源**：TRAE 技术专家 小夏，2026-04-28

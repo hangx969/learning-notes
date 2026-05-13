@@ -11,7 +11,7 @@ date: 2026-04-16
 # ☸️ Kubernetes 专题地图
 
 > [!info] 专题范围
-> 覆盖 Docker-Kubernetes 目录下 ==146 篇文档==，从容器基础到企业级 K8s 全生命周期管理。
+> 覆盖 Docker-Kubernetes 目录下 ==147 篇文档==，从容器基础到企业级 K8s 全生命周期管理。
 
 ---
 
@@ -80,14 +80,14 @@ date: 2026-04-16
 | 扩展 | [[Docker-Kubernetes/k8s-basic-resources/k8s基础-自定义CRD资源|k8s基础-自定义CRD资源]]、[[Docker-Kubernetes/k8s-basic-resources/k8s基础-kubeadm|k8s基础-kubeadm]]、[[Docker-Kubernetes/k8s-basic-resources/k8s基础-容器运行时-containerd|k8s基础-容器运行时-containerd]] |
 | 自动化 | [[Docker-Kubernetes/k8s-basic-resources/Python调用k8s-api实现资源管理|Python调用k8s-api实现资源管理]] |
 
-### 安装与运维管理（16 篇）
+### 安装与运维管理（17 篇）
 | 主题 | 文章 |
 |------|------|
 | 最新版 | [[Docker-Kubernetes/k8s-installation-management/latest-version/安装k8s-1.35-基于rockylinux10-最新步骤|安装k8s-1.35-基于rockylinux10-最新步骤]] |
 | 企业级 | [[Docker-Kubernetes/k8s-installation-management/2025最新-企业级高可用集群-基于rockylinux|2025最新-企业级高可用集群-基于rockylinux]] |
 | 二进制 | [[Docker-Kubernetes/k8s-installation-management/二进制安装k8s高可用集群|二进制安装k8s高可用集群]] |
 | 历史版本 | 1.20.6 / 1.23 / 1.26-1.27 / 1.28 / 1.30 / 1.32 / 1.33（7 篇） |
-| 运维 | [[Docker-Kubernetes/k8s-installation-management/etcd高可用配置以及模拟集群故障和恢复|etcd高可用配置以及模拟集群故障和恢复]]、[[Docker-Kubernetes/k8s-installation-management/k8s故障排查指南|k8s故障排查指南]]、[[Docker-Kubernetes/k8s-installation-management/k8s生产环境优化与最佳实践|k8s生产环境优化与最佳实践]]、[[Docker-Kubernetes/k8s-installation-management/k8s迁移容器运行时-版本升级|k8s迁移容器运行时-版本升级]] |
+| 运维 | [[Docker-Kubernetes/k8s-installation-management/etcd高可用配置以及模拟集群故障和恢复|etcd高可用配置以及模拟集群故障和恢复]]、[[Docker-Kubernetes/k8s-installation-management/k8s故障排查指南|k8s故障排查指南]]、[[Docker-Kubernetes/k8s-installation-management/k8s生产环境优化与最佳实践|k8s生产环境优化与最佳实践]]、[[Docker-Kubernetes/k8s-installation-management/k8s迁移容器运行时-版本升级|k8s迁移容器运行时-版本升级]]、[[Docker-Kubernetes/k8s-installation-management/k8s-cgroup-v2深度解析-迁移实战与避坑指南|cgroup v2 深度解析与迁移]] |
 | 架构 | [[Docker-Kubernetes/k8s-installation-management/k8s两地三中心架构|k8s两地三中心架构]]、[[Docker-Kubernetes/k8s-installation-management/k8s多集群kubeconfig管理|k8s多集群kubeconfig管理]] |
 
 ### 监控与日志（20 篇）
