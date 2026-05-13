@@ -83,16 +83,19 @@ Prompt 参考：
 但 HTML 可以渲染真正的 diff 视图，加上行内批注、按严重程度标颜色、画流程图来解释代码逻辑。
 
 Thariq 说，他现在每个 PR 都会附一个 HTML 格式的代码说明。
+![image.png](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260513140640915.png)
 
 ### 3、设计和原型
 
 HTML 在交互方面就是天生优势，很适合用来做前端。
+![image.png](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260513140700544.png)
 
 ### 4、报告和研究
 
 让 Claude Code 去翻你的 Slack、你的代码库、你的 git 历史、互联网上的资料，然后把所有信息整合成一份可读性极高的 HTML 报告。
 
 可以是一份长文档，可以是一个交互式的解释器，甚至，可以是一个幻灯片。
+![image.png](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260513140716391.png)
 
 ### 5、一次性编辑器
 
@@ -100,6 +103,7 @@ HTML 在交互方面就是天生优势，很适合用来做前端。
 
 - 30 个 Linear ticket 需要重新排优先级 → 做一个拖拽看板，预排一遍，调整完，点一下按钮导出成 Markdown
 - 调一个 system prompt → 做一个左右分栏的编辑器，左边改 Prompt，右边实时预览，带 token 计数器和 copy 按钮
+![image.png](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260513140726834.png)
 
 奢侈，用完就扔。但它帮你省下的时间和脑力，远超你花在描述需求上的 30 秒。
 
