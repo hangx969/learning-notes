@@ -51,7 +51,7 @@ date: 2026-04-17
 
 | 页面 | 摘要 |
 |------|------|
-| [Kubernetes](entities/Kubernetes.md) | 容器编排平台，147 篇文章覆盖全生命周期 |
+| [Kubernetes](entities/Kubernetes.md) | 容器编排平台，148 篇文章覆盖全生命周期 |
 | [Docker](entities/Docker.md) | 容器运行时，12 篇覆盖基础与服务部署实战 |
 | [Helm](entities/Helm.md) | Kubernetes 包管理器 |
 | [ArgoCD](entities/ArgoCD.md) | GitOps 持续交付工具 |
@@ -127,7 +127,7 @@ date: 2026-04-17
 | [Docker](sources/docker-batch-summary.md) | 12 | Docker 基础、GPU 配置、服务部署实战（GitLab/Prometheus/Loki 等） |
 | [K8s 基础资源](sources/k8s-basic-resources-batch-summary.md) | 20 | Pod/Deployment/Service/Ingress/ConfigMap/Storage/RBAC/CRD/Operator |
 | [K8s 安装管理](sources/k8s-installation-management-batch-summary.md) | 17 | v1.20→v1.35 安装演进、企业高可用、etcd HA、运行时迁移、cgroup v2 |
-| [K8s 监控日志](sources/k8s-monitoring-logging-batch-summary.md) | 21 | Prometheus 全栈、EFK/Loki 日志、Jaeger/SkyWalking 链路追踪、集群巡检脚本 |
+| [K8s 监控日志](sources/k8s-monitoring-logging-batch-summary.md) | 22 | Prometheus 全栈、EFK/Loki 日志、Jaeger/SkyWalking 链路追踪、六种日志采集方案对比、集群巡检脚本 |
 | [K8s CI/CD](sources/k8s-CICD-batch-summary.md) | 19 | Jenkins/ArgoCD/GitLab CI/Tekton/Kustomize/GitHub Actions |
 | [K8s 网络与服务网格](sources/k8s-networking-service-mesh-batch-summary.md) | 7 | Ingress-Nginx/External-DNS/Calico/Istio 流量管理 |
 | [K8s 安全认证](sources/k8s-security-auth-batch-summary.md) | 7 | Cert-Manager/External Secrets/Kyverno(含1.18新特性)/OAuth2 Proxy/Trivy/SonarQube |
@@ -177,6 +177,7 @@ date: 2026-04-17
 | 页面 | 覆盖文档数 | 摘要 |
 |------|:---------:|------|
 | [RAG-Agent](sources/rag-agent-batch-summary.md) | 33 | 企业级 RAG 知识库系统，Spring Boot 3.4.2 + ES 8.10 混合检索 + Kafka 异步处理 + MinIO 存储 |
+| [RAG PDF 解析](sources/rag-pdf-parsing-summary.md) | 1 | PDF 解析难点（无语义结构）、三大技术路线（文本提取/OCR/VLM）、四类工具方案、7 个生产问题 |
 
 ### AI/Hermes-agent（已摄入 ✅）
 
@@ -269,12 +270,12 @@ date: 2026-04-17
 
 | 领域 | 篇数 | 成熟度 | 入口 |
 |------|------|:------:|------|
-| Docker-Kubernetes | 147 | 🟢 | [kubernetes-map](maps/kubernetes-map.md) |
+| Docker-Kubernetes | 148 | 🟢 | [kubernetes-map](maps/kubernetes-map.md) |
 | Python | 27 | 🟢 | [python-devops-map](maps/python-devops-map.md) |
 | Linux-Shell | 24 | 🟡 | [linux-ops-map](maps/linux-ops-map.md) |
 | Azure | 21 | 🟢 | [cloud-platform-map](maps/cloud-platform-map.md) |
 | Aliyun | 19 | 🟢 | [cloud-platform-map](maps/cloud-platform-map.md) |
-| AI | 120 | 🟢 | [ai-workflow-map](maps/ai-workflow-map.md) |
+| AI | 121 | 🟢 | [ai-workflow-map](maps/ai-workflow-map.md) |
 | Go | 9 | 🟡 | [go-01-环境配置-基础](../Go/go-01-环境配置-基础.md) |
 | CloudComputing | 7 | 🟡 | [云原生](../CloudComputing/云原生.md) |
 | HPC | 7 | 🟡 | [CentOS7-slurm23.02-二进制安装](../HPC/CentOS7-slurm23.02-二进制安装.md) |

@@ -12,6 +12,33 @@ date: 2026-04-17
 
 ---
 
+## [2026-05-13] ingest | K8s 日志采集六种方案深度对比与选型指南
+
+- **来源**：WAKEUP技术，2026-05-11，微信公众号
+- **清洗**：去除作者署名行、页脚营销（赞赏/滑动导航）、评论区互动引导、作者简介
+- **新建文件**：
+  - `Docker-Kubernetes/k8s-monitoring-logging/k8s日志采集六种方案深度对比与选型指南.md` — 清洗后技术文章
+- **更新页面**：
+  - `sources/k8s-monitoring-logging-batch-summary.md`：frontmatter 新增 source、文档数 21→22
+  - `maps/kubernetes-map.md`：总篇数 147→148、监控日志 20→22 篇、列表新增日志选型
+  - `index.md`：监控日志批量摘要 21→22、Kubernetes 实体 147→148、领域导航 147→148
+- **核心知识**：六种方案（DaemonSet/Sidecar/直推/ServiceMesh/OpenTelemetry/云托管）对比、Fluent Bit 完整配置、5 个生产踩坑、选型决策树、PLG vs EFK+Kafka 架构推荐
+
+---
+
+## [2026-05-13] ingest | RAG PDF 解析难点与主流方案
+
+- **来源**：小橙子（AI Engineer编程），2026-05-09，微信公众号
+- **清洗**：去除作者署名行、页脚导航（"继续滑动看下一个"）、列表冗余序号格式
+- **新建文件**：
+  - `AI/RAG-PDF解析难点与主流方案.md` — 清洗后技术文章
+  - `KnowledgeBase/sources/rag-pdf-parsing-summary.md` — 来源摘要页
+- **更新页面**：
+  - `index.md`：RAG-Agent 分区新增 RAG PDF 解析条目、AI 领域 120→121
+- **核心知识**：PDF 格式三种对比（DOCX/HTML/PDF）、三大解析路线（文本提取/OCR/VLM）、Docling/MinerU/Marker-PDF AI 增强框架、7 个常见生产问题处理方案
+
+---
+
 ## [2026-05-13] ingest | Hermes Curator — Skill 膨胀治理
 
 - **来源**：AI技术立文，2026-05-07，微信公众号
