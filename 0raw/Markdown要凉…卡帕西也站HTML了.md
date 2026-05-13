@@ -284,10 +284,6 @@ Thariq没有给出完美的解决方案。
 
 其实吧，你看看最近病毒式传播的那个 **神经渲染demo** ，也许没那么远。
 
-就这玩意儿。
-
-<video src="https://mpvideo.qpic.cn/0b2eoiadqaaaqiakiqacojvfa4wdhbzaaoaa.f10002.mp4?dis_k=4b7aafb76b2e38b7907ac31c94bd215f&amp;dis_t=1778651467&amp;play_scene=10120&amp;auth_info=O8OR4J96V0BOpIfOp1lOD2ZjGBozYBJiNWYEOTFOLUgHbzEdVVZMDTlDbhZMNEMvcmk=&amp;auth_key=291327b80b595f7560aca3ca75a87b19&amp;vid=wxv_4512464993669578752&amp;format_id=10002&amp;support_redirect=0&amp;mmversion=false" controls="">您的浏览器不支持 video 标签</video>
-
 很多东西的实现成本，都被AI打爆了。
 
 上面说的是输出形式的问题。
