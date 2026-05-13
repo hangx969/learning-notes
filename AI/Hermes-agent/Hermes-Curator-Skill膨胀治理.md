@@ -25,6 +25,7 @@ Hermes Curator 是一个后台维护系统，专门管理 Agent 自己创建的 
 它的存在，是为了防止通过自我改进循环创建的 Skill 无限堆积。
 
 ## 1. Curator 如何管理 Skill？
+![Uploading file...plh38]()
 
 Hermes Agent 会将 Skill 保存为文件，伴随 Agent 一起学习。每个"Agent 创建"的已保存 Skill 都会成为 Skill 文件夹里的一个文件。没有维护，这个文件夹就会无限膨胀——Agent 每次提示都要加载更多内容，Skill 目录变成了噪音。
 
