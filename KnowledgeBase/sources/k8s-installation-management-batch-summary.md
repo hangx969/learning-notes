@@ -21,13 +21,14 @@ sources:
   - "[[Docker-Kubernetes/k8s-installation-management/k8s迁移容器运行时-版本升级]]"
   - "[[Docker-Kubernetes/k8s-installation-management/k8s故障排查指南]]"
   - "[[Docker-Kubernetes/k8s-installation-management/k8s多集群kubeconfig管理]]"
+  - "[[Docker-Kubernetes/k8s-installation-management/k8s-cgroup-v2深度解析-迁移实战与避坑指南]]"
 ---
 
 # k8s-installation-management 来源批量摘要
 
 ## 元信息
 - **原始目录**：`Docker-Kubernetes/k8s-installation-management/`
-- **文档数量**：16 篇
+- **文档数量**：17 篇
 - **领域**：Docker-Kubernetes
 - **摄入日期**：2026-04-17
 
@@ -153,6 +154,16 @@ sources:
   - 方案二：KUBECONFIG 环境变量指向多个文件
   - 方案三：kubectl config view --flatten 合并配置
   - 方案四：krew 插件 konfig 管理 kubeconfig
+
+### [[Docker-Kubernetes/k8s-installation-management/k8s-cgroup-v2深度解析-迁移实战与避坑指南|K8s CGroup v2 深度解析]]
+- 核心内容：从内核原理到 K8s 实战，系统讲解 cgroup v1→v2 迁移全流程，含 5 个生产踩坑案例和监控告警配置。
+- 关键知识点：
+  - cgroup v2 统一层次树取代 v1 多层次树，消除跨子系统配置不一致
+  - CPU Burst 特性（内核 5.14+）解决 v1 固定窗口 throttle 问题，P99 延迟降低 30%-50%
+  - memory.high 双层限制 + MemoryQoS（v1.27 Beta）：提前回收减少 OOM Kill
+  - kubelet + containerd 必须同时使用 systemd cgroupDriver
+  - v1/v2 混合集群通过 NodeAffinity 标签隔离逐步迁移
+  - Prometheus 指标变化：cAdvisor ≥ 0.45 才支持 v2 格式
 
 ## 涉及的概念与实体
 - [[KnowledgeBase/entities/Kubernetes|Kubernetes]]
