@@ -26,13 +26,14 @@ sources:
   - "[[Docker-Kubernetes/k8s-monitoring-logging/k8s部署全链路追踪-Skywalking]]"
   - "[[Docker-Kubernetes/k8s-monitoring-logging/helm部署jaeger]]"
   - "[[Docker-Kubernetes/k8s-monitoring-logging/K8s全面巡检脚本-生成HTML健康报告]]"
+  - "[[Docker-Kubernetes/k8s-monitoring-logging/k8s日志采集六种方案深度对比与选型指南]]"
 ---
 
 # k8s-monitoring-logging 来源批量摘要
 
 ## 元信息
 - **原始目录**：`Docker-Kubernetes/k8s-monitoring-logging/`
-- **文档数量**：21 篇
+- **文档数量**：22 篇
 - **领域**：Docker-Kubernetes
 - **摄入日期**：2026-04-17
 
