@@ -25,7 +25,10 @@ Markdown 能做什么？标题、加粗、列表、代码块。差不多了。
 
 几乎没有任何一类信息，是 AI 读得懂但 HTML 表达不了的。
 
+![image.png](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260513140425571.png)
+
 Claude Code 在 Markdown 里用 ASCII 码画流程图，或用 Unicode 色块去「估算颜色」——就像逼着一个画家用筷子画油画，还要求人家必须画出个蒙娜丽莎。
+![image.png](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260513140452101.png)
 
 ### 2、可读性
 
