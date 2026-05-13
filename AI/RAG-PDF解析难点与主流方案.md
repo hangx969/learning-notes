@@ -31,8 +31,9 @@ PDF（Portable Document Format）由 Adobe 于 1993 年发布，基于 PostScrip
 **PDF 没有段落、没有标题、没有表格这些语义概念**。有的只是坐标、字形（glyph）、线段、颜色，以及绘图操作符序列。解析器需要自己去推断这些线段和文字之间的空间关系，才能还原出表格结构，而这种推断在合并单元格、多级表头的情况下很容易出错。
 
 ### PDF 结构
-
 一个 PDF 文件由四个部分构成：Header、Body、Cross-Reference Table、Trailer。
+
+![image.png](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260513145232339.png)
 
 **Body** 是核心，由大量 **COS 对象**（Carousel Object System）组成，包括：
 
