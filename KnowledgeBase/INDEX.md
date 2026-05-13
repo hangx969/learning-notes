@@ -190,6 +190,7 @@ date: 2026-04-17
 |------|---------|------|
 | [Boris Cherny 红杉大会](sources/boris-cherny-sequoia-summary.md) | [AI/行业动态/Claude-Code创始人红杉大会七个判断](../AI/行业动态/Claude-Code创始人红杉大会七个判断.md) | Claude Code 创始人 7 个行业判断：代码民主化、MCP 定位、SaaS 护城河瓦解、创业黄金期 |
 | [HTML 取代 Markdown](sources/html-vs-markdown-summary.md) | [AI/行业动态/Anthropic工程师力推HTML取代Markdown-Karpathy附议](../AI/行业动态/Anthropic工程师力推HTML取代Markdown-Karpathy附议.md) | Anthropic 工程师 5 大论据力推 HTML、Karpathy 附议进化路线、Token 成本权衡、哥白尼式智能观 |
+| [AI 时代 Git 实践](sources/ai-git-best-practices-summary.md) | [AI/行业动态/AI时代的Git版本管理最佳实践](../AI/行业动态/AI时代的Git版本管理最佳实践.md) | 11 条 Agent Git 最佳实践、Jujutsu/GitButler 新工具、隔离/透明/自动化三原则 |
 
 ### AI/HarnessKit（已摄入 ✅）
 

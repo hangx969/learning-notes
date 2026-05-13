@@ -12,6 +12,20 @@ date: 2026-04-17
 
 ---
 
+## [2026-05-13] ingest | AI 行业动态：AI 时代 Git 版本管理最佳实践
+
+- **来源**：TRAE 技术专家 小夏，2026-04-28
+- **清洗**：去除公众号引流、页脚导航；修复全部代码块格式（错误的语言标识符 xml/sql/kotlin/perl/css/makefile/apache/python/nginx/cs/php → text/bash/markdown/json；恢复代码块内换行）
+- **新建文件**：
+  - `AI/行业动态/AI时代的Git版本管理最佳实践.md` — 清洗后技术文章
+  - `KnowledgeBase/sources/ai-git-best-practices-summary.md` — 来源摘要页
+- **更新页面**：
+  - `maps/ai-workflow-map.md`：行业动态 2→3 篇
+  - `index.md`：行业动态表格新增一行
+  - `AI/index.md`：行业动态/ 2→3 篇
+
+---
+
 ## [2026-05-13] ingest | AI 行业动态：HTML 取代 Markdown
 
 - **来源**：量子位 QbitAI（Jay），2026-05-12，Anthropic 工程师 Thariq 长文 + Karpathy 回应
