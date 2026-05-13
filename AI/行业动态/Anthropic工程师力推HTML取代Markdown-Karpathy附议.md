@@ -139,6 +139,7 @@ Karpathy 跑出来附议：
 - **Markdown**（加粗、斜体、标题，稍微好看点）
 - **HTML**（还是代码驱动的，但在图形、布局、交互上灵活太多了）
 - **……**
+![image.png](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260513140800834.png)
 
 至于这条路的终点，Karpathy 表示，可能是某种由扩散模型直接生成的交互式视频。
 
@@ -169,3 +170,4 @@ HTML 确实有些信息冗余。但它是半结构化的——能精确定位、
 CLI 正在回归，自然语言正在取代 GUI，代码本身正在变成一种中间产物，而不是最终产品。所有曾经为了「方便人类操作」而精心设计的东西，都在被重新审视。
 
 当创作者和消费者都不再是纯粹的人类时，那个为「纯粹人类」设计的世界，或许……注定会逐渐坍塌。
+![image.png](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260513140839966.png)
