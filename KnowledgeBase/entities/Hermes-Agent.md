@@ -8,6 +8,7 @@ sources:
   - "[[AI/Hermes-agent/Hermes-Agent-满配指南与生态资源]]"
   - "[[AI/Hermes-agent/Ubuntu 25.10 安装与使用 Hermes Agent 指南]]"
   - "[[AI/Hermes-agent/Hermes与OpenClaw对比及飞书接入指南]]"
+  - "[[AI/Hermes-agent/Hermes-Curator-Skill膨胀治理]]"
 aliases:
   - Hermes
   - hermes-agent
@@ -27,6 +28,7 @@ Hermes Agent 是 Nous Research 推出的开源 AI Agent 框架，核心特色是
 - **持久记忆系统**：内置 MEMORY.md（~2200 字符）/ USER.md（~1375 字符），支持 Hindsight 知识图谱扩展
 - **子代理委托**：深度限制 2 层，ThreadPoolExecutor 最多 3 并行，子代理无权修改父级记忆
 - **Skill Factory**：任务完成后复盘，自动生成可复用技能
+- **Hermes Curator**：后台 Skill 维护系统——监测→降级（30天陈旧/90天归档）→复盘（廉价模型合并重复项）→锁定优先，防止 Skill 无限膨胀
 - **Maestro 协作框架**：基于 Beads 架构支持跨 Agent 协作
 - **Web Dashboard**：默认端口 9119，Gateway/API 默认端口 8642
 - **飞书集成**：WebSocket 模式，无需公网 Webhook
@@ -48,9 +50,9 @@ Hermes Agent 是 Nous Research 推出的开源 AI Agent 框架，核心特色是
 - [[AI/Hermes-agent/Hermes-Agent-满配指南与生态资源]]：五大配置模块实操 + 高阶进化工具 + 生态资源合集（两篇合并）
 - [[AI/Hermes-agent/Ubuntu 25.10 安装与使用 Hermes Agent 指南]]：Ubuntu 完整部署、Web Dashboard、OpenClaw 迁移、飞书集成
 - [[AI/Hermes-agent/Hermes与OpenClaw对比及飞书接入指南]]：五层架构深度解析、记忆系统、与 OpenClaw 六维对比
+- [[AI/Hermes-agent/Hermes-Curator-Skill膨胀治理]]：Curator 四步工作流（监测/降级/复盘/锁定）、Skill 与记忆的区别、Agent 四种记忆类型
 
 ## 知识空白
 
 - Hermes 在生产环境的稳定性和性能表现
-- Skill Factory 自动生成技能的质量和实用性评估
 - Hermes 与 Claude Code 的功能详细对比

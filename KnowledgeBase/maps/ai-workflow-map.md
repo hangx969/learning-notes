@@ -45,6 +45,7 @@ date: 2026-04-16
 1. [[AI/Hermes-agent/Hermes-Agent-满配指南与生态资源|满配指南与生态资源]] — 五大配置模块 + 高阶进化 + 资源合集（两篇合并）
 2. [[AI/Hermes-agent/Ubuntu 25.10 安装与使用 Hermes Agent 指南|Ubuntu 安装指南]] — 部署与 OpenClaw 迁移
 3. [[AI/Hermes-agent/Hermes与OpenClaw对比及飞书接入指南|架构解析与对比]] — 五层架构、记忆系统、飞书接入
+4. [[AI/Hermes-agent/Hermes-Curator-Skill膨胀治理|Curator Skill 膨胀治理]] — Skill 生命周期管理、四步工作流、Agent 四种记忆
 
 ### AI 行业动态
 1. [[AI/行业动态/Claude-Code创始人红杉大会七个判断|Boris Cherny 红杉大会七个判断]] — 代码价值重估、MCP 定位、SaaS 护城河瓦解、创业机会窗口
@@ -102,7 +103,7 @@ date: 2026-04-16
 ## 📑 来源摘要
 - [[KnowledgeBase/sources/cloudops-agent-batch-summary|CloudOps-Agent 批量摘要]] — 57 篇，三语言智能 OnCall Agent
 - [[KnowledgeBase/sources/rag-agent-batch-summary|RAG-Agent 批量摘要]] — 33 篇，企业 RAG 知识库系统
-- [[KnowledgeBase/sources/hermes-agent-batch-summary|Hermes-agent 批量摘要]] — 3 篇，Hermes Agent 安装、资源合集与架构解析
+- [[KnowledgeBase/sources/hermes-agent-batch-summary|Hermes-agent 批量摘要]] — 4 篇，Hermes Agent 安装、资源合集、架构解析与 Curator Skill 治理
 - [[KnowledgeBase/sources/k8s-report-skills-summary|K8s 巡检 Skills 摘要]] — K8s 集群巡检 Python/Shell 技能
 - [[KnowledgeBase/sources/obsidian-claude-AI知识库完整指南-summary|AI知识库完整指南摘要]] — Obsidian+Claude Code 完整指南（理念+工具+操作+计划）
 

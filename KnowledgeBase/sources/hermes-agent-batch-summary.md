@@ -8,6 +8,7 @@ sources:
   - "[[AI/Hermes-agent/Hermes-Agent-满配指南与生态资源]]"
   - "[[AI/Hermes-agent/Ubuntu 25.10 安装与使用 Hermes Agent 指南]]"
   - "[[AI/Hermes-agent/Hermes与OpenClaw对比及飞书接入指南]]"
+  - "[[AI/Hermes-agent/Hermes-Curator-Skill膨胀治理]]"
 aliases:
   - Hermes Agent摘要
 ---
@@ -16,12 +17,12 @@ aliases:
 
 ## 元信息
 - **原始目录**：`AI/Hermes-agent/`
-- **文档数量**：3 篇
+- **文档数量**：4 篇
 - **领域**：AI Agent 框架
 - **摄入日期**：2026-05-04
 
 ## 整体概述
-Hermes Agent 是 Nous Research 推出的 AI Agent 框架，具备持久记忆、自动技能提炼、跨会话成长等自我进化能力。本批次包含一份满配指南与生态资源合集（五大配置模块实操 + 中文社区 + 生态工具，由两篇合并）、一份 Ubuntu 25.10 完整部署指南（安装、Web Dashboard、OpenClaw 迁移、升级、飞书集成），以及一份深度架构解析文章（五层架构、记忆系统、子代理委托、与 OpenClaw 对比、飞书接入）。
+Hermes Agent 是 Nous Research 推出的 AI Agent 框架，具备持久记忆、自动技能提炼、跨会话成长等自我进化能力。本批次包含一份满配指南与生态资源合集（五大配置模块实操 + 中文社区 + 生态工具，由两篇合并）、一份 Ubuntu 25.10 完整部署指南（安装、Web Dashboard、OpenClaw 迁移、升级、飞书集成）、一份深度架构解析文章（五层架构、记忆系统、子代理委托、与 OpenClaw 对比、飞书接入），以及一份 Hermes Curator Skill 膨胀治理解析（监测→降级→复盘→锁定四步工作流、Skill 与记忆的区别、Agent 四种记忆类型）。
 
 ## 各文档摘要
 
@@ -51,6 +52,15 @@ Hermes Agent 是 Nous Research 推出的 AI Agent 框架，具备持久记忆、
   - 子代理委托深度限制 2 层，ThreadPoolExecutor 最多 3 并行，子代理无权修改父级记忆
   - 与 OpenClaw 对比：Python 轻量后端 vs TypeScript 全平台产品；自注册 vs 插件生态；有机记忆 vs 模块化
   - 飞书接入：`hermes setup` 向导式配置，DM 配对，Feishu CLI 提供上下文+操作能力
+
+### [[AI/Hermes-agent/Hermes-Curator-Skill膨胀治理|Hermes Curator — Skill 膨胀治理]]
+- 核心内容：Hermes Curator 后台维护系统设计原理——追踪 Skill 使用频率，自动降级/归档/合并，防止自我改进循环产生的 Skill 无限堆积
+- 关键知识点：
+  - 四步工作流：监测（使用计数器+时间戳）→ 降级（30天陈旧/90天归档）→ 复盘（廉价模型审查合并）→ 锁定优先（pin 保护关键 Skill）
+  - Skill 膨胀数学：无 Curator 一年 365 条 Skill，有 Curator 约 36 条（合并近似重复项）
+  - Skill ≠ 记忆：Skill 是程序性知识（如何做），记忆是语义知识（知道什么），需不同清理逻辑
+  - Agent 四种记忆：工作记忆（缓存）、语义记忆（向量库）、情景记忆（对话日志）、程序性记忆（Skill 文件夹）
+  - Curator CLI：`hermes curator status/run/pin/restore` 等命令
 
 ## 涉及的概念与实体
 - [[KnowledgeBase/entities/OpenClaw|OpenClaw]]
