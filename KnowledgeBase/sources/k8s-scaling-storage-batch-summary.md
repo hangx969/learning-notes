@@ -40,12 +40,16 @@ sources:
 
 ### [[Docker-Kubernetes/k8s-scaling/helm部署vpa|Helm 部署 VPA]]
 
-**核心内容**: VPA（垂直 Pod 自动扩缩容）自动为 Pod 设置合理的 resource request，通过 Fairwinds Helm Chart 部署。
+**核心内容**: VPA（垂直 Pod 自动扩缩容）自动为 Pod 设置合理的 resource request，通过 Fairwinds Helm Chart 部署。含四种 updateMode 深入解析、推荐算法原理、与 HPA 共存方案。
 
 - 三个组件：Updater（更新 Pod 资源）、Admission Controller（拦截创建请求）、Recommender（推荐资源值）
 - 必须依赖 Metrics Server（Chart 可自带安装）
 - kubeadm 集群中自带 Metrics Server 子 Chart 可能启动失败（需 `--kubelet-insecure-tls`）
 - 可仅启用 Recommender 模式（不自动更新，只提供推荐）
+- 四种 updateMode（Off/Initial/Auto/Recreate）：生产建议先 Off 观察 1-2 周，核心服务用 Initial
+- 推荐算法：指数衰减直方图，CPU 基于 P95、Memory 基于高水位、默认 8 天历史窗口
+- VPA + HPA 共存：分离控制维度（VPA 管 Memory，HPA 管 CPU），不能同时对同一资源使用
+- 驱逐风险：配合 PDB 限制 maxUnavailable，核心服务避免 Auto/Recreate 模式
 
 ### [[Docker-Kubernetes/k8s-scaling/k8s-基于KEDA的弹性能力|KEDA 事件驱动扩缩容]]
 

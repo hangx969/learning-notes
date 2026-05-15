@@ -224,3 +224,133 @@ spec:
             - "while true; do timeout 0.5s yes >/dev/null; sleep 0.5s; done"
 ~~~
 
+---
+
+# VPA 深入：四种模式、推荐算法与 HPA 共存
+
+> 来源：[K8s VPA 垂直自动扩缩容：你真的会用吗？](https://mp.weixin.qq.com/s/FfNIwJJrF9XpBSZMNcffag)
+
+## 四种 updateMode 对比
+
+| Mode | 行为 | 适用场景 |
+| --- | --- | --- |
+| `Off` | 只生成推荐，不做任何修改 | 先观察，收集数据 |
+| `Initial` | 只在 Pod 首次创建时注入推荐值 | 稳定服务，减少驱逐 |
+| `Auto` | 自动注入 + 驱逐过期 Pod | 接受一定重启的服务 |
+| `Recreate` | 强制驱逐并用新推荐值重建 | 需要立即生效（少用） |
+
+**生产建议**：先用 `Off` 模式跑 1-2 周收集推荐值，然后切换到 `Initial` 稳定运行。核心服务不要用 `Auto` 或 `Recreate`，因为会触发 Pod 重启影响可用性。
+
+## VPA 推荐值算法
+
+VPA Recommender 使用**指数衰减直方图**算法对历史 CPU/Memory 使用量建模：
+
+- **CPU 推荐**：基于使用量分布的第 95 百分位（P95），不是平均值
+- **Memory 推荐**：基于最近一段时间的内存使用高水位
+- **历史窗口**：默认采集过去 8 天的数据（可通过 `--history-length` 调整）
+- **衰减因子**：越近的数据权重越高（近期流量特征更重要）
+
+注意：
+- 如果服务有周期性业务高峰（每周一峰值），VPA 会把这个峰值纳入推荐
+- 如果刚上线没多少历史数据，推荐值可能偏低，需要等 1-2 周
+
+## VPA 与 HPA 共存
+
+**不能同时对同一资源（CPU/Memory）使用 VPA Auto/Recreate + HPA based on CPU/Memory**，会造成控制器互相打架。
+
+正确的共存方案：
+
+```
+方案1：VPA Off 模式 + HPA（VPA 只做参考，人工调整 requests）
+方案2：VPA 管 Memory + HPA 管 CPU 水平扩容（分离控制维度）
+方案3：KEDA 基于自定义指标 HPA + VPA Off 模式推荐
+```
+
+配置示例（VPA 只管内存，HPA 只管 CPU 水平扩容）：
+
+~~~yaml
+# VPA：只控制 Memory
+apiVersion: autoscaling.k8s.io/v1
+kind: VerticalPodAutoscaler
+metadata:
+  name: my-app-vpa
+spec:
+  targetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: my-app
+  updatePolicy:
+    updateMode: "Auto"
+  resourcePolicy:
+    containerPolicies:
+    - containerName: my-app
+      controlledResources: ["memory"]   # 只控制内存
+      minAllowed:
+        memory: 128Mi
+      maxAllowed:
+        memory: 4Gi
+---
+# HPA：只基于 CPU 水平扩
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: my-app-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: my-app
+  minReplicas: 2
+  maxReplicas: 20
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70
+~~~
+
+## VPA 驱逐风险与缓解
+
+VPA `Auto`/`Recreate` 模式会主动 evict Pod，这是最大风险。缓解措施：
+
+1. **配合 PDB 限制最大驱逐数**：
+
+~~~yaml
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: my-app-pdb
+spec:
+  maxUnavailable: 1      # 同时只允许 1 个 Pod 不可用
+  selector:
+    matchLabels:
+      app: my-app
+~~~
+
+2. **设置合理的 minAllowed/maxAllowed 缩小触发范围**
+3. **生产核心服务建议使用 `Initial` 模式**，只在 Pod 重建（滚动升级/节点迁移）时才注入新推荐值
+
+## VPA 监控
+
+使用 Prometheus + Grafana 监控 VPA：
+
+~~~bash
+# VPA 关键指标（vpa-recommender 暴露）
+vpa_recommender_memory_usage            # Recommender 自身内存使用
+vpa_recommender_cpu_usage               # Recommender CPU 使用
+vpa_recommender_recommendations_total   # 总推荐次数
+
+# 定期导出推荐值差异
+kubectl get vpa -A -o json | jq '.items[] | {
+  name: .metadata.name,
+  namespace: .metadata.namespace,
+  target: .status.recommendation.containerRecommendations[0].target
+}'
+~~~
+
+Grafana Dashboard ID: **14588**
+
+> **总结**：1）先用 `Off` 模式收集推荐数据；2）核心服务用 `Initial` 减少驱逐影响；3）与 HPA 共存时分离控制维度（VPA 管内存，HPA 管 CPU）；4）始终配合 PDB 保障可用性。
+
