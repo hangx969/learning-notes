@@ -158,10 +158,10 @@ helm upgrade --install metrics-server . -f values.yaml
 
 ## demo pod
 
-- [Test Your Installation](https://github.com/kubernetes/autoscaler/blob/master/vertical-pod-autoscaler/docs/quickstart.md#test-your-installation)：vpa github提供了一个示例deployment来测试vpa是否正常工作。
+- [Test Your Installation](https://github.com/kubernetes/autoscaler/blob/master/vertical-pod-autoscaler/docs/quickstart.md#test-your-installation)：vpa github提供了一个示例deployment来测试vpa是否正常工作
 - 这个deployment设置了pod request cpu是100m，但是实际pod会用到500m以上，过几分钟之后就会看到pod被删掉重新创建了，request cpu的值被改到600m多
 
-~~~yaml
+```yaml
 # This config creates a deployment with two pods, each requesting 100 millicores
 # and trying to utilize slightly above 500 millicores (repeatedly using CPU for
 # 0.5s and sleeping 0.5s).
