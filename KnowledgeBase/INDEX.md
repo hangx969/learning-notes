@@ -275,7 +275,7 @@ date: 2026-04-17
 | Linux-Shell | 24 | 🟡 | [linux-ops-map](maps/linux-ops-map.md) |
 | Azure | 21 | 🟢 | [cloud-platform-map](maps/cloud-platform-map.md) |
 | Aliyun | 19 | 🟢 | [cloud-platform-map](maps/cloud-platform-map.md) |
-| AI | 121 | 🟢 | [ai-workflow-map](maps/ai-workflow-map.md) |
+| AI | 123 | 🟢 | [ai-workflow-map](maps/ai-workflow-map.md) |
 | Go | 9 | 🟡 | [go-01-环境配置-基础](../Go/go-01-环境配置-基础.md) |
 | CloudComputing | 7 | 🟡 | [云原生](../CloudComputing/云原生.md) |
 | HPC | 7 | 🟡 | [CentOS7-slurm23.02-二进制安装](../HPC/CentOS7-slurm23.02-二进制安装.md) |
