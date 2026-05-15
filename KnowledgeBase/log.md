@@ -12,6 +12,27 @@ date: 2026-04-17
 
 ---
 
+## [2026-05-15] ingest | CLAUDE.md 最佳实践两篇（21 条指令 + 12 条规则模板）
+
+- **来源**：
+  - Mayank Agarwal（@TheAIWorld22），X 长帖，290 万阅读，2026-05-09
+  - Mnilax（@Mnilax），X 长帖，30 个代码库实测，2026-05-13
+  - 两篇均由公众号 Cf2019 翻译整理
+- **清洗**：去除公众号署名行、赞赏/滑动导航、目录导航
+- **新建文件**：
+  - `AI/ClaudeCode/CLAUDE.md最佳实践-21条指令清单.md` — Mayank 21 条指令（沟通/行为/上下文/记忆/安全五维度）
+  - `AI/ClaudeCode/CLAUDE.md最佳实践-12条规则模板.md` — Mnilax 12 条规则（Karpathy 4 条 + 8 条新规则，含翻车现场和实测数据）
+- **更新页面**：
+  - `entities/Claude-Code.md`：记忆层章节新增 CLAUDE.md 最佳实践摘要（200 行天花板/Karpathy 4 条/Mnilax 12 条/Mayank 21 条）、sources 引用 +2、覆盖条目 +2
+  - `maps/ai-workflow-map.md`：Claude Code 路径 5→7 步
+  - `index.md`：AI 领域 121→123
+- **核心知识**：
+  - **Mayank 独有**：MEMORY.md/ERRORS.md 记忆连续性系统、非开发者场景覆盖（写作者/营销人/研究者）、指令 9-11 个人上下文注入
+  - **Mnilax 独有**：200 行遵循率天花板实测、Token 预算（4000/任务 30000/会话）、暴露冲突不折中、先读后写、测试验证意图、长任务检查点、约定胜于新奇、显式失败、6 条"试过但放弃的"反面经验
+  - **共同**：Karpathy 4 条基础规则、外科手术式修改、不可逆操作确认
+
+---
+
 ## [2026-05-15] ingest | OpenTelemetry 实战：统一 Traces/Metrics/Logs
 
 - **来源**：WAKEUP技术，2026-05-13，微信公众号
