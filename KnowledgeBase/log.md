@@ -12,6 +12,22 @@ date: 2026-04-17
 
 ---
 
+## [2026-05-15] ingest | VPA 垂直扩缩容深入：四种模式、推荐算法与 HPA 共存
+
+- **来源**：WAKEUP技术，2026-05-15，微信公众号
+- **清洗**：去除作者署名/简介/个人主页、页脚营销（赞赏/滑动导航）、列表冗余序号格式
+- **操作方式**：清洗后内容追加到已有文档 `Docker-Kubernetes/k8s-scaling/helm部署vpa.md` 末尾，未新增独立文件
+- **新增内容**：
+  - 四种 updateMode 对比表（Off/Initial/Auto/Recreate）及生产建议
+  - 推荐值算法原理（指数衰减直方图、CPU P95、Memory 高水位、8 天窗口）
+  - VPA + HPA 共存三种方案（分离控制维度配置示例）
+  - 驱逐风险缓解（PDB 配合、Initial 模式推荐）
+  - Prometheus 监控指标 + Grafana Dashboard ID 14588
+- **更新页面**：
+  - `sources/k8s-scaling-storage-batch-summary.md`：VPA 小节补充四种模式/推荐算法/HPA 共存/驱逐风险要点
+
+---
+
 ## [2026-05-13] ingest | K8s 日志采集六种方案深度对比与选型指南
 
 - **来源**：WAKEUP技术，2026-05-11，微信公众号
