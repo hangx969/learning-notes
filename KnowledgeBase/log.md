@@ -12,6 +12,20 @@ date: 2026-04-17
 
 ---
 
+## [2026-05-15] ingest | OpenTelemetry 实战：统一 Traces/Metrics/Logs
+
+- **来源**：WAKEUP技术，2026-05-13，微信公众号
+- **清洗**：去除作者署名行、下期预告、关注引导、页脚营销（滑动导航）、列表冗余序号格式
+- **新建文件**：
+  - `Docker-Kubernetes/k8s-monitoring-logging/OpenTelemetry实战-统一Traces-Metrics-Logs.md` — 清洗后技术文章
+- **更新页面**：
+  - `sources/k8s-monitoring-logging-batch-summary.md`：frontmatter 新增 source、文档数 22→23、正文新增 OTel 小节
+  - `maps/kubernetes-map.md`：总篇数 148→149、监控日志 22→23 篇、列表新增 OTel
+  - `index.md`：监控日志批量摘要 22→23、Kubernetes 实体 148→149、领域导航 148→149
+- **核心知识**：OTel Collector 三段式管道（Receivers→Processors→Exporters）、Operator 零代码自动注入、尾部采样四策略、OTel vs Datadog 选型（$3000-8000+/月 vs 开源自主）、LGTM 栈（Loki+Grafana+Tempo+Mimir）、四阶段迁移策略、生产要点（Collector 资源规划/Cardinality 防爆/背压处理/多租户隔离/监控你的监控）
+
+---
+
 ## [2026-05-15] ingest | VPA 垂直扩缩容深入：四种模式、推荐算法与 HPA 共存
 
 - **来源**：WAKEUP技术，2026-05-15，微信公众号

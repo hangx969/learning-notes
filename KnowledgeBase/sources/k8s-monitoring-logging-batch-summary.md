@@ -27,13 +27,14 @@ sources:
   - "[[Docker-Kubernetes/k8s-monitoring-logging/helm部署jaeger]]"
   - "[[Docker-Kubernetes/k8s-monitoring-logging/K8s全面巡检脚本-生成HTML健康报告]]"
   - "[[Docker-Kubernetes/k8s-monitoring-logging/k8s日志采集六种方案深度对比与选型指南]]"
+  - "[[Docker-Kubernetes/k8s-monitoring-logging/OpenTelemetry实战-统一Traces-Metrics-Logs]]"
 ---
 
 # k8s-monitoring-logging 来源批量摘要
 
 ## 元信息
 - **原始目录**：`Docker-Kubernetes/k8s-monitoring-logging/`
-- **文档数量**：22 篇
+- **文档数量**：23 篇
 - **领域**：Docker-Kubernetes
 - **摄入日期**：2026-04-17
 
@@ -197,6 +198,17 @@ sources:
   - 可配置告警阈值：CPU 80%、内存 80%、磁盘 85%、Pod 重启 5 次、证书到期 30 天
   - 自动化部署：Dockerfile 打包 + CronJob 每日定时执行 + PVC 持久化报告 + RBAC 只读权限
   - 告警集成：钉钉 Webhook + 企业微信 Webhook，异常 Pod 数 > 0 自动推送
+
+### [[Docker-Kubernetes/k8s-monitoring-logging/OpenTelemetry实战-统一Traces-Metrics-Logs|OpenTelemetry 实战：统一 Traces/Metrics/Logs]]
+- 核心内容：从零搭建 OTel + LGTM（Loki+Grafana+Tempo+Mimir）完整可观测性体系，含 Collector 三段式管道、Operator 自动注入、尾部采样、与传统方案对比。
+- 关键知识点：
+  - OTel Collector 三段式管道：Receivers → Processors → Exporters，OTLP 统一协议
+  - OTel Operator + Auto-instrumentation：零代码注入 SDK（Java/Python/Node.js/Go）
+  - 尾部采样（Tail Sampling）：Gateway StatefulSet 模式，按错误/延迟/属性/概率四策略保留 Trace
+  - OTel vs 传统 APM 对比：1 套 SDK 替代 3 套、Trace-Metric-Log 内置关联、存储成本降低 60-80%
+  - Datadog vs 开源 OTel+LGTM 选型：100 节点月费 $3000-8000+ vs 对象存储自主运维
+  - 生产要点：Collector 资源规划表、Cardinality 爆炸防护、OTLP 背压处理、多租户隔离
+  - 迁移策略：四阶段（双写过渡→新服务接入→存量迁移→下线旧系统）
 
 ## 涉及的概念与实体
 - [[KnowledgeBase/entities/Prometheus|Prometheus]]
