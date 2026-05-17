@@ -12,6 +12,38 @@ date: 2026-04-17
 
 ---
 
+## [2026-05-17] restructure + ingest | K8s 日志管理三合一（日志基础 + 六种采集方案 + 审计日志）
+
+- **操作**：将两篇现有文章合并，并摄入一篇新文章，三合一为一篇完整的日志管理综合文章
+- **合并来源**：
+  - `k8s日志管理.md`（kubelet 本地日志管理基础，73 行）
+  - `k8s日志采集六种方案深度对比与选型指南.md`（六种采集方案+踩坑+架构推荐，466 行）
+- **新增来源**：`0raw/K8s审计日志深度实践——从运维利器到合规基石.md`（WAKEUP技术，2026-05-17）
+  - 清洗：去除作者署名/简介/个人主页、页脚营销（赞赏/滑动导航）、列表冗余序号
+- **新建文件**：
+  - `Docker-Kubernetes/k8s-monitoring-logging/k8s日志管理-采集方案与审计日志.md` — 三合一综合文章（922 行）
+- **删除文件**：
+  - `Docker-Kubernetes/k8s-monitoring-logging/k8s日志管理.md`（内容已合并）
+  - `Docker-Kubernetes/k8s-monitoring-logging/k8s日志采集六种方案深度对比与选型指南.md`（内容已合并）
+- **更新页面**：
+  - `sources/k8s-monitoring-logging-batch-summary.md`：合并两个旧 source 引用为一个、文档数 23→22、日志管理小节替换为三合一摘要（14 条关键知识点）
+  - `maps/kubernetes-map.md`：修复 2 处断链（日志管理/六种方案→合并文件）、监控日志 23→22 篇、总篇数 151→150
+  - `entities/Kubernetes.md`：篇数 151→150
+  - `concepts/日志系统.md`、`concepts/Observability.md`：修复断链（日志管理→合并文件）
+  - `index.md`：监控日志 23→22、Kubernetes 151→150、领域导航 151→150
+- **合并后文章结构（9 章）**：
+  - 一、K8s 日志基础机制（kubelet 默认策略、日志路径、生命周期、logrotate）
+  - 二、日志的三种原生形式（stdout/文件/系统日志）
+  - 三、六种采集方案深度对比（DaemonSet/Sidecar/直推/ServiceMesh/OTel/云托管，含完整 YAML）
+  - 四、六种方案对比总览表
+  - 五、生产环境五大踩坑
+  - 六、选型决策树 + 三种推荐架构（PLG/EFK+Kafka/OTel）
+  - 七、K8s 审计日志（策略配置、API Server 启用、采集架构、4 个排查场景）
+  - 八、审计日志合规与安全（等保 2.0/SOC2、性能优化、OPA 联动）
+  - 九、总结（合并推荐表 + 5 条黄金法则）
+
+---
+
 ## [2026-05-17] ingest | html-anything — AI 生成 HTML 全场景工具
 
 - **来源**：开源日记，2026-05-17，微信公众号
