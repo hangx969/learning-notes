@@ -26,6 +26,9 @@ tags:
 失败时 → Claude 拉 pod logs/events → 根因分析（写到 Job log）
 ```
 
+![image.png](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260517151540512.png)
+
+
 **关键技术选型**
 
 - 构建：Kaniko（不需要 dind，Runner 不开特权）
@@ -37,6 +40,9 @@ tags:
 ---
 
 ## CI/CD 完整 Pipeline 配置
+
+![image.png](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260517151608160.png)
+
 
 ### 变量与阶段定义
 
