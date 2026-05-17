@@ -86,8 +86,22 @@ Confluence Wiki 的内容并不只是普通文本。
 **数据来源类型设计**
 
 我们用source\_type区分不同来源
+数据来源	source_type	说明
+页面正文	page	普通正文、代码宏、配置文件、表格
+页面评论	comment	评论和回复
+页面附件	attachment	PDF、docx、xlsx、pptx、txt、conf 等
+普通图片	image	页面插入图片，经多模态模型解析
+draw.io 图	drawio	Confluence draw.io 宏解析
+空页面元信息	page	目录页或空页的最小元信息
 
-| 数据来源 | source\_type | 说明 |
-| --- | --- | --- |
-| 页面正文 | page | 普通正文、代码宏、配置文件、表格 |
-| 页面评论 |
+最终所有内容都会被转换为统一格式：
+
+{
+  "chunk_id": "confluence_34144478_page_v10_0000",
+  "source_type": "page",
+  "doc_id": "34144478",
+  "title": "1-生产环境xxx 架构",
+  "url": "https://wiki.net-inc.com/pages/viewpage.action?pageId=34144478",
+  "text": "..."
+}
+
