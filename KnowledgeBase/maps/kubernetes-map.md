@@ -11,7 +11,7 @@ date: 2026-04-16
 # ☸️ Kubernetes 专题地图
 
 > [!info] 专题范围
-> 覆盖 Docker-Kubernetes 目录下 ==151 篇文档==，从容器基础到企业级 K8s 全生命周期管理。
+> 覆盖 Docker-Kubernetes 目录下 ==150 篇文档==，从容器基础到企业级 K8s 全生命周期管理。
 
 ---
 
@@ -51,7 +51,7 @@ date: 2026-04-16
 ### 第四阶段：监控与日志
 14. [[Docker-Kubernetes/k8s-monitoring-logging/helm部署prometheus-stack全家桶|helm部署prometheus-stack全家桶]] — Prometheus 全家桶
 15. [[Docker-Kubernetes/k8s-monitoring-logging/helm部署Loki-promtail-tempo-grafanaAgent全家桶|helm部署Loki-promtail-tempo-grafanaAgent全家桶]] — Loki + Tempo
-16. [[Docker-Kubernetes/k8s-monitoring-logging/k8s日志管理|k8s日志管理]] — 日志架构
+16. [[Docker-Kubernetes/k8s-monitoring-logging/k8s日志管理-采集方案与审计日志|k8s日志管理综合]] — 日志架构
 
 ### 第五阶段：CI/CD
 17. [[Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD基础|ArgoCD基础]] — GitOps
@@ -90,14 +90,14 @@ date: 2026-04-16
 | 运维 | [[Docker-Kubernetes/k8s-installation-management/etcd高可用配置以及模拟集群故障和恢复|etcd高可用配置以及模拟集群故障和恢复]]、[[Docker-Kubernetes/k8s-installation-management/k8s故障排查指南|k8s故障排查指南]]、[[Docker-Kubernetes/k8s-installation-management/k8s生产环境优化与最佳实践|k8s生产环境优化与最佳实践]]、[[Docker-Kubernetes/k8s-installation-management/k8s迁移容器运行时-版本升级|k8s迁移容器运行时-版本升级]]、[[Docker-Kubernetes/k8s-installation-management/k8s-cgroup-v2深度解析-迁移实战与避坑指南|cgroup v2 深度解析与迁移]] |
 | 架构 | [[Docker-Kubernetes/k8s-installation-management/k8s两地三中心架构|k8s两地三中心架构]]、[[Docker-Kubernetes/k8s-installation-management/k8s多集群kubeconfig管理|k8s多集群kubeconfig管理]] |
 
-### 监控与日志（23 篇）
+### 监控与日志（22 篇）
 | 主题 | 文章 |
 |------|------|
 | Prometheus | 基础、Helm Stack、监控 K8s 组件、监控外部集群、监控主机、多版本部署(3)、联邦集群 |
-| 日志 | [[Docker-Kubernetes/k8s-monitoring-logging/k8s日志管理|k8s日志管理]]、EFK 系列(4)、ECK |
+| 日志 | [[Docker-Kubernetes/k8s-monitoring-logging/k8s日志管理-采集方案与审计日志|k8s日志管理综合]]、EFK 系列(4)、ECK |
 | 追踪 | [[Docker-Kubernetes/k8s-monitoring-logging/k8s部署全链路追踪-Skywalking|k8s部署全链路追踪-Skywalking]]、[[Docker-Kubernetes/k8s-monitoring-logging/helm部署jaeger|helm部署jaeger]] |
 | 全栈 | [[Docker-Kubernetes/k8s-monitoring-logging/helm部署Loki-promtail-tempo-grafanaAgent全家桶|helm部署Loki-promtail-tempo-grafanaAgent全家桶]] |
-| 日志选型 | [[Docker-Kubernetes/k8s-monitoring-logging/k8s日志采集六种方案深度对比与选型指南|六种日志采集方案对比与选型]] |
+| 日志选型 | [[Docker-Kubernetes/k8s-monitoring-logging/k8s日志管理-采集方案与审计日志|六种采集方案+审计日志]] |
 | OTel | [[Docker-Kubernetes/k8s-monitoring-logging/OpenTelemetry实战-统一Traces-Metrics-Logs|OpenTelemetry 统一可观测性实战]] |
 
 ### CI/CD（19 篇）

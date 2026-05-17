@@ -122,13 +122,21 @@ sources:
   - 配置匿名访问和 Admin 角色以简化实验环境
   - Grafana 自带告警功能但生产环境推荐使用 Alertmanager
 
-### [[Docker-Kubernetes/k8s-monitoring-logging/k8s日志管理|K8s日志管理]]
-- 核心内容：K8s 容器日志的保存机制、生命周期管理和持久化方案，涵盖 kubelet 日志管控策略。
+### [[Docker-Kubernetes/k8s-monitoring-logging/k8s日志管理-采集方案与审计日志|K8s 日志管理：基础机制、采集方案与审计日志]]
+- 核心内容：三篇合并——kubelet 本地日志管理 + 六种采集方案对比 + 审计日志实战。覆盖从日志基础机制到生产选型再到合规审计的完整体系。
 - 关键知识点：
-  - kubelet 默认日志限制：containerLogMaxSize 10Mi，containerLogMaxFiles 5，每容器最多约 50MiB
-  - Docker 和 containerd 运行时的日志存储路径差异
-  - 容器删除时日志同步删除，轮转仅基于文件大小而非时间
-  - 生产环境必须部署集中式日志系统（ELK/EFK/Loki 等）
+  - kubelet 默认日志限制：containerLogMaxSize 10Mi / containerLogMaxFiles 5，每容器最多约 50MiB
+  - Docker 和 containerd 运行时的日志存储路径差异，容器删除时日志同步删除
+  - 六种采集方案（DaemonSet/Sidecar/直推/ServiceMesh/OpenTelemetry/云托管）完整 YAML 配置和对比
+  - 5 个生产踩坑（Fluent Bit OOM/Pod 重启丢日志/JSON 双重序列化/Loki 高基数/双重采集）
+  - 选型决策树 + PLG/EFK+Kafka/OTel 三种推荐架构
+  - 审计日志策略配置（4 级 Level：None/Metadata/Request/RequestResponse）
+  - API Server 审计参数启用 + logrotate 日志轮转
+  - 审计日志采集架构（文件→Fluent Bit→ES/Loki，或 Webhook→Falco）
+  - 4 个典型排查场景（追踪删除者/异常高频调用/匿名访问/Grafana 告警）
+  - 合规：等保 2.0（6 个月保留/不可篡改）、SOC2 Type II + ES Watcher 实时告警
+  - OPA Gatekeeper 联动：事前拦截 + 事后审计形成安全闭环
+  - 审计日志性能优化：分级记录 + 采样 + Webhook 异步批量
 
 ### [[Docker-Kubernetes/k8s-monitoring-logging/k8s监控ES(7.2)+Kibana(7.2)+Fluentd(v1.4.2)|K8s部署EFK日志收集]]
 - 核心内容：在 K8s 中部署 EFK（Elasticsearch 7.2 + Kibana 7.2 + Fluentd v1.4.2）日志收集方案，包含日志基础知识。
