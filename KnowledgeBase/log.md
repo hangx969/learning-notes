@@ -12,6 +12,25 @@ date: 2026-04-17
 
 ---
 
+## [2026-05-17] ingest | Confluence 内部 Wiki RAG 知识库增强检索系统
+
+- **来源**：认真做自己（老甄说运维），2026-05-13，微信公众号（本地 HTML 文件摄入）
+- **清洗**：去除作者署名行、公众号关注/星标引导、SVG 占位图、谷雨装饰、上一篇/下一篇链接、赞赏/留言 UI 元素；**还原所有被压缩为单行的格式**——2 个 ASCII 架构图、5 个表格、7 个 JSON 代码块、1 个 Python 配置文件、3 个 XML 宏示例、5 个处理流程图、1 个目录树结构，全部从单行恢复为正确缩进的多行格式
+- **新建文件**：
+  - `AI/Confluence-Wiki-RAG知识库增强检索系统.md` — 清洗后技术文章（639 行）
+- **更新页面**：
+  - `index.md`：RAG-Agent 分区新增条目、AI 领域 123→124
+- **核心知识**：
+  - 架构全景：Confluence REST API 采集 → BeautifulSoup 清洗 Storage Format → bge-m3 向量化 → Qdrant 存储 → LiteLLM 网关 → FastAPI 后端 → Vue 前端
+  - 6 种数据来源统一处理：正文（page）、评论（comment）、附件（attachment，支持 PDF/docx/xlsx/pptx）、图片（image，多模态模型解析）、draw.io 架构图（drawio，mxCell 节点提取 + 图像解析）、空页面元信息
+  - Confluence Storage Format 宏处理：code 宏提取 CDATA → Markdown 代码块、drawio 宏保留占位、info/note/warning 保留内容
+  - Chunk 切分策略：优先 Markdown 标题切分、代码块内不按 # 切分（区分注释和标题）、chunk overlap 保留上下文
+  - Qdrant 入库：stable_uuid(chunk_id) 保证幂等覆盖、全量入库 vs 单页面入库
+  - RAG 服务：Prompt 规则（可溯源不编造、正文优先评论、冲突说明冲突）、来源返回含 preview_url
+  - 日常运维一条命令：`python sync_pages_batch.py data/page_ids.txt --mode auto --expand-children`
+
+---
+
 ## [2026-05-17] ingest | Claude Code 实现 CI/CD 自动化发布流程
 
 - **来源**：认真做自己（老甄说运维），2026-05-16，微信公众号

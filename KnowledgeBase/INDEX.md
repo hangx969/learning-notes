@@ -178,6 +178,7 @@ date: 2026-04-17
 |------|:---------:|------|
 | [RAG-Agent](sources/rag-agent-batch-summary.md) | 33 | 企业级 RAG 知识库系统，Spring Boot 3.4.2 + ES 8.10 混合检索 + Kafka 异步处理 + MinIO 存储 |
 | [RAG PDF 解析](sources/rag-pdf-parsing-summary.md) | 1 | PDF 解析难点（无语义结构）、三大技术路线（文本提取/OCR/VLM）、四类工具方案、7 个生产问题 |
+| [[AI/Confluence-Wiki-RAG知识库增强检索系统]] | 1 | Confluence + Qdrant + LiteLLM + FastAPI + Vue 全链路 RAG，正文/评论/附件/图片/draw.io 全量打通 |
 
 ### AI/Hermes-agent（已摄入 ✅）
 
@@ -275,7 +276,7 @@ date: 2026-04-17
 | Linux-Shell | 24 | 🟡 | [linux-ops-map](maps/linux-ops-map.md) |
 | Azure | 21 | 🟢 | [cloud-platform-map](maps/cloud-platform-map.md) |
 | Aliyun | 19 | 🟢 | [cloud-platform-map](maps/cloud-platform-map.md) |
-| AI | 123 | 🟢 | [ai-workflow-map](maps/ai-workflow-map.md) |
+| AI | 124 | 🟢 | [ai-workflow-map](maps/ai-workflow-map.md) |
 | Go | 9 | 🟡 | [go-01-环境配置-基础](../Go/go-01-环境配置-基础.md) |
 | CloudComputing | 7 | 🟡 | [云原生](../CloudComputing/云原生.md) |
 | HPC | 7 | 🟡 | [CentOS7-slurm23.02-二进制安装](../HPC/CentOS7-slurm23.02-二进制安装.md) |
