@@ -191,6 +191,18 @@ sources:
 - 包含 Dockerfile 编写、镜像构建、K8s Deployment 创建的完整步骤
 - 适用于多语言微服务的标准化发布流程
 
+### [[Docker-Kubernetes/k8s-CICD/Claude-Code实现CICD自动化发布流程|Claude Code 实现 CI/CD 自动化发布流程]]
+
+**核心内容**: 以 Vue 前端项目为例，实现从 GitLab 推送 → Kaniko 构建 → Harbor 推送 → K8s 部署 → Istio 网关暴露的完整 CI/CD 流程，并集成 AI 能力实现 MR 自动评审、Release Notes 自动生成、部署失败根因分析。
+
+- 构建选型：Kaniko（无需 dind/特权模式），内网 Harbor 机器人账号认证
+- 5 个 Pipeline 阶段：review → build → deploy → release → notify
+- Claude MR Review：拉取 diff → 拼 prompt → curl LiteLLM OpenAI 兼容 API → 评论挂回 MR
+- 部署失败自动 RCA：`on_failure` 触发 → 抓取 Pod describe/events/logs → AI 根因分析
+- Release Notes 自动生成：tag 间 git log → AI 按类别分类 → GitLab Releases API 建 Release
+- 敏感信息管理：全部通过 GitLab CI/CD Variables 注入（Masked + Protected），不进 yaml
+- `.claude-call` 模板复用：alpine + curl/jq/git 基础镜像，所有 AI 调用阶段继承
+
 ## 涉及的概念与实体
 
 - [[KnowledgeBase/concepts/GitOps]]: ArgoCD 核心理念，Git 作为唯一事实来源

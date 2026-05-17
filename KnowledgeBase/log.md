@@ -12,6 +12,21 @@ date: 2026-04-17
 
 ---
 
+## [2026-05-17] ingest | Claude Code 实现 CI/CD 自动化发布流程
+
+- **来源**：认真做自己（老甄说运维），2026-05-16，微信公众号
+- **清洗**：去除作者署名行、公众号关注/星标引导、SVG 占位图片（7 张）、谷雨节气装饰、上一篇链接、微信群/博客推广、赞赏/滑动导航；修复 YAML 代码块格式（原文代码块内无换行，全部还原为正确缩进的多行 YAML）
+- **新建文件**：
+  - `Docker-Kubernetes/k8s-CICD/Claude-Code实现CICD自动化发布流程.md` — 清洗后技术文章
+- **更新页面**：
+  - `sources/k8s-CICD-batch-summary.md`：frontmatter 新增 source、文档数 19→20、正文新增 Claude Code CI/CD 小节（7 条关键知识点）
+  - `entities/Kubernetes.md`：篇数→151
+  - `maps/kubernetes-map.md`：总篇数→151、CI/CD 其他 2→3 篇
+  - `index.md`：CI/CD 批量摘要 19→20、Kubernetes→151、领域导航→151
+- **核心知识**：GitLab CI 5 阶段 Pipeline（review→build→deploy→release→notify）、Kaniko 无特权构建 + Harbor 推送、kubectl 原生部署 + Istio VirtualService 暴露、Claude MR Review（diff→prompt→LiteLLM→MR 评论）、部署失败 on_failure 自动 RCA（pod describe/events/logs→AI 根因分析）、Release Notes 自动生成（git log→AI 分类→GitLab Releases API）、.claude-call 模板复用、敏感信息全走 GitLab Variables（Masked+Protected）
+
+---
+
 ## [2026-05-17] ingest | K8s API Server 深度剖析：请求链路、认证授权与生产调优
 
 - **来源**：WAKEUP技术，2026-05-15，微信公众号

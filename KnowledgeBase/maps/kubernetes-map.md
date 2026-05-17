@@ -11,7 +11,7 @@ date: 2026-04-16
 # ☸️ Kubernetes 专题地图
 
 > [!info] 专题范围
-> 覆盖 Docker-Kubernetes 目录下 ==150 篇文档==，从容器基础到企业级 K8s 全生命周期管理。
+> 覆盖 Docker-Kubernetes 目录下 ==151 篇文档==，从容器基础到企业级 K8s 全生命周期管理。
 
 ---
 
@@ -108,7 +108,7 @@ date: 2026-04-16
 | GitLab | 3 | [[Docker-Kubernetes/k8s-CICD/Gitlab/二进制安装Gitlab(17.9.8)|二进制安装Gitlab(17.9.8)]] |
 | Tekton | 2 | [[Docker-Kubernetes/k8s-CICD/Tekton/基于Tekton的云原生平台落地|基于Tekton的云原生平台落地]] |
 | Kustomize | 1 | [[Docker-Kubernetes/k8s-CICD/Kustomize/k8s配置定制工具-kustomize|k8s配置定制工具-kustomize]] |
-| 其他 | 2 | GitHub Actions、发布代码到 K8S |
+| 其他 | 3 | GitHub Actions、发布代码到 K8S、Claude Code AI CI/CD |
 
 ### 网络与服务网格（7 篇）
 - [[Docker-Kubernetes/k8s-networking-service-mesh/k8s精细化流量管理-istio|k8s精细化流量管理-istio]]
