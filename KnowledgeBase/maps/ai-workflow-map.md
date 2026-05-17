@@ -42,6 +42,7 @@ date: 2026-04-16
 5. [[AI/OpenClaw/Openclaw-AIOps|Openclaw-AIOps]] — AIOps 运维场景
 6. [[AI/OpenClaw/Openclaw-多智能体|Openclaw-多智能体]] — 多智能体架构（2974 行，全库最大文档）
 7. [[AI/OpenClaw/Ubuntu-2510-Setup-Guide|Ubuntu-2510-Setup-Guide]] — Ubuntu 环境搭建
+8. [[AI/OpenClaw/OpenClaw-K8s智能运维实战|K8s 智能运维实战]] — 三阶段渐进（只读→诊断→变更）+ OPA 护栏 + 实战案例
 
 ### Hermes Agent 路径
 1. [[AI/Hermes-agent/Hermes-Agent-满配指南与生态资源|满配指南与生态资源]] — 五大配置模块 + 高阶进化 + 资源合集（两篇合并）

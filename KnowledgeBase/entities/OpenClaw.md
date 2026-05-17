@@ -13,6 +13,7 @@ sources:
   - "[[AI/OpenClaw/Ubuntu-2510-Setup-Guide]]"
   - "[[AI/OpenClaw/OpenClaw-Workspace-运维]]"
   - "[[AI/agents/aiops/IDENTITY.md]]"
+  - "[[AI/OpenClaw/OpenClaw-K8s智能运维实战]]"
 ---
 
 # OpenClaw
@@ -95,6 +96,7 @@ OpenClaw 和 [[KnowledgeBase/entities/Claude-Code|Claude Code]] 同属 AI Agent 
 - [[AI/OpenClaw/CoPaw|CoPaw]]
 - [[AI/OpenClaw/OpenClaw-Workspace-运维|OpenClaw-Workspace-运维]]
 - [[AI/OpenClaw/Ubuntu-2510-Setup-Guide|Ubuntu-2510-Setup-Guide]]
+- [[AI/OpenClaw/OpenClaw-K8s智能运维实战|OpenClaw-K8s智能运维实战]] — 三阶段渐进（只读→诊断→变更）+ OPA 护栏 + 60 秒诊断修复实战
 
 ## 智能体定义文件（AI/agents/）
 
@@ -117,6 +119,6 @@ OpenClaw 和 [[KnowledgeBase/entities/Claude-Code|Claude Code]] 同属 AI Agent 
 - [[KnowledgeBase/entities/Kubernetes|Kubernetes]]
 
 ## 可延展方向
-- OpenClaw 与 Kubernetes 集群的 AIOps 集成
+- ~~OpenClaw 与 Kubernetes 集群的 AIOps 集成~~（已有 K8s 智能运维实战文章覆盖）
 - 多智能体在 DevOps 场景中的应用
 - OpenClaw Skills 与 MCP 协议的对比
