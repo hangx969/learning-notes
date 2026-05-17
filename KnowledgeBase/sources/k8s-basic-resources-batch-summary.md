@@ -25,13 +25,14 @@ sources:
   - "[[Docker-Kubernetes/k8s-basic-resources/k8s基础-架构-组件-资源]]"
   - "[[Docker-Kubernetes/k8s-basic-resources/k8s基础-自定义CRD资源]]"
   - "[[Docker-Kubernetes/k8s-basic-resources/k8s基础-认证-授权-准入]]"
+  - "[[Docker-Kubernetes/k8s-basic-resources/k8s-APIServer深度剖析-请求链路-认证授权-生产调优]]"
 ---
 
 # K8s基础资源 来源批量摘要
 
 ## 元信息
 - **原始目录**：`Docker-Kubernetes/k8s-basic-resources/`
-- **文档数量**：20 篇
+- **文档数量**：21 篇
 - **领域**：Docker-Kubernetes
 - **摄入日期**：2026-04-17
 
@@ -199,6 +200,20 @@ sources:
   - 使用 `client.AppsV1Api()` 操作 Deployment 等控制器资源
   - 需加载 kubeconfig 文件（master 节点的 `~/.kube/config`）进行认证
   - 支持列举、查询、创建等 CRUD 操作
+
+### [[Docker-Kubernetes/k8s-basic-resources/k8s-APIServer深度剖析-请求链路-认证授权-生产调优|API Server 深度剖析]]
+- 核心内容：kube-apiserver 内部工作原理全面剖析——请求完整生命周期（认证→授权→准入→持久化→Watch）、Watch/Informer 机制、API 扩展（CRD/聚合 API）、生产调优、故障排查。
+- 关键知识点：
+  - 请求链路 7 步：认证（X.509/SA Token/OIDC/Webhook）→ 授权（RBAC）→ 变更准入（Mutating）→ 校验 → 验证准入（Validating）→ etcd 持久化 → Watch 通知
+  - Watch 机制：基于 ResourceVersion 增量推送，Watchcache 内存缓存减少 etcd 压力，Bookmark 事件防止 RV 过期
+  - SharedInformer 三组件：Reflector（List+Watch）→ DeltaFIFO Queue → Indexer（本地缓存）
+  - 准入 Webhook 危险点：`failurePolicy: Fail` + Webhook 不可用 = 所有 Pod 创建失败，必须排除 kube-system
+  - CRD 注册后自动提供 REST CRUD + Watch + RBAC + etcd 持久化
+  - 聚合 API Server（APIService）：kubectl top pods 背后调用 metrics-server 的机制
+  - 生产调优参数：max-requests-inflight/max-mutating-requests-inflight/target-ram-mb，资源规划表（50→3000+ 节点）
+  - 审计日志完整 Policy 配置（分级：None/Metadata/Request）
+  - 3 条 Prometheus 告警规则（错误率/P99 延迟/并发请求上限）
+  - 故障排查手册：API Server 无响应（etcd 健康检查/证书过期）、Webhook 死锁紧急恢复、Watch 泄漏定位
 
 ## 涉及的概念与实体
 - [[KnowledgeBase/entities/Kubernetes|Kubernetes]]
