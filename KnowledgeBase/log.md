@@ -12,6 +12,18 @@ date: 2026-04-17
 
 ---
 
+## [2026-05-17] ingest | html-anything — AI 生成 HTML 全场景工具
+
+- **来源**：开源日记，2026-05-17，微信公众号
+- **清洗**：去除作者署名行、SVG 占位图片（12 张）、点赞/在看/转发/星标引导、页脚滑动导航
+- **新建文件**：
+  - `AI/AI-视觉/html-anything-AI生成HTML全场景工具.md` — 清洗后技术文章
+- **更新页面**：
+  - `index.md`：AI 领域 124→125
+- **核心知识**：html-anything（GitHub 2500+ Star）不自带模型，调用本地已有 AI CLI（Claude Code/Cursor/Gemini CLI）；75 套模板覆盖 9 种场景（Web 原型/演示文稿/视频/社交卡片/办公文档等）；20 套演示文稿模板（瑞士国际主义/杂志墨水/小红书柔和/赛博霓虹等）；10 个 Hyperframes 视频帧脚本可渲染 MP4；一键导出微信公众号（CSS 内联）/X/微博/小红书（2× PNG）/知乎（LaTeX→图片）；SSE 流式渲染 + 沙箱 iframe 安全隔离；新增与同目录 ppt-master/html-ppt-skill/AI-Animation-Skill 横向对比表
+
+---
+
 ## [2026-05-17] ingest | Confluence 内部 Wiki RAG 知识库增强检索系统
 
 - **来源**：认真做自己（老甄说运维），2026-05-13，微信公众号（本地 HTML 文件摄入）
