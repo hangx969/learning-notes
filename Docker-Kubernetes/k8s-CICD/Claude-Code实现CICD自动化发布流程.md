@@ -138,6 +138,9 @@ deploy-k8s:
 
 ### Claude MR 评审（任一 MR 触发）
 
+![image.png](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260517151638687.png)
+
+
 Claude 调用模板（复用基础镜像 + 依赖安装）：
 
 ```yaml
@@ -233,3 +236,7 @@ release-notes:
 - 走 Istio Gateway 用域名访问，namespace 单独隔离
 - AI 自动评审代码、写 Release Notes、部署失败时自动给根因分析
 - 所有敏感信息都不能写到 yaml 里，全部走 GitLab CI/CD Variables（Masked + Protected）
+
+![image.png](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260517151702263.png)
+
+![image.png](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260517151716830.png)
