@@ -12,6 +12,20 @@ date: 2026-04-17
 
 ---
 
+## [2026-05-17] ingest | code-review-graph 本地代码知识图谱
+
+- **来源**：兔兔AGI（技术极简主义），2026-05-13，微信公众号
+- **清洗**：去除作者署名行、SVG 占位图片（4 张）、推荐阅读链接、点赞/转发引导、页脚营销（赞赏/滑动导航）
+- **新建文件**：
+  - `AI/ClaudeCode/code-review-graph-本地代码知识图谱.md` — 清洗后技术文章
+- **更新页面**：
+  - `entities/Claude-Code.md`：sources +1、覆盖条目 +1
+  - `maps/ai-workflow-map.md`：Claude Code 路径 7→8 步
+  - `index.md`：AI 领域 126→127
+- **核心知识**：code-review-graph（GitHub 开源）将代码库解析为本地知识图谱（Tree-sitter AST → SQLite 存储 → MCP Server），通过 blast-radius 分析计算变更影响范围的最小文件集合；2900 文件增量索引 2 秒；支持 7 个 AI 平台（Claude Code/Cursor/Codex/Gemini CLI/Kiro/Copilot）；6 个核心 MCP 工具 + 4 个进阶工具；Slash Commands（build-graph/review-delta/review-pr）；daemon 模式多仓库统一管理；Windows 排障指南
+
+---
+
 ## [2026-05-17] ingest | OpenClaw K8s 智能运维实战
 
 - **来源**：深栈运维，2026-05-13，微信公众号
