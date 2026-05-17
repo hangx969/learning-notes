@@ -13,6 +13,8 @@ tags:
 
 公司的 Wiki 知识库积累了运维部门近五年的知识内容，如何结合大模型实现内部知识库 RAG 增强检索功能？不仅是正文内容，包括插入的图片、附件、评论等都可以在 RAG 检索中展示出来。
 
+![image.png](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260517222949775.png)
+
 ## 为什么要做 RAG 知识库检索
 
 结合传统 Wiki 检索存在的问题：
