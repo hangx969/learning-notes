@@ -24,12 +24,13 @@ sources:
   - "[[Docker-Kubernetes/k8s-CICD/Kustomize/k8s配置定制工具-kustomize]]"
   - "[[Docker-Kubernetes/k8s-CICD/使用github action部署helmchart]]"
   - "[[Docker-Kubernetes/k8s-CICD/发布go-python-java代码到K8S环境]]"
+  - "[[Docker-Kubernetes/k8s-CICD/Claude-Code实现CICD自动化发布流程]]"
 ---
 
 ## 元信息
 
 - **原始目录**: `Docker-Kubernetes/k8s-CICD/`（含子目录 ArgoCD、Gitlab、Jenkins、Kustomize、Tekton）
-- **文档数量**: 19 篇
+- **文档数量**: 20 篇
 - **领域**: Kubernetes CI/CD 持续集成与持续部署
 - **摄入日期**: 2026-04-17
 
