@@ -16,7 +16,7 @@ sources:
   - "[[Docker-Kubernetes/k8s-monitoring-logging/Prometheus监控非云原生应用-主机]]"
   - "[[Docker-Kubernetes/k8s-monitoring-logging/k8s监控alertmanager(v0.14.0)]]"
   - "[[Docker-Kubernetes/k8s-monitoring-logging/k8s部署grafana(v5.0.4)]]"
-  - "[[Docker-Kubernetes/k8s-monitoring-logging/k8s日志管理]]"
+  - "[[Docker-Kubernetes/k8s-monitoring-logging/k8s日志管理-采集方案与审计日志]]"
   - "[[Docker-Kubernetes/k8s-monitoring-logging/k8s监控ES(7.2)+Kibana(7.2)+Fluentd(v1.4.2)]]"
   - "[[Docker-Kubernetes/k8s-monitoring-logging/k8s监控EFK+logstash+kafka]]"
   - "[[Docker-Kubernetes/k8s-monitoring-logging/二进制部署efk+logstash+kafka日志收集平台]]"
@@ -26,7 +26,6 @@ sources:
   - "[[Docker-Kubernetes/k8s-monitoring-logging/k8s部署全链路追踪-Skywalking]]"
   - "[[Docker-Kubernetes/k8s-monitoring-logging/helm部署jaeger]]"
   - "[[Docker-Kubernetes/k8s-monitoring-logging/K8s全面巡检脚本-生成HTML健康报告]]"
-  - "[[Docker-Kubernetes/k8s-monitoring-logging/k8s日志采集六种方案深度对比与选型指南]]"
   - "[[Docker-Kubernetes/k8s-monitoring-logging/OpenTelemetry实战-统一Traces-Metrics-Logs]]"
 ---
 
@@ -34,7 +33,7 @@ sources:
 
 ## 元信息
 - **原始目录**：`Docker-Kubernetes/k8s-monitoring-logging/`
-- **文档数量**：23 篇
+- **文档数量**：22 篇
 - **领域**：Docker-Kubernetes
 - **摄入日期**：2026-04-17
 
