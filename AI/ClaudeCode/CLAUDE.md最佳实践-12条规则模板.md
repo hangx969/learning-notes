@@ -232,6 +232,15 @@ Mnilax 提供了可以直接粘贴的完整版本。以下是核心 12 条（项
 默认原则：主动暴露不确定性，绝不掩盖。
 ~~~
 
+```markdown
+## Rule 5 — Use the model only for judgment calls
+Use Claude for: classification, drafting, summarization, extraction from unstructured text.
+Do NOT use Claude for: routing, retries, status-code handling, deterministic transforms.
+If a status code already answers the question, plain code answers the question.
+
+
+```
+
 ---
 
 ## 八、心智模型
