@@ -12,6 +12,21 @@ date: 2026-04-17
 
 ---
 
+## [2026-05-17] ingest | K8s API Server 深度剖析：请求链路、认证授权与生产调优
+
+- **来源**：WAKEUP技术，2026-05-15，微信公众号
+- **清洗**：去除作者署名行、公众号推广、页脚营销（赞赏/滑动导航）、列表冗余序号格式
+- **新建文件**：
+  - `Docker-Kubernetes/k8s-basic-resources/k8s-APIServer深度剖析-请求链路-认证授权-生产调优.md` — 清洗后技术文章
+- **更新页面**：
+  - `sources/k8s-basic-resources-batch-summary.md`：frontmatter 新增 source、文档数 20→21、正文新增 API Server 深度剖析小节（11 条关键知识点）
+  - `entities/Kubernetes.md`：篇数→150、基础资源→21 篇
+  - `maps/kubernetes-map.md`：总篇数→150、基础资源→21 篇、安全行新增 API Server 深度剖析
+  - `index.md`：基础资源批量摘要 20→21、Kubernetes 实体→150、领域导航→150
+- **核心知识**：请求 7 步链路（认证→授权→变更准入→校验→验证准入→etcd→Watch）、4 种认证插件（X.509/SA Token/OIDC/Webhook）、RBAC 核心逻辑与 `*` 通配符陷阱、准入 Webhook `failurePolicy: Fail` 致命风险、Watch/Informer/SharedInformer 三组件、CRD 与聚合 API Server、生产调优参数表（50→3000+ 节点资源规划）、审计日志完整 Policy、3 条 Prometheus 告警规则、3 个故障排查手册（API Server 无响应/Webhook 死锁/Watch 泄漏 OOM）
+
+---
+
 ## [2026-05-15] ingest | CLAUDE.md 最佳实践两篇（21 条指令 + 12 条规则模板）
 
 - **来源**：

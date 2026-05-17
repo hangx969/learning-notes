@@ -11,7 +11,7 @@ date: 2026-04-16
 # ☸️ Kubernetes 专题地图
 
 > [!info] 专题范围
-> 覆盖 Docker-Kubernetes 目录下 ==149 篇文档==，从容器基础到企业级 K8s 全生命周期管理。
+> 覆盖 Docker-Kubernetes 目录下 ==150 篇文档==，从容器基础到企业级 K8s 全生命周期管理。
 
 ---
 
@@ -67,7 +67,7 @@ date: 2026-04-16
 
 ## 📂 完整内容目录
 
-### 基础资源（20 篇）
+### 基础资源（21 篇）
 | 主题 | 文章 |
 |------|------|
 | 架构 | [[Docker-Kubernetes/k8s-basic-resources/k8s基础-架构-组件-资源|k8s基础-架构-组件-资源]] |
@@ -76,7 +76,7 @@ date: 2026-04-16
 | 网络 | [[Docker-Kubernetes/k8s-basic-resources/k8s基础-Service|k8s基础-Service]]、[[Docker-Kubernetes/k8s-basic-resources/k8s基础-ingress|k8s基础-ingress]]、[[Docker-Kubernetes/k8s-basic-resources/k8s基础-Calico|k8s基础-Calico]] |
 | 存储 | [[Docker-Kubernetes/k8s-basic-resources/k8s基础-storage|k8s基础-storage]] |
 | 配置 | [[Docker-Kubernetes/k8s-basic-resources/k8s基础-configMap-Secret|k8s基础-configMap-Secret]]、[[Docker-Kubernetes/k8s-basic-resources/k8s基础-yaml|k8s基础-yaml]]、[[Docker-Kubernetes/k8s-basic-resources/k8s基础-namespace-资源分配|k8s基础-namespace-资源分配]] |
-| 安全 | [[Docker-Kubernetes/k8s-basic-resources/k8s基础-认证-授权-准入|k8s基础-认证-授权-准入]] |
+| 安全 | [[Docker-Kubernetes/k8s-basic-resources/k8s基础-认证-授权-准入|k8s基础-认证-授权-准入]]、[[Docker-Kubernetes/k8s-basic-resources/k8s-APIServer深度剖析-请求链路-认证授权-生产调优|API Server 深度剖析]] |
 | 扩展 | [[Docker-Kubernetes/k8s-basic-resources/k8s基础-自定义CRD资源|k8s基础-自定义CRD资源]]、[[Docker-Kubernetes/k8s-basic-resources/k8s基础-kubeadm|k8s基础-kubeadm]]、[[Docker-Kubernetes/k8s-basic-resources/k8s基础-容器运行时-containerd|k8s基础-容器运行时-containerd]] |
 | 自动化 | [[Docker-Kubernetes/k8s-basic-resources/Python调用k8s-api实现资源管理|Python调用k8s-api实现资源管理]] |
 
