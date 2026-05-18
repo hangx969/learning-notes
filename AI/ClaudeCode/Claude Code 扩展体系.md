@@ -1220,6 +1220,41 @@ npx claude-code-templates@latest --template=react --yes
 - 附带交互式幻灯片演示（`presentation/index.html`）
 - 包含 Claude Agent SDK 与 CLI 系统提示词的对比分析报告
 
+## OthmanAdi/planning-with-files
+
+> [!info] 仓库
+> [OthmanAdi/planning-with-files](https://github.com/OthmanAdi/planning-with-files) — 21.4K Star，MIT 协议，支持 17+ AI 平台
+
+用 AI 做项目时常见的问题：聊着聊着就跑偏、做到一半忘目标、上下文一清空直接重来、反复踩同一个坑。Planning with Files 让 AI 把所有计划、进度、坑点全写成本地 Markdown 文件——文件化规划 + 外置记忆 + 错误自动记录。
+
+**3 个核心文件**：
+
+| 文件 | 用途 |
+| --- | --- |
+| `task_plan.md` | 任务计划与进度——分阶段任务列表，打勾推进 |
+| `findings.md` | 资料、研究、结论——项目过程中的发现和决策记录 |
+| `progress.md` | 过程记录、测试、日志——错误记录和执行日志 |
+
+**核心价值**：
+
+- 文件当记忆，关软件 / 清上下文 / 重启电脑都还在
+- 先规划再动手，自动分阶段结构化推进
+- 自动记坑，AI 下次自动避开，绝不重复犯错
+- 清屏 / 重启后自动读取文件恢复进度
+- 每一步对照计划，严格对齐目标不跑偏
+- 任务成功率从 6.7% → 96.7%
+
+**安装**：
+
+```sh
+npx skills add OthmanAdi/planning-with-files --skill planning-with-files -g
+```
+
+启动规划模式：`/plan`，AI 会自动生成 3 个核心文件并按计划执行。
+
+> [!note] 支持平台
+> Claude Code / Cursor / GitHub Copilot / Gemini / Hermes / Codex / OpenCode 等 17+ 平台。
+
 ## wshobson/agents
 
 最大的 Claude Code Plugin Marketplace，详见 [[AI/ClaudeCode/多智能体协作-Subagents与Agent-Teams#开源 Agents 推荐|多智能体协作 — 开源 Agents 推荐]]。
