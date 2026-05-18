@@ -12,6 +12,20 @@ date: 2026-04-17
 
 ---
 
+## [2026-05-18] ingest | Planning with Files — AI 项目规划 Skill
+
+- **来源**：展望未来科技01，2026-05-17，微信公众号
+- **清洗**：去除作者署名行、营销话术（"封神""爆款神器""必备"等）、页脚营销（赞赏/滑动导航）；修复代码块格式（原文 3 个核心文件被压缩为单行，还原为表格）
+- **新建文件**：
+  - `AI/ClaudeCode/planning-with-files-AI项目规划Skill.md` — 清洗后技术文章
+- **更新页面**：
+  - `entities/Claude-Code.md`：sources +1、覆盖条目 +1
+  - `maps/ai-workflow-map.md`：Claude Code 路径 8→9 步
+  - `index.md`：AI 领域 127→128
+- **核心知识**：Planning with Files（GitHub 21.4K Star，MIT）——3 个 Markdown 文件（task_plan.md 任务计划/findings.md 发现记录/progress.md 进度日志）实现文件化规划+外置记忆+错误自动记录；支持 17+ AI 平台（Claude Code/Cursor/Copilot/Gemini/Hermes 等）；任务成功率从 6.7%→96.7%；一键安装 `npx skills add`；`/plan` 命令启动；新增与知识库中其他 Skills（karpathy-skills/code-review-graph/Skill Craft/superpowers）横向对比表
+
+---
+
 ## [2026-05-17] ingest | code-review-graph 本地代码知识图谱
 
 - **来源**：兔兔AGI（技术极简主义），2026-05-13，微信公众号
