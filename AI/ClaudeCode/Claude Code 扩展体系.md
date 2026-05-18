@@ -591,62 +591,6 @@ python3 /path/to/skill-creator/scripts/package_skill.py \
 
 ---
 
-## 各种 Skill 推荐
-
-### 官方 Skills仓库：
-[anthropics/skills](https://github.com/anthropics/skills.git)
-
-### 开源 Skills 仓库：
-
-- 该项目收集了各种实用 Skill，采用模块化设计。比如文档处理、开发、数据分析、营销、写作创意啥的都有：[ComposioHQ/awesome-claude-skills](https://github.com/ComposioHQ/awesome-claude-skills)、[BehiSecc/awesome-claude-skills](https://github.com/BehiSecc/awesome-claude-skills)
-- 传统的 Claude Code Skill 需要你手动记忆和调用，而这个项目通过创新的钩子机制，实现了 Skill 的智能自动触发。当你输入提示或操作文件时，系统会自动分析上下文，并建议最相关的技能：[claude-code-infrastructure-showcase](https://github.com/diet103/claude-code-infrastructure-showcase)
-- 强迫 Claude 按高级工程师标准流程工作的 Skills 套件，详见下方"开源 Plugin 推荐"中的 [obra/superpowers](#obra/superpowers) 章节
-### 用 Skill 创建 Skill
-
-Anthropic 官方有一个帮助创建 Skill 的 Skill：[skill-creator](https://github.com/anthropics/skills/tree/main/skills/skill-creator)
-告诉 Claude Code 基于当前的 Skill 草稿，调用 skill-creator 来创建一个完整的 skill，名称为 xxx。
-
-### Obsidian Skill
-
-> [!info] 仓库地址
-> [kepano/obsidian-skills](https://github.com/kepano/obsidian-skills)
-
-obsidian-skills 直接把 Obsidian 专家集成在 Claude Code 里，仓库包含三个核心技能 Skill：
-
-- **obsidian-markdown**：Obsidian 风格的 Markdown 书写，各种专有格式都支持
-- **obsidian-bases**：`.base` 类数据库视图，支持过滤、公式、汇总
-- **json-canvas**：`.canvas` 无限画布文件格式，可以实现点、连线、分组
-
-**安装**：
-
-```sh
-/plugin marketplace add kepano/obsidian-skills
-/plugin install obsidian@obsidian-skills
-```
-
-### Excalidraw 手绘架构图
-
-> [!info] 地址
-> - GitHub：[github/awesome-copilot - excalidraw-diagram-generator](https://github.com/github/awesome-copilot/blob/main/skills/excalidraw-diagram-generator/)
-> - Skills 市场：[skills.sh](https://skills.sh/github/awesome-copilot/excalidraw-diagram-generator) | [skillsmp.com](https://skillsmp.com/zh/skills/github-awesome-copilot-skills-excalidraw-diagram-generator-skill-md)
-
-一句话用自然语言生成可编辑的 **Excalidraw** 手绘风格图。支持流程图、架构图、思维导图、时序图、ER 图、泳道图、类图、数据流图等 9 种图表类型。
-
-**安装**：
-
-```sh
-npx skills add https://github.com/github/awesome-copilot --skill excalidraw-diagram-generator
-```
-
-**工作原理**：分析需求 → 提取节点与关系 → 匹配 8 个内置模板之一 → 生成符合 Excalidraw 规范的 JSON → 输出 `.excalidraw` 文件（VS Code 安装 Excalidraw 扩展即可直接打开编辑）。
-
-**用法**：直接告诉 Claude `生成一个用户登录流程图`，即自动调用该 Skill 生成 `.excalidraw` 文件。
-
-> [!note]
-> 图的质量取决于模型能力，建议搭配较强的大模型使用。Claude Code 和 OpenClaw 都可用。
-
----
-
 ## Skills 实战案例
 
 ### 第一层：工程化单点突破（把说明书变技能包）
@@ -1034,6 +978,62 @@ Plugin（插件）是应用级打包容器，用来打包其他四个工具。
 
 > [!tip] 建议
 > 个人用全局配置，团队用 Plugins 打包分发。别超过 3 个，够用就行。
+
+---
+
+## 各种 Skill 推荐
+
+### 官方 Skills仓库：
+[anthropics/skills](https://github.com/anthropics/skills.git)
+
+### 开源 Skills 仓库：
+
+- 该项目收集了各种实用 Skill，采用模块化设计。比如文档处理、开发、数据分析、营销、写作创意啥的都有：[ComposioHQ/awesome-claude-skills](https://github.com/ComposioHQ/awesome-claude-skills)、[BehiSecc/awesome-claude-skills](https://github.com/BehiSecc/awesome-claude-skills)
+- 传统的 Claude Code Skill 需要你手动记忆和调用，而这个项目通过创新的钩子机制，实现了 Skill 的智能自动触发。当你输入提示或操作文件时，系统会自动分析上下文，并建议最相关的技能：[claude-code-infrastructure-showcase](https://github.com/diet103/claude-code-infrastructure-showcase)
+- 强迫 Claude 按高级工程师标准流程工作的 Skills 套件，详见下方"开源 Plugin 推荐"中的 [obra/superpowers](#obra/superpowers) 章节
+### 用 Skill 创建 Skill
+
+Anthropic 官方有一个帮助创建 Skill 的 Skill：[skill-creator](https://github.com/anthropics/skills/tree/main/skills/skill-creator)
+告诉 Claude Code 基于当前的 Skill 草稿，调用 skill-creator 来创建一个完整的 skill，名称为 xxx。
+
+### Obsidian Skill
+
+> [!info] 仓库地址
+> [kepano/obsidian-skills](https://github.com/kepano/obsidian-skills)
+
+obsidian-skills 直接把 Obsidian 专家集成在 Claude Code 里，仓库包含三个核心技能 Skill：
+
+- **obsidian-markdown**：Obsidian 风格的 Markdown 书写，各种专有格式都支持
+- **obsidian-bases**：`.base` 类数据库视图，支持过滤、公式、汇总
+- **json-canvas**：`.canvas` 无限画布文件格式，可以实现点、连线、分组
+
+**安装**：
+
+```sh
+/plugin marketplace add kepano/obsidian-skills
+/plugin install obsidian@obsidian-skills
+```
+
+### Excalidraw 手绘架构图
+
+> [!info] 地址
+> - GitHub：[github/awesome-copilot - excalidraw-diagram-generator](https://github.com/github/awesome-copilot/blob/main/skills/excalidraw-diagram-generator/)
+> - Skills 市场：[skills.sh](https://skills.sh/github/awesome-copilot/excalidraw-diagram-generator) | [skillsmp.com](https://skillsmp.com/zh/skills/github-awesome-copilot-skills-excalidraw-diagram-generator-skill-md)
+
+一句话用自然语言生成可编辑的 **Excalidraw** 手绘风格图。支持流程图、架构图、思维导图、时序图、ER 图、泳道图、类图、数据流图等 9 种图表类型。
+
+**安装**：
+
+```sh
+npx skills add https://github.com/github/awesome-copilot --skill excalidraw-diagram-generator
+```
+
+**工作原理**：分析需求 → 提取节点与关系 → 匹配 8 个内置模板之一 → 生成符合 Excalidraw 规范的 JSON → 输出 `.excalidraw` 文件（VS Code 安装 Excalidraw 扩展即可直接打开编辑）。
+
+**用法**：直接告诉 Claude `生成一个用户登录流程图`，即自动调用该 Skill 生成 `.excalidraw` 文件。
+
+> [!note]
+> 图的质量取决于模型能力，建议搭配较强的大模型使用。Claude Code 和 OpenClaw 都可用。
 
 ---
 
