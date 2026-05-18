@@ -77,7 +77,6 @@ prompt: |
 
 ![image.png](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260517230925899.png)
 
-
 诊断输出示例：
 
 ~~~text
