@@ -17,6 +17,7 @@ sources:
   - "[[AI/ClaudeCode/CLAUDE.md最佳实践-21条指令清单]]"
   - "[[AI/ClaudeCode/CLAUDE.md最佳实践-12条规则模板]]"
   - "[[AI/ClaudeCode/code-review-graph-本地代码知识图谱]]"
+  - "[[AI/ClaudeCode/Claude-Code为什么用grep不用RAG]]"
 ---
 
 # Claude Code

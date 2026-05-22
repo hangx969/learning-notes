@@ -12,6 +12,26 @@ date: 2026-04-17
 
 ---
 
+## [2026-05-22] ingest | 为什么 Claude Code 不用 RAG 检索代码，而是 grep
+
+- **来源**：沉默王二，2026-05-20，微信公众号（引用 Boris Cherny 播客、亚马逊论文、Cursor 博客）
+- **清洗**：去除作者署名/自我介绍、营销话术、简历模板章节、页脚导航；图片暂保留微信 CDN 链接（待后续 picgo 上传）
+- **新建文件**：
+  - `AI/ClaudeCode/Claude-Code为什么用grep不用RAG.md` — 清洗后技术文章
+- **更新页面**：
+  - `entities/Claude-Code.md`：sources +1、覆盖条目 +1
+  - `index.md`：AI 领域 127→128
+- **核心知识**：
+  - Agentic Search 架构：Glob+Grep(ripgrep)+Read 三工具，isConcurrencySafe 可并行，不预建索引
+  - RAG 检索代码五大问题：语义相似度对代码不管用（精确匹配 > 语义匹配）、索引同步成本高、安全隐私、搜索精度、依赖链路长
+  - ripgrep 性能：SIMD 加速，几万文件仓库 200ms 全文搜索；head_limit 250 行防上下文溢出；"尽力返回"设计
+  - Boris Cherny 原话：早期用过 Voyage Embedding RAG，后切换到 Agentic Search "outperformed everything, by a lot"
+  - 亚马逊论文实锤（2025.12）：关键词搜索 Agent 达到 RAG 90%+ 性能，代码场景关键词比语义检索还好
+  - Cursor 反面论证：混合检索（grep+向量）效果最好，反证 grep 是不可或缺基础能力
+  - LLM 作为 Reranker：多轮迭代搜索能力 > RAG 一次检索模式
+
+---
+
 ## [2026-05-22] ingest | K8s 集群成本优化方案——FinOps 实战
 
 - **来源**：WAKEUP技术，2026-05-20，微信公众号
