@@ -90,6 +90,11 @@ Claude Code 的 Grep 工具在 ripgrep 之上的封装：
 
 **"尽力返回结果"** 的设计哲学，vs RAG 的"要么成功要么失败"。
 
+![image.png](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260522234958217.png)
+
+![image.png](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260522235008335.png)
+
+
 ## 四、Anthropic 官方怎么说
 
 来源：Boris Cherny（Claude Code 首席工程师）2025 年 5 月 7 日在 Latent Space 播客原话。
