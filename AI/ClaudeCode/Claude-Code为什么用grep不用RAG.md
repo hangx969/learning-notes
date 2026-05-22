@@ -56,6 +56,9 @@ RAG 的核心逻辑是把文本转成向量，用余弦相似度找"语义最接
 RAG 需要 Embedding 模型：要么本地跑（消耗计算资源），要么调用远程 API（代码发到外部服务器）。代码库是高度敏感的资产。
 
 grep 直接在本地磁盘搜索，从安全角度看是碾压级优势。
+![image.png](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260522234706491.png)
+
+![image.png](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260522234742626.png)
 
 ### 2.4 搜索精度
 
