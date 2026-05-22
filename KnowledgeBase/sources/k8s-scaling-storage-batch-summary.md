@@ -13,12 +13,13 @@ sources:
   - "[[Docker-Kubernetes/k8s-storage/k8s-分布式存储CubeFS]]"
   - "[[Docker-Kubernetes/k8s-storage/helm部署nfs-subdir-external-provisioner]]"
   - "[[Docker-Kubernetes/k8s-storage/k8s-ceph部署与集成]]"
+  - "[[Docker-Kubernetes/k8s-scaling/k8s成本优化方案-FinOps实战]]"
 ---
 
 ## 元信息
 
 - **原始目录**: `Docker-Kubernetes/k8s-scaling/` 与 `Docker-Kubernetes/k8s-storage/`
-- **文档数量**: 7 篇（扩缩容 4 篇 + 存储 3 篇）
+- **文档数量**: 8 篇（扩缩容 5 篇 + 存储 3 篇）
 - **领域**: Kubernetes 自动扩缩容（HPA/VPA/KEDA）与分布式存储（NFS/Ceph/CubeFS）
 - **摄入日期**: 2026-04-17
 
@@ -115,6 +116,19 @@ sources:
 - [[KnowledgeBase/entities/Ceph]]: 企业级分布式存储系统
 - [[KnowledgeBase/entities/NFS]]: 网络文件系统
 - [[KnowledgeBase/entities/Knative]]: Serverless 框架（KPA 来源）
+
+### [[Docker-Kubernetes/k8s-scaling/k8s成本优化方案-FinOps实战|K8s 成本优化方案——FinOps 实战]]
+
+**核心内容**: K8s 集群成本优化五层体系（Right-Sizing → 节点效率 → 调度策略 → FinOps 监控 → 存储网络），含完整配置和 4 周落地路线图，预期降低 40%-60% 云账单。
+
+- 四大浪费黑洞：过度配置（40%）、空闲资源（30%）、僵尸资源（15%）、碎片化（15%）
+- L1 Right-Sizing：VPA 四种模式 + VPA/HPA 黄金组合（VPA 管资源，HPA 管业务指标）+ 集群资源审计脚本
+- L2 节点效率：Karpenter vs Cluster Autoscaler 六维对比（5-15 秒扩容/主动 Consolidation/Pod 粒度 Bin-Packing）+ Spot 实例策略（砍 60-70%）+ Topology Spread 多 AZ 分散
+- L3 调度策略：非生产环境 CronJob 定时开关（投入产出比最高）+ PriorityClass 资源抢占（关键服务 Never 抢占/批处理可抢占）
+- L4 FinOps 监控：Prometheus 5 条成本告警规则（CPU 低利用率/Request 3x 偏差/僵尸 Pod/未绑定 PVC/内存低利用率）+ OpenCost 成本分摊部署
+- L5 存储网络：GP3 替代 GP2（便宜 20%）、HDD 替代 SSD（便宜 75%）、WaitForFirstConsumer 减少跨 AZ 费用
+- 5 大生产避坑：VPA/HPA 冲突、Karpenter Consolidation 误杀、Spot 雪崩、ResourceQuota 阻止 VPA、监控盲区
+- 4 周落地路线图：Week1 VPA Off+OpenCost → Week2 VPA Auto+Karpenter+Spot → Week3 PriorityClass+PDB → Week4 存储网络优化
 
 ## 交叉主题发现
 

@@ -11,7 +11,7 @@ date: 2026-04-16
 # ☸️ Kubernetes 专题地图
 
 > [!info] 专题范围
-> 覆盖 Docker-Kubernetes 目录下 ==150 篇文档==，从容器基础到企业级 K8s 全生命周期管理。
+> 覆盖 Docker-Kubernetes 目录下 ==151 篇文档==，从容器基础到企业级 K8s 全生命周期管理。
 
 ---
 
@@ -122,8 +122,8 @@ date: 2026-04-16
 ### 安全与认证（7 篇）
 Cert-Manager、External-Secrets、Kyverno+Policy-Reporter（含 1.18 新特性）、OAuth2-Proxy、Capsule、SonarQube、Trivy-Operator
 
-### 扩缩容（4 篇）
-HPA-VPA、KEDA、Goldilocks、VPA Helm
+### 扩缩容（5 篇）
+HPA-VPA、KEDA、Goldilocks、VPA Helm、[[Docker-Kubernetes/k8s-scaling/k8s成本优化方案-FinOps实战|K8s FinOps 成本优化]]
 
 ### 存储（3 篇）
 NFS Provisioner、Ceph、CubeFS
