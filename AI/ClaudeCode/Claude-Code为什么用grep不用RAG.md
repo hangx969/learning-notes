@@ -16,6 +16,7 @@ Claude Code 的代码搜索又快又准，核心只用三个工具：**Glob、Gr
 ## 一、Claude Code 怎么查找代码
 
 三个工具：
+![image.png](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260522234528951.png)
 
 | 工具 | 职责 | 底层实现 |
 | --- | --- | --- |
