@@ -12,6 +12,21 @@ date: 2026-04-17
 
 ---
 
+## [2026-05-22] ingest | K8s 集群成本优化方案——FinOps 实战
+
+- **来源**：WAKEUP技术，2026-05-20，微信公众号
+- **清洗**：去除作者署名行、公众号推广、页脚营销（赞赏/滑动导航）、列表冗余序号格式
+- **新建文件**：
+  - `Docker-Kubernetes/k8s-scaling/k8s成本优化方案-FinOps实战.md` — 清洗后技术文章
+- **更新页面**：
+  - `sources/k8s-scaling-storage-batch-summary.md`：frontmatter 新增 source、文档数 7→8（扩缩容 4→5）、正文新增 FinOps 小节（8 条关键知识点）
+  - `entities/Kubernetes.md`：篇数→151、标记"FinOps 成本优化"知识空白已覆盖
+  - `maps/kubernetes-map.md`：总篇数→151、扩缩容 4→5 篇
+  - `index.md`：扩缩容与存储 7→8、Kubernetes→151、领域导航→151
+- **核心知识**：K8s 成本优化五层体系（Right-Sizing/节点效率/调度策略/FinOps 监控/存储网络）；四大浪费黑洞（过度配置 40%/空闲资源 30%/僵尸资源 15%/碎片化 15%）；VPA+HPA 黄金组合；Karpenter vs Cluster Autoscaler 六维对比；Spot 实例砍 60-70%；CronJob 非生产环境定时开关；PriorityClass 资源抢占；OpenCost 成本分摊部署；5 条 Prometheus 成本告警规则；GP3/HDD 存储分级；5 大生产避坑；4 周落地路线图
+
+---
+
 ## [2026-05-18] update | Planning with Files Skill 整合进扩展体系
 
 - **来源**：展望未来科技01，2026-05-17，微信公众号
