@@ -29,6 +29,7 @@ Claude Code 的代码搜索又快又准，核心只用三个工具：**Glob、Gr
 **Agentic Search 核心思路**：不预先构建任何索引，而是让 Agent 在执行任务过程中，根据当前上下文和目标，动态决定搜什么、怎么搜、搜到之后下一步干什么。
 
 工作流程：Glob 看目录结构 → Grep 搜关键词 → Read 读相关文件 → LLM 判断 → 决定下一步搜什么。
+![image.png](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260522234556368.png)
 
 ## 二、RAG 检索代码的五个问题
 
@@ -40,6 +41,9 @@ RAG 的核心逻辑是把文本转成向量，用余弦相似度找"语义最接
 - `handleAuth` 和 `validateJwtToken` 语义不相关，但后者可能是前者内部调用的关键逻辑。向量相似度找不到调用关系，但 `grep validateJwtToken` 能精确定位
 
 代码世界里，**精确匹配比语义匹配重要得多**。变量名、方法签名、import 路径，要么完全匹配，要么就是找错了。没有"大概对"这回事。
+![image.png](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260522234631901.png)
+
+![image.png](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260522234649251.png)
 
 ### 2.2 索引同步成本很高
 
