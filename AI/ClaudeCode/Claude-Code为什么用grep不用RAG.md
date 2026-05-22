@@ -94,6 +94,8 @@ Claude Code 的 Grep 工具在 ripgrep 之上的封装：
 
 ![image.png](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260522235008335.png)
 
+![image.png](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260522235030413.png)
+
 
 ## 四、Anthropic 官方怎么说
 
