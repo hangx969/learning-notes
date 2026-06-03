@@ -68,6 +68,7 @@ grep 直接在本地磁盘搜索，从安全角度看是碾压级优势。
 
 RAG 流程：查询→Embedding→向量数据库 KNN→Rerank→生成（至少 8 个步骤、四五个服务）。grep：一个二进制文件、一次磁盘扫描。
 
+![image.png](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260603103054173.png)
 
 
 ## 三、ripgrep 为什么这么猛
