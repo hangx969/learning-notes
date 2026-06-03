@@ -68,6 +68,8 @@ grep 直接在本地磁盘搜索，从安全角度看是碾压级优势。
 
 RAG 流程：查询→Embedding→向量数据库 KNN→Rerank→生成（至少 8 个步骤、四五个服务）。grep：一个二进制文件、一次磁盘扫描。
 
+
+
 ## 三、ripgrep 为什么这么猛
 
 Claude Code 用的不是 GNU grep，而是 **ripgrep**——Rust 写的现代搜索工具。

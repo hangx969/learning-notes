@@ -158,6 +158,8 @@ LLM Wiki 的做法完全不同：**LLM 增量构建并维护一个持久化的 w
 | **Raw Sources（原始来源）** | 你写的笔记、剪藏的文章、论文、图片、数据文件。**不可变**，LLM 只读不改。这是你的事实来源。 | 人类策划 |
 | **Wiki（编译知识层）** | LLM 生成的 markdown 文件目录：摘要、实体页、概念页、对比、综览、综述。LLM 完全拥有此层，创建页面、更新、维护交叉引用、保持一致性。 | LLM 拥有 |
 | **Schema（规约文件）** | 一份文档（如 `CLAUDE.md`）告诉 LLM wiki 的结构约定、工作流程。这是核心配置文件——让 LLM 成为有纪律的 wiki 维护者而非通用聊天机器人。 | 人类与 LLM 共同演进 |
+![image.png](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260603102943288.png)
+
 
 落到 Obsidian 里就是 raw → wiki → output 三层结构：
 
