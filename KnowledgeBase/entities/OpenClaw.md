@@ -14,6 +14,7 @@ sources:
   - "[[AI/OpenClaw/OpenClaw-Workspace-运维]]"
   - "[[AI/agents/aiops/IDENTITY.md]]"
   - "[[AI/OpenClaw/OpenClaw-K8s智能运维实战]]"
+  - "[[AI/OpenClaw/飞书CLI画板-一句话生成架构图]]"
 ---
 
 # OpenClaw

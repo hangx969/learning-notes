@@ -1273,3 +1273,11 @@ date: 2026-04-17
   - 更新 [[KnowledgeBase/index.md]]：替换两个旧条目为一个新条目
   - 更新 [[AI/index.md]]：Obsidian 子目录条目从 4 篇→2 篇，关键入口更新
 
+
+## [2026-06-05] ingest | 飞书 CLI 画板生成能力
+
+- 清洗并简化原始文章 `0raw/别画了！用飞书 CLI 真能一句话生成架构图.md`，去除营销内容，保留技术要点
+- 清洗后文章存入 `AI/OpenClaw/飞书CLI画板-一句话生成架构图.md`
+- 创建来源摘要页 `KnowledgeBase/sources/feishu-cli-whiteboard-summary.md`
+- 更新实体页 `KnowledgeBase/entities/OpenClaw.md`：添加相关文章链接 + Skills 插件生态新增 feishu-whiteboard-themes
+- 更新 `KnowledgeBase/index.md`：AI-OpenClaw 分区新增飞书CLI画板条目
