@@ -125,6 +125,7 @@ date: 2026-04-17
 | 页面 | 覆盖文档数 | 摘要 |
 |------|:---------:|------|
 | [Docker](sources/docker-batch-summary.md) | 12 | Docker 基础、GPU 配置、服务部署实战（GitLab/Prometheus/Loki 等） |
+| [Docker 安全加固](sources/docker-security-capabilities-summary.md) | 1 | Capabilities 最小化、no-new-privileges 防提权、User Namespace/只读文件系统/资源限制纵深防御 |
 | [K8s 基础资源](sources/k8s-basic-resources-batch-summary.md) | 21 | Pod/Deployment/Service/Ingress/ConfigMap/Storage/RBAC/CRD/Operator/API Server 深度剖析 |
 | [K8s 安装管理](sources/k8s-installation-management-batch-summary.md) | 17 | v1.20→v1.35 安装演进、企业高可用、etcd HA、运行时迁移、cgroup v2 |
 | [K8s 监控日志](sources/k8s-monitoring-logging-batch-summary.md) | 22 | Prometheus 全栈、EFK/Loki 日志、Jaeger/SkyWalking 链路追踪、日志管理+六种采集方案+审计日志（三合一）、OpenTelemetry 统一可观测性、集群巡检脚本 |
