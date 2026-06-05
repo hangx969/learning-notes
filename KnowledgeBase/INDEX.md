@@ -135,6 +135,7 @@ date: 2026-04-17
 | [K8s 扩缩容与存储](sources/k8s-scaling-storage-batch-summary.md) | 8 | HPA/VPA/KEDA/Karpenter 扩缩容 + FinOps 成本优化 + NFS/Longhorn/Rook-Ceph 存储 |
 | [K8s 中间件与 UI](sources/k8s-db-middleware-UI-batch-summary.md) | 19 | Redis/MySQL/PostgreSQL/Kafka/RabbitMQ 部署 + Dashboard/Rancher/k9s 管理工具 |
 | [K8s 杂项](sources/k8s-misc-batch-summary.md) | 18 | Helm 工具链/CKA-CKS/KubeBlocks/Harbor/K3S/Velero/GPU |
+| [K8s 备份与灾备](sources/k8s-backup-dr-summary.md) | 1 | 三层容灾架构（etcd 快照/Velero/应用数据）、自动化备份 CronJob、六大生产避坑、RTO/RPO 目标 |
 
 ### Azure（已摄入 ✅）
 
