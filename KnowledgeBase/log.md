@@ -1290,3 +1290,12 @@ date: 2026-04-17
 - 更新实体页 `KnowledgeBase/entities/Docker.md`：新增"安全加固"小节（7 项措施）、添加 sources 引用、标记知识空白部分已覆盖
 - 更新 `KnowledgeBase/index.md`：Docker-Kubernetes 分区新增安全加固条目
 - 填补知识空白：Docker 安全加固（Seccomp、AppArmor）已有覆盖，仅 rootless 模式尚缺
+
+## [2026-06-05] ingest | K8s 备份与灾备实战
+
+- 清洗原始文章 `0raw/K8s 集群的"后悔药"...备份与灾备实战全指南.md`，去除营销内容，保留完整技术要点（三层模型/etcd 实战/Velero 操作/六大避坑/告警规则）
+- 清洗后文章存入 `Docker-Kubernetes/k8s-backup-dr/k8s备份与灾备实战-三层容灾架构.md`
+- 创建来源摘要页 `KnowledgeBase/sources/k8s-backup-dr-summary.md`
+- 更新实体页 `KnowledgeBase/entities/Kubernetes.md`：新增"备份与灾备"小节、添加 sources 引用
+- 更新 `KnowledgeBase/index.md`：Docker-Kubernetes 分区新增备份与灾备条目
+- 与已有 `k8s集群备份恢复-Velero.md` 形成互补：已有文章侧重 Velero 工具，新文章提供架构层面的三层容灾体系
