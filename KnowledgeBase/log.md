@@ -1281,3 +1281,12 @@ date: 2026-04-17
 - 创建来源摘要页 `KnowledgeBase/sources/feishu-cli-whiteboard-summary.md`
 - 更新实体页 `KnowledgeBase/entities/OpenClaw.md`：添加相关文章链接 + Skills 插件生态新增 feishu-whiteboard-themes
 - 更新 `KnowledgeBase/index.md`：AI-OpenClaw 分区新增飞书CLI画板条目
+
+## [2026-06-05] ingest | Docker 安全配置与 Capabilities 加固
+
+- 清洗原始文章 `0raw/Docker 安全配置详解：RockyLinux 9.7 开发容器.md`，去除营销内容
+- 清洗后文章存入 `Docker-Kubernetes/docker/docker安全配置-Capabilities与容器加固.md`
+- 创建来源摘要页 `KnowledgeBase/sources/docker-security-capabilities-summary.md`
+- 更新实体页 `KnowledgeBase/entities/Docker.md`：新增"安全加固"小节（7 项措施）、添加 sources 引用、标记知识空白部分已覆盖
+- 更新 `KnowledgeBase/index.md`：Docker-Kubernetes 分区新增安全加固条目
+- 填补知识空白：Docker 安全加固（Seccomp、AppArmor）已有覆盖，仅 rootless 模式尚缺
