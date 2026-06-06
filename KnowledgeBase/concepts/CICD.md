@@ -32,6 +32,7 @@ date: 2026-04-16
 - [[Docker-Kubernetes/k8s-CICD/Kustomize/k8s配置定制工具-kustomize|k8s配置定制工具-kustomize]]
 - [[Docker-Kubernetes/k8s-CICD/使用github action部署helmchart|使用github action部署helmchart]]
 - [[Docker-Kubernetes/k8s-CICD/发布go-python-java代码到K8S环境|发布go-python-java代码到K8S环境]]
+- [[Docker-Kubernetes/k8s-CICD/k8s发布策略-蓝绿部署与金丝雀发布|k8s发布策略-蓝绿部署与金丝雀发布]]
 
 ## 关联概念
 - [[KnowledgeBase/entities/Azure|Azure]]
@@ -43,6 +44,6 @@ date: 2026-04-16
 ## 可延展方向
 - GitOps 工作流最佳实践（ArgoCD + Kustomize / Helm）
 - CI/CD 安全（镜像签名、SBOM、Supply Chain Security）
-- 多集群 CD 部署策略（蓝绿、金丝雀、渐进式发布）
+- ~~多集群 CD 部署策略（蓝绿、金丝雀、渐进式发布）~~（已有 [[Docker-Kubernetes/k8s-CICD/k8s发布策略-蓝绿部署与金丝雀发布]] 覆盖单集群蓝绿/金丝雀/Argo Rollouts，尚缺多集群场景）
 - Pipeline as Code 规范与模板化
 - Azure DevOps Pipeline 与 GitHub Actions 对比
