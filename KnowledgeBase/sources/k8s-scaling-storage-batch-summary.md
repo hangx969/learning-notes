@@ -51,6 +51,10 @@ sources:
 - 推荐算法：指数衰减直方图，CPU 基于 P95、Memory 基于高水位、默认 8 天历史窗口
 - VPA + HPA 共存：分离控制维度（VPA 管 Memory，HPA 管 CPU），不能同时对同一资源使用
 - 驱逐风险：配合 PDB 限制 maxUnavailable，核心服务避免 Auto/Recreate 模式
+- 实战案例：MySQL StatefulSet Off→Initial 渐进式优化，单 Pod 节省 550m CPU + 800Mi 内存
+- 避坑：OOMKill 恶性循环（minAllowed 须大于空闲基准）、JVM 应用推荐偏差（minAllowed ≥ -Xms）、频繁重建干扰 Prometheus 监控
+- 自定义 Recommender：支持 Prometheus 后端 + 自定义历史窗口（14d）
+- 渐进式落地四阶段：观察期（Off）→ 灰度验证（Initial）→ 生产推广（Auto + 保护）→ 长期维护
 
 ### [[Docker-Kubernetes/k8s-scaling/k8s-基于KEDA的弹性能力|KEDA 事件驱动扩缩容]]
 

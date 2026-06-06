@@ -354,3 +354,155 @@ Grafana Dashboard ID: **14588**
 
 > **总结**：1）先用 `Off` 模式收集推荐数据；2）核心服务用 `Initial` 减少驱逐影响；3）与 HPA 共存时分离控制维度（VPA 管内存，HPA 管 CPU）；4）始终配合 PDB 保障可用性。
 
+---
+
+# VPA 实战补充：避坑指南与落地方法论
+
+> 来源：[Kubernetes VPA深度解析：从手动调参到自动资源配置的完整实战](https://mp.weixin.qq.com/s/fxp4cBRXUG9XRluke62f-w)
+
+## 实战案例：MySQL StatefulSet 资源优化
+
+### 场景
+
+MySQL StatefulSet 初期资源配置过高：
+
+~~~yaml
+resources:
+  requests:
+    memory: "2Gi"
+    cpu: "1000m"
+  limits:
+    memory: "4Gi"
+    cpu: "4000m"
+~~~
+
+### 步骤 1：Off 模式观察（24小时+）
+
+~~~yaml
+apiVersion: autoscaling.k8s.io/v1
+kind: VerticalPodAutoscaler
+metadata:
+  name: mysql-vpa
+  namespace: production
+spec:
+  targetRef:
+    apiVersion: apps/v1
+    kind: StatefulSet
+    name: mysql
+  updatePolicy:
+    updateMode: "Off"
+~~~
+
+24 小时后查看推荐值：
+
+~~~sh
+kubectl describe vpa mysql-vpa -n production
+# Target:     cpu: 450m, memory: 1.2Gi  ← 比原来的 1000m/2Gi 小很多
+# Upper Bound: cpu: 1500m, memory: 4Gi
+# Lower Bound: cpu: 200m, memory: 900Mi
+~~~
+
+### 步骤 2：切换 Initial 模式 + 滚动重启
+
+~~~yaml
+spec:
+  updatePolicy:
+    updateMode: "Initial"
+~~~
+
+~~~sh
+kubectl rollout restart statefulset mysql -n production
+~~~
+
+### 效果量化
+
+- 单个 Pod 节省：550m CPU + 800Mi 内存
+- 3 副本合计节省：1650m CPU + 2.4Gi 内存
+- 约等于省下一个 4C8G 节点的成本
+
+## VPA 避坑指南
+
+### 坑 1：OOMKill 恶性循环
+
+Pod 被 VPA 缩小内存后偶尔 OOM → Pod 重启 → 重启期间无历史数据 → VPA 给出更小的推荐值 → 更大 OOM 风险。
+
+**解决**：`minAllowed` 必须大于应用的空闲基准内存，要有一定冗余：
+
+~~~yaml
+resourcePolicy:
+  containerPolicies:
+    - containerName: "app"
+      minAllowed:
+        memory: "256Mi"  # 设置合理下限，大于空闲基准
+      maxAllowed:
+        memory: "2Gi"
+~~~
+
+### 坑 2：JVM 应用的资源推荐偏差
+
+JVM 应用的 RSS 内存和使用内存差异大。JVM 启动就会分配大量堆内存，VPA 推荐基于容器内存使用，可能给出偏低的值。
+
+**解决**：`minAllowed.memory` 至少等于 JVM `-Xms` 的值：
+
+~~~yaml
+resourcePolicy:
+  containerPolicies:
+    - containerName: "spring-app"
+      minAllowed:
+        memory: "1Gi"  # 与 -Xms1g 对应
+        cpu: "500m"
+~~~
+
+### 坑 3：频繁重启干扰 Prometheus 监控
+
+VPA Auto 模式频繁重建容器会导致 Prometheus 数据出现空洞，影响告警和分析。
+
+**缓解**：通过 `minAllowed`/`maxAllowed` 缩小推荐值波动范围，减少触发重建的频率。核心服务优先使用 `Initial` 模式。
+
+## 自定义 Recommender
+
+默认的直方图算法不够用时，可部署自定义 Recommender，使用 Prometheus 作为数据源：
+
+~~~yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: custom-vpa-recommender
+  namespace: kube-system
+spec:
+  replicas: 1
+  template:
+    spec:
+      containers:
+        - name: recommender
+          image: my-registry/custom-recommender:v1
+          args:
+            - --recommender-name=custom
+            - --storage=prometheus
+            - --prometheus-address=http://prometheus:9090
+            - --history-length=14d              # 延长历史窗口到14天
+            - --pod-recommendation-min-memory=64Mi
+~~~
+
+在 VPA 对象中指定使用自定义 Recommender：
+
+~~~yaml
+spec:
+  recommenders:
+    - name: custom
+~~~
+
+## 渐进式落地四阶段
+
+| 阶段 | 操作 | 周期 |
+|------|------|------|
+| 观察期 | Off 模式，收集推荐值 | 1-7 天 |
+| 灰度验证 | Initial 模式，新 Pod 使用推荐值 | 1-2 周 |
+| 生产推广 | Auto 模式 + minAllowed/maxAllowed 保护 | 持续 |
+| 长期维护 | 定期 review VPA 推荐值趋势 | 每月 |
+
+**三条铁律**：
+1. **永远设置 minAllowed/maxAllowed**——防止推荐值极端化
+2. **有状态服务用 Initial 而非 Auto**——避免不必要的中断
+3. **VPA + HPA 共存时，VPA 只管控内存**——CPU 交给 HPA
+
