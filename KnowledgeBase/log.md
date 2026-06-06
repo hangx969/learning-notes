@@ -1307,3 +1307,13 @@ date: 2026-04-17
 - 创建来源摘要页 `KnowledgeBase/sources/k8s-pdb-summary.md`
 - 更新实体页 `KnowledgeBase/entities/Kubernetes.md`：声明式资源模型小节新增 PDB 条目、添加 sources 引用
 - 更新 `KnowledgeBase/index.md`：K8s 基础资源分区新增 PDB 条目
+
+## [2026-06-06] ingest | VPA 实战补充（合并摄入）
+
+- 分析原始文章 `0raw/Kubernetes VPA深度解析...完整实战.md` 与已有 `Docker-Kubernetes/k8s-scaling/helm部署vpa.md` 的重复度（~50%），决定合并而非独立摄入
+- 提取 4 个独特增量追加到 `Docker-Kubernetes/k8s-scaling/helm部署vpa.md`：
+  1. MySQL StatefulSet 实战案例（Off→Initial 渐进式 + 资源节省量化）
+  2. 三个避坑点（OOMKill 恶性循环、JVM 应用推荐偏差、Prometheus 数据空洞）
+  3. 自定义 Recommender（Prometheus 后端 + 自定义历史窗口）
+  4. 渐进式落地四阶段方法论
+- 更新来源摘要页 `KnowledgeBase/sources/k8s-scaling-storage-batch-summary.md`：VPA 条目补充增量内容摘要
