@@ -1496,3 +1496,524 @@ spec:
         url: http://alertmanager-webhook-dingtalk.monitoring.svc.cluster.local/dingtalk/webhook1/send
 ~~~
 
+
+
+---
+
+# 八、参数优化与性能调优
+
+> 来源：[Prometheus + AlertManager + kube-prometheus 生产级部署完全指南](https://mp.weixin.qq.com/s/VCQ81Mn0rgP9qPKnXzFM6w)
+
+## 8.1 Prometheus 性能优化
+
+### 资源规划建议
+
+| 指标数量 | 抓取目标数 | CPU | 内存 | 磁盘 | 抓取间隔 |
+|----------|-----------|-----|------|------|----------|
+| < 100K | < 100 | 2核 | 8GB | 100GB | 30s |
+| 100K-500K | 100-500 | 4核 | 16GB | 500GB | 30s |
+| 500K-1M | 500-1000 | 8核 | 32GB | 1TB | 15s |
+| > 1M | > 1000 | 16核+ | 64GB+ | 2TB+ | 15s |
+
+### TSDB 优化参数
+
+```yaml
+# values-production.yaml 中的 prometheusSpec 部分
+prometheusSpec:
+  retention: 30d
+  retentionSize: 450GB              # 保留大小（优先触发）
+  tsdb:
+    outOfOrderTimeWindow: 0s
+  additionalArgs:
+    - name: storage.tsdb.min-block-duration
+      value: 2h
+    - name: storage.tsdb.max-block-duration
+      value: 2h
+    - name: storage.tsdb.wal-compression
+      value: "true"
+    - name: storage.tsdb.max-block-chunk-segment-size
+      value: "512MB"
+    - name: query.max-samples
+      value: "50000000"
+    - name: query.max-concurrency
+      value: "20"
+    - name: query.timeout
+      value: "2m"
+    - name: storage.remote.flush-deadline
+      value: "1m"
+    - name: rules.alert.for-outage-tolerance
+      value: "1h"
+    - name: rules.alert.for-grace-period
+      value: "10m"
+    - name: rules.alert.resend-delay
+      value: "1m"
+```
+
+### 抓取配置优化
+
+```yaml
+prometheusSpec:
+  scrapeInterval: 30s
+  evaluationInterval: 30s
+  scrapeTimeout: 10s
+  externalLabels:
+    cluster: production
+    replica: '{{.ExternalURL}}'
+  enableFeatures:
+    - exemplar-storage
+    - memory-snapshot-on-shutdown
+    - new-service-discovery-manager
+    - remote-write-receiver
+```
+
+## 8.2 AlertManager 优化
+
+```yaml
+alertmanager:
+  alertmanagerSpec:
+    resources:
+      limits: { cpu: 1000m, memory: 1Gi }
+      requests: { cpu: 100m, memory: 256Mi }
+    replicas: 3
+    clusterAdvertiseAddress: $(POD_IP)
+    additionalArgs:
+      - name: cluster.gossip-interval
+        value: "200ms"
+      - name: cluster.pushpull-interval
+        value: "1m0s"
+      - name: silences.max-silences
+        value: "10000"
+      - name: silences.max-silence-size-bytes
+        value: "10485760"  # 10MB
+```
+
+## 8.3 Grafana 优化
+
+```yaml
+grafana:
+  resources:
+    limits: { cpu: 1000m, memory: 1Gi }
+    requests: { cpu: 250m, memory: 512Mi }
+  env:
+    GF_DATABASE_MAX_OPEN_CONN: "100"
+    GF_DATABASE_MAX_IDLE_CONN: "100"
+    GF_SESSION_PROVIDER: "memory"
+    GF_CACHE_ENABLED: "true"
+    GF_LOG_LEVEL: "warn"
+    GF_AUTH_ANONYMOUS_ENABLED: "false"
+    GF_SECURITY_CSRF_ADDITIONAL_HEADERS: "X-Forwarded-Host"
+    GF_SECURITY_STRICT_TRANSPORT_SECURITY: "true"
+    GF_SECURITY_STRICT_TRANSPORT_SECURITY_MAX_AGE_SECONDS: "86400"
+    GF_SECURITY_X_CONTENT_TYPE_OPTIONS: "true"
+    GF_SECURITY_X_XSS_PROTECTION: "true"
+```
+
+## 8.4 PromQL 查询优化
+
+```yaml
+# 1. 使用 rate() 而不是 increase() 计算速率
+rate(http_requests_total[5m])           # 推荐
+# increase(http_requests_total[5m]) / 300  # 不推荐
+
+# 2. 使用 irate() 用于快速变化的计数器
+irate(http_requests_total[5m])
+
+# 3. 避免高基数查询
+topk(10, sum by(handler) (rate(http_requests_total[5m])))  # 推荐
+# topk(10000, http_requests_total)                         # 不推荐
+
+# 4. 使用 recording rules 预计算复杂查询
+```
+
+Recording Rules 示例：
+
+```yaml
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: recording-rules
+  namespace: monitoring
+spec:
+  groups:
+    - name: http_requests
+      interval: 30s
+      rules:
+        - record: job:http_requests_total:rate5m
+          expr: sum by(job) (rate(http_requests_total[5m]))
+        - record: job:http_request_duration_seconds:p95
+          expr: |
+            histogram_quantile(0.95,
+              sum by(job, le) (rate(http_request_duration_seconds_bucket[5m]))
+            )
+```
+
+## 8.5 存储优化
+
+### NFS 挂载选项优化
+
+```yaml
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: nfs-optimized
+provisioner: nfs.csi.k8s.io
+parameters:
+  server: <nfs-server-ip>
+  share: /data/k8s/nfs
+mountOptions:
+  - nfsvers=4.1
+  - nconnect=16       # 多连接（Linux 5.3+）
+  - hard
+  - intr
+  - rsize=1048576     # 读块大小 1MB
+  - wsize=1048576     # 写块大小 1MB
+  - noatime
+  - nodiratime
+reclaimPolicy: Retain
+volumeBindingMode: WaitForFirstConsumer
+```
+
+### 本地缓存方案
+
+```yaml
+prometheusSpec:
+  storageSpec:
+    volumeClaimTemplate:
+      spec:
+        storageClassName: nfs-client
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 500Gi
+  # 额外挂载本地 SSD 用于 WAL
+  volumes:
+    - name: wal-volume
+      emptyDir:
+        medium: Memory  # 或使用 hostPath 挂载本地 SSD
+  volumeMounts:
+    - name: wal-volume
+      mountPath: /prometheus/wal
+```
+
+## 8.6 网络优化
+
+```yaml
+prometheusSpec:
+  additionalArgs:
+    - name: web.enable-http2
+      value: "true"
+    - name: web.enable-gzip
+      value: "true"
+    - name: web.max-connections
+      value: "512"
+    - name: web.read-timeout
+      value: "5m"
+    - name: web.write-timeout
+      value: "5m"
+```
+
+---
+
+# 九、高可用与扩展方案
+
+## 9.1 Prometheus 高可用架构
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                     Load Balancer (Ingress)                     │
+└─────────────────────────────┬───────────────────────────────────┘
+                              │
+        ┌─────────────────────┼─────────────────────┐
+        │                     │                     │
+        ▼                     ▼                     ▼
+┌───────────────┐    ┌───────────────┐    ┌───────────────┐
+│ Prometheus-0  │    │ Prometheus-1  │    │ Prometheus-2  │
+│ (Shard 0)     │    │ (Shard 1)     │    │ (Shard 2)     │
+└───────┬───────┘    └───────┬───────┘    └───────┬───────┘
+        │                     │                     │
+        └─────────────────────┼─────────────────────┘
+                              │
+                              ▼
+                    ┌─────────────────┐
+                    │  Thanos Query   │
+                    │  (全局查询视图)  │
+                    └────────┬────────┘
+                             │
+                    ┌────────▼────────┐
+                    │   Thanos Store  │
+                    │   (长期存储)     │
+                    └─────────────────┘
+```
+
+## 9.2 Thanos 集成配置
+
+```yaml
+thanosSidecar:
+  enabled: true
+  image: quay.io/thanos/thanos:v0.35.0
+  objectStorageConfig:
+    type: s3
+    config:
+      bucket: "thanos-bucket"
+      endpoint: "s3.amazonaws.com"
+      access_key: "your-access-key"
+      secret_key: "your-secret-key"
+      insecure: false
+      http_config:
+        idle_conn_timeout: 90s
+        response_header_timeout: 2m
+  resources:
+    limits: { cpu: 1000m, memory: 1Gi }
+    requests: { cpu: 100m, memory: 256Mi }
+```
+
+## 9.3 联邦集群配置
+
+```yaml
+apiVersion: monitoring.coreos.com/v1
+kind: Prometheus
+metadata:
+  name: global
+  namespace: monitoring
+spec:
+  replicas: 2
+  additionalScrapeConfigs:
+    - job_name: 'federate'
+      scrape_interval: 30s
+      honor_labels: true
+      metrics_path: '/federate'
+      params:
+        'match[]':
+          - '{job="prometheus"}'
+          - '{__name__=~"job:.*"}'
+          - '{__name__=~"node_.*"}'
+      static_configs:
+        - targets:
+            - 'prometheus-dc1:9090'
+            - 'prometheus-dc2:9090'
+            - 'prometheus-dc3:9090'
+```
+
+## 9.4 AlertManager 高可用
+
+```yaml
+alertmanager:
+  alertmanagerSpec:
+    replicas: 3
+    clusterAdvertiseAddress: $(POD_IP)
+    affinity:
+      podAntiAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+                - key: app.kubernetes.io/name
+                  operator: In
+                  values: [alertmanager]
+            topologyKey: kubernetes.io/hostname
+    tolerations:
+      - key: "monitoring"
+        operator: "Equal"
+        value: "true"
+        effect: "NoSchedule"
+```
+
+## 9.5 多集群监控（Remote Write）
+
+```yaml
+apiVersion: monitoring.coreos.com/v1
+kind: Prometheus
+metadata:
+  name: cluster-prometheus
+  namespace: monitoring
+  labels:
+    cluster: cluster-1
+spec:
+  externalLabels:
+    cluster: cluster-1
+    region: beijing
+    datacenter: dc1
+  remoteWrite:
+    - url: "http://central-prometheus:9090/api/v1/write"
+      queueConfig:
+        maxSamplesPerSend: 1000
+        maxShards: 200
+        capacity: 2500
+      writeRelabelConfigs:
+        - sourceLabels: [__name__]
+          regex: 'up|node_.*|container_.*|kube_.*'
+          action: keep
+```
+
+---
+
+# 十、故障排查与常见问题
+
+## 10.1 常用排查命令
+
+```bash
+# 查看 Prometheus Pod 状态与日志
+kubectl get pods -n monitoring -l app.kubernetes.io/name=prometheus
+kubectl logs -f prometheus-k8s-0 -n monitoring -c prometheus
+
+# 查看配置
+kubectl get secret prometheus-k8s -n monitoring -o jsonpath='{.data.prometheus\.yaml\.gz}' | base64 -d | gunzip
+
+# 查看 targets（端口转发后访问 http://localhost:9090/targets）
+kubectl port-forward svc/prometheus-kube-prometheus-prometheus 9090:9090 -n monitoring
+
+# AlertManager / Grafana 日志
+kubectl logs -f alertmanager-main-0 -n monitoring -c alertmanager
+kubectl logs -f deployment/kube-prometheus-stack-grafana -n monitoring
+
+# 检查存储
+kubectl get pvc -n monitoring
+kubectl get pv
+kubectl get storageclass
+```
+
+## 10.2 常见问题解决
+
+### 问题1：Prometheus 无法发现目标
+
+```bash
+# 1. 检查 ServiceMonitor 标签
+kubectl get servicemonitor -n monitoring --show-labels
+
+# 2. 检查 Prometheus 的 serviceMonitorSelector
+kubectl get prometheus k8s -n monitoring -o yaml | grep -A 5 serviceMonitorSelector
+
+# 3. 确保 ServiceMonitor 标签与 Prometheus selector 匹配
+
+# 4. 检查 Service 标签和 Endpoints
+kubectl get svc -n <namespace> --show-labels
+kubectl get endpoints -n <namespace>
+```
+
+### 问题2：告警不触发
+
+```bash
+# 1. 检查告警规则是否加载（http://localhost:9090/rules）
+# 2. 在 Graph 页面测试告警表达式
+# 3. 检查告警状态（http://localhost:9090/alerts）
+# 4. 检查 AlertManager 连接（http://localhost:9090/status）
+```
+
+### 问题3：NFS 挂载失败
+
+```bash
+# 1. 检查 NFS 服务器
+showmount -e <nfs-server-ip>
+# 2. 检查 NFS provisioner 日志
+kubectl logs -f deployment/nfs-provisioner -n kube-system
+# 3. 检查 PVC 事件
+kubectl describe pvc <pvc-name> -n monitoring
+# 4. 手动测试挂载
+kubectl run test-nfs --rm -it --image=busybox -- mount -t nfs <nfs-server-ip>:/data /mnt
+```
+
+### 问题4：Prometheus OOMKilled
+
+```bash
+# 1. 增加内存限制
+kubectl patch prometheus k8s -n monitoring --type merge -p '{"spec":{"resources":{"limits":{"memory":"32Gi"}}}}'
+# 2. 减少抓取目标（调整 ServiceMonitor 的 namespaceSelector）
+# 3. 增加抓取间隔（scrapeInterval 改为 60s）
+# 4. 减少保留时间（retention 改为 15d）
+```
+
+### 问题5：镜像拉取失败
+
+```bash
+# 修改 values.yaml 中的镜像地址为国内源
+# prometheus.prometheusSpec.image.repository: registry.aliyuncs.com/prometheus/prometheus
+# 或配置镜像拉取密钥
+kubectl create secret docker-registry regcred \
+  --docker-server=your-registry.com \
+  --docker-username=username \
+  --docker-password=password
+```
+
+## 10.3 性能调优检查清单
+
+```bash
+# 1. 检查 Prometheus 内存使用
+kubectl top pod -n monitoring -l app.kubernetes.io/name=prometheus
+# 2. 检查 TSDB 状态
+kubectl exec -it prometheus-k8s-0 -n monitoring -c prometheus -- wget -qO- http://localhost:9090/api/v1/status/tsdb
+# 3. 检查目标数量
+kubectl exec -it prometheus-k8s-0 -n monitoring -c prometheus -- wget -qO- http://localhost:9090/api/v1/targets | jq '.data.activeTargets | length'
+# 4. 检查序列数量（在 Prometheus UI 执行）
+# prometheus_tsdb_head_series
+```
+
+## 10.4 备份与恢复
+
+```bash
+# 方法1：使用 Velero
+velero backup create prometheus-backup --include-namespaces monitoring
+
+# 方法2：手动备份
+kubectl exec -it prometheus-k8s-0 -n monitoring -c prometheus -- tar czf /tmp/prometheus-backup.tar.gz /prometheus
+kubectl cp monitoring/prometheus-k8s-0:/tmp/prometheus-backup.tar.gz ./prometheus-backup.tar.gz
+
+# 恢复
+kubectl scale sts prometheus-k8s --replicas=0 -n monitoring
+# 恢复数据到 PVC ...
+kubectl scale sts prometheus-k8s --replicas=2 -n monitoring
+```
+
+## 10.5 生产部署检查清单
+
+- [ ] **存储**：NFS 服务器可用、StorageClass 正确、PVC 绑定成功、数据持久化验证
+- [ ] **高可用**：Prometheus 多副本、AlertManager 多副本、反亲和性、容忍污点
+- [ ] **告警**：告警规则已加载、AlertManager 路由配置、通知渠道测试、抑制规则验证
+- [ ] **安全**：Ingress TLS、Grafana 认证、网络策略、RBAC
+- [ ] **性能**：资源限制、TSDB 参数、抓取间隔、查询性能
+- [ ] **备份**：数据备份策略、配置备份、恢复测试
+- [ ] **运维**：运维手册、告警响应流程、升级流程、故障处理流程
+
+---
+
+# 附录
+
+## 常用 PromQL 速查
+
+```promql
+# 节点 CPU 使用率
+100 - (avg by(instance) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100)
+
+# 节点内存使用率
+(node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / node_memory_MemTotal_bytes * 100
+
+# 节点磁盘使用率
+(node_filesystem_size_bytes{mountpoint="/"} - node_filesystem_avail_bytes{mountpoint="/"}) / node_filesystem_size_bytes{mountpoint="/"} * 100
+
+# Pod CPU / 内存
+rate(container_cpu_usage_seconds_total{container!=""}[5m])
+container_memory_usage_bytes{container!=""}
+
+# HTTP 请求速率 / 错误率
+rate(http_requests_total[5m])
+rate(http_requests_total{status=~"5.."}[5m]) / rate(http_requests_total[5m])
+
+# P95 延迟
+histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket[5m])) by (le))
+
+# Pod 重启次数
+increase(kube_pod_container_status_restarts_total[1h])
+
+# 预测磁盘 4 小时内写满
+predict_linear(node_filesystem_avail_bytes{mountpoint="/"}[1h], 4 * 3600) < 0
+```
+
+## 版本兼容参考
+
+| 组件 | 版本 |
+|------|------|
+| Kubernetes | 1.35+ |
+| kube-prometheus-stack | 76.0.0+ |
+| Prometheus | v2.55.0+ |
+| AlertManager | v0.27.0+ |
+| Grafana | 11.1.0+ |
+| Node Exporter | v1.8.2+ |
+| kube-state-metrics | v2.13.0+ |
