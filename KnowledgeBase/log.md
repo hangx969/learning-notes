@@ -1326,3 +1326,15 @@ date: 2026-04-17
 - 更新概念页 `KnowledgeBase/concepts/CICD.md`：相关文章新增条目、标记"蓝绿/金丝雀"可延展方向已部分覆盖
 - 更新 `KnowledgeBase/index.md`：K8s CI/CD 分区新增发布策略条目
 - 与已有文章互补：deployment.md 有基础原理，istio.md 有服务网格方案，本文补充 Nginx Ingress 和 Argo Rollouts 两种生产级方案
+
+## [2026-06-06] restructure | Prometheus-Stack 全家桶文章整合
+
+- 将新文章 `0raw/Prometheus + AlertManager + kube-prometheus 生产级部署完全指南.md`（131KB）与已有 `Docker-Kubernetes/k8s-monitoring-logging/helm部署prometheus-stack全家桶.md`（52KB）合并
+- 重新设计章节结构为十章 + 附录：
+  - 一~七（原有内容重新编号）：概述 → 部署 → Grafana 管理 → CRD 资源 → Target Down 排查 → 告警规则 → AlertManager 配置
+  - 八（新增）：参数优化与性能调优（资源规划/TSDB/抓取/AlertManager/Grafana/PromQL/存储/网络 六维度）
+  - 九（新增）：高可用与扩展方案（Prometheus HA 架构/Thanos 集成/联邦集群/AlertManager HA/多集群 Remote Write）
+  - 十（新增）：故障排查与常见问题（排查命令/5 大常见问题/性能检查清单/备份恢复/生产部署清单）
+  - 附录（新增）：PromQL 速查 + 版本兼容参考
+- 更新来源摘要页 `KnowledgeBase/sources/k8s-monitoring-logging-batch-summary.md`：扩展摘要描述
+- 去重策略：基础概念/Helm 部署/CRD 配置/AlertManager 路由等重复内容保留原有版本（更详细的实操内容），仅追加新文章的独特增量

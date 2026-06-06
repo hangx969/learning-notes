@@ -78,13 +78,16 @@ sources:
   - 架构：主节点 + 多个联邦子节点，每个子节点监控各自数据中心
   - 各节点分别部署 node-exporter 采集主机指标
 
-### [[Docker-Kubernetes/k8s-monitoring-logging/helm部署prometheus-stack全家桶|Helm部署Prometheus-Stack全家桶]]
-- 核心内容：使用 Helm 部署 kube-prometheus-stack，一键安装 Prometheus、Alertmanager、Grafana、kube-state-metrics、node-exporter 等全套组件。
+### [[Docker-Kubernetes/k8s-monitoring-logging/helm部署prometheus-stack全家桶|Prometheus-Stack 全家桶：生产级部署与运维完全指南]]
+- 核心内容：使用 Helm 部署 kube-prometheus-stack，一键安装 Prometheus、Alertmanager、Grafana、kube-state-metrics、node-exporter 等全套组件。整合了参数优化、高可用方案和故障排查内容。
 - 关键知识点：
   - kube-prometheus-stack 是 Prometheus Operator 的 Helm Chart 封装
   - 子 Chart 依赖：kube-state-metrics（容器指标）、node-exporter（宿主机指标）、grafana
   - 前提条件：需要 StorageClass 持久化存储和 Ingress Controller
   - 需将镜像源替换为国内镜像（如阿里云）
+  - 性能调优六维度：Prometheus TSDB 优化/AlertManager 集群参数/Grafana 连接池与安全/PromQL 最佳实践/NFS 存储优化/网络 HTTP/2+gzip
+  - 高可用与扩展：Prometheus 分片 + Thanos 全局查询/联邦集群/AlertManager 3 副本 HA/多集群 Remote Write
+  - 故障排查：5 大常见问题（Target 发现失败/告警不触发/NFS 挂载/OOMKilled/镜像拉取）+ 性能检查清单 + 备份恢复 + 生产部署清单
 
 ### [[Docker-Kubernetes/k8s-monitoring-logging/Prometheus监控k8s系统组件|Prometheus监控K8s系统组件]]
 - 核心内容：使用 Prometheus 监控 K8s 控制面组件（etcd、kube-proxy、kube-scheduler、kube-controller-manager），包含 ServiceMonitor 配置。
