@@ -1,5 +1,5 @@
 ---
-title: Helm部署Prometheus-Stack全家桶
+title: "Prometheus-Stack 全家桶：生产级部署与运维完全指南"
 tags:
   - kubernetes
   - monitoring
@@ -8,11 +8,13 @@ tags:
   - alertmanager
   - helm
   - operator
+  - kube-prometheus
 aliases:
   - Prometheus-Stack全家桶
+  - kube-prometheus-stack
 ---
 
-# 介绍
+# 一、概述
 
 Prometheus Operator 也称为 Kube-Prometheus-Stack。prometheus-community/kube-prometheus-stack Helm Chart 提供了与 kube-prometheus 类似的功能集。该Chart由 Prometheus 社区维护。
 
@@ -30,7 +32,7 @@ artifact hub: [kube-prometheus-stack on ArtifactHub](https://artifacthub.io/pack
 - [prometheus-community/prometheus-node-exporter](https://github.com/prometheus-community/helm-charts/tree/main/charts/prometheus-node-exporter)
 - [grafana/grafana](https://github.com/grafana/helm-charts/tree/main/charts/grafana)
 
-# 部署
+# 二、部署
 
 ## 前提条件
 
@@ -303,7 +305,9 @@ annotations:
   nginx.ingress.kubernetes.io/auth-signin: "https://oauth2proxy.hanxux.local/oauth2/start?rd=https%3A%2F%2Fgrafana.hanxux.local"
 ~~~
 
-# helm管理grafana dashboard
+# 三、Grafana 管理
+
+## Helm 管理 Grafana Dashboard
 
 - dashboard可以单独打成一个helm包
 
@@ -361,7 +365,7 @@ data:
 helm upgrade -i grafana-dashboards-config -n monitoring . --values values.yaml
 ~~~
 
-# helm管理grafana datasources
+## Helm 管理 Grafana Datasource
 
 - datasource也可以以helm chart的形式部署，例如templates目录下放datasources的yaml文件：
 
@@ -393,7 +397,7 @@ data:
 EOF
 ~~~
 
-# prometheus CRD资源
+# 四、Prometheus CRD 资源
 
 ## 常见CRD资源
 
@@ -713,7 +717,7 @@ spec:
           key: password
 ~~~
 
-# target down排查流程
+# 五、Target Down 排查流程
 
 一般是从prometheus中看到target是down的状态。
 
@@ -722,7 +726,7 @@ spec:
 3. 确认能通过svc访问到metrics接口
 4. 确认svc的端口和scheme、serviceMonitor的一致
 
-# 告警规则实战
+# 六、告警规则实战
 
 ## 使用技巧
 
@@ -906,7 +910,7 @@ spec:
         component: redis 
 ~~~
 
-# Alertmanager配置与实战
+# 七、AlertManager 配置与通知
 
 示例文件：[alertmanager/doc/examples/simple.yml at main · prometheus/alertmanager](https://github.com/prometheus/alertmanager/blob/main/doc/examples/simple.yml)
 
