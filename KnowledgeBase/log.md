@@ -1351,3 +1351,16 @@ date: 2026-04-17
 - 清洗原始文章 `0raw/Script-Server...` 并存入 `Python/script-server-脚本Web化工具.md`
 - 创建来源摘要页 `KnowledgeBase/sources/script-server-summary.md`
 - 更新 `KnowledgeBase/index.md`：Python 分区新增条目
+
+## [2026-06-06] update | Claude Code Skills 工程化内容整合
+
+- 将 `0raw/滴滴面试官逗乐了...SKILL.md...5K token.md` 的核心内容简化后整合进 `AI/ClaudeCode/Claude Code 扩展体系.md` 的 Skills 章节
+- 扩展"渐进式披露机制"子章节，新增内容：
+  1. 官方三层加载机制表（Level 1/2/3 的 token 成本与加载时机）
+  2. 官方硬限制（name 64 字符 / description 1024 字符 / SKILL.md < 5K token）
+  3. SKILL.md 定位（分层引用网络的根节点，非 prompt 非文档）
+  4. 拆分判断标准表（<200 行健康 / >800 行立即重构）
+  5. 拆分优先级（示例→规则→长流程，决策树不拆）
+  6. 好引用 vs 坏引用 + 子文件不循环引用原则
+  7. 实战演进案例（1900 行→612 行，token 从 28K 降到 12K）
+  8. Skill 间 handoff 协议设计
