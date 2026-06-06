@@ -1299,3 +1299,11 @@ date: 2026-04-17
 - 更新实体页 `KnowledgeBase/entities/Kubernetes.md`：新增"备份与灾备"小节、添加 sources 引用
 - 更新 `KnowledgeBase/index.md`：Docker-Kubernetes 分区新增备份与灾备条目
 - 与已有 `k8s集群备份恢复-Velero.md` 形成互补：已有文章侧重 Velero 工具，新文章提供架构层面的三层容灾体系
+
+## [2026-06-06] ingest | K8s PodDisruptionBudget 实战
+
+- 清洗原始文章 `0raw/K8s PodDisruptionBudget 实战：优雅滚动更新背后的守护神.md`，去除营销内容
+- 清洗后文章存入 `Docker-Kubernetes/k8s-basic-resources/k8s-PodDisruptionBudget实战.md`
+- 创建来源摘要页 `KnowledgeBase/sources/k8s-pdb-summary.md`
+- 更新实体页 `KnowledgeBase/entities/Kubernetes.md`：声明式资源模型小节新增 PDB 条目、添加 sources 引用
+- 更新 `KnowledgeBase/index.md`：K8s 基础资源分区新增 PDB 条目
