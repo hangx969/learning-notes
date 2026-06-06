@@ -32,6 +32,129 @@ artifact hub: [kube-prometheus-stack on ArtifactHub](https://artifacthub.io/pack
 - [prometheus-community/prometheus-node-exporter](https://github.com/prometheus-community/helm-charts/tree/main/charts/prometheus-node-exporter)
 - [grafana/grafana](https://github.com/grafana/helm-charts/tree/main/charts/grafana)
 
+## Prometheus 核心特性
+
+| 特性 | 说明 |
+|------|------|
+| **多维数据模型** | 时间序列数据由指标名称和键值对标签标识 |
+| **PromQL** | 强大的数据查询和聚合语言 |
+| **不依赖分布式存储** | 单个服务器节点自治，易于运维 |
+| **HTTP 拉取模型** | 通过 HTTP 协议主动拉取（pull）指标数据 |
+| **高效存储** | 自定义 TSDB，支持压缩和分块 |
+
+**四种核心指标类型**：
+
+| 类型 | 说明 | 示例 |
+|------|------|------|
+| **Counter** | 只增不减的累加值 | `http_requests_total` |
+| **Gauge** | 可增可减的瞬时值 | `node_memory_MemAvailable_bytes` |
+| **Histogram** | 数据分布统计（分位数） | `http_request_duration_seconds` |
+| **Summary** | 客户端计算的分位数 | `rpc_duration_seconds` |
+
+## AlertManager 核心功能
+
+| 功能 | 描述 |
+|------|------|
+| **分组 (Grouping)** | 将相似告警聚合为单一通知，减少告警风暴 |
+| **抑制 (Inhibition)** | 高优先级告警触发时，抑制低优先级相关告警 |
+| **静默 (Silencing)** | 维护窗口期间临时静默特定告警 |
+| **路由 (Routing)** | 基于标签将告警路由到不同的接收器 |
+| **去重 (Deduplication)** | 消除重复告警通知 |
+
+**告警生命周期**：
+
+```
+Inactive → Pending → Firing → Resolved
+  ↑          ↑          ↑          ↑
+未触发    条件满足    持续满足    条件恢复
+         但未超时    超过阈值    告警解除
+```
+
+## kube-prometheus 组件总览
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    kube-prometheus-stack                    │
+├─────────────────────────────────────────────────────────────┤
+│  Prometheus Operator    │  Prometheus CRD 控制器            │
+│  Prometheus Server      │  时序数据库与采集引擎              │
+│  AlertManager           │  告警管理与通知路由               │
+│  Grafana                │  可视化仪表盘                     │
+│  Node Exporter          │  节点级系统指标采集               │
+│  kube-state-metrics     │  K8s 资源状态指标                 │
+│  Prometheus Adapter     │  K8s Metrics API 适配器           │
+│  Blackbox Exporter      │  黑盒探测与端点监控               │
+└─────────────────────────────────────────────────────────────┘
+```
+
+**核心 CRD 速查**：
+
+| CRD | 作用 |
+|-----|------|
+| `Prometheus` | 定义 Prometheus 服务器实例 |
+| `Alertmanager` | 定义 AlertManager 实例 |
+| `ServiceMonitor` | 基于 Service 的服务发现与监控 |
+| `PodMonitor` | 基于 Pod 的服务发现与监控 |
+| `PrometheusRule` | 定义告警规则和记录规则 |
+| `ThanosRuler` | 定义 Thanos Ruler 实例 |
+
+## 整体架构图
+
+```
+                              ┌─────────────────┐
+                              │   User/Admin    │
+                              └────────┬────────┘
+                                       │
+                    ┌──────────────────┼──────────────────┐
+                    │                  │                  │
+                    ▼                  ▼                  ▼
+           ┌─────────────┐    ┌─────────────┐    ┌─────────────┐
+           │   Grafana   │    │  Prometheus │    │ AlertManager│
+           │   :3000     │    │   :9090     │    │   :9093     │
+           └──────┬──────┘    └──────┬──────┘    └──────┬──────┘
+                  │                  │                  │
+                  │    ┌─────────────┴─────────────┐    │
+                  │    │                           │    │
+                  └────┤    Prometheus Operator    ├────┘
+                       │                           │
+                       └─────────────┬─────────────┘
+                                     │
+         ┌───────────────────────────┼───────────────────────────┐
+         │                           │                           │
+         ▼                           ▼                           ▼
+┌─────────────────┐      ┌─────────────────┐      ┌─────────────────┐
+│  ServiceMonitor │      │  PodMonitor     │      │ PrometheusRule  │
+│  (服务发现)      │      │  (Pod发现)      │      │  (告警规则)      │
+└────────┬────────┘      └────────┬────────┘      └─────────────────┘
+         │                        │
+         ▼                        ▼
+┌─────────────────┐      ┌─────────────────┐
+│  Target Apps    │      │  Node Exporter  │
+│  (业务应用)      │      │  (节点指标)      │
+└─────────────────┘      └─────────────────┘
+```
+
+## 数据流
+
+```
+┌──────────────┐     ┌──────────────┐     ┌──────────────┐     ┌──────────────┐
+│  Target      │────▶│  Prometheus  │────▶│ AlertManager │────▶│  Receiver    │
+│  (被监控端)   │Pull │  (采集存储)   │Alert│  (告警管理)   │Notify│  (通知渠道)   │
+└──────────────┘     └──────┬───────┘     └──────────────┘     └──────────────┘
+                            │Query
+                            ▼
+                     ┌──────────────┐
+                     │   Grafana    │
+                     │  (可视化)     │
+                     └──────────────┘
+```
+
+1. **数据采集**：Prometheus 通过 HTTP Pull 模式从 Target 拉取指标
+2. **规则评估**：Prometheus 定期评估告警规则，触发告警发送给 AlertManager
+3. **告警处理**：AlertManager 对告警进行分组、去重、抑制、路由
+4. **通知发送**：AlertManager 将告警发送到配置的接收器（邮件、Slack 等）
+5. **数据查询**：Grafana 通过 PromQL 查询 Prometheus 数据进行可视化
+
 # 二、部署
 
 ## 前提条件
@@ -909,6 +1032,83 @@ spec:
         type: basic 
         component: redis 
 ~~~
+
+## Prometheus 自身告警规则
+
+监控 Prometheus 自身健康状态的告警规则，覆盖配置重载、AlertManager 连接、规则评估、WAL 损坏、存储空间等：
+
+```yaml
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: prometheus-alerts
+  namespace: monitoring
+  labels:
+    prometheus: k8s
+    role: alert-rules
+spec:
+  groups:
+    - name: prometheus.service
+      rules:
+        - alert: PrometheusConfigurationReloadFailure
+          expr: prometheus_config_last_reload_successful != 1
+          for: 0m
+          labels: { severity: critical }
+          annotations:
+            summary: "Prometheus 配置重载失败"
+
+        - alert: PrometheusNotConnectedToAlertmanagers
+          expr: prometheus_notifications_alertmanagers_discovered < 1
+          for: 5m
+          labels: { severity: critical }
+          annotations:
+            summary: "Prometheus 未连接到 AlertManager"
+
+    - name: prometheus.performance
+      rules:
+        - alert: PrometheusRuleEvaluationSlow
+          expr: |
+            prometheus_rule_group_last_duration_seconds
+            / prometheus_rule_group_interval_seconds > 0.5
+          for: 5m
+          labels: { severity: warning }
+          annotations:
+            summary: "规则评估时间超过间隔的 50%"
+
+        - alert: PrometheusTSDBWALCorruptions
+          expr: tsdb_wal_corruptions_total > 0
+          for: 0m
+          labels: { severity: critical }
+          annotations:
+            summary: "Prometheus TSDB WAL 损坏"
+
+        - alert: PrometheusNotIngestingSamples
+          expr: rate(prometheus_tsdb_head_samples_appended_total[5m]) <= 0
+          for: 10m
+          labels: { severity: critical }
+          annotations:
+            summary: "过去 10 分钟未写入任何样本"
+
+        - alert: PrometheusQueryErrors
+          expr: |
+            rate(prometheus_http_requests_total{handler="/api/v1/query",code=~"5.."}[5m])
+            / rate(prometheus_http_requests_total{handler="/api/v1/query"}[5m]) > 0.05
+          for: 5m
+          labels: { severity: warning }
+          annotations:
+            summary: "查询 API 5xx 错误率超过 5%"
+
+    - name: prometheus.storage
+      rules:
+        - alert: PrometheusStorageRunningOut
+          expr: |
+            (prometheus_tsdb_retention_limit_bytes - prometheus_tsdb_storage_blocks_bytes)
+            / prometheus_tsdb_retention_limit_bytes < 0.1
+          for: 5m
+          labels: { severity: warning }
+          annotations:
+            summary: "Prometheus 存储空间剩余不足 10%"
+```
 
 # 七、AlertManager 配置与通知
 
