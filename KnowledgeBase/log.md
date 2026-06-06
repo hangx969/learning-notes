@@ -1317,3 +1317,12 @@ date: 2026-04-17
   3. 自定义 Recommender（Prometheus 后端 + 自定义历史窗口）
   4. 渐进式落地四阶段方法论
 - 更新来源摘要页 `KnowledgeBase/sources/k8s-scaling-storage-batch-summary.md`：VPA 条目补充增量内容摘要
+
+## [2026-06-06] ingest | K8s 发布策略（蓝绿部署与金丝雀发布）
+
+- 清洗原始文章 `0raw/蓝绿部署还是金丝雀发布...K8s生产发布再也不翻车.md`，去除营销内容
+- 清洗后文章存入 `Docker-Kubernetes/k8s-CICD/k8s发布策略-蓝绿部署与金丝雀发布.md`
+- 创建来源摘要页 `KnowledgeBase/sources/k8s-release-strategy-summary.md`
+- 更新概念页 `KnowledgeBase/concepts/CICD.md`：相关文章新增条目、标记"蓝绿/金丝雀"可延展方向已部分覆盖
+- 更新 `KnowledgeBase/index.md`：K8s CI/CD 分区新增发布策略条目
+- 与已有文章互补：deployment.md 有基础原理，istio.md 有服务网格方案，本文补充 Nginx Ingress 和 Argo Rollouts 两种生产级方案
