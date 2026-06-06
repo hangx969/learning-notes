@@ -1338,3 +1338,10 @@ date: 2026-04-17
   - 附录（新增）：PromQL 速查 + 版本兼容参考
 - 更新来源摘要页 `KnowledgeBase/sources/k8s-monitoring-logging-batch-summary.md`：扩展摘要描述
 - 去重策略：基础概念/Helm 部署/CRD 配置/AlertManager 路由等重复内容保留原有版本（更详细的实操内容），仅追加新文章的独特增量
+
+## [2026-06-06] update | Prometheus-Stack 文章补充缺失内容
+
+- 在 `Docker-Kubernetes/k8s-monitoring-logging/helm部署prometheus-stack全家桶.md` 补充以下缺失内容：
+  1. 一、概述章节：Prometheus 核心特性表 + 四种指标类型 + AlertManager 核心功能表 + 告警生命周期状态机 + kube-prometheus 组件总览 + CRD 速查表 + 整体架构图 + 数据流说明
+  2. 六、告警规则章节末尾：Prometheus 自身告警规则（配置重载失败/AlertManager 连接/规则评估/WAL 损坏/存储空间不足等）
+  3. 四、CRD 资源章节：常见应用 ServiceMonitor 配置（MySQL/Redis/Kafka/Elasticsearch/PostgreSQL Exporter 完整 YAML + 镜像版本参考）

@@ -803,6 +803,123 @@ helm upgrade -i commoninfra-kube-prometheus-config -n kube-system . --values ./v
   - prometheus-stack的values文件中有一个`ruleSelector`的选项，通过标签选择器来匹配PrometheusRule资源。
   - 默认情况下不做配置：匹配所有PrometheusRule资源
 
+## 常见应用 ServiceMonitor 配置
+
+### MySQL Exporter
+
+```yaml
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: mysql-exporter
+  namespace: monitoring
+  labels:
+    app: mysql-exporter
+    release: kube-prometheus-stack
+spec:
+  selector:
+    matchLabels: { app: mysql-exporter }
+  namespaceSelector:
+    matchNames: [database]
+  endpoints:
+    - port: metrics
+      path: /metrics
+      interval: 30s
+      metricRelabelings:
+        - sourceLabels: [__name__]
+          regex: '(mysql_global_status_.*|mysql_up|mysql_global_variables_.*)'
+          action: keep
+```
+
+> Exporter 镜像：`prom/mysqld-exporter:v0.15.1`，环境变量 `DATA_SOURCE_NAME="user:password@(mysql:3306)/"`，端口 9104
+
+### Redis Exporter
+
+```yaml
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: redis-exporter
+  namespace: monitoring
+  labels:
+    app: redis-exporter
+    release: kube-prometheus-stack
+spec:
+  selector:
+    matchLabels: { app: redis-exporter }
+  namespaceSelector:
+    matchNames: [database]
+  endpoints:
+    - port: metrics
+      path: /metrics
+      interval: 30s
+```
+
+> Exporter 镜像：`oliver006/redis_exporter:v1.55.0`，环境变量 `REDIS_ADDR`/`REDIS_PASSWORD`，端口 9121
+
+### Kafka Exporter
+
+```yaml
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: kafka-exporter
+  namespace: monitoring
+spec:
+  selector:
+    matchLabels: { app: kafka-exporter }
+  namespaceSelector:
+    matchNames: [messaging]
+  endpoints:
+    - port: metrics
+      path: /metrics
+      interval: 30s
+```
+
+> Exporter 镜像：`danielqsj/kafka-exporter:v1.7.0`，启动参数 `--kafka.server=kafka:9092`，端口 9308
+
+### Elasticsearch Exporter
+
+```yaml
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: elasticsearch-exporter
+  namespace: monitoring
+spec:
+  selector:
+    matchLabels: { app: elasticsearch-exporter }
+  namespaceSelector:
+    matchNames: [logging]
+  endpoints:
+    - port: metrics
+      path: /metrics
+      interval: 30s
+```
+
+> Exporter 镜像：`quay.io/prometheuscommunity/elasticsearch-exporter:v1.7.0`，参数 `--es.uri=http://elasticsearch:9200 --es.all --es.indices`，端口 9114
+
+### PostgreSQL Exporter
+
+```yaml
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: postgres-exporter
+  namespace: monitoring
+spec:
+  selector:
+    matchLabels: { app: postgres-exporter }
+  namespaceSelector:
+    matchNames: [database]
+  endpoints:
+    - port: metrics
+      path: /metrics
+      interval: 30s
+```
+
+> Exporter 镜像：`quay.io/prometheuscommunity/postgres-exporter:v0.15.0`，环境变量 `DATA_SOURCE_NAME`，端口 9187
+
 ## AlertmanagerConfig
 
 ~~~yaml
