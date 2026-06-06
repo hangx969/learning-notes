@@ -156,6 +156,7 @@ date: 2026-04-17
 | 页面 | 覆盖文档数 | 摘要 |
 |------|:---------:|------|
 | [Python](sources/python-batch-summary.md) | 27 | 基础语法、运维开发（SSH/subprocess/K8s API）、网络编程/前端、数据分析/AI、项目实战 |
+| [Script-Server](sources/script-server-summary.md) | 1 | Python 脚本 Web 化工具，JSON 配置零改动包装脚本为 Web 应用，支持 LDAP/OAuth + 审计日志 |
 
 ### Linux-Shell（已摄入 ✅）
 

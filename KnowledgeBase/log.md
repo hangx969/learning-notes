@@ -1345,3 +1345,9 @@ date: 2026-04-17
   1. 一、概述章节：Prometheus 核心特性表 + 四种指标类型 + AlertManager 核心功能表 + 告警生命周期状态机 + kube-prometheus 组件总览 + CRD 速查表 + 整体架构图 + 数据流说明
   2. 六、告警规则章节末尾：Prometheus 自身告警规则（配置重载失败/AlertManager 连接/规则评估/WAL 损坏/存储空间不足等）
   3. 四、CRD 资源章节：常见应用 ServiceMonitor 配置（MySQL/Redis/Kafka/Elasticsearch/PostgreSQL Exporter 完整 YAML + 镜像版本参考）
+
+## [2026-06-06] ingest | Script-Server 脚本 Web 化工具
+
+- 清洗原始文章 `0raw/Script-Server...` 并存入 `Python/script-server-脚本Web化工具.md`
+- 创建来源摘要页 `KnowledgeBase/sources/script-server-summary.md`
+- 更新 `KnowledgeBase/index.md`：Python 分区新增条目
