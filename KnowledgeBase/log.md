@@ -1371,3 +1371,15 @@ date: 2026-04-17
 - 创建来源摘要页 `KnowledgeBase/sources/claude-md-maintenance-summary.md`
 - 更新 `KnowledgeBase/index.md`：AI/ClaudeCode 分区新增条目
 - 与已有文章的关系：`12条规则模板.md`（具体规则）和 `21条指令清单.md`（拿来即用指令）侧重内容，本文侧重维护方法论和架构设计，三者互补
+
+## [2026-06-07] restructure | CLAUDE.md 三篇文章合并为完全指南
+
+- 将三篇 CLAUDE.md 相关文章合并为一篇：
+  - `AI/ClaudeCode/CLAUDE.md最佳实践-12条规则模板.md`（写什么：Mnilax 12 条规则）
+  - `AI/ClaudeCode/CLAUDE.md最佳实践-21条指令清单.md`（怎么写：Mayank 21 条指令）
+  - `AI/ClaudeCode/CLAUDE.md维护工程-四层加载与指令预算.md`（怎么管：加载体系+指令预算）
+- 合并后文件：`AI/ClaudeCode/CLAUDE.md完全指南-规则-指令-维护工程.md`
+- 章节结构：概念 → 四层加载 → 指令预算 → 好坏规则 → 12 条规则模板 → 21 条指令清单 → rules/ 目录 → /init vs /memory → 配置四角色 → 官方结构 → 实战模板
+- 创建新来源摘要 `KnowledgeBase/sources/claude-md-complete-guide-summary.md`
+- 更新 `KnowledgeBase/index.md`：替换旧条目为新的合并条目
+- 旧的三篇原始文件保留未删除，由用户决定是否清理
