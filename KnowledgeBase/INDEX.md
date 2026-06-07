@@ -106,7 +106,7 @@ date: 2026-04-17
 | [Obsidian可视化Skills](sources/obsidian-visual-skills-summary.md) | [AI/Obsidian/Obsidian可视化Skills](../AI/Obsidian/Obsidian可视化Skills-Excalidraw-Mermaid-Canvas.md) | AI Skills 生成可编辑图表：Excalidraw/Mermaid/Canvas 三种格式 |
 | [Skill Craft](sources/skill-craft-summary.md) | [AI/ClaudeCode/Claude-Skill质检工具-SkillCraft](../AI/ClaudeCode/Claude-Skill质检工具-SkillCraft.md) | Skill 质量工程：7 类失效模式、三层评估体系、check/fix/create/audit 四模式 |
 | [Harness 实战](sources/harness-system-summary.md) | [AI/ClaudeCode/Claude-Code-Harness实战-最小可用系统](../AI/ClaudeCode/Claude-Code-Harness实战-最小可用系统.md) | Harness 四层安全约束：约束层/工具层/中间件层/编排层 + Hooks 拦截器 + Git 门禁 |
-| [CLAUDE.md 维护工程](sources/claude-md-maintenance-summary.md) | [[AI/ClaudeCode/CLAUDE.md维护工程-四层加载与指令预算]] | 四层加载体系、指令预算（arXiv 论文）、rules/ 精准投放、配置体系四角色分工、/init vs /memory |
+| [CLAUDE.md 完全指南](sources/claude-md-complete-guide-summary.md) | [[AI/ClaudeCode/CLAUDE.md完全指南-规则-指令-维护工程]] | 三篇合并：12 条行为规则（错误率 41%→3%）+ 21 条指令清单（五维度）+ 四层加载/指令预算/rules/ 精准投放/配置体系四角色 |
 
 ### AI/skills（自研 Skills ✅）
 
