@@ -36,7 +36,7 @@ ClaudeCode基础指南
 ```
 
 **核心文章：**
-- [[AI/ClaudeCode/ClaudeCode基础指南|ClaudeCode基础指南]] — 从零开始
+- [[Claude Code 基础指南|Claude Code 基础指南]] — 从零开始
 - [[AI/ClaudeCode/Claude Code 扩展体系|扩展体系]] — ==MCP、Skills、Slash Commands、Plugin 四层扩展机制全解==
 - [[AI/ClaudeCode/多智能体协作-Subagents与Agent-Teams|多智能体协作]] — Subagents + Agent Teams
 

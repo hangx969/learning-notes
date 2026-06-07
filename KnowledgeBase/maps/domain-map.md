@@ -107,7 +107,7 @@ date: 2026-04-16
 - `OpenClaw/`（7 篇）— 基础安装、Channels、Skills、AIOps、多智能体、CoPaw
 
 **代表性文章：**
-- [[AI/ClaudeCode/ClaudeCode基础指南|ClaudeCode基础指南]] — Claude Code 全面指南
+- [[Claude Code 基础指南|Claude Code 基础指南]] — Claude Code 全面指南
 - [[AI/OpenClaw/OpenClaw-基础-安装|OpenClaw-基础-安装]] — OpenClaw 入门
 - [[AI/OpenClaw/Openclaw-多智能体|Openclaw-多智能体]] — 多智能体架构（2974 行，全库最大）
 

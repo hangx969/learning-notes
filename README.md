@@ -49,7 +49,7 @@
 7. [K8s 成本优化](./Docker-Kubernetes/k8s-scaling/k8s成本优化方案-FinOps实战.md) → FinOps 实战
 
 ### AI 赋能运维
-1. [Claude Code 指南](./AI/ClaudeCode/ClaudeCode基础指南.md) → 入门必读
+1. [Claude Code 指南](Claude%20Code%20基础指南.md) → 入门必读
 2. [扩展体系（MCP/Skills/Plugin）](./AI/ClaudeCode/Claude%20Code%20扩展体系.md) → 四层扩展机制
 3. [CLAUDE.md 12 条规则](./AI/ClaudeCode/CLAUDE.md最佳实践-12条规则模板.md) → 错误率 41%→3%
 4. [为什么 grep 不用 RAG](./AI/ClaudeCode/Claude-Code为什么用grep不用RAG.md) → Agentic Search 架构

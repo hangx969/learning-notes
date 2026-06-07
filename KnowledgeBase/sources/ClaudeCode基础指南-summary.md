@@ -5,13 +5,13 @@ tags:
   - ai/claude-code
 date: 2026-04-17
 sources:
-  - "[[AI/ClaudeCode/ClaudeCode基础指南]]"
+  - "[[Claude Code 基础指南]]"
 ---
 
 # ClaudeCode基础指南
 
 ## 元信息
-- **原始文档**：[[AI/ClaudeCode/ClaudeCode基础指南]]
+- **原始文档**：[[Claude Code 基础指南]]
 - **领域**：AI / Claude Code
 - **摄入日期**：2026-04-17
 

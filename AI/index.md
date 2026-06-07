@@ -20,7 +20,7 @@
 
 ## 关键入口
 
-- [[AI/ClaudeCode/ClaudeCode基础指南]] — Claude Code 入门必读
+- [[Claude Code 基础指南]] — Claude Code 入门必读
 - [[AI/ClaudeCode/Claude Code 扩展体系]] — MCP/Skills/Slash Commands/Plugin 四层扩展
 - [[AI/OpenClaw/OpenClaw-基础-安装]] — OpenClaw 入门
 - [[AI/Obsidian/obsidian-claude-code-AI知识库完整指南]] — Obsidian+Claude Code 知识库完整指南（理念+搭建+操作+计划）

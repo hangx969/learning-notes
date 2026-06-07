@@ -123,7 +123,7 @@ date: 2026-04-16
 
 **与当前仓库的关系：**
 - [[AI/OpenClaw/Openclaw-AIOps|Openclaw-AIOps]]
-- [[AI/ClaudeCode/ClaudeCode基础指南|ClaudeCode基础指南]]
+- [[Claude Code 基础指南|Claude Code 基础指南]]
 - [[Python/python-运维开发/python-Linux-operation|python-Linux-operation]]
 
 **能补上的空白：** AI 工具从"会用"到"用好"的实战桥梁

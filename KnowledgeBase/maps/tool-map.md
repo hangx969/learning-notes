@@ -18,7 +18,7 @@ date: 2026-04-16
 
 ### Claude Code
 **相关文档（7 篇）：**
-- [[AI/ClaudeCode/ClaudeCode基础指南|ClaudeCode基础指南]] ⭐ 推荐入口
+- [[Claude Code 基础指南|Claude Code 基础指南]] ⭐ 推荐入口
 - [[AI/ClaudeCode/Claude Code 扩展体系|扩展体系]] — MCP + Skills + Slash Commands + Plugin 四层扩展机制
 - [[AI/ClaudeCode/多智能体协作-Subagents与Agent-Teams|多智能体协作]] — Subagents 与 Agent Teams
 - [[AI/ClaudeCode/Claude-Skill质检工具-SkillCraft|Skill Craft 质检工具]] — Skill 质量工程（7 类失效模式 + 三层评估）

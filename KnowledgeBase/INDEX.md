@@ -99,7 +99,7 @@ date: 2026-04-17
 
 | 页面 | 原始来源 | 摘要 |
 |------|---------|------|
-| [ClaudeCode基础指南](sources/ClaudeCode基础指南-summary.md) | [AI/ClaudeCode/ClaudeCode基础指南](../AI/ClaudeCode/ClaudeCode基础指南.md) | 3 种模式、Extended Thinking、Claude.md、Spec 工作流、5 大实战场景 |
+| [ClaudeCode基础指南](sources/ClaudeCode基础指南-summary.md) | [AI/ClaudeCode/ClaudeCode基础指南](Claude%20Code%20基础指南.md) | 3 种模式、Extended Thinking、Claude.md、Spec 工作流、5 大实战场景 |
 | [扩展体系](sources/Claude-Code扩展体系-summary.md) | [AI/ClaudeCode/Claude Code 扩展体系](../AI/ClaudeCode/Claude%20Code%20扩展体系.md) | 四层扩展机制全解：MCP（10+ 服务器）、Skills（3 层模式）、Slash Commands、Plugin |
 | [多智能体协作](sources/多智能体协作-summary.md) | [AI/ClaudeCode/多智能体协作-Subagents与Agent-Teams](../AI/ClaudeCode/多智能体协作-Subagents与Agent-Teams.md) | Subagents（5 组件、适用场景评级）+ Agent Teams（Team Lead/Teammates/Task List/Mailbox） |
 | [AI知识库完整指南](sources/obsidian-claude-AI知识库完整指南-summary.md) | [[AI/Obsidian/obsidian-claude-code-AI知识库完整指南]] | Markdown 母语论证、Karpathy Wiki 三层架构、30 分钟四步上手、六大操作谱系、三个集成工具、改造计划（三篇合并） |
@@ -288,7 +288,7 @@ date: 2026-04-17
 | HPC | 7 | 🟡 | [CentOS7-slurm23.02-二进制安装](../HPC/CentOS7-slurm23.02-二进制安装.md) |
 | GPU-DeepLearning | 4 | 🟠 | [GPU-basics](../GPU-DeepLearning/GPU-basics.md) |
 | Database | 3 | 🟡 | [MySQL入门](../Database/MySQL入门.md) |
-| Middlewares | 3 | 🔴 | [Kafka](../Middlewares/Kafka.md) |
+| Middl[Claude Code 基础指南](Claude%20Code%20基础指南.md)
 | OS | 3 | 🟠 | [OS](../OS/OS.md) |
 | Networking | 2 | 🟠 | [计算机网络基础](../Networking/计算机网络基础.md) |
 | IaC | 3 | 🟡 | [terraform-basics](../IaC/terraform-basics.md) |
