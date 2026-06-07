@@ -7,7 +7,7 @@ tags:
   - MCP
 date: 2026-06-07
 sources:
-  - "[[AI/Kubernetes-MCP-Server-Dify智能运维]]"
+  - "[[Kubernetes-MCP-Server-Dify智能运维]]"
 aliases:
   - K8s MCP Server摘要
 ---
@@ -15,7 +15,7 @@ aliases:
 # Kubernetes MCP Server + Dify 智能运维
 
 ## 元信息
-- **原始文档**：[[AI/Kubernetes-MCP-Server-Dify智能运维]]
+- **原始文档**：[[Kubernetes-MCP-Server-Dify智能运维]]
 - **领域**：AI / AIOps / Kubernetes
 - **摄入日期**：2026-06-07
 
