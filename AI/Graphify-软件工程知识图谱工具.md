@@ -185,6 +185,15 @@ python -m graphify.serve graphify-out/graph.json
 
 ## 团队协作
 
+### 推荐流程
+
+1. 一个人在项目里运行 `/graphify .`
+2. 提交 `graphify-out/` 到 git
+3. 其他人拉取代码后，AI 助手可直接读取图谱
+4. 后续通过 `--update` 或 git hook 增量更新
+
+### 常用操作
+
 ```bash
 # 提交图谱到 git（团队共享）
 git add graphify-out/
@@ -193,15 +202,28 @@ git add graphify-out/
 # graphify-out/manifest.json
 # graphify-out/cost.json
 
-# .graphifyignore 排除不需要的文件
-# node_modules/
-# dist/
-
-# 安装 git hook，commit 后自动重建图谱
+# 安装 git hook，commit 后自动重建图谱（代码 AST 部分无 API 成本）
+# 同时设置 git merge driver，避免 graph.json 在多人并行提交时留下冲突标记
 graphify hook install
 
 # 合并多个图谱
 graphify merge-graphs a.json b.json
+```
+
+### .graphifyignore
+
+语法与 `.gitignore` 类似，支持 `!` 取反：
+
+```
+# .graphifyignore
+node_modules/
+dist/
+*.generated.py
+
+# 只索引 src/，忽略其他内容
+*
+!src/
+!src/**
 ```
 
 ## 隐私与成本
@@ -209,7 +231,18 @@ graphify merge-graphs a.json b.json
 - **代码文件**：通过 tree-sitter 本地处理，不离开机器
 - **视频/音频**：可通过 faster-whisper 本地转录
 - **文档/PDF/图片**：通常需发送给 AI 模型做语义提取——企业项目需确认数据边界
-- 环境变量配置后端：`ANTHROPIC_API_KEY`（Claude）、`OPENAI_API_KEY`、`OLLAMA_BASE_URL`（本地）等
+在 headless 或 CI 场景下，通过环境变量指定不同后端：
+
+| 环境变量 | 用途 |
+|----------|------|
+| `ANTHROPIC_API_KEY` | Claude 后端 |
+| `GEMINI_API_KEY` 或 `GOOGLE_API_KEY` | Gemini 后端 |
+| `OPENAI_API_KEY` | OpenAI 或兼容 API |
+| `MOONSHOT_API_KEY` | Kimi Code 后端 |
+| `OLLAMA_BASE_URL` | Ollama 本地推理地址 |
+| `AWS_*` 或 `~/.aws/credentials` | AWS Bedrock |
+
+使用前最好先划清边界：哪些文件进图谱、哪些忽略、哪些资料可发给模型、哪些只能本地处理
 
 ## 使用注意
 
