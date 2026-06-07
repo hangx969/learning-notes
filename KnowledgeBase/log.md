@@ -1411,3 +1411,10 @@ date: 2026-04-17
 - 清洗后文章存入 `AI/RAG/OpenRAG生产级知识库架构实战.md`，完整保留：四面分离架构图、文档导入链路设计（含状态机+Worker 职责拆分）、Chunk 元数据模型、OpenSearch Mapping 示例、混合检索代码骨架、Reranker 实现骨架、权限模型（ACL 字段+检索前过滤+生成前复核）、问答服务骨架、K8s 部署拆分 YAML、缓存分层示例、SLI/SLO 指标、演进路线三阶段、真实案例、Agentic RAG 策略、MCP 接入、排坑清单、上线前 Checklist
 - 创建来源摘要页 `KnowledgeBase/sources/openrag-production-summary.md`
 - 更新 `KnowledgeBase/index.md`：AI/RAG-Agent 分区新增条目
+
+## [2026-06-08] ingest | CodeGraph 代码语义知识图谱
+
+- 清洗原始文章 `0raw/CodeGraph：给 Claude Code 先画一张代码地图...` 并存入 `AI/ClaudeCode/CodeGraph-代码语义知识图谱.md`
+- 保留完整内容：问题背景、效果数据（VS Code 实测对比）、核心能力（影响分析/19 种语言/框架路由/本地数据/自动同步）、安装命令、适用场景分析、与 Graphify 的对比表
+- 创建来源摘要页 `KnowledgeBase/sources/codegraph-summary.md`
+- 更新 `KnowledgeBase/index.md`：AI/ClaudeCode 分区新增条目
