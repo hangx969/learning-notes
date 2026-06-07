@@ -33,7 +33,7 @@ date: 2026-04-16
 5. [[AI/ClaudeCode/Claude-Code-Harness实战-最小可用系统|Harness 实战]] — 四层约束架构 + Git 门禁，系统强制执行安全边界
 6. [[AI/ClaudeCode/CLAUDE.md最佳实践-21条指令清单|CLAUDE.md 21 条指令]] — 五维度通用指令清单（沟通/行为/上下文/记忆/安全）
 7. [[AI/ClaudeCode/CLAUDE.md最佳实践-12条规则模板|CLAUDE.md 12 条规则]] — Karpathy 4 条 + 8 条新规则，实测错误率 41%→3%
-8. [[AI/ClaudeCode/code-review-graph-本地代码知识图谱|code-review-graph 代码知识图谱]] — 本地 AST 图谱 + MCP 接入，blast-radius 影响范围分析
+8. [[code-review-graph-本地代码知识图谱|code-review-graph 代码知识图谱]] — 本地 AST 图谱 + MCP 接入，blast-radius 影响范围分析
 
 ### OpenClaw 路径
 1. [[AI/OpenClaw/OpenClaw-基础-安装|OpenClaw-基础-安装]] — 入门安装

@@ -5,7 +5,7 @@ tags:
   - AI/tools
 date: 2026-06-07
 sources:
-  - "[[AI/Graphify-软件工程知识图谱工具]]"
+  - "[[Graphify-软件工程知识图谱工具]]"
 aliases:
   - Graphify摘要
 ---
@@ -13,7 +13,7 @@ aliases:
 # Graphify 软件工程知识图谱工具
 
 ## 元信息
-- **原始文档**：[[AI/Graphify-软件工程知识图谱工具]]
+- **原始文档**：[[Graphify-软件工程知识图谱工具]]
 - **领域**：AI / 代码理解工具
 - **摄入日期**：2026-06-07
 
