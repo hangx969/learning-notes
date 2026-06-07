@@ -186,6 +186,7 @@ date: 2026-04-17
 | [RAG-Agent](sources/rag-agent-batch-summary.md) | 33 | 企业级 RAG 知识库系统，Spring Boot 3.4.2 + ES 8.10 混合检索 + Kafka 异步处理 + MinIO 存储 |
 | [RAG PDF 解析](sources/rag-pdf-parsing-summary.md) | 1 | PDF 解析难点（无语义结构）、三大技术路线（文本提取/OCR/VLM）、四类工具方案、7 个生产问题 |
 | [[Confluence-Wiki-RAG知识库增强检索系统]] | 1 | Confluence + Qdrant + LiteLLM + FastAPI + Vue 全链路 RAG，正文/评论/附件/图片/draw.io 全量打通 |
+| [OpenRAG 生产级架构](sources/openrag-production-summary.md) | 1 | 企业级 RAG 平台完整架构：四面分离/异步导入/Chunk建模/混合检索/Reranker/权限模型/K8s高并发/缓存/可观测性/演进路线（21章） |
 
 ### AI/Hermes-agent（已摄入 ✅）
 

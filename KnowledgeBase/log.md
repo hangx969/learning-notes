@@ -1404,3 +1404,10 @@ date: 2026-04-17
 - 清洗后文章存入 `AI/AIOps/AIOps实战-Golang手搓K8s智能运维工具链.md`，保留完整背景说明、三层架构图、Go 源码（client-go 三客户端/OpenAI 适配层）、Function Calling 工作流四步骤、DeepRui 诊断流程四步、传统脚本 vs DeepRui 对比表、技术栈参考资料
 - 创建来源摘要页 `KnowledgeBase/sources/aiops-golang-k8s-toolchain-summary.md`
 - 更新 `KnowledgeBase/index.md`：AI/工具分区新增条目
+
+## [2026-06-07] ingest | OpenRAG 生产级知识库架构实战
+
+- 清洗原始文章 `0raw/OpenRAG 生产级知识库架构实战...企业级 RAG 平台.md`（66KB），去除营销尾部，保留全部 21 章技术内容（42KB）
+- 清洗后文章存入 `AI/RAG/OpenRAG生产级知识库架构实战.md`，完整保留：四面分离架构图、文档导入链路设计（含状态机+Worker 职责拆分）、Chunk 元数据模型、OpenSearch Mapping 示例、混合检索代码骨架、Reranker 实现骨架、权限模型（ACL 字段+检索前过滤+生成前复核）、问答服务骨架、K8s 部署拆分 YAML、缓存分层示例、SLI/SLO 指标、演进路线三阶段、真实案例、Agentic RAG 策略、MCP 接入、排坑清单、上线前 Checklist
+- 创建来源摘要页 `KnowledgeBase/sources/openrag-production-summary.md`
+- 更新 `KnowledgeBase/index.md`：AI/RAG-Agent 分区新增条目
