@@ -212,6 +212,7 @@ date: 2026-04-17
 | 页面 | 覆盖文档数 | 摘要 |
 |------|:---------:|------|
 | [Graphify](sources/graphify-summary.md) | 1 | 软件工程知识图谱工具，代码 AST 本地解析 + 文档 AI 语义提取，支持关系查询/MCP Server/团队协作 |
+| [K8s MCP Server + Dify](sources/k8s-mcp-server-dify-summary.md) | 1 | Dify + Kubernetes MCP Server 智能运维，实时集群感知/自然语言运维/自动故障分析/企业知识库 |
 
 ### IaC/Terraform 容器管理（已摄入 ✅）
 

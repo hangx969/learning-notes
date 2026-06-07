@@ -1390,3 +1390,10 @@ date: 2026-04-17
 - 清洗后文章存入 `AI/Graphify-软件工程知识图谱工具.md`
 - 创建来源摘要页 `KnowledgeBase/sources/graphify-summary.md`
 - 更新 `KnowledgeBase/index.md`：新增 AI/工具分区
+
+## [2026-06-07] ingest | Kubernetes MCP Server + Dify 智能运维
+
+- 清洗原始文章 `0raw/AI 接管 Kubernetes 运维——Kubernetes MCP Server.md`
+- 清洗后文章存入 `AI/Kubernetes-MCP-Server-Dify智能运维.md`，保留完整背景说明、四大核心特点详述、四大使用场景、架构图、部署命令（含参数说明）、MCP 连接配置、Agent 完整提示词模板
+- 创建来源摘要页 `KnowledgeBase/sources/k8s-mcp-server-dify-summary.md`
+- 更新 `KnowledgeBase/index.md`：AI/工具分区新增条目
