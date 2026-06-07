@@ -83,9 +83,34 @@ graphify cursor install
 graphify vscode install
 ```
 
-支持平台：Claude Code、Codex、Cursor、Gemini CLI、GitHub Copilot CLI、VS Code Copilot、Aider、Kimi Code、Kiro、Trae 等。
+支持平台：Claude Code、Codex、OpenCode、Cursor、Gemini CLI、GitHub Copilot CLI、VS Code Copilot Chat、Aider、Kimi Code、Kiro、Trae 等。
 
-## 基本使用
+**Codex 用户注意**：使用 `$graphify` 而非 `/graphify`，且需在 `~/.codex/config.toml` 的 `[features]` 下开启：
+
+```toml
+multi_agent = true
+```
+
+**Windows PowerShell 注意**：PowerShell 会把开头的 `/` 当路径分隔符，不要写 `/graphify .`，直接在终端运行 `graphify .`。
+
+## 常用查询方式
+
+生成图谱只是第一步。更常用的场景是围绕这张图继续提问。与 grep 的区别：grep 找"关键词在哪"，Graphify 追"模块/概念/文档之间怎么连起来"。
+
+### 接手陌生项目的典型流程
+
+```bash
+# 第一步：生成图谱
+/graphify .
+
+# 第二步：先读报告（项目图谱的"导读"）
+# 打开 graphify-out/GRAPH_REPORT.md
+
+# 第三步：围绕关键模块追问
+/graphify query "show the auth flow"
+```
+
+### 查询命令
 
 ```bash
 # 生成图谱
@@ -100,20 +125,30 @@ graphify .           # 终端
 
 # 解释节点
 /graphify explain "RateLimiter"
+```
 
-# 增量更新（不全量重跑）
+如果已有 `graph.json`，也可以从终端直接查询：
+
+```bash
+graphify query "what connects DigestAuth to Response?" --graph graphify-out/graph.json
+```
+
+### 更新与导出
+
+```bash
+# 增量更新（只更新变化文件，不全量重跑）
 /graphify ./docs --update
 
-# 只重新聚类
+# 只重新聚类，不重新抽取内容
 /graphify . --cluster-only
 
-# 不生成 HTML
+# 不生成 HTML（大项目节省时间）
 /graphify . --no-viz
 
 # 生成 Markdown wiki
 /graphify . --wiki
 
-# 导出可读架构页面
+# 导出可读架构和调用流页面（适合团队内部项目讲解）
 graphify export callflow-html
 ```
 
