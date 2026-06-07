@@ -1364,3 +1364,10 @@ date: 2026-04-17
   6. 好引用 vs 坏引用 + 子文件不循环引用原则
   7. 实战演进案例（1900 行→612 行，token 从 28K 降到 12K）
   8. Skill 间 handoff 协议设计
+
+## [2026-06-07] ingest | CLAUDE.md 维护工程
+
+- 清洗原始文章 `0raw/腾讯面试官...CLAUDE.md...init...` 并存入 `AI/ClaudeCode/CLAUDE.md维护工程-四层加载与指令预算.md`
+- 创建来源摘要页 `KnowledgeBase/sources/claude-md-maintenance-summary.md`
+- 更新 `KnowledgeBase/index.md`：AI/ClaudeCode 分区新增条目
+- 与已有文章的关系：`12条规则模板.md`（具体规则）和 `21条指令清单.md`（拿来即用指令）侧重内容，本文侧重维护方法论和架构设计，三者互补
