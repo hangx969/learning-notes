@@ -1383,3 +1383,10 @@ date: 2026-04-17
 - 创建新来源摘要 `KnowledgeBase/sources/claude-md-complete-guide-summary.md`
 - 更新 `KnowledgeBase/index.md`：替换旧条目为新的合并条目
 - 旧的三篇原始文件保留未删除，由用户决定是否清理
+
+## [2026-06-07] ingest | Graphify 软件工程知识图谱工具
+
+- 清洗原始文章 `0raw/开源 AI 编程可查询的软件工程知识图谱：Graphify 完整上手攻略.md`
+- 清洗后文章存入 `AI/Graphify-软件工程知识图谱工具.md`
+- 创建来源摘要页 `KnowledgeBase/sources/graphify-summary.md`
+- 更新 `KnowledgeBase/index.md`：新增 AI/工具分区

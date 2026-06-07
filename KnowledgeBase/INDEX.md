@@ -207,6 +207,12 @@ date: 2026-04-17
 |------|:---------:|------|
 | [HarnessKit](sources/harnesskit-summary.md) | 1 | AI 编码智能体统一管理工具，Rust 编写，支持 7 种 Agent 的 Skills/MCP/Plugins/Hooks 跨平台管理与安全审计 |
 
+### AI/工具（已摄入 ✅）
+
+| 页面 | 覆盖文档数 | 摘要 |
+|------|:---------:|------|
+| [Graphify](sources/graphify-summary.md) | 1 | 软件工程知识图谱工具，代码 AST 本地解析 + 文档 AI 语义提取，支持关系查询/MCP Server/团队协作 |
+
 ### IaC/Terraform 容器管理（已摄入 ✅）
 
 | 页面 | 覆盖文档数 | 摘要 |
