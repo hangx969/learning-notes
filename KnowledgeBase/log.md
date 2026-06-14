@@ -1418,3 +1418,16 @@ date: 2026-04-17
 - 保留完整内容：问题背景、效果数据（VS Code 实测对比）、核心能力（影响分析/19 种语言/框架路由/本地数据/自动同步）、安装命令、适用场景分析、与 Graphify 的对比表
 - 创建来源摘要页 `KnowledgeBase/sources/codegraph-summary.md`
 - 更新 `KnowledgeBase/index.md`：AI/ClaudeCode 分区新增条目
+
+
+## [2026-06-14] ingest | Claude Fable 5 System Prompt
+
+- 摄入 `AI/ClaudeCode/Claude-Fable-5-system-prompt.md`（~125K 字符完整系统提示词）
+- 创建来源摘要页 `KnowledgeBase/sources/claude-fable5-system-prompt-summary.md`，提炼 11 个关键知识点：产品定位（Mythos-class）、产品生态（Cowork/Chrome/Excel/PPT Agent）、行为规约（refusal/tone/wellbeing/evenhandedness）、~15 个内置工具、沙箱架构、Artifact 系统、Claudeception、MCP 连接器流程、版权合规硬限制、Skill 强制规则、搜索决策规则
+- 更新实体页 `KnowledgeBase/entities/Claude-Code.md`：新增 sources 引用、新增"内部架构（来自 Fable 5 系统提示词）"小节、新增"在本仓库中的覆盖"条目、更新知识空白
+- 更新 `KnowledgeBase/index.md`：AI/ClaudeCode 分区新增条目
+
+## [2026-06-14] update | CodeGraph 文件引用检查
+
+- 用户将 `AI/ClaudeCode/CodeGraph-代码语义知识图谱.md` 移动至 `AI/代码知识图谱/CodeGraph-代码语义知识图谱.md`
+- 检查所有 wiki 页面引用：均使用短格式 wikilink `[[CodeGraph-代码语义知识图谱]]`，Obsidian 自动按文件名解析，无需修改
