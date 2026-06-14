@@ -6,7 +6,7 @@ tags:
   - code-understanding
 date: 2026-06-08
 sources:
-  - "[[AI/ClaudeCode/CodeGraph-代码语义知识图谱]]"
+  - "[[CodeGraph-代码语义知识图谱]]"
 aliases:
   - CodeGraph摘要
 ---
@@ -14,7 +14,7 @@ aliases:
 # CodeGraph 代码语义知识图谱
 
 ## 元信息
-- **原始文档**：[[AI/ClaudeCode/CodeGraph-代码语义知识图谱]]
+- **原始文档**：[[CodeGraph-代码语义知识图谱]]
 - **领域**：AI / Claude Code / 代码理解
 - **摄入日期**：2026-06-08
 

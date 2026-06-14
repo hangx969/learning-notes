@@ -107,7 +107,7 @@ date: 2026-04-17
 | [Skill Craft](sources/skill-craft-summary.md) | [AI/ClaudeCode/Claude-Skill质检工具-SkillCraft](../AI/ClaudeCode/Claude-Skill质检工具-SkillCraft.md) | Skill 质量工程：7 类失效模式、三层评估体系、check/fix/create/audit 四模式 |
 | [Harness 实战](sources/harness-system-summary.md) | [AI/ClaudeCode/Claude-Code-Harness实战-最小可用系统](../AI/ClaudeCode/Claude-Code-Harness实战-最小可用系统.md) | Harness 四层安全约束：约束层/工具层/中间件层/编排层 + Hooks 拦截器 + Git 门禁 |
 | [CLAUDE.md 完全指南](sources/claude-md-complete-guide-summary.md) | [[AI/ClaudeCode/CLAUDE.md完全指南-规则-指令-维护工程]] | 三篇合并：12 条行为规则（错误率 41%→3%）+ 21 条指令清单（五维度）+ 四层加载/指令预算/rules/ 精准投放/配置体系四角色 |
-| [CodeGraph](sources/codegraph-summary.md) | [[AI/ClaudeCode/CodeGraph-代码语义知识图谱]] | 代码语义图谱，工具调用减少 92%、探索速度提升 71%，19 种语言 + 框架路由映射，本地 AST 不依赖外部 |
+| [CodeGraph](sources/codegraph-summary.md) | [[CodeGraph-代码语义知识图谱]] | 代码语义图谱，工具调用减少 92%、探索速度提升 71%，19 种语言 + 框架路由映射，本地 AST 不依赖外部 |
 
 ### AI/skills（自研 Skills ✅）
 
