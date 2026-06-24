@@ -5,7 +5,9 @@ tags:
   - AI/claude-code
 date: 2026-06-07
 sources:
-  - "[[AI/ClaudeCode/CLAUDE.md完全指南-规则-指令-维护工程]]"
+  - "[[CLAUDE.md最佳实践-12条规则模板]]"
+  - "[[CLAUDE.md最佳实践-21条指令清单]]"
+  - "[[CLAUDE.md维护工程-四层加载与指令预算]]"
 aliases:
   - CLAUDE.md完全指南摘要
 ---
