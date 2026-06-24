@@ -1431,3 +1431,11 @@ date: 2026-04-17
 
 - 用户将 `AI/ClaudeCode/CodeGraph-代码语义知识图谱.md` 移动至 `AI/代码知识图谱/CodeGraph-代码语义知识图谱.md`
 - 检查所有 wiki 页面引用：均使用短格式 wikilink `[[CodeGraph-代码语义知识图谱]]`，Obsidian 自动按文件名解析，无需修改
+
+
+## [2026-06-24] lint | 全量健康检查
+
+- 并行执行 6 维度 lint：断链检查、孤儿页、交叉引用、来源时效性、Frontmatter 一致性、模板合规
+- 检查 113 个 wiki 页面 + 全库原始来源文件
+- 核心发现：234 处断链（主要集中在批量摘要的短路径）、29 孤儿页（核心页 0 孤儿）、122 处缺失交叉引用、4 篇严重过期摘要、4 篇 index.md 缺失条目
+- 生成完整报告 `KnowledgeBase/maintenance/lint-report-2026-06-24.md`，含 13 条优先修复清单
