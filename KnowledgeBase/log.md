@@ -1439,3 +1439,11 @@ date: 2026-04-17
 - 检查 113 个 wiki 页面 + 全库原始来源文件
 - 核心发现：234 处断链（主要集中在批量摘要的短路径）、29 孤儿页（核心页 0 孤儿）、122 处缺失交叉引用、4 篇严重过期摘要、4 篇 index.md 缺失条目
 - 生成完整报告 `KnowledgeBase/maintenance/lint-report-2026-06-24.md`，含 13 条优先修复清单
+
+
+## [2026-06-24] lint-fix | 高优先修复
+
+- **断链修复**：`claude-md-complete-guide-summary.md` 引用的 `CLAUDE.md完全指南-规则-指令-维护工程` 文件不存在（三篇合并文件从未创建），改为引用 3 篇独立原始文件：`CLAUDE.md最佳实践-12条规则模板`、`CLAUDE.md最佳实践-21条指令清单`、`CLAUDE.md维护工程-四层加载与指令预算`
+- **index.md 同步更新**该条目的引用
+- **index.md 补充 4 篇缺失条目**：`claude-md-maintenance-summary`（AI/ClaudeCode 分区）、`k8s-cgroup-v2-summary`（K8s 安装管理分区）、`kyverno-1.18-summary`（K8s 安全认证分区）、`rabbitmq-ha-summary`（K8s 中间件分区）
+- **确认 5 处"路径不匹配"为 lint 误报**：均使用短格式 wikilink，Obsidian 按文件名解析正常工作

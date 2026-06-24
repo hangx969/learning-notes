@@ -133,13 +133,16 @@ date: 2026-04-17
 | [K8s 基础资源](sources/k8s-basic-resources-batch-summary.md) | 21 | Pod/Deployment/Service/Ingress/ConfigMap/Storage/RBAC/CRD/Operator/API Server 深度剖析 |
 | [K8s PDB 实战](sources/k8s-pdb-summary.md) | 1 | PodDisruptionBudget 自愿中断保护、四大配置陷阱、与 drain/滚动更新/HPA 的配合 |
 | [K8s 安装管理](sources/k8s-installation-management-batch-summary.md) | 17 | v1.20→v1.35 安装演进、企业高可用、etcd HA、运行时迁移、cgroup v2 |
+| [K8s CGroup v2](sources/k8s-cgroup-v2-summary.md) | 1 | cgroup v1→v2 架构演进、K8s 实战配置（kubelet/containerd 对齐）、5 个生产踩坑案例、Prometheus 监控告警 |
 | [K8s 监控日志](sources/k8s-monitoring-logging-batch-summary.md) | 22 | Prometheus 全栈、EFK/Loki 日志、Jaeger/SkyWalking 链路追踪、日志管理+六种采集方案+审计日志（三合一）、OpenTelemetry 统一可观测性、集群巡检脚本 |
 | [K8s CI/CD](sources/k8s-CICD-batch-summary.md) | 20 | Jenkins/ArgoCD/GitLab CI/Tekton/Kustomize/GitHub Actions/Claude Code AI CI/CD |
 | [K8s 发布策略](sources/k8s-release-strategy-summary.md) | 1 | 蓝绿部署/金丝雀发布三种方案（原生/Nginx Ingress/Argo Rollouts）、选型决策树、数据库兼容性 |
 | [K8s 网络与服务网格](sources/k8s-networking-service-mesh-batch-summary.md) | 7 | Ingress-Nginx/External-DNS/Calico/Istio 流量管理 |
 | [K8s 安全认证](sources/k8s-security-auth-batch-summary.md) | 7 | Cert-Manager/External Secrets/Kyverno(含1.18新特性)/OAuth2 Proxy/Trivy/SonarQube |
+| [Kyverno 1.18](sources/kyverno-1.18-summary.md) | 1 | CNCF 毕业后首版：SSRF 防护、CLI 扩展、CEL 策略演进、性能与可观测性提升 |
 | [K8s 扩缩容与存储](sources/k8s-scaling-storage-batch-summary.md) | 8 | HPA/VPA/KEDA/Karpenter 扩缩容 + FinOps 成本优化 + NFS/Longhorn/Rook-Ceph 存储 |
 | [K8s 中间件与 UI](sources/k8s-db-middleware-UI-batch-summary.md) | 19 | Redis/MySQL/PostgreSQL/Kafka/RabbitMQ 部署 + Dashboard/Rancher/k9s 管理工具 |
+| [RabbitMQ HA](sources/rabbitmq-ha-summary.md) | 1 | Helm 部署 RabbitMQ 高可用集群（StatefulSet）、aliyun Chart 配置、旧版 API 兼容修复 |
 | [K8s 杂项](sources/k8s-misc-batch-summary.md) | 18 | Helm 工具链/CKA-CKS/KubeBlocks/Harbor/K3S/Velero/GPU |
 | [K8s 备份与灾备](sources/k8s-backup-dr-summary.md) | 1 | 三层容灾架构（etcd 快照/Velero/应用数据）、自动化备份 CronJob、六大生产避坑、RTO/RPO 目标 |
 
