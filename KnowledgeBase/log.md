@@ -1523,3 +1523,11 @@ date: 2026-04-17
 - 清洗 `0raw/Markdown Viewer：让 AI 写文档时，顺手把图也画了.md` 并存入 `AI/AI-视觉/Markdown-Viewer-Skills-AI文档配图.md`
 - 保留完整内容：问题定义（文档配图痛点）、5 类技能（UML/云架构/网络拓扑/数据分析/infocard）、6 种渲染引擎、关键设计点（图是代码块/文档改图也改）、定位与局限分析
 - 未创建独立来源摘要页（AI-视觉领域尚未系统性摄入，待积累后批量处理）
+
+
+## [2026-06-28] ingest | Kubernetes Gateway API 入门
+
+- 清洗 `0raw/Kubernetes Gateway API 入门： Ingress 的下一代方案.md` 并存入 `Docker-Kubernetes/k8s-networking-service-mesh/k8s-Gateway-API入门-Ingress下一代方案.md`
+- 保留完整内容：Ingress 三大局限（annotation 绑定/职责混合/跨 namespace 困难）、Gateway API 核心资源模型（GatewayClass/Gateway/HTTPRoute）、hostname 分层控制、parentRefs/sectionName 绑定机制、完整请求链路、Ingress vs Gateway API 对比表
+- 新增整合：Ingress vs Gateway API 对比表（原文无）
+- 未创建独立来源摘要页（待积累后与 k8s-networking 批量摘要合并更新）
