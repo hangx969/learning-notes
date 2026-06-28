@@ -1516,3 +1516,10 @@ date: 2026-04-17
 - 保留完整内容：21 个配置分组（基础配置、模型与提供方、审批与沙箱、网络代理、TUI、环境策略、权限 Profiles、MCP Servers、Hooks、Agents、Memories、Apps、Tools、Skills、Plugins、OTel、指令与文档、认证、状态杂项）
 - 整理为结构化表格格式，方便速查
 - 未创建独立来源摘要页（Codex 领域尚未系统性摄入，待积累更多文档后批量处理）
+
+
+## [2026-06-28] ingest | Markdown Viewer Skills AI 文档配图
+
+- 清洗 `0raw/Markdown Viewer：让 AI 写文档时，顺手把图也画了.md` 并存入 `AI/AI-视觉/Markdown-Viewer-Skills-AI文档配图.md`
+- 保留完整内容：问题定义（文档配图痛点）、5 类技能（UML/云架构/网络拓扑/数据分析/infocard）、6 种渲染引擎、关键设计点（图是代码块/文档改图也改）、定位与局限分析
+- 未创建独立来源摘要页（AI-视觉领域尚未系统性摄入，待积累后批量处理）
