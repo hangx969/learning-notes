@@ -1560,3 +1560,10 @@ date: 2026-04-17
 - 清洗 `0raw/当 Istio、Kyverno、Gatekeeper 三个 Webhook 同时存在，你的集群会发生什么？.md` 并存入 `Docker-Kubernetes/k8s-security-auth/k8s-Admission-Webhook链冲突排查-Istio-Kyverno-Gatekeeper.md`
 - 保留完整内容：Admission 链执行顺序（Mutating→Validating）、三组件各自修改范围、3 个生产坑（JSON Patch 路径脆/annotations 整体覆盖/Gatekeeper 拒绝最终对象）、排查三步法（列 Webhook→审计日志→隔离复现）、reinvocationPolicy/failurePolicy 分级策略、6 条编排规范、10 步排查清单
 - 与现有知识关联：Kyverno（同目录）、Istio（networking 目录）、Gatekeeper/OPA（策略引擎）
+
+
+## [2026-06-28] ingest | Loop Engineering 从 Prompt 到自动化流水线
+
+- 清洗 `0raw/Prompt该退环境了，未来属于Loop Engineering。.md` 并存入 `AI/行业动态/Loop-Engineering-从Prompt到自动化流水线.md`
+- 保留完整内容：四次跃迁对比（Prompt→Context→Harness→Loop，各自核心能力与底层学科）、Loop 五组件（定时任务/Worktree/知识体系/MCP/子Agent）、/goal 命令产品化、目标定义灵魂论（管理学视角）、古德哈特定律陷阱（Agent 删测试案例）、四条目标定义框架
+- 与现有知识关联：Harness Engineering、Claude Code /goal /loop 命令、Boris Cherny 行业判断
