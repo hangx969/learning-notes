@@ -1489,3 +1489,13 @@ date: 2026-04-17
 - 创建来源摘要页 `KnowledgeBase/sources/k8s-labels-selectors-summary.md`
 - 更新 `KnowledgeBase/index.md`：K8s 基础资源分区新增条目
 - 填补知识空白：K8s 基础资源 21 篇批量摘要中缺少 Labels/Selectors 专题
+
+
+## [2026-06-28] ingest | K8s 容器设计模式（四篇合并）
+
+- 清洗并合并 `0raw/` 中四篇容器设计模式文章（Sidecar / Init Container / Ambassador / Adapter）
+- 存入 `Docker-Kubernetes/k8s-basic-resources/k8s基础-容器设计模式-Sidecar-Init-Ambassador-Adapter.md`
+- 保留完整内容：四种模式的核心理念、应用场景、完整 YAML 配置示例、四模式对比表、选型指南
+- 新增整合内容：四种模式对比表（运行时机/生命周期/职责/数据流/典型代表）
+- 创建来源摘要页 `KnowledgeBase/sources/k8s-container-design-patterns-summary.md`
+- 更新 `KnowledgeBase/index.md`：K8s 基础资源分区新增条目

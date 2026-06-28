@@ -133,6 +133,7 @@ date: 2026-04-17
 | [Docker 安全加固](sources/docker-security-capabilities-summary.md) | 1 | Capabilities 最小化、no-new-privileges 防提权、User Namespace/只读文件系统/资源限制纵深防御 |
 | [K8s 基础资源](sources/k8s-basic-resources-batch-summary.md) | 21 | Pod/Deployment/Service/Ingress/ConfigMap/Storage/RBAC/CRD/Operator/API Server 深度剖析 |
 | [K8s 标签与选择器](sources/k8s-labels-selectors-summary.md) | 1 | 5 条 SRE 铁律（selector 匹配/节点调度/成本归因/版本陷阱/单值原则）、4 个翻车案例、`app.kubernetes.io/*` 命名规范 |
+| [K8s 容器设计模式](sources/k8s-container-design-patterns-summary.md) | 4（合并） | Sidecar/Init Container/Ambassador/Adapter 四大模式：核心理念、场景、完整 YAML、选型对比 |
 | [K8s PDB 实战](sources/k8s-pdb-summary.md) | 1 | PodDisruptionBudget 自愿中断保护、四大配置陷阱、与 drain/滚动更新/HPA 的配合 |
 | [K8s 安装管理](sources/k8s-installation-management-batch-summary.md) | 17 | v1.20→v1.35 安装演进、企业高可用、etcd HA、运行时迁移、cgroup v2 |
 | [K8s CGroup v2](sources/k8s-cgroup-v2-summary.md) | 1 | cgroup v1→v2 架构演进、K8s 实战配置（kubelet/containerd 对齐）、5 个生产踩坑案例、Prometheus 监控告警 |
