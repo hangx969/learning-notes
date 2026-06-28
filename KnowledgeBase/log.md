@@ -1499,3 +1499,12 @@ date: 2026-04-17
 - 新增整合内容：四种模式对比表（运行时机/生命周期/职责/数据流/典型代表）
 - 创建来源摘要页 `KnowledgeBase/sources/k8s-container-design-patterns-summary.md`
 - 更新 `KnowledgeBase/index.md`：K8s 基础资源分区新增条目
+
+
+## [2026-06-28] update | Claude Code 扩展体系 - Slash Commands 章节增强
+
+- 从 `0raw/技术Leader惊了...Claude Code 用得6吗` 文章中提取 Slash Commands 实用内容
+- 集成到 `AI/ClaudeCode/Claude Code 扩展体系.md` 的「三、Slash Commands」章节
+- 新增内容：/powerup 入门引导、内置命令速查（5 大类 17 个命令）、快捷键表（8 个）、三个隐藏关键词（ultrathink/ultracode/ultraplan）、推荐资源（2 个网站）、日常高频五件套
+- 原有自定义命令内容保留并重命名为「自定义斜杠命令」子节
+- 未单独创建来源摘要页（内容已集成到现有文档中）
