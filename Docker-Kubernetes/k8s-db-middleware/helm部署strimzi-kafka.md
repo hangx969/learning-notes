@@ -888,6 +888,7 @@ env:
 ### 根因
 
 `min.insync.replicas=1` 允许 Leader 确认写入时只要自己收到数据就算成功，不需要等待任何 Follower 确认。在多副本场景下，等于把数据一致性交给了运气。
+![image.png](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260628231459615.png)
 
 ## Kafka 副本同步核心参数
 
