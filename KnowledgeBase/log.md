@@ -1574,3 +1574,11 @@ date: 2026-04-17
 - 将 `0raw/【Kubernetes 存储扩容避坑指南】PVPVCStorageClass 在线扩容+缩容真相.md` 整合到 `Docker-Kubernetes/k8s-basic-resources/k8s基础-storage.md` 末尾
 - 新增章节「PVC 在线扩容与缩容」，保留完整内容：扩容前三件必查、两种扩容方式（patch/edit）、扩容后验证流程（后端→文件系统两阶段）、缩容不支持的核心限制、v1.34 扩容失败恢复机制、6 条生产环境建议、存储类选型表、常见问题速查表
 - 未创建独立来源文件（内容直接整合到现有文档中）
+
+
+## [2026-06-28] ingest | Understand-Anything 代码知识图谱可视化
+
+- 清洗 `0raw/55.5k Star！AI代码知识图谱神器开源，让Claude Code一次看懂全仓库.md` 并存入 `AI/代码知识图谱/Understand-Anything-代码知识图谱可视化.md`
+- 保留完整内容：问题定义（AI 读不下整仓/传统可视化无语义）、三层架构（Tree-sitter AST→多智能体图谱构建→交互可视化）、安装方式（Claude Code/Cursor/VS Code/Codex）、团队共享图谱（JSON Git 同步 + git-lfs）
+- 新增整合：与 CodeGraph、Graphify 的三工具对比表（原文无）
+- 放入 AI/代码知识图谱/ 目录，与 CodeGraph、Graphify、code-review-graph 形成完整的代码知识图谱工具群
