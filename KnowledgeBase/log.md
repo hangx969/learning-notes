@@ -1471,3 +1471,12 @@ date: 2026-04-17
   - 合并 `相关文章` 到 `在本仓库中的覆盖`
   - 新增 `使用场景` section（逐页提炼 3 个典型场景）
   - 补充 frontmatter：`aliases` 字段
+
+
+## [2026-06-28] ingest | Git Worktree AI 开发实践指南
+
+- 清洗 `0raw/Vibe Coding时代的Git Worktree实践指南.md`（去除微信营销噪音），存入 `AI/ClaudeCode/Git-Worktree-AI开发实践指南.md`
+- 保留完整内容：问题分析（AI 上下文丢失）、Worktree 原理、核心原则（一个 AI 会话 = 一个 Worktree）、两个典型场景（紧急修复/多方案并行）、5 个实践踩坑
+- 创建来源摘要页 `KnowledgeBase/sources/git-worktree-ai-dev-summary.md`
+- 更新 `KnowledgeBase/entities/Claude-Code.md`：新增 sources 引用 + 覆盖条目
+- 更新 `KnowledgeBase/index.md`：AI/ClaudeCode 分区新增条目

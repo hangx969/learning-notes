@@ -110,6 +110,7 @@ date: 2026-04-17
 | [CLAUDE.md 维护工程](sources/claude-md-maintenance-summary.md) | [[CLAUDE.md维护工程-四层加载与指令预算]] | 四层加载体系、LLM 指令预算（arXiv 论文）、rules/ 精准投放、配置体系四角色分工 |
 | [CodeGraph](sources/codegraph-summary.md) | [[CodeGraph-代码语义知识图谱]] | 代码语义图谱，工具调用减少 92%、探索速度提升 71%，19 种语言 + 框架路由映射，本地 AST 不依赖外部 |
 | [Fable 5 System Prompt](sources/claude-fable5-system-prompt-summary.md) | [[AI/ClaudeCode/Claude-Fable-5-system-prompt]] | Claude Fable 5 完整系统提示词（~125K 字符）：Mythos-class 新层级、行为规约体系、~15 个内置工具、沙箱架构、Artifact/Claudeception、版权硬限制 |
+| [Git Worktree AI 实践](sources/git-worktree-ai-dev-summary.md) | [[Git-Worktree-AI开发实践指南]] | 一个 AI 会话 = 一个 Worktree，并行开发/紧急修复/多方案探索，5 个实践踩坑 |
 
 ### AI/skills（自研 Skills ✅）
 
