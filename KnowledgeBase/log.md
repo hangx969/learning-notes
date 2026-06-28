@@ -1480,3 +1480,12 @@ date: 2026-04-17
 - 创建来源摘要页 `KnowledgeBase/sources/git-worktree-ai-dev-summary.md`
 - 更新 `KnowledgeBase/entities/Claude-Code.md`：新增 sources 引用 + 覆盖条目
 - 更新 `KnowledgeBase/index.md`：AI/ClaudeCode 分区新增条目
+
+
+## [2026-06-28] ingest | K8s 标签与选择器实战
+
+- 清洗 `0raw/【K8s资源管理】Kubernetes 标签与选择器避坑...` 并存入 `Docker-Kubernetes/k8s-basic-resources/k8s基础-pod调度-标签与选择器实战.md`
+- 保留完整内容：Labels vs Annotations 区分、`app.kubernetes.io/*` 六件套命名规范、两种选择器用法、5 条 SRE 铁律（含 Deployment selector 不可变、版本标签陷阱、成本归因）、4 个翻车案例（含 kubectl v1.33.0 Null 值修复）
+- 创建来源摘要页 `KnowledgeBase/sources/k8s-labels-selectors-summary.md`
+- 更新 `KnowledgeBase/index.md`：K8s 基础资源分区新增条目
+- 填补知识空白：K8s 基础资源 21 篇批量摘要中缺少 Labels/Selectors 专题
