@@ -1553,3 +1553,10 @@ date: 2026-04-17
 - 保留完整内容：Operator 组成（CRD + Controller + Manager）、Kubebuilder 环境搭建、完整 Go 代码（FooSpec/FooStatus CRD 定义 + Reconcile 控制循环 + Pod 事件映射）、运行与测试流程、进阶方向
 - 新增整合：Operator 开发工具对比表（Kubebuilder/OperatorSDK/controller-runtime/Metacontroller，原文无）
 - 与现有知识网络关联：概念页 Operator模式、CRD，原始文档 k8s基础-自定义CRD资源
+
+
+## [2026-06-28] ingest | Admission Webhook 链冲突排查
+
+- 清洗 `0raw/当 Istio、Kyverno、Gatekeeper 三个 Webhook 同时存在，你的集群会发生什么？.md` 并存入 `Docker-Kubernetes/k8s-security-auth/k8s-Admission-Webhook链冲突排查-Istio-Kyverno-Gatekeeper.md`
+- 保留完整内容：Admission 链执行顺序（Mutating→Validating）、三组件各自修改范围、3 个生产坑（JSON Patch 路径脆/annotations 整体覆盖/Gatekeeper 拒绝最终对象）、排查三步法（列 Webhook→审计日志→隔离复现）、reinvocationPolicy/failurePolicy 分级策略、6 条编排规范、10 步排查清单
+- 与现有知识关联：Kyverno（同目录）、Istio（networking 目录）、Gatekeeper/OPA（策略引擎）
