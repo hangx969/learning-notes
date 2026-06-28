@@ -1615,3 +1615,10 @@ date: 2026-04-17
 
 - 将 `0raw/一个副本没同步引发的"血案"：别再迷信云厂商的默认配置！.md` 整合到 `Docker-Kubernetes/k8s-db-middleware/helm部署strimzi-kafka.md` 末尾
 - 新增章节「Kafka 生产避坑：副本同步与云厂商默认配置陷阱」：事故复盘（min.insync.replicas=1 导致数据空洞）、副本同步核心参数详解、生产环境标准配置（Broker/Topic/Producer/监控告警）、通用原则（5 组件坑人默认配置表 + 部署前审查六问 + 三个不要）
+
+
+## [2026-06-28] ingest | OpenCodeReview 阿里 AI 代码审查工程化
+
+- 整合两篇 0raw/ 文章（OpenCodeReview 详解 + 阿里 Open Code Review 工程化实践）为一篇
+- 存入 `AI/行业动态/OpenCodeReview-阿里AI代码审查工程化.md`
+- 保留完整内容：AI 代码质量数据（6 组权威报告）、通用 Agent 做 CR 的三个瓶颈、确定性工程骨架 + LLM 语义判断设计哲学、三项关键突破（隔离评审/行号分离/工具收束）、多语言路由/七层质量控制/可追溯、安装使用（三种审查模式）、三种集成方式（Skill/Plugin/命令文件）、CI/CD 集成、审查规则四层优先级、适用场景分析
