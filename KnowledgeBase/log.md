@@ -1596,3 +1596,9 @@ date: 2026-04-17
 - 将 `0raw/告别 GitOps 翻车！7 招让 ArgoCD 稳如老狗.md` 整合到 `Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD多集群GitOps实战-ApplicationSet.md` 末尾
 - 新增章节「附：生产环境 7 步加固法」：资源限制（含实测数据）、工具选型（Helm vs Kustomize）、源代码与清单库分离（权责+安全）、多实例隔离（Red Hat 推荐）、声明式配置漂移陷阱（All-in Git + argocd app diff + Prometheus 监控）、AppProject 细粒度 RBAC、按需调整不盲套模板
 - 更新 frontmatter source 为双来源数组
+
+
+## [2026-06-28] ingest | TypeScript vs Python AI Agent 时代的语言分层
+
+- 清洗 `0raw/为什么 AI Agent 时代，TypeScript 正在抢走 Python 的主场？.md` 并存入 `AI/行业动态/TypeScript-vs-Python-AI-Agent时代的语言之争.md`
+- 保留完整内容：GitHub/npm/YC 三组数据信号、AI 技术栈两层分工（模型层 Python vs 应用层 TypeScript）、TypeScript 五个结构性优势（类型安全/框架生态/全栈同构/异步原生/边缘部署）、Python 四个不可替代领域、2026 年四大趋势（产品下半场/Agent SDK 标准/全栈工程师岗位/中国公司跟进）
