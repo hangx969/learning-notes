@@ -37,6 +37,7 @@ tags:
 ### 核心理念
 
 就像摩托车旁边的"边车"，主容器负责核心业务，边车容器负责辅助功能。两者在同一个 Pod 中运行，共享网络和存储卷。
+![image.png](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260628094057298.png)
 
 ### 应用场景
 
