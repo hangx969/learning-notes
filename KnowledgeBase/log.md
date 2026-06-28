@@ -1531,3 +1531,10 @@ date: 2026-04-17
 - 保留完整内容：Ingress 三大局限（annotation 绑定/职责混合/跨 namespace 困难）、Gateway API 核心资源模型（GatewayClass/Gateway/HTTPRoute）、hostname 分层控制、parentRefs/sectionName 绑定机制、完整请求链路、Ingress vs Gateway API 对比表
 - 新增整合：Ingress vs Gateway API 对比表（原文无）
 - 未创建独立来源摘要页（待积累后与 k8s-networking 批量摘要合并更新）
+
+
+## [2026-06-28] ingest | effective-html AI 直出 HTML 工具实测
+
+- 清洗 `0raw/AI别再输出Markdown了，让它直接吐HTML — effective-html 工具实测.md` 并存入 `AI/AI-视觉/effective-html-AI直出HTML工具实测.md`
+- 保留完整内容：问题定义（Markdown 无法承载视觉交付）、三个 Skill（html 通用/html-diagram 架构图/html-plan 计划文档）、html-effectiveness 设计范本库（20 个模板）、HTML vs Markdown 各自优势对比
+- 新增整合：与同类工具（Markdown Viewer Skills / html-anything / Mermaid）的定位对比表（原文无）
