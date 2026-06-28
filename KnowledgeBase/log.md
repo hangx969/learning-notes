@@ -1582,3 +1582,10 @@ date: 2026-04-17
 - 保留完整内容：问题定义（AI 读不下整仓/传统可视化无语义）、三层架构（Tree-sitter AST→多智能体图谱构建→交互可视化）、安装方式（Claude Code/Cursor/VS Code/Codex）、团队共享图谱（JSON Git 同步 + git-lfs）
 - 新增整合：与 CodeGraph、Graphify 的三工具对比表（原文无）
 - 放入 AI/代码知识图谱/ 目录，与 CodeGraph、Graphify、code-review-graph 形成完整的代码知识图谱工具群
+
+
+## [2026-06-28] ingest | ArgoCD 多集群 GitOps 实战
+
+- 清洗 `0raw/多集群 GitOps 实践：如何用 Argo CD 管理上百个 Kubernetes 集群.md` 并存入 `Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD多集群GitOps实战-ApplicationSet.md`
+- 保留完整内容：三层目录模型（应用模板/环境覆盖/集群元数据）、ApplicationSet Generator 选型（Cluster/List/Git/Matrix）、Push vs Pull vs 区域级折中架构（含选型表）、Project 权限隔离（多租户最佳实践）、环境差异分层覆盖（values 拼接模板）、大规模发布节奏控制（6 种手段 + Progressive Sync）、100 集群平台落地架构
+- 与现有知识关联：ArgoCD 实体页、联邦集群概念页、CICD 概念页
