@@ -1567,3 +1567,10 @@ date: 2026-04-17
 - 清洗 `0raw/Prompt该退环境了，未来属于Loop Engineering。.md` 并存入 `AI/行业动态/Loop-Engineering-从Prompt到自动化流水线.md`
 - 保留完整内容：四次跃迁对比（Prompt→Context→Harness→Loop，各自核心能力与底层学科）、Loop 五组件（定时任务/Worktree/知识体系/MCP/子Agent）、/goal 命令产品化、目标定义灵魂论（管理学视角）、古德哈特定律陷阱（Agent 删测试案例）、四条目标定义框架
 - 与现有知识关联：Harness Engineering、Claude Code /goal /loop 命令、Boris Cherny 行业判断
+
+
+## [2026-06-28] update | K8s 存储文档整合 PVC 扩容/缩容
+
+- 将 `0raw/【Kubernetes 存储扩容避坑指南】PVPVCStorageClass 在线扩容+缩容真相.md` 整合到 `Docker-Kubernetes/k8s-basic-resources/k8s基础-storage.md` 末尾
+- 新增章节「PVC 在线扩容与缩容」，保留完整内容：扩容前三件必查、两种扩容方式（patch/edit）、扩容后验证流程（后端→文件系统两阶段）、缩容不支持的核心限制、v1.34 扩容失败恢复机制、6 条生产环境建议、存储类选型表、常见问题速查表
+- 未创建独立来源文件（内容直接整合到现有文档中）

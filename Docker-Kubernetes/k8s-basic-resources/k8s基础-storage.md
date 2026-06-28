@@ -1316,3 +1316,160 @@ subjects:
   namespace: public-service
 ~~~
 
+# PVC 在线扩容与缩容
+
+> **核心结论**：PVC 可以在线扩容（大部分场景不中断业务），但缩容——K8s 原生不支持，别想了。
+
+## 什么时候需要扩容
+
+- 监控告警：PV 使用率 > 85%，磁盘快写满了
+- 业务反馈：Pod 写入文件时报 `No space left on device`
+- 容量规划：历史数据显示数据每月增长 20%，需要提前扩
+- 数据库扩容：MySQL/PostgreSQL 的数据目录不够用了
+
+## 扩容前三件必查事项
+
+### 1. 确认当前 PVC 信息
+
+```bash
+kubectl get pvc <pvc-name> -n <namespace>
+# 看 CAPACITY 和 STATUS，确认是 Bound 状态
+```
+
+### 2. 确认 StorageClass 名称
+
+```bash
+kubectl get pvc <pvc-name> -n <namespace> -o jsonpath='{.spec.storageClassName}'
+```
+
+### 3. 确认 StorageClass 支持扩容（最重要）
+
+```bash
+kubectl get storageclass <sc-name> -o yaml | grep -A1 allowVolumeExpansion
+```
+
+如果没输出或者显示 `false`，需要修改：
+
+```bash
+kubectl edit storageclass <sc-name>
+# 添加或修改：
+# allowVolumeExpansion: true
+```
+
+改完立即生效，不需要重启任何东西。
+
+> [!warning] 坑
+> 有些云厂商的 CSI 驱动虽然支持 `allowVolumeExpansion`，但实际扩容时需要离线（停 Pod）。比如 UpCloud 的 CSI 驱动就只支持离线扩容。生产环境动手前先读 CSI 驱动文档。
+
+## 动手扩容
+
+### 方式一：kubectl patch（推荐，一行搞定）
+
+```bash
+kubectl patch pvc <pvc-name> -n <namespace> \
+  -p '{"spec":{"resources":{"requests":{"storage":"20Gi"}}}}'
+# 输出 persistentvolumeclaim/<pvc-name> patched 表示成功
+```
+
+### 方式二：kubectl edit
+
+```bash
+kubectl edit pvc <pvc-name> -n <namespace>
+# 找到 .spec.resources.requests.storage，改成新的大小
+```
+
+## 扩容后验证（别光看 PVC）
+
+扩容指令执行后**不一定立即生效**。整个流程分两个阶段：
+
+1. **后端存储扩容**：底层 Volume 被扩到新大小
+2. **文件系统扩容**：Pod 重新挂载后，节点上的文件系统被调整
+
+### 查看扩容进度
+
+```bash
+kubectl describe pvc <pvc-name> -n <namespace>
+# 看 Conditions 字段
+# FileSystemResizePending = 存储后端已扩完，文件系统等 Pod 重启后自动完成
+```
+
+### 进 Pod 确认文件系统大小（最终验证）
+
+```bash
+kubectl exec -it <pod-name> -n <namespace> -- df -h
+# 看到新的大小才算真正完成
+```
+
+## 核心限制
+
+### 缩容？不支持。
+
+K8s 从设计上就不支持 PVC 缩容。不管是 CSI 驱动还是 in-tree 插件，都不支持对底层 Volume 做实际收缩。
+
+试着 patch 一个比当前小的值：
+
+```bash
+kubectl patch pvc my-pvc -p '{"spec":{"resources":{"requests":{"storage":"5Gi"}}}}'
+# 报错：
+# spec.resources.requests.storage: Forbidden: field can not be less than previous value
+```
+
+这是 API 层面的校验，绕不过去。
+
+**扩多了怎么办？**
+1. 接受现实，多的容量就放在那——反正存储又不贵，留着以后用
+2. 如果一定要回收：建一个新的小 PVC，把数据拷过去，切流量，删老的
+
+### 扩容失败怎么办？（v1.34 有救了）
+
+最常见的原因：拼写错误（想扩 100TB 写成了 1000TB）、存储配额用完、后端不支持那么大容量。
+
+**K8s v1.34 之前**：扩容失败后 PVC 会被卡住，需要管理员手动介入恢复。
+
+**K8s v1.34+**：扩容失败后，可以直接 patch 一个比错误值小但比原值大的新大小，Kubernetes 会自动修正。
+
+```bash
+# 原来 10TB，错误地扩到 1000TB（失败），修正到 100TB：
+kubectl patch pvc myclaim -p '{"spec":{"resources":{"requests":{"storage":"100TB"}}}}'
+# 前提：100TB 必须大于原值 10TB，不能缩到原值以下
+```
+
+查看扩容失败的详细状态（v1.34+）：
+
+```bash
+kubectl get pvc myclaim -o jsonpath='{.status.allocatedResourceStatus.storage}'
+```
+
+| 状态 | 含义 |
+|------|------|
+| `ControllerResizeInProgress` | 控制器正在扩容 |
+| `NodeResizePending` | 等待节点扩容文件系统 |
+| `ControllerResizeInfeasible` | 扩容不可行（配额/后端限制） |
+| `ControllerResizeError` | 扩容出错 |
+
+## 生产环境扩容建议
+
+1. **扩容前先备份**——尤其是数据库的 PVC。虽然扩容操作本身不会丢数据，但万一后端存储出问题呢？
+2. **扩容时预留缓冲**——别等到磁盘 99% 才扩，建议阈值设在 80%。扩容需要时间，万一扩的过程中业务写爆了就尴尬了
+3. **建立容量看板**——把 PVC 使用率接入 Prometheus，设置分级告警（80% 预警，90% 紧急）
+4. **扩容参数要慎重**——扩多大？一般按"当前已用 × 1.5"来估算，既留够缓冲又不过度浪费
+5. **检查 CSI 驱动文档**——不同厂商的驱动行为有差异：有的支持在线扩容（Pod 不用重启），有的要求离线（停 Pod），有的对文件系统类型有限制
+
+### 存储类选型建议
+
+| 场景 | 推荐 | 说明 |
+|------|------|------|
+| 数据库（MySQL/PostgreSQL/Etcd） | 支持在线扩容的块存储（AWS EBS、GCE PD、Azure Disk） | IOPS 要够 |
+| 大文件共享/日志 | 支持 RWX 的共享存储（NFS、CephFS） | 确认扩容是否支持 |
+| 非关键数据 | 普通云盘 | 便宜 |
+
+## 常见问题速查表
+
+| 现象 | 可能原因 | 解决方案 |
+|------|---------|---------|
+| patch 后 PVC 没变化 | StorageClass 的 allowVolumeExpansion 不是 true | `kubectl edit storageclass` 加上 |
+| describe 显示 `VolumeResizeFailed` | 存储后端不支持扩容，或 PV 是静态创建的 | 检查 PV 的 RECLAIM POLICY；静态 PV 需手动改 PV 容量后重建 PVC |
+| `FileSystemResizePending` 一直不消失 | Pod 没有重新挂载 | 重启 Pod 或 scale down/up 触发重新挂载 |
+| 想缩容 | K8s 不支持 | 建新 PVC 做数据迁移，无法原地缩 |
+| 扩容时写错数值，卡住了（1.34 以下） | 扩容请求进入失败循环 | 只能手动恢复；推荐升级到 1.34+ |
+
