@@ -1538,3 +1538,10 @@ date: 2026-04-17
 - 清洗 `0raw/AI别再输出Markdown了，让它直接吐HTML — effective-html 工具实测.md` 并存入 `AI/AI-视觉/effective-html-AI直出HTML工具实测.md`
 - 保留完整内容：问题定义（Markdown 无法承载视觉交付）、三个 Skill（html 通用/html-diagram 架构图/html-plan 计划文档）、html-effectiveness 设计范本库（20 个模板）、HTML vs Markdown 各自优势对比
 - 新增整合：与同类工具（Markdown Viewer Skills / html-anything / Mermaid）的定位对比表（原文无）
+
+
+## [2026-06-28] ingest | K8s Backstage 内部开发者平台 IDP 实战
+
+- 清洗 `0raw/YAML 写到吐？2026 年最火的 K8s 平台工程实战：用 Backstage 打造一站式内部开发者平台.md` 并存入 `Docker-Kubernetes/k8s-installation-management/k8s-Backstage-内部开发者平台IDP实战.md`
+- 保留完整内容：平台工程理念（DevOps→IDP）、Backstage 架构（Frontend+Backend+PostgreSQL）、生产部署实战（PostgreSQL StatefulSet + app-config.yaml + Deployment + RBAC）、Software Catalog 实体定义、Software Templates 一键创建服务、TechDocs 代码即文档、8 个插件推荐、5 大生产注意事项、竞品对比表（Backstage vs Port vs Cortex vs OpsLevel）
+- 未创建独立来源摘要页（待积累后与 k8s-installation-management 批量摘要合并更新）
