@@ -3,6 +3,10 @@ title: Observability
 tags:
   - knowledgebase/concept
 date: 2026-04-16
+sources: []
+aliases:
+  - 可观测性
+  - 监控
 ---
 
 # Observability
@@ -10,10 +14,10 @@ date: 2026-04-16
 ## 定义
 可观测性（Observability）是通过日志（Logs）、指标（Metrics）和链路追踪（Traces）三大支柱来理解系统内部状态的能力。本仓库覆盖 Prometheus、Grafana、Loki、Jaeger、Skywalking、EFK 等主流可观测性工具栈的部署与实践。
 
-## 在本仓库中的位置
+## 在本仓库中的覆盖
 主要集中在 `Docker-Kubernetes/k8s-monitoring-logging/` 目录下，共 20 篇文章，涵盖指标监控、日志收集、全链路追踪三大方向。
 
-## 相关文章
+
 - [[Docker-Kubernetes/k8s-monitoring-logging/Prometheus基础|Prometheus基础]]
 - [[Docker-Kubernetes/k8s-monitoring-logging/Prometheus监控k8s系统组件|Prometheus监控k8s系统组件]]
 - [[Docker-Kubernetes/k8s-monitoring-logging/Prometheus监控外部k8s集群|Prometheus监控外部k8s集群]]
@@ -35,13 +39,13 @@ date: 2026-04-16
 - [[Docker-Kubernetes/k8s-monitoring-logging/二进制部署efk+logstash+kafka日志收集平台|二进制部署efk+logstash+kafka日志收集平台]]
 - [[Docker-Kubernetes/k8s-monitoring-logging/基于helm+operator部署ECK日志收集平台|基于helm+operator部署ECK日志收集平台]]
 
-## 关联概念
+## 与其他概念的关系
 - [[KnowledgeBase/concepts/日志系统|日志系统]]
 - [[KnowledgeBase/entities/AKS|AKS]]
 - [[KnowledgeBase/concepts/服务网格|服务网格]]
 - [[KnowledgeBase/concepts/CICD|CICD]]
 
-## 可延展方向
+## 知识空白
 - OpenTelemetry 统一采集标准
 - Grafana LGTM 全家桶（Loki + Grafana + Tempo + Mimir）
 - SLO/SLI 定义与告警策略设计

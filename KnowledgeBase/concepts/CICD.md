@@ -3,6 +3,11 @@ title: CICD
 tags:
   - knowledgebase/concept
 date: 2026-04-16
+sources: []
+aliases:
+  - CI/CD
+  - 持续集成
+  - 持续交付
 ---
 
 # CICD
@@ -10,10 +15,10 @@ date: 2026-04-16
 ## 定义
 持续集成（Continuous Integration）与持续交付/部署（Continuous Delivery/Deployment）是 DevOps 实践的核心，通过自动化构建、测试和部署流程，实现代码从提交到上线的快速、可靠交付。本仓库涵盖 Jenkins、ArgoCD、GitLab CI、Tekton、Kustomize、GitHub Actions 等主流 CI/CD 工具链。
 
-## 在本仓库中的位置
+## 在本仓库中的覆盖
 主要集中在 `Docker-Kubernetes/k8s-CICD/` 目录下，按工具分为 Jenkins、ArgoCD、Gitlab、Tekton、Kustomize 等子目录，共 19 篇文章。
 
-## 相关文章
+
 - [[Docker-Kubernetes/k8s-CICD/Jenkins/k8s-Devops平台落地-基于jenkins|k8s-Devops平台落地-基于jenkins]]
 - [[Docker-Kubernetes/k8s-CICD/Jenkins/k8s部署基于Jenkins(2.426.3)的Devops工具链-基于yaml|k8s部署基于Jenkins(2.426.3)的Devops工具链-基于yaml]]
 - [[Docker-Kubernetes/k8s-CICD/Jenkins/k8s部署基于Jenkins(2.394)的DevOps工具链-基于yaml|k8s部署基于Jenkins(2.394)的DevOps工具链-基于yaml]]
@@ -34,14 +39,14 @@ date: 2026-04-16
 - [[Docker-Kubernetes/k8s-CICD/发布go-python-java代码到K8S环境|发布go-python-java代码到K8S环境]]
 - [[Docker-Kubernetes/k8s-CICD/k8s发布策略-蓝绿部署与金丝雀发布|k8s发布策略-蓝绿部署与金丝雀发布]]
 
-## 关联概念
+## 与其他概念的关系
 - [[KnowledgeBase/entities/Azure|Azure]]
 - [[KnowledgeBase/entities/AKS|AKS]]
 - [[KnowledgeBase/concepts/Observability|Observability]]
 - [[KnowledgeBase/concepts/服务网格|服务网格]]
 - [[KnowledgeBase/concepts/容器运行时|容器运行时]]
 
-## 可延展方向
+## 知识空白
 - GitOps 工作流最佳实践（ArgoCD + Kustomize / Helm）
 - CI/CD 安全（镜像签名、SBOM、Supply Chain Security）
 - ~~多集群 CD 部署策略（蓝绿、金丝雀、渐进式发布）~~（已有 [[Docker-Kubernetes/k8s-CICD/k8s发布策略-蓝绿部署与金丝雀发布]] 覆盖单集群蓝绿/金丝雀/Argo Rollouts，尚缺多集群场景）
