@@ -1545,3 +1545,11 @@ date: 2026-04-17
 - 清洗 `0raw/YAML 写到吐？2026 年最火的 K8s 平台工程实战：用 Backstage 打造一站式内部开发者平台.md` 并存入 `Docker-Kubernetes/k8s-installation-management/k8s-Backstage-内部开发者平台IDP实战.md`
 - 保留完整内容：平台工程理念（DevOps→IDP）、Backstage 架构（Frontend+Backend+PostgreSQL）、生产部署实战（PostgreSQL StatefulSet + app-config.yaml + Deployment + RBAC）、Software Catalog 实体定义、Software Templates 一键创建服务、TechDocs 代码即文档、8 个插件推荐、5 大生产注意事项、竞品对比表（Backstage vs Port vs Cortex vs OpsLevel）
 - 未创建独立来源摘要页（待积累后与 k8s-installation-management 批量摘要合并更新）
+
+
+## [2026-06-28] ingest | K8s Operator 开发实战 Kubebuilder
+
+- 清洗 `0raw/通过例子介绍如何从零开发 Kubernetes Operator.md` 并存入 `Docker-Kubernetes/k8s-basic-resources/k8s基础-Operator开发实战-Kubebuilder.md`
+- 保留完整内容：Operator 组成（CRD + Controller + Manager）、Kubebuilder 环境搭建、完整 Go 代码（FooSpec/FooStatus CRD 定义 + Reconcile 控制循环 + Pod 事件映射）、运行与测试流程、进阶方向
+- 新增整合：Operator 开发工具对比表（Kubebuilder/OperatorSDK/controller-runtime/Metacontroller，原文无）
+- 与现有知识网络关联：概念页 Operator模式、CRD，原始文档 k8s基础-自定义CRD资源
