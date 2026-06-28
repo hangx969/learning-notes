@@ -1508,3 +1508,11 @@ date: 2026-04-17
 - 新增内容：/powerup 入门引导、内置命令速查（5 大类 17 个命令）、快捷键表（8 个）、三个隐藏关键词（ultrathink/ultracode/ultraplan）、推荐资源（2 个网站）、日常高频五件套
 - 原有自定义命令内容保留并重命名为「自定义斜杠命令」子节
 - 未单独创建来源摘要页（内容已集成到现有文档中）
+
+
+## [2026-06-28] ingest | OpenAI Codex config.toml 全量配置参考
+
+- 清洗 `0raw/OpenAI Codex 可视化配置生成器.md` 并存入 `AI/Codex/Codex-config-toml-全量配置参考.md`
+- 保留完整内容：21 个配置分组（基础配置、模型与提供方、审批与沙箱、网络代理、TUI、环境策略、权限 Profiles、MCP Servers、Hooks、Agents、Memories、Apps、Tools、Skills、Plugins、OTel、指令与文档、认证、状态杂项）
+- 整理为结构化表格格式，方便速查
+- 未创建独立来源摘要页（Codex 领域尚未系统性摄入，待积累更多文档后批量处理）
