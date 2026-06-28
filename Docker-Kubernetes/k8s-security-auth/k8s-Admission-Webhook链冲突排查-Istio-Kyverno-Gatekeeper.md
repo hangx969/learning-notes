@@ -24,6 +24,7 @@ tags:
 ## 请求到底经过了什么
 
 一个创建 Pod 的请求进入 kube-apiserver 后，经过两段 Admission：
+![image.png](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260628223220277.png)
 
 ```
 用户 YAML → Mutating Webhooks（按字母序依次执行）→ Validating Webhooks（看到的是所有 Mutation 之后的最终对象）→ etcd
