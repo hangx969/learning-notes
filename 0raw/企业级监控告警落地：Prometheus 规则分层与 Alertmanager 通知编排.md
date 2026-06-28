@@ -1,16 +1,13 @@
 ---
-title: "企业级监控告警落地：Prometheus 规则分层与 Alertmanager 通知编排"
-source: "https://mp.weixin.qq.com/s/uVH_OTvFznkk1WnbGMnvDw"
+title: 企业级监控告警落地：Prometheus 规则分层与 Alertmanager 通知编排
+source: https://mp.weixin.qq.com/s/uVH_OTvFznkk1WnbGMnvDw
 author:
 published:
 created: 2026-06-28
-description: "关注「Raymond运维」公众号，并设为「星标」，也可以扫描底部二维码加入群聊，第一时间获取最新内容，不再错过"
+description: 关注「Raymond运维」公众号，并设为「星标」，也可以扫描底部二维码加入群聊，第一时间获取最新内容，不再错过
 tags:
-  - "clippings"
+  - clippings
 ---
-Raymond运维 *2026年6月17日 20:00![图片](https://mmbiz.qpic.cn/sz_mmbiz_gif/b5PbQq93ic09N2RfN7gYF9IOF5giaofTOPoR8Y9szIF5eLelR8lIXgGMn1Lh700B0dPxeeibC2VX1mAzhWvcHz0cg/640?wx_fmt=gif&from=appmsg&wxfrom=5&tp=webp&wx_lazy=1#imgIndex=0)
-
-关注 **「Raymond运维」** 公众号，并设为 **「星标」** ，也可以扫描底部二维码加入群聊，第一时间获取最新内容，不再错过精彩内容。
 
 ## 一、概述
 
