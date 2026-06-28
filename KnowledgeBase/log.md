@@ -1622,3 +1622,9 @@ date: 2026-04-17
 - 整合两篇 0raw/ 文章（OpenCodeReview 详解 + 阿里 Open Code Review 工程化实践）为一篇
 - 存入 `AI/行业动态/OpenCodeReview-阿里AI代码审查工程化.md`
 - 保留完整内容：AI 代码质量数据（6 组权威报告）、通用 Agent 做 CR 的三个瓶颈、确定性工程骨架 + LLM 语义判断设计哲学、三项关键突破（隔离评审/行号分离/工具收束）、多语言路由/七层质量控制/可追溯、安装使用（三种审查模式）、三种集成方式（Skill/Plugin/命令文件）、CI/CD 集成、审查规则四层优先级、适用场景分析
+
+
+## [2026-06-28] ingest | Obsidian Vault 模板库合集
+
+- 清洗 `0raw/Obsidian vault 模板库合集：48 个 GitHub 上的宝藏 vault，下载即用.md` 并存入 `AI/Obsidian/Obsidian-Vault模板库合集-48个宝藏vault.md`
+- 保留完整内容：48 个 vault 的 11 大分类表、挑选三原则（活跃度>star/场景对口/先标杆后同类）、5 个推荐 vault 详解（Kepano/Hub/JS Info/DevCookbook/HowToCook）、踩坑清单（3 个避坑）、5 分钟上手流程
