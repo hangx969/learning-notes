@@ -1589,3 +1589,10 @@ date: 2026-04-17
 - 清洗 `0raw/多集群 GitOps 实践：如何用 Argo CD 管理上百个 Kubernetes 集群.md` 并存入 `Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD多集群GitOps实战-ApplicationSet.md`
 - 保留完整内容：三层目录模型（应用模板/环境覆盖/集群元数据）、ApplicationSet Generator 选型（Cluster/List/Git/Matrix）、Push vs Pull vs 区域级折中架构（含选型表）、Project 权限隔离（多租户最佳实践）、环境差异分层覆盖（values 拼接模板）、大规模发布节奏控制（6 种手段 + Progressive Sync）、100 集群平台落地架构
 - 与现有知识关联：ArgoCD 实体页、联邦集群概念页、CICD 概念页
+
+
+## [2026-06-28] update | ArgoCD 多集群实战整合生产加固 7 步法
+
+- 将 `0raw/告别 GitOps 翻车！7 招让 ArgoCD 稳如老狗.md` 整合到 `Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD多集群GitOps实战-ApplicationSet.md` 末尾
+- 新增章节「附：生产环境 7 步加固法」：资源限制（含实测数据）、工具选型（Helm vs Kustomize）、源代码与清单库分离（权责+安全）、多实例隔离（Red Hat 推荐）、声明式配置漂移陷阱（All-in Git + argocd app diff + Prometheus 监控）、AppProject 细粒度 RBAC、按需调整不盲套模板
+- 更新 frontmatter source 为双来源数组

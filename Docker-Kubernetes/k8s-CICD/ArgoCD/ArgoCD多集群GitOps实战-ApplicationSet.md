@@ -1,6 +1,8 @@
 ---
 title: "多集群 GitOps 实战：用 Argo CD 管理上百个 Kubernetes 集群"
-source: "https://mp.weixin.qq.com/s/gflLt0lXE0zkJGs1hncBtg"
+source:
+  - "https://mp.weixin.qq.com/s/gflLt0lXE0zkJGs1hncBtg"
+  - "https://mp.weixin.qq.com/s/Ua-8o4-4Lb4PHWJIOX_8pQ"
 created: 2026-06-28
 tags:
   - kubernetes
@@ -226,3 +228,97 @@ SaaS 平台，100 个集群按 `env/region/tenant/tier` 打标签。
 3. **权限边界有没有被 Project 卡死** — 不靠约定靠机制
 4. **环境差异是否能被审计** — 分层覆盖，cluster 级最小化
 5. **发布失败会不会扩散成全局事故** — 分批发布 + Progressive Sync + 灰度
+
+
+---
+
+## 附：生产环境 7 步加固法
+
+> 来源：多租户 K8s 平台 ArgoCD 实战经验 + Red Hat 官方推荐实践。
+
+### 加固 1：资源限制——别让 ArgoCD 饿死，也别让它暴走
+
+ArgoCD 本身也是 Pod，大规模集群下 `application-controller` 和 `repo-server` 负载会很高（实测 controller 单 Pod 16G 内存）。
+
+```yaml
+server:
+  resources:
+    requests: { cpu: "250m", memory: "512Mi" }
+    limits:   { cpu: "500m", memory: "1Gi" }
+controller:
+  resources:
+    requests: { cpu: "500m", memory: "1Gi" }
+    limits:   { cpu: "1",    memory: "2Gi" }
+repoServer:
+  resources:
+    requests: { cpu: "250m", memory: "512Mi" }
+    limits:   { cpu: "500m", memory: "1Gi" }
+```
+
+原则：**请求给足，限制给够**。根据集群规模和应用数量调整。
+
+### 加固 2：别跟原始 YAML 死磕——Helm 或 Kustomize 任选
+
+直接维护原始 YAML 的缺点：重复代码多、一个环境改漏了 DR 时抓瞎、版本管理复杂。
+
+- **首选 Helm**：模板化能力强，生态丰富（ArtifactHub 一堆现成 Chart），ArgoCD 原生支持
+- **次选 Kustomize**：K8s 原生方式，大量 overlay 场景更合适，平台层 CRD/Operator 配置更适用
+
+### 加固 3：源代码和清单库分开——权责分明，安全第一
+
+很多人把应用代码和 ArgoCD `Application` 清单放在同一个 Git 仓库，这有严重问题：
+
+- **生命周期不同**：应用代码每天变，ArgoCD 清单几周才改一次
+- **权限不清**：开发有代码仓库写权限，但不应该有修改 `Application` 资源的权限（可能跳过审批直接上线）
+- **安全风险**：代码仓库被黑，攻击者可以修改 ArgoCD 配置指向恶意镜像仓库
+
+**最佳实践**：
+- **源代码仓库**（Source Repo）：应用本身的代码，开发团队维护
+- **清单库**（Manifest Repo）：ArgoCD 的 Application、AppProject、Helm Chart/Kustomize overlay，由平台/SRE 团队维护，严格控制写权限
+
+### 加固 4：最大程度隔离——应用实例和平台实例分开
+
+Red Hat 官方推荐。想象一个团队的 `Application` 资源被误删，导致整个 `application-controller` 需要重新同步，影响所有其他团队。
+
+**解决方案**：为不同团队创建独立的 ArgoCD 实例（用 Helm Chart 或 ArgoCD Operator 部署多套）。每个实例自治，一个团队的"瞎搞"不会影响集群配置或别人的应用。
+
+### 加固 5：警惕声明式配置的"隐形陷阱"
+
+期望状态 ≠ 实际状态。有人用 Web UI 手动改了 `syncPolicy` 或 `targetRevision`，这个修改不会自动同步回 Git。
+
+**防护措施**：
+- **All-in Git**：所有对 ArgoCD 配置的修改必须从 Git 仓库发起，Web UI 只用来查看状态和手动触发同步
+- **CI 中检查漂移**：在流水线中运行 `argocd app diff`，跟 Git 仓库对比，确保没有意外的配置漂移
+- **监控 ArgoCD 自身**：用 Prometheus 监控 `argocd_app_info` 指标，`OutOfSync` 状态触发告警；或用 ArgoCD notifications-controller 发送通知
+
+### 加固 6：多人协作时，AppProject 是黄金搭档
+
+（与前文"权限隔离"互补，这里补充 `clusterResourceWhitelist` 和 `namespaceResourceWhitelist` 的细粒度控制）
+
+```yaml
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: team-b-project
+  namespace: argocd
+spec:
+  sourceRepos:
+    - 'https://gitlab.example.com/team-b/*'
+  destinations:
+    - namespace: 'team-b-*'
+      server: 'https://kubernetes.default.svc'
+  clusterResourceWhitelist: []        # 禁止创建任何集群级资源
+  namespaceResourceWhitelist:
+    - group: '*'
+      kind: '*'
+```
+
+AppProject 是 GitOps 多租户的基石——少了它，后面的隔离全是空谈。
+
+### 加固 7：不要迷信"最佳实践"——按需调整
+
+- 团队结构扁平、项目简单 → 一个 ArgoCD 实例 + Helm/Kustomize 就够用
+- 平台团队服务多个业务单元 → 必须上多实例 + AppProject + 严格权限控制
+- 还在用原始 YAML → 别急着上 Kustomize，先评估切换成本
+
+> 知行合一。知道怎么配置只是第一步，动手去实践、去踩坑、去复盘，才能真正把 GitOps 变成你团队的基础设施。
