@@ -1609,3 +1609,9 @@ date: 2026-04-17
 - 清洗 `0raw/KEDA vs HPA 2026终极对比：v1.36原生缩零后该选谁？.md` 并存入 `Docker-Kubernetes/k8s-scaling/KEDA-vs-HPA-2026终极对比-v1.36缩零.md`
 - 保留完整内容：HPA 三种指标类型与三大硬伤、KEDA 架构（Scaler→HPA 代理模式）与 60+ 内置 Scaler 表、v1.36 HPA Scale-to-Zero（Beta 默认启用）+ External Metrics Fallback、全方位对比矩阵（10 维度）、五场景选型决策树、五大生产避坑（冷启动/认证/冻结/冲突/CRD 兼容）、Prometheus 告警规则
 - 与现有知识关联：k8s-HPA-VPA、k8s-基于KEDA的弹性能力、k8s成本优化方案-FinOps实战
+
+
+## [2026-06-28] update | Kafka 生产避坑整合到 strimzi-kafka 文档
+
+- 将 `0raw/一个副本没同步引发的"血案"：别再迷信云厂商的默认配置！.md` 整合到 `Docker-Kubernetes/k8s-db-middleware/helm部署strimzi-kafka.md` 末尾
+- 新增章节「Kafka 生产避坑：副本同步与云厂商默认配置陷阱」：事故复盘（min.insync.replicas=1 导致数据空洞）、副本同步核心参数详解、生产环境标准配置（Broker/Topic/Producer/监控告警）、通用原则（5 组件坑人默认配置表 + 部署前审查六问 + 三个不要）
