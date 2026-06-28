@@ -1602,3 +1602,10 @@ date: 2026-04-17
 
 - 清洗 `0raw/为什么 AI Agent 时代，TypeScript 正在抢走 Python 的主场？.md` 并存入 `AI/行业动态/TypeScript-vs-Python-AI-Agent时代的语言之争.md`
 - 保留完整内容：GitHub/npm/YC 三组数据信号、AI 技术栈两层分工（模型层 Python vs 应用层 TypeScript）、TypeScript 五个结构性优势（类型安全/框架生态/全栈同构/异步原生/边缘部署）、Python 四个不可替代领域、2026 年四大趋势（产品下半场/Agent SDK 标准/全栈工程师岗位/中国公司跟进）
+
+
+## [2026-06-28] ingest | KEDA vs HPA 2026 终极对比
+
+- 清洗 `0raw/KEDA vs HPA 2026终极对比：v1.36原生缩零后该选谁？.md` 并存入 `Docker-Kubernetes/k8s-scaling/KEDA-vs-HPA-2026终极对比-v1.36缩零.md`
+- 保留完整内容：HPA 三种指标类型与三大硬伤、KEDA 架构（Scaler→HPA 代理模式）与 60+ 内置 Scaler 表、v1.36 HPA Scale-to-Zero（Beta 默认启用）+ External Metrics Fallback、全方位对比矩阵（10 维度）、五场景选型决策树、五大生产避坑（冷启动/认证/冻结/冲突/CRD 兼容）、Prometheus 告警规则
+- 与现有知识关联：k8s-HPA-VPA、k8s-基于KEDA的弹性能力、k8s成本优化方案-FinOps实战
