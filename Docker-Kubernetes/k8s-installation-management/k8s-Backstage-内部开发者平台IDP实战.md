@@ -13,7 +13,7 @@ tags:
 
 ## 一、为什么需要 IDP
 
-"强哥，帮我建个测试环境呗，要一个 namespace，配好 MySQL 和 Redis，再加个 Ingress。"
+"帮我建个测试环境呗，要一个 namespace，配好 MySQL 和 Redis，再加个 Ingress。"
 
 20 分钟后，手动创建了 Namespace、写了 Deployment、申请了 PV、配了 Service、调了 Ingress…… 然后发现忘记开 NetworkPolicy。
 
