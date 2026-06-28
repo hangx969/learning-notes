@@ -14,6 +14,13 @@ aliases:
 ## 定义
 Python 运维开发是指使用 Python 语言编写自动化脚本和工具来完成 Linux 系统管理、Kubernetes API 调用、数据库运维、Web 服务管理等 DevOps 场景的开发实践。常用模块包括 subprocess、psutil、paramiko、fabric、kubernetes-client 等。
 
+## 核心要点
+- 核心模块：subprocess（本地命令）、paramiko/fabric（SSH 远程）、kubernetes-client（K8s API）、psutil（系统信息）
+- Web 运维平台：Flask/Django 构建 CMDB、工单系统、自动化运维面板
+- 数据分析：pandas 处理日志/监控数据，matplotlib 绘制趋势图
+- 项目实战覆盖：SSH 管理工具、K8s 集群巡检、MySQL 自动化备份、Prometheus API 调用
+- 与 Shell 脚本互补：Python 适合复杂逻辑和 API 集成，Shell 适合快速系统操作
+
 ## 在本仓库中的覆盖
 主要集中在 `Python/python-运维开发/` 目录下，共 10 篇文章，涵盖 Linux 运维操作、Kubernetes 模块、MySQL/PostgreSQL 数据库、Nginx/Tomcat 管理、fabric 远程执行等。
 - [[KnowledgeBase/sources/python-batch-summary|Python 批量摘要]]：27 篇覆盖基础语法、运维开发、网络编程、数据分析

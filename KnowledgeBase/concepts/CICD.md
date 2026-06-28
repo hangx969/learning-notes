@@ -15,6 +15,13 @@ aliases:
 ## 定义
 持续集成（Continuous Integration）与持续交付/部署（Continuous Delivery/Deployment）是 DevOps 实践的核心，通过自动化构建、测试和部署流程，实现代码从提交到上线的快速、可靠交付。本仓库涵盖 Jenkins、ArgoCD、GitLab CI、Tekton、Kustomize、GitHub Actions 等主流 CI/CD 工具链。
 
+## 核心要点
+- CI（持续集成）关注代码合并后的自动构建与测试；CD（持续交付/部署）关注从测试到生产环境的自动化发布
+- 工具链选型：Jenkins（灵活但运维重）、ArgoCD（GitOps 原生）、GitLab CI（一体化）、Tekton（云原生 Pipeline）、GitHub Actions（SaaS 化）
+- GitOps 模式（以 ArgoCD 为代表）通过 Git 仓库作为唯一事实源，实现声明式部署与自动漂移修复
+- Kustomize vs Helm：前者无模板引擎、原生 kubectl 集成；后者支持 Chart 打包与版本管理
+- AI 辅助 CI/CD：Claude Code 可自动生成 Pipeline 配置、执行代码审查、集成 GitHub Actions
+
 ## 在本仓库中的覆盖
 主要集中在 `Docker-Kubernetes/k8s-CICD/` 目录下，按工具分为 Jenkins、ArgoCD、Gitlab、Tekton、Kustomize 等子目录，共 19 篇文章。
 
