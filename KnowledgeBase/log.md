@@ -1447,3 +1447,27 @@ date: 2026-04-17
 - **index.md 同步更新**该条目的引用
 - **index.md 补充 4 篇缺失条目**：`claude-md-maintenance-summary`（AI/ClaudeCode 分区）、`k8s-cgroup-v2-summary`（K8s 安装管理分区）、`kyverno-1.18-summary`（K8s 安全认证分区）、`rabbitmq-ha-summary`（K8s 中间件分区）
 - **确认 5 处"路径不匹配"为 lint 误报**：均使用短格式 wikilink，Obsidian 按文件名解析正常工作
+
+
+## [2026-06-28] lint-fix | 批量断链修复 + 模板迁移
+
+### 批量断链修复
+- 修复 `cloudops-agent-batch-summary.md` 67 处 + `rag-agent-batch-summary.md` 66 处短路径 wikilink
+- 方法：构建 `短文件名→完整相对路径` 映射，Python 正则批量替换
+- 效果：两个文件的课程章节链接全部转为全路径格式，零残留
+
+### 7 篇概念页模板迁移
+- 页面：CICD、Observability、Python运维开发、容器运行时、日志系统、服务网格、自动化运维
+- 操作：
+  - Heading 重命名：`在本仓库中的位置`→`在本仓库中的覆盖`、`关联概念`→`与其他概念的关系`、`可延展方向`→`知识空白`
+  - 合并 `相关文章` 到 `在本仓库中的覆盖`
+  - 新增 `核心要点` section（逐页从定义内容提炼 4-5 个要点）
+  - 补充 frontmatter：`sources`、`aliases` 字段
+
+### 10 篇实体页模板迁移
+- 页面：AKS、ArgoCD、Grafana、Helm、Ingress、Istio、Jenkins、Prometheus、Slurm、Terraform
+- 操作：
+  - Heading 重命名：`定义`→`简介`、`编译知识`→`核心功能`、`在本仓库中的位置`→`在本仓库中的覆盖`、`关联概念`→`相关概念与实体`、`可延展方向`→`知识空白`
+  - 合并 `相关文章` 到 `在本仓库中的覆盖`
+  - 新增 `使用场景` section（逐页提炼 3 个典型场景）
+  - 补充 frontmatter：`aliases` 字段

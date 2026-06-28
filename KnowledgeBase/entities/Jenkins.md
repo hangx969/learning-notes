@@ -5,14 +5,16 @@ tags:
 date: 2026-04-17
 sources:
   - "[[KnowledgeBase/sources/k8s-CICD-batch-summary|k8s-CICD 来源批量摘要]]"
+aliases:
+  - jenkins
 ---
 
 # Jenkins
 
-## 定义
+## 简介
 Jenkins 是老牌开源 CI/CD 服务器，支持 Pipeline as Code、丰富的插件生态与分布式构建。本仓库以 7 篇文章记录了 Jenkins 从二进制安装到 Kubernetes DevOps 平台落地的完整实践。
 
-## 编译知识
+## 核心功能
 
 ### 部署方式
 本仓库覆盖了 Jenkins 的四种部署方式，反映了不同环境的适配需求：
@@ -35,10 +37,15 @@ Jenkins 是老牌开源 CI/CD 服务器，支持 Pipeline as Code、丰富的插
 - Jenkins 代表 **Push 模式** CI/CD，与 [[KnowledgeBase/entities/ArgoCD|ArgoCD]] 的 **Pull 模式** GitOps 可集成使用
 - Jenkins 负责 CI（构建+测试），ArgoCD 负责 CD（部署同步），两者互补
 
-## 在本仓库中的位置
+## 使用场景
+- CI/CD Pipeline：代码提交触发自动构建→测试→部署
+- 企业级 DevOps 平台：多团队共享 Jenkins，RBAC 权限隔离
+- 混合环境部署：通过 Agent 机制支持物理机/VM/K8s 多环境
+
+## 在本仓库中的覆盖
 主要集中在 `Docker-Kubernetes/k8s-CICD/Jenkins/` 目录。
 
-## 相关文章
+
 - [[Docker-Kubernetes/k8s-CICD/Jenkins/Jenkins语法-基于docker部署|Jenkins语法-基于docker部署]]
 - [[Docker-Kubernetes/k8s-CICD/Jenkins/docker部署jenkins|docker部署jenkins]]
 - [[Docker-Kubernetes/k8s-CICD/Jenkins/helm部署jenkins|helm部署jenkins]]
@@ -47,13 +54,13 @@ Jenkins 是老牌开源 CI/CD 服务器，支持 Pipeline as Code、丰富的插
 - [[Docker-Kubernetes/k8s-CICD/Jenkins/k8s部署基于Jenkins(2.426.3)的Devops工具链-基于yaml|k8s部署基于Jenkins(2.426.3)的Devops工具链-基于yaml]]
 - [[Docker-Kubernetes/k8s-CICD/Jenkins/二进制安装Jenkins(2.319)|二进制安装Jenkins(2.319)]]
 
-## 关联概念
+## 相关概念与实体
 - [[KnowledgeBase/entities/Kubernetes|Kubernetes]]
 - [[KnowledgeBase/entities/ArgoCD|ArgoCD]]
 - [[KnowledgeBase/entities/Docker|Docker]]
 - [[KnowledgeBase/entities/Helm|Helm]]
 
-## 可延展方向
+## 知识空白
 - Jenkins 向 GitOps（ArgoCD）迁移策略
 - Jenkins Shared Library 最佳实践
 - Jenkins 与云原生 CI 工具（Tekton）的对比

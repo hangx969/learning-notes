@@ -5,14 +5,17 @@ tags:
 date: 2026-04-17
 sources:
   - "[[KnowledgeBase/sources/k8s-CICD-batch-summary|k8s-CICD 来源批量摘要]]"
+aliases:
+  - Argo CD
+  - argocd
 ---
 
 # ArgoCD
 
-## 定义
+## 简介
 ArgoCD 是基于 GitOps 理念的 Kubernetes 持续交付（CD）工具，通过监听 Git 仓库变更自动同步应用到集群。本仓库记录了 ArgoCD 基础使用、Image Updater 自动更新镜像、Helm 应用部署及问题排查。
 
-## 编译知识
+## 核心功能
 
 ### 核心架构与组件
 - ArgoCD 是 **CNCF 旗下**的声明式 GitOps 持续交付工具，以 Git 仓库作为**唯一事实来源**，自动同步集群状态与期望状态
@@ -33,22 +36,27 @@ ArgoCD 是基于 GitOps 理念的 Kubernetes 持续交付（CD）工具，通过
 - DNS 解析失败：CoreDNS 上游转发配置不当 + Go 纯 DNS 解析器优先尝试 IPv6 可导致 Helm 应用部署失败
 - 排查涉及 CoreDNS forward 插件、Calico CNI、kubeadm 集群环境
 
-## 在本仓库中的位置
+## 使用场景
+- GitOps 持续部署：Git 仓库作为唯一事实源，自动同步到 K8s 集群
+- 多集群管理：单个 ArgoCD 实例管理多个目标集群
+- 渐进式发布：与 Argo Rollouts 集成实现蓝绿/金丝雀部署
+
+## 在本仓库中的覆盖
 主要集中在 `Docker-Kubernetes/k8s-CICD/ArgoCD/` 目录，共 4 篇文章。
 
-## 相关文章
+
 - [[Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD基础|ArgoCD基础]]
 - [[Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD Image Updater|ArgoCD Image Updater]]
 - [[Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD部署Helm应用时域名解析失败问题排查与解决|ArgoCD部署Helm应用时域名解析失败问题排查与解决]]
 - [[Docker-Kubernetes/k8s-CICD/ArgoCD/学习链接|学习链接]]
 
-## 关联概念
+## 相关概念与实体
 - [[KnowledgeBase/entities/Kubernetes|Kubernetes]]
 - [[KnowledgeBase/entities/Helm|Helm]]
 - [[KnowledgeBase/entities/Jenkins|Jenkins]]
 - [[KnowledgeBase/entities/Docker|Docker]]
 
-## 可延展方向
+## 知识空白
 - ArgoCD ApplicationSet 多环境管理
 - ArgoCD 与 Kustomize 的结合使用
 - ArgoCD RBAC 与多租户配置
