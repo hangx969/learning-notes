@@ -164,7 +164,7 @@ spec:
 - **API 网关功能**：作为 API 网关，处理路由、限流和监控
 
 ### 实战配置：数据库代理
-![Uploading file...3w5ox]()
+![image.png](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260628094222030.png)
 
 Deployment：
 
@@ -254,6 +254,7 @@ data:
 - **监控指标转换**：将各种监控指标转换为统一的数据格式（如 Prometheus 格式）
 - **协议转换**：实现不同协议间的转换，如 HTTP 到 gRPC
 - **数据格式适配**：调整数据格式以满足不同系统的需求
+![image.png](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260628094236515.png)
 
 ### 实战配置：遗留系统监控数据转 Prometheus
 
