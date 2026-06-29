@@ -1634,3 +1634,10 @@ date: 2026-04-17
 
 - 清洗 `0raw/Codex 一键省 Token 大法，亲测有效.md` 并存入 `AI/Codex/Codex-省Token工具实测-Ponytail-Headroom-RTK.md`
 - 保留完整内容：四个省 Token 工具总览表（Ponytail/穴居人/Headroom/RTK-AI）、Ponytail 详解（YAGNI 理念/判断决策梯子/6 个 Skill/3 个 Hooks/安装方式）、Codex 实测对比（小游戏生成 vs 代码审查两个场景）、官方 Benchmark（前端任务代码行数减少 62-94%）、适用场景分析、背后洞察（教 Agent 学会克制）
+
+
+## [2026-06-29] update | K8s 故障排查指南整合 DiskPressure 驱逐机制
+
+- 将 `0raw/Kubernetes 节点突发 DiskPressure事件告警？吃透 Kubelet 驱逐底层原理，告别盲目扩容.md` 整合到 `Docker-Kubernetes/k8s-installation-management/k8s故障排查指南.md` 末尾
+- 新增章节「节点 DiskPressure 与 Kubelet 驱逐机制」：认知纠偏（DiskPressure≠磁盘满）、Eviction Manager 底层链路（cAdvisor→阈值判定→GC→驱逐）、三类磁盘监控（NodeFS/ImageFS/ContainerFS）、Inode 耗尽隐患、Pod QoS 驱逐优先级、5 步线上排查流程、6 条生产最佳实践
+- 补全了原文件缺失的"节点级故障排查"维度（原有内容只覆盖 Pod/Service/DNS/容器调试）
