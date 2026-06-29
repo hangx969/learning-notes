@@ -106,6 +106,7 @@ codex plugin marketplace add DietrichGebert/ponytail
 | 前端小功能（表单控件、设置项、弹窗、开关、日期/颜色选择） | 从零开始做一个完整产品 |
 | 已有项目里的局部修改（加字段、补校验、修边界、接已有 API） | 需要大量原创架构设计 |
 | 代码评审和项目瘦身 | — |
+![image.png](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260629174653605.png)
 
 ## 同类工具
 
