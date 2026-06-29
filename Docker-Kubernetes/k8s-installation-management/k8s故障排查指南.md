@@ -262,3 +262,193 @@ iptables -L -n -v
 | `nicolaka/netshoot` | 包含完整网络工具（curl, tcpdump, dig 等） | 通用网络调试         |
 | `busybox:glibc`     | 轻量级，支持 nslookup、ping               | 基础连通性测试       |
 | `alpine:latest`     | 包含 Shell 和包管理器（apk）              | 需临时安装工具的场合 |
+
+
+---
+
+# 节点 DiskPressure 与 Kubelet 驱逐机制
+
+> 80% 的磁盘压力告警，根本不是磁盘容量耗尽，而是 Kubelet 资源驱逐机制触发了节点保护。别急着扩容——先搞懂底层原理。
+
+## NodeHasDiskPressure 不是"磁盘满了"
+
+K8s 官方定义的 NodeHasDiskPressure 真实含义：**Kubelet 检测到节点磁盘类资源（空间/Inode）低于安全阈值，判定节点无法稳定、安全运行现有 Pod，触发节点资源保护机制。**
+
+重点是"不安全"，不是"磁盘满"。哪怕磁盘只用了 50%，只要剩余可用资源、Inode 数量跌破 Kubelet 预设阈值，就会立即触发磁盘压力状态。
+
+## 底层全链路：Kubelet 如何发现磁盘压力
+
+```
+cAdvisor 采集节点文件系统指标
+  → 上报至 Eviction Manager
+    → 对比驱逐阈值
+      → 更新节点 DiskPressure 状态
+        → 调度器停止新 Pod 调度
+          → 优先执行镜像/容器 GC
+            → 资源仍不足则驱逐存量 Pod
+```
+
+### Eviction Manager 核心循环
+
+对应源码：`pkg/kubelet/eviction`。持续周期性执行 `synchronize()` 方法，循环完成三件事：
+
+1. **采集指标**：获取节点磁盘、内存、PID、Inode 等实时资源数据
+2. **阈值判定**：对比预设软硬驱逐阈值，判断资源是否超标
+3. **执行动作**：更新节点状态、触发垃圾回收、按需驱逐 Pod
+
+## Kubelet 监控的 3 类磁盘（90% 的人只看了 1 个）
+
+**任意一个触发阈值，都会触发 DiskPressure**：
+
+| 磁盘类型 | 对应目录 | 承载内容 |
+|---------|---------|---------|
+| **NodeFS**（节点根文件系统） | `/` | `/var/lib/kubelet`、节点日志 `/var/log`、系统配置 |
+| **ImageFS**（镜像文件系统） | Containerd: `/var/lib/containerd`<br>Docker: `/var/lib/docker` | 容器镜像、镜像分层、快照数据 |
+| **ContainerFS**（容器可写层） | 新版 CRI/Containerd 专属 | 容器运行时的可写分层数据、临时读写数据 |
+
+**核心结论**：哪怕根磁盘空间充足，只要 ImageFS、ContainerFS 资源耗尽或跌破阈值，节点依然会触发磁盘压力、驱逐 Pod。
+
+## 阈值判定：Kubelet 看的是可用资源，不是使用率
+
+日常用 `df -h` 看的是"已用空间占比"，但 **Kubelet 的驱逐判定和使用率无关，只看可用资源**。
+
+### 默认硬驱逐阈值
+
+```
+--eviction-hard=
+  memory.available<100Mi
+  nodefs.available<10%
+  imagefs.available<15%
+  nodefs.inodesFree<5%
+  imagefs.inodesFree<5%
+```
+
+- `nodefs.available<10%`：节点根磁盘剩余可用空间不足 10%，触发压力
+- `inodeFree<5%`：剩余 Inode 不足 5%，同样触发磁盘压力
+
+### 最容易被忽略的杀手：Inode 耗尽
+
+大量微小文件会快速耗尽 Inode，却几乎不占用磁盘空间：
+
+- 容器疯狂打印短日志、碎片化日志文件
+- emptyDir 临时文件、缓存碎片堆积
+- 老旧容器残留海量小文件
+
+**排查时务必双指令核查，缺一不可**：
+
+```bash
+df -h    # 查看磁盘空间
+df -i    # 查看 Inode 使用率（核心！）
+```
+
+## 触发后的完整连锁反应
+
+### 第一步：更新节点状态
+
+节点 Condition 标记为 `DiskPressure=True`，直至资源恢复。
+
+### 第二步：调度器停止新 Pod 调度
+
+所有新创建、待调度的 Pod 直接陷入 Pending 状态。
+
+### 第三步：优先执行垃圾回收（不是立即驱逐！）
+
+**K8s 不会立即驱逐 Pod！** 这是大多数人的认知盲区。
+
+官方优先级：**先 GC 回收资源，资源仍不足，再驱逐 Pod。**
+
+- **Image GC**：由 `image_gc_manager` 管控，默认每 5 分钟执行，清理超过最小存活时长（默认 2 分钟）、长期未被使用的闲置镜像
+- **Container GC**：默认每分钟执行，清理节点上已退出、终止的残留容器和无效运行时碎片资源
+
+### 第四步：资源仍不足，触发 Pod 驱逐
+
+镜像、残留容器清理完毕后，若磁盘/Inode 资源依旧低于阈值，Eviction Manager 才执行最终的 Pod 驱逐。
+
+## Pod 驱逐优先级（不是随机的）
+
+### 按 QoS 等级优先驱逐（核心规则）
+
+**BestEffort（先驱逐）> Burstable > Guaranteed（最后驱逐）**
+
+无资源配额限制的 BestEffort Pod 优先级最高（最先被驱逐），核心 Guaranteed 业务 Pod 最后驱逐。
+
+### 同 QoS 下的辅助判定
+
+- 优先驱逐**磁盘资源占用更高**的 Pod（日志、emptyDir、Overlay 可写层占用大户）
+- 参考 `PriorityClass` 优先级，低优先级业务先被驱逐
+- 运行时间更短、重启更频繁的 Pod 优先被清理
+
+> **疯狂打日志、占用临时磁盘多的低优先级 Pod，永远是第一个被干掉的。**
+
+## 线上故障极速排查流程
+
+遇到 NodeHasDiskPressure 告警，别慌着扩容，按这套流程走：
+
+### 1. 查看节点压力状态与事件
+
+```bash
+kubectl describe node <节点名>
+# 重点关注：Conditions 中的 DiskPressure 状态、Event 中的驱逐与压力告警记录
+```
+
+### 2. 核查 Kubelet 底层驱逐日志
+
+```bash
+journalctl -u kubelet -f
+# 检索关键词：eviction thresholds have been met、must evict pod
+```
+
+### 3. 双维度核查磁盘与 Inode
+
+```bash
+df -h    # 磁盘空间
+df -i    # Inode 使用率
+# 重点排查：Inode 耗尽、ImageFS 爆满、根磁盘剩余空间不足
+```
+
+### 4. 清理闲置镜像
+
+```bash
+# Containerd
+ctr images ls
+# 通用 CRI
+crictl images
+# 清理未使用的镜像
+crictl rmi --prune
+```
+
+### 5. 排查容器日志堆积（线上头号元凶）
+
+```bash
+# 核心日志目录
+du -sh /var/log/containers/
+du -sh /var/log/pods/
+# 找到最大的日志文件
+find /var/log/containers/ -size +100M -exec ls -lh {} \;
+```
+
+**生产中 60% 以上的磁盘压力故障，都是业务日志无限制打印、日志未轮转导致，而非镜像堆积。**
+
+## 生产最佳实践
+
+| 措施 | 说明 |
+|------|------|
+| **自定义驱逐阈值** | 根据节点磁盘容量和业务负载调优软硬驱逐阈值，避免误杀和频繁告警 |
+| **强制容器日志轮转** | 配置日志大小、保留份数、自动轮转策略，杜绝日志无限膨胀 |
+| **开启并优化镜像 GC** | 合理配置镜像最小保留时长、GC 高低阈值，定期自动清理闲置镜像 |
+| **新增 Inode 监控告警** | 监控面板同时接入 nodefs、imagefs 的空间使用率**与 Inode 使用率** |
+| **限制 emptyDir 临时存储** | 为业务 emptyDir 配置 `sizeLimit`，禁止临时数据无限制占用节点磁盘 |
+| **前置监控预警** | 核心监控 `nodefs.available`、`imagefs.available`、`inodeFree` 三大指标 |
+
+## 总结
+
+**NodeHasDiskPressure 从来不是磁盘故障，而是 K8s 节点的主动保护机制。**
+
+完整底层链路：
+
+```
+cAdvisor 指标采集 → Eviction Manager 阈值校验 → 节点 DiskPressure 状态更新
+→ 停止新 Pod 调度 → Image/Container 垃圾回收 → 资源不足触发 Pod 分级驱逐
+```
+
+真正靠谱的集群运维，从不只会扩容磁盘。**读懂 Eviction 底层原理、吃透资源回收机制、做好前置监控治理**，才能彻底杜绝磁盘压力导致的业务重启、集群抖动问题。
