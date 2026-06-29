@@ -1628,3 +1628,9 @@ date: 2026-04-17
 
 - 清洗 `0raw/Obsidian vault 模板库合集：48 个 GitHub 上的宝藏 vault，下载即用.md` 并存入 `AI/Obsidian/Obsidian-Vault模板库合集-48个宝藏vault.md`
 - 保留完整内容：48 个 vault 的 11 大分类表、挑选三原则（活跃度>star/场景对口/先标杆后同类）、5 个推荐 vault 详解（Kepano/Hub/JS Info/DevCookbook/HowToCook）、踩坑清单（3 个避坑）、5 分钟上手流程
+
+
+## [2026-06-29] ingest | Codex 省 Token 工具实测
+
+- 清洗 `0raw/Codex 一键省 Token 大法，亲测有效.md` 并存入 `AI/Codex/Codex-省Token工具实测-Ponytail-Headroom-RTK.md`
+- 保留完整内容：四个省 Token 工具总览表（Ponytail/穴居人/Headroom/RTK-AI）、Ponytail 详解（YAGNI 理念/判断决策梯子/6 个 Skill/3 个 Hooks/安装方式）、Codex 实测对比（小游戏生成 vs 代码审查两个场景）、官方 Benchmark（前端任务代码行数减少 62-94%）、适用场景分析、背后洞察（教 Agent 学会克制）
