@@ -12,13 +12,14 @@ sources:
   - "[[Docker-Kubernetes/k8s-security-auth/helm部署oauth2proxy]]"
   - "[[Docker-Kubernetes/k8s-security-auth/helm部署sonarqube]]"
   - "[[Docker-Kubernetes/k8s-security-auth/helm部署trivy-operator]]"
+  - "[[Docker-Kubernetes/k8s-security-auth/k8s容器安全上下文完全指南-SecurityContext]]"
 ---
 
 ## 元信息
 
 - **原始目录**: `Docker-Kubernetes/k8s-security-auth/`
-- **文档数量**: 7 篇
-- **领域**: Kubernetes 安全、认证授权、证书管理、策略引擎、代码质量与镜像扫描
+- **文档数量**: 8 篇
+- **领域**: Kubernetes 安全、认证授权、证书管理、策略引擎、代码质量与镜像扫描、容器安全上下文
 - **摄入日期**: 2026-04-17
 
 ## 整体概述
@@ -90,6 +91,22 @@ sources:
 - 报告类型：VulnerabilityReport（镜像漏洞）、ConfigAuditReport（配置安全）
 - Vulnerability DB 是 OCI Image，需使用 oras 工具下载（非 docker pull）
 - 支持离线环境的漏洞数据库部署
+
+### [[Docker-Kubernetes/k8s-security-auth/k8s容器安全上下文完全指南-SecurityContext|K8s 容器安全上下文完全指南]]
+
+**核心内容**: Security Context 生产实战完全指南，覆盖 UID/GID 管理、Linux Capabilities、特权模式、sysctl、seccomp、Pod 安全标准（PSS）三级策略。
+
+- Security Context 两级配置：Pod 级通用身份 + 容器级特殊权限，容器级覆盖 Pod 级
+- UID/GID 6 个核心字段：runAsUser/runAsGroup/runAsNonRoot/fsGroup/fsGroupChangePolicy/supplementalGroups
+- fsGroupChangePolicy 生产用 `OnRootMismatch`（减少递归、提升启动速度）
+- v1.35 GA：`supplementalGroupsPolicy: Strict` 消除镜像 `/etc/group` 隐式组安全隐患
+- Capabilities 最佳实践：`drop: ALL` + 按需 `add: NET_BIND_SERVICE`，配合 `allowPrivilegeEscalation: false` + `readOnlyRootFilesystem: true`
+- 特权模式三条铁律：默认禁止、99% 场景用 capabilities 替代、privileged 会让 seccomp 失效
+- allowPrivilegeEscalation 陷阱：hostPath/CSI 卷可能隐式授予 CAP_SYS_ADMIN 导致该字段不生效
+- sysctl 安全列表（v1.32，13 个参数含内核版本要求）、不安全 sysctl 三步启用流程
+- seccomp 三种 Profile（Unconfined/RuntimeDefault/Localhost）、生产用 RuntimeDefault 即可
+- Pod 安全标准三级策略：Privileged/Baseline/Restricted，Baseline 允许 13 种 capabilities，Restricted 仅允许 NET_BIND_SERVICE
+- 6 个常见故障排查（runAsNonRoot 冲突、fsGroup 卷权限、不安全 sysctl、特权端口绑定、只读文件系统、seccomp 与特权互斥）
 
 ## 涉及的概念与实体
 
