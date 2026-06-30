@@ -15,6 +15,7 @@
 | agents/ | 8 个 | OpenClaw 多智能体定义文件（aiops/linux/container/k8s/architect/backend/frontend/pm） |
 | CloudOps-Agent-项目/ | 57 | 三语言智能 OnCall Agent（Go/Java/Python） |
 | RAG-Agent-项目/ | 33 | 企业 RAG 知识库系统（Spring Boot + ES） |
+| 代码知识图谱/ | 5 | CodeGraph、Graphify、code-review-graph、Understand-Anything、shiji-kb 知识图谱构造方法论 |
 | 行业动态/ | 3 | Boris Cherny 红杉大会七个判断、HTML 取代 Markdown、AI 时代 Git 版本管理 |
 | GithubCopilot/ | 1 | Copilot CLI |
 
