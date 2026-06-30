@@ -222,6 +222,7 @@ date: 2026-04-17
 | 页面 | 覆盖文档数 | 摘要 |
 |------|:---------:|------|
 | [Graphify](sources/graphify-summary.md) | 1 | 软件工程知识图谱工具，代码 AST 本地解析 + 文档 AI 语义提取，支持关系查询/MCP Server/团队协作 |
+| [shiji-kb 知识图谱构造方法论](sources/shiji-kb-knowledge-graph-summary.md) | 1 | 开源古籍知识工程：AI 将《史记》57 万字结构化（10 万实体/3185 事件/7652 关系），沉淀 26 个可复用 Skill（9 大阶段） |
 | [K8s MCP Server + Dify](sources/k8s-mcp-server-dify-summary.md) | 1 | Dify + Kubernetes MCP Server 智能运维，实时集群感知/自然语言运维/自动故障分析/企业知识库 |
 | [AIOps Golang 工具链](sources/aiops-golang-k8s-toolchain-summary.md) | 1 | Go 三层递进工具链：Cobra CLI 基座 → Function Calling ChatOps → RAG 故障诊断，含完整源码 |
 
