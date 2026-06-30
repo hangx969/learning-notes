@@ -12,6 +12,32 @@ date: 2026-04-17
 
 ---
 
+## [2026-06-30] ingest | K8s 容器安全上下文完全指南（Security Context）
+
+- **来源**：老郭a，2026-06-29，微信公众号
+- **清洗**：去除作者署名/发布时间行、"先说点实在的"个人叙事段落中的非技术部分、评论区互动引导（"说来听听"）、微信赞赏/目录导航/个人观点声明页脚；还原全部 YAML 代码块格式（原文代码块压缩为单行，全部恢复为正确缩进的多行 YAML），修复错误的代码块语言标识符（makefile/cs/apache/sql → yaml/bash）
+- **新建文件**：
+  - `Docker-Kubernetes/k8s-security-auth/k8s容器安全上下文完全指南-SecurityContext.md` — 清洗后技术文章
+- **更新页面**：
+  - `sources/k8s-security-auth-batch-summary.md`：frontmatter 新增 source、文档数 7→8、正文新增 Security Context 小节（11 条关键知识点）
+  - `entities/Kubernetes.md`：篇数 151→152、安全与认证 7→8 篇、新增 Security Context 核心要点
+  - `maps/kubernetes-map.md`：总篇数 151→152、安全与认证 7→8 篇、列表新增 Security Context
+  - `index.md`：安全认证批量摘要 7→8、Kubernetes 实体→152、领域导航→152
+- **核心知识**：
+  - Security Context 两级配置（Pod 级通用身份 + 容器级特殊权限），容器级覆盖 Pod 级
+  - UID/GID 6 个核心字段（runAsUser/runAsGroup/runAsNonRoot/fsGroup/fsGroupChangePolicy/supplementalGroups）
+  - fsGroupChangePolicy 生产用 `OnRootMismatch`（减少递归提升启动速度）
+  - v1.35 GA：`supplementalGroupsPolicy: Strict` 消除镜像隐式组安全隐患（v1.31 Alpha → v1.33 Beta → v1.35 GA）
+  - Capabilities 最佳实践：`drop: ALL` + 按需 add，配合 `allowPrivilegeEscalation: false` + `readOnlyRootFilesystem: true`
+  - 特权模式三条铁律：默认禁止、99% 场景用 capabilities 替代、privileged 会让 seccomp 失效
+  - allowPrivilegeEscalation 陷阱：hostPath/CSI 卷可能隐式授予 CAP_SYS_ADMIN 导致该字段不生效
+  - sysctl 安全列表（v1.32，13 个参数含内核版本要求）
+  - seccomp 三种 Profile，生产用 RuntimeDefault 即可
+  - Pod 安全标准三级策略（Privileged/Baseline/Restricted），Baseline 允许 13 种 capabilities
+  - 6 个常见故障排查场景
+
+---
+
 ## [2026-06-30] ingest | shiji-kb：AI 史记知识库与可复用知识图谱构造方法论
 
 - **来源**：01fish（数字人文研究），2026-04-09，微信公众号
