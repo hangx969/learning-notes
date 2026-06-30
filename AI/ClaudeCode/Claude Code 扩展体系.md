@@ -1450,4 +1450,5 @@ npx skills add OthmanAdi/planning-with-files --skill planning-with-files -g
 ```
 
 ## 去AI味 skills
-英文版：https://github.com/blader/humanizer/tree/main
+英文版： https://github.com/blader/humanizer/tree/main
+中文版： https://github.com/op7418/Humanizer-zh
