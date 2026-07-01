@@ -198,6 +198,228 @@ EOF
 
 # 实战 -- 自动修改pod的image repo
 
+## 项目背景
+
+在跨国企业中，海外 Artifactory（如 `artifactory.example.com`）经常作为统一镜像源，代理 DockerHub、GHCR、Quay 等公共仓库。当业务扩展到中国区时，由于跨境网络延迟，Pod 拉取镜像速度很慢甚至超时。
+
+解决方案：在中国区 Artifactory（如 `artifactory.example.cn`）上配置 Smart Remote Repository，将海外 Artifactory 作为上游源进行缓存加速。然后利用 Kyverno 在 Pod 创建时自动将镜像路径从 `.com` 替换为 `.cn`，实现对业务 manifest 的零侵入改造。
+
+**核心需求：**
+
+- 自动替换 Pod 中 containers 和 initContainers 的镜像路径
+- 仅替换特定仓库（有 Smart Remote 配置的）的镜像，跳过没有 `.cn` 缓存的仓库
+- 仅在指定 namespace 中生效，避免影响系统组件
+- Kyverno 宕机时不阻塞 Pod 创建（`failurePolicy: Ignore`）
+
+## 为什么选择 MutatingPolicy（CEL）而非 ClusterPolicy（JMESPath）
+
+Kyverno 1.18 引入了 `MutatingPolicy`（API Group: `policies.kyverno.io/v1`），使用 CEL（Common Expression Language）替代 JMESPath。在实际落地中，我们发现 MutatingPolicy 有以下优势：
+
+### 1. CEL 表达力更强
+
+ClusterPolicy 的 JMESPath `AnyIn` 通配符不支持多级路径匹配。例如 `artifactory.example.com/my-repo/*` 无法匹配 `artifactory.example.com/my-repo/datadog/agent:7.68.3-jmx`（多级子路径）。
+
+CEL 的 `startsWith()` + `exists()` 可以轻松实现：
+
+```cel
+variables.allowedRepos.exists(repo,
+  c.image.startsWith("artifactory.example.com/" + repo + "/")
+)
+```
+
+### 2. Webhook 机制独立
+
+ClusterPolicy 共享一套 webhook，而 MutatingPolicy 使用独立的 admission 机制（`kyverno-resource-mutating-webhook-cfg` 中的 `mpol.validate.kyverno.svc-ignore`）。在实测中，ClusterPolicy 偶尔出现 webhook 不接收请求的问题，切换到 MutatingPolicy 后立即生效。
+
+### 3. 更好的错误处理
+
+CEL 表达式在编译期即可发现语法错误，而 JMESPath 的错误往往在运行时才暴露。MutatingPolicy 的 `READY` 状态可以直观反映策略是否编译通过。
+
+## 最终 Policy 设计
+
+### 关键设计决策：单一 Policy + matchExpressions In
+
+**踩坑经历：** 最初尝试为每个 namespace 生成一个 MutatingPolicy（通过 Helm `range` 循环），但发现所有 MutatingPolicy 共享同一个 webhook（`kyverno-resource-mutating-webhook-cfg`），最后一个 policy 的 `namespaceSelector` 会覆盖之前所有 policy 的 selector。导致只有最后一个 namespace 的 policy 生效。
+
+**解决方案：** 使用单一 MutatingPolicy，通过 `matchExpressions` + `operator: In` 列出所有目标 namespace。
+
+### Policy YAML（Helm 模板）
+
+```yaml
+{{- if .Values.kyvernoPolicy }}
+{{- if .Values.kyvernoPolicy.targetNamespaces }}
+---
+apiVersion: policies.kyverno.io/v1
+kind: MutatingPolicy
+metadata:
+  name: mutate-image-registry-cn
+spec:
+  # Kyverno 宕机时不阻塞 Pod 创建，Pod 会使用原始 .com 路径作为 fallback
+  failurePolicy: Ignore
+  matchConstraints:
+    # 单一 Policy + In 操作符，避免多 policy 的 webhook selector 冲突
+    namespaceSelector:
+      matchExpressions:
+        - key: kubernetes.io/metadata.name
+          operator: In
+          values:
+          {{- range .Values.kyvernoPolicy.targetNamespaces }}
+            - {{ . }}
+          {{- end }}
+    resourceRules:
+      - apiGroups: ['']
+        apiVersions: ['v1']
+        operations: ['CREATE', 'UPDATE']
+        resources: ['pods']
+  # 仓库白名单：仅替换有 Smart Remote 配置的仓库
+  variables:
+    - name: allowedRepos
+      expression: >-
+        [{{- range $i, $repo := .Values.kyvernoPolicy.allowedRepos -}}
+        {{ if $i }}, {{ end }}"{{ $repo }}"
+        {{- end }}]
+  mutations:
+    # 替换 containers 中的镜像路径
+    - patchType: JSONPatch
+      jsonPatch:
+        expression: |
+          object.spec.containers.map(c,
+            c.image.startsWith("artifactory.example.com/") &&
+            variables.allowedRepos.exists(repo,
+              c.image.startsWith("artifactory.example.com/" + repo + "/")) ?
+            JSONPatch{
+              op: "replace",
+              path: "/spec/containers/" + string(object.spec.containers.indexOf(c)) + "/image",
+              value: c.image.replace("artifactory.example.com", "artifactory.example.cn")
+            } : null
+          ).filter(p, p != null)
+    # 替换 initContainers 中的镜像路径（需先判断是否存在）
+    - patchType: JSONPatch
+      jsonPatch:
+        expression: |
+          has(object.spec.initContainers) ?
+          object.spec.initContainers.map(c,
+            c.image.startsWith("artifactory.example.com/") &&
+            variables.allowedRepos.exists(repo,
+              c.image.startsWith("artifactory.example.com/" + repo + "/")) ?
+            JSONPatch{
+              op: "replace",
+              path: "/spec/initContainers/" + string(object.spec.initContainers.indexOf(c)) + "/image",
+              value: c.image.replace("artifactory.example.com", "artifactory.example.cn")
+            } : null
+          ).filter(p, p != null)
+          : []
+{{- end }}
+{{- end }}
+```
+
+### Values 配置
+
+```yaml
+kyvernoPolicy:
+  # 分阶段 rollout：先基础设施和 ArgoCD agent，再业务 namespace
+  targetNamespaces:
+    - tools
+    - akuity-clop
+    - akuity-app
+    # - core        # 业务 namespace，后续开启
+    # - diagnosis
+
+  # 仅替换有 Smart Remote 缓存的仓库，跳过无缓存的（如 docker-local-sandbox）
+  allowedRepos:
+    - my-dockerhub-docker-remote
+    - my-ghcr-docker-remote
+    - my-quay-docker-remote
+```
+
+## 验证方法
+
+```bash
+# 检查 policy 状态（READY 应为 true）
+kubectl get mutatingpolicy
+# NAME                       AGE   READY
+# mutate-image-registry-cn   1m    true
+
+# 检查 webhook selector 是否正确包含所有目标 namespace
+kubectl get mutatingwebhookconfiguration kyverno-resource-mutating-webhook-cfg \
+  -o jsonpath='{.webhooks[0].namespaceSelector}' | jq .
+
+# dry-run 测试：目标 namespace 中的白名单 repo（应被替换）
+kubectl run test -n tools \
+  --image=artifactory.example.com/my-dockerhub-docker-remote/datadog/agent:7.68.3 \
+  --dry-run=server -o jsonpath='{.spec.containers[0].image}'
+# 输出: artifactory.example.cn/my-dockerhub-docker-remote/datadog/agent:7.68.3
+
+# dry-run 测试：目标 namespace 中的非白名单 repo（不应被替换）
+kubectl run test -n tools \
+  --image=artifactory.example.com/my-docker-local-sandbox/some-image:latest \
+  --dry-run=server -o jsonpath='{.spec.containers[0].image}'
+# 输出: artifactory.example.com/my-docker-local-sandbox/some-image:latest
+
+# dry-run 测试：非目标 namespace（不应被替换）
+kubectl run test -n default \
+  --image=artifactory.example.com/my-dockerhub-docker-remote/datadog/agent:7.68.3 \
+  --dry-run=server -o jsonpath='{.spec.containers[0].image}'
+# 输出: artifactory.example.com/my-dockerhub-docker-remote/datadog/agent:7.68.3
+
+# rollout restart 后检查 Pod 镜像是否已替换
+kubectl rollout restart deployment -n tools
+kubectl get pods -n tools \
+  -o jsonpath='{range .items[*]}{.metadata.name}: {.spec.containers[*].image}{"\n"}{end}'
+```
+
+## 踩坑记录
+
+### 1. 多 MutatingPolicy 的 webhook selector 冲突
+
+**现象：** 为每个 namespace 创建一个 MutatingPolicy 后，只有最后一个 namespace 的 Pod 被 mutate。
+
+**原因：** 所有 MutatingPolicy 共享同一个 `MutatingWebhookConfiguration`（`kyverno-resource-mutating-webhook-cfg`），webhook 的 `namespaceSelector` 被最后注册的 policy 覆盖。
+
+**解决：** 使用单一 MutatingPolicy + `matchExpressions.In` 列出所有目标 namespace。
+
+### 2. ArgoCD 自动 sync 干扰 Policy 测试
+
+**现象：** 手动 apply 的 policy 被 ArgoCD 自动 sync 覆盖或删除。
+
+**解决：** 在 ApplicationSet 的 `templatePatch` 中为 kyverno app 设置 `automated: null` 禁用自动 sync，手动验证后再恢复。
+
+```yaml
+templatePatch: |
+  {{- if eq .path.basename "kyverno" }}
+  spec:
+    ignoreDifferences:
+      - group: apiextensions.k8s.io
+        kind: CustomResourceDefinition
+        jsonPointers:
+          - /metadata/labels
+          - /metadata/annotations
+    syncPolicy:
+      automated: null
+      syncOptions:
+        - ApplyOutOfSyncOnly=true
+        - ServerSideApply=true
+        - RespectIgnoreDifferences=true
+  {{- end }}
+```
+
+### 3. CRD annotations 过长导致 sync 失败
+
+**现象：** Kyverno 3.8.0 chart 的 CRD metadata 过大，ArgoCD 默认的 client-side apply 报错 `Too long`。
+
+**解决：** 在 syncOptions 中添加 `ServerSideApply=true`。同时 CRD 的空 labels/annotations 会导致永久 OutOfSync，需配合 `ignoreDifferences` + `RespectIgnoreDifferences=true`。
+
+### 4. 镜像拉取认证与 TLS 卸载
+
+**现象：** 替换到 `.cn` 后 Pod 报 `ImagePullBackOff`，Docker auth 失败。
+
+**原因：** 负载均衡器（如 ALB）做 TLS 卸载后，后端 Artifactory 收到的是 HTTP 请求，生成了 `http://` 的 Docker token realm，客户端校验失败。
+
+**解决：** 在 ALB/LB 上启用 `X-Forwarded-Proto` 透传（如 `x_forwarded_for_proto_enabled = true`），让 Artifactory 知道原始请求是 HTTPS。
+
+### 5. failurePolicy: Ignore 的 fallback 保障
+
+设计要点：当 Kyverno 宕机或 webhook 不可用时，`failurePolicy: Ignore` 确保 Pod 正常创建，使用原始 `.com` 镜像路径。`.com` 源始终可用（只是慢），不会造成服务中断。这是一个关键的容错设计。
 
 # Kyverno 1.18 新特性（CNCF 毕业后首个版本）
 
