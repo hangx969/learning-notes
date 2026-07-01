@@ -196,6 +196,8 @@ spec:
 EOF
 ~~~
 
+# 实战 -- 自动修改pod的image repo
+
 
 # Kyverno 1.18 新特性（CNCF 毕业后首个版本）
 
