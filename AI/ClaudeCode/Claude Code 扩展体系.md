@@ -219,12 +219,6 @@ claude mcp add filesystem -- npx -y @modelcontextprotocol/server-filesystem /pat
 
 ### github
 
-GitHub 操作（需要官网 key）。需要设置 `GITHUB_TOKEN` 环境变量。
-
-```sh
-export GITHUB_PERSONAL_ACCESS_TOKEN="your_token_here"
-claude mcp add github -- npx -y @modelcontextprotocol/server-github
-```
 
 ---
 
