@@ -218,7 +218,28 @@ claude mcp add filesystem -- npx -y @modelcontextprotocol/server-filesystem /pat
 ---
 
 ### github
+Claude Code 通过官方 GitHub MCP Server 接入 GitHub，可读取/操作 PR、Issue 等。两种配置方式：
 
+**方式 A：远程 HTTP（推荐）**
+- 无需 Docker，GitHub 官方托管，配置最简单
+- 前提：能访问 `api.githubcopilot.com`；GHES（私有部署）不支持
+```bash
+claude mcp add-json github '{"type":"http","url":"https://api.githubcopilot.com/mcp","headers":{"Authorization":"Bearer YOUR_GITHUB_PAT"}}'
+# 全局可用加 --scope user
+```
+
+**方式 B：本地 Docker**
+- Token 只在本机流转，不经过任何远程中转；GHES 场景下唯一选择
+- 前提：本机需要 Docker 且保持运行
+```bash
+claude mcp add github -e GITHUB_PERSONAL_ACCESS_TOKEN=YOUR_GITHUB_PAT -- docker run -i --rm -e GITHUB_PERSONAL_ACCESS_TOKEN ghcr.io/github/github-mcp-server
+```
+
+**PAT 权限要求**：Contents / Pull requests / Metadata 至少 Read 权限（fine-grained token）或 `repo`（classic token）
+
+**验证**：`claude mcp list` / `claude mcp get github`
+
+**选型建议**：默认用方式 A，图省心；如果是 GHES 私有部署或公司网络封锁 `api.githubcopilot.com`，切换方式 B。
 
 ---
 
