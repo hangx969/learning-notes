@@ -317,13 +317,9 @@ spec:
 
 ```yaml
 kyvernoPolicy:
-  # 分阶段 rollout：先基础设施和 ArgoCD agent，再业务 namespace
+  # 分阶段 rollout：先基础设施，再业务 namespace
   targetNamespaces:
     - tools
-    - akuity-clop
-    - akuity-app
-    # - core        # 业务 namespace，后续开启
-    # - diagnosis
 
   # 仅替换有 Smart Remote 缓存的仓库，跳过无缓存的（如 docker-local-sandbox）
   allowedRepos:
@@ -371,55 +367,9 @@ kubectl get pods -n tools \
 ## 踩坑记录
 
 ### 1. 多 MutatingPolicy 的 webhook selector 冲突
-
 **现象：** 为每个 namespace 创建一个 MutatingPolicy 后，只有最后一个 namespace 的 Pod 被 mutate。
-
 **原因：** 所有 MutatingPolicy 共享同一个 `MutatingWebhookConfiguration`（`kyverno-resource-mutating-webhook-cfg`），webhook 的 `namespaceSelector` 被最后注册的 policy 覆盖。
-
 **解决：** 使用单一 MutatingPolicy + `matchExpressions.In` 列出所有目标 namespace。
-
-### 2. ArgoCD 自动 sync 干扰 Policy 测试
-
-**现象：** 手动 apply 的 policy 被 ArgoCD 自动 sync 覆盖或删除。
-
-**解决：** 在 ApplicationSet 的 `templatePatch` 中为 kyverno app 设置 `automated: null` 禁用自动 sync，手动验证后再恢复。
-
-```yaml
-templatePatch: |
-  {{- if eq .path.basename "kyverno" }}
-  spec:
-    ignoreDifferences:
-      - group: apiextensions.k8s.io
-        kind: CustomResourceDefinition
-        jsonPointers:
-          - /metadata/labels
-          - /metadata/annotations
-    syncPolicy:
-      automated: null
-      syncOptions:
-        - ApplyOutOfSyncOnly=true
-        - ServerSideApply=true
-        - RespectIgnoreDifferences=true
-  {{- end }}
-```
-
-### 3. CRD annotations 过长导致 sync 失败
-
-**现象：** Kyverno 3.8.0 chart 的 CRD metadata 过大，ArgoCD 默认的 client-side apply 报错 `Too long`。
-
-**解决：** 在 syncOptions 中添加 `ServerSideApply=true`。同时 CRD 的空 labels/annotations 会导致永久 OutOfSync，需配合 `ignoreDifferences` + `RespectIgnoreDifferences=true`。
-
-### 4. 镜像拉取认证与 TLS 卸载
-
-**现象：** 替换到 `.cn` 后 Pod 报 `ImagePullBackOff`，Docker auth 失败。
-
-**原因：** 负载均衡器（如 ALB）做 TLS 卸载后，后端 Artifactory 收到的是 HTTP 请求，生成了 `http://` 的 Docker token realm，客户端校验失败。
-
-**解决：** 在 ALB/LB 上启用 `X-Forwarded-Proto` 透传（如 `x_forwarded_for_proto_enabled = true`），让 Artifactory 知道原始请求是 HTTPS。
-
-### 5. failurePolicy: Ignore 的 fallback 保障
-
-设计要点：当 Kyverno 宕机或 webhook 不可用时，`failurePolicy: Ignore` 确保 Pod 正常创建，使用原始 `.com` 镜像路径。`.com` 源始终可用（只是慢），不会造成服务中断。这是一个关键的容错设计。
 
 # Kyverno 1.18 新特性（CNCF 毕业后首个版本）
 
