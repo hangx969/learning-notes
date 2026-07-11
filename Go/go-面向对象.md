@@ -143,7 +143,28 @@ func main() {
 > - `cal` 是接收者的名字，可以在方法体内用 cal 访问结构体的字段和方法，相当于 ==this== 或 ==self==。
 
 ```go
+package main
 
+import (
+	"fmt"
+)
+
+//结构体定义
+type Person struct {
+	Name string
+	Age  int
+}
+
+//给结构体创建方法
+func (p *Person) GetInfo() string {
+	return fmt.Sprintf("Name:%s, Age:%d", p.Name, p.Age)
+}
+
+func main() {
+	p := Person{Name: "Alice", Age: 30}
+	fmt.Printf("Name:%s, Age:%d", p.Name, p.Age)
+	p.GetInfo()
+}
 ```
 
 ---
