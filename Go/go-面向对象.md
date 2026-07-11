@@ -159,6 +159,7 @@ type Person struct {
 }
 
 //给结构体创建方法
+// *Person 是方法接收者
 func (p *Person) GetInfo() string {
 	return fmt.Sprintf("Name:%s, Age:%d", p.Name, p.Age)
 }
