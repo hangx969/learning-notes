@@ -109,6 +109,7 @@ var person *Person = &Person{}
 > 3. 如果需要使用指针，推荐 `person := &Person{}` 这样的写法；如果不需要指针，推荐 `person := Person{}` 的写法
 
 ### 结构体方法
+示例1:
 
 ~~~go
 package main
@@ -141,6 +142,8 @@ func main() {
 > `(cal Calculator)` 是 Go 方法的"接收者"（receiver），表示这两个函数是 Calculator 结构体的方法。
 > - `(cal Calculator)` 表示该方法属于 Calculator 类型，只有 Calculator 类型的变量才能调用这个方法。
 > - `cal` 是接收者的名字，可以在方法体内用 cal 访问结构体的字段和方法，相当于 ==this== 或 ==self==。
+
+示例2:
 
 ```go
 package main
