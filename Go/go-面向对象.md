@@ -142,6 +142,10 @@ func main() {
 > - `(cal Calculator)` 表示该方法属于 Calculator 类型，只有 Calculator 类型的变量才能调用这个方法。
 > - `cal` 是接收者的名字，可以在方法体内用 cal 访问结构体的字段和方法，相当于 ==this== 或 ==self==。
 
+```go
+
+```
+
 ---
 
 ## 工厂模式
