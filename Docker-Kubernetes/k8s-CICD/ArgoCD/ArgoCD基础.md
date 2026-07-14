@@ -656,6 +656,12 @@ argocd repo add https://oauth:TOKEN@git.example.com/repos/repo.git
 argocd repo add git@git.example.com:repos/repo --insecure-ignore-host-key --ssh-private-key-path ~/id_rsa --name test-repo
 ```
 
+### 添加gitee仓库
+```sh
+argocd repo add https://gitee.com/hangxu969/local-k8s-gitops.git --name local-k8s-gitops
+
+```
+
 ## 回滚
 UI界面的History and Rollback功能可以一键回滚。但是任何非紧急问题，都建议在git仓库源端回滚代码，要不然任何在UI上的变更都会引起argocd out of sync
 
