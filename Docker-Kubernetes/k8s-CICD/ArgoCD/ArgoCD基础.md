@@ -661,6 +661,7 @@ argocd repo add git@git.example.com:repos/repo --insecure-ignore-host-key --ssh-
 ```sh
 argocd login 10.96.60.42
 argocd repo add https://gitee.com/hangxu969/local-k8s-gitops.git --name local-k8s-gitops
+# 添加完成之后，argocd namespace中会自动生成一个secret：repo-xxxx，记录repo url
 
 ```
 
