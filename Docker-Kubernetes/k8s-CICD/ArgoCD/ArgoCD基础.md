@@ -657,6 +657,7 @@ argocd repo add git@git.example.com:repos/repo --insecure-ignore-host-key --ssh-
 ```
 
 ### 添加gitee仓库
+设置仓库为**公开**（ArgoCD 无需认证即可拉取）：
 ```sh
 argocd login 10.96.60.42
 argocd repo add https://gitee.com/hangxu969/local-k8s-gitops.git --name local-k8s-gitops
