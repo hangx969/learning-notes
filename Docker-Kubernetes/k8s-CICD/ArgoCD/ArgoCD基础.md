@@ -573,9 +573,9 @@ chmod +x /usr/local/bin/argocd
 ~~~sh
 # 登录命令 -- 在宿主机
 argocd login grpc.argocd.hanxux.local
-# 登录命令 -- 在master节点,找argocd-server svc的clusterIP
+# 登录命令 -- 在master节点: 找argocd-server svc的clusterIP
 # 登录之后，相关配置保存在~/.config/argocd/config中
-argocd login 10.96.23.131
+argocd login 10.96.60.42
 
 #更新当前登录用户的密码
 #在更改密码后，您应该从 argocd 命名空间中删除 `argocd-initial-admin-secret`。该 Secret 除存储初始生成的明文密码外没有其他用途，可以随时安全删除。如果需要重新生成管理员密码，argocd 将按需重新创建该Secret。
@@ -658,6 +658,7 @@ argocd repo add git@git.example.com:repos/repo --insecure-ignore-host-key --ssh-
 
 ### 添加gitee仓库
 ```sh
+argocd login 
 argocd repo add https://gitee.com/hangxu969/local-k8s-gitops.git --name local-k8s-gitops
 
 ```
