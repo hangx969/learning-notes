@@ -664,7 +664,16 @@ argocd repo add https://gitee.com/hangxu969/local-k8s-gitops.git --name local-k8
 # 添加完成之后，argocd namespace中会自动生成一个secret：repo-xxxx，记录repo url
 
 ```
+有时候拉取的太频繁会触发gitee那边的WAF拦截，导致必须要认证。如何添加认证：
 
+```sh
+argocd login 10.96.60.42
+argocd repo add https://gitee.com/hangxu969/local-k8s-gitops.git \
+  --username <你的gitee用户名> \
+  --password <刚生成的TOKEN> \
+  --name local-k8s-gitops \
+  --upsert
+```
 
 
 ## 回滚
