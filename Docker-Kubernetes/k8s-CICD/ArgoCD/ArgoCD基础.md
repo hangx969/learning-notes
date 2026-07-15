@@ -665,6 +665,8 @@ argocd repo add https://gitee.com/hangxu969/local-k8s-gitops.git --name local-k8
 
 ```
 
+
+
 ## 回滚
 UI界面的History and Rollback功能可以一键回滚。但是任何非紧急问题，都建议在git仓库源端回滚代码，要不然任何在UI上的变更都会引起argocd out of sync
 
