@@ -12,7 +12,10 @@ aliases:
 
 - 官网教程：[Istio / 使用 Helm 安装](https://istio.io/latest/zh/docs/setup/install/helm/)
 - github release: [istio/istio: Connect, secure, control, and observe services.](https://github.com/istio/istio)
-- artifacthub: [istiod 1.27.1 · istio/istio-official](https://artifacthub.io/packages/helm/istio-official/istiod)
+- artifacthub: 
+	- [istiod 1.27.1 · istio/istio-official](https://artifacthub.io/packages/helm/istio-official/istiod)
+	- https://artifacthub.io/packages/helm/istio-official/base
+	- 
 
 ~~~sh
 helm repo add istio https://istio-release.storage.googleapis.com/charts
