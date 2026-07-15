@@ -670,7 +670,7 @@ argocd repo add https://gitee.com/hangxu969/local-k8s-gitops.git --name local-k8
 argocd login 10.96.60.42
 argocd repo add https://gitee.com/hangxu969/local-k8s-gitops.git \
   --username <你的gitee用户名> \
-  --password <刚生成的TOKEN> \
+  --password <TOKEN> \
   --name local-k8s-gitops \
   --upsert
 ```
