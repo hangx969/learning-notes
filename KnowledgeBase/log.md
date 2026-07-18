@@ -1693,7 +1693,7 @@ date: 2026-04-17
 ## [2026-07-18] ingest | Kubernetes v1.37 升级破坏性变更
 
 - 摄入来源：《K8s 1.37 升级生死线》公众号文章
-- 清洗并归档至 [[Docker-Kubernetes/k8s-installation-management/k8s-1.37-upgrade-breaking-changes.md]]
+- 清洗并归档至 [[k8s-1.37-升级须知-breaking-changes]]
 - 覆盖内容：
   - containerd 1.x → 2.0 强制升级要求和迁移方案
   - cgroup v1 → v2 迁移路径与检查命令

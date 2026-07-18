@@ -13,12 +13,12 @@ sources:
   - "[[Docker-Kubernetes/k8s-installation-management/legacy-versions/安装k8s-1.26-1.27]]"
   - "[[Docker-Kubernetes/k8s-installation-management/legacy-versions/安装k8s-1.23]]"
   - "[[Docker-Kubernetes/k8s-installation-management/legacy-versions/安装k8s-1.20.6-高可用]]"
-  - "[[Docker-Kubernetes/k8s-installation-management/二进制安装k8s高可用集群]]"
+  - "[[二进制安装k8s高可用集群]]"
   - "[[Docker-Kubernetes/k8s-installation-management/2025最新-企业级高可用集群-基于rockylinux]]"
   - "[[Docker-Kubernetes/k8s-installation-management/etcd高可用配置以及模拟集群故障和恢复]]"
   - "[[Docker-Kubernetes/k8s-installation-management/k8s两地三中心架构]]"
   - "[[Docker-Kubernetes/k8s-installation-management/k8s生产环境优化与最佳实践]]"
-  - "[[Docker-Kubernetes/k8s-installation-management/k8s迁移容器运行时-版本升级]]"
+  - "[[k8s迁移容器运行时-版本升级]]"
   - "[[Docker-Kubernetes/k8s-installation-management/k8s故障排查指南]]"
   - "[[Docker-Kubernetes/k8s-installation-management/k8s多集群kubeconfig管理]]"
   - "[[Docker-Kubernetes/k8s-installation-management/k8s-cgroup-v2深度解析-迁移实战与避坑指南]]"
@@ -94,7 +94,7 @@ sources:
   - 使用 rpm 强制安装方式处理离线依赖
   - K8s 核心组件架构介绍（API Server、Scheduler、Controller Manager、etcd）
 
-### [[Docker-Kubernetes/k8s-installation-management/二进制安装k8s高可用集群|二进制安装k8s高可用集群]]
+### [[二进制安装k8s高可用集群|二进制安装k8s高可用集群]]
 - 核心内容：通过二进制方式安装 k8s 1.20.7 多 master 高可用集群，使用 keepalived + nginx 实现负载均衡。
 - 关键知识点：
   - 二进制安装 vs kubeadm 安装的对比分析
@@ -133,7 +133,7 @@ sources:
   - 3 master 可管理 900 个 worker 节点
   - 服务高可用（反亲和力）、性能优化（节点亲和力、污点容忍）
 
-### [[Docker-Kubernetes/k8s-installation-management/k8s迁移容器运行时-版本升级|k8s迁移容器运行时与版本升级]]
+### [[k8s迁移容器运行时-版本升级|k8s迁移容器运行时与版本升级]]
 - 核心内容：将容器运行时从 Docker 迁移到 containerd 的完整操作流程，以及 k8s 版本升级方法。
 - 关键知识点：
   - 迁移步骤：cordon/drain 节点 -> 卸载 Docker -> 安装 containerd -> 修改 kubelet 配置

@@ -46,7 +46,7 @@ date: 2026-04-16
 ### 第三阶段：安装部署
 11. [[Docker-Kubernetes/k8s-installation-management/latest-version/安装k8s-1.35-基于rockylinux10-最新步骤|安装k8s-1.35-基于rockylinux10-最新步骤]] — 最新版安装
 12. [[Docker-Kubernetes/k8s-installation-management/2025最新-企业级高可用集群-基于rockylinux|2025最新-企业级高可用集群-基于rockylinux]] — 企业级高可用
-13. [[Docker-Kubernetes/k8s-installation-management/二进制安装k8s高可用集群|二进制安装k8s高可用集群]] — 二进制安装
+13. [[二进制安装k8s高可用集群|二进制安装k8s高可用集群]] — 二进制安装
 
 ### 第四阶段：监控与日志
 14. [[Docker-Kubernetes/k8s-monitoring-logging/helm部署prometheus-stack全家桶|helm部署prometheus-stack全家桶]] — Prometheus 全家桶
