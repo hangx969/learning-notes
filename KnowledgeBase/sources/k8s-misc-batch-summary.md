@@ -17,7 +17,7 @@ sources:
   - "[[Docker-Kubernetes/helm-operator/helm部署dragonfly]]"
   - "[[Docker-Kubernetes/helm-operator/helm部署pact-broker]]"
   - "[[Docker-Kubernetes/helm-operator/helm部署reloader]]"
-  - "[[Docker-Kubernetes/helm-operator/helm部署tomcat]]"
+  - "[[helm部署tomcat]]"
   - "[[Docker-Kubernetes/CKA-CKS/CKA-备考]]"
   - "[[Docker-Kubernetes/CKA-CKS/CKS-备考]]"
   - "[[Docker-Kubernetes/CKA-CKS/k8s-面试题汇总]]"
@@ -90,7 +90,7 @@ sources:
   - 支持全局监控或指定 Namespace 监控
   - 可精确指定需要监控的 ConfigMap/Secret 名称
 
-### [[Docker-Kubernetes/helm-operator/helm部署tomcat|Helm部署Tomcat]]
+### [[helm部署tomcat|Helm部署Tomcat]]
 
 - **核心内容**: 使用 Bitnami Helm Chart 部署 Tomcat 并通过 NodePort 暴露服务。
 - **关键知识点**:

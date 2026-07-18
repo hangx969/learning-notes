@@ -54,7 +54,7 @@ Helm 基础位于 `Docker-Kubernetes/helm-operator/`，同时大量 helm 部署�
 - [[Docker-Kubernetes/helm-operator/helm部署dragonfly|helm部署dragonfly]]
 - [[Docker-Kubernetes/helm-operator/helm部署reloader|helm部署reloader]]
 - [[Docker-Kubernetes/helm-operator/helm部署config-syncer(kubed)|helm部署config-syncer(kubed)]]
-- [[Docker-Kubernetes/helm-operator/helm部署tomcat|helm部署tomcat]]
+- [[helm部署tomcat|helm部署tomcat]]
 - [[Docker-Kubernetes/helm-operator/helm部署pact-broker|helm部署pact-broker]]
 - [[Docker-Kubernetes/k8s-monitoring-logging/helm部署prometheus-stack全家桶|helm部署prometheus-stack全家桶]]
 - [[Docker-Kubernetes/k8s-monitoring-logging/helm部署Loki-promtail-tempo-grafanaAgent全家桶|helm部署Loki-promtail-tempo-grafanaAgent全家桶]]
