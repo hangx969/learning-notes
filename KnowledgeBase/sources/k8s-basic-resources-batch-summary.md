@@ -26,18 +26,19 @@ sources:
   - "[[Docker-Kubernetes/k8s-basic-resources/k8s基础-自定义CRD资源]]"
   - "[[Docker-Kubernetes/k8s-basic-resources/k8s基础-认证-授权-准入]]"
   - "[[Docker-Kubernetes/k8s-basic-resources/k8s-APIServer深度剖析-请求链路-认证授权-生产调优]]"
+  - "[[Docker-Kubernetes/k8s-basic-resources/k8s基础-Finalizer与资源删除]]"
 ---
 
 # K8s基础资源 来源批量摘要
 
 ## 元信息
 - **原始目录**：`Docker-Kubernetes/k8s-basic-resources/`
-- **文档数量**：21 篇
+- **文档数量**：22 篇
 - **领域**：Docker-Kubernetes
-- **摄入日期**：2026-04-17
+- **摄入日期**：2026-04-17（新增文档摄入日期：2026-07-18）
 
 ## 整体概述
-本批次文档系统性地覆盖了 Kubernetes 的核心基础知识，从集群架构与组件（API Server、Scheduler、Controller Manager、etcd）到各类工作负载资源（Pod、Deployment、StatefulSet、DaemonSet、Job/CronJob），再到网络（Service、Ingress、Calico）、存储（Volume、PV/PVC）、配置管理（ConfigMap、Secret）、安全（认证、授权、RBAC）以及扩展机制（CRD、Operator）。文档还涵盖了集群搭建工具 kubeadm、容器运行时 containerd、YAML 编写规范、临时容器调试、Python API 编程等实用主题。整体构成了一套完整的 Kubernetes 基础知识体系。
+本批次文档系统性地覆盖了 Kubernetes 的核心基础知识，从集群架构与组件（API Server、Scheduler、Controller Manager、etcd）到各类工作负载资源（Pod、Deployment、StatefulSet、DaemonSet、Job/CronJob），再到网络（Service、Ingress、Calico）、存储（Volume、PV/PVC）、配置管理（ConfigMap、Secret）、安全（认证、授权、RBAC）以及扩展机制（CRD、Operator）、资源删除生命周期机制（Finalizer）。文档还涵盖了集群搭建工具 kubeadm、容器运行时 containerd、YAML 编写规范、临时容器调试、Python API 编程等实用主题。整体构成了一套完整的 Kubernetes 基础知识体系。
 
 ## 各文档摘要
 
@@ -215,8 +216,18 @@ sources:
   - 3 条 Prometheus 告警规则（错误率/P99 延迟/并发请求上限）
   - 故障排查手册：API Server 无响应（etcd 健康检查/证书过期）、Webhook 死锁紧急恢复、Watch 泄漏定位
 
+### [[Docker-Kubernetes/k8s-basic-resources/k8s基础-Finalizer与资源删除|K8s基础-Finalizer与资源删除]]
+- 核心内容：Finalizer 机制的完整解析——`metadata.finalizers` 字段如何阻止资源被真正删除、资源删除的完整流程（deletionTimestamp → Controller 清理 → 移除 Finalizer → etcd 删除）、内置与第三方常见 Finalizer、资源"删不掉"的五大场景及诊断修复方法、Operator 中编写 Finalizer 的完整代码示例。
+- 关键知识点：
+  - `metadata.finalizers` 列表非空时，apiserver 只设置 `deletionTimestamp` 进入 Terminating，不会真正删除对象
+  - 五大"删不掉"场景：Controller 已卸载、Controller 清理逻辑报错、Namespace 内资源卡住、Finalizer 与 ownerReferences 循环依赖、apiserver 无法到达 Controller
+  - 手动移除 Finalizer（`kubectl patch --type=merge -p '{"metadata":{"finalizers":null}}'`）会跳过清理逻辑，可能导致外部资源（云盘、负载均衡器）泄漏
+  - 编写 Finalizer 四原则：清理逻辑幂等、失败时不移除 Finalizer（RequeueAfter 重试）、命名用 `域名/功能` 格式、记录部分清理进度
+  - Finalizer（资源对象级别，apiserver 层拦截）与 preStop/terminationGracePeriodSeconds（Pod 级别）作用层次不同，Finalizer 更早触发、更难绕过
+
 ## 涉及的概念与实体
 - [[KnowledgeBase/entities/Kubernetes|Kubernetes]]
+- [[KnowledgeBase/concepts/Finalizer|Finalizer]]
 - [[KnowledgeBase/entities/Pod|Pod]]
 - [[KnowledgeBase/entities/Deployment|Deployment]]
 - [[KnowledgeBase/entities/StatefulSet|StatefulSet]]

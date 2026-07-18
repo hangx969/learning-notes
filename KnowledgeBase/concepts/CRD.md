@@ -34,6 +34,7 @@ CRD（CustomResourceDefinition）是 Kubernetes 提供的 API 扩展机制，允
 - [[KnowledgeBase/concepts/Operator模式]]：CRD 是 Operator 模式的基础组件，CRD 定义资源模型，Controller 实现控制逻辑
 - [[KnowledgeBase/entities/Kubernetes]]：CRD 是 K8s 原生的 API 扩展机制
 - [[KnowledgeBase/concepts/StorageClass]]：StorageClass 本身也是通过类似的扩展机制注册到 K8s API 的
+- [[KnowledgeBase/concepts/Finalizer]]：自定义资源实例可携带 Finalizer，Namespace 级联删除该资源时若对应 Controller 未移除 Finalizer，会导致删除卡住
 
 ## 在本仓库中的覆盖
 

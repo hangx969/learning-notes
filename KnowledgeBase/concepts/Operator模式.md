@@ -39,6 +39,7 @@ Operator 模式是 Kubernetes 中将 CRD（自定义资源定义）与自定义 
 - [[KnowledgeBase/entities/Prometheus]]：Prometheus Operator 是社区中最知名的 Operator 之一
 - [[KnowledgeBase/concepts/高可用架构]]：Operator 常用于自动化管理有状态服务的高可用部署
 - [[KnowledgeBase/entities/Helm]]：Helm 与 Operator 互补，Helm 适合简单部署，Operator 适合需要持续运维的复杂应用
+- [[KnowledgeBase/concepts/Finalizer]]：Operator 的 Controller 通常在 Reconcile 循环中通过 Finalizer 实现资源删除前的外部资源清理逻辑，清理逻辑必须幂等
 
 ## 在本仓库中的覆盖
 
