@@ -39,6 +39,7 @@ date: 2026-04-17
 | [高可用架构](concepts/高可用架构.md) | 消除单点故障的冗余与故障切换架构设计 |
 | [CRD](concepts/CRD.md) | Kubernetes 自定义资源定义，扩展 API 的核心机制 |
 | [Operator模式](concepts/Operator模式.md) | CRD + Controller 模式，自动化有状态应用运维 |
+| [Finalizer](concepts/Finalizer.md) | Kubernetes 资源删除前钩子机制，防止外部资源泄漏 |
 | [RBAC](concepts/RBAC.md) | Kubernetes 基于角色的访问控制 |
 | [联邦集群](concepts/联邦集群.md) | Kubernetes 多集群统一管理与跨集群调度 |
 | [ServiceMesh](concepts/ServiceMesh.md) | → 服务网格（别名页）|
@@ -51,7 +52,7 @@ date: 2026-04-17
 
 | 页面 | 摘要 |
 |------|------|
-| [Kubernetes](entities/Kubernetes.md) | 容器编排平台，152 篇文章覆盖全生命周期 |
+| [Kubernetes](entities/Kubernetes.md) | 容器编排平台，153 篇文章覆盖全生命周期 |
 | [Docker](entities/Docker.md) | 容器运行时，12 篇覆盖基础与服务部署实战 |
 | [Helm](entities/Helm.md) | Kubernetes 包管理器 |
 | [ArgoCD](entities/ArgoCD.md) | GitOps 持续交付工具 |
@@ -131,7 +132,7 @@ date: 2026-04-17
 |------|:---------:|------|
 | [Docker](sources/docker-batch-summary.md) | 12 | Docker 基础、GPU 配置、服务部署实战（GitLab/Prometheus/Loki 等） |
 | [Docker 安全加固](sources/docker-security-capabilities-summary.md) | 1 | Capabilities 最小化、no-new-privileges 防提权、User Namespace/只读文件系统/资源限制纵深防御 |
-| [K8s 基础资源](sources/k8s-basic-resources-batch-summary.md) | 21 | Pod/Deployment/Service/Ingress/ConfigMap/Storage/RBAC/CRD/Operator/API Server 深度剖析 |
+| [K8s 基础资源](sources/k8s-basic-resources-batch-summary.md) | 22 | Pod/Deployment/Service/Ingress/ConfigMap/Storage/RBAC/CRD/Operator/API Server 深度剖析/Finalizer |
 | [K8s 标签与选择器](sources/k8s-labels-selectors-summary.md) | 1 | 5 条 SRE 铁律（selector 匹配/节点调度/成本归因/版本陷阱/单值原则）、4 个翻车案例、`app.kubernetes.io/*` 命名规范 |
 | [K8s 容器设计模式](sources/k8s-container-design-patterns-summary.md) | 4（合并） | Sidecar/Init Container/Ambassador/Adapter 四大模式：核心理念、场景、完整 YAML、选型对比 |
 | [K8s PDB 实战](sources/k8s-pdb-summary.md) | 1 | PodDisruptionBudget 自愿中断保护、四大配置陷阱、与 drain/滚动更新/HPA 的配合 |
@@ -297,7 +298,7 @@ date: 2026-04-17
 
 | 领域 | 篇数 | 成熟度 | 入口 |
 |------|------|:------:|------|
-| Docker-Kubernetes | 152 | 🟢 | [kubernetes-map](maps/kubernetes-map.md) |
+| Docker-Kubernetes | 153 | 🟢 | [kubernetes-map](maps/kubernetes-map.md) |
 | Python | 27 | 🟢 | [python-devops-map](maps/python-devops-map.md) |
 | Linux-Shell | 24 | 🟡 | [linux-ops-map](maps/linux-ops-map.md) |
 | Azure | 21 | 🟢 | [cloud-platform-map](maps/cloud-platform-map.md) |

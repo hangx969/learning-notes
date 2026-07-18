@@ -250,3 +250,4 @@ sources:
 - **有状态与无状态的对比设计**：Deployment（无状态）vs StatefulSet（有状态）的设计理念贯穿多篇文档，体现了 K8s 对不同应用类型的差异化支持。
 - **从容器到编排的演进**：containerd 文档连接了 Docker 与 K8s 的技术演进线索，展示了容器运行时从 Docker 独占到 CRI 标准化的技术变革。
 - **生产环境最佳实践**：多篇文档强调了生产环境的注意事项，如 ns 级别 Pod/RS 数量限制、Ingress 独占节点 + hostNetwork、Operator 部署有状态服务等。
+- **删除生命周期与扩展机制交织**：Finalizer 机制解释了 namespace-资源分配 文档中 Namespace 卡在 Terminating 的根本原因，也与 CRD/Operator 文档中"删除命名空间级联删除自定义资源实例"直接相关——CRD 实例若带 Finalizer 且 Controller 异常，会导致整条级联删除链路卡死。
