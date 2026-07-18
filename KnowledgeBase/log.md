@@ -12,6 +12,20 @@ date: 2026-04-17
 
 ---
 
+## [2026-07-18] ingest | K8s Finalizer 与资源删除机制
+
+- **来源**：WAKEUP技术，2026-07-12，微信公众号剪藏（原暂存于 `0raw/`）
+- **清洗**：去除作者署名/公众号名片/个人主页链接行、文末"微信扫一扫赞赏作者"引导，技术内容完整保留
+- **归档**：`0raw/K8s Finalizer：那个让资源"删不掉"的隐形守护者.md` → `Docker-Kubernetes/k8s-basic-resources/k8s基础-Finalizer与资源删除.md`（Raw Source，人类确认后移入）
+- **新建文件**：
+  - `KnowledgeBase/concepts/Finalizer.md` — 新建概念页：定义、工作机制、内置/常见 Finalizer、五大"删不掉"场景、诊断修复方法、Operator 中的 Finalizer 编写原则
+- **更新文件**：
+  - `KnowledgeBase/sources/k8s-basic-resources-batch-summary.md` — 文档数 21→22，新增该文档摘要段落，补充交叉主题发现
+  - `KnowledgeBase/concepts/CRD.md`、`KnowledgeBase/concepts/Operator模式.md` — 补充与 Finalizer 的关系交叉引用
+  - `KnowledgeBase/maps/kubernetes-map.md` — 总文档数 152→153，核心概念新增 Finalizer，基础资源表格新增"生命周期"行
+  - `KnowledgeBase/entities/Kubernetes.md` — 文章总数 152→153，基础资源 21→22 篇，覆盖描述补充 Finalizer
+  - `KnowledgeBase/index.md` — 概念页表格新增 Finalizer 行，Docker-Kubernetes 文档数 152→153，K8s 基础资源来源行 21→22
+
 ## [2026-06-30] ingest | K8s 容器安全上下文完全指南（Security Context）
 
 - **来源**：老郭a，2026-06-29，微信公众号
