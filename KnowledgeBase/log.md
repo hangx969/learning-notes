@@ -1688,3 +1688,18 @@ date: 2026-04-17
 - 将 `0raw/Kubernetes 节点突发 DiskPressure事件告警？吃透 Kubelet 驱逐底层原理，告别盲目扩容.md` 整合到 `Docker-Kubernetes/k8s-installation-management/k8s故障排查指南.md` 末尾
 - 新增章节「节点 DiskPressure 与 Kubelet 驱逐机制」：认知纠偏（DiskPressure≠磁盘满）、Eviction Manager 底层链路（cAdvisor→阈值判定→GC→驱逐）、三类磁盘监控（NodeFS/ImageFS/ContainerFS）、Inode 耗尽隐患、Pod QoS 驱逐优先级、5 步线上排查流程、6 条生产最佳实践
 - 补全了原文件缺失的"节点级故障排查"维度（原有内容只覆盖 Pod/Service/DNS/容器调试）
+
+
+## [2026-07-18] ingest | Kubernetes v1.37 升级破坏性变更
+
+- 摄入来源：《K8s 1.37 升级生死线》公众号文章
+- 清洗并归档至 [[Docker-Kubernetes/k8s-installation-management/k8s-1.37-upgrade-breaking-changes.md]]
+- 覆盖内容：
+  - containerd 1.x → 2.0 强制升级要求和迁移方案
+  - cgroup v1 → v2 迁移路径与检查命令
+  - kubelet 废弃标志清理（--cgroup-driver 等）
+  - DRA Partitionable Devices（GPU 切片调度，Alpha）
+  - SELinuxMount 特性默认启用的影响
+  - 完整的升级检查清单（升级前/中/后）
+- 影响实体：[[KnowledgeBase/entities/Kubernetes]]、[[KnowledgeBase/entities/containerd]]
+- 影响概念：[[KnowledgeBase/concepts/cgroup]]、[[KnowledgeBase/concepts/容器运行时]]
