@@ -1,8 +1,12 @@
 # 云原生与基础设施学习笔记
 
+**📖 在线浏览：[hangx969.github.io/learning-notes](https://hangx969.github.io/learning-notes/)**（随 main 分支自动更新）
+
+[![Deploy Pages](https://github.com/hangx969/learning-notes/actions/workflows/deploy-pages.yml/badge.svg)](https://github.com/hangx969/learning-notes/actions/workflows/deploy-pages.yml)
+
 涵盖云原生技术、基础设施自动化、编程语言、AI/ML 和现代 DevOps 实践的综合知识库。
 
-> **~460 篇文档 · 17 个技术领域 · 109 篇知识编译层文件**
+> **~379 篇学习笔记 · 17 个技术领域 · 129 篇知识编译层文件**
 
 ## 🧭 知识库导航（KnowledgeBase）
 
@@ -27,15 +31,17 @@
 
 | 领域 | 篇数 | 成熟度 | 亮点 |
 | --- | ---: | :---: | --- |
-| Docker-Kubernetes | 151 | 🟢 | 基础资源→安装管理→监控日志→CI/CD→网络→安全→扩缩容→存储→中间件，全生命周期 |
-| AI | 128 | 🟢 | Claude Code（9 篇深度）+ OpenClaw（8 篇）+ Hermes Agent（4 篇）+ RAG + 视觉 + 行业动态 |
-| Python | 27 | 🟢 | 基础→运维开发→网络编程→数据分析→项目实战 |
-| Linux-Shell | 24 | 🟡 | 系统管理 + Shell 脚本 + SSH/网络 + 存储/LVM/NFS |
-| Azure | 21 | 🟢 | VM/VMSS + AKS + 网络/存储 + DevOps Pipeline + Policy |
-| Aliyun | 19 | 🟢 | ECS/ESS + VPC/SLB/WAF + OSS + RDS/DTS + Landing Zone |
-| Go | 9 | 🟡 | 环境配置→变量→控制流→OOP→云原生选型 |
-| HPC + Cloud + GPU | 18 | 🟡 | Slurm/PBS + 云原生/微服务 + CUDA/驱动 |
-| 杂项 | 18 | 🟡 | Database + Middlewares + OS + Networking + IaC + Git + C++ |
+| Docker-Kubernetes | 170 | 🟢 | 基础资源→安装管理→监控日志→CI/CD→网络→安全→扩缩容→存储→中间件，全生命周期 |
+| AI¹ | 54 | 🟢 | Claude Code（9 篇深度）+ OpenClaw（8 篇）+ Hermes Agent（4 篇）+ 视觉 + 行业动态 |
+| Python | 29 | 🟢 | 基础→运维开发→网络编程→数据分析→项目实战 |
+| Linux-Shell | 25 | 🟡 | 系统管理 + Shell 脚本 + SSH/网络 + 存储/LVM/NFS |
+| Azure | 22 | 🟢 | VM/VMSS + AKS + 网络/存储 + DevOps Pipeline + Policy |
+| Aliyun | 22 | 🟢 | ECS/ESS + VPC/SLB/WAF + OSS + RDS/DTS + Landing Zone |
+| Go | 12 | 🟡 | 环境配置→变量→控制流→OOP→云原生选型 |
+| HPC + Cloud + GPU | 21 | 🟡 | Slurm/PBS + 云原生/微服务 + CUDA/驱动 |
+| 杂项 | 24 | 🟡 | Database + Middlewares + OS + Networking + IaC + Git + C++ |
+
+¹ AI/ 目录下另有 283 篇引用/嵌入内容未计入：AI-视觉/awesome-design-md 第三方设计参考库（135 篇）、RAG-Agent 项目文档（110 篇）、Agent/Skill 定义文件（38 篇）。
 
 ## 🚀 推荐阅读路径
 
@@ -70,14 +76,14 @@ learning-notes/
 │   ├── index.md                   ← 全库内容目录
 │   ├── log.md                     ← 操作日志
 │   ├── sources/                   ← 原始来源摘要页
-│   ├── concepts/                  ← 概念页（14 篇）
-│   ├── entities/                  ← 实体页（35 篇）
+│   ├── concepts/                  ← 概念页（15 篇）
+│   ├── entities/                  ← 实体页（37 篇）
 │   ├── maps/                      ← 主题地图（8 篇）
 │   ├── analysis/                  ← 分析报告
 │   ├── inventory/                 ← 文档盘点
 │   └── maintenance/               ← 维护报告
 │
-├── AI/                            ← AI 工具与实践（128 篇）
+├── AI/                            ← AI 工具与实践（54 篇笔记 + 283 篇引用/嵌入内容）
 │   ├── ClaudeCode/                ← Claude Code 深度文章
 │   ├── OpenClaw/                  ← OpenClaw 多智能体平台
 │   ├── Hermes-agent/              ← Hermes Agent 框架
@@ -85,7 +91,7 @@ learning-notes/
 │   ├── AI-视觉/                   ← PPT/动画/HTML 生成
 │   └── 行业动态/                   ← AI 趋势与洞察
 │
-├── Docker-Kubernetes/             ← K8s 全生态（151 篇）
+├── Docker-Kubernetes/             ← K8s 全生态（170 篇）
 │   ├── docker/                    ← Docker 基础
 │   ├── k8s-basic-resources/       ← K8s 核心资源 + API Server
 │   ├── k8s-installation-management/ ← 安装管理 + cgroup v2
@@ -96,11 +102,11 @@ learning-notes/
 │   ├── k8s-scaling/               ← 扩缩容 + FinOps 成本优化
 │   └── ...                        ← 存储/中间件/Helm/Harbor/GPU
 │
-├── Azure/                         ← Azure 云平台（21 篇）
-├── Aliyun/                        ← 阿里云（19 篇）
-├── Python/                        ← Python 开发（27 篇）
-├── Linux-Shell/                   ← Linux 运维（24 篇）
-├── Go/                            ← Go 语言（9 篇）
+├── Azure/                         ← Azure 云平台（22 篇）
+├── Aliyun/                        ← 阿里云（22 篇）
+├── Python/                        ← Python 开发（29 篇）
+├── Linux-Shell/                   ← Linux 运维（25 篇）
+├── Go/                            ← Go 语言（12 篇）
 └── ...                            ← HPC/GPU/Database/IaC 等
 ```
 
