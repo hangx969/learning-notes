@@ -23,14 +23,30 @@ WIKILINK_RE = r"\[\[([^\[\]\n]+)\]\]"
 
 CALLOUT_RE = re.compile(r"^>\s*\[!([A-Za-z][\w-]*)\][+-]?\s*(.*)$")
 
+# 高优先级处理器（escape、tables 的 \| 处理）会先把转义字符替换成
+# 内部占位符：\x02klzzwxh:NNNN\x03（暂存节点）或 \x02<ord>\x03（转义字符）。
+# wikilink 在优先级 75 执行时需要先还原它们（表格里的 [[x\|alias]] 依赖这个）。
+STASH_PLACEHOLDER_RE = re.compile("\x02klzzwxh:(\\d+)\x03")
+ESCAPED_CHAR_RE = re.compile("\x02(\\d+)\x03")
+
 
 class WikiLinkProcessor(InlineProcessor):
     def __init__(self, pattern, md, resolver):
         super().__init__(pattern, md)
         self.resolver = resolver
 
+    def _unescape(self, text):
+        stash = self.md.treeprocessors["inline"].stashed_nodes
+
+        def restore(m):
+            node = stash.get(m.group(1))
+            return node if isinstance(node, str) else m.group(0)
+
+        text = STASH_PLACEHOLDER_RE.sub(restore, text)
+        return ESCAPED_CHAR_RE.sub(lambda m: chr(int(m.group(1))), text)
+
     def handleMatch(self, m, data):
-        inner = m.group(1)
+        inner = self._unescape(m.group(1))
         target, _, alias = inner.partition("|")
         page, _, anchor = target.partition("#")
         page, anchor, alias = page.strip(), anchor.strip(), alias.strip()
