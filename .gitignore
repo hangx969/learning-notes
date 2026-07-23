@@ -18,3 +18,5 @@ Python/python-manuscripts/**/venv
 .claudian/
 .claude/*
 _site/
+__pycache__/
+*.pyc
