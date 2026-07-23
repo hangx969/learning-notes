@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}{{ topic.name }} - {{ site_name }}{% endblock %}
+{% block content %}
+<nav class="breadcrumb"><a href="{{ root }}index.html">首页</a><span>/</span><span>{{ topic.name }}</span></nav>
+<section class="hero hero-topic">
+  <h1>{{ topic.name }}</h1>
+  <p class="hero-sub">{{ topic.count }} 篇笔记</p>
+</section>
+
+{%- for group_name, group_notes in groups %}
+<section class="section">
+  <h2 class="section-label">{{ group_name }}</h2>
+  <ul class="note-list">
+    {%- for n in group_notes %}
+    <li><a href="{{ root }}{{ n.url|urlq }}">{{ n.title }}</a><span class="date">{{ n.date_str }}</span></li>
+    {%- endfor %}
+  </ul>
+</section>
+{%- endfor %}
+{% endblock %}

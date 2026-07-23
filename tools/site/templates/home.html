@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="hero">
+  <h1>学习笔记</h1>
+  <p class="hero-sub">{{ total }} 篇笔记 · {{ topics|length }} 个主题 · 构建于 {{ build_date }}</p>
+</section>
+
+<section class="section">
+  <h2 class="section-label">主题</h2>
+  <div class="card-grid">
+    {%- for t in topics %}
+    <a class="card" href="{{ root }}{{ t.url|urlq }}">
+      <h3>{{ t.name }}</h3>
+      <p>{{ t.count }} 篇笔记</p>
+    </a>
+    {%- endfor %}
+  </div>
+</section>
+
+<section class="section">
+  <h2 class="section-label">最近更新</h2>
+  <ul class="recent-list">
+    {%- for n in recent %}
+    <li>
+      <a href="{{ root }}{{ n.url|urlq }}">{{ n.title }}</a>
+      <span class="recent-meta"><span class="tag">{{ n.topic }}</span><span class="date">{{ n.date_str }}</span></span>
+    </li>
+    {%- endfor %}
+  </ul>
+</section>
+{% endblock %}

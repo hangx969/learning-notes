@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}{{ site_name }}{% endblock %}</title>
+<link rel="stylesheet" href="{{ root }}static/style.css">
+<link rel="stylesheet" href="{{ root }}static/pygments.css">
+</head>
+<body data-root="{{ root }}">
+<header class="site-header">
+  <div class="header-inner">
+    <a class="logo" href="{{ root }}index.html"><span class="logo-mark"></span>LEARNING NOTES</a>
+    <div class="search">
+      <input id="search-input" type="search" placeholder="搜索笔记…" autocomplete="off" aria-label="搜索笔记">
+      <div id="search-results" hidden></div>
+    </div>
+  </div>
+  <nav class="topic-nav" aria-label="主题导航">
+    <div class="topic-nav-inner">
+      {%- for t in topics %}
+      <a href="{{ root }}{{ t.url|urlq }}"{% if t.name == current_topic %} class="active"{% endif %}>{{ t.name }}</a>
+      {%- endfor %}
+    </div>
+  </nav>
+</header>
+<main class="main">
+{% block content %}{% endblock %}
+</main>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>{{ site_name }}</span>
+    <a href="{{ repo_url }}">GitHub</a>
+  </div>
+</footer>
+<script src="{{ root }}static/search.js"></script>
+</body>
+</html>
