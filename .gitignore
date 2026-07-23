@@ -17,3 +17,4 @@ Python/python-manuscripts/**/venv
 .DS_Store
 .claudian/
 .claude/*
+_site/
