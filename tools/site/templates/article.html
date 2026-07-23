@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}{{ note.title }} - {{ site_name }}{% endblock %}
+
+{% macro toc_items(tokens) -%}
+<ul>
+  {%- for t in tokens %}
+  <li><a href="#{{ t.id }}">{{ t.name }}</a>{% if t.children %}{{ toc_items(t.children) }}{% endif %}</li>
+  {%- endfor %}
+</ul>
+{%- endmacro %}
+
+{% block content %}
+<div class="article-layout{% if not note.toc_tokens %} no-toc{% endif %}">
+
+  <aside class="sidebar">
+    <details class="sidebar-details" open>
+      <summary>{{ note.topic }}</summary>
+      <nav class="sidebar-nav">
+        {%- for group_name, group_notes in groups %}
+        <p class="sidebar-group">{{ group_name }}</p>
+        <ul>
+          {%- for n in group_notes %}
+          <li><a href="{{ root }}{{ n.url|urlq }}"{% if n.path == note.path %} class="current"{% endif %}>{{ n.title }}</a></li>
+          {%- endfor %}
+        </ul>
+        {%- endfor %}
+      </nav>
+    </details>
+  </aside>
+
+  <article class="article">
+    <nav class="breadcrumb">
+      <a href="{{ root }}index.html">首页</a><span>/</span>
+      <a href="{{ root }}{{ (note.topic + '/')|urlq }}">{{ note.topic }}</a>
+      {%- if note.subgroup != '其他' %}<span>/</span><span>{{ note.subgroup }}</span>{% endif %}
+    </nav>
+    <h1 class="article-title">{{ note.title }}</h1>
+    <p class="article-meta">
+      {%- if note.date_str %}<span>更新于 {{ note.date_str }}</span>{% endif %}
+      <a href="{{ repo_url }}/blob/main/{{ note.path|urlq }}">查看源文件</a>
+    </p>
+    <div class="article-body">
+{{ note.html|safe }}
+    </div>
+  </article>
+
+  {%- if note.toc_tokens %}
+  <aside class="toc">
+    <p class="toc-label">本页目录</p>
+    {{ toc_items(note.toc_tokens) }}
+  </aside>
+  {%- endif %}
+
+</div>
+{% endblock %}
