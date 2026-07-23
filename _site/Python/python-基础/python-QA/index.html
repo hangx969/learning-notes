@@ -110,8 +110,8 @@
 <h1 id="python-知识总结与常见问题">Python 知识总结与常见问题</h1>
 <h2 id="python-解释型语言">Python 解释型语言</h2>
 <p>计算机是不能够识别高级语言的,所以当我们运行一个高级语言程序的时候,就需要一个"翻译机"来把高级语言转变成计算机能读懂的机器语言的过程。这个过程分成两类,第一种是==编译==,第二种是==解释==。</p>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">编译型语言 vs 解释型语言</p></p>
+<div class="callout callout-info">
+<p class="callout-title">编译型语言 vs 解释型语言</p>
 <ul>
 <li><strong>编译型语言</strong>:编译型语言在程序执行之前,先会通过<strong>编译器</strong>对程序执行一个<strong>编译</strong>的过程,把程序转变成机器语言。运行时就不需要翻译,而直接执行就可以了。最典型的例子就是C语言。</li>
 <li><strong>解释型语言</strong>:解释型语言就没有这个<strong>编译</strong>的过程,而是在程序运行的时候,通过解释器对程序逐行作出解释,然后再运行。</li>
@@ -179,8 +179,8 @@
 </ul>
 <hr />
 <h2 id="gil锁">GIL锁</h2>
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">GIL 全局解释器锁</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">GIL 全局解释器锁</p>
 <ul>
 <li>在Cpython中,内存管理不是线程安全的,避免多个线程间同时访问同一对象,需要GIL锁。</li>
 <li>每个线程在执行过程中,需要先获取GIL,保证同一时刻只有一个线程可以执行代码。</li>
@@ -272,8 +272,8 @@
 <hr />
 <h2 id="python-中内存泄漏和溢出指的是什么有什么区别">Python 中内存泄漏和溢出指的是什么,有什么区别？</h2>
 <p><strong>答:</strong>（1）==内存泄漏(Memory Leak)==是指程序中已动态分配的堆内存由于某种原因程序未释放或无法释放,造成系统内存的浪费,导致程序运行速度减慢甚至系统崩溃等严重后果。对于python这种支持垃圾回收的语言来说,也会有内存泄露,大致有三种原因:</p>
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">Python 内存泄漏的三种原因</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">Python 内存泄漏的三种原因</p>
 <ol>
 <li>所用到的用 C 语言开发的底层模块中出现了内存泄露。</li>
 <li>代码中用到了全局的list、dict或其它容器,不停的往这些容器中插入对象,而忘记了在使用完之后进行删除回收。</li>

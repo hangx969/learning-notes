@@ -113,8 +113,8 @@
 <li>Expand the root filesystem: <mark>resize2fs</mark></li>
 <li>Then the root fs will be expanded.</li>
 </ul>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">Useful Disk Commands</p></p>
+<div class="callout callout-info">
+<p class="callout-title">Useful Disk Commands</p>
 <p><code>df -h</code> provides information on the overall disk space usage, showing statistics for each mounted file system.</p>
 <p><code>du -h</code> provides information about the sizes of directories and files in a specified directory or a list of directories.</p>
 <p><code>lsblk -f</code> command is used to list information about block devices, including file system information.</p>
@@ -174,8 +174,8 @@
 <li>There is a bug in this new version of systemd, it cleared the content in <code>/etc/resolv.conf</code>, causing DNS error.</li>
 </ul>
 <h3 id="solve_4">Solve</h3>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">Quick Fix</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">Quick Fix</p>
 <p>Reboot VM to get DNS conf back, or manually write the content back to <code>/etc/resolv.conf</code>.</p>
 </div>
 <ul>
@@ -224,8 +224,8 @@
 <li>Collect OS logs in <code>/var/log/</code>, and check messages</li>
 <li>Find that the VM is a node of a <mark>pacemaker cluster</mark></li>
 </ul>
-<p><div class="callout callout-important" markdown="1"><br />
-<p class="callout-title">Root Cause</p></p>
+<div class="callout callout-important">
+<p class="callout-title">Root Cause</p>
 <p>The networking connectivity between pacemaker nodes were lost for 30 sec, then one node was rebooted by its peer. Further investigation showed the connectivity loss was sometimes caused by underlying host node patch.</p>
 </div>
     </div>

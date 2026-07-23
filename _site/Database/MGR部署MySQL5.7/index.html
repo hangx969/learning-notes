@@ -76,22 +76,22 @@
 <li>MGR允许多个 MySQL 实例组成一个组，这些实例之间会自动同步数据，确保数据的一致性和高可用性。如果某个实例出现故障，其他实例会继续工作，从而保持服务的连续性。</li>
 <li>MGR是mysql原生带有的，不需要安装插件。MGR集群也有一些限制和要求，例如需要使用==InnoDB==存储引擎。</li>
 </ul>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">适用于需要高度自动化和数据一致性的场景。它提供了内置的高可用性解决方案，适合不希望依赖第三方工具的用户。</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">适用于需要高度自动化和数据一致性的场景。它提供了内置的高可用性解决方案，适合不希望依赖第三方工具的用户。</p>
 </div>
 <h3 id="mmm">MMM</h3>
 <ul>
 <li><mark>MMM</mark>（MySQL Multi-Master Replication Manager）是一种用于管理 MySQL 主从复制的工具。它允许你配置多个主节点和从节点，并在主节点发生故障时自动进行故障转移。MMM 可以帮助你实现读写分离，提升系统性能。</li>
 </ul>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">适用于需要复杂复制拓扑和读写分离的场景。它允许配置多个主节点和从节点，但需要手动管理和监控。</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">适用于需要复杂复制拓扑和读写分离的场景。它允许配置多个主节点和从节点，但需要手动管理和监控。</p>
 </div>
 <h3 id="mha">MHA</h3>
 <ul>
 <li><mark>MHA</mark>（Master High Availability Manager and tools）MHA 是一种用于 MySQL 主从复制环境中的高可用性管理工具。它在主节点发生故障时，能够自动选举一个新的主节点，并重新配置复制关系，从而实现快速故障转移。</li>
 </ul>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">适用于需要快速故障转移和高可用性的主从复制环境。它能够自动处理主节点故障，但不支持多主复制。</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">适用于需要快速故障转移和高可用性的主从复制环境。它能够自动处理主节点故障，但不支持多主复制。</p>
 </div>
 <hr />
 <h2 id="部署mgr一主多从集群">部署MGR一主多从集群</h2>
@@ -215,8 +215,8 @@ vim<span class="w"> </span>/etc/my.cnf<span class="w">   </span>
 systemctl<span class="w"> </span>restart<span class="w"> </span>mysqld
 </code></pre></div>
 
-<p><div class="callout callout-note" markdown="1"><br />
-<p class="callout-title">配置参数详解</p></p>
+<div class="callout callout-note">
+<p class="callout-title">配置参数详解</p>
 <ol>
 <li><mark>server_id = 63</mark>：每个MySQL服务都像一个独特的身份证号码一样，以便在集群中识别和区分不同的服务器。</li>
 <li><mark>gtid_mode = ON</mark>：开启了一个全球唯一的事务ID，可以用来标识数据库中的每个事务，有助于跟踪和管理数据库复制。</li>
@@ -249,15 +249,15 @@ systemctl<span class="w"> </span>restart<span class="w"> </span>mysqld
 <span class="n">mysql</span><span class="o">&gt;</span><span class="w"> </span><span class="k">set</span><span class="w"> </span><span class="n">SQL_LOG_BIN</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span><span class="w">   </span><span class="c1">#开启日志记录</span>
 </code></pre></div>
 
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">为什么创建repl用户需要关闭二进制日志功能?</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">为什么创建repl用户需要关闭二进制日志功能?</p>
 <p>因为用于同步数据的用户名repl和密码，必须在所有节点上有，且用户名和密码必须一样。所以，创建用户和密码时，先关闭二进制日志功能，这样不产生二进制日志数据。创建成功后，再开启二进制日志功能。这样repl用户信息，每台机器上都有了，而且不会在MGR同步数据时产生冲突。</p>
 </div>
 <div class="highlight"><pre><span></span><code><span class="n">mysql</span><span class="o">&gt;</span><span class="w"> </span><span class="k">change</span><span class="w"> </span><span class="k">master</span><span class="w"> </span><span class="k">to</span><span class="w"> </span><span class="k">master_user</span><span class="o">=</span><span class="s1">&#39;repl&#39;</span><span class="p">,</span><span class="k">master_password</span><span class="o">=</span><span class="s1">&#39;123456&#39;</span><span class="w">  </span><span class="k">for</span><span class="w"> </span><span class="k">channel</span><span class="w"> </span><span class="s1">&#39;group_replication_recovery&#39;</span><span class="p">;</span>
 </code></pre></div>
 
-<p><div class="callout callout-note" markdown="1"><br />
-<p class="callout-title">CHANGE MASTER TO 命令说明</p></p>
+<div class="callout callout-note">
+<p class="callout-title">CHANGE MASTER TO 命令说明</p>
 <ul>
 <li><mark>CHANGE MASTER TO</mark>: 这是 MySQL 的命令，用于修改从节点的复制配置。</li>
 <li><mark>MASTER_USER='repl'</mark>: 指定连接主节点的用户名为 repl，这是一个在主节点上用于复制的已授权用户。</li>
@@ -665,8 +665,8 @@ mysql<span class="w"> </span>-uroot<span class="w"> </span>-h192.168.40.199<span
 </code></pre></div>
 
 <hr />
-<p><div class="callout callout-summary" markdown="1"><br />
-<p class="callout-title">相关笔记</p></p>
+<div class="callout callout-summary">
+<p class="callout-title">相关笔记</p>
 <ul>
 <li><a class="wikilink" href="../../Database/MySQL%E5%85%A5%E9%97%A8/">Database/MySQL入门</a> - MySQL基础入门</li>
 <li><a class="wikilink" href="../../Database/%E6%BA%90%E7%A0%81%E5%AE%89%E8%A3%85redis-6.2.6-centos7/">Database/源码安装redis-6.2.6-centos7</a> - Redis安装部署</li>

@@ -101,8 +101,8 @@
     </p>
     <div class="article-body">
 <h1 id="产品特性">产品特性</h1>
-<p><div class="callout callout-summary" markdown="1"><br />
-<p class="callout-title">ESS核心能力</p></p>
+<div class="callout callout-summary">
+<p class="callout-title">ESS核心能力</p>
 <p><strong>扩容时:</strong><br />
 - 自动创建指定数量、指定类型的实例(<a class="wikilink" href="../../../Aliyun/%E8%AE%A1%E7%AE%97/ECS/">ECS</a>/ECI实例)<br />
 - 如果伸缩组关联了<a class="wikilink" href="../../../Aliyun/%E7%BD%91%E7%BB%9C/%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1SLB/">负载均衡</a>,自动为创建的ECS关联负载均衡<br />
@@ -149,12 +149,12 @@
 </ul>
 <h2 id="实例移出策略">实例移出策略</h2>
 <p>可以选择优先移除最早创建或者最新创建的实例。</p>
-<p><div class="callout callout-important" markdown="1"><br />
-<p class="callout-title">手动添加 vs 自动创建的实例</p></p>
+<div class="callout callout-important">
+<p class="callout-title">手动添加 vs 自动创建的实例</p>
 <p>手动添加进伸缩组的实例,缩容时==不会被删除==,只会被移除出伸缩组;而自动扩容出来的实例,缩容时==会被释放掉==。</p>
 </div>
-<p><div class="callout callout-note" markdown="1"><br />
-<p class="callout-title">包年包月实例在弹性伸缩中的角色</p></p>
+<div class="callout callout-note">
+<p class="callout-title">包年包月实例在弹性伸缩中的角色</p>
 <p>包年包月实例在弹性伸缩中的角色通常是 <mark>基础容量保障</mark>,用于非波动业务场景,而自动扩缩容主要针对按量付费或抢占式实例。其核心规则为:<br />
 1. <strong>永不自动释放</strong>,仅移出伸缩组。<br />
 2. <strong>优先保留</strong>,缩容时最后被移出。<br />
@@ -169,8 +169,8 @@
 <p>基于报警任务(系统监控或者自定义监控):触发某个报警任务后,增加减少多少台</p>
 <h2 id="目标追踪规则">目标追踪规则</h2>
 <p>e.g. 持续监测CPU使用率,自动伸缩,使得CPU使用率一直保持在==50%==左右</p>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">目标追踪规则优于简单规则</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">目标追踪规则优于简单规则</p>
 <p>相比简单规则,具有以下优点:<br />
 - <strong>数据稳定</strong>:支持设置实例预热时间,新实例加入伸缩组后,将首先进入实例预热阶段,在此期间不会向云监控上报监控数据,也不作为扩缩容过程的基数实例。预热阶段能够有效防止增加过多实例,达到动态稳定扩缩容效果。<br />
 - <strong>实例数不回调</strong>:弹性伸缩会及时自动计算所需的实例数量并触发扩缩容,比较精准地将云监控指标维持在目标值附近。<br />
@@ -196,8 +196,8 @@
 <p>添加了生命周期挂钩之后:<br />
 - 扩容出新实例的时候,会出现==Pending:Wait==状态,在这期间进行预装软件或其他自定义操作。<br />
 - 缩容的时候,出现==Removing:Wait==状态。</p>
-<p><div class="callout callout-example" markdown="1"><br />
-<p class="callout-title">适合配置生命周期挂钩的场景</p></p>
+<div class="callout callout-example">
+<p class="callout-title">适合配置生命周期挂钩的场景</p>
 <ul>
 <li>弹性扩容的实例不适合立即为客户端提供服务,比如要加入云数据库,绑定辅助弹性网卡等。或者应用程序需要一定的启动时间</li>
 <li>缩容的实例不适合立即被移除,比如需要备份数据,拷贝日志,处理未完成的请求等。</li>
@@ -206,8 +206,8 @@
 <hr />
 <h1 id="最佳实践">最佳实践</h1>
 <h3 id="多种模式混合配置">多种模式混合配置</h3>
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">实例生命周期托管</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">实例生命周期托管</p>
 <p>注意:如果选中<strong>将实例的生命周期托管给伸缩组</strong>,在弹性收缩活动中,将该ECS实例移出伸缩组时也会释放ECS实例。支持将包年包月实例手动添加至伸缩组,但不支持伸缩组托管包年包月实例的生命周期。<strong>(ACK包年包月节点池scale out之后,节点会变成游离状态)</strong></p>
 </div>
 <h3 id="注意事项">注意事项</h3>
@@ -218,8 +218,8 @@
 <li>伸缩活动==无法中断==,比如扩容5台,在扩容到第三台的时候无法强行终止。</li>
 </ul>
 <h4 id="冷却时间">冷却时间</h4>
-<p><div class="callout callout-important" markdown="1"><br />
-<p class="callout-title">冷却时间规则</p></p>
+<div class="callout callout-important">
+<p class="callout-title">冷却时间规则</p>
 <ul>
 <li>每个伸缩组的最后一个实例成功加入或移出伸缩组时,整个伸缩组的冷却时间才开始计时</li>
 <li>同时在伸缩组和伸缩规则中设置了冷却时间,<mark>优先使用伸缩规则中的冷却时间</mark></li>

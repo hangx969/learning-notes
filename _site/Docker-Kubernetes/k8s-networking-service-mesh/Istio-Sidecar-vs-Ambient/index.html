@@ -345,8 +345,8 @@
 - 协议类型（TCP / HTTP / gRPC）<br />
 - 连接模型（短连接越多，L7 越贵）<br />
 - 策略复杂度（路由匹配、镜像、重试、WASM）</p>
-<p><div class="callout callout-note" markdown="1"><br />
-<p class="callout-title">零复制可能吗？</p></p>
+<div class="callout callout-note">
+<p class="callout-title">零复制可能吗？</p>
 <p>完全零复制做不到——代理执行治理逻辑需要读取数据，mTLS 加解密有 CPU 成本，跨进程数据路径无法完全共享内存。能做的是：<strong>少解析</strong>（L4 优先）、<strong>少策略</strong>（只开必要的）、<strong>少链路</strong>（避免不必要的镜像/过滤器）。</p>
 </div>
 <hr />

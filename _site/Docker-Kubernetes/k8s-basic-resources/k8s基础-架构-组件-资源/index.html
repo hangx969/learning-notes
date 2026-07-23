@@ -367,8 +367,8 @@
 <li>状态管理器,保证pod等资源达到期望状态。</li>
 <li>如果资源未达到目标状态,会尝试自动修复并达到期望状态。</li>
 </ul>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">说明</p></p>
+<div class="callout callout-info">
+<p class="callout-title">说明</p>
 <ul>
 <li>scheduler和controller manager是有状态组件,只有一个主节点在工作。</li>
 <li>主节点信息保存在了leases资源中,可以通过<code>kubectl get leases -n kube-system</code>获取,也可以进行横向扩容,选主过程无需人工干预</li>
@@ -380,8 +380,8 @@
 <li>生产环境中建议部署为大于3的奇数个的Etcd节点,以保证数据的安全性和可恢复性,并且Etcd的数据盘需要使用SSD硬盘。</li>
 </ul>
 <p>(kube-proxy、kubelet、runtime也都会在master上部署一份)</p>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">说明</p></p>
+<div class="callout callout-info">
+<p class="callout-title">说明</p>
 <p>以上四个系统组件,对于kubeadm安装的集群来说,他们是静态pod形式启动的,查看他们的yaml的时候,会看到一个字段:<code>staticPodPath: /etc/kubernetes/manifests</code>,在这个目录下存放着这些pod的yaml,kubelet启动的时候会把他们直接拉起来。这个目录里面的文件都会自动被kubelet启动。</p>
 </div>
 <h3 id="工作节点">工作节点</h3>
@@ -392,8 +392,8 @@
 <li>负责维护svc和pod之间的请求路由和流量转发。</li>
 <li>容器对外提供服务的网络入口</li>
 </ul>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">提示</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">提示</p>
 <p>如果使用Cilium作为CNI组件,可以不安装Proxy。</p>
 </div>
 <h4 id="kubelet">Kubelet</h4>

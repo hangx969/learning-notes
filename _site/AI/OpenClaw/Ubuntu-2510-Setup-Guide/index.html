@@ -166,8 +166,8 @@ sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> <
 <div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>ufw<span class="w"> </span>allow<span class="w"> </span>ssh
 </code></pre></div>
 
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">配置文件</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">配置文件</p>
 <p>配置文件位于 <code>/etc/ssh/sshd_config</code>,修改后需重启服务:<br />
 <code>bash
 sudo systemctl restart ssh</code></p>
@@ -177,8 +177,8 @@ sudo systemctl restart ssh</code></p>
 <div class="highlight"><pre><span></span><code><span class="nb">echo</span><span class="w"> </span><span class="s1">&#39;hx-ai ALL=(ALL) NOPASSWD:ALL&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>sudo<span class="w"> </span>tee<span class="w"> </span>/etc/sudoers.d/hx-ai
 </code></pre></div>
 
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">更安全的方式:<code>visudo</code></p></p>
+<div class="callout callout-tip">
+<p class="callout-title">更安全的方式:`visudo`</p>
 <p><code>bash
 sudo visudo -f /etc/sudoers.d/hx-ai</code><br />
 添加内容:<br />
@@ -212,8 +212,8 @@ sudo<span class="w"> </span>sed<span class="w"> </span>-i<span class="w"> </span
 <div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>apt<span class="w"> </span>update
 </code></pre></div>
 
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">Info</p></p>
+<div class="callout callout-info">
+<p class="callout-title">Info</p>
 <p>可通过 <code>lsb_release -cs</code> 查看实际系统代号。</p>
 </div>
 <h2 id="4-安装常用开发工具包">4. 安装常用开发工具包</h2>
@@ -286,16 +286,16 @@ cp<span class="w"> </span>/usr/share/applications/org.fcitx.Fcitx5.desktop<span 
 </code></pre></div>
 
 <p>在 <strong>Input Method</strong> 选项卡中,点击 <code>+</code> 搜索 <code>Pinyin</code>,添加即可。</p>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">默认快捷键</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">默认快捷键</p>
 <ul>
 <li><code>Ctrl + 空格</code> — 切换中英文</li>
 <li><code>Ctrl + Shift</code> — 切换输入法</li>
 </ul>
 </div>
 <h2 id="6-安装-vmware-tools">6. 安装 VMware Tools</h2>
-<p><div class="callout callout-note" markdown="1"><br />
-<p class="callout-title">推荐使用 open-vm-tools</p></p>
+<div class="callout callout-note">
+<p class="callout-title">推荐使用 open-vm-tools</p>
 <p>Ubuntu 官方仓库直接提供,比 VMware 官方 Tools 更稳定。</p>
 </div>
 <h3 id="61-安装">6.1 安装</h3>
@@ -329,8 +329,8 @@ cp<span class="w"> </span>/usr/share/applications/org.fcitx.Fcitx5.desktop<span 
 </code></pre></div>
 
 <h3 id="64-排障">6.4 排障</h3>
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">如果重启后仍无法复制粘贴</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">如果重启后仍无法复制粘贴</p>
 <p>检查 VMware 设置:<strong>VM → Settings → Options → Guest Isolation</strong><br />
 - ✅ 勾选 <code>Enable copy and paste</code><br />
 - ✅ 勾选 <code>Enable drag and drop</code></p>

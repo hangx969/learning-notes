@@ -110,8 +110,8 @@
 <h1 id="python-包管理工具-uv">Python 包管理工具 uv</h1>
 <h2 id="什么是uv">什么是uv</h2>
 <p>简单来说,<mark><code>uv</code></mark> 是一个用 Rust 语言编写的、超级快的 Python 包安装和项目管理工具。你可以把它看作是 <code>pip</code>(我们常用的包安装工具)和 <code>venv</code>(创建虚拟环境的工具)的 "高速合体版"!</p>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">为什么选择 uv</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">为什么选择 uv</p>
 <ol>
 <li><strong>节省时间</strong>:安装包的速度真的快到飞起!尤其是在安装很多包或者大型包(比如数据科学库)时,感受会非常明显。告别漫长的等待!</li>
 <li><strong>简化操作</strong>:以前可能需要先用 <code>venv</code> 创建环境,再用 <code>pip</code> 安装包。<code>uv</code> 把这些常用操作整合起来了,一个命令就能搞定很多事。</li>
@@ -143,8 +143,8 @@
 <div class="highlight"><pre><span></span><code>uv<span class="w"> </span>--version
 </code></pre></div>
 
-<p><div class="callout callout-note" markdown="1"><br />
-<p class="callout-title">IDE 配置说明</p></p>
+<div class="callout callout-note">
+<p class="callout-title">IDE 配置说明</p>
 <ul>
 <li><strong>Windows + PyCharm</strong>:创建新项目时,"解释器类型"选择"自定义环境","类型"选择"uv",基础python选择uv安装的python路径</li>
 <li><strong>VS Code</strong>:按 Ctrl+Shift+P (或 Cmd+Shift+P on Mac) 打开命令面板,输入 Python: Select Interpreter (Python: 选择解释器)。在弹出的列表中,选择你用 uv 安装的 Python 3.10 版本。VS Code 通常会自动检测到。如果没找到,可以手动 "Enter interpreter path..." 指定路径。然后在终端中输入<code>uv venv</code>来激活虚拟环境。</li>
@@ -159,8 +159,8 @@
 <div class="highlight"><pre><span></span><code>uv<span class="w"> </span>python<span class="w"> </span>install<span class="w"> </span><span class="m">3</span>.10
 </code></pre></div>
 
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">建议安装3.10版本,3.11、3.12也可以,根据实际需要,后续文章会逐步讲</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">建议安装3.10版本,3.11、3.12也可以,根据实际需要,后续文章会逐步讲</p>
 </div>
 <hr />
 <h3 id="创建venv">创建venv</h3>

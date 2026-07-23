@@ -74,8 +74,8 @@
 <li>很多大型电商网站、视频直播和游戏应用等,存在大规模数据访问,对数据查询效率要求高,且数据结构简单,不涉及太多关联查询。这种场景使用Redis,在速度上对传统磁盘数据库有很大优势,能够有效减少数据库磁盘IO,提高数据查询效率,减轻管理维护工作量,降低数据库存储成本</li>
 <li>Redis对传统磁盘数据库是一个重要的补充,尤其是支持高并发访问的互联网应用必不可少的基础服务。电商网站的商品类目、推荐系统以及秒杀抢购活动,适宜使用Redis缓存数据库。</li>
 </ul>
-<p><div class="callout callout-example" markdown="1"><br />
-<p class="callout-title">应用场景举例</p></p>
+<div class="callout callout-example">
+<p class="callout-title">应用场景举例</p>
 <ol>
 <li><mark>秒杀抢购活动</mark>,并发高,对于传统关系型数据库来说访问压力大,需要较高的硬件配置(如磁盘IO)支撑。Redis数据库,单节点QPS支撑能达到10万,轻松应对秒杀并发。实现秒杀和数据加锁的命令简单,使用SET、GET、DEL、RPUSH等命令即可。</li>
 <li><mark>(视频直播)消息弹幕</mark>:直播间的在线用户列表,礼物排行榜,弹幕消息等信息,都适合使用Redis中的SortedSet结构进行存储。例如弹幕消息,可使用ZREVRANGEBYSCORE排序返回,在Redis 5.0中,新增了zpopmax,zpopmin命令,更加方便消息处理。</li>
@@ -92,8 +92,8 @@
 </ul>
 <hr />
 <h2 id="源码安装redis单节点-v626">源码安装redis单节点-v6.2.6</h2>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">7.2.3版本安装步骤相同</p></p>
+<div class="callout callout-info">
+<p class="callout-title">7.2.3版本安装步骤相同</p>
 </div>
 <h3 id="安装依赖">安装依赖</h3>
 <div class="highlight"><pre><span></span><code>yum<span class="w"> </span>-y<span class="w"> </span>install<span class="w"> </span>cpp<span class="w"> </span>binutils<span class="w"> </span>glibc<span class="w"> </span>glibc-kernheaders<span class="w"> </span>glibc-common<span class="w"> </span>glibc-devel<span class="w"> </span>gcc<span class="w"> </span>make<span class="w"> </span>centos-release-scl<span class="w"> </span>devtoolset-9-gcc<span class="w"> </span>devtoolset-9-c++<span class="w"> </span>devtoolset-9-binutils<span class="w"> </span>scl<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>devtoolset-9
@@ -155,8 +155,8 @@ lsof<span class="w"> </span>-i:6379
 </code></pre></div>
 
 <h3 id="问题排查">问题排查</h3>
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">第一次启动redis可能会看到日志报下面的3个警告</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">第一次启动redis可能会看到日志报下面的3个警告</p>
 </div>
 <div class="highlight"><pre><span></span><code>WARNING:<span class="w"> </span>The<span class="w"> </span>TCP<span class="w"> </span>backlog<span class="w"> </span>setting<span class="w"> </span>of<span class="w"> </span><span class="m">511</span><span class="w"> </span>cannot<span class="w"> </span>be<span class="w"> </span>enforced<span class="w"> </span>because<span class="w"> </span>/proc/sys/net/core/somaxconn<span class="w"> </span>is<span class="w"> </span><span class="nb">set</span><span class="w"> </span>to<span class="w"> </span>the<span class="w"> </span>lower<span class="w"> </span>value<span class="w"> </span>of<span class="w"> </span><span class="m">128</span>.
 WARNING:<span class="w"> </span>overcommit_memory<span class="w"> </span>is<span class="w"> </span><span class="nb">set</span><span class="w"> </span>to<span class="w"> </span><span class="m">0</span>!<span class="w"> </span>Background<span class="w"> </span>save<span class="w"> </span>may<span class="w"> </span>fail<span class="w"> </span>under<span class="w"> </span>low<span class="w"> </span>memory<span class="w"> </span>condition.<span class="w"> </span>To<span class="w"> </span>fix<span class="w"> </span>this<span class="w"> </span>issue<span class="w"> </span>add<span class="w"> </span><span class="s1">&#39;vm.overcommit_memory = 1&#39;</span><span class="w"> </span>to<span class="w"> </span>/etc/sysctl.conf<span class="w"> </span>and<span class="w"> </span><span class="k">then</span><span class="w"> </span>reboot<span class="w"> </span>or<span class="w"> </span>run<span class="w"> </span>the<span class="w"> </span><span class="nb">command</span><span class="w"> </span><span class="s1">&#39;sysctl vm.overcommit_memory=1&#39;</span><span class="w"> </span><span class="k">for</span><span class="w"> </span>this<span class="w"> </span>to<span class="w"> </span>take<span class="w"> </span>effect.
@@ -189,8 +189,8 @@ sysctl<span class="w"> </span>-p
 <ul>
 <li>Redis 主从模式是一种在分布式系统中用于提高性能、可靠性和可扩展性的架构。在这种模式中,一个 Redis 服务器(主节点)可以有多个从节点,从而形成主从复制。</li>
 </ul>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">基础概念</p></p>
+<div class="callout callout-info">
+<p class="callout-title">基础概念</p>
 <ul>
 <li><mark>主节点(Master)</mark>: 主节点是负责写入和读取的节点。所有写入操作都在主节点上进行。主节点将写入的数据同步到所有从节点。</li>
 <li><mark>从节点(Slave)</mark>: 从节点复制主节点的数据,起到备份的作用。从节点可以接收读请求,分担主节点的读负载。从节点可以提供故障转移(failover)支持,即当主节点宕机时,其中一个从节点可以被提升为新的主节点。</li>
@@ -200,8 +200,8 @@ sysctl<span class="w"> </span>-p
 <ul>
 <li>主从复制是通过异步传播数据的方式进行的,即主节点将数据变更写入到本地 RDB 快照文件,并将快照文件和增量数据发送给从节点。</li>
 </ul>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">主从模式应用场景</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">主从模式应用场景</p>
 <ul>
 <li><mark>读写分离</mark>: 主从模式允许将读请求分发到从节点,从而减轻主节点的读取压力。这对于读多写少的应用场景非常有用,提高了整体性能和响应速度。</li>
 <li><mark>数据备份和恢复</mark>: 从节点可以用于实时数据备份,即通过复制主节点的数据,实现数据的实时备份。</li>
@@ -393,8 +393,8 @@ repl_backlog_first_byte_offset:15
 repl_backlog_histlen:3989
 </code></pre></div>
 
-<p><div class="callout callout-note" markdown="1"><br />
-<p class="callout-title">将一个 Redis 服务器从其当前的主服务器角色中解除,使其变成一个独立的(非复制的)服务器。这个命令的作用是告诉当前的从服务器停止复制任何主服务器。将slave手工指定为Master。</p></p>
+<div class="callout callout-note">
+<p class="callout-title">将一个 Redis 服务器从其当前的主服务器角色中解除,使其变成一个独立的(非复制的)服务器。这个命令的作用是告诉当前的从服务器停止复制任何主服务器。将slave手工指定为Master。</p>
 </div>
 <ul>
 <li>master恢复后,切回slave角色</li>
@@ -435,8 +435,8 @@ repl_backlog_histlen:28
 </code></pre></div>
 
 <h3 id="summary">Summary</h3>
-<p><div class="callout callout-important" markdown="1"><br />
-<p class="callout-title">主从模式的局限性</p></p>
+<div class="callout callout-important">
+<p class="callout-title">主从模式的局限性</p>
 <ul>
 <li>主从模式中的主服务器仍然是==单点故障==的可能来源。如果主服务器发生故障,整个系统可能会受到影响。</li>
 <li>在主服务器发生故障时,进行故障转移并使一个从服务器晋升为新的主服务器需要一些时间,且==只能手动切换==、一般不建议使用。</li>
@@ -447,8 +447,8 @@ repl_backlog_histlen:28
 <h2 id="redis哨兵模式部署">redis哨兵模式部署</h2>
 <h3 id="背景_1">背景</h3>
 <p><mark>Redis Sentinel</mark> 是 Redis 的高可用性解决方案之一,用于监控和管理 Redis 主从复制环境。它可以检测节点的状态,并在主节点下线时自动进行故障转移。</p>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">主要特性</p></p>
+<div class="callout callout-info">
+<p class="callout-title">主要特性</p>
 <ul>
 <li><mark>监控</mark>: Sentinel 能够监控 Redis 主从节点的健康状况,包括网络连接、内存使用、主从同步状态等。</li>
 <li><mark>自动故障检测</mark>: Sentinel 能够检测到主节点的故障,并在必要时触发自动故障转移。</li>
@@ -456,8 +456,8 @@ repl_backlog_histlen:28
 <li><mark>配置提供</mark>: Sentinel 可以通过发布/订阅机制向应用程序提供有关节点状态的实时信息,使应用程序能够动态调整连接。</li>
 </ul>
 </div>
-<p><div class="callout callout-note" markdown="1"><br />
-<p class="callout-title">工作原理</p></p>
+<div class="callout callout-note">
+<p class="callout-title">工作原理</p>
 <ul>
 <li>每个Sentinel(哨兵)进程以每秒钟一次的频率向整个集群中的Master主服务器,Slave从服务器以及其他Sentinel(哨兵)进程发送一个 PING 命令。</li>
 <li>如果一个实例(instance)距离最后一次有效回复 PING 命令的时间超过 <mark>down-after-milliseconds</mark> 选项所指定的值, 则这个实例会被 Sentinel(哨兵)进程标记为==主观下线(SDOWN)==</li>
@@ -468,8 +468,8 @@ repl_backlog_histlen:28
 <li>若没有足够数量的 Sentinel(哨兵)进程同意 Master主服务器下线, Master主服务器的客观下线状态就会被移除。若 Master主服务器重新向 Sentinel(哨兵)进程发送 PING 命令返回有效回复,Master主服务器的主观下线状态就会被移除。</li>
 </ul>
 </div>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">优缺点</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">优缺点</p>
 <ul>
 <li>哨兵模式是基于主从模式的,所有主从的优点,哨兵模式都具有。主从可以自动切换,系统更健壮,可用性更高。</li>
 <li>难支持在线扩容,在集群容量达到上限时在线扩容会变得很复杂。</li>
@@ -543,8 +543,8 @@ repl_backlog_histlen:322805
 </code></pre></div>
 
 <h3 id="summary_1">Summary</h3>
-<p><div class="callout callout-summary" markdown="1"><br />
-<p class="callout-title">哨兵模式总结</p></p>
+<div class="callout callout-summary">
+<p class="callout-title">哨兵模式总结</p>
 <ul>
 <li>采用2个哨兵实现对6个redis实例的监测,并实现自动故障切换。当默认的 Redis 主节点宕掉之后,如果使用了 Redis Sentinel 进行主从切换(故障转移),Sentinel 会选择一个健康的从节点晋升为新的主节点,而不是默认的主节点恢复。</li>
 <li>=="一主二从三哨兵"==是一种常见的 Redis 高可用配置,但是否是最佳实践取决于具体的应用场景和需求。这种配置有一些优点,如提供了基本的高可用性、故障转移功能和读取负载均衡。</li>
@@ -553,8 +553,8 @@ repl_backlog_histlen:322805
 <hr />
 <h2 id="redis-cluster模式部署">redis cluster模式部署</h2>
 <h3 id="背景_2">背景</h3>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">Redis Cluster概述</p></p>
+<div class="callout callout-info">
+<p class="callout-title">Redis Cluster概述</p>
 <ul>
 <li>Redis数据库的Cluster集群模式是一种将数据分布到多个Redis节点的解决方案,以提高数据存储和读取的可用性和扩展性。Redis Cluster是一种分布式、高可用性的Redis数据库部署模式。它将数据划分为多个==槽(slot)==,每个节点负责处理一部分槽的数据。通过对槽的划分和分配,实现数据在多个节点之间的分布式存储和访问。Redis Cluster使用==Gossip协议==来进行节点间的信息传递和集群管理。</li>
 <li>Cluster集群模式的核心思想是将数据==分片(Sharding)==存储在多个Redis节点上,每个节点负责存储一部分数据。客户端与Cluster集群交互时,通过计算==CRC16==校验码将数据定位到具体的节点上。Cluster集群使用Gossip协议进行节点间的通信,以实现自动分片、故障转移和数据一致性。</li>
@@ -733,8 +733,8 @@ Warning:<span class="w"> </span>Using<span class="w"> </span>a<span class="w"> <
 <span class="o">[</span>ERR<span class="o">]</span><span class="w"> </span>Node<span class="w"> </span><span class="m">192</span>.168.1.137:6371<span class="w"> </span>is<span class="w"> </span>not<span class="w"> </span>empty.<span class="w"> </span>Either<span class="w"> </span>the<span class="w"> </span>node<span class="w"> </span>already<span class="w"> </span>knows<span class="w"> </span>other<span class="w"> </span>nodes<span class="w"> </span><span class="o">(</span>check<span class="w"> </span>with<span class="w"> </span>CLUSTER<span class="w"> </span>NODES<span class="o">)</span><span class="w"> </span>or<span class="w"> </span>contains<span class="w"> </span>some<span class="w"> </span>key<span class="w"> </span><span class="k">in</span><span class="w"> </span>database<span class="w"> </span><span class="m">0</span>.
 </code></pre></div>
 
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">这个错误提示表明节点 192.168.1.137:6371 不是空的,可能已经包含其他节点的信息(通过 CLUSTER NODES 命令查看)或者包含了数据库0中的某些键。在创建Redis集群时,所有的节点都必须是空的,没有包含其他节点的信息。</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">这个错误提示表明节点 192.168.1.137:6371 不是空的,可能已经包含其他节点的信息(通过 CLUSTER NODES 命令查看)或者包含了数据库0中的某些键。在创建Redis集群时,所有的节点都必须是空的,没有包含其他节点的信息。</p>
 </div>
 <ul>
 <li>清理节点数据</li>
@@ -768,8 +768,8 @@ pkill<span class="w"> </span>redis
 <hr />
 <h2 id="redis的数据持久化">redis的数据持久化</h2>
 <h3 id="背景_3">背景</h3>
-<p><div class="callout callout-important" markdown="1"><br />
-<p class="callout-title">数据持久化的必要性</p></p>
+<div class="callout callout-important">
+<p class="callout-title">数据持久化的必要性</p>
 <ul>
 <li>Redis作为一个键值对内存数据库(NoSQL),数据都存储在内存当中,在处理客户端请求时,所有操作都在内存当中进行；当服务器关机甚至redis守护进程退出的时候,内存数据就消失了。</li>
 <li>对于只把Redis当缓存来用的项目来说,数据消失或许问题不大,重新从数据源把数据加载进来就可以了,但如果直接把用户提交的业务数据存储在Redis当中,把Redis作为数据库来使用,在其放存储重要业务数据,那么Redis的内存数据丢失所造成的影响也许是毁灭性。</li>
@@ -803,8 +803,8 @@ pkill<span class="w"> </span>redis
 <span class="n">redis</span><span class="o">-</span><span class="k">server</span><span class="w"> </span><span class="n">redis</span><span class="p">.</span><span class="n">conf</span>
 </code></pre></div>
 
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">这种通过服务器配置文件触发RDB的方式,与bgsave命令类似,达到触发条件时,会forks一个子进程进行数据同步,不过最好不要通过这方式来触发RDB持久化,因为设置触发的时间太短,则容易频繁写入rdb文件,影响服务器性能,时间设置太长则会造成数据丢失。</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">这种通过服务器配置文件触发RDB的方式,与bgsave命令类似,达到触发条件时,会forks一个子进程进行数据同步,不过最好不要通过这方式来触发RDB持久化,因为设置触发的时间太短,则容易频繁写入rdb文件,影响服务器性能,时间设置太长则会造成数据丢失。</p>
 </div>
 <ul>
 <li>RDB默认生成的文件名为dump.rdb,可以通过配置文件进行更加详细配置,比如在单机下启动多个redis服务器进程时,可以通过端口号配置不同的rdb名称,如下所示:</li>
@@ -884,8 +884,8 @@ bgrewriteaof
 </code></pre></div>
 
 <p>AOF重写方式也是异步操作,即如果要写入aof文件,则Redis主进程会forks一个子进程来处理。</p>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">重写aof文件的好处</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">重写aof文件的好处</p>
 <ol>
 <li>压缩aof文件,减少磁盘占用量。</li>
 <li>将aof的命令压缩为最小命令集,加快了数据恢复的速度。</li>
@@ -901,8 +901,8 @@ bgrewriteaof
 </code></pre></div>
 
 <p>重启Redis服务器,加载已经修复的aof文件,恢复数据。</p>
-<p><div class="callout callout-summary" markdown="1"><br />
-<p class="callout-title">RDB vs AOF 对比</p></p>
+<div class="callout callout-summary">
+<p class="callout-title">RDB vs AOF 对比</p>
 <ul>
 <li><mark>AOF优点</mark>: AOF只是追加日志文件,因此对服务器性能影响较小,速度比RDB要快,消耗的内存较少。</li>
 <li><mark>AOF缺点</mark>: AOF方式生成的日志文件太大,即使通过AOF重写,文件体积仍然很大。恢复数据的速度比RDB慢。</li>
@@ -910,8 +910,8 @@ bgrewriteaof
 </div>
 <p><img alt="image-20240813205743348" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202408132057464.png" /></p>
 <hr />
-<p><div class="callout callout-summary" markdown="1"><br />
-<p class="callout-title">相关笔记</p></p>
+<div class="callout callout-summary">
+<p class="callout-title">相关笔记</p>
 <ul>
 <li><a class="wikilink" href="../../Database/MySQL%E5%85%A5%E9%97%A8/">Database/MySQL入门</a> - MySQL基础入门</li>
 <li><a class="wikilink" href="../../Database/MGR%E9%83%A8%E7%BD%B2MySQL5.7/">Database/MGR部署MySQL5.7</a> - MySQL高可用集群部署</li>

@@ -116,8 +116,8 @@
 <li>安全性:提供保护用户数据和避免常见安全漏洞的功能。</li>
 <li>可扩展性:可根据需要扩展应用功能。</li>
 </ol>
-<p><div class="callout callout-important" markdown="1"><br />
-<p class="callout-title">安装</p></p>
+<div class="callout callout-important">
+<p class="callout-title">安装</p>
 </div>
 <div class="highlight"><pre><span></span><code>pip3<span class="w"> </span>install<span class="w"> </span>-i<span class="w"> </span>https://pypi.tuna.tsinghua.edu.cn/simple<span class="w"> </span>django
 </code></pre></div>
@@ -144,8 +144,8 @@ django-admin<span class="w"> </span>startproject<span class="w"> </span>myprojec
 <p>myproject/</p>
 <p>​    manage.py</p>
 <p>​    myproject/ # 这个是内层目录</p>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">manage.py</p></p>
+<div class="callout callout-info">
+<p class="callout-title">manage.py</p>
 <p>作用:这是 Django 项目中的管理脚本。<br />
 功能:通过这个脚本,你可以运行常用的 Django 命令,如启动开发服务器 (<mark>runserver</mark>)、数据库迁移 (<mark>migrate</mark>)、创建管理员账号(<mark>createsuperuser</mark>) 等。<br />
 示例:<code>python manage.py runserver</code></p>
@@ -242,8 +242,8 @@ django-admin<span class="w"> </span>startproject<span class="w"> </span>myprojec
     <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="s2">&quot;Hello, Django!&quot;</span><span class="p">)</span>
 </code></pre></div>
 
-<p><div class="callout callout-note" markdown="1"><br />
-<p class="callout-title">视图函数说明</p></p>
+<div class="callout callout-note">
+<p class="callout-title">视图函数说明</p>
 </div>
 <ol>
 <li><code>from django.http import HttpResponse</code></li>
@@ -277,8 +277,8 @@ django-admin<span class="w"> </span>startproject<span class="w"> </span>myprojec
 <span class="p">]</span>
 </code></pre></div>
 
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">URL路由代码解释</p></p>
+<div class="callout callout-info">
+<p class="callout-title">URL路由代码解释</p>
 <p>这段代码是 Django 项目中用于定义 URL 路由的部分。它将用户访问的 URL 路径映射到相应的视图函数。</p>
 <p>在 Django 中,<mark>path</mark> 函数用于定义 URL 和视图函数之间的关系,也就是路由。它告诉 Django,当用户访问某个特定的 URL 时,应该调用哪个视图函数来处理这个请求。</p>
 <ol>
@@ -305,8 +305,8 @@ django-admin<span class="w"> </span>startproject<span class="w"> </span>myprojec
 </ol>
 <hr />
 <h2 id="使用orm模型与数据库交互">使用ORM模型与数据库交互</h2>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">ORM简介</p></p>
+<div class="callout callout-info">
+<p class="callout-title">ORM简介</p>
 <p>==ORM==是对象关系映射模型,是 Django 框架中用于与数据库进行交互的模型。它允许使用 Python 类来定义数据库表,并通过 Python 代码执行 SQL 操作,如查询、插入、更新和删除数据。</p>
 <p>Django 中的每个模型(类)通常对应数据库中的一个表,模型的每个属性对应表中的一列。</p>
 </div>
@@ -335,8 +335,8 @@ django-admin<span class="w"> </span>startproject<span class="w"> </span>myprojec
 </ul>
 <hr />
 <h3 id="数据库迁移">数据库迁移</h3>
-<p><div class="callout callout-important" markdown="1"><br />
-<p class="callout-title">迁移机制</p></p>
+<div class="callout callout-important">
+<p class="callout-title">迁移机制</p>
 <p>在 Django 中,迁移(migrations)是管理数据库模式变化的一种机制。每当你对模型类进行更改时,Django 会生成迁移文件,以便将这些更改应用到数据库中。</p>
 </div>
 <h4 id="创建数据库迁移文件">创建数据库迁移文件</h4>
@@ -398,8 +398,8 @@ django-admin<span class="w"> </span>startproject<span class="w"> </span>myprojec
 <span class="p">&lt;/</span><span class="nt">html</span><span class="p">&gt;</span>
 </code></pre></div>
 
-<p><div class="callout callout-note" markdown="1"><br />
-<p class="callout-title">Django模板语法</p></p>
+<div class="callout callout-note">
+<p class="callout-title">Django模板语法</p>
 <ul>
 <li><code>{% for article in articles %}</code>: 这是 Django 模板语言,表示一个循环。它会遍历 articles 变量中的每一个元素。</li>
 <li><code>{{ article.title }}</code> 是 Django 模板中的变量表达式,用来获取 article 对象的 title 字段。</li>
@@ -417,8 +417,8 @@ django-admin<span class="w"> </span>startproject<span class="w"> </span>myprojec
     <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;home.html&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;articles&#39;</span><span class="p">:</span> <span class="n">articles</span><span class="p">})</span> <span class="c1"># 渲染模板并传递文章数据</span>
 </code></pre></div>
 
-<p><div class="callout callout-summary" markdown="1"><br />
-<p class="callout-title">渲染流程</p></p>
+<div class="callout callout-summary">
+<p class="callout-title">渲染流程</p>
 <ol>
 <li>用户访问 home 页面时,Django 会调用这个 home 视图函数。</li>
 <li>视图函数从数据库中获取所有 Article(文章)对象。</li>
@@ -432,8 +432,8 @@ django-admin<span class="w"> </span>startproject<span class="w"> </span>myprojec
 
 <hr />
 <h2 id="表单创建与数据处理">表单创建与数据处理</h2>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">表单架构</p></p>
+<div class="callout callout-info">
+<p class="callout-title">表单架构</p>
 <p>前端是HTML,后端是Django,Django渲染HTML页面。</p>
 </div>
 <h3 id="创建表单">创建表单</h3>
@@ -515,8 +515,8 @@ django-admin<span class="w"> </span>startproject<span class="w"> </span>myprojec
 <hr />
 <h2 id="用户注册与登录">用户注册与登录</h2>
 <h3 id="用户注册功能">用户注册功能</h3>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">内置用户模型</p></p>
+<div class="callout callout-info">
+<p class="callout-title">内置用户模型</p>
 <p>在 Django 中,<mark>User</mark> 模型(从 <code>django.contrib.auth.models</code> 导入)提供了内置的用户管理功能。</p>
 </div>
 <h4 id="创建视图_1">创建视图</h4>
@@ -572,8 +572,8 @@ django-admin<span class="w"> </span>startproject<span class="w"> </span>myprojec
 <hr />
 <h3 id="用户登录功能">用户登录功能</h3>
 <h4 id="创建登录视图">创建登录视图</h4>
-<p><div class="callout callout-note" markdown="1"><br />
-<p class="callout-title">认证函数</p></p>
+<div class="callout callout-note">
+<p class="callout-title">认证函数</p>
 <p>使用 Django 内置的 <mark>authenticate</mark> 和 <mark>login</mark> 函数来处理用户认证和登录。</p>
 </div>
 <p>myapp/views.py代码,新增如下内容:</p>

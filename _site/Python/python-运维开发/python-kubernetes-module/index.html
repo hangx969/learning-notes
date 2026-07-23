@@ -131,8 +131,8 @@
 <p>相关笔记: <a class="wikilink" href="../../../Python/python-%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91/python-GUI-tkinter/">python-GUI-tkinter</a> | <a class="wikilink" href="../../../Python/python-%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91/python-Linux-operation/">python-Linux-operation</a></p>
 <hr />
 <h2 id="使用k8s-api操作资源的优势">使用k8s api操作资源的优势</h2>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">为什么使用 API 而不是 YAML?</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">为什么使用 API 而不是 YAML?</p>
 <ol>
 <li>在开发环境中,部署服务可能很简单,只需手动修改 YAML 文件。但在生产环境中,需要根据流量波动动态扩展 pod 分副本数、根据不同的名称空间更新镜像版本号,或者需要根据不同的环境(开发、测试、生产)修改 pod 副本数,编写 API 代码可以轻松实现这些自动化需求。</li>
 <li>代码可以加"如果...那么..."的判断,或者循环去做很多重复的操作。YAML 文件只是配置,不能处理这种复杂逻辑</li>
@@ -619,13 +619,13 @@
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error occurred: </span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="n">reason</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </code></pre></div>
 
-<p><div class="callout callout-note" markdown="1"><br />
-<p class="callout-title">异常处理</p></p>
+<div class="callout callout-note">
+<p class="callout-title">异常处理</p>
 <p>注意kubernetes的client模块在处理异常时,用的是:<code>except client.exceptions.ApiException as e</code>,里面可以用<code>e.status</code>获取错误返回码,<code>e.reason</code>获取错误信息。</p>
 </div>
 <h3 id="版本2">版本2</h3>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">改进点</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">改进点</p>
 <ol>
 <li>循环输入: 使用 while True 实现持续的输入,直到用户输入 'exit' 结束程序。</li>
 <li>异常处理: 在副本数输入错误时,允许用户重新输入,并提供退出选项。</li>

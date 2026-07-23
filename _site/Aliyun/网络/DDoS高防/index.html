@@ -143,8 +143,8 @@
 </table>
 <hr />
 <h2 id="中招特征">中招特征</h2>
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">DDoS攻击的常见症状</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">DDoS攻击的常见症状</p>
 <ul>
 <li>网络和设备正常的情况下，服务器突然出现连接断开、访问卡顿、用户掉线等情况</li>
 <li>服务器CPU内存突然出现异常增长</li>
@@ -157,8 +157,8 @@
 <h2 id="dns-flood攻击">DNS Flood攻击</h2>
 <p>DNS 攻击（特指 <strong>DNS Query Flood</strong>）的目标是 <strong>权威 DNS 服务器</strong>（比如阿里云 DNS、DNSPod 或者您自建的 BIND 服务器）。</p>
 <p><strong>攻击效果</strong>：黑客不需要炸掉您的房子，他只需要把全世界所有导航系统里关于您家地址的那一页<strong>撕掉</strong>（或者让导航系统瘫痪）。此时，虽然您的房子（业务服务器）运行正常、甚至负载很低，但用户在浏览器输入域名时，导航系统无法返回 IP，用户就进不来。</p>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">随机子域名攻击 (DNS Water Torture)</p></p>
+<div class="callout callout-info">
+<p class="callout-title">随机子域名攻击 (DNS Water Torture)</p>
 <p>黑客有一种专门针对 DNS 机制的攻击手法，叫做 <strong>"随机子域名攻击"</strong>，它能==穿透全球缓存==。</p>
 </div>
 <p><strong>正常流程</strong>：</p>
@@ -176,8 +176,8 @@
 <li><strong>资源耗尽</strong>：虽然阿里云等大厂的 DNS 很强，但如果是<strong>免费版</strong>或<strong>低配版</strong>，QPS（每秒查询数）上限可能只有几千或几万。当攻击流量达到几千万 QPS 时，权威 DNS 服务器的 CPU 瞬间跑满，或者带宽被占满。</li>
 <li><strong>拒绝服务</strong>：此时，真实的客户想查询 <code>www.abc.com</code>，权威 DNS 已经忙不过来了，直接丢包或超时。</li>
 </ol>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">不同DNS版本的防护能力</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">不同DNS版本的防护能力</p>
 <ul>
 <li><strong>对于免费/自建 DNS</strong>：非常脆弱。几十块钱买的攻击流量就能让一个使用自建 DNS 的网站瘫痪一天。</li>
 <li><strong>对于付费云解析</strong>：云厂商（如阿里云）通常会设置防护阈值。<ul>
@@ -254,16 +254,16 @@
 </tr>
 </tbody>
 </table>
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">如果正常业务流量大于黑洞阈值，建议提升资产规格，否则可能会被识别为异常流量导致资产进入黑洞</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">如果正常业务流量大于黑洞阈值，建议提升资产规格，否则可能会被识别为异常流量导致资产进入黑洞</p>
 </div>
 <h2 id="解除黑洞">解除黑洞</h2>
 <p>黑洞期间，阿里云会持续监测DDoS攻击状态，攻击结束一段时间后会自动解除。默认是==2.5h==，实际时间根据攻击情况有差异。</p>
 <p>付费版DDoS防御支持手动解除黑洞。</p>
 <hr />
 <h1 id="反ddos攻击最佳实践">反DDoS攻击最佳实践</h1>
-<p><div class="callout callout-summary" markdown="1"><br />
-<p class="callout-title">防护策略总结</p></p>
+<div class="callout callout-summary">
+<p class="callout-title">防护策略总结</p>
 </div>
 <ul>
 <li><strong>缩小暴露面</strong><ul>
@@ -286,8 +286,8 @@
 </ul>
 </li>
 </ul>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">相关产品</p></p>
+<div class="callout callout-info">
+<p class="callout-title">相关产品</p>
 <ul>
 <li><a class="wikilink" href="../../../Aliyun/%E7%BD%91%E7%BB%9C/%E4%BA%91%E5%AE%89%E5%85%A8%E4%B8%AD%E5%BF%83-%E4%BA%91%E9%98%B2%E7%81%AB%E5%A2%99/">Aliyun/网络/云安全中心-云防火墙</a> - 安全中心与云防火墙</li>
 </ul>

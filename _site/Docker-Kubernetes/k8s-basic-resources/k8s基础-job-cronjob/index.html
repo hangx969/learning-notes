@@ -413,8 +413,8 @@
 <p>如果CronJob未标注调度时区,Kubernetes会以kube-controller-manager组件的时区进行调度,如果该组件运行的时区和本地时区不一样,会导致无法按照规定时间进行调度。</p>
 <p>比如创建一个每天凌晨一点开始执行的任务,此时配置的调度表达式可能如下:<code>schedule: '00 01 * * *'</code>。但是如果未指定时区,当kube-controller-manager组件的时区和本地时区有差别时,可能会在北京时间每天的九点进行调度(本地时区为Shanghai时区,kube-controller-manager采用UTC时间)</p>
 <p>在Kubernetes 1.25 版本时,CronJob 增加了<code>.spec.timeZone</code>的字段用于配置CronJob的调度时区。在1.27版本达到稳定,可以直接使用。</p>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">说明</p></p>
+<div class="callout callout-info">
+<p class="callout-title">说明</p>
 <p>1.25~1.27(不包括1.27)版本之间需要打开<code>kube-apiserver</code>的featuregates特性,比如:<code>--feature-gates=CronJobTimeZone=true</code> ,1.27及1.27之后不用打开直接用就行。</p>
 </div>
 <div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">batch/v1</span>

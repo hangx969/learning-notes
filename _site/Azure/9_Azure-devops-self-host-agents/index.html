@@ -100,8 +100,8 @@
 <blockquote>
 <p>https://learn.microsoft.com/en-us/azure/devops/pipelines/agents/agents?view=azure-devops&amp;tabs=yaml%2Cbrowser#self-hosted-agents</p>
 </blockquote>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">Info</p></p>
+<div class="callout callout-info">
+<p class="callout-title">Info</p>
 <ul>
 <li>Azure DevOps在Azure China不支持MS managed agents，只能使用self-hosted agents，可能会存在一些cache warm-up和拉取commit到local repo的准备时间。</li>
 <li>self-hosted agents提供==capability==，意思是上面装了什么软件。pipeline的==demand==会定义需要哪些软件。</li>
@@ -146,8 +146,8 @@
 <p>PAT：在自己account的setting里面创建PAT，复制下来，agent注册时会用</p>
 </li>
 </ul>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">Tip</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">Tip</p>
 <p>注意这个PAT仅用于agent首次向pipeline注册时使用。后续的agent-pipeline通信用的是OAuth Token。</p>
 </div>
 <hr />
@@ -174,8 +174,8 @@ connectedServiceType:<span class="w"> </span><span class="s1">&#39;azure&#39;</s
 <ol>
 <li>去翻了Packer的源码：https://github.com/riezebosch/vsts-tasks-packer/blob/9611850a1b2571bde9c7c7e9459eb5d00cd42039/Packer/PackerV1/src/packer.ts#L69，他是要去找这个service connection对应的service principal的client id和client secert。</li>
 </ol>
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">Warning</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">Warning</p>
 <ol>
 <li>也就是说，service connection需要是通过secret的方式注册的，Packer@1才能顺利拿到client secret完成认证。workload identity的方式注册的他拿不到federated secret。Packer@1版本根本不支持Azure devops service connection和EntraID service principal的workload identity的认证方式。</li>
 <li>去service connection界面尝试创建一个secret类型的service connection，结果发现根本选不了subscription，他默认会去global endpoint去找，不会识别到china，因为azure devops service连不到Azure China的tenant。也就是说我们用的global azure devops，根本无法创建secret类型的service connection。也就是说我们无法在china使用Packer@1这个task了。</li>
@@ -190,13 +190,13 @@ connectedServiceType:<span class="w"> </span><span class="s1">&#39;azure&#39;</s
 <p>PackerBuild task 通过一个模板文件定义一堆参数，告诉Packer：在azure上创建什么样的虚机，用这个虚机制作什么种类的系统镜像，在其中运行哪些自定义脚本安装依赖，最后把镜像保存到什么位置。template有hcl和json两种格式可以选择。</p>
 </li>
 </ul>
-<p><div class="callout callout-note" markdown="1"><br />
-<p class="callout-title">Note</p></p>
+<div class="callout callout-note">
+<p class="callout-title">Note</p>
 <p>PackerBuild@1 到2025年依然不支持hcl格式的config文件：https://github.com/microsoft/azure-pipelines-tasks/issues/16753，所以hcl的template用不了。改成json template可用。</p>
 </div>
 <h4 id="packer-template注意事项">Packer template注意事项</h4>
-<p><div class="callout callout-important" markdown="1"><br />
-<p class="callout-title">Important</p></p>
+<div class="callout callout-important">
+<p class="callout-title">Important</p>
 <ul>
 <li><code>build_resource_group_name</code> - 要求这个rg必须已经提前存在。要去image_gallery.tf文件里面预先创建出来</li>
 <li><code>shared_image_gallery_destination.image_name</code> - 这个变量是指VM Image Definition，也需要提前创建好。Packer会在里面创建image version</li>
@@ -278,8 +278,8 @@ az<span class="w"> </span>resource<span class="w"> </span>invoke-action<span cla
 
 <hr />
 <h2 id="vmss-agent">VMSS Agent</h2>
-<p><div class="callout callout-summary" markdown="1"><br />
-<p class="callout-title">Summary</p></p>
+<div class="callout callout-summary">
+<p class="callout-title">Summary</p>
 <ul>
 <li>特点：每个job结束后会reimage job，而且支持base image的更新。无需手动安装注册agent，pipeline自动安装agent</li>
 <li>创建VMSS需要关闭==Overprovisioning==和==auto-scaling==功能。由Pipelines根据要运行的job数量决定scale的数量？（https://learn.microsoft.com/en-us/azure/devops/pipelines/agents/scale-set-agents?view=azure-devops#how-azure-pipelines-manages-the-scale-set）</li>
@@ -354,8 +354,8 @@ az<span class="w"> </span>resource<span class="w"> </span>invoke-action<span cla
 <p>微软正在考虑逐步减少PAT的使用：https://devblogs.microsoft.com/devops/reducing-pat-usage-across-azure-devops/</p>
 <h3 id="service-principal">Service Principal</h3>
 <p>想法是把Azure China的service principal或者managed identity注册到Azure devops service，然后用它进行注册。</p>
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">Warning</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">Warning</p>
 <p>但是仅支持从azure devops org连接到的EntraID tenant里面加载sp或mi。从Azure China加载不支持。</p>
 </div>
 <p>https://learn.microsoft.com/en-us/azure/devops/integrate/get-started/authentication/service-principal-managed-identity?view=azure-devops</p>

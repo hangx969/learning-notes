@@ -133,8 +133,8 @@
 <hr />
 <h2 id="switch分支控制">switch分支控制</h2>
 <p>switch 语句用于基于不同条件执行不同动作，每一个 case 分支都是唯一的，从上到下逐一测试，直到匹配为止。</p>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">switch 执行流程</p></p>
+<div class="callout callout-info">
+<p class="callout-title">switch 执行流程</p>
 <ol>
 <li>先执行表达式，得到值，然后和 case 的表达式进行比较，如果相等就匹配到，然后执行对应的 case 的语句块，然后退出 switch 控制。</li>
 <li>如果 switch 的表达式的值没有和任何的 case 的表达式匹配成功，则执行 default 的语句块。执行后退出 switch 的控制.</li>
@@ -183,8 +183,8 @@
 <span class="p">}</span>
 </code></pre></div>
 
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">switch vs if 的选择</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">switch vs if 的选择</p>
 <ol>
 <li>如果判断的具体数值不多，而且符合整数、浮点数、字符、字符串这几种类型。建议使用 swtich语句，简洁高效。</li>
 <li>对区间判断和结果为 bool 类型的判断使用 if，if 的使用范围更广。</li>

@@ -193,8 +193,8 @@
 </ul>
 </li>
 </ul>
-<p><div class="callout callout-example" markdown="1"><br />
-<p class="callout-title">Memory Reservation Calculation</p></p>
+<div class="callout callout-example">
+<p class="callout-title">Memory Reservation Calculation</p>
 <p>For a node with 7 GB memory, 34% is non-allocatable (including 750Mi hard eviction threshold):<br />
 <code>0.75 + (0.25*4) + (0.20*3) = 0.75GB + 1GB + 0.6GB = 2.35GB / 7GB = 33.57% reserved</code></p>
 </div>
@@ -216,8 +216,8 @@
 <div class="highlight"><pre><span></span><code>az<span class="w"> </span>aks<span class="w"> </span>create<span class="w"> </span>-g<span class="w"> </span>hangvmasaks-RG<span class="w"> </span>-n<span class="w"> </span>hangvmasaks<span class="w"> </span>--kubernetes-version<span class="w"> </span><span class="m">1</span>.24.9<span class="w"> </span>--vm-set-type<span class="w"> </span>AvailabilitySet<span class="w"> </span>-l<span class="w"> </span>chinaeast2
 </code></pre></div>
 
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">VMAS Limitations</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">VMAS Limitations</p>
 <p>VMAS-based clusters can only use one node pool and cannot be directly converted to VMSS. Must rebuild the AKS cluster with VMSS and migrate applications. Do NOT manually change VM configuration or size in the availability set, as this causes configuration mismatch and AKS runtime issues.</p>
 </div>
 <h4 id="aks-engine">AKS-Engine</h4>
@@ -298,8 +298,8 @@
     Declare PVC -&gt; PVC auto-creates corresponding PV and Disk -&gt; Mount in Pod</p>
 </li>
 </ul>
-<p><div class="callout callout-important" markdown="1"><br />
-<p class="callout-title">PVC Notes</p></p>
+<div class="callout callout-important">
+<p class="callout-title">PVC Notes</p>
 <ol>
 <li>Default storage classes cannot update volume size after creation. Add <mark><code>allowVolumeExpansion: true</code></mark> to the storage class, or create a custom storage class. Use <code>kubectl edit sc</code> to edit.</li>
 <li>PVC size reduction is NOT supported (prevents data loss).</li>
@@ -380,8 +380,8 @@
 <p><img alt="image-20231031092258665" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202310310922718.png" /></p>
 <h3 id="handling-burst-situations">Handling Burst Situations</h3>
 <p>When applications need rapid scaling, use <mark>AKS + Azure Container Instance (ACI)</mark> for fast deployment. ACI acts as a virtual node where K8s can run Pods.</p>
-<p><div class="callout callout-note" markdown="1"><br />
-<p class="callout-title">Note</p></p>
+<div class="callout callout-note">
+<p class="callout-title">Note</p>
 <p>Cannot use only ACI -- at least one worker node is required.</p>
 </div>
 <p><img alt="image-20231031092411134" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202310310924175.png" /></p>
@@ -408,8 +408,8 @@
 <li>CNCF integrated the shim into containerd (called <mark>CRI plugin</mark>). Kubelet's CRI interface accesses containerd directly, bypassing dockerd.</li>
 </ul>
 <p><img alt="image-20231031095623715" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202310310956817.png" /></p>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">Impact on Usage</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">Impact on Usage</p>
 <p>No practical impact. Image build/push still uses Docker; image pull still uses containerd. The only difference is it's more lightweight -- shim is integrated into containerd.</p>
 </div>
 <p><img alt="image-20231031095531638" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202310310955757.png" /></p>
@@ -430,8 +430,8 @@ vim<span class="w"> </span>/etc/profile
 </code></pre></div>
 
 <h3 id="delete-nodes">Delete Nodes</h3>
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">Do NOT Use kubectl delete node</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">Do NOT Use kubectl delete node</p>
 <p>This is a K8s-level operation; K8s level and AKS nodepool level have no API call. Nodepool cannot sense K8s-level changes. After deleting a node with kubectl, nodepool won't reflect the count change. Subsequent scaling will produce errors.</p>
 <p><strong>Workarounds if accidentally deleted:</strong><br />
 1. Restart the deleted VMSS instance at the nodepool level<br />
@@ -440,8 +440,8 @@ vim<span class="w"> </span>/etc/profile
 <h3 id="ephemeral-disks">Ephemeral Disks</h3>
 <p>https://docs.microsoft.com/en-us/azure/virtual-machines/ephemeral-os-disks</p>
 <p>https://docs.microsoft.com/en-us/azure/aks/cluster-configuration#ephemeral-os</p>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">Best Practice for VM Throttling</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">Best Practice for VM Throttling</p>
 <p>Use <mark>ephemeral OS disks</mark> for improved IO performance and read/write speed, faster reimage, and faster cluster scaling/upgrades. Deployed on ephemeral disk or VM cache. Downside: data lost on restart.</p>
 </div>
 <ul>
@@ -490,8 +490,8 @@ kubectl<span class="w"> </span>debug<span class="w"> </span>node/&lt;node<span c
 chroot<span class="w"> </span>/host
 </code></pre></div>
 
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">How Privileged Container Works</p></p>
+<div class="callout callout-info">
+<p class="callout-title">How Privileged Container Works</p>
 <p>This command creates a privileged container that mounts the node's root directory <code>/</code> to <code>/host</code> inside the pod via HostPath. Running <code>chroot /host</code> changes the pod's root to <code>/host</code>, exposing the node's filesystem.</p>
 </div>
 <h4 id="method-2-node-shell">Method 2: node-shell</h4>
@@ -599,8 +599,8 @@ kubectl<span class="w"> </span>cp<span class="w"> </span>&lt;debugger<span class
 <ul>
 <li>Logs are now transferred from the privileged container to the management machine for upload.</li>
 </ul>
-<p><div class="callout callout-note" markdown="1"><br />
-<p class="callout-title">Note</p></p>
+<div class="callout callout-note">
+<p class="callout-title">Note</p>
 <p>With the official privileged container method, <code>journalctl -u kubelet</code> can only run after <code>chroot /host</code>, not directly inside the node.</p>
 </div>
 <h4 id="sftp-method">sftp Method</h4>
@@ -618,8 +618,8 @@ put<span class="w"> </span>&lt;path/file<span class="w"> </span>name&gt;
 <li>AKS feature: directly collect node system logs via Container Insight:</li>
 </ul>
 <p><a href="https://learn.microsoft.com/en-us/azure/azure-monitor/containers/container-insights-syslog#prerequisites">https://learn.microsoft.com/en-us/azure/azure-monitor/containers/container-insights-syslog#prerequisites</a></p>
-<p><div class="callout callout-important" markdown="1"><br />
-<p class="callout-title">Important</p></p>
+<div class="callout callout-important">
+<p class="callout-title">Important</p>
 <p>This is NOT enabled through AKS Diagnostics. Use the CLI method to enable syslog collection.</p>
 </div>
 <ul>
@@ -679,8 +679,8 @@ Volumes:
 </ul>
 <p><code>az aks update -g &lt;resourceGroup&gt; -n &lt;clusterName&gt;</code></p>
 <p>without any optional arguments. This recovers a cluster stuck in a failure state.</p>
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">Remember</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">Remember</p>
 <p><strong>Upgrade your az cli</strong> to latest version and <strong>install aks-preview extension</strong> or you will hit errors.</p>
 </div>
 <h4 id="does-reconcile-cause-restarts">Does Reconcile Cause Restarts?</h4>
@@ -693,8 +693,8 @@ Volumes:
 <li>Validates VMSS template vs node image library. If different, updates VMSS template from node image -&gt; then updates VMSS instances.</li>
 <li>In this case, latest model shows "yes" but reconcile still triggers node reimage.</li>
 </ul>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">Best Practice</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">Best Practice</p>
 <p>Do NOT change configurations at the VMSS level. Make changes at the VMSS template level by creating a new pool with the new template, migrating workloads, then deleting the old pool.</p>
 </div>
 <hr />
@@ -721,14 +721,14 @@ Volumes:
 <p>Support plan categories: <mark>N-2</mark> (regular supported) and <mark>N-3</mark> (platform support):</p>
 <p><a href="https://docs.azure.cn/en-us/aks/supported-kubernetes-versions?tabs=azure-cli">Supported Kubernetes versions in AKS | Azure Docs</a></p>
 <p>N-2 vs N-3 comparison: <a href="https://docs.azure.cn/en-us/aks/supported-kubernetes-versions?tabs=azure-cli#platform-support-policy">Platform support policy</a></p>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">Info</p></p>
+<div class="callout callout-info">
+<p class="callout-title">Info</p>
 <p>N-3 platform support is a reduced support level. Plan version upgrades using the N-2 approach.</p>
 </div>
 <h3 id="upgrade-method">Upgrade Method</h3>
 <p><a href="https://docs.azure.cn/zh-cn/aks/upgrade-cluster">升级 Azure Kubernetes 服务 (AKS) 群集 | Azure Docs</a></p>
-<p><div class="callout callout-note" markdown="1"><br />
-<p class="callout-title">Note</p></p>
+<div class="callout callout-note">
+<p class="callout-title">Note</p>
 <p>After K8s version upgrade, the buffer node will be deleted. Post-upgrade node names remain the same.</p>
 </div>
 <h3 id="upgrade-checklist">Upgrade Checklist</h3>
@@ -744,8 +744,8 @@ Volumes:
 <div class="highlight"><pre><span></span><code>az<span class="w"> </span>aks<span class="w"> </span>upgrade<span class="w">  </span>--resource-group<span class="w"> </span>myResourceGroup<span class="w">  </span>--name<span class="w"> </span>myAKSCluster<span class="w">  </span>--kubernetes-version<span class="w"> </span>KUBERNETES_VERSION
 </code></pre></div>
 
-<p><div class="callout callout-important" markdown="1"><br />
-<p class="callout-title">Pre-Upgrade Checks</p></p>
+<div class="callout callout-important">
+<p class="callout-title">Pre-Upgrade Checks</p>
 <ul>
 <li>If using custom CNI networking, check that remaining IP addresses are sufficient: <a href="https://docs.azure.cn/zh-cn/aks/configure-azure-cni#plan-ip-addressing-for-your-cluster">Plan IP addressing for your cluster</a></li>
 <li>Check for PDB (Pod Disruption Budget) in the cluster. Delete before upgrade, re-apply after:<br />
@@ -824,8 +824,8 @@ Volumes:
 <li><mark>CA</mark> (Certificate Authority) - AKS's certificate authority - valid for ~30 years - self-signed - controlled by product group</li>
 <li>Issues certificates to API, kubelet, ETCD, and other components</li>
 </ul>
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">CA Expiration Impact</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">CA Expiration Impact</p>
 <p>Reports <mark>x509</mark> errors, kubectl commands fail, all nodes lose contact with API, cluster enters non-success state.</p>
 </div>
 <h3 id="cert-vs-sp">Cert vs SP</h3>
@@ -835,8 +835,8 @@ Volumes:
 </ul>
 <h3 id="aks-upgrade-auto-rotates-certs">AKS Upgrade Auto-Rotates Certs</h3>
 <p><img alt="image-20231031151204236" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202310311512305.png" /></p>
-<p><div class="callout callout-important" markdown="1"><br />
-<p class="callout-title">Prerequisite</p></p>
+<div class="callout callout-important">
+<p class="callout-title">Prerequisite</p>
 <p>Must enable <mark>TLS Bootstrapping</mark>. See <a href="https://learn.microsoft.com/en-us/azure/aks/certificate-rotation#how-to-check-whether-current-agent-node-pool-is-tls-bootstrapping-enabled">Certificate Rotation in AKS | Microsoft Learn</a></p>
 </div>
 <h3 id="manual-certificate-rotation">Manual Certificate Rotation</h3>
@@ -848,8 +848,8 @@ Volumes:
 <li><code>az aks rotate-certs</code> to rotate all certificates, CA, and SA</li>
 <li>After success, run <code>az aks get-credentials -g $RESOURCE_GROUP_NAME -n $CLUSTER_NAME --overwrite-existing</code> to update local credentials</li>
 </ul>
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">Manual Cert Rotation Impact</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">Manual Cert Rotation Impact</p>
 <p><code>az aks rotate-certs</code> <strong>recreates all nodes, VM scale sets, and their disks</strong>. May cause cluster downtime up to <mark>30 minutes</mark>.<br />
 If combined with version too low, must upgrade first.</p>
 </div>
@@ -905,8 +905,8 @@ If combined with version too low, must upgrade first.</p>
 <li>Check SP expiration: <a href="https://learn.microsoft.com/zh-cn/azure/aks/update-credentials#check-the-expiration-date-of-your-service-principal">为 AKS 群集更新或轮换凭据 | Microsoft Learn</a></li>
 <li>Reset SP credentials: <a href="https://learn.microsoft.com/zh-cn/azure/aks/update-credentials#reset-the-existing-service-principal-credentials">为 AKS 群集更新或轮换凭据 | Microsoft Learn</a></li>
 </ul>
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">SP Update Causes Node Restart</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">SP Update Causes Node Restart</p>
 <p>SP info is written to each VMSS instance (not a referenced variable). Updating SP involves <mark>reimage</mark> and node restart. Upgrade happens per-node (not simultaneous). Multi-replica workloads with redundancy should not be affected.</p>
 </div>
 <ul>
@@ -926,8 +926,8 @@ az<span class="w"> </span>aks<span class="w"> </span>show<span class="w"> </span
 <ul>
 <li>Migrate from SP to MSI: <a href="https://learn.microsoft.com/zh-cn/azure/aks/use-managed-identity#update-an-aks-cluster-to-use-a-managed-identity">在 AKS 中使用托管标识 | Microsoft Learn</a></li>
 </ul>
-<p><div class="callout callout-note" markdown="1"><br />
-<p class="callout-title">SP to MSI Migration Details</p></p>
+<div class="callout callout-note">
+<p class="callout-title">SP to MSI Migration Details</p>
 <p>After upgrade, control plane and addons use managed identity, but nodepool kubelet still uses SP until a newer node image appears in the image library. Node image update: <a href="https://learn.microsoft.com/en-us/azure/aks/node-image-upgrade#upgrade-all-nodes-in-all-node-pools">Upgrade AKS node images | Microsoft Learn</a></p>
 </div>
 <p><img alt="image-20231031155011070" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202310311550126.png" /></p>

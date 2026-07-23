@@ -216,8 +216,8 @@
 <p>```</p>
 <hr />
 <h3 id="连接查询">连接查询</h3>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">两个或多个表中存放相同意义的字段时，进行连接查询</p></p>
+<div class="callout callout-info">
+<p class="callout-title">两个或多个表中存放相同意义的字段时，进行连接查询</p>
 </div>
 <ul>
 <li>连接的意义 将一个表的主键 存放到另一个表 作为另一个表的外键 增强可伸缩性</li>
@@ -245,8 +245,8 @@
 <span class="w">    </span><span class="o">-&gt;</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">customers</span><span class="p">.</span><span class="n">c_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">orders</span><span class="p">.</span><span class="n">c_id</span><span class="p">;</span>
 </code></pre></div>
 
-<p><div class="callout callout-summary" markdown="1"><br />
-<p class="callout-title">内连接 vs 外连接</p></p>
+<div class="callout callout-summary">
+<p class="callout-title">内连接 vs 外连接</p>
 <ul>
 <li><mark>内连接</mark>（inner join）：取出两张表中匹配到的数据，匹配不到的不保留</li>
 <li><mark>外连接</mark>（outer join）：取出连接表中匹配到的数据，匹配不到的也会保留，其值为NULL</li>
@@ -254,8 +254,8 @@
 </div>
 <hr />
 <h3 id="子查询">子查询</h3>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">一个查询嵌套在另一个查询里面，先执行子查询，再以子查询的结果作为外部查询的范围</p></p>
+<div class="callout callout-info">
+<p class="callout-title">一个查询嵌套在另一个查询里面，先执行子查询，再以子查询的结果作为外部查询的范围</p>
 </div>
 <p><mark>ANY</mark> <mark>SOME</mark> <mark>ALL</mark> <mark>IN</mark> <mark>EXISTS</mark> 关键字</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># ANY 表示只要num1中符合 这个数大于 num2中随便一个数 （num2中存在比num1小的就行）</span>
@@ -297,8 +297,8 @@
 <h3 id="lc197-上升的温度">LC197 上升的温度</h3>
 <p>==DATEDIFF（a，b）==是对两个日期格式的数据，求出a日期和b日期的差值。</p>
 <hr />
-<p><div class="callout callout-summary" markdown="1"><br />
-<p class="callout-title">相关笔记</p></p>
+<div class="callout callout-summary">
+<p class="callout-title">相关笔记</p>
 <ul>
 <li><a class="wikilink" href="../../Database/MGR%E9%83%A8%E7%BD%B2MySQL5.7/">Database/MGR部署MySQL5.7</a> - MySQL高可用集群部署</li>
 <li><a class="wikilink" href="../../Database/%E6%BA%90%E7%A0%81%E5%AE%89%E8%A3%85redis-6.2.6-centos7/">Database/源码安装redis-6.2.6-centos7</a> - Redis安装部署</li>

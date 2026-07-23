@@ -94,14 +94,14 @@
 <li><a class="wikilink" href="../../Azure/0_Azure-VM-VMSS/">Azure/0_Azure-VM-VMSS</a></li>
 <li><a class="wikilink" href="../../Azure/2_AKS-basics/">Azure/2_AKS-basics</a></li>
 </ul>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">Info</p></p>
+<div class="callout callout-info">
+<p class="callout-title">Info</p>
 <p>This file contains a collection of KQL queries for Azure diagnostics and troubleshooting across various services including VM/Node management, AKS, Storage, ACR/ACI, CRP, Backup/ASR, Monitoring, AAD, and Health Events.</p>
 </div>
 <hr />
 <h2 id="vm-id-and-nodes">VM ID and Nodes</h2>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">Tip</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">Tip</p>
 <p>Key tables: <mark>LogContainerSnapshot</mark>, <mark>LogNodeSnapshot</mark>, <mark>LogContainerHealthSnapshot</mark>, <mark>TMMgmtNodeEventsEtwTable</mark>, <mark>RdmResourceSnapshot</mark></p>
 </div>
 <div class="highlight"><pre><span></span><code>//----------------------<span class="w"> </span>Query<span class="w"> </span>all<span class="w"> </span>kind<span class="w"> </span>of<span class="w"> </span>IDs<span class="w"> </span>-------------------------------------------------------
@@ -642,12 +642,12 @@ LiveMigrationSessionCompleteLog
 
 <hr />
 <h2 id="aks">AKS</h2>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">Tip</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">Tip</p>
 <p>Key tables: <mark>FrontEndQoSEvents</mark>, <mark>AsyncQoSEvents</mark>, <mark>BlackboxMonitoringActivity</mark>, <mark>ControlPlaneEvents</mark>, <mark>RemediatorEvent</mark>, <mark>AutoUpgraderEvents</mark></p>
 </div>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">Info</p></p>
+<div class="callout callout-info">
+<p class="callout-title">Info</p>
 <ul>
 <li>rp service分前后端，前端是frontend<em> 后端是async</em></li>
 <li>frontendqos是用户发来的request；asyncqos是前段发给后端的request，是内部实现用的</li>
@@ -1107,8 +1107,8 @@ cluster<span class="o">(</span><span class="s1">&#39;icmcluster.kusto.windows.ne
 
 <hr />
 <h2 id="storage">Storage</h2>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">Tip</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">Tip</p>
 <p>Key tables: <mark>EventServiceEntries</mark>, <mark>HttpIncomingRequests</mark>, <mark>StorageAccountStatisticsRecord</mark>, <mark>AccountTransactionsHourly</mark>, <mark>DiskRPResourceLifecycleEvent</mark></p>
 </div>
 <div class="highlight"><pre><span></span><code><span class="w">    </span>//<span class="w"> </span>ARM<span class="w"> </span>-<span class="w"> </span>Armmcadx<span class="w"> </span>-<span class="w"> </span>armmc
@@ -1269,8 +1269,8 @@ AccountTransactionsDaily
 
 <hr />
 <h2 id="acr">ACR</h2>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">Tip</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">Tip</p>
 <p>Key tables: <mark>RegistryActivity</mark>, <mark>WorkerServiceActivity</mark>, <mark>ContainerVA_ImageScanLifeCycleEvents</mark></p>
 </div>
 <div class="highlight"><pre><span></span><code>//Acrmc2
@@ -1340,8 +1340,8 @@ cluster<span class="o">(</span><span class="s1">&#39;acimooncake.chinaeast2.kust
 
 <hr />
 <h2 id="mdc">MDC</h2>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">Tip</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">Tip</p>
 <p>Key tables: <mark>ServiceFabricIfxTraceEvent</mark>, <mark>AssessmentsNonAggregatedStatusSnapshot</mark>, <mark>SubscriptionActivityQueryOE</mark></p>
 </div>
 <div class="highlight"><pre><span></span><code>//List<span class="w"> </span>successfully<span class="w"> </span>created<span class="w"> </span>exemptions
@@ -1415,8 +1415,8 @@ RecommendationsData<span class="o">(</span>31d,0d<span class="o">)</span>
 
 <hr />
 <h2 id="crp">CRP</h2>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">Tip</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">Tip</p>
 <p>Key tables: <mark>ApiQosEvent</mark>, <mark>ContextActivity</mark>, <mark>VMApiQosEvent</mark>, <mark>DCMNMAgentProgrammingDurationEtwTable</mark></p>
 </div>
 <div class="highlight"><pre><span></span><code>//----------------CRP<span class="w"> </span>operation---------------------------------------------------
@@ -1478,8 +1478,8 @@ cluster<span class="o">(</span><span class="s2">&quot;https://azurecm.chinanorth
 
 <hr />
 <h2 id="backup-asr">Backup + ASR</h2>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">Tip</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">Tip</p>
 <p>Key tables: <mark>BMSProtectionStats</mark>, <mark>SRSShoeboxEvent</mark>, <mark>SRSOperationEvent</mark>, <mark>HvrDsTelemetryStats</mark></p>
 </div>
 <div class="highlight"><pre><span></span><code>//<span class="o">=======</span><span class="nv">backup</span><span class="o">=================</span>
@@ -1766,8 +1766,8 @@ cluster<span class="o">(</span><span class="s1">&#39;asradxclusmc.chinanorth2.ku
 
 <hr />
 <h2 id="monitor-automation">Monitor + Automation</h2>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">Tip</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">Tip</p>
 <p>Key tables: <mark>LogContainerSnapshot</mark>, <mark>WindowsEventTable</mark>, <mark>TMMgmtNodeTraceEtwTable</mark>, <mark>ControlPlaneEvents</mark>, <mark>ApiQosEvent_nonGet</mark></p>
 </div>
 <div class="highlight"><pre><span></span><code>//----------------------<span class="w"> </span>Query<span class="w"> </span>all<span class="w"> </span>kind<span class="w"> </span>of<span class="w"> </span>IDs<span class="w"> </span>-------------------------------------------------------
@@ -2105,8 +2105,8 @@ cluster<span class="o">(</span><span class="s2">&quot;sparkle.eastus&quot;</span
 
 <hr />
 <h2 id="aad">AAD</h2>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">Tip</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">Tip</p>
 <p>Key tables: <mark>EventServiceEntries</mark>, <mark>PerRequestTableIfx</mark>, <mark>IfxUlsEvents</mark>, <mark>IfxBECAuthorizationManager</mark></p>
 </div>
 <div class="highlight"><pre><span></span><code>//<span class="w"> </span><span class="nv">Connection</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>https://armmcadx.chinaeast2.kusto.chinacloudapi.cn
@@ -2158,8 +2158,8 @@ IfxBECAuthorizationManager
 
 <hr />
 <h2 id="health-event">Health Event</h2>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">Tip</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">Tip</p>
 <p>Key tables: <mark>ServiceHealthPublisherCommunications</mark>, <mark>ServiceHealthTargets</mark></p>
 </div>
 <div class="highlight"><pre><span></span><code>//<span class="w"> </span>Check<span class="w"> </span>ServiceHealth
@@ -2175,8 +2175,8 @@ ServiceHealthTargets
 
 <hr />
 <h2 id="ah2021-patch">AH2021 Patch</h2>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">Tip</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">Tip</p>
 <p>Key tables: <mark>OsConfigTable</mark>, <mark>WindowsEventTable</mark>, <mark>TMMgmtNodeEventsEtwTable</mark>, <mark>IridiasTargets</mark></p>
 </div>
 <div class="highlight"><pre><span></span><code>//Azurecm<span class="w"> </span>-<span class="w"> </span>azurecm

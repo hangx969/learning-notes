@@ -89,8 +89,8 @@
     </p>
     <div class="article-body">
 <h1 id="command-line-tools">Command Line Tools</h1>
-<p><div class="callout callout-summary" markdown="1"><br />
-<p class="callout-title">Azure command-line tools for managing resources and data</p></p>
+<div class="callout callout-summary">
+<p class="callout-title">Azure command-line tools for managing resources and data</p>
 <p>Covers <mark>Azure PowerShell</mark>, <mark>Az CLI</mark>, and <mark>AzCopy</mark> for managing <a class="wikilink" href="../../Azure/5_Azure-Storage/">Azure Storage</a> and other Azure resources.</p>
 </div>
 <hr />
@@ -105,8 +105,8 @@
 <li><a href="https://docs.microsoft.com/en-us/powershell/azure/new-azureps-module-az?view=azps-7.3.2">Introducing the Azure Az PowerShell module | Microsoft Docs</a></li>
 <li><a href="https://learn.microsoft.com/en-us/powershell/azure/install-az-ps?view=azps-9.4.0">Install the Azure Az PowerShell module | Microsoft Learn</a></li>
 </ul>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">通过 PowerShellGet 安装 Azure PowerShell</p></p>
+<div class="callout callout-info">
+<p class="callout-title">通过 PowerShellGet 安装 Azure PowerShell</p>
 <p>要求：<br />
 - Windows PowerShell <mark>5.1</mark> or more<br />
 - .NET Framework <mark>4.7.2</mark> or more<br />
@@ -129,8 +129,8 @@
 <p><code>powershell
   Connect-AzAccount -Environment AzureChinaCloud</code></p>
 <h4 id="便捷登录-tips">便捷登录 Tips</h4>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">使用 AAD App 自动登录</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">使用 AAD App 自动登录</p>
 <ul>
 <li>建一个 AAD 的 app，new 一个 <mark>client secret</mark></li>
 <li>在 PowerShell 里面写一个登录脚本，做一个 credential，用这个 app 的 client secret 来登录</li>
@@ -138,8 +138,8 @@
 </div>
 <p><img alt="image-20231030164620380" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202310301646534.png" /></p>
 <h3 id="azpowershell-清除缓存">AzPowerShell 清除缓存</h3>
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">清除缓存</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">清除缓存</p>
 <p><code>msal.cache</code> 里面存了 token，清缓存可以手动删除以下文件：</p>
 </div>
 <p>Remove all of these files:</p>
@@ -180,8 +180,8 @@
 az<span class="w"> </span>login
 </code></pre></div>
 
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">登录报错排查</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">登录报错排查</p>
 <p><img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202310301652604.png" alt="image-20231030165207511" style="zoom:50%;" /></p>
 <ul>
 <li>有可能是 <mark>account credential cache</mark> 的问题：<a href="https://github.com/Azure/azure-cli/issues/20231#issuecomment-1007176901"><code>az login</code> fails: OSError: [WinError -2146893813] · Issue #20231 · Azure/azure-cli · GitHub</a></li>
@@ -198,8 +198,8 @@ az<span class="w"> </span>account<span class="w"> </span><span class="nb">set</s
 
 <hr />
 <h2 id="azcopy">AzCopy</h2>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">AzCopy 概述</p></p>
+<div class="callout callout-info">
+<p class="callout-title">AzCopy 概述</p>
 <p>Perform copy and sync operations with AzCopy between local and Azure or different storage accounts.<br />
 <mark>注意：azcopy 使用的是服务器到服务器 Azure backbone 的 API，不占用本地网络带宽。</mark></p>
 </div>

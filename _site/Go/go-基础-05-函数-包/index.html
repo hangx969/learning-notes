@@ -126,8 +126,8 @@
 <li>在实际的开发中，我们往往需要在不同的文件中，去调用其它文件定义的函数，比如 main.go 中，去使用 utils.go  文件中的函数，如何实现？ 通过包实现</li>
 <li>现在有两个程序员共同开发一个 Go 项目，程序员A希望定义函数 Cal，程序员B也想定义函数也叫 Cal。怎么办? 通过包实现</li>
 </ol>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">包的基本介绍</p></p>
+<div class="callout callout-info">
+<p class="callout-title">包的基本介绍</p>
 <p>包的本质实际上就是创建不同的文件夹，来存放程序文件。go 的每一个文件都是属于一个包的，也就是说 go 是以包的形式来管理文件和项目目录结构的。</p>
 </div>
 <h3 id="包的基本使用">包的基本使用</h3>
@@ -188,8 +188,8 @@ touch<span class="w"> </span>goproject/functiondemo/utils/utils.go
 <span class="p">}</span>
 </code></pre></div>
 
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">跨包访问规则</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">跨包访问规则</p>
 <p>Go 中==大写开头==的函数名和变量名可以被其他包访问，==小写开头==的只能在包内使用。这是 Go 的访问控制机制。</p>
 </div>
 <hr />
@@ -372,8 +372,8 @@ touch<span class="w"> </span>goproject/functiondemo/utils/utils.go
 <span class="p">}</span>
 </code></pre></div>
 
-<p><div class="callout callout-example" markdown="1"><br />
-<p class="callout-title">闭包实际应用 - 文件后缀名处理</p></p>
+<div class="callout callout-example">
+<p class="callout-title">闭包实际应用 - 文件后缀名处理</p>
 <p><sub>~</sub>go<br />
 package main</p>
 <p>import (<br />
@@ -404,8 +404,8 @@ package main</p>
 <p>在函数中，程序员经常需要创建资源(比如：数据库连接、文件句柄、锁等) ，为了在函数执行完毕后，及时的释放资源，Go 的设计者提供 <mark>defer</mark> (延时机制)。</p>
 <p>defer可以在函数return之前或者程序panic之前执行，一般用于资源回收和数据返回，也可以用于异常恢复。</p>
 <p>好习惯是打开一个文件之后，马上接一个defer去关闭这个文件。</p>
-<p><div class="callout callout-important" markdown="1"><br />
-<p class="callout-title">defer 的执行规则</p></p>
+<div class="callout callout-important">
+<p class="callout-title">defer 的执行规则</p>
 <ol>
 <li>当 go 执行到一个 defer 时，不会立即执行 defer 后的语句，而是将 defer 后的语句压入到一个==栈==中, 然后继续执行函数下一个语句。</li>
 <li>当函数执行完毕后，在从 defer 栈中，依次从栈顶取出语句执行 (注：遵守栈==先入后出==的机制)</li>
@@ -436,8 +436,8 @@ package main</p>
 <span class="p">}</span>
 </code></pre></div>
 
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">defer 最佳实践</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">defer 最佳实践</p>
 <p>defer 最主要的价值是，当函数执行完毕后，可以及时的释放函数创建的资源。</p>
 <p>在 golang 编程中的通常做法是：<br />
 1. 创建资源后，比如打开了文件，获取了数据库的链接，或者是锁资源，可以直接在后面执行 <code>defer file.Close()</code> <code>defer connect.Close()</code><br />

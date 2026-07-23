@@ -305,8 +305,8 @@ helm<span class="w"> </span>pull<span class="w"> </span>bitnami/postgresql<span 
 helm<span class="w"> </span>pull<span class="w"> </span>bitnami/postgresql-ha<span class="w"> </span>--version<span class="w"> </span><span class="m">16</span>.3.1<span class="w"> </span><span class="c1"># 这个chart是用来安装HA模式高可用pg</span>
 </code></pre></div>
 
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">提示</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">提示</p>
 <ul>
 <li>bitnami/postgresql如果网络问题pull不下来就直接从bitnami github上clone下来源码，里面就有mysql的helm chart。</li>
 </ul>
@@ -318,8 +318,8 @@ helm<span class="w"> </span>pull<span class="w"> </span>bitnami/postgresql-ha<sp
 </ul>
 </div>
 <h1 id="配置-ha模式">配置-HA模式</h1>
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">生产环境注意</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">生产环境注意</p>
 <ul>
 <li>生产环境中不推荐使用nfs，由于其单点无高可用、性能也有问题。如果k8s中没有配置ceph等分布式储，那就不推荐把数据库等需要持久化数据的服务部署到k8s中。</li>
 <li>这里学习环境可以使用nfs。</li>

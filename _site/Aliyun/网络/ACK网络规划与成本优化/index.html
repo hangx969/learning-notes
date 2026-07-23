@@ -140,8 +140,8 @@
 <li><strong>Service CIDR 与 VPC CIDR 不重叠</strong>：重叠后网络冲突，修复成本极高</li>
 <li><strong>多集群提前留足空间</strong>：每个集群使用不同网段，方便未来通过 VPC Peering 或 CEN 打通</li>
 </ol>
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">踩坑提示</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">踩坑提示</p>
 <p>Service CIDR 与 VPC CIDR 重叠是常见坑点，一旦发生只能重建集群，无法在线修复。</p>
 </div>
 <h2 id="流量成本优化">流量成本优化</h2>

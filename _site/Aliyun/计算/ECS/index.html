@@ -147,8 +147,8 @@
 <li>包年包月:可以中途退费,但是可能会按照按量会多收点钱</li>
 <li>抢占式示例:不稳定,会被收走。适用于无状态服务</li>
 </ul>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">节省计划</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">节省计划</p>
 <p>节省计划 == ECS按量付费的预付会员卡</p>
 </div>
 <p>费用构成:<mark>实例规格费用 + 镜像费用 + 云盘费用 + 公网带宽费用 + 快照费用</mark></p>
@@ -167,8 +167,8 @@
 </ul>
 </li>
 </ul>
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">弹性伸缩与镜像</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">弹性伸缩与镜像</p>
 <p><a class="wikilink" href="../../../Aliyun/%E8%AE%A1%E7%AE%97/%E5%BC%B9%E6%80%A7%E4%BC%B8%E7%BC%A9ESS/">ESS</a>弹性伸缩配置中,不支持云市场镜像。因为部分云市场镜像是收费的</p>
 </div>
 <h2 id="实例规格族">实例规格族</h2>
@@ -185,8 +185,8 @@
 </ul>
 <h2 id="选型推荐">选型推荐</h2>
 <p>在云端,我们常见的CPU:内存的几个配置是1:1、1:2、1:4和1:8。</p>
-<p><div class="callout callout-example" markdown="1"><br />
-<p class="callout-title">CPU与内存比例选型</p></p>
+<div class="callout callout-example">
+<p class="callout-title">CPU与内存比例选型</p>
 <ul>
 <li>==1:1与1:2==的配置,尤其是1:2的比例,如2核4G,4核8G等,我们称之为"黄金比例",适用于绝大多数场景,尤其是高资源消耗的计算场景、个人网页、企业建站等小型部署。</li>
 <li>==1:4==的配置,由于其内存占比较高,所以适合数据库类型的部署。</li>
@@ -194,8 +194,8 @@
 </ul>
 </div>
 <p>对于云盘的选择:</p>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">云盘选型建议</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">云盘选型建议</p>
 <ul>
 <li>不必过度关注磁盘的大小,因为磁盘的大小都是可以一键扩容的,重点关注点在于磁盘的==IOPS==</li>
 <li>云上也不建议用LVM,可能在一致性快照恢复上会有问题。</li>
@@ -203,8 +203,8 @@
 </div>
 <h2 id="运行状态">运行状态</h2>
 <p>==Stopped和Running==是稳定状态,可以进行运维。</p>
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">实例状态与服务</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">实例状态与服务</p>
 <p>实例处于Running状态仅代表实例运行起来,类似于对电脑进行开机,但是实例的操作系统并不一定运行起来了。您可以通过查看实例的健康状态,判断实例的操作系统是否已经运行起来。<br />
 只有当实例的操作系统运行起来后,网络服务才能正常工作,才可以通过SSH、RDP等方式进行远程访问。</p>
 </div>
@@ -219,8 +219,8 @@
 同地域的不同可用区之间是走backbone内网互通的,网络时延更小。</p>
 <p>每个地域Region,包含多个可用区,对应列表:<br />
 https://www.alibabacloud.com/help/zh/cloud-migration-guide-for-beginners/latest/regions-and-zones</p>
-<p><div class="callout callout-note" markdown="1"><br />
-<p class="callout-title">可用区选择策略</p></p>
+<div class="callout callout-note">
+<p class="callout-title">可用区选择策略</p>
 <p>对于容灾要求高,采用==多可用区==;对网络时延要求高,部署在==同一可用区==。</p>
 </div>
 <hr />

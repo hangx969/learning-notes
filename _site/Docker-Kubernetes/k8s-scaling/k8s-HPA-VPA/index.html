@@ -304,8 +304,8 @@
 <li>同时，为了避免过于频繁的扩缩容，默认在5min内没有重新扩缩容的情况下，才会触发扩缩容。</li>
 <li>HPA本身的算法相对比较保守，可能并不适用于很多场景。例如，一个快速的流量突发场景，如果正处在5min内的HPA稳定期，这个时候根据HPA的策略，会导致无法扩容。</li>
 </ul>
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">注意：针对原生HPA</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">注意：针对原生HPA</p>
 <ol>
 <li>必须安装metrics-server或者其他自定义metrics-server</li>
 <li>pod必须配置requests。因为HPA就是根据requests来计算使用率的</li>
@@ -324,8 +324,8 @@
 <li>既可以缩小过度请求资源的容器，也可以根据其使用情况随时提升资源不足的容量。</li>
 <li>不能与HPA一起使用。</li>
 </ul>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">VPA优势</p></p>
+<div class="callout callout-info">
+<p class="callout-title">VPA优势</p>
 <p>Pod 资源用其所需，所以集群节点使用效率高。Pod 会被安排到具有适当可用资源的节点上。</p>
 <p>不必运行基准测试任务来确定 CPU 和内存请求的合适值。VPA 可以随时调整 CPU 和内存请求，无需人为操作，因此可以减少维护时间。</p>
 <p>VPA是Kubernetes比较新的功能，还没有在生产环境大规模实践过，不建议在线上环境使用自动更新模式，但是使用推荐模式你可以更好了解服务的资源使用情况。</p>
@@ -434,8 +434,8 @@
 <span class="l l-Scalar l-Scalar-Plain">EOF</span>
 </code></pre></div>
 
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">注意：pod定义中必须要有对应指标的requests，HPA才能检测得到指标从而起作用</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">注意：pod定义中必须要有对应指标的requests，HPA才能检测得到指标从而起作用</p>
 </div>
 <h3 id="创建hpa">创建HPA</h3>
 <div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>autoscale<span class="w"> </span>deployment<span class="w"> </span>nginx-hpa<span class="w"> </span>--cpu-percent<span class="o">=</span><span class="m">10</span><span class="w"> </span>--min<span class="o">=</span><span class="m">1</span><span class="w"> </span>--max<span class="o">=</span><span class="m">10</span>
@@ -449,8 +449,8 @@
 </code></pre></div>
 
 <h2 id="hpa基于内存实现pod扩缩容">HPA基于内存实现pod扩缩容</h2>
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">注意：生产环境中尽量避免使用基于内存的HPA。</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">注意：生产环境中尽量避免使用基于内存的HPA。</p>
 <p>因为内存是不可压缩资源；不像cpu一样一会高一会低，一般内存使用量升高是因为程序存在bug，升上去是降不下来的。</p>
 </div>
 <h3 id="yaml文件创建hpa">yaml文件创建HPA</h3>
@@ -572,8 +572,8 @@ docker<span class="w"> </span>load<span class="w"> </span>-i<span class="w"> </s
 <span class="l l-Scalar l-Scalar-Plain">kubectl apply -f php-apache.yaml</span>
 </code></pre></div>
 
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">注意：pod定义中必须要有CPU的requests、limits，HPA才能检测得到指标从而起作用</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">注意：pod定义中必须要有CPU的requests、limits，HPA才能检测得到指标从而起作用</p>
 </div>
 <h3 id="创建hpa_1">创建HPA</h3>
 <div class="highlight"><pre><span></span><code><span class="c1">#1）让副本数维持在1-10个之间（这里副本数指的是通过deployment部署的pod的副本数）</span>

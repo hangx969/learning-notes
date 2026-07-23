@@ -74,8 +74,8 @@
 <h1 id="slurm-node-exporter">Slurm Node Exporter</h1>
 <hr />
 <h2 id="旧版exporter">旧版exporter</h2>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">参考资料</p></p>
+<div class="callout callout-info">
+<p class="callout-title">参考资料</p>
 <ul>
 <li>https://erdong.site/prometheus-notes/chapter03-Exporter/3.24-slurm-exporter.html</li>
 <li>https://github.com/vpenso/prometheus-slurm-exporter</li>
@@ -212,8 +212,8 @@ systemctl<span class="w"> </span>restart<span class="w"> </span>slurm-exporter.s
 <li><mark>Total</mark>: GPU 卡的总数.</li>
 <li><mark>Utilization</mark>: 集群中总的 GPU 使用率.</li>
 </ul>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">GPU计费</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">GPU计费</p>
 <p>从==0.19版本==开始,GPU计费必须在命令行中添加 <code>-gpu-acct</code> 选项来显式启用,否则它将不会被激活。</p>
 </div>
 <h4 id="机器节点的状态">机器节点的状态</h4>
@@ -231,8 +231,8 @@ systemctl<span class="w"> </span>restart<span class="w"> </span>slurm-exporter.s
 <li><mark>Mixed</mark>: 这些节点已经分配了一些cpu,而其他cpu处于空闲状态。</li>
 <li><mark>Resv</mark>: 这些节点处于高级预订状态,通常不可用。</li>
 </ul>
-<p><div class="callout callout-note" markdown="1"><br />
-<p class="callout-title">从0.18版本开始的额外节点信息</p></p>
+<div class="callout callout-note">
+<p class="callout-title">从0.18版本开始的额外节点信息</p>
 <p>Slurm也提取并导出了每个已知节点的以下信息:<br />
 - CPU:分配的cpu个数、空闲cpu个数、其他cpu个数和总数。<br />
 - 内存:已分配和总内存。<br />
@@ -296,8 +296,8 @@ systemctl<span class="w"> </span>restart<span class="w"> </span>slurm-exporter.s
 <hr />
 <h2 id="新版exporterslurm-dashboard-v2">新版exporter+Slurm Dashboard V2</h2>
 <h3 id="部署">部署</h3>
-<p><div class="callout callout-note" markdown="1"><br />
-<p class="callout-title">版本说明</p></p>
+<div class="callout callout-note">
+<p class="callout-title">版本说明</p>
 <p>前面的slurm exporter停止维护了,现在有新的exporter: https://github.com/rivosinc/prometheus-slurm-exporter</p>
 </div>
 <div class="highlight"><pre><span></span><code><span class="c1">#下载二进制包解压,直接有了二进制文件</span>
@@ -323,8 +323,8 @@ tee<span class="w"> </span>/etc/systemd/system/slurm-exporter.service<span class
 systemctl<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>slurm-exporter<span class="w"> </span>--now
 </code></pre></div>
 
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">参数说明</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">参数说明</p>
 <p>Usage of /usr/bin/prometheus-slurm-exporter:<br />
   - <code>-slurm.cli-fallback</code>: drop the --json arg and revert back to standard squeue for performance reasons (default true)<br />
   - <code>-slurm.collect-diags</code>: Collect daemon diagnostics stats from slurm<br />
@@ -353,8 +353,8 @@ systemctl<span class="w"> </span><span class="nb">enable</span><span class="w"> 
 <span class="w">    </span>-<span class="w"> </span>targets:<span class="w"> </span><span class="o">[</span><span class="s1">&#39;172.16.183.135:9092&#39;</span><span class="o">]</span>
 </code></pre></div>
 
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">注意</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">注意</p>
 <p>这个版本不太好用,不如老的那版exporter数据多</p>
 </div>
 <hr />

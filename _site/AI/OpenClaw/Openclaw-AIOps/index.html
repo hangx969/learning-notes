@@ -153,8 +153,8 @@
 <li>下载地址：<a href="https://clawhub.ai/ddevaal/kubectl">kubectl skill</a></li>
 <li>解压到 OpenClaw 工作目录的 skills 目录下</li>
 </ul>
-<p><div class="callout callout-important" markdown="1"><br />
-<p class="callout-title">前置条件</p></p>
+<div class="callout callout-important">
+<p class="callout-title">前置条件</p>
 <p>基于 kubectl 来管理的，所以需要在 OpenClaw 机器上安装 kubectl，并且拿到集群的 kubeconfig 文件，放到 <code>~/.kube/config</code>，需要直接 <code>kubectl get nodes</code> 能运行。</p>
 </div>
 <h2 id="使用">使用</h2>
@@ -220,8 +220,8 @@
 <ul>
 <li>把这个任务做成计划任务，按照北京时间，Asia/Shanghai 时区在每天的凌晨 1 点执行</li>
 </ul>
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">注意</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">注意</p>
 <p>有失败几率，因为大概率它会直接在 Linux 中生成一个 crontab，而不是直接添加在 OpenClaw 的定时任务中。</p>
 </div>
 <p><strong>命令行方式（推荐）</strong>：</p>
@@ -237,8 +237,8 @@
 </code></pre></div>
 
 <p>任务执行时，会创建一个隔离的会话处理该任务。</p>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">更多定时任务</p></p>
+<div class="callout callout-info">
+<p class="callout-title">更多定时任务</p>
 <p><a href="https://docs.openclaw.ai/zh-CN/automation/cron-jobs">OpenClaw Cron Jobs 文档</a></p>
 </div>
     </div>

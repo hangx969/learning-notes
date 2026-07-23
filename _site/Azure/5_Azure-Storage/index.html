@@ -153,8 +153,8 @@
 <li>On Linux typically <code>/dev/sdb</code>, default mount point <code>/mnt/resource</code></li>
 <li>On Windows typically <code>D:\</code></li>
 </ol>
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">Temporary Disk Data Loss</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">Temporary Disk Data Loss</p>
 <p>During VM failure, temporary storage does NOT migrate. Never store important data on temporary disk.</p>
 </div>
 <hr />
@@ -187,8 +187,8 @@
 <li><a href="https://docs.microsoft.com/zh-cn/rest/api/storageservices/storage-analytics-log-format">存储分析日志格式 (REST API) | Microsoft Docs</a></li>
 <li><a href="https://docs.microsoft.com/zh-cn/rest/api/storageservices/storage-analytics-logged-operations-and-status-messages">存储分析记录的操作和状态消息 (REST API) | Microsoft Docs</a></li>
 </ul>
-<p><div class="callout callout-example" markdown="1"><br />
-<p class="callout-title">Convert Storage Logs with PowerShell</p></p>
+<div class="callout callout-example">
+<p class="callout-title">Convert Storage Logs with PowerShell</p>
 </div>
 <div class="highlight"><pre><span></span><code><span class="nv">$Columns</span> <span class="p">=</span> 
      <span class="p">(</span>   <span class="s2">&quot;version-number&quot;</span><span class="p">,</span>
@@ -280,8 +280,8 @@
 <li>Only data disks support this; OS disks do not</li>
 <li>Setting OS disk cache to None will internally override to ReadOnly</li>
 </ul>
-<p><div class="callout callout-example" markdown="1"><br />
-<p class="callout-title">SQL Server on Premium Storage</p></p>
+<div class="callout callout-example">
+<p class="callout-title">SQL Server on Premium Storage</p>
 <ol>
 <li>Configure <mark>ReadOnly</mark> cache on premium storage disks hosting <strong>data files</strong></li>
 <li>Fast cache reads shorten SQL Server query time</li>
@@ -426,8 +426,8 @@ wget<span class="w"> </span>-O<span class="w"> </span>azcopy_v10.tar.gz<span cla
 <span class="l l-Scalar l-Scalar-Plain">./azcopy copy &#39;&lt;file name&gt;&#39; &#39;https://&lt;sa name&gt;.blob.core.chinacloudapi.cn/&lt;container name&gt;&#39; --put-md5</span>
 </code></pre></div>
 
-<p><div class="callout callout-note" markdown="1"><br />
-<p class="callout-title">Blob MD5 for Large Files</p></p>
+<div class="callout callout-note">
+<p class="callout-title">Blob MD5 for Large Files</p>
 <p>Azure Blob's MD5 for large file uploads needs to be manually specified:<br />
 - https://learn.microsoft.com/en-us/answers/questions/282572/md5-hash-calculation-for-large-files<br />
 - https://technet2.github.io/Wiki/blogs/windowsazurestorage/windows-azure-blob-md5-overview.html<br />
@@ -481,8 +481,8 @@ wget<span class="w"> </span>-O<span class="w"> </span>azcopy_v10.tar.gz<span cla
 <span class="l l-Scalar l-Scalar-Plain">EOF</span>
 </code></pre></div>
 
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">Workload Identity Environment Variables</p></p>
+<div class="callout callout-info">
+<p class="callout-title">Workload Identity Environment Variables</p>
 <p>Every pod with WI has these environment variables:<br />
 <code>sh
 Environment:
@@ -516,8 +516,8 @@ az storage blob upload --account-name &lt;sa name&gt; --container-name &lt;conta
 <span class="l l-Scalar l-Scalar-Plain">EOF</span>
 </code></pre></div>
 
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">AZ CLI Container Resource Requirements</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">AZ CLI Container Resource Requirements</p>
 <p>The MS-provided azcli container will crash when running az commands if CPU/memory is too low. Set request to at least <mark>200m CPU</mark> and <mark>500Mi memory</mark>.</p>
 </div>
 <hr />

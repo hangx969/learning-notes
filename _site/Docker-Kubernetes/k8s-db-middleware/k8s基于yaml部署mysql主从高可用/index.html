@@ -290,8 +290,8 @@
       <a href="https://github.com/hangx969/learning-notes/blob/main/Docker-Kubernetes/k8s-db-middleware/k8s%E5%9F%BA%E4%BA%8Eyaml%E9%83%A8%E7%BD%B2mysql%E4%B8%BB%E4%BB%8E%E9%AB%98%E5%8F%AF%E7%94%A8.md">查看源文件</a>
     </p>
     <div class="article-body">
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">注意</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">注意</p>
 <p>如果需要mysql对性能要求很高，建议不要在k8s中部署，还是建议直接在服务器上部署</p>
 </div>
 <h1 id="部署nfs">部署nfs</h1>
@@ -664,8 +664,8 @@ docker<span class="w"> </span>load<span class="w"> </span>-i<span class="w"> </s
 <span class="w">          </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mysql</span>
 </code></pre></div>
 
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">xtrabackup容器启动命令解释</p></p>
+<div class="callout callout-info">
+<p class="callout-title">xtrabackup容器启动命令解释</p>
 <p>首先通过检查备份信息文件（如 xtrabackup_slave_info 和 xtrabackup_binlog_info）来确定备份的来源，然后根据不同情况分别处理这些备份信息。</p>
 <p>具体实现步骤如下：</p>
 <ol>

@@ -552,8 +552,8 @@ helm<span class="w"> </span>upgrade<span class="w"> </span>-i<span class="w"> </
 </code></pre></div>
 
 <p>通过NodePort访问skywalking UI</p>
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">Warning</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">Warning</p>
 <p>如果oap server pod始终起不来，报错是liveness probe失败，log里面没看到任何ERROR信息，可能是因为默认的liveness probe太严格了，oap启动比较慢，还没完全起来就被linevess探测给重启了。</p>
 <p>去看template发现liveness probe是写死的，给他时间改长一点：</p>
 <p><sub>~</sub>yaml<br />

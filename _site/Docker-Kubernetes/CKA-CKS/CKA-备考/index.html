@@ -317,8 +317,8 @@ hostnamectl<span class="w"> </span>set-hostname<span class="w"> </span>ckanode1<
 apt-get<span class="w"> </span>update<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>sudo<span class="w"> </span>apt-get<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>apt-transport-https<span class="w"> </span>ca-certificates<span class="w"> </span>curl<span class="w"> </span>software-properties-common<span class="w"> </span>gnupg2
 </code></pre></div>
 
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">报错处理</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">报错处理</p>
 <p><img alt="img" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202401081901198.jpg" /></p>
 <p>解决方法如下：</p>
 <p><code>bash
@@ -400,8 +400,8 @@ cat<span class="w"> </span><span class="s">&lt;&lt;EOF &gt;/etc/apt/sources.list
 apt-get<span class="w"> </span>update
 </code></pre></div>
 
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">报错处理</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">报错处理</p>
 <p><img alt="image-20240109072509367" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202401090725553.png" /></p>
 <p>解决方案：</p>
 <p><code>sh
@@ -544,8 +544,8 @@ kubectl<span class="w"> </span>create<span class="w"> </span>rolebinding<span cl
 kubectl<span class="w"> </span>describe<span class="w"> </span>rolebinding<span class="w"> </span>cicd-token-binding<span class="w"> </span>-n<span class="w"> </span>app-team1
 </code></pre></div>
 
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">注意</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">注意</p>
 <ul>
 <li>资源要变复数</li>
 <li>sa要带着ns，--serviceaccount=<code>app-team1</code>:cicd-token</li>
@@ -615,8 +615,8 @@ kubectl<span class="w"> </span>get<span class="w"> </span>nodes<span class="w"> 
 
 <h1 id="4-etcd备份还原">4 etcd备份还原</h1>
 <h2 id="题目_3">题目</h2>
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">考试注意</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">考试注意</p>
 <p>真实考试时，第3题是”升级集群”那道题。建议真正考试时，前4道题按照顺序做，特别是第4题，且做完后不要再修改，做完第3道题，如果没有exit退出到student@node-1，则无法执行etcdctl命令，另外这道题没有切换集群，用的是第3道题的集群，所以，这道题做完就不要在回来检查或者操作了，etcd不建议放到最后做，如果最后做，etcd备份还原可能把所有pod都清空了，有可能会出现，所以前4道题按照顺序做。</p>
 </div>
 <ul>
@@ -627,8 +627,8 @@ kubectl<span class="w"> </span>get<span class="w"> </span>nodes<span class="w"> 
   客户端密钥: /opt/KUIN00601/etcd-client.key</li>
 </ul>
 <h2 id="解答_3">解答</h2>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">自建环境准备</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">自建环境准备</p>
 <p>自己的环境先安装etcdctl：上传etcd-v3.4.13-linux-amd64.tar.gz</p>
 <p><sub>~</sub>sh<br />
 tar zxvf etcd-v3.4.13-linux-amd64.tar.gz<br />
@@ -682,8 +682,8 @@ mkdir<span class="w"> </span>-p<span class="w"> </span>/srv/data/
 <ul>
 <li>kubernetes.io中搜network policies</li>
 </ul>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">提示</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">提示</p>
 <p>vim中 <code>:set paste</code>，防止yaml文件空格错序。</p>
 </div>
 <div class="highlight"><pre><span></span><code><span class="c1">#自己环境</span>
@@ -875,8 +875,8 @@ kubectl<span class="w"> </span>describe<span class="w"> </span>nodes<span class=
 <span class="nb">echo</span><span class="w"> </span>x<span class="w"> </span>&gt;<span class="w"> </span>/opt/KUSC00402/kusc00402.txt
 </code></pre></div>
 
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">参数说明</p></p>
+<div class="callout callout-info">
+<p class="callout-title">参数说明</p>
 <p><code>-i</code> 参数使搜索变为不区分大小写。这个命令的目的是从 kubectl 的输出中找出包含 "Taint" 的行。</p>
 <p><code>-v</code> 参数让 grep 只输出不匹配的行，<code>-c</code> 参数让 grep 输出匹配的行数。这个命令的目的是计数不包含 "NoSchedule" 的行</p>
 </div>
@@ -1044,8 +1044,8 @@ kubectl<span class="w"> </span>logs<span class="w"> </span>counter<span class="w
 <span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;pod name&quot;</span><span class="w"> </span>&gt;<span class="w"> </span>/opt/KUTR00401/KUTR00401.txt
 </code></pre></div>
 
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">前置条件</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">前置条件</p>
 <p>用kubectl top前提是有metrics-server这个组件，可以部署一下：</p>
 <p>上传课件两个文件：</p>
 <ul>

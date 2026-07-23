@@ -122,8 +122,8 @@
 <h2 id="异常处理机制">异常处理机制</h2>
 <p>异常处理的核心目的是即使遇到异常,程序也不会崩溃,而是返回报错信息。</p>
 <h3 id="try-except">try-except</h3>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">try-except 结构</p></p>
+<div class="callout callout-info">
+<p class="callout-title">try-except 结构</p>
 <ul>
 <li><strong>try 块</strong>: try 块包含可能会引发异常的代码。你把容易出错的代码放在try里。如果 try 块中的代码运行时发生错误,程序会停止执行 try 块剩余部分,并跳转到相应的 except 块来处理这个错误。</li>
 <li><strong>except 块</strong>:处理异常的代码。当 try 块中的代码发生指定类型的异常时,程序会进入 except 块,并执行其中的代码。通过 except 块,你可以处理各种不同的错误类型,并采取相应的行动,而不会让整个程序崩溃。</li>
@@ -209,8 +209,8 @@
 <hr />
 <h2 id="自定义异常类">自定义异常类</h2>
 <p>在 Python 中,标准库提供了一些内建的异常类,例如 <code>ValueError</code> 和 <code>TypeError</code>,但有时我们需要为特定的应用程序逻辑定义自己的异常类型。自定义异常类可以帮助你更好地处理程序中特定的错误情况,提高代码的可读性和维护性。</p>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">创建和使用自定义异常</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">创建和使用自定义异常</p>
 <ol>
 <li><strong>创建自定义异常类</strong>:</li>
 <li>自定义异常类通常继承自python内建的 <code>Exception</code> 类或其子类。</li>

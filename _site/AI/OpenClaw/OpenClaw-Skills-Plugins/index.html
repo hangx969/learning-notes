@@ -155,8 +155,8 @@
 </ul>
 <hr />
 <h2 id="skills-管理工具-clawhub">Skills 管理工具 Clawhub</h2>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">教程文档</p></p>
+<div class="callout callout-info">
+<p class="callout-title">教程文档</p>
 <p><a href="https://docs.openclaw.ai/zh-CN/tools/clawhub">Clawhub 文档</a></p>
 </div>
 <p>Clawhub 是由 OpenClaw 官方提供的 Skill 管理工具，可以用该工具搜索、安装、升级或卸载 skill。首先安装该工具：</p>
@@ -172,8 +172,8 @@ clawhub<span class="w"> </span>search<span class="w"> </span><span class="s2">&q
 clawhub<span class="w"> </span>install<span class="w"> </span>pdf
 </code></pre></div>
 
-<p><div class="callout callout-note" markdown="1"><br />
-<p class="callout-title">Note</p></p>
+<div class="callout callout-note">
+<p class="callout-title">Note</p>
 <p>用 clawhub 安装的 Skills 默认是装在当前 Agent 的工作目录中的 Skills 里，是局部的。想要装成全局 Skills，需要手动安装。</p>
 </div>
 <hr />
@@ -182,8 +182,8 @@ clawhub<span class="w"> </span>install<span class="w"> </span>pdf
 <li>在 <a href="https://clawhub.ai/">clawhub.ai</a> 上找到想要的，下载到 OpenClaw 的工作目录下的 <code>skills</code> 目录下即可（没有就创建一个）</li>
 <li>可以在 WebUI 的"技能"中查看到安装的 Skills</li>
 </ul>
-<p><div class="callout callout-note" markdown="1"><br />
-<p class="callout-title">Note</p></p>
+<div class="callout callout-note">
+<p class="callout-title">Note</p>
 <p>第一次运行某个新 skill 的时候可能速度会比较慢，因为会安装一些依赖包。</p>
 </div>
 <hr />
@@ -206,8 +206,8 @@ clawhub<span class="w"> </span>install<span class="w"> </span>pdf
 <p>帮我生成一个 PPT，这个 PPT 是关于 OpenClaw 介绍相关的，只需要生成三页 PPT 即可，注意你需要先列出来大纲，然后再生成 PPT。请注意你需要使用桌面的 <code>openclaw.pptx</code> 模版进行生成。</p>
 <hr />
 <h2 id="自我进化-skills">自我进化 Skills</h2>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">地址</p></p>
+<div class="callout callout-info">
+<p class="callout-title">地址</p>
 <p><a href="https://clawhub.ai/pskoett/self-improving-agent">self-improving-agent</a></p>
 </div>
 <p>这个 skill 不是"多了一个命令"，而是给 agent 加了一套行为模式：</p>
@@ -224,8 +224,8 @@ clawhub<span class="w"> </span>install<span class="w"> </span>pdf
 </ol>
 <hr />
 <h2 id="个人知识库-second-brain">个人知识库 - second-brain</h2>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">地址</p></p>
+<div class="callout callout-info">
+<p class="callout-title">地址</p>
 <p><a href="https://clawhub.ai/">second-brain</a> | 来源：<a href="https://mp.weixin.qq.com/s/kEomUUhk3Fw6XcdT7m5X_Q">Openclaw帮你管理个人知识库</a></p>
 </div>
 <p>second-brain 是 ClawHub 上的知识管理插件，名字直译就是"第二大脑"。把各种输入（读书笔记、会议记录、灵感碎片、文章摘录）统一存进一个结构化的<strong>本地知识库</strong>，用 AI 帮你检索、整理、关联。</p>
@@ -286,22 +286,22 @@ openclaw<span class="w"> </span>restart
 <li><strong>主题聚合</strong>：把散落各处的笔记按主题整理汇总</li>
 <li><strong>知识发现</strong>：发现不同笔记之间你没有意识到的关联</li>
 </ul>
-<p><div class="callout callout-note" markdown="1"><br />
-<p class="callout-title">与记忆插件的区别</p></p>
+<div class="callout callout-note">
+<p class="callout-title">与记忆插件的区别</p>
 <p>second-brain 侧重<strong>主动的知识管理</strong>（存笔记、按主题检索、知识关联），下面的 memos-local 记忆插件侧重<strong>对话上下文的持久化记忆</strong>。两者互补。</p>
 </div>
 <hr />
 <h2 id="记忆插件">记忆插件</h2>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">文档</p></p>
+<div class="callout callout-info">
+<p class="callout-title">文档</p>
 <p><a href="https://memos-claw.openmem.net/docs/index.html#quickstart">memos-local-openclaw-plugin</a></p>
 </div>
 <p>OpenClaw 自己本身也有内建 memory 机制（<code>MEMORY.md</code> / <code>memory*.md</code> + <code>memory_search</code>）。而这个 <code>memos-local-openclaw-plugin</code> 是<strong>memory 类插件</strong>，<strong>本地 SQLite 存储</strong>。</p>
 <p>部署完成后可以可视化查看存储起来的 memory（<code>127.0.0.1:18799</code>）。</p>
 <hr />
 <h2 id="安全审计-skill-vetter">安全审计 - skill-vetter</h2>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">地址</p></p>
+<div class="callout callout-info">
+<p class="callout-title">地址</p>
 <p><a href="https://clawhub.ai/spclaudehome/skill-vetter">skill-vetter</a></p>
 </div>
 <p>这个 skill 是 spclaudehome 做的，下载量 30000+，LobeHub 评分 4.96/5。它本身是一个纯文档型 skill，没有任何可执行代码，说白了就是一套安全审查协议。装上之后，每次你要安装新的 skill，它会引导你走四步审查流程：先查来源（作者信誉、GitHub 活跃度、Star 数量），然后做代码审查（扫描数据外泄模式、credential 访问、<code>eval()</code> 调用、可疑网络请求），再分析权限范围，最后给出风险评级，分 LOW、MEDIUM、HIGH、EXTREME 四个等级。</p>
@@ -312,8 +312,8 @@ openclaw<span class="w"> </span>restart
 <p>AI Agent 最大的痛点是什么？看不到外面的世界。这两个配合起来，基本上让你的 OpenClaw 长出了眼睛和手。</p>
 </blockquote>
 <h3 id="agent-browser">Agent-browser</h3>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">仓库</p></p>
+<div class="callout callout-info">
+<p class="callout-title">仓库</p>
 <p><a href="https://github.com/vercel-labs/agent-browser">vercel-labs/agent-browser</a></p>
 </div>
 <p>Agent-browser 是 Vercel Labs 用 Rust 写的无头浏览器自动化 CLI，GitHub 19600+ stars。Agent-browser 其实不算是 Skill，本质上是个无头浏览器工具。</p>
@@ -340,8 +340,8 @@ https://raw.githubusercontent.com/Panniantong/agent-reach/main/docs/install.md
 <h3 id="背景">背景</h3>
 <p>Browser Agent、Playwright：帮我登录公众号排版，帮我登录 12306 买票。但现实是，所有平台都非常介意这种事。严重一点直接封号。小红书已经封过一批了。公众号都只敢拿小号。所以 Browser Agent 之类 Skill 看起来很酷，但目前很多场景其实不敢用。</p>
 <p>我反而认为最重要的一个 Skill，是搜索。为什么？因为如果不装搜索 Skill 的话，模型是没有最新知识的。</p>
-<p><div class="callout callout-question" markdown="1"><br />
-<p class="callout-title">模型不是也有搜索能力吗？</p></p>
+<div class="callout callout-question">
+<p class="callout-title">模型不是也有搜索能力吗？</p>
 <p>是这样没错。但 OpenClaw 接模型的方式是通过 API，API 里是没有搜索的。搜索是 Chat 产品层额外做了一层插件。现在没有哪个模型有原生搜索的能力。</p>
 <p>所以如果你在 OpenClaw 里不装搜索 Skill，模型就是个半瞎子。因为模型的知识是有截止日期的。很多最新的信息，比如新闻、公司动态、产品更新，模型基本上都不知道。所以有的时候它就会一本正经地胡说八道。</p>
 </div>
@@ -353,8 +353,8 @@ https://raw.githubusercontent.com/Panniantong/agent-reach/main/docs/install.md
 <p><a href="https://console.bce.baidu.com/qianfan/ais/console/apiKey">百度 API Key 申请</a></p>
 <hr />
 <h2 id="可视化面板">可视化面板</h2>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">仓库</p></p>
+<div class="callout callout-info">
+<p class="callout-title">仓库</p>
 <p><a href="https://github.com/ClawDeckX/ClawDeckX/tree/main">ClawDeckX</a></p>
 </div>
 <p>这个比较好看：</p>

@@ -311,8 +311,8 @@ sudo<span class="w"> </span>systemctl<span class="w"> </span>start<span class="w
 </code></pre></div>
 
 <h3 id="进阶版">进阶版</h3>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">安装docker前可以配置docker阿里云的源:<a href="https://developer.aliyun.com/mirror/docker-ce">docker-ce镜像_docker-ce下载地址_docker-ce安装教程-阿里巴巴开源镜像站</a></p></p>
+<div class="callout callout-tip">
+<p class="callout-title">安装docker前可以配置docker阿里云的源:[docker-ce镜像_docker-ce下载地址_docker-ce安装教程-阿里巴巴开源镜像站](https://developer.aliyun.com/mirror/docker-ce)</p>
 </div>
 <div class="highlight"><pre><span></span><code><span class="c1">#配置主机名:</span>
 hostnamectl<span class="w"> </span>set-hostname<span class="w"> </span>dockerlab<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>bash
@@ -740,8 +740,8 @@ docker<span class="w"> </span>commit<span class="w"> </span>-a<span class="o">=<
 <li>只有镜像名称没有registry和repo的时候,就默认是去<code>docker.io/library</code>去拉</li>
 <li>0.8:tag/版本号</li>
 </ul>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">有些镜像如果docker.io没有,用bitnami的也行。bitnami也是比较可靠的镜像库</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">有些镜像如果docker.io没有,用bitnami的也行。bitnami也是比较可靠的镜像库</p>
 </div>
 <h2 id="docker部署服务通用步骤">docker部署服务通用步骤</h2>
 <ol>
@@ -971,8 +971,8 @@ docker<span class="w"> </span>run<span class="w"> </span>--help<span class="w"> 
 </li>
 </ul>
 <h3 id="cpu-core核心限制">CPU core核心限制</h3>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">从系统架构来看,目前的商用服务器大体可以分为三类架构:</p></p>
+<div class="callout callout-info">
+<p class="callout-title">从系统架构来看,目前的商用服务器大体可以分为三类架构:</p>
 <ol>
 <li>
 <p>即对称多处理器结构(SMP:Symmetric Multi-Processor) 例: x86 服务器,双路服务器。主板上有两个物理cpu</p>
@@ -991,8 +991,8 @@ docker<span class="w"> </span>run<span class="w"> </span>--help<span class="w"> 
 <li>--cpuset-mems 对具有NUMA拓扑(具有多CPU、多内存节点)的服务器尤其有用,可以对需要高性能计算的容器进行性能最优的配置。如果服务器只有一个内存节点,则--cpuset-mems的配置基本上不会有明显效果。</li>
 </ul>
 <h3 id="lab">Lab</h3>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">stress 压测工具参数</p></p>
+<div class="callout callout-info">
+<p class="callout-title">stress 压测工具参数</p>
 <p>-?        显示帮助信息<br />
 -v        显示版本号<br />
 -q       不显示运行信息<br />
@@ -1069,8 +1069,8 @@ mkdir<span class="w"> </span>-p<span class="w"> </span>/var/www/html/
 docker<span class="w"> </span>run<span class="w"> </span>-itd<span class="w"> </span>-v<span class="w"> </span>/var/www/html/:/var/www/html<span class="w"> </span>--device<span class="w"> </span>/dev/sda:/dev/sda<span class="w"> </span>--device-write-bps<span class="w"> </span>/dev/sda:2mb<span class="w"> </span>centos<span class="w">  </span>/bin/bash
 </code></pre></div>
 
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">用time dd测试磁盘io: time有计时作用,dd用于复制,从if读出,写到of</p></p>
+<div class="callout callout-info">
+<p class="callout-title">用time dd测试磁盘io: time有计时作用,dd用于复制,从if读出,写到of</p>
 <p>注:dd 参数:<br />
 direct:读写数据采用直接IO方式,不走缓存。直接从内存写硬盘上。<br />
 nonblock:读写数据采用非阻塞IO方式,优先写dd命令的数据</p>
@@ -1157,8 +1157,8 @@ docker<span class="w"> </span>network<span class="w"> </span>rm<span class="w"> 
 </li>
 </ol>
 <p>用docker rmi删掉了none镜像,但是磁盘占用并没有下降。原因是:</p>
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">被删除的镜像层并没有真正被删除,而是从镜像层变为了Build Cache层</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">被删除的镜像层并没有真正被删除,而是从镜像层变为了Build Cache层</p>
 </div>
 <p>现在docker默认使用BuildKit构建镜像。当你使用docker rmi删除镜像时,docker会识别到这些镜像层来自之前的docker build,正好作为下次构建的缓存,所以BuildKit就把这些镜像收编为Build Cache,用命令查看docker的缓存占用空间</p>
 <div class="highlight"><pre><span></span><code>docker<span class="w"> </span>system<span class="w"> </span>df

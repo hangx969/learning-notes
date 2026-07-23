@@ -459,8 +459,8 @@ data:<br />
 <li>github release: <a href="https://github.com/grafana/loki/releases">Loki Releases</a></li>
 <li>artifact hub: <a href="https://artifacthub.io/packages/helm/grafana/loki">Loki on ArtifactHub</a></li>
 </ul>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">Info</p></p>
+<div class="callout callout-info">
+<p class="callout-title">Info</p>
 <p>Grafana生态中日志存储的后端，其单机模式支持直接使用文件存储，而多副本模式依赖对象存储来对数据进行持久化。Grafana内置了Loki数据源类型，在配置相应的数据源后可以通过Grafana Explore页面进行日志查询。</p>
 </div>
 <ul>
@@ -565,8 +565,8 @@ helm<span class="w"> </span>pull<span class="w"> </span>grafana/tempo<span class
 <div class="highlight"><pre><span></span><code>helm<span class="w"> </span>upgrade<span class="w"> </span>-i<span class="w"> </span>tempo<span class="w"> </span>-n<span class="w"> </span>monitoring<span class="w"> </span>.<span class="w"> </span>-f<span class="w"> </span>values.yaml
 </code></pre></div>
 
-<p><div class="callout callout-note" markdown="1"><br />
-<p class="callout-title">Note</p></p>
+<div class="callout callout-note">
+<p class="callout-title">Note</p>
 <p>部署完loki和tempo，去prometheus-stack的grafana配置里面加上additionalDataSource：</p>
 <p><sub>~</sub>yaml<br />
   additionalDataSources:<br />

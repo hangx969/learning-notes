@@ -130,8 +130,8 @@ go<span class="w"> </span>get<span class="w"> </span>k8s.io/client-go@latest
 go<span class="w"> </span>get<span class="w"> </span>k8s.io/client-go@v0.20.4
 </code></pre></div>
 
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">版本对应</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">版本对应</p>
 <p>client-go 版本与 K8s 版本对应，参考官方 README 的兼容性矩阵。</p>
 </div>
 <h2 id="初始化客户端">初始化客户端</h2>
@@ -211,8 +211,8 @@ go<span class="w"> </span>get<span class="w"> </span>k8s.io/client-go@v0.20.4
 <span class="p">})</span>
 </code></pre></div>
 
-<p><div class="callout callout-important" markdown="1"><br />
-<p class="callout-title">RetryOnConflict</p></p>
+<div class="callout callout-important">
+<p class="callout-title">RetryOnConflict</p>
 <p><code>retry.RetryOnConflict</code> 使用指数回退重试，避免并发更新冲突。每次重试前重新 Get 最新版本，确保 resourceVersion 一致。</p>
 </div>
 <h3 id="list-列出资源">List — 列出资源</h3>
@@ -365,8 +365,8 @@ go<span class="w"> </span>get<span class="w"> </span>k8s.io/client-go@v0.20.4
 <span class="c1"># 返回: {&quot;message&quot;:&quot;Deployment created&quot;,&quot;name&quot;:&quot;my-web&quot;,&quot;ns&quot;:&quot;default&quot;}</span>
 </code></pre></div>
 
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">扩展方向</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">扩展方向</p>
 <p>基于此框架可以扩展 Update/Delete/List 接口，构建完整的 K8s Web 管理控制台。Gin 的模板渲染（<code>html/template</code>）支持动态 HTML 页面，结合前端表单实现可视化操作。</p>
 </div>
     </div>

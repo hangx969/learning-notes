@@ -213,8 +213,8 @@
 </li>
 </ol>
 <h2 id="cdn和全站加速dcdn">CDN和全站加速DCDN</h2>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">CDN适合==静态资源==加速，DCDN适合==动态资源+静态资源==加速</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">CDN适合==静态资源==加速，DCDN适合==动态资源+静态资源==加速</p>
 </div>
 <table>
 <thead>
@@ -289,8 +289,8 @@
 <li>大文件下载</li>
 <li>音视频点播</li>
 </ul>
-<p><div class="callout callout-note" markdown="1"><br />
-<p class="callout-title">配置CDN的时候，每一种应用场景都可以选择，后台有针对性的优化。</p></p>
+<div class="callout callout-note">
+<p class="callout-title">配置CDN的时候，每一种应用场景都可以选择，后台有针对性的优化。</p>
 </div>
 <h2 id="给oss配置cdn加速">给OSS配置CDN加速</h2>
 <p>以给<a class="wikilink" href="../../../Aliyun/%E5%AD%98%E5%82%A8/%E5%AF%B9%E8%B1%A1%E5%AD%98%E5%82%A8OSS/">OSS</a>开启加速为例：</p>
@@ -436,8 +436,8 @@
 </tbody>
 </table>
 <h2 id="ssl证书支持域名类型">SSL证书支持域名类型</h2>
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">==DV证书==不支持绑定多域名和混合域名，==EV证书==不支持绑定通配符域名和混合域名</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">==DV证书==不支持绑定多域名和混合域名，==EV证书==不支持绑定通配符域名和混合域名</p>
 </div>
 <table>
 <thead>
@@ -536,8 +536,8 @@
 <hr />
 <h2 id="ssl证书部署">SSL证书部署</h2>
 <p>https://help.aliyun.com/zh/ssl-certificate/ssl-certificate-deployment-scheme-selection?spm=a2c4g.11186623.0.i1#904b14940330x</p>
-<p><div class="callout callout-important" markdown="1"><br />
-<p class="callout-title">处理HTTPS流量过程中，需要确保所有相关网络节点都部署了SSL证书。</p></p>
+<div class="callout callout-important">
+<p class="callout-title">处理HTTPS流量过程中，需要确保所有相关网络节点都部署了SSL证书。</p>
 <p>比如流量路径是：用户 - CDN - <a class="wikilink" href="../../../Aliyun/%E7%BD%91%E7%BB%9C/WAF/">Aliyun/网络/WAF</a> - ALB - ECS。那么每个处理HTTPS流量的节点都需要部署证书。</p>
 </div>
 <p>用户端，对于一些IoT设备、嵌入式系统、离线App、旧版浏览器、Java客户端等场景，一般不会预埋CA根证书。因此在部署完SSL证书后，可能会出现客户端不信任的情况，需要手动下载根证书并将根证书安装至客户端。</p>
@@ -547,8 +547,8 @@
 <li>由于SLB和ECS是内网互通的，一般我们认为内网流量是可信的，不需要用HTTPS加密传输。</li>
 <li>所以公网流量访问到SLB之后，可以将流量从HTTPS转为HTTP，向后端转发</li>
 </ul>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">这种架构的优点</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">这种架构的优点</p>
 <ul>
 <li>不需要下载证书并手动配到nginx中，不涉及代码改动，可以控制台一键部署</li>
 <li>https证书卸载和流量跳转是在SLB上，<mark>节约了ECS的计算资源</mark></li>

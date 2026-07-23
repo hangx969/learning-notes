@@ -359,8 +359,8 @@
 <h3 id="数据流向">数据流向</h3>
 <p>使用七层负载均衡调度器ingress controller时，当客户端访问kubernetes集群内部的应用时，数据包走向如下图流程所示：</p>
 <p><img alt="image-20231209111616791" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202312091116867.png" /></p>
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">注意</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">注意</p>
 <p>上图其实能看出来，svc只是起到了分组的作用，ingress controller里面的nginx通过label直接找到了pod，流量不经过service直接到了pod上！</p>
 </div>
 <h1 id="生产环境推荐架构">生产环境推荐架构</h1>
@@ -725,8 +725,8 @@ cat<span class="w"> </span>auth<span class="w"> </span>
 </tbody>
 </table>
 <p>再次访问 nginx.test.com/api-a 即可访问到后端服务。</p>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">说明</p></p>
+<div class="callout callout-info">
+<p class="callout-title">说明</p>
 <ul>
 <li>如果希望把/api-a重写为/api，annotation就写<code>nginx.ingress.kubernetes.io/rewrite-target: /api/$2</code></li>
 <li>这个ingress里面配了rewrite，里面所有的host都会被重写。所以需要rewrite的不需要rewrite的ingress要分开创建ingress.yaml</li>
@@ -956,8 +956,8 @@ nginx-errors-7486ff48d8-zwz6t<span class="w">    </span><span class="m">1</span>
 <p>蓝绿发布：v2版本部署之后，直接把流量全切到v2上面去，有问题再切回v1。同时存在两个版本。</p>
 </li>
 </ul>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">提示</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">提示</p>
 <p>灰度发布里面可以通过请求头设置一部分测试用户的流量可以进来，是更加稳妥的做法。</p>
 </div>
 <p>v2的灰度版本如何设置，才能获取到一小部分比例的流量：创建 v2 版本的 Ingress 时，需要添加两个注释:</p>
@@ -1563,8 +1563,8 @@ ctr<span class="w"> </span>-n<span class="o">=</span>k8s.io<span class="w"> </sp
 </code></pre></div>
 
 <h3 id="部署-ingress-controller">部署 ingress-controller</h3>
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">注意</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">注意</p>
 <p>k8s官方维护的叫<code>ingress-nginx</code>，nginx维护的叫<code>nginx-ingress</code></p>
 </div>
 <ul>
@@ -2273,8 +2273,8 @@ ctr<span class="w"> </span>-n<span class="o">=</span>k8s.io<span class="w"> </sp
 <li>部署完会在两个worker node上建出来两个pod：ingress-nginx-controller-64bdc78c96-8t25x</li>
 <li>ingress-nginx-admission-create-2qqzl和ingress-nginx-admission-patch-8nzwm是生成证书用的两个一次性pod</li>
 </ul>
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">注意</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">注意</p>
 <p>如果部署完ingress，访问ingress的80端口被拒绝，原因一般是： ingress-controller的官方yaml默认注释了hostNetwork 工作方式，以防止端口的在宿主机的冲突，没有绑定到宿主机 80 端口。需要在ingress-class的deployment.spec.template.spec中加上hostNetwork: true</p>
 </div>
 <h3 id="安装配置nginx和keeplived">安装配置nginx和keeplived</h3>

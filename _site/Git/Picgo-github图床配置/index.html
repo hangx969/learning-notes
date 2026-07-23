@@ -142,14 +142,14 @@
 <h3 id="obsidian配置">obsidian配置</h3>
 <p>装一个Image auto upload 插件，配置github仓库地址，token，picgo监听端口。即可粘贴图片的同时自动上传。</p>
 <h3 id="troubleshooting">Troubleshooting</h3>
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">常见报错</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">常见报错</p>
 <p>根据配置中遇到的报错经验：<br />
 - PicGo 设置中的 repo 路径有空格，会导致 404 报错。<br />
 - PicGo 设置中的时间戳命名如果没开的话，会导致文件名重复，typora 上传失败，picgo 日志中会有 detect second instance 信息。</p>
 </div>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">图片不显示</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">图片不显示</p>
 <p>typora 中图片上传成功，但是 typora 中不显示。可能是 GitHub 图片被屏蔽；解决办法是修改 host 文件（<code>C:\Windows\System32\drivers\etc\hosts</code>），加上：</p>
 </div>
 <div class="highlight"><pre><span></span><code><span class="m">185</span>.199.108.133<span class="w"> </span>raw.githubusercontent.com

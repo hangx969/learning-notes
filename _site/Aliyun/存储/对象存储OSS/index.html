@@ -256,12 +256,12 @@
 </tr>
 </tbody>
 </table>
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">不建议将OSS映射为文件系统ossfs</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">不建议将OSS映射为文件系统ossfs</p>
 <p>从上述表格得知，不建议将OSS映射为文件系统ossfs。如果结合您的业务场景需要将OSS挂载为文件系统，建议只执行写入文件、删除文件、读取文件操作。使用OSS应该充分发挥其优点，即==海量数据处理能力==，优先用来存储海量的非结构化数据，比如图片、视频、文档等。</p>
 </div>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">什么时候用ossfs</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">什么时候用ossfs</p>
 <ul>
 <li>很多客户认为ossfs就是可以直接将oss当成文件存储使用，这并没有问题，但是oss变成文件系统进行大量的增删改查操作，会造成非常消耗资源的操作。</li>
 <li>因此，除非将ossfs作为简单上传和下载等备份操作，可以建议使用。</li>
@@ -359,8 +359,8 @@
 </ul>
 </li>
 </ul>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">数据湖建设建议</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">数据湖建设建议</p>
 <p>阿里云建议企业不要把数据分散存储，而是全部汇聚到 <strong>OSS</strong> 这个低成本、高弹性的"湖"里，然后根据业务需求，灵活选择上面的计算引擎（无论是做报表、做AI训练还是做日志分析）来使用这些数据。</p>
 </div>
 <hr />
@@ -454,8 +454,8 @@
 </table>
 <hr />
 <h3 id="避坑指南">避坑指南</h3>
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">1. 64KB 计费陷阱（小文件地狱）</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">1. 64KB 计费陷阱（小文件地狱）</p>
 <ul>
 <li><strong>注意</strong>：低频、归档、冷归档都有 <mark>64KB</mark> 的最小计量单位。</li>
 <li><strong>场景</strong>：如果你有 1 亿个 1 KB 的日志文件，为了省钱转存到"低频访问"。</li>
@@ -463,8 +463,8 @@
 <li><strong>建议</strong>：小文件请打包（tar/zip）后再转存低频/归档。</li>
 </ul>
 </div>
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">2. 提前删除违约金</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">2. 提前删除违约金</p>
 <ul>
 <li><strong>注意</strong>：关注"最低存储时间"。</li>
 <li><strong>场景</strong>：文件上传到"冷归档"（要求存180天），结果第 10 天你就把它删了。</li>
@@ -472,8 +472,8 @@
 <li><strong>建议</strong>：生命周期规则（Lifecycle）设置要谨慎，不要对短期临时文件设置归档策略。</li>
 </ul>
 </div>
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">3. 解冻时间与 RTO</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">3. 解冻时间与 RTO</p>
 <p>如果业务要求 Disaster Recovery (DR) 必须在 ==10 分钟==内恢复，千万别把核心备份放到<strong>冷归档</strong>，因为解冻可能需要数小时，会直接导致 RTO 达不到 KPI。</p>
 </div>
 <h2 id="object">Object</h2>
@@ -486,8 +486,8 @@
 <li><strong>Multipart</strong>：通过分片上传生成的Object。上传结束之后内容是固定的，只能读取，不能修改。如果Object内容发生了改变，只能重新上传同名的Object来覆盖之前的内容。分片上传适用于大文件加速上传、网络环境较差、文件大小不确定的场景。</li>
 <li><strong>Appendable</strong>：通过追加上传生成的Object。追加上传可在视频数据产生之后即时将数据上传至同一个Object。追加上传适用于视频监控、视频直播等领域生成的实时视频流场景。</li>
 </ul>
-<p><div class="callout callout-important" markdown="1"><br />
-<p class="callout-title">类型不可转换</p></p>
+<div class="callout callout-important">
+<p class="callout-title">类型不可转换</p>
 <p>不支持在不同类型的Object之间相互转换。例如，Normal类型的Object无法转换为Multipart或者Appendable类型。</p>
 </div>
 <h3 id="原子性和强一致性">原子性和强一致性</h3>
@@ -508,16 +508,16 @@
 <li>当Bucket版本控制处于"开启"状态时，OSS将为新上传的Object生成全局唯一的随机字符串版本ID。（还没开版本控制的时候的文件的版本ID就是null）</li>
 <li>当Bucket版本控制处于"暂停"状态时，OSS将为新上传的Object生成特殊字符串为"null"的版本ID。</li>
 </ul>
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">版本控制费用</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">版本控制费用</p>
 <p>当Bucket版本控制处于"开启"状态时，由于Object的每个版本都被保存下来，每个版本都会占用存储空间，OSS会对Object的==所有版本收取存储费用==。</p>
 </div>
-<p><div class="callout callout-important" markdown="1"><br />
-<p class="callout-title">跨区域复制与版本控制</p></p>
+<div class="callout callout-important">
+<p class="callout-title">跨区域复制与版本控制</p>
 <p>开了跨区域复制，源端和目的端版本控制要保持一致，要开都开，要关都关。</p>
 </div>
-<p><div class="callout callout-note" markdown="1"><br />
-<p class="callout-title">互斥配置</p></p>
+<div class="callout callout-note">
+<p class="callout-title">互斥配置</p>
 <p><strong>同一Bucket中，版本控制与合规保留策略无法同时配置。</strong></p>
 </div>
 <h2 id="生命周期管理">生命周期管理</h2>
@@ -527,8 +527,8 @@
 - <strong>过期和删除</strong>：超过过期时间之后，自动删除object<br />
 - <strong>碎片规则</strong>：文件碎片自动删除</p>
 <p>多条规则冲突时，oss自动按照==最低开销原则==排优先级</p>
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">生命周期策略限制</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">生命周期策略限制</p>
 <p>生命周期策略是通过XML配置的，同一个prefix规则中的transition策略==不能超过三个==，否则会报invalid XML。<br />
 参考文档：https://help.aliyun.com/zh/oss/user-guide/configuration-examples</p>
 </div>
@@ -539,15 +539,15 @@
 - <strong>默认首页</strong>是您通过浏览器访问静态网站域名时，OSS返回的网站首页。您为默认首页指定的文件必须是Bucket根目录下允许被匿名访问的文件。如果您还开通了子目录首页，则子目录下也应存在此文件。<br />
 - <strong>默认404页</strong>是您通过浏览器访问Bucket内文件出现404错误时，OSS返回的错误页面。您为默认404页指定的文件必须是Bucket根目录下允许被匿名访问的文件。<br />
 - 默认页面为空，那就表示不开启静态网站托管</p>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">费用</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">费用</p>
 <p>访问一次就收一次费，性价比高。</p>
 </div>
 <h3 id="自定义域名">自定义域名</h3>
 <p>参考文档：https://help.aliyun.com/zh/oss/user-guide/access-buckets-via-custom-domain-names</p>
 <p>自定义域名绑定至OSS Bucket的实现机制基于DNS的==CNAME（Canonical Name）==记录。通过将域名指向OSS为Bucket提供的访问地址，当用户访问自定义域名时，DNS系统将其解析到对应的OSS Bucket域名，从而实现对OSS资源的直接访问。</p>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">为什么需要自定义域名</p></p>
+<div class="callout callout-info">
+<p class="callout-title">为什么需要自定义域名</p>
 <p>OSS Bucket域名访问HTML、图片等文件时，浏览器会==强制下载而非在线预览==，影响用户体验。通过将自定义域名绑定至Bucket，可以使用自定义域名替代OSS Bucket域名直接访问文件，实现在线预览，并获得更灵活的访问控制能力。</p>
 </div>
 <h3 id="预览或下载行为">预览或下载行为</h3>
@@ -569,8 +569,8 @@ https://help.aliyun.com/zh/oss/user-guide/access-oss-by-https-protocol</p>
 - <strong>视频截帧</strong><br />
 - <strong>zip包解压</strong><br />
 - <strong>事件通知</strong></p>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">优势</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">优势</p>
 <p>使用了对象存储中的数据处理模块后，我们可以把业务处理模块功能"转嫁"给OSS，也就是说，让云厂商来承受这部分的算力。我们的服务器可以腾出资源运行更多的服务，或者可以减小服务器的配置，<mark>节省企业的成本</mark>。</p>
 </div>
 <hr />
@@ -609,8 +609,8 @@ https://help.aliyun.com/zh/oss/user-guide/access-oss-by-https-protocol</p>
 </tr>
 </tbody>
 </table>
-<p><div class="callout callout-summary" markdown="1"><br />
-<p class="callout-title">三种加速方式速记</p></p>
+<div class="callout callout-summary">
+<p class="callout-title">三种加速方式速记</p>
 <ol>
 <li><strong>CDN 加速</strong>：关键词 -- <mark>缓存、静态、边缘</mark>。场景：给最终用户看图、看视频、加载网页（解决"最后一公里"慢）。</li>
 <li><strong>传输加速</strong>：关键词 -- <mark>链路优化、上传、远距离</mark>。场景：跨国传输、运维传大包、数据迁移（解决"公网链路质量差/丢包"）。</li>
@@ -626,8 +626,8 @@ https://help.aliyun.com/zh/oss/user-guide/access-oss-by-https-protocol</p>
 <li>将静态资源如图片、音视频、静态脚本等存放在对象存储OSS上。</li>
 <li>将OSS作为CDN的源站，通过CDN加速分发，使用户通过CDN节点就近获得文件。</li>
 </ul>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">CDN + OSS 优势</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">CDN + OSS 优势</p>
 <ul>
 <li>CDN降低了Web服务器负载，缩短网络传输距离，加快了用户调用速度</li>
 <li>OSS无限容量，不用考虑扩容</li>
@@ -651,8 +651,8 @@ https://help.aliyun.com/zh/oss/user-guide/access-oss-by-https-protocol</p>
 <li>预留空间：针对有地域属性的bucket产生的标准存储容量费用（本地冗余）以及ECS快照存储费用。</li>
 <li>存储容量单位包SCU</li>
 </ul>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">抵扣顺序</p></p>
+<div class="callout callout-info">
+<p class="callout-title">抵扣顺序</p>
 <p>地域资源包 - SCU - 按量付费</p>
 </div>
 <h2 id="其他计费">其他计费</h2>
@@ -711,8 +711,8 @@ https://help.aliyun.com/zh/oss/user-guide/access-oss-by-https-protocol</p>
 - 支持文件并发上传、断点续传。<br />
 - 支持RAM 用户的图形化Policy授权操作。<br />
 - 支持Windows、Linux、Mac平台。</p>
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">使用限制</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">使用限制</p>
 <ul>
 <li>ossbrowser是图形化工具，传输速度和性能不如ossutil。</li>
 <li>只支持 <mark>5 GB</mark> 以下的文件移动或复制。</li>
@@ -737,8 +737,8 @@ https://help.aliyun.com/zh/oss/user-guide/access-oss-by-https-protocol</p>
 <li>支持使用OSS的Multipart功能上传大文件。</li>
 <li>支持MD5校验，保证数据完整性。</li>
 </ul>
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">使用限制</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">使用限制</p>
 <ul>
 <li>不支持挂载归档存储、冷归档存储或者深度冷归档存储类型Bucket。</li>
 <li>编辑已上传文件会导致文件被重新上传。</li>
@@ -750,8 +750,8 @@ https://help.aliyun.com/zh/oss/user-guide/access-oss-by-https-protocol</p>
 <li>如果您因意外中断了文件上传的过程，且未继续完成该文件的上传，则已上传的部分会以碎片（Part）的形式存储在OSS的存储空间（Bucket）中。如果您不再需要这些Part，建议您通过手动删除Part或者通过生命周期规则自动删除Part。</li>
 </ul>
 </div>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">推荐替代方案</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">推荐替代方案</p>
 <p>建议您优先使用==云存储网关==进行Bucket挂载。具体操作，请参见通过云存储网关挂载OSS。</p>
 </div>
 <h2 id="ossimport">ossimport</h2>
@@ -761,15 +761,15 @@ https://help.aliyun.com/zh/oss/user-guide/access-oss-by-https-protocol</p>
 - 支持==TB级以上==数据迁移。<br />
 - 支持Windows、Linux平台。<br />
 - 适用于Java 7。</p>
-<p><div class="callout callout-note" markdown="1"><br />
-<p class="callout-title">说明</p></p>
+<div class="callout callout-note">
+<p class="callout-title">说明</p>
 <ul>
 <li>您也可以使用阿里云在线迁移服务，无需部署迁移工具。</li>
 <li>对于迁移小于 <mark>30 TB</mark> 的数据，推荐使用ossutil，简单方便，通过<code>-u</code>，<code>--update</code>和<code>--snapshot-path</code>选项还可以实现文件的增量迁移。</li>
 </ul>
 </div>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">迁移速度问题</p></p>
+<div class="callout callout-info">
+<p class="callout-title">迁移速度问题</p>
 <ul>
 <li>取决于源端的读取带宽、本地网络带宽、文件大小等因素</li>
 <li>大量小文件（小于200KB），IOPS会比较高，也会导致迁移较慢</li>
@@ -801,8 +801,8 @@ https://help.aliyun.com/zh/oss/user-guide/access-oss-by-https-protocol</p>
 <li>旧bucket每小时写入50G，迁移速度还是36G/h</li>
 </ul>
 <p><strong>操作：</strong></p>
-<p><div class="callout callout-important" markdown="1"><br />
-<p class="callout-title">镜像回源兜底方案</p></p>
+<div class="callout callout-important">
+<p class="callout-title">镜像回源兜底方案</p>
 <p>还是全量+增量模式的话，新bucket的数据永远不可能和旧bucket完全一致。此时可以：<br />
 1. 先开启全量同步，同步存量数据，然后启用新bucket的==镜像回源==。<br />
 2. 然后切换客户访问地址到新bucket，此时增量数据开始在新bucket上产生。<br />

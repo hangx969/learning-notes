@@ -131,8 +131,8 @@
 <span class="w">  </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span><span class="s1">&#39;.consume_records[] | {cloud_service_type_name, resource_id, amount}&#39;</span>
 </code></pre></div>
 
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">落地要点</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">落地要点</p>
 <ul>
 <li>三个月账单拉齐，按产品/标签/项目做 CSV 聚合</li>
 <li>停机不代表不收费——云盘、公网 IP、带宽仍计费</li>
@@ -212,8 +212,8 @@ coscli<span class="w"> </span>stat<span class="w"> </span>cos://news-archive/<sp
 <span class="m">0</span><span class="w"> </span><span class="m">08</span><span class="w"> </span>*<span class="w"> </span>*<span class="w"> </span><span class="m">1</span>-5<span class="w"> </span>/opt/ecs-scheduler.sh<span class="w"> </span>start
 </code></pre></div>
 
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">关机后云盘、公网 IP 仍在计费，需确认。</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">关机后云盘、公网 IP 仍在计费，需确认。</p>
 </div>
 <h3 id="动作-2降配规格迁移">动作 2：降配（规格迁移）</h3>
 <div class="highlight"><pre><span></span><code><span class="c1"># 阿里云 ECS 变配</span>

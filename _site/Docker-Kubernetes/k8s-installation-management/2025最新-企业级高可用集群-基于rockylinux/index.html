@@ -655,8 +655,8 @@ dnf<span class="w"> </span>clean<span class="w"> </span>all
 dnf<span class="w"> </span>makecache
 </code></pre></div>
 
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">由于无法同步,所有 EPEL 镜像站都不包含 EPEL Cisco OpenH264 仓库(epel-cisco-openh264.repo),如果不需要可手动将其改为 enabled=0。</p></p>
+<div class="callout callout-info">
+<p class="callout-title">由于无法同步,所有 EPEL 镜像站都不包含 EPEL Cisco OpenH264 仓库(epel-cisco-openh264.repo),如果不需要可手动将其改为 enabled=0。</p>
 <p>参考文档:<a href="https://www.rockylinux.cn/notes/zai-rocky-linux-9-shang-qi-yong-epel-he-remi-cang-ku.html">在Rocky Linux 9上启用EPEL和Remi仓库</a></p>
 </div>
 <p>所有节点安装基本软件包:</p>
@@ -793,8 +793,8 @@ lsmod<span class="w"> </span><span class="p">|</span><span class="w"> </span>gre
 </code></pre></div>
 
 <h2 id="高可用组件安装">高可用组件安装</h2>
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">注意</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">注意</p>
 <ol>
 <li>如果安装的不是高可用集群,不需要安装haproxy和keepalived</li>
 <li>公有云上自建集群,用公有云的SLB服务即可代替haproxy和keepalived。因为公有云大多数不支持keepalived VIP漂移</li>
@@ -1021,8 +1021,8 @@ ping<span class="w"> </span><span class="m">192</span>.168.40.199<span class="w"
 telnet<span class="w"> </span><span class="m">192</span>.168.40.199<span class="w"> </span><span class="m">16443</span>
 </code></pre></div>
 
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">如果ping不通且telnet没有出现 ] ,则认为VIP不通,不可继续安装</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">如果ping不通且telnet没有出现 ] ,则认为VIP不通,不可继续安装</p>
 <p>需要排查keepalived的问题,比如防火墙和selinux,haproxy和keepalived的状态,监听端口等。排查步骤:</p>
 <ol>
 <li>确认VIP是否正确</li>
@@ -1919,8 +1919,8 @@ kubectl<span class="w"> </span>create<span class="w"> </span>-f<span class="w"> 
 <li>新节点上join集群,打上标签<code>kubectl label nodes node01 node-role.kubernetes.io/work=worker</code></li>
 </ol>
 <h1 id="制作k8s安装需要的离线yum源">制作k8s安装需要的离线yum源</h1>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">要全内网环境安装docker、k8s和相关依赖,需要在内部提供安装k8s、docker需要的yum源。首先需要在联网机器上把镜像拉下来。</p></p>
+<div class="callout callout-info">
+<p class="callout-title">要全内网环境安装docker、k8s和相关依赖,需要在内部提供安装k8s、docker需要的yum源。首先需要在联网机器上把镜像拉下来。</p>
 </div>
 <h2 id="制作安装docker需要的离线yum源">制作安装docker需要的离线yum源</h2>
 <p>1、添加docker在线源</p>

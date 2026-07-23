@@ -329,8 +329,8 @@ Git规范:
 </code></pre></div>
 
 <p><strong>场景</strong>：读写配置、批量处理文件、项目初始化脚本</p>
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">注意</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">注意</p>
 <p>指定允许访问的路径，避免权限过大。</p>
 </div>
 <hr />
@@ -379,8 +379,8 @@ Git规范:
 <p><strong>场景</strong>：聚合某个库的完整文档站点，比 context7 更全面但速度慢一些。</p>
 <hr />
 <h3 id="drawio">drawio</h3>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">仓库</p></p>
+<div class="callout callout-info">
+<p class="callout-title">仓库</p>
 <p><a href="https://github.com/jgraph/drawio-mcp">jgraph/drawio-mcp</a></p>
 </div>
 <p>Draw.io 的这个 MCP 工具（<code>drawio-mcp</code>），走了一条非常聪明的路子。它不是自己在后台"画"一张图，而是<strong>把 AI 生成的逻辑（Mermaid、CSV、XML）瞬间转换成 Draw.io 的专用链接</strong>。</p>
@@ -412,8 +412,8 @@ Git规范:
 <p><strong>导出</strong>：export 成 xml 格式，在 Confluence page 上创建一个 draw.io diagram</p>
 <hr />
 <h3 id="datadog">datadog</h3>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">文档</p></p>
+<div class="callout callout-info">
+<p class="callout-title">文档</p>
 <p><a href="https://docs.datadoghq.com/bits_ai/mcp_server/setup/?tab=claudecode">Datadog MCP Server Setup</a></p>
 </div>
 <p><strong>场景</strong>：在 Claude Code 中直接查询 Datadog 的日志、指标、Trace、Dashboard、Monitor、Incident 等可观测性数据，支持 16 个产品 Toolset 按需加载。</p>
@@ -453,12 +453,12 @@ claude<span class="w"> </span>mcp<span class="w"> </span>add<span class="w"> </s
 <span class="p">}</span>
 </code></pre></div>
 
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">安全建议</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">安全建议</p>
 <p>建议使用 <a href="https://docs.datadoghq.com/account_management/org_settings/service_accounts/">Service Account</a> 创建的 scoped API Key 和 Application Key，仅赋予所需权限。</p>
 </div>
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">权限</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">权限</p>
 <p>需要 Datadog 用户角色具备 <code>mcp_read</code> 和 <code>mcp_write</code> 权限（Standard Role 默认包含）。除此之外还需要对应资源的标准权限（如读 Monitor 需要 Monitors Read）。如使用自定义角色，需在 <a href="https://app.datadoghq.com/organization-settings/roles">Organization Settings &gt; Roles</a> 中手动勾选 <strong>MCP Read</strong> 和 <strong>MCP Write</strong>。</p>
 </div>
 <p><strong>Toolset 机制</strong>：Datadog MCP 支持按产品域选择性加载工具集，通过 URL query 参数 <code>toolsets</code> 控制，节省 context window 空间：</p>
@@ -689,8 +689,8 @@ https://mcp.datadoghq.com/api/unstable/mcp-server/mcp?toolsets<span class="o">=<
 <hr />
 <h1 id="二skills技能">二、Skills（技能）</h1>
 <p>Skills（技能）是自动触发的能力包，2025 年 10 月发布。</p>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">官方文档</p></p>
+<div class="callout callout-info">
+<p class="callout-title">官方文档</p>
 <p><a href="https://code.claude.com/docs/zh-CN/skills">Claude Code Skills</a></p>
 </div>
 <p><strong>和 MCP 的区别</strong>：Skills 的范围更大，Skills 可以调用 MCP。Skills 还可以包含 Python 脚本，功能更灵活丰富。</p>
@@ -765,8 +765,8 @@ https://mcp.datadoghq.com/api/unstable/mcp-server/mcp?toolsets<span class="o">=<
 <li><strong>告诉模型在每个步骤里去引用哪个子文件</strong>（"详细规则见 references/style-guide.md"）</li>
 </ol>
 <p>凡是"细节填充"——具体的规则案例、模板正文、长篇示例、参考代码——一律不进主文件，全部下沉到 Level 3 的引用文件。<strong>主文件不需要装下所有内容，只需要装下"地图"</strong>。</p>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">Anthropic 官方 Skills 的示范</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">Anthropic 官方 Skills 的示范</p>
 <p>官方 PDF Skill 的 SKILL.md 才一百多行——只放"什么场景用、几行 quick start、其它能力请见 FORMS.md / REFERENCE.md"。没有一个官方 Skill 的 SKILL.md 超过 200 行。</p>
 </div>
 <h3 id="skillmd-拆分判断标准">SKILL.md 拆分判断标准</h3>
@@ -925,8 +925,8 @@ pre-commit-check
 
 <h4 id="案例-1智能代码审查">案例 1：智能代码审查</h4>
 <p><code>smart-code-review</code>：</p>
-<p><div class="callout callout-success" markdown="1"><br />
-<p class="callout-title">效果</p></p>
+<div class="callout callout-success">
+<p class="callout-title">效果</p>
 <p>以前代码审查靠人工挑毛病，经常遗漏关键问题。现在说"review 这个 PR"，自动按文件类型做专项检查，该找的坑一个不漏。团队线上事故率下降 60%。</p>
 </div>
 <div class="highlight"><pre><span></span><code><span class="gh"># 名称</span>
@@ -957,8 +957,8 @@ smart-code-review
 
 <h4 id="案例-2依赖升级风险评估">案例 2：依赖升级风险评估</h4>
 <p><code>dependency-upgrade-check</code>：</p>
-<p><div class="callout callout-success" markdown="1"><br />
-<p class="callout-title">效果</p></p>
+<div class="callout callout-success">
+<p class="callout-title">效果</p>
 <p>以前升级依赖全靠运气，升了才知道炸不炸。现在每次升级前先跑一遍评估，该注意的点全列出来，升级有底气。</p>
 </div>
 <div class="highlight"><pre><span></span><code><span class="gh"># 触发</span>
@@ -996,8 +996,8 @@ smart-code-review
 <p>一个技能适配多项目，多个技能串成流水线。</p>
 <h4 id="案例生产事故应急响应">案例：生产事故应急响应</h4>
 <p><code>incident-response</code>：</p>
-<p><div class="callout callout-success" markdown="1"><br />
-<p class="callout-title">效果</p></p>
+<div class="callout callout-success">
+<p class="callout-title">效果</p>
 <p>以前线上出问题，团队一片慌乱，排查靠经验靠猜。现在说"线上订单服务挂了"，5 分钟内给出完整分析 + 3 套止损方案。平均故障恢复时间从 45 分钟降到 12 分钟。</p>
 </div>
 <div class="highlight"><pre><span></span><code><span class="gh"># 触发</span>
@@ -1047,8 +1047,8 @@ smart-code-review
 <hr />
 <h3 id="第三层团队智能体知识沉淀-自进化">第三层：团队智能体（知识沉淀 + 自进化）</h3>
 <h4 id="案例技术债追踪助手">案例：技术债追踪助手</h4>
-<p><div class="callout callout-success" markdown="1"><br />
-<p class="callout-title">效果</p></p>
+<div class="callout callout-success">
+<p class="callout-title">效果</p>
 <p>不再是"想起来就还"，而是每周有明确的 3 个小目标。结合 SonarQube 等专业工具，Skill 负责排优先级和生成报告。</p>
 </div>
 <p><code>tech-debt-tracker</code>：</p>
@@ -1145,8 +1145,8 @@ Markdown周报:
 </tr>
 </tbody>
 </table>
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">连锁触发</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">连锁触发</p>
 <p>这些模式会互相放大：输出膨胀 → 上下文被挤满 → 约束衰减 → 工具漂移 + 步骤跳过 + 幻觉填充。</p>
 </div>
 <h3 id="skill-craft-质检工具">Skill Craft 质检工具</h3>
@@ -1485,8 +1485,8 @@ cp<span class="w"> </span>-r<span class="w"> </span>skill-craft<span class="w"> 
 </tbody>
 </table>
 <p><strong>用法</strong>：直接在提示中嵌入即可，不需要额外语法——<code>ultrathink 分析这段代码的并发问题</code>。</p>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">日常高频五件套</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">日常高频五件套</p>
 <p><code>/compact</code> 管上下文、<code>/resume</code> 管会话、<code>/code-review</code> 管代码质量、Shift+Tab 管权限、ultrathink 管推理深度。先把这五个用熟，其余按需查。</p>
 </div>
 <hr />
@@ -1602,8 +1602,8 @@ cp<span class="w"> </span>-r<span class="w"> </span>skill-craft<span class="w"> 
 </ol>
 <h2 id="缺点">缺点</h2>
 <p>装太多会卡，而且大部分功能都重复。</p>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">建议</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">建议</p>
 <p>个人用全局配置，团队用 Plugins 打包分发。别超过 3 个，够用就行。</p>
 </div>
 <hr />
@@ -1620,8 +1620,8 @@ cp<span class="w"> </span>-r<span class="w"> </span>skill-craft<span class="w"> 
 <p>Anthropic 官方有一个帮助创建 Skill 的 Skill：<a href="https://github.com/anthropics/skills/tree/main/skills/skill-creator">skill-creator</a><br />
 告诉 Claude Code 基于当前的 Skill 草稿，调用 skill-creator 来创建一个完整的 skill，名称为 xxx。</p>
 <h2 id="obsidian-skill">Obsidian Skill</h2>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">仓库地址</p></p>
+<div class="callout callout-info">
+<p class="callout-title">仓库地址</p>
 <p><a href="https://github.com/kepano/obsidian-skills">kepano/obsidian-skills</a></p>
 </div>
 <p>obsidian-skills 直接把 Obsidian 专家集成在 Claude Code 里，仓库包含三个核心技能 Skill：</p>
@@ -1636,8 +1636,8 @@ cp<span class="w"> </span>-r<span class="w"> </span>skill-craft<span class="w"> 
 </code></pre></div>
 
 <h2 id="excalidraw-手绘架构图skill">Excalidraw 手绘架构图Skill</h2>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">地址</p></p>
+<div class="callout callout-info">
+<p class="callout-title">地址</p>
 <ul>
 <li>GitHub：<a href="https://github.com/github/awesome-copilot/blob/main/skills/excalidraw-diagram-generator/">github/awesome-copilot - excalidraw-diagram-generator</a></li>
 <li>Skills 市场：<a href="https://skills.sh/github/awesome-copilot/excalidraw-diagram-generator">skills.sh</a> | <a href="https://skillsmp.com/zh/skills/github-awesome-copilot-skills-excalidraw-diagram-generator-skill-md">skillsmp.com</a></li>
@@ -1650,13 +1650,13 @@ cp<span class="w"> </span>-r<span class="w"> </span>skill-craft<span class="w"> 
 
 <p><strong>工作原理</strong>：分析需求 → 提取节点与关系 → 匹配 8 个内置模板之一 → 生成符合 Excalidraw 规范的 JSON → 输出 <code>.excalidraw</code> 文件（VS Code 安装 Excalidraw 扩展即可直接打开编辑）。</p>
 <p><strong>用法</strong>：直接告诉 Claude <code>生成一个用户登录流程图</code>，即自动调用该 Skill 生成 <code>.excalidraw</code> 文件。</p>
-<p><div class="callout callout-note" markdown="1"><br />
-<p class="callout-title">Note</p></p>
+<div class="callout callout-note">
+<p class="callout-title">Note</p>
 <p>图的质量取决于模型能力，建议搭配较强的大模型使用。Claude Code 和 OpenClaw 都可用。</p>
 </div>
 <h2 id="obrasuperpowers">obra/superpowers</h2>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">仓库</p></p>
+<div class="callout callout-info">
+<p class="callout-title">仓库</p>
 <p><a href="https://github.com/obra/superpowers">obra/superpowers</a> — 强迫 AI 按高级工程师标准流程工作的 Skills 套件</p>
 </div>
 <p>Superpowers 的核心理念：<strong>AI 写代码太随意，需要用结构化流程约束它</strong>。安装后 Claude 的行为模式变为：收到需求 → 头脑风暴 → 制定计划 → TDD 写测试 → 写代码通过测试 → 代码审查 → 验证完成。</p>
@@ -1801,13 +1801,13 @@ cp<span class="w"> </span>-r<span class="w"> </span>skill-craft<span class="w"> 
 /plugin<span class="w"> </span>install<span class="w"> </span>superpowers@superpowers-marketplace
 </code></pre></div>
 
-<p><div class="callout callout-note" markdown="1"><br />
-<p class="callout-title">Note</p></p>
+<div class="callout callout-note">
+<p class="callout-title">Note</p>
 <p>跨平台支持：除 Claude Code 外还支持 Cursor、Codex、OpenCode、GitHub Copilot CLI、Gemini CLI。</p>
 </div>
 <h2 id="andrej-karpathy-skills">andrej-karpathy-skills</h2>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">仓库</p></p>
+<div class="callout callout-info">
+<p class="callout-title">仓库</p>
 <p><a href="https://github.com/forrestchang/andrej-karpathy-skills">forrestchang/andrej-karpathy-skills</a> — 仅 2.3K 的 CLAUDE.md 文件，GitHub 全球热榜，46.5K 星。</p>
 </div>
 <p>这个项目把 Andrej Karpathy 观察到的 LLM 编程三大祖传毛病，浓缩成 4 条行为准则，写进 CLAUDE.md 让 Claude Code "乖乖听话"。</p>
@@ -1865,8 +1865,8 @@ curl<span class="w"> </span>-o<span class="w"> </span>CLAUDE.md<span class="w"> 
 curl<span class="w"> </span>-s<span class="w"> </span>https://raw.githubusercontent.com/forrestchang/andrej-karpathy-skills/main/CLAUDE.md<span class="w"> </span>&gt;&gt;<span class="w"> </span>CLAUDE.md
 </code></pre></div>
 
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">Plugin 安装 ≠ 自动生效</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">Plugin 安装 ≠ 自动生效</p>
 <p>实测发现：方式一（Plugin）安装后，Karpathy 准则只是<strong>注册在可用 Skill 列表中</strong>，不会自动注入 system prompt。只有显式调用 <code>/karpathy-guidelines</code> 时才加载——日常编码不会自动约束。</p>
 <p><strong>如果想让准则始终生效，必须写进 CLAUDE.md。</strong> CLAUDE.md 分两级：<br />
 - <strong>用户级</strong> <code>~/.claude/CLAUDE.md</code>：全局生效，所有项目自动加载（推荐方式二）<br />
@@ -1875,8 +1875,8 @@ curl<span class="w"> </span>-s<span class="w"> </span>https://raw.githubusercont
 <p>这揭示了 Skills 的一个重要机制差异：<strong>Skills 是"可用"不是"始终激活"</strong>，而 CLAUDE.md 是"始终激活"。对于行为准则型约束，CLAUDE.md 是唯一可靠的注入方式。</p>
 </div>
 <h2 id="davila7claude-code-templates">davila7/claude-code-templates</h2>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">仓库</p></p>
+<div class="callout callout-info">
+<p class="callout-title">仓库</p>
 <p><a href="https://github.com/davila7/claude-code-templates">davila7/claude-code-templates</a> — 500+ 组件的 Claude Code 模板市场，Web 界面：<a href="https://aitmpl.com">aitmpl.com</a></p>
 </div>
 <p>一个 CLI 工具 + 组件市场，提供 Agents、Commands、MCPs、Settings、Hooks、Skills、Templates 七大类组件，可按需安装到项目中。</p>
@@ -1946,8 +1946,8 @@ npx<span class="w"> </span>claude-code-templates@latest<span class="w"> </span>-
 
 <p><strong>附带工具</strong>：<code>--analytics</code> 实时监控开发会话、<code>--chats</code> 移动端查看对话、<code>--health-check</code> 环境诊断、<code>--plugins</code> 插件管理面板。</p>
 <h2 id="shanraisshanclaude-code-best-practice">shanraisshan/claude-code-best-practice</h2>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">仓库</p></p>
+<div class="callout callout-info">
+<p class="callout-title">仓库</p>
 <p><a href="https://github.com/shanraisshan/claude-code-best-practice">shanraisshan/claude-code-best-practice</a> — Claude Code 生产级最佳实践参考实现</p>
 </div>
 <p>这个项目不是简单的 Plugin，而是一套<strong>从 Vibe Coding 到 Agentic Engineering 的完整进阶指南</strong>，通过一个 TodoApp 示例项目演示如何用 Claude Code 的全部扩展机制构建生产级工作流。</p>
@@ -1999,8 +1999,8 @@ npx<span class="w"> </span>claude-code-templates@latest<span class="w"> </span>-
 - 附带交互式幻灯片演示（<code>presentation/index.html</code>）<br />
 - 包含 Claude Agent SDK 与 CLI 系统提示词的对比分析报告</p>
 <h2 id="othmanadiplanning-with-files">OthmanAdi/planning-with-files</h2>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">仓库</p></p>
+<div class="callout callout-info">
+<p class="callout-title">仓库</p>
 <p><a href="https://github.com/OthmanAdi/planning-with-files">OthmanAdi/planning-with-files</a> — 21.4K Star，MIT 协议，支持 17+ AI 平台</p>
 </div>
 <p>用 AI 做项目时常见的问题：聊着聊着就跑偏、做到一半忘目标、上下文一清空直接重来、反复踩同一个坑。Planning with Files 让 AI 把所有计划、进度、坑点全写成本地 Markdown 文件——文件化规划 + 外置记忆 + 错误自动记录。</p>
@@ -2041,8 +2041,8 @@ npx<span class="w"> </span>claude-code-templates@latest<span class="w"> </span>-
 </code></pre></div>
 
 <p>启动规划模式：<code>/plan</code>，AI 会自动生成 3 个核心文件并按计划执行。</p>
-<p><div class="callout callout-note" markdown="1"><br />
-<p class="callout-title">支持平台</p></p>
+<div class="callout callout-note">
+<p class="callout-title">支持平台</p>
 <p>Claude Code / Cursor / GitHub Copilot / Gemini / Hermes / Codex / OpenCode 等 17+ 平台。</p>
 </div>
 <h2 id="wshobsonagents">wshobson/agents</h2>

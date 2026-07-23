@@ -102,8 +102,8 @@
     <div class="article-body">
 <h1 id="数据湖-hdfs-posix">数据湖-HDFS-POSIX</h1>
 <h2 id="posix-portable-operating-system-interface-标准的规矩">POSIX (Portable Operating System Interface) -- "标准的规矩"</h2>
-<p><div class="callout callout-summary" markdown="1"><br />
-<p class="callout-title">一句话解释</p></p>
+<div class="callout callout-summary">
+<p class="callout-title">一句话解释</p>
 <p>POSIX 是一套让软件在不同 Unix/Linux 系统上能通用运行的==标准接口规范==。</p>
 </div>
 <p><strong>运维视角理解：</strong><br />
@@ -115,14 +115,14 @@
 <li>文件名重命名（<code>mv</code>）是==原子操作==（瞬间完成）。</li>
 </ul>
 <p><strong>这就是 POSIX 文件系统标准</strong>。绝大多数传统软件（如 MySQL、Nginx、以及你写的 Python 脚本）都默认底层存储是符合 POSIX 标准的。</p>
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">痛点</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">痛点</p>
 <p>到了云原生和大数据时代，S3（对象存储）和 HDFS 并不是完全符合 POSIX 标准的（比如 S3 不能修改文件中间的内容，只能覆盖上传）。如果强行用 <code>s3fs</code> 挂载 S3 当硬盘用，性能会非常差且容易丢数据，这就是因为=="非 POSIX 存储强行模拟 POSIX"==带来的代价。</p>
 </div>
 <hr />
 <h2 id="hdfs-hadoop-distributed-file-system-大数据的硬盘">HDFS (Hadoop Distributed File System) -- "大数据的硬盘"</h2>
-<p><div class="callout callout-summary" markdown="1"><br />
-<p class="callout-title">一句话解释</p></p>
+<div class="callout callout-summary">
+<p class="callout-title">一句话解释</p>
 <p>HDFS 是 Hadoop 生态系统的核心组件，一种==分布式文件系统==，设计初衷是用一堆廉价的普通服务器组成一个超大容量的"虚拟硬盘"。</p>
 </div>
 <p><strong>运维视角理解：</strong></p>
@@ -140,14 +140,14 @@
 </ul>
 </li>
 </ul>
-<p><div class="callout callout-example" markdown="1"><br />
-<p class="callout-title">应用场景</p></p>
+<div class="callout callout-example">
+<p class="callout-title">应用场景</p>
 <p>离线大数据分析。你在云上部署 EMR (Elastic MapReduce) 时，底层通常就在跑 HDFS（或者用 S3 替代 HDFS）。</p>
 </div>
 <hr />
 <h2 id="data-lake-数据湖-囤货的仓库架构">Data Lake (数据湖) -- "囤货的仓库架构"</h2>
-<p><div class="callout callout-summary" markdown="1"><br />
-<p class="callout-title">一句话解释</p></p>
+<div class="callout callout-summary">
+<p class="callout-title">一句话解释</p>
 <p>数据湖不是一种具体的技术（像 HDFS 那样），而是一种==数据架构理念==。它指的是一个集中式存储库，可以按<strong>原生格式</strong>存储所有结构化（数据库表）和非结构化（日志、图片、视频）数据。</p>
 </div>
 <p><strong>运维视角理解：</strong></p>
@@ -160,8 +160,8 @@
 <li><strong>私有云/自建</strong>：数据湖的底层存储通常就是 <strong>HDFS</strong>。</li>
 <li><strong>公有云 (AWS/阿里云)</strong>：数据湖的底层存储通常是 <strong>S3 / <a class="wikilink" href="../../../Aliyun/%E5%AD%98%E5%82%A8/%E5%AF%B9%E8%B1%A1%E5%AD%98%E5%82%A8OSS/">OSS</a></strong>（对象存储）。</li>
 </ul>
-<p><div class="callout callout-important" markdown="1"><br />
-<p class="callout-title">为什么云运维要懂？</p></p>
+<div class="callout callout-important">
+<p class="callout-title">为什么云运维要懂？</p>
 <p>因为现在的趋势是=="存算分离"==。<br />
 - 数据湖（S3/OSS）负责存，很便宜，无限扩容。<br />
 - 计算引擎（Spark/Presto/K8s Pods）负责算，用完即毁。</p>

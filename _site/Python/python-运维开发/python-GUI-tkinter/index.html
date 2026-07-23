@@ -140,8 +140,8 @@
 pip3<span class="w"> </span>install<span class="w"> </span>-i<span class="w"> </span>https://pypi.tuna.tsinghua.edu.cn/simple<span class="w"> </span>pyinstaller
 </code></pre></div>
 
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">pyinstaller</p></p>
+<div class="callout callout-info">
+<p class="callout-title">pyinstaller</p>
 <p>pyinstaller 可以把 python 代码打包成 windows 的 exe 程序。</p>
 </div>
 <div class="highlight"><pre><span></span><code><span class="c1"># 进入你的脚本目录,然后运行以下命令打包为可执行文件:</span>
@@ -155,8 +155,8 @@ pyinstaller<span class="w"> </span>--onefile<span class="w"> </span>--windowed<s
 <hr />
 <h2 id="案例gui界面自动管理nginx">案例:GUI界面自动管理nginx</h2>
 <p>基于 Python 开发的 Windows GUI 应用程序,用于远程管理 Nginx 服务。它利用 <mark>paramiko</mark> 库通过 SSH 连接到远程安装 nginx 的服务器,实现对 Nginx 服务的状态监控和基本操作,如启动、停止、重启 Nginx 服务以及查看 Nginx 错误日志。用户可以通过简洁的图形界面操作Nginx 服务,方便地维护和监控远程服务器上的服务状态。</p>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">messagebox导入</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">messagebox导入</p>
 <p><code>python
 import tkinter as tk
 from tkinter import messagebox</code></p>

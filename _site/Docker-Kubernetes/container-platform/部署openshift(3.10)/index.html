@@ -777,8 +777,8 @@ ansible-playbook<span class="w"> </span>-i<span class="w"> </span>/etc/ansible/h
 ansible-playbook<span class="w"> </span>-i<span class="w"> </span>/etc/ansible/hosts<span class="w"> </span>openshift-ansible-release-3.10/playbooks/deploy_cluster.yml
 </code></pre></div>
 
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">DNS 问题解决</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">DNS 问题解决</p>
 <p>执行deploy时主机dns导致连外网失败（在执行上面deploy时，需要在每个节点ping www.baidu.com，如果ping不通，解决方案如下）</p>
 <p><code>sh
   echo nameserver 8.8.8.8 &gt;&gt;/etc/resolv.conf</code></p>
@@ -1146,8 +1146,8 @@ rpm2cpio python-rhsm-certificates-1.19.10-1.el7_4.x86_64.rpm | cpio -iv --to-std
 <p><sub>~</sub>sh<br />
   docker pull nginxinc/nginx-unprivileged:latest<br />
   ~~~</p>
-<p><div class="callout callout-note" markdown="1"><br />
-<p class="callout-title">非特权版本的nginx容器监听8080端口而非80，需要在containerPort和svc的targetport中修改为8080才能访问通</p></p>
+<div class="callout callout-note">
+<p class="callout-title">非特权版本的nginx容器监听8080端口而非80，需要在containerPort和svc的targetport中修改为8080才能访问通</p>
 </div>
 <h1 id="常用命令介绍">常用命令介绍</h1>
 <ul>

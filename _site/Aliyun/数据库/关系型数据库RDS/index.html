@@ -120,8 +120,8 @@
 <li>备节点故障，主节点会进行实时备份，备份完成时会产生全局锁，导致主节点只读，一般不会超过5秒</li>
 <li>主备节点可以创建到同一Region的相同或不同AZ；但是不能跨Region</li>
 </ul>
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">备节点故障影响</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">备节点故障影响</p>
 <p>备节点故障时，主节点会进行实时备份，备份完成时会产生==全局锁==，导致主节点只读，一般不会超过5秒。</p>
 </div>
 <h3 id="集群版">集群版</h3>
@@ -212,8 +212,8 @@
 </tr>
 </tbody>
 </table>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">选型建议</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">选型建议</p>
 <p>大部分情况下选择 <mark>ESSD云盘</mark>，性价比较高。</p>
 </div>
 <hr />
@@ -230,8 +230,8 @@
 <h2 id="常用功能">常用功能</h2>
 <h3 id="白名单">白名单</h3>
 <p>在每个instance级别设置，默认是对本 <a class="wikilink" href="../../../Aliyun/%E7%BD%91%E7%BB%9C/VPC/">VPC</a> 放行。</p>
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">注意</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">注意</p>
 <p>还有一个安全组功能，但是==不推荐用==，就推荐用白名单放行IP。</p>
 </div>
 <h3 id="数据库连接">数据库连接</h3>
@@ -293,8 +293,8 @@
 <ul>
 <li>在instance级别，可以创建高权限账号；在数据库中也能创建账号。</li>
 </ul>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">最佳实践</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">最佳实践</p>
 <p>建议就在控制台上创建账号，尽量不用数据库内部的账号：<br />
 - 更加符合云原生管理实践。<br />
 - 防止内部账户和控制台的账户冲突。</p>
@@ -306,8 +306,8 @@
 <h3 id="数据管理预案">数据管理预案</h3>
 <h4 id="性能安全">性能安全</h4>
 <p>在编辑实例中，在实例级别设置在DMS上查询超时时间和导出超时时间，避免用户运行长SQL影响业务。</p>
-<p><div class="callout callout-important" markdown="1"><br />
-<p class="callout-title">推荐超时设置</p></p>
+<div class="callout callout-important">
+<p class="callout-title">推荐超时设置</p>
 <ul>
 <li><strong>常态设置推荐值</strong>：查询 <mark>60s</mark>，导出 <mark>600s</mark></li>
 <li><strong>业务高峰推荐设置</strong>：查询 <mark>5s</mark>，导出 <mark>60s</mark></li>

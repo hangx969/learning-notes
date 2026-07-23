@@ -500,8 +500,8 @@ tree<span class="w"> </span>/var/lib/kubelet/pods/e948ebb2-50f2-4884-a16c-2c0dd7
 <li>CharDevice：字符设备，如串行端口、声卡、摄像头等，必须存在于给定路径中，且只有Linux 支持。</li>
 <li>BlockDevice：块设备，如硬盘等，必须存在于给定路径中，且只有Linux支持。</li>
 </ul>
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">注意</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">注意</p>
 <ul>
 <li>根据官网说明：<a href="https://kubernetes.io/docs/concepts/storage/volumes/#hostpath">Kubernetes Volumes - hostPath</a>，hostPath方式存在安全隐患，需要小心使用。更推荐使用local类型volume</li>
 </ul>
@@ -615,8 +615,8 @@ tree<span class="w"> </span>/var/lib/kubelet/pods/e948ebb2-50f2-4884-a16c-2c0dd7
 <span class="w">            </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">local-storage-volume</span>
 </code></pre></div>
 
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">提示</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">提示</p>
 <p>github上有一个开源工具：<a href="https://github.com/kubernetes-sigs/sig-storage-local-static-provisioner/blob/master/docs/getting-started.md">sig-storage-local-static-provisioner</a>，自动把指定的local路径做成PV。</p>
 </div>
 <h2 id="nfsnas">NFS/NAS</h2>
@@ -1214,8 +1214,8 @@ sed<span class="w"> </span>-i<span class="w"> </span><span class="s2">&quot;s#re
 <span class="w">        </span><span class="nt">claimName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pvc-nfs-dynamic</span>
 </code></pre></div>
 
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">注意</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">注意</p>
 <p>一般NFS/NAS高可用和性能不是很好，一些数据库、缓存、消息队列服务尽量不要使用NFS，生产环境中推荐使用分布式存储。如果实在没有分布式存储，那就不要部署在k8s中了。</p>
 </div>
 <h2 id="默认存储类">默认存储类</h2>
@@ -1533,8 +1533,8 @@ sed<span class="w"> </span>-i<span class="w"> </span><span class="s2">&quot;s#re
 </code></pre></div>
 
 <p>改完立即生效，不需要重启任何东西。</p>
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">坑</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">坑</p>
 <p>有些云厂商的 CSI 驱动虽然支持 <code>allowVolumeExpansion</code>，但实际扩容时需要离线（停 Pod）。比如 UpCloud 的 CSI 驱动就只支持离线扩容。生产环境动手前先读 CSI 驱动文档。</p>
 </div>
 <h2 id="动手扩容">动手扩容</h2>

@@ -127,8 +127,8 @@
 <p><img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202506072159961.png" alt="image-20250607215953894" style="zoom:50%;" /></p>
 <p>Guest Agent functions:</p>
 <p><img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202506072202407.png" alt="image-20250607220229193" style="zoom:50%;" /></p>
-<p><div class="callout callout-example" markdown="1"><br />
-<p class="callout-title">Manually Reinstall Guest Agent (waagent)</p></p>
+<div class="callout callout-example">
+<p class="callout-title">Manually Reinstall Guest Agent (waagent)</p>
 </div>
 <div class="highlight"><pre><span></span><code><span class="c1"># centos7 lab test：</span>
 <span class="c1"># uninstall waagent</span>
@@ -162,8 +162,8 @@ systemctl<span class="w"> </span>status<span class="w"> </span>waagent
 <li><a href="https://learn.microsoft.com/en-us/azure/virtual-network/what-is-ip-address-168-63-129-16">What is IP address 168.63.129.16? | Microsoft Learn</a></li>
 <li><a href="https://learn.microsoft.com/en-us/azure/virtual-network/what-is-ip-address-168-63-129-16#troubleshoot-connectivity">What is IP address 168.63.129.16? | Microsoft Learn</a></li>
 </ul>
-<p><div class="callout callout-important" markdown="1"><br />
-<p class="callout-title">Wire Server Communication</p></p>
+<div class="callout callout-important">
+<p class="callout-title">Wire Server Communication</p>
 <p>VM Agent communicates with Azure platform to report status. VM gets IP and DHCP through <mark>168.63.129.16</mark>.</p>
 <p>The VM Agent requires outbound communication over ports <mark>80/tcp</mark> and <mark>32526/tcp</mark> with WireServer (168.63.129.16).</p>
 <p>These should be open in the local firewall on the VM. Communication on these ports with 168.63.129.16 is not subject to configured NSGs.</p>
@@ -231,8 +231,8 @@ telnet<span class="w"> </span><span class="m">168</span>.63.129.16<span class="w
 <li>If maintenance does not require a reboot, Azure pauses the VM for a few seconds during host update. These maintenance operations are applied fault domain by fault domain. The process stops if any warning health signals are received. Maintenance requiring reboot sends a notification.</li>
 <li>If maintenance requires a reboot, the system notifies the planned maintenance time. A window of approximately <mark>35 days</mark> is provided for self-service maintenance.</li>
 </ol>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">Memory-Preserving Updates</p></p>
+<div class="callout callout-info">
+<p class="callout-title">Memory-Preserving Updates</p>
 <p>Memory-preserving updates typically complete within ~10 seconds. For this type of deployment, the platform does not send notifications. However, you can obtain platform maintenance/deployment info through VM Metadata Service. See <a href="https://docs.azure.cn/zh-cn/virtual-machines/windows/scheduled-events">Azure 中适用于Windows VM 的计划事件</a>.</p>
 </div>
 <h3 id="alerts">Alerts</h3>
@@ -319,8 +319,8 @@ telnet<span class="w"> </span><span class="m">168</span>.63.129.16<span class="w
 <li><a href="https://github.com/Azure/azure-linux-extensions/tree/master/CustomScript">azure-linux-extensions/CustomScript | GitHub</a></li>
 <li>https://docs.microsoft.com/en-us/azure/virtual-machines/windows/extensions-customscript?toc=%2Fazure%2Fvirtual-machines%2Fwindows%2Ftoc.json</li>
 </ul>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">Troubleshooting Extensions</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">Troubleshooting Extensions</p>
 <p>Extensions are managed by VM Agent. Log location: <code>/var/log/azure/&lt;extension name&gt;/extension.log</code></p>
 </div>
 <ul>
@@ -350,8 +350,8 @@ telnet<span class="w"> </span><span class="m">168</span>.63.129.16<span class="w
 <h4 id="run-command">Run Command</h4>
 <p>Can run custom commands in a VM.</p>
 <p><a href="https://learn.microsoft.com/en-us/azure/virtual-machines/windows/run-command#restrictions">Run scripts in a Windows VM in Azure using action Run Commands - Azure Virtual Machines | Microsoft Learn</a></p>
-<p><div class="callout callout-note" markdown="1"><br />
-<p class="callout-title">Run Command Script Location</p></p>
+<div class="callout callout-note">
+<p class="callout-title">Run Command Script Location</p>
 <p>View run command scripts on Linux VM at <code>/var/lib/waagent/run-command/download</code>. <code>script.sh</code> is the script, <code>stdout</code> is the execution result.</p>
 </div>
 <hr />
@@ -397,8 +397,8 @@ telnet<span class="w"> </span><span class="m">168</span>.63.129.16<span class="w
 <hr />
 <h1 id="azure-vm-troubleshooting">Azure VM Troubleshooting</h1>
 <h2 id="recovery-vm">Recovery VM</h2>
-<p><div class="callout callout-summary" markdown="1"><br />
-<p class="callout-title">Recovery VM Process</p></p>
+<div class="callout callout-summary">
+<p class="callout-title">Recovery VM Process</p>
 <p>When a VM has boot or SSH issues, create a snapshot of the OS Disk, then create a Recovery Disk from the snapshot and attach it to a recovery VM for troubleshooting.</p>
 </div>
 <ol>
@@ -466,8 +466,8 @@ telnet<span class="w"> </span><span class="m">168</span>.63.129.16<span class="w
 </ul>
 <hr />
 <h1 id="vm-security">VM Security</h1>
-<p><div class="callout callout-important" markdown="1"><br />
-<p class="callout-title">Azure VM Security Best Practices</p></p>
+<div class="callout callout-important">
+<p class="callout-title">Azure VM Security Best Practices</p>
 </div>
 <ul>
 <li><strong>Overall VM protection</strong>: See <a href="https://docs.azure.cn/zh-cn/security/fundamentals/iaas">Azure 中IaaS 工作负载的安全性最佳做法 | Azure Docs</a></li>

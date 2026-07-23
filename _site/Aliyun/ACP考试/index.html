@@ -105,16 +105,16 @@
 <p>ACP云计算工程师 -- 云计算容器工程师/微服务工程师/网络工程师/安全工程师 -- 云计算架构师ACE</p>
 <hr />
 <h2 id="考试组成">考试组成</h2>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">笔试考试</p></p>
+<div class="callout callout-info">
+<p class="callout-title">笔试考试</p>
 <ul>
 <li>时间：<mark>120分钟</mark></li>
 <li>试卷满分：<mark>100分</mark>，<mark>80分及格</mark></li>
 <li>题型：单选70（No. 0-70），多选30（No. 75-100），每题一分</li>
 </ul>
 </div>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">实验考试</p></p>
+<div class="callout callout-info">
+<p class="callout-title">实验考试</p>
 <p>在线进行。实验考试可以在笔试之前或者之后完成。<br />
 ACP共有==11个实验==</p>
 </div>
@@ -174,8 +174,8 @@ ACP共有==11个实验==</p>
 </ul>
 <hr />
 <h3 id="slb">SLB</h3>
-<p><div class="callout callout-summary" markdown="1"><br />
-<p class="callout-title">SLB核心组成</p></p>
+<div class="callout callout-summary">
+<p class="callout-title">SLB核心组成</p>
 <p>SLB组成：<mark>LoadBalancer、Listener、BackendServer</mark></p>
 </div>
 <ul>
@@ -202,8 +202,8 @@ ACP共有==11个实验==</p>
 <li>四层SLB：通过转发策略 + 目的IP端口 来转发到对应实例上。</li>
 <li>SLB四层负载均衡采用LVS，做了优化：采用LVS集群、DDoS防御、优化Keepalived性能。（没有Tengine，Tengine是七层的）</li>
 </ul>
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">SLB与<a class="wikilink" href="../../Aliyun/%E8%AE%A1%E7%AE%97/%E5%BC%B9%E6%80%A7%E4%BC%B8%E7%BC%A9ESS/">弹性伸缩</a></p></p>
+<div class="callout callout-warning">
+<p class="callout-title">SLB与[[Aliyun/计算/弹性伸缩ESS|弹性伸缩]]</p>
 <ul>
 <li>SLB==必须打开健康检查==，否则不能和弹性伸缩一起用。但是会话保持不影响，随便开。</li>
 <li>一个SLB实例可以绑定多个伸缩组。</li>
@@ -244,8 +244,8 @@ ACP共有==11个实验==</p>
 <li>不同地域的SLB实例通过：==DNS轮询==对外提供服务。</li>
 <li>SLB的操作日志需要在ActionTrail控制台看。</li>
 </ul>
-<p><div class="callout callout-important" markdown="1"><br />
-<p class="callout-title">SLB流量转发顺序</p></p>
+<div class="callout callout-important">
+<p class="callout-title">SLB流量转发顺序</p>
 <p>用户流量到达SLB，转发顺序：首先匹配==转发规则==；没有就找==虚拟服务器组==；再没有就转发到==实例级别添加的后端服务器==中。</p>
 </div>
 <ul>
@@ -317,8 +317,8 @@ ACP共有==11个实验==</p>
 </ul>
 <hr />
 <h3 id="计算">计算</h3>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">ECS操作注意事项</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">ECS操作注意事项</p>
 <p>ECS自己操作：不要卸载硬件驱动，不要改/etc/issue，不要做流量穿透。关SELinux是可以的</p>
 </div>
 <ul>
@@ -366,8 +366,8 @@ ACP共有==11个实验==</p>
 <li>Disk Genius不能恢复数据。testdisk和fdisk都可以</li>
 <li>对实例创建快照，实例必须是运行中或者已停止。</li>
 </ul>
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">实例释放保护</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">实例释放保护</p>
 <p>开启了实例释放保护，手动释放就不会释放掉。其余合理原因都会被释放（自动释放时间到了、欠费、被伸缩组移出释放）</p>
 </div>
 <ul>
@@ -419,8 +419,8 @@ ACP共有==11个实验==</p>
 <li>多个定时任务触发，最早触发的先执行，排在后面的在Launch ExpirationTime内自动重试</li>
 <li>定时任务和报警任务同时满足条件，同时随机只执行一个，没有优先级区分。</li>
 </ul>
-<p><div class="callout callout-note" markdown="1"><br />
-<p class="callout-title">ECS实例状态对比</p></p>
+<div class="callout callout-note">
+<p class="callout-title">ECS实例状态对比</p>
 <ul>
 <li>ECS转为==备用状态==：权重清零，不会检查健康，不会被释放。</li>
 <li>ECS转为==保护状态==：权重不变，不检查健康，不释放。</li>
@@ -440,8 +440,8 @@ ACP共有==11个实验==</p>
 </ul>
 <hr />
 <h3 id="oss存储">OSS存储</h3>
-<p><div class="callout callout-summary" markdown="1"><br />
-<p class="callout-title">OSS核心特性</p></p>
+<div class="callout callout-summary">
+<p class="callout-title">OSS核心特性</p>
 <p><mark>强一致性、原子性</mark></p>
 </div>
 <ul>
@@ -464,8 +464,8 @@ ACP共有==11个实验==</p>
 <li>图片处理最大==20MB==，最大像素==4096==，单边大小==30000==</li>
 <li>图片处理完直接返回给用户，不保存到任何bucket</li>
 </ul>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">防止OSS文件误删</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">防止OSS文件误删</p>
 <p>开启跨区域复制、开启服务端加密、检查文件生命周期规则。（别配日志，没用）</p>
 </div>
 <ul>
@@ -503,8 +503,8 @@ ACP共有==11个实验==</p>
 </ul>
 <hr />
 <h3 id="数据库rds">数据库RDS</h3>
-<p><div class="callout callout-summary" markdown="1"><br />
-<p class="callout-title">RDS支持的数据库类型</p></p>
+<div class="callout callout-summary">
+<p class="callout-title">RDS支持的数据库类型</p>
 <p>MySQL、SQL Server、pgSQL、MariaDB TX</p>
 </div>
 <ul>
@@ -545,8 +545,8 @@ ACP共有==11个实验==</p>
 <li>CAP理论：分布式系统不能同时满足：<mark>一致性、可用性、分区容错性</mark></li>
 <li>音视频转码MTS是指视频在线播放，不需要就不用。</li>
 </ul>
-<p><div class="callout callout-important" markdown="1"><br />
-<p class="callout-title">SLB、ECS、ESS关系</p></p>
+<div class="callout callout-important">
+<p class="callout-title">SLB、ECS、ESS关系</p>
 <ul>
 <li><a class="wikilink" href="../../Aliyun/%E7%BD%91%E7%BB%9C/%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1SLB/">SLB</a>、<a class="wikilink" href="../../Aliyun/%E8%AE%A1%E7%AE%97/ECS/">ECS</a>、<a class="wikilink" href="../../Aliyun/%E8%AE%A1%E7%AE%97/%E5%BC%B9%E6%80%A7%E4%BC%B8%E7%BC%A9ESS/">ESS</a>必须在==同一region==。</li>
 <li>SLB必须开健康检查才能用弹性伸缩。</li>

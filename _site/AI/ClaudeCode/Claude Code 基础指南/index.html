@@ -149,8 +149,8 @@
     <div class="article-body">
 <h1 id="claude-code-使用指南">Claude Code 使用指南</h1>
 <h2 id="项目结构与启动原则">项目结构与启动原则</h2>
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">重要：单一项目原则</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">重要：单一项目原则</p>
 <p>Claude Code 是基于项目文件夹的工具，它在生成 <code>claude.md</code> 时会参考整个 codebase 代码库。如果启动目录包含多个项目，会导致==上下文混乱和逻辑冲突==</p>
 </div>
 <p><strong>问题场景</strong>：在做新需求时，AI 既会参考空间里的 A 项目，也会参考 B 项目，容易出错。</p>
@@ -162,18 +162,18 @@
 <h2 id="模式选择">模式选择</h2>
 <p>在 Claude Code 中有 <mark>3 种模式</mark>，通过 <code>Shift+Tab</code> 可以切换：</p>
 <h3 id="1-普通模式">1️⃣ 普通模式</h3>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">普通模式</p></p>
+<div class="callout callout-info">
+<p class="callout-title">普通模式</p>
 <p>进入主界面就是普通模式，适合一般的对话和任务执行。</p>
 </div>
 <h3 id="2-plan-模式">2️⃣ Plan 模式</h3>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">推荐：Plan 模式</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">推荐：Plan 模式</p>
 <p>这个模式只会讨论沟通，<strong>不会执行写代码</strong>。在项目前期需要规划功能时使用，会自动给出计划方案并与你确认是否执行。</p>
 </div>
 <h3 id="3-自动接受编辑模式">3️⃣ 自动接受编辑模式</h3>
-<p><div class="callout callout-check" markdown="1"><br />
-<p class="callout-title">自动执行模式</p></p>
+<div class="callout callout-check">
+<p class="callout-title">自动执行模式</p>
 <p>根据与 AI 讨论的方案，自动进行任务执行（如写代码）。</p>
 </div>
 <p><strong>推荐工作流</strong>：<br />
@@ -183,8 +183,8 @@
 4. 切换到普通或自动接受模式执行</p>
 <hr />
 <h2 id="思考模式">思考模式</h2>
-<p><div class="callout callout-important" markdown="1"><br />
-<p class="callout-title">Extended Thinking（扩展思考）</p></p>
+<div class="callout callout-important">
+<p class="callout-title">Extended Thinking（扩展思考）</p>
 <p>在 Claude Code 中可以通过 <code>think</code> 提示词来激活思考模式。</p>
 </div>
 <h3 id="思考层级">思考层级</h3>
@@ -196,8 +196,8 @@
 <p>通过调节 <mark>思考预算</mark>（即模型在内部推理阶段可用的资源/token 数），让模型在遇到复杂任务时"多花点时间思考"再出结果：<br />
 - ✅ 效果会更好<br />
 - ⚠️ 费用也会更多</p>
-<p><div class="callout callout-note" markdown="1"><br />
-<p class="callout-title">注意</p></p>
+<div class="callout callout-note">
+<p class="callout-title">注意</p>
 <p>这个扩展思考模式不是切换模型，只是让同一个模型在内部保留更多推理步骤或 token 数来思考更久。</p>
 </div>
 <p><strong>示例用法</strong>：</p>
@@ -206,8 +206,8 @@
 
 <hr />
 <h2 id="claudemd-创建">Claude.md 创建</h2>
-<p><div class="callout callout-abstract" markdown="1"><br />
-<p class="callout-title">Claude.md 是什么？</p></p>
+<div class="callout callout-abstract">
+<p class="callout-title">Claude.md 是什么？</p>
 <p>这是一个特殊文件，类似官方提供的你和 CC 之间的 <mark>备忘录</mark>。Claude 在开始对话时会自动将其内容拉入上下文。</p>
 </div>
 <h3 id="用途">用途</h3>
@@ -255,16 +255,16 @@
 
 <hr />
 <h2 id="工作流管理">工作流管理</h2>
-<p><div class="callout callout-quote" markdown="1"><br />
-<p class="callout-title">核心原则</p></p>
+<div class="callout callout-quote">
+<p class="callout-title">核心原则</p>
 <p>文档，文档，还是文档！只要把需求细节都讲清楚，让它照着文档做，选个好模型，做出来的产品与预期不会偏离太多。</p>
 </div>
 <h3 id="spec-工作流">Spec 工作流</h3>
 <p><strong>Spec</strong> 即 <mark>规范规格</mark>，用规格文档来驱动 AI 开发。可以理解为这个规格是 AI 要遵守的唯一契约，必须按照 spec 文档执行。</p>
 <h4 id="spec-四部曲">Spec 四部曲</h4>
 <h5 id="1-写需求文档">1️⃣ 写需求文档</h5>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">需求文档要点</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">需求文档要点</p>
 <p>这个文档无关技术，主要关于：<br />
 - 项目描述<br />
 - 功能需求<br />
@@ -315,13 +315,13 @@
 </tr>
 </tbody>
 </table>
-<p><div class="callout callout-note" markdown="1"><br />
-<p class="callout-title">简单需求</p></p>
+<div class="callout callout-note">
+<p class="callout-title">简单需求</p>
 <p>对于简单小需求，只写一个即可。</p>
 </div>
 <h3 id="上下文问题的解决">上下文问题的解决</h3>
-<p><div class="callout callout-bug" markdown="1"><br />
-<p class="callout-title">问题：上下文丢失</p></p>
+<div class="callout callout-bug">
+<p class="callout-title">问题：上下文丢失</p>
 <p>现在模型上下文都很有限，如果上下文用满后再开一个窗口，不能把这些上下文内容 100% 记录，就会造成上下文丢失，开发效果会大大折扣。</p>
 </div>
 <p><strong>解决方案</strong>：文档记录正好解决了这一问题，可以让 AI 看到完整的上下文背景信息。</p>
@@ -340,8 +340,8 @@
 </ol>
 <hr />
 <h2 id="工具实战指南">工具实战指南</h2>
-<p><div class="callout callout-important" markdown="1"><br />
-<p class="callout-title">三大核心能力</p></p>
+<div class="callout callout-important">
+<p class="callout-title">三大核心能力</p>
 <ul>
 <li><strong>Plugin 系统</strong>：让它从工具变成平台</li>
 <li><strong>Subagent</strong>：让它更智能地理解和执行任务</li>
@@ -383,8 +383,8 @@
 <p><strong>输出</strong>：6 步完整迁移计划</p>
 <hr />
 <h3 id="场景-2生产事故快速响应争分夺秒">场景 2：生产事故快速响应（争分夺秒）</h3>
-<p><div class="callout callout-danger" markdown="1"><br />
-<p class="callout-title">事故场景</p></p>
+<div class="callout callout-danger">
+<p class="callout-title">事故场景</p>
 <p>"线上支付服务挂了，订单超时率 80%"</p>
 </div>
 <p><strong>自动触发 Skill</strong>：<code>incident-response</code></p>
@@ -560,8 +560,8 @@ ALTER<span class="w"> </span>TABLE...
 
 <hr />
 <h2 id="综合实战">综合实战</h2>
-<p><div class="callout callout-example" markdown="1"><br />
-<p class="callout-title">实战任务</p></p>
+<div class="callout callout-example">
+<p class="callout-title">实战任务</p>
 <p>基于你团队最烦的事，写一个 Skill 或斜杠命令：<br />
 - 代码提交流程<br />
 - PR 创建流程<br />
@@ -576,15 +576,15 @@ ALTER<span class="w"> </span>TABLE...
 <li>[ ] 说 "准备提交代码"，能自动触发 pre-commit-check (Skill)</li>
 <li>[ ] 输入 <code>/release</code>，能执行完整发布流程（用上面自己定义的 slash command 实现）</li>
 </ul>
-<p><div class="callout callout-success" markdown="1"><br />
-<p class="callout-title">升级完成</p></p>
+<div class="callout callout-success">
+<p class="callout-title">升级完成</p>
 <p>做到这 5 点，你的 Claude 就从 <mark>聊天助手</mark> 升级成 <mark>智能工作流系统</mark> 了。</p>
 </div>
 <hr />
 <h2 id="最佳实践">最佳实践</h2>
 <h3 id="1-不要贪多先用三件套起步">1️⃣ 不要贪多，先用三件套起步</h3>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">推荐起步配置</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">推荐起步配置</p>
 </div>
 <p><strong>MCP（必装 3 件套）</strong>：<br />
 - <code>memory</code> - 记忆管理<br />
@@ -605,8 +605,8 @@ ALTER<span class="w"> </span>TABLE...
 <li><strong>生产事故响应</strong>（并行排查 + 生成方案）</li>
 <li><strong>新人入职流程</strong>（自动化环境 + 知识导入）</li>
 </ol>
-<p><div class="callout callout-important" markdown="1"><br />
-<p class="callout-title">投入产出比</p></p>
+<div class="callout callout-important">
+<p class="callout-title">投入产出比</p>
 <p>这 3 个做好，投入产出比最高。</p>
 </div>
 <h3 id="3-让知识沉淀而不只是用一次">3️⃣ 让知识沉淀，而不只是用一次</h3>
@@ -614,8 +614,8 @@ ALTER<span class="w"> </span>TABLE...
 - 团队踩过的坑<br />
 - 重要的架构决策<br />
 - 经常用的配置和规范</p>
-<p><div class="callout callout-quote" markdown="1"><br />
-<p class="callout-title">核心理念</p></p>
+<div class="callout callout-quote">
+<p class="callout-title">核心理念</p>
 <p>好的工具链会自己长知识。</p>
 </div>
 <hr />

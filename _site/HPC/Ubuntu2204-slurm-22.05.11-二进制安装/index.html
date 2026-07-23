@@ -72,8 +72,8 @@
     </p>
     <div class="article-body">
 <h1 id="ubuntu-2204-slurm-220511-二进制安装">Ubuntu 22.04 Slurm 22.05.11 二进制安装</h1>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">实验机器规划</p></p>
+<div class="callout callout-info">
+<p class="callout-title">实验机器规划</p>
 <ul>
 <li>OS: <a href="https://mirrors.tuna.tsinghua.edu.cn/ubuntu-releases/22.04/ubuntu-22.04.4-live-server-amd64.iso">ubuntu-22.04.4-live-server-amd64.iso</a></li>
 <li>User: hangx hangx / root root</li>
@@ -145,8 +145,8 @@ ssh-copy-id<span class="w"> </span>-i<span class="w"> </span>~/.ssh/id_rsa.pub<s
 
 <hr />
 <h2 id="配置munge">配置munge</h2>
-<p><div class="callout callout-important" markdown="1"><br />
-<p class="callout-title">Munge用户要确保Master Node和Compute Nodes的==UID和GID相同==,<strong>所有节点</strong>都需要安装Munge。</p></p>
+<div class="callout callout-important">
+<p class="callout-title">Munge用户要确保Master Node和Compute Nodes的==UID和GID相同==,**所有节点**都需要安装Munge。</p>
 </div>
 <div class="highlight"><pre><span></span><code><span class="c1">#所有节点上</span>
 <span class="c1">#验证gid为1108的组不存在</span>

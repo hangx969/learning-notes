@@ -226,8 +226,8 @@
 <ul>
 <li>允许用户直接使用的指令，不能访问系统中的软硬件资源，仅限于访问用户的地址空间、这是为了防止用户程序对系统的破坏。</li>
 </ul>
-<p><div class="callout callout-question" markdown="1"><br />
-<p class="callout-title">思考</p></p>
+<div class="callout callout-question">
+<p class="callout-title">思考</p>
 <p>CPU如何区分正在运行的是内核程序还是用户程序？这就引出了内核态和用户态。</p>
 </div>
 <h3 id="内核态和用户态">内核态和用户态</h3>
@@ -241,8 +241,8 @@
 </li>
 </ul>
 <h4 id="状态切换">状态切换</h4>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">状态切换</p></p>
+<div class="callout callout-info">
+<p class="callout-title">状态切换</p>
 <p>内核态 -&gt; 用户态：执行一条特权指令（一般是中断返回指令），修改PSW的标志位为用户态，这意味着OS主动让出CPU使用权。</p>
 <p>用户态 -&gt; 内核态：由中断等引发，硬件自动完成变态过程，触发中断信号就意味着OS夺回CPU使用权。</p>
 </div>
@@ -263,8 +263,8 @@
 </ol>
 <h2 id="中断和异常">中断和异常</h2>
 <h3 id="中断的作用">中断的作用</h3>
-<p><div class="callout callout-important" markdown="1"><br />
-<p class="callout-title">核心概念</p></p>
+<div class="callout callout-important">
+<p class="callout-title">核心概念</p>
 <p>中断是操作系统内核夺回CPU使用权的唯一途径。</p>
 </div>
 <h3 id="中断的类型">中断的类型</h3>
@@ -412,8 +412,8 @@
 </ul>
 <h3 id="操作系统引导">操作系统引导</h3>
 <p>操作系统也是程序，程序以数据的形式放在硬盘里，计算机有多个硬盘，硬盘又分为多个区，怎么找到操作系统？</p>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">定义</p></p>
+<div class="callout callout-info">
+<p class="callout-title">定义</p>
 <p>操作系统引导是指计算机利用CPU运行特定程序，通过程序识别特定硬盘，识别分区，识别分区上的操作系统，最后通过程序启动操作系统。</p>
 </div>
 <h4 id="引导过程">引导过程</h4>
@@ -468,14 +468,14 @@
 <li>进程是程序的依次执行过程，是动态的。同一个程序多次执行，会对应多个进程。</li>
 <li>进程是资源分配的调度的一个独立单位；是程序的一次执行过程。</li>
 </ul>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">备注</p></p>
+<div class="callout callout-info">
+<p class="callout-title">备注</p>
 <p>注意这里的资源分配的含义：是指CPU、存储器等设备服务于某个进程<strong>时间片</strong>。</p>
 </div>
 <h2 id="进程的组成">进程的组成</h2>
 <h3 id="pcb">PCB</h3>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">PCB</p></p>
+<div class="callout callout-info">
+<p class="callout-title">PCB</p>
 <ul>
 <li>操作系统需要对各个并发进程进行管理，所需要的信息都会放到PCB中，<strong>进程控制块PCB</strong>（Process Control Block）。</li>
 <li>PCB常驻内存，随时存取。</li>
@@ -595,8 +595,8 @@
 <ul>
 <li>在事件等待队列中找到PCB --- 设置进程为就绪态，将PCB从队列中移出 --- 将PCB插入就绪队列，等待被CPU调度</li>
 </ul>
-<p><div class="callout callout-note" markdown="1"><br />
-<p class="callout-title">备注</p></p>
+<div class="callout callout-note">
+<p class="callout-title">备注</p>
 <p>一般由谁引起的阻塞，就由谁唤醒。阻塞和唤醒是成对出现。</p>
 </div>
 <h3 id="切换原语">切换原语</h3>
@@ -624,8 +624,8 @@
 <h3 id="高级通信方法">高级通信方法</h3>
 <h4 id="共享存储">共享存储</h4>
 <p><img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202301012033644.png" alt="image-20230101203340519" style="zoom:50%;" /></p>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">共享存储通信</p></p>
+<div class="callout callout-info">
+<p class="callout-title">共享存储通信</p>
 <p>两个进程通过共享存储空间互相通信，但是对共享空间的操作要具有互斥性。互斥性通过操作系统提供的<strong>同步互斥工具（如P、V操作来实现）</strong></p>
 </div>
 <ul>
@@ -642,8 +642,8 @@
 </li>
 </ul>
 <h4 id="消息传递">消息传递</h4>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">消息传递</p></p>
+<div class="callout callout-info">
+<p class="callout-title">消息传递</p>
 <p>如果进程之间不存在共享内存，可以使用操作系统提供的消息传递方法实现进程通信。这种方法采用格式化的信息为单位，采用发送消息和接收消息的原语来实现。</p>
 </div>
 <ul>
@@ -660,8 +660,8 @@
 </li>
 </ul>
 <h4 id="管道通信">管道通信</h4>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">管道</p></p>
+<div class="callout callout-info">
+<p class="callout-title">管道</p>
 <p>管道：适用于连接读写进程之间的一个共享文件，本质是一个在内存中的大小固定的缓冲区。</p>
 </div>
 <ul>
@@ -711,8 +711,8 @@
 <li>早期操作系统还不支持线程，当时的线程是由程序员在应用代码中自己实现的线程库。</li>
 <li>线程的管理工作由应用完成，线程切换不需要CPU变态；操作系统只认识进程，而不认识线程。这种情况下，进程仍是CPU调度的基本单位。</li>
 </ul>
-<p><div class="callout callout-note" markdown="1"><br />
-<p class="callout-title">用户级线程优缺点</p></p>
+<div class="callout callout-note">
+<p class="callout-title">用户级线程优缺点</p>
 <p>优点是线程切换开销较小；缺点是多线程并不能在多核处理机上并发运行，并且当一个用户线程被阻塞后，整个进程都会被阻塞，并发度不高。</p>
 </div>
 <ul>
@@ -1055,8 +1055,8 @@
 </li>
 <li>不会导致饥饿。</li>
 </ol>
-<p><div class="callout callout-note" markdown="1"><br />
-<p class="callout-title">总结</p></p>
+<div class="callout callout-note">
+<p class="callout-title">总结</p>
 <p>以上三种算法，只考虑了平均周转时间、平均等待时间等系统整体性能指标，并未考虑响应时间，也不区分任务紧急程度。只适用于早期的批处理操作系统。</p>
 <p>所以对用户而言，交互性很糟糕。</p>
 <p>以下的算法适用于分时和实时操作系统，更关注进程的响应时间。</p>
@@ -1197,8 +1197,8 @@
 <p>可能会。如果源源不断的高优先级进程进来，低优先级进程可能会饥饿。</p>
 </li>
 </ol>
-<p><div class="callout callout-note" markdown="1"><br />
-<p class="callout-title">总结</p></p>
+<div class="callout callout-note">
+<p class="callout-title">总结</p>
 <p>以上三种算法注重于响应时间、公平性等指标，更适合于实时操作系统。</p>
 <p>比如UNIX系统使用的就是多级反馈队列调度算法。</p>
 </div>
@@ -1621,8 +1621,8 @@
 </li>
 </ul>
 <p>比如实现互斥的P操作，发生在实现同步的P操作之前，就会发生死锁。</p>
-<p><div class="callout callout-note" markdown="1"><br />
-<p class="callout-title">总结</p></p>
+<div class="callout callout-note">
+<p class="callout-title">总结</p>
 <p>总之，对不可剥夺资源的不合理分配，会导致死锁。</p>
 </div>
 <h3 id="死锁的处理策略">死锁的处理策略</h3>
@@ -1762,8 +1762,8 @@
 <li>覆盖技术</li>
 </ul>
 <p><img alt="image-20230406224858801" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202304062248036.png" /></p>
-<p><div class="callout callout-note" markdown="1"><br />
-<p class="callout-title">备注</p></p>
+<div class="callout callout-note">
+<p class="callout-title">备注</p>
 <p>需要由程序员声明覆盖条件，增加难度；目前不再使用</p>
 </div>
 <ul>
@@ -1862,8 +1862,8 @@
 </ol>
 </li>
 </ul>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">内部碎片与外部碎片</p></p>
+<div class="callout callout-info">
+<p class="callout-title">内部碎片与外部碎片</p>
 <ul>
 <li>
 <p><strong>内部碎片：分配给进程的内存区域中，某些部分没有用上。</strong></p>
@@ -1914,8 +1914,8 @@
 </ul>
 <h3 id="非连续分配管理方式">非连续分配管理方式</h3>
 <h4 id="基本地址变换机构">基本地址变换机构</h4>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">定义</p></p>
+<div class="callout callout-info">
+<p class="callout-title">定义</p>
 <p>用于实现逻辑地址到物理地址转换的一组硬件结构</p>
 </div>
 <ul>
@@ -1929,8 +1929,8 @@
 </li>
 </ul>
 <p><img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202304091448689.png" alt="image-20230409144830425" style="zoom:50%;" /></p>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">分页式存储管理</p></p>
+<div class="callout callout-info">
+<p class="callout-title">分页式存储管理</p>
 <p>分页式存储管理中，只要确定了每个页面的大小，逻辑地址结构就确定了。只要给出一个逻辑地址，系统就会自动算出页号、页内偏移量。</p>
 <p>因为只需要告诉系统逻辑地址即可，分页式存储管理是一维的。</p>
 </div>
@@ -2208,8 +2208,8 @@
 <p><img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202304172144618.png" alt="image-20230417214429452" style="zoom:50%;" /></p>
 <h2 id="文件管理">文件管理</h2>
 <h3 id="概述">概述</h3>
-<p><div class="callout callout-question" markdown="1"><br />
-<p class="callout-title">文件管理核心问题</p></p>
+<div class="callout callout-question">
+<p class="callout-title">文件管理核心问题</p>
 <ol>
 <li>一个文件有哪些属性？</li>
 <li>文件内部的数据应该怎样组织起来？</li>
@@ -2242,8 +2242,8 @@
 <h4 id="文件应该如何放到外存">文件应该如何放到外存？</h4>
 <p><img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202304202213207.png" alt="image-20230420221324905" style="zoom:50%;" /></p>
 <h3 id="文件的逻辑结构">文件的逻辑结构</h3>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">逻辑结构与物理结构</p></p>
+<div class="callout callout-info">
+<p class="callout-title">逻辑结构与物理结构</p>
 <p>逻辑结构：用户看来，文件内的数据是怎样组织的；物理结构：操作系统看来，文件的数据是怎样放在外存中的。</p>
 </div>
 <ul>
@@ -2298,8 +2298,8 @@
 <li>给低级索引顺序表再建立一个高级索引顺序表</li>
 </ul>
 <h3 id="文件目录">文件目录</h3>
-<p><div class="callout callout-question" markdown="1"><br />
-<p class="callout-title">思考</p></p>
+<div class="callout callout-question">
+<p class="callout-title">思考</p>
 <p>操作系统是如何实现文件目录的？</p>
 </div>
 <h4 id="文件控制块">文件控制块</h4>
@@ -2344,8 +2344,8 @@
 </li>
 </ul>
 <p><img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202304222210675.png" alt="image-20230422221055595" style="zoom:50%;" /></p>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">性能优化</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">性能优化</p>
 <p>从pwd（当前路径）出发检索文件会减少磁盘IO次数。因为每查询下一级目录的时候都需要启动磁盘IO，把下一级的目录文件从外存调入内存。</p>
 </div>
 <h3 id="文件保护">文件保护</h3>
@@ -2387,8 +2387,8 @@
 <li>因为软链接访问文件要访问多级目录，因此会比硬链接的磁盘IO更高。</li>
 </ul>
 <h3 id="文件的物理结构">文件的物理结构</h3>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">文件物理结构</p></p>
+<div class="callout callout-info">
+<p class="callout-title">文件物理结构</p>
 <p>对空闲/非空闲磁盘块的管理</p>
 </div>
 <ul>

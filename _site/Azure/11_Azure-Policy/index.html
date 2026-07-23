@@ -100,8 +100,8 @@
 <p><img alt="image-20250608102808405" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202506081028519.png" /></p>
 <h3 id="policy的特点">Policy的特点</h3>
 <p>可以在==Root Mgmt Group== - <mark>Mgmt Group</mark> - <mark>ResourceGroup</mark> - ==Resource==不同级别设定policy，而且都是继承的。除非在assign的时候设置了exclusion。</p>
-<p><div class="callout callout-important" markdown="1"><br />
-<p class="callout-title">Important</p></p>
+<div class="callout callout-important">
+<p class="callout-title">Important</p>
 <p><strong>explicit deny system</strong>：意思是deny操作，凌驾于所有允许操之上，绕不开。所以如果对管理组实行了拒绝的策略，再对下面的child实行更宽松的策略，是行不通的。要先把child排除在外，再给child分配宽松策略。</p>
 </div>
 <p>policy两大目的：</p>
@@ -132,8 +132,8 @@
 </ol>
 <p><img alt="image-20250608103453028" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202506081034185.png" /></p>
 <h3 id="policy-与-rbac">Policy 与 RBAC</h3>
-<p><div class="callout callout-note" markdown="1"><br />
-<p class="callout-title">Note</p></p>
+<div class="callout callout-note">
+<p class="callout-title">Note</p>
 <ul>
 <li>policy只检查资源定义，不检查用户权限，因为假定用户权限已经在上一步定义了</li>
 <li>policy针对的是==资源定义==；RBAC针对的是==user action==.</li>
@@ -169,8 +169,8 @@
 <li>试想情景：想强制让存储账户开启加密，所以设置了检测加密这个属性，如果不是显式的设置为true，就deny；但是实际应用中，如果一台VM开启了guest diagnostics setting，选择自动帮你建存储账户，这时系统并不会显式的设置为true，这时触犯了policy就会部署失败。</li>
 <li>解决：</li>
 </ul>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">Tip</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">Tip</p>
 <p>Append evaluates before the request gets processed by a Resource Provider during the creation or updating of a resource. Append adds fields to the resource when the if condition of the policy rule is met. If the append effect would override a value in the original request with a different value, then it acts as a deny effect and rejects the request.</p>
 </div>
 <p>满足条件的话就把属性加上去；如果属性本来就有，并且冲突了，那才deny掉。</p>
@@ -193,8 +193,8 @@
 <p>满足某些条件之后，policy本身会被disable掉。no action is taken</p>
 <h4 id="modify">Modify</h4>
 <p>修改属性或者tags</p>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">Info</p></p>
+<div class="callout callout-info">
+<p class="callout-title">Info</p>
 <p>这些Effects的操作都会被记在==Activity log==里面</p>
 </div>
 <h4 id="评估顺序">评估顺序</h4>
@@ -207,8 +207,8 @@
 </ol>
 <hr />
 <h2 id="policy-生效时间">Policy 生效时间</h2>
-<p><div class="callout callout-note" markdown="1"><br />
-<p class="callout-title">Note</p></p>
+<div class="callout callout-note">
+<p class="callout-title">Note</p>
 <p>policy去assign之后，可能会有一个==30min==或更长的时间，视policy复杂程度而定。</p>
 </div>
 <hr />

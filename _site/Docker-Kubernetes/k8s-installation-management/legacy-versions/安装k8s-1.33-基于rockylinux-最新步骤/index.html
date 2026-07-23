@@ -363,8 +363,8 @@
 dnf<span class="w"> </span>makecache
 </code></pre></div>
 
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">可以去阿里云镜像源网站：<a href="https://developer.aliyun.com/mirror">developer.aliyun.com/mirror</a> 找到对应系统的换源操作。</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">可以去阿里云镜像源网站：[developer.aliyun.com/mirror](https://developer.aliyun.com/mirror) 找到对应系统的换源操作。</p>
 </div>
 <ul>
 <li>软件包安装</li>
@@ -388,8 +388,8 @@ nmcli<span class="w"> </span>connection<span class="w"> </span>down<span class="
 <span class="c1"># systemctl restart NetworkManager 也行</span>
 </code></pre></div>
 
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">NetworkManager 会把修改写入 <code>/etc/NetworkManager/system-connections/ens160.nmconnection</code>；手动编辑该文件也可，但改完需 <code>nmcli connection reload</code></p></p>
+<div class="callout callout-info">
+<p class="callout-title">NetworkManager 会把修改写入 `/etc/NetworkManager/system-connections/ens160.nmconnection`；手动编辑该文件也可，但改完需 `nmcli connection reload`</p>
 </div>
 <ul>
 <li>关闭selinux</li>
@@ -633,8 +633,8 @@ modprobe<span class="w"> </span>ip_conntrack
 sysctl<span class="w"> </span>-p<span class="w"> </span>/etc/sysctl.d/k8s_better.conf
 </code></pre></div>
 
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">内核参数说明</p></p>
+<div class="callout callout-info">
+<p class="callout-title">内核参数说明</p>
 <p><sub>~</sub>sh<br />
 vm.swappiness=0 # 禁用交换分区，Kubernetes 要求禁用 swap<br />
 vm.overcommit_memory=1  # 允许内存过量分配，提高容器密度<br />

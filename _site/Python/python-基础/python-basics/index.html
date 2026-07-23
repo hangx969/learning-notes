@@ -206,8 +206,8 @@ multi-line commtns<br />
 <span class="nb">list</span><span class="o">.</span><span class="n">reverse</span><span class="p">()</span>
 </code></pre></div>
 
-<p><div class="callout callout-note" markdown="1"><br />
-<p class="callout-title">中文排序规则</p></p>
+<div class="callout callout-note">
+<p class="callout-title">中文排序规则</p>
 <ul>
 <li>中文排序是按照每个字符的unicode编码,从小到大排序。Unicode 对应的汉字编码是一种国际标准,用于为每个汉字分配一个唯一的编码值。由于汉字数量庞大,这些编码值范围从较低的数值到较高的数值。常见汉字的 Unicode 编码大多集中在 U+4E00 到 U+9FFF 之间</li>
 <li>查看unicode编码:访问 https://www.unicode.org/charts/,找到 CJK Unified Ideographs (Han)</li>
@@ -230,8 +230,8 @@ multi-line commtns<br />
 <span class="s2">&quot;-&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">words</span><span class="p">)</span> <span class="c1"># &quot;a-b-c&quot;</span>
 </code></pre></div>
 
-<p><div class="callout callout-example" markdown="1"><br />
-<p class="callout-title">案例:处理时间戳</p></p>
+<div class="callout callout-example">
+<p class="callout-title">案例:处理时间戳</p>
 <p>```python<br />
 time_stamps=['2028','08','08','T10:00:00','Z']</p>
 <h1 id="提取日期和时间部分分别提取出来拼接成新的字符串日期部分为2028-08-08时间部分为100000-z">提取日期和时间部分分别提取出来,拼接成新的字符串,日期部分为'2028-08-08',时间部分为'10:00:00 Z'</h1>
@@ -378,8 +378,8 @@ time = time_stamps[3][1:]+ ' ' + time_stamps[-1]</p>
 <span class="n">result</span> <span class="o">=</span> <span class="s2">&quot;x&gt;5&quot;</span> <span class="k">if</span> <span class="n">x</span><span class="o">&gt;</span><span class="mi">5</span> <span class="k">else</span> <span class="s2">&quot;x&lt;=5&quot;</span>
 </code></pre></div>
 
-<p><div class="callout callout-example" markdown="1"><br />
-<p class="callout-title">案例:验证用户信息</p></p>
+<div class="callout callout-example">
+<p class="callout-title">案例:验证用户信息</p>
 <p>```python</p>
 <h1 id="phone-number-validation">phone number validation</h1>
 <p>phone = input ("Enter your phone number: ")</p>
@@ -454,8 +454,8 @@ touch<span class="w"> </span>-d<span class="w"> </span><span class="s1">&#39;60 
 </code></pre></div>
 
 <h3 id="案例3服务器运行状态定期检查">案例3:服务器运行状态定期检查</h3>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">subprocess.run 用法</p></p>
+<div class="callout callout-info">
+<p class="callout-title">subprocess.run 用法</p>
 <p><code>subprocess.run</code> 是一个用于执行外部命令的函数。<br />
 - <code>[]</code>内放需要执行的命令和参数<br />
 - <code>capture_output=True</code>,捕获命令执行时的标准输出(stdout)和标准错误输出(stderr)。不使用 capture_output=True,标准输出和标准错误输出会直接显示在你的终端或命令行界面上。使用 capture_output=True 后,这些输出会被捕获并存储在 result 对象的属性中,供后续使用。<br />
@@ -734,8 +734,8 @@ touch<span class="w"> </span>-d<span class="w"> </span><span class="s1">&#39;60 
     <span class="n">content</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
 </code></pre></div>
 
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">file.read() 特点</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">file.read() 特点</p>
 <ul>
 <li><strong>优点</strong>:操作简单,适合处理文件内容较小的情况。</li>
 <li><strong>缺点</strong>:如果文件很大,可能会占用大量内存,因为整个文件内容都会被加载到内存中。</li>
@@ -749,8 +749,8 @@ touch<span class="w"> </span>-d<span class="w"> </span><span class="s1">&#39;60 
         <span class="nb">print</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
 </code></pre></div>
 
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">for line in file 特点</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">for line in file 特点</p>
 <p><code>for line in file</code>:逐行读取文件的内容。file 对象是一个<strong>可迭代对象</strong>,每次迭代返回一行文本。<br />
 - <strong>优点</strong>:适合处理大文件,因为不会一次性将整个文件加载到内存中。逐行读取会将当前行加载到内存,而不是整个文件。<br />
 - <strong>缺点</strong>:处理文件时,每次读取一行,可能会稍微增加处理时间。<br />
@@ -764,8 +764,8 @@ touch<span class="w"> </span>-d<span class="w"> </span><span class="s1">&#39;60 
     <span class="nb">print</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
 </code></pre></div>
 
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">file.readlines() 特点</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">file.readlines() 特点</p>
 <p><code>file.readlines()</code>:读取文件中的所有行,并将每一行作为列表中的一个元素返回。<br />
 - <strong>优点</strong>:能够在内存中以列表的形式处理文件的每一行,可以随机访问每一行。<br />
 - <strong>缺点</strong>:会一次性将整个文件加载到内存中,因此适用于文件较小的情况。对于大文件,可能会导致高内存使用。<br />
@@ -880,8 +880,8 @@ touch<span class="w"> </span>-d<span class="w"> </span><span class="s1">&#39;60 
 <hr />
 <h3 id="案例处理大文件">案例:处理大文件</h3>
 <p>处理大文件时,直接将整个文件读入内存可能会导致内存不足或程序变得非常慢。因此,逐块读取文件内容是一种更有效的方式,这样可以逐步处理文件内容,而不是一次性加载整个文件。这种方法特别适合处理大型日志文件、大型数据文件等。</p>
-<p><div class="callout callout-important" markdown="1"><br />
-<p class="callout-title">重点</p></p>
+<div class="callout callout-important">
+<p class="callout-title">重点</p>
 <p><code>file.read(chuck_size)</code> 参数控制每次读取的字节数。</p>
 </div>
 <div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
@@ -905,8 +905,8 @@ touch<span class="w"> </span>-d<span class="w"> </span><span class="s1">&#39;60 
 
 <hr />
 <h3 id="案例备份数据到目录">案例:备份数据到目录</h3>
-<p><div class="callout callout-important" markdown="1"><br />
-<p class="callout-title">重点</p></p>
+<div class="callout callout-important">
+<p class="callout-title">重点</p>
 <ul>
 <li><code>os.path.exists()</code> 判断路径是否存在</li>
 <li><code>os.makedirs()</code> 创建目录</li>
@@ -970,8 +970,8 @@ touch<span class="w"> </span>-d<span class="w"> </span><span class="s1">&#39;60 
 
 <hr />
 <h3 id="案例清理过期日志文件">案例:清理过期日志文件</h3>
-<p><div class="callout callout-important" markdown="1"><br />
-<p class="callout-title">重点</p></p>
+<div class="callout callout-important">
+<p class="callout-title">重点</p>
 <ul>
 <li><code>os.path.isfile()</code> 判断是否是文件</li>
 <li><code>os.path.getmtime</code> 获取文件最后修改时间</li>
@@ -1013,8 +1013,8 @@ touch<span class="w"> </span>/path/to/logs/test_file_4.log
 
 <hr />
 <h3 id="案例批量重命名文件">案例:批量重命名文件</h3>
-<p><div class="callout callout-important" markdown="1"><br />
-<p class="callout-title">重点</p></p>
+<div class="callout callout-important">
+<p class="callout-title">重点</p>
 <ul>
 <li><code>file.endswith()</code> 检测文件扩展名</li>
 <li><code>os.path.splitext()</code> 分离文件名和扩展名,[0]是文件名,[1]是扩展名</li>
@@ -1059,8 +1059,8 @@ touch<span class="w"> </span>/path/to/logs/test_file_4.log
 <li><code>{n,}</code>: 至少匹配 <code>n</code> 次。</li>
 <li><code>{n,m}</code>: 匹配 <code>n</code> 到 <code>m</code> 次。</li>
 </ol>
-<p><div class="callout callout-example" markdown="1"><br />
-<p class="callout-title">示例:匹配邮箱地址</p></p>
+<div class="callout callout-example">
+<p class="callout-title">示例:匹配邮箱地址</p>
 <p>从<code>You can contact us at info@example.com or support@service.org.</code>中匹配出邮箱地址,可以用<br />
 <code>python
 [A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}</code><br />
@@ -1105,8 +1105,8 @@ touch<span class="w"> </span>/path/to/logs/test_file_4.log
 <p><mark><code>+</code></mark>:匹配前面的模式一次或多次,换言之必须得有。</p>
 <p><mark><code>*</code></mark>:匹配前面的模式零次或多次,换言之有没有都行。</p>
 <p><mark><code>?</code></mark>:匹配前面的模式零次或一次。</p>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">贪婪模式与非贪婪模式</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">贪婪模式与非贪婪模式</p>
 <ul>
 <li><code>+</code>和<code>*</code>会尽可能多的匹配字符,即==贪婪模式==。</li>
 <li>在<code>+</code>或<code>*</code>后面加上<code>?</code>表示从贪婪模式转变为==非贪婪模式==,最小匹配。</li>
@@ -1192,8 +1192,8 @@ pattern = '&lt;.*?&gt;' # 仅匹配到'&lt;h1&gt;'</code></p>
     <span class="nb">print</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">groups</span><span class="p">())</span> <span class="c1"># 输出 (&#39;0.&#39;,) 只保存了最后一次捕获</span>
 </code></pre></div>
 
-<p><div class="callout callout-note" markdown="1"><br />
-<p class="callout-title">为什么只显示最后一次的捕获？</p></p>
+<div class="callout callout-note">
+<p class="callout-title">为什么只显示最后一次的捕获？</p>
 <ol>
 <li>正则表达式 <code>([0-9]{1,3}\.){3}</code> 包含一个捕获组 <code>([0-9]{1,3}\.)</code>,它会捕获 1 到 3 位数字,后面跟一个点号。</li>
 <li><code>{3}</code> 表示这个捕获组会重复三次,也就是说它会尝试匹配三段类似于 <code>192.</code>、<code>168.</code>、<code>0.</code>的内容。</li>
@@ -1251,8 +1251,8 @@ pattern = '&lt;.*?&gt;' # 仅匹配到'&lt;h1&gt;'</code></p>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Match well </span><span class="si">{</span><span class="n">result</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">result</span> <span class="k">else</span> <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Match failed&quot;</span><span class="p">)</span>
 </code></pre></div>
 
-<p><div class="callout callout-note" markdown="1"><br />
-<p class="callout-title">什么叫非重叠？</p></p>
+<div class="callout callout-note">
+<p class="callout-title">什么叫非重叠？</p>
 <p><code>python
 import re
 pattern = 'aba'
@@ -1327,8 +1327,8 @@ print(f"Match well {result}") if result else print("Match failed")</code><br />
         <span class="nb">print</span><span class="p">(</span><span class="n">ip</span><span class="p">)</span>
 </code></pre></div>
 
-<p><div class="callout callout-important" markdown="1"><br />
-<p class="callout-title">重点</p></p>
+<div class="callout callout-important">
+<p class="callout-title">重点</p>
 <ul>
 <li>用<code>\b</code>匹配单词边界</li>
 <li><code>(?:[0-9]{1,3}\.){3}</code>非捕获组匹配重复的3个数字和<code>\.</code> 作为IP地址的前三位。</li>
@@ -1360,8 +1360,8 @@ print(f"Match well {result}") if result else print("Match failed")</code><br />
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Updated </span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </code></pre></div>
 
-<p><div class="callout callout-important" markdown="1"><br />
-<p class="callout-title">重点</p></p>
+<div class="callout callout-important">
+<p class="callout-title">重点</p>
 <ul>
 <li>因为要替换这一句中间的内容,所以要把整个句子拆分成三部分,将匹配到的user1部分替换成新的值,再拼接起来。</li>
 <li>匹配 <code>:</code> 前面的一段用户名: <code>[^:]+</code> 非冒号的字符出现一次或多次</li>

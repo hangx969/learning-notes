@@ -562,8 +562,8 @@ exportfs<span class="w"> </span>-arv
 </code></pre></div>
 
 <h1 id="自定义crd资源-etcd">自定义CRD资源-Etcd</h1>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">说明</p></p>
+<div class="callout callout-info">
+<p class="callout-title">说明</p>
 <p>Etcd是一个分布式键值存储系统，常用于存储共享配置和服务发现等场景。Etcd Operator是一个基于Operator模式开发的控制器，用于在Kubernetes上管理和运行Etcd集群。</p>
 <ol>
 <li>自定义资源定义（CRD）：Etcd Operator定义了一个自定义资源类型EtcdCluster，用于描述Etcd集群的配置和规模。这个CRD定义了Etcd集群的规格，包括节点数量、存储大小、版本等信息。</li>
@@ -752,8 +752,8 @@ return operator, nil
 <span class="l l-Scalar l-Scalar-Plain">EOF</span>
 </code></pre></div>
 
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">说明</p></p>
+<div class="callout callout-info">
+<p class="callout-title">说明</p>
 <p>一般而言k8s自带的api-resources够用，自定义CRD开发难度较大；一般二次开发是对coreDNS、kube-proxy做开发。</p>
 </div>
     </div>

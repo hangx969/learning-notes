@@ -114,7 +114,9 @@ class ObsidianExtension(Extension):
         super().__init__(**kwargs)
 
     def extendMarkdown(self, md):
-        md.preprocessors.register(CalloutPreprocessor(md), "obsidian_callout", 20)
+        # 优先级必须在 fenced_code(25) 之后、html_block(20) 之前：
+        # 代码块先被保护，callout 生成的 div 再交给 md_in_html 提取
+        md.preprocessors.register(CalloutPreprocessor(md), "obsidian_callout", 22)
         md.inlinePatterns.register(
             WikiLinkProcessor(WIKILINK_RE, md, self.resolver), "obsidian_wikilink", 75
         )

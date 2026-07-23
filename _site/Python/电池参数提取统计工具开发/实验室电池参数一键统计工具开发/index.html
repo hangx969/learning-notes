@@ -115,8 +115,8 @@
 <hr />
 <h2 id="v10-初版实现">V1.0 - 初版实现</h2>
 <p>用python遍历每一个txt文件,识别参数并输出到Excel表格中,以此思路做成第一版软件:(2020.11.18)</p>
-<p><div class="callout callout-summary" markdown="1"><br />
-<p class="callout-title">技术栈</p></p>
+<div class="callout callout-summary">
+<p class="callout-title">技术栈</p>
 <ul>
 <li><mark>re</mark> 正则表达式匹配电池参数</li>
 <li><mark>openpyxl</mark> 操作Excel表格</li>
@@ -240,8 +240,8 @@
 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;电池测定数据已输出至: &#39;</span> <span class="o">+</span> <span class="n">path</span> <span class="o">+</span> <span class="s1">&#39; 下,文件名为:cellStats.xlsx&#39;</span><span class="p">)</span>
 </code></pre></div>
 
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">V1.0 存在的问题</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">V1.0 存在的问题</p>
 <ol>
 <li>嵌套字典未能派上用场,在excel赋值中无法使用。</li>
 <li>excel表格中的数据皆为文本格式。</li>
@@ -253,8 +253,8 @@
 <hr />
 <h2 id="v40-面向对象重构版">V4.0 - 面向对象重构版</h2>
 <p>对问题进行改进,优化代码结构,使用嵌套字典存储数据,使用面向对象方法模块化结构,增加可视化界面(2021.10.5)</p>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">V2.0~V4.0 改进内容</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">V2.0~V4.0 改进内容</p>
 <ul>
 <li><mark>V2.0</mark>: 文件名自动加日期、参数转为float格式、嵌套字典直接赋值Excel、按文件名排序</li>
 <li><mark>V3.0</mark>: 添加 <mark>tkinter</mark> 可视化窗口</li>

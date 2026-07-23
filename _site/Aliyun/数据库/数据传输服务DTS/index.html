@@ -179,8 +179,8 @@
 </tr>
 </tbody>
 </table>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">核心区别</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">核心区别</p>
 <ul>
 <li>==同步==适合长期持续实时同步，==迁移==更适合短期迁移任务。</li>
 <li>同步是可以==双向同步==的，迁移只能单向迁移。</li>
@@ -214,12 +214,12 @@
 </tr>
 </tbody>
 </table>
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">全量迁移注意</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">全量迁移注意</p>
 <p>为保障数据一致性，迁移期间请勿在源库中写入新的数据。如需实现==不停机迁移==，您需要在配置数据迁移任务时，同时选择<strong>结构迁移</strong>、<strong>全量数据迁移</strong>和<strong>增量数据迁移</strong>。</p>
 </div>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">增量迁移说明</p></p>
+<div class="callout callout-info">
+<p class="callout-title">增量迁移说明</p>
 <p>增量数据迁移会保持实时同步的状态，所以迁移任务==不会自动结束==，您需要手动结束迁移任务。</p>
 </div>
 <h3 id="etl特性">ETL特性</h3>
@@ -239,8 +239,8 @@
 <h2 id="迁移场景">迁移场景</h2>
 <h3 id="不停机迁移数据库">不停机迁移数据库</h3>
 <p>迁移过程中应用可以保持运行。</p>
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">注意</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">注意</p>
 <p>还是有一定的停机时间的，只不过相比传统方式少了一些。唯一的停机时间是将应用程序切换到目标数据库的过程。通常情况下，此切换窗口可以降低到==分钟级别==。这是一定要有的，在切换的时候停机，保证数据一致性。</p>
 </div>
 <p>迁移过程包括三个阶段：</p>
@@ -262,8 +262,8 @@
 <li>用户地理位置分布较广，地理位置远的客户访问延迟较高。</li>
 <li>单个地域底层基础设置能力限制业务扩展，例如供电能力、网络建设能力等。</li>
 </ul>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">解决方案</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">解决方案</p>
 <p>可以在同城、异地构建多个业务单元。每个业务单元之间用DTS实现数据==双向实时同步==，保障全局数据一致性。任一单元故障，切换到另一个单元即可，业务==秒级恢复==。还可以将业务流量分布至各个业务单元。</p>
 </div>
 <h3 id="加速全球化业务访问">加速全球化业务访问</h3>

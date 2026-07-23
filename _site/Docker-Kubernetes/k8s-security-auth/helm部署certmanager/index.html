@@ -366,8 +366,8 @@ kubectl<span class="w"> </span><span class="nb">wait</span><span class="w"> </sp
 </code></pre></div>
 
 <h3 id="创建certificate颁发给svc">创建Certificate颁发给svc</h3>
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">注意：certificate和它生成的secret是一定在同一个namespace的</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">注意：certificate和它生成的secret是一定在同一个namespace的</p>
 </div>
 <div class="highlight"><pre><span></span><code><span class="l l-Scalar l-Scalar-Plain">tee certificate-app01.yaml &lt;&lt;&#39;EOF&#39;</span>
 <span class="l l-Scalar l-Scalar-Plain">apiVersion</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cert-manager.io/v1</span>
@@ -496,8 +496,8 @@ certificate.cert-manager.io/app01<span class="w">   </span>True<span class="w"> 
           hosts:<br />
             - kyverno.hanxux.local<br />
   ~~~</p>
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">注意：pod只能挂载位于同一个namespace下的secret</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">注意：pod只能挂载位于同一个namespace下的secret</p>
 </div>
 <h2 id="使用letsencrypt-certificate">使用Letsencrypt certificate</h2>
 <h3 id="参考">参考</h3>
@@ -514,8 +514,8 @@ certificate.cert-manager.io/app01<span class="w">   </span>True<span class="w"> 
 <p>Let’s Encrypt CA 利用 ACME (Automated Certificate Management Environment，自动证书管理) 协议校验域名的归属，校验成功后可以自动颁发免费证书。免费证书有效期只有 90 天，需在到期前再校验一次实现续期。使用 cert-manager 可以自动续期，即实现永久使用免费证书。</p>
 <p>Let's Encrypt 不颁发CA证书，只颁发终端实体证书。</p>
 <p>校验域名归属的两种方式分别是 HTTP-01 和 DNS-01，校验原理详情可参见 <a href="https://letsencrypt.org/zh-cn/how-it-works/">Let's Encrypt 的运作方式</a></p>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">校验流程</p></p>
+<div class="callout callout-info">
+<p class="callout-title">校验流程</p>
 <ul>
 <li>用户向clusterissuer提出申请证书请求，clusterissuer向letsencrypt机构申请证书，letsencrypt机构进行审核，假如申请的域名为www.xxx.com，机构会审核www.xxx.com这个站点是不是你的？审核的方式有：http01和dns01。</li>
 <li>使用http01的审核方式：letsencrypt机构让你往网站的某个路径里面写一个文件。然后他登录到www.xxx.com，看看能不能访问成功，访问成功就证明是你的网站。<ul>
@@ -709,8 +709,8 @@ kubectl<span class="w"> </span>get<span class="w"> </span>challenges.acme.cert-m
 <ul>
 <li>证书到期之后，clusterissuers会自动续约。</li>
 </ul>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">自动续约</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">自动续约</p>
 <p>为配置certificate自动续约，可以给ingress添加annotation</p>
 <ul>
 <li>ingress支持的annotation：<a href="https://cert-manager.io/docs/usage/ingress/#supported-annotations">Supported Annotations</a></li>
@@ -808,8 +808,8 @@ kubectl<span class="w"> </span>get<span class="w"> </span>challenges.acme.cert-m
 <span class="w">    </span><span class="nt">azure.workload.identity/client-id</span><span class="p">:</span>
 </code></pre></div>
 
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">Staging Server</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">Staging Server</p>
 <p>对于azureDNS，cert-manager定义了一个staging server用于前期测试，避免对于一个domain用尽cert的quota：</p>
 <p>参考：</p>
 <ul>

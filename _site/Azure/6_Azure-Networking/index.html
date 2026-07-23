@@ -181,8 +181,8 @@ dig<span class="w"> </span>mcr.azk8s.cn<span class="w"> </span>
 <ul>
 <li>A virtual network is communication between devices, servers, and virtual machines over the Internet. Azure Virtual Network (VNet) is a private network with interconnected Azure resources such as Azure VMs, infrastructure, and networking. It supports communication between various Azure resources over the Internet. In a virtual network, contiguous IP address blocks are used to create multiple subnet networks. From <a href="https://k21academy.com/microsoft-azure/az-303/azure-networking/">https://k21academy.com/microsoft-azure/az-303/azure-networking/</a></li>
 </ul>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">VNet Outbound Without Public IP</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">VNet Outbound Without Public IP</p>
 <p>When resources in a VNet don't have a Public IP, can they access the Internet? <mark>YES</mark>. Through Private IP, when sending data externally through the VNet, NAT translates Private IP to Public IP. Inbound traffic is also NAT-translated to Private IP.</p>
 </div>
 <hr />
@@ -197,8 +197,8 @@ dig<span class="w"> </span>mcr.azk8s.cn<span class="w"> </span>
 <ul>
 <li>A subnet is a portion of a network covering a range of IP addresses. In Azure, a VNet can be divided into smaller subnets. When creating a VNet in Azure, you need to specify the subnet range and topology. The IP address range in a subnet will be a sub-portion of the larger block of IP addresses used in the VNet. VMs and resources in the network will be assigned IP addresses from these subnets.</li>
 </ul>
-<p><div class="callout callout-important" markdown="1"><br />
-<p class="callout-title">Azure Reserved IPs</p></p>
+<div class="callout callout-important">
+<p class="callout-title">Azure Reserved IPs</p>
 <p>Azure reserves the <mark>first four IPs</mark> and the <mark>last IP</mark> in each subnet for its own use.</p>
 </div>
 <p>From <a href="https://k21academy.com/microsoft-azure/az-303/azure-networking/">https://k21academy.com/microsoft-azure/az-303/azure-networking/</a></p>
@@ -244,8 +244,8 @@ dig<span class="w"> </span>mcr.azk8s.cn<span class="w"> </span>
 <p><strong>Security</strong>: Private Endpoints improve security by restricting traffic to the Azure resource's private IP address. Service Endpoints improve security by restricting traffic to the specific service's IP address range.</p>
 </li>
 </ol>
-<p><div class="callout callout-note" markdown="1"><br />
-<p class="callout-title">Private Endpoint DNS Resolution</p></p>
+<div class="callout callout-note">
+<p class="callout-title">Private Endpoint DNS Resolution</p>
 <p>When a storage account has a private endpoint configured, DNS resolution from within the subnet first resolves the public endpoint (e.g., <code>artifactorysa.file.core.chinacloudapi.cn</code>) via CNAME to the private endpoint (e.g., <code>artifactorysa.privatelink.file.core.chinacloudapi.cn</code>), which then resolves to the private IP.</p>
 <p>Your local DNS needs to forward the public endpoint to Azure DNS for resolution, or you can directly configure the public endpoint to the private IP in <code>/etc/hosts</code>.</p>
 </div>
@@ -271,8 +271,8 @@ dig<span class="w"> </span>mcr.azk8s.cn<span class="w"> </span>
 </ul>
 <hr />
 <h2 id="vm-internal-network-access-options">VM Internal Network Access Options</h2>
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">Security Risk</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">Security Risk</p>
 <p>Assigning public IPs to multiple VMs risks port scanning and brute force attacks.</p>
 </div>
 <ul>

@@ -392,8 +392,8 @@
 <li>无需队列等待：nq，如果后端 Pod 的队列为空，则直接选择该 Pod；如果所有 Pod 的队列都非空，则采用其他策略（如轮询或最少连接）来选择 Pod</li>
 <li>最短期望延迟：sed，考虑 Pod 的当前连接数和连接请求的平均处理时间，选择预计处理时间最短的 Pod 来接收新请求</li>
 </ul>
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">注意</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">注意</p>
 <ul>
 <li>不推荐默认的轮询算法是因为如果某个节点由于性能问题（比如cpu、内存高），导致上面pod处理请求比较慢，但是轮询是感知不到的。会导致请求不断还是会继续发送到这个节点的pod上，导致这个pod一直cpu飚高，但是其他pod空闲。</li>
 </ul>
@@ -513,8 +513,8 @@ TCP<span class="w"> </span><span class="m">172</span>.16.32.128:32001<span class
 <span class="w">   </span><span class="l l-Scalar l-Scalar-Plain">targetPort   &lt;string&gt;</span><span class="w"> </span><span class="c1"># targetPort是pod上的端口，从port和nodePort上来的流量，经过kube-proxy流入到后端pod的targetPort上，最后进入容器。</span>
 </code></pre></div>
 
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">注意</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">注意</p>
 <p>Selector字段：svc通过selector选择对应标签的pod去代理流量。</p>
 </div>
 <h1 id="svc分类">svc分类</h1>
@@ -572,8 +572,8 @@ TCP<span class="w">  </span><span class="m">10</span>.99.178.109:80<span class="
 <ul>
 <li><strong>HeadLiness</strong> Service：不想使用service提供的负载均衡，希望自己定策略。这种不分配cluster IP，只能通过service的域名来访问。yaml文件中将cluster IP设置为None即可。</li>
 </ul>
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">注意</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">注意</p>
 <p>clusterIP虽然在宿主机上能直接请求，但是svc的FQDN在宿主机上可能无法解析。因为宿主机的DNS不是CoreDNS。</p>
 </div>
 <h2 id="nodeport">NodePort</h2>
@@ -589,8 +589,8 @@ TCP<span class="w">  </span><span class="m">10</span>.99.178.109:80<span class="
 </li>
 </ul>
 <p>client -&gt; nodeIP:nodePort -&gt; node的docker0网卡 -&gt; pod</p>
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">注意</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">注意</p>
 <p>1.18之后的集群，这个NodePort不能用netstat或者ss探测到了，因为它仅仅是用iptables/ipvs建了一个映射，不是起了一个socket链接了。</p>
 </div>
 <div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>

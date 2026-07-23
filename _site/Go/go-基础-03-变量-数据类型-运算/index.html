@@ -123,8 +123,8 @@
 
 <h3 id="短变量声明">短变量声明</h3>
 <p>在函数内部，可以使用更简略的 <mark><code>:=</code></mark> 方式声明并初始化变量。这属于语法糖的形式，go会自动识别变量类型。</p>
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">注意</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">注意</p>
 <p>只能在函数内使用，在包级别不能使用短变量声明</p>
 </div>
 <div class="highlight"><pre><span></span><code><span class="kn">package</span><span class="w"> </span><span class="nx">main</span>
@@ -262,8 +262,8 @@
 <p>另一种是 <mark>rune</mark> 类型，代表一个 UTF-8 字符，当需要处理中文、日文或者其他复合字符时，则需要用到 rune 类型。rune 类型等价于 int32 类型。</p>
 </li>
 </ol>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">编码</p></p>
+<div class="callout callout-info">
+<p class="callout-title">编码</p>
 <p>Go 语言的编码都统一成了 <mark>utf-8</mark>。非常的方便，很统一，再也没有编码乱码的困扰了</p>
 </div>
 <h3 id="布尔型">布尔型</h3>
@@ -384,8 +384,8 @@
 </code></pre></div>
 
 <h3 id="各种类型的默认值">各种类型的默认值</h3>
-<p><div class="callout callout-summary" markdown="1"><br />
-<p class="callout-title">默认零值</p></p>
+<div class="callout callout-summary">
+<p class="callout-title">默认零值</p>
 <ul>
 <li><code>int</code> / <code>float32</code> / <code>float64</code> =&gt; <mark>0</mark></li>
 <li><code>bool</code> =&gt; <mark>false</mark></li>
@@ -563,8 +563,8 @@ fmt.Printf(&quot;Type of b: %T, a1=%v \n&quot;, b, b)
 <li>取余 <code>%</code></li>
 <li>自增自减 <code>++</code> <code>--</code></li>
 </ol>
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">注意</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">注意</p>
 <ol>
 <li>自增自减只能当做一个单独的语句，在单独的一行里面使用</li>
 <li>Golang 的 <code>++</code> 和 <code>--</code> 只能写在变量的后面，不能写在变量的前面，即：只有 <code>a++</code> <code>a--</code>，没有 <code>++a</code> 和 <code>--a</code></li>
@@ -645,8 +645,8 @@ fmt.Printf(&quot;Type of b: %T, a1=%v \n&quot;, b, b)
 <span class="p">}</span>
 </code></pre></div>
 
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">Go 时间格式化</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">Go 时间格式化</p>
 <p>Go 使用固定参考时间 <mark><code>2006-01-02 15:04:05</code></mark> 来定义格式，而非常见的 <code>YYYY-MM-DD</code> 风格。这个参考时间是 Go 语言的诞生时间。</p>
 </div>
 <hr />

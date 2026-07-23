@@ -192,8 +192,8 @@
 </tr>
 </tbody>
 </table>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">一句话选择原则</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">一句话选择原则</p>
 <ul>
 <li>并行干活、各自汇报 → <strong>Subagents</strong></li>
 <li>并行干活、互相讨论 → <strong>Agent Teams</strong></li>
@@ -261,8 +261,8 @@
 </tr>
 </tbody>
 </table>
-<p><div class="callout callout-note" markdown="1"><br />
-<p class="callout-title">Note</p></p>
+<div class="callout callout-note">
+<p class="callout-title">Note</p>
 <p>名称冲突时，项目级 SubAgent 会覆盖全局级。</p>
 </div>
 <h2 id="新建-subagent">新建 SubAgent</h2>
@@ -271,8 +271,8 @@
 <li>Claude Code 自动检测并加载</li>
 <li>在对话中自然调用，或让 Claude 自行判断何时使用</li>
 </ol>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">更多现成的 SubAgent</p></p>
+<div class="callout callout-info">
+<p class="callout-title">更多现成的 SubAgent</p>
 <p>GitHub 上有社区整理的 100+ SubAgent：<a href="https://github.com/VoltAgent/awesome-claude-code-subagents">awesome-claude-code-subagents</a>，可按场景挑选直接使用。</p>
 </div>
 <h2 id="典型场景">典型场景</h2>
@@ -334,8 +334,8 @@
 <li>队友之间可以<strong>直接通信</strong>，不需要经过 Lead 中转</li>
 <li>你也可以<strong>直接与任意队友对话</strong>，给它额外指令</li>
 </ul>
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">实验性功能</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">实验性功能</p>
 <p>Agent Teams 当前为实验性功能，默认关闭。需要 Claude Code <strong>v2.1.32+</strong>。</p>
 </div>
 <h2 id="启用">启用</h2>
@@ -375,8 +375,8 @@
 </tr>
 </tbody>
 </table>
-<p><div class="callout callout-important" markdown="1"><br />
-<p class="callout-title">不适合的场景</p></p>
+<div class="callout callout-important">
+<p class="callout-title">不适合的场景</p>
 <p>顺序依赖任务、编辑同一文件、依赖关系复杂的工作——用单会话或 Subagents 更高效。</p>
 </div>
 <h2 id="架构">架构</h2>
@@ -448,8 +448,8 @@ teammate on UX, one on technical architecture, one playing devil&#39;s advocate.
 claude<span class="w"> </span>--teammate-mode<span class="w"> </span><span class="k">in</span>-process
 </code></pre></div>
 
-<p><div class="callout callout-note" markdown="1"><br />
-<p class="callout-title">Split panes 依赖</p></p>
+<div class="callout callout-note">
+<p class="callout-title">Split panes 依赖</p>
 <p>需要 <a href="https://github.com/tmux/tmux/wiki">tmux</a> 或 iTerm2 + <a href="https://github.com/mkusaka/it2"><code>it2</code> CLI</a>。<br />
 VS Code 集成终端、Windows Terminal、Ghostty <strong>不支持</strong>。</p>
 </div>
@@ -465,8 +465,8 @@ Require plan approval before they make any changes.
 </code></pre></div>
 
 <p>流程：队友在只读 plan 模式工作→提交计划→Lead 批准或驳回→批准后开始实施。</p>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">影响审批标准</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">影响审批标准</p>
 <p>在 prompt 中设定条件：<code>"only approve plans that include test coverage"</code></p>
 </div>
 <h3 id="直接与队友对话">直接与队友对话</h3>
@@ -499,8 +499,8 @@ Require plan approval before they make any changes.
 Clean up the team                           # 清理整个团队
 </code></pre></div>
 
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">清理注意</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">清理注意</p>
 <p>先关闭所有队友再清理；必须由 Lead 执行清理。</p>
 </div>
 <h2 id="上下文与通信">上下文与通信</h2>
@@ -609,8 +609,8 @@ Clean up the team                           # 清理整个团队
 </tr>
 </tbody>
 </table>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title"><code>CLAUDE.md</code> 正常工作</p></p>
+<div class="callout callout-info">
+<p class="callout-title">`CLAUDE.md` 正常工作</p>
 <p>队友从工作目录读取 <code>CLAUDE.md</code>，可用它向所有队友提供项目级指导。</p>
 </div>
 <hr />
@@ -785,8 +785,8 @@ git<span class="w"> </span>worktree<span class="w"> </span>remove<span class="w"
 # 输出分步骤计划，等待确认后才执行
 </code></pre></div>
 
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">什么时候用 Plan</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">什么时候用 Plan</p>
 <p><strong>多模块重构、新技术引入、架构调整</strong>时用 Plan；常规 CRUD、小需求直接做。</p>
 </div>
 <h2 id="在工作流中嵌入-plan-模式">在工作流中嵌入 Plan 模式</h2>
@@ -890,8 +890,8 @@ backend-dev：
   └─→ 审查结果自动发 PR comment 或邮件通知
 </code></pre></div>
 
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">当前限制</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">当前限制</p>
 <ul>
 <li>Routines 处于<strong>研究预览阶段</strong></li>
 <li>仅支持 Claude 官方模型，不支持第三方 API 路由</li>
@@ -967,8 +967,8 @@ backend-dev：
 <hr />
 <h1 id="开源-agents-推荐">开源 Agents 推荐</h1>
 <h2 id="wshobsonagents">wshobson/agents</h2>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">仓库</p></p>
+<div class="callout callout-info">
+<p class="callout-title">仓库</p>
 <p><a href="https://github.com/wshobson/agents">wshobson/agents</a> — Claude Code 的大型 Plugin Marketplace，包含 <strong>72 个插件、112 个专业 Agent、146 个 Skills、16 个多智能体编排器</strong>。</p>
 </div>
 <p>项目定位</p>

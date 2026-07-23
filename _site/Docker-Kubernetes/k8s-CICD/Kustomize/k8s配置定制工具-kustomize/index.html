@@ -363,8 +363,8 @@
 <h2 id="构建覆盖层-overlay">构建覆盖层--Overlay</h2>
 <p>接下来，针对不同的环境或需求，创建覆盖层目录，如 dev、prod 等。在每个覆盖层目录下，都需要创建一个 kustomization.yaml 文件，用于定义对基础配置的修改。</p>
 <p>在 dev 目录下，kustomization.yaml 示例如下：</p>
-<p><div class="callout callout-note" markdown="1"><br />
-<p class="callout-title">说明</p></p>
+<div class="callout callout-note">
+<p class="callout-title">说明</p>
 <p>这里通过 patches 对 Deployment 的副本数进行了修改，同时利用 configMapGenerator 更新了 ConfigMap 中的环境变量，开启调试模式，以适应开发环境的需求。</p>
 </div>
 <div class="highlight"><pre><span></span><code><span class="l l-Scalar l-Scalar-Plain">tee ./dev/kustomization.yaml &lt;&lt;&#39;EOF&#39;</span>
@@ -417,8 +417,8 @@
 
 <h2 id="应用配置">应用配置</h2>
 <p>完成基础配置和覆盖层的创建后，就可以使用 kubectl 来应用配置了。在对应的覆盖层目录下，执行命令：</p>
-<p><div class="callout callout-note" markdown="1"><br />
-<p class="callout-title">说明</p></p>
+<div class="callout callout-note">
+<p class="callout-title">说明</p>
 <p>这个命令会根据当前目录下的 kustomization.yaml 以及相关的基础配置，生成最终的 Kubernetes 资源清单，并将其应用到集群中。如果后续需要更新配置，只需修改覆盖层的相应内容，再次执行该命令即可，Kustomize 会智能地处理资源的变更，确保平滑过渡。</p>
 </div>
 <div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>apply<span class="w"> </span>-k.
@@ -475,8 +475,8 @@
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">module-config.properties</span><span class="w"> </span><span class="c1">#加载一个specific的configMap合并进去</span>
 </code></pre></div>
 
-<p><div class="callout callout-note" markdown="1"><br />
-<p class="callout-title">说明</p></p>
+<div class="callout callout-note">
+<p class="callout-title">说明</p>
 <p>这里不仅引用了基础目录下的资源，还生成了一个新的 <code>module-specific-config</code>，并将本地的 <code>module-config.properties</code> 文件内容合并进去，使得应用能够一站式获取所需的所有配置，减少了配置分散带来的管理难题。</p>
 </div>
 <h2 id="generator和transformer">Generator和Transformer</h2>
@@ -491,8 +491,8 @@
 <span class="w">  </span><span class="nt">newTag</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v2.0</span>
 </code></pre></div>
 
-<p><div class="callout callout-note" markdown="1"><br />
-<p class="callout-title">说明</p></p>
+<div class="callout callout-note">
+<p class="callout-title">说明</p>
 <p>这个配置会自动查找所有引用 my-app-image 的资源，并将其镜像标签更新为 v2.0，大大简化了版本升级的流程，确保了整个应用集群的一致性更新。同时，你还可以根据自己的需求编写自定义的生成器和变压器，深度定制 Kustomize 的功能，满足复杂多变的业务场景。</p>
 </div>
     </div>

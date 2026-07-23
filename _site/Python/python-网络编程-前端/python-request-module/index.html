@@ -110,8 +110,8 @@
 <h1 id="python-requests模块">Python Requests模块</h1>
 <h2 id="介绍">介绍</h2>
 <p><mark>requests</mark> 模块是 Python 简单易用的 HTTP 库,主要用于发送 HTTP 请求并接收响应。与原生的 urllib 库相比,requests 提供了更加简洁直观的 API,使得网络请求的处理更加方便。</p>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">核心功能</p></p>
+<div class="callout callout-info">
+<p class="callout-title">核心功能</p>
 </div>
 <ul>
 <li>发送 HTTP 请求:支持常见的 <mark>GET</mark>、<mark>POST</mark>、<mark>PUT</mark>、<mark>DELETE</mark>、<mark>HEAD</mark>、<mark>OPTIONS</mark> 等请求方法。</li>
@@ -122,8 +122,8 @@
 <li>自动处理重定向和压缩:会自动处理 301 重定向和 GZIP 压缩。</li>
 <li>支持超时和异常处理:允许设置超时并处理网络请求中的常见异常。</li>
 </ul>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">核心方法</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">核心方法</p>
 </div>
 <ul>
 <li><code>requests.get(url, params=None, **kwargs)</code>:发送 GET 请求。</li>
@@ -141,8 +141,8 @@
 <li><mark>headers</mark>:字典格式,指定自定义的请求头。</li>
 <li><mark>timeout</mark>:设置请求的超时时间,单位为秒。</li>
 </ul>
-<p><div class="callout callout-important" markdown="1"><br />
-<p class="callout-title">安装</p></p>
+<div class="callout callout-important">
+<p class="callout-title">安装</p>
 </div>
 <p><code>pip3 install requests</code></p>
 <hr />
@@ -217,8 +217,8 @@
 </ul>
 </li>
 </ul>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">返回值response对象</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">返回值response对象</p>
 </div>
 <ul>
 <li><code>response.status_code</code>获取状态码</li>
@@ -317,8 +317,8 @@
 <h3 id="发送delete请求requestsdelete">发送DELETE请求requests.delete()</h3>
 <p><mark>delete()</mark> 方法用于发送 HTTP DELETE 请求,以删除服务器上的特定资源。</p>
 <p>语法:<code>response = requests.delete(url, **kwargs)</code></p>
-<p><div class="callout callout-note" markdown="1"><br />
-<p class="callout-title">响应状态码</p></p>
+<div class="callout callout-note">
+<p class="callout-title">响应状态码</p>
 <ul>
 <li><mark>204</mark>:表示删除操作成功,服务器没有返回任何内容。</li>
 <li>404:表示尝试删除的资源不存在。</li>
@@ -348,8 +348,8 @@
 <li>检查资源存在性:可以通过检查返回的状态码(如 200 或 404)来确定资源是否存在。</li>
 <li>获取资源信息:获取有关资源的元数据而不下载实际内容,适用于了解响应的内容类型和大小等信息。</li>
 </ul>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">响应头信息</p></p>
+<div class="callout callout-info">
+<p class="callout-title">响应头信息</p>
 </div>
 <ul>
 <li><code>Content-Type</code>:资源的内容类型(如 text/html)。</li>
@@ -357,8 +357,8 @@
 <li><code>Last-Modified</code>:资源最后修改的时间。</li>
 <li><code>Cache-Control</code>:缓存相关的指令。</li>
 </ul>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">效率优势</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">效率优势</p>
 <p>由于不下载响应体,HEAD 请求比 GET 请求更高效,适用于需要快速检查资源信息的场景。</p>
 </div>
 <h4 id="示例_4">示例</h4>
@@ -436,8 +436,8 @@
 
 <hr />
 <h3 id="cookie处理">Cookie处理</h3>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">Cookie简介</p></p>
+<div class="callout callout-info">
+<p class="callout-title">Cookie简介</p>
 <p><mark>cookie</mark> 是指存储在用户浏览器中的一小段数据,它用于记录和保存用户的状态信息。服务器通过 cookie 可以在用户访问网站的过程中,保持用户会话信息,或用于跟踪用户的访问行为。</p>
 </div>
 <p>cookie 的常见用途:</p>
@@ -467,8 +467,8 @@
 
 <hr />
 <h3 id="重定向与历史">重定向与历史</h3>
-<p><div class="callout callout-note" markdown="1"><br />
-<p class="callout-title">重定向机制</p></p>
+<div class="callout callout-note">
+<p class="callout-title">重定向机制</p>
 <p>当你发送一个 HTTP 请求到服务器时,服务器可能会返回一个重定向状态码,比如 <mark>301</mark> 或 <mark>302</mark>。这意味着请求的资源已经被移动到一个新的 URL。</p>
 </div>
 <p>默认行为:</p>

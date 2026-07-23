@@ -89,8 +89,8 @@
     </p>
     <div class="article-body">
 <h1 id="io-monitor">IO Monitor</h1>
-<p><div class="callout callout-summary" markdown="1"><br />
-<p class="callout-title">Disk I/O benchmarking and monitoring tools for Azure VMs</p></p>
+<div class="callout callout-summary">
+<p class="callout-title">Disk I/O benchmarking and monitoring tools for Azure VMs</p>
 <p>Covers <mark>Diskspd</mark> (Windows), <mark>FIO</mark> (Linux), and <mark>iotop/ps/top</mark> (Linux) for measuring and monitoring disk performance on <a class="wikilink" href="../../Azure/0_Azure-VM-VMSS/">Azure VMs</a> with <a class="wikilink" href="../../Azure/5_Azure-Storage/">Azure Storage</a>.</p>
 </div>
 <hr />
@@ -115,8 +115,8 @@
 </ul>
 <p><img alt="image-20231030171508132" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202310301715276.png" /></p>
 <h3 id="压测与-perfmon-配合使用">压测与 PerfMon 配合使用</h3>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">配合 <a class="wikilink" href="../../Azure/perfMon%20ProcessMon/">PerfMon</a> 使用可同时收集性能计数器数据</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">配合 [[Azure/perfMon ProcessMon|PerfMon]] 使用可同时收集性能计数器数据</p>
 </div>
 <ul>
 <li>使用管理员权限打开 CMD 窗口，配置 PerfMon 信息：</li>
@@ -150,8 +150,8 @@
 <li><code>ps -e -o pid,user,%mem,cmd --sort=-%mem</code></li>
 </ol>
 <h3 id="iotop-脚本">iotop 脚本</h3>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">使用 iotop 脚本持续监控 I/O</p></p>
+<div class="callout callout-info">
+<p class="callout-title">使用 iotop 脚本持续监控 I/O</p>
 <p>脚本监控：使用 iotop 命令来监测服务器的状态，这样当问题重现时，我们可以对比发生问题的进程来进行排查。您可创建一个 <mark>cron job</mark> 在每分钟来收集一下 I/O 信息，并将其保存在日志文件中。</p>
 </div>
 <ul>
@@ -161,8 +161,8 @@
   vi /etc/cron.d/iotop
   root /usr/sbin/iotop -botqqqk --iter=60 | grep -P "\d\d\.\d\d K/s"  &gt;&gt;/tmp/io.log 2&gt;&amp;1
   #注：日志文件会不断增长，如果问题一直没有发生，请注意清理该文件。</code></p>
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">日志文件会不断增长，如果问题一直没有发生，请注意清理该文件。</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">日志文件会不断增长，如果问题一直没有发生，请注意清理该文件。</p>
 </div>
     </div>
   </article>

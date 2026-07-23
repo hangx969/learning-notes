@@ -113,8 +113,8 @@
 <hr />
 <h2 id="subprocess模块">subprocess模块</h2>
 <p><code>subprocess</code> 模块是 Python 用来管理和控制系统命令执行的工具，它可以让你从 Python 程序中运行外部的命令行命令，就像你在命令提示符或终端中手动输入命令一样。比如，你可以用它来执行 shell 命令、启动程序，或者处理子进程。</p>
-<p><div class="callout callout-summary" markdown="1"><br />
-<p class="callout-title">核心概念</p></p>
+<div class="callout callout-summary">
+<p class="callout-title">核心概念</p>
 <ul>
 <li><mark>子进程</mark>：当你使用 subprocess 模块运行命令时，Python 会创建一个新进程，这个进程就是"子进程"。</li>
 <li><mark>同步与异步</mark>：你可以选择等待命令执行完成后再继续运行你的 Python 脚本（同步），或者不等待命令执行完毕直接继续运行（异步）。</li>
@@ -209,8 +209,8 @@
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;stderr:</span><span class="si">{</span><span class="n">stderr</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </code></pre></div>
 
-<p><div class="callout callout-note" markdown="1"><br />
-<p class="callout-title">Popen参数说明</p></p>
+<div class="callout callout-note">
+<p class="callout-title">Popen参数说明</p>
 <ul>
 <li><code>stdin=subprocess.PIPE</code> 表示你可以向子进程的标准输入发送数据</li>
 <li><code>stdout=subprocess.PIPE</code> 表示你可以从子进程的标准输出读取数据</li>
@@ -270,8 +270,8 @@
 
 <hr />
 <h3 id="案例实时监控磁盘使用情况并识别空间占用最大的目录">案例：实时监控磁盘使用情况并识别空间占用最大的目录</h3>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">重点</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">重点</p>
 <ul>
 <li><code>splitlines()</code>按行分割，再<code>split()</code>按空格分割，就能把linux命令输出给拆分出来</li>
 <li>字典赋值<code>directory['key']=value</code></li>
@@ -581,8 +581,8 @@
 <hr />
 <h2 id="logging模块">logging模块</h2>
 <p><mark>logging</mark> 模块是 Python 标准库中的一个模块，用于记录和跟踪程序的运行状态和事件。</p>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">日志级别</p></p>
+<div class="callout callout-info">
+<p class="callout-title">日志级别</p>
 <ul>
 <li><mark>DEBUG</mark>：调试信息，通常用于开发过程中获取详细信息。</li>
 <li><mark>INFO</mark>：普通信息，表示程序的正常运行状态。</li>
@@ -613,8 +613,8 @@
 <span class="n">logging</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="s2">&quot;This is critical message&quot;</span><span class="p">)</span>
 </code></pre></div>
 
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">文件命名注意</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">文件命名注意</p>
 <p>python的py文件命名最好不要与module名字重名，否则import module的时候会错误的引用到本文件。</p>
 <p>比如这个脚本文件命名为<code>logging.py</code>,在其中<code>import logging</code>的时候，就会报错：</p>
 <p><code>sh
@@ -748,8 +748,8 @@ pip3<span class="w"> </span>install<span class="w"> </span>-i<span class="w"> </
 
 <h4 id="autoaddpolicy">AutoAddPolicy</h4>
 <p><mark>paramiko.AutoAddPolicy</mark> 表示自动接受未知主机的密钥并将其添加到客户端的已知主机密钥列表中。</p>
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">安全提示</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">安全提示</p>
 <p>这种策略适合开发和测试环境，因为它避免了手动管理主机密钥的麻烦。然而，在生产环境中，这种策略可能存在安全风险，因为它无法防止连接到伪造的服务器。</p>
 </div>
 <h3 id="sftp操作">sftp操作</h3>
@@ -871,8 +871,8 @@ pip3<span class="w"> </span>install<span class="w"> </span>-i<span class="w"> </
 <span class="nb">print</span><span class="p">(</span><span class="n">stdout</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">))</span>
 </code></pre></div>
 
-<p><div class="callout callout-important" markdown="1"><br />
-<p class="callout-title">注意事项</p></p>
+<div class="callout callout-important">
+<p class="callout-title">注意事项</p>
 <ol>
 <li><strong>资源管理</strong>: 始终确保关闭连接</li>
 <li><strong>错误处理</strong>: 检查退出状态码而不仅仅是 stderr</li>
@@ -960,8 +960,8 @@ pip3<span class="w"> </span>install<span class="w"> </span>-i<span class="w"> </
 <hr />
 <h2 id="fabric模块">fabric模块</h2>
 <p><mark>Fabric</mark> 建立在 Paramiko 之上，是一个高级库，旨在简化和自动化通过 SSH 进行的任务。</p>
-<p><div class="callout callout-note" markdown="1"><br />
-<p class="callout-title">Fabric vs Paramiko</p></p>
+<div class="callout callout-note">
+<p class="callout-title">Fabric vs Paramiko</p>
 <ul>
 <li><strong>Paramiko</strong>：底层库，提供 SSH 协议实现，适合需要对 SSH 连接有更大控制的开发者</li>
 <li><strong>Fabric</strong>：高级库，提供更易于使用的 API，方便批量执行命令和文件传输，支持任务组织和多主机操作</li>
@@ -1049,8 +1049,8 @@ pip3<span class="w"> </span>install<span class="w"> </span>-i<span class="w"> </
 <hr />
 <h2 id="json模块">json模块</h2>
 <p><mark>JSON</mark> 是一种轻量级数据交换格式，既易于人类阅读和编写，又便于计算机解析和生成。</p>
-<p><div class="callout callout-summary" markdown="1"><br />
-<p class="callout-title">核心方法</p></p>
+<div class="callout callout-summary">
+<p class="callout-title">核心方法</p>
 <ul>
 <li><code>json.dump()</code>：将python对象转换成json格式，并写入文件</li>
 <li><code>json.dumps()</code>：将python对象转换成json格式，并返回json字符串</li>
@@ -1192,8 +1192,8 @@ pip3<span class="w"> </span>install<span class="w"> </span>-i<span class="w"> </
 import<span class="w"> </span>yaml
 </code></pre></div>
 
-<p><div class="callout callout-summary" markdown="1"><br />
-<p class="callout-title">核心方法</p></p>
+<div class="callout callout-summary">
+<p class="callout-title">核心方法</p>
 <ol>
 <li><code>yaml.load()</code> - 解析 YAML 字符串为 Python 对象</li>
 <li><code>yaml.safe_load()</code> - 安全解析 YAML</li>
@@ -1204,8 +1204,8 @@ import<span class="w"> </span>yaml
 </ol>
 </div>
 <h3 id="不安全的yaml对象">不安全的yaml对象</h3>
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">安全风险</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">安全风险</p>
 <p>自定义对象或函数可能存在安全风险。恶意用户可以利用自定义标签执行任意代码：<br />
 <code>yaml
 execute: !!python/object/apply:os.system
@@ -1495,8 +1495,8 @@ execute: !!python/object/apply:os.system
     <span class="n">monitor_cpu_usage</span><span class="p">()</span>
 </code></pre></div>
 
-<p><div class="callout callout-note" markdown="1"><br />
-<p class="callout-title">信号处理</p></p>
+<div class="callout callout-note">
+<p class="callout-title">信号处理</p>
 <ul>
 <li><mark>signal</mark> 是 Python 用于处理信号的模块。当按下 Ctrl+C 时，操作系统会向进程发送 SIGINT 信号。</li>
 <li>通过 <code>signal.signal(signal.SIGINT, signal_handler)</code> 绑定信号处理函数，接收到 SIGINT 信号时，设置 RUNNING = False 停止主循环。</li>

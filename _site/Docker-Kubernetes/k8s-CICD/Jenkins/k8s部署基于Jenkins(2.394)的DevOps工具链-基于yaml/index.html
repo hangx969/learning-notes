@@ -919,8 +919,8 @@ cat<span class="w"> </span>/data/v2/jenkins-home/secrets/initialAdminPassword
 <p>查看console output</p>
 </li>
 </ul>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">提示</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">提示</p>
 <p>上面这套方法，在开发、生产、测试环境里面用的镜像都是一样的。实际应用中，不同的环境的配置是不同的，比如要连接到的一些IP等。这种情况可以用configmap把不同环境的配置挂到deployment里面去用。</p>
 </div>
 <ul>
@@ -1156,8 +1156,8 @@ docker-compose<span class="w"> </span>start
 </ul>
 <h1 id="jenkins-k8s-nexus-gitlab-harbor-sonarqube-springcloud构建devops">jenkins-k8s-nexus-gitlab-harbor-sonarqube-springcloud构建devops</h1>
 <h2 id="jenkins接入sonarqube">jenkins接入Sonarqube</h2>
-<p><div class="callout callout-note" markdown="1"><br />
-<p class="callout-title">SonarQube简介</p></p>
+<div class="callout callout-note">
+<p class="callout-title">SonarQube简介</p>
 <p>SonarQube是一个开源的代码质量管理系统，用于自动化检查源代码的质量并提供报告。它支持多种编程语言，包括Java、C#、JavaScript、Python等，能够检测出代码中的错误、漏洞、代码异味等问题。SonarQube可以集成到CI/CD流程中，帮助开发团队在开发过程中持续改进代码质量。</p>
 </div>
 <ul>
@@ -1181,8 +1181,8 @@ sysctl<span class="w"> </span>-p
 <span class="c1">#docker rm删掉容器重新创建即可</span>
 </code></pre></div>
 
-<p><div class="callout callout-note" markdown="1"><br />
-<p class="callout-title">vm.max_map_count说明</p></p>
+<div class="callout callout-note">
+<p class="callout-title">vm.max_map_count说明</p>
 <ul>
 <li><code>vm.max_map_count</code> 是一个内核参数，用于限制一个进程可以拥有的 VMA（Virtual Memory Areas）的数量。VMA 是用于描述进程虚拟内存空间的数据结构。如果进程创建大量的内存映射，但没有足够的 VMA，那么进程将无法成功映射内存，可能会导致错误。</li>
 <li>所以，<code>vm.max_map_count=262144</code> 这行配置的含义是，设置系统中每个进程可以拥有的最大 VMA 数量为 262144。这对于一些内存密集型的应用（如 Elasticsearch）可能是必要的，因为这些应用可能需要创建大量的内存映射。</li>
@@ -1316,8 +1316,8 @@ mvn sonar:sonar  -Dsonar.host.url=http://192.168.40.181:9000 -Dsonar.login=e7afc
 <li>ID：dockerharbor</li>
 </ul>
 <h3 id="安装nexus">安装nexus</h3>
-<p><div class="callout callout-note" markdown="1"><br />
-<p class="callout-title">Nexus简介</p></p>
+<div class="callout callout-note">
+<p class="callout-title">Nexus简介</p>
 <ul>
 <li>Nexus服务器是一个代码包管理的服务器，可以理解 Nexus 服务器是一个巨大的 Library 仓库。</li>
 <li>Nexus 可以支持管理的工具包括 Maven ， npm 等，对于 JAVA 开发来说，只要用到 Maven 管理就可以了。</li>
@@ -1370,8 +1370,8 @@ mvn sonar:sonar  -Dsonar.host.url=http://192.168.40.181:9000 -Dsonar.login=e7afc
          </server><br />
    </servers> <br />
   ~~~</p>
-<p><div class="callout callout-note" markdown="1"><br />
-<p class="callout-title">pom.xml与settings.xml说明</p></p>
+<div class="callout callout-note">
+<p class="callout-title">pom.xml与settings.xml说明</p>
 <ul>
 <li><code>pom.xml</code>（Project Object Model）是Maven项目必备的配置文件，它是整个项目的基本单元。<code>pom.xml</code>文件定义了项目的基本信息，如项目的依赖、构建设置、插件、目标等。</li>
 <li><code>settings.xml</code>文件是Maven的全局配置文件，它包含了如本地仓库的位置、镜像仓库设置、代理设置等信息。这个文件通常位于Maven安装的<code>conf</code>目录下，或者在用户的<code>.m2</code>目录下。</li>

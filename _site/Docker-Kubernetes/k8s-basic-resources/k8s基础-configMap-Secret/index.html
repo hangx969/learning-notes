@@ -408,8 +408,8 @@ server-id<span class="o">=</span><span class="m">2</span>
 <span class="w">    </span><span class="no">log_bin_trust_function_creators=1</span>
 </code></pre></div>
 
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">说明</p></p>
+<div class="callout callout-info">
+<p class="callout-title">说明</p>
 <p>在 Kubernetes 的 ConfigMap 中，<code>|</code> 和 <code>| -</code> 的主要区别在于它们处理多行字符串的方式。</p>
 <p><code>|</code> 是一个块标识符，它会保留换行符和（除最后一行外的）尾随空格。例如：</p>
 <p><code>yaml
@@ -511,8 +511,8 @@ kubectl<span class="w"> </span>create<span class="w"> </span>cm<span class="w"> 
 <span class="w">      </span><span class="nt">optional</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"> </span><span class="c1"># 即使items的key名写错了，也不影响pod启动</span>
 </code></pre></div>
 
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">注意</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">注意</p>
 <p>如果cm里面有多个key，并且指定了items，那么只有指定了items的key会被挂进去，没指定的就不挂载进去。所以如果需要挂载所有的key，就指定所有的items。</p>
 </div>
 <h4 id="自定义挂载权限">自定义挂载权限</h4>
@@ -554,8 +554,8 @@ kubectl<span class="w"> </span>create<span class="w"> </span>cm<span class="w"> 
 <span class="w">      </span><span class="nt">subPath</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx.conf</span>
 </code></pre></div>
 
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">注意</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">注意</p>
 <p>用subPath挂载进去的cm文件，不会热更新</p>
 </div>
 <h3 id="单一挂载环境变量-configmapkeyref">单一挂载环境变量-configMapKeyRef</h3>
@@ -593,8 +593,8 @@ kubectl<span class="w"> </span>create<span class="w"> </span>cm<span class="w"> 
 <span class="w">          </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">lower</span><span class="w"> </span><span class="c1">#指定configmap中的key</span>
 </code></pre></div>
 
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">提示</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">提示</p>
 <p>这种方式一个一个导入env，不是很灵活。在大部分情况下环境变量很多，需要批量导入。</p>
 </div>
 <h3 id="批量挂载环境变量-envfrom">批量挂载环境变量-envFrom</h3>
@@ -957,8 +957,8 @@ kubectl<span class="w"> </span>-n<span class="w"> </span>default<span class="w">
 <li><strong>根据节点/集群信息动态生成配置</strong>，避免为每个环境维护单独的 ConfigMap</li>
 <li><strong>供应商容器</strong>需要许可证密钥或一次性令牌，不想硬编码也不想创建额外资源</li>
 </ol>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">建议</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">建议</p>
 <p>K8s 1.35+ 新集群可优先使用 fileKeyRef 替代 ConfigMap 管理环境变量，减少配置资源的维护负担。对于仍在低版本集群的场景，继续使用 ConfigMap + envFrom 的方式。</p>
 </div>
 <h1 id="最佳实践">最佳实践</h1>

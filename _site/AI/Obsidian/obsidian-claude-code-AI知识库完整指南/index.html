@@ -199,8 +199,8 @@
 </tr>
 </tbody>
 </table>
-<p><div class="callout callout-summary" markdown="1"><br />
-<p class="callout-title">核心矛盾</p></p>
+<div class="callout callout-summary">
+<p class="callout-title">核心矛盾</p>
 <p>要么没脑子，要么没记忆，要么有脑子有记忆但==不是你的==。</p>
 </div>
 <h3 id="markdown-是-llm-的母语">Markdown 是 LLM 的母语</h3>
@@ -231,8 +231,8 @@ claude
 <p>不是向量数据库，不是 SQL，不是 JSON。就是 <code>.md</code> 文件。</p>
 <h3 id="为什么选-obsidian">为什么选 Obsidian</h3>
 <p><a href="https://obsidian.md">Obsidian</a> 在海外已有 <mark>150 万月活用户</mark>，开发者、研究者、写作者用得特别多。</p>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">关于 Obsidian 公司</p></p>
+<div class="callout callout-info">
+<p class="callout-title">关于 Obsidian 公司</p>
 <ul>
 <li>完全没有接受风投，全靠用户付费</li>
 <li>年收入约 <strong>2500 万美元</strong>，续费率 <strong>90%+</strong></li>
@@ -244,23 +244,23 @@ claude
 <li><strong>双向链接</strong> — 笔记之间用 <code>[[wikilink]]</code> 互相关联，形成知识网络</li>
 <li><strong>Graph View</strong> — 可视化所有笔记的关联关系，哪些知识孤立、哪些高频被引用，一目了然</li>
 </ul>
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">之前的门槛</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">之前的门槛</p>
 <p>要装插件、配同步、学 Markdown 语法、研究方法论（Zettelkasten、PARA、MOC），光折腾"怎么用"就能把人劝退。</p>
 </div>
 <p><mark>但现在不一样了。</mark> Claude Code 的生态起来之后，Obsidian 的使用门槛大幅降低——你不需要懂那些方法论，Claude Code 替你搞定。</p>
 <hr />
 <h2 id="三核心理念karpathy-llm-wiki-模式">三、核心理念：Karpathy LLM Wiki 模式</h2>
-<p><div class="callout callout-abstract" markdown="1"><br />
-<p class="callout-title">核心理念</p></p>
+<div class="callout callout-abstract">
+<p class="callout-title">核心理念</p>
 <p>基于 <a href="https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f">Karpathy LLM Wiki</a> 模式：<strong>你永远不自己写 wiki——LLM 写并维护全部内容。你负责：策划来源、探索方向、提出好问题。LLM 负责：总结、交叉引用、归档和簿记。</strong></p>
 </div>
 <p>这个思路来自 Andrej Karpathy 2026 年 4 月那条 1600 万浏览的推文。</p>
 <p>他说的核心是一个观点转换： <strong>AI 不是检索器，是编译器</strong> 。</p>
 <p>传统 RAG（检索增强生成）的逻辑是每次提问都重头搜索原始材料、拼接、生成回答，回答用完即弃，下次再问还得从零开始——<strong>每次查询都从零发现知识，没有积累</strong>。</p>
 <p>LLM Wiki 的做法完全不同：<strong>LLM 增量构建并维护一个持久化的 wiki</strong>——一组结构化、互相链接的 markdown 文件，位于你和原始资料之间。每当新资料进入，LLM 不是简单索引，而是阅读、提取关键信息、整合到现有 wiki 中——更新实体页、修订主题摘要、标注新旧数据的矛盾、强化或挑战已有综述。知识被<strong>编译一次，持续更新</strong>，而非每次查询重新推导。</p>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">比喻</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">比喻</p>
 <p>Obsidian 是 IDE；LLM 是程序员；Wiki 是代码库。</p>
 </div>
 <h3 id="三层架构">三层架构</h3>
@@ -426,8 +426,8 @@ git clone https://github.com/kepano/obsidian-skills.git .claude/skills/obsidian-
 <p>直接把 Claude Code 嵌进 Obsidian 侧边栏，选中笔记就能让 AI 总结、扩写、找关联，整个过程不离开编辑器。</p>
 </blockquote>
 <p>🔗 GitHub: <a href="https://github.com/YishenTu/claudian">YishenTu/claudian</a></p>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">安装步骤</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">安装步骤</p>
 <ol>
 <li>在 <a href="https://github.com/YishenTu/claudian/releases">Release</a> 中下载 <code>main.js</code>、<code>manifest.json</code>、<code>styles.css</code></li>
 <li>放到 <code>.obsidian/plugins/claudian/</code> 目录</li>
@@ -441,8 +441,8 @@ git clone https://github.com/kepano/obsidian-skills.git .claude/skills/obsidian-
 <p>让 Claude Code 理解 Obsidian 的格式——双向链接、标签、属性、嵌入，全都认得。</p>
 </blockquote>
 <p>🔗 GitHub: <a href="https://github.com/kepano/obsidian-skills">kepano/obsidian-skills</a></p>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">安装步骤</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">安装步骤</p>
 <ol>
 <li>下载 Skills 文件</li>
 <li>放到 vault 的 <code>.claude/</code> 目录下即可</li>
@@ -459,8 +459,8 @@ git clone https://github.com/kepano/obsidian-skills.git .claude/skills/obsidian-
 <li>拿到 <code>API Key</code>、<code>Host</code>、<code>Port</code> 即可</li>
 <li><strong>MCP 服务端</strong>：<a href="https://github.com/MarkusPfundstein/mcp-obsidian">MarkusPfundstein/mcp-obsidian</a></li>
 </ul>
-<p><div class="callout callout-example" markdown="1"><br />
-<p class="callout-title">MCP 配置</p></p>
+<div class="callout callout-example">
+<p class="callout-title">MCP 配置</p>
 <p>放到 vault 目录（<code>.claude/settings.json</code>）或 Claude 全局配置均可：<br />
 <code>json
 {
@@ -482,8 +482,8 @@ git clone https://github.com/kepano/obsidian-skills.git .claude/skills/obsidian-
 <h2 id="六日常操作谱系">六、日常操作谱系</h2>
 <p>搭建完成后，你和 LLM 的日常互动有六大类操作。</p>
 <h3 id="1-ingest摄入-知识进来">1. Ingest（摄入）— 知识进来</h3>
-<p><div class="callout callout-quote" markdown="1"><br />
-<p class="callout-title">新笔记写完后，一句话让 LLM 完成全部后续工作。</p></p>
+<div class="callout callout-quote">
+<p class="callout-title">新笔记写完后，一句话让 LLM 完成全部后续工作。</p>
 </div>
 <table>
 <thead>
@@ -511,13 +511,13 @@ git clone https://github.com/kepano/obsidian-skills.git .claude/skills/obsidian-
 </tr>
 </tbody>
 </table>
-<p><div class="callout callout-important" markdown="1"><br />
-<p class="callout-title">核心原则</p></p>
+<div class="callout callout-important">
+<p class="callout-title">核心原则</p>
 <p>你只需要告诉 LLM <mark>文件路径或目录路径</mark>，其余流程（写摘要、更新交叉引用、维护索引）全部自动完成。</p>
 </div>
 <h3 id="2-query查询-向知识库提问">2. Query（查询）— 向知识库提问</h3>
-<p><div class="callout callout-quote" markdown="1"><br />
-<p class="callout-title">这是<strong>最高频</strong>的日常操作。不需要自己翻文档，直接问。</p></p>
+<div class="callout callout-quote">
+<p class="callout-title">这是**最高频**的日常操作。不需要自己翻文档，直接问。</p>
 </div>
 <table>
 <thead>
@@ -545,13 +545,13 @@ git clone https://github.com/kepano/obsidian-skills.git .claude/skills/obsidian-
 </tr>
 </tbody>
 </table>
-<p><div class="callout callout-success" markdown="1"><br />
-<p class="callout-title">关键习惯</p></p>
+<div class="callout callout-success">
+<p class="callout-title">关键习惯</p>
 <p>如果回答有分析价值，追一句 <strong>"归档到 wiki"</strong>。这样你的每次提问都在积累知识，而非一次性消耗——<mark>知识复利</mark>。</p>
 </div>
 <h3 id="3-lint健康检查-维护质量">3. Lint（健康检查）— 维护质量</h3>
-<p><div class="callout callout-quote" markdown="1"><br />
-<p class="callout-title">定期检查知识库健康度，保持结构整洁。</p></p>
+<div class="callout callout-quote">
+<p class="callout-title">定期检查知识库健康度，保持结构整洁。</p>
 </div>
 <table>
 <thead>
@@ -587,8 +587,8 @@ git clone https://github.com/kepano/obsidian-skills.git .claude/skills/obsidian-
 - 过时内容<br />
 - 缺失的交叉引用</p>
 <h3 id="4-restructure结构调整-知识重组">4. Restructure（结构调整）— 知识重组</h3>
-<p><div class="callout callout-quote" markdown="1"><br />
-<p class="callout-title">当知识积累到一定程度，结构需要演进。</p></p>
+<div class="callout callout-quote">
+<p class="callout-title">当知识积累到一定程度，结构需要演进。</p>
 </div>
 <table>
 <thead>
@@ -621,8 +621,8 @@ git clone https://github.com/kepano/obsidian-skills.git .claude/skills/obsidian-
 </tbody>
 </table>
 <h3 id="5-review回顾-知识复盘">5. Review（回顾）— 知识复盘</h3>
-<p><div class="callout callout-quote" markdown="1"><br />
-<p class="callout-title">宏观审视知识库的全貌和成长。</p></p>
+<div class="callout callout-quote">
+<p class="callout-title">宏观审视知识库的全貌和成长。</p>
 </div>
 <table>
 <thead>
@@ -651,8 +651,8 @@ git clone https://github.com/kepano/obsidian-skills.git .claude/skills/obsidian-
 </tbody>
 </table>
 <h3 id="6-export导出-知识输出">6. Export（导出）— 知识输出</h3>
-<p><div class="callout callout-quote" markdown="1"><br />
-<p class="callout-title">知识库的最终价值在于输出。</p></p>
+<div class="callout callout-quote">
+<p class="callout-title">知识库的最终价值在于输出。</p>
 </div>
 <table>
 <thead>
@@ -681,8 +681,8 @@ git clone https://github.com/kepano/obsidian-skills.git .claude/skills/obsidian-
 </tbody>
 </table>
 <h3 id="推荐节奏">推荐节奏</h3>
-<p><div class="callout callout-example" markdown="1"><br />
-<p class="callout-title">日常节奏</p></p>
+<div class="callout callout-example">
+<p class="callout-title">日常节奏</p>
 <table>
 <thead>
 <tr>

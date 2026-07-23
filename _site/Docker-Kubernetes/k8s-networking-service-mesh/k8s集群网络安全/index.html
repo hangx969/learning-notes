@@ -478,8 +478,8 @@ kubescape<span class="w"> </span>scan<span class="w"> </span>framework<span clas
   #攻击机上操作<br />
   kubectl --kubeconfig=./test_token get pods -n default<br />
   ~~~</p>
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">总结</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">总结</p>
 <ol>
 <li>管理员给system:anonymous开放cluster-admin之后，攻击者可以通过接口看到所有的ns以及里面的secrets。</li>
 <li>管理员又给某个ns的default sa绑定了token，并且赋予了cluster-admin的权限。攻击者可以直接通过anonymous用户访问api接口，一个一个ns来试，看看哪个ns的sa绑定了token。</li>
@@ -491,8 +491,8 @@ kubescape<span class="w"> </span>scan<span class="w"> </span>framework<span clas
 </ul>
 </div>
 <h1 id="模拟攻击kubelet">模拟攻击kubelet</h1>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">kubelet默认开了三个端口</p></p>
+<div class="callout callout-info">
+<p class="callout-title">kubelet默认开了三个端口</p>
 <ol>
 <li>10250：</li>
 <li>作用：这是kubelet的主要监听端口，用于与API服务器通信，接收来自API服务器的指令，并提供节点的状态信息。</li>

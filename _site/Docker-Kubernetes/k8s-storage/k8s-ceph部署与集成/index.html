@@ -290,8 +290,8 @@
       <a href="https://github.com/hangx969/learning-notes/blob/main/Docker-Kubernetes/k8s-storage/k8s-ceph%E9%83%A8%E7%BD%B2%E4%B8%8E%E9%9B%86%E6%88%90.md">查看源文件</a>
     </p>
     <div class="article-body">
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">生产环境注意</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">生产环境注意</p>
 <p>生产环境中如果要用ceph，一定要非常专业精通、可以troubleshooting才能去用；而且建议二进制安装在服务器上，不要装在k8s中。否则出问题之后因为ceph是分块存储，数据非常难以还原，有极大的丢失风险。</p>
 </div>
 <h1 id="ceph简介">ceph简介</h1>
@@ -911,8 +911,8 @@ ceph<span class="w"> </span>osd<span class="w"> </span>pool<span class="w"> </sp
 <span class="w">  </span><span class="nt">imageFeatures</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;layering&quot;</span><span class="w"> </span><span class="c1">#这个参数指定了RBD镜像的特性。&quot;layering&quot;表示启用了层次化存储特性。层次化存储允许镜像共享相同的数据块，可以节省存储空间，并且可以更快地创建新的镜像和快照。</span>
 </code></pre></div>
 
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">K8s 1.20版本兼容问题</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">K8s 1.20版本兼容问题</p>
 <p>k8s1.20版本通过rbd provisioner动态生成pv会报错:</p>
 <p><code>sh
 kubectl logs rbd-provisioner-685746688f-8mbz</code></p>

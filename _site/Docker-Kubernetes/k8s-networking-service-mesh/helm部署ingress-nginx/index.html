@@ -331,8 +331,8 @@ helm<span class="w"> </span>pull<span class="w"> </span>ingress-nginx/ingress-ng
 <li><code>controller.dnsPolicy: ClusterFirstWithHostNet</code>，让ingress-nginx pod可以用kube-dns解析集群内的svc</li>
 <li>虚拟机和虚拟机外面的hosts文件还是配置任意工作节点IP</li>
 </ul>
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">注意</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">注意</p>
 <ol>
 <li>
 <p>hosts文件里面写哪个节点的IP取决于ingress-controller的pod调度到了哪个节点上面，保险起见可以这样做：</p>
@@ -771,8 +771,8 @@ sudo<span class="w"> </span>iptables<span class="w"> </span>-t<span class="w"> <
 <span class="w">  </span><span class="nt">nginx.ingress.kubernetes.io/auth-signin</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;https://oauth2proxy.hanxux.local/oauth2/start?rd=https%3A%2F%2Fgrafana.hanxux.local&quot;</span>
 </code></pre></div>
 
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">注意</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">注意</p>
 <p>这里的auth-url写的是oauth2proxy的svc地址。而不是oauth的ingress url（oauth2proxy.hanxux.local），是因为这个auth-url是在ingress pod内部去请求的，来找oauth获取是否认证的信息。如果写oauth2proxy.hanxux.local，pod内部用的是coreDNS，解析不了。写svc地址就可以解析了。</p>
 </div>
 <ul>
@@ -830,8 +830,8 @@ sudo<span class="w"> </span>iptables<span class="w"> </span>-t<span class="w"> <
 <li>流量百分比取值范围：(0, 100]，百分比总和必须不大于100%。</li>
 <li>支持同时配置多个不同的复制流量接收目标应用。</li>
 </ol>
-<p><div class="callout callout-question" markdown="1"><br />
-<p class="callout-title">Q：这里是在哪个环境的ingress操作的？？</p></p>
+<div class="callout callout-question">
+<p class="callout-title">Q：这里是在哪个环境的ingress操作的？？</p>
 </div>
 <h3 id="步骤2-配置prod的ingress">步骤2-配置prod的ingress</h3>
 <p>通过configuration-snippet和server-snippet修改源Ingress，增加应用的流量镜像配置。</p>

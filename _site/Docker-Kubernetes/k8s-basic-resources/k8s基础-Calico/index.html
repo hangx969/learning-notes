@@ -448,8 +448,8 @@
 <span class="s">&quot;CrossSubnet&quot;</span><span class="l l-Scalar l-Scalar-Plain">，CALICO_NETWORKING_BACKEND修改为&quot;bird&quot;，表示启用BGP模式。</span>
 </code></pre></div>
 
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">备注</p></p>
+<div class="callout callout-info">
+<p class="callout-title">备注</p>
 <p>当CALICO_IPV4POOL_IPIP被设置为”CrossSubnet”时，Calico可以为不同子网中的节点创建IPIP隧道，以便它们可以通过隧道相互通信。在 BGP 模式下，IPIP 仍然是 Calico 网络的一部分，用于支持 Kubernetes 网络的内部通信，因此仍需要设置CALICO_IPV4POOL_IPIP 参数。设置为 “CrossSubnet” 表示启用 IPIP 模式，且IPIP 模式的隧道可以跨越多个子网，而不仅仅是在同一子网内（子网值物理机网络）。这有助于支持更大规模的Kubernetes 网络，其中节点分布在多个子网中。</p>
 </div>
 <h2 id="配置vxlan模式">配置VXLAN模式</h2>
@@ -484,8 +484,8 @@
 <p>2、Calico：是一个完全基于BGP协议的CNI插件，可以实现高性能和高扩展性的网络功能。Calico使用了IPIP、BGP和VXLAN技术，可以轻松扩展网络规模。它还支持网络安全策略、网络流量策略和网络监控等功能。</p>
 <p>3、Weave Net：是一个简单易用的CNI插件，使用虚拟路由和Overlay网络实现容器之间的通信和隔离。它提供了一种快速、可靠和可扩展的解决方案，并支持多云环境。</p>
 <p>4、Cilium：是一个支持L3、L4和L7网络安全的CNI插件，具有网络和安全功能集成，使用eBPF技术，可以实现更好的性能和可观测性。</p>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">提示</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">提示</p>
 <p>对于小规模的Kubernetes集群，Flannel和Weave Net比较适合，而对于大规模的集群，Calico、Cilium则是一个更好的选择。</p>
 </div>
     </div>

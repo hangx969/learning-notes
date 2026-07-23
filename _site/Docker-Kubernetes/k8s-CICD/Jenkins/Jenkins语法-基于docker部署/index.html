@@ -783,8 +783,8 @@
 <p>如何找到都支持哪些parameters？去pipeline - Configure - Pipeline - Pipeline Syntax就会进入一个语法生成器页面，在第二个‘<strong>Declarative Directive Generator</strong>’里面，Sample Directive - parameters: Parameters就能看到各种支持的parameter以及类型了。</p>
 <h4 id="triggers">triggers</h4>
 <p>在Pipeline中可以用Triggers实现自动触发流水线，可以通过Webhook、Cron、pollSCM、upstream等方式触发流水线。</p>
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">注意</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">注意</p>
 <p>一般情况下triggers不会在pipeline中写，一般在界面中去配置。因为很多情况下pipeline是一个模板，针对不同的服务。一般是对每个job在ui上设置触发器。</p>
 </div>
 <p>示例：</p>

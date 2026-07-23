@@ -327,8 +327,8 @@ kubectl<span class="w"> </span>annotate<span class="w"> </span>secrets<span clas
 kubectl<span class="w"> </span>annotate<span class="w"> </span>secrets<span class="w"> </span>oauth2-proxy-redis<span class="w"> </span>-n<span class="w"> </span>oauth2-proxy<span class="w"> </span><span class="s2">&quot;meta.helm.sh/release-namespace&quot;</span><span class="o">=</span><span class="s2">&quot;oauth2-proxy&quot;</span>
 </code></pre></div>
 
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">sessionStorage负责认证状态维护</p></p>
+<div class="callout callout-info">
+<p class="callout-title">sessionStorage负责认证状态维护</p>
 <p><code>yaml
 sessionStorage:
   type: redis     # 使用 Redis 存储用户会话状态

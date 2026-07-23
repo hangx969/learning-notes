@@ -104,8 +104,8 @@
 <h2 id="nat网关">NAT网关</h2>
 <p>网络地址转换器，提供NAT代理：==SNAT（出）、DNAT（入）==能力。<br />
 阿里云NAT网关分为 公网NAT网关 和 VPC NAT网关。</p>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">使用场景</p></p>
+<div class="callout callout-info">
+<p class="callout-title">使用场景</p>
 <ul>
 <li>云上机器只想主动访问公网，不想暴露在公网上。</li>
 <li>业务具有突增的公网访问需求，用公网NAT网关实现灵活弹性扩容。</li>
@@ -116,8 +116,8 @@
 <li><strong>SNAT</strong>：内部 <a class="wikilink" href="../../../Aliyun/%E8%AE%A1%E7%AE%97/ECS/">ECS</a> 访问外部</li>
 <li><strong>DNAT</strong>：将NAT IP地址和端口，映射为内部IP和端口，可以从外部访问到内部服务。</li>
 </ul>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">推荐</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">推荐</p>
 <p>DNAT 一般仅用于单台机器简单服务，外访问内推荐使用 <a class="wikilink" href="../../../Aliyun/%E7%BD%91%E7%BB%9C/%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1SLB/">SLB</a>。</p>
 </div>
 <h3 id="创建">创建</h3>
@@ -128,8 +128,8 @@
 - <strong>ECS弹性网卡粒度</strong><br />
 - <strong>自定义网段粒度</strong></p>
 <p>可以精细化指定哪些机器可以走NAT访问公网。</p>
-<p><div class="callout callout-note" markdown="1"><br />
-<p class="callout-title">多IP场景</p></p>
+<div class="callout callout-note">
+<p class="callout-title">多IP场景</p>
 <p>可以指定NAT出公网的IP是单IP还是多IP。多IP情况下，阿里云会通过哈希算法分配到某个IP上。</p>
 </div>
 <hr />
@@ -139,8 +139,8 @@
 - NAT网关带宽包中的公网IP<br />
 - 公网负载均衡实例的公网IP<br />
 - VPN网关也有自己的公网IP</p>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">灵活应对波峰波谷</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">灵活应对波峰波谷</p>
 <p>可以将EIP加入到共享带宽和共享流量包中。</p>
 </div>
 <table>
@@ -197,8 +197,8 @@
 <p>共享带宽是独立的带宽产品，可以将EIP添加到共享带宽包，这些EIP会同时享用带宽包中的带宽。可以将EIP绑定到ECS、NAT、CLB等。</p>
 <p>共享带宽支持包年包月和按量计费。<br />
 共享带宽包还提供 <mark>95计费模式</mark>，提供不限值峰值带宽。适用于突增峰值类型的流量，按实际使用带宽去突发峰值后计费。</p>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">成本优化建议</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">成本优化建议</p>
 <ul>
 <li>如果EIP较多，并且错峰明显，可以使用共享带宽包节省成本。</li>
 <li>对于经常有突发峰值的业务，可以选择95计费。</li>
@@ -208,15 +208,15 @@
 <hr />
 <h2 id="vpn网关">VPN网关</h2>
 <p>建立加密隧道，实现本地数据中心、企业办公网、互联网客户端连接到阿里云 <a class="wikilink" href="../../../Aliyun/%E7%BD%91%E7%BB%9C/VPC/">VPC</a> 的私网连接。</p>
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">限制</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">限制</p>
 <p>仅支持==非跨境连接==，不支持跨境连接。（跨境连接需要用 <a class="wikilink" href="../../../Aliyun/%E7%BD%91%E7%BB%9C/CEN-TR/">CEN</a>）</p>
 </div>
 <p>提供IPSec-VPN和SSL-VPN两种方式：<br />
 - <strong>IPSec-VPN</strong>：本地数据中心做配置，可以连接到阿里云VPC<br />
 - <strong>SSL-VPN</strong>：互联网客户端连接阿里云VPC</p>
-<p><div class="callout callout-note" markdown="1"><br />
-<p class="callout-title">连接模式区别</p></p>
+<div class="callout callout-note">
+<p class="callout-title">连接模式区别</p>
 <ul>
 <li><strong>IPSec-VPN连接</strong>：==Site-to-Site==连接，服务端和客户端都要做配置</li>
 <li><strong>SSL-VPN连接</strong>：==Point-to-Site==连接，不需要配置客户端网关，终端直接接入</li>
@@ -226,29 +226,29 @@
 <p>基于路由的网络连接技术，适用于企业本地数据中心或企业办公网络与VPC之间建立Site-to-Site的网络连接。</p>
 <h4 id="双隧道模式与主备模式">双隧道模式与主备模式</h4>
 <p>阿里云的IPSec-VPN是==双隧道模式==，一个IPSec-VPN连接下包含主备两条隧道，两条隧道分布在不同的可用区，实现高可用。</p>
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">要求</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">要求</p>
 <p>必须有两个不同可用区的虚拟交换机，也就是说，如果连接的是线下IDC，必须要求IDC有==两个本地网关==才能建立双隧道。对于已经建立双隧道模式的连接，默认就是主备模式了。</p>
 </div>
 <h4 id="实操">实操</h4>
 <p>阿里云Portal上 - VPN - IPSec连接：可选连接到两种资源：<br />
 - <strong>云企业网</strong>：本地网关设备连接到 <a class="wikilink" href="../../../Aliyun/%E7%BD%91%E7%BB%9C/CEN-TR/">CEN</a> 的TR上。<br />
 - <strong>VPN网关</strong>：需要先创建一个，并且绑定一个VPC</p>
-<p><div class="callout callout-example" markdown="1"><br />
-<p class="callout-title">场景一：上海VPC连接北京VPC</p></p>
+<div class="callout callout-example">
+<p class="callout-title">场景一：上海VPC连接北京VPC</p>
 <ul>
 <li>上海创建一个VPN网关，再创建一个用户网关；北京创建一个VPN网关，再创建一个用户网关。</li>
 <li>上海创建IPSec连接，北京创建IPSec连接，上海的配置好了复制PSK，创建北京的IPSec的时候填进去。显示第二阶段协商成功就连接好了。</li>
 <li>两个VPC中的ECS互联，需要两端都配置路由表，告诉目的地址怎么过去。</li>
 </ul>
 </div>
-<p><div class="callout callout-example" markdown="1"><br />
-<p class="callout-title">场景二：IDC连接VPC</p></p>
+<div class="callout callout-example">
+<p class="callout-title">场景二：IDC连接VPC</p>
 <p>创建VPN网关、用户网关，把配置给线下IDC，他们配好连接就行。</p>
 </div>
 <h4 id="私网vpn网关">私网VPN网关</h4>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">前提</p></p>
+<div class="callout callout-info">
+<p class="callout-title">前提</p>
 <p>本地数据中心已经和VPC之间建立了物理专线，那么就可以用IPSec连接，实现物理专线==私网流量加密通信==。</p>
 </div>
 <h4 id="连接到tr">连接到TR</h4>
@@ -260,16 +260,16 @@
 <hr />
 <h2 id="高速通道专线">高速通道（专线）</h2>
 <p>阿里云高速通道（Express Connect）可在本地数据中心IDC（Internet Data Center）和云上专有网络VPC间建立==高速、稳定、安全==的私网通信。</p>
-<p><div class="callout callout-summary" markdown="1"><br />
-<p class="callout-title">产品优势</p></p>
+<div class="callout callout-summary">
+<p class="callout-title">产品优势</p>
 <p><strong>高速互通、稳定可靠、安全、按需购买。</strong></p>
 </div>
 <h3 id="vbr">VBR</h3>
 <p>==VBR（边界路由器）==是本地CPE（Customer Premises Equipment）和VPC之间的路由器，作为桥梁。</p>
 <p>高速通道产品由：<strong>物理专线</strong>和<strong>边界路由器</strong>组成。<br />
 物理专线的一端连接您本地IDC的网关设备，另一端连接高速通道的边界路由器VBR（Virtual Border Router）。</p>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">接入方式</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">接入方式</p>
 <p>将VBR和要访问的阿里云VPC加入同一个 <a class="wikilink" href="../../../Aliyun/%E7%BD%91%E7%BB%9C/CEN-TR/">云企业网</a> 后，本地IDC便可访问阿里云VPC内的全部资源。</p>
 </div>
 <h3 id="物理专线与vpn对比">物理专线与VPN对比</h3>

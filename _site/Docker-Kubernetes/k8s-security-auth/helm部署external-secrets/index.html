@@ -687,8 +687,8 @@ vault<span class="w"> </span>write<span class="w"> </span>auth/kubernetes/config
 <li>失败次数连续 N 次 → 触发告警</li>
 <li><code>kubectl describe externalsecret</code> 查看事件和同步状态</li>
 </ul>
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">refreshInterval 设置</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">refreshInterval 设置</p>
 <p>过短会导致后端 API 速率限制（rate limiting），建议生产环境 ≥ 1h，非敏感场景 ≥ 5m。</p>
 </div>
 <h1 id="与其他密钥管理方案对比">与其他密钥管理方案对比</h1>
@@ -728,8 +728,8 @@ vault<span class="w"> </span>write<span class="w"> </span>auth/kubernetes/config
 </tr>
 </tbody>
 </table>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">可组合使用</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">可组合使用</p>
 <p>ESO 负责"拉取 + 生成 Secret"，应用以 env 或文件消费。若需要文件形式 + 不进入 etcd，可结合 CSI Secret Store Driver。</p>
 </div>
 <h1 id="生产落地路线">生产落地路线</h1>

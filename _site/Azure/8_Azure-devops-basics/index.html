@@ -188,8 +188,8 @@
 <li>Reports results.</li>
 </ul>
 <h3 id="timeouts">Timeouts</h3>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">Info</p></p>
+<div class="callout callout-info">
+<p class="callout-title">Info</p>
 <ul>
 <li>每个job有timeout超时时间，未能完成就会被server cancel掉。这时就会进入到cancel timeout时间，在这个时间内，agent没能cancel完成，server直接标记job为失败。</li>
 <li>agent每分钟向server报告一次心跳，五次心跳没接收到，server就认为agent下线，其上的job标记为失败。</li>
@@ -227,8 +227,8 @@
 <li>https://learn.microsoft.com/en-us/azure/devops/pipelines/security/overview?view=azure-devops</li>
 </ul>
 </blockquote>
-<p><div class="callout callout-important" markdown="1"><br />
-<p class="callout-title">Important</p></p>
+<div class="callout callout-important">
+<p class="callout-title">Important</p>
 <p>ado中，下列资源属于==protected resources==，每项资源都可以单独被管理，需要user账户被加到Admin Group中：<br />
 - Agent pools<br />
 - Secret variables in variable groups<br />
@@ -258,8 +258,8 @@
 <li><mark>workload identity</mark>： 是推荐的方式，需要在service principal或者managed identity上创建federated secret，让entraID信任devops颁发的token。在相应的scope上授予权限，devops就能用这个身份创建资源。</li>
 <li><mark>secret</mark>： 不推荐，因为client secret需要手动rotation。</li>
 </ol>
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">Warning</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">Warning</p>
 <p>现在我们采用的是service principal+federated secert方式，目前存在一个bug就是service principal - federated secert设置中需要手动把Audience的值从<code>api://AzureADTokenExchangeChina</code>（默认值）改成<code>api://AzureADTokenExchange</code>。否则devops会找不到service principal</p>
 </div>
 <p>与Azure Support沟通后，他们表示这种修改是非标操作，建议更换为workload identity方式。</p>

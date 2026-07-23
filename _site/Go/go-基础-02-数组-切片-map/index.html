@@ -123,8 +123,8 @@
 <hr />
 <h2 id="切片">切片</h2>
 <p>Go 语言切片是对数组的抽象。Go 数组的长度不可改变，在特定场景中这样的集合就不太适用，Go 中提供了一种灵活，功能强悍的内置类型==切片==("动态数组")，与数组相比切片的长度是不固定的，可以追加元素，在追加时可能使切片的容量增大。比方说存放学生成绩，那学生个数是不确定的，这样就可以用切片。</p>
-<p><div class="callout callout-important" markdown="1"><br />
-<p class="callout-title">切片的本质</p></p>
+<div class="callout callout-important">
+<p class="callout-title">切片的本质</p>
 <ul>
 <li>切片是数组的一个==引用==，因此切片是==引用类型==，在进行传递时，遵守引用传递的机制。</li>
 <li>切片本质是对数组的一个"轻量级封装"，包含==指向底层数组的指针==、<mark>长度==和==容量</mark>。</li>
@@ -160,8 +160,8 @@
 <span class="p">}</span>
 </code></pre></div>
 
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">切片 vs 数组</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">切片 vs 数组</p>
 <p>Go开发中，绝大多数场景都推荐用==切片==而不是数组，因为切片提供了动态长度和灵活操作的能力。</p>
 </div>
 <h3 id="切片基本使用">切片基本使用</h3>
@@ -287,8 +287,8 @@
 <p>Map 是一种集合，所以我们可以像迭代数组和切片那样迭代它。不过，Map 是==无序==的，我们无法决定它的返回顺序，这是因为 Map 是使用 ==hash 表==来实现的。</p>
 <h3 id="集合声明">集合声明</h3>
 <p>声明：<code>var 变量名 map[keytype]valuetype</code></p>
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">注意</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">注意</p>
 <p>声明是不会分配内存的，初始化需要 <mark>make</mark> 分配内存后才能赋值和使用。<code>变量名 = make(map[keytype]valuetype)</code></p>
 <p>如果不初始化 map，那么就会创建一个 <mark>nil map</mark>。nil map 不能用来存放键值对</p>
 </div>
@@ -367,8 +367,8 @@
 
 <h3 id="安全取值">安全取值</h3>
 <p>如果取到了一个集合中不存在的值，不会报错，而是返回一个空值，所以我们要自己处理这种异常情况，用==双返回值模式（comma ok idiom）==。</p>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">惯用写法</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">惯用写法</p>
 <p>这是 Go 中访问 map 的惯用写法，建议始终使用双返回值模式来安全地检查 key 是否存在。</p>
 </div>
 <div class="highlight"><pre><span></span><code><span class="kn">package</span><span class="w"> </span><span class="nx">main</span>
@@ -403,8 +403,8 @@
 
 <hr />
 <h2 id="深浅拷贝-引用和值">深浅拷贝 - 引用和值</h2>
-<p><div class="callout callout-summary" markdown="1"><br />
-<p class="callout-title">深拷贝 vs 浅拷贝</p></p>
+<div class="callout callout-summary">
+<p class="callout-title">深拷贝 vs 浅拷贝</p>
 <ul>
 <li><strong>深拷贝</strong>：复制一个变量的时候，创建了一个新的变量，并且将原始数据复制给新变量，新变量在内存中是一个新的地址，两个变量修改时不会影响其他变量</li>
 <li><strong>浅拷贝</strong>：复制一个变量时，也会创建一个新的变量，但是两个变量共享底层的数据。也就是新旧变量会指向同一个数据的内存地址。实际上算是引用同一个数据。也就意味着任意一个变量发生变更，其他的也会变。</li>

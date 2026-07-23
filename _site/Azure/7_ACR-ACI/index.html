@@ -153,8 +153,8 @@
 </ul>
 <h3 id="image异地复制区域冗余">image异地复制、区域冗余</h3>
 <p><a href="https://docs.azure.cn/zh-cn/container-registry/container-registry-tutorial-prepare-registry">教程 - 创建异地复制注册表 - Azure Container Registry | Azure Docs</a></p>
-<p><div class="callout callout-important" markdown="1"><br />
-<p class="callout-title">Important</p></p>
+<div class="callout callout-important">
+<p class="callout-title">Important</p>
 <p>需要==Premium==的SKU</p>
 </div>
 <h3 id="acr-任务">ACR 任务</h3>
@@ -195,8 +195,8 @@ docker<span class="w"> </span>login<span class="w"> </span>&lt;registry_name&gt;
 </ul>
 <p><code>bash
   PURGE_CMD="acr purge --filter '*:.*'--untagged --ago 180d --dry-run"</code></p>
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">Warning</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">Warning</p>
 <p>由于删除的image无法恢复，请在删除前使用<code>--dry-run</code>参数来查看可能被删除的数据。</p>
 </div>
 <h3 id="troubleshooting">Troubleshooting</h3>

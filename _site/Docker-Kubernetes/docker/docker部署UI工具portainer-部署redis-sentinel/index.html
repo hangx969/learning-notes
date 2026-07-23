@@ -446,8 +446,8 @@ tee<span class="w"> </span>sentinel3.conf<span class="w"> </span><span class="s"
 <span class="s">EOF</span>
 </code></pre></div>
 
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">master节点IP地址来源</p></p>
+<div class="callout callout-info">
+<p class="callout-title">master节点IP地址来源</p>
 <p>将master节点命名为redis-master,然后网络配置为172.19.0.2这个值是从哪里来的呢?</p>
 <ul>
 <li>我们点击redis-master即redis主节点容器管理界面,在ip address一栏看到master节点的容器ip地址,因为哨兵节点和主从节点都处于redis-sentinel这个网络中,所以172.19.0.x这个网络是互通的,在bridge模式下配置这个ip地址是完全没有问题的。</li>

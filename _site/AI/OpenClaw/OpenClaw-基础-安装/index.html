@@ -243,8 +243,8 @@ npm<span class="w"> </span>install<span class="w"> </span>-g<span class="w"> </s
 </code></pre></div>
 
 <p>由于要安装几百个依赖，所以还是需要等待一段时间。</p>
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">Docker/K8s 安装注意</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">Docker/K8s 安装注意</p>
 <p>也可以用 Docker/K8s 安装，但是由于 OpenClaw 的很多组件是需要数据持久化的，如果没有配置正确存储的话，重启容器/Pod，数据就丢失了。</p>
 </div>
 <h2 id="openclaw引导配置">OpenClaw引导配置</h2>
@@ -311,8 +311,8 @@ sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> <
 npm<span class="w"> </span>install<span class="w"> </span>-g<span class="w"> </span>openclaw@v2026.3.2
 </code></pre></div>
 
-<p><div class="callout callout-bug" markdown="1"><br />
-<p class="callout-title">已知问题（2026.03.10）</p></p>
+<div class="callout callout-bug">
+<p class="callout-title">已知问题（2026.03.10）</p>
 <p>用 <code>npm install -g openclaw@latest</code> 安装时可能报错：<br />
 <code>git@github.com: Permission denied (publickey).
 fatal: Could not read from remote repository.</code><br />
@@ -383,8 +383,8 @@ git<span class="w"> </span>config<span class="w"> </span>--global<span class="w"
 <div class="highlight"><pre><span></span><code>openclaw<span class="w"> </span>configure
 </code></pre></div>
 
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">配置文件路径</p></p>
+<div class="callout callout-info">
+<p class="callout-title">配置文件路径</p>
 <p>OpenClaw 的所有配置都是以文件的形式保存在用户家目录中的 <code>.openclaw</code> 目录下。后面的配置修改都建议修改配置文件或者用命令行修改。</p>
 </div>
 <ul>

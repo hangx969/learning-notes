@@ -340,8 +340,8 @@
 </li>
 </ul>
 <p><img alt="image-20240105164157769" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202401051641038.png" /></p>
-<p><div class="callout callout-note" markdown="1"><br />
-<p class="callout-title">EFK vs ELK区别</p></p>
+<div class="callout callout-note">
+<p class="callout-title">EFK vs ELK区别</p>
 <ul>
 <li>EFK和ELK,区别就在于中间的日志收集组件F(fluentd或filebeat)vs L(logstash)</li>
 <li>F是轻量级的;L是重量级的,logstash本身占用内存就很大,如果拿它来采集日志会占用很多资源。优点是日志格式转换功能很强大。</li>
@@ -369,8 +369,8 @@
 <p><strong>Filebeat(采集)—&gt; Kafka/Redis(消峰) —&gt; Logstash(聚合、处理)—&gt; ElasticSearch (存储)—&gt; Kibana (展示)</strong></p>
 </li>
 </ul>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">Tip</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">Tip</p>
 <p>前三种方案可能会在日志量大的时候产生延迟,所以第四种方案加了消息队列做缓冲,适合大量日志情形(每天上TB的日志)</p>
 </div>
 <h2 id="组件介绍">组件介绍</h2>
@@ -650,8 +650,8 @@ systemctl<span class="w"> </span>restart<span class="w"> </span>nfs
 <span class="w">  </span><span class="nt">apiGroup</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">rbac.authorization.k8s.io</span>
 </code></pre></div>
 
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">k8s 1.20+版本nfs provisioner报错</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">k8s 1.20+版本nfs provisioner报错</p>
 <p>k8s1.20+版本通过nfs provisioner动态生成pv会报错: Unexpected error getting claim reference to claim "default/test-claim1": selfLink was empty, can't make reference,报错原因是1.20版本启用了selfLink,解决方法如下;</p>
 <ul>
 <li>vim /etc/kubernetes/manifests/kube-apiserver.yaml</li>

@@ -151,8 +151,8 @@
 <span class="n">func</span><span class="p">({</span><span class="n">name</span><span class="p">:</span><span class="s1">&#39;alice&#39;</span><span class="p">,</span><span class="n">age</span><span class="p">:</span><span class="s1">&#39;10&#39;</span><span class="p">})</span>
 </code></pre></div>
 
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">传参顺序</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">传参顺序</p>
 <p>传参的时候,args要在kwargs前面,否则会报错。</p>
 </div>
 <p>相关内容参见 <a class="wikilink" href="../../../Python/python-%E5%9F%BA%E7%A1%80/python-QA/#函数参数-args-和-kwargs-的区别">QA - <em>args 和 </em>*kwargs</a></p>
@@ -211,8 +211,8 @@
 <span class="nb">print</span><span class="p">(</span><span class="n">triple</span><span class="p">(</span><span class="mi">5</span><span class="p">))</span> <span class="c1"># Output: 15</span>
 </code></pre></div>
 
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">闭包的定义</p></p>
+<div class="callout callout-info">
+<p class="callout-title">闭包的定义</p>
 <p>这种方式也称为==闭包==,闭包的特性是:内部函数可以引用并记住外部函数的变量,即使外部函数已经执行完毕。在这个示例中,每次调用<code>make_multiplier</code>都生成了一个新的<code>multiplier_func</code>实例,并将<code>multiplier</code>的参数值绑定到该实例上。</p>
 </div>
 <hr />
@@ -220,8 +220,8 @@
 <p>闭包是一种强大的编程工具,适用于以下场景或情况:</p>
 <h4 id="1-需要保存函数的上下文状态">1. 需要保存函数的上下文状态</h4>
 <p>闭包可以"记住"外部函数的变量,即使外部函数已经执行完毕。这在需要保存某些状态或上下文信息时非常有用。例如:</p>
-<p><div class="callout callout-example" markdown="1"><br />
-<p class="callout-title">任务调度器</p></p>
+<div class="callout callout-example">
+<p class="callout-title">任务调度器</p>
 <p>根据不同的策略生成特定的任务函数,并在后续调用时执行。<br />
 ```python<br />
 def make_command_executor(server_name):<br />
@@ -239,8 +239,8 @@ print(result1)</p>
 print(result2)<br />
 ```</p>
 </div>
-<p><div class="callout callout-example" markdown="1"><br />
-<p class="callout-title">计数器</p></p>
+<div class="callout callout-example">
+<p class="callout-title">计数器</p>
 <p>实现一个计数器函数,每次调用时返回递增的值。<br />
 ```python<br />
 def make_counter():<br />

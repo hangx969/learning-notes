@@ -396,8 +396,8 @@ rm<span class="w"> </span>nfs-test.txt
 <div class="highlight"><pre><span></span><code>helm<span class="w"> </span>install<span class="w"> </span>nfs-subdir-external-provisioner<span class="w"> </span>nfs-subdir-external-provisioner/nfs-subdir-external-provisioner<span class="w"> </span>--set<span class="w"> </span>storageClass.name<span class="o">=</span>nfs-sc<span class="w"> </span>--set<span class="w"> </span>nfs.server<span class="o">=</span><span class="m">192</span>.168.40.180<span class="w"> </span>--set<span class="w"> </span>nfs.path<span class="o">=</span>/data/k8s<span class="w"> </span>-n<span class="w"> </span>nfs-system
 </code></pre></div>
 
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">参数说明</p></p>
+<div class="callout callout-info">
+<p class="callout-title">参数说明</p>
 <ul>
 <li><code>--set storageClass.name=nfs-sc</code>：指定 storageClass 的名字 </li>
 <li><code>--set nfs.server=192.168.40.180</code>：指定 NFS 服务器的地址 </li>
@@ -486,8 +486,8 @@ tar<span class="w"> </span>xvf<span class="w"> </span>nfs-subdir-external-provis
 <div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>test-nfs-pod<span class="w"> </span>-n<span class="w"> </span>nfs-system<span class="w"> </span>--<span class="w"> </span>df<span class="w"> </span>-h
 </code></pre></div>
 
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">NFS存储注意事项</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">NFS存储注意事项</p>
 <ul>
 <li>在输出结果中我们可以看到挂载的 NFS 存储的可用空间是大于PVC中分配的 1G。</li>
 <li>实际测试写入2G 的数据量，已经超过了我们创建的 PVC 1G 的限制。因此，要特别注意，使用 NFS 存储时无法限制存储使用量。 </li>

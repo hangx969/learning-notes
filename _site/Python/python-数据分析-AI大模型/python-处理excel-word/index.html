@@ -110,8 +110,8 @@
 <h1 id="python处理excel与word文档">Python处理Excel与Word文档</h1>
 <h2 id="excel表格操作">Excel表格操作</h2>
 <h3 id="安装">安装</h3>
-<p><div class="callout callout-important" markdown="1"><br />
-<p class="callout-title">依赖安装</p></p>
+<div class="callout callout-important">
+<p class="callout-title">依赖安装</p>
 <p>需要安装 <mark>pandas</mark> 和 <mark>openpyxl</mark></p>
 </div>
 <div class="highlight"><pre><span></span><code>pip3<span class="w"> </span>install<span class="w"> </span>-i<span class="w"> </span>https://pypi.tuna.tsinghua.edu.cn/simple<span class="w"> </span>pandas
@@ -120,8 +120,8 @@ pip3<span class="w"> </span>install<span class="w"> </span>-i<span class="w"> </
 
 <hr />
 <h3 id="dataframe和series">DataFrame和Series</h3>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">Series</p></p>
+<div class="callout callout-info">
+<p class="callout-title">Series</p>
 <p><mark>Series</mark> 是 pandas 中的一维数据结构,类似于带标签的数组或字典。</p>
 </div>
 <p>特点:</p>
@@ -137,8 +137,8 @@ pip3<span class="w"> </span>install<span class="w"> </span>-i<span class="w"> </
 <li>支持快速的数据访问和操作</li>
 <li>可以进行数学运算、统计分析等</li>
 </ul>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">DataFrame</p></p>
+<div class="callout callout-info">
+<p class="callout-title">DataFrame</p>
 <p><mark>DataFrame</mark> 是 pandas 中的二维数据结构,可以理解为多个 Series 的集合。</p>
 </div>
 <p>特点:</p>
@@ -172,8 +172,8 @@ pip3<span class="w"> </span>install<span class="w"> </span>-i<span class="w"> </
 
 <hr />
 <h3 id="分析表格数据">分析表格数据</h3>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">常用分析方法</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">常用分析方法</p>
 <ul>
 <li><mark>groupby()</mark> 分组聚合</li>
 <li><mark>sort_values()</mark> 排序</li>
@@ -220,8 +220,8 @@ pip3<span class="w"> </span>install<span class="w"> </span>-i<span class="w"> </
 
 <hr />
 <h4 id="绘图">绘图</h4>
-<p><div class="callout callout-example" markdown="1"><br />
-<p class="callout-title">柱状图绘制</p></p>
+<div class="callout callout-example">
+<p class="callout-title">柱状图绘制</p>
 <p>使用 <mark>matplotlib</mark> 绘制产品销量柱状图,并按总销量降序排列。</p>
 </div>
 <div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">sys</span><span class="o">,</span><span class="w"> </span><span class="nn">io</span>
@@ -270,8 +270,8 @@ pip3<span class="w"> </span>install<span class="w"> </span>-i<span class="w"> </
 
 <hr />
 <h3 id="绘制折线图">绘制折线图</h3>
-<p><div class="callout callout-example" markdown="1"><br />
-<p class="callout-title">折线图绘制</p></p>
+<div class="callout callout-example">
+<p class="callout-title">折线图绘制</p>
 <p>按日期统计销量趋势,使用 <mark>pd.to_datetime()</mark> 转换日期格式。</p>
 </div>
 <div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">sys</span><span class="o">,</span><span class="w"> </span><span class="nn">io</span>
@@ -312,8 +312,8 @@ pip3<span class="w"> </span>install<span class="w"> </span>-i<span class="w"> </
 
 <hr />
 <h2 id="word文件处理">Word文件处理</h2>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">python-docx库</p></p>
+<div class="callout callout-info">
+<p class="callout-title">python-docx库</p>
 <ul>
 <li><mark>docx</mark> 是一个操作 Word 文档的库,提供了创建、读取和修改 <code>.docx</code> 文件的功能。</li>
 <li><mark>Document</mark> 是文档操作的核心类,用于创建和操作 Word 文档对象。</li>
@@ -440,8 +440,8 @@ pip3<span class="w"> </span>install<span class="w"> </span>-i<span class="w"> </
 
 <hr />
 <h3 id="生成性能趋势报告">生成性能趋势报告</h3>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">图表嵌入Word</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">图表嵌入Word</p>
 <p>使用 <mark>docx.shared.Inches</mark> 控制 Word 中图片的大小。</p>
 </div>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">docx</span><span class="w"> </span><span class="kn">import</span> <span class="n">Document</span>

@@ -94,8 +94,8 @@
 <li><a href="https://mp.weixin.qq.com/s?__biz=MzAwMDQyOTcwOA==&amp;mid=2247485728&amp;idx=1&amp;sn=d4bb3891dd1ccb855cbc94beeb55410a&amp;chksm=9ae852c3ad9fdbd509e2496aad06e2c3aec731d5586be9d95ce85f0bbef6a1ba6127bf02565a&amp;cur_album_id=3097728928959414276&amp;scene=189#wechat_redirect">nvidia-smi 使用说明</a></li>
 </ul>
 <h1 id="环境配置">环境配置</h1>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">不同环境的 GPU 配置要求</p></p>
+<div class="callout callout-info">
+<p class="callout-title">不同环境的 GPU 配置要求</p>
 <ul>
 <li>对于裸机环境，只需要安装对应的 GPU Driver 以及 CUDA Toolkit。</li>
 <li>对于 Docker 环境，需要额外安装 nvidia-container-toolkit 并配置 docker 使用 nvidia runtime。</li>
@@ -220,8 +220,8 @@ python3<span class="w"> </span>check_cuda_pytorch.py
 <ul>
 <li>NVIDIA Container Toolkit 的主要作用是将 NVIDIA GPU 设备挂载到容器中。</li>
 </ul>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">兼容性</p></p>
+<div class="callout callout-info">
+<p class="callout-title">兼容性</p>
 <p>兼容生态系统中的任意容器运行时，docker、containerd、cri-o 等。</p>
 </div>
 <ul>
@@ -387,8 +387,8 @@ docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </
 <ul>
 <li>需要在节点上安装 GPU Driver、Container Toolkit 等组件，当集群规模较大时还是比较麻烦的。为了解决这个问题，NVIDIA 推出了 GPU Operator，旨在简化在 Kubernetes 环境中使用 GPU 的过程，通过自动化的方式处理 GPU 驱动程序安装、Controller Toolkit、Device-Plugin 、监控等组件。<a href="https://github.com/NVIDIA/gpu-operator">NVIDIA/gpu-operator (GitHub)</a></li>
 </ul>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">GPU Operator 优势</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">GPU Operator 优势</p>
 <p>基本上把需要手动安装、配置的地方全部自动化处理了，极大简化了 k8s 环境中的 GPU 使用。<br />
 注：只有 NVIDIA GPU 可以使用，其他厂家现在基本还是手动安装。</p>
 </div>
@@ -459,8 +459,8 @@ docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </
 <p>最后的 exporter 则是采集 GPU 监控并以 Prometheus Metrics 格式暴露，用于做 GPU 监控。</p>
 </li>
 </ul>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">自动化</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">自动化</p>
 <p>这些组件基本就把需要手动配置的东西都自动化了。</p>
 </div>
 <p>NVIDIA GPU Operator 依如下的顺序部署各个组件，并且如果前一个组件部署失败，那么其后面的组件将停止部署：</p>

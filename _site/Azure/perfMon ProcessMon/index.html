@@ -89,8 +89,8 @@
     </p>
     <div class="article-body">
 <h1 id="perfmon-processmon">PerfMon &amp; ProcessMon</h1>
-<p><div class="callout callout-summary" markdown="1"><br />
-<p class="callout-title">Windows performance monitoring and process tracing tools</p></p>
+<div class="callout callout-summary">
+<p class="callout-title">Windows performance monitoring and process tracing tools</p>
 <p>Used alongside <a class="wikilink" href="../../Azure/IO-monitor/">IO Monitor</a> tools for disk benchmarking and troubleshooting on <a class="wikilink" href="../../Azure/5_Azure-Storage/">Azure Storage</a>.</p>
 </div>
 <hr />
@@ -98,8 +98,8 @@
 <p>Download - https://docs.microsoft.com/en-us/sysinternals/downloads/procmon</p>
 <p><img alt="image-20231030172435694" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202310301724780.png" /></p>
 <h3 id="lab">Lab</h3>
-<p><div class="callout callout-example" markdown="1"><br />
-<p class="callout-title">Disk Benchmarking Lab with PerfMon</p></p>
+<div class="callout callout-example">
+<p class="callout-title">Disk Benchmarking Lab with PerfMon</p>
 <p>The instructor will provide the following instructions:</p>
 <ol>
 <li>Attach <mark>4 Data Disks</mark> (Standard_SSD) on a Windows VM (<mark>A2_v2</mark> size), 32 GiB each.</li>
@@ -111,8 +111,8 @@
 diskspd.exe<span class="w"> </span>-c1024M<span class="w"> </span>-d10<span class="w"> </span>-W5<span class="w"> </span>-o1<span class="w"> </span>-t4<span class="w"> </span>-b8k<span class="w"> </span>-r<span class="w"> </span>-Sh<span class="w"> </span>-L<span class="w"> </span>f:<span class="se">\t</span>est.dat
 </code></pre></div>
 
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">评估差异</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">评估差异</p>
 <ul>
 <li>Evaluate the differences in terms of <mark>IOPS</mark> and <mark>avg latency</mark></li>
 <li>Repeat the exercise by increasing the <code>-o</code> value from <code>-o1</code> to <code>-o16</code> and <code>-o32</code>: can you see the difference?</li>

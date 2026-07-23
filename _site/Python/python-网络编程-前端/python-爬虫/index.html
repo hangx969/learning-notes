@@ -109,8 +109,8 @@
     <div class="article-body">
 <h1 id="python爬虫">Python爬虫</h1>
 <p><mark>爬虫</mark>(Web Scraping / Web Crawling)是一种自动化程序,按照特定规则从网络上抓取信息。</p>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">工作原理</p></p>
+<div class="callout callout-info">
+<p class="callout-title">工作原理</p>
 </div>
 <ol>
 <li>发送请求:向目标网站发送HTTP请求。</li>
@@ -118,8 +118,8 @@
 <li>解析数据:使用解析库(如==BeautifulSoup==、lxml)提取所需数据。</li>
 <li>存储数据:将提取的数据存储到本地文件、数据库等。</li>
 </ol>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">常用工具与库</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">常用工具与库</p>
 </div>
 <ul>
 <li><mark>Requests</mark>:用于发送HTTP请求。</li>
@@ -167,8 +167,8 @@
 </table>
 <hr />
 <h2 id="反爬虫">反爬虫</h2>
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">反爬虫机制</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">反爬虫机制</p>
 <p>反爬虫是网站采用的一系列技术和策略,以防止爬虫抓取其数据。</p>
 </div>
 <p>常见反爬虫技术:</p>
@@ -241,8 +241,8 @@
 
 <hr />
 <h2 id="突破反爬限制">突破反爬限制</h2>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">常用突破方法</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">常用突破方法</p>
 </div>
 <ol>
 <li><mark>IP 代理池</mark>:使用代理 IP 进行请求,避免频繁使用同一 IP。可以使用免费的代理服务,或购买代理服务来确保可用性和速度。</li>
@@ -318,8 +318,8 @@ pip3<span class="w"> </span>install<span class="w"> </span>-i<span class="w"> </
 <div class="highlight"><pre><span></span><code><span class="n">pip3</span> <span class="n">install</span> <span class="o">-</span><span class="n">i</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">pypi</span><span class="o">.</span><span class="n">tuna</span><span class="o">.</span><span class="n">tsinghua</span><span class="o">.</span><span class="n">edu</span><span class="o">.</span><span class="n">cn</span><span class="o">/</span><span class="n">simple</span> <span class="n">beautifulsoup4</span>
 </code></pre></div>
 
-<p><div class="callout callout-example" markdown="1"><br />
-<p class="callout-title">爬取li标签并保存到CSV</p></p>
+<div class="callout callout-example">
+<p class="callout-title">爬取li标签并保存到CSV</p>
 </div>
 <div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">bs4</span><span class="w"> </span><span class="kn">import</span> <span class="n">BeautifulSoup</span>
@@ -361,8 +361,8 @@ pip3<span class="w"> </span>install<span class="w"> </span>-i<span class="w"> </
 
 <hr />
 <h3 id="爬取github上的devops项目">爬取GitHub上的DevOps项目</h3>
-<p><div class="callout callout-summary" markdown="1"><br />
-<p class="callout-title">需求</p></p>
+<div class="callout callout-summary">
+<p class="callout-title">需求</p>
 <p>从 GitHub API 获取与"DevOps"相关的项目信息,并将这些信息输出到控制台和保存到文件中。</p>
 </div>
 <div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">requests</span> <span class="c1"># 发送http请求</span>
@@ -487,8 +487,8 @@ pip3<span class="w"> </span>install<span class="w"> </span>-i<span class="w"> </
 <hr />
 <h2 id="网站爬虫协议robotstxt">网站爬虫协议robots.txt</h2>
 <h3 id="什么是robotstxt协议">什么是robots.txt协议</h3>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">robots.txt简介</p></p>
+<div class="callout callout-info">
+<p class="callout-title">robots.txt简介</p>
 <p><mark>robots.txt</mark> 是一种用于网站的标准文件,称为 <strong>"机器人排除标准"</strong>(Robots Exclusion Protocol,简称 REP)。<br />
 它是网站管理员用来告诉搜索引擎爬虫(如 Googlebot)或其他网络爬虫,哪些页面或资源可以被抓取,哪些不可以被抓取。<br />
 该文件通常位于网站的根目录下,访问路径为:<br />
@@ -545,8 +545,8 @@ https://example.com/robots.txt</code></p>
    Allow: /public/</code></p>
 <hr />
 <h4 id="robotstxt的局限性">robots.txt的局限性</h4>
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">注意事项</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">注意事项</p>
 </div>
 <ol>
 <li><strong>非强制性</strong>:</li>
@@ -589,8 +589,8 @@ https://example.com/robots.txt</code></p>
    但在抓取前,建议与网站管理员沟通,确保不会违反法律或道德规范。</p>
 <hr />
 <h3 id="总结">总结</h3>
-<p><div class="callout callout-summary" markdown="1"><br />
-<p class="callout-title">robots.txt要点</p></p>
+<div class="callout callout-summary">
+<p class="callout-title">robots.txt要点</p>
 <ul>
 <li><strong>robots.txt</strong> 是一种用于限制爬虫行为的协议,帮助网站管理员管理爬虫访问。</li>
 <li>它通过简单的规则指定哪些路径可以被抓取,哪些不能。</li>

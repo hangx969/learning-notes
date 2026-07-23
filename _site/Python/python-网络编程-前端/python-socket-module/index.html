@@ -110,16 +110,16 @@
 <h1 id="python-socket模块">Python Socket模块</h1>
 <h2 id="介绍">介绍</h2>
 <p><mark>socket</mark> 模块是 Python 标准库,专门用于网络通信的套接字编程。套接字是进行网络通信的端点,通过它可以在网络中发送和接收数据。它在实现网络应用程序时起到关键作用,支持多种网络协议,包括传输控制协议(<mark>TCP</mark>)和用户数据报协议(<mark>UDP</mark>)。</p>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">套接字的基本概念</p></p>
+<div class="callout callout-info">
+<p class="callout-title">套接字的基本概念</p>
 </div>
 <ul>
 <li><strong>套接字(Socket)</strong>:在客户端和服务器之间进行通信的端点。每个套接字都有一个唯一的 IP 地址和端口号组合,标识网络中的特定服务。</li>
 <li><strong>IP 地址</strong>:用于标识网络中的设备。可以是 IPv4 或 IPv6 格式。</li>
 <li><strong>端口号</strong>:用于标识特定的应用程序或服务。常用的端口号如 <mark>80</mark>(HTTP)和 <mark>443</mark>(HTTPS)</li>
 </ul>
-<p><div class="callout callout-summary" markdown="1"><br />
-<p class="callout-title">客户端-服务器模型</p></p>
+<div class="callout callout-summary">
+<p class="callout-title">客户端-服务器模型</p>
 </div>
 <p><strong>服务器(Server)</strong>:<br />
 - 服务器是一个长期运行的程序,它在特定的<strong>IP地址和端口</strong>上监听来自客户端的请求。<br />
@@ -314,8 +314,8 @@
 <span class="n">sock</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 </code></pre></div>
 
-<p><div class="callout callout-summary" markdown="1"><br />
-<p class="callout-title">双向通信流程</p></p>
+<div class="callout callout-summary">
+<p class="callout-title">双向通信流程</p>
 <ol>
 <li><strong>服务端</strong>:等待客户端连接。连接成功后,服务端向客户端发送"python"。然后等待从客户端接收数据。当接收到客户端发送的数据"Hello from client"时,打印输出。</li>
 <li><strong>客户端</strong>:服务端向客户端发送"python",客户端接收到并打印。客户端向服务端发送"Hello from client",服务端接收并打印。</li>
@@ -324,8 +324,8 @@
 </div>
 <hr />
 <h2 id="案例简易聊天服务器">案例:简易聊天服务器</h2>
-<p><div class="callout callout-summary" markdown="1"><br />
-<p class="callout-title">需求</p></p>
+<div class="callout callout-summary">
+<p class="callout-title">需求</p>
 <p>构建一个简单的聊天服务器,允许多个客户端连接并交换信息。使用 <mark>threading</mark> 实现多线程处理。</p>
 </div>
 <h3 id="服务端">服务端</h3>
@@ -407,8 +407,8 @@
 
 <hr />
 <h2 id="案例创建ftp服务器">案例:创建FTP服务器</h2>
-<p><div class="callout callout-summary" markdown="1"><br />
-<p class="callout-title">需求</p></p>
+<div class="callout callout-summary">
+<p class="callout-title">需求</p>
 <p>创建一个 TCP 服务器,服务器端负责传输文件,而客户端连接到服务器并接收文件。</p>
 </div>
 <h3 id="服务端_1">服务端</h3>
@@ -447,8 +447,8 @@
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Connetion to </span><span class="si">{</span><span class="n">addr</span><span class="si">}</span><span class="s2"> has closed.&quot;</span><span class="p">)</span>
 </code></pre></div>
 
-<p><div class="callout callout-note" markdown="1"><br />
-<p class="callout-title">海象运算符 <code>:=</code></p></p>
+<div class="callout callout-note">
+<p class="callout-title">海象运算符 `:=`</p>
 <p><code>:=</code> 运算符,也称为"海象运算符"(Walrus Operator),是 Python 3.8 引入的一种语法,用于在表达式中进行赋值操作。它允许在一个表达式中同时完成变量赋值和使用赋值结果,从而提高代码的简洁性和可读性。</p>
 <p><strong>赋值与返回值结合</strong>:<br />
 <code>:=</code> 运算符将右侧的值赋给左侧的变量,同时返回赋值的结果。</p>
@@ -469,14 +469,14 @@ while chunk:<br />
 - <strong>条件判断</strong>: 在 <code>if</code> 或 <code>while</code> 中直接使用赋值结果。<br />
 - <strong>列表推导</strong>: 在列表推导中保存中间结果以避免重复计算。</p>
 </div>
-<p><div class="callout callout-example" markdown="1"><br />
-<p class="callout-title">在循环中使用</p></p>
+<div class="callout callout-example">
+<p class="callout-title">在循环中使用</p>
 <p><code>python
 while (data := socket.recv(1024)):
     print(data)</code></p>
 </div>
-<p><div class="callout callout-example" markdown="1"><br />
-<p class="callout-title">在条件判断中使用</p></p>
+<div class="callout callout-example">
+<p class="callout-title">在条件判断中使用</p>
 <p><code>python
 if (result := expensive_function()) &gt; 0:
     print(f"Result is {result}")</code></p>
@@ -511,8 +511,8 @@ if (result := expensive_function()) &gt; 0:
 
 <hr />
 <h2 id="案例创建简单http服务器">案例:创建简单HTTP服务器</h2>
-<p><div class="callout callout-summary" markdown="1"><br />
-<p class="callout-title">需求</p></p>
+<div class="callout callout-summary">
+<p class="callout-title">需求</p>
 <p>实现一个简单的HTTP服务器,可以接收客户端的请求并返回静态网页内容。</p>
 </div>
 <div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">socket</span>

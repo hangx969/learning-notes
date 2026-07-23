@@ -341,8 +341,8 @@
 </ul>
 <p><img alt="image-20231029220956699" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202310292209817.png" /></p>
 <h3 id="更新管理">更新管理</h3>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">说明</p></p>
+<div class="callout callout-info">
+<p class="callout-title">说明</p>
 <p>只有在<code>deploytment.spec.template</code>产生变化之后，deployment才会触发更新，产生新的RS</p>
 </div>
 <ul>
@@ -516,8 +516,8 @@ kubectl<span class="w"> </span>get<span class="w"> </span>rs<span class="w"> </s
 <p>maxSurge == 1</p>
 </li>
 </ol>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">最佳实践</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">最佳实践</p>
 <p>这是我们生产环境提供给用户的默认配置。即”一上一下，先上后下”最平滑原则：1个新版本pod ready（结合readiness）后，才销毁旧版本pod。此配置适用场景是平滑更新、保证服务平稳，但也有缺点，就是太慢了。</p>
 </div>
 <ol>
@@ -722,8 +722,8 @@ ctr<span class="w"> </span>-n<span class="o">=</span>k8s.io<span class="w"> </sp
 <span class="l l-Scalar l-Scalar-Plain">kubectl rollout resume deployment myapp-v1 -n blue-green</span>
 </code></pre></div>
 
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">提示</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">提示</p>
 <p>金丝雀发布功能，用istio实现，更加方便</p>
 </div>
 <h1 id="迁移服务到k8s">迁移服务到k8s</h1>

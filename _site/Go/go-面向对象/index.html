@@ -91,8 +91,8 @@
 <li>字段名必须唯一。</li>
 <li>字段的类型也可以是结构体，甚至是字段所在结构体的类型。</li>
 </ol>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">Go 中的 struct 与 class</p></p>
+<div class="callout callout-info">
+<p class="callout-title">Go 中的 struct 与 class</p>
 <p>Golang 没有类(class)，Go 语言的==结构体(struct)==和其它编程语言的类(class)有同等的地位，你可以理解Golang 是基于 struct 来实现OOP（面向对象编程）特性的。</p>
 </div>
 <h3 id="结构体定义">结构体定义</h3>
@@ -157,8 +157,8 @@
 <span class="c1">// 短变量声明 person := &amp;Person{}</span>
 </code></pre></div>
 
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">结构体指针访问</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">结构体指针访问</p>
 <ol>
 <li>第3种和第4种方式返回的是==结构体指针==。</li>
 <li>结构体指针访问字段的标准方式应该是：<code>(*person).Name = "jack"</code>。但 go 做了一个简化，也支持 <code>person.Name = "jack"</code>。go 编译器底层对 <code>person.Name</code> 做了转化 <code>(*person).Name</code>。</li>
@@ -192,8 +192,8 @@
 <span class="p">}</span>
 </code></pre></div>
 
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">接收者（receiver）</p></p>
+<div class="callout callout-info">
+<p class="callout-title">接收者（receiver）</p>
 <p><code>(cal Calculator)</code> 是 Go 方法的"接收者"（receiver），表示这两个函数是 Calculator 结构体的方法。<br />
 - <code>(cal Calculator)</code> 表示该方法属于 Calculator 类型，只有 Calculator 类型的变量才能调用这个方法。<br />
 - <code>cal</code> 是接收者的名字，可以在方法体内用 cal 访问结构体的字段和方法，相当于 <mark>this</mark> 或 <mark>self</mark>。</p>
@@ -232,8 +232,8 @@
 <p>Go 中的工厂模式（Factory Pattern）是一种常用的设计模式，用于封装对象的创建过程。它通过一个工厂函数（通常以 <mark>NewXXX</mark> 命名）来创建并返回结构体实例，而不是直接在外部用结构体字面量初始化。</p>
 <p>工厂模式的优点：</p>
 <p>可以隐藏结构体的创建细节（如初始化默认值、做参数校验等）便于后续扩展和维护。</p>
-<p><div class="callout callout-example" markdown="1"><br />
-<p class="callout-title">工厂函数示例</p></p>
+<div class="callout callout-example">
+<p class="callout-title">工厂函数示例</p>
 <p><sub>~</sub>go<br />
 package main</p>
 <p>import "fmt"</p>
@@ -361,8 +361,8 @@ package main</p>
 
 <hr />
 <h2 id="面向对象三大特性">面向对象三大特性</h2>
-<p><div class="callout callout-summary" markdown="1"><br />
-<p class="callout-title">Go 的 OOP 实现</p></p>
+<div class="callout callout-summary">
+<p class="callout-title">Go 的 OOP 实现</p>
 <p>Golang 仍然有面向对象编程的==继承==，==封装==和==多态==的特性，只是实现的方式和其它OOP语言不一样。</p>
 </div>
 <h3 id="封装">封装</h3>
@@ -413,8 +413,8 @@ package main</p>
 <p>如果字段需要封装（私有化），应以小写开头并通过 SetXxx 校验赋值、GetXxx 暴露读取；若字段不需要校验，直接导出（大写开头）即可，Go 项目里往往不写显式 Getter。</p>
 </li>
 </ol>
-<p><div class="callout callout-example" markdown="1"><br />
-<p class="callout-title">封装完整示例</p></p>
+<div class="callout callout-example">
+<p class="callout-title">封装完整示例</p>
 </div>
 <p>goproject/factory/model/model.go：</p>
 <div class="highlight"><pre><span></span><code><span class="kn">package</span><span class="w"> </span><span class="nx">model</span>
@@ -621,8 +621,8 @@ package main</p>
 <span class="p">}</span>
 </code></pre></div>
 
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">Go 接口的特点</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">Go 接口的特点</p>
 <p>Go语言的接口是==隐式实现==的：只要某个类型实现了接口中的所有方法，就认为它实现了该接口，无需像Java那样用 <code>implement</code> 关键字。</p>
 </div>
 <h4 id="多态_1">多态</h4>
@@ -630,8 +630,8 @@ package main</p>
 <p>在前面的 Usb 接口案例，usb Usb ，既可以接收手机变量，又可以接收Pad变量，就体现了Usb 接口的多态特性。</p>
 <h4 id="类型断言">类型断言</h4>
 <p>Go中的==类型断言==（type assertion）是用于将接口类型的变量转换为具体类型的语法。它的作用是：在已知接口变量的实际底层类型时，将其还原为具体类型，以便访问该类型特有的方法或字段。</p>
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">为什么需要类型断言</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">为什么需要类型断言</p>
 <p>实际开发中，很多场景下你拿到的是接口类型变量，而不是具体类型的结构体变量。接口变量无法调用某个具体类型结构体的独有方法。这时候就需要类型断言，将接口变量还原成具体类型，就能调用他的独有方法了</p>
 </div>
 <div class="highlight"><pre><span></span><code><span class="kn">package</span><span class="w"> </span><span class="nx">main</span>
@@ -732,8 +732,8 @@ package main</p>
 <span class="p">}</span>
 </code></pre></div>
 
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">类型断言安全写法</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">类型断言安全写法</p>
 <p>始终使用 <code>if phone, ok := dev.(*Phone); ok { ... }</code> 的双返回值写法，避免断言失败时 panic 导致程序崩溃。</p>
 </div>
 <hr />

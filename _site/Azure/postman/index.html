@@ -89,8 +89,8 @@
     </p>
     <div class="article-body">
 <h1 id="postman">Postman</h1>
-<p><div class="callout callout-summary" markdown="1"><br />
-<p class="callout-title">使用 Postman 发送 HTTP 请求，获取 Azure <mark>access token</mark> 进行 API 调试。</p></p>
+<div class="callout callout-summary">
+<p class="callout-title">使用 Postman 发送 HTTP 请求，获取 Azure ==access token== 进行 API 调试。</p>
 </div>
 <hr />
 <h2 id="用途">用途</h2>
@@ -100,14 +100,14 @@
 </ul>
 <hr />
 <h2 id="aad-token">AAD Token</h2>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">在 AAD 中使用时，作用域 scope 如下：</p></p>
+<div class="callout callout-info">
+<p class="callout-title">在 AAD 中使用时，作用域 scope 如下：</p>
 </div>
 <p><img alt="image-20231030170702907" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202310301707977.png" /></p>
 <hr />
 <h2 id="arm-token">ARM Token</h2>
-<p><div class="callout callout-important" markdown="1"><br />
-<p class="callout-title">ARM 请求需要不同的 Bearer Token</p></p>
+<div class="callout callout-important">
+<p class="callout-title">ARM 请求需要不同的 Bearer Token</p>
 <ul>
 <li>Query ARM 资源，也要拿一个 <mark>Bearer Token</mark>，是和 AAD 不一样的 token。只要 token 里面有 ==RBAC 的权限==就行。</li>
 <li>Portal 上可以点到非 AAD 界面的地方，从 <mark>F12</mark> 里面拿到 Bearer Token。</li>

@@ -310,8 +310,8 @@
 </code></pre></div>
 
 <p>这条命令会向指定的Pod添加一个以busybox镜像运行的临时容器，并提供交互式终端。</p>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">参考</p></p>
+<div class="callout callout-info">
+<p class="callout-title">参考</p>
 <ul>
 <li>官方文档：<a href="https://kubernetes.io/docs/concepts/workloads/pods/ephemeral-containers/">Ephemeral Containers | Kubernetes</a></li>
 <li>教程示例：<a href="https://kubernetes.io/docs/tasks/debug/debug-application/debug-running-pod/#ephemeral-container">调试运行中的Pod</a></li>
@@ -386,8 +386,8 @@ vim<span class="w"> </span>/etc/sysconfig/kubelet<span class="w"> </span>
 kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-n<span class="w"> </span>kube-system<span class="w"> </span><span class="c1">#检查pod正常工作</span>
 </code></pre></div>
 
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">注意</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">注意</p>
 <p>重启apiserver会影响业务，最好集群创建完就配置上；或者配置高可用master节点</p>
 </div>
 <h1 id="使用临时容器">使用临时容器</h1>

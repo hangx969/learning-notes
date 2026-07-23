@@ -103,8 +103,8 @@
 <h1 id="云企业网-cen">云企业网 CEN</h1>
 <p>文档： https://help.aliyun.com/zh/cen/product-overview/what-is-cen?spm=a2c4g.11174283.0.0.4aca5905RWQ7VN</p>
 <p>作用：打通不同地域的内网<a class="wikilink" href="../../../Aliyun/%E7%BD%91%E7%BB%9C/VPC/">Aliyun/网络/VPC</a>连接，需要靠TR来实现。</p>
-<p><div class="callout callout-note" markdown="1"><br />
-<p class="callout-title">通过CEN连接的两个VPC之间是否可以互相通信？</p></p>
+<div class="callout callout-note">
+<p class="callout-title">通过CEN连接的两个VPC之间是否可以互相通信？</p>
 <p>可以，只要通过 CEN（云企业网）正确打通路由和授权，两个接入的 VPC 就能互通。CEN 会在不同账号/地域的 VPC 之间建立传输通道。</p>
 <p><strong>条件</strong>：各 VPC 的路由表需要把对端网段指向 CEN，安全组/ACL 放行对端流量，并且在CEN 中完成实例互访授权（同账号自动生效，跨账号需接受邀请）。</p>
 <p>如果要隔离，只需在 CEN 中禁用实例互访或在网络策略层面限制。</p>
@@ -120,8 +120,8 @@
 <h2 id="企业复杂组网">企业复杂组网</h2>
 <h3 id="统一vpc出口">统一VPC出口</h3>
 <p>所有VPC都走同一个VPC的出口EIP访问公网。</p>
-<p><div class="callout callout-summary" markdown="1"><br />
-<p class="callout-title">实现场景</p></p>
+<div class="callout callout-summary">
+<p class="callout-title">实现场景</p>
 <p>您可以通过转发路由器的多种路由功能定义灵活的路由策略，使云上部署的所有VPC实例从==统一的互联网出口==访问互联网，便于集中管控，提高您业务的安全性。</p>
 </div>
 <p><strong>主要操作</strong>：</p>
@@ -132,8 +132,8 @@
 </li>
 </ul>
 <h3 id="多vpc间流量安全互访">多VPC间流量安全互访</h3>
-<p><div class="callout callout-summary" markdown="1"><br />
-<p class="callout-title">实现场景</p></p>
+<div class="callout callout-summary">
+<p class="callout-title">实现场景</p>
 <p>您可以通过转发路由器的多种路由功能定义灵活的路由策略，将VPC实例间互相访问的流量划分为==可信流量==和==不可信的流量==，引导不可信的流量先经过安全服务VPC进行流量过滤，并只允许过滤后的流量相互通信，提高网络的安全性。</p>
 </div>
 <p><strong>主要操作</strong>：</p>
@@ -145,8 +145,8 @@
 </ul>
 <p>https://help.aliyun.com/zh/cen/use-cases/use-an-enterprise-edition-transit-router-to-enable-and-secure-network-communication#task-2076151</p>
 <h3 id="多cen实例下的网络使用共享服务">多CEN实例下的网络使用共享服务</h3>
-<p><div class="callout callout-summary" markdown="1"><br />
-<p class="callout-title">实现场景</p></p>
+<div class="callout callout-summary">
+<p class="callout-title">实现场景</p>
 <p>一个VPC实例支持同时连接多个转发路由器实例。<br />
 如果您拥有多个云企业网实例，不同云企业网实例下的网络均需要访问某一个VPC实例下的服务，您可以将该VPC实例连接至不同云企业网实例下的转发路由器上，然后通过转发路由器的多种路由功能实现不同云企业网实例的网络均可以访问该VPC实例的服务。</p>
 </div>
@@ -166,8 +166,8 @@
 <li><strong>关联转发</strong>【VPC访问别人看哪张表】：实例连接与转发路由器路由表可以创建关联转发关系。关联转发关系创建后，转发路由器会依据网络实例连接关联的路由表转发其流量。</li>
 <li><strong>路由学习</strong>【VPC把自己登记到哪张表方便别人看】：网络实例连接到TR之后，可以创建路由学习关系，TR路由表可以自动学习该网络实例的路由</li>
 </ul>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">类比理解</p></p>
+<div class="callout callout-info">
+<p class="callout-title">类比理解</p>
 <p>把 <strong>TR 比作一个"超级巨大的中央邮局"</strong>，把连接到 TR 的 <strong><a class="wikilink" href="../../../Aliyun/%E7%BD%91%E7%BB%9C/VPC/">Aliyun/网络/VPC</a>（专有网络）比作不同的"公司办事处"</strong>。</p>
 </div>
 <h3 id="默认路由表-default-route-table">默认路由表 (Default Route Table)</h3>
@@ -188,8 +188,8 @@
 </li>
 </ul>
 <hr />
-<p><div class="callout callout-important" markdown="1"><br />
-<p class="callout-title">流量怎么走 = 进门查谁的表 (关联) + 表里有什么路 (学习)</p></p>
+<div class="callout callout-important">
+<p class="callout-title">流量怎么走 = 进门查谁的表 (关联) + 表里有什么路 (学习)</p>
 </div>
 <h3 id="关联转发-association-进门查谁的表">关联转发 (Association) -- "进门查谁的表"</h3>
 <ul>
@@ -215,8 +215,8 @@
 <li><mark>一个 VPC 的路由可以同时被多张路由表学习</mark>（你的地址可以同时出现在"大厅地图"和"VIP地图"上）。</li>
 </ul>
 <hr />
-<p><div class="callout callout-example" markdown="1"><br />
-<p class="callout-title">综合示例：生产VPC 与 测试VPC 隔离</p></p>
+<div class="callout callout-example">
+<p class="callout-title">综合示例：生产VPC 与 测试VPC 隔离</p>
 <p>假设你有两个 VPC：<strong>生产VPC</strong> 和 <strong>测试VPC</strong>。你想让它们都连到 TR，但<strong>互相隔离不通</strong>。</p>
 <ol>
 <li><strong>创建路由表</strong>：<ul>
@@ -263,8 +263,8 @@
 <li><strong><a class="wikilink" href="../../../Aliyun/%E7%BD%91%E7%BB%9C/%E7%BD%91%E5%85%B3-VPN-%E4%B8%93%E7%BA%BF/">VPN连接</a></strong>（IPSec与TR的连接）</li>
 <li><strong>跨地域连接</strong>：不同Region之间的TR attach（在CEN portal - 跨地域网络连接里面创建，就是跨地域TR attach）</li>
 </ol>
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">TR Attach没有传递性</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">TR Attach没有传递性</p>
 <p>Region A和Region B建立了TR跨区域连接，Region B和Region C建立了TR跨区域连接。那么Region A和Region C==并不会自动产生连接==，还是得重新创建跨区域连接。</p>
 </div>
     </div>

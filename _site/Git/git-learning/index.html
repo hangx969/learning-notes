@@ -252,8 +252,8 @@ git<span class="w"> </span>fetch<span class="w"> </span>-p
 <div class="highlight"><pre><span></span><code>git<span class="w"> </span>branch<span class="w"> </span>-d<span class="w"> </span>xxx
 </code></pre></div>
 
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">注意</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">注意</p>
 <ul>
 <li><code>-d</code>：安全删除，只有当这个分支的提交已经被合并到当前分支，或者 Git 认为它的改动不会丢时，才会删。</li>
 <li><code>-D</code>：强制删除。如果这个分支上还有没合并的提交，就丢失了。</li>
@@ -692,8 +692,8 @@ debug1:<span class="w"> </span>C:<span class="se">\\</span>Users<span class="se"
 debug1:<span class="w"> </span>Connecting<span class="w"> </span>to<span class="w"> </span>ssh.github.com<span class="w"> </span><span class="o">[</span><span class="m">20</span>.205.243.160<span class="o">]</span><span class="w"> </span>port<span class="w"> </span><span class="m">22</span>.
 </code></pre></div>
 
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">SSH 端口说明</p></p>
+<div class="callout callout-info">
+<p class="callout-title">SSH 端口说明</p>
 <p>GitHub 的标准 SSH 端口是 22。但在某些网络环境中（公司防火墙、ISP限制等），端口 22 可能被封锁。GitHub 提供了替代方案：通过 ssh.github.com 的 443 端口（HTTPS 端口）来进行 SSH 连接。</p>
 </div>
 <ol>
@@ -774,8 +774,8 @@ ssh<span class="w"> </span>-T<span class="w"> </span>git@github-personal
 <div class="highlight"><pre><span></span><code>git<span class="w"> </span>push<span class="w"> </span>origin<span class="w"> </span>main
 </code></pre></div>
 
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">关键点</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">关键点</p>
 <ul>
 <li><code>IdentitiesOnly yes</code> 是关键配置，确保 SSH 只使用指定的密钥文件，不会尝试 ssh-agent 中的其他密钥。</li>
 <li>Host 别名（如 <code>github-personal</code>）仅用于 SSH 路由，Git 实际连接的仍然是 <code>github.com</code>。</li>

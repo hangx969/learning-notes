@@ -110,8 +110,8 @@
 <h1 id="python-web框架flask">Python Web框架Flask</h1>
 <h2 id="flask介绍">Flask介绍</h2>
 <p><mark>Flask</mark> 是一个用 Python 编写的轻量级 Web 框架,主要用于快速开发 Web 应用程序和 API。</p>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">什么是Flask?</p></p>
+<div class="callout callout-info">
+<p class="callout-title">什么是Flask?</p>
 <p>Flask 就像一个工具箱,可以帮助你搭建网站或 Web 应用。它提供了一些基本的功能,让你可以快速开始,而不需要从头写很多代码。</p>
 </div>
 <p><strong>核心功能</strong>:</p>
@@ -120,16 +120,16 @@
 <li><mark>请求处理</mark>:Flask 能接收用户发送的数据(比如表单输入)并做出相应的处理。</li>
 <li><mark>返回响应</mark>:Flask 可以返回网页内容、JSON 数据或其他类型的信息给用户。</li>
 </ul>
-<p><div class="callout callout-important" markdown="1"><br />
-<p class="callout-title">安装</p></p>
+<div class="callout callout-important">
+<p class="callout-title">安装</p>
 </div>
 <div class="highlight"><pre><span></span><code>pip3<span class="w"> </span>install<span class="w"> </span>Flask
 <span class="c1"># 国内安装速度慢,可以用清华源</span>
 pip<span class="w"> </span>install<span class="w"> </span>-i<span class="w"> </span>https://pypi.tuna.tsinghua.edu.cn/simple<span class="w"> </span>Flask
 </code></pre></div>
 
-<p><div class="callout callout-example" markdown="1"><br />
-<p class="callout-title">基础示例</p></p>
+<div class="callout callout-example">
+<p class="callout-title">基础示例</p>
 </div>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">flask</span><span class="w"> </span><span class="kn">import</span> <span class="n">Flask</span>
 
@@ -172,8 +172,8 @@ pip<span class="w"> </span>install<span class="w"> </span>-i<span class="w"> </s
 
 <hr />
 <h2 id="案例监控服务器健康状态">案例:监控服务器健康状态</h2>
-<p><div class="callout callout-summary" markdown="1"><br />
-<p class="callout-title">需求概述</p></p>
+<div class="callout callout-summary">
+<p class="callout-title">需求概述</p>
 <p>开发一个<strong>健康状态监控 API</strong>,实现以下目标:<br />
 1. <mark>自动化监控</mark>:定期检查服务器资源使用情况,自动记录和响应异常状态。<br />
 2. <mark>实时告警</mark>:在资源使用超过设定阈值时及时告警。<br />
@@ -279,8 +279,8 @@ pip<span class="w"> </span>install<span class="w"> </span>-i<span class="w"> </s
 
 <hr />
 <h2 id="案例自动检查并重启服务">案例:自动检查并重启服务</h2>
-<p><div class="callout callout-summary" markdown="1"><br />
-<p class="callout-title">需求</p></p>
+<div class="callout callout-summary">
+<p class="callout-title">需求</p>
 <p>某个关键服务在服务器上运行,当该服务异常停止时,需要通过 API 检查并自动重启该服务。</p>
 </div>
 <h3 id="判断逻辑">判断逻辑</h3>
@@ -314,8 +314,8 @@ pip<span class="w"> </span>install<span class="w"> </span>-i<span class="w"> </s
 
 <hr />
 <h3 id="api接口定义">API接口定义</h3>
-<p><div class="callout callout-note" markdown="1"><br />
-<p class="callout-title">实现说明</p></p>
+<div class="callout callout-note">
+<p class="callout-title">实现说明</p>
 <p>上面脚本中的status_url和restart_url都需要在flask应用中预先定义好。<br />
 通过 Flask 来实现服务状态的检查和重启操作,特别是针对 <mark>Nginx</mark> 服务的监控。</p>
 </div>
@@ -388,8 +388,8 @@ pip<span class="w"> </span>install<span class="w"> </span>-i<span class="w"> </s
 
 <hr />
 <h2 id="案例系统资源监控web应用">案例:系统资源监控Web应用</h2>
-<p><div class="callout callout-summary" markdown="1"><br />
-<p class="callout-title">功能需求</p></p>
+<div class="callout callout-summary">
+<p class="callout-title">功能需求</p>
 <ul>
 <li>使用 Python 获取系统资源信息:CPU 使用率、内存使用率、根磁盘使用率和网络带宽。</li>
 <li>使用 Flask 框架提供一个 Web 前端页面,显示这些实时信息。</li>

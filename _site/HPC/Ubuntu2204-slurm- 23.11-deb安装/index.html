@@ -72,8 +72,8 @@
     </p>
     <div class="article-body">
 <h1 id="ubuntu-2204-slurm-2311-deb安装">Ubuntu 22.04 Slurm 23.11 deb安装</h1>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">实验机器规划</p></p>
+<div class="callout callout-info">
+<p class="callout-title">实验机器规划</p>
 <ul>
 <li>OS: <a href="https://mirrors.tuna.tsinghua.edu.cn/ubuntu-releases/22.04/ubuntu-22.04.4-live-server-amd64.iso">ubuntu-22.04.4-live-server-amd64.iso</a></li>
 <li>2vcpu, 4GB内存</li>
@@ -177,8 +177,8 @@ ssh-copy-id<span class="w"> </span>-i<span class="w"> </span>~/.ssh/id_rsa.pub<s
 
 <hr />
 <h2 id="配置munge">配置munge</h2>
-<p><div class="callout callout-important" markdown="1"><br />
-<p class="callout-title">Munge用户要确保Master Node和Compute Nodes的==UID和GID相同==,<strong>所有节点</strong>都需要安装Munge。</p></p>
+<div class="callout callout-important">
+<p class="callout-title">Munge用户要确保Master Node和Compute Nodes的==UID和GID相同==,**所有节点**都需要安装Munge。</p>
 </div>
 <div class="highlight"><pre><span></span><code><span class="c1">#所有节点上</span>
 groupadd<span class="w"> </span>-g<span class="w"> </span><span class="m">1108</span><span class="w"> </span>munge
@@ -327,8 +327,8 @@ mk-build-deps<span class="w"> </span>-i<span class="w"> </span>debian/control
 debuild<span class="w"> </span>-b<span class="w"> </span>-uc<span class="w"> </span>-us
 </code></pre></div>
 
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">各节点安装不同的deb包</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">各节点安装不同的deb包</p>
 <p>The packages will be in the parent directory after debuild completes.<br />
 <sub>~</sub>sh</p>
 <h1 id="um1上">um1上</h1>

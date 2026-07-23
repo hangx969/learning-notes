@@ -72,8 +72,8 @@
     </p>
     <div class="article-body">
 <h1 id="ubuntu-2204-slurm-220511-binary-installation-production">Ubuntu 22.04 Slurm 22.05.11 Binary Installation (Production)</h1>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">实验环境</p></p>
+<div class="callout callout-info">
+<p class="callout-title">实验环境</p>
 <table>
 <thead>
 <tr>
@@ -118,8 +118,8 @@
 </div>
 <hr />
 <h2 id="managementlogin-node安装munge">management/login node安装munge</h2>
-<p><div class="callout callout-important" markdown="1"><br />
-<p class="callout-title">Munge用户要确保Master/login Nodes和Compute Nodes的==UID和GID相同==，<strong>所有节点</strong>都需要安装Munge。</p></p>
+<div class="callout callout-important">
+<p class="callout-title">Munge用户要确保Master/login Nodes和Compute Nodes的==UID和GID相同==，**所有节点**都需要安装Munge。</p>
 </div>
 <div class="highlight"><pre><span></span><code><span class="c1">#所有节点上</span>
 <span class="c1">#验证gid为1108的组不存在</span>
@@ -406,8 +406,8 @@ free<span class="w"> </span>-m
 <span class="c1">#</span>
 </code></pre></div>
 
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">slurm.conf 关键参数说明</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">slurm.conf 关键参数说明</p>
 <ul>
 <li><mark>ProctrackType=proctrack/cgroup</mark>: 采用Linux cgroup来生成作业容器并追踪进程</li>
 <li><mark>ReturnToService=1</mark>: 仅当由于无响应而将DOWN节点设置为DOWN状态时，才可以当有效配置注册后使DOWN节点恢复服务</li>

@@ -214,8 +214,8 @@ az<span class="w"> </span>storage<span class="w"> </span>share<span class="w"> <
 <li>admin - Passw0rd</li>
 </ul>
 <h3 id="aci-deployment">ACI Deployment</h3>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">Best Practices</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">Best Practices</p>
 <ul>
 <li>容器组 IP 地址在创建或删除后可能会发生更改。 建议不要让应用程序代码依赖于容器组的 IP 地址。 如果想维护静态 IP 地址，还建议使用 <a href="https://docs.azure.cn/zh-cn/container-instances/container-instances-nat-gateway">NAT 网关</a>或<a href="https://docs.azure.cn/zh-cn/container-instances/container-instances-application-gateway">应用程序网关</a>。</li>
 <li>ACI 服务保留以下服务功能端口：<mark>22、1025-1027、3389-3399、9999、19000、19080、19390、19100、20000-30000、49152-65534</mark>。 请避免在容器组定义中使用这些端口。</li>
@@ -244,8 +244,8 @@ az<span class="w"> </span>storage<span class="w"> </span>share<span class="w"> <
 <li>login UI using containerIP:8082/ui (default username: admin, passwd: password)</li>
 <li>edit admin password after logged in</li>
 </ul>
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">Warning</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">Warning</p>
 <p>ACI部署artifactory会出现各种各样的artifactory报错，导致容器起不来。遂放弃。</p>
 </div>
 <hr />
@@ -474,8 +474,8 @@ openssl<span class="w"> </span>rand<span class="w"> </span>-hex<span class="w"> 
 <span class="l l-Scalar l-Scalar-Plain">EOF</span>
 </code></pre></div>
 
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">Warning</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">Warning</p>
 <p>总是报错：<br />
 - Caught exception in GET /artifactory/api/system/ping<br />
 - Missing required services: [jffe]<br />
@@ -501,8 +501,8 @@ helm<span class="w"> </span>repo<span class="w"> </span>update
 kubectl<span class="w"> </span>create<span class="w"> </span>secret<span class="w"> </span>generic<span class="w"> </span>masterkey-secret<span class="w"> </span>-n<span class="w"> </span>artifactory<span class="w"> </span>--from-literal<span class="o">=</span>master-key<span class="o">=</span><span class="si">${</span><span class="nv">MASTER_KEY</span><span class="si">}</span>
 </code></pre></div>
 
-<p><div class="callout callout-important" markdown="1"><br />
-<p class="callout-title">Important</p></p>
+<div class="callout callout-important">
+<p class="callout-title">Important</p>
 <p>In either case, make sure to pass the same master key on all future calls to Helm install and Helm upgrade. This means always passing<br />
 <code>--set artifactory.masterKey=${MASTER_KEY}</code> (for the custom master key) or<br />
 <code>--set artifactory.masterKeySecretName=my-masterkey-secret</code> (for the manual secret) and verifying that the contents of the secret remain unchanged.</p>
@@ -598,8 +598,8 @@ jfrog/artifactory-oss<span class="w"> </span>-n<span class="w"> </span>artifacto
 <ul>
 <li>delete artifactory</li>
 </ul>
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">Warning</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">Warning</p>
 <p>Deleting Artifactory will also delete your data volumes and you will lose all of your data. You must back up all this information before deletion. You do not need to uninstall Artifactory before deleting it.</p>
 </div>
 <div class="highlight"><pre><span></span><code>helm<span class="w"> </span>delete<span class="w"> </span>jfrog/artifactory-oss<span class="w"> </span>--namespace<span class="w"> </span>artifactory
@@ -610,8 +610,8 @@ jfrog/artifactory-oss<span class="w"> </span>-n<span class="w"> </span>artifacto
 <ul>
 <li>单独开一台虚机，启动rancher容器</li>
 </ul>
-<p><div class="callout callout-note" markdown="1"><br />
-<p class="callout-title">Note</p></p>
+<div class="callout callout-note">
+<p class="callout-title">Note</p>
 <p>注意：Ubuntu 2204有bug导致容器中的K3S起不来：https://github.com/rancher/rancher/issues/36238</p>
 </div>
 <div class="highlight"><pre><span></span><code><span class="c1">#ubuntu 2004上安装latest rancher可以起来</span>
@@ -625,8 +625,8 @@ docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </sp
 <div class="highlight"><pre><span></span><code>az<span class="w"> </span>ad<span class="w"> </span>sp<span class="w"> </span>create-for-rbac<span class="w"> </span>--scope<span class="w"> </span>&lt;rg-resource-id&gt;<span class="w"> </span>--role<span class="w"> </span>Contributor
 </code></pre></div>
 
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">Warning</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">Warning</p>
 <p>rancher无法导入AKS集群，他会默认集群在china east，导致无法获取到api version，但是这个配置无处改变，遂放弃</p>
 </div>
 <hr />

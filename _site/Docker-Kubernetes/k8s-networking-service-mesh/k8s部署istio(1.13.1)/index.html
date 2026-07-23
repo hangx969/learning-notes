@@ -411,8 +411,8 @@
 </ol>
 <h1 id="k8s-123部署istio">k8s-1.23部署istio</h1>
 <h2 id="安装istioctl">安装istioctl</h2>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">k8s &lt;= 1.23装istio 1.10/1.13即可；k8s &gt;= 1.24装1.18+</p></p>
+<div class="callout callout-info">
+<p class="callout-title">k8s &lt;= 1.23装istio 1.10/1.13即可；k8s &gt;= 1.24装1.18+</p>
 </div>
 <div class="highlight"><pre><span></span><code><span class="c1">#可以github拉取或者课件上传安装包istio-1.13.1.tar.gz</span>
 tar<span class="w"> </span>zxvf<span class="w"> </span>istio-1.13.1.tar.gz<span class="w"> </span>
@@ -445,8 +445,8 @@ istioctl<span class="w"> </span>x<span class="w"> </span>uninstall<span class="w
 <li>demo模式安装完成后，创建了3个pod：</li>
 </ul>
 <p><img alt="image-20240213101439863" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202402131014015.png" /></p>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">Profile说明</p></p>
+<div class="callout callout-info">
+<p class="callout-title">Profile说明</p>
 <ul>
 <li>
 <p>使用 <code>istioctl install --set profile=demo</code> 安装 Istio 时，会根据指定的 profile 来选择使用的 Istio 配置文件。profile 参数是一个预定义的配置选项，用于快速设置 Istio 的安装配置。每个 profile 都对应一个特定的 YAML 配置文件，其中包含了一组预定义的配置选项。</p>
@@ -1067,8 +1067,8 @@ docker<span class="w"> </span>load<span class="w"> </span>-i<span class="w"> </s
 <span class="w">      </span><span class="nt">targetPort</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span>
 </code></pre></div>
 
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">此时有两个版本的pod都是apply: canary标签，这个svc代理了两个pod，默认是采用轮询方式，curl svc-ip时会轮流代理给v1和v2两个pod</p></p>
+<div class="callout callout-info">
+<p class="callout-title">此时有两个版本的pod都是apply: canary标签，这个svc代理了两个pod，默认是采用轮询方式，curl svc-ip时会轮流代理给v1和v2两个pod</p>
 </div>
 <ul>
 <li>创建gateway</li>

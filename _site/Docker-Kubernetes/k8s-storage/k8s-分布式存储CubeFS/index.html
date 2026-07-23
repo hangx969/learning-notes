@@ -528,8 +528,8 @@ kubectl<span class="w"> </span>label<span class="w"> </span>node<span class="w">
 <span class="c1"># Disk /dev/sdb: 6 GiB, 6442450944 bytes, 12582912 sectors</span>
 </code></pre></div>
 
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">磁盘空间要求</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">磁盘空间要求</p>
 <p>磁盘可用空间必须大于10G，否则磁盘会被cubeFS标记为ReadOnly，并且空间计算也会不准确。</p>
 <p>参考：<a href="https://github.com/cubefs/cubefs/issues/3173#issuecomment-1986599468">[Bug]: the datanodes is not WRITABLE - Issue #3173</a></p>
 </div>
@@ -549,8 +549,8 @@ tee<span class="w"> </span>-a<span class="w"> </span>/etc/fstab<span class="w"> 
 mount<span class="w"> </span>-a<span class="w"> </span>
 </code></pre></div>
 
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">注意</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">注意</p>
 <p>如果有多个数据节点，需要保证每个数据节点的磁盘数量、大小等配置是完全一致的。因为后面配置数据节点的时候，是所有数据节点统一配置的。这样出错的概率小。</p>
 </div>
 <h2 id="helm安装">helm安装</h2>
@@ -672,8 +672,8 @@ mount<span class="w"> </span>-a<span class="w"> </span>
 helm<span class="w"> </span>upgrade<span class="w"> </span>-i<span class="w"> </span>cubefs<span class="w"> </span>-n<span class="w"> </span>cubefs<span class="w"> </span>.<span class="w"> </span>--create-namespace<span class="w"> </span>-f<span class="w"> </span>values.yaml<span class="w"> </span>
 </code></pre></div>
 
-<p><div class="callout callout-bug" markdown="1"><br />
-<p class="callout-title">版本Bug</p></p>
+<div class="callout callout-bug">
+<p class="callout-title">版本Bug</p>
 <p>2025-08-28 安装的3.3.2.150.0 Release版本，有个bug：</p>
 <p>在<code>cubefs-helm/cubefs/templates/statefulset-master.yaml</code>文件的第80行，需要把：</p>
 <p><code>value: {{ .Value.master.legacy_data_media_type | quote }}</code> 他的Value加上s：</p>
@@ -836,8 +836,8 @@ cfs-client<span class="w"> </span>-c<span class="w"> </span>volume-test-client.c
 df<span class="w"> </span>-Th<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>volume-test
 </code></pre></div>
 
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">挂载协议</p></p>
+<div class="callout callout-info">
+<p class="callout-title">挂载协议</p>
 <p>这种挂载方式使用的是传统的POSIX。CubeFS 客户端通过 FUSE (Filesystem in Userspace) 提供标准的 POSIX 文件系统语义</p>
 </div>
 <p>测试写入数据：</p>
@@ -916,8 +916,8 @@ mc<span class="w"> </span><span class="nb">alias</span><span class="w"> </span><
 mc<span class="w"> </span>ls<span class="w"> </span><span class="nb">test</span>
 </code></pre></div>
 
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">mc命令版本差异</p></p>
+<div class="callout callout-info">
+<p class="callout-title">mc命令版本差异</p>
 <ol>
 <li><strong>旧版本语法</strong>：<code>mc config host add</code> 是旧版本的语法</li>
 <li><strong>新版本语法</strong>：<code>mc alias set</code> 是新版本的正确语法</li>
@@ -986,8 +986,8 @@ mc<span class="w"> </span>cp<span class="w"> </span>templates/<span class="w"> <
 <div class="highlight"><pre><span></span><code>helm<span class="w"> </span>upgrade<span class="w"> </span>-i<span class="w"> </span>cubefs<span class="w"> </span>-n<span class="w"> </span>cubefs<span class="w"> </span>.<span class="w"> </span>--create-namespace<span class="w"> </span>-f<span class="w"> </span>values.yaml
 </code></pre></div>
 
-<p><div class="callout callout-bug" markdown="1"><br />
-<p class="callout-title">tolerations缩进问题</p></p>
+<div class="callout callout-bug">
+<p class="callout-title">tolerations缩进问题</p>
 <ol>
 <li>如果values里面配置了tolerations，渲染模板会报错：<br />
 <sub>~</sub>sh<br />

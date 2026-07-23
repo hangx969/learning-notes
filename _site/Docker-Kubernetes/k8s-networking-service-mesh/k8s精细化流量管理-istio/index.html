@@ -891,8 +891,8 @@ vim<span class="w"> </span>curl.yaml
 <div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>label<span class="w"> </span>namespace<span class="w"> </span>istio-test<span class="w"> </span>istio-injection-
 </code></pre></div>
 
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">最常用的的方式</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">最常用的的方式</p>
 <ul>
 <li>打开某个ns的istio sidecar注入，其中个别pod不需要sidecar，就打标签关闭注入。</li>
 <li>单独开某几个pod的情况比较少</li>
@@ -955,14 +955,14 @@ vim<span class="w"> </span>curl.yaml
 <span class="c1"># 通过NodePort高位端口访问UI界面</span>
 </code></pre></div>
 
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">注意：公司如果真需要上链路追踪，建议用更专业的Skywalking。jaeger这个比较简单而且也不太好用。</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">注意：公司如果真需要上链路追踪，建议用更专业的Skywalking。jaeger这个比较简单而且也不太好用。</p>
 </div>
 <h1 id="集成prometheusgrafana">集成prometheus+grafana</h1>
 <p>Istio 默认暴露了很多监控指标，比如请求数量统计、请求持续时间以及Service和工作负载的指标，这些指标可以使用Prometheus进行收集，Grafana进行展示。</p>
 <p>Istio 内置了Prometheus和Grafana的安装文件，直接安装即可。</p>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">也可以使用外置的Prometheus和Grafana。</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">也可以使用外置的Prometheus和Grafana。</p>
 <p>但是建议istio的prometheus和grafana单独安装，因为集群自己的prometheus需要监控很多集群其他指标，不建议再接入istio的指标。istio用自己独立的prometheus和grafana即可。</p>
 </div>
 <h2 id="安装_1">安装</h2>

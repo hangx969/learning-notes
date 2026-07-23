@@ -99,8 +99,8 @@
 </code></pre></div>
 
 <h2 id="普通错误处理">普通错误处理</h2>
-<p><div class="callout callout-important" markdown="1"><br />
-<p class="callout-title">Go 错误处理哲学</p></p>
+<div class="callout callout-important">
+<p class="callout-title">Go 错误处理哲学</p>
 <p>Go鼓励通过==返回值==显式传递和处理错误，而不是依赖异常（panic/recover）。只有在不可恢复的严重错误（如数组越界、除零、程序内部bug）时才用panic。</p>
 </div>
 <div class="highlight"><pre><span></span><code><span class="kn">package</span><span class="w"> </span><span class="nx">main</span>
@@ -135,8 +135,8 @@
 - 只有在遇到不可恢复的致命错误时才用 <mark>panic/recover</mark>，比如程序内部不一致、严重bug等。<br />
 - 普通业务逻辑错误（如除零、文件不存在）不影响程序其他部分，应通过 error 返回。<br />
 - panic不能滥用，不能到处用panic</p>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">panic/recover 机制</p></p>
+<div class="callout callout-info">
+<p class="callout-title">panic/recover 机制</p>
 <ol>
 <li>在默认情况下，当发生错误后(panic) ，程序就会退出（崩溃）</li>
 <li>如果我们希望：当发生错误后，可以捕获到错误，并进行处理，保证程序可以继续执行。还可以在捕获到错误后，产生某些告警信息等<br />

@@ -178,8 +178,8 @@ cat<span class="w"> </span>PAT.txt<span class="w"> </span><span class="p">|</spa
 <li>REST API可以附加的参数：https://learn.microsoft.com/en-us/rest/api/azure/devops/distributedtask/agents/get-agent?view=azure-devops-rest-7.1#uri-parameters</li>
 <li>PAT document：https://learn.microsoft.com/en-us/azure/devops/organizations/accounts/use-personal-access-tokens-to-authenticate?view=azure-devops&amp;tabs=Linux#q-why-did-my-pat-stop-working</li>
 </ol>
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">Warning</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">Warning</p>
 <p><mark>一定注意：curl传递的authorization header是在原有token前面加了个:</mark></p>
 </div>
 <div class="highlight"><pre><span></span><code><span class="ch">#!/usr/bin/env bash</span>
@@ -230,8 +230,8 @@ curl<span class="w"> </span>-s<span class="w"> </span>-H<span class="w"> </span>
 </code></pre></div>
 
 <h3 id="脚本逻辑">脚本逻辑</h3>
-<p><div class="callout callout-note" markdown="1"><br />
-<p class="callout-title">Note</p></p>
+<div class="callout callout-note">
+<p class="callout-title">Note</p>
 <p>注意：azcli pod中需要先安装gawk：<code>yum install gawk -y</code>，也可以东dockerfile做一个提前安装好gawk的azcli-gawk image以供使用。</p>
 </div>
 <ol>
@@ -371,8 +371,8 @@ az<span class="w"> </span>account<span class="w"> </span>clear<span class="w"> <
 <span class="k">fi</span>
 </code></pre></div>
 
-<p><div class="callout callout-note" markdown="1"><br />
-<p class="callout-title">Note</p></p>
+<div class="callout callout-note">
+<p class="callout-title">Note</p>
 <ul>
 <li>需要检测offline的agent同时，也检测对应VM instance也删掉</li>
 <li>遇到被disable的agent，即使是offline的也删不掉。后面可以测试一下disabled的agent怎么</li>
@@ -387,8 +387,8 @@ az<span class="w"> </span>account<span class="w"> </span>clear<span class="w"> <
 <span class="w">    </span>--new-capacity<span class="w"> </span><span class="m">5</span>
 </code></pre></div>
 
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">Warning</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">Warning</p>
 <p>有个问题就是如果定期用azcli直接scale VMSS，那么无法识别这个VMSS是否有CICD任务在运行，容易误伤。还是需要想办法通过azure devops REST API来检测agent是否是idle。</p>
 </div>
 <h3 id="extension">Extension</h3>
@@ -516,8 +516,8 @@ curl<span class="w"> </span>-s<span class="w"> </span>-H<span class="w"> </span>
 curl<span class="w"> </span>-s<span class="w"> </span>-H<span class="w"> </span><span class="s2">&quot;Authorization: Basic </span><span class="nv">$PAT_TOKEN_B64</span><span class="s2">&quot;</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">ORG_URL</span><span class="si">}</span><span class="s2">/_apis/distributedtask/pools/</span><span class="si">${</span><span class="nv">POOL_ID</span><span class="si">}</span><span class="s2">/agents/</span><span class="si">${</span><span class="nv">AGENT_ID</span><span class="si">}</span><span class="s2">?includeAssignedRequest=true&amp;includeCapabilities=true&amp;api-version=</span><span class="si">${</span><span class="nv">API_VERSION</span><span class="si">}</span><span class="s2">&quot;</span>
 </code></pre></div>
 
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">Info</p></p>
+<div class="callout callout-info">
+<p class="callout-title">Info</p>
 <p>注意：如果一个agent处于idle状态，REST API返回值中不存在"assignedRequest"字段。如果有任务在运行，那么会返回"assignedRequest"字段及其详细信息。</p>
 </div>
 <h3 id="pod中登录azcli-sp">Pod中登录azcli-sp</h3>

@@ -293,8 +293,8 @@
 <h1 id="docker-pull配置代理">docker pull配置代理</h1>
 <h2 id="背景">背景</h2>
 <p>关于 docker 配置代理服务器的 <a href="https://docs.docker.com/network/proxy/#configure-the-docker-client">官方文档</a> :</p>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">官方文档说明</p></p>
+<div class="callout callout-info">
+<p class="callout-title">官方文档说明</p>
 <p>If your container needs to use an HTTP, HTTPS, or FTP proxy server, you can configure it in different ways: Configure the Docker client On the Docker client, create or edit the file ~/.docker/config.json in the home directory of the user that starts containers.</p>
 <p>...</p>
 <p>When you create or start new containers, the environment variables are set automatically within the container.</p>
@@ -305,8 +305,8 @@
 <p>常规的命令行程序如果要使用代理,需要设置两个环境变量:<code>HTTP_PROXY</code> 和 <code>HTTPS_PROXY</code> 。但是仅仅这样设置环境变量,也不能让 docker 成功拉取镜像。</p>
 <p>因为镜像的拉取和管理都是 docker daemon 的职责,所以我们要让 docker daemon 知道代理服务器的存在。而 docker daemon 是由 systemd 管理的,所以我们要从 systemd 配置入手。</p>
 <h2 id="配置方法">配置方法</h2>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">systemd配置说明</p></p>
+<div class="callout callout-info">
+<p class="callout-title">systemd配置说明</p>
 <p>The Docker daemon uses the HTTP_PROXY, HTTPS_PROXY, and NO_PROXY environmental variables in its start-up environment to configure HTTP or HTTPS proxy behavior. You cannot configure these environment variables using the daemon.json file.</p>
 <p>This example overrides the default docker.service file.</p>
 <p>If you are behind an HTTP or HTTPS proxy server, for example in corporate settings, you need to add this configuration in the Docker systemd service file.</p>

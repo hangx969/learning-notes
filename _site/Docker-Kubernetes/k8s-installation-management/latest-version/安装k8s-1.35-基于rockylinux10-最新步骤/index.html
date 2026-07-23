@@ -306,8 +306,8 @@
 <li><strong>Calico</strong>：网络插件，负责 Pod IP 分配和网络策略</li>
 <li><strong>containerd</strong>：容器运行时（K8s 1.24+ 已移除 dockershim，不再支持 Docker 作为直接运行时）</li>
 </ul>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">本文版本信息</p></p>
+<div class="callout callout-info">
+<p class="callout-title">本文版本信息</p>
 <ul>
 <li>操作系统：Rocky Linux 10（基于 RHEL 10）</li>
 <li>Kubernetes：1.35.x</li>
@@ -349,8 +349,8 @@
 </tr>
 </tbody>
 </table>
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">最低配置要求</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">最低配置要求</p>
 <ul>
 <li>控制节点：2 CPU / 2 GB RAM / 20 GB 磁盘</li>
 <li>工作节点：2 CPU / 2 GB RAM / 20 GB 磁盘</li>
@@ -358,8 +358,8 @@
 </ul>
 </div>
 <h2 id="安装前准备">安装前准备</h2>
-<p><div class="callout callout-note" markdown="1"><br />
-<p class="callout-title">以下操作若无特殊说明，所有节点均需执行</p></p>
+<div class="callout callout-note">
+<p class="callout-title">以下操作若无特殊说明，所有节点均需执行</p>
 </div>
 <h3 id="1-配置基础源">1. 配置基础源</h3>
 <p>Rocky Linux 10 国内镜像源配置（使用阿里云镜像）：</p>
@@ -375,8 +375,8 @@ sed<span class="w"> </span>-e<span class="w"> </span><span class="s1">&#39;s|^mi
 dnf<span class="w"> </span>makecache
 </code></pre></div>
 
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">换源说明</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">换源说明</p>
 <p>可以去阿里云镜像站（developer.aliyun.com/mirror）搜索 "Rocky Linux" 找到对应系统的换源操作。若阿里云暂未支持 Rocky Linux 10，可尝试 USTC（mirrors.ustc.edu.cn）或网易（mirrors.163.com）镜像源，或暂时使用官方源。</p>
 </div>
 <h3 id="2-安装基础软件包">2. 安装基础软件包</h3>
@@ -407,8 +407,8 @@ reboot
 nslookup<span class="w"> </span>registry.cn-hangzhou.aliyuncs.com
 </code></pre></div>
 
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">DNS 配置说明</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">DNS 配置说明</p>
 <p>公共 DNS <strong>必须放在 NAT 网关 DNS 前面</strong>。containerd（Go 语言 resolver）只使用第一个 nameserver 解析，<br />
 如果 <code>192.168.164.2</code> 在最前面，它会对外部域名返回 NXDOMAIN（域名不存在），Go resolver 收到明确的否定应答后<strong>不会再尝试后续 DNS</strong>，导致 kubeadm init 时所有镜像拉取失败。<br />
 - <code>114.114.114.114</code>：国内公共 DNS，放第一位，解析快<br />
@@ -416,8 +416,8 @@ nslookup<span class="w"> </span>registry.cn-hangzhou.aliyuncs.com
 - <code>192.168.164.2</code>：NAT 网关，放最后，仅解析内网域名</p>
 <p>如果 <code>nslookup</code> 验证失败，说明网络不通，需先排查 NAT 网络配置，不要继续后续步骤。</p>
 </div>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">Tip</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">Tip</p>
 <p>NetworkManager 会把修改写入 <code>/etc/NetworkManager/system-connections/ens160.nmconnection</code>；手动编辑该文件也可，但改完需执行 <code>nmcli connection reload</code></p>
 </div>
 <h3 id="4-关闭-selinux">4. 关闭 SELinux</h3>
@@ -456,8 +456,8 @@ ssh-copy-id<span class="w"> </span>rn2
 </code></pre></div>
 
 <h3 id="8-关闭-swap">8. 关闭 Swap</h3>
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">重要</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">重要</p>
 <p>执行删除 swap LV 操作前，请先打虚拟机快照！如删除后无法启动，可从快照恢复。</p>
 </div>
 <div class="highlight"><pre><span></span><code><span class="c1"># 临时关闭</span>
@@ -605,8 +605,8 @@ systemctl<span class="w"> </span>restart<span class="w"> </span>systemd-modules-
 lsmod<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-e<span class="w"> </span>ip_vs<span class="w"> </span>-e<span class="w"> </span>nf_conntrack
 </code></pre></div>
 
-<p><div class="callout callout-note" markdown="1"><br />
-<p class="callout-title">Rocky Linux 10 变更</p></p>
+<div class="callout callout-note">
+<p class="callout-title">Rocky Linux 10 变更</p>
 <p><code>ip_conntrack</code> 模块在新内核中已更名为 <code>nf_conntrack</code>，请使用新名称。<code>conntrack</code> 软件包也已更名为 <code>conntrack-tools</code>。</p>
 </div>
 <h3 id="13-设置文件句柄数上限">13. 设置文件句柄数上限</h3>
@@ -661,14 +661,14 @@ yum-config-manager<span class="w"> </span>--add-repo<span class="w"> </span>http
 dnf<span class="w"> </span>clean<span class="w"> </span>all<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>dnf<span class="w"> </span>makecache
 </code></pre></div>
 
-<p><div class="callout callout-note" markdown="1"><br />
-<p class="callout-title">为何从 centos 改为 rhel</p></p>
+<div class="callout callout-note">
+<p class="callout-title">为何从 centos 改为 rhel</p>
 <p>1.33 文档使用的是 <code>centos/docker-ce.repo</code>，其仓库只有 el7/el8/el9 的包。Rocky Linux 10 的 <code>$releasever=10</code>，解析后找不到对应包会报错。改为 <code>rhel/docker-ce.repo</code> 后，Docker CE 官方为 RHEL 10 提供了 el10 的包，阿里云同步了该镜像源，可以正常安装。</p>
 </div>
 <h1 id="组件安装">组件安装</h1>
 <h2 id="docker">Docker</h2>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">Info</p></p>
+<div class="callout callout-info">
+<p class="callout-title">Info</p>
 <p>Docker 和 containerd 不冲突，安装 Docker 是为了能基于 Dockerfile 构建镜像。K8s 的容器运行时使用 containerd，与 Docker 无关。</p>
 </div>
 <div class="highlight"><pre><span></span><code><span class="c1"># 安装最新版 Docker CE（无需像 1.33 那样固定 24.0.6 版本，</span>
@@ -721,8 +721,8 @@ sed<span class="w"> </span>-i<span class="w"> </span><span class="s1">&#39;s#reg
 sed<span class="w"> </span>-i<span class="w"> </span><span class="s1">&#39;s#config_path = &quot;&quot;#config_path = &quot;/etc/containerd/certs.d&quot;#g&#39;</span><span class="w"> </span>/etc/containerd/config.toml
 </code></pre></div>
 
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">config_path 与 mirrors 互斥</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">config_path 与 mirrors 互斥</p>
 <p>当 <code>config_path</code> 不为空时，<strong>不能</strong>再配置 <code>mirrors</code> 段（即 <code>[plugins."...".registry.mirrors]</code>），二者互斥。containerd 2.x 的 registry 插件路径也有变化：<br />
 - <strong>V2</strong>：<code>plugins."io.containerd.cri.v1.images".registry</code><br />
 - <strong>V1</strong>（旧版）：<code>plugins."io.containerd.grpc.v1.cri".registry</code></p>
@@ -816,8 +816,8 @@ cat<span class="w"> </span>&gt;<span class="w"> </span>/etc/containerd/certs.d/h
 <span class="c1"># 生成方式：echo -n &quot;admin:password&quot; | base64</span>
 </code></pre></div>
 
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">验证私有仓库拉取</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">验证私有仓库拉取</p>
 <p><code>sh
 crictl pull hub.test.local/镜像名:标签</code></p>
 </div>
@@ -888,8 +888,8 @@ dnf<span class="w"> </span>install<span class="w"> </span>cri-tools<span class="
 crictl<span class="w"> </span>info
 </code></pre></div>
 
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">离线安装</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">离线安装</p>
 <p>如果无法访问在线源，可以从以下地址下载 rpm 文件手动安装：<br />
 - https://mirrors.aliyun.com/kubernetes-new/core/stable/v1.35/rpm/x86_64/</p>
 <p>```sh</p>
@@ -898,8 +898,8 @@ crictl<span class="w"> </span>info
 ```</p>
 </div>
 <h1 id="kubeadm-初始化-k8s-集群">kubeadm 初始化 K8s 集群</h1>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">kubeadm vs 二进制安装</p></p>
+<div class="callout callout-info">
+<p class="callout-title">kubeadm vs 二进制安装</p>
 <ul>
 <li><strong>kubeadm</strong>：官方工具，快速部署，所有组件以 Pod 方式运行，具备故障自恢复能力，推荐自动化场景</li>
 <li><strong>二进制</strong>：手动安装，对 Kubernetes 理解更深，适合深度定制</li>
@@ -958,8 +958,8 @@ kubeadm<span class="w"> </span>config<span class="w"> </span>print<span class="w
 <span class="l l-Scalar l-Scalar-Plain">EOF</span>
 </code></pre></div>
 
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">kubeadm v1beta4 重要变更（相比 v1beta3）</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">kubeadm v1beta4 重要变更（相比 v1beta3）</p>
 <ul>
 <li><strong>API 版本</strong>：<code>kubeadm.k8s.io/v1beta4</code>（v1beta3 已废弃，1.35 不再支持）</li>
 <li><strong>新增类型</strong>：<code>ResetConfiguration</code>、<code>UpgradeConfiguration</code></li>
@@ -982,8 +982,8 @@ kubeadm<span class="w"> </span>config<span class="w"> </span>images<span class="
 kubeadm<span class="w"> </span>init<span class="w"> </span>--config<span class="o">=</span>kubeadm.yaml<span class="w"> </span>--ignore-preflight-errors<span class="o">=</span>SystemVerification
 </code></pre></div>
 
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">IPVS 模式说明</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">IPVS 模式说明</p>
 <p>相比默认的 iptables 模式，IPVS 是高性能负载均衡器，在大规模集群下有更好的性能和可靠性，支持四层/七层负载均衡，生产环境建议开启。</p>
 </div>
 <p>初始化成功后，输出的 join 命令需要保存下来，用于工作节点加入集群。</p>
@@ -1064,8 +1064,8 @@ kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> <
 </code></pre></div>
 
 <h2 id="配置-nfsnfs-provisioner-前置依赖">配置 NFS（nfs-provisioner 前置依赖）</h2>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">Info</p></p>
+<div class="callout callout-info">
+<p class="callout-title">Info</p>
 <p>如果需要部署 nfs-provisioner 来提供动态 PV，需要先在集群中配置 NFS 服务。PV 本质是先挂载到宿主机、再挂载到 Pod，因此所有节点都需要安装 NFS 客户端。</p>
 </div>
 <h3 id="安装-nfs-服务所有节点">安装 NFS 服务（所有节点）</h3>
@@ -1087,8 +1087,8 @@ mkdir<span class="w"> </span>-p<span class="w"> </span>/data/nfs_pro
 exportfs<span class="w"> </span>-arv
 </code></pre></div>
 
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">网段限制说明</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">网段限制说明</p>
 <p>如果需要限制可访问的网段，应填写<strong>宿主机网段</strong>（如 <code>192.168.164.0/24</code>）而非 Pod 网段，因为 PV 是挂载到宿主机上再挂载到 Pod 中的。</p>
 </div>
 <h2 id="安装homebrew">安装homebrew</h2>
@@ -1150,8 +1150,8 @@ kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> <
 </code></pre></div>
 
 <h1 id="可选延长-k8s-证书">【可选】延长 K8s 证书</h1>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">v1beta4 新字段与手动续签的关系</p></p>
+<div class="callout callout-info">
+<p class="callout-title">v1beta4 新字段与手动续签的关系</p>
 <p>kubeadm v1beta4 新增了 <code>certificateValidityPeriod</code> 和 <code>caCertificateValidityPeriod</code> 字段，可以在 <strong><code>kubeadm init</code> 初始化时</strong>直接签发长期证书（本文已在 kubeadm.yaml 中设为 10 年 / 20 年）。</p>
 <p>但手动续签脚本<strong>仍然有价值</strong>，适用于以下场景：<br />
 - 初始化时未设置长有效期、证书已接近到期的<strong>存量集群</strong><br />
@@ -1169,8 +1169,8 @@ openssl<span class="w"> </span>x509<span class="w"> </span>-in<span class="w"> <
 
 <h2 id="延长证书有效期脚本">延长证书有效期脚本</h2>
 <p>文件命名为 <code>update-kubeadm-cert.sh</code>：</p>
-<p><div class="callout callout-note" markdown="1"><br />
-<p class="callout-title">与 1.33 版本脚本的区别</p></p>
+<div class="callout callout-note">
+<p class="callout-title">与 1.33 版本脚本的区别</p>
 <p>本脚本移除了对 <code>docker</code> 命令的依赖（纯 containerd 环境没有 docker），改为使用 <code>crictl</code> 重启 static pod，kubelet 会自动重新创建它们。</p>
 </div>
 <div class="highlight"><pre><span></span><code><span class="ch">#!/bin/bash</span>
@@ -1456,8 +1456,8 @@ rm<span class="w"> </span>-rf<span class="w"> </span>/var/etcd
 </code></pre></div>
 
 <h1 id="制作-k8s-安装所需离线源">制作 K8s 安装所需离线源</h1>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">Info</p></p>
+<div class="callout callout-info">
+<p class="callout-title">Info</p>
 <p>全内网环境安装 K8s 时，需要在有网络的机器上提前下载好所有资源。</p>
 </div>
 <h2 id="制作-containerd-离线包">制作 containerd 离线包</h2>

@@ -624,8 +624,8 @@ tar<span class="w"> </span>xzvf<span class="w"> </span>kube-prometheus-stack-59.
 <span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">--set grafana.ingress.pathType=Prefix . -f values.yaml</span>
 </code></pre></div>
 
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">Warning</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">Warning</p>
 <p>后面单独部署了loki和tempo之后，要去prometheus-stack的values里面加上grafana.additaionalDataSources字段：</p>
 <p><sub>~</sub>yaml<br />
 additionalDataSources:<br />
@@ -1371,8 +1371,8 @@ kube-prometheus-stack-prometheus<span class="w">     </span>nginx<span class="w"
 <span class="w">          </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Container</span><span class="nv"> </span><span class="s">memory</span><span class="nv"> </span><span class="s">usage</span><span class="nv"> </span><span class="s">is</span><span class="nv"> </span><span class="s">above</span><span class="nv"> </span><span class="s">90%.&quot;</span>
 </code></pre></div>
 
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">Tip</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">Tip</p>
 <p><a href="https://github.com/samber/awesome-prometheus-alerts">awesome-prometheus-alerts</a> 这个项目中包含了常见组件的prometheus alerts</p>
 </div>
 <h2 id="域名访问延迟及故障告警">域名访问延迟及故障告警</h2>
@@ -1668,8 +1668,8 @@ kube-prometheus-stack-prometheus<span class="w">     </span>nginx<span class="w"
 </code></pre></div>
 
 <h2 id="发送告警到slack">发送告警到slack</h2>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">Info</p></p>
+<div class="callout callout-info">
+<p class="callout-title">Info</p>
 <ul>
 <li>prometheus与slack集成的配置文件说明：<a href="https://prometheus.io/docs/alerting/latest/configuration/#slack_config">slack_config</a></li>
 <li>slack web API说明：<a href="https://api.slack.com/web">Slack Web API</a></li>

@@ -299,8 +299,8 @@ helm<span class="w"> </span>repo<span class="w"> </span>update<span class="w"> <
 helm<span class="w"> </span>pull<span class="w"> </span>bitnami/mysql<span class="w"> </span>--version<span class="w"> </span><span class="m">13</span>.0.2<span class="w"> </span>
 </code></pre></div>
 
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">提示</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">提示</p>
 <ul>
 <li>bitnami/mysql如果网络问题pull不下来就直接从bitnami github上clone下来源码，里面就有mysql的helm chart。</li>
 </ul>
@@ -313,8 +313,8 @@ helm<span class="w"> </span>pull<span class="w"> </span>bitnami/mysql<span class
 </div>
 <h1 id="配置-单节点模式">配置-单节点模式</h1>
 <p>这里简单配置，用standalone模式，只有一个statefulset会被创建。service用NodePort，暴露端口30006。</p>
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">生产环境注意</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">生产环境注意</p>
 <ul>
 <li>生产环境中不推荐使用nfs，由于其单点无高可用、性能也有问题。如果k8s中没有配置ceph等分布式储，那就不推荐把mysql等需要持久化数据的服务部署到k8s中。</li>
 <li>这里学习环境可以使用nfs。</li>
@@ -369,8 +369,8 @@ helm<span class="w"> </span>pull<span class="w"> </span>bitnami/mysql<span class
 </code></pre></div>
 
 <h1 id="配置-主从模式">配置-主从模式</h1>
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">注意</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">注意</p>
 <p>生产环境也不推荐主从模式，建议用集群模式（用operator安装集群模式比较方便）</p>
 </div>
 <div class="highlight"><pre><span></span><code><span class="nt">global</span><span class="p">:</span>

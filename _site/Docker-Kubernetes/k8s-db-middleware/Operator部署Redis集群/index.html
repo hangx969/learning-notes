@@ -354,8 +354,8 @@ helm<span class="w"> </span>install<span class="w"> </span>redis-operator<span c
 <span class="w">            </span><span class="nt">storage</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1Gi</span>
 </code></pre></div>
 
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">PV权限问题</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">PV权限问题</p>
 <p>Redis pod如果报错pv没有permission的话: 去nfs节点把pv数据目录改成chmod -R 777, chown -R 1000.1000</p>
 <p>本质是因为存储平台没有配置默认权限，需要挨个pod去配置对应的pv目录权限。</p>
 </div>

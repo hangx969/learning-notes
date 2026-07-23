@@ -141,16 +141,16 @@
 CLB和后端ECS之间是通过内网进行通信的。<br />
 - 如果ECS仅仅处理来自CLB的请求,可以不购买公网带宽(ECS、公网IP、弹性公网IP、NAT网关等)。<br />
 - 如果需要直接通过后端ECS对外提供服务,或后端ECS有访问外网的需求,需要购买ECS、公网IP、弹性公网IP、NAT网关等服务。</p>
-<p><div class="callout callout-important" markdown="1"><br />
-<p class="callout-title">总体原则:流量从哪里进来,就从哪里出去。</p></p>
+<div class="callout callout-important">
+<p class="callout-title">总体原则:流量从哪里进来,就从哪里出去。</p>
 <ul>
 <li>通过CLB进入的流量在CLB上限速或计费,<mark>仅收取出方向流量费用</mark>,入方向流量不收取,CLB到ECS之间是阿里云内网通信,不收取流量费用。</li>
 <li>来自弹性公网IP或NAT网关的流量,分别在弹性公网IP或NAT网关上进行限速或计费。如果在购买ECS时选择了公网带宽,限速/计费点在ECS上。</li>
 <li>CLB仅提供==被动访问公网的能力==,即后端ECS只能在收到通过CLB转发来的公网的请求时,才能访问公网回应该请求。如后端ECS希望主动发起公网访问,则需要配置或购买ECS公网带宽、弹性公网IP或NAT网关来实现。</li>
 </ul>
 </div>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">意思是虽然CLB有公网访问能力,但是仅支持有请求进来,需要后端ECS响应的时候,ECS才能被动访问公网。比如ECS想跑个 <code>yum install</code>,是不能走CLB出公网的。</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">意思是虽然CLB有公网访问能力,但是仅支持有请求进来,需要后端ECS响应的时候,ECS才能被动访问公网。比如ECS想跑个 `yum install`,是不能走CLB出公网的。</p>
 </div>
 <ul>
 <li>ECS公网带宽(购买ECS时配置)、弹性公网IP、NAT网关均可以实现ECS的双向公网访问(访问或被访问),但没有流量分发和负载均衡的能力。</li>
@@ -196,8 +196,8 @@ CLB和后端ECS之间是通过内网进行通信的。<br />
 <li><strong>默认服务器组</strong>:是给所有的后端机器配置同样的后端监听端口。使用LB之前必须指定一台默认服务器接收负载均衡转发的客户端请求</li>
 <li><strong>主备服务器组</strong>:只包含两台ECS实例,一台主,一台备。必须开启健康检查,主检查,备不检查。主挂了,自动切换到备。<mark>只能使用四层监听</mark>。</li>
 </ul>
-<p><div class="callout callout-note" markdown="1"><br />
-<p class="callout-title">同时配置了虚拟服务器组和默认服务器组,监听会将请求转发到虚拟服务器组,而不是默认服务器组</p></p>
+<div class="callout callout-note">
+<p class="callout-title">同时配置了虚拟服务器组和默认服务器组,监听会将请求转发到虚拟服务器组,而不是默认服务器组</p>
 </div>
 <hr />
 <h3 id="健康检查">健康检查</h3>
@@ -205,8 +205,8 @@ CLB和后端ECS之间是通过内网进行通信的。<br />
 配置:HTTP请求后端什么路径(接口),返回2xx/3xx,认为是健康的。<br />
 需要注意配置的后端路径(接口)必须是存在,正常返回2xx或3xx的。</p>
 <p>某台ECS健康检查失败就会停止向该ECS发送请求。</p>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">如果您的业务对负载敏感性高,高频率的健康检查探测可能会对正常业务访问造成影响。您可以结合业务情况,通过降低健康检查频率、增大健康检查间隔、七层检查修改为四层检查等方式,来降低对业务的影响。但为了保障业务的持续可用,<mark>不建议关闭健康检查</mark>。</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">如果您的业务对负载敏感性高,高频率的健康检查探测可能会对正常业务访问造成影响。您可以结合业务情况,通过降低健康检查频率、增大健康检查间隔、七层检查修改为四层检查等方式,来降低对业务的影响。但为了保障业务的持续可用,==不建议关闭健康检查==。</p>
 </div>
 <h4 id="原理">原理</h4>
 <p>负载均衡健康检查使用的地址段是 <mark><code>100.64.0.0/10</code></mark>,后端服务器务必不能屏蔽该地址段。<br />
@@ -220,8 +220,8 @@ CLB和后端ECS之间是通过内网进行通信的。<br />
 - 综上,如果后端服务器对host字段有检查要求,需要配置域名。</p>
 <h4 id="tcp检查">TCP检查</h4>
 <p>针对四层健康检查,如TCP,向后端ECS IP+端口发送==TCP SYN包==。后端服务器如果健康接收请求,则返回SYN+ACK包。</p>
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">TCP健康检查的异常行为</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">TCP健康检查的异常行为</p>
 <p>正常的TCP三次握手,LVS节点服务器在收到后端ECS返回的SYN+ACK数据包后,会进一步发送ACK数据包,随后立即发送==RST数据包中断TCP连接==。</p>
 <p>该实现机制可能会导致后端ECS认为相关TCP连接出现异常（非正常退出），并在业务软件如Java连接池等日志抛出相应的错误信息,如 <code>Connection reset by peer</code>。</p>
 <p><strong>解决方案</strong>:<br />
@@ -232,13 +232,13 @@ CLB和后端ECS之间是通过内网进行通信的。<br />
 <p>向后端ECS的内网IP+【健康检查端口】发送UDP报文:<br />
 - 如果后端ECS相应端口未正常监听,则系统会返回类似 <code>port XX unreachable</code> 的ICMP报错信息<br />
 - 反之不做任何处理。</p>
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">UDP健康检查不一致问题</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">UDP健康检查不一致问题</p>
 <p>当前UDP协议服务健康检查可能存在服务真实状态与健康检查不一致的情况:如果后端是linux服务器,在大并发场景下,由于Linux的防ICMP攻击保护机制,会限制服务器发送ICMP的速度。此时,即使服务已经出现异常,由于无法向前端LB返回 <code>port XX unreachable</code> 报错信息,会导致负载均衡没有收到ICMP应答,认为探测成功。从而导致不一致。</p>
 <p><strong>解决方案</strong>: 负载均衡通过发送您指定的字符串到后端服务器,必须得到指定应答后才认为检查成功。但该实现机制需要客户端程序配合应答。</p>
 </div>
-<p><div class="callout callout-summary" markdown="1"><br />
-<p class="callout-title">七层健康检查是检查状态码;四层健康检查是检查端口是否超时</p></p>
+<div class="callout callout-summary">
+<p class="callout-title">七层健康检查是检查状态码;四层健康检查是检查端口是否超时</p>
 </div>
 <hr />
 <h2 id="alb">ALB</h2>

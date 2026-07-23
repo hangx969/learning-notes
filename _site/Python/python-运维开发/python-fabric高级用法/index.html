@@ -112,8 +112,8 @@
 <li>参考链接:https://cloud.tencent.com/developer/article/2336612</li>
 </ul>
 <h2 id="fabric">fabric</h2>
-<p><div class="callout callout-info" markdown="1"><br />
-<p class="callout-title">fabric简介</p></p>
+<div class="callout callout-info">
+<p class="callout-title">fabric简介</p>
 <p>fabric是基于paramiko的进一步封装,使用起来更加方便。fabric共有三个版本:fabric1、fabric2、fabric3,其中fabric3是非官方版本,所以不推荐使用,建议使用fabric2版本。 官方文档:www.fabfile.org/</p>
 </div>
 <p>相关笔记: <a class="wikilink" href="../../../Python/python-%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91/python-Linux-operation/">python-Linux-operation</a></p>
@@ -187,8 +187,8 @@ ret.failed  # 执行状态True or False
 <ul>
 <li>如果需要用户主动输入命令,可以使用==Responder==,第一个参数为需要匹配的字符串,第二个参数为响应的内容。由于交互式终端原因,此处需要设置<code>pty=True</code>,否则运行会提示:<code>no tty present and no askpass program specified</code>,若提示<code>xx user is not in the sudoers file. This incident will be reported</code>,需要通过登录root用户,修改sudoers文件。</li>
 </ul>
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">注意事项</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">注意事项</p>
 <p>模式匹配字符串要转义,否则会匹配不到,进而一直阻塞无响应(凡是需要用户介入的操作,都会一直卡在那里直到给出响应);response内容必须以<code>\n</code>紧接结尾,相当于输入完成后执行回车操作。</p>
 </div>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">invoke</span><span class="w"> </span><span class="kn">import</span> <span class="n">Responder</span>
@@ -259,8 +259,8 @@ ret.failed  # 执行状态True or False
 
 <hr />
 <h3 id="上传文件">上传文件</h3>
-<p><div class="callout callout-note" markdown="1"><br />
-<p class="callout-title">上传文件说明</p></p>
+<div class="callout callout-note">
+<p class="callout-title">上传文件说明</p>
 <p>fabric只能上传单个文件,如果想上传多个文件,有两种方案:本地打包之后上传,然后在远程服务器执行解压操作,或者通过遍历文件夹循环调用get上传,本地目录遍历用到了<code>pathlib2.Path</code>中的<code>rglob</code>方法。注意:远程路径如果不存在会报错。</p>
 </div>
 <div class="highlight"><pre><span></span><code><span class="n">conn</span> <span class="o">=</span> <span class="n">Connection</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">user</span><span class="si">}</span><span class="s2">@</span><span class="si">{</span><span class="n">host</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">port</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">connect_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;password&quot;</span><span class="p">:</span> <span class="n">password</span><span class="p">})</span>
@@ -409,8 +409,8 @@ ret.failed  # 执行状态True or False
 <span class="c1"># 如果入口文件为fabfile.py,可以直接执行 fab -H localhost task2</span>
 </code></pre></div>
 
-<p><div class="callout callout-important" markdown="1"><br />
-<p class="callout-title">注意事项</p></p>
+<div class="callout callout-important">
+<p class="callout-title">注意事项</p>
 <p>其中被<code>@task</code>装饰的函数必须有一个参数,否则会报:<code>TypeError: Tasks must have an initial Context argument!</code>。 假如入口文件不是fabfile.py且不指定的话,会报<code>Can't find any collection named 'fabfile'!</code>,fabric2中通过-c来指定加载的任务列表,<strong>官方API文档也说明了:--collection后面的参数是模块名而不是具体文件名</strong>。</p>
 </div>
 <ul>

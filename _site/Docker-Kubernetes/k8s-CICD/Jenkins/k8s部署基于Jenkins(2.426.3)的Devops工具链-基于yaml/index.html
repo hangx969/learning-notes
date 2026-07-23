@@ -412,8 +412,8 @@ kubectl<span class="w"> </span>create<span class="w"> </span>clusterrolebinding<
 <span class="w">          </span><span class="nt">claimName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">jenkins-k8s-pvc</span>
 </code></pre></div>
 
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">权限问题</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">权限问题</p>
 <p>报错显示没有权限操作/var/jenkins_home/copy_reference_file.log文件:</p>
 <p>touch: cannot touch '/var/jenkins_home/copy_reference_file.log': Permission denied</p>
 <p>Can not write to /var/jenkins_home/copy_reference_file.log. Wrong volume permissions?</p>

@@ -110,8 +110,8 @@
 <h1 id="python-mysql操作">Python MySQL操作</h1>
 <h2 id="mysql介绍">Mysql介绍</h2>
 <p><mark>MySQL</mark> 是一种开源的关系型数据库管理系统(RDBMS),数据库就是用来存储和管理数据的地方,而 MySQL 则是一种专门用来管理这些数据的软件。</p>
-<p><div class="callout callout-tip" markdown="1"><br />
-<p class="callout-title">为什么使用 MySQL?</p></p>
+<div class="callout callout-tip">
+<p class="callout-title">为什么使用 MySQL?</p>
 <ol>
 <li>存储数据:MySQL 能帮助我们把数据存储在一个结构化的表格中。比如,你有一个网站,可以用 MySQL 来存储用户信息、订单数据、商品信息等。</li>
 <li>数据查询:你可以用 MySQL 的查询语言(SQL)快速找到你想要的数据,比如查找某个用户的订单记录。</li>
@@ -135,8 +135,8 @@
 <span class="n">chown</span> <span class="n">mysql</span><span class="p">:</span><span class="n">mysql</span> <span class="o">-</span><span class="n">R</span> <span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">mysql</span>
 </code></pre></div>
 
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">兼容性问题</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">兼容性问题</p>
 <p>注:这个教程在RockyLinux8.10上无法启动mysql。</p>
 <p>尝试使用<a href="../../Docker-Kubernetes/helm/helm部署mysql">helm安装mysql</a></p>
 </div>
@@ -203,8 +203,8 @@ flush<span class="w"> </span>privileges<span class="p">;</span>
 <h2 id="mysql-connector-python库">mysql-connector-python库</h2>
 <h3 id="功能">功能</h3>
 <p><mark>mysql-connector-python</mark> 是一个官方提供的 Python 库,用于与 MySQL 数据库进行交互。它为 Python 应用程序提供了简单而强大的 API,使开发者能够轻松执行数据库操作,如连接数据库、执行 SQL 查询、处理结果集等。</p>
-<p><div class="callout callout-summary" markdown="1"><br />
-<p class="callout-title">主要功能</p></p>
+<div class="callout callout-summary">
+<p class="callout-title">主要功能</p>
 <ol>
 <li>数据库连接: 通过该库,用户可以方便地连接到 MySQL 数据库,支持使用主机名、端口、用户名和密码等信息进行连接。</li>
 <li>执行 SQL 语句: 提供游标对象,允许用户执行各种 SQL 语句,包括 SELECT、INSERT、UPDATE 和 DELETE 等。</li>
@@ -355,8 +355,8 @@ pip3<span class="w"> </span>install<span class="w"> </span>-i<span class="w"> </
      参数 <code>"Alice"</code> 和 <code>30</code> 被安全地插入,而不是直接拼接到 SQL 字符串中。</li>
 </ol>
 <h4 id="为什么-s-能阻止-sql-注入攻击">为什么 <code>%s</code> 能阻止 SQL 注入攻击?</h4>
-<p><div class="callout callout-warning" markdown="1"><br />
-<p class="callout-title">SQL 注入攻击</p></p>
+<div class="callout callout-warning">
+<p class="callout-title">SQL 注入攻击</p>
 <p>SQL 注入攻击的核心是通过恶意输入将额外的 SQL 代码插入到查询中,从而改变查询的逻辑。例如:</p>
 <p><code>sql
 SELECT * FROM users WHERE name = 'Alice'; DROP TABLE users; --'</code></p>
