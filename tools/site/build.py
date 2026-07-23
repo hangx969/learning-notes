@@ -144,8 +144,12 @@ def load_notes():
 
 
 def load_git_times(notes):
-    """单次遍历 git log 全历史；文件首次出现即最后提交时间（log 按时间倒序）。"""
-    out = git("log", "--pretty=format:\x01%ct", "--name-only")
+    """单次遍历 git log 全历史；文件首次出现即最后提交时间（log 按时间倒序）。
+
+    --no-renames：只按路径统计"最后触碰时间"，无需重命名检测；同时避免在
+    CI 的 blob:none 部分克隆下因重命名检测触发历史 blob 的按需拉取。
+    """
+    out = git("log", "--no-renames", "--pretty=format:\x01%ct", "--name-only")
     times, cur = {}, 0
     for line in out.splitlines():
         if line.startswith("\x01"):
