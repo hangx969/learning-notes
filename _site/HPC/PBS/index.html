@@ -1,0 +1,1218 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PBS 作业调度系统 - Learning Notes</title>
+<link rel="stylesheet" href="../../static/style.css">
+<link rel="stylesheet" href="../../static/pygments.css">
+</head>
+<body data-root="../../">
+<header class="site-header">
+  <div class="header-inner">
+    <a class="logo" href="../../index.html"><span class="logo-mark"></span>LEARNING NOTES</a>
+    <div class="search">
+      <input id="search-input" type="search" placeholder="搜索笔记…" autocomplete="off" aria-label="搜索笔记">
+      <div id="search-results" hidden></div>
+    </div>
+  </div>
+  <nav class="topic-nav" aria-label="主题导航">
+    <div class="topic-nav-inner">
+      <a href="../../AI/">AI</a>
+      <a href="../../Aliyun/">Aliyun</a>
+      <a href="../../Azure/">Azure</a>
+      <a href="../../C%2B%2B/">C++</a>
+      <a href="../../CloudComputing/">CloudComputing</a>
+      <a href="../../Database/">Database</a>
+      <a href="../../Docker-Kubernetes/">Docker-Kubernetes</a>
+      <a href="../../GPU-DeepLearning/">GPU-DeepLearning</a>
+      <a href="../../Git/">Git</a>
+      <a href="../../Go/">Go</a>
+      <a href="../../HPC/" class="active">HPC</a>
+      <a href="../../IaC/">IaC</a>
+      <a href="../../Linux-Shell/">Linux-Shell</a>
+      <a href="../../Middlewares/">Middlewares</a>
+      <a href="../../Networking/">Networking</a>
+      <a href="../../OS/">OS</a>
+      <a href="../../Python/">Python</a>
+      <a href="../../SoftwareTesting/">SoftwareTesting</a>
+    </div>
+  </nav>
+</header>
+<main class="main">
+
+<div class="article-layout">
+
+  <aside class="sidebar">
+    <details class="sidebar-details">
+      <summary>HPC</summary>
+      <nav class="sidebar-nav">
+        <p class="sidebar-group">其他</p>
+        <ul>
+          <li><a href="../../HPC/CentOS7-slurm23.02-%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%AE%89%E8%A3%85/">CentOS7 Slurm 23.02 二进制安装</a></li>
+          <li><a href="../../HPC/PBS-cases/">PBS 实际案例</a></li>
+          <li><a href="../../HPC/PBS/" class="current">PBS 作业调度系统</a></li>
+          <li><a href="../../HPC/Slurm-node-exporter/">Slurm Node Exporter</a></li>
+          <li><a href="../../HPC/Ubuntu-2204-slurm-22.05.11-binary-installation/">Ubuntu 22.04 Slurm 22.05.11 Binary Installation (Production)</a></li>
+          <li><a href="../../HPC/Ubuntu2204-slurm-%2023.11-deb%E5%AE%89%E8%A3%85/">Ubuntu 22.04 Slurm 23.11 deb安装</a></li>
+          <li><a href="../../HPC/Ubuntu2204-slurm-22.05.11-%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%AE%89%E8%A3%85/">Ubuntu 22.04 Slurm 22.05.11 二进制安装</a></li>
+        </ul>
+      </nav>
+    </details>
+  </aside>
+
+  <article class="article">
+    <nav class="breadcrumb">
+      <a href="../../index.html">首页</a><span>/</span>
+      <a href="../../HPC/">HPC</a>
+    </nav>
+    <h1 class="article-title">PBS 作业调度系统</h1>
+    <p class="article-meta"><span>更新于 2026-04-16</span>
+      <a href="https://github.com/hangx969/learning-notes/blob/main/HPC/PBS.md">查看源文件</a>
+    </p>
+    <div class="article-body">
+<h1 id="pbs-作业调度系统">PBS 作业调度系统</h1>
+<ul>
+<li>
+<p>==PBS(Portable Batch System)==是一个常用的作业调度系统,用于管理和调度计算集群中的作业。它允许用户提交作业并有效地利用集群资源,使得多个用户能够共享计算资源并按照优先级执行他们的作业。</p>
+</li>
+<li>
+<p>背景:PBS最初由NASA开发,旨在管理和调度超级计算机集群中的作业。它的设计目标是提供一个可移植、灵活和可扩展的作业管理系统,使得用户可以方便地提交、管理和跟踪作业的执行。</p>
+</li>
+<li>
+<p>作用:PBS的主要功能是管理和调度计算集群中的作业。它允许用户提交作业描述,包括作业需要的资源、执行命令、作业优先级等信息。PBS根据资源可用性、作业优先级和调度策略等因素来决定作业的执行顺序,并负责分配计算资源给作业使用。同时,PBS还提供了查询作业状态、取消作业、节点管理等功能。</p>
+</li>
+</ul>
+<hr />
+<h2 id="版本分支">版本分支</h2>
+<p>PBS的目前包括==openPBS==, ==PBS Pro==和==Torque==三个主要分支.</p>
+<ul>
+<li>其中OpenPBS是最早的PBS系统, 目前已经没有太多后续开发。</li>
+<li>PBS pro是PBS的商业版本, 功能最为丰富。</li>
+<li>Torque是Clustering公司接过了OpenPBS, 并给与后续支持的一个开源版本。</li>
+</ul>
+<hr />
+<h2 id="工作流程">工作流程</h2>
+<ol>
+<li>作业提交:用户使用==qsub==命令提交作业到PBS系统,包括作业描述和执行脚本。</li>
+<li>作业排队:提交的作业被放置在队列中等待调度执行。</li>
+<li>资源分配:PBS根据作业需求、可用资源和调度策略,选择合适的节点分配资源。</li>
+<li>作业执行:作业在分配的节点上执行,执行期间可以通过==qstat==查看作业状态。</li>
+<li>作业完成:作业执行完成后,输出结果被返回给用户。</li>
+</ol>
+<hr />
+<h2 id="pbs命令介绍">PBS命令介绍</h2>
+<h3 id="查看节点情况-pbsnodes">查看节点情况-pbsnodes</h3>
+<ol>
+<li><code>pbsnodes -a</code>:这个命令将显示所有节点的详细信息,包括节点的状态、空闲核数、总核数等。</li>
+<li><code>pbsnodes -l free</code>:这个命令将列出所有空闲的节点。</li>
+<li><code>pbsnodes -l</code>:这个命令将列出所有节点的状态,包括空闲节点和正在运行的节点。</li>
+</ol>
+<h3 id="提交作业-qsub">提交作业-qsub</h3>
+<ul>
+<li>qsub 命令:用于提交作业脚本</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="c1">#命令格式:</span>
+<span class="nv">$qsub</span><span class="w"> </span>-a<span class="w"> </span>date_time<span class="w"> </span><span class="o">[</span>-C<span class="w"> </span>directive_prefix<span class="o">]</span>
+<span class="w">      </span>-e<span class="w"> </span>path<span class="w"> </span>-j<span class="w"> </span>join<span class="w"> </span>-l<span class="w"> </span>resource_list
+<span class="w">      </span>-M<span class="w"> </span>user_list<span class="w"> </span>-o<span class="w"> </span>path<span class="w"> </span>-q<span class="w"> </span>destination
+<span class="w">      </span>-S<span class="w"> </span>path_list-v<span class="w"> </span>variable_list
+<span class="w">      </span>-W<span class="w"> </span>additional_attributes
+<span class="c1">#参数说明:因为所采用的选项一般放在pbs 脚本中提交,所以具体见PBS 脚本选项。</span>
+</code></pre></div>
+
+<h3 id="提交作业-脚本">提交作业-脚本</h3>
+<ul>
+<li>
+<p>当使用PBS管理作业时,需要编写PBS脚本文件来描述作业的要求、资源需求以及作业的执行流程。PBS脚本是一个文本文件,通常以<code>.pbs</code>为扩展名。它包含了用于描述作业要求的指令、环境设置和作业执行命令。</p>
+</li>
+<li>
+<p>脚本结构:</p>
+</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="ch">#!/bin/bash</span>
+<span class="c1">#PBS -N job_name  # 作业名称</span>
+<span class="c1">#PBS -l nodes=1:ppn=4  # 分配资源,1个节点,每节点4个核心</span>
+<span class="c1">#PBS -l walltime=01:00:00  # 预计作业运行时间</span>
+<span class="c1">#PBS -q batch  # 队列名称</span>
+
+<span class="c1"># 可选的环境设置和加载模块</span>
+module<span class="w"> </span>load<span class="w"> </span>&lt;module_name&gt;
+
+<span class="c1"># 进入工作目录</span>
+<span class="nb">cd</span><span class="w"> </span><span class="nv">$PBS_O_WORKDIR</span>
+
+<span class="c1"># 执行命令</span>
+&lt;command_to_execute&gt;
+</code></pre></div>
+
+<p><div class="callout callout-example" markdown="1"><br />
+<p class="callout-title">示例1 - 运行shell命令</p></p>
+<p><sub>~</sub>sh</p>
+<h1 id="binbash">!/bin/bash</h1>
+<h1 id="pbs-n-myjob">PBS -N myjob</h1>
+<h1 id="pbs-l-nodes1ppn2">PBS -l nodes=1:ppn=2</h1>
+<h1 id="pbs-l-walltime000100">PBS -l walltime=00:01:00</h1>
+<h1 id="pbs-q-batch">PBS -q batch</h1>
+<p>cd $PBS_O_WORKDIR</p>
+<p>echo "Hello, PBS! This is my job."<br />
+~~~</p>
+</div>
+<p><div class="callout callout-example" markdown="1"><br />
+<p class="callout-title">示例2 - 运行python脚本</p></p>
+<p><sub>~</sub>sh</p>
+<h1 id="binbash_1">!/bin/bash</h1>
+<h1 id="pbs-n-python_job">PBS -N python_job</h1>
+<h1 id="pbs-l-nodes1ppn4">PBS -l nodes=1:ppn=4</h1>
+<h1 id="pbs-l-walltime010000">PBS -l walltime=01:00:00</h1>
+<h1 id="pbs-q-batch_1">PBS -q batch</h1>
+<p>module load python</p>
+<p>cd $PBS_O_WORKDIR</p>
+<p>python myscript.py<br />
+~~~</p>
+</div>
+<p><div class="callout callout-example" markdown="1"><br />
+<p class="callout-title">示例3 - 使用MPI运行并行作业</p></p>
+<p><sub>~</sub>sh</p>
+<h1 id="binbash_2">!/bin/bash</h1>
+<h1 id="pbs-n-mpi_job">PBS -N mpi_job</h1>
+<h1 id="pbs-l-nodes4ppn2">PBS -l nodes=4:ppn=2</h1>
+<h1 id="pbs-l-walltime020000">PBS -l walltime=02:00:00</h1>
+<h1 id="pbs-q-batch_2">PBS -q batch</h1>
+<p>module load mpi</p>
+<p>cd $PBS_O_WORKDIR</p>
+<p>mpirun -np 8 my_mpi_program<br />
+~~~</p>
+</div>
+<p>qsub test.sh即可提交作业脚本</p>
+<h3 id="查看作业状态-qstat">查看作业状态-qstat</h3>
+<ul>
+<li>qstat 命令:用于查询作业状态信息</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202401181740885.png" alt="image-20240118174026739" style="zoom:50%;" /></p>
+<p><code>sh
+  #状态码
+  #B  只用于任务向量,表示任务向量已经开始执行
+  #E  任务在运行后退出
+  #H  任务被服务器或用户或者管理员阻塞
+  #Q  任务正在排队中,等待被调度运行
+  #R  任务正在运行
+  #S  任务被服务器挂起,由于一个更高优先级的任务需要当前任务的资源
+  #T  任务被转移到其它执行节点了
+  #U  由于服务器繁忙,任务被挂起
+  #W  任务在等待它所请求的执行时间的到来(qsub -a)
+  #X  只用于子任务,表示子任务完成</code></p>
+<h3 id="删除作业-qdel">删除作业-qdel</h3>
+<ul>
+<li>qdel 命令:用于删除已提交的作业</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="c1">#命令格式:</span>
+qdel<span class="w"> </span><span class="o">[</span>-W<span class="w"> </span>间隔时间<span class="o">]</span><span class="w"> </span>作业号
+<span class="c1"># qdel -W 15 211 #15秒后删除作业号为211 的作业</span>
+qdel<span class="w"> </span>-W<span class="w"> </span>force<span class="w"> </span>jobid<span class="w"> </span><span class="c1">#强制删除作业</span>
+</code></pre></div>
+
+<h3 id="队列管理-qmgr">队列管理-qmgr</h3>
+<ul>
+<li>qmgr 命令---用于队列管理</li>
+</ul>
+<div class="highlight"><pre><span></span><code>qmgr<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;create queue batch queue_type=execution&quot;</span>
+qmgr<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;set queue batch started=true&quot;</span>
+qmgr<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;set queue batch enabled=true&quot;</span>
+qmgr<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;set queue batch resources_default.nodes=1&quot;</span>
+qmgr<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;set queue batch resources_default.walltime=3600&quot;</span>
+qmgr<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;set server default_queue=batch&quot;</span>
+</code></pre></div>
+
+<hr />
+<h2 id="pbs-pro学习">PBS pro学习</h2>
+<h3 id="组件">组件</h3>
+<ul>
+<li><mark>Server</mark></li>
+<li>管理job,queue;处理命令</li>
+<li>守护进程是<code>pbs_server.bin</code></li>
+<li><mark>Scheduler</mark></li>
+<li>负责调度job</li>
+<li>守护进程是<code>pbs_sched</code></li>
+<li><mark>MoM</mark></li>
+<li>执行job</li>
+<li>守护进程是<code>pbs_mom</code></li>
+</ul>
+<p>可以将3个组件全部部署在一台服务器上;更通用的方法是将Server+scheduler部署到一台管理节点,然后部署多台MoM节点。</p>
+<h3 id="工作流程_1">工作流程</h3>
+<ol>
+<li>User submits job</li>
+<li>PBS server returns a job ID (数字+head node的hostname)</li>
+<li>PBS scheduler requests a list of resources from the server</li>
+<li>PBS scheduler sorts all the resources and jobs</li>
+<li>PBS scheduler informs PBS server which host(s) that job  can run on</li>
+<li>PBS server pushes job script to execution host(s)</li>
+<li>PBS MoM executes job script</li>
+<li>PBS MoM periodically reports resource usage back to PBS server</li>
+<li>When job is completed PBS MoM kills the job script</li>
+<li>PBS server de-queues job from PBS complex</li>
+</ol>
+<h3 id="提交作业">提交作业</h3>
+<ul>
+<li>命令行方式</li>
+</ul>
+<p><sub>~</sub>sh<br />
+  su pbsuser1<br />
+  qsub -l select=1:ncpus=1:mem=1gb -l walltime=10:00:00 -- /bin/sleep 100<br />
+  ~~~</p>
+<ul>
+<li>ctrl+d提交</li>
+</ul>
+<p><sub>~</sub>sh<br />
+  qsub<br />
+  #回车之后开始输入命令<br />
+  #ctrl+D作业就被提交了<br />
+  ~~~</p>
+<ul>
+<li>脚本方式</li>
+</ul>
+<p><sub>~</sub>sh<br />
+  cat pbs_script.sh<br />
+  #!/bin/bash<br />
+  #PBS -l select=1:ncpus=1:mem=1gb<br />
+  #PBS -l walltime=00:01:00<br />
+  /bin/sleep 100<br />
+  ~~~</p>
+<p><sub>~</sub>sh<br />
+  qsub pbs_script.sh<br />
+  ~~~</p>
+<ul>
+<li>交互式</li>
+</ul>
+<p><sub>~</sub>sh<br />
+  su pbsuser1<br />
+  qsub -I<br />
+  #会直接给一个到计算节点的终端,可以交互式输入命令。适用于debug。<br />
+  ~~~</p>
+<h3 id="作业参数设置">作业参数设置</h3>
+<ul>
+<li>
+<p>可以通过qsub参数指定 <code>qsub -N job_name job_script</code></p>
+</li>
+<li>
+<p>可以在脚本中指定</p>
+</li>
+</ul>
+<p><sub>~</sub>sh<br />
+  #!/bin/bash<br />
+  #PBS -N test_run_01<br />
+  #PBS -l select=2:ncpus=2:mem=1GB<br />
+  #PBS -l place=scatter<br />
+  #PBS -j oe<br />
+  #PBS -o /home/pbsuser1/OUTPUTS<br />
+  ## this is a comment<br />
+  /bin/sleep 60<br />
+  ~~~</p>
+<ul>
+<li><code>#PBS -l select=2:ncpus=2:mem=1GB</code> 指定需要==2个chunk==,每个chunk都需要2个核心,1GB内存来处理这个任务。</li>
+<li><code>#PBS -l place=scatter</code> 加了这个参数,倾向于把两个chunk分散到多个node去执行</li>
+</ul>
+<h4 id="数组作业">数组作业</h4>
+<ul>
+<li>数组作业是一种特殊类型的作业,它允许你一次提交多个相似的作业。使用一个脚本来提交多个相似的作业,而不需要为每个作业都写一个单独的脚本。这对于需要运行大量相似作业的情况非常有用,例如参数扫描或蒙特卡洛模拟。</li>
+</ul>
+<p><sub>~</sub>sh<br />
+  qsub -J 1-5 -- /bin/sleep 10</p>
+<p>qstat -answ1 #只能查看数组作业的整体状态<br />
+  qstat -t #查看数组作业中每个子成员作业的状态<br />
+  qstat -J #Shows state only<br />
+  qstat -p #Shows the % completed<br />
+  ~~~</p>
+<p><div class="callout callout-example" markdown="1"><br />
+<p class="callout-title">数组作业的脚本示例</p></p>
+<p>Submit 5 jobs with odd indices (1,3,5,7,9):<br />
+<sub>~</sub>sh</p>
+<h1 id="binsh">!/bin/sh</h1>
+<h1 id="pbs-n-simoddjobs">PBS -N SimOddJobs</h1>
+<h1 id="pbs-j-1-102">PBS -J 1-10:2</h1>
+<p>echo "Main script: index " $PBS_ARRAY_INDEX<br />
+/opt/AppA -input /home/user01/odd/scriptlet_$PBS_ARRAY_INDEX<br />
+~~~</p>
+<p>Submit 10 jobs with consecutive index numbers:<br />
+<sub>~</sub>sh</p>
+<h1 id="binsh_1">!/bin/sh</h1>
+<h1 id="pbs-n-simn1010jobs">PBS -N Simn1010Jobs</h1>
+<h1 id="pbs-j-1-10">PBS -J 1-10</h1>
+<p>echo "Main script: index " $PBS_ARRAY_INDEX<br />
+/opt/AppA -input /home/pbsuser1/runcase1/scriptlet_$PBS_ARRAY_INDEX<br />
+~~~</p>
+</div>
+<h4 id="作业环境变量">作业环境变量</h4>
+<ul>
+<li>作业提交之后,PBS会自动指定一些环境变量,这些变量可以被利用为参数写到脚本里</li>
+</ul>
+<p><img alt="image-20240204160456322" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202402041604385.png" /></p>
+<p><sub>~</sub>sh<br />
+  #!/bin/bash<br />
+  #PBS -l select=8:ncpus=16:mem=32GB<br />
+  #PBS -l place=scatter,walltime=5:00:00<br />
+  #PBS -N sim_run_01<br />
+  #PBS -M user01@altair.com<br />
+  #PBS -m abe<br />
+  #PBS -e pbsworks:/scratch/${PBS_JOBNAME}.e${PBS_JOBID}<br />
+  #PBS -o pbsworks:/scratch/${PBS_JOBNAME}.o${PBS_JOBID}<br />
+  cd $PBS_TMPDIR<br />
+  mpirun -np 128 my_script.sh<br />
+  ~~~</p>
+<h4 id="作业输出">作业输出</h4>
+<ul>
+<li>
+<p>作业的STDOUT和STDERR可以定义,默认<code>$PBS_O_WORKDIR</code>。</p>
+</li>
+<li>
+<p>有两种方式指定</p>
+</li>
+<li>
+<p><code>-o &lt;host&gt;:&lt;path&gt;&lt;filename&gt;</code>, <code>-e &lt;host&gt;:&lt;path&gt;&lt;filename&gt;</code></p>
+</li>
+<li>
+<p><code>-k</code></p>
+<p><img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202402051030441.png" alt="image-20240205103046334" style="zoom:50%;" /></p>
+</li>
+<li>
+<p>默认的job staging目录是user的home directory</p>
+</li>
+</ul>
+<h4 id="作业sandbox">作业sandbox</h4>
+<p><img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202402051047262.png" alt="image-20240205104714155" style="zoom:50%;" /></p>
+<h4 id="作业dependency">作业dependency</h4>
+<ul>
+<li><code>qsub -W depend=afterok:1.trainta01:2.trainta01  my_script</code></li>
+<li>有dependency的job会被置于==H状态==</li>
+</ul>
+<h3 id="查看作业状态">查看作业状态</h3>
+<div class="highlight"><pre><span></span><code>qstat<span class="w"> </span>-answ1<span class="w"> </span><span class="c1">#查看当前所有作业详细信息</span>
+qstat<span class="w"> </span>-fx<span class="w"> </span>jobid
+qstat<span class="w"> </span>-f<span class="w"> </span><span class="m">16</span>.pbs1<span class="w"> </span><span class="c1">#查看某个作业详细信息</span>
+qstat<span class="w"> </span>-fx<span class="w"> </span><span class="m">16</span><span class="w"> </span>-F<span class="w"> </span>json<span class="w"> </span><span class="c1">#以json格式输出历史job的详细信息</span>
+tracejob<span class="w"> </span><span class="m">3</span>.pbs1<span class="w"> </span><span class="c1">#输出中的L代表log来自scheduler,S代表来自server</span>
+
+<span class="nb">source</span><span class="w"> </span>/etc/pbs.conf
+<span class="nv">$PBS_EXEC</span>/unsupported/pbs_dtj<span class="w"> </span><span class="m">3</span>.pbs1
+</code></pre></div>
+
+<ul>
+<li>作业状态码含义</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202402041408776.png" alt="image-20240204140817880" style="zoom:50%;" /></p>
+<p><div class="callout callout-warning" markdown="1"><br />
+<p class="callout-title">E状态</p></p>
+<p>说明job在exit状态,可能正在复制结果回来。如果长时间卡在E说明可能server之间的==passwordless ssh或者scp有问题==。</p>
+</div>
+<ul>
+<li>
+<p>作业历史</p>
+</li>
+<li>
+<p>管理员可以开启作业历史功能,查看过去14天的job</p>
+<p><sub>~</sub>sh<br />
+qmgr -c " set server job_history_enable = true "<br />
+qstat -H #看已经删掉、移动或完成的<br />
+qstat -x #看所有状态的<br />
+~~~</p>
+</li>
+<li>
+<p>作业日志</p>
+</li>
+<li>
+<p>accounting log存放在pbs_server守护进程所在的server上。每天生成一个log文件,只有root能看</p>
+</li>
+</ul>
+<p><sub>~</sub>sh<br />
+  cd /var/spool/pbs/server_priv/accounting/<br />
+  #其中有每日的job执行记录的log。分为E记录和S记录<br />
+  ~~~</p>
+<ul>
+<li>筛选出特定作业 - <code>qselect</code></li>
+</ul>
+<p><sub>~</sub>sh<br />
+  qselect -u user01 #列出属于某用户的job id<br />
+  qselect -s R -l ncpus.gt.4 #在running job中找出需求cpu大于4的job<br />
+  qstat <code>qselect -s E</code> #联合使用,找出状态是E的job,列出详细信息。<br />
+  qselect -ts.gt.09251200 -ts.lt.09251500 #列出某时间段内的job<br />
+  ~~~</p>
+<h3 id="作业其他操作">作业其他操作</h3>
+<ul>
+<li>删除作业 - <code>qdel</code></li>
+<li>重新排队一个正在运行的job - <code>qrerun</code></li>
+<li>手动hold job - <code>qhold</code>;手动release job - <code>qrls</code></li>
+<li>定时启动任务 - <code>qsub -a &lt;date time&gt;</code></li>
+<li>作业提交之后,其需求的资源仍可被改变 - <code>qalter -l select=1:ncpus=3 0.pbs1</code></li>
+</ul>
+<h3 id="查看节点状态">查看节点状态</h3>
+<div class="highlight"><pre><span></span><code>pbsnodes<span class="w"> </span>-aSjv
+qstat<span class="w"> </span>-Bf
+</code></pre></div>
+
+<h3 id="查看queue">查看queue</h3>
+<div class="highlight"><pre><span></span><code>qstat<span class="w"> </span>-q
+</code></pre></div>
+
+<h3 id="查看节点资源">查看节点资源</h3>
+<div class="highlight"><pre><span></span><code>pbsnodes<span class="w"> </span>pbs2<span class="w"> </span><span class="c1">#指定节点名查看节点资源情况</span>
+</code></pre></div>
+
+<ul>
+<li>提交作业的时候,通过<code>-l</code>参数指定对资源的要求</li>
+</ul>
+<p><sub>~</sub>sh<br />
+  qsub -l vnode=pbs3 -- /bin/sleep 100 #指定在pbs3上运行<br />
+  qsub -l host=pbs3 -- /bin/sleep 100 #指定在pbs3上运行,效果一样<br />
+  qsub -l nodes=pbs2+pbs3 -- /bin/sleep 100 #指定在2和3上执行job<br />
+  qsub -l select=2:ncpus=2:mem=1GB -- /bin/sleep 100<br />
+  ~~~</p>
+<p><div class="callout callout-info" markdown="1"><br />
+<p class="callout-title">What are &quot;chunks&quot;?</p></p>
+<ul>
+<li>Set of resources that are allocated as a unit to a job</li>
+<li>Smallest set of resources that are allocated to a job, For example: ncpus, mem</li>
+<li>Requested in a "select" statement<br />
+```sh<br />
+qsub -l select=&lt;#&gt;:ncpus=&lt;#&gt;:mem=&lt;#&gt;</li>
+</ul>
+<h1 id="举例子如果一个job需要总计4个相同chunk共计32核心cpu64gb内存那么">举例子:如果一个job需要总计4个相同chunk,共计32核心CPU,64GB内存,那么:</h1>
+<p>qsub -l select=4:ncpus=8:mem=16GB xxx.sh<br />
+```</p>
+</div>
+<ul>
+<li>提交job的位置参数,决定了不同的chunk怎么分配给job</li>
+</ul>
+<p><img alt="image-20240204163420516" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202402041634602.png" /></p>
+<ul>
+<li>
+<p>节点资源分为==node-wide==和==job-wide==两类</p>
+</li>
+<li>
+<p>node-wide比如cpu核心数、内存、gpu数量等;job-wide比如walltime(job预计的执行时间)、cput等。</p>
+</li>
+<li>
+<p>job-wide的资源也可以指定:</p>
+<p><sub>~</sub>sh<br />
+qsub -l select=1:ncpus=1:mem=100MB -l walltime=01:00:00 #指定1h的执行时间。如果超过这个时间还没执行完,pbs会kill掉这个job<br />
+qsub -l select=1:ncpus=1:mem=100MB -l cput=03:00:00,walltime=02:00:00<br />
+~~~</p>
+</li>
+</ul>
+<h3 id="troubleshooting">troubleshooting</h3>
+<ul>
+<li>获取job为什么没能运行的相关信息。需要以root运行</li>
+</ul>
+<p><sub>~</sub>sh<br />
+  pbs_snapshot -o /tmp<br />
+  # 30 days of accounting logs<br />
+  # 5 days of daemon logs from the server host<br />
+  ~~~</p>
+<p><div class="callout callout-summary" markdown="1"><br />
+<p class="callout-title">job退出码</p></p>
+<ul>
+<li>==0==代表成功完成</li>
+<li>==1-127==代表是job自己call exit(),终止了自己</li>
+<li>==129-255==代表UNIX signal</li>
+</ul>
+</div>
+<p><div class="callout callout-summary" markdown="1"><br />
+<p class="callout-title">job状态含义</p></p>
+<ul>
+<li><strong>Q</strong>: 当前资源不足以调度任务 / queue没有启动 / 当前用户超出了资源限额</li>
+<li><strong>W</strong>: job等待input文件拷贝到job执行目录,卡在这里可能是因为pbs server和MoM之间的无密码ssh/scp有问题 / 用户没有权限拷贝文件到job执行目录</li>
+<li><strong>H</strong>: user在计算节点上的认证问题(有可能是home目录没挂载) / 可能是手动qhold了这个job,或者依赖于其他job完成</li>
+<li><strong>E</strong>: 计算节点到pbs server的无密码ssh/scp有问题,或者权限问题,导致结果传不回来</li>
+</ul>
+</div>
+<hr />
+<h2 id="docker容器部署pbspro多节点">docker容器部署pbspro多节点</h2>
+<p>参考教程:https://blog.csdn.net/u012460749/article/details/78583063</p>
+<p>机器配置:</p>
+<ul>
+<li><mark>Ubuntu 2204</mark> - s0001969,s0001969</li>
+<li>通过docker容器,安装3个pbs节点,版本为==pbspro 19.0.0==</li>
+</ul>
+<p>进环境:</p>
+<div class="highlight"><pre><span></span><code><span class="c1">#可能需要现将虚拟机快照还原到fresh状态</span>
+docker<span class="w"> </span>ps<span class="w"> </span>-a
+docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>pbs1<span class="w"> </span>/bin/bash
+</code></pre></div>
+
+<h3 id="配置静态ip">配置静态IP</h3>
+<p>https://cloud.tencent.com/developer/article/1933335</p>
+<div class="highlight"><pre><span></span><code><span class="nt">network</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span>
+<span class="w">  </span><span class="nt">renderer</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">NetworkManager</span>
+<span class="w">  </span><span class="nt">ethernets</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">ens33</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">dhcp4</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">no</span>
+<span class="w">      </span><span class="nt">dhcp6</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">no</span>
+<span class="w">      </span><span class="nt">addresses</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">172.16.183.128/24</span>
+<span class="w">      </span><span class="nt">routes</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">to</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
+<span class="w">        </span><span class="nt">via</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">172.16.183.2</span>
+<span class="w">      </span><span class="nt">nameservers</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">addresses</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">8.8.8.8</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">114.114.114.114</span><span class="p p-Indicator">]</span><span class="w"> </span><span class="c1">#dns</span>
+</code></pre></div>
+
+<h3 id="安装docker">安装docker</h3>
+<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>apt-get<span class="w"> </span>update
+<span class="c1">#安装允许 apt 通过 HTTPS 使用存储库(repository)的必要软件包:</span>
+sudo<span class="w"> </span>apt-get<span class="w"> </span>install<span class="w"> </span>apt-transport-https<span class="w"> </span>ca-certificates<span class="w"> </span>curl<span class="w"> </span>software-properties-common
+<span class="c1">#添加 Docker 的官方 GPG 密钥:</span>
+curl<span class="w"> </span>-fsSL<span class="w"> </span>https://download.docker.com/linux/ubuntu/gpg<span class="w"> </span><span class="p">|</span><span class="w"> </span>sudo<span class="w"> </span>apt-key<span class="w"> </span>add<span class="w"> </span>-
+<span class="c1">#添加 Docker APT 源:</span>
+sudo<span class="w"> </span>add-apt-repository<span class="w"> </span><span class="s2">&quot;deb [arch=amd64] https://download.docker.com/linux/ubuntu </span><span class="k">$(</span>lsb_release<span class="w"> </span>-cs<span class="k">)</span><span class="s2"> stable&quot;</span>
+<span class="c1">#最后,更新 apt 包数据库:</span>
+sudo<span class="w"> </span>apt-get<span class="w"> </span>update
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="c1">#关闭防火墙</span>
+systemctl<span class="w"> </span>stop<span class="w"> </span>firewalld<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>systemctl<span class="w"> </span>disable<span class="w"> </span>firewalld
+<span class="c1">#安装iptables防火墙</span>
+apt<span class="w"> </span>install<span class="w"> </span>iptables-services<span class="w"> </span>-y
+<span class="c1">#禁用iptables</span>
+service<span class="w"> </span>iptables<span class="w"> </span>stop<span class="w">   </span><span class="o">&amp;&amp;</span><span class="w"> </span>systemctl<span class="w"> </span>disable<span class="w"> </span>iptables
+<span class="c1">#清空防火墙规则</span>
+iptables<span class="w"> </span>-F
+<span class="c1">#关闭selinux</span>
+setenforce<span class="w"> </span><span class="m">0</span>
+sed<span class="w"> </span>-i<span class="w"> </span><span class="s1">&#39;s/SELINUX=enforcing/SELINUX=disabled/g&#39;</span><span class="w"> </span>/etc/selinux/config
+<span class="c1">#注意:修改selinux配置文件之后,重启机器,selinux才能永久生效 reboot- f</span>
+getenforce<span class="w"> </span><span class="c1">#显示Disabled表示selinux关闭成功</span>
+<span class="c1">#配置时间同步</span>
+apt<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>ntp<span class="w"> </span>ntpdate
+ntpdate<span class="w"> </span>cn.pool.ntp.org
+<span class="c1">#编写计划任务</span>
+crontab<span class="w"> </span>-e
+*<span class="w"> </span>*/1<span class="w"> </span>*<span class="w"> </span>*<span class="w"> </span>*<span class="w"> </span>/usr/sbin/ntpdate<span class="w">   </span>cn.pool.ntp.org
+<span class="c1">#重启crond服务使配置生效:</span>
+systemctl<span class="w"> </span>restart<span class="w"> </span>crond
+<span class="c1">#安装基础软件包</span>
+apt<span class="w"> </span>install<span class="w"> </span>-y<span class="w">  </span>wget<span class="w"> </span>net-tools<span class="w"> </span>nfs-utils<span class="w"> </span>lrzsz<span class="w"> </span>gcc<span class="w"> </span>gcc-c++<span class="w"> </span>make<span class="w"> </span>cmake<span class="w"> </span>libxml2-devel<span class="w"> </span>openssl-devel<span class="w"> </span>curl<span class="w"> </span>curl-devel<span class="w"> </span>unzip<span class="w"> </span>sudo<span class="w"> </span>ntp<span class="w"> </span>libaio-devel<span class="w"> </span>wget<span class="w"> </span>vim<span class="w"> </span>ncurses-devel<span class="w"> </span>autoconf<span class="w"> </span>automake<span class="w"> </span>zlib-devel<span class="w">  </span>python-devel<span class="w"> </span>epel-release<span class="w"> </span>openssh-server<span class="w"> </span>socat<span class="w">  </span>ipvsadm<span class="w"> </span>conntrack
+<span class="c1">#安装docker依赖包</span>
+apt<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>lvm2
+<span class="c1">#安装docker-ce</span>
+apt<span class="w"> </span>install<span class="w"> </span>docker-ce<span class="w"> </span>-y
+<span class="c1">#启动docker服务</span>
+systemctl<span class="w"> </span>start<span class="w"> </span>docker<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>systemctl<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>docker
+systemctl<span class="w"> </span>status<span class="w"> </span>docker
+<span class="c1">#查看Docker 版本信息</span>
+docker<span class="w"> </span>version
+<span class="c1">#开启包转发功能和修改内核参数</span>
+<span class="c1">#内核参数修改:br_netfilter模块用于将桥接流量转发至iptables链,br_netfilter内核参数需要开启转发。</span>
+modprobe<span class="w"> </span>br_netfilter
+cat<span class="w"> </span>&gt;<span class="w"> </span>/etc/sysctl.d/docker.conf<span class="w"> </span><span class="s">&lt;&lt;EOF</span>
+<span class="s">net.bridge.bridge-nf-call-ip6tables = 1</span>
+<span class="s">net.bridge.bridge-nf-call-iptables = 1</span>
+<span class="s">net.ipv4.ip_forward = 1</span>
+<span class="s">EOF</span>
+<span class="c1">#使参数生效</span>
+sysctl<span class="w"> </span>-p<span class="w"> </span>/etc/sysctl.d/docker.conf
+<span class="c1">#重启后模块失效,下面是开机自动加载模块的脚本</span>
+<span class="c1">#在/etc/新建rc.sysinit 文件</span>
+vim<span class="w"> </span>/etc/rc.sysinit
+
+<span class="c1">#!/bin/bash</span>
+<span class="k">for</span><span class="w"> </span>file<span class="w"> </span><span class="k">in</span><span class="w"> </span>/etc/sysconfig/modules/*.modules<span class="w"> </span><span class="p">;</span><span class="w"> </span><span class="k">do</span>
+<span class="o">[</span><span class="w"> </span>-x<span class="w"> </span><span class="nv">$file</span><span class="w"> </span><span class="o">]</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nv">$file</span>
+<span class="k">done</span>
+
+<span class="c1">#在/etc/modules-load.d/br_netfilter.conf目录下新建文件如下</span>
+vim<span class="w"> </span>/etc/modules-load.d/br_netfilter.conf
+modprobe<span class="w"> </span>br_netfilter
+<span class="c1">#增加权限</span>
+chmod<span class="w"> </span><span class="m">755</span><span class="w"> </span>/etc/modules-load.d/br_netfilter.conf
+<span class="c1">#重启机器模块也会自动加载</span>
+lsmod<span class="w"> </span><span class="p">|</span>grep<span class="w"> </span>br_netfilter
+br_netfilter<span class="w"> </span><span class="m">22209</span><span class="w"> </span><span class="m">0</span>
+bridge<span class="w"> </span><span class="m">136173</span><span class="w"> </span><span class="m">1</span><span class="w"> </span>br_netfilter
+
+<span class="c1">#注:Docker 安装后出现:WARNING: bridge-nf-call-iptables is disabled 的解决办法:</span>
+<span class="c1">#net.bridge.bridge-nf-call-ip6tables = 1</span>
+<span class="c1">#net.bridge.bridge-nf-call-iptables = 1</span>
+
+<span class="c1">#net.ipv4.ip_forward = 1:将Linux系统作为路由或者VPN服务就必须要开启IP转发功能。当linux主机有多个网卡时一个网卡收到的信息是否能够传递给其他的网卡 ,如果设置成1 的话 可以进行数据包转发,可以实现VxLAN 等功能。不开启会导致docker部署应用无法访问。</span>
+<span class="c1">#重启docker</span>
+systemctl<span class="w"> </span>restart<span class="w"> </span>docker
+<span class="c1">#配置docker镜像加速器: 登陆阿里云镜像仓库</span>
+<span class="c1">#https://cr.console.aliyun.com/cn-hangzhou/instances/mirrors</span>
+<span class="c1">#修改/etc/docker/daemon.json,变成如下</span>
+<span class="o">{</span>
+<span class="w"> </span><span class="s2">&quot;registry-mirrors&quot;</span>:<span class="o">[</span><span class="s2">&quot;https://y8y6vosv.mirror.aliyuncs.com&quot;</span>,<span class="s2">&quot;https://registry.docker-cn.com&quot;</span>,<span class="s2">&quot;https://docker.mirrors.ustc.edu.cn&quot;</span>,<span class="s2">&quot;https://dockerhub.azk8s.cn&quot;</span>,<span class="s2">&quot;http://hub-mirror.c.163.com&quot;</span><span class="o">]</span>
+<span class="o">}</span>
+<span class="c1">#让配置文件生效</span>
+sudo<span class="w"> </span>systemctl<span class="w"> </span>daemon-reload
+sudo<span class="w"> </span>systemctl<span class="w"> </span>restart<span class="w"> </span>docker
+</code></pre></div>
+
+<h3 id="拉取pbspro镜像">拉取pbspro镜像</h3>
+<div class="highlight"><pre><span></span><code>docker<span class="w"> </span>pull
+</code></pre></div>
+
+<h3 id="运行容器">运行容器</h3>
+<table>
+<thead>
+<tr>
+<th>容器名称</th>
+<th>容器hostname</th>
+<th>ip</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>pbs1</td>
+<td>pbs1</td>
+<td>172.19.0.3</td>
+</tr>
+<tr>
+<td>pbs2</td>
+<td>pbs2</td>
+<td>172.19.0.4</td>
+</tr>
+<tr>
+<td>pbs3</td>
+<td>pbs3</td>
+<td>172.19.0.5</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight"><pre><span></span><code>docker<span class="w"> </span>network<span class="w"> </span>create<span class="w"> </span>--subnet<span class="o">=</span><span class="m">172</span>.19.0.0/16<span class="w"> </span>mynetwork
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code>docker<span class="w"> </span>run<span class="w"> </span>-tid<span class="w"> </span>--name<span class="w"> </span>pbs1<span class="w"> </span>-h<span class="w"> </span>pbs1<span class="w"> </span>--add-host<span class="w"> </span>pbs1:172.19.0.3<span class="w"> </span>--add-host<span class="w"> </span>pbs2:172.19.0.4<span class="w"> </span>--add-host<span class="w"> </span>pbs3:172.19.0.5<span class="w"> </span>--net<span class="o">=</span>mynetwork<span class="w"> </span>--ip<span class="o">=</span><span class="m">172</span>.19.0.3<span class="w"> </span>pbspro/pbspro<span class="w"> </span>bash
+docker<span class="w"> </span>run<span class="w"> </span>-tid<span class="w"> </span>--name<span class="w"> </span>pbs2<span class="w"> </span>-h<span class="w"> </span>pbs2<span class="w"> </span>--add-host<span class="w"> </span>pbs1:172.19.0.3<span class="w"> </span>--add-host<span class="w"> </span>pbs2:172.19.0.4<span class="w"> </span>--add-host<span class="w"> </span>pbs3:172.19.0.5<span class="w"> </span>--net<span class="o">=</span>mynetwork<span class="w"> </span>--ip<span class="o">=</span><span class="m">172</span>.19.0.4<span class="w"> </span>pbspro/pbspro<span class="w"> </span>bash
+docker<span class="w"> </span>run<span class="w"> </span>-tid<span class="w"> </span>--name<span class="w"> </span>pbs3<span class="w"> </span>-h<span class="w"> </span>pbs3<span class="w"> </span>--add-host<span class="w"> </span>pbs1:172.19.0.3<span class="w"> </span>--add-host<span class="w"> </span>pbs2:172.19.0.4<span class="w"> </span>--add-host<span class="w"> </span>pbs3:172.19.0.5<span class="w"> </span>--net<span class="o">=</span>mynetwork<span class="w"> </span>--ip<span class="o">=</span><span class="m">172</span>.19.0.5<span class="w"> </span>pbspro/pbspro<span class="w"> </span>bash
+</code></pre></div>
+
+<h3 id="配置容器间ssh互信">配置容器间ssh互信</h3>
+<p>https://www.jianshu.com/p/fcbd57ae5d3b</p>
+<div class="highlight"><pre><span></span><code><span class="c1">#pbs1配置</span>
+docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>pbs1<span class="w"> </span>/bin/bash
+<span class="c1">#执行如下命令</span>
+yum<span class="w"> </span>install<span class="w"> </span>passwd<span class="w"> </span>openssl<span class="w"> </span>openssh-server<span class="w"> </span>openssh-clients<span class="w"> </span>net-tools<span class="w"> </span>vim<span class="w"> </span>which<span class="w"> </span>-y
+/usr/sbin/sshd
+<span class="c1">#报错文件不存在,执行以下命令</span>
+ssh-keygen<span class="w"> </span>-q<span class="w"> </span>-t<span class="w"> </span>rsa<span class="w"> </span>-b<span class="w"> </span><span class="m">2048</span><span class="w"> </span>-f<span class="w"> </span>/etc/ssh/ssh_host_rsa_key<span class="w"> </span>-N<span class="w"> </span><span class="s1">&#39;&#39;</span>
+ssh-keygen<span class="w"> </span>-q<span class="w"> </span>-t<span class="w"> </span>ecdsa<span class="w"> </span>-f<span class="w"> </span>/etc/ssh/ssh_host_ecdsa_key<span class="w"> </span>-N<span class="w"> </span><span class="s1">&#39;&#39;</span>
+ssh-keygen<span class="w"> </span>-t<span class="w"> </span>dsa<span class="w"> </span>-f<span class="w"> </span>/etc/ssh/ssh_host_ed25519_key<span class="w"> </span>-N<span class="w"> </span><span class="s1">&#39;&#39;</span>
+<span class="c1">#生成RSA随机图,修改 /etc/ssh/sshd_config 配置信息:</span>
+<span class="c1">#UsePAM yes 改为 UsePAM no</span>
+<span class="c1">#UsePrivilegeSeparation sandbox 改为 UsePrivilegeSeparation no</span>
+<span class="c1">#具体执行如下:</span>
+sed<span class="w"> </span>-i<span class="w"> </span><span class="s2">&quot;s/#UsePrivilegeSeparation.*/UsePrivilegeSeparation no/g&quot;</span><span class="w"> </span>/etc/ssh/sshd_config
+sed<span class="w"> </span>-i<span class="w"> </span><span class="s2">&quot;s/UsePAM.*/UsePAM no/g&quot;</span><span class="w"> </span>/etc/ssh/sshd_config
+<span class="c1">#启动sshd</span>
+/usr/sbin/sshd
+<span class="c1">#查看ssh服务是否启动成功</span>
+ps<span class="w"> </span>-ef<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>ssh
+<span class="c1">#修改root密码</span>
+passwd
+...<span class="w"> </span><span class="c1">#root</span>
+...
+<span class="c1">#生成密码对</span>
+ssh-keygen<span class="w"> </span>-t<span class="w"> </span>rsa
+<span class="c1">#查看生成的私钥idrsa和公钥idrsa.pub</span>
+<span class="nb">cd</span><span class="w"> </span>~/.ssh/
+<span class="c1">#查看ssh服务是否启动成功</span>
+ps<span class="w"> </span>-ef<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>ssh
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="c1">#pbs2配置</span>
+docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>pbs2<span class="w"> </span>/bin/bash
+ssh-keygen<span class="w"> </span>-q<span class="w"> </span>-t<span class="w"> </span>rsa<span class="w"> </span>-b<span class="w"> </span><span class="m">2048</span><span class="w"> </span>-f<span class="w"> </span>/etc/ssh/ssh_host_rsa_key<span class="w"> </span>-N<span class="w"> </span><span class="s1">&#39;&#39;</span>
+ssh-keygen<span class="w"> </span>-q<span class="w"> </span>-t<span class="w"> </span>ecdsa<span class="w"> </span>-f<span class="w"> </span>/etc/ssh/ssh_host_ecdsa_key<span class="w"> </span>-N<span class="w"> </span><span class="s1">&#39;&#39;</span>
+ssh-keygen<span class="w"> </span>-t<span class="w"> </span>dsa<span class="w"> </span>-f<span class="w"> </span>/etc/ssh/ssh_host_ed25519_key<span class="w"> </span>-N<span class="w"> </span><span class="s1">&#39;&#39;</span>
+sed<span class="w"> </span>-i<span class="w"> </span><span class="s2">&quot;s/#UsePrivilegeSeparation.*/UsePrivilegeSeparation no/g&quot;</span><span class="w"> </span>/etc/ssh/sshd_config
+sed<span class="w"> </span>-i<span class="w"> </span><span class="s2">&quot;s/UsePAM.*/UsePAM no/g&quot;</span><span class="w"> </span>/etc/ssh/sshd_config
+/usr/sbin/sshd
+ps<span class="w"> </span>-ef<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>ssh
+passwd
+ssh-keygen<span class="w"> </span>-t<span class="w"> </span>rsa
+<span class="nb">cd</span><span class="w"> </span>~/.ssh/
+ps<span class="w"> </span>-ef<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>ssh
+/usr/sbin/sshd
+<span class="c1">#将pbs2的公钥发送到pbs1上</span>
+scp<span class="w"> </span>id_rsa.pub<span class="w"> </span>root@pbs1:~/.ssh/id_rsa.pub.pbs2
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="c1">#pbs3配置</span>
+docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>pbs3<span class="w"> </span>/bin/bash
+yum<span class="w"> </span>install<span class="w"> </span>passwd<span class="w"> </span>openssl<span class="w"> </span>openssh-server<span class="w"> </span>openssh-clients<span class="w"> </span>net-tools<span class="w"> </span>vim<span class="w"> </span>which<span class="w"> </span>-y
+ssh-keygen<span class="w"> </span>-q<span class="w"> </span>-t<span class="w"> </span>rsa<span class="w"> </span>-b<span class="w"> </span><span class="m">2048</span><span class="w"> </span>-f<span class="w"> </span>/etc/ssh/ssh_host_rsa_key<span class="w"> </span>-N<span class="w"> </span><span class="s1">&#39;&#39;</span>
+ssh-keygen<span class="w"> </span>-q<span class="w"> </span>-t<span class="w"> </span>ecdsa<span class="w"> </span>-f<span class="w"> </span>/etc/ssh/ssh_host_ecdsa_key<span class="w"> </span>-N<span class="w"> </span><span class="s1">&#39;&#39;</span>
+ssh-keygen<span class="w"> </span>-t<span class="w"> </span>dsa<span class="w"> </span>-f<span class="w"> </span>/etc/ssh/ssh_host_ed25519_key<span class="w"> </span>-N<span class="w"> </span><span class="s1">&#39;&#39;</span>
+sed<span class="w"> </span>-i<span class="w"> </span><span class="s2">&quot;s/#UsePrivilegeSeparation.*/UsePrivilegeSeparation no/g&quot;</span><span class="w"> </span>/etc/ssh/sshd_config
+sed<span class="w"> </span>-i<span class="w"> </span><span class="s2">&quot;s/UsePAM.*/UsePAM no/g&quot;</span><span class="w"> </span>/etc/ssh/sshd_config
+/usr/sbin/sshd
+ps<span class="w"> </span>-ef<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>ssh
+passwd<span class="w"> </span><span class="c1">#root</span>
+ssh-keygen<span class="w"> </span>-t<span class="w"> </span>rsa
+<span class="nb">cd</span><span class="w"> </span>~/.ssh/
+ps<span class="w"> </span>-ef<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>ssh
+/usr/sbin/sshd
+<span class="c1">#将pbs2的公钥发送到pbs1上</span>
+scp<span class="w"> </span>id_rsa.pub<span class="w"> </span>root@pbs1:~/.ssh/id_rsa.pub.pbs3
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="c1">#enter pbs1</span>
+docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>pbs1<span class="w"> </span>/bin/bash
+<span class="nb">cd</span><span class="w"> </span>~/.ssh/
+cat<span class="w"> </span>id_rsa.pub<span class="w"> </span>&gt;&gt;<span class="w"> </span>authorized_keys
+cat<span class="w"> </span>id_rsa.pub.pbs2<span class="w"> </span>&gt;&gt;<span class="w"> </span>authorized_keys
+cat<span class="w"> </span>id_rsa.pub.pbs3<span class="w"> </span>&gt;&gt;<span class="w"> </span>authorized_keys
+scp<span class="w"> </span>authorized_keys<span class="w"> </span>root@pbs2:~/.ssh/
+scp<span class="w"> </span>authorized_keys<span class="w"> </span>root@pbs3:~/.ssh/
+</code></pre></div>
+
+<p><div class="callout callout-note" markdown="1"><br />
+<p class="callout-title">容器启动注意</p></p>
+<p>容器启动的时候,需要重新开启ssh:<br />
+<sub>~</sub>sh<br />
+/usr/sbin/sshd<br />
+ps -ef | grep ssh<br />
+~~~</p>
+</div>
+<h3 id="配置管理节点">配置管理节点</h3>
+<div class="highlight"><pre><span></span><code><span class="c1">#登录管理节点pbs1,然后以root用户运行,修改/etc/pbs.conf</span>
+vi<span class="w"> </span>/etc/pbs.conf
+<span class="c1">#修改PBS_SERVER和PBS_START_MOM</span>
+<span class="nv">PBS_SERVER</span><span class="o">=</span>pbs1
+<span class="nv">PBS_START_MOM</span><span class="o">=</span><span class="m">1</span>
+<span class="c1">#备注:如果是单机安装pbspro,要将PBS_START_MOM改为1</span>
+
+vi<span class="w"> </span>/var/spool/pbs/mom_priv/config
+<span class="c1">#修改clienthost为pbs1</span>
+<span class="nv">$clienthost</span><span class="w"> </span>pbs1
+</code></pre></div>
+
+<p><div class="callout callout-info" markdown="1"><br />
+<p class="callout-title">PBS_START_MOM参数</p></p>
+<ul>
+<li><mark>PBS_START_MOM</mark> 参数用于控制是否启动 MOM (Message Oriented Middleware) 服务。MOM 是 PBS Pro 系统中的一个组件,它在每个计算节点上运行,负责管理和监控该节点上的作业。</li>
+<li>如果 PBS_START_MOM 设置为 <mark>1</mark>,那么在 PBS Pro 系统启动时,MOM 服务也会被启动(表明主节点也会承担计算任务)。如果设置为 0,那么 MOM 服务不会被启动。</li>
+</ul>
+</div>
+<h3 id="配置计算节点">配置计算节点</h3>
+<div class="highlight"><pre><span></span><code><span class="c1">#分别登录计算节点pbs2和pbs3,然后以root用户运行,修改/etc/pbs.conf</span>
+vi<span class="w"> </span>/etc/pbs.conf
+<span class="c1">#修改PBS_SERVER和PBS_START_MOM</span>
+<span class="nv">PBS_SERVER</span><span class="o">=</span>pbs1
+<span class="nv">PBS_START_MOM</span><span class="o">=</span><span class="m">1</span>
+</code></pre></div>
+
+<h3 id="启动pbs">启动pbs</h3>
+<div class="highlight"><pre><span></span><code><span class="c1">#3个节点上分别启动</span>
+/etc/init.d/pbs<span class="w"> </span>start
+</code></pre></div>
+
+<blockquote>
+<p><code>sh
+/etc/init.d/pbs start    #启动pbs
+/etc/init.d/pbs stop     #停止pbs
+/etc/init.d/pbs restart  #重启pbs
+/etc/init.d/pbs status   #查看pbs状态</code></p>
+</blockquote>
+<h3 id="节点扩容">节点扩容</h3>
+<div class="highlight"><pre><span></span><code>.<span class="w"> </span>/etc/profile.d/pbs.sh
+qmgr<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;create node pbs2&quot;</span>
+qmgr<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;create node pbs3&quot;</span>
+<span class="c1">#查看添加的节点,返回state=free即为成功</span>
+pbsnodes<span class="w"> </span>-a
+</code></pre></div>
+
+<h3 id="测试作业提交">测试作业提交</h3>
+<div class="highlight"><pre><span></span><code><span class="c1">#在管理节点创建user,提交作业,状态显示R为任务正在运行。同时也需要在其他计算节点也添加相同的用户,使其UID、GID一样</span>
+sudo<span class="w"> </span>groupadd<span class="w"> </span>-g<span class="w"> </span><span class="m">1002</span><span class="w"> </span>pbsgroup
+sudo<span class="w"> </span>useradd<span class="w"> </span>-u<span class="w"> </span><span class="m">1001</span><span class="w"> </span>-g<span class="w"> </span><span class="m">1002</span><span class="w"> </span>pbsuser1
+<span class="c1">#管理节点上</span>
+su<span class="w"> </span>pbsuser1
+<span class="nb">cd</span><span class="w"> </span>~
+qsub<span class="w"> </span>--<span class="w"> </span>/bin/sleep<span class="w"> </span><span class="m">60</span><span class="w"> </span><span class="c1">#qsub是提交一个作业到 PBS 集群,这个作业在被调度到集群的一个节点上运行后,会暂停10秒,然后结束。</span>
+qstat<span class="w"> </span>-a<span class="w"> </span><span class="c1">#查询集群中所有作业</span>
+tracejob<span class="w"> </span><span class="m">0</span>.pbs1<span class="w"> </span><span class="c1">#使用tracejob JobID查看作业的进度</span>
+</code></pre></div>
+
+<p><div class="callout callout-note" markdown="1"><br />
+<p class="callout-title">tracejob查询结果示例</p></p>
+<p><code>sh
+01/18/2024 09:30:33  S    Obit received momhop:1 serverhop:1 state:4 substate:42</code><br />
+- <code>Obit received</code> 表示作业已经结束,PBS 集群已经收到了作业结束的通知。<br />
+- <code>momhop:1</code> 和 <code>serverhop:1</code> 是内部的计数器,用于跟踪作业在集群中的移动。通常情况下,这些值对于用户来说并不重要。<br />
+- <code>state:4</code> 表示作业的当前状态。在 PBS 中,状态 4 通常表示作业已经完成。<br />
+- <code>substate:42</code> 是作业的子状态,它提供了关于作业状态的更多细节。不同的 PBS 版本可能会有不同的子状态代码,你可能需要查阅你的 PBS 版本的文档来了解子状态 42 的具体含义。</p>
+</div>
+<hr />
+<h2 id="centos虚拟机部署torque">CentOS虚拟机部署torque</h2>
+<ul>
+<li>参考教程:https://www.cnblogs.com/liu-shaobo/p/13526084.html</li>
+<li>3台centos机器上部署==torque-6.1.3==</li>
+</ul>
+<h3 id="环境准备">环境准备</h3>
+<ul>
+<li>CentOS 7 - root - root</li>
+<li>pbs1:<mark>172.16.183.60/24</mark></li>
+<li>pbs2:<mark>172.16.183.61/24</mark></li>
+<li>pbs3:<mark>172.16.183.62/24</mark></li>
+<li>gateway:172.16.183.2</li>
+<li>DNS1: 172.16.183.2</li>
+</ul>
+<h3 id="部署虚拟机">部署虚拟机</h3>
+<ul>
+<li>在pbs1上配置静态IP:</li>
+</ul>
+<p><sub>~</sub>sh<br />
+  vi /etc/sysconfig/network-scripts/ifcfg-ens33</p>
+<p>TYPE=Ethernet<br />
+  PROXY_METHOD=none<br />
+  BROWSER_ONLY=no<br />
+  BOOTPROTO=static #static表示静态ip地址<br />
+  IPADDR=172.16.183.60 #ip地址,需要跟自己电脑所在网段一致<br />
+  NETMASK=255.255.255.0<br />
+  GATEWAY=172.16.183.2<br />
+  DNS1=172.16.183.2<br />
+  DEFROUTE=yes<br />
+  IPV4_FAILURE_FATAL=no<br />
+  IPV6INIT=yes<br />
+  IPV6_AUTOCONF=yes<br />
+  IPV6_DEFROUTE=yes<br />
+  IPV6_FAILURE_FATAL=no<br />
+  IPV6_ADDR_GEN_MODE=stable-privacy<br />
+  NAME=ens33 #网卡名字,跟DEVICE名字保持一致即可<br />
+  DEVICE=ens33 #网卡设备名,ip addr可看到自己的这个网卡设备名<br />
+  ONBOOT=yes #开机自启动网络,必须是yes<br />
+  ~~~</p>
+<ul>
+<li>
+<p>重启,ping一下看看网络是否通了</p>
+</li>
+<li>
+<p>克隆出pbs2和3,修改静态IP分别为172.16.183.61,172.16.183.62</p>
+</li>
+<li>
+<p>关闭防火墙</p>
+</li>
+</ul>
+<p><sub>~</sub>sh<br />
+  systemctl stop firewalld<br />
+  systemctl disable firewalld<br />
+  ~~~</p>
+<ul>
+<li>安装epel源</li>
+</ul>
+<p><sub>~</sub>sh<br />
+  yum install -y http://mirrors.sohu.com/fedora-epel/epel-release-latest-7.noarch.rpm<br />
+  ~~~</p>
+<ul>
+<li>安装软件包</li>
+</ul>
+<p><sub>~</sub>sh<br />
+  yum install -y device-mapper-persistent-data lvm2 wget net-tools nfs-utils lrzsz gcc gcc-c++ make cmake libxml2-devel openssl-devel curl curl-devel unzip sudo ntp libaio-devel wget vim ncurses-devel autoconf automake zlib-devel  python-devel epel-release openssh-server socat  ipvsadm conntrack telnet ipvsadm openssh-clients<br />
+  ~~~</p>
+<h3 id="配置ssh互信">配置ssh互信</h3>
+<div class="highlight"><pre><span></span><code><span class="c1">#修改hostname</span>
+hostnamectl<span class="w"> </span>set-hostname<span class="w"> </span>pbs1<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>bash
+hostnamectl<span class="w"> </span>set-hostname<span class="w"> </span>pbs2<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>bash
+hostnamectl<span class="w"> </span>set-hostname<span class="w"> </span>pbs3<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>bash
+<span class="c1">#修改hosts文件</span>
+vim<span class="w"> </span>/etc/hosts
+<span class="m">172</span>.16.183.60<span class="w">   </span>pbs1
+<span class="m">172</span>.16.183.61<span class="w">   </span>pbs2
+<span class="m">172</span>.16.183.62<span class="w">   </span>pbs3
+<span class="c1">#生成、拷贝密钥</span>
+ssh-keygen
+ssh-copy-id<span class="w"> </span>pbs2
+ssh-copy-id<span class="w"> </span>pbs3
+</code></pre></div>
+
+<h3 id="配置时间同步">配置时间同步</h3>
+<div class="highlight"><pre><span></span><code><span class="c1">#安装ntpdate命令</span>
+yum<span class="w"> </span>install<span class="w"> </span>ntpdate<span class="w"> </span>-y
+<span class="c1">#跟网络时间做同步</span>
+ntpdate<span class="w"> </span>cn.pool.ntp.org
+<span class="c1">#把时间同步做成计划任务</span>
+crontab<span class="w"> </span>-e
+*<span class="w"> </span>*/1<span class="w"> </span>*<span class="w"> </span>*<span class="w"> </span>*<span class="w"> </span>/usr/sbin/ntpdate<span class="w">   </span>cn.pool.ntp.org
+<span class="c1">#重启crond服务</span>
+service<span class="w"> </span>crond<span class="w"> </span>restart
+</code></pre></div>
+
+<h3 id="修改资源限制">修改资源限制</h3>
+<div class="highlight"><pre><span></span><code>vim<span class="w"> </span>/etc/security/limits.conf
+*<span class="w"> </span>hard<span class="w"> </span>nofile<span class="w"> </span><span class="m">1000000</span>
+*<span class="w"> </span>soft<span class="w"> </span>nofile<span class="w"> </span><span class="m">1000000</span>
+*<span class="w"> </span>soft<span class="w"> </span>core<span class="w"> </span>unlimited
+*<span class="w"> </span>soft<span class="w"> </span>stack<span class="w"> </span><span class="m">10240</span>
+*<span class="w"> </span>soft<span class="w"> </span>memlock<span class="w"> </span>unlimited
+*<span class="w"> </span>hard<span class="w"> </span>memlock<span class="w"> </span>unlimited
+</code></pre></div>
+
+<h3 id="配置nfs">配置nfs</h3>
+<div class="highlight"><pre><span></span><code><span class="c1">#pbs1上</span>
+yum<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>nfs-utils<span class="w"> </span>rpcbind
+mkdir<span class="w"> </span>/software
+vim<span class="w"> </span>/etc/exports
+/software<span class="w"> </span>*<span class="o">(</span>rw,async,insecure,no_root_squash<span class="o">)</span>
+
+<span class="c1">#使NFS配置生效</span>
+exportfs<span class="w"> </span>-arv
+service<span class="w"> </span>nfs<span class="w"> </span>restart
+systemctl<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>nfs<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>systemctl<span class="w"> </span>status<span class="w"> </span>nfs
+systemctl<span class="w"> </span>start<span class="w"> </span>rpcbind
+systemctl<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>rpcbind
+
+<span class="c1">#计算节点上</span>
+yum<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>nfs-utils
+mkdir<span class="w"> </span>/software
+mount<span class="w"> </span>pbs1:/software<span class="w"> </span>/software
+<span class="c1">#永久挂载</span>
+vim<span class="w"> </span>/etc/fstab
+pbs1:/software<span class="w">       </span>/software<span class="w">              </span>nfs<span class="w">     </span>defaults<span class="w">        </span><span class="m">0</span><span class="w"> </span><span class="m">0</span>
+</code></pre></div>
+
+<h3 id="部署torque管理节点">部署Torque管理节点</h3>
+<p><div class="callout callout-info" markdown="1"><br />
+<p class="callout-title">Torque由四个服务组成</p></p>
+<ul>
+<li><mark>pbs_server</mark> :资源管理系统的服务器,根据调度进程提供的可用节点资源清单进行作业分发和回收;</li>
+<li><mark>pbs_mom</mark>  :客户端,监视各计算节点的资源使用情况;</li>
+<li><mark>trqauthd</mark>   :用于授权pbs_mom进程与pbs_server进程之间建立互信连接;</li>
+<li><mark>pbs_sched</mark> :任务调度器;</li>
+</ul>
+</div>
+<h4 id="安装依赖">安装依赖</h4>
+<div class="highlight"><pre><span></span><code>yum<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>libtool<span class="w"> </span>openssl-devel<span class="w"> </span>libxml2-devel<span class="w"> </span>boost-devel<span class="w"> </span>gcc<span class="w"> </span>gcc-c++<span class="w"> </span>hwloc<span class="w"> </span>hwloc-devel
+</code></pre></div>
+
+<h4 id="安装torque">安装torque</h4>
+<div class="highlight"><pre><span></span><code>wget<span class="w"> </span>http://wpfilebase.s3.amazonaws.com/torque/torque-6.1.3.tar.gz
+tar<span class="w"> </span>zxvf<span class="w"> </span>torque-6.1.3.tar.gz
+<span class="nb">cd</span><span class="w"> </span>torque-6.1.3
+./configure<span class="w"> </span>--prefix<span class="o">=</span>/usr/local/torque<span class="w"> </span>--with-scp
+<span class="c1">#报错:</span>
+<span class="c1">#checking whether boost is installed... configure: error: Torque needs Boost, but it was not found on your system</span>
+<span class="c1">#This can be solved by one of the two following methods:</span>
+<span class="c1">#1) Install the boost-devel package for your OS distribution. Note that it must be at least version 1.36.0.</span>
+<span class="c1">#2) Run configure with --with-boost-path=&lt;path&gt;. This path should be the path to the directory containing the boost/ directory for your version of boost.</span>
+<span class="c1">#解决:</span>
+<span class="c1">#yum install -y boost-devel</span>
+make<span class="w"> </span>-j4
+make<span class="w"> </span>install
+</code></pre></div>
+
+<ul>
+<li>生成计算节点需要的安装包,会生成5个可执行脚本</li>
+</ul>
+<div class="highlight"><pre><span></span><code>make<span class="w"> </span>packages
+yum<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>libtool
+libtool<span class="w"> </span>--finish<span class="w"> </span>/usr/local/torque/lib
+</code></pre></div>
+
+<h4 id="配置torque服务端">配置torque服务端</h4>
+<ul>
+<li>添加环境变量</li>
+</ul>
+<div class="highlight"><pre><span></span><code>.<span class="w"> </span>/etc/profile.d/torque.sh
+</code></pre></div>
+
+<ul>
+<li>初始化serverdb</li>
+</ul>
+<div class="highlight"><pre><span></span><code>./torque.setup<span class="w"> </span>root
+</code></pre></div>
+
+<ul>
+<li>开启Torque服务端</li>
+</ul>
+<div class="highlight"><pre><span></span><code>qterm
+systemctl<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>pbs_server
+systemctl<span class="w"> </span>start<span class="w"> </span>pbs_server
+systemctl<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>trqauthd
+systemctl<span class="w"> </span>start<span class="w"> </span>trqauthd
+</code></pre></div>
+
+<h3 id="部署torque计算节点">部署torque计算节点</h3>
+<p>1、安装客户端<br />
+将torque文件夹的安装包复制到计算节点,或复制到NFS目录</p>
+<div class="highlight"><pre><span></span><code><span class="c1">#在计算节点上</span>
+./torque-package-mom-linux-x86_64.sh<span class="w"> </span>--install
+./torque-package-clients-linux-x86_64.sh<span class="w"> </span>--install
+</code></pre></div>
+
+<p>2、配置客户端</p>
+<div class="highlight"><pre><span></span><code>vim<span class="w"> </span>/var/spool/torque/mom_priv/config
+<span class="nv">$pbsserver</span><span class="w"> </span>pbs1
+<span class="nv">$logevent</span><span class="w"> </span><span class="m">225</span>
+<span class="nv">$loglevel</span><span class="w"> </span><span class="m">4</span>
+<span class="nv">$usecp</span><span class="w"> </span>pbs1:/data<span class="w"> </span>/data
+</code></pre></div>
+
+<p>3、启动客户端</p>
+<div class="highlight"><pre><span></span><code>systemctl<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>pbs_mom
+systemctl<span class="w"> </span>start<span class="w"> </span>pbs_mom
+systemctl<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>trqauthd
+systemctl<span class="w"> </span>start<span class="w"> </span>trqauthd
+</code></pre></div>
+
+<p>4、确保server_name文件内容为管理节点名</p>
+<div class="highlight"><pre><span></span><code>cat<span class="w"> </span>/var/spool/torque/server_name
+</code></pre></div>
+
+<p>5、扩容计算节点</p>
+<div class="highlight"><pre><span></span><code>.<span class="w"> </span>/etc/profile.d/pbs.sh
+qmgr<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;create node pbs2&quot;</span>
+qmgr<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;create node pbs3&quot;</span>
+<span class="c1">#可以直接将主机名写入/var/spool/torque/server_priv/nodes</span>
+</code></pre></div>
+
+<p>6、查看各节点状态</p>
+<div class="highlight"><pre><span></span><code><span class="c1">#查看添加的节点,返回state=free即为成功</span>
+pbsnodes<span class="w"> </span>-a
+<span class="c1">#或者</span>
+qnodes
+<span class="c1">#如果报错15137,可以执行:</span>
+cp<span class="w"> </span>contrib/init.d/<span class="o">{</span>pbs_<span class="o">{</span>server,sched,mom<span class="o">}</span>,trqauthd<span class="o">}</span><span class="w"> </span>/etc/init.d/
+<span class="k">for</span><span class="w"> </span>i<span class="w"> </span><span class="k">in</span><span class="w"> </span>pbs_server<span class="w"> </span>pbs_sched<span class="w"> </span>pbs_mom<span class="w"> </span>trqauthd<span class="p">;</span><span class="w"> </span><span class="k">do</span><span class="w"> </span>chkconfig<span class="w"> </span>--add<span class="w"> </span><span class="nv">$i</span><span class="p">;</span><span class="w"> </span>chkconfig<span class="w"> </span><span class="nv">$ion</span><span class="p">;</span><span class="w"> </span><span class="k">done</span>
+<span class="k">for</span><span class="w"> </span>i<span class="w"> </span><span class="k">in</span><span class="w"> </span>pbs_server<span class="w"> </span>pbs_sched<span class="w"> </span>pbs_mom<span class="w"> </span>trqauthd<span class="p">;</span><span class="w"> </span><span class="k">do</span><span class="w"> </span>service<span class="w"> </span><span class="nv">$i</span><span class="w"> </span>restart<span class="p">;</span><span class="w"> </span><span class="k">done</span>
+<span class="c1">#for i in pbs_mom trqauthd; do service $i start; done</span>
+</code></pre></div>
+
+<p><div class="callout callout-warning" markdown="1"><br />
+<p class="callout-title">日志报错排查</p></p>
+<p>journalctl -xe或者message日志中如果出现如下报错:<br />
+<code>sh
+PBS_Server;Svr;PBS_Server;LOG_ERROR::is_request, bad attempt to connect from  (address not trusted - check entry in server_priv/nodes</code><br />
+- 原因是,这个节点启用了pbs_mom但在主节点的<code>/var/spool/torque/server_priv/nodes</code>中并没有将其归入。<br />
+- 解决方法:如果不需要归入就什么都别改,如果需要这些节点进行运算,就在<code>/var/spool/torque/server_priv/nodes</code>中写入这些节点名</p>
+</div>
+<h3 id="管理节点配置调度器">管理节点配置调度器</h3>
+<p>1、启动调度器</p>
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span>~/torque-6.1.3
+cp<span class="w"> </span>contrib/systemd/pbs_sched.service<span class="w"> </span>/usr/lib/systemd/system/
+systemctl<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>pbs_sched
+systemctl<span class="w"> </span>start<span class="w"> </span>pbs_sched
+</code></pre></div>
+
+<p>2、配置队列</p>
+<div class="highlight"><pre><span></span><code>qmgr<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;create queue batch&#39;</span>
+qmgr<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;set server default_queue=batch&#39;</span>
+qmgr<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;set server query_other_jobs=true&#39;</span>
+qmgr<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;set queue batch queue_type=execution&#39;</span>
+qmgr<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;set queue batch started=true&#39;</span>
+qmgr<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;set queue batch enabled=true&#39;</span>
+qmgr<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;set queue batch resources_default.nodes=1&#39;</span><span class="c1"># qmgr -c &#39;set server scheduling=true&#39;</span>
+</code></pre></div>
+
+<h3 id="配置节点cpu信息">配置节点cpu信息</h3>
+<div class="highlight"><pre><span></span><code><span class="c1">#在管理节点上</span>
+vim<span class="w"> </span>/var/spool/torque/server_priv/nodes
+
+pbs1<span class="w"> </span><span class="nv">np</span><span class="o">=</span><span class="m">4</span>
+pbs2<span class="w"> </span><span class="nv">np</span><span class="o">=</span><span class="m">4</span>
+pbs3<span class="w"> </span><span class="nv">np</span><span class="o">=</span><span class="m">4</span>
+
+<span class="c1">#重启服务</span>
+service<span class="w"> </span>pbs_mon<span class="w"> </span>restart
+service<span class="w"> </span>pbs_server<span class="w"> </span>restart
+service<span class="w"> </span>pbs_sched<span class="w"> </span>restart
+</code></pre></div>
+
+<h3 id="测试作业提交_1">测试作业提交</h3>
+<div class="highlight"><pre><span></span><code><span class="c1">#在管理节点创建user,提交作业。同时也需要在其他计算节点也添加相同的用户,使其UID、GID一样。</span>
+<span class="c1">#所有节点上</span>
+sudo<span class="w"> </span>groupadd<span class="w"> </span>-g<span class="w"> </span><span class="m">1002</span><span class="w"> </span>pbsgroup
+sudo<span class="w"> </span>useradd<span class="w"> </span>-u<span class="w"> </span><span class="m">1001</span><span class="w"> </span>-g<span class="w"> </span><span class="m">1002</span><span class="w"> </span>pbsuser1
+<span class="c1">#管理节点上</span>
+su<span class="w"> </span>pbsuser1
+<span class="nb">cd</span><span class="w"> </span>~
+qsub<span class="w"> </span>--<span class="w"> </span>/bin/sleep<span class="w"> </span><span class="m">60</span><span class="w"> </span><span class="c1">#qsub是提交一个作业到 PBS 集群,这个作业在被调度到集群的一个节点上运行后,会暂停10秒,然后结束。</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;hello&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>qsub
+qstat<span class="w"> </span>-a<span class="w"> </span><span class="c1">#查询集群中所有作业</span>
+tracejob<span class="w"> </span><span class="m">0</span>.pbs1<span class="w"> </span><span class="c1">#使用tracejob JobID查看作业的进度</span>
+</code></pre></div>
+
+<hr />
+<h2 id="pestat安装问题">pestat安装问题</h2>
+<p>问题:</p>
+<p>安装了torque,里面带着pestat。</p>
+<p>尝试安装pestat,修改了Makefile</p>
+<p><img alt="image-20240120175838964" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202401201758054.png" /></p>
+<p>但是无法安装,报错如图。</p>
+<p><img alt="2024-01-20_17-56" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202401201757319.png" /></p>
+<hr />
+<h2 id="相关笔记">相关笔记</h2>
+<ul>
+<li><a class="wikilink" href="../../HPC/PBS-cases/">PBS-cases</a> - PBS实际案例和故障排除</li>
+<li><a class="wikilink" href="../../HPC/CentOS7-slurm23.02-%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%AE%89%E8%A3%85/">CentOS7-slurm23.02-二进制安装</a> - Slurm vs PBS 对比</li>
+<li><a class="wikilink" href="../../HPC/Slurm-node-exporter/">Slurm-node-exporter</a> - HPC集群监控</li>
+</ul>
+    </div>
+  </article>
+  <aside class="toc">
+    <p class="toc-label">本页目录</p>
+    <ul>
+  <li><a href="#版本分支">版本分支</a></li>
+  <li><a href="#工作流程">工作流程</a></li>
+  <li><a href="#pbs命令介绍">PBS命令介绍</a><ul>
+  <li><a href="#查看节点情况-pbsnodes">查看节点情况-pbsnodes</a></li>
+  <li><a href="#提交作业-qsub">提交作业-qsub</a></li>
+  <li><a href="#提交作业-脚本">提交作业-脚本</a></li>
+  <li><a href="#查看作业状态-qstat">查看作业状态-qstat</a></li>
+  <li><a href="#删除作业-qdel">删除作业-qdel</a></li>
+  <li><a href="#队列管理-qmgr">队列管理-qmgr</a></li>
+</ul></li>
+  <li><a href="#pbs-pro学习">PBS pro学习</a><ul>
+  <li><a href="#组件">组件</a></li>
+  <li><a href="#工作流程_1">工作流程</a></li>
+  <li><a href="#提交作业">提交作业</a></li>
+  <li><a href="#作业参数设置">作业参数设置</a></li>
+  <li><a href="#查看作业状态">查看作业状态</a></li>
+  <li><a href="#作业其他操作">作业其他操作</a></li>
+  <li><a href="#查看节点状态">查看节点状态</a></li>
+  <li><a href="#查看queue">查看queue</a></li>
+  <li><a href="#查看节点资源">查看节点资源</a></li>
+  <li><a href="#troubleshooting">troubleshooting</a></li>
+</ul></li>
+  <li><a href="#docker容器部署pbspro多节点">docker容器部署pbspro多节点</a><ul>
+  <li><a href="#配置静态ip">配置静态IP</a></li>
+  <li><a href="#安装docker">安装docker</a></li>
+  <li><a href="#拉取pbspro镜像">拉取pbspro镜像</a></li>
+  <li><a href="#运行容器">运行容器</a></li>
+  <li><a href="#配置容器间ssh互信">配置容器间ssh互信</a></li>
+  <li><a href="#配置管理节点">配置管理节点</a></li>
+  <li><a href="#配置计算节点">配置计算节点</a></li>
+  <li><a href="#启动pbs">启动pbs</a></li>
+  <li><a href="#节点扩容">节点扩容</a></li>
+  <li><a href="#测试作业提交">测试作业提交</a></li>
+</ul></li>
+  <li><a href="#centos虚拟机部署torque">CentOS虚拟机部署torque</a><ul>
+  <li><a href="#环境准备">环境准备</a></li>
+  <li><a href="#部署虚拟机">部署虚拟机</a></li>
+  <li><a href="#配置ssh互信">配置ssh互信</a></li>
+  <li><a href="#配置时间同步">配置时间同步</a></li>
+  <li><a href="#修改资源限制">修改资源限制</a></li>
+  <li><a href="#配置nfs">配置nfs</a></li>
+  <li><a href="#部署torque管理节点">部署Torque管理节点</a></li>
+  <li><a href="#部署torque计算节点">部署torque计算节点</a></li>
+  <li><a href="#管理节点配置调度器">管理节点配置调度器</a></li>
+  <li><a href="#配置节点cpu信息">配置节点cpu信息</a></li>
+  <li><a href="#测试作业提交_1">测试作业提交</a></li>
+</ul></li>
+  <li><a href="#pestat安装问题">pestat安装问题</a></li>
+  <li><a href="#相关笔记">相关笔记</a></li>
+</ul>
+  </aside>
+
+</div>
+
+</main>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>Learning Notes</span>
+    <a href="https://github.com/hangx969/learning-notes">GitHub</a>
+  </div>
+</footer>
+<script src="../../static/search.js"></script>
+</body>
+</html>

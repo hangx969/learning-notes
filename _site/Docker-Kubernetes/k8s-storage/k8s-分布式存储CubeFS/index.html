@@ -1,0 +1,1273 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>K8s分布式存储CubeFS - Learning Notes</title>
+<link rel="stylesheet" href="../../../static/style.css">
+<link rel="stylesheet" href="../../../static/pygments.css">
+</head>
+<body data-root="../../../">
+<header class="site-header">
+  <div class="header-inner">
+    <a class="logo" href="../../../index.html"><span class="logo-mark"></span>LEARNING NOTES</a>
+    <div class="search">
+      <input id="search-input" type="search" placeholder="搜索笔记…" autocomplete="off" aria-label="搜索笔记">
+      <div id="search-results" hidden></div>
+    </div>
+  </div>
+  <nav class="topic-nav" aria-label="主题导航">
+    <div class="topic-nav-inner">
+      <a href="../../../AI/">AI</a>
+      <a href="../../../Aliyun/">Aliyun</a>
+      <a href="../../../Azure/">Azure</a>
+      <a href="../../../C%2B%2B/">C++</a>
+      <a href="../../../CloudComputing/">CloudComputing</a>
+      <a href="../../../Database/">Database</a>
+      <a href="../../../Docker-Kubernetes/" class="active">Docker-Kubernetes</a>
+      <a href="../../../GPU-DeepLearning/">GPU-DeepLearning</a>
+      <a href="../../../Git/">Git</a>
+      <a href="../../../Go/">Go</a>
+      <a href="../../../HPC/">HPC</a>
+      <a href="../../../IaC/">IaC</a>
+      <a href="../../../Linux-Shell/">Linux-Shell</a>
+      <a href="../../../Middlewares/">Middlewares</a>
+      <a href="../../../Networking/">Networking</a>
+      <a href="../../../OS/">OS</a>
+      <a href="../../../Python/">Python</a>
+      <a href="../../../SoftwareTesting/">SoftwareTesting</a>
+    </div>
+  </nav>
+</header>
+<main class="main">
+
+<div class="article-layout">
+
+  <aside class="sidebar">
+    <details class="sidebar-details">
+      <summary>Docker-Kubernetes</summary>
+      <nav class="sidebar-nav">
+        <p class="sidebar-group">CKA-CKS</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/CKA-CKS/CKA-%E5%A4%87%E8%80%83/">CKA 备考</a></li>
+          <li><a href="../../../Docker-Kubernetes/CKA-CKS/CKS-%E5%A4%87%E8%80%83/">CKS 备考</a></li>
+          <li><a href="../../../Docker-Kubernetes/CKA-CKS/k8s-%E9%9D%A2%E8%AF%95%E9%A2%98%E6%B1%87%E6%80%BB/">K8s 面试题汇总</a></li>
+        </ul>
+        <p class="sidebar-group">container-platform</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/container-platform/%E9%83%A8%E7%BD%B2openshift%283.10%29/">部署 OpenShift (3.10)</a></li>
+          <li><a href="../../../Docker-Kubernetes/container-platform/%E9%83%A8%E7%BD%B2%E8%BD%BB%E9%87%8F%E7%BA%A7%E7%9A%84K8S%E5%B9%B3%E5%8F%B0-K3S/">部署轻量级 K8S 平台 - K3S</a></li>
+        </ul>
+        <p class="sidebar-group">docker</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E5%9F%BA%E7%A1%80/">Docker基础</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E5%AE%89%E5%85%A8%E9%85%8D%E7%BD%AE-Capabilities%E4%B8%8E%E5%AE%B9%E5%99%A8%E5%8A%A0%E5%9B%BA/">Docker 安全配置详解：Capabilities 与容器加固</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2UI%E5%B7%A5%E5%85%B7portainer-%E9%83%A8%E7%BD%B2redis-sentinel/">Docker部署Portainer与Redis-Sentinel</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2gitlab/">Docker部署GitLab</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2lnmp%E7%BD%91%E7%AB%99/">Docker部署LNMP网站</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2loki/">Docker部署Loki日志系统</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2nginx-tomcat-httpd-go-python%E6%9C%8D%E5%8A%A1/">Docker部署Nginx-Tomcat-Httpd-Go-Python服务</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2prometheus-grafana-cAdvisior%E7%9B%91%E6%8E%A7/">Docker部署Prometheus-Grafana-cAdvisor监控</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2%E4%BB%93%E5%BA%93%E5%B9%B3%E5%8F%B0homebox/">Docker部署Homebox仓库平台</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1%E5%B7%A5%E5%85%B7gocron/">Docker部署GoCron定时任务工具</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2%E8%B7%AF%E7%94%B1%E7%9B%91%E6%8E%A7%E5%B7%A5%E5%85%B7NextTrace/">Docker部署NextTrace路由监控工具</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%85%8D%E7%BD%AENVIDIA%20GPU/">Docker配置NVIDIA GPU</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%85%8D%E7%BD%AE%E4%BB%A3%E7%90%86/">Docker配置代理</a></li>
+        </ul>
+        <p class="sidebar-group">harbor</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/harbor/harbor-basics/">Harbor 基础</a></li>
+          <li><a href="../../../Docker-Kubernetes/harbor/helm%E9%83%A8%E7%BD%B2harbor/">Helm 部署 Harbor</a></li>
+        </ul>
+        <p class="sidebar-group">helm-operator</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/helm-operator/helmv3-%E5%AE%89%E8%A3%85%E4%B8%8E%E4%BD%BF%E7%94%A8/">Helm v3 安装与使用</a></li>
+          <li><a href="../../../Docker-Kubernetes/helm-operator/helm%E9%83%A8%E7%BD%B2config-syncer%28kubed%29/">Helm 部署 Config Syncer (Kubed)</a></li>
+          <li><a href="../../../Docker-Kubernetes/helm-operator/helm%E9%83%A8%E7%BD%B2dragonfly/">Helm 部署 Dragonfly</a></li>
+          <li><a href="../../../Docker-Kubernetes/helm-operator/helm%E9%83%A8%E7%BD%B2pact-broker/">Helm 部署 Pact Broker</a></li>
+          <li><a href="../../../Docker-Kubernetes/helm-operator/helm%E9%83%A8%E7%BD%B2reloader/">Helm 部署 Reloader</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-CICD</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD%20Image%20Updater/">ArgoCD Image Updater</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD%E5%9F%BA%E7%A1%80/">ArgoCD基础</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD%E5%A4%9A%E9%9B%86%E7%BE%A4GitOps%E5%AE%9E%E6%88%98/">多集群 GitOps 实战：用 Argo CD 管理上百个 Kubernetes 集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD%E9%83%A8%E7%BD%B2Helm%E5%BA%94%E7%94%A8%E6%97%B6%E5%9F%9F%E5%90%8D%E8%A7%A3%E6%9E%90%E5%A4%B1%E8%B4%A5%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5%E4%B8%8E%E8%A7%A3%E5%86%B3/">ArgoCD部署Helm应用时域名解析失败问题排查与解决</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/ArgoCD/%E5%AD%A6%E4%B9%A0%E9%93%BE%E6%8E%A5/">ArgoCD学习链接</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Claude-Code%E5%AE%9E%E7%8E%B0CICD%E8%87%AA%E5%8A%A8%E5%8C%96%E5%8F%91%E5%B8%83%E6%B5%81%E7%A8%8B/">Claude Code 实现 CI/CD 自动化发布流程详细指南</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Gitlab/helm%E9%83%A8%E7%BD%B2gitlab/">Helm部署GitLab</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Gitlab/k8s%E9%83%A8%E7%BD%B2Gitlab%2811.8.1%29-%E5%9F%BA%E4%BA%8Eyaml/">K8s部署GitLab(11.8.1)-基于YAML</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Gitlab/%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%AE%89%E8%A3%85Gitlab%2817.9.8%29/">二进制安装GitLab(17.9.8)</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Jenkins/Jenkins%E8%AF%AD%E6%B3%95-%E5%9F%BA%E4%BA%8Edocker%E9%83%A8%E7%BD%B2/">Jenkins语法-基于Docker部署</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Jenkins/docker%E9%83%A8%E7%BD%B2jenkins/">Docker部署Jenkins</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Jenkins/helm%E9%83%A8%E7%BD%B2jenkins/">Helm部署Jenkins</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Jenkins/k8s-Devops%E5%B9%B3%E5%8F%B0%E8%90%BD%E5%9C%B0-%E5%9F%BA%E4%BA%8Ejenkins/">K8s DevOps平台落地-基于Jenkins</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Jenkins/k8s%E9%83%A8%E7%BD%B2%E5%9F%BA%E4%BA%8EJenkins%282.394%29%E7%9A%84DevOps%E5%B7%A5%E5%85%B7%E9%93%BE-%E5%9F%BA%E4%BA%8Eyaml/">K8s部署基于Jenkins(2.394)的DevOps工具链-基于YAML</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Jenkins/k8s%E9%83%A8%E7%BD%B2%E5%9F%BA%E4%BA%8EJenkins%282.426.3%29%E7%9A%84Devops%E5%B7%A5%E5%85%B7%E9%93%BE-%E5%9F%BA%E4%BA%8Eyaml/">K8s部署基于Jenkins(2.426.3)的DevOps工具链-基于YAML</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Jenkins/%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%AE%89%E8%A3%85Jenkins%282.319%29/">二进制安装Jenkins(2.319)</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Kustomize/k8s%E9%85%8D%E7%BD%AE%E5%AE%9A%E5%88%B6%E5%B7%A5%E5%85%B7-kustomize/">K8s配置定制工具-Kustomize</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Tekton/k8s%E9%83%A8%E7%BD%B2%E5%8E%9F%E7%94%9F%E7%9A%84CICD%E5%B7%A5%E5%85%B7Tekton-%E5%9F%BA%E4%BA%8Eyaml/">K8s部署原生的CICD工具Tekton-基于YAML</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Tekton/%E5%9F%BA%E4%BA%8ETekton%E7%9A%84%E4%BA%91%E5%8E%9F%E7%94%9F%E5%B9%B3%E5%8F%B0%E8%90%BD%E5%9C%B0/">基于Tekton的云原生平台落地</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/k8s%E5%8F%91%E5%B8%83%E7%AD%96%E7%95%A5-%E8%93%9D%E7%BB%BF%E9%83%A8%E7%BD%B2%E4%B8%8E%E9%87%91%E4%B8%9D%E9%9B%80%E5%8F%91%E5%B8%83/">K8s 发布策略：蓝绿部署与金丝雀发布实战</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/%E4%BD%BF%E7%94%A8github%20action%E9%83%A8%E7%BD%B2helmchart/">使用GitHub Action部署Helm Chart</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/%E5%8F%91%E5%B8%83go-python-java%E4%BB%A3%E7%A0%81%E5%88%B0K8S%E7%8E%AF%E5%A2%83/">发布Go/Python/Java代码到K8S环境</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-UI-tools</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-UI-tools/k8s-API%E6%A3%80%E6%9F%A5%E5%B7%A5%E5%85%B7kubent/">K8s API 检查工具 kubent</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-UI-tools/k8s-%E5%B0%8F%E5%B7%A5%E5%85%B7%E9%9B%86%E5%90%88/">K8s 小工具集合</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-UI-tools/k8s%E9%83%A8%E7%BD%B2-Dashboard-UI/">K8s 部署 Dashboard UI</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-UI-tools/k8s%E9%83%A8%E7%BD%B2%E5%8F%AF%E8%A7%86%E5%8C%96ui%E7%95%8C%E9%9D%A2kuboard/">K8s 部署 Kuboard</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-UI-tools/kubectl-UI%E5%B7%A5%E5%85%B7Lens/">kubectl UI 工具 Lens</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-UI-tools/kubectl-%E5%8F%AF%E8%A7%86%E5%8C%96%E6%8F%92%E4%BB%B6k9s-stern/">kubectl 可视化插件 k9s 和 stern</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-UI-tools/kuebctl-%E6%8F%92%E4%BB%B6krew-rolesum/">kubectl 插件 krew 和 rolesum</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-UI-tools/rancher%28v2.6.4%29%E7%AE%A1%E7%90%86k8s%E9%9B%86%E7%BE%A4/">Rancher (v2.6.4) 管理 K8s 集群</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-ai-gpu</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-ai-gpu/k8s%E9%85%8D%E7%BD%AENVIDIA%20GPU/">K8s 配置 NVIDIA GPU</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-backup-dr</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-backup-dr/k8s%E5%A4%87%E4%BB%BD%E4%B8%8E%E7%81%BE%E5%A4%87%E5%AE%9E%E6%88%98-%E4%B8%89%E5%B1%82%E5%AE%B9%E7%81%BE%E6%9E%B6%E6%9E%84/">K8s 备份与灾备实战：三层容灾架构</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-backup-dr/k8s%E9%9B%86%E7%BE%A4%E5%A4%87%E4%BB%BD%E6%81%A2%E5%A4%8D-Velero/">K8s集群备份恢复 - Velero</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-basic-resources</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/K8s%E5%9F%BA%E7%A1%80-pod%E8%B0%83%E5%BA%A6-%E4%BA%B2%E5%92%8C%E5%8A%9B/">K8s基础-Pod调度-亲和力</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/Python%E8%B0%83%E7%94%A8k8s-api%E5%AE%9E%E7%8E%B0%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/">Python调用K8s-API实现资源管理</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s-APIServer%E6%B7%B1%E5%BA%A6%E5%89%96%E6%9E%90-%E8%AF%B7%E6%B1%82%E9%93%BE%E8%B7%AF-%E8%AE%A4%E8%AF%81%E6%8E%88%E6%9D%83-%E7%94%9F%E4%BA%A7%E8%B0%83%E4%BC%98/">Kubernetes API Server 深度剖析：请求链路、认证授权与生产调优</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s-PodDisruptionBudget%E5%AE%9E%E6%88%98/">K8s PodDisruptionBudget 实战：优雅中断保护</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-Calico/">K8s基础-Calico</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-Finalizer%E4%B8%8E%E8%B5%84%E6%BA%90%E5%88%A0%E9%99%A4/">K8s基础-Finalizer与资源删除</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-Operator%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98-Kubebuilder/">从零开发 Kubernetes Operator：Kubebuilder 实战教程</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-Service/">K8s基础-Service</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-configMap-Secret/">K8s基础-configMap-Secret</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-daemonset/">K8s基础-DaemonSet</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-deployment/">K8s基础-Deployment</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-ingress/">K8s基础-Ingress</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-job-cronjob/">K8s基础-Job-CronJob</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-kubeadm/">K8s基础-kubeadm</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-namespace-%E8%B5%84%E6%BA%90%E5%88%86%E9%85%8D/">K8s基础-namespace-资源分配</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-pod/">K8s基础-Pod</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-pod%E8%B0%83%E5%BA%A6-%E6%A0%87%E7%AD%BE%E4%B8%8E%E9%80%89%E6%8B%A9%E5%99%A8%E5%AE%9E%E6%88%98/">Kubernetes 标签与选择器避坑：5 条核心铁律与生产级实战案例</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-statefulset/">K8s基础-StatefulSet</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-storage/">K8s基础-Storage</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-yaml/">K8s基础-YAML</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E4%B8%B4%E6%97%B6%E5%AE%B9%E5%99%A8ephemeral/">K8s基础-临时容器Ephemeral</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E5%AE%B9%E5%99%A8%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-Sidecar-Init-Ambassador-Adapter/">K8s 容器设计模式：Sidecar / Init Container / Ambassador / Adapter</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E5%AE%B9%E5%99%A8%E8%BF%90%E8%A1%8C%E6%97%B6-containerd/">K8s基础-容器运行时-containerd</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E6%9E%B6%E6%9E%84-%E7%BB%84%E4%BB%B6-%E8%B5%84%E6%BA%90/">K8s基础-架构-组件-资源</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E8%87%AA%E5%AE%9A%E4%B9%89CRD%E8%B5%84%E6%BA%90/">K8s基础-自定义CRD资源</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E8%AE%A4%E8%AF%81-%E6%8E%88%E6%9D%83-%E5%87%86%E5%85%A5/">K8s基础-认证-授权-准入</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-db-middleware</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/Operator%E9%83%A8%E7%BD%B2Redis%E9%9B%86%E7%BE%A4/">基于Operator部署Redis集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/Operator%E9%83%A8%E7%BD%B2mysql%E9%9B%86%E7%BE%A4/">Operator部署MySQL NDB集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/helm%E9%83%A8%E7%BD%B2mysql/">Helm部署MySQL</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/helm%E9%83%A8%E7%BD%B2postgreSQL/">Helm部署PostgreSQL</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/helm%E9%83%A8%E7%BD%B2rabbitmq-ha/">Helm部署RabbitMQ高可用集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/helm%E9%83%A8%E7%BD%B2strimzi-kafka/">Helm部署Strimzi Kafka</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/k8s%E5%9F%BA%E4%BA%8Eyaml%E9%83%A8%E7%BD%B2MongoDB%E9%9B%86%E7%BE%A4/">K8s基于YAML部署MongoDB集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/k8s%E5%9F%BA%E4%BA%8Eyaml%E9%83%A8%E7%BD%B2httpd%E6%9C%8D%E5%8A%A1/">K8s基于YAML部署httpd服务</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/k8s%E5%9F%BA%E4%BA%8Eyaml%E9%83%A8%E7%BD%B2mysql%E4%B8%BB%E4%BB%8E%E9%AB%98%E5%8F%AF%E7%94%A8/">K8s基于YAML部署MySQL主从高可用</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/k8s%E5%9F%BA%E4%BA%8Eyaml%E9%83%A8%E7%BD%B2redis%E9%9B%86%E7%BE%A4/">K8s基于YAML部署Redis集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/k8s%E9%83%A8%E7%BD%B2springcloud%E7%94%B5%E5%95%86%E9%A1%B9%E7%9B%AE/">K8s部署SpringCloud电商项目</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-installation-management</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/2025%E6%9C%80%E6%96%B0-%E4%BC%81%E4%B8%9A%E7%BA%A7%E9%AB%98%E5%8F%AF%E7%94%A8%E9%9B%86%E7%BE%A4-%E5%9F%BA%E4%BA%8Erockylinux/">2025最新-企业级高可用集群-基于rockylinux</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/etcd%E9%AB%98%E5%8F%AF%E7%94%A8%E9%85%8D%E7%BD%AE%E4%BB%A5%E5%8F%8A%E6%A8%A1%E6%8B%9F%E9%9B%86%E7%BE%A4%E6%95%85%E9%9A%9C%E5%92%8C%E6%81%A2%E5%A4%8D/">etcd高可用配置以及模拟集群故障和恢复</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/k8s-Backstage-%E5%86%85%E9%83%A8%E5%BC%80%E5%8F%91%E8%80%85%E5%B9%B3%E5%8F%B0IDP%E5%AE%9E%E6%88%98/">K8s 平台工程实战：用 Backstage 打造一站式内部开发者平台</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/k8s-cgroup-v2%E6%B7%B1%E5%BA%A6%E8%A7%A3%E6%9E%90-%E8%BF%81%E7%A7%BB%E5%AE%9E%E6%88%98%E4%B8%8E%E9%81%BF%E5%9D%91%E6%8C%87%E5%8D%97/">K8s CGroup v2 深度解析：资源隔离原理、迁移实战与生产避坑指南</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/k8s%E4%B8%A4%E5%9C%B0%E4%B8%89%E4%B8%AD%E5%BF%83%E6%9E%B6%E6%9E%84/">k8s两地三中心架构</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/k8s%E5%A4%9A%E9%9B%86%E7%BE%A4kubeconfig%E7%AE%A1%E7%90%86/">k8s多集群kubeconfig管理</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/k8s%E6%95%85%E9%9A%9C%E6%8E%92%E6%9F%A5%E6%8C%87%E5%8D%97/">k8s故障排查指南</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/k8s%E7%94%9F%E4%BA%A7%E7%8E%AF%E5%A2%83%E4%BC%98%E5%8C%96%E4%B8%8E%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/">k8s生产环境优化与最佳实践</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/k8s%E9%83%A8%E7%BD%B2%E9%98%B2%E7%81%AB%E5%A2%99%E7%AB%AF%E5%8F%A3%E9%85%8D%E7%BD%AE/">K8s部署防火墙端口配置</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/latest-version/%E5%AE%89%E8%A3%85k8s-1.35-%E5%9F%BA%E4%BA%8Erockylinux10-%E6%9C%80%E6%96%B0%E6%AD%A5%E9%AA%A4/">在 Rocky Linux 10 上安装 Kubernetes 1.35</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%AE%89%E8%A3%85k8s%E9%AB%98%E5%8F%AF%E7%94%A8%E9%9B%86%E7%BE%A4/">二进制安装k8s高可用集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.20.6-%E9%AB%98%E5%8F%AF%E7%94%A8/">安装k8s-1.20.6-高可用</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.23/">安装k8s-1.23</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.26-1.27/">安装k8s-1.26-1.27</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.28/">安装k8s-1.28</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.30-%E5%9F%BA%E4%BA%8Erockylinux/">安装k8s-1.30-基于rockylinux</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.32-%E5%9F%BA%E4%BA%8Erockylinux/">安装k8s-1.32-基于rockylinux</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.33-%E5%9F%BA%E4%BA%8Erockylinux-%E6%9C%80%E6%96%B0%E6%AD%A5%E9%AA%A4/">安装k8s-1.33-基于rockylinux-最新步骤</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/%E5%8D%87%E7%BA%A7/k8s-1.37-%E5%8D%87%E7%BA%A7%E9%A1%BB%E7%9F%A5-breaking-changes/">Kubernetes v1.37 升级破坏性变更指南</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/%E5%8D%87%E7%BA%A7/k8s%E8%BF%81%E7%A7%BB%E5%AE%B9%E5%99%A8%E8%BF%90%E8%A1%8C%E6%97%B6-%E7%89%88%E6%9C%AC%E5%8D%87%E7%BA%A7/">k8s迁移容器运行时与版本升级</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-monitoring-logging</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/K8s%E5%85%A8%E9%9D%A2%E5%B7%A1%E6%A3%80%E8%84%9A%E6%9C%AC-%E7%94%9F%E6%88%90HTML%E5%81%A5%E5%BA%B7%E6%8A%A5%E5%91%8A/">K8s 全面巡检脚本：一键生成 HTML 健康报告</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/OpenTelemetry%E5%AE%9E%E6%88%98-%E7%BB%9F%E4%B8%80Traces-Metrics-Logs/">OpenTelemetry 实战：告别厂商锁定，统一 Traces/Metrics/Logs</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/Prometheus%E5%9F%BA%E7%A1%80/">Prometheus基础</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/Prometheus%E7%9B%91%E6%8E%A7k8s%E7%B3%BB%E7%BB%9F%E7%BB%84%E4%BB%B6/">Prometheus监控K8s系统组件</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/Prometheus%E7%9B%91%E6%8E%A7%E5%A4%96%E9%83%A8k8s%E9%9B%86%E7%BE%A4/">Prometheus监控外部K8s集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/Prometheus%E7%9B%91%E6%8E%A7%E9%9D%9E%E4%BA%91%E5%8E%9F%E7%94%9F%E5%BA%94%E7%94%A8-%E4%B8%BB%E6%9C%BA/">Prometheus监控非云原生应用-主机</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/helm%E9%83%A8%E7%BD%B2Loki-promtail-tempo-grafanaAgent%E5%85%A8%E5%AE%B6%E6%A1%B6/">Helm部署Loki+Promtail+Tempo+GrafanaAgent全家桶</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/helm%E9%83%A8%E7%BD%B2jaeger/">Helm部署Jaeger</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/helm%E9%83%A8%E7%BD%B2prometheus-stack%E5%85%A8%E5%AE%B6%E6%A1%B6/">Prometheus-Stack 全家桶：生产级部署与运维完全指南</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E6%97%A5%E5%BF%97%E7%AE%A1%E7%90%86-%E9%87%87%E9%9B%86%E6%96%B9%E6%A1%88%E4%B8%8E%E5%AE%A1%E8%AE%A1%E6%97%A5%E5%BF%97/">K8s 日志管理：基础机制、六种采集方案与审计日志实战</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E7%9B%91%E6%8E%A7EFK%2Blogstash%2Bkafka/">K8s监控EFK+logstash+kafka</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E7%9B%91%E6%8E%A7ES%287.2%29%2BKibana%287.2%29%2BFluentd%28v1.4.2%29/">K8s监控ES(7.2)+Kibana(7.2)+Fluentd(v1.4.2)</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E7%9B%91%E6%8E%A7Prometheus%28v2.2.1%29/">K8s监控Prometheus(v2.2.1)</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E7%9B%91%E6%8E%A7Prometheus%28v2.33.5%29%2BGrafana%28v8.4.5%29/">K8s监控Prometheus(v2.33.5)+Grafana(v8.4.5)</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E7%9B%91%E6%8E%A7alertmanager%28v0.14.0%29/">K8s监控Alertmanager(v0.14.0)</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E9%83%A8%E7%BD%B2elasticsearch%E9%9B%86%E7%BE%A4/">K8s部署Elasticsearch集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E9%83%A8%E7%BD%B2grafana%28v5.0.4%29/">K8s部署Grafana(v5.0.4)</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E9%83%A8%E7%BD%B2%E5%85%A8%E9%93%BE%E8%B7%AF%E8%BF%BD%E8%B8%AA-Skywalking/">K8s部署全链路追踪-Skywalking</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2Prometheus%28v2.32.1%29%E8%81%94%E9%82%A6%E9%9B%86%E7%BE%A4/">二进制部署Prometheus(v2.32.1)联邦集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2efk%2Blogstash%2Bkafka%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%B9%B3%E5%8F%B0/">二进制部署EFK+Logstash+Kafka日志收集平台</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2prometheus-grafana-nodeexporter/">二进制部署Prometheus-Grafana-NodeExporter</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/%E5%9F%BA%E4%BA%8Ehelm%2Boperator%E9%83%A8%E7%BD%B2ECK%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%B9%B3%E5%8F%B0/">基于Helm+Operator部署ECK日志收集平台</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-networking-service-mesh</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/Istio-Sidecar-vs-Ambient/">Istio Sidecar vs Ambient 模式对比</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/helm%E5%AE%89%E8%A3%85istio/">Helm安装Istio</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/helm%E9%83%A8%E7%BD%B2external-dns/">Helm部署External-DNS</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/helm%E9%83%A8%E7%BD%B2ingress-nginx/">Helm部署Ingress-Nginx</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/helm%E9%83%A8%E7%BD%B2tomcat/">Helm 部署 Tomcat</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/k8s-Gateway-API%E5%85%A5%E9%97%A8-Ingress%E4%B8%8B%E4%B8%80%E4%BB%A3%E6%96%B9%E6%A1%88/">Kubernetes Gateway API 入门：Ingress 的下一代方案</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/k8s%E7%B2%BE%E7%BB%86%E5%8C%96%E6%B5%81%E9%87%8F%E7%AE%A1%E7%90%86-istio/">K8s精细化流量管理-Istio</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/k8s%E9%83%A8%E7%BD%B2istio%281.13.1%29/">K8s部署Istio(1.13.1)</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/k8s%E9%9B%86%E7%BE%A4%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/">K8s集群网络安全</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/%E4%BC%81%E4%B8%9A%E9%A1%B9%E7%9B%AE%E6%8E%A5%E5%85%A5istio%E5%AE%9E%E6%88%98/">企业项目接入Istio实战</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-scaling</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-scaling/KEDA-vs-HPA-2026%E7%BB%88%E6%9E%81%E5%AF%B9%E6%AF%94-v1.36%E7%BC%A9%E9%9B%B6/">KEDA vs HPA 2026 终极对比：v1.36 原生缩零后该选谁？</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-scaling/helm%E9%83%A8%E7%BD%B2goldilocks/">Helm部署Goldilocks</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-scaling/helm%E9%83%A8%E7%BD%B2vpa/">Helm部署VPA</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-scaling/k8s-HPA-VPA/">K8s HPA与VPA</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-scaling/k8s-%E5%9F%BA%E4%BA%8EKEDA%E7%9A%84%E5%BC%B9%E6%80%A7%E8%83%BD%E5%8A%9B/">K8s基于KEDA的弹性能力</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-scaling/k8s%E6%88%90%E6%9C%AC%E4%BC%98%E5%8C%96%E6%96%B9%E6%A1%88-FinOps%E5%AE%9E%E6%88%98/">K8s 集群成本优化方案：砍掉 60% 云账单</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-security-auth</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2capsule/">Helm部署Capsule</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2certmanager/">Helm部署Cert-Manager</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2external-secrets/">Helm部署External-Secrets</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2kyverno%E5%92%8Cpolicy-reporter/">Helm部署Kyverno和Policy-Reporter</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2oauth2proxy/">Helm部署OAuth2-Proxy</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2sonarqube/">Helm部署SonarQube</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2trivy-operator/">Helm部署Trivy-Operator</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/k8s-Admission-Webhook%E9%93%BE%E5%86%B2%E7%AA%81%E6%8E%92%E6%9F%A5-Istio-Kyverno-Gatekeeper/">当 Istio、Kyverno、Gatekeeper 三个 Webhook 同时存在，你的集群会发生什么？</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/k8s%E5%AE%B9%E5%99%A8%E5%AE%89%E5%85%A8%E4%B8%8A%E4%B8%8B%E6%96%87-SecurityContext/">Kubernetes 容器安全上下文完全指南：从入门到生产避坑</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-springcloud</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-springcloud/SpringCloud%E9%A1%B9%E7%9B%AE%E8%BF%81%E7%A7%BB%E5%88%B0k8s%E5%AE%9E%E6%88%98/">SpringCloud 项目迁移到 K8s 实战</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-storage</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-storage/helm%E9%83%A8%E7%BD%B2nfs-subdir-external-provisioner/">Helm部署NFS Subdir External Provisioner</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-storage/k8s-ceph%E9%83%A8%E7%BD%B2%E4%B8%8E%E9%9B%86%E6%88%90/">K8s Ceph部署与集成</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-storage/k8s-%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8CubeFS/" class="current">K8s分布式存储CubeFS</a></li>
+        </ul>
+        <p class="sidebar-group">kubeblocks</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/kubeblocks/kubeblocks%E9%83%A8%E7%BD%B2WordPress/">KubeBlocks 部署 WordPress</a></li>
+          <li><a href="../../../Docker-Kubernetes/kubeblocks/kubeblocks%E9%83%A8%E7%BD%B2%E9%AB%98%E5%8F%AF%E7%94%A8harbor%E9%9B%86%E7%BE%A4/">KubeBlocks 部署高可用 Harbor 集群</a></li>
+        </ul>
+        <p class="sidebar-group">其他</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/%E7%AE%80%E5%8E%86%E6%8C%87%E5%8D%97/">简历指南</a></li>
+        </ul>
+      </nav>
+    </details>
+  </aside>
+
+  <article class="article">
+    <nav class="breadcrumb">
+      <a href="../../../index.html">首页</a><span>/</span>
+      <a href="../../../Docker-Kubernetes/">Docker-Kubernetes</a><span>/</span><span>k8s-storage</span>
+    </nav>
+    <h1 class="article-title">K8s分布式存储CubeFS</h1>
+    <p class="article-meta"><span>更新于 2026-04-16</span>
+      <a href="https://github.com/hangx969/learning-notes/blob/main/Docker-Kubernetes/k8s-storage/k8s-%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8CubeFS.md">查看源文件</a>
+    </p>
+    <div class="article-body">
+<h1 id="存储架构对比">存储架构对比</h1>
+<h2 id="单节点存储">单节点存储</h2>
+<p>一种常见但又失败的存储设计：一台存储服务器，挂载了很多磁盘，搭建一个nfs或者其他nas服务提供存储。</p>
+<p><img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202508281559728.png" alt="image-20250828155935532" style="zoom:50%;" /></p>
+<p>这种架构存在很多问题：</p>
+<ol>
+<li>单点故障，非高可用</li>
+<li>如果想再搭一台作为高可用，很难实时同步两台节点的数据；而且故障转移也很困难，大概率转移不过去。</li>
+<li>性能瓶颈，数据阻塞</li>
+<li>存储服务器的网卡成为网络数据流量的瓶颈，一般只有一个或者两个磁盘承载读写，也会成为瓶颈。</li>
+<li>存储有限，扩容复杂</li>
+<li>安全性低，容易宕机</li>
+<li>功能有限，只支持文件</li>
+<li>如果想实现块存储或者对象存储是不支持的</li>
+<li>隔离性差，无权限管理</li>
+</ol>
+<h2 id="分布式存储">分布式存储</h2>
+<p>生产环境中建议使用分布式存储。分布式存储有以下优势：</p>
+<ol>
+<li>支持近乎无限的扩容</li>
+<li>可以通过添加节点到集群的方式扩容</li>
+<li>扩容后集群会自动balance</li>
+<li>支持容错能力和数据冗余</li>
+<li>可以配置存储多份文件副本</li>
+<li>可以配置文件拆分成多份存储到不同节点上</li>
+<li>支持多机房多区域部署</li>
+<li>支持负载均衡和并行处理</li>
+<li>数据可以在多个节点并行处理，性能更好</li>
+<li>支持权限管理和多用户</li>
+<li>支持多种文件存储类型</li>
+<li>块存储（可以当做一块硬盘直接挂载到某台机器上或者容器内）、对象存储（s3、hadoop等协议）</li>
+<li>支持普通硬件设计</li>
+<li>nfs存储性能就依赖于高性能磁盘，分布式存储可以通过缓存、中间件等，即使在普通硬件上也可以提高性能</li>
+</ol>
+<h2 id="分布式存储平台">分布式存储平台</h2>
+<p>主要对比主流的Ceph和CubeFS：</p>
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th>Ceph</th>
+<th>CubeFS</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>设计目标</td>
+<td>统一存储解决方案，支持块、对象、文件存储</td>
+<td>专注于文件、对象存储</td>
+</tr>
+<tr>
+<td>存储类型</td>
+<td>对象、块、文件系统</td>
+<td>对象、文件系统（目前不支持块存储）</td>
+</tr>
+<tr>
+<td>扩展性</td>
+<td>支持超大规模集群，PB-EB级</td>
+<td>支持大规模集群，但是针对中小规模场景优化更好</td>
+</tr>
+<tr>
+<td>性能</td>
+<td>大文件性能优秀，小文件性能一般</td>
+<td>小文件和大文件性能均优秀</td>
+</tr>
+<tr>
+<td>元数据管理</td>
+<td>基于RADOS分布式存储，元数据分布在OSD中</td>
+<td>独立的Metadata节点管理元数据，避免瓶颈</td>
+</tr>
+<tr>
+<td>部署复杂度</td>
+<td>需要配置多组件（Monitor、Manager、OSD等）维护比k8s还困难<br />直接部署到k8s较困难，而且对接K8s也需要其它工具支持</td>
+<td>轻量级，部署简单，适合云原生环境</td>
+</tr>
+<tr>
+<td>硬件要求</td>
+<td>对磁盘IO和网络带宽要求较高</td>
+<td>硬件要求相对较低（企业级也要用高性能磁盘和万兆带宽）</td>
+</tr>
+<tr>
+<td>社区活跃度</td>
+<td>社区庞大、文档丰富、生态成熟</td>
+<td>中文文档齐全（由OPPO开源的）</td>
+</tr>
+<tr>
+<td>成熟度</td>
+<td>技术成熟，已在生产环境中广泛使用</td>
+<td>较新的项目，生产环境验证时间较短</td>
+</tr>
+<tr>
+<td>使用场景</td>
+<td>通用存储需求，企业级数据中心</td>
+<td>云原生环境、大数据分析、AI训练、容器化等场景，有专门优化。</td>
+</tr>
+<tr>
+<td>兼容性</td>
+<td>支持多种协议（S3、iSCSI、NFS、HDFS等）</td>
+<td>支持多种协议，主要针对对象、文件存储</td>
+</tr>
+<tr>
+<td>扩展方式</td>
+<td>水平扩展、支持动态扩展</td>
+<td>水平扩展、支持动态扩展</td>
+</tr>
+<tr>
+<td>容错机制</td>
+<td>多副本嚯纠删码机制</td>
+<td>多副本或纠删码机制（文件经常访问-多副本好一些；不经常访问-纠删码好一些）</td>
+</tr>
+</tbody>
+</table>
+<h2 id="k8s上落地分布式存储平台">k8s上落地分布式存储平台</h2>
+<p>裸机部署分布式存储平台，管理很复杂，而且对故障的承受能力也比较差。</p>
+<p>在k8s上部署分布式存储平台，有如下优势：</p>
+<ol>
+<li>简化部署和管理</li>
+<li>不需要在每台机器上维护配置文件。用helm等工具在k8s上实现IaC，方便管理</li>
+<li>自动化运维</li>
+<li>一键式动态扩展</li>
+<li>daemonset实现每个节点的配置相同</li>
+<li>故障自愈和高可用性</li>
+<li>健康检查、自动故障恢复漂移</li>
+<li>云原生生态集成</li>
+<li>云原生应用可以直接用CSI对接到存储</li>
+</ol>
+<h1 id="cubefs介绍">CubeFS介绍</h1>
+<p>官网：<a href="https://www.cubefs.io/zh/docs/master/overview/introduction.html">CubeFS - 云原生分布式存储系统</a></p>
+<p>CubeFS是新一代云原生存储产品，目前已经是CNCF毕业的开源项目。兼容S3、POSIX、HDFS等多种访问协议，支持多副本与纠删码两种存储引擎，提供多租户、多AZ部署以及跨区域复制等多种特性。广泛应用于大数据、AI、容器平台、数据库、中间件存算分离、数据共享以及数据保护等场景。</p>
+<p>比如大模型服务，部署一个deepseek，671B的参数量，模型文件就得接近上TB。模型文件越多，对存储性能要求越高，放到CubeFS上，吞吐量很优秀，可以支持大模型服务。放到单节点存储上会拖慢大模型速度。</p>
+<h2 id="特性">特性</h2>
+<ol>
+<li>多协议：S3、POSIX、HDFS</li>
+<li>双引擎：支持多副本和纠删码</li>
+<li>多租户：支持多租户隔离和权限分配</li>
+<li>可扩展：支持各模块水平扩展、轻松扩展到PB或EB级</li>
+<li>高性能：支持多级缓存、支持多种高性能的复制协议。</li>
+<li>云原生：自带CSI插件，一键集成到k8s</li>
+<li>多场景：大数据分析、机器学习、深度训练、共享存储、对象存储、数据库中间件等。</li>
+</ol>
+<h2 id="架构">架构</h2>
+<p><img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202508281651643.png" alt="image-20250828165135446" style="zoom:50%;" /></p>
+<ol>
+<li>Master Node：</li>
+</ol>
+<p>集群管理中枢和请求入口，管理其他节点，分发请求到其他节点</p>
+<ol>
+<li>Meta Node：</li>
+</ol>
+<p>元数据节点，存储文件metadata：文件名称、存储状态、副本状态等。这些数据都是缓存到内存中的</p>
+<ol>
+<li>Data Node:</li>
+</ol>
+<p>数据节点，真正存储数据的地方。如果采用副本模式就是Data Node；如果采用纠删码模式就是Blob Node。</p>
+<ol>
+<li>Object Node：</li>
+</ol>
+<p>CubeFS也是支持S3协议的，object node对外提供s3协议，应用通过object node作为入口访问到对象存储。</p>
+<h1 id="企业级分布式存储架构设计">企业级分布式存储架构设计</h1>
+<h2 id="部署方式">部署方式</h2>
+<h3 id="混合部署">混合部署</h3>
+<p>混合部署指的是已经有一个现成的k8s集群，已经部署了一些业务应用，再把分布式存储平台也部署上去。</p>
+<p>不过是部署在特殊节点上，通过打污点的形式，不让其他应用pod部署上去。</p>
+<p>对于CubeFS的挂载，应用可以通过Master节点的service来挂载，或者通过object node来挂载对象存储。</p>
+<h3 id="独立部署-基础设施集群">独立部署-基础设施集群</h3>
+<p>是企业中比较常见、典型、可靠的部署方式：</p>
+<ol>
+<li>把一些通用服务单独部署到基础设施集群中（比如CubeFS、prometheus、grafana、ECK等）</li>
+<li>应用业务单独部署在业务集群中</li>
+</ol>
+<p>基础设施集群中的通用服务怎么对外提供服务？需要看服务是通过什么协议代理的：</p>
+<ol>
+<li>通过TCP四层协议代理的，比如mysql、redis：</li>
+<li>可以在两个集群中间加一个F5（负载均衡器）</li>
+<li>可以把服务通过NodePort暴露</li>
+<li>通过HTTP七层协议代理的</li>
+<li>可以通过ingress，暴露一个内部域名，只能内网去解析。如果没有内网域名，可以在业务集群的coreDNS上配置自定义解析，解析到基础设施集群的入口。</li>
+<li>也可以通过istio ingressGateway暴露域名。</li>
+</ol>
+<h2 id="资源分配建议">资源分配建议</h2>
+<h3 id="总内存">总内存</h3>
+<p>以CubeFS为例，元数据节点总内存计算规则：每个文件元数据占用空间2KB-4KB。</p>
+<ul>
+<li>根据文件数量预估：</li>
+<li>假设已知的文件数量预估为10亿，则需要的内存KB为：20亿KB</li>
+<li>
+<p>换算为GB：20亿/1024/1024 = 2000GB = 2TB内存</p>
+</li>
+<li>
+<p>根据数据量预估：</p>
+</li>
+<li>假设集群数据总量为10PB = 10240TB = 10737418240MB</li>
+<li>通过CubeFS默认分片大小8MB预估，可能需要10737418240/8=1342177280个文件</li>
+<li>通过计算规则，需要的内存为：1342177280*2 = 2684354560KB = 2500GB = 2.5TB</li>
+</ul>
+<h3 id="服务器硬件">服务器硬件</h3>
+<p>假设需要落地1PB CubeFS存储（需要256G内存）。</p>
+<p>常见的配置：一台16硬盘位的存储服务器：</p>
+<ul>
+<li>每个硬盘位插一个16T的SAS硬盘（目前SAS盘性价比最高），这样一台存储服务器就有256T硬盘空间，四台就能满足1PB了。</li>
+<li>四个内存槽，每个插上64G内存条，总共256G内存，四台服务器就有约1TB内存了，远超需求量。（内存一般来说是容易满足的，而且服务器内存条也比较便宜，不会成为瓶颈）</li>
+</ul>
+<p>如果担心16盘位受到服务器故障影响较大，可以换成8盘位的服务器：</p>
+<ul>
+<li>每个硬盘位插一个16T的SAS硬盘，8台可以满足1PB。</li>
+<li>内存槽4个，每个槽插一个32G内存条，8台也是1TB内存，足够用。</li>
+</ul>
+<p>所以就把服务器盘位、硬盘容量规划好就行，内存一般不会成为瓶颈。</p>
+<h1 id="cubefs部署">CubeFS部署</h1>
+<h2 id="部署架构">部署架构</h2>
+<p><img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202508281805748.png" alt="image-20250828180510573" style="zoom:50%;" /></p>
+<ul>
+<li><code>Master</code>：资源管理节点，负责维护整个集群的元信息，部署为 StatefulSet 资源。</li>
+<li><code>DataNode</code>：数据存储节点，需要挂载大量磁盘负责文件数据的实际存储，部署为 DaemonSet 资源。</li>
+<li><code>MetaNode</code>：元数据节点，负责存储所有的文件元信息，部署为 DaemonSet 资源。</li>
+<li><code>ObjectNode</code>：负责提供转换 S3 协议提供对象存储的能力，无状态服务，部署为 Deployment 资源。</li>
+</ul>
+<h2 id="配置标签">配置标签</h2>
+<p>CubeFS 安装时会根据这些标签通过<code>nodeSelector</code>进行匹配，然后在机器创建起对应的<code>Pod</code>。</p>
+<p>实验环境下就三个节点，所有节点都用作所有三个角色：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Master 节点，至少三个，建议为奇数个 </span>
+kubectl<span class="w"> </span>label<span class="w"> </span>node<span class="w"> </span>component.cubefs.io/master<span class="o">=</span>enabled<span class="w"> </span>--all
+<span class="c1"># MetaNode 元数据节点，至少 3 个，奇偶无所谓 </span>
+kubectl<span class="w"> </span>label<span class="w"> </span>node<span class="w"> </span>component.cubefs.io/metanode<span class="o">=</span>enabled<span class="w"> </span>--all
+<span class="c1"># Dataode 数据节点，至少 3 个，奇偶无所谓 </span>
+kubectl<span class="w"> </span>label<span class="w"> </span>node<span class="w"> </span>component.cubefs.io/datanode<span class="o">=</span>enabled<span class="w"> </span>--all
+<span class="c1"># ObjectNode 对象存储节点，可以按需进行标记，不需要对象存储功能的话也可以不部署这个组件 </span>
+kubectl<span class="w"> </span>label<span class="w"> </span>node<span class="w"> </span>component.cubefs.io/objectnode<span class="o">=</span>enabled<span class="w"> </span>--all
+</code></pre></div>
+
+<h2 id="配置数据盘">配置数据盘</h2>
+<p>搭建分布式存储，是需要专门挂载磁盘的。</p>
+<p>在配置了<code>kubectl label node &lt;nodename&gt; component.cubefs.io/datanode=enabled</code>的数据节点上，对数据盘进行初始化操作。</p>
+<p>首先添加一个新盘，然后通过fdisk -l查看：</p>
+<div class="highlight"><pre><span></span><code>fdisk<span class="w"> </span>-l<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>dev/sd
+<span class="c1"># Disk /dev/sdb: 6 GiB, 6442450944 bytes, 12582912 sectors</span>
+</code></pre></div>
+
+<p><div class="callout callout-warning" markdown="1"><br />
+<p class="callout-title">磁盘空间要求</p></p>
+<p>磁盘可用空间必须大于10G，否则磁盘会被cubeFS标记为ReadOnly，并且空间计算也会不准确。</p>
+<p>参考：<a href="https://github.com/cubefs/cubefs/issues/3173#issuecomment-1986599468">[Bug]: the datanodes is not WRITABLE - Issue #3173</a></p>
+</div>
+<p>格式化磁盘并挂载：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 格式化硬盘 </span>
+mkfs.xfs<span class="w"> </span>-f<span class="w"> </span>/dev/sdb<span class="w"> </span>
+<span class="c1"># 创建挂载目录，如果机器上存在多个需要挂载的数据磁盘，则每个磁盘按以上步骤进行格式化和挂载磁盘，挂载目录按照data0/data1/../data999的顺序命名 </span>
+mkdir<span class="w"> </span>/data0<span class="w"> </span>
+<span class="c1"># 挂载磁盘 </span>
+mount<span class="w"> </span>/dev/sdb<span class="w"> </span>/data0<span class="w"> </span>
+
+<span class="c1"># 开机自动挂载</span>
+blkid<span class="w"> </span>/dev/sdb<span class="w"> </span><span class="c1"># 获取磁盘UUID</span>
+tee<span class="w"> </span>-a<span class="w"> </span>/etc/fstab<span class="w"> </span><span class="s">&lt;&lt;&#39;EOF&#39; </span>
+<span class="s">UUID=c94b2053-bf99-4268-8255-bcbe4e6e4b7f   /data0   xfs    defaults  0 0</span>
+<span class="s">EOF</span>
+mount<span class="w"> </span>-a<span class="w"> </span>
+</code></pre></div>
+
+<p><div class="callout callout-warning" markdown="1"><br />
+<p class="callout-title">注意</p></p>
+<p>如果有多个数据节点，需要保证每个数据节点的磁盘数量、大小等配置是完全一致的。因为后面配置数据节点的时候，是所有数据节点统一配置的。这样出错的概率小。</p>
+</div>
+<h2 id="helm安装">helm安装</h2>
+<p>官网指南：<a href="https://www.cubefs.io/zh/docs/master/deploy/k8s.html">CubeFS K8s部署指南</a></p>
+<p>github地址：<a href="https://github.com/cubefs/cubefs-helm">cubefs-helm - GitHub</a></p>
+<h3 id="下载helm包">下载helm包</h3>
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/cubefs/cubefs-helm.git
+</code></pre></div>
+
+<h3 id="配置values">配置values</h3>
+<h4 id="组件和镜像">组件和镜像</h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># 临时关闭一些组件 </span>
+<span class="l l-Scalar l-Scalar-Plain">cd cubefs-helm/cubefs</span><span class="w"> </span>
+<span class="l l-Scalar l-Scalar-Plain">vim values.yaml</span><span class="w"> </span>
+<span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">client</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"> </span>
+<span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">csi</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"> </span>
+<span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">monitor</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"> </span>
+<span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">ingress</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"> </span>
+<span class="c1"># 调整组件的镜像地址（如果报错说明镜像源还不支持这些新版镜像，还是用默认的，手动传到节点解压）</span>
+<span class="nt">image</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">server</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">m.daocloud.io/docker.io/cubefs/cfs-server:v3.4.0</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">client</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">m.daocloud.io/docker.io/cubefs/cfs-client:v3.4.0</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">blobstore</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">m.daocloud.io/docker.io/cubefs/blobstore:v3.4.0</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">csi_driver</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">m.daocloud.io/docker.io/cubefs/cfs-csi-driver:v3.4.0</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">csi_provisioner</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">m.daocloud.io/registry.k8s.io/sig-storage/csi-provisioner:v2.2.2</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">csi_attacher</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">m.daocloud.io/registry.k8s.io/sig-storage/csi-attacher:v3.4.0</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">csi_resizer</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">m.daocloud.io/registry.k8s.io/sig-storage/csi-resizer:v1.3.0</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">driver_registrar</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">m.daocloud.io/registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.5.0</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">grafana</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">m.daocloud.io/docker.io/grafana/grafana:6.4.4</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">prometheus</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">m.daocloud.io/docker.io/prom/prometheus:v2.13.1</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">consul</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">m.daocloud.io/docker.io/library/consul:1.6.1</span><span class="w"> </span>
+</code></pre></div>
+
+<h4 id="主节点配置">主节点配置</h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># 主节点副本数，建议奇数 </span>
+<span class="nt">master</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">replicas</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
+<span class="w">  </span><span class="nt">tolerations</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;node-role.kubernetes.io/control-plane&quot;</span>
+<span class="w">      </span><span class="nt">operator</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Equal&quot;</span>
+<span class="w">      </span><span class="nt">effect</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;NoSchedule&quot;</span>
+<span class="c1"># 资源请求： </span>
+<span class="w">  </span><span class="nt">resources</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">    </span><span class="nt">requests</span><span class="p">:</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;256Mi&quot;</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;200m&quot;</span><span class="w"> </span>
+<span class="w">    </span><span class="nt">limits</span><span class="p">:</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;2Gi&quot;</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;2000m&quot;</span><span class="w"> </span>
+<span class="c1"># 生产环境建议： </span>
+<span class="w">    </span><span class="nt">requests</span><span class="p">:</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;8Gi&quot;</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;2000m&quot;</span><span class="w"> </span>
+<span class="w">    </span><span class="nt">limits</span><span class="p">:</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;32Gi&quot;</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;8000m&quot;</span>
+</code></pre></div>
+
+<h4 id="元数据节点配置">元数据节点配置</h4>
+<div class="highlight"><pre><span></span><code><span class="nt">metanode</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="c1"># metanode可用的内存，建议主机内存的80% </span>
+<span class="w">  </span><span class="nt">total_mem</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;7516192768&quot;</span><span class="w"> </span><span class="c1"># 这里配置7G</span>
+<span class="c1"># 资源配置 </span>
+<span class="w">  </span><span class="nt">resources</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">    </span><span class="nt">requests</span><span class="p">:</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;256Mi&quot;</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;200m&quot;</span><span class="w"> </span>
+<span class="w">    </span><span class="nt">limits</span><span class="p">:</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;2Gi&quot;</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;2000m&quot;</span><span class="w"> </span>
+<span class="c1"># 生产环境建议 </span>
+<span class="w">  </span><span class="nt">resources</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">    </span><span class="nt">requests</span><span class="p">:</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;32Gi&quot;</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;2000m&quot;</span><span class="w"> </span>
+<span class="w">    </span><span class="nt">limits</span><span class="p">:</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;256Gi&quot;</span><span class="w"> </span><span class="c1"># 要比上面的total_mem的值稍微大一些。比如上面配置了128G，这里配置132G。给一些buffer</span>
+<span class="w">      </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;8000m&quot;</span><span class="w"> </span>
+</code></pre></div>
+
+<h4 id="数据节点配置">数据节点配置</h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># 数据盘配置 </span>
+<span class="c1"># datanode.disks字段用于配置数据的挂载点，同时可以为每个磁盘保留一定的空间 </span>
+<span class="w">  </span><span class="nt">disks</span><span class="p">:</span>
+<span class="w">    </span><span class="c1"># 格式: 挂载点:保留的空间</span>
+<span class="w">    </span><span class="c1"># 保留的空间: 单位字节，当磁盘剩余空间小于该值时将不会再在该磁盘上写入数据</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/data0:536870912</span>
+<span class="c1"># 资源配置：</span>
+<span class="w">  </span><span class="nt">resources</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">    </span><span class="nt">requests</span><span class="p">:</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;256Mi&quot;</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;200m&quot;</span><span class="w"> </span>
+<span class="w">    </span><span class="nt">limits</span><span class="p">:</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;2Gi&quot;</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;2000m&quot;</span><span class="w"> </span>
+<span class="c1"># 生产环境建议 </span>
+<span class="w">    </span><span class="nt">requests</span><span class="p">:</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;8Gi&quot;</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;2000m&quot;</span><span class="w"> </span>
+<span class="w">    </span><span class="nt">limits</span><span class="p">:</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;32Gi&quot;</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;8000m&quot;</span><span class="w"> </span>
+</code></pre></div>
+
+<h4 id="对象存储节点配置">对象存储节点配置</h4>
+<div class="highlight"><pre><span></span><code><span class="nt">objectnode</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="c1"># 对象存储的域名 </span>
+<span class="w">  </span><span class="nt">region</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;spark&quot;</span><span class="w"> </span>
+<span class="c1"># 对象存储的域名。公司内部有域名就用，没有就用这个默认的。</span>
+<span class="nt">domains</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;objectcfs.cubefs.io,objectnode.cubefs.io&quot;</span><span class="w"> </span>
+</code></pre></div>
+
+<h3 id="安装cubefs">安装CubeFS</h3>
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span>./cubefs-helm/cubefs
+helm<span class="w"> </span>upgrade<span class="w"> </span>-i<span class="w"> </span>cubefs<span class="w"> </span>-n<span class="w"> </span>cubefs<span class="w"> </span>.<span class="w"> </span>--create-namespace<span class="w"> </span>-f<span class="w"> </span>values.yaml<span class="w"> </span>
+</code></pre></div>
+
+<p><div class="callout callout-bug" markdown="1"><br />
+<p class="callout-title">版本Bug</p></p>
+<p>2025-08-28 安装的3.3.2.150.0 Release版本，有个bug：</p>
+<p>在<code>cubefs-helm/cubefs/templates/statefulset-master.yaml</code>文件的第80行，需要把：</p>
+<p><code>value: {{ .Value.master.legacy_data_media_type | quote }}</code> 他的Value加上s：</p>
+<p><code>value: {{ .Values.master.legacy_data_media_type | quote }}</code></p>
+<p>否则会报错：Error: template: cubefs/templates/statefulset-master.yaml:80:30: executing "cubefs/templates/statefulset-master.yaml" at &lt;.Value.master.legacy_data_media_type&gt;: nil pointer evaluating interface {}.master</p>
+</div>
+<p>如果遇到启动失败的，可以在对应的节点上，查看/var/log/cubefs下的日志。</p>
+<h1 id="cubefs客户端部署使用">CubeFS客户端部署使用</h1>
+<p>官网：<a href="https://www.cubefs.io/zh/docs/master/user-guide/cli/overview.html">CubeFS CLI概览</a></p>
+<h2 id="下载工具包">下载工具包</h2>
+<div class="highlight"><pre><span></span><code><span class="c1"># 下载地址: https://github.com/cubefs/cubefs/releases/ </span>
+tar<span class="w"> </span>xf<span class="w"> </span>cubefs-3.5.0-linux-amd64.tar.gz<span class="w"> </span>
+<span class="nb">cd</span><span class="w"> </span>build/bin<span class="w"> </span>
+cp<span class="w"> </span>./cfs-cli<span class="w"> </span>/usr/local/bin/
+cfs-cli<span class="w"> </span>--version
+</code></pre></div>
+
+<h2 id="客户端配置">客户端配置</h2>
+<div class="highlight"><pre><span></span><code>cfs-cli<span class="w"> </span>cluster<span class="w"> </span>info
+<span class="c1"># 报错解析不了域名</span>
+<span class="c1"># 修改配置</span>
+vim<span class="w"> </span>~/.cfs-cli.json
+<span class="c1"># 更改masterAddr为master service的svc ip </span>
+<span class="o">{</span><span class="w"> </span>
+<span class="w">  </span><span class="s2">&quot;masterAddr&quot;</span>:<span class="w"> </span><span class="o">[</span><span class="w"> </span>
+<span class="w">    </span><span class="s2">&quot;10.99.61.70:17010&quot;</span><span class="w"> </span>
+<span class="w">  </span><span class="o">]</span>,<span class="w"> </span>
+<span class="w">  </span><span class="s2">&quot;timeout&quot;</span>:<span class="w"> </span><span class="m">60</span><span class="w"> </span>
+<span class="o">}</span><span class="w"> </span>
+<span class="c1"># 查询集群状态</span>
+./cfs-cli<span class="w"> </span>cluster<span class="w"> </span>info
+</code></pre></div>
+
+<h2 id="集群管理">集群管理</h2>
+<div class="highlight"><pre><span></span><code><span class="c1"># 查看集群信息</span>
+cfs-cli<span class="w"> </span>cluster<span class="w"> </span>info
+<span class="c1"># 获取集群状态</span>
+cfs-cli<span class="w"> </span>cluster<span class="w"> </span>stat<span class="w"> </span>
+</code></pre></div>
+
+<p>Metanode的Total为最大可用内存，由所有metanode的MaxMemAvailWeight之和计算得来。</p>
+<p>设置卷删除延迟的时间，表示卷被删除多久才会被彻底删除，默认48h，在此之前可以恢复：</p>
+<div class="highlight"><pre><span></span><code>cfs-cli<span class="w"> </span>cluster<span class="w"> </span>volDeletionDelayTime<span class="w"> </span><span class="m">72</span><span class="w"> </span>
+</code></pre></div>
+
+<h2 id="元数据节点管理">元数据节点管理</h2>
+<p>列出所有的元数据节点，包括ID、地址、读写状态及存活状态等：</p>
+<div class="highlight"><pre><span></span><code>cfs-cli<span class="w"> </span>metanode<span class="w"> </span>list
+</code></pre></div>
+
+<p>查看某个节点的详细信息：</p>
+<div class="highlight"><pre><span></span><code>cfs-cli<span class="w"> </span>metanode<span class="w"> </span>info<span class="w"> </span>rn1:17210
+</code></pre></div>
+
+<h2 id="数据节点管理">数据节点管理</h2>
+<p>列举所有的数据节点，包括ID、地址、读写状态和存活状态： </p>
+<div class="highlight"><pre><span></span><code>cfs-cli<span class="w"> </span>datanode<span class="w"> </span>list
+</code></pre></div>
+
+<p>展示某个节点的详细信息： </p>
+<div class="highlight"><pre><span></span><code>cfs-cli<span class="w"> </span>datanode<span class="w"> </span>info<span class="w"> </span>rn2:17310
+</code></pre></div>
+
+<p>下线数据节点，下线之后该该节点的数据会自动迁移到其他数据节点。</p>
+<div class="highlight"><pre><span></span><code>cfs-cli<span class="w"> </span>datanode<span class="w"> </span>decommission<span class="w"> </span>rn2:17310
+<span class="c1"># 下线之后，该节点无法查看，可用数据空间也降低</span>
+cfs-cli<span class="w"> </span>datanode<span class="w"> </span>info<span class="w"> </span>rn2:17310
+cfs-cli<span class="w"> </span>cluster<span class="w"> </span>stat
+</code></pre></div>
+
+<p>该下线节点的datanode pod不会被删除，删掉pod重建之后，这个数据节点就会重新加入，数据空间恢复。</p>
+<h2 id="数据卷管理">数据卷管理</h2>
+<p>数据卷可以给服务使用或者挂载到宿主机。如果是外部服务需要使用cubeFS，那就需要创建卷给外部服务用。如果存储是在k8s内部，那么就不需要创建卷了，直接用csi管理。</p>
+<p>列出所有的卷：</p>
+<div class="highlight"><pre><span></span><code>cfs-cli<span class="w"> </span>volume<span class="w"> </span>list
+</code></pre></div>
+
+<p>创建一个卷：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 命令格式：cfs-cli volume create [VOLUME NAME] [USER ID] [flags] </span>
+<span class="c1"># user id可以随便写，会自动创建这个用户</span>
+cfs-cli<span class="w"> </span>volume<span class="w"> </span>create<span class="w"> </span>volume-test<span class="w"> </span><span class="nb">test</span><span class="w"> </span>--capacity<span class="w"> </span><span class="m">1</span>
+</code></pre></div>
+
+<p>列出卷：</p>
+<div class="highlight"><pre><span></span><code>cfs-cli<span class="w"> </span>volume<span class="w"> </span>list
+</code></pre></div>
+
+<p>查看某个卷的详细信息：</p>
+<div class="highlight"><pre><span></span><code>cfs-cli<span class="w"> </span>volume<span class="w"> </span>info<span class="w"> </span>volume-test
+</code></pre></div>
+
+<p>禁用卷、取消禁用</p>
+<div class="highlight"><pre><span></span><code>cfs-cli<span class="w"> </span>volume<span class="w"> </span>set-forbidden<span class="w"> </span>volume-test<span class="w"> </span><span class="nb">true</span><span class="w"> </span>
+cfs-cli<span class="w"> </span>volume<span class="w"> </span>info<span class="w"> </span>volume-test<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span>Forbidden<span class="w"> </span>
+<span class="c1"># 取消禁用</span>
+cfs-cli<span class="w"> </span>volume<span class="w"> </span>set-forbidden<span class="w"> </span>volume-test<span class="w"> </span><span class="nb">false</span><span class="w"> </span>
+cfs-cli<span class="w"> </span>volume<span class="w"> </span>info<span class="w"> </span>volume-test<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span>Forbidden
+</code></pre></div>
+
+<p>卷扩容、更新卷：</p>
+<div class="highlight"><pre><span></span><code>cfs-cli<span class="w"> </span>volume<span class="w"> </span>update<span class="w"> </span>volume-test<span class="w"> </span>--capacity<span class="w"> </span><span class="m">2</span>
+cfs-cli<span class="w"> </span>volume<span class="w"> </span>list
+</code></pre></div>
+
+<p>添加空间限制（空间满了之后就不允许写入了）：</p>
+<div class="highlight"><pre><span></span><code>cfs-cli<span class="w"> </span>volume<span class="w"> </span>update<span class="w"> </span>volume-test<span class="w"> </span>--readonly-when-full<span class="w"> </span><span class="nb">true</span><span class="w"> </span>
+</code></pre></div>
+
+<p>删除卷：</p>
+<div class="highlight"><pre><span></span><code>cfs-cli<span class="w"> </span>volume<span class="w"> </span>delete<span class="w"> </span>volume-test<span class="w"> </span>-y
+</code></pre></div>
+
+<h1 id="cubefs用户管理">CubeFS用户管理</h1>
+<p>CubeFS支持多用户，可以为每个用户对每个卷分配不同的权限，同时也可为对象存储提供用户认证。</p>
+<p>主要应用场景是对象存储给不同程序去用的时候，不同的卷权限不同，用户名密码也不同。</p>
+<div class="highlight"><pre><span></span><code>cfs-cli<span class="w"> </span>user<span class="w"> </span>create<span class="w"> </span>-h<span class="w"> </span>
+<span class="c1"># 创建用户</span>
+cfs-cli<span class="w"> </span>user<span class="w"> </span>create<span class="w"> </span>hangx
+<span class="c1"># 获取用户信息</span>
+cfs-cli<span class="w"> </span>user<span class="w"> </span>info<span class="w"> </span>hangx
+<span class="c1"># 列举所有用户</span>
+cfs-cli<span class="w"> </span>user<span class="w"> </span>list
+<span class="c1"># 删除用户</span>
+cfs-cli<span class="w"> </span>user<span class="w"> </span>delete<span class="w"> </span>hangx<span class="w"> </span>--yes
+</code></pre></div>
+
+<h1 id="cubefs挂载测试">CubeFS挂载测试</h1>
+<p>如果k8s集群外部裸机或者虚机部署的服务也想挂载cubeFS，也是可以的，挂载完成就等于访问一个本地文件夹一样了。</p>
+<p>测试在K8s宿主机挂载cubeFS文件。由于masterAddr可以通过svc访问，就直接用svc地址了。如果对集群外部访问的话需要把master-service这个svc通过NodePort或者域名暴露出去。</p>
+<p>客户端安装fuse：</p>
+<div class="highlight"><pre><span></span><code>yum<span class="w"> </span>install<span class="w"> </span>fuse<span class="w"> </span>-y<span class="w"> </span>
+</code></pre></div>
+
+<p>cubeFS创建volume：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 创建卷</span>
+cfs-cli<span class="w"> </span>volume<span class="w"> </span>create<span class="w"> </span>volume-test<span class="w"> </span>ltptest<span class="w"> </span>--capacity<span class="w"> </span><span class="m">1</span>
+</code></pre></div>
+
+<p>客户端创建配置文件：</p>
+<div class="highlight"><pre><span></span><code>cat<span class="w"> </span>volume-test-client.conf<span class="w">  </span>
+<span class="o">{</span><span class="w"> </span>
+<span class="w">  </span><span class="s2">&quot;mountPoint&quot;</span>:<span class="w"> </span><span class="s2">&quot;/volume-test&quot;</span>,<span class="w"> </span>
+<span class="w">  </span><span class="s2">&quot;volName&quot;</span>:<span class="w"> </span><span class="s2">&quot;volume-test&quot;</span>,<span class="w"> </span>
+<span class="w">  </span><span class="s2">&quot;owner&quot;</span>:<span class="w"> </span><span class="s2">&quot;ltptest&quot;</span>,<span class="w"> </span>
+<span class="w">  </span><span class="s2">&quot;masterAddr&quot;</span>:<span class="w"> </span><span class="s2">&quot;10.99.61.70:17010&quot;</span>,<span class="w"> </span>
+<span class="w">  </span><span class="s2">&quot;logDir&quot;</span>:<span class="w"> </span><span class="s2">&quot;/cfs/client/log&quot;</span>,<span class="w"> </span>
+<span class="w">  </span><span class="s2">&quot;logLevel&quot;</span>:<span class="w"> </span><span class="s2">&quot;info&quot;</span>,<span class="w"> </span>
+<span class="w">  </span><span class="s2">&quot;profPort&quot;</span>:<span class="w"> </span><span class="s2">&quot;27510&quot;</span><span class="w"> </span>
+<span class="o">}</span><span class="w"> </span>
+</code></pre></div>
+
+<p>执行挂载：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 用的是另一个叫cfs-client的客户端工具</span>
+cp<span class="w"> </span>/root/cubefs-client/build/bin/cfs-client<span class="w"> </span>/usr/local/bin/
+cfs-client<span class="w"> </span>-c<span class="w"> </span>volume-test-client.conf
+<span class="c1"># 这会：</span>
+<span class="c1"># 1. 读取配置文件中的集群连接信息</span>
+<span class="c1"># 2. 通过 FUSE 创建一个虚拟文件系统挂载点</span>
+<span class="c1"># 3. 将文件系统操作转换为网络请求发送给 CubeFS 集群</span>
+df<span class="w"> </span>-Th<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>volume-test
+</code></pre></div>
+
+<p><div class="callout callout-info" markdown="1"><br />
+<p class="callout-title">挂载协议</p></p>
+<p>这种挂载方式使用的是传统的POSIX。CubeFS 客户端通过 FUSE (Filesystem in Userspace) 提供标准的 POSIX 文件系统语义</p>
+</div>
+<p>测试写入数据：</p>
+<div class="highlight"><pre><span></span><code>dd<span class="w"> </span><span class="k">if</span><span class="o">=</span>/dev/zero<span class="w"> </span><span class="nv">of</span><span class="o">=</span>./testdata<span class="w"> </span><span class="nv">bs</span><span class="o">=</span>1M<span class="w"> </span><span class="nv">count</span><span class="o">=</span><span class="m">512</span>
+dd<span class="w"> </span><span class="k">if</span><span class="o">=</span>/dev/zero<span class="w"> </span><span class="nv">of</span><span class="o">=</span>./testdata2<span class="w"> </span><span class="nv">bs</span><span class="o">=</span>128M<span class="w"> </span><span class="nv">count</span><span class="o">=</span><span class="m">4</span>
+<span class="c1"># 查看卷使用</span>
+cfs-cli<span class="w"> </span>volume<span class="w"> </span>list
+</code></pre></div>
+
+<h1 id="cubefs扩容">CubeFS扩容</h1>
+<h2 id="新加磁盘">新加磁盘</h2>
+<p>如果CubeFS是部署在K8s中的，扩容时需要给每个datanode都添加同样的磁盘。要注意新加的盘要和原来的盘大小、性能、型号一样，这样集群的balance不会受到影响。</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 加完盘进系统，格式化</span>
+mkfs.xfs<span class="w"> </span>-f<span class="w"> </span>/dev/sdc
+<span class="c1"># 创建挂载目录，如果机器上存在多个需要挂载的数据磁盘，则每个磁盘按以上步骤进行格式化和挂载磁盘，挂载目录按照data0/data1/../data999的顺序命名 </span>
+mkdir<span class="w"> </span>/data1<span class="w"> </span>
+<span class="c1"># 挂载磁盘 </span>
+mount<span class="w"> </span>/dev/sdc<span class="w"> </span>/data1
+blkid<span class="w"> </span>/dev/sdc
+tee<span class="w"> </span>-a<span class="w"> </span>/etc/fstab<span class="w"> </span><span class="s">&lt;&lt;&#39;EOF&#39; </span>
+<span class="s">UUID=f3a1fd89-ff67-4512-b2d3-e914440d4b84   /data0   xfs    defaults  0 0</span>
+<span class="s">EOF</span>
+mount<span class="w"> </span>-a<span class="w"> </span>
+</code></pre></div>
+
+<p>更新helm配置：</p>
+<div class="highlight"><pre><span></span><code><span class="w">  </span><span class="nt">disks</span><span class="p">:</span>
+<span class="w">    </span><span class="c1"># 格式: 挂载点:保留的空间</span>
+<span class="w">    </span><span class="c1"># 保留的空间: 单位字节，当磁盘剩余空间小于该值时将不会再在该磁盘上写入数据</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/data0:536870912</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/data1:536870912</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code>helm<span class="w"> </span>upgrade<span class="w"> </span>-i<span class="w"> </span>cubefs<span class="w"> </span>-n<span class="w"> </span>cubefs<span class="w"> </span>.<span class="w"> </span>--create-namespace<span class="w"> </span>-f<span class="w"> </span>values.yaml
+</code></pre></div>
+
+<p>触发datanode pod重启：</p>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>delete<span class="w"> </span>po<span class="w"> </span>-n<span class="w"> </span>cubefs<span class="w"> </span>-l<span class="w"> </span>app.kubernetes.io/component<span class="o">=</span>datanode
+</code></pre></div>
+
+<p>查看集群状态：</p>
+<div class="highlight"><pre><span></span><code>cfs-cli<span class="w"> </span>cluster<span class="w"> </span>stat<span class="w"> </span>
+</code></pre></div>
+
+<h2 id="基于主机的扩容">基于主机的扩容</h2>
+<p>基于主机的扩容，需要通过添加datanode节点来完成。  </p>
+<ol>
+<li>
+<p>添加一个新节点（k8s层面先加上），已有节点可以忽略</p>
+</li>
+<li>
+<p>在新节点上添加和当前配置、数量、大小一样的硬盘，并挂载</p>
+</li>
+<li>
+<p>在新节点上打<code>component.cubefs.io/datanode=enabled</code>标签即可:</p>
+</li>
+</ol>
+<p><sub>~</sub>sh <br />
+   kubectl label node xxx component.cubefs.io/datanode=enabled<br />
+   ~~~</p>
+<h1 id="cubefs对象存储">CubeFS对象存储</h1>
+<p>程序直接连接到存储平台对文件读写操作，不需要挂载、不需要创建PV、PVC。</p>
+<h2 id="对象存储基本使用">对象存储基本使用</h2>
+<p>要测试对象存储，可以自己写程序，或者用一些对象存储客户端工具。CubeFS自己没没有提供对象存储的客户端工具，得用别的。</p>
+<p>下载Minio对象存储客户端：（Minio也是提供对象存储的平台，但是只提供对象存储。但是不论使用哪个平台，协议都是s3。）</p>
+<div class="highlight"><pre><span></span><code>curl<span class="w"> </span>https://dl.minio.org.cn/client/mc/release/linux-amd64/mc<span class="w"> </span>--create-dirs<span class="w"> </span>-o<span class="w"> </span>/usr/local/bin/mc
+chmod<span class="w"> </span>+x<span class="w"> </span>/usr/local/bin/mc<span class="w"> </span>
+</code></pre></div>
+
+<p>配置对象存储：添加 MinIO/S3 服务器</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># host add test是user的name</span>
+<span class="c1"># 对象存储的入口：objectnode-service的svc的clusterIP</span>
+<span class="c1"># 后面是cubefs的user的access key和secret key。这其实就是对象存储的用户名和密码</span>
+mc<span class="w"> </span><span class="nb">alias</span><span class="w"> </span><span class="nb">set</span><span class="w"> </span><span class="nb">test</span><span class="w"> </span>http://10.104.157.128:1601<span class="w"> </span>NSwS4hTkT43TW903<span class="w"> </span>uY9Hg8IgyW2awnRF3XpaAK8Da91c8RG7
+<span class="c1"># 查看alias</span>
+mc<span class="w"> </span>ls<span class="w"> </span><span class="nb">test</span>
+</code></pre></div>
+
+<p><div class="callout callout-info" markdown="1"><br />
+<p class="callout-title">mc命令版本差异</p></p>
+<ol>
+<li><strong>旧版本语法</strong>：<code>mc config host add</code> 是旧版本的语法</li>
+<li><strong>新版本语法</strong>：<code>mc alias set</code> 是新版本的正确语法</li>
+</ol>
+</div>
+<p>创建桶：（创建桶的本质就是在cubeFS中创建了一个volume）</p>
+<div class="highlight"><pre><span></span><code>mc<span class="w"> </span>mb<span class="w"> </span>test/buckettest
+</code></pre></div>
+
+<p>查看桶：</p>
+<div class="highlight"><pre><span></span><code>mc<span class="w"> </span>ls<span class="w"> </span>test/
+</code></pre></div>
+
+<p>上传文件：</p>
+<div class="highlight"><pre><span></span><code>mc<span class="w"> </span>cp<span class="w"> </span>cubefs-3.5.0-linux-amd64.tar.gz<span class="w"> </span>test/buckettest/<span class="w"> </span>
+<span class="c1"># 上传文件夹(不会自动创建目录，需要指定子目录名称)</span>
+mc<span class="w"> </span>cp<span class="w"> </span>templates/<span class="w"> </span>test/buckettest/templates<span class="w"> </span>-r
+</code></pre></div>
+
+<p>查看文件：</p>
+<div class="highlight"><pre><span></span><code>mc<span class="w"> </span>ls<span class="w"> </span>test/buckettest/<span class="w"> </span>
+</code></pre></div>
+
+<p>删除文件：</p>
+<div class="highlight"><pre><span></span><code>mc<span class="w"> </span>rm<span class="w"> </span>test/buckettest/cubefs-3.5.0-linux-amd64.tar.gz<span class="w"> </span>
+</code></pre></div>
+
+<p>删除桶：</p>
+<div class="highlight"><pre><span></span><code>mc<span class="w"> </span>rb<span class="w"> </span>test/buckettest
+</code></pre></div>
+
+<p>删除服务器：</p>
+<div class="highlight"><pre><span></span><code>mc<span class="w"> </span><span class="nb">alias</span><span class="w"> </span>rm<span class="w"> </span><span class="nb">test</span>
+</code></pre></div>
+
+<h2 id="对象存储项目管理">对象存储项目管理</h2>
+<p>为每个项目创建用户：</p>
+<div class="highlight"><pre><span></span><code>cfs-cli<span class="w"> </span>user<span class="w"> </span>create<span class="w"> </span>projecta
+</code></pre></div>
+
+<p>添加项目的host：（生产环境使用需要配置域名）</p>
+<div class="highlight"><pre><span></span><code>mc<span class="w"> </span>config<span class="w"> </span>host<span class="w"> </span>add<span class="w"> </span>projecta<span class="w"> </span>http://10.100.82.212:1601<span class="w"> </span>sTnnilRm1YPuohs0<span class="w"> </span>ayIjC5uZYdRmVRFYey8lDy73Whdg716l
+</code></pre></div>
+
+<p>这个项目可能会有很多微服务，这些微服务就共用同一套用户名密码。为每个微服务单独创建不同的桶。（共享数据的微服务就共用同一个桶）</p>
+<div class="highlight"><pre><span></span><code>mc<span class="w"> </span>mb<span class="w"> </span>projecta/appa
+</code></pre></div>
+
+<h1 id="cubefs对接k8s">CubeFS对接K8s</h1>
+<h2 id="部署cubefs-csi">部署cubeFS csi</h2>
+<p>首先给需要使用cubeFS存储的节点打上CSI的标签（一般直接给所有节点打上标签即可）：</p>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>label<span class="w"> </span>node<span class="w"> </span>component.cubefs.io/csi<span class="o">=</span>enabled<span class="w"> </span>--all
+</code></pre></div>
+
+<p>配置values，开启csi安装：</p>
+<div class="highlight"><pre><span></span><code><span class="nt">component</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">master</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">  </span><span class="nt">datanode</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">  </span><span class="nt">metanode</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">  </span><span class="nt">objectnode</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">  </span><span class="nt">client</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">  </span><span class="nt">csi</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</code></pre></div>
+
+<p>执行安装：</p>
+<div class="highlight"><pre><span></span><code>helm<span class="w"> </span>upgrade<span class="w"> </span>-i<span class="w"> </span>cubefs<span class="w"> </span>-n<span class="w"> </span>cubefs<span class="w"> </span>.<span class="w"> </span>--create-namespace<span class="w"> </span>-f<span class="w"> </span>values.yaml
+</code></pre></div>
+
+<p><div class="callout callout-bug" markdown="1"><br />
+<p class="callout-title">tolerations缩进问题</p></p>
+<ol>
+<li>如果values里面配置了tolerations，渲染模板会报错：<br />
+<sub>~</sub>sh<br />
+   Error: UPGRADE FAILED: YAML parse error on cubefs/templates/csi-controller-deployment.yaml: error converting YAML to JSON: yaml: line 21: did not find expected key<br />
+<br />
+   Error: UPGRADE FAILED: YAML parse error on cubefs/templates/csi-node-daemonset.yaml: error converting YAML to JSON: yaml: line 21: did not find expected key<br />
+   ~~~</li>
+</ol>
+<p>cubefs/templates/csi-controller-deployment.yaml</p>
+<p>cubefs/templates/csi-node-daemonset.yaml</p>
+<p>这两个文件都有spec.tolerations字段的缩进问题</p>
+<ol>
+<li>用helm template输出报错的模板：</li>
+</ol>
+<p><sub>~</sub>sh<br />
+   helm template cubefs -n cubefs . -f values.yaml --debug &gt; error-template.yaml<br />
+   ~~~</p>
+<ol>
+<li>分析可知模板中的tolerations字段缩进有问题：</li>
+</ol>
+<p>原始文件（错的）</p>
+<p><sub>~</sub>yaml<br />
+       {{- with .Values.csi.controller.nodeSelector }}<br />
+         nodeSelector:<br />
+   {{ toYaml . | indent 8 }}<br />
+       {{- end }}<br />
+         {{- with .Values.csi.controller.tolerations }}<br />
+           tolerations:<br />
+         {{ toYaml . | indent 8 }}<br />
+   ~~~</p>
+<p>改为正确缩进：</p>
+<p><sub>~</sub>yaml<br />
+       {{- with .Values.csi.controller.nodeSelector }}<br />
+         nodeSelector:<br />
+   {{ toYaml . | indent 8 }}<br />
+       {{- end }}<br />
+       {{- with .Values.csi.controller.tolerations }}<br />
+         tolerations:<br />
+   {{ toYaml . | indent 8 }}<br />
+   ~~~</p>
+<ol>
+<li>
+<p>改完之后可以成功安装</p>
+</li>
+<li>
+<p>在其他模板中又发现了更多缩进错误，我提了一个github issue：<a href="https://github.com/cubefs/cubefs-helm/issues/53">Indent Error found in spec.tolerations for some templates - Issue #53</a></p>
+</li>
+</ol>
+</div>
+<h2 id="pvpvc测试">PV/PVC测试</h2>
+<p>创建pvc:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span><span class="w"> </span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PersistentVolumeClaim</span><span class="w"> </span>
+<span class="nt">metadata</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cubefs-test</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span><span class="w"> </span>
+<span class="nt">spec</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">accessModes</span><span class="p">:</span><span class="w"> </span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ReadWriteMany</span><span class="w"> </span><span class="c1"># Once也可以，单节点读写</span>
+<span class="w">  </span><span class="nt">resources</span><span class="p">:</span><span class="w"> </span>
+<span class="w">    </span><span class="nt">requests</span><span class="p">:</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">storage</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1Gi</span>
+<span class="w">  </span><span class="nt">storageClassName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cfs-sc</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">volumeMode</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Filesystem</span>
+</code></pre></div>
+
+<p>创建之后就能看到自动创建了PV。下面可以创建服务来挂载PVC：</p>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">apps/v1</span><span class="w"> </span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Deployment</span><span class="w"> </span>
+<span class="nt">metadata</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cfs-csi-demo</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span><span class="w"> </span>
+<span class="nt">spec</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">replicas</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">selector</span><span class="p">:</span><span class="w"> </span>
+<span class="w">    </span><span class="nt">matchLabels</span><span class="p">:</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cfs-csi-demo-pod</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">template</span><span class="p">:</span><span class="w"> </span>
+<span class="w">    </span><span class="nt">metadata</span><span class="p">:</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">labels</span><span class="p">:</span><span class="w"> </span>
+<span class="w">        </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cfs-csi-demo-pod</span><span class="w"> </span>
+<span class="w">    </span><span class="nt">spec</span><span class="p">:</span><span class="w"> </span>
+<span class="w">      </span><span class="c1"># 只有安装了CSI驱动的才可以挂载存储 </span>
+<span class="w">      </span><span class="nt">nodeSelector</span><span class="p">:</span><span class="w"> </span>
+<span class="w">        </span><span class="nt">component.cubefs.io/csi</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">enabled</span>
+<span class="w">      </span><span class="nt">volumes</span><span class="p">:</span><span class="w"> </span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mypvc</span>
+<span class="w">          </span><span class="nt">persistentVolumeClaim</span><span class="p">:</span><span class="w"> </span>
+<span class="w">            </span><span class="nt">claimName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cubefs-test</span>
+<span class="w">      </span><span class="nt">containers</span><span class="p">:</span><span class="w"> </span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cfs-csi-demo</span><span class="w"> </span>
+<span class="w">          </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">registry.cn-beijing.aliyuncs.com/dotbalo/rabbitmq:3.6.12-management</span><span class="w">  </span>
+<span class="w">          </span><span class="nt">imagePullPolicy</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;IfNotPresent&quot;</span><span class="w"> </span>
+<span class="w">          </span><span class="nt">ports</span><span class="p">:</span><span class="w"> </span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">containerPort</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">15672</span><span class="w"> </span>
+<span class="w">              </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;http-server&quot;</span><span class="w"> </span>
+<span class="w">          </span><span class="nt">volumeMounts</span><span class="p">:</span><span class="w"> </span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">mountPath</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;/var/lib/rabbitmq&quot;</span><span class="w"> </span>
+<span class="w">              </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mypvc</span><span class="w"> </span>
+</code></pre></div>
+
+<h2 id="在线扩容">在线扩容</h2>
+<p>支持不停机扩容，直接把PVC的request改大，等待一段时间就生效了。Pod是不会收到影响的。</p>
+<div class="highlight"><pre><span></span><code><span class="nt">spec</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">accessModes</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ReadWriteMany</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">resources</span><span class="p">:</span><span class="w"> </span>
+<span class="w">    </span><span class="nt">requests</span><span class="p">:</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">storage</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2Gi</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">storageClassName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cfs-sc</span><span class="w"> </span>
+</code></pre></div>
+
+<h2 id="cubefs为基础组件提供存储">CubeFS为基础组件提供存储</h2>
+<h3 id="mysql单实例">mysql单实例</h3>
+<p>单实例手动创建PVC。如果是多实例就需要用集群模式或者主从模式，用helm或者Operator去部署，在模板里面直接写storageclass就行</p>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span><span class="w"> </span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PersistentVolumeClaim</span><span class="w"> </span>
+<span class="nt">metadata</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mysql</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span><span class="w"> </span>
+<span class="nt">spec</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">resources</span><span class="p">:</span><span class="w"> </span>
+<span class="w">    </span><span class="nt">requests</span><span class="p">:</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">storage</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1Gi</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">volumeMode</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Filesystem</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">storageClassName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cfs-sc</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">accessModes</span><span class="p">:</span><span class="w"> </span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ReadWriteOnce</span>
+<span class="nn">---</span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">apps/v1</span><span class="w"> </span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Deployment</span><span class="w"> </span>
+<span class="nt">metadata</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mysql</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span><span class="w"> </span>
+<span class="nt">spec</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">replicas</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">selector</span><span class="p">:</span><span class="w"> </span>
+<span class="w">    </span><span class="nt">matchLabels</span><span class="p">:</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mysql</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">strategy</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Recreate</span><span class="w"> </span><span class="c1"># 不能用滚动更新，因为。两个mysql不能同时使用一块存储。</span>
+<span class="w">  </span><span class="nt">template</span><span class="p">:</span><span class="w"> </span>
+<span class="w">    </span><span class="nt">metadata</span><span class="p">:</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">labels</span><span class="p">:</span><span class="w"> </span>
+<span class="w">        </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mysql</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">annotations</span><span class="p">:</span><span class="w"> </span>
+<span class="w">        </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mysql</span><span class="w"> </span>
+<span class="w">    </span><span class="nt">spec</span><span class="p">:</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">volumes</span><span class="p">:</span><span class="w"> </span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">data</span><span class="w"> </span>
+<span class="w">          </span><span class="nt">persistentVolumeClaim</span><span class="p">:</span><span class="w"> </span>
+<span class="w">            </span><span class="nt">claimName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mysql</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">containers</span><span class="p">:</span><span class="w"> </span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mysql</span><span class="w"> </span>
+<span class="w">          </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">registry.cn-beijing.aliyuncs.com/dotbalo/mysql:8.0.20</span><span class="w"> </span>
+<span class="w">          </span><span class="nt">ports</span><span class="p">:</span><span class="w"> </span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tcp-3306</span><span class="w"> </span>
+<span class="w">              </span><span class="nt">containerPort</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3306</span><span class="w"> </span>
+<span class="w">              </span><span class="nt">protocol</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TCP</span><span class="w"> </span>
+<span class="w">          </span><span class="nt">volumeMounts</span><span class="p">:</span><span class="w"> </span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">data</span><span class="w"> </span>
+<span class="w">              </span><span class="nt">mountPath</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/var/lib/mysql</span><span class="w"> </span>
+<span class="w">          </span><span class="nt">env</span><span class="p">:</span><span class="w"> </span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MYSQL_ROOT_PASSWORD</span><span class="w"> </span>
+<span class="w">              </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mysql</span>
+</code></pre></div>
+
+<h2 id="cubefs为大模型提供存储">CubeFS为大模型提供存储</h2>
+<p>CubeFS对AI训练、模型存储及分发、IO加速等需求做了专门优化。所以可以直接把CubeFS作为大模型的数据存储底座。 </p>
+<p>很多位置去启动大模型服务，可以共享同一个大模型的存储。</p>
+<h3 id="ollama">ollama</h3>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span><span class="w"> </span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PersistentVolumeClaim</span><span class="w"> </span>
+<span class="nt">metadata</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ollama-data</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span><span class="w"> </span>
+<span class="nt">spec</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">resources</span><span class="p">:</span><span class="w"> </span>
+<span class="w">    </span><span class="nt">requests</span><span class="p">:</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">storage</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10Gi</span>
+<span class="w">  </span><span class="nt">volumeMode</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Filesystem</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">storageClassName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cfs-sc</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">accessModes</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ReadWriteMany</span><span class="w"> </span>
+<span class="nn">---</span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">apps/v1</span><span class="w"> </span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Deployment</span><span class="w"> </span>
+<span class="nt">metadata</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ollama</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span><span class="w"> </span>
+<span class="nt">spec</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">selector</span><span class="p">:</span><span class="w"> </span>
+<span class="w">    </span><span class="nt">matchLabels</span><span class="p">:</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ollama</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">replicas</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">template</span><span class="p">:</span><span class="w"> </span>
+<span class="w">    </span><span class="nt">metadata</span><span class="p">:</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">labels</span><span class="p">:</span><span class="w"> </span>
+<span class="w">        </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ollama</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">annotations</span><span class="p">:</span><span class="w"> </span>
+<span class="w">        </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ollama</span><span class="w"> </span>
+<span class="w">    </span><span class="nt">spec</span><span class="p">:</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">volumes</span><span class="p">:</span><span class="w"> </span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">data</span><span class="w"> </span>
+<span class="w">        </span><span class="nt">persistentVolumeClaim</span><span class="p">:</span><span class="w"> </span>
+<span class="w">          </span><span class="nt">claimName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ollama-data</span><span class="w"> </span>
+<span class="w">          </span><span class="nt">readonly</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">containers</span><span class="p">:</span><span class="w"> </span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ollama</span><span class="w"> </span>
+<span class="w">        </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">registry.cn-beijing.aliyuncs.com/dotbalo/ollama</span>
+<span class="w">        </span><span class="nt">imagePullPolicy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">IfNotPresent</span><span class="w"> </span>
+<span class="w">        </span><span class="nt">volumeMounts</span><span class="p">:</span><span class="w"> </span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">data</span><span class="w"> </span>
+<span class="w">          </span><span class="nt">mountPath</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/data/models</span><span class="w"> </span>
+<span class="w">          </span><span class="nt">readonly</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"> </span>
+<span class="w">        </span><span class="nt">env</span><span class="p">:</span><span class="w"> </span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">OLLAMA_MODELS</span><span class="w"> </span>
+<span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/data/models</span><span class="w"> </span>
+</code></pre></div>
+
+<p>部署完成后进入pod下载模型<code>ollama pull deepseek-r1:1.5b</code></p>
+<p>下载完成之后启动模型：<code>ollama run deepseek-r1:1.5b</code></p>
+    </div>
+  </article>
+  <aside class="toc">
+    <p class="toc-label">本页目录</p>
+    <ul>
+  <li><a href="#单节点存储">单节点存储</a></li>
+  <li><a href="#分布式存储">分布式存储</a></li>
+  <li><a href="#分布式存储平台">分布式存储平台</a></li>
+  <li><a href="#k8s上落地分布式存储平台">k8s上落地分布式存储平台</a></li>
+  <li><a href="#特性">特性</a></li>
+  <li><a href="#架构">架构</a></li>
+  <li><a href="#部署方式">部署方式</a><ul>
+  <li><a href="#混合部署">混合部署</a></li>
+  <li><a href="#独立部署-基础设施集群">独立部署-基础设施集群</a></li>
+</ul></li>
+  <li><a href="#资源分配建议">资源分配建议</a><ul>
+  <li><a href="#总内存">总内存</a></li>
+  <li><a href="#服务器硬件">服务器硬件</a></li>
+</ul></li>
+  <li><a href="#部署架构">部署架构</a></li>
+  <li><a href="#配置标签">配置标签</a></li>
+  <li><a href="#配置数据盘">配置数据盘</a></li>
+  <li><a href="#helm安装">helm安装</a><ul>
+  <li><a href="#下载helm包">下载helm包</a></li>
+  <li><a href="#配置values">配置values</a></li>
+  <li><a href="#安装cubefs">安装CubeFS</a></li>
+</ul></li>
+  <li><a href="#下载工具包">下载工具包</a></li>
+  <li><a href="#客户端配置">客户端配置</a></li>
+  <li><a href="#集群管理">集群管理</a></li>
+  <li><a href="#元数据节点管理">元数据节点管理</a></li>
+  <li><a href="#数据节点管理">数据节点管理</a></li>
+  <li><a href="#数据卷管理">数据卷管理</a></li>
+  <li><a href="#新加磁盘">新加磁盘</a></li>
+  <li><a href="#基于主机的扩容">基于主机的扩容</a></li>
+  <li><a href="#对象存储基本使用">对象存储基本使用</a></li>
+  <li><a href="#对象存储项目管理">对象存储项目管理</a></li>
+  <li><a href="#部署cubefs-csi">部署cubeFS csi</a></li>
+  <li><a href="#pvpvc测试">PV/PVC测试</a></li>
+  <li><a href="#在线扩容">在线扩容</a></li>
+  <li><a href="#cubefs为基础组件提供存储">CubeFS为基础组件提供存储</a><ul>
+  <li><a href="#mysql单实例">mysql单实例</a></li>
+</ul></li>
+  <li><a href="#cubefs为大模型提供存储">CubeFS为大模型提供存储</a><ul>
+  <li><a href="#ollama">ollama</a></li>
+</ul></li>
+</ul>
+  </aside>
+
+</div>
+
+</main>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>Learning Notes</span>
+    <a href="https://github.com/hangx969/learning-notes">GitHub</a>
+  </div>
+</footer>
+<script src="../../../static/search.js"></script>
+</body>
+</html>

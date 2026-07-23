@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Samba文件共享服务 - Learning Notes</title>
+<link rel="stylesheet" href="../../static/style.css">
+<link rel="stylesheet" href="../../static/pygments.css">
+</head>
+<body data-root="../../">
+<header class="site-header">
+  <div class="header-inner">
+    <a class="logo" href="../../index.html"><span class="logo-mark"></span>LEARNING NOTES</a>
+    <div class="search">
+      <input id="search-input" type="search" placeholder="搜索笔记…" autocomplete="off" aria-label="搜索笔记">
+      <div id="search-results" hidden></div>
+    </div>
+  </div>
+  <nav class="topic-nav" aria-label="主题导航">
+    <div class="topic-nav-inner">
+      <a href="../../AI/">AI</a>
+      <a href="../../Aliyun/">Aliyun</a>
+      <a href="../../Azure/">Azure</a>
+      <a href="../../C%2B%2B/">C++</a>
+      <a href="../../CloudComputing/">CloudComputing</a>
+      <a href="../../Database/">Database</a>
+      <a href="../../Docker-Kubernetes/">Docker-Kubernetes</a>
+      <a href="../../GPU-DeepLearning/">GPU-DeepLearning</a>
+      <a href="../../Git/">Git</a>
+      <a href="../../Go/">Go</a>
+      <a href="../../HPC/">HPC</a>
+      <a href="../../IaC/">IaC</a>
+      <a href="../../Linux-Shell/" class="active">Linux-Shell</a>
+      <a href="../../Middlewares/">Middlewares</a>
+      <a href="../../Networking/">Networking</a>
+      <a href="../../OS/">OS</a>
+      <a href="../../Python/">Python</a>
+      <a href="../../SoftwareTesting/">SoftwareTesting</a>
+    </div>
+  </nav>
+</header>
+<main class="main">
+
+<div class="article-layout">
+
+  <aside class="sidebar">
+    <details class="sidebar-details">
+      <summary>Linux-Shell</summary>
+      <nav class="sidebar-nav">
+        <p class="sidebar-group">其他</p>
+        <ul>
+          <li><a href="../../Linux-Shell/LVM-RAID/">LVM 与 RAID</a></li>
+          <li><a href="../../Linux-Shell/Linux-learning-notes/">Linux 学习笔记</a></li>
+          <li><a href="../../Linux-Shell/Linux%E7%BB%88%E7%AB%AF%E9%85%8D%E7%BD%AEproxy/">Linux终端配置代理</a></li>
+          <li><a href="../../Linux-Shell/MacBook%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/">MacBook 开发环境配置</a></li>
+          <li><a href="../../Linux-Shell/Ubuntu-unattended-upgrade%E7%AE%A1%E7%90%86/">Ubuntu安全补丁</a></li>
+          <li><a href="../../Linux-Shell/Ubuntu-%E4%BF%AE%E6%94%B9%E5%90%AF%E5%8A%A8%E5%86%85%E6%A0%B8/">Ubuntu修改启动内核</a></li>
+          <li><a href="../../Linux-Shell/Ubuntu%E5%9F%BA%E7%A1%80%E6%93%8D%E4%BD%9C/">Ubuntu基础操作</a></li>
+          <li><a href="../../Linux-Shell/Ubuntu%E5%AE%89%E8%A3%85Wechat/">Ubuntu安装Wechat</a></li>
+          <li><a href="../../Linux-Shell/Ubuntu%E5%AE%89%E8%A3%85%E6%98%BE%E5%8D%A1%E9%A9%B1%E5%8A%A8/">Ubuntu安装显卡驱动</a></li>
+          <li><a href="../../Linux-Shell/Ubuntu%E9%83%A8%E7%BD%B2vftpd/">Ubuntu部署vsftpd</a></li>
+          <li><a href="../../Linux-Shell/VMWare-using-notes/">VMWare虚拟机挂载共享目录</a></li>
+          <li><a href="../../Linux-Shell/ansible%E5%AE%89%E8%A3%85-rockylinux8/">Ansible安装 - Rocky Linux 8</a></li>
+          <li><a href="../../Linux-Shell/inotifywait%E7%9B%91%E6%8E%A7%E6%96%87%E4%BB%B6%E5%8F%98%E5%8C%96/">inotifywait监控文件变化</a></li>
+          <li><a href="../../Linux-Shell/linux%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E7%AE%A1%E7%90%86/">Linux环境变量管理</a></li>
+          <li><a href="../../Linux-Shell/nmcli%E7%AE%A1%E7%90%86%E7%BD%91%E7%BB%9C%E9%85%8D%E7%BD%AE/">nmcli管理网络配置</a></li>
+          <li><a href="../../Linux-Shell/samba%E6%96%87%E4%BB%B6%E5%85%B1%E4%BA%AB%E6%9C%8D%E5%8A%A1/" class="current">Samba文件共享服务</a></li>
+          <li><a href="../../Linux-Shell/screen%E5%90%8E%E5%8F%B0%E8%BF%90%E8%A1%8C%E4%BB%BB%E5%8A%A1/">screen后台运行任务</a></li>
+          <li><a href="../../Linux-Shell/shell-scripts/">Shell 脚本</a></li>
+          <li><a href="../../Linux-Shell/ssh%E8%BF%9C%E7%A8%8B%E6%89%A7%E8%A1%8C%E5%A4%9A%E4%B8%AA%E5%91%BD%E4%BB%A4/">SSH远程执行多个命令</a></li>
+          <li><a href="../../Linux-Shell/ssh%E8%BF%9E%E6%8E%A5/">SSH连接</a></li>
+          <li><a href="../../Linux-Shell/vscode/">VSCode命令行安装插件</a></li>
+          <li><a href="../../Linux-Shell/%E5%BC%80%E6%BA%90%E5%A0%A1%E5%9E%92%E6%9C%BAjumpserver%E9%83%A8%E7%BD%B2/">开源堡垒机JumpServer部署</a></li>
+          <li><a href="../../Linux-Shell/%E7%B3%BB%E7%BB%9F%E4%BF%A1%E6%81%AF%E6%9F%A5%E7%9C%8B/">系统信息查看</a></li>
+          <li><a href="../../Linux-Shell/%E9%85%8D%E7%BD%AEzsh%E7%BB%88%E7%AB%AF/">配置zsh终端</a></li>
+        </ul>
+      </nav>
+    </details>
+  </aside>
+
+  <article class="article">
+    <nav class="breadcrumb">
+      <a href="../../index.html">首页</a><span>/</span>
+      <a href="../../Linux-Shell/">Linux-Shell</a>
+    </nav>
+    <h1 class="article-title">Samba文件共享服务</h1>
+    <p class="article-meta"><span>更新于 2026-04-16</span>
+      <a href="https://github.com/hangx969/learning-notes/blob/main/Linux-Shell/samba%E6%96%87%E4%BB%B6%E5%85%B1%E4%BA%AB%E6%9C%8D%E5%8A%A1.md">查看源文件</a>
+    </p>
+    <div class="article-body">
+<h1 id="背景">背景</h1>
+<ul>
+<li>1987年，微软公司和英特尔公司共同制定了SMB（server Messages Block）协议用来解决局域网内的文件或打印机等的资源共享问题。但是这时后还是解决不了跨系统之间的文件共享。直到1991年，在读大学的Tridgwell基于SMB协议开发能够解决Linux系统和windows系统之间的文件的问题——也就是SMB Server服务。后来被命名为samba（根据一个拉丁舞名字）。如今，samba服务测序成为了在Linux和windows系统之间共享文件的最佳选择。</li>
+</ul>
+<hr />
+<h1 id="samba">samba</h1>
+<p>介绍:</p>
+<ol>
+<li>samba是一组软件包，是Linux支持SMB/CIFS协议（也称S/C）</li>
+<li>samba可以在几乎所有的类UNIX平台上运行。</li>
+</ol>
+<p>功能：</p>
+<ol>
+<li>使Linux主机成为Windows网络的一份子，与Windows网络相互分享资源</li>
+<li>使Linux主机可以使用Windows共享的文件和打印机</li>
+<li>使Linux主机成为文件服务器或打印服务器，为Linux 、Windows客户端提供文件共享服务和远程打印服务</li>
+</ol>
+<p>需要启动的服务：</p>
+<ol>
+<li>smb服务：管理SAMBA服务器共享什么目录、文件、打印机</li>
+<li>nmb服务：管理群组和netbios name解析</li>
+</ol>
+<hr />
+<h1 id="搭建samba环境">搭建samba环境</h1>
+<h2 id="server端-linux">server端-Linux</h2>
+<ul>
+<li>创建两个nologin用户</li>
+</ul>
+<div class="highlight"><pre><span></span><code>useradd<span class="w"> </span>-s<span class="w"> </span>/bin/nologin<span class="w"> </span>user01
+useradd<span class="w"> </span>-s<span class="w"> </span>/bin/nologin<span class="w"> </span>user02
+</code></pre></div>
+
+<ul>
+<li>我们做这个服务是为了能够实现文件共享，为此，我们还要准备一个共享的文件 /share，并且设置其文件权限为777</li>
+</ul>
+<div class="highlight"><pre><span></span><code>mkdir<span class="w"> </span>/share
+chmod<span class="w"> </span>-R<span class="w"> </span><span class="m">777</span><span class="w"> </span>/share/
+</code></pre></div>
+
+<ul>
+<li>在server上通过yum来安装samba服务</li>
+</ul>
+<div class="highlight"><pre><span></span><code>yum<span class="w"> </span>-y<span class="w"> </span>install<span class="w"> </span>samba
+</code></pre></div>
+
+<ul>
+<li>创建samba账号，用我们最开始创建的user01和user02用户，密码设置为123456</li>
+</ul>
+<div class="highlight"><pre><span></span><code>smbpasswd<span class="w"> </span>-a<span class="w"> </span>user01
+pdbedit<span class="w"> </span>-a<span class="w"> </span>-u<span class="w"> </span>user02
+<span class="c1">#两个命令都是samba自带的工具，功能差不多</span>
+</code></pre></div>
+
+<ul>
+<li>配置文件</li>
+</ul>
+<div class="highlight"><pre><span></span><code>vim<span class="w"> </span>/etc/samba/smb.conf
+<span class="c1">#写入以下</span>
+<span class="o">[</span>myshare<span class="o">]</span>
+<span class="w">        </span><span class="nv">comment</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>public<span class="w"> </span>document
+<span class="w">        </span><span class="nv">path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>/share
+<span class="w">        </span><span class="nv">public</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>no
+<span class="w">        </span><span class="nv">browseable</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>Yes
+<span class="w">        </span><span class="nv">writable</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>Yes
+<span class="c1">#重启samba</span>
+systemctl<span class="w"> </span>restart<span class="w"> </span>smb
+</code></pre></div>
+
+<ul>
+<li>配置防火墙</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="c1">#测试环境直接关闭</span>
+systemctl<span class="w"> </span>stop<span class="w"> </span>firewalld
+<span class="c1">#正式环境配置允许samba服务</span>
+firewall-cmd<span class="w"> </span>--add-service<span class="o">=</span>samba<span class="w"> </span>--permanent<span class="w"> </span>
+firewall-cmd<span class="w"> </span>--reload
+</code></pre></div>
+
+<ul>
+<li>配置selinux</li>
+</ul>
+<div class="highlight"><pre><span></span><code>chcon<span class="w"> </span>-R<span class="w"> </span>-t<span class="w"> </span>samba_share_t<span class="w"> </span>/share
+</code></pre></div>
+
+<ul>
+<li>如果需要samba服务程序访问普通用户家目录或者是共享用户的家目录，我们需要打开sebool设置</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="c1">#可以通过getsebool 命令筛选出有关samba相关的SELinux域策略，但是还是需要策略的名称选择出正确的策略开启就行了</span>
+getsebool<span class="w"> </span>-a<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>samba
+samba_create_home_dirs<span class="w"> </span>--&gt;<span class="w"> </span>off
+samba_domain_controller<span class="w"> </span>--&gt;<span class="w"> </span>off
+samba_enable_home_dirs<span class="w"> </span>--&gt;<span class="w"> </span>on<span class="w">    </span><span class="c1">####我们本次实操开启这个就行了，基本上也就只要要开启这个</span>
+samba_export_all_ro<span class="w"> </span>--&gt;<span class="w"> </span>off
+samba_export_all_rw<span class="w"> </span>--&gt;<span class="w"> </span>off
+samba_load_libgfapi<span class="w"> </span>--&gt;<span class="w"> </span>off
+samba_portmapper<span class="w"> </span>--&gt;<span class="w"> </span>off
+samba_run_unconfined<span class="w"> </span>--&gt;<span class="w"> </span>off
+samba_share_fusefs<span class="w"> </span>--&gt;<span class="w"> </span>off
+samba_share_nfs<span class="w"> </span>--&gt;<span class="w"> </span>off
+sanlock_use_samba<span class="w"> </span>--&gt;<span class="w"> </span>off
+tmpreaper_use_samba<span class="w"> </span>--&gt;<span class="w"> </span>off
+use_samba_home_dirs<span class="w"> </span>--&gt;<span class="w"> </span>off
+virt_use_samba<span class="w"> </span>--&gt;<span class="w"> </span>off
+<span class="c1">#打开配置</span>
+setsebool<span class="w"> </span>-P<span class="w"> </span>samba_enable_home_dirs<span class="w"> </span>on
+</code></pre></div>
+
+<h2 id="client端-windows">client端-Windows</h2>
+<div class="highlight"><pre><span></span><code><span class="c1">#访问server地址</span>
+<span class="se">\\</span><span class="m">192</span>.168.147.11
+<span class="c1">#输入网络凭据，也就是我们一开始设置的samba用户和密码</span>
+<span class="c1">#注：可以使用 net use * /del 命令清除网络连接缓存，用来排除上次连接的影响</span>
+</code></pre></div>
+
+<h2 id="client端-linux">client端-Linux</h2>
+<ul>
+<li>直接用smbclient访问</li>
+</ul>
+<div class="highlight"><pre><span></span><code>yum<span class="w"> </span>-y<span class="w"> </span>install<span class="w"> </span>samba-client<span class="w"> </span>cifs-utils
+smbclient<span class="w"> </span>-L<span class="w"> </span><span class="m">192</span>.168.147.11<span class="w"> </span>-U<span class="w"> </span>user01
+<span class="c1">#可以看到myshare被列出了</span>
+smbclient<span class="w"> </span>//192.168.147.11/myshare<span class="w"> </span>-U<span class="w"> </span>user01
+<span class="c1">#测试创建目录（根据我们之前在server上samba配置文件所给的权限）</span>
+smb:<span class="w"> </span><span class="se">\&gt;</span><span class="w"> </span>mkdir<span class="w"> </span>test_share
+</code></pre></div>
+
+<ul>
+<li>将samba共享的目录挂在到客户端的本地目录下（临时挂载）</li>
+</ul>
+<div class="highlight"><pre><span></span><code>mkdir<span class="w"> </span>/usershare
+mount<span class="w"> </span>-t<span class="w"> </span>cifs<span class="w"> </span>//192.168.147.11/myshare<span class="w"> </span>/usershare/<span class="w"> </span>-o<span class="w"> </span><span class="nv">username</span><span class="o">=</span>user01
+ls<span class="w"> </span>-l<span class="w"> </span>/usershare/
+</code></pre></div>
+    </div>
+  </article>
+  <aside class="toc">
+    <p class="toc-label">本页目录</p>
+    <ul>
+  <li><a href="#server端-linux">server端-Linux</a></li>
+  <li><a href="#client端-windows">client端-Windows</a></li>
+  <li><a href="#client端-linux">client端-Linux</a></li>
+</ul>
+  </aside>
+
+</div>
+
+</main>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>Learning Notes</span>
+    <a href="https://github.com/hangx969/learning-notes">GitHub</a>
+  </div>
+</footer>
+<script src="../../static/search.js"></script>
+</body>
+</html>

@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Helm部署Cert-Manager - Learning Notes</title>
+<link rel="stylesheet" href="../../../static/style.css">
+<link rel="stylesheet" href="../../../static/pygments.css">
+</head>
+<body data-root="../../../">
+<header class="site-header">
+  <div class="header-inner">
+    <a class="logo" href="../../../index.html"><span class="logo-mark"></span>LEARNING NOTES</a>
+    <div class="search">
+      <input id="search-input" type="search" placeholder="搜索笔记…" autocomplete="off" aria-label="搜索笔记">
+      <div id="search-results" hidden></div>
+    </div>
+  </div>
+  <nav class="topic-nav" aria-label="主题导航">
+    <div class="topic-nav-inner">
+      <a href="../../../AI/">AI</a>
+      <a href="../../../Aliyun/">Aliyun</a>
+      <a href="../../../Azure/">Azure</a>
+      <a href="../../../C%2B%2B/">C++</a>
+      <a href="../../../CloudComputing/">CloudComputing</a>
+      <a href="../../../Database/">Database</a>
+      <a href="../../../Docker-Kubernetes/" class="active">Docker-Kubernetes</a>
+      <a href="../../../GPU-DeepLearning/">GPU-DeepLearning</a>
+      <a href="../../../Git/">Git</a>
+      <a href="../../../Go/">Go</a>
+      <a href="../../../HPC/">HPC</a>
+      <a href="../../../IaC/">IaC</a>
+      <a href="../../../Linux-Shell/">Linux-Shell</a>
+      <a href="../../../Middlewares/">Middlewares</a>
+      <a href="../../../Networking/">Networking</a>
+      <a href="../../../OS/">OS</a>
+      <a href="../../../Python/">Python</a>
+      <a href="../../../SoftwareTesting/">SoftwareTesting</a>
+    </div>
+  </nav>
+</header>
+<main class="main">
+
+<div class="article-layout">
+
+  <aside class="sidebar">
+    <details class="sidebar-details">
+      <summary>Docker-Kubernetes</summary>
+      <nav class="sidebar-nav">
+        <p class="sidebar-group">CKA-CKS</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/CKA-CKS/CKA-%E5%A4%87%E8%80%83/">CKA 备考</a></li>
+          <li><a href="../../../Docker-Kubernetes/CKA-CKS/CKS-%E5%A4%87%E8%80%83/">CKS 备考</a></li>
+          <li><a href="../../../Docker-Kubernetes/CKA-CKS/k8s-%E9%9D%A2%E8%AF%95%E9%A2%98%E6%B1%87%E6%80%BB/">K8s 面试题汇总</a></li>
+        </ul>
+        <p class="sidebar-group">container-platform</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/container-platform/%E9%83%A8%E7%BD%B2openshift%283.10%29/">部署 OpenShift (3.10)</a></li>
+          <li><a href="../../../Docker-Kubernetes/container-platform/%E9%83%A8%E7%BD%B2%E8%BD%BB%E9%87%8F%E7%BA%A7%E7%9A%84K8S%E5%B9%B3%E5%8F%B0-K3S/">部署轻量级 K8S 平台 - K3S</a></li>
+        </ul>
+        <p class="sidebar-group">docker</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E5%9F%BA%E7%A1%80/">Docker基础</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E5%AE%89%E5%85%A8%E9%85%8D%E7%BD%AE-Capabilities%E4%B8%8E%E5%AE%B9%E5%99%A8%E5%8A%A0%E5%9B%BA/">Docker 安全配置详解：Capabilities 与容器加固</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2UI%E5%B7%A5%E5%85%B7portainer-%E9%83%A8%E7%BD%B2redis-sentinel/">Docker部署Portainer与Redis-Sentinel</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2gitlab/">Docker部署GitLab</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2lnmp%E7%BD%91%E7%AB%99/">Docker部署LNMP网站</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2loki/">Docker部署Loki日志系统</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2nginx-tomcat-httpd-go-python%E6%9C%8D%E5%8A%A1/">Docker部署Nginx-Tomcat-Httpd-Go-Python服务</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2prometheus-grafana-cAdvisior%E7%9B%91%E6%8E%A7/">Docker部署Prometheus-Grafana-cAdvisor监控</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2%E4%BB%93%E5%BA%93%E5%B9%B3%E5%8F%B0homebox/">Docker部署Homebox仓库平台</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1%E5%B7%A5%E5%85%B7gocron/">Docker部署GoCron定时任务工具</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2%E8%B7%AF%E7%94%B1%E7%9B%91%E6%8E%A7%E5%B7%A5%E5%85%B7NextTrace/">Docker部署NextTrace路由监控工具</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%85%8D%E7%BD%AENVIDIA%20GPU/">Docker配置NVIDIA GPU</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%85%8D%E7%BD%AE%E4%BB%A3%E7%90%86/">Docker配置代理</a></li>
+        </ul>
+        <p class="sidebar-group">harbor</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/harbor/harbor-basics/">Harbor 基础</a></li>
+          <li><a href="../../../Docker-Kubernetes/harbor/helm%E9%83%A8%E7%BD%B2harbor/">Helm 部署 Harbor</a></li>
+        </ul>
+        <p class="sidebar-group">helm-operator</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/helm-operator/helmv3-%E5%AE%89%E8%A3%85%E4%B8%8E%E4%BD%BF%E7%94%A8/">Helm v3 安装与使用</a></li>
+          <li><a href="../../../Docker-Kubernetes/helm-operator/helm%E9%83%A8%E7%BD%B2config-syncer%28kubed%29/">Helm 部署 Config Syncer (Kubed)</a></li>
+          <li><a href="../../../Docker-Kubernetes/helm-operator/helm%E9%83%A8%E7%BD%B2dragonfly/">Helm 部署 Dragonfly</a></li>
+          <li><a href="../../../Docker-Kubernetes/helm-operator/helm%E9%83%A8%E7%BD%B2pact-broker/">Helm 部署 Pact Broker</a></li>
+          <li><a href="../../../Docker-Kubernetes/helm-operator/helm%E9%83%A8%E7%BD%B2reloader/">Helm 部署 Reloader</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-CICD</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD%20Image%20Updater/">ArgoCD Image Updater</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD%E5%9F%BA%E7%A1%80/">ArgoCD基础</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD%E5%A4%9A%E9%9B%86%E7%BE%A4GitOps%E5%AE%9E%E6%88%98/">多集群 GitOps 实战：用 Argo CD 管理上百个 Kubernetes 集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD%E9%83%A8%E7%BD%B2Helm%E5%BA%94%E7%94%A8%E6%97%B6%E5%9F%9F%E5%90%8D%E8%A7%A3%E6%9E%90%E5%A4%B1%E8%B4%A5%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5%E4%B8%8E%E8%A7%A3%E5%86%B3/">ArgoCD部署Helm应用时域名解析失败问题排查与解决</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/ArgoCD/%E5%AD%A6%E4%B9%A0%E9%93%BE%E6%8E%A5/">ArgoCD学习链接</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Claude-Code%E5%AE%9E%E7%8E%B0CICD%E8%87%AA%E5%8A%A8%E5%8C%96%E5%8F%91%E5%B8%83%E6%B5%81%E7%A8%8B/">Claude Code 实现 CI/CD 自动化发布流程详细指南</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Gitlab/helm%E9%83%A8%E7%BD%B2gitlab/">Helm部署GitLab</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Gitlab/k8s%E9%83%A8%E7%BD%B2Gitlab%2811.8.1%29-%E5%9F%BA%E4%BA%8Eyaml/">K8s部署GitLab(11.8.1)-基于YAML</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Gitlab/%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%AE%89%E8%A3%85Gitlab%2817.9.8%29/">二进制安装GitLab(17.9.8)</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Jenkins/Jenkins%E8%AF%AD%E6%B3%95-%E5%9F%BA%E4%BA%8Edocker%E9%83%A8%E7%BD%B2/">Jenkins语法-基于Docker部署</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Jenkins/docker%E9%83%A8%E7%BD%B2jenkins/">Docker部署Jenkins</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Jenkins/helm%E9%83%A8%E7%BD%B2jenkins/">Helm部署Jenkins</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Jenkins/k8s-Devops%E5%B9%B3%E5%8F%B0%E8%90%BD%E5%9C%B0-%E5%9F%BA%E4%BA%8Ejenkins/">K8s DevOps平台落地-基于Jenkins</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Jenkins/k8s%E9%83%A8%E7%BD%B2%E5%9F%BA%E4%BA%8EJenkins%282.394%29%E7%9A%84DevOps%E5%B7%A5%E5%85%B7%E9%93%BE-%E5%9F%BA%E4%BA%8Eyaml/">K8s部署基于Jenkins(2.394)的DevOps工具链-基于YAML</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Jenkins/k8s%E9%83%A8%E7%BD%B2%E5%9F%BA%E4%BA%8EJenkins%282.426.3%29%E7%9A%84Devops%E5%B7%A5%E5%85%B7%E9%93%BE-%E5%9F%BA%E4%BA%8Eyaml/">K8s部署基于Jenkins(2.426.3)的DevOps工具链-基于YAML</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Jenkins/%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%AE%89%E8%A3%85Jenkins%282.319%29/">二进制安装Jenkins(2.319)</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Kustomize/k8s%E9%85%8D%E7%BD%AE%E5%AE%9A%E5%88%B6%E5%B7%A5%E5%85%B7-kustomize/">K8s配置定制工具-Kustomize</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Tekton/k8s%E9%83%A8%E7%BD%B2%E5%8E%9F%E7%94%9F%E7%9A%84CICD%E5%B7%A5%E5%85%B7Tekton-%E5%9F%BA%E4%BA%8Eyaml/">K8s部署原生的CICD工具Tekton-基于YAML</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Tekton/%E5%9F%BA%E4%BA%8ETekton%E7%9A%84%E4%BA%91%E5%8E%9F%E7%94%9F%E5%B9%B3%E5%8F%B0%E8%90%BD%E5%9C%B0/">基于Tekton的云原生平台落地</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/k8s%E5%8F%91%E5%B8%83%E7%AD%96%E7%95%A5-%E8%93%9D%E7%BB%BF%E9%83%A8%E7%BD%B2%E4%B8%8E%E9%87%91%E4%B8%9D%E9%9B%80%E5%8F%91%E5%B8%83/">K8s 发布策略：蓝绿部署与金丝雀发布实战</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/%E4%BD%BF%E7%94%A8github%20action%E9%83%A8%E7%BD%B2helmchart/">使用GitHub Action部署Helm Chart</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/%E5%8F%91%E5%B8%83go-python-java%E4%BB%A3%E7%A0%81%E5%88%B0K8S%E7%8E%AF%E5%A2%83/">发布Go/Python/Java代码到K8S环境</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-UI-tools</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-UI-tools/k8s-API%E6%A3%80%E6%9F%A5%E5%B7%A5%E5%85%B7kubent/">K8s API 检查工具 kubent</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-UI-tools/k8s-%E5%B0%8F%E5%B7%A5%E5%85%B7%E9%9B%86%E5%90%88/">K8s 小工具集合</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-UI-tools/k8s%E9%83%A8%E7%BD%B2-Dashboard-UI/">K8s 部署 Dashboard UI</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-UI-tools/k8s%E9%83%A8%E7%BD%B2%E5%8F%AF%E8%A7%86%E5%8C%96ui%E7%95%8C%E9%9D%A2kuboard/">K8s 部署 Kuboard</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-UI-tools/kubectl-UI%E5%B7%A5%E5%85%B7Lens/">kubectl UI 工具 Lens</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-UI-tools/kubectl-%E5%8F%AF%E8%A7%86%E5%8C%96%E6%8F%92%E4%BB%B6k9s-stern/">kubectl 可视化插件 k9s 和 stern</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-UI-tools/kuebctl-%E6%8F%92%E4%BB%B6krew-rolesum/">kubectl 插件 krew 和 rolesum</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-UI-tools/rancher%28v2.6.4%29%E7%AE%A1%E7%90%86k8s%E9%9B%86%E7%BE%A4/">Rancher (v2.6.4) 管理 K8s 集群</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-ai-gpu</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-ai-gpu/k8s%E9%85%8D%E7%BD%AENVIDIA%20GPU/">K8s 配置 NVIDIA GPU</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-backup-dr</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-backup-dr/k8s%E5%A4%87%E4%BB%BD%E4%B8%8E%E7%81%BE%E5%A4%87%E5%AE%9E%E6%88%98-%E4%B8%89%E5%B1%82%E5%AE%B9%E7%81%BE%E6%9E%B6%E6%9E%84/">K8s 备份与灾备实战：三层容灾架构</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-backup-dr/k8s%E9%9B%86%E7%BE%A4%E5%A4%87%E4%BB%BD%E6%81%A2%E5%A4%8D-Velero/">K8s集群备份恢复 - Velero</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-basic-resources</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/K8s%E5%9F%BA%E7%A1%80-pod%E8%B0%83%E5%BA%A6-%E4%BA%B2%E5%92%8C%E5%8A%9B/">K8s基础-Pod调度-亲和力</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/Python%E8%B0%83%E7%94%A8k8s-api%E5%AE%9E%E7%8E%B0%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/">Python调用K8s-API实现资源管理</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s-APIServer%E6%B7%B1%E5%BA%A6%E5%89%96%E6%9E%90-%E8%AF%B7%E6%B1%82%E9%93%BE%E8%B7%AF-%E8%AE%A4%E8%AF%81%E6%8E%88%E6%9D%83-%E7%94%9F%E4%BA%A7%E8%B0%83%E4%BC%98/">Kubernetes API Server 深度剖析：请求链路、认证授权与生产调优</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s-PodDisruptionBudget%E5%AE%9E%E6%88%98/">K8s PodDisruptionBudget 实战：优雅中断保护</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-Calico/">K8s基础-Calico</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-Finalizer%E4%B8%8E%E8%B5%84%E6%BA%90%E5%88%A0%E9%99%A4/">K8s基础-Finalizer与资源删除</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-Operator%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98-Kubebuilder/">从零开发 Kubernetes Operator：Kubebuilder 实战教程</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-Service/">K8s基础-Service</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-configMap-Secret/">K8s基础-configMap-Secret</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-daemonset/">K8s基础-DaemonSet</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-deployment/">K8s基础-Deployment</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-ingress/">K8s基础-Ingress</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-job-cronjob/">K8s基础-Job-CronJob</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-kubeadm/">K8s基础-kubeadm</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-namespace-%E8%B5%84%E6%BA%90%E5%88%86%E9%85%8D/">K8s基础-namespace-资源分配</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-pod/">K8s基础-Pod</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-pod%E8%B0%83%E5%BA%A6-%E6%A0%87%E7%AD%BE%E4%B8%8E%E9%80%89%E6%8B%A9%E5%99%A8%E5%AE%9E%E6%88%98/">Kubernetes 标签与选择器避坑：5 条核心铁律与生产级实战案例</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-statefulset/">K8s基础-StatefulSet</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-storage/">K8s基础-Storage</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-yaml/">K8s基础-YAML</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E4%B8%B4%E6%97%B6%E5%AE%B9%E5%99%A8ephemeral/">K8s基础-临时容器Ephemeral</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E5%AE%B9%E5%99%A8%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-Sidecar-Init-Ambassador-Adapter/">K8s 容器设计模式：Sidecar / Init Container / Ambassador / Adapter</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E5%AE%B9%E5%99%A8%E8%BF%90%E8%A1%8C%E6%97%B6-containerd/">K8s基础-容器运行时-containerd</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E6%9E%B6%E6%9E%84-%E7%BB%84%E4%BB%B6-%E8%B5%84%E6%BA%90/">K8s基础-架构-组件-资源</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E8%87%AA%E5%AE%9A%E4%B9%89CRD%E8%B5%84%E6%BA%90/">K8s基础-自定义CRD资源</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E8%AE%A4%E8%AF%81-%E6%8E%88%E6%9D%83-%E5%87%86%E5%85%A5/">K8s基础-认证-授权-准入</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-db-middleware</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/Operator%E9%83%A8%E7%BD%B2Redis%E9%9B%86%E7%BE%A4/">基于Operator部署Redis集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/Operator%E9%83%A8%E7%BD%B2mysql%E9%9B%86%E7%BE%A4/">Operator部署MySQL NDB集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/helm%E9%83%A8%E7%BD%B2mysql/">Helm部署MySQL</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/helm%E9%83%A8%E7%BD%B2postgreSQL/">Helm部署PostgreSQL</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/helm%E9%83%A8%E7%BD%B2rabbitmq-ha/">Helm部署RabbitMQ高可用集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/helm%E9%83%A8%E7%BD%B2strimzi-kafka/">Helm部署Strimzi Kafka</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/k8s%E5%9F%BA%E4%BA%8Eyaml%E9%83%A8%E7%BD%B2MongoDB%E9%9B%86%E7%BE%A4/">K8s基于YAML部署MongoDB集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/k8s%E5%9F%BA%E4%BA%8Eyaml%E9%83%A8%E7%BD%B2httpd%E6%9C%8D%E5%8A%A1/">K8s基于YAML部署httpd服务</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/k8s%E5%9F%BA%E4%BA%8Eyaml%E9%83%A8%E7%BD%B2mysql%E4%B8%BB%E4%BB%8E%E9%AB%98%E5%8F%AF%E7%94%A8/">K8s基于YAML部署MySQL主从高可用</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/k8s%E5%9F%BA%E4%BA%8Eyaml%E9%83%A8%E7%BD%B2redis%E9%9B%86%E7%BE%A4/">K8s基于YAML部署Redis集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/k8s%E9%83%A8%E7%BD%B2springcloud%E7%94%B5%E5%95%86%E9%A1%B9%E7%9B%AE/">K8s部署SpringCloud电商项目</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-installation-management</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/2025%E6%9C%80%E6%96%B0-%E4%BC%81%E4%B8%9A%E7%BA%A7%E9%AB%98%E5%8F%AF%E7%94%A8%E9%9B%86%E7%BE%A4-%E5%9F%BA%E4%BA%8Erockylinux/">2025最新-企业级高可用集群-基于rockylinux</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/etcd%E9%AB%98%E5%8F%AF%E7%94%A8%E9%85%8D%E7%BD%AE%E4%BB%A5%E5%8F%8A%E6%A8%A1%E6%8B%9F%E9%9B%86%E7%BE%A4%E6%95%85%E9%9A%9C%E5%92%8C%E6%81%A2%E5%A4%8D/">etcd高可用配置以及模拟集群故障和恢复</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/k8s-Backstage-%E5%86%85%E9%83%A8%E5%BC%80%E5%8F%91%E8%80%85%E5%B9%B3%E5%8F%B0IDP%E5%AE%9E%E6%88%98/">K8s 平台工程实战：用 Backstage 打造一站式内部开发者平台</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/k8s-cgroup-v2%E6%B7%B1%E5%BA%A6%E8%A7%A3%E6%9E%90-%E8%BF%81%E7%A7%BB%E5%AE%9E%E6%88%98%E4%B8%8E%E9%81%BF%E5%9D%91%E6%8C%87%E5%8D%97/">K8s CGroup v2 深度解析：资源隔离原理、迁移实战与生产避坑指南</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/k8s%E4%B8%A4%E5%9C%B0%E4%B8%89%E4%B8%AD%E5%BF%83%E6%9E%B6%E6%9E%84/">k8s两地三中心架构</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/k8s%E5%A4%9A%E9%9B%86%E7%BE%A4kubeconfig%E7%AE%A1%E7%90%86/">k8s多集群kubeconfig管理</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/k8s%E6%95%85%E9%9A%9C%E6%8E%92%E6%9F%A5%E6%8C%87%E5%8D%97/">k8s故障排查指南</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/k8s%E7%94%9F%E4%BA%A7%E7%8E%AF%E5%A2%83%E4%BC%98%E5%8C%96%E4%B8%8E%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/">k8s生产环境优化与最佳实践</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/k8s%E9%83%A8%E7%BD%B2%E9%98%B2%E7%81%AB%E5%A2%99%E7%AB%AF%E5%8F%A3%E9%85%8D%E7%BD%AE/">K8s部署防火墙端口配置</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/latest-version/%E5%AE%89%E8%A3%85k8s-1.35-%E5%9F%BA%E4%BA%8Erockylinux10-%E6%9C%80%E6%96%B0%E6%AD%A5%E9%AA%A4/">在 Rocky Linux 10 上安装 Kubernetes 1.35</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%AE%89%E8%A3%85k8s%E9%AB%98%E5%8F%AF%E7%94%A8%E9%9B%86%E7%BE%A4/">二进制安装k8s高可用集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.20.6-%E9%AB%98%E5%8F%AF%E7%94%A8/">安装k8s-1.20.6-高可用</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.23/">安装k8s-1.23</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.26-1.27/">安装k8s-1.26-1.27</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.28/">安装k8s-1.28</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.30-%E5%9F%BA%E4%BA%8Erockylinux/">安装k8s-1.30-基于rockylinux</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.32-%E5%9F%BA%E4%BA%8Erockylinux/">安装k8s-1.32-基于rockylinux</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.33-%E5%9F%BA%E4%BA%8Erockylinux-%E6%9C%80%E6%96%B0%E6%AD%A5%E9%AA%A4/">安装k8s-1.33-基于rockylinux-最新步骤</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/%E5%8D%87%E7%BA%A7/k8s-1.37-%E5%8D%87%E7%BA%A7%E9%A1%BB%E7%9F%A5-breaking-changes/">Kubernetes v1.37 升级破坏性变更指南</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/%E5%8D%87%E7%BA%A7/k8s%E8%BF%81%E7%A7%BB%E5%AE%B9%E5%99%A8%E8%BF%90%E8%A1%8C%E6%97%B6-%E7%89%88%E6%9C%AC%E5%8D%87%E7%BA%A7/">k8s迁移容器运行时与版本升级</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-monitoring-logging</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/K8s%E5%85%A8%E9%9D%A2%E5%B7%A1%E6%A3%80%E8%84%9A%E6%9C%AC-%E7%94%9F%E6%88%90HTML%E5%81%A5%E5%BA%B7%E6%8A%A5%E5%91%8A/">K8s 全面巡检脚本：一键生成 HTML 健康报告</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/OpenTelemetry%E5%AE%9E%E6%88%98-%E7%BB%9F%E4%B8%80Traces-Metrics-Logs/">OpenTelemetry 实战：告别厂商锁定，统一 Traces/Metrics/Logs</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/Prometheus%E5%9F%BA%E7%A1%80/">Prometheus基础</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/Prometheus%E7%9B%91%E6%8E%A7k8s%E7%B3%BB%E7%BB%9F%E7%BB%84%E4%BB%B6/">Prometheus监控K8s系统组件</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/Prometheus%E7%9B%91%E6%8E%A7%E5%A4%96%E9%83%A8k8s%E9%9B%86%E7%BE%A4/">Prometheus监控外部K8s集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/Prometheus%E7%9B%91%E6%8E%A7%E9%9D%9E%E4%BA%91%E5%8E%9F%E7%94%9F%E5%BA%94%E7%94%A8-%E4%B8%BB%E6%9C%BA/">Prometheus监控非云原生应用-主机</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/helm%E9%83%A8%E7%BD%B2Loki-promtail-tempo-grafanaAgent%E5%85%A8%E5%AE%B6%E6%A1%B6/">Helm部署Loki+Promtail+Tempo+GrafanaAgent全家桶</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/helm%E9%83%A8%E7%BD%B2jaeger/">Helm部署Jaeger</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/helm%E9%83%A8%E7%BD%B2prometheus-stack%E5%85%A8%E5%AE%B6%E6%A1%B6/">Prometheus-Stack 全家桶：生产级部署与运维完全指南</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E6%97%A5%E5%BF%97%E7%AE%A1%E7%90%86-%E9%87%87%E9%9B%86%E6%96%B9%E6%A1%88%E4%B8%8E%E5%AE%A1%E8%AE%A1%E6%97%A5%E5%BF%97/">K8s 日志管理：基础机制、六种采集方案与审计日志实战</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E7%9B%91%E6%8E%A7EFK%2Blogstash%2Bkafka/">K8s监控EFK+logstash+kafka</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E7%9B%91%E6%8E%A7ES%287.2%29%2BKibana%287.2%29%2BFluentd%28v1.4.2%29/">K8s监控ES(7.2)+Kibana(7.2)+Fluentd(v1.4.2)</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E7%9B%91%E6%8E%A7Prometheus%28v2.2.1%29/">K8s监控Prometheus(v2.2.1)</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E7%9B%91%E6%8E%A7Prometheus%28v2.33.5%29%2BGrafana%28v8.4.5%29/">K8s监控Prometheus(v2.33.5)+Grafana(v8.4.5)</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E7%9B%91%E6%8E%A7alertmanager%28v0.14.0%29/">K8s监控Alertmanager(v0.14.0)</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E9%83%A8%E7%BD%B2elasticsearch%E9%9B%86%E7%BE%A4/">K8s部署Elasticsearch集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E9%83%A8%E7%BD%B2grafana%28v5.0.4%29/">K8s部署Grafana(v5.0.4)</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E9%83%A8%E7%BD%B2%E5%85%A8%E9%93%BE%E8%B7%AF%E8%BF%BD%E8%B8%AA-Skywalking/">K8s部署全链路追踪-Skywalking</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2Prometheus%28v2.32.1%29%E8%81%94%E9%82%A6%E9%9B%86%E7%BE%A4/">二进制部署Prometheus(v2.32.1)联邦集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2efk%2Blogstash%2Bkafka%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%B9%B3%E5%8F%B0/">二进制部署EFK+Logstash+Kafka日志收集平台</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2prometheus-grafana-nodeexporter/">二进制部署Prometheus-Grafana-NodeExporter</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/%E5%9F%BA%E4%BA%8Ehelm%2Boperator%E9%83%A8%E7%BD%B2ECK%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%B9%B3%E5%8F%B0/">基于Helm+Operator部署ECK日志收集平台</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-networking-service-mesh</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/Istio-Sidecar-vs-Ambient/">Istio Sidecar vs Ambient 模式对比</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/helm%E5%AE%89%E8%A3%85istio/">Helm安装Istio</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/helm%E9%83%A8%E7%BD%B2external-dns/">Helm部署External-DNS</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/helm%E9%83%A8%E7%BD%B2ingress-nginx/">Helm部署Ingress-Nginx</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/helm%E9%83%A8%E7%BD%B2tomcat/">Helm 部署 Tomcat</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/k8s-Gateway-API%E5%85%A5%E9%97%A8-Ingress%E4%B8%8B%E4%B8%80%E4%BB%A3%E6%96%B9%E6%A1%88/">Kubernetes Gateway API 入门：Ingress 的下一代方案</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/k8s%E7%B2%BE%E7%BB%86%E5%8C%96%E6%B5%81%E9%87%8F%E7%AE%A1%E7%90%86-istio/">K8s精细化流量管理-Istio</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/k8s%E9%83%A8%E7%BD%B2istio%281.13.1%29/">K8s部署Istio(1.13.1)</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/k8s%E9%9B%86%E7%BE%A4%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/">K8s集群网络安全</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/%E4%BC%81%E4%B8%9A%E9%A1%B9%E7%9B%AE%E6%8E%A5%E5%85%A5istio%E5%AE%9E%E6%88%98/">企业项目接入Istio实战</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-scaling</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-scaling/KEDA-vs-HPA-2026%E7%BB%88%E6%9E%81%E5%AF%B9%E6%AF%94-v1.36%E7%BC%A9%E9%9B%B6/">KEDA vs HPA 2026 终极对比：v1.36 原生缩零后该选谁？</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-scaling/helm%E9%83%A8%E7%BD%B2goldilocks/">Helm部署Goldilocks</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-scaling/helm%E9%83%A8%E7%BD%B2vpa/">Helm部署VPA</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-scaling/k8s-HPA-VPA/">K8s HPA与VPA</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-scaling/k8s-%E5%9F%BA%E4%BA%8EKEDA%E7%9A%84%E5%BC%B9%E6%80%A7%E8%83%BD%E5%8A%9B/">K8s基于KEDA的弹性能力</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-scaling/k8s%E6%88%90%E6%9C%AC%E4%BC%98%E5%8C%96%E6%96%B9%E6%A1%88-FinOps%E5%AE%9E%E6%88%98/">K8s 集群成本优化方案：砍掉 60% 云账单</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-security-auth</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2capsule/">Helm部署Capsule</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2certmanager/" class="current">Helm部署Cert-Manager</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2external-secrets/">Helm部署External-Secrets</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2kyverno%E5%92%8Cpolicy-reporter/">Helm部署Kyverno和Policy-Reporter</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2oauth2proxy/">Helm部署OAuth2-Proxy</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2sonarqube/">Helm部署SonarQube</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2trivy-operator/">Helm部署Trivy-Operator</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/k8s-Admission-Webhook%E9%93%BE%E5%86%B2%E7%AA%81%E6%8E%92%E6%9F%A5-Istio-Kyverno-Gatekeeper/">当 Istio、Kyverno、Gatekeeper 三个 Webhook 同时存在，你的集群会发生什么？</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/k8s%E5%AE%B9%E5%99%A8%E5%AE%89%E5%85%A8%E4%B8%8A%E4%B8%8B%E6%96%87-SecurityContext/">Kubernetes 容器安全上下文完全指南：从入门到生产避坑</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-springcloud</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-springcloud/SpringCloud%E9%A1%B9%E7%9B%AE%E8%BF%81%E7%A7%BB%E5%88%B0k8s%E5%AE%9E%E6%88%98/">SpringCloud 项目迁移到 K8s 实战</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-storage</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-storage/helm%E9%83%A8%E7%BD%B2nfs-subdir-external-provisioner/">Helm部署NFS Subdir External Provisioner</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-storage/k8s-ceph%E9%83%A8%E7%BD%B2%E4%B8%8E%E9%9B%86%E6%88%90/">K8s Ceph部署与集成</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-storage/k8s-%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8CubeFS/">K8s分布式存储CubeFS</a></li>
+        </ul>
+        <p class="sidebar-group">kubeblocks</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/kubeblocks/kubeblocks%E9%83%A8%E7%BD%B2WordPress/">KubeBlocks 部署 WordPress</a></li>
+          <li><a href="../../../Docker-Kubernetes/kubeblocks/kubeblocks%E9%83%A8%E7%BD%B2%E9%AB%98%E5%8F%AF%E7%94%A8harbor%E9%9B%86%E7%BE%A4/">KubeBlocks 部署高可用 Harbor 集群</a></li>
+        </ul>
+        <p class="sidebar-group">其他</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/%E7%AE%80%E5%8E%86%E6%8C%87%E5%8D%97/">简历指南</a></li>
+        </ul>
+      </nav>
+    </details>
+  </aside>
+
+  <article class="article">
+    <nav class="breadcrumb">
+      <a href="../../../index.html">首页</a><span>/</span>
+      <a href="../../../Docker-Kubernetes/">Docker-Kubernetes</a><span>/</span><span>k8s-security-auth</span>
+    </nav>
+    <h1 class="article-title">Helm部署Cert-Manager</h1>
+    <p class="article-meta"><span>更新于 2026-04-16</span>
+      <a href="https://github.com/hangx969/learning-notes/blob/main/Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2certmanager.md">查看源文件</a>
+    </p>
+    <div class="article-body">
+<h1 id="介绍">介绍</h1>
+<ul>
+<li>使用 HTTPS 需要向CA申请证书，并且需要付出一定的成本，如果需求数量多，则开支也相对增加。<a href="https://cert-manager.io/docs/">cert-manager</a> 是 Kubernetes 上的全能证书管理工具，支持利用 cert-manager 基于 <a href="https://tools.ietf.org/html/rfc8555">ACME</a> 协议与<a href="https://letsencrypt.org/">Let's Encrypt CA</a> 签发免费证书并为证书自动续期，实现永久免费使用证书。</li>
+<li>certmanager官网：<a href="https://cert-manager.io/docs/installation/helm/">Cert-Manager Helm Installation</a></li>
+<li>helm chart官网：<a href="https://artifacthub.io/packages/helm/cert-manager/cert-manager">cert-manager helm chart</a></li>
+<li>release note: <a href="https://github.com/cert-manager/cert-manager/releases/tag/v1.17.1">cert-manager v1.17.1</a></li>
+<li>pod间TLS通信：<a href="https://www.youtube.com/watch?v=uTaXgZWwXzs&amp;list=PLpbcUe4chE79sB7Jg7B4z3HytqUUEwcNE&amp;index=93">YouTube - Pod TLS</a></li>
+<li>certmanager教程：<a href="https://www.youtube.com/watch?v=rOe9UpHcnKk&amp;list=PLpbcUe4chE79sB7Jg7B4z3HytqUUEwcNE&amp;index=96">YouTube - Cert-Manager</a></li>
+</ul>
+<h2 id="证书分类">证书分类</h2>
+<table>
+<thead>
+<tr>
+<th>证书类型</th>
+<th>用途</th>
+<th>特征</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Root CA证书</strong></td>
+<td>证书链的根，签发中间CA</td>
+<td>自签名，无域名限制</td>
+</tr>
+<tr>
+<td><strong>中间CA证书</strong></td>
+<td>签发终端实体证书</td>
+<td>由Root CA签发，无域名限制</td>
+</tr>
+<tr>
+<td><strong>终端实体证书</strong> End-entity Certificate</td>
+<td>实际服务使用</td>
+<td>绑定具体域名，不能签发其他证书</td>
+</tr>
+</tbody>
+</table>
+<h1 id="拉取">拉取</h1>
+<div class="highlight"><pre><span></span><code>helm<span class="w"> </span>repo<span class="w"> </span>add<span class="w"> </span>jetstack<span class="w"> </span>https://charts.jetstack.io
+helm<span class="w"> </span>repo<span class="w"> </span>update<span class="w"> </span>jetstack
+helm<span class="w"> </span>pull<span class="w"> </span>jetstack/cert-manager<span class="w"> </span>--version<span class="w"> </span>v1.16.1
+</code></pre></div>
+
+<h1 id="配置">配置</h1>
+<div class="highlight"><pre><span></span><code><span class="c1">#参照ado code调整</span>
+<span class="c1">#注意：crds.enabled额外设置成true，crds.keep设置成true，因为cert-manager-cainjector需要这个crd才能正常工作</span>
+</code></pre></div>
+
+<h1 id="安装">安装</h1>
+<div class="highlight"><pre><span></span><code>helm<span class="w"> </span>upgrade<span class="w"> </span>-i<span class="w"> </span>cert-manager<span class="w"> </span>-n<span class="w"> </span>cert-manager<span class="w"> </span>.<span class="w"> </span>--values<span class="w"> </span>values.yaml<span class="w"> </span>--create-namespace
+<span class="c1">#可以使用下面命令检查pod是否是ready</span>
+kubectl<span class="w"> </span><span class="nb">wait</span><span class="w"> </span>--for<span class="o">=</span><span class="nv">condition</span><span class="o">=</span>Ready<span class="w"> </span>pods<span class="w"> </span>--all<span class="w"> </span>-n<span class="w"> </span>cert-manager
+</code></pre></div>
+
+<h1 id="使用">使用</h1>
+<ul>
+<li>cert-manager服务部署好之后，可以创建issuer和certificate资源：（refer: <a href="https://todoit.tech/k8s/cert/#%E5%88%9B%E5%BB%BA-issuer">创建 Issuer</a>）</li>
+<li>issuer/clusterissuer是让cert-manager认出证书颁发机构，比如指定letsencrypt</li>
+<li>certificate资源就是绑定issuer，创建存放certificate的k8s secret</li>
+</ul>
+<h2 id="使用self-signed-certificate">使用Self-signed certificate</h2>
+<h3 id="创建self-signed-cluster-issuer">创建self-signed cluster issuer</h3>
+<p>clusterIssuer文件是证书颁发者的配置模板，用于告诉 cert-manager 如何从Let's Encrypt等CA机构申请证书，而不是证书本身。它定义了申请 SSL/TLS 证书的方法和参数。</p>
+<ul>
+<li>Lab为简化处理，不去连接CA机构，用自签证书代替。<a href="https://github.com/HoussemDellai/aks-course/blob/main/34_https_pod_certmanager_letsencrypt/certificate.yaml">Certificate示例</a></li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="l l-Scalar l-Scalar-Plain">tee cluster-issuer-selfsigned &lt;&lt;&#39;EOF&#39;</span>
+<span class="l l-Scalar l-Scalar-Plain">apiVersion</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cert-manager.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ClusterIssuer</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">selfsigned</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">selfSigned</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span>
+<span class="l l-Scalar l-Scalar-Plain">EOF</span>
+</code></pre></div>
+
+<h3 id="创建certificate颁发给svc">创建Certificate颁发给svc</h3>
+<p><div class="callout callout-warning" markdown="1"><br />
+<p class="callout-title">注意：certificate和它生成的secret是一定在同一个namespace的</p></p>
+</div>
+<div class="highlight"><pre><span></span><code><span class="l l-Scalar l-Scalar-Plain">tee certificate-app01.yaml &lt;&lt;&#39;EOF&#39;</span>
+<span class="l l-Scalar l-Scalar-Plain">apiVersion</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cert-manager.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Certificate</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">app01</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">secretName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">app01-tls-cert-secret</span>
+<span class="w">  </span><span class="nt">privateKey</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">rotationPolicy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Always</span>
+<span class="w">  </span><span class="nt">commonName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">app01.default.svc.cluster.local</span><span class="w"> </span><span class="c1">#写的是后面要部署的svc的name</span>
+<span class="w">  </span><span class="nt">dnsNames</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">app01.default.svc.cluster.local</span>
+<span class="w">  </span><span class="nt">usages</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">digital signature</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">key encipherment</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">server auth</span>
+<span class="w">  </span><span class="nt">issuerRef</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">selfsigned</span>
+<span class="w">    </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ClusterIssuer</span>
+<span class="l l-Scalar l-Scalar-Plain">EOF</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="c1">#查看证书</span>
+k<span class="w"> </span>get<span class="w"> </span>clusterissuer,secret,certificate
+NAME<span class="w">                                       </span>READY<span class="w">   </span>AGE
+clusterissuer.cert-manager.io/selfsigned<span class="w">   </span>True<span class="w">    </span>5m27s
+
+NAME<span class="w">                           </span>TYPE<span class="w">                </span>DATA<span class="w">   </span>AGE
+secret/app01-tls-cert-secret<span class="w">   </span>kubernetes.io/tls<span class="w">   </span><span class="m">3</span><span class="w">      </span>16s
+
+NAME<span class="w">                                </span>READY<span class="w">   </span>SECRET<span class="w">                  </span>AGE
+certificate.cert-manager.io/app01<span class="w">   </span>True<span class="w">    </span>app01-tls-cert-secret<span class="w">   </span>16s
+</code></pre></div>
+
+<h3 id="pod挂载certificate">pod挂载certificate</h3>
+<ul>
+<li>pod用volume挂载secret，用环境变量指定证书位置。app中需要提前配置好https</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="l l-Scalar l-Scalar-Plain">tee deploy-app01.yaml &lt;&lt;&#39;EOF&#39;</span>
+<span class="l l-Scalar l-Scalar-Plain">apiVersion</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">apps/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Deployment</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">app01</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">app01</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">replicas</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="w">  </span><span class="nt">selector</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">matchLabels</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">app01</span>
+<span class="w">  </span><span class="nt">template</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">metadata</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">app01</span>
+<span class="w">    </span><span class="nt">spec</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">restartPolicy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Always</span>
+<span class="w">      </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">app01-tls</span>
+<span class="w">        </span><span class="nt">secret</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">secretName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">app01-tls-cert-secret</span>
+<span class="w">      </span><span class="nt">containers</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">app01</span>
+<span class="w">        </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">us-docker.pkg.dev/google-samples/containers/gke/hello-app-tls:1.0</span>
+<span class="w">        </span><span class="nt">ports</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">containerPort</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8443</span>
+<span class="w">        </span><span class="nt">volumeMounts</span><span class="p">:</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">app01-tls</span>
+<span class="w">            </span><span class="nt">mountPath</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/etc/tls</span>
+<span class="w">            </span><span class="nt">readOnly</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">        </span><span class="nt">env</span><span class="p">:</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TLS_CERT</span>
+<span class="w">            </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/etc/tls/tls.crt</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TLS_KEY</span>
+<span class="w">            </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/etc/tls/tls.key</span>
+<span class="nn">---</span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Service</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">app01</span>
+<span class="w">  </span><span class="c1">#namespace: monitoring</span>
+<span class="w">  </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">app01</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">ports</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">443</span>
+<span class="w">    </span><span class="nt">protocol</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TCP</span>
+<span class="w">    </span><span class="nt">targetPort</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8443</span>
+<span class="w">  </span><span class="nt">selector</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">app01</span>
+<span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ClusterIP</span>
+<span class="l l-Scalar l-Scalar-Plain">EOF</span>
+</code></pre></div>
+
+<ul>
+<li>创建完成之后，可以用命令行测试pod间访问：</li>
+</ul>
+<p><sub>~</sub>sh<br />
+  kubectl run nginx --image=nginx<br />
+  kubectl exec -it nginx -- curl --insecure https://app01.default.svc.cluster.local<br />
+  kubectl exec -it nginx -- curl --insecure -v https://app01.default.svc.cluster.local<br />
+  ~~~</p>
+<h3 id="certificate颁发给ingress">Certificate颁发给ingress</h3>
+<ul>
+<li>
+<p>创建certificate时common name和dns name写ingress的hostname，证书保存到secret</p>
+</li>
+<li>
+<p>创建ingress时，配置tls字段，指定secret name，例如：</p>
+</li>
+</ul>
+<p><sub>~</sub>yaml<br />
+    ingress:<br />
+      enabled: true<br />
+      ingressClassName: nginx-default<br />
+      annotations:<br />
+        nginx.ingress.kubernetes.io/auth-url: "http://oauth2-proxy.oauth2-proxy.svc.cluster.local/oauth2/auth"<br />
+        nginx.ingress.kubernetes.io/auth-signin: "https://oauth2proxy.hanxux.local/oauth2/start?rd=https%3A%2F%2Fkyverno.hanxux.local"<br />
+      hosts:<br />
+        - host: kyverno.hanxux.local<br />
+          paths:<br />
+            - path: /<br />
+              pathType: Prefix<br />
+      tls:<br />
+        - secretName: policy-reporter-tls-cert-secret<br />
+          hosts:<br />
+            - kyverno.hanxux.local<br />
+  ~~~</p>
+<p><div class="callout callout-warning" markdown="1"><br />
+<p class="callout-title">注意：pod只能挂载位于同一个namespace下的secret</p></p>
+</div>
+<h2 id="使用letsencrypt-certificate">使用Letsencrypt certificate</h2>
+<h3 id="参考">参考</h3>
+<ul>
+<li>azure文档：<a href="https://learn.microsoft.com/en-us/previous-versions/azure/aks/ingress-tls?tabs=azure-cli#install-cert-manager">AKS Ingress TLS</a></li>
+<li>letsencrypt官网：<a href="https://letsencrypt.org/getting-started/">Let's Encrypt Getting Started</a></li>
+<li>challenge的方式：<a href="https://letsencrypt.org/docs/challenge-types/#dns-01-challenge">Challenge Types - DNS-01</a></li>
+<li>创建Issuer和ClusterIssuer可以去官网找例子：<a href="https://cert-manager.io/docs/configuration/acme/dns01/">ACME DNS01</a></li>
+</ul>
+<h3 id="过期时间">过期时间</h3>
+<p>参考：<a href="https://letsencrypt.org/zh-cn/docs/faq/#let-s-encrypt-%E8%AF%81%E4%B9%A6%E7%9A%84%E6%9C%89%E6%95%88%E6%9C%9F%E6%9C%89%E5%A4%9A%E9%95%BF-%E8%83%BD%E5%A4%9F%E4%BD%BF%E7%94%A8%E5%A4%9A%E4%B9%85">Let's Encrypt FAQ - 证书有效期</a></p>
+<p>有效期90天，无法更改，建议每60天更新一次证书</p>
+<h3 id="校验原理">校验原理</h3>
+<p>Let’s Encrypt CA 利用 ACME (Automated Certificate Management Environment，自动证书管理) 协议校验域名的归属，校验成功后可以自动颁发免费证书。免费证书有效期只有 90 天，需在到期前再校验一次实现续期。使用 cert-manager 可以自动续期，即实现永久使用免费证书。</p>
+<p>Let's Encrypt 不颁发CA证书，只颁发终端实体证书。</p>
+<p>校验域名归属的两种方式分别是 HTTP-01 和 DNS-01，校验原理详情可参见 <a href="https://letsencrypt.org/zh-cn/how-it-works/">Let's Encrypt 的运作方式</a></p>
+<p><div class="callout callout-info" markdown="1"><br />
+<p class="callout-title">校验流程</p></p>
+<ul>
+<li>用户向clusterissuer提出申请证书请求，clusterissuer向letsencrypt机构申请证书，letsencrypt机构进行审核，假如申请的域名为www.xxx.com，机构会审核www.xxx.com这个站点是不是你的？审核的方式有：http01和dns01。</li>
+<li>使用http01的审核方式：letsencrypt机构让你往网站的某个路径里面写一个文件。然后他登录到www.xxx.com，看看能不能访问成功，访问成功就证明是你的网站。<ul>
+<li>这种方式对于内网web环境，letsencrypt访问不了。</li>
+<li>这种方式也无法签发wildcard certificate</li>
+</ul>
+</li>
+<li>使用dns01的审核方式：如果www.xxx.com是你的站点，你肯定有dns服务器的操控权，在DNS服务器上生成一个api token，letsencrypt会尝试使用这个api token往DNS服务器写入内容，如果能写入成功，则说明www.xxx.com站点是你的，就会审核通过。<ul>
+<li>适用于wildcard certificate</li>
+<li>需要dns resolver支持提供API token</li>
+</ul>
+</li>
+</ul>
+</div>
+<h3 id="使用cloudflare作为dns-resolver">使用cloudflare作为dns resolver</h3>
+<p>参考：<a href="https://www.cnblogs.com/renshengdezheli/p/18211540">Cloudflare DNS配置</a></p>
+<h4 id="获取cloudflare的api-token">获取cloudflare的API Token</h4>
+<ul>
+<li>
+<p>公网域名注册可以使用<a href="https://www.cloudflare.com/zh-cn/">Cloudflare</a>，拿到cloudflare的API token。</p>
+</li>
+<li>
+<p>测试API Token：</p>
+</li>
+</ul>
+<div class="highlight"><pre><span></span><code>curl<span class="w"> </span>-X<span class="w"> </span>GET<span class="w"> </span><span class="s2">&quot;https://api.cloudflare.com/client/v4/user/tokens/verify&quot;</span><span class="w"> </span><span class="se">\</span>
+</code></pre></div>
+
+<ul>
+<li>
+<p>letsencrypt通过我们创建的API令牌就可以往我们的cloudflare DNS服务器里写入内容，如果成功写入内容，则证明站点是我们的，则审核通过。</p>
+</li>
+<li>
+<p>写入k8s secret</p>
+</li>
+</ul>
+<p><sub>~</sub>yaml<br />
+  apiVersion: v1<br />
+  kind: Secret<br />
+  metadata:<br />
+    name: cloudflare-api-token-secret<br />
+  type: Opaque<br />
+  stringData:<br />
+    api-token: <API Token><br />
+  ~~~</p>
+<h4 id="创建cluster-issuer">创建cluster issuer</h4>
+<ul>
+<li>创建ClusterIssuer时提供cloudflare的token，这样cert-manager可以自动化向域名机构添加CA要求的认证信息，完成证书申请和renew。</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cert-manager.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ClusterIssuer</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="c1">#ClusterIssuer名字</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">letsencrypt-dns01</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">acme</span><span class="p">:</span>
+<span class="w">    </span><span class="c1">#指定一个</span>
+<span class="w">    </span><span class="nt">privateKeySecretRef</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">letsencrypt-dns01</span>
+<span class="w">    </span><span class="c1">#ClusterIssuer去https://acme-v02.api.letsencrypt.org/directory申请证书</span>
+<span class="w">    </span><span class="nt">server</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://acme-v02.api.letsencrypt.org/directory</span>
+<span class="w">    </span><span class="nt">solvers</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">dns01</span><span class="p">:</span>
+<span class="w">        </span><span class="c1"># clusterissuer支持的resolver类型有限，必须选一种dns server来配置。</span>
+<span class="w">        </span><span class="c1"># 通过命令查看：k explain clusterissuer.spec.acme.solvers.dns01</span>
+<span class="w">        </span><span class="nt">cloudflare</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">email</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">xxxxx</span>
+<span class="w">          </span><span class="c1">#指定存储着API token的secret，secret的名字为cloudflare-api-token-secret，secret的key为api-token</span>
+<span class="w">          </span><span class="nt">apiTokenSecretRef</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">api-token</span>
+<span class="w">            </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cloudflare-api-token-secret</span>
+</code></pre></div>
+
+<h4 id="申请证书">申请证书</h4>
+<ul>
+<li>创建certificate，指定ClusterIssuer和要保存到哪个secret，完成证书的签发。（注意Let's Encrypt 一个星期内只为同一个域名颁发 5 次证书，todoit.tech 和 whoami.todoit.tech 被视为不同的域名。）</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cert-manager.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Certificate</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="c1">#cert-zheli-com是申请的证书名字</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cert-zheli-com</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">dnsNames</span><span class="p">:</span>
+<span class="w">  </span><span class="c1">#www.rengshengdezheli.xyz表示申请的证书只给www.rengshengdezheli.xyz用</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">www.rengshengdezheli.xyz</span>
+<span class="w">  </span><span class="nt">issuerRef</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ClusterIssuer</span>
+<span class="w">    </span><span class="c1">#name: letsencrypt-dns01表示使用哪个ClusterIssuer申请证书</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">letsencrypt-dns01</span>
+<span class="w">  </span><span class="c1">#secretName: cert-zheli-com-tls表示申请到的证书放在哪个secret里面</span>
+<span class="w">  </span><span class="nt">secretName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cert-zheli-com-tls</span>
+</code></pre></div>
+
+<ul>
+<li>查看相关资源</li>
+</ul>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>get<span class="w"> </span>certificate<span class="w"> </span>-o<span class="w"> </span>wide
+kubectl<span class="w"> </span>get<span class="w"> </span>secrets<span class="w"> </span>-o<span class="w"> </span>wide
+kubectl<span class="w"> </span>get<span class="w"> </span>certificaterequests.cert-manager.io<span class="w"> </span>-o<span class="w"> </span>wide
+<span class="c1">#查看challenges，challenges用来验证证书请求是否成功，当证书申请成功之后，challenges会消失，certificaterequests的READY状态变为True。</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>challenges.acme.cert-manager.io<span class="w"> </span>-o<span class="w"> </span>wide
+<span class="c1">#secret由xxxx-btt2t变为xxxx-tls，现在证书就在xxxx-tls里面了。</span>
+</code></pre></div>
+
+<h4 id="创建ingress挂载证书">创建ingress挂载证书</h4>
+<ul>
+<li>通过ingress manifest配置secretName的方式，让ingress找到证书：</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">networking.k8s.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Ingress</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-ingress</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">ingressClassName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx-default</span>
+<span class="w">  </span><span class="nt">tls</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">hosts</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">www.rengshengdezheli.xyz</span>
+<span class="w">    </span><span class="nt">secretName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cert-zheli-com-tls</span>
+<span class="w">  </span><span class="nt">rules</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">www.rengshengdezheli.xyz</span>
+<span class="w">    </span><span class="nt">http</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">paths</span><span class="p">:</span>
+<span class="w">      </span><span class="c1">#访问网址目录</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/</span>
+<span class="w">        </span><span class="nt">pathType</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Prefix</span>
+<span class="w">        </span><span class="nt">backend</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">service</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx1svc</span>
+<span class="w">            </span><span class="nt">port</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">number</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span>
+</code></pre></div>
+
+<ul>
+<li>创建业务pod和svc，例如：</li>
+</ul>
+<p><sub>~</sub>yaml<br />
+  # cert/whoami.yaml<br />
+  apiVersion: apps/v1<br />
+  kind: Deployment<br />
+  metadata:<br />
+    name: whoami<br />
+    labels:<br />
+      app: containous<br />
+      name: whoami<br />
+  spec:<br />
+    replicas: 2<br />
+    selector:<br />
+      matchLabels:<br />
+        app: containous<br />
+        task: whoami<br />
+    template:<br />
+      metadata:<br />
+        labels:<br />
+          app: containous<br />
+          task: whoami<br />
+      spec:<br />
+        containers:<br />
+          - name: containouswhoami<br />
+            image: containous/whoami<br />
+            resources:<br />
+            ports:<br />
+              - containerPort: 80</p>
+<hr />
+<p>apiVersion: v1<br />
+  kind: Service<br />
+  metadata:<br />
+    name: whoami<br />
+  spec:<br />
+    ports:<br />
+      - name: http<br />
+        port: 80<br />
+    selector:<br />
+      app: containous<br />
+      task: whoami<br />
+    type: ClusterIP<br />
+  ~~~</p>
+<h4 id="配置clusterissuer自动挂载证书">配置clusterissuer自动挂载证书</h4>
+<ul>
+<li>
+<p>我们申请证书的步骤是创建certificate，然后clusterissuer使用certificate申请证书，最后带有certificate信息的secret和ingress一起使用。</p>
+</li>
+<li>
+<p>我们现在使用另外一种方法，创建ingress的时候自动让clusterissuer申请证书，不用创建certificate yaml文件。</p>
+</li>
+<li>
+<p>添加cert-manager.io/cluster-issuer: "letsencrypt-dns01"表示使用名为letsencrypt-dns01的clusterissuer申请证书。</p>
+</li>
+</ul>
+<p>当我们创建ingress规则之后，会自动使用名为letsencrypt-dns01的clusterissuer申请证书，申请的证书放在名为cert-zheli-com-tls的secret里</p>
+<ul>
+<li>证书到期之后，clusterissuers会自动续约。</li>
+</ul>
+<p><div class="callout callout-tip" markdown="1"><br />
+<p class="callout-title">自动续约</p></p>
+<p>为配置certificate自动续约，可以给ingress添加annotation</p>
+<ul>
+<li>ingress支持的annotation：<a href="https://cert-manager.io/docs/usage/ingress/#supported-annotations">Supported Annotations</a></li>
+<li>How it works：<a href="https://cert-manager.io/docs/usage/ingress/#how-it-works">Ingress - How it works</a></li>
+</ul>
+</div>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">networking.k8s.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Ingress</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-ingress</span>
+<span class="w">  </span><span class="nt">annotations</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">cert-manager.io/cluster-issuer</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;letsencrypt-dns01&quot;</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">ingressClassName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx-default</span>
+<span class="w">  </span><span class="nt">tls</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">hosts</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">www.rengshengdezheli.xyz</span>
+<span class="w">    </span><span class="nt">secretName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cert-zheli-com-tls</span>
+<span class="w">  </span><span class="nt">rules</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">www.rengshengdezheli.xyz</span>
+<span class="w">    </span><span class="nt">http</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">paths</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/</span>
+<span class="w">        </span><span class="nt">pathType</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Prefix</span>
+<span class="w">        </span><span class="nt">backend</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">service</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx1svc</span>
+<span class="w">            </span><span class="nt">port</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">number</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span>
+</code></pre></div>
+
+<h4 id="配置wildcard证书">配置wildcard证书</h4>
+<p>一个父域里面有很多个子域，直接用一个wildcard certificate给父域申请证书。</p>
+<p>子域的ingress资源不再需要额外单独配置cert-manager，自动沿用父域的certificate</p>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cert-manager.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Certificate</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">private-wildcard-certificate-onepilot-tls</span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cert-manager</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">secretName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">private-wildcard-certificate-onepilot-tls</span>
+<span class="w">  </span><span class="nt">secretTemplate</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">annotations</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">kubed.appscode.com/sync</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;kubernetes.io/metadata.name</span><span class="nv"> </span><span class="s">in</span><span class="nv"> </span><span class="s">(external-nginx,rabbit)&quot;</span>
+<span class="w">  </span><span class="nt">dnsNames</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;dev.onepilot.azurecn.autoheim.net&quot;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;*.onepilot.azurecn.autoheim.net&quot;</span>
+<span class="w">  </span><span class="nt">issuerRef</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">letsencrypt</span>
+<span class="w">    </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ClusterIssuer</span>
+<span class="w">  </span><span class="nt">keystores</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">pkcs12</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">create</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">      </span><span class="nt">passwordSecretRef</span><span class="p">:</span><span class="w"> </span><span class="c1"># Password used to encrypt the keystore</span>
+<span class="w">        </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">password</span>
+<span class="w">        </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pkcs12-password-secret</span>
+</code></pre></div>
+
+<h3 id="使用azure-dns作为dns-resolver">使用azure dns作为dns resolver</h3>
+<p>cert-manager官网教程：<a href="https://cert-manager.io/docs/tutorials/getting-started-aks-letsencrypt/#part-2">Getting Started with AKS and Let's Encrypt</a></p>
+<ul>
+<li>cluster issuer中的dns配置为azureDNS</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cert-manager.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ClusterIssuer</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">letsencrypt</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">acme</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">server</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://acme-v02.api.letsencrypt.org/directory</span>
+<span class="w">    </span><span class="nt">email</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dl_team_xxx@xxxx.com</span>
+<span class="w">    </span><span class="nt">privateKeySecretRef</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">letsencrypt-account-key</span>
+<span class="w">    </span><span class="nt">solvers</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">dns01</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">azureDNS</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">managedIdentity</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">clientID</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{{</span><span class="w"> </span><span class="nv">.Values.workload_identity_client_id</span><span class="w"> </span><span class="p p-Indicator">}}</span>
+<span class="w">            </span><span class="nt">subscriptionID</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{{</span><span class="w"> </span><span class="nv">.Values.dns.subscription_id</span><span class="w"> </span><span class="p p-Indicator">}}</span>
+<span class="w">            </span><span class="nt">resourceGroupName</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{{</span><span class="w"> </span><span class="nv">.Values.dns.resource_group_name</span><span class="w"> </span><span class="p p-Indicator">}}</span>
+<span class="w">            </span><span class="nt">hostedZoneName</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{{</span><span class="w"> </span><span class="nv">.Values.dns.domain</span><span class="w"> </span><span class="p p-Indicator">}}</span>
+<span class="w">            </span><span class="nt">environment</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{{</span><span class="nv">.Values.dns.environment</span><span class="p p-Indicator">}}</span>
+</code></pre></div>
+
+<ul>
+<li>cert-manager本体的配置中，podLabel和service account都要配置workload identity</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="nt">podLabels</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">azure.workload.identity/use</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;true&quot;</span>
+
+<span class="nt">serviceAccount</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">azure.workload.identity/use</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;true&quot;</span>
+<span class="w">  </span><span class="nt">annotations</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">azure.workload.identity/client-id</span><span class="p">:</span>
+</code></pre></div>
+
+<p><div class="callout callout-tip" markdown="1"><br />
+<p class="callout-title">Staging Server</p></p>
+<p>对于azureDNS，cert-manager定义了一个staging server用于前期测试，避免对于一个domain用尽cert的quota：</p>
+<p>参考：</p>
+<ul>
+<li>cert-manager教程：<a href="https://cert-manager.io/docs/tutorials/getting-started-aks-letsencrypt/#create-a-clusterissuer-for-lets-encrypt-staging">Create a ClusterIssuer for Let's Encrypt Staging</a></li>
+<li>letsencrypt教程：<a href="https://letsencrypt.org/docs/staging-environment/">Staging Environment</a></li>
+</ul>
+<p>流程如下：</p>
+<ul>
+<li>先在cluster issuer中配置连接到letsencrypt staging server</li>
+<li>创建出来的certificate是staging签发的证书，是insecure的</li>
+<li>web server先用这个insecure证书，测试流程都是通的。</li>
+<li>再在cluster issuer中配置连接到letsencrypt prod server，签发正式证书</li>
+</ul>
+</div>
+<h1 id="troubleshooting">Troubleshooting</h1>
+<ul>
+<li>本地虚机中有时候操作certificate时会报错：</li>
+</ul>
+<p><sub>~</sub>sh<br />
+  Error from server (InternalError): Internal error occurred: failed calling webhook "webhook.cert-manager.io": failed to call webhook: Post "https://cert-manager-webhook.cert-manager.svc:443/validate?timeout=30s": tls: failed to verify certificate: x509: certificate has expired or is not yet valid: current time 2024-12-23T02:30:04Z is after 2024-12-20T02:19:54Z<br />
+  ~~~</p>
+<p>删掉cert-manager-webhook-86b8dc6c77-hczkm这个pod重建就好了</p>
+<ul>
+<li>cert-manager-config中部署的certificate会自动帮你创建secrets，但是经历certificate重建之后，关联的secret并不会被删除，需要手动删除掉之后，会自动重建。</li>
+</ul>
+<h1 id="helm管理配置文件">helm管理配置文件</h1>
+<ul>
+<li>
+<p>cluster issuer、certificate等yaml文件都可以用helm去管理。</p>
+</li>
+<li>
+<p>创建cert-manager-config目录，下面放Chart.yaml和values.yaml</p>
+</li>
+</ul>
+<p><sub>~</sub>yaml<br />
+  tee Chart.yaml &lt;&lt;"EOF"<br />
+  apiVersion: v2<br />
+  name: commoninfra-cert-manager-config<br />
+  description: A Helm chart for cert manager configurations<br />
+  type: application<br />
+  version: 0.0.1<br />
+  appVersion: "0.0.1"<br />
+  EOF<br />
+  ~~~</p>
+<ul>
+<li>
+<p>创建template目录，里面放所有需要创建的yaml文件</p>
+</li>
+<li>
+<p>安装</p>
+</li>
+</ul>
+<p><sub>~</sub>sh<br />
+  helm upgrade -i commoninfra-cert-manager-config . --values ./values.yaml<br />
+  ~~~</p>
+    </div>
+  </article>
+  <aside class="toc">
+    <p class="toc-label">本页目录</p>
+    <ul>
+  <li><a href="#证书分类">证书分类</a></li>
+  <li><a href="#使用self-signed-certificate">使用Self-signed certificate</a><ul>
+  <li><a href="#创建self-signed-cluster-issuer">创建self-signed cluster issuer</a></li>
+  <li><a href="#创建certificate颁发给svc">创建Certificate颁发给svc</a></li>
+  <li><a href="#pod挂载certificate">pod挂载certificate</a></li>
+  <li><a href="#certificate颁发给ingress">Certificate颁发给ingress</a></li>
+</ul></li>
+  <li><a href="#使用letsencrypt-certificate">使用Letsencrypt certificate</a><ul>
+  <li><a href="#参考">参考</a></li>
+  <li><a href="#过期时间">过期时间</a></li>
+  <li><a href="#校验原理">校验原理</a></li>
+  <li><a href="#使用cloudflare作为dns-resolver">使用cloudflare作为dns resolver</a></li>
+  <li><a href="#使用azure-dns作为dns-resolver">使用azure dns作为dns resolver</a></li>
+</ul></li>
+</ul>
+  </aside>
+
+</div>
+
+</main>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>Learning Notes</span>
+    <a href="https://github.com/hangx969/learning-notes">GitHub</a>
+  </div>
+</footer>
+<script src="../../../static/search.js"></script>
+</body>
+</html>

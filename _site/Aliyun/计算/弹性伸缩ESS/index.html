@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>弹性伸缩ESS - Learning Notes</title>
+<link rel="stylesheet" href="../../../static/style.css">
+<link rel="stylesheet" href="../../../static/pygments.css">
+</head>
+<body data-root="../../../">
+<header class="site-header">
+  <div class="header-inner">
+    <a class="logo" href="../../../index.html"><span class="logo-mark"></span>LEARNING NOTES</a>
+    <div class="search">
+      <input id="search-input" type="search" placeholder="搜索笔记…" autocomplete="off" aria-label="搜索笔记">
+      <div id="search-results" hidden></div>
+    </div>
+  </div>
+  <nav class="topic-nav" aria-label="主题导航">
+    <div class="topic-nav-inner">
+      <a href="../../../AI/">AI</a>
+      <a href="../../../Aliyun/" class="active">Aliyun</a>
+      <a href="../../../Azure/">Azure</a>
+      <a href="../../../C%2B%2B/">C++</a>
+      <a href="../../../CloudComputing/">CloudComputing</a>
+      <a href="../../../Database/">Database</a>
+      <a href="../../../Docker-Kubernetes/">Docker-Kubernetes</a>
+      <a href="../../../GPU-DeepLearning/">GPU-DeepLearning</a>
+      <a href="../../../Git/">Git</a>
+      <a href="../../../Go/">Go</a>
+      <a href="../../../HPC/">HPC</a>
+      <a href="../../../IaC/">IaC</a>
+      <a href="../../../Linux-Shell/">Linux-Shell</a>
+      <a href="../../../Middlewares/">Middlewares</a>
+      <a href="../../../Networking/">Networking</a>
+      <a href="../../../OS/">OS</a>
+      <a href="../../../Python/">Python</a>
+      <a href="../../../SoftwareTesting/">SoftwareTesting</a>
+    </div>
+  </nav>
+</header>
+<main class="main">
+
+<div class="article-layout">
+
+  <aside class="sidebar">
+    <details class="sidebar-details">
+      <summary>Aliyun</summary>
+      <nav class="sidebar-nav">
+        <p class="sidebar-group">存储</p>
+        <ul>
+          <li><a href="../../../Aliyun/%E5%AD%98%E5%82%A8/%E5%AF%B9%E8%B1%A1%E5%AD%98%E5%82%A8OSS/">对象存储OSS</a></li>
+          <li><a href="../../../Aliyun/%E5%AD%98%E5%82%A8/%E6%95%B0%E6%8D%AE%E6%B9%96-HDFS-POSIX/">数据湖-HDFS-POSIX</a></li>
+          <li><a href="../../../Aliyun/%E5%AD%98%E5%82%A8/%E8%B7%A8%E5%9F%9F%E5%85%B1%E4%BA%ABCORS/">跨域共享CORS</a></li>
+        </ul>
+        <p class="sidebar-group">数据库</p>
+        <ul>
+          <li><a href="../../../Aliyun/%E6%95%B0%E6%8D%AE%E5%BA%93/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93RDS/">关系型数据库RDS</a></li>
+          <li><a href="../../../Aliyun/%E6%95%B0%E6%8D%AE%E5%BA%93/%E6%95%B0%E6%8D%AE%E4%BC%A0%E8%BE%93%E6%9C%8D%E5%8A%A1DTS/">数据传输服务DTS</a></li>
+        </ul>
+        <p class="sidebar-group">网络</p>
+        <ul>
+          <li><a href="../../../Aliyun/%E7%BD%91%E7%BB%9C/ACK%E7%BD%91%E7%BB%9C%E8%A7%84%E5%88%92%E4%B8%8E%E6%88%90%E6%9C%AC%E4%BC%98%E5%8C%96/">ACK 网络规划与成本优化</a></li>
+          <li><a href="../../../Aliyun/%E7%BD%91%E7%BB%9C/CEN-TR/">云企业网 CEN 与转发路由器 TR</a></li>
+          <li><a href="../../../Aliyun/%E7%BD%91%E7%BB%9C/DDoS%E9%AB%98%E9%98%B2/">DDoS 防护</a></li>
+          <li><a href="../../../Aliyun/%E7%BD%91%E7%BB%9C/DNS-CDN-SSL/">DNS、CDN 与 SSL 证书</a></li>
+          <li><a href="../../../Aliyun/%E7%BD%91%E7%BB%9C/VPC/">专有网络 VPC</a></li>
+          <li><a href="../../../Aliyun/%E7%BD%91%E7%BB%9C/WAF/">Web 应用防火墙 WAF</a></li>
+          <li><a href="../../../Aliyun/%E7%BD%91%E7%BB%9C/%E4%BA%91%E5%AE%89%E5%85%A8%E4%B8%AD%E5%BF%83-%E4%BA%91%E9%98%B2%E7%81%AB%E5%A2%99/">云安全中心与云防火墙</a></li>
+          <li><a href="../../../Aliyun/%E7%BD%91%E7%BB%9C/%E7%BD%91%E5%85%B3-VPN-%E4%B8%93%E7%BA%BF/">网关-VPN-专线</a></li>
+          <li><a href="../../../Aliyun/%E7%BD%91%E7%BB%9C/%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1SLB/">负载均衡 SLB</a></li>
+        </ul>
+        <p class="sidebar-group">计算</p>
+        <ul>
+          <li><a href="../../../Aliyun/%E8%AE%A1%E7%AE%97/ECS/">弹性计算服务ECS</a></li>
+          <li><a href="../../../Aliyun/%E8%AE%A1%E7%AE%97/%E4%B8%BB%E6%9C%BA%E8%BF%81%E7%A7%BB%E5%B7%A5%E5%85%B7SMC/">主机迁移工具SMC</a></li>
+          <li><a href="../../../Aliyun/%E8%AE%A1%E7%AE%97/%E4%BA%91%E7%9B%98-%E5%BF%AB%E7%85%A7-%E9%95%9C%E5%83%8F/">云盘、快照与镜像</a></li>
+          <li><a href="../../../Aliyun/%E8%AE%A1%E7%AE%97/%E5%BC%B9%E6%80%A7%E4%BC%B8%E7%BC%A9ESS/" class="current">弹性伸缩ESS</a></li>
+        </ul>
+        <p class="sidebar-group">资源管理</p>
+        <ul>
+          <li><a href="../../../Aliyun/%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/FinOps-%E4%BA%91%E6%88%90%E6%9C%AC%E4%BC%98%E5%8C%96%E5%AE%9E%E6%88%98/">FinOps - 云成本优化实战</a></li>
+          <li><a href="../../../Aliyun/%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/Landing%20Zone/">Landing Zone</a></li>
+        </ul>
+        <p class="sidebar-group">其他</p>
+        <ul>
+          <li><a href="../../../Aliyun/ACP%E8%80%83%E8%AF%95/">ACP云计算工程师考试笔记</a></li>
+        </ul>
+      </nav>
+    </details>
+  </aside>
+
+  <article class="article">
+    <nav class="breadcrumb">
+      <a href="../../../index.html">首页</a><span>/</span>
+      <a href="../../../Aliyun/">Aliyun</a><span>/</span><span>计算</span>
+    </nav>
+    <h1 class="article-title">弹性伸缩ESS</h1>
+    <p class="article-meta"><span>更新于 2026-04-16</span>
+      <a href="https://github.com/hangx969/learning-notes/blob/main/Aliyun/%E8%AE%A1%E7%AE%97/%E5%BC%B9%E6%80%A7%E4%BC%B8%E7%BC%A9ESS.md">查看源文件</a>
+    </p>
+    <div class="article-body">
+<h1 id="产品特性">产品特性</h1>
+<p><div class="callout callout-summary" markdown="1"><br />
+<p class="callout-title">ESS核心能力</p></p>
+<p><strong>扩容时:</strong><br />
+- 自动创建指定数量、指定类型的实例(<a class="wikilink" href="../../../Aliyun/%E8%AE%A1%E7%AE%97/ECS/">ECS</a>/ECI实例)<br />
+- 如果伸缩组关联了<a class="wikilink" href="../../../Aliyun/%E7%BD%91%E7%BB%9C/%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1SLB/">负载均衡</a>,自动为创建的ECS关联负载均衡<br />
+- 如果伸缩组关联了<a class="wikilink" href="../../../Aliyun/%E6%95%B0%E6%8D%AE%E5%BA%93/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93RDS/">RDS</a>,自动将创建的ECS实例IP加到RDS访问白名单中。</p>
+<p><strong>缩容时:</strong><br />
+- 自动删除实例、取消关联负载均衡,移除RDS白名单</p>
+</div>
+<hr />
+<h1 id="配置步骤">配置步骤</h1>
+<p>伸缩组 -- 实例来源 -- 伸缩规则 -- 触发任务</p>
+<hr />
+<h1 id="实例来源">实例来源</h1>
+<p>实例来源可以选择==实例启动模板==和==伸缩配置==两种。</p>
+<h2 id="启动模板">启动模板</h2>
+<ul>
+<li>用某个自定义<a class="wikilink" href="../../../Aliyun/%E8%AE%A1%E7%AE%97/%E4%BA%91%E7%9B%98-%E5%BF%AB%E7%85%A7-%E9%95%9C%E5%83%8F/">镜像</a>启动实例。</li>
+<li>创建伸缩组会指定VPC和VSW,如果启动模板也选择了VPC和VSW,则实际伸缩时会用伸缩组中指定的VPC和VSW,替换掉启动模板中的配置。</li>
+<li>参数不支持修改,但是支持创建新版本</li>
+</ul>
+<h2 id="伸缩配置">伸缩配置</h2>
+<p>两种模式:<br />
+- 根据已有实例,创建相同配置的实例出来。<br />
+- 从0到1创建。<br />
+- 参数可以修改但是不可追溯</p>
+<hr />
+<h1 id="伸缩组">伸缩组</h1>
+<p>定义对哪些<a class="wikilink" href="../../../Aliyun/%E8%AE%A1%E7%AE%97/ECS/">ECS</a>实例做扩缩容,定义实例最大最小数量,关联的<a class="wikilink" href="../../../Aliyun/%E7%BD%91%E7%BB%9C/%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1SLB/">负载均衡</a>实例、关联的<a class="wikilink" href="../../../Aliyun/%E6%95%B0%E6%8D%AE%E5%BA%93/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93RDS/">RDS</a>实例等。</p>
+<ul>
+<li><strong>最大实例数</strong></li>
+<li><strong>最小实例数</strong></li>
+<li><strong>期望实例数</strong>: https://help.aliyun.com/zh/auto-scaling/user-guide/expected-number-of-instances<ul>
+<li>在创建伸缩组的时候设置期望实例数,创建出来之后就会自动伸缩到这个数</li>
+<li>由于各种触发规则导致的扩缩容,也会自动改变期望实例数</li>
+<li>不设置期望实例数,伸缩活动失败时,需要手动重试;而且当伸缩组内存在执行中的伸缩活动时,不能执行新的伸缩活动。</li>
+<li>简单规则中设置增加2台,手动触发该规则,会发现期望实例数+2。手动执行简单规则就是通过增加期望实例数,系统自动检测期望实例数来实现的扩缩容。</li>
+</ul>
+</li>
+</ul>
+<h2 id="弹性伸缩策略">弹性伸缩策略</h2>
+<ul>
+<li><strong>优先级策略</strong>:在优先级高的可用区扩缩容。如果无法扩容,自动在下一优先级的可用区进行扩缩容</li>
+<li><strong>均衡分布策略</strong>:在多个可用区均衡分布ECS实例</li>
+<li><strong>成本优化策略</strong>:指定了多种规格的实例,优先创建vCPU单价最低的实例;优先移除vCPU单价最高的实例</li>
+</ul>
+<h2 id="实例移出策略">实例移出策略</h2>
+<p>可以选择优先移除最早创建或者最新创建的实例。</p>
+<p><div class="callout callout-important" markdown="1"><br />
+<p class="callout-title">手动添加 vs 自动创建的实例</p></p>
+<p>手动添加进伸缩组的实例,缩容时==不会被删除==,只会被移除出伸缩组;而自动扩容出来的实例,缩容时==会被释放掉==。</p>
+</div>
+<p><div class="callout callout-note" markdown="1"><br />
+<p class="callout-title">包年包月实例在弹性伸缩中的角色</p></p>
+<p>包年包月实例在弹性伸缩中的角色通常是 <mark>基础容量保障</mark>,用于非波动业务场景,而自动扩缩容主要针对按量付费或抢占式实例。其核心规则为:<br />
+1. <strong>永不自动释放</strong>,仅移出伸缩组。<br />
+2. <strong>优先保留</strong>,缩容时最后被移出。<br />
+3. <strong>不参与成本策略排序</strong>,但需计入实例数限制。</p>
+<p>建议将包年包月实例用于稳定负载,而通过伸缩组管理波动流量的弹性实例,以优化成本与资源利用率。</p>
+</div>
+<hr />
+<h1 id="弹性伸缩规则">弹性伸缩规则</h1>
+<h2 id="简单规则">简单规则</h2>
+<p>直接定义增加减少多少台</p>
+<h2 id="步进规则">步进规则</h2>
+<p>基于报警任务(系统监控或者自定义监控):触发某个报警任务后,增加减少多少台</p>
+<h2 id="目标追踪规则">目标追踪规则</h2>
+<p>e.g. 持续监测CPU使用率,自动伸缩,使得CPU使用率一直保持在==50%==左右</p>
+<p><div class="callout callout-tip" markdown="1"><br />
+<p class="callout-title">目标追踪规则优于简单规则</p></p>
+<p>相比简单规则,具有以下优点:<br />
+- <strong>数据稳定</strong>:支持设置实例预热时间,新实例加入伸缩组后,将首先进入实例预热阶段,在此期间不会向云监控上报监控数据,也不作为扩缩容过程的基数实例。预热阶段能够有效防止增加过多实例,达到动态稳定扩缩容效果。<br />
+- <strong>实例数不回调</strong>:弹性伸缩会及时自动计算所需的实例数量并触发扩缩容,比较精准地将云监控指标维持在目标值附近。<br />
+- <strong>实例稳定性高</strong>:具有动态稳定区间,根据伸缩组的历史监控数据计算目标值稳定的区间。</p>
+</div>
+<p>可以禁用缩容,这种情况下目标追踪只扩容,可以创建其他规则用来缩容。</p>
+<h2 id="预测规则">预测规则</h2>
+<p>机器学习预测未来监控指标值。预测结果每天更新一次。<br />
+这种监控不准。</p>
+<hr />
+<h1 id="触发任务">触发任务</h1>
+<h2 id="手动执行">手动执行</h2>
+<h2 id="定时任务">定时任务</h2>
+<p>cronjob类型来自动伸缩</p>
+<h2 id="报警任务">报警任务</h2>
+<p>是基于云监控根据CPU使用率等指标进行弹性伸缩。</p>
+<hr />
+<h1 id="弹性自愈">弹性自愈</h1>
+<p>弹性伸缩提供健康检查功能,自动监控伸缩组内<a class="wikilink" href="../../../Aliyun/%E8%AE%A1%E7%AE%97/ECS/">ECS</a>实例的健康状态。监测到某台实例不健康(即未处于运行中状态),<mark>自动释放不健康实例并创建新的实例</mark>。</p>
+<hr />
+<h1 id="生命周期挂钩">生命周期挂钩</h1>
+<p>挂起实例,可以在挂起期间对实例进行自定义操作。比如在创建ECS实例之后延迟一段时间,测试服务正常后再挂载到负载均衡上接受流量。</p>
+<p>添加了生命周期挂钩之后:<br />
+- 扩容出新实例的时候,会出现==Pending:Wait==状态,在这期间进行预装软件或其他自定义操作。<br />
+- 缩容的时候,出现==Removing:Wait==状态。</p>
+<p><div class="callout callout-example" markdown="1"><br />
+<p class="callout-title">适合配置生命周期挂钩的场景</p></p>
+<ul>
+<li>弹性扩容的实例不适合立即为客户端提供服务,比如要加入云数据库,绑定辅助弹性网卡等。或者应用程序需要一定的启动时间</li>
+<li>缩容的实例不适合立即被移除,比如需要备份数据,拷贝日志,处理未完成的请求等。</li>
+</ul>
+</div>
+<hr />
+<h1 id="最佳实践">最佳实践</h1>
+<h3 id="多种模式混合配置">多种模式混合配置</h3>
+<p><div class="callout callout-warning" markdown="1"><br />
+<p class="callout-title">实例生命周期托管</p></p>
+<p>注意:如果选中<strong>将实例的生命周期托管给伸缩组</strong>,在弹性收缩活动中,将该ECS实例移出伸缩组时也会释放ECS实例。支持将包年包月实例手动添加至伸缩组,但不支持伸缩组托管包年包月实例的生命周期。<strong>(ACK包年包月节点池scale out之后,节点会变成游离状态)</strong></p>
+</div>
+<h3 id="注意事项">注意事项</h3>
+<ul>
+<li>部署在伸缩组内的ECS实例,需要时==无状态==的,不要存储持久化数据。应用数据、日志存在单独的地方</li>
+<li>如果伸缩组关联的<a class="wikilink" href="../../../Aliyun/%E6%95%B0%E6%8D%AE%E5%BA%93/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93RDS/">RDS</a>实例、ALB/CLB服务器组被删除,那么伸缩组自动解除与该资源的关联;但是伸缩活动不会因为解除关联而停止。</li>
+<li>保证ECS级别的事务完整性:即只进行ECS实例级回滚,而不是伸缩活动回滚。比如,创建了20台ECS实例,只有19台成功加入负载均衡,不成功的一台实例会进行自动释放,而不是所有20台都释放掉。</li>
+<li>伸缩活动==无法中断==,比如扩容5台,在扩容到第三台的时候无法强行终止。</li>
+</ul>
+<h4 id="冷却时间">冷却时间</h4>
+<p><div class="callout callout-important" markdown="1"><br />
+<p class="callout-title">冷却时间规则</p></p>
+<ul>
+<li>每个伸缩组的最后一个实例成功加入或移出伸缩组时,整个伸缩组的冷却时间才开始计时</li>
+<li>同时在伸缩组和伸缩规则中设置了冷却时间,<mark>优先使用伸缩规则中的冷却时间</mark></li>
+<li>在冷却时间内,只有==云监控报警任务==类型的伸缩活动请求会被拒绝,其他类型的触发任务(手动、定时等)可以绕过冷却时间立即执行伸缩活动。</li>
+</ul>
+</div>
+<h3 id="弹性强度">弹性强度</h3>
+<p>创建完伸缩组,提示弹性强度较差,因为这些方面:<br />
+- 交换机要选择多个可用区的交换机<br />
+- 启动模板的配置,要选择多个库存充足的实例规格<br />
+- 选择可用区内库存充足的实例规格</p>
+    </div>
+  </article>
+  <aside class="toc">
+    <p class="toc-label">本页目录</p>
+    <ul>
+  <li><a href="#启动模板">启动模板</a></li>
+  <li><a href="#伸缩配置">伸缩配置</a></li>
+  <li><a href="#弹性伸缩策略">弹性伸缩策略</a></li>
+  <li><a href="#实例移出策略">实例移出策略</a></li>
+  <li><a href="#简单规则">简单规则</a></li>
+  <li><a href="#步进规则">步进规则</a></li>
+  <li><a href="#目标追踪规则">目标追踪规则</a></li>
+  <li><a href="#预测规则">预测规则</a></li>
+  <li><a href="#手动执行">手动执行</a></li>
+  <li><a href="#定时任务">定时任务</a></li>
+  <li><a href="#报警任务">报警任务</a><ul>
+  <li><a href="#多种模式混合配置">多种模式混合配置</a></li>
+  <li><a href="#注意事项">注意事项</a></li>
+  <li><a href="#弹性强度">弹性强度</a></li>
+</ul></li>
+</ul>
+  </aside>
+
+</div>
+
+</main>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>Learning Notes</span>
+    <a href="https://github.com/hangx969/learning-notes">GitHub</a>
+  </div>
+</footer>
+<script src="../../../static/search.js"></script>
+</body>
+</html>

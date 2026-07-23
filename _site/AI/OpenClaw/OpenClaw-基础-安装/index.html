@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OpenClaw 基础与安装 - Learning Notes</title>
+<link rel="stylesheet" href="../../../static/style.css">
+<link rel="stylesheet" href="../../../static/pygments.css">
+</head>
+<body data-root="../../../">
+<header class="site-header">
+  <div class="header-inner">
+    <a class="logo" href="../../../index.html"><span class="logo-mark"></span>LEARNING NOTES</a>
+    <div class="search">
+      <input id="search-input" type="search" placeholder="搜索笔记…" autocomplete="off" aria-label="搜索笔记">
+      <div id="search-results" hidden></div>
+    </div>
+  </div>
+  <nav class="topic-nav" aria-label="主题导航">
+    <div class="topic-nav-inner">
+      <a href="../../../AI/" class="active">AI</a>
+      <a href="../../../Aliyun/">Aliyun</a>
+      <a href="../../../Azure/">Azure</a>
+      <a href="../../../C%2B%2B/">C++</a>
+      <a href="../../../CloudComputing/">CloudComputing</a>
+      <a href="../../../Database/">Database</a>
+      <a href="../../../Docker-Kubernetes/">Docker-Kubernetes</a>
+      <a href="../../../GPU-DeepLearning/">GPU-DeepLearning</a>
+      <a href="../../../Git/">Git</a>
+      <a href="../../../Go/">Go</a>
+      <a href="../../../HPC/">HPC</a>
+      <a href="../../../IaC/">IaC</a>
+      <a href="../../../Linux-Shell/">Linux-Shell</a>
+      <a href="../../../Middlewares/">Middlewares</a>
+      <a href="../../../Networking/">Networking</a>
+      <a href="../../../OS/">OS</a>
+      <a href="../../../Python/">Python</a>
+      <a href="../../../SoftwareTesting/">SoftwareTesting</a>
+    </div>
+  </nav>
+</header>
+<main class="main">
+
+<div class="article-layout">
+
+  <aside class="sidebar">
+    <details class="sidebar-details">
+      <summary>AI</summary>
+      <nav class="sidebar-nav">
+        <p class="sidebar-group">AI-视觉</p>
+        <ul>
+          <li><a href="../../../AI/AI-%E8%A7%86%E8%A7%89/AI-Animation-Skill-%E7%A7%91%E6%99%AE%E5%8A%A8%E7%94%BB/">AI-Animation-Skill - HTML科普动画生成</a></li>
+          <li><a href="../../../AI/AI-%E8%A7%86%E8%A7%89/AI%E5%81%9APPT-ppt-master/">AI做PPT - ppt-master</a></li>
+          <li><a href="../../../AI/AI-%E8%A7%86%E8%A7%89/Markdown-Viewer-Skills-Markdown%E4%B8%AD%E7%9B%B4%E6%8E%A5%E7%94%BB%E5%9B%BE/">Markdown Viewer Skills：让 AI 写文档时顺手把图也画了</a></li>
+          <li><a href="../../../AI/AI-%E8%A7%86%E8%A7%89/effective-html-AI%E7%9B%B4%E5%87%BAHTML%E5%B7%A5%E5%85%B7%E5%AE%9E%E6%B5%8B/">effective-html：让 AI 直接输出 HTML 而非 Markdown</a></li>
+          <li><a href="../../../AI/AI-%E8%A7%86%E8%A7%89/html-anything-AI%E7%94%9F%E6%88%90HTML%E5%85%A8%E5%9C%BA%E6%99%AF%E5%B7%A5%E5%85%B7/">html-anything：AI 生成 HTML 全场景工具</a></li>
+          <li><a href="../../../AI/AI-%E8%A7%86%E8%A7%89/html-ppt-skill-%E5%AE%9E%E6%B5%8B%E6%8C%87%E5%8D%97/">html-ppt-skill - HTML幻灯片生成</a></li>
+          <li><a href="../../../AI/AI-%E8%A7%86%E8%A7%89/%E8%A7%86%E8%A7%89%E8%AE%BE%E8%AE%A1%E6%8F%90%E7%A4%BA%E8%AF%8D/">视觉设计提示词</a></li>
+        </ul>
+        <p class="sidebar-group">AIOps</p>
+        <ul>
+          <li><a href="../../../AI/AIOps/AIOps%E5%AE%9E%E6%88%98-Golang%E6%89%8B%E6%90%93K8s%E6%99%BA%E8%83%BD%E8%BF%90%E7%BB%B4%E5%B7%A5%E5%85%B7%E9%93%BE/">AIOps 实战：Golang 手搓 K8s 智能运维工具链</a></li>
+          <li><a href="../../../AI/AIOps/Kubernetes-MCP-Server-Dify%E6%99%BA%E8%83%BD%E8%BF%90%E7%BB%B4/">AI 接管 Kubernetes 运维——Kubernetes MCP Server + Dify</a></li>
+        </ul>
+        <p class="sidebar-group">ClaudeCode</p>
+        <ul>
+          <li><a href="../../../AI/ClaudeCode/CLAUDE.md%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5-12%E6%9D%A1%E8%A7%84%E5%88%99%E6%A8%A1%E6%9D%BF/">Mnilax：CLAUDE.md 规则从 Karpathy 的 4 条增加到 12 条，错误率从 41% 降到 3%</a></li>
+          <li><a href="../../../AI/ClaudeCode/CLAUDE.md%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5-21%E6%9D%A1%E6%8C%87%E4%BB%A4%E6%B8%85%E5%8D%95/">Mayank Agarwal：21 条 CLAUDE.md 指令，让 Claude 真正懂你</a></li>
+          <li><a href="../../../AI/ClaudeCode/CLAUDE.md%E7%BB%B4%E6%8A%A4%E5%B7%A5%E7%A8%8B-%E5%9B%9B%E5%B1%82%E5%8A%A0%E8%BD%BD%E4%B8%8E%E6%8C%87%E4%BB%A4%E9%A2%84%E7%AE%97/">CLAUDE.md 维护工程：四层加载与指令预算</a></li>
+          <li><a href="../../../AI/ClaudeCode/Claude%20Code%20%E5%9F%BA%E7%A1%80%E6%8C%87%E5%8D%97/">Claude Code 使用指南</a></li>
+          <li><a href="../../../AI/ClaudeCode/Claude%20Code%20%E6%89%A9%E5%B1%95%E4%BD%93%E7%B3%BB/">Claude Code 扩展体系</a></li>
+          <li><a href="../../../AI/ClaudeCode/Claude-Code-Harness%E5%AE%9E%E6%88%98-%E6%9C%80%E5%B0%8F%E5%8F%AF%E7%94%A8%E7%B3%BB%E7%BB%9F/">Harness 实战：从零搭建最小可用的 Harness 系统</a></li>
+          <li><a href="../../../AI/ClaudeCode/Claude-Code%E4%B8%BA%E4%BB%80%E4%B9%88%E7%94%A8grep%E4%B8%8D%E7%94%A8RAG/">为什么 Claude Code 不用 RAG 检索代码，而是 grep？</a></li>
+          <li><a href="../../../AI/ClaudeCode/Claude-Fable-5-system-prompt/">Claude Fable 5 — System Prompt</a></li>
+          <li><a href="../../../AI/ClaudeCode/Claude-Skill%E8%B4%A8%E6%A3%80%E5%B7%A5%E5%85%B7-SkillCraft/">Claude Skill 质检工具 Skill Craft</a></li>
+          <li><a href="../../../AI/ClaudeCode/Git-Worktree-AI%E5%BC%80%E5%8F%91%E5%AE%9E%E8%B7%B5%E6%8C%87%E5%8D%97/">Vibe Coding 时代的 Git Worktree 实践指南</a></li>
+          <li><a href="../../../AI/ClaudeCode/%E5%A4%9A%E6%99%BA%E8%83%BD%E4%BD%93%E5%8D%8F%E4%BD%9C-Subagents%E4%B8%8EAgent-Teams/">Claude Code 多智能体协作：Subagents 与 Agent Teams</a></li>
+        </ul>
+        <p class="sidebar-group">Codex</p>
+        <ul>
+          <li><a href="../../../AI/Codex/Codex-config-toml-%E5%85%A8%E9%87%8F%E9%85%8D%E7%BD%AE%E5%8F%82%E8%80%83/">OpenAI Codex config.toml 全量配置参考</a></li>
+          <li><a href="../../../AI/Codex/Codex-%E7%9C%81Token%E5%B7%A5%E5%85%B7%E5%AE%9E%E6%B5%8B-Ponytail-Headroom-RTK/">Codex 省 Token 工具实测：Ponytail、Headroom、RTK-AI</a></li>
+        </ul>
+        <p class="sidebar-group">GithubCopilot</p>
+        <ul>
+          <li><a href="../../../AI/GithubCopilot/Copilot%20CLI/">GitHub Copilot CLI</a></li>
+        </ul>
+        <p class="sidebar-group">Hermes-agent</p>
+        <ul>
+          <li><a href="../../../AI/Hermes-agent/Hermes-Agent-%E6%BB%A1%E9%85%8D%E6%8C%87%E5%8D%97%E4%B8%8E%E7%94%9F%E6%80%81%E8%B5%84%E6%BA%90/">Hermes Agent 满配指南与生态资源</a></li>
+          <li><a href="../../../AI/Hermes-agent/Hermes-Curator-Skill%E8%86%A8%E8%83%80%E6%B2%BB%E7%90%86/">Skill 太多导致上下文膨胀怎么办？来自 Hermes Agent 的实践</a></li>
+          <li><a href="../../../AI/Hermes-agent/Hermes%E4%B8%8EOpenClaw%E5%AF%B9%E6%AF%94%E5%8F%8A%E9%A3%9E%E4%B9%A6%E6%8E%A5%E5%85%A5%E6%8C%87%E5%8D%97/">Hermes Agent全解析：与OpenClaw对比及飞书接入指南</a></li>
+          <li><a href="../../../AI/Hermes-agent/Ubuntu%2025.10%20%E5%AE%89%E8%A3%85%E4%B8%8E%E4%BD%BF%E7%94%A8%20Hermes%20Agent%20%E6%8C%87%E5%8D%97/">Ubuntu 25.10 安装与使用 Hermes Agent 指南</a></li>
+        </ul>
+        <p class="sidebar-group">Obsidian</p>
+        <ul>
+          <li><a href="../../../AI/Obsidian/Obsidian-Vault%E6%A8%A1%E6%9D%BF%E5%BA%93%E5%90%88%E9%9B%86-48%E4%B8%AA%E5%AE%9D%E8%97%8Fvault/">Obsidian Vault 模板库合集：48 个 GitHub 宝藏 vault</a></li>
+          <li><a href="../../../AI/Obsidian/Obsidian%E5%8F%AF%E8%A7%86%E5%8C%96Skills-Excalidraw-Mermaid-Canvas/">Obsidian 可视化 Skills — Excalidraw / Mermaid / Canvas</a></li>
+          <li><a href="../../../AI/Obsidian/obsidian-claude-code-AI%E7%9F%A5%E8%AF%86%E5%BA%93%E5%AE%8C%E6%95%B4%E6%8C%87%E5%8D%97/">Obsidian + Claude Code：AI 驱动的知识库完整指南</a></li>
+        </ul>
+        <p class="sidebar-group">OpenClaw</p>
+        <ul>
+          <li><a href="../../../AI/OpenClaw/CoPaw/">CoPaw</a></li>
+          <li><a href="../../../AI/OpenClaw/OpenClaw-Channels/">OpenClaw Channel 配置</a></li>
+          <li><a href="../../../AI/OpenClaw/OpenClaw-K8s%E6%99%BA%E8%83%BD%E8%BF%90%E7%BB%B4%E5%AE%9E%E6%88%98/">用 OpenClaw 智能体网关接管 K8s 日常运维：从只读巡检到低风险变更</a></li>
+          <li><a href="../../../AI/OpenClaw/OpenClaw-Skills-Plugins/">OpenClaw Skills 与插件</a></li>
+          <li><a href="../../../AI/OpenClaw/OpenClaw-Workspace-%E8%BF%90%E7%BB%B4/">OpenClaw Workspace 运维实战</a></li>
+          <li><a href="../../../AI/OpenClaw/OpenClaw-%E5%9F%BA%E7%A1%80-%E5%AE%89%E8%A3%85/" class="current">OpenClaw 基础与安装</a></li>
+          <li><a href="../../../AI/OpenClaw/Openclaw-AIOps/">OpenClaw AIOps</a></li>
+          <li><a href="../../../AI/OpenClaw/Openclaw-%E5%A4%9A%E6%99%BA%E8%83%BD%E4%BD%93/">OpenClaw 多智能体</a></li>
+          <li><a href="../../../AI/OpenClaw/Ubuntu-2510-Setup-Guide/">Ubuntu 25.10 (Questing) 初始化配置指南</a></li>
+          <li><a href="../../../AI/OpenClaw/%E9%A3%9E%E4%B9%A6CLI%E7%94%BB%E6%9D%BF-%E4%B8%80%E5%8F%A5%E8%AF%9D%E7%94%9F%E6%88%90%E6%9E%B6%E6%9E%84%E5%9B%BE/">飞书 CLI 画板：一句话生成架构图</a></li>
+        </ul>
+        <p class="sidebar-group">代码知识图谱</p>
+        <ul>
+          <li><a href="../../../AI/%E4%BB%A3%E7%A0%81%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/CodeGraph-%E4%BB%A3%E7%A0%81%E8%AF%AD%E4%B9%89%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/">CodeGraph：给 Claude Code 先画一张代码地图，工具调用砍掉 92%</a></li>
+          <li><a href="../../../AI/%E4%BB%A3%E7%A0%81%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/Graphify-%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1%E5%B7%A5%E5%85%B7/">Graphify：软件工程知识图谱工具</a></li>
+          <li><a href="../../../AI/%E4%BB%A3%E7%A0%81%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/Understand-Anything-%E4%BB%A3%E7%A0%81%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1%E5%8F%AF%E8%A7%86%E5%8C%96/">Understand-Anything：AI 代码知识图谱可视化工具</a></li>
+          <li><a href="../../../AI/%E4%BB%A3%E7%A0%81%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/code-review-graph-%E6%9C%AC%E5%9C%B0%E4%BB%A3%E7%A0%81%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/">开源 Claude Code 本地代码知识图谱：code-review-graph 完整上手攻略</a></li>
+          <li><a href="../../../AI/%E4%BB%A3%E7%A0%81%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/shiji-kb-AI%E5%8F%B2%E8%AE%B0%E7%9F%A5%E8%AF%86%E5%BA%93%E4%B8%8E%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1%E6%9E%84%E9%80%A0%E6%96%B9%E6%B3%95%E8%AE%BA/">shiji-kb：AI 史记知识库与可复用知识图谱构造方法论</a></li>
+        </ul>
+        <p class="sidebar-group">行业动态</p>
+        <ul>
+          <li><a href="../../../AI/%E8%A1%8C%E4%B8%9A%E5%8A%A8%E6%80%81/AI%E6%97%B6%E4%BB%A3%E7%9A%84Git%E7%89%88%E6%9C%AC%E7%AE%A1%E7%90%86%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/">AI 时代的 Git 版本管理最佳实践</a></li>
+          <li><a href="../../../AI/%E8%A1%8C%E4%B8%9A%E5%8A%A8%E6%80%81/Anthropic%E5%B7%A5%E7%A8%8B%E5%B8%88%E5%8A%9B%E6%8E%A8HTML%E5%8F%96%E4%BB%A3Markdown-Karpathy%E9%99%84%E8%AE%AE/">Anthropic 工程师力推 HTML 取代 Markdown —— Karpathy 附议</a></li>
+          <li><a href="../../../AI/%E8%A1%8C%E4%B8%9A%E5%8A%A8%E6%80%81/Claude-Code%E5%88%9B%E5%A7%8B%E4%BA%BA%E7%BA%A2%E6%9D%89%E5%A4%A7%E4%BC%9A%E4%B8%83%E4%B8%AA%E5%88%A4%E6%96%AD/">Claude Code 创始人在红杉大会上的 7 个重要判断</a></li>
+          <li><a href="../../../AI/%E8%A1%8C%E4%B8%9A%E5%8A%A8%E6%80%81/Loop-Engineering-%E4%BB%8EPrompt%E5%88%B0%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%81%E6%B0%B4%E7%BA%BF/">Loop Engineering：从 Prompt 到自动化流水线</a></li>
+          <li><a href="../../../AI/%E8%A1%8C%E4%B8%9A%E5%8A%A8%E6%80%81/OpenCodeReview-%E9%98%BF%E9%87%8CAI%E4%BB%A3%E7%A0%81%E5%AE%A1%E6%9F%A5%E5%B7%A5%E7%A8%8B%E5%8C%96/">OpenCodeReview：阿里开源的 AI 代码审查工程化工具</a></li>
+          <li><a href="../../../AI/%E8%A1%8C%E4%B8%9A%E5%8A%A8%E6%80%81/TypeScript-vs-Python-AI-Agent%E6%97%B6%E4%BB%A3%E7%9A%84%E8%AF%AD%E8%A8%80%E4%B9%8B%E4%BA%89/">为什么 AI Agent 时代，TypeScript 正在抢走 Python 的主场？</a></li>
+        </ul>
+        <p class="sidebar-group">其他</p>
+        <ul>
+          <li><a href="../../../AI/HarnessKit/">HarnessKit — AI 编码智能体统一管理工具</a></li>
+          <li><a href="../../../AI/%E6%8F%90%E7%A4%BA%E8%AF%8D/">提示词</a></li>
+        </ul>
+      </nav>
+    </details>
+  </aside>
+
+  <article class="article">
+    <nav class="breadcrumb">
+      <a href="../../../index.html">首页</a><span>/</span>
+      <a href="../../../AI/">AI</a><span>/</span><span>OpenClaw</span>
+    </nav>
+    <h1 class="article-title">OpenClaw 基础与安装</h1>
+    <p class="article-meta"><span>更新于 2026-04-16</span>
+      <a href="https://github.com/hangx969/learning-notes/blob/main/AI/OpenClaw/OpenClaw-%E5%9F%BA%E7%A1%80-%E5%AE%89%E8%A3%85.md">查看源文件</a>
+    </p>
+    <div class="article-body">
+<h1 id="绪论">绪论</h1>
+<h2 id="openclaw是什么">OpenClaw是什么</h2>
+<p>OpenClaw是一个由大模型驱动的通用AI Agent平台。前身为Clawbot、Moltbot。</p>
+<p>OpenClaw和传统对话性AI不同，不仅能理解自然语言指令，还能主动执行任务，比如操作电脑、管理文件、浏览网页、调用API，甚至操作鼠标键盘。同时可以添加Skills扩展功能使其进化。</p>
+<h2 id="应用场景">应用场景</h2>
+<ul>
+<li>智慧办公：PPT生成、Excel处理、邮件处理、简历筛选、会议处理</li>
+<li>IT行业：代码开发、故障处理、业务巡检、跨机操作、AIOps</li>
+<li>自媒体：素材收集、资讯聚合、视频剪辑、合规检查、内容分发</li>
+</ul>
+<h2 id="架构分层">架构分层</h2>
+<ul>
+<li><strong>入口层</strong></li>
+<li>消息渠道：微信、钉钉、飞书</li>
+<li>客户端：CLI、WebUI、WebSocket</li>
+<li>移动端：安卓、iOS 的 App 等</li>
+<li><strong>Gateway 网关层</strong></li>
+<li>WebSocket 维护</li>
+<li>身份认证</li>
+<li>会话绑定</li>
+<li>消息处理</li>
+<li><strong>大脑 AgentRuntime</strong></li>
+<li>上下文组装</li>
+<li>模型推理</li>
+<li>工具 Skills 调度</li>
+<li>记忆系统</li>
+<li><strong>原子操作</strong></li>
+<li>Shell / 代码</li>
+<li>浏览器自动化</li>
+<li>文件操作</li>
+<li>接口调用</li>
+<li><strong>持久化</strong></li>
+<li>对话日志</li>
+<li>MEMORY</li>
+<li>向量数据</li>
+<li>临时文件</li>
+<li><strong>响应</strong></li>
+<li>响应至入口</li>
+</ul>
+<h2 id="官网">官网</h2>
+<ul>
+<li><a href="https://docs.openclaw.ai/">OpenClaw 官方文档</a></li>
+<li><a href="https://github.com/openclaw/openclaw">OpenClaw GitHub</a></li>
+<li><a href="https://docs.openclaw.ai/zh-CN/install">安装指南</a></li>
+</ul>
+<hr />
+<h1 id="大模型api准备">大模型API准备</h1>
+<p>OpenClaw 是需要接入大模型 API 的，如果选择免费版的大模型 API，会面临限速限流问题。收费的会好一些。</p>
+<h2 id="魔塔api注册使用">魔塔API注册使用</h2>
+<p>由于 openclaw 需要接入模型，可以先临时选择魔塔的免费 API（每日免费调用 2000 次）。</p>
+<ul>
+<li>首先访问 <a href="https://www.modelscope.cn/models">魔塔模型库</a></li>
+<li>注册登录</li>
+<li>新建一个长期有效的token：个人设置-访问控制-新建访问令牌</li>
+<li>选择模型库--&gt;支持体验--&gt;推理 API</li>
+<li>选择一个模型 - 查看代码实例 - api key选择刚创建的长期有效的那个 - 拿到base url和api key</li>
+</ul>
+<h2 id="deepseek-api准备">Deepseek API准备</h2>
+<ul>
+<li><a href="https://platform.deepseek.com/">Deepseek 平台</a> 创建账户</li>
+<li>创建长期有效的API key，复制保存到其他地方</li>
+<li>实名认证并充值（20RMB就够用实验了）</li>
+<li>获取 base url：<a href="https://api-docs.deepseek.com/zh-cn/">Deepseek API 文档</a></li>
+<li>获取 model id：<code>deepseek-chat</code></li>
+</ul>
+<hr />
+<h1 id="windows安装openclaw">Windows安装OpenClaw</h1>
+<h2 id="nodejs安装">Nodejs安装</h2>
+<ul>
+<li>需要 &gt;22 版本。安装包下载地址：<a href="https://nodejs.org/en/download">Node.js Downloads</a></li>
+<li>安装，保持默认配置即可</li>
+<li>配置国内阿里云npm仓库:</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="n">npm</span> <span class="n">-v</span>
+<span class="n">npm</span> <span class="n">config</span> <span class="n">get</span> <span class="n">registry</span>
+<span class="n">npm</span> <span class="n">config</span> <span class="nb">set </span><span class="n">registry</span> <span class="n">https</span><span class="p">://</span><span class="n">registry</span><span class="p">.</span><span class="n">npmmirror</span><span class="p">.</span><span class="n">com</span><span class="p">/</span>
+<span class="n">npm</span> <span class="n">config</span> <span class="n">get</span> <span class="n">registry</span>
+</code></pre></div>
+
+<h2 id="python安装">Python安装</h2>
+<ul>
+<li>安装包下载地址：<a href="https://www.python.org/downloads/windows/">Python for Windows</a></li>
+<li>配置国内阿里云pip源：</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="n">pip</span> <span class="n">config</span> <span class="nb">set </span><span class="n">global</span><span class="p">.</span><span class="n">index-url</span> <span class="n">https</span><span class="p">://</span><span class="n">mirrors</span><span class="p">.</span><span class="n">aliyun</span><span class="p">.</span><span class="n">com</span><span class="p">/</span><span class="n">pypi</span><span class="p">/</span><span class="n">simple</span><span class="p">/</span>
+</code></pre></div>
+
+<h2 id="openclaw安装">OpenClaw安装</h2>
+<p>官网上有一键安装脚本，但是国内网络环境大概率会遇到timeout。所以用我们配置好国内源的npm来安装：<a href="https://docs.openclaw.ai/zh-CN#%E5%BF%AB%E9%80%9F%E5%BC%80%E5%A7%8B">快速开始</a></p>
+<p>用管理员打开powershell：</p>
+<div class="highlight"><pre><span></span><code>npm<span class="w"> </span>install<span class="w"> </span>-g<span class="w"> </span>openclaw@latest
+<span class="c1"># 指定版本（看github release上的tag值）</span>
+npm<span class="w"> </span>install<span class="w"> </span>-g<span class="w"> </span>openclaw@v2026.3.2
+</code></pre></div>
+
+<p>由于要安装几百个依赖，所以还是需要等待一段时间。</p>
+<p><div class="callout callout-warning" markdown="1"><br />
+<p class="callout-title">Docker/K8s 安装注意</p></p>
+<p>也可以用 Docker/K8s 安装，但是由于 OpenClaw 的很多组件是需要数据持久化的，如果没有配置正确存储的话，重启容器/Pod，数据就丢失了。</p>
+</div>
+<h2 id="openclaw引导配置">OpenClaw引导配置</h2>
+<div class="highlight"><pre><span></span><code>openclaw<span class="w"> </span>onboard<span class="w"> </span>
+<span class="c1"># 需要做成守护进程就加参数 --install-daemon</span>
+</code></pre></div>
+
+<p>以魔塔免费API为例：<br />
+- onboarding mode选quick start<br />
+- model选择custom provider<br />
+- 填入base url（从魔塔获取的url）<br />
+- 填入api key<br />
+- 接口协议选OpenAI<br />
+- 填入模型ID（也可以从示例代码中找到）：deepseek-ai/DeepSeek-V3.2<br />
+- 由于网络问题，先跳过Channel、Skills、Hooks配置（选Skip for now，按空格+回车选中选项）<br />
+- hatch your bot选择Open the Web UI<br />
+- 引导完成后会自动启动Gateway并且打开浏览器。初次访问会显示unauthorized。<br />
+- 配置gateway token：<br />
+    - gateway的token也是明文保存在openclaw.json文件下，gateway.token字段下。<br />
+    - 填进去，连接，看到状态正常即可。</p>
+<hr />
+<h1 id="linux安装openclaw">Linux安装OpenClaw</h1>
+<h2 id="安装nodejs">安装nodejs</h2>
+<div class="highlight"><pre><span></span><code><span class="c1"># RPM版</span>
+curl<span class="w"> </span>-fsSL<span class="w"> </span>https://rpm.nodesource.com/setup_24.x<span class="w"> </span><span class="p">|</span><span class="w"> </span>sudo<span class="w"> </span>bash<span class="w"> </span>-
+dnf<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>nodejs
+
+<span class="c1"># DEB版</span>
+<span class="c1"># 安装 nvm（如果还没装）</span>
+curl<span class="w"> </span>-o-<span class="w"> </span>https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh<span class="w"> </span><span class="p">|</span><span class="w"> </span>bash
+<span class="nb">source</span><span class="w"> </span>~/.bashrc
+
+<span class="c1"># 安装并使用 Node 24（openclaw 推荐）</span>
+nvm<span class="w"> </span>install<span class="w"> </span><span class="m">24</span>
+nvm<span class="w"> </span>use<span class="w"> </span><span class="m">24</span>
+nvm<span class="w"> </span><span class="nb">alias</span><span class="w"> </span>default<span class="w"> </span><span class="m">24</span>
+
+<span class="c1"># 验证</span>
+npm<span class="w"> </span>-v
+node<span class="w"> </span>-v
+
+<span class="c1"># 配置国内源</span>
+npm<span class="w"> </span>config<span class="w"> </span>get<span class="w"> </span>registry
+npm<span class="w"> </span>config<span class="w"> </span><span class="nb">set</span><span class="w"> </span>registry<span class="w"> </span>https://registry.npmmirror.com/
+npm<span class="w"> </span>config<span class="w"> </span>get<span class="w"> </span>registry
+</code></pre></div>
+
+<h2 id="安装python">安装python</h2>
+<p>Linux自带python，直接配置国内源即可：</p>
+<div class="highlight"><pre><span></span><code>apt<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>pip
+pip<span class="w"> </span>config<span class="w"> </span><span class="nb">set</span><span class="w"> </span>global.index-url<span class="w"> </span>https://mirrors.aliyun.com/pypi/simple/
+</code></pre></div>
+
+<h2 id="安装openclaw">安装Openclaw</h2>
+<p>安装编译工具：</p>
+<div class="highlight"><pre><span></span><code>yum<span class="w"> </span>install<span class="w"> </span>cmake<span class="w"> </span>gcc*<span class="w"> </span>-y
+<span class="c1"># ubuntu下直接装gcc*，包太多了放不下</span>
+sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>cmake<span class="w"> </span>gcc<span class="w"> </span>g++<span class="w"> </span>make<span class="w"> </span>build-essential
+</code></pre></div>
+
+<p>npm安装OpenClaw：</p>
+<div class="highlight"><pre><span></span><code>npm<span class="w"> </span>install<span class="w"> </span>-g<span class="w"> </span>openclaw@latest
+<span class="c1"># 指定版本</span>
+npm<span class="w"> </span>install<span class="w"> </span>-g<span class="w"> </span>openclaw@v2026.3.2
+</code></pre></div>
+
+<p><div class="callout callout-bug" markdown="1"><br />
+<p class="callout-title">已知问题（2026.03.10）</p></p>
+<p>用 <code>npm install -g openclaw@latest</code> 安装时可能报错：<br />
+<code>git@github.com: Permission denied (publickey).
+fatal: Could not read from remote repository.</code><br />
+这是一个已知问题，某个依赖包被强制使用 SSH 连接 GitHub 地址了，而非 HTTPS。<br />
+- <a href="https://github.com/openclaw/openclaw/issues/40684">Issue #40684</a><br />
+- <a href="https://github.com/openclaw/openclaw/pull/40721">PR #40721</a></p>
+</div>
+<p>临时修复命令：</p>
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>config<span class="w"> </span>--global<span class="w"> </span>url.<span class="s2">&quot;https://github.com/&quot;</span>.insteadOf<span class="w"> </span><span class="s2">&quot;ssh://git@github.com/&quot;</span>
+git<span class="w"> </span>config<span class="w"> </span>--global<span class="w"> </span>url.<span class="s2">&quot;https://github.com/&quot;</span>.insteadOf<span class="w"> </span><span class="s2">&quot;git+ssh://git@github.com/&quot;</span>
+git<span class="w"> </span>config<span class="w"> </span>--global<span class="w"> </span>url.<span class="s2">&quot;https://github.com/&quot;</span>.insteadOf<span class="w"> </span><span class="s2">&quot;git+ssh://git@github.com:&quot;</span>
+</code></pre></div>
+
+<p>开启工具权限：</p>
+<div class="highlight"><pre><span></span><code>openclaw<span class="w"> </span>config<span class="w"> </span><span class="nb">set</span><span class="w"> </span>tools.profile<span class="w"> </span><span class="s2">&quot;full&quot;</span>
+</code></pre></div>
+
+<h2 id="openclaw引导配置_1">OpenClaw引导配置</h2>
+<div class="highlight"><pre><span></span><code>openclaw<span class="w"> </span>onboard<span class="w"> </span>--install-daemon
+</code></pre></div>
+
+<p>以 deepseek-chat 为例<br />
+- onboarding mode选quick start<br />
+- model选择custom provider<br />
+- 填入base url： https://api.deepseek.com/v1<br />
+- 填入api key<br />
+- 接口协议选OpenAI<br />
+- 填入模型ID：deepseek-chat<br />
+- 由于网络问题，先跳过Channel、Skills、Hooks配置（选Skip for now，按空格+回车选中选项）<br />
+- hatch your bot选择Open the Web UI<br />
+- 引导完成后会自动启动Gateway并且打开浏览器，概览中看到状态正常即可。</p>
+<p>引导结束后，可以查看openclaw进程：</p>
+<div class="highlight"><pre><span></span><code>netstat<span class="w"> </span>-lntp<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>open
+</code></pre></div>
+
+<h2 id="浏览器访问">浏览器访问</h2>
+<p>如果linux是虚拟机安装在windows宿主机上。由于安全问题，openclaw监听的是127.0.0.1，直接用虚拟机IP:18789端口是访问不通的。</p>
+<p>如果需要宿主机上的浏览器访问，需要在 Windows 上执行以下命令，通过SSH隧道访问：</p>
+<div class="highlight"><pre><span></span><code>ssh<span class="w"> </span>-N<span class="w"> </span>-L<span class="w"> </span><span class="m">18789</span>:127.0.0.1:18789<span class="w"> </span>root@&lt;虚拟机-IP&gt;
+</code></pre></div>
+
+<p>没有返回说明连接成功，然后宿主机通过：127.0.0.1:18789 访问。</p>
+<p>初次访问，进去会看到unauthorized报错，需要去openclaw配置文件中拿gateway token：<code>/root/.openclaw/openclaw.json</code> 中的 <code>"gateway"."token"</code> 字段。<br />
+填入概览-网关令牌中，点击连接，看到状态是正常的即可。</p>
+<hr />
+<h1 id="openclaw基础使用">OpenClaw基础使用</h1>
+<ul>
+<li>开启工具权限：（或者在 WebUI → 代理中打开工具权限）</li>
+</ul>
+<div class="highlight"><pre><span></span><code>openclaw<span class="w"> </span>config<span class="w"> </span><span class="nb">set</span><span class="w"> </span>tools.profile<span class="w"> </span><span class="s2">&quot;full&quot;</span>
+</code></pre></div>
+
+<ul>
+<li>手动开启gateway / 重启gateway：</li>
+</ul>
+<div class="highlight"><pre><span></span><code>openclaw<span class="w"> </span>gateway
+</code></pre></div>
+
+<ul>
+<li>启停服务：</li>
+</ul>
+<div class="highlight"><pre><span></span><code>openclaw<span class="w"> </span>gateway<span class="w"> </span>stop/start
+</code></pre></div>
+
+<ul>
+<li>CLI修改配置</li>
+</ul>
+<div class="highlight"><pre><span></span><code>openclaw<span class="w"> </span>configure
+</code></pre></div>
+
+<p><div class="callout callout-info" markdown="1"><br />
+<p class="callout-title">配置文件路径</p></p>
+<p>OpenClaw 的所有配置都是以文件的形式保存在用户家目录中的 <code>.openclaw</code> 目录下。后面的配置修改都建议修改配置文件或者用命令行修改。</p>
+</div>
+<ul>
+<li>初始角色定义：</li>
+<li>
+<p>“记住这个：你是 xxx，我是 xxx，你是我的个人助理”（”记住这个”后面的内容会被自动加载到 memory 中）</p>
+</li>
+<li>
+<p>升级</p>
+</li>
+</ul>
+<div class="highlight"><pre><span></span><code>npm<span class="w"> </span>i<span class="w"> </span>-g<span class="w"> </span>openclaw@2026.3.11
+openclaw<span class="w"> </span>doctor
+openclaw<span class="w"> </span>gateway<span class="w"> </span>restart
+</code></pre></div>
+
+<ul>
+<li>开启一段新对话：<code>/new</code></li>
+</ul>
+<hr />
+<h1 id="添加多供应商多模型">添加多供应商多模型</h1>
+<h2 id="手动添加推荐">手动添加（推荐）</h2>
+<ul>
+<li>openclaw的所有配置都是以文件的形式保存在C盘用户家目录中的.openclaw目录下。</li>
+<li>修改配置文件，添加到 models.providers</li>
+<li>以 deepseek 为例，base url、版本等信息都可以在 <a href="https://api-docs.deepseek.com/zh-cn/quick_start/pricing">API 文档</a> 中找到</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="nt">&quot;deepseek&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;baseUrl&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://api.deepseek.com/v1&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;apiKey&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;api&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;openai-completions&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;models&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;deepseek-chat&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;deepseek-chat&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;reasoning&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;input&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                </span><span class="s2">&quot;text&quot;</span>
+<span class="w">            </span><span class="p">],</span>
+<span class="w">            </span><span class="nt">&quot;cost&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">&quot;input&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">&quot;output&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">&quot;cacheRead&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">&quot;cacheWrite&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span>
+<span class="w">            </span><span class="p">},</span>
+<span class="w">            </span><span class="nt">&quot;contextWindow&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">131072</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;maxTokens&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">32768</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">]</span>
+<span class="p">},</span>
+</code></pre></div>
+
+<p>需要把配置的模型添加到agents.models里面，而且更改智能体默认模型为deepseek模型。格式为provider name/model id：</p>
+<div class="highlight"><pre><span></span><code><span class="nt">&quot;agents&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;defaults&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;model&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;primary&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;deepseek/deepseek-chat&quot;</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="nt">&quot;models&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;custom-api-inference-modelscope-cn/deepseek-ai/DeepSeek-V3.2&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">&quot;alias&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ms-deepseek-v32&quot;</span>
+<span class="w">            </span><span class="p">},</span>
+<span class="w">            </span><span class="nt">&quot;custom-api-inference-modelscope-cn/Qwen/Qwen3-235B-A22B-Instruct-2507&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{},</span>
+<span class="w">            </span><span class="nt">&quot;deepseek/deepseek-chat&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{}</span>
+<span class="w">        </span><span class="p">},</span>
+</code></pre></div>
+
+<h2 id="自然语言自动添加">自然语言自动添加</h2>
+<p>直接让 OpenClaw 自己添加模型，输入提示词：</p>
+<div class="highlight"><pre><span></span><code>帮我新增一个模型，provider为 deepseek，模型名字和ID是 deepseek-reasoner，该模型的 base url是 https://api.deepseek.com/v1，api key是 xxxxx，该模型是openai标准协议的模型，配置时，需要限制最大 token为 32768，上下文窗口为 64k。Openclaw配置文件路径：C:\Users\xxx\.openclaw\openclaw.json
+</code></pre></div>
+
+<h2 id="添加github-copilot订阅">添加github copilot订阅</h2>
+<p>GitHub Copilot（包括 Enterprise 版）<strong>不提供独立的 API Key</strong>。它的认证方式是通过 GitHub OAuth 令牌交换实现的。但好消息是，<strong>OpenClaw 内置了对 GitHub Copilot 的原生支持</strong>，会自动处理整个令牌交换和刷新流程。</p>
+<ol>
+<li>登录 GitHub Copilot<br />
+在你安装好 OpenClaw 的服务器上执行：</li>
+</ol>
+<div class="highlight"><pre><span></span><code>openclaw<span class="w"> </span>models<span class="w"> </span>auth<span class="w"> </span>login-github-copilot
+</code></pre></div>
+
+<p>该命令会启动 GitHub 设备授权流程：<br />
+- 终端会显示一个 <strong>URL</strong> 和一个 <strong>一次性验证码</strong><br />
+- 在浏览器中打开该 URL，输入验证码，授权 OpenClaw 使用你的 GitHub 账户<br />
+- 保持终端打开直到授权完成</p>
+<ol>
+<li>设置默认模型</li>
+</ol>
+<p>登录成功后，设置你想用的模型：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 设置默认模型（根据你的 Enterprise 订阅可用的模型选择）</span>
+openclaw<span class="w"> </span>models<span class="w"> </span><span class="nb">set</span><span class="w"> </span>github-copilot/claude-sonnet-4.6
+
+<span class="c1"># 或者使用 GPT 系列</span>
+openclaw<span class="w"> </span>models<span class="w"> </span><span class="nb">set</span><span class="w"> </span>github-copilot/gpt-4.1
+</code></pre></div>
+
+<ol>
+<li>可选：指定认证配置文件 ID</li>
+</ol>
+<div class="highlight"><pre><span></span><code>openclaw<span class="w"> </span>models<span class="w"> </span>auth<span class="w"> </span>login-github-copilot<span class="w"> </span>--profile-id<span class="w"> </span>github-copilot:enterprise
+</code></pre></div>
+
+<h2 id="多agent">多Agent</h2>
+<p>可以创建多个Agent，每个Agent绑定的模型、配置等都可以不同。<br />
+如果创建了多个Agent，每个Agent建议保存在不同的工作目录。</p>
+<hr />
+<h1 id="卸载">卸载</h1>
+<p>一行命令即可卸载：</p>
+<div class="highlight"><pre><span></span><code>openclaw<span class="w"> </span>uninstall
+openclaw<span class="w"> </span>uninstall<span class="w"> </span>--all<span class="w"> </span>--yes<span class="w"> </span>--non-interactive
+</code></pre></div>
+
+<p>但是要注意观察执行命令后的输出结果，有些内容可能不会自动删除。</p>
+<p>完全干净卸载：<br />
+- Mac / Linux 用户：</p>
+<div class="highlight"><pre><span></span><code>openclaw<span class="w"> </span>gateway<span class="w"> </span>stop<span class="w">  </span>
+openclaw<span class="w"> </span>gateway<span class="w"> </span>uninstall<span class="w">  </span>
+rm<span class="w"> </span>-rf<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">OPENCLAW_STATE_DIR</span><span class="k">:-</span><span class="nv">$HOME</span><span class="p">/.openclaw</span><span class="si">}</span><span class="s2">&quot;</span><span class="w">  </span>
+npm<span class="w"> </span>rm<span class="w"> </span>-g<span class="w"> </span>openclaw<span class="w"> </span><span class="o">||</span><span class="w"> </span>pnpm<span class="w"> </span>remove<span class="w"> </span>-g<span class="w"> </span>openclaw<span class="w">  </span>
+rm<span class="w"> </span>-rf<span class="w"> </span>/Applications/OpenClaw.app
+</code></pre></div>
+
+<ul>
+<li>Windows 用户（在 PowerShell 中执行）：</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="n">openclaw</span> <span class="n">gateway</span> <span class="n">stop</span>  
+<span class="n">openclaw</span> <span class="n">gateway</span> <span class="n">uninstall</span>  
+<span class="n">schtasks</span> <span class="p">/</span><span class="n">Delete</span> <span class="p">/</span><span class="n">F</span> <span class="p">/</span><span class="n">TN</span> <span class="s2">&quot;OpenClaw Gateway&quot;</span>  
+<span class="nb">Remove-Item</span> <span class="n">-Recurse</span> <span class="n">-Force</span> <span class="s2">&quot;$env:USERPROFILE\.openclaw&quot;</span>  
+<span class="nb">Remove-Item</span> <span class="n">-Force</span> <span class="s2">&quot;$env:USERPROFILE\.openclaw\gateway.cmd&quot;</span> <span class="n">-ErrorAction</span> <span class="n">SilentlyContinue</span>  
+<span class="n">npm</span> <span class="nb">rm </span><span class="n">-g</span> <span class="n">openclaw</span>  
+<span class="c"># 如果你是用 pnpm 安装的，改为执行：pnpm remove -g openclaw</span>
+</code></pre></div>
+    </div>
+  </article>
+  <aside class="toc">
+    <p class="toc-label">本页目录</p>
+    <ul>
+  <li><a href="#openclaw是什么">OpenClaw是什么</a></li>
+  <li><a href="#应用场景">应用场景</a></li>
+  <li><a href="#架构分层">架构分层</a></li>
+  <li><a href="#官网">官网</a></li>
+  <li><a href="#魔塔api注册使用">魔塔API注册使用</a></li>
+  <li><a href="#deepseek-api准备">Deepseek API准备</a></li>
+  <li><a href="#nodejs安装">Nodejs安装</a></li>
+  <li><a href="#python安装">Python安装</a></li>
+  <li><a href="#openclaw安装">OpenClaw安装</a></li>
+  <li><a href="#openclaw引导配置">OpenClaw引导配置</a></li>
+  <li><a href="#安装nodejs">安装nodejs</a></li>
+  <li><a href="#安装python">安装python</a></li>
+  <li><a href="#安装openclaw">安装Openclaw</a></li>
+  <li><a href="#openclaw引导配置_1">OpenClaw引导配置</a></li>
+  <li><a href="#浏览器访问">浏览器访问</a></li>
+  <li><a href="#手动添加推荐">手动添加（推荐）</a></li>
+  <li><a href="#自然语言自动添加">自然语言自动添加</a></li>
+  <li><a href="#添加github-copilot订阅">添加github copilot订阅</a></li>
+  <li><a href="#多agent">多Agent</a></li>
+</ul>
+  </aside>
+
+</div>
+
+</main>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>Learning Notes</span>
+    <a href="https://github.com/hangx969/learning-notes">GitHub</a>
+  </div>
+</footer>
+<script src="../../../static/search.js"></script>
+</body>
+</html>

@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Azure DevOps Agent Pool Management - Learning Notes</title>
+<link rel="stylesheet" href="../../static/style.css">
+<link rel="stylesheet" href="../../static/pygments.css">
+</head>
+<body data-root="../../">
+<header class="site-header">
+  <div class="header-inner">
+    <a class="logo" href="../../index.html"><span class="logo-mark"></span>LEARNING NOTES</a>
+    <div class="search">
+      <input id="search-input" type="search" placeholder="搜索笔记…" autocomplete="off" aria-label="搜索笔记">
+      <div id="search-results" hidden></div>
+    </div>
+  </div>
+  <nav class="topic-nav" aria-label="主题导航">
+    <div class="topic-nav-inner">
+      <a href="../../AI/">AI</a>
+      <a href="../../Aliyun/">Aliyun</a>
+      <a href="../../Azure/" class="active">Azure</a>
+      <a href="../../C%2B%2B/">C++</a>
+      <a href="../../CloudComputing/">CloudComputing</a>
+      <a href="../../Database/">Database</a>
+      <a href="../../Docker-Kubernetes/">Docker-Kubernetes</a>
+      <a href="../../GPU-DeepLearning/">GPU-DeepLearning</a>
+      <a href="../../Git/">Git</a>
+      <a href="../../Go/">Go</a>
+      <a href="../../HPC/">HPC</a>
+      <a href="../../IaC/">IaC</a>
+      <a href="../../Linux-Shell/">Linux-Shell</a>
+      <a href="../../Middlewares/">Middlewares</a>
+      <a href="../../Networking/">Networking</a>
+      <a href="../../OS/">OS</a>
+      <a href="../../Python/">Python</a>
+      <a href="../../SoftwareTesting/">SoftwareTesting</a>
+    </div>
+  </nav>
+</header>
+<main class="main">
+
+<div class="article-layout">
+
+  <aside class="sidebar">
+    <details class="sidebar-details">
+      <summary>Azure</summary>
+      <nav class="sidebar-nav">
+        <p class="sidebar-group">Customer Support</p>
+        <ul>
+          <li><a href="../../Azure/Customer%20Support/Email%20Templates/">Email Templates</a></li>
+        </ul>
+        <p class="sidebar-group">其他</p>
+        <ul>
+          <li><a href="../../Azure/0_Azure-VM-VMSS/">Azure VM and VMSS</a></li>
+          <li><a href="../../Azure/10_Azure-devops-agent-pool-management/" class="current">Azure DevOps Agent Pool Management</a></li>
+          <li><a href="../../Azure/11_Azure-Policy/">Azure Policy</a></li>
+          <li><a href="../../Azure/1_Azure-Linux-VM-troubheshooting/">Azure Linux VM Troubleshooting</a></li>
+          <li><a href="../../Azure/2_AKS-basics/">AKS Basics</a></li>
+          <li><a href="../../Azure/3_AKS-workload-identity/">AKS Workload Identity</a></li>
+          <li><a href="../../Azure/4_AKS-SecretProviderClass-KeyVault/">AKS SecretProviderClass with KeyVault</a></li>
+          <li><a href="../../Azure/5_Azure-Storage/">Azure Storage</a></li>
+          <li><a href="../../Azure/6_Azure-Networking/">Azure Networking</a></li>
+          <li><a href="../../Azure/7_ACR-ACI/">Azure Container Registry &amp; Azure Container Instances</a></li>
+          <li><a href="../../Azure/8_Azure-devops-basics/">Azure DevOps Basics</a></li>
+          <li><a href="../../Azure/9_Azure-devops-self-host-agents/">Azure DevOps Self-Hosted Agents</a></li>
+          <li><a href="../../Azure/IO-monitor/">IO Monitor</a></li>
+          <li><a href="../../Azure/Jfrog-artifactory-Azure/">JFrog Artifactory on Azure</a></li>
+          <li><a href="../../Azure/Kusto%20Query/">Kusto Query Language (KQL) Reference</a></li>
+          <li><a href="../../Azure/browser%20trace/">Browser Trace (HAR)</a></li>
+          <li><a href="../../Azure/command-line-tools/">Command Line Tools</a></li>
+          <li><a href="../../Azure/fiddler/">Fiddler</a></li>
+          <li><a href="../../Azure/perfMon%20ProcessMon/">PerfMon &amp; ProcessMon</a></li>
+          <li><a href="../../Azure/postman/">Postman</a></li>
+        </ul>
+      </nav>
+    </details>
+  </aside>
+
+  <article class="article">
+    <nav class="breadcrumb">
+      <a href="../../index.html">首页</a><span>/</span>
+      <a href="../../Azure/">Azure</a>
+    </nav>
+    <h1 class="article-title">Azure DevOps Agent Pool Management</h1>
+    <p class="article-meta"><span>更新于 2026-04-16</span>
+      <a href="https://github.com/hangx969/learning-notes/blob/main/Azure/10_Azure-devops-agent-pool-management.md">查看源文件</a>
+    </p>
+    <div class="article-body">
+<h1 id="azure-devops-agent-pool-management">Azure DevOps Agent Pool Management</h1>
+<h2 id="related-notes">Related Notes</h2>
+<ul>
+<li><a class="wikilink" href="../../Azure/8_Azure-devops-basics/">Azure/8_Azure-devops-basics</a></li>
+<li><a class="wikilink" href="../../Azure/9_Azure-devops-self-host-agents/">Azure/9_Azure-devops-self-host-agents</a></li>
+</ul>
+<hr />
+<h2 id="az-devops-cli">Az DevOps CLI</h2>
+<h3 id="登录devops">登录DevOps</h3>
+<p>https://learn.microsoft.com/en-us/azure/devops/cli/log-in-via-pat?view=azure-devops&amp;tabs=windows</p>
+<div class="highlight"><pre><span></span><code><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;xxx&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>az<span class="w"> </span>devops<span class="w"> </span>login<span class="w"> </span>--organization<span class="w"> </span>https://dev.azure.com/xxx
+cat<span class="w"> </span>PAT.txt<span class="w"> </span><span class="p">|</span><span class="w"> </span>az<span class="w"> </span>devops<span class="w"> </span>login<span class="w"> </span>--organization<span class="w"> </span>https://dev.azure.com/xxx
+</code></pre></div>
+
+<h3 id="操作agent-pool">操作Agent Pool</h3>
+<p>https://learn.microsoft.com/en-us/cli/azure/pipelines/pool?view=azure-cli-latest</p>
+<ul>
+<li>获取pool id</li>
+</ul>
+<div class="highlight"><pre><span></span><code>az<span class="w"> </span>pipelines<span class="w"> </span>pool<span class="w"> </span>list<span class="w">  </span>&gt;<span class="w"> </span>pools.json
+</code></pre></div>
+
+<ul>
+<li>显示pool具体信息</li>
+</ul>
+<p><code>sh
+  az pipelines pool show    --id 56</code></p>
+<h3 id="操作agents">操作Agents</h3>
+<p>https://learn.microsoft.com/en-us/cli/azure/pipelines/agent?view=azure-cli-latest</p>
+<ul>
+<li>list</li>
+</ul>
+<p><code>sh
+  az pipelines agent show --id 77315 --pool-id 56 --include-assigned-request true --include-last-completed-request true --output jsonc</code></p>
+<ul>
+<li>
+<p>detect status</p>
+</li>
+<li>
+<p>delete: azcli没有提供删除agent的命令，只能通过REST API来操作</p>
+</li>
+</ul>
+<h3 id="检测agent-current-status">检测Agent Current Status</h3>
+<div class="highlight"><pre><span></span><code>az<span class="w"> </span>pipelines<span class="w"> </span>agent<span class="w"> </span>show<span class="w"> </span><span class="se">\</span>
+--id<span class="w"> </span><span class="m">77398</span><span class="w"> </span><span class="se">\</span>
+--pool-id<span class="w"> </span><span class="m">56</span><span class="w"> </span><span class="se">\</span>
+--include-assigned-request<span class="w"> </span><span class="nb">true</span><span class="w"> </span><span class="se">\ </span><span class="c1">#关键在于这个参数可以获取agent现在是否正有job在跑。这个参数也是通过REST API发送的。</span>
+--include-last-completed-request<span class="w"> </span><span class="nb">true</span><span class="w"> </span><span class="se">\</span>
+--output<span class="w"> </span>jsonc
+<span class="c1"># --debug 可以看到azcli发送REST API的具体过程和参数</span>
+</code></pre></div>
+
+<ul>
+<li>有job在跑的agent，返回值带有一大段<code>assignedRequest</code>字段：</li>
+</ul>
+<p><code>json
+  {
+      "accessPoint": "CodexAccessMapping",
+      "assignedAgentCloudRequest": null,
+      "assignedRequest": {
+        "agentDelays": null,
+        "agentSpecification": null,
+        "assignTime": "2025-02-19T07:27:43.060000+00:00",
+        "data": {
+          "IsScheduledKey": "False",
+          "ParallelismTag": "Private"
+        },
+  ......
+    }</code></p>
+<ul>
+<li>idle的agent，返回值里面==assigned request是null==。（注意：如果这个agent上面有job已经跑完了，则assigned request仍然是null）</li>
+</ul>
+<p><code>json
+  {
+      "accessPoint": "CodexAccessMapping",
+      "assignedAgentCloudRequest": null,
+      "assignedRequest": null,
+  ......
+  }</code></p>
+<hr />
+<h2 id="azure-devops-rest-api">Azure DevOps REST API</h2>
+<h3 id="删除offline的agent">删除Offline的Agent</h3>
+<p>shell脚本实现</p>
+<p>参考：</p>
+<ol>
+<li>https://thanhtunguet.info/posts/delete-offline-agents-from-azure-devops-pools/</li>
+<li>REST API文档：https://learn.microsoft.com/en-us/rest/api/azure/devops/distributedtask/agents/delete?view=azure-devops-rest-7.1</li>
+<li>REST API可以附加的参数：https://learn.microsoft.com/en-us/rest/api/azure/devops/distributedtask/agents/get-agent?view=azure-devops-rest-7.1#uri-parameters</li>
+<li>PAT document：https://learn.microsoft.com/en-us/azure/devops/organizations/accounts/use-personal-access-tokens-to-authenticate?view=azure-devops&amp;tabs=Linux#q-why-did-my-pat-stop-working</li>
+</ol>
+<p><div class="callout callout-warning" markdown="1"><br />
+<p class="callout-title">Warning</p></p>
+<p><mark>一定注意：curl传递的authorization header是在原有token前面加了个:</mark></p>
+</div>
+<div class="highlight"><pre><span></span><code><span class="ch">#!/usr/bin/env bash</span>
+
+<span class="c1"># Set your Azure DevOps organization URL and PAT token (Note that PAT should be encoded with base64)</span>
+<span class="nv">ORG_URL</span><span class="o">=</span><span class="s2">&quot;https://dev.azure.com/xxxx&quot;</span>
+<span class="nv">PAT_TOKEN</span><span class="o">=</span><span class="s2">&quot;&quot;</span>
+
+<span class="c1"># Encode the PAT token as base64 for use in the Authorization header, pay atttention to the : prefix and -w0 to avoid line break</span>
+<span class="nv">PAT_TOKEN_B64</span><span class="o">=</span><span class="k">$(</span><span class="nb">printf</span><span class="w"> </span><span class="s2">&quot;%s&quot;&quot;:</span><span class="nv">$PAT_TOKEN</span><span class="s2">&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>base64<span class="w"> </span>-w0<span class="k">)</span>
+
+<span class="c1"># Set the agent pool ID and API version</span>
+<span class="nv">POOL_ID</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$1</span><span class="s2">&quot;</span>
+<span class="nv">API_VERSION</span><span class="o">=</span><span class="s2">&quot;7.1&quot;</span>
+
+<span class="c1"># Get a list of all agents in the pool</span>
+<span class="nv">AGENTS</span><span class="o">=</span><span class="k">$(</span>curl<span class="w"> </span>-s<span class="w"> </span>-H<span class="w"> </span><span class="s2">&quot;Authorization: Basic </span><span class="nv">$PAT_TOKEN_B64</span><span class="s2">&quot;</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">ORG_URL</span><span class="si">}</span><span class="s2">/_apis/distributedtask/pools/</span><span class="si">${</span><span class="nv">POOL_ID</span><span class="si">}</span><span class="s2">/agents?api-version=</span><span class="si">${</span><span class="nv">API_VERSION</span><span class="si">}</span><span class="s2">&quot;</span><span class="k">)</span>
+
+<span class="c1"># Loop through each agent and delete the offline agents</span>
+<span class="k">for</span><span class="w"> </span>AGENT<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="k">$(</span><span class="nb">echo</span><span class="w"> </span><span class="nv">$AGENTS</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span>-r<span class="w"> </span><span class="s1">&#39;.value[].id&#39;</span><span class="k">)</span>
+<span class="k">do</span>
+<span class="w">  </span><span class="nv">STATUS</span><span class="o">=</span><span class="k">$(</span><span class="nb">echo</span><span class="w"> </span><span class="nv">$AGENTS</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span>-r<span class="w"> </span>--arg<span class="w"> </span>AGENTID<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$AGENT</span><span class="s2">&quot;</span><span class="w"> </span><span class="s1">&#39;.value[] | select(.id == ($AGENTID | tonumber)) | .status&#39;</span><span class="k">)</span>
+
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$STATUS</span><span class="s2">&quot;</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s2">&quot;offline&quot;</span><span class="w"> </span><span class="o">]</span>
+<span class="w">  </span><span class="k">then</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Deleting agent with ID </span><span class="nv">$AGENT</span><span class="s2">&quot;</span>
+<span class="w">    </span>curl<span class="w"> </span>-s<span class="w"> </span>-X<span class="w"> </span>DELETE<span class="w"> </span>-H<span class="w"> </span><span class="s2">&quot;Authorization: Basic </span><span class="nv">$PAT_TOKEN_B64</span><span class="s2">&quot;</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">ORG_URL</span><span class="si">}</span><span class="s2">/_apis/distributedtask/pools/</span><span class="si">${</span><span class="nv">POOL_ID</span><span class="si">}</span><span class="s2">/agents/</span><span class="si">${</span><span class="nv">AGENT</span><span class="si">}</span><span class="s2">?api-version=</span><span class="si">${</span><span class="nv">API_VERSION</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="w">  </span><span class="k">fi</span>
+<span class="k">done</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code>chmod<span class="w"> </span>+x<span class="w"> </span>azure-devops-delete-offline-agents.sh
+<span class="c1"># To run the script, pass the agent pool ID as an argument.</span>
+./azure-devops-delete-offline-agents.sh<span class="w"> </span>&lt;pool_id&gt;
+</code></pre></div>
+
+<h3 id="检测agent-current-status_1">检测Agent Current Status</h3>
+<p>用Get Agent API检查每个具体agent信息：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Set your Azure DevOps organization URL and PAT token</span>
+<span class="nv">ORG_URL</span><span class="o">=</span><span class="s2">&quot;https://dev.azure.com/xxx&quot;</span>
+<span class="nv">PAT_TOKEN_B64</span><span class="o">=</span><span class="s2">&quot;&quot;</span>
+
+<span class="c1"># Set the agent pool ID and API version</span>
+<span class="nv">POOL_ID</span><span class="o">=</span><span class="s2">&quot;56&quot;</span>
+<span class="nv">API_VERSION</span><span class="o">=</span><span class="s2">&quot;7.1&quot;</span>
+
+curl<span class="w"> </span>-s<span class="w"> </span>-H<span class="w"> </span><span class="s2">&quot;Authorization: Basic </span><span class="nv">$PAT_TOKEN_B64</span><span class="s2">&quot;</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">ORG_URL</span><span class="si">}</span><span class="s2">/_apis/distributedtask/pools/</span><span class="si">${</span><span class="nv">POOL_ID</span><span class="si">}</span><span class="s2">/agents/</span><span class="si">${</span><span class="nv">AGENT_ID</span><span class="si">}</span><span class="s2">?includeAssignedRequest=true&amp;includeCapabilities=true&amp;api-version=</span><span class="si">${</span><span class="nv">API_VERSION</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span>&gt;<span class="w"> </span>agent-info.json
+</code></pre></div>
+
+<h3 id="脚本逻辑">脚本逻辑</h3>
+<p><div class="callout callout-note" markdown="1"><br />
+<p class="callout-title">Note</p></p>
+<p>注意：azcli pod中需要先安装gawk：<code>yum install gawk -y</code>，也可以东dockerfile做一个提前安装好gawk的azcli-gawk image以供使用。</p>
+</div>
+<ol>
+<li>根据pool name获取pool id</li>
+<li>获取这个pool中的所有agent id和agent count</li>
+<li>删掉offline的agent，检测对应的vm instance如果有就删掉（防止后面scale out出新的时候，与已经offline的冲突）</li>
+<li>过滤出：</li>
+<li>状态为online</li>
+<li>assignedRequest字段不存在</li>
+<li>created-on时间距今已超过5天</li>
+</ol>
+<p>提取出这些agent的computerName。</p>
+<ol>
+<li>scale-in: 用azcli删掉这些agent对应的VM instance</li>
+<li>scale-out：判断剩余agent数量是否小于4个，如果是，就scale out到4个。</li>
+</ol>
+<div class="highlight"><pre><span></span><code><span class="ch">#!/bin/bash</span>
+
+yum<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>gawk
+<span class="nv">ORG_URL</span><span class="o">=</span><span class="s2">&quot;https://dev.azure.com/xxx&quot;</span>
+<span class="nv">PAT_TOKEN</span><span class="o">=</span><span class="si">${</span><span class="nv">AZURE_DEVOPS_PAT</span><span class="si">}</span>
+<span class="c1"># Encode PAT for use in the Authorization header, pay atttention that : prefix is required</span>
+<span class="nv">PAT_TOKEN_B64</span><span class="o">=</span><span class="k">$(</span><span class="nb">printf</span><span class="w"> </span><span class="s2">&quot;%s&quot;&quot;:</span><span class="nv">$PAT_TOKEN</span><span class="s2">&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>base64<span class="w"> </span>-w0<span class="k">)</span>
+<span class="nv">API_VERSION</span><span class="o">=</span><span class="s2">&quot;7.1&quot;</span>
+
+<span class="c1"># Resrouce group and VMSS name</span>
+<span class="nv">RG_NAME</span><span class="o">=</span><span class="si">${</span><span class="nv">VMSS_RG_NAME</span><span class="si">}</span>
+<span class="nv">VMSS_NAME</span><span class="o">=</span><span class="si">${</span><span class="nv">VMSS_NAME</span><span class="si">}</span>
+
+<span class="c1"># Get devops pool id by pool name</span>
+<span class="nv">POOL_NAME</span><span class="o">=</span><span class="si">${</span><span class="nv">POOL_NAME</span><span class="si">}</span>
+
+<span class="nv">POOL_ID</span><span class="o">=</span><span class="k">$(</span>curl<span class="w"> </span>-s<span class="w"> </span>-H<span class="w"> </span><span class="s2">&quot;Authorization: Basic </span><span class="nv">$PAT_TOKEN_B64</span><span class="s2">&quot;</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">ORG_URL</span><span class="si">}</span><span class="s2">/_apis/distributedtask/pools?api-version=</span><span class="si">${</span><span class="nv">API_VERSION</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span>-r<span class="w"> </span><span class="s1">&#39;.value[] | select(.name == &quot;&#39;</span><span class="nv">$POOL_NAME</span><span class="s1">&#39;&quot;) | .id&#39;</span><span class="k">)</span>
+
+<span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span>-z<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$POOL_ID</span><span class="s2">&quot;</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Pool </span><span class="nv">$POOL_NAME</span><span class="s2"> not found, please check the pool name and PAT token&quot;</span>
+<span class="w">    </span><span class="nb">exit</span><span class="w"> </span><span class="m">1</span>
+<span class="k">fi</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Agent pool </span><span class="nv">$POOL_NAME</span><span class="s2"> found, Pool ID: </span><span class="nv">$POOL_ID</span><span class="s2">&quot;</span>
+
+<span class="c1"># Login AzureChina and set RG and VMSS name</span>
+az<span class="w"> </span>account<span class="w"> </span>clear<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>az<span class="w"> </span>cloud<span class="w"> </span><span class="nb">set</span><span class="w"> </span>--name<span class="w"> </span>AzureChinaCloud<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>az<span class="w"> </span>login<span class="w"> </span>--service-principal<span class="w"> </span>--username<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">AZURE_CLIENT_ID</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span>--tenant<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">AZURE_TENANT_ID</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span>--federated-token<span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span>cat<span class="w"> </span><span class="nv">$AZURE_FEDERATED_TOKEN_FILE</span><span class="k">)</span><span class="s2">&quot;</span>
+
+
+<span class="c1"># Get VM instance id by agent computer name</span>
+<span class="k">function</span><span class="w"> </span>getInstanceID<span class="o">()</span><span class="w"> </span><span class="o">{</span>
+<span class="w">    </span><span class="nb">local</span><span class="w"> </span><span class="nv">RG_NAME</span><span class="o">=</span><span class="nv">$1</span>
+<span class="w">    </span><span class="nb">local</span><span class="w"> </span><span class="nv">VMSS_NAME</span><span class="o">=</span><span class="nv">$2</span>
+<span class="w">    </span><span class="nb">local</span><span class="w"> </span><span class="nv">TARGET_COMPUTER_NAME</span><span class="o">=</span><span class="nv">$3</span>
+
+<span class="w">    </span><span class="c1"># Get the map of instance ids to computer names for all instances in the VMSS</span>
+<span class="w">    </span><span class="nb">local</span><span class="w"> </span><span class="nv">INSTANCES</span><span class="o">=</span><span class="k">$(</span>az<span class="w"> </span>vmss<span class="w"> </span>list-instances<span class="w"> </span>--resource-group<span class="w"> </span><span class="nv">$RG_NAME</span><span class="w"> </span>--name<span class="w"> </span><span class="nv">$VMSS_NAME</span><span class="w"> </span>--query<span class="w"> </span><span class="s2">&quot;[].{name:name, computerName:osProfile.computerName}&quot;</span><span class="w"> </span>-o<span class="w"> </span>json<span class="k">)</span>
+
+<span class="w">    </span><span class="k">for</span><span class="w"> </span>INSTANCE<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="k">$(</span><span class="nb">echo</span><span class="w"> </span><span class="nv">$INSTANCES</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;.[]&#39;</span><span class="k">)</span><span class="p">;</span><span class="w"> </span><span class="k">do</span>
+<span class="w">        </span><span class="nb">local</span><span class="w"> </span><span class="nv">INSTANCE_NAME</span><span class="o">=</span><span class="k">$(</span><span class="nb">echo</span><span class="w"> </span><span class="nv">$INSTANCE</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span>-r<span class="w"> </span><span class="s1">&#39;.name&#39;</span><span class="k">)</span>
+<span class="w">        </span><span class="nb">local</span><span class="w"> </span><span class="nv">COMPUTER_NAME</span><span class="o">=</span><span class="k">$(</span><span class="nb">echo</span><span class="w"> </span><span class="nv">$INSTANCE</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span>-r<span class="w"> </span><span class="s1">&#39;.computerName&#39;</span><span class="k">)</span>
+
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$COMPUTER_NAME</span><span class="s2">&quot;</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$TARGET_COMPUTER_NAME</span><span class="s2">&quot;</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">            </span><span class="nb">local</span><span class="w"> </span><span class="nv">INSTANCE_ID</span><span class="o">=</span><span class="k">$(</span><span class="nb">echo</span><span class="w"> </span><span class="nv">$INSTANCE_NAME</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span>-F<span class="s1">&#39;_&#39;</span><span class="w"> </span><span class="s1">&#39;{print $NF}&#39;</span><span class="k">)</span>
+<span class="w">            </span><span class="nb">echo</span><span class="w"> </span><span class="nv">$INSTANCE_ID</span>
+<span class="w">            </span><span class="k">return</span>
+<span class="w">        </span><span class="k">fi</span>
+<span class="w">    </span><span class="k">done</span>
+
+<span class="w">    </span><span class="c1"># If the agent is not found, return empty string</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="o">}</span>
+
+
+<span class="c1"># Get a list of all agent ids in the pool</span>
+<span class="nv">AGENT_IDS</span><span class="o">=</span><span class="k">$(</span>curl<span class="w"> </span>-s<span class="w"> </span>-H<span class="w"> </span><span class="s2">&quot;Authorization: Basic </span><span class="nv">$PAT_TOKEN_B64</span><span class="s2">&quot;</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">ORG_URL</span><span class="si">}</span><span class="s2">/_apis/distributedtask/pools/</span><span class="si">${</span><span class="nv">POOL_ID</span><span class="si">}</span><span class="s2">/agents?api-version=</span><span class="si">${</span><span class="nv">API_VERSION</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span>-r<span class="w"> </span><span class="s1">&#39;.value[].id&#39;</span><span class="k">)</span>
+
+<span class="c1"># Loop through the agent ids and get the details for each agent</span>
+<span class="k">for</span><span class="w"> </span>AGENT_ID<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="nv">$AGENT_IDS</span><span class="p">;</span><span class="w"> </span><span class="k">do</span>
+
+<span class="w">    </span><span class="c1"># Get info of each agent, including assignedRequest and capabilities</span>
+<span class="w">    </span><span class="nv">AGENT_INFO</span><span class="o">=</span><span class="k">$(</span>curl<span class="w"> </span>-s<span class="w"> </span>-H<span class="w"> </span><span class="s2">&quot;Authorization: Basic </span><span class="nv">$PAT_TOKEN_B64</span><span class="s2">&quot;</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">ORG_URL</span><span class="si">}</span><span class="s2">/_apis/distributedtask/pools/</span><span class="si">${</span><span class="nv">POOL_ID</span><span class="si">}</span><span class="s2">/agents/</span><span class="si">${</span><span class="nv">AGENT_ID</span><span class="si">}</span><span class="s2">?includeAssignedRequest=true&amp;includeCapabilities=true&amp;api-version=</span><span class="si">${</span><span class="nv">API_VERSION</span><span class="si">}</span><span class="s2">&quot;</span><span class="k">)</span>
+
+<span class="w">    </span><span class="c1"># filter offline agents, delete them firstly to avoid conflict with newly created instances later</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$AGENT_INFO</span><span class="s2">&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span>-r<span class="w"> </span><span class="s1">&#39;.status&#39;</span><span class="k">)</span><span class="s2">&quot;</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;offline&quot;</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">        </span><span class="c1"># get compuster name of the agent</span>
+<span class="w">        </span><span class="nv">COMPUTER_NAME</span><span class="o">=</span><span class="k">$(</span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$AGENT_INFO</span><span class="s2">&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span>-r<span class="w"> </span><span class="s1">&#39;.systemCapabilities.&quot;Agent.ComputerName&quot;&#39;</span><span class="k">)</span>
+<span class="w">        </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Deleting offline agent </span><span class="nv">$AGENT_ID</span><span class="s2">, computer name: </span><span class="nv">$COMPUTER_NAME</span><span class="s2">&quot;</span>
+<span class="w">        </span><span class="c1"># delete agent from devops pool</span>
+<span class="w">        </span>curl<span class="w"> </span>-s<span class="w"> </span>-X<span class="w"> </span>DELETE<span class="w"> </span>-H<span class="w"> </span><span class="s2">&quot;Authorization: Basic </span><span class="nv">$PAT_TOKEN_B64</span><span class="s2">&quot;</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">ORG_URL</span><span class="si">}</span><span class="s2">/_apis/distributedtask/pools/</span><span class="si">${</span><span class="nv">POOL_ID</span><span class="si">}</span><span class="s2">/agents/</span><span class="si">${</span><span class="nv">AGENT_ID</span><span class="si">}</span><span class="s2">?api-version=</span><span class="si">${</span><span class="nv">API_VERSION</span><span class="si">}</span><span class="s2">&quot;</span>
+
+<span class="w">        </span><span class="c1"># delete azure vm instance</span>
+<span class="w">        </span><span class="nv">VM_INSTANCE_ID</span><span class="o">=</span><span class="k">$(</span>getInstanceID<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$RG_NAME</span><span class="s2">&quot;</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$VMSS_NAME</span><span class="s2">&quot;</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$COMPUTER_NAME</span><span class="s2">&quot;</span><span class="k">)</span>
+
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span>-n<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$VM_INSTANCE_ID</span><span class="s2">&quot;</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">            </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Deleting VM instance in Azure, computer name: </span><span class="nv">$COMPUTER_NAME</span><span class="s2">, instance id: </span><span class="nv">$VM_INSTANCE_ID</span><span class="s2">&quot;</span>
+<span class="w">            </span>az<span class="w"> </span>vmss<span class="w"> </span>delete-instances<span class="w"> </span>--resource-group<span class="w"> </span><span class="nv">$RG_NAME</span><span class="w"> </span>--name<span class="w"> </span><span class="nv">$VMSS_NAME</span><span class="w"> </span>--instance-ids<span class="w"> </span><span class="nv">$VM_INSTANCE_ID</span>
+<span class="w">        </span><span class="k">else</span>
+<span class="w">            </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;VM instance not found for agent </span><span class="nv">$AGENT_ID</span><span class="s2"> (computer name: </span><span class="nv">$COMPUTER_NAME</span><span class="s2">, instance id: </span><span class="nv">$VM_INSTANCE_ID</span><span class="s2">), skipping&quot;</span>
+<span class="w">        </span><span class="k">fi</span>
+
+<span class="w">    </span><span class="c1"># filter the agents whose status is online and has been created more than 5 days</span>
+<span class="w">    </span><span class="k">elif</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$AGENT_INFO</span><span class="s2">&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span>-r<span class="w"> </span><span class="s1">&#39;.status&#39;</span><span class="k">)</span><span class="s2">&quot;</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;online&quot;</span><span class="w"> </span><span class="o">]</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$AGENT_INFO</span><span class="s2">&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span>-r<span class="w"> </span><span class="s1">&#39;.createdOn | sub(&quot;\\..*&quot;; &quot;Z&quot;) | fromdateiso8601&#39;</span><span class="k">)</span><span class="s2">&quot;</span><span class="w"> </span>-lt<span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span>date<span class="w"> </span>-d<span class="w"> </span><span class="s2">&quot;5 days ago&quot;</span><span class="w"> </span>+%s<span class="k">)</span><span class="s2">&quot;</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+
+<span class="w">        </span><span class="k">if</span><span class="w"> </span>jq<span class="w"> </span>-e<span class="w"> </span><span class="s1">&#39;.assignedRequest | not&#39;</span><span class="w"> </span><span class="o">&lt;&lt;&lt;</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$AGENT_INFO</span><span class="s2">&quot;</span><span class="w"> </span>&gt;<span class="w"> </span>/dev/null<span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">            </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Agent </span><span class="nv">$AGENT_ID</span><span class="s2"> is older than 5 days, currently online and idle, can be removed&quot;</span>
+<span class="w">            </span><span class="c1"># delete agent from devops pool</span>
+<span class="w">            </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Deleting agent </span><span class="nv">$AGENT_ID</span><span class="s2"> from pool </span><span class="nv">$POOL_ID</span><span class="s2">&quot;</span>
+<span class="w">            </span>curl<span class="w"> </span>-s<span class="w"> </span>-X<span class="w"> </span>DELETE<span class="w"> </span>-H<span class="w"> </span><span class="s2">&quot;Authorization: Basic </span><span class="nv">$PAT_TOKEN_B64</span><span class="s2">&quot;</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">ORG_URL</span><span class="si">}</span><span class="s2">/_apis/distributedtask/pools/</span><span class="si">${</span><span class="nv">POOL_ID</span><span class="si">}</span><span class="s2">/agents/</span><span class="si">${</span><span class="nv">AGENT_ID</span><span class="si">}</span><span class="s2">?api-version=</span><span class="si">${</span><span class="nv">API_VERSION</span><span class="si">}</span><span class="s2">&quot;</span>
+
+<span class="w">            </span><span class="c1"># Get its computer name</span>
+<span class="w">            </span><span class="nv">COMPUTER_NAME</span><span class="o">=</span><span class="k">$(</span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$AGENT_INFO</span><span class="s2">&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span>-r<span class="w"> </span><span class="s1">&#39;.systemCapabilities.&quot;Agent.ComputerName&quot;&#39;</span><span class="k">)</span>
+<span class="w">            </span><span class="c1"># delete azure vm instance</span>
+<span class="w">            </span><span class="nv">VM_INSTANCE_ID</span><span class="o">=</span><span class="k">$(</span>getInstanceID<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$RG_NAME</span><span class="s2">&quot;</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$VMSS_NAME</span><span class="s2">&quot;</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$COMPUTER_NAME</span><span class="s2">&quot;</span><span class="k">)</span>
+
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span>-n<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$VM_INSTANCE_ID</span><span class="s2">&quot;</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">                </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Deleting VM instance in Azure, computer name: </span><span class="nv">$COMPUTER_NAME</span><span class="s2">, instance id: </span><span class="nv">$VM_INSTANCE_ID</span><span class="s2">&quot;</span>
+<span class="w">                </span>az<span class="w"> </span>vmss<span class="w"> </span>delete-instances<span class="w"> </span>--resource-group<span class="w"> </span><span class="nv">$RG_NAME</span><span class="w"> </span>--name<span class="w"> </span><span class="nv">$VMSS_NAME</span><span class="w"> </span>--instance-ids<span class="w"> </span><span class="nv">$VM_INSTANCE_ID</span>
+<span class="w">            </span><span class="k">else</span>
+<span class="w">                </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;VM instance not found for agent </span><span class="nv">$AGENT_ID</span><span class="s2"> (computer name: </span><span class="nv">$COMPUTER_NAME</span><span class="s2">, instance id: </span><span class="nv">$VM_INSTANCE_ID</span><span class="s2">)&quot;</span>
+<span class="w">            </span><span class="k">fi</span>
+
+<span class="w">        </span><span class="k">else</span>
+<span class="w">            </span><span class="c1"># the online agent is currently running a job, skip it.</span>
+<span class="w">            </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Agent </span><span class="nv">$AGENT_ID</span><span class="s2"> is idle but has been assigned a request, keep it&quot;</span>
+<span class="w">        </span><span class="k">fi</span>
+
+<span class="w">    </span><span class="k">else</span>
+<span class="w">        </span><span class="c1"># the agent younger than 5 days, skip it.</span>
+<span class="w">        </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Agent </span><span class="nv">$AGENT_ID</span><span class="s2"> is created less than 5 days, keep it&quot;</span>
+<span class="w">    </span><span class="k">fi</span>
+<span class="k">done</span>
+
+<span class="c1"># Get the number of remaining agents in the pool</span>
+<span class="nv">AGENT_COUNTS</span><span class="o">=</span><span class="k">$(</span>curl<span class="w"> </span>-s<span class="w"> </span>-H<span class="w"> </span><span class="s2">&quot;Authorization: Basic </span><span class="nv">$PAT_TOKEN_B64</span><span class="s2">&quot;</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">ORG_URL</span><span class="si">}</span><span class="s2">/_apis/distributedtask/pools/</span><span class="si">${</span><span class="nv">POOL_ID</span><span class="si">}</span><span class="s2">/agents?api-version=</span><span class="si">${</span><span class="nv">API_VERSION</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span>-r<span class="w"> </span><span class="s1">&#39;.count&#39;</span><span class="k">)</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;There are </span><span class="nv">$AGENT_COUNTS</span><span class="s2"> agents remaining in pool </span><span class="nv">$POOL_NAME</span><span class="s2">&quot;</span>
+
+<span class="c1"># If current number of agents is less than expected, scale out the VMSS to the expected number</span>
+<span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="nv">$AGENT_COUNTS</span><span class="w"> </span>-lt<span class="w"> </span><span class="si">${</span><span class="nv">EXPECTED_COUNT</span><span class="si">}</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Scaling out VMSS </span><span class="nv">$VMSS_NAME</span><span class="s2"> to </span><span class="si">${</span><span class="nv">EXPECTED_COUNT</span><span class="si">}</span><span class="s2"> instances&quot;</span>
+<span class="w">    </span>az<span class="w"> </span>vmss<span class="w"> </span>scale<span class="w"> </span>--resource-group<span class="w"> </span><span class="nv">$RG_NAME</span><span class="w"> </span>--name<span class="w"> </span><span class="nv">$VMSS_NAME</span><span class="w"> </span>--new-capacity<span class="w"> </span><span class="si">${</span><span class="nv">EXPECTED_COUNT</span><span class="si">}</span>
+<span class="k">fi</span>
+</code></pre></div>
+
+<p><div class="callout callout-note" markdown="1"><br />
+<p class="callout-title">Note</p></p>
+<ul>
+<li>需要检测offline的agent同时，也检测对应VM instance也删掉</li>
+<li>遇到被disable的agent，即使是offline的也删不掉。后面可以测试一下disabled的agent怎么</li>
+</ul>
+</div>
+<hr />
+<h2 id="azure-vmss-cli">Azure VMSS CLI</h2>
+<h3 id="scale">Scale</h3>
+<div class="highlight"><pre><span></span><code>az<span class="w"> </span>vmss<span class="w"> </span>scale<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--resource-group<span class="w"> </span>myResourceGroup<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--name<span class="w"> </span>myScaleSet<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--new-capacity<span class="w"> </span><span class="m">5</span>
+</code></pre></div>
+
+<p><div class="callout callout-warning" markdown="1"><br />
+<p class="callout-title">Warning</p></p>
+<p>有个问题就是如果定期用azcli直接scale VMSS，那么无法识别这个VMSS是否有CICD任务在运行，容易误伤。还是需要想办法通过azure devops REST API来检测agent是否是idle。</p>
+</div>
+<h3 id="extension">Extension</h3>
+<p>https://docs.azure.cn/zh-cn/virtual-machines/extensions/custom-script-linux</p>
+<p>https://learn.microsoft.com/en-us/azure/virtual-machines/extensions/custom-script-linux</p>
+<h3 id="替换image">替换Image</h3>
+<p>https://learn.microsoft.com/en-us/azure/devops/pipelines/agents/scale-set-agents?view=azure-devops#update-an-existing-scale-set-with-a-new-custom-image</p>
+<hr />
+<h2 id="helm-chart部署">Helm Chart部署</h2>
+<div class="highlight"><pre><span></span><code><span class="c1"># 部署到dev环境</span>
+kubectl<span class="w"> </span>config<span class="w"> </span>use-context<span class="w"> </span>aks-commoninfra-dev-chinanorth3
+<span class="nb">cd</span><span class="w"> </span>~/Cloud/devops-management/devops-agent-management
+helm<span class="w"> </span>upgrade<span class="w"> </span>-i<span class="w"> </span>devops-agent-management<span class="w"> </span>-n<span class="w"> </span>devops-agent-management<span class="w"> </span>--create-namespace<span class="w"> </span>.<span class="w"> </span>-f<span class="w"> </span>./values.yaml
+</code></pre></div>
+
+<h3 id="测试pod里运行az-devops">测试Pod里运行az devops</h3>
+<ul>
+<li>用预装了azcli的pod，导入到ACR</li>
+<li>截止2025/04/09，最新版本2.71.0：https://learn.microsoft.com/zh-cn/cli/azure/release-notes-azure-cli#april-01-2025</li>
+</ul>
+<div class="highlight"><pre><span></span><code>az<span class="w"> </span>acr<span class="w"> </span>import<span class="w"> </span>--name<span class="w"> </span>&lt;ACR&gt;<span class="w"> </span>--source<span class="w"> </span>mcr.microsoft.com/azure-cli:2.71.0-cbl-mariner2.0
+</code></pre></div>
+
+<ul>
+<li>创建测试pod，exec进去看看能不能登录azure devops</li>
+</ul>
+<p><code>yaml
+  apiVersion: v1
+  kind: Pod
+  metadata:
+    name: pod-test-azcli
+    namespace: devops-agent-management
+  spec:
+    containers:
+      - name: standby
+        image: mcr.microsoft.com/azure-cli:2.71.0-cbl-mariner2.0
+        command: ["/bin/sh"]
+        args: ["-c", "while true; do echo hello; sleep 10;done"]
+        volumeMounts:
+        - name: azure-devops-pat
+          mountPath: /etc/secret-vol
+          readOnly: true
+        resources:
+          requests:
+            cpu: 500m
+            memory: 200Mi
+          limits:
+            cpu: 800m
+            memory: 500Mi
+    volumes:
+    - name: azure-devops-pat
+      secret:
+        secretName: azure-devops-pat</code></p>
+<p>```sh<br />
+  #测试登录<br />
+  base64 -d /etc/secret-vol/token &gt; pat.txt<br />
+  cat pat.txt | az devops login --organization <ORG></p>
+<p># 或者在容器内执行<br />
+  kubectl exec -n devops-agent-management pod-test-azcli -- bash -c "base64 -d /etc/secret-vol/token &gt; pat.txt"<br />
+  ```</p>
+<blockquote>
+<p>az devops extension装不上： network issue</p>
+</blockquote>
+<ul>
+<li>预先build一个带有az devops extension的镜像：</li>
+</ul>
+<p>```dockerfile<br />
+  FROM mcr.microsoft.com/azure-cli:2.71.0-cbl-mariner2.0</p>
+<p>RUN az extension add --upgrade --name azure-devops --yes \<br />
+      &amp;&amp; az --version<br />
+  ```</p>
+<p>进pod里面登录az devops，报错：</p>
+<p><code>sh
+  cli.azext_devops.dev.common.credential_store: Failed to store PAT using keyring; falling back to file storage.</code></p>
+<blockquote>
+<p>[!warning]<br />
+这个报错看起来是az devops cli的bug，还没修复：https://github.com/Azure/azure-cli/issues/26731</p>
+<p>到此基本判断pod中运行az devops cli不可行。还是需要用REST API实现</p>
+</blockquote>
+<h3 id="测试pod中请求rest-api">测试Pod中请求REST API</h3>
+<h4 id="测试pod">测试Pod</h4>
+<div class="highlight"><pre><span></span><code><span class="nn">---</span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Pod</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-test-alpine</span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">devops-agent-management</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">containers</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">test-container</span>
+<span class="w">      </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">docker.io/library/alpine:3.21.3</span>
+<span class="w">      </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;/bin/sh&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">      </span><span class="nt">args</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;-c&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;while</span><span class="nv"> </span><span class="s">true;</span><span class="nv"> </span><span class="s">do</span><span class="nv"> </span><span class="s">echo</span><span class="nv"> </span><span class="s">hello;</span><span class="nv"> </span><span class="s">sleep</span><span class="nv"> </span><span class="s">10;done&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">      </span><span class="nt">volumeMounts</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">azure-devops-pat</span>
+<span class="w">        </span><span class="nt">mountPath</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/etc/secret-vol</span>
+<span class="w">        </span><span class="nt">readOnly</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">      </span><span class="nt">resources</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">requests</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100m</span>
+<span class="w">          </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">200Mi</span>
+<span class="w">        </span><span class="nt">limits</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">200m</span>
+<span class="w">          </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">400Mi</span>
+<span class="w">  </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">azure-devops-pat</span>
+<span class="w">    </span><span class="nt">secret</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">secretName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">azure-devops-pat</span>
+</code></pre></div>
+
+<p>alpine镜像默认不带curl，可以进容器安装一下：</p>
+<div class="highlight"><pre><span></span><code>apk<span class="w"> </span>add<span class="w"> </span>--no-cache<span class="w"> </span>curl
+</code></pre></div>
+
+<p>测试成功，可以获取到json格式agent信息。</p>
+<div class="highlight"><pre><span></span><code><span class="nv">ORG_URL</span><span class="o">=</span><span class="s2">&quot;https://dev.azure.com/xxxx&quot;</span>
+<span class="nv">PAT_TOKEN</span><span class="o">=</span><span class="k">$(</span>cat<span class="w"> </span>/etc/secret-vol/token<span class="k">)</span>
+<span class="nv">PAT_TOKEN_B64</span><span class="o">=</span><span class="k">$(</span><span class="nb">printf</span><span class="w"> </span><span class="s2">&quot;%s&quot;&quot;:</span><span class="nv">$PAT_TOKEN</span><span class="s2">&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>base64<span class="w"> </span>-w0<span class="k">)</span>
+<span class="nv">POOL_ID</span><span class="o">=</span><span class="s2">&quot;56&quot;</span>
+<span class="nv">API_VERSION</span><span class="o">=</span><span class="s2">&quot;7.1&quot;</span>
+
+curl<span class="w"> </span>-s<span class="w"> </span>-H<span class="w"> </span><span class="s2">&quot;Authorization: Basic </span><span class="nv">$PAT_TOKEN_B64</span><span class="s2">&quot;</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">ORG_URL</span><span class="si">}</span><span class="s2">/_apis/distributedtask/pools/</span><span class="si">${</span><span class="nv">POOL_ID</span><span class="si">}</span><span class="s2">/agents?api-version=</span><span class="si">${</span><span class="nv">API_VERSION</span><span class="si">}</span><span class="s2">&quot;</span>
+
+<span class="nv">AGENT_ID</span><span class="o">=</span><span class="m">77399</span>
+curl<span class="w"> </span>-s<span class="w"> </span>-H<span class="w"> </span><span class="s2">&quot;Authorization: Basic </span><span class="nv">$PAT_TOKEN_B64</span><span class="s2">&quot;</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">ORG_URL</span><span class="si">}</span><span class="s2">/_apis/distributedtask/pools/</span><span class="si">${</span><span class="nv">POOL_ID</span><span class="si">}</span><span class="s2">/agents/</span><span class="si">${</span><span class="nv">AGENT_ID</span><span class="si">}</span><span class="s2">?includeAssignedRequest=true&amp;includeCapabilities=true&amp;api-version=</span><span class="si">${</span><span class="nv">API_VERSION</span><span class="si">}</span><span class="s2">&quot;</span>
+</code></pre></div>
+
+<p><div class="callout callout-info" markdown="1"><br />
+<p class="callout-title">Info</p></p>
+<p>注意：如果一个agent处于idle状态，REST API返回值中不存在"assignedRequest"字段。如果有任务在运行，那么会返回"assignedRequest"字段及其详细信息。</p>
+</div>
+<h3 id="pod中登录azcli-sp">Pod中登录azcli-sp</h3>
+<p>参考： https://learn.microsoft.com/en-us/cli/azure/authenticate-azure-cli-service-principal</p>
+<ul>
+<li>client位于AKS中，VMSS位于另一个tenant中。看起来managed identity用不了，试试用VMSS的tenant中的sp，在AKS中用sp登录</li>
+</ul>
+<p><code>yaml
+  apiVersion: v1
+  kind: Pod
+  metadata:
+    name: pod-test-azcli
+    namespace: devops-agent-management
+  spec:
+    containers:
+      - name: standby
+        image: mcr.microsoft.com/azure-cli:2.71.0-cbl-mariner2.0
+        command: ["/bin/sh"]
+        args: ["-c", "while true; do echo hello; sleep 10;done"]
+        resources:
+          requests:
+            cpu: 500m
+            memory: 200Mi
+          limits:
+            cpu: 800m
+            memory: 500Mi</code></p>
+<p>```sh<br />
+  az cloud set --name AzureChinaCloud</p>
+<p>TENANT_ID="xxx"<br />
+  CLIENT_ID="xxx"<br />
+  CLIENT_SECRET="xxx"</p>
+<p>echo "Logging in with service principal"<br />
+  az login --service-principal --username $CLIENT_ID --tenant $TENANT_ID --password $CLIENT_SECRET<br />
+  ```</p>
+<p>登录是成功的</p>
+<h3 id="pod登录azcli-workload-identity">Pod登录azcli-Workload Identity</h3>
+<p>参考：https://learn.microsoft.com/zh-cn/entra/workload-id/workload-identity-federation-config-app-trust-managed-identity?tabs=microsoft-entra-admin-center</p>
+<ul>
+<li>在ns中创建service account</li>
+</ul>
+<p><code>yaml
+  apiVersion: v1
+  kind: ServiceAccount
+  metadata:
+    annotations:
+      azure.workload.identity/client-id: "xxx"
+      azure.workload.identity/tenant-id: "xxx"
+    labels:
+      azure.workload.identity/use: "true"
+    name: "sa-devops-agent-management"
+    namespace: "devops-agent-management"</code></p>
+<ul>
+<li>获取clusterIssuer</li>
+</ul>
+<p><code>sh
+  AKS_RG_NAME="myResourceGroup"
+  CLUSTER_NAME="myCluster"
+  az aks show -g $AKS_RG_NAME -n $CLUSTER_NAME --query "oidcIssuerProfile.issuerUrl" -otsv</code></p>
+<ul>
+<li>前往sp的federated secrets界面，基于已经创建的sa、AKS的OIDC issuer URL，创建一个新的federated credential</li>
+</ul>
+<blockquote>
+<p>[!warning]<br />
+<mark>注意在Audience字段中不能带China，要改成 api://AzureADTokenExchange。否则在后面pod中登录的时候会报错：AADSTS700212: No matching federated identity record found for presented assertion audience 'api://AzureADTokenExchange'.</mark></p>
+</blockquote>
+<ul>
+<li>创建pod挂载workload identity和sa</li>
+</ul>
+<p><code>yaml
+  apiVersion: v1
+  kind: Pod
+  metadata:
+    name: pod-test-azcli
+    namespace: devops-agent-management
+    labels:
+      azure.workload.identity/use: true 
+  spec:
+    serviceAccountName: sa-devops-agent-management
+    containers:
+      - name: standby
+        image: mcr.microsoft.com/azure-cli:2.71.0-cbl-mariner2.0
+        command: ["/bin/sh"]
+        args: ["-c", "while true; do echo hello; sleep 10;done"]
+        resources:
+          requests:
+            cpu: 500m
+            memory: 200Mi
+          limits:
+            cpu: 800m
+            memory: 500Mi</code></p>
+<ul>
+<li>describe pod检查这几个环境变量：</li>
+</ul>
+<p>```sh<br />
+  AZURE_CLIENT_ID:           <br />
+  AZURE_TENANT_ID:           <br />
+  AZURE_FEDERATED_TOKEN_FILE:  /var/run/secrets/azure/tokens/azure-identity-token<br />
+  AZURE_AUTHORITY_HOST:        https://login.chinacloudapi.cn/</p>
+<p>cat /var/run/secrets/azure/tokens/azure-identity-token<br />
+  ```</p>
+<ul>
+<li>利用workload identity登录</li>
+</ul>
+<p><code>sh
+  az cloud set --name AzureChinaCloud &amp;&amp; az login --service-principal --username "${AZURE_CLIENT_ID}" --tenant "${AZURE_TENANT_ID}" --federated-token "$(cat $AZURE_FEDERATED_TOKEN_FILE)"</code></p>
+<ul>
+<li>尝试scale VMSS -- 成功</li>
+</ul>
+<p><code>sh
+  rgname=""
+  vmssname=""
+  az vmss scale --resource-group $rgname --name $vmssname --new-capacity 4</code></p>
+    </div>
+  </article>
+  <aside class="toc">
+    <p class="toc-label">本页目录</p>
+    <ul>
+  <li><a href="#related-notes">Related Notes</a></li>
+  <li><a href="#az-devops-cli">Az DevOps CLI</a><ul>
+  <li><a href="#登录devops">登录DevOps</a></li>
+  <li><a href="#操作agent-pool">操作Agent Pool</a></li>
+  <li><a href="#操作agents">操作Agents</a></li>
+  <li><a href="#检测agent-current-status">检测Agent Current Status</a></li>
+</ul></li>
+  <li><a href="#azure-devops-rest-api">Azure DevOps REST API</a><ul>
+  <li><a href="#删除offline的agent">删除Offline的Agent</a></li>
+  <li><a href="#检测agent-current-status_1">检测Agent Current Status</a></li>
+  <li><a href="#脚本逻辑">脚本逻辑</a></li>
+</ul></li>
+  <li><a href="#azure-vmss-cli">Azure VMSS CLI</a><ul>
+  <li><a href="#scale">Scale</a></li>
+  <li><a href="#extension">Extension</a></li>
+  <li><a href="#替换image">替换Image</a></li>
+</ul></li>
+  <li><a href="#helm-chart部署">Helm Chart部署</a><ul>
+  <li><a href="#测试pod里运行az-devops">测试Pod里运行az devops</a></li>
+  <li><a href="#测试pod中请求rest-api">测试Pod中请求REST API</a></li>
+  <li><a href="#pod中登录azcli-sp">Pod中登录azcli-sp</a></li>
+  <li><a href="#pod登录azcli-workload-identity">Pod登录azcli-Workload Identity</a></li>
+</ul></li>
+</ul>
+  </aside>
+
+</div>
+
+</main>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>Learning Notes</span>
+    <a href="https://github.com/hangx969/learning-notes">GitHub</a>
+  </div>
+</footer>
+<script src="../../static/search.js"></script>
+</body>
+</html>

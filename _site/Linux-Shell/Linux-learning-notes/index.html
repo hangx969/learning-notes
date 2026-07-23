@@ -1,0 +1,2945 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Linux 学习笔记 - Learning Notes</title>
+<link rel="stylesheet" href="../../static/style.css">
+<link rel="stylesheet" href="../../static/pygments.css">
+</head>
+<body data-root="../../">
+<header class="site-header">
+  <div class="header-inner">
+    <a class="logo" href="../../index.html"><span class="logo-mark"></span>LEARNING NOTES</a>
+    <div class="search">
+      <input id="search-input" type="search" placeholder="搜索笔记…" autocomplete="off" aria-label="搜索笔记">
+      <div id="search-results" hidden></div>
+    </div>
+  </div>
+  <nav class="topic-nav" aria-label="主题导航">
+    <div class="topic-nav-inner">
+      <a href="../../AI/">AI</a>
+      <a href="../../Aliyun/">Aliyun</a>
+      <a href="../../Azure/">Azure</a>
+      <a href="../../C%2B%2B/">C++</a>
+      <a href="../../CloudComputing/">CloudComputing</a>
+      <a href="../../Database/">Database</a>
+      <a href="../../Docker-Kubernetes/">Docker-Kubernetes</a>
+      <a href="../../GPU-DeepLearning/">GPU-DeepLearning</a>
+      <a href="../../Git/">Git</a>
+      <a href="../../Go/">Go</a>
+      <a href="../../HPC/">HPC</a>
+      <a href="../../IaC/">IaC</a>
+      <a href="../../Linux-Shell/" class="active">Linux-Shell</a>
+      <a href="../../Middlewares/">Middlewares</a>
+      <a href="../../Networking/">Networking</a>
+      <a href="../../OS/">OS</a>
+      <a href="../../Python/">Python</a>
+      <a href="../../SoftwareTesting/">SoftwareTesting</a>
+    </div>
+  </nav>
+</header>
+<main class="main">
+
+<div class="article-layout">
+
+  <aside class="sidebar">
+    <details class="sidebar-details">
+      <summary>Linux-Shell</summary>
+      <nav class="sidebar-nav">
+        <p class="sidebar-group">其他</p>
+        <ul>
+          <li><a href="../../Linux-Shell/LVM-RAID/">LVM 与 RAID</a></li>
+          <li><a href="../../Linux-Shell/Linux-learning-notes/" class="current">Linux 学习笔记</a></li>
+          <li><a href="../../Linux-Shell/Linux%E7%BB%88%E7%AB%AF%E9%85%8D%E7%BD%AEproxy/">Linux终端配置代理</a></li>
+          <li><a href="../../Linux-Shell/MacBook%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/">MacBook 开发环境配置</a></li>
+          <li><a href="../../Linux-Shell/Ubuntu-unattended-upgrade%E7%AE%A1%E7%90%86/">Ubuntu安全补丁</a></li>
+          <li><a href="../../Linux-Shell/Ubuntu-%E4%BF%AE%E6%94%B9%E5%90%AF%E5%8A%A8%E5%86%85%E6%A0%B8/">Ubuntu修改启动内核</a></li>
+          <li><a href="../../Linux-Shell/Ubuntu%E5%9F%BA%E7%A1%80%E6%93%8D%E4%BD%9C/">Ubuntu基础操作</a></li>
+          <li><a href="../../Linux-Shell/Ubuntu%E5%AE%89%E8%A3%85Wechat/">Ubuntu安装Wechat</a></li>
+          <li><a href="../../Linux-Shell/Ubuntu%E5%AE%89%E8%A3%85%E6%98%BE%E5%8D%A1%E9%A9%B1%E5%8A%A8/">Ubuntu安装显卡驱动</a></li>
+          <li><a href="../../Linux-Shell/Ubuntu%E9%83%A8%E7%BD%B2vftpd/">Ubuntu部署vsftpd</a></li>
+          <li><a href="../../Linux-Shell/VMWare-using-notes/">VMWare虚拟机挂载共享目录</a></li>
+          <li><a href="../../Linux-Shell/ansible%E5%AE%89%E8%A3%85-rockylinux8/">Ansible安装 - Rocky Linux 8</a></li>
+          <li><a href="../../Linux-Shell/inotifywait%E7%9B%91%E6%8E%A7%E6%96%87%E4%BB%B6%E5%8F%98%E5%8C%96/">inotifywait监控文件变化</a></li>
+          <li><a href="../../Linux-Shell/linux%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E7%AE%A1%E7%90%86/">Linux环境变量管理</a></li>
+          <li><a href="../../Linux-Shell/nmcli%E7%AE%A1%E7%90%86%E7%BD%91%E7%BB%9C%E9%85%8D%E7%BD%AE/">nmcli管理网络配置</a></li>
+          <li><a href="../../Linux-Shell/samba%E6%96%87%E4%BB%B6%E5%85%B1%E4%BA%AB%E6%9C%8D%E5%8A%A1/">Samba文件共享服务</a></li>
+          <li><a href="../../Linux-Shell/screen%E5%90%8E%E5%8F%B0%E8%BF%90%E8%A1%8C%E4%BB%BB%E5%8A%A1/">screen后台运行任务</a></li>
+          <li><a href="../../Linux-Shell/shell-scripts/">Shell 脚本</a></li>
+          <li><a href="../../Linux-Shell/ssh%E8%BF%9C%E7%A8%8B%E6%89%A7%E8%A1%8C%E5%A4%9A%E4%B8%AA%E5%91%BD%E4%BB%A4/">SSH远程执行多个命令</a></li>
+          <li><a href="../../Linux-Shell/ssh%E8%BF%9E%E6%8E%A5/">SSH连接</a></li>
+          <li><a href="../../Linux-Shell/vscode/">VSCode命令行安装插件</a></li>
+          <li><a href="../../Linux-Shell/%E5%BC%80%E6%BA%90%E5%A0%A1%E5%9E%92%E6%9C%BAjumpserver%E9%83%A8%E7%BD%B2/">开源堡垒机JumpServer部署</a></li>
+          <li><a href="../../Linux-Shell/%E7%B3%BB%E7%BB%9F%E4%BF%A1%E6%81%AF%E6%9F%A5%E7%9C%8B/">系统信息查看</a></li>
+          <li><a href="../../Linux-Shell/%E9%85%8D%E7%BD%AEzsh%E7%BB%88%E7%AB%AF/">配置zsh终端</a></li>
+        </ul>
+      </nav>
+    </details>
+  </aside>
+
+  <article class="article">
+    <nav class="breadcrumb">
+      <a href="../../index.html">首页</a><span>/</span>
+      <a href="../../Linux-Shell/">Linux-Shell</a>
+    </nav>
+    <h1 class="article-title">Linux 学习笔记</h1>
+    <p class="article-meta"><span>更新于 2026-04-16</span>
+      <a href="https://github.com/hangx969/learning-notes/blob/main/Linux-Shell/Linux-learning-notes.md">查看源文件</a>
+    </p>
+    <div class="article-body">
+<h1 id="linux-basic">Linux Basic</h1>
+<h2 id="001-绪论">001 绪论</h2>
+<ul>
+<li>Linux学习阶段：</li>
+</ul>
+<p>​   基本操作命令 - 各种配置（网络 存储等） - shell 脚本 - 系统调优 - 深入了解Linux内核</p>
+<ul>
+<li>学习方法：</li>
+</ul>
+<p>先整体后细节 - 要知道怎么查 怎么用 - 先how 再why</p>
+<p>计算机是 做中学</p>
+<p>Linux是实操性 用指令要非常溜 拿过来就敲 </p>
+<ul>
+<li>学习大纲：</li>
+</ul>
+<p>基础篇：Linux入门 - vim和Linux的安装 - Linux目录结构</p>
+<hr />
+<h2 id="002-linux应用范围">002 Linux应用范围</h2>
+<ul>
+<li>Linux应用场景</li>
+</ul>
+<p>​   Linux开发项目（JavaEE、Python、PHP、C等）、运维、嵌入式等</p>
+<ul>
+<li>Linux应用领域</li>
+</ul>
+<p><strong>服务器：</strong>免费、高效。<strong>这是Linux最主要的应用领域</strong></p>
+<p>嵌入式：对软件进行裁剪，可对内核进行定制</p>
+<hr />
+<h2 id="003-linux介绍">003 Linux介绍</h2>
+<ul>
+<li>免费、稳定、开源、可高并发的系统</li>
+<li>
+<p>主要发行版：<strong>ubuntu、Redhat、CentOS</strong>、Debain、Fedora、SuSE、CoreOS、OracleLinux等</p>
+</li>
+<li>
+<p>Linux是内核，发行版是内核+程序包等扩展功能形成的封装版</p>
+</li>
+</ul>
+<p>Linux发行版与Windows或Mac OS（操作系统）一样，Linux由多种类型组成，称为分发,每个发行版都很相似，但是不完全一样。一般情况下，Linux发行版是各种应用程序（软件）的集合，从而来适应使用目的，除了在服务器上安装之外，其他还要提前设置，以便可以立即进行实际使用。</p>
+<p>Linux发行版主要有：Debian类型、Slackware系列、Red Hat<br />
+1.Debian类型：<br />
+Debian拥有出色的性能，可用于嵌入式设备等众多应用。此外，它已经发展成为一种流行的Linux发行版，名为Ubuntu。 <br />
+2.Slackware系列：<br />
+Slackware管理方法比其他线路更复杂，对于初学者来说相对困难。Slackware著名的发行版包括openSUSE，Plamo Linux和Puppy Linux。 <br />
+3.Red Hat：<br />
+目前Red Hat大致分为两类，第一个是红帽企业Linux（RHEL），有些服务是要收费的。另一种是名为Fedora（Fedora）的免费发行版。<br />
+4、Centos<br />
+CentOS是Linux发行版之一，它是来自于Red Hat Enterprise Linux依照开放源代码规定释出的源代码所编译而成。由于出自同样的源代码，因此有些要求高度稳定性的服务器以CentOS替代商业版的Red Hat Enterprise Linux使用。</p>
+<hr />
+<h2 id="004-unix与linux">004 Unix与Linux</h2>
+<ul>
+<li>1970s 贝尔实验室+Ken Tompson + Dennis = Unix诞生 （多用户分时操作系统）</li>
+<li>1980s Unix发行版 高端机型才能用 PC用不了</li>
+<li>著名黑客Richard Stallman发起了<strong>GNU计划 倡导开源精神</strong>，大家都能阅读源代码，软件公司提供服务和培训。</li>
+<li>Linus贡献了Linux Kernel（可在x86系统上运行），越来越多的人贡献了FTP、editor等功能 =&gt; GNU/Linux</li>
+</ul>
+<hr />
+<h2 id="005-vmware-16和centos-7-安装">005 VMWARE 16和CentOS 7 安装</h2>
+<ul>
+<li>
+<p>win10系统，安装之后要 控制面板-程序-打开或关闭windows功能-虚拟机 开启</p>
+</li>
+<li>
+<p>手动配置分区：</p>
+</li>
+</ul>
+<p>Linux磁盘空间分区一般分三个区：Boot分区、Swap分区、根分区 </p>
+<ul>
+<li>Boot分区：包含启动文件和内核</li>
+<li>Swap分区：交换分区，系统内存不足时，调用硬盘的一部分，可以理解为虚拟内存。</li>
+<li>
+<p>根分区：存放用户文件</p>
+</li>
+<li>
+<p>安装模式</p>
+</li>
+</ul>
+<p>实际生产环境会选择Minimal，不带用户界面的那种</p>
+<ul>
+<li>KDUMP 生产环境会开启 </li>
+</ul>
+<hr />
+<h2 id="007-linux虚拟机网络连接的三种方式">007 Linux虚拟机网络连接的三种方式</h2>
+<ul>
+<li>桥接模式：虚拟系统可以与外部进行通信，但用的是主机的网段，容易发生IP冲突（占用同一个网段）</li>
+<li>NAT模式：网络地址转换，虚拟系统可以和外部系统通信，不造成外部冲突 </li>
+<li>主机模式：独立系统，不与外界通信 </li>
+</ul>
+<hr />
+<h2 id="008-linux虚拟机克隆">008 Linux虚拟机克隆</h2>
+<ul>
+<li>直接复制虚拟机文件</li>
+<li>vmware自带克隆功能</li>
+</ul>
+<hr />
+<h2 id="009-虚拟机快照">009 虚拟机快照</h2>
+<ul>
+<li>就是Save and Load功能</li>
+</ul>
+<hr />
+<h2 id="011-安装vmtools">011 安装vmtools</h2>
+<ul>
+<li>
+<p>详见教程</p>
+</li>
+<li>
+<p>设置与主机的共享文件夹</p>
+</li>
+</ul>
+<p>在CentOS中，共享文件夹位于/mnt/hgfs/下</p>
+<ul>
+<li>实际生产环境下，上传下载是使用远程方式完成的</li>
+</ul>
+<hr />
+<h2 id="012-linux-目录结构">012 Linux 目录结构</h2>
+<ul>
+<li>树状结构 根目录下有各种子目录（规定好的）</li>
+<li>Linux会把硬件</li>
+<li>资源映射成文件来管理，所以Linux里面一切皆文件，隐藏文件是以 . 开头的</li>
+<li>具体目录结构：</li>
+<li>
+<p><strong>/bin</strong> 存放最常使用的指令，单人维护模式下也可以执行的指令。</p>
+</li>
+<li>
+<p>/sbin 存放系统管理员的管理程序</p>
+</li>
+<li>
+<p>/home 用户的家目录。~表示当前用户的家目录</p>
+</li>
+<li>
+<p>/root 系统管理员的用户主目录</p>
+</li>
+<li>
+<p>/lib 动态链接共享库，函数库</p>
+</li>
+<li>
+<p><strong>/etc 系统管理所需要的配置文件和子目录。</strong></p>
+</li>
+<li>
+<p>/opt 安装包 约定俗成 放在这里</p>
+</li>
+<li>
+<p><strong>/usr</strong>：Unix System Resource，操作系统软件资源，里面放着/sbin /bin /lib等</p>
+</li>
+<li>
+<p><strong>/boot Linux启动引导</strong></p>
+</li>
+<li>
+<p>/proc 系统内存映射 /srv 服务启动 /sys  【这些都不能动】</p>
+</li>
+<li>
+<p>/dev 类似windows的设备管理器，将硬件映射为文件的形式</p>
+</li>
+<li>
+<p>/mnt 自动识别的设备 U盘 光驱等</p>
+</li>
+<li>
+<p>/mnt 让用户临时挂载别的文件系统</p>
+</li>
+<li>
+<p>/var 存放经常变动的文件 一般可以把日志文件放进去 （<strong>/var/log</strong> 系统日志）</p>
+</li>
+<li>
+<p>/run centos7之后才有，将经常变动的项目移动到内存中暂存，不占用硬盘容量。放在内存中每次开机都变动。</p>
+</li>
+<li>系统变量</li>
+<li>位置查看：echo $PATH</li>
+<li>作用：当输入一个命令的时候，系统需要寻找这个命令的路径，系统变量就是告诉系统去哪里寻找命令，节省时间</li>
+<li>将新增系统变量：将目录加入到~/.bash_profile</li>
+</ul>
+<h3 id="fhs">FHS</h3>
+<p>Filesystem Hierarchy Standard</p>
+<p>linux目录结构的标准规范。 定义了根目录以及/usr, /var中的内容以及应该放置的数据。 </p>
+<hr />
+<h2 id="014-远程登录linux">014 远程登录Linux</h2>
+<ul>
+<li>实际生产环境中，Linux服务器是开发小组共享；上线的项目运行在公网</li>
+<li>Xshell远程登录（只能做一些命令性指令），Xftp文件远程上传下载</li>
+<li>XShell远程连接的条件：1、知道Linux公网IP 2、能ping通远程服务器</li>
+<li>
+<p>ifconfig 查看Linux公网IP地址，windows终端ping一下这个IP试试</p>
+</li>
+<li>
+<p>windows编码是gbk，Linux编码用的是UTF-8</p>
+</li>
+<li>Telnet和SSH是用于远程访问服务器的两大协议，telnet是明码传输，ssh是加密传输</li>
+</ul>
+<h3 id="linux终端机界面">Linux终端机界面</h3>
+<ul>
+<li>tty1-tty6</li>
+<li>
+<p>linux预设6个terminal可供登录，使用 ctrl+alt+f1-f6 来切换</p>
+</li>
+<li>
+<p>开机之后默认提供一个tty，切换之后才产生新的</p>
+</li>
+</ul>
+<h3 id="远程登录的服务">远程登录的服务</h3>
+<ul>
+<li>systemctl status sshd.service</li>
+</ul>
+<p>是通过OpenSSH server.daemon来实现的</p>
+<hr />
+<h2 id="016-vi和vim">016 Vi和Vim</h2>
+<p>Linux的文本编辑器</p>
+<ul>
+<li>
+<p>三种模式：</p>
+</li>
+<li>
+<p>正常模式（不能输入内容）</p>
+</li>
+<li>插入模式：按i进入</li>
+<li>
+<p>命令行模式：按/ or : 进入</p>
+</li>
+<li>
+<p>实例：</p>
+</li>
+</ul>
+<p><code>Shell
+  vim hello.java  # 创建新文件或者打开文件
+  i #进入编辑模式
+  # 按Esc 再输入:wq即可退出vim
+  # 按:可以进入命令行模式 :wq 保存退出 :q! 强制退出</code></p>
+<ul>
+<li>
+<h3 id="快捷键">快捷键</h3>
+</li>
+<li>
+<p>正常模式下：yy 复制当前行；5yy复制当前行下面的5行；p 粘贴</p>
+</li>
+<li>正常模式下：dd 删除当前行；5dd 删除当前行下面的5行</li>
+<li>查找单词：正常模式输入/ 进入命令行模式，输入单词，回车，按n切到下一个</li>
+<li>显示行号：正常模式输入/进入命令行模式，输入set nu，set nonu</li>
+<li>大文件：正常模式下，移动到首行 小写gg；移动到末尾，大写G，移动到首行</li>
+<li>撤销：正常模式，输入u</li>
+<li>快速到某一行：1、可以在正常模式下输入 20 shift+g；2、可以在命令模式下输入:20</li>
+</ul>
+<hr />
+<h2 id="017-关机-重启-用户">017 关机 重启 用户</h2>
+<h3 id="linux启动过程">linux启动过程</h3>
+<p><img alt="090eb76673404b3ff67ee7ed697224f" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202312042155530.jpg" /></p>
+<p><img alt="dc019cdb971d2f32c75f931de48252d" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202312042155497.jpg" /></p>
+<ol>
+<li>按电源键，服务器启动，首先会加载BIOS或者UEFI</li>
+<li>BIOS会检测硬件是否准备就绪，例如内存、硬盘、CPU等。</li>
+<li>硬件检测通过，会选择启动设备，可以是硬盘、光驱、网络服务器。</li>
+<li>从设备中读取引导文件（grub），读取到之后会提示选择内核版本，操作系统等。</li>
+<li>Linux内核启动，运行用户环境，systemd将成为第一个用户空间的进程。用于管理系统中的进程和服务，并挂载文件系统。</li>
+<li>在操作系统启动时，也会启动相关的服务或者进程，比如sshd，syslog，或者用户设置的开机启动服务。</li>
+<li>运行启动脚本，并配置用户环境。</li>
+<li>然后显示登录界面，提示输入用户名密码。</li>
+</ol>
+<h3 id="关机">关机</h3>
+<ul>
+<li>
+<p>shutdown -h now 立刻关机</p>
+</li>
+<li>
+<p>shutdown -h 1  1min之后关机</p>
+</li>
+<li>
+<p>shutdown -r noe 现在重启</p>
+</li>
+<li>
+<p>reboot 现在重启</p>
+</li>
+<li>
+<p><strong>sync</strong> 将内存数据同步到磁盘 关机之前要进行一遍</p>
+</li>
+</ul>
+<div class="highlight"><pre><span></span><code>sync<span class="p">;</span><span class="w"> </span>sync<span class="p">;</span><span class="w"> </span>sync<span class="p">;</span><span class="w"> </span>reboot
+</code></pre></div>
+
+<ul>
+<li>shutdown / halt / poweroff这几个命令都是去call systemctl</li>
+</ul>
+<h3 id="用户类型">用户类型</h3>
+<ul>
+<li>root用户：UID=0，GID=0</li>
+<li>普通用户：UID&gt;1000</li>
+<li>
+<p>系统用户：伪用户，nologin 无法登陆，0&lt;UID&lt;1000，是为系统中某些进程准备的，即nobody用户：</p>
+</li>
+<li>
+<p>nobody在linux中是一个不能登陆的帐号，一些服务进程如Apache，aquid等都采用一些特殊的帐号来运行，比如nobody,news,games等等，这是就可以防止程序本身有安全问题的时候，不会被黑客获得root权限。</p>
+<p>1、Windows系统在安装后会自动建立一些用户帐户，在Linux系统中同样有一些用户帐户是在系统安装后就有的，就像Windows系统中的内置帐户一样。</p>
+<p>2、它们是用来完成特定任务的，比如nobody和ftp等，我们访问网页程序时，官网的服务器就是让客户以 nobody 身份登录的(相当于Windows系统中的匿名帐户); 我们匿名访问ftp时，会用到用户ftp或nobody。</p>
+<p>3、首先，nobody是一个普通用户，非特权用户。 使用nobody用户名的'目的'是，使任何人都可以登录系统，但是其 UID 和 GID 不提供任何特权，即该uid和gid只能访问人人皆可读写的文件。<br />
+4、其次，许多系统中都按惯例地默认创建一个nobody，尽量'限制它的权限至最小'，当服务器向外服务时，可能会让client以nobody的身份登录。</p>
+<p>5、nobody就是一个普通账户，因为默认登录shell是 '/sbin/nologin'，所以这个用户是无法直接登录系统的，也就是黑客很难通过漏洞连接到你的服务器来做破坏。此外这个用户的权限也给配置的很低。因此有比较高的安全性。一切都只给最低权限。这就是nobody存在的意义。</p>
+</li>
+</ul>
+<h3 id="用户登录与注销">用户登录与注销</h3>
+<ul>
+<li>登录</li>
+</ul>
+<p>一般不会给你root用户权限，普通用户想要切换成root用户，输入 su - 用户名，切换成root用户（直接 su - 也行</p>
+<ul>
+<li>
+<p>注销：logout 在<strong>用户级别3</strong>时才有效</p>
+</li>
+<li>
+<p>su 命令 申请切换root用户，需要输入root用户密码；sudo su 是临时申请root权限，所输入的是用户密码。</p>
+</li>
+</ul>
+<h3 id="账户">账户</h3>
+<ul>
+<li>
+<p>每个用户的登陆环境在家目录中有 ~/.bash.profile 和 <sub>/.bashrc两个配置文件，通常个人bash环境设置都定义在</sub>/.bashrc中</p>
+</li>
+<li>
+<p>对所有用户生效的配置文件：/etc/bash.profile 和 /etc/bash.rc </p>
+</li>
+</ul>
+<hr />
+<h2 id="018-用户管理">018 用户管理</h2>
+<h3 id="添加用户">添加用户</h3>
+<p>useradd 用户名</p>
+<p>1、创建用户成功后，自动创建该用户的家目录，位于/home/用户名</p>
+<p>2、通过 useradd -d 指定目录 用户名 :可以给新创建的用户制定家目录</p>
+<h3 id="制定修改密码">制定、修改密码</h3>
+<p>passwd 用户名 密码  （注意加上用户名，否则是给当前用户改密码）</p>
+<h3 id="删除用户">删除用户</h3>
+<p>userdel 用户名 （保留了家目录）一般建议保留家目录</p>
+<p>userdel -r 用户名 （删除家目录）</p>
+<h3 id="查询用户">查询用户</h3>
+<p>id 用户名</p>
+<h3 id="切换用户">切换用户</h3>
+<ul>
+<li>
+<p>su - 用户名 （带 - 是切换用户的同时切换环境变量）</p>
+</li>
+<li>
+<p>su 直接切换，不是登录shell，该用户的环境变量没有被切换。</p>
+</li>
+<li>
+<p>命令行#代表root用户 $代表普通用户</p>
+</li>
+<li>root用户切其他用户是不需要输入密码的，即使该user没设置密码。</li>
+</ul>
+<h3 id="查看当前用户">查看当前用户</h3>
+<p>who am i 显示的是第一次登录到的用户信息</p>
+<h3 id="用户组"><strong>用户组</strong></h3>
+<p>（给组设置具体权限，把用户拉进来）</p>
+<p>groupadd 组名</p>
+<p>groupdel 删除组</p>
+<p>（如果新建用户时没有指定的组，系统会自动建一个用户名同名的组，放进去）</p>
+<p>groupadd -g 用户组 用户名：新建用户同时放到一个组里</p>
+<p>groupmod -g 用户组 用户名 ：更改用户组</p>
+<h3 id="把用户拉进组-更改用户所在组"><strong>把用户拉进组</strong> / 更改用户所在组</h3>
+<p>usermod -aG 组名 用户名</p>
+<h3 id="更换文件所在组">更换文件所在组</h3>
+<p>chgrp 组名 文件名</p>
+<h3 id="用户配置文件">用户配置文件</h3>
+<p>/etc/passwd  用户配置文件，记录用户的各种信息</p>
+<p>（查询已有用户：cat /etc/passwd）</p>
+<p>/etc/shadow  口令的配置文件 ，记录密码，登录信息啥的</p>
+<p>/etc/group  组的配置文件</p>
+<hr />
+<h2 id="019-bash-shell">019 Bash shell</h2>
+<p>shell：类似解释器的进程，把命令转换为Linux内核可以识别的命令，中国一般用bash shell</p>
+<p>Azure 用的是 Bourne Again shell （Bash）</p>
+<hr />
+<h2 id="025-实用指令-01">025 <strong>实用指令</strong>-01</h2>
+<h3 id="指定运行级别">指定运行级别</h3>
+<ul>
+<li>0 关机</li>
+<li>1 单用户【找回丢失密码】（单人维护模式仅挂载根目录）</li>
+<li>2 多用户状态没有网络</li>
+<li>3 多用户状态 有网络服务 【<strong>使用最多</strong>】</li>
+<li>4 保留给用户</li>
+<li>5 图形界面 【也常用】</li>
+<li>6 系统重启</li>
+</ul>
+<p>​       centOS 7 以后，运行级别3 等同于 multi-user.target；运行级别5 等同于 graphical.target</p>
+<p>​       查看默认的运行级别：systemctl get-default</p>
+<p>​       设置默认的运行级别：systemctl set-default multiuser.target</p>
+<ul>
+<li>找回root密码</li>
+</ul>
+<p>开机界面进入单用户模式</p>
+<h3 id="帮助指令">帮助指令</h3>
+<ul>
+<li>man 查看帮助信息</li>
+</ul>
+<p>查询某指令时候，指令后面会带一个括号数字：</p>
+<p><img alt="image-20220914230526292" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202209171633422.png" /></p>
+<p>1-9含义不同：</p>
+<p><img alt="image-20220914231244428" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202209171633462.png" /></p>
+<ul>
+<li>help 查看 shell 内置指令的帮助</li>
+</ul>
+<p><div class="callout callout-tip" markdown="1"><br />
+<p class="callout-title">查看命令常用方法</p></p>
+<p>curl cheat.sh/tree #可以查看命令的常用方法</p>
+</div>
+<h3 id="快捷键_1">快捷键</h3>
+<ul>
+<li>ctrl + a 光标移动到最前面；ctrl+e 光标移动到最后面</li>
+</ul>
+<h3 id="ls-列出当前目录文件">ls 列出当前目录文件</h3>
+<ul>
+<li>-l 按行详细输出</li>
+<li>-a 显示所有文件包含隐藏文件(以. 开头的是隐藏文件)</li>
+<li>
+<p>ls -lh 将文件大小显示为适合人类看的格式</p>
+</li>
+<li>
+<p>ls -al 的时候，列出的信息的第二列的数字：</p>
+</li>
+</ul>
+<p><img alt="image-20220917160920543" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202209171636268.png" /></p>
+<p>​       是link数；每个文件都会将权限和属性记录到文件系统的i-node中；每个文件名也会连接到一个inode。</p>
+<p>​       第二列的数字就是该文件的硬连接数，相当于该文件有多少个别名。</p>
+<hr />
+<h2 id="028-文件类实用指令-02">028 文件类实用指令-02</h2>
+<h3 id="文件目录">文件目录</h3>
+<ul>
+<li>
+<p>pwd  （print working directory）</p>
+</li>
+<li>
+<p>cd：</p>
+</li>
+</ul>
+<p>cd <strong>~</strong> 回到家目录（root回到/root，普通用户回到家目录）</p>
+<p>cd .. 回到上一级目录（cd ../.. 可以连着用）</p>
+<p>. 或者 ./ 代表当前目录；.. 或者 ../s 代表上一级目录</p>
+<ul>
+<li>
+<p>mkdir 创建目录</p>
+</li>
+<li>
+<p>mkdir /home/animal</p>
+</li>
+<li>
+<p>mkdir -p 创建多级目录</p>
+<p>mkdir -p /home/animal/tiger</p>
+</li>
+<li>
+<p>rmdir 删除目录</p>
+</li>
+<li>
+<p>默认删除空目录，里面有内容不生效</p>
+</li>
+<li>
+<p>里面有东西可以用这个恐怖指令：</p>
+<p>rm -rf 目录路径</p>
+</li>
+</ul>
+<p>这里推荐用 <strong>mv指令 移动到 /delete 文件夹 定期清理</strong></p>
+<ul>
+<li>touch 创建空文件</li>
+</ul>
+<p>当这个文件已经存在时，可以将其时间标签更新为系统当前时间</p>
+<h3 id="文件操作">文件操作</h3>
+<ul>
+<li>
+<p>cp 文件复制</p>
+</li>
+<li>
+<p>单个文件：cp 文件名 目录</p>
+</li>
+</ul>
+<p><code>shell
+  cp hello.py /opt/</code></p>
+<ul>
+<li>复制整个目录： cp -r 源目录 目标目录</li>
+</ul>
+<p><code>cp -r /home/bbb /opt # 直接复制过去 若有同名文件 会一个一个提示是否覆盖
+  \cp -r /home/bbb /opt # 不提示 直接覆盖 （cp -rf也可以）</code></p>
+<ul>
+<li>
+<p>cp -p 旧文件 新文件：将修改时间和访问权限也复制到新文件</p>
+</li>
+<li>
+<p>cut 文件提取</p>
+</li>
+<li>
+<p>sort 能把文件里面的行排好序显示出来，不改变原始内容</p>
+</li>
+<li>
+<p>awk 命令行编程工具 不需要编译 可以用变量 字符、数字函数等。</p>
+</li>
+</ul>
+<p><code>shell
+  awk '{print $1,$2}' # 输出前两行
+  awk '/Enlish {print}'</code></p>
+<ul>
+<li>sed 文本替换</li>
+</ul>
+<p><code>shell
+  sed -i 's/[old text]/[new text]/g' xxx.txt</code></p>
+<ul>
+<li>rm 删除文件或者目录</li>
+</ul>
+<p>-r 递归删除</p>
+<p>-f 强制删除不提示</p>
+<h3 id="文件时间">文件时间</h3>
+<p>有三个主要的变动时间：</p>
+<ul>
+<li>mtime：修改时间，更改文件内容</li>
+<li>ctime：status time，修改文件状态会更新这个时间，例如改文件属性</li>
+<li>atime：access time，文件内容被读取就会更新</li>
+</ul>
+<p>其中，ls -ll 默认显示mtime；想要看其他的time，要加参数，例如</p>
+<div class="highlight"><pre><span></span><code>ls<span class="w"> </span>-ll<span class="w"> </span>--time<span class="o">=</span>atime<span class="w"> </span>/var/log/messages
+</code></pre></div>
+
+<p>touch可以修改mtime和atime</p>
+<h3 id="文件比较">文件比较</h3>
+<ul>
+<li>cmp 一个字母一个字母的比较</li>
+<li>comm 比较两个sorted的文件</li>
+<li>diff 按行比较</li>
+</ul>
+<h3 id="mv-移动重命名">mv 移动/重命名</h3>
+<p>mv 旧文件名 新文件名</p>
+<p>mv 源目录 新目录</p>
+<p>mv 源文件 新目录/新名字 (移动并且重命名)</p>
+<h3 id="cat-查看文件内容">cat 查看文件内容</h3>
+<p>更加安全 只能看不能改</p>
+<ul>
+<li>cat -n 显示行号</li>
+<li>一般会带上管道命令 | more (管道命令是将前面的结果交给后面处理) </li>
+</ul>
+<h3 id="head-查看开头指定行数">head 查看开头指定行数</h3>
+<p>head 默认查看前10行</p>
+<p>head -n 5 看前5行</p>
+<h3 id="tail-查看末尾指定行数">tail 查看末尾指定行数</h3>
+<ul>
+<li>tail -f  可以实时监控文件末尾改变</li>
+</ul>
+<p><code>shell
+  tail -f /opt/mylog.txt
+  tail -fn 10 test.log #循环实时查看最后10行记录(最常用的)</code></p>
+<p>实时监控 按ctrl + C 中断指令</p>
+<p>tail -f 只能监控echo写入的内容，vim写入的不行。因为tail -f 是基于文件的inode监控，而vim会改变文件的inode</p>
+<p>（Unix/Linux系统内部不使用文件名，而使用inode号码来识别文件。对于系统来说，文件名只是inode号码便于识别的别称或者绰号。）</p>
+<h3 id="more-基于vi的文本过滤器">more 基于Vi的文本过滤器</h3>
+<p>按回车一行一行看，空格一页一页看</p>
+<h3 id="less">less</h3>
+<p>分屏查看 支持各种终端 动态加载 适合查看大文件 效率高 </p>
+<h3 id="echo-将内容输出至控制台">echo 将内容输出至控制台</h3>
+<ul>
+<li>echo [选项] 输出内容</li>
+</ul>
+<p>echo $HOSTNAME</p>
+<p>echo "Hello World"</p>
+<p>写shell脚本的时候相当于printf</p>
+<ul>
+<li>echo "xxx" &gt;  xxx.txt  新建文件的方法2</li>
+</ul>
+<h3 id="和">&gt; 和 &gt;&gt;</h3>
+<p>&gt; 是覆写 &gt;&gt; 是追加</p>
+<ul>
+<li>
+<p><code>shell
+  echo “Hello World” &gt; /home/mylog.txt</code></p>
+</li>
+<li>
+<p>ls -l &gt; 文件  （将ls -l显示出来的列表内容写入到文件）文件不存在的话，自动创建</p>
+</li>
+</ul>
+<p>ls -al &gt;&gt; 文件  （将列表内容追加到文件末尾）</p>
+<p>cat 文件1 &gt; 文件2  （将文件1的内容覆写到文件2）</p>
+<ul>
+<li>
+<p>cal &gt;&gt; /home/mycal  可以把日历信息输出到文件中</p>
+</li>
+<li>
+<p>cat 文件1 文件2 &gt; 文件3  把两个文件的信息合并到一起</p>
+</li>
+<li>
+<p><strong>cat 文件1 &gt; 文件2  快捷复制文件 速度非常快</strong></p>
+</li>
+</ul>
+<h3 id="文件链接">文件链接</h3>
+<ul>
+<li>
+<p>ln -s <strong>软链接/符号链接</strong></p>
+</li>
+<li>
+<p>类似快捷方式，不占用磁盘空间</p>
+</li>
+<li>
+<p>基本语法： ln -s [源文件或目录]  [软连接名]</p>
+</li>
+<li>注意：如果软链接的目的路径和源文件路径不同的话，都需要使用绝对路径才能成功创建</li>
+<li>软链接的文件Inode是不同的</li>
+<li>
+<p>ln  <strong>硬链接</strong></p>
+</li>
+<li>
+<p>基本语法： ln [源文件或目录]  [软连接名]</p>
+</li>
+<li>硬链接只能链接文件，不能链接目录</li>
+<li><strong>链接与源文件的inode相同</strong>，代表这是同一个文件</li>
+<li>把源文件移走或重命名，都不影响内容或者权限的同步改变</li>
+<li>删掉原文件之后，硬链接文件仍然保持着原内容</li>
+<li>
+<p>改变内容：</p>
+</li>
+<li>
+<p>对于软硬链接而言，改变链接文件的内容，源文件会都同步改变</p>
+</li>
+<li>
+<p>改变权限：</p>
+</li>
+<li>
+<p>改变软链接文件的权限，软链接的权限并不会改变，源文件的权限会改变</p>
+</li>
+<li>改变硬连接和原文件的权限一旦改变，另一个文件随之也改变</li>
+<li>
+<p>文件系统：</p>
+</li>
+<li>
+<p>软链接可以跨越文件系统；硬链接不能</p>
+</li>
+</ul>
+<h3 id="文件指针">文件指针</h3>
+<p>inode 代表文件的数据结构</p>
+<p>dentry 代表目录的数据结构</p>
+<p>inode和dentry一起构成了cache，磁盘上的文件系统</p>
+<h3 id="history-查看已经执行过的命令">history 查看已经执行过的命令</h3>
+<p>history 所有的；history 10 看最近10个；</p>
+<p>history !5 执行 history列表中行号为5的指令</p>
+<h3 id="文件系统类型">文件系统类型</h3>
+<p>Ext3</p>
+<p>Ext4</p>
+<p>XFS ：large data files</p>
+<hr />
+<h2 id="034-时间日期指令">034 时间日期指令</h2>
+<h3 id="date">date</h3>
+<ul>
+<li>date 显示当前时间</li>
+<li>date "+%Y-%m-%d %H:%M:%S"按占位符规定的格式显示日期</li>
+<li>
+<p>date -s [新时间] 设置系统时间</p>
+</li>
+<li>
+<p>cal 显示日历</p>
+</li>
+</ul>
+<hr />
+<h2 id="035-查找指令">035 查找指令</h2>
+<h3 id="find">find</h3>
+<p>从当前目录向下递归遍历各个子目录，将查到的显示在终端</p>
+<ul>
+<li>
+<p>基本语法：find [搜索范围] [选项]</p>
+</li>
+<li>
+<p>find -name / -user / -size (+n 大于；-n 小于；n等于；单位 k M G )</p>
+</li>
+<li>
+<p>find /目录 -iname xxx.txt  (-i 忽略大小写)</p>
+</li>
+<li>find /目录 -f -name xxx.txt (加上-f是查找文件)</li>
+<li>find /目录 -d -name xxx.txt (加上-f是查找目录)</li>
+<li>不加 -f-d都查找 </li>
+</ul>
+<h3 id="whereis">whereis</h3>
+<ul>
+<li>find有时候会比较慢，whereis会比较快。但是whereis只是去找特定的几个目录</li>
+</ul>
+<h3 id="locate">locate</h3>
+<ul>
+<li>利用事先建立的查找数据库，快速定位文件；保证精确度，定时更新索引数据库（大概是系统每天自动更新一次数据库）</li>
+<li>先 updatedb</li>
+<li>再 locate xxx.txt</li>
+</ul>
+<h3 id="which">which</h3>
+<ul>
+<li>
+<p>是找 PATH环境变量下面目录的指令</p>
+</li>
+<li>
+<p>查看某个指令在哪个目录下：which ls</p>
+</li>
+</ul>
+<h3 id="grep">grep</h3>
+<ul>
+<li>过滤查找，常常与管道符结合使用</li>
+<li>基本语法：grep [选项] 查找内容 源文件</li>
+<li>例如：cat /opt/mylog | grep -n "Hello"</li>
+<li>-n：显示行号；-i：忽略大小写</li>
+</ul>
+<hr />
+<h2 id="037-压缩和解压缩">037 压缩和解压缩</h2>
+<h3 id="gzipgunzip">gzip/gunzip</h3>
+<ul>
+<li>gzip 压缩文件，只能压缩为.gz；gunzip 解压缩，只能解压.gz</li>
+<li>压缩完，源文件就没了</li>
+<li>语法 gzip *</li>
+</ul>
+<h3 id="zipunzip">zip/unzip</h3>
+<p>压缩/解压，项目打包发布有用</p>
+<ul>
+<li>zip/unzip [选项] [文件名].zip [文件或者目录名] </li>
+<li>zip -r ：递归压缩，压缩整个目录（该文件夹内必须有子文件夹，才能-r递归压缩成功）</li>
+<li>unzip -d [指定目录]  [待解压文件]：解压后放到指定目录</li>
+</ul>
+<h3 id="tar">tar</h3>
+<ul>
+<li>
+<p>既能压缩，又能解压；压缩成.tar.gz文件（.tar是打包文件，没压缩；.tar.gz是压缩文件）</p>
+</li>
+<li>
+<p>基本语法：tar  [选项]  xxx.tar.gz 打包的内容</p>
+</li>
+<li>
+<p>-c 产生.tar打包文件；-v 显示详细信息；-f 指定压缩后的文件名；-z 用gzip格式对文档进行压缩或解压；-x 解包.tar文件</p>
+</li>
+<li>
+<p>文件名后缀有.gz，得加上-z解压缩</p>
+</li>
+</ul>
+<p><code>bash
+  # 压缩文件夹
+  tar -zcvf /opt/my.tar.gz /opt/mytest/
+  # 压缩俩文件
+  tar -zcvf /opt/my.tar.gz /opt/my1.txt /opt/my2.txt
+  # 解压到指定目录 -C 后面加上指定目录
+  tar -zxvf /opt/my.tar.gz -C /opt/tmp</code></p>
+<hr />
+<h2 id="040-组管理">040 组管理</h2>
+<ol>
+<li>每一个用户都必须属于一个组，可以属于多个组</li>
+<li>
+<p>每个文件而言，有：<strong>所有者、所在组、其他组</strong> 三个概念，每种组，都有一定的权限可以设置。每个文件只能由一个组</p>
+</li>
+<li>
+<p>查看所有者</p>
+</li>
+</ol>
+<p>ls -ahl / ls -ll 一样</p>
+<ul>
+<li>修改所有者 得有root权限</li>
+</ul>
+<p>chown 所有者：所有组 /文件、目录</p>
+<ul>
+<li>创建组，把人放进去</li>
+</ul>
+<p>groupadd [组名]</p>
+<p>useradd -g [组名] [用户名]</p>
+<ul>
+<li>
+<p>文件的创作者就是所有者，所有者所在组就是文件的所在组</p>
+</li>
+<li>
+<p>chgrp 更改<strong>文件</strong>所在组；usermod -g 新组名 用户名（改变<strong>用户</strong>所在组）；usermod -d 目录名 用户名 该用户登录的初始目录；（该用户得有该目录的进入权限）</p>
+</li>
+<li>
+<p><strong>小技巧</strong>：查找有没有某个组</p>
+</li>
+</ul>
+<p><code>shell
+  cat /etc/group | grep root</code></p>
+<hr />
+<h2 id="044-权限">044 权限</h2>
+<ul>
+<li>Linux中，任何一个文件都具有User、Group、Others三种身份的权限；即：<strong>所有者、所在组、其他组</strong>。</li>
+<li>User信息记录在：/etc/passwd里面；个人密码记录在/etc/shadow里面；群组信息记录在/etc/group里面。</li>
+<li>命令：</li>
+<li>chgrp：改变群组</li>
+<li>chown：改变所有者</li>
+<li>chmod：改变权限</li>
+</ul>
+<h3 id="权限详解">权限详解</h3>
+<p>0-9 总共10位：- rwx rw- r--</p>
+<ul>
+<li>
+<p>第0位：文件类型</p>
+</li>
+<li>
+<p>— 普通文件，l 链接，d 目录，c 字符设备文件（鼠标键盘等） ，b 块设备（硬盘），p管道文件，s socket文件</p>
+</li>
+<li>
+<p>查看文件状态 stat <filename></p>
+</li>
+<li>
+<p>1-3位：<strong>所有者</strong>权限 rwx</p>
+</li>
+</ul>
+<p>r 可读 w可写 x可执行 ，某一位是 - 代表无此权限 </p>
+<ul>
+<li>
+<p>4-6位：<strong>所在组</strong>权限（与文件所有者同一组的用户权限）</p>
+</li>
+<li>
+<p>7-9位：<strong>其他组</strong>权限</p>
+</li>
+<li>
+<p>对文件：</p>
+</li>
+</ul>
+<p>r：可以读取、查看（读取一个文件的话，如果知道该文件路径，则需要对目录具有x权限，对文件具有r权限才能读取该文件。不必对目录具有r权限，因为已经提前知道文件路径了，不用列出目录下的文件。）</p>
+<p>w：可以修改，不代表可以删除。可删除的前提是，用户对该文件所在<strong>目录</strong>有<strong>w</strong>的权限</p>
+<p>x：可以执行（Windows下的可执行与Linux下不同，windows是由扩展名来决定；linux是由x权限位来表示）</p>
+<ul>
+<li>对目录：</li>
+</ul>
+<p>r：可以ls查看文件列表</p>
+<p>w：可以修改，可创建/删除/重命名目录</p>
+<p>x：可以进入该目录。如果要开放目录给别人浏览的时候，至少要给到r和x。</p>
+<ul>
+<li>可用数字表示</li>
+</ul>
+<p>r = 4；w = 2；x = 1；rwx  = 7</p>
+<p><img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202209111347288.jpeg" alt="img" style="zoom:50%;" /></p>
+<p><img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202209111348269.png" alt="img" style="zoom:50%;" /></p>
+<h3 id="修改权限-chmod">修改权限 chmod</h3>
+<ul>
+<li>
+<p>chmod -v 显示权限变更的过程</p>
+</li>
+<li>
+<p>方式1：+ - = / u g o a</p>
+</li>
+</ul>
+<p>u：所有者；g：所有组；o：其他人；a：所有人（对三种角色同时做操作）</p>
+<p><code>shell
+  chmod u=rwx,g=rx,o=x log.txt
+  chmod o+w log.txt
+  chmod a-x log.txt</code></p>
+<ul>
+<li>方式2：r=4 w=2 x=1</li>
+</ul>
+<p><code>bash
+  # 将log.txt文件的权限更改为rwxr-xr-x
+  chmod 755 log.txt</code></p>
+<p>注意这九位数是默认u g o 的顺序</p>
+<h3 id="新文件的默认权限">新文件的默认权限</h3>
+<p>可以用umask查看：例如，0022，第一位是特殊标志位，后3位是权限位。</p>
+<p>规则如下：</p>
+<ul>
+<li>默认规定，新文件要拿掉x权限，即默认最大给到：-rw-rw-rw-；默认规定，新目录不拿掉任何权限，即默认给到：drwxrwxrwx</li>
+<li>umask的0022规定了在以上基础上继续拿掉哪些权限。022表示：user不被拿掉任何权限；group和others拿掉2（w）</li>
+<li>默认权限基础上减掉被umask拿掉的权限就是新创建文件和目录的默认权限：</li>
+<li>文件：-rw-r--r--</li>
+<li>目录：drwxr-xr-x</li>
+</ul>
+<p><img alt="image-20220917205951750" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202209172059809.png" /></p>
+<h3 id="suid-sgid-sticky特殊标志位">SUID SGID Sticky：特殊标志位</h3>
+<ul>
+<li>SUID</li>
+<li><strong>只对有x权限的文件有效。</strong>如果一个程序的所有者是root并且具有SUID属性；那么普通用户执行，如同是root在执行。</li>
+<li>-rwsr-xr-x；置于u的x位置，s 表示SUID位被设置。也可以用 4755 表示</li>
+<li>比如/etc/passwd: ----------（即passwd只有root用户可以读写）; 但是修改密码的命令：/usr/bin/passwd: -rwsr-xr-x，那么普通用户在用passwd改自己的密码时可以跟root一样获得权限去写入passwd文件。</li>
+<li>SGID</li>
+<li>对目录设置后，该目录中【新建的文件】的所在组 都是该目录的所在组</li>
+<li>drwxrwsr-x; 置于g的x位置，也可以用 2775 表示</li>
+<li>sticky</li>
+<li>针对目录而言，如果设置了粘滞位，在该目录下的文件，只能是<strong>root</strong>和<strong>创建者</strong>可以删改，某个普通用户不能删除/改名/移动别人的文件。</li>
+<li>drwxrwxrwt；置于o的x位置 1777</li>
+</ul>
+<hr />
+<h2 id="052-任务调度">052 任务调度</h2>
+<h3 id="crontab-定时任务设置-反复执行">crontab 定时任务设置 （反复执行）</h3>
+<p>科隆表达式，科隆是古代掌握时间的神</p>
+<ul>
+<li>
+<p>定时调用脚本or指令</p>
+</li>
+<li>
+<p>crontab </p>
+</li>
+<li>
+<p>设置任务调度文件：/etc/crontab</p>
+</li>
+<li>
+<p>设置个人任务到调度文件：</p>
+<p>先输入 crontab -e </p>
+<p>再输入任务：</p>
+<p>*/1 * * * * ls -l etc/ &gt; /tmp/to.txt  (每小时的每分钟执行)</p>
+</li>
+<li>
+<p>可以用工具生成？</p>
+</li>
+<li>
+<p>实例：每隔一分钟，将当前日历和时间追加到mycal.txt中。</p>
+</li>
+<li>
+<p>思路：写一个脚本，里面包含两条指令，然后在crontab中添加定时任务执行脚本</p>
+<ul>
+<li>写脚本：</li>
+</ul>
+<p><code>shell
+  vim my.sh</code></p>
+<p>写入：</p>
+<p><code>shell
+  date &gt;&gt; /opt/mycal.txt
+  cal &gt;&gt; /opt/mycal.txt</code></p>
+<ul>
+<li><strong>给my.sh 添加执行权限：</strong></li>
+</ul>
+<p><code>shell
+  chmod 744 /opt/my.sh</code></p>
+<ul>
+<li>添加定时任务：</li>
+</ul>
+<p><code>shell
+  crontab -e</code></p>
+<p>写入：</p>
+<p><code>shell
+  */1 * * * * /opt/my.sh</code></p>
+</li>
+<li>
+<p>实例：每天凌晨两点，将数据库testdb备份到文件中</p>
+</li>
+</ul>
+<p><code>shell
+  crontab -e
+  0 2 * * * mysqldump -u -proot testdb &gt; /home/test.bak</code></p>
+<h3 id="at-定时任务-一次性执行">at 定时任务 （一次性执行）</h3>
+<ul>
+<li>at是一次性定时计划任务，at的守护进程atd以后台模式运行，检查作业队列来运行。</li>
+</ul>
+<p>ps -ef | grep atd  (检测atd进程有没有在运行)</p>
+<p>atd守护进程每60 s检查一次作业队列，匹配则运行此作业</p>
+<ul>
+<li>
+<p>at [选项] [时间]   然后输入指令  然后<strong>ctrl+d 两次</strong></p>
+</li>
+<li>
+<p>arq 查看任务</p>
+</li>
+<li>
+<p>atrm [任务序号]： 删除任务</p>
+</li>
+</ul>
+<hr />
+<h2 id="058-linux-磁盘分区和挂载">058 Linux 磁盘分区和挂载</h2>
+<h3 id="磁盘组成">磁盘组成</h3>
+<ul>
+<li>
+<p>扇区sector：最小的物理储存单位。目前有512bytes和4k两种格式。</p>
+</li>
+<li>
+<p>将扇区围成一个圆，叫磁柱。</p>
+</li>
+</ul>
+<h3 id="linux磁盘分区">Linux磁盘分区</h3>
+<h4 id="mbr">MBR</h4>
+<ul>
+<li>主引导记录，硬盘第一个扇区放着512字节的主要启动记录和分区表。</li>
+<li>特点：最大支持2T硬盘，最多支持4个主分区；更多分区可以用扩展分区和逻辑分区来实现。</li>
+</ul>
+<h4 id="gpt">GPT</h4>
+<ul>
+<li>与MBR仅使用第一个512byte来记录不同，GPT使用了34个LBA区块来记录分区信息。</li>
+<li>解决了主要分区的数量限制。</li>
+<li>
+<p>并不是所有操作系统都可以读取GPT分区，与开机检测程序有关。</p>
+</li>
+<li>
+<p>分区与文件系统的关系</p>
+</li>
+<li>
+<p>挂载：把某个目录分配磁盘的空间，将文件系统与目录树结合；挂载点一定是目录，该目录是进入该文件系统的入口。</p>
+</li>
+<li>
+<p>Linux分区</p>
+</li>
+<li>
+<p>一般采用SCSI硬盘，标识为 sda1、sda2、sdb1、sdb2等等</p>
+</li>
+<li>查看挂载情况：lsblk / lsblk -f</li>
+</ul>
+<h3 id="开机检测程序">开机检测程序</h3>
+<p><div class="callout callout-info" markdown="1"><br />
+<p class="callout-title">BIOS/UEFI 简介</p></p>
+<p><strong>即基本输入输出系统，是服务器启动后最先运行的软件。它包括基本输入输出控制程序、上电自检程序、系统启动自举程序、系统设置信息。</strong>BIOS是服务器硬件和OS之间的抽象层，用来设置硬件，为OS运行做准备。<strong>BIOS设置程序是储存在BIOS芯片中的。BIOS的进化版本是UEFI（Unified Extensible FirmwareInterface），即统一的可扩展固定接口。</strong>这种接口用于操作系统自动从预启动的操作环境，加载到一种操作系统上，从而使开机程序化繁为简，节省时间。</p>
+</div>
+<h4 id="bios">BIOS</h4>
+<p>写入到主板上的程序，是开机的时候计算机运行的第一个程序。</p>
+<ul>
+<li>上电后，<strong>BIOS</strong>会确认<strong>硬件</strong>是否正常运行，随后去找能够开机的硬盘，并且去读取MBR</li>
+<li>没问题的话就<strong>启动开机引导程序</strong>。</li>
+<li>引导程序的作用是把硬盘中的OS加载到内存中运行。（OS负责启动应用程序，但是OS没有办法自己启动自己，需要引导程序来启动。）</li>
+<li>开机管理程序除了可以除了可以安装到MBR之外，还可以安装到分区槽的启动扇区（boot loader）中。实现多重引导。</li>
+</ul>
+<h4 id="uefi">UEFI</h4>
+<p>BIOS无法读取GPT格式；UEFI出现，为了代替BIOS。省去了开机自检，开机速度较快。</p>
+<p>通常磁盘分区格式会与开机检测程序一起提到：</p>
+<ul>
+<li>legacy方式：MBR+BIOS方式</li>
+<li>UEFI+GPT方式</li>
+</ul>
+<h3 id="增加磁盘的操作实例">增加磁盘的操作实例</h3>
+<ul>
+<li>
+<p>步骤1：虚拟机设置中增加一块磁盘</p>
+</li>
+<li>
+<p>步骤2：分区命令 fdisk /dev/sdb</p>
+</li>
+</ul>
+<p>输入 m 看说明；输入n分区；输入 p （primary）；输入分区数量；回车 回车 回车 全部默认</p>
+<p>再输入w 保存退出；（不想保存，输入q）</p>
+<ul>
+<li>步骤3：格式化sdb1（指定文件格式）</li>
+</ul>
+<p><code>shell
+  mkfs -t ext4 /dev/sdb1 # ext4
+  mkfs.xfs /dev/sdb1 # xfs</code></p>
+<ul>
+<li>步骤4 挂载到指定目录 mount /dev/sdb1 /...</li>
+</ul>
+<p>​   <strong>注意：</strong></p>
+<p>​   <strong>0.并不是所有目录都可以作为挂载点，挂载操作会使得原有目录隐藏，因此根目录以及系统原有目录不能作为挂载点</strong></p>
+<p>​   <strong>1.挂载点一定是已经建立的空目录</strong>。（也可以不为空，但是挂载之后，已有的内容将不可用）</p>
+<p>​   <strong>2.用命令行挂载，是临时的，重启之后，会失效。</strong></p>
+<p>​   <strong>3.MBR分区用fdisk分区；GPT用gdisk分区</strong></p>
+<ul>
+<li>步骤5：永久挂载</li>
+</ul>
+<p>修改/etc/fstab</p>
+<p>输入mount -a 即刻生效</p>
+<ul>
+<li>
+<p>fstab 文件</p>
+<p>每行数据分了六个字段</p>
+<ol>
+<li>分区设备文件名或者UUID</li>
+<li>挂载点</li>
+<li>文件系统的类型</li>
+<li>挂载参数 defaults等（auto/noauto代表是否会被mount -a主动测试挂载）</li>
+<li>分区是否被dump备份 （0是不备份 1 代表备份 2 不定期备份）</li>
+<li>分区是否被fsck检测  (0 不检测 1 高优先级 2 稍低的优先级) (先检测1优先级)</li>
+</ol>
+</li>
+<li>
+<p>fstab的挂载记录是写入到/etc/mtab 和 /proc/mounts中。</p>
+</li>
+<li>
+<p>重新挂载remount </p>
+</li>
+</ul>
+<p><code>shell
+  mount -o remount,rw,auto /</code></p>
+<p>当进入单人维护模式时，根目录通常被重新挂载为只读，用这个命令重新挂载为rw</p>
+<ul>
+<li>挂载image等大文件：mount -o loop</li>
+</ul>
+<h3 id="查看磁盘使用情况">查看磁盘使用情况</h3>
+<ul>
+<li>
+<p>df -h ：查询文件系统占用情况，要是读取superblock信息，会非常快。</p>
+</li>
+<li>
+<p>du：查询<strong>某个目录</strong>的磁盘占用</p>
+</li>
+</ul>
+<p>-s 指定目录占用大小汇总</p>
+<p>-h 带计量单位</p>
+<p>-a <strong>含文件  （不写-a，列出来的仅仅是子目录；写上-a才是连文件带目录都列出来）</strong></p>
+<p>--max-depth = 1 子目录深度</p>
+<p>-c 列出明细，增加汇总值</p>
+<ul>
+<li>实例：</li>
+</ul>
+<p><code>bash
+  #查询/opt占用情况，深度为1
+  du -hac --max-depth=1 /opt
+  #按照目录占用空间大小排序本层目录里面的子目录
+  du -sh * | sort -hr</code></p>
+<ul>
+<li>
+<p>df （disk free）和 du (disk usage)的区别</p>
+</li>
+<li>
+<p>不同点：</p>
+<ul>
+<li>统计范围不同</li>
+</ul>
+<p>df统计磁盘总体使用情况；du既能统计总体使用情况，也能统计某个文件夹和文件大小</p>
+<ul>
+<li>计算方式不同</li>
+</ul>
+<p>df通过文件系统快速获取；du通过逐级进入目录来统计，相对较慢，如果没有文件夹访问权限也无法读取。</p>
+<ul>
+<li>计算结果差异</li>
+</ul>
+<p>df可以获取已删除的文件，由于df是通过文件系统获取空间大小，当删除一个文件之后，他不是立即消失的，而是确认没有进程使用它才完全删除。</p>
+<p>而du只能看到当前存在的未删除的文件。</p>
+</li>
+<li>
+<p>blkid</p>
+</li>
+</ul>
+<p>查看文件系统和和装置的UUID</p>
+<ul>
+<li>parted</li>
+</ul>
+<p>列出磁盘的分区表类型和分区信息</p>
+<p><code>shell
+  parted /dev/vda1 print</code></p>
+<ul>
+<li>partprobe</li>
+</ul>
+<p>更新核心分区表</p>
+<h3 id="工作常用指令">工作常用指令</h3>
+<ol>
+<li>统计/opt文件夹下的目录个数</li>
+</ol>
+<p><code>shell
+   ls -l | grep "^-" | wc -l
+   # 列出了目录内容容，用正则表达式筛选 - 开头的，-开头的就是文件，再用wc -l 列出文件个数</code></p>
+<ol>
+<li>统计/opt文件夹下目录的个数</li>
+</ol>
+<p><code>shell
+   ls -l | grep "^d" | wc -l</code></p>
+<ol>
+<li>统计/opt 文件夹下的所有文件个数，包括子文件夹下的</li>
+</ol>
+<p><code>shell
+   ls -lR | grep "^-" | wc -l</code></p>
+<ol>
+<li>统计/opt 文件夹下的所有目录个数，包括子文件夹下的</li>
+</ol>
+<p><code>shell
+   ls -lR | grep "^d" | wc -l</code></p>
+<p><strong>ls的递归列出文件 -R</strong> </p>
+<ol>
+<li>树形结构展示目录</li>
+</ol>
+<p><code>shell
+   yum install tree
+   tree /home/</code></p>
+<h3 id="逻辑卷管理-lvm">逻辑卷管理 LVM</h3>
+<ul>
+<li>What</li>
+<li>Logical Volume Manager 逻辑卷管理，Linux中对磁盘分区进行管理的机制</li>
+<li>Why</li>
+<li>直接用fdisk挂载的话，当硬盘空间满了的话，必须挂载新硬盘，做数据迁移，导致业务暂停，不符合企业需求。</li>
+<li>
+<p>LVM可以自由调整文件系统大小，实现文件系统跨越不同磁盘和分区。封装底层物理硬盘，以逻辑卷的形式表现给上层系统，逻辑卷可以调整 </p>
+</li>
+<li>
+<p>About</p>
+</li>
+<li>
+<p>物理卷 physical volume：硬盘分区或者与分区具有相同功能的设备（如RAID）。PV是LVM的基本存储逻辑块，包含LVM的管理参数</p>
+</li>
+<li>卷组 volume group：由物理卷组成，可在卷组中创建一个或多个LVM（逻辑卷）分区</li>
+<li>逻辑卷 logical volume：类似硬盘分区，可以格式化后挂载使用。</li>
+<li>
+<p>PE physical extent：物理卷划分为PE单元，是可被LVM寻址的最小单元，默认4MB</p>
+</li>
+<li>
+<p>summary</p>
+</li>
+</ul>
+<p>一款硬盘，被格式化为物理卷（PV），其内部分为若干PE，在PV基础上创建了卷组（VG），可以把若干PV加入VG；VG相当于空间池，基于VG创建逻辑卷（LV），将LV格式化，再挂载。扩充LV的过程就是增减PE的数量，不会影响数据</p>
+<h3 id="磁盘阵列-raid">磁盘阵列 RAID</h3>
+<ul>
+<li>Redundant Arrays of Independent Disks. 利用许多独立的便宜磁盘，组成容量巨大的磁盘组，利用个别磁盘提供数据所产生的加成效果提升整个磁盘系统的效能</li>
+<li>最大优点：提高数据传输速率，在多个磁盘上同时存储数据</li>
+<li>RAID0：数据并行写入每个磁盘，并行读取；但是没有冗余，一个盘坏掉，数据全部丢失。不适用于安全性要求高的场景</li>
+<li>注意：别把空间不同的磁盘RAID，否则性能将会被限制在最小容量的那个盘</li>
+</ul>
+<h3 id="磁盘完整性检查-fsck">磁盘完整性检查 FSCK</h3>
+<ul>
+<li>磁盘没有mount的时候运行fsck</li>
+</ul>
+<p><code>bash
+  umount /dev/sdc1
+  fcsk -y /dev/sdc1  # -y可以自动修复错误
+  xfs_repair /dev/sdc1 # xfs文件系统用这个</code></p>
+<h3 id="初始化磁盘initrd">初始化磁盘（Initrd）</h3>
+<ul>
+<li>是系统引导过程中挂载的一个临时根文件系统，用来支持两阶段的引导过程，initrd中包含了各种可执行程序和驱动，可以挂载实际的根文件系统，然后再将initrd磁盘卸载，释放内存。</li>
+</ul>
+<h3 id="启动管理">启动管理</h3>
+<ul>
+<li>UEFI or BIOS？</li>
+</ul>
+<p><code>shell
+  [ -d /sys/firmware/efi ] &amp;&amp; echo UEFI || echo BIOS</code></p>
+<ul>
+<li>版本？</li>
+</ul>
+<p><code>shell
+  dmesg | grep -i "EFI"  # "BIOS"</code></p>
+<ul>
+<li>Check if secure boot?</li>
+</ul>
+<p><code>shell
+  mokutil -sb-state</code></p>
+<hr />
+<h2 id="059-linux文件系统">059 Linux文件系统</h2>
+<h3 id="ext2-文件系统特性">EXT2 文件系统特性</h3>
+<p>inode、block、superblock</p>
+<ul>
+<li>inode：存放文件属性信息，一个文件占用一个inode；同时也记录该文件数据所在的block号码</li>
+<li>block：记录文件的数实际内容。</li>
+<li>superblock：记录此文件系统的整体信息，包括inode的使用量、使用总量等。</li>
+</ul>
+<p>举例：假设一个文件的inode记录了文件数据的实际放置点为2 3 5 7，那么操作系统就可以据此排列磁盘的阅读顺序，一口气将多个block的内容都读取出来。这种数据存取的方法称为<strong>索引式文件系统</strong>。</p>
+<p>与之对比的是FAT文件系统，没有inode存在，每个block记录了下一个block位置，像链表一样一个一个顺序来读。【碎片整理】说的就是FAT文件系统里面的bolck太过分散，通过碎片整理来将同一个文件的block汇总到一起。提升读写速度。</p>
+<h3 id="block大小">block大小</h3>
+<ul>
+<li>文件大于block大小，会占用多个block；文件小于单个block大小，还是会占用单个block。</li>
+<li>block过大，存小文件会造成空间浪费；block过小，存大文件会造成block太多，读写缓慢。根据实际情况合理选择。</li>
+<li>格式化的时候会分为多个block groups，每个组都有super block</li>
+</ul>
+<h3 id="inode">inode</h3>
+<ul>
+<li>每个inode大小固定（128 bytes for ext2；256 bytes for ext4 and xfs）。</li>
+<li>文件系统能够创建的文件数量与inode数量有关。</li>
+</ul>
+<h3 id="查看ext文件系统信息">查看ext文件系统信息</h3>
+<p>dumpe2fs /dev/sda1</p>
+<h3 id="目录的占用">目录的占用</h3>
+<ul>
+<li>目录也会被分配一个inode，存储目录的权限和属性，以及分配的block的号码；block则记录目录下的文件名以及每个文件的inode号码。</li>
+<li>文件太多，一个block放不下的话，多个block来放。</li>
+<li>注意：由于文件名是存储在block里面的，所以涉及到文件名修改的操作，需要目录的w权限。</li>
+</ul>
+<h3 id="bitmap">bitmap</h3>
+<ul>
+<li>bitmap记录了文件系统中可用的inode和block信息</li>
+<li>inode bitmap，block bitmap和superblock称为metadata</li>
+</ul>
+<h3 id="一致性检查">一致性检查</h3>
+<p>如果在写入文件过程中，发生意外系统中断，造成inode、block与bitmap数据不一致。如果要检查就得整个文件系统检查。</p>
+<h3 id="日志式文件系统ext4ext4">日志式文件系统：ext4/ext4</h3>
+<p>在文件系统中规划出了一个区块，记录写入和修订文件的步骤：</p>
+<ul>
+<li>预备：会在日志记录区中记录准备写入的信息</li>
+<li>实际写入：开始写入文件的权限和数据，更新metadata的数据</li>
+<li>完成数据和metadata更新后，记录为完成。</li>
+</ul>
+<p>一致性出问题只需根据日志针对性的去找，快速恢复。</p>
+<h3 id="文件系统的读写运作">文件系统的读写运作</h3>
+<p>CPU只能读取内存中的数据，如果文件比较大，需要频繁写入磁盘、读到内存；会效率低下。</p>
+<p>Linux采用异步（async）来处理：</p>
+<ul>
+<li>系统加载到内存，如果文件被更改过；该内存区段的文件会被标记为dirty；没改过就是clean；磁盘会不定时将dirty的文件写回磁盘，保持内存磁盘的一致性。</li>
+<li>可以手动采用sync来将dirty数据写回到磁盘；正常关机之后会调用sync；但是非正常关机之后，数据未写入磁盘，再次启动可能会导致文件系统损坏。</li>
+</ul>
+<h3 id="其他文件系统">其他文件系统</h3>
+<p>更新的速度更快的文件系统，比如xfs、reiserfs等。CentOS7开始，预设的文件系统已经开始默认为xfs了。</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 查看Linux支持的文件系统有哪些。（这个路径下是支持的文件系统的驱动程序）</span>
+ls<span class="w"> </span>-l<span class="w"> </span>/lib/<span class="k">$(</span>uname<span class="w"> </span>-r<span class="k">)</span>/kernel/fs
+</code></pre></div>
+
+<h3 id="xfs文件系统简介">xfs文件系统简介</h3>
+<p>ext文件系统是预先规划出所有的inode/block/superblock，不再需要进行动态配置；在磁盘容量巨大之后，格式化的时候会特别慢。而xfs文件系统就被用于高容量磁盘和高性能文件系统而用。</p>
+<h4 id="组成">组成</h4>
+<ul>
+<li>资料区</li>
+</ul>
+<p>存放superblock、inode分配与追踪；inode和block都是系统需要的时候才动态配置产生。</p>
+<ul>
+<li>文件系统活动登陆区</li>
+</ul>
+<p>记录文件系统的变化；异常中断后，系统会拿这个区块进行一致性检验修复，有点像日志区。</p>
+<ul>
+<li>实时运作区</li>
+</ul>
+<p>有文件要建立的时候，xfs会将文件暂时放置在里面，inode分配完毕之后再写到data section中。</p>
+<h3 id="查看信息">查看信息</h3>
+<div class="highlight"><pre><span></span><code>xfs_info
+</code></pre></div>
+
+<p><img alt="image-20221017185539855" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202210171855949.png" /></p>
+<h3 id="修改uuid和label-name">修改UUID和label name</h3>
+<p>xfs_admin 和 tune2fs</p>
+<hr />
+<h2 id="cloud-相关配置">Cloud 相关配置</h2>
+<h3 id="waagent">waagent</h3>
+<ul>
+<li>
+<p>Windows Azure Agent 控制了资源盘和交换区</p>
+</li>
+<li>
+<p>resource disk</p>
+</li>
+<li>
+<p>temporary storage （located in /dev/sdb1）in VM</p>
+</li>
+<li>
+<p>重启不友好，灾难恢复后VM重新分配</p>
+</li>
+<li>
+<p>waagent 日志路径</p>
+</li>
+</ul>
+<p>/var/log/waagent.log</p>
+<ul>
+<li>
+<p>交换区 </p>
+</li>
+<li>
+<p>作用：当物理内存不够用的时候，释放一部分内存；被释放掉的进程可以先保存在交换区内；等到有空间时再加载回去</p>
+</li>
+<li>启用交换区</li>
+</ul>
+<p><code>shell
+  vim /etc/waagent.conf  # waagent means Windows Azure Agent</code></p>
+<ul>
+<li>修改参数：</li>
+</ul>
+<p>​ ResourceDisk.Format=y</p>
+<p>​ ResourceDisk.EnableSwap=y</p>
+<p>​ ResourceDisk.SwapSizeMB=4096</p>
+<h3 id="cloud-init">cloud-init</h3>
+<ul>
+<li>云端部署时，设置默认配置</li>
+<li>waagent是Azure专属；cloud-init是通用；后者可以覆盖前者</li>
+</ul>
+<h3 id="extension">extension</h3>
+<ul>
+<li>部署之后的一些扩展功能</li>
+<li>可通过CLI Powershell Azure Resource Manager启动</li>
+<li>查看extensions路径：/var/log/azure/*</li>
+</ul>
+<hr />
+<h2 id="063-网络配置">063 网络配置</h2>
+<ul>
+<li>windows查看VMnet8网络配置 （ipconfig）</li>
+<li>Linux查看网络配置 ifconfig  （interface configuring）</li>
+</ul>
+<h3 id="ip获取方式">IP获取方式</h3>
+<ul>
+<li>自动获取：自己用可以，但服务器不适用</li>
+<li>指定IP：详见老韩图解</li>
+</ul>
+<h3 id="设置主机名和hosts映射">设置主机名和hosts映射</h3>
+<ul>
+<li>hostname 查看主机名</li>
+<li>hosts文件是主机名和IP地址的映射</li>
+<li>windows：C:\Windows\System32\drivers\etc\hosts 中指定主机和IP映射即可</li>
+<li>Linux：/etc/hosts  指定主机名和IP的映射，在不适用DNS服务器的情况下</li>
+</ul>
+<h3 id="interface设置">interface设置</h3>
+<ul>
+<li>路径：/etc/network/network-scripts/ifcfg-<strong>eth0</strong>(device名)</li>
+</ul>
+<h3 id="验证dns域名解析">验证DNS域名解析</h3>
+<ul>
+<li><strong>dig</strong> @8.8.8.8 Microsoft.com</li>
+<li>A 地址记录，用来指定域名的 IPv4 地址，如果需要将域名指向一个 IP 地址，就需要添加 A 记录。</li>
+<li><strong>nslookup</strong> microsoft.com</li>
+<li><strong>getent hosts</strong> microsoft.com</li>
+<li>本地DNS解析：/etc/hosts</li>
+<li>DNS优先级定义：/etc/nsswitch.conf</li>
+<li><strong>/etc/nsswitch.conf</strong> 这个文件定义了DNS解析的优先级过程，默认下，先从本地寻找（<strong>/etc/hosts</strong>），如果找不到，再从<strong>/etc/resolv.conf</strong>中定义的DNS服务器中寻找</li>
+<li><strong>nslookup</strong>和<strong>dig</strong>直接从<strong>/etc/resolv.conf</strong>中定义的nameserver寻找，并不会查找本地/etc/hosts；然而<strong>getent</strong>会按照<strong>/etc/nsswitch.conf</strong> 定义的顺序来查找（默认时就会先查找/etc/hosts）</li>
+</ul>
+<h3 id="检查端口监听状态">检查端口监听状态</h3>
+<div class="highlight"><pre><span></span><code>netstat<span class="w"> </span>-an<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="m">80</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>LISTEN
+</code></pre></div>
+
+<h3 id="连接端口">连接端口</h3>
+<ul>
+<li>使用netcat telnet curl 连接指定端口  （http80 https 443）</li>
+<li>netcat 亦可检查UDP连接；telnet只能检查TCP连接</li>
+</ul>
+<h3 id="路由表">路由表</h3>
+<ul>
+<li>
+<p>Information on how packets are forwarded</p>
+</li>
+<li>
+<p>Assist customers to add static route</p>
+</li>
+<li>
+<p>check routing table</p>
+</li>
+</ul>
+<p><code>shell
+  netstat -r
+  route -n</code></p>
+<ul>
+<li>Add route</li>
+</ul>
+<p><code>shell
+  route add -net 10.0.2.0 netmask 255.255.255.0 dev eth0
+  route add -net 127.0.0.0 netmask 255.0.0.0 lo  # add loopback interface
+  route add default gw 192.168.10.1  # add default gateway</code></p>
+<h3 id="iptables">iptables</h3>
+<ul>
+<li>
+<p>a set of rules to decide what to do</p>
+</li>
+<li>
+<p>Rules are organized into groups called <strong>chains</strong></p>
+</li>
+</ul>
+<p>INPUT: This chain handles packets that are addressed to your server</p>
+<p>OUTPUT: This chain handles packets that are created by your server</p>
+<p>FORWARD: Configure your server to route requests to other machines</p>
+<ul>
+<li>
+<p>Chians contain 0 or more policies including ACCEPT/DROP/REJECT</p>
+</li>
+<li>
+<p>how to check</p>
+</li>
+</ul>
+<p><code>shell
+  iptables -S
+  iptables -L</code></p>
+<h3 id="network-trace">Network trace</h3>
+<ul>
+<li>
+<p>Net connectivity problem - network captures from source to destination to analyze</p>
+</li>
+<li>
+<p><strong>tcpdump</strong> : most commonly used tool to capture or filter packets</p>
+</li>
+<li>
+<p>eg</p>
+</li>
+</ul>
+<p><code>shell
+  tcpdump -w /tmp/traces.pcap -i eth0  # capture traces in device eth0 and save it
+  ^C
+  ls -l /tmp/traces.pcap</code></p>
+<h3 id="network-file-share-nfs">Network File Share (NFS)</h3>
+<p>Azure Linux Academy - Foundation P.104   </p>
+<h3 id="firewalld-basics">Firewalld basics</h3>
+<ul>
+<li>
+<p>Zones utilized for trust for network connections: block, drop, public, external, dmz, internal, trusted, work, home.</p>
+</li>
+<li>
+<p>firewalld</p>
+</li>
+</ul>
+<p>```bash<br />
+  firewalld-cmd --state # check status<br />
+  firewalld-cmd --list-all # list configuration<br />
+  firewalld-cmd --get-zones # list zones<br />
+  firewalld-cmd --get-active-zones # list active zones<br />
+  firewalld-cmd --list-services # list allowed services<br />
+  firewalld-cmd --list-ports # list allowed ports<br />
+  firewall-cmd --add-service=<service name> --zone=<zone name> --pernament # allow a service<br />
+  firewall-cmd --add-port=<port number/protocol> --zone=<zone name> --permanent # allow a port<br />
+  firewall-cmd --remove-service=<service name> --zone=<zone name> --permanent<br />
+  firewall-cmd --remove-port=<portnumber/protocol> --zone=<zone name> --permanent<br />
+  firewall-cmd --reload</p>
+<p>```</p>
+<h3 id="selinux">SELinux</h3>
+<ul>
+<li>An architecture for Linux that defines access to apps, processes, files by security policies.</li>
+<li>Configuration file: /etc/sysconfig/selinux  (symlink to /etc/selinux/config)</li>
+<li>SElinux modes: enforcing (policies are enforced), permissive (logs warnings/violations), disabled</li>
+<li>SElinux policies: Targeted, miminum, MLS</li>
+<li>How it works:</li>
+<li>all files, processes, ports have a label and are logically grouped </li>
+<li>Access Vector Cache (avc) caches permissions and is checked shen a request is made.</li>
+<li>If permission is denied, an "avc:denied" massage appears in /var/log/messages and /var/log/audit/audit.log  </li>
+</ul>
+<div class="highlight"><pre><span></span><code>sestatus  
+getenforce  # check status of selinux
+
+setenforce 0 # temporarily enable permissive
+setenforce 1 # temporarily enable enforcing
+</code></pre></div>
+
+<ul>
+<li>Trouble shooting</li>
+</ul>
+<p><code>shell
+  grep -i denied | /var/log/audit/*  # 找到日志里面带denied的信息</code></p>
+<hr />
+<h2 id="068-进程管理">068 进程管理</h2>
+<ul>
+<li>执行中的程序都是一个进程，每一个进程分配一个PID。程序是静态的，程序run起来，加载到内存中，就是一个进程。</li>
+<li>每个进程可能以两种方式存在，<strong>前台</strong> or <strong>后台</strong> ， 一般而言，系统服务以后台形式常驻</li>
+</ul>
+<h3 id="显示进程">显示进程</h3>
+<ul>
+<li>
+<p>ps</p>
+</li>
+<li>
+<p>字段 PID、TTY（终端机号）、TIME（消耗CPU时间）、CMD（进程名）</p>
+</li>
+<li>
+<p>-a 显示所有进程；-u 以用户格式显示进程；-x 显示运行参数</p>
+</li>
+<li>
+<p>常用：</p>
+<p><code>shell
+ps -aux | more
+ps -aux | grep ...
+ps -ef # 与-aux一样，只是显示的格式不同</code></p>
+<p>VSZ：进程占用虚拟内存大小</p>
+<p>RSS：进程占用的物理内存大小</p>
+<p>TT：终端名称</p>
+<p>STAT：进程状态</p>
+</li>
+<li>
+<p>查看父进程，可以用ps -ef | more</p>
+</li>
+</ul>
+<p>ps -ef 能显示出父进程号（PPID）</p>
+<ul>
+<li>pgrep -l 进程名 （查找指定名称的进程）</li>
+</ul>
+<h3 id="终止进程">终止进程</h3>
+<ul>
+<li>
+<p>kill [选项] 进程号</p>
+</li>
+<li>
+<p>killall 进程名    （子进程同时被杀掉）</p>
+</li>
+<li>
+<p>常用选项 -9  强迫终止</p>
+</li>
+<li>
+<p>案例：</p>
+</li>
+</ul>
+<p>1、踢掉非法登录用户</p>
+<p><code>ps -ef | grep sshd   # sshd 远程连接服务 先查看sshd的进程号
+  kill 11421</code></p>
+<p>2、暂停远程登录功能</p>
+<p><code>shell
+  ps -ef | grep sshd # 找到名称为/usr/sbin/sshd -D的进程号
+  kill xxxxx
+  # 恢复远程登录
+  /bin/systemctl start sshd.service</code></p>
+<p>3、终止多个gedit</p>
+<p><code>shell
+  killall gedit  # 这是一种编辑器</code></p>
+<p>可以用于系统负载过大变卡</p>
+<p>4、强制杀掉终端</p>
+<p><code>shell
+  kill -9 11405</code></p>
+<h3 id="查看进程树">查看进程树</h3>
+<ul>
+<li>pstree -p (带进程号)</li>
+<li>pstree -u （带用户名）</li>
+</ul>
+<h3 id="服务管理">服务管理</h3>
+<ul>
+<li>服务是运行在后台的进程，例如 mysqld，SSHD  （d：deamon 守护进程）</li>
+</ul>
+<p>mysqld、sshd守护进程 分别通过3306 or 22 端口进行监听。network停止之后，监控端口就关闭了</p>
+<ul>
+<li>
+<p>service [status | start | stop | reload]  service在CentOS7.0之后被弱化，更多的是systemctl</p>
+</li>
+<li>
+<p>setup 可以看到所有服务</p>
+</li>
+</ul>
+<p>[*]的是自动启动的服务，按空格可以取消</p>
+<h3 id="服务的运行级别">服务的运行级别</h3>
+<ul>
+<li>
+<p>0 - 6 与前面的级别一样 （常用的是3 和 5）</p>
+</li>
+<li>
+<p>开机流程</p>
+</li>
+</ul>
+<p>开机 -&gt; BIOS -&gt; /boot -&gt; systemd 进程1  -&gt; 运行级别 -&gt; 运行级别对应的服务</p>
+<ul>
+<li>设置运行级别的自启动 chkconfig</li>
+</ul>
+<p>让某些服务，在某个运行级别下自启动或者不启动，重启机器生效</p>
+<h3 id="systemv和systemd">systemV和systemd</h3>
+<ul>
+<li>
+<p><code>SystemV</code>和<code>systemd</code>都是Linux系统中的初始化系统（init system），负责在系统启动时启动和管理系统服务。</p>
+</li>
+<li>
+<p><code>SystemV</code>是一个传统的初始化系统，它使用脚本来启动和停止服务。这些脚本通常位于<code>/etc/init.d/</code>目录下，服务的启动顺序由这些脚本的名字决定。</p>
+</li>
+<li>
+<p><code>systemd</code>是一个新的初始化系统，它使用单元（units）来管理服务。这些单元的配置文件通常位于<code>/etc/systemd/system/</code>目录下，服务的启动顺序由这些配置文件中的依赖关系决定。</p>
+</li>
+</ul>
+<p>他们的主要区别如下：</p>
+<ul>
+<li>启动速度：<code>systemd</code>使用并行处理来加快启动速度，而<code>SystemV</code>则是按顺序启动服务。</li>
+<li>配置方式：<code>systemd</code>使用单元配置文件，而<code>SystemV</code>使用脚本。</li>
+<li>日志管理：<code>systemd</code>内置了日志管理系统<code>journald</code>，而<code>SystemV</code>没有内置的日志管理系统。</li>
+<li>依赖管理：<code>systemd</code>可以自动处理服务之间的依赖关系，而<code>SystemV</code>需要手动管理。</li>
+</ul>
+<h3 id="服务管理_1">服务管理</h3>
+<ul>
+<li>systemctl   管理指令</li>
+</ul>
+<p>systemctl [start | stop | restart | status]  （start和stop重启失效；enable是永久性）</p>
+<p>systemctl指令管理的服务在 <strong>/usr/lib/systemd/system</strong>   可在里面查找服务名</p>
+<ul>
+<li>systemctl 设置服务的<strong>开机启动</strong>状态</li>
+</ul>
+<p>systemctl list-unit-files [| grep 服务名] 查看服务的自启动状态</p>
+<p>systemctl enable | disable 服务名 （设置服务开机启动，3和5的运行级别同时生效）</p>
+<p>systemctl is-enabled  查询是否是自启动的</p>
+<ul>
+<li>讲了<strong>firewalld</strong> 防火墙守护进程</li>
+</ul>
+<p>firewalld中关闭的端口无法被外部程序访问到；关闭防火墙之后，相当于裸奔</p>
+<p>防火墙相当于家里防盗门；端口相当于家里的成员</p>
+<ul>
+<li>
+<p>firewall 指令 可以管理端口</p>
+</li>
+<li>
+<p>打开防火墙，外部请求数据包，无法与内部端口进行通讯，所以需要手动开启某些端口</p>
+</li>
+<li>
+<p>打开端口：firewall-cmd --permanent --add-port=端口号/协议</p>
+<p>关闭端口：firewall-cmd --permanent --remove-port=端口号/协议</p>
+</li>
+<li>
+<p>操作完后，得重新载入才能生效：firewall-cmd --reload</p>
+</li>
+<li>
+<p>查询端口是否开放：firewall-cmd --query-port=端口号/协议</p>
+</li>
+<li>
+<p>举例：查看111端口</p>
+<p>firewall-cmd --query-port=111/tcp</p>
+</li>
+<li>
+<p>高位端口？</p>
+</li>
+</ul>
+<h3 id="service-trouble-shooting">Service trouble-shooting</h3>
+<ul>
+<li>
+<p>Init and systemd</p>
+</li>
+<li>
+<p>init is a process trees</p>
+</li>
+<li>
+<p>Service</p>
+</li>
+<li>
+<p>process that run in background, mainly for resource management, interface to access resources</p>
+</li>
+<li>
+<p>traditional init systems: SysV and BSD</p>
+</li>
+</ul>
+<p>other init schema: SMF, launchd, PoenRC, Upstart</p>
+<ul>
+<li>
+<p>systemctl and journalctl</p>
+</li>
+<li>
+<p>systemctl: control services; journalctl: read and filter systemd journal</p>
+</li>
+<li>
+<p>other important commands and services</p>
+</li>
+<li>
+<p>commands: timetablectl (synchronizayion), hostnamectl(hostname, location, ...), systemmd-resolve</p>
+</li>
+<li>
+<p>services: </p>
+</li>
+<li>
+<p>Tools in systemd commands:</p>
+</li>
+<li>
+<p>systemctl</p>
+<p><code>bash
+systemctl status service
+journalctl -u service
+systemctl cat service
+systemctl list-dependencies service</code></p>
+</li>
+</ul>
+<h3 id="动态监控进程">动态监控进程</h3>
+<p><strong>top</strong></p>
+<ul>
+<li>
+<p>与ps相似，不过可以更新</p>
+</li>
+<li>
+<p>top -d 秒数   （每隔5秒，默认是3 s）</p>
+</li>
+</ul>
+<p>top -i  （不显示闲置进程）</p>
+<p>top -p PID （指定监视某个进程）</p>
+<p>load average：三个值平均值大于7%的话说明负载过大，需要优化</p>
+<p>zombie 僵尸进程，进程已经死掉，但是仍然占用着内存</p>
+<p>%CPU 的各项指标含义 ：</p>
+<ul>
+<li><code>us</code>：用户空间占用CPU的百分比。</li>
+<li><code>sy</code>：内核空间占用CPU的百分比。</li>
+<li><code>ni</code>：用户空间内改变过优先级的进程占用CPU的百分比。</li>
+<li><code>id</code>：空闲CPU百分比。</li>
+<li><code>wa</code>：等待I/O的CPU时间百分比。</li>
+<li><code>hi</code>：处理硬中断的CPU时间百分比。</li>
+<li><code>si</code>：处理软中断的CPU时间百分比。</li>
+<li>
+<p><code>st</code>：在虚拟环境中等待实际CPU的百分比。</p>
+</li>
+<li>
+<p>top 交互操作</p>
+</li>
+</ul>
+<p>在动态显示界面 输入：</p>
+<p>P （按照%CPU排序）</p>
+<p>M （按照内存排序）</p>
+<p>N （按照PID排序）</p>
+<p>输入k 再输入进程号，就直接杀掉了；强制结束可以继续输入 9  （9是信号量）</p>
+<p>​     剔除用户：就是kill掉该用户的bash进程。</p>
+<h3 id="监控网络状态">监控网络状态</h3>
+<ul>
+<li>
+<p><strong>netstat -anp</strong> [-an 按照一定顺序排列输出 -p 显示哪个进程在监听端口]</p>
+</li>
+<li>
+<p>0.0.0.0:22  本地程序在监听22端口</p>
+</li>
+<li>
+<p>192.168.13.128:22 这是本地Linux的IP地址和端口</p>
+</li>
+<li>
+<p>192.168.13.1:8226 这是windows中xshell的IP与端口</p>
+</li>
+<li>
+<h3 id="验证端口">验证端口</h3>
+</li>
+</ul>
+<p><code>shell
+  netstat -tulpn | grep -i ssh</code></p>
+<hr />
+<h2 id="rpm包管理">rpm包管理</h2>
+<h3 id="介绍">介绍</h3>
+<ul>
+<li>rpm：RedHat Package Manager  软件包管理工具，.RPM扩展名的文件。虽然是基于RedHat 但是被广泛采用，算是行业标准。</li>
+</ul>
+<h3 id="查询已安装的rpm">查询已安装的rpm</h3>
+<ul>
+<li>
+<p>rpm -qa | grep firefox</p>
+</li>
+<li>
+<p>返回结果：firefox-60.2.2-1.el7.centos.x86_64</p>
+</li>
+<li>
+<p>名称：firefox</p>
+</li>
+<li>
+<p>版本号：60.2.2-1</p>
+</li>
+<li>
+<p>适用操作系统：el7.centos.x86_64 （如果是i686、i386表示32位系统，noarch表示通用）</p>
+</li>
+</ul>
+<h3 id="其他查询指令">其他查询指令</h3>
+<ul>
+<li>rpm -qa  查询所有已安装的rpm软件包</li>
+<li>rpm -qa | more、grep</li>
+<li>rpm | q 软件包名 查询软件包是否安装</li>
+<li>rpm -qi  查询软件包信息</li>
+<li>rpm -ql 查询软件安装到哪里了，包里包含着什么文件</li>
+<li>rpm -qf [文件]  查询这个文件隶属于哪个rpm包</li>
+</ul>
+<h3 id="rpm包卸载">rpm包卸载</h3>
+<ul>
+<li>rpm -e 包名（比如只写firefox即可）  //erase的意思</li>
+<li>注意：如果其他软件包依赖你要删除的软件包，可能会报错</li>
+</ul>
+<h3 id="rpm安装">rpm安装</h3>
+<ul>
+<li>rpm -ivh RPM包全路径名称  （install 安装；verbose 提示；hash 进度条）</li>
+</ul>
+<h3 id="yum">yum</h3>
+<ul>
+<li>shell前端包管理器，基于RPM管理，可以自动下载安装，处理依赖性关系。</li>
+<li>yum list | grep xxx  查询服务器是否有需要安装的软件；yum list installed | grep xxx 查询已安装的</li>
+<li>yum install xxx  下载安装</li>
+<li>yum -y install xxx  安装过程中的选项都默认自动选择</li>
+</ul>
+<h3 id="epel">EPEL</h3>
+<p>Extra Packages for Enterprise <a href="https://www.linuxprobe.com/">Linux</a></p>
+<p>Fedora推出的免费软件包的源</p>
+<h3 id="干净重装-以-waagent为例">干净重装 (以 waagent为例)</h3>
+<ol>
+<li>Stop</li>
+</ol>
+<p><code>shell
+   systemctl stop waagent</code></p>
+<ol>
+<li>Move current /var/lib/waagent</li>
+</ol>
+<p><code>shell
+   mv /var/lib/waagent /var/lib/waagent.old</code></p>
+<ol>
+<li>Unintsall</li>
+</ol>
+<p><code>shell
+   yum remove WALinuxAgent -y</code></p>
+<ol>
+<li>Reinstall</li>
+</ol>
+<p><code>shell
+   yum install WALinuxAgent -y</code></p>
+<ol>
+<li>Restart the Azure waagent</li>
+</ol>
+<p><code>shell
+   systemctl start waagent</code></p>
+<ol>
+<li>Validate current status</li>
+</ol>
+<p><code>shell
+   systemctl status waagent</code></p>
+<ol>
+<li>check contents</li>
+</ol>
+<p><code>shell
+   ls -l /var/lib/waagent
+   cat /var/log/waagent.conf</code></p>
+<ol>
+<li>Check extensions</li>
+</ol>
+<p><code>shell
+   cd /var/log/azure
+   ls -l</code></p>
+<h3 id="包管理-package-management">包管理 Package Management</h3>
+<ul>
+<li>
+<p>Package：一个压缩文件，包含一个特定应用的所有文件。可以是.rpm .deb .tgz 类型</p>
+</li>
+<li>
+<p>Packages stored in <strong>respositories</strong> which is a collection of packages. (资源库)</p>
+</li>
+<li>
+<p>Linux respositories: a storage location from which system retrives and installs OS updates and applications</p>
+</li>
+<li>
+<p>查看仓库：</p>
+</li>
+</ul>
+<p><code>bash
+  yum repolist all</code></p>
+<hr />
+<h2 id="打印服务">打印服务</h2>
+<p>Common UNIX Printer System （CUPS）</p>
+<ul>
+<li>Package name</li>
+</ul>
+<p>cups</p>
+<hr />
+<h2 id="系统信息查看">系统信息查看</h2>
+<p>可以用 stress功能</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 首先安装EPEL源</span>
+yum<span class="w"> </span>-y<span class="w"> </span>install<span class="w"> </span>epel-release
+<span class="c1"># 再安装stress</span>
+yum<span class="w"> </span>--enbaleerepo<span class="o">=</span>epel<span class="w"> </span>install<span class="w"> </span>stress<span class="w"> </span>-y
+<span class="c1"># 复制一个Terminal，查看CPU</span>
+stress<span class="w"> </span>-c<span class="w"> </span><span class="m">4</span>
+<span class="c1"># CPU</span>
+cat<span class="w"> </span>/proc/cpuinfo
+<span class="c1"># memory</span>
+cat<span class="w"> </span>/proc/meminfo
+<span class="c1"># 内存 缓存 交换区</span>
+free<span class="w"> </span>-m
+</code></pre></div>
+
+<h3 id="系统行为报告">系统行为报告</h3>
+<p>System Activity Report</p>
+<div class="highlight"><pre><span></span><code>yum<span class="w"> </span>install<span class="w"> </span>sysstat<span class="w"> </span>-y
+systemctl<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>sysstat
+systemctl<span class="w"> </span>start<span class="w"> </span>sysstat
+sar
+</code></pre></div>
+
+<h3 id="sosreport">sosreport</h3>
+<p>把系统配置、诊断信息等打包起来，可以发给Technical Support</p>
+<h3 id="os-信息查看">OS 信息查看</h3>
+<ul>
+<li>查看OS版本</li>
+</ul>
+<p><code>shell
+  cat /etc/*release</code></p>
+<ul>
+<li>查看kernel信息</li>
+</ul>
+<p><code>shell
+  uname -a</code></p>
+<ul>
+<li>查看安装的版本</li>
+</ul>
+<p><code>shell
+  lsmod</code></p>
+<ul>
+<li>查看CPU信息</li>
+</ul>
+<p><code>shell
+  cat /proc/cpuinfo</code></p>
+<ul>
+<li>查看存储信息</li>
+</ul>
+<p><code>shell
+  cat /proc/meminfo</code></p>
+<ul>
+<li>查看kernel参数</li>
+</ul>
+<p><code>shell
+  sysctl -a</code></p>
+<hr />
+<h2 id="默认kernel变更">默认kernel变更</h2>
+<ul>
+<li>
+<p>启动时，如果有多个kernel存在，可以选择用哪个。通过GRUB（grand unified bootloader），GRUB配置文件：/boot/grub/grub.conf或者/boot/grub2/grub.cfg</p>
+</li>
+<li>
+<p>在一些case中，客户升级了kernel后，VM不能重新启动，所以我们要更改grub配置</p>
+</li>
+</ul>
+<p>查看所有kernel版本</p>
+<p><code>shell
+  awk -F \' '$1==menuentry " {print $2}' /boot/grub2/grub.cfg</code></p>
+<p>查看默认启动kernel版本</p>
+<p><code>shell
+  grep -i default /etc/default/grub</code></p>
+<p>改变kernel默认启动版本</p>
+<p><code>shell
+  vi /etc/default/grub
+  # GRUB_DEFAULT = saved (saved意思是使用GRUB_SAVEDEFAULT变量所保存的，或者grub-set-default命令设置的选项作为默认)
+  grub2-set-default 1  # 这里的序号是系统中存在的kernel列表从0开始的编号</code></p>
+<p>将配置写入cfg文件，以永久保存</p>
+<p><code>shell
+  grub2-mkconfig -o /boot/grub2/grub.cfg</code></p>
+<p>重启</p>
+<p><code>shell
+  reboot
+  uname -r</code></p>
+<hr />
+<h2 id="日志管理">日志管理</h2>
+<h3 id="日志简介">日志简介</h3>
+<ul>
+<li>系统信息文件，记录系统事件</li>
+</ul>
+<p>常用日志的位置：</p>
+<ul>
+<li>
+<p>日志管理服务</p>
+</li>
+<li>
+<p>CentOS6：<strong>syslogd</strong>；CentOS7.6：<strong>rsyslogd</strong></p>
+</li>
+<li>
+<p>查询日志管理服务是否启动：</p>
+<p><code>shell
+ps aux | grep "rsyslog"
+systemctl status rsyslog.service
+systemctl list-all-units | grep rsyslog</code></p>
+</li>
+<li>
+<p>日志配置文件</p>
+</li>
+</ul>
+<p>​       /etc/rsyslog.conf</p>
+<p>​       记录了什么日志往哪放；还有日志级别：</p>
+<ul>
+<li>
+<p>日志轮替</p>
+</li>
+<li>
+<p>配置文件：/etc/logrotate.conf</p>
+</li>
+<li>
+<p>被轮替下来的日志会被命名为 xxx1.log，再被轮替下来就会有 xxx1.log和 xxx2.log，可以设置最大保存的副本数量。</p>
+</li>
+<li>
+<p>也可以设置日志大小必须超过多少MB才会被轮替，不到这个大小，即使到了规定的轮替时间也不会被轮替。</p>
+</li>
+<li>
+<p>日志轮替是通过系统定时任务来实现的。<strong>rsyslogd负责往哪里写什么，logrotate后台定时任务负责什么时候写和删除</strong></p>
+</li>
+<li>
+<p>查看内存日志</p>
+</li>
+<li>有一部分日志是先写到内存里，还没写到文件里；内存日志重启就清空了</li>
+<li>journalctl -o verbose</li>
+</ul>
+<hr />
+<h2 id="数据备份dump">数据备份dump</h2>
+<h3 id="语法说明">语法说明</h3>
+<ul>
+<li>dump - [cu c是个具体数字：0123456789] [-f 备份后文件名] -[T 日期] [目录或者文件系统]</li>
+<li>
+<p>-0123456789 ：备份层级，0为最完整备份，&gt;0是增量备份，指定最多备份几次。</p>
+</li>
+<li>
+<p>注意：xfs文件系统要用xfsdump；ext4才能用dump命令</p>
+</li>
+</ul>
+<hr />
+<h2 id="shell-编程">Shell 编程</h2>
+<h3 id="基础">基础</h3>
+<ul>
+<li>
+<p>shell是命令行解释器，负责向Linux内核发送请求</p>
+</li>
+<li>
+<p>脚本格式要求</p>
+</li>
+<li>
+<p>脚本以 #!/bin/bash 开头 </p>
+</li>
+<li>
+<p>脚本执行方式</p>
+</li>
+<li>
+<p>方式1 赋予x权限，再执行</p>
+<p><code>shell
+chmod u+x /opt/shcode/hello.sh
+./hello.sh</code></p>
+<p>方式2 sh +脚本 不用赋予权限也能执行</p>
+<p><code>shell
+sh hello.sh</code></p>
+</li>
+</ul>
+<h3 id="变量">变量</h3>
+<ul>
+<li>
+<p>系统变量：$HOME $USER $PATH $PWD $SHELL 等；用户自定义变量</p>
+</li>
+<li>
+<p>显示系统中的所有变量 set</p>
+</li>
+<li>
+<p>变量定义：</p>
+</li>
+<li>
+<p>定义：名字=值 （注意：中间不能有空格）</p>
+</li>
+<li>撤销变量：unset A （变量名）</li>
+<li>声明静态变量：readonly 变量 无法被unset</li>
+<li>注：vim中显示行号：命令行模式 :set nu</li>
+<li>
+<p>规则</p>
+<ul>
+<li>变量定义中等号两侧不能有空格</li>
+<li>变量名习惯为大写字母，不能以数字开头</li>
+<li>将某条命令的返回值赋值给变量：</li>
+<li>A=`date` (`是反引号)  或者  A=$(date) </li>
+</ul>
+</li>
+<li>
+<p>环境变量</p>
+</li>
+<li>
+<p>基本语法</p>
+<ul>
+<li>在/etc/profile中加入 export 变量名=变量值  （将shell变量输出为环境变量/全局变量，可以被多个文件共用）</li>
+<li>
+<p>source /etc/profile  (写入新的环境变量之后，应该用source刷新一下)</p>
+</li>
+<li>
+<p>echo $变量名</p>
+</li>
+</ul>
+</li>
+<li>
+<p>注：多行注释</p>
+<p><code>shell
+:&lt;&lt;!
+xxxx 
+!</code></p>
+</li>
+<li>
+<p>位置参数变量</p>
+</li>
+<li>
+<p>运行脚本时，希望获取到命令行手动输入的一些参数，就要用到位置参数变量。例如 sh myshell.sh 100 200，100 200这两个参数就能被传进去</p>
+</li>
+<li>
+<p>基本语法：</p>
+<ul>
+<li><strong>$n</strong> n=代表命令本身；<strong>n=$1</strong>代表命令行传入的第一个参数；n=$2-9；n=${10} 10以上要用{}</li>
+<li><strong>$</strong><em> 代表所有参数；</em><em>$@</em>*也代表所有参数，把各个参数区分对待？ $#代表参数的个数</li>
+</ul>
+</li>
+<li>
+<p>预定义变量</p>
+</li>
+<li>
+<p>基本语法</p>
+<ul>
+<li>
+<p><strong>$$</strong>当前进程号PID；$!后台运行的最后一个进程号PID；<strong>$?</strong>最后一次执行命令的返回状态，0代表成功，非0代表失败</p>
+</li>
+<li>
+<p>在shell脚本中运行另一个脚本</p>
+</li>
+</ul>
+<p><code>shell
+  /opt/shellcode/myshell.sh &amp;</code></p>
+</li>
+</ul>
+<h3 id="运算符">运算符</h3>
+<ul>
+<li>$((运算式)) 或者 $[运算式] 或者 expr m + n (这种写法 运算符之间有空格)；想把结果赋给某个变量，要用 ``</li>
+<li>expr 乘 \* 除/ 取余%   （用了expr才要用转义）</li>
+</ul>
+<h3 id="判断语句">判断语句</h3>
+<ul>
+<li>
+<p><code>shell
+  if [ 23 -ge 22 ]  # [xxx]非空返回true true就是0；[ ]空的就返回false，false是&gt;1;判断符与数字之间有空格，[ 后面 与 ] 前面都有空格
+  then echo "greater" 
+  fi</code></p>
+</li>
+<li>
+<p>判断条件</p>
+</li>
+<li>
+<p>= 字符串比较</p>
+</li>
+<li>
+<p>整数比较</p>
+<ul>
+<li>-lt 小于；-le 小于等于；-eq 等于；-gt 大于；-ne 不等于</li>
+</ul>
+</li>
+<li>
+<p>文件权限判断</p>
+<p>-r -w -x</p>
+</li>
+<li>
+<p>文件类型判断</p>
+<p>-f 文件存在并且是常规文件</p>
+<p>-e 文件存在</p>
+<p>-d 文件存在并且是个目录</p>
+<p><code>shell
+if [ -f aaa.txt ]
+then
+    echo "Yes"
+fi</code></p>
+</li>
+</ul>
+<h3 id="流程控制">流程控制</h3>
+<ul>
+<li>if</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span>condition<span class="w"> </span><span class="o">]</span>
+<span class="k">then</span>
+代码
+<span class="k">fi</span>
+
+<span class="k">if</span><span class="w"> </span><span class="o">[</span>condition<span class="o">]</span>
+<span class="k">then</span>
+代码
+<span class="k">elif</span>
+代码
+<span class="k">fi</span>
+
+<span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span>condition<span class="w"> </span><span class="o">]</span>
+<span class="k">then</span>
+代码
+<span class="k">else</span>
+代码
+<span class="k">fi</span>
+</code></pre></div>
+
+<ul>
+<li>case</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="k">case</span><span class="w"> </span><span class="nv">$1</span><span class="w"> </span><span class="k">in</span>
+<span class="s2">&quot;1&quot;</span><span class="w"> </span><span class="o">)</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;one&quot;</span>
+<span class="p">;;</span>
+
+<span class="s2">&quot;2&quot;</span><span class="o">)</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;two&quot;</span>
+<span class="p">;;</span>
+*<span class="o">)</span>
+
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;other&quot;</span>
+<span class="p">;;</span>
+<span class="k">esac</span>
+</code></pre></div>
+
+<ul>
+<li>for</li>
+</ul>
+<p>```shell<br />
+  # 方式1<br />
+  for i in "$<em>" # $</em>把命令行参数看作一个整体；$@分开看命令行参数<br />
+  do<br />
+    echo "num is $i" # i在in的里面就不停的输出；但是因为$*看作整体，所以一次就一口气全输出了；$@有几个参数，for就输出几次<br />
+  done</p>
+<p>#方式2<br />
+  SUM=0<br />
+  for((i=1; i&lt;=100; i++))  # 这里；后面要有空格 小括号旁边没有空格<br />
+  do<br />
+    SUM=$[$SUM+$i]<br />
+  done<br />
+  ```</p>
+<ul>
+<li>while</li>
+</ul>
+<p>```shell<br />
+  while [ condition ]   # 只要是中括号后面就一律加上空格<br />
+  do<br />
+  代码<br />
+  done</p>
+<p>SUM=0<br />
+  i=0<br />
+  while [ $i -le $1]  # 中括号里面的条件判断不能用&lt;= 还得用 -le那一套<br />
+  do<br />
+    SUM=$[$SUM+$i]<br />
+    i=$[$i+1]  #自增操作<br />
+  done<br />
+  ```</p>
+<p>### 读取输入read</p>
+<p>read(选项)(参数)</p>
+<p>-p 指定读取时的屏幕输出提示符</p>
+<p>-t 指定读取时的指定时间，超过时间没输入就不等待了    </p>
+<div class="highlight"><pre><span></span><code><span class="nb">read</span><span class="w"> </span>-p<span class="w"> </span><span class="s2">&quot;Input NUM1=&quot;</span><span class="w"> </span>NUM1
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;num1=</span><span class="nv">$NUM1</span><span class="s2">&quot;</span>
+
+<span class="nb">read</span><span class="w"> </span>-t<span class="w"> </span><span class="m">10</span><span class="w"> </span>-p<span class="w"> </span><span class="s2">&quot;Input NUM2=&quot;</span><span class="w"> </span>NUM2
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;num2=</span><span class="nv">$NUM2</span><span class="s2">&quot;</span><span class="w"> </span>
+</code></pre></div>
+
+<h3 id="函数">函数</h3>
+<p>系统函数和自定义函数</p>
+<ul>
+<li>
+<p>系统函数</p>
+</li>
+<li>
+<p>例如：basename 返回完整路径 / 最后的部分，用于获取文件名</p>
+</li>
+<li>basename [pathname] [suffix]</li>
+<li>
+<p>dirname 返回完整路径 / 前面的部分</p>
+</li>
+<li>
+<p>自定义函数</p>
+</li>
+</ul>
+<p>function funname()</p>
+<p>{</p>
+<p>​ action;</p>
+<p>​ [return int;]</p>
+<p>}</p>
+<h3 id="shell-编程综合案例">shell 编程综合案例</h3>
+<ul>
+<li>
+<p>需求：</p>
+</li>
+<li>
+<p>每天凌晨2:30备份</p>
+</li>
+<li>备份开始结束，给出提示信息</li>
+<li>备份文件以时间为文件名</li>
+<li>
+<p>检查是否有10天前的备份文件，有的话就删除</p>
+</li>
+<li>
+<p>思路分析：</p>
+</li>
+</ul>
+<p>编写脚本实现2 3 4项功能，用crond定时执行即可</p>
+<div class="highlight"><pre><span></span><code><span class="ch">#!/bin/bash</span>
+
+<span class="c1"># Backup to which location</span>
+<span class="nv">BACKUP</span><span class="o">=</span>/opt/shcode/backup
+
+<span class="c1">#get current time</span>
+<span class="nv">DATETIME</span><span class="o">=</span><span class="k">$(</span>date<span class="w"> </span>+%Y-%m-%d_%H%M%S<span class="k">)</span>
+
+<span class="c1">#judge if backup location exists</span>
+<span class="c1"># 这是一个短路与 表达式 []里面的表达式为真 则执行&amp;&amp;后面的；这里是如果文件夹不存在的话，就创建一个 mkdir -p 代表创建多级文件夹</span>
+<span class="o">[</span><span class="w"> </span>!<span class="w"> </span>-d<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">BACKUP</span><span class="si">}</span><span class="s2">/</span><span class="si">${</span><span class="nv">DATETIME</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span><span class="o">]</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>mkdir<span class="w"> </span>-p<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">BACKUP</span><span class="si">}</span><span class="s2">/</span><span class="si">${</span><span class="nv">DATETIME</span><span class="si">}</span><span class="s2">&quot;</span>
+
+<span class="c1">#create tar.gz for fun.sh</span>
+tar<span class="w"> </span>-zcvf<span class="w"> </span>/opt/shcode/fun.sh<span class="w"> </span><span class="si">${</span><span class="nv">BACKUP</span><span class="si">}</span>/<span class="si">${</span><span class="nv">DATETIME</span><span class="si">}</span>/<span class="si">${</span><span class="nv">DATETIME</span><span class="si">}</span>.tar.gz
+
+<span class="c1"># create tar.gz for the directory then remove the tar.gz file</span>
+<span class="nb">cd</span><span class="w"> </span><span class="si">${</span><span class="nv">BACKUP</span><span class="si">}</span>
+tar<span class="w"> </span>-zcvf<span class="w"> </span><span class="si">${</span><span class="nv">DATETIME</span><span class="si">}</span>.tar.gz<span class="w"> </span><span class="si">${</span><span class="nv">DATETIME</span><span class="si">}</span>
+rm<span class="w"> </span>-rf<span class="w"> </span><span class="si">${</span><span class="nv">BACKUP</span><span class="si">}</span>/<span class="si">${</span><span class="nv">DATETIME</span><span class="si">}</span>
+
+<span class="c1"># remove the backupc files which is created before 10 days；</span>
+<span class="c1">#find -atime 表示寻找到多少天之前的文件；-exec 表示对前面生成的文件进行操作；{}表示对前面所有文件；/;表示结束符</span>
+find<span class="w"> </span><span class="si">${</span><span class="nv">BACKUP</span><span class="si">}</span><span class="w"> </span>-atime<span class="w"> </span>+10<span class="w"> </span>-name<span class="w"> </span><span class="s2">&quot;*.tar.gz&quot;</span><span class="w"> </span>-exec<span class="w"> </span>rm<span class="w"> </span><span class="o">{}</span><span class="w"> </span><span class="se">\;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Backup completed&quot;</span>
+</code></pre></div>
+
+<hr />
+<h2 id="ubuntu">Ubuntu</h2>
+<h3 id="root用户">root用户</h3>
+<ul>
+<li>一开始root没有密码，用su命令会失败；要先设置密码：</li>
+</ul>
+<p><code>shell
+  sudo passwd</code></p>
+<p>设置好密码再用su，输入密码即可切换为root用户</p>
+<ul>
+<li>$ 代表普通用户；# 代表root用户</li>
+</ul>
+<h3 id="apt">apt</h3>
+<ul>
+<li>
+<p>Advanced Package Tools</p>
+</li>
+<li>
+<p>国内的镜像网站：会定时去国外服务器同步资源，访问速度会快一些。可以在sourcelist里面设置成从镜像网站安装，例如，在清华大学镜像站中，找到使用帮助，在对应系统版本中找到sources.list的配置</p>
+</li>
+<li>
+<p>常用命令 （新版Ubuntu用apt代替apt-get）</p>
+</li>
+</ul>
+<p>sudo apt-get update</p>
+<p>sudo apt-get install xxx</p>
+<p>sudo apt-get remove xxx</p>
+<p>sudo apt-cache show xxx（获取包的相关信息）</p>
+<p>sudo apt-get source xxx (下载该包的源代码)</p>
+<h3 id="远程登录">远程登录</h3>
+<ul>
+<li>
+<p>SSH：Secure Shell：是建立在应用层和传输层的安全协议；如果A机器想要被B机器远程操作，A要安装SSH服务器，B要安装SSH客户端</p>
+</li>
+<li>
+<p>Ubuntu 默认没有安装ssh服务</p>
+</li>
+</ul>
+<p><code>shell
+  apt install openssh-server</code></p>
+<ul>
+<li>打开sshd服务</li>
+</ul>
+<p><code>shell
+  systemctl restart sshd</code></p>
+<ul>
+<li>从一个Linux登录到另一个Linux (服务器集群中有用)</li>
+</ul>
+<p><code>shell
+  ssh username@ip # 输入目标服务器的登陆用户名和密码</code></p>
+<hr />
+<h1 id="redhat-enterprise-administrator-guide">Redhat Enterprise Administrator Guide</h1>
+<h2 id="chapter-1">Chapter 1</h2>
+<h3 id="system-locale-specify-bitmap-fonts-and-code-pages">System locale （specify bitmap fonts and code pages）</h3>
+<ul>
+<li>stored in /etc/locale.conf</li>
+<li>system locale and keyboard can be configured by <strong>localectl</strong></li>
+</ul>
+<hr />
+<h2 id="chapter-2">Chapter 2</h2>
+<h3 id="date-and-time">Date and time</h3>
+<ul>
+<li>RTC (real time clock): hardware clock. Independent, run even shut down</li>
+<li>UTC (Coordinated Unviersal Time); DST (daylight saving time): local time</li>
+<li><strong>timedatectl</strong> <strong>date</strong> <strong>hwclock</strong> : configure the system clock</li>
+<li>after changes made, use <strong>systemctl restart systemd-timedated.service</strong> to restart</li>
+<li>Changing current time\date : <strong>timedatectl set-time HH:MM:SS / YYYY-MM-DD HH:MM:SS</strong></li>
+<li>Changing time zone: <strong>timedatectl list-timezones</strong> / <strong>timedatectl set-timezone xxx</strong></li>
+<li>sync with remote server <strong>timedatectl set-ntp yee/no</strong></li>
+<li>
+<p><strong>hwclock /etc/adjtime</strong></p>
+</li>
+<li>
+<p>if NTP is used, hardware clock automatically synchronized every 11 mins.</p>
+</li>
+<li>
+<p>Recommand to keep the hardware clock in UTC.</p>
+</li>
+</ul>
+<hr />
+<h2 id="chapter-3">Chapter 3</h2>
+<h3 id="users-and-groups">Users and Groups</h3>
+<ul>
+<li>The settings defines what permissions are applied to a newly created file or directory is <strong>umask</strong>, which is configured in /etc/bashrc. Default is <strong>022</strong>, which only allows creators to modify, even creator's group are not allowed.</li>
+<li>a list of groups: /etc/group</li>
+</ul>
+<h3 id="passwds">Passwds</h3>
+<ul>
+<li>
+<p>/etc/passwd move to-&gt; /etc/shadow which is only read by root user. Passwd aging Policy is also contained</p>
+</li>
+<li>
+<p>Users setting tool (Graphical): Super -&gt; Users</p>
+</li>
+<li>
+<p>Connamd line tools:</p>
+</li>
+<li>
+<p>useradd usermod userdel</p>
+</li>
+<li>groupadd groupmod groupdel</li>
+<li>
+<p>gpasswd: for administering /etc/group</p>
+</li>
+<li>
+<p>pwck, grpck</p>
+</li>
+<li>
+<p>pwconv, pwunconv; grpconv, grpunconv</p>
+</li>
+<li>
+<p>Default UID range:</p>
+</li>
+<li>
+<p>Previously 1 - 499 : system users; 500 + normal user</p>
+<p>now:      1 - 999 : system users; 1000 + normal user</p>
+<p>Default ranges of UID and GID can be changed in /etc/login.defs</p>
+</li>
+<li>
+<p>Dafault GID range:</p>
+</li>
+<li>
+<p>below 1000 are for system and could not be used by users</p>
+</li>
+<li>
+<p>useradd user1</p>
+</li>
+</ul>
+<p>then /etc/passwd is changed as follow:</p>
+<p><code>shell
+  user1:x:1001:1001::/home/user1:bin/bash
+  # user name；x: systyem using shadow passwd; UID; GID; GECOS left blank;home directory;default shell</code></p>
+<p>Meanwhile, /etc/shadow /etc/group /etc/gshadow is also changed accordingly</p>
+<p>/home/user1 is added. but this new user is activitated after the root user set a passwd </p>
+<h3 id="group-directories-setgid-bit">group directories-setgid bit</h3>
+<p>Situation: By default, in a directory, when sb. creates a file, it belongs to the primary group he belongs.</p>
+<p>Setgid bit：对一个目录设置，目录中的文件 便自动会分配上 [与目录的组相同] 的组。让文件执行者以 目录组 的权限去执行。</p>
+<p>Eg：</p>
+<p>Several users are working on files in /myproject; some are trusted to modify files.</p>
+<div class="highlight"><pre><span></span><code>mkdir<span class="w"> </span>/myproject
+groupadd<span class="w"> </span>myproject
+chown<span class="w"> </span>root:myproject<span class="w"> </span>/myproject
+chmod<span class="w"> </span><span class="m">2775</span><span class="w"> </span>/myproject<span class="w">  </span><span class="c1"># setgid bit设置为2了</span>
+ls<span class="w"> </span>-ld<span class="w"> </span>/myproject
+usermod<span class="w"> </span>-aG<span class="w"> </span>myproject<span class="w"> </span>username<span class="w"> </span><span class="c1"># add user into myproject group </span>
+</code></pre></div>
+
+<hr />
+<h2 id="chapter-4">Chapter 4</h2>
+<h3 id="gain-privilege">gain privilege</h3>
+<ul>
+<li>A special administrative group called <strong>wheel</strong></li>
+</ul>
+<p><code>shell
+  useradd -aG username</code></p>
+<p>you can configure who has the privilege to use <strong>su</strong> and <strong>sudo</strong> command</p>
+<ul>
+<li>
+<p>edit PAM configuration file for su: /etc/pam.d/su</p>
+<p>uncomment it:</p>
+<p>```shell</p>
+<h1 id="auth-required-pam_wheelso-use_uid">auth  required    pam_wheel.so    use_uid</h1>
+<p>```</p>
+<p>which means that only <strong>members in wheel</strong> can use su command.</p>
+</li>
+<li>
+<p><strong>/etc/sudoers</strong> in default: gives every user in wheel group with unlimited root access.</p>
+</li>
+<li>
+<p>only users listed in <strong>/etc/sudoers</strong> are allowed to use <strong>sudo</strong> command</p>
+<ul>
+<li>
+<p>each successful authentication using sudo is logged into <strong>/var/log/messages</strong>,</p>
+</li>
+<li>
+<p>issuer's name is logged into <strong>/var/log/secure</strong></p>
+</li>
+<li>
+<p>which one to be logged can be controlled in <strong>/etc/pam.d/system-auth</strong>:</p>
+<p>add line: <strong>session required    pam_tty_audit.so disabled=user1,user2 enabled=user1,user2</strong></p>
+</li>
+<li>
+<p>To give sb. full privilege to use sudo:</p>
+</li>
+</ul>
+<p>type <strong>visudo</strong>  (visudo is a tool to manage /etc/sudoers)</p>
+<p>find sth like root ALL=(ALL) ALL</p>
+<p>add username ALL=(ALL) ALL</p>
+<p>which means username can use sudo from any host and execute any command</p>
+<ul>
+<li>sudoers' passwd intervals can also be managed.</li>
+</ul>
+</li>
+</ul>
+<hr />
+<h2 id="chapter-5">Chapter 5</h2>
+<h3 id="registering">Registering</h3>
+<ul>
+<li>
+<p><strong>subscription-manager register</strong> (register your system with the same username and passwd as Redhat Customer portal)</p>
+</li>
+<li>
+<p><strong>subscription-manager list --available</strong> (lsit all subscriptions)</p>
+</li>
+<li>
+<p>subscription-manager attach --pool=pool_id (attach a subscription to the system)</p>
+</li>
+<li>
+<p>after system subscribed, a repository file is created in /etc/yum.repos.d/</p>
+</li>
+<li>
+<p>use <strong>yum repolist</strong> to check</p>
+</li>
+<li>
+<p>remove subscription</p>
+</li>
+<li>
+<p>check sub lists: <strong>subscription-manager list --consumed</strong></p>
+</li>
+<li>
+<p>find serial number</p>
+</li>
+<li><strong>subscription-manager remove --serial= <em>serial_number</em></strong></li>
+</ul>
+<hr />
+<h2 id="chapter-6">Chapter 6</h2>
+<h3 id="redhat-support-tool">Redhat support tool</h3>
+<ul>
+<li>install -&gt; register</li>
+</ul>
+<h3 id="case-management">Case management</h3>
+<ul>
+<li>Open and update</li>
+<li>viewing cases</li>
+</ul>
+<hr />
+<h2 id="chapter-9">Chapter 9</h2>
+<h3 id="openssh">OpenSSH</h3>
+<ul>
+<li>client-server architecture, encoded session, more secure than telnet</li>
+<li>openssh package required</li>
+<li>version1 and version2 </li>
+</ul>
+<h3 id="configuring-openssh">Configuring OpenSSH</h3>
+<ul>
+<li>files  记录着服务端、客户端的一些身份验证信息等</li>
+<li>system-wide files: <strong>/etc/ssh</strong></li>
+<li>user-specific files: <strong>~/.ssh/</strong></li>
+<li>
+<p>如果重装了系统，可以备份相应的文件夹，以恢复之前的设置 </p>
+</li>
+<li>
+<p>generate key-pair then send the public key</p>
+</li>
+<li>configure ssh-agent</li>
+<li>using ssh-client</li>
+<li>scp: file transfer between machines, encrypted</li>
+<li>sftp: open an FTP session</li>
+</ul>
+<h3 id="x11">X11</h3>
+<p>Previously insecure port connections between systems can be mapped to specific SSH channels</p>
+<ul>
+<li>yum group install X windows system</li>
+<li>X11 forwarding</li>
+</ul>
+<hr />
+<h2 id="chapter-12">Chapter 12</h2>
+<ul>
+<li>Client - server architecture</li>
+<li>server -&gt; recipient's server -&gt; recipient's client</li>
+</ul>
+<h3 id="emial-transport-protocols">Emial transport protocols</h3>
+<ul>
+<li>SMTP</li>
+<li>no authentication, making junk email, use <strong>relay restriction</strong> to limit it</li>
+</ul>
+<h3 id="email-access-protocols">Email access protocols</h3>
+<p>used by clients to retrive email from servers，规定了怎样将个人计算机连接到网络上的邮件服务器的协议</p>
+<ul>
+<li>
+<p>Post office Protocol (POP) </p>
+</li>
+<li>
+<p>用户将邮件从服务器上下载到本地主机，同时删除服务器上的邮件</p>
+</li>
+<li>Redhat use <strong>Dovecot</strong> provided by dovecot package to use POP server</li>
+<li>email are downloaded by email client apps</li>
+<li>
+<p>compatible for Internet standards, such as <strong>Multipurpose Internet Mail Extensions (MIME)</strong>, which allows <strong>Mail Attachments</strong></p>
+</li>
+<li>
+<p>most current version: POP3; POP3s service provided SSL encryprion</p>
+</li>
+<li>
+<p>Internet Message Access Protocol (IMAP)</p>
+</li>
+<li>从客户端收取的邮件都保留在服务器上，同时在客户端的操作在服务器上都有标记</li>
+<li>emails remain on the server which can be checked </li>
+<li>dovecot is also used;SSL is also supported by using syunnel program</li>
+</ul>
+<h3 id="email-program">Email program</h3>
+<ul>
+<li>Mail Transport Agent</li>
+<li>use SMTP (Simple Mail Transfer Protocol), 一组用于从源地址到目的地址传输邮件的规范，控制邮件的中转方式，属于TCP/IP协议簇</li>
+<li>Postfix and Sendmail</li>
+<li>
+<p>fetchmail: retrieves email from remote servers and delivers it to the local MTA</p>
+</li>
+<li>
+<p>Mail Delivery Program</p>
+</li>
+<li>Procmail: deliver email to be read by client apps</li>
+<li>Mail User Agent</li>
+<li>
+<h3 id="graphical-evolution-text-based-mutt">Graphical: Evolution; text-based: Mutt</h3>
+</li>
+</ul>
+    </div>
+  </article>
+  <aside class="toc">
+    <p class="toc-label">本页目录</p>
+    <ul>
+  <li><a href="#001-绪论">001 绪论</a></li>
+  <li><a href="#002-linux应用范围">002 Linux应用范围</a></li>
+  <li><a href="#003-linux介绍">003 Linux介绍</a></li>
+  <li><a href="#004-unix与linux">004 Unix与Linux</a></li>
+  <li><a href="#005-vmware-16和centos-7-安装">005 VMWARE 16和CentOS 7 安装</a></li>
+  <li><a href="#007-linux虚拟机网络连接的三种方式">007 Linux虚拟机网络连接的三种方式</a></li>
+  <li><a href="#008-linux虚拟机克隆">008 Linux虚拟机克隆</a></li>
+  <li><a href="#009-虚拟机快照">009 虚拟机快照</a></li>
+  <li><a href="#011-安装vmtools">011 安装vmtools</a></li>
+  <li><a href="#012-linux-目录结构">012 Linux 目录结构</a><ul>
+  <li><a href="#fhs">FHS</a></li>
+</ul></li>
+  <li><a href="#014-远程登录linux">014 远程登录Linux</a><ul>
+  <li><a href="#linux终端机界面">Linux终端机界面</a></li>
+  <li><a href="#远程登录的服务">远程登录的服务</a></li>
+</ul></li>
+  <li><a href="#016-vi和vim">016 Vi和Vim</a><ul>
+  <li><a href="#快捷键">快捷键</a></li>
+</ul></li>
+  <li><a href="#017-关机-重启-用户">017 关机 重启 用户</a><ul>
+  <li><a href="#linux启动过程">linux启动过程</a></li>
+  <li><a href="#关机">关机</a></li>
+  <li><a href="#用户类型">用户类型</a></li>
+  <li><a href="#用户登录与注销">用户登录与注销</a></li>
+  <li><a href="#账户">账户</a></li>
+</ul></li>
+  <li><a href="#018-用户管理">018 用户管理</a><ul>
+  <li><a href="#添加用户">添加用户</a></li>
+  <li><a href="#制定修改密码">制定、修改密码</a></li>
+  <li><a href="#删除用户">删除用户</a></li>
+  <li><a href="#查询用户">查询用户</a></li>
+  <li><a href="#切换用户">切换用户</a></li>
+  <li><a href="#查看当前用户">查看当前用户</a></li>
+  <li><a href="#用户组">用户组</a></li>
+  <li><a href="#把用户拉进组-更改用户所在组">把用户拉进组 / 更改用户所在组</a></li>
+  <li><a href="#更换文件所在组">更换文件所在组</a></li>
+  <li><a href="#用户配置文件">用户配置文件</a></li>
+</ul></li>
+  <li><a href="#019-bash-shell">019 Bash shell</a></li>
+  <li><a href="#025-实用指令-01">025 实用指令-01</a><ul>
+  <li><a href="#指定运行级别">指定运行级别</a></li>
+  <li><a href="#帮助指令">帮助指令</a></li>
+  <li><a href="#快捷键_1">快捷键</a></li>
+  <li><a href="#ls-列出当前目录文件">ls 列出当前目录文件</a></li>
+</ul></li>
+  <li><a href="#028-文件类实用指令-02">028 文件类实用指令-02</a><ul>
+  <li><a href="#文件目录">文件目录</a></li>
+  <li><a href="#文件操作">文件操作</a></li>
+  <li><a href="#文件时间">文件时间</a></li>
+  <li><a href="#文件比较">文件比较</a></li>
+  <li><a href="#mv-移动重命名">mv 移动/重命名</a></li>
+  <li><a href="#cat-查看文件内容">cat 查看文件内容</a></li>
+  <li><a href="#head-查看开头指定行数">head 查看开头指定行数</a></li>
+  <li><a href="#tail-查看末尾指定行数">tail 查看末尾指定行数</a></li>
+  <li><a href="#more-基于vi的文本过滤器">more 基于Vi的文本过滤器</a></li>
+  <li><a href="#less">less</a></li>
+  <li><a href="#echo-将内容输出至控制台">echo 将内容输出至控制台</a></li>
+  <li><a href="#和">&gt; 和 &amp;gt;&amp;gt;</a></li>
+  <li><a href="#文件链接">文件链接</a></li>
+  <li><a href="#文件指针">文件指针</a></li>
+  <li><a href="#history-查看已经执行过的命令">history 查看已经执行过的命令</a></li>
+  <li><a href="#文件系统类型">文件系统类型</a></li>
+</ul></li>
+  <li><a href="#034-时间日期指令">034 时间日期指令</a><ul>
+  <li><a href="#date">date</a></li>
+</ul></li>
+  <li><a href="#035-查找指令">035 查找指令</a><ul>
+  <li><a href="#find">find</a></li>
+  <li><a href="#whereis">whereis</a></li>
+  <li><a href="#locate">locate</a></li>
+  <li><a href="#which">which</a></li>
+  <li><a href="#grep">grep</a></li>
+</ul></li>
+  <li><a href="#037-压缩和解压缩">037 压缩和解压缩</a><ul>
+  <li><a href="#gzipgunzip">gzip/gunzip</a></li>
+  <li><a href="#zipunzip">zip/unzip</a></li>
+  <li><a href="#tar">tar</a></li>
+</ul></li>
+  <li><a href="#040-组管理">040 组管理</a></li>
+  <li><a href="#044-权限">044 权限</a><ul>
+  <li><a href="#权限详解">权限详解</a></li>
+  <li><a href="#修改权限-chmod">修改权限 chmod</a></li>
+  <li><a href="#新文件的默认权限">新文件的默认权限</a></li>
+  <li><a href="#suid-sgid-sticky特殊标志位">SUID SGID Sticky：特殊标志位</a></li>
+</ul></li>
+  <li><a href="#052-任务调度">052 任务调度</a><ul>
+  <li><a href="#crontab-定时任务设置-反复执行">crontab 定时任务设置 （反复执行）</a></li>
+  <li><a href="#at-定时任务-一次性执行">at 定时任务 （一次性执行）</a></li>
+</ul></li>
+  <li><a href="#058-linux-磁盘分区和挂载">058 Linux 磁盘分区和挂载</a><ul>
+  <li><a href="#磁盘组成">磁盘组成</a></li>
+  <li><a href="#linux磁盘分区">Linux磁盘分区</a></li>
+  <li><a href="#开机检测程序">开机检测程序</a></li>
+  <li><a href="#增加磁盘的操作实例">增加磁盘的操作实例</a></li>
+  <li><a href="#查看磁盘使用情况">查看磁盘使用情况</a></li>
+  <li><a href="#工作常用指令">工作常用指令</a></li>
+  <li><a href="#逻辑卷管理-lvm">逻辑卷管理 LVM</a></li>
+  <li><a href="#磁盘阵列-raid">磁盘阵列 RAID</a></li>
+  <li><a href="#磁盘完整性检查-fsck">磁盘完整性检查 FSCK</a></li>
+  <li><a href="#初始化磁盘initrd">初始化磁盘（Initrd）</a></li>
+  <li><a href="#启动管理">启动管理</a></li>
+</ul></li>
+  <li><a href="#059-linux文件系统">059 Linux文件系统</a><ul>
+  <li><a href="#ext2-文件系统特性">EXT2 文件系统特性</a></li>
+  <li><a href="#block大小">block大小</a></li>
+  <li><a href="#inode">inode</a></li>
+  <li><a href="#查看ext文件系统信息">查看ext文件系统信息</a></li>
+  <li><a href="#目录的占用">目录的占用</a></li>
+  <li><a href="#bitmap">bitmap</a></li>
+  <li><a href="#一致性检查">一致性检查</a></li>
+  <li><a href="#日志式文件系统ext4ext4">日志式文件系统：ext4/ext4</a></li>
+  <li><a href="#文件系统的读写运作">文件系统的读写运作</a></li>
+  <li><a href="#其他文件系统">其他文件系统</a></li>
+  <li><a href="#xfs文件系统简介">xfs文件系统简介</a></li>
+  <li><a href="#查看信息">查看信息</a></li>
+  <li><a href="#修改uuid和label-name">修改UUID和label name</a></li>
+</ul></li>
+  <li><a href="#cloud-相关配置">Cloud 相关配置</a><ul>
+  <li><a href="#waagent">waagent</a></li>
+  <li><a href="#cloud-init">cloud-init</a></li>
+  <li><a href="#extension">extension</a></li>
+</ul></li>
+  <li><a href="#063-网络配置">063 网络配置</a><ul>
+  <li><a href="#ip获取方式">IP获取方式</a></li>
+  <li><a href="#设置主机名和hosts映射">设置主机名和hosts映射</a></li>
+  <li><a href="#interface设置">interface设置</a></li>
+  <li><a href="#验证dns域名解析">验证DNS域名解析</a></li>
+  <li><a href="#检查端口监听状态">检查端口监听状态</a></li>
+  <li><a href="#连接端口">连接端口</a></li>
+  <li><a href="#路由表">路由表</a></li>
+  <li><a href="#iptables">iptables</a></li>
+  <li><a href="#network-trace">Network trace</a></li>
+  <li><a href="#network-file-share-nfs">Network File Share (NFS)</a></li>
+  <li><a href="#firewalld-basics">Firewalld basics</a></li>
+  <li><a href="#selinux">SELinux</a></li>
+</ul></li>
+  <li><a href="#068-进程管理">068 进程管理</a><ul>
+  <li><a href="#显示进程">显示进程</a></li>
+  <li><a href="#终止进程">终止进程</a></li>
+  <li><a href="#查看进程树">查看进程树</a></li>
+  <li><a href="#服务管理">服务管理</a></li>
+  <li><a href="#服务的运行级别">服务的运行级别</a></li>
+  <li><a href="#systemv和systemd">systemV和systemd</a></li>
+  <li><a href="#服务管理_1">服务管理</a></li>
+  <li><a href="#service-trouble-shooting">Service trouble-shooting</a></li>
+  <li><a href="#动态监控进程">动态监控进程</a></li>
+  <li><a href="#监控网络状态">监控网络状态</a></li>
+  <li><a href="#验证端口">验证端口</a></li>
+</ul></li>
+  <li><a href="#rpm包管理">rpm包管理</a><ul>
+  <li><a href="#介绍">介绍</a></li>
+  <li><a href="#查询已安装的rpm">查询已安装的rpm</a></li>
+  <li><a href="#其他查询指令">其他查询指令</a></li>
+  <li><a href="#rpm包卸载">rpm包卸载</a></li>
+  <li><a href="#rpm安装">rpm安装</a></li>
+  <li><a href="#yum">yum</a></li>
+  <li><a href="#epel">EPEL</a></li>
+  <li><a href="#干净重装-以-waagent为例">干净重装 (以 waagent为例)</a></li>
+  <li><a href="#包管理-package-management">包管理 Package Management</a></li>
+</ul></li>
+  <li><a href="#打印服务">打印服务</a></li>
+  <li><a href="#系统信息查看">系统信息查看</a><ul>
+  <li><a href="#系统行为报告">系统行为报告</a></li>
+  <li><a href="#sosreport">sosreport</a></li>
+  <li><a href="#os-信息查看">OS 信息查看</a></li>
+</ul></li>
+  <li><a href="#默认kernel变更">默认kernel变更</a></li>
+  <li><a href="#日志管理">日志管理</a><ul>
+  <li><a href="#日志简介">日志简介</a></li>
+</ul></li>
+  <li><a href="#数据备份dump">数据备份dump</a><ul>
+  <li><a href="#语法说明">语法说明</a></li>
+</ul></li>
+  <li><a href="#shell-编程">Shell 编程</a><ul>
+  <li><a href="#基础">基础</a></li>
+  <li><a href="#变量">变量</a></li>
+  <li><a href="#运算符">运算符</a></li>
+  <li><a href="#判断语句">判断语句</a></li>
+  <li><a href="#流程控制">流程控制</a></li>
+  <li><a href="#函数">函数</a></li>
+  <li><a href="#shell-编程综合案例">shell 编程综合案例</a></li>
+</ul></li>
+  <li><a href="#ubuntu">Ubuntu</a><ul>
+  <li><a href="#root用户">root用户</a></li>
+  <li><a href="#apt">apt</a></li>
+  <li><a href="#远程登录">远程登录</a></li>
+</ul></li>
+  <li><a href="#chapter-1">Chapter 1</a><ul>
+  <li><a href="#system-locale-specify-bitmap-fonts-and-code-pages">System locale （specify bitmap fonts and code pages）</a></li>
+</ul></li>
+  <li><a href="#chapter-2">Chapter 2</a><ul>
+  <li><a href="#date-and-time">Date and time</a></li>
+</ul></li>
+  <li><a href="#chapter-3">Chapter 3</a><ul>
+  <li><a href="#users-and-groups">Users and Groups</a></li>
+  <li><a href="#passwds">Passwds</a></li>
+  <li><a href="#group-directories-setgid-bit">group directories-setgid bit</a></li>
+</ul></li>
+  <li><a href="#chapter-4">Chapter 4</a><ul>
+  <li><a href="#gain-privilege">gain privilege</a></li>
+</ul></li>
+  <li><a href="#chapter-5">Chapter 5</a><ul>
+  <li><a href="#registering">Registering</a></li>
+</ul></li>
+  <li><a href="#chapter-6">Chapter 6</a><ul>
+  <li><a href="#redhat-support-tool">Redhat support tool</a></li>
+  <li><a href="#case-management">Case management</a></li>
+</ul></li>
+  <li><a href="#chapter-9">Chapter 9</a><ul>
+  <li><a href="#openssh">OpenSSH</a></li>
+  <li><a href="#configuring-openssh">Configuring OpenSSH</a></li>
+  <li><a href="#x11">X11</a></li>
+</ul></li>
+  <li><a href="#chapter-12">Chapter 12</a><ul>
+  <li><a href="#emial-transport-protocols">Emial transport protocols</a></li>
+  <li><a href="#email-access-protocols">Email access protocols</a></li>
+  <li><a href="#email-program">Email program</a></li>
+  <li><a href="#graphical-evolution-text-based-mutt">Graphical: Evolution; text-based: Mutt</a></li>
+</ul></li>
+</ul>
+  </aside>
+
+</div>
+
+</main>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>Learning Notes</span>
+    <a href="https://github.com/hangx969/learning-notes">GitHub</a>
+  </div>
+</footer>
+<script src="../../static/search.js"></script>
+</body>
+</html>

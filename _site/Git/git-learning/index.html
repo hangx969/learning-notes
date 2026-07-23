@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Git 学习笔记 - Learning Notes</title>
+<link rel="stylesheet" href="../../static/style.css">
+<link rel="stylesheet" href="../../static/pygments.css">
+</head>
+<body data-root="../../">
+<header class="site-header">
+  <div class="header-inner">
+    <a class="logo" href="../../index.html"><span class="logo-mark"></span>LEARNING NOTES</a>
+    <div class="search">
+      <input id="search-input" type="search" placeholder="搜索笔记…" autocomplete="off" aria-label="搜索笔记">
+      <div id="search-results" hidden></div>
+    </div>
+  </div>
+  <nav class="topic-nav" aria-label="主题导航">
+    <div class="topic-nav-inner">
+      <a href="../../AI/">AI</a>
+      <a href="../../Aliyun/">Aliyun</a>
+      <a href="../../Azure/">Azure</a>
+      <a href="../../C%2B%2B/">C++</a>
+      <a href="../../CloudComputing/">CloudComputing</a>
+      <a href="../../Database/">Database</a>
+      <a href="../../Docker-Kubernetes/">Docker-Kubernetes</a>
+      <a href="../../GPU-DeepLearning/">GPU-DeepLearning</a>
+      <a href="../../Git/" class="active">Git</a>
+      <a href="../../Go/">Go</a>
+      <a href="../../HPC/">HPC</a>
+      <a href="../../IaC/">IaC</a>
+      <a href="../../Linux-Shell/">Linux-Shell</a>
+      <a href="../../Middlewares/">Middlewares</a>
+      <a href="../../Networking/">Networking</a>
+      <a href="../../OS/">OS</a>
+      <a href="../../Python/">Python</a>
+      <a href="../../SoftwareTesting/">SoftwareTesting</a>
+    </div>
+  </nav>
+</header>
+<main class="main">
+
+<div class="article-layout">
+
+  <aside class="sidebar">
+    <details class="sidebar-details">
+      <summary>Git</summary>
+      <nav class="sidebar-nav">
+        <p class="sidebar-group">其他</p>
+        <ul>
+          <li><a href="../../Git/Picgo-github%E5%9B%BE%E5%BA%8A%E9%85%8D%E7%BD%AE/">PicGo-GitHub 图床配置</a></li>
+          <li><a href="../../Git/git-learning/" class="current">Git 学习笔记</a></li>
+        </ul>
+      </nav>
+    </details>
+  </aside>
+
+  <article class="article">
+    <nav class="breadcrumb">
+      <a href="../../index.html">首页</a><span>/</span>
+      <a href="../../Git/">Git</a>
+    </nav>
+    <h1 class="article-title">Git 学习笔记</h1>
+    <p class="article-meta"><span>更新于 2026-05-07</span>
+      <a href="https://github.com/hangx969/learning-notes/blob/main/Git/git-learning.md">查看源文件</a>
+    </p>
+    <div class="article-body">
+<h1 id="版本控制">版本控制</h1>
+<h2 id="版本控制工具">版本控制工具</h2>
+<p>主流版本：</p>
+<ul>
+<li>Git</li>
+<li>SVN（subversion）</li>
+<li>CVS</li>
+<li>VSS</li>
+<li>TFS</li>
+</ul>
+<h2 id="版本控制分类">版本控制分类</h2>
+<ul>
+<li>
+<p>本地版本控制</p>
+</li>
+<li>
+<p>集中版本控制：SVN</p>
+</li>
+<li>
+<p>版本都保存在服务器上。用户需要联网从中央服务器上拉下来最新版本再修改提交。必须联网才能工作,对带宽要求比较高。</p>
+</li>
+<li>
+<p>用户自己电脑上只有某一部分文件。</p>
+</li>
+<li>
+<p>分布式版本控制：Git</p>
+</li>
+<li>
+<p>每个用户电脑上都有完整的所有的版本数据。不会因为服务器坏掉造成不能工作的情况。</p>
+</li>
+<li>
+<p>协同方法：一个人改了文件A，另一个人也改了文件A，互相把修改推送给对方就可以看到对方的修改。</p>
+</li>
+<li>git是本地代码库，局域网联网就可以进行多人开发，把最终版本提价到远程即可。</li>
+</ul>
+<h1 id="git基本理论">Git基本理论</h1>
+<h2 id="基本组成">基本组成</h2>
+<p><img alt="图片" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202209111100348.png" /></p>
+<ul>
+<li>工作目录 working directory</li>
+</ul>
+<p>平时本地写代码的地方</p>
+<ul>
+<li>暂存区 stage / index</li>
+</ul>
+<p>临时存放改动，只是一些文件。</p>
+<ul>
+<li>
+<p>仓库区：本地仓库repository</p>
+</li>
+<li>
+<p>远程仓库：remote</p>
+</li>
+</ul>
+<p>托管代码的服务器</p>
+<h2 id="工作流程">工作流程</h2>
+<ul>
+<li>
+<p>从远程仓库中把项目clone到本地</p>
+</li>
+<li>
+<p>在本地工作区中增删改</p>
+</li>
+<li>将更改的文件add到暂存区域</li>
+<li>将暂存区域的文件commit到本地git仓库</li>
+<li>从本地仓库push到远程仓库</li>
+</ul>
+<p><img alt="图片" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202209111100296.jpeg" /></p>
+<h2 id="git文件状态">git文件状态</h2>
+<p>文件四种状态</p>
+<ul>
+<li>Untracked:</li>
+<li>
+<p>未跟踪, 此文件在文件夹中, 但并没有add到本地仓库, 不参与版本控制。通过git add 状态变为Staged.</p>
+</li>
+<li>
+<p>Unmodified</p>
+</li>
+<li>
+<p>文件已经入库, 未修改, 即版本库中的文件快照内容与文件夹中完全一致。这种类型的文件有两种去处, 如果它被修改, 而变为Modified。如果使用git rm移出版本库, 则成为Untracked文件</p>
+</li>
+<li>
+<p>Modified</p>
+</li>
+<li>
+<p>文件已修改, 仅仅是修改, 并没有进行其他的操作。 这个文件也有两个去处, 通过git add可进入暂存staged状态, 使用git checkout 则丢弃修改过, 返回到unmodify状态, 这个git checkout即从库中取出文件, 覆盖当前修改 !</p>
+</li>
+<li>
+<p>Staged</p>
+</li>
+<li>暂存状态，文件已经暂存到暂存区。执行git commit则将修改同步到本地仓库中, 这时本地仓库中的文件和工作区文件变为一致, 文件为Unmodified状态. 执行git reset HEAD filename取消暂存, 文件状态为Modified</li>
+</ul>
+<p>查看文件状态</p>
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>status<span class="w"> </span><span class="o">[</span>filename<span class="o">]</span>
+git<span class="w"> </span>status
+</code></pre></div>
+
+<h1 id="git配置">Git配置</h1>
+<ul>
+<li>查看所有git 配置：</li>
+</ul>
+<p><code>shell
+  git config -l</code></p>
+<ul>
+<li>查看git系统配置：</li>
+</ul>
+<p><code>shell
+  git config --system --list
+  git config --system -e #直接打开配置文件</code></p>
+<ul>
+<li>查看git本地配置：</li>
+</ul>
+<p><code>shell
+  git config --global --list
+  git config --global -e #直接打开配置文件</code></p>
+<ul>
+<li>下载git bash之后首先要配的：用户名和邮箱</li>
+</ul>
+<p><code>shell
+   git config --global user.email ""
+   git config --global user.name ""</code></p>
+<h1 id="git项目搭建">Git项目搭建</h1>
+<p><img alt="图片" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202209111100768.png" /></p>
+<h2 id="创建仓库">创建仓库</h2>
+<ol>
+<li>创建本地仓库</li>
+</ol>
+<p><code>bash
+   git init #会在当前路径下创建出一个隐藏文件夹 .git，存放git的版本、管理等信息</code></p>
+<ol>
+<li>克隆远程仓库</li>
+</ol>
+<p><code>bash
+   # 克隆一个项目和它的整个代码历史(版本信息)
+   $ git clone [url]  # https://gitee.com/kuangstudy/openclass.git</code></p>
+<h2 id="配置branch和remote">配置branch和remote</h2>
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>branch<span class="w"> </span>-M<span class="w"> </span>main
+git<span class="w"> </span>remote<span class="w"> </span>add<span class="w"> </span>origin<span class="w"> </span>https://github.com/hangx969/Scripts.git
+</code></pre></div>
+
+<h2 id="更换remote">更换remote</h2>
+<p>有时候在一开始添加remote的时候添加的是https url，后面希望更换成ssh url：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 查看当前remote</span>
+git<span class="w"> </span>remote<span class="w"> </span>-v
+<span class="c1"># 切换remote</span>
+git<span class="w"> </span>remote<span class="w"> </span>set-url<span class="w"> </span>origin<span class="w"> </span>git@ssh.xxxx
+</code></pre></div>
+
+<h2 id="免密码登录git">免密码登录git</h2>
+<ul>
+<li>
+<p>github设置中加入客户端的ssh公钥。</p>
+</li>
+<li>
+<p>git clone项目下来的时候，使用ssh链接而非http链接。（http链接是需要MFA的，后续每次push都需要输入用户名密码）</p>
+</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202412281415127.png" alt="image-20241228141528061" style="zoom:67%;" /></p>
+<ul>
+<li>git remote add采用ssh的link</li>
+</ul>
+<p><code>sh
+  git remote add origin git@github.com:hangx969/k8s-platform-tools.git
+  git add .
+  git commit -m "xxx"
+  git checkout -b xxx
+  git push origin xxx</code></p>
+<h1 id="git分支管理">Git分支管理</h1>
+<h2 id="查看操作">查看操作</h2>
+<div class="highlight"><pre><span></span><code><span class="c1"># 查看本地分支</span>
+git<span class="w"> </span>branch
+<span class="c1"># 查看远程分支</span>
+git<span class="w"> </span>branch<span class="w"> </span>-r
+<span class="c1"># 查看本地远程所有分支的汇总</span>
+git<span class="w"> </span>branch<span class="w"> </span>-a
+</code></pre></div>
+
+<h2 id="获取远程分支">获取远程分支</h2>
+<div class="highlight"><pre><span></span><code><span class="c1"># 从远程拉取最新的分支/标签信息到本地，顺手清理本地那些&quot;远程已经删除&quot;的origin/xxx分支</span>
+git<span class="w"> </span>fetch<span class="w"> </span>-p
+</code></pre></div>
+
+<h2 id="删除本地分支">删除本地分支</h2>
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>branch<span class="w"> </span>-d<span class="w"> </span>xxx
+</code></pre></div>
+
+<p><div class="callout callout-warning" markdown="1"><br />
+<p class="callout-title">注意</p></p>
+<ul>
+<li><code>-d</code>：安全删除，只有当这个分支的提交已经被合并到当前分支，或者 Git 认为它的改动不会丢时，才会删。</li>
+<li><code>-D</code>：强制删除。如果这个分支上还有没合并的提交，就丢失了。</li>
+</ul>
+</div>
+<h2 id="删除远程分支">删除远程分支</h2>
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>push<span class="w"> </span>origin<span class="w"> </span>--delete<span class="w"> </span>feature-x
+</code></pre></div>
+
+<h2 id="工作流程_1">工作流程</h2>
+<ul>
+<li>
+<p>master主分支应该非常稳定，用来发布新版本，一般情况下不允许在上面工作。</p>
+</li>
+<li>
+<p>工作一般情况下在新建的dev分支上工作，工作完后，比如要发布，或者说dev分支代码稳定后可以合并到主分支master上来。</p>
+</li>
+<li>
+<p>要将修改后的代码推送到新的分支 "dev" 上，您可以按照以下步骤使用 Git 命令来操作：</p>
+</li>
+<li>
+<p>首先，确保您的本地仓库是最新的：</p>
+<p><code>bash
+ git pull origin main  # 假设您从 main 分支拉取的最新代码</code></p>
+</li>
+<li>
+<p>创建并切换到新的分支 "dev"：</p>
+<p><code>bash
+ git checkout -b dev</code></p>
+<p>这个命令会创建一个名为 "dev" 的新分支，并自动切换到这个分支。</p>
+</li>
+<li>
+<p>将您的代码更改添加到暂存区：</p>
+<p><code>bash
+ git add .
+ # 或者您可以只添加部分文件
+ git add &lt;文件路径&gt;</code></p>
+</li>
+<li>
+<p>提交您的更改：</p>
+<p><code>bash
+ git commit -m "描述您的更改"</code></p>
+</li>
+<li>
+<p>将 "dev" 分支推送到远程仓库：</p>
+<p><code>bash
+ git push origin dev</code></p>
+<p>如果是第一次将这个分支推送到远程仓库，Git 会创建远程的 "dev" 分支。</p>
+</li>
+</ul>
+<h1 id="git版本管理">Git版本管理</h1>
+<div class="highlight"><pre><span></span><code><span class="c1"># 查看代码提交记录</span>
+git<span class="w"> </span>log
+<span class="c1"># 查看当前环境文件变更状态</span>
+git<span class="w"> </span>status
+<span class="c1"># 查看某个文件的diff</span>
+git<span class="w"> </span>diff<span class="w"> </span>xxx.md
+<span class="c1"># 撤销单个文件的修改</span>
+git<span class="w"> </span>checkout<span class="w"> </span>-<span class="w"> </span>xxx.md
+<span class="c1"># 撤销所有文件的修改 (谨慎)</span>
+git<span class="w"> </span>reset<span class="w"> </span>--hard
+<span class="c1"># 回滚到某个commit版本（谨慎）</span>
+git<span class="w"> </span>reset<span class="w"> </span>--hard<span class="w"> </span>&lt;commit-id&gt;
+<span class="c1"># 回滚完之后push会被拒绝，加force（谨慎）</span>
+git<span class="w"> </span>push<span class="w"> </span>origin<span class="w"> </span>feature-x<span class="w"> </span>--force
+</code></pre></div>
+
+<h1 id="开发常用流程">开发常用流程</h1>
+<h2 id="初始化本地仓库并拉取远程仓库">初始化本地仓库并拉取远程仓库</h2>
+<ul>
+<li>
+<p>本地新建文件夹</p>
+</li>
+<li>
+<p>文件夹内打开git bash</p>
+</li>
+</ul>
+<p><code>shell
+  git init
+  git remote add origin &lt;git repo link&gt;
+  git pull --rebase origin main</code></p>
+<h2 id="本地更改推送到远程仓库">本地更改推送到远程仓库</h2>
+<ul>
+<li>添加所有文件到暂存区</li>
+</ul>
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>add<span class="w"> </span>.
+
+<span class="c1"># 如果只提交部分文件</span>
+git<span class="w"> </span>status
+git<span class="w"> </span>add<span class="w"> </span>xxx.yaml<span class="w"> </span>
+</code></pre></div>
+
+<ul>
+<li>提交暂存区的内容到本地仓库</li>
+</ul>
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;comments&quot;</span>
+</code></pre></div>
+
+<ul>
+<li>新建分支</li>
+</ul>
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>checkout<span class="w"> </span>-b<span class="w"> </span>aaa-bbb-ccc
+</code></pre></div>
+
+<ul>
+<li>提交至远程仓库的新分支</li>
+</ul>
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>push<span class="w"> </span>origin<span class="w"> </span>aaa-bbb-ccc
+<span class="c1"># git -u: 第一次加了参数-u后，以后即可直接用git push代替git push origin main</span>
+</code></pre></div>
+
+<ul>
+<li>忽略文件: 被忽略的文件在 .gitignore里面，可以配置正则规则配置哪些文件不会被push到远端仓库</li>
+</ul>
+<h2 id="merge-pr">Merge PR</h2>
+<p>推送新分支到远程仓库之后，在远程仓库上会执行创建Pull Request、Merge Pull Request等操作。</p>
+<ul>
+<li>
+<p>在github上一般采用"Merge and rebase"方式来merge PR：</p>
+</li>
+<li>
+<p>先对PR分支执行rebase，PR分支的commit会加到main分支的最新状态上</p>
+</li>
+<li>再通过merge commit将PR的更改合并到main上</li>
+</ul>
+<p>这样main分支上会保留一个merge commit。</p>
+<ul>
+<li>
+<p>azure devops上一般采用"Rebase and fast-forward"：</p>
+</li>
+<li>
+<p>对 PR 的分支执行一个 rebase 操作，将 PR 分支上的提交重新应用到目标分支的最新状态上。</p>
+</li>
+<li>然后通过 fast-forward merge 将这些提交直接添加到目标分支中，不会创建 merge commit。</li>
+</ul>
+<p>合并后，目标分支上的提交历史是线性的，PR 的提交直接接在目标分支的最新提交之后。没有额外的 merge commit。</p>
+<h2 id="从远程仓库拉取更新内容到本地">从远程仓库拉取更新内容到本地</h2>
+<p>本地推送完成新分支之后，远端仓库执行了merge PR操作，这样main分支的提交记录已经改变，需要把新的main分支同步到本地仓库：</p>
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>checkout<span class="w"> </span>main
+git<span class="w"> </span>branch<span class="w"> </span>-D<span class="w"> </span>aaa-bbb-ccc
+git<span class="w"> </span>pull<span class="w"> </span>--rebase<span class="w"> </span>origin<span class="w"> </span>main
+</code></pre></div>
+
+<h2 id="merge-main到开发分支">Merge main到开发分支</h2>
+<p>比如我正在一个dev分支上开发，此时远程main分支有别人提交了新改动，我在dev分支完成开发，push之前，需要同步远程main的改动：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 1. 确保当前在 dev 分支</span>
+git<span class="w"> </span>checkout<span class="w"> </span>dev
+
+<span class="c1"># 2. 获取远程最新代码</span>
+git<span class="w"> </span>fetch<span class="w"> </span>origin
+
+<span class="c1"># 3. 合并 main 分支到当前分支</span>
+git<span class="w"> </span>rebase<span class="w"> </span>origin/main<span class="w"> </span><span class="c1"># 推荐，保留历史整洁</span>
+<span class="c1"># 或者</span>
+git<span class="w"> </span>merge<span class="w"> </span>origin/main<span class="w"> </span><span class="c1"># 保留完整历史</span>
+
+<span class="c1"># 后续可以继续进行commit和push</span>
+</code></pre></div>
+
+<h2 id="给commit打tag">给commit打tag</h2>
+<p>有时候我们推送上去的commit需要打一个tag，这个tag往往会代表一个breaking change的标记。推送commit和推送tag分开操作：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 推送开发分支</span>
+git<span class="w"> </span>checkout<span class="w"> </span>-b<span class="w"> </span>feat/xxx
+git<span class="w"> </span>add<span class="w"> </span>.
+git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;update for breaking changes&quot;</span>
+git<span class="w"> </span>push<span class="w"> </span>origin<span class="w"> </span>feat/xxx
+<span class="c1"># 远程仓库先merge</span>
+<span class="c1"># 切到main打tag再单独推送tag</span>
+git<span class="w"> </span>checkout<span class="w"> </span>main
+git<span class="w"> </span>pull<span class="w"> </span>--rebase<span class="w"> </span>origin<span class="w"> </span>main
+git<span class="w"> </span>tag<span class="w"> </span><span class="m">0</span>.4.1
+git<span class="w"> </span>push<span class="w"> </span>origin<span class="w"> </span><span class="m">0</span>.4.1
+</code></pre></div>
+
+<h1 id="清理操作">清理操作</h1>
+<h2 id="清除github-repo的commit记录">清除github repo的commit记录</h2>
+<div class="highlight"><pre><span></span><code><span class="c1">#进入本地仓库的目录</span>
+<span class="nb">cd</span><span class="w"> </span>/path/to/your/repository
+<span class="c1">#创建并切换到一个与当前分支无关的新的孤立分支。</span>
+git<span class="w"> </span>checkout<span class="w"> </span>--orphan<span class="w"> </span>newBranch
+<span class="c1"># 添加所有的文件到新分支</span>
+git<span class="w"> </span>add<span class="w"> </span>.
+<span class="c1"># 提交更改</span>
+git<span class="w"> </span>commit<span class="w"> </span>-am<span class="w"> </span><span class="s2">&quot;Initial commit&quot;</span>
+<span class="c1"># 删除原始分支：因为我们将删除commit历史记录，所以不再需要原始分支</span>
+git<span class="w"> </span>branch<span class="w"> </span>-D<span class="w"> </span>main
+<span class="c1"># 将新的分支重命名为 main 分支</span>
+git<span class="w"> </span>branch<span class="w"> </span>-m<span class="w"> </span>main
+<span class="c1"># 强制将本地修改推送到远程仓库：由于我们已经改变了本地仓库的历史记录，所以必须使用强制推送选项</span>
+git<span class="w"> </span>push<span class="w"> </span>-f<span class="w"> </span>origin<span class="w"> </span>main
+</code></pre></div>
+
+<h2 id="清除所有git-history并覆盖到远端仓库">清除所有git history并覆盖到远端仓库</h2>
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span>&lt;repo<span class="w"> </span>dir&gt;
+rm<span class="w"> </span>-rf<span class="w"> </span>./git
+git<span class="w"> </span>init
+git<span class="w"> </span>config<span class="w"> </span>user.name<span class="w"> </span><span class="s2">&quot;xxxx&quot;</span>
+git<span class="w"> </span>config<span class="w"> </span>user.email<span class="w"> </span><span class="s2">&quot;xxxxx&quot;</span>
+git<span class="w"> </span>add<span class="w"> </span>.
+git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;initial commit with cleaned history&quot;</span>
+<span class="c1"># git branch -M main</span>
+git<span class="w"> </span>remote<span class="w"> </span>add<span class="w"> </span>origin<span class="w"> </span>&lt;remote-repo-url&gt;<span class="w"> </span><span class="c1"># 去github repo上copy ssh url</span>
+git<span class="w"> </span>push<span class="w"> </span>-f<span class="w"> </span>origin<span class="w"> </span>main
+</code></pre></div>
+
+<p>此操作会覆盖掉远程仓库的历史记录。完成之后，repo就只会有一个干净的提交记录，所有历史记录都会被清除。</p>
+<h2 id="清理被gitignore的文件">清理被gitignore的文件</h2>
+<p>有时候有些文件已经被git add和commit了，但是后面在gitignore中配置忽略他们。这时需要重新track文件：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 先更改.gitignore文件</span>
+<span class="c1"># 取消track</span>
+git<span class="w"> </span>rm<span class="w"> </span>--cached<span class="w"> </span>-r<span class="w"> </span>Python/python-manuscripts
+<span class="c1"># 重新commit，移除这些文件</span>
+git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;Stop tracking Python/python-manuscripts files&quot;</span>
+<span class="c1"># 重新add和commit</span>
+git<span class="w"> </span>add<span class="w"> </span>.
+git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;re-track files&quot;</span>
+git<span class="w"> </span>push<span class="w"> </span>origin<span class="w"> </span>main
+<span class="c1"># 完成后，git将不再追踪这些后来配置的忽略文件</span>
+</code></pre></div>
+
+<h1 id="git配置代理">git配置代理</h1>
+<h2 id="git代理">git代理</h2>
+<div class="highlight"><pre><span></span><code><span class="c1"># 设置</span>
+git<span class="w"> </span>config<span class="w"> </span>--global<span class="w"> </span>http.proxy<span class="w"> </span><span class="s1">&#39;socks5://127.0.0.1:7890&#39;</span><span class="w"> </span>
+git<span class="w"> </span>config<span class="w"> </span>--global<span class="w"> </span>https.proxy<span class="w"> </span><span class="s1">&#39;socks5://127.0.0.1:7890&#39;</span>
+
+<span class="c1"># 恢复</span>
+git<span class="w"> </span>config<span class="w"> </span>--global<span class="w"> </span>--unset<span class="w"> </span>http.proxy
+git<span class="w"> </span>config<span class="w"> </span>--global<span class="w"> </span>--unset<span class="w"> </span>https.proxy
+</code></pre></div>
+
+<h2 id="git-clone-ssh设置代理">git clone ssh设置代理</h2>
+<div class="highlight"><pre><span></span><code>vim<span class="w"> </span>~/.ssh/config
+<span class="c1"># 全局</span>
+<span class="c1"># ProxyCommand nc -X 5 -x 127.0.0.1:7890 %h %p</span>
+<span class="c1"># 只为特定域名设定</span>
+Host<span class="w"> </span>github.com
+<span class="w">    </span>ProxyCommand<span class="w"> </span>nc<span class="w"> </span>-X<span class="w"> </span><span class="m">5</span><span class="w"> </span>-x<span class="w"> </span><span class="m">127</span>.0.0.1:7890<span class="w"> </span>%h<span class="w"> </span>%p
+</code></pre></div>
+
+<h1 id="实用git工具">实用git工具</h1>
+<ul>
+<li>GitKraken</li>
+<li>tortoisegit （windows平台）</li>
+<li>fork</li>
+<li>sourceTree</li>
+<li>git graph (vscode插件)</li>
+<li>学习git：<a href="https://learngitbranching.js.org/?locale=zh_CN">Learn Git Branching</a></li>
+<li>alias： zsh自带git插件</li>
+</ul>
+<h1 id="lab">Lab</h1>
+<div class="highlight"><pre><span></span><code><span class="c1"># 基于以下内容创作本代码，用于讲解DevOps精讲课Git与Github章节</span>
+<span class="c1"># https://www.bookstack.cn/read/backlog-git-tutorial/35.md</span>
+<span class="c1"># https://www.youtube.com/watch?v=tRZGeaHPoaw&amp;ab_channel=KevinStratvert</span>
+
+<span class="c1"># 常用命令</span>
+git<span class="w"> </span>XXX<span class="w"> </span>-h<span class="w"> </span><span class="c1"># 询问git XXX是啥意思</span>
+git<span class="w"> </span><span class="nb">help</span><span class="w"> </span>XXX<span class="w"> </span><span class="c1"># 更详细的解释，打开一个本地html页面给你解释</span>
+git<span class="w"> </span>log<span class="w"> </span>--oneline<span class="w"> </span><span class="c1"># 看看我之前所有的commit历史（以简洁的形式）</span>
+git<span class="w"> </span>reset<span class="w"> </span>XXX<span class="w"> </span><span class="c1"># 回溯到某个commit上</span>
+
+<span class="c1"># 事前预备</span>
+git<span class="w"> </span>config<span class="w"> </span>--global<span class="w"> </span>user.name<span class="w"> </span><span class="s2">&quot;xxxx&quot;</span>
+git<span class="w"> </span>config<span class="w"> </span>--global<span class="w"> </span>user.email<span class="w"> </span><span class="s2">&quot;xxxx&quot;</span>
+git<span class="w"> </span>init<span class="w"> </span><span class="c1"># 初始化文件夹</span>
+<span class="c1"># 创建一个myfile.txt文件</span>
+git<span class="w"> </span>status<span class="w"> </span><span class="c1"># 这是我们超常用的命令</span>
+git<span class="w"> </span>add<span class="w"> </span>myfile.txt<span class="w"> </span><span class="c1"># git add . 可以track所有目录里文件</span>
+git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;first commit&quot;</span><span class="w"> </span><span class="c1"># 此时此刻，照张照片，贴在相册，可以回溯</span>
+
+<span class="c1"># 建立分支</span>
+git<span class="w"> </span>branch<span class="w"> </span>issue1<span class="w"> </span><span class="c1"># 建立一个名为issue1的分支</span>
+git<span class="w"> </span>branch<span class="w"> </span><span class="c1"># 查看所有分支，发现head还指在master</span>
+
+<span class="c1"># 切换分支</span>
+git<span class="w"> </span>checkout<span class="w"> </span>issue1<span class="w"> </span><span class="c1"># 切换到issue1分支，-b可以创建分支并切换，git switch -c是创建并切换（推荐）</span>
+<span class="c1"># 修改myfile.txt文件</span>
+git<span class="w"> </span>add<span class="w"> </span>myfile.txt
+git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;add new content&quot;</span>
+<span class="c1"># 现在master落后于issue1，head指向issue1</span>
+
+<span class="c1"># 合并分支 -- merge合并都是先在主线上，把其他分支往主线上合并</span>
+<span class="c1"># 先切换master分支，然后把issue1分支导入到master分支</span>
+git<span class="w"> </span>checkout<span class="w"> </span>master
+<span class="c1"># 打开myfile.txt档案以确认内容，应该是旧的</span>
+git<span class="w"> </span>merge<span class="w"> </span>issue1<span class="w"> </span>
+<span class="c1"># 打开myfile.txt档案以确认内容，应该是新的，此时head在master上</span>
+
+<span class="c1"># 删除分支</span>
+<span class="c1"># 既然issue1分支的内容已经顺利地合并到master分支了，现在可以将其删除了</span>
+git<span class="w"> </span>branch<span class="w"> </span>-d<span class="w"> </span>issue1<span class="w"> </span><span class="c1"># 删除了issue1分支</span>
+git<span class="w"> </span>branch<span class="w"> </span><span class="c1"># 检查现在只有master分支了</span>
+
+<span class="c1"># 并行操作</span>
+<span class="c1"># 首先创建issue2分支和issue3分支，并切换到issue2分支</span>
+git<span class="w"> </span>branch<span class="w"> </span>issue2
+git<span class="w"> </span>branch<span class="w"> </span>issue3
+git<span class="w"> </span>checkout<span class="w"> </span>issue2
+git<span class="w"> </span>branch
+<span class="c1"># 在issue2分支的myfile.txt添加commit命令的说明后提交</span>
+git<span class="w"> </span>add<span class="w"> </span>.<span class="se">\m</span>yfile.txt
+git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;add content from issue2&quot;</span>
+<span class="c1"># 接着，切换到issue3分支</span>
+git<span class="w"> </span>checkout<span class="w"> </span>issue3
+<span class="c1"># 打开myfile.txt档案，由于在issue2分支添加了新内容，所以issue3分支的myfile.txt里没有新内容</span>
+git<span class="w"> </span>add<span class="w"> </span>myfile.txt
+git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;add content from issue3&quot;</span>
+<span class="c1"># 对比切换到issue2和issue3分支</span>
+
+<span class="c1"># 解决合并的冲突</span>
+<span class="c1"># 把issue2分支和issue3分支的修改合并到master</span>
+<span class="c1"># 切换master分支后，与issue2分支合并</span>
+git<span class="w"> </span>checkout<span class="w"> </span>master
+git<span class="w"> </span>merge<span class="w"> </span>issue2<span class="w"> </span><span class="c1"># 没有冲突，这是fast-forward合并</span>
+git<span class="w"> </span>merge<span class="w"> </span>issue3<span class="w"> </span><span class="c1"># 出现冲突报警，由于在同一行进行了修改，所以产生了冲突</span>
+<span class="c1"># 打开myfile.txt文件，处理冲突</span>
+git<span class="w"> </span>add<span class="w"> </span>myfile.txt
+git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;merge issue3&quot;</span>
+
+<span class="c1"># 用rebase合并</span>
+<span class="c1"># 合并issue3分支的时候，使用rebase可以使提交的历史记录显得更简洁</span>
+<span class="c1"># 现在暂时取消刚才的合并</span>
+git<span class="w"> </span>reset<span class="w"> </span>--hard<span class="w"> </span>HEAD~
+<span class="c1"># 画图解释目前的历史记录</span>
+<span class="c1"># 切换到issue3分支后，对master执行rebase</span>
+git<span class="w"> </span>checkout<span class="w"> </span>issue3
+git<span class="w"> </span>rebase<span class="w"> </span>master
+<span class="c1"># 和merge时的操作相同，修改在myfile.txt发生冲突的部分</span>
+<span class="c1"># rebase的时候，修改冲突后的提交不是使用commit命令，而是执行rebase命令指定 —continue选项</span>
+<span class="c1"># 若要取消rebase，指定 —abort选项</span>
+git<span class="w"> </span>add<span class="w"> </span>myfile.txt
+git<span class="w"> </span>rebase<span class="w"> </span>--continue<span class="w"> </span><span class="c1"># 按i进入insert模式，输入comment，Esc后:wq保存并退出</span>
+<span class="c1"># 这样，在master分支的issue3分支就可以fast-forward合并了，切换到master分支后执行合并</span>
+git<span class="w"> </span>checkout<span class="w"> </span>master
+git<span class="w"> </span>merge<span class="w"> </span>issue3
+<span class="c1"># myfile.txt的最终内容和merge是一样的，但是历史记录拉成直线了</span>
+
+<span class="c1"># 创建Github Repo</span>
+<span class="c1"># 先在Github上创建一个Repo，创建完后，下面三行是自动生成的</span>
+git<span class="w"> </span>remote<span class="w"> </span>add<span class="w"> </span>origin<span class="w"> </span>https://github.com/cengxiye/learn-git-2024.git<span class="w"> </span><span class="c1"># 首先将远程仓库的地址添加到本地仓库，并将其命名为 &quot;origin&quot;</span>
+git<span class="w"> </span>branch<span class="w"> </span>-M<span class="w"> </span>main<span class="w"> </span><span class="c1"># 将当前分支（默认是master）重命名为main</span>
+git<span class="w"> </span>push<span class="w"> </span>-u<span class="w"> </span>origin<span class="w"> </span>main<span class="w"> </span><span class="c1"># 将本地的&quot;main&quot;分支推送到远程仓库&quot;origin&quot;。-u参数用于设置&quot;origin&quot;作为默认的远程仓库</span>
+<span class="c1"># 以后可以直接使用git push而不需要指定远程仓库和分支。这个命令会将本地的&quot;main&quot;分支的内容推送到远程仓库，实现同步</span>
+
+
+<span class="c1"># 简要介绍Github</span>
+<span class="c1"># About，填写有关你这个Repo的信息</span>
+<span class="c1"># Issue，提交bug和feature request，可以assign给其他人/可以加labels等等</span>
+<span class="c1"># Actions，可以run test，测试你得代码</span>
+<span class="c1"># Projects，可以管理你的项目</span>
+<span class="c1"># Wiki，类似一个有关于你项目的百科</span>
+<span class="c1"># Security，诸如代码安全扫描等</span>
+<span class="c1"># Insights，查看项目数据</span>
+<span class="c1"># Settings，设置你的项目</span>
+<span class="c1"># Release，回到你Repo的主页，可以发布1.0版本你的release，你的代码被打包成zip</span>
+
+<span class="c1"># PUSH</span>
+<span class="c1"># 在main branch上，修改mytext.txt文件</span>
+git<span class="w"> </span>add<span class="w"> </span>.<span class="se">\m</span>yfile..txt
+git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;change file, to be pushed to origin&quot;</span>
+git<span class="w"> </span>push
+<span class="c1"># 检查Github上的文件，已经更新</span>
+
+<span class="c1"># PULL</span>
+<span class="c1"># 在Github上修改txt</span>
+git<span class="w"> </span>pull
+<span class="c1"># 在本地main branch上，检查txt</span>
+
+<span class="c1"># FETCH</span>
+<span class="c1"># 在Github上修改txt</span>
+git<span class="w"> </span>fetch<span class="w"> </span>
+git<span class="w"> </span>diff<span class="w"> </span>main<span class="w"> </span>origin/main
+<span class="c1"># git fetch：只是将远程仓库的变更下载到本地，不会自动合并到当前分支</span>
+<span class="c1"># git pull = git fetch + git merge</span>
+
+<span class="c1"># CLONE</span>
+git<span class="w"> </span>clone<span class="w"> </span>https://github.com/cengxiye/sid.github.io.git
+<span class="c1"># 适用场景：使用 git clone 通常是在开始新项目或者从头开始的时候</span>
+<span class="c1"># 适用场景：使用 git pull 通常是在你已经有了一个本地仓库，希望获取最新变更时</span>
+<span class="c1"># 操作对象：git clone 操作的对象是整个远程仓库</span>
+<span class="c1"># 操作对象：git pull 操作的对象是当前分支上的远程变更</span>
+<span class="c1"># 执行时机：git clone 只需要执行一次，创建本地仓库的拷贝</span>
+<span class="c1"># 执行时机：git pull 需要在你想要获取远程仓库变更时执行</span>
+</code></pre></div>
+
+<h1 id="troubleshooting">Troubleshooting</h1>
+<h2 id="大文件上传报错">大文件上传报错</h2>
+<ul>
+<li>
+<p>目录中有大文件，push的时候显示超过100MB不能上传，删除这个文件之后，push仍然会提交这个文件报错。</p>
+</li>
+<li>
+<p>解决：要从所有commit中把这个文件删掉，再push</p>
+<p><code>bash
+git filter-branch --force --index-filter "git rm --cached --ignore-unmatch xxx/xxx.exe" --prune-empty --tag-name-filter cat -- --all</code></p>
+</li>
+<li>
+<p>git pull时如果遇到报错</p>
+</li>
+</ul>
+<p><code>sh
+  fetch-pack: unexpected disconnect while reading sideband packet
+  fatal: early EOF
+  fatal: fetch-pack: invalid index-pack output</code></p>
+<ul>
+<li>
+<p>原因：远程仓库的文件过大，需要设置本地仓库大小。</p>
+</li>
+<li>
+<p>解决：</p>
+<p>```sh<br />
+git config http.sslVerify "false"</p>
+<h1 id="若出现下列错误">若出现下列错误：</h1>
+<p>git config http.sslVerify "false" fatal: not in a git directory</p>
+<h1 id="再继续执行即可解决">再继续执行即可解决</h1>
+<p>git config --global http.sslVerify "false"</p>
+<h1 id="文件大小的上限设置">文件大小的上限设置：</h1>
+<p>git config --global http.postBuffer 524288000<br />
+```</p>
+</li>
+</ul>
+<h2 id="22端口连接报错">22端口连接报错</h2>
+<p>以Windows系统为例进行说明，在个人电脑上使用<a href="https://zhida.zhihu.com/search?content_id=203985854&amp;content_type=Article&amp;match_order=1&amp;q=Git&amp;zd_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ6aGlkYV9zZXJ2ZXIiLCJleHAiOjE3NTY0MzUzNTEsInEiOiJHaXQiLCJ6aGlkYV9zb3VyY2UiOiJlbnRpdHkiLCJjb250ZW50X2lkIjoyMDM5ODU4NTQsImNvbnRlbnRfdHlwZSI6IkFydGljbGUiLCJtYXRjaF9vcmRlciI6MSwiemRfdG9rZW4iOm51bGx9.h-I3dlo-ib5YFrapPGueFbAMugsU6KzUoIoIGOY7VVI&amp;zhida_source=entity">Git</a>命令来操作<a href="https://zhida.zhihu.com/search?content_id=203985854&amp;content_type=Article&amp;match_order=1&amp;q=GitHub&amp;zd_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ6aGlkYV9zZXJ2ZXIiLCJleHAiOjE3NTY0MzUzNTEsInEiOiJHaXRIdWIiLCJ6aGlkYV9zb3VyY2UiOiJlbnRpdHkiLCJjb250ZW50X2lkIjoyMDM5ODU4NTQsImNvbnRlbnRfdHlwZSI6IkFydGljbGUiLCJtYXRjaF9vcmRlciI6MSwiemRfdG9rZW4iOm51bGx9.-Y0FJU1F9Re3chaSQK2HXLvatrYlgGfi04phWxHMdn0&amp;zhida_source=entity">GitHub</a>上的项目，本来都很正常，突然某一天开始，会提示如下错误<code>ssh: connect to host github.com port 22: Connection Timeout</code>。</p>
+<ol>
+<li>先查看下具体ssh报错：</li>
+</ol>
+<div class="highlight"><pre><span></span><code>ssh<span class="w"> </span>-vT<span class="w"> </span>git@github.com
+</code></pre></div>
+
+<ol>
+<li>结果会显示使用的ssh配置文件，以及连接github 22端口超时：</li>
+</ol>
+<div class="highlight"><pre><span></span><code>OpenSSH_for_Windows_9.5p1,<span class="w"> </span>LibreSSL<span class="w"> </span><span class="m">3</span>.8.2
+debug1:<span class="w"> </span>Reading<span class="w"> </span>configuration<span class="w"> </span>data<span class="w"> </span>C:<span class="se">\\</span>Users<span class="se">\\</span>xuhan/.ssh/config
+debug1:<span class="w"> </span>C:<span class="se">\\</span>Users<span class="se">\\</span>xuhan/.ssh/config<span class="w"> </span>line<span class="w"> </span><span class="m">1</span>:<span class="w"> </span>Applying<span class="w"> </span>options<span class="w"> </span><span class="k">for</span><span class="w"> </span>github.com
+debug1:<span class="w"> </span>Connecting<span class="w"> </span>to<span class="w"> </span>ssh.github.com<span class="w"> </span><span class="o">[</span><span class="m">20</span>.205.243.160<span class="o">]</span><span class="w"> </span>port<span class="w"> </span><span class="m">22</span>.
+</code></pre></div>
+
+<p><div class="callout callout-info" markdown="1"><br />
+<p class="callout-title">SSH 端口说明</p></p>
+<p>GitHub 的标准 SSH 端口是 22。但在某些网络环境中（公司防火墙、ISP限制等），端口 22 可能被封锁。GitHub 提供了替代方案：通过 ssh.github.com 的 443 端口（HTTPS 端口）来进行 SSH 连接。</p>
+</div>
+<ol>
+<li>修改这个ssh配置文件，改成连接ssh的443端口：</li>
+</ol>
+<div class="highlight"><pre><span></span><code>gsudo<span class="w"> </span>notepad<span class="w"> </span>C:<span class="se">\\</span>Users<span class="se">\\</span>xuhan/.ssh/config
+
+Host<span class="w"> </span>github.com
+<span class="w">  </span>Hostname<span class="w"> </span>ssh.github.com
+<span class="w">  </span>Port<span class="w"> </span><span class="m">443</span>
+</code></pre></div>
+
+<ol>
+<li>修改完成后测试连接github：</li>
+</ol>
+<div class="highlight"><pre><span></span><code>ssh<span class="w"> </span>-T<span class="w"> </span>git@github.com
+</code></pre></div>
+
+<p>结果显示：<code>`Hi xxxxx! You've successfully authenticated, but GitHub does not provide shell access.</code>就表示一切正常了。</p>
+<ol>
+<li>再次尝试上传下载github文件，结果显示正常：</li>
+</ol>
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>add<span class="w"> </span>.
+git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;Update&quot;</span>
+git<span class="w"> </span>push<span class="w"> </span>origin<span class="w"> </span>main
+</code></pre></div>
+
+<h2 id="多github账号ssh密钥冲突导致push报错">多GitHub账号SSH密钥冲突导致push报错</h2>
+<h3 id="问题背景">问题背景</h3>
+<p>在同一台机器上配置了多个 GitHub 账号的 SSH 密钥（例如工作账号 <code>ds-hangxu</code> 和个人账号 <code>hangx969</code>），push 个人仓库时报错：</p>
+<div class="highlight"><pre><span></span><code>ERROR: Permission to hangx969/learning-notes.git denied to ds-hangxu.
+fatal: Could not read from remote repository.
+Please make sure you have the correct access rights and the repository exists.
+</code></pre></div>
+
+<p>原因是 <code>~/.ssh/config</code> 中 <code>Host github.com</code> 下配置了多个 <code>IdentityFile</code>，SSH 连接时优先使用了第一个密钥（工作账号），GitHub 将你识别为工作账号用户，而该用户没有个人仓库的权限。</p>
+<h3 id="解决办法">解决办法</h3>
+<ol>
+<li>修改 <code>~/.ssh/config</code>，为不同账号配置不同的 Host 别名，并加上 <code>IdentitiesOnly yes</code> 确保只使用指定密钥：</li>
+</ol>
+<div class="highlight"><pre><span></span><code># 工作账号
+Host github.com
+    HostName github.com
+    User git
+    IdentityFile ~/.ssh/id_ed25519_ds_github
+    IdentitiesOnly yes
+
+# 个人账号
+Host github-personal
+    HostName github.com
+    User git
+    IdentityFile ~/.ssh/id_ed25519
+    IdentitiesOnly yes
+</code></pre></div>
+
+<ol>
+<li>将个人仓库的 remote URL 改为使用别名：</li>
+</ol>
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span>~/github-repo/learning-notes
+git<span class="w"> </span>remote<span class="w"> </span>set-url<span class="w"> </span>origin<span class="w"> </span>git@github-personal:hangx969/learning-notes.git
+</code></pre></div>
+
+<ol>
+<li>验证连接身份：</li>
+</ol>
+<div class="highlight"><pre><span></span><code><span class="c1"># 验证工作账号</span>
+ssh<span class="w"> </span>-T<span class="w"> </span>git@github.com
+<span class="c1"># Hi ds-hangxu! You&#39;ve successfully authenticated...</span>
+
+<span class="c1"># 验证个人账号</span>
+ssh<span class="w"> </span>-T<span class="w"> </span>git@github-personal
+<span class="c1"># Hi hangx969! You&#39;ve successfully authenticated...</span>
+</code></pre></div>
+
+<ol>
+<li>推送测试：</li>
+</ol>
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>push<span class="w"> </span>origin<span class="w"> </span>main
+</code></pre></div>
+
+<p><div class="callout callout-tip" markdown="1"><br />
+<p class="callout-title">关键点</p></p>
+<ul>
+<li><code>IdentitiesOnly yes</code> 是关键配置，确保 SSH 只使用指定的密钥文件，不会尝试 ssh-agent 中的其他密钥。</li>
+<li>Host 别名（如 <code>github-personal</code>）仅用于 SSH 路由，Git 实际连接的仍然是 <code>github.com</code>。</li>
+<li>所有使用个人账号的仓库都需要将 remote URL 中的 <code>github.com</code> 替换为 <code>github-personal</code>。</li>
+</ul>
+</div>
+    </div>
+  </article>
+  <aside class="toc">
+    <p class="toc-label">本页目录</p>
+    <ul>
+  <li><a href="#版本控制工具">版本控制工具</a></li>
+  <li><a href="#版本控制分类">版本控制分类</a></li>
+  <li><a href="#基本组成">基本组成</a></li>
+  <li><a href="#工作流程">工作流程</a></li>
+  <li><a href="#git文件状态">git文件状态</a></li>
+  <li><a href="#创建仓库">创建仓库</a></li>
+  <li><a href="#配置branch和remote">配置branch和remote</a></li>
+  <li><a href="#更换remote">更换remote</a></li>
+  <li><a href="#免密码登录git">免密码登录git</a></li>
+  <li><a href="#查看操作">查看操作</a></li>
+  <li><a href="#获取远程分支">获取远程分支</a></li>
+  <li><a href="#删除本地分支">删除本地分支</a></li>
+  <li><a href="#删除远程分支">删除远程分支</a></li>
+  <li><a href="#工作流程_1">工作流程</a></li>
+  <li><a href="#初始化本地仓库并拉取远程仓库">初始化本地仓库并拉取远程仓库</a></li>
+  <li><a href="#本地更改推送到远程仓库">本地更改推送到远程仓库</a></li>
+  <li><a href="#merge-pr">Merge PR</a></li>
+  <li><a href="#从远程仓库拉取更新内容到本地">从远程仓库拉取更新内容到本地</a></li>
+  <li><a href="#merge-main到开发分支">Merge main到开发分支</a></li>
+  <li><a href="#给commit打tag">给commit打tag</a></li>
+  <li><a href="#清除github-repo的commit记录">清除github repo的commit记录</a></li>
+  <li><a href="#清除所有git-history并覆盖到远端仓库">清除所有git history并覆盖到远端仓库</a></li>
+  <li><a href="#清理被gitignore的文件">清理被gitignore的文件</a></li>
+  <li><a href="#git代理">git代理</a></li>
+  <li><a href="#git-clone-ssh设置代理">git clone ssh设置代理</a></li>
+  <li><a href="#大文件上传报错">大文件上传报错</a></li>
+  <li><a href="#22端口连接报错">22端口连接报错</a></li>
+  <li><a href="#多github账号ssh密钥冲突导致push报错">多GitHub账号SSH密钥冲突导致push报错</a><ul>
+  <li><a href="#问题背景">问题背景</a></li>
+  <li><a href="#解决办法">解决办法</a></li>
+</ul></li>
+</ul>
+  </aside>
+
+</div>
+
+</main>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>Learning Notes</span>
+    <a href="https://github.com/hangx969/learning-notes">GitHub</a>
+  </div>
+</footer>
+<script src="../../static/search.js"></script>
+</body>
+</html>

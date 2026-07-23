@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PerfMon &amp; ProcessMon - Learning Notes</title>
+<link rel="stylesheet" href="../../static/style.css">
+<link rel="stylesheet" href="../../static/pygments.css">
+</head>
+<body data-root="../../">
+<header class="site-header">
+  <div class="header-inner">
+    <a class="logo" href="../../index.html"><span class="logo-mark"></span>LEARNING NOTES</a>
+    <div class="search">
+      <input id="search-input" type="search" placeholder="搜索笔记…" autocomplete="off" aria-label="搜索笔记">
+      <div id="search-results" hidden></div>
+    </div>
+  </div>
+  <nav class="topic-nav" aria-label="主题导航">
+    <div class="topic-nav-inner">
+      <a href="../../AI/">AI</a>
+      <a href="../../Aliyun/">Aliyun</a>
+      <a href="../../Azure/" class="active">Azure</a>
+      <a href="../../C%2B%2B/">C++</a>
+      <a href="../../CloudComputing/">CloudComputing</a>
+      <a href="../../Database/">Database</a>
+      <a href="../../Docker-Kubernetes/">Docker-Kubernetes</a>
+      <a href="../../GPU-DeepLearning/">GPU-DeepLearning</a>
+      <a href="../../Git/">Git</a>
+      <a href="../../Go/">Go</a>
+      <a href="../../HPC/">HPC</a>
+      <a href="../../IaC/">IaC</a>
+      <a href="../../Linux-Shell/">Linux-Shell</a>
+      <a href="../../Middlewares/">Middlewares</a>
+      <a href="../../Networking/">Networking</a>
+      <a href="../../OS/">OS</a>
+      <a href="../../Python/">Python</a>
+      <a href="../../SoftwareTesting/">SoftwareTesting</a>
+    </div>
+  </nav>
+</header>
+<main class="main">
+
+<div class="article-layout">
+
+  <aside class="sidebar">
+    <details class="sidebar-details">
+      <summary>Azure</summary>
+      <nav class="sidebar-nav">
+        <p class="sidebar-group">Customer Support</p>
+        <ul>
+          <li><a href="../../Azure/Customer%20Support/Email%20Templates/">Email Templates</a></li>
+        </ul>
+        <p class="sidebar-group">其他</p>
+        <ul>
+          <li><a href="../../Azure/0_Azure-VM-VMSS/">Azure VM and VMSS</a></li>
+          <li><a href="../../Azure/10_Azure-devops-agent-pool-management/">Azure DevOps Agent Pool Management</a></li>
+          <li><a href="../../Azure/11_Azure-Policy/">Azure Policy</a></li>
+          <li><a href="../../Azure/1_Azure-Linux-VM-troubheshooting/">Azure Linux VM Troubleshooting</a></li>
+          <li><a href="../../Azure/2_AKS-basics/">AKS Basics</a></li>
+          <li><a href="../../Azure/3_AKS-workload-identity/">AKS Workload Identity</a></li>
+          <li><a href="../../Azure/4_AKS-SecretProviderClass-KeyVault/">AKS SecretProviderClass with KeyVault</a></li>
+          <li><a href="../../Azure/5_Azure-Storage/">Azure Storage</a></li>
+          <li><a href="../../Azure/6_Azure-Networking/">Azure Networking</a></li>
+          <li><a href="../../Azure/7_ACR-ACI/">Azure Container Registry &amp; Azure Container Instances</a></li>
+          <li><a href="../../Azure/8_Azure-devops-basics/">Azure DevOps Basics</a></li>
+          <li><a href="../../Azure/9_Azure-devops-self-host-agents/">Azure DevOps Self-Hosted Agents</a></li>
+          <li><a href="../../Azure/IO-monitor/">IO Monitor</a></li>
+          <li><a href="../../Azure/Jfrog-artifactory-Azure/">JFrog Artifactory on Azure</a></li>
+          <li><a href="../../Azure/Kusto%20Query/">Kusto Query Language (KQL) Reference</a></li>
+          <li><a href="../../Azure/browser%20trace/">Browser Trace (HAR)</a></li>
+          <li><a href="../../Azure/command-line-tools/">Command Line Tools</a></li>
+          <li><a href="../../Azure/fiddler/">Fiddler</a></li>
+          <li><a href="../../Azure/perfMon%20ProcessMon/" class="current">PerfMon &amp; ProcessMon</a></li>
+          <li><a href="../../Azure/postman/">Postman</a></li>
+        </ul>
+      </nav>
+    </details>
+  </aside>
+
+  <article class="article">
+    <nav class="breadcrumb">
+      <a href="../../index.html">首页</a><span>/</span>
+      <a href="../../Azure/">Azure</a>
+    </nav>
+    <h1 class="article-title">PerfMon &amp; ProcessMon</h1>
+    <p class="article-meta"><span>更新于 2026-04-16</span>
+      <a href="https://github.com/hangx969/learning-notes/blob/main/Azure/perfMon%20ProcessMon.md">查看源文件</a>
+    </p>
+    <div class="article-body">
+<h1 id="perfmon-processmon">PerfMon &amp; ProcessMon</h1>
+<p><div class="callout callout-summary" markdown="1"><br />
+<p class="callout-title">Windows performance monitoring and process tracing tools</p></p>
+<p>Used alongside <a class="wikilink" href="../../Azure/IO-monitor/">IO Monitor</a> tools for disk benchmarking and troubleshooting on <a class="wikilink" href="../../Azure/5_Azure-Storage/">Azure Storage</a>.</p>
+</div>
+<hr />
+<h2 id="perfmon">PerfMon</h2>
+<p>Download - https://docs.microsoft.com/en-us/sysinternals/downloads/procmon</p>
+<p><img alt="image-20231030172435694" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202310301724780.png" /></p>
+<h3 id="lab">Lab</h3>
+<p><div class="callout callout-example" markdown="1"><br />
+<p class="callout-title">Disk Benchmarking Lab with PerfMon</p></p>
+<p>The instructor will provide the following instructions:</p>
+<ol>
+<li>Attach <mark>4 Data Disks</mark> (Standard_SSD) on a Windows VM (<mark>A2_v2</mark> size), 32 GiB each.</li>
+<li>Create a <mark>Virtual Disk</mark> using Storage Spaces, by combining the 4 disks with Simple (striping) layout.</li>
+<li>Run disk benchmarking (i.e.: DiskSpd) tests with below commands:</li>
+</ol>
+</div>
+<div class="highlight"><pre><span></span><code>diskspd.exe<span class="w"> </span>-c1024M<span class="w"> </span>-d10<span class="w"> </span>-W5<span class="w"> </span>-o1<span class="w"> </span>-t1<span class="w"> </span>-b8k<span class="w"> </span>-r<span class="w"> </span>-Sh<span class="w"> </span>-L<span class="w"> </span>f:<span class="se">\t</span>est.dat
+diskspd.exe<span class="w"> </span>-c1024M<span class="w"> </span>-d10<span class="w"> </span>-W5<span class="w"> </span>-o1<span class="w"> </span>-t4<span class="w"> </span>-b8k<span class="w"> </span>-r<span class="w"> </span>-Sh<span class="w"> </span>-L<span class="w"> </span>f:<span class="se">\t</span>est.dat
+</code></pre></div>
+
+<p><div class="callout callout-tip" markdown="1"><br />
+<p class="callout-title">评估差异</p></p>
+<ul>
+<li>Evaluate the differences in terms of <mark>IOPS</mark> and <mark>avg latency</mark></li>
+<li>Repeat the exercise by increasing the <code>-o</code> value from <code>-o1</code> to <code>-o16</code> and <code>-o32</code>: can you see the difference?</li>
+</ul>
+</div>
+<hr />
+<h2 id="processmon">ProcessMon</h2>
+<p>Process Monitor 收集方式如下：</p>
+<p>https://docs.microsoft.com/en-us/sysinternals/downloads/procmon</p>
+<p>解压到文件夹之后，请参考以下步骤：</p>
+<ol>
+<li>双击打开 Process Monitor</li>
+</ol>
+<p><img alt="image-20231030172616086" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202310301726155.png" /></p>
+<ol>
+<li><mark>默认自动抓取</mark>，您可以通过点击该按钮进行打开抓取和关闭抓取。</li>
+</ol>
+<p><img alt="image-20231030172639079" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202310301726134.png" /></p>
+<ol>
+<li>
+<p>开启抓取之后，启动 Edge，访问有问题的地址，复现问题。</p>
+</li>
+<li>
+<p>问题复现结束之后，关闭抓取</p>
+</li>
+<li>
+<p>从 File 中选择保存或者点击 save 进行保存。保存完格式为 <mark><code>*.PML</code></mark> 格式。</p>
+</li>
+</ol>
+    </div>
+  </article>
+  <aside class="toc">
+    <p class="toc-label">本页目录</p>
+    <ul>
+  <li><a href="#perfmon">PerfMon</a><ul>
+  <li><a href="#lab">Lab</a></li>
+</ul></li>
+  <li><a href="#processmon">ProcessMon</a></li>
+</ul>
+  </aside>
+
+</div>
+
+</main>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>Learning Notes</span>
+    <a href="https://github.com/hangx969/learning-notes">GitHub</a>
+  </div>
+</footer>
+<script src="../../static/search.js"></script>
+</body>
+</html>

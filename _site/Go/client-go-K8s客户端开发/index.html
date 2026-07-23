@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Client-Go K8s客户端开发 - Learning Notes</title>
+<link rel="stylesheet" href="../../static/style.css">
+<link rel="stylesheet" href="../../static/pygments.css">
+</head>
+<body data-root="../../">
+<header class="site-header">
+  <div class="header-inner">
+    <a class="logo" href="../../index.html"><span class="logo-mark"></span>LEARNING NOTES</a>
+    <div class="search">
+      <input id="search-input" type="search" placeholder="搜索笔记…" autocomplete="off" aria-label="搜索笔记">
+      <div id="search-results" hidden></div>
+    </div>
+  </div>
+  <nav class="topic-nav" aria-label="主题导航">
+    <div class="topic-nav-inner">
+      <a href="../../AI/">AI</a>
+      <a href="../../Aliyun/">Aliyun</a>
+      <a href="../../Azure/">Azure</a>
+      <a href="../../C%2B%2B/">C++</a>
+      <a href="../../CloudComputing/">CloudComputing</a>
+      <a href="../../Database/">Database</a>
+      <a href="../../Docker-Kubernetes/">Docker-Kubernetes</a>
+      <a href="../../GPU-DeepLearning/">GPU-DeepLearning</a>
+      <a href="../../Git/">Git</a>
+      <a href="../../Go/" class="active">Go</a>
+      <a href="../../HPC/">HPC</a>
+      <a href="../../IaC/">IaC</a>
+      <a href="../../Linux-Shell/">Linux-Shell</a>
+      <a href="../../Middlewares/">Middlewares</a>
+      <a href="../../Networking/">Networking</a>
+      <a href="../../OS/">OS</a>
+      <a href="../../Python/">Python</a>
+      <a href="../../SoftwareTesting/">SoftwareTesting</a>
+    </div>
+  </nav>
+</header>
+<main class="main">
+
+<div class="article-layout">
+
+  <aside class="sidebar">
+    <details class="sidebar-details">
+      <summary>Go</summary>
+      <nav class="sidebar-nav">
+        <p class="sidebar-group">其他</p>
+        <ul>
+          <li><a href="../../Go/client-go-K8s%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%BC%80%E5%8F%91/" class="current">Client-Go K8s客户端开发</a></li>
+          <li><a href="../../Go/go-web%E5%BC%80%E5%8F%91/">Go Web开发</a></li>
+          <li><a href="../../Go/go-%E5%9F%BA%E7%A1%80-01-%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE-%E5%9F%BA%E7%A1%80/">Go环境配置与基础</a></li>
+          <li><a href="../../Go/go-%E5%9F%BA%E7%A1%80-02-%E6%95%B0%E7%BB%84-%E5%88%87%E7%89%87-map/">Go数组、切片与Map</a></li>
+          <li><a href="../../Go/go-%E5%9F%BA%E7%A1%80-03-%E5%8F%98%E9%87%8F-%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B-%E8%BF%90%E7%AE%97/">Go变量、数据类型与运算</a></li>
+          <li><a href="../../Go/go-%E5%9F%BA%E7%A1%80-04-%E5%88%86%E6%94%AF-%E5%BE%AA%E7%8E%AF/">Go分支与循环控制</a></li>
+          <li><a href="../../Go/go-%E5%9F%BA%E7%A1%80-05-%E5%87%BD%E6%95%B0-%E5%8C%85/">Go函数与包</a></li>
+          <li><a href="../../Go/go-%E5%9F%BA%E7%A1%80-06-%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86/">Go错误处理</a></li>
+          <li><a href="../../Go/go-%E6%8E%A5%E5%8F%A3/">什么是接口interface</a></li>
+          <li><a href="../../Go/go-%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1/">Go面向对象编程</a></li>
+          <li><a href="../../Go/%E4%BA%91%E5%8E%9F%E7%94%9F%E5%BC%80%E5%8F%91-%E5%9F%BA%E7%A1%80/">云原生开发基础</a></li>
+        </ul>
+      </nav>
+    </details>
+  </aside>
+
+  <article class="article">
+    <nav class="breadcrumb">
+      <a href="../../index.html">首页</a><span>/</span>
+      <a href="../../Go/">Go</a>
+    </nav>
+    <h1 class="article-title">Client-Go K8s客户端开发</h1>
+    <p class="article-meta"><span>更新于 2026-04-23</span>
+      <a href="https://github.com/hangx969/learning-notes/blob/main/Go/client-go-K8s%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%BC%80%E5%8F%91.md">查看源文件</a>
+    </p>
+    <div class="article-body">
+<h1 id="client-go-k8s-客户端开发">Client-Go — K8s 客户端开发</h1>
+<blockquote>
+<p>来源：<a href="https://mp.weixin.qq.com/s/2OwhjnvJHL2YOAcP3IzQEA">初始K8S客户端工具Client-Go</a></p>
+</blockquote>
+<p>client-go 是 Kubernetes 官方提供的 Go 语言客户端库，封装了与 API Server 通信的细节，用于编程方式操作 K8s 资源。</p>
+<ul>
+<li>官方仓库：https://github.com/kubernetes/client-go</li>
+</ul>
+<h2 id="用途">用途</h2>
+<table>
+<thead>
+<tr>
+<th>场景</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Operator / Controller 开发</td>
+<td>编写自定义控制器管理 CRD</td>
+</tr>
+<tr>
+<td>自动化运维工具</td>
+<td>批量创建/删除/更新资源，集群巡检、资源清理、权限审计</td>
+</tr>
+<tr>
+<td>CI/CD 集成</td>
+<td>替代 kubectl 命令行，实现可编程的部署控制</td>
+</tr>
+<tr>
+<td>CLI 工具 / Web 控制台</td>
+<td>Helm、K9s、Lens 底层都依赖 client-go</td>
+</tr>
+<tr>
+<td>理解 K8s 内核</td>
+<td>包含 Informer、Lister、WorkQueue、Reflector 等核心组件</td>
+</tr>
+</tbody>
+</table>
+<h2 id="核心功能">核心功能</h2>
+<ul>
+<li><strong>资源操作</strong>：对 Pod、Service、Deployment 等资源的 CRUD</li>
+<li><strong>资源监听</strong>：注册回调处理资源的添加、更新、删除事件，实现实时监听</li>
+<li><strong>认证授权</strong>：支持令牌认证、证书认证等多种方式</li>
+<li><strong>错误处理和重试</strong>：内置乐观锁冲突重试机制（<code>retry.RetryOnConflict</code>）</li>
+<li><strong>扩展性</strong>：提供拦截器、插件接口用于定制化</li>
+</ul>
+<h2 id="安装">安装</h2>
+<div class="highlight"><pre><span></span><code><span class="c1"># 安装最新版本</span>
+go<span class="w"> </span>get<span class="w"> </span>k8s.io/client-go@latest
+
+<span class="c1"># 安装指定版本</span>
+go<span class="w"> </span>get<span class="w"> </span>k8s.io/client-go@v0.20.4
+</code></pre></div>
+
+<p><div class="callout callout-tip" markdown="1"><br />
+<p class="callout-title">版本对应</p></p>
+<p>client-go 版本与 K8s 版本对应，参考官方 README 的兼容性矩阵。</p>
+</div>
+<h2 id="初始化客户端">初始化客户端</h2>
+<p>集群外部使用时，需要 kubeconfig 文件（通常在 <code>~/.kube/config</code>）：</p>
+<div class="highlight"><pre><span></span><code><span class="kd">var</span><span class="w"> </span><span class="nx">kubeconfig</span><span class="w"> </span><span class="o">*</span><span class="kt">string</span>
+<span class="k">if</span><span class="w"> </span><span class="nx">home</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">homedir</span><span class="p">.</span><span class="nx">HomeDir</span><span class="p">();</span><span class="w"> </span><span class="nx">home</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">kubeconfig</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nx">flag</span><span class="p">.</span><span class="nx">String</span><span class="p">(</span><span class="s">&quot;kubeconfig&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">filepath</span><span class="p">.</span><span class="nx">Join</span><span class="p">(</span><span class="nx">home</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;.kube&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;config&quot;</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;(optional) absolute path to the kubeconfig file&quot;</span><span class="p">)</span>
+<span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">kubeconfig</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nx">flag</span><span class="p">.</span><span class="nx">String</span><span class="p">(</span><span class="s">&quot;kubeconfig&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;absolute path to the kubeconfig file&quot;</span><span class="p">)</span>
+<span class="p">}</span>
+<span class="nx">flag</span><span class="p">.</span><span class="nx">Parse</span><span class="p">()</span>
+
+<span class="nx">config</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">clientcmd</span><span class="p">.</span><span class="nx">BuildConfigFromFlags</span><span class="p">(</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="w"> </span><span class="o">*</span><span class="nx">kubeconfig</span><span class="p">)</span>
+<span class="k">if</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">nil</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+<span class="p">}</span>
+<span class="nx">clientset</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">kubernetes</span><span class="p">.</span><span class="nx">NewForConfig</span><span class="p">(</span><span class="nx">config</span><span class="p">)</span>
+<span class="k">if</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">nil</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>集群内部（Pod 中运行）使用 InClusterConfig 自动获取 ServiceAccount 凭证：</p>
+<div class="highlight"><pre><span></span><code><span class="nx">config</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">rest</span><span class="p">.</span><span class="nx">InClusterConfig</span><span class="p">()</span>
+</code></pre></div>
+
+<h2 id="crud-操作示例">CRUD 操作示例</h2>
+<h3 id="create-创建-deployment">Create — 创建 Deployment</h3>
+<div class="highlight"><pre><span></span><code><span class="nx">deploymentsClient</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">clientset</span><span class="p">.</span><span class="nx">AppsV1</span><span class="p">().</span><span class="nx">Deployments</span><span class="p">(</span><span class="nx">apiv1</span><span class="p">.</span><span class="nx">NamespaceDefault</span><span class="p">)</span>
+
+<span class="nx">deployment</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="o">&amp;</span><span class="nx">appsv1</span><span class="p">.</span><span class="nx">Deployment</span><span class="p">{</span>
+<span class="w">    </span><span class="nx">ObjectMeta</span><span class="p">:</span><span class="w"> </span><span class="nx">metav1</span><span class="p">.</span><span class="nx">ObjectMeta</span><span class="p">{</span>
+<span class="w">        </span><span class="nx">Name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;demo-deployment&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nx">Spec</span><span class="p">:</span><span class="w"> </span><span class="nx">appsv1</span><span class="p">.</span><span class="nx">DeploymentSpec</span><span class="p">{</span>
+<span class="w">        </span><span class="nx">Replicas</span><span class="p">:</span><span class="w"> </span><span class="nx">ptr</span><span class="p">.</span><span class="nx">To</span><span class="p">[</span><span class="kt">int32</span><span class="p">](</span><span class="mi">2</span><span class="p">),</span>
+<span class="w">        </span><span class="nx">Selector</span><span class="p">:</span><span class="w"> </span><span class="o">&amp;</span><span class="nx">metav1</span><span class="p">.</span><span class="nx">LabelSelector</span><span class="p">{</span>
+<span class="w">            </span><span class="nx">MatchLabels</span><span class="p">:</span><span class="w"> </span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">string</span><span class="p">{</span><span class="s">&quot;app&quot;</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;demo&quot;</span><span class="p">},</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="nx">Template</span><span class="p">:</span><span class="w"> </span><span class="nx">apiv1</span><span class="p">.</span><span class="nx">PodTemplateSpec</span><span class="p">{</span>
+<span class="w">            </span><span class="nx">ObjectMeta</span><span class="p">:</span><span class="w"> </span><span class="nx">metav1</span><span class="p">.</span><span class="nx">ObjectMeta</span><span class="p">{</span>
+<span class="w">                </span><span class="nx">Labels</span><span class="p">:</span><span class="w"> </span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">string</span><span class="p">{</span><span class="s">&quot;app&quot;</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;demo&quot;</span><span class="p">},</span>
+<span class="w">            </span><span class="p">},</span>
+<span class="w">            </span><span class="nx">Spec</span><span class="p">:</span><span class="w"> </span><span class="nx">apiv1</span><span class="p">.</span><span class="nx">PodSpec</span><span class="p">{</span>
+<span class="w">                </span><span class="nx">Containers</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span><span class="nx">apiv1</span><span class="p">.</span><span class="nx">Container</span><span class="p">{</span>
+<span class="w">                    </span><span class="p">{</span>
+<span class="w">                        </span><span class="nx">Name</span><span class="p">:</span><span class="w">            </span><span class="s">&quot;web&quot;</span><span class="p">,</span>
+<span class="w">                        </span><span class="nx">Image</span><span class="p">:</span><span class="w">           </span><span class="s">&quot;nginx:1.12&quot;</span><span class="p">,</span>
+<span class="w">                        </span><span class="nx">ImagePullPolicy</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;IfNotPresent&quot;</span><span class="p">,</span>
+<span class="w">                        </span><span class="nx">Ports</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span><span class="nx">apiv1</span><span class="p">.</span><span class="nx">ContainerPort</span><span class="p">{</span>
+<span class="w">                            </span><span class="p">{</span><span class="nx">Name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;http&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">Protocol</span><span class="p">:</span><span class="w"> </span><span class="nx">apiv1</span><span class="p">.</span><span class="nx">ProtocolTCP</span><span class="p">,</span><span class="w"> </span><span class="nx">ContainerPort</span><span class="p">:</span><span class="w"> </span><span class="mi">80</span><span class="p">},</span>
+<span class="w">                        </span><span class="p">},</span>
+<span class="w">                    </span><span class="p">},</span>
+<span class="w">                </span><span class="p">},</span>
+<span class="w">            </span><span class="p">},</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="p">}</span>
+
+<span class="nx">result</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">deploymentsClient</span><span class="p">.</span><span class="nx">Create</span><span class="p">(</span><span class="nx">context</span><span class="p">.</span><span class="nx">TODO</span><span class="p">(),</span><span class="w"> </span><span class="nx">deployment</span><span class="p">,</span><span class="w"> </span><span class="nx">metav1</span><span class="p">.</span><span class="nx">CreateOptions</span><span class="p">{})</span>
+<span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;Created deployment %q.\n&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">result</span><span class="p">.</span><span class="nx">GetObjectMeta</span><span class="p">().</span><span class="nx">GetName</span><span class="p">())</span>
+</code></pre></div>
+
+<h3 id="update-冲突重试更新">Update — 冲突重试更新</h3>
+<p>Kubernetes 使用<strong>乐观锁机制</strong>：每个资源都有 <code>metadata.resourceVersion</code>，Update 时 API Server 检查版本是否一致，不一致则返回 409 Conflict。</p>
+<div class="highlight"><pre><span></span><code><span class="nx">retryErr</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">retry</span><span class="p">.</span><span class="nx">RetryOnConflict</span><span class="p">(</span><span class="nx">retry</span><span class="p">.</span><span class="nx">DefaultRetry</span><span class="p">,</span><span class="w"> </span><span class="kd">func</span><span class="p">()</span><span class="w"> </span><span class="kt">error</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// 获取最新版本</span>
+<span class="w">    </span><span class="nx">result</span><span class="p">,</span><span class="w"> </span><span class="nx">getErr</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">deploymentsClient</span><span class="p">.</span><span class="nx">Get</span><span class="p">(</span><span class="nx">context</span><span class="p">.</span><span class="nx">TODO</span><span class="p">(),</span><span class="w"> </span><span class="s">&quot;demo-deployment&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">metav1</span><span class="p">.</span><span class="nx">GetOptions</span><span class="p">{})</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="nx">getErr</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">nil</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nb">panic</span><span class="p">(</span><span class="nx">fmt</span><span class="p">.</span><span class="nx">Errorf</span><span class="p">(</span><span class="s">&quot;Failed to get latest version of Deployment: %v&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">getErr</span><span class="p">))</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="nx">result</span><span class="p">.</span><span class="nx">Spec</span><span class="p">.</span><span class="nx">Replicas</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nx">ptr</span><span class="p">.</span><span class="nx">To</span><span class="p">[</span><span class="kt">int32</span><span class="p">](</span><span class="mi">1</span><span class="p">)</span><span class="w">                        </span><span class="c1">// 缩容到 1 个副本</span>
+<span class="w">    </span><span class="nx">result</span><span class="p">.</span><span class="nx">Spec</span><span class="p">.</span><span class="nx">Template</span><span class="p">.</span><span class="nx">Spec</span><span class="p">.</span><span class="nx">Containers</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">Image</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">&quot;nginx:latest&quot;</span><span class="w"> </span><span class="c1">// 更新镜像</span>
+<span class="w">    </span><span class="nx">_</span><span class="p">,</span><span class="w"> </span><span class="nx">updateErr</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">deploymentsClient</span><span class="p">.</span><span class="nx">Update</span><span class="p">(</span><span class="nx">context</span><span class="p">.</span><span class="nx">TODO</span><span class="p">(),</span><span class="w"> </span><span class="nx">result</span><span class="p">,</span><span class="w"> </span><span class="nx">metav1</span><span class="p">.</span><span class="nx">UpdateOptions</span><span class="p">{})</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nx">updateErr</span>
+<span class="p">})</span>
+</code></pre></div>
+
+<p><div class="callout callout-important" markdown="1"><br />
+<p class="callout-title">RetryOnConflict</p></p>
+<p><code>retry.RetryOnConflict</code> 使用指数回退重试，避免并发更新冲突。每次重试前重新 Get 最新版本，确保 resourceVersion 一致。</p>
+</div>
+<h3 id="list-列出资源">List — 列出资源</h3>
+<div class="highlight"><pre><span></span><code><span class="nx">list</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">deploymentsClient</span><span class="p">.</span><span class="nx">List</span><span class="p">(</span><span class="nx">context</span><span class="p">.</span><span class="nx">TODO</span><span class="p">(),</span><span class="w"> </span><span class="nx">metav1</span><span class="p">.</span><span class="nx">ListOptions</span><span class="p">{})</span>
+<span class="k">for</span><span class="w"> </span><span class="nx">_</span><span class="p">,</span><span class="w"> </span><span class="nx">d</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="k">range</span><span class="w"> </span><span class="nx">list</span><span class="p">.</span><span class="nx">Items</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot; * %s (%d replicas)\n&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">d</span><span class="p">.</span><span class="nx">Name</span><span class="p">,</span><span class="w"> </span><span class="o">*</span><span class="nx">d</span><span class="p">.</span><span class="nx">Spec</span><span class="p">.</span><span class="nx">Replicas</span><span class="p">)</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="nx">_</span><span class="p">,</span><span class="w"> </span><span class="nx">c</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="k">range</span><span class="w"> </span><span class="nx">d</span><span class="p">.</span><span class="nx">Spec</span><span class="p">.</span><span class="nx">Template</span><span class="p">.</span><span class="nx">Spec</span><span class="p">.</span><span class="nx">Containers</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;   - %s (%s)\n&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">c</span><span class="p">.</span><span class="nx">Name</span><span class="p">,</span><span class="w"> </span><span class="nx">c</span><span class="p">.</span><span class="nx">Image</span><span class="p">)</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h3 id="delete-删除策略">Delete — 删除策略</h3>
+<div class="highlight"><pre><span></span><code><span class="nx">deletePolicy</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">metav1</span><span class="p">.</span><span class="nx">DeletePropagationForeground</span>
+<span class="nx">err</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">deploymentsClient</span><span class="p">.</span><span class="nx">Delete</span><span class="p">(</span><span class="nx">context</span><span class="p">.</span><span class="nx">TODO</span><span class="p">(),</span><span class="w"> </span><span class="s">&quot;demo-deployment&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">metav1</span><span class="p">.</span><span class="nx">DeleteOptions</span><span class="p">{</span>
+<span class="w">    </span><span class="nx">PropagationPolicy</span><span class="p">:</span><span class="w"> </span><span class="o">&amp;</span><span class="nx">deletePolicy</span><span class="p">,</span>
+<span class="p">})</span>
+</code></pre></div>
+
+<p>三种 DeletionPropagation 策略：</p>
+<table>
+<thead>
+<tr>
+<th>策略</th>
+<th>行为</th>
+<th>特点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Foreground</code></td>
+<td>先删子资源，再删父资源</td>
+<td>安全有序，删除会阻塞直到子资源清理完</td>
+</tr>
+<tr>
+<td><code>Background</code></td>
+<td>先删父资源，后台异步删子资源</td>
+<td>快速返回，子资源稍后清理</td>
+</tr>
+<tr>
+<td><code>Orphan</code></td>
+<td>只删父资源，子资源变为孤儿</td>
+<td>子资源继续运行，常用于迁移或调试</td>
+</tr>
+</tbody>
+</table>
+<h2 id="实战client-go-gin-web-控制台">实战：Client-Go + Gin Web 控制台</h2>
+<p>将 client-go 与 Gin 框架结合，通过 HTTP API 和 Web 页面操作 K8s 集群。</p>
+<h3 id="初始化支持集群内外">初始化（支持集群内外）</h3>
+<div class="highlight"><pre><span></span><code><span class="kd">var</span><span class="w"> </span><span class="nx">clientset</span><span class="w"> </span><span class="o">*</span><span class="nx">kubernetes</span><span class="p">.</span><span class="nx">Clientset</span>
+
+<span class="kd">func</span><span class="w"> </span><span class="nx">init</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">var</span><span class="w"> </span><span class="nx">config</span><span class="w"> </span><span class="o">*</span><span class="nx">rest</span><span class="p">.</span><span class="nx">Config</span>
+<span class="w">    </span><span class="kd">var</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="kt">error</span>
+
+<span class="w">    </span><span class="c1">// 尝试 in-cluster config（Pod 内运行）</span>
+<span class="w">    </span><span class="nx">config</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nx">rest</span><span class="p">.</span><span class="nx">InClusterConfig</span><span class="p">()</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">nil</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// 回退到 kubeconfig（本地开发）</span>
+<span class="w">        </span><span class="nx">kubeconfig</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">filepath</span><span class="p">.</span><span class="nx">Join</span><span class="p">(</span><span class="nx">homedir</span><span class="p">.</span><span class="nx">HomeDir</span><span class="p">(),</span><span class="w"> </span><span class="s">&quot;.kube&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;config&quot;</span><span class="p">)</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="nx">_</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">os</span><span class="p">.</span><span class="nx">Stat</span><span class="p">(</span><span class="nx">kubeconfig</span><span class="p">);</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="kc">nil</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nx">config</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nx">clientcmd</span><span class="p">.</span><span class="nx">BuildConfigFromFlags</span><span class="p">(</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">kubeconfig</span><span class="p">)</span>
+<span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nb">panic</span><span class="p">(</span><span class="s">&quot;failed to load kubeconfig&quot;</span><span class="p">)</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="nx">clientset</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nx">kubernetes</span><span class="p">.</span><span class="nx">NewForConfig</span><span class="p">(</span><span class="nx">config</span><span class="p">)</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">nil</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h3 id="create-接口">Create 接口</h3>
+<div class="highlight"><pre><span></span><code><span class="kd">type</span><span class="w"> </span><span class="nx">DeployRequest</span><span class="w"> </span><span class="kd">struct</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">Name</span><span class="w">      </span><span class="kt">string</span><span class="w"> </span><span class="s">`json:&quot;name&quot; binding:&quot;required&quot;`</span>
+<span class="w">    </span><span class="nx">Namespace</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="s">`json:&quot;namespace&quot; binding:&quot;required&quot;`</span>
+<span class="w">    </span><span class="nx">Replicas</span><span class="w">  </span><span class="kt">int32</span><span class="w">  </span><span class="s">`json:&quot;replicas&quot;`</span>
+<span class="w">    </span><span class="nx">Image</span><span class="w">     </span><span class="kt">string</span><span class="w"> </span><span class="s">`json:&quot;image&quot; binding:&quot;required&quot;`</span>
+<span class="p">}</span>
+
+<span class="kd">func</span><span class="w"> </span><span class="nx">createDeployment</span><span class="p">(</span><span class="nx">c</span><span class="w"> </span><span class="o">*</span><span class="nx">gin</span><span class="p">.</span><span class="nx">Context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">var</span><span class="w"> </span><span class="nx">req</span><span class="w"> </span><span class="nx">DeployRequest</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">c</span><span class="p">.</span><span class="nx">ShouldBindJSON</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">req</span><span class="p">);</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">nil</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nx">c</span><span class="p">.</span><span class="nx">JSON</span><span class="p">(</span><span class="nx">http</span><span class="p">.</span><span class="nx">StatusBadRequest</span><span class="p">,</span><span class="w"> </span><span class="nx">gin</span><span class="p">.</span><span class="nx">H</span><span class="p">{</span><span class="s">&quot;error&quot;</span><span class="p">:</span><span class="w"> </span><span class="nx">err</span><span class="p">.</span><span class="nx">Error</span><span class="p">()})</span>
+<span class="w">        </span><span class="k">return</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="nx">req</span><span class="p">.</span><span class="nx">Replicas</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nx">req</span><span class="p">.</span><span class="nx">Replicas</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="nx">deployment</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="o">&amp;</span><span class="nx">appsv1</span><span class="p">.</span><span class="nx">Deployment</span><span class="p">{</span>
+<span class="w">        </span><span class="nx">ObjectMeta</span><span class="p">:</span><span class="w"> </span><span class="nx">metav1</span><span class="p">.</span><span class="nx">ObjectMeta</span><span class="p">{</span><span class="nx">Name</span><span class="p">:</span><span class="w"> </span><span class="nx">req</span><span class="p">.</span><span class="nx">Name</span><span class="p">,</span><span class="w"> </span><span class="nx">Namespace</span><span class="p">:</span><span class="w"> </span><span class="nx">req</span><span class="p">.</span><span class="nx">Namespace</span><span class="p">},</span>
+<span class="w">        </span><span class="nx">Spec</span><span class="p">:</span><span class="w"> </span><span class="nx">appsv1</span><span class="p">.</span><span class="nx">DeploymentSpec</span><span class="p">{</span>
+<span class="w">            </span><span class="nx">Replicas</span><span class="p">:</span><span class="w"> </span><span class="o">&amp;</span><span class="nx">req</span><span class="p">.</span><span class="nx">Replicas</span><span class="p">,</span>
+<span class="w">            </span><span class="nx">Selector</span><span class="p">:</span><span class="w"> </span><span class="o">&amp;</span><span class="nx">metav1</span><span class="p">.</span><span class="nx">LabelSelector</span><span class="p">{</span>
+<span class="w">                </span><span class="nx">MatchLabels</span><span class="p">:</span><span class="w"> </span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">string</span><span class="p">{</span><span class="s">&quot;app&quot;</span><span class="p">:</span><span class="w"> </span><span class="nx">req</span><span class="p">.</span><span class="nx">Name</span><span class="p">},</span>
+<span class="w">            </span><span class="p">},</span>
+<span class="w">            </span><span class="nx">Template</span><span class="p">:</span><span class="w"> </span><span class="nx">apiv1</span><span class="p">.</span><span class="nx">PodTemplateSpec</span><span class="p">{</span>
+<span class="w">                </span><span class="nx">ObjectMeta</span><span class="p">:</span><span class="w"> </span><span class="nx">metav1</span><span class="p">.</span><span class="nx">ObjectMeta</span><span class="p">{</span><span class="nx">Labels</span><span class="p">:</span><span class="w"> </span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">string</span><span class="p">{</span><span class="s">&quot;app&quot;</span><span class="p">:</span><span class="w"> </span><span class="nx">req</span><span class="p">.</span><span class="nx">Name</span><span class="p">}},</span>
+<span class="w">                </span><span class="nx">Spec</span><span class="p">:</span><span class="w"> </span><span class="nx">apiv1</span><span class="p">.</span><span class="nx">PodSpec</span><span class="p">{</span>
+<span class="w">                    </span><span class="nx">Containers</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span><span class="nx">apiv1</span><span class="p">.</span><span class="nx">Container</span><span class="p">{</span>
+<span class="w">                        </span><span class="p">{</span><span class="nx">Name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;app&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">Image</span><span class="p">:</span><span class="w"> </span><span class="nx">req</span><span class="p">.</span><span class="nx">Image</span><span class="p">,</span><span class="w"> </span><span class="nx">ImagePullPolicy</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;IfNotPresent&quot;</span><span class="p">,</span>
+<span class="w">                         </span><span class="nx">Ports</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span><span class="nx">apiv1</span><span class="p">.</span><span class="nx">ContainerPort</span><span class="p">{{</span><span class="nx">ContainerPort</span><span class="p">:</span><span class="w"> </span><span class="mi">80</span><span class="p">}}},</span>
+<span class="w">                    </span><span class="p">},</span>
+<span class="w">                </span><span class="p">},</span>
+<span class="w">            </span><span class="p">},</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="nx">result</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">clientset</span><span class="p">.</span><span class="nx">AppsV1</span><span class="p">().</span><span class="nx">Deployments</span><span class="p">(</span><span class="nx">req</span><span class="p">.</span><span class="nx">Namespace</span><span class="p">).</span><span class="nx">Create</span><span class="p">(</span>
+<span class="w">        </span><span class="nx">context</span><span class="p">.</span><span class="nx">TODO</span><span class="p">(),</span><span class="w"> </span><span class="nx">deployment</span><span class="p">,</span><span class="w"> </span><span class="nx">metav1</span><span class="p">.</span><span class="nx">CreateOptions</span><span class="p">{})</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">nil</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nx">c</span><span class="p">.</span><span class="nx">JSON</span><span class="p">(</span><span class="nx">http</span><span class="p">.</span><span class="nx">StatusInternalServerError</span><span class="p">,</span><span class="w"> </span><span class="nx">gin</span><span class="p">.</span><span class="nx">H</span><span class="p">{</span><span class="s">&quot;error&quot;</span><span class="p">:</span><span class="w"> </span><span class="nx">err</span><span class="p">.</span><span class="nx">Error</span><span class="p">()})</span>
+<span class="w">        </span><span class="k">return</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="nx">c</span><span class="p">.</span><span class="nx">JSON</span><span class="p">(</span><span class="nx">http</span><span class="p">.</span><span class="nx">StatusCreated</span><span class="p">,</span><span class="w"> </span><span class="nx">gin</span><span class="p">.</span><span class="nx">H</span><span class="p">{</span><span class="s">&quot;message&quot;</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Deployment created&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="nx">result</span><span class="p">.</span><span class="nx">Name</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;ns&quot;</span><span class="p">:</span><span class="w"> </span><span class="nx">result</span><span class="p">.</span><span class="nx">Namespace</span><span class="p">})</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h3 id="路由注册-模板渲染">路由注册 + 模板渲染</h3>
+<div class="highlight"><pre><span></span><code><span class="kd">func</span><span class="w"> </span><span class="nx">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">r</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">gin</span><span class="p">.</span><span class="nx">Default</span><span class="p">()</span>
+
+<span class="w">    </span><span class="c1">// 模板渲染：加载前端页面</span>
+<span class="w">    </span><span class="nx">r</span><span class="p">.</span><span class="nx">LoadHTMLGlob</span><span class="p">(</span><span class="s">&quot;./index.html&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="nx">r</span><span class="p">.</span><span class="nx">GET</span><span class="p">(</span><span class="s">&quot;/&quot;</span><span class="p">,</span><span class="w"> </span><span class="kd">func</span><span class="p">(</span><span class="nx">c</span><span class="w"> </span><span class="o">*</span><span class="nx">gin</span><span class="p">.</span><span class="nx">Context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nx">c</span><span class="p">.</span><span class="nx">HTML</span><span class="p">(</span><span class="nx">http</span><span class="p">.</span><span class="nx">StatusOK</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;index.html&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">gin</span><span class="p">.</span><span class="nx">H</span><span class="p">{</span><span class="s">&quot;主题&quot;</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Deployments&quot;</span><span class="p">})</span>
+<span class="w">    </span><span class="p">})</span>
+
+<span class="w">    </span><span class="c1">// API 接口</span>
+<span class="w">    </span><span class="nx">r</span><span class="p">.</span><span class="nx">POST</span><span class="p">(</span><span class="s">&quot;/deploy&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">createDeployment</span><span class="p">)</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">r</span><span class="p">.</span><span class="nx">Run</span><span class="p">(</span><span class="s">&quot;:9000&quot;</span><span class="p">);</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">nil</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>调用示例：</p>
+<div class="highlight"><pre><span></span><code>curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://localhost:9000/deploy<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{</span>
+<span class="s1">    &quot;name&quot;: &quot;my-web&quot;,</span>
+<span class="s1">    &quot;namespace&quot;: &quot;default&quot;,</span>
+<span class="s1">    &quot;replicas&quot;: 2,</span>
+<span class="s1">    &quot;image&quot;: &quot;nginx:latest&quot;</span>
+<span class="s1">  }&#39;</span>
+<span class="c1"># 返回: {&quot;message&quot;:&quot;Deployment created&quot;,&quot;name&quot;:&quot;my-web&quot;,&quot;ns&quot;:&quot;default&quot;}</span>
+</code></pre></div>
+
+<p><div class="callout callout-tip" markdown="1"><br />
+<p class="callout-title">扩展方向</p></p>
+<p>基于此框架可以扩展 Update/Delete/List 接口，构建完整的 K8s Web 管理控制台。Gin 的模板渲染（<code>html/template</code>）支持动态 HTML 页面，结合前端表单实现可视化操作。</p>
+</div>
+    </div>
+  </article>
+  <aside class="toc">
+    <p class="toc-label">本页目录</p>
+    <ul>
+  <li><a href="#用途">用途</a></li>
+  <li><a href="#核心功能">核心功能</a></li>
+  <li><a href="#安装">安装</a></li>
+  <li><a href="#初始化客户端">初始化客户端</a></li>
+  <li><a href="#crud-操作示例">CRUD 操作示例</a><ul>
+  <li><a href="#create-创建-deployment">Create — 创建 Deployment</a></li>
+  <li><a href="#update-冲突重试更新">Update — 冲突重试更新</a></li>
+  <li><a href="#list-列出资源">List — 列出资源</a></li>
+  <li><a href="#delete-删除策略">Delete — 删除策略</a></li>
+</ul></li>
+  <li><a href="#实战client-go-gin-web-控制台">实战：Client-Go + Gin Web 控制台</a><ul>
+  <li><a href="#初始化支持集群内外">初始化（支持集群内外）</a></li>
+  <li><a href="#create-接口">Create 接口</a></li>
+  <li><a href="#路由注册-模板渲染">路由注册 + 模板渲染</a></li>
+</ul></li>
+</ul>
+  </aside>
+
+</div>
+
+</main>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>Learning Notes</span>
+    <a href="https://github.com/hangx969/learning-notes">GitHub</a>
+  </div>
+</footer>
+<script src="../../static/search.js"></script>
+</body>
+</html>

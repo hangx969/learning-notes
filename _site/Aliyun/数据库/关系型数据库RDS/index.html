@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>关系型数据库RDS - Learning Notes</title>
+<link rel="stylesheet" href="../../../static/style.css">
+<link rel="stylesheet" href="../../../static/pygments.css">
+</head>
+<body data-root="../../../">
+<header class="site-header">
+  <div class="header-inner">
+    <a class="logo" href="../../../index.html"><span class="logo-mark"></span>LEARNING NOTES</a>
+    <div class="search">
+      <input id="search-input" type="search" placeholder="搜索笔记…" autocomplete="off" aria-label="搜索笔记">
+      <div id="search-results" hidden></div>
+    </div>
+  </div>
+  <nav class="topic-nav" aria-label="主题导航">
+    <div class="topic-nav-inner">
+      <a href="../../../AI/">AI</a>
+      <a href="../../../Aliyun/" class="active">Aliyun</a>
+      <a href="../../../Azure/">Azure</a>
+      <a href="../../../C%2B%2B/">C++</a>
+      <a href="../../../CloudComputing/">CloudComputing</a>
+      <a href="../../../Database/">Database</a>
+      <a href="../../../Docker-Kubernetes/">Docker-Kubernetes</a>
+      <a href="../../../GPU-DeepLearning/">GPU-DeepLearning</a>
+      <a href="../../../Git/">Git</a>
+      <a href="../../../Go/">Go</a>
+      <a href="../../../HPC/">HPC</a>
+      <a href="../../../IaC/">IaC</a>
+      <a href="../../../Linux-Shell/">Linux-Shell</a>
+      <a href="../../../Middlewares/">Middlewares</a>
+      <a href="../../../Networking/">Networking</a>
+      <a href="../../../OS/">OS</a>
+      <a href="../../../Python/">Python</a>
+      <a href="../../../SoftwareTesting/">SoftwareTesting</a>
+    </div>
+  </nav>
+</header>
+<main class="main">
+
+<div class="article-layout">
+
+  <aside class="sidebar">
+    <details class="sidebar-details">
+      <summary>Aliyun</summary>
+      <nav class="sidebar-nav">
+        <p class="sidebar-group">存储</p>
+        <ul>
+          <li><a href="../../../Aliyun/%E5%AD%98%E5%82%A8/%E5%AF%B9%E8%B1%A1%E5%AD%98%E5%82%A8OSS/">对象存储OSS</a></li>
+          <li><a href="../../../Aliyun/%E5%AD%98%E5%82%A8/%E6%95%B0%E6%8D%AE%E6%B9%96-HDFS-POSIX/">数据湖-HDFS-POSIX</a></li>
+          <li><a href="../../../Aliyun/%E5%AD%98%E5%82%A8/%E8%B7%A8%E5%9F%9F%E5%85%B1%E4%BA%ABCORS/">跨域共享CORS</a></li>
+        </ul>
+        <p class="sidebar-group">数据库</p>
+        <ul>
+          <li><a href="../../../Aliyun/%E6%95%B0%E6%8D%AE%E5%BA%93/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93RDS/" class="current">关系型数据库RDS</a></li>
+          <li><a href="../../../Aliyun/%E6%95%B0%E6%8D%AE%E5%BA%93/%E6%95%B0%E6%8D%AE%E4%BC%A0%E8%BE%93%E6%9C%8D%E5%8A%A1DTS/">数据传输服务DTS</a></li>
+        </ul>
+        <p class="sidebar-group">网络</p>
+        <ul>
+          <li><a href="../../../Aliyun/%E7%BD%91%E7%BB%9C/ACK%E7%BD%91%E7%BB%9C%E8%A7%84%E5%88%92%E4%B8%8E%E6%88%90%E6%9C%AC%E4%BC%98%E5%8C%96/">ACK 网络规划与成本优化</a></li>
+          <li><a href="../../../Aliyun/%E7%BD%91%E7%BB%9C/CEN-TR/">云企业网 CEN 与转发路由器 TR</a></li>
+          <li><a href="../../../Aliyun/%E7%BD%91%E7%BB%9C/DDoS%E9%AB%98%E9%98%B2/">DDoS 防护</a></li>
+          <li><a href="../../../Aliyun/%E7%BD%91%E7%BB%9C/DNS-CDN-SSL/">DNS、CDN 与 SSL 证书</a></li>
+          <li><a href="../../../Aliyun/%E7%BD%91%E7%BB%9C/VPC/">专有网络 VPC</a></li>
+          <li><a href="../../../Aliyun/%E7%BD%91%E7%BB%9C/WAF/">Web 应用防火墙 WAF</a></li>
+          <li><a href="../../../Aliyun/%E7%BD%91%E7%BB%9C/%E4%BA%91%E5%AE%89%E5%85%A8%E4%B8%AD%E5%BF%83-%E4%BA%91%E9%98%B2%E7%81%AB%E5%A2%99/">云安全中心与云防火墙</a></li>
+          <li><a href="../../../Aliyun/%E7%BD%91%E7%BB%9C/%E7%BD%91%E5%85%B3-VPN-%E4%B8%93%E7%BA%BF/">网关-VPN-专线</a></li>
+          <li><a href="../../../Aliyun/%E7%BD%91%E7%BB%9C/%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1SLB/">负载均衡 SLB</a></li>
+        </ul>
+        <p class="sidebar-group">计算</p>
+        <ul>
+          <li><a href="../../../Aliyun/%E8%AE%A1%E7%AE%97/ECS/">弹性计算服务ECS</a></li>
+          <li><a href="../../../Aliyun/%E8%AE%A1%E7%AE%97/%E4%B8%BB%E6%9C%BA%E8%BF%81%E7%A7%BB%E5%B7%A5%E5%85%B7SMC/">主机迁移工具SMC</a></li>
+          <li><a href="../../../Aliyun/%E8%AE%A1%E7%AE%97/%E4%BA%91%E7%9B%98-%E5%BF%AB%E7%85%A7-%E9%95%9C%E5%83%8F/">云盘、快照与镜像</a></li>
+          <li><a href="../../../Aliyun/%E8%AE%A1%E7%AE%97/%E5%BC%B9%E6%80%A7%E4%BC%B8%E7%BC%A9ESS/">弹性伸缩ESS</a></li>
+        </ul>
+        <p class="sidebar-group">资源管理</p>
+        <ul>
+          <li><a href="../../../Aliyun/%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/FinOps-%E4%BA%91%E6%88%90%E6%9C%AC%E4%BC%98%E5%8C%96%E5%AE%9E%E6%88%98/">FinOps - 云成本优化实战</a></li>
+          <li><a href="../../../Aliyun/%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/Landing%20Zone/">Landing Zone</a></li>
+        </ul>
+        <p class="sidebar-group">其他</p>
+        <ul>
+          <li><a href="../../../Aliyun/ACP%E8%80%83%E8%AF%95/">ACP云计算工程师考试笔记</a></li>
+        </ul>
+      </nav>
+    </details>
+  </aside>
+
+  <article class="article">
+    <nav class="breadcrumb">
+      <a href="../../../index.html">首页</a><span>/</span>
+      <a href="../../../Aliyun/">Aliyun</a><span>/</span><span>数据库</span>
+    </nav>
+    <h1 class="article-title">关系型数据库RDS</h1>
+    <p class="article-meta"><span>更新于 2026-04-16</span>
+      <a href="https://github.com/hangx969/learning-notes/blob/main/Aliyun/%E6%95%B0%E6%8D%AE%E5%BA%93/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93RDS.md">查看源文件</a>
+    </p>
+    <div class="article-body">
+<h1 id="关系型数据库rds">关系型数据库RDS</h1>
+<p>RDS，阿里云关系型数据库，基于阿里云分布式文件系统和SSD高性能存储。<br />
+支持 <mark>MySQL、SQL Server、PostgreSQL、MariaDB</mark> 引擎。</p>
+<hr />
+<h2 id="实例类型">实例类型</h2>
+<p>基础版、高可用版、集群版（MySQL）。</p>
+<h3 id="基础版">基础版</h3>
+<ul>
+<li>只有==单个数据库节点==，因为没有热备份，所以当节点意外宕机、重启、维护时，会出现长时间不可用。</li>
+<li>由于不提供备节点，不会因为实时数据库复制产生额外的性能开销，因此基础版的性能相对于同样配置的高可用版甚至有所提升。</li>
+<li>计算和存储分离，基于阿里云飞天架构的分布式存储、云盘存储数据，多副本可靠性，计算节点故障不会造成数据丢失。</li>
+</ul>
+<h3 id="高可用版">高可用版</h3>
+<ul>
+<li>采用==一主一备==的架构。备节点仅作为备份形式存在，不提供业务访问，不可读。可以添加只读节点。</li>
+<li>根据所选参数模板不同，主节点的数据会通过同步或异步的方式复制到备节点。</li>
+<li>主节点故障，自动切换到备节点</li>
+<li>备节点故障，主节点会进行实时备份，备份完成时会产生全局锁，导致主节点只读，一般不会超过5秒</li>
+<li>主备节点可以创建到同一Region的相同或不同AZ；但是不能跨Region</li>
+</ul>
+<p><div class="callout callout-warning" markdown="1"><br />
+<p class="callout-title">备节点故障影响</p></p>
+<p>备节点故障时，主节点会进行实时备份，备份完成时会产生==全局锁==，导致主节点只读，一般不会超过5秒。</p>
+</div>
+<h3 id="集群版">集群版</h3>
+<p>包括RDS MySQL集群版和RDS SQL Server集群版。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">指标</th>
+<th style="text-align: left;">基础版</th>
+<th style="text-align: left;">高可用版</th>
+<th style="text-align: left;">集群版</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>节点数</strong></td>
+<td style="text-align: left;">1个</td>
+<td style="text-align: left;">2个（默认）<br><br>高可用版默认一主一备两个节点，如需更多节点可创建只读实例。</td>
+<td style="text-align: left;">2~5个<br><br>创建集群版实例时，默认创建一主二备共3个节点，也可以创建一主一备共2个节点。实例创建完成后，可通过增加节点，将节点数量提升到最多4个，也就是一主四备共5个节点。</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>备节点是否可读</strong></td>
+<td style="text-align: left;">不涉及</td>
+<td style="text-align: left;">否</td>
+<td style="text-align: left;"><mark>是</mark></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>地址类型</strong></td>
+<td style="text-align: left;">读写地址</td>
+<td style="text-align: left;">读写地址</td>
+<td style="text-align: left;">- 读写地址：指向主节点，处理读、写请求。<br>- 只读地址：指向备节点，处理读请求。</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>复制模式</strong></td>
+<td style="text-align: left;">无</td>
+<td style="text-align: left;">异步、半同步</td>
+<td style="text-align: left;">异步、半同步、组复制</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>最大容忍不可用节点数</strong></td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">n-1，n为集群版实例包含的节点数</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>可用区数量</strong></td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">小于或等于2</td>
+<td style="text-align: left;">小于或等于集群版实例包含的节点数</td>
+</tr>
+<tr>
+<td style="text-align: left;">支持的数据库</td>
+<td style="text-align: left;">MySQL、PostgreSQL、SQL Server</td>
+<td style="text-align: left;">MySQL、PostgreSQL、SQL Server、MariaDB</td>
+<td style="text-align: left;">MySQL、SQL Server</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="规格族">规格族</h2>
+<p>根据CPU、内存、连接数和IOPS，提供多种规格族：</p>
+<ul>
+<li><strong>共享规格</strong></li>
+<li><strong>通用规格</strong></li>
+<li><strong>独享规格</strong></li>
+</ul>
+<hr />
+<h2 id="存储类型">存储类型</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">存储类型</th>
+<th style="text-align: left;">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>ESSD云盘</strong></td>
+<td style="text-align: left;">增强型（Enhanced）SSD云盘，是阿里云全新推出的超高性能云盘产品。ESSD云盘基于新一代分布式块存储架构，结合25GE网络和RDMA技术，为您提供单盘高达==100万的随机读写能力==和更低的单路时延能力。ESSD云盘分为如下三类：<br><br>- ESSD PL1云盘：PL1性能级别的ESSD云盘。<br>- ESSD PL2云盘：相比PL1，PL2性能级别的ESSD云盘大约可提升==2倍==IOPS和吞吐量。<br>- ESSD PL3云盘：相比PL1，PL3性能级别的ESSD云盘最高可提升==20倍==IOPS、11倍吞吐量，适合对极限并发I/O性能要求极高、读写时延极稳定的业务场景。</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>本地SSD盘</strong></td>
+<td style="text-align: left;">本地SSD盘，是与数据库引擎位于同一节点的SSD盘，I/O延时低。</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>SSD云盘</strong></td>
+<td style="text-align: left;">SSD云盘，是基于分布式存储架构的弹性块存储设备，实现计算与存储分离。<br><strong>说明</strong>：SSD云盘分批下线中，建议使用ESSD云盘。</td>
+</tr>
+</tbody>
+</table>
+<p><div class="callout callout-tip" markdown="1"><br />
+<p class="callout-title">选型建议</p></p>
+<p>大部分情况下选择 <mark>ESSD云盘</mark>，性价比较高。</p>
+</div>
+<hr />
+<h2 id="rds-for-mysql">RDS for MySQL</h2>
+<p>RDS支持MySQL引擎。提供高级功能：</p>
+<ul>
+<li><strong>只读实例</strong>：少量写请求，大量读请求，单个实例无法承受读取压力，对业务产生影响。可以创建多个只读实例，满足读请求。</li>
+<li><strong>读写分离</strong>：在只读实例的基础上，额外提供一个==读写分离地址==，联动主实例和只读实例，自动创建读写分离链路。应用只需要连接读写分离地址进行数据读取和写入，读写分离程序会自动将写请求发往主实例，读请求发往只读实例。用户只需要添加只读实例的个数，即可不断扩展系统的处理能力。</li>
+<li><strong>数据库代理</strong></li>
+<li><strong>自治服务DAS</strong>：智能诊断及优化</li>
+<li><strong>专属集群MyBase</strong></li>
+</ul>
+<hr />
+<h2 id="常用功能">常用功能</h2>
+<h3 id="白名单">白名单</h3>
+<p>在每个instance级别设置，默认是对本 <a class="wikilink" href="../../../Aliyun/%E7%BD%91%E7%BB%9C/VPC/">VPC</a> 放行。</p>
+<p><div class="callout callout-warning" markdown="1"><br />
+<p class="callout-title">注意</p></p>
+<p>还有一个安全组功能，但是==不推荐用==，就推荐用白名单放行IP。</p>
+</div>
+<h3 id="数据库连接">数据库连接</h3>
+<ul>
+<li>访问模式是在数据库集群前面有一个SLB集群（阿里云托管，用户不可见）。SLB集群暴露一个内网访问地址。</li>
+<li>默认没有开通外网访问地址，也可以添加一个外网地址。</li>
+</ul>
+<h3 id="数据库代理">数据库代理</h3>
+<ul>
+<li>如果我们有一个主实例、一个只读实例。两个实例的连接地址是不一样的。</li>
+<li>读请求发送到只读实例，写请求发送到主实例，那么就需要在代码中对两个地址予以区分</li>
+<li>RDS提供一个代理功能，通过一个==统一入口地址==，实现自动检测读写请求，分发到不同的实例地址上。</li>
+<li>实现读写分离、连接池、事务拆分等功能。</li>
+</ul>
+<h3 id="备份恢复">备份恢复</h3>
+<p>分为数据备份和日志备份两种类型。</p>
+<ul>
+<li><strong>数据备份</strong>：全量备份，完整数据文件</li>
+<li><strong>日志备份</strong>：增量备份，记录数据修改的日志文件，需要依赖最近的一次数据备份。可以实现==任意时间点恢复==</li>
+</ul>
+<h3 id="分析实例">分析实例</h3>
+<p>可以将MySQL中的数据自动同步到分析实例中，解决复杂分析查询卡顿问题。分析实例实现==毫秒级万亿数据即时分析==。</p>
+<hr />
+<h2 id="数据管理服务dms">数据管理服务DMS</h2>
+<p>可以把企业自己的数据库集成进来统一管理。</p>
+<h3 id="管控模式">管控模式</h3>
+<p>参考文档：https://help.aliyun.com/zh/dms/product-overview/control-modes#multiTask8447</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">管控模式</th>
+<th style="text-align: left;">功能特性</th>
+<th style="text-align: left;">适用场景</th>
+<th style="text-align: left;">登录/访问方式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>自由操作</strong></td>
+<td style="text-align: left;">- 支持27种数据库的可视化数据管理和结构管理。<br>- 支持在SQLConsole进行各类数据与结构的SQL变更或可视化编辑操作。<br>- 数据管理功能存在一定限制。</td>
+<td style="text-align: left;">- 数据库实例无需严格管控。<br>- 单一用户使用。</td>
+<td style="text-align: left;">管理员、DBA或普通用户都需要申请数据库实例的登录权限，待获取登录权限后，再输入数据库账号密码登录。</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>稳定变更</strong></td>
+<td style="text-align: left;">- 支持自由操作模式的所有功能，同时减少功能限制，如数据变更。<br>- 为数据库提供更加稳定运行的解决方案，如无锁变更、SQL审核。</td>
+<td style="text-align: left;">- 数据库实例需要稳定运行，对持续可用性要求高。<br>- 小团队多人协同。</td>
+<td style="text-align: left;">管理员、DBA或普通用户都需要申请数据库实例的登录权限，待获取登录权限后，再输入数据库账号密码登录。</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>安全协同</strong></td>
+<td style="text-align: left;">- 支持自由操作模式和稳定变更模式的所有功能。<br>- 提供DevOps功能，设计规范、研发流程、审批流程可灵活自定义。</td>
+<td style="text-align: left;">- 需要保障数据库实例的数据安全。<br>- 需要对研发、变更流程强管控。<br>- 需要企业合规管理。</td>
+<td style="text-align: left;">免登录，通过授权使用。<br>- 管理员、DBA：直接访问。<br>- 普通用户：获取实例、数据库、表的相关权限，直接访问。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="账号管理">账号管理</h3>
+<ul>
+<li>在instance级别，可以创建高权限账号；在数据库中也能创建账号。</li>
+</ul>
+<p><div class="callout callout-tip" markdown="1"><br />
+<p class="callout-title">最佳实践</p></p>
+<p>建议就在控制台上创建账号，尽量不用数据库内部的账号：<br />
+- 更加符合云原生管理实践。<br />
+- 防止内部账户和控制台的账户冲突。</p>
+</div>
+<ul>
+<li>RDS for MySQL 是可以在创建普通账号的时候同时授予数据库读写权限；PostgreSQL暂时没有</li>
+</ul>
+<hr />
+<h3 id="数据管理预案">数据管理预案</h3>
+<h4 id="性能安全">性能安全</h4>
+<p>在编辑实例中，在实例级别设置在DMS上查询超时时间和导出超时时间，避免用户运行长SQL影响业务。</p>
+<p><div class="callout callout-important" markdown="1"><br />
+<p class="callout-title">推荐超时设置</p></p>
+<ul>
+<li><strong>常态设置推荐值</strong>：查询 <mark>60s</mark>，导出 <mark>600s</mark></li>
+<li><strong>业务高峰推荐设置</strong>：查询 <mark>5s</mark>，导出 <mark>60s</mark></li>
+</ul>
+</div>
+<h5 id="限制最大返回行数">限制最大返回行数</h5>
+<p>在安全规则中，限制单次查询最大返回行数的值，避免大量数据返回影响业务正常请求响应时间。</p>
+<ul>
+<li>常态推荐值：<mark>200行</mark>；业务高峰期推荐值：<mark>10行</mark></li>
+</ul>
+<h5 id="限制全表扫描最大值">限制全表扫描最大值</h5>
+<p>在安全规则中，限制允许全表扫描SQL执行的表的大小，避免研发对超大表进行全表扫描。</p>
+<ul>
+<li>常态推荐值 <mark>10240MB</mark>，业务高峰期间推荐 <mark>1024MB</mark></li>
+</ul>
+<h4 id="变更安全">变更安全</h4>
+<h5 id="拦截高风险sql">拦截高风险SQL</h5>
+<p>在安全规则中对高风险SQL语句（DQL、DDL、DML、DCL）进行拦截。</p>
+<ul>
+<li>常态时候可以开启，业务高峰时期可以拦截</li>
+</ul>
+<h5 id="升级审批流程">升级审批流程</h5>
+<p>大促期间，审批流程中可以增加高级别审批负责人</p>
+<h5 id="变更窗口管控">变更窗口管控</h5>
+<p>在执行引擎底层强制管控实例的变更窗口范围，可以限制时间段、人员发起DDL、DML、SELECT</p>
+<h4 id="数据安全">数据安全</h4>
+<h5 id="提高敏感信息列的等级设置">提高敏感信息列的等级设置</h5>
+<p>可以设置字段安全级别调整功能，将用户个人信息、身份证号等敏感字段进行==脱敏==。</p>
+<h5 id="开启数据水印">开启数据水印</h5>
+<p>可以开启防泄露数字水印，系统将在整个控制台中同时提供水印。防止截图泄露。</p>
+<h5 id="敏感数据保护">敏感数据保护</h5>
+<p>有效识别敏感数据分布，进行细粒度权限管控、数据脱敏处理，进行最小化权限访问。</p>
+<h5 id="行级管控">行级管控</h5>
+<p>可以设置表中行的权限。同一个表中的数据，不同人员仅能访问不同行。</p>
+<h4 id="访问元数据权限">访问元数据权限</h4>
+<h5 id="限制用户访问元数据权限">限制用户访问元数据权限</h5>
+<p>指定避免一些人员接触到一些元数据（数据库、实例、表等）</p>
+<h5 id="设置元数据可见范围">设置元数据可见范围</h5>
+<p>通过元数据访问控制，避免元数据展示</p>
+<h4 id="应急处理">应急处理</h4>
+<h5 id="操作审计">操作审计</h5>
+<p>可以快速定位指定时间段，人员是否在DMS对指定DB、表实施变更</p>
+<h5 id="数据追踪">数据追踪</h5>
+<p>在误删、误更新数据操作后，可快速恢复数据</p>
+<hr />
+<h3 id="数据归档至oss">数据归档至OSS</h3>
+<p>DMS提供数据归档功能，线上数据越来越多，影响业务运作时，可以将源库的大表数据归档到 <a class="wikilink" href="../../../Aliyun/%E5%AD%98%E5%82%A8/%E5%AF%B9%E8%B1%A1%E5%AD%98%E5%82%A8OSS/">OSS</a>，自动清理源表已归档数据。可通过 <a class="wikilink" href="../../../Aliyun/%E6%95%B0%E6%8D%AE%E5%BA%93/%E6%95%B0%E6%8D%AE%E4%BC%A0%E8%BE%93%E6%9C%8D%E5%8A%A1DTS/">DTS</a> 进行数据迁移与同步。</p>
+    </div>
+  </article>
+  <aside class="toc">
+    <p class="toc-label">本页目录</p>
+    <ul>
+  <li><a href="#实例类型">实例类型</a><ul>
+  <li><a href="#基础版">基础版</a></li>
+  <li><a href="#高可用版">高可用版</a></li>
+  <li><a href="#集群版">集群版</a></li>
+</ul></li>
+  <li><a href="#规格族">规格族</a></li>
+  <li><a href="#存储类型">存储类型</a></li>
+  <li><a href="#rds-for-mysql">RDS for MySQL</a></li>
+  <li><a href="#常用功能">常用功能</a><ul>
+  <li><a href="#白名单">白名单</a></li>
+  <li><a href="#数据库连接">数据库连接</a></li>
+  <li><a href="#数据库代理">数据库代理</a></li>
+  <li><a href="#备份恢复">备份恢复</a></li>
+  <li><a href="#分析实例">分析实例</a></li>
+</ul></li>
+  <li><a href="#数据管理服务dms">数据管理服务DMS</a><ul>
+  <li><a href="#管控模式">管控模式</a></li>
+  <li><a href="#账号管理">账号管理</a></li>
+  <li><a href="#数据管理预案">数据管理预案</a></li>
+  <li><a href="#数据归档至oss">数据归档至OSS</a></li>
+</ul></li>
+</ul>
+  </aside>
+
+</div>
+
+</main>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>Learning Notes</span>
+    <a href="https://github.com/hangx969/learning-notes">GitHub</a>
+  </div>
+</footer>
+<script src="../../../static/search.js"></script>
+</body>
+</html>

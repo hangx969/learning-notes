@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>弹性计算服务ECS - Learning Notes</title>
+<link rel="stylesheet" href="../../../static/style.css">
+<link rel="stylesheet" href="../../../static/pygments.css">
+</head>
+<body data-root="../../../">
+<header class="site-header">
+  <div class="header-inner">
+    <a class="logo" href="../../../index.html"><span class="logo-mark"></span>LEARNING NOTES</a>
+    <div class="search">
+      <input id="search-input" type="search" placeholder="搜索笔记…" autocomplete="off" aria-label="搜索笔记">
+      <div id="search-results" hidden></div>
+    </div>
+  </div>
+  <nav class="topic-nav" aria-label="主题导航">
+    <div class="topic-nav-inner">
+      <a href="../../../AI/">AI</a>
+      <a href="../../../Aliyun/" class="active">Aliyun</a>
+      <a href="../../../Azure/">Azure</a>
+      <a href="../../../C%2B%2B/">C++</a>
+      <a href="../../../CloudComputing/">CloudComputing</a>
+      <a href="../../../Database/">Database</a>
+      <a href="../../../Docker-Kubernetes/">Docker-Kubernetes</a>
+      <a href="../../../GPU-DeepLearning/">GPU-DeepLearning</a>
+      <a href="../../../Git/">Git</a>
+      <a href="../../../Go/">Go</a>
+      <a href="../../../HPC/">HPC</a>
+      <a href="../../../IaC/">IaC</a>
+      <a href="../../../Linux-Shell/">Linux-Shell</a>
+      <a href="../../../Middlewares/">Middlewares</a>
+      <a href="../../../Networking/">Networking</a>
+      <a href="../../../OS/">OS</a>
+      <a href="../../../Python/">Python</a>
+      <a href="../../../SoftwareTesting/">SoftwareTesting</a>
+    </div>
+  </nav>
+</header>
+<main class="main">
+
+<div class="article-layout">
+
+  <aside class="sidebar">
+    <details class="sidebar-details">
+      <summary>Aliyun</summary>
+      <nav class="sidebar-nav">
+        <p class="sidebar-group">存储</p>
+        <ul>
+          <li><a href="../../../Aliyun/%E5%AD%98%E5%82%A8/%E5%AF%B9%E8%B1%A1%E5%AD%98%E5%82%A8OSS/">对象存储OSS</a></li>
+          <li><a href="../../../Aliyun/%E5%AD%98%E5%82%A8/%E6%95%B0%E6%8D%AE%E6%B9%96-HDFS-POSIX/">数据湖-HDFS-POSIX</a></li>
+          <li><a href="../../../Aliyun/%E5%AD%98%E5%82%A8/%E8%B7%A8%E5%9F%9F%E5%85%B1%E4%BA%ABCORS/">跨域共享CORS</a></li>
+        </ul>
+        <p class="sidebar-group">数据库</p>
+        <ul>
+          <li><a href="../../../Aliyun/%E6%95%B0%E6%8D%AE%E5%BA%93/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93RDS/">关系型数据库RDS</a></li>
+          <li><a href="../../../Aliyun/%E6%95%B0%E6%8D%AE%E5%BA%93/%E6%95%B0%E6%8D%AE%E4%BC%A0%E8%BE%93%E6%9C%8D%E5%8A%A1DTS/">数据传输服务DTS</a></li>
+        </ul>
+        <p class="sidebar-group">网络</p>
+        <ul>
+          <li><a href="../../../Aliyun/%E7%BD%91%E7%BB%9C/ACK%E7%BD%91%E7%BB%9C%E8%A7%84%E5%88%92%E4%B8%8E%E6%88%90%E6%9C%AC%E4%BC%98%E5%8C%96/">ACK 网络规划与成本优化</a></li>
+          <li><a href="../../../Aliyun/%E7%BD%91%E7%BB%9C/CEN-TR/">云企业网 CEN 与转发路由器 TR</a></li>
+          <li><a href="../../../Aliyun/%E7%BD%91%E7%BB%9C/DDoS%E9%AB%98%E9%98%B2/">DDoS 防护</a></li>
+          <li><a href="../../../Aliyun/%E7%BD%91%E7%BB%9C/DNS-CDN-SSL/">DNS、CDN 与 SSL 证书</a></li>
+          <li><a href="../../../Aliyun/%E7%BD%91%E7%BB%9C/VPC/">专有网络 VPC</a></li>
+          <li><a href="../../../Aliyun/%E7%BD%91%E7%BB%9C/WAF/">Web 应用防火墙 WAF</a></li>
+          <li><a href="../../../Aliyun/%E7%BD%91%E7%BB%9C/%E4%BA%91%E5%AE%89%E5%85%A8%E4%B8%AD%E5%BF%83-%E4%BA%91%E9%98%B2%E7%81%AB%E5%A2%99/">云安全中心与云防火墙</a></li>
+          <li><a href="../../../Aliyun/%E7%BD%91%E7%BB%9C/%E7%BD%91%E5%85%B3-VPN-%E4%B8%93%E7%BA%BF/">网关-VPN-专线</a></li>
+          <li><a href="../../../Aliyun/%E7%BD%91%E7%BB%9C/%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1SLB/">负载均衡 SLB</a></li>
+        </ul>
+        <p class="sidebar-group">计算</p>
+        <ul>
+          <li><a href="../../../Aliyun/%E8%AE%A1%E7%AE%97/ECS/" class="current">弹性计算服务ECS</a></li>
+          <li><a href="../../../Aliyun/%E8%AE%A1%E7%AE%97/%E4%B8%BB%E6%9C%BA%E8%BF%81%E7%A7%BB%E5%B7%A5%E5%85%B7SMC/">主机迁移工具SMC</a></li>
+          <li><a href="../../../Aliyun/%E8%AE%A1%E7%AE%97/%E4%BA%91%E7%9B%98-%E5%BF%AB%E7%85%A7-%E9%95%9C%E5%83%8F/">云盘、快照与镜像</a></li>
+          <li><a href="../../../Aliyun/%E8%AE%A1%E7%AE%97/%E5%BC%B9%E6%80%A7%E4%BC%B8%E7%BC%A9ESS/">弹性伸缩ESS</a></li>
+        </ul>
+        <p class="sidebar-group">资源管理</p>
+        <ul>
+          <li><a href="../../../Aliyun/%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/FinOps-%E4%BA%91%E6%88%90%E6%9C%AC%E4%BC%98%E5%8C%96%E5%AE%9E%E6%88%98/">FinOps - 云成本优化实战</a></li>
+          <li><a href="../../../Aliyun/%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/Landing%20Zone/">Landing Zone</a></li>
+        </ul>
+        <p class="sidebar-group">其他</p>
+        <ul>
+          <li><a href="../../../Aliyun/ACP%E8%80%83%E8%AF%95/">ACP云计算工程师考试笔记</a></li>
+        </ul>
+      </nav>
+    </details>
+  </aside>
+
+  <article class="article">
+    <nav class="breadcrumb">
+      <a href="../../../index.html">首页</a><span>/</span>
+      <a href="../../../Aliyun/">Aliyun</a><span>/</span><span>计算</span>
+    </nav>
+    <h1 class="article-title">弹性计算服务ECS</h1>
+    <p class="article-meta"><span>更新于 2026-04-16</span>
+      <a href="https://github.com/hangx969/learning-notes/blob/main/Aliyun/%E8%AE%A1%E7%AE%97/ECS.md">查看源文件</a>
+    </p>
+    <div class="article-body">
+<h1 id="虚拟化与云计算发展">虚拟化与云计算发展</h1>
+<h2 id="虚拟化发展">虚拟化发展</h2>
+<ul>
+<li>2001年VMWare打不ESX和GSX</li>
+<li>2005年Xen 3.0发布</li>
+<li>2006年KVM诞生</li>
+</ul>
+<h2 id="云计算厂商起步年份">云计算厂商起步年份</h2>
+<ul>
+<li>2006年Amazon推出S3和EC2</li>
+<li>2008年Google发布了GAE</li>
+<li>2009年阿里云成立</li>
+<li>2010年Microsoft发布了Azure</li>
+<li>2011年Openstack推出</li>
+</ul>
+<h2 id="云计算特点优势">云计算特点优势</h2>
+<ol>
+<li>按需自主服务</li>
+<li>资源池化</li>
+<li>按计量付费</li>
+<li>广泛网络接入</li>
+<li>快速弹性伸缩</li>
+</ol>
+<h2 id="云计算几大件">云计算几大件</h2>
+<p>计算、存储、网络、数据库、安全</p>
+<hr />
+<h1 id="虚拟化常见的两种架构">虚拟化常见的两种架构</h1>
+<h2 id="寄居架构">寄居架构</h2>
+<p>在操作系统之上安装运行虚拟化程序,依赖于主机操作系统对设备的支持和物理资源管理</p>
+<h2 id="裸金属架构">裸金属架构</h2>
+<p>直接在硬件上安装虚拟化软件,再在其上安装操作系统和应用,依赖虚拟层内核和服务器控制台进行管理</p>
+<h2 id="阿里云弹性计算虚拟化架构的演进">阿里云弹性计算虚拟化架构的演进</h2>
+<ul>
+<li>2010 - 2015年用的是Xen架构</li>
+<li>2015 第一次架构升级,采用KVM架构,虚拟化损耗降低</li>
+<li>2016 阿里云发布ECS企业级产品。移动互联网爆发,很多中小企业抢占市场没时间采购物理服务器,也就开始用ECS</li>
+<li>2017 第二次虚拟化架构升级,<mark>神龙架构</mark>,弹性裸金属服务器,虚拟化损耗降为0</li>
+<li>2022年推出全新计算体系架构==CIPU==</li>
+</ul>
+<hr />
+<h1 id="ecs">ECS</h1>
+<h2 id="计费模式">计费模式</h2>
+<ul>
+<li>按量付费</li>
+<li>包年包月:可以中途退费,但是可能会按照按量会多收点钱</li>
+<li>抢占式示例:不稳定,会被收走。适用于无状态服务</li>
+</ul>
+<p><div class="callout callout-tip" markdown="1"><br />
+<p class="callout-title">节省计划</p></p>
+<p>节省计划 == ECS按量付费的预付会员卡</p>
+</div>
+<p>费用构成:<mark>实例规格费用 + 镜像费用 + 云盘费用 + 公网带宽费用 + 快照费用</mark></p>
+<h2 id="ecs配件">ECS配件</h2>
+<ul>
+<li>实例</li>
+<li>块存储(<a class="wikilink" href="../../../Aliyun/%E8%AE%A1%E7%AE%97/%E4%BA%91%E7%9B%98-%E5%BF%AB%E7%85%A7-%E9%95%9C%E5%83%8F/">云盘</a>)</li>
+<li><a class="wikilink" href="../../../Aliyun/%E8%AE%A1%E7%AE%97/%E4%BA%91%E7%9B%98-%E5%BF%AB%E7%85%A7-%E9%95%9C%E5%83%8F/">镜像</a>:公共镜像、自定义镜像、共享镜像、云市场镜像和社区镜像。</li>
+<li>网络:<a class="wikilink" href="../../../Aliyun/%E7%BD%91%E7%BB%9C/VPC/">VPC</a></li>
+<li>安全组:虚拟防火墙,控制ECS实例的出入站流量。</li>
+<li>弹性网卡:ENI,VPC中的虚拟网络接口,用于连接ECS</li>
+<li>部署集:支持高可用策略,同一部署集内的实例会严格分散在不同的物理服务器上。</li>
+<li>公网IP:计费模式可选择:<ul>
+<li>按使用流量:需要设置峰值带宽。比如每个G 0.8元,峰值带宽10Mbps。</li>
+<li>按固定带宽:一直都是某个带宽,会贵一些。</li>
+</ul>
+</li>
+</ul>
+<p><div class="callout callout-warning" markdown="1"><br />
+<p class="callout-title">弹性伸缩与镜像</p></p>
+<p><a class="wikilink" href="../../../Aliyun/%E8%AE%A1%E7%AE%97/%E5%BC%B9%E6%80%A7%E4%BC%B8%E7%BC%A9ESS/">ESS</a>弹性伸缩配置中,不支持云市场镜像。因为部分云市场镜像是收费的</p>
+</div>
+<h2 id="实例规格族">实例规格族</h2>
+<p><code>ecs.&lt;规格族&gt;.&lt;nx&gt;large</code></p>
+<ul>
+<li>规格族:小写字母表示性能领域,数字越大表示新一代规格族<ul>
+<li><mark>c</mark> 计算型</li>
+<li><mark>g</mark> 通用型</li>
+<li><mark>r</mark> 内存型</li>
+<li><mark>ebm</mark> 裸金属</li>
+</ul>
+</li>
+<li>nx:n表示CPU核数</li>
+</ul>
+<h2 id="选型推荐">选型推荐</h2>
+<p>在云端,我们常见的CPU:内存的几个配置是1:1、1:2、1:4和1:8。</p>
+<p><div class="callout callout-example" markdown="1"><br />
+<p class="callout-title">CPU与内存比例选型</p></p>
+<ul>
+<li>==1:1与1:2==的配置,尤其是1:2的比例,如2核4G,4核8G等,我们称之为"黄金比例",适用于绝大多数场景,尤其是高资源消耗的计算场景、个人网页、企业建站等小型部署。</li>
+<li>==1:4==的配置,由于其内存占比较高,所以适合数据库类型的部署。</li>
+<li>==1:8==的配置,由于其内存占比更高,所以适合内存型数据库的部署或其他消耗内存的服务。</li>
+</ul>
+</div>
+<p>对于云盘的选择:</p>
+<p><div class="callout callout-tip" markdown="1"><br />
+<p class="callout-title">云盘选型建议</p></p>
+<ul>
+<li>不必过度关注磁盘的大小,因为磁盘的大小都是可以一键扩容的,重点关注点在于磁盘的==IOPS==</li>
+<li>云上也不建议用LVM,可能在一致性快照恢复上会有问题。</li>
+</ul>
+</div>
+<h2 id="运行状态">运行状态</h2>
+<p>==Stopped和Running==是稳定状态,可以进行运维。</p>
+<p><div class="callout callout-warning" markdown="1"><br />
+<p class="callout-title">实例状态与服务</p></p>
+<p>实例处于Running状态仅代表实例运行起来,类似于对电脑进行开机,但是实例的操作系统并不一定运行起来了。您可以通过查看实例的健康状态,判断实例的操作系统是否已经运行起来。<br />
+只有当实例的操作系统运行起来后,网络服务才能正常工作,才可以通过SSH、RDP等方式进行远程访问。</p>
+</div>
+<p>在系统内关机,实例还在,仍要收费。<br />
+在控制台调OpenAPI关机可以释放实例。</p>
+<hr />
+<h1 id="地域">地域</h1>
+<p>ECS实例如果用做web服务器需要完成备案,需要在指定的地域购买ECS实例。</p>
+<hr />
+<h1 id="可用区">可用区</h1>
+<p>每个地域的多个可用区 使用不同的电力和网络。<br />
+同地域的不同可用区之间是走backbone内网互通的,网络时延更小。</p>
+<p>每个地域Region,包含多个可用区,对应列表:<br />
+https://www.alibabacloud.com/help/zh/cloud-migration-guide-for-beginners/latest/regions-and-zones</p>
+<p><div class="callout callout-note" markdown="1"><br />
+<p class="callout-title">可用区选择策略</p></p>
+<p>对于容灾要求高,采用==多可用区==;对网络时延要求高,部署在==同一可用区==。</p>
+</div>
+<hr />
+<h1 id="ecs连接方式">ECS连接方式</h1>
+<h2 id="workbench">Workbench</h2>
+<p>https://help.aliyun.com/zh/ecs/user-guide/workbench-overview/?spm=a2c4g.11186623.help-menu-25365.d_0_1_2_2.1d5f2d39yyqjS9&amp;scm=20140722.H_108412._.OR_help-T_cn~zh-V_1</p>
+<p>阿里云提供的浏览器远程连接方式。<br />
+需要设置Workbench的服务关联角色、RAM用户的使用Workbench的权限</p>
+<h2 id="vnc">VNC</h2>
+<p>https://help.aliyun.com/zh/ecs/user-guide/log-on-to-an-instance-by-using-vnc?spm=a2c4g.11186623.help-menu-25365.d_0_1_2_5.71a04079BdIdVZ</p>
+<p>故障排查的连接方式,不属于远程连接,直接进入linux实时页面</p>
+<h2 id="命令行">命令行</h2>
+<p>可以用命令行实现将无公网IP的ECS的22/3389端口port-forward到本地来连接。<br />
+https://help.aliyun.com/zh/ecs/user-guide/connect-to-an-instance-by-using-ali-instance-cli/</p>
+    </div>
+  </article>
+  <aside class="toc">
+    <p class="toc-label">本页目录</p>
+    <ul>
+  <li><a href="#虚拟化发展">虚拟化发展</a></li>
+  <li><a href="#云计算厂商起步年份">云计算厂商起步年份</a></li>
+  <li><a href="#云计算特点优势">云计算特点优势</a></li>
+  <li><a href="#云计算几大件">云计算几大件</a></li>
+  <li><a href="#寄居架构">寄居架构</a></li>
+  <li><a href="#裸金属架构">裸金属架构</a></li>
+  <li><a href="#阿里云弹性计算虚拟化架构的演进">阿里云弹性计算虚拟化架构的演进</a></li>
+  <li><a href="#计费模式">计费模式</a></li>
+  <li><a href="#ecs配件">ECS配件</a></li>
+  <li><a href="#实例规格族">实例规格族</a></li>
+  <li><a href="#选型推荐">选型推荐</a></li>
+  <li><a href="#运行状态">运行状态</a></li>
+  <li><a href="#workbench">Workbench</a></li>
+  <li><a href="#vnc">VNC</a></li>
+  <li><a href="#命令行">命令行</a></li>
+</ul>
+  </aside>
+
+</div>
+
+</main>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>Learning Notes</span>
+    <a href="https://github.com/hangx969/learning-notes">GitHub</a>
+  </div>
+</footer>
+<script src="../../../static/search.js"></script>
+</body>
+</html>

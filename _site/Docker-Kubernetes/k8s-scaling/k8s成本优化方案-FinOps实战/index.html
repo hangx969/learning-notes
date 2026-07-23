@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>K8s 集群成本优化方案：砍掉 60% 云账单 - Learning Notes</title>
+<link rel="stylesheet" href="../../../static/style.css">
+<link rel="stylesheet" href="../../../static/pygments.css">
+</head>
+<body data-root="../../../">
+<header class="site-header">
+  <div class="header-inner">
+    <a class="logo" href="../../../index.html"><span class="logo-mark"></span>LEARNING NOTES</a>
+    <div class="search">
+      <input id="search-input" type="search" placeholder="搜索笔记…" autocomplete="off" aria-label="搜索笔记">
+      <div id="search-results" hidden></div>
+    </div>
+  </div>
+  <nav class="topic-nav" aria-label="主题导航">
+    <div class="topic-nav-inner">
+      <a href="../../../AI/">AI</a>
+      <a href="../../../Aliyun/">Aliyun</a>
+      <a href="../../../Azure/">Azure</a>
+      <a href="../../../C%2B%2B/">C++</a>
+      <a href="../../../CloudComputing/">CloudComputing</a>
+      <a href="../../../Database/">Database</a>
+      <a href="../../../Docker-Kubernetes/" class="active">Docker-Kubernetes</a>
+      <a href="../../../GPU-DeepLearning/">GPU-DeepLearning</a>
+      <a href="../../../Git/">Git</a>
+      <a href="../../../Go/">Go</a>
+      <a href="../../../HPC/">HPC</a>
+      <a href="../../../IaC/">IaC</a>
+      <a href="../../../Linux-Shell/">Linux-Shell</a>
+      <a href="../../../Middlewares/">Middlewares</a>
+      <a href="../../../Networking/">Networking</a>
+      <a href="../../../OS/">OS</a>
+      <a href="../../../Python/">Python</a>
+      <a href="../../../SoftwareTesting/">SoftwareTesting</a>
+    </div>
+  </nav>
+</header>
+<main class="main">
+
+<div class="article-layout">
+
+  <aside class="sidebar">
+    <details class="sidebar-details">
+      <summary>Docker-Kubernetes</summary>
+      <nav class="sidebar-nav">
+        <p class="sidebar-group">CKA-CKS</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/CKA-CKS/CKA-%E5%A4%87%E8%80%83/">CKA 备考</a></li>
+          <li><a href="../../../Docker-Kubernetes/CKA-CKS/CKS-%E5%A4%87%E8%80%83/">CKS 备考</a></li>
+          <li><a href="../../../Docker-Kubernetes/CKA-CKS/k8s-%E9%9D%A2%E8%AF%95%E9%A2%98%E6%B1%87%E6%80%BB/">K8s 面试题汇总</a></li>
+        </ul>
+        <p class="sidebar-group">container-platform</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/container-platform/%E9%83%A8%E7%BD%B2openshift%283.10%29/">部署 OpenShift (3.10)</a></li>
+          <li><a href="../../../Docker-Kubernetes/container-platform/%E9%83%A8%E7%BD%B2%E8%BD%BB%E9%87%8F%E7%BA%A7%E7%9A%84K8S%E5%B9%B3%E5%8F%B0-K3S/">部署轻量级 K8S 平台 - K3S</a></li>
+        </ul>
+        <p class="sidebar-group">docker</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E5%9F%BA%E7%A1%80/">Docker基础</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E5%AE%89%E5%85%A8%E9%85%8D%E7%BD%AE-Capabilities%E4%B8%8E%E5%AE%B9%E5%99%A8%E5%8A%A0%E5%9B%BA/">Docker 安全配置详解：Capabilities 与容器加固</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2UI%E5%B7%A5%E5%85%B7portainer-%E9%83%A8%E7%BD%B2redis-sentinel/">Docker部署Portainer与Redis-Sentinel</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2gitlab/">Docker部署GitLab</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2lnmp%E7%BD%91%E7%AB%99/">Docker部署LNMP网站</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2loki/">Docker部署Loki日志系统</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2nginx-tomcat-httpd-go-python%E6%9C%8D%E5%8A%A1/">Docker部署Nginx-Tomcat-Httpd-Go-Python服务</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2prometheus-grafana-cAdvisior%E7%9B%91%E6%8E%A7/">Docker部署Prometheus-Grafana-cAdvisor监控</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2%E4%BB%93%E5%BA%93%E5%B9%B3%E5%8F%B0homebox/">Docker部署Homebox仓库平台</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1%E5%B7%A5%E5%85%B7gocron/">Docker部署GoCron定时任务工具</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2%E8%B7%AF%E7%94%B1%E7%9B%91%E6%8E%A7%E5%B7%A5%E5%85%B7NextTrace/">Docker部署NextTrace路由监控工具</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%85%8D%E7%BD%AENVIDIA%20GPU/">Docker配置NVIDIA GPU</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%85%8D%E7%BD%AE%E4%BB%A3%E7%90%86/">Docker配置代理</a></li>
+        </ul>
+        <p class="sidebar-group">harbor</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/harbor/harbor-basics/">Harbor 基础</a></li>
+          <li><a href="../../../Docker-Kubernetes/harbor/helm%E9%83%A8%E7%BD%B2harbor/">Helm 部署 Harbor</a></li>
+        </ul>
+        <p class="sidebar-group">helm-operator</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/helm-operator/helmv3-%E5%AE%89%E8%A3%85%E4%B8%8E%E4%BD%BF%E7%94%A8/">Helm v3 安装与使用</a></li>
+          <li><a href="../../../Docker-Kubernetes/helm-operator/helm%E9%83%A8%E7%BD%B2config-syncer%28kubed%29/">Helm 部署 Config Syncer (Kubed)</a></li>
+          <li><a href="../../../Docker-Kubernetes/helm-operator/helm%E9%83%A8%E7%BD%B2dragonfly/">Helm 部署 Dragonfly</a></li>
+          <li><a href="../../../Docker-Kubernetes/helm-operator/helm%E9%83%A8%E7%BD%B2pact-broker/">Helm 部署 Pact Broker</a></li>
+          <li><a href="../../../Docker-Kubernetes/helm-operator/helm%E9%83%A8%E7%BD%B2reloader/">Helm 部署 Reloader</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-CICD</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD%20Image%20Updater/">ArgoCD Image Updater</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD%E5%9F%BA%E7%A1%80/">ArgoCD基础</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD%E5%A4%9A%E9%9B%86%E7%BE%A4GitOps%E5%AE%9E%E6%88%98/">多集群 GitOps 实战：用 Argo CD 管理上百个 Kubernetes 集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD%E9%83%A8%E7%BD%B2Helm%E5%BA%94%E7%94%A8%E6%97%B6%E5%9F%9F%E5%90%8D%E8%A7%A3%E6%9E%90%E5%A4%B1%E8%B4%A5%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5%E4%B8%8E%E8%A7%A3%E5%86%B3/">ArgoCD部署Helm应用时域名解析失败问题排查与解决</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/ArgoCD/%E5%AD%A6%E4%B9%A0%E9%93%BE%E6%8E%A5/">ArgoCD学习链接</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Claude-Code%E5%AE%9E%E7%8E%B0CICD%E8%87%AA%E5%8A%A8%E5%8C%96%E5%8F%91%E5%B8%83%E6%B5%81%E7%A8%8B/">Claude Code 实现 CI/CD 自动化发布流程详细指南</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Gitlab/helm%E9%83%A8%E7%BD%B2gitlab/">Helm部署GitLab</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Gitlab/k8s%E9%83%A8%E7%BD%B2Gitlab%2811.8.1%29-%E5%9F%BA%E4%BA%8Eyaml/">K8s部署GitLab(11.8.1)-基于YAML</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Gitlab/%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%AE%89%E8%A3%85Gitlab%2817.9.8%29/">二进制安装GitLab(17.9.8)</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Jenkins/Jenkins%E8%AF%AD%E6%B3%95-%E5%9F%BA%E4%BA%8Edocker%E9%83%A8%E7%BD%B2/">Jenkins语法-基于Docker部署</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Jenkins/docker%E9%83%A8%E7%BD%B2jenkins/">Docker部署Jenkins</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Jenkins/helm%E9%83%A8%E7%BD%B2jenkins/">Helm部署Jenkins</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Jenkins/k8s-Devops%E5%B9%B3%E5%8F%B0%E8%90%BD%E5%9C%B0-%E5%9F%BA%E4%BA%8Ejenkins/">K8s DevOps平台落地-基于Jenkins</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Jenkins/k8s%E9%83%A8%E7%BD%B2%E5%9F%BA%E4%BA%8EJenkins%282.394%29%E7%9A%84DevOps%E5%B7%A5%E5%85%B7%E9%93%BE-%E5%9F%BA%E4%BA%8Eyaml/">K8s部署基于Jenkins(2.394)的DevOps工具链-基于YAML</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Jenkins/k8s%E9%83%A8%E7%BD%B2%E5%9F%BA%E4%BA%8EJenkins%282.426.3%29%E7%9A%84Devops%E5%B7%A5%E5%85%B7%E9%93%BE-%E5%9F%BA%E4%BA%8Eyaml/">K8s部署基于Jenkins(2.426.3)的DevOps工具链-基于YAML</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Jenkins/%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%AE%89%E8%A3%85Jenkins%282.319%29/">二进制安装Jenkins(2.319)</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Kustomize/k8s%E9%85%8D%E7%BD%AE%E5%AE%9A%E5%88%B6%E5%B7%A5%E5%85%B7-kustomize/">K8s配置定制工具-Kustomize</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Tekton/k8s%E9%83%A8%E7%BD%B2%E5%8E%9F%E7%94%9F%E7%9A%84CICD%E5%B7%A5%E5%85%B7Tekton-%E5%9F%BA%E4%BA%8Eyaml/">K8s部署原生的CICD工具Tekton-基于YAML</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Tekton/%E5%9F%BA%E4%BA%8ETekton%E7%9A%84%E4%BA%91%E5%8E%9F%E7%94%9F%E5%B9%B3%E5%8F%B0%E8%90%BD%E5%9C%B0/">基于Tekton的云原生平台落地</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/k8s%E5%8F%91%E5%B8%83%E7%AD%96%E7%95%A5-%E8%93%9D%E7%BB%BF%E9%83%A8%E7%BD%B2%E4%B8%8E%E9%87%91%E4%B8%9D%E9%9B%80%E5%8F%91%E5%B8%83/">K8s 发布策略：蓝绿部署与金丝雀发布实战</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/%E4%BD%BF%E7%94%A8github%20action%E9%83%A8%E7%BD%B2helmchart/">使用GitHub Action部署Helm Chart</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/%E5%8F%91%E5%B8%83go-python-java%E4%BB%A3%E7%A0%81%E5%88%B0K8S%E7%8E%AF%E5%A2%83/">发布Go/Python/Java代码到K8S环境</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-UI-tools</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-UI-tools/k8s-API%E6%A3%80%E6%9F%A5%E5%B7%A5%E5%85%B7kubent/">K8s API 检查工具 kubent</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-UI-tools/k8s-%E5%B0%8F%E5%B7%A5%E5%85%B7%E9%9B%86%E5%90%88/">K8s 小工具集合</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-UI-tools/k8s%E9%83%A8%E7%BD%B2-Dashboard-UI/">K8s 部署 Dashboard UI</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-UI-tools/k8s%E9%83%A8%E7%BD%B2%E5%8F%AF%E8%A7%86%E5%8C%96ui%E7%95%8C%E9%9D%A2kuboard/">K8s 部署 Kuboard</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-UI-tools/kubectl-UI%E5%B7%A5%E5%85%B7Lens/">kubectl UI 工具 Lens</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-UI-tools/kubectl-%E5%8F%AF%E8%A7%86%E5%8C%96%E6%8F%92%E4%BB%B6k9s-stern/">kubectl 可视化插件 k9s 和 stern</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-UI-tools/kuebctl-%E6%8F%92%E4%BB%B6krew-rolesum/">kubectl 插件 krew 和 rolesum</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-UI-tools/rancher%28v2.6.4%29%E7%AE%A1%E7%90%86k8s%E9%9B%86%E7%BE%A4/">Rancher (v2.6.4) 管理 K8s 集群</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-ai-gpu</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-ai-gpu/k8s%E9%85%8D%E7%BD%AENVIDIA%20GPU/">K8s 配置 NVIDIA GPU</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-backup-dr</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-backup-dr/k8s%E5%A4%87%E4%BB%BD%E4%B8%8E%E7%81%BE%E5%A4%87%E5%AE%9E%E6%88%98-%E4%B8%89%E5%B1%82%E5%AE%B9%E7%81%BE%E6%9E%B6%E6%9E%84/">K8s 备份与灾备实战：三层容灾架构</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-backup-dr/k8s%E9%9B%86%E7%BE%A4%E5%A4%87%E4%BB%BD%E6%81%A2%E5%A4%8D-Velero/">K8s集群备份恢复 - Velero</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-basic-resources</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/K8s%E5%9F%BA%E7%A1%80-pod%E8%B0%83%E5%BA%A6-%E4%BA%B2%E5%92%8C%E5%8A%9B/">K8s基础-Pod调度-亲和力</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/Python%E8%B0%83%E7%94%A8k8s-api%E5%AE%9E%E7%8E%B0%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/">Python调用K8s-API实现资源管理</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s-APIServer%E6%B7%B1%E5%BA%A6%E5%89%96%E6%9E%90-%E8%AF%B7%E6%B1%82%E9%93%BE%E8%B7%AF-%E8%AE%A4%E8%AF%81%E6%8E%88%E6%9D%83-%E7%94%9F%E4%BA%A7%E8%B0%83%E4%BC%98/">Kubernetes API Server 深度剖析：请求链路、认证授权与生产调优</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s-PodDisruptionBudget%E5%AE%9E%E6%88%98/">K8s PodDisruptionBudget 实战：优雅中断保护</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-Calico/">K8s基础-Calico</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-Finalizer%E4%B8%8E%E8%B5%84%E6%BA%90%E5%88%A0%E9%99%A4/">K8s基础-Finalizer与资源删除</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-Operator%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98-Kubebuilder/">从零开发 Kubernetes Operator：Kubebuilder 实战教程</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-Service/">K8s基础-Service</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-configMap-Secret/">K8s基础-configMap-Secret</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-daemonset/">K8s基础-DaemonSet</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-deployment/">K8s基础-Deployment</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-ingress/">K8s基础-Ingress</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-job-cronjob/">K8s基础-Job-CronJob</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-kubeadm/">K8s基础-kubeadm</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-namespace-%E8%B5%84%E6%BA%90%E5%88%86%E9%85%8D/">K8s基础-namespace-资源分配</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-pod/">K8s基础-Pod</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-pod%E8%B0%83%E5%BA%A6-%E6%A0%87%E7%AD%BE%E4%B8%8E%E9%80%89%E6%8B%A9%E5%99%A8%E5%AE%9E%E6%88%98/">Kubernetes 标签与选择器避坑：5 条核心铁律与生产级实战案例</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-statefulset/">K8s基础-StatefulSet</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-storage/">K8s基础-Storage</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-yaml/">K8s基础-YAML</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E4%B8%B4%E6%97%B6%E5%AE%B9%E5%99%A8ephemeral/">K8s基础-临时容器Ephemeral</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E5%AE%B9%E5%99%A8%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-Sidecar-Init-Ambassador-Adapter/">K8s 容器设计模式：Sidecar / Init Container / Ambassador / Adapter</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E5%AE%B9%E5%99%A8%E8%BF%90%E8%A1%8C%E6%97%B6-containerd/">K8s基础-容器运行时-containerd</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E6%9E%B6%E6%9E%84-%E7%BB%84%E4%BB%B6-%E8%B5%84%E6%BA%90/">K8s基础-架构-组件-资源</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E8%87%AA%E5%AE%9A%E4%B9%89CRD%E8%B5%84%E6%BA%90/">K8s基础-自定义CRD资源</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E8%AE%A4%E8%AF%81-%E6%8E%88%E6%9D%83-%E5%87%86%E5%85%A5/">K8s基础-认证-授权-准入</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-db-middleware</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/Operator%E9%83%A8%E7%BD%B2Redis%E9%9B%86%E7%BE%A4/">基于Operator部署Redis集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/Operator%E9%83%A8%E7%BD%B2mysql%E9%9B%86%E7%BE%A4/">Operator部署MySQL NDB集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/helm%E9%83%A8%E7%BD%B2mysql/">Helm部署MySQL</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/helm%E9%83%A8%E7%BD%B2postgreSQL/">Helm部署PostgreSQL</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/helm%E9%83%A8%E7%BD%B2rabbitmq-ha/">Helm部署RabbitMQ高可用集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/helm%E9%83%A8%E7%BD%B2strimzi-kafka/">Helm部署Strimzi Kafka</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/k8s%E5%9F%BA%E4%BA%8Eyaml%E9%83%A8%E7%BD%B2MongoDB%E9%9B%86%E7%BE%A4/">K8s基于YAML部署MongoDB集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/k8s%E5%9F%BA%E4%BA%8Eyaml%E9%83%A8%E7%BD%B2httpd%E6%9C%8D%E5%8A%A1/">K8s基于YAML部署httpd服务</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/k8s%E5%9F%BA%E4%BA%8Eyaml%E9%83%A8%E7%BD%B2mysql%E4%B8%BB%E4%BB%8E%E9%AB%98%E5%8F%AF%E7%94%A8/">K8s基于YAML部署MySQL主从高可用</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/k8s%E5%9F%BA%E4%BA%8Eyaml%E9%83%A8%E7%BD%B2redis%E9%9B%86%E7%BE%A4/">K8s基于YAML部署Redis集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/k8s%E9%83%A8%E7%BD%B2springcloud%E7%94%B5%E5%95%86%E9%A1%B9%E7%9B%AE/">K8s部署SpringCloud电商项目</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-installation-management</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/2025%E6%9C%80%E6%96%B0-%E4%BC%81%E4%B8%9A%E7%BA%A7%E9%AB%98%E5%8F%AF%E7%94%A8%E9%9B%86%E7%BE%A4-%E5%9F%BA%E4%BA%8Erockylinux/">2025最新-企业级高可用集群-基于rockylinux</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/etcd%E9%AB%98%E5%8F%AF%E7%94%A8%E9%85%8D%E7%BD%AE%E4%BB%A5%E5%8F%8A%E6%A8%A1%E6%8B%9F%E9%9B%86%E7%BE%A4%E6%95%85%E9%9A%9C%E5%92%8C%E6%81%A2%E5%A4%8D/">etcd高可用配置以及模拟集群故障和恢复</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/k8s-Backstage-%E5%86%85%E9%83%A8%E5%BC%80%E5%8F%91%E8%80%85%E5%B9%B3%E5%8F%B0IDP%E5%AE%9E%E6%88%98/">K8s 平台工程实战：用 Backstage 打造一站式内部开发者平台</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/k8s-cgroup-v2%E6%B7%B1%E5%BA%A6%E8%A7%A3%E6%9E%90-%E8%BF%81%E7%A7%BB%E5%AE%9E%E6%88%98%E4%B8%8E%E9%81%BF%E5%9D%91%E6%8C%87%E5%8D%97/">K8s CGroup v2 深度解析：资源隔离原理、迁移实战与生产避坑指南</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/k8s%E4%B8%A4%E5%9C%B0%E4%B8%89%E4%B8%AD%E5%BF%83%E6%9E%B6%E6%9E%84/">k8s两地三中心架构</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/k8s%E5%A4%9A%E9%9B%86%E7%BE%A4kubeconfig%E7%AE%A1%E7%90%86/">k8s多集群kubeconfig管理</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/k8s%E6%95%85%E9%9A%9C%E6%8E%92%E6%9F%A5%E6%8C%87%E5%8D%97/">k8s故障排查指南</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/k8s%E7%94%9F%E4%BA%A7%E7%8E%AF%E5%A2%83%E4%BC%98%E5%8C%96%E4%B8%8E%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/">k8s生产环境优化与最佳实践</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/k8s%E9%83%A8%E7%BD%B2%E9%98%B2%E7%81%AB%E5%A2%99%E7%AB%AF%E5%8F%A3%E9%85%8D%E7%BD%AE/">K8s部署防火墙端口配置</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/latest-version/%E5%AE%89%E8%A3%85k8s-1.35-%E5%9F%BA%E4%BA%8Erockylinux10-%E6%9C%80%E6%96%B0%E6%AD%A5%E9%AA%A4/">在 Rocky Linux 10 上安装 Kubernetes 1.35</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%AE%89%E8%A3%85k8s%E9%AB%98%E5%8F%AF%E7%94%A8%E9%9B%86%E7%BE%A4/">二进制安装k8s高可用集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.20.6-%E9%AB%98%E5%8F%AF%E7%94%A8/">安装k8s-1.20.6-高可用</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.23/">安装k8s-1.23</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.26-1.27/">安装k8s-1.26-1.27</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.28/">安装k8s-1.28</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.30-%E5%9F%BA%E4%BA%8Erockylinux/">安装k8s-1.30-基于rockylinux</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.32-%E5%9F%BA%E4%BA%8Erockylinux/">安装k8s-1.32-基于rockylinux</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.33-%E5%9F%BA%E4%BA%8Erockylinux-%E6%9C%80%E6%96%B0%E6%AD%A5%E9%AA%A4/">安装k8s-1.33-基于rockylinux-最新步骤</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/%E5%8D%87%E7%BA%A7/k8s-1.37-%E5%8D%87%E7%BA%A7%E9%A1%BB%E7%9F%A5-breaking-changes/">Kubernetes v1.37 升级破坏性变更指南</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/%E5%8D%87%E7%BA%A7/k8s%E8%BF%81%E7%A7%BB%E5%AE%B9%E5%99%A8%E8%BF%90%E8%A1%8C%E6%97%B6-%E7%89%88%E6%9C%AC%E5%8D%87%E7%BA%A7/">k8s迁移容器运行时与版本升级</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-monitoring-logging</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/K8s%E5%85%A8%E9%9D%A2%E5%B7%A1%E6%A3%80%E8%84%9A%E6%9C%AC-%E7%94%9F%E6%88%90HTML%E5%81%A5%E5%BA%B7%E6%8A%A5%E5%91%8A/">K8s 全面巡检脚本：一键生成 HTML 健康报告</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/OpenTelemetry%E5%AE%9E%E6%88%98-%E7%BB%9F%E4%B8%80Traces-Metrics-Logs/">OpenTelemetry 实战：告别厂商锁定，统一 Traces/Metrics/Logs</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/Prometheus%E5%9F%BA%E7%A1%80/">Prometheus基础</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/Prometheus%E7%9B%91%E6%8E%A7k8s%E7%B3%BB%E7%BB%9F%E7%BB%84%E4%BB%B6/">Prometheus监控K8s系统组件</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/Prometheus%E7%9B%91%E6%8E%A7%E5%A4%96%E9%83%A8k8s%E9%9B%86%E7%BE%A4/">Prometheus监控外部K8s集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/Prometheus%E7%9B%91%E6%8E%A7%E9%9D%9E%E4%BA%91%E5%8E%9F%E7%94%9F%E5%BA%94%E7%94%A8-%E4%B8%BB%E6%9C%BA/">Prometheus监控非云原生应用-主机</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/helm%E9%83%A8%E7%BD%B2Loki-promtail-tempo-grafanaAgent%E5%85%A8%E5%AE%B6%E6%A1%B6/">Helm部署Loki+Promtail+Tempo+GrafanaAgent全家桶</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/helm%E9%83%A8%E7%BD%B2jaeger/">Helm部署Jaeger</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/helm%E9%83%A8%E7%BD%B2prometheus-stack%E5%85%A8%E5%AE%B6%E6%A1%B6/">Prometheus-Stack 全家桶：生产级部署与运维完全指南</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E6%97%A5%E5%BF%97%E7%AE%A1%E7%90%86-%E9%87%87%E9%9B%86%E6%96%B9%E6%A1%88%E4%B8%8E%E5%AE%A1%E8%AE%A1%E6%97%A5%E5%BF%97/">K8s 日志管理：基础机制、六种采集方案与审计日志实战</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E7%9B%91%E6%8E%A7EFK%2Blogstash%2Bkafka/">K8s监控EFK+logstash+kafka</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E7%9B%91%E6%8E%A7ES%287.2%29%2BKibana%287.2%29%2BFluentd%28v1.4.2%29/">K8s监控ES(7.2)+Kibana(7.2)+Fluentd(v1.4.2)</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E7%9B%91%E6%8E%A7Prometheus%28v2.2.1%29/">K8s监控Prometheus(v2.2.1)</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E7%9B%91%E6%8E%A7Prometheus%28v2.33.5%29%2BGrafana%28v8.4.5%29/">K8s监控Prometheus(v2.33.5)+Grafana(v8.4.5)</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E7%9B%91%E6%8E%A7alertmanager%28v0.14.0%29/">K8s监控Alertmanager(v0.14.0)</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E9%83%A8%E7%BD%B2elasticsearch%E9%9B%86%E7%BE%A4/">K8s部署Elasticsearch集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E9%83%A8%E7%BD%B2grafana%28v5.0.4%29/">K8s部署Grafana(v5.0.4)</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E9%83%A8%E7%BD%B2%E5%85%A8%E9%93%BE%E8%B7%AF%E8%BF%BD%E8%B8%AA-Skywalking/">K8s部署全链路追踪-Skywalking</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2Prometheus%28v2.32.1%29%E8%81%94%E9%82%A6%E9%9B%86%E7%BE%A4/">二进制部署Prometheus(v2.32.1)联邦集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2efk%2Blogstash%2Bkafka%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%B9%B3%E5%8F%B0/">二进制部署EFK+Logstash+Kafka日志收集平台</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2prometheus-grafana-nodeexporter/">二进制部署Prometheus-Grafana-NodeExporter</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/%E5%9F%BA%E4%BA%8Ehelm%2Boperator%E9%83%A8%E7%BD%B2ECK%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%B9%B3%E5%8F%B0/">基于Helm+Operator部署ECK日志收集平台</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-networking-service-mesh</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/Istio-Sidecar-vs-Ambient/">Istio Sidecar vs Ambient 模式对比</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/helm%E5%AE%89%E8%A3%85istio/">Helm安装Istio</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/helm%E9%83%A8%E7%BD%B2external-dns/">Helm部署External-DNS</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/helm%E9%83%A8%E7%BD%B2ingress-nginx/">Helm部署Ingress-Nginx</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/helm%E9%83%A8%E7%BD%B2tomcat/">Helm 部署 Tomcat</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/k8s-Gateway-API%E5%85%A5%E9%97%A8-Ingress%E4%B8%8B%E4%B8%80%E4%BB%A3%E6%96%B9%E6%A1%88/">Kubernetes Gateway API 入门：Ingress 的下一代方案</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/k8s%E7%B2%BE%E7%BB%86%E5%8C%96%E6%B5%81%E9%87%8F%E7%AE%A1%E7%90%86-istio/">K8s精细化流量管理-Istio</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/k8s%E9%83%A8%E7%BD%B2istio%281.13.1%29/">K8s部署Istio(1.13.1)</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/k8s%E9%9B%86%E7%BE%A4%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/">K8s集群网络安全</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/%E4%BC%81%E4%B8%9A%E9%A1%B9%E7%9B%AE%E6%8E%A5%E5%85%A5istio%E5%AE%9E%E6%88%98/">企业项目接入Istio实战</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-scaling</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-scaling/KEDA-vs-HPA-2026%E7%BB%88%E6%9E%81%E5%AF%B9%E6%AF%94-v1.36%E7%BC%A9%E9%9B%B6/">KEDA vs HPA 2026 终极对比：v1.36 原生缩零后该选谁？</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-scaling/helm%E9%83%A8%E7%BD%B2goldilocks/">Helm部署Goldilocks</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-scaling/helm%E9%83%A8%E7%BD%B2vpa/">Helm部署VPA</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-scaling/k8s-HPA-VPA/">K8s HPA与VPA</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-scaling/k8s-%E5%9F%BA%E4%BA%8EKEDA%E7%9A%84%E5%BC%B9%E6%80%A7%E8%83%BD%E5%8A%9B/">K8s基于KEDA的弹性能力</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-scaling/k8s%E6%88%90%E6%9C%AC%E4%BC%98%E5%8C%96%E6%96%B9%E6%A1%88-FinOps%E5%AE%9E%E6%88%98/" class="current">K8s 集群成本优化方案：砍掉 60% 云账单</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-security-auth</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2capsule/">Helm部署Capsule</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2certmanager/">Helm部署Cert-Manager</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2external-secrets/">Helm部署External-Secrets</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2kyverno%E5%92%8Cpolicy-reporter/">Helm部署Kyverno和Policy-Reporter</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2oauth2proxy/">Helm部署OAuth2-Proxy</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2sonarqube/">Helm部署SonarQube</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2trivy-operator/">Helm部署Trivy-Operator</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/k8s-Admission-Webhook%E9%93%BE%E5%86%B2%E7%AA%81%E6%8E%92%E6%9F%A5-Istio-Kyverno-Gatekeeper/">当 Istio、Kyverno、Gatekeeper 三个 Webhook 同时存在，你的集群会发生什么？</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/k8s%E5%AE%B9%E5%99%A8%E5%AE%89%E5%85%A8%E4%B8%8A%E4%B8%8B%E6%96%87-SecurityContext/">Kubernetes 容器安全上下文完全指南：从入门到生产避坑</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-springcloud</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-springcloud/SpringCloud%E9%A1%B9%E7%9B%AE%E8%BF%81%E7%A7%BB%E5%88%B0k8s%E5%AE%9E%E6%88%98/">SpringCloud 项目迁移到 K8s 实战</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-storage</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-storage/helm%E9%83%A8%E7%BD%B2nfs-subdir-external-provisioner/">Helm部署NFS Subdir External Provisioner</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-storage/k8s-ceph%E9%83%A8%E7%BD%B2%E4%B8%8E%E9%9B%86%E6%88%90/">K8s Ceph部署与集成</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-storage/k8s-%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8CubeFS/">K8s分布式存储CubeFS</a></li>
+        </ul>
+        <p class="sidebar-group">kubeblocks</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/kubeblocks/kubeblocks%E9%83%A8%E7%BD%B2WordPress/">KubeBlocks 部署 WordPress</a></li>
+          <li><a href="../../../Docker-Kubernetes/kubeblocks/kubeblocks%E9%83%A8%E7%BD%B2%E9%AB%98%E5%8F%AF%E7%94%A8harbor%E9%9B%86%E7%BE%A4/">KubeBlocks 部署高可用 Harbor 集群</a></li>
+        </ul>
+        <p class="sidebar-group">其他</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/%E7%AE%80%E5%8E%86%E6%8C%87%E5%8D%97/">简历指南</a></li>
+        </ul>
+      </nav>
+    </details>
+  </aside>
+
+  <article class="article">
+    <nav class="breadcrumb">
+      <a href="../../../index.html">首页</a><span>/</span>
+      <a href="../../../Docker-Kubernetes/">Docker-Kubernetes</a><span>/</span><span>k8s-scaling</span>
+    </nav>
+    <h1 class="article-title">K8s 集群成本优化方案：砍掉 60% 云账单</h1>
+    <p class="article-meta"><span>更新于 2026-05-22</span>
+      <a href="https://github.com/hangx969/learning-notes/blob/main/Docker-Kubernetes/k8s-scaling/k8s%E6%88%90%E6%9C%AC%E4%BC%98%E5%8C%96%E6%96%B9%E6%A1%88-FinOps%E5%AE%9E%E6%88%98.md">查看源文件</a>
+    </p>
+    <div class="article-body">
+<blockquote>
+<p>你的 K8s 集群每月账单是不是像脱缰野马一样失控？Pod 里 request 设了 8 核实际只用了 0.5 核？半夜跑的批处理还占着 32G 内存？</p>
+</blockquote>
+<hr />
+<h2 id="一为什么-k8s-成本优化到了必须做的地步">一、为什么 K8s 成本优化到了必须做的地步？</h2>
+<p>根据 Flexera 2026 年最新报告，<strong>73% 的企业在 Kubernetes 上存在超过 30% 的资源浪费</strong>，平均浪费率高达 <strong>45%</strong>。</p>
+<p>浪费主要来自四大黑洞：</p>
+<table>
+<thead>
+<tr>
+<th>浪费类型</th>
+<th>占比</th>
+<th>典型场景</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>过度配置</strong></td>
+<td>40%</td>
+<td>Request/Limit 设为峰值 3-5 倍</td>
+</tr>
+<tr>
+<td><strong>空闲资源</strong></td>
+<td>30%</td>
+<td>开发/测试环境 7×24 运行</td>
+</tr>
+<tr>
+<td><strong>僵尸资源</strong></td>
+<td>15%</td>
+<td>废弃 Deployment/未清理 PV</td>
+</tr>
+<tr>
+<td><strong>碎片化浪费</strong></td>
+<td>15%</td>
+<td>节点碎片导致无法调度</td>
+</tr>
+</tbody>
+</table>
+<p>更致命的是，这些浪费是<strong>隐性的</strong>——不监控根本看不到。</p>
+<hr />
+<h2 id="二第一层优化资源-right-sizing省-20-40">二、第一层优化：资源 Right-Sizing（省 20%-40%）</h2>
+<h3 id="21-问题诊断集群到底浪费了多少">2.1 问题诊断：集群到底浪费了多少？</h3>
+<p>快速扫描集群资源利用率的脚本：</p>
+<div class="highlight"><pre><span></span><code><span class="ch">#!/bin/bash</span>
+<span class="c1"># k8s-cost-audit.sh — 快速诊断集群资源浪费</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;=== Namespace CPU 利用率 ===&quot;</span>
+kubectl<span class="w"> </span>top<span class="w"> </span>pods<span class="w"> </span>-A<span class="w"> </span>--no-headers<span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">&#39;{</span>
+<span class="s1">  ns=$1; pod=$2;</span>
+<span class="s1">  split($3,cpu,&quot;m&quot;); usage=cpu[1]/1000;</span>
+<span class="s1">  printf &quot;%s/%s: %.2f cores\n&quot;, ns, pod, usage</span>
+<span class="s1">}&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>sort<span class="w"> </span>-t:<span class="w"> </span>-k2<span class="w"> </span>-rn<span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-20
+
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;=== Namespace 内存利用率 (Top 20) ===&quot;</span>
+kubectl<span class="w"> </span>top<span class="w"> </span>pods<span class="w"> </span>-A<span class="w"> </span>--no-headers<span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">&#39;{</span>
+<span class="s1">  ns=$1; pod=$2;</span>
+<span class="s1">  split($4,mem,&quot;Mi&quot;); usage=mem[1];</span>
+<span class="s1">  printf &quot;%s/%s: %.0f Mi\n&quot;, ns, pod, usage</span>
+<span class="s1">}&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>sort<span class="w"> </span>-t:<span class="w"> </span>-k2<span class="w"> </span>-rn<span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-20
+
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;=== Pod Request vs 实际使用对比 ===&quot;</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-A<span class="w"> </span>-o<span class="w"> </span>json<span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span>-r<span class="w"> </span><span class="s1">&#39;</span>
+<span class="s1">  .items[] | select(.status.phase==&quot;Running&quot;) |</span>
+<span class="s1">  &quot;\(.metadata.namespace)/\(.metadata.name) | CPU Req: \(.spec.containers[].resources.requests.cpu // &quot;none&quot;) | Mem Req: \(.spec.containers[].resources.requests.memory // &quot;none&quot;)&quot;</span>
+<span class="s1">&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-30
+</code></pre></div>
+
+<h3 id="22-vpa-自动垂直伸缩">2.2 VPA 自动垂直伸缩</h3>
+<p>VPA 是 Right-Sizing 的核心武器，根据历史数据自动推荐和调整 Pod 的 CPU/内存 Request。</p>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">autoscaling.k8s.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">VerticalPodAutoscaler</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">web-app-vpa</span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">production</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">targetRef</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">apps/v1</span>
+<span class="w">    </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Deployment</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">web-app</span>
+<span class="w">  </span><span class="nt">updatePolicy</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">updateMode</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Auto&quot;</span>
+<span class="w">  </span><span class="nt">resourcePolicy</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">containerPolicies</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">containerName</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;*&quot;</span>
+<span class="w">        </span><span class="nt">minAllowed</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100m</span>
+<span class="w">          </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">128Mi</span>
+<span class="w">        </span><span class="nt">maxAllowed</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;4&quot;</span>
+<span class="w">          </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8Gi</span>
+<span class="w">        </span><span class="nt">controlledResources</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;cpu&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;memory&quot;</span><span class="p p-Indicator">]</span>
+</code></pre></div>
+
+<p>VPA 四种模式对比：</p>
+<table>
+<thead>
+<tr>
+<th>模式</th>
+<th>行为</th>
+<th>适用场景</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Off</code></td>
+<td>仅生成推荐，不修改 Pod</td>
+<td>评估阶段，安全无风险</td>
+</tr>
+<tr>
+<td><code>Initial</code></td>
+<td>仅在 Pod 创建时应用推荐</td>
+<td>新部署 + 金丝雀</td>
+</tr>
+<tr>
+<td><code>Recreate</code></td>
+<td>重启 Pod 应用推荐</td>
+<td>非关键服务</td>
+</tr>
+<tr>
+<td><code>Auto</code></td>
+<td>自动驱逐并重建 Pod</td>
+<td>可容忍短暂中断的服务</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>生产避坑</strong>：VPA 与 HPA（基于 CPU/内存）<strong>不要同时使用在同一指标上</strong>，否则会互相打架。正确做法是 HPA 管自定义指标（QPS/延迟），VPA 管 CPU/内存。</p>
+</blockquote>
+<h3 id="23-vpa-hpa-黄金组合架构">2.3 VPA + HPA 黄金组合架构</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># 最佳实践：VPA 管 CPU/内存，HPA 管业务指标</span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">autoscaling.k8s.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">VerticalPodAutoscaler</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">api-server-vpa</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">targetRef</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">apps/v1</span>
+<span class="w">    </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Deployment</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">api-server</span>
+<span class="w">  </span><span class="nt">updatePolicy</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">updateMode</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Auto&quot;</span>
+<span class="nn">---</span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">autoscaling/v2</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">HorizontalPodAutoscaler</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">api-server-hpa</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">scaleTargetRef</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">apps/v1</span>
+<span class="w">    </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Deployment</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">api-server</span>
+<span class="w">  </span><span class="nt">minReplicas</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
+<span class="w">  </span><span class="nt">maxReplicas</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">20</span>
+<span class="w">  </span><span class="nt">metrics</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Pods</span>
+<span class="w">      </span><span class="nt">pods</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">metric</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">http_requests_per_second</span><span class="w">  </span><span class="c1"># HPA 管业务指标</span>
+<span class="w">        </span><span class="nt">target</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AverageValue</span>
+<span class="w">          </span><span class="nt">averageValue</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;1000&quot;</span>
+</code></pre></div>
+
+<hr />
+<h2 id="三第二层优化节点效率最大化省-20-30">三、第二层优化：节点效率最大化（省 20%-30%）</h2>
+<h3 id="31-karpenter-替代-cluster-autoscaler">3.1 Karpenter 替代 Cluster Autoscaler</h3>
+<p>2026 年，<strong>Karpenter 已经全面超越 Cluster Autoscaler</strong>，成为节点自动伸缩的首选方案：</p>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>Cluster Autoscaler</th>
+<th>Karpenter</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>扩容速度</strong></td>
+<td>30-60 秒</td>
+<td>5-15 秒（直接调用 EC2 API）</td>
+</tr>
+<tr>
+<td><strong>节点类型</strong></td>
+<td>需预定义 ASG</td>
+<td>支持任意实例类型组合</td>
+</tr>
+<tr>
+<td><strong>Consolidation</strong></td>
+<td>仅缩容空节点</td>
+<td>主动替换低效节点</td>
+</tr>
+<tr>
+<td><strong>成本优化</strong></td>
+<td>被动缩容</td>
+<td>主动 Spot/按需混合</td>
+</tr>
+<tr>
+<td><strong>Bin-Packing</strong></td>
+<td>ASG 粒度</td>
+<td>Pod 粒度精准匹配</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight"><pre><span></span><code><span class="c1"># 生产级 Karpenter 配置</span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">karpenter.sh/v1beta1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Provisioner</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">production-provisioner</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">requirements</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">karpenter.sh/capacity-type</span>
+<span class="w">      </span><span class="nt">operator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">In</span>
+<span class="w">      </span><span class="nt">values</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;spot&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;on-demand&quot;</span><span class="p p-Indicator">]</span><span class="w">  </span><span class="c1"># Spot 优先</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kubernetes.io/arch</span>
+<span class="w">      </span><span class="nt">operator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">In</span>
+<span class="w">      </span><span class="nt">values</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;amd64&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">node.kubernetes.io/instance-type</span>
+<span class="w">      </span><span class="nt">operator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">In</span>
+<span class="w">      </span><span class="nt">values</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;m6i.large&quot;</span><span class="w">        </span><span class="c1"># 通用计算</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;m6i.xlarge&quot;</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;r6i.large&quot;</span><span class="w">        </span><span class="c1"># 内存密集</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;c6i.2xlarge&quot;</span><span class="w">      </span><span class="c1"># CPU 密集</span>
+<span class="w">  </span><span class="nt">ttlSecondsAfterEmpty</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">60</span><span class="w">          </span><span class="c1"># 空节点 60 秒后回收</span>
+<span class="w">  </span><span class="nt">ttlSecondsUntilExpired</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">604800</span><span class="w">    </span><span class="c1"># 节点最长存活 7 天（滚动更新）</span>
+<span class="w">  </span><span class="nt">limits</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">resources</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;1000&quot;</span>
+<span class="w">      </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2000Gi</span>
+<span class="w">  </span><span class="nt">consolidation</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w">                   </span><span class="c1"># 开启主动合并</span>
+<span class="w">  </span><span class="nt">providerRef</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
+</code></pre></div>
+
+<h3 id="32-spot-实例策略砍-60-70-计算成本">3.2 Spot 实例策略（砍 60%-70% 计算成本）</h3>
+<p>Spot 实例是成本优化的核武器，关键是<strong>正确处理中断</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Pod</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">batch-processor</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">affinity</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">nodeAffinity</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">preferredDuringSchedulingIgnoredDuringExecution</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">weight</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100</span>
+<span class="w">          </span><span class="nt">preference</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">matchExpressions</span><span class="p">:</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">karpenter.sh/capacity-type</span>
+<span class="w">                </span><span class="nt">operator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">In</span>
+<span class="w">                </span><span class="nt">values</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;spot&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="nt">terminationGracePeriodSeconds</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30</span>
+<span class="w">  </span><span class="nt">containers</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">worker</span>
+<span class="w">      </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-batch-processor:v1.2</span>
+<span class="w">      </span><span class="nt">lifecycle</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">preStop</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">exec</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;/bin/sh&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;-c&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;echo</span><span class="nv"> </span><span class="s">&#39;Shutting</span><span class="nv"> </span><span class="s">down</span><span class="nv"> </span><span class="s">gracefully...&#39;</span><span class="nv"> </span><span class="s">&amp;&amp;</span><span class="nv"> </span><span class="s">sleep</span><span class="nv"> </span><span class="s">10&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">      </span><span class="nt">resources</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">requests</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;2&quot;</span>
+<span class="w">          </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;4Gi&quot;</span>
+<span class="w">        </span><span class="nt">limits</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;4&quot;</span>
+<span class="w">          </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;8Gi&quot;</span>
+</code></pre></div>
+
+<h3 id="33-topology-spread-防止单节点故障">3.3 Topology Spread 防止单节点故障</h3>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">apps/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Deployment</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">web-frontend</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">replicas</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">6</span>
+<span class="w">  </span><span class="nt">template</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">spec</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">topologySpreadConstraints</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">maxSkew</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="w">          </span><span class="nt">topologyKey</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">topology.kubernetes.io/zone</span>
+<span class="w">          </span><span class="nt">whenUnsatisfiable</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">DoNotSchedule</span>
+<span class="w">          </span><span class="nt">labelSelector</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">matchLabels</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">web-frontend</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">maxSkew</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span>
+<span class="w">          </span><span class="nt">topologyKey</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kubernetes.io/hostname</span>
+<span class="w">          </span><span class="nt">whenUnsatisfiable</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ScheduleAnyway</span>
+<span class="w">          </span><span class="nt">labelSelector</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">matchLabels</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">web-frontend</span>
+</code></pre></div>
+
+<hr />
+<h2 id="四第三层优化工作负载调度策略省-10-20">四、第三层优化：工作负载调度策略（省 10%-20%）</h2>
+<h3 id="41-非生产环境定时开关">4.1 非生产环境定时开关</h3>
+<p>这是<strong>投入产出比最高</strong>的优化。开发和测试环境不需要 7×24 运行：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 工作日 20:00 缩容</span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">batch/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CronJob</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">scale-down-dev-after-hours</span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dev</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">schedule</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;0</span><span class="nv"> </span><span class="s">20</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">1-5&quot;</span>
+<span class="w">  </span><span class="nt">concurrencyPolicy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Forbid</span>
+<span class="w">  </span><span class="nt">jobTemplate</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">spec</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">template</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">spec</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">serviceAccountName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">scaler-sa</span>
+<span class="w">          </span><span class="nt">containers</span><span class="p">:</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">scaler</span>
+<span class="w">              </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">bitnami/kubectl:1.31</span>
+<span class="w">              </span><span class="nt">command</span><span class="p">:</span>
+<span class="w">                </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kubectl</span>
+<span class="w">                </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">scale</span>
+<span class="w">                </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">deployment</span>
+<span class="w">                </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">--all</span>
+<span class="w">                </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">--replicas=0</span>
+<span class="w">                </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">-n</span>
+<span class="w">                </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dev</span>
+<span class="w">          </span><span class="nt">restartPolicy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">OnFailure</span>
+<span class="nn">---</span>
+<span class="c1"># 工作日 08:00 扩容</span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">batch/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CronJob</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">scale-up-dev-morning</span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dev</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">schedule</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;0</span><span class="nv"> </span><span class="s">8</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">1-5&quot;</span>
+<span class="w">  </span><span class="nt">jobTemplate</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">spec</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">template</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">spec</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">serviceAccountName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">scaler-sa</span>
+<span class="w">          </span><span class="nt">containers</span><span class="p">:</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">scaler</span>
+<span class="w">              </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">bitnami/kubectl:1.31</span>
+<span class="w">              </span><span class="nt">command</span><span class="p">:</span>
+<span class="w">                </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kubectl</span>
+<span class="w">                </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">scale</span>
+<span class="w">                </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">deployment</span>
+<span class="w">                </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">--all</span>
+<span class="w">                </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">--replicas=1</span>
+<span class="w">                </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">-n</span>
+<span class="w">                </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dev</span>
+<span class="w">          </span><span class="nt">restartPolicy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">OnFailure</span>
+</code></pre></div>
+
+<h3 id="42-pod-优先级与资源抢占">4.2 Pod 优先级与资源抢占</h3>
+<p>让关键工作负载优先获取资源，非关键任务为关键任务让路：</p>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">scheduling.k8s.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PriorityClass</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">critical-production</span>
+<span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1000000</span>
+<span class="nt">globalDefault</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;生产关键服务，永远不被抢占&quot;</span>
+<span class="nt">preemptionPolicy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Never</span>
+<span class="nn">---</span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">scheduling.k8s.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PriorityClass</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">batch-jobs</span>
+<span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100</span>
+<span class="nt">globalDefault</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;批处理任务，可被抢占&quot;</span>
+<span class="nt">preemptionPolicy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PreemptLowerPriority</span>
+<span class="nn">---</span>
+<span class="c1"># 批处理 Pod 使用低优先级</span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Pod</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nightly-report-generator</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">priorityClassName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">batch-jobs</span>
+<span class="w">  </span><span class="nt">tolerations</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;spot-instance&quot;</span>
+<span class="w">      </span><span class="nt">operator</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Exists&quot;</span>
+<span class="w">      </span><span class="nt">effect</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;NoSchedule&quot;</span>
+<span class="w">  </span><span class="nt">containers</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">report-gen</span>
+<span class="w">      </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">report-generator:v2</span>
+<span class="w">      </span><span class="nt">resources</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">requests</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;4&quot;</span>
+<span class="w">          </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;16Gi&quot;</span>
+</code></pre></div>
+
+<hr />
+<h2 id="五第四层优化监控与-finops-可观测性">五、第四层优化：监控与 FinOps 可观测性</h2>
+<h3 id="51-prometheus-成本监控">5.1 Prometheus 成本监控</h3>
+<p>关键告警规则：</p>
+<div class="highlight"><pre><span></span><code><span class="nt">groups</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">k8s_cost_efficiency</span>
+<span class="w">    </span><span class="nt">rules</span><span class="p">:</span>
+<span class="w">      </span><span class="c1"># 节点 CPU 利用率低于 20% 告警</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">alert</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">NodeCPUUnderutilized</span>
+<span class="w">        </span><span class="nt">expr</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">          </span><span class="no">avg(node_namespace_pod_container:container_cpu_usage_seconds_total:sum_rate) by (node)</span>
+<span class="w">          </span><span class="no">/ sum(kube_node_status_allocatable{resource=&quot;cpu&quot;}) by (node) &lt; 0.2</span>
+<span class="w">        </span><span class="nt">for</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2h</span>
+<span class="w">        </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">severity</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">warning</span>
+<span class="w">          </span><span class="nt">category</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cost</span>
+<span class="w">        </span><span class="nt">annotations</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">summary</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;节点</span><span class="nv"> </span><span class="s">{{</span><span class="nv"> </span><span class="s">$labels.node</span><span class="nv"> </span><span class="s">}}</span><span class="nv"> </span><span class="s">CPU</span><span class="nv"> </span><span class="s">利用率低于</span><span class="nv"> </span><span class="s">20%&quot;</span>
+<span class="w">          </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;持续</span><span class="nv"> </span><span class="s">2</span><span class="nv"> </span><span class="s">小时</span><span class="nv"> </span><span class="s">CPU</span><span class="nv"> </span><span class="s">利用率不足</span><span class="nv"> </span><span class="s">20%，建议缩容或合并工作负载&quot;</span>
+
+<span class="w">      </span><span class="c1"># Request 与实际使用偏差超过 3 倍</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">alert</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">OverRequestedResources</span>
+<span class="w">        </span><span class="nt">expr</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">          </span><span class="no">sum(kube_pod_container_resource_requests{resource=&quot;cpu&quot;}) by (namespace)</span>
+<span class="w">          </span><span class="no">/ sum(rate(container_cpu_usage_seconds_total{container!=&quot;&quot;}[1h])) by (namespace) &gt; 3</span>
+<span class="w">        </span><span class="nt">for</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">6h</span>
+<span class="w">        </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">severity</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">warning</span>
+<span class="w">          </span><span class="nt">category</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cost</span>
+<span class="w">        </span><span class="nt">annotations</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">summary</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;命名空间</span><span class="nv"> </span><span class="s">{{</span><span class="nv"> </span><span class="s">$labels.namespace</span><span class="nv"> </span><span class="s">}}</span><span class="nv"> </span><span class="s">CPU</span><span class="nv"> </span><span class="s">Request</span><span class="nv"> </span><span class="s">是实际使用的</span><span class="nv"> </span><span class="s">3</span><span class="nv"> </span><span class="s">倍以上&quot;</span>
+
+<span class="w">      </span><span class="c1"># 僵尸 Pod</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">alert</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ZombiePods</span>
+<span class="w">        </span><span class="nt">expr</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">          </span><span class="no">count by (namespace) (kube_pod_status_phase{phase=~&quot;Failed|Pending|Unknown&quot;} == 1) &gt; 0</span>
+<span class="w">        </span><span class="nt">for</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1h</span>
+<span class="w">        </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">severity</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">info</span>
+<span class="w">          </span><span class="nt">category</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cost</span>
+<span class="w">        </span><span class="nt">annotations</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">summary</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;命名空间</span><span class="nv"> </span><span class="s">{{</span><span class="nv"> </span><span class="s">$labels.namespace</span><span class="nv"> </span><span class="s">}}</span><span class="nv"> </span><span class="s">存在僵尸</span><span class="nv"> </span><span class="s">Pod&quot;</span>
+
+<span class="w">      </span><span class="c1"># PVC 未绑定超过 24 小时</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">alert</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">UnboundPVC</span>
+<span class="w">        </span><span class="nt">expr</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">          </span><span class="no">kube_persistentvolumeclaim_status_phase{phase=&quot;Pending&quot;} == 1</span>
+<span class="w">        </span><span class="nt">for</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">24h</span>
+<span class="w">        </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">severity</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">warning</span>
+<span class="w">          </span><span class="nt">category</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cost</span>
+<span class="w">        </span><span class="nt">annotations</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">summary</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;PVC</span><span class="nv"> </span><span class="s">{{</span><span class="nv"> </span><span class="s">$labels.persistentvolumeclaim</span><span class="nv"> </span><span class="s">}}</span><span class="nv"> </span><span class="s">超过</span><span class="nv"> </span><span class="s">24</span><span class="nv"> </span><span class="s">小时未绑定&quot;</span>
+</code></pre></div>
+
+<h3 id="52-opencost-集群成本分摊">5.2 OpenCost 集群成本分摊</h3>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">apps/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Deployment</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">opencost</span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">opencost</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">replicas</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="w">  </span><span class="nt">selector</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">matchLabels</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">opencost</span>
+<span class="w">  </span><span class="nt">template</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">metadata</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">opencost</span>
+<span class="w">    </span><span class="nt">spec</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">containers</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">opencost</span>
+<span class="w">          </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">opencost/opencost:1.113</span>
+<span class="w">          </span><span class="nt">ports</span><span class="p">:</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">containerPort</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">9003</span>
+<span class="w">          </span><span class="nt">env</span><span class="p">:</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PROMETHEUS_ENDPOINT</span>
+<span class="w">              </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;http://prometheus-server.monitoring.svc:9090&quot;</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CLOUD_PROVIDER_API_KEY</span>
+<span class="w">              </span><span class="nt">valueFrom</span><span class="p">:</span>
+<span class="w">                </span><span class="nt">secretKeyRef</span><span class="p">:</span>
+<span class="w">                  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cloud-api-key</span>
+<span class="w">                  </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">api-key</span>
+<span class="w">          </span><span class="nt">resources</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">requests</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;100m&quot;</span>
+<span class="w">              </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;256Mi&quot;</span>
+<span class="w">            </span><span class="nt">limits</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;500m&quot;</span>
+<span class="w">              </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;512Mi&quot;</span>
+</code></pre></div>
+
+<p>OpenCost 能回答的关键问题：每个 Namespace 每天花多少钱？哪个 Deployment 是成本大头？Spot vs On-Demand 各占多少比例？数据传输费用多少？</p>
+<hr />
+<h2 id="六第五层优化存储与网络成本">六、第五层优化：存储与网络成本</h2>
+<h3 id="61-存储成本优化">6.1 存储成本优化</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># 不同场景使用不同存储类型</span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">storage.k8s.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">StorageClass</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">low-cost-retain</span>
+<span class="nt">provisioner</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kubernetes.io/aws-ebs</span>
+<span class="nt">parameters</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gp3</span><span class="w">          </span><span class="c1"># GP3 比 GP2 便宜 20%，IOPS 更高</span>
+<span class="w">  </span><span class="nt">fsType</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ext4</span>
+<span class="nt">reclaimPolicy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Retain</span>
+<span class="nt">volumeBindingMode</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">WaitForFirstConsumer</span><span class="w">  </span><span class="c1"># 延迟绑定，减少跨 AZ 费用</span>
+<span class="nn">---</span>
+<span class="c1"># 临时数据用便宜存储</span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">storage.k8s.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">StorageClass</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cheap-temp</span>
+<span class="nt">provisioner</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kubernetes.io/aws-ebs</span>
+<span class="nt">parameters</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">st1</span><span class="w">           </span><span class="c1"># 吞吐优化 HDD，比 SSD 便宜 75%</span>
+<span class="w">  </span><span class="nt">fsType</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ext4</span>
+<span class="nt">reclaimPolicy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Delete</span>
+</code></pre></div>
+
+<h3 id="62-网络成本控制">6.2 网络成本控制</h3>
+<p>跨可用区和跨区域的流量是隐形杀手。关键优化策略：</p>
+<ol>
+<li>使用 <code>WaitForFirstConsumer</code> 延迟绑定，确保 PVC 和 Pod 在同一 AZ</li>
+<li>同一 AZ 内的 Pod 优先调度（Topology Spread）</li>
+<li>压缩 Service Mesh 的 mTLS 流量（减少 15%-20% 网络开销）</li>
+</ol>
+<hr />
+<h2 id="七生产环境-5-大避坑指南">七、生产环境 5 大避坑指南</h2>
+<h3 id="坑位-1vpa-和-hpa-同时基于-cpu-伸缩">坑位 1：VPA 和 HPA 同时基于 CPU 伸缩</h3>
+<p><strong>现象</strong>：Pod 被反复驱逐，服务不稳定。</p>
+<p><strong>根因</strong>：VPA 增大 CPU Request → HPA 检测到利用率下降 → HPA 缩容 → VPA 又增大 → 死循环。</p>
+<p><strong>解决</strong>：VPA 管基础资源，HPA 只管业务指标（QPS/延迟）。</p>
+<h3 id="坑位-2karpenter-consolidation-误杀关键-pod">坑位 2：Karpenter Consolidation 误杀关键 Pod</h3>
+<p><strong>现象</strong>：Consolidation 主动替换节点时，关键服务被短暂中断。</p>
+<p><strong>解决</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">policy/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PodDisruptionBudget</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">api-server-pdb</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">minAvailable</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;50%&quot;</span>
+<span class="w">  </span><span class="nt">selector</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">matchLabels</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">api-server</span>
+</code></pre></div>
+
+<h3 id="坑位-3spot-实例大规模回收导致雪崩">坑位 3：Spot 实例大规模回收导致雪崩</h3>
+<p><strong>现象</strong>：某个可用区的 Spot 价格飙升，数百个 Pod 同时被驱逐。</p>
+<p><strong>解决</strong>：强制多 AZ 分散 + 合理设置 PDB。</p>
+<h3 id="坑位-4resourcequota-阻止-vpa-缩减">坑位 4：ResourceQuota 阻止 VPA 缩减</h3>
+<p><strong>现象</strong>：VPA 推荐降低 Request，但 Pod 无法更新。</p>
+<p><strong>解决</strong>：定期审查 ResourceQuota，移除不必要的 <code>min</code> 约束。</p>
+<h3 id="坑位-5监控盲区只看节点不看-pod">坑位 5：监控盲区——只看节点不看 Pod</h3>
+<p><strong>现象</strong>：节点利用率看起来正常，但大量 Pod 在浪费资源。</p>
+<p><strong>解决</strong>：部署 OpenCost + kube-state-metrics，建立 Pod 级别的成本视图。</p>
+<hr />
+<h2 id="八优化效果总结与落地路线图">八、优化效果总结与落地路线图</h2>
+<table>
+<thead>
+<tr>
+<th>优化层级</th>
+<th>措施</th>
+<th>预期节省</th>
+<th>实施难度</th>
+<th>建议顺序</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>L1</strong></td>
+<td>Right-Sizing (VPA)</td>
+<td>20%-40%</td>
+<td>低</td>
+<td>第 1 周</td>
+</tr>
+<tr>
+<td><strong>L2</strong></td>
+<td>Karpenter + Spot</td>
+<td>20%-30%</td>
+<td>中</td>
+<td>第 2 周</td>
+</tr>
+<tr>
+<td><strong>L3</strong></td>
+<td>非生产环境定时开关</td>
+<td>10%-20%</td>
+<td>低</td>
+<td>第 1 周</td>
+</tr>
+<tr>
+<td><strong>L3</strong></td>
+<td>优先级调度</td>
+<td>5%-10%</td>
+<td>中</td>
+<td>第 3 周</td>
+</tr>
+<tr>
+<td><strong>L4</strong></td>
+<td>FinOps 监控</td>
+<td>持续优化</td>
+<td>中</td>
+<td>第 1-2 周</td>
+</tr>
+<tr>
+<td><strong>L5</strong></td>
+<td>存储网络优化</td>
+<td>5%-15%</td>
+<td>高</td>
+<td>第 4 周</td>
+</tr>
+</tbody>
+</table>
+<p><strong>综合预期：通过 4 周实施，可降低 40%-60% 的 Kubernetes 云账单。</strong></p>
+<p>落地顺序：</p>
+<div class="highlight"><pre><span></span><code>Week 1: 部署 VPA(Off 模式) + OpenCost + 非生产环境 CronJob
+        ↓ 收集 1 周推荐数据
+Week 2: 启用 VPA(Auto) + 部署 Karpenter + Spot 混合策略
+        ↓ 观察 1 周稳定性
+Week 3: 配置 PriorityClass + PDB + 拓扑分散
+        ↓
+Week 4: 存储优化 + 网络优化 + Prometheus 成本告警
+</code></pre></div>
+
+<hr />
+<h2 id="九总结">九、总结</h2>
+<p>Kubernetes 成本优化不是一次性的任务，而是一个<strong>持续运转的 FinOps 实践</strong>。核心原则三句话：</p>
+<ol>
+<li><strong>测量一切</strong>：没有监控就没有优化。部署 OpenCost + Prometheus，让每一分钱都可追溯</li>
+<li><strong>自动化决策</strong>：用 VPA 替代人工估算，用 Karpenter 替代手动运维，让机器替你省钱</li>
+<li><strong>渐进式落地</strong>：从 VPA Off 模式开始评估，逐步切换到 Auto；先 Spot 补充再 Spot 为主</li>
+</ol>
+    </div>
+  </article>
+  <aside class="toc">
+    <p class="toc-label">本页目录</p>
+    <ul>
+  <li><a href="#一为什么-k8s-成本优化到了必须做的地步">一、为什么 K8s 成本优化到了必须做的地步？</a></li>
+  <li><a href="#二第一层优化资源-right-sizing省-20-40">二、第一层优化：资源 Right-Sizing（省 20%-40%）</a><ul>
+  <li><a href="#21-问题诊断集群到底浪费了多少">2.1 问题诊断：集群到底浪费了多少？</a></li>
+  <li><a href="#22-vpa-自动垂直伸缩">2.2 VPA 自动垂直伸缩</a></li>
+  <li><a href="#23-vpa-hpa-黄金组合架构">2.3 VPA + HPA 黄金组合架构</a></li>
+</ul></li>
+  <li><a href="#三第二层优化节点效率最大化省-20-30">三、第二层优化：节点效率最大化（省 20%-30%）</a><ul>
+  <li><a href="#31-karpenter-替代-cluster-autoscaler">3.1 Karpenter 替代 Cluster Autoscaler</a></li>
+  <li><a href="#32-spot-实例策略砍-60-70-计算成本">3.2 Spot 实例策略（砍 60%-70% 计算成本）</a></li>
+  <li><a href="#33-topology-spread-防止单节点故障">3.3 Topology Spread 防止单节点故障</a></li>
+</ul></li>
+  <li><a href="#四第三层优化工作负载调度策略省-10-20">四、第三层优化：工作负载调度策略（省 10%-20%）</a><ul>
+  <li><a href="#41-非生产环境定时开关">4.1 非生产环境定时开关</a></li>
+  <li><a href="#42-pod-优先级与资源抢占">4.2 Pod 优先级与资源抢占</a></li>
+</ul></li>
+  <li><a href="#五第四层优化监控与-finops-可观测性">五、第四层优化：监控与 FinOps 可观测性</a><ul>
+  <li><a href="#51-prometheus-成本监控">5.1 Prometheus 成本监控</a></li>
+  <li><a href="#52-opencost-集群成本分摊">5.2 OpenCost 集群成本分摊</a></li>
+</ul></li>
+  <li><a href="#六第五层优化存储与网络成本">六、第五层优化：存储与网络成本</a><ul>
+  <li><a href="#61-存储成本优化">6.1 存储成本优化</a></li>
+  <li><a href="#62-网络成本控制">6.2 网络成本控制</a></li>
+</ul></li>
+  <li><a href="#七生产环境-5-大避坑指南">七、生产环境 5 大避坑指南</a><ul>
+  <li><a href="#坑位-1vpa-和-hpa-同时基于-cpu-伸缩">坑位 1：VPA 和 HPA 同时基于 CPU 伸缩</a></li>
+  <li><a href="#坑位-2karpenter-consolidation-误杀关键-pod">坑位 2：Karpenter Consolidation 误杀关键 Pod</a></li>
+  <li><a href="#坑位-3spot-实例大规模回收导致雪崩">坑位 3：Spot 实例大规模回收导致雪崩</a></li>
+  <li><a href="#坑位-4resourcequota-阻止-vpa-缩减">坑位 4：ResourceQuota 阻止 VPA 缩减</a></li>
+  <li><a href="#坑位-5监控盲区只看节点不看-pod">坑位 5：监控盲区——只看节点不看 Pod</a></li>
+</ul></li>
+  <li><a href="#八优化效果总结与落地路线图">八、优化效果总结与落地路线图</a></li>
+  <li><a href="#九总结">九、总结</a></li>
+</ul>
+  </aside>
+
+</div>
+
+</main>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>Learning Notes</span>
+    <a href="https://github.com/hangx969/learning-notes">GitHub</a>
+  </div>
+</footer>
+<script src="../../../static/search.js"></script>
+</body>
+</html>

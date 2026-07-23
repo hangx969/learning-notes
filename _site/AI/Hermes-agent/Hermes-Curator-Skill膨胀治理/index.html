@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Skill 太多导致上下文膨胀怎么办？来自 Hermes Agent 的实践 - Learning Notes</title>
+<link rel="stylesheet" href="../../../static/style.css">
+<link rel="stylesheet" href="../../../static/pygments.css">
+</head>
+<body data-root="../../../">
+<header class="site-header">
+  <div class="header-inner">
+    <a class="logo" href="../../../index.html"><span class="logo-mark"></span>LEARNING NOTES</a>
+    <div class="search">
+      <input id="search-input" type="search" placeholder="搜索笔记…" autocomplete="off" aria-label="搜索笔记">
+      <div id="search-results" hidden></div>
+    </div>
+  </div>
+  <nav class="topic-nav" aria-label="主题导航">
+    <div class="topic-nav-inner">
+      <a href="../../../AI/" class="active">AI</a>
+      <a href="../../../Aliyun/">Aliyun</a>
+      <a href="../../../Azure/">Azure</a>
+      <a href="../../../C%2B%2B/">C++</a>
+      <a href="../../../CloudComputing/">CloudComputing</a>
+      <a href="../../../Database/">Database</a>
+      <a href="../../../Docker-Kubernetes/">Docker-Kubernetes</a>
+      <a href="../../../GPU-DeepLearning/">GPU-DeepLearning</a>
+      <a href="../../../Git/">Git</a>
+      <a href="../../../Go/">Go</a>
+      <a href="../../../HPC/">HPC</a>
+      <a href="../../../IaC/">IaC</a>
+      <a href="../../../Linux-Shell/">Linux-Shell</a>
+      <a href="../../../Middlewares/">Middlewares</a>
+      <a href="../../../Networking/">Networking</a>
+      <a href="../../../OS/">OS</a>
+      <a href="../../../Python/">Python</a>
+      <a href="../../../SoftwareTesting/">SoftwareTesting</a>
+    </div>
+  </nav>
+</header>
+<main class="main">
+
+<div class="article-layout">
+
+  <aside class="sidebar">
+    <details class="sidebar-details">
+      <summary>AI</summary>
+      <nav class="sidebar-nav">
+        <p class="sidebar-group">AI-视觉</p>
+        <ul>
+          <li><a href="../../../AI/AI-%E8%A7%86%E8%A7%89/AI-Animation-Skill-%E7%A7%91%E6%99%AE%E5%8A%A8%E7%94%BB/">AI-Animation-Skill - HTML科普动画生成</a></li>
+          <li><a href="../../../AI/AI-%E8%A7%86%E8%A7%89/AI%E5%81%9APPT-ppt-master/">AI做PPT - ppt-master</a></li>
+          <li><a href="../../../AI/AI-%E8%A7%86%E8%A7%89/Markdown-Viewer-Skills-Markdown%E4%B8%AD%E7%9B%B4%E6%8E%A5%E7%94%BB%E5%9B%BE/">Markdown Viewer Skills：让 AI 写文档时顺手把图也画了</a></li>
+          <li><a href="../../../AI/AI-%E8%A7%86%E8%A7%89/effective-html-AI%E7%9B%B4%E5%87%BAHTML%E5%B7%A5%E5%85%B7%E5%AE%9E%E6%B5%8B/">effective-html：让 AI 直接输出 HTML 而非 Markdown</a></li>
+          <li><a href="../../../AI/AI-%E8%A7%86%E8%A7%89/html-anything-AI%E7%94%9F%E6%88%90HTML%E5%85%A8%E5%9C%BA%E6%99%AF%E5%B7%A5%E5%85%B7/">html-anything：AI 生成 HTML 全场景工具</a></li>
+          <li><a href="../../../AI/AI-%E8%A7%86%E8%A7%89/html-ppt-skill-%E5%AE%9E%E6%B5%8B%E6%8C%87%E5%8D%97/">html-ppt-skill - HTML幻灯片生成</a></li>
+          <li><a href="../../../AI/AI-%E8%A7%86%E8%A7%89/%E8%A7%86%E8%A7%89%E8%AE%BE%E8%AE%A1%E6%8F%90%E7%A4%BA%E8%AF%8D/">视觉设计提示词</a></li>
+        </ul>
+        <p class="sidebar-group">AIOps</p>
+        <ul>
+          <li><a href="../../../AI/AIOps/AIOps%E5%AE%9E%E6%88%98-Golang%E6%89%8B%E6%90%93K8s%E6%99%BA%E8%83%BD%E8%BF%90%E7%BB%B4%E5%B7%A5%E5%85%B7%E9%93%BE/">AIOps 实战：Golang 手搓 K8s 智能运维工具链</a></li>
+          <li><a href="../../../AI/AIOps/Kubernetes-MCP-Server-Dify%E6%99%BA%E8%83%BD%E8%BF%90%E7%BB%B4/">AI 接管 Kubernetes 运维——Kubernetes MCP Server + Dify</a></li>
+        </ul>
+        <p class="sidebar-group">ClaudeCode</p>
+        <ul>
+          <li><a href="../../../AI/ClaudeCode/CLAUDE.md%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5-12%E6%9D%A1%E8%A7%84%E5%88%99%E6%A8%A1%E6%9D%BF/">Mnilax：CLAUDE.md 规则从 Karpathy 的 4 条增加到 12 条，错误率从 41% 降到 3%</a></li>
+          <li><a href="../../../AI/ClaudeCode/CLAUDE.md%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5-21%E6%9D%A1%E6%8C%87%E4%BB%A4%E6%B8%85%E5%8D%95/">Mayank Agarwal：21 条 CLAUDE.md 指令，让 Claude 真正懂你</a></li>
+          <li><a href="../../../AI/ClaudeCode/CLAUDE.md%E7%BB%B4%E6%8A%A4%E5%B7%A5%E7%A8%8B-%E5%9B%9B%E5%B1%82%E5%8A%A0%E8%BD%BD%E4%B8%8E%E6%8C%87%E4%BB%A4%E9%A2%84%E7%AE%97/">CLAUDE.md 维护工程：四层加载与指令预算</a></li>
+          <li><a href="../../../AI/ClaudeCode/Claude%20Code%20%E5%9F%BA%E7%A1%80%E6%8C%87%E5%8D%97/">Claude Code 使用指南</a></li>
+          <li><a href="../../../AI/ClaudeCode/Claude%20Code%20%E6%89%A9%E5%B1%95%E4%BD%93%E7%B3%BB/">Claude Code 扩展体系</a></li>
+          <li><a href="../../../AI/ClaudeCode/Claude-Code-Harness%E5%AE%9E%E6%88%98-%E6%9C%80%E5%B0%8F%E5%8F%AF%E7%94%A8%E7%B3%BB%E7%BB%9F/">Harness 实战：从零搭建最小可用的 Harness 系统</a></li>
+          <li><a href="../../../AI/ClaudeCode/Claude-Code%E4%B8%BA%E4%BB%80%E4%B9%88%E7%94%A8grep%E4%B8%8D%E7%94%A8RAG/">为什么 Claude Code 不用 RAG 检索代码，而是 grep？</a></li>
+          <li><a href="../../../AI/ClaudeCode/Claude-Fable-5-system-prompt/">Claude Fable 5 — System Prompt</a></li>
+          <li><a href="../../../AI/ClaudeCode/Claude-Skill%E8%B4%A8%E6%A3%80%E5%B7%A5%E5%85%B7-SkillCraft/">Claude Skill 质检工具 Skill Craft</a></li>
+          <li><a href="../../../AI/ClaudeCode/Git-Worktree-AI%E5%BC%80%E5%8F%91%E5%AE%9E%E8%B7%B5%E6%8C%87%E5%8D%97/">Vibe Coding 时代的 Git Worktree 实践指南</a></li>
+          <li><a href="../../../AI/ClaudeCode/%E5%A4%9A%E6%99%BA%E8%83%BD%E4%BD%93%E5%8D%8F%E4%BD%9C-Subagents%E4%B8%8EAgent-Teams/">Claude Code 多智能体协作：Subagents 与 Agent Teams</a></li>
+        </ul>
+        <p class="sidebar-group">Codex</p>
+        <ul>
+          <li><a href="../../../AI/Codex/Codex-config-toml-%E5%85%A8%E9%87%8F%E9%85%8D%E7%BD%AE%E5%8F%82%E8%80%83/">OpenAI Codex config.toml 全量配置参考</a></li>
+          <li><a href="../../../AI/Codex/Codex-%E7%9C%81Token%E5%B7%A5%E5%85%B7%E5%AE%9E%E6%B5%8B-Ponytail-Headroom-RTK/">Codex 省 Token 工具实测：Ponytail、Headroom、RTK-AI</a></li>
+        </ul>
+        <p class="sidebar-group">GithubCopilot</p>
+        <ul>
+          <li><a href="../../../AI/GithubCopilot/Copilot%20CLI/">GitHub Copilot CLI</a></li>
+        </ul>
+        <p class="sidebar-group">Hermes-agent</p>
+        <ul>
+          <li><a href="../../../AI/Hermes-agent/Hermes-Agent-%E6%BB%A1%E9%85%8D%E6%8C%87%E5%8D%97%E4%B8%8E%E7%94%9F%E6%80%81%E8%B5%84%E6%BA%90/">Hermes Agent 满配指南与生态资源</a></li>
+          <li><a href="../../../AI/Hermes-agent/Hermes-Curator-Skill%E8%86%A8%E8%83%80%E6%B2%BB%E7%90%86/" class="current">Skill 太多导致上下文膨胀怎么办？来自 Hermes Agent 的实践</a></li>
+          <li><a href="../../../AI/Hermes-agent/Hermes%E4%B8%8EOpenClaw%E5%AF%B9%E6%AF%94%E5%8F%8A%E9%A3%9E%E4%B9%A6%E6%8E%A5%E5%85%A5%E6%8C%87%E5%8D%97/">Hermes Agent全解析：与OpenClaw对比及飞书接入指南</a></li>
+          <li><a href="../../../AI/Hermes-agent/Ubuntu%2025.10%20%E5%AE%89%E8%A3%85%E4%B8%8E%E4%BD%BF%E7%94%A8%20Hermes%20Agent%20%E6%8C%87%E5%8D%97/">Ubuntu 25.10 安装与使用 Hermes Agent 指南</a></li>
+        </ul>
+        <p class="sidebar-group">Obsidian</p>
+        <ul>
+          <li><a href="../../../AI/Obsidian/Obsidian-Vault%E6%A8%A1%E6%9D%BF%E5%BA%93%E5%90%88%E9%9B%86-48%E4%B8%AA%E5%AE%9D%E8%97%8Fvault/">Obsidian Vault 模板库合集：48 个 GitHub 宝藏 vault</a></li>
+          <li><a href="../../../AI/Obsidian/Obsidian%E5%8F%AF%E8%A7%86%E5%8C%96Skills-Excalidraw-Mermaid-Canvas/">Obsidian 可视化 Skills — Excalidraw / Mermaid / Canvas</a></li>
+          <li><a href="../../../AI/Obsidian/obsidian-claude-code-AI%E7%9F%A5%E8%AF%86%E5%BA%93%E5%AE%8C%E6%95%B4%E6%8C%87%E5%8D%97/">Obsidian + Claude Code：AI 驱动的知识库完整指南</a></li>
+        </ul>
+        <p class="sidebar-group">OpenClaw</p>
+        <ul>
+          <li><a href="../../../AI/OpenClaw/CoPaw/">CoPaw</a></li>
+          <li><a href="../../../AI/OpenClaw/OpenClaw-Channels/">OpenClaw Channel 配置</a></li>
+          <li><a href="../../../AI/OpenClaw/OpenClaw-K8s%E6%99%BA%E8%83%BD%E8%BF%90%E7%BB%B4%E5%AE%9E%E6%88%98/">用 OpenClaw 智能体网关接管 K8s 日常运维：从只读巡检到低风险变更</a></li>
+          <li><a href="../../../AI/OpenClaw/OpenClaw-Skills-Plugins/">OpenClaw Skills 与插件</a></li>
+          <li><a href="../../../AI/OpenClaw/OpenClaw-Workspace-%E8%BF%90%E7%BB%B4/">OpenClaw Workspace 运维实战</a></li>
+          <li><a href="../../../AI/OpenClaw/OpenClaw-%E5%9F%BA%E7%A1%80-%E5%AE%89%E8%A3%85/">OpenClaw 基础与安装</a></li>
+          <li><a href="../../../AI/OpenClaw/Openclaw-AIOps/">OpenClaw AIOps</a></li>
+          <li><a href="../../../AI/OpenClaw/Openclaw-%E5%A4%9A%E6%99%BA%E8%83%BD%E4%BD%93/">OpenClaw 多智能体</a></li>
+          <li><a href="../../../AI/OpenClaw/Ubuntu-2510-Setup-Guide/">Ubuntu 25.10 (Questing) 初始化配置指南</a></li>
+          <li><a href="../../../AI/OpenClaw/%E9%A3%9E%E4%B9%A6CLI%E7%94%BB%E6%9D%BF-%E4%B8%80%E5%8F%A5%E8%AF%9D%E7%94%9F%E6%88%90%E6%9E%B6%E6%9E%84%E5%9B%BE/">飞书 CLI 画板：一句话生成架构图</a></li>
+        </ul>
+        <p class="sidebar-group">代码知识图谱</p>
+        <ul>
+          <li><a href="../../../AI/%E4%BB%A3%E7%A0%81%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/CodeGraph-%E4%BB%A3%E7%A0%81%E8%AF%AD%E4%B9%89%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/">CodeGraph：给 Claude Code 先画一张代码地图，工具调用砍掉 92%</a></li>
+          <li><a href="../../../AI/%E4%BB%A3%E7%A0%81%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/Graphify-%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1%E5%B7%A5%E5%85%B7/">Graphify：软件工程知识图谱工具</a></li>
+          <li><a href="../../../AI/%E4%BB%A3%E7%A0%81%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/Understand-Anything-%E4%BB%A3%E7%A0%81%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1%E5%8F%AF%E8%A7%86%E5%8C%96/">Understand-Anything：AI 代码知识图谱可视化工具</a></li>
+          <li><a href="../../../AI/%E4%BB%A3%E7%A0%81%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/code-review-graph-%E6%9C%AC%E5%9C%B0%E4%BB%A3%E7%A0%81%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/">开源 Claude Code 本地代码知识图谱：code-review-graph 完整上手攻略</a></li>
+          <li><a href="../../../AI/%E4%BB%A3%E7%A0%81%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/shiji-kb-AI%E5%8F%B2%E8%AE%B0%E7%9F%A5%E8%AF%86%E5%BA%93%E4%B8%8E%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1%E6%9E%84%E9%80%A0%E6%96%B9%E6%B3%95%E8%AE%BA/">shiji-kb：AI 史记知识库与可复用知识图谱构造方法论</a></li>
+        </ul>
+        <p class="sidebar-group">行业动态</p>
+        <ul>
+          <li><a href="../../../AI/%E8%A1%8C%E4%B8%9A%E5%8A%A8%E6%80%81/AI%E6%97%B6%E4%BB%A3%E7%9A%84Git%E7%89%88%E6%9C%AC%E7%AE%A1%E7%90%86%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/">AI 时代的 Git 版本管理最佳实践</a></li>
+          <li><a href="../../../AI/%E8%A1%8C%E4%B8%9A%E5%8A%A8%E6%80%81/Anthropic%E5%B7%A5%E7%A8%8B%E5%B8%88%E5%8A%9B%E6%8E%A8HTML%E5%8F%96%E4%BB%A3Markdown-Karpathy%E9%99%84%E8%AE%AE/">Anthropic 工程师力推 HTML 取代 Markdown —— Karpathy 附议</a></li>
+          <li><a href="../../../AI/%E8%A1%8C%E4%B8%9A%E5%8A%A8%E6%80%81/Claude-Code%E5%88%9B%E5%A7%8B%E4%BA%BA%E7%BA%A2%E6%9D%89%E5%A4%A7%E4%BC%9A%E4%B8%83%E4%B8%AA%E5%88%A4%E6%96%AD/">Claude Code 创始人在红杉大会上的 7 个重要判断</a></li>
+          <li><a href="../../../AI/%E8%A1%8C%E4%B8%9A%E5%8A%A8%E6%80%81/Loop-Engineering-%E4%BB%8EPrompt%E5%88%B0%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%81%E6%B0%B4%E7%BA%BF/">Loop Engineering：从 Prompt 到自动化流水线</a></li>
+          <li><a href="../../../AI/%E8%A1%8C%E4%B8%9A%E5%8A%A8%E6%80%81/OpenCodeReview-%E9%98%BF%E9%87%8CAI%E4%BB%A3%E7%A0%81%E5%AE%A1%E6%9F%A5%E5%B7%A5%E7%A8%8B%E5%8C%96/">OpenCodeReview：阿里开源的 AI 代码审查工程化工具</a></li>
+          <li><a href="../../../AI/%E8%A1%8C%E4%B8%9A%E5%8A%A8%E6%80%81/TypeScript-vs-Python-AI-Agent%E6%97%B6%E4%BB%A3%E7%9A%84%E8%AF%AD%E8%A8%80%E4%B9%8B%E4%BA%89/">为什么 AI Agent 时代，TypeScript 正在抢走 Python 的主场？</a></li>
+        </ul>
+        <p class="sidebar-group">其他</p>
+        <ul>
+          <li><a href="../../../AI/HarnessKit/">HarnessKit — AI 编码智能体统一管理工具</a></li>
+          <li><a href="../../../AI/%E6%8F%90%E7%A4%BA%E8%AF%8D/">提示词</a></li>
+        </ul>
+      </nav>
+    </details>
+  </aside>
+
+  <article class="article">
+    <nav class="breadcrumb">
+      <a href="../../../index.html">首页</a><span>/</span>
+      <a href="../../../AI/">AI</a><span>/</span><span>Hermes-agent</span>
+    </nav>
+    <h1 class="article-title">Skill 太多导致上下文膨胀怎么办？来自 Hermes Agent 的实践</h1>
+    <p class="article-meta"><span>更新于 2026-05-13</span>
+      <a href="https://github.com/hangx969/learning-notes/blob/main/AI/Hermes-agent/Hermes-Curator-Skill%E8%86%A8%E8%83%80%E6%B2%BB%E7%90%86.md">查看源文件</a>
+    </p>
+    <div class="article-body">
+<p><strong>目录</strong></p>
+<ol>
+<li>Curator 如何管理 Skill</li>
+<li>Curator 的四步工作流</li>
+<li>Skill 膨胀的数学</li>
+<li>Skill 与记忆的区别</li>
+<li>Skill 在 Agent 运行时中的位置</li>
+</ol>
+<hr />
+<p>自我改进型 Agent（如 Hermes）一个显著的特点是能够自我学习，这种自我学习，一般是通过将历史内容总结为 Skill 来实现的。这就导致了一个问题——Skill 膨胀。每个 Agent 写下的 Skill 都会永远保留，哪怕从未被用过。如何解决这个问题？Hermes Agent 推出了 Hermes Curator 专门处理 Skill 膨胀。</p>
+<p>Hermes Curator 是一个后台维护系统，专门管理 Agent 自己创建的 Skill。它追踪每个 Skill 被查看、使用和打补丁的频率，将长期未使用的 Skill 流转到活跃 → 陈旧 → 归档状态，并定期触发一次辅助模型的简短审查，提出合并建议或修复 Skill 漂移。</p>
+<p>它的存在，是为了防止通过自我改进循环创建的 Skill 无限堆积。</p>
+<h2 id="1-curator-如何管理-skill">1. Curator 如何管理 Skill？</h2>
+<p><img alt="image.png" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260513144312972.png" /></p>
+<p>Hermes Agent 会将 Skill 保存为文件，伴随 Agent 一起学习。每个"Agent 创建"的已保存 Skill 都会成为 Skill 文件夹里的一个文件。没有维护，这个文件夹就会无限膨胀——Agent 每次提示都要加载更多内容，Skill 目录变成了噪音。</p>
+<p>Curator 就是 Hermes Agent 推出的清理系统，目的就是阻止这种情况。</p>
+<p>它只在你的 Agent 闲置时运行。大约每周一次，当 Agent 空闲至少两小时后，它会醒来，在后台运行一次审查。审查分两部分。</p>
+<p><strong>第一部分是自动的。</strong> Curator 检查每个 Skill 的最后使用时间。任何 30 天未触碰的 Skill 都会被标记为陈旧。任何 90 天未触碰的 Skill 会被移入归档文件夹。不会有任何内容被删除，任何已归档的 Skill 都可以用一条命令恢复回来。</p>
+<p><strong>第二部分使用一个单独的、更便宜的模型。</strong> 这个模型读取 Agent 写下的 Skill，判断哪些重叠了、哪些漂移了，以及哪些应该被合并、打补丁或归档。因为它运行在一个辅助槽位上，你可以指向一个廉价模型（如 Gemini Flash），而不必在日常家务上支付主对话模型的费用。</p>
+<blockquote>
+<p>所有这些数字都可以在 config.yaml 的 curator: 下配置。如果 30 天对你的工作流来说太激进，可以调大。如果你想每天运行一次审查，把间隔调小即可。</p>
+</blockquote>
+<p>三个值得特别指出的护栏：</p>
+<ul>
+<li>Curator 只操作 Agent 写的 Skill 或你手动写的 Skill。随 Hermes 原装的 Skill 或你从 hub 安装的 Skill 不受影响。</li>
+<li>你可以锁定任何 Skill。被锁定的 Skill 对自动计时器和审查模型都是不可见的。就连 Agent 自己的编辑工具也会拒绝修改被锁定的 Skill。这是你保护任何依赖项的杠杆。</li>
+<li>Curator 使用的每个计数器和时间戳都保存在 Skill 文件夹内部的一个伴生文件里。你可以读取它，可以审计它。没有隐藏的数据库。</li>
+</ul>
+<h2 id="2-curator-的四步工作流">2. Curator 的四步工作流</h2>
+<p>Curator 做四件事：<strong>监测、降级、复盘、锁定优先。</strong></p>
+<ol>
+<li><strong>监测。</strong><br />
+   每次 Skill 被加载到提示中或被 Agent 读取时，计数器就会增加，并写入一个时间戳。那个伴生文件记录了每个 Skill 实际被使用的次数和时间——也就是它的价值记忆。</li>
+<li><strong>降级。</strong><br />
+   如果某个 Skill 30 天没有被触碰，它会从活跃降级到陈旧。陈旧 Skill 仍然能用，但系统已经将它们标记为可疑。如果再过 60 天仍然没有触碰，它们会被移出活动文件夹，进入归档文件夹。不会有任何内容被删除。你随时可以用一条命令拉回某个 Skill。</li>
+<li><strong>复盘。</strong><br />
+   大约每周一次，当 Agent 空闲几小时后，一个单独的廉价模型会醒来并读取 Skill 文件夹。它寻找漂移的 Skill、重叠的 Skill，以及应该被合并为一条更简洁版本的 Skill。它可以打补丁、合并，或将它们发送到归档。然后继续睡觉。</li>
+<li><strong>锁定优先。</strong><br />
+   任何你标记为锁定的内容，对降级计时器和审查模型都是不可见的。就连 Agent 自己也不能重写一个被锁定的 Skill。这保证了任何你依赖的 Skill 不会在你脚下漂移。</li>
+</ol>
+<h3 id="curator-cli">Curator CLI</h3>
+<p>你不必等待每周一次的 Curator 清理。Curator 提供了一个小型 CLI 界面：</p>
+<div class="highlight"><pre><span></span><code>hermes<span class="w"> </span>curator<span class="w"> </span>status<span class="w">              </span><span class="c1"># 上次运行时间、计数、锁定列表、LRU 前5</span>
+hermes<span class="w"> </span>curator<span class="w"> </span>run<span class="w">                 </span><span class="c1"># 立即触发复盘（默认后台运行）</span>
+hermes<span class="w"> </span>curator<span class="w"> </span>run<span class="w"> </span>--sync<span class="w">          </span><span class="c1"># 同上，但阻塞直到LLM复盘完成</span>
+hermes<span class="w"> </span>curator<span class="w"> </span>pause<span class="w">               </span><span class="c1"># 停止运行，直到恢复</span>
+hermes<span class="w"> </span>curator<span class="w"> </span>resume
+hermes<span class="w"> </span>curator<span class="w"> </span>pin<span class="w"> </span>&lt;skill&gt;<span class="w">        </span><span class="c1"># 永不让此Skill自动流转</span>
+hermes<span class="w"> </span>curator<span class="w"> </span>unpin<span class="w"> </span>&lt;skill&gt;
+hermes<span class="w"> </span>curator<span class="w"> </span>restore<span class="w"> </span>&lt;skill&gt;<span class="w">     </span><span class="c1"># 将已归档Skill移回活跃状态</span>
+</code></pre></div>
+
+<p>日常最有用的命令是 <code>hermes curator status</code>。它会列出五个最近最少使用的 Skill，这是快速判断哪些最可能下一步变为陈旧的方法。</p>
+<h2 id="3-skill-膨胀的数学">3. Skill 膨胀的数学</h2>
+<p><img alt="image.png" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260513144340320.png" /></p>
+<p>数学很简单。即使每天保存一个新 Skill，Skill 目录一个月就会达到 30 条，一年达到 365 条。通过 Curator 复盘合并近似重复项，每月大约只存活 3 条唯一 Skill。也就是说一年大约 36 条，而不是 365 条。</p>
+<p>大多数"Agent 创建"的 Skill 并非唯一。Agent 会在五天里用五种不同方式写"修复 bug"，彼此互不知晓。Curator 的复盘正是为解决这一问题而设计：它读取目录、识别重叠，将近似重复项合并为一个规范 Skill，同时将冗余副本移入归档。</p>
+<p>如果不做任何修剪，两件事会出问题：</p>
+<ol>
+<li><strong>Token 账单上涨</strong>，因为每次提示都要读取一个越来越大的目录。</li>
+<li><strong>推理质量下降</strong>，因为五个近似重复的 Skill 都对同一查询有响应，模型没有好的信号来判断选择哪个。</li>
+</ol>
+<p>有时它选错了。有时它会尝试同时使用两个。无论哪种情况，目录越大，Agent 越慢、越笨。</p>
+<h2 id="4-skill-与记忆的区别">4. Skill 与记忆的区别</h2>
+<p><img alt="image.png" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260513144354594.png" /></p>
+<p>有必要精确区分 Curator 处理的"记忆"类型。</p>
+<p>大多数人口中的"记忆"，是 Agent 知道的东西：关于用户、项目和领域的事实。过去的对话以及由此产生的决策。Agent 需要随时获取的参考资料。记忆保存着 Agent 运作其中的上下文。记忆层是这些内容所在的地方，由相应的记忆管理系统负责。</p>
+<p>Skill 则不同。Skill 是活在 Agent 行动和项目核心的程序性知识。它是 Agent 给自己写的操作指南：如何预订航班、如何重构文件、如何查询特定 API。Skill 告诉 Agent 如何工作。Skill 层是这些内容所在的地方，Hermes Curator 是管理它的系统。</p>
+<p>这两个系统并不竞争。它们处理同一问题的不同部分：保持 Agent 积累状态的有用性，而不仅仅是重量。<strong>记忆整合处理 Agent 知道什么。Curator 处理 Agent 如何工作。</strong> 两者共同覆盖长期运行 Agent 需要维护的两个方面。</p>
+<blockquote>
+<p>重要的原因：看到 Curator，很容易认为这只是记忆管理。它们处于不同的层，以不同的速度衰减，需要不同的清理逻辑。两者都构建，才能得到一个真正持续学习的 Agent。</p>
+</blockquote>
+<h2 id="5-skill-在-agent-运行时中的位置">5. Skill 在 Agent 运行时中的位置</h2>
+<p>Agent 运行时的形态在不断扩展。几年前，一个 Agent 就是一个模型加一个提示。然后我们添加了工具注册表、记忆层、长上下文窗口技巧。</p>
+<p>今天，一个正经的 Agent 运行时拥有的管道比 Agent 本身还多：</p>
+<ul>
+<li><strong>服务层</strong>：带 KV 缓存逐出</li>
+<li><strong>长期记忆层</strong>：带周期性整合，由自己的后台模型运行</li>
+<li><strong>Skill 层</strong>：带使用追踪、状态流转、锁定和单独的审查通道</li>
+<li><strong>工具层</strong>：带权限管理</li>
+<li><strong>提示缓存</strong>：带过期机制</li>
+<li><strong>编排器</strong>：决定哪个后台任务何时运行</li>
+</ul>
+<p>Agent 实际上同时在维护四种不同的记忆：</p>
+<table>
+<thead>
+<tr>
+<th>记忆类型</th>
+<th>存储位置</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>工作记忆</td>
+<td>缓存</td>
+<td>每次轮次使用后丢弃</td>
+</tr>
+<tr>
+<td>语义记忆</td>
+<td>向量库</td>
+<td>Agent 可查找的事实</td>
+</tr>
+<tr>
+<td>情景记忆</td>
+<td>对话日志</td>
+<td>事件记录</td>
+</tr>
+<tr>
+<td>程序性记忆</td>
+<td>Skill 文件夹</td>
+<td>操作指南库（Curator 管理）</td>
+</tr>
+</tbody>
+</table>
+<p>每种记忆以自己的速度衰减，以自己的节奏填充，需要自己的后台静默清理进程。</p>
+<h2 id="要点">要点</h2>
+<p>Hermes Curator 是自我学习型 Agent 应有的清理方案。它监测被使用的内容，淘汰未被使用的，合并重复项，并让你锁定任何不想被触碰的东西。</p>
+<p>自我改进型 Agent 需要自我修剪系统和上下文管理。没有上下文管理层，每周都会给你的未来自我留下更多要整理的 Skill，你依赖的 Skill 迷失在噪音中的概率也越大。</p>
+    </div>
+  </article>
+  <aside class="toc">
+    <p class="toc-label">本页目录</p>
+    <ul>
+  <li><a href="#1-curator-如何管理-skill">1. Curator 如何管理 Skill？</a></li>
+  <li><a href="#2-curator-的四步工作流">2. Curator 的四步工作流</a><ul>
+  <li><a href="#curator-cli">Curator CLI</a></li>
+</ul></li>
+  <li><a href="#3-skill-膨胀的数学">3. Skill 膨胀的数学</a></li>
+  <li><a href="#4-skill-与记忆的区别">4. Skill 与记忆的区别</a></li>
+  <li><a href="#5-skill-在-agent-运行时中的位置">5. Skill 在 Agent 运行时中的位置</a></li>
+  <li><a href="#要点">要点</a></li>
+</ul>
+  </aside>
+
+</div>
+
+</main>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>Learning Notes</span>
+    <a href="https://github.com/hangx969/learning-notes">GitHub</a>
+  </div>
+</footer>
+<script src="../../../static/search.js"></script>
+</body>
+</html>

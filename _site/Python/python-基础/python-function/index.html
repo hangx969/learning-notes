@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Python 函数 - Learning Notes</title>
+<link rel="stylesheet" href="../../../static/style.css">
+<link rel="stylesheet" href="../../../static/pygments.css">
+</head>
+<body data-root="../../../">
+<header class="site-header">
+  <div class="header-inner">
+    <a class="logo" href="../../../index.html"><span class="logo-mark"></span>LEARNING NOTES</a>
+    <div class="search">
+      <input id="search-input" type="search" placeholder="搜索笔记…" autocomplete="off" aria-label="搜索笔记">
+      <div id="search-results" hidden></div>
+    </div>
+  </div>
+  <nav class="topic-nav" aria-label="主题导航">
+    <div class="topic-nav-inner">
+      <a href="../../../AI/">AI</a>
+      <a href="../../../Aliyun/">Aliyun</a>
+      <a href="../../../Azure/">Azure</a>
+      <a href="../../../C%2B%2B/">C++</a>
+      <a href="../../../CloudComputing/">CloudComputing</a>
+      <a href="../../../Database/">Database</a>
+      <a href="../../../Docker-Kubernetes/">Docker-Kubernetes</a>
+      <a href="../../../GPU-DeepLearning/">GPU-DeepLearning</a>
+      <a href="../../../Git/">Git</a>
+      <a href="../../../Go/">Go</a>
+      <a href="../../../HPC/">HPC</a>
+      <a href="../../../IaC/">IaC</a>
+      <a href="../../../Linux-Shell/">Linux-Shell</a>
+      <a href="../../../Middlewares/">Middlewares</a>
+      <a href="../../../Networking/">Networking</a>
+      <a href="../../../OS/">OS</a>
+      <a href="../../../Python/" class="active">Python</a>
+      <a href="../../../SoftwareTesting/">SoftwareTesting</a>
+    </div>
+  </nav>
+</header>
+<main class="main">
+
+<div class="article-layout">
+
+  <aside class="sidebar">
+    <details class="sidebar-details">
+      <summary>Python</summary>
+      <nav class="sidebar-nav">
+        <p class="sidebar-group">python-基础</p>
+        <ul>
+          <li><a href="../../../Python/python-%E5%9F%BA%E7%A1%80/python-OOP/">Python 面向对象编程</a></li>
+          <li><a href="../../../Python/python-%E5%9F%BA%E7%A1%80/python-QA/">Python 知识总结与常见问题</a></li>
+          <li><a href="../../../Python/python-%E5%9F%BA%E7%A1%80/python-basics/">Python 数据类型、运算符与基础语法</a></li>
+          <li><a href="../../../Python/python-%E5%9F%BA%E7%A1%80/python-exception-handling/">Python 异常处理</a></li>
+          <li><a href="../../../Python/python-%E5%9F%BA%E7%A1%80/python-function/" class="current">Python 函数</a></li>
+          <li><a href="../../../Python/python-%E5%9F%BA%E7%A1%80/python%E5%8C%85%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7-uv/">Python 包管理工具 uv</a></li>
+          <li><a href="../../../Python/python-%E5%9F%BA%E7%A1%80/rockylinux%E9%85%8D%E7%BD%AEpython%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/">RockyLinux 配置 Python 开发环境</a></li>
+          <li><a href="../../../Python/python-%E5%9F%BA%E7%A1%80/windows%E9%85%8D%E7%BD%AEpython%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/">Windows 配置 Python 开发环境</a></li>
+        </ul>
+        <p class="sidebar-group">python-数据分析-AI大模型</p>
+        <ul>
+          <li><a href="../../../Python/python-%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-AI%E5%A4%A7%E6%A8%A1%E5%9E%8B/python-%E5%A4%84%E7%90%86excel-word/">Python处理Excel与Word文档</a></li>
+          <li><a href="../../../Python/python-%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-AI%E5%A4%A7%E6%A8%A1%E5%9E%8B/python-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E4%B8%8E%E9%A2%84%E6%B5%8B/">Python机器学习与预测</a></li>
+        </ul>
+        <p class="sidebar-group">python-网络编程-前端</p>
+        <ul>
+          <li><a href="../../../Python/python-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B-%E5%89%8D%E7%AB%AF/python-Web%E5%BC%80%E5%8F%91-HTML-CSS-JS/">Web开发基础 - HTML/CSS/JavaScript</a></li>
+          <li><a href="../../../Python/python-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B-%E5%89%8D%E7%AB%AF/python-Web%E6%A1%86%E6%9E%B6Django/">Python Web框架Django</a></li>
+          <li><a href="../../../Python/python-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B-%E5%89%8D%E7%AB%AF/python-Web%E6%A1%86%E6%9E%B6Flask/">Python Web框架Flask</a></li>
+          <li><a href="../../../Python/python-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B-%E5%89%8D%E7%AB%AF/python-request-module/">Python Requests模块</a></li>
+          <li><a href="../../../Python/python-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B-%E5%89%8D%E7%AB%AF/python-socket-module/">Python Socket模块</a></li>
+          <li><a href="../../../Python/python-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B-%E5%89%8D%E7%AB%AF/python-%E7%88%AC%E8%99%AB/">Python爬虫</a></li>
+        </ul>
+        <p class="sidebar-group">python-运维开发</p>
+        <ul>
+          <li><a href="../../../Python/python-%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91/python-GUI-tkinter/">Python GUI开发 - Tkinter</a></li>
+          <li><a href="../../../Python/python-%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91/python-Linux-operation/">Python Linux运维模块</a></li>
+          <li><a href="../../../Python/python-%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91/python-elasticsearch/">Python Elasticsearch运维</a></li>
+          <li><a href="../../../Python/python-%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91/python-fabric%E9%AB%98%E7%BA%A7%E7%94%A8%E6%B3%95/">Python Fabric高级用法</a></li>
+          <li><a href="../../../Python/python-%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91/python-kubernetes-module/">Python Kubernetes模块</a></li>
+          <li><a href="../../../Python/python-%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91/python-mysql/">Python MySQL操作</a></li>
+          <li><a href="../../../Python/python-%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91/python-nginx/">Python Nginx运维自动化</a></li>
+          <li><a href="../../../Python/python-%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91/python-postgresql/">Python PostgreSQL操作</a></li>
+          <li><a href="../../../Python/python-%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91/python-tomcat/">Python Tomcat运维自动化</a></li>
+          <li><a href="../../../Python/python-%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91/python-%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/">Python 游戏开发</a></li>
+        </ul>
+        <p class="sidebar-group">电池参数提取统计工具开发</p>
+        <ul>
+          <li><a href="../../../Python/%E7%94%B5%E6%B1%A0%E5%8F%82%E6%95%B0%E6%8F%90%E5%8F%96%E7%BB%9F%E8%AE%A1%E5%B7%A5%E5%85%B7%E5%BC%80%E5%8F%91/%E5%AE%9E%E9%AA%8C%E5%AE%A4%E7%94%B5%E6%B1%A0%E5%8F%82%E6%95%B0%E4%B8%80%E9%94%AE%E7%BB%9F%E8%AE%A1%E5%B7%A5%E5%85%B7%E5%BC%80%E5%8F%91/">实验室电池参数一键统计工具开发</a></li>
+        </ul>
+        <p class="sidebar-group">其他</p>
+        <ul>
+          <li><a href="../../../Python/script-server-%E8%84%9A%E6%9C%ACWeb%E5%8C%96%E5%B7%A5%E5%85%B7/">Script-Server：脚本 Web 化工具</a></li>
+        </ul>
+      </nav>
+    </details>
+  </aside>
+
+  <article class="article">
+    <nav class="breadcrumb">
+      <a href="../../../index.html">首页</a><span>/</span>
+      <a href="../../../Python/">Python</a><span>/</span><span>python-基础</span>
+    </nav>
+    <h1 class="article-title">Python 函数</h1>
+    <p class="article-meta"><span>更新于 2026-04-16</span>
+      <a href="https://github.com/hangx969/learning-notes/blob/main/Python/python-%E5%9F%BA%E7%A1%80/python-function.md">查看源文件</a>
+    </p>
+    <div class="article-body">
+<h1 id="python-函数">Python 函数</h1>
+<h2 id="函数传参">函数传参</h2>
+<h3 id="位置参数">位置参数</h3>
+<p>传递给函数的参数,按照定义的顺序匹配</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">add</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">a</span><span class="o">+</span><span class="n">b</span>
+<span class="n">add</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+</code></pre></div>
+
+<h3 id="默认参数">默认参数</h3>
+<p>定义函数时提供默认值,调用时不传参就用默认值</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">func</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;guest&#39;</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Hello </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="n">func</span><span class="p">()</span>
+<span class="n">func</span><span class="p">(</span><span class="s1">&#39;Bob&#39;</span><span class="p">)</span>
+</code></pre></div>
+
+<h3 id="关键字参数">关键字参数</h3>
+<p>通过参数名称来传递参数值,这样可以在调用时更清晰地指定参数</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">func</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">age</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;name is </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">, age is </span><span class="si">{</span><span class="n">age</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="n">func</span><span class="p">(</span><span class="n">age</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Bob&#39;</span><span class="p">)</span>
+</code></pre></div>
+
+<hr />
+<h3 id="不定长参数">不定长参数</h3>
+<p>用于接收可变数量的位置参数或关键字参数。</p>
+<h4 id="args">*args</h4>
+<p>==<code>*args</code>==接收任意数量的位置参数,作为一个元组</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">joinargs</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">):</span>
+    <span class="c1"># args接收到的参数形成一个元组</span>
+    <span class="k">return</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">joinargs</span><span class="p">(</span><span class="s1">&#39;hello&#39;</span><span class="p">,</span> <span class="s1">&#39;world&#39;</span><span class="p">))</span>
+</code></pre></div>
+
+<h4 id="kwargs">**kwargs</h4>
+<p>==<code>**kwargs</code>==会将传递的关键字参数收集成一个字典,可以接收任意数量的参数。</p>
+<p>在函数中,<code>kwargs.items()</code> 方法返回字典中的键值对,并允许我们遍历每一个键值对。</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">func</span><span class="p">(</span><span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">func</span><span class="p">({</span><span class="n">name</span><span class="p">:</span><span class="s1">&#39;alice&#39;</span><span class="p">,</span><span class="n">age</span><span class="p">:</span><span class="s1">&#39;10&#39;</span><span class="p">})</span>
+</code></pre></div>
+
+<p><div class="callout callout-warning" markdown="1"><br />
+<p class="callout-title">传参顺序</p></p>
+<p>传参的时候,args要在kwargs前面,否则会报错。</p>
+</div>
+<p>相关内容参见 <a class="wikilink" href="../../../Python/python-%E5%9F%BA%E7%A1%80/python-QA/#函数参数-args-和-kwargs-的区别">QA - <em>args 和 </em>*kwargs</a></p>
+<hr />
+<h2 id="函数嵌套和作用域">函数嵌套和作用域</h2>
+<h3 id="嵌套">嵌套</h3>
+<p>函数可以在其他函数内部定义,这叫做==嵌套函数==。内部函数可以访问外部函数的变量,但外部函数不能直接访问内部函数。</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">outerfunc</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">innerfunc</span><span class="p">(</span><span class="n">y</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">y</span><span class="o">*</span><span class="mi">2</span>
+    <span class="k">return</span> <span class="n">innerfunc</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">+</span> <span class="mi">5</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">outerfunc</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span> <span class="c1"># 11</span>
+</code></pre></div>
+
+<h3 id="作用域">作用域</h3>
+<p>Python 的变量作用域有==局部作用域(Local Scope)<mark>和==全局作用域(Global Scope)</mark>:</p>
+<ul>
+<li>在函数内部定义的变量默认是局部的,只能在函数内部使用。</li>
+<li>在所有函数外部定义的变量是全局变量,可以被程序中的任何函数访问和修改。</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="n">x</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">modify_global</span><span class="p">():</span>
+    <span class="k">global</span> <span class="n">x</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="mi">20</span>
+<span class="c1"># 在函数里把x变量转成全局变量了</span>
+<span class="n">modify_global</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</code></pre></div>
+
+<hr />
+<h2 id="高阶函数">高阶函数</h2>
+<h3 id="函数作为参数">函数作为参数</h3>
+<p>高阶函数的一个关键特点是它们可以接受其他函数作为参数。通过将函数作为参数传递,你可以在不同的场景下复用代码,并使代码更具灵活性。</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">apply_function</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">square</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">x</span><span class="o">*</span><span class="n">x</span>
+
+<span class="n">result</span> <span class="o">=</span> <span class="n">apply_function</span><span class="p">(</span><span class="n">square</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+</code></pre></div>
+
+<hr />
+<h3 id="返回函数闭包">返回函数(闭包)</h3>
+<p>高阶函数的另一个特点是它们可以返回函数。这使得你可以通过<code>函数嵌套</code>和<code>参数绑定</code>创建"定制化"的函数:</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">make_multiplier</span><span class="p">(</span><span class="n">multiplier</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">multiplier_func</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">value</span> <span class="o">*</span> <span class="n">multiplier</span>
+    <span class="k">return</span> <span class="n">multiplier_func</span>
+
+<span class="n">double</span> <span class="o">=</span> <span class="n">make_multiplier</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="c1"># double是返回的multiplier_func函数,这个函数预先被绑定了2,所以double传入几,结果就是几乘2</span>
+<span class="n">triple</span> <span class="o">=</span> <span class="n">make_multiplier</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="c1"># triple是返回的multiplier_func函数,这个函数预先被传了3,所以triple传入几,结果就是几乘3</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">double</span><span class="p">(</span><span class="mi">5</span><span class="p">))</span> <span class="c1"># Output: 10</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">triple</span><span class="p">(</span><span class="mi">5</span><span class="p">))</span> <span class="c1"># Output: 15</span>
+</code></pre></div>
+
+<p><div class="callout callout-info" markdown="1"><br />
+<p class="callout-title">闭包的定义</p></p>
+<p>这种方式也称为==闭包==,闭包的特性是:内部函数可以引用并记住外部函数的变量,即使外部函数已经执行完毕。在这个示例中,每次调用<code>make_multiplier</code>都生成了一个新的<code>multiplier_func</code>实例,并将<code>multiplier</code>的参数值绑定到该实例上。</p>
+</div>
+<hr />
+<h3 id="闭包使用场景">闭包使用场景</h3>
+<p>闭包是一种强大的编程工具,适用于以下场景或情况:</p>
+<h4 id="1-需要保存函数的上下文状态">1. 需要保存函数的上下文状态</h4>
+<p>闭包可以"记住"外部函数的变量,即使外部函数已经执行完毕。这在需要保存某些状态或上下文信息时非常有用。例如:</p>
+<p><div class="callout callout-example" markdown="1"><br />
+<p class="callout-title">任务调度器</p></p>
+<p>根据不同的策略生成特定的任务函数,并在后续调用时执行。<br />
+```python<br />
+def make_command_executor(server_name):<br />
+    def command_executor(command):<br />
+        # 这里演示假装执行命令,返回结果<br />
+        return f"Executing {command} in {server_name}"<br />
+    return command_executor</p>
+<p>server1_executor = make_command_executor('server1')<br />
+server2_executor = make_command_executor('server2')</p>
+<h1 id="server1-检查磁盘空间">server1 检查磁盘空间</h1>
+<p>result1 = server1_executor('df -h')<br />
+print(result1)</p>
+<h1 id="server2重启服务">server2重启服务</h1>
+<p>result2 = server2_executor('systemctl restart nginx')<br />
+print(result2)<br />
+```</p>
+</div>
+<p><div class="callout callout-example" markdown="1"><br />
+<p class="callout-title">计数器</p></p>
+<p>实现一个计数器函数,每次调用时返回递增的值。<br />
+```python<br />
+def make_counter():<br />
+    count = 0<br />
+    def counter():<br />
+        nonlocal count # 声明这里的count是外层函数的变量,方便后续修改<br />
+        count += 1<br />
+        return count<br />
+    return counter</p>
+<p>counter = make_counter() # 此时已经实例化了一个内部函数counter,count从0开始自增了<br />
+print(counter())  # 输出 1<br />
+print(counter())  # 输出 2<br />
+```</p>
+</div>
+<hr />
+<h4 id="2-需要动态生成函数">2. 需要动态生成函数</h4>
+<p>当需要根据不同的输入动态生成具有特定行为的函数时,闭包是一个很好的选择。例如:</p>
+<ul>
+<li><strong>策略模式</strong>:根据不同的策略生成对应的处理函数。</li>
+<li><strong>命令生成器</strong>:动态生成带有特定参数的命令执行函数。示例:</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">make_multiplier</span><span class="p">(</span><span class="n">factor</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">multiplier</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">x</span> <span class="o">*</span> <span class="n">factor</span>
+    <span class="k">return</span> <span class="n">multiplier</span>
+
+<span class="n">double</span> <span class="o">=</span> <span class="n">make_multiplier</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">triple</span> <span class="o">=</span> <span class="n">make_multiplier</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">double</span><span class="p">(</span><span class="mi">5</span><span class="p">))</span>  <span class="c1"># 输出 10</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">triple</span><span class="p">(</span><span class="mi">5</span><span class="p">))</span>  <span class="c1"># 输出 15</span>
+</code></pre></div>
+
+<hr />
+<h4 id="3-避免全局变量">3. 避免全局变量</h4>
+<p>闭包可以通过外部函数的局部变量保存状态,从而避免使用全局变量,减少命名冲突和副作用。示例:</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">logger</span><span class="p">(</span><span class="n">prefix</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">log</span><span class="p">(</span><span class="n">message</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">message</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">log</span>
+
+<span class="n">info_logger</span> <span class="o">=</span> <span class="n">logger</span><span class="p">(</span><span class="s2">&quot;INFO&quot;</span><span class="p">)</span> <span class="c1"># logger被调用时,INFO被传入了内部函数log,即使logger在这里调用结束并退出,返回出来的log函数仍然保留了传进去的INFO参数</span>
+<span class="n">error_logger</span> <span class="o">=</span> <span class="n">logger</span><span class="p">(</span><span class="s2">&quot;ERROR&quot;</span><span class="p">)</span>
+
+<span class="n">info_logger</span><span class="p">(</span><span class="s2">&quot;This is an info message.&quot;</span><span class="p">)</span>  <span class="c1"># 输出 INFO: This is an info message.</span>
+<span class="n">error_logger</span><span class="p">(</span><span class="s2">&quot;This is an error message.&quot;</span><span class="p">)</span>  <span class="c1"># 输出 ERROR: This is an error message.</span>
+</code></pre></div>
+
+<hr />
+<h4 id="4-实现装饰器">4. 实现装饰器</h4>
+<p>闭包是实现装饰器的基础,用于在不修改原函数的情况下扩展其功能。</p>
+<p>相关内容参见 <a class="wikilink" href="../../../Python/python-%E5%9F%BA%E7%A1%80/python-OOP/#类装饰器">OOP - 类装饰器</a> 和 <a class="wikilink" href="../../../Python/python-%E5%9F%BA%E7%A1%80/python-QA/#装饰器">QA - 装饰器</a></p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Before function call&quot;</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;After function call&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span>
+    <span class="k">return</span> <span class="n">wrapper</span>
+
+<span class="nd">@decorator</span>
+<span class="c1"># 装饰器相当于在原函数执行之前先执行:</span>
+<span class="c1"># say_hello=decortor(say_hello)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">say_hello</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Hello!&quot;</span><span class="p">)</span>
+
+<span class="n">say_hello</span><span class="p">()</span>
+<span class="c1"># 输出:</span>
+<span class="c1"># Before function call</span>
+<span class="c1"># Hello!</span>
+<span class="c1"># After function call</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="c1"># 对一个计数程序 增加统计时间功能</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">count_time_wrapper</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">improved_func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">clock</span><span class="p">()</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">end_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">clock</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;takes </span><span class="si">{}</span><span class="s2"> s&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">end_time</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">ret</span>
+    <span class="k">return</span> <span class="n">improved_func</span>
+
+<span class="nd">@count_time_wrapper</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">odds</span><span class="p">(</span><span class="n">lim</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">lim</span><span class="p">,</span><span class="mi">2</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="c1"># 装饰器等价于在函数调用之前执行如下语句: odds = count_time_wrapper(odds)</span>
+    <span class="n">odds</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+</code></pre></div>
+
+<hr />
+<h4 id="5-需要延迟执行的逻辑">5. 需要延迟执行的逻辑</h4>
+<p>闭包可以将某些逻辑封装起来,延迟到特定条件满足时再执行。例如:</p>
+<ul>
+<li><strong>事件处理</strong>:为不同的事件生成对应的处理函数。</li>
+<li><strong>回调函数</strong>:在异步操作完成后执行特定逻辑。</li>
+</ul>
+<hr />
+<h3 id="闭包的工作机制">闭包的工作机制</h3>
+<p>闭包的工作机制是通过内部函数对外部函数局部变量的引用实现的。即使外部函数已经执行完毕,内部函数依然可以访问这些变量。</p>
+<p>在 Python 中,闭包会将外部函数的局部变量存储在内部函数的 <mark><code>__closure__</code></mark> 属性中。例如:</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">logger</span><span class="p">(</span><span class="n">prefix</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">log</span><span class="p">(</span><span class="n">message</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">message</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">log</span>
+
+<span class="n">info_logger</span> <span class="o">=</span> <span class="n">logger</span><span class="p">(</span><span class="s2">&quot;INFO&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">info_logger</span><span class="o">.</span><span class="vm">__closure__</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">cell_contents</span><span class="p">)</span> <span class="c1"># 输出 &quot;INFO&quot;</span>
+</code></pre></div>
+
+<p>这里,<code>info_logger.__closure__</code> 存储了闭包中捕获的变量,<code>cell_contents</code> 是变量的值。</p>
+<hr />
+<h2 id="案例实战">案例实战</h2>
+<h3 id="1-不同服务器自动匹配执行的任务">1. 不同服务器自动匹配执行的任务</h3>
+<p>创建一个高阶函数,根据服务器主机名和不同的命令生成不同的执行器,然后用这些执行器来控制在哪个主机上执行哪个命令。</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">make_command_executor</span><span class="p">(</span><span class="n">server_name</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">command_executor</span><span class="p">(</span><span class="n">command</span><span class="p">):</span>
+        <span class="c1"># 这里演示假装执行命令,返回结果</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Executing </span><span class="si">{</span><span class="n">command</span><span class="si">}</span><span class="s2"> in </span><span class="si">{</span><span class="n">server_name</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">return</span> <span class="n">command_executor</span>
+
+<span class="n">server1_executor</span> <span class="o">=</span> <span class="n">make_command_executor</span><span class="p">(</span><span class="s1">&#39;server1&#39;</span><span class="p">)</span> <span class="c1"># 传入了server1,返回了预先绑定server1参数的command_executor函数,后面传参command,相当于调用了command_executor(command)函数</span>
+<span class="n">server2_executor</span> <span class="o">=</span> <span class="n">make_command_executor</span><span class="p">(</span><span class="s1">&#39;server2&#39;</span><span class="p">)</span>
+
+<span class="c1"># server1 检查磁盘空间</span>
+<span class="n">result1</span> <span class="o">=</span> <span class="n">server1_executor</span><span class="p">(</span><span class="s1">&#39;df -h&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">result1</span><span class="p">)</span>
+
+<span class="c1"># server2重启服务</span>
+<span class="n">result2</span> <span class="o">=</span> <span class="n">server2_executor</span><span class="p">(</span><span class="s1">&#39;systemctl restart nginx&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">result2</span><span class="p">)</span>
+</code></pre></div>
+
+<hr />
+<h3 id="2-自动化任务调度">2. 自动化任务调度</h3>
+<p>对不同服务器执行相似的任务,如备份数据库、清理临时文件等。我们可以使用高阶函数来创建动态的任务调度器,根据不同服务器的配置来定制执行任务的策略。</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">make_task_scheduler</span><span class="p">(</span><span class="n">strategy</span><span class="p">):</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">daily_backup</span><span class="p">():</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Performing daily backup&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">weekly_cleanup</span><span class="p">():</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Performing weekly cleanup&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">monthly_report</span><span class="p">():</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Generating monthly report&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">strategy</span> <span class="o">==</span> <span class="s1">&#39;daily&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">daily_backup</span>
+    <span class="k">elif</span> <span class="n">strategy</span> <span class="o">==</span> <span class="s1">&#39;weekly&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">weekly_cleanup</span>
+    <span class="k">elif</span> <span class="n">strategy</span> <span class="o">==</span> <span class="s1">&#39;monthly&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">monthly_report</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Unknown strategy&#39;</span><span class="p">)</span>
+
+<span class="n">daily_task</span> <span class="o">=</span> <span class="n">make_task_scheduler</span><span class="p">(</span><span class="n">daily</span><span class="p">)</span>
+<span class="n">weekly_task</span> <span class="o">=</span> <span class="n">make_task_scheduler</span><span class="p">(</span><span class="n">weekly</span><span class="p">)</span>
+<span class="n">monthly_task</span> <span class="o">=</span> <span class="n">make_task_scheduler</span><span class="p">(</span><span class="n">monthly</span><span class="p">)</span>
+
+<span class="n">daily_task</span><span class="p">()</span>
+<span class="n">weekly_task</span><span class="p">()</span>
+<span class="n">monthly_task</span><span class="p">()</span>
+</code></pre></div>
+
+<hr />
+<h3 id="3-动态配置生成器">3. 动态配置生成器</h3>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">make_config_generator</span><span class="p">(</span><span class="n">env</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">dev_config</span><span class="p">():</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s1">&#39;db&#39;</span><span class="p">:</span> <span class="s1">&#39;dev_db&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;host&#39;</span><span class="p">:</span> <span class="s1">&#39;localhost&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;debug&#39;</span><span class="p">:</span> <span class="kc">True</span>
+        <span class="p">}</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">prod_config</span><span class="p">():</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s1">&#39;db&#39;</span><span class="p">:</span> <span class="s1">&#39;prod_db&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;host&#39;</span><span class="p">:</span> <span class="s1">&#39;prod.server.com&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;debug&#39;</span><span class="p">:</span> <span class="kc">False</span>
+        <span class="p">}</span>
+
+    <span class="k">if</span> <span class="n">env</span> <span class="o">==</span> <span class="s1">&#39;dev&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">dev_config</span>
+    <span class="k">elif</span> <span class="n">env</span> <span class="o">==</span> <span class="s1">&#39;prod&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">prod_config</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Unknown env&#39;</span><span class="p">)</span>
+
+<span class="n">dev_config</span> <span class="o">=</span> <span class="n">make_config_generator</span><span class="p">(</span><span class="s1">&#39;dev&#39;</span><span class="p">)</span>
+<span class="n">prod_config</span> <span class="o">=</span> <span class="n">make_config_generator</span><span class="p">(</span><span class="s1">&#39;prod&#39;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">dev_config</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">prod_config</span><span class="p">())</span>
+</code></pre></div>
+
+<hr />
+<h3 id="4-自定义告警规则">4. 自定义告警规则</h3>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">make_alert_ruler</span><span class="p">(</span><span class="n">service_name</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">cpu_usage_alert</span><span class="p">(</span><span class="n">threshold</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Alert: </span><span class="si">{</span><span class="n">service_name</span><span class="si">}</span><span class="s2"> CPU usage exceeded </span><span class="si">{</span><span class="n">threshold</span><span class="si">}</span><span class="s2">%&quot;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">mem_usage_alert</span><span class="p">(</span><span class="n">threshold</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Alert: </span><span class="si">{</span><span class="n">service_name</span><span class="si">}</span><span class="s2"> Memory usage exceeded </span><span class="si">{</span><span class="n">threshold</span><span class="si">}</span><span class="s2"> MB&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">service_name</span> <span class="o">==</span> <span class="s1">&#39;web_server&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">cpu_usage_alert</span>
+    <span class="k">elif</span> <span class="n">service_name</span> <span class="o">==</span> <span class="s1">&#39;db_server&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">mem_usage_alert</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Unknown service name&#39;</span><span class="p">)</span>
+
+<span class="n">web_server_alert</span> <span class="o">=</span> <span class="n">make_alert_ruler</span><span class="p">(</span><span class="s1">&#39;web_server&#39;</span><span class="p">)</span>
+<span class="n">db_server_alert</span> <span class="o">=</span> <span class="n">make_alert_ruler</span><span class="p">(</span><span class="s1">&#39;db_server&#39;</span><span class="p">)</span>
+
+<span class="n">web_server_alert</span><span class="p">(</span><span class="mi">80</span><span class="p">)</span>
+<span class="n">db_server_alert</span><span class="p">(</span><span class="mi">1024</span><span class="p">)</span>
+</code></pre></div>
+
+<hr />
+<h3 id="5-分析nginx日志">5. 分析nginx日志</h3>
+<h4 id="背景">背景</h4>
+<ol>
+<li>需求</li>
+</ol>
+<p>设计一个通用的日志解析器,用于解析不同类型服务的日志(如 Nginx 日志和系统 messages 日志)</p>
+<ol>
+<li>编写动态解析器生成函数</li>
+</ol>
+<p>编写一个 make_log_parser 函数,该函数可以根据传入的服务名动态返回一个专门用于该服务的解析器。</p>
+<p>这样设计的目的是为了实现代码复用和简化扩展:未来如果你需要添加新的日志类型,只需要在这个函数内扩展即可。</p>
+<ol>
+<li>实现具体的解析逻辑</li>
+</ol>
+<p>每种日志格式都需要各自的解析逻辑,因此为 Nginx 和 messages 分别编写解析函数。</p>
+<ol>
+<li>
+<p>Nginx 日志解析逻辑</p>
+</li>
+<li>
+<p>利用字符串的 split()方法将日志行按空格拆分成多个部分。</p>
+</li>
+<li>根据日志中各个字段的顺序提取出对应的IP、日期、请求方法、状态码、返回值大小、用户代理等信息。</li>
+<li>
+<p>注意处理带有括号的字段,如日期中的[]。</p>
+</li>
+<li>
+<p>Messages 日志解析逻辑</p>
+</li>
+<li>
+<p>使用 split()分割日志行,提取出日期、时间、主机名等信息。</p>
+</li>
+<li>使用正则表达式提取服务名(包括方括号内的进程 ID)</li>
+<li>
+<p>按照服务名: 消息内容的格式分割剩余部分。</p>
+</li>
+<li>
+<p>日志示例:</p>
+</li>
+</ol>
+<p><code>sh
+   nginx_log = '192.168.40.80 - - [30/Aug/2030:11:27:18 +0800] "GET / HTTP/1.1" 200 3429 "-" "curl/7.61.1" "-"'
+   messages_log = 'Aug 30 18:08 myhost sshd[1234]: Accepted password for user from 192.168.1.2 port 22 ssh2'</code></p>
+<h4 id="代码实现">代码实现</h4>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">make_log_praser</span><span class="p">(</span><span class="n">service_name</span><span class="p">):</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">nginx_praser</span><span class="p">(</span><span class="n">line</span><span class="p">):</span>
+    <span class="c1"># IP、日期、请求方法、状态码、返回值大小、用户代理</span>
+        <span class="n">parts</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
+        <span class="c1"># [&#39;192.168.40.80&#39;, &#39;-&#39;, &#39;-&#39;, &#39;[30/Aug/2030:11:27:18&#39;, &#39;+0800]&#39;, &#39;&quot;GET&#39;, &#39;/&#39;, &#39;HTTP/1.1&quot;&#39;, &#39;200&#39;, &#39;3429&#39;, &#39;&quot;-&quot;&#39;, &#39;&quot;curl/7.61.1&quot;&#39;, &#39;&quot;-&quot;&#39;]</span>
+
+        <span class="c1"># 直接用字符串切片获取对应的值</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s1">&#39;IP&#39;</span><span class="p">:</span> <span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+            <span class="s1">&#39;date&#39;</span><span class="p">:</span> <span class="n">parts</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">1</span><span class="p">:]</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="n">parts</span><span class="p">[</span><span class="mi">4</span><span class="p">][:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+            <span class="s1">&#39;request&#39;</span><span class="p">:</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parts</span><span class="p">[</span><span class="mi">5</span><span class="p">:</span><span class="mi">8</span><span class="p">]),</span>
+            <span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="n">parts</span><span class="p">[</span><span class="mi">8</span><span class="p">],</span>
+            <span class="s1">&#39;size&#39;</span><span class="p">:</span> <span class="n">parts</span><span class="p">[</span><span class="mi">9</span><span class="p">],</span>
+            <span class="s1">&#39;referer&#39;</span><span class="p">:</span> <span class="n">parts</span><span class="p">[</span><span class="mi">10</span><span class="p">],</span>
+            <span class="s1">&#39;user_agent&#39;</span><span class="p">:</span> <span class="n">parts</span><span class="p">[</span><span class="mi">11</span><span class="p">][</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="p">}</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">messages_praser</span><span class="p">(</span><span class="n">line</span><span class="p">):</span>
+        <span class="c1"># 日期、时间、主机名、服务信息、日志消息</span>
+        <span class="c1">#[&#39;Aug&#39;, &#39;30&#39;, &#39;18:08&#39;, &#39;myhost sshd[1234]: Accepted password for user from 192.168.1.2 port 22 ssh2&#39;]</span>
+        <span class="n">parts</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span> <span class="c1"># 只分割前三个空格,拿出来日期时间</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">4</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Log line is too short to parse&#39;</span><span class="p">)</span>
+
+        <span class="n">date</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">time</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+
+        <span class="c1"># 提取主机名部分</span>
+        <span class="n">rest</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+        <span class="n">host_part</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;(\S+)&#39;</span><span class="p">,</span> <span class="n">rest</span><span class="p">)</span> <span class="c1"># 匹配剩余部分开头的主机名部分</span>
+        <span class="k">if</span> <span class="n">host_part</span><span class="p">:</span>
+            <span class="n">hostname</span> <span class="o">=</span> <span class="n">host_part</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># 提取正则表达式中的第一个捕获组</span>
+            <span class="n">rest</span> <span class="o">=</span> <span class="n">rest</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">hostname</span><span class="p">):]</span><span class="o">.</span><span class="n">lstrip</span><span class="p">()</span>
+            <span class="c1"># 从左边开始切片,去掉hostname部分</span>
+            <span class="c1"># &#39;sshd[1234]: Accepted password for user from 192.168.1.2 port 22 ssh2&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Log line is malformed&#39;</span><span class="p">)</span>
+
+        <span class="c1"># 获取 sshd 部分,去掉[1234]</span>
+        <span class="n">service_message_split</span> <span class="o">=</span> <span class="n">rest</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="c1"># 剩余部分用冒号分割一次,分割成两部分 [&#39;sshd[1234]&#39;, &#39;Accepted......&#39;]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">service_message_split</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">return</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Log line is malformed&#39;</span><span class="p">)</span>
+        <span class="n">service_message</span> <span class="o">=</span> <span class="n">service_message_split</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="c1"># 去掉[1234]</span>
+        <span class="n">service_message</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;(\S+)(?:\[\d+\])&#39;</span><span class="p">,</span> <span class="n">service_message</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">service_message</span><span class="p">:</span>
+            <span class="c1"># 匹配到就取出第1个捕获组的值</span>
+            <span class="n">service</span> <span class="o">=</span> <span class="n">service_message</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># 没匹配到说明没有[1234]部分,service就是它本身?(有没有可能是没有前面的部分?)</span>
+            <span class="n">service</span> <span class="o">=</span> <span class="n">service_message</span>
+
+        <span class="c1"># 获取 Accepted password ... 部分</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="n">service_message_split</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
+        <span class="c1"># 返回字典结果</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s1">&#39;date&#39;</span><span class="p">:</span> <span class="n">date</span><span class="p">,</span>
+            <span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="n">time</span><span class="p">,</span>
+            <span class="s1">&#39;hostname&#39;</span><span class="p">:</span> <span class="n">hostname</span><span class="p">,</span>
+            <span class="s1">&#39;service&#39;</span><span class="p">:</span> <span class="n">service</span><span class="p">,</span>
+            <span class="s1">&#39;message&#39;</span><span class="p">:</span> <span class="n">message</span>
+        <span class="p">}</span>
+
+    <span class="k">if</span> <span class="n">service_name</span> <span class="o">==</span> <span class="s1">&#39;nginx&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">nginx_praser</span>
+    <span class="k">elif</span> <span class="n">service_name</span> <span class="o">==</span> <span class="s1">&#39;messages&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">messages_praser</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Unknown service name&#39;</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="vm">__name__</span><span class="o">==</span><span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">nginx_log_praser</span> <span class="o">=</span> <span class="n">make_log_praser</span><span class="p">(</span><span class="s1">&#39;nginx&#39;</span><span class="p">)</span>
+    <span class="n">messages_log_praser</span> <span class="o">=</span> <span class="n">make_log_praser</span><span class="p">(</span><span class="s1">&#39;messages&#39;</span><span class="p">)</span>
+
+    <span class="n">nginx_log</span> <span class="o">=</span> <span class="s1">&#39;192.168.40.80 - - [30/Aug/2030:11:27:18 +0800] &quot;GET / HTTP/1.1&quot; 200 3429 &quot;-&quot; &quot;curl/7.61.1&quot; &quot;-&quot;&#39;</span>
+    <span class="n">messages_log</span> <span class="o">=</span> <span class="s1">&#39;Aug 30 18:08 myhost sshd[1234]: Accepted password for user from 192.168.1.2 port 22 ssh2&#39;</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="n">nginx_log_praser</span><span class="p">(</span><span class="n">nginx_log</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">messages_log_praser</span><span class="p">(</span><span class="n">messages_log</span><span class="p">))</span>
+</code></pre></div>
+    </div>
+  </article>
+  <aside class="toc">
+    <p class="toc-label">本页目录</p>
+    <ul>
+  <li><a href="#函数传参">函数传参</a><ul>
+  <li><a href="#位置参数">位置参数</a></li>
+  <li><a href="#默认参数">默认参数</a></li>
+  <li><a href="#关键字参数">关键字参数</a></li>
+  <li><a href="#不定长参数">不定长参数</a></li>
+</ul></li>
+  <li><a href="#函数嵌套和作用域">函数嵌套和作用域</a><ul>
+  <li><a href="#嵌套">嵌套</a></li>
+  <li><a href="#作用域">作用域</a></li>
+</ul></li>
+  <li><a href="#高阶函数">高阶函数</a><ul>
+  <li><a href="#函数作为参数">函数作为参数</a></li>
+  <li><a href="#返回函数闭包">返回函数(闭包)</a></li>
+  <li><a href="#闭包使用场景">闭包使用场景</a></li>
+  <li><a href="#闭包的工作机制">闭包的工作机制</a></li>
+</ul></li>
+  <li><a href="#案例实战">案例实战</a><ul>
+  <li><a href="#1-不同服务器自动匹配执行的任务">1. 不同服务器自动匹配执行的任务</a></li>
+  <li><a href="#2-自动化任务调度">2. 自动化任务调度</a></li>
+  <li><a href="#3-动态配置生成器">3. 动态配置生成器</a></li>
+  <li><a href="#4-自定义告警规则">4. 自定义告警规则</a></li>
+  <li><a href="#5-分析nginx日志">5. 分析nginx日志</a></li>
+</ul></li>
+</ul>
+  </aside>
+
+</div>
+
+</main>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>Learning Notes</span>
+    <a href="https://github.com/hangx969/learning-notes">GitHub</a>
+  </div>
+</footer>
+<script src="../../../static/search.js"></script>
+</body>
+</html>

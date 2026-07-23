@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Python Web框架Django - Learning Notes</title>
+<link rel="stylesheet" href="../../../static/style.css">
+<link rel="stylesheet" href="../../../static/pygments.css">
+</head>
+<body data-root="../../../">
+<header class="site-header">
+  <div class="header-inner">
+    <a class="logo" href="../../../index.html"><span class="logo-mark"></span>LEARNING NOTES</a>
+    <div class="search">
+      <input id="search-input" type="search" placeholder="搜索笔记…" autocomplete="off" aria-label="搜索笔记">
+      <div id="search-results" hidden></div>
+    </div>
+  </div>
+  <nav class="topic-nav" aria-label="主题导航">
+    <div class="topic-nav-inner">
+      <a href="../../../AI/">AI</a>
+      <a href="../../../Aliyun/">Aliyun</a>
+      <a href="../../../Azure/">Azure</a>
+      <a href="../../../C%2B%2B/">C++</a>
+      <a href="../../../CloudComputing/">CloudComputing</a>
+      <a href="../../../Database/">Database</a>
+      <a href="../../../Docker-Kubernetes/">Docker-Kubernetes</a>
+      <a href="../../../GPU-DeepLearning/">GPU-DeepLearning</a>
+      <a href="../../../Git/">Git</a>
+      <a href="../../../Go/">Go</a>
+      <a href="../../../HPC/">HPC</a>
+      <a href="../../../IaC/">IaC</a>
+      <a href="../../../Linux-Shell/">Linux-Shell</a>
+      <a href="../../../Middlewares/">Middlewares</a>
+      <a href="../../../Networking/">Networking</a>
+      <a href="../../../OS/">OS</a>
+      <a href="../../../Python/" class="active">Python</a>
+      <a href="../../../SoftwareTesting/">SoftwareTesting</a>
+    </div>
+  </nav>
+</header>
+<main class="main">
+
+<div class="article-layout">
+
+  <aside class="sidebar">
+    <details class="sidebar-details">
+      <summary>Python</summary>
+      <nav class="sidebar-nav">
+        <p class="sidebar-group">python-基础</p>
+        <ul>
+          <li><a href="../../../Python/python-%E5%9F%BA%E7%A1%80/python-OOP/">Python 面向对象编程</a></li>
+          <li><a href="../../../Python/python-%E5%9F%BA%E7%A1%80/python-QA/">Python 知识总结与常见问题</a></li>
+          <li><a href="../../../Python/python-%E5%9F%BA%E7%A1%80/python-basics/">Python 数据类型、运算符与基础语法</a></li>
+          <li><a href="../../../Python/python-%E5%9F%BA%E7%A1%80/python-exception-handling/">Python 异常处理</a></li>
+          <li><a href="../../../Python/python-%E5%9F%BA%E7%A1%80/python-function/">Python 函数</a></li>
+          <li><a href="../../../Python/python-%E5%9F%BA%E7%A1%80/python%E5%8C%85%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7-uv/">Python 包管理工具 uv</a></li>
+          <li><a href="../../../Python/python-%E5%9F%BA%E7%A1%80/rockylinux%E9%85%8D%E7%BD%AEpython%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/">RockyLinux 配置 Python 开发环境</a></li>
+          <li><a href="../../../Python/python-%E5%9F%BA%E7%A1%80/windows%E9%85%8D%E7%BD%AEpython%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/">Windows 配置 Python 开发环境</a></li>
+        </ul>
+        <p class="sidebar-group">python-数据分析-AI大模型</p>
+        <ul>
+          <li><a href="../../../Python/python-%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-AI%E5%A4%A7%E6%A8%A1%E5%9E%8B/python-%E5%A4%84%E7%90%86excel-word/">Python处理Excel与Word文档</a></li>
+          <li><a href="../../../Python/python-%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-AI%E5%A4%A7%E6%A8%A1%E5%9E%8B/python-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E4%B8%8E%E9%A2%84%E6%B5%8B/">Python机器学习与预测</a></li>
+        </ul>
+        <p class="sidebar-group">python-网络编程-前端</p>
+        <ul>
+          <li><a href="../../../Python/python-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B-%E5%89%8D%E7%AB%AF/python-Web%E5%BC%80%E5%8F%91-HTML-CSS-JS/">Web开发基础 - HTML/CSS/JavaScript</a></li>
+          <li><a href="../../../Python/python-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B-%E5%89%8D%E7%AB%AF/python-Web%E6%A1%86%E6%9E%B6Django/" class="current">Python Web框架Django</a></li>
+          <li><a href="../../../Python/python-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B-%E5%89%8D%E7%AB%AF/python-Web%E6%A1%86%E6%9E%B6Flask/">Python Web框架Flask</a></li>
+          <li><a href="../../../Python/python-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B-%E5%89%8D%E7%AB%AF/python-request-module/">Python Requests模块</a></li>
+          <li><a href="../../../Python/python-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B-%E5%89%8D%E7%AB%AF/python-socket-module/">Python Socket模块</a></li>
+          <li><a href="../../../Python/python-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B-%E5%89%8D%E7%AB%AF/python-%E7%88%AC%E8%99%AB/">Python爬虫</a></li>
+        </ul>
+        <p class="sidebar-group">python-运维开发</p>
+        <ul>
+          <li><a href="../../../Python/python-%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91/python-GUI-tkinter/">Python GUI开发 - Tkinter</a></li>
+          <li><a href="../../../Python/python-%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91/python-Linux-operation/">Python Linux运维模块</a></li>
+          <li><a href="../../../Python/python-%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91/python-elasticsearch/">Python Elasticsearch运维</a></li>
+          <li><a href="../../../Python/python-%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91/python-fabric%E9%AB%98%E7%BA%A7%E7%94%A8%E6%B3%95/">Python Fabric高级用法</a></li>
+          <li><a href="../../../Python/python-%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91/python-kubernetes-module/">Python Kubernetes模块</a></li>
+          <li><a href="../../../Python/python-%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91/python-mysql/">Python MySQL操作</a></li>
+          <li><a href="../../../Python/python-%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91/python-nginx/">Python Nginx运维自动化</a></li>
+          <li><a href="../../../Python/python-%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91/python-postgresql/">Python PostgreSQL操作</a></li>
+          <li><a href="../../../Python/python-%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91/python-tomcat/">Python Tomcat运维自动化</a></li>
+          <li><a href="../../../Python/python-%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91/python-%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/">Python 游戏开发</a></li>
+        </ul>
+        <p class="sidebar-group">电池参数提取统计工具开发</p>
+        <ul>
+          <li><a href="../../../Python/%E7%94%B5%E6%B1%A0%E5%8F%82%E6%95%B0%E6%8F%90%E5%8F%96%E7%BB%9F%E8%AE%A1%E5%B7%A5%E5%85%B7%E5%BC%80%E5%8F%91/%E5%AE%9E%E9%AA%8C%E5%AE%A4%E7%94%B5%E6%B1%A0%E5%8F%82%E6%95%B0%E4%B8%80%E9%94%AE%E7%BB%9F%E8%AE%A1%E5%B7%A5%E5%85%B7%E5%BC%80%E5%8F%91/">实验室电池参数一键统计工具开发</a></li>
+        </ul>
+        <p class="sidebar-group">其他</p>
+        <ul>
+          <li><a href="../../../Python/script-server-%E8%84%9A%E6%9C%ACWeb%E5%8C%96%E5%B7%A5%E5%85%B7/">Script-Server：脚本 Web 化工具</a></li>
+        </ul>
+      </nav>
+    </details>
+  </aside>
+
+  <article class="article">
+    <nav class="breadcrumb">
+      <a href="../../../index.html">首页</a><span>/</span>
+      <a href="../../../Python/">Python</a><span>/</span><span>python-网络编程-前端</span>
+    </nav>
+    <h1 class="article-title">Python Web框架Django</h1>
+    <p class="article-meta"><span>更新于 2026-04-16</span>
+      <a href="https://github.com/hangx969/learning-notes/blob/main/Python/python-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B-%E5%89%8D%E7%AB%AF/python-Web%E6%A1%86%E6%9E%B6Django.md">查看源文件</a>
+    </p>
+    <div class="article-body">
+<h1 id="python-web框架django">Python Web框架Django</h1>
+<h2 id="django介绍">Django介绍</h2>
+<p><mark>Django</mark> 是一个开源的 Python Web 框架,旨在帮助开发者快速创建高效、可扩展的 Web 应用。</p>
+<p>特点:</p>
+<ol>
+<li>快速开发:通过内置功能减少开发时间。</li>
+<li>安全性:提供保护用户数据和避免常见安全漏洞的功能。</li>
+<li>可扩展性:可根据需要扩展应用功能。</li>
+</ol>
+<p><div class="callout callout-important" markdown="1"><br />
+<p class="callout-title">安装</p></p>
+</div>
+<div class="highlight"><pre><span></span><code>pip3<span class="w"> </span>install<span class="w"> </span>-i<span class="w"> </span>https://pypi.tuna.tsinghua.edu.cn/simple<span class="w"> </span>django
+</code></pre></div>
+
+<hr />
+<h2 id="初始化django项目">初始化Django项目</h2>
+<div class="highlight"><pre><span></span><code><span class="c1"># 打开terminal</span>
+django-admin<span class="w"> </span>startproject<span class="w"> </span>myproject
+</code></pre></div>
+
+<p>会创建两个同名的 myproject 文件夹。</p>
+<ul>
+<li>
+<p>第一个 myproject 文件夹是项目的根目录。</p>
+</li>
+<li>
+<p>第二个 myproject 文件夹是项目的实际应用目录,它包含项目的配置和应用代码。</p>
+</li>
+</ul>
+<p>这是 Django 的默认项目结构设计,目的是将项目的代码与项目的外部管理文件(如版本控制文件、虚拟环境、其他工具的配置文件)分开。</p>
+<p>下面是两层目录的具体作用:</p>
+<h3 id="外层-myproject项目根目录">外层 myproject/(项目根目录)</h3>
+<p>这是项目的根目录,用于存放管理项目的相关文件。这一层通常包含项目级别的内容,如 manage.py、虚拟环境、依赖库的 requirements.txt 或者 pyproject.toml 文件等。目录结构示例:</p>
+<p>myproject/</p>
+<p>​    manage.py</p>
+<p>​    myproject/ # 这个是内层目录</p>
+<p><div class="callout callout-info" markdown="1"><br />
+<p class="callout-title">manage.py</p></p>
+<p>作用:这是 Django 项目中的管理脚本。<br />
+功能:通过这个脚本,你可以运行常用的 Django 命令,如启动开发服务器 (<mark>runserver</mark>)、数据库迁移 (<mark>migrate</mark>)、创建管理员账号(<mark>createsuperuser</mark>) 等。<br />
+示例:<code>python manage.py runserver</code></p>
+</div>
+<h3 id="内层-myproject项目应用目录">内层 myproject/(项目应用目录)</h3>
+<p>这个文件夹是项目的实际应用目录,它包含与 Django 框架相关的核心配置文件和代码(如settings.py、urls.py、asgi.py、wsgi.py、__init__.py)。目录结构示例:</p>
+<p>myproject/<br />
+    __init__.py<br />
+    asgi.py<br />
+    settings.py<br />
+    urls.py<br />
+    wsgi.py</p>
+<p>功能:这一层是项目代码的存放位置,Django 会在这里查找应用的配置、URL 路由和启动文件</p>
+<ol>
+<li><strong>myproject/__init__.py</strong></li>
+</ol>
+<p>作用:这是一个空文件,用来告诉 Python,myproject 目录应该被视为一个包(package)。</p>
+<p>功能:有了这个文件,Django 项目可以将 myproject 目录作为一个模块导入,Python 脚本可以引用其中的内容。</p>
+<ol>
+<li><strong>myproject/settings.py</strong></li>
+</ol>
+<p>作用:这是 Django 项目的核心配置文件。</p>
+<p>功能:定义项目的所有设置,如数据库连接、时区设置、已安装的应用(<mark>INSTALLED_APPS</mark>)等。</p>
+<p>常见配置:</p>
+<ul>
+<li>数据库设置 (DATABASES)</li>
+<li>已安装的应用 (INSTALLED_APPS)</li>
+<li>中间件 (MIDDLEWARE)</li>
+<li>
+<p>模板路径 (TEMPLATES)</p>
+</li>
+<li>
+<p><strong>myproject/urls.py</strong></p>
+</li>
+</ul>
+<p>作用:用于定义项目的 URL 路由。</p>
+<p>功能:它决定了用户访问某个 URL 时,应该调用哪个视图(view)。通过 <mark>urlpatterns</mark> 列表,Django 将不同的 URL 与相应的视图函数或类关联起来。</p>
+<p>示例:</p>
+<p><code>python
+   from django.urls import path
+   from . import views
+   urlpatterns = [
+   path('home/', views.home_view),
+   ]</code></p>
+<ol>
+<li><strong>myproject/asgi.py</strong></li>
+</ol>
+<p>作用:用于 <mark>ASGI</mark>(Asynchronous Server Gateway Interface)服务器的入口文件。</p>
+<p>功能:ASGI 是 Django 的异步服务器接口,它支持 WebSocket 等异步操作。这个文件用于在使用 ASGI 服务器时,启动 Django 应用程序。</p>
+<p>使用场景:当你需要运行异步任务或 WebSocket 连接时,ASGI 比 WSGI 更合适。</p>
+<ol>
+<li><strong>myproject/wsgi.py</strong></li>
+</ol>
+<p>作用:用于 <mark>WSGI</mark>(Web Server Gateway Interface)服务器的入口文件。</p>
+<p>功能:WSGI 是 Django 项目在生产环境中常用的 Web 服务器接口。这个文件定义了项目的 WSGI 应用对象,Web 服务器通过这个文件来启动 Django 项目。</p>
+<p>使用场景:通常在部署 Django 项目时,使用 gunicorn、uWSGI 等服务器,都会通过这个文件来启动项目。</p>
+<hr />
+<h2 id="启动django项目">启动Django项目</h2>
+<div class="highlight"><pre><span></span><code><span class="c1"># 进入项目目录,启动web服务器</span>
+<span class="n">cd</span> <span class="n">myproject</span>
+<span class="n">python</span> <span class="n">manage</span><span class="o">.</span><span class="n">py</span> <span class="n">runserver</span>
+</code></pre></div>
+
+<hr />
+<h2 id="创建django应用">创建Django应用</h2>
+<h3 id="创建应用">创建应用</h3>
+<ol>
+<li>在终端中,确保你在项目目录下,输入以下命令创建一个新的应用:</li>
+</ol>
+<p><code>sh
+   python manage.py startapp myapp</code></p>
+<p>myapp 是你的应用名称,是 Django 项目中的一个子模块,通常负责处理某一类功能或逻辑(例如博客、用户管理、商品管理)。每个应用是相对独立的,但会与项目的 settings.py 配置结合在一起。settings.py 是整个项目级别的配置文件,settings.py 只存在于整个项目的配置中,而不是每个应用中。</p>
+<ol>
+<li>在项目配置目录下的 settings.py 文件中,将新创建的应用添加到 INSTALLED_APPS 中:</li>
+</ol>
+<p><code>python
+   INSTALLED_APPS = [
+   'django.contrib.admin',
+   'django.contrib.auth',
+   'django.contrib.contenttypes',
+   'django.contrib.sessions',
+   'django.contrib.messages',
+   'django.contrib.staticfiles',
+   'myapp', # 添加你的应用名称
+   ]</code></p>
+<hr />
+<h3 id="创建视图">创建视图</h3>
+<p>在 myapp/views.py 文件中,定义一个简单的视图函数:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">django.shortcuts</span><span class="w"> </span><span class="kn">import</span> <span class="n">render</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.http</span><span class="w"> </span><span class="kn">import</span> <span class="n">HttpResponse</span>
+
+<span class="c1"># 视图函数</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">home</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="s2">&quot;Hello, Django!&quot;</span><span class="p">)</span>
+</code></pre></div>
+
+<p><div class="callout callout-note" markdown="1"><br />
+<p class="callout-title">视图函数说明</p></p>
+</div>
+<ol>
+<li><code>from django.http import HttpResponse</code></li>
+</ol>
+<p>作用:从 Django 的 http 模块中导入 <mark>HttpResponse</mark> 类。</p>
+<p>功能:HttpResponse 是 Django 中用来生成 HTTP 响应对象的类。通过它,服务器可以返回 HTTP 响应给客户端(例如浏览器)。在这个例子中,HttpResponse 用于返回一个包含文本的响应。</p>
+<ol>
+<li>定义视图函数 <code>home(request)</code></li>
+</ol>
+<p>作用:定义了一个名为 home 的视图函数。</p>
+<p><mark>request</mark> 参数:request 是 Django 自动传递给视图函数的参数。它是一个包含所有请求信息的对象。当用户在浏览器中访问某个 URL 时,Django 就会创建一个 request 对象,里面包含了很多信息,比如:</p>
+<ul>
+<li>URL:用户访问的网页地址。</li>
+<li>GET/POST 参数:如果用户通过表单提交数据,这些数据会包含在 request 中</li>
+<li>用户信息:如果用户已登录,request 对象中会包含用户的相关信息。</li>
+</ul>
+<p>通过 request 参数,视图函数可以知道用户访问了哪个页面,提交了哪些数据,并基于这些信息做出相应的处理。</p>
+<ol>
+<li><code>return HttpResponse("Hello, Django!")</code></li>
+</ol>
+<p>作用:返回一个 HttpResponse 对象,内容是 "Hello, Django!"。</p>
+<p>功能:这表示服务器会把 "Hello, Django!" 这个字符串返回给客户端(例如浏览器),浏览器就会在网页上显示这个内容。</p>
+<p>视图函数的功能:这个函数的目的是处理一个客户端的 HTTP 请求,并返回一个响应。在这里,它简单地返回一个包含字符串 "Hello, Django!" 的 HTTP 响应。</p>
+<hr />
+<h3 id="配置url路由">配置URL路由</h3>
+<p>在 myapp 目录下创建一个新的文件 urls.py,并添加以下内容:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">django.urls</span><span class="w"> </span><span class="kn">import</span> <span class="n">path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.views</span><span class="w"> </span><span class="kn">import</span> <span class="n">home</span>
+<span class="n">urlpatterns</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">path</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">home</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;home&#39;</span><span class="p">),</span> <span class="c1"># 根路径对应 home 视图</span>
+<span class="p">]</span>
+</code></pre></div>
+
+<p><div class="callout callout-info" markdown="1"><br />
+<p class="callout-title">URL路由代码解释</p></p>
+<p>这段代码是 Django 项目中用于定义 URL 路由的部分。它将用户访问的 URL 路径映射到相应的视图函数。</p>
+<p>在 Django 中,<mark>path</mark> 函数用于定义 URL 和视图函数之间的关系,也就是路由。它告诉 Django,当用户访问某个特定的 URL 时,应该调用哪个视图函数来处理这个请求。</p>
+<ol>
+<li>第一个参数 <code>''</code> 是空字符串,它表示网站的根 URL。</li>
+<li>第二个参数 <code>home</code> 是你之前定义的视图函数。</li>
+<li>第三个参数 <code>name='home'</code> 给这个路由起了一个名字。通过给路由命名,可以在 Django 项目的其他地方方便地引用这个 URL。</li>
+</ol>
+</div>
+<hr />
+<h3 id="配置admin后台">配置admin后台</h3>
+<p>【可选】在项目的主 urls.py 文件中(通常在 myproject/urls.py),添加 myapp 的 URL 配置:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">django.contrib</span><span class="w"> </span><span class="kn">import</span> <span class="n">admin</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.urls</span><span class="w"> </span><span class="kn">import</span> <span class="n">path</span><span class="p">,</span> <span class="n">include</span> <span class="c1"># 引入 include</span>
+<span class="n">urlpatterns</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">path</span><span class="p">(</span><span class="s1">&#39;admin/&#39;</span><span class="p">,</span> <span class="n">admin</span><span class="o">.</span><span class="n">site</span><span class="o">.</span><span class="n">urls</span><span class="p">),</span>
+    <span class="n">path</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">include</span><span class="p">(</span><span class="s1">&#39;myapp.urls&#39;</span><span class="p">)),</span> <span class="c1"># 包含 myapp 的 URL</span>
+<span class="p">]</span>
+</code></pre></div>
+
+<p>path('admin/', admin.site.urls),解释:</p>
+<ol>
+<li>第一个参数 <code>'admin/'</code>:表示匹配 URL 路径 <code>http://localhost:8000/admin/</code>。</li>
+<li>第二个参数 <code>admin.site.urls</code>:表示当用户访问这个路径时,调用 Django 的内置管理后台的路由配置。</li>
+</ol>
+<hr />
+<h2 id="使用orm模型与数据库交互">使用ORM模型与数据库交互</h2>
+<p><div class="callout callout-info" markdown="1"><br />
+<p class="callout-title">ORM简介</p></p>
+<p>==ORM==是对象关系映射模型,是 Django 框架中用于与数据库进行交互的模型。它允许使用 Python 类来定义数据库表,并通过 Python 代码执行 SQL 操作,如查询、插入、更新和删除数据。</p>
+<p>Django 中的每个模型(类)通常对应数据库中的一个表,模型的每个属性对应表中的一列。</p>
+</div>
+<h3 id="创建模型">创建模型</h3>
+<p>在 myapp/models.py 文件中定义类(模型):</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">django.db</span><span class="w"> </span><span class="kn">import</span> <span class="n">models</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Article</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">title</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span> <span class="c1"># 文章标题</span>
+    <span class="n">content</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">TextField</span><span class="p">()</span> <span class="c1"># 文章内容</span>
+    <span class="n">created_at</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">(</span><span class="n">auto_now_add</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="c1"># 创建时间</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">title</span> <span class="c1"># 返回文章标题作为字符串表示</span>
+    <span class="c1"># __str__ 方法的作用:__str__ 是 Python 中的一个特殊方法。它的目的是告诉 Python,当你试图打印一个对象时,应该返回什么内容。</span>
+    <span class="c1"># 为什么需要 __str__ 方法?默认输出不友好:如果没有定义 __str__ 方法,当你打印一个模型的实例时,Python 会返回类似Article object (1) 的内容。这种输出不容易理解,因为它只是告诉你这是一个 Article 对象,并给了你一个内部的 ID,但没有提供有用的信息。</span>
+</code></pre></div>
+
+<p>在 Django 中,<mark>models.Model</mark> 是用于定义数据模型的基类。</p>
+<ul>
+<li>
+<p>基类:models.Model 是所有模型类的父类。你创建的每个模型类都必须继承父类,这样 Django 才能知道该类与数据库中的哪个表相对应。</p>
+</li>
+<li>
+<p>数据库表映射:当你定义一个类(模型)时,Django 会自动将这个类映射到数据库中的一张表。例如,如果你创建了一个名为 Article的模型类,Django 会在数据库中创建一个名为 Article的表。</p>
+</li>
+</ul>
+<hr />
+<h3 id="数据库迁移">数据库迁移</h3>
+<p><div class="callout callout-important" markdown="1"><br />
+<p class="callout-title">迁移机制</p></p>
+<p>在 Django 中,迁移(migrations)是管理数据库模式变化的一种机制。每当你对模型类进行更改时,Django 会生成迁移文件,以便将这些更改应用到数据库中。</p>
+</div>
+<h4 id="创建数据库迁移文件">创建数据库迁移文件</h4>
+<div class="highlight"><pre><span></span><code>python<span class="w"> </span>manage.py<span class="w"> </span>makemigrations
+</code></pre></div>
+
+<p><mark>makemigrations</mark> 的作用:创建迁移文件。当你运行 <code>python manage.py makemigrations</code> 时,Django 会检查你在模型类中所做的更改,并生成相应的迁移文件。这些文件包含了需要在数据库中执行的操作,比如创建表、添加字段等。</p>
+<h4 id="应用迁移到数据库">应用迁移到数据库</h4>
+<div class="highlight"><pre><span></span><code>python<span class="w"> </span>manage.py<span class="w"> </span>migrate
+<span class="c1"># 这个命令会根据之前生成的迁移文件更新数据库结构,确保数据库与模型类的定义保持一致。</span>
+<span class="c1"># 例如,它会创建一个 Article 表,并添加 title、content 和 created_at 这三列数据。</span>
+</code></pre></div>
+
+<h4 id="添加数据">添加数据</h4>
+<p>在 Django shell 中添加数据。首先打开shell终端</p>
+<div class="highlight"><pre><span></span><code>python<span class="w"> </span>manage.py<span class="w"> </span>shell
+<span class="c1"># 这个命令让你可以在 Django 项目环境中直接使用 Python 进行交互式编程。启动这个 shell 后,你可以访问 Django 项目的所有组件,例如模型、数据库、配置等。</span>
+</code></pre></div>
+
+<p>添加一篇文章:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 导入模型</span>
+&gt;&gt;&gt;from<span class="w"> </span>myapp.models<span class="w"> </span>import<span class="w"> </span>Article
+<span class="c1"># 创建一个文章对象</span>
+&gt;&gt;&gt;article<span class="w"> </span><span class="o">=</span><span class="w"> </span>Article<span class="o">(</span><span class="nv">title</span><span class="o">=</span><span class="s2">&quot;My First Article&quot;</span>,<span class="w"> </span><span class="nv">content</span><span class="o">=</span><span class="s2">&quot;This is the content of my first article.&quot;</span><span class="o">)</span>
+<span class="c1"># 保存到数据库</span>
+&gt;&gt;&gt;article.save<span class="o">()</span>
+<span class="c1"># 这段代码创建了一个新的 Article 对象,标题为 &quot;My First Article&quot;,内容为 &quot;This is the content of my first article.&quot;。然后使用 save() 方法将这篇文章保存到数据库中。</span>
+&gt;&gt;&gt;<span class="w"> </span><span class="nv">article</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>Article<span class="o">(</span><span class="nv">title</span><span class="o">=</span><span class="s2">&quot;My Second Article&quot;</span>,<span class="w"> </span><span class="nv">content</span><span class="o">=</span><span class="s2">&quot;This is the content of my second article.&quot;</span><span class="o">)</span>
+&gt;&gt;&gt;<span class="w"> </span>article.save<span class="o">()</span>
+</code></pre></div>
+
+<h4 id="查询数据">查询数据</h4>
+<p>查询并打印所有文章:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 获取数据库中所有文章</span>
+<span class="nv">articles</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>Article.objects.all<span class="o">()</span>
+<span class="c1"># 打印每篇文章的标题</span>
+<span class="k">for</span><span class="w"> </span>article<span class="w"> </span><span class="k">in</span><span class="w"> </span>articles:
+<span class="w">    </span>print<span class="o">(</span>article.title<span class="o">)</span>
+</code></pre></div>
+
+<p>这段代码会从数据库中获取所有的 Article,并循环遍历每篇文章,将它们的标题打印出来。</p>
+<hr />
+<h2 id="模板与视图结合动态渲染html文档">模板与视图结合:动态渲染HTML文档</h2>
+<h3 id="创建模板">创建模板</h3>
+<p>在 myapp 目录下创建一个名为 templates 的文件夹,然后在 templates 中创建home.html 文件:</p>
+<div class="highlight"><pre><span></span><code><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="p">&lt;</span><span class="nt">html</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">head</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">title</span><span class="p">&gt;</span>My Articles<span class="p">&lt;/</span><span class="nt">title</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">head</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">h1</span><span class="p">&gt;</span>Articles<span class="p">&lt;/</span><span class="nt">h1</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">ul</span><span class="p">&gt;</span>
+    {% for article in articles %}
+      <span class="p">&lt;</span><span class="nt">li</span><span class="p">&gt;</span>{{ article.title }}<span class="p">&lt;/</span><span class="nt">li</span><span class="p">&gt;</span>
+    {% endfor %}
+  <span class="p">&lt;/</span><span class="nt">ul</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">html</span><span class="p">&gt;</span>
+</code></pre></div>
+
+<p><div class="callout callout-note" markdown="1"><br />
+<p class="callout-title">Django模板语法</p></p>
+<ul>
+<li><code>{% for article in articles %}</code>: 这是 Django 模板语言,表示一个循环。它会遍历 articles 变量中的每一个元素。</li>
+<li><code>{{ article.title }}</code> 是 Django 模板中的变量表达式,用来获取 article 对象的 title 字段。</li>
+</ul>
+</div>
+<hr />
+<h3 id="修改视图以使用模板">修改视图以使用模板</h3>
+<p>修改 myapp/views.py 文件中的 home 视图函数,以渲染模板:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">django.shortcuts</span><span class="w"> </span><span class="kn">import</span> <span class="n">render</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.http</span><span class="w"> </span><span class="kn">import</span> <span class="n">HttpResponse</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">Article</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">home</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="n">articles</span> <span class="o">=</span> <span class="n">Article</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span> <span class="c1"># 从数据库中获取所有文章</span>
+    <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;home.html&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;articles&#39;</span><span class="p">:</span> <span class="n">articles</span><span class="p">})</span> <span class="c1"># 渲染模板并传递文章数据</span>
+</code></pre></div>
+
+<p><div class="callout callout-summary" markdown="1"><br />
+<p class="callout-title">渲染流程</p></p>
+<ol>
+<li>用户访问 home 页面时,Django 会调用这个 home 视图函数。</li>
+<li>视图函数从数据库中获取所有 Article(文章)对象。</li>
+<li>然后,它通过 <mark>render()</mark> 函数,将文章数据传递给模板 'home.html' 进行渲染。</li>
+<li>最终,渲染后的 HTML 页面作为响应返回给用户,用户的浏览器将看到所有文章的列表。</li>
+</ol>
+</div>
+<p>运行程序:</p>
+<div class="highlight"><pre><span></span><code>python<span class="w"> </span>manage.py<span class="w"> </span>runserver
+</code></pre></div>
+
+<hr />
+<h2 id="表单创建与数据处理">表单创建与数据处理</h2>
+<p><div class="callout callout-info" markdown="1"><br />
+<p class="callout-title">表单架构</p></p>
+<p>前端是HTML,后端是Django,Django渲染HTML页面。</p>
+</div>
+<h3 id="创建表单">创建表单</h3>
+<p>在 myapp/forms.py 文件中,创建一个表单类:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">django</span><span class="w"> </span><span class="kn">import</span> <span class="n">forms</span> <span class="c1"># 用于创建和处理 HTML 表单。</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ArticleForm</span><span class="p">(</span><span class="n">forms</span><span class="o">.</span><span class="n">Form</span><span class="p">):</span>
+<span class="c1"># 定义一个表单类:这里定义了一个名为 ArticleForm 的类,它继承自 forms.Form。这个类用来创建一个表单,表单里有两个字段:title 和 content。</span>
+    <span class="n">title</span> <span class="o">=</span> <span class="n">forms</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Title&#39;</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span> <span class="c1"># forms.CharField() 创建一个输入框(HTML 的 &lt;input type=&quot;text&quot;&gt;),用来填写文章的标题。</span>
+    <span class="n">content</span> <span class="o">=</span> <span class="n">forms</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Content&#39;</span><span class="p">,</span> <span class="n">widget</span><span class="o">=</span><span class="n">forms</span><span class="o">.</span><span class="n">Textarea</span><span class="p">)</span> <span class="c1"># 将默认的文本输入框(即 &lt;input&gt;)替换为多行文本框(即 &lt;textarea&gt;)</span>
+</code></pre></div>
+
+<p>通过 ArticleForm 类,Django 将自动为我们生成一个 HTML 表单,包括两个字段:</p>
+<ol>
+<li>标题字段 (title):一个文本输入框,最多可以输入 100 个字符。</li>
+<li>内容字段 (content):一个多行文本框,用来输入文章的内容。</li>
+</ol>
+<hr />
+<h3 id="处理表单提交">处理表单提交</h3>
+<p>在 myapp/views.py 中添加一个处理表单的视图:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">django.shortcuts</span><span class="w"> </span><span class="kn">import</span> <span class="n">render</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.http</span><span class="w"> </span><span class="kn">import</span> <span class="n">HttpResponse</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">Article</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.shortcuts</span><span class="w"> </span><span class="kn">import</span> <span class="n">redirect</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.forms</span><span class="w"> </span><span class="kn">import</span> <span class="n">ArticleForm</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">home</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="n">articles</span> <span class="o">=</span> <span class="n">Article</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span> <span class="c1"># 从数据库中获取所有文章</span>
+    <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;home.html&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;articles&#39;</span><span class="p">:</span> <span class="n">articles</span><span class="p">})</span> <span class="c1"># 渲染模板并传递文章数据</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">create_article</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;POST&#39;</span><span class="p">:</span>
+        <span class="n">form</span> <span class="o">=</span> <span class="n">ArticleForm</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">form</span><span class="o">.</span><span class="n">is_valid</span><span class="p">():</span>
+            <span class="n">title</span> <span class="o">=</span> <span class="n">form</span><span class="o">.</span><span class="n">cleaned_data</span><span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">]</span>
+            <span class="n">content</span> <span class="o">=</span> <span class="n">form</span><span class="o">.</span><span class="n">cleaned_data</span><span class="p">[</span><span class="s1">&#39;content&#39;</span><span class="p">]</span>
+            <span class="n">Article</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">,</span> <span class="n">content</span><span class="o">=</span><span class="n">content</span><span class="p">)</span> <span class="c1"># 创建文章</span>
+            <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;home&#39;</span><span class="p">)</span> <span class="c1"># 重定向到首页</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">form</span> <span class="o">=</span> <span class="n">ArticleForm</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;create_article.html&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;form&#39;</span><span class="p">:</span> <span class="n">form</span><span class="p">})</span> <span class="c1"># 渲染表单</span>
+</code></pre></div>
+
+<h3 id="添加url路由">添加URL路由</h3>
+<p>在 myapp/urls.py 中添加新的 URL 路由:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">django.urls</span><span class="w"> </span><span class="kn">import</span> <span class="n">path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.views</span><span class="w"> </span><span class="kn">import</span> <span class="n">home</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.shortcuts</span><span class="w"> </span><span class="kn">import</span> <span class="n">redirect</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.views</span><span class="w"> </span><span class="kn">import</span> <span class="n">home</span><span class="p">,</span><span class="n">create_article</span>
+
+<span class="n">urlpatterns</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">path</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">home</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;home&#39;</span><span class="p">),</span>
+    <span class="n">path</span><span class="p">(</span><span class="s1">&#39;create/&#39;</span><span class="p">,</span> <span class="n">create_article</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;create_article&#39;</span><span class="p">),</span> <span class="c1"># 创建文章</span>
+<span class="p">]</span>
+</code></pre></div>
+
+<h3 id="添加表单html页面">添加表单HTML页面</h3>
+<p>在 templates 文件夹中创建 create_article.html:</p>
+<div class="highlight"><pre><span></span><code><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="p">&lt;</span><span class="nt">html</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">head</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">title</span><span class="p">&gt;</span>Create Article<span class="p">&lt;/</span><span class="nt">title</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">head</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">h1</span><span class="p">&gt;</span>Create New Article<span class="p">&lt;/</span><span class="nt">h1</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">form</span> <span class="na">method</span><span class="o">=</span><span class="s">&quot;post&quot;</span><span class="p">&gt;</span>
+        {% csrf_token %}
+        {{ form.as_p }}
+        <span class="p">&lt;</span><span class="nt">button</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;submit&quot;</span><span class="p">&gt;</span>Submit<span class="p">&lt;/</span><span class="nt">button</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">form</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">html</span><span class="p">&gt;</span>
+</code></pre></div>
+
+<h3 id="访问创建文章页面">访问创建文章页面</h3>
+<div class="highlight"><pre><span></span><code>python<span class="w"> </span>manage.py<span class="w"> </span>runserver
+<span class="c1"># http://127.0.0.1:8000/create</span>
+</code></pre></div>
+
+<hr />
+<h2 id="用户注册与登录">用户注册与登录</h2>
+<h3 id="用户注册功能">用户注册功能</h3>
+<p><div class="callout callout-info" markdown="1"><br />
+<p class="callout-title">内置用户模型</p></p>
+<p>在 Django 中,<mark>User</mark> 模型(从 <code>django.contrib.auth.models</code> 导入)提供了内置的用户管理功能。</p>
+</div>
+<h4 id="创建视图_1">创建视图</h4>
+<p>myapp/views.py代码,新增如下内容:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">django.contrib.auth.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">User</span> <span class="c1"># 导入用户模型</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.contrib.auth</span><span class="w"> </span><span class="kn">import</span> <span class="n">authenticate</span><span class="p">,</span> <span class="n">login</span> <span class="c1"># 导入认证和登录函数</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.shortcuts</span><span class="w"> </span><span class="kn">import</span> <span class="n">redirect</span><span class="p">,</span> <span class="n">render</span> <span class="c1"># 导入重定向和渲染函数</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">register</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;POST&#39;</span><span class="p">:</span> <span class="c1"># 检查请求方法是否为 POST,表单提交时为 POST 请求</span>
+        <span class="n">username</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s1">&#39;username&#39;</span><span class="p">]</span> <span class="c1"># 从表单中获取用户名</span>
+        <span class="n">password</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s1">&#39;password&#39;</span><span class="p">]</span> <span class="c1"># 从表单中获取密码</span>
+        <span class="n">user</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create_user</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="n">password</span><span class="p">)</span> <span class="c1"># 创建新用户</span>
+        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;home&#39;</span><span class="p">)</span> <span class="c1"># 注册成功后重定向到主页</span>
+    <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;register.html&#39;</span><span class="p">)</span> <span class="c1"># 如果不是 POST 请求,渲染注册页面</span>
+</code></pre></div>
+
+<h4 id="添加url路由_1">添加URL路由</h4>
+<p>在 myapp/urls.py 文件中,为 register 视图创建路由:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">django.urls</span><span class="w"> </span><span class="kn">import</span> <span class="n">path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.views</span><span class="w"> </span><span class="kn">import</span> <span class="n">register</span> <span class="c1"># 导入 register 视图</span>
+
+<span class="n">urlpatterns</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">path</span><span class="p">(</span><span class="s1">&#39;register/&#39;</span><span class="p">,</span> <span class="n">register</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;register&#39;</span><span class="p">),</span> <span class="c1"># 注册页面的 URL 路由</span>
+<span class="p">]</span>
+</code></pre></div>
+
+<h4 id="创建注册页面html">创建注册页面HTML</h4>
+<p>在 templates 文件夹中创建 register.html:</p>
+<div class="highlight"><pre><span></span><code><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="p">&lt;</span><span class="nt">html</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">head</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">title</span><span class="p">&gt;</span>Register<span class="p">&lt;/</span><span class="nt">title</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">head</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">h1</span><span class="p">&gt;</span>Register<span class="p">&lt;/</span><span class="nt">h1</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">form</span> <span class="na">method</span><span class="o">=</span><span class="s">&quot;post&quot;</span><span class="p">&gt;</span> <span class="cm">&lt;!-- 表单使用 POST 方法提交数据 --&gt;</span>
+    {% csrf_token %} <span class="cm">&lt;!-- Django 的安全机制,防止跨站请求伪造攻击 --&gt;</span>
+    <span class="p">&lt;</span><span class="nt">label</span> <span class="na">for</span><span class="o">=</span><span class="s">&quot;username&quot;</span><span class="p">&gt;</span>Username:<span class="p">&lt;/</span><span class="nt">label</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">input</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;text&quot;</span> <span class="na">name</span><span class="o">=</span><span class="s">&quot;username&quot;</span> <span class="na">required</span><span class="p">&gt;</span> <span class="cm">&lt;!-- 用户名输入框 --&gt;</span>
+    <span class="p">&lt;</span><span class="nt">label</span> <span class="na">for</span><span class="o">=</span><span class="s">&quot;password&quot;</span><span class="p">&gt;</span>Password:<span class="p">&lt;/</span><span class="nt">label</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">input</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;password&quot;</span> <span class="na">name</span><span class="o">=</span><span class="s">&quot;password&quot;</span> <span class="na">required</span><span class="p">&gt;</span> <span class="cm">&lt;!-- 密码输入框 --&gt;</span>
+    <span class="p">&lt;</span><span class="nt">button</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;submit&quot;</span><span class="p">&gt;</span>Register<span class="p">&lt;/</span><span class="nt">button</span><span class="p">&gt;</span> <span class="cm">&lt;!-- 提交按钮 --&gt;</span>
+  <span class="p">&lt;/</span><span class="nt">form</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">html</span><span class="p">&gt;</span>
+</code></pre></div>
+
+<h4 id="访问注册页面">访问注册页面</h4>
+<div class="highlight"><pre><span></span><code>http://127.0.0.1:8000/register
+</code></pre></div>
+
+<hr />
+<h3 id="用户登录功能">用户登录功能</h3>
+<h4 id="创建登录视图">创建登录视图</h4>
+<p><div class="callout callout-note" markdown="1"><br />
+<p class="callout-title">认证函数</p></p>
+<p>使用 Django 内置的 <mark>authenticate</mark> 和 <mark>login</mark> 函数来处理用户认证和登录。</p>
+</div>
+<p>myapp/views.py代码,新增如下内容:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">django.contrib.auth</span><span class="w"> </span><span class="kn">import</span> <span class="n">authenticate</span><span class="p">,</span> <span class="n">login</span> <span class="c1"># 导入认证和登录函数</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.shortcuts</span><span class="w"> </span><span class="kn">import</span> <span class="n">redirect</span><span class="p">,</span> <span class="n">render</span> <span class="c1"># 导入重定向和渲染函数</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">user_login</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;POST&#39;</span><span class="p">:</span> <span class="c1"># 检查请求方法是否为 POST</span>
+        <span class="n">username</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s1">&#39;username&#39;</span><span class="p">]</span> <span class="c1"># 获取提交的用户名</span>
+        <span class="n">password</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s1">&#39;password&#39;</span><span class="p">]</span> <span class="c1"># 获取提交的密码</span>
+        <span class="n">user</span> <span class="o">=</span> <span class="n">authenticate</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">username</span><span class="o">=</span><span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="n">password</span><span class="p">)</span> <span class="c1"># 验证用户身份</span>
+        <span class="k">if</span> <span class="n">user</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span> <span class="c1"># 如果验证通过</span>
+            <span class="n">login</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">user</span><span class="p">)</span> <span class="c1"># 登录用户</span>
+            <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;home&#39;</span><span class="p">)</span> <span class="c1"># 重定向到主页</span>
+    <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;login.html&#39;</span><span class="p">)</span> <span class="c1"># 如果请求不是 POST,渲染登录页面</span>
+</code></pre></div>
+
+<h4 id="添加url路由_2">添加URL路由</h4>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">django.urls</span><span class="w"> </span><span class="kn">import</span> <span class="n">path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.views</span><span class="w"> </span><span class="kn">import</span> <span class="n">user_login</span> <span class="c1"># 导入 user_login 视图</span>
+
+<span class="n">urlpatterns</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">path</span><span class="p">(</span><span class="s1">&#39;login/&#39;</span><span class="p">,</span> <span class="n">user_login</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;login&#39;</span><span class="p">),</span> <span class="c1"># 登录页面的 URL 路由</span>
+<span class="p">]</span>
+</code></pre></div>
+
+<h4 id="创建登录模板">创建登录模板</h4>
+<p>在 templates 文件夹中创建 login.html:</p>
+<div class="highlight"><pre><span></span><code><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="p">&lt;</span><span class="nt">html</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">head</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">title</span><span class="p">&gt;</span>Login<span class="p">&lt;/</span><span class="nt">title</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">head</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">h1</span><span class="p">&gt;</span>Login<span class="p">&lt;/</span><span class="nt">h1</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">form</span> <span class="na">method</span><span class="o">=</span><span class="s">&quot;post&quot;</span><span class="p">&gt;</span> <span class="cm">&lt;!-- 表单使用 POST 方法提交数据 --&gt;</span>
+    {% csrf_token %} <span class="cm">&lt;!-- Django 的安全机制,防止跨站请求伪造攻击 --&gt;</span>
+    <span class="p">&lt;</span><span class="nt">label</span> <span class="na">for</span><span class="o">=</span><span class="s">&quot;username&quot;</span><span class="p">&gt;</span>Username:<span class="p">&lt;/</span><span class="nt">label</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">input</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;text&quot;</span> <span class="na">name</span><span class="o">=</span><span class="s">&quot;username&quot;</span> <span class="na">required</span><span class="p">&gt;</span> <span class="cm">&lt;!-- 用户名输入框 --&gt;</span>
+    <span class="p">&lt;</span><span class="nt">label</span> <span class="na">for</span><span class="o">=</span><span class="s">&quot;password&quot;</span><span class="p">&gt;</span>Password:<span class="p">&lt;/</span><span class="nt">label</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">input</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;password&quot;</span> <span class="na">name</span><span class="o">=</span><span class="s">&quot;password&quot;</span> <span class="na">required</span><span class="p">&gt;</span> <span class="cm">&lt;!-- 密码输入框 --&gt;</span>
+    <span class="p">&lt;</span><span class="nt">button</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;submit&quot;</span><span class="p">&gt;</span>Login<span class="p">&lt;/</span><span class="nt">button</span><span class="p">&gt;</span> <span class="cm">&lt;!-- 提交按钮 --&gt;</span>
+  <span class="p">&lt;/</span><span class="nt">form</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">html</span><span class="p">&gt;</span>
+</code></pre></div>
+
+<hr />
+<h2 id="相关笔记">相关笔记</h2>
+<ul>
+<li><a class="wikilink" href="../../../Python/python-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B-%E5%89%8D%E7%AB%AF/python-Web%E6%A1%86%E6%9E%B6Flask/">python-Web框架Flask</a> - Flask Web框架</li>
+<li><a class="wikilink" href="../../../Python/python-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B-%E5%89%8D%E7%AB%AF/python-Web%E5%BC%80%E5%8F%91-HTML-CSS-JS/">python-Web开发-HTML-CSS-JS</a> - HTML/CSS/JS前端开发</li>
+<li><a class="wikilink" href="../../../Python/python-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B-%E5%89%8D%E7%AB%AF/python-request-module/">python-request-module</a> - requests HTTP库</li>
+</ul>
+    </div>
+  </article>
+  <aside class="toc">
+    <p class="toc-label">本页目录</p>
+    <ul>
+  <li><a href="#django介绍">Django介绍</a></li>
+  <li><a href="#初始化django项目">初始化Django项目</a><ul>
+  <li><a href="#外层-myproject项目根目录">外层 myproject/(项目根目录)</a></li>
+  <li><a href="#内层-myproject项目应用目录">内层 myproject/(项目应用目录)</a></li>
+</ul></li>
+  <li><a href="#启动django项目">启动Django项目</a></li>
+  <li><a href="#创建django应用">创建Django应用</a><ul>
+  <li><a href="#创建应用">创建应用</a></li>
+  <li><a href="#创建视图">创建视图</a></li>
+  <li><a href="#配置url路由">配置URL路由</a></li>
+  <li><a href="#配置admin后台">配置admin后台</a></li>
+</ul></li>
+  <li><a href="#使用orm模型与数据库交互">使用ORM模型与数据库交互</a><ul>
+  <li><a href="#创建模型">创建模型</a></li>
+  <li><a href="#数据库迁移">数据库迁移</a></li>
+</ul></li>
+  <li><a href="#模板与视图结合动态渲染html文档">模板与视图结合:动态渲染HTML文档</a><ul>
+  <li><a href="#创建模板">创建模板</a></li>
+  <li><a href="#修改视图以使用模板">修改视图以使用模板</a></li>
+</ul></li>
+  <li><a href="#表单创建与数据处理">表单创建与数据处理</a><ul>
+  <li><a href="#创建表单">创建表单</a></li>
+  <li><a href="#处理表单提交">处理表单提交</a></li>
+  <li><a href="#添加url路由">添加URL路由</a></li>
+  <li><a href="#添加表单html页面">添加表单HTML页面</a></li>
+  <li><a href="#访问创建文章页面">访问创建文章页面</a></li>
+</ul></li>
+  <li><a href="#用户注册与登录">用户注册与登录</a><ul>
+  <li><a href="#用户注册功能">用户注册功能</a></li>
+  <li><a href="#用户登录功能">用户登录功能</a></li>
+</ul></li>
+  <li><a href="#相关笔记">相关笔记</a></li>
+</ul>
+  </aside>
+
+</div>
+
+</main>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>Learning Notes</span>
+    <a href="https://github.com/hangx969/learning-notes">GitHub</a>
+  </div>
+</footer>
+<script src="../../../static/search.js"></script>
+</body>
+</html>

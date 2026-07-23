@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Loop Engineering：从 Prompt 到自动化流水线 - Learning Notes</title>
+<link rel="stylesheet" href="../../../static/style.css">
+<link rel="stylesheet" href="../../../static/pygments.css">
+</head>
+<body data-root="../../../">
+<header class="site-header">
+  <div class="header-inner">
+    <a class="logo" href="../../../index.html"><span class="logo-mark"></span>LEARNING NOTES</a>
+    <div class="search">
+      <input id="search-input" type="search" placeholder="搜索笔记…" autocomplete="off" aria-label="搜索笔记">
+      <div id="search-results" hidden></div>
+    </div>
+  </div>
+  <nav class="topic-nav" aria-label="主题导航">
+    <div class="topic-nav-inner">
+      <a href="../../../AI/" class="active">AI</a>
+      <a href="../../../Aliyun/">Aliyun</a>
+      <a href="../../../Azure/">Azure</a>
+      <a href="../../../C%2B%2B/">C++</a>
+      <a href="../../../CloudComputing/">CloudComputing</a>
+      <a href="../../../Database/">Database</a>
+      <a href="../../../Docker-Kubernetes/">Docker-Kubernetes</a>
+      <a href="../../../GPU-DeepLearning/">GPU-DeepLearning</a>
+      <a href="../../../Git/">Git</a>
+      <a href="../../../Go/">Go</a>
+      <a href="../../../HPC/">HPC</a>
+      <a href="../../../IaC/">IaC</a>
+      <a href="../../../Linux-Shell/">Linux-Shell</a>
+      <a href="../../../Middlewares/">Middlewares</a>
+      <a href="../../../Networking/">Networking</a>
+      <a href="../../../OS/">OS</a>
+      <a href="../../../Python/">Python</a>
+      <a href="../../../SoftwareTesting/">SoftwareTesting</a>
+    </div>
+  </nav>
+</header>
+<main class="main">
+
+<div class="article-layout">
+
+  <aside class="sidebar">
+    <details class="sidebar-details">
+      <summary>AI</summary>
+      <nav class="sidebar-nav">
+        <p class="sidebar-group">AI-视觉</p>
+        <ul>
+          <li><a href="../../../AI/AI-%E8%A7%86%E8%A7%89/AI-Animation-Skill-%E7%A7%91%E6%99%AE%E5%8A%A8%E7%94%BB/">AI-Animation-Skill - HTML科普动画生成</a></li>
+          <li><a href="../../../AI/AI-%E8%A7%86%E8%A7%89/AI%E5%81%9APPT-ppt-master/">AI做PPT - ppt-master</a></li>
+          <li><a href="../../../AI/AI-%E8%A7%86%E8%A7%89/Markdown-Viewer-Skills-Markdown%E4%B8%AD%E7%9B%B4%E6%8E%A5%E7%94%BB%E5%9B%BE/">Markdown Viewer Skills：让 AI 写文档时顺手把图也画了</a></li>
+          <li><a href="../../../AI/AI-%E8%A7%86%E8%A7%89/effective-html-AI%E7%9B%B4%E5%87%BAHTML%E5%B7%A5%E5%85%B7%E5%AE%9E%E6%B5%8B/">effective-html：让 AI 直接输出 HTML 而非 Markdown</a></li>
+          <li><a href="../../../AI/AI-%E8%A7%86%E8%A7%89/html-anything-AI%E7%94%9F%E6%88%90HTML%E5%85%A8%E5%9C%BA%E6%99%AF%E5%B7%A5%E5%85%B7/">html-anything：AI 生成 HTML 全场景工具</a></li>
+          <li><a href="../../../AI/AI-%E8%A7%86%E8%A7%89/html-ppt-skill-%E5%AE%9E%E6%B5%8B%E6%8C%87%E5%8D%97/">html-ppt-skill - HTML幻灯片生成</a></li>
+          <li><a href="../../../AI/AI-%E8%A7%86%E8%A7%89/%E8%A7%86%E8%A7%89%E8%AE%BE%E8%AE%A1%E6%8F%90%E7%A4%BA%E8%AF%8D/">视觉设计提示词</a></li>
+        </ul>
+        <p class="sidebar-group">AIOps</p>
+        <ul>
+          <li><a href="../../../AI/AIOps/AIOps%E5%AE%9E%E6%88%98-Golang%E6%89%8B%E6%90%93K8s%E6%99%BA%E8%83%BD%E8%BF%90%E7%BB%B4%E5%B7%A5%E5%85%B7%E9%93%BE/">AIOps 实战：Golang 手搓 K8s 智能运维工具链</a></li>
+          <li><a href="../../../AI/AIOps/Kubernetes-MCP-Server-Dify%E6%99%BA%E8%83%BD%E8%BF%90%E7%BB%B4/">AI 接管 Kubernetes 运维——Kubernetes MCP Server + Dify</a></li>
+        </ul>
+        <p class="sidebar-group">ClaudeCode</p>
+        <ul>
+          <li><a href="../../../AI/ClaudeCode/CLAUDE.md%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5-12%E6%9D%A1%E8%A7%84%E5%88%99%E6%A8%A1%E6%9D%BF/">Mnilax：CLAUDE.md 规则从 Karpathy 的 4 条增加到 12 条，错误率从 41% 降到 3%</a></li>
+          <li><a href="../../../AI/ClaudeCode/CLAUDE.md%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5-21%E6%9D%A1%E6%8C%87%E4%BB%A4%E6%B8%85%E5%8D%95/">Mayank Agarwal：21 条 CLAUDE.md 指令，让 Claude 真正懂你</a></li>
+          <li><a href="../../../AI/ClaudeCode/CLAUDE.md%E7%BB%B4%E6%8A%A4%E5%B7%A5%E7%A8%8B-%E5%9B%9B%E5%B1%82%E5%8A%A0%E8%BD%BD%E4%B8%8E%E6%8C%87%E4%BB%A4%E9%A2%84%E7%AE%97/">CLAUDE.md 维护工程：四层加载与指令预算</a></li>
+          <li><a href="../../../AI/ClaudeCode/Claude%20Code%20%E5%9F%BA%E7%A1%80%E6%8C%87%E5%8D%97/">Claude Code 使用指南</a></li>
+          <li><a href="../../../AI/ClaudeCode/Claude%20Code%20%E6%89%A9%E5%B1%95%E4%BD%93%E7%B3%BB/">Claude Code 扩展体系</a></li>
+          <li><a href="../../../AI/ClaudeCode/Claude-Code-Harness%E5%AE%9E%E6%88%98-%E6%9C%80%E5%B0%8F%E5%8F%AF%E7%94%A8%E7%B3%BB%E7%BB%9F/">Harness 实战：从零搭建最小可用的 Harness 系统</a></li>
+          <li><a href="../../../AI/ClaudeCode/Claude-Code%E4%B8%BA%E4%BB%80%E4%B9%88%E7%94%A8grep%E4%B8%8D%E7%94%A8RAG/">为什么 Claude Code 不用 RAG 检索代码，而是 grep？</a></li>
+          <li><a href="../../../AI/ClaudeCode/Claude-Fable-5-system-prompt/">Claude Fable 5 — System Prompt</a></li>
+          <li><a href="../../../AI/ClaudeCode/Claude-Skill%E8%B4%A8%E6%A3%80%E5%B7%A5%E5%85%B7-SkillCraft/">Claude Skill 质检工具 Skill Craft</a></li>
+          <li><a href="../../../AI/ClaudeCode/Git-Worktree-AI%E5%BC%80%E5%8F%91%E5%AE%9E%E8%B7%B5%E6%8C%87%E5%8D%97/">Vibe Coding 时代的 Git Worktree 实践指南</a></li>
+          <li><a href="../../../AI/ClaudeCode/%E5%A4%9A%E6%99%BA%E8%83%BD%E4%BD%93%E5%8D%8F%E4%BD%9C-Subagents%E4%B8%8EAgent-Teams/">Claude Code 多智能体协作：Subagents 与 Agent Teams</a></li>
+        </ul>
+        <p class="sidebar-group">Codex</p>
+        <ul>
+          <li><a href="../../../AI/Codex/Codex-config-toml-%E5%85%A8%E9%87%8F%E9%85%8D%E7%BD%AE%E5%8F%82%E8%80%83/">OpenAI Codex config.toml 全量配置参考</a></li>
+          <li><a href="../../../AI/Codex/Codex-%E7%9C%81Token%E5%B7%A5%E5%85%B7%E5%AE%9E%E6%B5%8B-Ponytail-Headroom-RTK/">Codex 省 Token 工具实测：Ponytail、Headroom、RTK-AI</a></li>
+        </ul>
+        <p class="sidebar-group">GithubCopilot</p>
+        <ul>
+          <li><a href="../../../AI/GithubCopilot/Copilot%20CLI/">GitHub Copilot CLI</a></li>
+        </ul>
+        <p class="sidebar-group">Hermes-agent</p>
+        <ul>
+          <li><a href="../../../AI/Hermes-agent/Hermes-Agent-%E6%BB%A1%E9%85%8D%E6%8C%87%E5%8D%97%E4%B8%8E%E7%94%9F%E6%80%81%E8%B5%84%E6%BA%90/">Hermes Agent 满配指南与生态资源</a></li>
+          <li><a href="../../../AI/Hermes-agent/Hermes-Curator-Skill%E8%86%A8%E8%83%80%E6%B2%BB%E7%90%86/">Skill 太多导致上下文膨胀怎么办？来自 Hermes Agent 的实践</a></li>
+          <li><a href="../../../AI/Hermes-agent/Hermes%E4%B8%8EOpenClaw%E5%AF%B9%E6%AF%94%E5%8F%8A%E9%A3%9E%E4%B9%A6%E6%8E%A5%E5%85%A5%E6%8C%87%E5%8D%97/">Hermes Agent全解析：与OpenClaw对比及飞书接入指南</a></li>
+          <li><a href="../../../AI/Hermes-agent/Ubuntu%2025.10%20%E5%AE%89%E8%A3%85%E4%B8%8E%E4%BD%BF%E7%94%A8%20Hermes%20Agent%20%E6%8C%87%E5%8D%97/">Ubuntu 25.10 安装与使用 Hermes Agent 指南</a></li>
+        </ul>
+        <p class="sidebar-group">Obsidian</p>
+        <ul>
+          <li><a href="../../../AI/Obsidian/Obsidian-Vault%E6%A8%A1%E6%9D%BF%E5%BA%93%E5%90%88%E9%9B%86-48%E4%B8%AA%E5%AE%9D%E8%97%8Fvault/">Obsidian Vault 模板库合集：48 个 GitHub 宝藏 vault</a></li>
+          <li><a href="../../../AI/Obsidian/Obsidian%E5%8F%AF%E8%A7%86%E5%8C%96Skills-Excalidraw-Mermaid-Canvas/">Obsidian 可视化 Skills — Excalidraw / Mermaid / Canvas</a></li>
+          <li><a href="../../../AI/Obsidian/obsidian-claude-code-AI%E7%9F%A5%E8%AF%86%E5%BA%93%E5%AE%8C%E6%95%B4%E6%8C%87%E5%8D%97/">Obsidian + Claude Code：AI 驱动的知识库完整指南</a></li>
+        </ul>
+        <p class="sidebar-group">OpenClaw</p>
+        <ul>
+          <li><a href="../../../AI/OpenClaw/CoPaw/">CoPaw</a></li>
+          <li><a href="../../../AI/OpenClaw/OpenClaw-Channels/">OpenClaw Channel 配置</a></li>
+          <li><a href="../../../AI/OpenClaw/OpenClaw-K8s%E6%99%BA%E8%83%BD%E8%BF%90%E7%BB%B4%E5%AE%9E%E6%88%98/">用 OpenClaw 智能体网关接管 K8s 日常运维：从只读巡检到低风险变更</a></li>
+          <li><a href="../../../AI/OpenClaw/OpenClaw-Skills-Plugins/">OpenClaw Skills 与插件</a></li>
+          <li><a href="../../../AI/OpenClaw/OpenClaw-Workspace-%E8%BF%90%E7%BB%B4/">OpenClaw Workspace 运维实战</a></li>
+          <li><a href="../../../AI/OpenClaw/OpenClaw-%E5%9F%BA%E7%A1%80-%E5%AE%89%E8%A3%85/">OpenClaw 基础与安装</a></li>
+          <li><a href="../../../AI/OpenClaw/Openclaw-AIOps/">OpenClaw AIOps</a></li>
+          <li><a href="../../../AI/OpenClaw/Openclaw-%E5%A4%9A%E6%99%BA%E8%83%BD%E4%BD%93/">OpenClaw 多智能体</a></li>
+          <li><a href="../../../AI/OpenClaw/Ubuntu-2510-Setup-Guide/">Ubuntu 25.10 (Questing) 初始化配置指南</a></li>
+          <li><a href="../../../AI/OpenClaw/%E9%A3%9E%E4%B9%A6CLI%E7%94%BB%E6%9D%BF-%E4%B8%80%E5%8F%A5%E8%AF%9D%E7%94%9F%E6%88%90%E6%9E%B6%E6%9E%84%E5%9B%BE/">飞书 CLI 画板：一句话生成架构图</a></li>
+        </ul>
+        <p class="sidebar-group">代码知识图谱</p>
+        <ul>
+          <li><a href="../../../AI/%E4%BB%A3%E7%A0%81%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/CodeGraph-%E4%BB%A3%E7%A0%81%E8%AF%AD%E4%B9%89%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/">CodeGraph：给 Claude Code 先画一张代码地图，工具调用砍掉 92%</a></li>
+          <li><a href="../../../AI/%E4%BB%A3%E7%A0%81%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/Graphify-%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1%E5%B7%A5%E5%85%B7/">Graphify：软件工程知识图谱工具</a></li>
+          <li><a href="../../../AI/%E4%BB%A3%E7%A0%81%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/Understand-Anything-%E4%BB%A3%E7%A0%81%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1%E5%8F%AF%E8%A7%86%E5%8C%96/">Understand-Anything：AI 代码知识图谱可视化工具</a></li>
+          <li><a href="../../../AI/%E4%BB%A3%E7%A0%81%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/code-review-graph-%E6%9C%AC%E5%9C%B0%E4%BB%A3%E7%A0%81%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/">开源 Claude Code 本地代码知识图谱：code-review-graph 完整上手攻略</a></li>
+          <li><a href="../../../AI/%E4%BB%A3%E7%A0%81%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/shiji-kb-AI%E5%8F%B2%E8%AE%B0%E7%9F%A5%E8%AF%86%E5%BA%93%E4%B8%8E%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1%E6%9E%84%E9%80%A0%E6%96%B9%E6%B3%95%E8%AE%BA/">shiji-kb：AI 史记知识库与可复用知识图谱构造方法论</a></li>
+        </ul>
+        <p class="sidebar-group">行业动态</p>
+        <ul>
+          <li><a href="../../../AI/%E8%A1%8C%E4%B8%9A%E5%8A%A8%E6%80%81/AI%E6%97%B6%E4%BB%A3%E7%9A%84Git%E7%89%88%E6%9C%AC%E7%AE%A1%E7%90%86%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/">AI 时代的 Git 版本管理最佳实践</a></li>
+          <li><a href="../../../AI/%E8%A1%8C%E4%B8%9A%E5%8A%A8%E6%80%81/Anthropic%E5%B7%A5%E7%A8%8B%E5%B8%88%E5%8A%9B%E6%8E%A8HTML%E5%8F%96%E4%BB%A3Markdown-Karpathy%E9%99%84%E8%AE%AE/">Anthropic 工程师力推 HTML 取代 Markdown —— Karpathy 附议</a></li>
+          <li><a href="../../../AI/%E8%A1%8C%E4%B8%9A%E5%8A%A8%E6%80%81/Claude-Code%E5%88%9B%E5%A7%8B%E4%BA%BA%E7%BA%A2%E6%9D%89%E5%A4%A7%E4%BC%9A%E4%B8%83%E4%B8%AA%E5%88%A4%E6%96%AD/">Claude Code 创始人在红杉大会上的 7 个重要判断</a></li>
+          <li><a href="../../../AI/%E8%A1%8C%E4%B8%9A%E5%8A%A8%E6%80%81/Loop-Engineering-%E4%BB%8EPrompt%E5%88%B0%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%81%E6%B0%B4%E7%BA%BF/" class="current">Loop Engineering：从 Prompt 到自动化流水线</a></li>
+          <li><a href="../../../AI/%E8%A1%8C%E4%B8%9A%E5%8A%A8%E6%80%81/OpenCodeReview-%E9%98%BF%E9%87%8CAI%E4%BB%A3%E7%A0%81%E5%AE%A1%E6%9F%A5%E5%B7%A5%E7%A8%8B%E5%8C%96/">OpenCodeReview：阿里开源的 AI 代码审查工程化工具</a></li>
+          <li><a href="../../../AI/%E8%A1%8C%E4%B8%9A%E5%8A%A8%E6%80%81/TypeScript-vs-Python-AI-Agent%E6%97%B6%E4%BB%A3%E7%9A%84%E8%AF%AD%E8%A8%80%E4%B9%8B%E4%BA%89/">为什么 AI Agent 时代，TypeScript 正在抢走 Python 的主场？</a></li>
+        </ul>
+        <p class="sidebar-group">其他</p>
+        <ul>
+          <li><a href="../../../AI/HarnessKit/">HarnessKit — AI 编码智能体统一管理工具</a></li>
+          <li><a href="../../../AI/%E6%8F%90%E7%A4%BA%E8%AF%8D/">提示词</a></li>
+        </ul>
+      </nav>
+    </details>
+  </aside>
+
+  <article class="article">
+    <nav class="breadcrumb">
+      <a href="../../../index.html">首页</a><span>/</span>
+      <a href="../../../AI/">AI</a><span>/</span><span>行业动态</span>
+    </nav>
+    <h1 class="article-title">Loop Engineering：从 Prompt 到自动化流水线</h1>
+    <p class="article-meta"><span>更新于 2026-06-28</span>
+      <a href="https://github.com/hangx969/learning-notes/blob/main/AI/%E8%A1%8C%E4%B8%9A%E5%8A%A8%E6%80%81/Loop-Engineering-%E4%BB%8EPrompt%E5%88%B0%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%81%E6%B0%B4%E7%BA%BF.md">查看源文件</a>
+    </p>
+    <div class="article-body">
+<h1 id="loop-engineering从-prompt-到自动化流水线">Loop Engineering：从 Prompt 到自动化流水线</h1>
+<h2 id="背景第四个-engineering-诞生">背景：第四个 Engineering 诞生</h2>
+<p>2026 年 6 月 7 日，OpenClaw 创始人 Peter 发推：<strong>"你不再需要为编码智能体编写提示词了，你应该设计循环来提示你的 Agent。"</strong></p>
+<p>几天前，Claude Code 创始人 Boris 在开发者大会上说了类似的话："我不再手动给 Claude 写提示词了，我运行着能让 Claude 自动编排任务的循环，我的工作就是编写这些循环机制。"</p>
+<p>随后 Google 的 Addy Osmani 发了一篇长文，把 Loop Engineering 这个概念正式梳理了出来。</p>
+<p>继 Prompt Engineering → Context Engineering → Harness Engineering 之后，AI 行业的<strong>第四个共识性 Engineering</strong> 诞生了。</p>
+<h2 id="四次跃迁">四次跃迁</h2>
+<table>
+<thead>
+<tr>
+<th>Engineering</th>
+<th>核心能力</th>
+<th>底层学科</th>
+<th>关键转变</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Prompt Engineering</strong></td>
+<td>语言表达</td>
+<td>语言学</td>
+<td>好好说话，AI 会更懂你</td>
+</tr>
+<tr>
+<td><strong>Context Engineering</strong></td>
+<td>信息筛选和组织</td>
+<td>信息科学</td>
+<td>光说话不够，得给 AI 足够的信息</td>
+</tr>
+<tr>
+<td><strong>Harness Engineering</strong></td>
+<td>系统设计和规则制定</td>
+<td>控制论</td>
+<td>光给信息也不够，得给 AI 设规则和约束</td>
+</tr>
+<tr>
+<td><strong>Loop Engineering</strong></td>
+<td>目标定义和管理</td>
+<td>管理学</td>
+<td>光设规则也不够，得让整个系统能自己跑起来</td>
+</tr>
+</tbody>
+</table>
+<h2 id="loop-的五个组件">Loop 的五个组件</h2>
+<p>Addy Osmani 把一个完整的 loop 拆成了五个组件：</p>
+<h3 id="1-定时任务loop-的心跳">1. 定时任务——Loop 的心跳</h3>
+<p>整个 loop 的自动启动机制。Claude Code 里有几种方式：<br />
+- <code>/loop</code> 命令按间隔自动执行<br />
+- <code>cron</code> 定时调度<br />
+- Hook 在 Agent 生命周期的特定节点自动触发（比如每次改完文件自动跑一遍 lint）<br />
+- GitHub Actions 里运行，关上电脑它也在跑</p>
+<p>没有定时任务的 Agent，每次都得手动踢一脚才会动，那不是 loop，还是你在操控。</p>
+<h3 id="2-工作树隔离worktree">2. 工作树隔离——Worktree</h3>
+<p>同时跑好几个 Agent 的时候，给每个 Agent 一个独立的工作空间，各干各的互不干扰，干完了再合并。</p>
+<h3 id="3-项目知识体系不止-skill">3. 项目知识体系——不止 Skill</h3>
+<p>Addy Osmani 原文写的是 skill，但单 skill 不够，必须得是知识管理体系：<br />
+- <strong>CLAUDE.md</strong> = 全局的规则和约束<br />
+- <strong>跨会话记忆</strong> = 之前悬而未决的记录和文档路由<br />
+- <strong>docs 体系</strong> = 完整的所有的知识和经验沉淀</p>
+<p><strong>为什么知识管理在 loop 里特别重要？</strong> 因为 loop 是自动跑的，你不在场。如果 Agent 的记忆里有过期信息，它就会基于错误的前提做决策；如果 CLAUDE.md 膨胀到几百行全是历史叙事，真正的规则反而被挤出去了。</p>
+<blockquote>
+<p>没有干净知识体系的 loop，就像一个每天早上都在看过期文档的员工，干得越快错得越多。</p>
+</blockquote>
+<h3 id="4-连接器mcp">4. 连接器——MCP</h3>
+<p>一个只能看文件系统的 Agent 能力很有限。但接上 GitHub、飞书、数据库之类的，它就能在你的真实工作环境里干活了。这才叫真正的闭环——从发现问题到解决问题到通知人类，一条龙。</p>
+<h3 id="5-子-agent">5. 子 Agent</h3>
+<p>做事的和检查的分开。写代码的 Agent 不能自己给自己打分——跟学生自己批自己的考卷一个道理，它一定会对自己太宽容。所以得有另一个 Agent（甚至用不同的模型）专门检查前一个 Agent 的输出。</p>
+<h2 id="goal-命令loop-的微观产品化">/goal 命令：Loop 的微观产品化</h2>
+<p>Claude Code 和 Codex 都有一个命令，叫 <code>/goal</code>。</p>
+<p>给 Claude 一个完成条件，比如"所有测试通过并且 lint 检查没有报错"，然后它就会一轮一轮的自己干，干完每一轮之后就会检查这个条件是不是满足了。</p>
+<p>这就是 Loop Engineering 这套骨架最直接的微观产品化体现。</p>
+<h2 id="灵魂定义目标的能力">灵魂：定义目标的能力</h2>
+<p>大多数讲 Loop Engineering 的文章，都停在了五个组件和 /goal 命令这一层。这些是术。</p>
+<p><strong>更核心的，是道：定义目标的能力。</strong></p>
+<h3 id="目标定义对比">目标定义对比</h3>
+<p><strong>目标 A</strong>："把这个应用优化一下"<br />
+→ Claude 会陷入尴尬状态，因为它不知道什么叫"优化好了"。可能改了一点代码就自己觉得还行就停了，也可能一直改一直改，把代码库改得面目全非。</p>
+<p><strong>目标 B</strong>："test/auth 目录下所有测试通过，tsc --noEmit 零报错，npm run lint 零违规"<br />
+→ Claude 每改一轮代码，都会去跑测试、跑类型检查、跑 lint。三个命令，三个明确的通过标准。全过了就停，没过就继续。</p>
+<p>同一个工具，同一个模型。区别只在于你的目标定义得好不好。</p>
+<h3 id="这就是管人的逻辑">这就是管人的逻辑</h3>
+<p>定义目标的能力，其实就是管人的逻辑——管理者要做的，是确保<strong>目标足够清晰、资源足够充足、反馈足够及时</strong>。</p>
+<p>这三条跟一个好的 loop 的三个要素一模一样：<br />
+- <strong>目标清晰</strong> = 你的条件写得精准<br />
+- <strong>资源充足</strong> = 你给 Agent 配好了 Skill、连接器、工作权限<br />
+- <strong>反馈及时</strong> = 你设计了验证机制，每一轮都有独立的检查器告诉 Agent 做得对不对</p>
+<p>管人的逻辑和管 Agent 的逻辑完全一样。只不过管 Agent 比管人还要极端——人可以理解你的模糊意图，会主动来找你确认；Agent 很多时候不会，它会非常自信地按照它自己的理解去执行，然后非常自信地告诉你它做完了。</p>
+<h3 id="古德哈特定律最阴险的陷阱">古德哈特定律：最阴险的陷阱</h3>
+<blockquote>
+<p>当一个衡量指标变成了目标本身的时候，它就不再是一个好的衡量指标了。</p>
+</blockquote>
+<p>翻译成人话：你考核什么，员工就只做什么，然后其他东西可能全都退化。</p>
+<p>这个事在 Agent 身上被放大了一百倍——Agent 比人类更擅长钻规则的空子。</p>
+<p>经典案例：你的 loop 条件是让测试全部通过，那 Agent 可能最后不去修 Bug，直接把失败的测试给你删了。从验证条件来看它确实完成了目标，但从你真正想要的结果来看……它啥也没干。</p>
+<p><strong>所以，一个好的目标定义，不能只有"做完了"的标准，还必须有"不能怎么做"的边界。</strong> 这正是 Harness Engineering 在 Loop Engineering 里面发挥作用的地方——Harness 是约束，是护栏；Loop 是驱动力。两个加在一起，才是一个完整的系统。</p>
+<h2 id="目标定义框架实战经验">目标定义框架（实战经验）</h2>
+<ol>
+<li><strong>完成标准要可以被机器验证</strong>——不能是"把它做好"，而是"tsc 零报错 + 测试全过"</li>
+<li><strong>边界条件要跟完成标准一起定义</strong>——告诉 Agent 不能删测试、不能改公共接口、不能引入新依赖</li>
+<li><strong>要有失败的降级方案</strong>——不是所有目标都能一次达成，定义超时、重试上限、人工介入条件</li>
+<li><strong>目标要分层</strong>——大目标拆成可验证的子目标，每个子目标独立可检查</li>
+</ol>
+<h2 id="总结">总结</h2>
+<p>从 Prompt → Context → Harness → Loop，四次跃迁讲的是同一个故事：</p>
+<ul>
+<li>Prompt = 好好说话</li>
+<li>Context = 给够信息</li>
+<li>Harness = 设好规则</li>
+<li>Loop = 让它自己跑</li>
+</ul>
+<p><strong>Loop Engineering 说是 Engineering，但它的核心竞争力根本不在工程，在管理。</strong></p>
+<p>语言学、信息科学、控制论、管理学。四个 Engineering，四门古老的学科。</p>
+<p>Boris 说，2026 年他就再也没有手写过一行代码了——他的工作是编写 loop。晚上睡觉的时候，甚至有时候会有几千个 Agent 在同时工作。</p>
+<blockquote>
+<p>技术的尽头是管理。</p>
+</blockquote>
+    </div>
+  </article>
+  <aside class="toc">
+    <p class="toc-label">本页目录</p>
+    <ul>
+  <li><a href="#背景第四个-engineering-诞生">背景：第四个 Engineering 诞生</a></li>
+  <li><a href="#四次跃迁">四次跃迁</a></li>
+  <li><a href="#loop-的五个组件">Loop 的五个组件</a><ul>
+  <li><a href="#1-定时任务loop-的心跳">1. 定时任务——Loop 的心跳</a></li>
+  <li><a href="#2-工作树隔离worktree">2. 工作树隔离——Worktree</a></li>
+  <li><a href="#3-项目知识体系不止-skill">3. 项目知识体系——不止 Skill</a></li>
+  <li><a href="#4-连接器mcp">4. 连接器——MCP</a></li>
+  <li><a href="#5-子-agent">5. 子 Agent</a></li>
+</ul></li>
+  <li><a href="#goal-命令loop-的微观产品化">/goal 命令：Loop 的微观产品化</a></li>
+  <li><a href="#灵魂定义目标的能力">灵魂：定义目标的能力</a><ul>
+  <li><a href="#目标定义对比">目标定义对比</a></li>
+  <li><a href="#这就是管人的逻辑">这就是管人的逻辑</a></li>
+  <li><a href="#古德哈特定律最阴险的陷阱">古德哈特定律：最阴险的陷阱</a></li>
+</ul></li>
+  <li><a href="#目标定义框架实战经验">目标定义框架（实战经验）</a></li>
+  <li><a href="#总结">总结</a></li>
+</ul>
+  </aside>
+
+</div>
+
+</main>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>Learning Notes</span>
+    <a href="https://github.com/hangx969/learning-notes">GitHub</a>
+  </div>
+</footer>
+<script src="../../../static/search.js"></script>
+</body>
+</html>

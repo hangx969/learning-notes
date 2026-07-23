@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Python Nginx运维自动化 - Learning Notes</title>
+<link rel="stylesheet" href="../../../static/style.css">
+<link rel="stylesheet" href="../../../static/pygments.css">
+</head>
+<body data-root="../../../">
+<header class="site-header">
+  <div class="header-inner">
+    <a class="logo" href="../../../index.html"><span class="logo-mark"></span>LEARNING NOTES</a>
+    <div class="search">
+      <input id="search-input" type="search" placeholder="搜索笔记…" autocomplete="off" aria-label="搜索笔记">
+      <div id="search-results" hidden></div>
+    </div>
+  </div>
+  <nav class="topic-nav" aria-label="主题导航">
+    <div class="topic-nav-inner">
+      <a href="../../../AI/">AI</a>
+      <a href="../../../Aliyun/">Aliyun</a>
+      <a href="../../../Azure/">Azure</a>
+      <a href="../../../C%2B%2B/">C++</a>
+      <a href="../../../CloudComputing/">CloudComputing</a>
+      <a href="../../../Database/">Database</a>
+      <a href="../../../Docker-Kubernetes/">Docker-Kubernetes</a>
+      <a href="../../../GPU-DeepLearning/">GPU-DeepLearning</a>
+      <a href="../../../Git/">Git</a>
+      <a href="../../../Go/">Go</a>
+      <a href="../../../HPC/">HPC</a>
+      <a href="../../../IaC/">IaC</a>
+      <a href="../../../Linux-Shell/">Linux-Shell</a>
+      <a href="../../../Middlewares/">Middlewares</a>
+      <a href="../../../Networking/">Networking</a>
+      <a href="../../../OS/">OS</a>
+      <a href="../../../Python/" class="active">Python</a>
+      <a href="../../../SoftwareTesting/">SoftwareTesting</a>
+    </div>
+  </nav>
+</header>
+<main class="main">
+
+<div class="article-layout">
+
+  <aside class="sidebar">
+    <details class="sidebar-details">
+      <summary>Python</summary>
+      <nav class="sidebar-nav">
+        <p class="sidebar-group">python-基础</p>
+        <ul>
+          <li><a href="../../../Python/python-%E5%9F%BA%E7%A1%80/python-OOP/">Python 面向对象编程</a></li>
+          <li><a href="../../../Python/python-%E5%9F%BA%E7%A1%80/python-QA/">Python 知识总结与常见问题</a></li>
+          <li><a href="../../../Python/python-%E5%9F%BA%E7%A1%80/python-basics/">Python 数据类型、运算符与基础语法</a></li>
+          <li><a href="../../../Python/python-%E5%9F%BA%E7%A1%80/python-exception-handling/">Python 异常处理</a></li>
+          <li><a href="../../../Python/python-%E5%9F%BA%E7%A1%80/python-function/">Python 函数</a></li>
+          <li><a href="../../../Python/python-%E5%9F%BA%E7%A1%80/python%E5%8C%85%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7-uv/">Python 包管理工具 uv</a></li>
+          <li><a href="../../../Python/python-%E5%9F%BA%E7%A1%80/rockylinux%E9%85%8D%E7%BD%AEpython%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/">RockyLinux 配置 Python 开发环境</a></li>
+          <li><a href="../../../Python/python-%E5%9F%BA%E7%A1%80/windows%E9%85%8D%E7%BD%AEpython%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/">Windows 配置 Python 开发环境</a></li>
+        </ul>
+        <p class="sidebar-group">python-数据分析-AI大模型</p>
+        <ul>
+          <li><a href="../../../Python/python-%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-AI%E5%A4%A7%E6%A8%A1%E5%9E%8B/python-%E5%A4%84%E7%90%86excel-word/">Python处理Excel与Word文档</a></li>
+          <li><a href="../../../Python/python-%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-AI%E5%A4%A7%E6%A8%A1%E5%9E%8B/python-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E4%B8%8E%E9%A2%84%E6%B5%8B/">Python机器学习与预测</a></li>
+        </ul>
+        <p class="sidebar-group">python-网络编程-前端</p>
+        <ul>
+          <li><a href="../../../Python/python-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B-%E5%89%8D%E7%AB%AF/python-Web%E5%BC%80%E5%8F%91-HTML-CSS-JS/">Web开发基础 - HTML/CSS/JavaScript</a></li>
+          <li><a href="../../../Python/python-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B-%E5%89%8D%E7%AB%AF/python-Web%E6%A1%86%E6%9E%B6Django/">Python Web框架Django</a></li>
+          <li><a href="../../../Python/python-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B-%E5%89%8D%E7%AB%AF/python-Web%E6%A1%86%E6%9E%B6Flask/">Python Web框架Flask</a></li>
+          <li><a href="../../../Python/python-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B-%E5%89%8D%E7%AB%AF/python-request-module/">Python Requests模块</a></li>
+          <li><a href="../../../Python/python-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B-%E5%89%8D%E7%AB%AF/python-socket-module/">Python Socket模块</a></li>
+          <li><a href="../../../Python/python-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B-%E5%89%8D%E7%AB%AF/python-%E7%88%AC%E8%99%AB/">Python爬虫</a></li>
+        </ul>
+        <p class="sidebar-group">python-运维开发</p>
+        <ul>
+          <li><a href="../../../Python/python-%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91/python-GUI-tkinter/">Python GUI开发 - Tkinter</a></li>
+          <li><a href="../../../Python/python-%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91/python-Linux-operation/">Python Linux运维模块</a></li>
+          <li><a href="../../../Python/python-%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91/python-elasticsearch/">Python Elasticsearch运维</a></li>
+          <li><a href="../../../Python/python-%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91/python-fabric%E9%AB%98%E7%BA%A7%E7%94%A8%E6%B3%95/">Python Fabric高级用法</a></li>
+          <li><a href="../../../Python/python-%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91/python-kubernetes-module/">Python Kubernetes模块</a></li>
+          <li><a href="../../../Python/python-%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91/python-mysql/">Python MySQL操作</a></li>
+          <li><a href="../../../Python/python-%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91/python-nginx/" class="current">Python Nginx运维自动化</a></li>
+          <li><a href="../../../Python/python-%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91/python-postgresql/">Python PostgreSQL操作</a></li>
+          <li><a href="../../../Python/python-%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91/python-tomcat/">Python Tomcat运维自动化</a></li>
+          <li><a href="../../../Python/python-%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91/python-%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/">Python 游戏开发</a></li>
+        </ul>
+        <p class="sidebar-group">电池参数提取统计工具开发</p>
+        <ul>
+          <li><a href="../../../Python/%E7%94%B5%E6%B1%A0%E5%8F%82%E6%95%B0%E6%8F%90%E5%8F%96%E7%BB%9F%E8%AE%A1%E5%B7%A5%E5%85%B7%E5%BC%80%E5%8F%91/%E5%AE%9E%E9%AA%8C%E5%AE%A4%E7%94%B5%E6%B1%A0%E5%8F%82%E6%95%B0%E4%B8%80%E9%94%AE%E7%BB%9F%E8%AE%A1%E5%B7%A5%E5%85%B7%E5%BC%80%E5%8F%91/">实验室电池参数一键统计工具开发</a></li>
+        </ul>
+        <p class="sidebar-group">其他</p>
+        <ul>
+          <li><a href="../../../Python/script-server-%E8%84%9A%E6%9C%ACWeb%E5%8C%96%E5%B7%A5%E5%85%B7/">Script-Server：脚本 Web 化工具</a></li>
+        </ul>
+      </nav>
+    </details>
+  </aside>
+
+  <article class="article">
+    <nav class="breadcrumb">
+      <a href="../../../index.html">首页</a><span>/</span>
+      <a href="../../../Python/">Python</a><span>/</span><span>python-运维开发</span>
+    </nav>
+    <h1 class="article-title">Python Nginx运维自动化</h1>
+    <p class="article-meta"><span>更新于 2026-04-16</span>
+      <a href="https://github.com/hangx969/learning-notes/blob/main/Python/python-%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91/python-nginx.md">查看源文件</a>
+    </p>
+    <div class="article-body">
+<h1 id="python-nginx运维自动化">Python Nginx运维自动化</h1>
+<h2 id="nginx介绍">Nginx介绍</h2>
+<p><mark>Nginx</mark>(发音为"Engine-X")是一个开源的高性能 HTTP 和反向代理服务器,具有轻量级和高效的特点。它由 Igor Sysoev 于 2002 年首次发布,主要用于处理高负载的 HTTP 请求,并且能够作为反向代理、负载均衡器和 HTTP 缓存使用。</p>
+<p><div class="callout callout-summary" markdown="1"><br />
+<p class="callout-title">主要特点</p></p>
+<ul>
+<li><mark>高性能</mark>:Nginx 设计用于处理大量并发连接,适合高流量网站。</li>
+<li><mark>高可用性</mark>:可以作为负载均衡器,将流量分配到多个服务器,提升系统的可用性。</li>
+<li><mark>反向代理</mark>:可以转发客户端请求到后端服务器,并将响应返回给客户端。</li>
+<li><mark>低资源消耗</mark>:内存和 CPU 占用较低,适合资源有限的环境。</li>
+<li><mark>灵活配置</mark>:支持模块化配置和多种扩展功能。</li>
+</ul>
+</div>
+<hr />
+<h2 id="安装">安装</h2>
+<h3 id="yum安装">yum安装</h3>
+<p>在基于 Red Hat 的系统(如 CentOS、rockylinux、RHEL)上,可以使用 YUM 包管理工具安装 Nginx。以下是具体步骤:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 1、安装 EPEL(Extra Packages for Enterprise Linux)仓库</span>
+<span class="c1"># Nginx 在默认的 YUM 仓库中可能不可用,需要先安装 EPEL 仓库:</span>
+yum<span class="w"> </span>install<span class="w"> </span>epel-release<span class="w"> </span>-y
+<span class="c1"># 2、安装 Nginx</span>
+yum<span class="w"> </span>install<span class="w"> </span>nginx<span class="w"> </span>-y
+<span class="c1"># 3、启动 Nginx 服务</span>
+systemctl<span class="w"> </span>start<span class="w"> </span>nginx
+systemctl<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>nginx
+<span class="c1"># 6、检查 Nginx 服务状态</span>
+systemctl<span class="w"> </span>status<span class="w"> </span>nginx
+<span class="c1"># 7、配置防火墙</span>
+systemctl<span class="w"> </span>stop<span class="w"> </span>firewalld
+systemctl<span class="w"> </span>disable<span class="w"> </span>firewalld
+</code></pre></div>
+
+<hr />
+<h2 id="案例检查nginx配置文件语法">案例:检查Nginx配置文件语法</h2>
+<p>在对 Nginx 进行配置更改后,检查配置文件的语法是一个关键步骤。这可以通过 Python 脚本自动化完成:</p>
+<p>相关笔记: <a class="wikilink" href="../../../Python/python-%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91/python-Linux-operation/">python-Linux-operation</a> | <a class="wikilink" href="../../../Python/python-%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91/python-GUI-tkinter/">python-GUI-tkinter</a></p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">check_nginx_config</span><span class="p">():</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s1">&#39;nginx&#39;</span><span class="p">,</span><span class="s1">&#39;-t&#39;</span><span class="p">],</span> <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Nginx config is correct.&quot;</span><span class="p">)</span>
+    <span class="c1"># subprocess.CalledProcessError 表示指定的命令运行失败了</span>
+    <span class="k">except</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">stderr</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">check_nginx_config</span><span class="p">()</span>
+</code></pre></div>
+
+<hr />
+<h2 id="案例自动重启nginx服务">案例:自动重启nginx服务</h2>
+<p>检测 nginx 是否处于运行状态,如果 nginx 没运行需要执行脚本自动重启 nginx 服务。</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">check_nginx_alive</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s1">&#39;systemctl&#39;</span><span class="p">,</span><span class="s1">&#39;is-active&#39;</span><span class="p">,</span> <span class="s1">&#39;nginx&#39;</span><span class="p">],</span> <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;active&#39;</span> <span class="c1"># 是active就返回True,否则就返回False</span>
+    <span class="k">except</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span> <span class="c1"># 命令执行失败直接返回False</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">restart_nginx</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s1">&#39;systemctl&#39;</span><span class="p">,</span><span class="s1">&#39;restart&#39;</span><span class="p">,</span> <span class="s1">&#39;nginx&#39;</span><span class="p">],</span> <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Nginx is restarted successfully.&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to restart nginx: </span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="n">stderr</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">check_nginx_alive</span><span class="p">():</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Nginx is not running, restarting nginx.&quot;</span><span class="p">)</span>
+        <span class="n">restart_nginx</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Nginx is already running.&#39;</span><span class="p">)</span>
+</code></pre></div>
+
+<hr />
+<h2 id="案例更新nginx配置文件">案例:更新nginx配置文件</h2>
+<p>使用 Python 脚本动态更新 Nginx 配置文件(例如添加一个新的 server 块)。默认的配置文件在<code>/etc/nginx/nginx.conf</code>。</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">add_server_block</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">server_block</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">server_block</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;New server block has been added to nginx config file.&quot;</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">reload_nginx</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s1">&#39;systemctl&#39;</span><span class="p">,</span><span class="s1">&#39;reload&#39;</span><span class="p">,</span> <span class="s1">&#39;nginx&#39;</span><span class="p">],</span> <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Nginx is reloaded successfully.&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to reload nginx: </span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="n">stderr</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="s1">&#39;/etc/nginx/nginx.conf&#39;</span>
+    <span class="n">new_server_block</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">    server {</span>
+<span class="s2">    listen 8080;</span>
+<span class="s2">    server_name example.com;</span>
+<span class="s2">    location / {</span>
+<span class="s2">        proxy_pass http://localhost:8000;</span>
+<span class="s2">    }</span>
+<span class="s2">    }</span>
+<span class="s2">    &quot;&quot;&quot;</span>
+
+    <span class="n">add_server_block</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">new_server_block</span><span class="p">)</span>
+    <span class="n">reload_nginx</span><span class="p">()</span>
+</code></pre></div>
+    </div>
+  </article>
+  <aside class="toc">
+    <p class="toc-label">本页目录</p>
+    <ul>
+  <li><a href="#nginx介绍">Nginx介绍</a></li>
+  <li><a href="#安装">安装</a><ul>
+  <li><a href="#yum安装">yum安装</a></li>
+</ul></li>
+  <li><a href="#案例检查nginx配置文件语法">案例:检查Nginx配置文件语法</a></li>
+  <li><a href="#案例自动重启nginx服务">案例:自动重启nginx服务</a></li>
+  <li><a href="#案例更新nginx配置文件">案例:更新nginx配置文件</a></li>
+</ul>
+  </aside>
+
+</div>
+
+</main>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>Learning Notes</span>
+    <a href="https://github.com/hangx969/learning-notes">GitHub</a>
+  </div>
+</footer>
+<script src="../../../static/search.js"></script>
+</body>
+</html>

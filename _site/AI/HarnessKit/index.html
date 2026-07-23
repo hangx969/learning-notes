@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HarnessKit — AI 编码智能体统一管理工具 - Learning Notes</title>
+<link rel="stylesheet" href="../../static/style.css">
+<link rel="stylesheet" href="../../static/pygments.css">
+</head>
+<body data-root="../../">
+<header class="site-header">
+  <div class="header-inner">
+    <a class="logo" href="../../index.html"><span class="logo-mark"></span>LEARNING NOTES</a>
+    <div class="search">
+      <input id="search-input" type="search" placeholder="搜索笔记…" autocomplete="off" aria-label="搜索笔记">
+      <div id="search-results" hidden></div>
+    </div>
+  </div>
+  <nav class="topic-nav" aria-label="主题导航">
+    <div class="topic-nav-inner">
+      <a href="../../AI/" class="active">AI</a>
+      <a href="../../Aliyun/">Aliyun</a>
+      <a href="../../Azure/">Azure</a>
+      <a href="../../C%2B%2B/">C++</a>
+      <a href="../../CloudComputing/">CloudComputing</a>
+      <a href="../../Database/">Database</a>
+      <a href="../../Docker-Kubernetes/">Docker-Kubernetes</a>
+      <a href="../../GPU-DeepLearning/">GPU-DeepLearning</a>
+      <a href="../../Git/">Git</a>
+      <a href="../../Go/">Go</a>
+      <a href="../../HPC/">HPC</a>
+      <a href="../../IaC/">IaC</a>
+      <a href="../../Linux-Shell/">Linux-Shell</a>
+      <a href="../../Middlewares/">Middlewares</a>
+      <a href="../../Networking/">Networking</a>
+      <a href="../../OS/">OS</a>
+      <a href="../../Python/">Python</a>
+      <a href="../../SoftwareTesting/">SoftwareTesting</a>
+    </div>
+  </nav>
+</header>
+<main class="main">
+
+<div class="article-layout">
+
+  <aside class="sidebar">
+    <details class="sidebar-details">
+      <summary>AI</summary>
+      <nav class="sidebar-nav">
+        <p class="sidebar-group">AI-视觉</p>
+        <ul>
+          <li><a href="../../AI/AI-%E8%A7%86%E8%A7%89/AI-Animation-Skill-%E7%A7%91%E6%99%AE%E5%8A%A8%E7%94%BB/">AI-Animation-Skill - HTML科普动画生成</a></li>
+          <li><a href="../../AI/AI-%E8%A7%86%E8%A7%89/AI%E5%81%9APPT-ppt-master/">AI做PPT - ppt-master</a></li>
+          <li><a href="../../AI/AI-%E8%A7%86%E8%A7%89/Markdown-Viewer-Skills-Markdown%E4%B8%AD%E7%9B%B4%E6%8E%A5%E7%94%BB%E5%9B%BE/">Markdown Viewer Skills：让 AI 写文档时顺手把图也画了</a></li>
+          <li><a href="../../AI/AI-%E8%A7%86%E8%A7%89/effective-html-AI%E7%9B%B4%E5%87%BAHTML%E5%B7%A5%E5%85%B7%E5%AE%9E%E6%B5%8B/">effective-html：让 AI 直接输出 HTML 而非 Markdown</a></li>
+          <li><a href="../../AI/AI-%E8%A7%86%E8%A7%89/html-anything-AI%E7%94%9F%E6%88%90HTML%E5%85%A8%E5%9C%BA%E6%99%AF%E5%B7%A5%E5%85%B7/">html-anything：AI 生成 HTML 全场景工具</a></li>
+          <li><a href="../../AI/AI-%E8%A7%86%E8%A7%89/html-ppt-skill-%E5%AE%9E%E6%B5%8B%E6%8C%87%E5%8D%97/">html-ppt-skill - HTML幻灯片生成</a></li>
+          <li><a href="../../AI/AI-%E8%A7%86%E8%A7%89/%E8%A7%86%E8%A7%89%E8%AE%BE%E8%AE%A1%E6%8F%90%E7%A4%BA%E8%AF%8D/">视觉设计提示词</a></li>
+        </ul>
+        <p class="sidebar-group">AIOps</p>
+        <ul>
+          <li><a href="../../AI/AIOps/AIOps%E5%AE%9E%E6%88%98-Golang%E6%89%8B%E6%90%93K8s%E6%99%BA%E8%83%BD%E8%BF%90%E7%BB%B4%E5%B7%A5%E5%85%B7%E9%93%BE/">AIOps 实战：Golang 手搓 K8s 智能运维工具链</a></li>
+          <li><a href="../../AI/AIOps/Kubernetes-MCP-Server-Dify%E6%99%BA%E8%83%BD%E8%BF%90%E7%BB%B4/">AI 接管 Kubernetes 运维——Kubernetes MCP Server + Dify</a></li>
+        </ul>
+        <p class="sidebar-group">ClaudeCode</p>
+        <ul>
+          <li><a href="../../AI/ClaudeCode/CLAUDE.md%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5-12%E6%9D%A1%E8%A7%84%E5%88%99%E6%A8%A1%E6%9D%BF/">Mnilax：CLAUDE.md 规则从 Karpathy 的 4 条增加到 12 条，错误率从 41% 降到 3%</a></li>
+          <li><a href="../../AI/ClaudeCode/CLAUDE.md%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5-21%E6%9D%A1%E6%8C%87%E4%BB%A4%E6%B8%85%E5%8D%95/">Mayank Agarwal：21 条 CLAUDE.md 指令，让 Claude 真正懂你</a></li>
+          <li><a href="../../AI/ClaudeCode/CLAUDE.md%E7%BB%B4%E6%8A%A4%E5%B7%A5%E7%A8%8B-%E5%9B%9B%E5%B1%82%E5%8A%A0%E8%BD%BD%E4%B8%8E%E6%8C%87%E4%BB%A4%E9%A2%84%E7%AE%97/">CLAUDE.md 维护工程：四层加载与指令预算</a></li>
+          <li><a href="../../AI/ClaudeCode/Claude%20Code%20%E5%9F%BA%E7%A1%80%E6%8C%87%E5%8D%97/">Claude Code 使用指南</a></li>
+          <li><a href="../../AI/ClaudeCode/Claude%20Code%20%E6%89%A9%E5%B1%95%E4%BD%93%E7%B3%BB/">Claude Code 扩展体系</a></li>
+          <li><a href="../../AI/ClaudeCode/Claude-Code-Harness%E5%AE%9E%E6%88%98-%E6%9C%80%E5%B0%8F%E5%8F%AF%E7%94%A8%E7%B3%BB%E7%BB%9F/">Harness 实战：从零搭建最小可用的 Harness 系统</a></li>
+          <li><a href="../../AI/ClaudeCode/Claude-Code%E4%B8%BA%E4%BB%80%E4%B9%88%E7%94%A8grep%E4%B8%8D%E7%94%A8RAG/">为什么 Claude Code 不用 RAG 检索代码，而是 grep？</a></li>
+          <li><a href="../../AI/ClaudeCode/Claude-Fable-5-system-prompt/">Claude Fable 5 — System Prompt</a></li>
+          <li><a href="../../AI/ClaudeCode/Claude-Skill%E8%B4%A8%E6%A3%80%E5%B7%A5%E5%85%B7-SkillCraft/">Claude Skill 质检工具 Skill Craft</a></li>
+          <li><a href="../../AI/ClaudeCode/Git-Worktree-AI%E5%BC%80%E5%8F%91%E5%AE%9E%E8%B7%B5%E6%8C%87%E5%8D%97/">Vibe Coding 时代的 Git Worktree 实践指南</a></li>
+          <li><a href="../../AI/ClaudeCode/%E5%A4%9A%E6%99%BA%E8%83%BD%E4%BD%93%E5%8D%8F%E4%BD%9C-Subagents%E4%B8%8EAgent-Teams/">Claude Code 多智能体协作：Subagents 与 Agent Teams</a></li>
+        </ul>
+        <p class="sidebar-group">Codex</p>
+        <ul>
+          <li><a href="../../AI/Codex/Codex-config-toml-%E5%85%A8%E9%87%8F%E9%85%8D%E7%BD%AE%E5%8F%82%E8%80%83/">OpenAI Codex config.toml 全量配置参考</a></li>
+          <li><a href="../../AI/Codex/Codex-%E7%9C%81Token%E5%B7%A5%E5%85%B7%E5%AE%9E%E6%B5%8B-Ponytail-Headroom-RTK/">Codex 省 Token 工具实测：Ponytail、Headroom、RTK-AI</a></li>
+        </ul>
+        <p class="sidebar-group">GithubCopilot</p>
+        <ul>
+          <li><a href="../../AI/GithubCopilot/Copilot%20CLI/">GitHub Copilot CLI</a></li>
+        </ul>
+        <p class="sidebar-group">Hermes-agent</p>
+        <ul>
+          <li><a href="../../AI/Hermes-agent/Hermes-Agent-%E6%BB%A1%E9%85%8D%E6%8C%87%E5%8D%97%E4%B8%8E%E7%94%9F%E6%80%81%E8%B5%84%E6%BA%90/">Hermes Agent 满配指南与生态资源</a></li>
+          <li><a href="../../AI/Hermes-agent/Hermes-Curator-Skill%E8%86%A8%E8%83%80%E6%B2%BB%E7%90%86/">Skill 太多导致上下文膨胀怎么办？来自 Hermes Agent 的实践</a></li>
+          <li><a href="../../AI/Hermes-agent/Hermes%E4%B8%8EOpenClaw%E5%AF%B9%E6%AF%94%E5%8F%8A%E9%A3%9E%E4%B9%A6%E6%8E%A5%E5%85%A5%E6%8C%87%E5%8D%97/">Hermes Agent全解析：与OpenClaw对比及飞书接入指南</a></li>
+          <li><a href="../../AI/Hermes-agent/Ubuntu%2025.10%20%E5%AE%89%E8%A3%85%E4%B8%8E%E4%BD%BF%E7%94%A8%20Hermes%20Agent%20%E6%8C%87%E5%8D%97/">Ubuntu 25.10 安装与使用 Hermes Agent 指南</a></li>
+        </ul>
+        <p class="sidebar-group">Obsidian</p>
+        <ul>
+          <li><a href="../../AI/Obsidian/Obsidian-Vault%E6%A8%A1%E6%9D%BF%E5%BA%93%E5%90%88%E9%9B%86-48%E4%B8%AA%E5%AE%9D%E8%97%8Fvault/">Obsidian Vault 模板库合集：48 个 GitHub 宝藏 vault</a></li>
+          <li><a href="../../AI/Obsidian/Obsidian%E5%8F%AF%E8%A7%86%E5%8C%96Skills-Excalidraw-Mermaid-Canvas/">Obsidian 可视化 Skills — Excalidraw / Mermaid / Canvas</a></li>
+          <li><a href="../../AI/Obsidian/obsidian-claude-code-AI%E7%9F%A5%E8%AF%86%E5%BA%93%E5%AE%8C%E6%95%B4%E6%8C%87%E5%8D%97/">Obsidian + Claude Code：AI 驱动的知识库完整指南</a></li>
+        </ul>
+        <p class="sidebar-group">OpenClaw</p>
+        <ul>
+          <li><a href="../../AI/OpenClaw/CoPaw/">CoPaw</a></li>
+          <li><a href="../../AI/OpenClaw/OpenClaw-Channels/">OpenClaw Channel 配置</a></li>
+          <li><a href="../../AI/OpenClaw/OpenClaw-K8s%E6%99%BA%E8%83%BD%E8%BF%90%E7%BB%B4%E5%AE%9E%E6%88%98/">用 OpenClaw 智能体网关接管 K8s 日常运维：从只读巡检到低风险变更</a></li>
+          <li><a href="../../AI/OpenClaw/OpenClaw-Skills-Plugins/">OpenClaw Skills 与插件</a></li>
+          <li><a href="../../AI/OpenClaw/OpenClaw-Workspace-%E8%BF%90%E7%BB%B4/">OpenClaw Workspace 运维实战</a></li>
+          <li><a href="../../AI/OpenClaw/OpenClaw-%E5%9F%BA%E7%A1%80-%E5%AE%89%E8%A3%85/">OpenClaw 基础与安装</a></li>
+          <li><a href="../../AI/OpenClaw/Openclaw-AIOps/">OpenClaw AIOps</a></li>
+          <li><a href="../../AI/OpenClaw/Openclaw-%E5%A4%9A%E6%99%BA%E8%83%BD%E4%BD%93/">OpenClaw 多智能体</a></li>
+          <li><a href="../../AI/OpenClaw/Ubuntu-2510-Setup-Guide/">Ubuntu 25.10 (Questing) 初始化配置指南</a></li>
+          <li><a href="../../AI/OpenClaw/%E9%A3%9E%E4%B9%A6CLI%E7%94%BB%E6%9D%BF-%E4%B8%80%E5%8F%A5%E8%AF%9D%E7%94%9F%E6%88%90%E6%9E%B6%E6%9E%84%E5%9B%BE/">飞书 CLI 画板：一句话生成架构图</a></li>
+        </ul>
+        <p class="sidebar-group">代码知识图谱</p>
+        <ul>
+          <li><a href="../../AI/%E4%BB%A3%E7%A0%81%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/CodeGraph-%E4%BB%A3%E7%A0%81%E8%AF%AD%E4%B9%89%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/">CodeGraph：给 Claude Code 先画一张代码地图，工具调用砍掉 92%</a></li>
+          <li><a href="../../AI/%E4%BB%A3%E7%A0%81%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/Graphify-%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1%E5%B7%A5%E5%85%B7/">Graphify：软件工程知识图谱工具</a></li>
+          <li><a href="../../AI/%E4%BB%A3%E7%A0%81%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/Understand-Anything-%E4%BB%A3%E7%A0%81%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1%E5%8F%AF%E8%A7%86%E5%8C%96/">Understand-Anything：AI 代码知识图谱可视化工具</a></li>
+          <li><a href="../../AI/%E4%BB%A3%E7%A0%81%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/code-review-graph-%E6%9C%AC%E5%9C%B0%E4%BB%A3%E7%A0%81%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/">开源 Claude Code 本地代码知识图谱：code-review-graph 完整上手攻略</a></li>
+          <li><a href="../../AI/%E4%BB%A3%E7%A0%81%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/shiji-kb-AI%E5%8F%B2%E8%AE%B0%E7%9F%A5%E8%AF%86%E5%BA%93%E4%B8%8E%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1%E6%9E%84%E9%80%A0%E6%96%B9%E6%B3%95%E8%AE%BA/">shiji-kb：AI 史记知识库与可复用知识图谱构造方法论</a></li>
+        </ul>
+        <p class="sidebar-group">行业动态</p>
+        <ul>
+          <li><a href="../../AI/%E8%A1%8C%E4%B8%9A%E5%8A%A8%E6%80%81/AI%E6%97%B6%E4%BB%A3%E7%9A%84Git%E7%89%88%E6%9C%AC%E7%AE%A1%E7%90%86%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/">AI 时代的 Git 版本管理最佳实践</a></li>
+          <li><a href="../../AI/%E8%A1%8C%E4%B8%9A%E5%8A%A8%E6%80%81/Anthropic%E5%B7%A5%E7%A8%8B%E5%B8%88%E5%8A%9B%E6%8E%A8HTML%E5%8F%96%E4%BB%A3Markdown-Karpathy%E9%99%84%E8%AE%AE/">Anthropic 工程师力推 HTML 取代 Markdown —— Karpathy 附议</a></li>
+          <li><a href="../../AI/%E8%A1%8C%E4%B8%9A%E5%8A%A8%E6%80%81/Claude-Code%E5%88%9B%E5%A7%8B%E4%BA%BA%E7%BA%A2%E6%9D%89%E5%A4%A7%E4%BC%9A%E4%B8%83%E4%B8%AA%E5%88%A4%E6%96%AD/">Claude Code 创始人在红杉大会上的 7 个重要判断</a></li>
+          <li><a href="../../AI/%E8%A1%8C%E4%B8%9A%E5%8A%A8%E6%80%81/Loop-Engineering-%E4%BB%8EPrompt%E5%88%B0%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%81%E6%B0%B4%E7%BA%BF/">Loop Engineering：从 Prompt 到自动化流水线</a></li>
+          <li><a href="../../AI/%E8%A1%8C%E4%B8%9A%E5%8A%A8%E6%80%81/OpenCodeReview-%E9%98%BF%E9%87%8CAI%E4%BB%A3%E7%A0%81%E5%AE%A1%E6%9F%A5%E5%B7%A5%E7%A8%8B%E5%8C%96/">OpenCodeReview：阿里开源的 AI 代码审查工程化工具</a></li>
+          <li><a href="../../AI/%E8%A1%8C%E4%B8%9A%E5%8A%A8%E6%80%81/TypeScript-vs-Python-AI-Agent%E6%97%B6%E4%BB%A3%E7%9A%84%E8%AF%AD%E8%A8%80%E4%B9%8B%E4%BA%89/">为什么 AI Agent 时代，TypeScript 正在抢走 Python 的主场？</a></li>
+        </ul>
+        <p class="sidebar-group">其他</p>
+        <ul>
+          <li><a href="../../AI/HarnessKit/" class="current">HarnessKit — AI 编码智能体统一管理工具</a></li>
+          <li><a href="../../AI/%E6%8F%90%E7%A4%BA%E8%AF%8D/">提示词</a></li>
+        </ul>
+      </nav>
+    </details>
+  </aside>
+
+  <article class="article">
+    <nav class="breadcrumb">
+      <a href="../../index.html">首页</a><span>/</span>
+      <a href="../../AI/">AI</a>
+    </nav>
+    <h1 class="article-title">HarnessKit — AI 编码智能体统一管理工具</h1>
+    <p class="article-meta"><span>更新于 2026-06-07</span>
+      <a href="https://github.com/hangx969/learning-notes/blob/main/AI/HarnessKit.md">查看源文件</a>
+    </p>
+    <div class="article-body">
+<h1 id="harnesskit-ai-编码智能体统一管理工具">HarnessKit — AI 编码智能体统一管理工具</h1>
+<blockquote>
+<p><strong>One home for every agent.</strong><br />
+一个免费开源的应用，统一管理所有 AI 编码智能体的扩展、配置、记忆和规则。</p>
+</blockquote>
+<ul>
+<li><strong>GitHub</strong>：https://github.com/RealZST/HarnessKit</li>
+<li><strong>许可证</strong>：Apache-2.0</li>
+<li><strong>技术栈</strong>：Rust（核心）+ TypeScript/Vite（前端）</li>
+<li><strong>当前版本</strong>：v1.3.1（2026-05-01）</li>
+<li><strong>支持平台</strong>：macOS / Linux / Windows</li>
+</ul>
+<hr />
+<h2 id="解决的问题">解决的问题</h2>
+<p>每个 AI 编码智能体（Claude Code、Cursor、Codex、Gemini CLI 等）都有自己的扩展格式、配置目录、记忆文件和规则约定。当你同时使用多个 Agent 时，面临的问题是：</p>
+<ul>
+<li>扩展（Skills、MCP Server、Plugins）<strong>分散在不同目录</strong>，格式各异</li>
+<li>同一个扩展在不同 Agent 上的<strong>配置方式不同</strong>（JSON、TOML、hook 约定、MCP schema）</li>
+<li><strong>无法跨 Agent 复用</strong>扩展，需要手动逐一安装和维护</li>
+<li>缺乏统一的<strong>安全审计</strong>视角，不清楚扩展实际访问了哪些权限</li>
+</ul>
+<p>HarnessKit 将所有 Agent 的扩展、配置、记忆和规则纳入一个统一管理界面。</p>
+<hr />
+<h2 id="支持的-ai-智能体">支持的 AI 智能体</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Agent</th>
+<th style="text-align: center;">Skills</th>
+<th style="text-align: center;">MCP</th>
+<th style="text-align: center;">Plugins</th>
+<th style="text-align: center;">Hooks</th>
+<th style="text-align: center;">Agent-first CLIs</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Claude Code</strong></td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✓</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Codex</strong></td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✓</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Gemini CLI</strong></td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✓</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Cursor</strong></td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✓</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Antigravity</strong></td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">—</td>
+<td style="text-align: center;">—</td>
+<td style="text-align: center;">✓</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Copilot</strong></td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✓</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Windsurf</strong></td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">—</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✓</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>路线图</strong>中计划支持 Hermes-agent、OpenClaw、OpenCode 等更多 Agent。</p>
+</blockquote>
+<hr />
+<h2 id="核心功能">核心功能</h2>
+<h3 id="1-全类型扩展管理">1. 全类型扩展管理</h3>
+<p>管理五种扩展类型：<strong>Skills</strong>、<strong>MCP Servers</strong>、<strong>Plugins</strong>、<strong>Hooks</strong>、<strong>Agent-first CLIs</strong>。</p>
+<ul>
+<li><strong>智能分组</strong>：按类型、Agent 或来源筛选；同源扩展自动归组为 Pack，支持批量操作</li>
+<li><strong>全局可视</strong>：每个扩展展示所属 Agent、权限范围、Trust Score 和状态</li>
+<li><strong>一键操作</strong>：启用/禁用直接在列表中完成；一键检查所有扩展更新</li>
+<li><strong>跨 Agent 部署</strong>：查看哪些 Agent 已安装、哪些缺失，一键部署到任意 Agent，HarnessKit 自动处理格式差异</li>
+</ul>
+<h3 id="2-配置记忆规则管理">2. 配置/记忆/规则管理</h3>
+<p>统一管理每个 Agent 的 <strong>Configs</strong>、<strong>Memory</strong>、<strong>Rules</strong> 和 <strong>Ignore</strong> 文件。</p>
+<ul>
+<li>自动发现全局和项目级配置文件</li>
+<li>每个 Agent 独立仪表板，按类别展示所有文件（作用域、路径、大小、扩展摘要）</li>
+<li>支持添加自定义路径到仪表板</li>
+<li>配置文件修改实时检测刷新</li>
+</ul>
+<h3 id="3-安全审计与权限透明">3. 安全审计与权限透明</h3>
+<p>内置安全引擎，18 条静态分析规则，为每个扩展计算 <strong>Trust Score</strong>（0–100）：</p>
+<table>
+<thead>
+<tr>
+<th>等级</th>
+<th>分数</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Safe</td>
+<td>80+</td>
+<td>安全</td>
+</tr>
+<tr>
+<td>Low Risk</td>
+<td>60–79</td>
+<td>低风险</td>
+</tr>
+<tr>
+<td>Needs Review</td>
+<td>&lt;60</td>
+<td>需审查</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><strong>一键全扫描</strong>：对所有扩展运行安全审计</li>
+<li><strong>精确定位</strong>：每条发现标注文件和行号</li>
+<li><strong>独立审计</strong>：即使多个 Agent 共享同一扩展，每份副本独立审计</li>
+<li><strong>五维权限透视</strong>：文件系统路径、网络域名、Shell 命令、数据库引擎、环境变量</li>
+</ul>
+<h3 id="4-扩展市场">4. 扩展市场</h3>
+<p>三大市场集成：</p>
+<ul>
+<li><strong>Skills</strong>：浏览 <a href="https://skills.sh">skills.sh</a> 注册表，也支持从 Git URL 或本地目录安装</li>
+<li><strong>MCP Servers</strong>：浏览 <a href="https://smithery.ai">Smithery</a> 的 MCP 服务器注册表</li>
+<li><strong>Agent-first CLI</strong>：发现专为 Agent 构建的 CLI 工具</li>
+</ul>
+<p>每个列表展示描述、安装量和来源。Skills 支持预览文档、查看第三方安全评分，一键安装到任意 Agent。</p>
+<h3 id="5-原地管理in-place">5. 原地管理（In-Place）</h3>
+<ul>
+<li>直接读写 Agent 原生配置目录，<strong>不做影子拷贝</strong></li>
+<li>启用/禁用扩展仅做文件重命名，<strong>不移动不复制</strong></li>
+<li>卸载 HarnessKit 后<strong>零残留</strong>，一切保持原状</li>
+</ul>
+<hr />
+<h2 id="三种使用模式">三种使用模式</h2>
+<h3 id="桌面应用macos">桌面应用（macOS）</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># 下载 DMG 安装</span>
+<span class="c1"># Apple Silicon: HarnessKit_x.x.x_aarch64.dmg</span>
+<span class="c1"># Intel:         HarnessKit_x.x.x_x64.dmg</span>
+</code></pre></div>
+
+<h3 id="cli-模式全平台">CLI 模式（全平台）</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># 安装</span>
+curl<span class="w"> </span>-fsSL<span class="w"> </span>https://raw.githubusercontent.com/RealZST/HarnessKit/main/install.sh<span class="w"> </span><span class="p">|</span><span class="w"> </span>sh
+
+<span class="c1"># Windows</span>
+<span class="c1"># irm https://raw.githubusercontent.com/RealZST/HarnessKit/main/install.ps1 | iex</span>
+
+<span class="c1"># 常用命令</span>
+hk<span class="w"> </span>status<span class="w">                              </span><span class="c1"># 查看检测到的 Agent 和扩展概览</span>
+hk<span class="w"> </span>list<span class="w"> </span>--kind<span class="w"> </span>skill<span class="w"> </span>--agent<span class="w"> </span>claude<span class="w">     </span><span class="c1"># 按类型和 Agent 筛选</span>
+hk<span class="w"> </span>audit<span class="w">                               </span><span class="c1"># 安全审计</span>
+hk<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>my-skill<span class="w">                      </span><span class="c1"># 启用扩展</span>
+hk<span class="w"> </span>disable<span class="w"> </span>--pack<span class="w"> </span>owner/repo<span class="w">            </span><span class="c1"># 按来源批量禁用</span>
+</code></pre></div>
+
+<h3 id="web-模式全平台">Web 模式（全平台）</h3>
+<div class="highlight"><pre><span></span><code>hk<span class="w"> </span>serve
+<span class="c1"># 访问 http://localhost:7070</span>
+</code></pre></div>
+
+<p>适用于 Linux 服务器、HPC 集群等无桌面环境，与桌面应用功能完全一致。</p>
+<p>远程服务器使用方式：</p>
+<div class="highlight"><pre><span></span><code>ssh<span class="w"> </span>-L<span class="w"> </span><span class="m">7070</span>:localhost:7070<span class="w"> </span>user@your-server
+hk<span class="w"> </span>serve
+<span class="c1"># 本地浏览器访问 http://localhost:7070</span>
+</code></pre></div>
+
+<hr />
+<h2 id="与本仓库其他工具的关系">与本仓库其他工具的关系</h2>
+<table>
+<thead>
+<tr>
+<th>工具</th>
+<th>定位</th>
+<th>关系</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Claude Code 基础指南klzzwxh:0046Claude Code</td>
+<td>AI 编码助手</td>
+<td>HarnessKit 管理其 Skills/MCP/Plugins/Hooks/Rules</td>
+</tr>
+<tr>
+<td>AI/OpenClaw/OpenClaw-基础-安装klzzwxh:0048OpenClaw</td>
+<td>AI 多智能体运维平台</td>
+<td>HarnessKit 路线图计划支持</td>
+</tr>
+<tr>
+<td>AI/Hermes-agent/Hermes-Agent-满配指南与生态资源klzzwxh:0050Hermes Agent</td>
+<td>AI Agent 框架</td>
+<td>HarnessKit 路线图计划支持</td>
+</tr>
+<tr>
+<td>AI/GithubCopilot/Copilot CLIklzzwxh:0052Copilot CLI</td>
+<td>GitHub Copilot</td>
+<td>HarnessKit 已支持 Copilot 扩展管理</td>
+</tr>
+</tbody>
+</table>
+<p>HarnessKit 不替代任何 Agent，而是作为<strong>元管理层</strong>运行在所有 Agent 之上，解决多 Agent 并存时的扩展碎片化问题。</p>
+<hr />
+<h2 id="路线图">路线图</h2>
+<ul>
+<li>更多 Agent 支持：Hermes-agent、OpenClaw、OpenCode</li>
+<li>扩展迁移：跨设备导入/导出扩展配置</li>
+<li>CLI 增强：更丰富的命令和交互功能</li>
+</ul>
+    </div>
+  </article>
+  <aside class="toc">
+    <p class="toc-label">本页目录</p>
+    <ul>
+  <li><a href="#解决的问题">解决的问题</a></li>
+  <li><a href="#支持的-ai-智能体">支持的 AI 智能体</a></li>
+  <li><a href="#核心功能">核心功能</a><ul>
+  <li><a href="#1-全类型扩展管理">1. 全类型扩展管理</a></li>
+  <li><a href="#2-配置记忆规则管理">2. 配置/记忆/规则管理</a></li>
+  <li><a href="#3-安全审计与权限透明">3. 安全审计与权限透明</a></li>
+  <li><a href="#4-扩展市场">4. 扩展市场</a></li>
+  <li><a href="#5-原地管理in-place">5. 原地管理（In-Place）</a></li>
+</ul></li>
+  <li><a href="#三种使用模式">三种使用模式</a><ul>
+  <li><a href="#桌面应用macos">桌面应用（macOS）</a></li>
+  <li><a href="#cli-模式全平台">CLI 模式（全平台）</a></li>
+  <li><a href="#web-模式全平台">Web 模式（全平台）</a></li>
+</ul></li>
+  <li><a href="#与本仓库其他工具的关系">与本仓库其他工具的关系</a></li>
+  <li><a href="#路线图">路线图</a></li>
+</ul>
+  </aside>
+
+</div>
+
+</main>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>Learning Notes</span>
+    <a href="https://github.com/hangx969/learning-notes">GitHub</a>
+  </div>
+</footer>
+<script src="../../static/search.js"></script>
+</body>
+</html>

@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>数据传输服务DTS - Learning Notes</title>
+<link rel="stylesheet" href="../../../static/style.css">
+<link rel="stylesheet" href="../../../static/pygments.css">
+</head>
+<body data-root="../../../">
+<header class="site-header">
+  <div class="header-inner">
+    <a class="logo" href="../../../index.html"><span class="logo-mark"></span>LEARNING NOTES</a>
+    <div class="search">
+      <input id="search-input" type="search" placeholder="搜索笔记…" autocomplete="off" aria-label="搜索笔记">
+      <div id="search-results" hidden></div>
+    </div>
+  </div>
+  <nav class="topic-nav" aria-label="主题导航">
+    <div class="topic-nav-inner">
+      <a href="../../../AI/">AI</a>
+      <a href="../../../Aliyun/" class="active">Aliyun</a>
+      <a href="../../../Azure/">Azure</a>
+      <a href="../../../C%2B%2B/">C++</a>
+      <a href="../../../CloudComputing/">CloudComputing</a>
+      <a href="../../../Database/">Database</a>
+      <a href="../../../Docker-Kubernetes/">Docker-Kubernetes</a>
+      <a href="../../../GPU-DeepLearning/">GPU-DeepLearning</a>
+      <a href="../../../Git/">Git</a>
+      <a href="../../../Go/">Go</a>
+      <a href="../../../HPC/">HPC</a>
+      <a href="../../../IaC/">IaC</a>
+      <a href="../../../Linux-Shell/">Linux-Shell</a>
+      <a href="../../../Middlewares/">Middlewares</a>
+      <a href="../../../Networking/">Networking</a>
+      <a href="../../../OS/">OS</a>
+      <a href="../../../Python/">Python</a>
+      <a href="../../../SoftwareTesting/">SoftwareTesting</a>
+    </div>
+  </nav>
+</header>
+<main class="main">
+
+<div class="article-layout">
+
+  <aside class="sidebar">
+    <details class="sidebar-details">
+      <summary>Aliyun</summary>
+      <nav class="sidebar-nav">
+        <p class="sidebar-group">存储</p>
+        <ul>
+          <li><a href="../../../Aliyun/%E5%AD%98%E5%82%A8/%E5%AF%B9%E8%B1%A1%E5%AD%98%E5%82%A8OSS/">对象存储OSS</a></li>
+          <li><a href="../../../Aliyun/%E5%AD%98%E5%82%A8/%E6%95%B0%E6%8D%AE%E6%B9%96-HDFS-POSIX/">数据湖-HDFS-POSIX</a></li>
+          <li><a href="../../../Aliyun/%E5%AD%98%E5%82%A8/%E8%B7%A8%E5%9F%9F%E5%85%B1%E4%BA%ABCORS/">跨域共享CORS</a></li>
+        </ul>
+        <p class="sidebar-group">数据库</p>
+        <ul>
+          <li><a href="../../../Aliyun/%E6%95%B0%E6%8D%AE%E5%BA%93/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93RDS/">关系型数据库RDS</a></li>
+          <li><a href="../../../Aliyun/%E6%95%B0%E6%8D%AE%E5%BA%93/%E6%95%B0%E6%8D%AE%E4%BC%A0%E8%BE%93%E6%9C%8D%E5%8A%A1DTS/" class="current">数据传输服务DTS</a></li>
+        </ul>
+        <p class="sidebar-group">网络</p>
+        <ul>
+          <li><a href="../../../Aliyun/%E7%BD%91%E7%BB%9C/ACK%E7%BD%91%E7%BB%9C%E8%A7%84%E5%88%92%E4%B8%8E%E6%88%90%E6%9C%AC%E4%BC%98%E5%8C%96/">ACK 网络规划与成本优化</a></li>
+          <li><a href="../../../Aliyun/%E7%BD%91%E7%BB%9C/CEN-TR/">云企业网 CEN 与转发路由器 TR</a></li>
+          <li><a href="../../../Aliyun/%E7%BD%91%E7%BB%9C/DDoS%E9%AB%98%E9%98%B2/">DDoS 防护</a></li>
+          <li><a href="../../../Aliyun/%E7%BD%91%E7%BB%9C/DNS-CDN-SSL/">DNS、CDN 与 SSL 证书</a></li>
+          <li><a href="../../../Aliyun/%E7%BD%91%E7%BB%9C/VPC/">专有网络 VPC</a></li>
+          <li><a href="../../../Aliyun/%E7%BD%91%E7%BB%9C/WAF/">Web 应用防火墙 WAF</a></li>
+          <li><a href="../../../Aliyun/%E7%BD%91%E7%BB%9C/%E4%BA%91%E5%AE%89%E5%85%A8%E4%B8%AD%E5%BF%83-%E4%BA%91%E9%98%B2%E7%81%AB%E5%A2%99/">云安全中心与云防火墙</a></li>
+          <li><a href="../../../Aliyun/%E7%BD%91%E7%BB%9C/%E7%BD%91%E5%85%B3-VPN-%E4%B8%93%E7%BA%BF/">网关-VPN-专线</a></li>
+          <li><a href="../../../Aliyun/%E7%BD%91%E7%BB%9C/%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1SLB/">负载均衡 SLB</a></li>
+        </ul>
+        <p class="sidebar-group">计算</p>
+        <ul>
+          <li><a href="../../../Aliyun/%E8%AE%A1%E7%AE%97/ECS/">弹性计算服务ECS</a></li>
+          <li><a href="../../../Aliyun/%E8%AE%A1%E7%AE%97/%E4%B8%BB%E6%9C%BA%E8%BF%81%E7%A7%BB%E5%B7%A5%E5%85%B7SMC/">主机迁移工具SMC</a></li>
+          <li><a href="../../../Aliyun/%E8%AE%A1%E7%AE%97/%E4%BA%91%E7%9B%98-%E5%BF%AB%E7%85%A7-%E9%95%9C%E5%83%8F/">云盘、快照与镜像</a></li>
+          <li><a href="../../../Aliyun/%E8%AE%A1%E7%AE%97/%E5%BC%B9%E6%80%A7%E4%BC%B8%E7%BC%A9ESS/">弹性伸缩ESS</a></li>
+        </ul>
+        <p class="sidebar-group">资源管理</p>
+        <ul>
+          <li><a href="../../../Aliyun/%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/FinOps-%E4%BA%91%E6%88%90%E6%9C%AC%E4%BC%98%E5%8C%96%E5%AE%9E%E6%88%98/">FinOps - 云成本优化实战</a></li>
+          <li><a href="../../../Aliyun/%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/Landing%20Zone/">Landing Zone</a></li>
+        </ul>
+        <p class="sidebar-group">其他</p>
+        <ul>
+          <li><a href="../../../Aliyun/ACP%E8%80%83%E8%AF%95/">ACP云计算工程师考试笔记</a></li>
+        </ul>
+      </nav>
+    </details>
+  </aside>
+
+  <article class="article">
+    <nav class="breadcrumb">
+      <a href="../../../index.html">首页</a><span>/</span>
+      <a href="../../../Aliyun/">Aliyun</a><span>/</span><span>数据库</span>
+    </nav>
+    <h1 class="article-title">数据传输服务DTS</h1>
+    <p class="article-meta"><span>更新于 2026-04-16</span>
+      <a href="https://github.com/hangx969/learning-notes/blob/main/Aliyun/%E6%95%B0%E6%8D%AE%E5%BA%93/%E6%95%B0%E6%8D%AE%E4%BC%A0%E8%BE%93%E6%9C%8D%E5%8A%A1DTS.md">查看源文件</a>
+    </p>
+    <div class="article-body">
+<h1 id="数据传输服务dts">数据传输服务DTS</h1>
+<h2 id="功能">功能</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">功能</th>
+<th style="text-align: left;">介绍</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>数据同步</strong></td>
+<td style="text-align: left;">实现数据源之间的数据==实时同步==，适用于<strong>数据异地多活</strong>、数据异地灾备、本地数据灾备、跨境数据同步、查询与报表分流、云BI及实时数据仓库等多种业务场景。</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>数据迁移</strong></td>
+<td style="text-align: left;">实现同构和异构数据源之间的数据迁移，适用于数据上云迁移、阿里云内部跨任务数据迁移、数据库拆分或扩容等业务场景。</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>数据集成</strong></td>
+<td style="text-align: left;">作为数据迁移功能的延伸，数据集成功能可以根据调度策略的配置，定期地将源库中的结构和存量数据迁移至目标库中，帮助您构建更加灵活的数据仓库（例如构建T+1的周期性数仓）。</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>数据订阅</strong></td>
+<td style="text-align: left;">获取自建MySQL、[[Aliyun/数据库/关系型数据库RDS</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>数据加工</strong></td>
+<td style="text-align: left;">实现流式数据的抽取、数据转换和加工、数据装载。丰富企业实时数据处理和计算场景，赋能企业数字化转型。</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>数据校验</strong></td>
+<td style="text-align: left;">为数据迁移或同步任务配置数据校验功能，监控源库与目标库数据的差异，以便及时发现数据不一致的问题。</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="迁移和同步的区别">迁移和同步的区别</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">对比项</th>
+<th style="text-align: left;">数据迁移</th>
+<th style="text-align: left;">数据同步</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>适用场景</strong></td>
+<td style="text-align: left;">主要用于上云迁移，例如将本地数据库、[[Aliyun/计算/ECS</td>
+<td style="text-align: left;">ECS]]上的自建数据库或第三方云数据库、阿里云RDS数据库跨地域跨账号迁移至阿里云数据库。</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>支持的数据库</strong></td>
+<td style="text-align: left;">请参见<a href="https://help.aliyun.com/zh/dts/user-guide/overview-of-data-migration-scenarios#concept-26618-zh">迁移方案概览</a>。</td>
+<td style="text-align: left;">请参见<a href="https://help.aliyun.com/zh/dts/user-guide/data-synchronization-scenarios#concept-1732301">同步方案概览</a>。</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>支持的数据库部署位置（接入方式）</strong></td>
+<td style="text-align: left;">- 阿里云实例<br>- 有公网IP的自建数据库<br>- 通过数据库网关DG接入的自建数据库<br>- 通过[[Aliyun/网络/CEN-TR</td>
+<td style="text-align: left;">云企业网CEN]]接入的自建数据库<br>- ECS上的自建数据库<br>- 通过专线/VPN网关/智能接入网关接入的自建数据库</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>功能特性差异</strong></td>
+<td style="text-align: left;">- 支持库表列三级对象名映射。<br>- 支持过滤待迁移的数据。<br>- 支持选择迁移的SQL操作类型，例如选择仅迁移INSERT操作。<br>- 支持读取其他阿里云账号下的专有网络，通过该功能可以实现跨阿里云账号迁移专有网络下的自建数据库。</td>
+<td style="text-align: left;">- 支持库表列三级对象名映射。<br>- 支持过滤待同步的数据。<br>- 支持在线修改同步对象。<br>- 支持MySQL等间的==双向同步==。<br>- 支持选择同步的SQL操作类型，例如选择仅同步INSERT操作。</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>计费方式</strong></td>
+<td style="text-align: left;">仅支持按量付费。</td>
+<td style="text-align: left;">支持按量付费和包年包月。</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>计费规则</strong></td>
+<td style="text-align: left;">仅在增量数据迁移正常运行期间计费（不包含增量数据迁移暂停期间），结构迁移和全量数据迁移期间不计费。</td>
+<td style="text-align: left;">- 按量付费时，仅在增量数据同步正常运行期间计费（包含增量数据同步暂停期间），结构同步和全量数据同步期间不计费。<br>- 包年包月时，按照购买时选择的配置和购买量一次性扣费。</td>
+</tr>
+</tbody>
+</table>
+<p><div class="callout callout-tip" markdown="1"><br />
+<p class="callout-title">核心区别</p></p>
+<ul>
+<li>==同步==适合长期持续实时同步，==迁移==更适合短期迁移任务。</li>
+<li>同步是可以==双向同步==的，迁移只能单向迁移。</li>
+<li>对于某些不支持数据同步的数据库（比如MongoDB），可以采用增量数据迁移的方式来实现数据同步。</li>
+</ul>
+</div>
+<hr />
+<h2 id="数据迁移">数据迁移</h2>
+<p>实现本地DB上云迁移、阿里云内部跨实例迁移、跨账号跨地域迁移、数据库拆分等需求。甚至可以用DTS迁移其他云的数据库（只要有公网IP访问DB，源库放行即可）。</p>
+<p>提供了<strong>库表列三级映射</strong>、数据过滤等多种ETL特性。</p>
+<h3 id="迁移类型">迁移类型</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">迁移类型</th>
+<th style="text-align: left;">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>库表结构迁移</strong></td>
+<td style="text-align: left;">DTS将源库中待迁移对象的结构定义迁移至目标库（例如表、视图、触发器、存储过程等）。对于异构数据库之间的结构迁移，DTS会根据源库和目标库的语法，将结构定义的语法进行转换，例如将Oracle中的number转换为MySQL中的decimal。</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>全量迁移</strong></td>
+<td style="text-align: left;">DTS将源库中待迁移对象的存量数据，全部迁移到目标库中。如果在配置数据迁移任务时，仅选择了结构迁移和全量数据迁移，那么在迁移过程中，源库的新增数据不会被迁移至目标库。</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>增量迁移</strong></td>
+<td style="text-align: left;">DTS会先在源库中实现静态快照，然后将快照数据迁移到目标库，最后再将迁移过程中源库产生的增量数据实时同步至目标库。</td>
+</tr>
+</tbody>
+</table>
+<p><div class="callout callout-warning" markdown="1"><br />
+<p class="callout-title">全量迁移注意</p></p>
+<p>为保障数据一致性，迁移期间请勿在源库中写入新的数据。如需实现==不停机迁移==，您需要在配置数据迁移任务时，同时选择<strong>结构迁移</strong>、<strong>全量数据迁移</strong>和<strong>增量数据迁移</strong>。</p>
+</div>
+<p><div class="callout callout-info" markdown="1"><br />
+<p class="callout-title">增量迁移说明</p></p>
+<p>增量数据迁移会保持实时同步的状态，所以迁移任务==不会自动结束==，您需要手动结束迁移任务。</p>
+</div>
+<h3 id="etl特性">ETL特性</h3>
+<p>ETL是将业务系统中的数据进行：==抽取-Extract、清洗转换-Transform、加载-Load==到数据仓库的过程。是BI（商业智能）中的重要环节。</p>
+<p>数据迁移支持多种ETL特性：</p>
+<ul>
+<li><strong>库表列三级对象名映射</strong>：实现对源和目标实例的库名、表名、列名不同的两个对象之间进行数据迁移。</li>
+<li><strong>条件过滤</strong>：对要迁移的表设置SQL条件过滤要迁移的数据</li>
+</ul>
+<h3 id="数据校验">数据校验</h3>
+<p>监控源库和目标库数据差异的功能，支持在不停服的情况下校验。</p>
+<ul>
+<li>全量校验、增量校验、结构校验</li>
+<li>校验出不一致的数据，DTS会在一定时间后再校验，确保异常不是由于增量延迟所导致。</li>
+</ul>
+<hr />
+<h2 id="迁移场景">迁移场景</h2>
+<h3 id="不停机迁移数据库">不停机迁移数据库</h3>
+<p>迁移过程中应用可以保持运行。</p>
+<p><div class="callout callout-warning" markdown="1"><br />
+<p class="callout-title">注意</p></p>
+<p>还是有一定的停机时间的，只不过相比传统方式少了一些。唯一的停机时间是将应用程序切换到目标数据库的过程。通常情况下，此切换窗口可以降低到==分钟级别==。这是一定要有的，在切换的时候停机，保证数据一致性。</p>
+</div>
+<p>迁移过程包括三个阶段：</p>
+<ol>
+<li><strong>结构迁移</strong></li>
+<li><strong>全量数据迁移</strong></li>
+<li><strong>增量数据迁移</strong><ul>
+<li>增量数据校验、增量迁移会持续运行，直到手动停止。源库中进行的数据变更会实时同步到目标数据库。</li>
+<li>先停止应用写入数据，再等增量数据迁移完成。这样就完成数据迁移了。</li>
+<li>迁移完成后，可以验证目标库是否和应用兼容。验证通过后，即可切换应用程序到目标库。</li>
+</ul>
+</li>
+</ol>
+<h3 id="异地灾备">异地灾备</h3>
+<p>在另一个区域构建灾备中心，用DTS在业务中心和灾备中心持续同步数据更新，保持地域间副本同步。<br />
+主地域故障，可以将用户请求切换到灾备区域。</p>
+<h3 id="异地多活">异地多活</h3>
+<ul>
+<li>用户地理位置分布较广，地理位置远的客户访问延迟较高。</li>
+<li>单个地域底层基础设置能力限制业务扩展，例如供电能力、网络建设能力等。</li>
+</ul>
+<p><div class="callout callout-tip" markdown="1"><br />
+<p class="callout-title">解决方案</p></p>
+<p>可以在同城、异地构建多个业务单元。每个业务单元之间用DTS实现数据==双向实时同步==，保障全局数据一致性。任一单元故障，切换到另一个单元即可，业务==秒级恢复==。还可以将业务流量分布至各个业务单元。</p>
+</div>
+<h3 id="加速全球化业务访问">加速全球化业务访问</h3>
+<p>全球化业务，在全球多个Region设立业务中心，通过DTS将主业务中心的数据实时同步到次业务中心，各个地区的读请求，路由到就近的次业务中心，避免远距离访问。可通过 <a class="wikilink" href="../../../Aliyun/%E7%BD%91%E7%BB%9C/CEN-TR/">CEN</a> 实现跨Region网络互通。</p>
+    </div>
+  </article>
+  <aside class="toc">
+    <p class="toc-label">本页目录</p>
+    <ul>
+  <li><a href="#功能">功能</a></li>
+  <li><a href="#迁移和同步的区别">迁移和同步的区别</a></li>
+  <li><a href="#数据迁移">数据迁移</a><ul>
+  <li><a href="#迁移类型">迁移类型</a></li>
+  <li><a href="#etl特性">ETL特性</a></li>
+  <li><a href="#数据校验">数据校验</a></li>
+</ul></li>
+  <li><a href="#迁移场景">迁移场景</a><ul>
+  <li><a href="#不停机迁移数据库">不停机迁移数据库</a></li>
+  <li><a href="#异地灾备">异地灾备</a></li>
+  <li><a href="#异地多活">异地多活</a></li>
+  <li><a href="#加速全球化业务访问">加速全球化业务访问</a></li>
+</ul></li>
+</ul>
+  </aside>
+
+</div>
+
+</main>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>Learning Notes</span>
+    <a href="https://github.com/hangx969/learning-notes">GitHub</a>
+  </div>
+</footer>
+<script src="../../../static/search.js"></script>
+</body>
+</html>

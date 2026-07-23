@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Go环境配置与基础 - Learning Notes</title>
+<link rel="stylesheet" href="../../static/style.css">
+<link rel="stylesheet" href="../../static/pygments.css">
+</head>
+<body data-root="../../">
+<header class="site-header">
+  <div class="header-inner">
+    <a class="logo" href="../../index.html"><span class="logo-mark"></span>LEARNING NOTES</a>
+    <div class="search">
+      <input id="search-input" type="search" placeholder="搜索笔记…" autocomplete="off" aria-label="搜索笔记">
+      <div id="search-results" hidden></div>
+    </div>
+  </div>
+  <nav class="topic-nav" aria-label="主题导航">
+    <div class="topic-nav-inner">
+      <a href="../../AI/">AI</a>
+      <a href="../../Aliyun/">Aliyun</a>
+      <a href="../../Azure/">Azure</a>
+      <a href="../../C%2B%2B/">C++</a>
+      <a href="../../CloudComputing/">CloudComputing</a>
+      <a href="../../Database/">Database</a>
+      <a href="../../Docker-Kubernetes/">Docker-Kubernetes</a>
+      <a href="../../GPU-DeepLearning/">GPU-DeepLearning</a>
+      <a href="../../Git/">Git</a>
+      <a href="../../Go/" class="active">Go</a>
+      <a href="../../HPC/">HPC</a>
+      <a href="../../IaC/">IaC</a>
+      <a href="../../Linux-Shell/">Linux-Shell</a>
+      <a href="../../Middlewares/">Middlewares</a>
+      <a href="../../Networking/">Networking</a>
+      <a href="../../OS/">OS</a>
+      <a href="../../Python/">Python</a>
+      <a href="../../SoftwareTesting/">SoftwareTesting</a>
+    </div>
+  </nav>
+</header>
+<main class="main">
+
+<div class="article-layout">
+
+  <aside class="sidebar">
+    <details class="sidebar-details">
+      <summary>Go</summary>
+      <nav class="sidebar-nav">
+        <p class="sidebar-group">其他</p>
+        <ul>
+          <li><a href="../../Go/client-go-K8s%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%BC%80%E5%8F%91/">Client-Go K8s客户端开发</a></li>
+          <li><a href="../../Go/go-web%E5%BC%80%E5%8F%91/">Go Web开发</a></li>
+          <li><a href="../../Go/go-%E5%9F%BA%E7%A1%80-01-%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE-%E5%9F%BA%E7%A1%80/" class="current">Go环境配置与基础</a></li>
+          <li><a href="../../Go/go-%E5%9F%BA%E7%A1%80-02-%E6%95%B0%E7%BB%84-%E5%88%87%E7%89%87-map/">Go数组、切片与Map</a></li>
+          <li><a href="../../Go/go-%E5%9F%BA%E7%A1%80-03-%E5%8F%98%E9%87%8F-%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B-%E8%BF%90%E7%AE%97/">Go变量、数据类型与运算</a></li>
+          <li><a href="../../Go/go-%E5%9F%BA%E7%A1%80-04-%E5%88%86%E6%94%AF-%E5%BE%AA%E7%8E%AF/">Go分支与循环控制</a></li>
+          <li><a href="../../Go/go-%E5%9F%BA%E7%A1%80-05-%E5%87%BD%E6%95%B0-%E5%8C%85/">Go函数与包</a></li>
+          <li><a href="../../Go/go-%E5%9F%BA%E7%A1%80-06-%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86/">Go错误处理</a></li>
+          <li><a href="../../Go/go-%E6%8E%A5%E5%8F%A3/">什么是接口interface</a></li>
+          <li><a href="../../Go/go-%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1/">Go面向对象编程</a></li>
+          <li><a href="../../Go/%E4%BA%91%E5%8E%9F%E7%94%9F%E5%BC%80%E5%8F%91-%E5%9F%BA%E7%A1%80/">云原生开发基础</a></li>
+        </ul>
+      </nav>
+    </details>
+  </aside>
+
+  <article class="article">
+    <nav class="breadcrumb">
+      <a href="../../index.html">首页</a><span>/</span>
+      <a href="../../Go/">Go</a>
+    </nav>
+    <h1 class="article-title">Go环境配置与基础</h1>
+    <p class="article-meta"><span>更新于 2026-07-11</span>
+      <a href="https://github.com/hangx969/learning-notes/blob/main/Go/go-%E5%9F%BA%E7%A1%80-01-%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE-%E5%9F%BA%E7%A1%80.md">查看源文件</a>
+    </p>
+    <div class="article-body">
+<h1 id="go环境配置与基础">Go环境配置与基础</h1>
+<h2 id="go背景">Go背景</h2>
+<p>Go语言亦叫Golong语言，是由谷歌Google公司推出。Go语言保证了既能到达==静态编译语言==的安全和性能，又达到了==动态语言==开发速度和易维护性，有人形容Go语言：<mark>Go = C + Python</mark> , 说明Go语言既有C静态语言程序的运行速度，又能达到Python动态语言的快速开发。</p>
+<p>2009发布并正式开源，2012年第一个正式版本Go 1.0发布。</p>
+<p>官网地址：</p>
+<ul>
+<li>Golang 官方网站：https://golang.org</li>
+<li>Golang 官方标准库API：https://golang.org/pkg</li>
+<li>Golang 中文网官方标准库API：https://studygolang.com/pkgdoc</li>
+</ul>
+<hr />
+<h2 id="go语言特性">Go语言特性</h2>
+<ol>
+<li>并发编程</li>
+</ol>
+<p>Go语言天然并发，只需要关键字"go"就可以让函数并发执行，使得并发编程变得更为简单，这也是Go语言最大的优势。Go语言的并发是基于 <mark>goroutine</mark> 的，goroutine 类似于线程，但并非线程。可以将 goroutine 理解为一种虚拟线程。Go 语言运行时会参与调度 goroutine，并将 goroutine 合理地分配到每个 CPU 中，最大限度地使用CPU性能。开启一个goroutine的消耗非常小（大约==2KB==的内存），你可以轻松创建数百万个goroutine。</p>
+<ol>
+<li>性能好</li>
+</ol>
+<p>与其他现代高级语言（如Java/Python）相比，使用C，C++的最大好处是它们的性能。因为C/ C++是编译型语言而不是解释的语言。 处理器只能理解二进制文件，Java和Python这种高级语言在运行的时候需要先将人类可读的代码翻译成字节码，然后由专门的解释器再转变成处理器可以理解的二进制文件。同C,C++一样，Go语言也是==编译型==的语言，它直接将人类可读的代码编译成了处理器可以直接运行的二进制文件，执行效率更高，性能更好。</p>
+<ol>
+<li>语法简介</li>
+</ol>
+<p>Go 语言被称为"互联网时代的C语言"。Go 语言的风格类似于C语言。其语法在C语言的基础上进行了大幅的简化，去掉了不需要的表达式括号，循环也只有 for 一种表示方法，就可以实现各种遍历。</p>
+<ol>
+<li>开发效率高</li>
+</ol>
+<p>Go语言实现了开发效率与执行效率的完美结合，让你像写Python代码（效率）一样编写C代码（性能）。</p>
+<ol>
+<li>代码风格统一</li>
+</ol>
+<p>Go 语言提供了一套格式化工具——<mark>go fmt</mark>。一些 Go 语言的开发环境或者编辑器在保存时，都会使用格式化工具进行修改代码的格式化，这样就保证了不同开发者提交的代码都是统一的格式。</p>
+<hr />
+<h2 id="go项目结构规划">Go项目结构规划</h2>
+<p>个人项目：</p>
+<p><img alt="image-20250928114717648" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202509281147723.png" /></p>
+<p>公司项目：</p>
+<p><img alt="image-20250928114732249" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202509281147306.png" /></p>
+<hr />
+<h2 id="windows下配置go开发环境">Windows下配置Go开发环境</h2>
+<h3 id="下载安装">下载安装</h3>
+<ol>
+<li>
+<p>下载Go：在Go语言官网（https://golang.google.cn/dl/）下载 Windows 系统下的Go语言开发包，如下图所示。</p>
+</li>
+<li>
+<p>双击安装包安装</p>
+</li>
+</ol>
+<h3 id="配环境变量">配环境变量</h3>
+<ol>
+<li>把<strong>用户变量</strong>中的GOPATH删除。</li>
+<li>把<strong>用户变量-PATH变量</strong>中自带的%USERPROFILE%\go\bin删除</li>
+<li>创建go代码目录：</li>
+</ol>
+<div class="highlight"><pre><span></span><code><span class="n">mkdir</span> <span class="n">D</span><span class="p">:\</span><span class="n">cache</span><span class="p">\</span><span class="n">gocode</span>
+<span class="nb">cd </span><span class="n">D</span><span class="p">:\</span><span class="n">cache</span><span class="p">\</span><span class="n">gocode</span>
+<span class="n">mkdir</span> <span class="n">src</span>
+<span class="n">mkdir</span> <span class="n">bin</span>
+<span class="n">mkdir</span> <span class="n">pkg</span>
+<span class="c"># src：存放源代码</span>
+<span class="c"># bin:  存放编译后的二进制文件</span>
+<span class="c"># pkg：存放编译后的库文件</span>
+</code></pre></div>
+
+<ol>
+<li>在系统变量里增加go相关的变量：</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>变量名</th>
+<th>变量值</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GOPATH</td>
+<td>[根据实际位置] D:\cache\gocode</td>
+<td>指定存放自已编写的go代码的路径。<br />Go语言是一个编译型语言，有很多依赖包需要开发在打包过程编译进去。所以需要配置一个类似workspace的工作区，也就是定义好目录，要在这个目录下写源代码。</td>
+</tr>
+<tr>
+<td>GOROOT</td>
+<td>[根据实际安装位置] D:\0Software\Go</td>
+<td>GOPATH变量：用来表明你写的go项目的存放路径（工作目录）。指定Go安装包的安装路径</td>
+</tr>
+<tr>
+<td>GO111MODULE</td>
+<td>auto</td>
+<td>GOPATH路径最好只设置一个，所有的项目代码都放在GOPATH的src目录下。在这种模式下，Go 会表现：<br />1. 当项目路径在 GOPATH 目录外部时，设置为 GO111MODULE = on；<br />2. 当项目路径位于 GOPATH 内部时，即使存在 go.mod, 设置为 GO111MODULE = off。</td>
+</tr>
+<tr>
+<td>GOPROXY</td>
+<td>https://goproxy.cn</td>
+<td>配置go下载包的代理地址为七牛云的go代理地址。go依赖包默认下载地址是国外的，中国访问不了</td>
+</tr>
+<tr>
+<td>【系统变量】PATH</td>
+<td>D:\0Software\Go\bin</td>
+<td>cmd中可以运行go指令</td>
+</tr>
+</tbody>
+</table>
+<ol>
+<li>打开cmd，运行go env, go version检查是否能运行。</li>
+</ol>
+<h3 id="配vscode">配vscode</h3>
+<p>装插件：</p>
+<ol>
+<li>Go</li>
+<li>vscode-go-syntax</li>
+<li>code runner</li>
+</ol>
+<hr />
+<h2 id="mac配置go开发环境">Mac配置Go开发环境</h2>
+<p>用homebrew是最方便的：<code>brew install go</code> 。各种环境变量已经配置好了，开箱即用，不用其他手动配置。可以通过<code>go env</code> 查看。</p>
+<p>只需要配置一个goproxy即可：</p>
+<div class="highlight"><pre><span></span><code>go<span class="w"> </span>env<span class="w"> </span>-w<span class="w"> </span><span class="nv">GOPROXY</span><span class="o">=</span>https://goproxy.cn,direct
+</code></pre></div>
+
+<p>vscode里面装了go插件之后，需要再装几个依赖包：</p>
+<div class="highlight"><pre><span></span><code>go<span class="w"> </span>install<span class="w"> </span>github.com/josharian/impl@latest
+go<span class="w"> </span>install<span class="w"> </span>github.com/cweill/gotests/gotests@latest
+go<span class="w"> </span>install<span class="w"> </span>github.com/haya14busa/goplay/cmd/goplay@latest
+go<span class="w"> </span>install<span class="w"> </span>github.com/go-delve/delve/cmd/dlv@latest
+go<span class="w"> </span>install<span class="w"> </span>golang.org/x/tools/gopls@latest
+</code></pre></div>
+
+<hr />
+<h2 id="测试第一个go程序">测试第一个Go程序</h2>
+<ul>
+<li>创建项目目录</li>
+</ul>
+<p><sub>~</sub>sh<br />
+  mkdir gocode/src/goproject<br />
+  ~~~</p>
+<ul>
+<li>创建源码文件main.go</li>
+</ul>
+<p><sub>~</sub>go<br />
+  package main<br />
+  // 包是go源码的集合，是一种比较高级的代码复用方案。把可以复用的代码或者功能封装到一起，形成一个包，可以被另一个包引用。<br />
+  // 在 go 中，每个文件都必须归属于一个包。必须在源文件中非注释的第一行指明这个文件属于哪个包。<br />
+  // 如：package main。表示该go文件所在的包是 main。只有main包的文件才能被go build编译。不是main包的只能被其他包引用。<br />
+  // main包是一个特殊的包。一个可执行程序有且只有一个main包。main包是整个程序的入口，如果一个程序没有main函数是不能正常执行程序的。</p>
+<p>import "fmt" // import "fmt" 告诉 Go 编译器这个程序需要使用 fmt 包，引入该包后，就可以使用 fmt 包的函数，比如：fmt.Println</p>
+<p>// 定义入口函数<br />
+  func main() {<br />
+      fmt.Println("hello, world")<br />
+  }<br />
+  ~~~</p>
+<ul>
+<li>运行代码【直接运行】</li>
+</ul>
+<p><sub>~</sub>sh<br />
+  go run ./main.go<br />
+  ~~~</p>
+<ul>
+<li>运行代码【编译运行】</li>
+</ul>
+<p><sub>~</sub>sh<br />
+  go build ./main.go<br />
+  # 生成一个同名的exe文件，运行<br />
+  ./main.exe</p>
+<p># 也可以指定exe文件名<br />
+  go build -o hello.exe main.go<br />
+  ~~~</p>
+<hr />
+<h2 id="go文件名和关键字">Go文件名和关键字</h2>
+<p><div class="callout callout-info" markdown="1"><br />
+<p class="callout-title">命名规则</p></p>
+<ol>
+<li>所有的go源码都是以 ".go" 结尾。</li>
+<li>首字符可以是任意Unicode字符或者下划线</li>
+<li>剩余字符可以是Unicode、数字或者下划线</li>
+<li>字符长度不限</li>
+</ol>
+</div>
+<p>Go的关键字：<mark>25个</mark></p>
+<p>brea, defaul, fun, interfac, selec, case, defer, go, map, struct, chan, else, goto, package, switch, const, fallthrough, if, range, type, continue, for, import, return, var</p>
+<p>Go的保留字：<mark>37个</mark></p>
+<ul>
+<li>Constants：<code>true</code>, <code>false</code>, <code>iota</code>, <code>nil</code></li>
+<li>Types：<code>int</code>, <code>int8</code>, <code>int16</code>, <code>int32</code>, <code>int64</code>, <code>uint</code>, <code>uint8</code>, <code>uint32</code>, <code>uint64</code>, <code>uintptr</code>, <code>float32</code>, <code>float64</code>, <code>complex128</code>, <code>complex64</code>, <code>bool</code>, <code>byte</code>, <code>rune</code>, <code>string</code>, <code>error</code></li>
+<li>Functions：<code>make</code>, <code>len</code>, <code>cap</code>, <code>new</code>, <code>append</code>, <code>copy</code>, <code>close</code>, <code>delete</code>, <code>complex</code>, <code>real</code>, <code>imag</code>, <code>panic</code>, <code>recover</code></li>
+</ul>
+<hr />
+<h2 id="go命令行">Go命令行</h2>
+<div class="highlight"><pre><span></span><code><span class="c1"># cmd终端输入go会出现所有go命令行参数</span>
+go
+</code></pre></div>
+
+<ul>
+<li><mark>go env</mark> 用于打印Go语言的环境信息。</li>
+<li><mark>go run</mark> 命令可以编译并运行源码文件。</li>
+<li><mark>go get</mark> 可以根据要求和实际情况从互联网上下载或更新指定的代码包及其依赖包，并对它们进行编译和安装。</li>
+<li><mark>go build</mark> 命令用于编译我们指定的源码文件或代码包以及它们的依赖包。</li>
+<li><mark>go install</mark> 用于编译并安装指定的代码包及它们的依赖包。</li>
+<li><mark>go clean</mark> 命令会删除掉执行其它命令时产生的一些文件和目录。</li>
+<li><mark>go doc</mark> 命令可以打印附于Go语言程序实体上的文档。我们可以通过把程序实体的标识符作为该命令的参数来达到查看其文档的目的。</li>
+<li><mark>go test</mark> 命令用于对Go语言编写的程序进行测试。go list命令的作用是列出指定的代码包的信息。</li>
+<li><mark>go fix</mark> 会把指定代码包的所有Go语言源码文件中的旧版本代码修正为新版本的代码。</li>
+<li><mark>go vet</mark> 是一个用于检查Go语言源码中静态错误的简单工具。</li>
+<li><mark>go tool pprof</mark> 命令来交互式的访问概要文件的内容。</li>
+</ul>
+<hr />
+<h2 id="go注释">Go注释</h2>
+<ol>
+<li>单行注释: //</li>
+<li>
+<p>多行注释：/* */</p>
+</li>
+<li>
+<p>Golang中注释风格: Go 官方推荐使用行注释来注释整个方法和语句。</p>
+</li>
+<li>
+<p>代码风格：</p>
+</li>
+</ol>
+<p><sub>~</sub>go<br />
+   package main<br />
+   import "fmt"<br />
+   func main() {<br />
+   fmt.Println("hello,world!")<br />
+   }<br />
+   // 这样写是可以的，内容可以不缩进</p>
+<p>func main()<br />
+   {<br />
+   fmt.Println("hello,world!")<br />
+   }<br />
+   // 这样写不可以，{ 不能换行<br />
+   ~~~</p>
+<p><div class="callout callout-warning" markdown="1"><br />
+<p class="callout-title">注意</p></p>
+<p>Go 中 <code>{</code> 不能换行放在新的一行，必须紧跟在函数声明、if、for 等语句之后。</p>
+</div>
+<hr />
+<p><strong>相关笔记：</strong> <a class="wikilink" href="../../Go/go-%E5%9F%BA%E7%A1%80-03-%E5%8F%98%E9%87%8F-%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B-%E8%BF%90%E7%AE%97/">go-基础-03-变量-数据类型-运算</a> | <a class="wikilink" href="../../Go/go-%E5%9F%BA%E7%A1%80-04-%E5%88%86%E6%94%AF-%E5%BE%AA%E7%8E%AF/">go-基础-04-分支-循环</a> | <a class="wikilink" href="../../Go/go-%E5%9F%BA%E7%A1%80-05-%E5%87%BD%E6%95%B0-%E5%8C%85/">go-基础-05-函数-包</a> | <a class="wikilink" href="../../Go/%E4%BA%91%E5%8E%9F%E7%94%9F%E5%BC%80%E5%8F%91-%E5%9F%BA%E7%A1%80/">云原生开发-基础</a></p>
+    </div>
+  </article>
+  <aside class="toc">
+    <p class="toc-label">本页目录</p>
+    <ul>
+  <li><a href="#go背景">Go背景</a></li>
+  <li><a href="#go语言特性">Go语言特性</a></li>
+  <li><a href="#go项目结构规划">Go项目结构规划</a></li>
+  <li><a href="#windows下配置go开发环境">Windows下配置Go开发环境</a><ul>
+  <li><a href="#下载安装">下载安装</a></li>
+  <li><a href="#配环境变量">配环境变量</a></li>
+  <li><a href="#配vscode">配vscode</a></li>
+</ul></li>
+  <li><a href="#mac配置go开发环境">Mac配置Go开发环境</a></li>
+  <li><a href="#测试第一个go程序">测试第一个Go程序</a></li>
+  <li><a href="#go文件名和关键字">Go文件名和关键字</a></li>
+  <li><a href="#go命令行">Go命令行</a></li>
+  <li><a href="#go注释">Go注释</a></li>
+</ul>
+  </aside>
+
+</div>
+
+</main>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>Learning Notes</span>
+    <a href="https://github.com/hangx969/learning-notes">GitHub</a>
+  </div>
+</footer>
+<script src="../../static/search.js"></script>
+</body>
+</html>

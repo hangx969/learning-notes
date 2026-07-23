@@ -1,0 +1,1328 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Helm v3 安装与使用 - Learning Notes</title>
+<link rel="stylesheet" href="../../../static/style.css">
+<link rel="stylesheet" href="../../../static/pygments.css">
+</head>
+<body data-root="../../../">
+<header class="site-header">
+  <div class="header-inner">
+    <a class="logo" href="../../../index.html"><span class="logo-mark"></span>LEARNING NOTES</a>
+    <div class="search">
+      <input id="search-input" type="search" placeholder="搜索笔记…" autocomplete="off" aria-label="搜索笔记">
+      <div id="search-results" hidden></div>
+    </div>
+  </div>
+  <nav class="topic-nav" aria-label="主题导航">
+    <div class="topic-nav-inner">
+      <a href="../../../AI/">AI</a>
+      <a href="../../../Aliyun/">Aliyun</a>
+      <a href="../../../Azure/">Azure</a>
+      <a href="../../../C%2B%2B/">C++</a>
+      <a href="../../../CloudComputing/">CloudComputing</a>
+      <a href="../../../Database/">Database</a>
+      <a href="../../../Docker-Kubernetes/" class="active">Docker-Kubernetes</a>
+      <a href="../../../GPU-DeepLearning/">GPU-DeepLearning</a>
+      <a href="../../../Git/">Git</a>
+      <a href="../../../Go/">Go</a>
+      <a href="../../../HPC/">HPC</a>
+      <a href="../../../IaC/">IaC</a>
+      <a href="../../../Linux-Shell/">Linux-Shell</a>
+      <a href="../../../Middlewares/">Middlewares</a>
+      <a href="../../../Networking/">Networking</a>
+      <a href="../../../OS/">OS</a>
+      <a href="../../../Python/">Python</a>
+      <a href="../../../SoftwareTesting/">SoftwareTesting</a>
+    </div>
+  </nav>
+</header>
+<main class="main">
+
+<div class="article-layout">
+
+  <aside class="sidebar">
+    <details class="sidebar-details">
+      <summary>Docker-Kubernetes</summary>
+      <nav class="sidebar-nav">
+        <p class="sidebar-group">CKA-CKS</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/CKA-CKS/CKA-%E5%A4%87%E8%80%83/">CKA 备考</a></li>
+          <li><a href="../../../Docker-Kubernetes/CKA-CKS/CKS-%E5%A4%87%E8%80%83/">CKS 备考</a></li>
+          <li><a href="../../../Docker-Kubernetes/CKA-CKS/k8s-%E9%9D%A2%E8%AF%95%E9%A2%98%E6%B1%87%E6%80%BB/">K8s 面试题汇总</a></li>
+        </ul>
+        <p class="sidebar-group">container-platform</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/container-platform/%E9%83%A8%E7%BD%B2openshift%283.10%29/">部署 OpenShift (3.10)</a></li>
+          <li><a href="../../../Docker-Kubernetes/container-platform/%E9%83%A8%E7%BD%B2%E8%BD%BB%E9%87%8F%E7%BA%A7%E7%9A%84K8S%E5%B9%B3%E5%8F%B0-K3S/">部署轻量级 K8S 平台 - K3S</a></li>
+        </ul>
+        <p class="sidebar-group">docker</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E5%9F%BA%E7%A1%80/">Docker基础</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E5%AE%89%E5%85%A8%E9%85%8D%E7%BD%AE-Capabilities%E4%B8%8E%E5%AE%B9%E5%99%A8%E5%8A%A0%E5%9B%BA/">Docker 安全配置详解：Capabilities 与容器加固</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2UI%E5%B7%A5%E5%85%B7portainer-%E9%83%A8%E7%BD%B2redis-sentinel/">Docker部署Portainer与Redis-Sentinel</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2gitlab/">Docker部署GitLab</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2lnmp%E7%BD%91%E7%AB%99/">Docker部署LNMP网站</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2loki/">Docker部署Loki日志系统</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2nginx-tomcat-httpd-go-python%E6%9C%8D%E5%8A%A1/">Docker部署Nginx-Tomcat-Httpd-Go-Python服务</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2prometheus-grafana-cAdvisior%E7%9B%91%E6%8E%A7/">Docker部署Prometheus-Grafana-cAdvisor监控</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2%E4%BB%93%E5%BA%93%E5%B9%B3%E5%8F%B0homebox/">Docker部署Homebox仓库平台</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1%E5%B7%A5%E5%85%B7gocron/">Docker部署GoCron定时任务工具</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2%E8%B7%AF%E7%94%B1%E7%9B%91%E6%8E%A7%E5%B7%A5%E5%85%B7NextTrace/">Docker部署NextTrace路由监控工具</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%85%8D%E7%BD%AENVIDIA%20GPU/">Docker配置NVIDIA GPU</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%85%8D%E7%BD%AE%E4%BB%A3%E7%90%86/">Docker配置代理</a></li>
+        </ul>
+        <p class="sidebar-group">harbor</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/harbor/harbor-basics/">Harbor 基础</a></li>
+          <li><a href="../../../Docker-Kubernetes/harbor/helm%E9%83%A8%E7%BD%B2harbor/">Helm 部署 Harbor</a></li>
+        </ul>
+        <p class="sidebar-group">helm-operator</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/helm-operator/helmv3-%E5%AE%89%E8%A3%85%E4%B8%8E%E4%BD%BF%E7%94%A8/" class="current">Helm v3 安装与使用</a></li>
+          <li><a href="../../../Docker-Kubernetes/helm-operator/helm%E9%83%A8%E7%BD%B2config-syncer%28kubed%29/">Helm 部署 Config Syncer (Kubed)</a></li>
+          <li><a href="../../../Docker-Kubernetes/helm-operator/helm%E9%83%A8%E7%BD%B2dragonfly/">Helm 部署 Dragonfly</a></li>
+          <li><a href="../../../Docker-Kubernetes/helm-operator/helm%E9%83%A8%E7%BD%B2pact-broker/">Helm 部署 Pact Broker</a></li>
+          <li><a href="../../../Docker-Kubernetes/helm-operator/helm%E9%83%A8%E7%BD%B2reloader/">Helm 部署 Reloader</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-CICD</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD%20Image%20Updater/">ArgoCD Image Updater</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD%E5%9F%BA%E7%A1%80/">ArgoCD基础</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD%E5%A4%9A%E9%9B%86%E7%BE%A4GitOps%E5%AE%9E%E6%88%98/">多集群 GitOps 实战：用 Argo CD 管理上百个 Kubernetes 集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD%E9%83%A8%E7%BD%B2Helm%E5%BA%94%E7%94%A8%E6%97%B6%E5%9F%9F%E5%90%8D%E8%A7%A3%E6%9E%90%E5%A4%B1%E8%B4%A5%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5%E4%B8%8E%E8%A7%A3%E5%86%B3/">ArgoCD部署Helm应用时域名解析失败问题排查与解决</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/ArgoCD/%E5%AD%A6%E4%B9%A0%E9%93%BE%E6%8E%A5/">ArgoCD学习链接</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Claude-Code%E5%AE%9E%E7%8E%B0CICD%E8%87%AA%E5%8A%A8%E5%8C%96%E5%8F%91%E5%B8%83%E6%B5%81%E7%A8%8B/">Claude Code 实现 CI/CD 自动化发布流程详细指南</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Gitlab/helm%E9%83%A8%E7%BD%B2gitlab/">Helm部署GitLab</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Gitlab/k8s%E9%83%A8%E7%BD%B2Gitlab%2811.8.1%29-%E5%9F%BA%E4%BA%8Eyaml/">K8s部署GitLab(11.8.1)-基于YAML</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Gitlab/%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%AE%89%E8%A3%85Gitlab%2817.9.8%29/">二进制安装GitLab(17.9.8)</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Jenkins/Jenkins%E8%AF%AD%E6%B3%95-%E5%9F%BA%E4%BA%8Edocker%E9%83%A8%E7%BD%B2/">Jenkins语法-基于Docker部署</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Jenkins/docker%E9%83%A8%E7%BD%B2jenkins/">Docker部署Jenkins</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Jenkins/helm%E9%83%A8%E7%BD%B2jenkins/">Helm部署Jenkins</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Jenkins/k8s-Devops%E5%B9%B3%E5%8F%B0%E8%90%BD%E5%9C%B0-%E5%9F%BA%E4%BA%8Ejenkins/">K8s DevOps平台落地-基于Jenkins</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Jenkins/k8s%E9%83%A8%E7%BD%B2%E5%9F%BA%E4%BA%8EJenkins%282.394%29%E7%9A%84DevOps%E5%B7%A5%E5%85%B7%E9%93%BE-%E5%9F%BA%E4%BA%8Eyaml/">K8s部署基于Jenkins(2.394)的DevOps工具链-基于YAML</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Jenkins/k8s%E9%83%A8%E7%BD%B2%E5%9F%BA%E4%BA%8EJenkins%282.426.3%29%E7%9A%84Devops%E5%B7%A5%E5%85%B7%E9%93%BE-%E5%9F%BA%E4%BA%8Eyaml/">K8s部署基于Jenkins(2.426.3)的DevOps工具链-基于YAML</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Jenkins/%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%AE%89%E8%A3%85Jenkins%282.319%29/">二进制安装Jenkins(2.319)</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Kustomize/k8s%E9%85%8D%E7%BD%AE%E5%AE%9A%E5%88%B6%E5%B7%A5%E5%85%B7-kustomize/">K8s配置定制工具-Kustomize</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Tekton/k8s%E9%83%A8%E7%BD%B2%E5%8E%9F%E7%94%9F%E7%9A%84CICD%E5%B7%A5%E5%85%B7Tekton-%E5%9F%BA%E4%BA%8Eyaml/">K8s部署原生的CICD工具Tekton-基于YAML</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Tekton/%E5%9F%BA%E4%BA%8ETekton%E7%9A%84%E4%BA%91%E5%8E%9F%E7%94%9F%E5%B9%B3%E5%8F%B0%E8%90%BD%E5%9C%B0/">基于Tekton的云原生平台落地</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/k8s%E5%8F%91%E5%B8%83%E7%AD%96%E7%95%A5-%E8%93%9D%E7%BB%BF%E9%83%A8%E7%BD%B2%E4%B8%8E%E9%87%91%E4%B8%9D%E9%9B%80%E5%8F%91%E5%B8%83/">K8s 发布策略：蓝绿部署与金丝雀发布实战</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/%E4%BD%BF%E7%94%A8github%20action%E9%83%A8%E7%BD%B2helmchart/">使用GitHub Action部署Helm Chart</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/%E5%8F%91%E5%B8%83go-python-java%E4%BB%A3%E7%A0%81%E5%88%B0K8S%E7%8E%AF%E5%A2%83/">发布Go/Python/Java代码到K8S环境</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-UI-tools</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-UI-tools/k8s-API%E6%A3%80%E6%9F%A5%E5%B7%A5%E5%85%B7kubent/">K8s API 检查工具 kubent</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-UI-tools/k8s-%E5%B0%8F%E5%B7%A5%E5%85%B7%E9%9B%86%E5%90%88/">K8s 小工具集合</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-UI-tools/k8s%E9%83%A8%E7%BD%B2-Dashboard-UI/">K8s 部署 Dashboard UI</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-UI-tools/k8s%E9%83%A8%E7%BD%B2%E5%8F%AF%E8%A7%86%E5%8C%96ui%E7%95%8C%E9%9D%A2kuboard/">K8s 部署 Kuboard</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-UI-tools/kubectl-UI%E5%B7%A5%E5%85%B7Lens/">kubectl UI 工具 Lens</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-UI-tools/kubectl-%E5%8F%AF%E8%A7%86%E5%8C%96%E6%8F%92%E4%BB%B6k9s-stern/">kubectl 可视化插件 k9s 和 stern</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-UI-tools/kuebctl-%E6%8F%92%E4%BB%B6krew-rolesum/">kubectl 插件 krew 和 rolesum</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-UI-tools/rancher%28v2.6.4%29%E7%AE%A1%E7%90%86k8s%E9%9B%86%E7%BE%A4/">Rancher (v2.6.4) 管理 K8s 集群</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-ai-gpu</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-ai-gpu/k8s%E9%85%8D%E7%BD%AENVIDIA%20GPU/">K8s 配置 NVIDIA GPU</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-backup-dr</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-backup-dr/k8s%E5%A4%87%E4%BB%BD%E4%B8%8E%E7%81%BE%E5%A4%87%E5%AE%9E%E6%88%98-%E4%B8%89%E5%B1%82%E5%AE%B9%E7%81%BE%E6%9E%B6%E6%9E%84/">K8s 备份与灾备实战：三层容灾架构</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-backup-dr/k8s%E9%9B%86%E7%BE%A4%E5%A4%87%E4%BB%BD%E6%81%A2%E5%A4%8D-Velero/">K8s集群备份恢复 - Velero</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-basic-resources</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/K8s%E5%9F%BA%E7%A1%80-pod%E8%B0%83%E5%BA%A6-%E4%BA%B2%E5%92%8C%E5%8A%9B/">K8s基础-Pod调度-亲和力</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/Python%E8%B0%83%E7%94%A8k8s-api%E5%AE%9E%E7%8E%B0%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/">Python调用K8s-API实现资源管理</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s-APIServer%E6%B7%B1%E5%BA%A6%E5%89%96%E6%9E%90-%E8%AF%B7%E6%B1%82%E9%93%BE%E8%B7%AF-%E8%AE%A4%E8%AF%81%E6%8E%88%E6%9D%83-%E7%94%9F%E4%BA%A7%E8%B0%83%E4%BC%98/">Kubernetes API Server 深度剖析：请求链路、认证授权与生产调优</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s-PodDisruptionBudget%E5%AE%9E%E6%88%98/">K8s PodDisruptionBudget 实战：优雅中断保护</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-Calico/">K8s基础-Calico</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-Finalizer%E4%B8%8E%E8%B5%84%E6%BA%90%E5%88%A0%E9%99%A4/">K8s基础-Finalizer与资源删除</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-Operator%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98-Kubebuilder/">从零开发 Kubernetes Operator：Kubebuilder 实战教程</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-Service/">K8s基础-Service</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-configMap-Secret/">K8s基础-configMap-Secret</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-daemonset/">K8s基础-DaemonSet</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-deployment/">K8s基础-Deployment</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-ingress/">K8s基础-Ingress</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-job-cronjob/">K8s基础-Job-CronJob</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-kubeadm/">K8s基础-kubeadm</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-namespace-%E8%B5%84%E6%BA%90%E5%88%86%E9%85%8D/">K8s基础-namespace-资源分配</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-pod/">K8s基础-Pod</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-pod%E8%B0%83%E5%BA%A6-%E6%A0%87%E7%AD%BE%E4%B8%8E%E9%80%89%E6%8B%A9%E5%99%A8%E5%AE%9E%E6%88%98/">Kubernetes 标签与选择器避坑：5 条核心铁律与生产级实战案例</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-statefulset/">K8s基础-StatefulSet</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-storage/">K8s基础-Storage</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-yaml/">K8s基础-YAML</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E4%B8%B4%E6%97%B6%E5%AE%B9%E5%99%A8ephemeral/">K8s基础-临时容器Ephemeral</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E5%AE%B9%E5%99%A8%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-Sidecar-Init-Ambassador-Adapter/">K8s 容器设计模式：Sidecar / Init Container / Ambassador / Adapter</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E5%AE%B9%E5%99%A8%E8%BF%90%E8%A1%8C%E6%97%B6-containerd/">K8s基础-容器运行时-containerd</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E6%9E%B6%E6%9E%84-%E7%BB%84%E4%BB%B6-%E8%B5%84%E6%BA%90/">K8s基础-架构-组件-资源</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E8%87%AA%E5%AE%9A%E4%B9%89CRD%E8%B5%84%E6%BA%90/">K8s基础-自定义CRD资源</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E8%AE%A4%E8%AF%81-%E6%8E%88%E6%9D%83-%E5%87%86%E5%85%A5/">K8s基础-认证-授权-准入</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-db-middleware</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/Operator%E9%83%A8%E7%BD%B2Redis%E9%9B%86%E7%BE%A4/">基于Operator部署Redis集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/Operator%E9%83%A8%E7%BD%B2mysql%E9%9B%86%E7%BE%A4/">Operator部署MySQL NDB集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/helm%E9%83%A8%E7%BD%B2mysql/">Helm部署MySQL</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/helm%E9%83%A8%E7%BD%B2postgreSQL/">Helm部署PostgreSQL</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/helm%E9%83%A8%E7%BD%B2rabbitmq-ha/">Helm部署RabbitMQ高可用集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/helm%E9%83%A8%E7%BD%B2strimzi-kafka/">Helm部署Strimzi Kafka</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/k8s%E5%9F%BA%E4%BA%8Eyaml%E9%83%A8%E7%BD%B2MongoDB%E9%9B%86%E7%BE%A4/">K8s基于YAML部署MongoDB集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/k8s%E5%9F%BA%E4%BA%8Eyaml%E9%83%A8%E7%BD%B2httpd%E6%9C%8D%E5%8A%A1/">K8s基于YAML部署httpd服务</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/k8s%E5%9F%BA%E4%BA%8Eyaml%E9%83%A8%E7%BD%B2mysql%E4%B8%BB%E4%BB%8E%E9%AB%98%E5%8F%AF%E7%94%A8/">K8s基于YAML部署MySQL主从高可用</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/k8s%E5%9F%BA%E4%BA%8Eyaml%E9%83%A8%E7%BD%B2redis%E9%9B%86%E7%BE%A4/">K8s基于YAML部署Redis集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/k8s%E9%83%A8%E7%BD%B2springcloud%E7%94%B5%E5%95%86%E9%A1%B9%E7%9B%AE/">K8s部署SpringCloud电商项目</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-installation-management</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/2025%E6%9C%80%E6%96%B0-%E4%BC%81%E4%B8%9A%E7%BA%A7%E9%AB%98%E5%8F%AF%E7%94%A8%E9%9B%86%E7%BE%A4-%E5%9F%BA%E4%BA%8Erockylinux/">2025最新-企业级高可用集群-基于rockylinux</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/etcd%E9%AB%98%E5%8F%AF%E7%94%A8%E9%85%8D%E7%BD%AE%E4%BB%A5%E5%8F%8A%E6%A8%A1%E6%8B%9F%E9%9B%86%E7%BE%A4%E6%95%85%E9%9A%9C%E5%92%8C%E6%81%A2%E5%A4%8D/">etcd高可用配置以及模拟集群故障和恢复</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/k8s-Backstage-%E5%86%85%E9%83%A8%E5%BC%80%E5%8F%91%E8%80%85%E5%B9%B3%E5%8F%B0IDP%E5%AE%9E%E6%88%98/">K8s 平台工程实战：用 Backstage 打造一站式内部开发者平台</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/k8s-cgroup-v2%E6%B7%B1%E5%BA%A6%E8%A7%A3%E6%9E%90-%E8%BF%81%E7%A7%BB%E5%AE%9E%E6%88%98%E4%B8%8E%E9%81%BF%E5%9D%91%E6%8C%87%E5%8D%97/">K8s CGroup v2 深度解析：资源隔离原理、迁移实战与生产避坑指南</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/k8s%E4%B8%A4%E5%9C%B0%E4%B8%89%E4%B8%AD%E5%BF%83%E6%9E%B6%E6%9E%84/">k8s两地三中心架构</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/k8s%E5%A4%9A%E9%9B%86%E7%BE%A4kubeconfig%E7%AE%A1%E7%90%86/">k8s多集群kubeconfig管理</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/k8s%E6%95%85%E9%9A%9C%E6%8E%92%E6%9F%A5%E6%8C%87%E5%8D%97/">k8s故障排查指南</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/k8s%E7%94%9F%E4%BA%A7%E7%8E%AF%E5%A2%83%E4%BC%98%E5%8C%96%E4%B8%8E%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/">k8s生产环境优化与最佳实践</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/k8s%E9%83%A8%E7%BD%B2%E9%98%B2%E7%81%AB%E5%A2%99%E7%AB%AF%E5%8F%A3%E9%85%8D%E7%BD%AE/">K8s部署防火墙端口配置</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/latest-version/%E5%AE%89%E8%A3%85k8s-1.35-%E5%9F%BA%E4%BA%8Erockylinux10-%E6%9C%80%E6%96%B0%E6%AD%A5%E9%AA%A4/">在 Rocky Linux 10 上安装 Kubernetes 1.35</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%AE%89%E8%A3%85k8s%E9%AB%98%E5%8F%AF%E7%94%A8%E9%9B%86%E7%BE%A4/">二进制安装k8s高可用集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.20.6-%E9%AB%98%E5%8F%AF%E7%94%A8/">安装k8s-1.20.6-高可用</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.23/">安装k8s-1.23</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.26-1.27/">安装k8s-1.26-1.27</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.28/">安装k8s-1.28</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.30-%E5%9F%BA%E4%BA%8Erockylinux/">安装k8s-1.30-基于rockylinux</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.32-%E5%9F%BA%E4%BA%8Erockylinux/">安装k8s-1.32-基于rockylinux</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.33-%E5%9F%BA%E4%BA%8Erockylinux-%E6%9C%80%E6%96%B0%E6%AD%A5%E9%AA%A4/">安装k8s-1.33-基于rockylinux-最新步骤</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/%E5%8D%87%E7%BA%A7/k8s-1.37-%E5%8D%87%E7%BA%A7%E9%A1%BB%E7%9F%A5-breaking-changes/">Kubernetes v1.37 升级破坏性变更指南</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/%E5%8D%87%E7%BA%A7/k8s%E8%BF%81%E7%A7%BB%E5%AE%B9%E5%99%A8%E8%BF%90%E8%A1%8C%E6%97%B6-%E7%89%88%E6%9C%AC%E5%8D%87%E7%BA%A7/">k8s迁移容器运行时与版本升级</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-monitoring-logging</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/K8s%E5%85%A8%E9%9D%A2%E5%B7%A1%E6%A3%80%E8%84%9A%E6%9C%AC-%E7%94%9F%E6%88%90HTML%E5%81%A5%E5%BA%B7%E6%8A%A5%E5%91%8A/">K8s 全面巡检脚本：一键生成 HTML 健康报告</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/OpenTelemetry%E5%AE%9E%E6%88%98-%E7%BB%9F%E4%B8%80Traces-Metrics-Logs/">OpenTelemetry 实战：告别厂商锁定，统一 Traces/Metrics/Logs</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/Prometheus%E5%9F%BA%E7%A1%80/">Prometheus基础</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/Prometheus%E7%9B%91%E6%8E%A7k8s%E7%B3%BB%E7%BB%9F%E7%BB%84%E4%BB%B6/">Prometheus监控K8s系统组件</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/Prometheus%E7%9B%91%E6%8E%A7%E5%A4%96%E9%83%A8k8s%E9%9B%86%E7%BE%A4/">Prometheus监控外部K8s集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/Prometheus%E7%9B%91%E6%8E%A7%E9%9D%9E%E4%BA%91%E5%8E%9F%E7%94%9F%E5%BA%94%E7%94%A8-%E4%B8%BB%E6%9C%BA/">Prometheus监控非云原生应用-主机</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/helm%E9%83%A8%E7%BD%B2Loki-promtail-tempo-grafanaAgent%E5%85%A8%E5%AE%B6%E6%A1%B6/">Helm部署Loki+Promtail+Tempo+GrafanaAgent全家桶</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/helm%E9%83%A8%E7%BD%B2jaeger/">Helm部署Jaeger</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/helm%E9%83%A8%E7%BD%B2prometheus-stack%E5%85%A8%E5%AE%B6%E6%A1%B6/">Prometheus-Stack 全家桶：生产级部署与运维完全指南</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E6%97%A5%E5%BF%97%E7%AE%A1%E7%90%86-%E9%87%87%E9%9B%86%E6%96%B9%E6%A1%88%E4%B8%8E%E5%AE%A1%E8%AE%A1%E6%97%A5%E5%BF%97/">K8s 日志管理：基础机制、六种采集方案与审计日志实战</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E7%9B%91%E6%8E%A7EFK%2Blogstash%2Bkafka/">K8s监控EFK+logstash+kafka</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E7%9B%91%E6%8E%A7ES%287.2%29%2BKibana%287.2%29%2BFluentd%28v1.4.2%29/">K8s监控ES(7.2)+Kibana(7.2)+Fluentd(v1.4.2)</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E7%9B%91%E6%8E%A7Prometheus%28v2.2.1%29/">K8s监控Prometheus(v2.2.1)</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E7%9B%91%E6%8E%A7Prometheus%28v2.33.5%29%2BGrafana%28v8.4.5%29/">K8s监控Prometheus(v2.33.5)+Grafana(v8.4.5)</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E7%9B%91%E6%8E%A7alertmanager%28v0.14.0%29/">K8s监控Alertmanager(v0.14.0)</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E9%83%A8%E7%BD%B2elasticsearch%E9%9B%86%E7%BE%A4/">K8s部署Elasticsearch集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E9%83%A8%E7%BD%B2grafana%28v5.0.4%29/">K8s部署Grafana(v5.0.4)</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E9%83%A8%E7%BD%B2%E5%85%A8%E9%93%BE%E8%B7%AF%E8%BF%BD%E8%B8%AA-Skywalking/">K8s部署全链路追踪-Skywalking</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2Prometheus%28v2.32.1%29%E8%81%94%E9%82%A6%E9%9B%86%E7%BE%A4/">二进制部署Prometheus(v2.32.1)联邦集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2efk%2Blogstash%2Bkafka%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%B9%B3%E5%8F%B0/">二进制部署EFK+Logstash+Kafka日志收集平台</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2prometheus-grafana-nodeexporter/">二进制部署Prometheus-Grafana-NodeExporter</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/%E5%9F%BA%E4%BA%8Ehelm%2Boperator%E9%83%A8%E7%BD%B2ECK%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%B9%B3%E5%8F%B0/">基于Helm+Operator部署ECK日志收集平台</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-networking-service-mesh</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/Istio-Sidecar-vs-Ambient/">Istio Sidecar vs Ambient 模式对比</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/helm%E5%AE%89%E8%A3%85istio/">Helm安装Istio</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/helm%E9%83%A8%E7%BD%B2external-dns/">Helm部署External-DNS</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/helm%E9%83%A8%E7%BD%B2ingress-nginx/">Helm部署Ingress-Nginx</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/helm%E9%83%A8%E7%BD%B2tomcat/">Helm 部署 Tomcat</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/k8s-Gateway-API%E5%85%A5%E9%97%A8-Ingress%E4%B8%8B%E4%B8%80%E4%BB%A3%E6%96%B9%E6%A1%88/">Kubernetes Gateway API 入门：Ingress 的下一代方案</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/k8s%E7%B2%BE%E7%BB%86%E5%8C%96%E6%B5%81%E9%87%8F%E7%AE%A1%E7%90%86-istio/">K8s精细化流量管理-Istio</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/k8s%E9%83%A8%E7%BD%B2istio%281.13.1%29/">K8s部署Istio(1.13.1)</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/k8s%E9%9B%86%E7%BE%A4%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/">K8s集群网络安全</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/%E4%BC%81%E4%B8%9A%E9%A1%B9%E7%9B%AE%E6%8E%A5%E5%85%A5istio%E5%AE%9E%E6%88%98/">企业项目接入Istio实战</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-scaling</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-scaling/KEDA-vs-HPA-2026%E7%BB%88%E6%9E%81%E5%AF%B9%E6%AF%94-v1.36%E7%BC%A9%E9%9B%B6/">KEDA vs HPA 2026 终极对比：v1.36 原生缩零后该选谁？</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-scaling/helm%E9%83%A8%E7%BD%B2goldilocks/">Helm部署Goldilocks</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-scaling/helm%E9%83%A8%E7%BD%B2vpa/">Helm部署VPA</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-scaling/k8s-HPA-VPA/">K8s HPA与VPA</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-scaling/k8s-%E5%9F%BA%E4%BA%8EKEDA%E7%9A%84%E5%BC%B9%E6%80%A7%E8%83%BD%E5%8A%9B/">K8s基于KEDA的弹性能力</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-scaling/k8s%E6%88%90%E6%9C%AC%E4%BC%98%E5%8C%96%E6%96%B9%E6%A1%88-FinOps%E5%AE%9E%E6%88%98/">K8s 集群成本优化方案：砍掉 60% 云账单</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-security-auth</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2capsule/">Helm部署Capsule</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2certmanager/">Helm部署Cert-Manager</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2external-secrets/">Helm部署External-Secrets</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2kyverno%E5%92%8Cpolicy-reporter/">Helm部署Kyverno和Policy-Reporter</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2oauth2proxy/">Helm部署OAuth2-Proxy</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2sonarqube/">Helm部署SonarQube</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2trivy-operator/">Helm部署Trivy-Operator</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/k8s-Admission-Webhook%E9%93%BE%E5%86%B2%E7%AA%81%E6%8E%92%E6%9F%A5-Istio-Kyverno-Gatekeeper/">当 Istio、Kyverno、Gatekeeper 三个 Webhook 同时存在，你的集群会发生什么？</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/k8s%E5%AE%B9%E5%99%A8%E5%AE%89%E5%85%A8%E4%B8%8A%E4%B8%8B%E6%96%87-SecurityContext/">Kubernetes 容器安全上下文完全指南：从入门到生产避坑</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-springcloud</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-springcloud/SpringCloud%E9%A1%B9%E7%9B%AE%E8%BF%81%E7%A7%BB%E5%88%B0k8s%E5%AE%9E%E6%88%98/">SpringCloud 项目迁移到 K8s 实战</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-storage</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-storage/helm%E9%83%A8%E7%BD%B2nfs-subdir-external-provisioner/">Helm部署NFS Subdir External Provisioner</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-storage/k8s-ceph%E9%83%A8%E7%BD%B2%E4%B8%8E%E9%9B%86%E6%88%90/">K8s Ceph部署与集成</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-storage/k8s-%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8CubeFS/">K8s分布式存储CubeFS</a></li>
+        </ul>
+        <p class="sidebar-group">kubeblocks</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/kubeblocks/kubeblocks%E9%83%A8%E7%BD%B2WordPress/">KubeBlocks 部署 WordPress</a></li>
+          <li><a href="../../../Docker-Kubernetes/kubeblocks/kubeblocks%E9%83%A8%E7%BD%B2%E9%AB%98%E5%8F%AF%E7%94%A8harbor%E9%9B%86%E7%BE%A4/">KubeBlocks 部署高可用 Harbor 集群</a></li>
+        </ul>
+        <p class="sidebar-group">其他</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/%E7%AE%80%E5%8E%86%E6%8C%87%E5%8D%97/">简历指南</a></li>
+        </ul>
+      </nav>
+    </details>
+  </aside>
+
+  <article class="article">
+    <nav class="breadcrumb">
+      <a href="../../../index.html">首页</a><span>/</span>
+      <a href="../../../Docker-Kubernetes/">Docker-Kubernetes</a><span>/</span><span>helm-operator</span>
+    </nav>
+    <h1 class="article-title">Helm v3 安装与使用</h1>
+    <p class="article-meta"><span>更新于 2026-04-16</span>
+      <a href="https://github.com/hangx969/learning-notes/blob/main/Docker-Kubernetes/helm-operator/helmv3-%E5%AE%89%E8%A3%85%E4%B8%8E%E4%BD%BF%E7%94%A8.md">查看源文件</a>
+    </p>
+    <div class="article-body">
+<h1 id="helm介绍">Helm介绍</h1>
+<ul>
+<li>Helm是kubernetes的包管理工具，相当于linux环境下的yum/apt-get命令。</li>
+<li>Helm可以解决的问题：运维人员写好资源文件模板，交给开发人员填写参数即可</li>
+<li>Helm中的一些概念：</li>
+<li>helm：命令行客户端工具，主要用于Kubernetes应用中的chart的创建、打包、发布和管理。</li>
+<li>Chart：helm程序包，一系列用于描述k8s资源相关文件的集合，比方说我们部署nginx，需要deployment、svc的yaml，这两个清单文件就是一个helm程序包，在k8s中把这些yaml清单文件叫做chart图表。</li>
+<li>功能：</li>
+<li>资源管理：helm chart预定义yaml文件，描述各个组件的配置和模板</li>
+<li>版本控制：支持一键回滚到先前的版本</li>
+<li>依赖管理：声明依赖关系，自动解析并安装这些依赖</li>
+<li>模板化：charts可以受用go模板语言，动态生成资源文件</li>
+</ul>
+<h2 id="官网地址">官网地址</h2>
+<ul>
+<li>
+<p>中文：<a href="https://v3.helm.sh/zh/docs/">Helm 中文文档</a></p>
+</li>
+<li>
+<p>英文：<a href="https://helm.sh/">Helm 官网</a></p>
+</li>
+<li>
+<p>helm 官方的chart站点：<a href="https://hub.kubeapps.com/">Helm Hub</a></p>
+</li>
+<li>
+<p>helm与k8s的版本支持策略：<a href="https://helm.sh/zh/docs/topics/version_skew/">Helm | Helm版本支持策略</a></p>
+</li>
+</ul>
+<h2 id="教程文章">教程文章</h2>
+<ul>
+<li><a href="https://mp.weixin.qq.com/s/S_4QK6pLSrmu0PgShOZEjw">Helm 教程文章</a></li>
+</ul>
+<h2 id="helm-v3版本变化">Helm v3版本变化</h2>
+<ul>
+<li>2019年11月13日，Helm团队发布Helm v3的第一个稳定版本。</li>
+<li>该版本主要变化是架构变化：</li>
+<li>Helm服务端Tiller被删除（v2版本中，需要装一个Tiller服务端作为通信桥梁才能与k8s交互。v3版不需要了。）</li>
+</ul>
+<h1 id="安装helm-v3123">安装helm v3.12.3</h1>
+<h2 id="下载安装包">下载安装包</h2>
+<ul>
+<li>下载地址：<a href="https://github.com/helm/helm/releases">Helm Releases</a></li>
+</ul>
+<h3 id="linux安装">Linux安装</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># 对于k8s 1.23版本，小于等于3.11.x版本的helm是支持的</span>
+wget<span class="w"> </span>https://get.helm.sh/helm-v3.16.2-linux-amd64.tar.gz<span class="w"> </span>
+tar<span class="w"> </span>zxvf<span class="w"> </span>helm-v3.16.2-linux-amd64.tar.gz
+cp<span class="w"> </span>linux-amd64/helm<span class="w"> </span>/bin/<span class="w">  </span><span class="c1">#/bin/是默认的环境变量路径之一，所以移动后你可以在任何位置运行这个二进制文件。</span>
+<span class="c1"># 查看helm版本</span>
+helm<span class="w"> </span>version
+</code></pre></div>
+
+<h3 id="windows安装-基于scoop">Windows安装-基于scoop</h3>
+<h4 id="scoop">scoop</h4>
+<p>Scoop是一款适用于Windows平台的命令行软件（包）管理工具，这里是<a href="https://link.zhihu.com/?target=https%3A//github.com/ScoopInstaller/Scoop">Github介绍页</a>。简单来说，就是可以通过命令行工具（PowerShell、CMD等）实现软件（包）的安装管理等需求，<strong>通过简单的一行代码实现软件的下载、安装、卸载、更新等操作</strong>。</p>
+<p>先安装scoop：<a href="https://scoop.sh/">Scoop</a></p>
+<div class="highlight"><pre><span></span><code><span class="nb">Set-ExecutionPolicy</span> <span class="n">-ExecutionPolicy</span> <span class="n">RemoteSigned</span> <span class="n">-Scope</span> <span class="n">CurrentUser</span>
+<span class="c"># 更改默认安装目录</span>
+<span class="nv">$env:SCOOP</span><span class="p">=</span><span class="s1">&#39;D:\0Software\scoop&#39;</span>
+<span class="no">[Environment]</span><span class="p">::</span><span class="n">SetEnvironmentVariable</span><span class="p">(</span><span class="s1">&#39;SCOOP&#39;</span><span class="p">,</span> <span class="nv">$env:SCOOP</span><span class="p">,</span> <span class="s1">&#39;User&#39;</span><span class="p">)</span>
+<span class="c"># 安装</span>
+<span class="nb">Invoke-Expression</span> <span class="p">(</span><span class="nb">New-Object</span> <span class="n">System</span><span class="p">.</span><span class="n">Net</span><span class="p">.</span><span class="n">WebClient</span><span class="p">).</span><span class="n">DownloadString</span><span class="p">(</span><span class="s1">&#39;https://get.scoop.sh&#39;</span><span class="p">)</span>
+</code></pre></div>
+
+<p><strong>设置scoop代理：</strong></p>
+<ul>
+<li>方法1：<code>scoop config proxy 127.0.0.1:7078</code> (根据实际代理端口修改)</li>
+<li>方法2：修改配置文件：<code>C:\Users\username\.config\scoop\config.json</code>，添加<code>“proxy”: “127.0.0.1:7078”</code></li>
+</ul>
+<p><strong>基本使用：</strong></p>
+<p>在实际使用过程中，我们可以先通过<code>search</code>命令查询一下是否有相应软件，软件名称是否正确，然后通过<code>install</code>命令完成软件的安装。另外，有两个必备的软件需要安装——git和7zip，建议完成Scoop安装后先执行以下命令：<code>scoop install git 7zip</code>（Scoop支持多个软件同时依次安装），虽然后续操作中未安装这两个软件时也会提醒用户安装就是了。</p>
+<ul>
+<li>search——搜索仓库中是否有相应软件。</li>
+<li>install——安装软件。</li>
+<li>uninstall——卸载软件。</li>
+<li>update——更新软件。可通过<code>scoop update *</code>更新所有已安装软件，或通过<code>scoop update</code>更新所有软件仓库资料及Scoop自身而不更新软件。</li>
+<li>hold——锁定软件阻止其更新。</li>
+<li>info——查询软件简要信息。</li>
+<li>home——打开浏览器进入软件官网。</li>
+</ul>
+<p><strong>软件仓库：</strong></p>
+<p>软件仓库是Scoop软件管理的重要基础，通过json文件记录仓库中每一个软件的信息，从而实现软件的管理等便捷命令行操作，并由仓库管理员（其实开源项目都是大家用爱发电）负责软件信息的更新。</p>
+<p>前面提到，默认安装Scoop后仅有<code>main</code>仓库，其中主要是面向程序员的工具，对于一般用户而言并不是那么实用。好在Scoop本身考虑到了这一点，添加了面向一般用户的软件仓库<code>extras</code>，其中收录大量好用的小软件，足够日常的使用。</p>
+<p>Scoop添加软件仓库的命令是<code>scoop bucket add bucketname (+ url可选)</code>。如添加<code>extras</code>的命令是<code>scoop bucket add extras</code>，执行此命令后会在scoop文件夹中的buckets子文件夹中添加extras文件夹。</p>
+<p>除了官方的软件仓库，Scoop也支持用户自建仓库并共享，于是又有很多大佬提供了许多好用的软件仓库。这里强推<a href="https://link.zhihu.com/?target=https%3A//github.com/chawyehsu/dorado">dorado</a>仓库，里面有许多适合中国用户的软件，或者你有兴趣可以去看看仓库作者<a href="https://link.zhihu.com/?target=https%3A//chawyehsu.com/blog/talk-about-scoop-the-package-manager-for-windows-again">关于Scoop更多技术方面的探讨</a>。添加<code>dorado</code>仓库的命令如下：<code>scoop bucket add dorado https://github.com/chawyehsu/dorado</code>。</p>
+<h4 id="helm">helm</h4>
+<p>一行命令安装：<code>scoop install helm</code></p>
+<h1 id="helm仓库类型">helm仓库类型</h1>
+<h2 id="chartmuseum">ChartMuseum</h2>
+<ul>
+<li>访问方式：HTTP/HTTPS</li>
+<li>命令：helm repo add添加仓库，helm install安装应用</li>
+</ul>
+<h2 id="oci">OCI</h2>
+<ul>
+<li>
+<p>访问方式：OCI规范（helm 3.8之后加进来的，相当于用镜像仓库存储helm chart）</p>
+</li>
+<li>
+<p>helm registry去登录仓库，登录完用helm pull可以直接拉chart包，或者helm install安装</p>
+</li>
+</ul>
+<p><sub>~</sub>sh<br />
+  helm pull oci://registry-1.docker.io/bitnamicharts/schema-registry<br />
+  ~~~</p>
+<blockquote>
+<p>官方仓库：https://artifacthub.io</p>
+</blockquote>
+<h1 id="helm基本使用">helm基本使用</h1>
+<h2 id="添加chart仓库">添加chart仓库</h2>
+<ul>
+<li>
+<p>配置国内存放chart仓库的地址:</p>
+</li>
+<li>
+<p>阿里云仓库（https://kubernetes.oss-cn-hangzhou.aliyuncs.com/charts）</p>
+</li>
+<li>
+<p>官方仓库（https://hub.kubeapps.com/charts/incubator）官方chart仓库，国内可能无法访问。</p>
+</li>
+<li>
+<p>微软仓库（http://mirror.azure.cn/kubernetes/charts/）这个仓库推荐，基本上官网有的chart这里都有。</p>
+</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="c1">#添加阿里云chart仓库，aliyun参数就是要加的仓库所起的别名。根据自己的需要来命名，在你的 Helm 仓库列表中是唯一的就可以。</span>
+helm<span class="w"> </span>repo<span class="w"> </span>add<span class="w"> </span>aliyun<span class="w"> </span>https://kubernetes.oss-cn-hangzhou.aliyuncs.com/charts
+<span class="c1">#添加bitnami的chart仓库</span>
+helm<span class="w"> </span>repo<span class="w"> </span>add<span class="w"> </span>bitnami<span class="w"> </span>https://charts.bitnami.com/bitnami
+<span class="c1">#更新chart仓库。更新 Helm chart 仓库的索引。这个索引包含了 Helm chart 仓库中所有包的信息。当你添加新的仓库或者已有的仓库中有新的包发布时，你需要运行这个命令来更新本地的索引，以便 Helm 能够获取到最新的包信息。</span>
+helm<span class="w"> </span>repo<span class="w"> </span>update
+<span class="c1">#查看配置的chart仓库有哪些</span>
+helm<span class="w"> </span>repo<span class="w"> </span>list
+<span class="c1">#删除chart仓库地址</span>
+helm<span class="w"> </span>repo<span class="w"> </span>remove<span class="w"> </span>aliyun
+<span class="c1">#从指定仓库搜索chart</span>
+helm<span class="w"> </span>search<span class="w"> </span>repo<span class="w"> </span>aliyun
+</code></pre></div>
+
+<ul>
+<li>chart仓库保存位置</li>
+</ul>
+<p>如果需要转移到另一台机器，复制这个文件即可</p>
+<p><sub>~</sub>sh<br />
+  cat /root/.config/helm/repositories.yaml <br />
+  ~~~</p>
+<h2 id="搜索和下载chart">搜索和下载chart</h2>
+<ul>
+<li>查看阿里云chart仓库中的memcached</li>
+</ul>
+<div class="highlight"><pre><span></span><code>helm<span class="w"> </span>search<span class="w"> </span>repo<span class="w"> </span>aliyun<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>memcached
+helm<span class="w"> </span>search<span class="w"> </span>repo<span class="w"> </span>aliyun/memcached<span class="w"> </span>-l<span class="w"> </span><span class="c1"># 查看chart所有版本</span>
+</code></pre></div>
+
+<ul>
+<li>查看chart信息</li>
+</ul>
+<div class="highlight"><pre><span></span><code>helm<span class="w"> </span>show<span class="w"> </span>chart<span class="w"> </span>aliyun/memcached
+</code></pre></div>
+
+<ul>
+<li>下载chart包到本地</li>
+</ul>
+<div class="highlight"><pre><span></span><code>helm<span class="w"> </span>pull<span class="w"> </span>aliyun/memcached
+tar<span class="w"> </span>zxvf<span class="w"> </span>memcached-2.0.1.tgz
+</code></pre></div>
+
+<ul>
+<li>一键下载helm chart并解压</li>
+</ul>
+<div class="highlight"><pre><span></span><code>helm<span class="w"> </span>fetch<span class="w"> </span>stable/mysql<span class="w"> </span>--version<span class="w"> </span><span class="m">0</span>.2.8<span class="w"> </span>--untar
+</code></pre></div>
+
+<h2 id="部署chart">部署chart</h2>
+<div class="highlight"><pre><span></span><code><span class="c1"># 指定chart: </span>
+helm<span class="w"> </span>install<span class="w"> </span>stable/mariadb
+<span class="c1"># 指定打包的chart: </span>
+helm<span class="w"> </span>install<span class="w"> </span>./nginx-1.2.3.tgz
+<span class="c1"># 指定打包目录: </span>
+helm<span class="w"> </span>install<span class="w"> </span>./nginx
+<span class="c1"># 当前已经在chart目录里面了，直接在当前目录部署helm chart</span>
+helm<span class="w"> </span>install<span class="w"> </span>.
+<span class="c1"># 指定chart包URL: </span>
+helm<span class="w"> </span>install<span class="w"> </span>https://example.com/charts/nginx-1.2.3.tgz
+</code></pre></div>
+
+<h2 id="release管理">release管理</h2>
+<div class="highlight"><pre><span></span><code><span class="c1"># 查看release发布状态</span>
+helm<span class="w"> </span>list
+<span class="c1"># 查看release提示信息</span>
+helm<span class="w"> </span>status<span class="w"> </span>memcached
+<span class="c1"># 查看release历史版本</span>
+helm<span class="w"> </span><span class="nb">history</span><span class="w"> </span>memcached
+<span class="c1"># 查看修改了哪些values（仅在使用了--set设置values的情况下才会显示）</span>
+helm<span class="w"> </span>get<span class="w"> </span>values<span class="w"> </span>memcached
+<span class="c1"># 回滚到指定版本</span>
+helm<span class="w"> </span>rollback<span class="w"> </span>memcached<span class="w"> </span><span class="m">3</span>
+<span class="c1"># 删除release，会把release对应的资源全部删除</span>
+helm<span class="w"> </span>uninstall<span class="w"> </span>memcached
+</code></pre></div>
+
+<h2 id="helm管理crds">helm管理crds</h2>
+<ul>
+<li>
+<p>crd在helm中的管理过程：<a href="https://helm.sh/zh/docs/topics/charts/#%E7%94%A8%E6%88%B7%E8%87%AA%E5%AE%9A%E4%B9%89%E8%B5%84%E6%BA%90crd">Helm CRD 管理</a></p>
+</li>
+<li>
+<p>crd不会被升级的说明：<a href="https://helm.sh/zh/docs/topics/charts/#crd%E7%9A%84%E9%99%90%E5%88%B6">CRD 限制</a></p>
+</li>
+<li>
+<p>crd最佳实践说明：<a href="https://helm.sh/docs/chart_best_practices/custom_resource_definitions/#some-caveats-and-explanations">CRD 最佳实践</a></p>
+</li>
+</ul>
+<blockquote>
+<p>不像大部分的Kubernetes对象，CRD是全局安装的。因此Helm管理CRD时会采取非常谨慎的方式。 CRD受到以下限制：</p>
+<ul>
+<li>CRD从不重新安装。如果Helm确定<code>crds/</code>目录中的CRD已经存在（忽略版本），Helm不会安装或升级。</li>
+<li>CRD从不会在升级或回滚时安装。Helm只会在安装时创建CRD。</li>
+<li>CRD从不会被删除。自动删除CRD会删除集群中所有命名空间中的所有CRD内容。因此Helm不会删除CRD。</li>
+</ul>
+</blockquote>
+<h2 id="把k8s资源加入helm管理">把k8s资源加入helm管理</h2>
+<ul>
+<li>某项资源是手动创建出来的，现在需要加到某个helm release里面，变成helm去管理，需要给这个资源加上label和annotations：</li>
+<li><code>label： "app.kubernetes.io/managed-by"="Helm"</code></li>
+<li><code>annotation： "meta.helm.sh/release-name"="xxxx" "meta.helm.sh/release-namespace"="xxxx"</code></li>
+<li>命令行操作：</li>
+</ul>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>label<span class="w"> </span>certificate<span class="w"> </span>app01<span class="w"> </span><span class="s2">&quot;app.kubernetes.io/managed-by&quot;</span><span class="o">=</span><span class="s2">&quot;Helm&quot;</span>
+kubectl<span class="w"> </span>annotate<span class="w"> </span>certificate<span class="w"> </span>app01<span class="w"> </span><span class="s2">&quot;meta.helm.sh/release-name&quot;</span><span class="o">=</span><span class="s2">&quot;xxx&quot;</span><span class="w"> </span><span class="s2">&quot;meta.helm.sh/release-namespace&quot;</span><span class="o">=</span><span class="s2">&quot;xxx&quot;</span>
+</code></pre></div>
+
+<ul>
+<li>脚本批量操作，以更新crd为例：</li>
+</ul>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>get<span class="w"> </span>crd<span class="w"> </span>--no-headers<span class="w"> </span>-o<span class="w"> </span>custom-columns<span class="o">=</span><span class="s2">&quot;:metadata.name&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>kyverno<span class="w"> </span><span class="p">|</span><span class="w"> </span>xargs<span class="w"> </span>-I<span class="w"> </span><span class="o">{}</span><span class="w"> </span>kubectl<span class="w"> </span>annotate<span class="w"> </span>crd<span class="w"> </span><span class="o">{}</span><span class="w"> </span>meta.helm.sh/release-name<span class="o">=</span>kyverno
+kubectl<span class="w"> </span>get<span class="w"> </span>crd<span class="w"> </span>--no-headers<span class="w"> </span>-o<span class="w"> </span>custom-columns<span class="o">=</span><span class="s2">&quot;:metadata.name&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>kyverno<span class="w"> </span><span class="p">|</span><span class="w"> </span>xargs<span class="w"> </span>-I<span class="w"> </span><span class="o">{}</span><span class="w"> </span>kubectl<span class="w"> </span>annotate<span class="w"> </span>crd<span class="w"> </span><span class="o">{}</span><span class="w"> </span>meta.helm.sh/release-namespace<span class="o">=</span>kyverno
+kubectl<span class="w"> </span>get<span class="w"> </span>crd<span class="w"> </span>--no-headers<span class="w"> </span>-o<span class="w"> </span>custom-columns<span class="o">=</span><span class="s2">&quot;:metadata.name&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>kyverno<span class="w"> </span><span class="p">|</span><span class="w"> </span>xargs<span class="w"> </span>-I<span class="w"> </span><span class="o">{}</span><span class="w"> </span>kubectl<span class="w"> </span>label<span class="w"> </span>crd<span class="w"> </span><span class="o">{}</span><span class="w"> </span>app.kubernetes.io/managed-by<span class="o">=</span>Helm
+</code></pre></div>
+
+<h1 id="helm常用命令演示">Helm常用命令演示</h1>
+<ul>
+<li>官网地址：<a href="https://helm.sh/zh/docs/helm/helm/">Helm | Helm</a></li>
+</ul>
+<h2 id="helm调试命令">helm调试命令</h2>
+<h3 id="helm-template">helm template</h3>
+<ul>
+<li>如果想根据Chart导出yaml，可以使用template字段，一键导出所有部署的yaml文件</li>
+</ul>
+<p><sub>~</sub>sh<br />
+  helm template mamcached . --output-dir yaml # 导出所有<br />
+  helm template cert-manager jetstack/cert-manager -n cert-manager -f values.yaml &gt; cert-manager.yaml # 导出单个<br />
+  ~~~</p>
+<h3 id="helm-diff">helm diff</h3>
+<ul>
+<li>用于展示helm upgrade将会带来哪些变化：<a href="https://github.com/databus23/helm-diff?tab=readme-ov-file">helm-diff GitHub</a></li>
+</ul>
+<p><sub>~</sub>sh<br />
+  #比较升级会带来哪些变化<br />
+  helm diff upgrade <release name> -n <namespace> <source-chart-location> --version $VERSION -f values.yaml --set xxx=$xxx<br />
+  #比较两个chart版本的变化<br />
+  helm diff revision nginx-chart 1 2<br />
+  ~~~</p>
+<h3 id="helm-lint">helm lint</h3>
+<ul>
+<li>用来检查chart格式是否有问题</li>
+</ul>
+<p><sub>~</sub>sh<br />
+  helm lint mysql<br />
+  helm lint /root/myapp/</p>
+<p>==&gt; Linting /root/myapp/<br />
+  [INFO] Chart.yaml: icon is recommended</p>
+<p>1 chart(s) linted, 0 chart(s) failed<br />
+  ~~~</p>
+<h3 id="helm-install-dry-run">helm install --dry-run</h3>
+<ul>
+<li>模拟安装到集群中，看看是否会有报错</li>
+</ul>
+<h2 id="部署chart_1">部署chart</h2>
+<div class="highlight"><pre><span></span><code><span class="c1">#指定chart: </span>
+helm<span class="w"> </span>install<span class="w"> </span>stable/mariadb
+<span class="c1">#指定打包的chart: </span>
+helm<span class="w"> </span>install<span class="w"> </span>./nginx-1.2.3.tgz
+<span class="c1">#指定打包目录: </span>
+helm<span class="w"> </span>install<span class="w"> </span>./nginx
+<span class="c1">#指定chart包URL: </span>
+helm<span class="w"> </span>install<span class="w"> </span>https://example.com/charts/nginx-1.2.3.tgz
+</code></pre></div>
+
+<h2 id="调整参数">调整参数</h2>
+<div class="highlight"><pre><span></span><code>helm<span class="w"> </span>upgrade<span class="w"> </span>--set<span class="w"> </span>service.type<span class="o">=</span><span class="s2">&quot;NodePort&quot;</span><span class="w"> </span>nginx<span class="w"> </span>.
+</code></pre></div>
+
+<blockquote>
+<ul>
+<li>
+<p>在 Helm 命令中，<code>.</code> 表示当前目录。</p>
+</li>
+<li>
+<p>命令 <code>helm upgrade --set service.type="NodePort" nginx .</code> 中，<code>.</code> 表示 Helm chart 的位置是当前目录。Helm 将在这个目录下查找 <code>Chart.yaml</code> 文件以及其他相关的模板文件来部署或升级你的应用。</p>
+</li>
+</ul>
+</blockquote>
+<h2 id="回滚版本">回滚版本</h2>
+<div class="highlight"><pre><span></span><code><span class="c1">#查看历史版本号</span>
+helm<span class="w"> </span><span class="nb">history</span><span class="w"> </span>nginx
+<span class="c1">#简写为hist</span>
+helm<span class="w"> </span>hist<span class="w"> </span>nginx
+<span class="c1"># 回滚到指定版本号</span>
+helm<span class="w"> </span>rollback<span class="w"> </span>nginx<span class="w"> </span><span class="m">1</span>
+</code></pre></div>
+
+<h2 id="查看部署状态">查看部署状态</h2>
+<div class="highlight"><pre><span></span><code>helm<span class="w"> </span>status<span class="w"> </span>nginx
+</code></pre></div>
+
+<h2 id="打包chart">打包chart</h2>
+<div class="highlight"><pre><span></span><code>helm<span class="w"> </span>package<span class="w"> </span>/root/myapp/
+</code></pre></div>
+
+<h2 id="查看chart">查看chart</h2>
+<div class="highlight"><pre><span></span><code><span class="c1">#inspect和show互为alias</span>
+helm<span class="w"> </span>inspect<span class="w"> </span>chart<span class="w"> </span>~/myapp/
+helm<span class="w"> </span>show<span class="w"> </span>chart<span class="w"> </span>~/myapp/
+</code></pre></div>
+
+<h1 id="自定义chart模板">自定义chart模板</h1>
+<h2 id="生成chart目录模板">生成chart目录模板</h2>
+<div class="highlight"><pre><span></span><code>helm<span class="w"> </span>create<span class="w"> </span>myapp
+</code></pre></div>
+
+<h2 id="chart目录结构">chart目录结构</h2>
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span>myapp/
+tree<span class="w"> </span>./
+
+├──<span class="w"> </span>charts<span class="w"> </span><span class="c1"># 用于存放依赖的子chart</span>
+├──<span class="w"> </span>Chart.yaml<span class="w"> </span><span class="c1"># 描述这个 Chart 的相关信息、包括名字、描述信息、版本等</span>
+<span class="p">|</span><span class="w">     </span>apiVersion<span class="w"> </span><span class="c1"># Chart的apiVersion，目前默认都是v2</span>
+<span class="p">|</span><span class="w">     </span>name<span class="w"> </span><span class="c1"># chart的名称</span>
+<span class="p">|</span><span class="w">     </span><span class="nb">type</span><span class="w"> </span><span class="c1"># Chart的类型，一般都用application</span>
+<span class="p">|</span><span class="w">     </span>version<span class="w"> </span><span class="c1"># Chart自己的版本号</span>
+<span class="p">|</span><span class="w">     </span>appVersion<span class="w"> </span><span class="c1"># Chart内应用的版本号</span>
+<span class="p">|</span><span class="w">     </span>description<span class="w"> </span><span class="c1"># Chart的描述信息</span>
+├──<span class="w"> </span>templates<span class="w"> </span><span class="c1"># 模板目录，保留创建k8s的资源清单文件</span>
+│<span class="w">   </span>├──<span class="w"> </span>deployment.yaml<span class="w"> </span><span class="c1"># deployment资源的go模板文件</span>
+│<span class="w">   </span>├──<span class="w"> </span>_helpers.tpl<span class="w"> </span><span class="c1"># 自定义的模板或者函数</span>
+│<span class="w">   </span>├──<span class="w"> </span>hpa.yaml<span class="w"> </span>
+│<span class="w">   </span>├──<span class="w"> </span>ingress.yaml
+│<span class="w">   </span>├──<span class="w"> </span>NOTES.txt<span class="w"> </span><span class="c1"># Chart安装完成后输出到控制台的提示信息</span>
+│<span class="w">   </span>├──<span class="w"> </span>serviceaccount.yaml
+│<span class="w">   </span>├──<span class="w"> </span>service.yaml
+│<span class="w">   </span>└──<span class="w"> </span>tests<span class="w"> </span><span class="c1"># 存放测试文件的目录</span>
+│<span class="w">       </span>└──<span class="w"> </span>test-connection.yaml
+└──<span class="w"> </span>values.yaml<span class="w"> </span><span class="c1"># 模板的值文件，这些值会在安装时应用到 GO 模板生成部署文件</span>
+</code></pre></div>
+
+<blockquote>
+<p>注意：Chart.yaml中的version什么时候需要改：如果只是更新了values.yaml里面的经常变更的配置，不需要改version；如果更新了template/目录里面的模板文件的配置，一般需要把version升级一个版本。</p>
+</blockquote>
+<h2 id="编写chartyaml">编写Chart.yaml</h2>
+<blockquote>
+<p>Helm 使用的 Go 模板是 Go 语言的一个内置包，它提供了数据驱动的模板，用于生成可读的输出。这种模板语言被广泛应用于 Go web 框架和生成文本文件。</p>
+<p>在 Helm 中，Go 模板被用于动态生成 Kubernetes 的配置文件。这意味着你可以在模板中使用变量，然后在 Helm 安装 chart 时，根据提供的值文件（values.yaml）或者直接的命令行参数，动态替换这些变量，生成最终的 Kubernetes 配置文件。</p>
+<p>例如，你可以在模板中定义一个变量来表示镜像的版本：</p>
+<p><code>yaml
+image: "{{ .Values.image.tag }}"</code></p>
+<p>然后在 values.yaml 文件或者 helm 命令行参数中提供这个变量的值：</p>
+<p><code>yaml
+image: 
+ tag: "v1.0.0"</code></p>
+<p>这样，Helm 在安装 chart 时，会将模板中的 <code>{{ .Values.image.tag }}</code> 替换为 "v1.0.0"，生成最终的 Kubernetes 配置文件。</p>
+</blockquote>
+<div class="highlight"><pre><span></span><code><span class="c1"># Helm Chart的API版本，这里使用的是v2版本。在 v2 版本的 Helm 中，apiVersion 是 v1，而在 v3 版本的 Helm 中，apiVersion 升级为 v2</span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v2</span><span class="w"> </span>
+<span class="c1"># 指定Chart的名称，这个名称将用于在Helm中引用这个Chart</span>
+<span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">myapp</span><span class="w"> </span>
+<span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">A Helm chart for Kubernetes</span>
+<span class="c1"># Chart的版本号。每当对Chart和其模板（templates）进行更改时，包括应用版本，都应该递增这个版本号。版本号遵循语义化版本（Semantic Versioning）规范</span>
+<span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.0.1</span><span class="w"> </span>
+<span class="nt">appVersion</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;latest&quot;</span><span class="w"> </span><span class="c1"># 镜像标签的版本号</span>
+<span class="c1"># 指定Chart的类型，可以是&#39;application&#39;或&#39;library&#39;。在这个示例中，类型为&#39;application&#39;，意味着这是一个可以部署的应用程序Chart</span>
+<span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">application</span>
+</code></pre></div>
+
+<h2 id="编写deploymentyaml">编写deployment.yaml</h2>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">apps/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Deployment</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{{</span><span class="w"> </span><span class="nv">include &quot;myapp.fullname&quot; .</span><span class="w"> </span><span class="p p-Indicator">}}</span><span class="w"> </span><span class="c1">#include开头的变量，都是来自于helpers.tpl</span>
+<span class="w">  </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">{{</span><span class="nv">- include &quot;myapp.labels&quot; . | nindent 4</span><span class="w"> </span><span class="p p-Indicator">}}</span><span class="w"> </span><span class="c1"># 首行缩进4字符，用于符合yaml文件格式</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">{{</span><span class="nv">- if not .Values.autoscaling.enabled</span><span class="w"> </span><span class="p p-Indicator">}}</span>
+<span class="w">  </span><span class="nt">replicas</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{{</span><span class="w"> </span><span class="nv">.Values.replicaCount</span><span class="w"> </span><span class="p p-Indicator">}}</span><span class="w"> </span>
+<span class="w">  </span><span class="c1">#.Values开头的来自于Values.yaml</span>
+<span class="w">  </span><span class="c1"># 如果 autoscaling.enabled 参数没有启用，副本数将使用配置文件中 .Values.replicaCount 设置。如果启用了自动扩展，则不会应用这个副本数设置，而是由自动扩展机制根据负载动态调整副本数。</span>
+<span class="w">  </span><span class="p p-Indicator">{{</span><span class="nv">- end</span><span class="w"> </span><span class="p p-Indicator">}}</span>
+<span class="w">  </span><span class="nt">selector</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">matchLabels</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">{{</span><span class="nv">- include &quot;myapp.selectorLabels&quot; . | nindent 6</span><span class="w"> </span><span class="p p-Indicator">}}</span>
+<span class="w">  </span><span class="nt">template</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">metadata</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">{{</span><span class="nv">- with .Values.podAnnotations</span><span class="w"> </span><span class="p p-Indicator">}}</span><span class="w"> </span><span class="c1">#条件判断，有就去下面抓换，没有就跳过。</span>
+<span class="w">      </span><span class="nt">annotations</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">{{</span><span class="nv">- toYaml . | nindent 8</span><span class="w"> </span><span class="p p-Indicator">}}</span><span class="w"> </span><span class="c1"># 将 .Values.podAnnotations 参数转换为 YAML 格式，并通过 nindent 8 命令进行缩进。toYaml 是一个 Helm 函数，它将参数转换为 YAML 格式。nindent 8 是一个 Helm 函数，用于对生成的 YAML 进行缩进，使其适应于 YAML 文件中的正确位置。</span>
+<span class="w">      </span><span class="p p-Indicator">{{</span><span class="nv">- end</span><span class="w"> </span><span class="p p-Indicator">}}</span>
+<span class="w">      </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">{{</span><span class="nv">- include &quot;myapp.selectorLabels&quot; . | nindent 8</span><span class="w"> </span><span class="p p-Indicator">}}</span>
+<span class="w">    </span><span class="nt">spec</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">{{</span><span class="nv">- with .Values.imagePullSecrets</span><span class="w"> </span><span class="p p-Indicator">}}</span>
+<span class="w">      </span><span class="nt">imagePullSecrets</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">{{</span><span class="nv">- toYaml . | nindent 8</span><span class="w"> </span><span class="p p-Indicator">}}</span>
+<span class="w">      </span><span class="p p-Indicator">{{</span><span class="nv">- end</span><span class="w"> </span><span class="p p-Indicator">}}</span>
+<span class="w">      </span><span class="nt">serviceAccountName</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{{</span><span class="w"> </span><span class="nv">include &quot;myapp.serviceAccountName&quot; .</span><span class="w"> </span><span class="p p-Indicator">}}</span>
+<span class="w">      </span><span class="nt">securityContext</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">{{</span><span class="nv">- toYaml .Values.podSecurityContext | nindent 8</span><span class="w"> </span><span class="p p-Indicator">}}</span>
+<span class="w">      </span><span class="nt">containers</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{{</span><span class="w"> </span><span class="nv">.Chart.Name</span><span class="w"> </span><span class="p p-Indicator">}}</span>
+<span class="w">          </span><span class="nt">securityContext</span><span class="p">:</span>
+<span class="w">            </span><span class="p p-Indicator">{{</span><span class="nv">- toYaml .Values.securityContext | nindent 12</span><span class="w"> </span><span class="p p-Indicator">}}</span>
+<span class="w">          </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;{{</span><span class="nv"> </span><span class="s">.Values.image.repository</span><span class="nv"> </span><span class="s">}}:{{</span><span class="nv"> </span><span class="s">.Values.image.tag</span><span class="nv"> </span><span class="s">|</span><span class="nv"> </span><span class="s">default</span><span class="nv"> </span><span class="s">.Chart.AppVersion</span><span class="nv"> </span><span class="s">}}&quot;</span><span class="w"> </span><span class="c1"># | 代表默认值的判断，如果values.yaml定义了image.tag就沿用，没定义就用默认的Chart.yaml里面的appversion</span>
+<span class="w">          </span><span class="nt">imagePullPolicy</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{{</span><span class="w"> </span><span class="nv">.Values.image.pullPolicy</span><span class="w"> </span><span class="p p-Indicator">}}</span>
+<span class="w">          </span><span class="nt">ports</span><span class="p">:</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">http</span>
+<span class="w">              </span><span class="nt">containerPort</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span>
+<span class="w">              </span><span class="nt">protocol</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TCP</span>
+<span class="w">          </span><span class="nt">livenessProbe</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">httpGet</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/</span>
+<span class="w">              </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">http</span>
+<span class="w">          </span><span class="nt">readinessProbe</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">httpGet</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/</span>
+<span class="w">              </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">http</span>
+<span class="w">          </span><span class="nt">resources</span><span class="p">:</span>
+<span class="w">            </span><span class="p p-Indicator">{{</span><span class="nv">- toYaml .Values.resources | nindent 12</span><span class="w"> </span><span class="p p-Indicator">}}</span>
+<span class="w">      </span><span class="p p-Indicator">{{</span><span class="nv">- with .Values.nodeSelector</span><span class="w"> </span><span class="p p-Indicator">}}</span>
+<span class="w">      </span><span class="nt">nodeSelector</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">{{</span><span class="nv">- toYaml . | nindent 8</span><span class="w"> </span><span class="p p-Indicator">}}</span>
+<span class="w">      </span><span class="p p-Indicator">{{</span><span class="nv">- end</span><span class="w"> </span><span class="p p-Indicator">}}</span>
+<span class="w">      </span><span class="p p-Indicator">{{</span><span class="nv">- with .Values.affinity</span><span class="w"> </span><span class="p p-Indicator">}}</span>
+<span class="w">      </span><span class="nt">affinity</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">{{</span><span class="nv">- toYaml . | nindent 8</span><span class="w"> </span><span class="p p-Indicator">}}</span>
+<span class="w">      </span><span class="p p-Indicator">{{</span><span class="nv">- end</span><span class="w"> </span><span class="p p-Indicator">}}</span>
+<span class="w">      </span><span class="p p-Indicator">{{</span><span class="nv">- with .Values.tolerations</span><span class="w"> </span><span class="p p-Indicator">}}</span>
+<span class="w">      </span><span class="nt">tolerations</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">{{</span><span class="nv">- toYaml . | nindent 8</span><span class="w"> </span><span class="p p-Indicator">}}</span>
+<span class="w">      </span><span class="p p-Indicator">{{</span><span class="nv">- end</span><span class="w"> </span><span class="p p-Indicator">}}</span>
+</code></pre></div>
+
+<h2 id="_helpershpl">_helpers.hpl</h2>
+<p>_helpers.tpl是helm中的一个重要组成部分，通常用来定义可以被其他模板文件复用的辅助函数、片段或者变量等。</p>
+<p>可以把常用的、可重复用的代码片段和逻辑放进去，保持模板文件的整洁。</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 定义模板 </span>
+<span class="c1"># _helpers.tpl</span>
+<span class="p p-Indicator">{{</span><span class="nv">- define &quot;myapp.fullname&quot; -</span><span class="p p-Indicator">}}</span><span class="w"> </span><span class="c1"># 这是定义了这个模板的名称为myapp.fullname</span>
+<span class="p p-Indicator">{{</span><span class="nv">- printf &quot;%s-%s&quot; .Release.Name .Chart.Name | trunc 63 | trimSuffix &quot;-&quot;</span><span class="w"> </span><span class="p p-Indicator">}}</span>
+<span class="p p-Indicator">{{</span><span class="nv">- end</span><span class="w"> </span><span class="p p-Indicator">}}</span>
+
+<span class="c1"># 使用模板，用include来引用。</span>
+<span class="c1"># templates/api-development.yaml</span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">apps/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">deployment</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{{</span><span class="w"> </span><span class="nv">include &quot;myapp.fullname&quot; .</span><span class="w"> </span><span class="p p-Indicator">}}</span><span class="l l-Scalar l-Scalar-Plain">-api</span>
+
+<span class="c1">#  {{ include &quot;myapp.fullname&quot; . }} 里面的 . 意思是传递当前上下文给helpers.tpl</span>
+<span class="c1"># 因为这个模板函数需要访问 .Release.Name 和 .Chart.Name，所以调用时必须传递包含这些信息的上下文</span>
+<span class="c1"># 不写 . ，模板函数内部就无法访问 .Release.Name 和 .Chart.Name，会导致渲染错误。</span>
+</code></pre></div>
+
+<h2 id="notestxt">NOTES.txt</h2>
+<p>安装说明文件，再执行helm install/upgrade之后，helm会打印出这些信息，比如使用说明等。</p>
+<p>NOTES文件同样可以使用template语法进行生成，比如：</p>
+<div class="highlight"><pre><span></span><code><span class="l l-Scalar l-Scalar-Plain">Thank you for installing {{ .Chart.Name }}.</span>
+<span class="l l-Scalar l-Scalar-Plain">Your release is named {{ .Release.Name }}.</span>
+<span class="l l-Scalar l-Scalar-Plain">To learn about the release, run</span><span class="p p-Indicator">:</span>
+<span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$ helm status {{ .Release.Name }}</span>
+<span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$ helm get all {{ .Release.Name }}</span>
+</code></pre></div>
+
+<h2 id="valuesyaml">values.yaml</h2>
+<ul>
+<li>比如我们要引用values.yaml文件中的image字段下的tag字段的值</li>
+<li>可以在模板文件中写成{{ .Values.image.tag }}；</li>
+<li>如果在命令行使用--set选项来应用我们可以写成 image.tag；</li>
+<li>修改对应的值可以直接编辑对应values.yaml文件中对应字段的值，也可以直接使用--set 指定对应字段的对应值即可；默认情况在命令行使用--set选项给出的值，都会直接被替换；没有给定的值，默认还是使用values.yaml文件中给定的默认值；</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="c1"># Default values for myapp.</span>
+<span class="c1"># This is a YAML-formatted file.</span>
+<span class="c1"># Declare variables to be passed into your templates.</span>
+<span class="nt">replicaCount</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="nt">image</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">repository</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+<span class="w">  </span><span class="nt">pullPolicy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">IfNotPresent</span>
+<span class="w">  </span><span class="c1"># Overrides the image tag whose default is the chart appVersion.</span>
+<span class="w">  </span><span class="nt">tag</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;latest&quot;</span>
+<span class="nt">imagePullSecrets</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
+<span class="nt">nameOverride</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&quot;</span>
+<span class="nt">fullnameOverride</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&quot;</span>
+<span class="nt">serviceAccount</span><span class="p">:</span>
+<span class="w">  </span><span class="c1"># Specifies whether a service account should be created</span>
+<span class="w">  </span><span class="nt">create</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">  </span><span class="c1"># Annotations to add to the service account</span>
+<span class="w">  </span><span class="nt">annotations</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span>
+<span class="w">  </span><span class="c1"># The name of the service account to use.</span>
+<span class="w">  </span><span class="c1"># If not set and create is true, a name is generated using the fullname template</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&quot;</span>
+<span class="nt">podAnnotations</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span>
+<span class="nt">podSecurityContext</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span>
+<span class="w">  </span><span class="c1"># fsGroup: 2000</span>
+<span class="nt">securityContext</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span>
+<span class="w">  </span><span class="c1"># capabilities:</span>
+<span class="w">  </span><span class="c1">#   drop:</span>
+<span class="w">  </span><span class="c1">#   - ALL</span>
+<span class="w">  </span><span class="c1"># readOnlyRootFilesystem: true</span>
+<span class="w">  </span><span class="c1"># runAsNonRoot: true</span>
+<span class="w">  </span><span class="c1"># runAsUser: 1000</span>
+<span class="nt">service</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ClusterIP</span>
+<span class="w">  </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span>
+<span class="nt">ingress</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">  </span><span class="nt">className</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&quot;</span>
+<span class="w">  </span><span class="nt">annotations</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span>
+<span class="w">    </span><span class="c1"># kubernetes.io/ingress.class: nginx</span>
+<span class="w">    </span><span class="c1"># kubernetes.io/tls-acme: &quot;true&quot;</span>
+<span class="w">  </span><span class="nt">hosts</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">chart-example.local</span>
+<span class="w">      </span><span class="nt">paths</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/</span>
+<span class="w">          </span><span class="nt">pathType</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ImplementationSpecific</span>
+<span class="w">  </span><span class="nt">tls</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
+<span class="w">  </span><span class="c1">#  - secretName: chart-example-tls</span>
+<span class="w">  </span><span class="c1">#    hosts:</span>
+<span class="w">  </span><span class="c1">#      - chart-example.local</span>
+<span class="nt">resources</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span>
+<span class="w">  </span><span class="c1"># We usually recommend not to specify default resources and to leave this as a conscious</span>
+<span class="w">  </span><span class="c1"># choice for the user. This also increases chances charts run on environments with little</span>
+<span class="w">  </span><span class="c1"># resources, such as Minikube. If you do want to specify resources, uncomment the following</span>
+<span class="w">  </span><span class="c1"># lines, adjust them as necessary, and remove the curly braces after &#39;resources:&#39;.</span>
+<span class="w">  </span><span class="c1"># limits:</span>
+<span class="w">  </span><span class="c1">#   cpu: 100m</span>
+<span class="w">  </span><span class="c1">#   memory: 128Mi</span>
+<span class="w">  </span><span class="c1"># requests:</span>
+<span class="w">  </span><span class="c1">#   cpu: 100m</span>
+<span class="w">  </span><span class="c1">#   memory: 128Mi</span>
+<span class="nt">autoscaling</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">  </span><span class="nt">minReplicas</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="w">  </span><span class="nt">maxReplicas</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100</span>
+<span class="w">  </span><span class="nt">targetCPUUtilizationPercentage</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span>
+<span class="w">  </span><span class="c1"># targetMemoryUtilizationPercentage: 80</span>
+<span class="nt">nodeSelector</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span>
+<span class="nt">tolerations</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
+<span class="nt">affinity</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span>
+</code></pre></div>
+
+<h2 id="部署chart_2">部署chart</h2>
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span>~/myapp/
+helm<span class="w"> </span>install<span class="w"> </span>nginx<span class="w"> </span>./<span class="w"> </span><span class="c1">#Chart.yaml在当前目录下，就用 ./去部署</span>
+</code></pre></div>
+
+<h1 id="helm-chart开发语法">Helm Chart开发语法</h1>
+<blockquote>
+<p>注意：template/xxx.yaml里面的Go template语法，# 注释是不生效的。意思是即使你注释了一段Go template，里面的语法也是会被渲染生效的。所以不需要某段Go template的话就直接删掉。</p>
+</blockquote>
+<h2 id="常用内置变量">常用内置变量</h2>
+<div class="highlight"><pre><span></span><code>Release.Name<span class="w"> </span><span class="c1"># 实例的名称，helm install指定的名字</span>
+Release.Namespace<span class="w"> </span><span class="c1"># 实例对应的名称空间</span>
+Release.IsUpgrade<span class="w"> </span><span class="c1"># 如果当前对实例的操作是更新或者回滚，这个变量就是true</span>
+Release.IsInstall<span class="w"> </span><span class="c1"># 如果当前对实例的操作是安装，这个变量就是true</span>
+Release.Revision<span class="w"> </span><span class="c1"># 此次修订的版本号，从1开始，每次升级回滚都会+1</span>
+Chart<span class="w"> </span><span class="c1"># 用来取Chart.yaml文件中的内容，可以使用Chart.Version表示应用版本，Chart.Name表示Chart的名称</span>
+</code></pre></div>
+
+<h2 id="常用函数">常用函数</h2>
+<h3 id="字符串函数">字符串函数</h3>
+<div class="highlight"><pre><span></span><code>trim<span class="w"> </span><span class="c1"># 去除字符串两边的空格</span>
+trimAll<span class="w"> </span><span class="c1"># 从字符串中移除给定的字符</span>
+trimPrefix<span class="w"> </span><span class="c1"># 从字符串前面移除某个字符</span>
+trimSuffix<span class="w"> </span><span class="c1"># 从字符串后面移除某个字符</span>
+lower<span class="w"> </span><span class="c1"># 转成小写</span>
+upper<span class="w"> </span><span class="c1"># 转成大写</span>
+title<span class="w"> </span><span class="c1"># 首字母大写</span>
+repeat<span class="w"> </span><span class="c1"># 重复产生字符串</span>
+nospace<span class="w"> </span><span class="c1"># 去除所有空格</span>
+contains<span class="w"> </span><span class="c1"># 判断是否包含某个值</span>
+hasPrefix<span class="w"> </span><span class="c1"># 判断是否以什么开头</span>
+hasSuffix<span class="w"> </span><span class="c1"># 判断是否以什么结尾</span>
+quote<span class="w"> </span><span class="c1"># 使用双引号括起来字符串</span>
+squote<span class="w"> </span><span class="c1"># 使用单引号括起来字符串</span>
+cat<span class="w"> </span><span class="c1"># 字符串使用空格连接</span>
+indent<span class="w"> </span><span class="c1"># 已制定的长度缩进</span>
+nindent<span class="w"> </span><span class="c1"># 缩进，并添加新的一行</span>
+substr<span class="w"> </span><span class="c1"># 截取字符串，从哪里到哪里</span>
+trunc<span class="w"> </span><span class="c1"># 阶段字符串，从前或者从后</span>
+print<span class="w"> </span><span class="c1"># 组合字符串</span>
+println<span class="w"> </span><span class="c1"># 和print效果一样，但是会在某位新加一行</span>
+<span class="nb">printf</span><span class="w"> </span><span class="c1"># 格式化字符串，用占位符实现：printf &quot;%s has %d dots&quot; .Name .NumberDots</span>
+</code></pre></div>
+
+<h3 id="类型转换函数">类型转换函数</h3>
+<div class="highlight"><pre><span></span><code>atoi<span class="w"> </span><span class="c1"># 字符串转成整型</span>
+toString<span class="w"> </span><span class="c1"># 转换为字符串：12345这种数值、true/false这种布尔值，最需要转成字符串来使用，才能在yaml中作为key或者value来使用。</span>
+toStrings<span class="w"> </span><span class="c1"># 转换为字符串列表</span>
+toYaml<span class="w"> </span><span class="c1"># 将列表、切片、数组、字典等，转换成已缩进的yaml块。对于整块存在的多项配置，用这个一起打包转成yaml快很好用</span>
+</code></pre></div>
+
+<h3 id="逻辑比较函数">逻辑比较函数</h3>
+<div class="highlight"><pre><span></span><code>and<span class="w"> </span><span class="c1"># 且，多个条件必须同时成立</span>
+or<span class="w"> </span><span class="c1"># 或，多个条件成立一个即可</span>
+not<span class="w"> </span><span class="c1"># 取反</span>
+eq<span class="w"> </span><span class="c1"># 判断是否相等</span>
+ne<span class="w"> </span><span class="c1"># 判断是否不相等</span>
+lt<span class="w"> </span><span class="c1"># 是否小于</span>
+le<span class="w"> </span><span class="c1"># 是否小于等于</span>
+gt<span class="w"> </span><span class="c1"># 是否大于</span>
+ge<span class="w"> </span><span class="c1"># 是否大于等于</span>
+default<span class="w"> </span><span class="c1"># 设置默认值</span>
+empty<span class="w"> </span><span class="c1"># 判断是否为空</span>
+</code></pre></div>
+
+<h2 id="管道符">管道符</h2>
+<p>helm的管道符用 | 来表示，可以按顺序完成一系列任务，比如：</p>
+<div class="highlight"><pre><span></span><code><span class="nt">data</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">v1</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{{</span><span class="w"> </span><span class="nv">.Values.env.v1 | repeat 5 | quote</span><span class="w"> </span><span class="p p-Indicator">}}</span>
+<span class="w">  </span><span class="nt">v2</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{{</span><span class="w"> </span><span class="nv">.Values.env.v2 | upper | quote</span><span class="w"> </span><span class="p p-Indicator">}}</span>
+</code></pre></div>
+
+<h2 id="流控制">流控制</h2>
+<h3 id="条件语句ifelse">条件语句if/else</h3>
+<div class="highlight"><pre><span></span><code><span class="p p-Indicator">{{</span><span class="w"> </span><span class="nv">if PIPELINE</span><span class="w"> </span><span class="p p-Indicator">}}</span>
+<span class="w">  </span><span class="c1"># Do something</span>
+<span class="p p-Indicator">{{</span><span class="w"> </span><span class="nv">if OTHER PIPELINE</span><span class="w"> </span><span class="p p-Indicator">}}</span>
+<span class="w">  </span><span class="c1"># Do something else</span>
+<span class="p p-Indicator">{{</span><span class="w"> </span><span class="nv">else</span><span class="w"> </span><span class="p p-Indicator">}}</span>
+<span class="w">  </span><span class="c1"># Default case</span>
+<span class="p p-Indicator">{{</span><span class="w"> </span><span class="nv">end</span><span class="w"> </span><span class="p p-Indicator">}}</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="p p-Indicator">{{</span><span class="nv">- if eq.Values.data.v1 &quot;test&quot;</span><span class="w"> </span><span class="p p-Indicator">}}</span>
+<span class="nt">env</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;test&quot;</span>
+<span class="p p-Indicator">{{</span><span class="w"> </span><span class="nv">end</span><span class="w"> </span><span class="p p-Indicator">}}</span>
+</code></pre></div>
+
+<blockquote>
+<p>{{- 是为了去掉渲染之后的 <code>env:test</code> 这一行的上面的空行</p>
+</blockquote>
+<h2 id="循环语句range">循环语句range</h2>
+<div class="highlight"><pre><span></span><code><span class="p p-Indicator">{{</span><span class="w"> </span><span class="nv">range xxx</span><span class="w"> </span><span class="p p-Indicator">}}</span>
+<span class="w">  </span><span class="c1"># Do something</span>
+<span class="p p-Indicator">{{</span><span class="w"> </span><span class="nv">end</span><span class="w"> </span><span class="p p-Indicator">}}</span>
+</code></pre></div>
+
+<h3 id="循环遍历列表">循环遍历列表</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># 假设values.yaml中有这样一行列表配置：</span>
+<span class="nt">pizzaToppings</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mushrooms</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cheese</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">peppers</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">onions</span>
+
+<span class="c1"># 在模板中可以这样生成一段字符串列表配置：</span>
+<span class="nt">toppings</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|-</span>
+<span class="w">  </span><span class="no">{{- range .Values.pizzaToppings }}</span>
+<span class="w">  </span><span class="no">- {{ . | title | quote }} # . 代表每次循环的当前上下文的值</span>
+<span class="w">  </span><span class="no">{{- end }}</span>
+
+<span class="c1"># 渲染出来结果就是：</span>
+<span class="nt">toppings</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|-</span>
+<span class="w">  </span><span class="no">- &quot;Mushrooms&quot;</span>
+<span class="w">  </span><span class="no">- &quot;Cheese&quot;</span>
+<span class="w">  </span><span class="no">- &quot;Peppers&quot;</span>
+<span class="w">  </span><span class="no">- &quot;Onions&quot;</span>
+</code></pre></div>
+
+<h3 id="循环遍历字典kv">循环遍历字典kv</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># 假设values.yaml中有一个字典</span>
+<span class="nt">favorite</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">drink</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">coffee</span>
+<span class="w">  </span><span class="nt">food</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pizza</span>
+
+<span class="c1"># 在模板中可以这样来渲染成字符串的k-v</span>
+<span class="p p-Indicator">{{</span><span class="nv">- range $key. $val</span><span class="w"> </span><span class="p p-Indicator">:</span><span class="nv">= .Values.favorite</span><span class="w"> </span><span class="p p-Indicator">}}</span>
+<span class="w">  </span><span class="p p-Indicator">{{</span><span class="w"> </span><span class="nv">$key</span><span class="w"> </span><span class="p p-Indicator">}}:</span><span class="w"> </span><span class="p p-Indicator">{{</span><span class="w"> </span><span class="nv">$val | quote</span><span class="w"> </span><span class="p p-Indicator">}}</span>
+<span class="p p-Indicator">{{</span><span class="nv">- end</span><span class="w"> </span><span class="p p-Indicator">}}</span>
+
+<span class="c1"># 结果就是</span>
+<span class="nt">favorite</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|-</span>
+<span class="w">  </span><span class="no">drink: &quot;coffee&quot;</span>
+<span class="w">  </span><span class="no">food: &quot;pizza&quot;</span>
+</code></pre></div>
+
+<h2 id="更改取值作用域with">更改取值作用域with</h2>
+<p>主要用于values中有多层的值，取值非常麻烦，非常长，而且如果改掉values中的母值，模板中的母值就都要改。用with把取值作用域框在母值下面，就方便很多：</p>
+<div class="highlight"><pre><span></span><code><span class="p p-Indicator">{{</span><span class="w"> </span><span class="nv">with PIPELINE</span><span class="w"> </span><span class="p p-Indicator">}}</span>
+<span class="w"> </span><span class="c1"># restricted scope</span>
+<span class="p p-Indicator">{{</span><span class="w"> </span><span class="nv">end</span><span class="w"> </span><span class="p p-Indicator">}}</span>
+
+<span class="c1"># 使用之前的取值</span>
+<span class="nt">drink</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{{</span><span class="w"> </span><span class="nv">.Values.favorite.drink | default &quot;tea&quot; | quote</span><span class="w"> </span><span class="p p-Indicator">}}</span>
+<span class="nt">food</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{{</span><span class="w"> </span><span class="nv">.Values.favorite.food | upper | quote</span><span class="w"> </span><span class="p p-Indicator">}}</span>
+
+<span class="c1"># 更改作用域之后</span>
+<span class="p p-Indicator">{{</span><span class="nv">- with .Values.favorite</span><span class="w"> </span><span class="p p-Indicator">}}</span>
+<span class="nt">drink</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{{</span><span class="w"> </span><span class="nv">.drink | default &quot;tea&quot; | quote</span><span class="w"> </span><span class="p p-Indicator">}}</span>
+<span class="nt">food</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{{</span><span class="w"> </span><span class="nv">.food | upper | quote</span><span class="w"> </span><span class="p p-Indicator">}}</span>
+<span class="p p-Indicator">{{</span><span class="nv">- end</span><span class="w"> </span><span class="p p-Indicator">}}</span>
+</code></pre></div>
+
+<p>注意：在更改作用域的范围内，如果想要再取到其他外面的变量，需要指定$符，比如：<code>{{ $.Release.Name }}</code></p>
+<h1 id="可视化管理工具-helm-dashboard">可视化管理工具-helm dashboard</h1>
+<ul>
+<li>
+<p>一款开源helm ui插件：<a href="https://github.com/komodorio/helm-dashboard">Helm Dashboard GitHub</a></p>
+</li>
+<li>
+<p>安装插件</p>
+</li>
+</ul>
+<p><sub>~</sub>sh<br />
+  helm plugin install https://github.com/komodorio/helm-dashboard.git<br />
+  ~~~</p>
+<ul>
+<li>更新插件</li>
+</ul>
+<p><sub>~</sub>sh<br />
+  helm plugin update dashboard<br />
+  ~~~</p>
+<ul>
+<li>卸载</li>
+</ul>
+<p><sub>~</sub>sh<br />
+  helm plugin uninstall dashboard<br />
+  ~~~</p>
+<ul>
+<li>使用插件</li>
+</ul>
+<p><sub>~</sub>sh<br />
+   设置服务运行绑定 ipv4 ,否则只能本地访问<br />
+  export HD_BIND=0.0.0.0<br />
+  # 设置 web 端口，默认8080<br />
+  export HD_PORT=9000</p>
+<p># 设置1是不打开浏览器，否则默认打开浏览器<br />
+  #export HD_NOBROWSER=1<br />
+  # 后台运行<br />
+  setsid helm dashboard &amp;<br />
+  ~~~</p>
+<blockquote>
+<p>helm安装helm dashboard：<a href="https://github.com/komodorio/helm-charts/tree/master/charts/helm-dashboard">Helm Dashboard Chart</a></p>
+</blockquote>
+<h1 id="实战-自定义chart部署flask应用并推送到harbor">实战-自定义chart部署flask应用并推送到harbor</h1>
+<h2 id="应用代码">应用代码</h2>
+<div class="highlight"><pre><span></span><code><span class="c1">#这里使用python基于flask开发一个web服务器，该服务通过读取环境变量 USERNAME 获得用户自己定义的名称，然后监听 80 端口。对于任意 HTTP 请求，返回 Hello ${USERNAME}。比如如果设置USERNAME=world（默认场景），该服务会返回 Hello world。</span>
+<span class="n">tee</span> <span class="n">app</span><span class="o">.</span><span class="n">py</span> <span class="o">&lt;&lt;</span><span class="s1">&#39;EOF&#39;</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">flask</span><span class="w"> </span><span class="kn">import</span> <span class="n">Flask</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;GET&quot;</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">hello</span><span class="p">():</span>
+    <span class="n">username</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;USERNAME&quot;</span><span class="p">,</span> <span class="s2">&quot;world&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Hello </span><span class="si">{</span><span class="n">username</span><span class="si">}</span><span class="s2">!&quot;</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="s2">&quot;0.0.0.0&quot;</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">80</span><span class="p">)</span>
+<span class="n">EOF</span>
+</code></pre></div>
+
+<h2 id="构建容器镜像">构建容器镜像</h2>
+<div class="highlight"><pre><span></span><code><span class="c"># 使用官方 Python 基础镜像</span>
+<span class="k">FROM</span><span class="w"> </span>python:3.10-slim
+<span class="c"># 设置工作目录</span>
+<span class="k">WORKDIR</span><span class="w"> </span><span class="s">/app</span>
+<span class="c"># 复制当前目录内容到工作目录</span>
+<span class="k">COPY</span><span class="w"> </span>.<span class="w"> </span>/app
+<span class="c"># 安装依赖</span>
+<span class="k">RUN</span><span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>--no-cache-dir<span class="w"> </span>Flask<span class="w"> </span>-i<span class="w"> </span>https://mirrors.aliyun.com/pypi/simple/
+<span class="c"># 设置环境变量</span>
+<span class="k">ENV</span><span class="w"> </span>USERNAME<span class="w"> </span>world
+<span class="c"># 暴露应用运行的端口</span>
+<span class="k">EXPOSE</span><span class="w"> </span><span class="s">80</span>
+<span class="c"># 运行 Flask 应用</span>
+<span class="k">CMD</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;python&quot;</span><span class="p">,</span><span class="err"> </span><span class="s2">&quot;app.py&quot;</span><span class="p">]</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code>docker<span class="w"> </span>build<span class="w"> </span>-t<span class="w"> </span>my-hello<span class="w"> </span>.
+<span class="c1">#镜像可以推送到harbor</span>
+</code></pre></div>
+
+<h2 id="构建helm-chart">构建helm chart</h2>
+<div class="highlight"><pre><span></span><code>helm<span class="w"> </span>create<span class="w"> </span>my-hello
+<span class="c1">#这个命令会生成一个名为 my-hello 的目录，里面包含了 Helm Chart 的基本结构。</span>
+<span class="c1">#需要注意的是，Chart 里面的 my-hello名称需要和生成的 Chart 文件夹名称一致。如果修改 my-hello，则需要做一致的修改。</span>
+</code></pre></div>
+
+<ul>
+<li>在根目录下的 Chart.yaml 文件内，声明了当前 Chart 的名称、版本等基本信息，这些信息会在该 Chart 被放入仓库后，供用户浏览检索。</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="l l-Scalar l-Scalar-Plain">apiVersion</span><span class="err">: </span><span class="l l-Scalar l-Scalar-Plain">v2</span>
+<span class="l l-Scalar l-Scalar-Plain">name</span><span class="err">: </span><span class="l l-Scalar l-Scalar-Plain">my-hello</span>
+<span class="l l-Scalar l-Scalar-Plain">description</span><span class="err">: </span><span class="l l-Scalar l-Scalar-Plain">My</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">hello</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">app</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">Helm</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">chart</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">for</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">Kubernetes</span><span class="err">      </span><span class="l l-Scalar l-Scalar-Plain">#</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">helm</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">chart描述信息</span>
+
+<span class="l l-Scalar l-Scalar-Plain">#</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">A</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">chart</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">can</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">be</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">either</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">an</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">&#39;application&#39;</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">or</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">a</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">&#39;library&#39;</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">chart.</span>
+<span class="l l-Scalar l-Scalar-Plain">#</span>
+<span class="l l-Scalar l-Scalar-Plain">#</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">Application</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">charts</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">are</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">a</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">collection</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">of</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">templates</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">that</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">can</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">be</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">packaged</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">into</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">versioned</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">archives</span>
+<span class="l l-Scalar l-Scalar-Plain">#</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">to</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">be</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">deployed.</span>
+<span class="l l-Scalar l-Scalar-Plain">#</span>
+<span class="l l-Scalar l-Scalar-Plain">#</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">Library</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">charts</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">provide</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">useful</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">utilities</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">or</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">functions</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">for</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">the</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">chart</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">developer.</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">They&#39;re</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">included</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">as</span>
+<span class="l l-Scalar l-Scalar-Plain">#</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">a</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">dependency</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">of</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">application</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">charts</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">to</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">inject</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">those</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">utilities</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">and</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">functions</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">into</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">the</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">rendering</span>
+<span class="l l-Scalar l-Scalar-Plain">#</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">pipeline.</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">Library</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">charts</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">do</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">not</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">define</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">any</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">templates</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">and</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">therefore</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">cannot</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">be</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">deployed.</span>
+<span class="l l-Scalar l-Scalar-Plain">type</span><span class="err">: </span><span class="l l-Scalar l-Scalar-Plain">application</span>
+
+<span class="l l-Scalar l-Scalar-Plain">#</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">This</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">is</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">the</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">chart</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">version.</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">This</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">version</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">number</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">should</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">be</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">incremented</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">each</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">time</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">you</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">make</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">changes</span>
+<span class="l l-Scalar l-Scalar-Plain">#</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">to</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">the</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">chart</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">and</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">its</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">templates,</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">including</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">the</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">app</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">version.</span>
+<span class="l l-Scalar l-Scalar-Plain">#</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">Versions</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">are</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">expected</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">to</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">follow</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">Semantic</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">Versioning</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">(https://semver.org/)</span>
+<span class="l l-Scalar l-Scalar-Plain">version</span><span class="err">: </span><span class="l l-Scalar l-Scalar-Plain">1.0</span><span class="err">   </span><span class="l l-Scalar l-Scalar-Plain">#Chart</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">的版本</span>
+
+<span class="l l-Scalar l-Scalar-Plain">#</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">This</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">is</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">the</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">version</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">number</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">of</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">the</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">application</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">being</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">deployed.</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">This</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">version</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">number</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">should</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">be</span>
+<span class="l l-Scalar l-Scalar-Plain">#</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">incremented</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">each</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">time</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">you</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">make</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">changes</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">to</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">the</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">application.</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">Versions</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">are</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">not</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">expected</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">to</span>
+<span class="l l-Scalar l-Scalar-Plain">#</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">follow</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">Semantic</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">Versioning.</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">They</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">should</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">reflect</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">the</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">version</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">the</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">application</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">is</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">using.</span>
+<span class="l l-Scalar l-Scalar-Plain">#</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">It</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">is</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">recommended</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">to</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">use</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">it</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">with</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">quotes.</span>
+<span class="l l-Scalar l-Scalar-Plain">appVersion</span><span class="err">: </span><span class="l l-Scalar l-Scalar-Plain">&quot;1.16.0&quot;</span><span class="err">   </span><span class="l l-Scalar l-Scalar-Plain">#</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">应用的版本</span>
+</code></pre></div>
+
+<ul>
+<li>编辑values.yaml</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="c1">#根目录下有一个values.yaml文件，这个文件提供了应用在安装时的默认参数。编辑 values.yaml 文件，定义 Chart 的默认值：</span>
+<span class="c1">#这里主要修改values.yaml内的 image.repository,image.tag，并添加Username: helm。其他保持默认。</span>
+<span class="l l-Scalar l-Scalar-Plain">replicaCount</span><span class="err">: </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+
+<span class="l l-Scalar l-Scalar-Plain">image</span><span class="p p-Indicator">:</span>
+<span class="err">  </span><span class="l l-Scalar l-Scalar-Plain">repository</span><span class="err">: </span><span class="l l-Scalar l-Scalar-Plain">harbor.test.com/library/my-hello</span>
+<span class="err">  </span><span class="l l-Scalar l-Scalar-Plain">pullPolicy</span><span class="err">: </span><span class="l l-Scalar l-Scalar-Plain">IfNotPresent</span>
+<span class="err">  </span><span class="l l-Scalar l-Scalar-Plain">tag</span><span class="err">: </span><span class="l l-Scalar l-Scalar-Plain">&quot;v1.0&quot;</span>
+
+<span class="nt">service</span><span class="p">:</span>
+<span class="err">  </span><span class="l l-Scalar l-Scalar-Plain">type</span><span class="err">: </span><span class="l l-Scalar l-Scalar-Plain">ClusterIP</span>
+<span class="err">  </span><span class="l l-Scalar l-Scalar-Plain">port</span><span class="err">: </span><span class="l l-Scalar l-Scalar-Plain">80</span>
+<span class="nn">...</span>
+<span class="l l-Scalar l-Scalar-Plain">Username</span><span class="err">: </span><span class="l l-Scalar l-Scalar-Plain">helm</span>
+</code></pre></div>
+
+<ul>
+<li>编辑模板文件templates/deployment.yaml</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="c1">#在templates文件夹内存放了应用部署所需要使用的YAML文件，比如Deployment 和 Service。在我当前的应用内，只需要一个 deployment，而有的应用可能包含不同组件，需要多个deployment，就需要在 templates 文件夹下放置不同deployment的YAML文件。</span>
+<span class="c1">#增加env部分：</span>
+...
+<span class="w">      </span>containers:
+<span class="w">        </span>-<span class="w"> </span>name:<span class="w"> </span><span class="o">{{</span><span class="w"> </span>.Chart.Name<span class="w"> </span><span class="o">}}</span>
+<span class="w">          </span>securityContext:
+<span class="w">            </span><span class="o">{{</span>-<span class="w"> </span>toYaml<span class="w"> </span>.Values.securityContext<span class="w"> </span><span class="p">|</span><span class="w"> </span>nindent<span class="w"> </span><span class="m">12</span><span class="w"> </span><span class="o">}}</span>
+<span class="w">          </span>image:<span class="w"> </span><span class="s2">&quot;{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}&quot;</span>
+<span class="w">          </span>imagePullPolicy:<span class="w"> </span><span class="o">{{</span><span class="w"> </span>.Values.image.pullPolicy<span class="w"> </span><span class="o">}}</span>
+<span class="w">          </span>env:
+<span class="w">            </span>-<span class="w"> </span>name:<span class="w"> </span>USERNAME
+<span class="w">              </span>value:<span class="w"> </span><span class="o">{{</span><span class="w"> </span>.Values.Username<span class="w"> </span><span class="o">}}</span>
+...
+</code></pre></div>
+
+<ul>
+<li>编辑 templates/service.yaml</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="l l-Scalar l-Scalar-Plain">apiVersion</span><span class="err">: </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="l l-Scalar l-Scalar-Plain">kind</span><span class="err">: </span><span class="l l-Scalar l-Scalar-Plain">Service</span>
+<span class="l l-Scalar l-Scalar-Plain">metadata</span><span class="p p-Indicator">:</span>
+<span class="err">  </span><span class="l l-Scalar l-Scalar-Plain">name</span><span class="err">: </span><span class="l l-Scalar l-Scalar-Plain">{{</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">include</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">&quot;my-hello.fullname&quot;</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">.</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">}}</span>
+<span class="err">  </span><span class="nt">labels</span><span class="p">:</span>
+<span class="err">    </span><span class="p p-Indicator">{{</span><span class="nv">-</span><span class="err"> </span><span class="nv">include</span><span class="err"> </span><span class="nv">&quot;my-hello.labels&quot;</span><span class="err"> </span><span class="nv">.</span><span class="err"> </span><span class="nv">|</span><span class="err"> </span><span class="nv">nindent</span><span class="err"> </span><span class="nv">4</span><span class="err"> </span><span class="p p-Indicator">}}</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="err">  </span><span class="l l-Scalar l-Scalar-Plain">type</span><span class="err">: </span><span class="l l-Scalar l-Scalar-Plain">{{</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">.Values.service.type</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">}}</span>
+<span class="err">  </span><span class="nt">ports</span><span class="p">:</span>
+<span class="err">    - </span><span class="l l-Scalar l-Scalar-Plain">port</span><span class="err">: </span><span class="l l-Scalar l-Scalar-Plain">{{</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">.Values.service.port</span><span class="err"> </span><span class="l l-Scalar l-Scalar-Plain">}}</span>
+<span class="err">      </span><span class="l l-Scalar l-Scalar-Plain">targetPort</span><span class="err">: </span><span class="l l-Scalar l-Scalar-Plain">http</span>
+<span class="err">      </span><span class="l l-Scalar l-Scalar-Plain">protocol</span><span class="err">: </span><span class="l l-Scalar l-Scalar-Plain">TCP</span>
+<span class="err">      </span><span class="l l-Scalar l-Scalar-Plain">name</span><span class="err">: </span><span class="l l-Scalar l-Scalar-Plain">http</span>
+<span class="err">  </span><span class="nt">selector</span><span class="p">:</span>
+<span class="err">    </span><span class="p p-Indicator">{{</span><span class="nv">-</span><span class="err"> </span><span class="nv">include</span><span class="err"> </span><span class="nv">&quot;my-hello.selectorLabels&quot;</span><span class="err"> </span><span class="nv">.</span><span class="err"> </span><span class="nv">|</span><span class="err"> </span><span class="nv">nindent</span><span class="err"> </span><span class="nv">4</span><span class="err"> </span><span class="p p-Indicator">}}</span>
+</code></pre></div>
+
+<h2 id="打包应用">打包应用</h2>
+<div class="highlight"><pre><span></span><code><span class="c1">#使用Helm lint校验Chart有无语法问题。</span>
+helm<span class="w"> </span><span class="nv">lint</span>
+<span class="o">==</span>&gt;<span class="w"> </span>Linting<span class="w"> </span>.
+<span class="o">[</span>ERROR<span class="o">]</span><span class="w"> </span>Chart.yaml:<span class="w"> </span>version<span class="w"> </span>should<span class="w"> </span>be<span class="w"> </span>of<span class="w"> </span><span class="nb">type</span><span class="w"> </span>string<span class="w"> </span>but<span class="w"> </span>it<span class="err">&#39;</span>s<span class="w"> </span>of<span class="w"> </span><span class="nb">type</span><span class="w"> </span>float64
+<span class="o">[</span>INFO<span class="o">]</span><span class="w"> </span>Chart.yaml:<span class="w"> </span>icon<span class="w"> </span>is<span class="w"> </span>recommended
+Error:<span class="w"> </span><span class="m">1</span><span class="w"> </span>chart<span class="o">(</span>s<span class="o">)</span><span class="w"> </span>linted,<span class="w"> </span><span class="m">1</span><span class="w"> </span>chart<span class="o">(</span>s<span class="o">)</span><span class="w"> </span>failed
+<span class="c1"># 上面提示，version应该为string，而不是float64。将Chart.yaml中的version字段改为字符串，version: &quot;1.0&quot;。重新校验通过：</span>
+
+helm<span class="w"> </span><span class="nv">lint</span>
+<span class="o">==</span>&gt;<span class="w"> </span>Linting<span class="w"> </span>.
+<span class="o">[</span>INFO<span class="o">]</span><span class="w"> </span>Chart.yaml:<span class="w"> </span>icon<span class="w"> </span>is<span class="w"> </span>recommended
+<span class="m">1</span><span class="w"> </span>chart<span class="o">(</span>s<span class="o">)</span><span class="w"> </span>linted,<span class="w"> </span><span class="m">0</span><span class="w"> </span>chart<span class="o">(</span>s<span class="o">)</span><span class="w"> </span>failed
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="c1">#使用helm package对已经创建好的chart应用进行打包，即得到我们厂家的tgz格式的chart包。</span>
+helm<span class="w"> </span>package<span class="w"> </span>./my-hello/
+</code></pre></div>
+
+<h2 id="部署应用">部署应用</h2>
+<div class="highlight"><pre><span></span><code><span class="c1">#部署 Chart进行测试使用以下命令部署你创建的 Helm Chart</span>
+helm<span class="w"> </span>install<span class="w"> </span>my-hello<span class="w"> </span>my-hello-1.0.tgz
+<span class="c1">#也可以根据部署后的提示，配置端口转发到宿主机的8080端口进行测试：</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">POD_NAME</span><span class="o">=</span><span class="k">$(</span>kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>--namespace<span class="w"> </span>default<span class="w"> </span>-l<span class="w"> </span><span class="s2">&quot;app.kubernetes.io/name=my-hello,app.kubernetes.io/instance=my-hello&quot;</span><span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s2">&quot;{.items[0].metadata.name}&quot;</span><span class="k">)</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">CONTAINER_PORT</span><span class="o">=</span><span class="k">$(</span>kubectl<span class="w"> </span>get<span class="w"> </span>pod<span class="w"> </span>--namespace<span class="w"> </span>default<span class="w"> </span><span class="nv">$POD_NAME</span><span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s2">&quot;{.spec.containers[0].ports[0].containerPort}&quot;</span><span class="k">)</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Visit http://127.0.0.1:8080 to use your application&quot;</span>
+kubectl<span class="w"> </span>--namespace<span class="w"> </span>default<span class="w"> </span>port-forward<span class="w"> </span><span class="nv">$POD_NAME</span><span class="w"> </span><span class="m">8080</span>:<span class="nv">$CONTAINER_PORT</span>
+<span class="c1">#此时节点处于监听8080端口状态，任何访问8080端口的流量都会转发到my-hello容器的80端口 ：</span>
+<span class="c1">#新开终端</span>
+curl<span class="w"> </span>localhost:8080
+</code></pre></div>
+
+<h2 id="参数重载">参数重载</h2>
+<div class="highlight"><pre><span></span><code><span class="c1">#应用开发者在 values 配置中只是提供了默认的安装参数，用户也可以在安装时指定自己的配置，通过set参数传递参数。如果应用已经部署，可以用upgrade命令替代install，实现在原有部署好的应用的基础上变更配置。</span>
+<span class="c1"># 全新安装</span>
+helm<span class="w"> </span>install<span class="w"> </span>my-hello<span class="w"> </span>my-hello-1.0.tgz<span class="w"> </span>--set<span class="w"> </span><span class="nv">Username</span><span class="o">=</span><span class="s2">&quot;K8S&quot;</span>
+<span class="c1"># 也可以通过配置文件进行传参</span>
+helm<span class="w"> </span>install<span class="w"> </span>my-hello2<span class="w"> </span>my-hello-1.0.tgz<span class="w"> </span>-f<span class="w"> </span>my-values.yaml
+<span class="c1"># 升级更新。基于新的value.yaml或者set更新参数</span>
+helm<span class="w"> </span>upgrade<span class="w"> </span>my-hello<span class="w"> </span>my-hello-1.0.tgz<span class="w"> </span>-f<span class="w"> </span>my-new-values.yaml
+helm<span class="w"> </span>upgrade<span class="w"> </span>my-hello<span class="w"> </span>my-hello-1.0.tgz<span class="w"> </span>--set<span class="w"> </span><span class="nv">Username</span><span class="o">=</span><span class="s2">&quot;K8S&quot;</span>
+</code></pre></div>
+
+<h2 id="修改提示信息">修改提示信息</h2>
+<div class="highlight"><pre><span></span><code><span class="c1">#修改提示信息部署chart后的提示信息来自templates目录下的NOTES.txt文件：</span>
+<span class="c1">#根据需要可以自定义输出。</span>
+cat<span class="w"> </span>my-hello/templates/NOTES.txt
+<span class="m">1</span>.<span class="w"> </span>Get<span class="w"> </span>the<span class="w"> </span>application<span class="w"> </span>URL<span class="w"> </span>by<span class="w"> </span>running<span class="w"> </span>these<span class="w"> </span>commands:
+<span class="o">{{</span>-<span class="w"> </span><span class="k">if</span><span class="w"> </span>.Values.ingress.enabled<span class="w"> </span><span class="o">}}</span>
+<span class="o">{{</span>-<span class="w"> </span>range<span class="w"> </span><span class="nv">$host</span><span class="w"> </span>:<span class="o">=</span><span class="w"> </span>.Values.ingress.hosts<span class="w"> </span><span class="o">}}</span>
+<span class="w">  </span><span class="o">{{</span>-<span class="w"> </span>range<span class="w"> </span>.paths<span class="w"> </span><span class="o">}}</span>
+<span class="w">  </span>http<span class="o">{{</span><span class="w"> </span><span class="k">if</span><span class="w"> </span>$.Values.ingress.tls<span class="w"> </span><span class="o">}}</span>s<span class="o">{{</span><span class="w"> </span>end<span class="w"> </span><span class="o">}}</span>://<span class="o">{{</span><span class="w"> </span><span class="nv">$host</span>.host<span class="w"> </span><span class="o">}}{{</span><span class="w"> </span>.path<span class="w"> </span><span class="o">}}</span>
+<span class="w">  </span><span class="o">{{</span>-<span class="w"> </span>end<span class="w"> </span><span class="o">}}</span>
+<span class="o">{{</span>-<span class="w"> </span>end<span class="w"> </span><span class="o">}}</span>
+<span class="o">{{</span>-<span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span>contains<span class="w"> </span><span class="s2">&quot;NodePort&quot;</span><span class="w"> </span>.Values.service.type<span class="w"> </span><span class="o">}}</span>
+<span class="w">  </span><span class="nb">export</span><span class="w"> </span><span class="nv">NODE_PORT</span><span class="o">=</span><span class="k">$(</span>kubectl<span class="w"> </span>get<span class="w"> </span>--namespace<span class="w"> </span><span class="o">{{</span><span class="w"> </span>.Release.Namespace<span class="w"> </span><span class="o">}}</span><span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s2">&quot;{.spec.ports[0].nodePort}&quot;</span><span class="w"> </span>services<span class="w"> </span><span class="o">{{</span><span class="w"> </span>include<span class="w"> </span><span class="s2">&quot;my-hello.fullname&quot;</span><span class="w"> </span>.<span class="w"> </span><span class="o">}}</span><span class="k">)</span>
+<span class="w">  </span><span class="nb">export</span><span class="w"> </span><span class="nv">NODE_IP</span><span class="o">=</span><span class="k">$(</span>kubectl<span class="w"> </span>get<span class="w"> </span>nodes<span class="w"> </span>--namespace<span class="w"> </span><span class="o">{{</span><span class="w"> </span>.Release.Namespace<span class="w"> </span><span class="o">}}</span><span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s2">&quot;{.items[0].status.addresses[0].address}&quot;</span><span class="k">)</span>
+<span class="w">  </span><span class="nb">echo</span><span class="w"> </span>http://<span class="nv">$NODE_IP</span>:<span class="nv">$NODE_PORT</span>
+<span class="o">{{</span>-<span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span>contains<span class="w"> </span><span class="s2">&quot;LoadBalancer&quot;</span><span class="w"> </span>.Values.service.type<span class="w"> </span><span class="o">}}</span>
+<span class="w">     </span>NOTE:<span class="w"> </span>It<span class="w"> </span>may<span class="w"> </span>take<span class="w"> </span>a<span class="w"> </span>few<span class="w"> </span>minutes<span class="w"> </span><span class="k">for</span><span class="w"> </span>the<span class="w"> </span>LoadBalancer<span class="w"> </span>IP<span class="w"> </span>to<span class="w"> </span>be<span class="w"> </span>available.
+<span class="w">           </span>You<span class="w"> </span>can<span class="w"> </span>watch<span class="w"> </span>its<span class="w"> </span>status<span class="w"> </span>by<span class="w"> </span>running<span class="w"> </span><span class="s1">&#39;kubectl get --namespace {{ .Release.Namespace }} svc -w {{ include &quot;my-hello.fullname&quot; . }}&#39;</span>
+<span class="w">  </span><span class="nb">export</span><span class="w"> </span><span class="nv">SERVICE_IP</span><span class="o">=</span><span class="k">$(</span>kubectl<span class="w"> </span>get<span class="w"> </span>svc<span class="w"> </span>--namespace<span class="w"> </span><span class="o">{{</span><span class="w"> </span>.Release.Namespace<span class="w"> </span><span class="o">}}</span><span class="w"> </span><span class="o">{{</span><span class="w"> </span>include<span class="w"> </span><span class="s2">&quot;my-hello.fullname&quot;</span><span class="w"> </span>.<span class="w"> </span><span class="o">}}</span><span class="w"> </span>--template<span class="w"> </span><span class="s2">&quot;{{&quot;</span><span class="o">{{</span><span class="w"> </span>range<span class="w"> </span><span class="o">(</span>index<span class="w"> </span>.status.loadBalancer.ingress<span class="w"> </span><span class="m">0</span><span class="k">)</span><span class="w"> </span><span class="o">}}{{</span>.<span class="o">}}{{</span><span class="w"> </span>end<span class="w"> </span><span class="o">}}</span><span class="s2">&quot;}}&quot;</span><span class="o">)</span>
+<span class="w">  </span><span class="nb">echo</span><span class="w"> </span>http://<span class="nv">$SERVICE_IP</span>:<span class="o">{{</span><span class="w"> </span>.Values.service.port<span class="w"> </span><span class="o">}}</span>
+<span class="o">{{</span>-<span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span>contains<span class="w"> </span><span class="s2">&quot;ClusterIP&quot;</span><span class="w"> </span>.Values.service.type<span class="w"> </span><span class="o">}}</span>
+<span class="w">  </span><span class="nb">export</span><span class="w"> </span><span class="nv">POD_NAME</span><span class="o">=</span><span class="k">$(</span>kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>--namespace<span class="w"> </span><span class="o">{{</span><span class="w"> </span>.Release.Namespace<span class="w"> </span><span class="o">}}</span><span class="w"> </span>-l<span class="w"> </span><span class="s2">&quot;app.kubernetes.io/name={{ include &quot;</span>my-hello.name<span class="s2">&quot; . }},app.kubernetes.io/instance={{ .Release.Name }}&quot;</span><span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s2">&quot;{.items[0].metadata.name}&quot;</span><span class="k">)</span>
+<span class="w">  </span><span class="nb">export</span><span class="w"> </span><span class="nv">CONTAINER_PORT</span><span class="o">=</span><span class="k">$(</span>kubectl<span class="w"> </span>get<span class="w"> </span>pod<span class="w"> </span>--namespace<span class="w"> </span><span class="o">{{</span><span class="w"> </span>.Release.Namespace<span class="w"> </span><span class="o">}}</span><span class="w"> </span><span class="nv">$POD_NAME</span><span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s2">&quot;{.spec.containers[0].ports[0].containerPort}&quot;</span><span class="k">)</span>
+<span class="w">  </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Visit http://127.0.0.1:8080 to use your application&quot;</span>
+<span class="w">  </span>kubectl<span class="w"> </span>--namespace<span class="w"> </span><span class="o">{{</span><span class="w"> </span>.Release.Namespace<span class="w"> </span><span class="o">}}</span><span class="w"> </span>port-forward<span class="w"> </span><span class="nv">$POD_NAME</span><span class="w"> </span><span class="m">8080</span>:<span class="nv">$CONTAINER_PORT</span>
+<span class="o">{{</span>-<span class="w"> </span>end<span class="w"> </span><span class="o">}}</span>
+</code></pre></div>
+
+<h2 id="清理部署">清理部署</h2>
+<div class="highlight"><pre><span></span><code>helm<span class="w"> </span>ls
+helm<span class="w"> </span>uninstall<span class="w"> </span>my-hello
+</code></pre></div>
+    </div>
+  </article>
+  <aside class="toc">
+    <p class="toc-label">本页目录</p>
+    <ul>
+  <li><a href="#官网地址">官网地址</a></li>
+  <li><a href="#教程文章">教程文章</a></li>
+  <li><a href="#helm-v3版本变化">Helm v3版本变化</a></li>
+  <li><a href="#下载安装包">下载安装包</a><ul>
+  <li><a href="#linux安装">Linux安装</a></li>
+  <li><a href="#windows安装-基于scoop">Windows安装-基于scoop</a></li>
+</ul></li>
+  <li><a href="#chartmuseum">ChartMuseum</a></li>
+  <li><a href="#oci">OCI</a></li>
+  <li><a href="#添加chart仓库">添加chart仓库</a></li>
+  <li><a href="#搜索和下载chart">搜索和下载chart</a></li>
+  <li><a href="#部署chart">部署chart</a></li>
+  <li><a href="#release管理">release管理</a></li>
+  <li><a href="#helm管理crds">helm管理crds</a></li>
+  <li><a href="#把k8s资源加入helm管理">把k8s资源加入helm管理</a></li>
+  <li><a href="#helm调试命令">helm调试命令</a><ul>
+  <li><a href="#helm-template">helm template</a></li>
+  <li><a href="#helm-diff">helm diff</a></li>
+  <li><a href="#helm-lint">helm lint</a></li>
+  <li><a href="#helm-install-dry-run">helm install --dry-run</a></li>
+</ul></li>
+  <li><a href="#部署chart_1">部署chart</a></li>
+  <li><a href="#调整参数">调整参数</a></li>
+  <li><a href="#回滚版本">回滚版本</a></li>
+  <li><a href="#查看部署状态">查看部署状态</a></li>
+  <li><a href="#打包chart">打包chart</a></li>
+  <li><a href="#查看chart">查看chart</a></li>
+  <li><a href="#生成chart目录模板">生成chart目录模板</a></li>
+  <li><a href="#chart目录结构">chart目录结构</a></li>
+  <li><a href="#编写chartyaml">编写Chart.yaml</a></li>
+  <li><a href="#编写deploymentyaml">编写deployment.yaml</a></li>
+  <li><a href="#_helpershpl">_helpers.hpl</a></li>
+  <li><a href="#notestxt">NOTES.txt</a></li>
+  <li><a href="#valuesyaml">values.yaml</a></li>
+  <li><a href="#部署chart_2">部署chart</a></li>
+  <li><a href="#常用内置变量">常用内置变量</a></li>
+  <li><a href="#常用函数">常用函数</a><ul>
+  <li><a href="#字符串函数">字符串函数</a></li>
+  <li><a href="#类型转换函数">类型转换函数</a></li>
+  <li><a href="#逻辑比较函数">逻辑比较函数</a></li>
+</ul></li>
+  <li><a href="#管道符">管道符</a></li>
+  <li><a href="#流控制">流控制</a><ul>
+  <li><a href="#条件语句ifelse">条件语句if/else</a></li>
+</ul></li>
+  <li><a href="#循环语句range">循环语句range</a><ul>
+  <li><a href="#循环遍历列表">循环遍历列表</a></li>
+  <li><a href="#循环遍历字典kv">循环遍历字典kv</a></li>
+</ul></li>
+  <li><a href="#更改取值作用域with">更改取值作用域with</a></li>
+  <li><a href="#应用代码">应用代码</a></li>
+  <li><a href="#构建容器镜像">构建容器镜像</a></li>
+  <li><a href="#构建helm-chart">构建helm chart</a></li>
+  <li><a href="#打包应用">打包应用</a></li>
+  <li><a href="#部署应用">部署应用</a></li>
+  <li><a href="#参数重载">参数重载</a></li>
+  <li><a href="#修改提示信息">修改提示信息</a></li>
+  <li><a href="#清理部署">清理部署</a></li>
+</ul>
+  </aside>
+
+</div>
+
+</main>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>Learning Notes</span>
+    <a href="https://github.com/hangx969/learning-notes">GitHub</a>
+  </div>
+</footer>
+<script src="../../../static/search.js"></script>
+</body>
+</html>

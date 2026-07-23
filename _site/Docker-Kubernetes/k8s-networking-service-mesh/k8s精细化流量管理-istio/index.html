@@ -1,0 +1,1600 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>K8s精细化流量管理-Istio - Learning Notes</title>
+<link rel="stylesheet" href="../../../static/style.css">
+<link rel="stylesheet" href="../../../static/pygments.css">
+</head>
+<body data-root="../../../">
+<header class="site-header">
+  <div class="header-inner">
+    <a class="logo" href="../../../index.html"><span class="logo-mark"></span>LEARNING NOTES</a>
+    <div class="search">
+      <input id="search-input" type="search" placeholder="搜索笔记…" autocomplete="off" aria-label="搜索笔记">
+      <div id="search-results" hidden></div>
+    </div>
+  </div>
+  <nav class="topic-nav" aria-label="主题导航">
+    <div class="topic-nav-inner">
+      <a href="../../../AI/">AI</a>
+      <a href="../../../Aliyun/">Aliyun</a>
+      <a href="../../../Azure/">Azure</a>
+      <a href="../../../C%2B%2B/">C++</a>
+      <a href="../../../CloudComputing/">CloudComputing</a>
+      <a href="../../../Database/">Database</a>
+      <a href="../../../Docker-Kubernetes/" class="active">Docker-Kubernetes</a>
+      <a href="../../../GPU-DeepLearning/">GPU-DeepLearning</a>
+      <a href="../../../Git/">Git</a>
+      <a href="../../../Go/">Go</a>
+      <a href="../../../HPC/">HPC</a>
+      <a href="../../../IaC/">IaC</a>
+      <a href="../../../Linux-Shell/">Linux-Shell</a>
+      <a href="../../../Middlewares/">Middlewares</a>
+      <a href="../../../Networking/">Networking</a>
+      <a href="../../../OS/">OS</a>
+      <a href="../../../Python/">Python</a>
+      <a href="../../../SoftwareTesting/">SoftwareTesting</a>
+    </div>
+  </nav>
+</header>
+<main class="main">
+
+<div class="article-layout">
+
+  <aside class="sidebar">
+    <details class="sidebar-details">
+      <summary>Docker-Kubernetes</summary>
+      <nav class="sidebar-nav">
+        <p class="sidebar-group">CKA-CKS</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/CKA-CKS/CKA-%E5%A4%87%E8%80%83/">CKA 备考</a></li>
+          <li><a href="../../../Docker-Kubernetes/CKA-CKS/CKS-%E5%A4%87%E8%80%83/">CKS 备考</a></li>
+          <li><a href="../../../Docker-Kubernetes/CKA-CKS/k8s-%E9%9D%A2%E8%AF%95%E9%A2%98%E6%B1%87%E6%80%BB/">K8s 面试题汇总</a></li>
+        </ul>
+        <p class="sidebar-group">container-platform</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/container-platform/%E9%83%A8%E7%BD%B2openshift%283.10%29/">部署 OpenShift (3.10)</a></li>
+          <li><a href="../../../Docker-Kubernetes/container-platform/%E9%83%A8%E7%BD%B2%E8%BD%BB%E9%87%8F%E7%BA%A7%E7%9A%84K8S%E5%B9%B3%E5%8F%B0-K3S/">部署轻量级 K8S 平台 - K3S</a></li>
+        </ul>
+        <p class="sidebar-group">docker</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E5%9F%BA%E7%A1%80/">Docker基础</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E5%AE%89%E5%85%A8%E9%85%8D%E7%BD%AE-Capabilities%E4%B8%8E%E5%AE%B9%E5%99%A8%E5%8A%A0%E5%9B%BA/">Docker 安全配置详解：Capabilities 与容器加固</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2UI%E5%B7%A5%E5%85%B7portainer-%E9%83%A8%E7%BD%B2redis-sentinel/">Docker部署Portainer与Redis-Sentinel</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2gitlab/">Docker部署GitLab</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2lnmp%E7%BD%91%E7%AB%99/">Docker部署LNMP网站</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2loki/">Docker部署Loki日志系统</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2nginx-tomcat-httpd-go-python%E6%9C%8D%E5%8A%A1/">Docker部署Nginx-Tomcat-Httpd-Go-Python服务</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2prometheus-grafana-cAdvisior%E7%9B%91%E6%8E%A7/">Docker部署Prometheus-Grafana-cAdvisor监控</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2%E4%BB%93%E5%BA%93%E5%B9%B3%E5%8F%B0homebox/">Docker部署Homebox仓库平台</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1%E5%B7%A5%E5%85%B7gocron/">Docker部署GoCron定时任务工具</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2%E8%B7%AF%E7%94%B1%E7%9B%91%E6%8E%A7%E5%B7%A5%E5%85%B7NextTrace/">Docker部署NextTrace路由监控工具</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%85%8D%E7%BD%AENVIDIA%20GPU/">Docker配置NVIDIA GPU</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%85%8D%E7%BD%AE%E4%BB%A3%E7%90%86/">Docker配置代理</a></li>
+        </ul>
+        <p class="sidebar-group">harbor</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/harbor/harbor-basics/">Harbor 基础</a></li>
+          <li><a href="../../../Docker-Kubernetes/harbor/helm%E9%83%A8%E7%BD%B2harbor/">Helm 部署 Harbor</a></li>
+        </ul>
+        <p class="sidebar-group">helm-operator</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/helm-operator/helmv3-%E5%AE%89%E8%A3%85%E4%B8%8E%E4%BD%BF%E7%94%A8/">Helm v3 安装与使用</a></li>
+          <li><a href="../../../Docker-Kubernetes/helm-operator/helm%E9%83%A8%E7%BD%B2config-syncer%28kubed%29/">Helm 部署 Config Syncer (Kubed)</a></li>
+          <li><a href="../../../Docker-Kubernetes/helm-operator/helm%E9%83%A8%E7%BD%B2dragonfly/">Helm 部署 Dragonfly</a></li>
+          <li><a href="../../../Docker-Kubernetes/helm-operator/helm%E9%83%A8%E7%BD%B2pact-broker/">Helm 部署 Pact Broker</a></li>
+          <li><a href="../../../Docker-Kubernetes/helm-operator/helm%E9%83%A8%E7%BD%B2reloader/">Helm 部署 Reloader</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-CICD</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD%20Image%20Updater/">ArgoCD Image Updater</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD%E5%9F%BA%E7%A1%80/">ArgoCD基础</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD%E5%A4%9A%E9%9B%86%E7%BE%A4GitOps%E5%AE%9E%E6%88%98/">多集群 GitOps 实战：用 Argo CD 管理上百个 Kubernetes 集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD%E9%83%A8%E7%BD%B2Helm%E5%BA%94%E7%94%A8%E6%97%B6%E5%9F%9F%E5%90%8D%E8%A7%A3%E6%9E%90%E5%A4%B1%E8%B4%A5%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5%E4%B8%8E%E8%A7%A3%E5%86%B3/">ArgoCD部署Helm应用时域名解析失败问题排查与解决</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/ArgoCD/%E5%AD%A6%E4%B9%A0%E9%93%BE%E6%8E%A5/">ArgoCD学习链接</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Claude-Code%E5%AE%9E%E7%8E%B0CICD%E8%87%AA%E5%8A%A8%E5%8C%96%E5%8F%91%E5%B8%83%E6%B5%81%E7%A8%8B/">Claude Code 实现 CI/CD 自动化发布流程详细指南</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Gitlab/helm%E9%83%A8%E7%BD%B2gitlab/">Helm部署GitLab</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Gitlab/k8s%E9%83%A8%E7%BD%B2Gitlab%2811.8.1%29-%E5%9F%BA%E4%BA%8Eyaml/">K8s部署GitLab(11.8.1)-基于YAML</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Gitlab/%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%AE%89%E8%A3%85Gitlab%2817.9.8%29/">二进制安装GitLab(17.9.8)</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Jenkins/Jenkins%E8%AF%AD%E6%B3%95-%E5%9F%BA%E4%BA%8Edocker%E9%83%A8%E7%BD%B2/">Jenkins语法-基于Docker部署</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Jenkins/docker%E9%83%A8%E7%BD%B2jenkins/">Docker部署Jenkins</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Jenkins/helm%E9%83%A8%E7%BD%B2jenkins/">Helm部署Jenkins</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Jenkins/k8s-Devops%E5%B9%B3%E5%8F%B0%E8%90%BD%E5%9C%B0-%E5%9F%BA%E4%BA%8Ejenkins/">K8s DevOps平台落地-基于Jenkins</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Jenkins/k8s%E9%83%A8%E7%BD%B2%E5%9F%BA%E4%BA%8EJenkins%282.394%29%E7%9A%84DevOps%E5%B7%A5%E5%85%B7%E9%93%BE-%E5%9F%BA%E4%BA%8Eyaml/">K8s部署基于Jenkins(2.394)的DevOps工具链-基于YAML</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Jenkins/k8s%E9%83%A8%E7%BD%B2%E5%9F%BA%E4%BA%8EJenkins%282.426.3%29%E7%9A%84Devops%E5%B7%A5%E5%85%B7%E9%93%BE-%E5%9F%BA%E4%BA%8Eyaml/">K8s部署基于Jenkins(2.426.3)的DevOps工具链-基于YAML</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Jenkins/%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%AE%89%E8%A3%85Jenkins%282.319%29/">二进制安装Jenkins(2.319)</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Kustomize/k8s%E9%85%8D%E7%BD%AE%E5%AE%9A%E5%88%B6%E5%B7%A5%E5%85%B7-kustomize/">K8s配置定制工具-Kustomize</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Tekton/k8s%E9%83%A8%E7%BD%B2%E5%8E%9F%E7%94%9F%E7%9A%84CICD%E5%B7%A5%E5%85%B7Tekton-%E5%9F%BA%E4%BA%8Eyaml/">K8s部署原生的CICD工具Tekton-基于YAML</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Tekton/%E5%9F%BA%E4%BA%8ETekton%E7%9A%84%E4%BA%91%E5%8E%9F%E7%94%9F%E5%B9%B3%E5%8F%B0%E8%90%BD%E5%9C%B0/">基于Tekton的云原生平台落地</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/k8s%E5%8F%91%E5%B8%83%E7%AD%96%E7%95%A5-%E8%93%9D%E7%BB%BF%E9%83%A8%E7%BD%B2%E4%B8%8E%E9%87%91%E4%B8%9D%E9%9B%80%E5%8F%91%E5%B8%83/">K8s 发布策略：蓝绿部署与金丝雀发布实战</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/%E4%BD%BF%E7%94%A8github%20action%E9%83%A8%E7%BD%B2helmchart/">使用GitHub Action部署Helm Chart</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/%E5%8F%91%E5%B8%83go-python-java%E4%BB%A3%E7%A0%81%E5%88%B0K8S%E7%8E%AF%E5%A2%83/">发布Go/Python/Java代码到K8S环境</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-UI-tools</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-UI-tools/k8s-API%E6%A3%80%E6%9F%A5%E5%B7%A5%E5%85%B7kubent/">K8s API 检查工具 kubent</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-UI-tools/k8s-%E5%B0%8F%E5%B7%A5%E5%85%B7%E9%9B%86%E5%90%88/">K8s 小工具集合</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-UI-tools/k8s%E9%83%A8%E7%BD%B2-Dashboard-UI/">K8s 部署 Dashboard UI</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-UI-tools/k8s%E9%83%A8%E7%BD%B2%E5%8F%AF%E8%A7%86%E5%8C%96ui%E7%95%8C%E9%9D%A2kuboard/">K8s 部署 Kuboard</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-UI-tools/kubectl-UI%E5%B7%A5%E5%85%B7Lens/">kubectl UI 工具 Lens</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-UI-tools/kubectl-%E5%8F%AF%E8%A7%86%E5%8C%96%E6%8F%92%E4%BB%B6k9s-stern/">kubectl 可视化插件 k9s 和 stern</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-UI-tools/kuebctl-%E6%8F%92%E4%BB%B6krew-rolesum/">kubectl 插件 krew 和 rolesum</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-UI-tools/rancher%28v2.6.4%29%E7%AE%A1%E7%90%86k8s%E9%9B%86%E7%BE%A4/">Rancher (v2.6.4) 管理 K8s 集群</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-ai-gpu</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-ai-gpu/k8s%E9%85%8D%E7%BD%AENVIDIA%20GPU/">K8s 配置 NVIDIA GPU</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-backup-dr</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-backup-dr/k8s%E5%A4%87%E4%BB%BD%E4%B8%8E%E7%81%BE%E5%A4%87%E5%AE%9E%E6%88%98-%E4%B8%89%E5%B1%82%E5%AE%B9%E7%81%BE%E6%9E%B6%E6%9E%84/">K8s 备份与灾备实战：三层容灾架构</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-backup-dr/k8s%E9%9B%86%E7%BE%A4%E5%A4%87%E4%BB%BD%E6%81%A2%E5%A4%8D-Velero/">K8s集群备份恢复 - Velero</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-basic-resources</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/K8s%E5%9F%BA%E7%A1%80-pod%E8%B0%83%E5%BA%A6-%E4%BA%B2%E5%92%8C%E5%8A%9B/">K8s基础-Pod调度-亲和力</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/Python%E8%B0%83%E7%94%A8k8s-api%E5%AE%9E%E7%8E%B0%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/">Python调用K8s-API实现资源管理</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s-APIServer%E6%B7%B1%E5%BA%A6%E5%89%96%E6%9E%90-%E8%AF%B7%E6%B1%82%E9%93%BE%E8%B7%AF-%E8%AE%A4%E8%AF%81%E6%8E%88%E6%9D%83-%E7%94%9F%E4%BA%A7%E8%B0%83%E4%BC%98/">Kubernetes API Server 深度剖析：请求链路、认证授权与生产调优</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s-PodDisruptionBudget%E5%AE%9E%E6%88%98/">K8s PodDisruptionBudget 实战：优雅中断保护</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-Calico/">K8s基础-Calico</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-Finalizer%E4%B8%8E%E8%B5%84%E6%BA%90%E5%88%A0%E9%99%A4/">K8s基础-Finalizer与资源删除</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-Operator%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98-Kubebuilder/">从零开发 Kubernetes Operator：Kubebuilder 实战教程</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-Service/">K8s基础-Service</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-configMap-Secret/">K8s基础-configMap-Secret</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-daemonset/">K8s基础-DaemonSet</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-deployment/">K8s基础-Deployment</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-ingress/">K8s基础-Ingress</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-job-cronjob/">K8s基础-Job-CronJob</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-kubeadm/">K8s基础-kubeadm</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-namespace-%E8%B5%84%E6%BA%90%E5%88%86%E9%85%8D/">K8s基础-namespace-资源分配</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-pod/">K8s基础-Pod</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-pod%E8%B0%83%E5%BA%A6-%E6%A0%87%E7%AD%BE%E4%B8%8E%E9%80%89%E6%8B%A9%E5%99%A8%E5%AE%9E%E6%88%98/">Kubernetes 标签与选择器避坑：5 条核心铁律与生产级实战案例</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-statefulset/">K8s基础-StatefulSet</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-storage/">K8s基础-Storage</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-yaml/">K8s基础-YAML</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E4%B8%B4%E6%97%B6%E5%AE%B9%E5%99%A8ephemeral/">K8s基础-临时容器Ephemeral</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E5%AE%B9%E5%99%A8%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-Sidecar-Init-Ambassador-Adapter/">K8s 容器设计模式：Sidecar / Init Container / Ambassador / Adapter</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E5%AE%B9%E5%99%A8%E8%BF%90%E8%A1%8C%E6%97%B6-containerd/">K8s基础-容器运行时-containerd</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E6%9E%B6%E6%9E%84-%E7%BB%84%E4%BB%B6-%E8%B5%84%E6%BA%90/">K8s基础-架构-组件-资源</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E8%87%AA%E5%AE%9A%E4%B9%89CRD%E8%B5%84%E6%BA%90/">K8s基础-自定义CRD资源</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E8%AE%A4%E8%AF%81-%E6%8E%88%E6%9D%83-%E5%87%86%E5%85%A5/">K8s基础-认证-授权-准入</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-db-middleware</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/Operator%E9%83%A8%E7%BD%B2Redis%E9%9B%86%E7%BE%A4/">基于Operator部署Redis集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/Operator%E9%83%A8%E7%BD%B2mysql%E9%9B%86%E7%BE%A4/">Operator部署MySQL NDB集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/helm%E9%83%A8%E7%BD%B2mysql/">Helm部署MySQL</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/helm%E9%83%A8%E7%BD%B2postgreSQL/">Helm部署PostgreSQL</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/helm%E9%83%A8%E7%BD%B2rabbitmq-ha/">Helm部署RabbitMQ高可用集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/helm%E9%83%A8%E7%BD%B2strimzi-kafka/">Helm部署Strimzi Kafka</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/k8s%E5%9F%BA%E4%BA%8Eyaml%E9%83%A8%E7%BD%B2MongoDB%E9%9B%86%E7%BE%A4/">K8s基于YAML部署MongoDB集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/k8s%E5%9F%BA%E4%BA%8Eyaml%E9%83%A8%E7%BD%B2httpd%E6%9C%8D%E5%8A%A1/">K8s基于YAML部署httpd服务</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/k8s%E5%9F%BA%E4%BA%8Eyaml%E9%83%A8%E7%BD%B2mysql%E4%B8%BB%E4%BB%8E%E9%AB%98%E5%8F%AF%E7%94%A8/">K8s基于YAML部署MySQL主从高可用</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/k8s%E5%9F%BA%E4%BA%8Eyaml%E9%83%A8%E7%BD%B2redis%E9%9B%86%E7%BE%A4/">K8s基于YAML部署Redis集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/k8s%E9%83%A8%E7%BD%B2springcloud%E7%94%B5%E5%95%86%E9%A1%B9%E7%9B%AE/">K8s部署SpringCloud电商项目</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-installation-management</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/2025%E6%9C%80%E6%96%B0-%E4%BC%81%E4%B8%9A%E7%BA%A7%E9%AB%98%E5%8F%AF%E7%94%A8%E9%9B%86%E7%BE%A4-%E5%9F%BA%E4%BA%8Erockylinux/">2025最新-企业级高可用集群-基于rockylinux</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/etcd%E9%AB%98%E5%8F%AF%E7%94%A8%E9%85%8D%E7%BD%AE%E4%BB%A5%E5%8F%8A%E6%A8%A1%E6%8B%9F%E9%9B%86%E7%BE%A4%E6%95%85%E9%9A%9C%E5%92%8C%E6%81%A2%E5%A4%8D/">etcd高可用配置以及模拟集群故障和恢复</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/k8s-Backstage-%E5%86%85%E9%83%A8%E5%BC%80%E5%8F%91%E8%80%85%E5%B9%B3%E5%8F%B0IDP%E5%AE%9E%E6%88%98/">K8s 平台工程实战：用 Backstage 打造一站式内部开发者平台</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/k8s-cgroup-v2%E6%B7%B1%E5%BA%A6%E8%A7%A3%E6%9E%90-%E8%BF%81%E7%A7%BB%E5%AE%9E%E6%88%98%E4%B8%8E%E9%81%BF%E5%9D%91%E6%8C%87%E5%8D%97/">K8s CGroup v2 深度解析：资源隔离原理、迁移实战与生产避坑指南</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/k8s%E4%B8%A4%E5%9C%B0%E4%B8%89%E4%B8%AD%E5%BF%83%E6%9E%B6%E6%9E%84/">k8s两地三中心架构</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/k8s%E5%A4%9A%E9%9B%86%E7%BE%A4kubeconfig%E7%AE%A1%E7%90%86/">k8s多集群kubeconfig管理</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/k8s%E6%95%85%E9%9A%9C%E6%8E%92%E6%9F%A5%E6%8C%87%E5%8D%97/">k8s故障排查指南</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/k8s%E7%94%9F%E4%BA%A7%E7%8E%AF%E5%A2%83%E4%BC%98%E5%8C%96%E4%B8%8E%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/">k8s生产环境优化与最佳实践</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/k8s%E9%83%A8%E7%BD%B2%E9%98%B2%E7%81%AB%E5%A2%99%E7%AB%AF%E5%8F%A3%E9%85%8D%E7%BD%AE/">K8s部署防火墙端口配置</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/latest-version/%E5%AE%89%E8%A3%85k8s-1.35-%E5%9F%BA%E4%BA%8Erockylinux10-%E6%9C%80%E6%96%B0%E6%AD%A5%E9%AA%A4/">在 Rocky Linux 10 上安装 Kubernetes 1.35</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%AE%89%E8%A3%85k8s%E9%AB%98%E5%8F%AF%E7%94%A8%E9%9B%86%E7%BE%A4/">二进制安装k8s高可用集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.20.6-%E9%AB%98%E5%8F%AF%E7%94%A8/">安装k8s-1.20.6-高可用</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.23/">安装k8s-1.23</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.26-1.27/">安装k8s-1.26-1.27</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.28/">安装k8s-1.28</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.30-%E5%9F%BA%E4%BA%8Erockylinux/">安装k8s-1.30-基于rockylinux</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.32-%E5%9F%BA%E4%BA%8Erockylinux/">安装k8s-1.32-基于rockylinux</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.33-%E5%9F%BA%E4%BA%8Erockylinux-%E6%9C%80%E6%96%B0%E6%AD%A5%E9%AA%A4/">安装k8s-1.33-基于rockylinux-最新步骤</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/%E5%8D%87%E7%BA%A7/k8s-1.37-%E5%8D%87%E7%BA%A7%E9%A1%BB%E7%9F%A5-breaking-changes/">Kubernetes v1.37 升级破坏性变更指南</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/%E5%8D%87%E7%BA%A7/k8s%E8%BF%81%E7%A7%BB%E5%AE%B9%E5%99%A8%E8%BF%90%E8%A1%8C%E6%97%B6-%E7%89%88%E6%9C%AC%E5%8D%87%E7%BA%A7/">k8s迁移容器运行时与版本升级</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-monitoring-logging</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/K8s%E5%85%A8%E9%9D%A2%E5%B7%A1%E6%A3%80%E8%84%9A%E6%9C%AC-%E7%94%9F%E6%88%90HTML%E5%81%A5%E5%BA%B7%E6%8A%A5%E5%91%8A/">K8s 全面巡检脚本：一键生成 HTML 健康报告</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/OpenTelemetry%E5%AE%9E%E6%88%98-%E7%BB%9F%E4%B8%80Traces-Metrics-Logs/">OpenTelemetry 实战：告别厂商锁定，统一 Traces/Metrics/Logs</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/Prometheus%E5%9F%BA%E7%A1%80/">Prometheus基础</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/Prometheus%E7%9B%91%E6%8E%A7k8s%E7%B3%BB%E7%BB%9F%E7%BB%84%E4%BB%B6/">Prometheus监控K8s系统组件</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/Prometheus%E7%9B%91%E6%8E%A7%E5%A4%96%E9%83%A8k8s%E9%9B%86%E7%BE%A4/">Prometheus监控外部K8s集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/Prometheus%E7%9B%91%E6%8E%A7%E9%9D%9E%E4%BA%91%E5%8E%9F%E7%94%9F%E5%BA%94%E7%94%A8-%E4%B8%BB%E6%9C%BA/">Prometheus监控非云原生应用-主机</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/helm%E9%83%A8%E7%BD%B2Loki-promtail-tempo-grafanaAgent%E5%85%A8%E5%AE%B6%E6%A1%B6/">Helm部署Loki+Promtail+Tempo+GrafanaAgent全家桶</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/helm%E9%83%A8%E7%BD%B2jaeger/">Helm部署Jaeger</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/helm%E9%83%A8%E7%BD%B2prometheus-stack%E5%85%A8%E5%AE%B6%E6%A1%B6/">Prometheus-Stack 全家桶：生产级部署与运维完全指南</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E6%97%A5%E5%BF%97%E7%AE%A1%E7%90%86-%E9%87%87%E9%9B%86%E6%96%B9%E6%A1%88%E4%B8%8E%E5%AE%A1%E8%AE%A1%E6%97%A5%E5%BF%97/">K8s 日志管理：基础机制、六种采集方案与审计日志实战</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E7%9B%91%E6%8E%A7EFK%2Blogstash%2Bkafka/">K8s监控EFK+logstash+kafka</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E7%9B%91%E6%8E%A7ES%287.2%29%2BKibana%287.2%29%2BFluentd%28v1.4.2%29/">K8s监控ES(7.2)+Kibana(7.2)+Fluentd(v1.4.2)</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E7%9B%91%E6%8E%A7Prometheus%28v2.2.1%29/">K8s监控Prometheus(v2.2.1)</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E7%9B%91%E6%8E%A7Prometheus%28v2.33.5%29%2BGrafana%28v8.4.5%29/">K8s监控Prometheus(v2.33.5)+Grafana(v8.4.5)</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E7%9B%91%E6%8E%A7alertmanager%28v0.14.0%29/">K8s监控Alertmanager(v0.14.0)</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E9%83%A8%E7%BD%B2elasticsearch%E9%9B%86%E7%BE%A4/">K8s部署Elasticsearch集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E9%83%A8%E7%BD%B2grafana%28v5.0.4%29/">K8s部署Grafana(v5.0.4)</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E9%83%A8%E7%BD%B2%E5%85%A8%E9%93%BE%E8%B7%AF%E8%BF%BD%E8%B8%AA-Skywalking/">K8s部署全链路追踪-Skywalking</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2Prometheus%28v2.32.1%29%E8%81%94%E9%82%A6%E9%9B%86%E7%BE%A4/">二进制部署Prometheus(v2.32.1)联邦集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2efk%2Blogstash%2Bkafka%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%B9%B3%E5%8F%B0/">二进制部署EFK+Logstash+Kafka日志收集平台</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2prometheus-grafana-nodeexporter/">二进制部署Prometheus-Grafana-NodeExporter</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/%E5%9F%BA%E4%BA%8Ehelm%2Boperator%E9%83%A8%E7%BD%B2ECK%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%B9%B3%E5%8F%B0/">基于Helm+Operator部署ECK日志收集平台</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-networking-service-mesh</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/Istio-Sidecar-vs-Ambient/">Istio Sidecar vs Ambient 模式对比</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/helm%E5%AE%89%E8%A3%85istio/">Helm安装Istio</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/helm%E9%83%A8%E7%BD%B2external-dns/">Helm部署External-DNS</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/helm%E9%83%A8%E7%BD%B2ingress-nginx/">Helm部署Ingress-Nginx</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/helm%E9%83%A8%E7%BD%B2tomcat/">Helm 部署 Tomcat</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/k8s-Gateway-API%E5%85%A5%E9%97%A8-Ingress%E4%B8%8B%E4%B8%80%E4%BB%A3%E6%96%B9%E6%A1%88/">Kubernetes Gateway API 入门：Ingress 的下一代方案</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/k8s%E7%B2%BE%E7%BB%86%E5%8C%96%E6%B5%81%E9%87%8F%E7%AE%A1%E7%90%86-istio/" class="current">K8s精细化流量管理-Istio</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/k8s%E9%83%A8%E7%BD%B2istio%281.13.1%29/">K8s部署Istio(1.13.1)</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/k8s%E9%9B%86%E7%BE%A4%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/">K8s集群网络安全</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/%E4%BC%81%E4%B8%9A%E9%A1%B9%E7%9B%AE%E6%8E%A5%E5%85%A5istio%E5%AE%9E%E6%88%98/">企业项目接入Istio实战</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-scaling</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-scaling/KEDA-vs-HPA-2026%E7%BB%88%E6%9E%81%E5%AF%B9%E6%AF%94-v1.36%E7%BC%A9%E9%9B%B6/">KEDA vs HPA 2026 终极对比：v1.36 原生缩零后该选谁？</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-scaling/helm%E9%83%A8%E7%BD%B2goldilocks/">Helm部署Goldilocks</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-scaling/helm%E9%83%A8%E7%BD%B2vpa/">Helm部署VPA</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-scaling/k8s-HPA-VPA/">K8s HPA与VPA</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-scaling/k8s-%E5%9F%BA%E4%BA%8EKEDA%E7%9A%84%E5%BC%B9%E6%80%A7%E8%83%BD%E5%8A%9B/">K8s基于KEDA的弹性能力</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-scaling/k8s%E6%88%90%E6%9C%AC%E4%BC%98%E5%8C%96%E6%96%B9%E6%A1%88-FinOps%E5%AE%9E%E6%88%98/">K8s 集群成本优化方案：砍掉 60% 云账单</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-security-auth</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2capsule/">Helm部署Capsule</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2certmanager/">Helm部署Cert-Manager</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2external-secrets/">Helm部署External-Secrets</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2kyverno%E5%92%8Cpolicy-reporter/">Helm部署Kyverno和Policy-Reporter</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2oauth2proxy/">Helm部署OAuth2-Proxy</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2sonarqube/">Helm部署SonarQube</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2trivy-operator/">Helm部署Trivy-Operator</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/k8s-Admission-Webhook%E9%93%BE%E5%86%B2%E7%AA%81%E6%8E%92%E6%9F%A5-Istio-Kyverno-Gatekeeper/">当 Istio、Kyverno、Gatekeeper 三个 Webhook 同时存在，你的集群会发生什么？</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/k8s%E5%AE%B9%E5%99%A8%E5%AE%89%E5%85%A8%E4%B8%8A%E4%B8%8B%E6%96%87-SecurityContext/">Kubernetes 容器安全上下文完全指南：从入门到生产避坑</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-springcloud</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-springcloud/SpringCloud%E9%A1%B9%E7%9B%AE%E8%BF%81%E7%A7%BB%E5%88%B0k8s%E5%AE%9E%E6%88%98/">SpringCloud 项目迁移到 K8s 实战</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-storage</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-storage/helm%E9%83%A8%E7%BD%B2nfs-subdir-external-provisioner/">Helm部署NFS Subdir External Provisioner</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-storage/k8s-ceph%E9%83%A8%E7%BD%B2%E4%B8%8E%E9%9B%86%E6%88%90/">K8s Ceph部署与集成</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-storage/k8s-%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8CubeFS/">K8s分布式存储CubeFS</a></li>
+        </ul>
+        <p class="sidebar-group">kubeblocks</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/kubeblocks/kubeblocks%E9%83%A8%E7%BD%B2WordPress/">KubeBlocks 部署 WordPress</a></li>
+          <li><a href="../../../Docker-Kubernetes/kubeblocks/kubeblocks%E9%83%A8%E7%BD%B2%E9%AB%98%E5%8F%AF%E7%94%A8harbor%E9%9B%86%E7%BE%A4/">KubeBlocks 部署高可用 Harbor 集群</a></li>
+        </ul>
+        <p class="sidebar-group">其他</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/%E7%AE%80%E5%8E%86%E6%8C%87%E5%8D%97/">简历指南</a></li>
+        </ul>
+      </nav>
+    </details>
+  </aside>
+
+  <article class="article">
+    <nav class="breadcrumb">
+      <a href="../../../index.html">首页</a><span>/</span>
+      <a href="../../../Docker-Kubernetes/">Docker-Kubernetes</a><span>/</span><span>k8s-networking-service-mesh</span>
+    </nav>
+    <h1 class="article-title">K8s精细化流量管理-Istio</h1>
+    <p class="article-meta"><span>更新于 2026-07-15</span>
+      <a href="https://github.com/hangx969/learning-notes/blob/main/Docker-Kubernetes/k8s-networking-service-mesh/k8s%E7%B2%BE%E7%BB%86%E5%8C%96%E6%B5%81%E9%87%8F%E7%AE%A1%E7%90%86-istio.md">查看源文件</a>
+    </p>
+    <div class="article-body">
+<h1 id="服务网格背景">服务网格背景</h1>
+<h2 id="为什么要用服务网格">为什么要用服务网格</h2>
+<p>应用架构演变：单体应用 -- 微服务 -- 函数即服务</p>
+<ol>
+<li>单体应用发展到微服务带来的问题：</li>
+<li>服务间通信复杂：各个服务之间通过接口调用其他服务</li>
+<li>流量精细化管理很难：比如想实现金丝雀发布</li>
+<li>服务间安全通信难：双向TLS加密需要自己实现</li>
+<li>多语言环境统一治理困难：Java服务怎么自动发现python服务等</li>
+<li>跨服务间依赖管理困难：B服务挂掉，可能影响上游A服务</li>
+<li>可观测性不足：链路调用可追踪性不足</li>
+<li>为了解决上述问题，可以采用SpringCloud框架、Nacos框架等解决服务发现。但是也有问题：</li>
+<li>一是k8s已经提供了这些功能，再在k8s中用springCloud属于套娃。</li>
+<li>对于开发人员，需要手动维护微服务之间的调用、负载均衡、服务发现、熔断降级、动态路由等功能。这些都需要写代码，然而都不属于业务逻辑，严重影响开发效率。</li>
+<li>springCloud和Nacos都是原生支持Java，但是对其他语言的支持性不好。这对于多语言环境很不友好。</li>
+<li>为了解决上述问题，引入了服务网格：</li>
+<li>把上述流量治理的功能下沉到了基础设施。开发人员只需要聚焦自己的业务逻辑就行了。</li>
+</ol>
+<h2 id="服务网格">服务网格</h2>
+<p>SeriviceMesh有Buoyant公司CEO William Morgan发起，目标位解决微服务之间的复杂链路问题。</p>
+<p>ServiceMesh将程序开发的网络功能和程序本身解耦，网络功能下沉到基础架构。</p>
+<p>由服务网格实现服务之间的负载均衡等功能，并且除了网络功能外，也提供了其他更高级的功能，比如：全链路加密、监控、链路追踪等。</p>
+<p>服务网格最常用的架构就是一个服务对应一个sidecar proxy。</p>
+<h3 id="核心功能">核心功能</h3>
+<ol>
+<li>负载均衡</li>
+</ol>
+<p>服务间访问可以自定义轮询、最小连接数等负载均衡算法。</p>
+<ol>
+<li>服务发现</li>
+</ol>
+<p>服务上下线，流量会自动做接入和切断</p>
+<ol>
+<li>熔断降级</li>
+</ol>
+<p>下游服务故障之后，上游服务会自动降级，避免发生微服务雪崩</p>
+<ol>
+<li>动态路由</li>
+</ol>
+<p>灰度、蓝绿发布</p>
+<ol>
+<li>故障注入</li>
+</ol>
+<p>用来测试服务韧性，模拟某个微服务的故障，测试其他服务的正常运行情况</p>
+<ol>
+<li>错误重试</li>
+</ol>
+<p>网络抖动时，提供重试功能。谨慎使用，避免幂等性问题。</p>
+<ol>
+<li>安全通信</li>
+</ol>
+<p>网格内的服务可以实现全链路加密，开箱即用</p>
+<ol>
+<li>语言无关</li>
+</ol>
+<p>服务网格代理与应用语言无关。</p>
+<h2 id="产品对比">产品对比</h2>
+<h3 id="linkerd">Linkerd</h3>
+<ul>
+<li>Buoyant公司在2016年率先开源的高性能网络代理程序。是服务网格的鼻祖，标志着Service Mesh时代的开始。</li>
+<li>配置和管理比较复杂。</li>
+</ul>
+<h3 id="envoy">Envoy</h3>
+<ul>
+<li>高性能服务网格程序，为云原生设计。但是他并不是一款完整的服务网格产品，只是个网络代理程序。</li>
+<li>Istio和Kuma属于比较完整的服务网格程序，是基于Envoy开发的。</li>
+</ul>
+<h3 id="kuma">Kuma</h3>
+<ul>
+<li>由Kong开发并提供支持，是一个通用的现代服务网格控制平面。基于Envoy构建。</li>
+</ul>
+<h3 id="istio">Istio</h3>
+<ul>
+<li>Istio受Google、IBM、Lyft等公司的支持和推广，于2017年5月发布。底层为Envoy。</li>
+<li>因为有大厂支持和背书，是现在服务网格产品的首选。</li>
+<li>很多云计算大厂的k8s产品带的服务网格功能，底层也是接入的istio。</li>
+</ul>
+<h1 id="istio功能">istio功能</h1>
+<h2 id="文档">文档</h2>
+<p>官方文档：<a href="https://istio.io/docs/concepts/what-is-istio/">Istio - What is Istio</a></p>
+<p>Github地址：<a href="https://github.com/istio/istio/releases">istio/istio</a></p>
+<p>详解文章：<a href="https://juejin.cn/post/7310878133720301604">Istio详解 - 掘金</a></p>
+<h2 id="核心功能_1">核心功能</h2>
+<p>Istio是一个开源的服务网格（Service Mesh）产品，专为微服务架构设计，用于透明的管理微服务间的通信、安全、监控和流量策略。</p>
+<p>Istio通过sidecar拦截并控制服务间的所有流量，将复杂的微服务治理从业务代码中剥离，病下沉到基础设施层，使开发者更专注于业务逻辑，以提升开发效率。</p>
+<p>以下是Istio的一些基本特性：</p>
+<ol>
+<li>代理注入：Istio使用Envoy作为其数据面代理，通过注入Envoy代理到每个微服务的Pod中，实现对流量的控制和管理。这种代理注入的方式无需修改应用代码，提供了一种非侵入式的部署方式。（部署好istio，会自动在创建的pod里面注入一个sidecar envoy容器）</li>
+<li>服务发现：Istio通过在代理中集成服务注册和发现机制，实现对微服务实例的自动发现和路由。它能够动态地将流量转发到可用的服务实例，并支持多种服务发现的机制 </li>
+<li>负载均衡：Istio提供了丰富的负载均衡策略，可以根据不同的需求进行流量的分发和负载均衡，包括轮询、加权轮询、故障感知等。（Istio主要工作在六层）</li>
+<li>流量管理：Istio可以实现对流量的灵活管理和控制，支持流量切分、A/B测试、金丝雀发布等高级流量管理功能。它可以帮助开发人员更好地控制和管理微服务架构中的流量。</li>
+<li>故障恢复：Istio提供了故障恢复机制，包括超时控制、重试、断路器和熔断等。它能够自动检测和处理微服务中的故障，并提供弹性和可靠性。</li>
+<li>安全性：Istio提供了丰富的安全功能，包括双向TLS流量加密（mTLS）、身份认证和授权、访问控制（用的比较少，开发者还是更愿意在程序内部处理认证逻辑）等。它可以通过自动注入代理，对服务间的通信进行加密和验证，提供了更高层次的安全保障。</li>
+<li>集群出入口流量管理：入口流量，可以代替ingress-controller提供外部访问入口；出口流量，可以让集群出口流量固定到某一个出口出去。</li>
+</ol>
+<h3 id="流量管理">流量管理</h3>
+<h4 id="熔断">熔断</h4>
+<ul>
+<li>熔断是一种故障保护机制，用于在服务之间的通信中防止故障扩散，并提供更好的容错能力。在微服务架构中，一个应用通常由许多小型的、相互协作的服务组成。当某个服务发生故障或变得不可用时，如果不采取措施，可能会导致连锁反应，影响到整个系统的可用性。熔断机制旨在解决这个问题，其核心思想是在服务之间设置阈值和超时时间，并对请求进行监控。当服务的错误率或响应时间超过预设的阈值时，熔断器会打开，拒绝向该服务发送更多请求，并快速失败返回错误，而不是等待超时。</li>
+<li>应用场景</li>
+<li>快速失败返回: 当目标服务不可用时，不再尝试等待请求超时，而是快速返回错误，从而避免资源浪费和潜在的长时间等待。</li>
+<li>故障隔离: 熔断机制阻止故障扩散，使问题局限在出现故障的服务，而不会影响到整个应用程序。</li>
+<li>恢复机制: 熔断器会定期尝试发起一些请求到目标服务，以检查其是否已经恢复。如果服务恢复正常，则熔断器会逐渐关闭，允许流量再次流向目标服务。</li>
+<li>自动重试: 一旦目标服务恢复，熔断器会逐渐允许一部分流量通过，如果没有再次出现问题，会逐渐恢复到正常状态，否则继续保持熔断状态。</li>
+<li>在高并发情况下，如果请求数量达到一定极限（可以自己设置阈值），超出了设置的阈值，断路器会自动开启服务保护功能，通过服务降级的方式返回一个友好的提示给客户端。假设当10个请求中，有10%失败时，熔断器就会打开，此时再调用此服务，将会直接返回失败，不再调远程服务。直到10s之后，重新检测该触发条件，判断是否把熔断器关闭或者继续打开。</li>
+</ul>
+<h4 id="超时">超时</h4>
+<ul>
+<li>在 Kubernetes（K8s）集群中结合 Istio，可以使用 Istio 的流量管理功能来控制服务之间的请求超时。超时是指在一定时间内，如果某个请求没有得到及时响应，就会被认为是超时。通过设置请求超时时间，可以对服务之间的通信进行控制，确保请求在合理的时间内得到响应，避免请求无限期地等待导致资源浪费或影响整体系统的响应性能。</li>
+</ul>
+<p>Istio 的超时控制允许你为每个服务之间的请求设置最大的等待时间。当某个请求在指定的超时时间内没有得到响应时，Istio 会终止该请求并返回一个错误响应给客户端。这样可以防止请求在后端服务长时间等待，从而避免请求积压，同时提高系统的稳定性和可用性。</p>
+<h4 id="重试">重试</h4>
+<ul>
+<li>重试机制就是如果调用服务失败，Envoy 代理尝试连接服务的最大次数。而默认情况下，Envoy 代理在失败后并不会尝试重新连接服务。</li>
+</ul>
+<h1 id="istio架构">istio架构</h1>
+<p><img alt="image-20240212203342339" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202402122033623.png" /></p>
+<p>Istio从逻辑上分为数据平面和控制平面：</p>
+<ul>
+<li>控制平面：</li>
+<li>负责管理和配置数据平面的流量策略。由管理员创建的Istio资源会解析成相关的配置下发到数据平面</li>
+<li>
+<p><strong>istio 1.5+中使用了一个全新的部署模式，重建了控制平面，将原有的多个组件整合为一个单体结构istiod，这个组件是控制平面的核心，管理Istio的所有功能，主要包括Pilot、Mixer、Citadel等服务组件，是以三个进程运行的。</strong></p>
+</li>
+<li>
+<p>数据平面：</p>
+</li>
+<li>由一组以Sidecar方式部署的智能代理容器组成。这些代理承载并控制微服务之间的所有网络通信，管理入口和出口流量，类似于一线员工。</li>
+<li>Sidecar 一般和业务容器运行在一个pod里，来劫持业务应用容器的流量，并接受控制面组件的控制，同时会向控制面输出日志、跟踪及监控数据。</li>
+<li>数据平面在Istio 1.22版本后，分为了Sidecar和Ambient两种模式：<ul>
+<li>Sidecar模式：为集群中启动的pod部署一个Envoy代理，或者为在虚拟机上运行的服务并行创建一个Envoy代理。</li>
+<li>Ambient模式：在每个节点上启动四层代理Ztunnel，也可以在每个命名空间启动一个Envoy（waypoint）。出现这种模式是因为sidecar也需要占用资源，pod量上去之后，大量的sidecar也要占用很多资源。这种模式在节点上启动一个代理，这个代理故障会影响整个节点的流量。</li>
+</ul>
+</li>
+</ul>
+<h2 id="工作模式对比">工作模式对比</h2>
+<table>
+<thead>
+<tr>
+<th>对比项</th>
+<th>对比维度</th>
+<th>Sidecar</th>
+<th>Ambient</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>核心架构</td>
+<td>代理部署方式</td>
+<td>每个pod注入一个Envoy Sidecar容器</td>
+<td>分层部署：<br />L4：每个节点部署一个Ztunnel代理<br />L7：每个ns部署一个或多个Waypoint代理</td>
+</tr>
+<tr>
+<td></td>
+<td>流量管理</td>
+<td>通过iptables/IPVS规则劫持pod进出流量</td>
+<td>四层由Ztunnel处理，七层由Waypoint处理</td>
+</tr>
+<tr>
+<td></td>
+<td>覆盖范围</td>
+<td>所有注入Sidecar的pod</td>
+<td>默认纳入所有pod，无需添加annotation（灵活性较差）</td>
+</tr>
+<tr>
+<td></td>
+<td>故障可用性</td>
+<td>只影响某个故障的pod</td>
+<td>影响当前节点或当前空间的所有服务（影响较大）</td>
+</tr>
+<tr>
+<td>资源开销</td>
+<td>代理数量</td>
+<td>每个pod一个Envoy</td>
+<td>Ztunnel：每个节点一个代理<br />Wayponit：通常一个ns一个或多个</td>
+</tr>
+<tr>
+<td></td>
+<td>内存/CPU消耗</td>
+<td>较高（也要看开启了多少sidecar）</td>
+<td>较低（也要看实际使用量）</td>
+</tr>
+<tr>
+<td></td>
+<td>启动延迟</td>
+<td>pod启动时需要等待Sidecar就绪</td>
+<td>Pod启动无需等待代理，延迟更低</td>
+</tr>
+<tr>
+<td>性能对比</td>
+<td>调用延迟</td>
+<td>每个请求经过两次Envoy代理</td>
+<td>四层经过Ztunnel，七层经过Waypoint。（跨ns、跨节点时，经过多跳Ztunnel和Waypoint，延迟可能更多）</td>
+</tr>
+</tbody>
+</table>
+<p>Sidecar模式官方也是推荐在生产环境中使用，非常成熟稳定，而且服务网格大部分功能都支持。</p>
+<p>Ambient在官网一直是标成Beta版本，不推荐在生产环境中使用，有些功能不支持，比如跨集群、虚拟机服务代理等。</p>
+<h1 id="istio组件">istio组件</h1>
+<h2 id="控制平面">控制平面</h2>
+<h3 id="pilot">Pilot</h3>
+<p>Pilot主要用于监听API Server，动态获取集群中的svc和endpoint信息，将配置的路由规则、负载均衡策略转换为Envoy可理解的配置，下发到各个Sidecar中。</p>
+<p><img alt="image-20240212204831402" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202402122048477.png" /></p>
+<h3 id="citadel">Citadel</h3>
+<ul>
+<li>
+<p>Citadel负责Istio中的身份和凭据管理，提供安全相关功能。它用于为服务生成和分发TLS证书，以实现服务之间的安全通信。</p>
+</li>
+<li>
+<p>Citadel可以被视为团队中的保密专员。它负责确保团队成员之间的通信是安全的，别人无法窃听或者假冒。Citadel会为每个队员提供一个保密的通信渠道，确保他们之间的交流是私密的，就像用密码和密钥加密信息一样。</p>
+</li>
+</ul>
+<p><img alt="image-20240212205143030" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202402122051084.png" /></p>
+<h3 id="galley">Galley</h3>
+<ul>
+<li>Galley是Istio的配置管理组件，负责验证、转换和分发配置给其他Istio组件。它监听Kubernetes的配置更改，例如Service、Deployment等，根据规则和策略生成Istio所需的配置，并将其提供给Pilot和其他组件。</li>
+<li>Gallery使用Mesh Configuration Protocol和其他组件进行配置交互。</li>
+<li>Galley可以被看作是团队中的文件管理员。它负责管理团队中所有的文件和信息，确保每个队员都能得到正确的信息和文件。当有新的文件产生或者文件发生变化时，Galley会及时通知团队中的每个成员，确保大家都使用的是最新的文件，不会出现信息不同步的问题。</li>
+</ul>
+<h2 id="数据平面">数据平面</h2>
+<h3 id="envoy_1">Envoy</h3>
+<ul>
+<li>
+<p>Envoy是Istio中的代理，pod开启了istio功能，会在pod里自动注入Envoy sidecar容器，它负责处理服务之间的所有网络通信，拦截并转发所有的HTTP、TCP和gRPC流量。Envoy提供强大的流量控制和管理功能，如路由、重试、超时和故障注入等。</p>
+</li>
+<li>
+<p>Envoy和主容器同属于一个Pod，共享网络和命名空间，Envoy代理进出Pod的流量，并将流量按照外部请求的规则作用于主容器中。</p>
+</li>
+<li>
+<p>Envoy可以看作是服务之间的守护者。它像一个中间人一样，坐在每个服务旁边（就像每个队员身边都有一个保镖一样）。它负责处理服务之间的所有信息传递，确保信息传送得又快又准确。如果有请求从一个服务发出，Envoy会帮它找到正确的目标服务并将请求送达过去。它还能处理各种不同类型的请求，就像精通各种语言的翻译一样。</p>
+</li>
+</ul>
+<p><img alt="image-20240212205022521" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202402122050589.png" /></p>
+<h2 id="组件调用关系">组件调用关系</h2>
+<p><img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202402131741612.png" alt="image-20240213174135452" style="zoom: 67%;" /></p>
+<ol>
+<li>自动注入：Kubernetes在创建Pod时调用Sidecar代理服务，自动将Sidecar代理容器（也叫做envoy容器）注入到Pod中。</li>
+<li>流量拦截：通过设置iptables规则，Envoy拦截业务容器的入口和出口流量，应用程序感知不到Sidecar代理容器的存在。上图中，流出frontend服务的流量会被 frontend服务侧的 sidecar拦截，而当流量到达forecast容器时，Inbound流量被forecast 服务侧的sidecar拦截。</li>
+<li>服务发现：服务发起方的 Envoy 调用控制面组件 Pilot 的服务发现接口获取目标服务的实例列表。上图中，frontend 服务侧的 Envoy 通过 Pilot 的服务发现接口得到forecast服务各个实例的地址。 </li>
+<li>负载均衡：服务发起方的Envoy根据配置的负载均衡策略选择服务实例，并连接对应的实例地址。上图中，数据面的各个Envoy从Pilot中获取forecast服务的负载均衡配置，并执行负载均衡动作。 </li>
+<li>流量治理：Envoy 从 Pilot 中获取配置的流量规则，在拦截到 Inbound 流量和Outbound 流量时执行治理逻辑。上图中， frontend 服务侧的 Envoy 从 Pilot 中获取流量治理规则，并根据该流量治理规则将不同特征的流量分发到forecast服务的v1或v2版本。 </li>
+<li>访问安全：在服务间访问时通过双方的Envoy进行双向认证和通道加密，并基于服务的身份进行授权管理。上图中，Pilot下发安全相关配置，在frontend服务和forecast服务的Envoy上自动加载证书和密钥来实现双向认证，其中的证书和密钥由另一个管理面组件 Citadel维护。 </li>
+<li>服务监测：在服务间通信时，通信双方的Envoy都会连接管理面组件Mixer上报访问数据，并通过Mixer将数据转发给对应的监控后端。上图中，frontend服务对forecast服务的访问监控指标、日志和调用链都可以通过这种方式收集到对应的监控后端。 </li>
+<li>策略执行：在进行服务访问时，通过Mixer连接后端服务来控制服务间的访问，判断对访问是放行还是拒绝。上图中，Mixer 后端可以对接一个限流服务对从frontend服务到forecast服务的访问进行速率控制等操作。 </li>
+<li>外部访问：在网格的入口处有一个Envoy扮演入口网关的角 色。上图中，外部服务通过Gateway访问入口服务 frontend，对 frontend服务的负载均衡和一些流量治理策略都在这个Gateway上执行。</li>
+</ol>
+<h1 id="istio核心资源">istio核心资源</h1>
+<h2 id="destinationrule">DestinationRule</h2>
+<p>目标规则，将服务划分为多个版本（子集），同时可以对不同版本进行配置负载均衡和连接池等策略。</p>
+<p>使用场景：</p>
+<ol>
+<li>版本划分：根据标签划分<strong>同一个服务的不同版本</strong>（使用灰度发布的时候会用到，v1/v2两个版本）</li>
+<li>负载均衡策略：支持配置各种负载均衡算法（如轮询、随机、最小链接数等）</li>
+<li>熔断器：支持配置最大连接数、熔断等</li>
+</ol>
+<h2 id="virtualservice">VirtualService</h2>
+<p>Istio路由规则的核心，用于控制流量走向。和Ingress类似，支持HTTP、gPRC、TCP等协议。</p>
+<p>控制南北流量：可以声明一个域名实现集群外访问。与Ingress类似。</p>
+<p>控制东西流量：通常和DestinationRule结合实现更细粒度的流量分配。比如灰度发布。</p>
+<p>主要应用场景：</p>
+<ol>
+<li>灰度发布：支持基于比例的流量分配</li>
+<li>A/B测试：支持基于请求头、URI、权重等条件的流量分配</li>
+<li>重试：支持错误重试、故障注入、链接超时等策略</li>
+</ol>
+<h2 id="gateway">Gateway</h2>
+<p>Istio集群的出入口网关，处理对外的流量。通常和VirtualService结合实现内外流量的统一治理。</p>
+<p>主要应用场景：</p>
+<ol>
+<li>端口监听：可根据协议指定对外暴露的端口</li>
+<li>TLS：可以根据域名证书提供HTTPS访问</li>
+<li>域名：可以根据域名进行路由转发</li>
+<li>出口管控：可以将出口的流量固定从EgressGateway的服务中代理出去</li>
+</ol>
+<h3 id="ingressgateway">Ingressgateway</h3>
+<ul>
+<li>ingressgateway是Istio中的一个特殊网关，它作为整个网格的入口，接收外部请求，并将它们引导到内部的服务。</li>
+<li>可以将它比作一个大门保安，负责接收外部人员的访问请求，然后根据配置的规则将请求分发给网格内部的服务。</li>
+<li>可以类比为ingress-nginx controller。在本地实验环境部署中，本地域名+ingressgateway svc的高位端口访问到集群服务。</li>
+</ul>
+<h3 id="egressgateway">egressgateway</h3>
+<ul>
+<li>egressgateway是Istio中的另一个特殊网关，它负责处理网格内部服务对集群外部服务的访问请求。</li>
+<li>可以将它看作是一个网格内部的出口，负责将内部服务需要访问的外部服务请求发送到外部。</li>
+</ul>
+<h2 id="核心资源逻辑架构">核心资源逻辑架构</h2>
+<p><img alt="image-20250826154253315" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202508261542496.png" /></p>
+<ul>
+<li>DestinationRule：定义服务子集和流量策略，路由的最终目标。</li>
+<li>VirtualService：路由规则的核心，控制流量去向。</li>
+<li>Gateway：管理外部流量入口和出口，与VS协同实现内外流量统一治理。（只是声明对外暴露哪些域名和端口，实际路由转发规则是VS定义的）</li>
+</ul>
+<p>三者可以单独使用也可以配合使用。</p>
+<p>以上三种资源不是实际存在的，只是一些配置，Istio拿到这些资源，翻译成Envoy认识的配置，实际本质上起作用的还是Envoy、IngressGateway。</p>
+<h2 id="核心资源定义">核心资源定义</h2>
+<p>官网文档：<a href="https://istio.io/latest/docs/reference/config/networking/">Istio Traffic Management</a></p>
+<h3 id="destinationrule_1">DestinationRule</h3>
+<p><a href="https://istio.io/latest/docs/reference/config/networking/destination-rule/">Istio / Destination Rule</a></p>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">networking.istio.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">DestinationRule</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">bookinfo-ratings</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ratings.prod.svc.cluster.local</span><span class="w"> </span><span class="c1"># 路由规则的目标。客户端向服务端发送请求时用的地址。一般是写svc FQDN</span>
+<span class="w">  </span><span class="nt">trafficPolicy</span><span class="p">:</span><span class="w"> </span><span class="c1"># 针对这一个svc，配置流量规则配置</span>
+<span class="w">    </span><span class="nt">loadbalancer</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">simple</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">LEAST_REQUEST</span><span class="w"> </span><span class="c1"># 最小请求算法</span>
+<span class="w">  </span><span class="nt">subsets</span><span class="p">:</span><span class="w"> </span><span class="c1"># 版本划分</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v3</span><span class="w"> </span><span class="c1"># 自己起一个版本名称</span>
+<span class="w">    </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v3</span>
+<span class="w">    </span><span class="nt">trafficPolicy</span><span class="p">:</span><span class="w"> </span><span class="c1"># 还可以对不同版本的服务做配置，这里的会覆盖掉外面的trafficPolicy</span>
+<span class="w">      </span><span class="nt">loadbalancer</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">simple</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ROUND_ROBIN</span><span class="w"> </span><span class="c1"># 轮询算法</span>
+</code></pre></div>
+
+<h3 id="virtualservice_1">VirtualService</h3>
+<p><a href="https://istio.io/latest/docs/reference/config/networking/virtual-service/">Istio / Virtual Service</a></p>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">networking.istio.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">VirtualService</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ProductPage</span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nsA</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">hosts</span><span class="p">:</span>
+<span class="w">  </span><span class="c1"># 路由规则的目标，客户端向服务端发动请求时使用的地址。</span>
+<span class="w">  </span><span class="c1"># 如果是管理南北流量，写域名；管理东西流量，写svc的FQDN</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">bookinfo.com</span>
+<span class="w">  </span><span class="nt">gateways</span><span class="p">:</span>
+<span class="w">  </span><span class="c1"># 管理南北流量，写当前域名绑定的gateway的名称。</span>
+<span class="w">  </span><span class="c1"># 管理东西流量，可以不用写</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-gateway</span>
+<span class="w">  </span><span class="nt">http</span><span class="p">:</span><span class="w"> </span><span class="c1"># 配置七层代理规则 - 某个路径路由到哪个服务</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">match</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">url</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">prefix</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/productpage/v1/</span>
+<span class="w">    </span><span class="nt">route</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">destination</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">productpage-v1.nsA.svc.cluster.local</span>
+<span class="w">  </span><span class="c1"># 请求匹配到bookinfo.com/productpage/v1/，就走上面的svc</span>
+<span class="w">  </span><span class="c1"># 没匹配到，就走这个默认的svc。下面的默认配置也可以不写。</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">route</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">destination</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">productpage.nsA.svc.cluster.local</span>
+</code></pre></div>
+
+<h3 id="gateway_1">Gateway</h3>
+<p><a href="https://istio.io/latest/docs/reference/config/networking/gateway/">Istio / Gateway</a></p>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">networking.istio.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Gateway</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-gateway</span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nsA</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">selector</span><span class="p">:</span><span class="w"> </span><span class="c1"># 选择运行此网关配置的istio ingress gateway pod（一般一个集群内装一个ingress gateway）</span>
+<span class="w">    </span><span class="nt">app</span><span class="p">:</span><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">my-gateway-controller</span>
+<span class="w">  </span><span class="nt">servers</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">port</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">http</span>
+<span class="w">      </span><span class="nt">number</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span>
+<span class="w">      </span><span class="nt">protocol</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">HTTP</span>
+<span class="w">    </span><span class="nt">hosts</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;bookinfo.com&quot;</span>
+</code></pre></div>
+
+<p>推荐给每一个ns创建一个Gateway，单独管理这个ns里面的服务暴露的域名。</p>
+<p>不推荐把所有的域名全放在一个Gateway资源里面，这样翻译出来的Envoy配置文件会变得很大。</p>
+<h1 id="istio生产环境高可用架构">istio生产环境高可用架构</h1>
+<p>回顾Ingress Controller的高可用架构：ingress Controller的pod所在的宿主机暴露80/443端口，前端有个负载均衡器LB（F5、SLB、LVS、HAProxy等），购买的公网域名绑定到LB的IP上。LB配置80/443端口，解析到ingress-conrtoller的节点的80/443上，ingress-controller再把流量代理到后端svc-pod。</p>
+<h2 id="istio-gateway架构">istio gateway架构</h2>
+<p>对于istio也是类似的：</p>
+<p><img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202508261729606.png" alt="image-20250826172950474" style="zoom: 67%;" /></p>
+<p>Istio Gateway和ingress-controller一样，也是有一个端口在宿主机上暴露，这个端口是内网访问的入口。</p>
+<p>服务发布到公网，需要在前端LB上配置IP或者代理，指向后端的istio gateway的端口号，由istio gateway再代理到后端服务。</p>
+<h2 id="设备选型问题">设备选型问题</h2>
+<p>istio gateway和ingress controller功能一样，实际使用中用哪个？</p>
+<p>在功能层面，istio gateway完全覆盖ingress controller的功能（反之则不行）。所以建议网关直接用istio gateway。</p>
+<h1 id="itsio部署">itsio部署</h1>
+<h2 id="版本release表">版本release表</h2>
+<p>官网版本支持表：<a href="https://istio.io/latest/docs/releases/supported-releases/#support-status-of-istioreleases">Istio Supported Releases</a></p>
+<p>github release：<a href="https://github.com/istio/istio/releases">Releases - istio/istio</a></p>
+<h2 id="安装istioctl">安装istioctl</h2>
+<p>Istio自带istioctl工具，用来操作istio。</p>
+<div class="highlight"><pre><span></span><code><span class="c1">#首先下载Istio的安装包： </span>
+wget<span class="w"> </span>https://github.com/istio/istio/releases/download/1.27.0/istio-1.27.0-linux-amd64.tar.gz<span class="w"> </span>
+<span class="c1">#解压后，将Istio的客户端工具istioctl，移动到/usr/local/bin 目录下： </span>
+tar<span class="w"> </span>xf<span class="w"> </span>istio-1.27.0-linux-amd64.tar.gz<span class="w"> </span>
+<span class="nb">cd</span><span class="w"> </span>istio-1.27.0<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>mv<span class="w"> </span>bin/istioctl<span class="w"> </span>/usr/local/bin/<span class="w"> </span>
+istioctl<span class="w"> </span>version<span class="w"> </span>
+</code></pre></div>
+
+<h2 id="声明istiooperator资源-测试环境">声明istioOperator资源 - 测试环境</h2>
+<p>对于istio安装，也是建议用istioctl工具安装，首先需要声明istioOperator的配置：</p>
+<h3 id="创建istio-system-ns">创建istio-system ns</h3>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>create<span class="w"> </span>ns<span class="w"> </span>istio-system
+</code></pre></div>
+
+<h3 id="声明istiooperator配置">声明istioOperator配置</h3>
+<p>创建istio-operator.yaml：</p>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">install.istio.io/v1alpha1</span><span class="w"> </span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">IstioOperator</span><span class="w"> </span>
+<span class="nt">metadata</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">example-istio</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">istio-system</span><span class="w"> </span>
+<span class="nt">spec</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">hub</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">m.daocloud.io/docker.io/istio</span><span class="w"> </span><span class="c1"># 修改镜像地址</span>
+<span class="w">  </span><span class="nt">meshConfig</span><span class="p">:</span><span class="w"> </span>
+<span class="w">    </span><span class="nt">accessLogEncoding</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">JSON</span><span class="w"> </span>
+<span class="w">    </span><span class="nt">accessLogFile</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/dev/stdout</span><span class="w"> </span>
+<span class="w">  </span><span class="c1"># https://istio.io/latest/docs/setup/additional-setup/config-profiles/</span>
+<span class="w">  </span><span class="nt">profile</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span><span class="w"> </span><span class="c1"># 生产环境建议直接用default就行。</span>
+<span class="w">  </span><span class="nt">components</span><span class="p">:</span><span class="w"> </span>
+<span class="w">    </span><span class="nt">base</span><span class="p">:</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"> </span>
+<span class="w">    </span><span class="nt">cni</span><span class="p">:</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"> </span>
+<span class="w">    </span><span class="nt">egressGateways</span><span class="p">:</span><span class="w"> </span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">istio-egressgateway</span><span class="w"> </span>
+<span class="w">    </span><span class="nt">ingressGateways</span><span class="p">:</span><span class="w"> </span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">istio-ingressgateway</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">k8s</span><span class="p">:</span><span class="w"> </span><span class="c1"># ingressgateway自己的pod端口配置</span>
+<span class="w">        </span><span class="nt">service</span><span class="p">:</span><span class="w">      </span><span class="c1"># 将Service类型改成NodePort </span>
+<span class="w">          </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">NodePort</span><span class="w"> </span>
+<span class="w">          </span><span class="nt">ports</span><span class="p">:</span><span class="w"> </span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">status-port</span>
+<span class="w">            </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">15020</span><span class="w"> </span>
+<span class="w">            </span><span class="nt">nodePort</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30520</span><span class="w">  </span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">http2</span><span class="w"> </span>
+<span class="w">            </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span><span class="w">  </span><span class="c1"># 流量入口80端口映射到NodePort的30080，之后通过节点IP+30080即可访问Istio服务 </span>
+<span class="w">            </span><span class="nt">nodePort</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30080</span><span class="w"> </span>
+<span class="w">            </span><span class="nt">targetPort</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8080</span><span class="w"> </span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https</span><span class="w"> </span>
+<span class="w">            </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">443</span><span class="w"> </span>
+<span class="w">            </span><span class="nt">nodePort</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30443</span><span class="w"> </span>
+<span class="w">            </span><span class="nt">targetPort</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8443</span><span class="w"> </span>
+</code></pre></div>
+
+<h3 id="安装istio">安装istio</h3>
+<div class="highlight"><pre><span></span><code>istioctl<span class="w"> </span>install<span class="w"> </span>-f<span class="w"> </span>istio-operator.yaml
+<span class="c1"># This will install the Istio 1.26.0 profile &quot;default&quot; into the cluster. </span>
+<span class="c1"># Proceed? (y/N) y </span>
+</code></pre></div>
+
+<h4 id="profile选项">profile选项</h4>
+<ul>
+<li>
+<p>使用 <code>istioctl</code> 安装 Istio 时，会根据指定的 profile 来选择使用的 Istio 配置文件。</p>
+</li>
+<li>
+<p>profile 参数是一个预定义的配置选项，用于快速设置 Istio 的安装配置。每个 profile 都对应一个特定的 YAML 配置文件，其中包含了一组预定义的配置选项。</p>
+</li>
+<li>
+<p>在 Istio 的安装过程中，profile 参数可以指定为以下一些值：</p>
+</li>
+<li>
+<p>demo：适用于<strong>生产环境</strong>，包含<code>istiod</code>、<code>ingressgateway</code>、<code>egressgateway</code></p>
+</li>
+<li>
+<p>default：这是一个最小配置，仅包含最基本的组件，如<code>istiod</code>和<code>ingressgateway</code> </p>
+</li>
+<li>
+<p>minimal：这个配置相对更加精简，只包含了必需的组件，适用于资源受限或轻量级的环境。只会安装<code>istiod</code>。</p>
+</li>
+<li>
+<p>istioctl install 本质上是根据选择的 profile 来加载对应的 YAML 配置文件，并将配置部署到 Kubernetes 集群中。</p>
+</li>
+<li>
+<p>如果你想查看 demo 配置文件的内容，可以通过以下命令查找 Istio 的安装目录并找到对应的文件：</p>
+</li>
+</ul>
+<p><code>sh
+  istioctl profile dump demo</code></p>
+<p>这将打印出 demo 配置的完整内容，包括各个组件的配置选项。你也可以在 Istio 官方文档中找到各种预定义的 profile 配置选项的详细信息。</p>
+<h2 id="声明istiooperator资源-生产环境">声明istioOperator资源 - 生产环境</h2>
+<p>测试环境安装出来的isitio和ingressgateway只有一个副本。生产环境建议两个以上的服务。</p>
+<h3 id="创建istio-system-ns_1">创建istio-system ns</h3>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>create<span class="w"> </span>ns<span class="w"> </span>istio-system
+</code></pre></div>
+
+<h3 id="声明istiooperator配置_1">声明istioOperator配置</h3>
+<p>istio组件的</p>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">install.istio.io/v1alpha1</span><span class="w"> </span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">IstioOperator</span><span class="w"> </span>
+<span class="nt">metadata</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">example-istio</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">istio-system</span><span class="w"> </span>
+<span class="nt">spec</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">hub</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">m.daocloud.io/docker.io/istio</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">meshConfig</span><span class="p">:</span><span class="w"> </span>
+<span class="w">    </span><span class="nt">accessLogEncoding</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">JSON</span><span class="w"> </span>
+<span class="w">    </span><span class="nt">accessLogFile</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/dev/stdout</span>
+<span class="w">  </span><span class="nt">components</span><span class="p">:</span><span class="w"> </span>
+<span class="w">    </span><span class="nt">base</span><span class="p">:</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"> </span>
+<span class="w">    </span><span class="nt">cni</span><span class="p">:</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"> </span>
+<span class="w">    </span><span class="nt">egressGateways</span><span class="p">:</span><span class="w"> </span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">istio-egressgateway</span><span class="w"> </span>
+<span class="w">    </span><span class="nt">pilot</span><span class="p">:</span><span class="w"> </span><span class="c1"># istiod组件的hpa</span>
+<span class="w">      </span><span class="nt">k8s</span><span class="p">:</span><span class="w"> </span>
+<span class="w">        </span><span class="nt">hpaSpec</span><span class="p">:</span><span class="w"> </span>
+<span class="w">          </span><span class="nt">minReplicas</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span><span class="w">  </span><span class="c1"># 默认为1 </span>
+<span class="w">          </span><span class="nt">maxReplicas</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span><span class="w"> </span><span class="c1"># 默认为5 </span>
+<span class="w">        </span><span class="nt">resources</span><span class="p">:</span><span class="w"> </span>
+<span class="w">          </span><span class="nt">limits</span><span class="p">:</span><span class="w"> </span><span class="c1"># 生产环境建议4C4G/4C8G</span>
+<span class="w">            </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2Gi</span><span class="w"> </span>
+<span class="w">            </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;2&quot;</span><span class="w"> </span>
+<span class="w">          </span><span class="nt">requests</span><span class="p">:</span><span class="w"> </span><span class="c1"># 生产环境建议4C4G/4C8G（和limit一样，提高QoS）</span>
+<span class="w">            </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">128Mi</span>
+<span class="w">            </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;100m&quot;</span><span class="w"> </span>
+<span class="w">    </span><span class="nt">ingressGateways</span><span class="p">:</span><span class="w"> </span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">istio-ingressgateway</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">k8s</span><span class="p">:</span><span class="w"> </span><span class="c1"># ingressGateway的hpa配置</span>
+<span class="w">        </span><span class="nt">hpaSpec</span><span class="p">:</span><span class="w"> </span>
+<span class="w">          </span><span class="nt">minReplicas</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span><span class="w">  </span><span class="c1"># default 1 </span>
+<span class="w">          </span><span class="nt">maxReplicas</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span><span class="w"> </span><span class="c1"># default 5 </span>
+<span class="w">        </span><span class="nt">resources</span><span class="p">:</span><span class="w"> </span>
+<span class="w">          </span><span class="nt">limits</span><span class="p">:</span><span class="w"> </span><span class="c1"># 生产环境建议4C4G/4C8G</span>
+<span class="w">            </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2Gi</span><span class="w"> </span>
+<span class="w">            </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;2&quot;</span><span class="w"> </span>
+<span class="w">          </span><span class="nt">requests</span><span class="p">:</span><span class="w"> </span><span class="c1"># 生产环境建议4C4G/4C8G（和limit一样，提高QoS）</span>
+<span class="w">            </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">128Mi</span><span class="w"> </span>
+<span class="w">            </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;100m&quot;</span><span class="w"> </span>
+<span class="w">        </span><span class="nt">service</span><span class="p">:</span><span class="w">      </span><span class="c1"># 将Service类型改成NodePort </span>
+<span class="w">          </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">NodePort</span><span class="w"> </span>
+<span class="w">          </span><span class="nt">ports</span><span class="p">:</span><span class="w"> </span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">15020</span><span class="w"> </span>
+<span class="w">            </span><span class="nt">nodePort</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30520</span><span class="w"> </span>
+<span class="w">            </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">status-port</span><span class="w"> </span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span><span class="w">  </span><span class="c1"># 流量入口80端口映射到NodePort的30080，之后通过节点IP+30080即可访问Istio服务 </span>
+<span class="w">            </span><span class="nt">nodePort</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30080</span><span class="w"> </span>
+<span class="w">            </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">http2</span><span class="w"> </span>
+<span class="w">            </span><span class="nt">targetPort</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8080</span><span class="w"> </span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">443</span><span class="w"> </span>
+<span class="w">            </span><span class="nt">nodePort</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30443</span><span class="w"> </span>
+<span class="w">            </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https</span><span class="w"> </span>
+<span class="w">            </span><span class="nt">targetPort</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8443</span>
+</code></pre></div>
+
+<h3 id="安装istio_1">安装istio</h3>
+<div class="highlight"><pre><span></span><code>istioctl<span class="w"> </span>install<span class="w"> </span>-f<span class="w"> </span>istio-operator.yaml<span class="w"> </span>
+<span class="c1"># This will install the Istio 1.26.0 profile &quot;default&quot; into the cluster. </span>
+<span class="c1"># Proceed? (y/N) y </span>
+</code></pre></div>
+
+<h1 id="istio自动注入sidecar">istio自动注入sidecar</h1>
+<p>istio自动注入sidecar的方式有两种：</p>
+<ol>
+<li>Namespace级别：添加<code>istio-injection=enabled</code>（disabled就关闭自动注入）的标签到指定的namespace，那么该namespace下的pod1都会被自动注入一个Sidecar。</li>
+<li>Pod级别：添加<code>sidecar.istio.io/inject=true</code>（false就关闭自动注入）的标签到指定的pod，那么该pod会被注入sidecar。</li>
+</ol>
+<h2 id="测试sidecar注入">测试sidecar注入</h2>
+<p>创建测试ns：</p>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>create<span class="w"> </span>ns<span class="w"> </span>istio-test
+kubectl<span class="w"> </span>label<span class="w"> </span>namespace<span class="w"> </span>istio-test<span class="w"> </span>istio-injection<span class="o">=</span>enabled
+</code></pre></div>
+
+<p>切换目录至 istio 的安装包解压目录，里面有自带的测试用pod。然后创建测试应用，此时创建的 Pod 会被自动注入一个 istio proxy 的容器（因为这个pod创建在了开启sidecar注入的ns下面）：</p>
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span>istio-1.27.0/sample/sleep/
+<span class="c1"># 更改测试服务的镜像地址：</span>
+vim<span class="w"> </span>sleep.yaml
+image:<span class="w"> </span>m.daocloud.io/docker.io/curlimages/curl<span class="w"> </span>
+<span class="c1"># 创建测试服务：</span>
+kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>sleep.yaml<span class="w"> </span>-n<span class="w"> </span>istio-test<span class="w"> </span>
+</code></pre></div>
+
+<p>如果需要给Pod单独添加istio-proxy，可以给Pod添加sidecar.istio.io/inject=true标签即可：</p>
+<div class="highlight"><pre><span></span><code><span class="w">  </span><span class="nt">template</span><span class="p">:</span><span class="w"> </span>
+<span class="w">    </span><span class="nt">metadata</span><span class="p">:</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">labels</span><span class="p">:</span><span class="w"> </span>
+<span class="w">        </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sleep</span><span class="w"> </span>
+<span class="w">        </span><span class="nt">sidecar.istio.io/inject</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;true&quot;</span><span class="w"> </span>
+</code></pre></div>
+
+<h2 id="关闭sidecar注入">关闭sidecar注入</h2>
+<p>如果某个服务不想被注入sidecar，可以添加<code>sidecar.istio.io/inject=false</code>的标签即可：</p>
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span>istio-1.27.0/samples/curl
+vim<span class="w"> </span>curl.yaml
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="nt">template</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">metadata</span><span class="p">:</span><span class="w"> </span>
+<span class="w">    </span><span class="nt">labels</span><span class="p">:</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">curl</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">sidecar.istio.io/inject</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;false&quot;</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">spec</span><span class="p">:</span><span class="w"> </span>
+<span class="w">    </span><span class="nt">terminationGracePeriodSeconds</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span><span class="w"> </span>
+<span class="w">    </span><span class="nt">serviceAccountName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">curl</span><span class="w"> </span>
+<span class="w">    </span><span class="nt">containers</span><span class="p">:</span><span class="w"> </span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">curl</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">m.daocloud.io/docker.io/curlimages/curl</span><span class="w"> </span>
+</code></pre></div>
+
+<p>如果想要关闭该Namespace的自动注入，直接去除标签即可（已注入的Pod不受影响，下次重建后，不再有isito-proxy的容器）</p>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>label<span class="w"> </span>namespace<span class="w"> </span>istio-test<span class="w"> </span>istio-injection-
+</code></pre></div>
+
+<p><div class="callout callout-tip" markdown="1"><br />
+<p class="callout-title">最常用的的方式</p></p>
+<ul>
+<li>打开某个ns的istio sidecar注入，其中个别pod不需要sidecar，就打标签关闭注入。</li>
+<li>单独开某几个pod的情况比较少</li>
+</ul>
+</div>
+<h1 id="istio可视化工具kiali">istio可视化工具Kiali</h1>
+<p>Kiali为Istio提供了可视化的界面，可以在Kiali上进行观测流量的走向、调用链，同时还可以使用Kiali进行配置管理。</p>
+<h2 id="安装">安装</h2>
+<p>kiali就在istio的安装包中，service改成NodePort，直接安装即可</p>
+<div class="highlight"><pre><span></span><code><span class="l l-Scalar l-Scalar-Plain">vim ./istio-1.27/samples/addons/kiali.yaml</span>
+
+<span class="l l-Scalar l-Scalar-Plain">apiVersion</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span><span class="w"> </span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Service</span><span class="w"> </span>
+<span class="nt">metadata</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kiali</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;istio-system&quot;</span><span class="w"> </span>
+<span class="nt">spec</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">NodePort</span>
+
+<span class="c1"># 安装</span>
+<span class="l l-Scalar l-Scalar-Plain">kubectl apply -f ./istio-1.27/samples/addons/kiali.yaml</span>
+<span class="c1"># 通过NodePort高位端口访问UI界面</span>
+</code></pre></div>
+
+<h1 id="安装链路追踪jaeger">安装链路追踪jaeger</h1>
+<p>除了Kiali 之外，还可以安装一个链路追踪的工具，安装该工具可以在Kiali的Workloads页面，查看某个服务的Traces信息：</p>
+<div class="highlight"><pre><span></span><code><span class="l l-Scalar l-Scalar-Plain">cd ./istio-1.27.0/samples/addons</span>
+
+<span class="l l-Scalar l-Scalar-Plain"># 首先更改镜像地址</span><span class="w"> </span>
+<span class="l l-Scalar l-Scalar-Plain">vim samples/addons/jaeger.yaml</span><span class="w"> </span>
+<span class="l l-Scalar l-Scalar-Plain">image</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;m.daocloud.io/docker.io/jaegertracing/all-in-one:1.67.0&quot;</span>
+
+<span class="c1"># 更改名称为tracing的svc为NodePort</span>
+<span class="l l-Scalar l-Scalar-Plain">vim samples/addons/jaeger.yaml</span><span class="w"> </span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Service</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tracing</span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">istio-system</span>
+<span class="w">  </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">jaeger</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">NodePort</span>
+<span class="w">  </span><span class="nt">ports</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">http-query</span>
+<span class="w">      </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span>
+<span class="w">      </span><span class="nt">protocol</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TCP</span>
+<span class="w">      </span><span class="nt">targetPort</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">16686</span>
+<span class="w">    </span><span class="c1"># Note: Change port name if you add &#39;--query.grpc.tls.enabled=true&#39;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">grpc-query</span>
+<span class="w">      </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">16685</span>
+<span class="w">      </span><span class="nt">protocol</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TCP</span>
+<span class="w">      </span><span class="nt">targetPort</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">16685</span>
+<span class="w">  </span><span class="nt">selector</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">jaeger</span>
+
+<span class="c1"># 创建</span>
+<span class="l l-Scalar l-Scalar-Plain">kubectl create -f samples/addons/jaeger.yaml</span>
+
+<span class="c1"># 通过NodePort高位端口访问UI界面</span>
+</code></pre></div>
+
+<p><div class="callout callout-tip" markdown="1"><br />
+<p class="callout-title">注意：公司如果真需要上链路追踪，建议用更专业的Skywalking。jaeger这个比较简单而且也不太好用。</p></p>
+</div>
+<h1 id="集成prometheusgrafana">集成prometheus+grafana</h1>
+<p>Istio 默认暴露了很多监控指标，比如请求数量统计、请求持续时间以及Service和工作负载的指标，这些指标可以使用Prometheus进行收集，Grafana进行展示。</p>
+<p>Istio 内置了Prometheus和Grafana的安装文件，直接安装即可。</p>
+<p><div class="callout callout-tip" markdown="1"><br />
+<p class="callout-title">也可以使用外置的Prometheus和Grafana。</p></p>
+<p>但是建议istio的prometheus和grafana单独安装，因为集群自己的prometheus需要监控很多集群其他指标，不建议再接入istio的指标。istio用自己独立的prometheus和grafana即可。</p>
+</div>
+<h2 id="安装_1">安装</h2>
+<div class="highlight"><pre><span></span><code><span class="c1"># 同样需要修改镜像地址 </span>
+vim<span class="w"> </span>samples/addons/grafana.yaml<span class="w"> </span>
+image:<span class="w"> </span><span class="s2">&quot;m.daocloud.io/docker.io/grafana/grafana:11.3.1&quot;</span><span class="w"> </span>
+vim<span class="w"> </span>samples/addons/prometheus.yaml
+image:<span class="w"> </span><span class="s2">&quot;m.daocloud.io/docker.io/prom/prometheus:v3.2.1&quot;</span><span class="w"> </span>
+
+<span class="c1"># 修改svc为NodePort</span>
+vim<span class="w"> </span>samples/addons/grafana.yaml<span class="w"> </span><span class="c1"># 修改name为grafana的svc</span>
+vim<span class="w"> </span>samples/addons/prometheus.yaml<span class="w"> </span><span class="c1"># 修改名为prometheus的svc</span>
+
+<span class="c1"># 安装</span>
+kubectl<span class="w"> </span>create<span class="w"> </span>-f<span class="w"> </span>samples/addons/prometheus.yaml<span class="w"> </span>-f<span class="w"> </span>samples/addons/grafana.yaml<span class="w"> </span>
+<span class="c1"># 完成后通过NodePort高位端口访问grafana</span>
+</code></pre></div>
+
+<h2 id="grafana-dashboard">Grafana dashboard</h2>
+<p>进入到Grafana dashboard可以看到默认已经加进去了istio相关的dashboard。</p>
+<p>进入Istio Control Plane Dashboard：</p>
+<ol>
+<li>有一个指标叫：“<strong>Push Erros</strong>”，代表当前的配置分发到数据平面有没有报错。可以着重看这个指标</li>
+</ol>
+<p>进入Istio Mesh Dashboard：</p>
+<ol>
+<li>这是全局监控面板，如果出现性能问题，可以在其中查看相关指标。</li>
+</ol>
+<p>进入Istio Performance Dashboard：</p>
+<ol>
+<li>这里面显示了istio的资源使用情况。出现性能问题同样可以在其中查看。</li>
+</ol>
+<p>进入Istio Service Dashboard和Istio Workload Dashboard：</p>
+<ol>
+<li>可以看到服务间访问的链路情况。</li>
+</ol>
+<h1 id="istio流量治理实践">istio流量治理实践</h1>
+<p>istio官网提供了BookInfo项目：<a href="https://istio.io/latest/docs/examples/bookinfo/">Istio Bookinfo Application</a></p>
+<h2 id="部署bookinfo项目">部署bookinfo项目</h2>
+<p>创建ns并添加自动注入标签：</p>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>create<span class="w"> </span>ns<span class="w"> </span>bookinfo
+kubectl<span class="w"> </span>label<span class="w"> </span>ns<span class="w"> </span>bookinfo<span class="w"> </span>istio-injection<span class="o">=</span>enabled
+</code></pre></div>
+
+<p>修改项目里面的镜像地址：</p>
+<div class="highlight"><pre><span></span><code>vim<span class="w"> </span>samples/bookinfo/platform/kube/bookinfo.yaml
+image:<span class="w"> </span>m.daocloud.io/docker.io/istio/examples-bookinfo-details-v1:1.20.3<span class="w"> </span>
+image:<span class="w"> </span>m.daocloud.io/docker.io/istio/examples-bookinfo-ratings-v1:1.20.3<span class="w"> </span>
+image:<span class="w"> </span>m.daocloud.io/docker.io/istio/examples-bookinfo-reviews-v1:1.20.3<span class="w"> </span>
+image:<span class="w"> </span>m.daocloud.io/docker.io/istio/examples-bookinfo-reviews-v2:1.20.3<span class="w"> </span>
+image:<span class="w"> </span>m.daocloud.io/docker.io/istio/examples-bookinfo-reviews-v3:1.20.3<span class="w"> </span>
+image:<span class="w"> </span>m.daocloud.io/docker.io/istio/examples-bookinfo-productpage-v1:1.20.3<span class="w"> </span>
+</code></pre></div>
+
+<p>部署服务：</p>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>samples/bookinfo/platform/kube/bookinfo.yaml<span class="w"> </span>-n<span class="w"> </span>bookinfo<span class="w"> </span>
+</code></pre></div>
+
+<h2 id="使用域名发布服务">使用域名发布服务</h2>
+<p>接下来创建Istio的Gateway和VirtualService实现域名访问Bookinfo项目。</p>
+<h3 id="创建gateway">创建Gateway</h3>
+<p>首先创建Gateway，假设发布的域名是<code>bookinfo.kubeasy.com</code>。Gateway配置如下所示：</p>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">networking.istio.io/v1</span><span class="w"> </span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Gateway</span><span class="w"> </span>
+<span class="nt">metadata</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">bookinfo-gateway</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">bookinfo</span><span class="w"> </span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="c1"># The selector matches the ingress gateway pod labels.</span>
+<span class="w">  </span><span class="c1"># If you installed Istio using Helm following the standard documentation, this would be &quot;istio=ingress&quot;</span>
+<span class="w">  </span><span class="nt">selector</span><span class="p">:</span><span class="w"> </span>
+<span class="w">    </span><span class="nt">istio</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ingressgateway</span><span class="w"> </span><span class="c1"># 使用默认的istio ingress gateway </span>
+<span class="w">  </span><span class="nt">servers</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">number</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">http</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">protocol</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">HTTP</span><span class="w"> </span>
+<span class="w">    </span><span class="nt">hosts</span><span class="p">:</span><span class="w"> </span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;bookinfo.kubeasy.com&quot;</span><span class="w"> </span><span class="c1"># 发布域名</span>
+</code></pre></div>
+
+<h3 id="创建virtualservice">创建VirtualService</h3>
+<p>接下来创建VirtualService，实现对不同微服务的访问</p>
+<div class="highlight"><pre><span></span><code><span class="nn">---</span><span class="w"> </span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">networking.istio.io/v1</span><span class="w"> </span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">VirtualService</span><span class="w"> </span>
+<span class="nt">metadata</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">bookinfo</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">bookinfo</span><span class="w"> </span>
+<span class="nt">spec</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">hosts</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;bookinfo.kubeasy.com&quot;</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">gateways</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">bookinfo-gateway</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">http</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">match</span><span class="p">:</span><span class="w"> </span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">uri</span><span class="p">:</span><span class="w"> </span>
+<span class="w">        </span><span class="nt">exact</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/productpage</span><span class="w"> </span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">uri</span><span class="p">:</span><span class="w"> </span>
+<span class="w">        </span><span class="nt">prefix</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/static</span><span class="w"> </span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">uri</span><span class="p">:</span><span class="w"> </span>
+<span class="w">        </span><span class="nt">exact</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/login</span><span class="w"> </span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">uri</span><span class="p">:</span><span class="w"> </span>
+<span class="w">        </span><span class="nt">exact</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/logout</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">uri</span><span class="p">:</span><span class="w"> </span>
+<span class="w">        </span><span class="nt">prefix</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/api/v1/products</span><span class="w"> </span>
+<span class="w">    </span><span class="nt">route</span><span class="p">:</span><span class="w"> </span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">destination</span><span class="p">:</span><span class="w"> </span>
+<span class="w">        </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">productpage.bookinfo.svc.cluster.local</span><span class="w"> </span>
+<span class="w">        </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span>
+<span class="w">          </span><span class="nt">number</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">9080</span><span class="w"> </span>
+</code></pre></div>
+
+<p>部署Gateway和VS：</p>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>bookinfo-gateway.yaml<span class="w"> </span>-f<span class="w"> </span>bookinfo-vs.yaml<span class="w"> </span>-n<span class="w"> </span>bookinfo
+</code></pre></div>
+
+<h3 id="发布域名">发布域名</h3>
+<p>接下来，在宿主机上将域名bookinfo.kubeasy.com解析至集群任意一个安装了kube-proxy的节点IP上。通过ingressgateway的Service的NodePort即可访问到Bookinfo：</p>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>get<span class="w"> </span>svc<span class="w"> </span>-n<span class="w"> </span>istio-system<span class="w"> </span>istio-ingressgateway
+</code></pre></div>
+
+<ol>
+<li>绑定hosts后，通过bookinfo.kubeasy.com +【ingressgateway 80 端口对应的NodePort（30080）】即可访问该服务。注意加上接口路径。比如本次示例：<code>bookinfo.kubeasy.com:30080/productpage</code></li>
+</ol>
+<p>(实际生产环境中有前端LB，外部用户要访问的话需要把域名解析到前端LB的IP，默认是80/443端口，就不用写端口号了。由LB再把请求转发到后端ingressgateway上面)</p>
+<ol>
+<li>
+<p>多访问几次，可以看到Reviewer处的星星会在黑色、红色和消失之间来回替换，是因为部署了三个不同版本的reviews，每个版本具有不同的显示效果。</p>
+</li>
+<li>
+<p>然后去kiali - traffic graph里面看到流量链路图。</p>
+</li>
+</ol>
+<h2 id="地址重写和重定向">地址重写和重定向</h2>
+<p>Istio 同样支持访问地址的重写和重定向，这个功能一般用于新旧域名的替换和移动端、桌面端互相跳转。效果是访问某个域名的某个路径时，自动跳转到另一个域名的另一个路径。</p>
+<p>详细配置文档：<a href="https://istio.io/latest/docs/reference/config/networking/virtual-service/#HTTPRedirect">Istio HTTPRedirect</a> </p>
+<h3 id="域名重定向">域名重定向</h3>
+<p>比如将<code>bookinfo.kubeasy.com/hangx</code>跳转到<code>edu.51cto.com/lecturer/11062970.html</code>，在VS里面配置：</p>
+<div class="highlight"><pre><span></span><code><span class="nn">---</span><span class="w"> </span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">networking.istio.io/v1</span><span class="w"> </span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">VirtualService</span><span class="w"> </span>
+<span class="nt">metadata</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">bookinfo</span><span class="w"> </span>
+<span class="nt">spec</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">hosts</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;bookinfo.kubeasy.com&quot;</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">gateways</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">bookinfo-gateway</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">http</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">match</span><span class="p">:</span><span class="w"> </span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">uri</span><span class="p">:</span><span class="w"> </span>
+<span class="w">        </span><span class="nt">prefix</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/hangx</span><span class="w"> </span><span class="c1"># 匹配/hangx</span>
+<span class="w">    </span><span class="nt">redirect</span><span class="p">:</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">authority</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">edu.51cto.com</span><span class="w">  </span><span class="c1"># 跳转的域名 </span>
+<span class="w">      </span><span class="nt">uri</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/lecturer/11062970.html</span><span class="w">  </span><span class="c1"># 跳转的路径</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">match</span><span class="p">:</span><span class="w"> </span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">uri</span><span class="p">:</span><span class="w"> </span>
+<span class="w">        </span><span class="nt">exact</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/productpage</span><span class="w"> </span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">uri</span><span class="p">:</span><span class="w"> </span>
+<span class="w">        </span><span class="nt">prefix</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/static</span><span class="w"> </span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">uri</span><span class="p">:</span><span class="w"> </span>
+<span class="w">        </span><span class="nt">exact</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/login</span><span class="w"> </span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">uri</span><span class="p">:</span><span class="w"> </span>
+<span class="w">        </span><span class="nt">exact</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/logout</span><span class="w"> </span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">uri</span><span class="p">:</span><span class="w"> </span>
+<span class="w">        </span><span class="nt">prefix</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/api/v1/products</span><span class="w"> </span>
+<span class="w">    </span><span class="nt">route</span><span class="p">:</span><span class="w"> </span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">destination</span><span class="p">:</span><span class="w"> </span>
+<span class="w">        </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">productpage.bookinfo.svc.cluster.local</span>
+<span class="w">        </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span>
+<span class="w">          </span><span class="nt">number</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">9080</span><span class="w"> </span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>bookinfo-vs.yaml<span class="w"> </span>-n<span class="w"> </span>bookinfo
+</code></pre></div>
+
+<h3 id="地址重写">地址重写</h3>
+<p>地址重写的一个典型应用场景就是：</p>
+<ol>
+<li>同一个域名代理了很多后端服务，比如：test.com --&gt; a、b、b三个服务，需要通过test.com/a、test.com/b、test.com/c来路由到不同后端服务</li>
+<li>但是对于a、b、c服务的三个后端pod，开发出来对外暴露的接口都是/api。你直接访问test.com/a报404，因为pod根本没暴露这个接口，人家暴露的是/api</li>
+<li>这就需要根据域名/路径，重定向到后端服务。比如将test.com/a重写为test.com/api，route配置为a服务的svc。</li>
+</ol>
+<p>我们上面bookinfo项目默认根路径是报错404的：<code>bookinfo.kubeasy.com:30080/</code>，我们可以配置根路径访问到/productpage页面。在VS中配置：</p>
+<div class="highlight"><pre><span></span><code><span class="nn">---</span><span class="w"> </span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">networking.istio.io/v1</span><span class="w"> </span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">VirtualService</span><span class="w"> </span>
+<span class="nt">metadata</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">bookinfo</span><span class="w"> </span>
+<span class="nt">spec</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">hosts</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;bookinfo.kubeasy.com&quot;</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">gateways</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">bookinfo-gateway</span>
+<span class="w">  </span><span class="nt">http</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">match</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">uri</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">exact</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/</span><span class="w"> </span><span class="c1"># 匹配根路径</span>
+<span class="w">    </span><span class="nt">rewrite</span><span class="p">:</span><span class="w"> </span><span class="c1"># 地址重写为/productpage</span>
+<span class="w">      </span><span class="nt">uri</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/productpage</span>
+<span class="w">    </span><span class="nt">route</span><span class="p">:</span><span class="w"> </span><span class="c1"># 指定rewrite到哪个</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">destination</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">productpage.bookinfo.svc.cluster.local</span>
+<span class="w">        </span><span class="nt">port</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">number</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">9080</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">match</span><span class="p">:</span><span class="w"> </span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">uri</span><span class="p">:</span><span class="w"> </span>
+<span class="w">        </span><span class="nt">exact</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/productpage</span><span class="w"> </span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">uri</span><span class="p">:</span><span class="w"> </span>
+<span class="w">        </span><span class="nt">prefix</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/static</span><span class="w"> </span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">uri</span><span class="p">:</span><span class="w"> </span>
+<span class="w">        </span><span class="nt">exact</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/login</span><span class="w"> </span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">uri</span><span class="p">:</span><span class="w"> </span>
+<span class="w">        </span><span class="nt">exact</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/logout</span><span class="w"> </span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">uri</span><span class="p">:</span><span class="w"> </span>
+<span class="w">        </span><span class="nt">prefix</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/api/v1/products</span><span class="w"> </span>
+<span class="w">    </span><span class="nt">route</span><span class="p">:</span><span class="w"> </span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">destination</span><span class="p">:</span><span class="w"> </span>
+<span class="w">        </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">productpage.bookinfo.svc.cluster.local</span>
+<span class="w">        </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span>
+<span class="w">          </span><span class="nt">number</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">9080</span><span class="w"> </span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>bookinfo-vs.yaml<span class="w"> </span>-n<span class="w"> </span>bookinfo
+</code></pre></div>
+
+<h2 id="istio实现灰度发布">istio实现灰度发布</h2>
+<p>使用Istio进行细粒度的流量管理，步骤如下：</p>
+<ol>
+<li>创建DR划分subset</li>
+<li>创建VS将100%流量导向旧版本</li>
+<li>部署新版本</li>
+<li>使用VS逐渐切换比例流量到新版本</li>
+</ol>
+<h3 id="创建dr划分子集">创建DR划分子集</h3>
+<p>在bookinfo项目中，有三个版本的reviews服务（svc只有一个，pod有三个版本的共存；每组的pod都打好了标签version=v1、v2、v3）。</p>
+<p>首先通过DestinationRule将reviews分成三个版本：</p>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">networking.istio.io/v1</span><span class="w"> </span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">DestinationRule</span><span class="w"> </span>
+<span class="nt">metadata</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">reviews</span><span class="w"> </span>
+<span class="nt">spec</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">reviews.bookinfo.svc.cluster.local</span>
+<span class="w">  </span><span class="nt">subsets</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span><span class="w"> </span>
+<span class="w">    </span><span class="nt">labels</span><span class="p">:</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span><span class="w"> </span><span class="c1"># subset v1指向具有version=v1的Pod </span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v2</span><span class="w"> </span>
+<span class="w">    </span><span class="nt">labels</span><span class="p">:</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v2</span><span class="w"> </span><span class="c1"># subset v2指向具有version=v2的Pod </span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v3</span><span class="w"> </span>
+<span class="w">    </span><span class="nt">labels</span><span class="p">:</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v3</span><span class="w"> </span><span class="c1"># subset v3指向具有version=v3的Pod </span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>bookinfo-canary-dr.yaml<span class="w"> </span>-n<span class="w"> </span>bookinfo
+</code></pre></div>
+
+<h3 id="创建vs路由流量">创建VS路由流量</h3>
+<ol>
+<li>首先将所有流量路由到v1：</li>
+</ol>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">networking.istio.io/v1</span><span class="w"> </span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">VirtualService</span><span class="w"> </span>
+<span class="nt">metadata</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">reviews</span><span class="w"> </span>
+<span class="nt">spec</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">hosts</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">reviews.bookinfo.svc.cluster.local</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">http</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">route</span><span class="p">:</span><span class="w"> </span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">destination</span><span class="p">:</span><span class="w"> </span>
+<span class="w">        </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">reviews.bookinfo.svc.cluster.local</span><span class="w"> </span>
+<span class="w">        </span><span class="nt">subset</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span><span class="w"> </span><span class="c1"># 将流量全部指向v1</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>vs-reviews-v1-all.yaml<span class="w"> </span>-n<span class="w"> </span>bookinfo
+</code></pre></div>
+
+<ol>
+<li>开发了v2版本上线，现在把20%流量切到v2作为灰度发布：</li>
+</ol>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">networking.istio.io/v1</span><span class="w"> </span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">VirtualService</span><span class="w"> </span>
+<span class="nt">metadata</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">reviews</span><span class="w"> </span>
+<span class="nt">spec</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">hosts</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">reviews.bookinfo.svc.cluster.local</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">http</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">route</span><span class="p">:</span><span class="w"> </span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">weight</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span>
+<span class="w">        </span><span class="nt">destination</span><span class="p">:</span><span class="w"> </span>
+<span class="w">          </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">reviews.bookinfo.svc.cluster.local</span><span class="w"> </span>
+<span class="w">          </span><span class="nt">subset</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">weight</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">20</span>
+<span class="w">        </span><span class="nt">destination</span><span class="p">:</span><span class="w"> </span>
+<span class="w">          </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">reviews.bookinfo.svc.cluster.local</span>
+<span class="w">          </span><span class="nt">subset</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v2</span><span class="w">    </span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>vs-reviews-v1-all.yaml<span class="w"> </span>-n<span class="w"> </span>bookinfo
+</code></pre></div>
+
+<ol>
+<li>将流量全部导向v2</li>
+</ol>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">networking.istio.io/v1</span><span class="w"> </span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">VirtualService</span><span class="w"> </span>
+<span class="nt">metadata</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">reviews</span><span class="w"> </span>
+<span class="nt">spec</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">hosts</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">reviews.bookinfo.svc.cluster.local</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">http</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">route</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">destination</span><span class="p">:</span><span class="w"> </span>
+<span class="w">        </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">reviews.bookinfo.svc.cluster.local</span>
+<span class="w">        </span><span class="nt">subset</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v2</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>vs-reviews-v1-all.yaml<span class="w"> </span>-n<span class="w"> </span>bookinfo
+</code></pre></div>
+
+<h2 id="istio实现ab测试">istio实现A/B测试</h2>
+<p>Istio也支持基于请求头、uri、schema等方式的细粒度流量管理，这种路由方式比较适用于新版本上线时的AB测试。</p>
+<p>Istio请求头匹配介绍：<a href="https://istio.io/latest/docs/reference/config/networking/virtual-service/#HTTPMatchRequest">Istio HTTPMatchRequest</a> </p>
+<p>假如bookinfo项目又开发了一个新版v3，此时只想要公司内部的测试组先进行测试，可以配置VirtualService指定部分用户访问新版本。 </p>
+<ol>
+<li>再次修改reviews的VirtualService，将jason用户指向v3，其他用户依旧使用v2版本：</li>
+</ol>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">networking.istio.io/v1</span><span class="w"> </span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">VirtualService</span><span class="w"> </span>
+<span class="nt">metadata</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">reviews</span><span class="w"> </span>
+<span class="nt">spec</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">hosts</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">reviews.bookinfo.svc.cluster.local</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">http</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">match</span><span class="p">:</span><span class="w"> </span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">headers</span><span class="p">:</span><span class="w"> </span><span class="c1"># 匹配请求头 </span>
+<span class="w">        </span><span class="nt">end-user</span><span class="p">:</span><span class="w"> </span><span class="c1"># 匹配请求头的key为end-user。根据实际情况填写合适的header头</span>
+<span class="w">          </span><span class="nt">exact</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">jason</span><span class="w"> </span><span class="c1"># value 为jason，也支持prefix、regex </span>
+<span class="w">    </span><span class="nt">route</span><span class="p">:</span><span class="w"> </span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">destination</span><span class="p">:</span><span class="w"> </span>
+<span class="w">        </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">reviews.bookinfo.svc.cluster.local</span>
+<span class="w">        </span><span class="nt">subset</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v3</span><span class="w"> </span><span class="c1"># 匹配到end-user=jason路由至v3版本</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">route</span><span class="p">:</span><span class="w"> </span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">destination</span><span class="p">:</span><span class="w"> </span>
+<span class="w">        </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">reviews.bookinfo.svc.cluster.local</span>
+<span class="w">        </span><span class="nt">subset</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v2</span><span class="w"> </span><span class="c1"># 其余用户路由到v2版本</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>vs-ab-json-v3.yaml<span class="w"> </span>-n<span class="w"> </span>bookinfo
+</code></pre></div>
+
+<p>在bookinfo.kubeasy.com:30080/productpage页面上登录，user为jason，密码随便写。登录后可以发现使用的是v3版本的reviews（星星颜色为红色）</p>
+<ol>
+<li>当AB测试完成后，可以再接上一个灰度发布，20%到v3，80%到v2。</li>
+<li>灰度发布完成后，再完全切换流量到v3</li>
+</ol>
+<h2 id="istio负载均衡算法">istio负载均衡算法</h2>
+<p>k8s原生可以调整节点级别kube-proxy ipvs的负载均衡算法，但是不支持精细化到pod级别的负载均衡算法，Istio可以。</p>
+<p>Istio原生支持多种负载均衡算法，比如ROUND_ROBIN、LEAST_REQUEST、LEAST_CONN、RANDOM等。假如一个应用存在多个副本（Pod），可以使用上述算法对多个Pod进行定制化的负载均衡配置。</p>
+<p>常见的负载均衡策略如下：</p>
+<ol>
+<li>ROUND_ROBIN：轮询算法，将请求依次分配给每一个实例，不推荐使用。</li>
+</ol>
+<blockquote>
+<p>[!warning] 只要涉及到负载均衡算法，都不推荐使用轮询，已经被证实存在很多问题，比如：某个节点由于性能问题（比如cpu、内存高），导致上面pod处理请求比较慢，但是轮询是感知不到的。会导致请求不断还是会继续发送到这个节点的pod上，导致这个pod一直cpu飚高，但是其他pod空闲。</p>
+</blockquote>
+<ol>
+<li>
+<p>LEAST_REQUEST：最小链接算法，从池中随机选择两个实例pod，并将请求路由给当前活跃请求数较少的那个主机。<code>【生产环境建议】</code></p>
+</li>
+<li>
+<p>RANDOM：随机算法，将请求随机分配给其中一个实例。</p>
+</li>
+<li>
+<p>PASSTHROUGH：将连接转发到调用者请求的原始 IP 地址，而不进行任何形式的负载均衡，目前不推荐使用。</p>
+</li>
+<li>
+<p>UNSPECIFIED：未指定负载均衡算法，Istio将选择一个合适的默认算法，不推荐使用。</p>
+</li>
+</ol>
+<h3 id="更改负载均衡算法">更改负载均衡算法</h3>
+<p>更改负载均衡算法需要在DR上配置，因为DR才是控制流量作用到pod上的。</p>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">networking.istio.io/v1</span><span class="w"> </span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">DestinationRule</span><span class="w"> </span>
+<span class="nt">metadata</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">reviews</span><span class="w"> </span>
+<span class="nt">spec</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">trafficPolicy</span><span class="p">:</span><span class="w">  </span><span class="c1"># 添加路由策略，在spec下对所有的subset生效，也可以在subset中配置</span>
+<span class="w">    </span><span class="nt">loadBalancer</span><span class="p">:</span><span class="w"> </span><span class="c1"># 配置负载均衡</span>
+<span class="w">      </span><span class="nt">simple</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">RANDOM</span><span class="w"> </span><span class="c1"># 策略为RANDOM</span>
+<span class="w">  </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">reviews.bookinfo.svc.cluster.local</span>
+<span class="w">  </span><span class="nt">subsets</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span><span class="w"> </span>
+<span class="w">    </span><span class="nt">labels</span><span class="p">:</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span><span class="w"> </span><span class="c1"># subset v1指向具有version=v1的Pod </span>
+<span class="w">    </span><span class="nt">trafficPolicy</span><span class="p">:</span><span class="w"> </span><span class="c1"># 对于v1的所有pod配置单独的负载均衡算法</span>
+<span class="w">      </span><span class="nt">loadBalancer</span><span class="p">:</span><span class="w"> </span><span class="c1"># 配置负载均衡</span>
+<span class="w">        </span><span class="nt">simple</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">LEAST_REQUEST</span><span class="w"> </span><span class="c1"># 策略为RANDOM</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v2</span><span class="w"> </span>
+<span class="w">    </span><span class="nt">labels</span><span class="p">:</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v2</span><span class="w"> </span><span class="c1"># subset v2指向具有version=v2的Pod </span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v3</span><span class="w"> </span>
+<span class="w">    </span><span class="nt">labels</span><span class="p">:</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v3</span><span class="w"> </span><span class="c1"># subset v3指向具有version=v3的Pod </span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>bookinfo-canary-dr.yaml<span class="w"> </span>-n<span class="w"> </span>bookinfo
+</code></pre></div>
+
+<h2 id="istio熔断配置">istio熔断配置</h2>
+<p>Istio支持熔断机制，可以实现在高并发时对服务进行过载保护。比如部署了一个大模型服务，只能同时支持100用户请求。此时来了高于100个请求，就会造成服务宕机，影响前100个正常用户的访问。这样影响太大。可以设置熔断，超过最大并发量的时候，新进来的请求返回一个“当前繁忙，请稍后再试”之类的友好提示。</p>
+<p>假设对ratings进行熔断，希望在并发请求数超过3，并且存在1个以上的待处理请求，就触发熔断。因为熔断也是在最终实例pod上生效的，也是在DR上配置的。</p>
+<h3 id="dr配置熔断">DR配置熔断</h3>
+<p>此时可以配置ratings的DestinationRule如下所示： </p>
+<div class="highlight"><pre><span></span><code><span class="c1"># vim ratings-dr.yaml  </span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">networking.istio.io/v1</span><span class="w"> </span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">DestinationRule</span><span class="w"> </span>
+<span class="nt">metadata</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ratings</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">bookinfo</span><span class="w"> </span>
+<span class="nt">spec</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ratings.bookinfo.svc.cluster.local</span>
+<span class="w">  </span><span class="nt">trafficPolicy</span><span class="p">:</span><span class="w"> </span><span class="c1"># trafficPolicy配置，也可以配置在subsets级别 </span>
+<span class="w">    </span><span class="nt">connectionPool</span><span class="p">:</span><span class="w"> </span><span class="c1"># 连接池配置，可以单独使用限制程序的并发数 </span>
+<span class="w">      </span><span class="nt">tcp</span><span class="p">:</span><span class="w"> </span>
+<span class="w">        </span><span class="nt">maxConnections</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span><span class="w"> </span><span class="c1"># 最大并发数为3 </span>
+<span class="w">      </span><span class="nt">http</span><span class="p">:</span><span class="w"> </span>
+<span class="w">        </span><span class="nt">http1MaxPendingRequests</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span><span class="w"> </span><span class="c1"># 最大的待处理请求。</span>
+<span class="w">        </span><span class="c1"># 假如有2个待处理请求，就触发了熔断，不让你排队了，因为排队也没有用了</span>
+<span class="w">    </span><span class="nt">outlierDetection</span><span class="p">:</span><span class="w">  </span><span class="c1"># 熔断探测配置 </span>
+<span class="w">      </span><span class="nt">consecutive5xxErrors</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span><span class="w">  </span><span class="c1"># 如果连续出现的5xx错误超过1次，就会被熔断 </span>
+<span class="w">      </span><span class="nt">interval</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10s</span><span class="w"> </span><span class="c1"># 每10秒探测一次后端实例 </span>
+<span class="w">      </span><span class="nt">baseEjectionTime</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3m</span><span class="w">  </span><span class="c1"># 熔断的时间。某个后端pod触发熔断后，也不能一直不接受请求。3分钟之后，估算着请求应该都处理完成了，重新接受请求。</span>
+<span class="w">      </span><span class="nt">maxEjectionPercent</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100</span><span class="w"> </span><span class="c1"># 被熔断实例最大的百分比。比如10个pod，10个都能触发熔断就是100。测试用写100。实际写50就可以，太高会造成其他实例出现性能问题。</span>
+<span class="w">  </span><span class="nt">subsets</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="w">    </span><span class="nt">labels</span><span class="p">:</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span><span class="w"> </span>
+</code></pre></div>
+
+<h3 id="fortio压测">fortio压测</h3>
+<p>istio安装包提供了压测工具fortio，先部署一下：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 修改镜像</span>
+vim<span class="w"> </span>samples/httpbin/sample-client/fortio-deploy.yaml
+
+<span class="c1"># 部署</span>
+kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>samples/httpbin/sample-client/fortio-deploy.yaml<span class="w"> </span>-n<span class="w"> </span>bookinfo
+</code></pre></div>
+
+<p>获取容器ID并发送请求：</p>
+<div class="highlight"><pre><span></span><code><span class="nv">FORTIO_POD</span><span class="o">=</span><span class="k">$(</span>kubectl<span class="w"> </span>get<span class="w"> </span>pod<span class="w"> </span>-n<span class="w"> </span>bookinfo<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>fortio<span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">&#39;{ print $1 }&#39;</span><span class="k">)</span><span class="w"> </span>
+<span class="nb">echo</span><span class="w"> </span><span class="nv">$FORTIO_POD</span>
+
+kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-ti<span class="w"> </span><span class="nv">$FORTIO_POD</span><span class="w"> </span>-n<span class="w"> </span>bookinfo<span class="w"> </span>--<span class="w"> </span>fortio<span class="w"> </span>load<span class="w"> </span>-curl<span class="w"> </span>http://ratings:9080/ratings/0
+</code></pre></div>
+
+<p>接下来更改为两个并发连接（-c 2），发送20请求（-n 20）:</p>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-ti<span class="w"> </span><span class="nv">$FORTIO_POD</span><span class="w"> </span>-n<span class="w"> </span>bookinfo<span class="w"> </span>--<span class="w"> </span>fortio<span class="w"> </span>load<span class="w"> </span>-c<span class="w"> </span><span class="m">2</span><span class="w"> </span>-qps<span class="w"> </span><span class="m">0</span><span class="w"> </span>-n<span class="w"> </span><span class="m">20</span><span class="w"> </span>-loglevel<span class="w"> </span>Warning<span class="w"> </span>http://ratings:9080/ratings/0<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>Code<span class="w"> </span>
+</code></pre></div>
+
+<p>可以看到请求都是成功的，说明pod处理这些请求速度很快，请求没有排队待处理</p>
+<p>提高并发量，会触发熔断：</p>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-ti<span class="w"> </span><span class="nv">$FORTIO_POD</span><span class="w"> </span>-n<span class="w"> </span>bookinfo<span class="w"> </span>--<span class="w"> </span>fortio<span class="w"> </span>load<span class="w"> </span>-c<span class="w"> </span><span class="m">20</span><span class="w"> </span>-qps<span class="w"> </span><span class="m">0</span><span class="w"> </span>-n<span class="w"> </span><span class="m">20</span><span class="w"> </span>-loglevel<span class="w"> </span>Warning<span class="w">  </span>http://ratings:9080/ratings/0<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>Code
+
+Code<span class="w"> </span><span class="m">200</span><span class="w"> </span>:<span class="w"> </span><span class="m">5</span><span class="w"> </span><span class="o">(</span><span class="m">25</span>.0<span class="w"> </span>%<span class="o">)</span>
+Code<span class="w"> </span><span class="m">503</span><span class="w"> </span>:<span class="w"> </span><span class="m">15</span><span class="w"> </span><span class="o">(</span><span class="m">75</span>.0<span class="w"> </span>%<span class="o">)</span>
+</code></pre></div>
+
+<p>说明触发了熔断，pod没有直接挂掉，实现了过载保护。</p>
+<h2 id="istio故障注入">istio故障注入</h2>
+<h3 id="延迟">延迟</h3>
+<p>主要用来测试链路可靠性，比如三个服务A-B-C，由于偶发网络延迟高，C服务响应变慢，是否会影响A、B服务？这是链路可靠性的问题，需要我们进行测试。</p>
+<p>首先创建测试工具，测试访问details服务的时间：</p>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>create<span class="w"> </span>deploy<span class="w"> </span>-n<span class="w"> </span>bookinfo<span class="w"> </span>debug-tools<span class="w"> </span>--image<span class="o">=</span>registry.cn-beijing.aliyuncs.com/dotbalo/debug-tools<span class="w"> </span>--<span class="w"> </span>sleep<span class="w"> </span><span class="m">36000</span>
+
+kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-ti<span class="w"> </span>debug-tools-5887bf6774-598tc<span class="w">  </span>-n<span class="w"> </span>bookinfo<span class="w"> </span>–-<span class="w"> </span>bash
+<span class="nb">time</span><span class="w"> </span>curl<span class="w"> </span>-I<span class="w"> </span>-s<span class="w"> </span>details:9080
+</code></pre></div>
+
+<p>不添加任何故障延迟时，0.02秒左右就会返回结果。接下来注入一个5s的延迟。由于故障注入属于service级别，所以是在vs上配置：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># vim details-delay.yaml  </span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">networking.istio.io/v1</span><span class="w"> </span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">VirtualService</span><span class="w"> </span>
+<span class="nt">metadata</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">details</span><span class="w"> </span>
+<span class="nt">spec</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">hosts</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">details.bookinfo.svc.cluster.local</span>
+<span class="w">  </span><span class="nt">http</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">fault</span><span class="p">:</span><span class="w"> </span><span class="c1"># 添加一个错误 </span>
+<span class="w">      </span><span class="nt">delay</span><span class="p">:</span><span class="w"> </span><span class="c1"># 添加类型为delay的故障 </span>
+<span class="w">        </span><span class="nt">percentage</span><span class="p">:</span><span class="w"> </span><span class="c1"># 故障注入的百分比 </span>
+<span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100</span><span class="w"> </span><span class="c1"># 对所有请求注入故障 </span>
+<span class="w">        </span><span class="nt">fixedDelay</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5s</span><span class="w"> </span><span class="c1"># 注入的延迟时间 </span>
+<span class="w">    </span><span class="nt">route</span><span class="p">:</span><span class="w"> </span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">destination</span><span class="p">:</span><span class="w"> </span>
+<span class="w">        </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">details</span><span class="w"> </span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>create<span class="w"> </span>-f<span class="w"> </span>details-delay.yaml<span class="w"> </span>-n<span class="w"> </span>bookinfo
+</code></pre></div>
+
+<p>再返回测试工具进行测试，响应时间变成了5s：</p>
+<div class="highlight"><pre><span></span><code><span class="nb">time</span><span class="w"> </span>curl<span class="w"> </span>-I<span class="w"> </span>-s<span class="w"> </span>details:9080
+</code></pre></div>
+
+<p>假设我们有A服务去访问details服务，设置的超时时间为2s，这样通过延迟故障注入，我们可以测试这个超时时间配置是否生效。</p>
+<h3 id="中断">中断</h3>
+<p>注入中断故障，可以模拟服务返回指定的状态码（400、503等），上游服务的处理是否符合预期。（上游服务如果接收到异常状态码，也抛出异常，那就不正确了；需要配置上异常处理才算是合理的代码）</p>
+<p>中断故障注入只需要将fault 的delay更改为abort即可： </p>
+<div class="highlight"><pre><span></span><code><span class="c1"># vim details-abort.yaml </span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">networking.istio.io/v1</span><span class="w"> </span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">VirtualService</span><span class="w"> </span>
+<span class="nt">metadata</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">details</span><span class="w"> </span>
+<span class="nt">spec</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">hosts</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">details</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">http</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">fault</span><span class="p">:</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">abort</span><span class="p">:</span><span class="w"> </span><span class="c1"># 更改为abort类型的故障 </span>
+<span class="w">        </span><span class="nt">percentage</span><span class="p">:</span><span class="w"> </span>
+<span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100</span><span class="w"> </span>
+<span class="w">        </span><span class="nt">httpStatus</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">400</span><span class="w"> </span><span class="c1"># 故障状态码 </span>
+<span class="w">    </span><span class="w w-Error"> </span><span class="nt">route</span><span class="p">:</span><span class="w"> </span>
+<span class="w">     </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">destination</span><span class="p">:</span><span class="w"> </span>
+<span class="w">         </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">details</span><span class="w"> </span>
+</code></pre></div>
+    </div>
+  </article>
+  <aside class="toc">
+    <p class="toc-label">本页目录</p>
+    <ul>
+  <li><a href="#为什么要用服务网格">为什么要用服务网格</a></li>
+  <li><a href="#服务网格">服务网格</a><ul>
+  <li><a href="#核心功能">核心功能</a></li>
+</ul></li>
+  <li><a href="#产品对比">产品对比</a><ul>
+  <li><a href="#linkerd">Linkerd</a></li>
+  <li><a href="#envoy">Envoy</a></li>
+  <li><a href="#kuma">Kuma</a></li>
+  <li><a href="#istio">Istio</a></li>
+</ul></li>
+  <li><a href="#文档">文档</a></li>
+  <li><a href="#核心功能_1">核心功能</a><ul>
+  <li><a href="#流量管理">流量管理</a></li>
+</ul></li>
+  <li><a href="#工作模式对比">工作模式对比</a></li>
+  <li><a href="#控制平面">控制平面</a><ul>
+  <li><a href="#pilot">Pilot</a></li>
+  <li><a href="#citadel">Citadel</a></li>
+  <li><a href="#galley">Galley</a></li>
+</ul></li>
+  <li><a href="#数据平面">数据平面</a><ul>
+  <li><a href="#envoy_1">Envoy</a></li>
+</ul></li>
+  <li><a href="#组件调用关系">组件调用关系</a></li>
+  <li><a href="#destinationrule">DestinationRule</a></li>
+  <li><a href="#virtualservice">VirtualService</a></li>
+  <li><a href="#gateway">Gateway</a><ul>
+  <li><a href="#ingressgateway">Ingressgateway</a></li>
+  <li><a href="#egressgateway">egressgateway</a></li>
+</ul></li>
+  <li><a href="#核心资源逻辑架构">核心资源逻辑架构</a></li>
+  <li><a href="#核心资源定义">核心资源定义</a><ul>
+  <li><a href="#destinationrule_1">DestinationRule</a></li>
+  <li><a href="#virtualservice_1">VirtualService</a></li>
+  <li><a href="#gateway_1">Gateway</a></li>
+</ul></li>
+  <li><a href="#istio-gateway架构">istio gateway架构</a></li>
+  <li><a href="#设备选型问题">设备选型问题</a></li>
+  <li><a href="#版本release表">版本release表</a></li>
+  <li><a href="#安装istioctl">安装istioctl</a></li>
+  <li><a href="#声明istiooperator资源-测试环境">声明istioOperator资源 - 测试环境</a><ul>
+  <li><a href="#创建istio-system-ns">创建istio-system ns</a></li>
+  <li><a href="#声明istiooperator配置">声明istioOperator配置</a></li>
+  <li><a href="#安装istio">安装istio</a></li>
+</ul></li>
+  <li><a href="#声明istiooperator资源-生产环境">声明istioOperator资源 - 生产环境</a><ul>
+  <li><a href="#创建istio-system-ns_1">创建istio-system ns</a></li>
+  <li><a href="#声明istiooperator配置_1">声明istioOperator配置</a></li>
+  <li><a href="#安装istio_1">安装istio</a></li>
+</ul></li>
+  <li><a href="#测试sidecar注入">测试sidecar注入</a></li>
+  <li><a href="#关闭sidecar注入">关闭sidecar注入</a></li>
+  <li><a href="#安装">安装</a></li>
+  <li><a href="#安装_1">安装</a></li>
+  <li><a href="#grafana-dashboard">Grafana dashboard</a></li>
+  <li><a href="#部署bookinfo项目">部署bookinfo项目</a></li>
+  <li><a href="#使用域名发布服务">使用域名发布服务</a><ul>
+  <li><a href="#创建gateway">创建Gateway</a></li>
+  <li><a href="#创建virtualservice">创建VirtualService</a></li>
+  <li><a href="#发布域名">发布域名</a></li>
+</ul></li>
+  <li><a href="#地址重写和重定向">地址重写和重定向</a><ul>
+  <li><a href="#域名重定向">域名重定向</a></li>
+  <li><a href="#地址重写">地址重写</a></li>
+</ul></li>
+  <li><a href="#istio实现灰度发布">istio实现灰度发布</a><ul>
+  <li><a href="#创建dr划分子集">创建DR划分子集</a></li>
+  <li><a href="#创建vs路由流量">创建VS路由流量</a></li>
+</ul></li>
+  <li><a href="#istio实现ab测试">istio实现A/B测试</a></li>
+  <li><a href="#istio负载均衡算法">istio负载均衡算法</a><ul>
+  <li><a href="#更改负载均衡算法">更改负载均衡算法</a></li>
+</ul></li>
+  <li><a href="#istio熔断配置">istio熔断配置</a><ul>
+  <li><a href="#dr配置熔断">DR配置熔断</a></li>
+  <li><a href="#fortio压测">fortio压测</a></li>
+</ul></li>
+  <li><a href="#istio故障注入">istio故障注入</a><ul>
+  <li><a href="#延迟">延迟</a></li>
+  <li><a href="#中断">中断</a></li>
+</ul></li>
+</ul>
+  </aside>
+
+</div>
+
+</main>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>Learning Notes</span>
+    <a href="https://github.com/hangx969/learning-notes">GitHub</a>
+  </div>
+</footer>
+<script src="../../../static/search.js"></script>
+</body>
+</html>

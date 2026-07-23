@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Azure Container Registry &amp; Azure Container Instances - Learning Notes</title>
+<link rel="stylesheet" href="../../static/style.css">
+<link rel="stylesheet" href="../../static/pygments.css">
+</head>
+<body data-root="../../">
+<header class="site-header">
+  <div class="header-inner">
+    <a class="logo" href="../../index.html"><span class="logo-mark"></span>LEARNING NOTES</a>
+    <div class="search">
+      <input id="search-input" type="search" placeholder="搜索笔记…" autocomplete="off" aria-label="搜索笔记">
+      <div id="search-results" hidden></div>
+    </div>
+  </div>
+  <nav class="topic-nav" aria-label="主题导航">
+    <div class="topic-nav-inner">
+      <a href="../../AI/">AI</a>
+      <a href="../../Aliyun/">Aliyun</a>
+      <a href="../../Azure/" class="active">Azure</a>
+      <a href="../../C%2B%2B/">C++</a>
+      <a href="../../CloudComputing/">CloudComputing</a>
+      <a href="../../Database/">Database</a>
+      <a href="../../Docker-Kubernetes/">Docker-Kubernetes</a>
+      <a href="../../GPU-DeepLearning/">GPU-DeepLearning</a>
+      <a href="../../Git/">Git</a>
+      <a href="../../Go/">Go</a>
+      <a href="../../HPC/">HPC</a>
+      <a href="../../IaC/">IaC</a>
+      <a href="../../Linux-Shell/">Linux-Shell</a>
+      <a href="../../Middlewares/">Middlewares</a>
+      <a href="../../Networking/">Networking</a>
+      <a href="../../OS/">OS</a>
+      <a href="../../Python/">Python</a>
+      <a href="../../SoftwareTesting/">SoftwareTesting</a>
+    </div>
+  </nav>
+</header>
+<main class="main">
+
+<div class="article-layout">
+
+  <aside class="sidebar">
+    <details class="sidebar-details">
+      <summary>Azure</summary>
+      <nav class="sidebar-nav">
+        <p class="sidebar-group">Customer Support</p>
+        <ul>
+          <li><a href="../../Azure/Customer%20Support/Email%20Templates/">Email Templates</a></li>
+        </ul>
+        <p class="sidebar-group">其他</p>
+        <ul>
+          <li><a href="../../Azure/0_Azure-VM-VMSS/">Azure VM and VMSS</a></li>
+          <li><a href="../../Azure/10_Azure-devops-agent-pool-management/">Azure DevOps Agent Pool Management</a></li>
+          <li><a href="../../Azure/11_Azure-Policy/">Azure Policy</a></li>
+          <li><a href="../../Azure/1_Azure-Linux-VM-troubheshooting/">Azure Linux VM Troubleshooting</a></li>
+          <li><a href="../../Azure/2_AKS-basics/">AKS Basics</a></li>
+          <li><a href="../../Azure/3_AKS-workload-identity/">AKS Workload Identity</a></li>
+          <li><a href="../../Azure/4_AKS-SecretProviderClass-KeyVault/">AKS SecretProviderClass with KeyVault</a></li>
+          <li><a href="../../Azure/5_Azure-Storage/">Azure Storage</a></li>
+          <li><a href="../../Azure/6_Azure-Networking/">Azure Networking</a></li>
+          <li><a href="../../Azure/7_ACR-ACI/" class="current">Azure Container Registry &amp; Azure Container Instances</a></li>
+          <li><a href="../../Azure/8_Azure-devops-basics/">Azure DevOps Basics</a></li>
+          <li><a href="../../Azure/9_Azure-devops-self-host-agents/">Azure DevOps Self-Hosted Agents</a></li>
+          <li><a href="../../Azure/IO-monitor/">IO Monitor</a></li>
+          <li><a href="../../Azure/Jfrog-artifactory-Azure/">JFrog Artifactory on Azure</a></li>
+          <li><a href="../../Azure/Kusto%20Query/">Kusto Query Language (KQL) Reference</a></li>
+          <li><a href="../../Azure/browser%20trace/">Browser Trace (HAR)</a></li>
+          <li><a href="../../Azure/command-line-tools/">Command Line Tools</a></li>
+          <li><a href="../../Azure/fiddler/">Fiddler</a></li>
+          <li><a href="../../Azure/perfMon%20ProcessMon/">PerfMon &amp; ProcessMon</a></li>
+          <li><a href="../../Azure/postman/">Postman</a></li>
+        </ul>
+      </nav>
+    </details>
+  </aside>
+
+  <article class="article">
+    <nav class="breadcrumb">
+      <a href="../../index.html">首页</a><span>/</span>
+      <a href="../../Azure/">Azure</a>
+    </nav>
+    <h1 class="article-title">Azure Container Registry &amp; Azure Container Instances</h1>
+    <p class="article-meta"><span>更新于 2026-04-16</span>
+      <a href="https://github.com/hangx969/learning-notes/blob/main/Azure/7_ACR-ACI.md">查看源文件</a>
+    </p>
+    <div class="article-body">
+<h1 id="azure-container-registry-azure-container-instances">Azure Container Registry &amp; Azure Container Instances</h1>
+<h2 id="related-notes">Related Notes</h2>
+<ul>
+<li><a class="wikilink" href="../../Azure/2_AKS-basics/">Azure/2_AKS-basics</a></li>
+<li><a class="wikilink" href="../../Azure/5_Azure-Storage/">Azure/5_Azure-Storage</a></li>
+</ul>
+<hr />
+<h2 id="acr">ACR</h2>
+<p><a href="https://docs.azure.cn/zh-cn/container-registry/container-registry-intro">托管容器注册表 - Azure Container Registry | Azure Docs</a></p>
+<h3 id="层级概念">层级概念</h3>
+<p><a href="https://docs.azure.cn/zh-cn/container-registry/container-registry-concepts">关于注册表、存储库、映像和项目 - Azure Container Registry | Azure Docs</a></p>
+<p><img alt="image-20231031170357549" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202310311703613.png" /></p>
+<ul>
+<li><mark>容器注册表</mark></li>
+</ul>
+<p><a href="https://docs.azure.cn/zh-cn/container-registry/container-registry-image-formats">支持的内容格式 - Azure Container Registry | Azure Docs</a></p>
+<ul>
+<li><mark>存储库</mark></li>
+</ul>
+<p>名称相同但是标记不同的镜像；标记不同的含义有两种：</p>
+<ol>
+<li>tag不同</li>
+<li>
+<p>namespace不同</p>
+</li>
+<li>
+<p><mark>容器镜像</mark></p>
+</li>
+</ol>
+<p>层：注册表中的项目共享公用的层，因而提高了存储效率。</p>
+<h3 id="清单">清单</h3>
+<ul>
+<li>
+<p>推送到ACR的每个image都与一个清单关联，推送的时候由注册表生成清单唯一标识image。</p>
+</li>
+<li>
+<p>列出存储库的清单：</p>
+</li>
+</ul>
+<div class="highlight"><pre><span></span><code>az<span class="w"> </span>acr<span class="w"> </span>manifest<span class="w"> </span>list-metadata<span class="w"> </span>--name<span class="w"> </span>azure-vote-front<span class="w"> </span>--registry<span class="w"> </span>xhacrtest
+</code></pre></div>
+
+<h4 id="清单摘要-digest">清单摘要 digest</h4>
+<ul>
+<li>清单由唯一的 SHA-256 哈希（即==清单摘要==）进行标识 。 每个映像或项目（无论是否标记）均由其摘要标识。 即便项目的层数据与其他项目的层数据相同，摘要值也是唯一的。 此机制使你能够反复向注册表推送标记相同的映像。 例如，你可反复向注册表推送 myimage:latest 而不出任何错误，因为每个映像均由其唯一摘要标识。</li>
+</ul>
+<h3 id="项目寻址">项目寻址</h3>
+<p><a href="https://docs.azure.cn/zh-cn/container-registry/container-registry-concepts#addressing-an-artifact">关于注册表、存储库、映像和项目 - Azure Container Registry | Azure Docs</a></p>
+<ul>
+<li>ACR要用完全限定URL：\<registry name>. azurecr. cn</li>
+</ul>
+<h3 id="acr的sku">ACR的SKU</h3>
+<p><a href="https://docs.azure.cn/zh-cn/container-registry/container-registry-skus">注册表服务层级和功能 - Azure Container Registry | Azure Docs</a></p>
+<h3 id="推送image到acr">推送image到ACR</h3>
+<p><a href="https://docs.azure.cn/zh-cn/container-registry/container-registry-get-started-azure-cli#push-image-to-registry">快速入门 - 创建注册表 - Azure CLI - Azure Container Registry | Azure Docs</a></p>
+<ul>
+<li>
+<p>将映像推送到注册表之前，必须使用 ACR 登录服务器的完全限定的名称进行标记。 登录服务器名称采用 <mark>\<registry-name>.azurecr.cn</mark>（全小写）格式，例如 <em>mycontainerregistry007.azurecr.cn</em>。</p>
+</li>
+<li>
+<p>使用 <a href="https://docs.docker.com/engine/reference/commandline/tag/">docker tag</a> 命令标记映像。 使用 ACR 实例的登录服务器名称替换 \<acrLoginServer></p>
+</li>
+</ul>
+<h3 id="image异地复制区域冗余">image异地复制、区域冗余</h3>
+<p><a href="https://docs.azure.cn/zh-cn/container-registry/container-registry-tutorial-prepare-registry">教程 - 创建异地复制注册表 - Azure Container Registry | Azure Docs</a></p>
+<p><div class="callout callout-important" markdown="1"><br />
+<p class="callout-title">Important</p></p>
+<p>需要==Premium==的SKU</p>
+</div>
+<h3 id="acr-任务">ACR 任务</h3>
+<p>在Azure中生成docker镜像，推送至Registry</p>
+<ul>
+<li>
+<p><mark>快速任务</mark>：az acr build使用docker build；发送到ACR任务。</p>
+</li>
+<li>
+<p><mark>自动触发的任务</mark></p>
+</li>
+<li>提交代码时生成</li>
+<li>更新base image时生成</li>
+<li>
+<p>定时运行</p>
+</li>
+<li>
+<p><mark>多步骤任务</mark></p>
+</li>
+</ul>
+<p>日志查看：<code>az acr task logs</code></p>
+<h3 id="acr-mi">ACR MI</h3>
+<p>在 ACR 任务中启用 Azure 资源的托管标识，使<strong>该任务无需提供或管理凭据</strong>即可访问其他 Azure 资源。 例如，使用托管标识可让某个任务步骤将容器映像提取或推送到其他注册表。</p>
+<h3 id="acr登录">ACR登录</h3>
+<p>To authenticate with an Azure Container Registry, you can use the <code>az acr login</code> command with the name of the registry:</p>
+<div class="highlight"><pre><span></span><code><span class="c1">#This command will authenticate your Docker CLI with the Azure Container Registry and allow you to push and pull images</span>
+az<span class="w"> </span>acr<span class="w"> </span>login<span class="w"> </span>--name<span class="w"> </span>&lt;registry_name&gt;
+<span class="c1">#Alternatively, you can use the docker login command with the fully qualified name of the registry, This command will prompt you for your Azure Container Registry username and password, which you can find in the Azure portal under &quot;Access keys&quot; in the container registry&#39;s settings.</span>
+docker<span class="w"> </span>login<span class="w"> </span>&lt;registry_name&gt;.azurecr.io
+<span class="c1">#After authenticating, you can use the Docker CLI to push and pull images to and from the Azure Container Registry.</span>
+</code></pre></div>
+
+<h3 id="acr清理image">ACR清理image</h3>
+<p><a href="https://nam06.safelinks.protection.outlook.com/?url=https%3A%2F%2Fdocs.azure.cn%2Fzh-cn%2Fcontainer-registry%2Fcontainer-registry-auto-purge%23run-in-an-on-demand-task&amp;data=05|01|hangx%40microsoft.com|868fb1a8d7154d8ab7d008db60d8ba91|72f988bf86f141af91ab2d7cd011db47|1|0|638210256247290568|Unknown|TWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D|3000|||&amp;sdata=%2F5gQ7fDh3nDcu7%2FMwoCKDM1wxhKeM72DhpwxQ7RkXZo%3D&amp;reserved=0">清除标记和清单- Azure Container Registry | Azure Docs</a></p>
+<p><img alt="image-20231031172557527" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202310311725569.png" /></p>
+<ul>
+<li><code>--filter</code>是必需的选项，如果您需要对所有repository进行清理，请使用类似如下方式。</li>
+</ul>
+<p><code>bash
+  PURGE_CMD="acr purge --filter '*:.*'--untagged --ago 180d --dry-run"</code></p>
+<p><div class="callout callout-warning" markdown="1"><br />
+<p class="callout-title">Warning</p></p>
+<p>由于删除的image无法恢复，请在删除前使用<code>--dry-run</code>参数来查看可能被删除的数据。</p>
+</div>
+<h3 id="troubleshooting">Troubleshooting</h3>
+<p><a href="https://docs.azure.cn/zh-cn/container-registry/container-registry-troubleshoot-login">注册表登录故障排除 - Azure Container Registry | Azure Docs</a></p>
+<p><a href="https://learn.microsoft.com/en-us/troubleshoot/azure/azure-kubernetes/cannot-pull-image-from-acr-to-aks-cluster">Can't pull images from Azure Container Registry to Kubernetes - Azure | Microsoft Learn</a></p>
+<div class="highlight"><pre><span></span><code>az<span class="w"> </span>acr<span class="w"> </span>check-health<span class="w"> </span><span class="c1">#测试ACR健康情况</span>
+az<span class="w"> </span>aks<span class="w"> </span>check-acr<span class="w"> </span>--name<span class="w"> </span>&lt;aks<span class="w"> </span>name&gt;<span class="w"> </span>--resource-group<span class="w"> </span>&lt;aks<span class="w"> </span>rg&gt;<span class="w"> </span>--acr<span class="w"> </span>&lt;acr<span class="w"> </span>name&gt;<span class="w"> </span><span class="c1">#查看AKS与ACR连接性</span>
+</code></pre></div>
+
+<h3 id="azurechina注册表endpoint">AzureChina注册表endpoint</h3>
+<ul>
+<li>
+<p>不过由于docker.io的镜像仓库，其IP所在的地理位置位于海外，在整个网络链路上涉及到的节点比较多，确实会存在网络拥塞导致的拉取镜像慢或是失败的情况。</p>
+</li>
+<li>
+<p>您可以考虑使用Azure China的container registry proxy，其部署在Azure中国数据中心内部，可以实现镜像的缓存，进而实现更加稳定快速的镜像拉取，详情请见: <a href="https://nam06.safelinks.protection.outlook.com/?url=https%3A%2F%2Fgithub.com%2FAzure%2Fcontainer-service-for-azure-china%2Fblob%2Fmaster%2Faks%2FREADME.md%2322-container-registry-proxy&amp;data=05|01|hangx%40microsoft.com|4f732694e9b14b1adcba08dabe01f3f0|72f988bf86f141af91ab2d7cd011db47|1|0|638031213178529331|Unknown|TWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D|3000|||&amp;sdata=qyk78YI4b7Ses1bt%2F%2FiZbnyHYNeFCuU5SIM9QU709fw%3D&amp;reserved=0">container-service-for-azure-china/README.md at master · Azure/container-service-for-azure-china · GitHub</a></p>
+</li>
+</ul>
+<p><img alt="image-20231031172012735" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202310311720820.png" /></p>
+<hr />
+<h2 id="aci">ACI</h2>
+<ul>
+<li>不管什么方案（包括简单应用程序、任务自动化、生成作业），只要能够在隔离容器中操作，就可以使用 Azure 容器实例这种解决方案。</li>
+<li>
+<p><a href="https://docs.azure.cn/zh-cn/container-instances/container-instances-overview">Azure 中的无服务器容器 - Azure Container Instances | Azure Docs</a></p>
+</li>
+<li>
+<p>底层也是跑在VM上，创建的时候可以选择CPU、内存的大小。</p>
+</li>
+</ul>
+<p><img alt="image-20231031172127637" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202310311721707.png" /></p>
+<h3 id="持久存储">持久存储</h3>
+<ul>
+<li>
+<p>默认情况，容器是无状态的，崩溃重启等，会造成数据丢失。</p>
+</li>
+<li>
+<p>可以将file share挂载到instance上：<a href="https://docs.azure.cn/zh-cn/container-instances/container-instances-volume-azure-files#deploy-container-and-mount-volume---yaml">将 Azure 文件卷装载到容器组 - Azure Container Instances | Azure Docs</a></p>
+</li>
+<li>
+<p>可以用azcli或者yaml文件来部署容器并挂载</p>
+</li>
+</ul>
+<h3 id="容器组">容器组</h3>
+<ul>
+<li>容器组中的容器共享生命周期、资源、本地网络和存储卷；与POD概念类似。</li>
+</ul>
+<p><a href="https://docs.azure.cn/zh-cn/container-instances/container-instances-multi-container-yaml">教程 - 部署多容器组 - YAML - Azure Container Instances | Azure Docs</a></p>
+<ul>
+<li>用yaml文件+azcli部署</li>
+</ul>
+<h3 id="查看容器日志">查看容器日志</h3>
+<p><a href="https://docs.azure.cn/zh-cn/container-instances/container-instances-multi-container-yaml#view-container-logs">教程 - 部署多容器组 - YAML - Azure Container Instances | Azure Docs</a></p>
+<p><a href="https://docs.azure.cn/zh-cn/container-instances/container-instances-get-logs">获取容器实例日志和事件 - Azure Container Instances | Azure Docs</a></p>
+    </div>
+  </article>
+  <aside class="toc">
+    <p class="toc-label">本页目录</p>
+    <ul>
+  <li><a href="#related-notes">Related Notes</a></li>
+  <li><a href="#acr">ACR</a><ul>
+  <li><a href="#层级概念">层级概念</a></li>
+  <li><a href="#清单">清单</a></li>
+  <li><a href="#项目寻址">项目寻址</a></li>
+  <li><a href="#acr的sku">ACR的SKU</a></li>
+  <li><a href="#推送image到acr">推送image到ACR</a></li>
+  <li><a href="#image异地复制区域冗余">image异地复制、区域冗余</a></li>
+  <li><a href="#acr-任务">ACR 任务</a></li>
+  <li><a href="#acr-mi">ACR MI</a></li>
+  <li><a href="#acr登录">ACR登录</a></li>
+  <li><a href="#acr清理image">ACR清理image</a></li>
+  <li><a href="#troubleshooting">Troubleshooting</a></li>
+  <li><a href="#azurechina注册表endpoint">AzureChina注册表endpoint</a></li>
+</ul></li>
+  <li><a href="#aci">ACI</a><ul>
+  <li><a href="#持久存储">持久存储</a></li>
+  <li><a href="#容器组">容器组</a></li>
+  <li><a href="#查看容器日志">查看容器日志</a></li>
+</ul></li>
+</ul>
+  </aside>
+
+</div>
+
+</main>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>Learning Notes</span>
+    <a href="https://github.com/hangx969/learning-notes">GitHub</a>
+  </div>
+</footer>
+<script src="../../static/search.js"></script>
+</body>
+</html>

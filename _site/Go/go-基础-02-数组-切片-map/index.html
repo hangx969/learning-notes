@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Go数组、切片与Map - Learning Notes</title>
+<link rel="stylesheet" href="../../static/style.css">
+<link rel="stylesheet" href="../../static/pygments.css">
+</head>
+<body data-root="../../">
+<header class="site-header">
+  <div class="header-inner">
+    <a class="logo" href="../../index.html"><span class="logo-mark"></span>LEARNING NOTES</a>
+    <div class="search">
+      <input id="search-input" type="search" placeholder="搜索笔记…" autocomplete="off" aria-label="搜索笔记">
+      <div id="search-results" hidden></div>
+    </div>
+  </div>
+  <nav class="topic-nav" aria-label="主题导航">
+    <div class="topic-nav-inner">
+      <a href="../../AI/">AI</a>
+      <a href="../../Aliyun/">Aliyun</a>
+      <a href="../../Azure/">Azure</a>
+      <a href="../../C%2B%2B/">C++</a>
+      <a href="../../CloudComputing/">CloudComputing</a>
+      <a href="../../Database/">Database</a>
+      <a href="../../Docker-Kubernetes/">Docker-Kubernetes</a>
+      <a href="../../GPU-DeepLearning/">GPU-DeepLearning</a>
+      <a href="../../Git/">Git</a>
+      <a href="../../Go/" class="active">Go</a>
+      <a href="../../HPC/">HPC</a>
+      <a href="../../IaC/">IaC</a>
+      <a href="../../Linux-Shell/">Linux-Shell</a>
+      <a href="../../Middlewares/">Middlewares</a>
+      <a href="../../Networking/">Networking</a>
+      <a href="../../OS/">OS</a>
+      <a href="../../Python/">Python</a>
+      <a href="../../SoftwareTesting/">SoftwareTesting</a>
+    </div>
+  </nav>
+</header>
+<main class="main">
+
+<div class="article-layout">
+
+  <aside class="sidebar">
+    <details class="sidebar-details">
+      <summary>Go</summary>
+      <nav class="sidebar-nav">
+        <p class="sidebar-group">其他</p>
+        <ul>
+          <li><a href="../../Go/client-go-K8s%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%BC%80%E5%8F%91/">Client-Go K8s客户端开发</a></li>
+          <li><a href="../../Go/go-web%E5%BC%80%E5%8F%91/">Go Web开发</a></li>
+          <li><a href="../../Go/go-%E5%9F%BA%E7%A1%80-01-%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE-%E5%9F%BA%E7%A1%80/">Go环境配置与基础</a></li>
+          <li><a href="../../Go/go-%E5%9F%BA%E7%A1%80-02-%E6%95%B0%E7%BB%84-%E5%88%87%E7%89%87-map/" class="current">Go数组、切片与Map</a></li>
+          <li><a href="../../Go/go-%E5%9F%BA%E7%A1%80-03-%E5%8F%98%E9%87%8F-%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B-%E8%BF%90%E7%AE%97/">Go变量、数据类型与运算</a></li>
+          <li><a href="../../Go/go-%E5%9F%BA%E7%A1%80-04-%E5%88%86%E6%94%AF-%E5%BE%AA%E7%8E%AF/">Go分支与循环控制</a></li>
+          <li><a href="../../Go/go-%E5%9F%BA%E7%A1%80-05-%E5%87%BD%E6%95%B0-%E5%8C%85/">Go函数与包</a></li>
+          <li><a href="../../Go/go-%E5%9F%BA%E7%A1%80-06-%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86/">Go错误处理</a></li>
+          <li><a href="../../Go/go-%E6%8E%A5%E5%8F%A3/">什么是接口interface</a></li>
+          <li><a href="../../Go/go-%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1/">Go面向对象编程</a></li>
+          <li><a href="../../Go/%E4%BA%91%E5%8E%9F%E7%94%9F%E5%BC%80%E5%8F%91-%E5%9F%BA%E7%A1%80/">云原生开发基础</a></li>
+        </ul>
+      </nav>
+    </details>
+  </aside>
+
+  <article class="article">
+    <nav class="breadcrumb">
+      <a href="../../index.html">首页</a><span>/</span>
+      <a href="../../Go/">Go</a>
+    </nav>
+    <h1 class="article-title">Go数组、切片与Map</h1>
+    <p class="article-meta"><span>更新于 2026-07-11</span>
+      <a href="https://github.com/hangx969/learning-notes/blob/main/Go/go-%E5%9F%BA%E7%A1%80-02-%E6%95%B0%E7%BB%84-%E5%88%87%E7%89%87-map.md">查看源文件</a>
+    </p>
+    <div class="article-body">
+<h1 id="go数组切片与map">Go数组、切片与Map</h1>
+<h2 id="数组">数组</h2>
+<h3 id="数组声明">数组声明</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">package</span><span class="w"> </span><span class="nx">main</span>
+
+<span class="kd">func</span><span class="w"> </span><span class="nx">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// 数组声明</span>
+<span class="w">    </span><span class="c1">// 方式一：</span>
+<span class="w">    </span><span class="kd">var</span><span class="w"> </span><span class="nx">balance1</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="kt">float32</span><span class="p">{</span><span class="mf">1.0</span><span class="p">,</span><span class="w"> </span><span class="mf">2.0</span><span class="p">,</span><span class="w"> </span><span class="mf">3.4</span><span class="p">,</span><span class="w"> </span><span class="mf">7.0</span><span class="p">,</span><span class="w"> </span><span class="mf">5.0</span><span class="p">}</span>
+
+<span class="w">    </span><span class="c1">// 方式二：类型推导在声明数组的同时快速初始化数组：</span>
+<span class="w">    </span><span class="nx">balance2</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="kt">float32</span><span class="p">{</span><span class="mf">1.0</span><span class="p">,</span><span class="w"> </span><span class="mf">2.0</span><span class="p">,</span><span class="w"> </span><span class="mf">3.4</span><span class="p">,</span><span class="w"> </span><span class="mf">7.0</span><span class="p">,</span><span class="w"> </span><span class="mf">5.0</span><span class="p">}</span>
+
+<span class="w">    </span><span class="c1">// 方式三：如果数组长度不确定，可以使用 ... 代替数组的长度，编译器会根据元素个数自行推断数组的长度：</span>
+<span class="w">    </span><span class="kd">var</span><span class="w"> </span><span class="nx">balance3</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">[</span><span class="o">...</span><span class="p">]</span><span class="kt">float32</span><span class="p">{</span><span class="mf">1.0</span><span class="p">,</span><span class="w"> </span><span class="mf">2.0</span><span class="p">,</span><span class="w"> </span><span class="mf">3.4</span><span class="p">,</span><span class="w"> </span><span class="mf">7.0</span><span class="p">,</span><span class="w"> </span><span class="mf">5.0</span><span class="p">}</span>
+<span class="w">    </span><span class="c1">// 或</span>
+<span class="w">    </span><span class="nx">balance4</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="p">[</span><span class="o">...</span><span class="p">]</span><span class="kt">float32</span><span class="p">{</span><span class="mf">1.0</span><span class="p">,</span><span class="w"> </span><span class="mf">2.0</span><span class="p">,</span><span class="w"> </span><span class="mf">3.4</span><span class="p">,</span><span class="w"> </span><span class="mf">7.0</span><span class="p">,</span><span class="w"> </span><span class="mf">5.0</span><span class="p">}</span>
+
+<span class="w">    </span><span class="c1">// 方式四：如果设置了数组的长度，通过指定下标来初始化个别元素：</span>
+<span class="w">    </span><span class="c1">// 将索引为 1 和 3 的元素初始化，其他没赋值的默认就是0</span>
+<span class="w">    </span><span class="nx">balance5</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="kt">float32</span><span class="p">{</span><span class="mi">1</span><span class="p">:</span><span class="w"> </span><span class="mf">2.0</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">:</span><span class="w"> </span><span class="mf">7.0</span><span class="p">}</span>
+
+<span class="p">}</span>
+</code></pre></div>
+
+<h3 id="数组访问">数组访问</h3>
+<p>用索引来访问数组元素</p>
+<div class="highlight"><pre><span></span><code><span class="kd">var</span><span class="w"> </span><span class="nx">salary</span><span class="w"> </span><span class="kt">float32</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nx">balance</span><span class="p">[</span><span class="mi">9</span><span class="p">]</span>
+</code></pre></div>
+
+<h3 id="遍历数组">遍历数组</h3>
+<p><mark>for..range</mark> 遍历，这是 Go 语言一种独有的结构，可以用来遍历访问数组的元素。</p>
+<div class="highlight"><pre><span></span><code><span class="kn">package</span><span class="w"> </span><span class="nx">main</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="s">&quot;fmt&quot;</span>
+
+<span class="kd">func</span><span class="w"> </span><span class="nx">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">names</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="kt">string</span><span class="p">{</span><span class="s">&quot;Bob&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Alice&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Tom&quot;</span><span class="p">}</span>
+<span class="w">    </span><span class="c1">// 遍历数组，range返回索引和值。可以用 _ 忽略i或者v</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="nx">i</span><span class="p">,</span><span class="w"> </span><span class="nx">v</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="k">range</span><span class="w"> </span><span class="nx">names</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;Index is %d, value is %s\n&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">i</span><span class="p">,</span><span class="w"> </span><span class="nx">v</span><span class="p">)</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<hr />
+<h2 id="切片">切片</h2>
+<p>Go 语言切片是对数组的抽象。Go 数组的长度不可改变，在特定场景中这样的集合就不太适用，Go 中提供了一种灵活，功能强悍的内置类型==切片==("动态数组")，与数组相比切片的长度是不固定的，可以追加元素，在追加时可能使切片的容量增大。比方说存放学生成绩，那学生个数是不确定的，这样就可以用切片。</p>
+<p><div class="callout callout-important" markdown="1"><br />
+<p class="callout-title">切片的本质</p></p>
+<ul>
+<li>切片是数组的一个==引用==，因此切片是==引用类型==，在进行传递时，遵守引用传递的机制。</li>
+<li>切片本质是对数组的一个"轻量级封装"，包含==指向底层数组的指针==、<mark>长度==和==容量</mark>。</li>
+<li>切片可以通过 <code>append</code> 动态扩容，数组不行。</li>
+</ul>
+</div>
+<h3 id="切片定义">切片定义</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">package</span><span class="w"> </span><span class="nx">main</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="s">&quot;fmt&quot;</span>
+
+<span class="kd">func</span><span class="w"> </span><span class="nx">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+
+<span class="w">    </span><span class="nx">intArr</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="p">[</span><span class="o">...</span><span class="p">]</span><span class="kt">int</span><span class="p">{</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">11</span><span class="p">,</span><span class="w"> </span><span class="mi">22</span><span class="p">,</span><span class="w"> </span><span class="mi">55</span><span class="p">,</span><span class="w"> </span><span class="mi">76</span><span class="p">}</span>
+
+<span class="w">    </span><span class="c1">//方法1：定义一个切片，直接引用已经存在的一个数组中的某些元素</span>
+<span class="w">    </span><span class="nx">slice</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">intArr</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span>
+
+<span class="w">    </span><span class="c1">//方法2：make切片</span>
+<span class="w">    </span><span class="c1">// var 切片名 []type = make([]type, len, [cap])</span>
+<span class="w">    </span><span class="c1">// type:  切片的数据类型</span>
+<span class="w">    </span><span class="c1">// len : 切片元素的个数</span>
+<span class="w">    </span><span class="c1">// cap ：指定切片容量，可选， 如果你分配了 cap,则要求 cap&gt;=len.</span>
+<span class="w">    </span><span class="kd">var</span><span class="w"> </span><span class="nx">slc</span><span class="w"> </span><span class="p">[]</span><span class="kt">float64</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">make</span><span class="p">([]</span><span class="kt">float64</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="p">)</span>
+<span class="w">    </span><span class="nx">slc2</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nb">make</span><span class="p">([]</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="p">)</span>
+<span class="w">    </span><span class="nx">slc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mf">1.0</span>
+<span class="w">    </span><span class="nx">slc</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mf">2.0</span>
+<span class="w">    </span><span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;slc=&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">slc</span><span class="p">)</span>
+
+<span class="w">    </span><span class="c1">//第3种方式：定义一个切片，直接就指定具体数组，使用原理类似make的方式</span>
+<span class="w">    </span><span class="nx">strSlc</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="p">[]</span><span class="kt">string</span><span class="p">{</span><span class="s">&quot;Bob&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Tom&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Alice&quot;</span><span class="p">}</span>
+
+<span class="p">}</span>
+</code></pre></div>
+
+<p><div class="callout callout-tip" markdown="1"><br />
+<p class="callout-title">切片 vs 数组</p></p>
+<p>Go开发中，绝大多数场景都推荐用==切片==而不是数组，因为切片提供了动态长度和灵活操作的能力。</p>
+</div>
+<h3 id="切片基本使用">切片基本使用</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">package</span><span class="w"> </span><span class="nx">main</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="s">&quot;fmt&quot;</span>
+
+<span class="kd">func</span><span class="w"> </span><span class="nx">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+
+<span class="w">    </span><span class="c1">//演示切片的基本使用</span>
+<span class="w">    </span><span class="kd">var</span><span class="w"> </span><span class="nx">intArr</span><span class="w"> </span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="kt">int</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">[</span><span class="o">...</span><span class="p">]</span><span class="kt">int</span><span class="p">{</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">11</span><span class="p">,</span><span class="w"> </span><span class="mi">22</span><span class="p">,</span><span class="w"> </span><span class="mi">55</span><span class="p">,</span><span class="w"> </span><span class="mi">76</span><span class="p">}</span>
+
+<span class="w">    </span><span class="c1">//声明/定义一个切片</span>
+<span class="w">    </span><span class="c1">//1. slice 就是切片名</span>
+<span class="w">    </span><span class="c1">//2. intArr[1:3] 表示 slice 引用到intArr这个数组</span>
+<span class="w">    </span><span class="c1">//3. 引用intArr数组的起始下标为 1 , 最后的下标为3(但是不包含3)。所以就是索引1，索引2的元素</span>
+<span class="w">    </span><span class="nx">slice</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">intArr</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span>
+<span class="w">    </span><span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;intArr=&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">intArr</span><span class="p">)</span>
+<span class="w">    </span><span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;slice 的元素 =&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">slice</span><span class="p">)</span>
+<span class="w">    </span><span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;slice 的元素个数 =&quot;</span><span class="p">,</span><span class="w"> </span><span class="nb">len</span><span class="p">(</span><span class="nx">slice</span><span class="p">))</span><span class="w"> </span><span class="c1">// 2</span>
+<span class="w">    </span><span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;slice 的容量 =&quot;</span><span class="p">,</span><span class="w"> </span><span class="nb">cap</span><span class="p">(</span><span class="nx">slice</span><span class="p">))</span><span class="w"> </span><span class="c1">// 切片的容量是可以动态变化</span>
+<span class="w">    </span><span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;intArr[1]的地址=%p\n&quot;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="nx">intArr</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<span class="w">    </span><span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;slice[0]的地址=%p slice[0]==%v\n&quot;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="nx">slice</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="w"> </span><span class="nx">slice</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+<span class="w">    </span><span class="nx">slice</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">66</span><span class="w"> </span><span class="c1">//改了Slice的元素，原数组的元素也随之改变</span>
+<span class="w">    </span><span class="c1">//添加元素</span>
+<span class="w">    </span><span class="nx">slice</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">append</span><span class="p">(</span><span class="nx">slice</span><span class="p">,</span><span class="w"> </span><span class="mi">18</span><span class="p">)</span>
+<span class="w">    </span><span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;intArr=&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">intArr</span><span class="p">)</span>
+<span class="w">    </span><span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;slice 的元素是 =&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">slice</span><span class="p">)</span><span class="w"> </span><span class="c1">// 11 66 18</span>
+<span class="w">    </span><span class="c1">//删除元素，没有实现具体方法，用切片实现</span>
+<span class="w">    </span><span class="nx">slice</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nx">slice</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="w"> </span><span class="c1">//删头</span>
+<span class="w">    </span><span class="nx">slice</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nx">slice</span><span class="p">[:</span><span class="nb">len</span><span class="p">(</span><span class="nx">slice</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="c1">//删尾</span>
+<span class="w">    </span><span class="nx">slice</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">append</span><span class="p">(</span><span class="nx">slice</span><span class="p">[:</span><span class="mi">2</span><span class="p">],</span><span class="w"> </span><span class="nx">slice</span><span class="p">[</span><span class="mi">3</span><span class="p">:]</span><span class="o">...</span><span class="p">)</span><span class="w"> </span><span class="c1">//删中间，靠拼接实现</span>
+
+<span class="p">}</span>
+</code></pre></div>
+
+<h3 id="切片的遍历">切片的遍历</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">package</span><span class="w"> </span><span class="nx">main</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="s">&quot;fmt&quot;</span>
+
+<span class="kd">func</span><span class="w"> </span><span class="nx">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+
+<span class="w">    </span><span class="nx">strSlc</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="p">[]</span><span class="kt">string</span><span class="p">{</span><span class="s">&quot;Bob&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Tom&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Alice&quot;</span><span class="p">}</span>
+
+<span class="w">    </span><span class="c1">//索引遍历</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="nx">i</span><span class="o">:=</span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="nx">i</span><span class="p">&lt;</span><span class="mi">3</span><span class="p">;</span><span class="w"> </span><span class="nx">i</span><span class="o">++</span><span class="p">{</span>
+<span class="w">        </span><span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;index is %v, value is %v\n&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">i</span><span class="p">,</span><span class="w"> </span><span class="nx">strSlc</span><span class="p">[</span><span class="nx">i</span><span class="p">])</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="c1">// for range遍历</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="nx">i</span><span class="p">,</span><span class="w"> </span><span class="nx">v</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="k">range</span><span class="w"> </span><span class="nx">strSlc</span><span class="p">{</span>
+<span class="w">        </span><span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;index is %v, value is %v\n&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">i</span><span class="p">,</span><span class="w"> </span><span class="nx">v</span><span class="p">)</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<hr />
+<h2 id="二维数组">二维数组</h2>
+<h3 id="二维数组定义">二维数组定义</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">package</span><span class="w"> </span><span class="nx">main</span>
+<span class="kn">import</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="s">&quot;fmt&quot;</span>
+<span class="p">)</span>
+
+<span class="kd">func</span><span class="w"> </span><span class="nx">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">//二维数组的演示案例</span>
+<span class="w">    </span><span class="cm">/*</span>
+<span class="cm">    0 0 0 0 0 0</span>
+<span class="cm">    0 0 1 0 0 0</span>
+<span class="cm">    0 2 0 3 0 0</span>
+<span class="cm">    0 0 0 0 0 0</span>
+<span class="cm">    */</span>
+
+<span class="w">    </span><span class="c1">//定义/声明二维数组，四行六列</span>
+<span class="w">    </span><span class="kd">var</span><span class="w"> </span><span class="nx">arr</span><span class="w"> </span><span class="p">[</span><span class="mi">4</span><span class="p">][</span><span class="mi">6</span><span class="p">]</span><span class="kt">int</span>
+<span class="w">    </span><span class="c1">//赋初值</span>
+<span class="w">    </span><span class="nx">arr</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">    </span><span class="nx">arr</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">2</span>
+<span class="w">    </span><span class="nx">arr</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">3</span><span class="p">]</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">3</span>
+
+<span class="w">    </span><span class="c1">//遍历二维数组，按照要求输出图形</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="nx">i</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="nx">i</span><span class="w"> </span><span class="p">&lt;</span><span class="w"> </span><span class="mi">4</span><span class="p">;</span><span class="w"> </span><span class="nx">i</span><span class="o">++</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="nx">j</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="nx">j</span><span class="w"> </span><span class="p">&lt;</span><span class="w"> </span><span class="mi">6</span><span class="p">;</span><span class="w"> </span><span class="nx">j</span><span class="o">++</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nx">fmt</span><span class="p">.</span><span class="nx">Print</span><span class="p">(</span><span class="nx">arr</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="nx">j</span><span class="p">],</span><span class="w"> </span><span class="s">&quot; &quot;</span><span class="p">)</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">()</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h3 id="二维数组遍历">二维数组遍历</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">package</span><span class="w"> </span><span class="nx">main</span>
+<span class="kn">import</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="s">&quot;fmt&quot;</span>
+<span class="p">)</span>
+<span class="kd">func</span><span class="w"> </span><span class="nx">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">//演示二维数组的遍历</span>
+<span class="w">    </span><span class="kd">var</span><span class="w"> </span><span class="nx">arr3</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">3</span><span class="p">]</span><span class="kt">int</span><span class="p">{{</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">},</span><span class="w"> </span><span class="p">{</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">}}</span>
+
+<span class="w">    </span><span class="c1">//for循环来遍历</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="nx">i</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="nx">i</span><span class="w"> </span><span class="p">&lt;</span><span class="w"> </span><span class="nb">len</span><span class="p">(</span><span class="nx">arr3</span><span class="p">);</span><span class="w"> </span><span class="nx">i</span><span class="o">++</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="nx">j</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="nx">j</span><span class="w"> </span><span class="p">&lt;</span><span class="w"> </span><span class="nb">len</span><span class="p">(</span><span class="nx">arr3</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span><span class="w"> </span><span class="nx">j</span><span class="o">++</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;%v\t&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">arr3</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="nx">j</span><span class="p">])</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">()</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="c1">//for-range来遍历二维数组</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="nx">i</span><span class="p">,</span><span class="w"> </span><span class="nx">v</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="k">range</span><span class="w"> </span><span class="nx">arr3</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="nx">j</span><span class="p">,</span><span class="w"> </span><span class="nx">v2</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="k">range</span><span class="w"> </span><span class="nx">v</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;arr3[%v][%v]=%v \t&quot;</span><span class="p">,</span><span class="nx">i</span><span class="p">,</span><span class="w"> </span><span class="nx">j</span><span class="p">,</span><span class="w"> </span><span class="nx">v2</span><span class="p">)</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">()</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<hr />
+<h2 id="集合map">集合（Map）</h2>
+<p><mark>Map</mark> 是一种无序的键值对的集合。Map 最重要的一点是通过 key 来快速检索数据，key 类似于索引，指向数据的值。</p>
+<p>Map 是一种集合，所以我们可以像迭代数组和切片那样迭代它。不过，Map 是==无序==的，我们无法决定它的返回顺序，这是因为 Map 是使用 ==hash 表==来实现的。</p>
+<h3 id="集合声明">集合声明</h3>
+<p>声明：<code>var 变量名 map[keytype]valuetype</code></p>
+<p><div class="callout callout-warning" markdown="1"><br />
+<p class="callout-title">注意</p></p>
+<p>声明是不会分配内存的，初始化需要 <mark>make</mark> 分配内存后才能赋值和使用。<code>变量名 = make(map[keytype]valuetype)</code></p>
+<p>如果不初始化 map，那么就会创建一个 <mark>nil map</mark>。nil map 不能用来存放键值对</p>
+</div>
+<div class="highlight"><pre><span></span><code><span class="kn">package</span><span class="w"> </span><span class="nx">main</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="s">&quot;fmt&quot;</span>
+
+<span class="kd">func</span><span class="w"> </span><span class="nx">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+
+<span class="w">    </span><span class="c1">// 声明map同时make初始化</span>
+<span class="w">    </span><span class="kd">var</span><span class="w"> </span><span class="nx">a</span><span class="w"> </span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">string</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">make</span><span class="p">(</span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="p">)</span>
+<span class="w">    </span><span class="c1">// 用短声明更简洁</span>
+<span class="w">    </span><span class="nx">b</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nb">make</span><span class="p">(</span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="p">)</span>
+<span class="w">    </span><span class="c1">// 不声明容量也行</span>
+<span class="w">    </span><span class="nx">c</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nb">make</span><span class="p">(</span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">string</span><span class="p">)</span>
+
+<span class="w">    </span><span class="nx">a</span><span class="p">[</span><span class="s">&quot;name1&quot;</span><span class="p">]</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">&quot;Bob&quot;</span>
+<span class="w">    </span><span class="nx">a</span><span class="p">[</span><span class="s">&quot;name2&quot;</span><span class="p">]</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">&quot;Alice&quot;</span>
+<span class="w">    </span><span class="nx">a</span><span class="p">[</span><span class="s">&quot;name3&quot;</span><span class="p">]</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">&quot;Tom&quot;</span>
+<span class="w">    </span><span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">a</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h3 id="集合遍历">集合遍历</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">package</span><span class="w"> </span><span class="nx">main</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="s">&quot;fmt&quot;</span>
+
+<span class="kd">func</span><span class="w"> </span><span class="nx">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+
+<span class="w">    </span><span class="nx">b</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nb">make</span><span class="p">(</span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="p">)</span>
+
+<span class="w">    </span><span class="nx">b</span><span class="p">[</span><span class="s">&quot;name1&quot;</span><span class="p">]</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">&quot;Bob&quot;</span>
+<span class="w">    </span><span class="nx">b</span><span class="p">[</span><span class="s">&quot;name2&quot;</span><span class="p">]</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">&quot;Alice&quot;</span>
+<span class="w">    </span><span class="nx">b</span><span class="p">[</span><span class="s">&quot;name3&quot;</span><span class="p">]</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">&quot;Tom&quot;</span>
+<span class="w">    </span><span class="c1">// for range遍历</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="nx">k</span><span class="p">,</span><span class="w"> </span><span class="nx">v</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="k">range</span><span class="w"> </span><span class="nx">b</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;Key is %v, value is %v\n&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">k</span><span class="p">,</span><span class="w"> </span><span class="nx">v</span><span class="p">)</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h3 id="集合增删改查">集合增删改查</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">package</span><span class="w"> </span><span class="nx">main</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="s">&quot;fmt&quot;</span>
+
+<span class="kd">func</span><span class="w"> </span><span class="nx">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+
+<span class="w">    </span><span class="nx">b</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nb">make</span><span class="p">(</span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="p">)</span>
+
+<span class="w">    </span><span class="nx">b</span><span class="p">[</span><span class="s">&quot;name1&quot;</span><span class="p">]</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">&quot;Bob&quot;</span>
+<span class="w">    </span><span class="nx">b</span><span class="p">[</span><span class="s">&quot;name2&quot;</span><span class="p">]</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">&quot;Alice&quot;</span>
+<span class="w">    </span><span class="nx">b</span><span class="p">[</span><span class="s">&quot;name3&quot;</span><span class="p">]</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">&quot;Tom&quot;</span>
+
+<span class="w">    </span><span class="c1">// 改</span>
+<span class="w">    </span><span class="nx">b</span><span class="p">[</span><span class="s">&quot;name1&quot;</span><span class="p">]</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">&quot;Ann&quot;</span>
+
+<span class="w">    </span><span class="c1">// 如果key不存在就是增</span>
+<span class="w">    </span><span class="nx">b</span><span class="p">[</span><span class="s">&quot;name4&quot;</span><span class="p">]</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">&quot;Cary&quot;</span>
+
+<span class="w">    </span><span class="c1">//删</span>
+<span class="w">    </span><span class="c1">// delete 是一个内置函数，如果 key 存在，就删除该 key-value,如果 key 不存在，不操作，但是也不会报错。</span>
+<span class="w">    </span><span class="nb">delete</span><span class="p">(</span><span class="nx">b</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;name4&quot;</span><span class="p">)</span>
+
+<span class="w">    </span><span class="c1">//遍历输出</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="nx">k</span><span class="p">,</span><span class="w"> </span><span class="nx">v</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="k">range</span><span class="w"> </span><span class="nx">b</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;Key is %v, value is %v\n&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">k</span><span class="p">,</span><span class="w"> </span><span class="nx">v</span><span class="p">)</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="c1">// 如果我们要删除 map 的所有 key ,没有专门的方法一次删除，可以遍历key, 逐个删除.</span>
+<span class="w">    </span><span class="c1">// 或者 map = make(...)，make 一个新的，这样原map会被GC回收，b变成一个新的空map。</span>
+<span class="w">    </span><span class="nx">b</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">make</span><span class="p">(</span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">string</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h3 id="安全取值">安全取值</h3>
+<p>如果取到了一个集合中不存在的值，不会报错，而是返回一个空值，所以我们要自己处理这种异常情况，用==双返回值模式（comma ok idiom）==。</p>
+<p><div class="callout callout-tip" markdown="1"><br />
+<p class="callout-title">惯用写法</p></p>
+<p>这是 Go 中访问 map 的惯用写法，建议始终使用双返回值模式来安全地检查 key 是否存在。</p>
+</div>
+<div class="highlight"><pre><span></span><code><span class="kn">package</span><span class="w"> </span><span class="nx">main</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="s">&quot;fmt&quot;</span>
+<span class="p">)</span>
+
+<span class="kd">func</span><span class="w"> </span><span class="nx">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">nameLists</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nb">make</span><span class="p">(</span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">string</span><span class="p">)</span>
+<span class="w">    </span><span class="nx">nameLists</span><span class="p">[</span><span class="s">&quot;Bob&quot;</span><span class="p">]</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">&quot;Engineer&quot;</span>
+<span class="w">    </span><span class="nx">nameLists</span><span class="p">[</span><span class="s">&quot;Tom&quot;</span><span class="p">]</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">&quot;Doctor&quot;</span>
+<span class="w">    </span><span class="nx">nameLists</span><span class="p">[</span><span class="s">&quot;Alice&quot;</span><span class="p">]</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">&quot;Teacher&quot;</span>
+
+<span class="w">  </span><span class="c1">// profession - key 对应的 value。如果 key 不存在，返回零值（&quot;&quot;）</span>
+<span class="w">  </span><span class="c1">// ok - key 是否存在。true = 找到，false = 未找到</span>
+<span class="w">    </span><span class="nx">profession</span><span class="p">,</span><span class="w"> </span><span class="nx">ok</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">nameLists</span><span class="p">[</span><span class="s">&quot;Bob&quot;</span><span class="p">]</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="nx">ok</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;Bob&#39;s profession is %s\n&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">profession</span><span class="p">)</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;Bob&#39;s profession not found&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="nx">profession</span><span class="p">,</span><span class="w"> </span><span class="nx">ok</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nx">nameLists</span><span class="p">[</span><span class="s">&quot;Charlie&quot;</span><span class="p">]</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="nx">ok</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;Charlie&#39;s profession is %s\n&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">profession</span><span class="p">)</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;Charlie is not found&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<hr />
+<h2 id="深浅拷贝-引用和值">深浅拷贝 - 引用和值</h2>
+<p><div class="callout callout-summary" markdown="1"><br />
+<p class="callout-title">深拷贝 vs 浅拷贝</p></p>
+<ul>
+<li><strong>深拷贝</strong>：复制一个变量的时候，创建了一个新的变量，并且将原始数据复制给新变量，新变量在内存中是一个新的地址，两个变量修改时不会影响其他变量</li>
+<li><strong>浅拷贝</strong>：复制一个变量时，也会创建一个新的变量，但是两个变量共享底层的数据。也就是新旧变量会指向同一个数据的内存地址。实际上算是引用同一个数据。也就意味着任意一个变量发生变更，其他的也会变。</li>
+</ul>
+</div>
+<ul>
+<li><mark>值类型</mark>：复制变量的时候是深拷贝，值类型包括：<code>int</code>、<code>float</code>、<code>string</code>、<code>struct</code>、<code>array</code>、<code>bool</code></li>
+<li><mark>引用类型</mark>：复制变量的时候是浅拷贝，引用类型包括：<code>slice</code>、<code>map</code>、<code>channel</code>、<code>interface</code>。<ul>
+<li>想要深拷贝切片，用 <code>copy(new, old)</code></li>
+</ul>
+</li>
+</ul>
+<hr />
+<p><strong>相关笔记：</strong> <a class="wikilink" href="../../Go/go-%E5%9F%BA%E7%A1%80-03-%E5%8F%98%E9%87%8F-%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B-%E8%BF%90%E7%AE%97/">go-基础-03-变量-数据类型-运算</a> | <a class="wikilink" href="../../Go/go-%E5%9F%BA%E7%A1%80-04-%E5%88%86%E6%94%AF-%E5%BE%AA%E7%8E%AF/">go-基础-04-分支-循环</a> | <a class="wikilink" href="../../Go/go-%E5%9F%BA%E7%A1%80-05-%E5%87%BD%E6%95%B0-%E5%8C%85/">go-基础-05-函数-包</a> | <a class="wikilink" href="../../Go/go-%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1/">go-面向对象</a></p>
+    </div>
+  </article>
+  <aside class="toc">
+    <p class="toc-label">本页目录</p>
+    <ul>
+  <li><a href="#数组">数组</a><ul>
+  <li><a href="#数组声明">数组声明</a></li>
+  <li><a href="#数组访问">数组访问</a></li>
+  <li><a href="#遍历数组">遍历数组</a></li>
+</ul></li>
+  <li><a href="#切片">切片</a><ul>
+  <li><a href="#切片定义">切片定义</a></li>
+  <li><a href="#切片基本使用">切片基本使用</a></li>
+  <li><a href="#切片的遍历">切片的遍历</a></li>
+</ul></li>
+  <li><a href="#二维数组">二维数组</a><ul>
+  <li><a href="#二维数组定义">二维数组定义</a></li>
+  <li><a href="#二维数组遍历">二维数组遍历</a></li>
+</ul></li>
+  <li><a href="#集合map">集合（Map）</a><ul>
+  <li><a href="#集合声明">集合声明</a></li>
+  <li><a href="#集合遍历">集合遍历</a></li>
+  <li><a href="#集合增删改查">集合增删改查</a></li>
+  <li><a href="#安全取值">安全取值</a></li>
+</ul></li>
+  <li><a href="#深浅拷贝-引用和值">深浅拷贝 - 引用和值</a></li>
+</ul>
+  </aside>
+
+</div>
+
+</main>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>Learning Notes</span>
+    <a href="https://github.com/hangx969/learning-notes">GitHub</a>
+  </div>
+</footer>
+<script src="../../static/search.js"></script>
+</body>
+</html>

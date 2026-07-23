@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Python 面向对象编程 - Learning Notes</title>
+<link rel="stylesheet" href="../../../static/style.css">
+<link rel="stylesheet" href="../../../static/pygments.css">
+</head>
+<body data-root="../../../">
+<header class="site-header">
+  <div class="header-inner">
+    <a class="logo" href="../../../index.html"><span class="logo-mark"></span>LEARNING NOTES</a>
+    <div class="search">
+      <input id="search-input" type="search" placeholder="搜索笔记…" autocomplete="off" aria-label="搜索笔记">
+      <div id="search-results" hidden></div>
+    </div>
+  </div>
+  <nav class="topic-nav" aria-label="主题导航">
+    <div class="topic-nav-inner">
+      <a href="../../../AI/">AI</a>
+      <a href="../../../Aliyun/">Aliyun</a>
+      <a href="../../../Azure/">Azure</a>
+      <a href="../../../C%2B%2B/">C++</a>
+      <a href="../../../CloudComputing/">CloudComputing</a>
+      <a href="../../../Database/">Database</a>
+      <a href="../../../Docker-Kubernetes/">Docker-Kubernetes</a>
+      <a href="../../../GPU-DeepLearning/">GPU-DeepLearning</a>
+      <a href="../../../Git/">Git</a>
+      <a href="../../../Go/">Go</a>
+      <a href="../../../HPC/">HPC</a>
+      <a href="../../../IaC/">IaC</a>
+      <a href="../../../Linux-Shell/">Linux-Shell</a>
+      <a href="../../../Middlewares/">Middlewares</a>
+      <a href="../../../Networking/">Networking</a>
+      <a href="../../../OS/">OS</a>
+      <a href="../../../Python/" class="active">Python</a>
+      <a href="../../../SoftwareTesting/">SoftwareTesting</a>
+    </div>
+  </nav>
+</header>
+<main class="main">
+
+<div class="article-layout">
+
+  <aside class="sidebar">
+    <details class="sidebar-details">
+      <summary>Python</summary>
+      <nav class="sidebar-nav">
+        <p class="sidebar-group">python-基础</p>
+        <ul>
+          <li><a href="../../../Python/python-%E5%9F%BA%E7%A1%80/python-OOP/" class="current">Python 面向对象编程</a></li>
+          <li><a href="../../../Python/python-%E5%9F%BA%E7%A1%80/python-QA/">Python 知识总结与常见问题</a></li>
+          <li><a href="../../../Python/python-%E5%9F%BA%E7%A1%80/python-basics/">Python 数据类型、运算符与基础语法</a></li>
+          <li><a href="../../../Python/python-%E5%9F%BA%E7%A1%80/python-exception-handling/">Python 异常处理</a></li>
+          <li><a href="../../../Python/python-%E5%9F%BA%E7%A1%80/python-function/">Python 函数</a></li>
+          <li><a href="../../../Python/python-%E5%9F%BA%E7%A1%80/python%E5%8C%85%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7-uv/">Python 包管理工具 uv</a></li>
+          <li><a href="../../../Python/python-%E5%9F%BA%E7%A1%80/rockylinux%E9%85%8D%E7%BD%AEpython%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/">RockyLinux 配置 Python 开发环境</a></li>
+          <li><a href="../../../Python/python-%E5%9F%BA%E7%A1%80/windows%E9%85%8D%E7%BD%AEpython%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/">Windows 配置 Python 开发环境</a></li>
+        </ul>
+        <p class="sidebar-group">python-数据分析-AI大模型</p>
+        <ul>
+          <li><a href="../../../Python/python-%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-AI%E5%A4%A7%E6%A8%A1%E5%9E%8B/python-%E5%A4%84%E7%90%86excel-word/">Python处理Excel与Word文档</a></li>
+          <li><a href="../../../Python/python-%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-AI%E5%A4%A7%E6%A8%A1%E5%9E%8B/python-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E4%B8%8E%E9%A2%84%E6%B5%8B/">Python机器学习与预测</a></li>
+        </ul>
+        <p class="sidebar-group">python-网络编程-前端</p>
+        <ul>
+          <li><a href="../../../Python/python-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B-%E5%89%8D%E7%AB%AF/python-Web%E5%BC%80%E5%8F%91-HTML-CSS-JS/">Web开发基础 - HTML/CSS/JavaScript</a></li>
+          <li><a href="../../../Python/python-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B-%E5%89%8D%E7%AB%AF/python-Web%E6%A1%86%E6%9E%B6Django/">Python Web框架Django</a></li>
+          <li><a href="../../../Python/python-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B-%E5%89%8D%E7%AB%AF/python-Web%E6%A1%86%E6%9E%B6Flask/">Python Web框架Flask</a></li>
+          <li><a href="../../../Python/python-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B-%E5%89%8D%E7%AB%AF/python-request-module/">Python Requests模块</a></li>
+          <li><a href="../../../Python/python-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B-%E5%89%8D%E7%AB%AF/python-socket-module/">Python Socket模块</a></li>
+          <li><a href="../../../Python/python-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B-%E5%89%8D%E7%AB%AF/python-%E7%88%AC%E8%99%AB/">Python爬虫</a></li>
+        </ul>
+        <p class="sidebar-group">python-运维开发</p>
+        <ul>
+          <li><a href="../../../Python/python-%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91/python-GUI-tkinter/">Python GUI开发 - Tkinter</a></li>
+          <li><a href="../../../Python/python-%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91/python-Linux-operation/">Python Linux运维模块</a></li>
+          <li><a href="../../../Python/python-%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91/python-elasticsearch/">Python Elasticsearch运维</a></li>
+          <li><a href="../../../Python/python-%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91/python-fabric%E9%AB%98%E7%BA%A7%E7%94%A8%E6%B3%95/">Python Fabric高级用法</a></li>
+          <li><a href="../../../Python/python-%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91/python-kubernetes-module/">Python Kubernetes模块</a></li>
+          <li><a href="../../../Python/python-%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91/python-mysql/">Python MySQL操作</a></li>
+          <li><a href="../../../Python/python-%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91/python-nginx/">Python Nginx运维自动化</a></li>
+          <li><a href="../../../Python/python-%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91/python-postgresql/">Python PostgreSQL操作</a></li>
+          <li><a href="../../../Python/python-%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91/python-tomcat/">Python Tomcat运维自动化</a></li>
+          <li><a href="../../../Python/python-%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91/python-%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/">Python 游戏开发</a></li>
+        </ul>
+        <p class="sidebar-group">电池参数提取统计工具开发</p>
+        <ul>
+          <li><a href="../../../Python/%E7%94%B5%E6%B1%A0%E5%8F%82%E6%95%B0%E6%8F%90%E5%8F%96%E7%BB%9F%E8%AE%A1%E5%B7%A5%E5%85%B7%E5%BC%80%E5%8F%91/%E5%AE%9E%E9%AA%8C%E5%AE%A4%E7%94%B5%E6%B1%A0%E5%8F%82%E6%95%B0%E4%B8%80%E9%94%AE%E7%BB%9F%E8%AE%A1%E5%B7%A5%E5%85%B7%E5%BC%80%E5%8F%91/">实验室电池参数一键统计工具开发</a></li>
+        </ul>
+        <p class="sidebar-group">其他</p>
+        <ul>
+          <li><a href="../../../Python/script-server-%E8%84%9A%E6%9C%ACWeb%E5%8C%96%E5%B7%A5%E5%85%B7/">Script-Server：脚本 Web 化工具</a></li>
+        </ul>
+      </nav>
+    </details>
+  </aside>
+
+  <article class="article">
+    <nav class="breadcrumb">
+      <a href="../../../index.html">首页</a><span>/</span>
+      <a href="../../../Python/">Python</a><span>/</span><span>python-基础</span>
+    </nav>
+    <h1 class="article-title">Python 面向对象编程</h1>
+    <p class="article-meta"><span>更新于 2026-04-16</span>
+      <a href="https://github.com/hangx969/learning-notes/blob/main/Python/python-%E5%9F%BA%E7%A1%80/python-OOP.md">查看源文件</a>
+    </p>
+    <div class="article-body">
+<h1 id="python-面向对象编程">Python 面向对象编程</h1>
+<h2 id="概念">概念</h2>
+<p>在面向对象编程中,任何东西都可以被看作一个"对象",比如人、汽车、动物、书籍等。每个对象都有==属性==和==方法==。举个例子:</p>
+<ul>
+<li>
+<p>人可以是一个对象,它有属性(比如姓名、年龄、身高)也有方法(比如吃饭、走路、说话)</p>
+</li>
+<li>
+<p>汽车也是一个对象,它有属性(品牌、型号、颜色)有方法(启动、加速、刹车)。</p>
+</li>
+</ul>
+<p><div class="callout callout-info" markdown="1"><br />
+<p class="callout-title">对象(Object)</p></p>
+<p>可以把对象理解为生活中的某个具体的东西。比如有一辆车,这辆车就是一个对象。在编程里,对象就是一个具体的==实例==。比如我们可以创建一个"汽车"的对象,它会有特定的属性,比如品牌、颜色,还有可以执行的动作,比如启动、刹车。</p>
+</div>
+<p><div class="callout callout-info" markdown="1"><br />
+<p class="callout-title">类(Class)</p></p>
+<p>类就是制造对象的"模具"或"模板"。就像你有个汽车的设计图,你可以用这个设计图制造很多不同的汽车。编程里的类就是定义了某种事物的属性和行为,比如汽车的品牌、颜色,能做的动作像启动、加速等。每次你用这个类,就像从设计图制造出一个新的汽车。</p>
+</div>
+<p><div class="callout callout-info" markdown="1"><br />
+<p class="callout-title">属性(Attributes)与方法(Methods)</p></p>
+<p>==属性==就是对象的特点或信息。比如汽车的品牌是红旗,颜色是白色,这些就是属性。每个对象都会有自己的属性,就像每辆汽车可以有不同的颜色和型号。==方法==就是对象能做的动作或功能。比如汽车能启动、加速、刹车,这些就是方法。在编程里,方法也叫做函数,就是定义在类里的"动作",让对象可以执行某些任务。</p>
+</div>
+<hr />
+<h2 id="示例">示例</h2>
+<div class="highlight"><pre><span></span><code><span class="c1"># 定义一个简单的类</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Car</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">make</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">make</span> <span class="o">=</span> <span class="n">make</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">start_engine</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">make</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="si">}</span><span class="s2"> starting&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">accerlate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">make</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="si">}</span><span class="s2"> acclerating&quot;</span><span class="p">)</span>
+
+<span class="n">car1</span> <span class="o">=</span> <span class="n">Car</span><span class="p">(</span><span class="s1">&#39;Audi&#39;</span><span class="p">,</span><span class="s1">&#39;A4&#39;</span><span class="p">)</span>
+<span class="n">car2</span> <span class="o">=</span> <span class="n">Car</span><span class="p">(</span><span class="s1">&#39;BMW&#39;</span><span class="p">,</span> <span class="s1">&#39;X7&#39;</span><span class="p">)</span>
+
+<span class="n">car1</span><span class="o">.</span><span class="n">start_engine</span><span class="p">()</span>
+<span class="n">car2</span><span class="o">.</span><span class="n">accerlate</span><span class="p">()</span>
+</code></pre></div>
+
+<hr />
+<h2 id="类和方法">类和方法</h2>
+<h3 id="修改类的属性">修改类的属性</h3>
+<p>类不仅可以定义属性和方法,还可以在对象创建后动态修改这些属性。</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">Friend</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">age</span><span class="p">,</span> <span class="n">hobby</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">age</span> <span class="o">=</span> <span class="n">age</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hobby</span> <span class="o">=</span> <span class="n">hobby</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">introduce</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;I am </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">age</span><span class="si">}</span><span class="s2"> years old, I like </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">hobby</span><span class="si">}</span><span class="s2">&quot;</span>
+
+<span class="n">bob</span> <span class="o">=</span> <span class="n">Friend</span><span class="p">(</span><span class="s1">&#39;Bob&#39;</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="s2">&quot;travel&quot;</span><span class="p">)</span>
+<span class="n">alice</span> <span class="o">=</span> <span class="n">Friend</span><span class="p">(</span><span class="s1">&#39;Alice&#39;</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="s1">&#39;movie&#39;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">bob</span><span class="o">.</span><span class="n">introduce</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">alice</span><span class="o">.</span><span class="n">introduce</span><span class="p">())</span>
+
+<span class="n">bob</span><span class="o">.</span><span class="n">age</span> <span class="o">=</span> <span class="mi">13</span>
+<span class="n">alice</span><span class="o">.</span><span class="n">hobby</span> <span class="o">=</span> <span class="s1">&#39;running&#39;</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">bob</span><span class="o">.</span><span class="n">introduce</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">alice</span><span class="o">.</span><span class="n">introduce</span><span class="p">())</span>
+</code></pre></div>
+
+<h3 id="带有参数的方法">带有参数的方法</h3>
+<p>类的方法可以接收参数:</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">Friend</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">age</span><span class="p">,</span> <span class="n">hobby</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">age</span> <span class="o">=</span> <span class="n">age</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hobby</span> <span class="o">=</span> <span class="n">hobby</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">introduce</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">greeting</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">greeting</span><span class="si">}</span><span class="s2">. I am </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">age</span><span class="si">}</span><span class="s2"> years old, I like </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">hobby</span><span class="si">}</span><span class="s2">&quot;</span>
+
+<span class="n">bob</span> <span class="o">=</span> <span class="n">Friend</span><span class="p">(</span><span class="s1">&#39;Bob&#39;</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="s2">&quot;travel&quot;</span><span class="p">)</span>
+<span class="n">alice</span> <span class="o">=</span> <span class="n">Friend</span><span class="p">(</span><span class="s1">&#39;Alice&#39;</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="s1">&#39;movie&#39;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">bob</span><span class="o">.</span><span class="n">introduce</span><span class="p">(</span><span class="s1">&#39;Hi&#39;</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">alice</span><span class="o">.</span><span class="n">introduce</span><span class="p">(</span><span class="s1">&#39;Hello&#39;</span><span class="p">))</span>
+</code></pre></div>
+
+<hr />
+<h3 id="类的继承">类的继承</h3>
+<p>类可以通过==继承(Inheritance)==机制从其他类派生出新的类。继承使得新类(子类)<strong>能够</strong>继承其父类的属性和方法,并可以添加新的功能或覆盖现有的功能。</p>
+<p><div class="callout callout-important" markdown="1"><br />
+<p class="callout-title">继承要点</p></p>
+<ul>
+<li>如何标识这个子类的父类是谁?用<code>class SonClass(FatherClass)</code>。括号()里写父类的名字。</li>
+<li>注意子类虽然<strong>能够</strong>继承父类的属性和方法:</li>
+<li>但是要完成继承父类属性:需要用<code>super().__init__(*args, **kargs)</code>实际继承过来。</li>
+<li>继承父类方法,要用<code>super().func()</code>来调用父类的方法。</li>
+</ul>
+</div>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">Friend</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">age</span><span class="p">,</span> <span class="n">hobby</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">age</span> <span class="o">=</span> <span class="n">age</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hobby</span> <span class="o">=</span> <span class="n">hobby</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">introduce</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">greeting</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">greeting</span><span class="si">}</span><span class="s2">. I am </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">age</span><span class="si">}</span><span class="s2"> years old, I like </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">hobby</span><span class="si">}</span><span class="s2">&quot;</span>
+
+<span class="c1"># 创建子类</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">OldFriend</span><span class="p">(</span><span class="n">Friend</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">age</span><span class="p">,</span> <span class="n">hobby</span><span class="p">,</span> <span class="n">year</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">age</span><span class="p">,</span> <span class="n">hobby</span><span class="p">)</span> <span class="c1"># name age hobby继承父类的属性</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">year</span> <span class="o">=</span> <span class="n">year</span> <span class="c1"># 定义子类特有的属性</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">introduce</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">base_info</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">introduce</span><span class="p">(</span><span class="s1">&#39;Hello&#39;</span><span class="p">)</span> <span class="c1"># 继承父类的方法并传了个参</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">base_info</span><span class="si">}</span><span class="s2">, we have known for </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">year</span><span class="si">}</span><span class="s2"> years.&quot;</span> <span class="c1"># 重写了父类的方法,增加了输出</span>
+
+<span class="n">hugo</span> <span class="o">=</span> <span class="n">OldFriend</span><span class="p">(</span><span class="s1">&#39;Hugo&#39;</span><span class="p">,</span> <span class="mi">28</span><span class="p">,</span> <span class="s1">&#39;reading&#39;</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">hugo</span><span class="o">.</span><span class="n">introduce</span><span class="p">())</span>
+</code></pre></div>
+
+<hr />
+<h3 id="类的特殊方法">类的特殊方法</h3>
+<p>每个 Python 类都可以有一些特殊方法,这些方法的名字通常是以==双下划线==开头和结尾的,比如 <code>__init__</code>。这些方法允许我们为类对象定义特殊的行为,让它们的表现更像内置的数据类型。</p>
+<h4 id="构造函数-__init__">构造函数: __init__</h4>
+<p><code>__init__(self)</code> 是类的构造函数,它在创建对象时自动被调用,用来初始化后面创建的每一个对象的属性。你可以把它想象成给对象"赋值"的地方。<code>self</code>是指当前这个对象自己。它允许你访问对象的属性和方法。make 和 model 是传入的参数。</p>
+<h4 id="对象字符串化函数-__str__">对象字符串化函数: __str__</h4>
+<p><code>__str__</code> 是一个特殊方法,它用于定义对象被打印或转换为字符串时的输出内容。</p>
+<p>如果你没有定义 <code>__str__</code> 方法,当你试图打印一个类的实例时,Python 会使用默认的字符串表示形式。这个默认的输出通常是对象的类型名和对象在内存中的地址,如:<code>__main__.Friend object at 0x10a2c1a60</code>,对用户而言不是很直观。</p>
+<p>通过定义 <code>__str__</code> 方法,你可以控制当使用 <code>print</code> 函数或 <code>str()</code> 函数来打印对象时,显示的具体内容。例如:</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">Friend</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">age</span><span class="p">,</span> <span class="n">hobby</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">age</span> <span class="o">=</span> <span class="n">age</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hobby</span> <span class="o">=</span> <span class="n">hobby</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;name: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">, age: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">age</span><span class="si">}</span><span class="s2">, hobby: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">hobby</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="c1"># 定义直接print对象或str()对象的时候,返回特定格式的输出</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">introduce</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">greeting</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">greeting</span><span class="si">}</span><span class="s2">. I am </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">age</span><span class="si">}</span><span class="s2"> years old, I like </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">hobby</span><span class="si">}</span><span class="s2">&quot;</span>
+
+<span class="n">bob</span> <span class="o">=</span> <span class="n">Friend</span><span class="p">(</span><span class="s1">&#39;Bob&#39;</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="s1">&#39;running&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">bob</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">bob</span><span class="p">))</span>
+</code></pre></div>
+
+<h4 id="对象比较函数-__eq__">对象比较函数: __eq__</h4>
+<p>在 Python 中,所有的对象都可以使用 <code>==</code> 运算符进行比较。默认情况下,== 运算符比较的是对象的==内存地址==,也就是说,它比较的是两个对象是否是同一个对象。</p>
+<p>如果你想让两个对象的比较更具意义(例如比较对象的内容),你需要自定义 == 运算符的行为。</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">Friend</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">age</span><span class="p">,</span> <span class="n">hobby</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">age</span> <span class="o">=</span> <span class="n">age</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hobby</span> <span class="o">=</span> <span class="n">hobby</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;name: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">, age: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">age</span><span class="si">}</span><span class="s2">, hobby: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">hobby</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="c1"># 定义直接print</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span> <span class="c1"># 返回值类型提示,不影响代码运行,提高可读性和可维护性</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Friend</span><span class="p">):</span> <span class="c1"># 首先判断other是否属于Friend类</span>
+            <span class="c1"># 自定义比较逻辑: 所有属性全部相同就认为对象相等</span>
+            <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">name</span> <span class="ow">and</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">age</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">age</span> <span class="ow">and</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">hobby</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">hobby</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span> <span class="c1"># other不是Friend类</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">introduce</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">greeting</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">greeting</span><span class="si">}</span><span class="s2">. I am </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">age</span><span class="si">}</span><span class="s2"> years old, I like </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">hobby</span><span class="si">}</span><span class="s2">&quot;</span>
+
+<span class="n">bob</span> <span class="o">=</span> <span class="n">Friend</span><span class="p">(</span><span class="s1">&#39;Bob&#39;</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="s1">&#39;running&#39;</span><span class="p">)</span>
+<span class="n">alice</span> <span class="o">=</span> <span class="n">Friend</span><span class="p">(</span><span class="s1">&#39;Alice&#39;</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="s1">&#39;reading&#39;</span><span class="p">)</span>
+<span class="n">bob2</span> <span class="o">=</span> <span class="n">Friend</span><span class="p">(</span><span class="s1">&#39;Bob&#39;</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="s1">&#39;running&#39;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">bob</span><span class="o">==</span><span class="n">alice</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">bob</span><span class="o">==</span><span class="n">bob2</span><span class="p">)</span>
+</code></pre></div>
+
+<hr />
+<h3 id="类的访问控制">类的访问控制</h3>
+<p>在 Python 中,类的访问控制主要依靠命名约定,来提示开发者哪些属性和方法不应该被外部代码直接访问或修改。Python 没有像其他语言(如 Java、C++)那样严格的访问控制机制,它通过==单下划线(<code>_</code>)==和==双下划线(<code>__</code>)==来实现一定程度的封装性。</p>
+<h4 id="_-受保护的属性和方法"><code>_</code>: 受保护的属性和方法</h4>
+<ul>
+<li>命名方式:属性或方法的名称以单下划线 _ 开头。</li>
+<li>目的:它是一种提示,告诉其他开发者这些属性和方法是类的内部实现,<strong>不建议直接访问或修改</strong>。</li>
+<li>实际效果:这种方式<strong>并没有真正阻止外部访问</strong>。你仍然可以从类的外部访问和修改这些属性和方法,但这样做是不推荐的,因为它们被认为是类的内部实现部分,随时可能被修改。</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="c1"># 访问受保护的属性和方法</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Example</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_protected_attr</span> <span class="o">=</span> <span class="mi">42</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_protected_method</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;This is a protected method.&quot;</span><span class="p">)</span>
+
+<span class="n">obj</span> <span class="o">=</span> <span class="n">Example</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">_protected_attr</span><span class="p">)</span>
+<span class="n">obj</span><span class="o">.</span><span class="n">_protected_method</span><span class="p">()</span>
+</code></pre></div>
+
+<h4 id="__-私有的属性和方法"><code>__</code>: 私有的属性和方法</h4>
+<ul>
+<li>命名方式:属性或方法的名称以双下划线 __ 开头。</li>
+<li>目的:双下划线的属性和方法被认为是私有的,用于更严格的封装,防止外部代码直接访问。</li>
+<li>实际效果:Python 通过==名称改编(name mangling)==机制将以双下划线开头的属性和方法的名称改为 <code>_类名__属性名</code> 或 <code>_类名__方法名</code>,从而实现一定程度的隐藏,避免外部直接访问它们。</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="c1"># 访问私有属性和方法</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Example</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__private_attr</span> <span class="o">=</span> <span class="mi">58</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__private_method</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;This is a private method.&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">public_method</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__private_attr</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__private_method</span><span class="p">()</span>
+
+<span class="n">obj</span> <span class="o">=</span> <span class="n">Example</span><span class="p">()</span>
+<span class="c1"># print(obj._private_attr) # 不能访问</span>
+<span class="c1"># obj._private_method() # 不能访问</span>
+<span class="n">obj</span><span class="o">.</span><span class="n">public_method</span><span class="p">()</span>
+</code></pre></div>
+
+<hr />
+<h3 id="访问器和修改器">访问器和修改器</h3>
+<p>在面向对象编程中,对象的属性(即类中的变量)通常是私有的或受保护的,这意味着外部代码不能直接访问或修改它们。这时候就需要通过==访问器(getter)==和==修改器(setter)==来控制这些属性的访问和修改。</p>
+<ul>
+<li><strong>访问器(getter)</strong>:这是一个用来"获取"对象属性值的方法。通过访问器,你可以从对象中读取某个属性的值,但不会直接访问该属性本身。</li>
+<li><strong>修改器(setter)</strong>:这是一个用来"设置"对象属性值的方法。通过修改器,你可以更改对象中的属性值,同时可以在设置值之前进行一些检查或处理</li>
+</ul>
+<p><div class="callout callout-tip" markdown="1"><br />
+<p class="callout-title">为什么需要使用访问器和修改器?</p></p>
+<ol>
+<li><strong>数据验证</strong>:你可以在修改器中对属性值进行验证,确保设置的值是有效的。例如,年龄不能是负数或超过某个上限值。</li>
+<li><strong>封装</strong>:访问器和修改器提供了一层抽象,隐藏了对象内部属性的实现细节。这意味着你可以随时修改属性的实现方式,而不必担心影响到使用这个类的外部代码。</li>
+<li><strong>控制访问权限</strong>:你可以通过只提供访问器而不提供修改器来实现只读属性,或者根据需要提供修改器以允许修改属性。</li>
+</ol>
+</div>
+<p><div class="callout callout-example" markdown="1"><br />
+<p class="callout-title">示例</p></p>
+<p>```python<br />
+class User:<br />
+    def <strong>init</strong>(self, status):<br />
+        self._status = None<br />
+        # 没有直接设置属性值,而是通过修改器赋值,目的是为了控制输入的数据是否合法。<br />
+        self.set_status(status)</p>
+<div class="highlight"><pre><span></span><code># 定义访问器,用于访问受保护的属性
+def get_status(self) -&gt; str:
+    return self._status
+
+# 定义修改器,修改受保护的属性,增加输入验证功能
+def set_status(self, status) -&gt; None:
+    valid_value = [&#39;active&#39;, &#39;inactive&#39;, &#39;disabled&#39;]
+    if status in valid_value:
+        self._status = status
+    else:
+        raise ValueError(f&quot;Invalid status. Valid status are {valid_value}.&quot;)
+</code></pre></div>
+
+<p>user1 = User('active')<br />
+user2 = User('disabled')<br />
+print(user1.get_status())<br />
+print(user2.get_status())</p>
+<p>user1.set_status('inactive')<br />
+print(user1.get_status())<br />
+user2.set_status('completed')<br />
+```</p>
+</div>
+<hr />
+<h2 id="类装饰器">类装饰器</h2>
+<p>类装饰器是一个函数,它接收一个类作为输入,并返回一个新的类或修改后的类。使用类装饰器,我们可以在不改变原始类代码的情况下,对类的行为进行增强或改变。</p>
+<p>相关内容参见 <a class="wikilink" href="../../../Python/python-%E5%9F%BA%E7%A1%80/python-function/#高阶函数">函数 - 高阶函数与闭包</a></p>
+<p><div class="callout callout-example" markdown="1"><br />
+<p class="callout-title">示例:日志装饰器</p></p>
+<p>编写一个装饰器,每次创建类的实例时,都会打印出一些日志信息。<br />
+```python<br />
+def log_creation(cls):<br />
+    # Warpped的父类是传入的参数cls,写到括号里<br />
+    class Warpped(cls):<br />
+        # 重写构造函数,打印一行日志<br />
+        def <strong>init</strong>(self, <em>args, </em><em>kwargs):<br />
+            print(f"Creating object: {args[0]}") # args[0]指传入的第一个参数<br />
+            # 确保父类的构造函数初始化。不写这一句就会造成name age的父类参数传递不进去<br />
+            super().<strong>init</strong>(</em>args, **kwargs)<br />
+    # 装饰器要返回装饰过的类<br />
+    return Warpped</p>
+<h1 id="使用装饰器log_creation装饰friend类">使用装饰器log_creation装饰Friend类</h1>
+<p>@log_creation<br />
+class Friend:<br />
+    def <strong>init</strong>(self, name, age):<br />
+        self.name = name<br />
+        self.age = age</p>
+<div class="highlight"><pre><span></span><code>def introduction(self):
+    print(f&quot;My name is {self.name}, age is {self.age}&quot;)
+</code></pre></div>
+
+<h1 id="创建friend类的时候实际上是通过wrapped类创建的会添加上日志打印功能">创建Friend类的时候,实际上是通过Wrapped类创建的,会添加上日志打印功能</h1>
+<p>bob = Friend('Bob', 12)<br />
+```</p>
+</div>
+<hr />
+<h3 id="装饰器工厂">装饰器工厂</h3>
+<p><div class="callout callout-note" markdown="1"><br />
+<p class="callout-title">装饰器工厂</p></p>
+<ul>
+<li><strong>作用</strong>: 装饰器工厂的作用是返回一个装饰器函数。装饰器工厂使我们能够<strong>在装饰器中使用参数</strong>,从而创建更具灵活性的装饰器。</li>
+<li><strong>特点</strong>:</li>
+<li>装饰器工厂本身不会直接用于装饰类或函数,它返回一个实际的装饰器函数。</li>
+<li>装饰器工厂允许我们在装饰器中传递参数,从而改变装饰器的行为。</li>
+<li><strong>使用场景</strong>:当我们需要在装饰器中使用动态参数时,例如根据权限控制装饰器的行为,装饰器工厂非常有用。</li>
+</ul>
+</div>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">require_permission</span><span class="p">(</span><span class="n">permission</span><span class="p">):</span> <span class="c1"># 装饰器工厂,可以接受参数。即需要检查的权限</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">decorator</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span> <span class="c1"># 装饰器函数</span>
+        <span class="k">class</span><span class="w"> </span><span class="nc">Wrapped</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span> <span class="c1"># 定义子类,继承父类cls,即被修饰的类</span>
+            <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+                <span class="c1"># 装饰的核心就是在这里加上额外的逻辑。在这里是判断是否有权限</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_permission</span><span class="p">(</span><span class="n">permission</span><span class="p">):</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Require </span><span class="si">{</span><span class="n">permission</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="c1"># 必须调用父类的构造函数以确保父类被正常初始化</span>
+                <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+            <span class="k">def</span><span class="w"> </span><span class="nf">has_permission</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">permission</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+                <span class="c1">#执行检查permission的逻辑,假设检查通过,返回true</span>
+                <span class="k">return</span> <span class="kc">True</span>
+
+        <span class="k">return</span> <span class="n">Wrapped</span> <span class="c1"># 返回一个预先内置了[permission参数]和[父类]的类</span>
+    <span class="k">return</span> <span class="n">decorator</span> <span class="c1"># 返回一个预先内置了传入参数的装饰器</span>
+
+<span class="nd">@require_permission</span><span class="p">(</span><span class="s1">&#39;admin&#39;</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Friend</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">age</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">age</span> <span class="o">=</span> <span class="n">age</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">introduction</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;My name is </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">, age is </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">age</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="n">bob</span> <span class="o">=</span> <span class="n">Friend</span><span class="p">(</span><span class="s1">&#39;Bob&#39;</span><span class="p">,</span> <span class="mi">12</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">bob</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+</code></pre></div>
+    </div>
+  </article>
+  <aside class="toc">
+    <p class="toc-label">本页目录</p>
+    <ul>
+  <li><a href="#概念">概念</a></li>
+  <li><a href="#示例">示例</a></li>
+  <li><a href="#类和方法">类和方法</a><ul>
+  <li><a href="#修改类的属性">修改类的属性</a></li>
+  <li><a href="#带有参数的方法">带有参数的方法</a></li>
+  <li><a href="#类的继承">类的继承</a></li>
+  <li><a href="#类的特殊方法">类的特殊方法</a></li>
+  <li><a href="#类的访问控制">类的访问控制</a></li>
+  <li><a href="#访问器和修改器">访问器和修改器</a></li>
+</ul></li>
+  <li><a href="#类装饰器">类装饰器</a><ul>
+  <li><a href="#装饰器工厂">装饰器工厂</a></li>
+</ul></li>
+</ul>
+  </aside>
+
+</div>
+
+</main>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>Learning Notes</span>
+    <a href="https://github.com/hangx969/learning-notes">GitHub</a>
+  </div>
+</footer>
+<script src="../../../static/search.js"></script>
+</body>
+</html>

@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IO Monitor - Learning Notes</title>
+<link rel="stylesheet" href="../../static/style.css">
+<link rel="stylesheet" href="../../static/pygments.css">
+</head>
+<body data-root="../../">
+<header class="site-header">
+  <div class="header-inner">
+    <a class="logo" href="../../index.html"><span class="logo-mark"></span>LEARNING NOTES</a>
+    <div class="search">
+      <input id="search-input" type="search" placeholder="搜索笔记…" autocomplete="off" aria-label="搜索笔记">
+      <div id="search-results" hidden></div>
+    </div>
+  </div>
+  <nav class="topic-nav" aria-label="主题导航">
+    <div class="topic-nav-inner">
+      <a href="../../AI/">AI</a>
+      <a href="../../Aliyun/">Aliyun</a>
+      <a href="../../Azure/" class="active">Azure</a>
+      <a href="../../C%2B%2B/">C++</a>
+      <a href="../../CloudComputing/">CloudComputing</a>
+      <a href="../../Database/">Database</a>
+      <a href="../../Docker-Kubernetes/">Docker-Kubernetes</a>
+      <a href="../../GPU-DeepLearning/">GPU-DeepLearning</a>
+      <a href="../../Git/">Git</a>
+      <a href="../../Go/">Go</a>
+      <a href="../../HPC/">HPC</a>
+      <a href="../../IaC/">IaC</a>
+      <a href="../../Linux-Shell/">Linux-Shell</a>
+      <a href="../../Middlewares/">Middlewares</a>
+      <a href="../../Networking/">Networking</a>
+      <a href="../../OS/">OS</a>
+      <a href="../../Python/">Python</a>
+      <a href="../../SoftwareTesting/">SoftwareTesting</a>
+    </div>
+  </nav>
+</header>
+<main class="main">
+
+<div class="article-layout">
+
+  <aside class="sidebar">
+    <details class="sidebar-details">
+      <summary>Azure</summary>
+      <nav class="sidebar-nav">
+        <p class="sidebar-group">Customer Support</p>
+        <ul>
+          <li><a href="../../Azure/Customer%20Support/Email%20Templates/">Email Templates</a></li>
+        </ul>
+        <p class="sidebar-group">其他</p>
+        <ul>
+          <li><a href="../../Azure/0_Azure-VM-VMSS/">Azure VM and VMSS</a></li>
+          <li><a href="../../Azure/10_Azure-devops-agent-pool-management/">Azure DevOps Agent Pool Management</a></li>
+          <li><a href="../../Azure/11_Azure-Policy/">Azure Policy</a></li>
+          <li><a href="../../Azure/1_Azure-Linux-VM-troubheshooting/">Azure Linux VM Troubleshooting</a></li>
+          <li><a href="../../Azure/2_AKS-basics/">AKS Basics</a></li>
+          <li><a href="../../Azure/3_AKS-workload-identity/">AKS Workload Identity</a></li>
+          <li><a href="../../Azure/4_AKS-SecretProviderClass-KeyVault/">AKS SecretProviderClass with KeyVault</a></li>
+          <li><a href="../../Azure/5_Azure-Storage/">Azure Storage</a></li>
+          <li><a href="../../Azure/6_Azure-Networking/">Azure Networking</a></li>
+          <li><a href="../../Azure/7_ACR-ACI/">Azure Container Registry &amp; Azure Container Instances</a></li>
+          <li><a href="../../Azure/8_Azure-devops-basics/">Azure DevOps Basics</a></li>
+          <li><a href="../../Azure/9_Azure-devops-self-host-agents/">Azure DevOps Self-Hosted Agents</a></li>
+          <li><a href="../../Azure/IO-monitor/" class="current">IO Monitor</a></li>
+          <li><a href="../../Azure/Jfrog-artifactory-Azure/">JFrog Artifactory on Azure</a></li>
+          <li><a href="../../Azure/Kusto%20Query/">Kusto Query Language (KQL) Reference</a></li>
+          <li><a href="../../Azure/browser%20trace/">Browser Trace (HAR)</a></li>
+          <li><a href="../../Azure/command-line-tools/">Command Line Tools</a></li>
+          <li><a href="../../Azure/fiddler/">Fiddler</a></li>
+          <li><a href="../../Azure/perfMon%20ProcessMon/">PerfMon &amp; ProcessMon</a></li>
+          <li><a href="../../Azure/postman/">Postman</a></li>
+        </ul>
+      </nav>
+    </details>
+  </aside>
+
+  <article class="article">
+    <nav class="breadcrumb">
+      <a href="../../index.html">首页</a><span>/</span>
+      <a href="../../Azure/">Azure</a>
+    </nav>
+    <h1 class="article-title">IO Monitor</h1>
+    <p class="article-meta"><span>更新于 2026-04-16</span>
+      <a href="https://github.com/hangx969/learning-notes/blob/main/Azure/IO-monitor.md">查看源文件</a>
+    </p>
+    <div class="article-body">
+<h1 id="io-monitor">IO Monitor</h1>
+<p><div class="callout callout-summary" markdown="1"><br />
+<p class="callout-title">Disk I/O benchmarking and monitoring tools for Azure VMs</p></p>
+<p>Covers <mark>Diskspd</mark> (Windows), <mark>FIO</mark> (Linux), and <mark>iotop/ps/top</mark> (Linux) for measuring and monitoring disk performance on <a class="wikilink" href="../../Azure/0_Azure-VM-VMSS/">Azure VMs</a> with <a class="wikilink" href="../../Azure/5_Azure-Storage/">Azure Storage</a>.</p>
+</div>
+<hr />
+<h2 id="diskspd">Diskspd</h2>
+<h3 id="教程">教程</h3>
+<ul>
+<li><a href="https://learn.microsoft.com/zh-cn/azure/virtual-machines/disks-benchmarks#diskspd">在 Azure 磁盘存储上对应用程序进行基准测试 - Azure Virtual Machines | Microsoft Learn</a></li>
+<li><a href="https://learn.microsoft.com/en-us/azure/virtual-machines/disks-benchmarks">Benchmark your application on Azure Disk Storage - Azure Virtual Machines | Microsoft Learn</a></li>
+</ul>
+<h3 id="压测">压测</h3>
+<ul>
+<li>测试 <mark>max Read IOPS</mark></li>
+</ul>
+<p><img alt="image-20231030171446532" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202310301714709.png" /></p>
+<ul>
+<li>测试 <mark>max Read IOPS</mark></li>
+</ul>
+<p><img alt="image-20231030171457642" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202310301714808.png" /></p>
+<ul>
+<li>测试 <mark>max 吞吐量</mark></li>
+<li>block size 要设的大一点</li>
+</ul>
+<p><img alt="image-20231030171508132" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202310301715276.png" /></p>
+<h3 id="压测与-perfmon-配合使用">压测与 PerfMon 配合使用</h3>
+<p><div class="callout callout-tip" markdown="1"><br />
+<p class="callout-title">配合 <a class="wikilink" href="../../Azure/perfMon%20ProcessMon/">PerfMon</a> 使用可同时收集性能计数器数据</p></p>
+</div>
+<ul>
+<li>使用管理员权限打开 CMD 窗口，配置 PerfMon 信息：</li>
+</ul>
+<p><code>bash
+  Logman create counter Perf-2Second -f bincirc -max 500 -c "\LogicalDisk(*)\*" "\Memory\*" "\Network Interface(*)\*" "\Paging File(*)\*" "\PhysicalDisk(*)\*" "\Server\*" "\System\*" "\Process(*)\*" "\Processor(*)\*" "\Cache\*" -si 00:00:02 -o C:\PerfMonLogs\Perf-2Second.blg</code></p>
+<ul>
+<li>开启 PerfMon：</li>
+</ul>
+<p><code>bash
+  Logman start Perf-2Second</code></p>
+<ul>
+<li>在 Diskspd - amd64 路径下打开 cmd 窗口，运行以下命令，开始执行压测：</li>
+</ul>
+<p><code>bash
+  .\diskspd.exe -c200G -w0 -b8K -F16 -r -o128 -d60 -Sh D:\testfile.dat
+  #其中，D:\ 替换为需要测试的磁盘的盘符</code></p>
+<ul>
+<li>压测结束后，命令行中会输出本次压测相关数据。此时，停止 PerfMon：</li>
+</ul>
+<p><code>bash
+  Logman stop Perf-2Second</code></p>
+<hr />
+<h2 id="fio">FIO</h2>
+<p><a href="https://learn.microsoft.com/en-us/azure/virtual-machines/disks-benchmarks#fio">Benchmark your application on Azure Disk Storage - Azure Virtual Machines | Microsoft Learn</a></p>
+<hr />
+<h2 id="iotop-ps-top">iotop / ps / top</h2>
+<h3 id="实时查看-io-情况">实时查看 IO 情况</h3>
+<ol>
+<li><code>top -i</code></li>
+<li><code>ps -e -o pid,user,%mem,cmd --sort=-%mem</code></li>
+</ol>
+<h3 id="iotop-脚本">iotop 脚本</h3>
+<p><div class="callout callout-info" markdown="1"><br />
+<p class="callout-title">使用 iotop 脚本持续监控 I/O</p></p>
+<p>脚本监控：使用 iotop 命令来监测服务器的状态，这样当问题重现时，我们可以对比发生问题的进程来进行排查。您可创建一个 <mark>cron job</mark> 在每分钟来收集一下 I/O 信息，并将其保存在日志文件中。</p>
+</div>
+<ul>
+<li>创建 <code>/etc/cron.d/iotop</code> 文件，并添加以下内容：</li>
+</ul>
+<p><code>bash
+  vi /etc/cron.d/iotop
+  root /usr/sbin/iotop -botqqqk --iter=60 | grep -P "\d\d\.\d\d K/s"  &gt;&gt;/tmp/io.log 2&gt;&amp;1
+  #注：日志文件会不断增长，如果问题一直没有发生，请注意清理该文件。</code></p>
+<p><div class="callout callout-warning" markdown="1"><br />
+<p class="callout-title">日志文件会不断增长，如果问题一直没有发生，请注意清理该文件。</p></p>
+</div>
+    </div>
+  </article>
+  <aside class="toc">
+    <p class="toc-label">本页目录</p>
+    <ul>
+  <li><a href="#diskspd">Diskspd</a><ul>
+  <li><a href="#教程">教程</a></li>
+  <li><a href="#压测">压测</a></li>
+  <li><a href="#压测与-perfmon-配合使用">压测与 PerfMon 配合使用</a></li>
+</ul></li>
+  <li><a href="#fio">FIO</a></li>
+  <li><a href="#iotop-ps-top">iotop / ps / top</a><ul>
+  <li><a href="#实时查看-io-情况">实时查看 IO 情况</a></li>
+  <li><a href="#iotop-脚本">iotop 脚本</a></li>
+</ul></li>
+</ul>
+  </aside>
+
+</div>
+
+</main>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>Learning Notes</span>
+    <a href="https://github.com/hangx969/learning-notes">GitHub</a>
+  </div>
+</footer>
+<script src="../../static/search.js"></script>
+</body>
+</html>

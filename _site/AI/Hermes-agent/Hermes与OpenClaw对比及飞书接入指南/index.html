@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hermes Agent全解析：与OpenClaw对比及飞书接入指南 - Learning Notes</title>
+<link rel="stylesheet" href="../../../static/style.css">
+<link rel="stylesheet" href="../../../static/pygments.css">
+</head>
+<body data-root="../../../">
+<header class="site-header">
+  <div class="header-inner">
+    <a class="logo" href="../../../index.html"><span class="logo-mark"></span>LEARNING NOTES</a>
+    <div class="search">
+      <input id="search-input" type="search" placeholder="搜索笔记…" autocomplete="off" aria-label="搜索笔记">
+      <div id="search-results" hidden></div>
+    </div>
+  </div>
+  <nav class="topic-nav" aria-label="主题导航">
+    <div class="topic-nav-inner">
+      <a href="../../../AI/" class="active">AI</a>
+      <a href="../../../Aliyun/">Aliyun</a>
+      <a href="../../../Azure/">Azure</a>
+      <a href="../../../C%2B%2B/">C++</a>
+      <a href="../../../CloudComputing/">CloudComputing</a>
+      <a href="../../../Database/">Database</a>
+      <a href="../../../Docker-Kubernetes/">Docker-Kubernetes</a>
+      <a href="../../../GPU-DeepLearning/">GPU-DeepLearning</a>
+      <a href="../../../Git/">Git</a>
+      <a href="../../../Go/">Go</a>
+      <a href="../../../HPC/">HPC</a>
+      <a href="../../../IaC/">IaC</a>
+      <a href="../../../Linux-Shell/">Linux-Shell</a>
+      <a href="../../../Middlewares/">Middlewares</a>
+      <a href="../../../Networking/">Networking</a>
+      <a href="../../../OS/">OS</a>
+      <a href="../../../Python/">Python</a>
+      <a href="../../../SoftwareTesting/">SoftwareTesting</a>
+    </div>
+  </nav>
+</header>
+<main class="main">
+
+<div class="article-layout">
+
+  <aside class="sidebar">
+    <details class="sidebar-details">
+      <summary>AI</summary>
+      <nav class="sidebar-nav">
+        <p class="sidebar-group">AI-视觉</p>
+        <ul>
+          <li><a href="../../../AI/AI-%E8%A7%86%E8%A7%89/AI-Animation-Skill-%E7%A7%91%E6%99%AE%E5%8A%A8%E7%94%BB/">AI-Animation-Skill - HTML科普动画生成</a></li>
+          <li><a href="../../../AI/AI-%E8%A7%86%E8%A7%89/AI%E5%81%9APPT-ppt-master/">AI做PPT - ppt-master</a></li>
+          <li><a href="../../../AI/AI-%E8%A7%86%E8%A7%89/Markdown-Viewer-Skills-Markdown%E4%B8%AD%E7%9B%B4%E6%8E%A5%E7%94%BB%E5%9B%BE/">Markdown Viewer Skills：让 AI 写文档时顺手把图也画了</a></li>
+          <li><a href="../../../AI/AI-%E8%A7%86%E8%A7%89/effective-html-AI%E7%9B%B4%E5%87%BAHTML%E5%B7%A5%E5%85%B7%E5%AE%9E%E6%B5%8B/">effective-html：让 AI 直接输出 HTML 而非 Markdown</a></li>
+          <li><a href="../../../AI/AI-%E8%A7%86%E8%A7%89/html-anything-AI%E7%94%9F%E6%88%90HTML%E5%85%A8%E5%9C%BA%E6%99%AF%E5%B7%A5%E5%85%B7/">html-anything：AI 生成 HTML 全场景工具</a></li>
+          <li><a href="../../../AI/AI-%E8%A7%86%E8%A7%89/html-ppt-skill-%E5%AE%9E%E6%B5%8B%E6%8C%87%E5%8D%97/">html-ppt-skill - HTML幻灯片生成</a></li>
+          <li><a href="../../../AI/AI-%E8%A7%86%E8%A7%89/%E8%A7%86%E8%A7%89%E8%AE%BE%E8%AE%A1%E6%8F%90%E7%A4%BA%E8%AF%8D/">视觉设计提示词</a></li>
+        </ul>
+        <p class="sidebar-group">AIOps</p>
+        <ul>
+          <li><a href="../../../AI/AIOps/AIOps%E5%AE%9E%E6%88%98-Golang%E6%89%8B%E6%90%93K8s%E6%99%BA%E8%83%BD%E8%BF%90%E7%BB%B4%E5%B7%A5%E5%85%B7%E9%93%BE/">AIOps 实战：Golang 手搓 K8s 智能运维工具链</a></li>
+          <li><a href="../../../AI/AIOps/Kubernetes-MCP-Server-Dify%E6%99%BA%E8%83%BD%E8%BF%90%E7%BB%B4/">AI 接管 Kubernetes 运维——Kubernetes MCP Server + Dify</a></li>
+        </ul>
+        <p class="sidebar-group">ClaudeCode</p>
+        <ul>
+          <li><a href="../../../AI/ClaudeCode/CLAUDE.md%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5-12%E6%9D%A1%E8%A7%84%E5%88%99%E6%A8%A1%E6%9D%BF/">Mnilax：CLAUDE.md 规则从 Karpathy 的 4 条增加到 12 条，错误率从 41% 降到 3%</a></li>
+          <li><a href="../../../AI/ClaudeCode/CLAUDE.md%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5-21%E6%9D%A1%E6%8C%87%E4%BB%A4%E6%B8%85%E5%8D%95/">Mayank Agarwal：21 条 CLAUDE.md 指令，让 Claude 真正懂你</a></li>
+          <li><a href="../../../AI/ClaudeCode/CLAUDE.md%E7%BB%B4%E6%8A%A4%E5%B7%A5%E7%A8%8B-%E5%9B%9B%E5%B1%82%E5%8A%A0%E8%BD%BD%E4%B8%8E%E6%8C%87%E4%BB%A4%E9%A2%84%E7%AE%97/">CLAUDE.md 维护工程：四层加载与指令预算</a></li>
+          <li><a href="../../../AI/ClaudeCode/Claude%20Code%20%E5%9F%BA%E7%A1%80%E6%8C%87%E5%8D%97/">Claude Code 使用指南</a></li>
+          <li><a href="../../../AI/ClaudeCode/Claude%20Code%20%E6%89%A9%E5%B1%95%E4%BD%93%E7%B3%BB/">Claude Code 扩展体系</a></li>
+          <li><a href="../../../AI/ClaudeCode/Claude-Code-Harness%E5%AE%9E%E6%88%98-%E6%9C%80%E5%B0%8F%E5%8F%AF%E7%94%A8%E7%B3%BB%E7%BB%9F/">Harness 实战：从零搭建最小可用的 Harness 系统</a></li>
+          <li><a href="../../../AI/ClaudeCode/Claude-Code%E4%B8%BA%E4%BB%80%E4%B9%88%E7%94%A8grep%E4%B8%8D%E7%94%A8RAG/">为什么 Claude Code 不用 RAG 检索代码，而是 grep？</a></li>
+          <li><a href="../../../AI/ClaudeCode/Claude-Fable-5-system-prompt/">Claude Fable 5 — System Prompt</a></li>
+          <li><a href="../../../AI/ClaudeCode/Claude-Skill%E8%B4%A8%E6%A3%80%E5%B7%A5%E5%85%B7-SkillCraft/">Claude Skill 质检工具 Skill Craft</a></li>
+          <li><a href="../../../AI/ClaudeCode/Git-Worktree-AI%E5%BC%80%E5%8F%91%E5%AE%9E%E8%B7%B5%E6%8C%87%E5%8D%97/">Vibe Coding 时代的 Git Worktree 实践指南</a></li>
+          <li><a href="../../../AI/ClaudeCode/%E5%A4%9A%E6%99%BA%E8%83%BD%E4%BD%93%E5%8D%8F%E4%BD%9C-Subagents%E4%B8%8EAgent-Teams/">Claude Code 多智能体协作：Subagents 与 Agent Teams</a></li>
+        </ul>
+        <p class="sidebar-group">Codex</p>
+        <ul>
+          <li><a href="../../../AI/Codex/Codex-config-toml-%E5%85%A8%E9%87%8F%E9%85%8D%E7%BD%AE%E5%8F%82%E8%80%83/">OpenAI Codex config.toml 全量配置参考</a></li>
+          <li><a href="../../../AI/Codex/Codex-%E7%9C%81Token%E5%B7%A5%E5%85%B7%E5%AE%9E%E6%B5%8B-Ponytail-Headroom-RTK/">Codex 省 Token 工具实测：Ponytail、Headroom、RTK-AI</a></li>
+        </ul>
+        <p class="sidebar-group">GithubCopilot</p>
+        <ul>
+          <li><a href="../../../AI/GithubCopilot/Copilot%20CLI/">GitHub Copilot CLI</a></li>
+        </ul>
+        <p class="sidebar-group">Hermes-agent</p>
+        <ul>
+          <li><a href="../../../AI/Hermes-agent/Hermes-Agent-%E6%BB%A1%E9%85%8D%E6%8C%87%E5%8D%97%E4%B8%8E%E7%94%9F%E6%80%81%E8%B5%84%E6%BA%90/">Hermes Agent 满配指南与生态资源</a></li>
+          <li><a href="../../../AI/Hermes-agent/Hermes-Curator-Skill%E8%86%A8%E8%83%80%E6%B2%BB%E7%90%86/">Skill 太多导致上下文膨胀怎么办？来自 Hermes Agent 的实践</a></li>
+          <li><a href="../../../AI/Hermes-agent/Hermes%E4%B8%8EOpenClaw%E5%AF%B9%E6%AF%94%E5%8F%8A%E9%A3%9E%E4%B9%A6%E6%8E%A5%E5%85%A5%E6%8C%87%E5%8D%97/" class="current">Hermes Agent全解析：与OpenClaw对比及飞书接入指南</a></li>
+          <li><a href="../../../AI/Hermes-agent/Ubuntu%2025.10%20%E5%AE%89%E8%A3%85%E4%B8%8E%E4%BD%BF%E7%94%A8%20Hermes%20Agent%20%E6%8C%87%E5%8D%97/">Ubuntu 25.10 安装与使用 Hermes Agent 指南</a></li>
+        </ul>
+        <p class="sidebar-group">Obsidian</p>
+        <ul>
+          <li><a href="../../../AI/Obsidian/Obsidian-Vault%E6%A8%A1%E6%9D%BF%E5%BA%93%E5%90%88%E9%9B%86-48%E4%B8%AA%E5%AE%9D%E8%97%8Fvault/">Obsidian Vault 模板库合集：48 个 GitHub 宝藏 vault</a></li>
+          <li><a href="../../../AI/Obsidian/Obsidian%E5%8F%AF%E8%A7%86%E5%8C%96Skills-Excalidraw-Mermaid-Canvas/">Obsidian 可视化 Skills — Excalidraw / Mermaid / Canvas</a></li>
+          <li><a href="../../../AI/Obsidian/obsidian-claude-code-AI%E7%9F%A5%E8%AF%86%E5%BA%93%E5%AE%8C%E6%95%B4%E6%8C%87%E5%8D%97/">Obsidian + Claude Code：AI 驱动的知识库完整指南</a></li>
+        </ul>
+        <p class="sidebar-group">OpenClaw</p>
+        <ul>
+          <li><a href="../../../AI/OpenClaw/CoPaw/">CoPaw</a></li>
+          <li><a href="../../../AI/OpenClaw/OpenClaw-Channels/">OpenClaw Channel 配置</a></li>
+          <li><a href="../../../AI/OpenClaw/OpenClaw-K8s%E6%99%BA%E8%83%BD%E8%BF%90%E7%BB%B4%E5%AE%9E%E6%88%98/">用 OpenClaw 智能体网关接管 K8s 日常运维：从只读巡检到低风险变更</a></li>
+          <li><a href="../../../AI/OpenClaw/OpenClaw-Skills-Plugins/">OpenClaw Skills 与插件</a></li>
+          <li><a href="../../../AI/OpenClaw/OpenClaw-Workspace-%E8%BF%90%E7%BB%B4/">OpenClaw Workspace 运维实战</a></li>
+          <li><a href="../../../AI/OpenClaw/OpenClaw-%E5%9F%BA%E7%A1%80-%E5%AE%89%E8%A3%85/">OpenClaw 基础与安装</a></li>
+          <li><a href="../../../AI/OpenClaw/Openclaw-AIOps/">OpenClaw AIOps</a></li>
+          <li><a href="../../../AI/OpenClaw/Openclaw-%E5%A4%9A%E6%99%BA%E8%83%BD%E4%BD%93/">OpenClaw 多智能体</a></li>
+          <li><a href="../../../AI/OpenClaw/Ubuntu-2510-Setup-Guide/">Ubuntu 25.10 (Questing) 初始化配置指南</a></li>
+          <li><a href="../../../AI/OpenClaw/%E9%A3%9E%E4%B9%A6CLI%E7%94%BB%E6%9D%BF-%E4%B8%80%E5%8F%A5%E8%AF%9D%E7%94%9F%E6%88%90%E6%9E%B6%E6%9E%84%E5%9B%BE/">飞书 CLI 画板：一句话生成架构图</a></li>
+        </ul>
+        <p class="sidebar-group">代码知识图谱</p>
+        <ul>
+          <li><a href="../../../AI/%E4%BB%A3%E7%A0%81%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/CodeGraph-%E4%BB%A3%E7%A0%81%E8%AF%AD%E4%B9%89%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/">CodeGraph：给 Claude Code 先画一张代码地图，工具调用砍掉 92%</a></li>
+          <li><a href="../../../AI/%E4%BB%A3%E7%A0%81%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/Graphify-%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1%E5%B7%A5%E5%85%B7/">Graphify：软件工程知识图谱工具</a></li>
+          <li><a href="../../../AI/%E4%BB%A3%E7%A0%81%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/Understand-Anything-%E4%BB%A3%E7%A0%81%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1%E5%8F%AF%E8%A7%86%E5%8C%96/">Understand-Anything：AI 代码知识图谱可视化工具</a></li>
+          <li><a href="../../../AI/%E4%BB%A3%E7%A0%81%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/code-review-graph-%E6%9C%AC%E5%9C%B0%E4%BB%A3%E7%A0%81%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/">开源 Claude Code 本地代码知识图谱：code-review-graph 完整上手攻略</a></li>
+          <li><a href="../../../AI/%E4%BB%A3%E7%A0%81%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/shiji-kb-AI%E5%8F%B2%E8%AE%B0%E7%9F%A5%E8%AF%86%E5%BA%93%E4%B8%8E%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1%E6%9E%84%E9%80%A0%E6%96%B9%E6%B3%95%E8%AE%BA/">shiji-kb：AI 史记知识库与可复用知识图谱构造方法论</a></li>
+        </ul>
+        <p class="sidebar-group">行业动态</p>
+        <ul>
+          <li><a href="../../../AI/%E8%A1%8C%E4%B8%9A%E5%8A%A8%E6%80%81/AI%E6%97%B6%E4%BB%A3%E7%9A%84Git%E7%89%88%E6%9C%AC%E7%AE%A1%E7%90%86%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/">AI 时代的 Git 版本管理最佳实践</a></li>
+          <li><a href="../../../AI/%E8%A1%8C%E4%B8%9A%E5%8A%A8%E6%80%81/Anthropic%E5%B7%A5%E7%A8%8B%E5%B8%88%E5%8A%9B%E6%8E%A8HTML%E5%8F%96%E4%BB%A3Markdown-Karpathy%E9%99%84%E8%AE%AE/">Anthropic 工程师力推 HTML 取代 Markdown —— Karpathy 附议</a></li>
+          <li><a href="../../../AI/%E8%A1%8C%E4%B8%9A%E5%8A%A8%E6%80%81/Claude-Code%E5%88%9B%E5%A7%8B%E4%BA%BA%E7%BA%A2%E6%9D%89%E5%A4%A7%E4%BC%9A%E4%B8%83%E4%B8%AA%E5%88%A4%E6%96%AD/">Claude Code 创始人在红杉大会上的 7 个重要判断</a></li>
+          <li><a href="../../../AI/%E8%A1%8C%E4%B8%9A%E5%8A%A8%E6%80%81/Loop-Engineering-%E4%BB%8EPrompt%E5%88%B0%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%81%E6%B0%B4%E7%BA%BF/">Loop Engineering：从 Prompt 到自动化流水线</a></li>
+          <li><a href="../../../AI/%E8%A1%8C%E4%B8%9A%E5%8A%A8%E6%80%81/OpenCodeReview-%E9%98%BF%E9%87%8CAI%E4%BB%A3%E7%A0%81%E5%AE%A1%E6%9F%A5%E5%B7%A5%E7%A8%8B%E5%8C%96/">OpenCodeReview：阿里开源的 AI 代码审查工程化工具</a></li>
+          <li><a href="../../../AI/%E8%A1%8C%E4%B8%9A%E5%8A%A8%E6%80%81/TypeScript-vs-Python-AI-Agent%E6%97%B6%E4%BB%A3%E7%9A%84%E8%AF%AD%E8%A8%80%E4%B9%8B%E4%BA%89/">为什么 AI Agent 时代，TypeScript 正在抢走 Python 的主场？</a></li>
+        </ul>
+        <p class="sidebar-group">其他</p>
+        <ul>
+          <li><a href="../../../AI/HarnessKit/">HarnessKit — AI 编码智能体统一管理工具</a></li>
+          <li><a href="../../../AI/%E6%8F%90%E7%A4%BA%E8%AF%8D/">提示词</a></li>
+        </ul>
+      </nav>
+    </details>
+  </aside>
+
+  <article class="article">
+    <nav class="breadcrumb">
+      <a href="../../../index.html">首页</a><span>/</span>
+      <a href="../../../AI/">AI</a><span>/</span><span>Hermes-agent</span>
+    </nav>
+    <h1 class="article-title">Hermes Agent全解析：与OpenClaw对比及飞书接入指南</h1>
+    <p class="article-meta"><span>更新于 2026-05-05</span>
+      <a href="https://github.com/hangx969/learning-notes/blob/main/AI/Hermes-agent/Hermes%E4%B8%8EOpenClaw%E5%AF%B9%E6%AF%94%E5%8F%8A%E9%A3%9E%E4%B9%A6%E6%8E%A5%E5%85%A5%E6%8C%87%E5%8D%97.md">查看源文件</a>
+    </p>
+    <div class="article-body">
+<h1 id="hermes-agent-全解析与-openclaw-对比及飞书接入指南">Hermes Agent 全解析：与 OpenClaw 对比及飞书接入指南</h1>
+<p>2025 年以来，AI Agent 从概念验证走向工程化落地，开源社区涌现出大量框架级项目。其中，Nous Research 推出的 Hermes Agent 和社区驱动的 OpenClaw 是两个值得深入研究的标杆：前者以"会自我成长的 Agent"为核心定位，35.7k Star，3,496 次提交，317 位贡献者；后者是当前 GitHub 上最受欢迎的个人 AI 助手项目之一，352k Star，29,172 次提交，已发展为一个覆盖全平台的成熟产品。</p>
+<p>两个项目在技术栈、架构理念和产品定位上走了截然不同的路径。本文将以 Hermes Agent 的源码为主线进行深度架构剖析，然后从工程化维度与 OpenClaw 进行结构化对比，最后详解如何将 Hermes Agent 接入飞书 Bot 和飞书 CLI。</p>
+<hr />
+<h2 id="一hermes-agent-是什么">一、Hermes Agent 是什么</h2>
+<blockquote>
+<p>一句话理解：Hermes 是一个运行在你自己服务器上、用得越久越聪明的开源 AI Agent。</p>
+</blockquote>
+<p>Hermes 由 AI 研究实验室 Nous Research 开发（曾获 Paradigm 领投 6500 万美元融资），基于自研 Hermes 模型家族构建。与一般 Agent 不同，它有一套闭环学习机制：</p>
+<ul>
+<li><strong>记住跨会话的上下文</strong>：通过 FTS5 全文搜索 + LLM 摘要实现跨会话真实召回，能搜索数周前的对话细节</li>
+<li><strong>自动沉淀技能文档</strong>：完成复杂任务后，将经验自动沉淀为可复用的"技能文档"</li>
+<li><strong>在使用中持续自我改进</strong>：技能在使用中会持续优化，形成越用越好用的正向循环</li>
+</ul>
+<p>它支持 400+ 模型（含本地部署），通过 Telegram、Discord、Slack、飞书等 8 个平台与用户交互，可 7×24 小时驻留在服务器上自主运行。</p>
+<hr />
+<h2 id="二hermes-agent-五层核心架构深度剖析">二、Hermes Agent 五层核心架构深度剖析</h2>
+<p>从源码目录结构和模块依赖链来看，Hermes Agent 的架构可以抽象为五个层次，依赖关系单向自下而上，工具注册层是整个系统的"脊柱"。</p>
+<h3 id="21-入口与编排层">2.1 入口与编排层</h3>
+<p>负责与用户的交互入口和跨平台消息调度：</p>
+<ul>
+<li><strong>HermesCLI 类</strong>（<code>cli.py</code>）：交互式终端编排器，基于 <code>prompt_toolkit</code> 实现 TUI</li>
+<li><strong>GatewayRunner 类</strong>（<code>gateway/run.py</code>）：消息平台网关入口，管理所有平台适配器的生命周期</li>
+<li><strong>hermes_cli/main.py</strong>：全局入口点，所有 <code>hermes</code> 子命令的调度中心</li>
+</ul>
+<p>CLI 和 Gateway 两个入口共享同一套 Agent 核心，只是交互方式不同——前者面向终端用户，后者面向消息平台。</p>
+<h3 id="22-agent-核心层">2.2 Agent 核心层</h3>
+<p><code>AIAgent</code> 类是整个系统最核心的抽象，核心方法 <code>run_conversation()</code> 实现了一个<strong>完全同步的对话循环</strong>：</p>
+<div class="highlight"><pre><span></span><code>调用 LLM → 获取响应 → 如有工具调用则逐一执行 → 追加结果到消息列表 → 重复
+</code></pre></div>
+
+<p><strong>为什么选择同步而非异步？</strong> 这是深思熟虑的工程决策。AI Agent 的核心瓶颈是 LLM API 调用的延迟，而非 I/O 并发。同步循环让代码更容易推理、调试和维护。当需要并行时（如子 Agent 批量执行），通过 <code>ThreadPoolExecutor</code> 显式并行。</p>
+<p>关键设计：</p>
+<ul>
+<li><strong>迭代预算机制</strong>：子 Agent 获得独立预算，不会消耗父 Agent 的配额，防止单一任务耗尽全局资源</li>
+<li><strong>消息格式遵循 OpenAI 标准</strong>：所有消息使用 <code>{"role": "system/user/assistant/tool"}</code> 格式，多模型切换几乎无摩擦</li>
+<li><strong>参数类型强转</strong>：<code>coerce_tool_args()</code> 函数将 LLM 返回的字符串参数与 JSON Schema 比对，自动安全强转</li>
+</ul>
+<h3 id="23-工具与注册层">2.3 工具与注册层</h3>
+<blockquote>
+<p>工具注册表是整个系统最优雅的部分之一。</p>
+</blockquote>
+<p>核心是 <code>ToolRegistry</code> 单例，每个工具文件在模块导入时调用 <code>registry.register()</code> 声明自己的 Schema、处理器、工具集归属和可用性检查函数。</p>
+<p><strong>添加新工具只需三步：</strong></p>
+<ol>
+<li>创建工具文件并调用 <code>registry.register()</code></li>
+<li>在 <code>model_tools.py</code> 的发现列表中添加导入</li>
+<li>在 <code>toolsets.py</code> 中将工具加入适当的工具集</li>
+</ol>
+<p><strong>运行时可用性检查</strong>是精髓所在：需要 API Key 的工具会在 Key 未配置时自动隐藏而非报错。这种"优雅降级"设计让缺少某些依赖时 Agent 仍可运行。</p>
+<p><strong>动态 Schema 重建</strong>同样精巧：<code>get_tool_definitions()</code> 会根据实际可用工具动态重建某些工具的 Schema。例如，<code>execute_code</code> 工具的描述会列出"沙箱中可用的工具"——如果 <code>web_search</code> 的 API Key 未配置，它就不会出现在描述中，从而避免模型产生"幻觉工具调用"。</p>
+<h3 id="24-状态与持久化层">2.4 状态与持久化层</h3>
+<ul>
+<li><strong>SessionDB 类</strong>（<code>hermes_state.py</code>）：SQLite 会话存储，启用 WAL 模式支持并发读和单写，FTS5 全文搜索覆盖所有历史会话</li>
+<li><strong>MemoryStore 类</strong>（<code>tools/memory_tool.py</code>）：有界策展式记忆，<code>MEMORY.md</code>（Agent 笔记）和 <code>USER.md</code>（用户偏好）分离设计</li>
+<li><strong>Cron 调度器</strong>：基于文件锁的定时任务调度，支持自然语言任务定义、多平台交付和技能注入</li>
+</ul>
+<h3 id="25-平台适配层">2.5 平台适配层</h3>
+<ul>
+<li><strong>gateway/platforms/</strong>：Telegram、Discord、Slack、WhatsApp、Signal 等平台适配器，单进程管理所有平台适配器生命周期</li>
+<li><strong>acp_adapter/</strong>：VS Code / Zed / JetBrains 编辑器集成</li>
+<li><strong>environments/</strong>：终端后端——local、Docker、SSH、Modal、Daytona、Singularity</li>
+</ul>
+<p><img alt="" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260504234800261.png" /></p>
+<hr />
+<h2 id="三记忆系统为何越用越聪明">三、记忆系统：为何"越用越聪明"</h2>
+<p>Hermes Agent 的记忆系统是其"自我成长"能力的核心支撑。</p>
+<h3 id="31-两个记忆存储的分离设计">3.1 两个记忆存储的分离设计</h3>
+<ul>
+<li><strong>MEMORY.md</strong>：存储 Agent 的个人笔记（环境事实、项目惯例、工具特性、所学知识）</li>
+<li><strong>USER.md</strong>：存储对用户的了解（偏好、沟通风格、工作流习惯）</li>
+</ul>
+<p>这种分离让 Agent 可以独立管理"关于世界的知识"和"关于人的知识"。</p>
+<h3 id="32-有界设计的深意">3.2 有界设计的深意</h3>
+<p>记忆有字符数上限（MEMORY.md 约 2200 字符，USER.md 约 1375 字符）。这不是技术限制而是设计哲学——无限记忆看似更强大，但实际上会导致系统提示膨胀、检索噪声增大、前缀缓存失效等问题。</p>
+<blockquote>
+<p>"有限资源"的约束迫使 Agent 学会优先级管理：什么值得记住，什么可以遗忘。</p>
+</blockquote>
+<h3 id="33-冻结快照模式">3.3 冻结快照模式</h3>
+<p><code>MemoryStore</code> 在 <code>load_from_disk()</code> 时捕获快照用于系统提示注入，之后的写入立即持久化但不改变当前会话的系统提示。这保证了 Anthropic 等支持前缀缓存的 LLM 在整个会话期间缓存有效，大幅降低成本。</p>
+<hr />
+<h2 id="四子-agent-委托隔离执行与上下文零泄漏">四、子 Agent 委托：隔离执行与上下文零泄漏</h2>
+<p><code>delegate_task</code> 工具实现了一个精心设计的子 Agent 系统。</p>
+<p><strong>隔离原则</strong>：每个子 Agent 获得全新的对话（不继承父上下文）、自己的 <code>task_id</code>（独立的文件操作缓存）、受限的工具集（<code>delegate_task</code>、<code>clarify</code>、<code>memory</code> 等危险工具总是被剥离）。</p>
+<p><strong>深度限制</strong>：最大委托深度为 2（父 → 子 → 孙辈被拒绝），防止递归委托导致的资源失控。</p>
+<p><strong>并行执行</strong>：批量模式下最多 3 个子 Agent 并行运行，使用 <code>ThreadPoolExecutor</code>。每个子 Agent 的进度通过回调实时传递给父 Agent 的 UI（CLI 显示树形视图）。</p>
+<hr />
+<h2 id="五hermes-agent-vs-openclaw核心差异对比">五、Hermes Agent vs OpenClaw：核心差异对比</h2>
+<p>两个项目代表了 AI Agent 工程化的两条截然不同的路径。</p>
+<h3 id="51-运行时形态轻量后端-vs-全平台产品">5.1 运行时形态：轻量后端 vs 全平台产品</h3>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>Hermes Agent</th>
+<th>OpenClaw</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>主语言</td>
+<td>Python 93.6%</td>
+<td>TypeScript 90.3%</td>
+</tr>
+<tr>
+<td>核心架构</td>
+<td>Python 进程 + SQLite</td>
+<td>Node.js Gateway + WebSocket</td>
+</tr>
+<tr>
+<td>入口形态</td>
+<td>CLI + Gateway 两个入口</td>
+<td>Gateway 控制平面 + 分布式 Node</td>
+</tr>
+<tr>
+<td>多平台覆盖</td>
+<td>Telegram/Discord/Slack/飞书等 8 个</td>
+<td>26+ 消息渠道 + macOS/iOS/Android 原生应用</td>
+</tr>
+<tr>
+<td>特色能力</td>
+<td>无服务器持久化（Modal/Daytona）</td>
+<td>Voice Wake、PTT、Talk Mode、Canvas</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>本质差异：Hermes Agent 是"轻量后端 + 重 Agent 循环"，OpenClaw 是"重 Gateway 平台 + 分布式 Node 架构"。</p>
+</blockquote>
+<h3 id="52-工具系统自注册-vs-插件生态">5.2 工具系统：自注册 vs 插件生态</h3>
+<ul>
+<li><strong>Hermes Agent</strong>：<code>ToolRegistry</code> 单例为核心，支持自注册、工具集组合、运行时可用性检查和动态 Schema 重建（防止模型幻觉工具调用）</li>
+<li><strong>OpenClaw</strong>：更重的插件化路线——npm 包分发插件，完整沙箱系统（off/non-main/all 三级）、工具文件系统硬化、完整 ACP 协议支持和插件信任模型</li>
+</ul>
+<blockquote>
+<p>本质差异：Hermes Agent 偏向"开发者友好的扩展点"，OpenClaw 偏向"产品级的插件生态和运维体验"。</p>
+</blockquote>
+<h3 id="53-记忆系统有机进化-vs-模块化">5.3 记忆系统：有机进化 vs 模块化</h3>
+<ul>
+<li><strong>Hermes Agent</strong>：有界约束迫使 Agent 学会信息管理，冻结快照模式保证前缀缓存效率</li>
+<li><strong>OpenClaw</strong>：记忆是"可替换插件槽"，但缺少 Hermes Agent 那种"从经验中创建技能"的闭环学习机制</li>
+</ul>
+<h3 id="54-安全模型选择性信任-vs-默认安全">5.4 安全模型：选择性信任 vs 默认安全</h3>
+<ul>
+<li><strong>Hermes Agent</strong>：命令审批 + DM 配对 + 注入扫描，适合技术用户的自托管场景</li>
+<li><strong>OpenClaw</strong>：完整信任模型文档（SECURITY.md 被评价为"开源 Agent 项目中最完善的安全文档之一"）、分级沙箱（off/non-main/all）、Gateway + Node 明确信任边界、<code>security audit --deep</code> 自动修复</li>
+</ul>
+<hr />
+<h2 id="六如何接入飞书-bot-和飞书-cli">六、如何接入飞书 Bot 和飞书 CLI</h2>
+<h3 id="61-三步接入飞书">6.1 三步接入飞书</h3>
+<p><strong>第一步：安装 Hermes Agent</strong></p>
+<div class="highlight"><pre><span></span><code>curl<span class="w"> </span>-fsSL<span class="w"> </span>https://hermes-agent.nousresearch.com/install.sh<span class="w"> </span><span class="p">|</span><span class="w"> </span>bash
+</code></pre></div>
+
+<p><strong>第二步：初始化 Hermes，连接飞书</strong></p>
+<div class="highlight"><pre><span></span><code>hermes<span class="w"> </span>setup
+</code></pre></div>
+
+<p>跟着向导操作：</p>
+<ol>
+<li>是否导入 OpenClaw → 可选否（N）</li>
+</ol>
+<p><img alt="" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260504234828996.png" /></p>
+<ol>
+<li>选择快速安装 → 选择模型 → 配置模型 API</li>
+</ol>
+<p><img alt="" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260504234849499.png" /></p>
+<ol>
+<li>选择配置 IM 工具</li>
+</ol>
+<p><img alt="" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260504234910996.png" /></p>
+<ol>
+<li>选择飞书（空格选中，Enter 下一步）</li>
+</ol>
+<p><img alt="" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260504234930025.png" /></p>
+<ol>
+<li>选择飞书扫码连接飞书</li>
+</ol>
+<p><img alt="" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/hermes-agent-06-20260504235113.png" /></p>
+<ol>
+<li>链接复制到浏览器或扫码配置飞书</li>
+</ol>
+<p><img alt="" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/hermes-agent-07-20260504235138.png" /></p>
+<ol>
+<li>选择新建飞书机器人或使用已有机器人</li>
+</ol>
+<p><img alt="" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/hermes-agent-08-20260504235158.png" /></p>
+<ol>
+<li>看到提示后，回到终端</li>
+</ol>
+<p><img alt="" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/hermes-agent-09-20260504235211.png" /></p>
+<ol>
+<li>设置消息配对方式（默认：私信配对）</li>
+</ol>
+<p><img alt="" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/hermes-agent-10-20260504235340.png" /></p>
+<ol>
+<li>设置群响应方式（默认：需 @bot）</li>
+</ol>
+<p><img alt="" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/hermes-agent-11-20260504235409.png" /></p>
+<ol>
+<li>定时任务推送群（可先跳过）</li>
+</ol>
+<p><img alt="" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/hermes-agent-12-20260504235440.png" /></p>
+<ol>
+<li>重启网关、启动 Hermes 对话</li>
+</ol>
+<p><img alt="" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/hermes-agent-13-20260504235514.png" /></p>
+<p><img alt="" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/hermes-agent-14-20260504235536.png" /></p>
+<ol>
+<li>在飞书中搜索 Bot 打招呼，获得配对码</li>
+</ol>
+<p><img alt="" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/hermes-agent-15-20260504235606.png" /></p>
+<ol>
+<li>在终端对话完成配对</li>
+</ol>
+<p><img alt="" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/hermes-agent-16-20260504235626.png" /></p>
+<p><strong>第三步：安装飞书 CLI</strong></p>
+<blockquote>
+<p>💡 为什么需要飞书 CLI？</p>
+<p>AI 模型聪明，但不等于有用——如果 Agent 不知道你开了什么会、跟谁聊了什么、手上有哪些待办，它就只能给通用回答。飞书 CLI 同时解决两个问题：给 Agent <strong>context</strong>（上下文），也给它<strong>"手"</strong>（操作能力）。</p>
+</blockquote>
+<p>飞书 CLI 提供的能力：</p>
+<ul>
+<li><strong>Context（上下文）</strong>：读取即时消息、云文档、电子表格、多维表格、日历、妙记、邮箱、知识库、任务、通讯录</li>
+<li><strong>手（操作）</strong>：创建文档、发送消息、建多维表格、约会议、搜索知识库、处理邮件</li>
+</ul>
+<p>安装方式——告诉 Hermes 机器人：</p>
+<div class="highlight"><pre><span></span><code>请帮我安装飞书CLI：https://github.com/larksuite/cli
+</code></pre></div>
+
+<h3 id="62-接入飞书后能做什么">6.2 接入飞书后能做什么</h3>
+<table>
+<thead>
+<tr>
+<th>场景</th>
+<th>痛点</th>
+<th>Hermes 解法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>一句话整理会议纪要</strong></td>
+<td>每周 1-2h 手动整理散落在妙记里的会议记录</td>
+<td>自动拉取妙记，提取待办/决策/讨论，按统一格式写入飞书文档，还能推送群聊</td>
+</tr>
+<tr>
+<td><strong>AI 隐形审稿人</strong></td>
+<td>改别人方案要反复沟通，自己写的难发现漏洞</td>
+<td>以评论形式指出逻辑漏洞/数据缺失/表述不清，可设"仅自己可见"</td>
+</tr>
+<tr>
+<td><strong>妙记视频→剪辑精华</strong></td>
+<td>会议录制没人看，手动剪辑工作量大</td>
+<td>下载妙记视频+逐字稿，识别高光片段，FFmpeg 剪辑+自动字幕</td>
+</tr>
+<tr>
+<td><strong>Markdown→精美飞书文档</strong></td>
+<td>MD 搬格式到飞书费时费力</td>
+<td>自动转换保留高亮/表格/代码块，还能生成 Mermaid 架构图插入文档</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>Hermes 加持：处理过几次后，会自动沉淀"技能文档"——记住你偏好的格式、关注的信息类型、推送目标群。再执行时速度更快、结果更准。</p>
+</blockquote>
+<hr />
+<h2 id="七总结如何选择">七、总结：如何选择</h2>
+<table>
+<thead>
+<tr>
+<th>你的需求</th>
+<th>推荐选择</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>需要长期记忆和自我进化</td>
+<td>Hermes Agent</td>
+</tr>
+<tr>
+<td>需要最大社区生态和多 Agent 编排</td>
+<td>OpenClaw</td>
+</tr>
+<tr>
+<td>面向更广泛用户的商业产品部署</td>
+<td>飞书 OpenClaw（企业级部署方案）</td>
+</tr>
+<tr>
+<td>AI Agent 研究和训练数据生成</td>
+<td>Hermes Agent（轨迹压缩 + RL 集成）</td>
+</tr>
+</tbody>
+</table>
+<p>两个项目不是替代关系，不少用户同时使用 Hermes 和 OpenClaw，各取所长——用 Hermes 的自我进化能力处理需要长期记忆的研究任务，用 OpenClaw 的多平台覆盖处理日常助手场景。</p>
+    </div>
+  </article>
+  <aside class="toc">
+    <p class="toc-label">本页目录</p>
+    <ul>
+  <li><a href="#一hermes-agent-是什么">一、Hermes Agent 是什么</a></li>
+  <li><a href="#二hermes-agent-五层核心架构深度剖析">二、Hermes Agent 五层核心架构深度剖析</a><ul>
+  <li><a href="#21-入口与编排层">2.1 入口与编排层</a></li>
+  <li><a href="#22-agent-核心层">2.2 Agent 核心层</a></li>
+  <li><a href="#23-工具与注册层">2.3 工具与注册层</a></li>
+  <li><a href="#24-状态与持久化层">2.4 状态与持久化层</a></li>
+  <li><a href="#25-平台适配层">2.5 平台适配层</a></li>
+</ul></li>
+  <li><a href="#三记忆系统为何越用越聪明">三、记忆系统：为何&#34;越用越聪明&#34;</a><ul>
+  <li><a href="#31-两个记忆存储的分离设计">3.1 两个记忆存储的分离设计</a></li>
+  <li><a href="#32-有界设计的深意">3.2 有界设计的深意</a></li>
+  <li><a href="#33-冻结快照模式">3.3 冻结快照模式</a></li>
+</ul></li>
+  <li><a href="#四子-agent-委托隔离执行与上下文零泄漏">四、子 Agent 委托：隔离执行与上下文零泄漏</a></li>
+  <li><a href="#五hermes-agent-vs-openclaw核心差异对比">五、Hermes Agent vs OpenClaw：核心差异对比</a><ul>
+  <li><a href="#51-运行时形态轻量后端-vs-全平台产品">5.1 运行时形态：轻量后端 vs 全平台产品</a></li>
+  <li><a href="#52-工具系统自注册-vs-插件生态">5.2 工具系统：自注册 vs 插件生态</a></li>
+  <li><a href="#53-记忆系统有机进化-vs-模块化">5.3 记忆系统：有机进化 vs 模块化</a></li>
+  <li><a href="#54-安全模型选择性信任-vs-默认安全">5.4 安全模型：选择性信任 vs 默认安全</a></li>
+</ul></li>
+  <li><a href="#六如何接入飞书-bot-和飞书-cli">六、如何接入飞书 Bot 和飞书 CLI</a><ul>
+  <li><a href="#61-三步接入飞书">6.1 三步接入飞书</a></li>
+  <li><a href="#62-接入飞书后能做什么">6.2 接入飞书后能做什么</a></li>
+</ul></li>
+  <li><a href="#七总结如何选择">七、总结：如何选择</a></li>
+</ul>
+  </aside>
+
+</div>
+
+</main>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>Learning Notes</span>
+    <a href="https://github.com/hangx969/learning-notes">GitHub</a>
+  </div>
+</footer>
+<script src="../../../static/search.js"></script>
+</body>
+</html>

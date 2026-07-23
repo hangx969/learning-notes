@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Python爬虫 - Learning Notes</title>
+<link rel="stylesheet" href="../../../static/style.css">
+<link rel="stylesheet" href="../../../static/pygments.css">
+</head>
+<body data-root="../../../">
+<header class="site-header">
+  <div class="header-inner">
+    <a class="logo" href="../../../index.html"><span class="logo-mark"></span>LEARNING NOTES</a>
+    <div class="search">
+      <input id="search-input" type="search" placeholder="搜索笔记…" autocomplete="off" aria-label="搜索笔记">
+      <div id="search-results" hidden></div>
+    </div>
+  </div>
+  <nav class="topic-nav" aria-label="主题导航">
+    <div class="topic-nav-inner">
+      <a href="../../../AI/">AI</a>
+      <a href="../../../Aliyun/">Aliyun</a>
+      <a href="../../../Azure/">Azure</a>
+      <a href="../../../C%2B%2B/">C++</a>
+      <a href="../../../CloudComputing/">CloudComputing</a>
+      <a href="../../../Database/">Database</a>
+      <a href="../../../Docker-Kubernetes/">Docker-Kubernetes</a>
+      <a href="../../../GPU-DeepLearning/">GPU-DeepLearning</a>
+      <a href="../../../Git/">Git</a>
+      <a href="../../../Go/">Go</a>
+      <a href="../../../HPC/">HPC</a>
+      <a href="../../../IaC/">IaC</a>
+      <a href="../../../Linux-Shell/">Linux-Shell</a>
+      <a href="../../../Middlewares/">Middlewares</a>
+      <a href="../../../Networking/">Networking</a>
+      <a href="../../../OS/">OS</a>
+      <a href="../../../Python/" class="active">Python</a>
+      <a href="../../../SoftwareTesting/">SoftwareTesting</a>
+    </div>
+  </nav>
+</header>
+<main class="main">
+
+<div class="article-layout">
+
+  <aside class="sidebar">
+    <details class="sidebar-details">
+      <summary>Python</summary>
+      <nav class="sidebar-nav">
+        <p class="sidebar-group">python-基础</p>
+        <ul>
+          <li><a href="../../../Python/python-%E5%9F%BA%E7%A1%80/python-OOP/">Python 面向对象编程</a></li>
+          <li><a href="../../../Python/python-%E5%9F%BA%E7%A1%80/python-QA/">Python 知识总结与常见问题</a></li>
+          <li><a href="../../../Python/python-%E5%9F%BA%E7%A1%80/python-basics/">Python 数据类型、运算符与基础语法</a></li>
+          <li><a href="../../../Python/python-%E5%9F%BA%E7%A1%80/python-exception-handling/">Python 异常处理</a></li>
+          <li><a href="../../../Python/python-%E5%9F%BA%E7%A1%80/python-function/">Python 函数</a></li>
+          <li><a href="../../../Python/python-%E5%9F%BA%E7%A1%80/python%E5%8C%85%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7-uv/">Python 包管理工具 uv</a></li>
+          <li><a href="../../../Python/python-%E5%9F%BA%E7%A1%80/rockylinux%E9%85%8D%E7%BD%AEpython%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/">RockyLinux 配置 Python 开发环境</a></li>
+          <li><a href="../../../Python/python-%E5%9F%BA%E7%A1%80/windows%E9%85%8D%E7%BD%AEpython%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/">Windows 配置 Python 开发环境</a></li>
+        </ul>
+        <p class="sidebar-group">python-数据分析-AI大模型</p>
+        <ul>
+          <li><a href="../../../Python/python-%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-AI%E5%A4%A7%E6%A8%A1%E5%9E%8B/python-%E5%A4%84%E7%90%86excel-word/">Python处理Excel与Word文档</a></li>
+          <li><a href="../../../Python/python-%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-AI%E5%A4%A7%E6%A8%A1%E5%9E%8B/python-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E4%B8%8E%E9%A2%84%E6%B5%8B/">Python机器学习与预测</a></li>
+        </ul>
+        <p class="sidebar-group">python-网络编程-前端</p>
+        <ul>
+          <li><a href="../../../Python/python-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B-%E5%89%8D%E7%AB%AF/python-Web%E5%BC%80%E5%8F%91-HTML-CSS-JS/">Web开发基础 - HTML/CSS/JavaScript</a></li>
+          <li><a href="../../../Python/python-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B-%E5%89%8D%E7%AB%AF/python-Web%E6%A1%86%E6%9E%B6Django/">Python Web框架Django</a></li>
+          <li><a href="../../../Python/python-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B-%E5%89%8D%E7%AB%AF/python-Web%E6%A1%86%E6%9E%B6Flask/">Python Web框架Flask</a></li>
+          <li><a href="../../../Python/python-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B-%E5%89%8D%E7%AB%AF/python-request-module/">Python Requests模块</a></li>
+          <li><a href="../../../Python/python-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B-%E5%89%8D%E7%AB%AF/python-socket-module/">Python Socket模块</a></li>
+          <li><a href="../../../Python/python-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B-%E5%89%8D%E7%AB%AF/python-%E7%88%AC%E8%99%AB/" class="current">Python爬虫</a></li>
+        </ul>
+        <p class="sidebar-group">python-运维开发</p>
+        <ul>
+          <li><a href="../../../Python/python-%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91/python-GUI-tkinter/">Python GUI开发 - Tkinter</a></li>
+          <li><a href="../../../Python/python-%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91/python-Linux-operation/">Python Linux运维模块</a></li>
+          <li><a href="../../../Python/python-%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91/python-elasticsearch/">Python Elasticsearch运维</a></li>
+          <li><a href="../../../Python/python-%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91/python-fabric%E9%AB%98%E7%BA%A7%E7%94%A8%E6%B3%95/">Python Fabric高级用法</a></li>
+          <li><a href="../../../Python/python-%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91/python-kubernetes-module/">Python Kubernetes模块</a></li>
+          <li><a href="../../../Python/python-%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91/python-mysql/">Python MySQL操作</a></li>
+          <li><a href="../../../Python/python-%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91/python-nginx/">Python Nginx运维自动化</a></li>
+          <li><a href="../../../Python/python-%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91/python-postgresql/">Python PostgreSQL操作</a></li>
+          <li><a href="../../../Python/python-%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91/python-tomcat/">Python Tomcat运维自动化</a></li>
+          <li><a href="../../../Python/python-%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91/python-%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/">Python 游戏开发</a></li>
+        </ul>
+        <p class="sidebar-group">电池参数提取统计工具开发</p>
+        <ul>
+          <li><a href="../../../Python/%E7%94%B5%E6%B1%A0%E5%8F%82%E6%95%B0%E6%8F%90%E5%8F%96%E7%BB%9F%E8%AE%A1%E5%B7%A5%E5%85%B7%E5%BC%80%E5%8F%91/%E5%AE%9E%E9%AA%8C%E5%AE%A4%E7%94%B5%E6%B1%A0%E5%8F%82%E6%95%B0%E4%B8%80%E9%94%AE%E7%BB%9F%E8%AE%A1%E5%B7%A5%E5%85%B7%E5%BC%80%E5%8F%91/">实验室电池参数一键统计工具开发</a></li>
+        </ul>
+        <p class="sidebar-group">其他</p>
+        <ul>
+          <li><a href="../../../Python/script-server-%E8%84%9A%E6%9C%ACWeb%E5%8C%96%E5%B7%A5%E5%85%B7/">Script-Server：脚本 Web 化工具</a></li>
+        </ul>
+      </nav>
+    </details>
+  </aside>
+
+  <article class="article">
+    <nav class="breadcrumb">
+      <a href="../../../index.html">首页</a><span>/</span>
+      <a href="../../../Python/">Python</a><span>/</span><span>python-网络编程-前端</span>
+    </nav>
+    <h1 class="article-title">Python爬虫</h1>
+    <p class="article-meta"><span>更新于 2026-04-16</span>
+      <a href="https://github.com/hangx969/learning-notes/blob/main/Python/python-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B-%E5%89%8D%E7%AB%AF/python-%E7%88%AC%E8%99%AB.md">查看源文件</a>
+    </p>
+    <div class="article-body">
+<h1 id="python爬虫">Python爬虫</h1>
+<p><mark>爬虫</mark>(Web Scraping / Web Crawling)是一种自动化程序,按照特定规则从网络上抓取信息。</p>
+<p><div class="callout callout-info" markdown="1"><br />
+<p class="callout-title">工作原理</p></p>
+</div>
+<ol>
+<li>发送请求:向目标网站发送HTTP请求。</li>
+<li>获取响应:接收服务器返回的HTML文档或数据。</li>
+<li>解析数据:使用解析库(如==BeautifulSoup==、lxml)提取所需数据。</li>
+<li>存储数据:将提取的数据存储到本地文件、数据库等。</li>
+</ol>
+<p><div class="callout callout-tip" markdown="1"><br />
+<p class="callout-title">常用工具与库</p></p>
+</div>
+<ul>
+<li><mark>Requests</mark>:用于发送HTTP请求。</li>
+<li><mark>BeautifulSoup</mark>:用于解析HTML和XML文档。</li>
+<li><mark>Scrapy</mark>:功能强大的爬虫框架,支持数据抓取、存储和调度。</li>
+<li><mark>Selenium</mark>:用于处理动态网页(如JavaScript生成的内容)。</li>
+</ul>
+<hr />
+<h2 id="scrapy和requestsbeautifulsoup对比">Scrapy和Requests+BeautifulSoup对比</h2>
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th>Scrapy</th>
+<th>Requests + BeautifulSoup</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>类型</td>
+<td>完整的爬虫框架,具有固定的项目结构</td>
+<td>基础库组合</td>
+</tr>
+<tr>
+<td>抓取能力</td>
+<td>支持异步处理,适合大规模抓取</td>
+<td>简单请求和解析</td>
+</tr>
+<tr>
+<td>内置功能</td>
+<td>提供内置的请求重试、用户代理管理、反爬虫机制等</td>
+<td>需要手动实现</td>
+</tr>
+<tr>
+<td>数据存储</td>
+<td>自动处理数据存储,支持多种格式</td>
+<td>需要手动实现数据存储</td>
+</tr>
+<tr>
+<td>资源使用</td>
+<td>支持多线程和多进程</td>
+<td>需要自己实现多线程,管理复杂</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="反爬虫">反爬虫</h2>
+<p><div class="callout callout-warning" markdown="1"><br />
+<p class="callout-title">反爬虫机制</p></p>
+<p>反爬虫是网站采用的一系列技术和策略,以防止爬虫抓取其数据。</p>
+</div>
+<p>常见反爬虫技术:</p>
+<ol>
+<li><mark>IP封禁</mark>:频繁的请求会导致 IP 被临时或永久封禁。</li>
+<li><mark>验证码</mark>:通过图形验证码或滑动验证码阻止自动化请求。</li>
+<li><mark>User-Agent检测</mark>:网站可以通过检查请求中的 User-Agent 头部来判断请求是否来自浏览器,非浏览器的请求可能会被拒绝。</li>
+<li><mark>请求频率限制</mark>:网站限制单位时间内的请求次数,超过限制会返回错误。</li>
+<li><mark>动态内容加载</mark>:使用 AJAX 或其他技术动态加载内容,爬虫难以直接抓取。</li>
+<li><mark>内容混淆</mark>:通过 JavaScript 加密或动态生成内容,爬虫难以解析。</li>
+<li><mark>Cookie 验证</mark>:网站要求用户登录后才能访问内容,爬虫需要管理和维护会话 cookie。</li>
+</ol>
+<hr />
+<h3 id="ip封禁请求速率限制">IP封禁+请求速率限制</h3>
+<p>实现方法:使用 Nginx 的 <code>limit_req</code> 模块来限制请求频率,配合 <code>deny</code> 指令封禁特定 IP。</p>
+<p>配置示例:</p>
+<div class="highlight"><pre><span></span><code><span class="n">http</span> <span class="p">{</span>
+    <span class="c1"># 定义请求速率</span>
+    <span class="n">limit_req_zone</span> <span class="err">$</span><span class="n">binary_remote_addr</span> <span class="n">zone</span><span class="o">=</span><span class="n">mylimit</span><span class="p">:</span><span class="mi">10</span><span class="n">m</span> <span class="n">rate</span><span class="o">=</span><span class="mi">1</span><span class="n">r</span><span class="o">/</span><span class="n">s</span><span class="p">;</span>
+    <span class="n">server</span> <span class="p">{</span>
+        <span class="n">location</span> <span class="o">/</span> <span class="p">{</span>
+            <span class="n">limit_req</span> <span class="n">zone</span><span class="o">=</span><span class="n">mylimit</span> <span class="n">burst</span><span class="o">=</span><span class="mi">5</span> <span class="n">nodelay</span><span class="p">;</span>  <span class="c1"># 允许突发请求</span>
+            <span class="c1"># 处理请求</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="c1"># 封禁特定 IP</span>
+<span class="n">server</span> <span class="p">{</span>
+    <span class="n">location</span> <span class="o">/</span> <span class="p">{</span>
+        <span class="n">deny</span> <span class="mf">192.168.1.1</span><span class="p">;</span>  <span class="c1"># 封禁指定 IP</span>
+        <span class="c1"># 处理请求</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h3 id="user-agent检测">User-Agent检测</h3>
+<p>实现方法:使用 Nginx 的 map 指令来检测 User-Agent,并拒绝不符合条件的请求。</p>
+<div class="highlight"><pre><span></span><code><span class="n">http</span> <span class="p">{</span>
+    <span class="nb">map</span> <span class="err">$</span><span class="n">http_user_agent</span> <span class="err">$</span><span class="n">blocked</span> <span class="p">{</span>
+        <span class="n">default</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="o">~*</span><span class="n">bot</span> <span class="mi">1</span><span class="p">;</span>  <span class="c1"># 匹配含有 &#39;bot&#39; 的 User-Agent</span>
+    <span class="p">}</span>
+
+    <span class="n">server</span> <span class="p">{</span>
+        <span class="n">location</span> <span class="o">/</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="err">$</span><span class="n">blocked</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="mi">403</span><span class="p">;</span>  <span class="c1"># 返回403状态码拒绝请求</span>
+            <span class="p">}</span>
+            <span class="c1"># 处理请求</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h3 id="cookie验证">Cookie验证</h3>
+<p>使用 Nginx 的 auth_request 模块结合后端应用进行 Cookie 验证。</p>
+<div class="highlight"><pre><span></span><code><span class="n">location</span> <span class="o">/</span> <span class="p">{</span>
+    <span class="n">auth_request</span> <span class="o">/</span><span class="n">auth</span><span class="p">;</span>  <span class="c1"># 通过子请求验证 Cookie</span>
+    <span class="c1"># 处理请求</span>
+<span class="p">}</span>
+
+<span class="n">location</span> <span class="o">=</span> <span class="o">/</span><span class="n">auth</span> <span class="p">{</span>
+    <span class="n">internal</span><span class="p">;</span>
+    <span class="c1"># 这里处理 Cookie 验证逻辑</span>
+    <span class="k">if</span> <span class="p">(</span><span class="err">$</span><span class="n">http_cookie</span> <span class="err">!</span><span class="o">~</span> <span class="s2">&quot;session=your_session&quot;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="mi">403</span><span class="p">;</span>  <span class="c1"># Cookie 验证失败,返回403</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<hr />
+<h2 id="突破反爬限制">突破反爬限制</h2>
+<p><div class="callout callout-tip" markdown="1"><br />
+<p class="callout-title">常用突破方法</p></p>
+</div>
+<ol>
+<li><mark>IP 代理池</mark>:使用代理 IP 进行请求,避免频繁使用同一 IP。可以使用免费的代理服务,或购买代理服务来确保可用性和速度。</li>
+<li><mark>随机 User-Agent</mark>:使用多个 User-Agent 字符串,随机选择在请求中使用,模拟不同的浏览器和设备请求。</li>
+<li><mark>请求间隔控制</mark>:添加随机延迟,控制请求的频率,以避免触发频率限制。</li>
+<li><mark>验证码处理</mark>:使用 OCR(光学字符识别)技术来识别验证码,或者使用第三方服务进行验证码识别。</li>
+<li><mark>JavaScript 渲染</mark>:使用 Selenium、Playwright 或 Puppeteer 等工具来处理需要执行 JavaScript 的网页。</li>
+<li><mark>会话管理</mark>:使用 requests 库中的会话功能,保持登录状态并管理 cookie,以模拟正常用户的访问行为。</li>
+<li><mark>分布式爬虫</mark>:构建分布式爬虫架构,将请求分发到不同的机器上,避免单一机器的 IP 被封。</li>
+<li><mark>API 使用</mark>:查找是否有公开的 API 可以使用。许多网站提供 RESTful API 来供用户访问数据。</li>
+</ol>
+<h3 id="ip封禁">IP封禁</h3>
+<p>反爬机制:频繁的请求会导致网站暂时或永久封禁 IP 地址。</p>
+<p>解决方案:IP 代理池:使用多个代理 IP,动态切换,避免连续使用同一 IP。</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">random</span><span class="w"> </span><span class="kn">import</span> <span class="n">choice</span>
+<span class="n">proxy_list</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;http://proxy1:port&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;http://proxy2:port&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;http://proxy3:port&#39;</span><span class="p">,</span>
+<span class="p">]</span>
+<span class="n">proxy</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;http&#39;</span><span class="p">:</span> <span class="n">choice</span><span class="p">(</span><span class="n">proxy_list</span><span class="p">),</span> <span class="s1">&#39;https&#39;</span><span class="p">:</span> <span class="n">choice</span><span class="p">(</span><span class="n">proxy_list</span><span class="p">)}</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;http://example.com&#39;</span><span class="p">,</span> <span class="n">proxies</span><span class="o">=</span><span class="n">proxy</span><span class="p">)</span>
+</code></pre></div>
+
+<h3 id="user-agent检测_1">User-Agent检测</h3>
+<p>反爬机制:网站会检查请求的 User-Agent 字段,过滤掉非浏览器的请求。</p>
+<p>解决方案:随机 User-Agent:使用 <mark>fake-useragent</mark> 库随机选择 User-Agent。</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">fake_useragent</span><span class="w"> </span><span class="kn">import</span> <span class="n">UserAgent</span>
+<span class="n">ua</span> <span class="o">=</span> <span class="n">UserAgent</span><span class="p">()</span>
+<span class="n">headers</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;User-Agent&#39;</span><span class="p">:</span> <span class="n">ua</span><span class="o">.</span><span class="n">random</span><span class="p">}</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;http://example.com&#39;</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
+</code></pre></div>
+
+<h3 id="请求频率限制">请求频率限制</h3>
+<p>反爬机制:网站限制单位时间内的请求次数,超过限制会返回错误。</p>
+<p>解决方案:设置请求间隔:使用 <mark>time.sleep()</mark> 函数来控制请求频率。</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>  <span class="c1"># 发起10次请求</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;http://example.com&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="p">)</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>  <span class="c1"># 每次请求之间间隔5秒</span>
+</code></pre></div>
+
+<h3 id="动态内容加载">动态内容加载</h3>
+<p>反爬机制:使用 AJAX 技术动态加载内容,直接请求 HTML 无法获取数据。</p>
+<p>解决方案:使用 <mark>Selenium</mark> 模拟浏览器行为加载动态内容。</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">selenium</span><span class="w"> </span><span class="kn">import</span> <span class="n">webdriver</span>
+
+<span class="n">driver</span> <span class="o">=</span> <span class="n">webdriver</span><span class="o">.</span><span class="n">Chrome</span><span class="p">()</span>
+<span class="n">driver</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;http://example.com&#39;</span><span class="p">)</span>
+<span class="n">content</span> <span class="o">=</span> <span class="n">driver</span><span class="o">.</span><span class="n">page_source</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
+<span class="n">driver</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span>
+</code></pre></div>
+
+<hr />
+<h2 id="基于requestsbeautifulsoup的爬虫案例">基于Requests+BeautifulSoup的爬虫案例</h2>
+<h3 id="爬取测试网站html标签">爬取测试网站HTML标签</h3>
+<h4 id="搭建测试网站">搭建测试网站</h4>
+<p>安装django</p>
+<div class="highlight"><pre><span></span><code>pip3<span class="w"> </span>install<span class="w"> </span>django
+pip3<span class="w"> </span>install<span class="w"> </span>-i<span class="w"> </span>https://pypi.tuna.tsinghua.edu.cn/simple<span class="w"> </span>django
+</code></pre></div>
+
+<p>运行django项目,访问127.0.0.1:8000看到网页</p>
+<div class="highlight"><pre><span></span><code><span class="n">python</span> <span class="o">./</span><span class="n">manage</span><span class="o">.</span><span class="n">py</span> <span class="n">runserver</span>
+</code></pre></div>
+
+<hr />
+<h4 id="爬取网页标签">爬取网页标签</h4>
+<p>安装beautifulsoup4</p>
+<div class="highlight"><pre><span></span><code><span class="n">pip3</span> <span class="n">install</span> <span class="o">-</span><span class="n">i</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">pypi</span><span class="o">.</span><span class="n">tuna</span><span class="o">.</span><span class="n">tsinghua</span><span class="o">.</span><span class="n">edu</span><span class="o">.</span><span class="n">cn</span><span class="o">/</span><span class="n">simple</span> <span class="n">beautifulsoup4</span>
+</code></pre></div>
+
+<p><div class="callout callout-example" markdown="1"><br />
+<p class="callout-title">爬取li标签并保存到CSV</p></p>
+</div>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">bs4</span><span class="w"> </span><span class="kn">import</span> <span class="n">BeautifulSoup</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">csv</span>
+
+<span class="n">url</span> <span class="o">=</span> <span class="s1">&#39;http://127.0.0.1:8000/&#39;</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span><span class="p">:</span>
+    <span class="c1"># 将返回的文本内容,用解析器html.parser解析,返回一个对象赋值给soup</span>
+    <span class="n">soup</span> <span class="o">=</span> <span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="s1">&#39;html.parser&#39;</span><span class="p">)</span>
+    <span class="c1"># print(response.text)</span>
+    <span class="c1"># 查找所有li标签,li标签是HTML中的列表项。</span>
+    <span class="c1"># 返回一个列表,元素是Tag对象。可迭代,用text方法获取文本内容</span>
+    <span class="n">articles</span> <span class="o">=</span> <span class="n">soup</span><span class="o">.</span><span class="n">find_all</span><span class="p">(</span><span class="s1">&#39;li&#39;</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">article</span> <span class="ow">in</span> <span class="n">articles</span><span class="p">:</span>
+        <span class="c1"># 用text方法获取到每个标签的文本内容</span>
+        <span class="n">title</span> <span class="o">=</span> <span class="n">article</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="c1"># 把每个字符串变成列表,存到列表里,方便后面输出到csv</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">title</span><span class="p">])</span>
+        <span class="c1"># data = [[&#39;My First Article&#39;], [&#39;My Second Article&#39;], [&#39;hanxianchao&#39;]]</span>
+
+    <span class="c1"># newline是防止写入时在每一行后额外添加空行。这是处理csv文件的推荐设置</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;scrape/article.csv&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="c1"># 创建csv写入器,用于将数据写入文件</span>
+        <span class="n">writer</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">writer</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        <span class="c1"># 用writerow往csv写入一行数据。写入一个列表,表示csv的第一行内容,通常是表头</span>
+        <span class="c1"># csv文件的第一行会包含一个单元格,内容为Title</span>
+        <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">([</span><span class="s1">&#39;Title&#39;</span><span class="p">])</span>
+        <span class="c1"># 写入多行数据,传入一个列表,列表中的每个子列表作为一行写入csv</span>
+        <span class="n">writer</span><span class="o">.</span><span class="n">writerows</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="c1">#</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Grab successfully, saved to article.csv&quot;</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Request failed, status code: </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+
+<hr />
+<h3 id="爬取github上的devops项目">爬取GitHub上的DevOps项目</h3>
+<p><div class="callout callout-summary" markdown="1"><br />
+<p class="callout-title">需求</p></p>
+<p>从 GitHub API 获取与"DevOps"相关的项目信息,并将这些信息输出到控制台和保存到文件中。</p>
+</div>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">requests</span> <span class="c1"># 发送http请求</span>
+<span class="c1"># import io, sys # 设置标准输出,编码是utf-8,确保处理中文字符不乱码</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">bs4</span><span class="w"> </span><span class="kn">import</span> <span class="n">BeautifulSoup</span>
+
+<span class="c1"># 设置输出内容可以处理中文字符</span>
+<span class="c1"># sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding=&#39;utf-8&#39;)</span>
+
+<span class="c1"># github api 查询devops相关的项目</span>
+<span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://api.github.com/search/repositories?q=devops&quot;</span>
+
+<span class="c1"># 发送get请求</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span><span class="p">:</span>
+    <span class="c1"># 返回了一个字典对象</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+    <span class="c1"># print(data)</span>
+    <span class="c1"># get是字典方法,查找指定的key,没找到就用默认值:空列表</span>
+    <span class="c1"># get比data[&#39;items&#39;]更安全,因为假设没有items键,后者会抛出KeyError,前者会用默认值</span>
+    <span class="n">repos</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;items&#39;</span><span class="p">,</span> <span class="p">[])</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;scrape/github-devops.txt&quot;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">repos</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;No projects are found.&quot;</span><span class="p">)</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;No projects are found&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">repos</span><span class="p">:</span>
+                <span class="c1"># repo是一个列表,每个元素r都是字典,包含repo的详细信息。</span>
+                <span class="c1"># 这里因为只要repo有值,&#39;name&#39;和&#39;html_url&#39;就有值,所以不用get方法。直接用字典键来获取值</span>
+                <span class="n">project_name</span> <span class="o">=</span> <span class="n">r</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span>
+                <span class="n">project_url</span> <span class="o">=</span> <span class="n">r</span><span class="p">[</span><span class="s1">&#39;html_url&#39;</span><span class="p">]</span>
+                <span class="n">description</span> <span class="o">=</span> <span class="n">r</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]</span>
+                <span class="n">output</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Project Name: </span><span class="si">{</span><span class="n">project_name</span><span class="si">}</span><span class="s2">.</span><span class="se">\n</span><span class="s2">Project URL: </span><span class="si">{</span><span class="n">project_url</span><span class="si">}</span><span class="s2">.</span><span class="se">\n</span><span class="s2">Project Description: </span><span class="si">{</span><span class="n">description</span><span class="si">}</span><span class="s2">.</span><span class="se">\n</span><span class="s2">-------</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="c1"># print(output) # 控制台输出</span>
+                <span class="c1"># 写入到文件</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Request failed: </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2">.</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+
+<hr />
+<h3 id="爬取各个国家的天气">爬取各个国家的天气</h3>
+<p>用的是openweathermap.org网站的api。需要注册帐号获取自己的api_key</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+
+<span class="c1">#基础设置</span>
+<span class="n">base_url</span> <span class="o">=</span> <span class="s2">&quot;http://api.openweathermap.org/data/2.5/weather&quot;</span>
+<span class="n">city</span> <span class="o">=</span> <span class="s2">&quot;New York&quot;</span>
+<span class="n">country</span> <span class="o">=</span> <span class="s2">&quot;US&quot;</span>
+<span class="n">api_key</span> <span class="o">=</span> <span class="s2">&quot;xxx&quot;</span>
+
+<span class="c1"># 构造查询url</span>
+<span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">base_url</span><span class="si">}</span><span class="s2">?q=</span><span class="si">{</span><span class="n">city</span><span class="si">}</span><span class="s2">,</span><span class="si">{</span><span class="n">country</span><span class="si">}</span><span class="s2">&amp;appid=</span><span class="si">{</span><span class="n">api_key</span><span class="si">}</span><span class="s2">&amp;units=metrics&quot;</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="c1"># 发送get请求</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">401</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Failed to authenticate.&quot;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">404</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Page Not Found, please check the url&quot;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span><span class="p">:</span>
+        <span class="c1"># 返回的data是字典</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+        <span class="c1"># 返回的字段里面的cod表示状态码,不是200表示请求出错</span>
+        <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;cod&#39;</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">200</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Request URL is not correct: </span><span class="si">{</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;message&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># 构造一个字典包含想要的天气信息</span>
+            <span class="n">weather</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s1">&#39;city&#39;</span><span class="p">:</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">),</span>
+                <span class="s1">&#39;country&#39;</span><span class="p">:</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;sys&#39;</span><span class="p">,{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;country&#39;</span><span class="p">),</span>
+                <span class="s1">&#39;temerature&#39;</span><span class="p">:</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;main&#39;</span><span class="p">,{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;temp&#39;</span><span class="p">),</span>
+                <span class="s1">&#39;humidity&#39;</span><span class="p">:</span> <span class="n">data</span><span class="o">.</span><span class="n">aget</span><span class="p">(</span><span class="s1">&#39;main&#39;</span><span class="p">,{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;humidity&#39;</span><span class="p">),</span>
+                <span class="c1"># weather字段下是一个列表,列表元素是字典,所以get的默认值设为[{}]</span>
+                <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;weather&#39;</span><span class="p">,[{}])[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;description&#39;</span><span class="p">)</span>
+            <span class="p">}</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Weather: &quot;</span><span class="p">)</span>
+            <span class="c1"># 把python字典转成json格式打印</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">weather</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">))</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;scrape/weather.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Weather</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">weather</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">))</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Weather info has been saved to weather.txt&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Status code is unknown&quot;</span><span class="p">)</span>
+
+<span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+
+<hr />
+<h3 id="爬取全球头条新闻">爬取全球头条新闻</h3>
+<p>使用<a href="https://newsapi.org/">NewsAPI</a>网站的API,需要注册帐号并获取api key</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">fetch_news</span><span class="p">(</span><span class="n">api_key</span><span class="p">):</span>
+    <span class="c1">#构造API</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;https://newsapi.org/v2/top-headlines?country=us&amp;apikey=</span><span class="si">{</span><span class="n">api_key</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="c1"># 发送get请求</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span><span class="p">:</span>
+        <span class="c1"># 把json格式数据转成python字典</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+        <span class="c1"># 从相应数据里面获取articles字段,返回的是列表</span>
+        <span class="n">articles</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;articles&#39;</span><span class="p">,[{}])</span>
+        <span class="k">for</span> <span class="n">article</span> <span class="ow">in</span> <span class="n">articles</span><span class="p">:</span>
+            <span class="n">title</span> <span class="o">=</span> <span class="n">article</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;title&#39;</span><span class="p">,</span><span class="s1">&#39;N/A&#39;</span><span class="p">)</span>
+            <span class="n">description</span> <span class="o">=</span> <span class="n">article</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;description&#39;</span><span class="p">,</span> <span class="s1">&#39;N/A&#39;</span><span class="p">)</span>
+            <span class="n">link</span> <span class="o">=</span> <span class="n">article</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;url&#39;</span><span class="p">,</span> <span class="s1">&#39;N/A&#39;</span><span class="p">)</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;scrape/news.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Title: </span><span class="si">{</span><span class="n">title</span><span class="si">}</span><span class="se">\n</span><span class="s2">Description: </span><span class="si">{</span><span class="n">description</span><span class="si">}</span><span class="se">\n</span><span class="s2">URL: </span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;News has been save to news.txt&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to fetch news, status code is </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">fetch_news</span><span class="p">(</span><span class="s2">&quot;xxxx&quot;</span><span class="p">)</span>
+</code></pre></div>
+
+<hr />
+<h2 id="网站爬虫协议robotstxt">网站爬虫协议robots.txt</h2>
+<h3 id="什么是robotstxt协议">什么是robots.txt协议</h3>
+<p><div class="callout callout-info" markdown="1"><br />
+<p class="callout-title">robots.txt简介</p></p>
+<p><mark>robots.txt</mark> 是一种用于网站的标准文件,称为 <strong>"机器人排除标准"</strong>(Robots Exclusion Protocol,简称 REP)。<br />
+它是网站管理员用来告诉搜索引擎爬虫(如 Googlebot)或其他网络爬虫,哪些页面或资源可以被抓取,哪些不可以被抓取。<br />
+该文件通常位于网站的根目录下,访问路径为:<br />
+<code>sh
+https://example.com/robots.txt</code></p>
+</div>
+<h4 id="robotstxt的作用">robots.txt的作用</h4>
+<ol>
+<li><strong>限制爬虫访问</strong>:</li>
+</ol>
+<p>网站管理员可以通过 <code>robots.txt</code> 限制爬虫访问某些敏感或不必要的页面(如后台管理页面、用户隐私数据等)。</p>
+<p><code>sh
+   User-agent: *
+   Disallow: /admin/
+   Disallow: /private/</code></p>
+<ol>
+<li><strong>优化爬虫行为</strong>:</li>
+</ol>
+<p>通过指定允许抓取的路径,减少爬虫对服务器的负载。</p>
+<p><code>sh
+   User-agent: Googlebot
+   Allow: /public/</code></p>
+<ol>
+<li><strong>防止重复内容抓取</strong>:</li>
+</ol>
+<p>避免爬虫抓取重复内容,影响 SEO(搜索引擎优化)。</p>
+<hr />
+<h4 id="robotstxt的基本语法">robots.txt的基本语法</h4>
+<ol>
+<li>
+<p><strong><mark>User-agent</mark></strong>: 指定爬虫的名称。</p>
+</li>
+<li>
+<p><strong><mark>Disallow</mark></strong>: 指定禁止爬虫访问的路径。</p>
+</li>
+<li>
+<p><strong><mark>Allow</mark></strong>: 指定允许爬虫访问的路径(通常用于更精细的控制)。</p>
+</li>
+<li>
+<p><strong><code>*</code> 和 <code>$</code> 通配符</strong>:</p>
+</li>
+<li><code>*</code> 表示任意字符。</li>
+<li><code>$</code> 表示路径的结尾。</li>
+</ol>
+<p><code>sh
+   Disallow: /*.pdf$</code></p>
+<p>禁止访问所有以 <code>.pdf</code> 结尾的文件。</p>
+<ol>
+<li><strong>示例完整文件</strong>:</li>
+</ol>
+<p><code>sh
+   User-agent: *
+   Disallow: /admin/
+   Allow: /public/</code></p>
+<hr />
+<h4 id="robotstxt的局限性">robots.txt的局限性</h4>
+<p><div class="callout callout-warning" markdown="1"><br />
+<p class="callout-title">注意事项</p></p>
+</div>
+<ol>
+<li><strong>非强制性</strong>:</li>
+<li><code>robots.txt</code> 是一种约定,而不是强制执行的规则。</li>
+<li>
+<p>恶意爬虫可以选择忽略 <code>robots.txt</code>,继续抓取被禁止的内容。</p>
+</li>
+<li>
+<p><strong>无法保护敏感数据</strong>:</p>
+</li>
+<li><code>robots.txt</code> 仅用于告诉爬虫不要抓取某些内容,但这些内容仍然可以通过直接访问 URL 获取。</li>
+<li>如果需要保护敏感数据,应使用身份验证或其他安全措施。</li>
+</ol>
+<hr />
+<h3 id="如何在爬虫中处理robotstxt">如何在爬虫中处理robots.txt</h3>
+<ol>
+<li><strong>遵守 robots.txt</strong>:</li>
+</ol>
+<p>在编写爬虫时,建议遵守目标网站的 <code>robots.txt</code> 文件,避免抓取被禁止的内容。<br />
+   可以使用 Python 的 <mark>robotparser</mark> 模块检查 URL 是否允许抓取:</p>
+<div class="highlight"><pre><span></span><code> ```python
+ from urllib.robotparser import RobotFileParser
+
+ rp = RobotFileParser()
+ rp.set_url(&quot;https://example.com/robots.txt&quot;)
+ rp.read()
+
+ url = &quot;https://example.com/private/&quot;
+ if rp.can_fetch(&quot;*&quot;, url):
+     print(&quot;Allowed to fetch:&quot;, url)
+ else:
+     print(&quot;Disallowed to fetch:&quot;, url)
+ ```
+</code></pre></div>
+
+<ol>
+<li><strong>忽略 robots.txt</strong>:</li>
+</ol>
+<p>如果爬虫是用于合法目的(如数据分析),且目标网站允许抓取,可以选择忽略 <code>robots.txt</code>。<br />
+   但在抓取前,建议与网站管理员沟通,确保不会违反法律或道德规范。</p>
+<hr />
+<h3 id="总结">总结</h3>
+<p><div class="callout callout-summary" markdown="1"><br />
+<p class="callout-title">robots.txt要点</p></p>
+<ul>
+<li><strong>robots.txt</strong> 是一种用于限制爬虫行为的协议,帮助网站管理员管理爬虫访问。</li>
+<li>它通过简单的规则指定哪些路径可以被抓取,哪些不能。</li>
+<li>在编写爬虫时,建议遵守目标网站的 <code>robots.txt</code> 文件,以避免不必要的法律或道德问题。</li>
+</ul>
+</div>
+<hr />
+<h2 id="相关笔记">相关笔记</h2>
+<ul>
+<li><a class="wikilink" href="../../../Python/python-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B-%E5%89%8D%E7%AB%AF/python-request-module/">python-request-module</a> - requests HTTP库</li>
+<li><a class="wikilink" href="../../../Python/python-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B-%E5%89%8D%E7%AB%AF/python-Web%E6%A1%86%E6%9E%B6Django/">python-Web框架Django</a> - Django Web框架</li>
+<li><a class="wikilink" href="../../../Python/python-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B-%E5%89%8D%E7%AB%AF/python-Web%E6%A1%86%E6%9E%B6Flask/">python-Web框架Flask</a> - Flask Web框架</li>
+<li><a class="wikilink" href="../../../Python/python-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B-%E5%89%8D%E7%AB%AF/python-socket-module/">python-socket-module</a> - Socket网络编程</li>
+</ul>
+    </div>
+  </article>
+  <aside class="toc">
+    <p class="toc-label">本页目录</p>
+    <ul>
+  <li><a href="#scrapy和requestsbeautifulsoup对比">Scrapy和Requests+BeautifulSoup对比</a></li>
+  <li><a href="#反爬虫">反爬虫</a><ul>
+  <li><a href="#ip封禁请求速率限制">IP封禁+请求速率限制</a></li>
+  <li><a href="#user-agent检测">User-Agent检测</a></li>
+  <li><a href="#cookie验证">Cookie验证</a></li>
+</ul></li>
+  <li><a href="#突破反爬限制">突破反爬限制</a><ul>
+  <li><a href="#ip封禁">IP封禁</a></li>
+  <li><a href="#user-agent检测_1">User-Agent检测</a></li>
+  <li><a href="#请求频率限制">请求频率限制</a></li>
+  <li><a href="#动态内容加载">动态内容加载</a></li>
+</ul></li>
+  <li><a href="#基于requestsbeautifulsoup的爬虫案例">基于Requests+BeautifulSoup的爬虫案例</a><ul>
+  <li><a href="#爬取测试网站html标签">爬取测试网站HTML标签</a></li>
+  <li><a href="#爬取github上的devops项目">爬取GitHub上的DevOps项目</a></li>
+  <li><a href="#爬取各个国家的天气">爬取各个国家的天气</a></li>
+  <li><a href="#爬取全球头条新闻">爬取全球头条新闻</a></li>
+</ul></li>
+  <li><a href="#网站爬虫协议robotstxt">网站爬虫协议robots.txt</a><ul>
+  <li><a href="#什么是robotstxt协议">什么是robots.txt协议</a></li>
+  <li><a href="#如何在爬虫中处理robotstxt">如何在爬虫中处理robots.txt</a></li>
+  <li><a href="#总结">总结</a></li>
+</ul></li>
+  <li><a href="#相关笔记">相关笔记</a></li>
+</ul>
+  </aside>
+
+</div>
+
+</main>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>Learning Notes</span>
+    <a href="https://github.com/hangx969/learning-notes">GitHub</a>
+  </div>
+</footer>
+<script src="../../../static/search.js"></script>
+</body>
+</html>

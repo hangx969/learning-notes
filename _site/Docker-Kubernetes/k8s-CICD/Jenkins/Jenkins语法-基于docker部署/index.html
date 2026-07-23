@@ -1,0 +1,1333 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jenkins语法-基于Docker部署 - Learning Notes</title>
+<link rel="stylesheet" href="../../../../static/style.css">
+<link rel="stylesheet" href="../../../../static/pygments.css">
+</head>
+<body data-root="../../../../">
+<header class="site-header">
+  <div class="header-inner">
+    <a class="logo" href="../../../../index.html"><span class="logo-mark"></span>LEARNING NOTES</a>
+    <div class="search">
+      <input id="search-input" type="search" placeholder="搜索笔记…" autocomplete="off" aria-label="搜索笔记">
+      <div id="search-results" hidden></div>
+    </div>
+  </div>
+  <nav class="topic-nav" aria-label="主题导航">
+    <div class="topic-nav-inner">
+      <a href="../../../../AI/">AI</a>
+      <a href="../../../../Aliyun/">Aliyun</a>
+      <a href="../../../../Azure/">Azure</a>
+      <a href="../../../../C%2B%2B/">C++</a>
+      <a href="../../../../CloudComputing/">CloudComputing</a>
+      <a href="../../../../Database/">Database</a>
+      <a href="../../../../Docker-Kubernetes/" class="active">Docker-Kubernetes</a>
+      <a href="../../../../GPU-DeepLearning/">GPU-DeepLearning</a>
+      <a href="../../../../Git/">Git</a>
+      <a href="../../../../Go/">Go</a>
+      <a href="../../../../HPC/">HPC</a>
+      <a href="../../../../IaC/">IaC</a>
+      <a href="../../../../Linux-Shell/">Linux-Shell</a>
+      <a href="../../../../Middlewares/">Middlewares</a>
+      <a href="../../../../Networking/">Networking</a>
+      <a href="../../../../OS/">OS</a>
+      <a href="../../../../Python/">Python</a>
+      <a href="../../../../SoftwareTesting/">SoftwareTesting</a>
+    </div>
+  </nav>
+</header>
+<main class="main">
+
+<div class="article-layout">
+
+  <aside class="sidebar">
+    <details class="sidebar-details">
+      <summary>Docker-Kubernetes</summary>
+      <nav class="sidebar-nav">
+        <p class="sidebar-group">CKA-CKS</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/CKA-CKS/CKA-%E5%A4%87%E8%80%83/">CKA 备考</a></li>
+          <li><a href="../../../../Docker-Kubernetes/CKA-CKS/CKS-%E5%A4%87%E8%80%83/">CKS 备考</a></li>
+          <li><a href="../../../../Docker-Kubernetes/CKA-CKS/k8s-%E9%9D%A2%E8%AF%95%E9%A2%98%E6%B1%87%E6%80%BB/">K8s 面试题汇总</a></li>
+        </ul>
+        <p class="sidebar-group">container-platform</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/container-platform/%E9%83%A8%E7%BD%B2openshift%283.10%29/">部署 OpenShift (3.10)</a></li>
+          <li><a href="../../../../Docker-Kubernetes/container-platform/%E9%83%A8%E7%BD%B2%E8%BD%BB%E9%87%8F%E7%BA%A7%E7%9A%84K8S%E5%B9%B3%E5%8F%B0-K3S/">部署轻量级 K8S 平台 - K3S</a></li>
+        </ul>
+        <p class="sidebar-group">docker</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/docker/docker%E5%9F%BA%E7%A1%80/">Docker基础</a></li>
+          <li><a href="../../../../Docker-Kubernetes/docker/docker%E5%AE%89%E5%85%A8%E9%85%8D%E7%BD%AE-Capabilities%E4%B8%8E%E5%AE%B9%E5%99%A8%E5%8A%A0%E5%9B%BA/">Docker 安全配置详解：Capabilities 与容器加固</a></li>
+          <li><a href="../../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2UI%E5%B7%A5%E5%85%B7portainer-%E9%83%A8%E7%BD%B2redis-sentinel/">Docker部署Portainer与Redis-Sentinel</a></li>
+          <li><a href="../../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2gitlab/">Docker部署GitLab</a></li>
+          <li><a href="../../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2lnmp%E7%BD%91%E7%AB%99/">Docker部署LNMP网站</a></li>
+          <li><a href="../../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2loki/">Docker部署Loki日志系统</a></li>
+          <li><a href="../../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2nginx-tomcat-httpd-go-python%E6%9C%8D%E5%8A%A1/">Docker部署Nginx-Tomcat-Httpd-Go-Python服务</a></li>
+          <li><a href="../../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2prometheus-grafana-cAdvisior%E7%9B%91%E6%8E%A7/">Docker部署Prometheus-Grafana-cAdvisor监控</a></li>
+          <li><a href="../../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2%E4%BB%93%E5%BA%93%E5%B9%B3%E5%8F%B0homebox/">Docker部署Homebox仓库平台</a></li>
+          <li><a href="../../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1%E5%B7%A5%E5%85%B7gocron/">Docker部署GoCron定时任务工具</a></li>
+          <li><a href="../../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2%E8%B7%AF%E7%94%B1%E7%9B%91%E6%8E%A7%E5%B7%A5%E5%85%B7NextTrace/">Docker部署NextTrace路由监控工具</a></li>
+          <li><a href="../../../../Docker-Kubernetes/docker/docker%E9%85%8D%E7%BD%AENVIDIA%20GPU/">Docker配置NVIDIA GPU</a></li>
+          <li><a href="../../../../Docker-Kubernetes/docker/docker%E9%85%8D%E7%BD%AE%E4%BB%A3%E7%90%86/">Docker配置代理</a></li>
+        </ul>
+        <p class="sidebar-group">harbor</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/harbor/harbor-basics/">Harbor 基础</a></li>
+          <li><a href="../../../../Docker-Kubernetes/harbor/helm%E9%83%A8%E7%BD%B2harbor/">Helm 部署 Harbor</a></li>
+        </ul>
+        <p class="sidebar-group">helm-operator</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/helm-operator/helmv3-%E5%AE%89%E8%A3%85%E4%B8%8E%E4%BD%BF%E7%94%A8/">Helm v3 安装与使用</a></li>
+          <li><a href="../../../../Docker-Kubernetes/helm-operator/helm%E9%83%A8%E7%BD%B2config-syncer%28kubed%29/">Helm 部署 Config Syncer (Kubed)</a></li>
+          <li><a href="../../../../Docker-Kubernetes/helm-operator/helm%E9%83%A8%E7%BD%B2dragonfly/">Helm 部署 Dragonfly</a></li>
+          <li><a href="../../../../Docker-Kubernetes/helm-operator/helm%E9%83%A8%E7%BD%B2pact-broker/">Helm 部署 Pact Broker</a></li>
+          <li><a href="../../../../Docker-Kubernetes/helm-operator/helm%E9%83%A8%E7%BD%B2reloader/">Helm 部署 Reloader</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-CICD</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD%20Image%20Updater/">ArgoCD Image Updater</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD%E5%9F%BA%E7%A1%80/">ArgoCD基础</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD%E5%A4%9A%E9%9B%86%E7%BE%A4GitOps%E5%AE%9E%E6%88%98/">多集群 GitOps 实战：用 Argo CD 管理上百个 Kubernetes 集群</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD%E9%83%A8%E7%BD%B2Helm%E5%BA%94%E7%94%A8%E6%97%B6%E5%9F%9F%E5%90%8D%E8%A7%A3%E6%9E%90%E5%A4%B1%E8%B4%A5%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5%E4%B8%8E%E8%A7%A3%E5%86%B3/">ArgoCD部署Helm应用时域名解析失败问题排查与解决</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/ArgoCD/%E5%AD%A6%E4%B9%A0%E9%93%BE%E6%8E%A5/">ArgoCD学习链接</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/Claude-Code%E5%AE%9E%E7%8E%B0CICD%E8%87%AA%E5%8A%A8%E5%8C%96%E5%8F%91%E5%B8%83%E6%B5%81%E7%A8%8B/">Claude Code 实现 CI/CD 自动化发布流程详细指南</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/Gitlab/helm%E9%83%A8%E7%BD%B2gitlab/">Helm部署GitLab</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/Gitlab/k8s%E9%83%A8%E7%BD%B2Gitlab%2811.8.1%29-%E5%9F%BA%E4%BA%8Eyaml/">K8s部署GitLab(11.8.1)-基于YAML</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/Gitlab/%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%AE%89%E8%A3%85Gitlab%2817.9.8%29/">二进制安装GitLab(17.9.8)</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/Jenkins/Jenkins%E8%AF%AD%E6%B3%95-%E5%9F%BA%E4%BA%8Edocker%E9%83%A8%E7%BD%B2/" class="current">Jenkins语法-基于Docker部署</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/Jenkins/docker%E9%83%A8%E7%BD%B2jenkins/">Docker部署Jenkins</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/Jenkins/helm%E9%83%A8%E7%BD%B2jenkins/">Helm部署Jenkins</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/Jenkins/k8s-Devops%E5%B9%B3%E5%8F%B0%E8%90%BD%E5%9C%B0-%E5%9F%BA%E4%BA%8Ejenkins/">K8s DevOps平台落地-基于Jenkins</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/Jenkins/k8s%E9%83%A8%E7%BD%B2%E5%9F%BA%E4%BA%8EJenkins%282.394%29%E7%9A%84DevOps%E5%B7%A5%E5%85%B7%E9%93%BE-%E5%9F%BA%E4%BA%8Eyaml/">K8s部署基于Jenkins(2.394)的DevOps工具链-基于YAML</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/Jenkins/k8s%E9%83%A8%E7%BD%B2%E5%9F%BA%E4%BA%8EJenkins%282.426.3%29%E7%9A%84Devops%E5%B7%A5%E5%85%B7%E9%93%BE-%E5%9F%BA%E4%BA%8Eyaml/">K8s部署基于Jenkins(2.426.3)的DevOps工具链-基于YAML</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/Jenkins/%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%AE%89%E8%A3%85Jenkins%282.319%29/">二进制安装Jenkins(2.319)</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/Kustomize/k8s%E9%85%8D%E7%BD%AE%E5%AE%9A%E5%88%B6%E5%B7%A5%E5%85%B7-kustomize/">K8s配置定制工具-Kustomize</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/Tekton/k8s%E9%83%A8%E7%BD%B2%E5%8E%9F%E7%94%9F%E7%9A%84CICD%E5%B7%A5%E5%85%B7Tekton-%E5%9F%BA%E4%BA%8Eyaml/">K8s部署原生的CICD工具Tekton-基于YAML</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/Tekton/%E5%9F%BA%E4%BA%8ETekton%E7%9A%84%E4%BA%91%E5%8E%9F%E7%94%9F%E5%B9%B3%E5%8F%B0%E8%90%BD%E5%9C%B0/">基于Tekton的云原生平台落地</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/k8s%E5%8F%91%E5%B8%83%E7%AD%96%E7%95%A5-%E8%93%9D%E7%BB%BF%E9%83%A8%E7%BD%B2%E4%B8%8E%E9%87%91%E4%B8%9D%E9%9B%80%E5%8F%91%E5%B8%83/">K8s 发布策略：蓝绿部署与金丝雀发布实战</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/%E4%BD%BF%E7%94%A8github%20action%E9%83%A8%E7%BD%B2helmchart/">使用GitHub Action部署Helm Chart</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/%E5%8F%91%E5%B8%83go-python-java%E4%BB%A3%E7%A0%81%E5%88%B0K8S%E7%8E%AF%E5%A2%83/">发布Go/Python/Java代码到K8S环境</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-UI-tools</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/k8s-UI-tools/k8s-API%E6%A3%80%E6%9F%A5%E5%B7%A5%E5%85%B7kubent/">K8s API 检查工具 kubent</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-UI-tools/k8s-%E5%B0%8F%E5%B7%A5%E5%85%B7%E9%9B%86%E5%90%88/">K8s 小工具集合</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-UI-tools/k8s%E9%83%A8%E7%BD%B2-Dashboard-UI/">K8s 部署 Dashboard UI</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-UI-tools/k8s%E9%83%A8%E7%BD%B2%E5%8F%AF%E8%A7%86%E5%8C%96ui%E7%95%8C%E9%9D%A2kuboard/">K8s 部署 Kuboard</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-UI-tools/kubectl-UI%E5%B7%A5%E5%85%B7Lens/">kubectl UI 工具 Lens</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-UI-tools/kubectl-%E5%8F%AF%E8%A7%86%E5%8C%96%E6%8F%92%E4%BB%B6k9s-stern/">kubectl 可视化插件 k9s 和 stern</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-UI-tools/kuebctl-%E6%8F%92%E4%BB%B6krew-rolesum/">kubectl 插件 krew 和 rolesum</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-UI-tools/rancher%28v2.6.4%29%E7%AE%A1%E7%90%86k8s%E9%9B%86%E7%BE%A4/">Rancher (v2.6.4) 管理 K8s 集群</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-ai-gpu</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/k8s-ai-gpu/k8s%E9%85%8D%E7%BD%AENVIDIA%20GPU/">K8s 配置 NVIDIA GPU</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-backup-dr</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/k8s-backup-dr/k8s%E5%A4%87%E4%BB%BD%E4%B8%8E%E7%81%BE%E5%A4%87%E5%AE%9E%E6%88%98-%E4%B8%89%E5%B1%82%E5%AE%B9%E7%81%BE%E6%9E%B6%E6%9E%84/">K8s 备份与灾备实战：三层容灾架构</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-backup-dr/k8s%E9%9B%86%E7%BE%A4%E5%A4%87%E4%BB%BD%E6%81%A2%E5%A4%8D-Velero/">K8s集群备份恢复 - Velero</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-basic-resources</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/K8s%E5%9F%BA%E7%A1%80-pod%E8%B0%83%E5%BA%A6-%E4%BA%B2%E5%92%8C%E5%8A%9B/">K8s基础-Pod调度-亲和力</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/Python%E8%B0%83%E7%94%A8k8s-api%E5%AE%9E%E7%8E%B0%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/">Python调用K8s-API实现资源管理</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s-APIServer%E6%B7%B1%E5%BA%A6%E5%89%96%E6%9E%90-%E8%AF%B7%E6%B1%82%E9%93%BE%E8%B7%AF-%E8%AE%A4%E8%AF%81%E6%8E%88%E6%9D%83-%E7%94%9F%E4%BA%A7%E8%B0%83%E4%BC%98/">Kubernetes API Server 深度剖析：请求链路、认证授权与生产调优</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s-PodDisruptionBudget%E5%AE%9E%E6%88%98/">K8s PodDisruptionBudget 实战：优雅中断保护</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-Calico/">K8s基础-Calico</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-Finalizer%E4%B8%8E%E8%B5%84%E6%BA%90%E5%88%A0%E9%99%A4/">K8s基础-Finalizer与资源删除</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-Operator%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98-Kubebuilder/">从零开发 Kubernetes Operator：Kubebuilder 实战教程</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-Service/">K8s基础-Service</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-configMap-Secret/">K8s基础-configMap-Secret</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-daemonset/">K8s基础-DaemonSet</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-deployment/">K8s基础-Deployment</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-ingress/">K8s基础-Ingress</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-job-cronjob/">K8s基础-Job-CronJob</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-kubeadm/">K8s基础-kubeadm</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-namespace-%E8%B5%84%E6%BA%90%E5%88%86%E9%85%8D/">K8s基础-namespace-资源分配</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-pod/">K8s基础-Pod</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-pod%E8%B0%83%E5%BA%A6-%E6%A0%87%E7%AD%BE%E4%B8%8E%E9%80%89%E6%8B%A9%E5%99%A8%E5%AE%9E%E6%88%98/">Kubernetes 标签与选择器避坑：5 条核心铁律与生产级实战案例</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-statefulset/">K8s基础-StatefulSet</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-storage/">K8s基础-Storage</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-yaml/">K8s基础-YAML</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E4%B8%B4%E6%97%B6%E5%AE%B9%E5%99%A8ephemeral/">K8s基础-临时容器Ephemeral</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E5%AE%B9%E5%99%A8%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-Sidecar-Init-Ambassador-Adapter/">K8s 容器设计模式：Sidecar / Init Container / Ambassador / Adapter</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E5%AE%B9%E5%99%A8%E8%BF%90%E8%A1%8C%E6%97%B6-containerd/">K8s基础-容器运行时-containerd</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E6%9E%B6%E6%9E%84-%E7%BB%84%E4%BB%B6-%E8%B5%84%E6%BA%90/">K8s基础-架构-组件-资源</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E8%87%AA%E5%AE%9A%E4%B9%89CRD%E8%B5%84%E6%BA%90/">K8s基础-自定义CRD资源</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E8%AE%A4%E8%AF%81-%E6%8E%88%E6%9D%83-%E5%87%86%E5%85%A5/">K8s基础-认证-授权-准入</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-db-middleware</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/k8s-db-middleware/Operator%E9%83%A8%E7%BD%B2Redis%E9%9B%86%E7%BE%A4/">基于Operator部署Redis集群</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-db-middleware/Operator%E9%83%A8%E7%BD%B2mysql%E9%9B%86%E7%BE%A4/">Operator部署MySQL NDB集群</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-db-middleware/helm%E9%83%A8%E7%BD%B2mysql/">Helm部署MySQL</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-db-middleware/helm%E9%83%A8%E7%BD%B2postgreSQL/">Helm部署PostgreSQL</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-db-middleware/helm%E9%83%A8%E7%BD%B2rabbitmq-ha/">Helm部署RabbitMQ高可用集群</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-db-middleware/helm%E9%83%A8%E7%BD%B2strimzi-kafka/">Helm部署Strimzi Kafka</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-db-middleware/k8s%E5%9F%BA%E4%BA%8Eyaml%E9%83%A8%E7%BD%B2MongoDB%E9%9B%86%E7%BE%A4/">K8s基于YAML部署MongoDB集群</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-db-middleware/k8s%E5%9F%BA%E4%BA%8Eyaml%E9%83%A8%E7%BD%B2httpd%E6%9C%8D%E5%8A%A1/">K8s基于YAML部署httpd服务</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-db-middleware/k8s%E5%9F%BA%E4%BA%8Eyaml%E9%83%A8%E7%BD%B2mysql%E4%B8%BB%E4%BB%8E%E9%AB%98%E5%8F%AF%E7%94%A8/">K8s基于YAML部署MySQL主从高可用</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-db-middleware/k8s%E5%9F%BA%E4%BA%8Eyaml%E9%83%A8%E7%BD%B2redis%E9%9B%86%E7%BE%A4/">K8s基于YAML部署Redis集群</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-db-middleware/k8s%E9%83%A8%E7%BD%B2springcloud%E7%94%B5%E5%95%86%E9%A1%B9%E7%9B%AE/">K8s部署SpringCloud电商项目</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-installation-management</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/2025%E6%9C%80%E6%96%B0-%E4%BC%81%E4%B8%9A%E7%BA%A7%E9%AB%98%E5%8F%AF%E7%94%A8%E9%9B%86%E7%BE%A4-%E5%9F%BA%E4%BA%8Erockylinux/">2025最新-企业级高可用集群-基于rockylinux</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/etcd%E9%AB%98%E5%8F%AF%E7%94%A8%E9%85%8D%E7%BD%AE%E4%BB%A5%E5%8F%8A%E6%A8%A1%E6%8B%9F%E9%9B%86%E7%BE%A4%E6%95%85%E9%9A%9C%E5%92%8C%E6%81%A2%E5%A4%8D/">etcd高可用配置以及模拟集群故障和恢复</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/k8s-Backstage-%E5%86%85%E9%83%A8%E5%BC%80%E5%8F%91%E8%80%85%E5%B9%B3%E5%8F%B0IDP%E5%AE%9E%E6%88%98/">K8s 平台工程实战：用 Backstage 打造一站式内部开发者平台</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/k8s-cgroup-v2%E6%B7%B1%E5%BA%A6%E8%A7%A3%E6%9E%90-%E8%BF%81%E7%A7%BB%E5%AE%9E%E6%88%98%E4%B8%8E%E9%81%BF%E5%9D%91%E6%8C%87%E5%8D%97/">K8s CGroup v2 深度解析：资源隔离原理、迁移实战与生产避坑指南</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/k8s%E4%B8%A4%E5%9C%B0%E4%B8%89%E4%B8%AD%E5%BF%83%E6%9E%B6%E6%9E%84/">k8s两地三中心架构</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/k8s%E5%A4%9A%E9%9B%86%E7%BE%A4kubeconfig%E7%AE%A1%E7%90%86/">k8s多集群kubeconfig管理</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/k8s%E6%95%85%E9%9A%9C%E6%8E%92%E6%9F%A5%E6%8C%87%E5%8D%97/">k8s故障排查指南</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/k8s%E7%94%9F%E4%BA%A7%E7%8E%AF%E5%A2%83%E4%BC%98%E5%8C%96%E4%B8%8E%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/">k8s生产环境优化与最佳实践</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/k8s%E9%83%A8%E7%BD%B2%E9%98%B2%E7%81%AB%E5%A2%99%E7%AB%AF%E5%8F%A3%E9%85%8D%E7%BD%AE/">K8s部署防火墙端口配置</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/latest-version/%E5%AE%89%E8%A3%85k8s-1.35-%E5%9F%BA%E4%BA%8Erockylinux10-%E6%9C%80%E6%96%B0%E6%AD%A5%E9%AA%A4/">在 Rocky Linux 10 上安装 Kubernetes 1.35</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%AE%89%E8%A3%85k8s%E9%AB%98%E5%8F%AF%E7%94%A8%E9%9B%86%E7%BE%A4/">二进制安装k8s高可用集群</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.20.6-%E9%AB%98%E5%8F%AF%E7%94%A8/">安装k8s-1.20.6-高可用</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.23/">安装k8s-1.23</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.26-1.27/">安装k8s-1.26-1.27</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.28/">安装k8s-1.28</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.30-%E5%9F%BA%E4%BA%8Erockylinux/">安装k8s-1.30-基于rockylinux</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.32-%E5%9F%BA%E4%BA%8Erockylinux/">安装k8s-1.32-基于rockylinux</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.33-%E5%9F%BA%E4%BA%8Erockylinux-%E6%9C%80%E6%96%B0%E6%AD%A5%E9%AA%A4/">安装k8s-1.33-基于rockylinux-最新步骤</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/%E5%8D%87%E7%BA%A7/k8s-1.37-%E5%8D%87%E7%BA%A7%E9%A1%BB%E7%9F%A5-breaking-changes/">Kubernetes v1.37 升级破坏性变更指南</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/%E5%8D%87%E7%BA%A7/k8s%E8%BF%81%E7%A7%BB%E5%AE%B9%E5%99%A8%E8%BF%90%E8%A1%8C%E6%97%B6-%E7%89%88%E6%9C%AC%E5%8D%87%E7%BA%A7/">k8s迁移容器运行时与版本升级</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-monitoring-logging</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/K8s%E5%85%A8%E9%9D%A2%E5%B7%A1%E6%A3%80%E8%84%9A%E6%9C%AC-%E7%94%9F%E6%88%90HTML%E5%81%A5%E5%BA%B7%E6%8A%A5%E5%91%8A/">K8s 全面巡检脚本：一键生成 HTML 健康报告</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/OpenTelemetry%E5%AE%9E%E6%88%98-%E7%BB%9F%E4%B8%80Traces-Metrics-Logs/">OpenTelemetry 实战：告别厂商锁定，统一 Traces/Metrics/Logs</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/Prometheus%E5%9F%BA%E7%A1%80/">Prometheus基础</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/Prometheus%E7%9B%91%E6%8E%A7k8s%E7%B3%BB%E7%BB%9F%E7%BB%84%E4%BB%B6/">Prometheus监控K8s系统组件</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/Prometheus%E7%9B%91%E6%8E%A7%E5%A4%96%E9%83%A8k8s%E9%9B%86%E7%BE%A4/">Prometheus监控外部K8s集群</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/Prometheus%E7%9B%91%E6%8E%A7%E9%9D%9E%E4%BA%91%E5%8E%9F%E7%94%9F%E5%BA%94%E7%94%A8-%E4%B8%BB%E6%9C%BA/">Prometheus监控非云原生应用-主机</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/helm%E9%83%A8%E7%BD%B2Loki-promtail-tempo-grafanaAgent%E5%85%A8%E5%AE%B6%E6%A1%B6/">Helm部署Loki+Promtail+Tempo+GrafanaAgent全家桶</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/helm%E9%83%A8%E7%BD%B2jaeger/">Helm部署Jaeger</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/helm%E9%83%A8%E7%BD%B2prometheus-stack%E5%85%A8%E5%AE%B6%E6%A1%B6/">Prometheus-Stack 全家桶：生产级部署与运维完全指南</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E6%97%A5%E5%BF%97%E7%AE%A1%E7%90%86-%E9%87%87%E9%9B%86%E6%96%B9%E6%A1%88%E4%B8%8E%E5%AE%A1%E8%AE%A1%E6%97%A5%E5%BF%97/">K8s 日志管理：基础机制、六种采集方案与审计日志实战</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E7%9B%91%E6%8E%A7EFK%2Blogstash%2Bkafka/">K8s监控EFK+logstash+kafka</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E7%9B%91%E6%8E%A7ES%287.2%29%2BKibana%287.2%29%2BFluentd%28v1.4.2%29/">K8s监控ES(7.2)+Kibana(7.2)+Fluentd(v1.4.2)</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E7%9B%91%E6%8E%A7Prometheus%28v2.2.1%29/">K8s监控Prometheus(v2.2.1)</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E7%9B%91%E6%8E%A7Prometheus%28v2.33.5%29%2BGrafana%28v8.4.5%29/">K8s监控Prometheus(v2.33.5)+Grafana(v8.4.5)</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E7%9B%91%E6%8E%A7alertmanager%28v0.14.0%29/">K8s监控Alertmanager(v0.14.0)</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E9%83%A8%E7%BD%B2elasticsearch%E9%9B%86%E7%BE%A4/">K8s部署Elasticsearch集群</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E9%83%A8%E7%BD%B2grafana%28v5.0.4%29/">K8s部署Grafana(v5.0.4)</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E9%83%A8%E7%BD%B2%E5%85%A8%E9%93%BE%E8%B7%AF%E8%BF%BD%E8%B8%AA-Skywalking/">K8s部署全链路追踪-Skywalking</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2Prometheus%28v2.32.1%29%E8%81%94%E9%82%A6%E9%9B%86%E7%BE%A4/">二进制部署Prometheus(v2.32.1)联邦集群</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2efk%2Blogstash%2Bkafka%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%B9%B3%E5%8F%B0/">二进制部署EFK+Logstash+Kafka日志收集平台</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2prometheus-grafana-nodeexporter/">二进制部署Prometheus-Grafana-NodeExporter</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/%E5%9F%BA%E4%BA%8Ehelm%2Boperator%E9%83%A8%E7%BD%B2ECK%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%B9%B3%E5%8F%B0/">基于Helm+Operator部署ECK日志收集平台</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-networking-service-mesh</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/k8s-networking-service-mesh/Istio-Sidecar-vs-Ambient/">Istio Sidecar vs Ambient 模式对比</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-networking-service-mesh/helm%E5%AE%89%E8%A3%85istio/">Helm安装Istio</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-networking-service-mesh/helm%E9%83%A8%E7%BD%B2external-dns/">Helm部署External-DNS</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-networking-service-mesh/helm%E9%83%A8%E7%BD%B2ingress-nginx/">Helm部署Ingress-Nginx</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-networking-service-mesh/helm%E9%83%A8%E7%BD%B2tomcat/">Helm 部署 Tomcat</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-networking-service-mesh/k8s-Gateway-API%E5%85%A5%E9%97%A8-Ingress%E4%B8%8B%E4%B8%80%E4%BB%A3%E6%96%B9%E6%A1%88/">Kubernetes Gateway API 入门：Ingress 的下一代方案</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-networking-service-mesh/k8s%E7%B2%BE%E7%BB%86%E5%8C%96%E6%B5%81%E9%87%8F%E7%AE%A1%E7%90%86-istio/">K8s精细化流量管理-Istio</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-networking-service-mesh/k8s%E9%83%A8%E7%BD%B2istio%281.13.1%29/">K8s部署Istio(1.13.1)</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-networking-service-mesh/k8s%E9%9B%86%E7%BE%A4%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/">K8s集群网络安全</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-networking-service-mesh/%E4%BC%81%E4%B8%9A%E9%A1%B9%E7%9B%AE%E6%8E%A5%E5%85%A5istio%E5%AE%9E%E6%88%98/">企业项目接入Istio实战</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-scaling</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/k8s-scaling/KEDA-vs-HPA-2026%E7%BB%88%E6%9E%81%E5%AF%B9%E6%AF%94-v1.36%E7%BC%A9%E9%9B%B6/">KEDA vs HPA 2026 终极对比：v1.36 原生缩零后该选谁？</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-scaling/helm%E9%83%A8%E7%BD%B2goldilocks/">Helm部署Goldilocks</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-scaling/helm%E9%83%A8%E7%BD%B2vpa/">Helm部署VPA</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-scaling/k8s-HPA-VPA/">K8s HPA与VPA</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-scaling/k8s-%E5%9F%BA%E4%BA%8EKEDA%E7%9A%84%E5%BC%B9%E6%80%A7%E8%83%BD%E5%8A%9B/">K8s基于KEDA的弹性能力</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-scaling/k8s%E6%88%90%E6%9C%AC%E4%BC%98%E5%8C%96%E6%96%B9%E6%A1%88-FinOps%E5%AE%9E%E6%88%98/">K8s 集群成本优化方案：砍掉 60% 云账单</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-security-auth</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2capsule/">Helm部署Capsule</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2certmanager/">Helm部署Cert-Manager</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2external-secrets/">Helm部署External-Secrets</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2kyverno%E5%92%8Cpolicy-reporter/">Helm部署Kyverno和Policy-Reporter</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2oauth2proxy/">Helm部署OAuth2-Proxy</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2sonarqube/">Helm部署SonarQube</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2trivy-operator/">Helm部署Trivy-Operator</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-security-auth/k8s-Admission-Webhook%E9%93%BE%E5%86%B2%E7%AA%81%E6%8E%92%E6%9F%A5-Istio-Kyverno-Gatekeeper/">当 Istio、Kyverno、Gatekeeper 三个 Webhook 同时存在，你的集群会发生什么？</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-security-auth/k8s%E5%AE%B9%E5%99%A8%E5%AE%89%E5%85%A8%E4%B8%8A%E4%B8%8B%E6%96%87-SecurityContext/">Kubernetes 容器安全上下文完全指南：从入门到生产避坑</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-springcloud</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/k8s-springcloud/SpringCloud%E9%A1%B9%E7%9B%AE%E8%BF%81%E7%A7%BB%E5%88%B0k8s%E5%AE%9E%E6%88%98/">SpringCloud 项目迁移到 K8s 实战</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-storage</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/k8s-storage/helm%E9%83%A8%E7%BD%B2nfs-subdir-external-provisioner/">Helm部署NFS Subdir External Provisioner</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-storage/k8s-ceph%E9%83%A8%E7%BD%B2%E4%B8%8E%E9%9B%86%E6%88%90/">K8s Ceph部署与集成</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-storage/k8s-%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8CubeFS/">K8s分布式存储CubeFS</a></li>
+        </ul>
+        <p class="sidebar-group">kubeblocks</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/kubeblocks/kubeblocks%E9%83%A8%E7%BD%B2WordPress/">KubeBlocks 部署 WordPress</a></li>
+          <li><a href="../../../../Docker-Kubernetes/kubeblocks/kubeblocks%E9%83%A8%E7%BD%B2%E9%AB%98%E5%8F%AF%E7%94%A8harbor%E9%9B%86%E7%BE%A4/">KubeBlocks 部署高可用 Harbor 集群</a></li>
+        </ul>
+        <p class="sidebar-group">其他</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/%E7%AE%80%E5%8E%86%E6%8C%87%E5%8D%97/">简历指南</a></li>
+        </ul>
+      </nav>
+    </details>
+  </aside>
+
+  <article class="article">
+    <nav class="breadcrumb">
+      <a href="../../../../index.html">首页</a><span>/</span>
+      <a href="../../../../Docker-Kubernetes/">Docker-Kubernetes</a><span>/</span><span>k8s-CICD</span>
+    </nav>
+    <h1 class="article-title">Jenkins语法-基于Docker部署</h1>
+    <p class="article-meta"><span>更新于 2026-04-16</span>
+      <a href="https://github.com/hangx969/learning-notes/blob/main/Docker-Kubernetes/k8s-CICD/Jenkins/Jenkins%E8%AF%AD%E6%B3%95-%E5%9F%BA%E4%BA%8Edocker%E9%83%A8%E7%BD%B2.md">查看源文件</a>
+    </p>
+    <div class="article-body">
+<h1 id="devops">DevOps</h1>
+<h2 id="定义">定义</h2>
+<p>Devops是Development和Operations的组合，一开始是为了解决开发人员和运维人员之间合作的避雷，强调跨团队协作与工具链整合。后面发展之后，不仅仅是开发运维，包含完整流程：开发、测试、运维、项目管理。</p>
+<p>Devops核心目标：</p>
+<ol>
+<li>加速交付：快速迭代，频繁发布新功能</li>
+<li>提高质量：自动化任务，减少人工操作错误</li>
+<li>增强协作：开发、运维、测试等角色紧密配合</li>
+</ol>
+<p>一句话总结：Devops是跨部门沟通的桥梁，利用相关工具的融合提升整个团队的工作效率。</p>
+<h2 id="工具链">工具链</h2>
+<table>
+<thead>
+<tr>
+<th>阶段</th>
+<th>工具示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>代码管理</td>
+<td>Gitlab(企业最常用)、Github、Gitee、Git</td>
+</tr>
+<tr>
+<td>代码扫描</td>
+<td>Sonarqube</td>
+</tr>
+<tr>
+<td>持续集成（自动编译）</td>
+<td>Jenkins、Tekton、Gitlab CI</td>
+</tr>
+<tr>
+<td>持续部署</td>
+<td>Jenkins、Tekton、ArgoCD</td>
+</tr>
+<tr>
+<td>容器化</td>
+<td>Docker、Containerd、Kaniko（轻量级做镜像）、Podman</td>
+</tr>
+<tr>
+<td>制品管理（镜像或Jar包存储）</td>
+<td>Harbor、Nexus（存Jar包比较常用）</td>
+</tr>
+<tr>
+<td>服务编排</td>
+<td>Kubernetes</td>
+</tr>
+</tbody>
+</table>
+<h2 id="cicd">CICD</h2>
+<p>CICD是Devops中尤为重要的一个环节，主要是通过自动化流程实现代码从开发到生产的快速和可靠交付。</p>
+<p>CICD主要分为了三个方面：</p>
+<ol>
+<li>
+<p>持续集成，CI，Continuous Integration</p>
+</li>
+<li>
+<p>代码提交：开发者推送代码到版本控制系统</p>
+</li>
+<li>自动化构建：Jenkins自动编译并打包应用（生成镜像或产物）</li>
+<li>自动化测试：运行单元测试、集成测试等（如Sonarqube、Jacoco，或者自己写单元测试）</li>
+<li>
+<p>任务反馈：每个环节集成通知和反馈</p>
+</li>
+<li>
+<p>持续交付，CD，Continuous Delivery（有些时候制品直接交付给客户，不需要部署）</p>
+</li>
+</ol>
+<p>把持续集成过程中的产物，有可能是代码、镜像、包等，转变为可以随时发布到生产环境的状态，比如推送到镜像仓库。</p>
+<ol>
+<li>持续部署，CD，Continuous Deployment</li>
+</ol>
+<p>把产物自动发布到生产环境中。流程：</p>
+<ol>
+<li>制品交付：把CI阶段的产物交付到制品仓库</li>
+<li>制品发布：将制品自动发布到各个环境</li>
+<li>验收测试：验证发布后的过程是否正常</li>
+</ol>
+<h2 id="pipeline">Pipeline</h2>
+<h3 id="定义_1">定义</h3>
+<p>一种自动化流程框架，用于定义、管理、执行一系列有序的任务。</p>
+<p>优势：</p>
+<ol>
+<li>标准化流程：通过声明方式确保每个环节一致性，避免人工操作差异导致的错误。</li>
+<li>自动化执行：有多个任务组成，每个任务可以自动完成，全程无需人工操作。（自己写脚本还得写判断逻辑）</li>
+<li>流程可视化：可以看到每个环节执行过程</li>
+<li>可追溯性：每个环节都有日志，方便排查问题</li>
+<li>支持并行：可以多个任务同时运行，减少任务等待时间</li>
+<li>重复执行：支持重试，无需特殊处理</li>
+<li>灵活性高</li>
+</ol>
+<p>自己写脚本处理这些事项，还得自己写失败判断逻辑、日志采集逻辑、重试逻辑，非常麻烦。</p>
+<h3 id="pipeline工具">Pipeline工具</h3>
+<h4 id="jenkins">Jenkins</h4>
+<p>优点：</p>
+<ul>
+<li>
+<p>长期占据CICD市场头部。社区支持强大、可扩展性、可集成性很强，插件生态系统丰富。</p>
+</li>
+<li>
+<p>基本可以满足企业内任何场景需求。</p>
+</li>
+<li>
+<p>可以跨平台：Win、Linux、Mac、容器、K8s等</p>
+</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>配置复杂</li>
+<li>需要手动管理插件依赖、插件与Jenkins版本兼容性（升级Jenkins前要对jenkins做备份，升级之后插件用不了就要回滚）</li>
+</ul>
+<h4 id="tekton">Tekton</h4>
+<p>优点：</p>
+<ul>
+<li>专门为K8s设计，以CRD方式运行，天然支持容器化和动态资源分配。（原生支持在k8s中创建pod作为slave，不用额外配置）</li>
+<li>Pipeline定义和底层K8s解耦（都是用CRD创建的），迁移方便，扩展性强</li>
+<li>方便集成企业内部平台进行二次开发（Tekton算是一个CICD框架，方便基于此框架进行二次开发）</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>插件支持较少</li>
+<li>学习难度大，部分功能需要自行开发集成（一些CRD要自己写）</li>
+<li>需要K8s底座支持 </li>
+</ul>
+<h4 id="gitlab-ci">Gitlab CI</h4>
+<p>优点：</p>
+<ul>
+<li>与Gitlab仓库深度集成，无需额外配置</li>
+<li>使用.gitlab-ci.yaml配置，适合中小团队快速上手</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>高级功能需要付费</li>
+<li>扩展性一般</li>
+<li>需要自行维护Runner</li>
+<li>无权限隔离</li>
+</ul>
+<h1 id="jenkins基础">Jenkins基础</h1>
+<h2 id="jenkins介绍">Jenkins介绍</h2>
+<p>Jenkins是一个开源的CICD工具，用于自动化构建、测试和部署软件。支持多种编程语言和版本控制系统，可以通过插件扩展功能。在CICD领域属于行业巨头。</p>
+<p>Jenkins架构是主从架构：</p>
+<ul>
+<li>Master节点为主节点，主要用于管理任务调度、任务配置、提供web UI。</li>
+<li>Agent节点为从节点，主要用于执行具体的任务，可动态扩展。</li>
+</ul>
+<h2 id="jenkins-pipeline">jenkins pipeline</h2>
+<p>分为声明式和脚本式。</p>
+<p>声明式流水线采用结构化语法实现，格式固定、易读性强，并且内置错误处理机制，可以不需要掌握Groovy即可完成编写。同时可以与Blue Ocean结合实现可视化，是目前官网推荐的方式。</p>
+<p>声明式pipeline语法，官网：<a href="https://www.jenkins.io/doc/book/pipeline/syntax/">Jenkins Pipeline语法</a></p>
+<p>声明式流水线和脚本式流水线比较容易区别：</p>
+<div class="highlight"><pre><span></span><code><span class="c1">// 声明式以pipeline开头</span>
+<span class="n">pipeline</span><span class="o">{</span>
+<span class="w">    </span><span class="n">agent</span><span class="w"> </span><span class="n">any</span>
+<span class="w">    </span><span class="n">stages</span><span class="o">{</span>
+<span class="w">        </span><span class="n">stage</span><span class="o">(</span><span class="s1">&#39;Build&#39;</span><span class="o">){</span>
+<span class="w">            </span><span class="n">steps</span><span class="o">{</span>
+<span class="w">                </span><span class="n">sh</span><span class="w"> </span><span class="s1">&#39;mvn clean package&#39;</span>
+<span class="w">            </span><span class="o">}</span>
+<span class="w">        </span><span class="o">}</span>
+<span class="w">    </span><span class="o">}</span>
+<span class="o">}</span>
+
+<span class="c1">// 脚本式以node开头，里面要写很多groovy语言</span>
+<span class="n">node</span><span class="o">(</span><span class="s1">&#39;linux-agent&#39;</span><span class="o">){</span>
+<span class="o">}</span>
+</code></pre></div>
+
+<h3 id="pipeline声明式语法">Pipeline声明式语法</h3>
+<p>Pipeline定义了包含了整个流水线的所有内容和指令，也是声明式流水线的开始，包含三个层级结构：</p>
+<ol>
+<li>Sections：包含Agent、Stages、Post、Directives和Steps的代码区域块。（即第一层缩进的字段）</li>
+<li>Directives：包含一个或多个指令，用于执行stage时的条件判断或预处理。（即第二层缩进的字段）</li>
+<li>Steps：用于指定具体的任务操作，比如sh命令等。（即第三层缩进的字段）</li>
+</ol>
+<div class="highlight"><pre><span></span><code><span class="n">pipeline</span><span class="o">{</span><span class="w"> </span>
+<span class="w">    </span><span class="n">agent</span><span class="w"> </span><span class="n">any</span><span class="w"> </span><span class="c1">//指定在哪个从节点上执行</span>
+<span class="w">    </span><span class="n">stages</span><span class="o">{</span><span class="w">  </span><span class="c1">//定义流水线执行过程</span>
+<span class="w">        </span><span class="n">stage</span><span class="o">(</span><span class="s1">&#39;Build&#39;</span><span class="o">){</span>
+<span class="w">            </span><span class="n">steps</span><span class="o">{</span><span class="w"> </span><span class="c1">//执行某阶段具体的步骤</span>
+<span class="w">                </span><span class="c1">//</span>
+<span class="w">            </span><span class="o">}</span>
+<span class="w">        </span><span class="o">}</span>
+<span class="w">        </span><span class="n">stage</span><span class="o">(</span><span class="s1">&#39;Test&#39;</span><span class="o">){</span>
+<span class="w">            </span><span class="n">steps</span><span class="o">{</span>
+<span class="w">                </span><span class="c1">//</span>
+<span class="w">            </span><span class="o">}</span>
+<span class="w">        </span><span class="o">}</span>
+<span class="w">        </span><span class="n">stage</span><span class="o">(</span><span class="s1">&#39;Deploy&#39;</span><span class="o">){</span>
+<span class="w">            </span><span class="n">steps</span><span class="o">{</span>
+<span class="w">                </span><span class="c1">//</span>
+<span class="w">            </span><span class="o">}</span>
+<span class="w">        </span><span class="o">}</span>
+<span class="w">    </span><span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div>
+
+<h3 id="sections">Sections</h3>
+<p>声明式流水线中的Sections 不是一个关键字或指令，而是包含一个或多个Agent、Stages、 Post、Directives 和 Steps 的代码区域块。</p>
+<h4 id="agent">Agent</h4>
+<p>Agent表示整个流水线或特定阶段中的步骤和命令执行的位置，该部分可以在pipeline块的顶层被定义，也可以在stage中再次定义，也可以同时在两处定义。 </p>
+<ul>
+<li>any：在任何可用的代理上执行流水线，配置语法：</li>
+</ul>
+<p><sub>~</sub>groovy<br />
+  pipeline { <br />
+    agent any <br />
+  }<br />
+  ~~~</p>
+<ul>
+<li>none：表示该Pipeline脚本没有全局的agent配置。当顶层的agent配置为none时，可以为每个stage配置局部的agent。配置语法：</li>
+</ul>
+<p><sub>~</sub>groovy<br />
+  pipeline { <br />
+    agent none <br />
+    stages { <br />
+        stage('Stage For Build'){ <br />
+            agent any <br />
+        } <br />
+    } <br />
+  }<br />
+  ~~~</p>
+<ul>
+<li>label：选择某个具体的节点执行Pipeline命令，例如：<code>agent { label 'my-slave-label' }</code>。如果这个标签的agent不存在，任务会一直处于等待agent状态。配置语法：</li>
+</ul>
+<p><sub>~</sub>groovy<br />
+  pipeline { <br />
+    agent none <br />
+    stages { <br />
+        stage('Stage For Build'){ <br />
+            agent { label 'my-slave-label' } <br />
+        } <br />
+    } <br />
+  } <br />
+  ~~~</p>
+<ul>
+<li>docker：agent支持直接使用镜像作为agent，这也是比较推荐的方式。直接用带基础环境的镜像，可以避免处理编译环境或者slave的版本问题。比如Java编译，可以直接使用maven镜像启动slave，之后进行打包，同时可以指定args：</li>
+</ul>
+<p><sub>~</sub>groovy<br />
+  pipeline{ <br />
+      agent any<br />
+      stages{ <br />
+          stage('Build'){<br />
+              agent {<br />
+                  docker {<br />
+                      image 'registry.cn-beijing.aliyuncs.com/dotbalo/maven:3.5.3'<br />
+                      args '-v /tmp:/tmp'<br />
+                  }<br />
+              }<br />
+              steps{ <br />
+                  echo 'Hello World'<br />
+                  sh 'pwd'<br />
+                  sh 'hostname'<br />
+                  sh 'mvn -version'<br />
+              }<br />
+          }<br />
+      }<br />
+  }<br />
+  ~~~</p>
+<ul>
+<li>kubernetes：Jenkins 也支持使用Kubernetes创建Slave，也就是动态Slave。配置示例如下： </li>
+</ul>
+<p>官网文档：<a href="https://plugins.jenkins.io/kubernetes/#plugin-content-configuration-reference">Kubernetes Plugin配置参考</a> </p>
+<p><sub>~</sub>groovy<br />
+  agent { <br />
+    kubernetes { <br />
+        label podlabel <br />
+        yaml """ <br />
+  kind: Pod <br />
+  metadata: <br />
+    name: jenkins-agent <br />
+  spec: <br />
+    containers: <br />
+    - name: kaniko <br />
+      image: gcr.io/kaniko-project/executor:debug <br />
+      imagePullPolicy: Always <br />
+      command: <br />
+      - /busybox/cat <br />
+      tty: true <br />
+      volumeMounts: <br />
+      - name: aws-secret <br />
+        mountPath: /root/.aws/ <br />
+      - name: docker-registry-config <br />
+        mountPath: /kaniko/.docker <br />
+    restartPolicy: Never <br />
+    volumes: <br />
+    - name: aws-secret <br />
+      secret: <br />
+        secretName: aws-secret <br />
+    - name: docker-registry-config <br />
+      configMap: <br />
+        name: docker-registry-config <br />
+  """ <br />
+  } <br />
+  ~~~</p>
+<h4 id="stages">stages</h4>
+<p>阶段集合，包裹所有的阶段（例如：打包，部署等各个阶段）。stage: 阶段，被stages包裹，一个stages可以有多个stage</p>
+<div class="highlight"><pre><span></span><code><span class="n">pipeline</span><span class="w"> </span><span class="o">{</span><span class="w"> </span>
+<span class="w">    </span><span class="n">agent</span><span class="w"> </span><span class="n">any</span><span class="w"> </span>
+<span class="w">    </span><span class="n">stages</span><span class="w"> </span><span class="o">{</span><span class="w">  </span>
+<span class="w">        </span><span class="n">stage</span><span class="o">(</span><span class="s1">&#39;Example&#39;</span><span class="o">)</span><span class="w"> </span><span class="o">{</span><span class="w"> </span>
+<span class="w">            </span><span class="n">steps</span><span class="w"> </span><span class="o">{</span><span class="w"> </span>
+<span class="w">                </span><span class="n">echo</span><span class="w"> </span><span class="s1">&#39;Hello World&#39;</span><span class="w"> </span>
+<span class="w">            </span><span class="o">}</span><span class="w"> </span>
+<span class="w">        </span><span class="o">}</span><span class="w"> </span>
+<span class="w">    </span><span class="o">}</span><span class="w"> </span>
+<span class="o">}</span><span class="w"> </span>
+</code></pre></div>
+
+<h4 id="steps">steps</h4>
+<p>Steps部分在给定的stage指令中执行的一个或多个步骤，比如在steps定义执行一条shell命令：</p>
+<div class="highlight"><pre><span></span><code><span class="n">pipeline</span><span class="w"> </span><span class="o">{</span><span class="w"> </span>
+<span class="w">    </span><span class="n">agent</span><span class="w"> </span><span class="n">any</span><span class="w"> </span>
+<span class="w">    </span><span class="n">stages</span><span class="w"> </span><span class="o">{</span><span class="w"> </span>
+<span class="w">        </span><span class="n">stage</span><span class="o">(</span><span class="s1">&#39;Example&#39;</span><span class="o">)</span><span class="w"> </span><span class="o">{</span><span class="w"> </span>
+<span class="w">            </span><span class="n">steps</span><span class="w"> </span><span class="o">{</span><span class="w">  </span>
+<span class="w">                </span><span class="n">echo</span><span class="w"> </span><span class="s1">&#39;Hello World&#39;</span><span class="w"> </span>
+<span class="w">            </span><span class="o">}</span><span class="w"> </span>
+<span class="w">        </span><span class="o">}</span><span class="w"> </span>
+<span class="w">    </span><span class="o">}</span><span class="w"> </span>
+<span class="o">}</span><span class="w"> </span>
+</code></pre></div>
+
+<p>也可以执行多条shell：</p>
+<div class="highlight"><pre><span></span><code><span class="n">pipeline</span><span class="w"> </span><span class="o">{</span><span class="w"> </span>
+<span class="w">    </span><span class="n">agent</span><span class="w"> </span><span class="n">any</span><span class="w"> </span>
+<span class="w">    </span><span class="n">stages</span><span class="w"> </span><span class="o">{</span><span class="w"> </span>
+<span class="w">        </span><span class="n">stage</span><span class="o">(</span><span class="s1">&#39;Example&#39;</span><span class="o">)</span><span class="w"> </span><span class="o">{</span><span class="w"> </span>
+<span class="w">            </span><span class="n">steps</span><span class="w"> </span><span class="o">{</span><span class="w">  </span>
+<span class="w">                </span><span class="n">sh</span><span class="w"> </span><span class="s2">&quot;&quot;&quot; </span>
+<span class="s2">                 echo &#39;Execute building...&#39; </span>
+<span class="s2">                 mvn clean install </span>
+<span class="s2">                 &quot;&quot;&quot;</span><span class="w"> </span>
+<span class="w">            </span><span class="o">}</span><span class="w"> </span>
+<span class="w">        </span><span class="o">}</span><span class="w"> </span>
+<span class="w">    </span><span class="o">}</span><span class="w"> </span>
+<span class="o">}</span><span class="w"> </span>
+</code></pre></div>
+
+<h4 id="post">post</h4>
+<p>Post一般用于流水线结束之后的进一步处理，比如错误通知等。Post可以针对流水线不同的结果做出不同的处理，就像开发程序的错误处理。比如python中的try catch。Post可以定义在PIpeline或stage中。支持以下条件：</p>
+<ul>
+<li>always：无论Pipeline或stage的完成状态如何，都会执行post中定义的指令</li>
+<li>changed：只有当前Pipeline或stage的完成状态与他之前的运行不同时，才执行post部分</li>
+<li>fixed：本次Pipeline或stage成功，且上一次构建是失败或不稳定的时候，才执行post部分</li>
+<li>regression：当本次Pipeline或stage状态为失败、不稳定或终止，且上一次构建成功时，才执行post部分</li>
+<li>failure：当前pipeline或stage状态为失败，才执行post。通常失败会在web中显示为红色</li>
+<li>success：当前状态为成功，才执行post步骤，web中显示为蓝色或绿色。</li>
+<li>unstable：当前状态为不稳定，执行post步骤，通常由于测试失败或代码违规等造成，在Web界面中显示为黄色</li>
+<li>aborted：当前状态为终止（aborted），执行该post步骤，通常由于流水线被手动终止触发，这时在Web界面中显示为灰色</li>
+<li>unsuccessful：当前状态不是success时，执行该post步骤；</li>
+<li>cleanup：无论pipeline或stage的完成状态如何，都允许运行该post中定义的指令。和always的区别在于，cleanup会在其它执行之后执行。 </li>
+</ul>
+<p>示例：一般情况下，post部分都是放在流水线的底部:</p>
+<div class="highlight"><pre><span></span><code><span class="c1">// 写在pipeline里面</span>
+<span class="n">pipeline</span><span class="w"> </span><span class="o">{</span>
+<span class="w">    </span><span class="n">agent</span><span class="w"> </span><span class="n">any</span>
+<span class="w">    </span><span class="n">stages</span><span class="w"> </span><span class="o">{</span>
+<span class="w">        </span><span class="n">stage</span><span class="o">(</span><span class="s1">&#39;Build&#39;</span><span class="o">)</span><span class="w"> </span><span class="o">{</span>
+<span class="w">            </span><span class="n">steps</span><span class="w"> </span><span class="o">{</span>
+<span class="w">                </span><span class="n">echo</span><span class="w"> </span><span class="s1">&#39;Hello World&#39;</span>
+<span class="w">            </span><span class="o">}</span>
+<span class="w">        </span><span class="o">}</span>
+<span class="w">    </span><span class="o">}</span>
+<span class="w">    </span><span class="n">post</span><span class="w"> </span><span class="o">{</span>
+<span class="w">        </span><span class="n">always</span><span class="w"> </span><span class="o">{</span>
+<span class="w">            </span><span class="n">echo</span><span class="w"> </span><span class="s1">&#39;This is post message&#39;</span>
+<span class="w">        </span><span class="o">}</span>
+<span class="w">    </span><span class="o">}</span>
+<span class="o">}</span>
+
+<span class="c1">// 也可以写在某个stage里面</span>
+<span class="n">pipeline</span><span class="w"> </span><span class="o">{</span>
+<span class="w">    </span><span class="n">agent</span><span class="w"> </span><span class="n">any</span>
+<span class="w">    </span><span class="n">stages</span><span class="w"> </span><span class="o">{</span>
+<span class="w">        </span><span class="n">stage</span><span class="o">(</span><span class="s1">&#39;Build&#39;</span><span class="o">)</span><span class="w"> </span><span class="o">{</span>
+<span class="w">            </span><span class="n">steps</span><span class="w"> </span><span class="o">{</span>
+<span class="w">                </span><span class="n">sh</span><span class="w"> </span><span class="s1">&#39;EXECUTE_COMMAND&#39;</span>
+<span class="w">            </span><span class="o">}</span>
+<span class="w">            </span><span class="n">post</span><span class="w"> </span><span class="o">{</span>
+<span class="w">                </span><span class="n">failure</span><span class="w"> </span><span class="o">{</span>
+<span class="w">                    </span><span class="n">echo</span><span class="w"> </span><span class="s1">&#39;Pipeline failure&#39;</span>
+<span class="w">                </span><span class="o">}</span>
+<span class="w">            </span><span class="o">}</span>
+<span class="w">        </span><span class="o">}</span>
+<span class="w">    </span><span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div>
+
+<h3 id="directives">Directives</h3>
+<p>Directives可用于执行stage时的一些条件判断或者预处理一些数据，他也不是一个关键字或指令，而是包含了environment、options、parameters、triggers、stage、tools、input、when等配置。</p>
+<h4 id="environment">environment</h4>
+<p>用于在流水线中配置一些环境变量，根据配置的位置决定环境变量的作用域。在pipeline中定义就作为全局环境变量，也可以配置在stage中作为该stage的环境变量。</p>
+<p>假设需要定义一个变量名为cc的全局变量和一个局部变量，可以通过以下方式定义：</p>
+<div class="highlight"><pre><span></span><code><span class="n">pipeline</span><span class="w"> </span><span class="o">{</span>
+<span class="w">    </span><span class="n">agent</span><span class="w"> </span><span class="n">any</span>
+<span class="w">    </span><span class="n">environment</span><span class="w"> </span><span class="o">{</span><span class="w">  </span>
+<span class="w">        </span><span class="n">CC</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;global&#39;</span><span class="w"> </span>
+<span class="w">    </span><span class="o">}</span>
+<span class="w">    </span><span class="n">stages</span><span class="w"> </span><span class="o">{</span>
+<span class="w">        </span><span class="n">stage</span><span class="o">(</span><span class="s1">&#39;local env&#39;</span><span class="o">)</span><span class="w"> </span><span class="o">{</span>
+<span class="w">            </span><span class="n">environment</span><span class="w"> </span><span class="o">{</span>
+<span class="w">                </span><span class="n">CC2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;local&#39;</span>
+<span class="w">            </span><span class="o">}</span>
+<span class="w">            </span><span class="n">steps</span><span class="w"> </span><span class="o">{</span>
+<span class="w">                </span><span class="n">sh</span><span class="w"> </span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                  echo CC2: $CC2</span>
+<span class="s2">                  echo CC: $CC</span>
+<span class="s2">                &quot;&quot;&quot;</span>
+<span class="w">            </span><span class="o">}</span>
+<span class="w">        </span><span class="o">}</span>
+<span class="w">    </span><span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div>
+
+<p>推荐把镜像tag作为环境变量放进去。</p>
+<h4 id="options">options</h4>
+<p>options指令允许在Pipeline中配置Pipeline专用选项。Pipeline本身提供了许多选项，例如buildDiscarder，但它们也可能由插件提供，例如 timestamps。</p>
+<p>可用指令：</p>
+<ul>
+<li><code>buildDiscarder</code>：保留多少个流水线的构建记录。例如：options { buildDiscarder(logRotator(numToKeepStr: '1')) }</li>
+<li><code>disableConcurrentBuilds</code>：禁止流水线并行执行，防止并行导致的资源共享访问。例如：options { disableConcurrentBuilds() }</li>
+<li><code>disableResume</code>：如果控制器重启，禁止流水线自动恢复。比如：options { disableResume() }</li>
+<li><code>skipDefaultCheckout</code>：跳过默认设置的代码check out。例如：options { skipDefaultCheckout() }</li>
+<li><code>skipStagesAfterUnstable</code>：一旦构建状态进入了“Unstable”状态，就跳过此stage。例如：options { skipStagesAfterUnstable() }</li>
+<li><code>timeout</code>：设置Pipeline运行的超时时间，超过超时时间，job会自动被终止，例如：options { timeout(time: 1, unit: 'HOURS') }。timeout一般用于编译、代码扫描的步骤，长时间没有结果可能是卡死了，可以设置超时时间。</li>
+<li><code>retry</code>：失败后，重试整个Pipeline的次数。例如：options { retry(3) }</li>
+<li><code>timestamps</code>： 预定义由Pipeline生成的所有控制台输出时间。例如：options { timestamps() }</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="n">pipeline</span><span class="w"> </span><span class="o">{</span>
+<span class="w">    </span><span class="n">agent</span><span class="w"> </span><span class="n">any</span>
+<span class="w">    </span><span class="n">options</span><span class="w"> </span><span class="o">{</span>
+<span class="w">        </span><span class="n">timeout</span><span class="o">(</span><span class="nl">time:</span><span class="w"> </span><span class="mi">1</span><span class="o">,</span><span class="w"> </span><span class="nl">unit:</span><span class="w"> </span><span class="s1">&#39;HOURS&#39;</span><span class="o">)</span><span class="w"> </span>
+<span class="w">    </span><span class="o">}</span>
+<span class="w">    </span><span class="n">stages</span><span class="w"> </span><span class="o">{</span>
+<span class="w">        </span><span class="n">stage</span><span class="o">(</span><span class="s1">&#39;Example&#39;</span><span class="o">)</span><span class="w"> </span><span class="o">{</span>
+<span class="w">            </span><span class="n">steps</span><span class="w"> </span><span class="o">{</span>
+<span class="w">                </span><span class="n">echo</span><span class="w"> </span><span class="s1">&#39;Hello World&#39;</span>
+<span class="w">            </span><span class="o">}</span>
+<span class="w">        </span><span class="o">}</span>
+<span class="w">    </span><span class="o">}</span>
+<span class="o">}</span><span class="w">　</span>
+</code></pre></div>
+
+<p>Option除了写在Pipeline顶层，还可以写在stage中，但是写在stage中的option仅支持retry、timeout、timestamps，或者是和stage相关的声明式选项，比如skipDefaultCheckout。</p>
+<h4 id="parameters">parameters</h4>
+<p>一般用于创建一个流水线的通用模板，应用于不同的环境，比如test、dev、prod等。</p>
+<p>目前支持的参数类型如下：</p>
+<ul>
+<li><code>string</code>：字符串类型的参数，例如：parameters { string(name: 'DEPLOY_ENV', defaultValue: 'staging', description: '') }，表示定义一个名为DEPLOY_ENV的字符型变量，默认值为 staging；</li>
+<li><code>text</code>：文本型参数，一般用于定义多行文本内容的变量。例如parameters { text(name:  'DEPLOY_TEXT', defaultValue: 'One\nTwo\nThree\n', description: '') }，表示定义一个名 为DEPLOY_TEXT的变量，默认值是'One\nTwo\nThree\n'； </li>
+<li><code>booleanParam</code>：布尔型参数，例如: parameters { booleanParam(name: 'DEBUG_BUILD', defaultValue: true, description: '') }；</li>
+<li><code>choice</code>：选择型参数，一般用于给定几个可选的值，然后选择其中一个进行赋值，例如：parameters { choice(name: 'CHOICES', choices: ['one', 'two', 'three'], description: '') }，表示定义一个名为CHOICES的变量，可选的值为one、two、three；</li>
+<li><code>password</code>：密码型变量，一般用于定义敏感型变量，在Jenkins控制台会显示为*。例如：parameters { password(name: 'PASSWORD', defaultValue: 'SECRET', description: 'A secret password') }，表示定义一个名为PASSWORD的变量，其默认值为SECRET。</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="n">pipeline</span><span class="w"> </span><span class="o">{</span><span class="w"> </span>
+<span class="w">    </span><span class="n">agent</span><span class="w"> </span><span class="n">any</span><span class="w"> </span>
+<span class="w">    </span><span class="n">parameters</span><span class="w"> </span><span class="o">{</span><span class="w"> </span>
+<span class="w">        </span><span class="n">string</span><span class="o">(</span><span class="nl">name:</span><span class="w"> </span><span class="s1">&#39;PERSON&#39;</span><span class="o">,</span><span class="w"> </span><span class="nl">defaultValue:</span><span class="w"> </span><span class="s1">&#39;Mr Jenkins&#39;</span><span class="o">,</span><span class="w"> </span><span class="nl">description:</span><span class="w"> </span><span class="s1">&#39;Who should I say hello to?&#39;</span><span class="o">)</span><span class="w"> </span>
+
+<span class="w">        </span><span class="n">text</span><span class="o">(</span><span class="nl">name:</span><span class="w"> </span><span class="s1">&#39;BIOGRAPHY&#39;</span><span class="o">,</span><span class="w"> </span><span class="nl">defaultValue:</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="o">,</span><span class="w"> </span><span class="nl">description:</span><span class="w"> </span><span class="s1">&#39;Enter some information about the person&#39;</span><span class="o">)</span><span class="w"> </span>
+
+<span class="w">        </span><span class="n">booleanParam</span><span class="o">(</span><span class="nl">name:</span><span class="w"> </span><span class="s1">&#39;TOGGLE&#39;</span><span class="o">,</span><span class="w"> </span><span class="nl">defaultValue:</span><span class="w"> </span><span class="kc">true</span><span class="o">,</span><span class="w"> </span><span class="nl">description:</span><span class="w"> </span><span class="s1">&#39;Toggle this value&#39;</span><span class="o">)</span><span class="w"> </span>
+
+<span class="w">        </span><span class="n">choice</span><span class="o">(</span><span class="nl">name:</span><span class="w"> </span><span class="s1">&#39;CHOICE&#39;</span><span class="o">,</span><span class="w"> </span><span class="nl">choices:</span><span class="w"> </span><span class="o">[</span><span class="s1">&#39;One&#39;</span><span class="o">,</span><span class="w"> </span><span class="s1">&#39;Two&#39;</span><span class="o">,</span><span class="w"> </span><span class="s1">&#39;Three&#39;</span><span class="o">],</span><span class="w"> </span><span class="nl">description:</span><span class="w"> </span><span class="s1">&#39;Pick something&#39;</span><span class="o">)</span><span class="w"> </span>
+
+<span class="w">        </span><span class="n">password</span><span class="o">(</span><span class="nl">name:</span><span class="w"> </span><span class="s1">&#39;PASSWORD&#39;</span><span class="o">,</span><span class="w"> </span><span class="nl">defaultValue:</span><span class="w"> </span><span class="s1">&#39;SECRET&#39;</span><span class="o">,</span><span class="w"> </span><span class="nl">description:</span><span class="w"> </span><span class="s1">&#39;Enter a password&#39;</span><span class="o">)</span><span class="w"> </span>
+<span class="w">    </span><span class="o">}</span><span class="w"> </span>
+<span class="w">    </span><span class="n">stages</span><span class="w"> </span><span class="o">{</span><span class="w"> </span>
+<span class="w">        </span><span class="n">stage</span><span class="o">(</span><span class="s1">&#39;Example&#39;</span><span class="o">)</span><span class="w"> </span><span class="o">{</span><span class="w"> </span>
+<span class="w">            </span><span class="n">steps</span><span class="w"> </span><span class="o">{</span><span class="w"> </span>
+<span class="w">                </span><span class="n">echo</span><span class="w"> </span><span class="s2">&quot;Hello ${params.PERSON}&quot;</span><span class="w"> </span>
+<span class="w">                </span><span class="n">echo</span><span class="w"> </span><span class="s2">&quot;Biography: ${params.BIOGRAPHY}&quot;</span><span class="w"> </span>
+<span class="w">                </span><span class="n">echo</span><span class="w"> </span><span class="s2">&quot;Toggle: ${params.TOGGLE}&quot;</span><span class="w"> </span>
+<span class="w">                </span><span class="n">echo</span><span class="w"> </span><span class="s2">&quot;Choice: ${params.CHOICE}&quot;</span><span class="w"> </span>
+<span class="w">                </span><span class="n">echo</span><span class="w"> </span><span class="s2">&quot;Password: ${params.PASSWORD}&quot;</span><span class="w"> </span>
+<span class="w">            </span><span class="o">}</span><span class="w"> </span>
+<span class="w">        </span><span class="o">}</span><span class="w"> </span>
+<span class="w">    </span><span class="o">}</span><span class="w"> </span>
+<span class="o">}</span><span class="w"> </span>
+<span class="c1">// 构建的时候选择build with paramaters，否则识别不了parameter</span>
+</code></pre></div>
+
+<p>除了上述内置的参数外，还可以通过插件扩展参数的能力，比如使用Git插件定义参数： </p>
+<div class="highlight"><pre><span></span><code><span class="n">parameters</span><span class="w"> </span><span class="o">{</span><span class="w"> </span>
+<span class="c1">// 该字段会在Jenkins页面生成一个选择分支的选项，用于赋值到BRANCH参数 </span>
+<span class="w">    </span><span class="n">gitParameter</span><span class="o">(</span><span class="nl">branch:</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="o">,</span><span class="w"> </span><span class="nl">branchFilter:</span><span class="w"> </span><span class="s1">&#39;origin/(.*)&#39;</span><span class="o">,</span><span class="w"> </span><span class="nl">defaultValue:</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="o">,</span><span class="w"> </span><span class="nl">description:</span><span class="w"> </span><span class="s1">&#39;Branch for build and deploy&#39;</span><span class="o">,</span><span class="w"> </span><span class="nl">name:</span><span class="w"> </span><span class="s1">&#39;BRANCH&#39;</span><span class="o">,</span><span class="w"> </span><span class="nl">quickFilterEnabled:</span><span class="w"> </span><span class="kc">false</span><span class="o">,</span><span class="w"> </span><span class="nl">selectedValue:</span><span class="w"> </span><span class="s1">&#39;NONE&#39;</span><span class="o">,</span><span class="w"> </span><span class="nl">sortMode:</span><span class="w"> </span><span class="s1">&#39;NONE&#39;</span><span class="o">,</span><span class="w"> </span>
+<span class="nl">tagFilter:</span><span class="w"> </span><span class="s1">&#39;*&#39;</span><span class="o">,</span><span class="w"> </span><span class="nl">type:</span><span class="w"> </span><span class="s1">&#39;PT_BRANCH&#39;</span><span class="o">)</span><span class="w"> </span>
+<span class="o">}</span>
+</code></pre></div>
+
+<p>如何找到都支持哪些parameters？去pipeline - Configure - Pipeline - Pipeline Syntax就会进入一个语法生成器页面，在第二个‘<strong>Declarative Directive Generator</strong>’里面，Sample Directive - parameters: Parameters就能看到各种支持的parameter以及类型了。</p>
+<h4 id="triggers">triggers</h4>
+<p>在Pipeline中可以用Triggers实现自动触发流水线，可以通过Webhook、Cron、pollSCM、upstream等方式触发流水线。</p>
+<p><div class="callout callout-warning" markdown="1"><br />
+<p class="callout-title">注意</p></p>
+<p>一般情况下triggers不会在pipeline中写，一般在界面中去配置。因为很多情况下pipeline是一个模板，针对不同的服务。一般是对每个job在ui上设置触发器。</p>
+</div>
+<p>示例：</p>
+<ol>
+<li>cron：假如某个流水线构建的时间比较长，或者需要氢气在某个时间段执行构建，可以用cron，比如周一到周五每隔四个小时执行一次</li>
+</ol>
+<div class="highlight"><pre><span></span><code><span class="n">pipeline</span><span class="w"> </span><span class="o">{</span><span class="w"> </span>
+<span class="w">    </span><span class="n">agent</span><span class="w"> </span><span class="n">any</span><span class="w"> </span>
+<span class="w">    </span><span class="n">triggers</span><span class="w"> </span><span class="o">{</span><span class="w"> </span>
+<span class="w">        </span><span class="n">cron</span><span class="o">(</span><span class="s1">&#39;H */4 * * 1-5&#39;</span><span class="o">)</span><span class="w"> </span><span class="c1">// 格式是分时日月周，但是分的位置写的H意思是随机分钟。在0-59分钟之间找一个空闲分钟去执行。防止很多构建任务挤在同一个时间点执行。</span>
+<span class="w">    </span><span class="o">}</span><span class="w"> </span>
+<span class="w">    </span><span class="n">stages</span><span class="w"> </span><span class="o">{</span><span class="w"> </span>
+<span class="w">        </span><span class="n">stage</span><span class="o">(</span><span class="s1">&#39;Example&#39;</span><span class="o">)</span><span class="w"> </span><span class="o">{</span><span class="w"> </span>
+<span class="w">            </span><span class="n">steps</span><span class="w"> </span><span class="o">{</span><span class="w"> </span>
+<span class="w">                </span><span class="n">echo</span><span class="w"> </span><span class="s1">&#39;Hello World&#39;</span><span class="w"> </span>
+<span class="w">            </span><span class="o">}</span><span class="w"> </span>
+<span class="w">        </span><span class="o">}</span><span class="w"> </span>
+<span class="w">    </span><span class="o">}</span><span class="w"> </span>
+<span class="o">}</span><span class="w"> </span>
+</code></pre></div>
+
+<ol>
+<li>pollSCM：使用cron字段可以定期执行流水线。如果希望在定时基础上，检测代码更新，只有代码更新了才触发流水线，无更新则不触发流水线，可以使用pollSCM字段</li>
+</ol>
+<div class="highlight"><pre><span></span><code><span class="n">pipeline</span><span class="w"> </span><span class="o">{</span><span class="w"> </span>
+<span class="w">    </span><span class="n">agent</span><span class="w"> </span><span class="n">any</span><span class="w"> </span>
+<span class="w">    </span><span class="n">triggers</span><span class="w"> </span><span class="o">{</span><span class="w"> </span>
+<span class="w">        </span><span class="n">pollSCM</span><span class="o">(</span><span class="s1">&#39;H */4 * * 1-5&#39;</span><span class="o">)</span><span class="w"> </span>
+<span class="w">    </span><span class="o">}</span><span class="w"> </span>
+<span class="w">    </span><span class="n">stages</span><span class="w"> </span><span class="o">{</span><span class="w"> </span>
+<span class="w">        </span><span class="n">stage</span><span class="o">(</span><span class="s1">&#39;Example&#39;</span><span class="o">)</span><span class="w"> </span><span class="o">{</span><span class="w"> </span>
+<span class="w">            </span><span class="n">steps</span><span class="w"> </span><span class="o">{</span><span class="w"> </span>
+<span class="w">                </span><span class="n">echo</span><span class="w"> </span><span class="s1">&#39;Hello World&#39;</span><span class="w"> </span>
+<span class="w">            </span><span class="o">}</span><span class="w"> </span>
+<span class="w">        </span><span class="o">}</span><span class="w"> </span>
+<span class="w">    </span><span class="o">}</span><span class="w"> </span>
+<span class="o">}</span><span class="w"> </span>
+</code></pre></div>
+
+<ol>
+<li>Upstream：可以根据上游job的执行结果决定是否触发该流水线。比如当job1或job2执行成功时触发该流水线</li>
+</ol>
+<div class="highlight"><pre><span></span><code><span class="n">pipeline</span><span class="w"> </span><span class="o">{</span><span class="w"> </span>
+<span class="w">    </span><span class="n">agent</span><span class="w"> </span><span class="n">any</span><span class="w"> </span>
+<span class="w">    </span><span class="n">triggers</span><span class="w"> </span><span class="o">{</span><span class="w"> </span>
+<span class="w">        </span><span class="n">upstream</span><span class="o">(</span><span class="nl">upstreamProjects:</span><span class="w"> </span><span class="s1">&#39;job1,job2&#39;</span><span class="o">,</span><span class="w"> </span><span class="nl">threshold:</span><span class="w"> </span><span class="n">hudson</span><span class="o">.</span><span class="na">model</span><span class="o">.</span><span class="na">Result</span><span class="o">.</span><span class="na">SUCCESS</span><span class="o">)</span><span class="w"> </span>
+<span class="w">    </span><span class="o">}</span><span class="w"> </span>
+<span class="w">    </span><span class="n">stages</span><span class="w"> </span><span class="o">{</span><span class="w"> </span>
+<span class="w">        </span><span class="n">stage</span><span class="o">(</span><span class="s1">&#39;Example&#39;</span><span class="o">)</span><span class="w"> </span><span class="o">{</span><span class="w"> </span>
+<span class="w">            </span><span class="n">steps</span><span class="w"> </span><span class="o">{</span><span class="w"> </span>
+<span class="w">                </span><span class="n">echo</span><span class="w"> </span><span class="s1">&#39;Hello World&#39;</span><span class="w"> </span>
+<span class="w">            </span><span class="o">}</span><span class="w"> </span>
+<span class="w">        </span><span class="o">}</span><span class="w"> </span>
+<span class="w">    </span><span class="o">}</span><span class="w"> </span>
+<span class="o">}</span><span class="w"> </span>
+</code></pre></div>
+
+<p>目前支持的状态有SUCCESS、UNSTABLE、FAILURE、NOT_BUILT、ABORTED等。（用的比较少）</p>
+<ol>
+<li>Webhook【用的最多】</li>
+</ol>
+<h4 id="input">input</h4>
+<p>Input字段可以实现在流水线中交互式操作。比如选择要部署的环境、是否继续执行某个阶段等。在公司没有单独的审批平台时可以使用。</p>
+<p>支持以下选项：</p>
+<ul>
+<li>message：必须。需要用户进行input的提示信息，比如“Deploy to Prod?”</li>
+<li>id：可选。input的标识符，默认为 stage 名称。</li>
+<li>ok：可选。确认按钮的显示信息。比如：”确定“、”允许“</li>
+<li>submitter：可选。允许提交input操作的用户或组的名称，为空则所有登录用户皆可提交input。admin可以无视这个列表直接处理input。</li>
+<li>parameters：提供一个参数列表供input使用</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="n">pipeline</span><span class="w"> </span><span class="o">{</span>
+<span class="w">    </span><span class="n">agent</span><span class="w"> </span><span class="n">any</span>
+<span class="w">    </span><span class="n">stages</span><span class="w"> </span><span class="o">{</span>
+<span class="w">        </span><span class="n">stage</span><span class="o">(</span><span class="s1">&#39;Example&#39;</span><span class="o">)</span><span class="w"> </span><span class="o">{</span>
+<span class="w">            </span><span class="n">input</span><span class="w"> </span><span class="o">{</span>
+<span class="w">                </span><span class="n">message</span><span class="w"> </span><span class="s2">&quot;Deploy to Prod? (true/false)&quot;</span>
+<span class="w">                </span><span class="n">ok</span><span class="w"> </span><span class="s2">&quot;true&quot;</span>
+<span class="w">                </span><span class="n">submitter</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">                </span><span class="n">parameters</span><span class="w"> </span><span class="o">{</span>
+<span class="w">                    </span><span class="n">string</span><span class="o">(</span><span class="nl">name:</span><span class="w"> </span><span class="s1">&#39;DEPLOY&#39;</span><span class="o">,</span><span class="w"> </span><span class="nl">defaultValue:</span><span class="w"> </span><span class="s1">&#39;false&#39;</span><span class="o">,</span><span class="w"> </span><span class="nl">description:</span><span class="w"> </span><span class="s1">&#39;Deploy or not?&#39;</span><span class="o">)</span>
+<span class="w">                </span><span class="o">}</span>
+<span class="w">            </span><span class="o">}</span>
+<span class="w">            </span><span class="n">steps</span><span class="w"> </span><span class="o">{</span>
+<span class="w">                </span><span class="n">echo</span><span class="w"> </span><span class="n">$</span><span class="o">{</span><span class="n">DEPLOY</span><span class="o">}</span>
+<span class="w">            </span><span class="o">}</span>
+<span class="w">        </span><span class="o">}</span>
+<span class="w">    </span><span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div>
+
+<h4 id="when">when</h4>
+<p>允许流水线根据给定的条件判断是否应该执行stage，when必须包含至少一个条件。如果when包含多个条件，都返回true，stage才能执行。</p>
+<p>比较常用的内置条件：</p>
+<ul>
+<li><code>branch</code>：【最常用】当正在构建的分支与给定的分支匹配时，执行这个stage。例如：when { branch 'master' }。注意，branch只适用于多分支流水线</li>
+<li><code>changelog</code>：匹配提交的changeLog决定是否构建。例如：when { changelog '.<em>^\[DEPENDENCY\] .+$' }；</em></li>
+<li><code>environment</code>：当指定的环境变量和给定的变量匹配时，执行这个stage。例如：when { environment name: 'DEPLOY_TO', value: 'production' }；</li>
+<li><code>expression</code>：当指定的Groovy表达式评估为True，执行这个stage。例如：when  { expression { return params.DEBUG_BUILD } }；</li>
+<li><code>tag</code>：代码提交的tag值和给定的条件匹配，执行这个stage，例如：when { tag "release-*" }；</li>
+<li><code>not</code>：当嵌套条件出现错误时，执行这个stage，必须包含一个条件，例如：when { not { branch 'master' } }；</li>
+<li><code>allOf</code>：当所有的嵌套条件都正确时，执行这个stage，必须包含至少一个条件，例如： when { allOf { branch 'master'; environment name: 'DEPLOY_TO', value: 'production' } }；</li>
+<li><code>anyOf</code>：当至少有一个嵌套条件为True时，执行这个stage，例如：when { anyOf { branch  'master'; branch 'staging' } }。</li>
+</ul>
+<p>示例：</p>
+<p>分支是production，而且DEPLOY_TO变量的值为production 时，才执行Example Deploy：</p>
+<div class="highlight"><pre><span></span><code><span class="n">pipeline</span><span class="w"> </span><span class="o">{</span><span class="w"> </span>
+<span class="w">    </span><span class="n">agent</span><span class="w"> </span><span class="n">any</span><span class="w"> </span>
+<span class="w">    </span><span class="n">stages</span><span class="w"> </span><span class="o">{</span><span class="w"> </span>
+<span class="w">        </span><span class="n">stage</span><span class="o">(</span><span class="s1">&#39;Example Build&#39;</span><span class="o">)</span><span class="w"> </span><span class="o">{</span><span class="w"> </span>
+<span class="w">            </span><span class="n">steps</span><span class="w"> </span><span class="o">{</span><span class="w"> </span>
+<span class="w">                </span><span class="n">echo</span><span class="w"> </span><span class="s1">&#39;Hello World&#39;</span><span class="w"> </span>
+<span class="w">            </span><span class="o">}</span><span class="w"> </span>
+<span class="w">        </span><span class="o">}</span><span class="w"> </span>
+<span class="w">        </span><span class="n">stage</span><span class="o">(</span><span class="s1">&#39;Example Deploy&#39;</span><span class="o">)</span><span class="w"> </span><span class="o">{</span><span class="w"> </span>
+<span class="w">            </span><span class="n">when</span><span class="w"> </span><span class="o">{</span><span class="w"> </span>
+<span class="w">                </span><span class="n">branch</span><span class="w"> </span><span class="s1">&#39;production&#39;</span><span class="w"> </span>
+<span class="w">                </span><span class="n">environment</span><span class="w"> </span><span class="nl">name:</span><span class="w"> </span><span class="s1">&#39;DEPLOY_TO&#39;</span><span class="o">,</span><span class="w"> </span><span class="nl">value:</span><span class="w"> </span><span class="s1">&#39;production&#39;</span><span class="w"> </span>
+<span class="w">            </span><span class="o">}</span><span class="w"> </span>
+<span class="w">            </span><span class="n">steps</span><span class="w"> </span><span class="o">{</span><span class="w"> </span>
+<span class="w">                </span><span class="n">echo</span><span class="w"> </span><span class="s1">&#39;Deploying&#39;</span><span class="w"> </span>
+<span class="w">            </span><span class="o">}</span><span class="w"> </span>
+<span class="w">        </span><span class="o">}</span><span class="w"> </span>
+<span class="w">    </span><span class="o">}</span><span class="w"> </span>
+<span class="o">}</span><span class="w"> </span>
+</code></pre></div>
+
+<h4 id="beforeagent">beforeAgent</h4>
+<p>默认情况下，如果定义了某个stage的agent，在进入到该agent后，when条件才会被评估。但是有一种情况是用docker作为slave的时候，条件判断应该是在创建slave agent之前，不符合条件就不创建slave；when为true才去创建slave。这样才比较合理，用beforeAgent参数写到when里面就可以。</p>
+<p>目前支持的前置条件如下：</p>
+<ul>
+<li><code>beforeAgent</code>：如果beforeAgent为true，则会先评估when条件。在when条件为true时，才会进入该stage</li>
+</ul>
+<p><sub>~</sub>groovy<br />
+  pipeline { <br />
+      agent none <br />
+      stages { <br />
+          stage('Example Build') { <br />
+              steps { <br />
+                  echo 'Hello World' <br />
+              } <br />
+          } <br />
+          stage('Example Deploy') { <br />
+              agent { <br />
+                  label "some-label" <br />
+              } <br />
+              when { <br />
+                  beforeAgent true <br />
+                  branch 'production' <br />
+              } <br />
+              steps { <br />
+                  echo 'Deploying' <br />
+              } <br />
+          } <br />
+      } <br />
+  } <br />
+  ~~~</p>
+<ul>
+<li><code>beforeInput</code>：如果beforeInput为true，则会先评估when条件。在when条件为true时，才会进入到input阶段</li>
+</ul>
+<p><sub>~</sub>groovy<br />
+  pipeline { <br />
+      agent none <br />
+      stages { <br />
+          stage('Example Build') { <br />
+              steps { <br />
+                  echo 'Hello World' <br />
+              } <br />
+          } <br />
+          stage('Example Deploy') { <br />
+              when { <br />
+                  beforeInput true <br />
+                  branch 'production' <br />
+              } <br />
+              input { <br />
+                  message "Deploy to production?" <br />
+                  id "simple-input" <br />
+              } <br />
+              steps { <br />
+                  echo 'Deploying' <br />
+              } <br />
+          } <br />
+      } <br />
+  }<br />
+  ~~~</p>
+<ul>
+<li><code>beforeOptions</code>：如果beforeOptions为true，则会先评估when条件。在when条件为true时，才会进入到options阶段</li>
+</ul>
+<p><sub>~</sub>groovy<br />
+  pipeline { <br />
+      agent none <br />
+      stages { <br />
+          stage('Example Build') { <br />
+              steps { <br />
+                  echo 'Hello World' <br />
+              } <br />
+          } <br />
+          stage('Example Deploy') { <br />
+              when { <br />
+                  beforeOptions true <br />
+                  branch 'testing' <br />
+              } <br />
+              options { <br />
+                  retry(3) <br />
+              } <br />
+              steps { <br />
+                  echo "Deploying to ${deployEnv}" <br />
+              } <br />
+          } <br />
+      } <br />
+  }<br />
+  ~~~</p>
+<h4 id="tools">tools</h4>
+<ul>
+<li>通过tools可自动安装工具，并放置环境变量到PATH。如果agent none，这将被忽略。</li>
+<li>支持的tools：maven、jdk、gradle</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="n">pipeline</span><span class="w"> </span><span class="o">{</span>
+<span class="w">    </span><span class="n">agent</span><span class="w"> </span><span class="n">any</span>
+<span class="w">    </span><span class="n">tools</span><span class="w"> </span><span class="o">{</span>
+<span class="w">       </span><span class="c1">//工具名称必须在Jenkins 管理Jenkins → 全局工具配置中预配置。</span>
+<span class="w">        </span><span class="n">maven</span><span class="w"> </span><span class="s1">&#39;apache-maven-3.0.1&#39;</span>
+<span class="w">    </span><span class="o">}</span>
+<span class="w">    </span><span class="n">stages</span><span class="w"> </span><span class="o">{</span>
+<span class="w">        </span><span class="n">stage</span><span class="o">(</span><span class="s1">&#39;Example&#39;</span><span class="o">)</span><span class="w"> </span><span class="o">{</span>
+<span class="w">            </span><span class="n">steps</span><span class="w"> </span><span class="o">{</span>
+<span class="w">                </span><span class="n">sh</span><span class="w"> </span><span class="s1">&#39;mvn --version&#39;</span>
+<span class="w">            </span><span class="o">}</span>
+<span class="w">        </span><span class="o">}</span>
+<span class="w">    </span><span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div>
+
+<h3 id="并行处理parallel">并行处理Parallel</h3>
+<p>当某几个stage都比较慢，并且都可以并行执行，就可以把这几个stage放到一个parallel里面并行处理，减少构建时间。</p>
+<div class="highlight"><pre><span></span><code><span class="n">pipeline</span><span class="w"> </span><span class="o">{</span><span class="w"> </span>
+<span class="w">    </span><span class="n">agent</span>
+<span class="w">    </span><span class="o">{</span>
+<span class="w">        </span><span class="n">docker</span><span class="o">{</span>
+<span class="w">            </span><span class="n">image</span><span class="w"> </span><span class="s1">&#39;busybox:1.28&#39;</span>
+<span class="w">        </span><span class="o">}</span>
+<span class="w">    </span><span class="o">}</span>
+<span class="w">    </span><span class="n">stages</span><span class="w"> </span><span class="o">{</span><span class="w"> </span>
+<span class="w">        </span><span class="n">stage</span><span class="o">(</span><span class="s1">&#39;Non-Parallel Stage&#39;</span><span class="o">)</span><span class="w"> </span><span class="o">{</span><span class="w"> </span>
+<span class="w">            </span><span class="n">steps</span><span class="w"> </span><span class="o">{</span><span class="w"> </span>
+<span class="w">                </span><span class="n">echo</span><span class="w"> </span><span class="s1">&#39;This stage will be executed first.&#39;</span><span class="w"> </span>
+<span class="w">            </span><span class="o">}</span><span class="w"> </span>
+<span class="w">        </span><span class="o">}</span><span class="w"> </span>
+<span class="w">        </span><span class="n">stage</span><span class="o">(</span><span class="s1">&#39;Parallel Stage&#39;</span><span class="o">)</span><span class="w"> </span><span class="o">{</span><span class="w"> </span>
+<span class="w">            </span><span class="n">failFast</span><span class="w"> </span><span class="kc">true</span><span class="w"> </span>
+<span class="w">            </span><span class="n">parallel</span><span class="w"> </span><span class="o">{</span><span class="w"> </span>
+<span class="w">                </span><span class="n">stage</span><span class="o">(</span><span class="s1">&#39;Stage A&#39;</span><span class="o">)</span><span class="w"> </span><span class="o">{</span><span class="w"> </span>
+<span class="w">                    </span><span class="n">steps</span><span class="w"> </span><span class="o">{</span><span class="w"> </span>
+<span class="w">                        </span><span class="n">echo</span><span class="w"> </span><span class="s2">&quot;On A&quot;</span><span class="w"> </span>
+<span class="w">                    </span><span class="o">}</span><span class="w"> </span>
+<span class="w">                </span><span class="o">}</span><span class="w"> </span>
+<span class="w">                </span><span class="n">stage</span><span class="o">(</span><span class="s1">&#39;Stage B&#39;</span><span class="o">)</span><span class="w"> </span><span class="o">{</span><span class="w"> </span>
+<span class="w">                    </span><span class="n">steps</span><span class="w"> </span><span class="o">{</span><span class="w"> </span>
+<span class="w">                        </span><span class="n">echo</span><span class="w"> </span><span class="s2">&quot;On B&quot;</span><span class="w"> </span>
+<span class="w">                    </span><span class="o">}</span><span class="w"> </span>
+<span class="w">                </span><span class="o">}</span><span class="w"> </span>
+<span class="w">                </span><span class="n">stage</span><span class="o">(</span><span class="s1">&#39;Stage C&#39;</span><span class="o">)</span><span class="w"> </span><span class="o">{</span><span class="w"> </span>
+<span class="w">                    </span><span class="n">steps</span><span class="w"> </span><span class="o">{</span><span class="w"> </span>
+<span class="w">                        </span><span class="n">echo</span><span class="w"> </span><span class="s2">&quot;On C&quot;</span><span class="w"> </span>
+<span class="w">                    </span><span class="o">}</span><span class="w"> </span>
+
+<span class="w">                </span><span class="o">}</span><span class="w"> </span>
+<span class="w">            </span><span class="o">}</span><span class="w"> </span>
+<span class="w">        </span><span class="o">}</span><span class="w"> </span>
+<span class="w">    </span><span class="o">}</span><span class="w"> </span>
+<span class="o">}</span><span class="w"> </span>
+</code></pre></div>
+
+<p>设置failFast 为true表示并行流水线中任意一个stage出现错误，其它stage也会立即终止。 也可以通过options配置在全局：</p>
+<div class="highlight"><pre><span></span><code><span class="n">pipeline</span><span class="w"> </span><span class="o">{</span><span class="w"> </span>
+<span class="w">    </span><span class="n">agent</span><span class="w"> </span><span class="n">any</span><span class="w"> </span>
+<span class="w">    </span><span class="n">options</span><span class="w"> </span><span class="o">{</span><span class="w"> </span>
+<span class="w">        </span><span class="n">parallelsAlwaysFailFast</span><span class="o">()</span><span class="w"> </span>
+<span class="w">    </span><span class="o">}</span><span class="w"> </span>
+<span class="w">    </span><span class="n">stages</span><span class="w"> </span><span class="o">{</span><span class="w"> </span>
+<span class="w">        </span><span class="n">stage</span><span class="o">(</span><span class="s1">&#39;Non-Parallel Stage&#39;</span><span class="o">)</span><span class="w"> </span><span class="o">{</span><span class="w"> </span>
+<span class="w">            </span><span class="n">steps</span><span class="w"> </span><span class="o">{</span><span class="w"> </span>
+<span class="w">                </span><span class="n">echo</span><span class="w"> </span><span class="s1">&#39;This stage will be executed first.&#39;</span><span class="w"> </span>
+<span class="w">            </span><span class="o">}</span><span class="w"> </span>
+<span class="w">        </span><span class="o">}</span><span class="w"> </span>
+<span class="w">        </span><span class="n">stage</span><span class="o">(</span><span class="s1">&#39;Parallel Stage&#39;</span><span class="o">)</span><span class="w"> </span><span class="o">{</span><span class="w"> </span>
+<span class="w">            </span><span class="n">parallel</span><span class="w"> </span><span class="o">{</span><span class="w"> </span>
+<span class="w">                </span><span class="n">stage</span><span class="o">(</span><span class="s1">&#39;Stage A&#39;</span><span class="o">)</span><span class="w"> </span><span class="o">{</span><span class="w"> </span>
+<span class="w">                    </span><span class="n">steps</span><span class="w"> </span><span class="o">{</span><span class="w"> </span>
+<span class="w">                        </span><span class="n">echo</span><span class="w"> </span><span class="s2">&quot;On A&quot;</span><span class="w"> </span>
+<span class="w">                    </span><span class="o">}</span><span class="w"> </span>
+<span class="w">                </span><span class="o">}</span><span class="w"> </span>
+<span class="w">                </span><span class="n">stage</span><span class="o">(</span><span class="s1">&#39;Stage B&#39;</span><span class="o">)</span><span class="w"> </span><span class="o">{</span><span class="w"> </span>
+<span class="w">                    </span><span class="n">steps</span><span class="w"> </span><span class="o">{</span><span class="w"> </span>
+<span class="w">                        </span><span class="n">echo</span><span class="w"> </span><span class="s2">&quot;On B&quot;</span><span class="w"> </span>
+<span class="w">                    </span><span class="o">}</span><span class="w"> </span>
+<span class="w">                </span><span class="o">}</span><span class="w"> </span>
+<span class="w">                </span><span class="n">stage</span><span class="o">(</span><span class="s1">&#39;Stage C&#39;</span><span class="o">)</span><span class="w"> </span><span class="o">{</span><span class="w"> </span>
+<span class="w">                    </span><span class="n">steps</span><span class="w"> </span><span class="o">{</span><span class="w"> </span>
+<span class="w">                        </span><span class="n">echo</span><span class="w"> </span><span class="s2">&quot;On C&quot;</span><span class="w"> </span>
+<span class="w">                    </span><span class="o">}</span><span class="w"> </span>
+
+<span class="w">                </span><span class="o">}</span><span class="w"> </span>
+<span class="w">            </span><span class="o">}</span><span class="w"> </span>
+<span class="w">        </span><span class="o">}</span><span class="w"> </span>
+<span class="w">    </span><span class="o">}</span><span class="w"> </span>
+<span class="o">}</span><span class="w"> </span>
+</code></pre></div>
+
+<h2 id="pipeline常用变量处理">Pipeline常用变量处理</h2>
+<h3 id="内置环境变量">内置环境变量</h3>
+<p>Jenkins有许多内置变量可以直接在Jenkinsfile中使用，可以通过JENKINS_URL/pipeline-syntax/globals#env获取完整列表。</p>
+<p>目前比较常用的环境变量如下：</p>
+<ul>
+<li><code>BUILD_ID</code>：构建ID，对于1.597及以上版本和BUILD_NUMBER一致。而对于更早版本的构建则是一个YYYY-MM-DD_hh-mm-ss格式的时间戳</li>
+<li><code>BUILD_NUMBER</code>：当前构建的ID，和BUILD_ID一致</li>
+<li><code>BUILD_TAG</code>：用来标识构建的版本号，格式为：<code>jenkins-${JOB_NAME}-${BUILD_NUMBER}</code>，可以对产物进行命名，比如生产的jar包名字、镜像的TAG等</li>
+<li><code>BUILD_URL</code>：本次构建的完整URL，比如：http://buildserver/jenkins/job/MyJobName/17/。这个URL后面拼上<code>/console</code>就能直接看到构建的output了</li>
+<li><code>JOB_NAME</code>：本次构建的项目名称</li>
+<li><code>NODE_NAME</code>：当前构建节点的名称</li>
+<li><code>JENKINS_URL</code>：Jenkins完整的URL，需要在System Configuration设置</li>
+<li><code>WORKSPACE</code>：执行构建的工作目录。</li>
+</ul>
+<p>上述内置变量都会保存在一个叫env的Map当中，可以使用<code>env.BUILD_ID</code>，<code>env.JENKINS_URL</code>这种格式引用某个内置变量：</p>
+<div class="highlight"><pre><span></span><code><span class="n">pipeline</span><span class="w"> </span><span class="o">{</span><span class="w"> </span>
+<span class="w">    </span><span class="n">agent</span><span class="w"> </span><span class="n">any</span><span class="w"> </span>
+<span class="w">    </span><span class="n">stages</span><span class="w"> </span><span class="o">{</span>
+<span class="w">        </span><span class="n">stage</span><span class="o">(</span><span class="s1">&#39;Show ENV&#39;</span><span class="o">)</span><span class="w"> </span><span class="o">{</span><span class="w"> </span>
+<span class="w">            </span><span class="n">steps</span><span class="w"> </span><span class="o">{</span><span class="w"> </span>
+<span class="w">                </span><span class="n">echo</span><span class="w"> </span><span class="s2">&quot;Show all envs&quot;</span>
+<span class="w">                </span><span class="n">sh</span><span class="w"> </span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                  env</span>
+<span class="s2">                &quot;&quot;&quot;</span>
+<span class="w">            </span><span class="o">}</span><span class="w"> </span>
+<span class="w">        </span><span class="o">}</span><span class="w"> </span>
+<span class="w">        </span><span class="n">stage</span><span class="o">(</span><span class="s1">&#39;Example&#39;</span><span class="o">)</span><span class="w"> </span><span class="o">{</span><span class="w"> </span>
+<span class="w">            </span><span class="n">steps</span><span class="w"> </span><span class="o">{</span><span class="w"> </span>
+<span class="w">                </span><span class="n">echo</span><span class="w"> </span><span class="s2">&quot;Running ${env.BUILD_ID}, tag ${env.BUILD_TAG}&quot;</span><span class="w"> </span>
+<span class="w">            </span><span class="o">}</span><span class="w"> </span>
+<span class="w">        </span><span class="o">}</span><span class="w"> </span>
+<span class="w">    </span><span class="o">}</span><span class="w"> </span>
+<span class="o">}</span>
+</code></pre></div>
+
+<h3 id="凭证管理">凭证管理</h3>
+<h4 id="用户名密码">用户名密码</h4>
+<p>主要是在UI界面上添加：Manage Jenkins - Security - Credentials - Stores scoped to Jenkins - (global) - Add credentials。</p>
+<p>类型选择Username with password，ID自己输入一个，比如是<code>HARBOR_USER_PASSWD</code>。接下来可以在environment中获取凭证的值：</p>
+<div class="highlight"><pre><span></span><code><span class="n">environment</span><span class="w"> </span><span class="o">{</span><span class="w"> </span>
+<span class="w">    </span><span class="n">HARBOR_ACCOUNT</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">credentials</span><span class="o">(</span><span class="s1">&#39;HARBOR_USER_PASSWD&#39;</span><span class="o">)</span><span class="w"> </span>
+<span class="o">}</span><span class="w"> </span>
+</code></pre></div>
+
+<p>以上配置会自动生成三个环境变量：</p>
+<ol>
+<li>HARBOR_ACCOUNT：包含一个以冒号分隔的用户名和密码，格式为 username:password</li>
+<li>HARBOR_ACCOUNT_USR：仅包含用户名的附加变量</li>
+<li>HARBOR_ACCOUNT_PSW：仅包含密码的附加变量</li>
+</ol>
+<p>此时可以用以下方式获取变量：</p>
+<div class="highlight"><pre><span></span><code><span class="n">pipeline</span><span class="w"> </span><span class="o">{</span><span class="w"> </span>
+<span class="w">    </span><span class="n">agent</span><span class="w"> </span><span class="n">any</span><span class="w"> </span>
+<span class="w">    </span><span class="n">stages</span><span class="w"> </span><span class="o">{</span><span class="w"> </span>
+<span class="w">        </span><span class="n">stage</span><span class="o">(</span><span class="s1">&#39;Example stage 1&#39;</span><span class="o">)</span><span class="w"> </span><span class="o">{</span><span class="w"> </span>
+<span class="w">        </span><span class="n">environment</span><span class="w"> </span><span class="o">{</span><span class="w"> </span>
+<span class="w">            </span><span class="n">HARBOR_ACCOUNT</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">credentials</span><span class="o">(</span><span class="s1">&#39;HARBOR_USER_PASSWD&#39;</span><span class="o">)</span><span class="w"> </span>
+<span class="w">        </span><span class="o">}</span>
+<span class="w">            </span><span class="n">steps</span><span class="w"> </span><span class="o">{</span><span class="w"> </span>
+<span class="w">                 </span><span class="n">echo</span><span class="w"> </span><span class="s2">&quot;&quot;&quot; </span>
+<span class="s2">                      HARBOR_ACCOUNT: $HARBOR_ACCOUNT </span>
+<span class="s2">                      HARBOR_ACCOUNT_USR: $HARBOR_ACCOUNT_USR </span>
+<span class="s2">                      HARBOR_ACCOUNT_PSW: $HARBOR_ACCOUNT_PSW </span>
+<span class="s2">                 &quot;&quot;&quot;</span><span class="w"> </span>
+<span class="w">            </span><span class="o">}</span><span class="w"> </span>
+<span class="w">        </span><span class="o">}</span><span class="w"> </span>
+<span class="w">    </span><span class="o">}</span><span class="w"> </span>
+<span class="o">}</span>
+</code></pre></div>
+
+<h4 id="加密文件">加密文件</h4>
+<p>如果需要加密某个文件，可以使用credential，比如连接到k8s集群的kubeconfig文件等。</p>
+<p>首先创建文本形式的凭证：类型选择Secret file，上传文件，设置ID。接下来可以在pipeline中引用：</p>
+<div class="highlight"><pre><span></span><code><span class="n">pipeline</span><span class="w"> </span><span class="o">{</span><span class="w"> </span>
+<span class="w">    </span><span class="n">agent</span><span class="w"> </span><span class="n">any</span><span class="w"> </span>
+<span class="w">    </span><span class="n">environment</span><span class="w"> </span><span class="o">{</span><span class="w"> </span>
+<span class="w">        </span><span class="n">KUBECONFIG_LOCAL</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">credentials</span><span class="o">(</span><span class="s1">&#39;KUBECONFIG_LOCAL&#39;</span><span class="o">)</span><span class="w"> </span>
+<span class="w">    </span><span class="o">}</span><span class="w"> </span>
+<span class="w">    </span><span class="n">stages</span><span class="w"> </span><span class="o">{</span><span class="w"> </span>
+<span class="w">        </span><span class="n">stage</span><span class="o">(</span><span class="s1">&#39;Secret File&#39;</span><span class="o">)</span><span class="w"> </span><span class="o">{</span><span class="w"> </span>
+<span class="w">            </span><span class="n">steps</span><span class="w"> </span><span class="o">{</span><span class="w"> </span>
+<span class="w">                </span><span class="n">sh</span><span class="w"> </span><span class="s2">&quot;cat $KUBECONFIG_LOCAL&quot;</span><span class="w"> </span>
+<span class="w">            </span><span class="o">}</span><span class="w"> </span>
+<span class="w">        </span><span class="o">}</span><span class="w"> </span>
+<span class="w">    </span><span class="o">}</span><span class="w"> </span>
+<span class="o">}</span>
+</code></pre></div>
+
+<h2 id="agent配置示例">Agent配置示例</h2>
+<h3 id="基于docker-slave">基于docker slave</h3>
+<ol>
+<li>假设有一个Java项目，需要用到mvn命令进行编译，此时可以用maven基础镜像作为agent，配置如下：</li>
+</ol>
+<p><sub>~</sub>groovy<br />
+   pipeline { <br />
+       agent {<br />
+           docker {<br />
+               image 'registry.cn-beijing.aliyuncs.com/dotbalo/maven:3.5.3'<br />
+               args '-v /tmp:/tmp'<br />
+           }<br />
+       }<br />
+       stages{ <br />
+           stage('Build'){<br />
+               steps{ <br />
+                   sh 'mvn -v'<br />
+               }<br />
+           }<br />
+       }<br />
+   }<br />
+   ~~~</p>
+<ol>
+<li>有多个stage，需要不同的agent，就把顶层agent设为none，具体agent配置在每个stage里面：</li>
+</ol>
+<p><sub>~</sub>groovy<br />
+   pipeline{ <br />
+       agent none<br />
+       stages{ <br />
+           stage('Build'){<br />
+               agent {<br />
+                   docker {<br />
+                       image 'registry.cn-beijing.aliyuncs.com/dotbalo/maven:3.5.3'<br />
+                       args '-v /tmp:/tmp'<br />
+                   }<br />
+               }<br />
+               steps{ <br />
+                   sh 'mvn -v'<br />
+               }<br />
+               stage('Test') {<br />
+                   agent {<br />
+                       docker {<br />
+                           image 'registry.cn-beijing.aliyuncs.com/dotbalo/jre:8u211-data'<br />
+                       }<br />
+                   }<br />
+                   steps {<br />
+                       sh 'java -version'<br />
+                   }<br />
+               }<br />
+           }<br />
+       }<br />
+   }<br />
+   ~~~</p>
+<h3 id="基于k8s-slave">基于k8s slave</h3>
+<p>上述示例可以用K8s slave pod实现。比定义具有3个容器的pod，分别为jnlp（负责与jenkins master通信）、build（执行构建命令）、kubectl（执行k8s命令）。在steps中，可以通过containers字段，选择在某个容器内执行命令.</p>
+<p>Kubernetes Agent详细语法：<a href="https://plugins.jenkins.io/kubernetes/#plugin-content-configuration-reference">Kubernetes Plugin配置参考</a></p>
+<p>注：dockerhub上的镜像地址：</p>
+<div class="highlight"><pre><span></span><code>jenkins/jnlp-agent-docker:latest
+maven:3.5.3
+bitnami/kubectl:latest
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="n">pipeline</span><span class="o">{</span><span class="w"> </span>
+<span class="w">    </span><span class="n">agent</span><span class="w"> </span><span class="o">{</span>
+<span class="w">        </span><span class="n">kubernetes</span><span class="w"> </span><span class="o">{</span>
+<span class="w">            </span><span class="n">cloud</span><span class="w"> </span><span class="s1">&#39;kubernetes-default&#39;</span><span class="w"> </span>
+<span class="w">            </span><span class="n">slaveConnectTimeout</span><span class="w"> </span><span class="mi">1200</span><span class="w"> </span>
+<span class="w">            </span><span class="n">yaml</span><span class="w"> </span><span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">apiVersion: v1 </span>
+<span class="s1">kind: Pod </span>
+<span class="s1">spec: </span>
+<span class="s1">  containers: </span>
+<span class="s1">  - name: jnlp</span>
+<span class="s1">    image: &#39;registry.cn-beijing.aliyuncs.com/dotbalo/jnlp-agent-docker:latest&#39;  </span>
+<span class="s1">    imagePullPolicy: IfNotPresent       </span>
+<span class="s1">    args: [\&#39;$(JENKINS_SECRET)\&#39;, \&#39;$(JENKINS_NAME)\&#39;] </span>
+<span class="s1">  - name: &quot;build&quot;</span>
+<span class="s1">    image: &quot;registry.cn-beijing.aliyuncs.com/dotbalo/maven:3.5.3&quot; </span>
+<span class="s1">    imagePullPolicy: &quot;IfNotPresent&quot; </span>
+<span class="s1">    command: </span>
+<span class="s1">    - &quot;cat&quot; </span>
+<span class="s1">    tty: true </span>
+<span class="s1">  - name: &quot;kubectl&quot; </span>
+<span class="s1">    command: </span>
+<span class="s1">    - &quot;cat&quot; </span>
+<span class="s1">    image: &quot;registry.cn-beijing.aliyuncs.com/dotbalo/kubectl:latest&quot; </span>
+<span class="s1">    imagePullPolicy: &quot;IfNotPresent&quot; </span>
+<span class="s1">    tty: true </span>
+<span class="s1">&#39;&#39;&#39;</span><span class="w">          </span>
+<span class="w">        </span><span class="o">}</span>
+<span class="w">    </span><span class="o">}</span>
+<span class="w">    </span><span class="n">stages</span><span class="o">{</span><span class="w"> </span>
+<span class="w">        </span><span class="n">stage</span><span class="o">(</span><span class="s1">&#39;Build&#39;</span><span class="o">){</span>
+<span class="w">            </span><span class="n">steps</span><span class="o">{</span><span class="w"> </span>
+<span class="w">                </span><span class="n">container</span><span class="o">(</span><span class="nl">name:</span><span class="w"> </span><span class="s1">&#39;build&#39;</span><span class="o">)</span>
+<span class="w">                </span><span class="n">sh</span><span class="w"> </span><span class="s1">&#39;mvn -v&#39;</span>
+<span class="w">            </span><span class="o">}</span>
+<span class="w">            </span><span class="n">stage</span><span class="o">(</span><span class="s1">&#39;Deploy&#39;</span><span class="o">)</span><span class="w"> </span><span class="o">{</span>
+<span class="w">                </span><span class="n">steps</span><span class="w"> </span><span class="o">{</span>
+<span class="w">                    </span><span class="n">container</span><span class="o">(</span><span class="nl">name:</span><span class="w"> </span><span class="s1">&#39;kubectl&#39;</span><span class="o">)</span>
+<span class="w">                    </span><span class="n">sh</span><span class="w"> </span><span class="s1">&#39;kubectl get node&#39;</span>
+<span class="w">                </span><span class="o">}</span>
+<span class="w">            </span><span class="o">}</span>
+<span class="w">        </span><span class="o">}</span>
+<span class="w">    </span><span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div>
+    </div>
+  </article>
+  <aside class="toc">
+    <p class="toc-label">本页目录</p>
+    <ul>
+  <li><a href="#定义">定义</a></li>
+  <li><a href="#工具链">工具链</a></li>
+  <li><a href="#cicd">CICD</a></li>
+  <li><a href="#pipeline">Pipeline</a><ul>
+  <li><a href="#定义_1">定义</a></li>
+  <li><a href="#pipeline工具">Pipeline工具</a></li>
+</ul></li>
+  <li><a href="#jenkins介绍">Jenkins介绍</a></li>
+  <li><a href="#jenkins-pipeline">jenkins pipeline</a><ul>
+  <li><a href="#pipeline声明式语法">Pipeline声明式语法</a></li>
+  <li><a href="#sections">Sections</a></li>
+  <li><a href="#directives">Directives</a></li>
+  <li><a href="#并行处理parallel">并行处理Parallel</a></li>
+</ul></li>
+  <li><a href="#pipeline常用变量处理">Pipeline常用变量处理</a><ul>
+  <li><a href="#内置环境变量">内置环境变量</a></li>
+  <li><a href="#凭证管理">凭证管理</a></li>
+</ul></li>
+  <li><a href="#agent配置示例">Agent配置示例</a><ul>
+  <li><a href="#基于docker-slave">基于docker slave</a></li>
+  <li><a href="#基于k8s-slave">基于k8s slave</a></li>
+</ul></li>
+</ul>
+  </aside>
+
+</div>
+
+</main>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>Learning Notes</span>
+    <a href="https://github.com/hangx969/learning-notes">GitHub</a>
+  </div>
+</footer>
+<script src="../../../../static/search.js"></script>
+</body>
+</html>

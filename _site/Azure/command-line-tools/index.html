@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Command Line Tools - Learning Notes</title>
+<link rel="stylesheet" href="../../static/style.css">
+<link rel="stylesheet" href="../../static/pygments.css">
+</head>
+<body data-root="../../">
+<header class="site-header">
+  <div class="header-inner">
+    <a class="logo" href="../../index.html"><span class="logo-mark"></span>LEARNING NOTES</a>
+    <div class="search">
+      <input id="search-input" type="search" placeholder="搜索笔记…" autocomplete="off" aria-label="搜索笔记">
+      <div id="search-results" hidden></div>
+    </div>
+  </div>
+  <nav class="topic-nav" aria-label="主题导航">
+    <div class="topic-nav-inner">
+      <a href="../../AI/">AI</a>
+      <a href="../../Aliyun/">Aliyun</a>
+      <a href="../../Azure/" class="active">Azure</a>
+      <a href="../../C%2B%2B/">C++</a>
+      <a href="../../CloudComputing/">CloudComputing</a>
+      <a href="../../Database/">Database</a>
+      <a href="../../Docker-Kubernetes/">Docker-Kubernetes</a>
+      <a href="../../GPU-DeepLearning/">GPU-DeepLearning</a>
+      <a href="../../Git/">Git</a>
+      <a href="../../Go/">Go</a>
+      <a href="../../HPC/">HPC</a>
+      <a href="../../IaC/">IaC</a>
+      <a href="../../Linux-Shell/">Linux-Shell</a>
+      <a href="../../Middlewares/">Middlewares</a>
+      <a href="../../Networking/">Networking</a>
+      <a href="../../OS/">OS</a>
+      <a href="../../Python/">Python</a>
+      <a href="../../SoftwareTesting/">SoftwareTesting</a>
+    </div>
+  </nav>
+</header>
+<main class="main">
+
+<div class="article-layout">
+
+  <aside class="sidebar">
+    <details class="sidebar-details">
+      <summary>Azure</summary>
+      <nav class="sidebar-nav">
+        <p class="sidebar-group">Customer Support</p>
+        <ul>
+          <li><a href="../../Azure/Customer%20Support/Email%20Templates/">Email Templates</a></li>
+        </ul>
+        <p class="sidebar-group">其他</p>
+        <ul>
+          <li><a href="../../Azure/0_Azure-VM-VMSS/">Azure VM and VMSS</a></li>
+          <li><a href="../../Azure/10_Azure-devops-agent-pool-management/">Azure DevOps Agent Pool Management</a></li>
+          <li><a href="../../Azure/11_Azure-Policy/">Azure Policy</a></li>
+          <li><a href="../../Azure/1_Azure-Linux-VM-troubheshooting/">Azure Linux VM Troubleshooting</a></li>
+          <li><a href="../../Azure/2_AKS-basics/">AKS Basics</a></li>
+          <li><a href="../../Azure/3_AKS-workload-identity/">AKS Workload Identity</a></li>
+          <li><a href="../../Azure/4_AKS-SecretProviderClass-KeyVault/">AKS SecretProviderClass with KeyVault</a></li>
+          <li><a href="../../Azure/5_Azure-Storage/">Azure Storage</a></li>
+          <li><a href="../../Azure/6_Azure-Networking/">Azure Networking</a></li>
+          <li><a href="../../Azure/7_ACR-ACI/">Azure Container Registry &amp; Azure Container Instances</a></li>
+          <li><a href="../../Azure/8_Azure-devops-basics/">Azure DevOps Basics</a></li>
+          <li><a href="../../Azure/9_Azure-devops-self-host-agents/">Azure DevOps Self-Hosted Agents</a></li>
+          <li><a href="../../Azure/IO-monitor/">IO Monitor</a></li>
+          <li><a href="../../Azure/Jfrog-artifactory-Azure/">JFrog Artifactory on Azure</a></li>
+          <li><a href="../../Azure/Kusto%20Query/">Kusto Query Language (KQL) Reference</a></li>
+          <li><a href="../../Azure/browser%20trace/">Browser Trace (HAR)</a></li>
+          <li><a href="../../Azure/command-line-tools/" class="current">Command Line Tools</a></li>
+          <li><a href="../../Azure/fiddler/">Fiddler</a></li>
+          <li><a href="../../Azure/perfMon%20ProcessMon/">PerfMon &amp; ProcessMon</a></li>
+          <li><a href="../../Azure/postman/">Postman</a></li>
+        </ul>
+      </nav>
+    </details>
+  </aside>
+
+  <article class="article">
+    <nav class="breadcrumb">
+      <a href="../../index.html">首页</a><span>/</span>
+      <a href="../../Azure/">Azure</a>
+    </nav>
+    <h1 class="article-title">Command Line Tools</h1>
+    <p class="article-meta"><span>更新于 2026-04-16</span>
+      <a href="https://github.com/hangx969/learning-notes/blob/main/Azure/command-line-tools.md">查看源文件</a>
+    </p>
+    <div class="article-body">
+<h1 id="command-line-tools">Command Line Tools</h1>
+<p><div class="callout callout-summary" markdown="1"><br />
+<p class="callout-title">Azure command-line tools for managing resources and data</p></p>
+<p>Covers <mark>Azure PowerShell</mark>, <mark>Az CLI</mark>, and <mark>AzCopy</mark> for managing <a class="wikilink" href="../../Azure/5_Azure-Storage/">Azure Storage</a> and other Azure resources.</p>
+</div>
+<hr />
+<h2 id="azure-powershell">Azure PowerShell</h2>
+<h3 id="介绍">介绍</h3>
+<ul>
+<li>PowerShell 是跨平台自动化任务解决方案，作为脚本语言，用于自动化系统管理；还用于自动化部署、测试解决方案；输入输出均为 <mark>.NET 对象</mark></li>
+<li>Azure PowerShell 是一组 <mark>cmdlet</mark>（轻量级命令），用于直接从 PowerShell 管理 Azure 资源</li>
+</ul>
+<h3 id="安装">安装</h3>
+<ul>
+<li><a href="https://docs.microsoft.com/en-us/powershell/azure/new-azureps-module-az?view=azps-7.3.2">Introducing the Azure Az PowerShell module | Microsoft Docs</a></li>
+<li><a href="https://learn.microsoft.com/en-us/powershell/azure/install-az-ps?view=azps-9.4.0">Install the Azure Az PowerShell module | Microsoft Learn</a></li>
+</ul>
+<p><div class="callout callout-info" markdown="1"><br />
+<p class="callout-title">通过 PowerShellGet 安装 Azure PowerShell</p></p>
+<p>要求：<br />
+- Windows PowerShell <mark>5.1</mark> or more<br />
+- .NET Framework <mark>4.7.2</mark> or more<br />
+- 要先安装最新版本的 PowerShellGet</p>
+</div>
+<ul>
+<li>安装 PowerShellGet：</li>
+</ul>
+<p><code>powershell
+  Install-Module -Name PowerShellGet -Force</code></p>
+<ul>
+<li>从 Windows PowerShell 上安装：</li>
+</ul>
+<p><code>powershell
+  Install-Module -Name Az -Scope AllUsers -Repository PSGallery -Force</code></p>
+<h3 id="登录">登录</h3>
+<ul>
+<li>对于 <mark>Azure China Cloud</mark>，使用：</li>
+</ul>
+<p><code>powershell
+  Connect-AzAccount -Environment AzureChinaCloud</code></p>
+<h4 id="便捷登录-tips">便捷登录 Tips</h4>
+<p><div class="callout callout-tip" markdown="1"><br />
+<p class="callout-title">使用 AAD App 自动登录</p></p>
+<ul>
+<li>建一个 AAD 的 app，new 一个 <mark>client secret</mark></li>
+<li>在 PowerShell 里面写一个登录脚本，做一个 credential，用这个 app 的 client secret 来登录</li>
+</ul>
+</div>
+<p><img alt="image-20231030164620380" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202310301646534.png" /></p>
+<h3 id="azpowershell-清除缓存">AzPowerShell 清除缓存</h3>
+<p><div class="callout callout-warning" markdown="1"><br />
+<p class="callout-title">清除缓存</p></p>
+<p><code>msal.cache</code> 里面存了 token，清缓存可以手动删除以下文件：</p>
+</div>
+<p>Remove all of these files:</p>
+<ul>
+<li><code>C:\Users\&lt;yourname&gt;\.azure\AzureRmContext.json</code></li>
+<li><code>C:\Users\&lt;yourname&gt;\.azure\AzureRmContextSettings.json</code></li>
+<li><code>C:\Users\&lt;yourname&gt;\.azure\AzureRmSurvey.json</code></li>
+<li><code>C:\Users\&lt;yourname&gt;\.azure\keystore.cache</code></li>
+<li><code>C:\Users\&lt;yourname&gt;\AppData\Local\.IdentityService\msal.cache</code></li>
+</ul>
+<hr />
+<h2 id="az-cli">Az CLI</h2>
+<ul>
+<li>Tool for managing Azure resources, text-based, designed for efficiency.</li>
+<li>CLI 是基于 <mark>Python</mark> 的。</li>
+</ul>
+<h3 id="安装_1">安装</h3>
+<ul>
+<li>
+<p>Install in Windows: <a href="https://docs.azure.cn/zh-cn/cli/install-azure-cli-windows?view=azure-cli-latest&amp;tabs=azure-cli">安装适用于 Windows 的 Azure CLI | Azure Docs</a></p>
+</li>
+<li>
+<p>Install in Linux: <a href="https://docs.microsoft.com/en-us/cli/azure/install-azure-cli-linux?pivots=dnf">Install the Azure CLI on Linux | Microsoft Docs</a></p>
+</li>
+</ul>
+<p><code>bash
+  sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
+  echo -e "[azure-cli]
+  name=Azure CLI
+  baseurl=https://packages.microsoft.com/yumrepos/azure-cli
+  enabled=1
+  gpgcheck=1
+  gpgkey=https://packages.microsoft.com/keys/microsoft.asc" | sudo tee /etc/yum.repos.d/azure-cli.repo
+  yum install -y dnf
+  sudo dnf install azure-cli</code></p>
+<h3 id="登录_1">登录</h3>
+<div class="highlight"><pre><span></span><code>az<span class="w"> </span>cloud<span class="w"> </span><span class="nb">set</span><span class="w"> </span>-n<span class="w"> </span>AzureChinaCloud
+az<span class="w"> </span>login
+</code></pre></div>
+
+<p><div class="callout callout-warning" markdown="1"><br />
+<p class="callout-title">登录报错排查</p></p>
+<p><img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202310301652604.png" alt="image-20231030165207511" style="zoom:50%;" /></p>
+<ul>
+<li>有可能是 <mark>account credential cache</mark> 的问题：<a href="https://github.com/Azure/azure-cli/issues/20231#issuecomment-1007176901"><code>az login</code> fails: OSError: [WinError -2146893813] · Issue #20231 · Azure/azure-cli · GitHub</a></li>
+<li>尝试：<code>az account clear</code></li>
+</ul>
+</div>
+<h3 id="订阅管理">订阅管理</h3>
+<p><a href="https://learn.microsoft.com/en-us/cli/azure/manage-azure-subscriptions-azure-cli#change-the-active-tenant">How to manage Azure subscriptions – Azure CLI | Microsoft Learn</a></p>
+<div class="highlight"><pre><span></span><code><span class="c1">#先用user登录：</span>
+az<span class="w"> </span>login<span class="w"> </span>--user<span class="w"> </span>hangx@mcpod.partner.onmschina.cn<span class="w"> </span>--password
+<span class="c1">#再切换sub：</span>
+az<span class="w"> </span>account<span class="w"> </span><span class="nb">set</span><span class="w"> </span>--subscription<span class="w"> </span>9ef8a15c-15a2-4ef1-a19b-e31876ab177
+</code></pre></div>
+
+<hr />
+<h2 id="azcopy">AzCopy</h2>
+<p><div class="callout callout-info" markdown="1"><br />
+<p class="callout-title">AzCopy 概述</p></p>
+<p>Perform copy and sync operations with AzCopy between local and Azure or different storage accounts.<br />
+<mark>注意：azcopy 使用的是服务器到服务器 Azure backbone 的 API，不占用本地网络带宽。</mark></p>
+</div>
+<h3 id="安装与登录">安装与登录</h3>
+<ul>
+<li>安装：</li>
+<li><a href="https://docs.azure.cn/zh-cn/storage/common/storage-use-azcopy-v10?toc=%2Fstorage%2Fblobs%2Ftoc.json">使用 AzCopy v10 将数据复制或移到 Azure 存储 | Azure Docs</a></li>
+<li>
+<p>下载 AzCopy 安装包，把 <code>azcopy.exe</code> 路径添加到系统路径。</p>
+</li>
+<li>
+<p>登录：</p>
+</li>
+</ul>
+<p><code>bash
+  azcopy login --aad-endpoint https://login.partner.microsoftonline.cn
+  #打开给定的web，输入给定的device code</code></p>
+<h3 id="用法">用法</h3>
+<h4 id="从不同的存储账户之间-copy">从不同的存储账户之间 Copy</h4>
+<ul>
+<li><a href="https://docs.azure.cn/zh-cn/storage/common/storage-use-azcopy-blobs-copy?toc=/storage/blobs/toc.json">使用 AzCopy v10 在 Azure 存储帐户之间复制 Blob | Azure Docs</a></li>
+<li><code>azcopy copy "源URL" "目的URL"</code></li>
+</ul>
+<h3 id="性能优化">性能优化</h3>
+<p><a href="https://docs.azure.cn/zh-cn/storage/common/storage-use-azcopy-optimize">通过 Azure 存储优化 AzCopy v10 的性能 | Azure Docs</a></p>
+<h4 id="设置并发数">设置并发数</h4>
+<ul>
+<li>通过 azcopy 命令设置：</li>
+</ul>
+<p><img alt="image-20231030165855197" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202310301658301.png" /></p>
+<ul>
+<li>通过 PowerShell 设置：</li>
+</ul>
+<p><code>powershell
+  $env:AZCOPY_CONCURRENCY_VALUE=3</code></p>
+<h4 id="azcopy-sync-降低内存使用">AzCopy Sync 降低内存使用</h4>
+<p><a href="https://nam06.safelinks.protection.outlook.com/?url=https%3A%2F%2Flearn.microsoft.com%2Fen-us%2Fazure%2Fstorage%2Fcommon%2Fstorage-ref-azcopy-sync%23guidelines&amp;data=05|01|hangx@microsoft.com|b4d7a41178ef42d4a42108db5c3742c4|72f988bf86f141af91ab2d7cd011db47|1|0|638205164739901027|Unknown|TWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D|3000|||&amp;sdata=bKeG0cy5j3QZgRETHDMHwDZkaHpqZKFyrUoxSRLdzmc%3D&amp;reserved=0">azcopy sync | Microsoft Learn</a></p>
+<div class="highlight"><pre><span></span><code>azcopy<span class="w"> </span>copy<span class="w"> </span>–overwrite<span class="o">=</span>ifSourceNewer
+</code></pre></div>
+    </div>
+  </article>
+  <aside class="toc">
+    <p class="toc-label">本页目录</p>
+    <ul>
+  <li><a href="#azure-powershell">Azure PowerShell</a><ul>
+  <li><a href="#介绍">介绍</a></li>
+  <li><a href="#安装">安装</a></li>
+  <li><a href="#登录">登录</a></li>
+  <li><a href="#azpowershell-清除缓存">AzPowerShell 清除缓存</a></li>
+</ul></li>
+  <li><a href="#az-cli">Az CLI</a><ul>
+  <li><a href="#安装_1">安装</a></li>
+  <li><a href="#登录_1">登录</a></li>
+  <li><a href="#订阅管理">订阅管理</a></li>
+</ul></li>
+  <li><a href="#azcopy">AzCopy</a><ul>
+  <li><a href="#安装与登录">安装与登录</a></li>
+  <li><a href="#用法">用法</a></li>
+  <li><a href="#性能优化">性能优化</a></li>
+</ul></li>
+</ul>
+  </aside>
+
+</div>
+
+</main>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>Learning Notes</span>
+    <a href="https://github.com/hangx969/learning-notes">GitHub</a>
+  </div>
+</footer>
+<script src="../../static/search.js"></script>
+</body>
+</html>

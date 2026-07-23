@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Python Requests模块 - Learning Notes</title>
+<link rel="stylesheet" href="../../../static/style.css">
+<link rel="stylesheet" href="../../../static/pygments.css">
+</head>
+<body data-root="../../../">
+<header class="site-header">
+  <div class="header-inner">
+    <a class="logo" href="../../../index.html"><span class="logo-mark"></span>LEARNING NOTES</a>
+    <div class="search">
+      <input id="search-input" type="search" placeholder="搜索笔记…" autocomplete="off" aria-label="搜索笔记">
+      <div id="search-results" hidden></div>
+    </div>
+  </div>
+  <nav class="topic-nav" aria-label="主题导航">
+    <div class="topic-nav-inner">
+      <a href="../../../AI/">AI</a>
+      <a href="../../../Aliyun/">Aliyun</a>
+      <a href="../../../Azure/">Azure</a>
+      <a href="../../../C%2B%2B/">C++</a>
+      <a href="../../../CloudComputing/">CloudComputing</a>
+      <a href="../../../Database/">Database</a>
+      <a href="../../../Docker-Kubernetes/">Docker-Kubernetes</a>
+      <a href="../../../GPU-DeepLearning/">GPU-DeepLearning</a>
+      <a href="../../../Git/">Git</a>
+      <a href="../../../Go/">Go</a>
+      <a href="../../../HPC/">HPC</a>
+      <a href="../../../IaC/">IaC</a>
+      <a href="../../../Linux-Shell/">Linux-Shell</a>
+      <a href="../../../Middlewares/">Middlewares</a>
+      <a href="../../../Networking/">Networking</a>
+      <a href="../../../OS/">OS</a>
+      <a href="../../../Python/" class="active">Python</a>
+      <a href="../../../SoftwareTesting/">SoftwareTesting</a>
+    </div>
+  </nav>
+</header>
+<main class="main">
+
+<div class="article-layout">
+
+  <aside class="sidebar">
+    <details class="sidebar-details">
+      <summary>Python</summary>
+      <nav class="sidebar-nav">
+        <p class="sidebar-group">python-基础</p>
+        <ul>
+          <li><a href="../../../Python/python-%E5%9F%BA%E7%A1%80/python-OOP/">Python 面向对象编程</a></li>
+          <li><a href="../../../Python/python-%E5%9F%BA%E7%A1%80/python-QA/">Python 知识总结与常见问题</a></li>
+          <li><a href="../../../Python/python-%E5%9F%BA%E7%A1%80/python-basics/">Python 数据类型、运算符与基础语法</a></li>
+          <li><a href="../../../Python/python-%E5%9F%BA%E7%A1%80/python-exception-handling/">Python 异常处理</a></li>
+          <li><a href="../../../Python/python-%E5%9F%BA%E7%A1%80/python-function/">Python 函数</a></li>
+          <li><a href="../../../Python/python-%E5%9F%BA%E7%A1%80/python%E5%8C%85%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7-uv/">Python 包管理工具 uv</a></li>
+          <li><a href="../../../Python/python-%E5%9F%BA%E7%A1%80/rockylinux%E9%85%8D%E7%BD%AEpython%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/">RockyLinux 配置 Python 开发环境</a></li>
+          <li><a href="../../../Python/python-%E5%9F%BA%E7%A1%80/windows%E9%85%8D%E7%BD%AEpython%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/">Windows 配置 Python 开发环境</a></li>
+        </ul>
+        <p class="sidebar-group">python-数据分析-AI大模型</p>
+        <ul>
+          <li><a href="../../../Python/python-%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-AI%E5%A4%A7%E6%A8%A1%E5%9E%8B/python-%E5%A4%84%E7%90%86excel-word/">Python处理Excel与Word文档</a></li>
+          <li><a href="../../../Python/python-%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-AI%E5%A4%A7%E6%A8%A1%E5%9E%8B/python-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E4%B8%8E%E9%A2%84%E6%B5%8B/">Python机器学习与预测</a></li>
+        </ul>
+        <p class="sidebar-group">python-网络编程-前端</p>
+        <ul>
+          <li><a href="../../../Python/python-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B-%E5%89%8D%E7%AB%AF/python-Web%E5%BC%80%E5%8F%91-HTML-CSS-JS/">Web开发基础 - HTML/CSS/JavaScript</a></li>
+          <li><a href="../../../Python/python-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B-%E5%89%8D%E7%AB%AF/python-Web%E6%A1%86%E6%9E%B6Django/">Python Web框架Django</a></li>
+          <li><a href="../../../Python/python-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B-%E5%89%8D%E7%AB%AF/python-Web%E6%A1%86%E6%9E%B6Flask/">Python Web框架Flask</a></li>
+          <li><a href="../../../Python/python-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B-%E5%89%8D%E7%AB%AF/python-request-module/" class="current">Python Requests模块</a></li>
+          <li><a href="../../../Python/python-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B-%E5%89%8D%E7%AB%AF/python-socket-module/">Python Socket模块</a></li>
+          <li><a href="../../../Python/python-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B-%E5%89%8D%E7%AB%AF/python-%E7%88%AC%E8%99%AB/">Python爬虫</a></li>
+        </ul>
+        <p class="sidebar-group">python-运维开发</p>
+        <ul>
+          <li><a href="../../../Python/python-%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91/python-GUI-tkinter/">Python GUI开发 - Tkinter</a></li>
+          <li><a href="../../../Python/python-%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91/python-Linux-operation/">Python Linux运维模块</a></li>
+          <li><a href="../../../Python/python-%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91/python-elasticsearch/">Python Elasticsearch运维</a></li>
+          <li><a href="../../../Python/python-%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91/python-fabric%E9%AB%98%E7%BA%A7%E7%94%A8%E6%B3%95/">Python Fabric高级用法</a></li>
+          <li><a href="../../../Python/python-%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91/python-kubernetes-module/">Python Kubernetes模块</a></li>
+          <li><a href="../../../Python/python-%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91/python-mysql/">Python MySQL操作</a></li>
+          <li><a href="../../../Python/python-%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91/python-nginx/">Python Nginx运维自动化</a></li>
+          <li><a href="../../../Python/python-%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91/python-postgresql/">Python PostgreSQL操作</a></li>
+          <li><a href="../../../Python/python-%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91/python-tomcat/">Python Tomcat运维自动化</a></li>
+          <li><a href="../../../Python/python-%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91/python-%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/">Python 游戏开发</a></li>
+        </ul>
+        <p class="sidebar-group">电池参数提取统计工具开发</p>
+        <ul>
+          <li><a href="../../../Python/%E7%94%B5%E6%B1%A0%E5%8F%82%E6%95%B0%E6%8F%90%E5%8F%96%E7%BB%9F%E8%AE%A1%E5%B7%A5%E5%85%B7%E5%BC%80%E5%8F%91/%E5%AE%9E%E9%AA%8C%E5%AE%A4%E7%94%B5%E6%B1%A0%E5%8F%82%E6%95%B0%E4%B8%80%E9%94%AE%E7%BB%9F%E8%AE%A1%E5%B7%A5%E5%85%B7%E5%BC%80%E5%8F%91/">实验室电池参数一键统计工具开发</a></li>
+        </ul>
+        <p class="sidebar-group">其他</p>
+        <ul>
+          <li><a href="../../../Python/script-server-%E8%84%9A%E6%9C%ACWeb%E5%8C%96%E5%B7%A5%E5%85%B7/">Script-Server：脚本 Web 化工具</a></li>
+        </ul>
+      </nav>
+    </details>
+  </aside>
+
+  <article class="article">
+    <nav class="breadcrumb">
+      <a href="../../../index.html">首页</a><span>/</span>
+      <a href="../../../Python/">Python</a><span>/</span><span>python-网络编程-前端</span>
+    </nav>
+    <h1 class="article-title">Python Requests模块</h1>
+    <p class="article-meta"><span>更新于 2026-04-16</span>
+      <a href="https://github.com/hangx969/learning-notes/blob/main/Python/python-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B-%E5%89%8D%E7%AB%AF/python-request-module.md">查看源文件</a>
+    </p>
+    <div class="article-body">
+<h1 id="python-requests模块">Python Requests模块</h1>
+<h2 id="介绍">介绍</h2>
+<p><mark>requests</mark> 模块是 Python 简单易用的 HTTP 库,主要用于发送 HTTP 请求并接收响应。与原生的 urllib 库相比,requests 提供了更加简洁直观的 API,使得网络请求的处理更加方便。</p>
+<p><div class="callout callout-info" markdown="1"><br />
+<p class="callout-title">核心功能</p></p>
+</div>
+<ul>
+<li>发送 HTTP 请求:支持常见的 <mark>GET</mark>、<mark>POST</mark>、<mark>PUT</mark>、<mark>DELETE</mark>、<mark>HEAD</mark>、<mark>OPTIONS</mark> 等请求方法。</li>
+<li>处理请求参数:支持传递 URL 参数、请求体数据、文件上传等。</li>
+<li>处理响应:包括响应状态码、响应头、响应内容等。</li>
+<li>支持会话管理:可以通过会话对象在多次请求之间保持 Cookie 等信息。</li>
+<li>简化认证:内置基本的 HTTP 认证支持,简化了身份验证的流程。</li>
+<li>自动处理重定向和压缩:会自动处理 301 重定向和 GZIP 压缩。</li>
+<li>支持超时和异常处理:允许设置超时并处理网络请求中的常见异常。</li>
+</ul>
+<p><div class="callout callout-tip" markdown="1"><br />
+<p class="callout-title">核心方法</p></p>
+</div>
+<ul>
+<li><code>requests.get(url, params=None, **kwargs)</code>:发送 GET 请求。</li>
+<li><code>requests.post(url, data=None, json=None, **kwargs)</code>:发送 POST 请求。</li>
+<li><code>requests.put(url, data=None, **kwargs)</code>:发送 PUT 请求。</li>
+<li><code>requests.delete(url, **kwargs)</code>:发送 DELETE 请求。</li>
+<li><code>requests.head(url, **kwargs)</code>:发送 HEAD 请求。</li>
+<li><code>requests.options(url, **kwargs)</code>:发送 OPTIONS 请求。</li>
+</ul>
+<p><strong>常用的参数</strong>:</p>
+<ul>
+<li><mark>params</mark>:字典格式,用于在 URL 中添加查询参数。</li>
+<li><mark>data</mark>:字典、列表或元组,表示要发送的表单数据。</li>
+<li><mark>json</mark>:字典格式,表示要发送的 JSON 数据。</li>
+<li><mark>headers</mark>:字典格式,指定自定义的请求头。</li>
+<li><mark>timeout</mark>:设置请求的超时时间,单位为秒。</li>
+</ul>
+<p><div class="callout callout-important" markdown="1"><br />
+<p class="callout-title">安装</p></p>
+</div>
+<p><code>pip3 install requests</code></p>
+<hr />
+<h2 id="国内公开免费测试地址">国内公开免费测试地址</h2>
+<p>以下是一些国内可以免费使用的测试 API 地址,适合用来测试 HTTP 请求:</p>
+<ol>
+<li>
+<p>httpbin.org(镜像)</p>
+</li>
+<li>
+<p>地址: http://httpbin.org/anything 或 https://httpbin.org/anything</p>
+</li>
+<li>
+<p>用途: 用于测试各种 HTTP 请求方法(GET、POST、PUT、DELETE、HEAD、OPTIONS 等)</p>
+</li>
+<li>
+<p>JSONPlaceholder</p>
+</li>
+<li>
+<p>地址: https://jsonplaceholder.typicode.com/posts</p>
+</li>
+<li>
+<p>用途: 提供 RESTful API 接口,用于模拟 CRUD 操作。</p>
+</li>
+<li>
+<p>接口调试工具(Postman)</p>
+</li>
+<li>
+<p>地址: https://postman-echo.com/get</p>
+</li>
+<li>用途: 适合做 GET 请求,返回请求的详细信息。这些 API 地址都是可以公开访问的,你可以使用它们进行各种 HTTP 请求的测试。</li>
+</ol>
+<hr />
+<h2 id="requests模块主要功能">requests模块主要功能</h2>
+<h3 id="发送get请求requestsget">发送GET请求requests.get()</h3>
+<p><mark>get()</mark> 方法用于发送 HTTP GET 请求,用于从服务器获取资源。该方法适用于访问公开的网页、API 接口或其他 HTTP 资源。</p>
+<p>基本语法:<code>response = requests.get(url, params=None, **kwargs)</code></p>
+<p>参数说明:</p>
+<ul>
+<li><strong>url</strong>:</li>
+<li>类型: 字符串</li>
+<li>
+<p>描述: 请求的目标地址,是必填项,指定了需要访问的资源位置。</p>
+</li>
+<li>
+<p><strong>params</strong>:</p>
+</li>
+<li>
+<p>类型: 字典(可选)</p>
+</li>
+<li>
+<p>描述: 发送到服务器的<strong>查询字符串</strong>,通常以键值对的形式表示。请求会自动将这些参数编码并附加到 URL 中,生成类似 <code>?key=value</code> 的格式。</p>
+</li>
+<li>
+<p><strong>kwargs</strong>:</p>
+</li>
+<li>
+<p>类型: 可变关键字参数(可选)</p>
+</li>
+<li>
+<p>描述: 其他可选参数,包括但不限于:</p>
+<ul>
+<li>
+<p><code>headers</code>: 自定义请求头,可以模拟不同的客户端(如浏览器、移动设备等)</p>
+</li>
+<li>
+<p><code>timeout</code>: 请求超时时间,单位为秒,用于设置请求的最大等待时间。</p>
+</li>
+<li>
+<p><code>cookies</code>: 用于发送 cookies 到服务器</p>
+</li>
+</ul>
+</li>
+</ul>
+<p><div class="callout callout-tip" markdown="1"><br />
+<p class="callout-title">返回值response对象</p></p>
+</div>
+<ul>
+<li><code>response.status_code</code>获取状态码</li>
+<li><code>response.text</code>获取文本格式返回内容</li>
+<li><code>response.json()</code>获取返回文本的json格式内容</li>
+<li><code>response.json().get('key')</code>获取到json返回值中的某个字段</li>
+</ul>
+<h4 id="示例">示例</h4>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
+
+<span class="c1"># 定义一个url来查询,/s是百度搜索的路径部分用于查询</span>
+<span class="n">url</span> <span class="o">=</span> <span class="s1">&#39;https://www.baidu.com/s&#39;</span>
+
+<span class="c1"># 查询参数</span>
+<span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;wd&#39;</span><span class="p">:</span> <span class="s1">&#39;python&#39;</span>
+<span class="p">}</span>
+
+<span class="c1"># 请求头</span>
+<span class="n">headers</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;User-Agent&#39;</span><span class="p">:</span> <span class="s1">&#39;Mozilla/5.0&#39;</span>
+<span class="p">}</span>
+
+<span class="c1"># 发送get请求</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Response:&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Request failed with status code </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+</code></pre></div>
+
+<hr />
+<h3 id="发送post请求requestspost">发送POST请求requests.post()</h3>
+<p><mark>post()</mark> 方法用于向服务器发送 HTTP POST 请求,通常用于提交数据,比如表单数据、JSON数据或文件。该方法会返回一个响应对象,包含服务器的响应信息,如状态码、响应内容、头部信息等。</p>
+<p>语法:<code>response = requests.post(url, data=None, json=None, **kwargs)</code></p>
+<ul>
+<li>url:请求的目标地址(必填)。</li>
+<li>data:可选参数,用于提交的表单数据。可以是字典、字节对象或文件等数据格式,常用于表单提交。</li>
+<li>json:可选参数,发送 JSON 格式的数据。传入字典,自动将字典序列化为 JSON 字符串并发送到服务器。</li>
+<li>**kwargs:其他可选参数,例如:</li>
+<li>headers:指定请求的头部信息,如 Content-Type。</li>
+<li>timeout:请求超时时间,单位为秒。</li>
+<li>cookies:指定要发送的 cookies 信息。</li>
+</ul>
+<p>格式:</p>
+<div class="highlight"><pre><span></span><code><span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+<span class="s1">&#39;https://example.com/api&#39;</span><span class="p">,</span>
+    <span class="n">json</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;key&#39;</span><span class="p">:</span><span class="s1">&#39;value&#39;</span><span class="p">},</span>
+    <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;Content-Type&#39;</span><span class="p">:</span><span class="s1">&#39;application/json&#39;</span><span class="p">}</span>
+<span class="p">)</span>
+</code></pre></div>
+
+<h4 id="示例_1">示例</h4>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
+
+<span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+    <span class="s1">&#39;https://httpbin.org/post&#39;</span><span class="p">,</span>
+    <span class="n">json</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;key&#39;</span><span class="p">:</span> <span class="s1">&#39;value&#39;</span><span class="p">},</span>
+    <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;Content-Type&#39;</span><span class="p">:</span> <span class="s1">&#39;application.json&#39;</span><span class="p">}</span>
+<span class="p">)</span>
+
+<span class="c1"># 获取状态码</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="p">)</span>
+<span class="c1"># 获取返回内容,用json格式显示</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">())</span>
+</code></pre></div>
+
+<hr />
+<h3 id="发送put请求requestsput">发送PUT请求requests.put()</h3>
+<p><mark>put()</mark> 方法用于发送 HTTP PUT 请求,通常用于更新服务器上的资源。</p>
+<p>语法:<code>response = requests.put(url, data=None, **kwargs)</code></p>
+<p>参数:</p>
+<ol>
+<li>url: (必填) 目标资源的 URL 地址,表示你希望更新的服务器资源的路径。</li>
+<li>data: (可选) 发送到服务器的更新数据,通常是<strong>字典格式</strong>的内容。</li>
+<li>**kwargs: (可选) 其他可选参数,类似于请求头(headers)、超时时间(timeout)、认证信息(auth)等。</li>
+</ol>
+<h4 id="示例_2">示例</h4>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
+
+<span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">put</span><span class="p">(</span>
+    <span class="s1">&#39;https://httpbin.org/put&#39;</span><span class="p">,</span>
+    <span class="n">json</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span><span class="s1">&#39;new_name&#39;</span><span class="p">}</span> <span class="c1"># 这里传入要修改的参数,例如把name修改成new_name</span>
+<span class="p">)</span>
+
+<span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Update successfully.&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">())</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Update failed: </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+
+<hr />
+<h3 id="发送delete请求requestsdelete">发送DELETE请求requests.delete()</h3>
+<p><mark>delete()</mark> 方法用于发送 HTTP DELETE 请求,以删除服务器上的特定资源。</p>
+<p>语法:<code>response = requests.delete(url, **kwargs)</code></p>
+<p><div class="callout callout-note" markdown="1"><br />
+<p class="callout-title">响应状态码</p></p>
+<ul>
+<li><mark>204</mark>:表示删除操作成功,服务器没有返回任何内容。</li>
+<li>404:表示尝试删除的资源不存在。</li>
+<li>其他状态码:可能表示请求失败,需进一步处理。</li>
+</ul>
+</div>
+<h4 id="示例_3">示例</h4>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
+
+<span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span>
+    <span class="s1">&#39;https://example.com/delete&#39;</span> <span class="c1"># 没用那个httpbin的免费接口,因为不支持delete这个方法</span>
+<span class="p">)</span>
+
+<span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">204</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Update successfully.&quot;</span><span class="p">)</span>
+<span class="k">elif</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">404</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Resource not found.&quot;</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Update failed: </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+
+<hr />
+<h3 id="发送head请求requestshead">发送HEAD请求requests.head()</h3>
+<p><mark>head()</mark> 方法用于发送 HTTP HEAD 请求,功能类似于 GET 请求,但<strong>只请求响应头而不下载响应体</strong>。该方法通常用于获取关于特定资源的信息,例如检查资源是否存在、获取内容类型、获取缓存信息等,而不需要下载整个内容。</p>
+<p>用途:</p>
+<ul>
+<li>检查资源存在性:可以通过检查返回的状态码(如 200 或 404)来确定资源是否存在。</li>
+<li>获取资源信息:获取有关资源的元数据而不下载实际内容,适用于了解响应的内容类型和大小等信息。</li>
+</ul>
+<p><div class="callout callout-info" markdown="1"><br />
+<p class="callout-title">响应头信息</p></p>
+</div>
+<ul>
+<li><code>Content-Type</code>:资源的内容类型(如 text/html)。</li>
+<li><code>Content-Length</code>:响应体的长度(字节数),虽然 HEAD 请求不会返回响应体,但可以获取该信息。</li>
+<li><code>Last-Modified</code>:资源最后修改的时间。</li>
+<li><code>Cache-Control</code>:缓存相关的指令。</li>
+</ul>
+<p><div class="callout callout-tip" markdown="1"><br />
+<p class="callout-title">效率优势</p></p>
+<p>由于不下载响应体,HEAD 请求比 GET 请求更高效,适用于需要快速检查资源信息的场景。</p>
+</div>
+<h4 id="示例_4">示例</h4>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
+
+<span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">head</span><span class="p">(</span>
+    <span class="s1">&#39;https://httpbin.org/headers&#39;</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">headers</span><span class="p">)</span>
+<span class="c1"># 返回 {&#39;Date&#39;: &#39;Wed, 11 Jun 2025 12:30:40 GMT&#39;, &#39;Content-Type&#39;: &#39;application/json&#39;, &#39;Content-Length&#39;: &#39;225&#39;, &#39;Connection&#39;: &#39;keep-alive&#39;, &#39;Server&#39;: &#39;gunicorn/19.9.0&#39;, &#39;Access-Control-Allow-Origin&#39;: &#39;*&#39;, &#39;Access-Control-Allow-Credentials&#39;: &#39;true&#39;}</span>
+</code></pre></div>
+
+<hr />
+<h3 id="发送options请求requestsoptions">发送OPTIONS请求requests.options()</h3>
+<p><mark>options()</mark> 方法用于发送 HTTP OPTIONS 请求,目的是查看服务器支持的请求方法。</p>
+<p>用途:</p>
+<ul>
+<li>API 调试:在开发或调试阶段,可以通过 OPTIONS 请求了解服务器的功能。</li>
+<li>CORS 处理:在跨域资源共享(CORS)中,OPTIONS 请求用于检查特定资源的访问权限。</li>
+</ul>
+<h4 id="示例_5">示例</h4>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
+
+<span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">options</span><span class="p">(</span>
+    <span class="s1">&#39;https://httpbin.org/anything&#39;</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">headers</span><span class="p">)</span>
+<span class="c1"># 返回的字典中的&#39;Allow&#39;这个KEY表示支持的方法</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s1">&#39;Allow&#39;</span><span class="p">])</span>
+</code></pre></div>
+
+<hr />
+<h2 id="requests模块其他功能">requests模块其他功能</h2>
+<h3 id="超时设置">超时设置</h3>
+<p>使用 <mark>timeout</mark> 参数可以设置请求的最大等待时间,以防止请求无限期挂起。超过此时间就会抛出Timeout异常。</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="s1">&#39;https://jsonplaceholder.typicode.com/posts&#39;</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Request success: </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">Timeout</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+
+<hr />
+<h3 id="身份验证">身份验证</h3>
+<p>requests 支持基本的 HTTP 身份验证,可以通过 <mark>auth</mark> 参数提供用户名和密码。提供 (username, password) 元组进行基本身份验证。</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
+
+<span class="n">url</span> <span class="o">=</span> <span class="s1">&#39;https://httpbin.org/basic-auth/user/pass&#39;</span> <span class="c1"># 这里传进去的user和pass就是用户名密码</span>
+<span class="c1"># url = &#39;https://httpbin.org/basic-auth/user/pass1&#39; 就会报401</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;user&#39;</span><span class="p">,</span> <span class="s1">&#39;pass&#39;</span><span class="p">))</span> <span class="c1"># 在这里匹配上面的user,pass</span>
+<span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Request success: </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Request failed: </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+
+<hr />
+<h3 id="文件上传">文件上传</h3>
+<p>可以使用 <mark>files</mark> 参数进行文件上传。files: 上传的文件字典,键为表单字段名,值为文件对象。</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
+
+<span class="c1"># b是以二进制模式读取文件内容。处理非文本文件时可以避免字符编码问题</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;config.json&#39;</span><span class="p">,</span><span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">files</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;file&#39;</span><span class="p">:</span> <span class="n">f</span><span class="p">}</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="s1">&#39;https://httpbin.org/post&#39;</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">files</span><span class="o">=</span><span class="n">files</span><span class="p">)</span> <span class="c1"># 这个要写到with里面,确保文件对象没被关闭。</span>
+
+<span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Request success: </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Request failed: </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+
+<hr />
+<h3 id="cookie处理">Cookie处理</h3>
+<p><div class="callout callout-info" markdown="1"><br />
+<p class="callout-title">Cookie简介</p></p>
+<p><mark>cookie</mark> 是指存储在用户浏览器中的一小段数据,它用于记录和保存用户的状态信息。服务器通过 cookie 可以在用户访问网站的过程中,保持用户会话信息,或用于跟踪用户的访问行为。</p>
+</div>
+<p>cookie 的常见用途:</p>
+<ol>
+<li>会话管理:用于记录用户的登录状态、购物车信息等,当用户再次访问时,可以保持用户的登录状态或其他信息。</li>
+<li>个性化设置:网站可以通过 cookie 保存用户的偏好设置,如语言、主题、显示风格等。</li>
+<li>追踪与分析:广告商或分析工具可以通过 cookie 追踪用户的浏览行为,了解用户的喜好,以提供定制化广告或优化网站体验。</li>
+</ol>
+<p>cookie 的组成:</p>
+<ol>
+<li>键值对:每个 cookie 都是一个键值对,例如 <code>session_id=abc123</code>。</li>
+<li>有效期:cookie 可以设置有效期,决定它会在浏览器中存储多长时间。如果不设置有效期,cookie 会在浏览器关闭时删除,称为<strong>会话 cookie</strong>。</li>
+<li>域和路径:cookie 只会对特定的域名和路径生效。</li>
+<li>安全性设置:cookie 可以设置为仅在 HTTPS 协议下发送(<mark>Secure</mark>),或者只有在 HTTP 请求中发送,避免 JavaScript 访问(<mark>HttpOnly</mark>)。</li>
+</ol>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
+
+<span class="c1"># 定义cookie,是一个字典包含多个键值对</span>
+<span class="n">cookies</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;session_id&#39;</span><span class="p">:</span> <span class="s1">&#39;abc123&#39;</span><span class="p">,</span> <span class="s1">&#39;user&#39;</span><span class="p">:</span> <span class="s1">&#39;bob&#39;</span><span class="p">}</span>
+<span class="c1"># post可以添加爱cookie参数</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+    <span class="s1">&#39;https://httpbin.org/post&#39;</span><span class="p">,</span>
+    <span class="n">cookies</span><span class="o">=</span> <span class="n">cookies</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">)</span> <span class="c1"># 返回值中带着cookie信息</span>
+</code></pre></div>
+
+<hr />
+<h3 id="重定向与历史">重定向与历史</h3>
+<p><div class="callout callout-note" markdown="1"><br />
+<p class="callout-title">重定向机制</p></p>
+<p>当你发送一个 HTTP 请求到服务器时,服务器可能会返回一个重定向状态码,比如 <mark>301</mark> 或 <mark>302</mark>。这意味着请求的资源已经被移动到一个新的 URL。</p>
+</div>
+<p>默认行为:</p>
+<ul>
+<li>requests 模块的默认行为是自动处理这些重定向。当你发送请求时,如果服务器返回了重定向状态码,requests 会自动向新的 URL 发送请求,直到最终返回目标资源的内容。</li>
+</ul>
+<p>禁用重定向:</p>
+<ul>
+<li>如果你希望手动处理重定向,可以通过设置 <code>allow_redirects</code> 参数为 <mark>False</mark> 来禁用自动重定向。</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
+
+<span class="n">url</span> <span class="o">=</span> <span class="s1">&#39;https://httpbin.org/redirect/1&#39;</span>
+<span class="c1"># 禁用自动重定向</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">allow_redirects</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Status code: </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span> <span class="c1"># 返回302</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Redirect URL: </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;Location&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="c1"># 获取重定向链接</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">)</span> <span class="c1"># 获取的内容是原本的url的内容,没有自动重定向到新url</span>
+
+<span class="c1"># 默认开启自动重定向</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Status code: </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span> <span class="c1"># 返回200</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Redirect URL: </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;Location&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="c1"># 返回None</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">)</span> <span class="c1"># 直接重定向到了新url</span>
+</code></pre></div>
+
+<p>查看重定向历史</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
+
+<span class="n">url</span> <span class="o">=</span> <span class="s1">&#39;https://httpbin.org/redirect/3&#39;</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+<span class="c1"># response.history.url获取到重定向历史的链接</span>
+<span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">history</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Redirect url: </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">url</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+
+<hr />
+<h2 id="相关笔记">相关笔记</h2>
+<ul>
+<li><a class="wikilink" href="../../../Python/python-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B-%E5%89%8D%E7%AB%AF/python-%E7%88%AC%E8%99%AB/">python-爬虫</a> - Python爬虫开发</li>
+<li><a class="wikilink" href="../../../Python/python-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B-%E5%89%8D%E7%AB%AF/python-Web%E6%A1%86%E6%9E%B6Flask/">python-Web框架Flask</a> - Flask Web框架</li>
+<li><a class="wikilink" href="../../../Python/python-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B-%E5%89%8D%E7%AB%AF/python-socket-module/">python-socket-module</a> - Socket网络编程</li>
+<li><a class="wikilink" href="../../../Python/python-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B-%E5%89%8D%E7%AB%AF/python-Web%E6%A1%86%E6%9E%B6Django/">python-Web框架Django</a> - Django Web框架</li>
+</ul>
+    </div>
+  </article>
+  <aside class="toc">
+    <p class="toc-label">本页目录</p>
+    <ul>
+  <li><a href="#介绍">介绍</a></li>
+  <li><a href="#国内公开免费测试地址">国内公开免费测试地址</a></li>
+  <li><a href="#requests模块主要功能">requests模块主要功能</a><ul>
+  <li><a href="#发送get请求requestsget">发送GET请求requests.get()</a></li>
+  <li><a href="#发送post请求requestspost">发送POST请求requests.post()</a></li>
+  <li><a href="#发送put请求requestsput">发送PUT请求requests.put()</a></li>
+  <li><a href="#发送delete请求requestsdelete">发送DELETE请求requests.delete()</a></li>
+  <li><a href="#发送head请求requestshead">发送HEAD请求requests.head()</a></li>
+  <li><a href="#发送options请求requestsoptions">发送OPTIONS请求requests.options()</a></li>
+</ul></li>
+  <li><a href="#requests模块其他功能">requests模块其他功能</a><ul>
+  <li><a href="#超时设置">超时设置</a></li>
+  <li><a href="#身份验证">身份验证</a></li>
+  <li><a href="#文件上传">文件上传</a></li>
+  <li><a href="#cookie处理">Cookie处理</a></li>
+  <li><a href="#重定向与历史">重定向与历史</a></li>
+</ul></li>
+  <li><a href="#相关笔记">相关笔记</a></li>
+</ul>
+  </aside>
+
+</div>
+
+</main>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>Learning Notes</span>
+    <a href="https://github.com/hangx969/learning-notes">GitHub</a>
+  </div>
+</footer>
+<script src="../../../static/search.js"></script>
+</body>
+</html>

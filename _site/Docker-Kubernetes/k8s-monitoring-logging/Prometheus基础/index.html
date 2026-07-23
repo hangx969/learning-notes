@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prometheus基础 - Learning Notes</title>
+<link rel="stylesheet" href="../../../static/style.css">
+<link rel="stylesheet" href="../../../static/pygments.css">
+</head>
+<body data-root="../../../">
+<header class="site-header">
+  <div class="header-inner">
+    <a class="logo" href="../../../index.html"><span class="logo-mark"></span>LEARNING NOTES</a>
+    <div class="search">
+      <input id="search-input" type="search" placeholder="搜索笔记…" autocomplete="off" aria-label="搜索笔记">
+      <div id="search-results" hidden></div>
+    </div>
+  </div>
+  <nav class="topic-nav" aria-label="主题导航">
+    <div class="topic-nav-inner">
+      <a href="../../../AI/">AI</a>
+      <a href="../../../Aliyun/">Aliyun</a>
+      <a href="../../../Azure/">Azure</a>
+      <a href="../../../C%2B%2B/">C++</a>
+      <a href="../../../CloudComputing/">CloudComputing</a>
+      <a href="../../../Database/">Database</a>
+      <a href="../../../Docker-Kubernetes/" class="active">Docker-Kubernetes</a>
+      <a href="../../../GPU-DeepLearning/">GPU-DeepLearning</a>
+      <a href="../../../Git/">Git</a>
+      <a href="../../../Go/">Go</a>
+      <a href="../../../HPC/">HPC</a>
+      <a href="../../../IaC/">IaC</a>
+      <a href="../../../Linux-Shell/">Linux-Shell</a>
+      <a href="../../../Middlewares/">Middlewares</a>
+      <a href="../../../Networking/">Networking</a>
+      <a href="../../../OS/">OS</a>
+      <a href="../../../Python/">Python</a>
+      <a href="../../../SoftwareTesting/">SoftwareTesting</a>
+    </div>
+  </nav>
+</header>
+<main class="main">
+
+<div class="article-layout">
+
+  <aside class="sidebar">
+    <details class="sidebar-details">
+      <summary>Docker-Kubernetes</summary>
+      <nav class="sidebar-nav">
+        <p class="sidebar-group">CKA-CKS</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/CKA-CKS/CKA-%E5%A4%87%E8%80%83/">CKA 备考</a></li>
+          <li><a href="../../../Docker-Kubernetes/CKA-CKS/CKS-%E5%A4%87%E8%80%83/">CKS 备考</a></li>
+          <li><a href="../../../Docker-Kubernetes/CKA-CKS/k8s-%E9%9D%A2%E8%AF%95%E9%A2%98%E6%B1%87%E6%80%BB/">K8s 面试题汇总</a></li>
+        </ul>
+        <p class="sidebar-group">container-platform</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/container-platform/%E9%83%A8%E7%BD%B2openshift%283.10%29/">部署 OpenShift (3.10)</a></li>
+          <li><a href="../../../Docker-Kubernetes/container-platform/%E9%83%A8%E7%BD%B2%E8%BD%BB%E9%87%8F%E7%BA%A7%E7%9A%84K8S%E5%B9%B3%E5%8F%B0-K3S/">部署轻量级 K8S 平台 - K3S</a></li>
+        </ul>
+        <p class="sidebar-group">docker</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E5%9F%BA%E7%A1%80/">Docker基础</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E5%AE%89%E5%85%A8%E9%85%8D%E7%BD%AE-Capabilities%E4%B8%8E%E5%AE%B9%E5%99%A8%E5%8A%A0%E5%9B%BA/">Docker 安全配置详解：Capabilities 与容器加固</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2UI%E5%B7%A5%E5%85%B7portainer-%E9%83%A8%E7%BD%B2redis-sentinel/">Docker部署Portainer与Redis-Sentinel</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2gitlab/">Docker部署GitLab</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2lnmp%E7%BD%91%E7%AB%99/">Docker部署LNMP网站</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2loki/">Docker部署Loki日志系统</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2nginx-tomcat-httpd-go-python%E6%9C%8D%E5%8A%A1/">Docker部署Nginx-Tomcat-Httpd-Go-Python服务</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2prometheus-grafana-cAdvisior%E7%9B%91%E6%8E%A7/">Docker部署Prometheus-Grafana-cAdvisor监控</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2%E4%BB%93%E5%BA%93%E5%B9%B3%E5%8F%B0homebox/">Docker部署Homebox仓库平台</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1%E5%B7%A5%E5%85%B7gocron/">Docker部署GoCron定时任务工具</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2%E8%B7%AF%E7%94%B1%E7%9B%91%E6%8E%A7%E5%B7%A5%E5%85%B7NextTrace/">Docker部署NextTrace路由监控工具</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%85%8D%E7%BD%AENVIDIA%20GPU/">Docker配置NVIDIA GPU</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%85%8D%E7%BD%AE%E4%BB%A3%E7%90%86/">Docker配置代理</a></li>
+        </ul>
+        <p class="sidebar-group">harbor</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/harbor/harbor-basics/">Harbor 基础</a></li>
+          <li><a href="../../../Docker-Kubernetes/harbor/helm%E9%83%A8%E7%BD%B2harbor/">Helm 部署 Harbor</a></li>
+        </ul>
+        <p class="sidebar-group">helm-operator</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/helm-operator/helmv3-%E5%AE%89%E8%A3%85%E4%B8%8E%E4%BD%BF%E7%94%A8/">Helm v3 安装与使用</a></li>
+          <li><a href="../../../Docker-Kubernetes/helm-operator/helm%E9%83%A8%E7%BD%B2config-syncer%28kubed%29/">Helm 部署 Config Syncer (Kubed)</a></li>
+          <li><a href="../../../Docker-Kubernetes/helm-operator/helm%E9%83%A8%E7%BD%B2dragonfly/">Helm 部署 Dragonfly</a></li>
+          <li><a href="../../../Docker-Kubernetes/helm-operator/helm%E9%83%A8%E7%BD%B2pact-broker/">Helm 部署 Pact Broker</a></li>
+          <li><a href="../../../Docker-Kubernetes/helm-operator/helm%E9%83%A8%E7%BD%B2reloader/">Helm 部署 Reloader</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-CICD</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD%20Image%20Updater/">ArgoCD Image Updater</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD%E5%9F%BA%E7%A1%80/">ArgoCD基础</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD%E5%A4%9A%E9%9B%86%E7%BE%A4GitOps%E5%AE%9E%E6%88%98/">多集群 GitOps 实战：用 Argo CD 管理上百个 Kubernetes 集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD%E9%83%A8%E7%BD%B2Helm%E5%BA%94%E7%94%A8%E6%97%B6%E5%9F%9F%E5%90%8D%E8%A7%A3%E6%9E%90%E5%A4%B1%E8%B4%A5%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5%E4%B8%8E%E8%A7%A3%E5%86%B3/">ArgoCD部署Helm应用时域名解析失败问题排查与解决</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/ArgoCD/%E5%AD%A6%E4%B9%A0%E9%93%BE%E6%8E%A5/">ArgoCD学习链接</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Claude-Code%E5%AE%9E%E7%8E%B0CICD%E8%87%AA%E5%8A%A8%E5%8C%96%E5%8F%91%E5%B8%83%E6%B5%81%E7%A8%8B/">Claude Code 实现 CI/CD 自动化发布流程详细指南</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Gitlab/helm%E9%83%A8%E7%BD%B2gitlab/">Helm部署GitLab</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Gitlab/k8s%E9%83%A8%E7%BD%B2Gitlab%2811.8.1%29-%E5%9F%BA%E4%BA%8Eyaml/">K8s部署GitLab(11.8.1)-基于YAML</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Gitlab/%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%AE%89%E8%A3%85Gitlab%2817.9.8%29/">二进制安装GitLab(17.9.8)</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Jenkins/Jenkins%E8%AF%AD%E6%B3%95-%E5%9F%BA%E4%BA%8Edocker%E9%83%A8%E7%BD%B2/">Jenkins语法-基于Docker部署</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Jenkins/docker%E9%83%A8%E7%BD%B2jenkins/">Docker部署Jenkins</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Jenkins/helm%E9%83%A8%E7%BD%B2jenkins/">Helm部署Jenkins</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Jenkins/k8s-Devops%E5%B9%B3%E5%8F%B0%E8%90%BD%E5%9C%B0-%E5%9F%BA%E4%BA%8Ejenkins/">K8s DevOps平台落地-基于Jenkins</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Jenkins/k8s%E9%83%A8%E7%BD%B2%E5%9F%BA%E4%BA%8EJenkins%282.394%29%E7%9A%84DevOps%E5%B7%A5%E5%85%B7%E9%93%BE-%E5%9F%BA%E4%BA%8Eyaml/">K8s部署基于Jenkins(2.394)的DevOps工具链-基于YAML</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Jenkins/k8s%E9%83%A8%E7%BD%B2%E5%9F%BA%E4%BA%8EJenkins%282.426.3%29%E7%9A%84Devops%E5%B7%A5%E5%85%B7%E9%93%BE-%E5%9F%BA%E4%BA%8Eyaml/">K8s部署基于Jenkins(2.426.3)的DevOps工具链-基于YAML</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Jenkins/%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%AE%89%E8%A3%85Jenkins%282.319%29/">二进制安装Jenkins(2.319)</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Kustomize/k8s%E9%85%8D%E7%BD%AE%E5%AE%9A%E5%88%B6%E5%B7%A5%E5%85%B7-kustomize/">K8s配置定制工具-Kustomize</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Tekton/k8s%E9%83%A8%E7%BD%B2%E5%8E%9F%E7%94%9F%E7%9A%84CICD%E5%B7%A5%E5%85%B7Tekton-%E5%9F%BA%E4%BA%8Eyaml/">K8s部署原生的CICD工具Tekton-基于YAML</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Tekton/%E5%9F%BA%E4%BA%8ETekton%E7%9A%84%E4%BA%91%E5%8E%9F%E7%94%9F%E5%B9%B3%E5%8F%B0%E8%90%BD%E5%9C%B0/">基于Tekton的云原生平台落地</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/k8s%E5%8F%91%E5%B8%83%E7%AD%96%E7%95%A5-%E8%93%9D%E7%BB%BF%E9%83%A8%E7%BD%B2%E4%B8%8E%E9%87%91%E4%B8%9D%E9%9B%80%E5%8F%91%E5%B8%83/">K8s 发布策略：蓝绿部署与金丝雀发布实战</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/%E4%BD%BF%E7%94%A8github%20action%E9%83%A8%E7%BD%B2helmchart/">使用GitHub Action部署Helm Chart</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/%E5%8F%91%E5%B8%83go-python-java%E4%BB%A3%E7%A0%81%E5%88%B0K8S%E7%8E%AF%E5%A2%83/">发布Go/Python/Java代码到K8S环境</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-UI-tools</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-UI-tools/k8s-API%E6%A3%80%E6%9F%A5%E5%B7%A5%E5%85%B7kubent/">K8s API 检查工具 kubent</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-UI-tools/k8s-%E5%B0%8F%E5%B7%A5%E5%85%B7%E9%9B%86%E5%90%88/">K8s 小工具集合</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-UI-tools/k8s%E9%83%A8%E7%BD%B2-Dashboard-UI/">K8s 部署 Dashboard UI</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-UI-tools/k8s%E9%83%A8%E7%BD%B2%E5%8F%AF%E8%A7%86%E5%8C%96ui%E7%95%8C%E9%9D%A2kuboard/">K8s 部署 Kuboard</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-UI-tools/kubectl-UI%E5%B7%A5%E5%85%B7Lens/">kubectl UI 工具 Lens</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-UI-tools/kubectl-%E5%8F%AF%E8%A7%86%E5%8C%96%E6%8F%92%E4%BB%B6k9s-stern/">kubectl 可视化插件 k9s 和 stern</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-UI-tools/kuebctl-%E6%8F%92%E4%BB%B6krew-rolesum/">kubectl 插件 krew 和 rolesum</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-UI-tools/rancher%28v2.6.4%29%E7%AE%A1%E7%90%86k8s%E9%9B%86%E7%BE%A4/">Rancher (v2.6.4) 管理 K8s 集群</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-ai-gpu</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-ai-gpu/k8s%E9%85%8D%E7%BD%AENVIDIA%20GPU/">K8s 配置 NVIDIA GPU</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-backup-dr</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-backup-dr/k8s%E5%A4%87%E4%BB%BD%E4%B8%8E%E7%81%BE%E5%A4%87%E5%AE%9E%E6%88%98-%E4%B8%89%E5%B1%82%E5%AE%B9%E7%81%BE%E6%9E%B6%E6%9E%84/">K8s 备份与灾备实战：三层容灾架构</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-backup-dr/k8s%E9%9B%86%E7%BE%A4%E5%A4%87%E4%BB%BD%E6%81%A2%E5%A4%8D-Velero/">K8s集群备份恢复 - Velero</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-basic-resources</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/K8s%E5%9F%BA%E7%A1%80-pod%E8%B0%83%E5%BA%A6-%E4%BA%B2%E5%92%8C%E5%8A%9B/">K8s基础-Pod调度-亲和力</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/Python%E8%B0%83%E7%94%A8k8s-api%E5%AE%9E%E7%8E%B0%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/">Python调用K8s-API实现资源管理</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s-APIServer%E6%B7%B1%E5%BA%A6%E5%89%96%E6%9E%90-%E8%AF%B7%E6%B1%82%E9%93%BE%E8%B7%AF-%E8%AE%A4%E8%AF%81%E6%8E%88%E6%9D%83-%E7%94%9F%E4%BA%A7%E8%B0%83%E4%BC%98/">Kubernetes API Server 深度剖析：请求链路、认证授权与生产调优</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s-PodDisruptionBudget%E5%AE%9E%E6%88%98/">K8s PodDisruptionBudget 实战：优雅中断保护</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-Calico/">K8s基础-Calico</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-Finalizer%E4%B8%8E%E8%B5%84%E6%BA%90%E5%88%A0%E9%99%A4/">K8s基础-Finalizer与资源删除</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-Operator%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98-Kubebuilder/">从零开发 Kubernetes Operator：Kubebuilder 实战教程</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-Service/">K8s基础-Service</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-configMap-Secret/">K8s基础-configMap-Secret</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-daemonset/">K8s基础-DaemonSet</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-deployment/">K8s基础-Deployment</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-ingress/">K8s基础-Ingress</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-job-cronjob/">K8s基础-Job-CronJob</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-kubeadm/">K8s基础-kubeadm</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-namespace-%E8%B5%84%E6%BA%90%E5%88%86%E9%85%8D/">K8s基础-namespace-资源分配</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-pod/">K8s基础-Pod</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-pod%E8%B0%83%E5%BA%A6-%E6%A0%87%E7%AD%BE%E4%B8%8E%E9%80%89%E6%8B%A9%E5%99%A8%E5%AE%9E%E6%88%98/">Kubernetes 标签与选择器避坑：5 条核心铁律与生产级实战案例</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-statefulset/">K8s基础-StatefulSet</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-storage/">K8s基础-Storage</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-yaml/">K8s基础-YAML</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E4%B8%B4%E6%97%B6%E5%AE%B9%E5%99%A8ephemeral/">K8s基础-临时容器Ephemeral</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E5%AE%B9%E5%99%A8%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-Sidecar-Init-Ambassador-Adapter/">K8s 容器设计模式：Sidecar / Init Container / Ambassador / Adapter</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E5%AE%B9%E5%99%A8%E8%BF%90%E8%A1%8C%E6%97%B6-containerd/">K8s基础-容器运行时-containerd</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E6%9E%B6%E6%9E%84-%E7%BB%84%E4%BB%B6-%E8%B5%84%E6%BA%90/">K8s基础-架构-组件-资源</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E8%87%AA%E5%AE%9A%E4%B9%89CRD%E8%B5%84%E6%BA%90/">K8s基础-自定义CRD资源</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E8%AE%A4%E8%AF%81-%E6%8E%88%E6%9D%83-%E5%87%86%E5%85%A5/">K8s基础-认证-授权-准入</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-db-middleware</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/Operator%E9%83%A8%E7%BD%B2Redis%E9%9B%86%E7%BE%A4/">基于Operator部署Redis集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/Operator%E9%83%A8%E7%BD%B2mysql%E9%9B%86%E7%BE%A4/">Operator部署MySQL NDB集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/helm%E9%83%A8%E7%BD%B2mysql/">Helm部署MySQL</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/helm%E9%83%A8%E7%BD%B2postgreSQL/">Helm部署PostgreSQL</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/helm%E9%83%A8%E7%BD%B2rabbitmq-ha/">Helm部署RabbitMQ高可用集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/helm%E9%83%A8%E7%BD%B2strimzi-kafka/">Helm部署Strimzi Kafka</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/k8s%E5%9F%BA%E4%BA%8Eyaml%E9%83%A8%E7%BD%B2MongoDB%E9%9B%86%E7%BE%A4/">K8s基于YAML部署MongoDB集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/k8s%E5%9F%BA%E4%BA%8Eyaml%E9%83%A8%E7%BD%B2httpd%E6%9C%8D%E5%8A%A1/">K8s基于YAML部署httpd服务</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/k8s%E5%9F%BA%E4%BA%8Eyaml%E9%83%A8%E7%BD%B2mysql%E4%B8%BB%E4%BB%8E%E9%AB%98%E5%8F%AF%E7%94%A8/">K8s基于YAML部署MySQL主从高可用</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/k8s%E5%9F%BA%E4%BA%8Eyaml%E9%83%A8%E7%BD%B2redis%E9%9B%86%E7%BE%A4/">K8s基于YAML部署Redis集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/k8s%E9%83%A8%E7%BD%B2springcloud%E7%94%B5%E5%95%86%E9%A1%B9%E7%9B%AE/">K8s部署SpringCloud电商项目</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-installation-management</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/2025%E6%9C%80%E6%96%B0-%E4%BC%81%E4%B8%9A%E7%BA%A7%E9%AB%98%E5%8F%AF%E7%94%A8%E9%9B%86%E7%BE%A4-%E5%9F%BA%E4%BA%8Erockylinux/">2025最新-企业级高可用集群-基于rockylinux</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/etcd%E9%AB%98%E5%8F%AF%E7%94%A8%E9%85%8D%E7%BD%AE%E4%BB%A5%E5%8F%8A%E6%A8%A1%E6%8B%9F%E9%9B%86%E7%BE%A4%E6%95%85%E9%9A%9C%E5%92%8C%E6%81%A2%E5%A4%8D/">etcd高可用配置以及模拟集群故障和恢复</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/k8s-Backstage-%E5%86%85%E9%83%A8%E5%BC%80%E5%8F%91%E8%80%85%E5%B9%B3%E5%8F%B0IDP%E5%AE%9E%E6%88%98/">K8s 平台工程实战：用 Backstage 打造一站式内部开发者平台</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/k8s-cgroup-v2%E6%B7%B1%E5%BA%A6%E8%A7%A3%E6%9E%90-%E8%BF%81%E7%A7%BB%E5%AE%9E%E6%88%98%E4%B8%8E%E9%81%BF%E5%9D%91%E6%8C%87%E5%8D%97/">K8s CGroup v2 深度解析：资源隔离原理、迁移实战与生产避坑指南</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/k8s%E4%B8%A4%E5%9C%B0%E4%B8%89%E4%B8%AD%E5%BF%83%E6%9E%B6%E6%9E%84/">k8s两地三中心架构</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/k8s%E5%A4%9A%E9%9B%86%E7%BE%A4kubeconfig%E7%AE%A1%E7%90%86/">k8s多集群kubeconfig管理</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/k8s%E6%95%85%E9%9A%9C%E6%8E%92%E6%9F%A5%E6%8C%87%E5%8D%97/">k8s故障排查指南</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/k8s%E7%94%9F%E4%BA%A7%E7%8E%AF%E5%A2%83%E4%BC%98%E5%8C%96%E4%B8%8E%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/">k8s生产环境优化与最佳实践</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/k8s%E9%83%A8%E7%BD%B2%E9%98%B2%E7%81%AB%E5%A2%99%E7%AB%AF%E5%8F%A3%E9%85%8D%E7%BD%AE/">K8s部署防火墙端口配置</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/latest-version/%E5%AE%89%E8%A3%85k8s-1.35-%E5%9F%BA%E4%BA%8Erockylinux10-%E6%9C%80%E6%96%B0%E6%AD%A5%E9%AA%A4/">在 Rocky Linux 10 上安装 Kubernetes 1.35</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%AE%89%E8%A3%85k8s%E9%AB%98%E5%8F%AF%E7%94%A8%E9%9B%86%E7%BE%A4/">二进制安装k8s高可用集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.20.6-%E9%AB%98%E5%8F%AF%E7%94%A8/">安装k8s-1.20.6-高可用</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.23/">安装k8s-1.23</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.26-1.27/">安装k8s-1.26-1.27</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.28/">安装k8s-1.28</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.30-%E5%9F%BA%E4%BA%8Erockylinux/">安装k8s-1.30-基于rockylinux</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.32-%E5%9F%BA%E4%BA%8Erockylinux/">安装k8s-1.32-基于rockylinux</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.33-%E5%9F%BA%E4%BA%8Erockylinux-%E6%9C%80%E6%96%B0%E6%AD%A5%E9%AA%A4/">安装k8s-1.33-基于rockylinux-最新步骤</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/%E5%8D%87%E7%BA%A7/k8s-1.37-%E5%8D%87%E7%BA%A7%E9%A1%BB%E7%9F%A5-breaking-changes/">Kubernetes v1.37 升级破坏性变更指南</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/%E5%8D%87%E7%BA%A7/k8s%E8%BF%81%E7%A7%BB%E5%AE%B9%E5%99%A8%E8%BF%90%E8%A1%8C%E6%97%B6-%E7%89%88%E6%9C%AC%E5%8D%87%E7%BA%A7/">k8s迁移容器运行时与版本升级</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-monitoring-logging</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/K8s%E5%85%A8%E9%9D%A2%E5%B7%A1%E6%A3%80%E8%84%9A%E6%9C%AC-%E7%94%9F%E6%88%90HTML%E5%81%A5%E5%BA%B7%E6%8A%A5%E5%91%8A/">K8s 全面巡检脚本：一键生成 HTML 健康报告</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/OpenTelemetry%E5%AE%9E%E6%88%98-%E7%BB%9F%E4%B8%80Traces-Metrics-Logs/">OpenTelemetry 实战：告别厂商锁定，统一 Traces/Metrics/Logs</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/Prometheus%E5%9F%BA%E7%A1%80/" class="current">Prometheus基础</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/Prometheus%E7%9B%91%E6%8E%A7k8s%E7%B3%BB%E7%BB%9F%E7%BB%84%E4%BB%B6/">Prometheus监控K8s系统组件</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/Prometheus%E7%9B%91%E6%8E%A7%E5%A4%96%E9%83%A8k8s%E9%9B%86%E7%BE%A4/">Prometheus监控外部K8s集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/Prometheus%E7%9B%91%E6%8E%A7%E9%9D%9E%E4%BA%91%E5%8E%9F%E7%94%9F%E5%BA%94%E7%94%A8-%E4%B8%BB%E6%9C%BA/">Prometheus监控非云原生应用-主机</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/helm%E9%83%A8%E7%BD%B2Loki-promtail-tempo-grafanaAgent%E5%85%A8%E5%AE%B6%E6%A1%B6/">Helm部署Loki+Promtail+Tempo+GrafanaAgent全家桶</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/helm%E9%83%A8%E7%BD%B2jaeger/">Helm部署Jaeger</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/helm%E9%83%A8%E7%BD%B2prometheus-stack%E5%85%A8%E5%AE%B6%E6%A1%B6/">Prometheus-Stack 全家桶：生产级部署与运维完全指南</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E6%97%A5%E5%BF%97%E7%AE%A1%E7%90%86-%E9%87%87%E9%9B%86%E6%96%B9%E6%A1%88%E4%B8%8E%E5%AE%A1%E8%AE%A1%E6%97%A5%E5%BF%97/">K8s 日志管理：基础机制、六种采集方案与审计日志实战</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E7%9B%91%E6%8E%A7EFK%2Blogstash%2Bkafka/">K8s监控EFK+logstash+kafka</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E7%9B%91%E6%8E%A7ES%287.2%29%2BKibana%287.2%29%2BFluentd%28v1.4.2%29/">K8s监控ES(7.2)+Kibana(7.2)+Fluentd(v1.4.2)</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E7%9B%91%E6%8E%A7Prometheus%28v2.2.1%29/">K8s监控Prometheus(v2.2.1)</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E7%9B%91%E6%8E%A7Prometheus%28v2.33.5%29%2BGrafana%28v8.4.5%29/">K8s监控Prometheus(v2.33.5)+Grafana(v8.4.5)</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E7%9B%91%E6%8E%A7alertmanager%28v0.14.0%29/">K8s监控Alertmanager(v0.14.0)</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E9%83%A8%E7%BD%B2elasticsearch%E9%9B%86%E7%BE%A4/">K8s部署Elasticsearch集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E9%83%A8%E7%BD%B2grafana%28v5.0.4%29/">K8s部署Grafana(v5.0.4)</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E9%83%A8%E7%BD%B2%E5%85%A8%E9%93%BE%E8%B7%AF%E8%BF%BD%E8%B8%AA-Skywalking/">K8s部署全链路追踪-Skywalking</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2Prometheus%28v2.32.1%29%E8%81%94%E9%82%A6%E9%9B%86%E7%BE%A4/">二进制部署Prometheus(v2.32.1)联邦集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2efk%2Blogstash%2Bkafka%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%B9%B3%E5%8F%B0/">二进制部署EFK+Logstash+Kafka日志收集平台</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2prometheus-grafana-nodeexporter/">二进制部署Prometheus-Grafana-NodeExporter</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/%E5%9F%BA%E4%BA%8Ehelm%2Boperator%E9%83%A8%E7%BD%B2ECK%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%B9%B3%E5%8F%B0/">基于Helm+Operator部署ECK日志收集平台</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-networking-service-mesh</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/Istio-Sidecar-vs-Ambient/">Istio Sidecar vs Ambient 模式对比</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/helm%E5%AE%89%E8%A3%85istio/">Helm安装Istio</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/helm%E9%83%A8%E7%BD%B2external-dns/">Helm部署External-DNS</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/helm%E9%83%A8%E7%BD%B2ingress-nginx/">Helm部署Ingress-Nginx</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/helm%E9%83%A8%E7%BD%B2tomcat/">Helm 部署 Tomcat</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/k8s-Gateway-API%E5%85%A5%E9%97%A8-Ingress%E4%B8%8B%E4%B8%80%E4%BB%A3%E6%96%B9%E6%A1%88/">Kubernetes Gateway API 入门：Ingress 的下一代方案</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/k8s%E7%B2%BE%E7%BB%86%E5%8C%96%E6%B5%81%E9%87%8F%E7%AE%A1%E7%90%86-istio/">K8s精细化流量管理-Istio</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/k8s%E9%83%A8%E7%BD%B2istio%281.13.1%29/">K8s部署Istio(1.13.1)</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/k8s%E9%9B%86%E7%BE%A4%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/">K8s集群网络安全</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/%E4%BC%81%E4%B8%9A%E9%A1%B9%E7%9B%AE%E6%8E%A5%E5%85%A5istio%E5%AE%9E%E6%88%98/">企业项目接入Istio实战</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-scaling</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-scaling/KEDA-vs-HPA-2026%E7%BB%88%E6%9E%81%E5%AF%B9%E6%AF%94-v1.36%E7%BC%A9%E9%9B%B6/">KEDA vs HPA 2026 终极对比：v1.36 原生缩零后该选谁？</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-scaling/helm%E9%83%A8%E7%BD%B2goldilocks/">Helm部署Goldilocks</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-scaling/helm%E9%83%A8%E7%BD%B2vpa/">Helm部署VPA</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-scaling/k8s-HPA-VPA/">K8s HPA与VPA</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-scaling/k8s-%E5%9F%BA%E4%BA%8EKEDA%E7%9A%84%E5%BC%B9%E6%80%A7%E8%83%BD%E5%8A%9B/">K8s基于KEDA的弹性能力</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-scaling/k8s%E6%88%90%E6%9C%AC%E4%BC%98%E5%8C%96%E6%96%B9%E6%A1%88-FinOps%E5%AE%9E%E6%88%98/">K8s 集群成本优化方案：砍掉 60% 云账单</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-security-auth</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2capsule/">Helm部署Capsule</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2certmanager/">Helm部署Cert-Manager</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2external-secrets/">Helm部署External-Secrets</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2kyverno%E5%92%8Cpolicy-reporter/">Helm部署Kyverno和Policy-Reporter</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2oauth2proxy/">Helm部署OAuth2-Proxy</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2sonarqube/">Helm部署SonarQube</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2trivy-operator/">Helm部署Trivy-Operator</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/k8s-Admission-Webhook%E9%93%BE%E5%86%B2%E7%AA%81%E6%8E%92%E6%9F%A5-Istio-Kyverno-Gatekeeper/">当 Istio、Kyverno、Gatekeeper 三个 Webhook 同时存在，你的集群会发生什么？</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/k8s%E5%AE%B9%E5%99%A8%E5%AE%89%E5%85%A8%E4%B8%8A%E4%B8%8B%E6%96%87-SecurityContext/">Kubernetes 容器安全上下文完全指南：从入门到生产避坑</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-springcloud</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-springcloud/SpringCloud%E9%A1%B9%E7%9B%AE%E8%BF%81%E7%A7%BB%E5%88%B0k8s%E5%AE%9E%E6%88%98/">SpringCloud 项目迁移到 K8s 实战</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-storage</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-storage/helm%E9%83%A8%E7%BD%B2nfs-subdir-external-provisioner/">Helm部署NFS Subdir External Provisioner</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-storage/k8s-ceph%E9%83%A8%E7%BD%B2%E4%B8%8E%E9%9B%86%E6%88%90/">K8s Ceph部署与集成</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-storage/k8s-%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8CubeFS/">K8s分布式存储CubeFS</a></li>
+        </ul>
+        <p class="sidebar-group">kubeblocks</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/kubeblocks/kubeblocks%E9%83%A8%E7%BD%B2WordPress/">KubeBlocks 部署 WordPress</a></li>
+          <li><a href="../../../Docker-Kubernetes/kubeblocks/kubeblocks%E9%83%A8%E7%BD%B2%E9%AB%98%E5%8F%AF%E7%94%A8harbor%E9%9B%86%E7%BE%A4/">KubeBlocks 部署高可用 Harbor 集群</a></li>
+        </ul>
+        <p class="sidebar-group">其他</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/%E7%AE%80%E5%8E%86%E6%8C%87%E5%8D%97/">简历指南</a></li>
+        </ul>
+      </nav>
+    </details>
+  </aside>
+
+  <article class="article">
+    <nav class="breadcrumb">
+      <a href="../../../index.html">首页</a><span>/</span>
+      <a href="../../../Docker-Kubernetes/">Docker-Kubernetes</a><span>/</span><span>k8s-monitoring-logging</span>
+    </nav>
+    <h1 class="article-title">Prometheus基础</h1>
+    <p class="article-meta"><span>更新于 2026-04-16</span>
+      <a href="https://github.com/hangx969/learning-notes/blob/main/Docker-Kubernetes/k8s-monitoring-logging/Prometheus%E5%9F%BA%E7%A1%80.md">查看源文件</a>
+    </p>
+    <div class="article-body">
+<h1 id="prometheus简介">Prometheus简介</h1>
+<h2 id="介绍">介绍</h2>
+<ul>
+<li>Prometheus是一个开源的系统监控和报警系统,现在已经加入到CNCF基金会,成为继k8s之后第二个在CNCF托管的项目。</li>
+<li>在kubernetes容器管理系统中,通常会搭配prometheus进行监控,同时也支持多种exporter采集数据,还支持pushgateway进行数据上报,Prometheus性能足够支撑上万台规模的集群。</li>
+<li>
+<p>其他监控服务比如:Zabbix、nagios、cattio、夜莺等,在k8s中,prometheus会更原生,配置起来更简便,修改配置文件即可部署监控。prometheus同样可以监控宿主机、windows、交换机等等,但是反过来就不一定能实现了。</p>
+</li>
+<li>
+<p>prometheus是监控平台,也是一个时序数据库,<code>TSDB</code>,专门存储大规模时间序列数据(性能指标、传感器数据、金融交易数据等),具有更高的效率和更好的性能。</p>
+</li>
+</ul>
+<h2 id="配置文档">配置文档</h2>
+<ul>
+<li>
+<p>Prometheus配置:<a href="https://prometheus.io/docs/prometheus/latest/configuration/configuration/">Prometheus Configuration Docs</a></p>
+</li>
+<li>
+<p>Prometheus监控组件对应的exporter部署地址: <a href="https://prometheus.io/docs/instrumenting/exporters/">Prometheus Exporters</a></p>
+</li>
+<li>
+<p>可以通过官网给出的不同的exporter来采集不同的指标(比如采集mysql、redis等软件的指标,采集GPU等硬件指标,采集node的OS指标,官网都给出了不同的exporter)</p>
+</li>
+<li>
+<p>Prometheus基于k8s服务发现参考: <a href="https://github.com/prometheus/prometheus/blob/release-2.31/documentation/examples/prometheus-kubernetes.yml">prometheus-kubernetes.yml (GitHub)</a></p>
+</li>
+</ul>
+<h2 id="特点">特点</h2>
+<ol>
+<li>
+<p>多维度数据模型</p>
+</li>
+<li>
+<p>每一个时间序列数据,都有一个时间戳。可以通过指标名称和一大堆标签去做聚合、检索。</p>
+</li>
+<li>
+<p>比如:http_requests_total 接收http请求的总计数,度量名称为/api/tracks的http请求,可以打上不同的标签,获取不同的操作:method=POST的标签,method=GET的标签,查看不同的操作</p>
+</li>
+<li>这个查询语言在这些度量和标签列表的基础上进行过滤和聚合。改变任何度量上的任何标签值,则会形成新的时间序列图。</li>
+<li>灵活的查询语言(PromQL)</li>
+<li>可以对采集的metrics指标进行加法,乘法,连接等操作。实现可视化、告警。</li>
+<li>存储简化:</li>
+<li>可以直接在本地部署,不依赖其他分布式存储;因为prometheus本身就是一个数据库。(zabbix等还需要单独部署mysql去存数据)</li>
+<li>部署多个prometheus实例,每个都是自治的独立的,都保存了完整的监控数据。一个挂了另外的还能独立工作。</li>
+<li>
+<p><strong>高效的存储:每个采样数据占3.5 bytes左右。比如:300万的时间序列,30s间隔,保留60天,消耗磁盘大概200G。</strong></p>
+</li>
+<li>
+<p>拉取模式:</p>
+</li>
+<li>prometheus服务端主动通过HTTP的pull方式采集时序数据;</li>
+<li>也有push模式,客户端push到中间网关pushgateway临时存储一下,prometheus server端再从pushgateway拉取数据;</li>
+<li>
+<p>比如有一个<code>一次性/短生命周期的job</code>,运行完就退出了,pull模式不能持续的拉数据。这个时候可以让job主动把指标发到pushgateway,prometheus再从pushgateway去拉</p>
+</li>
+<li>
+<p>动态发现:</p>
+</li>
+<li>可通过服务发现或者静态配置来发现目标服务对象(targets)。比如:</li>
+<li>
+<p>基于k8s的服务发现,自动发现所有pod;基于文件的,比如某个文件写入了redis的ip和接口列表,能基于文件做服务发现;比如有很多台非K8s主机,可以部署一个consul,主机注册到consul,prometheus就能从consul上做服务发现。</p>
+</li>
+<li>
+<p>做高可用,可以对数据做异地备份,联邦集群,部署多套prometheus,pushgateway上报数据:</p>
+</li>
+<li>比如,自己开发的应用,官网肯定没有exporter,就可以写脚本采集相应数据,用pushgateway推送到prometheus。</li>
+<li>可视化和告警支持</li>
+</ol>
+<h2 id="schema">schema</h2>
+<ul>
+<li>
+<p>在时间序列中的每一个点称为一个样本(sample),样本由以下三部分组成:</p>
+</li>
+<li>
+<p>指标(metric):指标名称和描述当前样本特征的 labelsets;</p>
+</li>
+<li>
+<p>时间戳(timestamp):一个精确到毫秒的时间戳;</p>
+</li>
+<li>
+<p>样本值(value): 一个 float64 的浮点型数据表示当前样本的值。</p>
+</li>
+<li>
+<p>表示方式:</p>
+</li>
+<li>
+<p>通过如下表达方式表示指定指标名称和指定标签集合的时间序列:</p>
+<p><code>&lt;metric name&gt;{&lt;label name&gt;=&lt;label value&gt;, ...}</code></p>
+</li>
+<li>
+<p>例如,指标名称为 api_http_requests_total,标签为 method="POST" 和 handler="/messages" 的时间序列可以表示为:</p>
+<p><code>api_http_requests_total{method="POST", handler="/messages"}</code></p>
+</li>
+</ul>
+<h2 id="数据类型">数据类型</h2>
+<h3 id="counter">Counter</h3>
+<ul>
+<li>Counter是计数器类型:</li>
+<li>Counter 用于累计值,例如记录请求次数、任务完成数、错误发生次数。</li>
+<li>一直增加,不会减少。</li>
+<li>
+<p>重启进程后,会被重置。</p>
+</li>
+<li>
+<p>例如:</p>
+</li>
+<li>http_response_total{method="GET",endpoint="/api/tracks"} 100</li>
+<li>
+<p>http_response_total{method="GET",endpoint="/api/tracks"} 160</p>
+</li>
+<li>
+<p>Counter可以方便的了解事件产生的速率的变化,在PromQL内置的相关操作函数可以提供相应的分析,比如以HTTP应用请求量来进行说明:</p>
+</li>
+<li>
+<p>通过rate()函数获取HTTP请求量的增长率</p>
+<p><code>rate(http_requests_total[5m])</code></p>
+</li>
+<li>
+<p>查询当前系统中,访问量前10的HTTP地址</p>
+<p><code>topk(10, http_requests_total)</code></p>
+</li>
+</ul>
+<h3 id="gauge">Gauge</h3>
+<ul>
+<li>Gauge是测量器类型:</li>
+<li>Gauge是常规数值,例如温度变化、内存使用变化。</li>
+<li>可变大,可变小。</li>
+<li>
+<p>重启进程后,会被重置</p>
+</li>
+<li>
+<p>例如:</p>
+</li>
+<li>memory_usage_bytes{host="master-01"}  100</li>
+<li>memory_usage_bytes{host="master-01"}  30</li>
+<li>
+<p>memory_usage_bytes{host="master-01"}  50</p>
+</li>
+<li>
+<p>对于 Gauge 类型的监控指标,通过 PromQL 内置函数<code>delta()</code>可以获取样本在一段时间内的变化情况,例如,计算 CPU 温度在两小时内的差异:</p>
+</li>
+</ul>
+<p><code>dalta(cpu_temp_celsius{host="zeus"}[2h])</code></p>
+<ul>
+<li>还可以通过PromQL内置函数<code>predict_linear()</code>基于简单线性回归的方式,对样本数据的变化趋势做出预测。例如,基于 2 小时的样本数据,来预测主机可用磁盘空间在 4 个小时之后的剩余情况:<code>predict_linear(node_filesystem_free{job="node"}[2h], 4 \* 3600) &lt; 0</code></li>
+</ul>
+<h3 id="histogram">histogram</h3>
+<ul>
+<li>histogram是柱状图,在Prometheus系统的查询语言中,有三种作用:</li>
+<li>在一段时间范围内对数据进行采样(通常是请求持续时间或响应大小等),并将其计入可配置的存储桶(bucket)中. 后续可通过指定区间筛选样本,也可以统计样本总数,最后一般将数据展示为直方图。</li>
+<li>对每个采样点值累计和(sum)</li>
+<li>
+<p>对采样点的次数累计和(count)</p>
+</li>
+<li>
+<p>度量指标名称: <code>basename_</code>上面三类的作用度量指标名称</p>
+</li>
+<li><code>basename_bucket{le="上边界"}</code>, 这个值为小于等于上边界的所有采样点数量</li>
+<li><code>basename_sum</code></li>
+<li>
+<p><code>basename_count</code></p>
+</li>
+<li>
+<p>为什需要用histogram柱状图?</p>
+</li>
+<li>
+<p>在大多数情况下人们都倾向于使用某些量化指标的平均值,例如 CPU 的平均使用率、页面的平均响应时间。这种方式的问题很明显,以系统 API 调用的平均响应时间为例:如果大多数 API 请求都维持在 100ms 的响应时间范围内,而个别请求的响应时间需要 5s,那么就会导致某些 WEB 页面的响应时间落到中位数的情况,而这种现象被称为长尾问题。</p>
+</li>
+<li>
+<p>为了区分是平均的慢还是长尾的慢,最简单的方式就是按照请求延迟的范围进行分组。例如,统计延迟在 0~10ms 之间的请求数有多少,而 10~20ms 之间的请求数又有多少。通过这种方式可以快速分析系统慢的原因。Histogram 和 Summary 都是为了能够解决这样问题的存在,通过 Histogram 和 Summary 类型的监控指标,我们可以快速了解监控样本的分布情况。</p>
+</li>
+<li>
+<p>例如:</p>
+</li>
+</ul>
+<p>样本的值分布在 bucket 中的数量,命名为 <code>basename_bucket{le="上边界"}</code>。这个值表示指标值小于等于上边界的所有样本数量。</p>
+<p>1、http 请求响应时间 &lt;=0.005 秒 的请求次数为0</p>
+<p><code>io_namespace_http_requests_latency_seconds_histogram_bucket{path="/",method="GET",code="200",le="0.005",} 0.0</code></p>
+<p>2、http 请求响应时间 &lt;=0.01 秒 的请求次数为0</p>
+<p><code>io_namespace_http_requests_latency_seconds_histogram_bucket{path="/",method="GET",code="200",le="0.01",} 0.0</code></p>
+<p>3、http 请求响应时间 &lt;=0.025 秒 的请求次数为0</p>
+<p><code>io_namespace_http_requests_latency_seconds_histogram_bucket{path="/",method="GET",code="200",le="0.025",} 0.0</code></p>
+<h3 id="summary">summary</h3>
+<ul>
+<li>与 Histogram 类型类似,用于表示一段时间内的数据采样结果(通常是请求持续时间或响应大小等),但它直接存储了分位数(通过客户端计算,然后展示出来),而不是通过区间来计算。它也有三种作用:</li>
+</ul>
+<p>1、观察时间的quantiles (0~1), 显示为<code>basename{分位数="quantitles"}</code></p>
+<p>2、<code>[basename]_sum</code>, 是指所有观察值的总和</p>
+<p>3、<code>[basename]_count</code>, 是指已观察到的事件计数值</p>
+<ul>
+<li>
+<p>例如:</p>
+</li>
+<li>
+<p>quantiles</p>
+<ul>
+<li>
+<p>http 请求中有 50% 的请求响应时间在 3.052404983s以内 <code>io_namespace_http_requests_latency_seconds_summary{path="/",method="GET",code="200",quantile="0.5",} 3.052404983</code></p>
+</li>
+<li>
+<p>http 请求中有 90% 的请求响应时间是在8.003261666s以内</p>
+</li>
+</ul>
+<p><code>io_namespace_http_requests_latency_seconds_summary{path="/",method="GET",code="200",quantile="0.9",} 8.003261666</code></p>
+</li>
+<li>
+<p>basename_sum</p>
+<p>http 请求的总响应时间为 51.029495508s</p>
+<p><code>io_namespace_http_requests_latency_seconds_summary_sum{path="/",method="GET",code="200",} 51.029495508</code></p>
+</li>
+<li>
+<p>basename_count</p>
+<p>当前一共发生了 12 次 http 请求</p>
+<p><code>io_namespace_http_requests_latency_seconds_summary_count{path="/",method="GET",code="200",} 12.0</code></p>
+</li>
+</ul>
+<h2 id="组件">组件</h2>
+<ol>
+<li>Prometheus Server: 用于收集和存储时间序列数据。</li>
+<li>Retrieval负责在活跃的target主机上抓取监控指标数据</li>
+<li>TSDB把采集到的数据存储到磁盘中</li>
+<li>
+<p>http server会将告警信息传递到alertmanager,推送到接收方</p>
+</li>
+<li>
+<p>Client Library: 客户端库,检测应用程序代码,当Prometheus抓取实例的HTTP端点时,客户端库会将所有跟踪的metrics指标的当前状态发送到prometheus server端。</p>
+</li>
+<li>
+<p>Exporters:</p>
+</li>
+<li>
+<p>有一些服务或者非云原生的组件没有metrics接口,不能直接拉数据,就需要单独的exporter去采集数据。prometheus支持多种exporter,通过exporter可以采集metrics数据,然后发送到prometheus server端,所有向promtheus server提供监控数据的程序都可以被称为exporter</p>
+</li>
+<li>
+<p>大部分云原生组件是有metrics接口的,就不需要exporter了,比如etcd、api-server等。</p>
+</li>
+<li>
+<p>Alertmanager: 从 Prometheus server 端接收到 alerts 后,会进行去重,分组,并路由到相应的接收方,发出报警,常见的接收方式有:电子邮件,微信,钉钉, slack等。</p>
+</li>
+<li>
+<p>Grafana:监控仪表盘,可视化监控数据。安装prometheus的时候基本必装grafana。但是两者不是一个公司开发的。</p>
+</li>
+<li>
+<p>pushgateway: 各个目标主机可上报数据到pushgateway,然后prometheus server统一从pushgateway拉取数据。</p>
+</li>
+</ol>
+<p><img alt="image-20240103104154211" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202401031041340.png" /></p>
+<h2 id="工作流程">工作流程</h2>
+<ol>
+<li>
+<p>Prometheus server可定期从活跃的(up)目标主机上(target)拉取监控指标数据,目标主机的监控数据可通过配置静态job或者服务发现的方式被prometheus server采集到,这种方式默认的pull方式拉取指标;也可通过pushgateway把采集的数据上报到prometheus server中;还可通过一些组件自带的exporter采集相应组件的数据;</p>
+</li>
+<li>
+<p>Prometheus server把采集到的监控指标数据保存到本地磁盘或者数据库;</p>
+</li>
+<li>
+<p>Prometheus采集的监控指标数据按时间序列存储,通过配置报警规则,把触发的报警发送到alertmanager</p>
+</li>
+<li>
+<p>Alertmanager通过配置报警接收方,发送报警到邮件,微信或者钉钉等</p>
+</li>
+<li>
+<p>Prometheus 自带的web ui界面提供PromQL查询语言,可查询监控数据</p>
+</li>
+<li>
+<p>Grafana可接入prometheus数据源,把监控数据以图形化形式展示出</p>
+</li>
+</ol>
+<h2 id="与zabbix对比">与Zabbix对比</h2>
+<p><img alt="image-20240103111904910" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202401031119014.png" /></p>
+<h1 id="安装方法">安装方法</h1>
+<ol>
+<li>二进制安装:go语言开发的,安一个go包就行</li>
+<li>容器安装</li>
+<li>k8s安装:kube-prometheus-stack helm包。非常全,所有组件一键安装。推荐。</li>
+</ol>
+<p><div class="callout callout-tip" markdown="1"><br />
+<p class="callout-title">Tip</p></p>
+<p>生产环境建议单独用一台工作节点去装prometheus</p>
+</div>
+<h1 id="promql查询语言">PromQL查询语言</h1>
+<p>PromQL(Prometheus Query Language)是 Prometheus 自己开发的表达式语言,语言表现力很丰富,内置函数也很多。使用它可以对时序数据进行筛选和聚合。</p>
+<h2 id="数据类型_1">数据类型</h2>
+<p>PromQL 表达式计算出来的值有以下几种类型:</p>
+<ul>
+<li>
+<p>瞬时向量 (Instant vector): 一组时序,每个时序只有一个采样值</p>
+</li>
+<li>
+<p>区间向量 (Range vector): 一组时序,每个时序包含一段时间内的多个采样值</p>
+</li>
+<li>
+<p>标量数据 (Scalar): 一个浮点数</p>
+</li>
+<li>
+<p>字符串 (String): 一个字符串,暂时未用</p>
+</li>
+</ul>
+<h3 id="瞬时向量选择器">瞬时向量选择器</h3>
+<ul>
+<li>瞬时向量选择器用来选择一组时序在某个采样点的采样值。最简单的情况就是指定一个度量指标,选择出所有属于该度量指标的时序的当前采样值。</li>
+<li>
+<p>比如下面的表达式:<code>apiserver_request_total</code>,可以通过在后面添加用大括号包围起来的一组标签键值对来对时序进行过滤。比如下面的表达式筛选出了 job 为 kubernetes-apiservers,并且 resource为 pod的时序:<code>apiserver_request_total{job="kubernetes-apiserver",resource="pods"}</code></p>
+</li>
+<li>
+<p>匹配标签值时可以是等于,也可以使用正则表达式。总共有下面几种匹配操作符:</p>
+</li>
+<li>
+<p>=:完全相等</p>
+</li>
+<li>
+<p>!=: 不相等</p>
+</li>
+<li>
+<p>=~: 正则表达式匹配</p>
+</li>
+<li>
+<p>!~: 正则表达式不匹配</p>
+</li>
+<li>
+<p>下面的表达式筛选出了container是kube-scheduler或kube-proxy或kube-apiserver的时序数据:<code>container_processes{container=~"kube-scheduler|kube-proxy|kube-apiserver"}</code></p>
+</li>
+</ul>
+<h3 id="区间向量选择器">区间向量选择器</h3>
+<ul>
+<li>区间向量选择器类似于瞬时向量选择器,不同的是它选择的是过去一段时间的采样值。可以通过在瞬时向量选择器后面添加包含在 [] 里的时长来得到区间向量选择器。</li>
+<li>比如下面的表达式选出了所有度量指标为apiserver_request_total且resource是pod的时序在过去1分钟的采样值:<code>apiserver_request_total{job="kubernetes-apiserver",resource="pods"}[1m]</code></li>
+</ul>
+<h3 id="偏移向量选择器">偏移向量选择器</h3>
+<ul>
+<li>偏移修饰器用来调整基准时间,使其往前偏移一段时间。偏移修饰器紧跟在选择器后面,使用 offset 来指定要偏移的量。</li>
+<li>
+<p>比如下面的表达式选择度量名称为apiserver_request_total的所有时序在 5 分钟前的采样值:<code>apiserver_request_total{job="kubernetes-apiserver",resource="pods"} offset 5m</code></p>
+</li>
+<li>
+<p>下面的表达式选择apiserver_request_total 度量指标在 1 周前的这个时间点过去 5 分钟的采样值:<code>apiserver_request_total{job="kubernetes-apiserver",resource="pods"} [5m] offset 1w</code></p>
+</li>
+</ul>
+<h2 id="聚合操作符">聚合操作符</h2>
+<p>PromQL 的聚合操作符用来将向量里的元素聚合得更少。总共有下面这些聚合操作符:</p>
+<ul>
+<li>
+<p>sum:求和</p>
+</li>
+<li>
+<p>min:最小值</p>
+</li>
+<li>
+<p>max:最大值</p>
+</li>
+<li>
+<p>avg:平均值</p>
+</li>
+<li>
+<p>stddev:标准差</p>
+</li>
+<li>
+<p>stdvar:方差</p>
+</li>
+<li>
+<p>count:元素个数</p>
+</li>
+<li>
+<p>count_values:等于某值的元素个数</p>
+</li>
+<li>
+<p>bottomk:最小的 k 个元素</p>
+</li>
+<li>
+<p>topk:最大的 k 个元素</p>
+</li>
+<li>
+<p>quantile:分位数</p>
+</li>
+</ul>
+<p>示例:</p>
+<ul>
+<li>计算master1节点所有容器总计内存</li>
+</ul>
+<p><code>sum(container_memory_usage_bytes{instance=~"master1"})/1024/1024/1024</code></p>
+<ul>
+<li>计算master1节点最近1m所有容器cpu使用率</li>
+</ul>
+<p><code>sum (rate (container_cpu_usage_seconds_total{instance=~"master1"}[1m])) / sum (machine_cpu_cores{ instance =~"master1"}) * 100</code></p>
+<ul>
+<li>计算最近1m所有容器cpu使用率的总和</li>
+</ul>
+<p><code>sum (rate (container_cpu_usage_seconds_total{id!="/"}[1m])) by (id)</code>#把id会打印出来</p>
+<blockquote>
+<p><code>rate()</code>函数用于计算时间序列数据的平均速率。这个函数通常用于处理计数器类型的指标</p>
+</blockquote>
+<h2 id="函数">函数</h2>
+<p>Prometheus 内置了一些函数来辅助计算,下面介绍一些典型的。</p>
+<ul>
+<li>
+<p>abs():绝对值</p>
+</li>
+<li>
+<p>sqrt():平方根</p>
+</li>
+<li>
+<p>exp():指数计算</p>
+</li>
+<li>
+<p>ln():自然对数</p>
+</li>
+<li>
+<p>ceil():向上取整</p>
+</li>
+<li>
+<p>floor():向下取整</p>
+</li>
+<li>
+<p>round():四舍五入取整</p>
+</li>
+<li>
+<p>delta():计算区间向量里每一个时序第一个和最后一个的差值</p>
+</li>
+<li>
+<p>sort():排序</p>
+</li>
+<li>
+<p>函数predict_linear 可以用于预测分析和预测性告警,比如可以根据一天的数据,预测4个 小时后,磁盘分区的空间会不会小于0:</p>
+</li>
+</ul>
+<p><code>sh
+  predict_linear(node_filesystem_files_free{mountpoint="/"}[1d], 4*3600) &lt; 0</code></p>
+<p>除了上述的函数,还有几个比较重要的函数,比如increase、rate、irate。</p>
+<p>其中increase是计算在一段时间范围内数据的增长(只能计算count类型的数据),rate和irate是计算平均增长率和瞬时增长率。</p>
+<p>比如查询某个请求在1小时的时间增长了多少:</p>
+<div class="highlight"><pre><span></span><code>increase<span class="o">(</span>prometheus_http_requests_total<span class="o">{</span><span class="nv">handler</span><span class="o">=</span><span class="s2">&quot;/-/healthy&quot;</span><span class="o">}[</span>1h<span class="o">])</span>
+</code></pre></div>
+
+<p>将1h增长的数量除以该时间即为增长率:</p>
+<div class="highlight"><pre><span></span><code>increase<span class="o">(</span>prometheus_http_requests_total<span class="o">{</span><span class="nv">handler</span><span class="o">=</span><span class="s2">&quot;/-/healthy&quot;</span><span class="o">}[</span>1h<span class="o">])</span><span class="w"> </span>/<span class="w"> </span><span class="m">3600</span>
+</code></pre></div>
+
+<p>相对于increase,rate 可以直接计算出某个指标在给定时间范围内的增长率,比如还是计算 1h 的增长率,可以用rate函数进行计算:</p>
+<div class="highlight"><pre><span></span><code>rate<span class="o">(</span>prometheus_http_requests_total<span class="o">{</span><span class="nv">handler</span><span class="o">=</span><span class="s2">&quot;/-/healthy&quot;</span><span class="o">}[</span>1h<span class="o">])</span>
+</code></pre></div>
+
+<p>如果需要计算瞬时增长率,可以使用irate(irate 是计算最接近当前时间的两个数据点之间 的增长率,即瞬时增长率):</p>
+<div class="highlight"><pre><span></span><code>irate<span class="o">(</span>prometheus_http_requests_total<span class="o">{</span><span class="nv">handler</span><span class="o">=</span><span class="s2">&quot;/-/healthy&quot;</span><span class="o">}[</span>1h<span class="o">])</span>
+</code></pre></div>
+
+<h1 id="relabel机制">Relabel机制</h1>
+<p>对监控目标的Label的重写,比如进行多重标记、过滤、分类等。(比如有些数据不想要了)</p>
+<p>常见Relabel配置:</p>
+<ul>
+<li>【必备】<code>source_labels:[meta_kubernetes_pod_name, meta_kubernetes_namespace]</code></li>
+<li>源标签的key的列表</li>
+<li>读取这些标签的key对应的值,作为relabel的输入。再把这些值赋值给targetLabel</li>
+<li>【必备】<code>target_label:[instance]</code></li>
+<li>指定relabel处理之后,要写入或者修改的标签的key,并将处理后的值赋值给这个标签</li>
+<li>separator:如果source_labels有多个,将他们的值合并。默认用;连接</li>
+<li>regex:匹配源标签的值,默认为<code>(.*)</code></li>
+<li>replacement: 指定再进行标签重写时用的替换值,默认为$1</li>
+<li>action:正则表达式匹配时执行的动作,默认为replace</li>
+<li>replace:替换标签值</li>
+<li>keep:保留匹配的目标,不匹配的丢弃</li>
+<li>drop:丢弃匹配的目标,保留未匹配的</li>
+<li>labelmap:对于匹配后的标签映射到新标签中</li>
+<li>labeldrop:删除某个标签</li>
+<li>labelkeep:只保留某个标签</li>
+</ul>
+<h1 id="promql语法实战">PromQL语法实战</h1>
+<h2 id="web-ui入口">Web UI入口</h2>
+<p>PromQL Web UI 的Graph选项卡提供了简单的用于查询数据的入口,对于PromQL的编写和校验都可以在此位置。</p>
+<p>想查看指标但是不知道都有哪些指标名称?麻烦的方法是去请求node_exporter的svc会返回所有的指标名称;简单的方法是直接在查询框里面输入前缀,想查pod就输入pod,下面会出现补全后的指标名称;想查node就输入node,以此类推。</p>
+<h2 id="常用监控指标">常用监控指标</h2>
+<p>查看磁盘空间:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 查询分区不是/boot,且磁盘是/dev/开头的分区大小(结果不再展示):</span>
+node_filesystem_size_bytes<span class="o">{</span><span class="nv">device</span><span class="o">=</span>~<span class="s2">&quot;/dev/.*&quot;</span>,<span class="w"> </span>mountpoint!<span class="o">=</span><span class="s2">&quot;/boot&quot;</span><span class="o">}</span>
+
+<span class="c1"># 查询主机k8s-master01在最近5分钟可用的磁盘空间变化:</span>
+node_filesystem_avail_bytes<span class="o">{</span><span class="nv">instance</span><span class="o">=</span><span class="s2">&quot;k8s-master01&quot;</span>,<span class="w"> </span><span class="nv">mountpoint</span><span class="o">=</span><span class="s2">&quot;/&quot;</span>,
+<span class="nv">device</span><span class="o">=</span><span class="s2">&quot;/dev/mapper/centos-root&quot;</span><span class="o">}[</span>5m<span class="o">]</span>
+
+<span class="c1"># 查询10分钟之前磁盘可用空间,只需要指定offset参数即可:</span>
+node_filesystem_avail_bytes<span class="o">{</span><span class="nv">instance</span><span class="o">=</span><span class="s2">&quot;k8s-master01&quot;</span>,<span class="w"> </span><span class="nv">mountpoint</span><span class="o">=</span><span class="s2">&quot;/&quot;</span>,
+<span class="nv">device</span><span class="o">=</span><span class="s2">&quot;/dev/mapper/centos-root&quot;</span><span class="o">}</span><span class="w"> </span>offset<span class="w"> </span>10m
+
+<span class="c1"># 将结果的字节转换为GB</span>
+node_filesystem_avail_bytes<span class="o">{</span><span class="nv">instance</span><span class="o">=</span><span class="s2">&quot;k8s-master01&quot;</span>,<span class="w"> </span><span class="nv">mountpoint</span><span class="o">=</span><span class="s2">&quot;/&quot;</span>,
+<span class="nv">device</span><span class="o">=</span><span class="s2">&quot;/dev/mapper/centos-root&quot;</span><span class="o">}</span><span class="w"> </span>/<span class="w"> </span><span class="o">(</span><span class="m">1024</span><span class="w"> </span>^<span class="w"> </span><span class="m">3</span><span class="o">)</span>
+</code></pre></div>
+
+<p>查询所有主机根分区的可用率:</p>
+<div class="highlight"><pre><span></span><code>node_filesystem_avail_bytes<span class="o">{</span><span class="nv">mountpoint</span><span class="o">=</span><span class="s2">&quot;/&quot;</span><span class="o">}</span><span class="w"> </span>/<span class="w"> </span>node_filesystem_size_bytes<span class="o">{</span><span class="nv">mountpoint</span><span class="o">=</span><span class="s2">&quot;/&quot;</span><span class="o">}</span><span class="w"> </span>*<span class="w"> </span><span class="m">100</span>
+</code></pre></div>
+    </div>
+  </article>
+  <aside class="toc">
+    <p class="toc-label">本页目录</p>
+    <ul>
+  <li><a href="#介绍">介绍</a></li>
+  <li><a href="#配置文档">配置文档</a></li>
+  <li><a href="#特点">特点</a></li>
+  <li><a href="#schema">schema</a></li>
+  <li><a href="#数据类型">数据类型</a><ul>
+  <li><a href="#counter">Counter</a></li>
+  <li><a href="#gauge">Gauge</a></li>
+  <li><a href="#histogram">histogram</a></li>
+  <li><a href="#summary">summary</a></li>
+</ul></li>
+  <li><a href="#组件">组件</a></li>
+  <li><a href="#工作流程">工作流程</a></li>
+  <li><a href="#与zabbix对比">与Zabbix对比</a></li>
+  <li><a href="#数据类型_1">数据类型</a><ul>
+  <li><a href="#瞬时向量选择器">瞬时向量选择器</a></li>
+  <li><a href="#区间向量选择器">区间向量选择器</a></li>
+  <li><a href="#偏移向量选择器">偏移向量选择器</a></li>
+</ul></li>
+  <li><a href="#聚合操作符">聚合操作符</a></li>
+  <li><a href="#函数">函数</a></li>
+  <li><a href="#web-ui入口">Web UI入口</a></li>
+  <li><a href="#常用监控指标">常用监控指标</a></li>
+</ul>
+  </aside>
+
+</div>
+
+</main>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>Learning Notes</span>
+    <a href="https://github.com/hangx969/learning-notes">GitHub</a>
+  </div>
+</footer>
+<script src="../../../static/search.js"></script>
+</body>
+</html>

@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LVM 与 RAID - Learning Notes</title>
+<link rel="stylesheet" href="../../static/style.css">
+<link rel="stylesheet" href="../../static/pygments.css">
+</head>
+<body data-root="../../">
+<header class="site-header">
+  <div class="header-inner">
+    <a class="logo" href="../../index.html"><span class="logo-mark"></span>LEARNING NOTES</a>
+    <div class="search">
+      <input id="search-input" type="search" placeholder="搜索笔记…" autocomplete="off" aria-label="搜索笔记">
+      <div id="search-results" hidden></div>
+    </div>
+  </div>
+  <nav class="topic-nav" aria-label="主题导航">
+    <div class="topic-nav-inner">
+      <a href="../../AI/">AI</a>
+      <a href="../../Aliyun/">Aliyun</a>
+      <a href="../../Azure/">Azure</a>
+      <a href="../../C%2B%2B/">C++</a>
+      <a href="../../CloudComputing/">CloudComputing</a>
+      <a href="../../Database/">Database</a>
+      <a href="../../Docker-Kubernetes/">Docker-Kubernetes</a>
+      <a href="../../GPU-DeepLearning/">GPU-DeepLearning</a>
+      <a href="../../Git/">Git</a>
+      <a href="../../Go/">Go</a>
+      <a href="../../HPC/">HPC</a>
+      <a href="../../IaC/">IaC</a>
+      <a href="../../Linux-Shell/" class="active">Linux-Shell</a>
+      <a href="../../Middlewares/">Middlewares</a>
+      <a href="../../Networking/">Networking</a>
+      <a href="../../OS/">OS</a>
+      <a href="../../Python/">Python</a>
+      <a href="../../SoftwareTesting/">SoftwareTesting</a>
+    </div>
+  </nav>
+</header>
+<main class="main">
+
+<div class="article-layout">
+
+  <aside class="sidebar">
+    <details class="sidebar-details">
+      <summary>Linux-Shell</summary>
+      <nav class="sidebar-nav">
+        <p class="sidebar-group">其他</p>
+        <ul>
+          <li><a href="../../Linux-Shell/LVM-RAID/" class="current">LVM 与 RAID</a></li>
+          <li><a href="../../Linux-Shell/Linux-learning-notes/">Linux 学习笔记</a></li>
+          <li><a href="../../Linux-Shell/Linux%E7%BB%88%E7%AB%AF%E9%85%8D%E7%BD%AEproxy/">Linux终端配置代理</a></li>
+          <li><a href="../../Linux-Shell/MacBook%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/">MacBook 开发环境配置</a></li>
+          <li><a href="../../Linux-Shell/Ubuntu-unattended-upgrade%E7%AE%A1%E7%90%86/">Ubuntu安全补丁</a></li>
+          <li><a href="../../Linux-Shell/Ubuntu-%E4%BF%AE%E6%94%B9%E5%90%AF%E5%8A%A8%E5%86%85%E6%A0%B8/">Ubuntu修改启动内核</a></li>
+          <li><a href="../../Linux-Shell/Ubuntu%E5%9F%BA%E7%A1%80%E6%93%8D%E4%BD%9C/">Ubuntu基础操作</a></li>
+          <li><a href="../../Linux-Shell/Ubuntu%E5%AE%89%E8%A3%85Wechat/">Ubuntu安装Wechat</a></li>
+          <li><a href="../../Linux-Shell/Ubuntu%E5%AE%89%E8%A3%85%E6%98%BE%E5%8D%A1%E9%A9%B1%E5%8A%A8/">Ubuntu安装显卡驱动</a></li>
+          <li><a href="../../Linux-Shell/Ubuntu%E9%83%A8%E7%BD%B2vftpd/">Ubuntu部署vsftpd</a></li>
+          <li><a href="../../Linux-Shell/VMWare-using-notes/">VMWare虚拟机挂载共享目录</a></li>
+          <li><a href="../../Linux-Shell/ansible%E5%AE%89%E8%A3%85-rockylinux8/">Ansible安装 - Rocky Linux 8</a></li>
+          <li><a href="../../Linux-Shell/inotifywait%E7%9B%91%E6%8E%A7%E6%96%87%E4%BB%B6%E5%8F%98%E5%8C%96/">inotifywait监控文件变化</a></li>
+          <li><a href="../../Linux-Shell/linux%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E7%AE%A1%E7%90%86/">Linux环境变量管理</a></li>
+          <li><a href="../../Linux-Shell/nmcli%E7%AE%A1%E7%90%86%E7%BD%91%E7%BB%9C%E9%85%8D%E7%BD%AE/">nmcli管理网络配置</a></li>
+          <li><a href="../../Linux-Shell/samba%E6%96%87%E4%BB%B6%E5%85%B1%E4%BA%AB%E6%9C%8D%E5%8A%A1/">Samba文件共享服务</a></li>
+          <li><a href="../../Linux-Shell/screen%E5%90%8E%E5%8F%B0%E8%BF%90%E8%A1%8C%E4%BB%BB%E5%8A%A1/">screen后台运行任务</a></li>
+          <li><a href="../../Linux-Shell/shell-scripts/">Shell 脚本</a></li>
+          <li><a href="../../Linux-Shell/ssh%E8%BF%9C%E7%A8%8B%E6%89%A7%E8%A1%8C%E5%A4%9A%E4%B8%AA%E5%91%BD%E4%BB%A4/">SSH远程执行多个命令</a></li>
+          <li><a href="../../Linux-Shell/ssh%E8%BF%9E%E6%8E%A5/">SSH连接</a></li>
+          <li><a href="../../Linux-Shell/vscode/">VSCode命令行安装插件</a></li>
+          <li><a href="../../Linux-Shell/%E5%BC%80%E6%BA%90%E5%A0%A1%E5%9E%92%E6%9C%BAjumpserver%E9%83%A8%E7%BD%B2/">开源堡垒机JumpServer部署</a></li>
+          <li><a href="../../Linux-Shell/%E7%B3%BB%E7%BB%9F%E4%BF%A1%E6%81%AF%E6%9F%A5%E7%9C%8B/">系统信息查看</a></li>
+          <li><a href="../../Linux-Shell/%E9%85%8D%E7%BD%AEzsh%E7%BB%88%E7%AB%AF/">配置zsh终端</a></li>
+        </ul>
+      </nav>
+    </details>
+  </aside>
+
+  <article class="article">
+    <nav class="breadcrumb">
+      <a href="../../index.html">首页</a><span>/</span>
+      <a href="../../Linux-Shell/">Linux-Shell</a>
+    </nav>
+    <h1 class="article-title">LVM 与 RAID</h1>
+    <p class="article-meta"><span>更新于 2026-04-16</span>
+      <a href="https://github.com/hangx969/learning-notes/blob/main/Linux-Shell/LVM-RAID.md">查看源文件</a>
+    </p>
+    <div class="article-body">
+<h1 id="lvm基本概念">LVM基本概念</h1>
+<p><div class="callout callout-info" markdown="1"><br />
+<p class="callout-title">LVM 简介</p></p>
+<ul>
+<li>在 GNU/Linux 环境中，LVM（Logical Volume Management）或逻辑卷管理是一种通过虚拟块轻松管理块设备的解决方案。Linux 环境中使用 LVM 的磁盘管理提供了系统上存在的磁盘结构的高级视图，为应用程序和用户分配存储提供了更大的灵活性。使用 LVM 创建的卷几乎可以随意调整大小和移动，使得存储空间的管理变得更加简便和高效。</li>
+<li>LVM 的三个重要元素：物理卷（PV）、卷组（VG）和逻辑卷（LV）。</li>
+</ul>
+</div>
+<h2 id="物理卷physical-volume">物理卷（Physical Volume）</h2>
+<p>物理卷是 LVM 中的基本单元，它可以是硬盘的整个分区或者未分区的硬盘空间。物理卷是 LVM 中存储数据的实际载体，它们通常是硬盘、SSD 或 NVMe 等块设备。</p>
+<p>创建物理卷的步骤通常包括使用 <code>pvcreate</code> 命令将磁盘或磁盘分区标记为物理卷，以供后续使用。</p>
+<div class="highlight"><pre><span></span><code>pvcreate<span class="w"> </span>/dev/sdb
+</code></pre></div>
+
+<h2 id="卷组volume-group">卷组（Volume Group）</h2>
+<p>卷组是由一个或多个物理卷组成的逻辑存储池，它为逻辑卷提供了抽象和灵活性。在卷组中，物理卷的存储空间汇总在一起，以供后续使用。</p>
+<p>创建卷组的步骤包括使用 <code>vgcreate</code> 命令创建一个卷组，并将一个或多个物理卷添加到卷组中。</p>
+<div class="highlight"><pre><span></span><code>vgcreate<span class="w"> </span>vg_data<span class="w"> </span>/dev/sdb
+</code></pre></div>
+
+<h2 id="逻辑卷logical-volume">逻辑卷（Logical Volume）</h2>
+<p>逻辑卷是从卷组中划分出的逻辑存储空间，它可以看作是虚拟的硬盘分区。逻辑卷是用户实际上用来存储数据的部分，它们可以根据需要动态调整大小，并且可以跨越多个物理卷。</p>
+<p>创建逻辑卷的步骤包括使用 <code>lvcreate</code> 命令在指定的卷组上创建逻辑卷，并指定逻辑卷的大小。</p>
+<div class="highlight"><pre><span></span><code>lvcreate<span class="w"> </span>-L<span class="w"> </span>100G<span class="w"> </span>-n<span class="w"> </span>lv_data<span class="w"> </span>vg_data
+</code></pre></div>
+
+<h2 id="lvm-架构示意图">LVM 架构示意图</h2>
+<div class="highlight"><pre><span></span><code>物理卷<span class="w"> </span><span class="o">(</span>PV<span class="o">)</span><span class="w">       </span>卷组<span class="w"> </span><span class="o">(</span>VG<span class="o">)</span><span class="w">        </span>逻辑卷<span class="w"> </span><span class="o">(</span>LV<span class="o">)</span>
+<span class="w">   </span><span class="p">|</span><span class="w">                 </span><span class="p">|</span><span class="w">                </span><span class="p">|</span>
+<span class="w">   </span><span class="p">|</span><span class="w">                 </span><span class="p">|</span><span class="w">                </span><span class="p">|</span>
+<span class="w">   </span>+-----------------+----------------+
+<span class="w">            </span><span class="p">|</span><span class="w">                  </span><span class="p">|</span>
+<span class="w">            </span>+------------------+
+<span class="w">                   </span><span class="p">|</span>
+<span class="w">                   </span><span class="p">|</span>
+<span class="w">            </span>文件系统（/、/var、/home<span class="w"> </span>等）
+</code></pre></div>
+
+<ul>
+<li>在 LVM 架构中，物理卷被组织成卷组，而卷组上创建逻辑卷以供文件系统使用。这种层次结构使得管理和扩展存储空间变得更加灵活和方便。</li>
+<li>遵循创建顺序，首先创建物理卷，然后将它们分组为一个或多个卷组，最后在卷组上创建逻辑卷。这种顺序保证了逻辑卷可以充分利用物理卷和卷组的灵活性和可用性。</li>
+</ul>
+<h1 id="线性逻辑卷和条带逻辑卷">线性逻辑卷和条带逻辑卷</h1>
+<p>在 LVM 中，您可以选择使用线性逻辑卷（Linear LV）或条带逻辑卷（Striped LV）来管理存储空间。这两种方式在磁盘资源的利用和性能方面有所不同。</p>
+<p><img alt="img" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202408151423674.webp" /></p>
+<h2 id="线性逻辑卷linear-lv">线性逻辑卷（Linear LV）</h2>
+<p>线性逻辑卷是 LVM 中的一种基本形式，它将物理卷上的数据按照线性顺序进行存储。换句话说，数据从一个物理卷的末尾延伸到下一个物理卷的开始，依次类推，直到所有物理卷都被使用完毕。</p>
+<p>特点：</p>
+<ul>
+<li>数据按照线性顺序存储，从一个物理卷延伸到下一个物理卷。</li>
+<li>简单直观，易于管理。</li>
+<li>适用于小型环境或者对数据读取顺序要求不高的情况。</li>
+</ul>
+<h2 id="条带逻辑卷striped-lv">条带逻辑卷（Striped LV）</h2>
+<p>条带逻辑卷是一种高级形式的逻辑卷，它将数据分布在多个物理卷之间，以提高读写性能和并发能力。数据被分成固定大小的条带（或块），依次存储在不同的物理卷上。</p>
+<p>特点：</p>
+<ul>
+<li>数据被分割成条带，并分布在多个物理卷上，增加了读写并发能力和性能。</li>
+<li>更好地利用了磁盘资源，提高了 IOP（每秒输入/输出操作数）。</li>
+<li>适用于对性能要求较高、需要大量并发读写操作的情况，如数据库、视频编辑等应用场景。</li>
+</ul>
+<p>假设我们有两个 1 TiB 的物理卷，分别为 <code>/dev/sdb</code> 和 <code>/dev/sdc</code>。我们可以创建一个线性逻辑卷和一个条带逻辑卷，以比较它们之间的不同。</p>
+<h2 id="创建线性逻辑卷">创建线性逻辑卷</h2>
+<div class="highlight"><pre><span></span><code>lvcreate<span class="w"> </span>-l<span class="w"> </span><span class="m">100</span>%FREE<span class="w"> </span>-n<span class="w"> </span>linear_lv<span class="w"> </span>vg_data<span class="w"> </span>/dev/sdb<span class="w"> </span>/dev/sdc
+</code></pre></div>
+
+<h2 id="创建条带逻辑卷">创建条带逻辑卷</h2>
+<div class="highlight"><pre><span></span><code>lvcreate<span class="w"> </span>-i2<span class="w"> </span>-I64<span class="w"> </span>-l<span class="w"> </span><span class="m">100</span>%FREE<span class="w"> </span>-n<span class="w"> </span>striped_lv<span class="w"> </span>vg_data<span class="w"> </span>/dev/sdb<span class="w"> </span>/dev/sdc
+</code></pre></div>
+
+<p>在上面的示例中，<code>-i2</code> 表示使用两个物理卷进行条带化，<code>-I64</code> 表示条带大小为 64KB。您可以根据实际需求调整条带数量和大小。</p>
+<h1 id="文件系统管理与挂载">文件系统管理与挂载</h1>
+<p>一旦我们创建了逻辑卷，接下来就是将其格式化为文件系统，并挂载到系统中的目录上，以便用户可以访问和使用该存储空间。</p>
+<h2 id="格式化逻辑卷">格式化逻辑卷</h2>
+<p>在创建逻辑卷后，需要使用适当的文件系统格式化它，以便在其上创建文件并存储数据。常见的文件系统格式包括 ext4、XFS、NTFS 等。</p>
+<p>例如，要将 <code>lv_data</code> 逻辑卷格式化为 ext4 文件系统，可以执行以下命令：</p>
+<div class="highlight"><pre><span></span><code>mkfs.ext4<span class="w"> </span>/dev/vg_data/lv_data
+</code></pre></div>
+
+<h2 id="挂载逻辑卷">挂载逻辑卷</h2>
+<p>格式化完成后，需要将逻辑卷挂载到文件系统的目录上，以便用户可以访问其中的数据。</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 创建挂载点（如果不存在）</span>
+mkdir<span class="w"> </span>/mnt/data
+
+<span class="c1"># 将逻辑卷挂载到挂载点上</span>
+mount<span class="w"> </span>/dev/vg_data/lv_data<span class="w"> </span>/mnt/data
+</code></pre></div>
+
+<p>现在，逻辑卷 <code>lv_data</code> 已经成功挂载到 <code>/mnt/data</code> 目录上，用户可以通过该目录来访问和管理存储在其中的数据。</p>
+<h1 id="lvm-的扩展与管理">LVM 的扩展与管理</h1>
+<p>LVM 不仅可以帮助我们管理已有的存储空间，还可以在需要时进行扩展和调整，以满足不断增长的存储需求。</p>
+<h2 id="添加物理卷到卷组">添加物理卷到卷组</h2>
+<p>如果卷组中的存储空间不足，可以通过添加更多的物理卷来扩展其容量。</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 创建新的物理卷</span>
+pvcreate<span class="w"> </span>/dev/sdc1
+
+<span class="c1"># 将新的物理卷添加到卷组</span>
+vgextend<span class="w"> </span>vg_data<span class="w"> </span>/dev/sdc1
+</code></pre></div>
+
+<h2 id="扩展逻辑卷">扩展逻辑卷</h2>
+<p>当系统中的存储空间不足时，可以通过扩展现有的逻辑卷来增加可用空间。</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 扩展逻辑卷</span>
+lvextend<span class="w"> </span>-L<span class="w"> </span>+50G<span class="w"> </span>/dev/vg_data/lv_data
+
+<span class="c1"># 调整文件系统大小</span>
+resize2fs<span class="w"> </span>/dev/vg_data/lv_data
+</code></pre></div>
+
+<h2 id="移除物理卷或逻辑卷">移除物理卷或逻辑卷</h2>
+<p>在一些情况下，可能需要移除不再需要的物理卷或逻辑卷，以释放存储空间或进行系统优化。</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 移除物理卷</span>
+vgreduce<span class="w"> </span>vg_data<span class="w"> </span>/dev/sdb1
+
+<span class="c1"># 移除逻辑卷</span>
+lvremove<span class="w"> </span>/dev/vg_data/lv_data
+</code></pre></div>
+
+<h2 id="扩容基于lvm的文件系统-实验">扩容基于LVM的文件系统-实验</h2>
+<ul>
+<li>实验环境：</li>
+<li>Ubuntu 2204</li>
+<li>实验目标：</li>
+<li>原始配置了20GB的LVM，挂载到根分区。</li>
+<li>
+<p>对磁盘进行扩容，如何扩容到根分区。</p>
+</li>
+<li>
+<p>查看现有LVM配置</p>
+</li>
+</ul>
+<div class="highlight"><pre><span></span><code>root@ubuntu-test:~#<span class="w"> </span>df<span class="w"> </span>-h
+Filesystem<span class="w">                         </span>Size<span class="w">  </span>Used<span class="w"> </span>Avail<span class="w"> </span>Use%<span class="w"> </span>Mounted<span class="w"> </span>on
+tmpfs<span class="w">                              </span>791M<span class="w">  </span><span class="m">1</span>.6M<span class="w">  </span>789M<span class="w">   </span><span class="m">1</span>%<span class="w"> </span>/run
+/dev/mapper/ubuntu--vg-ubuntu--lv<span class="w">  </span><span class="m">9</span>.8G<span class="w">  </span><span class="m">3</span>.1G<span class="w">  </span><span class="m">6</span>.3G<span class="w">  </span><span class="m">33</span>%<span class="w"> </span>/
+tmpfs<span class="w">                              </span><span class="m">3</span>.9G<span class="w">     </span><span class="m">0</span><span class="w">  </span><span class="m">3</span>.9G<span class="w">   </span><span class="m">0</span>%<span class="w"> </span>/dev/shm
+tmpfs<span class="w">                              </span><span class="m">5</span>.0M<span class="w">     </span><span class="m">0</span><span class="w">  </span><span class="m">5</span>.0M<span class="w">   </span><span class="m">0</span>%<span class="w"> </span>/run/lock
+/dev/sda2<span class="w">                          </span><span class="m">1</span>.8G<span class="w">  </span>130M<span class="w">  </span><span class="m">1</span>.5G<span class="w">   </span><span class="m">8</span>%<span class="w"> </span>/boot
+tmpfs<span class="w">                              </span>791M<span class="w">  </span><span class="m">4</span>.0K<span class="w">  </span>791M<span class="w">   </span><span class="m">1</span>%<span class="w"> </span>/run/user/0
+
+root@ubuntu-test:~#<span class="w"> </span>lsblk
+sda<span class="w">                         </span><span class="m">8</span>:0<span class="w">    </span><span class="m">0</span><span class="w">    </span>20G<span class="w">  </span><span class="m">0</span><span class="w"> </span>disk<span class="w"> </span>
+├─sda1<span class="w">                      </span><span class="m">8</span>:1<span class="w">    </span><span class="m">0</span><span class="w">     </span>1M<span class="w">  </span><span class="m">0</span><span class="w"> </span>part<span class="w"> </span>
+├─sda2<span class="w">                      </span><span class="m">8</span>:2<span class="w">    </span><span class="m">0</span><span class="w">   </span><span class="m">1</span>.8G<span class="w">  </span><span class="m">0</span><span class="w"> </span>part<span class="w"> </span>/boot
+└─sda3<span class="w">                      </span><span class="m">8</span>:3<span class="w">    </span><span class="m">0</span><span class="w">  </span><span class="m">18</span>.2G<span class="w">  </span><span class="m">0</span><span class="w"> </span>part<span class="w"> </span>
+<span class="w">  </span>└─ubuntu--vg-ubuntu--lv<span class="w"> </span><span class="m">253</span>:0<span class="w">    </span><span class="m">0</span><span class="w">    </span>10G<span class="w">  </span><span class="m">0</span><span class="w"> </span>lvm<span class="w">  </span>/
+</code></pre></div>
+
+<ul>
+<li>
+<p>扩容磁盘到25G</p>
+</li>
+<li>
+<p>更新磁盘容量</p>
+</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="c1">#刷新SCSI</span>
+<span class="k">for</span><span class="w"> </span>i<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="k">$(</span>ls<span class="w"> </span>/sys/class/scsi_host/<span class="k">)</span><span class="p">;</span><span class="w"> </span><span class="k">do</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;- - -&quot;</span><span class="w"> </span>&gt;<span class="w"> </span>/sys/class/scsi_host/<span class="nv">$i</span>/scan<span class="p">;</span><span class="w"> </span><span class="k">done</span>
+<span class="c1">#查看磁盘容量</span>
+sda<span class="w">                         </span><span class="m">8</span>:0<span class="w">    </span><span class="m">0</span><span class="w">    </span>25G<span class="w">  </span><span class="m">0</span><span class="w"> </span>disk<span class="w"> </span>
+├─sda1<span class="w">                      </span><span class="m">8</span>:1<span class="w">    </span><span class="m">0</span><span class="w">     </span>1M<span class="w">  </span><span class="m">0</span><span class="w"> </span>part<span class="w"> </span>
+├─sda2<span class="w">                      </span><span class="m">8</span>:2<span class="w">    </span><span class="m">0</span><span class="w">   </span><span class="m">1</span>.8G<span class="w">  </span><span class="m">0</span><span class="w"> </span>part<span class="w"> </span>/boot
+└─sda3<span class="w">                      </span><span class="m">8</span>:3<span class="w">    </span><span class="m">0</span><span class="w">  </span><span class="m">18</span>.2G<span class="w">  </span><span class="m">0</span><span class="w"> </span>part<span class="w"> </span>
+<span class="w">  </span>└─ubuntu--vg-ubuntu--lv<span class="w"> </span><span class="m">253</span>:0<span class="w">    </span><span class="m">0</span><span class="w">    </span>10G<span class="w">  </span><span class="m">0</span><span class="w"> </span>lvm<span class="w">  </span>/
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="c1">#gdisk新建磁盘分区</span>
+sudo<span class="w"> </span>gdisk<span class="w"> </span>/dev/sda
+p<span class="w"> </span><span class="c1">#查看已有分区</span>
+n<span class="w"> </span><span class="c1">#创建新分区</span>
+<span class="m">5</span><span class="w"> </span><span class="c1">#输入分区编号。</span>
+enter<span class="w"> </span><span class="c1">#默认起始点</span>
++100G<span class="w"> </span><span class="c1">#按照结束点设置分区大小 +5G。</span>
+8e00<span class="w"> </span><span class="c1">#更改分区类型为LVM。</span>
+w<span class="w"> </span><span class="c1">#保存并退出 fdisk。</span>
+<span class="c1">#更新分区表</span>
+partprobe<span class="w"> </span>/dev/sda
+<span class="c1">#扩容lvm</span>
+pvs/pvdisplay
+pvcreate<span class="w"> </span>/dev/sda5
+vgs/vgdisplay
+vgextend<span class="w"> </span>ubuntu-vg<span class="w"> </span>/dev/sda5
+lvs
+lvextend<span class="w"> </span>-L<span class="w"> </span>+100%FREE<span class="w"> </span>/dev/ubuntu-vg/ubuntu-lv
+lvs/lvdisplay
+<span class="c1">#扩容ext4文件系统 -- 指定的是lvdisplay中的LV Path</span>
+resize2fs<span class="w"> </span>/dev/ubuntu-vg/ubuntu-lv
+<span class="c1">#扩容xfs文件系统 -- 指定的是挂载点而非逻辑卷路径</span>
+xfs_growfs<span class="w"> </span>/
+df<span class="w"> </span>-h
+lsblk
+</code></pre></div>
+
+<h2 id="数据备份与恢复">数据备份与恢复</h2>
+<ul>
+<li>LVM 的快照功能可以用于创建存储卷的快照，以便进行数据备份、测试或者回滚操作，而无需中断服务。</li>
+<li>在数据库升级之前，我们可以先创建一个逻辑卷的快照，以便在升级失败时快速回滚。</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="c1"># 创建快照</span>
+lvcreate<span class="w"> </span>-L<span class="w"> </span>20G<span class="w"> </span>-s<span class="w"> </span>-n<span class="w"> </span>lv_data_snapshot<span class="w"> </span>/dev/vg_data/lv_data
+<span class="c1"># 在快照上进行操作（如升级数据库）</span>
+<span class="c1"># ...</span>
+<span class="c1"># 恢复快照</span>
+lvconvert<span class="w"> </span>--merge<span class="w"> </span>/dev/vg_data/lv_data_snapshot
+</code></pre></div>
+
+<h2 id="磁盘故障恢复">磁盘故障恢复</h2>
+<ul>
+<li>LVM 支持 RAID 技术，可以在物理卷之间创建镜像或条带，以提高数据的容错性和可用性，同时在硬盘故障时实现数据自动恢复。</li>
+<li>在卷组中创建一个镜像卷，以保证数据在一块硬盘故障时的可靠性。</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="c1"># 创建镜像卷</span>
+lvcreate<span class="w"> </span>-L<span class="w"> </span>100G<span class="w"> </span>-m1<span class="w"> </span>-n<span class="w"> </span>lv_data_mirror<span class="w"> </span>vg_data<span class="w"> </span>/dev/sdd1
+</code></pre></div>
+
+<hr />
+<h1 id="difference-about-raid-and-lvm">Difference about RAID and LVM</h1>
+<h2 id="raid">RAID</h2>
+<ul>
+<li>CPU Technology grew faster than disk which limit the further development.</li>
+<li>RAID was developed. RAID stands for Redundant Arrays of Independent Disk. It combines individual disks to a larger and faster disk array, where data is cut to sectors and stored on separate disks to gain performance.</li>
+<li>As for RAID0, at least two disks are combined via hardware or software approach, data was input on those disks by order, so that the IO performance improved.</li>
+</ul>
+<h2 id="lvm">LVM</h2>
+<ul>
+<li>After disk is partitioned, users may want to adjust the volume dynamically. Consequently, another disk management  technology, LVM, is developed.</li>
+<li>LVM add a logical layer between hardware and file system by creating volume group and logical volume.</li>
+</ul>
+<h2 id="difference">Difference</h2>
+<ul>
+<li>RAID is a disk management technology to improve IO performance by combining several disks to one array, while LVM is another disk management technology which allow users to adjust volume of partition dynamically by creating PV, VG and LV. </li>
+</ul>
+<hr />
+<h1 id="how-to-add-a-disk-on-azure-vm">How to add a disk on Azure VM</h1>
+<ul>
+<li>
+<p>Mount new data disk via fdisk</p>
+</li>
+<li>
+<p>Add a new disk on Azure Portal</p>
+</li>
+<li>Check the new disk</li>
+</ul>
+<div class="highlight"><pre><span></span><code>lsblk<span class="w"> </span>-f
+</code></pre></div>
+
+<ul>
+<li>Add a partition and check</li>
+</ul>
+<div class="highlight"><pre><span></span><code>fdisk<span class="w"> </span>/dev/sdd
+m<span class="w"> </span><span class="c1"># for help</span>
+n<span class="w"> </span><span class="c1"># add a new partition</span>
+p<span class="w"> </span><span class="c1"># primary</span>
+<span class="m">1</span><span class="w"> </span><span class="c1"># partition number, default in the following</span>
+w<span class="w"> </span><span class="c1"># save and quit</span>
+lsblk<span class="w"> </span>-f
+</code></pre></div>
+
+<ul>
+<li>Format the new partition and mount </li>
+<li>To set file format and get UUID</li>
+</ul>
+<div class="highlight"><pre><span></span><code>mkfs<span class="w"> </span>-t<span class="w"> </span>ext4<span class="w"> </span>/dev/sdd1<span class="w"> </span><span class="c1"># format</span>
+mkdir<span class="w"> </span>mnt/resource/newdisk2
+mount<span class="w"> </span>/dev/sdd1<span class="w"> </span>/mnt/resource/newdisk2
+lsblk<span class="w"> </span>-f
+</code></pre></div>
+
+<ul>
+<li>Configure the mount in fstab</li>
+<li>Mount through command line will not be kept after a reboot</li>
+<li>So we need to maintain the mount even after a reboot through configuring the <strong>fstab</strong></li>
+</ul>
+<div class="highlight"><pre><span></span><code>vim<span class="w"> </span>/etc/fstab<span class="w">  </span><span class="c1"># It&#39;s important to use UUID instead of disk name in VM</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code>mount<span class="w"> </span>-a<span class="w"> </span>
+</code></pre></div>
+
+<hr />
+<h1 id="configure-lvm-in-centos">Configure LVM in centos</h1>
+<ol>
+<li>Prepare disk partition with type of 8e</li>
+</ol>
+<div class="highlight"><pre><span></span><code>fdisk<span class="w"> </span>/dev/sde
+p<span class="w"> </span><span class="c1"># primary</span>
+<span class="m">1</span><span class="w"> </span><span class="c1"># partition num</span>
+default<span class="w"> </span><span class="c1"># first sector</span>
++1G<span class="w"> </span><span class="c1"># last sector</span>
+t<span class="w"> </span><span class="c1"># change partition type</span>
+8e<span class="w"> </span><span class="c1"># hex code for LVM</span>
+fdisk<span class="w"> </span>-l<span class="w"> </span><span class="c1"># check</span>
+</code></pre></div>
+
+<ol>
+<li>Prepare Physical volume (PV)</li>
+</ol>
+<div class="highlight"><pre><span></span><code>pvcreate<span class="w"> </span>/dev/sde1
+pvcreate<span class="w"> </span>/dev/sde2
+pvcreate<span class="w"> </span>/dev/sde3
+pvdisplay<span class="w"> </span><span class="c1"># check</span>
+</code></pre></div>
+
+<ol>
+<li>Prepare volume group (VG)</li>
+</ol>
+<div class="highlight"><pre><span></span><code>vgcreate<span class="w"> </span>vg1<span class="w"> </span>/dev/sde1<span class="w"> </span>/dev/sde2<span class="w"> </span>/dev/sde3<span class="w">  </span><span class="c1"># vg1 is a name for VG</span>
+vgdisplay<span class="w"> </span><span class="c1"># check</span>
+</code></pre></div>
+
+<ol>
+<li>Prepare logical volume (LV)</li>
+</ol>
+<div class="highlight"><pre><span></span><code>lvcreate<span class="w"> </span>-L<span class="w"> </span>100M<span class="w"> </span>-n<span class="w"> </span>lv1<span class="w"> </span>vg1<span class="w"> </span><span class="c1"># lv1: you name it, vg1: lv1 uses the volume on vg1</span>
+lvdisplay<span class="w"> </span><span class="c1"># check</span>
+</code></pre></div>
+
+<ol>
+<li>Format the LV and mount</li>
+</ol>
+<div class="highlight"><pre><span></span><code>mkfs<span class="w"> </span>-t<span class="w"> </span>ext4<span class="w"> </span>/dev/vg1/lv1
+mkdir<span class="w"> </span>/lvm-mount
+mount<span class="w"> </span>/dev/vg1/lv1<span class="w"> </span>/lvm-mount/
+lsblk<span class="w"> </span>-f<span class="w"> </span><span class="c1"># check</span>
+</code></pre></div>
+
+<p>6 [if necessary]. Expand the volume of LV </p>
+<div class="highlight"><pre><span></span><code>umount<span class="w"> </span>/lvm-mount/<span class="w"> </span><span class="c1"># unmount the point</span>
+lvresize<span class="w"> </span>-L<span class="w"> </span>200M<span class="w"> </span>/dev/vg1/lv1<span class="w"> </span><span class="c1"># resize the volume to 200M</span>
+e2fsck<span class="w"> </span>-f<span class="w"> </span>/dev/vg1/lv1<span class="w"> </span><span class="c1"># check the error in disk</span>
+resize2fs<span class="w"> </span>/dev/vg1/1v1<span class="w"> </span><span class="c1"># update</span>
+<span class="c1">#xfs_growfs /</span>
+<span class="c1"># note : order of the ubove command is IMPORTANT</span>
+lvdisplay<span class="w"> </span><span class="c1"># check</span>
+mount<span class="w"> </span>/dev/vg1/lv1<span class="w"> </span>/lvm-mount
+vim<span class="w"> </span>/etc/fstab<span class="w">  </span>
+<span class="c1"># configure fstab to add /dev/vg1/lv1 then the mount point is kept atfer reboot</span>
+</code></pre></div>
+
+<ol>
+<li>[if necessary] Curtail the volume of LV</li>
+</ol>
+<div class="highlight"><pre><span></span><code>umount<span class="w"> </span>/dev/vg1/lv1<span class="w"> </span>/lvm-mount
+e2fsck<span class="w"> </span>-f<span class="w"> </span>/dev/vg1/lv1<span class="w"> </span><span class="c1"># check disk error</span>
+resize2fs<span class="w"> </span>/dev/vg1/lv1<span class="w"> </span>50M<span class="w"> </span><span class="c1"># resize and update the file system first</span>
+lvresize<span class="w"> </span>-L<span class="w"> </span>50M<span class="w"> </span>/dev/vg1/lv1<span class="w"> </span><span class="c1"># curtail the LV volume</span>
+<span class="c1"># the order of commands above is IMPORTANT</span>
+lvdisplay<span class="w"> </span><span class="c1"># check</span>
+</code></pre></div>
+
+<ol>
+<li>[if necessary] Expand the VG</li>
+</ol>
+<p>Add a PV to VG. Then more LV can be created on the expanded VG.</p>
+<p>Actually, any disk partition with 8e type can be used to expand VG</p>
+<p>Prepare a disk partition sde4 as mentioned above.</p>
+<div class="highlight"><pre><span></span><code>pvcreate<span class="w"> </span>/dev/sde4<span class="w"> </span><span class="c1"># create Pyhsical Volume</span>
+vgextend<span class="w"> </span>vg1<span class="w"> </span>/dev/sde4<span class="w"> </span><span class="c1"># Expand the Voulme Group VG1</span>
+vgdisplay<span class="w"> </span><span class="c1"># check</span>
+</code></pre></div>
+
+<ol>
+<li>Remove</li>
+</ol>
+<div class="highlight"><pre><span></span><code>umount<span class="w"> </span>/lvm-mount
+lvremove<span class="w"> </span>/dev/vg1/lv1<span class="w"> </span><span class="c1"># delete the LV</span>
+vgremove<span class="w"> </span>vg1<span class="w"> </span><span class="c1"># delete the VG</span>
+pvremove<span class="w"> </span>/dev/sde1<span class="w"> </span><span class="c1"># delete the PV</span>
+</code></pre></div>
+
+<hr />
+<h1 id="configure-raid0">Configure RAID0</h1>
+<p>Get two new disks on Azure Portal</p>
+<h2 id="1-install-mdadm">1. Install mdadm</h2>
+<p>use mdadm to manage RAID configuration</p>
+<div class="highlight"><pre><span></span><code>yum<span class="w"> </span>install<span class="w"> </span>mdadm<span class="w"> </span>-y
+</code></pre></div>
+
+<h2 id="2-create-a-raid0">2. Create a RAID0</h2>
+<div class="highlight"><pre><span></span><code>mdadm<span class="w"> </span>-C<span class="w"> </span>-v<span class="w"> </span>/dev/md0<span class="w"> </span>-l<span class="w"> </span><span class="m">0</span><span class="w"> </span>-n<span class="w"> </span><span class="m">2</span><span class="w"> </span>/dev/sdc<span class="w"> </span>/dev/sdf<span class="w"> </span>
+<span class="c1"># -C create mode, -v more verbose, -l RAID level, -n disks numbers</span>
+mdadm<span class="w"> </span>-Ds<span class="w"> </span>&gt;<span class="w"> </span>etc/mdadm.conf<span class="w"> </span><span class="c1"># output the configuration info to this file</span>
+mdadm<span class="w"> </span>-D<span class="w"> </span>/dev/md0<span class="w"> </span><span class="c1"># check info about RAID</span>
+</code></pre></div>
+
+<h2 id="3-add-partition-to-raid">3. Add partition to raid</h2>
+<div class="highlight"><pre><span></span><code>fdisk<span class="w"> </span>/dev/md0
+</code></pre></div>
+
+<h2 id="4-format-the-new-partition-and-mount">4. Format the new partition and mount</h2>
+<div class="highlight"><pre><span></span><code>mkfs<span class="w"> </span>-t<span class="w"> </span>ext4<span class="w"> </span>/dev/md0p1<span class="w">  </span><span class="c1"># format to ext4</span>
+mkdir<span class="w"> </span>/raid0<span class="w"> </span><span class="c1"># create mount point</span>
+mount<span class="w"> </span>/dev/md0p1<span class="w"> </span>/raid0<span class="w"> </span><span class="c1"># mount to point </span>
+lsblk<span class="w"> </span>-f<span class="w"> </span><span class="c1"># check</span>
+</code></pre></div>
+
+<h2 id="5-configure-fstab">5. configure fstab</h2>
+<div class="highlight"><pre><span></span><code>vim<span class="w"> </span>/etc/fstab
+<span class="c1"># add md0p1 to fstab to make it work after reboot</span>
+</code></pre></div>
+    </div>
+  </article>
+  <aside class="toc">
+    <p class="toc-label">本页目录</p>
+    <ul>
+  <li><a href="#物理卷physical-volume">物理卷（Physical Volume）</a></li>
+  <li><a href="#卷组volume-group">卷组（Volume Group）</a></li>
+  <li><a href="#逻辑卷logical-volume">逻辑卷（Logical Volume）</a></li>
+  <li><a href="#lvm-架构示意图">LVM 架构示意图</a></li>
+  <li><a href="#线性逻辑卷linear-lv">线性逻辑卷（Linear LV）</a></li>
+  <li><a href="#条带逻辑卷striped-lv">条带逻辑卷（Striped LV）</a></li>
+  <li><a href="#创建线性逻辑卷">创建线性逻辑卷</a></li>
+  <li><a href="#创建条带逻辑卷">创建条带逻辑卷</a></li>
+  <li><a href="#格式化逻辑卷">格式化逻辑卷</a></li>
+  <li><a href="#挂载逻辑卷">挂载逻辑卷</a></li>
+  <li><a href="#添加物理卷到卷组">添加物理卷到卷组</a></li>
+  <li><a href="#扩展逻辑卷">扩展逻辑卷</a></li>
+  <li><a href="#移除物理卷或逻辑卷">移除物理卷或逻辑卷</a></li>
+  <li><a href="#扩容基于lvm的文件系统-实验">扩容基于LVM的文件系统-实验</a></li>
+  <li><a href="#数据备份与恢复">数据备份与恢复</a></li>
+  <li><a href="#磁盘故障恢复">磁盘故障恢复</a></li>
+  <li><a href="#raid">RAID</a></li>
+  <li><a href="#lvm">LVM</a></li>
+  <li><a href="#difference">Difference</a></li>
+  <li><a href="#1-install-mdadm">1. Install mdadm</a></li>
+  <li><a href="#2-create-a-raid0">2. Create a RAID0</a></li>
+  <li><a href="#3-add-partition-to-raid">3. Add partition to raid</a></li>
+  <li><a href="#4-format-the-new-partition-and-mount">4. Format the new partition and mount</a></li>
+  <li><a href="#5-configure-fstab">5. configure fstab</a></li>
+</ul>
+  </aside>
+
+</div>
+
+</main>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>Learning Notes</span>
+    <a href="https://github.com/hangx969/learning-notes">GitHub</a>
+  </div>
+</footer>
+<script src="../../static/search.js"></script>
+</body>
+</html>

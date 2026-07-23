@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>软件工程基础 - Learning Notes</title>
+<link rel="stylesheet" href="../../static/style.css">
+<link rel="stylesheet" href="../../static/pygments.css">
+</head>
+<body data-root="../../">
+<header class="site-header">
+  <div class="header-inner">
+    <a class="logo" href="../../index.html"><span class="logo-mark"></span>LEARNING NOTES</a>
+    <div class="search">
+      <input id="search-input" type="search" placeholder="搜索笔记…" autocomplete="off" aria-label="搜索笔记">
+      <div id="search-results" hidden></div>
+    </div>
+  </div>
+  <nav class="topic-nav" aria-label="主题导航">
+    <div class="topic-nav-inner">
+      <a href="../../AI/">AI</a>
+      <a href="../../Aliyun/">Aliyun</a>
+      <a href="../../Azure/">Azure</a>
+      <a href="../../C%2B%2B/">C++</a>
+      <a href="../../CloudComputing/">CloudComputing</a>
+      <a href="../../Database/">Database</a>
+      <a href="../../Docker-Kubernetes/">Docker-Kubernetes</a>
+      <a href="../../GPU-DeepLearning/">GPU-DeepLearning</a>
+      <a href="../../Git/">Git</a>
+      <a href="../../Go/">Go</a>
+      <a href="../../HPC/">HPC</a>
+      <a href="../../IaC/">IaC</a>
+      <a href="../../Linux-Shell/">Linux-Shell</a>
+      <a href="../../Middlewares/">Middlewares</a>
+      <a href="../../Networking/">Networking</a>
+      <a href="../../OS/">OS</a>
+      <a href="../../Python/">Python</a>
+      <a href="../../SoftwareTesting/" class="active">SoftwareTesting</a>
+    </div>
+  </nav>
+</header>
+<main class="main">
+
+<div class="article-layout">
+
+  <aside class="sidebar">
+    <details class="sidebar-details">
+      <summary>SoftwareTesting</summary>
+      <nav class="sidebar-nav">
+        <p class="sidebar-group">其他</p>
+        <ul>
+          <li><a href="../../SoftwareTesting/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B%E5%9F%BA%E7%A1%80/" class="current">软件工程基础</a></li>
+          <li><a href="../../SoftwareTesting/%E8%BD%AF%E4%BB%B6%E6%B5%8B%E8%AF%95%E7%9B%B4%E6%92%AD%E8%AF%BE%E7%AC%94%E8%AE%B0/">软件测试直播课笔记</a></li>
+        </ul>
+      </nav>
+    </details>
+  </aside>
+
+  <article class="article">
+    <nav class="breadcrumb">
+      <a href="../../index.html">首页</a><span>/</span>
+      <a href="../../SoftwareTesting/">SoftwareTesting</a>
+    </nav>
+    <h1 class="article-title">软件工程基础</h1>
+    <p class="article-meta"><span>更新于 2026-04-16</span>
+      <a href="https://github.com/hangx969/learning-notes/blob/main/SoftwareTesting/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B%E5%9F%BA%E7%A1%80.md">查看源文件</a>
+    </p>
+    <div class="article-body">
+<h1 id="软件工程基础">软件工程基础</h1>
+<hr />
+<h2 id="1-软件与软件的概念">1 软件与软件的概念</h2>
+<h3 id="软件的概念特性分类">软件的概念、特性、分类</h3>
+<h4 id="概念">概念</h4>
+<ul>
+<li>
+<p>具有产品和产品生产载体的双重作用。</p>
+</li>
+<li>
+<p><mark>软件 = 程序 + 数据 + 文档</mark></p>
+</li>
+</ul>
+<h4 id="特性">特性</h4>
+<p>形态特性（无形）</p>
+<p>智能特性（智力产品）</p>
+<p>开发特性（尚未实现自动化、人力开发）</p>
+<p>质量特性（没有完美的）</p>
+<p>生产特性（复制简单、边际成本低）</p>
+<p>管理特性</p>
+<p>环境特性（对环境有依赖）</p>
+<p>维护特性</p>
+<p>废弃特性</p>
+<p>应用特性</p>
+<h4 id="分类">分类</h4>
+<p>系统、应用、支撑、可复用</p>
+<h3 id="软件危机">软件危机</h3>
+<p>爆发于1960s，软件发展速度太慢了。</p>
+<p>催生==软件工程== - 最终实现软件的工业化生产</p>
+<h4 id="软件的质量特性">软件的质量特性</h4>
+<p><mark>功能性、可靠性、可使用性、效率、可维护性、可移植性</mark>。</p>
+<h3 id="软件生存期">软件生存期</h3>
+<h4 id="软件定义时期">软件定义时期</h4>
+<p>做什么</p>
+<p>问题定义、可行性研究、需求分析</p>
+<h4 id="软件开发时期">软件开发时期</h4>
+<p>怎么做</p>
+<p>概要设计、详细设计、编码、测试</p>
+<h4 id="运维">运维</h4>
+<p>DevOps</p>
+<h3 id="典型文档">典型文档</h3>
+<p>软件需求规格说明书、项目计划、软件测试计划、软件设计说明书、用户手册。</p>
+<h3 id="软件生存期模型">软件生存期模型</h3>
+<p><div class="callout callout-info" markdown="1"><br />
+<p class="callout-title">常见的软件生存期模型</p></p>
+</div>
+<p><mark>瀑布模型</mark>：按部就班、一个阶段完成再进行下一个阶段。</p>
+<p>快速原型模型、增量模型、螺旋模型、喷泉、统一过程</p>
+<p><mark>敏捷模型、极限编程</mark></p>
+<h3 id="面向对象">面向对象</h3>
+<ul>
+<li><mark>面向对象 = 对象+类+继承+消息通信</mark></li>
+<li>
+<p>接口：对象向外界提供的方法，外界可以通过这些方法对对象进行交互。</p>
+</li>
+<li>
+<p>多态：对某个请求提供服务的对象的不同，达到不同的行为，称为多态；在子类中覆盖父类的方法实现多态。</p>
+</li>
+</ul>
+<h4 id="统一建模语言uml">统一建模语言UML</h4>
+<p>面向对象的建模语言：<mark>Unified Modeling Language</mark>；可视化界面、不依赖于开发过程。类的建模、属性设计、消息传递。</p>
+<hr />
+<h2 id="2-文件和文件系统">2 文件和文件系统</h2>
+<h3 id="文件">文件</h3>
+<h4 id="分类_1">分类</h4>
+<p>文本文件、二进制文件；有结构文件、无结构文件；系统文件、用户文件、库文件；源文件、目标文件、可执行文件（目标代码+链接库lib、dll文件）</p>
+<h3 id="文件系统">文件系统</h3>
+<h4 id="作用">作用</h4>
+<ul>
+<li>
+<p>管理文件、目录、磁盘存储空间的一套控制器。</p>
+</li>
+<li>
+<p>对对象操纵和管理的软件集合。</p>
+</li>
+</ul>
+<h4 id="文件系统的接口">文件系统的接口</h4>
+<ul>
+<li>
+<p><mark>命令接口</mark>：用户与文件系统直接交互的接口</p>
+</li>
+<li>
+<p><mark>程序接口</mark>：程序中调用接口来操纵文件</p>
+</li>
+</ul>
+<h4 id="文件的逻辑结构">文件的逻辑结构</h4>
+<p>顺序文件、索引文件。</p>
+<h4 id="文件控制块file-control-block">文件控制块（File Control Block）</h4>
+<ul>
+<li>
+<p>基本信息：名字、物理位置、逻辑结构、物理结构</p>
+</li>
+<li>
+<p>控制信息：权限等</p>
+</li>
+<li>
+<p>使用信息：建立日期、修改日期等</p>
+</li>
+</ul>
+<p>一个硬盘格式化之后，就会划分出很大一块的信息表来存放这些metadata信息。</p>
+<h4 id="文件共享">文件共享</h4>
+<p>系统始终允许多个用户或晋城共享同一份文件。这样，在系统中只需保留该共享文件的一份副本即可。</p>
+<p><div class="callout callout-example" markdown="1"><br />
+<p class="callout-title">网盘极速秒传功能</p></p>
+<p>你上传的文件，生成一个哈希值；检测到跟别人的文件的哈希值一样，就不需要完整上传你的文件了；直接在后台把别人文件和你相同的内容写入到你的网盘的namespace就行了。</p>
+</div>
+<hr />
+<h2 id="3-系统服务">3 系统服务</h2>
+<h3 id="windows服务">Windows服务</h3>
+<ul>
+<li>Windows服务，过去叫NT服务，允许用户创建可在其自身windows会话中长时间运行的可执行程序，不显示任何用户界面。本质就是一个进程。</li>
+<li><code>services.msc</code>来查看windows服务。</li>
+</ul>
+<h4 id="windows服务应用程序">Windows服务应用程序</h4>
+<ul>
+<li>服务要符合服务控制管理器==SCM==的接口规则</li>
+<li>
+<p>服务可以由用户手动启动，也可以由应用程序使用服务函数来启动</p>
+</li>
+<li>
+<p>即使没有用户登录到系统，也可以执行服务</p>
+</li>
+</ul>
+<h4 id="使用scm提供的函数来构建服务">使用SCM提供的函数来构建服务</h4>
+<p>（符合微软提供的框架来构建服务，要实现规定的全部接口）</p>
+<ul>
+<li>服务计划</li>
+</ul>
+<p>为一个或多个服务提供可执行代码的程序</p>
+<ul>
+<li>服务配置程序</li>
+</ul>
+<p>查询或修改服务数据库的程序</p>
+<ul>
+<li>服务控制程序</li>
+</ul>
+<p>启动和控制服务</p>
+<p>服务写好之后，要在服务管理程序中进行注册（services.exe）</p>
+<h3 id="linux系统服务">Linux系统服务</h3>
+<p>启动后在后台运行，等待用户或其它应用程序来调用。</p>
+<h4 id="分类_2">分类</h4>
+<p>系统服务、网络服务</p>
+<h4 id="服务管理方式">服务管理方式</h4>
+<ul>
+<li>通过<code>/etc/init.d</code>目录中的启动脚本来管理：</li>
+</ul>
+<p>所有独立服务启动文件均存储在<code>/etc/init.d</code>目录下，通过 start，stop，status，restart来管理服务</p>
+<ul>
+<li>通过<code>service</code>或<code>systemctl</code>来管理</li>
+</ul>
+<p>本质也是调用<code>/etc/nint.d</code>来管理。</p>
+<ul>
+<li>
+<p>修改<code>/etc/rc.d/rc.local</code>文件</p>
+</li>
+<li>
+<p>设置服务自启动，修改<code>/etc/.rc.d/rc.local</code>文件，在文件中加入服务的启动命令。</p>
+</li>
+<li>
+<p>这个文件是系统启动的时候，在输入用户名密码之前，最后读取的文件，（<code>/etc/rc.d/rc.local</code>和<code>/etc/rc.local</code>是软链接，改哪个都行）</p>
+</li>
+<li>这个文件中有啥命令，都会在系统启动时运行。</li>
+</ul>
+<h4 id="守护进程daemon">守护进程Daemon</h4>
+<h5 id="分类_3">分类</h5>
+<ul>
+<li><mark>stand_alone</mark></li>
+<li>独立的启动，这类进程可以自行启动不必透过其他的机制，启动后就一直占用内存和系统资源。响应速度较快。</li>
+<li>常见的有：httpd、vsftpd（FTP）、docker.service等</li>
+<li><mark>super daemon</mark></li>
+<li>一个统一的super daemon来负责唤起其他系统服务。</li>
+<li>没有客户端请求时，各项服务都是未启动的状态，等到有客户端的请求时，super daemon才会唤醒相应的服务；客户端联机结束后就会结束该进程。比如telnet。</li>
+</ul>
+<h5 id="daemon工作形态">daemon工作形态</h5>
+<ul>
+<li><mark>singal-control</mark></li>
+</ul>
+<p>这种daemon通过消息通信来管理，只要有任何客户端的请求进来，他就会立即启动去处理，比如打印机的服务cupsd。</p>
+<ul>
+<li><mark>interval-control</mark></li>
+</ul>
+<p>这类的daemon是每隔一段时间就主动去运行某项工作，需要配置好间隔时间，比如crontab。</p>
+<h5 id="daemon的启动脚本和启动方式">daemon的启动脚本和启动方式</h5>
+<ul>
+<li><code>/etc/init.d</code></li>
+</ul>
+<p>系统上几乎所有的服务启动脚本都放在这里，CentOS中是在，<code>/etc/rc.d/init.d/</code>，不过也是连接到这里的</p>
+<ul>
+<li><code>/etc/sysconfig/*</code></li>
+</ul>
+<p>各服务的初始化环境配置文件</p>
+<ul>
+<li><code>/etc/xinetd.conf</code>, <code>/etc/xinetd.d</code></li>
+</ul>
+<p>super daemon的主要配置文件</p>
+<ul>
+<li><code>/etc/*</code></li>
+</ul>
+<p>各个服务的配置文件。</p>
+<ul>
+<li><code>/var/lib/*</code></li>
+</ul>
+<p>各个服务产生的数据库放到这里</p>
+<ul>
+<li><code>/var/run/</code></li>
+</ul>
+<p>各个服务进程的PID记录处。</p>
+<hr />
+<h2 id="数据库基础">数据库基础</h2>
+<h3 id="组成">组成</h3>
+<p><mark>数据库、数据库管理系统DBMS、数据库管理员、应用程序</mark></p>
+<h3 id="关系型数据库">关系型数据库</h3>
+<p>所谓关系，就是二维表、行和列组成。</p>
+<ul>
+<li>
+<p>行 -- 记录，一行数据就是一条记录。</p>
+</li>
+<li>
+<p>列 -- 字段，一列字段的数据类型一致。</p>
+</li>
+</ul>
+<hr />
+<h2 id="java基础">Java基础</h2>
+<h3 id="package-命名规则">Package 命名规则</h3>
+<p>由于Java面向对象的特性，每名Java开发人员都可以编写属于自己的Java Package，为了保障每个Java Package命名的唯一性，在最新的Java编程规范中，要求开发人员在自己定义的包名前加上唯一的前缀。由于互联网上的域名称是不会重复的，所以多数开发人员采用自己公司在互联网上的域名称作为自己程序包的唯一前缀。例如： <code>com.sun.swt.……</code>。</p>
+<p>从而，我们知道，一般公司命名为<code>com.公司名.项目名.模块名....</code>。</p>
+<p>那，我们个人的项目又怎么命名呢？</p>
+<p>经过我对"个人的"单词搜索，有"individual、personal、private、one-man"，进一步对以上4个单词词意的分析，并在保证了唯一性，使用每个单词的前<strong>4个字母</strong>作为前缀，正好和"com"也做了区分。如下：</p>
+<p><div class="callout callout-info" markdown="1"><br />
+<p class="callout-title">Java包命名约定</p></p>
+</div>
+<p><mark>indi</mark> ：</p>
+<p>个体项目，指个人发起，但非自己独自完成的项目，可公开或私有项目，copyright主要属于发起者。</p>
+<p>包名为<code>indi.发起者名.项目名.模块名.……</code>。</p>
+<p><mark>pers</mark> ：</p>
+<p>个人项目，指个人发起，独自完成，可分享的项目，copyright主要属于个人。</p>
+<p>包名为<code>pers.个人名.项目名.模块名.……</code>。</p>
+<p><mark>priv</mark> ：</p>
+<p>私有项目，指个人发起，独自完成，非公开的私人使用的项目，copyright属于个人。</p>
+<p>包名为<code>priv.个人名.项目名.模块名.……</code>。</p>
+<p><mark>onem</mark> ：</p>
+<p>与"indi"相同，推荐使用"indi"。</p>
+<p>另外，我为了区分团队项目和前面所说项目的区分，还有了一下扩展：</p>
+<p><mark>team</mark> ：</p>
+<p>团队项目，指由团队发起，并由该团队开发的项目，copyright属于该团队所有。</p>
+<p>包名为<code>team.团队名.项目名.模块名.……</code>。</p>
+<p><mark>com</mark> ：</p>
+<p>公司项目，copyright由项目发起的公司所有。</p>
+<p>包名为<code>com.公司名.项目名.模块名.……</code>。</p>
+<h3 id="两个java代码示例">两个Java代码示例</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">package</span><span class="w"> </span><span class="nn">com.ms.test</span><span class="p">;</span>
+
+<span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">JavaDemo</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="cm">/*</span>
+<span class="cm">     * java中，每个class中，都有属性和方法</span>
+<span class="cm">     * 属性就是对象当前的静态数据</span>
+<span class="cm">     * 方法是操作这些数据或对象本身的</span>
+<span class="cm">     */</span>
+
+<span class="w">    </span><span class="cm">/*</span>
+<span class="cm">     * 属性部分</span>
+<span class="cm">     * private -- 私有数据，一般数据都是私有的</span>
+<span class="cm">     */</span>
+
+<span class="w">    </span><span class="cm">/*</span>
+<span class="cm">     * 整数：byte（1字节），short（2字节），int（4个字节），long（8个字节），unsigned int（无符号）</span>
+<span class="cm">     * 小数：float（单精度，4字节），double（双精度，8字节）</span>
+<span class="cm">     * 布尔值 boolean</span>
+<span class="cm">     * 字符串 String</span>
+<span class="cm">     */</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">name</span><span class="p">;</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">age</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c1">//构造方法 -- 对象产生后的实例化过程，所调用的方法</span>
+
+<span class="w">    </span><span class="c1">//不指定，默认方法</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="nf">JavaDemo</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="c1">//指定要传参进去</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="nf">JavaDemo</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">age</span><span class="p">){</span>
+<span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">name</span><span class="p">;</span>
+<span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">age</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">age</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+
+<span class="w">    </span><span class="c1">//定义一个方法，提供接口获取这个类产生的对象的age</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="nf">getAge</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="na">age</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="c1">//定义一个方法，在外部修改该对象的age属性</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">setAge</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">age</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">age</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">age</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="nf">getName</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="na">name</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">setName</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">name</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">name</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="cm">/*</span>
+<span class="cm">     * main() -- 写一个main函数，左手alt，右手/，自动补齐</span>
+<span class="cm">     */</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="o">[]</span><span class="w"> </span><span class="n">args</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+
+<span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;HelloWorld&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="n">JavaDemo</span><span class="w"> </span><span class="n">jd</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">JavaDemo</span><span class="p">(</span><span class="s">&quot;zhangsan&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">28</span><span class="p">);</span>
+<span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;name = &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">jd</span><span class="p">.</span><span class="na">getName</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;\n&quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;age = &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">jd</span><span class="p">.</span><span class="na">getAge</span><span class="p">());</span><span class="w">       </span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="kn">package</span><span class="w"> </span><span class="nn">com.ms.test</span><span class="p">;</span>
+
+<span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">BmiFunc</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="cm">/*</span>
+<span class="cm">     * Bmi = 体重/（身高平方）</span>
+<span class="cm">     * Bmi &lt; 18.5 : too thin</span>
+<span class="cm">     * Bmi &lt; 24: normal</span>
+<span class="cm">     * Bmi &lt; 28: a little overweight</span>
+<span class="cm">     * Bmi &lt; 32: overweight</span>
+<span class="cm">     * or : heavily over weight</span>
+<span class="cm">     */</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="n">height</span><span class="p">;</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="n">weight</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c1">//构造函数</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="nf">BmiFunc</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="nf">BmiFunc</span><span class="p">(</span><span class="kt">float</span><span class="w"> </span><span class="n">weight</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="n">height</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">weight</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">weight</span><span class="p">;</span>
+<span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">height</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">height</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="c1">//获取数据的接口</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="nf">getHeight</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="na">height</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="nf">getWeight</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="na">weight</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="c1">//设定数据的方法</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">setHeight</span><span class="p">(</span><span class="kt">float</span><span class="w"> </span><span class="n">h</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">height</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">h</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">setWeight</span><span class="p">(</span><span class="kt">float</span><span class="w"> </span><span class="n">w</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">weight</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">w</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="c1">//计算bmi指数</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="nf">bmiRate</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="na">weight</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="na">height</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="na">height</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="c1">// 判断bmi</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="nf">bmiJudge</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kt">float</span><span class="w"> </span><span class="n">bj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">bmiRate</span><span class="p">();</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">bj</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mf">18.5</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="s">&quot;1&quot;</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">bj</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mf">24.0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="s">&quot;2&quot;</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">bj</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mf">28.0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="s">&quot;3&quot;</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="s">&quot;4&quot;</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<hr />
+<h2 id="devops基础">Devops基础</h2>
+<h3 id="是什么">是什么</h3>
+<ul>
+<li>
+<p>是一组过程、方法、与系统的统称，用于促进==开发、运营和质量团队==之间的沟通协作与整合。</p>
+</li>
+<li>
+<p>通过自动化软件交付和架构变更的实施，使得频繁的构建、测试、发布、更加快捷和可靠</p>
+</li>
+<li>包括：代码托管、项目管理、测试管理、持续集成、制品库等。研发团队可以在云端高效协同，实践敏捷开发与DevOps，提升软件交付质量与速度。</li>
+</ul>
+<hr />
+<h2 id="软件测试基础">软件测试基础</h2>
+<h3 id="测试环境基本知识">测试环境基本知识</h3>
+<ul>
+<li>测试计划 - 测试设计 - 测试实施</li>
+<li>测试计划是确定测试各阶段的目标策略</li>
+<li>测试设计是制定方案</li>
+<li>测试项目管理软件：</li>
+<li><mark>JIRA</mark></li>
+<li><mark>禅道</mark></li>
+</ul>
+<h3 id="测试方法">测试方法</h3>
+<p><div class="callout callout-info" markdown="1"><br />
+<p class="callout-title">测试方法分类</p></p>
+</div>
+<ul>
+<li>按照测试用例设计方法来分：<mark>黑盒、白盒、灰盒</mark></li>
+<li>黑盒：等价类、边界值、因果图、错误推测、判定表、正交时延、功能图、场景</li>
+<li>
+<p>白盒：代码检查、静态结构分析、静态质量分析、逻辑覆盖、基本路径测试</p>
+</li>
+<li>
+<p><mark>功能测试</mark>：主要是用黑盒测试方法，检查软件功能是否符合要求。</p>
+</li>
+<li><mark>冒烟测试</mark>：BVT，对基本功能特别是关键功能测试，确认软件基本功能正常。测试人员测试的版本必须经过冒烟测试才能进行后续。即版本确认性测试。</li>
+<li>
+<p><mark>回归测试</mark>：发生修改后，重新测试先前的测试内容，确保修改没影响先前的功能。</p>
+</li>
+<li>
+<p><mark>场景测试</mark>：基本流、备选流、异常流</p>
+</li>
+<li>状态转移图测试用例设计</li>
+<li>需求 - 有限状态机 - 看看这些有限状态能不能达到</li>
+<li>组合测试 </li>
+<li>两因素组合测试（配对测试）：生成的测试集可以覆盖任意两个变量的所有取值组合。</li>
+<li>基本选择组合：基础组合中包含每个参数的基础值，每次改变一个参数创建新的组合。 </li>
+<li>单一选择组合：每个测试输入的每一个取值在所有组合中至少出现一次</li>
+<li>完全组合：每个测试输入所有取值的所有组合</li>
+</ul>
+<h3 id="测试设计规格说明">测试设计规格说明</h3>
+<ul>
+<li>
+<p>测试设计</p>
+</li>
+<li>
+<p>测试设计是指定详细可行的方案</p>
+</li>
+<li>
+<p>流程：测试需求分析 - 测试策略设计 - 用例框架设计 - 测试用例编写</p>
+</li>
+</ul>
+<h3 id="自动化测试">自动化测试</h3>
+<h4 id="javascript">JavaScript</h4>
+<h5 id="背景">背景</h5>
+<ul>
+<li>1995年网景公司（现在的Mozilla）设计出的。2015年Emca组织发布了新版本ES6，做出改进。</li>
+<li>是一种脚本编程语言。</li>
+<li>Chrome开发出==ChromeV8引擎==，可以将js语言编译执行；后来出现==nodejs==可以将JS放到服务端去执行，而不是在浏览器中解释执行。</li>
+</ul>
+<h5 id="运行环境">运行环境</h5>
+<ul>
+<li>编写JS代码，需要编辑器：SublimeText、Dreamweaver等；执行调试JS代码，需要浏览器。</li>
+<li>除非是需要编译执行，放到服务端作为程序，那么需要nodejs。</li>
+</ul>
+<hr />
+<p><div class="callout callout-summary" markdown="1"><br />
+<p class="callout-title">相关笔记</p></p>
+<ul>
+<li><a class="wikilink" href="../../SoftwareTesting/%E8%BD%AF%E4%BB%B6%E6%B5%8B%E8%AF%95%E7%9B%B4%E6%92%AD%E8%AF%BE%E7%AC%94%E8%AE%B0/">SoftwareTesting/软件测试直播课笔记</a> - 软件测试培训课程笔记</li>
+<li><a class="wikilink" href="../../Database/MySQL%E5%85%A5%E9%97%A8/">Database/MySQL入门</a> - MySQL数据库基础</li>
+</ul>
+</div>
+    </div>
+  </article>
+  <aside class="toc">
+    <p class="toc-label">本页目录</p>
+    <ul>
+  <li><a href="#1-软件与软件的概念">1 软件与软件的概念</a><ul>
+  <li><a href="#软件的概念特性分类">软件的概念、特性、分类</a></li>
+  <li><a href="#软件危机">软件危机</a></li>
+  <li><a href="#软件生存期">软件生存期</a></li>
+  <li><a href="#典型文档">典型文档</a></li>
+  <li><a href="#软件生存期模型">软件生存期模型</a></li>
+  <li><a href="#面向对象">面向对象</a></li>
+</ul></li>
+  <li><a href="#2-文件和文件系统">2 文件和文件系统</a><ul>
+  <li><a href="#文件">文件</a></li>
+  <li><a href="#文件系统">文件系统</a></li>
+</ul></li>
+  <li><a href="#3-系统服务">3 系统服务</a><ul>
+  <li><a href="#windows服务">Windows服务</a></li>
+  <li><a href="#linux系统服务">Linux系统服务</a></li>
+</ul></li>
+  <li><a href="#数据库基础">数据库基础</a><ul>
+  <li><a href="#组成">组成</a></li>
+  <li><a href="#关系型数据库">关系型数据库</a></li>
+</ul></li>
+  <li><a href="#java基础">Java基础</a><ul>
+  <li><a href="#package-命名规则">Package 命名规则</a></li>
+  <li><a href="#两个java代码示例">两个Java代码示例</a></li>
+</ul></li>
+  <li><a href="#devops基础">Devops基础</a><ul>
+  <li><a href="#是什么">是什么</a></li>
+</ul></li>
+  <li><a href="#软件测试基础">软件测试基础</a><ul>
+  <li><a href="#测试环境基本知识">测试环境基本知识</a></li>
+  <li><a href="#测试方法">测试方法</a></li>
+  <li><a href="#测试设计规格说明">测试设计规格说明</a></li>
+  <li><a href="#自动化测试">自动化测试</a></li>
+</ul></li>
+</ul>
+  </aside>
+
+</div>
+
+</main>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>Learning Notes</span>
+    <a href="https://github.com/hangx969/learning-notes">GitHub</a>
+  </div>
+</footer>
+<script src="../../static/search.js"></script>
+</body>
+</html>

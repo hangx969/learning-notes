@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>云原生概念介绍 - Learning Notes</title>
+<link rel="stylesheet" href="../../static/style.css">
+<link rel="stylesheet" href="../../static/pygments.css">
+</head>
+<body data-root="../../">
+<header class="site-header">
+  <div class="header-inner">
+    <a class="logo" href="../../index.html"><span class="logo-mark"></span>LEARNING NOTES</a>
+    <div class="search">
+      <input id="search-input" type="search" placeholder="搜索笔记…" autocomplete="off" aria-label="搜索笔记">
+      <div id="search-results" hidden></div>
+    </div>
+  </div>
+  <nav class="topic-nav" aria-label="主题导航">
+    <div class="topic-nav-inner">
+      <a href="../../AI/">AI</a>
+      <a href="../../Aliyun/">Aliyun</a>
+      <a href="../../Azure/">Azure</a>
+      <a href="../../C%2B%2B/">C++</a>
+      <a href="../../CloudComputing/" class="active">CloudComputing</a>
+      <a href="../../Database/">Database</a>
+      <a href="../../Docker-Kubernetes/">Docker-Kubernetes</a>
+      <a href="../../GPU-DeepLearning/">GPU-DeepLearning</a>
+      <a href="../../Git/">Git</a>
+      <a href="../../Go/">Go</a>
+      <a href="../../HPC/">HPC</a>
+      <a href="../../IaC/">IaC</a>
+      <a href="../../Linux-Shell/">Linux-Shell</a>
+      <a href="../../Middlewares/">Middlewares</a>
+      <a href="../../Networking/">Networking</a>
+      <a href="../../OS/">OS</a>
+      <a href="../../Python/">Python</a>
+      <a href="../../SoftwareTesting/">SoftwareTesting</a>
+    </div>
+  </nav>
+</header>
+<main class="main">
+
+<div class="article-layout">
+
+  <aside class="sidebar">
+    <details class="sidebar-details">
+      <summary>CloudComputing</summary>
+      <nav class="sidebar-nav">
+        <p class="sidebar-group">其他</p>
+        <ul>
+          <li><a href="../../CloudComputing/Auth/">认证协议与SSO</a></li>
+          <li><a href="../../CloudComputing/Openstack/">OpenStack</a></li>
+          <li><a href="../../CloudComputing/%E4%BA%91%E5%8E%9F%E7%94%9F/" class="current">云原生概念介绍</a></li>
+          <li><a href="../../CloudComputing/%E5%9B%BE%E8%A7%A3%E4%BA%91%E8%AE%A1%E7%AE%97%E6%9E%B6%E6%9E%84/">图解云计算架构</a></li>
+          <li><a href="../../CloudComputing/%E5%A4%A7%E8%AF%9D%E4%BA%91%E8%AE%A1%E7%AE%97/">大话云计算</a></li>
+          <li><a href="../../CloudComputing/%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4-%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BA%E4%BA%91%E8%AE%A1%E7%AE%97/">深入浅出云计算</a></li>
+          <li><a href="../../CloudComputing/%E6%B7%B1%E5%85%A5%E5%89%96%E6%9E%90Kubernetes/">深入剖析Kubernetes</a></li>
+        </ul>
+      </nav>
+    </details>
+  </aside>
+
+  <article class="article">
+    <nav class="breadcrumb">
+      <a href="../../index.html">首页</a><span>/</span>
+      <a href="../../CloudComputing/">CloudComputing</a>
+    </nav>
+    <h1 class="article-title">云原生概念介绍</h1>
+    <p class="article-meta"><span>更新于 2026-04-16</span>
+      <a href="https://github.com/hangx969/learning-notes/blob/main/CloudComputing/%E4%BA%91%E5%8E%9F%E7%94%9F.md">查看源文件</a>
+    </p>
+    <div class="article-body">
+<h1 id="云原生概念介绍">云原生概念介绍</h1>
+<ul>
+<li>云原生的概念文档:<a href="https://landscape.cncf.io/guide#introduction">CNCF Landscape Guide</a></li>
+<li>云原生意义:<strong>充分利用云所提供的一切能力去设计程序来达到降低技术架构难度。</strong></li>
+<li>K8s在云原生中的角色:是一个基座,提供可移植、可扩展的平台。提供很多开箱即用的功能,比如负载均衡、高可用、服务发现等。可以大大降低应用开发的难度。</li>
+</ul>
+<h2 id="cncf云原生项目图">CNCF云原生项目图</h2>
+<ul>
+<li>CNCF的云原生的生态技术栈网站:<a href="https://landscape.cncf.io/">CNCF Landscape</a></li>
+<li>CNCF项目分为三种:Sandbox(初创期) --&gt; Incubating(正在孵化,可用于生产) --&gt; Graduated(非常稳定,可用于生产)</li>
+</ul>
+<h2 id="云原生发展历程">云原生发展历程</h2>
+<ol>
+<li>2010年 WS02创始人Paul Frementle首次提出Cloud Native</li>
+<li>2015年CNCF成立</li>
+<li>2018年CNCF重新定义云原生:容器、微服务、服务网格、不可变基础设置和声明式API</li>
+<li>2020年成为云原生元年,云原生逐渐成为云计算领域的重要发展方向。为企业十字花转型提供了强大的支持。</li>
+</ol>
+<h2 id="云原生技术体系">云原生技术体系</h2>
+<ul>
+<li>微服务</li>
+<li>软件架构的风格,把应用拆分成若干个单体应用,之间通过API通信。某个服务异常不会影响其他服务</li>
+<li>容器</li>
+<li>轻量级虚拟化、可移植性高,是微服务的最佳载体</li>
+<li>持续交付</li>
+<li>解决传统瀑布式开发的问题。不停机更新。改了一个小功能立马就上线,而不是开发很多功能等一个时间窗口上线。</li>
+<li>Devops</li>
+<li>通过自动化方式,提高软件交付的速度和质量</li>
+<li>云原生十二要素</li>
+<li>一组最佳实践原则</li>
+<li>服务网格</li>
+<li>可以让开发人员不用去关心服务治理的问题。比如多个微服务之间的多个实例,高可用和负载均衡都用服务网格来治理。</li>
+<li>声明式API</li>
+<li>是一种编程范式。通过声明目标状态来实现资源管理。</li>
+<li>基础设施即代码</li>
+<li>容器编排</li>
+<li>资源调度、自动修复、服务发现、负载均衡、弹性伸缩、自带高可用等</li>
+<li>Serverless</li>
+<li>函数即服务。无服务器计算。</li>
+<li>事件触发,例如AWS的lambda服务,只有用户请求时才会实际在后台起实例来执行</li>
+</ul>
+<h2 id="云原生十二要素">云原生十二要素</h2>
+<ol>
+<li>
+<p>一份基准代码,多份部署</p>
+</li>
+<li>
+<p>针对不同的环境,要用同一份代码。</p>
+</li>
+<li>
+<p>显式声明依赖</p>
+</li>
+<li>
+<p>不要依赖系统组件(比如curl wget等),最好都要声明出来,让他自动下载。</p>
+</li>
+<li>
+<p>在环境变量中存储配置</p>
+</li>
+<li>
+<p>不要把配置写在代码中,用环境变量表示</p>
+</li>
+<li>
+<p>配置放在配置中心中也可以</p>
+</li>
+<li>
+<p>把后端服务当做附加资源</p>
+</li>
+<li>
+<p>比如后端需要mysql等,需要做到mysql挂了,前端服务还能继续运行。</p>
+</li>
+<li>
+<p>这个在实践中很难做到。可以忽略</p>
+</li>
+<li>
+<p>严格分离构建、发布、运行</p>
+</li>
+<li>
+<p>代码部署到一个环境中,发现bug之后不能直接在这个环境中去修改。</p>
+</li>
+<li>
+<p>要在代码中心里面改,改完再构建发布运行</p>
+</li>
+<li>
+<p>应用无状态化</p>
+</li>
+<li>
+<p>数据最好放在远程对象存储或者数据库当中,而不是存在本地盘</p>
+</li>
+<li>
+<p>NFS不推荐,高可用性不好</p>
+<blockquote>
+<p>[!info] 对象存储<br />
+对象存储是一种数据存储架构,它将数据作为对象进行管理,而不是像传统文件系统那样以文件和文件夹的层次结构,或者像块存储那样以块的形式。每个对象都包含数据本身、元数据以及一个全局唯一的标识符。</p>
+<p>对象存储的特点:<br />
+- 扁平的命名空间:没有传统的文件夹层次结构<br />
+- REST API 访问:通过 HTTP/HTTPS API 进行访问<br />
+- 高度可扩展:可以存储大量数据<br />
+- 元数据丰富:每个对象可以包含自定义元数据<br />
+- 分布式架构:通常分布在多个节点上以提供高可用性</p>
+<p>对象存储特别适合云原生应用程序,因为它提供了高可用性、可扩展性和通过 API 的编程访问能力。</p>
+</blockquote>
+</li>
+<li>
+<p>通过端口绑定来提供服务</p>
+</li>
+<li>某个服务需要暴露度端口来被访问。而不是本地开一个socket文件。</li>
+<li>通过进程模型来扩展</li>
+<li>服务扩容的时候,推荐使用扩容副本数来实现。而不是内部提高线程数</li>
+<li>快速启动和优雅终止</li>
+<li>不要在服务启动的时候做太多初始配置。要把初始化配置当做单独的任务完成。比如放到InitContainer中</li>
+<li>运行环境一致性<ul>
+<li>UAT、PROD等环境要尽量保证一致</li>
+</ul>
+</li>
+<li>日志当做事件流<ul>
+<li>日志写到本地文件当中不推荐。可以直接把日志输出到控制台,或者输出到管理日志的平台当中。</li>
+</ul>
+</li>
+<li>后台管理任务单做一次性进程运行<ul>
+<li>一次性管理进程是指用于管理应用程序的临时任务(数据库迁移、数据库清理和维护、运行一次性脚本、数据导入/导出、缓存预热、系统健康检查、批量数据处理),这些任务应该作为独立的、一次性的进程(比如cronjob)来运行,而不是集成到主应用进程中。</li>
+</ul>
+</li>
+</ol>
+<h1 id="云原生最佳实践">云原生最佳实践</h1>
+<ol>
+<li>应用日志直接输出到控制台。</li>
+<li>不要写在本地文件内,会占用较大空间,收集比较困难。</li>
+<li>用日志工具直接收集即可。</li>
+<li>应用数据不要直接写在本地</li>
+<li>比如token写到redis,用户数据写在数据库,数据图片写到对象存储当中。</li>
+<li>应用配置和代码分离</li>
+<li>应用服务治理采用云平台能力</li>
+<li>比如用公有云提供的LB等开箱即用功能。</li>
+<li>不需要重复造轮子,比如springcloud就不推荐使用了。</li>
+<li>应用微服务化、可容器化</li>
+<li>应用提供健康检查接口</li>
+<li>Java会出现假死状态,比如接口还在,请求在程序内却不能处理了。</li>
+<li>应用提供Metrics接口</li>
+</ol>
+<h1 id="云原生ai">云原生AI</h1>
+<ul>
+<li>云原生人工智能CNAI:使用云原生技术构建和部署人工智能应用和工作负载。核心是将AI和韵苑升级技术相结合,以实现更高效、更灵活的AI应用开发和部署。</li>
+<li>比较火的项目比如KubeFlow:把机器学习的每个阶段都独立成微服务,用K8s来做调度。</li>
+<li>大模型的部署很复杂,并且可观测行很差。部署到K8s上就可以利用K8s的可观测性,比如OpenLLMMetrics</li>
+</ul>
+    </div>
+  </article>
+  <aside class="toc">
+    <p class="toc-label">本页目录</p>
+    <ul>
+  <li><a href="#cncf云原生项目图">CNCF云原生项目图</a></li>
+  <li><a href="#云原生发展历程">云原生发展历程</a></li>
+  <li><a href="#云原生技术体系">云原生技术体系</a></li>
+  <li><a href="#云原生十二要素">云原生十二要素</a></li>
+</ul>
+  </aside>
+
+</div>
+
+</main>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>Learning Notes</span>
+    <a href="https://github.com/hangx969/learning-notes">GitHub</a>
+  </div>
+</footer>
+<script src="../../static/search.js"></script>
+</body>
+</html>

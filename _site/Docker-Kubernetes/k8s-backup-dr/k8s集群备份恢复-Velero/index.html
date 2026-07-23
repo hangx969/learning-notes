@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>K8s集群备份恢复 - Velero - Learning Notes</title>
+<link rel="stylesheet" href="../../../static/style.css">
+<link rel="stylesheet" href="../../../static/pygments.css">
+</head>
+<body data-root="../../../">
+<header class="site-header">
+  <div class="header-inner">
+    <a class="logo" href="../../../index.html"><span class="logo-mark"></span>LEARNING NOTES</a>
+    <div class="search">
+      <input id="search-input" type="search" placeholder="搜索笔记…" autocomplete="off" aria-label="搜索笔记">
+      <div id="search-results" hidden></div>
+    </div>
+  </div>
+  <nav class="topic-nav" aria-label="主题导航">
+    <div class="topic-nav-inner">
+      <a href="../../../AI/">AI</a>
+      <a href="../../../Aliyun/">Aliyun</a>
+      <a href="../../../Azure/">Azure</a>
+      <a href="../../../C%2B%2B/">C++</a>
+      <a href="../../../CloudComputing/">CloudComputing</a>
+      <a href="../../../Database/">Database</a>
+      <a href="../../../Docker-Kubernetes/" class="active">Docker-Kubernetes</a>
+      <a href="../../../GPU-DeepLearning/">GPU-DeepLearning</a>
+      <a href="../../../Git/">Git</a>
+      <a href="../../../Go/">Go</a>
+      <a href="../../../HPC/">HPC</a>
+      <a href="../../../IaC/">IaC</a>
+      <a href="../../../Linux-Shell/">Linux-Shell</a>
+      <a href="../../../Middlewares/">Middlewares</a>
+      <a href="../../../Networking/">Networking</a>
+      <a href="../../../OS/">OS</a>
+      <a href="../../../Python/">Python</a>
+      <a href="../../../SoftwareTesting/">SoftwareTesting</a>
+    </div>
+  </nav>
+</header>
+<main class="main">
+
+<div class="article-layout">
+
+  <aside class="sidebar">
+    <details class="sidebar-details">
+      <summary>Docker-Kubernetes</summary>
+      <nav class="sidebar-nav">
+        <p class="sidebar-group">CKA-CKS</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/CKA-CKS/CKA-%E5%A4%87%E8%80%83/">CKA 备考</a></li>
+          <li><a href="../../../Docker-Kubernetes/CKA-CKS/CKS-%E5%A4%87%E8%80%83/">CKS 备考</a></li>
+          <li><a href="../../../Docker-Kubernetes/CKA-CKS/k8s-%E9%9D%A2%E8%AF%95%E9%A2%98%E6%B1%87%E6%80%BB/">K8s 面试题汇总</a></li>
+        </ul>
+        <p class="sidebar-group">container-platform</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/container-platform/%E9%83%A8%E7%BD%B2openshift%283.10%29/">部署 OpenShift (3.10)</a></li>
+          <li><a href="../../../Docker-Kubernetes/container-platform/%E9%83%A8%E7%BD%B2%E8%BD%BB%E9%87%8F%E7%BA%A7%E7%9A%84K8S%E5%B9%B3%E5%8F%B0-K3S/">部署轻量级 K8S 平台 - K3S</a></li>
+        </ul>
+        <p class="sidebar-group">docker</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E5%9F%BA%E7%A1%80/">Docker基础</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E5%AE%89%E5%85%A8%E9%85%8D%E7%BD%AE-Capabilities%E4%B8%8E%E5%AE%B9%E5%99%A8%E5%8A%A0%E5%9B%BA/">Docker 安全配置详解：Capabilities 与容器加固</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2UI%E5%B7%A5%E5%85%B7portainer-%E9%83%A8%E7%BD%B2redis-sentinel/">Docker部署Portainer与Redis-Sentinel</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2gitlab/">Docker部署GitLab</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2lnmp%E7%BD%91%E7%AB%99/">Docker部署LNMP网站</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2loki/">Docker部署Loki日志系统</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2nginx-tomcat-httpd-go-python%E6%9C%8D%E5%8A%A1/">Docker部署Nginx-Tomcat-Httpd-Go-Python服务</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2prometheus-grafana-cAdvisior%E7%9B%91%E6%8E%A7/">Docker部署Prometheus-Grafana-cAdvisor监控</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2%E4%BB%93%E5%BA%93%E5%B9%B3%E5%8F%B0homebox/">Docker部署Homebox仓库平台</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1%E5%B7%A5%E5%85%B7gocron/">Docker部署GoCron定时任务工具</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2%E8%B7%AF%E7%94%B1%E7%9B%91%E6%8E%A7%E5%B7%A5%E5%85%B7NextTrace/">Docker部署NextTrace路由监控工具</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%85%8D%E7%BD%AENVIDIA%20GPU/">Docker配置NVIDIA GPU</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%85%8D%E7%BD%AE%E4%BB%A3%E7%90%86/">Docker配置代理</a></li>
+        </ul>
+        <p class="sidebar-group">harbor</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/harbor/harbor-basics/">Harbor 基础</a></li>
+          <li><a href="../../../Docker-Kubernetes/harbor/helm%E9%83%A8%E7%BD%B2harbor/">Helm 部署 Harbor</a></li>
+        </ul>
+        <p class="sidebar-group">helm-operator</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/helm-operator/helmv3-%E5%AE%89%E8%A3%85%E4%B8%8E%E4%BD%BF%E7%94%A8/">Helm v3 安装与使用</a></li>
+          <li><a href="../../../Docker-Kubernetes/helm-operator/helm%E9%83%A8%E7%BD%B2config-syncer%28kubed%29/">Helm 部署 Config Syncer (Kubed)</a></li>
+          <li><a href="../../../Docker-Kubernetes/helm-operator/helm%E9%83%A8%E7%BD%B2dragonfly/">Helm 部署 Dragonfly</a></li>
+          <li><a href="../../../Docker-Kubernetes/helm-operator/helm%E9%83%A8%E7%BD%B2pact-broker/">Helm 部署 Pact Broker</a></li>
+          <li><a href="../../../Docker-Kubernetes/helm-operator/helm%E9%83%A8%E7%BD%B2reloader/">Helm 部署 Reloader</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-CICD</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD%20Image%20Updater/">ArgoCD Image Updater</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD%E5%9F%BA%E7%A1%80/">ArgoCD基础</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD%E5%A4%9A%E9%9B%86%E7%BE%A4GitOps%E5%AE%9E%E6%88%98/">多集群 GitOps 实战：用 Argo CD 管理上百个 Kubernetes 集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD%E9%83%A8%E7%BD%B2Helm%E5%BA%94%E7%94%A8%E6%97%B6%E5%9F%9F%E5%90%8D%E8%A7%A3%E6%9E%90%E5%A4%B1%E8%B4%A5%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5%E4%B8%8E%E8%A7%A3%E5%86%B3/">ArgoCD部署Helm应用时域名解析失败问题排查与解决</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/ArgoCD/%E5%AD%A6%E4%B9%A0%E9%93%BE%E6%8E%A5/">ArgoCD学习链接</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Claude-Code%E5%AE%9E%E7%8E%B0CICD%E8%87%AA%E5%8A%A8%E5%8C%96%E5%8F%91%E5%B8%83%E6%B5%81%E7%A8%8B/">Claude Code 实现 CI/CD 自动化发布流程详细指南</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Gitlab/helm%E9%83%A8%E7%BD%B2gitlab/">Helm部署GitLab</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Gitlab/k8s%E9%83%A8%E7%BD%B2Gitlab%2811.8.1%29-%E5%9F%BA%E4%BA%8Eyaml/">K8s部署GitLab(11.8.1)-基于YAML</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Gitlab/%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%AE%89%E8%A3%85Gitlab%2817.9.8%29/">二进制安装GitLab(17.9.8)</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Jenkins/Jenkins%E8%AF%AD%E6%B3%95-%E5%9F%BA%E4%BA%8Edocker%E9%83%A8%E7%BD%B2/">Jenkins语法-基于Docker部署</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Jenkins/docker%E9%83%A8%E7%BD%B2jenkins/">Docker部署Jenkins</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Jenkins/helm%E9%83%A8%E7%BD%B2jenkins/">Helm部署Jenkins</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Jenkins/k8s-Devops%E5%B9%B3%E5%8F%B0%E8%90%BD%E5%9C%B0-%E5%9F%BA%E4%BA%8Ejenkins/">K8s DevOps平台落地-基于Jenkins</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Jenkins/k8s%E9%83%A8%E7%BD%B2%E5%9F%BA%E4%BA%8EJenkins%282.394%29%E7%9A%84DevOps%E5%B7%A5%E5%85%B7%E9%93%BE-%E5%9F%BA%E4%BA%8Eyaml/">K8s部署基于Jenkins(2.394)的DevOps工具链-基于YAML</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Jenkins/k8s%E9%83%A8%E7%BD%B2%E5%9F%BA%E4%BA%8EJenkins%282.426.3%29%E7%9A%84Devops%E5%B7%A5%E5%85%B7%E9%93%BE-%E5%9F%BA%E4%BA%8Eyaml/">K8s部署基于Jenkins(2.426.3)的DevOps工具链-基于YAML</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Jenkins/%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%AE%89%E8%A3%85Jenkins%282.319%29/">二进制安装Jenkins(2.319)</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Kustomize/k8s%E9%85%8D%E7%BD%AE%E5%AE%9A%E5%88%B6%E5%B7%A5%E5%85%B7-kustomize/">K8s配置定制工具-Kustomize</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Tekton/k8s%E9%83%A8%E7%BD%B2%E5%8E%9F%E7%94%9F%E7%9A%84CICD%E5%B7%A5%E5%85%B7Tekton-%E5%9F%BA%E4%BA%8Eyaml/">K8s部署原生的CICD工具Tekton-基于YAML</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Tekton/%E5%9F%BA%E4%BA%8ETekton%E7%9A%84%E4%BA%91%E5%8E%9F%E7%94%9F%E5%B9%B3%E5%8F%B0%E8%90%BD%E5%9C%B0/">基于Tekton的云原生平台落地</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/k8s%E5%8F%91%E5%B8%83%E7%AD%96%E7%95%A5-%E8%93%9D%E7%BB%BF%E9%83%A8%E7%BD%B2%E4%B8%8E%E9%87%91%E4%B8%9D%E9%9B%80%E5%8F%91%E5%B8%83/">K8s 发布策略：蓝绿部署与金丝雀发布实战</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/%E4%BD%BF%E7%94%A8github%20action%E9%83%A8%E7%BD%B2helmchart/">使用GitHub Action部署Helm Chart</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/%E5%8F%91%E5%B8%83go-python-java%E4%BB%A3%E7%A0%81%E5%88%B0K8S%E7%8E%AF%E5%A2%83/">发布Go/Python/Java代码到K8S环境</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-UI-tools</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-UI-tools/k8s-API%E6%A3%80%E6%9F%A5%E5%B7%A5%E5%85%B7kubent/">K8s API 检查工具 kubent</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-UI-tools/k8s-%E5%B0%8F%E5%B7%A5%E5%85%B7%E9%9B%86%E5%90%88/">K8s 小工具集合</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-UI-tools/k8s%E9%83%A8%E7%BD%B2-Dashboard-UI/">K8s 部署 Dashboard UI</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-UI-tools/k8s%E9%83%A8%E7%BD%B2%E5%8F%AF%E8%A7%86%E5%8C%96ui%E7%95%8C%E9%9D%A2kuboard/">K8s 部署 Kuboard</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-UI-tools/kubectl-UI%E5%B7%A5%E5%85%B7Lens/">kubectl UI 工具 Lens</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-UI-tools/kubectl-%E5%8F%AF%E8%A7%86%E5%8C%96%E6%8F%92%E4%BB%B6k9s-stern/">kubectl 可视化插件 k9s 和 stern</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-UI-tools/kuebctl-%E6%8F%92%E4%BB%B6krew-rolesum/">kubectl 插件 krew 和 rolesum</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-UI-tools/rancher%28v2.6.4%29%E7%AE%A1%E7%90%86k8s%E9%9B%86%E7%BE%A4/">Rancher (v2.6.4) 管理 K8s 集群</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-ai-gpu</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-ai-gpu/k8s%E9%85%8D%E7%BD%AENVIDIA%20GPU/">K8s 配置 NVIDIA GPU</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-backup-dr</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-backup-dr/k8s%E5%A4%87%E4%BB%BD%E4%B8%8E%E7%81%BE%E5%A4%87%E5%AE%9E%E6%88%98-%E4%B8%89%E5%B1%82%E5%AE%B9%E7%81%BE%E6%9E%B6%E6%9E%84/">K8s 备份与灾备实战：三层容灾架构</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-backup-dr/k8s%E9%9B%86%E7%BE%A4%E5%A4%87%E4%BB%BD%E6%81%A2%E5%A4%8D-Velero/" class="current">K8s集群备份恢复 - Velero</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-basic-resources</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/K8s%E5%9F%BA%E7%A1%80-pod%E8%B0%83%E5%BA%A6-%E4%BA%B2%E5%92%8C%E5%8A%9B/">K8s基础-Pod调度-亲和力</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/Python%E8%B0%83%E7%94%A8k8s-api%E5%AE%9E%E7%8E%B0%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/">Python调用K8s-API实现资源管理</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s-APIServer%E6%B7%B1%E5%BA%A6%E5%89%96%E6%9E%90-%E8%AF%B7%E6%B1%82%E9%93%BE%E8%B7%AF-%E8%AE%A4%E8%AF%81%E6%8E%88%E6%9D%83-%E7%94%9F%E4%BA%A7%E8%B0%83%E4%BC%98/">Kubernetes API Server 深度剖析：请求链路、认证授权与生产调优</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s-PodDisruptionBudget%E5%AE%9E%E6%88%98/">K8s PodDisruptionBudget 实战：优雅中断保护</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-Calico/">K8s基础-Calico</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-Finalizer%E4%B8%8E%E8%B5%84%E6%BA%90%E5%88%A0%E9%99%A4/">K8s基础-Finalizer与资源删除</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-Operator%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98-Kubebuilder/">从零开发 Kubernetes Operator：Kubebuilder 实战教程</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-Service/">K8s基础-Service</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-configMap-Secret/">K8s基础-configMap-Secret</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-daemonset/">K8s基础-DaemonSet</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-deployment/">K8s基础-Deployment</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-ingress/">K8s基础-Ingress</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-job-cronjob/">K8s基础-Job-CronJob</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-kubeadm/">K8s基础-kubeadm</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-namespace-%E8%B5%84%E6%BA%90%E5%88%86%E9%85%8D/">K8s基础-namespace-资源分配</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-pod/">K8s基础-Pod</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-pod%E8%B0%83%E5%BA%A6-%E6%A0%87%E7%AD%BE%E4%B8%8E%E9%80%89%E6%8B%A9%E5%99%A8%E5%AE%9E%E6%88%98/">Kubernetes 标签与选择器避坑：5 条核心铁律与生产级实战案例</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-statefulset/">K8s基础-StatefulSet</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-storage/">K8s基础-Storage</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-yaml/">K8s基础-YAML</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E4%B8%B4%E6%97%B6%E5%AE%B9%E5%99%A8ephemeral/">K8s基础-临时容器Ephemeral</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E5%AE%B9%E5%99%A8%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-Sidecar-Init-Ambassador-Adapter/">K8s 容器设计模式：Sidecar / Init Container / Ambassador / Adapter</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E5%AE%B9%E5%99%A8%E8%BF%90%E8%A1%8C%E6%97%B6-containerd/">K8s基础-容器运行时-containerd</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E6%9E%B6%E6%9E%84-%E7%BB%84%E4%BB%B6-%E8%B5%84%E6%BA%90/">K8s基础-架构-组件-资源</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E8%87%AA%E5%AE%9A%E4%B9%89CRD%E8%B5%84%E6%BA%90/">K8s基础-自定义CRD资源</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E8%AE%A4%E8%AF%81-%E6%8E%88%E6%9D%83-%E5%87%86%E5%85%A5/">K8s基础-认证-授权-准入</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-db-middleware</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/Operator%E9%83%A8%E7%BD%B2Redis%E9%9B%86%E7%BE%A4/">基于Operator部署Redis集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/Operator%E9%83%A8%E7%BD%B2mysql%E9%9B%86%E7%BE%A4/">Operator部署MySQL NDB集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/helm%E9%83%A8%E7%BD%B2mysql/">Helm部署MySQL</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/helm%E9%83%A8%E7%BD%B2postgreSQL/">Helm部署PostgreSQL</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/helm%E9%83%A8%E7%BD%B2rabbitmq-ha/">Helm部署RabbitMQ高可用集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/helm%E9%83%A8%E7%BD%B2strimzi-kafka/">Helm部署Strimzi Kafka</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/k8s%E5%9F%BA%E4%BA%8Eyaml%E9%83%A8%E7%BD%B2MongoDB%E9%9B%86%E7%BE%A4/">K8s基于YAML部署MongoDB集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/k8s%E5%9F%BA%E4%BA%8Eyaml%E9%83%A8%E7%BD%B2httpd%E6%9C%8D%E5%8A%A1/">K8s基于YAML部署httpd服务</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/k8s%E5%9F%BA%E4%BA%8Eyaml%E9%83%A8%E7%BD%B2mysql%E4%B8%BB%E4%BB%8E%E9%AB%98%E5%8F%AF%E7%94%A8/">K8s基于YAML部署MySQL主从高可用</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/k8s%E5%9F%BA%E4%BA%8Eyaml%E9%83%A8%E7%BD%B2redis%E9%9B%86%E7%BE%A4/">K8s基于YAML部署Redis集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/k8s%E9%83%A8%E7%BD%B2springcloud%E7%94%B5%E5%95%86%E9%A1%B9%E7%9B%AE/">K8s部署SpringCloud电商项目</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-installation-management</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/2025%E6%9C%80%E6%96%B0-%E4%BC%81%E4%B8%9A%E7%BA%A7%E9%AB%98%E5%8F%AF%E7%94%A8%E9%9B%86%E7%BE%A4-%E5%9F%BA%E4%BA%8Erockylinux/">2025最新-企业级高可用集群-基于rockylinux</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/etcd%E9%AB%98%E5%8F%AF%E7%94%A8%E9%85%8D%E7%BD%AE%E4%BB%A5%E5%8F%8A%E6%A8%A1%E6%8B%9F%E9%9B%86%E7%BE%A4%E6%95%85%E9%9A%9C%E5%92%8C%E6%81%A2%E5%A4%8D/">etcd高可用配置以及模拟集群故障和恢复</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/k8s-Backstage-%E5%86%85%E9%83%A8%E5%BC%80%E5%8F%91%E8%80%85%E5%B9%B3%E5%8F%B0IDP%E5%AE%9E%E6%88%98/">K8s 平台工程实战：用 Backstage 打造一站式内部开发者平台</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/k8s-cgroup-v2%E6%B7%B1%E5%BA%A6%E8%A7%A3%E6%9E%90-%E8%BF%81%E7%A7%BB%E5%AE%9E%E6%88%98%E4%B8%8E%E9%81%BF%E5%9D%91%E6%8C%87%E5%8D%97/">K8s CGroup v2 深度解析：资源隔离原理、迁移实战与生产避坑指南</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/k8s%E4%B8%A4%E5%9C%B0%E4%B8%89%E4%B8%AD%E5%BF%83%E6%9E%B6%E6%9E%84/">k8s两地三中心架构</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/k8s%E5%A4%9A%E9%9B%86%E7%BE%A4kubeconfig%E7%AE%A1%E7%90%86/">k8s多集群kubeconfig管理</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/k8s%E6%95%85%E9%9A%9C%E6%8E%92%E6%9F%A5%E6%8C%87%E5%8D%97/">k8s故障排查指南</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/k8s%E7%94%9F%E4%BA%A7%E7%8E%AF%E5%A2%83%E4%BC%98%E5%8C%96%E4%B8%8E%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/">k8s生产环境优化与最佳实践</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/k8s%E9%83%A8%E7%BD%B2%E9%98%B2%E7%81%AB%E5%A2%99%E7%AB%AF%E5%8F%A3%E9%85%8D%E7%BD%AE/">K8s部署防火墙端口配置</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/latest-version/%E5%AE%89%E8%A3%85k8s-1.35-%E5%9F%BA%E4%BA%8Erockylinux10-%E6%9C%80%E6%96%B0%E6%AD%A5%E9%AA%A4/">在 Rocky Linux 10 上安装 Kubernetes 1.35</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%AE%89%E8%A3%85k8s%E9%AB%98%E5%8F%AF%E7%94%A8%E9%9B%86%E7%BE%A4/">二进制安装k8s高可用集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.20.6-%E9%AB%98%E5%8F%AF%E7%94%A8/">安装k8s-1.20.6-高可用</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.23/">安装k8s-1.23</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.26-1.27/">安装k8s-1.26-1.27</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.28/">安装k8s-1.28</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.30-%E5%9F%BA%E4%BA%8Erockylinux/">安装k8s-1.30-基于rockylinux</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.32-%E5%9F%BA%E4%BA%8Erockylinux/">安装k8s-1.32-基于rockylinux</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.33-%E5%9F%BA%E4%BA%8Erockylinux-%E6%9C%80%E6%96%B0%E6%AD%A5%E9%AA%A4/">安装k8s-1.33-基于rockylinux-最新步骤</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/%E5%8D%87%E7%BA%A7/k8s-1.37-%E5%8D%87%E7%BA%A7%E9%A1%BB%E7%9F%A5-breaking-changes/">Kubernetes v1.37 升级破坏性变更指南</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/%E5%8D%87%E7%BA%A7/k8s%E8%BF%81%E7%A7%BB%E5%AE%B9%E5%99%A8%E8%BF%90%E8%A1%8C%E6%97%B6-%E7%89%88%E6%9C%AC%E5%8D%87%E7%BA%A7/">k8s迁移容器运行时与版本升级</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-monitoring-logging</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/K8s%E5%85%A8%E9%9D%A2%E5%B7%A1%E6%A3%80%E8%84%9A%E6%9C%AC-%E7%94%9F%E6%88%90HTML%E5%81%A5%E5%BA%B7%E6%8A%A5%E5%91%8A/">K8s 全面巡检脚本：一键生成 HTML 健康报告</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/OpenTelemetry%E5%AE%9E%E6%88%98-%E7%BB%9F%E4%B8%80Traces-Metrics-Logs/">OpenTelemetry 实战：告别厂商锁定，统一 Traces/Metrics/Logs</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/Prometheus%E5%9F%BA%E7%A1%80/">Prometheus基础</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/Prometheus%E7%9B%91%E6%8E%A7k8s%E7%B3%BB%E7%BB%9F%E7%BB%84%E4%BB%B6/">Prometheus监控K8s系统组件</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/Prometheus%E7%9B%91%E6%8E%A7%E5%A4%96%E9%83%A8k8s%E9%9B%86%E7%BE%A4/">Prometheus监控外部K8s集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/Prometheus%E7%9B%91%E6%8E%A7%E9%9D%9E%E4%BA%91%E5%8E%9F%E7%94%9F%E5%BA%94%E7%94%A8-%E4%B8%BB%E6%9C%BA/">Prometheus监控非云原生应用-主机</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/helm%E9%83%A8%E7%BD%B2Loki-promtail-tempo-grafanaAgent%E5%85%A8%E5%AE%B6%E6%A1%B6/">Helm部署Loki+Promtail+Tempo+GrafanaAgent全家桶</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/helm%E9%83%A8%E7%BD%B2jaeger/">Helm部署Jaeger</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/helm%E9%83%A8%E7%BD%B2prometheus-stack%E5%85%A8%E5%AE%B6%E6%A1%B6/">Prometheus-Stack 全家桶：生产级部署与运维完全指南</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E6%97%A5%E5%BF%97%E7%AE%A1%E7%90%86-%E9%87%87%E9%9B%86%E6%96%B9%E6%A1%88%E4%B8%8E%E5%AE%A1%E8%AE%A1%E6%97%A5%E5%BF%97/">K8s 日志管理：基础机制、六种采集方案与审计日志实战</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E7%9B%91%E6%8E%A7EFK%2Blogstash%2Bkafka/">K8s监控EFK+logstash+kafka</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E7%9B%91%E6%8E%A7ES%287.2%29%2BKibana%287.2%29%2BFluentd%28v1.4.2%29/">K8s监控ES(7.2)+Kibana(7.2)+Fluentd(v1.4.2)</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E7%9B%91%E6%8E%A7Prometheus%28v2.2.1%29/">K8s监控Prometheus(v2.2.1)</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E7%9B%91%E6%8E%A7Prometheus%28v2.33.5%29%2BGrafana%28v8.4.5%29/">K8s监控Prometheus(v2.33.5)+Grafana(v8.4.5)</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E7%9B%91%E6%8E%A7alertmanager%28v0.14.0%29/">K8s监控Alertmanager(v0.14.0)</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E9%83%A8%E7%BD%B2elasticsearch%E9%9B%86%E7%BE%A4/">K8s部署Elasticsearch集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E9%83%A8%E7%BD%B2grafana%28v5.0.4%29/">K8s部署Grafana(v5.0.4)</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E9%83%A8%E7%BD%B2%E5%85%A8%E9%93%BE%E8%B7%AF%E8%BF%BD%E8%B8%AA-Skywalking/">K8s部署全链路追踪-Skywalking</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2Prometheus%28v2.32.1%29%E8%81%94%E9%82%A6%E9%9B%86%E7%BE%A4/">二进制部署Prometheus(v2.32.1)联邦集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2efk%2Blogstash%2Bkafka%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%B9%B3%E5%8F%B0/">二进制部署EFK+Logstash+Kafka日志收集平台</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2prometheus-grafana-nodeexporter/">二进制部署Prometheus-Grafana-NodeExporter</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/%E5%9F%BA%E4%BA%8Ehelm%2Boperator%E9%83%A8%E7%BD%B2ECK%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%B9%B3%E5%8F%B0/">基于Helm+Operator部署ECK日志收集平台</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-networking-service-mesh</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/Istio-Sidecar-vs-Ambient/">Istio Sidecar vs Ambient 模式对比</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/helm%E5%AE%89%E8%A3%85istio/">Helm安装Istio</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/helm%E9%83%A8%E7%BD%B2external-dns/">Helm部署External-DNS</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/helm%E9%83%A8%E7%BD%B2ingress-nginx/">Helm部署Ingress-Nginx</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/helm%E9%83%A8%E7%BD%B2tomcat/">Helm 部署 Tomcat</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/k8s-Gateway-API%E5%85%A5%E9%97%A8-Ingress%E4%B8%8B%E4%B8%80%E4%BB%A3%E6%96%B9%E6%A1%88/">Kubernetes Gateway API 入门：Ingress 的下一代方案</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/k8s%E7%B2%BE%E7%BB%86%E5%8C%96%E6%B5%81%E9%87%8F%E7%AE%A1%E7%90%86-istio/">K8s精细化流量管理-Istio</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/k8s%E9%83%A8%E7%BD%B2istio%281.13.1%29/">K8s部署Istio(1.13.1)</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/k8s%E9%9B%86%E7%BE%A4%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/">K8s集群网络安全</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/%E4%BC%81%E4%B8%9A%E9%A1%B9%E7%9B%AE%E6%8E%A5%E5%85%A5istio%E5%AE%9E%E6%88%98/">企业项目接入Istio实战</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-scaling</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-scaling/KEDA-vs-HPA-2026%E7%BB%88%E6%9E%81%E5%AF%B9%E6%AF%94-v1.36%E7%BC%A9%E9%9B%B6/">KEDA vs HPA 2026 终极对比：v1.36 原生缩零后该选谁？</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-scaling/helm%E9%83%A8%E7%BD%B2goldilocks/">Helm部署Goldilocks</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-scaling/helm%E9%83%A8%E7%BD%B2vpa/">Helm部署VPA</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-scaling/k8s-HPA-VPA/">K8s HPA与VPA</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-scaling/k8s-%E5%9F%BA%E4%BA%8EKEDA%E7%9A%84%E5%BC%B9%E6%80%A7%E8%83%BD%E5%8A%9B/">K8s基于KEDA的弹性能力</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-scaling/k8s%E6%88%90%E6%9C%AC%E4%BC%98%E5%8C%96%E6%96%B9%E6%A1%88-FinOps%E5%AE%9E%E6%88%98/">K8s 集群成本优化方案：砍掉 60% 云账单</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-security-auth</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2capsule/">Helm部署Capsule</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2certmanager/">Helm部署Cert-Manager</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2external-secrets/">Helm部署External-Secrets</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2kyverno%E5%92%8Cpolicy-reporter/">Helm部署Kyverno和Policy-Reporter</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2oauth2proxy/">Helm部署OAuth2-Proxy</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2sonarqube/">Helm部署SonarQube</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2trivy-operator/">Helm部署Trivy-Operator</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/k8s-Admission-Webhook%E9%93%BE%E5%86%B2%E7%AA%81%E6%8E%92%E6%9F%A5-Istio-Kyverno-Gatekeeper/">当 Istio、Kyverno、Gatekeeper 三个 Webhook 同时存在，你的集群会发生什么？</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/k8s%E5%AE%B9%E5%99%A8%E5%AE%89%E5%85%A8%E4%B8%8A%E4%B8%8B%E6%96%87-SecurityContext/">Kubernetes 容器安全上下文完全指南：从入门到生产避坑</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-springcloud</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-springcloud/SpringCloud%E9%A1%B9%E7%9B%AE%E8%BF%81%E7%A7%BB%E5%88%B0k8s%E5%AE%9E%E6%88%98/">SpringCloud 项目迁移到 K8s 实战</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-storage</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-storage/helm%E9%83%A8%E7%BD%B2nfs-subdir-external-provisioner/">Helm部署NFS Subdir External Provisioner</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-storage/k8s-ceph%E9%83%A8%E7%BD%B2%E4%B8%8E%E9%9B%86%E6%88%90/">K8s Ceph部署与集成</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-storage/k8s-%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8CubeFS/">K8s分布式存储CubeFS</a></li>
+        </ul>
+        <p class="sidebar-group">kubeblocks</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/kubeblocks/kubeblocks%E9%83%A8%E7%BD%B2WordPress/">KubeBlocks 部署 WordPress</a></li>
+          <li><a href="../../../Docker-Kubernetes/kubeblocks/kubeblocks%E9%83%A8%E7%BD%B2%E9%AB%98%E5%8F%AF%E7%94%A8harbor%E9%9B%86%E7%BE%A4/">KubeBlocks 部署高可用 Harbor 集群</a></li>
+        </ul>
+        <p class="sidebar-group">其他</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/%E7%AE%80%E5%8E%86%E6%8C%87%E5%8D%97/">简历指南</a></li>
+        </ul>
+      </nav>
+    </details>
+  </aside>
+
+  <article class="article">
+    <nav class="breadcrumb">
+      <a href="../../../index.html">首页</a><span>/</span>
+      <a href="../../../Docker-Kubernetes/">Docker-Kubernetes</a><span>/</span><span>k8s-backup-dr</span>
+    </nav>
+    <h1 class="article-title">K8s集群备份恢复 - Velero</h1>
+    <p class="article-meta"><span>更新于 2026-04-16</span>
+      <a href="https://github.com/hangx969/learning-notes/blob/main/Docker-Kubernetes/k8s-backup-dr/k8s%E9%9B%86%E7%BE%A4%E5%A4%87%E4%BB%BD%E6%81%A2%E5%A4%8D-Velero.md">查看源文件</a>
+    </p>
+    <div class="article-body">
+<h1 id="方案对比">方案对比</h1>
+<h2 id="etcd">Etcd</h2>
+<p>优点：全量备份，包含集群所有资源；备份不依赖于任何K8s API和版本，可用于灾难恢复。</p>
+<p>缺点：全量恢复，不可恢复部分资源；不支持数据迁移，恢复时必须保持配置统一（K8s版本、各种IP、主机名都要保持一致）。</p>
+<h2 id="gitops">GitOps</h2>
+<p>优点：符合GitOps规范，可以基于代码仓库进行配置控制、回滚、可审计、可重复部署</p>
+<p>缺点：配置漂移，资源文件过多，管理复杂。</p>
+<h2 id="velero">Velero</h2>
+<p>优点：灵活性高，支持按照namespace、集群等方式备份，支持定时备份、全量备份，支持备份应用数据，支持跨集群备份恢复数据，支持细粒度恢复。</p>
+<p>缺点：需要S3存储备份数据，备份应用数据功能有限，K8s版本依赖</p>
+<p>关于备份应用数据：<br />
+- 不推荐使用velero备份，他是崩溃一致性。数据库应用，直接用velero备份运行中的数据库的PV数据目录不可靠，是有其他事务逻辑约束的，还原会出问题。</p>
+<ul>
+<li>怎么备份应用数据：用数据库自己的工具，比如mysqldump、pgdump等。能保证应用一致性</li>
+</ul>
+<p><div class="callout callout-warning" markdown="1"><br />
+<p class="callout-title">应用数据备份</p></p>
+<p>这些约束是应用层的逻辑，文件系统级的备份工具（如 Velero）无法理解和保证，所以必须使用数据库自己的备份工具（如mysqldump、pg_dump），它们从应用层理解这些约束，才能保证备份的可靠性。</p>
+</div>
+<h1 id="velero介绍">Velero介绍</h1>
+<p>专门为K8s设计的备份容灾工具，主要用于以下场景：<br />
+1. 备份、恢复、灾备K8s集群的各类资源<br />
+2. 灵活迁移K8s的数据，可以从集群A迁移到集群B，可以从ns A迁移到ns B<br />
+3. 手动及周期备份、最小范围恢复（只恢复某个ns内的某个资源）</p>
+<p>核心组件：<br />
+- 服务端：处理备份和恢复操作，需要部署在K8s集群中，需要配置对象存储后端<br />
+- 客户端：负责与服务端交互</p>
+<h2 id="核心资源">核心资源</h2>
+<ul>
+<li>
+<p>Backup：备份资源，用于执行一次性备份任务，可以基于Schedule规则或者自定义字段创建，备份资源可以指定需要备份或排除的空间、资源类型，同时支持备份的保留时间等。</p>
+</li>
+<li>
+<p>Schedule：周期性备份，基于Cron表达式创建的周期性备份任务，包含Backup的所有字段。</p>
+</li>
+<li>
+<p>Restore：恢复资源，用于从某个backup中恢复资源，可以指定恢复的资源类型、空间等。</p>
+</li>
+<li>
+<p>BackupStorageLocation：备份存储位置，用于指定备份文件的存储位置，比如aws、minio等。同时可以指定对象存储的bucket和prefix。</p>
+</li>
+</ul>
+<h2 id="工作原理">工作原理</h2>
+<h3 id="备份过程">备份过程</h3>
+<p>手动或自动备份 -- 创建backup资源 -- 服务端处理 -- 执行钩子 -- 收集资源（创建json文件和一些压缩包） -- 上传至对象存储 -- 返回结果 -- 更新bakcup状态</p>
+<h3 id="还原过程">还原过程</h3>
+<p>执行还原 -- 创建Restore资源 -- 服务端处理 -- 下载备份文件 -- 创建k8s资源 -- 返回结果 -- 更新Restore状态</p>
+<h1 id="部署对象存储minio">部署对象存储Minio</h1>
+<p>Velero会把备份文件上传至对象存储，可以使用公有云存储或者Minio作为存储后端。<br />
+本次实验采用docker部署Minio：</p>
+<p>❌ 使用Bitnami镜像：（bitnami的minio的Arm64镜像无法拉取，dockerhub里面已经找不到任何tag，遂放弃）</p>
+<div class="highlight"><pre><span></span><code>mkdir<span class="w"> </span>-p<span class="w"> </span>/data/minio<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>chmod<span class="w"> </span>-R<span class="w"> </span><span class="m">777</span><span class="w"> </span>/data/minio
+docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>--name<span class="w"> </span>minio-server<span class="w"> </span>--restart<span class="o">=</span>always<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--env<span class="w"> </span><span class="nv">MINIO_ROOT_USER</span><span class="o">=</span><span class="s2">&quot;user&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--env<span class="w"> </span><span class="nv">MINIO_ROOT_PASSWORD</span><span class="o">=</span><span class="s2">&quot;password&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--env<span class="w"> </span><span class="nv">MINIO_DEFAULT_BUCKETS</span><span class="o">=</span><span class="s2">&quot;velerobackup&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--publish<span class="w"> </span><span class="m">9000</span>:9000<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--publish<span class="w"> </span><span class="m">9001</span>:9001<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-v<span class="w"> </span>/data/minio:/bitnami/minio/data<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>bitnami/minio:latest
+</code></pre></div>
+
+<p>访问宿主机IP+9001可以访问Minio UI界面。</p>
+<p>✅ 使用官方镜像：</p>
+<div class="highlight"><pre><span></span><code>mkdir<span class="w"> </span>-p<span class="w"> </span>/data/minio<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>chmod<span class="w"> </span>-R<span class="w"> </span><span class="m">777</span><span class="w"> </span>/data/minio
+docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>--name<span class="w"> </span>minio-server<span class="w"> </span>--restart<span class="o">=</span>always<span class="w"> </span>-p<span class="w"> </span><span class="m">9000</span>:9000<span class="w"> </span>-p<span class="w"> </span><span class="m">9001</span>:9001<span class="w"> </span>-e<span class="w"> </span><span class="nv">MINIO_ROOT_USER</span><span class="o">=</span><span class="s2">&quot;user&quot;</span><span class="w"> </span>-e<span class="w"> </span><span class="nv">MINIO_ROOT_PASSWORD</span><span class="o">=</span><span class="s2">&quot;password&quot;</span><span class="w"> </span>-v<span class="w"> </span>/data/minio:/data<span class="w"> </span>minio/minio:latest<span class="w"> </span>server<span class="w"> </span>/data<span class="w"> </span>--console-address<span class="w"> </span><span class="s2">&quot;:9001&quot;</span>
+</code></pre></div>
+
+<p>注意：<br />
+1. <strong><code>server /data --console-address ":9001"</code></strong>: 这是官方镜像必须的启动参数。如果不加 <code>--console-address</code>，Web 控制台端口可能会随机分配，导致你无法通过 9001 访问。<br />
+2. <code>MINIO_DEFAULT_BUCKETS</code> 是 Bitnami 镜像特有的环境变量。<strong>官方镜像不支持通过环境变量自动创建 Bucket</strong>。你需要启动后手动创建。<br />
+3. 访问宿主机IP+9001可以访问Minio UI界面，在界面左侧点击 "Buckets"，然后点击 "Create Bucket" 创建名为 <code>velerobackup</code> 的存储桶。</p>
+<h1 id="部署velero">部署Velero</h1>
+<h2 id="版本确认及下载">版本确认及下载</h2>
+<p>部署 Velero 之前，需要找到适合的版本和插件的版本：<br />
+- Velero 版 本 选 择 (需要下载docker image)： <a href="https://github.com/vmware-tanzu/velero?tab=readme-ov-file#velero-compatibility-matrix">Velero Compatibility Matrix - GitHub</a><br />
+- 插 件 版 本 选 择（需要下载docker image）： <a href="https://github.com/vmware-tanzu/velero-plugin-for-aws?tab=readme-ov-file#compatibility">velero-plugin-for-aws Compatibility - GitHub</a><br />
+- 接下来下载客户端工具（下载安装包）： <a href="https://github.com/vmware-tanzu/velero/releases/">Velero Releases - GitHub</a></p>
+<p>K8s集群版本是1.34 -- Velero版本用1.17 -- 插件版本选1.13</p>
+<h2 id="安装客户端工具">安装客户端工具</h2>
+<p>客户端工具选：1.17.1 (release里面选择最新的patch版本下载)：<br />
+<a href="https://github.com/vmware-tanzu/velero/releases">Velero Releases - GitHub</a></p>
+<div class="highlight"><pre><span></span><code>tar<span class="w"> </span>xf<span class="w"> </span>velero-v1.17.1-linux-arm64.tar.gz
+mv<span class="w"> </span>velero-v1.17.1-linux-arm64/velero<span class="w"> </span>/usr/local/bin/
+chmod<span class="w"> </span>+x<span class="w"> </span>/usr/local/bin/velero
+velero<span class="w"> </span>version
+</code></pre></div>
+
+<h2 id="创建对象存储密码文件">创建对象存储密码文件</h2>
+<div class="highlight"><pre><span></span><code>cat<span class="w"> </span>&gt;<span class="w"> </span>user-minio<span class="w"> </span><span class="s">&lt;&lt; EOF</span>
+<span class="s">[default]</span>
+<span class="s">aws_access_key_id=user</span>
+<span class="s">aws_secret_access_key=password</span>
+<span class="s">EOF</span>
+</code></pre></div>
+
+<h2 id="安装服务端">安装服务端</h2>
+<p>velero自动识别当前kubeconfig来往集群安装资源：</p>
+<div class="highlight"><pre><span></span><code>velero<span class="w"> </span>install<span class="w"> </span><span class="se">\</span>
+--provider<span class="w"> </span>aws<span class="w"> </span><span class="se">\</span>
+--plugins<span class="w"> </span>velero/velero-plugin-for-aws:v1.13.1<span class="w"> </span><span class="se">\</span>
+--image<span class="w"> </span>velero/velero:v1.17.1<span class="w"> </span><span class="se">\</span>
+--bucket<span class="w"> </span>velerobackup<span class="w"> </span><span class="se">\</span>
+--secret-file<span class="w"> </span>./user-minio<span class="w"> </span><span class="se">\</span>
+--use-volume-snapshots<span class="o">=</span><span class="nb">false</span><span class="w"> </span><span class="se">\</span>
+--backup-location-config<span class="w"> </span><span class="nv">region</span><span class="o">=</span>minio,s3ForcePathStyle<span class="o">=</span><span class="s2">&quot;true&quot;</span>,s3Url<span class="o">=</span>http://172.16.35.120:9000<span class="w"> </span><span class="se">\</span>
+--namespace<span class="w"> </span>velero
+</code></pre></div>
+
+<p>注意：关于为什么对象存储用minio，provider却用aws：<br />
+- <strong>因为 MinIO 是完全兼容 Amazon S3 协议的。</strong><br />
+- Velero 并没有专门为 MinIO 开发一个独立的插件，而是复用了 <strong>AWS S3 的插件</strong>。对于 Velero 来说，MinIO 就是一个“运行在你本地的 AWS S3”。<br />
+- 虽然我们用了 AWS 的插件，但我们不能让它去连接亚马逊的服务器。这就是你命令中 <strong><code>--backup-location-config</code></strong> 这一行的作用，它是“偷梁换柱”的关键：<br />
+- <strong><code>s3Url=http://192.168.181.134:9000</code></strong>:<br />
+    这个参数告诉 AWS 插件：“<strong>不要</strong>去连接默认的亚马逊官网地址，<strong>而是</strong>去连接我指定的这个 IP 和端口”。因为 MinIO 听得懂 AWS S3 的语言，所以插件发过去的请求，MinIO 能完美处理。<br />
+- <strong><code>s3ForcePathStyle="true"</code></strong>:<br />
+    AWS S3 现在的默认访问方式是域名形式（如 <code>bucketname.s3.amazonaws.com</code>），但本地部署的 MinIO 通常使用路径形式（如 <code>192.168.x.x:9000/bucketname</code>）。这个参数强制插件使用路径形式，否则会因为 DNS 解析不到域名而报错。<br />
+- <strong><code>region=minio</code></strong>:<br />
+    AWS SDK 强制要求必须填一个 Region（区域）。对于本地 MinIO，这个值其实不重要（MinIO 不分区域），但为了骗过 SDK 的检查，我们通常约定俗成填 <code>minio</code> 或者 <code>us-east-1</code>。<br />
+- 因为加载的是 <strong>AWS 插件</strong>，该插件的代码里写死了去读取名为 <code>aws_access_key_id</code> 的变量。插件并不知道它连的是 MinIO，它只认这些标准的 AWS 变量名。所以，这里的 <code>user</code> 和 <code>password</code> 其实就是你 MinIO 的用户名和密码，只是必须套上 AWS 的“马甲”。</p>
+<p><mark>扩展-S3协议</mark><br />
+- Amazon S3 是对象存储事实上的行业标准。几乎所有现代的对象存储软件（包括 MinIO、阿里云 OSS、腾讯云 COS、Ceph RGW 等）都实现了 <strong>S3 API</strong>。 这意味着：它们使用的通讯语言、认证方式、数据读写命令，和 AWS S3 是一模一样的。</p>
+<p>安装完起了一个velero的deployment，检查pod ready，检查存储后端配置：</p>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>get<span class="w"> </span>BackupStorageLocation<span class="w"> </span>-n<span class="w"> </span>velero
+</code></pre></div>
+
+<h1 id="创建测试资源">创建测试资源</h1>
+<p>创建测试ns：<code>kubectl create ns test</code></p>
+<p>部署测试deployment：</p>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">apps/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Deployment</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">busybox-test</span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">test</span>
+<span class="w">  </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">busybox-test</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">replicas</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="w">  </span><span class="nt">selector</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">matchLabels</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">busybox-test</span>
+<span class="w">  </span><span class="nt">template</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">metadata</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">busybox-test</span>
+<span class="w">    </span><span class="nt">spec</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">containers</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">busybox</span>
+<span class="w">          </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">busybox:1.28</span>
+<span class="w">          </span><span class="nt">command</span><span class="p">:</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;/bin/sh&quot;</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;-c&quot;</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;while</span><span class="nv"> </span><span class="s">true;</span><span class="nv"> </span><span class="s">do</span><span class="nv"> </span><span class="s">echo</span><span class="nv"> </span><span class="s">&#39;Hello</span><span class="nv"> </span><span class="s">from</span><span class="nv"> </span><span class="s">busybox&#39;;</span><span class="nv"> </span><span class="s">sleep</span><span class="nv"> </span><span class="s">10;</span><span class="nv"> </span><span class="s">done&quot;</span>
+<span class="w">          </span><span class="nt">ports</span><span class="p">:</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">containerPort</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span>
+<span class="w">          </span><span class="nt">resources</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">requests</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;50m&quot;</span>
+<span class="w">              </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;64Mi&quot;</span>
+<span class="w">            </span><span class="nt">limits</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;100m&quot;</span>
+<span class="w">              </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;128Mi&quot;</span>
+<span class="nn">---</span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Service</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">busybox-test-svc</span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">test</span>
+<span class="w">  </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">busybox-test</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">selector</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">busybox-test</span>
+<span class="w">  </span><span class="nt">ports</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">protocol</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TCP</span>
+<span class="w">      </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span>
+<span class="w">      </span><span class="nt">targetPort</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span>
+<span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ClusterIP</span>
+</code></pre></div>
+
+<h1 id="运行备份">运行备份</h1>
+<p>备份：<code>velero backup create test-backup</code></p>
+<p>查看备份：<code>velero backup get</code></p>
+<p>当你运行 <code>velero backup create test-backup</code> 且<strong>不带任何其他参数</strong>时，Velero 的默认行为是：<strong>“尽可能备份集群内的所有 Kubernetes 资源对象（Metadata）”</strong>。</p>
+<p>结合你之前提供的安装命令（特别是 <code>--use-volume-snapshots=false</code>），这个备份的具体内容如下：</p>
+<h2 id="1-备份了什么yes">1. 备份了什么（Yes）</h2>
+<p>它备份的是 <strong>Kubernetes 的“配置”和“状态描述”</strong>（也就是你通常用 <code>kubectl get ... -o yaml</code> 看到的那些东西）：</p>
+<ul>
+<li><strong>所有命名空间 (Namespaces)</strong>：包括 <code>default</code>、<code>kube-system</code> 以及你自己创建的所有 namespace。</li>
+<li><strong>工作负载 (Workloads)</strong>：Deployments, StatefulSets, DaemonSets, ReplicaSets, Pods, Jobs, CronJobs 等。</li>
+<li><strong>配置与密钥</strong>: ConfigMaps, Secrets。</li>
+<li><strong>网络配置</strong>: Services, Ingress, NetworkPolicies。</li>
+<li><strong>存储定义 (注意是定义)</strong>: PersistentVolumeClaims (PVC), PersistentVolumes (PV), StorageClasses。</li>
+<li><strong>权限控制</strong>: ServiceAccounts, Roles, RoleBindings, ClusterRoles, ClusterRoleBindings。</li>
+<li><strong>自定义资源 (CRDs)</strong>: 集群内安装的所有 CRD 定义及其 CR (Custom Resources)。</li>
+</ul>
+<p><strong>简单来说：</strong> 如果你的集群炸了，用这个备份还原，你的 K8s 会恢复出所有的 Deployment、Service 和 PVC 的<strong>定义</strong>。</p>
+<hr />
+<h2 id="2-没备份什么no-重点警告">2. 没备份什么（No）—— ⚠️ 重点警告</h2>
+<p>基于你之前的安装命令 <code>velero install ... --use-volume-snapshots=false</code>，<strong>这个备份极其重要的一点缺失是：</strong></p>
+<ul>
+<li>❌ <strong>持久化数据（Persistent Volume Data）没有被备份！</strong></li>
+</ul>
+<p><strong>这是什么意思？</strong><br />
+假设你在集群里运行了一个 MySQL 数据库，挂载了一个 PVC 存数据。</p>
+<ul>
+<li>Velero 会备份：“这里有一个 MySQL Deployment” 和 “这里有一个 10GB 的 PVC 申请” 这两张“图纸”。</li>
+<li>Velero <strong>不会</strong>备份：MySQL 数据库里存储的用户表、订单表等实际<strong>文件数据</strong>。</li>
+</ul>
+<p><strong>原因</strong>：<br />
+Velero 备份数据主要有两种方式：</p>
+<ol>
+<li><strong>存储卷快照 (Volume Snapshots)</strong>：你显式禁用了它 (<code>false</code>)，而且 MinIO/本地环境通常也没有云厂商那种一键快照能力。</li>
+<li><strong>文件系统备份 (FSB / Restic / Kopia)</strong>：这需要你显式启用 Node Agent，并在备份时指定（或者给 Pod 加注解）。你的 <code>velero install</code> 命令里没有启用这个组件，<code>backup</code> 命令里也没指定。</li>
+</ol>
+<hr />
+<h2 id="3-还有哪些通常被排除">3. 还有哪些通常被排除？</h2>
+<p>默认情况下，Velero 还会自动排除一些不适合备份或不需要备份的数据：</p>
+<ul>
+<li><strong>Kubernetes Events</strong>: 集群事件日志通常不备份。</li>
+<li><strong>Node 信息</strong>: 因为 Node 是基础设施，还原时通常是还原到新的一组 Node 上。</li>
+<li><strong>临时数据</strong>: 挂载了 <code>emptyDir</code> 的卷里的数据。</li>
+</ul>
+<hr />
+<h2 id="4-如何验证备份了什么">4. 如何验证备份了什么？</h2>
+<p>你可以运行以下命令来查看这次备份的详情：</p>
+<p><strong>查看备份概览：</strong></p>
+<div class="highlight"><pre><span></span><code>velero<span class="w"> </span>backup<span class="w"> </span>describe<span class="w"> </span>test-backup<span class="w"> </span>--details
+kubectl<span class="w"> </span>get<span class="w"> </span>backup<span class="w"> </span>-n<span class="w"> </span>velero
+</code></pre></div>
+
+<p>你会看到 Resource List，列出了它找到了多少个 Deployment、多少个 Pod 等。</p>
+<p><strong>查看具体的备份日志（排查是否有 Error）：</strong></p>
+<div class="highlight"><pre><span></span><code>velero<span class="w"> </span>backup<span class="w"> </span>logs<span class="w"> </span>test-backup
+</code></pre></div>
+
+<p><strong>下载备份文件看看（硬核验证）：</strong></p>
+<ol>
+<li>去你的 MinIO 控制台 (<code>http://&lt;IP&gt;:9001</code>)。</li>
+<li>进入 <code>velerobackup</code> 存储桶。</li>
+<li>你会看到 <code>backups/test-backup/</code> 目录。</li>
+<li>下载那个 <code>test-backup.tar.gz</code> 文件并解压。</li>
+<li>你会发现里面全是 JSON 文件，对应你集群里的每一个资源对象。</li>
+</ol>
+<h2 id="总结建议">总结建议</h2>
+<p>如果你只是想备份 <strong>YAML 配置</strong>（GitOps 风格），目前的备份是够用的。<br />
+如果你想备份 <strong>数据库里的实际数据</strong>，你需要：</p>
+<ol>
+<li>在 <code>velero install</code> 时启用 <code>--use-node-agent</code>。</li>
+<li>在备份命令中指定对特定 PVC 使用文件系统备份，或者给 Pod 打注解 <code>backup.velero.io/backup-volumes=my-volume-name</code>。</li>
+</ol>
+<h1 id="测试还原">测试还原</h1>
+<p>先删掉test ns：<code>kubectl delete ns test</code></p>
+<p>velero还原，仅还原test ns：</p>
+<div class="highlight"><pre><span></span><code>velero<span class="w"> </span>restore<span class="w"> </span>create<span class="w"> </span>test-restore<span class="w"> </span>--from-backup<span class="w"> </span>test-backup<span class="w"> </span>--include-namespaces<span class="w"> </span><span class="nb">test</span>
+</code></pre></div>
+
+<p>查看恢复状态：</p>
+<div class="highlight"><pre><span></span><code>velero<span class="w"> </span>restore<span class="w"> </span>get
+kubectl<span class="w"> </span>get<span class="w"> </span>restore<span class="w"> </span>-n<span class="w"> </span>velero<span class="w"> </span>test-restore
+kubectl<span class="w"> </span>get<span class="w"> </span>restore<span class="w"> </span>-n<span class="w"> </span>velero<span class="w"> </span>test-restore<span class="w"> </span>-oyaml
+</code></pre></div>
+
+<h1 id="velero-企业实践">Velero 企业实践</h1>
+<h2 id="周期性备份任务">周期性备份任务</h2>
+<p>Velero支持定期备份集群，建议为每个集群创建一个每天备份的任务：</p>
+<div class="highlight"><pre><span></span><code>velero<span class="w"> </span>schedule<span class="w"> </span>create<span class="w"> </span>daily-cluster-backup<span class="w"> </span><span class="se">\</span>
+--schedule<span class="o">=</span><span class="s2">&quot;0 13 * * *&quot;</span><span class="w"> </span><span class="se">\</span>
+--include-namespaces<span class="o">=</span><span class="s2">&quot;*&quot;</span><span class="w"> </span><span class="se">\</span>
+--exclude-namespaces<span class="o">=</span><span class="s2">&quot;velero,kube-system&quot;</span><span class="w"> </span><span class="se">\</span>
+--ttl<span class="o">=</span>720h0m0s
+</code></pre></div>
+
+<p><strong>参数说明：</strong></p>
+<ul>
+<li>
+<p><code>--schedule</code>：备份周期，分时日月周，默认为UTC时钟</p>
+</li>
+<li>
+<p><code>--include-namespaces</code>：需要备份的Namespace，<code>*</code>为所有，逗号分割</p>
+</li>
+<li>
+<p><code>--exclude-namespaces</code>：需要排除的Namespace，逗号分割，建议排除 <code>kube-system</code> 和 <code>velero</code></p>
+</li>
+<li>
+<p><code>--ttl</code>：备份文件保留的时间，建议保留30天以上</p>
+</li>
+</ul>
+<p><strong>查看备份任务：</strong></p>
+<div class="highlight"><pre><span></span><code>velero<span class="w"> </span>schedule<span class="w"> </span>get
+</code></pre></div>
+
+<p><strong>暂停备份任务：</strong></p>
+<div class="highlight"><pre><span></span><code>velero<span class="w"> </span>schedule<span class="w"> </span>pause<span class="w"> </span>daily-cluster-backup
+</code></pre></div>
+
+<p><strong>恢复备份任务：</strong></p>
+<div class="highlight"><pre><span></span><code>velero<span class="w"> </span>schedule<span class="w"> </span>unpause<span class="w"> </span>daily-cluster-backup
+</code></pre></div>
+
+<p><strong>基于schedule立即手动创建备份任务：</strong></p>
+<div class="highlight"><pre><span></span><code>velero<span class="w"> </span>backup<span class="w"> </span>create<span class="w"> </span>--from-schedule<span class="w"> </span>daily-cluster-backup
+</code></pre></div>
+
+<p>查看备份：</p>
+<div class="highlight"><pre><span></span><code>velero<span class="w"> </span>backup<span class="w"> </span>get
+</code></pre></div>
+
+<h3 id="1-为什么要排除-velero-命名空间">1. 为什么要排除 <code>velero</code> 命名空间？</h3>
+<p><strong>关键词：避免“死循环”和“自我覆盖”</strong></p>
+<ul>
+<li>
+<p><strong>鸡生蛋问题</strong>：<br />
+    当你的集群崩溃需要灾难恢复时，你做的第一件事通常是<strong>重新安装 Velero</strong>。<br />
+    既然你已经安装了一个全新的 Velero 来执行还原操作，如果你从备份里强行还原旧的 <code>velero</code> 命名空间，就会把当前正在干活的 Velero 覆盖掉或搞挂。这就像是在做手术的时候，突然把医生的脑子换掉了。</p>
+</li>
+<li>
+<p><strong>数据并不在 Pod 里</strong>：<br />
+    Velero 的核心数据（备份记录、元数据）其实都保存在 MinIO（对象存储）里。只要你重新安装 Velero 并连上同一个 Bucket，历史备份记录会自动同步回来。因此，备份 Velero 自身的 Pod 和 Deployment 是多余且危险的。</p>
+</li>
+</ul>
+<h3 id="2-为什么要排除-kube-system-命名空间">2. 为什么要排除 <code>kube-system</code> 命名空间？</h3>
+<p><strong>关键词：避免“环境冲突”和“破坏基础设施”</strong></p>
+<ul>
+<li>
+<p><strong>每个集群的“指纹”不同</strong>：<br />
+<code>kube-system</code> 里运行着 Kubernetes 的核心组件（如 CoreDNS, kube-proxy, CNI 网络插件等）。这些组件的配置通常与<strong>当前集群的具体环境</strong>（IP地址、节点信息、网络网段）深度绑定。<br />
+    如果你把<strong>旧集群</strong>（或备份时的状态）的 <code>kube-system</code> 还原到<strong>新集群</strong>（或升级后的集群）里，极大概率会导致网络瘫痪、DNS 解析失效，甚至集群彻底不可用。</p>
+</li>
+<li>
+<p><strong>ETCD 才是正解</strong>：<br />
+    如果你真的想备份集群的核心状态（Node 信息、集群证书等），应该使用 <strong>ETCD 备份</strong>，而不是用 Velero。<br />
+    Velero 的设计定位是备份 <strong>“用户的工作负载”</strong>（你的应用、Service、PVC），而不是备份 <strong>“Kubernetes 自身”</strong>。</p>
+</li>
+</ul>
+<h2 id="保留-nodeport-端口号">保留 NodePort 端口号</h2>
+<p>Velero恢复数据时，<strong>Service的NodePort端口会重新分配</strong>，如果用到了Service的NodePort会造成一些故障，此时可以使用<code>--preserve-nodeports</code>参数保留原端口（生产环境建议每次还原都使用该端口）。</p>
+<p>也有可能要还原的集群中已经有占用原来NodePort的服务了，这时还原的时候会提示端口号冲突。建议先把新集群的这个服务的端口号改了，还原过去之后再交换。<br />
+velero也支持指定参数但是要写很多正则表达式非常麻烦。</p>
+<p><strong>查看当前NodePort：</strong></p>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>get<span class="w"> </span>svc<span class="w"> </span>-n<span class="w"> </span><span class="nb">test</span>
+</code></pre></div>
+
+<p><strong>创建备份：</strong></p>
+<div class="highlight"><pre><span></span><code>velero<span class="w"> </span>backup<span class="w"> </span>create<span class="w"> </span>test-backup2
+</code></pre></div>
+
+<p><strong>删除数据（也可以只删除Service资源）：</strong></p>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>delete<span class="w"> </span>ns<span class="w"> </span><span class="nb">test</span>
+</code></pre></div>
+
+<p><strong>还原数据：</strong></p>
+<div class="highlight"><pre><span></span><code>velero<span class="w"> </span>restore<span class="w"> </span>create<span class="w"> </span>test-restore-with-nodeport<span class="w"> </span><span class="se">\</span>
+--from-backup<span class="w"> </span>test-backup2<span class="w"> </span><span class="se">\</span>
+--include-namespaces<span class="w"> </span><span class="nb">test</span><span class="w"> </span><span class="se">\</span>
+--preserve-nodeports
+</code></pre></div>
+
+<p><strong>查看还原的数据：</strong></p>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>get<span class="w"> </span>svc<span class="w"> </span>-n<span class="w"> </span><span class="nb">test</span>
+</code></pre></div>
+
+<h2 id="误删资源恢复">误删资源恢复</h2>
+<p>假如K8s的资源被误删除，也可以通过Velero进行恢复。</p>
+<p><strong>模拟删除deployment：</strong></p>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>delete<span class="w"> </span>deploy<span class="w"> </span>-n<span class="w"> </span><span class="nb">test</span><span class="w"> </span>--all
+</code></pre></div>
+
+<p><strong>使用Velero还原deployment（建议最小化执行）：</strong></p>
+<div class="highlight"><pre><span></span><code>velero<span class="w"> </span>restore<span class="w"> </span>create<span class="w"> </span>test-ns-restore-deployments<span class="w"> </span><span class="se">\</span>
+--from-backup<span class="w"> </span>test-backup<span class="w"> </span><span class="se">\</span>
+--include-namespaces<span class="o">=</span><span class="nb">test</span><span class="w"> </span><span class="se">\</span>
+--include-resources<span class="o">=</span>deployments<span class="w"> </span><span class="se">\</span>
+--preserve-nodeports
+</code></pre></div>
+
+<p>注意：无法指定还原特定资源，比如无法指定还原某个特定的deployment，只支持还原所有的deployment。但是集群中已经存在的资源是不会受到影响的。</p>
+<p><strong>查看还原的数据：</strong></p>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>get<span class="w"> </span>deploy<span class="w"> </span>-n<span class="w"> </span><span class="nb">test</span>
+</code></pre></div>
+
+<h2 id="重大上线变更提前备份">重大上线变更提前备份</h2>
+<p>如果要对一个系统进行非常大的变更，建议在变更之前提前对某个系统进行全量备份，假设变更失败，可以一键回滚资源。</p>
+<p>假如test项目今天需要进行变更上线，可以提前对test项目进行备份，命名方式建议 <code>nsName1-nsName2-ns-backup</code>：</p>
+<div class="highlight"><pre><span></span><code>velero<span class="w"> </span>backup<span class="w"> </span>create<span class="w"> </span>test-ns-backup<span class="w"> </span>--include-namespaces<span class="o">=</span><span class="nb">test</span>
+</code></pre></div>
+
+<p>查看备份：</p>
+<div class="highlight"><pre><span></span><code>velero<span class="w"> </span>backup<span class="w"> </span>get<span class="w"> </span>test-ns-backup
+</code></pre></div>
+
+<p><strong>模拟变更服务，假设变更出错：</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 修改镜像为不存在的版本  </span>
+kubectl<span class="w"> </span>edit<span class="w"> </span>deploy<span class="w"> </span>-n<span class="w"> </span><span class="nb">test</span><span class="w"> </span>krm<span class="w">  </span>
+<span class="c1"># image: registry.cn-beijing.aliyuncs.com/krm:xxx  </span>
+</code></pre></div>
+
+<p>​  </p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 删除服务  </span>
+kubectl<span class="w"> </span>delete<span class="w"> </span>svc<span class="w"> </span>-n<span class="w"> </span><span class="nb">test</span><span class="w"> </span>--all
+</code></pre></div>
+
+<p><strong>还原数据：</strong></p>
+<div class="highlight"><pre><span></span><code>velero<span class="w"> </span>restore<span class="w"> </span>create<span class="w"> </span>test-ns-restore<span class="w"> </span><span class="se">\</span>
+--from-backup<span class="w"> </span>test-ns-backup<span class="w"> </span><span class="se">\</span>
+--include-namespaces<span class="o">=</span><span class="nb">test</span><span class="w"> </span><span class="se">\</span>
+--preserve-nodeports
+</code></pre></div>
+
+<p><strong>查看还原信息：</strong></p>
+<div class="highlight"><pre><span></span><code>velero<span class="w"> </span>restore<span class="w"> </span>get
+</code></pre></div>
+
+<p>此时可能有两个警告，可以通过describe查看详情：</p>
+<div class="highlight"><pre><span></span><code>velero<span class="w"> </span>restore<span class="w"> </span>describe<span class="w"> </span>test-ns-restore
+</code></pre></div>
+
+<p>输出示例：</p>
+<div class="highlight"><pre><span></span><code>Namespaces:<span class="w">  </span>
+<span class="w">  </span>test:<span class="w"> </span>could<span class="w"> </span>not<span class="w"> </span>restore,<span class="w"> </span>Pod:krm-978cdf5dd-5nzkr<span class="w"> </span>already<span class="w"> </span>exists.<span class="w">  </span>
+<span class="w">        </span>Warning:<span class="w"> </span>the<span class="w"> </span><span class="k">in</span>-cluster<span class="w"> </span>version<span class="w"> </span>is<span class="w"> </span>different<span class="w"> </span>than<span class="w"> </span>the<span class="w"> </span>backed-up<span class="w"> </span>version<span class="w">  </span>
+<span class="w">        </span>could<span class="w"> </span>not<span class="w"> </span>restore,<span class="w"> </span>Deployment:krm<span class="w"> </span>already<span class="w"> </span>exists.<span class="w">  </span>
+<span class="w">        </span>Warning:<span class="w"> </span>the<span class="w"> </span><span class="k">in</span>-cluster<span class="w"> </span>version<span class="w"> </span>is<span class="w"> </span>different<span class="w"> </span>than<span class="w"> </span>the<span class="w"> </span>backed-up<span class="w"> </span>version
+</code></pre></div>
+
+<p>此时Service已还原，但是Deployment并未被Velero恢复（Velero默认不还原已经存在的数据）：</p>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>get<span class="w"> </span>svc<span class="w"> </span>-n<span class="w"> </span><span class="nb">test</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>po<span class="w"> </span>-n<span class="w"> </span><span class="nb">test</span>
+</code></pre></div>
+
+<p><strong>为了还原已存在的数据，可以使用 <code>--existing-resource-policy=update</code>：</strong></p>
+<div class="highlight"><pre><span></span><code>velero<span class="w"> </span>restore<span class="w"> </span>create<span class="w"> </span>test-ns-restore-update<span class="w"> </span><span class="se">\</span>
+--from-backup<span class="w"> </span>test-ns-backup<span class="w"> </span><span class="se">\</span>
+--include-namespaces<span class="o">=</span><span class="nb">test</span><span class="w"> </span><span class="se">\</span>
+--preserve-nodeports<span class="w"> </span><span class="se">\</span>
+--existing-resource-policy<span class="o">=</span>update
+</code></pre></div>
+
+<p><strong>查看还原的数据：</strong></p>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>get<span class="w"> </span>po<span class="w"> </span>-n<span class="w"> </span><span class="nb">test</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>svc<span class="w"> </span>-n<span class="w"> </span><span class="nb">test</span>
+</code></pre></div>
+
+<h2 id="多集群备份">多集群备份</h2>
+<p>针对不同的集群备份时，不建议备份到同一个位置，可以采用如下方式进行隔离：</p>
+<ul>
+<li>不同的Minio</li>
+<li>同一个Minio，不同的Bucket 【更推荐】</li>
+<li>同一个Bucket，不同的目录</li>
+</ul>
+<p>假设对其它集群备份，可以参考如下步骤。</p>
+<p><strong>上传velero客户端（velero指定其它集群的Kubeconfig也可以）：</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 上传离线包并解压  </span>
+ls<span class="w">  </span>
+<span class="c1"># velero-v1.17.1-linux-amd64.tar.gz  </span>
+​<span class="w">  </span>
+tar<span class="w"> </span>xf<span class="w"> </span>velero-v1.17.1-linux-amd64.tar.gz<span class="w">  </span>
+mv<span class="w"> </span>velero-v1.17.1-linux-amd64/velero<span class="w"> </span>/usr/local/bin/<span class="w">  </span>
+chmod<span class="w"> </span>+x<span class="w"> </span>/usr/local/bin/velero<span class="w">  </span>
+velero<span class="w"> </span>version
+</code></pre></div>
+
+<p><strong>配置对象存储密码文件：</strong></p>
+<div class="highlight"><pre><span></span><code>cat<span class="w"> </span>&gt;<span class="w"> </span>user-minio<span class="w"> </span><span class="s">&lt;&lt; EOF  </span>
+<span class="s">[default]  </span>
+<span class="s">aws_access_key_id=user  </span>
+<span class="s">aws_secret_access_key=password  </span>
+<span class="s">EOF</span>
+</code></pre></div>
+
+<p><strong>创建新的Bucket</strong>（在Minio中创建）</p>
+<p><strong>安装Velero服务端：</strong></p>
+<div class="highlight"><pre><span></span><code>velero<span class="w"> </span>install<span class="w"> </span><span class="se">\</span>
+--provider<span class="w"> </span>aws<span class="w"> </span><span class="se">\</span>
+--plugins<span class="w"> </span>velero/velero-plugin-for-aws:v1.13.1<span class="w"> </span><span class="se">\</span>
+--image<span class="w"> </span>velero/velero:v1.17.1<span class="w"> </span><span class="se">\</span>
+--bucket<span class="w"> </span>velerobackup-nj<span class="w"> </span><span class="se">\</span>
+--prefix<span class="w"> </span>k8s-nj<span class="w"> </span><span class="se">\</span>
+--secret-file<span class="w"> </span>./user-minio<span class="w"> </span><span class="se">\</span>
+--use-volume-snapshots<span class="o">=</span><span class="nb">false</span><span class="w"> </span><span class="se">\</span>
+--backup-location-config<span class="w"> </span><span class="nv">region</span><span class="o">=</span>minio,s3ForcePathStyle<span class="o">=</span><span class="s2">&quot;true&quot;</span>,s3Url<span class="o">=</span>http://172.16.35.120:9000<span class="w"> </span><span class="se">\</span>
+--namespace<span class="w"> </span>velero
+</code></pre></div>
+
+<blockquote>
+<p>如果是同一个桶，也可以用 <code>--prefix</code> 指定不同的目录。prefix的值会在桶里创建一个顶级目录，在里面再创建backup子目录存放备份数据</p>
+</blockquote>
+<p><strong>检查后端存储是否正常：</strong></p>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>get<span class="w"> </span>BackupStorageLocation<span class="w"> </span>-n<span class="w"> </span>velero
+</code></pre></div>
+
+<h2 id="跨集群恢复数据迁移">跨集群恢复/数据迁移</h2>
+<p>Velero支持把数据恢复到不同的集群，通常用于创建新环境、迁移和数据恢复，只需要能看到备份文件即可。</p>
+<p><strong>备份数据共享的方式一般有两个：</strong></p>
+<ul>
+<li>多集群备份至同一个位置，即同一个bucket的同一个目录（不推荐）</li>
+<li>手动处理备份文件</li>
+</ul>
+<p>接下来演示把bj集群的备份数据恢复到nj集群。</p>
+<p><strong>在源集群（bj）创建备份：</strong></p>
+<div class="highlight"><pre><span></span><code>velero<span class="w"> </span>backup<span class="w"> </span>create<span class="w"> </span>demo-backup
+</code></pre></div>
+
+<p><strong>复制备份文件到目标集群存储：</strong></p>
+<p>接下来只需要把bj的备份文件复制一份到nj的备份目录即可。可以使用mc命令，或者通过minio页面下载再上传均可。</p>
+<p>本次采用mc命令复制数据：</p>
+<div class="highlight"><pre><span></span><code>docker<span class="w"> </span>ps<span class="w">  </span>
+<span class="c1"># 找到minio容器  </span>
+docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-ti<span class="w"> </span>&lt;minio容器ID&gt;<span class="w"> </span>bash
+</code></pre></div>
+
+<p>通过mc命令查看备份文件：</p>
+<div class="highlight"><pre><span></span><code>mc<span class="w"> </span>ls<span class="w"> </span>local/
+mc<span class="w"> </span>ls<span class="w"> </span>local/velerobackup/backups/demo-backup
+</code></pre></div>
+
+<p><strong>拷贝数据：</strong></p>
+<p>把一个集群的bucket中的backups目录中的某个备份的子目录，拷贝到另一个集群的bucket中的backups目录中。（子目录会自动创建）</p>
+<div class="highlight"><pre><span></span><code>mc<span class="w"> </span>cp<span class="w"> </span>-r<span class="w"> </span>local/velerobackup/backups/demo-backup<span class="w"> </span>local/velerobackup-nj/k8s-nj/backups/
+</code></pre></div>
+
+<p><strong>查看数据：</strong></p>
+<div class="highlight"><pre><span></span><code>mc<span class="w"> </span>ls<span class="w"> </span>local/velerobackup-nj/k8s-nj/backups/
+</code></pre></div>
+
+<p>数据复制后，velero会读取该备份文件，并且会生成对应的Backup资源：</p>
+<p><strong>在目标集群（nj）查看备份：</strong></p>
+<div class="highlight"><pre><span></span><code>velero<span class="w"> </span>backup<span class="w"> </span>get
+</code></pre></div>
+
+<p><strong>直接还原：</strong></p>
+<div class="highlight"><pre><span></span><code>velero<span class="w"> </span>restore<span class="w"> </span>create<span class="w"> </span>demo-restore-with-nodeport<span class="w"> </span><span class="se">\</span>
+--from-backup<span class="w"> </span>demo-backup<span class="w"> </span><span class="se">\</span>
+--include-namespaces<span class="w"> </span>demo<span class="w"> </span><span class="se">\</span>
+--preserve-nodeports
+</code></pre></div>
+
+<p><strong>查看还原状态：</strong></p>
+<div class="highlight"><pre><span></span><code>velero<span class="w"> </span>restore<span class="w"> </span>get
+</code></pre></div>
+
+<h1 id="velero-卸载">Velero 卸载</h1>
+<div class="highlight"><pre><span></span><code>velero<span class="w"> </span>uninstall<span class="w"> </span>-n<span class="w"> </span>velero<span class="w"> </span>--force
+</code></pre></div>
+    </div>
+  </article>
+  <aside class="toc">
+    <p class="toc-label">本页目录</p>
+    <ul>
+  <li><a href="#etcd">Etcd</a></li>
+  <li><a href="#gitops">GitOps</a></li>
+  <li><a href="#velero">Velero</a></li>
+  <li><a href="#核心资源">核心资源</a></li>
+  <li><a href="#工作原理">工作原理</a><ul>
+  <li><a href="#备份过程">备份过程</a></li>
+  <li><a href="#还原过程">还原过程</a></li>
+</ul></li>
+  <li><a href="#版本确认及下载">版本确认及下载</a></li>
+  <li><a href="#安装客户端工具">安装客户端工具</a></li>
+  <li><a href="#创建对象存储密码文件">创建对象存储密码文件</a></li>
+  <li><a href="#安装服务端">安装服务端</a></li>
+  <li><a href="#1-备份了什么yes">1. 备份了什么（Yes）</a></li>
+  <li><a href="#2-没备份什么no-重点警告">2. 没备份什么（No）—— ⚠️ 重点警告</a></li>
+  <li><a href="#3-还有哪些通常被排除">3. 还有哪些通常被排除？</a></li>
+  <li><a href="#4-如何验证备份了什么">4. 如何验证备份了什么？</a></li>
+  <li><a href="#总结建议">总结建议</a></li>
+  <li><a href="#周期性备份任务">周期性备份任务</a><ul>
+  <li><a href="#1-为什么要排除-velero-命名空间">1. 为什么要排除 velero 命名空间？</a></li>
+  <li><a href="#2-为什么要排除-kube-system-命名空间">2. 为什么要排除 kube-system 命名空间？</a></li>
+</ul></li>
+  <li><a href="#保留-nodeport-端口号">保留 NodePort 端口号</a></li>
+  <li><a href="#误删资源恢复">误删资源恢复</a></li>
+  <li><a href="#重大上线变更提前备份">重大上线变更提前备份</a></li>
+  <li><a href="#多集群备份">多集群备份</a></li>
+  <li><a href="#跨集群恢复数据迁移">跨集群恢复/数据迁移</a></li>
+</ul>
+  </aside>
+
+</div>
+
+</main>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>Learning Notes</span>
+    <a href="https://github.com/hangx969/learning-notes">GitHub</a>
+  </div>
+</footer>
+<script src="../../../static/search.js"></script>
+</body>
+</html>

@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SSH连接 - Learning Notes</title>
+<link rel="stylesheet" href="../../static/style.css">
+<link rel="stylesheet" href="../../static/pygments.css">
+</head>
+<body data-root="../../">
+<header class="site-header">
+  <div class="header-inner">
+    <a class="logo" href="../../index.html"><span class="logo-mark"></span>LEARNING NOTES</a>
+    <div class="search">
+      <input id="search-input" type="search" placeholder="搜索笔记…" autocomplete="off" aria-label="搜索笔记">
+      <div id="search-results" hidden></div>
+    </div>
+  </div>
+  <nav class="topic-nav" aria-label="主题导航">
+    <div class="topic-nav-inner">
+      <a href="../../AI/">AI</a>
+      <a href="../../Aliyun/">Aliyun</a>
+      <a href="../../Azure/">Azure</a>
+      <a href="../../C%2B%2B/">C++</a>
+      <a href="../../CloudComputing/">CloudComputing</a>
+      <a href="../../Database/">Database</a>
+      <a href="../../Docker-Kubernetes/">Docker-Kubernetes</a>
+      <a href="../../GPU-DeepLearning/">GPU-DeepLearning</a>
+      <a href="../../Git/">Git</a>
+      <a href="../../Go/">Go</a>
+      <a href="../../HPC/">HPC</a>
+      <a href="../../IaC/">IaC</a>
+      <a href="../../Linux-Shell/" class="active">Linux-Shell</a>
+      <a href="../../Middlewares/">Middlewares</a>
+      <a href="../../Networking/">Networking</a>
+      <a href="../../OS/">OS</a>
+      <a href="../../Python/">Python</a>
+      <a href="../../SoftwareTesting/">SoftwareTesting</a>
+    </div>
+  </nav>
+</header>
+<main class="main">
+
+<div class="article-layout">
+
+  <aside class="sidebar">
+    <details class="sidebar-details">
+      <summary>Linux-Shell</summary>
+      <nav class="sidebar-nav">
+        <p class="sidebar-group">其他</p>
+        <ul>
+          <li><a href="../../Linux-Shell/LVM-RAID/">LVM 与 RAID</a></li>
+          <li><a href="../../Linux-Shell/Linux-learning-notes/">Linux 学习笔记</a></li>
+          <li><a href="../../Linux-Shell/Linux%E7%BB%88%E7%AB%AF%E9%85%8D%E7%BD%AEproxy/">Linux终端配置代理</a></li>
+          <li><a href="../../Linux-Shell/MacBook%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/">MacBook 开发环境配置</a></li>
+          <li><a href="../../Linux-Shell/Ubuntu-unattended-upgrade%E7%AE%A1%E7%90%86/">Ubuntu安全补丁</a></li>
+          <li><a href="../../Linux-Shell/Ubuntu-%E4%BF%AE%E6%94%B9%E5%90%AF%E5%8A%A8%E5%86%85%E6%A0%B8/">Ubuntu修改启动内核</a></li>
+          <li><a href="../../Linux-Shell/Ubuntu%E5%9F%BA%E7%A1%80%E6%93%8D%E4%BD%9C/">Ubuntu基础操作</a></li>
+          <li><a href="../../Linux-Shell/Ubuntu%E5%AE%89%E8%A3%85Wechat/">Ubuntu安装Wechat</a></li>
+          <li><a href="../../Linux-Shell/Ubuntu%E5%AE%89%E8%A3%85%E6%98%BE%E5%8D%A1%E9%A9%B1%E5%8A%A8/">Ubuntu安装显卡驱动</a></li>
+          <li><a href="../../Linux-Shell/Ubuntu%E9%83%A8%E7%BD%B2vftpd/">Ubuntu部署vsftpd</a></li>
+          <li><a href="../../Linux-Shell/VMWare-using-notes/">VMWare虚拟机挂载共享目录</a></li>
+          <li><a href="../../Linux-Shell/ansible%E5%AE%89%E8%A3%85-rockylinux8/">Ansible安装 - Rocky Linux 8</a></li>
+          <li><a href="../../Linux-Shell/inotifywait%E7%9B%91%E6%8E%A7%E6%96%87%E4%BB%B6%E5%8F%98%E5%8C%96/">inotifywait监控文件变化</a></li>
+          <li><a href="../../Linux-Shell/linux%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E7%AE%A1%E7%90%86/">Linux环境变量管理</a></li>
+          <li><a href="../../Linux-Shell/nmcli%E7%AE%A1%E7%90%86%E7%BD%91%E7%BB%9C%E9%85%8D%E7%BD%AE/">nmcli管理网络配置</a></li>
+          <li><a href="../../Linux-Shell/samba%E6%96%87%E4%BB%B6%E5%85%B1%E4%BA%AB%E6%9C%8D%E5%8A%A1/">Samba文件共享服务</a></li>
+          <li><a href="../../Linux-Shell/screen%E5%90%8E%E5%8F%B0%E8%BF%90%E8%A1%8C%E4%BB%BB%E5%8A%A1/">screen后台运行任务</a></li>
+          <li><a href="../../Linux-Shell/shell-scripts/">Shell 脚本</a></li>
+          <li><a href="../../Linux-Shell/ssh%E8%BF%9C%E7%A8%8B%E6%89%A7%E8%A1%8C%E5%A4%9A%E4%B8%AA%E5%91%BD%E4%BB%A4/">SSH远程执行多个命令</a></li>
+          <li><a href="../../Linux-Shell/ssh%E8%BF%9E%E6%8E%A5/" class="current">SSH连接</a></li>
+          <li><a href="../../Linux-Shell/vscode/">VSCode命令行安装插件</a></li>
+          <li><a href="../../Linux-Shell/%E5%BC%80%E6%BA%90%E5%A0%A1%E5%9E%92%E6%9C%BAjumpserver%E9%83%A8%E7%BD%B2/">开源堡垒机JumpServer部署</a></li>
+          <li><a href="../../Linux-Shell/%E7%B3%BB%E7%BB%9F%E4%BF%A1%E6%81%AF%E6%9F%A5%E7%9C%8B/">系统信息查看</a></li>
+          <li><a href="../../Linux-Shell/%E9%85%8D%E7%BD%AEzsh%E7%BB%88%E7%AB%AF/">配置zsh终端</a></li>
+        </ul>
+      </nav>
+    </details>
+  </aside>
+
+  <article class="article">
+    <nav class="breadcrumb">
+      <a href="../../index.html">首页</a><span>/</span>
+      <a href="../../Linux-Shell/">Linux-Shell</a>
+    </nav>
+    <h1 class="article-title">SSH连接</h1>
+    <p class="article-meta"><span>更新于 2026-04-16</span>
+      <a href="https://github.com/hangx969/learning-notes/blob/main/Linux-Shell/ssh%E8%BF%9E%E6%8E%A5.md">查看源文件</a>
+    </p>
+    <div class="article-body">
+<h1 id="ssh">SSH</h1>
+<ul>
+<li>
+<p>SHH（Secure Shell）用于加密两台计算机的通信，支持各种身份验证机制，主要用于保证远程登陆和远程通信的安全。SSH 的软件架构是CS模式，其有多种实现，主要用的是开源的OpenSSH</p>
+</li>
+<li>
+<p>一般用 大写的 SSH 表示协议，小写的 ssh 表示客户端软件</p>
+</li>
+</ul>
+<h2 id="登录服务器">登录服务器</h2>
+<p><code>$ ssh user@hostname</code><br />
+<code>user</code>是登录服务器的用户名，<code>hostname</code>是主机名（域名或者IP地址）<br />
+ssh 默认连接服务器的 22 端口，可以通过 <code>-p</code>参数进行端口指定</p>
+<h2 id="连接流程">连接流程</h2>
+<ol>
+<li>
+<p>ssh 连接服务器后，首先验证服务器是否为陌生地址，如果是第一次连接，会出现提醒是否确认连接</p>
+<p>这里是否陌生是通过服务器 SSH公钥 的哈希值来判断的，每台 SSH服务器 都有一对密钥，ssh 会将本机连接过的服务器的公钥哈希值都存储在本机的<code>.ssh/known_hosts</code>文件中，每次连接通过该文件判断是否为模式主机</p>
+</li>
+<li>
+<p>确认连接后，ssh 会要求输入密码，之后就可以登录到目标服务器了</p>
+</li>
+</ol>
+<h2 id="ssh客户端配置">ssh客户端配置</h2>
+<p>用户的个人配置文件在<code>~/.ssh/config</code><br />
+可以按照不同的服务器，列出各自的连接参数，以后就不需要每次登录都输入了，如：</p>
+<div class="highlight"><pre><span></span><code>Host<span class="w"> </span>remote
+<span class="w">     </span>HostName<span class="w">  </span>xxxx.yyyy.com
+<span class="w">     </span>User<span class="w">      </span>us
+<span class="w">     </span>Port<span class="w">      </span><span class="m">2222</span>
+</code></pre></div>
+
+<p>remote 可以作为一个别名来代替原有的HostName，以后再登录该服务器，就可以:</p>
+<div class="highlight"><pre><span></span><code>ssh<span class="w"> </span>remote<span class="w">   </span>等同于<span class="w">  </span>ssh<span class="w"> </span>-p<span class="w"> </span><span class="m">2222</span><span class="w"> </span>us@xxxx.yyyy.com
+</code></pre></div>
+
+<h2 id="密钥登录">密钥登录</h2>
+<p>SSH默认使用密码登录，每次输密码较麻烦且不安全，所以在常用的工作机上可以设置密钥登录<br />
+密钥通过加密算法得到，一般是一长串数字，SSH采用非对称加密，和https的SSL加密过程有些类似</p>
+<h3 id="密钥登录过程">密钥登录过程</h3>
+<ol>
+<li>客户端通过<code>ssh-keygen</code>命令生成自己的公钥和私钥，并将公钥上传到远程服务器</li>
+<li>客户端向服务器发起SSH登录请求，服务器收到后发送一些随机数据给客户端</li>
+<li>客户端使用私钥对数据进行签名，发回给服务器</li>
+<li>服务器收到加密签名后使用对应的公钥解密判断是否一致</li>
+</ol>
+<h3 id="密钥生成和上传">密钥生成和上传</h3>
+<ul>
+<li>生成密钥</li>
+</ul>
+<p>OpenSSH提供了工具 <code>ssh-keygen</code>命令用来生成密钥，采用默认的<code>rsa算法</code>生成的密钥文件默认是<code>~/.ssh/id_rsa</code>（私钥）和<code>~/.ssh/id_rsa.pub</code>（公钥）</p>
+<ul>
+<li>上传密钥</li>
+</ul>
+<p>生成密钥之后，公钥要上传到服务器才能使用公钥登录</p>
+<ul>
+<li>
+<p>手动上传：</p>
+<p>OpenSSH中的用户公钥保存在服务器的<code>~/.ssh/authorized_keys</code>文件中，我们可以手动编辑这个文件，把公钥添加在这个文件的最后一行</p>
+</li>
+<li>
+<p>自动上传</p>
+<div class="highlight"><pre><span></span><code>   OpenSSH自带`ssh-copy-id`命令，可以自动将公钥拷贝到远程服务器的公钥文件中。
+</code></pre></div>
+
+<p>在本地执行 <code>ssh-copy-id -i key_file user@host</code>就可以。其中<code>-i</code>表示指定公钥文件，即<code>key_file</code>。<code>ssh-copy-id</code>命令采用密码登录</p>
+<h2 id="scp-命令">scp 命令</h2>
+<p><code>scp</code>是 SSH 提供的一个客户端程序，用来在两台主机之间加密复制文件<br />
+<code>scp</code>是 <code>secure copy</code>的缩写，相当于<code>cp</code>命令 + SSH，其底层是 SSH 协议，默认端口是 22，相当于先使用 <code>ssh</code>命令登录远程主机，然后再执行拷贝操作<br />
+其主要用于以下三种复制：</p>
+</li>
+<li>
+<p>本地复制到远程</p>
+</li>
+<li>远程复制到本地</li>
+<li>两个远程系统之间的复制</li>
+</ul>
+<h3 id="基本语法">基本语法</h3>
+<p><code>scp</code>语法类似于<code>cp</code>的语法： <code>scp source destination</code><br />
+如：<code>scp user@host: example.txt  temp.txt</code> 将远程主机主目录下的<code>example.txt</code>复制为本机当前目录的<code>temp.txt</code>，注意主机和文件之间要用冒号分隔</p>
+<hr />
+<h1 id="vscode配置远程服务器免密连接">Vscode配置远程服务器免密连接</h1>
+<p><div class="callout callout-info" markdown="1"><br />
+<p class="callout-title">参考文档</p></p>
+<p><a href="https://blog.csdn.net/qq_45779334/article/details/129308235">VSCode——SSH免密登录_vscode免密登录ssh_Irving.Gao的博客-CSDN博客</a></p>
+</div>
+<ol>
+<li>首先需要在vscode电脑上生成公钥私钥对：</li>
+</ol>
+<p><code>bash
+   ssh-keygen</code></p>
+<p>从命令输出中查看到保存路径。</p>
+<ol>
+<li>id_rsa.pub是公钥，需要将其中内容复制到远程主机上：</li>
+</ol>
+<p><code>bash
+   vim ~/.ssh/authorized_keys #新建authorized_keys文件
+   #将公钥值复制进去</code></p>
+<ol>
+<li>赋权限</li>
+</ol>
+<p><code>bash
+   chmod 700 /home/userName # 我是root用户，就跳过了这一步
+   chmod 700 ~/.ssh
+   chmod 600 ~/.ssh/authorized_keys</code></p>
+<ol>
+<li>修改ssh配置文件</li>
+</ol>
+<p><code>bash
+   sudo vim /etc/ssh/sshd_config
+   #PubkeyAuthentication yes注释去掉，才可以使用公钥验证</code></p>
+<ol>
+<li>重启sshd服务</li>
+</ol>
+<p><code>bash
+   systemctl restart sshd.service</code></p>
+<ol>
+<li>在vscode的ssh配置文件中加入远程主机信息</li>
+</ol>
+<p><code>bash
+   Host 60.204.142.111
+     HostName 60.204.142.111
+     User root
+     Port 23333
+     IdentityFile C:\Users\hangx\.ssh\id_rsa</code></p>
+<p>此时可以vscode免密远程登录到虚拟机。</p>
+<hr />
+<h1 id="troubleshooting">Troubleshooting</h1>
+<ul>
+<li>
+<p>windows从公司账户切换到个人账户后，将公司账户配置文件里面的/.ssh/config文件拷贝到了个人账户的/.ssh中，在个人账户的vscode中尝试ssh连接时，报错：<code>Bad owner or permissions on C:\\Users\\xuhan/.ssh/config</code></p>
+</li>
+<li>
+<p>解决办法：</p>
+</li>
+</ul>
+<p><img alt="image-20240113075011013" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202401130750113.png" /></p>
+<ul>
+<li>
+<p>vscode ssh登录vmware虚拟机时报错：Address 192.168.<em>.</em> maps to localhost, but this does not map back to the address - POSSIBLE BREAK-IN ATTEMPT!</p>
+</li>
+<li>
+<p>是因为DNS服务器把 192.168.x.x 的地址都反向解析成 localhost 。 解决的办法就是，编辑 ssh 客户端的 /etc/hosts 文件，把出问题的IP 地址和主机名加进去，就不会报这样的错了。</p>
+</li>
+<li>
+<p>解决方案1：</p>
+<ul>
+<li>给客户端主机配置hostname /etc/hosts，然后使用hostname ssh连接就可以了</li>
+</ul>
+</li>
+<li>
+<p>解决方法2：</p>
+<p>```sh<br />
+vim  /etc/ssh/ssh_config</p>
+<h1 id="把gssapiauthentication-yes-改成-no">把GSSAPIAuthentication yes 改成 no</h1>
+<p>systemctl restart sshd<br />
+```</p>
+</li>
+</ul>
+<hr />
+<h1 id="how-to-change-ssh-port-on-azure">How to change ssh port on Azure</h1>
+<p>NOTE：CentOS 8 is used</p>
+<h3 id="1log-in-using-putty">1.Log in using PuTTY</h3>
+<h3 id="2-log-into-root-user">2. Log into root user</h3>
+<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>su
+</code></pre></div>
+
+<h3 id="3-modify-the-parameter-within-sshd_config">3. Modify the parameter within sshd_config</h3>
+<div class="highlight"><pre><span></span><code>vi<span class="w"> </span>/etc/ssh/sshd_config
+</code></pre></div>
+
+<p>the default SSH port appears like this:</p>
+<div class="highlight"><pre><span></span><code><span class="c1">#Port 22</span>
+</code></pre></div>
+
+<p>To change the SSH port to 2222, you will need to make the line appear like this:</p>
+<div class="highlight"><pre><span></span><code>Port<span class="w"> </span><span class="m">2222</span>
+</code></pre></div>
+
+<h3 id="3-update-iptables-and-firewall">3. Update Iptables and firewall</h3>
+<p>Firewalld.service is not activated on the newly created VM, so you need to start it firstly.</p>
+<div class="highlight"><pre><span></span><code>systemctl<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>firewalld
+systemctl<span class="w"> </span>start<span class="w"> </span>firewalld
+</code></pre></div>
+
+<p>Check the firewall service:</p>
+<div class="highlight"><pre><span></span><code>systemctl<span class="w"> </span>status<span class="w"> </span>firewalld
+</code></pre></div>
+
+<p>To allow the port in the firewall:</p>
+<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>firewall-cmd<span class="w"> </span>--permanent<span class="w"> </span>--zone<span class="o">=</span>public<span class="w"> </span>--add-port<span class="o">=</span><span class="m">52019</span>/tcp
+sudo<span class="w"> </span>firewall-cmd<span class="w"> </span>--reload
+</code></pre></div>
+
+<p>You should see a ‘Success’ message after each of these commands.</p>
+<p>To update iptables, please enter the following:</p>
+<div class="highlight"><pre><span></span><code>iptables<span class="w"> </span>-A<span class="w"> </span>INPUT<span class="w"> </span>-m<span class="w"> </span>state<span class="w"> </span>--state<span class="w"> </span>NEW<span class="w"> </span>-m<span class="w"> </span>tcp<span class="w"> </span>-p<span class="w"> </span>tcp<span class="w"> </span>--dport<span class="w"> </span><span class="m">2222</span><span class="w"> </span>-j<span class="w"> </span>ACCEPT
+</code></pre></div>
+
+<p>you can double check that the firewall rule was added using:</p>
+<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>iptables-save<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s1">&#39;2222&#39;</span>
+</code></pre></div>
+
+<p>And you should see:</p>
+<div class="highlight"><pre><span></span><code>-A<span class="w"> </span>IN_public_allow<span class="w"> </span>-p<span class="w"> </span>tcp<span class="w"> </span>-m<span class="w"> </span>tcp<span class="w"> </span>--dport<span class="w"> </span><span class="m">52019</span><span class="w"> </span>-m<span class="w"> </span>conntrack<span class="w"> </span>--ctstate<span class="w"> </span>NEW<span class="w"> </span>-j<span class="w"> </span>ACCEPT
+</code></pre></div>
+
+<h3 id="4-modify-the-selinux-configuration">4. Modify the selinux configuration</h3>
+<p>Enforcing in selinux may lead to the failure of binding to the 2222 port, which will lead to the unsuccessfully restart of sshd.service. Enter:</p>
+<div class="highlight"><pre><span></span><code>getenforce<span class="w"> </span>
+</code></pre></div>
+
+<p>you may see:</p>
+<div class="highlight"><pre><span></span><code>enforcing
+</code></pre></div>
+
+<p>So close the selinux as following:</p>
+<div class="highlight"><pre><span></span><code>vi<span class="w"> </span>/etc/selinux/config
+<span class="nv">SELINUX</span><span class="o">=</span>permissive
+</code></pre></div>
+
+<h3 id="5-restart-sshdservice">5. Restart sshd.service</h3>
+<div class="highlight"><pre><span></span><code>systemctl<span class="w"> </span>restart<span class="w"> </span>sshd.service
+</code></pre></div>
+
+<h3 id="6-add-inbound-port-rule-on-azure-portal">6. Add inbound port rule on Azure Portal</h3>
+<p>Settings - Add inbound rule</p>
+<h3 id="7-restart-putty-using-new-port">7. Restart PuTTY using new port</h3>
+<div class="highlight"><pre><span></span><code><span class="nb">exit</span>
+</code></pre></div>
+
+<p>Log in with new port.</p>
+<h3 id="8-delete-the-old-security-rule-with-22-port">8. Delete the old security rule with 22 port</h3>
+<p>References:</p>
+<p><a href="https://www.sqlskills.com/blogs/paul/changing-the-ssh-port-for-a-rhel-azure-vm/">Changing the SSH port for a RHEL Azure VM - Paul S. Randal (sqlskills.com)</a></p>
+<p><a href="https://www.hostgator.com/help/article/how-to-change-the-ssh-port-on-dedicated-and-vps">How to Change the SSH Port on Dedicated and VPS | HostGator Support</a></p>
+<p><a href="https://www.linuxprobe.com/selinux-introduction.html">SELinux入门 | 《Linux就该这么学》 (linuxprobe.com)</a></p>
+<p><a href="https://hqidi.com/133.html">SSHD服务启动失败 – 笛声 (hqidi.com)</a></p>
+    </div>
+  </article>
+  <aside class="toc">
+    <p class="toc-label">本页目录</p>
+    <ul>
+  <li><a href="#登录服务器">登录服务器</a></li>
+  <li><a href="#连接流程">连接流程</a></li>
+  <li><a href="#ssh客户端配置">ssh客户端配置</a></li>
+  <li><a href="#密钥登录">密钥登录</a><ul>
+  <li><a href="#密钥登录过程">密钥登录过程</a></li>
+  <li><a href="#密钥生成和上传">密钥生成和上传</a></li>
+</ul></li>
+  <li><a href="#scp-命令">scp 命令</a><ul>
+  <li><a href="#基本语法">基本语法</a></li>
+  <li><a href="#1log-in-using-putty">1.Log in using PuTTY</a></li>
+  <li><a href="#2-log-into-root-user">2. Log into root user</a></li>
+  <li><a href="#3-modify-the-parameter-within-sshd_config">3. Modify the parameter within sshd_config</a></li>
+  <li><a href="#3-update-iptables-and-firewall">3. Update Iptables and firewall</a></li>
+  <li><a href="#4-modify-the-selinux-configuration">4. Modify the selinux configuration</a></li>
+  <li><a href="#5-restart-sshdservice">5. Restart sshd.service</a></li>
+  <li><a href="#6-add-inbound-port-rule-on-azure-portal">6. Add inbound port rule on Azure Portal</a></li>
+  <li><a href="#7-restart-putty-using-new-port">7. Restart PuTTY using new port</a></li>
+  <li><a href="#8-delete-the-old-security-rule-with-22-port">8. Delete the old security rule with 22 port</a></li>
+</ul></li>
+</ul>
+  </aside>
+
+</div>
+
+</main>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>Learning Notes</span>
+    <a href="https://github.com/hangx969/learning-notes">GitHub</a>
+  </div>
+</footer>
+<script src="../../static/search.js"></script>
+</body>
+</html>

@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Azure VM and VMSS - Learning Notes</title>
+<link rel="stylesheet" href="../../static/style.css">
+<link rel="stylesheet" href="../../static/pygments.css">
+</head>
+<body data-root="../../">
+<header class="site-header">
+  <div class="header-inner">
+    <a class="logo" href="../../index.html"><span class="logo-mark"></span>LEARNING NOTES</a>
+    <div class="search">
+      <input id="search-input" type="search" placeholder="搜索笔记…" autocomplete="off" aria-label="搜索笔记">
+      <div id="search-results" hidden></div>
+    </div>
+  </div>
+  <nav class="topic-nav" aria-label="主题导航">
+    <div class="topic-nav-inner">
+      <a href="../../AI/">AI</a>
+      <a href="../../Aliyun/">Aliyun</a>
+      <a href="../../Azure/" class="active">Azure</a>
+      <a href="../../C%2B%2B/">C++</a>
+      <a href="../../CloudComputing/">CloudComputing</a>
+      <a href="../../Database/">Database</a>
+      <a href="../../Docker-Kubernetes/">Docker-Kubernetes</a>
+      <a href="../../GPU-DeepLearning/">GPU-DeepLearning</a>
+      <a href="../../Git/">Git</a>
+      <a href="../../Go/">Go</a>
+      <a href="../../HPC/">HPC</a>
+      <a href="../../IaC/">IaC</a>
+      <a href="../../Linux-Shell/">Linux-Shell</a>
+      <a href="../../Middlewares/">Middlewares</a>
+      <a href="../../Networking/">Networking</a>
+      <a href="../../OS/">OS</a>
+      <a href="../../Python/">Python</a>
+      <a href="../../SoftwareTesting/">SoftwareTesting</a>
+    </div>
+  </nav>
+</header>
+<main class="main">
+
+<div class="article-layout">
+
+  <aside class="sidebar">
+    <details class="sidebar-details">
+      <summary>Azure</summary>
+      <nav class="sidebar-nav">
+        <p class="sidebar-group">Customer Support</p>
+        <ul>
+          <li><a href="../../Azure/Customer%20Support/Email%20Templates/">Email Templates</a></li>
+        </ul>
+        <p class="sidebar-group">其他</p>
+        <ul>
+          <li><a href="../../Azure/0_Azure-VM-VMSS/" class="current">Azure VM and VMSS</a></li>
+          <li><a href="../../Azure/10_Azure-devops-agent-pool-management/">Azure DevOps Agent Pool Management</a></li>
+          <li><a href="../../Azure/11_Azure-Policy/">Azure Policy</a></li>
+          <li><a href="../../Azure/1_Azure-Linux-VM-troubheshooting/">Azure Linux VM Troubleshooting</a></li>
+          <li><a href="../../Azure/2_AKS-basics/">AKS Basics</a></li>
+          <li><a href="../../Azure/3_AKS-workload-identity/">AKS Workload Identity</a></li>
+          <li><a href="../../Azure/4_AKS-SecretProviderClass-KeyVault/">AKS SecretProviderClass with KeyVault</a></li>
+          <li><a href="../../Azure/5_Azure-Storage/">Azure Storage</a></li>
+          <li><a href="../../Azure/6_Azure-Networking/">Azure Networking</a></li>
+          <li><a href="../../Azure/7_ACR-ACI/">Azure Container Registry &amp; Azure Container Instances</a></li>
+          <li><a href="../../Azure/8_Azure-devops-basics/">Azure DevOps Basics</a></li>
+          <li><a href="../../Azure/9_Azure-devops-self-host-agents/">Azure DevOps Self-Hosted Agents</a></li>
+          <li><a href="../../Azure/IO-monitor/">IO Monitor</a></li>
+          <li><a href="../../Azure/Jfrog-artifactory-Azure/">JFrog Artifactory on Azure</a></li>
+          <li><a href="../../Azure/Kusto%20Query/">Kusto Query Language (KQL) Reference</a></li>
+          <li><a href="../../Azure/browser%20trace/">Browser Trace (HAR)</a></li>
+          <li><a href="../../Azure/command-line-tools/">Command Line Tools</a></li>
+          <li><a href="../../Azure/fiddler/">Fiddler</a></li>
+          <li><a href="../../Azure/perfMon%20ProcessMon/">PerfMon &amp; ProcessMon</a></li>
+          <li><a href="../../Azure/postman/">Postman</a></li>
+        </ul>
+      </nav>
+    </details>
+  </aside>
+
+  <article class="article">
+    <nav class="breadcrumb">
+      <a href="../../index.html">首页</a><span>/</span>
+      <a href="../../Azure/">Azure</a>
+    </nav>
+    <h1 class="article-title">Azure VM and VMSS</h1>
+    <p class="article-meta"><span>更新于 2026-04-16</span>
+      <a href="https://github.com/hangx969/learning-notes/blob/main/Azure/0_Azure-VM-VMSS.md">查看源文件</a>
+    </p>
+    <div class="article-body">
+<h1 id="azure-vm-and-vmss">Azure VM and VMSS</h1>
+<h2 id="related-notes">Related Notes</h2>
+<ul>
+<li><a class="wikilink" href="../../Azure/1_Azure-Linux-VM-troubheshooting/">Azure/1_Azure-Linux-VM-troubheshooting</a></li>
+<li><a class="wikilink" href="../../Azure/6_Azure-Networking/">Azure/6_Azure-Networking</a></li>
+<li><a class="wikilink" href="../../Azure/5_Azure-Storage/">Azure/5_Azure-Storage</a></li>
+</ul>
+<hr />
+<h2 id="vm-iaas-service">VM - IaaS Service</h2>
+<ul>
+<li><mark>IaaS</mark>: Cloud provides servers, virtualization, storage, and networking; users configure dev environments, manage apps and data</li>
+<li><mark>PaaS</mark>: Cloud provides complete dev environment; users develop apps and manage data</li>
+<li><mark>SaaS</mark>: Cloud provides ready-to-use applications; users consume directly</li>
+</ul>
+<p><img alt="image-20250607215225183" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202506072152288.png" /></p>
+<hr />
+<h2 id="vm-physical-node-architecture">VM Physical Node Architecture</h2>
+<p>VM is deployed in Windows Server physical machines, which reside on racks. Racks have management hardware called <mark>Fabric</mark>, controlled by <mark>Fabric Controller</mark>.</p>
+<p>Fabric receives definitions for hardware, networking, and other resources. It controls datacenter resource allocation, manages service lifecycles, monitors heartbeats, and handles failures. Datacenter servers form clusters of approximately 1000, also called blades. Clusters belong to different fault domains; each cluster is managed and deployed by FC.</p>
+<p>Fabric capabilities:</p>
+<ul>
+<li>Run process service model files</li>
+<li>Allocate compute and network resources (provisioning)</li>
+<li>Prepare nodes</li>
+<li>Configure networking</li>
+<li>Provide service-health management</li>
+</ul>
+<hr />
+<h2 id="vm-deployment-architecture">VM Deployment Architecture</h2>
+<h3 id="fabric">Fabric</h3>
+<p><img alt="image-20250607215705735" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202506072157003.png" /></p>
+<h3 id="host-agent">Host Agent</h3>
+<p>Fabric creates nodes (physical nodes where VMs reside). Physical nodes have a <mark>Host Agent</mark>:</p>
+<p><img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202506072159883.png" alt="image-20250607215905744" style="zoom:50%;" /></p>
+<h3 id="guest-agent">Guest Agent</h3>
+<p>Physical nodes contain multiple VMs. VMs have a <mark>Guest Agent</mark>:</p>
+<p><img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202506072159961.png" alt="image-20250607215953894" style="zoom:50%;" /></p>
+<p>Guest Agent functions:</p>
+<p><img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202506072202407.png" alt="image-20250607220229193" style="zoom:50%;" /></p>
+<p><div class="callout callout-example" markdown="1"><br />
+<p class="callout-title">Manually Reinstall Guest Agent (waagent)</p></p>
+</div>
+<div class="highlight"><pre><span></span><code><span class="c1"># centos7 lab test：</span>
+<span class="c1"># uninstall waagent</span>
+systemctl<span class="w"> </span>stop<span class="w"> </span>waagent
+waagent<span class="w"> </span>-deprovision<span class="w"> </span>-force
+rm<span class="w"> </span>-rf<span class="w"> </span>/var/lib/waagent
+
+<span class="c1"># install waagent</span>
+service<span class="w"> </span>network<span class="w"> </span>restart
+yum<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>git
+<span class="c1"># if python2.7 is not installed, install it</span>
+pkg<span class="w"> </span>install<span class="w"> </span>python27
+pkg<span class="w"> </span>install<span class="w"> </span>Py27-setuptools27<span class="w"> </span>
+ln<span class="w"> </span>-s<span class="w"> </span>/usr/local/bin/python2.7<span class="w"> </span>/usr/bin/python
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/Azure/WALinuxAgent.git
+<span class="nb">cd</span><span class="w"> </span>WALinuxAgent
+python<span class="w"> </span>setup.py<span class="w"> </span>install<span class="w"> </span>--register-service
+waagent<span class="w"> </span>--version
+systemctl<span class="w"> </span>status<span class="w"> </span>waagent
+</code></pre></div>
+
+<h3 id="wire-server">Wire Server</h3>
+<p>Guest Agent communicates with Host Agent through <mark>Wire Server</mark>. Wire Server docs:</p>
+<p><a href="https://learn.microsoft.com/en-us/azure/virtual-network/what-is-ip-address-168-63-129-16">What is IP address 168.63.129.16? | Microsoft Learn</a></p>
+<p><a href="https://learn.microsoft.com/en-us/azure/virtual-machines/instance-metadata-service?tabs=windows">Azure Instance Metadata Service for virtual machines - Azure Virtual Machines | Microsoft Learn</a></p>
+<p><img alt="image-20250607220207319" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202506072202559.png" /></p>
+<p>Wire Server troubleshooting:</p>
+<ul>
+<li><a href="https://learn.microsoft.com/en-us/azure/virtual-network/what-is-ip-address-168-63-129-16">What is IP address 168.63.129.16? | Microsoft Learn</a></li>
+<li><a href="https://learn.microsoft.com/en-us/azure/virtual-network/what-is-ip-address-168-63-129-16#troubleshoot-connectivity">What is IP address 168.63.129.16? | Microsoft Learn</a></li>
+</ul>
+<p><div class="callout callout-important" markdown="1"><br />
+<p class="callout-title">Wire Server Communication</p></p>
+<p>VM Agent communicates with Azure platform to report status. VM gets IP and DHCP through <mark>168.63.129.16</mark>.</p>
+<p>The VM Agent requires outbound communication over ports <mark>80/tcp</mark> and <mark>32526/tcp</mark> with WireServer (168.63.129.16).</p>
+<p>These should be open in the local firewall on the VM. Communication on these ports with 168.63.129.16 is not subject to configured NSGs.</p>
+<p>168.63.129.16 can provide DNS services to the VM. If not desired, outbound traffic to 168.63.129.16 ports 53/udp and 53/tcp can be blocked in the local firewall.</p>
+</div>
+<p>Check connectivity:</p>
+<p>Windows OS:</p>
+<div class="highlight"><pre><span></span><code>Test-NetConnection<span class="w"> </span><span class="m">168</span>.63.129.16<span class="w"> </span>-Port<span class="w"> </span><span class="m">80</span>
+Test-NetConnection<span class="w"> </span><span class="m">168</span>.63.129.16<span class="w"> </span>-Port<span class="w"> </span><span class="m">32526</span>
+</code></pre></div>
+
+<p>Linux OS:</p>
+<div class="highlight"><pre><span></span><code>telnet<span class="w"> </span><span class="m">168</span>.63.129.16<span class="w"> </span><span class="m">80</span>
+telnet<span class="w"> </span><span class="m">168</span>.63.129.16<span class="w"> </span><span class="m">32526</span>
+</code></pre></div>
+
+<hr />
+<h2 id="azure-resource-manager">Azure Resource Manager</h2>
+<p><img alt="image-20250608093651506" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202506080936637.png" /></p>
+<p>Users operate Azure resources through Azure Tools, all requests are received by <mark>ARM</mark> which performs the corresponding operations:</p>
+<p><img alt="image-20250608093727794" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202506080937848.png" /></p>
+<p><mark>ARM Template</mark>: JSON files defining resource infrastructure and configuration, enabling automated deployment of identical environments.</p>
+<p>Example of VM deployment:</p>
+<p><img alt="image-20250608093812500" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202506080938563.png" /></p>
+<hr />
+<h2 id="vm-arm-deployment-process">VM ARM Deployment Process</h2>
+<p>SRP, CRP, NRP etc. create corresponding resources respectively:</p>
+<p><img alt="image-20250607220511709" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202506072205194.png" /></p>
+<hr />
+<h2 id="vm-regional-code">VM Regional Code</h2>
+<table>
+<thead>
+<tr>
+<th>Region</th>
+<th>Code</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>China North</td>
+<td>bjb</td>
+</tr>
+<tr>
+<td>China North2</td>
+<td>bjb2</td>
+</tr>
+<tr>
+<td>China East</td>
+<td>sha</td>
+</tr>
+<tr>
+<td>China East2</td>
+<td>sha2</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="vm-platform-maintenance">VM Platform Maintenance</h2>
+<p><a href="https://docs.microsoft.com/zh-cn/azure/virtual-machines/maintenance-and-updates?toc=%2Fazure%2Fvirtual-machines%2Flinux%2Ftoc.json&amp;bc=%2Fazure%2Fvirtual-machines%2Flinux%2Fbreadcrumb%2Ftoc.json">维护和更新 - Azure Virtual Machines | Microsoft Docs</a></p>
+<p><a href="https://docs.microsoft.com/en-us/azure/virtual-machines/maintenance-and-updates">Maintenance and updates - Azure Virtual Machines | Microsoft Docs</a></p>
+<h3 id="types">Types</h3>
+<p>VM updates and deployments are roughly divided into 2 types:</p>
+<p><a href="https://docs.azure.cn/zh-cn/virtual-machines/maintenance-notifications">https://docs.azure.cn/zh-cn/virtual-machines/maintenance-notifications</a></p>
+<ol>
+<li>If maintenance does not require a reboot, Azure pauses the VM for a few seconds during host update. These maintenance operations are applied fault domain by fault domain. The process stops if any warning health signals are received. Maintenance requiring reboot sends a notification.</li>
+<li>If maintenance requires a reboot, the system notifies the planned maintenance time. A window of approximately <mark>35 days</mark> is provided for self-service maintenance.</li>
+</ol>
+<p><div class="callout callout-info" markdown="1"><br />
+<p class="callout-title">Memory-Preserving Updates</p></p>
+<p>Memory-preserving updates typically complete within ~10 seconds. For this type of deployment, the platform does not send notifications. However, you can obtain platform maintenance/deployment info through VM Metadata Service. See <a href="https://docs.azure.cn/zh-cn/virtual-machines/windows/scheduled-events">Azure 中适用于Windows VM 的计划事件</a>.</p>
+</div>
+<h3 id="alerts">Alerts</h3>
+<p>VM health status alerting. Common monitoring options:</p>
+<ol>
+<li><strong>Scheduled Events</strong> - Monitor the following events, see <a href="https://docs.azure.cn/zh-cn/virtual-machines/windows/scheduled-events">Azure 中适用于Windows VM 的计划事件 | Azure Docs</a>:</li>
+<li><a href="https://docs.azure.cn/zh-cn/virtual-machines/maintenance-and-updates">Platform-initiated maintenance</a> (e.g., VM reboot, live migration, memory-preserving updates)</li>
+<li>VM running on <a href="https://azure.microsoft.com/blog/find-out-when-your-virtual-machine-hardware-is-degraded-with-scheduled-events">degraded host hardware</a> predicted to fail soon</li>
+<li>
+<p>User-initiated maintenance (e.g., user restart or redeploy VM)</p>
+</li>
+<li>
+<p><strong>Resource Health</strong> - Monitor VM state (start, shutdown, etc.). See <a href="https://docs.azure.cn/zh-cn/service-health/resource-health-overview">Azure 资源运行状况概述 | Azure Docs</a> &amp; <a href="https://docs.azure.cn/zh-cn/service-health/resource-health-checks-resource-types">通过Azure 资源运行状况支持的资源类型 | Azure Docs</a></p>
+</li>
+<li>
+<p><strong>Azure Log Analytics Agent</strong> - More powerful monitoring and alerting service, such as monitoring heartbeats and CPU through log queries. See <a href="https://docs.azure.cn/zh-cn/azure-monitor/platform/alerts-overview">Azure 中的警报和通知监视概述 | Azure Docs</a></p>
+</li>
+</ol>
+<hr />
+<h1 id="azure-vm-basics">Azure VM Basics</h1>
+<h2 id="vm-availability-options">VM Availability Options</h2>
+<ul>
+<li><strong>Fault Domain</strong></li>
+<li>Physical grouping</li>
+<li>In a datacenter, servers are divided into groups, each using the same power supply and network equipment</li>
+<li>
+<p>If one group's power or network fails, only that group is affected</p>
+</li>
+<li>
+<p><strong>Update Domain</strong></p>
+</li>
+<li>Logical grouping</li>
+<li>When servers need patches or upgrades requiring restarts, not all servers restart at once</li>
+<li>
+<p>Divided into update domains, only one group restarts at a time</p>
+</li>
+<li>
+<p><strong>Availability Sets</strong></p>
+</li>
+<li>Within a datacenter, an availability set consists of multiple fault domains and update domains (configurable)</li>
+<li>
+<p>A logical concept: VMs in an availability set are distributed across different fault and update domains for high availability</p>
+</li>
+<li>
+<p><strong>Availability Zones</strong></p>
+</li>
+<li>Physically independent zones with separate power, networking, etc.</li>
+<li>Use zone-replicated VMs; if one datacenter goes down, replicated VMs activate in another</li>
+<li>Each zone has at least <mark>3 datacenters</mark>, each with independent power, cooling, and networking</li>
+<li>Can be understood as a larger-scale fault domain and update domain</li>
+<li>Protects against entire datacenter failures</li>
+<li>
+<p>Azure China limited support (North3 supports)</p>
+</li>
+<li>
+<p><strong>Regional Pair</strong> - Paired regions ensure upgrades affect only one, with priority recovery for one</p>
+</li>
+<li>
+<p><strong>VM Scale Sets</strong> - Build load-balanced clusters</p>
+</li>
+</ul>
+<h3 id="create-vm-in-availability-set">Create VM in Availability Set</h3>
+<p><a href="https://docs.microsoft.com/en-us/azure/virtual-machines/windows/tutorial-availability-sets">使用 Azure PowerShell 在可用性集中部署 VM - Azure 虚拟机 | 微软文档</a></p>
+<p><img alt="image-20250608095059478" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202506080950649.png" /></p>
+<hr />
+<h2 id="vm-sku-naming-convention">VM SKU Naming Convention</h2>
+<p><img alt="image-20250607220348948" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202506072203223.png" /></p>
+<hr />
+<h2 id="vm-extension">VM Extension</h2>
+<p>Azure VM Extensions are small programs providing deployment, configuration, and automation.</p>
+<p><strong>How to install:</strong></p>
+<ul>
+<li>Using Azure CLI, PowerShell, ARM, Portal</li>
+</ul>
+<p><strong>Prerequisites:</strong></p>
+<ul>
+<li>Need <mark>Azure Linux Agent</mark> installed to manage VM extensions</li>
+<li>Some extensions have OS limitations</li>
+</ul>
+<p>Related docs:</p>
+<ul>
+<li>https://docs.microsoft.com/en-us/azure/virtual-machines/extensions/agent-windows</li>
+<li><a href="https://docs.microsoft.com/en-us/azure/virtual-machines/extensions/agent-linux">Azure Linux VM Agent Overview | 微软文档</a></li>
+<li><a href="https://github.com/Azure/azure-linux-extensions/tree/master/CustomScript">azure-linux-extensions/CustomScript | GitHub</a></li>
+<li>https://docs.microsoft.com/en-us/azure/virtual-machines/windows/extensions-customscript?toc=%2Fazure%2Fvirtual-machines%2Fwindows%2Ftoc.json</li>
+</ul>
+<p><div class="callout callout-tip" markdown="1"><br />
+<p class="callout-title">Troubleshooting Extensions</p></p>
+<p>Extensions are managed by VM Agent. Log location: <code>/var/log/azure/&lt;extension name&gt;/extension.log</code></p>
+</div>
+<ul>
+<li><a href="https://docs.microsoft.com/en-us/troubleshoot/azure/virtual-machines/linux-azure-guest-agent">Troubleshoot the Azure Linux Agent - Virtual Machines | Microsoft Docs</a></li>
+<li><a href="https://learn.microsoft.com/en-us/troubleshoot/azure/virtual-machines/windows-azure-guest-agent">Troubleshooting Azure Windows VM Agent - Virtual Machines | Microsoft Learn</a></li>
+<li><a href="https://learn.microsoft.com/en-us/azure/backup/backup-azure-troubleshoot-vm-backup-fails-snapshot-timeout#the-agent-installed-in-the-vm-but-unresponsive-for-windows-vms">Troubleshoot Agent and extension issues - Azure Backup | Microsoft Learn</a></li>
+</ul>
+<h3 id="common-extensions">Common Extensions</h3>
+<h4 id="vmaccess">VMAccess</h4>
+<p><strong>What?</strong></p>
+<ul>
+<li>VM disk error, forgotten root password, or deleted SSH private key - need recovery, which normally requires datacenter console access</li>
+<li><mark>VMAccess Extension</mark> can access the console to reset Linux access</li>
+<li>Requires <code>waagent.service</code> process running on Linux</li>
+</ul>
+<p><strong>How?</strong></p>
+<ul>
+<li>When VM can access Azure Linux Agent:</li>
+<li>Use Azure CLI command with parameters to set directly</li>
+<li>Create JSON file with reset parameters, use Azure CLI to read and apply</li>
+</ul>
+<p>Steps:</p>
+<ul>
+<li><a href="https://docs.microsoft.com/en-us/azure/virtual-machines/extensions/vmaccess">重置对 Azure Linux VM 的访问 | 微软文档</a></li>
+<li><a href="https://github.com/Azure/azure-linux-extensions/tree/master/VMAccess">azure-linux-extensions/VMAccess | GitHub</a></li>
+</ul>
+<h4 id="run-command">Run Command</h4>
+<p>Can run custom commands in a VM.</p>
+<p><a href="https://learn.microsoft.com/en-us/azure/virtual-machines/windows/run-command#restrictions">Run scripts in a Windows VM in Azure using action Run Commands - Azure Virtual Machines | Microsoft Learn</a></p>
+<p><div class="callout callout-note" markdown="1"><br />
+<p class="callout-title">Run Command Script Location</p></p>
+<p>View run command scripts on Linux VM at <code>/var/lib/waagent/run-command/download</code>. <code>script.sh</code> is the script, <code>stdout</code> is the execution result.</p>
+</div>
+<hr />
+<h2 id="vm-image-and-snapshot">VM Image and Snapshot</h2>
+<p><strong>What is Image:</strong></p>
+<ul>
+<li>Image is a copy of a complete VM or OS disk only. Use a configured VM as template to create multiple identical VMs.</li>
+<li>Before creating VM from image, remove personal account info, then <mark>generalize</mark>.</li>
+</ul>
+<p><strong>Difference between Image and Snapshot:</strong></p>
+<ul>
+<li>Image contains all disks of the VM, can be used to create new VMs</li>
+<li>Snapshot is a copy of a single disk</li>
+<li>Image creation requires <mark>deprovision</mark> to clear personal info; snapshot does not</li>
+</ul>
+<p><strong>How:</strong></p>
+<ul>
+<li>For managed disk VMs, Portal has a direct capture option</li>
+</ul>
+<p>Docs:</p>
+<ul>
+<li><a href="https://docs.microsoft.com/en-us/azure/virtual-machines/linux/capture-image">使用 Azure CLI 捕获 Linux VM 的托管映像 | 微软文档</a></li>
+<li><a href="https://docs.microsoft.com/en-us/azure/virtual-machines/windows/capture-image-resource">在 Azure 中创建托管映像 | 微软文档</a></li>
+</ul>
+<hr />
+<h2 id="azure-vm-boot-diagnostics">Azure VM Boot Diagnostics</h2>
+<p><a href="https://docs.microsoft.com/en-us/troubleshoot/azure/virtual-machines/boot-diagnostics">Azure 中 VM 的启动诊断 | 微软文档</a></p>
+<p>In Portal, use <mark>screen display</mark> / <mark>serial log</mark> to view VM boot issues. Use screen display to check VM state when it becomes unresponsive.</p>
+<ul>
+<li><strong>Linux:</strong></li>
+<li>sos report: <a href="https://docs.azure.cn/zh-cn/articles/azure-operations-guide/virtual-machines/linux/aog-virtual-machines-linux-howto-gather-diagnostic-log">如何收集Linux 虚拟机的诊断日志 | Azure Docs</a></li>
+<li>Most system logs are in <code>/var/log/</code>: e.g., <code>/var/log/boot.log</code> for boot info; <code>/var/log/secure</code> for SSH, sudo, user add, password changes; <code>/var/log/messages</code> for important system info</li>
+<li>
+<p>rsyslogd manages logs. Configure in <code>/etc/rsyslog.conf</code></p>
+</li>
+<li>
+<p><strong>Windows System Event Log:</strong></p>
+</li>
+<li><code>C:\Windows\System32\winevt\Logs</code></li>
+<li><code>C:\Windows\Memory.dmp</code> if available</li>
+<li><code>C:\Windows\Minidump\</code> if available</li>
+</ul>
+<hr />
+<h1 id="azure-vm-troubleshooting">Azure VM Troubleshooting</h1>
+<h2 id="recovery-vm">Recovery VM</h2>
+<p><div class="callout callout-summary" markdown="1"><br />
+<p class="callout-title">Recovery VM Process</p></p>
+<p>When a VM has boot or SSH issues, create a snapshot of the OS Disk, then create a Recovery Disk from the snapshot and attach it to a recovery VM for troubleshooting.</p>
+</div>
+<ol>
+<li>
+<p>Create snapshot of issue VM's OS Disk, create new Recovery Disk from snapshot.</p>
+</li>
+<li>
+<p>Create a <mark>Dv3 or Ev3+</mark> VM in the same Region as the Recovery Disk. Install Windows Server 2016+ (supports nested virtualization), enable Hyper-V:<br />
+<code>Install-WindowsFeature -Name Hyper-V -IncludeManagementTools -Restart</code></p>
+</li>
+<li>
+<p>Attach Recovery Disk to the VM, offline the disk, create Hyper-V VM with it:</p>
+</li>
+<li>Computer Management - Disk Management - Offline</li>
+<li>Hyper-V Manager - New VM - Attach a virtual hard disk later</li>
+<li>VM Settings - IDE Controller0 - Hard Drive - Physical Hard Disk - Apply</li>
+<li>
+<p>Get into console</p>
+</li>
+<li>
+<p>Access VM console for troubleshooting or repair.</p>
+</li>
+</ol>
+<p>This method is suitable when Guest Agent is inaccessible, or for resetting local passwords. Related docs:</p>
+<ul>
+<li><a href="https://docs.azure.cn/zh-cn/articles/azure-operations-guide/virtual-machines/aog-virtual-machines-howto-fix-ssh-or-rdp-issues-via-hyper-v-console">如何通过 Hyper-V Console 方式修复虚拟机无法访问的问题 | Azure Docs</a></li>
+<li><a href="https://docs.microsoft.com/en-us/virtualization/hyper-v-on-windows/user-guide/nested-virtualization">Nested Virtualization | Microsoft Docs</a></li>
+<li><a href="https://docs.microsoft.com/en-us/windows-server/virtualization/hyper-v/get-started/install-the-hyper-v-role-on-windows-server">在 Windows Server 上安装 Hyper-V 角色 | 微软文档</a></li>
+<li><a href="https://learn.microsoft.com/en-us/troubleshoot/azure/virtual-machines/linux/reset-password">How to reset local Linux password on Azure VMs - Virtual Machines | Microsoft Learn</a></li>
+<li><a href="https://www.tecmint.com/boot-into-single-user-mode-in-centos-7/">How to Boot into Single User Mode in CentOS/RHEL 7 (tecmint.com)</a></li>
+</ul>
+<hr />
+<h2 id="mount-os-disk">Mount OS Disk</h2>
+<p>When the filesystem is mounted as <mark>read-only</mark> due to incorrect fstab settings and internal files cannot be modified, the Hyper-V boot mode approach is difficult. Workaround: attach the issue disk as a data disk to another VM, mount it to a directory, edit fstab. After changes, re-attach to the nested VM for further operations.</p>
+<hr />
+<h2 id="mount-disk-chroot">Mount Disk + chroot</h2>
+<p>Related doc: <a href="https://learn.microsoft.com/en-us/troubleshoot/azure/virtual-machines/chroot-environment-linux#rhelcentosoracle-6x--oracle-8x--rhelcentos-7x-with-raw-partitions">How to troubleshoot the chroot environment in a Linux Rescue VM - Virtual Machines | Microsoft Learn</a></p>
+<hr />
+<h1 id="azure-vmss">Azure VMSS</h1>
+<p><mark>VMSS</mark> (Virtual Machine Scale Sets) is a combination of independent VMs that is load-balanced, can automatically scale VM instances based on demand. Features centralized management, configuration, and updating of large numbers of VMs. Key advantage over manual creation is automated configuration, automatic load balancing. Suitable for large-scale compute tasks and workloads with varying demand over time, saving cost and time.</p>
+<ul>
+<li><a href="https://docs.microsoft.com/en-us/azure/virtual-machine-scale-sets/overview">Azure virtual machine scale sets overview | Microsoft Docs</a></li>
+<li><a href="https://docs.azure.cn/zh-cn/virtual-machine-scale-sets/overview">Azure 虚拟机规模集概述 | Azure Docs</a></li>
+</ul>
+<p><img alt="image-20250608100534712" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202506081005945.png" /></p>
+<p><img alt="image-20250608100552233" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202506081005473.png" /></p>
+<hr />
+<h2 id="vmss-load-balancer">VMSS - Load Balancer</h2>
+<p>Load Balancer works at the transport layer. Methods to access VMSS:</p>
+<ul>
+<li>
+<p>Assign each VM its own public IP (expensive)</p>
+</li>
+<li>
+<p>Use <mark>Load Balancer with NAT</mark>:</p>
+</li>
+<li>Assign public IP to LB, LB routes traffic through each VM's port to individual VM instances</li>
+<li>By default, NAT rules are added to LB, forwarding remote connection traffic to each VM on given ports</li>
+</ul>
+<hr />
+<h2 id="vmss-auto-scale">VMSS Auto-scale</h2>
+<ul>
+<li><a href="https://docs.azure.cn/zh-cn/virtual-machine-scale-sets/tutorial-autoscale-cli">教程 - 使用 Azure CLI 自动缩放规模集 | Azure Docs</a></li>
+<li><a href="https://docs.microsoft.com/en-us/azure/virtual-machine-scale-sets/virtual-machine-scale-sets-autoscale-portal">在 Azure 门户中自动缩放虚拟机规模集 | 微软文档</a></li>
+</ul>
+<hr />
+<h1 id="vm-security">VM Security</h1>
+<p><div class="callout callout-important" markdown="1"><br />
+<p class="callout-title">Azure VM Security Best Practices</p></p>
+</div>
+<ul>
+<li><strong>Overall VM protection</strong>: See <a href="https://docs.azure.cn/zh-cn/security/fundamentals/iaas">Azure 中IaaS 工作负载的安全性最佳做法 | Azure Docs</a></li>
+<li><strong>OS-level protection</strong>: Deploy <a href="https://docs.azure.cn/zh-cn/security/fundamentals/antimalware">Microsoft Antimalware for Azure | Azure Docs</a> to identify and remove viruses and malware (note: mining software is not in scope)</li>
+<li><strong>OS updates</strong>: See <a href="https://docs.azure.cn/zh-cn/automation/update-management/enable-from-vm">为Azure VM 启用Azure 自动化更新管理 | Azure Docs</a> for enabling update management and scheduled batch updates</li>
+<li><strong>Performance monitoring</strong>: See <a href="https://docs.azure.cn/zh-cn/azure-monitor/agents/data-collection-rule-azure-monitor-agent">使用Azure Monitor 代理从虚拟机收集事件和性能计数器 | Azure Docs</a> for configuring performance monitoring and alerts</li>
+<li><strong>Security posture</strong>: See <a href="https://docs.azure.cn/zh-cn/defender-for-cloud/defender-for-servers-introduction">Microsoft Defender for Servers 概述 | Azure Docs</a> for configuring Microsoft Defender for Cloud, with integration to Microsoft Sentinel <a href="https://docs.azure.cn/zh-cn/sentinel/detect-threats-built-in">Detect threats with built-in analytics rules in Microsoft Sentinel | Azure Docs</a> for monitoring OS-level anomalies</li>
+<li><strong>Network configuration</strong>: See <a href="https://docs.azure.cn/zh-cn/security/fundamentals/iaas#restrict-direct-internet-connectivity">限制直连Internet连接</a> for configuring <mark>NSG</mark> and enabling <mark>JIT (Just-In-Time)</mark> access control. Enable NSG flow logs via <a href="https://learn.microsoft.com/zh-cn/azure/network-watcher/network-watcher-nsg-flow-logging-overview">NSG 流日志 - Azure Network Watcher | Microsoft Learn</a></li>
+</ul>
+    </div>
+  </article>
+  <aside class="toc">
+    <p class="toc-label">本页目录</p>
+    <ul>
+  <li><a href="#related-notes">Related Notes</a></li>
+  <li><a href="#vm-iaas-service">VM - IaaS Service</a></li>
+  <li><a href="#vm-physical-node-architecture">VM Physical Node Architecture</a></li>
+  <li><a href="#vm-deployment-architecture">VM Deployment Architecture</a><ul>
+  <li><a href="#fabric">Fabric</a></li>
+  <li><a href="#host-agent">Host Agent</a></li>
+  <li><a href="#guest-agent">Guest Agent</a></li>
+  <li><a href="#wire-server">Wire Server</a></li>
+</ul></li>
+  <li><a href="#azure-resource-manager">Azure Resource Manager</a></li>
+  <li><a href="#vm-arm-deployment-process">VM ARM Deployment Process</a></li>
+  <li><a href="#vm-regional-code">VM Regional Code</a></li>
+  <li><a href="#vm-platform-maintenance">VM Platform Maintenance</a><ul>
+  <li><a href="#types">Types</a></li>
+  <li><a href="#alerts">Alerts</a></li>
+</ul></li>
+  <li><a href="#vm-availability-options">VM Availability Options</a><ul>
+  <li><a href="#create-vm-in-availability-set">Create VM in Availability Set</a></li>
+</ul></li>
+  <li><a href="#vm-sku-naming-convention">VM SKU Naming Convention</a></li>
+  <li><a href="#vm-extension">VM Extension</a><ul>
+  <li><a href="#common-extensions">Common Extensions</a></li>
+</ul></li>
+  <li><a href="#vm-image-and-snapshot">VM Image and Snapshot</a></li>
+  <li><a href="#azure-vm-boot-diagnostics">Azure VM Boot Diagnostics</a></li>
+  <li><a href="#recovery-vm">Recovery VM</a></li>
+  <li><a href="#mount-os-disk">Mount OS Disk</a></li>
+  <li><a href="#mount-disk-chroot">Mount Disk + chroot</a></li>
+  <li><a href="#vmss-load-balancer">VMSS - Load Balancer</a></li>
+  <li><a href="#vmss-auto-scale">VMSS Auto-scale</a></li>
+</ul>
+  </aside>
+
+</div>
+
+</main>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>Learning Notes</span>
+    <a href="https://github.com/hangx969/learning-notes">GitHub</a>
+  </div>
+</footer>
+<script src="../../static/search.js"></script>
+</body>
+</html>

@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OpenClaw Workspace 运维实战 - Learning Notes</title>
+<link rel="stylesheet" href="../../../static/style.css">
+<link rel="stylesheet" href="../../../static/pygments.css">
+</head>
+<body data-root="../../../">
+<header class="site-header">
+  <div class="header-inner">
+    <a class="logo" href="../../../index.html"><span class="logo-mark"></span>LEARNING NOTES</a>
+    <div class="search">
+      <input id="search-input" type="search" placeholder="搜索笔记…" autocomplete="off" aria-label="搜索笔记">
+      <div id="search-results" hidden></div>
+    </div>
+  </div>
+  <nav class="topic-nav" aria-label="主题导航">
+    <div class="topic-nav-inner">
+      <a href="../../../AI/" class="active">AI</a>
+      <a href="../../../Aliyun/">Aliyun</a>
+      <a href="../../../Azure/">Azure</a>
+      <a href="../../../C%2B%2B/">C++</a>
+      <a href="../../../CloudComputing/">CloudComputing</a>
+      <a href="../../../Database/">Database</a>
+      <a href="../../../Docker-Kubernetes/">Docker-Kubernetes</a>
+      <a href="../../../GPU-DeepLearning/">GPU-DeepLearning</a>
+      <a href="../../../Git/">Git</a>
+      <a href="../../../Go/">Go</a>
+      <a href="../../../HPC/">HPC</a>
+      <a href="../../../IaC/">IaC</a>
+      <a href="../../../Linux-Shell/">Linux-Shell</a>
+      <a href="../../../Middlewares/">Middlewares</a>
+      <a href="../../../Networking/">Networking</a>
+      <a href="../../../OS/">OS</a>
+      <a href="../../../Python/">Python</a>
+      <a href="../../../SoftwareTesting/">SoftwareTesting</a>
+    </div>
+  </nav>
+</header>
+<main class="main">
+
+<div class="article-layout">
+
+  <aside class="sidebar">
+    <details class="sidebar-details">
+      <summary>AI</summary>
+      <nav class="sidebar-nav">
+        <p class="sidebar-group">AI-视觉</p>
+        <ul>
+          <li><a href="../../../AI/AI-%E8%A7%86%E8%A7%89/AI-Animation-Skill-%E7%A7%91%E6%99%AE%E5%8A%A8%E7%94%BB/">AI-Animation-Skill - HTML科普动画生成</a></li>
+          <li><a href="../../../AI/AI-%E8%A7%86%E8%A7%89/AI%E5%81%9APPT-ppt-master/">AI做PPT - ppt-master</a></li>
+          <li><a href="../../../AI/AI-%E8%A7%86%E8%A7%89/Markdown-Viewer-Skills-Markdown%E4%B8%AD%E7%9B%B4%E6%8E%A5%E7%94%BB%E5%9B%BE/">Markdown Viewer Skills：让 AI 写文档时顺手把图也画了</a></li>
+          <li><a href="../../../AI/AI-%E8%A7%86%E8%A7%89/effective-html-AI%E7%9B%B4%E5%87%BAHTML%E5%B7%A5%E5%85%B7%E5%AE%9E%E6%B5%8B/">effective-html：让 AI 直接输出 HTML 而非 Markdown</a></li>
+          <li><a href="../../../AI/AI-%E8%A7%86%E8%A7%89/html-anything-AI%E7%94%9F%E6%88%90HTML%E5%85%A8%E5%9C%BA%E6%99%AF%E5%B7%A5%E5%85%B7/">html-anything：AI 生成 HTML 全场景工具</a></li>
+          <li><a href="../../../AI/AI-%E8%A7%86%E8%A7%89/html-ppt-skill-%E5%AE%9E%E6%B5%8B%E6%8C%87%E5%8D%97/">html-ppt-skill - HTML幻灯片生成</a></li>
+          <li><a href="../../../AI/AI-%E8%A7%86%E8%A7%89/%E8%A7%86%E8%A7%89%E8%AE%BE%E8%AE%A1%E6%8F%90%E7%A4%BA%E8%AF%8D/">视觉设计提示词</a></li>
+        </ul>
+        <p class="sidebar-group">AIOps</p>
+        <ul>
+          <li><a href="../../../AI/AIOps/AIOps%E5%AE%9E%E6%88%98-Golang%E6%89%8B%E6%90%93K8s%E6%99%BA%E8%83%BD%E8%BF%90%E7%BB%B4%E5%B7%A5%E5%85%B7%E9%93%BE/">AIOps 实战：Golang 手搓 K8s 智能运维工具链</a></li>
+          <li><a href="../../../AI/AIOps/Kubernetes-MCP-Server-Dify%E6%99%BA%E8%83%BD%E8%BF%90%E7%BB%B4/">AI 接管 Kubernetes 运维——Kubernetes MCP Server + Dify</a></li>
+        </ul>
+        <p class="sidebar-group">ClaudeCode</p>
+        <ul>
+          <li><a href="../../../AI/ClaudeCode/CLAUDE.md%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5-12%E6%9D%A1%E8%A7%84%E5%88%99%E6%A8%A1%E6%9D%BF/">Mnilax：CLAUDE.md 规则从 Karpathy 的 4 条增加到 12 条，错误率从 41% 降到 3%</a></li>
+          <li><a href="../../../AI/ClaudeCode/CLAUDE.md%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5-21%E6%9D%A1%E6%8C%87%E4%BB%A4%E6%B8%85%E5%8D%95/">Mayank Agarwal：21 条 CLAUDE.md 指令，让 Claude 真正懂你</a></li>
+          <li><a href="../../../AI/ClaudeCode/CLAUDE.md%E7%BB%B4%E6%8A%A4%E5%B7%A5%E7%A8%8B-%E5%9B%9B%E5%B1%82%E5%8A%A0%E8%BD%BD%E4%B8%8E%E6%8C%87%E4%BB%A4%E9%A2%84%E7%AE%97/">CLAUDE.md 维护工程：四层加载与指令预算</a></li>
+          <li><a href="../../../AI/ClaudeCode/Claude%20Code%20%E5%9F%BA%E7%A1%80%E6%8C%87%E5%8D%97/">Claude Code 使用指南</a></li>
+          <li><a href="../../../AI/ClaudeCode/Claude%20Code%20%E6%89%A9%E5%B1%95%E4%BD%93%E7%B3%BB/">Claude Code 扩展体系</a></li>
+          <li><a href="../../../AI/ClaudeCode/Claude-Code-Harness%E5%AE%9E%E6%88%98-%E6%9C%80%E5%B0%8F%E5%8F%AF%E7%94%A8%E7%B3%BB%E7%BB%9F/">Harness 实战：从零搭建最小可用的 Harness 系统</a></li>
+          <li><a href="../../../AI/ClaudeCode/Claude-Code%E4%B8%BA%E4%BB%80%E4%B9%88%E7%94%A8grep%E4%B8%8D%E7%94%A8RAG/">为什么 Claude Code 不用 RAG 检索代码，而是 grep？</a></li>
+          <li><a href="../../../AI/ClaudeCode/Claude-Fable-5-system-prompt/">Claude Fable 5 — System Prompt</a></li>
+          <li><a href="../../../AI/ClaudeCode/Claude-Skill%E8%B4%A8%E6%A3%80%E5%B7%A5%E5%85%B7-SkillCraft/">Claude Skill 质检工具 Skill Craft</a></li>
+          <li><a href="../../../AI/ClaudeCode/Git-Worktree-AI%E5%BC%80%E5%8F%91%E5%AE%9E%E8%B7%B5%E6%8C%87%E5%8D%97/">Vibe Coding 时代的 Git Worktree 实践指南</a></li>
+          <li><a href="../../../AI/ClaudeCode/%E5%A4%9A%E6%99%BA%E8%83%BD%E4%BD%93%E5%8D%8F%E4%BD%9C-Subagents%E4%B8%8EAgent-Teams/">Claude Code 多智能体协作：Subagents 与 Agent Teams</a></li>
+        </ul>
+        <p class="sidebar-group">Codex</p>
+        <ul>
+          <li><a href="../../../AI/Codex/Codex-config-toml-%E5%85%A8%E9%87%8F%E9%85%8D%E7%BD%AE%E5%8F%82%E8%80%83/">OpenAI Codex config.toml 全量配置参考</a></li>
+          <li><a href="../../../AI/Codex/Codex-%E7%9C%81Token%E5%B7%A5%E5%85%B7%E5%AE%9E%E6%B5%8B-Ponytail-Headroom-RTK/">Codex 省 Token 工具实测：Ponytail、Headroom、RTK-AI</a></li>
+        </ul>
+        <p class="sidebar-group">GithubCopilot</p>
+        <ul>
+          <li><a href="../../../AI/GithubCopilot/Copilot%20CLI/">GitHub Copilot CLI</a></li>
+        </ul>
+        <p class="sidebar-group">Hermes-agent</p>
+        <ul>
+          <li><a href="../../../AI/Hermes-agent/Hermes-Agent-%E6%BB%A1%E9%85%8D%E6%8C%87%E5%8D%97%E4%B8%8E%E7%94%9F%E6%80%81%E8%B5%84%E6%BA%90/">Hermes Agent 满配指南与生态资源</a></li>
+          <li><a href="../../../AI/Hermes-agent/Hermes-Curator-Skill%E8%86%A8%E8%83%80%E6%B2%BB%E7%90%86/">Skill 太多导致上下文膨胀怎么办？来自 Hermes Agent 的实践</a></li>
+          <li><a href="../../../AI/Hermes-agent/Hermes%E4%B8%8EOpenClaw%E5%AF%B9%E6%AF%94%E5%8F%8A%E9%A3%9E%E4%B9%A6%E6%8E%A5%E5%85%A5%E6%8C%87%E5%8D%97/">Hermes Agent全解析：与OpenClaw对比及飞书接入指南</a></li>
+          <li><a href="../../../AI/Hermes-agent/Ubuntu%2025.10%20%E5%AE%89%E8%A3%85%E4%B8%8E%E4%BD%BF%E7%94%A8%20Hermes%20Agent%20%E6%8C%87%E5%8D%97/">Ubuntu 25.10 安装与使用 Hermes Agent 指南</a></li>
+        </ul>
+        <p class="sidebar-group">Obsidian</p>
+        <ul>
+          <li><a href="../../../AI/Obsidian/Obsidian-Vault%E6%A8%A1%E6%9D%BF%E5%BA%93%E5%90%88%E9%9B%86-48%E4%B8%AA%E5%AE%9D%E8%97%8Fvault/">Obsidian Vault 模板库合集：48 个 GitHub 宝藏 vault</a></li>
+          <li><a href="../../../AI/Obsidian/Obsidian%E5%8F%AF%E8%A7%86%E5%8C%96Skills-Excalidraw-Mermaid-Canvas/">Obsidian 可视化 Skills — Excalidraw / Mermaid / Canvas</a></li>
+          <li><a href="../../../AI/Obsidian/obsidian-claude-code-AI%E7%9F%A5%E8%AF%86%E5%BA%93%E5%AE%8C%E6%95%B4%E6%8C%87%E5%8D%97/">Obsidian + Claude Code：AI 驱动的知识库完整指南</a></li>
+        </ul>
+        <p class="sidebar-group">OpenClaw</p>
+        <ul>
+          <li><a href="../../../AI/OpenClaw/CoPaw/">CoPaw</a></li>
+          <li><a href="../../../AI/OpenClaw/OpenClaw-Channels/">OpenClaw Channel 配置</a></li>
+          <li><a href="../../../AI/OpenClaw/OpenClaw-K8s%E6%99%BA%E8%83%BD%E8%BF%90%E7%BB%B4%E5%AE%9E%E6%88%98/">用 OpenClaw 智能体网关接管 K8s 日常运维：从只读巡检到低风险变更</a></li>
+          <li><a href="../../../AI/OpenClaw/OpenClaw-Skills-Plugins/">OpenClaw Skills 与插件</a></li>
+          <li><a href="../../../AI/OpenClaw/OpenClaw-Workspace-%E8%BF%90%E7%BB%B4/" class="current">OpenClaw Workspace 运维实战</a></li>
+          <li><a href="../../../AI/OpenClaw/OpenClaw-%E5%9F%BA%E7%A1%80-%E5%AE%89%E8%A3%85/">OpenClaw 基础与安装</a></li>
+          <li><a href="../../../AI/OpenClaw/Openclaw-AIOps/">OpenClaw AIOps</a></li>
+          <li><a href="../../../AI/OpenClaw/Openclaw-%E5%A4%9A%E6%99%BA%E8%83%BD%E4%BD%93/">OpenClaw 多智能体</a></li>
+          <li><a href="../../../AI/OpenClaw/Ubuntu-2510-Setup-Guide/">Ubuntu 25.10 (Questing) 初始化配置指南</a></li>
+          <li><a href="../../../AI/OpenClaw/%E9%A3%9E%E4%B9%A6CLI%E7%94%BB%E6%9D%BF-%E4%B8%80%E5%8F%A5%E8%AF%9D%E7%94%9F%E6%88%90%E6%9E%B6%E6%9E%84%E5%9B%BE/">飞书 CLI 画板：一句话生成架构图</a></li>
+        </ul>
+        <p class="sidebar-group">代码知识图谱</p>
+        <ul>
+          <li><a href="../../../AI/%E4%BB%A3%E7%A0%81%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/CodeGraph-%E4%BB%A3%E7%A0%81%E8%AF%AD%E4%B9%89%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/">CodeGraph：给 Claude Code 先画一张代码地图，工具调用砍掉 92%</a></li>
+          <li><a href="../../../AI/%E4%BB%A3%E7%A0%81%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/Graphify-%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1%E5%B7%A5%E5%85%B7/">Graphify：软件工程知识图谱工具</a></li>
+          <li><a href="../../../AI/%E4%BB%A3%E7%A0%81%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/Understand-Anything-%E4%BB%A3%E7%A0%81%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1%E5%8F%AF%E8%A7%86%E5%8C%96/">Understand-Anything：AI 代码知识图谱可视化工具</a></li>
+          <li><a href="../../../AI/%E4%BB%A3%E7%A0%81%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/code-review-graph-%E6%9C%AC%E5%9C%B0%E4%BB%A3%E7%A0%81%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/">开源 Claude Code 本地代码知识图谱：code-review-graph 完整上手攻略</a></li>
+          <li><a href="../../../AI/%E4%BB%A3%E7%A0%81%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/shiji-kb-AI%E5%8F%B2%E8%AE%B0%E7%9F%A5%E8%AF%86%E5%BA%93%E4%B8%8E%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1%E6%9E%84%E9%80%A0%E6%96%B9%E6%B3%95%E8%AE%BA/">shiji-kb：AI 史记知识库与可复用知识图谱构造方法论</a></li>
+        </ul>
+        <p class="sidebar-group">行业动态</p>
+        <ul>
+          <li><a href="../../../AI/%E8%A1%8C%E4%B8%9A%E5%8A%A8%E6%80%81/AI%E6%97%B6%E4%BB%A3%E7%9A%84Git%E7%89%88%E6%9C%AC%E7%AE%A1%E7%90%86%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/">AI 时代的 Git 版本管理最佳实践</a></li>
+          <li><a href="../../../AI/%E8%A1%8C%E4%B8%9A%E5%8A%A8%E6%80%81/Anthropic%E5%B7%A5%E7%A8%8B%E5%B8%88%E5%8A%9B%E6%8E%A8HTML%E5%8F%96%E4%BB%A3Markdown-Karpathy%E9%99%84%E8%AE%AE/">Anthropic 工程师力推 HTML 取代 Markdown —— Karpathy 附议</a></li>
+          <li><a href="../../../AI/%E8%A1%8C%E4%B8%9A%E5%8A%A8%E6%80%81/Claude-Code%E5%88%9B%E5%A7%8B%E4%BA%BA%E7%BA%A2%E6%9D%89%E5%A4%A7%E4%BC%9A%E4%B8%83%E4%B8%AA%E5%88%A4%E6%96%AD/">Claude Code 创始人在红杉大会上的 7 个重要判断</a></li>
+          <li><a href="../../../AI/%E8%A1%8C%E4%B8%9A%E5%8A%A8%E6%80%81/Loop-Engineering-%E4%BB%8EPrompt%E5%88%B0%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%81%E6%B0%B4%E7%BA%BF/">Loop Engineering：从 Prompt 到自动化流水线</a></li>
+          <li><a href="../../../AI/%E8%A1%8C%E4%B8%9A%E5%8A%A8%E6%80%81/OpenCodeReview-%E9%98%BF%E9%87%8CAI%E4%BB%A3%E7%A0%81%E5%AE%A1%E6%9F%A5%E5%B7%A5%E7%A8%8B%E5%8C%96/">OpenCodeReview：阿里开源的 AI 代码审查工程化工具</a></li>
+          <li><a href="../../../AI/%E8%A1%8C%E4%B8%9A%E5%8A%A8%E6%80%81/TypeScript-vs-Python-AI-Agent%E6%97%B6%E4%BB%A3%E7%9A%84%E8%AF%AD%E8%A8%80%E4%B9%8B%E4%BA%89/">为什么 AI Agent 时代，TypeScript 正在抢走 Python 的主场？</a></li>
+        </ul>
+        <p class="sidebar-group">其他</p>
+        <ul>
+          <li><a href="../../../AI/HarnessKit/">HarnessKit — AI 编码智能体统一管理工具</a></li>
+          <li><a href="../../../AI/%E6%8F%90%E7%A4%BA%E8%AF%8D/">提示词</a></li>
+        </ul>
+      </nav>
+    </details>
+  </aside>
+
+  <article class="article">
+    <nav class="breadcrumb">
+      <a href="../../../index.html">首页</a><span>/</span>
+      <a href="../../../AI/">AI</a><span>/</span><span>OpenClaw</span>
+    </nav>
+    <h1 class="article-title">OpenClaw Workspace 运维实战</h1>
+    <p class="article-meta"><span>更新于 2026-04-18</span>
+      <a href="https://github.com/hangx969/learning-notes/blob/main/AI/OpenClaw/OpenClaw-Workspace-%E8%BF%90%E7%BB%B4.md">查看源文件</a>
+    </p>
+    <div class="article-body">
+<h1 id="openclaw-workspace-运维">OpenClaw Workspace 运维</h1>
+<blockquote>
+<p>来源：<a href="https://mp.weixin.qq.com/s/4tVt4g6BlRv_Xe7RUIOzGQ">牛逼干货分享！OpenClaw Workspace 运维实战手册</a></p>
+</blockquote>
+<hr />
+<h2 id="核心概念配置与内容的分离">核心概念：配置与内容的分离</h2>
+<p>Workspace 本质上将 Agent 运行环境拆分为两个正交体系：</p>
+<table>
+<thead>
+<tr>
+<th>体系</th>
+<th>文件</th>
+<th>性质</th>
+<th>决定</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>配置文件</strong>（静态）</td>
+<td><code>AGENTS.md</code> <code>SOUL.md</code> <code>IDENTITY.md</code> <code>TOOLS.md</code></td>
+<td>定义行为规范</td>
+<td>Agent 能做什么、怎么做</td>
+</tr>
+<tr>
+<td><strong>内容文件</strong>（动态）</td>
+<td><code>USER.md</code> <code>memory/</code> Session 历史</td>
+<td>存储知识记忆</td>
+<td>Agent 知道什么、记得什么</td>
+</tr>
+</tbody>
+</table>
+<p>全局配置 <code>~/.openclaw/openclaw.json</code> 是"系统宪法"，定义 Gateway 行为和运行时参数，采用 JSON5 格式，严格 Schema 验证（<code>openclaw doctor</code> 检查）。</p>
+<hr />
+<h2 id="标准目录布局">标准目录布局</h2>
+<div class="highlight"><pre><span></span><code>~/.openclaw/
+├── openclaw.json              # 全局系统配置
+├── workspace-main/            # 主 Agent Workspace
+│   ├── AGENTS.md              # 工作手册（任务流程、安全边界、输出规范）
+│   ├── SOUL.md                # 性格配置（响应风格、专业领域、沟通偏好）
+│   ├── USER.md                # 用户档案（偏好、技术栈、历史交互）
+│   ├── IDENTITY.md            # 身份标识（名称、头像、功能标签）
+│   ├── TOOLS.md               # 工具权限（白名单/黑名单/确认策略）
+│   ├── memory/                # 长期记忆
+│   │   ├── MEMORY.md          # 记忆入口索引
+│   │   ├── projects.md        # 项目状态
+│   │   ├── infra.md           # 基础设施配置速查
+│   │   ├── lessons.md         # 踩坑教训（按严重程度分级）
+│   │   └── YYYY-MM-DD.md      # 日志归档
+│   └── sessions/              # Session 历史（可选）
+├── workspace-dev/             # 开发专用 Workspace
+├── workspace-work/            # 工作任务 Workspace
+├── skills/                    # 系统级 Skills（全局生效）
+├── cron/                      # Cron 任务配置
+└── logs/                      # Gateway 日志
+</code></pre></div>
+
+<h3 id="workspace-路径优先级">Workspace 路径优先级</h3>
+<ol>
+<li>Agent 配置中显式指定的 <code>workspace</code> 路径（最高）</li>
+<li><code>agents.defaults.workspace</code> 配置项</li>
+<li><code>~/.openclaw/workspace</code>（默认）</li>
+</ol>
+<div class="highlight"><pre><span></span><code><span class="c1"># 查看当前路径</span>
+openclaw<span class="w"> </span>config<span class="w"> </span>get<span class="w"> </span>agents.defaults.workspace
+
+<span class="c1"># 启动时指定</span>
+openclaw<span class="w"> </span>gateway<span class="w"> </span>start<span class="w"> </span>--workspace<span class="w"> </span>/path/to/custom/workspace
+</code></pre></div>
+
+<p><div class="callout callout-note" markdown="1"><br />
+<p class="callout-title">Note</p></p>
+<p>Gateway 启动时目录不存在会自动创建并执行 bootstrap 流程。</p>
+</div>
+<hr />
+<h2 id="多-agent-环境隔离">多 Agent 环境隔离</h2>
+<table>
+<thead>
+<tr>
+<th>环境</th>
+<th>用途</th>
+<th>配置倾向</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>workspace-main</code></td>
+<td>主力助手，日常对话</td>
+<td>保守，稳定优先</td>
+</tr>
+<tr>
+<td><code>workspace-dev</code></td>
+<td>开发测试，新功能验证</td>
+<td>激进，可快速迭代</td>
+</tr>
+<tr>
+<td><code>workspace-work</code></td>
+<td>专项任务自动化</td>
+<td>按任务调整</td>
+</tr>
+</tbody>
+</table>
+<p><strong>隔离级别</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>级别</th>
+<th>隔离内容</th>
+<th>适用场景</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>完全隔离</td>
+<td>独立 Workspace + 独立端口</td>
+<td>不同业务线</td>
+</tr>
+<tr>
+<td>配置隔离</td>
+<td>共享 Gateway，独立 Workspace</td>
+<td>同业务线不同角色</td>
+</tr>
+<tr>
+<td>会话隔离</td>
+<td>共享 Workspace，独立 session</td>
+<td>临时任务</td>
+</tr>
+</tbody>
+</table>
+<p><strong>配置示例</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nv">agents</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nv">defaults</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nv">workspace</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;~/.openclaw/workspace-main&quot;</span><span class="w"> </span><span class="p">},</span>
+<span class="w">    </span><span class="nv">list</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">      </span><span class="p">{</span><span class="w"> </span><span class="nv">id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;main&quot;</span><span class="p">,</span><span class="w"> </span><span class="nv">default</span><span class="p">:</span><span class="w"> </span><span class="k">true</span><span class="p">,</span><span class="w"> </span><span class="nv">workspace</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;~/.openclaw/workspace-main&quot;</span><span class="w"> </span><span class="p">},</span>
+<span class="w">      </span><span class="p">{</span><span class="w"> </span><span class="nv">id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;dev&quot;</span><span class="p">,</span><span class="w"> </span><span class="nv">workspace</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;~/.openclaw/workspace-dev&quot;</span><span class="w"> </span><span class="p">},</span>
+<span class="w">      </span><span class="p">{</span><span class="w"> </span><span class="nv">id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ops&quot;</span><span class="p">,</span><span class="w"> </span><span class="nv">workspace</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;~/.openclaw/workspace-ops&quot;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">    </span><span class="p">]</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p><strong>模型与 Token 差异化分配</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nv">agents</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nv">list</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">      </span><span class="p">{</span><span class="w"> </span><span class="nv">id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;main&quot;</span><span class="p">,</span><span class="w"> </span><span class="nv">model</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nv">primary</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;claude-opus-4-20250514&quot;</span><span class="w"> </span><span class="p">},</span><span class="w"> </span><span class="nv">compaction</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nv">reserveTokensFloor</span><span class="p">:</span><span class="w"> </span><span class="mf">25000</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">},</span>
+<span class="w">      </span><span class="p">{</span><span class="w"> </span><span class="nv">id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;dev&quot;</span><span class="p">,</span><span class="w">  </span><span class="nv">model</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nv">primary</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;claude-sonnet-4-20250514&quot;</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">},</span>
+<span class="w">      </span><span class="p">{</span><span class="w"> </span><span class="nv">id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;batch&quot;</span><span class="p">,</span><span class="w"> </span><span class="nv">model</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nv">primary</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;claude-haiku-4-20250514&quot;</span><span class="w"> </span><span class="p">},</span><span class="w"> </span><span class="nv">compaction</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nv">reserveTokensFloor</span><span class="p">:</span><span class="w"> </span><span class="mf">10000</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">}</span>
+<span class="w">    </span><span class="p">]</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<hr />
+<h2 id="核心配置文件速查">核心配置文件速查</h2>
+<h3 id="openclawjson-关键配置项">openclaw.json 关键配置项</h3>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nv">agents</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nv">defaults</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nv">workspace</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;~/.openclaw/workspace-main&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nv">model</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nv">primary</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;provider/claude-sonnet-4-20250514&quot;</span><span class="p">,</span><span class="w"> </span><span class="nv">fallbacks</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s">&quot;provider/claude-haiku-4-20250514&quot;</span><span class="p">]</span><span class="w"> </span><span class="p">},</span>
+<span class="w">      </span><span class="nv">timeoutSeconds</span><span class="p">:</span><span class="w"> </span><span class="mf">600</span><span class="p">,</span>
+<span class="w">      </span><span class="nv">compaction</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nv">reserveTokensFloor</span><span class="p">:</span><span class="w"> </span><span class="mf">20000</span><span class="p">,</span>
+<span class="w">        </span><span class="nv">memoryFlush</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nv">enabled</span><span class="p">:</span><span class="w"> </span><span class="k">true</span><span class="p">,</span><span class="w"> </span><span class="nv">softThresholdTokens</span><span class="p">:</span><span class="w"> </span><span class="mf">4000</span><span class="w"> </span><span class="p">}</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nv">heartbeat</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nv">every</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;30m&quot;</span><span class="p">,</span><span class="w"> </span><span class="nv">activeHours</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nv">start</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;08:00&quot;</span><span class="p">,</span><span class="w"> </span><span class="nv">end</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;23:00&quot;</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nv">gateway</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nv">port</span><span class="p">:</span><span class="w"> </span><span class="mf">18789</span><span class="p">,</span><span class="w"> </span><span class="nv">bind</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;loopback&quot;</span><span class="p">,</span><span class="w"> </span><span class="nv">auth</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nv">mode</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;token&quot;</span><span class="p">,</span><span class="w"> </span><span class="nv">token</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;your-secret-token&quot;</span><span class="w"> </span><span class="p">},</span><span class="w"> </span><span class="nv">reload</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nv">mode</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;hybrid&quot;</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">},</span>
+<span class="w">  </span><span class="nv">memorySearch</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nv">enabled</span><span class="p">:</span><span class="w"> </span><span class="k">true</span><span class="p">,</span><span class="w"> </span><span class="nv">provider</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;openai&quot;</span><span class="p">,</span><span class="w"> </span><span class="nv">remote</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nv">baseUrl</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;https://api.siliconflow.cn/v1&quot;</span><span class="p">,</span><span class="w"> </span><span class="nv">apiKey</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;your-api-key&quot;</span><span class="w"> </span><span class="p">},</span><span class="w"> </span><span class="nv">model</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;BAAI/bge-m3&quot;</span><span class="w"> </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h3 id="toolsmd-权限分级">TOOLS.md 权限分级</h3>
+<table>
+<thead>
+<tr>
+<th>级别</th>
+<th>操作</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>始终允许</strong></td>
+<td>读取类</td>
+<td><code>git pull</code>、<code>docker ps</code>、<code>kubectl get/describe</code></td>
+</tr>
+<tr>
+<td><strong>需要确认</strong></td>
+<td>写入/变更类</td>
+<td><code>systemctl restart</code>、<code>docker run</code>、<code>kubectl apply</code>、<code>ansible-playbook</code></td>
+</tr>
+<tr>
+<td><strong>禁止执行</strong></td>
+<td>破坏性操作</td>
+<td><code>rm -rf</code>、<code>dd</code>、<code>mkfs</code>、修改 <code>/etc/passwd</code></td>
+</tr>
+<tr>
+<td><strong>仅隔离会话</strong></td>
+<td>安装类</td>
+<td><code>apt-get install</code>、<code>docker pull/push</code>、<code>kubectl delete</code>（生产）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="soulmd-vs-openclawjson">SOUL.md vs openclaw.json</h3>
+<ul>
+<li><strong>SOUL.md</strong>：定义"软性"行为规范（响应风格、沟通偏好），依赖 AI 模型理解执行</li>
+<li><strong>openclaw.json</strong>：定义"硬性"运行时参数（超时、Token、端口），由系统强制执行</li>
+</ul>
+<hr />
+<h2 id="记忆系统运维">记忆系统运维</h2>
+<h3 id="builtin-vs-qmd-方案">builtin vs qmd 方案</h3>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>builtin</th>
+<th>qmd</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>实现复杂度</td>
+<td>低</td>
+<td>中</td>
+</tr>
+<tr>
+<td>检索能力</td>
+<td>依赖 memorySearch 向量检索</td>
+<td>更强的语义组织</td>
+</tr>
+<tr>
+<td>维护成本</td>
+<td>Agent 自动维护</td>
+<td>需定期结构化整理</td>
+</tr>
+<tr>
+<td>推荐场景</td>
+<td>个人助手、小型团队</td>
+<td>知识密集型、企业级</td>
+</tr>
+</tbody>
+</table>
+<h3 id="记忆污染处理">记忆污染处理</h3>
+<p><strong>症状</strong>：Agent 信息与实际配置不符、重复提示已解决的问题、项目状态不一致。</p>
+<p><strong>处理流程</strong>：</p>
+<div class="highlight"><pre><span></span><code>ls<span class="w"> </span>-la<span class="w"> </span>~/.openclaw/workspace-main/memory/<span class="w">           </span><span class="c1"># 检查最后修改时间</span>
+cat<span class="w"> </span>~/.openclaw/workspace-main/memory/projects.md<span class="w">   </span><span class="c1"># 检查内容</span>
+<span class="c1"># 直接编辑修正污染内容</span>
+openclaw<span class="w"> </span>gateway<span class="w"> </span>reload<span class="w">                             </span><span class="c1"># 验证修正</span>
+</code></pre></div>
+
+<p><strong>预防</strong>：定期复核 memoryFlush 内容、重大变更后主动更新、保持 MEMORY.md 索引准确。</p>
+<h3 id="清理策略">清理策略</h3>
+<table>
+<thead>
+<tr>
+<th>触发条件</th>
+<th>操作</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>单个日志文件 &gt; 100KB</td>
+<td>归档</td>
+</tr>
+<tr>
+<td>memory/ 总大小 &gt; 500MB</td>
+<td>清理旧日志</td>
+</tr>
+<tr>
+<td>项目状态文件 &gt; 6 个月未更新</td>
+<td>归档或删除</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight"><pre><span></span><code><span class="c1"># 归档旧日志</span>
+mkdir<span class="w"> </span>-p<span class="w"> </span>~/.openclaw/workspace-main/memory/archive/
+mv<span class="w"> </span>~/.openclaw/workspace-main/memory/2025-*.md<span class="w"> </span>~/.openclaw/workspace-main/memory/archive/
+tar<span class="w"> </span>-czf<span class="w"> </span>~/.openclaw/workspace-main/memory/archive-2025.tar.gz<span class="w"> </span>~/.openclaw/workspace-main/memory/archive/
+rm<span class="w"> </span>-rf<span class="w"> </span>~/.openclaw/workspace-main/memory/archive/
+<span class="c1"># 更新 MEMORY.md 索引</span>
+</code></pre></div>
+
+<hr />
+<h2 id="skill-加载层级">Skill 加载层级</h2>
+<table>
+<thead>
+<tr>
+<th>层级</th>
+<th>位置</th>
+<th>范围</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>系统级</td>
+<td><code>~/.openclaw/skills/</code></td>
+<td>全局，所有 Agent 共享</td>
+</tr>
+<tr>
+<td>Workspace 级</td>
+<td><code>~/.openclaw/workspace-&lt;name&gt;/skills/</code></td>
+<td>仅该 Workspace</td>
+</tr>
+<tr>
+<td>会话级</td>
+<td>随对话上下文动态加载</td>
+<td>不持久化</td>
+</tr>
+</tbody>
+</table>
+<p><strong>优先级</strong>：会话级 &gt; Workspace 级 &gt; 系统级（高覆盖低）</p>
+<p><strong>Skill 不生效排查</strong>：</p>
+<div class="highlight"><pre><span></span><code>ls<span class="w"> </span>-la<span class="w"> </span>~/.openclaw/skills/<span class="w"> </span>~/.openclaw/workspace-main/skills/<span class="w">  </span><span class="c1"># 确认文件存在</span>
+cat<span class="w"> </span>~/.openclaw/skills/my-skill.md<span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-50<span class="w">                  </span><span class="c1"># 检查语法</span>
+openclaw<span class="w"> </span>logs<span class="w"> </span>--grep<span class="w"> </span><span class="s2">&quot;skill\|load&quot;</span><span class="w"> </span>--lines<span class="w"> </span><span class="m">50</span><span class="w">                  </span><span class="c1"># 查看加载日志</span>
+</code></pre></div>
+
+<hr />
+<h2 id="故障排查清单">故障排查清单</h2>
+<table>
+<thead>
+<tr>
+<th>问题类型</th>
+<th>首要检查项</th>
+<th>快速修复</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>配置不生效</td>
+<td>文件存在性、语法正确性</td>
+<td><code>openclaw gateway reload</code></td>
+</tr>
+<tr>
+<td>权限问题</td>
+<td>文件/目录权限、所有关系</td>
+<td><code>chown -R openclaw:openclaw</code> + <code>chmod 700</code></td>
+</tr>
+<tr>
+<td>记忆失效</td>
+<td>memoryFlush 配置、文件存在</td>
+<td>启用 memoryFlush</td>
+</tr>
+<tr>
+<td>工具不可用</td>
+<td>TOOLS.md 配置、工具开关</td>
+<td>检查白名单</td>
+</tr>
+<tr>
+<td>性能下降</td>
+<td>系统资源、memory/ 大小</td>
+<td>清理 memory/ 目录</td>
+</tr>
+<tr>
+<td>Skill 不加载</td>
+<td>Skill 文件路径、语法正确</td>
+<td>重新部署 Skill</td>
+</tr>
+<tr>
+<td>向量检索失败</td>
+<td>memorySearch 配置、API Key</td>
+<td>检查网络和 API Key</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="备份与恢复">备份与恢复</h2>
+<h3 id="备份策略">备份策略</h3>
+<table>
+<thead>
+<tr>
+<th>内容</th>
+<th>频率</th>
+<th>保留周期</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>配置文件</td>
+<td>每次变更后</td>
+<td>90 天</td>
+</tr>
+<tr>
+<td>memory/</td>
+<td>每日增量</td>
+<td>30 天</td>
+</tr>
+<tr>
+<td>sessions/</td>
+<td>每周</td>
+<td>30 天</td>
+</tr>
+</tbody>
+</table>
+<p><strong>备份脚本</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="ch">#!/bin/bash</span>
+<span class="nv">BACKUP_DIR</span><span class="o">=</span><span class="s2">&quot;/var/backups/openclaw/workspace&quot;</span>
+<span class="nv">WORKSPACE_DIR</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$HOME</span><span class="s2">/.openclaw/workspace-main&quot;</span>
+<span class="nv">TIMESTAMP</span><span class="o">=</span><span class="k">$(</span>date<span class="w"> </span>+%Y%m%d-%H%M%S<span class="k">)</span>
+mkdir<span class="w"> </span>-p<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$BACKUP_DIR</span><span class="s2">&quot;</span>
+
+<span class="c1"># 备份配置 + 记忆</span>
+tar<span class="w"> </span>-czf<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$BACKUP_DIR</span><span class="s2">/config-</span><span class="nv">$TIMESTAMP</span><span class="s2">.tar.gz&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="s2">&quot;</span><span class="nv">$WORKSPACE_DIR</span><span class="s2">/AGENTS.md&quot;</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$WORKSPACE_DIR</span><span class="s2">/SOUL.md&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="s2">&quot;</span><span class="nv">$WORKSPACE_DIR</span><span class="s2">/USER.md&quot;</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$WORKSPACE_DIR</span><span class="s2">/IDENTITY.md&quot;</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$WORKSPACE_DIR</span><span class="s2">/TOOLS.md&quot;</span>
+tar<span class="w"> </span>-czf<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$BACKUP_DIR</span><span class="s2">/memory-</span><span class="nv">$TIMESTAMP</span><span class="s2">.tar.gz&quot;</span><span class="w"> </span>-C<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$WORKSPACE_DIR</span><span class="s2">&quot;</span><span class="w"> </span>memory/
+
+<span class="c1"># 清理旧备份</span>
+find<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$BACKUP_DIR</span><span class="s2">&quot;</span><span class="w"> </span>-name<span class="w"> </span><span class="s2">&quot;*.tar.gz&quot;</span><span class="w"> </span>-mtime<span class="w"> </span>+30<span class="w"> </span>-delete
+</code></pre></div>
+
+<h3 id="git-版本控制">Git 版本控制</h3>
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span>~/.openclaw/workspace-main
+git<span class="w"> </span>init
+git<span class="w"> </span>add<span class="w"> </span>AGENTS.md<span class="w"> </span>SOUL.md<span class="w"> </span>USER.md<span class="w"> </span>IDENTITY.md<span class="w"> </span>TOOLS.md<span class="w"> </span>memory/
+git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;Initial workspace commit&quot;</span>
+</code></pre></div>
+
+<p><strong>.gitignore</strong>：排除 <code>sessions/</code>、<code>*.tmp</code>、<code>*.bak</code>、<code>archive/</code>。</p>
+<h3 id="灾难恢复">灾难恢复</h3>
+<p>RTO 约 30 秒（Gateway 重启），RPO 建议不超过 24 小时（每日备份）。</p>
+<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>systemctl<span class="w"> </span>stop<span class="w"> </span>openclaw-gateway
+cp<span class="w"> </span>-r<span class="w"> </span>~/.openclaw/workspace-main<span class="w"> </span>~/.openclaw/workspace-main-crash-<span class="k">$(</span>date<span class="w"> </span>+%Y%m%d-%H%M%S<span class="k">)</span>
+tar<span class="w"> </span>-xzf<span class="w"> </span>/var/backups/openclaw/workspace/config-XXXXXXXX.tar.gz<span class="w"> </span>-C<span class="w"> </span>~/.openclaw/
+sudo<span class="w"> </span>systemctl<span class="w"> </span>start<span class="w"> </span>openclaw-gateway
+openclaw<span class="w"> </span>gateway<span class="w"> </span>health
+</code></pre></div>
+
+<hr />
+<h2 id="安全加固">安全加固</h2>
+<h3 id="权限基线">权限基线</h3>
+<table>
+<thead>
+<tr>
+<th>路径</th>
+<th>权限</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>~/.openclaw/</code></td>
+<td>700</td>
+<td>仅 owner 可访问</td>
+</tr>
+<tr>
+<td><code>~/.openclaw/openclaw.json</code></td>
+<td>600</td>
+<td>含敏感配置</td>
+</tr>
+<tr>
+<td><code>~/.openclaw/workspace-*/</code></td>
+<td>700</td>
+<td>Workspace 目录</td>
+</tr>
+<tr>
+<td>配置文件（*.md）</td>
+<td>600</td>
+<td>工作手册等</td>
+</tr>
+</tbody>
+</table>
+<h3 id="敏感信息管理">敏感信息管理</h3>
+<ul>
+<li><strong>环境变量方案</strong>：<code>"apiKey": "env:MEMORY_SEARCH_API_KEY"</code>，运行时替换</li>
+<li><strong>密钥管理系统</strong>：生产环境推荐 Vault 等，启动时注入</li>
+</ul>
+<h3 id="安全检查清单">安全检查清单</h3>
+<p><strong>部署前</strong>：<br />
+- [ ] openclaw.json 不含明文密钥<br />
+- [ ] Gateway 绑定 loopback<br />
+- [ ] 认证 Token 32 位以上<br />
+- [ ] Workspace 目录权限 700，配置文件 600<br />
+- [ ] 运行用户为专用非 root 用户</p>
+<p><strong>日常巡检</strong>：<br />
+- [ ] 日志中无异常登录尝试<br />
+- [ ] 无未授权配置变更<br />
+- [ ] memory/ 大小正常<br />
+- [ ] 磁盘空间充足</p>
+<h3 id="日志保留">日志保留</h3>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>保留期</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>操作日志</td>
+<td>90 天</td>
+</tr>
+<tr>
+<td>审计日志</td>
+<td>1 年</td>
+</tr>
+<tr>
+<td>错误日志</td>
+<td>180 天</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="自动化工具">自动化工具</h2>
+<h3 id="workspace-初始化脚本">Workspace 初始化脚本</h3>
+<div class="highlight"><pre><span></span><code><span class="ch">#!/bin/bash</span>
+<span class="c1"># init-workspace.sh &lt;name&gt;</span>
+<span class="nv">WORKSPACE_DIR</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$HOME</span><span class="s2">/.openclaw/workspace-</span><span class="nv">$1</span><span class="s2">&quot;</span>
+mkdir<span class="w"> </span>-p<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$WORKSPACE_DIR</span><span class="s2">/memory&quot;</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$WORKSPACE_DIR</span><span class="s2">/sessions&quot;</span>
+<span class="c1"># 从模板复制配置文件...</span>
+chmod<span class="w"> </span>-R<span class="w"> </span><span class="m">700</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$WORKSPACE_DIR</span><span class="s2">&quot;</span>
+</code></pre></div>
+
+<h3 id="workspace-校验脚本">Workspace 校验脚本</h3>
+<div class="highlight"><pre><span></span><code><span class="ch">#!/bin/bash</span>
+<span class="c1"># validate-workspace.sh [path]</span>
+<span class="nv">WORKSPACE_DIR</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">1</span><span class="k">:-</span><span class="nv">$HOME</span><span class="p">/.openclaw/workspace-main</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="c1"># 检查必需文件：AGENTS.md SOUL.md USER.md IDENTITY.md TOOLS.md</span>
+<span class="c1"># 检查 memory/ 目录和 MEMORY.md</span>
+<span class="c1"># 检查目录权限是否为 700</span>
+<span class="c1"># 检查 memory/ 大小是否超过 500MB</span>
+</code></pre></div>
+
+<h3 id="自动清理-cron-任务">自动清理 Cron 任务</h3>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nv">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;记忆目录清理&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nv">&quot;schedule&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nv">&quot;kind&quot;</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;every&quot;</span><span class="p">,</span><span class="w"> </span><span class="nv">&quot;everyMs&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">604800000</span><span class="w"> </span><span class="p">},</span><span class="w">  </span><span class="c1">// 每周</span>
+<span class="w">  </span><span class="nv">&quot;payload&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nv">&quot;kind&quot;</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;agentTurn&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nv">&quot;message&quot;</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;检查 memory/ 目录大小，超过 500MB 则归档 6 个月前的日志并更新索引&quot;</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nv">&quot;sessionTarget&quot;</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;isolated&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nv">&quot;delivery&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nv">&quot;mode&quot;</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;none&quot;</span><span class="w"> </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+    </div>
+  </article>
+  <aside class="toc">
+    <p class="toc-label">本页目录</p>
+    <ul>
+  <li><a href="#核心概念配置与内容的分离">核心概念：配置与内容的分离</a></li>
+  <li><a href="#标准目录布局">标准目录布局</a><ul>
+  <li><a href="#workspace-路径优先级">Workspace 路径优先级</a></li>
+</ul></li>
+  <li><a href="#多-agent-环境隔离">多 Agent 环境隔离</a></li>
+  <li><a href="#核心配置文件速查">核心配置文件速查</a><ul>
+  <li><a href="#openclawjson-关键配置项">openclaw.json 关键配置项</a></li>
+  <li><a href="#toolsmd-权限分级">TOOLS.md 权限分级</a></li>
+  <li><a href="#soulmd-vs-openclawjson">SOUL.md vs openclaw.json</a></li>
+</ul></li>
+  <li><a href="#记忆系统运维">记忆系统运维</a><ul>
+  <li><a href="#builtin-vs-qmd-方案">builtin vs qmd 方案</a></li>
+  <li><a href="#记忆污染处理">记忆污染处理</a></li>
+  <li><a href="#清理策略">清理策略</a></li>
+</ul></li>
+  <li><a href="#skill-加载层级">Skill 加载层级</a></li>
+  <li><a href="#故障排查清单">故障排查清单</a></li>
+  <li><a href="#备份与恢复">备份与恢复</a><ul>
+  <li><a href="#备份策略">备份策略</a></li>
+  <li><a href="#git-版本控制">Git 版本控制</a></li>
+  <li><a href="#灾难恢复">灾难恢复</a></li>
+</ul></li>
+  <li><a href="#安全加固">安全加固</a><ul>
+  <li><a href="#权限基线">权限基线</a></li>
+  <li><a href="#敏感信息管理">敏感信息管理</a></li>
+  <li><a href="#安全检查清单">安全检查清单</a></li>
+  <li><a href="#日志保留">日志保留</a></li>
+</ul></li>
+  <li><a href="#自动化工具">自动化工具</a><ul>
+  <li><a href="#workspace-初始化脚本">Workspace 初始化脚本</a></li>
+  <li><a href="#workspace-校验脚本">Workspace 校验脚本</a></li>
+  <li><a href="#自动清理-cron-任务">自动清理 Cron 任务</a></li>
+</ul></li>
+</ul>
+  </aside>
+
+</div>
+
+</main>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>Learning Notes</span>
+    <a href="https://github.com/hangx969/learning-notes">GitHub</a>
+  </div>
+</footer>
+<script src="../../../static/search.js"></script>
+</body>
+</html>

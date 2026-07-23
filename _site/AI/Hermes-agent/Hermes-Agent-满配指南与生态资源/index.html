@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hermes Agent 满配指南与生态资源 - Learning Notes</title>
+<link rel="stylesheet" href="../../../static/style.css">
+<link rel="stylesheet" href="../../../static/pygments.css">
+</head>
+<body data-root="../../../">
+<header class="site-header">
+  <div class="header-inner">
+    <a class="logo" href="../../../index.html"><span class="logo-mark"></span>LEARNING NOTES</a>
+    <div class="search">
+      <input id="search-input" type="search" placeholder="搜索笔记…" autocomplete="off" aria-label="搜索笔记">
+      <div id="search-results" hidden></div>
+    </div>
+  </div>
+  <nav class="topic-nav" aria-label="主题导航">
+    <div class="topic-nav-inner">
+      <a href="../../../AI/" class="active">AI</a>
+      <a href="../../../Aliyun/">Aliyun</a>
+      <a href="../../../Azure/">Azure</a>
+      <a href="../../../C%2B%2B/">C++</a>
+      <a href="../../../CloudComputing/">CloudComputing</a>
+      <a href="../../../Database/">Database</a>
+      <a href="../../../Docker-Kubernetes/">Docker-Kubernetes</a>
+      <a href="../../../GPU-DeepLearning/">GPU-DeepLearning</a>
+      <a href="../../../Git/">Git</a>
+      <a href="../../../Go/">Go</a>
+      <a href="../../../HPC/">HPC</a>
+      <a href="../../../IaC/">IaC</a>
+      <a href="../../../Linux-Shell/">Linux-Shell</a>
+      <a href="../../../Middlewares/">Middlewares</a>
+      <a href="../../../Networking/">Networking</a>
+      <a href="../../../OS/">OS</a>
+      <a href="../../../Python/">Python</a>
+      <a href="../../../SoftwareTesting/">SoftwareTesting</a>
+    </div>
+  </nav>
+</header>
+<main class="main">
+
+<div class="article-layout">
+
+  <aside class="sidebar">
+    <details class="sidebar-details">
+      <summary>AI</summary>
+      <nav class="sidebar-nav">
+        <p class="sidebar-group">AI-视觉</p>
+        <ul>
+          <li><a href="../../../AI/AI-%E8%A7%86%E8%A7%89/AI-Animation-Skill-%E7%A7%91%E6%99%AE%E5%8A%A8%E7%94%BB/">AI-Animation-Skill - HTML科普动画生成</a></li>
+          <li><a href="../../../AI/AI-%E8%A7%86%E8%A7%89/AI%E5%81%9APPT-ppt-master/">AI做PPT - ppt-master</a></li>
+          <li><a href="../../../AI/AI-%E8%A7%86%E8%A7%89/Markdown-Viewer-Skills-Markdown%E4%B8%AD%E7%9B%B4%E6%8E%A5%E7%94%BB%E5%9B%BE/">Markdown Viewer Skills：让 AI 写文档时顺手把图也画了</a></li>
+          <li><a href="../../../AI/AI-%E8%A7%86%E8%A7%89/effective-html-AI%E7%9B%B4%E5%87%BAHTML%E5%B7%A5%E5%85%B7%E5%AE%9E%E6%B5%8B/">effective-html：让 AI 直接输出 HTML 而非 Markdown</a></li>
+          <li><a href="../../../AI/AI-%E8%A7%86%E8%A7%89/html-anything-AI%E7%94%9F%E6%88%90HTML%E5%85%A8%E5%9C%BA%E6%99%AF%E5%B7%A5%E5%85%B7/">html-anything：AI 生成 HTML 全场景工具</a></li>
+          <li><a href="../../../AI/AI-%E8%A7%86%E8%A7%89/html-ppt-skill-%E5%AE%9E%E6%B5%8B%E6%8C%87%E5%8D%97/">html-ppt-skill - HTML幻灯片生成</a></li>
+          <li><a href="../../../AI/AI-%E8%A7%86%E8%A7%89/%E8%A7%86%E8%A7%89%E8%AE%BE%E8%AE%A1%E6%8F%90%E7%A4%BA%E8%AF%8D/">视觉设计提示词</a></li>
+        </ul>
+        <p class="sidebar-group">AIOps</p>
+        <ul>
+          <li><a href="../../../AI/AIOps/AIOps%E5%AE%9E%E6%88%98-Golang%E6%89%8B%E6%90%93K8s%E6%99%BA%E8%83%BD%E8%BF%90%E7%BB%B4%E5%B7%A5%E5%85%B7%E9%93%BE/">AIOps 实战：Golang 手搓 K8s 智能运维工具链</a></li>
+          <li><a href="../../../AI/AIOps/Kubernetes-MCP-Server-Dify%E6%99%BA%E8%83%BD%E8%BF%90%E7%BB%B4/">AI 接管 Kubernetes 运维——Kubernetes MCP Server + Dify</a></li>
+        </ul>
+        <p class="sidebar-group">ClaudeCode</p>
+        <ul>
+          <li><a href="../../../AI/ClaudeCode/CLAUDE.md%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5-12%E6%9D%A1%E8%A7%84%E5%88%99%E6%A8%A1%E6%9D%BF/">Mnilax：CLAUDE.md 规则从 Karpathy 的 4 条增加到 12 条，错误率从 41% 降到 3%</a></li>
+          <li><a href="../../../AI/ClaudeCode/CLAUDE.md%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5-21%E6%9D%A1%E6%8C%87%E4%BB%A4%E6%B8%85%E5%8D%95/">Mayank Agarwal：21 条 CLAUDE.md 指令，让 Claude 真正懂你</a></li>
+          <li><a href="../../../AI/ClaudeCode/CLAUDE.md%E7%BB%B4%E6%8A%A4%E5%B7%A5%E7%A8%8B-%E5%9B%9B%E5%B1%82%E5%8A%A0%E8%BD%BD%E4%B8%8E%E6%8C%87%E4%BB%A4%E9%A2%84%E7%AE%97/">CLAUDE.md 维护工程：四层加载与指令预算</a></li>
+          <li><a href="../../../AI/ClaudeCode/Claude%20Code%20%E5%9F%BA%E7%A1%80%E6%8C%87%E5%8D%97/">Claude Code 使用指南</a></li>
+          <li><a href="../../../AI/ClaudeCode/Claude%20Code%20%E6%89%A9%E5%B1%95%E4%BD%93%E7%B3%BB/">Claude Code 扩展体系</a></li>
+          <li><a href="../../../AI/ClaudeCode/Claude-Code-Harness%E5%AE%9E%E6%88%98-%E6%9C%80%E5%B0%8F%E5%8F%AF%E7%94%A8%E7%B3%BB%E7%BB%9F/">Harness 实战：从零搭建最小可用的 Harness 系统</a></li>
+          <li><a href="../../../AI/ClaudeCode/Claude-Code%E4%B8%BA%E4%BB%80%E4%B9%88%E7%94%A8grep%E4%B8%8D%E7%94%A8RAG/">为什么 Claude Code 不用 RAG 检索代码，而是 grep？</a></li>
+          <li><a href="../../../AI/ClaudeCode/Claude-Fable-5-system-prompt/">Claude Fable 5 — System Prompt</a></li>
+          <li><a href="../../../AI/ClaudeCode/Claude-Skill%E8%B4%A8%E6%A3%80%E5%B7%A5%E5%85%B7-SkillCraft/">Claude Skill 质检工具 Skill Craft</a></li>
+          <li><a href="../../../AI/ClaudeCode/Git-Worktree-AI%E5%BC%80%E5%8F%91%E5%AE%9E%E8%B7%B5%E6%8C%87%E5%8D%97/">Vibe Coding 时代的 Git Worktree 实践指南</a></li>
+          <li><a href="../../../AI/ClaudeCode/%E5%A4%9A%E6%99%BA%E8%83%BD%E4%BD%93%E5%8D%8F%E4%BD%9C-Subagents%E4%B8%8EAgent-Teams/">Claude Code 多智能体协作：Subagents 与 Agent Teams</a></li>
+        </ul>
+        <p class="sidebar-group">Codex</p>
+        <ul>
+          <li><a href="../../../AI/Codex/Codex-config-toml-%E5%85%A8%E9%87%8F%E9%85%8D%E7%BD%AE%E5%8F%82%E8%80%83/">OpenAI Codex config.toml 全量配置参考</a></li>
+          <li><a href="../../../AI/Codex/Codex-%E7%9C%81Token%E5%B7%A5%E5%85%B7%E5%AE%9E%E6%B5%8B-Ponytail-Headroom-RTK/">Codex 省 Token 工具实测：Ponytail、Headroom、RTK-AI</a></li>
+        </ul>
+        <p class="sidebar-group">GithubCopilot</p>
+        <ul>
+          <li><a href="../../../AI/GithubCopilot/Copilot%20CLI/">GitHub Copilot CLI</a></li>
+        </ul>
+        <p class="sidebar-group">Hermes-agent</p>
+        <ul>
+          <li><a href="../../../AI/Hermes-agent/Hermes-Agent-%E6%BB%A1%E9%85%8D%E6%8C%87%E5%8D%97%E4%B8%8E%E7%94%9F%E6%80%81%E8%B5%84%E6%BA%90/" class="current">Hermes Agent 满配指南与生态资源</a></li>
+          <li><a href="../../../AI/Hermes-agent/Hermes-Curator-Skill%E8%86%A8%E8%83%80%E6%B2%BB%E7%90%86/">Skill 太多导致上下文膨胀怎么办？来自 Hermes Agent 的实践</a></li>
+          <li><a href="../../../AI/Hermes-agent/Hermes%E4%B8%8EOpenClaw%E5%AF%B9%E6%AF%94%E5%8F%8A%E9%A3%9E%E4%B9%A6%E6%8E%A5%E5%85%A5%E6%8C%87%E5%8D%97/">Hermes Agent全解析：与OpenClaw对比及飞书接入指南</a></li>
+          <li><a href="../../../AI/Hermes-agent/Ubuntu%2025.10%20%E5%AE%89%E8%A3%85%E4%B8%8E%E4%BD%BF%E7%94%A8%20Hermes%20Agent%20%E6%8C%87%E5%8D%97/">Ubuntu 25.10 安装与使用 Hermes Agent 指南</a></li>
+        </ul>
+        <p class="sidebar-group">Obsidian</p>
+        <ul>
+          <li><a href="../../../AI/Obsidian/Obsidian-Vault%E6%A8%A1%E6%9D%BF%E5%BA%93%E5%90%88%E9%9B%86-48%E4%B8%AA%E5%AE%9D%E8%97%8Fvault/">Obsidian Vault 模板库合集：48 个 GitHub 宝藏 vault</a></li>
+          <li><a href="../../../AI/Obsidian/Obsidian%E5%8F%AF%E8%A7%86%E5%8C%96Skills-Excalidraw-Mermaid-Canvas/">Obsidian 可视化 Skills — Excalidraw / Mermaid / Canvas</a></li>
+          <li><a href="../../../AI/Obsidian/obsidian-claude-code-AI%E7%9F%A5%E8%AF%86%E5%BA%93%E5%AE%8C%E6%95%B4%E6%8C%87%E5%8D%97/">Obsidian + Claude Code：AI 驱动的知识库完整指南</a></li>
+        </ul>
+        <p class="sidebar-group">OpenClaw</p>
+        <ul>
+          <li><a href="../../../AI/OpenClaw/CoPaw/">CoPaw</a></li>
+          <li><a href="../../../AI/OpenClaw/OpenClaw-Channels/">OpenClaw Channel 配置</a></li>
+          <li><a href="../../../AI/OpenClaw/OpenClaw-K8s%E6%99%BA%E8%83%BD%E8%BF%90%E7%BB%B4%E5%AE%9E%E6%88%98/">用 OpenClaw 智能体网关接管 K8s 日常运维：从只读巡检到低风险变更</a></li>
+          <li><a href="../../../AI/OpenClaw/OpenClaw-Skills-Plugins/">OpenClaw Skills 与插件</a></li>
+          <li><a href="../../../AI/OpenClaw/OpenClaw-Workspace-%E8%BF%90%E7%BB%B4/">OpenClaw Workspace 运维实战</a></li>
+          <li><a href="../../../AI/OpenClaw/OpenClaw-%E5%9F%BA%E7%A1%80-%E5%AE%89%E8%A3%85/">OpenClaw 基础与安装</a></li>
+          <li><a href="../../../AI/OpenClaw/Openclaw-AIOps/">OpenClaw AIOps</a></li>
+          <li><a href="../../../AI/OpenClaw/Openclaw-%E5%A4%9A%E6%99%BA%E8%83%BD%E4%BD%93/">OpenClaw 多智能体</a></li>
+          <li><a href="../../../AI/OpenClaw/Ubuntu-2510-Setup-Guide/">Ubuntu 25.10 (Questing) 初始化配置指南</a></li>
+          <li><a href="../../../AI/OpenClaw/%E9%A3%9E%E4%B9%A6CLI%E7%94%BB%E6%9D%BF-%E4%B8%80%E5%8F%A5%E8%AF%9D%E7%94%9F%E6%88%90%E6%9E%B6%E6%9E%84%E5%9B%BE/">飞书 CLI 画板：一句话生成架构图</a></li>
+        </ul>
+        <p class="sidebar-group">代码知识图谱</p>
+        <ul>
+          <li><a href="../../../AI/%E4%BB%A3%E7%A0%81%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/CodeGraph-%E4%BB%A3%E7%A0%81%E8%AF%AD%E4%B9%89%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/">CodeGraph：给 Claude Code 先画一张代码地图，工具调用砍掉 92%</a></li>
+          <li><a href="../../../AI/%E4%BB%A3%E7%A0%81%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/Graphify-%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1%E5%B7%A5%E5%85%B7/">Graphify：软件工程知识图谱工具</a></li>
+          <li><a href="../../../AI/%E4%BB%A3%E7%A0%81%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/Understand-Anything-%E4%BB%A3%E7%A0%81%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1%E5%8F%AF%E8%A7%86%E5%8C%96/">Understand-Anything：AI 代码知识图谱可视化工具</a></li>
+          <li><a href="../../../AI/%E4%BB%A3%E7%A0%81%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/code-review-graph-%E6%9C%AC%E5%9C%B0%E4%BB%A3%E7%A0%81%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/">开源 Claude Code 本地代码知识图谱：code-review-graph 完整上手攻略</a></li>
+          <li><a href="../../../AI/%E4%BB%A3%E7%A0%81%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/shiji-kb-AI%E5%8F%B2%E8%AE%B0%E7%9F%A5%E8%AF%86%E5%BA%93%E4%B8%8E%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1%E6%9E%84%E9%80%A0%E6%96%B9%E6%B3%95%E8%AE%BA/">shiji-kb：AI 史记知识库与可复用知识图谱构造方法论</a></li>
+        </ul>
+        <p class="sidebar-group">行业动态</p>
+        <ul>
+          <li><a href="../../../AI/%E8%A1%8C%E4%B8%9A%E5%8A%A8%E6%80%81/AI%E6%97%B6%E4%BB%A3%E7%9A%84Git%E7%89%88%E6%9C%AC%E7%AE%A1%E7%90%86%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/">AI 时代的 Git 版本管理最佳实践</a></li>
+          <li><a href="../../../AI/%E8%A1%8C%E4%B8%9A%E5%8A%A8%E6%80%81/Anthropic%E5%B7%A5%E7%A8%8B%E5%B8%88%E5%8A%9B%E6%8E%A8HTML%E5%8F%96%E4%BB%A3Markdown-Karpathy%E9%99%84%E8%AE%AE/">Anthropic 工程师力推 HTML 取代 Markdown —— Karpathy 附议</a></li>
+          <li><a href="../../../AI/%E8%A1%8C%E4%B8%9A%E5%8A%A8%E6%80%81/Claude-Code%E5%88%9B%E5%A7%8B%E4%BA%BA%E7%BA%A2%E6%9D%89%E5%A4%A7%E4%BC%9A%E4%B8%83%E4%B8%AA%E5%88%A4%E6%96%AD/">Claude Code 创始人在红杉大会上的 7 个重要判断</a></li>
+          <li><a href="../../../AI/%E8%A1%8C%E4%B8%9A%E5%8A%A8%E6%80%81/Loop-Engineering-%E4%BB%8EPrompt%E5%88%B0%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%81%E6%B0%B4%E7%BA%BF/">Loop Engineering：从 Prompt 到自动化流水线</a></li>
+          <li><a href="../../../AI/%E8%A1%8C%E4%B8%9A%E5%8A%A8%E6%80%81/OpenCodeReview-%E9%98%BF%E9%87%8CAI%E4%BB%A3%E7%A0%81%E5%AE%A1%E6%9F%A5%E5%B7%A5%E7%A8%8B%E5%8C%96/">OpenCodeReview：阿里开源的 AI 代码审查工程化工具</a></li>
+          <li><a href="../../../AI/%E8%A1%8C%E4%B8%9A%E5%8A%A8%E6%80%81/TypeScript-vs-Python-AI-Agent%E6%97%B6%E4%BB%A3%E7%9A%84%E8%AF%AD%E8%A8%80%E4%B9%8B%E4%BA%89/">为什么 AI Agent 时代，TypeScript 正在抢走 Python 的主场？</a></li>
+        </ul>
+        <p class="sidebar-group">其他</p>
+        <ul>
+          <li><a href="../../../AI/HarnessKit/">HarnessKit — AI 编码智能体统一管理工具</a></li>
+          <li><a href="../../../AI/%E6%8F%90%E7%A4%BA%E8%AF%8D/">提示词</a></li>
+        </ul>
+      </nav>
+    </details>
+  </aside>
+
+  <article class="article">
+    <nav class="breadcrumb">
+      <a href="../../../index.html">首页</a><span>/</span>
+      <a href="../../../AI/">AI</a><span>/</span><span>Hermes-agent</span>
+    </nav>
+    <h1 class="article-title">Hermes Agent 满配指南与生态资源</h1>
+    <p class="article-meta"><span>更新于 2026-05-11</span>
+      <a href="https://github.com/hangx969/learning-notes/blob/main/AI/Hermes-agent/Hermes-Agent-%E6%BB%A1%E9%85%8D%E6%8C%87%E5%8D%97%E4%B8%8E%E7%94%9F%E6%80%81%E8%B5%84%E6%BA%90.md">查看源文件</a>
+    </p>
+    <div class="article-body">
+<h1 id="hermes-agent-满配指南与生态资源">Hermes Agent 满配指南与生态资源</h1>
+<p>裸装 Hermes 只是普通的 AI 对话助手。配置完五大模块后变成真正的 AI Agent——具备长期记忆、全网信息抓取、语音+图片生成、Token 精细管控等能力。</p>
+<p>本文同时整理了 Hermes 生态中的进阶工具与社区资源，覆盖从快速上手到构建长期运行的自我进化 Agent 的完整路径。</p>
+<hr />
+<h2 id="配置模块总览">配置模块总览</h2>
+<table>
+<thead>
+<tr>
+<th>模块</th>
+<th>能力</th>
+<th>核心工具</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>身份与记忆</td>
+<td>人格定义 + 持久记忆</td>
+<td>SOUL.md + Hindsight</td>
+</tr>
+<tr>
+<td>感知能力</td>
+<td>网页抓取</td>
+<td>Jina Reader / Crawl4AI / Scrapling / CamoFox</td>
+</tr>
+<tr>
+<td>搜索与文档</td>
+<td>搜索 + 格式转换</td>
+<td>Tavily / DuckDuckGo / Pandoc / Marker</td>
+</tr>
+<tr>
+<td>表达能力</td>
+<td>语音 + 图片生成</td>
+<td>Whisper / Edge TTS / Fal.ai / FLUX Skill</td>
+</tr>
+<tr>
+<td>效率与成本</td>
+<td>Token 监控 + 优化</td>
+<td>Tokscale / hermes-hudui / RTK / Self-evolution</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="一身份与记忆soulmd-hindsight">一、身份与记忆：SOUL.md + Hindsight</h2>
+<h3 id="11-soulmd-人格定义">1.1 SOUL.md 人格定义</h3>
+<p>使用 <strong>agency-agents-zh</strong> 中文角色模板库，包含 211 个中文角色模板 + 46 个中国市场原创智能体。</p>
+<ul>
+<li>GitHub：<ul>
+<li>https://github.com/jnMetaCode/agency-agents-zh</li>
+<li>https://github.com/jnMetaCode/agency-orchestrator</li>
+</ul>
+</li>
+<li>角色按 18 个部门分类（工程、设计、营销、产品、游戏、安全、金融、HR 等）</li>
+<li>每个角色为独立 <code>.md</code> 文件，包含完整人设、专业流程和可交付成果</li>
+<li>使用时直接告诉 Hermes 要激活哪个角色即可：<ul>
+<li>/personality + SOUL.md</li>
+<li>Hermes 启动时会读取 SOUL.md 文件，里面写的内容会永久成为你Agent的"灵魂"和语气。</li>
+<li>/personality 命令可以随时切换预设人格。别再每次聊天都打"你是一位资深 X 专家"了，一次性写进 SOUL.md 就行。</li>
+</ul>
+</li>
+</ul>
+<h3 id="12-hindsight-替换内置-memory">1.2 Hindsight 替换内置 MEMORY</h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>内置 MEMORY</th>
+<th>Hindsight</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>写入机制</strong></td>
+<td>只有 Hermes 认为重要时才写入</td>
+<td>自动从每轮对话提取实体、事实、关系、时间戳</td>
+</tr>
+<tr>
+<td><strong>容量上限</strong></td>
+<td>≈ 2200 字符（硬上限）</td>
+<td>无硬上限</td>
+</tr>
+<tr>
+<td><strong>知识组织</strong></td>
+<td>线性文本</td>
+<td>知识图谱</td>
+</tr>
+</tbody>
+</table>
+<p><strong>安装步骤：</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 1. 运行 setup wizard</span>
+hermes<span class="w"> </span>memory<span class="w"> </span>setup
+
+<span class="c1"># 2. 选择 hindsight，向导自动安装依赖</span>
+
+<span class="c1"># 3. 获取 API Key（Cloud 模式）</span>
+<span class="c1"># 打开 https://ui.hindsight.vectorize.io/connect 注册，生成 API Key（免费额度足够）</span>
+
+<span class="c1"># 4. 验证</span>
+hermes<span class="w"> </span>memory<span class="w"> </span>status
+<span class="c1"># 应看到 Hindsight 已激活，显示 bank_id、auto-recall、auto-retain 等状态</span>
+</code></pre></div>
+
+<hr />
+<h2 id="二感知能力内容抓取工具">二、感知能力：内容抓取工具</h2>
+<table>
+<thead>
+<tr>
+<th>工具</th>
+<th>用途</th>
+<th>集成方式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Jina Reader</strong></td>
+<td>单页抓取</td>
+<td>Skill 或直接调用</td>
+</tr>
+<tr>
+<td><strong>Crawl4AI</strong></td>
+<td>批量深度抓取</td>
+<td>Skill 或直接调用</td>
+</tr>
+<tr>
+<td><strong>Scrapling</strong></td>
+<td>反爬绕过</td>
+<td>官方原生支持，<code>hermes tools + pip</code> 启用</td>
+</tr>
+<tr>
+<td><strong>CamoFox</strong></td>
+<td>隐身浏览器</td>
+<td>官方可选技能，<code>hermes tools + pip</code> 启用</td>
+</tr>
+</tbody>
+</table>
+<p>Scrapling 和 CamoFox 为官方原生/可选技能，直接通过 <code>hermes tools + pip</code> 启用。Jina Reader 和 Crawl4AI 无内置技能，推荐用 Skill 方式集成。</p>
+<hr />
+<h2 id="三搜索与文档处理">三、搜索与文档处理</h2>
+<table>
+<thead>
+<tr>
+<th>工具</th>
+<th>用途</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Tavily</strong></td>
+<td>AI 专用搜索（主力）</td>
+<td>1000 次/月免费</td>
+</tr>
+<tr>
+<td><strong>DuckDuckGo</strong></td>
+<td>零成本兜底搜索</td>
+<td>无 API Key 需求</td>
+</tr>
+<tr>
+<td><strong>Pandoc</strong></td>
+<td>万能格式转换器</td>
+<td>任意格式互转</td>
+</tr>
+<tr>
+<td><strong>Marker</strong></td>
+<td>PDF 转 Markdown 增强</td>
+<td>高精度 PDF 文件提取</td>
+</tr>
+</tbody>
+</table>
+<p>配置后搜索策略：Tavily（主力）+ DuckDuckGo（兜底）。</p>
+<hr />
+<h2 id="四表达能力语音与图片">四、表达能力：语音与图片</h2>
+<table>
+<thead>
+<tr>
+<th>工具</th>
+<th>用途</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Whisper</strong></td>
+<td>语音识别</td>
+<td>支持 99+ 语言</td>
+</tr>
+<tr>
+<td><strong>Edge TTS</strong></td>
+<td>语音合成</td>
+<td>免费使用</td>
+</tr>
+<tr>
+<td><strong>Fal.ai</strong></td>
+<td>图片生成</td>
+<td>云端 API</td>
+</tr>
+<tr>
+<td><strong>FLUX Skill</strong></td>
+<td>高质量出图</td>
+<td>Skill 集成</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="五效率与成本token-精细管控">五、效率与成本：Token 精细管控</h2>
+<h3 id="51-tokscale-token-全局监控">5.1 Tokscale — Token 全局监控</h3>
+<p>专为 Hermes 等 AI 编码助手设计的 CLI 监控工具，实时查看全局 Token/成本（TUI 可视化 + JSON 导出）。</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 安装</span>
+npx<span class="w"> </span>tokscale@latest
+<span class="c1"># 或用 Bun</span>
+bunx<span class="w"> </span>tokscale@latest
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="c1"># 使用</span>
+tokscale<span class="w">                  </span><span class="c1"># 交互式 TUI（全局所有平台 Token 消耗总览）</span>
+tokscale<span class="w"> </span>--hermes<span class="w">         </span><span class="c1"># 只看 Hermes Agent 的全局消耗</span>
+tokscale<span class="w"> </span>--hermes<span class="w"> </span>--week<span class="w">  </span><span class="c1"># 过去7天 Hermes Token 趋势</span>
+tokscale<span class="w"> </span>--json<span class="w">           </span><span class="c1"># JSON 导出全局数据（可脚本监控）</span>
+tokscale<span class="w"> </span>models<span class="w">           </span><span class="c1"># 按模型统计 Token（含 Hermes）</span>
+</code></pre></div>
+
+<h3 id="52-hermes-hudui-web-仪表盘">5.2 hermes-hudui — Web 仪表盘</h3>
+<p>支持按模型/组件/会话深度拆解 Token 成本、实时 WebSocket 更新。</p>
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/joeynyc/hermes-hudui.git
+<span class="nb">cd</span><span class="w"> </span>hermes-hudui
+./install.sh<span class="w">          </span><span class="c1"># 自动安装 Python + Node 依赖</span>
+hermes-hudui<span class="w">          </span><span class="c1"># 启动</span>
+<span class="c1"># 访问 http://localhost:3001（支持手机端）</span>
+</code></pre></div>
+
+<h3 id="53-rtkrust-token-killer">5.3 RTK（Rust Token Killer）</h3>
+<p>Rust 编写的零依赖 CLI 代理，智能过滤/压缩 <code>ls</code>、<code>git status</code>、<code>cargo test</code> 等终端输出，直接减少 60-90% Token。</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Homebrew</span>
+brew<span class="w"> </span>install<span class="w"> </span>rtk
+
+<span class="c1"># 或一键脚本（Linux/macOS/Windows WSL）</span>
+curl<span class="w"> </span>-fsSL<span class="w"> </span>https://raw.githubusercontent.com/rtk-ai/rtk/refs/heads/master/install.sh<span class="w"> </span><span class="p">|</span><span class="w"> </span>sh
+
+<span class="c1"># 集成到 Hermes（自动重写终端命令）</span>
+rtk<span class="w"> </span>init<span class="w"> </span>-g<span class="w">       </span><span class="c1"># 安装全局 Hook + RTK.md</span>
+</code></pre></div>
+
+<h3 id="54-hermes-agent-self-evolution">5.4 Hermes-agent-self-evolution</h3>
+<p>用遗传算法自动优化 Agent 提示词和行为（DSPy + GEPA 遗传-帕累托进化算法），能自动优化 Skill、System Prompt、工具描述。</p>
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/NousResearch/hermes-agent-self-evolution.git
+<span class="nb">cd</span><span class="w"> </span>hermes-agent-self-evolution
+pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;.[dev]&quot;</span>
+</code></pre></div>
+
+<h3 id="55-skill-批量扩展">5.5 Skill 批量扩展</h3>
+<p>一次性安装 wondelai 的 380 个跨平台 Skill。</p>
+<hr />
+<h2 id="六高阶玩法自我进化与多-agent-协作">六、高阶玩法：自我进化与多 Agent 协作</h2>
+<h3 id="61-hermes-skill-factory">6.1 Hermes Skill Factory</h3>
+<p>通过任务复盘 <strong>自动生成并安装新技能</strong>，让 Agent 实现"武器自造"——用中学，学中进化。</p>
+<ul>
+<li>https://github.com/Romanescu11/hermes-skill-factory</li>
+</ul>
+<h3 id="62-maestro">6.2 Maestro</h3>
+<p>基于 Beads 架构的指挥官框架，支持 <strong>跨 Agent 协作</strong> 与结构化记忆管理，适合复杂工作流编排。</p>
+<ul>
+<li>https://github.com/ReinaMacCredy/maestro</li>
+</ul>
+<h3 id="63-hermes-agent-camel">6.3 Hermes Agent Camel</h3>
+<p>内置 <strong>信任边界与安全协议</strong>，适合生产环境防护，让 Agent 在可控范围内自主行动。</p>
+<ul>
+<li>https://github.com/nativ3ai/hermes-agent-camel</li>
+</ul>
+<h3 id="64-hermes-control-interface">6.4 Hermes Control Interface</h3>
+<p>自托管仪表盘，统一调度多 Agent、长程任务与记忆管理，适合需要可视化管控的场景。</p>
+<ul>
+<li>https://github.com/xaspx/hermes-control-interface</li>
+</ul>
+<hr />
+<h2 id="七工具增强">七、工具增强</h2>
+<h3 id="71-hermes-hud-tui-监控终端">7.1 Hermes HUD — TUI 监控终端</h3>
+<p>基于 Textual 的 TUI 监控终端，<strong>实时可视化意识流与内存状态</strong>，让你直观看到 Agent 在想什么。</p>
+<ul>
+<li>https://github.com/joeynyc/hermes-hud</li>
+</ul>
+<blockquote>
+<p>与 5.2 hermes-hudui（Web 仪表盘）为同一作者的两个项目：HUD 是终端 TUI，hudui 是浏览器 Web UI。</p>
+</blockquote>
+<h3 id="72-hermes-wiki">7.2 Hermes-Wiki</h3>
+<p>基于源码自动生成的 Wiki，Agent 自解释，文档与代码同步更新，是理解内部实现的好帮手。</p>
+<ul>
+<li>https://github.com/cclank/Hermes-Wiki</li>
+</ul>
+<h3 id="73-hermes-alpha">7.3 Hermes Alpha</h3>
+<p>一键部署模板，简化云端环境配置与快速原型开发，降低上手门槛。</p>
+<ul>
+<li>https://github.com/kaminocorp/hermes-alpha</li>
+</ul>
+<hr />
+<h2 id="八生态资源">八、生态资源</h2>
+<h3 id="官方资源">官方资源</h3>
+<table>
+<thead>
+<tr>
+<th>资源名称</th>
+<th>链接</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Hermes Agent 主仓库</td>
+<td>https://github.com/NousResearch/hermes-agent</td>
+</tr>
+<tr>
+<td>Hermes Agent 官方文档</td>
+<td>https://hermes-agent.nousresearch.com/docs</td>
+</tr>
+<tr>
+<td>Nous Research 网站</td>
+<td>https://nousresearch.com/</td>
+</tr>
+<tr>
+<td>Hermes Agent 官网</td>
+<td>https://hermes-agent.nousresearch.com/</td>
+</tr>
+</tbody>
+</table>
+<h3 id="中文社区与教程">中文社区与教程</h3>
+<table>
+<thead>
+<tr>
+<th>资源名称</th>
+<th>链接</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Hermes Agent 中文站</td>
+<td>https://hermesagentai.cn/</td>
+</tr>
+<tr>
+<td>Hermes Agent 中文社区</td>
+<td>https://hermesagent.org.cn/</td>
+</tr>
+<tr>
+<td>OpenClaw 中文社区论坛</td>
+<td>https://clawd.org.cn/forum/</td>
+</tr>
+<tr>
+<td>Hermes Agent 深度教程</td>
+<td>https://ha.aialiang.com/index.html</td>
+</tr>
+<tr>
+<td>Hermes Agent 从入门到精通</td>
+<td>https://pan.quark.cn/s/c2f5c0a9d48e?pwd=prVM</td>
+</tr>
+</tbody>
+</table>
+<h3 id="生态工具总览">生态工具总览</h3>
+<table>
+<thead>
+<tr>
+<th>工具</th>
+<th>说明</th>
+<th>链接</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Hermes 生态地图（Atlas）</strong></td>
+<td>社区维护的 80+ 工具全景图，支持 RAG 查询</td>
+<td>https://github.com/ksimback/hermes-ecosystem</td>
+</tr>
+<tr>
+<td><strong>Awesome Hermes Agent</strong></td>
+<td>社区驱动的精选插件、提示词与教程列表</td>
+<td>https://github.com/0xNyk/awesome-hermes-agent</td>
+</tr>
+</tbody>
+</table>
+    </div>
+  </article>
+  <aside class="toc">
+    <p class="toc-label">本页目录</p>
+    <ul>
+  <li><a href="#配置模块总览">配置模块总览</a></li>
+  <li><a href="#一身份与记忆soulmd-hindsight">一、身份与记忆：SOUL.md + Hindsight</a><ul>
+  <li><a href="#11-soulmd-人格定义">1.1 SOUL.md 人格定义</a></li>
+  <li><a href="#12-hindsight-替换内置-memory">1.2 Hindsight 替换内置 MEMORY</a></li>
+</ul></li>
+  <li><a href="#二感知能力内容抓取工具">二、感知能力：内容抓取工具</a></li>
+  <li><a href="#三搜索与文档处理">三、搜索与文档处理</a></li>
+  <li><a href="#四表达能力语音与图片">四、表达能力：语音与图片</a></li>
+  <li><a href="#五效率与成本token-精细管控">五、效率与成本：Token 精细管控</a><ul>
+  <li><a href="#51-tokscale-token-全局监控">5.1 Tokscale — Token 全局监控</a></li>
+  <li><a href="#52-hermes-hudui-web-仪表盘">5.2 hermes-hudui — Web 仪表盘</a></li>
+  <li><a href="#53-rtkrust-token-killer">5.3 RTK（Rust Token Killer）</a></li>
+  <li><a href="#54-hermes-agent-self-evolution">5.4 Hermes-agent-self-evolution</a></li>
+  <li><a href="#55-skill-批量扩展">5.5 Skill 批量扩展</a></li>
+</ul></li>
+  <li><a href="#六高阶玩法自我进化与多-agent-协作">六、高阶玩法：自我进化与多 Agent 协作</a><ul>
+  <li><a href="#61-hermes-skill-factory">6.1 Hermes Skill Factory</a></li>
+  <li><a href="#62-maestro">6.2 Maestro</a></li>
+  <li><a href="#63-hermes-agent-camel">6.3 Hermes Agent Camel</a></li>
+  <li><a href="#64-hermes-control-interface">6.4 Hermes Control Interface</a></li>
+</ul></li>
+  <li><a href="#七工具增强">七、工具增强</a><ul>
+  <li><a href="#71-hermes-hud-tui-监控终端">7.1 Hermes HUD — TUI 监控终端</a></li>
+  <li><a href="#72-hermes-wiki">7.2 Hermes-Wiki</a></li>
+  <li><a href="#73-hermes-alpha">7.3 Hermes Alpha</a></li>
+</ul></li>
+  <li><a href="#八生态资源">八、生态资源</a><ul>
+  <li><a href="#官方资源">官方资源</a></li>
+  <li><a href="#中文社区与教程">中文社区与教程</a></li>
+  <li><a href="#生态工具总览">生态工具总览</a></li>
+</ul></li>
+</ul>
+  </aside>
+
+</div>
+
+</main>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>Learning Notes</span>
+    <a href="https://github.com/hangx969/learning-notes">GitHub</a>
+  </div>
+</footer>
+<script src="../../../static/search.js"></script>
+</body>
+</html>

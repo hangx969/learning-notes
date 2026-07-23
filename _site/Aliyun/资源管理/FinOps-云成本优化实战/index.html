@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FinOps - 云成本优化实战 - Learning Notes</title>
+<link rel="stylesheet" href="../../../static/style.css">
+<link rel="stylesheet" href="../../../static/pygments.css">
+</head>
+<body data-root="../../../">
+<header class="site-header">
+  <div class="header-inner">
+    <a class="logo" href="../../../index.html"><span class="logo-mark"></span>LEARNING NOTES</a>
+    <div class="search">
+      <input id="search-input" type="search" placeholder="搜索笔记…" autocomplete="off" aria-label="搜索笔记">
+      <div id="search-results" hidden></div>
+    </div>
+  </div>
+  <nav class="topic-nav" aria-label="主题导航">
+    <div class="topic-nav-inner">
+      <a href="../../../AI/">AI</a>
+      <a href="../../../Aliyun/" class="active">Aliyun</a>
+      <a href="../../../Azure/">Azure</a>
+      <a href="../../../C%2B%2B/">C++</a>
+      <a href="../../../CloudComputing/">CloudComputing</a>
+      <a href="../../../Database/">Database</a>
+      <a href="../../../Docker-Kubernetes/">Docker-Kubernetes</a>
+      <a href="../../../GPU-DeepLearning/">GPU-DeepLearning</a>
+      <a href="../../../Git/">Git</a>
+      <a href="../../../Go/">Go</a>
+      <a href="../../../HPC/">HPC</a>
+      <a href="../../../IaC/">IaC</a>
+      <a href="../../../Linux-Shell/">Linux-Shell</a>
+      <a href="../../../Middlewares/">Middlewares</a>
+      <a href="../../../Networking/">Networking</a>
+      <a href="../../../OS/">OS</a>
+      <a href="../../../Python/">Python</a>
+      <a href="../../../SoftwareTesting/">SoftwareTesting</a>
+    </div>
+  </nav>
+</header>
+<main class="main">
+
+<div class="article-layout">
+
+  <aside class="sidebar">
+    <details class="sidebar-details">
+      <summary>Aliyun</summary>
+      <nav class="sidebar-nav">
+        <p class="sidebar-group">存储</p>
+        <ul>
+          <li><a href="../../../Aliyun/%E5%AD%98%E5%82%A8/%E5%AF%B9%E8%B1%A1%E5%AD%98%E5%82%A8OSS/">对象存储OSS</a></li>
+          <li><a href="../../../Aliyun/%E5%AD%98%E5%82%A8/%E6%95%B0%E6%8D%AE%E6%B9%96-HDFS-POSIX/">数据湖-HDFS-POSIX</a></li>
+          <li><a href="../../../Aliyun/%E5%AD%98%E5%82%A8/%E8%B7%A8%E5%9F%9F%E5%85%B1%E4%BA%ABCORS/">跨域共享CORS</a></li>
+        </ul>
+        <p class="sidebar-group">数据库</p>
+        <ul>
+          <li><a href="../../../Aliyun/%E6%95%B0%E6%8D%AE%E5%BA%93/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93RDS/">关系型数据库RDS</a></li>
+          <li><a href="../../../Aliyun/%E6%95%B0%E6%8D%AE%E5%BA%93/%E6%95%B0%E6%8D%AE%E4%BC%A0%E8%BE%93%E6%9C%8D%E5%8A%A1DTS/">数据传输服务DTS</a></li>
+        </ul>
+        <p class="sidebar-group">网络</p>
+        <ul>
+          <li><a href="../../../Aliyun/%E7%BD%91%E7%BB%9C/ACK%E7%BD%91%E7%BB%9C%E8%A7%84%E5%88%92%E4%B8%8E%E6%88%90%E6%9C%AC%E4%BC%98%E5%8C%96/">ACK 网络规划与成本优化</a></li>
+          <li><a href="../../../Aliyun/%E7%BD%91%E7%BB%9C/CEN-TR/">云企业网 CEN 与转发路由器 TR</a></li>
+          <li><a href="../../../Aliyun/%E7%BD%91%E7%BB%9C/DDoS%E9%AB%98%E9%98%B2/">DDoS 防护</a></li>
+          <li><a href="../../../Aliyun/%E7%BD%91%E7%BB%9C/DNS-CDN-SSL/">DNS、CDN 与 SSL 证书</a></li>
+          <li><a href="../../../Aliyun/%E7%BD%91%E7%BB%9C/VPC/">专有网络 VPC</a></li>
+          <li><a href="../../../Aliyun/%E7%BD%91%E7%BB%9C/WAF/">Web 应用防火墙 WAF</a></li>
+          <li><a href="../../../Aliyun/%E7%BD%91%E7%BB%9C/%E4%BA%91%E5%AE%89%E5%85%A8%E4%B8%AD%E5%BF%83-%E4%BA%91%E9%98%B2%E7%81%AB%E5%A2%99/">云安全中心与云防火墙</a></li>
+          <li><a href="../../../Aliyun/%E7%BD%91%E7%BB%9C/%E7%BD%91%E5%85%B3-VPN-%E4%B8%93%E7%BA%BF/">网关-VPN-专线</a></li>
+          <li><a href="../../../Aliyun/%E7%BD%91%E7%BB%9C/%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1SLB/">负载均衡 SLB</a></li>
+        </ul>
+        <p class="sidebar-group">计算</p>
+        <ul>
+          <li><a href="../../../Aliyun/%E8%AE%A1%E7%AE%97/ECS/">弹性计算服务ECS</a></li>
+          <li><a href="../../../Aliyun/%E8%AE%A1%E7%AE%97/%E4%B8%BB%E6%9C%BA%E8%BF%81%E7%A7%BB%E5%B7%A5%E5%85%B7SMC/">主机迁移工具SMC</a></li>
+          <li><a href="../../../Aliyun/%E8%AE%A1%E7%AE%97/%E4%BA%91%E7%9B%98-%E5%BF%AB%E7%85%A7-%E9%95%9C%E5%83%8F/">云盘、快照与镜像</a></li>
+          <li><a href="../../../Aliyun/%E8%AE%A1%E7%AE%97/%E5%BC%B9%E6%80%A7%E4%BC%B8%E7%BC%A9ESS/">弹性伸缩ESS</a></li>
+        </ul>
+        <p class="sidebar-group">资源管理</p>
+        <ul>
+          <li><a href="../../../Aliyun/%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/FinOps-%E4%BA%91%E6%88%90%E6%9C%AC%E4%BC%98%E5%8C%96%E5%AE%9E%E6%88%98/" class="current">FinOps - 云成本优化实战</a></li>
+          <li><a href="../../../Aliyun/%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/Landing%20Zone/">Landing Zone</a></li>
+        </ul>
+        <p class="sidebar-group">其他</p>
+        <ul>
+          <li><a href="../../../Aliyun/ACP%E8%80%83%E8%AF%95/">ACP云计算工程师考试笔记</a></li>
+        </ul>
+      </nav>
+    </details>
+  </aside>
+
+  <article class="article">
+    <nav class="breadcrumb">
+      <a href="../../../index.html">首页</a><span>/</span>
+      <a href="../../../Aliyun/">Aliyun</a><span>/</span><span>资源管理</span>
+    </nav>
+    <h1 class="article-title">FinOps - 云成本优化实战</h1>
+    <p class="article-meta"><span>更新于 2026-04-23</span>
+      <a href="https://github.com/hangx969/learning-notes/blob/main/Aliyun/%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/FinOps-%E4%BA%91%E6%88%90%E6%9C%AC%E4%BC%98%E5%8C%96%E5%AE%9E%E6%88%98.md">查看源文件</a>
+    </p>
+    <div class="article-body">
+<h1 id="finops-云成本优化实战">FinOps — 云成本优化实战</h1>
+<blockquote>
+<p>来源：<a href="https://mp.weixin.qq.com/s/bFPP_QCDDyG0M0qQaaY1-w">老杨的压箱底的技能聊聊FinOps</a></p>
+</blockquote>
+<p>FinOps 核心方法论：<strong>先量化，再优化，再固化</strong>。用数据说话——把账单、用量和配置拉齐，对着业务节奏做动作，降成本而不伤 SLA。</p>
+<hr />
+<h2 id="1-成本基线把钱看清">1. 成本基线：把钱看清</h2>
+<p>按产品、项目、标签聚合三个月账单，建立基线。</p>
+<h3 id="阿里云bss-openapi">阿里云（BSS OpenAPI）</h3>
+<div class="highlight"><pre><span></span><code>aliyun<span class="w"> </span>bssopenapi<span class="w"> </span>DescribeInstanceBill<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--BillingCycle<span class="w"> </span><span class="m">2025</span>-07<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--ProductCode<span class="w"> </span>ecs<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--PageSize<span class="w"> </span><span class="m">100</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span><span class="s1">&#39;.Data.Items.Item[] | {InstanceID,ProductName,SubscriptionType,Cost: .PretaxAmount,Tag: .Tag}&#39;</span>
+</code></pre></div>
+
+<h3 id="腾讯云tccli-billing">腾讯云（tccli Billing）</h3>
+<div class="highlight"><pre><span></span><code>tccli<span class="w"> </span>billing<span class="w"> </span>DescribeCostDetail<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--StartTime<span class="w"> </span><span class="s2">&quot;2025-07-01 00:00:00&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--EndTime<span class="w"> </span><span class="s2">&quot;2025-07-31 23:59:59&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--Limit<span class="w"> </span><span class="m">100</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span><span class="s1">&#39;.DetailSet[] | {PayerUin,ProductName,InstanceId,RealTotalCost,Tags}&#39;</span>
+</code></pre></div>
+
+<h3 id="华为云bss-v2">华为云（BSS v2）</h3>
+<div class="highlight"><pre><span></span><code>curl<span class="w"> </span>-s<span class="w"> </span>-H<span class="w"> </span><span class="s2">&quot;X-Auth-Token: </span><span class="nv">$HUAWEI_TOKEN</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;cycle&quot;:&quot;2025-07&quot;}&#39;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>https://bss.myhuaweicloud.com/v2/bills/customer-bills/consume-records<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span><span class="s1">&#39;.consume_records[] | {cloud_service_type_name, resource_id, amount}&#39;</span>
+</code></pre></div>
+
+<p><div class="callout callout-tip" markdown="1"><br />
+<p class="callout-title">落地要点</p></p>
+<ul>
+<li>三个月账单拉齐，按产品/标签/项目做 CSV 聚合</li>
+<li>停机不代表不收费——云盘、公网 IP、带宽仍计费</li>
+<li><strong>无标签 = 不可管理</strong>，务必补全</li>
+</ul>
+</div>
+<hr />
+<h2 id="2-找浪费四个高命中场景">2. 找浪费：四个高命中场景</h2>
+<h3 id="a-低利用率实例724-cpu-5">A. 低利用率实例（7×24 CPU &lt; 5%）</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># 阿里云拉 CPU 监控</span>
+aliyun<span class="w"> </span>cms<span class="w"> </span>DescribeMetricList<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--Namespace<span class="w"> </span>acs_ecs_dashboard<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--MetricName<span class="w"> </span>CPUUtilization<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--Dimensions<span class="w"> </span><span class="s1">&#39;[{&quot;instanceId&quot;:&quot;i-bp1abc123&quot;}]&#39;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--StartTime<span class="w"> </span><span class="m">2025</span>-07-01T00:00:00Z<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--EndTime<span class="w"> </span><span class="m">2025</span>-07-07T00:00:00Z<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span>-r<span class="w"> </span><span class="s1">&#39;.Datapoints&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span>-r<span class="w"> </span><span class="s1">&#39;.[] | [.timestamp,.Average,.Maximum] | @csv&#39;</span>
+
+<span class="c1"># 腾讯云拉 CPU 监控</span>
+tccli<span class="w"> </span>monitor<span class="w"> </span>GetMonitorData<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--Namespace<span class="w"> </span>QCE/CVM<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--MetricName<span class="w"> </span>CPUUsage<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--Instances<span class="w"> </span><span class="s1">&#39;[{&quot;Dimensions&quot;:[{&quot;Name&quot;:&quot;InstanceId&quot;,&quot;Value&quot;:&quot;ins-8xy1z2&quot;}]}]&#39;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--StartTime<span class="w"> </span><span class="m">2025</span>-07-01T00:00:00+08:00<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--EndTime<span class="w"> </span><span class="m">2025</span>-07-07T00:00:00+08:00<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span><span class="s1">&#39;.DataPoints[0].Values&#39;</span>
+</code></pre></div>
+
+<p><strong>判定</strong>：低于 5% 且无夜间批任务 → 降配或合并。</p>
+<h3 id="b-闲置公网-ip">B. 闲置公网 IP</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># 阿里云：未绑定 EIP</span>
+aliyun<span class="w"> </span>vpc<span class="w"> </span>DescribeEipAddresses<span class="w"> </span>--PageSize<span class="w"> </span><span class="m">100</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span><span class="s1">&#39;.EipAddresses.EipAddress[] | select(.InstanceId==null) | {AllocationId,IpAddress}&#39;</span>
+
+<span class="c1"># 腾讯云：未绑定 EIP</span>
+tccli<span class="w"> </span>vpc<span class="w"> </span>DescribeAddress<span class="w"> </span>--Filters<span class="w"> </span><span class="s1">&#39;[{&quot;Name&quot;:&quot;address-status&quot;,&quot;Values&quot;:[&quot;UNBIND&quot;]}]&#39;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span><span class="s1">&#39;.AddressSet[] | {AddressId, AddressIp}&#39;</span>
+</code></pre></div>
+
+<p><strong>动作</strong>：回收或合并出网，网关做复用。</p>
+<h3 id="c-对象存储没做生命周期">C. 对象存储没做生命周期</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># 阿里云 OSS 查看桶生命周期规则</span>
+ossutil<span class="w"> </span>lifecycle<span class="w"> </span>-b<span class="w"> </span>oss://my-logs-bucket
+
+<span class="c1"># 腾讯云 COS 查看存储类型分布</span>
+coscli<span class="w"> </span>stat<span class="w"> </span>cos://news-archive/<span class="w"> </span>--recursive<span class="w"> </span>--summarize
+</code></pre></div>
+
+<p><strong>动作</strong>：30 天未访问 → 转 IA/归档，老版本自动清理。</p>
+<h3 id="d-k8s-请求限制配大了">D. K8s 请求/限制配大了</h3>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>get<span class="w"> </span>pod<span class="w"> </span>-A<span class="w"> </span>-o<span class="w"> </span>json<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span>-r<span class="w"> </span><span class="s1">&#39;.items[] | [.metadata.namespace,.metadata.name,</span>
+<span class="s1">     .spec.containers[].resources.requests.cpu,</span>
+<span class="s1">     .spec.containers[].resources.limits.cpu] | @tsv&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-5
+</code></pre></div>
+
+<p><strong>动作</strong>：<code>requests</code> 调低到 P95 实际用量，<code>limits</code> 保留 1.5~2 倍缓冲，配 HPA/VPA。</p>
+<hr />
+<h2 id="3-立刻见效的优化动作">3. 立刻见效的优化动作</h2>
+<h3 id="动作-1下班自动关机-上班自动开机">动作 1：下班自动关机 / 上班自动开机</h3>
+<div class="highlight"><pre><span></span><code><span class="ch">#!/usr/bin/env bash</span>
+<span class="nb">set</span><span class="w"> </span>-euo<span class="w"> </span>pipefail
+<span class="nv">IDS</span><span class="o">=(</span><span class="s2">&quot;i-bp1abc123&quot;</span><span class="w"> </span><span class="s2">&quot;i-bp2def456&quot;</span><span class="o">)</span>
+<span class="nv">ACTION</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">1</span><span class="k">:-</span><span class="nv">stop</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="k">for</span><span class="w"> </span>id<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">IDS</span><span class="p">[@]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">;</span><span class="w"> </span><span class="k">do</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="o">[[</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$ACTION</span><span class="s2">&quot;</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s2">&quot;stop&quot;</span><span class="w"> </span><span class="o">]]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">    </span>aliyun<span class="w"> </span>ecs<span class="w"> </span>StopInstance<span class="w"> </span>--InstanceId<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$id</span><span class="s2">&quot;</span><span class="w"> </span>--ForceStop<span class="w"> </span><span class="nb">true</span>
+<span class="w">  </span><span class="k">else</span>
+<span class="w">    </span>aliyun<span class="w"> </span>ecs<span class="w"> </span>StartInstance<span class="w"> </span>--InstanceId<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$id</span><span class="s2">&quot;</span>
+<span class="w">  </span><span class="k">fi</span>
+<span class="k">done</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;done:</span><span class="nv">$ACTION</span><span class="s2">&quot;</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="c1"># crontab 定时</span>
+<span class="m">0</span><span class="w"> </span><span class="m">20</span><span class="w"> </span>*<span class="w"> </span>*<span class="w"> </span><span class="m">1</span>-5<span class="w"> </span>/opt/ecs-scheduler.sh<span class="w"> </span>stop
+<span class="m">0</span><span class="w"> </span><span class="m">08</span><span class="w"> </span>*<span class="w"> </span>*<span class="w"> </span><span class="m">1</span>-5<span class="w"> </span>/opt/ecs-scheduler.sh<span class="w"> </span>start
+</code></pre></div>
+
+<p><div class="callout callout-warning" markdown="1"><br />
+<p class="callout-title">关机后云盘、公网 IP 仍在计费，需确认。</p></p>
+</div>
+<h3 id="动作-2降配规格迁移">动作 2：降配（规格迁移）</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># 阿里云 ECS 变配</span>
+aliyun<span class="w"> </span>ecs<span class="w"> </span>ModifyInstanceSpec<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--InstanceId<span class="w"> </span>i-bp1abc123<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--InstanceType<span class="w"> </span>ecs.c7.large
+
+<span class="c1"># K8s 内部先降 requests</span>
+kubectl<span class="w"> </span><span class="nb">set</span><span class="w"> </span>resources<span class="w"> </span>deploy/api<span class="w"> </span>--requests<span class="o">=</span><span class="nv">cpu</span><span class="o">=</span>300m,memory<span class="o">=</span>512Mi
+</code></pre></div>
+
+<h3 id="动作-3对象存储冷热分层-版本清理">动作 3：对象存储冷热分层 + 版本清理</h3>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;Rule&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[{</span>
+<span class="w">    </span><span class="nt">&quot;ID&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;logs-ia-30d&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;Prefix&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;logs/&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;Status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Enabled&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;Transition&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;Days&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">30</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;StorageClass&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;IA&quot;</span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;Expiration&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;Days&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">180</span><span class="p">}</span>
+<span class="w">  </span><span class="p">},{</span>
+<span class="w">    </span><span class="nt">&quot;ID&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;versioned-clean&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;Status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Enabled&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;NoncurrentVersionExpiration&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;NoncurrentDays&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">30</span><span class="p">}</span>
+<span class="w">  </span><span class="p">}]</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code>ossutil<span class="w"> </span>lifecycle<span class="w"> </span>-b<span class="w"> </span>oss://my-logs-bucket<span class="w"> </span>-c<span class="w"> </span>/tmp/oss-lc.json
+</code></pre></div>
+
+<h3 id="动作-4固定负载转包年包月">动作 4：固定负载转包年包月</h3>
+<p>先识别 7×24 且波动小的实例 → 从最稳定的 20% 开始买包年包月或节省计划，不建议全量上。</p>
+<hr />
+<h2 id="4-预算告警-可观测">4. 预算告警 + 可观测</h2>
+<h3 id="预算告警阿里云">预算告警（阿里云）</h3>
+<div class="highlight"><pre><span></span><code>aliyun<span class="w"> </span>bssopenapi<span class="w"> </span>CreateCostBudget<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--BudgetName<span class="w"> </span>proj-search-2025Q3<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--BudgetType<span class="w"> </span>COST<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--BudgetAmount<span class="w"> </span><span class="m">50000</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--BudgetUnit<span class="w"> </span>CNY<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--DurationUnit<span class="w"> </span>Monthly<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--Subscribers<span class="w"> </span><span class="s1">&#39;[{&quot;Type&quot;:&quot;EMAIL&quot;,&quot;Address&quot;:&quot;finops@corp.com&quot;}]&#39;</span>
+</code></pre></div>
+
+<h3 id="账单落-prometheus做看板预警">账单落 Prometheus（做看板/预警）</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># 账单转 metrics，node_exporter textfile 采集</span>
+aliyun<span class="w"> </span>bssopenapi<span class="w"> </span>DescribeInstanceBill<span class="w"> </span>--BillingCycle<span class="w"> </span><span class="m">2025</span>-07<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span>-r<span class="w"> </span><span class="s1">&#39;.Data.Items.Item[] | &quot;cloud_cost_cny{product=\&quot;\(.ProductName)\&quot;,tag=\&quot;\(.Tag)\&quot;} \(.PretaxAmount)&quot;&#39;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>&gt;<span class="w"> </span>/var/lib/node_exporter/textfile_collector/cloud_cost.prom
+</code></pre></div>
+
+<hr />
+<h2 id="5-pr-级成本评估infracost">5. PR 级成本评估：Infracost</h2>
+<p>在 PR 里直接给出变更前后每月费用差异，避免先上再后悔：</p>
+<div class="highlight"><pre><span></span><code>infracost<span class="w"> </span>breakdown<span class="w"> </span>--path<span class="w"> </span>.<span class="w"> </span>--format<span class="w"> </span>json<span class="w"> </span>--out-file<span class="w"> </span>infracost.json
+infracost<span class="w"> </span>diff<span class="w"> </span>--path<span class="w"> </span>infracost.json
+</code></pre></div>
+
+<p>输出示例：</p>
+<div class="highlight"><pre><span></span><code>Monthly cost change for this PR: -¥1,243.50
+  ├─ alicloud_instance.api[2]   -¥980.00  (c7.large -&gt; c7.medium)
+  └─ alicloud_slb.lb_public     -¥263.50  (deleted)
+</code></pre></div>
+
+<hr />
+<h2 id="6-实战案例三步拿下-30-夜间浪费">6. 实战案例：三步拿下 30% 夜间浪费</h2>
+<p><strong>场景</strong>：研发白天用 40 台按量 ECS，晚上无任务。</p>
+<table>
+<thead>
+<tr>
+<th>步骤</th>
+<th>动作</th>
+<th>效果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>拉 30 天 CPU，确认 20:00–08:00 空闲</td>
+<td>数据验证</td>
+</tr>
+<tr>
+<td>2</td>
+<td>28 台加关机/开机排程，12 台观察两周</td>
+<td>夜间成本 ~40%↓</td>
+</tr>
+<tr>
+<td>3</td>
+<td>长期空闲 16 台转包年包月小规格</td>
+<td>单机 ~30%↓</td>
+</tr>
+</tbody>
+</table>
+<p><strong>综合结果</strong>：降到原来 55~60%，对 SLA 影响小。</p>
+<hr />
+<h2 id="总结">总结</h2>
+<p>FinOps 不是口号，是<strong>对齐账单、用量、配置</strong>的日常工作。运维的价值在三件事：</p>
+<ol>
+<li><strong>把数据拉齐</strong> — 账单 + 监控 + 标签</li>
+<li><strong>把规则固化</strong> — 预算告警 + Infracost PR 卡点</li>
+<li><strong>把改动自动化</strong> — 夜间关机、降配、存储分层、EIP 回收</li>
+</ol>
+    </div>
+  </article>
+  <aside class="toc">
+    <p class="toc-label">本页目录</p>
+    <ul>
+  <li><a href="#1-成本基线把钱看清">1. 成本基线：把钱看清</a><ul>
+  <li><a href="#阿里云bss-openapi">阿里云（BSS OpenAPI）</a></li>
+  <li><a href="#腾讯云tccli-billing">腾讯云（tccli Billing）</a></li>
+  <li><a href="#华为云bss-v2">华为云（BSS v2）</a></li>
+</ul></li>
+  <li><a href="#2-找浪费四个高命中场景">2. 找浪费：四个高命中场景</a><ul>
+  <li><a href="#a-低利用率实例724-cpu-5">A. 低利用率实例（7×24 CPU &amp;lt; 5%）</a></li>
+  <li><a href="#b-闲置公网-ip">B. 闲置公网 IP</a></li>
+  <li><a href="#c-对象存储没做生命周期">C. 对象存储没做生命周期</a></li>
+  <li><a href="#d-k8s-请求限制配大了">D. K8s 请求/限制配大了</a></li>
+</ul></li>
+  <li><a href="#3-立刻见效的优化动作">3. 立刻见效的优化动作</a><ul>
+  <li><a href="#动作-1下班自动关机-上班自动开机">动作 1：下班自动关机 / 上班自动开机</a></li>
+  <li><a href="#动作-2降配规格迁移">动作 2：降配（规格迁移）</a></li>
+  <li><a href="#动作-3对象存储冷热分层-版本清理">动作 3：对象存储冷热分层 + 版本清理</a></li>
+  <li><a href="#动作-4固定负载转包年包月">动作 4：固定负载转包年包月</a></li>
+</ul></li>
+  <li><a href="#4-预算告警-可观测">4. 预算告警 + 可观测</a><ul>
+  <li><a href="#预算告警阿里云">预算告警（阿里云）</a></li>
+  <li><a href="#账单落-prometheus做看板预警">账单落 Prometheus（做看板/预警）</a></li>
+</ul></li>
+  <li><a href="#5-pr-级成本评估infracost">5. PR 级成本评估：Infracost</a></li>
+  <li><a href="#6-实战案例三步拿下-30-夜间浪费">6. 实战案例：三步拿下 30% 夜间浪费</a></li>
+  <li><a href="#总结">总结</a></li>
+</ul>
+  </aside>
+
+</div>
+
+</main>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>Learning Notes</span>
+    <a href="https://github.com/hangx969/learning-notes">GitHub</a>
+  </div>
+</footer>
+<script src="../../../static/search.js"></script>
+</body>
+</html>

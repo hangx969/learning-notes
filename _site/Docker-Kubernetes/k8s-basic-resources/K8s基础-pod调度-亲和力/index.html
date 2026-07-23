@@ -1,0 +1,1312 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>K8s基础-Pod调度-亲和力 - Learning Notes</title>
+<link rel="stylesheet" href="../../../static/style.css">
+<link rel="stylesheet" href="../../../static/pygments.css">
+</head>
+<body data-root="../../../">
+<header class="site-header">
+  <div class="header-inner">
+    <a class="logo" href="../../../index.html"><span class="logo-mark"></span>LEARNING NOTES</a>
+    <div class="search">
+      <input id="search-input" type="search" placeholder="搜索笔记…" autocomplete="off" aria-label="搜索笔记">
+      <div id="search-results" hidden></div>
+    </div>
+  </div>
+  <nav class="topic-nav" aria-label="主题导航">
+    <div class="topic-nav-inner">
+      <a href="../../../AI/">AI</a>
+      <a href="../../../Aliyun/">Aliyun</a>
+      <a href="../../../Azure/">Azure</a>
+      <a href="../../../C%2B%2B/">C++</a>
+      <a href="../../../CloudComputing/">CloudComputing</a>
+      <a href="../../../Database/">Database</a>
+      <a href="../../../Docker-Kubernetes/" class="active">Docker-Kubernetes</a>
+      <a href="../../../GPU-DeepLearning/">GPU-DeepLearning</a>
+      <a href="../../../Git/">Git</a>
+      <a href="../../../Go/">Go</a>
+      <a href="../../../HPC/">HPC</a>
+      <a href="../../../IaC/">IaC</a>
+      <a href="../../../Linux-Shell/">Linux-Shell</a>
+      <a href="../../../Middlewares/">Middlewares</a>
+      <a href="../../../Networking/">Networking</a>
+      <a href="../../../OS/">OS</a>
+      <a href="../../../Python/">Python</a>
+      <a href="../../../SoftwareTesting/">SoftwareTesting</a>
+    </div>
+  </nav>
+</header>
+<main class="main">
+
+<div class="article-layout">
+
+  <aside class="sidebar">
+    <details class="sidebar-details">
+      <summary>Docker-Kubernetes</summary>
+      <nav class="sidebar-nav">
+        <p class="sidebar-group">CKA-CKS</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/CKA-CKS/CKA-%E5%A4%87%E8%80%83/">CKA 备考</a></li>
+          <li><a href="../../../Docker-Kubernetes/CKA-CKS/CKS-%E5%A4%87%E8%80%83/">CKS 备考</a></li>
+          <li><a href="../../../Docker-Kubernetes/CKA-CKS/k8s-%E9%9D%A2%E8%AF%95%E9%A2%98%E6%B1%87%E6%80%BB/">K8s 面试题汇总</a></li>
+        </ul>
+        <p class="sidebar-group">container-platform</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/container-platform/%E9%83%A8%E7%BD%B2openshift%283.10%29/">部署 OpenShift (3.10)</a></li>
+          <li><a href="../../../Docker-Kubernetes/container-platform/%E9%83%A8%E7%BD%B2%E8%BD%BB%E9%87%8F%E7%BA%A7%E7%9A%84K8S%E5%B9%B3%E5%8F%B0-K3S/">部署轻量级 K8S 平台 - K3S</a></li>
+        </ul>
+        <p class="sidebar-group">docker</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E5%9F%BA%E7%A1%80/">Docker基础</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E5%AE%89%E5%85%A8%E9%85%8D%E7%BD%AE-Capabilities%E4%B8%8E%E5%AE%B9%E5%99%A8%E5%8A%A0%E5%9B%BA/">Docker 安全配置详解：Capabilities 与容器加固</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2UI%E5%B7%A5%E5%85%B7portainer-%E9%83%A8%E7%BD%B2redis-sentinel/">Docker部署Portainer与Redis-Sentinel</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2gitlab/">Docker部署GitLab</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2lnmp%E7%BD%91%E7%AB%99/">Docker部署LNMP网站</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2loki/">Docker部署Loki日志系统</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2nginx-tomcat-httpd-go-python%E6%9C%8D%E5%8A%A1/">Docker部署Nginx-Tomcat-Httpd-Go-Python服务</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2prometheus-grafana-cAdvisior%E7%9B%91%E6%8E%A7/">Docker部署Prometheus-Grafana-cAdvisor监控</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2%E4%BB%93%E5%BA%93%E5%B9%B3%E5%8F%B0homebox/">Docker部署Homebox仓库平台</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1%E5%B7%A5%E5%85%B7gocron/">Docker部署GoCron定时任务工具</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2%E8%B7%AF%E7%94%B1%E7%9B%91%E6%8E%A7%E5%B7%A5%E5%85%B7NextTrace/">Docker部署NextTrace路由监控工具</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%85%8D%E7%BD%AENVIDIA%20GPU/">Docker配置NVIDIA GPU</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%85%8D%E7%BD%AE%E4%BB%A3%E7%90%86/">Docker配置代理</a></li>
+        </ul>
+        <p class="sidebar-group">harbor</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/harbor/harbor-basics/">Harbor 基础</a></li>
+          <li><a href="../../../Docker-Kubernetes/harbor/helm%E9%83%A8%E7%BD%B2harbor/">Helm 部署 Harbor</a></li>
+        </ul>
+        <p class="sidebar-group">helm-operator</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/helm-operator/helmv3-%E5%AE%89%E8%A3%85%E4%B8%8E%E4%BD%BF%E7%94%A8/">Helm v3 安装与使用</a></li>
+          <li><a href="../../../Docker-Kubernetes/helm-operator/helm%E9%83%A8%E7%BD%B2config-syncer%28kubed%29/">Helm 部署 Config Syncer (Kubed)</a></li>
+          <li><a href="../../../Docker-Kubernetes/helm-operator/helm%E9%83%A8%E7%BD%B2dragonfly/">Helm 部署 Dragonfly</a></li>
+          <li><a href="../../../Docker-Kubernetes/helm-operator/helm%E9%83%A8%E7%BD%B2pact-broker/">Helm 部署 Pact Broker</a></li>
+          <li><a href="../../../Docker-Kubernetes/helm-operator/helm%E9%83%A8%E7%BD%B2reloader/">Helm 部署 Reloader</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-CICD</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD%20Image%20Updater/">ArgoCD Image Updater</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD%E5%9F%BA%E7%A1%80/">ArgoCD基础</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD%E5%A4%9A%E9%9B%86%E7%BE%A4GitOps%E5%AE%9E%E6%88%98/">多集群 GitOps 实战：用 Argo CD 管理上百个 Kubernetes 集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD%E9%83%A8%E7%BD%B2Helm%E5%BA%94%E7%94%A8%E6%97%B6%E5%9F%9F%E5%90%8D%E8%A7%A3%E6%9E%90%E5%A4%B1%E8%B4%A5%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5%E4%B8%8E%E8%A7%A3%E5%86%B3/">ArgoCD部署Helm应用时域名解析失败问题排查与解决</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/ArgoCD/%E5%AD%A6%E4%B9%A0%E9%93%BE%E6%8E%A5/">ArgoCD学习链接</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Claude-Code%E5%AE%9E%E7%8E%B0CICD%E8%87%AA%E5%8A%A8%E5%8C%96%E5%8F%91%E5%B8%83%E6%B5%81%E7%A8%8B/">Claude Code 实现 CI/CD 自动化发布流程详细指南</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Gitlab/helm%E9%83%A8%E7%BD%B2gitlab/">Helm部署GitLab</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Gitlab/k8s%E9%83%A8%E7%BD%B2Gitlab%2811.8.1%29-%E5%9F%BA%E4%BA%8Eyaml/">K8s部署GitLab(11.8.1)-基于YAML</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Gitlab/%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%AE%89%E8%A3%85Gitlab%2817.9.8%29/">二进制安装GitLab(17.9.8)</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Jenkins/Jenkins%E8%AF%AD%E6%B3%95-%E5%9F%BA%E4%BA%8Edocker%E9%83%A8%E7%BD%B2/">Jenkins语法-基于Docker部署</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Jenkins/docker%E9%83%A8%E7%BD%B2jenkins/">Docker部署Jenkins</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Jenkins/helm%E9%83%A8%E7%BD%B2jenkins/">Helm部署Jenkins</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Jenkins/k8s-Devops%E5%B9%B3%E5%8F%B0%E8%90%BD%E5%9C%B0-%E5%9F%BA%E4%BA%8Ejenkins/">K8s DevOps平台落地-基于Jenkins</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Jenkins/k8s%E9%83%A8%E7%BD%B2%E5%9F%BA%E4%BA%8EJenkins%282.394%29%E7%9A%84DevOps%E5%B7%A5%E5%85%B7%E9%93%BE-%E5%9F%BA%E4%BA%8Eyaml/">K8s部署基于Jenkins(2.394)的DevOps工具链-基于YAML</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Jenkins/k8s%E9%83%A8%E7%BD%B2%E5%9F%BA%E4%BA%8EJenkins%282.426.3%29%E7%9A%84Devops%E5%B7%A5%E5%85%B7%E9%93%BE-%E5%9F%BA%E4%BA%8Eyaml/">K8s部署基于Jenkins(2.426.3)的DevOps工具链-基于YAML</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Jenkins/%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%AE%89%E8%A3%85Jenkins%282.319%29/">二进制安装Jenkins(2.319)</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Kustomize/k8s%E9%85%8D%E7%BD%AE%E5%AE%9A%E5%88%B6%E5%B7%A5%E5%85%B7-kustomize/">K8s配置定制工具-Kustomize</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Tekton/k8s%E9%83%A8%E7%BD%B2%E5%8E%9F%E7%94%9F%E7%9A%84CICD%E5%B7%A5%E5%85%B7Tekton-%E5%9F%BA%E4%BA%8Eyaml/">K8s部署原生的CICD工具Tekton-基于YAML</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Tekton/%E5%9F%BA%E4%BA%8ETekton%E7%9A%84%E4%BA%91%E5%8E%9F%E7%94%9F%E5%B9%B3%E5%8F%B0%E8%90%BD%E5%9C%B0/">基于Tekton的云原生平台落地</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/k8s%E5%8F%91%E5%B8%83%E7%AD%96%E7%95%A5-%E8%93%9D%E7%BB%BF%E9%83%A8%E7%BD%B2%E4%B8%8E%E9%87%91%E4%B8%9D%E9%9B%80%E5%8F%91%E5%B8%83/">K8s 发布策略：蓝绿部署与金丝雀发布实战</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/%E4%BD%BF%E7%94%A8github%20action%E9%83%A8%E7%BD%B2helmchart/">使用GitHub Action部署Helm Chart</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/%E5%8F%91%E5%B8%83go-python-java%E4%BB%A3%E7%A0%81%E5%88%B0K8S%E7%8E%AF%E5%A2%83/">发布Go/Python/Java代码到K8S环境</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-UI-tools</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-UI-tools/k8s-API%E6%A3%80%E6%9F%A5%E5%B7%A5%E5%85%B7kubent/">K8s API 检查工具 kubent</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-UI-tools/k8s-%E5%B0%8F%E5%B7%A5%E5%85%B7%E9%9B%86%E5%90%88/">K8s 小工具集合</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-UI-tools/k8s%E9%83%A8%E7%BD%B2-Dashboard-UI/">K8s 部署 Dashboard UI</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-UI-tools/k8s%E9%83%A8%E7%BD%B2%E5%8F%AF%E8%A7%86%E5%8C%96ui%E7%95%8C%E9%9D%A2kuboard/">K8s 部署 Kuboard</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-UI-tools/kubectl-UI%E5%B7%A5%E5%85%B7Lens/">kubectl UI 工具 Lens</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-UI-tools/kubectl-%E5%8F%AF%E8%A7%86%E5%8C%96%E6%8F%92%E4%BB%B6k9s-stern/">kubectl 可视化插件 k9s 和 stern</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-UI-tools/kuebctl-%E6%8F%92%E4%BB%B6krew-rolesum/">kubectl 插件 krew 和 rolesum</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-UI-tools/rancher%28v2.6.4%29%E7%AE%A1%E7%90%86k8s%E9%9B%86%E7%BE%A4/">Rancher (v2.6.4) 管理 K8s 集群</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-ai-gpu</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-ai-gpu/k8s%E9%85%8D%E7%BD%AENVIDIA%20GPU/">K8s 配置 NVIDIA GPU</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-backup-dr</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-backup-dr/k8s%E5%A4%87%E4%BB%BD%E4%B8%8E%E7%81%BE%E5%A4%87%E5%AE%9E%E6%88%98-%E4%B8%89%E5%B1%82%E5%AE%B9%E7%81%BE%E6%9E%B6%E6%9E%84/">K8s 备份与灾备实战：三层容灾架构</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-backup-dr/k8s%E9%9B%86%E7%BE%A4%E5%A4%87%E4%BB%BD%E6%81%A2%E5%A4%8D-Velero/">K8s集群备份恢复 - Velero</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-basic-resources</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/K8s%E5%9F%BA%E7%A1%80-pod%E8%B0%83%E5%BA%A6-%E4%BA%B2%E5%92%8C%E5%8A%9B/" class="current">K8s基础-Pod调度-亲和力</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/Python%E8%B0%83%E7%94%A8k8s-api%E5%AE%9E%E7%8E%B0%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/">Python调用K8s-API实现资源管理</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s-APIServer%E6%B7%B1%E5%BA%A6%E5%89%96%E6%9E%90-%E8%AF%B7%E6%B1%82%E9%93%BE%E8%B7%AF-%E8%AE%A4%E8%AF%81%E6%8E%88%E6%9D%83-%E7%94%9F%E4%BA%A7%E8%B0%83%E4%BC%98/">Kubernetes API Server 深度剖析：请求链路、认证授权与生产调优</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s-PodDisruptionBudget%E5%AE%9E%E6%88%98/">K8s PodDisruptionBudget 实战：优雅中断保护</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-Calico/">K8s基础-Calico</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-Finalizer%E4%B8%8E%E8%B5%84%E6%BA%90%E5%88%A0%E9%99%A4/">K8s基础-Finalizer与资源删除</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-Operator%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98-Kubebuilder/">从零开发 Kubernetes Operator：Kubebuilder 实战教程</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-Service/">K8s基础-Service</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-configMap-Secret/">K8s基础-configMap-Secret</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-daemonset/">K8s基础-DaemonSet</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-deployment/">K8s基础-Deployment</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-ingress/">K8s基础-Ingress</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-job-cronjob/">K8s基础-Job-CronJob</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-kubeadm/">K8s基础-kubeadm</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-namespace-%E8%B5%84%E6%BA%90%E5%88%86%E9%85%8D/">K8s基础-namespace-资源分配</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-pod/">K8s基础-Pod</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-pod%E8%B0%83%E5%BA%A6-%E6%A0%87%E7%AD%BE%E4%B8%8E%E9%80%89%E6%8B%A9%E5%99%A8%E5%AE%9E%E6%88%98/">Kubernetes 标签与选择器避坑：5 条核心铁律与生产级实战案例</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-statefulset/">K8s基础-StatefulSet</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-storage/">K8s基础-Storage</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-yaml/">K8s基础-YAML</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E4%B8%B4%E6%97%B6%E5%AE%B9%E5%99%A8ephemeral/">K8s基础-临时容器Ephemeral</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E5%AE%B9%E5%99%A8%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-Sidecar-Init-Ambassador-Adapter/">K8s 容器设计模式：Sidecar / Init Container / Ambassador / Adapter</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E5%AE%B9%E5%99%A8%E8%BF%90%E8%A1%8C%E6%97%B6-containerd/">K8s基础-容器运行时-containerd</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E6%9E%B6%E6%9E%84-%E7%BB%84%E4%BB%B6-%E8%B5%84%E6%BA%90/">K8s基础-架构-组件-资源</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E8%87%AA%E5%AE%9A%E4%B9%89CRD%E8%B5%84%E6%BA%90/">K8s基础-自定义CRD资源</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E8%AE%A4%E8%AF%81-%E6%8E%88%E6%9D%83-%E5%87%86%E5%85%A5/">K8s基础-认证-授权-准入</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-db-middleware</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/Operator%E9%83%A8%E7%BD%B2Redis%E9%9B%86%E7%BE%A4/">基于Operator部署Redis集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/Operator%E9%83%A8%E7%BD%B2mysql%E9%9B%86%E7%BE%A4/">Operator部署MySQL NDB集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/helm%E9%83%A8%E7%BD%B2mysql/">Helm部署MySQL</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/helm%E9%83%A8%E7%BD%B2postgreSQL/">Helm部署PostgreSQL</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/helm%E9%83%A8%E7%BD%B2rabbitmq-ha/">Helm部署RabbitMQ高可用集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/helm%E9%83%A8%E7%BD%B2strimzi-kafka/">Helm部署Strimzi Kafka</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/k8s%E5%9F%BA%E4%BA%8Eyaml%E9%83%A8%E7%BD%B2MongoDB%E9%9B%86%E7%BE%A4/">K8s基于YAML部署MongoDB集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/k8s%E5%9F%BA%E4%BA%8Eyaml%E9%83%A8%E7%BD%B2httpd%E6%9C%8D%E5%8A%A1/">K8s基于YAML部署httpd服务</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/k8s%E5%9F%BA%E4%BA%8Eyaml%E9%83%A8%E7%BD%B2mysql%E4%B8%BB%E4%BB%8E%E9%AB%98%E5%8F%AF%E7%94%A8/">K8s基于YAML部署MySQL主从高可用</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/k8s%E5%9F%BA%E4%BA%8Eyaml%E9%83%A8%E7%BD%B2redis%E9%9B%86%E7%BE%A4/">K8s基于YAML部署Redis集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/k8s%E9%83%A8%E7%BD%B2springcloud%E7%94%B5%E5%95%86%E9%A1%B9%E7%9B%AE/">K8s部署SpringCloud电商项目</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-installation-management</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/2025%E6%9C%80%E6%96%B0-%E4%BC%81%E4%B8%9A%E7%BA%A7%E9%AB%98%E5%8F%AF%E7%94%A8%E9%9B%86%E7%BE%A4-%E5%9F%BA%E4%BA%8Erockylinux/">2025最新-企业级高可用集群-基于rockylinux</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/etcd%E9%AB%98%E5%8F%AF%E7%94%A8%E9%85%8D%E7%BD%AE%E4%BB%A5%E5%8F%8A%E6%A8%A1%E6%8B%9F%E9%9B%86%E7%BE%A4%E6%95%85%E9%9A%9C%E5%92%8C%E6%81%A2%E5%A4%8D/">etcd高可用配置以及模拟集群故障和恢复</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/k8s-Backstage-%E5%86%85%E9%83%A8%E5%BC%80%E5%8F%91%E8%80%85%E5%B9%B3%E5%8F%B0IDP%E5%AE%9E%E6%88%98/">K8s 平台工程实战：用 Backstage 打造一站式内部开发者平台</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/k8s-cgroup-v2%E6%B7%B1%E5%BA%A6%E8%A7%A3%E6%9E%90-%E8%BF%81%E7%A7%BB%E5%AE%9E%E6%88%98%E4%B8%8E%E9%81%BF%E5%9D%91%E6%8C%87%E5%8D%97/">K8s CGroup v2 深度解析：资源隔离原理、迁移实战与生产避坑指南</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/k8s%E4%B8%A4%E5%9C%B0%E4%B8%89%E4%B8%AD%E5%BF%83%E6%9E%B6%E6%9E%84/">k8s两地三中心架构</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/k8s%E5%A4%9A%E9%9B%86%E7%BE%A4kubeconfig%E7%AE%A1%E7%90%86/">k8s多集群kubeconfig管理</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/k8s%E6%95%85%E9%9A%9C%E6%8E%92%E6%9F%A5%E6%8C%87%E5%8D%97/">k8s故障排查指南</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/k8s%E7%94%9F%E4%BA%A7%E7%8E%AF%E5%A2%83%E4%BC%98%E5%8C%96%E4%B8%8E%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/">k8s生产环境优化与最佳实践</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/k8s%E9%83%A8%E7%BD%B2%E9%98%B2%E7%81%AB%E5%A2%99%E7%AB%AF%E5%8F%A3%E9%85%8D%E7%BD%AE/">K8s部署防火墙端口配置</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/latest-version/%E5%AE%89%E8%A3%85k8s-1.35-%E5%9F%BA%E4%BA%8Erockylinux10-%E6%9C%80%E6%96%B0%E6%AD%A5%E9%AA%A4/">在 Rocky Linux 10 上安装 Kubernetes 1.35</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%AE%89%E8%A3%85k8s%E9%AB%98%E5%8F%AF%E7%94%A8%E9%9B%86%E7%BE%A4/">二进制安装k8s高可用集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.20.6-%E9%AB%98%E5%8F%AF%E7%94%A8/">安装k8s-1.20.6-高可用</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.23/">安装k8s-1.23</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.26-1.27/">安装k8s-1.26-1.27</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.28/">安装k8s-1.28</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.30-%E5%9F%BA%E4%BA%8Erockylinux/">安装k8s-1.30-基于rockylinux</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.32-%E5%9F%BA%E4%BA%8Erockylinux/">安装k8s-1.32-基于rockylinux</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.33-%E5%9F%BA%E4%BA%8Erockylinux-%E6%9C%80%E6%96%B0%E6%AD%A5%E9%AA%A4/">安装k8s-1.33-基于rockylinux-最新步骤</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/%E5%8D%87%E7%BA%A7/k8s-1.37-%E5%8D%87%E7%BA%A7%E9%A1%BB%E7%9F%A5-breaking-changes/">Kubernetes v1.37 升级破坏性变更指南</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/%E5%8D%87%E7%BA%A7/k8s%E8%BF%81%E7%A7%BB%E5%AE%B9%E5%99%A8%E8%BF%90%E8%A1%8C%E6%97%B6-%E7%89%88%E6%9C%AC%E5%8D%87%E7%BA%A7/">k8s迁移容器运行时与版本升级</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-monitoring-logging</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/K8s%E5%85%A8%E9%9D%A2%E5%B7%A1%E6%A3%80%E8%84%9A%E6%9C%AC-%E7%94%9F%E6%88%90HTML%E5%81%A5%E5%BA%B7%E6%8A%A5%E5%91%8A/">K8s 全面巡检脚本：一键生成 HTML 健康报告</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/OpenTelemetry%E5%AE%9E%E6%88%98-%E7%BB%9F%E4%B8%80Traces-Metrics-Logs/">OpenTelemetry 实战：告别厂商锁定，统一 Traces/Metrics/Logs</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/Prometheus%E5%9F%BA%E7%A1%80/">Prometheus基础</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/Prometheus%E7%9B%91%E6%8E%A7k8s%E7%B3%BB%E7%BB%9F%E7%BB%84%E4%BB%B6/">Prometheus监控K8s系统组件</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/Prometheus%E7%9B%91%E6%8E%A7%E5%A4%96%E9%83%A8k8s%E9%9B%86%E7%BE%A4/">Prometheus监控外部K8s集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/Prometheus%E7%9B%91%E6%8E%A7%E9%9D%9E%E4%BA%91%E5%8E%9F%E7%94%9F%E5%BA%94%E7%94%A8-%E4%B8%BB%E6%9C%BA/">Prometheus监控非云原生应用-主机</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/helm%E9%83%A8%E7%BD%B2Loki-promtail-tempo-grafanaAgent%E5%85%A8%E5%AE%B6%E6%A1%B6/">Helm部署Loki+Promtail+Tempo+GrafanaAgent全家桶</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/helm%E9%83%A8%E7%BD%B2jaeger/">Helm部署Jaeger</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/helm%E9%83%A8%E7%BD%B2prometheus-stack%E5%85%A8%E5%AE%B6%E6%A1%B6/">Prometheus-Stack 全家桶：生产级部署与运维完全指南</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E6%97%A5%E5%BF%97%E7%AE%A1%E7%90%86-%E9%87%87%E9%9B%86%E6%96%B9%E6%A1%88%E4%B8%8E%E5%AE%A1%E8%AE%A1%E6%97%A5%E5%BF%97/">K8s 日志管理：基础机制、六种采集方案与审计日志实战</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E7%9B%91%E6%8E%A7EFK%2Blogstash%2Bkafka/">K8s监控EFK+logstash+kafka</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E7%9B%91%E6%8E%A7ES%287.2%29%2BKibana%287.2%29%2BFluentd%28v1.4.2%29/">K8s监控ES(7.2)+Kibana(7.2)+Fluentd(v1.4.2)</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E7%9B%91%E6%8E%A7Prometheus%28v2.2.1%29/">K8s监控Prometheus(v2.2.1)</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E7%9B%91%E6%8E%A7Prometheus%28v2.33.5%29%2BGrafana%28v8.4.5%29/">K8s监控Prometheus(v2.33.5)+Grafana(v8.4.5)</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E7%9B%91%E6%8E%A7alertmanager%28v0.14.0%29/">K8s监控Alertmanager(v0.14.0)</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E9%83%A8%E7%BD%B2elasticsearch%E9%9B%86%E7%BE%A4/">K8s部署Elasticsearch集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E9%83%A8%E7%BD%B2grafana%28v5.0.4%29/">K8s部署Grafana(v5.0.4)</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E9%83%A8%E7%BD%B2%E5%85%A8%E9%93%BE%E8%B7%AF%E8%BF%BD%E8%B8%AA-Skywalking/">K8s部署全链路追踪-Skywalking</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2Prometheus%28v2.32.1%29%E8%81%94%E9%82%A6%E9%9B%86%E7%BE%A4/">二进制部署Prometheus(v2.32.1)联邦集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2efk%2Blogstash%2Bkafka%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%B9%B3%E5%8F%B0/">二进制部署EFK+Logstash+Kafka日志收集平台</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2prometheus-grafana-nodeexporter/">二进制部署Prometheus-Grafana-NodeExporter</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/%E5%9F%BA%E4%BA%8Ehelm%2Boperator%E9%83%A8%E7%BD%B2ECK%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%B9%B3%E5%8F%B0/">基于Helm+Operator部署ECK日志收集平台</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-networking-service-mesh</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/Istio-Sidecar-vs-Ambient/">Istio Sidecar vs Ambient 模式对比</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/helm%E5%AE%89%E8%A3%85istio/">Helm安装Istio</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/helm%E9%83%A8%E7%BD%B2external-dns/">Helm部署External-DNS</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/helm%E9%83%A8%E7%BD%B2ingress-nginx/">Helm部署Ingress-Nginx</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/helm%E9%83%A8%E7%BD%B2tomcat/">Helm 部署 Tomcat</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/k8s-Gateway-API%E5%85%A5%E9%97%A8-Ingress%E4%B8%8B%E4%B8%80%E4%BB%A3%E6%96%B9%E6%A1%88/">Kubernetes Gateway API 入门：Ingress 的下一代方案</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/k8s%E7%B2%BE%E7%BB%86%E5%8C%96%E6%B5%81%E9%87%8F%E7%AE%A1%E7%90%86-istio/">K8s精细化流量管理-Istio</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/k8s%E9%83%A8%E7%BD%B2istio%281.13.1%29/">K8s部署Istio(1.13.1)</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/k8s%E9%9B%86%E7%BE%A4%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/">K8s集群网络安全</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/%E4%BC%81%E4%B8%9A%E9%A1%B9%E7%9B%AE%E6%8E%A5%E5%85%A5istio%E5%AE%9E%E6%88%98/">企业项目接入Istio实战</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-scaling</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-scaling/KEDA-vs-HPA-2026%E7%BB%88%E6%9E%81%E5%AF%B9%E6%AF%94-v1.36%E7%BC%A9%E9%9B%B6/">KEDA vs HPA 2026 终极对比：v1.36 原生缩零后该选谁？</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-scaling/helm%E9%83%A8%E7%BD%B2goldilocks/">Helm部署Goldilocks</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-scaling/helm%E9%83%A8%E7%BD%B2vpa/">Helm部署VPA</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-scaling/k8s-HPA-VPA/">K8s HPA与VPA</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-scaling/k8s-%E5%9F%BA%E4%BA%8EKEDA%E7%9A%84%E5%BC%B9%E6%80%A7%E8%83%BD%E5%8A%9B/">K8s基于KEDA的弹性能力</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-scaling/k8s%E6%88%90%E6%9C%AC%E4%BC%98%E5%8C%96%E6%96%B9%E6%A1%88-FinOps%E5%AE%9E%E6%88%98/">K8s 集群成本优化方案：砍掉 60% 云账单</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-security-auth</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2capsule/">Helm部署Capsule</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2certmanager/">Helm部署Cert-Manager</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2external-secrets/">Helm部署External-Secrets</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2kyverno%E5%92%8Cpolicy-reporter/">Helm部署Kyverno和Policy-Reporter</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2oauth2proxy/">Helm部署OAuth2-Proxy</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2sonarqube/">Helm部署SonarQube</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2trivy-operator/">Helm部署Trivy-Operator</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/k8s-Admission-Webhook%E9%93%BE%E5%86%B2%E7%AA%81%E6%8E%92%E6%9F%A5-Istio-Kyverno-Gatekeeper/">当 Istio、Kyverno、Gatekeeper 三个 Webhook 同时存在，你的集群会发生什么？</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/k8s%E5%AE%B9%E5%99%A8%E5%AE%89%E5%85%A8%E4%B8%8A%E4%B8%8B%E6%96%87-SecurityContext/">Kubernetes 容器安全上下文完全指南：从入门到生产避坑</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-springcloud</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-springcloud/SpringCloud%E9%A1%B9%E7%9B%AE%E8%BF%81%E7%A7%BB%E5%88%B0k8s%E5%AE%9E%E6%88%98/">SpringCloud 项目迁移到 K8s 实战</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-storage</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-storage/helm%E9%83%A8%E7%BD%B2nfs-subdir-external-provisioner/">Helm部署NFS Subdir External Provisioner</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-storage/k8s-ceph%E9%83%A8%E7%BD%B2%E4%B8%8E%E9%9B%86%E6%88%90/">K8s Ceph部署与集成</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-storage/k8s-%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8CubeFS/">K8s分布式存储CubeFS</a></li>
+        </ul>
+        <p class="sidebar-group">kubeblocks</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/kubeblocks/kubeblocks%E9%83%A8%E7%BD%B2WordPress/">KubeBlocks 部署 WordPress</a></li>
+          <li><a href="../../../Docker-Kubernetes/kubeblocks/kubeblocks%E9%83%A8%E7%BD%B2%E9%AB%98%E5%8F%AF%E7%94%A8harbor%E9%9B%86%E7%BE%A4/">KubeBlocks 部署高可用 Harbor 集群</a></li>
+        </ul>
+        <p class="sidebar-group">其他</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/%E7%AE%80%E5%8E%86%E6%8C%87%E5%8D%97/">简历指南</a></li>
+        </ul>
+      </nav>
+    </details>
+  </aside>
+
+  <article class="article">
+    <nav class="breadcrumb">
+      <a href="../../../index.html">首页</a><span>/</span>
+      <a href="../../../Docker-Kubernetes/">Docker-Kubernetes</a><span>/</span><span>k8s-basic-resources</span>
+    </nav>
+    <h1 class="article-title">K8s基础-Pod调度-亲和力</h1>
+    <p class="article-meta"><span>更新于 2026-04-16</span>
+      <a href="https://github.com/hangx969/learning-notes/blob/main/Docker-Kubernetes/k8s-basic-resources/K8s%E5%9F%BA%E7%A1%80-pod%E8%B0%83%E5%BA%A6-%E4%BA%B2%E5%92%8C%E5%8A%9B.md">查看源文件</a>
+    </p>
+    <div class="article-body">
+<h1 id="拓扑域和拓扑键">拓扑域和拓扑键</h1>
+<p>拓扑域Topology Domain：</p>
+<ul>
+<li>通常用于标识一组相似属性、相似网络特性的节点。这些节点一般位于同一个物理位置或者网络子网中。拓扑域一般用于亲和力配置。</li>
+<li>在一个超大的规模集群中，可以使用拓扑域来标记几点所在的机房、子网等信息。</li>
+<li>拓扑域的划分很简单，给节点打上标签即可；标签的k、v都相同，就表示属于同一个拓扑域。</li>
+</ul>
+<p>拓扑键Topology Key：</p>
+<ul>
+<li>用于指定拓扑域，其实就是标签的key。</li>
+</ul>
+<h2 id="划分拓扑域">划分拓扑域</h2>
+<h3 id="基于主机">基于主机</h3>
+<p>k8s每个节点都有一个标签标识节点名称：<code>kubernetes.io/hostname=k9s-master01</code>。所以每一个节点都是一个拓扑域。</p>
+<h3 id="基于多区域">基于多区域</h3>
+<p>比如集群在不同物理区域有节点分布。给节点打上<code>region=beijing</code>，<code>region=nanjing</code>这样的标签。</p>
+<h3 id="基于数据中心">基于数据中心</h3>
+<p>按照数据中心的位置，打上<code>zone=chaoyang</code>，<code>zone=haidian</code>的标签</p>
+<h3 id="基于子网">基于子网</h3>
+<h1 id="pod调度">POD调度</h1>
+<blockquote>
+<p>Pod 在其生命周期中只会被<a href="https://kubernetes.io/zh-cn/docs/concepts/scheduling-eviction/">调度</a>一次。 一旦 Pod 被调度（分派）到某个节点，Pod 会一直在该节点运行，直到 Pod 停止或者被终止。</p>
+</blockquote>
+<p>默认情况下，pod在哪个节点上运行，是通过scheduler采用相应的算法来算出来的，这个过程不受人工控制。在实际使用中，需要手动控制pod调度到某些特定节点。</p>
+<p>k8s提供了四种调度方式：</p>
+<ol>
+<li>自动调度：scheduler自动算</li>
+<li>定向调度：NodeName、NodeSelector</li>
+<li>亲和性调度：NodeAffinity、PodAffinity、PodAntiAffinity（基于标签实现）</li>
+<li>污点调度：Taints、Toleration（基于node）</li>
+</ol>
+<h2 id="定向调度">定向调度</h2>
+<p>可以使用pods.spec.nodeName或者nodeSelector字段指定要调度到的node节点。</p>
+<h3 id="标签">标签</h3>
+<ul>
+<li>
+<p>作用</p>
+</li>
+<li>
+<p>label对各种资源（node，pod，svc等）加上标签；键值对的形式</p>
+</li>
+<li>
+<p>常用的label</p>
+<ul>
+<li>
+<p>版本标签："version":"release", "version":"stable"......</p>
+</li>
+<li>
+<p>环境标签："environment":"dev"，"environment":"test"，"environment":"pro"</p>
+</li>
+<li>
+<p>架构标签："tier":"frontend"，"tier":"backend" </p>
+</li>
+</ul>
+</li>
+<li>
+<p>标签的选择</p>
+</li>
+<li>
+<p>label selector 有两种类型：</p>
+<ul>
+<li>
+<p>基于等式的：例如 environment = dev；version ！= stable</p>
+</li>
+<li>
+<p>基于集合的： environment in（dev，test）</p>
+</li>
+</ul>
+</li>
+<li>
+<p>打标签</p>
+</li>
+</ul>
+<p><code>bash
+  kubectl label pod pod-test -n dev version=1.0 # 打标签
+  kubectl label pod nginx -n dev version=2.0 --overwrite=true #更新标签
+  kubectl label pod nginx -n dev version- # 删掉key为version的标签
+  kubectl get pod -n dev --show-labels # 看标签
+  kubectl get pod -l "version=2.0" -n dev --show-labels
+  kubectl get pods -l version # 列出默认名称空间下标签key是version的pod，不显示标签
+  kubectl get pod -L version # 看key为version的pod，并打印标签值</code></p>
+<h3 id="nodename">NodeName</h3>
+<ul>
+<li>直接指定pod调度到哪个node上 -- spec.nodeName</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Pod</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">demo-pod</span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
+<span class="w">  </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tomcat</span>
+<span class="w">    </span><span class="nt">env</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dev</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">nodeName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">node-01</span>
+<span class="w">  </span><span class="nt">containers</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">tomcat-pod-java</span>
+<span class="w">    </span><span class="nt">ports</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">containerPort</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8080</span>
+<span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tomcat:8.5-jre8-alpine</span>
+<span class="w">    </span><span class="nt">imagePullPolicy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">IfNotPresent</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">busybox</span>
+<span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">busybox:latest</span>
+<span class="w">    </span><span class="nt">command</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;/bin/sh&quot;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;-c&quot;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;while</span><span class="nv"> </span><span class="s">true;</span><span class="nv"> </span><span class="s">do</span><span class="nv"> </span><span class="s">echo</span><span class="nv"> </span><span class="s">hello;</span><span class="nv"> </span><span class="s">sleep</span><span class="nv"> </span><span class="s">10;</span><span class="nv"> </span><span class="s">done&quot;</span>
+</code></pre></div>
+
+<h3 id="nodeselector">nodeSelector</h3>
+<ul>
+<li>pod创建之前，由scheduler使用MatchNodeSelector调度策略进行label匹配。找到目标node再调度。是强制约束的: 没有满足条件的node，这个pod就起不来。-- pod.spec.nodeSelector</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Pod</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">demo-pod</span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
+<span class="w">  </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tomcat</span>
+<span class="w">    </span><span class="nt">env</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dev</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">nodeSelector</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">disk</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ceph</span>
+<span class="w">  </span><span class="nt">containers</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">tomcat-pod-java</span>
+<span class="w">    </span><span class="nt">ports</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">containerPort</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8080</span>
+<span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tomcat:8.5-jre8-alpine</span>
+<span class="w">    </span><span class="nt">imagePullPolicy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">IfNotPresent</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">busybox</span>
+<span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">busybox:latest</span>
+<span class="w">    </span><span class="nt">command</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;/bin/sh&quot;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;-c&quot;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;while</span><span class="nv"> </span><span class="s">true;</span><span class="nv"> </span><span class="s">do</span><span class="nv"> </span><span class="s">echo</span><span class="nv"> </span><span class="s">hello;</span><span class="nv"> </span><span class="s">sleep</span><span class="nv"> </span><span class="s">10;</span><span class="nv"> </span><span class="s">done&quot;</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>get<span class="w"> </span>nodes<span class="w"> </span>--show-labels<span class="w"> </span><span class="c1">#看node标签</span>
+kubectl<span class="w"> </span>label<span class="w"> </span>nodes<span class="w"> </span>node-01<span class="w"> </span><span class="nv">disk</span><span class="o">=</span>ceph<span class="w"> </span><span class="c1">#给node打标签</span>
+</code></pre></div>
+
+<p><div class="callout callout-warning" markdown="1"><br />
+<p class="callout-title">注意</p></p>
+<ul>
+<li>如果nodeName和nodeSelector都写上，并且这两个配置的调度node冲突，就会报错：Predictate NodeAffnity Failed.</li>
+<li>NodeName优先级高，在master节点有污点的情况下，如果定义nodename=master，则会强制调度上去。</li>
+</ul>
+</div>
+<h2 id="亲和性调度">亲和性调度</h2>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>explain<span class="w"> </span>pods.spec.affinity
+</code></pre></div>
+
+<p><strong>种类</strong></p>
+<ul>
+<li>
+<p>nodeAffinity</p>
+</li>
+<li>
+<p>podAffinity </p>
+</li>
+<li>
+<p>nodeAntiAffinity</p>
+</li>
+</ul>
+<p><strong>应用</strong></p>
+<ul>
+<li>亲和性：如果两个应用<strong>频繁交互</strong>，那就有必要利用亲和性让两个应用的尽可能的靠近，这样可以减少因网络通信而带来的性能损耗。</li>
+<li>反亲和性：当应用的采用<strong>多副本部署</strong>时，有必要采用<strong>反亲和性</strong>让各个应用实例打散分布在各个node上，这样可以提高服务的高可用性。</li>
+</ul>
+<h3 id="节点亲和性调度nodeaffinity">节点亲和性调度nodeAffinity</h3>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>explain<span class="w"> </span>pods.spec.affinity.nodeAffinity
+<span class="c1"># preferredDuringSchedulingIgnoredDuringExecution &lt;[]Object&gt;</span>
+<span class="c1"># requiredDuringSchedulingIgnoredDuringExecution &lt;Object&gt;</span>
+</code></pre></div>
+
+<ul>
+<li>prefered表示有节点尽量满足这个位置定义的亲和性，没有满足的也能调度：软亲和性</li>
+<li>required表示必须有节点满足这个位置定义的亲和性，没有满足的就pending：硬亲和性</li>
+</ul>
+<h4 id="硬亲和性">硬亲和性</h4>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>explain<span class="w"> </span>pods.spec.affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Pod</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-node-affinity-demo</span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
+<span class="w">  </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">bb</span>
+<span class="w">    </span><span class="nt">tier</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ft</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">affinity</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">nodeAffinity</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">requiredDuringSchedulingIgnoredDuringExecution</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">nodeSelectorTerms</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">matchExpressions</span><span class="p">:</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">zone</span><span class="w"> </span><span class="c1"># 硬亲和性 - 必须调度到label是zone=foo或zone=bar的node</span>
+<span class="w">            </span><span class="nt">operator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">In</span>
+<span class="w">            </span><span class="nt">values</span><span class="p">:</span><span class="w"> </span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">foo</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">bar</span>
+<span class="w">  </span><span class="nt">containers</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">busybox</span>
+<span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">busybox:latest</span>
+<span class="w">    </span><span class="nt">imagePullPolicy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">IfNotPresent</span>
+<span class="w">    </span><span class="nt">command</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;/bin/sh&quot;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;-c&quot;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;while</span><span class="nv"> </span><span class="s">true;</span><span class="nv"> </span><span class="s">do</span><span class="nv"> </span><span class="s">echo</span><span class="nv"> </span><span class="s">hello;</span><span class="nv"> </span><span class="s">sleep</span><span class="nv"> </span><span class="s">10;</span><span class="nv"> </span><span class="s">done&quot;</span>
+</code></pre></div>
+
+<h4 id="软亲和性">软亲和性</h4>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>explain<span class="w"> </span>pods.spec.affinity.nodeAffinity.preferredDuringSchedulingIgnoredDuringExecution
+
+preference<span class="w">   </span>&lt;Object&gt;<span class="w"> </span>-required-
+A<span class="w"> </span>node<span class="w"> </span>selector<span class="w"> </span>term,<span class="w"> </span>associated<span class="w"> </span>with<span class="w"> </span>the<span class="w"> </span>corresponding<span class="w"> </span>weight.
+
+weight<span class="w">       </span>&lt;integer&gt;<span class="w"> </span>-required-
+Weight<span class="w"> </span>associated<span class="w"> </span>with<span class="w"> </span>matching<span class="w"> </span>the<span class="w"> </span>corresponding<span class="w"> </span>nodeSelectorTerm,<span class="w"> </span><span class="k">in</span><span class="w"> </span>the<span class="w"> </span>range<span class="w"> </span><span class="m">1</span>-100.
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Pod</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-node-affinity-demo</span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
+<span class="w">  </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">bb</span>
+<span class="w">    </span><span class="nt">tier</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ft</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">affinity</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">nodeAffinity</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">preferredDuringSchedulingIgnoredDuringExecution</span><span class="p">:</span><span class="w"> </span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">preference</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">matchExpressions</span><span class="p">:</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">zone1</span>
+<span class="w">            </span><span class="nt">operator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">In</span>
+<span class="w">            </span><span class="nt">values</span><span class="p">:</span><span class="w"> </span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">foo1</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">bar1</span>
+<span class="w">        </span><span class="nt">weight</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">preference</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">matchExpressions</span><span class="p">:</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">zone2</span>
+<span class="w">            </span><span class="nt">operator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">In</span>
+<span class="w">            </span><span class="nt">values</span><span class="p">:</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">foo2</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">bar2</span>
+<span class="w">        </span><span class="nt">weight</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">20</span><span class="w"> </span><span class="c1"># 两个条件都有节点满足的话，权重高的条件会优先调度。</span>
+<span class="w">  </span><span class="nt">containers</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">busybox</span>
+<span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">busybox:latest</span>
+<span class="w">    </span><span class="nt">imagePullPolicy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">IfNotPresent</span>
+<span class="w">    </span><span class="nt">command</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;/bin/sh&quot;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;-c&quot;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;while</span><span class="nv"> </span><span class="s">true;</span><span class="nv"> </span><span class="s">do</span><span class="nv"> </span><span class="s">echo</span><span class="nv"> </span><span class="s">hello;</span><span class="nv"> </span><span class="s">sleep</span><span class="nv"> </span><span class="s">10;</span><span class="nv"> </span><span class="s">done&quot;</span>
+</code></pre></div>
+
+<p><div class="callout callout-info" markdown="1"><br />
+<p class="callout-title">NodeAffinity注意事项</p></p>
+<ol>
+<li>如果同时定义了nodeSelector和nodeAffinity，那么必须两个条件都得到满足，Pod才能运行在指定的Node上</li>
+<li>如果nodeAffinity指定了多个nodeSelectorTerms，那么只需要其中一个能够匹配成功即可</li>
+<li>如果一个nodeSelectorTerms中有多个matchExpressions ，则一个节点必须满足所有的才能匹配成功</li>
+<li>如果一个pod所在的Node在Pod运行期间其标签发生了改变，不再符合该Pod的节点亲和性需求，则系统将忽略此变化</li>
+</ol>
+</div>
+<p>注意节点亲和性没有反亲和性配置，实现反亲和性无非就是pod不想调度到某些pod，就写operator: NotIn某些values就行了。</p>
+<h3 id="pod亲和性调度">pod亲和性调度</h3>
+<h4 id="podaffinity">podAffinity</h4>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>explain<span class="w"> </span>pods.spec.affinity.podAffinity
+<span class="c1"># 同样分为硬亲和性和软亲和性：</span>
+<span class="c1"># preferredDuringSchedulingIgnoredDuringExecution &lt;[]Object&gt;</span>
+<span class="c1"># requiredDuringSchedulingIgnoredDuringExecution &lt;Object&gt;</span>
+</code></pre></div>
+
+<ul>
+<li>
+<p>先部署了一组pod，后部署的pod亲和先部署的pod，跟他部署到同一位置。</p>
+</li>
+<li>
+<p>yaml上要定义出两个信息：</p>
+</li>
+<li>
+<p>后来的pod跟先前的啥pod做亲和？-- labelSelector</p>
+</li>
+<li>
+<p>依据什么条件判断是同一位置还是不同位置？--topologyKey</p>
+</li>
+<li>
+<p>示例：</p>
+</li>
+</ul>
+<p>创建第一组pod：</p>
+<p><code>yaml
+  apiVersion: v1
+  kind: Pod
+  metadata:
+    name: pod-podAffinity-1
+    namespace: default
+    labels:
+      app: bb
+      tier: ft
+  spec:
+    containers:
+    - name: busybox
+      image: busybox:latest
+      imagePullPolicy: IfNotPresent
+      command:
+      - "/bin/sh"
+      - "-c"
+      - "while true; do echo hello; sleep 10; done"</code></p>
+<p>创建第二个pod，跟第一个做亲和性：</p>
+<p><code>yaml
+  apiVersion: v1
+  kind: Pod
+  metadata:
+    name: pod-podAffinity-2
+    namespace: default
+    labels:
+      app: bb
+      tier: ft
+  spec:
+    affinity:
+      podAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution: # 硬亲和性，匹配出来的pod必须在同一位置
+        - labelSelector: # 这个pod要跟app=bb的pod做亲和性
+            matchExpressions:
+            - {key: app, operator: In, values: ["bb"]}
+          topologyKey: kubernetes.io/hostname # 怎么定义同一个位置？对于key=kubernetes.io/hostname的node，value相同就算同一位置 ==&gt; 也就是跟匹配的pod在相同的node上算相同的位置。
+    containers:
+    - name: busybox
+      image: busybox:latest
+      imagePullPolicy: IfNotPresent
+      command:
+      - "/bin/sh"
+      - "-c"
+      - "while true; do echo hello; sleep 10; done"</code></p>
+<h4 id="podantiaffinity">podAntiAffinity</h4>
+<p>跟podAffinity相反，yaml上同样要定义出两个信息：</p>
+<ul>
+<li>后来的pod跟啥pod做亲和？-- labelSelector</li>
+<li>依据什么条件判断是同一位置还是不同位置？-- topologyKey</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Pod</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-podAffinity-2</span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
+<span class="w">  </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">bb</span>
+<span class="w">    </span><span class="nt">tier</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ft</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">affinity</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">podAntiAffinity</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">perferredDuringSchedulingIgnoredDuringExecution</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">weight</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100</span><span class="w"> </span><span class="c1"># 软亲和性才有的权重属性。当具有多个软亲和性规则的时候，优先满足高权重的规则。</span>
+<span class="w">        </span><span class="nt">podAffinityTerm</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">labelSelector</span><span class="p">:</span><span class="w"> </span><span class="c1"># 这个pod要跟app=bb的pod做反亲和性</span>
+<span class="w">            </span><span class="nt">matchExpressions</span><span class="p">:</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">app</span>
+<span class="w">              </span><span class="nt">operator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">In</span>
+<span class="w">              </span><span class="nt">values</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;bb&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">        </span><span class="nt">namespaces</span><span class="p">:</span><span class="w"> </span><span class="c1"># 和哪些ns下的pod进行匹配。通常设置为当前ns，扫描整个集群比较消耗性能。</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
+<span class="w">        </span><span class="nt">namespaceSelector</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span><span class="w"> </span><span class="c1"># 也可以在这里通过标签匹配ns</span>
+<span class="w">        </span><span class="nt">topologyKey</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kubernetes.io/hostname</span><span class="w"> </span><span class="c1"># 怎么定义同一个位置？对于key=kubernetes.io/hostname的node，value相同就算同一位置 ==&gt; 也就是跟匹配的pod在相同的node上算相同的位置。</span>
+<span class="w">  </span><span class="nt">containers</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">busybox</span>
+<span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">busybox:latest</span>
+<span class="w">    </span><span class="nt">imagePullPolicy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">IfNotPresent</span>
+<span class="w">    </span><span class="nt">command</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;/bin/sh&quot;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;-c&quot;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;while</span><span class="nv"> </span><span class="s">true;</span><span class="nv"> </span><span class="s">do</span><span class="nv"> </span><span class="s">echo</span><span class="nv"> </span><span class="s">hello;</span><span class="nv"> </span><span class="s">sleep</span><span class="nv"> </span><span class="s">10;</span><span class="nv"> </span><span class="s">done&quot;</span>
+</code></pre></div>
+
+<h1 id="调度实战示例">调度实战示例</h1>
+<h2 id="同一个应用必须部署在不同的宿主机">同一个应用必须部署在不同的宿主机</h2>
+<div class="highlight"><pre><span></span><code><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Deployment</span><span class="w"> </span>
+<span class="nt">metadata</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">diff-nodes</span><span class="w"> </span>
+<span class="nt">spec</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">selector</span><span class="p">:</span><span class="w"> </span>
+<span class="w">    </span><span class="nt">matchLabels</span><span class="p">:</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">diff-nodes</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">replicas</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">template</span><span class="p">:</span><span class="w"> </span>
+<span class="w">    </span><span class="nt">metadata</span><span class="p">:</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">labels</span><span class="p">:</span><span class="w"> </span>
+<span class="w">        </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">diff-nodes</span><span class="w"> </span>
+<span class="w">    </span><span class="nt">spec</span><span class="p">:</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">affinity</span><span class="p">:</span><span class="w"> </span>
+<span class="w">        </span><span class="nt">podAntiAffinity</span><span class="p">:</span><span class="w"> </span>
+<span class="w">          </span><span class="nt">requiredDuringSchedulingIgnoredDuringExecution</span><span class="p">:</span><span class="w"> </span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">labelSelector</span><span class="p">:</span><span class="w"> </span>
+<span class="w">                </span><span class="nt">matchExpressions</span><span class="p">:</span><span class="w"> </span>
+<span class="w">                  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">app</span><span class="w"> </span>
+<span class="w">                    </span><span class="nt">operator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">In</span><span class="w"> </span>
+<span class="w">                    </span><span class="nt">values</span><span class="p">:</span><span class="w"> </span>
+<span class="w">                      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">diff-nodes</span><span class="w"> </span><span class="c1"># 当前ns中具有app=diff-nodes标签的pod不允许被调度到hostname相同的节点上 </span>
+<span class="w">              </span><span class="nt">topologyKey</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kubernetes.io/hostname</span><span class="w"> </span>
+<span class="w">              </span><span class="nt">namespaces</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span><span class="w"> </span><span class="c1"># 空表示当前namespace</span>
+<span class="w">      </span><span class="nt">containers</span><span class="p">:</span><span class="w"> </span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">diff-nodes</span><span class="w"> </span>
+<span class="w">          </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx:1.15.12</span><span class="w"> </span>
+</code></pre></div>
+
+<h2 id="同一个应用尽量部署在不同的宿主机">同一个应用尽量部署在不同的宿主机</h2>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">apps/v1</span><span class="w"> </span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Deployment</span><span class="w"> </span>
+<span class="nt">metadata</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">diff-nodes</span><span class="w"> </span>
+<span class="nt">spec</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">selector</span><span class="p">:</span><span class="w"> </span>
+<span class="w">    </span><span class="nt">matchLabels</span><span class="p">:</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">diff-nodes</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">replicas</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">template</span><span class="p">:</span><span class="w"> </span>
+<span class="w">    </span><span class="nt">metadata</span><span class="p">:</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">labels</span><span class="p">:</span><span class="w"> </span>
+<span class="w">        </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">diff-nodes</span><span class="w"> </span>
+<span class="w">    </span><span class="nt">spec</span><span class="p">:</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">affinity</span><span class="p">:</span><span class="w"> </span>
+<span class="w">        </span><span class="nt">podAntiAffinity</span><span class="p">:</span><span class="w"> </span>
+<span class="w">          </span><span class="nt">preferredDuringSchedulingIgnoredDuringExecution</span><span class="p">:</span><span class="w"> </span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">podAffinityTerm</span><span class="p">:</span><span class="w"> </span>
+<span class="w">                </span><span class="nt">labelSelector</span><span class="p">:</span><span class="w"> </span>
+<span class="w">                  </span><span class="nt">matchExpressions</span><span class="p">:</span><span class="w"> </span>
+<span class="w">                    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">app</span><span class="w"> </span>
+<span class="w">                      </span><span class="nt">operator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">In</span><span class="w"> </span>
+<span class="w">                      </span><span class="nt">values</span><span class="p">:</span><span class="w"> </span>
+<span class="w">                        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">diff-nodes</span><span class="w"> </span>
+<span class="w">                </span><span class="nt">topologyKey</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kubernetes.io/hostname</span><span class="w"> </span>
+<span class="w">                </span><span class="nt">namespaces</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
+<span class="w">              </span><span class="nt">weight</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">containers</span><span class="p">:</span><span class="w"> </span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">diff-nodes</span><span class="w"> </span>
+<span class="w">        </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx:1.15.12</span><span class="w"> </span>
+</code></pre></div>
+
+<h2 id="同一个应用尽量分布在不同的机房">同一个应用尽量分布在不同的机房</h2>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">apps/v1</span><span class="w"> </span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Deployment</span><span class="w"> </span>
+<span class="nt">metadata</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">diff-zone</span><span class="w"> </span>
+<span class="nt">spec</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">selector</span><span class="p">:</span><span class="w"> </span>
+<span class="w">    </span><span class="nt">matchLabels</span><span class="p">:</span><span class="w">  </span>
+<span class="w">      </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">diff-zone</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">replicas</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">template</span><span class="p">:</span><span class="w"> </span>
+<span class="w">    </span><span class="nt">metadata</span><span class="p">:</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">labels</span><span class="p">:</span><span class="w"> </span>
+<span class="w">        </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">diff-zone</span><span class="w"> </span>
+<span class="w">    </span><span class="nt">spec</span><span class="p">:</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">affinity</span><span class="p">:</span><span class="w"> </span>
+<span class="w">        </span><span class="nt">podAntiAffinity</span><span class="p">:</span><span class="w"> </span>
+<span class="w">          </span><span class="nt">preferredDuringSchedulingIgnoredDuringExecution</span><span class="p">:</span><span class="w"> </span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">podAffinityTerm</span><span class="p">:</span><span class="w"> </span>
+<span class="w">                </span><span class="nt">labelSelector</span><span class="p">:</span><span class="w"> </span>
+<span class="w">                  </span><span class="nt">matchExpressions</span><span class="p">:</span><span class="w"> </span>
+<span class="w">                    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">app</span><span class="w"> </span>
+<span class="w">                      </span><span class="nt">operator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">In</span><span class="w"> </span>
+<span class="w">                      </span><span class="nt">values</span><span class="p">:</span><span class="w"> </span>
+<span class="w">                        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">diff-zone</span><span class="w"> </span>
+<span class="w">                </span><span class="nt">topologyKey</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">zone</span><span class="w"> </span>
+<span class="w">                </span><span class="nt">namespaces</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span><span class="w"> </span>
+<span class="w">              </span><span class="nt">weight</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">containers</span><span class="p">:</span><span class="w"> </span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">diff-nodes</span><span class="w"> </span>
+<span class="w">          </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx:1.15.12</span><span class="w"> </span>
+</code></pre></div>
+
+<h2 id="应用和缓存尽量部署在同一个可用域">应用和缓存尽量部署在同一个可用域</h2>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">apps/v1</span><span class="w"> </span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Deployment</span><span class="w"> </span>
+<span class="nt">metadata</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-app</span><span class="w"> </span>
+<span class="nt">spec</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">replicas</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">selector</span><span class="p">:</span><span class="w"> </span>
+<span class="w">    </span><span class="nt">matchLabels</span><span class="p">:</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-app</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">template</span><span class="p">:</span><span class="w"> </span>
+<span class="w">    </span><span class="nt">metadata</span><span class="p">:</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">labels</span><span class="p">:</span><span class="w"> </span>
+<span class="w">        </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-app</span><span class="w"> </span>
+<span class="w">    </span><span class="nt">spec</span><span class="p">:</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">affinity</span><span class="p">:</span><span class="w"> </span>
+<span class="w">        </span><span class="nt">podAffinity</span><span class="p">:</span><span class="w"> </span>
+<span class="w">          </span><span class="nt">preferredDuringSchedulingIgnoredDuringExecution</span><span class="p">:</span><span class="w"> </span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">weight</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100</span><span class="w"> </span>
+<span class="w">            </span><span class="nt">podAffinityTerm</span><span class="p">:</span><span class="w"> </span>
+<span class="w">              </span><span class="nt">labelSelector</span><span class="p">:</span><span class="w"> </span>
+<span class="w">                </span><span class="nt">matchExpressions</span><span class="p">:</span><span class="w"> </span><span class="c1"># 这个deployment的pod尽量和app=cache的pod分布在zone标签和值相同的节点上</span>
+<span class="w">                </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">app</span><span class="w"> </span>
+<span class="w">                  </span><span class="nt">operator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">In</span><span class="w"> </span>
+<span class="w">                  </span><span class="nt">values</span><span class="p">:</span><span class="w"> </span>
+<span class="w">                  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cache</span><span class="w"> </span>
+<span class="w">              </span><span class="nt">topologyKey</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">zone</span>
+<span class="w">      </span><span class="nt">containers</span><span class="p">:</span><span class="w"> </span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-app</span><span class="w"> </span>
+<span class="w">        </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx:1.15.12</span><span class="w"> </span>
+</code></pre></div>
+
+<p>缓存服务的deployment尽量也要设置成和这个my-app的pod亲和性</p>
+<h2 id="计算服务必须部署至高性能机器">计算服务必须部署至高性能机器</h2>
+<p>假设集群中有一批机器是高性能机器，而有一些需要密集计算的服务，需要部署至这些机器，以提高计算性能，此时可以使用节点亲和力来控制Pod尽量或者必须部署至这些节点上。</p>
+<p>比如计算服务只能部署在ssd或nvme的节点上：</p>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">apps/v1</span><span class="w"> </span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Deployment</span><span class="w"> </span>
+<span class="nt">metadata</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">compute</span><span class="w"> </span>
+<span class="nt">spec</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">replicas</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">selector</span><span class="p">:</span><span class="w"> </span>
+<span class="w">    </span><span class="nt">matchLabels</span><span class="p">:</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">compute</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">template</span><span class="p">:</span><span class="w"> </span>
+<span class="w">    </span><span class="nt">metadata</span><span class="p">:</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">labels</span><span class="p">:</span><span class="w"> </span>
+<span class="w">        </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">compute</span><span class="w"> </span>
+<span class="w">    </span><span class="nt">spec</span><span class="p">:</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">affinity</span><span class="p">:</span><span class="w"> </span>
+<span class="w">        </span><span class="nt">nodeAffinity</span><span class="p">:</span><span class="w"> </span>
+<span class="w">          </span><span class="nt">requiredDuringSchedulingIgnoredDuringExecution</span><span class="p">:</span><span class="w"> </span>
+<span class="w">            </span><span class="nt">nodeSelectorTerms</span><span class="p">:</span><span class="w"> </span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">matchExpressions</span><span class="p">:</span><span class="w"> </span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">disktype</span><span class="w"> </span>
+<span class="w">                </span><span class="nt">operator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">In</span><span class="w"> </span>
+<span class="w">                </span><span class="nt">values</span><span class="p">:</span><span class="w"> </span>
+<span class="w">                </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ssd</span><span class="w"> </span>
+<span class="w">                </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nvme</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">containers</span><span class="p">:</span><span class="w"> </span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">compute</span><span class="w"> </span>
+<span class="w">        </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx:1.15.12</span><span class="w"> </span>
+</code></pre></div>
+
+<h2 id="计算服务尽量部署到高性能机器">计算服务尽量部署到高性能机器</h2>
+<p>如果不强制要求，可以让计算服务尽量部署至高性能机器： </p>
+<div class="highlight"><pre><span></span><code><span class="w">   </span><span class="nt">nodeAffinity</span><span class="p">:</span><span class="w"> </span>
+<span class="w">          </span><span class="nt">preferredDuringSchedulingIgnoredDuringExecution</span><span class="p">:</span><span class="w"> </span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">weight</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100</span><span class="w"> </span>
+<span class="w">            </span><span class="nt">preference</span><span class="p">:</span><span class="w"> </span>
+<span class="w">              </span><span class="nt">matchExpressions</span><span class="p">:</span><span class="w"> </span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">disktype</span><span class="w"> </span>
+<span class="w">                </span><span class="nt">operator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">In</span><span class="w"> </span>
+<span class="w">                </span><span class="nt">values</span><span class="p">:</span><span class="w"> </span>
+<span class="w">                </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ssd</span><span class="w"> </span>
+<span class="w">                </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nvme</span><span class="w"> </span>
+</code></pre></div>
+
+<p>同时还可以配置优先使用ssd的机器： </p>
+<div class="highlight"><pre><span></span><code><span class="nt">affinity</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">nodeAffinity</span><span class="p">:</span><span class="w"> </span>
+<span class="w">    </span><span class="nt">preferredDuringSchedulingIgnoredDuringExecution</span><span class="p">:</span><span class="w"> </span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">weight</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">preference</span><span class="p">:</span><span class="w"> </span>
+<span class="w">        </span><span class="nt">matchExpressions</span><span class="p">:</span><span class="w"> </span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">disktype</span><span class="w"> </span>
+<span class="w">          </span><span class="nt">operator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">In</span><span class="w"> </span>
+<span class="w">          </span><span class="nt">values</span><span class="p">:</span><span class="w"> </span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ssd</span><span class="w"> </span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">weight</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">50</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">preference</span><span class="p">:</span><span class="w"> </span>
+<span class="w">        </span><span class="nt">matchExpressions</span><span class="p">:</span><span class="w"> </span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">disktype</span><span class="w"> </span>
+<span class="w">          </span><span class="nt">operator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">In</span><span class="w"> </span>
+<span class="w">          </span><span class="nt">values</span><span class="p">:</span><span class="w"> </span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nvme</span>
+</code></pre></div>
+
+<h2 id="应用尽量不部署到低性能机器">应用尽量不部署到低性能机器</h2>
+<p>假如已知集群中有一些机器可能性能不佳或者其他因素的影响，需要控制某个服务尽量不部署至这些机器，此时只需要把operator改为NotIn即可： </p>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">apps/v1</span><span class="w"> </span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Deployment</span><span class="w"> </span>
+<span class="nt">metadata</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">compute-intensive-app</span><span class="w"> </span>
+<span class="nt">spec</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">replicas</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">selector</span><span class="p">:</span><span class="w"> </span>
+<span class="w">    </span><span class="nt">matchLabels</span><span class="p">:</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">compute-intensive</span><span class="w"> </span>
+<span class="nt">template</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">metadata</span><span class="p">:</span><span class="w"> </span>
+<span class="w">    </span><span class="nt">labels</span><span class="p">:</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">compute-intensive</span><span class="w">  </span>
+<span class="w">  </span><span class="nt">spec</span><span class="p">:</span><span class="w"> </span>
+<span class="w">    </span><span class="nt">affinity</span><span class="p">:</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">nodeAffinity</span><span class="p">:</span><span class="w"> </span>
+<span class="w">        </span><span class="nt">preferredDuringSchedulingIgnoredDuringExecution</span><span class="p">:</span><span class="w"> </span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">weight</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100</span><span class="w"> </span>
+<span class="w">          </span><span class="nt">preference</span><span class="p">:</span><span class="w"> </span>
+<span class="w">            </span><span class="nt">matchExpressions</span><span class="p">:</span><span class="w"> </span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">performance</span><span class="w"> </span>
+<span class="w">              </span><span class="nt">operator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">NotIn</span><span class="w"> </span>
+<span class="w">              </span><span class="nt">values</span><span class="p">:</span><span class="w"> </span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">low</span><span class="w"> </span>
+<span class="w">    </span><span class="nt">containers</span><span class="p">:</span><span class="w"> </span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">compute-intensive</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx:1.15.12</span><span class="w"> </span>
+</code></pre></div>
+
+<h2 id="拓扑域约束-应用均匀分布">拓扑域约束-应用均匀分布</h2>
+<p>Kubernetes 的 <code>spec.topologySpreadConstraints</code>（拓扑域约束） 是一种高级的调度策略，用于确保工作负载的副本在集群中的不同拓扑域（如节点、可用区、区域等）之间均匀分布。（和亲和性没关系，独立的字段）</p>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">apps/v1</span><span class="w"> </span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Deployment</span><span class="w"> </span>
+<span class="nt">metadata</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">example-deployment</span><span class="w"> </span>
+<span class="nt">spec</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">replicas</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">selector</span><span class="p">:</span><span class="w"> </span>
+<span class="w">    </span><span class="nt">matchLabels</span><span class="p">:</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">example</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">template</span><span class="p">:</span><span class="w"> </span>
+<span class="w">    </span><span class="nt">metadata</span><span class="p">:</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">labels</span><span class="p">:</span><span class="w"> </span>
+<span class="w">        </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">example</span><span class="w"> </span>
+<span class="w">    </span><span class="nt">spec</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">topologySpreadConstraints</span><span class="p">:</span><span class="w"> </span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">maxSkew</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span><span class="w"> </span>
+<span class="w">        </span><span class="nt">whenUnsatisfiable</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">DoNotSchedule</span><span class="w"> </span>
+<span class="w">        </span><span class="nt">topologyKey</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kubernetes.io/hostname</span><span class="w"> </span>
+<span class="w">        </span><span class="nt">labelSelector</span><span class="p">:</span><span class="w"> </span>
+<span class="w">          </span><span class="nt">matchLabels</span><span class="p">:</span><span class="w"> </span>
+<span class="w">            </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">example</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">containers</span><span class="p">:</span><span class="w"> </span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">example</span><span class="w"> </span>
+<span class="w">        </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx:1.15.12</span><span class="w"> </span>
+</code></pre></div>
+
+<ul>
+<li>topologySpreadConstraints：拓扑域约束配置，可以是多个副本均匀分布在不同的域中，配置多个时，需要全部满足</li>
+<li>maxSkew：指定允许的最大偏差。例置为 1，那么在任何拓扑域中，副本的数量最多只能相差 1</li>
+<li>whenUnsatisfiable：指定当无法满足拓扑约束时的行为</li>
+<li>DoNotSchedule：不允许调度新的Pod，直到满足约束</li>
+<li>ScheduleAnyway：即使不满足约束，也允许调度新的Pod</li>
+<li>topologyKey：指定拓扑域的键</li>
+<li>labelSelector：指定要应用拓扑约束的Pod的标签选择器，通常配置为当前Pod的标签</li>
+</ul>
+<h1 id="污点与容忍">污点与容忍</h1>
+<p>官网链接：<a href="https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/">Kubernetes污点与容忍</a></p>
+<p>前面的亲和性调度是站在pod的角度上，通过对pod的属性添加，来决定调度到什么node上。也可以站在node的角度上，在node上添加污点属性，决定是否允许pod调度进来。</p>
+<p>考虑以下问题：</p>
+<ol>
+<li>
+<p>节点故障如何快速恢复服务</p>
+</li>
+<li>
+<p>默认情况下如果一个节点故障，五分钟之后才会触发pod漂移，还是有影响的。需要一种方法实现快速故障转移。</p>
+</li>
+<li>
+<p>特殊资源节点如何不浪费</p>
+</li>
+<li>
+<p>比如有一些GPU节点、高性能机器等，如何不让普通pod调度上去。</p>
+</li>
+<li>
+<p>节点维护如何确保可用性</p>
+</li>
+<li>
+<p>节点维护、升级、打补丁的时候，如何保证不影响上面的pod。</p>
+</li>
+<li>
+<p>新增节点在完全验证测试之前，暂时不接受pod调度。</p>
+</li>
+<li>
+<p>多租户如何进行隔离</p>
+</li>
+<li>
+<p>某些节点属于租户A，另一些节点属于租户B。怎么保证租户隔离，比如租户A的pod不能调度到租户B的节点上。</p>
+</li>
+</ol>
+<p>引出污点容忍的作用：</p>
+<ol>
+<li>污点和容忍是k8s提供的强大的调度控制机制，可以实现精细化管理和调度优化。</li>
+<li>污点用于标记节点，容忍用于控制pod的调度行为。</li>
+</ol>
+<h2 id="污点">污点</h2>
+<p>相当于给节点上了锁，有钥匙（容忍）的pod才能调度上去。没有要钥匙的调度不上去。</p>
+<h3 id="effect类型">Effect类型</h3>
+<p>污点定义是键值对数据，<strong>key=value:effect</strong>, key和value是<strong>污点的标签</strong>；effect描述污点的作用，支持如下三个选项：</p>
+<ol>
+<li><code>PreferNoSchedule</code>：kubernetes将尽量避免把Pod调度到具有该污点的Node上，除非没有其他节点可调度</li>
+<li>尽量别来，除非没办法</li>
+<li>
+<p>适用于软性资源隔离的场景</p>
+</li>
+<li>
+<p><code>NoSchedule</code>：kubernetes将不会把Pod调度到具有该污点的Node上，但不会影响当前Node上已存在的Pod</p>
+</li>
+<li>新的别来，在这的就别动了</li>
+<li>
+<p>用于资源隔离（比如给GPU节点打上污点）和节点维护的场景</p>
+</li>
+<li>
+<p><code>NoExecute</code>：kubernetes将不会把Pod调度到具有该污点的Node上，同时也会将Node上已存在的Pod驱离</p>
+</li>
+<li>新的别来，旧的赶紧走</li>
+<li>用于节点故障转移、紧急维护的场景</li>
+</ol>
+<h3 id="污点操作">污点操作</h3>
+<p>打污点：</p>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>taint<span class="w"> </span>node<span class="w"> </span>node-01<span class="w"> </span><span class="nv">ssd</span><span class="o">=</span>true:PreferNoschedule
+<span class="c1"># 不包含value</span>
+kubectl<span class="w"> </span>taint<span class="w"> </span>node<span class="w"> </span>node-01<span class="w"> </span>ssd:PreferNoschedule
+<span class="c1"># 所有节点打污点</span>
+kubectl<span class="w"> </span>taint<span class="w"> </span>node<span class="w"> </span><span class="nv">ssd</span><span class="o">=</span>true:PreferNoschedule<span class="w"> </span>--all
+</code></pre></div>
+
+<p>查看一个节点的污点：</p>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>get<span class="w"> </span>node<span class="w"> </span>master-01<span class="w"> </span>-o<span class="o">=</span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">&#39;{.spec.taints}&#39;</span>
+kubectl<span class="w"> </span>describe<span class="w"> </span>node<span class="w"> </span>master-01<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>Taint<span class="w"> </span>-A<span class="w"> </span><span class="m">10</span>
+<span class="c1"># 看所有节点的污点</span>
+kuebctl<span class="w"> </span>describe<span class="w"> </span>node<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>Taint<span class="w"> </span>-A<span class="w"> </span><span class="m">10</span>
+</code></pre></div>
+
+<p>删除污点：</p>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>taint<span class="w"> </span>node<span class="w"> </span>node-01<span class="w"> </span><span class="nv">ssd</span><span class="o">=</span>true:PreferNoSchedule-
+</code></pre></div>
+
+<p>修改污点（必须是key和effect相同，只改value的情况）</p>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>taint<span class="w"> </span>node<span class="w"> </span>node-01<span class="w"> </span><span class="nv">ssf</span><span class="o">=</span>false:PerferNoSchedule<span class="w"> </span>--overwtire
+</code></pre></div>
+
+<h3 id="常见内置污点">常见内置污点</h3>
+<ul>
+<li>node.kubernetes.io/not-ready：相当于节点状态Ready为false。节点出问题时会自动添加这个污点。会自动驱逐pod。</li>
+<li>node.kubernetes.io/unreachable：Node Controller访问不到节点时会自动添加，相当于节点状态Ready的值为Unknown。会自动驱逐pod。</li>
+<li>node.kubernetes.io/out-of-disk：节点磁盘耗尽</li>
+<li>node.kubernetes.io/memory-pressure：节点内存压力</li>
+<li>node.kubernetes.io/disk-pressure：节点磁盘压力</li>
+<li>node.kubernetes.io/pid-pressure：节点pid压力</li>
+<li>node.kubernetes.io/network-unavailable：节点网络不可达</li>
+<li>node.kubernetes.io/unschedulable：节点不可调度</li>
+</ul>
+<p>除了前两个，后面的都是不会驱逐pod的。</p>
+<h2 id="容忍">容忍</h2>
+<p>键值对数据，要定义出来容忍什么k、v、effect的污点。</p>
+<p>注意pod定义了容忍，只是可以被调度到污点节点上，而不是一定会调度到带污点的节点上。</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># node-02生产环境专用，打一个污点来区分</span>
+kubectl<span class="w"> </span>taint<span class="w"> </span>node<span class="w"> </span>node-02<span class="w"> </span>node-type<span class="o">=</span>production:NoExcute
+
+<span class="c1"># 给节点去除污点，后面带一个减号</span>
+kubectl<span class="w"> </span>taint<span class="w"> </span>node<span class="w"> </span>node-02<span class="w"> </span>key:<span class="w"> </span>node-type-
+</code></pre></div>
+
+<h3 id="容忍类型">容忍类型</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># 完全匹配。容忍的k，v，effect和污点的完全一样</span>
+<span class="nt">tolerations</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;taintKey&quot;</span>
+<span class="w">  </span><span class="nt">operator</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Equal&quot;</span>
+<span class="w">  </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;taintValue&quot;</span>
+<span class="w">  </span><span class="nt">effect</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;NoSchedule&quot;</span>
+
+<span class="c1"># 不完全匹配，没有value，只要容忍的key、effect和污点一样就能匹配上</span>
+<span class="nt">tolerations</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;taintKey&quot;</span>
+<span class="w">  </span><span class="nt">operator</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Equal&quot;</span>
+<span class="w">  </span><span class="nt">effect</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;NoSchedule&quot;</span>
+
+<span class="c1"># Key匹配，容忍的key和污点的key一样就能匹配上</span>
+<span class="nt">tolerations</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;taintKey&quot;</span>
+<span class="w">  </span><span class="nt">operator</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Exists&quot;</span>
+
+<span class="c1"># 容忍所有污点（不推荐），除非是daemonset要在所有节点部署。</span>
+<span class="nt">tolerations</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">operator</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Exists&quot;</span>
+
+<span class="c1"># 容忍一段时间。只容忍3600s，之后这个pod就要走了。适用于节点故障快速漂移。容忍not-ready和unreachable的污点，时间10s。节点故障之后10s，pod就可以漂移了。（默认是300s才开始漂移）</span>
+<span class="nt">tolerations</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;taintKey&quot;</span>
+<span class="w">  </span><span class="nt">operator</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Equal&quot;</span>
+<span class="w">  </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;taintValue&quot;</span>
+<span class="w">  </span><span class="nt">effect</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;NoSchedule&quot;</span>
+<span class="w">  </span><span class="nt">tolerationSeconds</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3600</span>
+</code></pre></div>
+
+<h3 id="字段配置">字段配置</h3>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Pod</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-podAffinity-2</span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
+<span class="w">  </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">bb</span>
+<span class="w">    </span><span class="nt">tier</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ft</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">containers</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">busybox</span>
+<span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">busybox:latest</span>
+<span class="w">    </span><span class="nt">imagePullPolicy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">IfNotPresent</span>
+<span class="w">    </span><span class="nt">command</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;/bin/sh&quot;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;-c&quot;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;while</span><span class="nv"> </span><span class="s">true;</span><span class="nv"> </span><span class="s">do</span><span class="nv"> </span><span class="s">echo</span><span class="nv"> </span><span class="s">hello;</span><span class="nv"> </span><span class="s">sleep</span><span class="nv"> </span><span class="s">10;</span><span class="nv"> </span><span class="s">done&quot;</span>
+<span class="w">  </span><span class="nt">tolerations</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;node-type&quot;</span>
+<span class="w">    </span><span class="nt">operator</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Equal&quot;</span><span class="w"> </span><span class="c1"># Equal要求k、v、effect必须全部匹配上，才能容忍。如果是Exists，那么NoExcute可以向下兼容匹配到 NoSchedule、PreferNoSchedule的effect。(NoExcute &gt; NoSchedule &gt; PreferNoSchedule)</span>
+<span class="w">    </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;production&quot;</span><span class="w"> </span><span class="c1"># value可以是空的，表示容忍特定key的污点</span>
+<span class="w">    </span><span class="nt">effect</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;NoExecute&quot;</span><span class="w"> </span><span class="c1"># effect也可以是空的。</span>
+<span class="w">    </span><span class="nt">tolerationSeconds</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span><span class="w"> </span><span class="c1"># NoExcute专用字段。容忍10s后就立刻被驱逐。</span>
+</code></pre></div>
+
+<h2 id="污点容忍实战示例">污点容忍实战示例</h2>
+<h3 id="主节点禁止调度">主节点禁止调度</h3>
+<p>在生产环境中，Kubernetes 的主节点除了部署系统组件外，不推荐再部署任何服务，此时可 以通过添加污点来禁止调度：</p>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>taint<span class="w"> </span>node<span class="w"> </span>k8s-master01<span class="w"> </span>node-role.kubernetes.io/control-plane:NoSchedule
+<span class="c1"># 也可以添加NoExecute类型的污点，此时不容忍该污点的Pod会被驱逐重建： </span>
+kubectl<span class="w"> </span>taint<span class="w"> </span>node<span class="w"> </span>k8s-master01<span class="w"> </span>node-role.kubernetes.io/control-plane:NoExecute<span class="w"> </span>
+</code></pre></div>
+
+<p>一般建议把NoSchedule和NoExecute都加上。</p>
+<h3 id="新节点禁止调度">新节点禁止调度</h3>
+<p>当Kubernetes 集群添加新节点时，通常情况下不会立即调度Pod到该节点，需要经过完整 的可用性测试之后才可以调度Pod，此时也可以使用污点先临时禁止该节点的调度：</p>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>taint<span class="w"> </span>node<span class="w"> </span>k8s-master01<span class="w"> </span>new-node<span class="o">=</span>true:NoSchedule
+<span class="c1"># 同样的道理，比如在禁止调度之前已经有Pod部署在该节点，可以进行驱逐： </span>
+kubectl<span class="w"> </span>taint<span class="w"> </span>node<span class="w"> </span>k8s-master01<span class="w"> </span>new-node<span class="o">=</span>true:NoExecute<span class="w"> </span>
+</code></pre></div>
+
+<h3 id="节点维护和下线">节点维护和下线</h3>
+<p>当Kubernetes的节点需要进行下线维护时，此时需要先把该节点的服务进行驱逐和重新调度。</p>
+<p>此时需要根据实际情况判断是直接驱逐还是选择重新调度，比如某个Pod只有一个副本，或者某个服务比较重要，就不能直接进行驱逐，而是需要先把节点关闭调度，然后在进行服务的重新部署。</p>
+<h4 id="基于污点实现">基于污点实现</h4>
+<p>关闭维护节点的调度，用NoSchedule：</p>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>taint<span class="w"> </span>node<span class="w"> </span>k8s-node02<span class="w"> </span>maintain:NoSchedule<span class="w"> </span>
+</code></pre></div>
+
+<p>重新触发某个服务的滚动改部署，这样新pod会调度到其他节点：</p>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>rollout<span class="w"> </span>restart<span class="w"> </span>deploy<span class="w"> </span>redis<span class="w"> </span>-n<span class="w"> </span>basic-component-dev
+</code></pre></div>
+
+<p>接下来节点上已经没有重要服务了，可以对节点的其他不重要pod进行驱逐，用NoExecute：</p>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>taint<span class="w"> </span>node<span class="w"> </span>k8s-node02<span class="w"> </span>maintain:NoExecute<span class="w"> </span>
+</code></pre></div>
+
+<p>驱逐后，即可按照预期进行对节点进行维护，维护完成以后，可以删除污点，恢复调度： </p>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>taint<span class="w"> </span>node<span class="w"> </span>k8s-node02<span class="w"> </span>maintain-<span class="w"> </span>
+</code></pre></div>
+
+<h4 id="基于cordon实现">基于cordon实现</h4>
+<p>除了自定义污点，也可以使用cordon将节点设置为维护状态： </p>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>cordon<span class="w"> </span>k8s-node01<span class="w"> </span>
+</code></pre></div>
+
+<p>此时节点会被标记一个SchedulingDisabled状态（其实也是通过内置NoSchedule污点实现），但是已经运行在该节点的Pod不受影响。</p>
+<p>然后驱逐节点上面的服务：</p>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>drain<span class="w"> </span>k8s-node01<span class="w"> </span>--ignore-daemonsets<span class="w"> </span>--delete-emptydir-data
+</code></pre></div>
+
+<p>恢复节点：</p>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>uncordon<span class="w"> </span>k8s-node01
+</code></pre></div>
+
+<h3 id="特殊节点资源保留">特殊节点资源保留</h3>
+<p>当Kubernetes中存储特殊节点时，应该尽量保持不要特殊资源的Pod不要调度到这些节点上，此时可以通过污点进行控制。</p>
+<p>比如包含了GPU的节点，不能被任意调度：</p>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>taint<span class="w"> </span>node<span class="w"> </span>k8s-node02<span class="w"> </span><span class="nv">gpu</span><span class="o">=</span>true:NoSchedule<span class="w"> </span>
+</code></pre></div>
+
+<p>具有其它特殊资源，比如是ssd节点，尽量不要调度：</p>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>taint<span class="w"> </span>node<span class="w"> </span>k8s-node02<span class="w"> </span><span class="nv">ssd</span><span class="o">=</span>true:PreferNoSchedule
+</code></pre></div>
+
+<p>如果某个pod需要GPU资源，添加容忍才能调度上去：</p>
+<div class="highlight"><pre><span></span><code><span class="nt">tolerations</span><span class="p">:</span><span class="w"> </span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;gpu&quot;</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">operator</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Exists&quot;</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">effect</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;NoSchedule&quot;</span><span class="w"> </span>
+</code></pre></div>
+
+<p>完整配置，同时添加了节点选择器和容忍（或者不用节点选择器，用resource申请GPU资源也行）</p>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">apps/v1</span><span class="w"> </span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Deployment</span><span class="w"> </span>
+<span class="nt">metadata</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gpu-example</span><span class="w"> </span>
+<span class="nt">spec</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">replicas</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">selector</span><span class="p">:</span><span class="w"> </span>
+<span class="w">    </span><span class="nt">matchLabels</span><span class="p">:</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gpu-example</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">template</span><span class="p">:</span><span class="w"> </span>
+<span class="w">    </span><span class="nt">metadata</span><span class="p">:</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">labels</span><span class="p">:</span><span class="w"> </span>
+<span class="w">        </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gpu-example</span><span class="w"> </span>
+<span class="w">    </span><span class="nt">spec</span><span class="p">:</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">nodeSelector</span><span class="p">:</span><span class="w"> </span><span class="c1"># 必须定义节点选择器才能保证调度到gpu节点</span>
+<span class="w">        </span><span class="nt">gpu</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;true&quot;</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">tolerations</span><span class="p">:</span><span class="w"> </span><span class="c1"># 容忍不能保证一定部署到GPU节点上，要用节点选择器配合容忍才行</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;gpu&quot;</span><span class="w"> </span>
+<span class="w">        </span><span class="nt">operator</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Exists&quot;</span><span class="w"> </span>
+<span class="w">        </span><span class="nt">effect</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;NoSchedule&quot;</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">containers</span><span class="p">:</span><span class="w"> </span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gpu-example</span><span class="w"> </span>
+<span class="w">        </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx:1.15.12</span>
+</code></pre></div>
+
+<h3 id="专用节点隔离">专用节点隔离</h3>
+<p>一个Kubernetes集群，很常见会有一些专用的节点，比如ingress controller、gateway、storage或者多租户环境等。</p>
+<p>这些节点通常不建议和其他服务交叉使用，所以需要利用污点和容忍将这些节点隔离起来。</p>
+<p>比如选择一批节点作为ingress入口的节点：</p>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>label<span class="w"> </span>node<span class="w"> </span>k8s-node02<span class="w"> </span><span class="nv">ingress</span><span class="o">=</span><span class="nb">true</span><span class="w"> </span>
+<span class="c1"># 添加一个污点，不让其他服务部署 </span>
+kubectl<span class="w"> </span>taint<span class="w"> </span>node<span class="w"> </span>k8s-node02<span class="w"> </span><span class="nv">ingress</span><span class="o">=</span>true:NoSchedule<span class="w"> </span>
+</code></pre></div>
+
+<p>更改Ingress Controller的部署资源，添加容忍和节点选择器：</p>
+<div class="highlight"><pre><span></span><code><span class="l l-Scalar l-Scalar-Plain">kubectl edit ds -n ingress-nginx</span><span class="w"> </span>
+<span class="l l-Scalar l-Scalar-Plain">nodeSelector</span><span class="p p-Indicator">:</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">ingress</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;true&quot;</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">kubernetes.io/os</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">linux</span><span class="w"> </span>
+<span class="nt">tolerations</span><span class="p">:</span><span class="w"> </span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ingress</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">operator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Exists</span>
+<span class="w">  </span><span class="nt">effect</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">NoSchedule</span>
+</code></pre></div>
+
+<h3 id="节点宕机快速恢复">节点宕机快速恢复</h3>
+<p>当Kubernetes集群中有节点故障时，Kubernetes会自动恢复故障节点上的服务：</p>
+<ol>
+<li>
+<p>自动给故障节点打上node.kubernetes.io/unreachable和node.kubernetes.io/not-ready污点，effect是NoExecute。</p>
+</li>
+<li>
+<p>污点打完，上面的pod并不是立刻被驱逐。默认情况下，节点故障时五分钟后，会重新调度上面的pod。</p>
+</li>
+</ol>
+<p>此时可以利用污点的 tolerationSeconds 加快pod被驱逐的速度。</p>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">apps/v1</span><span class="w"> </span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Deployment</span><span class="w"> </span>
+<span class="nt">metadata</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tolerations-second</span><span class="w"> </span>
+<span class="nt">spec</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">replicas</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">selector</span><span class="p">:</span><span class="w"> </span>
+<span class="w">    </span><span class="nt">matchLabels</span><span class="p">:</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tolerations-second</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">template</span><span class="p">:</span><span class="w"> </span>
+<span class="w">    </span><span class="nt">metadata</span><span class="p">:</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">labels</span><span class="p">:</span><span class="w"> </span>
+<span class="w">        </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tolerations-second</span><span class="w"> </span>
+<span class="w">    </span><span class="nt">spec</span><span class="p">:</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">tolerations</span><span class="p">:</span><span class="w"> </span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">node.kubernetes.io/unreachable</span><span class="w"> </span>
+<span class="w">        </span><span class="nt">operator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Exists</span><span class="w"> </span>
+<span class="w">        </span><span class="nt">effect</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">NoExecute</span>
+<span class="w">        </span><span class="nt">tolerationSeconds</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span><span class="w"> </span><span class="c1"># 容忍not-ready和unreachable的污点，时间10s。节点故障之后10s，pod就可以漂移了。（默认是300s才开始漂移）</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">node.kubernetes.io/not-ready</span><span class="w"> </span>
+<span class="w">        </span><span class="nt">operator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Exists</span><span class="w"> </span>
+<span class="w">        </span><span class="nt">effect</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">NoExecute</span>
+<span class="w">        </span><span class="nt">tolerationSeconds</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">containers</span><span class="p">:</span><span class="w"> </span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+<span class="w">        </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx:1.15.12</span><span class="w"> </span>
+</code></pre></div>
+    </div>
+  </article>
+  <aside class="toc">
+    <p class="toc-label">本页目录</p>
+    <ul>
+  <li><a href="#划分拓扑域">划分拓扑域</a><ul>
+  <li><a href="#基于主机">基于主机</a></li>
+  <li><a href="#基于多区域">基于多区域</a></li>
+  <li><a href="#基于数据中心">基于数据中心</a></li>
+  <li><a href="#基于子网">基于子网</a></li>
+</ul></li>
+  <li><a href="#定向调度">定向调度</a><ul>
+  <li><a href="#标签">标签</a></li>
+  <li><a href="#nodename">NodeName</a></li>
+  <li><a href="#nodeselector">nodeSelector</a></li>
+</ul></li>
+  <li><a href="#亲和性调度">亲和性调度</a><ul>
+  <li><a href="#节点亲和性调度nodeaffinity">节点亲和性调度nodeAffinity</a></li>
+  <li><a href="#pod亲和性调度">pod亲和性调度</a></li>
+</ul></li>
+  <li><a href="#同一个应用必须部署在不同的宿主机">同一个应用必须部署在不同的宿主机</a></li>
+  <li><a href="#同一个应用尽量部署在不同的宿主机">同一个应用尽量部署在不同的宿主机</a></li>
+  <li><a href="#同一个应用尽量分布在不同的机房">同一个应用尽量分布在不同的机房</a></li>
+  <li><a href="#应用和缓存尽量部署在同一个可用域">应用和缓存尽量部署在同一个可用域</a></li>
+  <li><a href="#计算服务必须部署至高性能机器">计算服务必须部署至高性能机器</a></li>
+  <li><a href="#计算服务尽量部署到高性能机器">计算服务尽量部署到高性能机器</a></li>
+  <li><a href="#应用尽量不部署到低性能机器">应用尽量不部署到低性能机器</a></li>
+  <li><a href="#拓扑域约束-应用均匀分布">拓扑域约束-应用均匀分布</a></li>
+  <li><a href="#污点">污点</a><ul>
+  <li><a href="#effect类型">Effect类型</a></li>
+  <li><a href="#污点操作">污点操作</a></li>
+  <li><a href="#常见内置污点">常见内置污点</a></li>
+</ul></li>
+  <li><a href="#容忍">容忍</a><ul>
+  <li><a href="#容忍类型">容忍类型</a></li>
+  <li><a href="#字段配置">字段配置</a></li>
+</ul></li>
+  <li><a href="#污点容忍实战示例">污点容忍实战示例</a><ul>
+  <li><a href="#主节点禁止调度">主节点禁止调度</a></li>
+  <li><a href="#新节点禁止调度">新节点禁止调度</a></li>
+  <li><a href="#节点维护和下线">节点维护和下线</a></li>
+  <li><a href="#特殊节点资源保留">特殊节点资源保留</a></li>
+  <li><a href="#专用节点隔离">专用节点隔离</a></li>
+  <li><a href="#节点宕机快速恢复">节点宕机快速恢复</a></li>
+</ul></li>
+</ul>
+  </aside>
+
+</div>
+
+</main>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>Learning Notes</span>
+    <a href="https://github.com/hangx969/learning-notes">GitHub</a>
+  </div>
+</footer>
+<script src="../../../static/search.js"></script>
+</body>
+</html>

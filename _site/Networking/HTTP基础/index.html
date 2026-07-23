@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HTTP 基础 - Learning Notes</title>
+<link rel="stylesheet" href="../../static/style.css">
+<link rel="stylesheet" href="../../static/pygments.css">
+</head>
+<body data-root="../../">
+<header class="site-header">
+  <div class="header-inner">
+    <a class="logo" href="../../index.html"><span class="logo-mark"></span>LEARNING NOTES</a>
+    <div class="search">
+      <input id="search-input" type="search" placeholder="搜索笔记…" autocomplete="off" aria-label="搜索笔记">
+      <div id="search-results" hidden></div>
+    </div>
+  </div>
+  <nav class="topic-nav" aria-label="主题导航">
+    <div class="topic-nav-inner">
+      <a href="../../AI/">AI</a>
+      <a href="../../Aliyun/">Aliyun</a>
+      <a href="../../Azure/">Azure</a>
+      <a href="../../C%2B%2B/">C++</a>
+      <a href="../../CloudComputing/">CloudComputing</a>
+      <a href="../../Database/">Database</a>
+      <a href="../../Docker-Kubernetes/">Docker-Kubernetes</a>
+      <a href="../../GPU-DeepLearning/">GPU-DeepLearning</a>
+      <a href="../../Git/">Git</a>
+      <a href="../../Go/">Go</a>
+      <a href="../../HPC/">HPC</a>
+      <a href="../../IaC/">IaC</a>
+      <a href="../../Linux-Shell/">Linux-Shell</a>
+      <a href="../../Middlewares/">Middlewares</a>
+      <a href="../../Networking/" class="active">Networking</a>
+      <a href="../../OS/">OS</a>
+      <a href="../../Python/">Python</a>
+      <a href="../../SoftwareTesting/">SoftwareTesting</a>
+    </div>
+  </nav>
+</header>
+<main class="main">
+
+<div class="article-layout">
+
+  <aside class="sidebar">
+    <details class="sidebar-details">
+      <summary>Networking</summary>
+      <nav class="sidebar-nav">
+        <p class="sidebar-group">其他</p>
+        <ul>
+          <li><a href="../../Networking/HTTP%E5%9F%BA%E7%A1%80/" class="current">HTTP 基础</a></li>
+          <li><a href="../../Networking/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%9F%BA%E7%A1%80/">计算机网络基础</a></li>
+        </ul>
+      </nav>
+    </details>
+  </aside>
+
+  <article class="article">
+    <nav class="breadcrumb">
+      <a href="../../index.html">首页</a><span>/</span>
+      <a href="../../Networking/">Networking</a>
+    </nav>
+    <h1 class="article-title">HTTP 基础</h1>
+    <p class="article-meta"><span>更新于 2026-04-16</span>
+      <a href="https://github.com/hangx969/learning-notes/blob/main/Networking/HTTP%E5%9F%BA%E7%A1%80.md">查看源文件</a>
+    </p>
+    <div class="article-body">
+<h1 id="图解http">图解HTTP</h1>
+<h2 id="http历史">HTTP历史</h2>
+<h3 id="www即web">WWW，即Web</h3>
+<ul>
+<li>
+<p>1989年，HTTP诞生；最初的设计理念是：界诸多文档之间相互关联形成的超文本，连成可以相互参阅的WWW。</p>
+</li>
+<li>
+<p>现在WWW的三项核心构建技术：</p>
+</li>
+<li>HTML，超文本标记语言；作为页面语言</li>
+<li>HTTP，超文本传输协议；作为传输协议</li>
+<li>URL，统一资源定位符；作为资源获取地址</li>
+</ul>
+<h3 id="http版本发展">HTTP版本发展</h3>
+<h4 id="http-10">HTTP 1.0</h4>
+<ul>
+<li>HTTP作为正式标准公布：1996.5，命名为HTTP1.0</li>
+</ul>
+<p><a href="http://www.ietf.org/rfc/rfc1945.txt">RFC 1945</a></p>
+<h4 id="http-11">HTTP 1.1</h4>
+<ul>
+<li>HTTP 1.1在1997.1公布，现在的修订版是RFC2616</li>
+</ul>
+<p><a href="http://www.ietf.org/rfc/rfc2616.txt">RFC 2616</a></p>
+<h2 id="http特点">HTTP特点</h2>
+<h3 id="http-10-非持久连接">HTTP 1.0 非持久连接</h3>
+<ul>
+<li>早期版本非持久连接是指：每进行一次HTTP通信，都会断开一次TCP连接。缺点是HTML页面资源内容多的时候会增加通信量。</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202211280810712.png" alt="image-20221128081016605" style="zoom:50%;" /></p>
+<h3 id="http-11-持久连接">HTTP 1.1 持久连接</h3>
+<ul>
+<li>HTTP 1.1 引入了持久连接并设为默认选项：keep-alive。只要任一端没有明确提出断开连接，就保持连接。减少TCP重复连接和断开的开销</li>
+</ul>
+<h4 id="pipeline">Pipeline</h4>
+<ul>
+<li>
+<p>没有pipeline时，发送了请求，需要等待收到响应才能发送下一个请求。</p>
+</li>
+<li>
+<p>持久连接使得pipeline成为可能，即并行发送多个请求，更加节省时间。</p>
+</li>
+</ul>
+<h3 id="使用cookie的状态管理">使用Cookie的状态管理</h3>
+<ul>
+<li>
+<p>HTTP是无状态的，不对之前发生过的请求和响应状态进行管理，服务端也不保存客户端信息。</p>
+</li>
+<li>
+<p>Cookie对无状态的HTTP进行状态化。</p>
+</li>
+</ul>
+<h4 id="cookie工作原理">Cookie工作原理</h4>
+<ul>
+<li>用户初次向服务器发送报文，服务器web进程为其产生一个唯一的Cookie识别码，并以此为索引，在服务端后端数据库中创建一个项目，记录用户访问的各种信息。</li>
+<li>服务端发送的响应报文内的叫做Set-Cookie的header字段，通知客户端保存cookie；下次客户端发送请求时，会在请求报文中加上cookie值。服务端收到后会对比记录，了解到是哪客户端发来的。</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202211280821319.png" alt="image-20221128082135252" style="zoom:33%;" /></p>
+<h2 id="http报文">HTTP报文</h2>
+<h3 id="结构">结构</h3>
+<p>报文首部 + 空行（CR+LF，意思是十六进制的回车+换行符）+ 报文主体。（二者由第一个出现的空行来区分）</p>
+<p><img alt="image-20221128082417098" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202211280824150.png" /></p>
+<h3 id="编码提升传输速率">编码提升传输速率</h3>
+<p>传输时编码可以提高传输速率，但要在计算机内完成，消耗CPU资源。</p>
+<ul>
+<li>压缩传输的内容编码：</li>
+<li>gzip（GNU zip）</li>
+<li>compress （UNIX系统的标准压缩）</li>
+<li>deflate （zlib）</li>
+<li>identity</li>
+</ul>
+<h3 id="分割发送">分割发送</h3>
+<p>传输大容量数据时，会将实体主体部分分割成多个块。接收端解码、恢复。</p>
+<h3 id="发送多种数据的多部分对象集合">发送多种数据的多部分对象集合</h3>
+<ul>
+<li>发送的同一份报文中可能含有多种类型的实体，文本、图片等。</li>
+<li>HTTP报文使用多部分对象集合时，需要在首部字段中加上Content-type；并使用boundary字符串来划分多类实体。</li>
+</ul>
+<h3 id="获取部分内容的范围请求">获取部分内容的范围请求</h3>
+<ul>
+<li>也就是断点续传：比如对于一份10000字节的资源，使用范围请求，可以只请求5000-10000字节的内容。</li>
+<li>请求报文用首部字段Range来制定资源的byte范围；响应报文用206 Partial Content作为状态码，并且加上Content-type中国标明multipart/byterange</li>
+</ul>
+<h3 id="内容协商">内容协商</h3>
+<ul>
+<li>客户端和服务端就响应的资源内容进行交涉，给客户端提供最合适的资源。比如页面语言、encoding等。</li>
+</ul>
+<h2 id="http状态码">HTTP状态码</h2>
+<h3 id="类别">类别</h3>
+<ul>
+<li>1xx</li>
+</ul>
+<p>Informational：接收的信息正在处理</p>
+<ul>
+<li>2xx</li>
+</ul>
+<p>Success：请求正常处理完毕</p>
+<ul>
+<li>3xx</li>
+</ul>
+<p>Redirection：重定向，意味着需要附加操作以完成</p>
+<ul>
+<li>301：永久重定向</li>
+<li>
+<p>302：临时重定向</p>
+</li>
+<li>
+<p>4xx</p>
+</li>
+</ul>
+<p>Client Error：服务器无法处理请求</p>
+<ul>
+<li>400 BadRequest：表示请求报文中语法错误</li>
+<li>401 Unauthorized：身份未认证或者认证失败</li>
+<li>403 Forbidden：表示请求被服务器拒绝了，一般是会涉及访问权限问题，比如未授权的源IP的访问。</li>
+<li>
+<p>404 NotFound：请求的资源服务器上没找到；有时服务端拒绝请求但不想告诉你理由也能用。</p>
+</li>
+<li>
+<p>5xx</p>
+</li>
+</ul>
+<p>Server Error：服务器处理请求出错</p>
+<ul>
+<li>500 Internal Server Error</li>
+<li>503 Service Unavailable：标明服务器暂时处于超负荷或者维护，暂时无法处理请求。、</li>
+</ul>
+<h2 id="与http协作的web服务器">与HTTP协作的Web服务器</h2>
+<h3 id="用单台主机实现多个域名">用单台主机实现多个域名</h3>
+<p>单台服务器开启Virtual Host，就能即使在物理层面只有一台服务器，但是可以有多个主机名和域名，提供多个Web站点供访问。</p>
+<h3 id="通信数据转发程序">通信数据转发程序</h3>
+<p>代理、网关、隧道</p>
+<h4 id="代理">代理</h4>
+<ul>
+<li>
+<p>基本行为就是接收客户端请求，转发给其他服务器，不会改变请求URI</p>
+</li>
+<li>
+<p>每次转发都会加上via字段（via：proxy1）</p>
+</li>
+<li>
+<p>使用代理的理由有：利用缓存技术减少网络中的流量；组织内部针对特定网站的访问控制；获取访问日志等</p>
+</li>
+<li>
+<p>代理基本分类：</p>
+</li>
+<li>
+<p>缓存代理</p>
+<p>代理服务器作为缓存服务器，保存请求资源的缓存，返回给客户端。</p>
+</li>
+<li>
+<p>透明代理</p>
+<p>转发请求或响应时，不对报文做任何修改。</p>
+</li>
+</ul>
+<h4 id="网关">网关</h4>
+<ul>
+<li>利用网关能将HTTP协议转化为非HTTP协议。比如智能家居连接网关将各种非HTTP信号转化为HTTP信号发送给Internet。</li>
+</ul>
+<h4 id="隧道">隧道</h4>
+<ul>
+<li>建立起一条与其他服务器的通信线路，届时使用SSL等加密通信，不改变HTTP请求，直接转发；便于实现远距离通信。</li>
+</ul>
+<h3 id="缓存">缓存</h3>
+<h4 id="服务器缓存">服务器缓存</h4>
+<h4 id="客户端缓存">客户端缓存</h4>
+<p>缓存具有有效期，会向服务器确认缓存是否需要更新。</p>
+<h2 id="http首部">HTTP首部</h2>
+<p><img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202211290839890.png" alt="image-20221129083900792" style="zoom:50%;" /></p>
+<h3 id="请求报文组成">请求报文组成</h3>
+<p><img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202211290839602.png" alt="image-20221129083928549" style="zoom:50%;" /></p>
+<h3 id="响应报文组成">响应报文组成</h3>
+<p><img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202211290843854.png" alt="image-20221129084318786" style="zoom:50%;" /></p>
+<ul>
+<li>通用首部字段：请求和响应都可以使用</li>
+<li>实体首部字段：补充一些资源内容更新时间等与实体有关的信息。</li>
+</ul>
+<h3 id="http11通用首部字段">HTTP1.1通用首部字段</h3>
+<h4 id="cache-control控制缓存的相关字段">Cache-control控制缓存的相关字段</h4>
+<ul>
+<li>public、private</li>
+</ul>
+<p>源服务器对缓存服务器做的规定</p>
+<ul>
+<li>
+<p>public：其他用户也可以用该份缓存；private：只能给这个请求的特定用户发送缓存。</p>
+</li>
+<li>
+<p>no-cache</p>
+</li>
+</ul>
+<p>目的是防止接收到过期的缓存内容。</p>
+<ul>
+<li>
+<p>如果是客户端请求内容：则要求缓存服务器不能直接将缓存返回过来；缓存服务器会向源服务器发送请求验证缓存有效期。</p>
+</li>
+<li>
+<p>如果是服务端响应内容：则要求缓存服务器不能缓存该相应内容。</p>
+</li>
+<li>
+<p>no-store</p>
+</li>
+</ul>
+<p>当使用no-store时，按时请求或响应中包含机密信息。该指令规定不能保存为缓存</p>
+<blockquote>
+<p>[!warning] 注意<br />
+no-cache和no-store的区别：no-cache只是确保不接收过期的缓存，而no-store才是不能缓存。</p>
+</blockquote>
+<h3 id="请求首部字段">请求首部字段</h3>
+<h4 id="authorization">authorization</h4>
+<ul>
+<li>用来告知服务器，用户代理的认证信息/证书值。</li>
+</ul>
+<h4 id="host">Host</h4>
+<ul>
+<li>同一个服务器，通过虚拟主机运行了多个web app，域名不同，但是是在同一个IP上；使用首部字段Host来区分不同的主机名和端口号。</li>
+<li>Host首部字段，在HTTP 1.1中，是唯一一个被要求必须包含在请求内的首部字段。</li>
+</ul>
+<h4 id="user-agent">User-Agent</h4>
+<ul>
+<li>创建请求的浏览器和用户代理名称；如果经过了代理，中间也有可能被添加上代理服务器的名称。</li>
+</ul>
+<h3 id="响应首部字段">响应首部字段</h3>
+<h4 id="age">Age</h4>
+<ul>
+<li>告知客户端，源服务器在多久前创建了响应。字段单位为秒</li>
+</ul>
+<h4 id="etag">Etag</h4>
+<ul>
+<li>Etag是服务器资源的唯一性标识，每一份资源都有Etag；当资源更新的时候，可能URI没变，但是ETag会改变。</li>
+<li>告知客户端，资源的实体标识。有时候，不同的资源的URI是相同的，比如中文版和英文版的网页，要靠ETag来分辨；当遇到连接中断再连接的时候，都会按照ETag的值来制定资源。</li>
+<li>ETag分为强ETag和弱ETag</li>
+</ul>
+<h4 id="location">Location</h4>
+<ul>
+<li>可以将接收方引导至某个与先前请求URI位置不同的资源。</li>
+<li>一般该字段会配合3xx：Redirection的响应，提供重定向的URI。</li>
+</ul>
+<h4 id="server">Server</h4>
+<ul>
+<li>告知服务器上HTTP服务器应用程序的信息</li>
+</ul>
+<h4 id="www-authenticate">WWW-Authenticate</h4>
+<ul>
+<li>告知客户端用于访问指定资源的认证方案（Basic or Digest）</li>
+<li>状态码401 Unauthorized的响应中，会带上WWW-Authenticate首部字段。</li>
+</ul>
+<h3 id="实体首部字段">实体首部字段</h3>
+<p>补充实体部分的相关信息。</p>
+<h3 id="为cookie服务的首部字段">为Cookie服务的首部字段</h3>
+<p>用户识别及状态管理。web网站为了管理用户的状态会通过浏览器，把一些数据临时写入用户的计算机内。接着用户带cookie访问该网站会被识别出来。</p>
+<h2 id="https">HTTPS</h2>
+<h3 id="背景">背景</h3>
+<ul>
+<li>
+<p>HTTP的隐患：服务器伪装、客户端伪装、无法身份验证、照单全收无意义的请求。</p>
+</li>
+<li>
+<p>HTTP + 加密 + 认证 + 完整性保护 = HTTPS</p>
+</li>
+<li>
+<p>HTTPS只是通信接口采用SSL和TLS代替；</p>
+</li>
+</ul>
+<p><img alt="image-20221201082201280" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202212010822365.png" /></p>
+<ul>
+<li>HTTPS使用SSL和TLS，SSL最开始是由网景公司倡导，后来由IETF来主导，IETF以SSL为基础开发了TLS。</li>
+</ul>
+<h3 id="密钥加密算法">密钥加密算法</h3>
+<p>以下算法都是密钥的生成算法：</p>
+<h4 id="des数据加密标准">DES：数据加密标准</h4>
+<p>IBM公司研发，1997年被美国指定为<strong>数据加密标准</strong>。</p>
+<h4 id="3des三种des加密">3DES：三种DES加密</h4>
+<h4 id="aes高级加密标准">AES：高级加密标准</h4>
+<h3 id="报文完整性鉴别">报文完整性鉴别</h3>
+<h4 id="报文摘要">报文摘要</h4>
+<ul>
+<li>对长度固定且比整个报文长度短得多的<strong>报文摘要</strong>来进行加密，得到报文鉴别码；接收方来验证报文鉴别码是否一致。（对整个报文加密太耗时了）</li>
+</ul>
+<p>报文摘要算法：</p>
+<ul>
+<li>MD5：输出128位的报文摘要。被中国学者王小云证明，可以找到两个报文，使其拥有相同的MD5报文摘要。导致其被SHA-1取代</li>
+<li>SHA：输出160位比特的报文摘要。（SHA-1也曾被王小云团队攻破）SHA-1仍在使用，但会逐渐被SHA-2和SHA-3取代</li>
+</ul>
+<h3 id="数字签名">数字签名</h3>
+<p>证明报文的真实来源。保证如下三点：</p>
+<ol>
+<li>接收方能够核实发送方对报文的数字签名</li>
+<li>任何人都无法伪造签名</li>
+<li>发送方事后不能抵赖对报文的数字签名</li>
+</ol>
+<p>有多种实现数字签名的方法，采用公钥 - 私钥对的方法比较容易实现：</p>
+<ul>
+<li>A用自己的私钥加密报文，发送给B；B用成对的公钥来解密得到报文。</li>
+</ul>
+<h3 id="混合加密机制">混合加密机制</h3>
+<p>对称加密 + 非对称加密</p>
+<ul>
+<li>在交换秘钥阶段，采用非对称加密。</li>
+<li>在通信阶段，采用对称加密。</li>
+</ul>
+<p>非对称加密开始时，如何证明服务端发过来的公钥就是合法的？</p>
+<h3 id="证书">证书</h3>
+<p>CA机构颁发公钥证书来证明公钥合法性。</p>
+<ul>
+<li>服务端向CA机构提出公开秘钥的申请</li>
+<li>CA机构向对公钥做数字签名，把已签名的公钥放到公钥证书里面绑定到一起。</li>
+<li>服务器就会把公钥证书发送给客户端。</li>
+<li>客户端接收到证书，会用CA机构的公开密钥来验证签名。验证通过后就可证明：1. CA机构的证书真实有效，2. 服务端的公钥有效。</li>
+</ul>
+<p><div class="callout callout-info" markdown="1"><br />
+<p class="callout-title">CA 公钥</p></p>
+<p>大部分CA机构的公开密钥已经被提前植入到浏览器中。</p>
+</div>
+<h4 id="自签名证书">自签名证书</h4>
+<p>使用OpenSSL开源程序，每个人都可以构建自己的认证体系，给自己颁发服务器证书。这被称为自签名证书。</p>
+<h3 id="实体鉴别">实体鉴别</h3>
+<p>通信双方验证另一方身份的技术。</p>
+<ul>
+<li>直接传输用户名和密码，用对称加密。这样有缺陷：中间人C可以截获从A发出来的加密的报文，传送给B；B会误认为中间人C就是发送者A，这叫Replay Attack重放攻击</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202212112349723.png" alt="image-20221211234920639" style="zoom:50%;" /></p>
+<ul>
+<li>
+<p>应对重放攻击，可以采用不重数方法：A给B发送的报文包含A的用户名和一个随机数Ra，B收到后发送响应报文，其中用对称密钥加密随机数Ra，同时给出自己的随机数Rb，A收到后也给出响应报文，包含对称加密的Rb。</p>
+<blockquote>
+<p>[!info] Challenge-Response 协议<br />
+这种使用随机数（不重数）进行实体鉴别的方法称为 Challenge - Response 协议。</p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202212112350507.png" alt="image-20221211235025426" style="zoom:50%;" /></p>
+</li>
+</ul>
+<h3 id="ssl-handshake过程">SSL Handshake过程</h3>
+<p><img alt="HTTPS-Handshake" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202212011501688.png" /></p>
+<h4 id="非对称加密总结">非对称加密总结</h4>
+<ul>
+<li>
+<p>公钥加密、私钥解密 - 任何有公钥的人，都能发送加密消息给持有私钥的对方；私钥签名、公钥验签 - 私钥签出来的任何东西，都能被验证合法性。</p>
+</li>
+<li>
+<p>非对称加密用来安全的交换对称加密的秘钥，对称加密用来加密传输数据。</p>
+</li>
+<li>为啥不用非对称加密来加密通信数据？一是因为服务端不可能保存如此多的客户端公钥；而是非对称加密的计算开销远远大于对称加密，为服务端的性能考虑。</li>
+</ul>
+<h4 id="中间人问题">中间人问题</h4>
+<ul>
+<li>如果只用对称加密 - 中间人可以轻而易举的获取到公钥，这就等于没加密。</li>
+<li>如果只用非对称加密 - 服务端给客户端发的消息只能用自己的私钥加密 - 中间人可以获取到公钥，解密消息。</li>
+<li>如果对称加密和非对称加密同时使用，但是没有CA机构的认证过程存在的话</li>
+<li>中间人一方面可以伪装成服务端给客户端发公钥，客户端信息会发给中间人被解密。</li>
+<li>另一方满可以伪装成客户端，向服务端索要公钥，将解密消息后的消息用服务端公钥加密发给服务端。</li>
+<li>等于是消息被窃听了。</li>
+</ul>
+<p>所以HTTPS = 对称加密 + 非对称加密 + CA + HASH（加密算法）</p>
+<h3 id="性能分析">性能分析</h3>
+<ul>
+<li>HTTPS要比HTTP慢2-100倍</li>
+<li>通信慢：SSL连接增大了通信量。</li>
+<li>处理慢：client和server端都要进行加解密，消耗硬件资源。</li>
+</ul>
+<h2 id="确认用户身份的认证">确认用户身份的认证</h2>
+<p>某些web可能只让特定的人来浏览，需要让访问的客户端自报家门，需要去验证一些只有用户本人才有的信息。常用的认证种类有：</p>
+<ul>
+<li>密码</li>
+<li>动态令牌</li>
+<li>生物认证</li>
+<li>IC卡等</li>
+</ul>
+<h3 id="http-11的认证方式">HTTP 1.1的认证方式</h3>
+<ul>
+<li>BASIC认证：基本认证</li>
+<li>DIGEST认证：摘要认证</li>
+</ul>
+<p>以上两种是HTTP自带的认证方式。</p>
+<ul>
+<li>SSL客户端认证</li>
+<li>FormBASE认证：基于表单的认证</li>
+<li>Windows统一认证：Keberos认证、NTLM认证等。</li>
+</ul>
+<h4 id="basic认证">BASIC认证</h4>
+<h5 id="认证步骤">认证步骤</h5>
+<ol>
+<li>当请求的资源需要BASIC认证时，服务器返回401 Authentication Required，返回带首部字段WWW-Authenticate，包含认证方式BASIC，和Request-URI安全域字符串（realm）。Realm是为了辨别请求URI所指定的资源受到的保护策略。</li>
+<li>客户端输入用户名密码，用:连接，经BASE64编码发送给服务端，服务端验证。</li>
+</ol>
+<p>BASIC认证密码不经加密，不安全；除此之外如果想再进行一次认证，一般浏览器无法进行认证的注销。所以并不被常用。</p>
+<h4 id="digest认证">Digest认证</h4>
+<ul>
+<li>HTTP1.1开始有，同样采用challenge/response模式，但是不会明文发送用户名密码。</li>
+<li>大致过程是客户端请求资源 - 服务端返回401+质询码 - 客户端算出响应码返回。</li>
+</ul>
+<h5 id="认证步骤_1">认证步骤</h5>
+<p><img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202212011745554.png" alt="image-20221201174548406" style="zoom:50%;" /></p>
+<ul>
+<li>客户端请求需要认证的资源，服务端返回401 Authorization Required，在WWW-Authenticate首部字段中必须包含：</li>
+<li>质询码，nonce，是一个随机数</li>
+<li>
+<p>realm：限定需要认证的资源范围。</p>
+</li>
+<li>
+<p>客户端返回的首部字段Authorization中，必须包含：</p>
+</li>
+<li>username：是realm限定的范围中，进行认证的用户名。</li>
+<li>realm</li>
+<li>nonce</li>
+<li>uri：digest-rui，就是request-uri的值，考虑到request-uri的值可能会被代理改变，提前复制一份在这里。</li>
+<li>response：就是返回的响应值，也叫Request-Digest；一般是经过MD5运算的密码字符串。</li>
+</ul>
+<p><div class="callout callout-warning" markdown="1"><br />
+<p class="callout-title">Digest 认证局限性</p></p>
+<p>Digest可以避免密码暴露，但是不能防止用户伪装；所以使用仍不广泛。</p>
+</div>
+<h4 id="ssl客户端认证">SSL客户端认证</h4>
+<ul>
+<li>借助HTTPS，凭借客户端证书来确认客户端。</li>
+<li>SSL客户端认证会与表单认证一起验证客户端真实性和用户真实性。</li>
+</ul>
+<h4 id="基于表单的认证">基于表单的认证</h4>
+<ul>
+<li>BASIC和DIGEST是HTTP带着的，但是几乎没人用；SSL客户端认证，要花钱，导入客户端也有门槛，应用也不广泛。所以现在都是web程序自己实现基于表单的认证。</li>
+</ul>
+<h4 id="sessioncookie">Session、Cookie</h4>
+<ul>
+<li>
+<p>基于表单认证登录信息以及认证过程，都没有标准化方法；服务端如何保存用户提交的登录信息，也没有标准化方法。</p>
+</li>
+<li>
+<p>一般会使用cookie来管理session：</p>
+</li>
+<li>
+<p>客户端把登录信息（用户名密码等）以POST请求发给服务器。</p>
+</li>
+<li>服务端发放SessionID，来唯一标识用户；把用户的登录状态绑定SessionID，保存在服务端。</li>
+<li>服务端向客户端返回时，首部字段Set-Cookie里面写入SessionID。</li>
+<li>客户端下次发送请求带着包含SessionID的Cookie，服务端就能识别出用户和登录状态。</li>
+</ul>
+<h2 id="构建web内容的技术">构建Web内容的技术</h2>
+<h3 id="html">HTML</h3>
+<ul>
+<li>web页面几乎都是HTML写的。</li>
+<li>采用标签来描述网页结构和内容。</li>
+</ul>
+<h3 id="css">CSS</h3>
+<ul>
+<li>从审美角度描述网页样式，指定HTML各种元素如何展示；让文档内容和设计分离。</li>
+</ul>
+<h3 id="dom">DOM</h3>
+<ul>
+<li>document object model，是一套用于操作HTML和XML文档的API。用于构建动态HTML。</li>
+<li>DOM可以将HTML的元素当做对象来操作，比如取出元素内的字符串，改变CSS属性等</li>
+</ul>
+<h3 id="javascript">JavaScript</h3>
+<ul>
+<li>脚本语言，跟Java没关系，用来控制网页行为。</li>
+</ul>
+<p>用HTML、CSS、js编写WWW Web文档，由浏览器负责解析和渲染。</p>
+<h3 id="web应用">Web应用</h3>
+<ul>
+<li>客户端发送请求时，返回事先编好的HTML，就叫做静态内容</li>
+<li>客户端请求后，返回由Web服务器上的程序生成的内容，叫做动态内容。</li>
+</ul>
+<h4 id="cgi">CGI</h4>
+<ul>
+<li>common gateway interface，通用网关接口。</li>
+<li>Web服务器接收到请求后，转发给程序的一组机制；CGI程序会对请求内容做出相应的动作，比如创建HTML等。</li>
+</ul>
+<h4 id="servlet">Servlet</h4>
+<p>CGI每次接到请求都要启动一次，会增加高并发下的负载，成为性能瓶颈；</p>
+<ul>
+<li>Servlet是可以在服务器上创建动态内容的程序，与web服务器运行在相同的进程中，比较轻量。Servlet的运行环境称为Web容器</li>
+<li>Servlet是Java实现的一套接口，</li>
+</ul>
+<h2 id="数据发布的格式和语言">数据发布的格式和语言</h2>
+<h3 id="xml">XML</h3>
+<ul>
+<li>用标签分隔的树形结构，通过语法分析器的解析功能来解析XML并取出元素，可以方便数据在程序间的共享。</li>
+</ul>
+<h3 id="json">JSON</h3>
+<ul>
+<li>以JavaScript对象表示法为基础的数据标记语言</li>
+</ul>
+    </div>
+  </article>
+  <aside class="toc">
+    <p class="toc-label">本页目录</p>
+    <ul>
+  <li><a href="#http历史">HTTP历史</a><ul>
+  <li><a href="#www即web">WWW，即Web</a></li>
+  <li><a href="#http版本发展">HTTP版本发展</a></li>
+</ul></li>
+  <li><a href="#http特点">HTTP特点</a><ul>
+  <li><a href="#http-10-非持久连接">HTTP 1.0 非持久连接</a></li>
+  <li><a href="#http-11-持久连接">HTTP 1.1 持久连接</a></li>
+  <li><a href="#使用cookie的状态管理">使用Cookie的状态管理</a></li>
+</ul></li>
+  <li><a href="#http报文">HTTP报文</a><ul>
+  <li><a href="#结构">结构</a></li>
+  <li><a href="#编码提升传输速率">编码提升传输速率</a></li>
+  <li><a href="#分割发送">分割发送</a></li>
+  <li><a href="#发送多种数据的多部分对象集合">发送多种数据的多部分对象集合</a></li>
+  <li><a href="#获取部分内容的范围请求">获取部分内容的范围请求</a></li>
+  <li><a href="#内容协商">内容协商</a></li>
+</ul></li>
+  <li><a href="#http状态码">HTTP状态码</a><ul>
+  <li><a href="#类别">类别</a></li>
+</ul></li>
+  <li><a href="#与http协作的web服务器">与HTTP协作的Web服务器</a><ul>
+  <li><a href="#用单台主机实现多个域名">用单台主机实现多个域名</a></li>
+  <li><a href="#通信数据转发程序">通信数据转发程序</a></li>
+  <li><a href="#缓存">缓存</a></li>
+</ul></li>
+  <li><a href="#http首部">HTTP首部</a><ul>
+  <li><a href="#请求报文组成">请求报文组成</a></li>
+  <li><a href="#响应报文组成">响应报文组成</a></li>
+  <li><a href="#http11通用首部字段">HTTP1.1通用首部字段</a></li>
+  <li><a href="#请求首部字段">请求首部字段</a></li>
+  <li><a href="#响应首部字段">响应首部字段</a></li>
+  <li><a href="#实体首部字段">实体首部字段</a></li>
+  <li><a href="#为cookie服务的首部字段">为Cookie服务的首部字段</a></li>
+</ul></li>
+  <li><a href="#https">HTTPS</a><ul>
+  <li><a href="#背景">背景</a></li>
+  <li><a href="#密钥加密算法">密钥加密算法</a></li>
+  <li><a href="#报文完整性鉴别">报文完整性鉴别</a></li>
+  <li><a href="#数字签名">数字签名</a></li>
+  <li><a href="#混合加密机制">混合加密机制</a></li>
+  <li><a href="#证书">证书</a></li>
+  <li><a href="#实体鉴别">实体鉴别</a></li>
+  <li><a href="#ssl-handshake过程">SSL Handshake过程</a></li>
+  <li><a href="#性能分析">性能分析</a></li>
+</ul></li>
+  <li><a href="#确认用户身份的认证">确认用户身份的认证</a><ul>
+  <li><a href="#http-11的认证方式">HTTP 1.1的认证方式</a></li>
+</ul></li>
+  <li><a href="#构建web内容的技术">构建Web内容的技术</a><ul>
+  <li><a href="#html">HTML</a></li>
+  <li><a href="#css">CSS</a></li>
+  <li><a href="#dom">DOM</a></li>
+  <li><a href="#javascript">JavaScript</a></li>
+  <li><a href="#web应用">Web应用</a></li>
+</ul></li>
+  <li><a href="#数据发布的格式和语言">数据发布的格式和语言</a><ul>
+  <li><a href="#xml">XML</a></li>
+  <li><a href="#json">JSON</a></li>
+</ul></li>
+</ul>
+  </aside>
+
+</div>
+
+</main>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>Learning Notes</span>
+    <a href="https://github.com/hangx969/learning-notes">GitHub</a>
+  </div>
+</footer>
+<script src="../../static/search.js"></script>
+</body>
+</html>

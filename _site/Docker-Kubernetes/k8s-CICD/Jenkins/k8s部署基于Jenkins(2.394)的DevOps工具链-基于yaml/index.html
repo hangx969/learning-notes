@@ -1,0 +1,1661 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>K8s部署基于Jenkins(2.394)的DevOps工具链-基于YAML - Learning Notes</title>
+<link rel="stylesheet" href="../../../../static/style.css">
+<link rel="stylesheet" href="../../../../static/pygments.css">
+</head>
+<body data-root="../../../../">
+<header class="site-header">
+  <div class="header-inner">
+    <a class="logo" href="../../../../index.html"><span class="logo-mark"></span>LEARNING NOTES</a>
+    <div class="search">
+      <input id="search-input" type="search" placeholder="搜索笔记…" autocomplete="off" aria-label="搜索笔记">
+      <div id="search-results" hidden></div>
+    </div>
+  </div>
+  <nav class="topic-nav" aria-label="主题导航">
+    <div class="topic-nav-inner">
+      <a href="../../../../AI/">AI</a>
+      <a href="../../../../Aliyun/">Aliyun</a>
+      <a href="../../../../Azure/">Azure</a>
+      <a href="../../../../C%2B%2B/">C++</a>
+      <a href="../../../../CloudComputing/">CloudComputing</a>
+      <a href="../../../../Database/">Database</a>
+      <a href="../../../../Docker-Kubernetes/" class="active">Docker-Kubernetes</a>
+      <a href="../../../../GPU-DeepLearning/">GPU-DeepLearning</a>
+      <a href="../../../../Git/">Git</a>
+      <a href="../../../../Go/">Go</a>
+      <a href="../../../../HPC/">HPC</a>
+      <a href="../../../../IaC/">IaC</a>
+      <a href="../../../../Linux-Shell/">Linux-Shell</a>
+      <a href="../../../../Middlewares/">Middlewares</a>
+      <a href="../../../../Networking/">Networking</a>
+      <a href="../../../../OS/">OS</a>
+      <a href="../../../../Python/">Python</a>
+      <a href="../../../../SoftwareTesting/">SoftwareTesting</a>
+    </div>
+  </nav>
+</header>
+<main class="main">
+
+<div class="article-layout">
+
+  <aside class="sidebar">
+    <details class="sidebar-details">
+      <summary>Docker-Kubernetes</summary>
+      <nav class="sidebar-nav">
+        <p class="sidebar-group">CKA-CKS</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/CKA-CKS/CKA-%E5%A4%87%E8%80%83/">CKA 备考</a></li>
+          <li><a href="../../../../Docker-Kubernetes/CKA-CKS/CKS-%E5%A4%87%E8%80%83/">CKS 备考</a></li>
+          <li><a href="../../../../Docker-Kubernetes/CKA-CKS/k8s-%E9%9D%A2%E8%AF%95%E9%A2%98%E6%B1%87%E6%80%BB/">K8s 面试题汇总</a></li>
+        </ul>
+        <p class="sidebar-group">container-platform</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/container-platform/%E9%83%A8%E7%BD%B2openshift%283.10%29/">部署 OpenShift (3.10)</a></li>
+          <li><a href="../../../../Docker-Kubernetes/container-platform/%E9%83%A8%E7%BD%B2%E8%BD%BB%E9%87%8F%E7%BA%A7%E7%9A%84K8S%E5%B9%B3%E5%8F%B0-K3S/">部署轻量级 K8S 平台 - K3S</a></li>
+        </ul>
+        <p class="sidebar-group">docker</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/docker/docker%E5%9F%BA%E7%A1%80/">Docker基础</a></li>
+          <li><a href="../../../../Docker-Kubernetes/docker/docker%E5%AE%89%E5%85%A8%E9%85%8D%E7%BD%AE-Capabilities%E4%B8%8E%E5%AE%B9%E5%99%A8%E5%8A%A0%E5%9B%BA/">Docker 安全配置详解：Capabilities 与容器加固</a></li>
+          <li><a href="../../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2UI%E5%B7%A5%E5%85%B7portainer-%E9%83%A8%E7%BD%B2redis-sentinel/">Docker部署Portainer与Redis-Sentinel</a></li>
+          <li><a href="../../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2gitlab/">Docker部署GitLab</a></li>
+          <li><a href="../../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2lnmp%E7%BD%91%E7%AB%99/">Docker部署LNMP网站</a></li>
+          <li><a href="../../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2loki/">Docker部署Loki日志系统</a></li>
+          <li><a href="../../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2nginx-tomcat-httpd-go-python%E6%9C%8D%E5%8A%A1/">Docker部署Nginx-Tomcat-Httpd-Go-Python服务</a></li>
+          <li><a href="../../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2prometheus-grafana-cAdvisior%E7%9B%91%E6%8E%A7/">Docker部署Prometheus-Grafana-cAdvisor监控</a></li>
+          <li><a href="../../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2%E4%BB%93%E5%BA%93%E5%B9%B3%E5%8F%B0homebox/">Docker部署Homebox仓库平台</a></li>
+          <li><a href="../../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1%E5%B7%A5%E5%85%B7gocron/">Docker部署GoCron定时任务工具</a></li>
+          <li><a href="../../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2%E8%B7%AF%E7%94%B1%E7%9B%91%E6%8E%A7%E5%B7%A5%E5%85%B7NextTrace/">Docker部署NextTrace路由监控工具</a></li>
+          <li><a href="../../../../Docker-Kubernetes/docker/docker%E9%85%8D%E7%BD%AENVIDIA%20GPU/">Docker配置NVIDIA GPU</a></li>
+          <li><a href="../../../../Docker-Kubernetes/docker/docker%E9%85%8D%E7%BD%AE%E4%BB%A3%E7%90%86/">Docker配置代理</a></li>
+        </ul>
+        <p class="sidebar-group">harbor</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/harbor/harbor-basics/">Harbor 基础</a></li>
+          <li><a href="../../../../Docker-Kubernetes/harbor/helm%E9%83%A8%E7%BD%B2harbor/">Helm 部署 Harbor</a></li>
+        </ul>
+        <p class="sidebar-group">helm-operator</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/helm-operator/helmv3-%E5%AE%89%E8%A3%85%E4%B8%8E%E4%BD%BF%E7%94%A8/">Helm v3 安装与使用</a></li>
+          <li><a href="../../../../Docker-Kubernetes/helm-operator/helm%E9%83%A8%E7%BD%B2config-syncer%28kubed%29/">Helm 部署 Config Syncer (Kubed)</a></li>
+          <li><a href="../../../../Docker-Kubernetes/helm-operator/helm%E9%83%A8%E7%BD%B2dragonfly/">Helm 部署 Dragonfly</a></li>
+          <li><a href="../../../../Docker-Kubernetes/helm-operator/helm%E9%83%A8%E7%BD%B2pact-broker/">Helm 部署 Pact Broker</a></li>
+          <li><a href="../../../../Docker-Kubernetes/helm-operator/helm%E9%83%A8%E7%BD%B2reloader/">Helm 部署 Reloader</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-CICD</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD%20Image%20Updater/">ArgoCD Image Updater</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD%E5%9F%BA%E7%A1%80/">ArgoCD基础</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD%E5%A4%9A%E9%9B%86%E7%BE%A4GitOps%E5%AE%9E%E6%88%98/">多集群 GitOps 实战：用 Argo CD 管理上百个 Kubernetes 集群</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD%E9%83%A8%E7%BD%B2Helm%E5%BA%94%E7%94%A8%E6%97%B6%E5%9F%9F%E5%90%8D%E8%A7%A3%E6%9E%90%E5%A4%B1%E8%B4%A5%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5%E4%B8%8E%E8%A7%A3%E5%86%B3/">ArgoCD部署Helm应用时域名解析失败问题排查与解决</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/ArgoCD/%E5%AD%A6%E4%B9%A0%E9%93%BE%E6%8E%A5/">ArgoCD学习链接</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/Claude-Code%E5%AE%9E%E7%8E%B0CICD%E8%87%AA%E5%8A%A8%E5%8C%96%E5%8F%91%E5%B8%83%E6%B5%81%E7%A8%8B/">Claude Code 实现 CI/CD 自动化发布流程详细指南</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/Gitlab/helm%E9%83%A8%E7%BD%B2gitlab/">Helm部署GitLab</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/Gitlab/k8s%E9%83%A8%E7%BD%B2Gitlab%2811.8.1%29-%E5%9F%BA%E4%BA%8Eyaml/">K8s部署GitLab(11.8.1)-基于YAML</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/Gitlab/%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%AE%89%E8%A3%85Gitlab%2817.9.8%29/">二进制安装GitLab(17.9.8)</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/Jenkins/Jenkins%E8%AF%AD%E6%B3%95-%E5%9F%BA%E4%BA%8Edocker%E9%83%A8%E7%BD%B2/">Jenkins语法-基于Docker部署</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/Jenkins/docker%E9%83%A8%E7%BD%B2jenkins/">Docker部署Jenkins</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/Jenkins/helm%E9%83%A8%E7%BD%B2jenkins/">Helm部署Jenkins</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/Jenkins/k8s-Devops%E5%B9%B3%E5%8F%B0%E8%90%BD%E5%9C%B0-%E5%9F%BA%E4%BA%8Ejenkins/">K8s DevOps平台落地-基于Jenkins</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/Jenkins/k8s%E9%83%A8%E7%BD%B2%E5%9F%BA%E4%BA%8EJenkins%282.394%29%E7%9A%84DevOps%E5%B7%A5%E5%85%B7%E9%93%BE-%E5%9F%BA%E4%BA%8Eyaml/" class="current">K8s部署基于Jenkins(2.394)的DevOps工具链-基于YAML</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/Jenkins/k8s%E9%83%A8%E7%BD%B2%E5%9F%BA%E4%BA%8EJenkins%282.426.3%29%E7%9A%84Devops%E5%B7%A5%E5%85%B7%E9%93%BE-%E5%9F%BA%E4%BA%8Eyaml/">K8s部署基于Jenkins(2.426.3)的DevOps工具链-基于YAML</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/Jenkins/%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%AE%89%E8%A3%85Jenkins%282.319%29/">二进制安装Jenkins(2.319)</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/Kustomize/k8s%E9%85%8D%E7%BD%AE%E5%AE%9A%E5%88%B6%E5%B7%A5%E5%85%B7-kustomize/">K8s配置定制工具-Kustomize</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/Tekton/k8s%E9%83%A8%E7%BD%B2%E5%8E%9F%E7%94%9F%E7%9A%84CICD%E5%B7%A5%E5%85%B7Tekton-%E5%9F%BA%E4%BA%8Eyaml/">K8s部署原生的CICD工具Tekton-基于YAML</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/Tekton/%E5%9F%BA%E4%BA%8ETekton%E7%9A%84%E4%BA%91%E5%8E%9F%E7%94%9F%E5%B9%B3%E5%8F%B0%E8%90%BD%E5%9C%B0/">基于Tekton的云原生平台落地</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/k8s%E5%8F%91%E5%B8%83%E7%AD%96%E7%95%A5-%E8%93%9D%E7%BB%BF%E9%83%A8%E7%BD%B2%E4%B8%8E%E9%87%91%E4%B8%9D%E9%9B%80%E5%8F%91%E5%B8%83/">K8s 发布策略：蓝绿部署与金丝雀发布实战</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/%E4%BD%BF%E7%94%A8github%20action%E9%83%A8%E7%BD%B2helmchart/">使用GitHub Action部署Helm Chart</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/%E5%8F%91%E5%B8%83go-python-java%E4%BB%A3%E7%A0%81%E5%88%B0K8S%E7%8E%AF%E5%A2%83/">发布Go/Python/Java代码到K8S环境</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-UI-tools</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/k8s-UI-tools/k8s-API%E6%A3%80%E6%9F%A5%E5%B7%A5%E5%85%B7kubent/">K8s API 检查工具 kubent</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-UI-tools/k8s-%E5%B0%8F%E5%B7%A5%E5%85%B7%E9%9B%86%E5%90%88/">K8s 小工具集合</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-UI-tools/k8s%E9%83%A8%E7%BD%B2-Dashboard-UI/">K8s 部署 Dashboard UI</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-UI-tools/k8s%E9%83%A8%E7%BD%B2%E5%8F%AF%E8%A7%86%E5%8C%96ui%E7%95%8C%E9%9D%A2kuboard/">K8s 部署 Kuboard</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-UI-tools/kubectl-UI%E5%B7%A5%E5%85%B7Lens/">kubectl UI 工具 Lens</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-UI-tools/kubectl-%E5%8F%AF%E8%A7%86%E5%8C%96%E6%8F%92%E4%BB%B6k9s-stern/">kubectl 可视化插件 k9s 和 stern</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-UI-tools/kuebctl-%E6%8F%92%E4%BB%B6krew-rolesum/">kubectl 插件 krew 和 rolesum</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-UI-tools/rancher%28v2.6.4%29%E7%AE%A1%E7%90%86k8s%E9%9B%86%E7%BE%A4/">Rancher (v2.6.4) 管理 K8s 集群</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-ai-gpu</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/k8s-ai-gpu/k8s%E9%85%8D%E7%BD%AENVIDIA%20GPU/">K8s 配置 NVIDIA GPU</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-backup-dr</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/k8s-backup-dr/k8s%E5%A4%87%E4%BB%BD%E4%B8%8E%E7%81%BE%E5%A4%87%E5%AE%9E%E6%88%98-%E4%B8%89%E5%B1%82%E5%AE%B9%E7%81%BE%E6%9E%B6%E6%9E%84/">K8s 备份与灾备实战：三层容灾架构</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-backup-dr/k8s%E9%9B%86%E7%BE%A4%E5%A4%87%E4%BB%BD%E6%81%A2%E5%A4%8D-Velero/">K8s集群备份恢复 - Velero</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-basic-resources</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/K8s%E5%9F%BA%E7%A1%80-pod%E8%B0%83%E5%BA%A6-%E4%BA%B2%E5%92%8C%E5%8A%9B/">K8s基础-Pod调度-亲和力</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/Python%E8%B0%83%E7%94%A8k8s-api%E5%AE%9E%E7%8E%B0%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/">Python调用K8s-API实现资源管理</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s-APIServer%E6%B7%B1%E5%BA%A6%E5%89%96%E6%9E%90-%E8%AF%B7%E6%B1%82%E9%93%BE%E8%B7%AF-%E8%AE%A4%E8%AF%81%E6%8E%88%E6%9D%83-%E7%94%9F%E4%BA%A7%E8%B0%83%E4%BC%98/">Kubernetes API Server 深度剖析：请求链路、认证授权与生产调优</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s-PodDisruptionBudget%E5%AE%9E%E6%88%98/">K8s PodDisruptionBudget 实战：优雅中断保护</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-Calico/">K8s基础-Calico</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-Finalizer%E4%B8%8E%E8%B5%84%E6%BA%90%E5%88%A0%E9%99%A4/">K8s基础-Finalizer与资源删除</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-Operator%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98-Kubebuilder/">从零开发 Kubernetes Operator：Kubebuilder 实战教程</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-Service/">K8s基础-Service</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-configMap-Secret/">K8s基础-configMap-Secret</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-daemonset/">K8s基础-DaemonSet</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-deployment/">K8s基础-Deployment</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-ingress/">K8s基础-Ingress</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-job-cronjob/">K8s基础-Job-CronJob</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-kubeadm/">K8s基础-kubeadm</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-namespace-%E8%B5%84%E6%BA%90%E5%88%86%E9%85%8D/">K8s基础-namespace-资源分配</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-pod/">K8s基础-Pod</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-pod%E8%B0%83%E5%BA%A6-%E6%A0%87%E7%AD%BE%E4%B8%8E%E9%80%89%E6%8B%A9%E5%99%A8%E5%AE%9E%E6%88%98/">Kubernetes 标签与选择器避坑：5 条核心铁律与生产级实战案例</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-statefulset/">K8s基础-StatefulSet</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-storage/">K8s基础-Storage</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-yaml/">K8s基础-YAML</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E4%B8%B4%E6%97%B6%E5%AE%B9%E5%99%A8ephemeral/">K8s基础-临时容器Ephemeral</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E5%AE%B9%E5%99%A8%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-Sidecar-Init-Ambassador-Adapter/">K8s 容器设计模式：Sidecar / Init Container / Ambassador / Adapter</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E5%AE%B9%E5%99%A8%E8%BF%90%E8%A1%8C%E6%97%B6-containerd/">K8s基础-容器运行时-containerd</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E6%9E%B6%E6%9E%84-%E7%BB%84%E4%BB%B6-%E8%B5%84%E6%BA%90/">K8s基础-架构-组件-资源</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E8%87%AA%E5%AE%9A%E4%B9%89CRD%E8%B5%84%E6%BA%90/">K8s基础-自定义CRD资源</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E8%AE%A4%E8%AF%81-%E6%8E%88%E6%9D%83-%E5%87%86%E5%85%A5/">K8s基础-认证-授权-准入</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-db-middleware</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/k8s-db-middleware/Operator%E9%83%A8%E7%BD%B2Redis%E9%9B%86%E7%BE%A4/">基于Operator部署Redis集群</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-db-middleware/Operator%E9%83%A8%E7%BD%B2mysql%E9%9B%86%E7%BE%A4/">Operator部署MySQL NDB集群</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-db-middleware/helm%E9%83%A8%E7%BD%B2mysql/">Helm部署MySQL</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-db-middleware/helm%E9%83%A8%E7%BD%B2postgreSQL/">Helm部署PostgreSQL</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-db-middleware/helm%E9%83%A8%E7%BD%B2rabbitmq-ha/">Helm部署RabbitMQ高可用集群</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-db-middleware/helm%E9%83%A8%E7%BD%B2strimzi-kafka/">Helm部署Strimzi Kafka</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-db-middleware/k8s%E5%9F%BA%E4%BA%8Eyaml%E9%83%A8%E7%BD%B2MongoDB%E9%9B%86%E7%BE%A4/">K8s基于YAML部署MongoDB集群</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-db-middleware/k8s%E5%9F%BA%E4%BA%8Eyaml%E9%83%A8%E7%BD%B2httpd%E6%9C%8D%E5%8A%A1/">K8s基于YAML部署httpd服务</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-db-middleware/k8s%E5%9F%BA%E4%BA%8Eyaml%E9%83%A8%E7%BD%B2mysql%E4%B8%BB%E4%BB%8E%E9%AB%98%E5%8F%AF%E7%94%A8/">K8s基于YAML部署MySQL主从高可用</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-db-middleware/k8s%E5%9F%BA%E4%BA%8Eyaml%E9%83%A8%E7%BD%B2redis%E9%9B%86%E7%BE%A4/">K8s基于YAML部署Redis集群</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-db-middleware/k8s%E9%83%A8%E7%BD%B2springcloud%E7%94%B5%E5%95%86%E9%A1%B9%E7%9B%AE/">K8s部署SpringCloud电商项目</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-installation-management</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/2025%E6%9C%80%E6%96%B0-%E4%BC%81%E4%B8%9A%E7%BA%A7%E9%AB%98%E5%8F%AF%E7%94%A8%E9%9B%86%E7%BE%A4-%E5%9F%BA%E4%BA%8Erockylinux/">2025最新-企业级高可用集群-基于rockylinux</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/etcd%E9%AB%98%E5%8F%AF%E7%94%A8%E9%85%8D%E7%BD%AE%E4%BB%A5%E5%8F%8A%E6%A8%A1%E6%8B%9F%E9%9B%86%E7%BE%A4%E6%95%85%E9%9A%9C%E5%92%8C%E6%81%A2%E5%A4%8D/">etcd高可用配置以及模拟集群故障和恢复</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/k8s-Backstage-%E5%86%85%E9%83%A8%E5%BC%80%E5%8F%91%E8%80%85%E5%B9%B3%E5%8F%B0IDP%E5%AE%9E%E6%88%98/">K8s 平台工程实战：用 Backstage 打造一站式内部开发者平台</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/k8s-cgroup-v2%E6%B7%B1%E5%BA%A6%E8%A7%A3%E6%9E%90-%E8%BF%81%E7%A7%BB%E5%AE%9E%E6%88%98%E4%B8%8E%E9%81%BF%E5%9D%91%E6%8C%87%E5%8D%97/">K8s CGroup v2 深度解析：资源隔离原理、迁移实战与生产避坑指南</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/k8s%E4%B8%A4%E5%9C%B0%E4%B8%89%E4%B8%AD%E5%BF%83%E6%9E%B6%E6%9E%84/">k8s两地三中心架构</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/k8s%E5%A4%9A%E9%9B%86%E7%BE%A4kubeconfig%E7%AE%A1%E7%90%86/">k8s多集群kubeconfig管理</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/k8s%E6%95%85%E9%9A%9C%E6%8E%92%E6%9F%A5%E6%8C%87%E5%8D%97/">k8s故障排查指南</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/k8s%E7%94%9F%E4%BA%A7%E7%8E%AF%E5%A2%83%E4%BC%98%E5%8C%96%E4%B8%8E%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/">k8s生产环境优化与最佳实践</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/k8s%E9%83%A8%E7%BD%B2%E9%98%B2%E7%81%AB%E5%A2%99%E7%AB%AF%E5%8F%A3%E9%85%8D%E7%BD%AE/">K8s部署防火墙端口配置</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/latest-version/%E5%AE%89%E8%A3%85k8s-1.35-%E5%9F%BA%E4%BA%8Erockylinux10-%E6%9C%80%E6%96%B0%E6%AD%A5%E9%AA%A4/">在 Rocky Linux 10 上安装 Kubernetes 1.35</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%AE%89%E8%A3%85k8s%E9%AB%98%E5%8F%AF%E7%94%A8%E9%9B%86%E7%BE%A4/">二进制安装k8s高可用集群</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.20.6-%E9%AB%98%E5%8F%AF%E7%94%A8/">安装k8s-1.20.6-高可用</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.23/">安装k8s-1.23</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.26-1.27/">安装k8s-1.26-1.27</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.28/">安装k8s-1.28</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.30-%E5%9F%BA%E4%BA%8Erockylinux/">安装k8s-1.30-基于rockylinux</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.32-%E5%9F%BA%E4%BA%8Erockylinux/">安装k8s-1.32-基于rockylinux</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.33-%E5%9F%BA%E4%BA%8Erockylinux-%E6%9C%80%E6%96%B0%E6%AD%A5%E9%AA%A4/">安装k8s-1.33-基于rockylinux-最新步骤</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/%E5%8D%87%E7%BA%A7/k8s-1.37-%E5%8D%87%E7%BA%A7%E9%A1%BB%E7%9F%A5-breaking-changes/">Kubernetes v1.37 升级破坏性变更指南</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/%E5%8D%87%E7%BA%A7/k8s%E8%BF%81%E7%A7%BB%E5%AE%B9%E5%99%A8%E8%BF%90%E8%A1%8C%E6%97%B6-%E7%89%88%E6%9C%AC%E5%8D%87%E7%BA%A7/">k8s迁移容器运行时与版本升级</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-monitoring-logging</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/K8s%E5%85%A8%E9%9D%A2%E5%B7%A1%E6%A3%80%E8%84%9A%E6%9C%AC-%E7%94%9F%E6%88%90HTML%E5%81%A5%E5%BA%B7%E6%8A%A5%E5%91%8A/">K8s 全面巡检脚本：一键生成 HTML 健康报告</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/OpenTelemetry%E5%AE%9E%E6%88%98-%E7%BB%9F%E4%B8%80Traces-Metrics-Logs/">OpenTelemetry 实战：告别厂商锁定，统一 Traces/Metrics/Logs</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/Prometheus%E5%9F%BA%E7%A1%80/">Prometheus基础</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/Prometheus%E7%9B%91%E6%8E%A7k8s%E7%B3%BB%E7%BB%9F%E7%BB%84%E4%BB%B6/">Prometheus监控K8s系统组件</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/Prometheus%E7%9B%91%E6%8E%A7%E5%A4%96%E9%83%A8k8s%E9%9B%86%E7%BE%A4/">Prometheus监控外部K8s集群</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/Prometheus%E7%9B%91%E6%8E%A7%E9%9D%9E%E4%BA%91%E5%8E%9F%E7%94%9F%E5%BA%94%E7%94%A8-%E4%B8%BB%E6%9C%BA/">Prometheus监控非云原生应用-主机</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/helm%E9%83%A8%E7%BD%B2Loki-promtail-tempo-grafanaAgent%E5%85%A8%E5%AE%B6%E6%A1%B6/">Helm部署Loki+Promtail+Tempo+GrafanaAgent全家桶</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/helm%E9%83%A8%E7%BD%B2jaeger/">Helm部署Jaeger</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/helm%E9%83%A8%E7%BD%B2prometheus-stack%E5%85%A8%E5%AE%B6%E6%A1%B6/">Prometheus-Stack 全家桶：生产级部署与运维完全指南</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E6%97%A5%E5%BF%97%E7%AE%A1%E7%90%86-%E9%87%87%E9%9B%86%E6%96%B9%E6%A1%88%E4%B8%8E%E5%AE%A1%E8%AE%A1%E6%97%A5%E5%BF%97/">K8s 日志管理：基础机制、六种采集方案与审计日志实战</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E7%9B%91%E6%8E%A7EFK%2Blogstash%2Bkafka/">K8s监控EFK+logstash+kafka</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E7%9B%91%E6%8E%A7ES%287.2%29%2BKibana%287.2%29%2BFluentd%28v1.4.2%29/">K8s监控ES(7.2)+Kibana(7.2)+Fluentd(v1.4.2)</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E7%9B%91%E6%8E%A7Prometheus%28v2.2.1%29/">K8s监控Prometheus(v2.2.1)</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E7%9B%91%E6%8E%A7Prometheus%28v2.33.5%29%2BGrafana%28v8.4.5%29/">K8s监控Prometheus(v2.33.5)+Grafana(v8.4.5)</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E7%9B%91%E6%8E%A7alertmanager%28v0.14.0%29/">K8s监控Alertmanager(v0.14.0)</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E9%83%A8%E7%BD%B2elasticsearch%E9%9B%86%E7%BE%A4/">K8s部署Elasticsearch集群</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E9%83%A8%E7%BD%B2grafana%28v5.0.4%29/">K8s部署Grafana(v5.0.4)</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E9%83%A8%E7%BD%B2%E5%85%A8%E9%93%BE%E8%B7%AF%E8%BF%BD%E8%B8%AA-Skywalking/">K8s部署全链路追踪-Skywalking</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2Prometheus%28v2.32.1%29%E8%81%94%E9%82%A6%E9%9B%86%E7%BE%A4/">二进制部署Prometheus(v2.32.1)联邦集群</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2efk%2Blogstash%2Bkafka%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%B9%B3%E5%8F%B0/">二进制部署EFK+Logstash+Kafka日志收集平台</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2prometheus-grafana-nodeexporter/">二进制部署Prometheus-Grafana-NodeExporter</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/%E5%9F%BA%E4%BA%8Ehelm%2Boperator%E9%83%A8%E7%BD%B2ECK%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%B9%B3%E5%8F%B0/">基于Helm+Operator部署ECK日志收集平台</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-networking-service-mesh</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/k8s-networking-service-mesh/Istio-Sidecar-vs-Ambient/">Istio Sidecar vs Ambient 模式对比</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-networking-service-mesh/helm%E5%AE%89%E8%A3%85istio/">Helm安装Istio</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-networking-service-mesh/helm%E9%83%A8%E7%BD%B2external-dns/">Helm部署External-DNS</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-networking-service-mesh/helm%E9%83%A8%E7%BD%B2ingress-nginx/">Helm部署Ingress-Nginx</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-networking-service-mesh/helm%E9%83%A8%E7%BD%B2tomcat/">Helm 部署 Tomcat</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-networking-service-mesh/k8s-Gateway-API%E5%85%A5%E9%97%A8-Ingress%E4%B8%8B%E4%B8%80%E4%BB%A3%E6%96%B9%E6%A1%88/">Kubernetes Gateway API 入门：Ingress 的下一代方案</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-networking-service-mesh/k8s%E7%B2%BE%E7%BB%86%E5%8C%96%E6%B5%81%E9%87%8F%E7%AE%A1%E7%90%86-istio/">K8s精细化流量管理-Istio</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-networking-service-mesh/k8s%E9%83%A8%E7%BD%B2istio%281.13.1%29/">K8s部署Istio(1.13.1)</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-networking-service-mesh/k8s%E9%9B%86%E7%BE%A4%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/">K8s集群网络安全</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-networking-service-mesh/%E4%BC%81%E4%B8%9A%E9%A1%B9%E7%9B%AE%E6%8E%A5%E5%85%A5istio%E5%AE%9E%E6%88%98/">企业项目接入Istio实战</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-scaling</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/k8s-scaling/KEDA-vs-HPA-2026%E7%BB%88%E6%9E%81%E5%AF%B9%E6%AF%94-v1.36%E7%BC%A9%E9%9B%B6/">KEDA vs HPA 2026 终极对比：v1.36 原生缩零后该选谁？</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-scaling/helm%E9%83%A8%E7%BD%B2goldilocks/">Helm部署Goldilocks</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-scaling/helm%E9%83%A8%E7%BD%B2vpa/">Helm部署VPA</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-scaling/k8s-HPA-VPA/">K8s HPA与VPA</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-scaling/k8s-%E5%9F%BA%E4%BA%8EKEDA%E7%9A%84%E5%BC%B9%E6%80%A7%E8%83%BD%E5%8A%9B/">K8s基于KEDA的弹性能力</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-scaling/k8s%E6%88%90%E6%9C%AC%E4%BC%98%E5%8C%96%E6%96%B9%E6%A1%88-FinOps%E5%AE%9E%E6%88%98/">K8s 集群成本优化方案：砍掉 60% 云账单</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-security-auth</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2capsule/">Helm部署Capsule</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2certmanager/">Helm部署Cert-Manager</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2external-secrets/">Helm部署External-Secrets</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2kyverno%E5%92%8Cpolicy-reporter/">Helm部署Kyverno和Policy-Reporter</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2oauth2proxy/">Helm部署OAuth2-Proxy</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2sonarqube/">Helm部署SonarQube</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2trivy-operator/">Helm部署Trivy-Operator</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-security-auth/k8s-Admission-Webhook%E9%93%BE%E5%86%B2%E7%AA%81%E6%8E%92%E6%9F%A5-Istio-Kyverno-Gatekeeper/">当 Istio、Kyverno、Gatekeeper 三个 Webhook 同时存在，你的集群会发生什么？</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-security-auth/k8s%E5%AE%B9%E5%99%A8%E5%AE%89%E5%85%A8%E4%B8%8A%E4%B8%8B%E6%96%87-SecurityContext/">Kubernetes 容器安全上下文完全指南：从入门到生产避坑</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-springcloud</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/k8s-springcloud/SpringCloud%E9%A1%B9%E7%9B%AE%E8%BF%81%E7%A7%BB%E5%88%B0k8s%E5%AE%9E%E6%88%98/">SpringCloud 项目迁移到 K8s 实战</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-storage</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/k8s-storage/helm%E9%83%A8%E7%BD%B2nfs-subdir-external-provisioner/">Helm部署NFS Subdir External Provisioner</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-storage/k8s-ceph%E9%83%A8%E7%BD%B2%E4%B8%8E%E9%9B%86%E6%88%90/">K8s Ceph部署与集成</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-storage/k8s-%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8CubeFS/">K8s分布式存储CubeFS</a></li>
+        </ul>
+        <p class="sidebar-group">kubeblocks</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/kubeblocks/kubeblocks%E9%83%A8%E7%BD%B2WordPress/">KubeBlocks 部署 WordPress</a></li>
+          <li><a href="../../../../Docker-Kubernetes/kubeblocks/kubeblocks%E9%83%A8%E7%BD%B2%E9%AB%98%E5%8F%AF%E7%94%A8harbor%E9%9B%86%E7%BE%A4/">KubeBlocks 部署高可用 Harbor 集群</a></li>
+        </ul>
+        <p class="sidebar-group">其他</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/%E7%AE%80%E5%8E%86%E6%8C%87%E5%8D%97/">简历指南</a></li>
+        </ul>
+      </nav>
+    </details>
+  </aside>
+
+  <article class="article">
+    <nav class="breadcrumb">
+      <a href="../../../../index.html">首页</a><span>/</span>
+      <a href="../../../../Docker-Kubernetes/">Docker-Kubernetes</a><span>/</span><span>k8s-CICD</span>
+    </nav>
+    <h1 class="article-title">K8s部署基于Jenkins(2.394)的DevOps工具链-基于YAML</h1>
+    <p class="article-meta"><span>更新于 2026-04-16</span>
+      <a href="https://github.com/hangx969/learning-notes/blob/main/Docker-Kubernetes/k8s-CICD/Jenkins/k8s%E9%83%A8%E7%BD%B2%E5%9F%BA%E4%BA%8EJenkins%282.394%29%E7%9A%84DevOps%E5%B7%A5%E5%85%B7%E9%93%BE-%E5%9F%BA%E4%BA%8Eyaml.md">查看源文件</a>
+    </p>
+    <div class="article-body">
+<h1 id="devops">DevOps</h1>
+<h2 id="持续集成-ci">持续集成-CI</h2>
+<ul>
+<li>持续集成强调开发人员提交了新代码之后，立刻自动的进行构建、（单元）测试。根据测试结果，我们可以确定新代码和原有代码能否正确地集成在一起。持续集成过程中很重视自动化测试验证结果，对可能出现的一些问题进行预警，以保障最终合并的代码没有问题。</li>
+<li>常见的持续集成工具：Jenkins、Gitlab CI</li>
+</ul>
+<h2 id="持续交付">持续交付</h2>
+<ul>
+<li>持续交付在持续集成的基础上，将集成后的代码部署到更贴近真实运行环境的「类生产环境」（production-like environments）中。交付给质量团队或者用户，以供评审。如果评审通过，代码就进入生产阶段。</li>
+<li>如果所有的代码完成之后一起交付，会导致很多问题爆发出来，解决起来很麻烦，所以持续集成，也就是没更新一次代码，都向下交付一次，这样可以及时发现问题，及时解决，防止问题大量堆积。</li>
+</ul>
+<h2 id="持续部署">持续部署</h2>
+<ul>
+<li>
+<p>持续部署是指当交付的代码通过评审之后，自动部署到生产环境中。持续部署是持续交付的最高阶段。</p>
+</li>
+<li>
+<p>Puppet，SaltStack和Ansible是这个阶段使用的流行工具。</p>
+</li>
+</ul>
+<p><img alt="image-20240203174605239" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202402031746374.png" /></p>
+<h1 id="jenkins基础">Jenkins基础</h1>
+<h2 id="jenkins-pipeline介绍">jenkins pipeline介绍</h2>
+<p>Jenkins pipeline （流水线）是一套运行于jenkins上的工作流框架，将原本独立运行于单个或者多个节点的任务连接起来，实现单个任务难以完成的复杂流程编排与可视化。它把持续提交流水线（Continuous Delivery Pipeline）的任务集成到Jenkins中。<strong>pipeline 是jenkins2.X 最核心的特性，帮助jenkins实现从CI到CD与DevOps的转变。</strong></p>
+<ul>
+<li>Jenkins Pipeline是一组插件，让Jenkins可以实现持续交付管道的落地和实施。</li>
+<li>持续交付管道(CD Pipeline)是将软件从版本控制阶段到交付给用户或客户的完整过程的自动化表现。</li>
+<li>软件的每一次更改（提交到源代码管理系统）都要经过一个复杂的过程才能被发布。</li>
+</ul>
+<h2 id="jenkins语法">jenkins语法</h2>
+<ul>
+<li>pipeline支持两种语法：Declarative声明式、Scripted pipeline脚本式</li>
+<li>声明式pipeline语法，官网：<a href="https://www.jenkins.io/doc/book/pipeline/syntax/">Jenkins Pipeline语法文档</a></li>
+</ul>
+<h3 id="声明式语法">声明式语法</h3>
+<ul>
+<li>
+<p>包括以下核心流程：</p>
+</li>
+<li>
+<p>pipeline : 声明其内容为一个声明式的pipeline脚本</p>
+</li>
+<li>agent: 连接到jenkins controller的实例，可以是VM、container等<ul>
+<li>node：A machine which is part of the Jenkins environment and capable of executing <a href="https://www.jenkins.io/doc/book/glossary/#pipeline">Pipelines</a> or <a href="https://www.jenkins.io/doc/book/glossary/#job">jobs</a>. Both the <a href="https://www.jenkins.io/doc/book/glossary/#controller">Controller</a> and <a href="https://www.jenkins.io/doc/book/glossary/#agent">Agents</a> are considered to be Nodes. 即执行节点（job运行的slave或者master节点）</li>
+</ul>
+</li>
+<li>stages: 阶段集合，包裹所有的阶段（例如：打包，部署等各个阶段）</li>
+<li>stage: 阶段，被stages包裹，一个stages可以有多个stage</li>
+<li>steps: 步骤,为每个阶段的最小执行单元,被stage包裹</li>
+<li>post:  执行构建后的操作，根据构建结果来执行对应的操作</li>
+</ul>
+<p><sub>~</sub>groovy<br />
+  pipeline{ //作用域，应用于全局最外层，表明该脚本为声明式pipeline<br />
+      agent any //运行在任意的可用节点上<br />
+      stages{<br />
+          stage("This is first stage"){<br />
+              steps("This is first step"){<br />
+                  echo "I am xianchao"<br />
+              }<br />
+          }<br />
+      }<br />
+      post{<br />
+          always{<br />
+              echo "The process is ending"<br />
+          }<br />
+      }<br />
+  }<br />
+  ~~~</p>
+<h3 id="environment">environment</h3>
+<ul>
+<li>environment指令指定一系列键值对，这些键值对将被定义为所有step或stage-specific step的环境变量，具体取决于environment指令在Pipeline中的位置。</li>
+<li>该指令支持一种特殊的方法credentials()，可以通过其在Jenkins环境中的标识符来访问预定义的凭据。</li>
+<li>对于类型为“Secret Text”的凭据，该 credentials()方法将确保指定的环境变量包含Secret Text内容；对于“标准用户名和密码”类型的凭证，指定的环境变量将被设置为username:password并且将自动定义两个附加的环境变量：<code>MYVARNAME_USR</code>和<code>MYVARNAME_PSW</code>。</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="n">pipeline</span><span class="w"> </span><span class="o">{</span>
+<span class="w">    </span><span class="n">agent</span><span class="w"> </span><span class="n">any</span>
+<span class="w">    </span><span class="n">environment</span><span class="w"> </span><span class="o">{</span><span class="w">  </span>
+<span class="w">        </span><span class="n">CC</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;clang&#39;</span><span class="w"> </span>
+<span class="w">    </span><span class="o">}</span>
+<span class="w">    </span><span class="n">stages</span><span class="w"> </span><span class="o">{</span>
+<span class="w">        </span><span class="n">stage</span><span class="o">(</span><span class="s1">&#39;Example&#39;</span><span class="o">)</span><span class="w"> </span><span class="o">{</span>
+<span class="w">            </span><span class="n">steps</span><span class="w"> </span><span class="o">{</span>
+<span class="w">                </span><span class="n">sh</span><span class="w"> </span><span class="s1">&#39;printenv&#39;</span>
+<span class="w">            </span><span class="o">}</span>
+<span class="w">        </span><span class="o">}</span>
+<span class="w">    </span><span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div>
+
+<h3 id="options">options</h3>
+<ul>
+<li>
+<p>options指令允许在Pipeline本身内配置Pipeline专用选项。Pipeline本身提供了许多选项，例如buildDiscarder，但它们也可能由插件提供，例如 timestamps。</p>
+</li>
+<li>
+<p>可用指令：</p>
+</li>
+<li>
+<p>buildDiscarder： pipeline保持构建的最大个数。用于保存Pipeline最近几次运行的数据，例如：options { buildDiscarder(logRotator(numToKeepStr: '1')) }</p>
+</li>
+<li>disableConcurrentBuilds：不允许并行执行Pipeline,可用于防止同时访问共享资源等。例如：options { disableConcurrentBuilds() }</li>
+<li>skipDefaultCheckout：跳过默认设置的代码check out。例如：options { skipDefaultCheckout() }</li>
+<li>skipStagesAfterUnstable：一旦构建状态进入了“Unstable”状态，就跳过此stage。例如：options { skipStagesAfterUnstable() }</li>
+<li>timeout：设置Pipeline运行的超时时间，超过超时时间，job会自动被终止，例如：options { timeout(time: 1, unit: 'HOURS') }</li>
+<li>retry：失败后，重试整个Pipeline的次数。例如：options { retry(3) }</li>
+<li>timestamps： 预定义由Pipeline生成的所有控制台输出时间。例如：options { timestamps() }</li>
+</ul>
+<p><sub>~</sub>groovy<br />
+  pipeline {<br />
+      agent any<br />
+      options {<br />
+          timeout(time: 1, unit: 'HOURS') <br />
+      }<br />
+      stages {<br />
+          stage('Example') {<br />
+              steps {<br />
+                  echo 'Hello World'<br />
+              }<br />
+          }<br />
+      }<br />
+  }　<br />
+  ~~~</p>
+<h3 id="parameters">parameters</h3>
+<ul>
+<li>parameters指令提供用户在触发Pipeline时的参数列表。这些参数值通过该params对象可用于Pipeline stage中，作用域：被最外层pipeline所包裹，并且只能出现一次，参数可被全局使用</li>
+</ul>
+<p><sub>~</sub>groovy<br />
+  pipeline{<br />
+      agent any<br />
+      parameters {<br />
+          string(name: 'xianchao', defaultValue: 'my name is xianchao', description: 'My name is xiancaho')<br />
+          booleanParam(name: 'luckylucky421302', defaultValue: true, description: 'This is my wechat')<br />
+      }<br />
+      stages{<br />
+          stage("stage1"){<br />
+              steps{<br />
+                  echo "$xianchao"<br />
+                  echo "$luckylucky421302"<br />
+              }<br />
+          }<br />
+      }<br />
+  } //构建的时候选择build with paramaters，否则识别不了parameter<br />
+  ~~~</p>
+<h3 id="triggers">triggers</h3>
+<ul>
+<li>triggers指令定义了Pipeline自动化触发的方式。目前有三个可用的触发器：cron和pollSCM和upstream。</li>
+<li>被pipeline包裹，在符合条件下自动触发pipeline</li>
+</ul>
+<h3 id="tools">tools</h3>
+<ul>
+<li>通过tools可自动安装工具，并放置环境变量到PATH。如果agent none，这将被忽略。</li>
+<li>支持的tools：maven、jdk、gradle</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="n">pipeline</span><span class="w"> </span><span class="o">{</span>
+<span class="w">    </span><span class="n">agent</span><span class="w"> </span><span class="n">any</span>
+<span class="w">    </span><span class="n">tools</span><span class="w"> </span><span class="o">{</span>
+<span class="w">       </span><span class="c1">//工具名称必须在Jenkins 管理Jenkins → 全局工具配置中预配置。</span>
+<span class="w">        </span><span class="n">maven</span><span class="w"> </span><span class="s1">&#39;apache-maven-3.0.1&#39;</span>
+<span class="w">    </span><span class="o">}</span>
+<span class="w">    </span><span class="n">stages</span><span class="w"> </span><span class="o">{</span>
+<span class="w">        </span><span class="n">stage</span><span class="o">(</span><span class="s1">&#39;Example&#39;</span><span class="o">)</span><span class="w"> </span><span class="o">{</span>
+<span class="w">            </span><span class="n">steps</span><span class="w"> </span><span class="o">{</span>
+<span class="w">                </span><span class="n">sh</span><span class="w"> </span><span class="s1">&#39;mvn --version&#39;</span>
+<span class="w">            </span><span class="o">}</span>
+<span class="w">        </span><span class="o">}</span>
+<span class="w">    </span><span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div>
+
+<h3 id="input">input</h3>
+<ul>
+<li>stage 的 input 指令允许你使用 input step提示输入。</li>
+<li>在应用了 options 后，进入 stage 的 agent 或评估 when 条件前，stage 将暂停。如果 input 被批准, stage 将会继续。</li>
+<li>作为 input 提交的一部分的任何参数都将在环境中用于其他 stage</li>
+<li>参数</li>
+<li>message：必需的。 这将在用户提交 input 时呈现给用户。</li>
+<li>id：input 的可选标识符， 默认为 stage 名称。</li>
+<li>ok：<code>input</code>表单上的"ok" 按钮的可选文本。</li>
+<li>submitter：可选的以逗号分隔的用户列表或允许提交 input 的外部组名。默认允许任何用户。admin可以无视这个列表直接处理input</li>
+<li>submitterParameter：环境变量的可选名称。如果存在，用 submitter 名称设置。</li>
+<li>parameters：提示提交者提供的一个可选的参数列表。</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="n">pipeline</span><span class="w"> </span><span class="o">{</span>
+<span class="w">    </span><span class="n">agent</span><span class="w"> </span><span class="n">any</span>
+<span class="w">    </span><span class="n">stages</span><span class="w"> </span><span class="o">{</span>
+<span class="w">        </span><span class="n">stage</span><span class="o">(</span><span class="s1">&#39;Example&#39;</span><span class="o">)</span><span class="w"> </span><span class="o">{</span>
+<span class="w">            </span><span class="n">input</span><span class="w"> </span><span class="o">{</span>
+<span class="w">                </span><span class="n">message</span><span class="w"> </span><span class="s2">&quot;Should we continue?&quot;</span>
+<span class="w">                </span><span class="n">ok</span><span class="w"> </span><span class="s2">&quot;Yes, we should.&quot;</span>
+<span class="w">                </span><span class="n">submitter</span><span class="w"> </span><span class="s2">&quot;xianchao,lucky&quot;</span>
+<span class="w">                </span><span class="n">parameters</span><span class="w"> </span><span class="o">{</span>
+<span class="w">                    </span><span class="n">string</span><span class="o">(</span><span class="nl">name:</span><span class="w"> </span><span class="s1">&#39;PERSON&#39;</span><span class="o">,</span><span class="w"> </span><span class="nl">defaultValue:</span><span class="w"> </span><span class="s1">&#39;xianchao&#39;</span><span class="o">,</span><span class="w"> </span><span class="nl">description:</span><span class="w"> </span><span class="s1">&#39;Who should I say hello to?&#39;</span><span class="o">)</span>
+<span class="w">                </span><span class="o">}</span>
+<span class="w">            </span><span class="o">}</span>
+<span class="w">            </span><span class="n">steps</span><span class="w"> </span><span class="o">{</span>
+<span class="w">                </span><span class="n">echo</span><span class="w"> </span><span class="s2">&quot;Hello, ${PERSON}, nice to meet you.&quot;</span>
+<span class="w">            </span><span class="o">}</span>
+<span class="w">        </span><span class="o">}</span>
+<span class="w">    </span><span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div>
+
+<h3 id="when">when</h3>
+<h3 id="parallel">parallel</h3>
+<h3 id="脚本式语法">脚本式语法</h3>
+<ul>
+<li>Declarative pipeline对用户来说，语法更严格，有固定的组织结构，更容易生成代码段，使其成为用户更理想的选择。但是Scripted pipeline更加灵活，因为Groovy本身只能对结构和语法进行限制，对于更复杂的pipeline来说，用户可以根据自己的业务进行灵活的实现和扩展。</li>
+</ul>
+<h1 id="jenkinsk8sgitdockerhub构建devops平台">Jenkins+k8s+Git+DockerHub构建DevOps平台</h1>
+<h2 id="环境准备">环境准备</h2>
+<ul>
+<li>
+<p>K8S环境：</p>
+</li>
+<li>
+<p>VMware虚拟机，centos7.9</p>
+</li>
+<li>root密码为root</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>K8S集群角色</th>
+<th>IP</th>
+<th>主机名</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>控制节点</td>
+<td>192.168.40.180</td>
+<td>master1</td>
+</tr>
+<tr>
+<td>工作节点</td>
+<td>192.168.40.181</td>
+<td>node1</td>
+</tr>
+</tbody>
+</table>
+<h2 id="部署jenkins-yaml文件">部署jenkins--yaml文件</h2>
+<h3 id="安装nfs">安装nfs</h3>
+<div class="highlight"><pre><span></span><code><span class="c1">#两台节点上都安装nfs</span>
+yum<span class="w"> </span>install<span class="w"> </span>nfs-utils<span class="w"> </span>-y
+systemctl<span class="w"> </span>start<span class="w"> </span>nfs
+systemctl<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>nfs
+<span class="c1">#master1上创建共享目录</span>
+mkdir<span class="w"> </span>/data/v1<span class="w"> </span>-p
+mkdir<span class="w"> </span>/data/v2<span class="w"> </span>-p
+
+vim<span class="w"> </span>/etc/exports
+/data/v1<span class="w"> </span>*<span class="o">(</span>rw,no_root_squash<span class="o">)</span>
+/data/v2<span class="w"> </span>*<span class="o">(</span>rw,no_root_squash<span class="o">)</span>
+
+<span class="c1">#使配置文件生效</span>
+exportfs<span class="w"> </span>-arv
+</code></pre></div>
+
+<h3 id="安装jenkins">安装jenkins</h3>
+<ul>
+<li>创建ns</li>
+</ul>
+<p><sub>~</sub>sh<br />
+  kubectl create namespace jenkins-k8s<br />
+  ~~~</p>
+<ul>
+<li>创建pv</li>
+</ul>
+<p><sub>~</sub>yaml<br />
+  apiVersion: v1<br />
+  kind: PersistentVolume<br />
+  metadata:<br />
+    name: jenkins-k8s-pv<br />
+    namespace: jenkins-k8s<br />
+  spec:<br />
+    capacity:<br />
+      storage: 10Gi<br />
+    accessModes:<br />
+    - ReadWriteMany<br />
+    nfs:<br />
+      server: 192.168.40.180<br />
+      path: /data/v2<br />
+  ~~~</p>
+<ul>
+<li>创建pvc</li>
+</ul>
+<p><sub>~</sub>yaml<br />
+  kind: PersistentVolumeClaim<br />
+  apiVersion: v1<br />
+  metadata:<br />
+    name: jenkins-k8s-pvc<br />
+    namespace: jenkins-k8s<br />
+  spec:<br />
+    resources:<br />
+      requests:<br />
+        storage: 10Gi<br />
+    accessModes:<br />
+    - ReadWriteMany<br />
+  ~~~</p>
+<ul>
+<li>创建sa并做授权</li>
+</ul>
+<p><sub>~</sub>sh<br />
+  kubectl create sa jenkins-k8s-sa -n jenkins-k8s<br />
+  kubectl create clusterrolebinding jenkins-k8s-sa-cluster -n jenkins-k8s  --clusterrole=cluster-admin --serviceaccount=jenkins-k8s:jenkins-k8s-sa<br />
+  ~~~</p>
+<ul>
+<li>制作jenkins镜像</li>
+</ul>
+<p><sub>~</sub>sh<br />
+  #制作jenkins镜像<br />
+  docker pull jenkins/jenkins:2.394<br />
+  docker save -o jenkins2.394.tar.gz  jenkins/jenkins:2.394</p>
+<p>#制作jenkins-slave从节点的镜像<br />
+  mkdir -p ./jenkins-slave<br />
+  cd ./jenkins-slave<br />
+  ##写dockerfile##<br />
+  cat dockerfile<br />
+  FROM jenkins/jnlp-slave:4.13.3-1-jdk11<br />
+  USER root<br />
+  ##安装Docker<br />
+  RUN apt-get update &amp;&amp; apt-get install -y \<br />
+      docker.io<br />
+  ##将当前用户加入docker用户组<br />
+  RUN usermod -aG docker jenkins<br />
+  RUN curl -LO https://dl.k8s.io/release/stable.txt<br />
+  RUN curl -LO https://dl.k8s.io/release/$(cat stable.txt)/bin/linux/amd64/kubectl<br />
+  RUN chmod +x kubectl<br />
+  RUN mv kubectl /usr/local/bin/<br />
+  ENV DOCKER_HOST unix:///var/run/docker.sock</p>
+<p>##打包镜像<br />
+  docker build -t=jenkins-slave-4-13:v1 .<br />
+  docker save -o jenkins-slave-4-13.tar.gz  jenkins-slave-4-13:v1<br />
+  #拷贝到所有节点上<br />
+  ~~~</p>
+<ul>
+<li>安装jenkins</li>
+</ul>
+<p><sub>~</sub>yaml<br />
+  kind: Deployment<br />
+  apiVersion: apps/v1<br />
+  metadata:<br />
+    name: jenkins<br />
+    namespace: jenkins-k8s<br />
+  spec:<br />
+    replicas: 1<br />
+    selector:<br />
+      matchLabels:<br />
+        app: jenkins<br />
+    template:<br />
+      metadata:<br />
+        labels:<br />
+          app: jenkins<br />
+      spec:<br />
+        serviceAccount: jenkins-k8s-sa<br />
+        containers:<br />
+        - name: jenkins<br />
+          image:  jenkins/jenkins:2.394<br />
+          imagePullPolicy: IfNotPresent<br />
+          ports:<br />
+          - name: web <br />
+            containerPort: 8080<br />
+            protocol: TCP<br />
+          - name: agent<br />
+            containerPort: 50000<br />
+            protocol: TCP<br />
+          resources:<br />
+            limits:<br />
+              cpu: 1000m<br />
+              memory: 1Gi<br />
+            requests:<br />
+              cpu: 500m<br />
+              memory: 512Mi<br />
+          livenessProbe:<br />
+            httpGet:<br />
+              path: /login<br />
+              port: 8080<br />
+            initialDelaySeconds: 60<br />
+            timeoutSeconds: 5<br />
+            failureThreshold: 12<br />
+          readinessProbe:<br />
+            httpGet:<br />
+              path: /login<br />
+              port: 8080<br />
+            initialDelaySeconds: 60<br />
+            timeoutSeconds: 5<br />
+            failureThreshold: 12<br />
+          volumeMounts:<br />
+          - name: jenkins-volume<br />
+            subPath: jenkins-home #这个subPath指的是宿主机目录里面创建一个子目录挂载<br />
+            mountPath: /var/jenkins_home<br />
+        volumes:<br />
+        - name: jenkins-volume<br />
+          persistentVolumeClaim:<br />
+            claimName: jenkins-k8s-pvc<br />
+  ~~~</p>
+<p><sub>~</sub>sh<br />
+  #报错<br />
+  k logs jenkins-c5c56899f-h2r4c -n jenkins-k8s<br />
+  #Can not write to /var/jenkins_home/copy_reference_file.log. Wrong volume permissions?<br />
+  #touch: cannot touch '/var/jenkins_home/copy_reference_file.log': Permission denied<br />
+  #解决<br />
+  #更改jenkins数据目录的属主。将 /data/v2 目录及其下所有文件和子目录的所有权更改为用户 ID 和组 ID 都为 1000 的用户。<br />
+  #pod挂载nfs的目录，如果没有权限，可以将属主属组改成1000.1000即可<br />
+  chown -R 1000.1000 /data/v2<br />
+  ~~~</p>
+<h3 id="暴露服务">暴露服务</h3>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Service</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">jenkins-service</span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">jenkins-k8s</span>
+<span class="w">  </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">jenkins</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">selector</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">jenkins</span>
+<span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">NodePort</span>
+<span class="w">  </span><span class="nt">ports</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">web</span>
+<span class="w">    </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8080</span>
+<span class="w">    </span><span class="nt">targetPort</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">web</span>
+<span class="w">    </span><span class="nt">nodePort</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30002</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">agent</span>
+<span class="w">    </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">50000</span>
+<span class="w">    </span><span class="nt">targetPort</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">agent</span>
+</code></pre></div>
+
+<h3 id="配置jenkins">配置jenkins</h3>
+<div class="highlight"><pre><span></span><code><span class="c1">#浏览器访问192.168.40.180:30002，进到jenkins管理界面</span>
+<span class="c1">#访问物理机的数据目录获取密码。密码文件在pod内的路径为/var/jenkins-home/secrets/initialAdminPassword</span>
+<span class="c1">#由于pod挂载的是master节点的/data/v2，所以去master的/data/v2/jenkins-home/secrets/initialAdminPassword</span>
+cat<span class="w"> </span>/data/v2/jenkins-home/secrets/initialAdminPassword
+<span class="c1">#b747213415c545548308434f7b30bee7</span>
+<span class="c1">#等他自动安装插件完，设置管理员</span>
+<span class="c1">#用户名：admin</span>
+<span class="c1">#密码：admin</span>
+</code></pre></div>
+
+<ul>
+<li>
+<p>manage jenkins - 插件管理 - available plugins - 搜索kubernetes、blueocean - 均选择download node and install after restart</p>
+</li>
+<li>
+<p>安装完kubernetes、blueocean之后，浏览器手动重启jenkins：</p>
+</li>
+</ul>
+<p><sub>~</sub>sh<br />
+  192.168.40.180:30002/restart<br />
+  ~~~</p>
+<ul>
+<li>弹出登录界面说明插件安装没问题，可以进行后续实验。</li>
+</ul>
+<h2 id="jenkins对接k8s自动生成从节点">jenkins对接k8s自动生成从节点</h2>
+<h3 id="连接k8s集群">连接k8s集群</h3>
+<ul>
+<li>访问：<a href="http://192.168.40.180:30002/configureClouds/">configureClouds</a></li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="c1">#kubernetes地址: https://192.168.40.180:6443</span>
+<span class="c1">#kubernetes名称空间：jenkins-k8s</span>
+<span class="c1">#jenkins地址写jenkins svc地址：http://jenkins-service.jenkins-k8s.svc.cluster.local:8080</span>
+</code></pre></div>
+
+<p><img alt="image-20240207210712930" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202402072107183.png" /></p>
+<h3 id="配置pod-template">配置pod template</h3>
+<ul>
+<li>
+<p>配置从节点的pod模板</p>
+</li>
+<li>
+<p>点击添加pod模板</p>
+</li>
+<li>docker镜像写之前导入到node上的slave的image名称，container template名称要写jnlp。</li>
+</ul>
+<p><img alt="image-20240207213411537" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202402072134653.png" /></p>
+<ul>
+<li>从节点的pod要调用docker去创建其他pod，所以把相关路径挂载进去。配置host path卷。</li>
+</ul>
+<p><img alt="image-20240207213709147" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202402072137227.png" /></p>
+<ul>
+<li>拷贝master1的.kube到node1上。因为从节点pod挂载的是主机路径，从节点pod调度到哪个node上，node都要有/root/.kube/目录</li>
+</ul>
+<p><sub>~</sub>sh<br />
+  scp -r /root/.kube/  node1:/root/<br />
+  ~~~</p>
+<ul>
+<li>apply - save保存</li>
+</ul>
+<h3 id="配置dockerhub凭据">配置dockerhub凭据</h3>
+<ul>
+<li>manage credentials：</li>
+</ul>
+<p><img alt="image-20240208194828707" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202402081948880.png" /></p>
+<ul>
+<li>
+<p>去dockerhub注册用户名密码</p>
+</li>
+<li>
+<p>填写credentials</p>
+</li>
+</ul>
+<p><img alt="image-20240208195456048" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202402081954137.png" /></p>
+<h2 id="自动化发布go项目">自动化发布Go项目</h2>
+<h3 id="流程">流程</h3>
+<ul>
+<li>
+<p>开发提交代码到代码仓库gitlab --&gt; jenkins检测到代码更新 --&gt; 调用k8s api在k8s中创建jenkins slave pod</p>
+</li>
+<li>
+<p>slave pod拉取代码 --&gt; maven把拉取的代码进行构建成war包/jar包 --&gt; 上传代码到Sonarqube，静态代码扫描 --&gt; 基于war包构建docker image --&gt; 把镜像上传到harbor/dockerhub --&gt; 基于镜像部署到开发/测试/生产环境</p>
+</li>
+</ul>
+<p><img alt="image-20240208200024244" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202402082000326.png" /></p>
+<h3 id="创建流水线">创建流水线</h3>
+<ul>
+<li>创建三个测试用namespace</li>
+</ul>
+<p><sub>~</sub>sh<br />
+  kubectl create ns devlopment<br />
+  kubectl create ns production<br />
+  kubectl create ns qatest<br />
+  ~~~</p>
+<ul>
+<li>
+<p>jenkins UI创建一个新任务</p>
+</li>
+<li>
+<p>任务名称：jenkins-variable-test-deploy</p>
+</li>
+<li>
+<p>创建类型为流水线</p>
+</li>
+<li>
+<p>pipeline script - 需要修改的地方见脚本注释</p>
+</li>
+</ul>
+<p><sub>~</sub>groovy<br />
+  node('test') { //下面的工作都是由jenkins slave pod完成的，所以在这里定义使用标签为test的slave pod模板。<br />
+      stage('Clone') {<br />
+          echo "1.Clone Stage"<br />
+          git url: "https://github.com/hangx969/jenkins-sample.git" <br />
+          //把韩老师的项目fork过来https://github.com/luckylucky421/jenkins-sample.git #并且注意fork过来之后，在k8s-dev/qa/prod.yaml文件中，把image的xianchao改成自己的dockerhub用户名xuhang969<br />
+          //slave自动拉代码并解压，后面通过dockerfile打包镜像<br />
+          script {<br />
+              build_tag = sh(returnStdout: true, script: 'git rev-parse --short HEAD').trim() //基于当前代码生成随机数，代码发生变化后，随机数变化会被检测到，从而触发后面的操作。<br />
+          }<br />
+      }<br />
+      stage('Test') {<br />
+        echo "2.Test Stage"</p>
+<div class="highlight"><pre><span></span><code>  }
+  stage(&#39;Build&#39;) {
+      echo &quot;3.Build Docker Image Stage&quot;
+      sh &quot;docker build -t xuhang969/jenkins-demo:${build_tag} .&quot;
+  }
+  stage(&#39;Push&#39;) {
+      echo &quot;4.Push Docker Image Stage&quot;
+      withCredentials([usernamePassword(credentialsId: &#39;dockerhub&#39;, passwordVariable: &#39;dockerHubPassword&#39;, usernameVariable: &#39;dockerHubUser&#39;)]) {
+          sh &quot;docker login -u ${dockerHubUser} -p ${dockerHubPassword}&quot;
+          sh &quot;docker push xuhang969/jenkins-demo:${build_tag}&quot;
+      } //检测jenkins之前配置的credentials的ID
+  }
+  stage(&#39;Deploy to dev&#39;) {
+      echo &quot;5. Deploy DEV&quot;
+    sh &quot;sed -i &#39;s/&lt;BUILD_TAG&gt;/${build_tag}/&#39; k8s-dev.yaml&quot;
+      sh &quot;sed -i &#39;s/&lt;BRANCH_NAME&gt;/${env.BRANCH_NAME}/&#39; k8s-dev.yaml&quot;
+</code></pre></div>
+
+<p>//        sh "bash running-devlopment.sh"<br />
+          sh "kubectl apply -f k8s-dev.yaml  --validate=false"<br />
+    } <br />
+    stage('Promote to qa') {  <br />
+        def userInput = input( //定义函数选择是否发布到qa<br />
+              id: 'userInput',</p>
+<div class="highlight"><pre><span></span><code>          message: &#39;Promote to qa?&#39;,
+          parameters: [
+              [
+                  $class: &#39;ChoiceParameterDefinition&#39;,
+                  choices: &quot;YES\nNO&quot;,
+                  name: &#39;Env&#39;
+              ]
+          ]
+      )
+      echo &quot;This is a deploy step to ${userInput}&quot;
+      if (userInput == &quot;YES&quot;) {
+          sh &quot;sed -i &#39;s/&lt;BUILD_TAG&gt;/${build_tag}/&#39; k8s-qa.yaml&quot;
+          sh &quot;sed -i &#39;s/&lt;BRANCH_NAME&gt;/${env.BRANCH_NAME}/&#39; k8s-qa.yaml&quot;
+</code></pre></div>
+
+<p>//            sh "bash running-qa.sh"<br />
+              sh "kubectl apply -f k8s-qa.yaml --validate=false"<br />
+              sh "sleep 6"<br />
+              sh "kubectl get pods -n qatest"<br />
+          } else {<br />
+              //exit<br />
+          }<br />
+      }<br />
+    stage('Promote to pro') { <br />
+        def userInput = input(</p>
+<div class="highlight"><pre><span></span><code>          id: &#39;userInput&#39;,
+          message: &#39;Promote to pro?&#39;,
+          parameters: [
+              [
+                  $class: &#39;ChoiceParameterDefinition&#39;,
+                  choices: &quot;YES\nNO&quot;,
+                  name: &#39;Env&#39;
+              ]
+          ]
+      )
+      echo &quot;This is a deploy step to ${userInput}&quot;
+      if (userInput == &quot;YES&quot;) {
+          sh &quot;sed -i &#39;s/&lt;BUILD_TAG&gt;/${build_tag}/&#39; k8s-prod.yaml&quot;
+          sh &quot;sed -i &#39;s/&lt;BRANCH_NAME&gt;/${env.BRANCH_NAME}/&#39; k8s-prod.yaml&quot;
+</code></pre></div>
+
+<p>//            sh "bash running-production.sh"<br />
+              sh "cat k8s-prod.yaml"<br />
+              sh "kubectl apply -f k8s-prod.yaml --record --validate=false"<br />
+          }<br />
+      }<br />
+  }<br />
+  ~~~</p>
+<ul>
+<li>
+<p>应用-保存-立即构建</p>
+</li>
+<li>
+<p>查看console output</p>
+</li>
+</ul>
+<p><div class="callout callout-tip" markdown="1"><br />
+<p class="callout-title">提示</p></p>
+<p>上面这套方法，在开发、生产、测试环境里面用的镜像都是一样的。实际应用中，不同的环境的配置是不同的，比如要连接到的一些IP等。这种情况可以用configmap把不同环境的配置挂到deployment里面去用。</p>
+</div>
+<ul>
+<li>更改源代码之后，可以在blue ocean界面再点击重新部署来重新拉代码，部署新的pod。</li>
+<li>打开blue ocean - 重运行</li>
+</ul>
+<h3 id="troubleshooting">troubleshooting</h3>
+<ul>
+<li>有时候jenkins-slave pod自动创建的时候会报错：</li>
+</ul>
+<p><code>sh
+  Failed to create pod sandbox: rpc error: code = Unknown desc = [failed to set up sandbox container "3787dcff86eec2020a21f0040b5225263d0df90500edcebb4e1941ee36c36ba5" network for pod "calico-kube-controllers-57c6dcfb5b-9lf78": networkPlugin cni failed to set up pod "calico-kube-controllers-57c6dcfb5b-9lf78_kube-system" network: error getting ClusterInformation: connection is unauthorized: Unauthorized, failed to clean up sandbox container "3787dcff86eec2020a21f0040b5225263d0df90500edcebb4e1941ee36c36ba5" network for pod "calico-kube-controllers-57c6dcfb5b-9lf78": networkPlugin cni failed to teardown pod "calico-kube-controllers-57c6dcfb5b-9lf78_kube-system" network: error getting ClusterInformation: connection is unauthorized: Unauthorized]</code></p>
+<ul>
+<li>解决：</li>
+</ul>
+<p>参考文档：<a href="https://stackoverflow.com/questions/61672804/after-uninstalling-calico-new-pods-are-stuck-in-container-creating-state">StackOverflow - After uninstalling calico, new pods are stuck in container creating state</a></p>
+<ul>
+<li>
+<p>删掉calico</p>
+<p><sub>~</sub>sh<br />
+kubectl delete -f calico.yaml <br />
+~~~</p>
+</li>
+<li>
+<p>删掉calico的配置文件</p>
+<p><code>sh
+cd /etc/cni/net.d/
+rm -f ./10-calico.conflist ./calico-kubeconfig</code></p>
+</li>
+<li>
+<p>重启工作节点</p>
+</li>
+<li>
+<p>重新部署calico</p>
+</li>
+</ul>
+<h2 id="按照指定版本回滚">按照指定版本回滚</h2>
+<ul>
+<li>
+<p>更新版本之后，k8s里的deployment中会存在两个版本的replicaset，可以通过kubectl rollout来回滚</p>
+</li>
+<li>
+<p>新建一个任务 --&gt; 任务名称：jenkins-variable-test-deploy-rollout --&gt; 流水线 --&gt; 在Pipeline script处：</p>
+</li>
+</ul>
+<p><sub>~</sub>groovy<br />
+  node('test') {<br />
+    stage('git clone') {<br />
+      git url: "https://github.com/luckylucky421/jenkins-rollout"<br />
+      sh "ls -al"<br />
+      sh "pwd"<br />
+  }<br />
+    stage('select env') {<br />
+      def envInput = input(<br />
+        id: 'envInput',<br />
+        message: 'Choose a deploy environment',<br />
+        parameters: [<br />
+           [<br />
+               $class: 'ChoiceParameterDefinition',<br />
+               choices: "devlopment\nqatest\nproduction",<br />
+               name: 'Env'<br />
+           ]<br />
+       ]<br />
+  )<br />
+  echo "This is a deploy step to ${envInput}"  //用户选择了env之后填写到脚本里<br />
+  sh "sed -i 's/<namespace>/${envInput}/' getVersion.sh"<br />
+  sh "sed -i 's/<namespace>/${envInput}/' rollout.sh"<br />
+  sh "bash getVersion.sh"<br />
+  // env.WORKSPACE = pwd()<br />
+  // def version = readFile "${env.WORKSPACE}/version.csv"<br />
+  // println version<br />
+  }<br />
+    stage('select version') {<br />
+       env.WORKSPACE = pwd()<br />
+    def version = readFile "${env.WORKSPACE}/version.csv"<br />
+    println version<br />
+        def userInput = input(id: 'userInput',<br />
+                                          message: '选择回滚版本',<br />
+                                          parameters: [<br />
+              [<br />
+                   $class: 'ChoiceParameterDefinition',<br />
+                   choices: "$version\n",<br />
+                   name: 'Version'<br />
+         ]<br />
+        ]<br />
+  )<br />
+         sh "sed -i 's/<version>/${userInput}/' rollout.sh"<br />
+  } //用户选了版本之后填写到脚本里<br />
+    stage('rollout deploy') {<br />
+        sh "bash rollout.sh"<br />
+  }<br />
+  }<br />
+  ~~~</p>
+<ul>
+<li>getVersion.sh</li>
+</ul>
+<p><sub>~</sub>sh<br />
+  kubectl rollout history deploy/jenkins-demo -n <namespace> | grep -v "deployment" | grep -v "REVISION" | awk '{print $1}' &gt; version.csv<br />
+  #查询deployment的历史版本并输出到version.csv文件<br />
+  #需要替换掉namespace<br />
+  ~~~</p>
+<ul>
+<li>rollout.sh</li>
+</ul>
+<p><sub>~</sub>sh<br />
+  kubectl rollout undo deployment jenkins-demo  --to-revision=<version> -n <namespace><br />
+  #回滚到指定版本，需要替换掉namespace和version<br />
+  ~~~</p>
+<h1 id="jenkinsk8sharbor实现devops">jenkins+k8s+harbor实现DevOps</h1>
+<h2 id="启动harbor">启动harbor</h2>
+<div class="highlight"><pre><span></span><code><span class="c1">#在安装了harbor的机器上启动</span>
+sudo<span class="w"> </span>su
+<span class="nb">cd</span><span class="w"> </span>/data/install/harbor
+docker-compose<span class="w"> </span>start
+<span class="c1">#https://20.205.104.235</span>
+<span class="c1">#用户名密码：admin/Harbor12345</span>
+</code></pre></div>
+
+<h2 id="配置jenkins-credentials">配置jenkins credentials</h2>
+<ul>
+<li>manage credentials --&gt; 全局凭据</li>
+<li>用户名：admin</li>
+<li>密码：Harbor12345</li>
+<li>ID：dockerharbor</li>
+</ul>
+<h2 id="配置jenkins-pipeline">配置jenkins pipeline</h2>
+<ul>
+<li>
+<p>在harbor中创建新项目：jenkins-demo</p>
+</li>
+<li>
+<p>github项目中：https://github.com/hangx969/jenkins-sample.git，把k8s-dev/qatest/prod-harbor.yaml中的image改成harbor的IP：20.205.104.235</p>
+</li>
+<li>
+<p>jenkins中创建新任务jenkins-harbor --&gt; 流水线</p>
+</li>
+</ul>
+<p><sub>~</sub>groovy<br />
+  node('test') {<br />
+      stage('Clone') {<br />
+          echo "1.Clone Stage"<br />
+          git url: "https://github.com/hangx969/jenkins-sample.git"<br />
+          script {<br />
+              build_tag = sh(returnStdout: true, script: 'git rev-parse --short HEAD').trim()<br />
+          }<br />
+      }<br />
+      stage('Test') {<br />
+        echo "2.Test Stage"</p>
+<div class="highlight"><pre><span></span><code>  }
+  stage(&#39;Build&#39;) {
+      echo &quot;3.Build Docker Image Stage&quot;
+      sh &quot;docker build -t 20.205.104.235/jenkins-demo/jenkins-demo:${build_tag} .&quot;
+  }
+  stage(&#39;Push&#39;) {
+      echo &quot;4.Push Docker Image Stage&quot;
+      withCredentials([usernamePassword(credentialsId: &#39;dockerharbor&#39;, passwordVariable: &#39;dockerHubPassword&#39;, usernameVariable: &#39;dockerHubUser&#39;)]) {
+          sh &quot;docker login 20.205.104.235 -u ${dockerHubUser} -p ${dockerHubPassword}&quot;
+          sh &quot;docker push 20.205.104.235/jenkins-demo/jenkins-demo:${build_tag}&quot;
+      }
+  }
+  stage(&#39;Deploy to dev&#39;) {
+      echo &quot;5. Deploy DEV&quot;
+    sh &quot;sed -i &#39;s/&lt;BUILD_TAG&gt;/${build_tag}/&#39; k8s-dev-harbor.yaml&quot;
+      sh &quot;sed -i &#39;s/&lt;BRANCH_NAME&gt;/${env.BRANCH_NAME}/&#39; k8s-dev-harbor.yaml&quot;
+</code></pre></div>
+
+<p>//        sh "bash running-devlopment.sh"<br />
+          sh "kubectl apply -f k8s-dev-harbor.yaml  --validate=false"<br />
+    } <br />
+    stage('Promote to qa') {  <br />
+        def userInput = input(<br />
+              id: 'userInput',</p>
+<div class="highlight"><pre><span></span><code>          message: &#39;Promote to qa?&#39;,
+          parameters: [
+              [
+                  $class: &#39;ChoiceParameterDefinition&#39;,
+                  choices: &quot;YES\nNO&quot;,
+                  name: &#39;Env&#39;
+              ]
+          ]
+      )
+      echo &quot;This is a deploy step to ${userInput}&quot;
+      if (userInput == &quot;YES&quot;) {
+          sh &quot;sed -i &#39;s/&lt;BUILD_TAG&gt;/${build_tag}/&#39; k8s-qa-harbor.yaml&quot;
+          sh &quot;sed -i &#39;s/&lt;BRANCH_NAME&gt;/${env.BRANCH_NAME}/&#39; k8s-qa-harbor.yaml&quot;
+</code></pre></div>
+
+<p>//            sh "bash running-qa.sh"<br />
+              sh "kubectl apply -f k8s-qa-harbor.yaml --validate=false"<br />
+              sh "sleep 6"<br />
+              sh "kubectl get pods -n qatest"<br />
+          } else {<br />
+              //exit<br />
+          }<br />
+      }<br />
+    stage('Promote to pro') { <br />
+        def userInput = input(</p>
+<div class="highlight"><pre><span></span><code>          id: &#39;userInput&#39;,
+          message: &#39;Promote to pro?&#39;,
+          parameters: [
+              [
+                  $class: &#39;ChoiceParameterDefinition&#39;,
+                  choices: &quot;YES\nNO&quot;,
+                  name: &#39;Env&#39;
+              ]
+          ]
+      )
+      echo &quot;This is a deploy step to ${userInput}&quot;
+      if (userInput == &quot;YES&quot;) {
+          sh &quot;sed -i &#39;s/&lt;BUILD_TAG&gt;/${build_tag}/&#39; k8s-prod-harbor.yaml&quot;
+          sh &quot;sed -i &#39;s/&lt;BRANCH_NAME&gt;/${env.BRANCH_NAME}/&#39; k8s-prod-harbor.yaml&quot;
+</code></pre></div>
+
+<p>//            sh "bash running-production.sh"<br />
+              sh "cat k8s-prod-harbor.yaml"<br />
+              sh "kubectl apply -f k8s-prod-harbor.yaml --record --validate=false"<br />
+          }<br />
+      }<br />
+  }<br />
+  ~~~</p>
+<ul>
+<li>测试了用azure VM部署的harbor，暴露公网IP给k8s使用，jenkins构建的时候会报错：</li>
+</ul>
+<p><sub>~</sub>sh<br />
+  + docker login 20.205.104.235 -u admin -p ****<br />
+  WARNING! Using --password via the CLI is insecure. Use --password-stdin.<br />
+  Error response from daemon: Get "https://20.205.104.235/v2/": tls: failed to verify certificate: x509: cannot validate certificate for 20.205.104.235 because it doesn't contain any IP SANs<br />
+  script returned exit code 1<br />
+  ~~~</p>
+<ul>
+<li>原因可能是证书不被信任，可以尝试这篇文章的办法，把harbor上面的证书拷贝到slave pod里面去：<a href="https://www.jianshu.com/p/1bc2d2b9d3fb">搭建好harbor服务器后，从另一台机登录时遇到的问题 - 简书 (jianshu.com)</a></li>
+<li>或者在内网中再搭建一个harbor，通过内网IP访问。</li>
+</ul>
+<h1 id="jenkins-k8s-nexus-gitlab-harbor-sonarqube-springcloud构建devops">jenkins-k8s-nexus-gitlab-harbor-sonarqube-springcloud构建devops</h1>
+<h2 id="jenkins接入sonarqube">jenkins接入Sonarqube</h2>
+<p><div class="callout callout-note" markdown="1"><br />
+<p class="callout-title">SonarQube简介</p></p>
+<p>SonarQube是一个开源的代码质量管理系统，用于自动化检查源代码的质量并提供报告。它支持多种编程语言，包括Java、C#、JavaScript、Python等，能够检测出代码中的错误、漏洞、代码异味等问题。SonarQube可以集成到CI/CD流程中，帮助开发团队在开发过程中持续改进代码质量。</p>
+</div>
+<ul>
+<li>docker启动sonarqube</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="c1">#在192.168.40.181上操作</span>
+docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>--name<span class="w"> </span>postgres10<span class="w"> </span>-p<span class="w"> </span><span class="m">5432</span>:5432<span class="w"> </span>-e<span class="w"> </span><span class="nv">POSTGRES_USER</span><span class="o">=</span>sonar<span class="w"> </span>-e<span class="w"> </span><span class="nv">POSTGRES_PASSWORD</span><span class="o">=</span><span class="m">123456</span><span class="w"> </span>postgres
+
+docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>--name<span class="w"> </span>sonarqube7.9<span class="w"> </span>-p<span class="w"> </span><span class="m">9000</span>:9000<span class="w"> </span>--link<span class="w"> </span>postgres10<span class="w"> </span>-e<span class="w"> </span><span class="nv">SONARQUBE_JDBC_URL</span><span class="o">=</span>jdbc:postgresql://postgres10:5432/sonar<span class="w"> </span>-e<span class="w"> </span><span class="nv">SONARQUBE_JDBC_USERNAME</span><span class="o">=</span>sonar<span class="w"> </span>-e<span class="w"> </span><span class="nv">SONARQUBE_JDBC_PASSWORD</span><span class="o">=</span><span class="m">123456</span><span class="w"> </span>-v<span class="w"> </span>sonarqube_conf:/opt/sonarqube/conf<span class="w"> </span>-v<span class="w"> </span>sonarqube_extensions:/opt/sonarqube/extensions<span class="w"> </span>-v<span class="w"> </span>sonarqube_logs:/opt/sonarqube/logs<span class="w"> </span>-v<span class="w"> </span>sonarqube_data:/opt/sonarqube/data<span class="w"> </span>sonarqube
+
+<span class="c1">#启动sonarqube容器后会马上exit</span>
+docker<span class="w"> </span>logs<span class="w"> </span>containerID
+<span class="c1">#有如下报错：</span>
+<span class="c1">#bootstrap check failure [1] of [1]: max virtual memory areas vm.max_map_count [65530] is too low, increase to at least [262144]</span>
+<span class="c1">#解决方法</span>
+vim<span class="w"> </span>/etc/sysctl.conf<span class="w"> </span>
+<span class="c1">#添加一行：</span>
+vm.max_map_count<span class="o">=</span><span class="m">262144</span>
+<span class="c1">#刷新配置</span>
+sysctl<span class="w"> </span>-p
+<span class="c1">#docker rm删掉容器重新创建即可</span>
+</code></pre></div>
+
+<p><div class="callout callout-note" markdown="1"><br />
+<p class="callout-title">vm.max_map_count说明</p></p>
+<ul>
+<li><code>vm.max_map_count</code> 是一个内核参数，用于限制一个进程可以拥有的 VMA（Virtual Memory Areas）的数量。VMA 是用于描述进程虚拟内存空间的数据结构。如果进程创建大量的内存映射，但没有足够的 VMA，那么进程将无法成功映射内存，可能会导致错误。</li>
+<li>所以，<code>vm.max_map_count=262144</code> 这行配置的含义是，设置系统中每个进程可以拥有的最大 VMA 数量为 262144。这对于一些内存密集型的应用（如 Elasticsearch）可能是必要的，因为这些应用可能需要创建大量的内存映射。</li>
+<li><code>/etc/sysctl.conf</code> 文件是 Linux 系统中用于调整内核参数的配置文件。你可以在这个文件中添加或修改参数，然后通过 <code>sysctl -p</code> 命令使其生效，以调整系统的各种性能。</li>
+</ul>
+</div>
+<ul>
+<li>
+<p>jenkins安装sonarqube插件</p>
+</li>
+<li>
+<p>系统管理-插件管理-可选插件：<strong>Sonarqube Scanner</strong> 安装</p>
+</li>
+<li>
+<p>重启jenkins：<code>192.168.40.180:30002/restart</code></p>
+</li>
+<li>
+<p>创建sonarqube token</p>
+</li>
+<li>
+<p>登录sonarqube</p>
+<ul>
+<li>问题：docker run命令指定了用户名密码-e SONARQUBE_JDBC_USERNAME=sonar  -e SONARQUBE_JDBC_PASSWORD=123456，为何认证失败？</li>
+</ul>
+<p><img alt="1707654654221" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202402112031991.jpg" /></p>
+<ul>
+<li>登录：用默认的admin/admin可以登陆成功，修改密码为123456</li>
+</ul>
+</li>
+<li>
+<p>创建token：administration - security - users - tokens - generate</p>
+<ul>
+<li>e7afc8592f0c4ec6c371417a6416e3b6018d7437</li>
+</ul>
+</li>
+<li>
+<p>扫描代码</p>
+</li>
+<li>
+<p>课件中有示例代码<strong>microservic-test</strong></p>
+<p><sub>~</sub>sh</p>
+<h1 id="上传到master1节点">上传到master1节点</h1>
+<p>unzip microservic-test.zip<br />
+cd ./microservic-test<br />
+yum install -y maven<br />
+mvn sonar:sonar  -Dsonar.host.url=http://192.168.40.181:9000 -Dsonar.login=e7afc8592f0c4ec6c371417a6416e3b6018d7437<br />
+~~~</p>
+<p>注：由于版本变更，当前的示例代码扫描会出错。</p>
+</li>
+</ul>
+<h2 id="私服nexus配置">私服nexus配置</h2>
+<h3 id="安装harbor">安装harbor</h3>
+<ol>
+<li>为harbor创建自签发证书</li>
+</ol>
+<p><code>bash
+   #在node1上
+   mkdir /data/ssl -p
+   cd /data/ssl/
+   #生成一个3072位的key，也就是私钥
+   openssl genrsa -out ca.key 3072
+   #生成一个数字证书ca.pem，3650表示证书的有效时间是3年。后续根据ca.pem根证书来签发信任的客户端证书
+   openssl req -new -x509 -days 3650 -key ca.key -out ca.pem 
+   #生成域名的证书
+   #生成一个3072位的key，也就是私钥
+   openssl genrsa -out harbor.key  3072
+   #生成一个证书请求文件，一会签发证书时需要的
+   openssl req -new -key harbor.key -out harbor.csr
+   #签发证书：
+   openssl x509 -req -in harbor.csr -CA ca.pem -CAkey ca.key -CAcreateserial -out harbor.pem -days 3650</code></p>
+<ol>
+<li>
+<p>安装docker（harbor是基于docker的）</p>
+</li>
+<li>
+<p>安装harbor</p>
+</li>
+</ol>
+<p>```bash<br />
+   #创建安装目录<br />
+   mkdir /data/install -p<br />
+   cd /data/install/<br />
+   #安装harbor<br />
+   #/data/ssl目录下有如下文件：ca.key  ca.pem  ca.srl  harbor.csr  harbor.key  harbor.pem<br />
+   #把harbor的离线包harbor-offline-installer-v2.3.0-rc3.tgz上传到这个目录，离线包在课件里提供了<br />
+   #下载harbor离线包的地址：<br />
+   #https://github.com/goharbor/harbor<br />
+   #解压：<br />
+   tar zxvf harbor-offline-installer-v2.3.0-rc3.tgz<br />
+   cd harbor<br />
+   cp harbor.yml.tmpl harbor.yml </p>
+<p>vim harbor.yml<br />
+   #修改配置文件：<br />
+   hostname: node1 #修改hostname，跟上面签发的证书域名保持一致<br />
+   #协议用https<br />
+   certificate: /data/ssl/harbor.pem<br />
+   private_key: /data/ssl/harbor.key<br />
+   #邮件和ldap不需要配置，在harbor的web界面可以配置，其他配置采用默认即可。<br />
+   #注：harbor默认的账号密码：admin/Harbor12345<br />
+   ```</p>
+<ol>
+<li>安装docker-compose</li>
+</ol>
+<p>docker-compose项目是Docker官方的开源项目，负责实现对Docker容器集群的快速编排。Docker-Compose的工程配置文件默认为docker-compose.yml，Docker-Compose运行目录下的必要有一个docker-compose.yml。docker-compose可以管理多个docker实例。</p>
+<p>```bash<br />
+   #上传docker-compose-Linux-x86_64文件到harbor机器，这是harbor的依赖<br />
+   mv docker-compose-Linux-x86_64.64 /usr/bin/docker-compose<br />
+   chmod +x /usr/bin/docker-compose</p>
+<p>#安装harbor依赖的的离线镜像包docker-harbor-2-3-0.tar.gz上传到harbor机器，通过docker load -i解压<br />
+   docker load -i docker-harbor-2-3-0.tar.gz <br />
+   cd /data/install/harbor<br />
+   ./install.sh<br />
+   #出现✔ ----Harbor has been installed and started successfully.---- 表明安装成功。<br />
+   ```</p>
+<ol>
+<li>harbor启动和停止</li>
+</ol>
+<p><code>bash
+   #如何停掉harbor：
+   cd /data/install/harbor
+   docker-compose stop 
+   #如何启动harbor：
+   sudo su
+   cd /data/install/harbor
+   docker-compose start</code></p>
+<h3 id="jenkins注册harbor-credentials">jenkins注册harbor credentials</h3>
+<ul>
+<li>系统管理-凭据管理-添加全局凭据</li>
+<li>username：admin</li>
+<li>password：Harbor12345</li>
+<li>ID：dockerharbor</li>
+</ul>
+<h3 id="安装nexus">安装nexus</h3>
+<p><div class="callout callout-note" markdown="1"><br />
+<p class="callout-title">Nexus简介</p></p>
+<ul>
+<li>Nexus服务器是一个代码包管理的服务器，可以理解 Nexus 服务器是一个巨大的 Library 仓库。</li>
+<li>Nexus 可以支持管理的工具包括 Maven ， npm 等，对于 JAVA 开发来说，只要用到 Maven 管理就可以了。</li>
+<li>Nexus服务器作用：因为传统的中央仓库在国外，其地理位置比较远，下载速度比较缓慢。</li>
+<li>如果不架设一台自己的Nexus服务器，会产生大量的流量阻塞带宽，开发就会因为无法下载相关依赖包而进度停滞。</li>
+<li>因此在本地环境部署一台私有的Nexus服务器来缓存所有依赖包，并且将公司内部开发的私有包也部署上去，方便其他开发人员下载，是非常有必要的。因为 Nexus 有权限控制，因此外部人员是无法得到公司内部开发的项目包的。</li>
+</ul>
+</div>
+<div class="highlight"><pre><span></span><code>docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>-p<span class="w"> </span><span class="m">8081</span>:8081<span class="w"> </span>-p<span class="w"> </span><span class="m">8082</span>:8082<span class="w"> </span>-p<span class="w"> </span><span class="m">8083</span>:8083<span class="w"> </span>-v<span class="w"> </span>/etc/localtime:/etc/localtime<span class="w"> </span>--name<span class="w"> </span>nexus3<span class="w">   </span>sonatype/nexus3
+<span class="c1">#在docker log日志中，会看到一条消息： Started Sonatype Nexus OSS 3.20.1-01 这意味着Nexus Repository Manager可以使用了。现在转到浏览器并打开：http://192.168.0.181:8081</span>
+</code></pre></div>
+
+<ul>
+<li>在 pom.xml 文件中声明发布的宿主仓库和 release 版本发布的仓库。</li>
+</ul>
+<p><sub>~</sub>xml<br />
+  &lt;! -- 发布构件到Nexus -- &gt;<br />
+      <distributionManagement><br />
+          <repository><br />
+              <id>releases</id><br />
+              <name>nexus-releases</name><br />
+              <url>http://192.168.40.181:8081/repository/maven-releases/</url><br />
+          </repository><br />
+          <snapshotRepository><br />
+              <id>snapshots</id><br />
+              <name>nexus-snapshots</name><br />
+              <url>http://192.168.40.181:8081/repository/maven-snapshots/</url><br />
+          </snapshotRepository><br />
+      </distributionManagement><br />
+  ~~~</p>
+<ul>
+<li>由于用 Maven 分发构件到远程仓库需要认证，须要在~/.m2/settings.xml或者中加入验证信息</li>
+</ul>
+<p><sub>~</sub>xml<br />
+  <servers><br />
+     <server><br />
+             <id>public</id><br />
+             <username>admin</username><br />
+             <password>123456</password><br />
+         </server><br />
+     <server><br />
+             <id>releases</id><br />
+             <username>admin</username><br />
+             <password>123456</password><br />
+         </server><br />
+     <server><br />
+             <id>snapshots</id><br />
+             <username>admin</username><br />
+             <password>123456</password><br />
+         </server><br />
+   </servers> <br />
+  ~~~</p>
+<p><div class="callout callout-note" markdown="1"><br />
+<p class="callout-title">pom.xml与settings.xml说明</p></p>
+<ul>
+<li><code>pom.xml</code>（Project Object Model）是Maven项目必备的配置文件，它是整个项目的基本单元。<code>pom.xml</code>文件定义了项目的基本信息，如项目的依赖、构建设置、插件、目标等。</li>
+<li><code>settings.xml</code>文件是Maven的全局配置文件，它包含了如本地仓库的位置、镜像仓库设置、代理设置等信息。这个文件通常位于Maven安装的<code>conf</code>目录下，或者在用户的<code>.m2</code>目录下。</li>
+<li>settings.xml 中 server 元素下 id 的值必须与 POM 中 repository 或 snapshotRepository 下 id 的值完全一致</li>
+</ul>
+</div>
+<h2 id="安装gitlab">安装gitlab</h2>
+<ul>
+<li>安装</li>
+</ul>
+<p><sub>~</sub>sh<br />
+  #在192.168.40.182上安装<br />
+  docker run -d -p 443:443 -p 80:80 -p 222:22 --name gitlab --restart always -v /home/gitlab/config:/etc/gitlab -v /home/gitlab/logs:/var/log/gitlab -v /home/gitlab/data:/var/opt/gitlab gitlab/gitlab-ce<br />
+  ~~~</p>
+<ul>
+<li>改配置</li>
+</ul>
+<p><sub>~</sub>sh<br />
+  vim /home/gitlab/config/gitlab.rb<br />
+  #增加以下3行<br />
+  external_url 'http://192.168.40.182'<br />
+  gitlab_rails['gitlab_ssh_host'] = '192.168.40.182'<br />
+  gitlab_rails['gitlab_shell_ssh_port'] = 222<br />
+  #重启容器<br />
+  docker restart gitlab<br />
+  ~~~</p>
+<ul>
+<li>
+<p>登录</p>
+</li>
+<li>
+<p>浏览器访问192.168.40.182即可登录：</p>
+</li>
+<li>
+<p>第一次登录注册账号密码之后，报错如下：</p>
+<p>Your account is pending approval from your GitLab administrator and hence bl </p>
+</li>
+<li>
+<p>解决：</p>
+</li>
+</ul>
+<p><code>sh
+  docker exec -it gitlab sh
+  gitlab-rails console #进入gitlab控制台
+  u=User.where(id:1).first
+  u.password='12345678'
+  u.password_confirmation='12345678' 
+  u.save!</code></p>
+<ul>
+<li>
+<p>再次登录192.168.40.135</p>
+<ul>
+<li>
+<p>用户名是root</p>
+</li>
+<li>
+<p>密码是12345678</p>
+</li>
+</ul>
+</li>
+<li>
+<p>jenkins安装git插件</p>
+</li>
+<li>
+<p>系统管理-插件管理-可选插件-搜索git安装即可</p>
+</li>
+<li>
+<p>jenkins安装gitlab凭据</p>
+</li>
+<li>系统管理-凭据管理-新建全局凭据</li>
+<li>用户名root，密码12345678，ID gitlab</li>
+</ul>
+<h3 id="配置gitlab">配置gitlab</h3>
+<ul>
+<li>
+<p>gitlab上新建项目</p>
+</li>
+<li>
+<p>New project - create blank project：</p>
+<p><img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202402120840309.png" alt="image-20240212084059114" style="zoom:50%;" /></p>
+</li>
+<li>
+<p>创建密钥对</p>
+</li>
+</ul>
+<p><sub>~</sub>sh<br />
+  ssh-keygen -t rsa<br />
+  cat ~/.ssh/id_rsa.pub #查看公钥<br />
+  ~~~</p>
+<ul>
+<li>gitlab - 右上角Preferences - ssh keys - 把公钥粘贴进去 - add</li>
+</ul>
+<h3 id="提交本地代码到gitlab">提交本地代码到gitlab</h3>
+<div class="highlight"><pre><span></span><code>yum<span class="w"> </span>install<span class="w"> </span>git<span class="w"> </span>-y
+<span class="c1">#上传项目microservic-test.zip</span>
+unzip<span class="w"> </span>microservic-test.zip
+<span class="nb">cd</span><span class="w"> </span>microservic-test
+<span class="c1">#建仓</span>
+git<span class="w"> </span>init
+<span class="c1">#把当前文件夹所有代码提交</span>
+git<span class="w"> </span>add<span class="w"> </span>*<span class="w"> </span>
+<span class="c1">#代码提交到缓冲区</span>
+git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;add microservic-test&quot;</span><span class="w"> </span>
+<span class="c1">#代码提交到远程仓库</span>
+git<span class="w"> </span>remote<span class="w"> </span>add<span class="w"> </span>origin<span class="w"> </span>http://192.168.40.135/root/microservic-test.git<span class="w">   </span>
+<span class="c1">#最后一步push推送过去，输入账号和密码，这里的用户名和密码就是gitlab上注册的用户了</span>
+git<span class="w"> </span>push<span class="w"> </span>-u<span class="w"> </span>origin<span class="w"> </span>master
+</code></pre></div>
+
+<h2 id="jenkins流水线配置">jenkins流水线配置</h2>
+<ul>
+<li>添加新的slave pod镜像：jenkins-jnlp-v2.tar.gz这个压缩包封装的镜像带有mvn命令</li>
+</ul>
+<p><sub>~</sub>sh<br />
+  docker load -i jenkins-jnlp-v2.tar.gz<br />
+  ~~~</p>
+<ul>
+<li>
+<p>在http://192.168.40.180:30002/configureClouds/，把Container Template镜像改成jenkins-jnlp-v2.tar.gz压缩包解压之后的镜像xianchao/jenkins-jnlp:v2</p>
+</li>
+<li>
+<p>修改gitlab上的项目中的k8s/portral.yaml文件，将image改成：192.168.40.181/microservice/jenkins-demo:v1（harbor server的地址）。同时harbor上面要创建microservice仓库。</p>
+</li>
+<li>
+<p>jenkins上面创建流水线</p>
+</li>
+<li>
+<p>name：<strong>mvn-gitlab-harbor-springcloud</strong></p>
+</li>
+<li>
+<p>script</p>
+<p><sub>~</sub>groovy<br />
+node('test') {<br />
+   stage('Clone') {<br />
+       echo "1.Clone Stage"<br />
+      git credentialsId: 'gitlab', url: 'http://192.168.40.182/root/microservic-test.git ' //gitlab地址，slave pod去拉源代码<br />
+       script {<br />
+           build_tag = sh(returnStdout: true, script: 'git rev-parse --shortHEAD').trim()<br />
+       }<br />
+    }</p>
+<p>stage('Test') {<br />
+     echo "2.Test Stage"<br />
+    }</p>
+<p>stage('mvn') {<br />
+     sh "mvn clean package -D maven.test.skip=true" //slave pod运行mvn构建java代码<br />
+    }</p>
+<p>stage('Build') {<br />
+       echo "3.Build Docker Image Stage"<br />
+       sh "cd /home/jenkins/agent/workspace/mvn-gitlab-harbor-springcloud/portal-service"<br />
+       sh "docker build --tag 192.168.40.181/microservice/jenkins-demo:v1 /home/jenkins/agent/workspace/mvn-gitlab-harbor-springcloud/portal-service/" //这里的workspace/项目名和流水线名字要一致。//写harbor地址 //slave pod把构建好的代码做成镜像push到harbor仓库<br />
+    }</p>
+<p>stage('Push') {<br />
+       echo "4.Push Docker Image Stage"<br />
+       withCredentials([usernamePassword(credentialsId: 'dockerharbor',passwordVariable: 'dockerHubPassword', usernameVariable: 'dockerHubUser')]) {<br />
+           sh "docker login 192.168.40.181 -u ${dockerHubUser} -p ${dockerHubPassword}" //harbor地址<br />
+           sh "docker push 192.168.40.181/microservice/jenkins-demo:v1" //harbor地址<br />
+       }<br />
+    }</p>
+<div class="highlight"><pre><span></span><code> stage(&#39;Promoteto pro&#39;) {    
+sh &quot;kubectl apply -f /home/jenkins/agent/workspace/mvn-gitlab-harbor-springcloud/k8s/portal.yaml&quot;
+  } //slave pod读取yaml文件，利用harbor的镜像部署pod
+</code></pre></div>
+
+<p>}<br />
+~~~</p>
+</li>
+<li>
+<p>k8s环境创建namespace：ms</p>
+</li>
+</ul>
+<p><sub>~</sub>sh<br />
+  kubectl create ns ms<br />
+  ~~~</p>
+<ul>
+<li>流水线立即构建</li>
+</ul>
+<blockquote>
+<p>[!warning] TLS证书验证失败<br />
+构建的时候到连接harbor这一步，docker login 192.168.40.181 -u -p 命令登录harbor会报错：”tls: failed to verify certificate: x509: cannot validate certificate for 192.168.40.181 because it doesn't contain any IP SANs”</p>
+<p>解决办法：Docker 客户端在尝试验证服务器的 SSL 证书时，没有找到任何 IP 主题备用名称（IP SANs）。这通常发生在使用自签名证书的情况下。解决这个问题的一种方法是在 Docker 客户端配置中禁用对该服务器的 TLS 验证。这可以通过在 Docker 客户端的 <code>daemon.json</code> 文件中添加 <code>insecure-registries</code> 来完成。</p>
+<p><sub>~</sub>sh<br />
+vim /etc/docker/daemon.json</p>
+<h1 id="添加">添加</h1>
+<p>“insecure-registries” : [“192.168.40.181”]<br />
+systemctl restart docker<br />
+~~~</p>
+</blockquote>
+<ul>
+<li>jenkins和gitlab、harbor比较吃资源，VMWare VM给3G内存容易OOM，20G磁盘容器用光。</li>
+</ul>
+<h1 id="jenkins插件离线安装">Jenkins插件离线安装</h1>
+<ol>
+<li>
+<p>Jenkins离线插件下载地址：<a href="http://mirrors.tuna.tsinghua.edu.cn/jenkins/plugins/">清华大学Jenkins插件镜像</a>，可以在Jenkins官网上搜索想要下载的插件，点击”Download”按钮下载.hpi文件。</p>
+</li>
+<li>
+<p>Jenkins离线插件安装方法：</p>
+</li>
+<li>方法一：在Jenkins管理页面点几“系统管理” -&gt; “插件管理” -&gt; “高级”。选择“上传插件”，并选择下载的.hpi文件。点击“上传”按钮，等待插件安装完成。</li>
+<li>方法二：将下载的.hpi文件放到Jenkins的安装目录下的“plugins”文件夹中。重启Jenkins，等待插件安装完成。</li>
+</ol>
+<h1 id="jenkins版本升级">Jenkins版本升级</h1>
+<p>Jenkins 版本升级通常分为以下几个步骤：</p>
+<ol>
+<li>
+<p>备份当前 Jenkins 数据在升级之前，应该备份当前 Jenkins 数据以避免数据丢失。可以通过将 Jenkins 的 JENKINS_HOME 目录复制到其他位置来备份数据。</p>
+</li>
+<li>
+<p>下载新版本的 Jenkins在官网下载最新版本的 Jenkins war 文件，通常可以在 <a href="https://www.jenkins.io/download/">Jenkins官方下载页面</a> 找到最新版本。</p>
+</li>
+<li>
+<p>停止当前 Jenkins 实例在进行版本升级之前，需要停止当前运行的 Jenkins 实例。</p>
+</li>
+<li>
+<p>启动新版本的 Jenkins将下载的新版本 Jenkins war 文件复制到 Jenkins 的安装目录下，并启动 Jenkins。在 Linux 系统中，可以使用以下命令来启动 Jenkins：<code>java -jar jenkins.war</code></p>
+</li>
+<li>升级插件在新版本的 Jenkins 中，有可能需要升级现有插件以保持兼容性。在 Jenkins 管理页面的“插件管理”中，可以检查并升级插件。</li>
+<li>验证升级启动新版本的 Jenkins 后，可以通过访问 Jenkins Web 界面来验证升级是否成功，并确保所有插件和功能正常工作。</li>
+</ol>
+    </div>
+  </article>
+  <aside class="toc">
+    <p class="toc-label">本页目录</p>
+    <ul>
+  <li><a href="#持续集成-ci">持续集成-CI</a></li>
+  <li><a href="#持续交付">持续交付</a></li>
+  <li><a href="#持续部署">持续部署</a></li>
+  <li><a href="#jenkins-pipeline介绍">jenkins pipeline介绍</a></li>
+  <li><a href="#jenkins语法">jenkins语法</a><ul>
+  <li><a href="#声明式语法">声明式语法</a></li>
+  <li><a href="#environment">environment</a></li>
+  <li><a href="#options">options</a></li>
+  <li><a href="#parameters">parameters</a></li>
+  <li><a href="#triggers">triggers</a></li>
+  <li><a href="#tools">tools</a></li>
+  <li><a href="#input">input</a></li>
+  <li><a href="#when">when</a></li>
+  <li><a href="#parallel">parallel</a></li>
+  <li><a href="#脚本式语法">脚本式语法</a></li>
+</ul></li>
+  <li><a href="#环境准备">环境准备</a></li>
+  <li><a href="#部署jenkins-yaml文件">部署jenkins--yaml文件</a><ul>
+  <li><a href="#安装nfs">安装nfs</a></li>
+  <li><a href="#安装jenkins">安装jenkins</a></li>
+  <li><a href="#暴露服务">暴露服务</a></li>
+  <li><a href="#配置jenkins">配置jenkins</a></li>
+</ul></li>
+  <li><a href="#jenkins对接k8s自动生成从节点">jenkins对接k8s自动生成从节点</a><ul>
+  <li><a href="#连接k8s集群">连接k8s集群</a></li>
+  <li><a href="#配置pod-template">配置pod template</a></li>
+  <li><a href="#配置dockerhub凭据">配置dockerhub凭据</a></li>
+</ul></li>
+  <li><a href="#自动化发布go项目">自动化发布Go项目</a><ul>
+  <li><a href="#流程">流程</a></li>
+  <li><a href="#创建流水线">创建流水线</a></li>
+  <li><a href="#troubleshooting">troubleshooting</a></li>
+</ul></li>
+  <li><a href="#按照指定版本回滚">按照指定版本回滚</a></li>
+  <li><a href="#启动harbor">启动harbor</a></li>
+  <li><a href="#配置jenkins-credentials">配置jenkins credentials</a></li>
+  <li><a href="#配置jenkins-pipeline">配置jenkins pipeline</a></li>
+  <li><a href="#jenkins接入sonarqube">jenkins接入Sonarqube</a></li>
+  <li><a href="#私服nexus配置">私服nexus配置</a><ul>
+  <li><a href="#安装harbor">安装harbor</a></li>
+  <li><a href="#jenkins注册harbor-credentials">jenkins注册harbor credentials</a></li>
+  <li><a href="#安装nexus">安装nexus</a></li>
+</ul></li>
+  <li><a href="#安装gitlab">安装gitlab</a><ul>
+  <li><a href="#配置gitlab">配置gitlab</a></li>
+  <li><a href="#提交本地代码到gitlab">提交本地代码到gitlab</a></li>
+</ul></li>
+  <li><a href="#jenkins流水线配置">jenkins流水线配置</a></li>
+</ul>
+  </aside>
+
+</div>
+
+</main>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>Learning Notes</span>
+    <a href="https://github.com/hangx969/learning-notes">GitHub</a>
+  </div>
+</footer>
+<script src="../../../../static/search.js"></script>
+</body>
+</html>

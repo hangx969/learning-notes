@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OS - 磁盘管理与IO - Learning Notes</title>
+<link rel="stylesheet" href="../../static/style.css">
+<link rel="stylesheet" href="../../static/pygments.css">
+</head>
+<body data-root="../../">
+<header class="site-header">
+  <div class="header-inner">
+    <a class="logo" href="../../index.html"><span class="logo-mark"></span>LEARNING NOTES</a>
+    <div class="search">
+      <input id="search-input" type="search" placeholder="搜索笔记…" autocomplete="off" aria-label="搜索笔记">
+      <div id="search-results" hidden></div>
+    </div>
+  </div>
+  <nav class="topic-nav" aria-label="主题导航">
+    <div class="topic-nav-inner">
+      <a href="../../AI/">AI</a>
+      <a href="../../Aliyun/">Aliyun</a>
+      <a href="../../Azure/">Azure</a>
+      <a href="../../C%2B%2B/">C++</a>
+      <a href="../../CloudComputing/">CloudComputing</a>
+      <a href="../../Database/">Database</a>
+      <a href="../../Docker-Kubernetes/">Docker-Kubernetes</a>
+      <a href="../../GPU-DeepLearning/">GPU-DeepLearning</a>
+      <a href="../../Git/">Git</a>
+      <a href="../../Go/">Go</a>
+      <a href="../../HPC/">HPC</a>
+      <a href="../../IaC/">IaC</a>
+      <a href="../../Linux-Shell/">Linux-Shell</a>
+      <a href="../../Middlewares/">Middlewares</a>
+      <a href="../../Networking/">Networking</a>
+      <a href="../../OS/" class="active">OS</a>
+      <a href="../../Python/">Python</a>
+      <a href="../../SoftwareTesting/">SoftwareTesting</a>
+    </div>
+  </nav>
+</header>
+<main class="main">
+
+<div class="article-layout">
+
+  <aside class="sidebar">
+    <details class="sidebar-details">
+      <summary>OS</summary>
+      <nav class="sidebar-nav">
+        <p class="sidebar-group">其他</p>
+        <ul>
+          <li><a href="../../OS/OS-%E7%A3%81%E7%9B%98%E7%AE%A1%E7%90%86/" class="current">OS - 磁盘管理与IO</a></li>
+          <li><a href="../../OS/OS/">操作系统</a></li>
+          <li><a href="../../OS/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86/">计算机组成原理</a></li>
+        </ul>
+      </nav>
+    </details>
+  </aside>
+
+  <article class="article">
+    <nav class="breadcrumb">
+      <a href="../../index.html">首页</a><span>/</span>
+      <a href="../../OS/">OS</a>
+    </nav>
+    <h1 class="article-title">OS - 磁盘管理与IO</h1>
+    <p class="article-meta"><span>更新于 2026-04-16</span>
+      <a href="https://github.com/hangx969/learning-notes/blob/main/OS/OS-%E7%A3%81%E7%9B%98%E7%AE%A1%E7%90%86.md">查看源文件</a>
+    </p>
+    <div class="article-body">
+<h1 id="磁盘的结构">磁盘的结构</h1>
+<h2 id="磁盘磁道扇区盘面柱面">磁盘、磁道、扇区、盘面、柱面</h2>
+<p><img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202305071830809.png" alt="image-20230507183035586" style="zoom:50%;" /></p>
+<ul>
+<li>同一个圆的磁道，被切分成了若干个扇区（一个扇区=一个磁盘块）</li>
+<li>每个扇区存放的数据量相同。</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202305082008397.png" alt="image-20230508200831149" style="zoom:50%;" /></p>
+<ul>
+<li>多个盘面叠在一起组成磁盘，垂直方向上位置相同的磁道形成柱面</li>
+</ul>
+<h2 id="物理地址">物理地址</h2>
+<ul>
+<li>磁盘的物理地址组成：</li>
+<li>柱面号（找到是哪个磁道）</li>
+<li>盘面号（找到是哪个盘面）</li>
+<li>
+<p>扇区号（找到是哪个扇区）</p>
+</li>
+<li>
+<p>读取过程：</p>
+</li>
+<li>根据柱面号，磁头移动到指定柱面</li>
+<li>激活该盘面对应的磁头</li>
+<li>磁盘旋转过程中，指定的扇区就会从磁头下面划过，就可以读写了。</li>
+</ul>
+<h1 id="磁盘调度算法">磁盘调度算法</h1>
+<h2 id="一次磁盘读写需要的时间">一次磁盘读写需要的时间</h2>
+<ul>
+<li>
+<p>寻道时间：将磁头移动到指定磁道需要的时间</p>
+</li>
+<li>
+<p>启动磁头臂的时间</p>
+</li>
+<li>
+<p>移动磁头找到对应磁道的时间</p>
+</li>
+<li>
+<p>延迟时间：盘面旋转，使得磁头定位到扇区所需时间</p>
+</li>
+<li>传输时间：从磁盘读出/写入到磁盘 所需的时间</li>
+</ul>
+<h2 id="磁盘调度算法_1">磁盘调度算法</h2>
+<h3 id="先来先服务">先来先服务</h3>
+<ul>
+<li>按照进程发起的访问磁盘请求的先后顺序，不加调整的直接进行磁盘读写</li>
+<li>优缺点：</li>
+<li>请求访问的磁道比较集中的话，性能尚可。类似于随机读写。</li>
+</ul>
+<h3 id="最短寻找时间优先">最短寻找时间优先</h3>
+<ul>
+<li>
+<p>类似贪心算法，当有多个读写请求到达时，每次都选当前寻道时间最短的读写请求处理。</p>
+</li>
+<li>
+<p>优缺点：</p>
+</li>
+<li>
+<p>局部最优并不能保证总体最优。</p>
+</li>
+<li>
+<p>有可能出现饥饿现象，目前离得远的磁道，可能会被源源不断到来的更近的磁道的请求所顶掉。</p>
+</li>
+</ul>
+<h3 id="扫描算法电梯算法">扫描算法（电梯算法）</h3>
+<ul>
+<li>
+<p>规定只有当磁盘移动到最外侧/内侧时，才允许向相反方向移动。</p>
+</li>
+<li>
+<p>优缺点：</p>
+</li>
+<li>不会产生饥饿现象</li>
+<li>当移动到最外侧的路径中没有请求的话，移动到最外侧的路程是浪费的</li>
+<li>各个位置的磁道，访问响应频率不均匀。</li>
+</ul>
+<h3 id="look算法">LOOK算法</h3>
+<ul>
+<li>改进电梯算法的缺点1：在电梯算法的基础上，如果在磁头移动方向上已经没有别的请求。就可以立刻改变磁头移动方向。</li>
+<li>优点：相比电梯算法，寻道时间缩短。</li>
+</ul>
+<h3 id="c-scan循环扫描算法">C-SCAN（循环扫描）算法</h3>
+<ul>
+<li>改进电梯算法的缺点2：规定只有磁头向某个方向移动时才会处理请求；这个方向移动到末端就直接快速返回另一端起点，不处理任何请求。</li>
+<li>优缺点：</li>
+<li>还是存在：当移动到最外侧的路径中没有请求的话，移动到最外侧的路程是浪费的的缺点</li>
+</ul>
+<h3 id="c-look算法">C-look算法</h3>
+<ul>
+<li>结合look和c-scan特点：磁头移动方向上如果没有请求的话，就掉头返回，并且不用返回到另一端，而是返回到距离另一端最近的有磁盘访问请求的位置即可。</li>
+</ul>
+<p><div class="callout callout-info" markdown="1"><br />
+<p class="callout-title">备注</p></p>
+<p>以上调度算法是优化寻道时间（移动磁头所花的时间）</p>
+</div>
+<h2 id="减少磁盘延迟时间的算法">减少磁盘延迟时间的算法</h2>
+<h3 id="背景">背景</h3>
+<ul>
+<li>延迟时间是指：目标扇区转到磁头下面所花的时间。</li>
+<li>机械原理理解：磁头读取完一块扇区的内容后，需要一小段时间处理；但是盘面又在不停的旋转。所以，如果将逻辑相邻的扇区，安排成物理相邻的话，则读入1号扇区后并不能马上读入2号扇区，得等盘片重新再转到2号才行。</li>
+</ul>
+<h3 id="交替编号">交替编号</h3>
+<p><img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202305082211509.png" alt="image-20230508221120379" style="zoom: 50%;" /></p>
+<ul>
+<li>逻辑相邻的扇区，物理上设计成间隔一定的扇区，磁头处理时间过去，盘面就正好转到逻辑上的下一个扇区，节省时间。</li>
+</ul>
+<h2 id="磁盘的管理">磁盘的管理</h2>
+<h3 id="磁盘的初始化">磁盘的初始化</h3>
+<ul>
+<li>
+<p>低级格式化（物理格式化）</p>
+</li>
+<li>
+<p>将磁盘的各个磁道，划分为扇区</p>
+</li>
+<li>
+<p>每个扇区由头、尾、数据区组成，头尾回放管理扇区的数据（奇偶校验、CRC校验等）</p>
+</li>
+<li>
+<p>磁盘分区</p>
+</li>
+<li>
+<p>将磁盘分区，每个分区由若干个柱面组成</p>
+<p><img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202305082253798.png" alt="image-20230508225335690" style="zoom:50%;" /></p>
+</li>
+<li>
+<p>逻辑格式化</p>
+</li>
+<li>创建文件系统：包括文件系统根目录、初始化存储空间管理的数据结构（位示图、空闲分区表等）</li>
+</ul>
+<h3 id="引导块">引导块</h3>
+<ul>
+<li>计算机启动时，需要进行一些初始化工作（CPU、memory的初始化），这些初始化工作是通过初始化程序（自举程序）来完成的。</li>
+<li>自举程序可以放在ROM中，ROM的数据出厂就集成在主板上写死了，不能更改；所以不方便对自举程序进行更新。</li>
+<li>所以现在一般都在ROM中只放一小段的“自举装入程序”，完整的自举程序存放在磁盘上的启动块（即引导块/启动分区）上，启动块放在磁盘的固定位置上。</li>
+<li>开机时，先运行ROM上的自举装入程序，通过该程序找到磁盘上的引导块，并将其上的完整自举程序读入内存，完成初始化。</li>
+</ul>
+<p><div class="callout callout-info" markdown="1"><br />
+<p class="callout-title">备注</p></p>
+<p>拥有启动分区的磁盘分区，一般被称为”系统盘”，比如C盘</p>
+</div>
+<h3 id="坏块的管理">坏块的管理</h3>
+<ul>
+<li>坏块是磁盘块物理损坏，系统无法修复，只能标记出来，不要分配。</li>
+<li>简单磁盘可以采用：逻辑格式化时，对磁盘进行坏块检查，标明坏扇区，在FAT表上注明。</li>
+<li>复杂磁盘可以采用：磁盘控制器（磁盘内部的一个硬件），来维护一个坏块链表。</li>
+</ul>
+<h1 id="io管理">IO管理</h1>
+<h2 id="io设备">IO设备</h2>
+<ul>
+<li>
+<p>处理机、存储器、文件都属于是计算机内部设备，IO设备是外部设备，OS也负责管理IO设备</p>
+</li>
+<li>
+<p>UNIX系统将IO设备抽象成特殊文件，用户可以使用与文件操作相同的方式对外部设备进行操作。</p>
+</li>
+</ul>
+<h3 id="分类">分类</h3>
+<p>按用途：</p>
+<ul>
+<li>人机交互设备</li>
+<li>存储设备</li>
+<li>网络设备</li>
+</ul>
+<p>按数据交换方式：</p>
+<ul>
+<li>块设备（磁盘）</li>
+<li>传输速率高，可寻址，可随机读写</li>
+<li>字符设备（鼠标键盘）</li>
+<li>慢、不可寻址、常采用中断驱动的方式来输入输出</li>
+</ul>
+<h2 id="io控制器">IO控制器</h2>
+<h3 id="介绍">介绍</h3>
+<ul>
+<li>CPU无法直接控制IO设备的物理部件，因此IO设备还需要有一个电子部件，通常是一块插入主板扩充槽的电路板。作为CPU和IO设备的中介，实现对设备的控制。</li>
+<li>功能</li>
+<li>接收、识别CPU发出的命令（控制器中设立<strong>控制寄存器</strong>，存放命令和参数）</li>
+<li>向CPU报告设备的状态（控制器中设立<strong>状态寄存器</strong>，用于记录设备的状态）</li>
+<li>数据交换（控制器中设立<strong>数据寄存器</strong>，用于暂存CPU和设备之间交换的数据）</li>
+<li>地址识别（类似于内存的地址，这些寄存器也被标记了特定的地址，控制器通过CPU提供的地址来识别CPU读写的是哪个寄存器）</li>
+</ul>
+<h3 id="组成">组成</h3>
+<p><img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202305092153714.png" alt="image-20230509215348482" style="zoom:50%;" /></p>
+<ul>
+<li>CPU的地址线，指明需要操作的设备；控制线，指明具体的指令。</li>
+<li>具体数据放到数据寄存器中；命令的参数放到控制寄存器中；设备状态放在状态寄存器中。 </li>
+</ul>
+<p>注意：</p>
+<ul>
+<li>
+<p>一个IO控制器可能对应多个设备，所以可能也有多个寄存器。</p>
+</li>
+<li>
+<p>多个寄存器都要编址，才方便CPU操作。</p>
+</li>
+<li>
+<p>编址方式1：让这些寄存器顺着内存编址往下编，称为内存映像IO</p>
+</li>
+<li>
+<p>编址方式2：寄存器独立编址</p>
+<p><img alt="image-20230509221817014" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202305092218185.png" /></p>
+</li>
+</ul>
+<h2 id="io控制方式">IO控制方式</h2>
+<h3 id="程序直接控制">程序直接控制</h3>
+<ul>
+<li>Key word：CPU轮询控制寄存器</li>
+<li>以读IO为例：</li>
+<li>CPU向IO控制器中的IO逻辑发起读指令，IO逻辑对设备发起读请求。同时设置控制寄存器状态为未就绪（busy）</li>
+<li>由于IO设备速度比CPU慢太多了，CPU就一直轮询状态寄存器。</li>
+<li>IO设备准备好数据后就通过IO逻辑将数据放到数据寄存器中；同时状态寄存器设为0，表示就绪。</li>
+<li>
+<p>CPU轮询到状态寄存器0，就从数据寄存器中读出数据，放到CPU的寄存器中，再放入内存。</p>
+</li>
+<li>
+<p>CPU干预频率：需要不断轮询检查</p>
+</li>
+<li>数据传送单位：一个字（CPU一次操作处理实际位数的多少，字的位数叫字长，如32位 64位等）</li>
+<li>数据流向：</li>
+<li>读：IO设备-CPU-内存</li>
+<li>写：内存-CPU-IO设备</li>
+<li>优缺点：</li>
+<li>优点：程序简单</li>
+<li>缺点：CPU和IO只能串行工作，CPU长期忙等，利用率低。</li>
+</ul>
+<h3 id="中断驱动方式">中断驱动方式</h3>
+<p>中断机制：</p>
+<ul>
+<li>
+<p>CPU发出读写命令后，将等待IO的进程阻塞；转而到别的进程执行。</p>
+</li>
+<li>
+<p>当IO完成后，控制器向CPU发出中断信号，CPU检测到信号后，保存当前进程现场。</p>
+</li>
+<li>
+<p>转而去执行中断程序，处理该中断；CPU从IO控制器读出一个字的信息，放到CPU寄存器，再放入内存。</p>
+</li>
+<li>
+<p>CPU恢复之前IO阻塞的进程环境，继续执行。</p>
+</li>
+</ul>
+<p>特点：</p>
+<ul>
+<li>CPU在每个指令周期的末尾检查中断。</li>
+<li>
+<p>中断也要时间开销，来保存恢复运行环境。</p>
+</li>
+<li>
+<p>CPU干预频率：CPU和IO设备可以并行工作</p>
+</li>
+<li>数据传送单位：一个字</li>
+<li>数据流向：</li>
+<li>读：IO设备-CPU-内存</li>
+<li>写：内存-CPU-IO设备</li>
+<li>优缺点：</li>
+<li>优点：CPU IO可以并行工作</li>
+<li>缺点：每次只传送一个字，数据都得经过CPU，频繁的中断处理消耗较多CPU时间。</li>
+</ul>
+<h3 id="直接存储器读取">直接存储器读取</h3>
+<p><div class="callout callout-info" markdown="1"><br />
+<p class="callout-title">DMA</p></p>
+<p>主要用于块设备，Direct Memory Access</p>
+</div>
+<ul>
+<li>
+<p>数据的传送单位是：块</p>
+</li>
+<li>
+<p>数据不再需要CPU作为中转，会是从IO设备直接调入内存。</p>
+</li>
+<li>
+<p>仅在一个或多个数据块开始和结束时，才需要CPU干预。</p>
+</li>
+</ul>
+<p>工作流程</p>
+<p><img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202305132145474.png" alt="image-20230513214518310" style="zoom:50%;" /></p>
+<p>DMA控制器</p>
+<p><img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202305132201256.png" alt="image-20230513220141114" style="zoom:50%;" /></p>
+<ul>
+<li>CPU干预的频率：仅在传送一个或多个数据块的开始和结束时才需要CPU干预</li>
+<li>数据读写单位：一个或多个块。（多个块的情况下，IO只能是读写连续的多个块，而且都要存放在连续的内存中）</li>
+<li>数据的流向：io设备 - 内存，不需经过CPU</li>
+<li>优缺点</li>
+<li>优：数据传输单位是块，CPU效率提高；数据不需要经过CPU，CPU io并行性得到提高。</li>
+<li>缺：如果需要读取在外存离散的数据块，或者要存放到内存中离散的地址中，就需要CPU发出多个IO指令，需要多次中断处理。</li>
+</ul>
+<h3 id="通道控制方式">通道控制方式</h3>
+<p><div class="callout callout-info" markdown="1"><br />
+<p class="callout-title">通道</p></p>
+<p>通道：一种硬件，可以理解为削弱版CPU，通道可以识别一系列通道指令。</p>
+<p>与CPU相比，通道可执行的指令比较单一；通道与CPU共享内存。</p>
+</div>
+<p><img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202305132243007.png" alt="image-20230513224334851" style="zoom:50%;" /></p>
+<ul>
+<li>CPU干预的频率：极低，只需要对通道程序发出指令，完成一组数据块的读写后才需要发送中断信号，请求CPU干预。</li>
+<li>数据读写单位：一组数据块</li>
+<li>数据流向：IO - 内存</li>
+<li>优缺点</li>
+<li>优点：CPU、通道、IO设备可以并行工作，效率高</li>
+<li>缺点：需要专门硬件支持</li>
+</ul>
+<h2 id="io软件层次结构">IO软件层次结构</h2>
+<p><img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202305142227951.png" alt="image-20230514222746797" style="zoom:50%;" /></p>
+<h3 id="用户层软件">用户层软件</h3>
+<p><img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202305142236299.png" alt="image-20230514223634230" style="zoom:50%;" /></p>
+<ul>
+<li>
+<p>提供一些与IO操作相关的库函数,对设备进行操作。（e.g. printf("Hello world")）</p>
+</li>
+<li>
+<p>用户层软件通过将用户请求翻译成格式化的IO请求，通过系统调用请求操作系统内核服务。</p>
+</li>
+</ul>
+<blockquote>
+<p>[!info] Windows API<br />
+Windows中，OS提供了一些系统调用，但是由于系统调用的格式严格，不容易直接使用；因此在用户层向上又封装了一层更方便的库函数供用户使用（Windows API）</p>
+</blockquote>
+<h3 id="设备独立性软件">设备独立性软件</h3>
+<ul>
+<li>实现与设备无关的一些接口</li>
+<li>向上提供统一的调用接口（read/write等）</li>
+<li>对设备的保护（设备被看作一种特殊的文件，也具有用户访问权限）</li>
+<li>差错处理</li>
+<li>设备分配与回收</li>
+<li>数据缓冲区管理（通过缓冲技术，屏蔽设备之间数据交换单位大小和传输速度的差异）</li>
+<li>建立逻辑设备名和物理设备名的映射关系；根据设备类型选择相应的驱动程序。<ul>
+<li>设备独立性软件通过“逻辑设备表”（LUT）来确定逻辑设备对应的物理设备，并找到该设备的驱动程序入口地址。</li>
+</ul>
+</li>
+</ul>
+<h3 id="设备驱动程序">设备驱动程序</h3>
+<ul>
+<li>不同设备内部的硬件特性不同，这些特性只有厂家了解，因此厂家必须提供与设备相对应的驱动程序、CPU执行驱动程序提供的指令来完成对硬件的控制。</li>
+<li>驱动程序主要负责对硬件设备的具体控制，将上层发出的命令转化为特定设备可以识别的操作，如设置设备寄存器、检查设备状态等。</li>
+</ul>
+<h3 id="中断处理程序">中断处理程序</h3>
+<ul>
+<li>硬件设备完成IO操作后，IO控制器会发送一个中断信号，操作系统根据中断信号的类型判断下一步操作。</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202305172215149.png" alt="image-20230517221505975" style="zoom:50%;" /></p>
+<h2 id="io核心子系统">IO核心子系统</h2>
+<ul>
+<li>包括设备独立性软件、设备驱动程序、中断处理程序；他们属于操作系统内核部分，即IO子系统</li>
+<li>IO核心子系统主要完成以下功能：</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202305172219507.png" alt="image-20230517221928416" style="zoom:50%;" /></p>
+<h3 id="io调度">IO调度</h3>
+<ul>
+<li>用某种算法确定各个IO请求的处理次序</li>
+</ul>
+<h3 id="设备保护">设备保护</h3>
+<ul>
+<li>设备在UNIX系统中也是文件，也有FCB来控制权限，用户访问某个设备时，也会根据FCB中的权限信息来鉴权。</li>
+</ul>
+<h3 id="假脱机技术">假脱机技术</h3>
+<ul>
+<li>脱机技术</li>
+<li>背景：CPU和输入输出设备的速度严重不匹配</li>
+<li>解决：在批处理发展阶段，引入了脱机技术。在外围控制机的控制下，打孔纸带输入设备的数据先被传送到磁带上，之后主机从磁带上读入数据，更快了；输出过程类似。</li>
+<li>
+<p>脱机就是脱离了主机的控制的输入输出操作</p>
+</li>
+<li>
+<p>假脱机技术</p>
+</li>
+<li>
+<p>SPOOLing技术：用软件方式模拟脱机技术。</p>
+</li>
+<li>
+<p>首先，需要在磁盘上开辟出“输入井”和“输出井”</p>
+</li>
+<li>在内存中有输入输出缓冲区，在输入输出进程的控制下，缓冲区用于暂存从设备的IO，再转存到输出井中。 </li>
+</ul>
+<p>​   <img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202305182143517.png" alt="image-20230518214305359" style="zoom: 50%;" />     </p>
+<ul>
+<li>共享打印机原理分析</li>
+<li>首先，打印机本质是独占设备，但是可以通过假脱机技术改造成共享设备，即多个进程可以同时请求。</li>
+<li>当用户进程申请使用打印机时，系统会接受请求，但并不是真正把打印机分配给他们，而是由假脱机技术管理进程来调配：<ul>
+<li>在磁盘输出井中，为进程申请一块空闲缓冲区，将要打印的数据发送过去</li>
+<li>给用户进程申请一张空白的打印请求表，将打印请求填入，指明输出数据的存放位置。</li>
+<li>将打印请求表挂到假脱机文件队列上，当打印机空闲时，输出进程就从队列队头取出请求表，找到磁盘输出井上的数据，发送到内存缓冲区，再到打印机进行打印。</li>
+</ul>
+</li>
+</ul>
+<h2 id="缓冲区管理">缓冲区管理</h2>
+<h3 id="缓冲区">缓冲区</h3>
+<p><div class="callout callout-info" markdown="1"><br />
+<p class="callout-title">缓冲区</p></p>
+<p>缓冲区是一个存储区，可以由专门的硬件寄存器组成、也可以利用内存作为缓冲区。</p>
+<p>使用硬件缓冲区的成本高，容量小；一般用在速度要求高的场合（联想寄存器、快表）。一般而言用内存作为缓冲区。</p>
+</div>
+<p>缓冲区的作用：</p>
+<ul>
+<li>解决速度不匹配</li>
+</ul>
+<p>缓冲区写满或被取走后，才会产生中断信号，打断CPU。减少打断CPU次数。</p>
+<p><img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202305192131540.png" alt="image-20230519213147398" style="zoom:33%;" /></p>
+<ul>
+<li>
+<p>解决数据粒度不匹配</p>
+</li>
+<li>
+<p>例如输出进程每次生成一块数据，但是IO设备每次只能输出一个字符。</p>
+</li>
+<li>
+<p>提高并行性</p>
+</li>
+</ul>
+<h3 id="单缓冲">单缓冲</h3>
+<ul>
+<li>用户进程从某种块设备读入数据，若采用单缓冲的策略，OS会在内存中为其分配一个缓冲区。</li>
+<li>缓冲区非空，就不能继续往里写，得等到读空了才能写；缓冲区空了，得完全写满后，才能开始读取。</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202305192143651.png" alt="image-20230519214327556" style="zoom:50%;" /></p>
+<h3 id="双缓冲">双缓冲</h3>
+<ul>
+<li>
+<p>用户进程从某种块设备读入数据，若采用单缓冲的策略，OS会在内存中为其分配两个缓冲区。</p>
+</li>
+<li>
+<p>两台相互通信的机器，采用双缓冲区，可以实现双向数据传输：</p>
+</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202305192152405.png" alt="image-20230519215216318" style="zoom:50%;" /></p>
+<h3 id="循环缓冲区">循环缓冲区</h3>
+<ul>
+<li>将大小相等的缓冲区组成循环队列</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202305192153226.png" alt="image-20230519215319147" style="zoom:50%;" /></p>
+<h3 id="缓冲池">缓冲池</h3>
+<ul>
+<li>
+<p>缓冲池由系统中共用的缓冲区组成。</p>
+</li>
+<li>
+<p>按使用状况可以分为：空缓冲队列、装满输入数据的缓冲队列、装满输出数据的缓冲队列</p>
+<p><img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202305192158324.png" alt="image-20230519215852272" style="zoom:50%;" /></p>
+</li>
+<li>
+<p>按功能不同，可分为：用于接收输入数据的（hin）、用于接收输出数据的（hout）、用于提取输入数据的（sin）、用于提取输出数据的（sout）</p>
+<p><img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202305192157780.png" alt="image-20230519215738717" style="zoom:50%;" /></p>
+</li>
+<li>
+<p>如果输入进程请求输入数据</p>
+</li>
+<li>从空缓冲队列取出一块，作为hin，开始接收输入数据，写满之后，挂到输入队列队尾。</li>
+<li>如果用户进程需要取得一块输入数据</li>
+<li>从输入队列队头取出一块，作为sin，进程读完数据（将数据转移到进程的工作区当中）之后，缓冲区挂回到空缓冲区队列。</li>
+<li>如果用户进程将新鲜出炉的数据放入缓冲区</li>
+<li>从空缓冲队列取出一块，作为hout，开始接收数据，写满之后，挂到输出队列队尾。</li>
+<li>如果输出进程需要输出数据</li>
+<li>从输出队列队头取出一块，作为sout，缓冲区数据被读完之后，挂回到空缓冲队列队尾。</li>
+</ul>
+<h1 id="固态硬盘">固态硬盘</h1>
+<p><img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202305192207560.png" alt="image-20230519220741331" style="zoom:50%;" /></p>
+<h2 id="结构">结构</h2>
+<p><img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202305192212562.png" alt="image-20230519221249453" style="zoom:50%;" /></p>
+<ul>
+<li>HDD读写是以扇区为单位的，SSD读写是以页为单位。</li>
+<li>SSD擦除数据是以块为单位。</li>
+<li>一个页写了数据就不能再写了；如果还向往这个页里面写，就要把整个块全擦除才行。这时会将其他页的数据复制到另一个擦除过的块里面，再在新块的页里面写入新+旧的数据。最后再把旧的块擦除掉。这样物理地址就变了，闪存翻译层会重新映射。</li>
+</ul>
+    </div>
+  </article>
+  <aside class="toc">
+    <p class="toc-label">本页目录</p>
+    <ul>
+  <li><a href="#磁盘磁道扇区盘面柱面">磁盘、磁道、扇区、盘面、柱面</a></li>
+  <li><a href="#物理地址">物理地址</a></li>
+  <li><a href="#一次磁盘读写需要的时间">一次磁盘读写需要的时间</a></li>
+  <li><a href="#磁盘调度算法_1">磁盘调度算法</a><ul>
+  <li><a href="#先来先服务">先来先服务</a></li>
+  <li><a href="#最短寻找时间优先">最短寻找时间优先</a></li>
+  <li><a href="#扫描算法电梯算法">扫描算法（电梯算法）</a></li>
+  <li><a href="#look算法">LOOK算法</a></li>
+  <li><a href="#c-scan循环扫描算法">C-SCAN（循环扫描）算法</a></li>
+  <li><a href="#c-look算法">C-look算法</a></li>
+</ul></li>
+  <li><a href="#减少磁盘延迟时间的算法">减少磁盘延迟时间的算法</a><ul>
+  <li><a href="#背景">背景</a></li>
+  <li><a href="#交替编号">交替编号</a></li>
+</ul></li>
+  <li><a href="#磁盘的管理">磁盘的管理</a><ul>
+  <li><a href="#磁盘的初始化">磁盘的初始化</a></li>
+  <li><a href="#引导块">引导块</a></li>
+  <li><a href="#坏块的管理">坏块的管理</a></li>
+</ul></li>
+  <li><a href="#io设备">IO设备</a><ul>
+  <li><a href="#分类">分类</a></li>
+</ul></li>
+  <li><a href="#io控制器">IO控制器</a><ul>
+  <li><a href="#介绍">介绍</a></li>
+  <li><a href="#组成">组成</a></li>
+</ul></li>
+  <li><a href="#io控制方式">IO控制方式</a><ul>
+  <li><a href="#程序直接控制">程序直接控制</a></li>
+  <li><a href="#中断驱动方式">中断驱动方式</a></li>
+  <li><a href="#直接存储器读取">直接存储器读取</a></li>
+  <li><a href="#通道控制方式">通道控制方式</a></li>
+</ul></li>
+  <li><a href="#io软件层次结构">IO软件层次结构</a><ul>
+  <li><a href="#用户层软件">用户层软件</a></li>
+  <li><a href="#设备独立性软件">设备独立性软件</a></li>
+  <li><a href="#设备驱动程序">设备驱动程序</a></li>
+  <li><a href="#中断处理程序">中断处理程序</a></li>
+</ul></li>
+  <li><a href="#io核心子系统">IO核心子系统</a><ul>
+  <li><a href="#io调度">IO调度</a></li>
+  <li><a href="#设备保护">设备保护</a></li>
+  <li><a href="#假脱机技术">假脱机技术</a></li>
+</ul></li>
+  <li><a href="#缓冲区管理">缓冲区管理</a><ul>
+  <li><a href="#缓冲区">缓冲区</a></li>
+  <li><a href="#单缓冲">单缓冲</a></li>
+  <li><a href="#双缓冲">双缓冲</a></li>
+  <li><a href="#循环缓冲区">循环缓冲区</a></li>
+  <li><a href="#缓冲池">缓冲池</a></li>
+</ul></li>
+  <li><a href="#结构">结构</a></li>
+</ul>
+  </aside>
+
+</div>
+
+</main>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>Learning Notes</span>
+    <a href="https://github.com/hangx969/learning-notes">GitHub</a>
+  </div>
+</footer>
+<script src="../../static/search.js"></script>
+</body>
+</html>

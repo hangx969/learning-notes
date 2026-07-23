@@ -1,0 +1,1495 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CKS 备考 - Learning Notes</title>
+<link rel="stylesheet" href="../../../static/style.css">
+<link rel="stylesheet" href="../../../static/pygments.css">
+</head>
+<body data-root="../../../">
+<header class="site-header">
+  <div class="header-inner">
+    <a class="logo" href="../../../index.html"><span class="logo-mark"></span>LEARNING NOTES</a>
+    <div class="search">
+      <input id="search-input" type="search" placeholder="搜索笔记…" autocomplete="off" aria-label="搜索笔记">
+      <div id="search-results" hidden></div>
+    </div>
+  </div>
+  <nav class="topic-nav" aria-label="主题导航">
+    <div class="topic-nav-inner">
+      <a href="../../../AI/">AI</a>
+      <a href="../../../Aliyun/">Aliyun</a>
+      <a href="../../../Azure/">Azure</a>
+      <a href="../../../C%2B%2B/">C++</a>
+      <a href="../../../CloudComputing/">CloudComputing</a>
+      <a href="../../../Database/">Database</a>
+      <a href="../../../Docker-Kubernetes/" class="active">Docker-Kubernetes</a>
+      <a href="../../../GPU-DeepLearning/">GPU-DeepLearning</a>
+      <a href="../../../Git/">Git</a>
+      <a href="../../../Go/">Go</a>
+      <a href="../../../HPC/">HPC</a>
+      <a href="../../../IaC/">IaC</a>
+      <a href="../../../Linux-Shell/">Linux-Shell</a>
+      <a href="../../../Middlewares/">Middlewares</a>
+      <a href="../../../Networking/">Networking</a>
+      <a href="../../../OS/">OS</a>
+      <a href="../../../Python/">Python</a>
+      <a href="../../../SoftwareTesting/">SoftwareTesting</a>
+    </div>
+  </nav>
+</header>
+<main class="main">
+
+<div class="article-layout">
+
+  <aside class="sidebar">
+    <details class="sidebar-details">
+      <summary>Docker-Kubernetes</summary>
+      <nav class="sidebar-nav">
+        <p class="sidebar-group">CKA-CKS</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/CKA-CKS/CKA-%E5%A4%87%E8%80%83/">CKA 备考</a></li>
+          <li><a href="../../../Docker-Kubernetes/CKA-CKS/CKS-%E5%A4%87%E8%80%83/" class="current">CKS 备考</a></li>
+          <li><a href="../../../Docker-Kubernetes/CKA-CKS/k8s-%E9%9D%A2%E8%AF%95%E9%A2%98%E6%B1%87%E6%80%BB/">K8s 面试题汇总</a></li>
+        </ul>
+        <p class="sidebar-group">container-platform</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/container-platform/%E9%83%A8%E7%BD%B2openshift%283.10%29/">部署 OpenShift (3.10)</a></li>
+          <li><a href="../../../Docker-Kubernetes/container-platform/%E9%83%A8%E7%BD%B2%E8%BD%BB%E9%87%8F%E7%BA%A7%E7%9A%84K8S%E5%B9%B3%E5%8F%B0-K3S/">部署轻量级 K8S 平台 - K3S</a></li>
+        </ul>
+        <p class="sidebar-group">docker</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E5%9F%BA%E7%A1%80/">Docker基础</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E5%AE%89%E5%85%A8%E9%85%8D%E7%BD%AE-Capabilities%E4%B8%8E%E5%AE%B9%E5%99%A8%E5%8A%A0%E5%9B%BA/">Docker 安全配置详解：Capabilities 与容器加固</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2UI%E5%B7%A5%E5%85%B7portainer-%E9%83%A8%E7%BD%B2redis-sentinel/">Docker部署Portainer与Redis-Sentinel</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2gitlab/">Docker部署GitLab</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2lnmp%E7%BD%91%E7%AB%99/">Docker部署LNMP网站</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2loki/">Docker部署Loki日志系统</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2nginx-tomcat-httpd-go-python%E6%9C%8D%E5%8A%A1/">Docker部署Nginx-Tomcat-Httpd-Go-Python服务</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2prometheus-grafana-cAdvisior%E7%9B%91%E6%8E%A7/">Docker部署Prometheus-Grafana-cAdvisor监控</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2%E4%BB%93%E5%BA%93%E5%B9%B3%E5%8F%B0homebox/">Docker部署Homebox仓库平台</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1%E5%B7%A5%E5%85%B7gocron/">Docker部署GoCron定时任务工具</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2%E8%B7%AF%E7%94%B1%E7%9B%91%E6%8E%A7%E5%B7%A5%E5%85%B7NextTrace/">Docker部署NextTrace路由监控工具</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%85%8D%E7%BD%AENVIDIA%20GPU/">Docker配置NVIDIA GPU</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%85%8D%E7%BD%AE%E4%BB%A3%E7%90%86/">Docker配置代理</a></li>
+        </ul>
+        <p class="sidebar-group">harbor</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/harbor/harbor-basics/">Harbor 基础</a></li>
+          <li><a href="../../../Docker-Kubernetes/harbor/helm%E9%83%A8%E7%BD%B2harbor/">Helm 部署 Harbor</a></li>
+        </ul>
+        <p class="sidebar-group">helm-operator</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/helm-operator/helmv3-%E5%AE%89%E8%A3%85%E4%B8%8E%E4%BD%BF%E7%94%A8/">Helm v3 安装与使用</a></li>
+          <li><a href="../../../Docker-Kubernetes/helm-operator/helm%E9%83%A8%E7%BD%B2config-syncer%28kubed%29/">Helm 部署 Config Syncer (Kubed)</a></li>
+          <li><a href="../../../Docker-Kubernetes/helm-operator/helm%E9%83%A8%E7%BD%B2dragonfly/">Helm 部署 Dragonfly</a></li>
+          <li><a href="../../../Docker-Kubernetes/helm-operator/helm%E9%83%A8%E7%BD%B2pact-broker/">Helm 部署 Pact Broker</a></li>
+          <li><a href="../../../Docker-Kubernetes/helm-operator/helm%E9%83%A8%E7%BD%B2reloader/">Helm 部署 Reloader</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-CICD</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD%20Image%20Updater/">ArgoCD Image Updater</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD%E5%9F%BA%E7%A1%80/">ArgoCD基础</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD%E5%A4%9A%E9%9B%86%E7%BE%A4GitOps%E5%AE%9E%E6%88%98/">多集群 GitOps 实战：用 Argo CD 管理上百个 Kubernetes 集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD%E9%83%A8%E7%BD%B2Helm%E5%BA%94%E7%94%A8%E6%97%B6%E5%9F%9F%E5%90%8D%E8%A7%A3%E6%9E%90%E5%A4%B1%E8%B4%A5%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5%E4%B8%8E%E8%A7%A3%E5%86%B3/">ArgoCD部署Helm应用时域名解析失败问题排查与解决</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/ArgoCD/%E5%AD%A6%E4%B9%A0%E9%93%BE%E6%8E%A5/">ArgoCD学习链接</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Claude-Code%E5%AE%9E%E7%8E%B0CICD%E8%87%AA%E5%8A%A8%E5%8C%96%E5%8F%91%E5%B8%83%E6%B5%81%E7%A8%8B/">Claude Code 实现 CI/CD 自动化发布流程详细指南</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Gitlab/helm%E9%83%A8%E7%BD%B2gitlab/">Helm部署GitLab</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Gitlab/k8s%E9%83%A8%E7%BD%B2Gitlab%2811.8.1%29-%E5%9F%BA%E4%BA%8Eyaml/">K8s部署GitLab(11.8.1)-基于YAML</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Gitlab/%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%AE%89%E8%A3%85Gitlab%2817.9.8%29/">二进制安装GitLab(17.9.8)</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Jenkins/Jenkins%E8%AF%AD%E6%B3%95-%E5%9F%BA%E4%BA%8Edocker%E9%83%A8%E7%BD%B2/">Jenkins语法-基于Docker部署</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Jenkins/docker%E9%83%A8%E7%BD%B2jenkins/">Docker部署Jenkins</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Jenkins/helm%E9%83%A8%E7%BD%B2jenkins/">Helm部署Jenkins</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Jenkins/k8s-Devops%E5%B9%B3%E5%8F%B0%E8%90%BD%E5%9C%B0-%E5%9F%BA%E4%BA%8Ejenkins/">K8s DevOps平台落地-基于Jenkins</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Jenkins/k8s%E9%83%A8%E7%BD%B2%E5%9F%BA%E4%BA%8EJenkins%282.394%29%E7%9A%84DevOps%E5%B7%A5%E5%85%B7%E9%93%BE-%E5%9F%BA%E4%BA%8Eyaml/">K8s部署基于Jenkins(2.394)的DevOps工具链-基于YAML</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Jenkins/k8s%E9%83%A8%E7%BD%B2%E5%9F%BA%E4%BA%8EJenkins%282.426.3%29%E7%9A%84Devops%E5%B7%A5%E5%85%B7%E9%93%BE-%E5%9F%BA%E4%BA%8Eyaml/">K8s部署基于Jenkins(2.426.3)的DevOps工具链-基于YAML</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Jenkins/%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%AE%89%E8%A3%85Jenkins%282.319%29/">二进制安装Jenkins(2.319)</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Kustomize/k8s%E9%85%8D%E7%BD%AE%E5%AE%9A%E5%88%B6%E5%B7%A5%E5%85%B7-kustomize/">K8s配置定制工具-Kustomize</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Tekton/k8s%E9%83%A8%E7%BD%B2%E5%8E%9F%E7%94%9F%E7%9A%84CICD%E5%B7%A5%E5%85%B7Tekton-%E5%9F%BA%E4%BA%8Eyaml/">K8s部署原生的CICD工具Tekton-基于YAML</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Tekton/%E5%9F%BA%E4%BA%8ETekton%E7%9A%84%E4%BA%91%E5%8E%9F%E7%94%9F%E5%B9%B3%E5%8F%B0%E8%90%BD%E5%9C%B0/">基于Tekton的云原生平台落地</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/k8s%E5%8F%91%E5%B8%83%E7%AD%96%E7%95%A5-%E8%93%9D%E7%BB%BF%E9%83%A8%E7%BD%B2%E4%B8%8E%E9%87%91%E4%B8%9D%E9%9B%80%E5%8F%91%E5%B8%83/">K8s 发布策略：蓝绿部署与金丝雀发布实战</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/%E4%BD%BF%E7%94%A8github%20action%E9%83%A8%E7%BD%B2helmchart/">使用GitHub Action部署Helm Chart</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/%E5%8F%91%E5%B8%83go-python-java%E4%BB%A3%E7%A0%81%E5%88%B0K8S%E7%8E%AF%E5%A2%83/">发布Go/Python/Java代码到K8S环境</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-UI-tools</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-UI-tools/k8s-API%E6%A3%80%E6%9F%A5%E5%B7%A5%E5%85%B7kubent/">K8s API 检查工具 kubent</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-UI-tools/k8s-%E5%B0%8F%E5%B7%A5%E5%85%B7%E9%9B%86%E5%90%88/">K8s 小工具集合</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-UI-tools/k8s%E9%83%A8%E7%BD%B2-Dashboard-UI/">K8s 部署 Dashboard UI</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-UI-tools/k8s%E9%83%A8%E7%BD%B2%E5%8F%AF%E8%A7%86%E5%8C%96ui%E7%95%8C%E9%9D%A2kuboard/">K8s 部署 Kuboard</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-UI-tools/kubectl-UI%E5%B7%A5%E5%85%B7Lens/">kubectl UI 工具 Lens</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-UI-tools/kubectl-%E5%8F%AF%E8%A7%86%E5%8C%96%E6%8F%92%E4%BB%B6k9s-stern/">kubectl 可视化插件 k9s 和 stern</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-UI-tools/kuebctl-%E6%8F%92%E4%BB%B6krew-rolesum/">kubectl 插件 krew 和 rolesum</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-UI-tools/rancher%28v2.6.4%29%E7%AE%A1%E7%90%86k8s%E9%9B%86%E7%BE%A4/">Rancher (v2.6.4) 管理 K8s 集群</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-ai-gpu</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-ai-gpu/k8s%E9%85%8D%E7%BD%AENVIDIA%20GPU/">K8s 配置 NVIDIA GPU</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-backup-dr</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-backup-dr/k8s%E5%A4%87%E4%BB%BD%E4%B8%8E%E7%81%BE%E5%A4%87%E5%AE%9E%E6%88%98-%E4%B8%89%E5%B1%82%E5%AE%B9%E7%81%BE%E6%9E%B6%E6%9E%84/">K8s 备份与灾备实战：三层容灾架构</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-backup-dr/k8s%E9%9B%86%E7%BE%A4%E5%A4%87%E4%BB%BD%E6%81%A2%E5%A4%8D-Velero/">K8s集群备份恢复 - Velero</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-basic-resources</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/K8s%E5%9F%BA%E7%A1%80-pod%E8%B0%83%E5%BA%A6-%E4%BA%B2%E5%92%8C%E5%8A%9B/">K8s基础-Pod调度-亲和力</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/Python%E8%B0%83%E7%94%A8k8s-api%E5%AE%9E%E7%8E%B0%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/">Python调用K8s-API实现资源管理</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s-APIServer%E6%B7%B1%E5%BA%A6%E5%89%96%E6%9E%90-%E8%AF%B7%E6%B1%82%E9%93%BE%E8%B7%AF-%E8%AE%A4%E8%AF%81%E6%8E%88%E6%9D%83-%E7%94%9F%E4%BA%A7%E8%B0%83%E4%BC%98/">Kubernetes API Server 深度剖析：请求链路、认证授权与生产调优</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s-PodDisruptionBudget%E5%AE%9E%E6%88%98/">K8s PodDisruptionBudget 实战：优雅中断保护</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-Calico/">K8s基础-Calico</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-Finalizer%E4%B8%8E%E8%B5%84%E6%BA%90%E5%88%A0%E9%99%A4/">K8s基础-Finalizer与资源删除</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-Operator%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98-Kubebuilder/">从零开发 Kubernetes Operator：Kubebuilder 实战教程</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-Service/">K8s基础-Service</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-configMap-Secret/">K8s基础-configMap-Secret</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-daemonset/">K8s基础-DaemonSet</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-deployment/">K8s基础-Deployment</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-ingress/">K8s基础-Ingress</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-job-cronjob/">K8s基础-Job-CronJob</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-kubeadm/">K8s基础-kubeadm</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-namespace-%E8%B5%84%E6%BA%90%E5%88%86%E9%85%8D/">K8s基础-namespace-资源分配</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-pod/">K8s基础-Pod</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-pod%E8%B0%83%E5%BA%A6-%E6%A0%87%E7%AD%BE%E4%B8%8E%E9%80%89%E6%8B%A9%E5%99%A8%E5%AE%9E%E6%88%98/">Kubernetes 标签与选择器避坑：5 条核心铁律与生产级实战案例</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-statefulset/">K8s基础-StatefulSet</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-storage/">K8s基础-Storage</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-yaml/">K8s基础-YAML</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E4%B8%B4%E6%97%B6%E5%AE%B9%E5%99%A8ephemeral/">K8s基础-临时容器Ephemeral</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E5%AE%B9%E5%99%A8%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-Sidecar-Init-Ambassador-Adapter/">K8s 容器设计模式：Sidecar / Init Container / Ambassador / Adapter</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E5%AE%B9%E5%99%A8%E8%BF%90%E8%A1%8C%E6%97%B6-containerd/">K8s基础-容器运行时-containerd</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E6%9E%B6%E6%9E%84-%E7%BB%84%E4%BB%B6-%E8%B5%84%E6%BA%90/">K8s基础-架构-组件-资源</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E8%87%AA%E5%AE%9A%E4%B9%89CRD%E8%B5%84%E6%BA%90/">K8s基础-自定义CRD资源</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E8%AE%A4%E8%AF%81-%E6%8E%88%E6%9D%83-%E5%87%86%E5%85%A5/">K8s基础-认证-授权-准入</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-db-middleware</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/Operator%E9%83%A8%E7%BD%B2Redis%E9%9B%86%E7%BE%A4/">基于Operator部署Redis集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/Operator%E9%83%A8%E7%BD%B2mysql%E9%9B%86%E7%BE%A4/">Operator部署MySQL NDB集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/helm%E9%83%A8%E7%BD%B2mysql/">Helm部署MySQL</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/helm%E9%83%A8%E7%BD%B2postgreSQL/">Helm部署PostgreSQL</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/helm%E9%83%A8%E7%BD%B2rabbitmq-ha/">Helm部署RabbitMQ高可用集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/helm%E9%83%A8%E7%BD%B2strimzi-kafka/">Helm部署Strimzi Kafka</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/k8s%E5%9F%BA%E4%BA%8Eyaml%E9%83%A8%E7%BD%B2MongoDB%E9%9B%86%E7%BE%A4/">K8s基于YAML部署MongoDB集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/k8s%E5%9F%BA%E4%BA%8Eyaml%E9%83%A8%E7%BD%B2httpd%E6%9C%8D%E5%8A%A1/">K8s基于YAML部署httpd服务</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/k8s%E5%9F%BA%E4%BA%8Eyaml%E9%83%A8%E7%BD%B2mysql%E4%B8%BB%E4%BB%8E%E9%AB%98%E5%8F%AF%E7%94%A8/">K8s基于YAML部署MySQL主从高可用</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/k8s%E5%9F%BA%E4%BA%8Eyaml%E9%83%A8%E7%BD%B2redis%E9%9B%86%E7%BE%A4/">K8s基于YAML部署Redis集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/k8s%E9%83%A8%E7%BD%B2springcloud%E7%94%B5%E5%95%86%E9%A1%B9%E7%9B%AE/">K8s部署SpringCloud电商项目</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-installation-management</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/2025%E6%9C%80%E6%96%B0-%E4%BC%81%E4%B8%9A%E7%BA%A7%E9%AB%98%E5%8F%AF%E7%94%A8%E9%9B%86%E7%BE%A4-%E5%9F%BA%E4%BA%8Erockylinux/">2025最新-企业级高可用集群-基于rockylinux</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/etcd%E9%AB%98%E5%8F%AF%E7%94%A8%E9%85%8D%E7%BD%AE%E4%BB%A5%E5%8F%8A%E6%A8%A1%E6%8B%9F%E9%9B%86%E7%BE%A4%E6%95%85%E9%9A%9C%E5%92%8C%E6%81%A2%E5%A4%8D/">etcd高可用配置以及模拟集群故障和恢复</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/k8s-Backstage-%E5%86%85%E9%83%A8%E5%BC%80%E5%8F%91%E8%80%85%E5%B9%B3%E5%8F%B0IDP%E5%AE%9E%E6%88%98/">K8s 平台工程实战：用 Backstage 打造一站式内部开发者平台</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/k8s-cgroup-v2%E6%B7%B1%E5%BA%A6%E8%A7%A3%E6%9E%90-%E8%BF%81%E7%A7%BB%E5%AE%9E%E6%88%98%E4%B8%8E%E9%81%BF%E5%9D%91%E6%8C%87%E5%8D%97/">K8s CGroup v2 深度解析：资源隔离原理、迁移实战与生产避坑指南</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/k8s%E4%B8%A4%E5%9C%B0%E4%B8%89%E4%B8%AD%E5%BF%83%E6%9E%B6%E6%9E%84/">k8s两地三中心架构</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/k8s%E5%A4%9A%E9%9B%86%E7%BE%A4kubeconfig%E7%AE%A1%E7%90%86/">k8s多集群kubeconfig管理</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/k8s%E6%95%85%E9%9A%9C%E6%8E%92%E6%9F%A5%E6%8C%87%E5%8D%97/">k8s故障排查指南</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/k8s%E7%94%9F%E4%BA%A7%E7%8E%AF%E5%A2%83%E4%BC%98%E5%8C%96%E4%B8%8E%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/">k8s生产环境优化与最佳实践</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/k8s%E9%83%A8%E7%BD%B2%E9%98%B2%E7%81%AB%E5%A2%99%E7%AB%AF%E5%8F%A3%E9%85%8D%E7%BD%AE/">K8s部署防火墙端口配置</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/latest-version/%E5%AE%89%E8%A3%85k8s-1.35-%E5%9F%BA%E4%BA%8Erockylinux10-%E6%9C%80%E6%96%B0%E6%AD%A5%E9%AA%A4/">在 Rocky Linux 10 上安装 Kubernetes 1.35</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%AE%89%E8%A3%85k8s%E9%AB%98%E5%8F%AF%E7%94%A8%E9%9B%86%E7%BE%A4/">二进制安装k8s高可用集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.20.6-%E9%AB%98%E5%8F%AF%E7%94%A8/">安装k8s-1.20.6-高可用</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.23/">安装k8s-1.23</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.26-1.27/">安装k8s-1.26-1.27</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.28/">安装k8s-1.28</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.30-%E5%9F%BA%E4%BA%8Erockylinux/">安装k8s-1.30-基于rockylinux</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.32-%E5%9F%BA%E4%BA%8Erockylinux/">安装k8s-1.32-基于rockylinux</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.33-%E5%9F%BA%E4%BA%8Erockylinux-%E6%9C%80%E6%96%B0%E6%AD%A5%E9%AA%A4/">安装k8s-1.33-基于rockylinux-最新步骤</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/%E5%8D%87%E7%BA%A7/k8s-1.37-%E5%8D%87%E7%BA%A7%E9%A1%BB%E7%9F%A5-breaking-changes/">Kubernetes v1.37 升级破坏性变更指南</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/%E5%8D%87%E7%BA%A7/k8s%E8%BF%81%E7%A7%BB%E5%AE%B9%E5%99%A8%E8%BF%90%E8%A1%8C%E6%97%B6-%E7%89%88%E6%9C%AC%E5%8D%87%E7%BA%A7/">k8s迁移容器运行时与版本升级</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-monitoring-logging</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/K8s%E5%85%A8%E9%9D%A2%E5%B7%A1%E6%A3%80%E8%84%9A%E6%9C%AC-%E7%94%9F%E6%88%90HTML%E5%81%A5%E5%BA%B7%E6%8A%A5%E5%91%8A/">K8s 全面巡检脚本：一键生成 HTML 健康报告</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/OpenTelemetry%E5%AE%9E%E6%88%98-%E7%BB%9F%E4%B8%80Traces-Metrics-Logs/">OpenTelemetry 实战：告别厂商锁定，统一 Traces/Metrics/Logs</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/Prometheus%E5%9F%BA%E7%A1%80/">Prometheus基础</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/Prometheus%E7%9B%91%E6%8E%A7k8s%E7%B3%BB%E7%BB%9F%E7%BB%84%E4%BB%B6/">Prometheus监控K8s系统组件</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/Prometheus%E7%9B%91%E6%8E%A7%E5%A4%96%E9%83%A8k8s%E9%9B%86%E7%BE%A4/">Prometheus监控外部K8s集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/Prometheus%E7%9B%91%E6%8E%A7%E9%9D%9E%E4%BA%91%E5%8E%9F%E7%94%9F%E5%BA%94%E7%94%A8-%E4%B8%BB%E6%9C%BA/">Prometheus监控非云原生应用-主机</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/helm%E9%83%A8%E7%BD%B2Loki-promtail-tempo-grafanaAgent%E5%85%A8%E5%AE%B6%E6%A1%B6/">Helm部署Loki+Promtail+Tempo+GrafanaAgent全家桶</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/helm%E9%83%A8%E7%BD%B2jaeger/">Helm部署Jaeger</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/helm%E9%83%A8%E7%BD%B2prometheus-stack%E5%85%A8%E5%AE%B6%E6%A1%B6/">Prometheus-Stack 全家桶：生产级部署与运维完全指南</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E6%97%A5%E5%BF%97%E7%AE%A1%E7%90%86-%E9%87%87%E9%9B%86%E6%96%B9%E6%A1%88%E4%B8%8E%E5%AE%A1%E8%AE%A1%E6%97%A5%E5%BF%97/">K8s 日志管理：基础机制、六种采集方案与审计日志实战</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E7%9B%91%E6%8E%A7EFK%2Blogstash%2Bkafka/">K8s监控EFK+logstash+kafka</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E7%9B%91%E6%8E%A7ES%287.2%29%2BKibana%287.2%29%2BFluentd%28v1.4.2%29/">K8s监控ES(7.2)+Kibana(7.2)+Fluentd(v1.4.2)</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E7%9B%91%E6%8E%A7Prometheus%28v2.2.1%29/">K8s监控Prometheus(v2.2.1)</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E7%9B%91%E6%8E%A7Prometheus%28v2.33.5%29%2BGrafana%28v8.4.5%29/">K8s监控Prometheus(v2.33.5)+Grafana(v8.4.5)</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E7%9B%91%E6%8E%A7alertmanager%28v0.14.0%29/">K8s监控Alertmanager(v0.14.0)</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E9%83%A8%E7%BD%B2elasticsearch%E9%9B%86%E7%BE%A4/">K8s部署Elasticsearch集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E9%83%A8%E7%BD%B2grafana%28v5.0.4%29/">K8s部署Grafana(v5.0.4)</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E9%83%A8%E7%BD%B2%E5%85%A8%E9%93%BE%E8%B7%AF%E8%BF%BD%E8%B8%AA-Skywalking/">K8s部署全链路追踪-Skywalking</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2Prometheus%28v2.32.1%29%E8%81%94%E9%82%A6%E9%9B%86%E7%BE%A4/">二进制部署Prometheus(v2.32.1)联邦集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2efk%2Blogstash%2Bkafka%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%B9%B3%E5%8F%B0/">二进制部署EFK+Logstash+Kafka日志收集平台</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2prometheus-grafana-nodeexporter/">二进制部署Prometheus-Grafana-NodeExporter</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/%E5%9F%BA%E4%BA%8Ehelm%2Boperator%E9%83%A8%E7%BD%B2ECK%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%B9%B3%E5%8F%B0/">基于Helm+Operator部署ECK日志收集平台</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-networking-service-mesh</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/Istio-Sidecar-vs-Ambient/">Istio Sidecar vs Ambient 模式对比</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/helm%E5%AE%89%E8%A3%85istio/">Helm安装Istio</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/helm%E9%83%A8%E7%BD%B2external-dns/">Helm部署External-DNS</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/helm%E9%83%A8%E7%BD%B2ingress-nginx/">Helm部署Ingress-Nginx</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/helm%E9%83%A8%E7%BD%B2tomcat/">Helm 部署 Tomcat</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/k8s-Gateway-API%E5%85%A5%E9%97%A8-Ingress%E4%B8%8B%E4%B8%80%E4%BB%A3%E6%96%B9%E6%A1%88/">Kubernetes Gateway API 入门：Ingress 的下一代方案</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/k8s%E7%B2%BE%E7%BB%86%E5%8C%96%E6%B5%81%E9%87%8F%E7%AE%A1%E7%90%86-istio/">K8s精细化流量管理-Istio</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/k8s%E9%83%A8%E7%BD%B2istio%281.13.1%29/">K8s部署Istio(1.13.1)</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/k8s%E9%9B%86%E7%BE%A4%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/">K8s集群网络安全</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/%E4%BC%81%E4%B8%9A%E9%A1%B9%E7%9B%AE%E6%8E%A5%E5%85%A5istio%E5%AE%9E%E6%88%98/">企业项目接入Istio实战</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-scaling</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-scaling/KEDA-vs-HPA-2026%E7%BB%88%E6%9E%81%E5%AF%B9%E6%AF%94-v1.36%E7%BC%A9%E9%9B%B6/">KEDA vs HPA 2026 终极对比：v1.36 原生缩零后该选谁？</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-scaling/helm%E9%83%A8%E7%BD%B2goldilocks/">Helm部署Goldilocks</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-scaling/helm%E9%83%A8%E7%BD%B2vpa/">Helm部署VPA</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-scaling/k8s-HPA-VPA/">K8s HPA与VPA</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-scaling/k8s-%E5%9F%BA%E4%BA%8EKEDA%E7%9A%84%E5%BC%B9%E6%80%A7%E8%83%BD%E5%8A%9B/">K8s基于KEDA的弹性能力</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-scaling/k8s%E6%88%90%E6%9C%AC%E4%BC%98%E5%8C%96%E6%96%B9%E6%A1%88-FinOps%E5%AE%9E%E6%88%98/">K8s 集群成本优化方案：砍掉 60% 云账单</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-security-auth</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2capsule/">Helm部署Capsule</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2certmanager/">Helm部署Cert-Manager</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2external-secrets/">Helm部署External-Secrets</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2kyverno%E5%92%8Cpolicy-reporter/">Helm部署Kyverno和Policy-Reporter</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2oauth2proxy/">Helm部署OAuth2-Proxy</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2sonarqube/">Helm部署SonarQube</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2trivy-operator/">Helm部署Trivy-Operator</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/k8s-Admission-Webhook%E9%93%BE%E5%86%B2%E7%AA%81%E6%8E%92%E6%9F%A5-Istio-Kyverno-Gatekeeper/">当 Istio、Kyverno、Gatekeeper 三个 Webhook 同时存在，你的集群会发生什么？</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/k8s%E5%AE%B9%E5%99%A8%E5%AE%89%E5%85%A8%E4%B8%8A%E4%B8%8B%E6%96%87-SecurityContext/">Kubernetes 容器安全上下文完全指南：从入门到生产避坑</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-springcloud</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-springcloud/SpringCloud%E9%A1%B9%E7%9B%AE%E8%BF%81%E7%A7%BB%E5%88%B0k8s%E5%AE%9E%E6%88%98/">SpringCloud 项目迁移到 K8s 实战</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-storage</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-storage/helm%E9%83%A8%E7%BD%B2nfs-subdir-external-provisioner/">Helm部署NFS Subdir External Provisioner</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-storage/k8s-ceph%E9%83%A8%E7%BD%B2%E4%B8%8E%E9%9B%86%E6%88%90/">K8s Ceph部署与集成</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-storage/k8s-%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8CubeFS/">K8s分布式存储CubeFS</a></li>
+        </ul>
+        <p class="sidebar-group">kubeblocks</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/kubeblocks/kubeblocks%E9%83%A8%E7%BD%B2WordPress/">KubeBlocks 部署 WordPress</a></li>
+          <li><a href="../../../Docker-Kubernetes/kubeblocks/kubeblocks%E9%83%A8%E7%BD%B2%E9%AB%98%E5%8F%AF%E7%94%A8harbor%E9%9B%86%E7%BE%A4/">KubeBlocks 部署高可用 Harbor 集群</a></li>
+        </ul>
+        <p class="sidebar-group">其他</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/%E7%AE%80%E5%8E%86%E6%8C%87%E5%8D%97/">简历指南</a></li>
+        </ul>
+      </nav>
+    </details>
+  </aside>
+
+  <article class="article">
+    <nav class="breadcrumb">
+      <a href="../../../index.html">首页</a><span>/</span>
+      <a href="../../../Docker-Kubernetes/">Docker-Kubernetes</a><span>/</span><span>CKA-CKS</span>
+    </nav>
+    <h1 class="article-title">CKS 备考</h1>
+    <p class="article-meta"><span>更新于 2026-04-16</span>
+      <a href="https://github.com/hangx969/learning-notes/blob/main/Docker-Kubernetes/CKA-CKS/CKS-%E5%A4%87%E8%80%83.md">查看源文件</a>
+    </p>
+    <div class="article-body">
+<h1 id="1-apparmor">1 AppArmor</h1>
+<h2 id="apparmor介绍">AppArmor介绍</h2>
+<ul>
+<li>k8s文档：<a href="https://kubernetes.io/docs/tutorials/security/apparmor/">AppArmor - Kubernetes</a></li>
+<li>AppArmor官网：<a href="https://wiki.ubuntu.com/AppArmor/">AppArmor - Ubuntu Wiki</a></li>
+<li>AppArmor（Application Armor）是一种在Linux环境中用于增强系统安全的软件。它通过使用Linux内核的安全模块（LSM）来限制程序的能力，防止系统受到恶意软件或者非授权操作的影响。AppArmor通过定义一套简单的配置文件来指定程序能够访问哪些文件和功能。这种机制被称为强制访问控制（MAC），它与传统的基于用户权限的访问控制（DAC）不同，可以更精细地控制应用程序的行为，提高系统的安全性。与SELinux相比，AppArmor的策略更加简洁易懂，易于配置和管理。</li>
+<li>AppArmor的策略通常定义在 /etc/apparmor.d/ 目录下，每个策略文件对应一个程序，通过规定哪些文件路径可以访问以及可执行哪些操作（如读取、写入、执行、打开网络端口等）来控制程序的行为。目前Apparmor已经整合到了Linux 2.6内核中，Ubuntu系统自带Apparmor。</li>
+<li>Apparmor两种工作模式：</li>
+<li>Enforcement：配置文件中列出的限制条件会被执行，并对于违反条件的程序进行日志记录</li>
+<li>
+<p>Complain：只监控行为并记录到日志中，并不会实际阻止程序的执行。</p>
+</li>
+<li>
+<p>配置文件位置：/etc/apparmor.d目录下</p>
+</li>
+<li>访问控制：</li>
+<li>r(read)  w(write)  a(append)  k(file locking mode)  l(link mode)</li>
+<li>在配置文件中的写法：<code>/tmp r</code> 表示对/tmp下的文件可以读取。（没在配置文件中列出的文件，程序是不能访问的）</li>
+<li>资源限制</li>
+<li><code>set rlimit as&lt;=1M</code> (限制使用的虚拟内存)</li>
+<li>网络限制</li>
+<li>network <code>\[\[domain]\[type]\[protocol]]</code></li>
+<li>允许对所有网络进行操作：<code>network,</code></li>
+<li>允许在IPv4下使用TCP协议：<code>network inet tcp.</code></li>
+</ul>
+<h2 id="task">Task</h2>
+<ul>
+<li>在cluster的工作节点上，实施位于/etc/apparmor.d/nginx_apparmor的现有的apparmor配置文件。编辑位于/home/candidate/KSSH00401/nginx-deploy.yaml的现有清单文件以应用AppArmor配置文件。最后，应用清单文件并创建其中指定的Pod。</li>
+</ul>
+<h2 id="answer">Answer</h2>
+<ul>
+<li>文档:kubernetes.io 搜apparmor</li>
+</ul>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>config<span class="w"> </span>use-context<span class="w"> </span>KSSH00401
+<span class="c1">#先去工作节点，查看apparmor配置文件</span>
+sudo<span class="w"> </span>kubectl<span class="w"> </span>get<span class="w"> </span>nodes
+ssh<span class="w"> </span>kssh00401-worker1
+sudo<span class="w"> </span>-i
+<span class="c1">#查看apparmor配置文件是为了获取profile的名称</span>
+cat<span class="w"> </span>/etc/apparmor.d/nginx_apparmor<span class="w"> </span>
+<span class="c1">#...</span>
+profile<span class="w"> </span>nginx-profile<span class="w">  </span><span class="nv">flags</span><span class="o">=(</span>attach_disconnected<span class="o">)</span><span class="w"> </span><span class="o">{</span>
+<span class="c1">#... profile后面的nginx-profile是这个配置的名称，</span>
+<span class="c1">#后面apparmor_status | grep nginx-profile 要用到</span>
+<span class="c1">#yaml文件的annotations也要用到</span>
+
+<span class="c1">#安静模式（不输出信息）加载或更新名为 nginx_apparmor 的 AppArmor 配置文件</span>
+apparmor_parser<span class="w"> </span>-q<span class="w"> </span>/etc/apparmor.d/nginx_apparmor<span class="w"> </span>
+<span class="c1">#查看apparmor配置文件是否生效(profile的名字是在nginx_apparmor文件里面定义的)</span>
+apparmor_status<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>nginx
+<span class="c1">#exit退出工作节点，回到login node署pod</span>
+
+kubectl<span class="w"> </span>config<span class="w"> </span>use-context<span class="w"> </span>KSSH00401
+sudo<span class="w"> </span>vim<span class="w"> </span>/home/candidate/KSSH00401/nginx-deploy.yaml<span class="w"> </span>
+<span class="c1">#新增deploy.spec.template.metadata.annotqations。</span>
+annotations:
+<span class="w">  </span>container.apparmor.security.beta.kubernetes.io/hello:<span class="w"> </span>localhost/nginx-profile
+<span class="w">  </span><span class="c1">##hello是pod里container的名称，nginx-profile是apparmor_status解析出来的结果</span>
+
+sudo<span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>/home/candidate/KSSH00401/nginx-deploy.yaml
+</code></pre></div>
+
+<p><div class="callout callout-warning" markdown="1"><br />
+<p class="callout-title">注意</p></p>
+<ul>
+<li>cat /etc/apparmor.d/nginx_apparmor配置文件中查看profile的名称</li>
+<li>yaml文件中的deployments.spec.template.metadata.annotations中写annotation</li>
+<li>annotation中的container name记得要改</li>
+<li>annotations的格式是container name后面的: 跟一个空格</li>
+</ul>
+</div>
+<h1 id="2-kube-bench基准测试">2 kube-bench基准测试</h1>
+<h2 id="kube-bench介绍">kube-bench介绍</h2>
+<ul>
+<li>kube-Bench是一款针对Kubernetes的安全检测工具</li>
+</ul>
+<h2 id="task_1">Task</h2>
+<p>context：针对kubeadm创建的cluster运行CIS基准测试工具时，发现了多个必须解决的问题。</p>
+<ul>
+<li>
+<p>task：通过配置修复所有问题并重新启动受影响的组件以确保新设置生效。</p>
+</li>
+<li>
+<p>修复针对kubelet发现的所有以下违规行为</p>
+</li>
+<li>
+<p>Ensure that the anonymous-auth argument is set to false  </p>
+</li>
+<li>
+<p>Ensure that the -authorization-mode argument is not set to AlwaysAllow </p>
+</li>
+<li>
+<p>尽可能使用Webhook 身份验证/授权</p>
+</li>
+<li>
+<p>修复针对etcd发现的以下违规行为：</p>
+</li>
+<li>
+<p>Ensure that the --client-cert-auth argument is set to true</p>
+</li>
+</ul>
+<h2 id="answer_1">Answer</h2>
+<ul>
+<li>官网搜索：kubelet configuration</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="c1">#切换到指定集群节点</span>
+kubectl<span class="w"> </span>config<span class="w"> </span>use-context<span class="w"> </span>KSSH00201
+sudo<span class="w"> </span>kubectl<span class="w"> </span>get<span class="w"> </span>nodes
+ssh<span class="w"> </span>kscs00201-master
+sudo<span class="w"> </span>-i
+</code></pre></div>
+
+<ul>
+<li>修改master节点kubelet文件</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="c1">#master节点上，编辑kubelet文件来配置以上参数</span>
+vim<span class="w"> </span>/var/lib/kubelet/config.yaml<span class="w"> </span>
+</code></pre></div>
+
+<ul>
+<li>原始文件如下：</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="c1">#原始文件内容如下：</span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kubelet.config.k8s.io/v1beta1</span>
+<span class="nt">authentication</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">anonymous</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">  </span><span class="nt">webhook</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">cacheTTL</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0s</span>
+<span class="w">    </span><span class="nt">enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">  </span><span class="nt">x509</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">clientCAFile</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/etc/kubernetes/pki/ca.crt</span>
+<span class="nt">authorization</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">mode</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AlwaysAllow</span>
+<span class="w">  </span><span class="nt">webhook</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">cacheAuthorizedTTL</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0s</span>
+<span class="w">    </span><span class="nt">cacheUnauthorizedTTL</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0s</span>
+<span class="nt">cgroupDriver</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">systemd</span>
+<span class="c1">#.........</span>
+</code></pre></div>
+
+<ul>
+<li>修改后内容如下：</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kubelet.config.k8s.io/v1beta1</span>
+<span class="nt">authentication</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">anonymous</span><span class="p">:</span><span class="w"> </span>
+<span class="w">    </span><span class="nt">enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"> </span><span class="c1">#改为false</span>
+<span class="w">  </span><span class="nt">webhook</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">cacheTTL</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0s</span>
+<span class="w">    </span><span class="nt">enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"> </span><span class="c1">#改为true</span>
+<span class="w">  </span><span class="nt">x509</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">clientCAFile</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/etc/kubernetes/pki/ca.crt</span>
+<span class="nt">authorization</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">mode</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Webhook</span><span class="w"> </span><span class="c1">#改为Webhook</span>
+<span class="c1">#......</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="c1">#修改完重启kubelet</span>
+systemctl<span class="w"> </span>restart<span class="w"> </span>kubelet
+</code></pre></div>
+
+<ul>
+<li>修改工作节点kubelet文件，修改内容同master节点。</li>
+</ul>
+<div class="highlight"><pre><span></span><code>ssh<span class="w"> </span>xianchaonode1
+sudo<span class="w"> </span>-i
+vim<span class="w"> </span>/var/lib/kubelet/config.yaml
+<span class="c1">#修改完重启kubelet</span>
+systemctl<span class="w"> </span>restart<span class="w"> </span>kubelet
+<span class="c1">#退出工作节点</span>
+<span class="nb">exit</span>
+</code></pre></div>
+
+<ul>
+<li>修改master节点etcd</li>
+</ul>
+<div class="highlight"><pre><span></span><code>ssh<span class="w"> </span>kscs00201-master
+sudo<span class="w"> </span>-i
+vim<span class="w"> </span>/etc/kubernetes/manifests/etcd.yaml
+<span class="c1">#containers.command下面新增以下参数</span>
+-<span class="w"> </span>--client-cert-auth<span class="o">=</span><span class="nb">true</span>
+</code></pre></div>
+
+<ul>
+<li>修改完重启kubelet</li>
+</ul>
+<div class="highlight"><pre><span></span><code>systemctl<span class="w"> </span>restart<span class="w"> </span>kubelet
+<span class="c1">#exit退回原始终端，切换集群</span>
+kubectl<span class="w"> </span>config<span class="w"> </span>use-context<span class="w"> </span>KSSH00201
+kubectl<span class="w"> </span>get<span class="w"> </span>nodes
+<span class="c1">#这个过程比较慢，估计需要几分钟才可以启动</span>
+</code></pre></div>
+
+<p><div class="callout callout-warning" markdown="1"><br />
+<p class="callout-title">注意</p></p>
+<ul>
+<li>这些字段可能默认没有，需要自己添加</li>
+</ul>
+<p><sub>~</sub>yaml<br />
+  anonymous: <br />
+    enabled: false #改为false<br />
+  webhook:<br />
+    cacheTTL: 0s<br />
+    enabled: true #改为true<br />
+~~~</p>
+<ul>
+<li>背过kubelet和etcd配置文件的路径：</li>
+<li><strong>kubelet：/var/lib/kubelet/config.yaml</strong> </li>
+<li>etcd: /etc/kubernetes/manifests/etcd.yaml</li>
+</ul>
+</div>
+<h1 id="3-trivy镜像扫描">3 Trivy镜像扫描</h1>
+<h2 id="task_2">Task</h2>
+<ul>
+<li>使用Trivy开源容器扫描器检测namespace yavin中pod使用的具有严重漏洞的镜像。查找具有High或Critical漏洞的镜像，并删除使用这些镜像的pod。</li>
+<li>Trivy仅预装在cluster的master节点上</li>
+</ul>
+<h2 id="answer_2">Answer</h2>
+<div class="highlight"><pre><span></span><code><span class="c1">#自己练习先创建pod</span>
+kubectl<span class="w"> </span>create<span class="w"> </span>ns<span class="w"> </span>yavin
+kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>trivy-1.yaml
+kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>trivy-2.yaml
+
+<span class="c1">#考试环境先切换集群</span>
+kubectl<span class="w"> </span>config<span class="w"> </span>use-context<span class="w"> </span>KSRS00101
+<span class="c1">#原始terminal上面查看pod的镜像</span>
+k<span class="w"> </span>get<span class="w"> </span>po<span class="w"> </span>-n<span class="w"> </span>yavin<span class="w"> </span>-o<span class="w"> </span>yaml<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>image:
+<span class="c1">#到master节点上扫描pod</span>
+ssh<span class="w"> </span>xianchaomaster1
+trivy<span class="w"> </span>image<span class="w"> </span>--help<span class="w"> </span><span class="c1">#查看参数选项</span>
+<span class="c1">#扫描刚才列出来的镜像</span>
+trivy<span class="w"> </span>image<span class="w"> </span>--skip-db-update<span class="w"> </span>-s<span class="w"> </span>HIGH,CRITICAL<span class="w"> </span>docker.io/library/nginx:1.25<span class="w"> </span>&gt;&gt;<span class="w"> </span>scan.log
+trivy<span class="w"> </span>image<span class="w"> </span>--skip-db-update<span class="w"> </span>-s<span class="w"> </span>HIGH,CRITICAL<span class="w"> </span>docker.io/library/redis:7.2<span class="w"> </span>&gt;&gt;<span class="w"> </span>scan.log<span class="w"> </span>
+<span class="c1">#过滤扫描结果,-B 2是把total:前面两行也显示出来</span>
+grep<span class="w"> </span>-iB<span class="w"> </span><span class="m">2</span><span class="w"> </span>total:<span class="w"> </span>scan.log
+<span class="c1">#exit回到原始命令终端，切换到集群环境</span>
+kubectl<span class="w"> </span>config<span class="w"> </span>use-context<span class="w"> </span>KSRS00101
+<span class="c1">#列出pod，找到使用漏洞镜像的pod，删掉</span>
+k<span class="w"> </span>get<span class="w"> </span>po<span class="w"> </span>-n<span class="w"> </span>yavin
+k<span class="w"> </span>describe<span class="w"> </span>po<span class="w"> </span>trivy-1<span class="w"> </span>-n<span class="w"> </span>yavin
+k<span class="w"> </span>delete<span class="w"> </span>po<span class="w"> </span>trivy-1<span class="w"> </span>-n<span class="w"> </span>trivy<span class="w"> </span>--force<span class="w"> </span>--grace-period<span class="o">=</span><span class="m">0</span>
+</code></pre></div>
+
+<p><div class="callout callout-warning" markdown="1"><br />
+<p class="callout-title">注意</p></p>
+<ul>
+<li>原始终端才能执行kubectl命令，exit退回到原始终端之后，需要重新执行kubectl use-context切换到集群环境。</li>
+<li>trivy命令需要ssh登录到master节点才能执行</li>
+</ul>
+</div>
+<h1 id="4-sysdig-falco">4 sysdig &amp; falco</h1>
+<h2 id="介绍">介绍</h2>
+<ul>
+<li>Sysdig官网：<a href="https://www.sysdig.org">Sysdig</a></li>
+<li>
+<p>sysdig的定位是系统监控、分析和排障的工具</p>
+</li>
+<li>
+<p>Falco 是一个云原生运行时安全系统，可与容器和原始 Linux 主机一起使用。它由 Sysdig 开发，是 Cloud Native Computing Foundation（云原生计算基金会）的一个沙箱项目。</p>
+</li>
+<li>Falco 的工作方式是查看文件更改、网络活动、进程表和其他数据是否存在可疑行为，然后通过可插拔后端发送警报。</li>
+<li>通过内核模块或扩展的 BPF 探测器在主机的系统调用级别检查事件。</li>
+<li>Falco 包含一组丰富的规则，您可以编辑这些规则以标记特定的异常行为，并为正常的计算机操作创建允许列表。</li>
+</ul>
+<h2 id="task_3">Task</h2>
+<ul>
+<li>使用运行时检测工具检测在属于Pod redis的单个容器中频繁产生和执行异常的进程。 </li>
+<li>cluster的工作节点上已经安装了sysdig和falco</li>
+<li>使用你选择的工具（包括任何未预装的工具），至少分析容器120s，使用过滤器检查新生成和执行的进程。在/opt/KSRS00101/events/details中存储一个事件文件，其中包含检测到的事件，每行一个，格式如下所示：</li>
+<li>timestamp,uid or namespace, processName</li>
+<li>以下是格式的正确的事件文件：<ul>
+<li>18:18:18.688688688,root,init</li>
+<li>18:18:19.688688688,nobody,init</li>
+</ul>
+</li>
+</ul>
+<h2 id="answer_3">Answer</h2>
+<div class="highlight"><pre><span></span><code><span class="c1">#自己环境中练习时，创建pod</span>
+k<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>redis.yaml
+
+<span class="c1">#切换集群环境</span>
+kubectl<span class="w"> </span>config<span class="w"> </span>use-context<span class="w"> </span>KSRS00101
+k<span class="w"> </span>get<span class="w"> </span>po
+k<span class="w"> </span>get<span class="w"> </span>po<span class="w"> </span>redis-deployment-5b569f968-86h8n<span class="w"> </span>-o<span class="w"> </span>yaml<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>containerID
+<span class="c1">#复制containerID前12位即可</span>
+2d3affbe35b4
+
+<span class="c1">#去工作节点上用sysdig检查。</span>
+ssh<span class="w"> </span>xianchaonode1
+sudo<span class="w"> </span>-i<span class="w"> </span>
+<span class="c1">#用下面命令查看sysdig里面的变量叫啥</span>
+sysdig<span class="w"> </span>-l<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="nb">time</span><span class="w"> </span><span class="c1">#找到 evt.time，作为输出字段</span>
+sysdig<span class="w"> </span>-l<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>uid<span class="w"> </span><span class="c1">#找到 user.uid，作为输出字段</span>
+sysdig<span class="w"> </span>-l<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>name<span class="w"> </span><span class="c1">#找到 proc.name，作为输出字段</span>
+sysdig<span class="w"> </span>-l<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>container<span class="w"> </span><span class="c1">#找到container.id作为filter条件</span>
+<span class="c1">#containerd的路径可以先查找一下：</span>
+find<span class="w"> </span>/<span class="w"> </span>-name<span class="w"> </span><span class="s2">&quot;containerd.sock&quot;</span><span class="w"> </span><span class="c1">#/run/containerd/containerd.sock</span>
+<span class="c1">#就用上面的变量名来组成输出格式</span>
+sysdig<span class="w"> </span>-M<span class="w"> </span><span class="m">120</span><span class="w"> </span>-p<span class="w"> </span><span class="s2">&quot;%evt.time,%user.uid,%proc.name&quot;</span><span class="w"> </span>--cri<span class="w"> </span>unix:///run/containerd/containerd.sock<span class="w"> </span>container.id<span class="o">=</span>2d3affbe35b4<span class="w"> </span>&gt;<span class="w"> </span>/opt/KSRS00101/events/details
+
+<span class="c1">#-p：指定打印事件时使用的格式</span>
+<span class="c1">#-M: 多少秒后停止收集</span>
+<span class="c1"># evt.time: 事件发生的时间</span>
+<span class="c1"># user.uid: 用户uid</span>
+<span class="c1"># proc.name: 生成事件的进程名字</span>
+<span class="c1"># container.id: 根据容器id过滤</span>
+
+<span class="c1">#如果details中没输出数据，可以尝试改成container name</span>
+<span class="c1">#sysdig -M 120 -p &quot;*%evt.time,%user.uid,%proc.name&quot; --cri unix:///run/containerd/containerd.sock container.name=redis &gt; /opt/KSRS00101/events/details</span>
+</code></pre></div>
+
+<p><div class="callout callout-warning" markdown="1"><br />
+<p class="callout-title">注意</p></p>
+<p>一定去工作节点上运行sysdig，因为pod跑在工作节点上，在控制节点上sysdig没有输出的。</p>
+</div>
+<h1 id="5-service-account">5 service account</h1>
+<h2 id="task_4">Task</h2>
+<p>Context：</p>
+<ul>
+<li>ServiceAccount不得自动挂载API凭据，ServiceAccount名称必须以“-sa”结尾。</li>
+<li>清单文件/home/candidate/KSCH00301/pod-manifest.yaml中指定的pod由于ServiceAccount指定错误而无法调度。</li>
+</ul>
+<p>Task：</p>
+<ul>
+<li>首先，在现有 namespace dev 中创建一个名为 database-sa 的新ServiceAccount，确保此ServiceAccount不得自动挂载API凭据。</li>
+<li>其次，使用 /home/candidate/KSCH00301/pod-manifest.yaml 中的清单文件来创建pod。</li>
+<li>最后，清理 namespace dev 中任何未使用的 ServiceAccount。</li>
+</ul>
+<h2 id="answer_4">Answer</h2>
+<ul>
+<li>文档：k8s官网搜configure service account</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="c1">#自己环境搭建资源</span>
+<span class="l l-Scalar l-Scalar-Plain">sudo kubectl create ns dev</span>
+<span class="l l-Scalar l-Scalar-Plain">#切换集群</span>
+<span class="l l-Scalar l-Scalar-Plain">kubectl config use-context KSCH00301</span>
+<span class="l l-Scalar l-Scalar-Plain">sudo -i</span>
+<span class="l l-Scalar l-Scalar-Plain">#通过dry-run生成yaml文件，--dry-run=client选项，仅生成结果，不发送给api server</span>
+<span class="l l-Scalar l-Scalar-Plain">kubectl create sa database-sa  -n dev --dry-run=client -o yaml &gt; sa.yaml</span>
+<span class="l l-Scalar l-Scalar-Plain">vim sa.yaml</span>
+<span class="l l-Scalar l-Scalar-Plain">apiVersion</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ServiceAccount</span>
+<span class="nt">automountServiceAccountToken</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w">  </span><span class="c1">#不自动挂载API凭据</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">creationTimestamp</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">null</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">database-sa</span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dev</span>
+
+<span class="l l-Scalar l-Scalar-Plain">kubectl apply -f sa.yaml</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="c1">#pod yaml文件新增两个字段</span>
+<span class="l l-Scalar l-Scalar-Plain">vim /home/candidate/KSCH00301/pod-manifest.yaml</span>
+<span class="l l-Scalar l-Scalar-Plain">apiVersion</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Pod</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dev</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dev-pod</span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dev</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">automountServiceAccountToken</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">serviceAccountName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">database-sa</span>
+<span class="w">  </span><span class="nt">containers</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">docker.io/xianchao/nginx:v1</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+<span class="w">    </span><span class="nt">imagePullPolicy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">IfNotPresent</span>
+
+<span class="l l-Scalar l-Scalar-Plain">kubectl delete -f /home/candidate/KSCH00301/pod-manifest.yaml</span>
+<span class="l l-Scalar l-Scalar-Plain">kubectl apply -f /home/candidate/KSCH00301/pod-manifest.yaml</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="c1">#先看有哪些sa</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>sa<span class="w"> </span>-n<span class="w"> </span>dev
+<span class="c1">#再看有哪些pod</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>po<span class="w"> </span>-n<span class="w"> </span>dev
+<span class="c1">#看pod都挂载了哪些sa。这样就找到了没被使用的sa，k delete sa -n dev删掉。</span>
+k<span class="w"> </span>get<span class="w"> </span>po<span class="w"> </span>-n<span class="w"> </span>dev<span class="w"> </span>-o<span class="w"> </span>yaml<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>serviceAccountName:
+</code></pre></div>
+
+<p><div class="callout callout-warning" markdown="1"><br />
+<p class="callout-title">注意</p></p>
+<ul>
+<li>创建sa的时候一定注意加上<strong>metadata.namespace</strong>，否则后面的pod创建不出来</li>
+<li>default这个sa不用删除，会自动生成的。</li>
+<li>如果pod删除较慢，直接<code>kubectl delete po xxx --force --grace-period=0</code>强制删除</li>
+</ul>
+</div>
+<h1 id="6-tls通信加强">6 TLS通信加强</h1>
+<h2 id="task_5">Task</h2>
+<p>一个现有的Kubernetes集群，通过更新组件的TLS配置进行安全加固</p>
+<ul>
+<li>修改API server和etcd之间通信的TLS配置，对于API server</li>
+<li>删除对除了TLS1.2及更高版本之外的所有TLS版本的支持</li>
+<li>删除对<strong>TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256</strong>之外左右密码套件的支持</li>
+<li>对于etcd：</li>
+<li>删除对于除了TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256之外的所有密码套件的支持</li>
+</ul>
+<h2 id="answer_5">Answer</h2>
+<ul>
+<li>官网搜：kube-apiserver, ctrl+F搜--tls</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="c1">#切换集群</span>
+kubectl<span class="w"> </span>config<span class="w"> </span>use-context<span class="w"> </span>KSMV00401
+k<span class="w"> </span>get<span class="w"> </span>nodes
+<span class="c1">#ssh到master节点更改配置</span>
+ssh<span class="w"> </span>xianchaomaster1
+sudo<span class="w"> </span>-i
+<span class="c1">#修改api server参数</span>
+vim<span class="w"> </span>/etc/kubernetes/manifests/kube-apiserver.yaml
+<span class="w">  </span>containers:
+<span class="w">  </span>-<span class="w"> </span>command:
+<span class="w">    </span>-<span class="w"> </span>kube-apiserver
+<span class="w">    </span>-<span class="w"> </span>--tls-min-version<span class="o">=</span>VersionTLS12<span class="w"> </span><span class="c1">#照文档添加这一项。TLS12代表TLS 1.2</span>
+<span class="w">    </span>-<span class="w"> </span>--tls-cipher-suites<span class="o">=</span>TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256<span class="w"> </span><span class="c1">#照文档添加这一项指定的TLS cipher</span>
+<span class="c1">#重启kubelet</span>
+systemctl<span class="w"> </span>restart<span class="w"> </span>kubelet
+
+<span class="c1">#修改etcd配置</span>
+vim<span class="w"> </span>/etc/kubernetes/manifests/etcd.yaml
+spec:
+<span class="w">  </span>containers:
+<span class="w">  </span>-<span class="w"> </span>command:
+<span class="w">    </span>-<span class="w"> </span>etcd
+<span class="w">    </span>-<span class="w"> </span>--cipher-suites<span class="o">=</span>TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256<span class="w"> </span><span class="c1">#添加这一项</span>
+<span class="c1">#重启kubelet</span>
+systemctl<span class="w"> </span>restart<span class="w"> </span>kubelet
+
+<span class="c1">#exit退出控制节点，到login node上检查</span>
+kubectl<span class="w"> </span>config<span class="w"> </span>use-context<span class="w"> </span>KSMV00401
+k<span class="w"> </span>get<span class="w"> </span>nodes<span class="w"> </span>-n<span class="w"> </span>kube-system
+</code></pre></div>
+
+<p><div class="callout callout-warning" markdown="1"><br />
+<p class="callout-title">注意</p></p>
+<ul>
+<li>etcd的参数文档上没有，记住是比apiserver上少了tls（- --cipher-suites）</li>
+<li>apiserver和etcd的要求的cipher不一定相同，注意甄别。</li>
+<li>重启kubelet完之后，可能会花费几分钟才能显示出k get nodes的结果</li>
+</ul>
+</div>
+<h1 id="7-networkpolicy拒绝所有的ingressegress流量">7 NetworkPolicy拒绝所有的ingress+egress流量</h1>
+<h2 id="task_6">Task</h2>
+<p>一个默认拒绝（default-deny）的NetworkPolicy可避免在未定义任何其他NetworkPolicy的namespace中意外公开Pod。</p>
+<ul>
+<li>在namespace development中创建一个名字为denynetwork的default-deny的NetworkPolicy</li>
+<li>此新的NetworkPolicy必须拒绝namespace development中的所有ingress+Egress流量。</li>
+<li>将新NetworkPolicy应用于在namespace development中运行的所有POD</li>
+<li>您可以在/home/candidate/KSCS00101/network-policy.yaml中找到模板清单文件</li>
+</ul>
+<h2 id="answer_6">Answer</h2>
+<ul>
+<li>官网搜networkpolicies --&gt; 搜deny --&gt; 找到 Default deny all ingress and all egress traffic</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="c1">#自己环境</span>
+k<span class="w"> </span>create<span class="w"> </span>ns<span class="w"> </span>development
+mkdir<span class="w"> </span>-p<span class="w"> </span>/home/candidate/KSCS00101/
+<span class="c1">#切换集群</span>
+kubectl<span class="w"> </span>config<span class="w"> </span>use-context<span class="w"> </span>KSCS00101
+vim<span class="w"> </span>/home/candidate/KSCS00101/network-policy.yaml
+<span class="c1">#将官网的模板复制进来，加个namespace即可</span>
+---
+apiVersion:<span class="w"> </span>networking.k8s.io/v1
+kind:<span class="w"> </span>NetworkPolicy
+metadata:
+<span class="w">  </span>name:<span class="w"> </span>denynetwork
+<span class="w">  </span>namespace:<span class="w"> </span>development
+spec:
+<span class="w">  </span>podSelector:<span class="w"> </span><span class="o">{}</span>
+<span class="w">  </span>policyTypes:
+<span class="w">  </span>-<span class="w"> </span>Ingress
+<span class="w">  </span>-<span class="w"> </span>Egress
+
+k<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>network-policy.yaml
+</code></pre></div>
+
+<p><div class="callout callout-warning" markdown="1"><br />
+<p class="callout-title">注意</p></p>
+<ul>
+<li>看清题目要求的限制的类型，如果是仅限制ingress/egress，从官网复制对应的条目即可：</li>
+<li>Default deny all egress traffic</li>
+<li>Default deny all ingress traffic</li>
+<li>“拒绝所有ns development”这个条件，在metadata.namespace这一条就满足了，不需要加namespaceSelector</li>
+</ul>
+</div>
+<h1 id="8-networkpolicy限制pod之间访问">8 NetworkPolicy限制pod之间访问</h1>
+<h2 id="task_7">Task</h2>
+<ul>
+<li>
+<p>创建名为pod-access的NetworkPolicy来限制对在namespace development中运行的pod products-service的访问。</p>
+</li>
+<li>
+<p>只允许以下Pod连接到pod products-service：</p>
+</li>
+</ul>
+<p>1、在namespace qa中的pod<br />
+  2、位于任何namespace，带有environment: testing的pod</p>
+<h2 id="answer_7">Answer</h2>
+<ul>
+<li>官网搜network policies --&gt; The NetworkPolicy resource下面复制模板</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="c1">#自己环境搭建</span>
+sudo<span class="w"> </span>kubectl<span class="w"> </span>create<span class="w"> </span>ns<span class="w"> </span>development<span class="w"> </span>
+sudo<span class="w"> </span>kubectl<span class="w"> </span>create<span class="w"> </span>ns<span class="w"> </span>qa
+sudo<span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>network-1.yaml
+sudo<span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>qa-pod.yaml
+sudo<span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>products-service.yaml
+
+<span class="c1">#切换集群</span>
+kubectl<span class="w"> </span>config<span class="w"> </span>use-context<span class="w"> </span>KSSH00301
+<span class="c1">#查看ns qa、product-service的标签</span>
+k<span class="w"> </span>get<span class="w"> </span>ns<span class="w"> </span>qa<span class="w"> </span>--show-labels<span class="w"> </span><span class="c1">#kubernetes.io/metadata.name=qa</span>
+k<span class="w"> </span>get<span class="w"> </span>po<span class="w"> </span>product-service<span class="w"> </span>-n<span class="w"> </span>development<span class="w"> </span>--show-labels<span class="w"> </span><span class="c1">#app=product</span>
+<span class="c1">#根据模板创建network policies</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">networking.k8s.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">NetworkPolicy</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-access</span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">development</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">podSelector</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">matchLabels</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">product</span>
+<span class="w">  </span><span class="nt">policyTypes</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Ingress</span>
+<span class="w">  </span><span class="nt">ingress</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">from</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">namespaceSelector</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">matchLabels</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">kubernetes.io/metadata.name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">qa</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">from</span><span class="p">:</span><span class="w"> </span><span class="c1">#分开写两个from，逻辑更清楚</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">namespaceSelector</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span><span class="w"> </span><span class="c1">#这里注意：题目说了任何namespace下，这里必须加上。</span>
+<span class="w">      </span><span class="nt">podSelector</span><span class="p">:</span><span class="w"> </span>
+<span class="w">        </span><span class="nt">matchLabels</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">environment</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">testing</span>
+</code></pre></div>
+
+<p><div class="callout callout-warning" markdown="1"><br />
+<p class="callout-title">注意</p></p>
+<ul>
+<li>
+<p>network policies要限制哪个namespace里面的pod被访问，就将其创建到哪个namespace</p>
+</li>
+<li>
+<p>labels要改成xxx: xx这种格式</p>
+</li>
+<li>
+<p>如果ns或者po有多个标签，就可以把标签都写上</p>
+</li>
+</ul>
+<p><code>yaml
+  matchLabels:
+    app: product
+    xxx: xx</code></p>
+<ul>
+<li>
+<p>“<strong>位于任何namespace，带有environment: testing的pod</strong>”：意味着要写上namespaceSelector: {}</p>
+</li>
+<li>
+<p>写两个from包含两个逻辑，更清楚</p>
+</li>
+<li>
+<p>network policy的yaml规则：</p>
+</li>
+</ul>
+<p><sub>~</sub>yaml<br />
+    ingress:<br />
+    - from: <br />
+      - namespaceSelector: {}<br />
+      - podSelector: #两个杠分开的两个条件是相互独立的or<br />
+          matchLabels:<br />
+            environment: testing<br />
+     - from: <br />
+       - namespaceSelector: {}<br />
+         podSelector: #同一个杠下面的两行是串联的and<br />
+           matchLabels:<br />
+             environment: testing<br />
+  ~~~</p>
+</div>
+<h1 id="9-rbac">9 RBAC</h1>
+<h2 id="task_8">Task</h2>
+<p>绑定到Pod的serviceAccount的Role授予过度的权限。完成以下任务以降低权限。</p>
+<ul>
+<li>一个名为web-pod的现有Pod已在namespace db中运行。</li>
+<li>编辑绑定到Pod的ServiceAccount：test-sa-3的现有Role：</li>
+<li>仅允许只对services类型的资源执行get操作。</li>
+<li>在namespace db中创建一个role：</li>
+<li>名为test-role-2</li>
+<li>并仅允许只对namespaces类型的资源执行patch操作。</li>
+<li>创建一个名为test-role-2-binding新RoleBinding，将新创建的 Role绑定到Pod的ServiceAccount</li>
+<li>不要删除现有RoleBinding。</li>
+</ul>
+<h2 id="answer_8">Answer</h2>
+<ul>
+<li>k8s官网搜RBAC（查看create role和rolebinding的命令）</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="c1">#自己环境搭建</span>
+kubectl<span class="w"> </span>create<span class="w"> </span>ns<span class="w"> </span>db
+kubectl<span class="w"> </span>create<span class="w"> </span>sa<span class="w"> </span>test-sa-3<span class="w"> </span>-n<span class="w"> </span>db
+kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>test-sa-3-role.yaml
+kubectl<span class="w"> </span>create<span class="w"> </span>rolebinding<span class="w"> </span>test-sa-rolebinding<span class="w">  </span>--role<span class="o">=</span>test-sa-3-role<span class="w"> </span>--serviceaccount<span class="o">=</span>db:test-sa-3<span class="w"> </span>--namespace<span class="o">=</span>db
+kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>web-pod.yaml
+
+<span class="c1">#检查一下题目说的pod是否真的挂载了sa</span>
+k<span class="w"> </span>describe<span class="w"> </span>po<span class="w"> </span>web-pod<span class="w"> </span>-n<span class="w"> </span>db
+<span class="c1">#查看db名称空间之下的所有rolebinding</span>
+k<span class="w"> </span>get<span class="w"> </span>rolebinding<span class="w"> </span>-n<span class="w"> </span>db
+<span class="c1">#挨个查看rolebinding，看哪个rolebinding是绑定了题目给的sa:test-sa-3</span>
+k<span class="w"> </span>get<span class="w"> </span>rolebinding<span class="w"> </span>-n<span class="w"> </span>db<span class="w"> </span>test-sa-rolebinding<span class="w"> </span>-o<span class="w"> </span>yaml
+<span class="c1">#编辑role的权限</span>
+k<span class="w"> </span>edit<span class="w"> </span>role<span class="w"> </span>test-sa-3-role<span class="w"> </span>-n<span class="w"> </span>db
+<span class="c1">#resource改成services，verb改成get(如果考试环境没给resources何verbs字段，官网搜roles即可)</span>
+<span class="w">  </span>resources:
+<span class="w">  </span>-<span class="w"> </span>services
+<span class="w">  </span>verbs:
+<span class="w">  </span>-<span class="w"> </span>get
+
+<span class="c1">#新创建一个role</span>
+kubectl<span class="w"> </span>create<span class="w"> </span>role<span class="w"> </span>test-role-2<span class="w">  </span>-n<span class="w"> </span>db<span class="w"> </span>--resource<span class="o">=</span>namespaces<span class="w"> </span>--verb<span class="o">=</span>patch
+<span class="c1">#创建rolebinding绑定到service account</span>
+k<span class="w"> </span>create<span class="w"> </span>rolebinding<span class="w"> </span>-n<span class="w"> </span>db<span class="w"> </span>--role<span class="o">=</span>test-role-2<span class="w"> </span>--serviceaccount<span class="o">=</span>db:test-sa-3
+</code></pre></div>
+
+<p><div class="callout callout-warning" markdown="1"><br />
+<p class="callout-title">注意</p></p>
+<p>答完题看一下pod的yaml字段是不是有serviceAccountName字段，没有的话要加上。</p>
+</div>
+<h1 id="10-kube-apiserver审计日志记录采集">10 kube-apiserver审计日志记录采集</h1>
+<h2 id="task_9">Task</h2>
+<ul>
+<li>在cluster 中启用审计日志。为此，请启用日志后端，并确保：</li>
+</ul>
+<p>1.日志存储在/var/log/kubernetes/logs.txt中<br />
+  2.日志文件能保留5天<br />
+  3.最多保留1个旧的审计日志文件</p>
+<ul>
+<li>
+<p>/etc/kubernetes/logpolicy/sample-policy.yaml提供了基本策略。基本策略位于cluster的master节点上。它仅指定不记录的内容。</p>
+</li>
+<li>
+<p>编辑和扩展基本策略来记录：</p>
+</li>
+<li>
+<p>RequestResponse级别的namespaces的更改</p>
+</li>
+<li>namespace webapps中 pods 更改的request</li>
+<li>
+<p>Metadata级别的所有namespace中的ConfigMap和Secret的更改</p>
+</li>
+<li>
+<p>另外，添加一个全方位的规则以在Metadata级别记录的所有其他请求。不要忘记应用修改后的策略。</p>
+</li>
+</ul>
+<h2 id="answer_9">Answer</h2>
+<ul>
+<li>官网搜auditing</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="c1">#切换集群，ssh到master节点</span>
+kubectl<span class="w"> </span>config<span class="w"> </span>use-context<span class="w"> </span>KSRS00602
+ssh<span class="w"> </span>ksrs00602-master
+sudo<span class="w"> </span>-i
+<span class="c1">#编辑auditing policy的yaml文件</span>
+vim<span class="w"> </span>/etc/kubernetes/logpolicy/sample-policy.yaml
+<span class="c1">##原始文件不动，按照题目要求，在rules下面的-level字段新增配置即可。可以从官网复制。</span>
+<span class="c1">#RequestResponse级别的namespaces的更改</span>
+<span class="w">  </span>-<span class="w"> </span>level:<span class="w"> </span>RequestResponse
+<span class="w">    </span>resources:
+<span class="w">    </span>-<span class="w"> </span>group:<span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">      </span><span class="c1"># Resource &quot;pods&quot; doesn&#39;t match requests to any subresource of pods,</span>
+<span class="w">      </span><span class="c1"># which is consistent with the RBAC policy.</span>
+<span class="w">      </span>resources:<span class="w"> </span><span class="o">[</span><span class="s2">&quot;namespaces&quot;</span><span class="o">]</span>
+
+<span class="c1">#namespace webapps中 pods 更改的request</span>
+<span class="w">  </span>-<span class="w"> </span>level:<span class="w"> </span>Request
+<span class="w">    </span>resources:
+<span class="w">    </span>-<span class="w"> </span>group:<span class="w"> </span><span class="s2">&quot;&quot;</span><span class="w"> </span><span class="c1"># core API group</span>
+<span class="w">      </span>resources:<span class="w"> </span><span class="o">[</span><span class="s2">&quot;pods&quot;</span><span class="o">]</span>
+<span class="w">    </span><span class="c1"># This rule only applies to resources in the &quot;kube-system&quot; namespace.</span>
+<span class="w">    </span><span class="c1"># The empty string &quot;&quot; can be used to select non-namespaced resources.</span>
+<span class="w">    </span>namespaces:<span class="w"> </span><span class="o">[</span><span class="s2">&quot;webapp&quot;</span><span class="o">]</span>
+
+<span class="c1">#Metadata级别的所有namespace中的ConfigMap和Secret的更改</span>
+<span class="w">  </span><span class="c1"># Log configmap and secret changes in all other namespaces at the Metadata level.</span>
+<span class="w">  </span>-<span class="w"> </span>level:<span class="w"> </span>Metadata
+<span class="w">    </span>resources:
+<span class="w">    </span>-<span class="w"> </span>group:<span class="w"> </span><span class="s2">&quot;&quot;</span><span class="w"> </span><span class="c1"># core API group</span>
+<span class="w">      </span>resources:<span class="w"> </span><span class="o">[</span><span class="s2">&quot;secrets&quot;</span>,<span class="w"> </span><span class="s2">&quot;configmaps&quot;</span><span class="o">]</span>
+<span class="c1">#添加一个全方位的规则以在Metadata级别记录的所有其他请求</span>
+<span class="w">  </span>-<span class="w"> </span>level:<span class="w"> </span>Metadata
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="c1">#修改apiserver - 文档搜kube-apiserver</span>
+<span class="l l-Scalar l-Scalar-Plain">vim /etc/kubernetes/manifests/kube-apiserver.yaml</span>
+<span class="l l-Scalar l-Scalar-Plain">#添加参数：</span>
+<span class="l l-Scalar l-Scalar-Plain">- --audit-policy-file=/etc/kubernetes/logpolicy/sample-policy.yaml</span><span class="w"> </span><span class="c1">#审计策略文件</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">--audit-log-path=/var/log/kubernetes/logs.txt</span><span class="w">  </span><span class="c1">#审计日志文件</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">--audit-log-maxage=5</span><span class="w">   </span><span class="c1">#日志最大保留天数</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">--audit-log-maxbackup=1</span><span class="w">  </span><span class="c1">#审计日志文件最大保留数据</span>
+
+<span class="c1">#apiserver的pod上写volume和volumeMounts挂载策略文件和日志文件 - 文档中logs backend字段有参数说明sa</span>
+<span class="w">    </span><span class="nt">volumeMounts</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kubernetes-logs</span>
+<span class="w">      </span><span class="nt">mountPath</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/var/log/kubernetes/</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kubernetes-policy</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">mountPath</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/etc/kubernetes/logpolicy/sample-policy.yaml</span>
+
+<span class="nt">volumes</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kubernetes-policy</span>
+<span class="w">    </span><span class="nt">hostPath</span><span class="p">:</span><span class="w">  </span>
+<span class="w">      </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">File</span>
+<span class="w">      </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/etc/kubernetes/logpolicy/sample-policy.yaml</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kubernetes-logs</span>
+<span class="w">    </span><span class="nt">hostPath</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">DirectoryOrCreate</span>
+<span class="w">      </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/var/log/kubernetes/</span>
+
+<span class="c1">#重启kubelet</span>
+<span class="l l-Scalar l-Scalar-Plain">systemctl daemon-reload</span>
+<span class="l l-Scalar l-Scalar-Plain">systemctl restart kubelet</span>
+<span class="c1">#exit回到login node查看集群状态</span>
+</code></pre></div>
+
+<p><div class="callout callout-warning" markdown="1"><br />
+<p class="callout-title">注意</p></p>
+<ul>
+<li>
+<p>记得查看kube-apiserver是否配置了volumeMount和volume。log是挂目录，policy是直接挂文件。</p>
+</li>
+<li>
+<p>应用这个audit policy就是systemctl daemon-reload，systemctl restart kubelet</p>
+</li>
+<li>
+<p>也可能抽到这个题：</p>
+</li>
+<li>RequestResponse级别的nodes更改</li>
+<li>namespace front-apps中pods更改的request</li>
+<li>metadata级别的所有namespace中的ConfigMap和Secret的更改</li>
+</ul>
+<p><sub>~</sub>yaml</p>
+<h2 id="编辑auditing-policy的yaml文件">编辑auditing policy的yaml文件</h2>
+<p>vim /etc/kubernetes/logpolicy/sample-policy.yaml</p>
+<h2 id="原始文件不动按照题目要求在rules下面的-level字段新增配置即可可以从官网复制">原始文件不动，按照题目要求，在rules下面的-level字段新增配置即可。可以从官网复制。</h2>
+<h1 id="requestresponse级别的nodes的更改">RequestResponse级别的nodes的更改</h1>
+<ul>
+<li>level: RequestResponse<br />
+    resources:<ul>
+<li>group: ""<br />
+  # Resource "pods" doesn't match requests to any subresource of pods,<br />
+  # which is consistent with the RBAC policy.<br />
+  resources: ["nodes"]</li>
+</ul>
+</li>
+</ul>
+<h1 id="namespace-front-apps中pods更改的request">namespace front-apps中pods更改的request</h1>
+<ul>
+<li>level: Request<br />
+    resources:<ul>
+<li>group: "" # core API group<br />
+  resources: ["pods"]</li>
+</ul>
+<h1 id="this-rule-only-applies-to-resources-in-the-kube-system-namespace">This rule only applies to resources in the "kube-system" namespace.</h1>
+<h1 id="the-empty-string-can-be-used-to-select-non-namespaced-resources">The empty string "" can be used to select non-namespaced resources.</h1>
+<p>namespaces: ["front-apps"]</p>
+</li>
+</ul>
+<h1 id="metadata级别的所有namespace中的configmap和secret的更改">metadata级别的所有namespace中的ConfigMap和Secret的更改</h1>
+<p># Log configmap and secret changes in all other namespaces at the Metadata level.<br />
+  - level: Metadata<br />
+    resources:<br />
+    - group: "" # core API group<br />
+      resources: ["secrets", "configmaps"]<br />
+~~~</p>
+</div>
+<h1 id="11-创建secret">11 创建secret</h1>
+<h2 id="task_10">Task</h2>
+<ul>
+<li>在namespace db中获取名为db1-test的现有secret的内容。</li>
+<li>将username字段存储在名为/home/candidate/old-username.txt的文件中，</li>
+<li>并将password字段存储在名为/home/candidate/pass.txt文件中</li>
+<li>
+<p>你必须创建这两个文件；它们还不存在。</p>
+</li>
+<li>
+<p>不要在以下步骤中使用/修改先前创建的文件，如果需要，创建新的临时文件。</p>
+</li>
+<li>
+<p>在db namespace中创建一个名为test-workflow 的新secret，内容如下；<br />
+    username: thanos<br />
+    password: u9YuWVpoVu7m</p>
+</li>
+<li>
+<p>最后，新建一个pod，可以通过卷访问secret test-workflow：</p>
+</li>
+<li>pod名： dev-pod</li>
+<li>namespace: db</li>
+<li>容器名：dev-container</li>
+<li>镜像：redis:7.2</li>
+<li>卷名：dev-volume</li>
+<li>挂载路径：/etc/secret</li>
+</ul>
+<h2 id="answer_10">Answer</h2>
+<ul>
+<li>官网搜secret</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="c1">#自己环境</span>
+kubectl<span class="w"> </span>create<span class="w"> </span>ns<span class="w"> </span>db
+kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>secret.yaml
+<span class="c1">#切换集群环境</span>
+kubectl<span class="w"> </span>config<span class="w"> </span>use-context<span class="w"> </span>KSMV00201
+<span class="c1">#创建两个文件</span>
+touch<span class="w"> </span>/home/candidate/old-username.txt
+touch<span class="w"> </span>/home/candidate/pass.txt
+<span class="c1">#获取secret。命令可以在secret文档中，搜json获取</span>
+<span class="c1">#直接显示出来，手动copy进去也行：kubectl get secret db1-test -n db -o jsonpath=&#39;{.data.*}&#39; | base64 -d</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>secret<span class="w"> </span>db1-test<span class="w"> </span>-n<span class="w"> </span>db<span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">&#39;{.data.username}&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>base64<span class="w"> </span>-d<span class="w"> </span>&gt;<span class="w"> </span>/home/candidate/old-username.txt
+kubectl<span class="w"> </span>get<span class="w"> </span>secret<span class="w"> </span>db1-test<span class="w"> </span>-n<span class="w"> </span>db<span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">&#39;{.data.password}&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>base64<span class="w"> </span>-d<span class="w"> </span>&gt;<span class="w"> </span>/home/candidate/pass.txtpass.txt
+
+<span class="c1">#创建新secret -- 文档搜secret kubectl --&gt; 搜literal</span>
+kubectl<span class="w"> </span>create<span class="w"> </span>secret<span class="w"> </span>generic<span class="w"> </span>test-workflow<span class="w"> </span>-n<span class="w"> </span>db<span class="w"> </span>--from-literal<span class="o">=</span><span class="nv">username</span><span class="o">=</span>thanos<span class="w"> </span>--from-literal<span class="o">=</span><span class="nv">password</span><span class="o">=</span>u9YuWVpoVu7m
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="c1">#创建pod -- 官网在secret页面</span>
+<span class="l l-Scalar l-Scalar-Plain">vim secret-pod.yaml</span>
+<span class="l l-Scalar l-Scalar-Plain">apiVersion</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Pod</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dev-pod</span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">db</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">containers</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dev-container</span>
+<span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">redis:7.2</span>
+<span class="w">    </span><span class="nt">imagePullPolicy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">IfNotPresent</span>
+<span class="w">    </span><span class="nt">volumeMounts</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dev-volume</span>
+<span class="w">      </span><span class="nt">mountPath</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;/etc/secret&quot;</span>
+<span class="w">  </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dev-volume</span>
+<span class="w">    </span><span class="nt">secret</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">secretName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">test-workflow</span>
+
+<span class="l l-Scalar l-Scalar-Plain">k apply -f secret-pod.yaml</span>
+</code></pre></div>
+
+<p><div class="callout callout-tip" markdown="1"><br />
+<p class="callout-title">注意</p></p>
+<p>参考官网的secret、Managing Secrets using kubectl两个页面</p>
+</div>
+<h1 id="12-dockefile和deployment优化">12 dockefile和deployment优化</h1>
+<h2 id="task_11">Task</h2>
+<ul>
+<li>分析指定的Dockerfile（基于Ubuntu:16.04），修复其中有安全问题的两个命令。</li>
+<li>分析指定的deployment，修复其中有安全问题的两个字段。</li>
+<li>如果需要非特权用户执行某些指令，可以采用uid为65535的user nobody</li>
+</ul>
+<h2 id="answer_11">Answer</h2>
+<ul>
+<li>官网搜security context</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="c1">#切换集群环境</span>
+kubectl<span class="w"> </span>config<span class="w"> </span>use-context<span class="w"> </span>KSSC00301
+<span class="c1">#修改dockerfile</span>
+vim<span class="w"> </span>/home/candidate/KSSC00301/Dockerfile
+<span class="c1">#原内容如下:</span>
+FROM<span class="w"> </span>ubuntu
+USER<span class="w"> </span>root
+USER<span class="w"> </span>root
+<span class="c1">#修改之后的内容如下： （只改FROM和USER，有几个root都改成nobody）</span>
+FROM<span class="w"> </span>ubuntu:16.04<span class="w">  </span>
+USER<span class="w"> </span>nobody
+USER<span class="w"> </span>nobody
+</code></pre></div>
+
+<p><sub>~</sub>yaml<br />
+ #修改deployment<br />
+ #内容如下：<br />
+ vim /home/candidate/KSSC00301/deployment.yaml<br />
+ apiVersion: apps/v1<br />
+ kind: Deployment<br />
+ metadata:<br />
+  name: test<br />
+  labels:<br />
+    app: dev<br />
+    name: dev<br />
+ spec:<br />
+  replicas: 1<br />
+  selector:<br />
+    matchLabels:<br />
+      app: dev<br />
+  template:<br />
+    metadata:<br />
+      labels:<br />
+        app: dev<br />
+    spec:<br />
+      containers:<br />
+      - image: nginx:1.25<br />
+        imagePullPolicy: IfNotPresent<br />
+        name: nginx<br />
+        securityContext: {'capabilities':{'add':['NET_ADMIN'],'drop':['all']},'privileged':True,'readOnlyRootFilesystem':False,'runAsUser':2000}</p>
+<p>#修改securityContext内容：<br />
+ #'privileged':False<br />
+ #'readOnlyRootFilesystem':True<br />
+ #'runAsUser':65535<br />
+ {'capabilities':{'add':['NET_ADMIN'],'drop':['all']},'privileged':False,'readOnlyRootFilesystem':True,'runAsUser':65535}</p>
+<p>k apply -f /home/candidate/KSSC00301/deployment.yaml<br />
+ ~~~</p>
+<p><div class="callout callout-warning" markdown="1"><br />
+<p class="callout-title">注意</p></p>
+<p>deployment资源中的spec.selector和template.metadata中的label是否对应了，题目中会出现不对应的情况。</p>
+</div>
+<h1 id="13-镜像安全imagepolicywebhook">13 镜像安全ImagePolicyWebhook</h1>
+<h2 id="task_12">Task</h2>
+<p>您必须在cluster的master节点上完成整个考题，所有服务和文件都已被准备好并放置在该节点上。</p>
+<p>cluster上设置了容器镜像扫描器，但尚未完全集成到cluster的配置中。完成后，容器镜像扫描器应扫描并拒绝易受攻击的镜像的使用。</p>
+<ul>
+<li>给定一个目录/etc/kubernetes/controlconf中不完整的配置以及具有HTTPS 端点的https://wakanda:8080/image_policy的功能性容器镜像扫描器：</li>
+<li>启用必要的插件来创建镜像策略</li>
+<li>校验控制配置并将其更改为隐式拒绝（implicit deny）(在隐式拒绝模式下，除非明确允许，否则所有请求都会被拒绝)</li>
+<li>编辑配置以正确指向提供的HTTPS端点。</li>
+<li>最后，通过尝试部署易受攻击的资源/root/KSSC00202/vulnerable-resource.yml来测试配置是否有效。</li>
+<li>可以在/var/log/limagepolicy/roadrunner.log找到容器镜像扫描的日志文件</li>
+</ul>
+<h2 id="answer_12">Answer</h2>
+<ul>
+<li>官网搜:</li>
+<li>ImagePolicyWebhook （在admission controllers里面）</li>
+<li>kube-api-server -- 搜admission</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="c1">#自己环境搭建</span>
+mkdir<span class="w"> </span>-p<span class="w"> </span>/etc/kubernetes/controlconf
+touch<span class="w"> </span>/etc/kubernetes/controlconf/admission_configuration.json
+touch<span class="w"> </span>/etc/kubernetes/controlconf/kubeconfig.yaml
+<span class="c1">#切换集群环境，到master节点上做题</span>
+kubectl<span class="w"> </span>config<span class="w"> </span>use-context<span class="w"> </span>KSSC00202
+ssh<span class="w"> </span>xianchaomaster1
+sudo<span class="w"> </span>-i
+
+<span class="c1">#修改admission controller的配置文件/etc/kubernetes/controlconf/admission_configuration.json</span>
+<span class="nb">cd</span><span class="w"> </span>/etc/kubernetes/controlconf
+vim<span class="w"> </span>admission_configuration.json
+apiversion:<span class="w"> </span>apiserver.config.k8s.io/v1
+kind:<span class="w"> </span>AdmissionConfiguration
+plugins:
+<span class="w">  </span>-<span class="w"> </span>name:<span class="w"> </span>ImagePolicyWebhook
+<span class="w">    </span>configuration:
+<span class="w">      </span>imagePolicy:
+<span class="w">        </span>kubeConfigFile:<span class="w"> </span>/etc/kubernetes/controlconf/kubeconfig.yaml
+<span class="w">        </span>allowTTL:<span class="w"> </span><span class="m">50</span>
+<span class="w">        </span>denyTTL:<span class="w"> </span><span class="m">50</span>
+<span class="w">        </span>retryBackoff:<span class="w"> </span><span class="m">500</span>
+<span class="w">        </span>defaultAllow:<span class="w"> </span><span class="nb">false</span><span class="w"> </span><span class="c1">#将true改为false（没有这个字段的话自己加上，官网搜admission，有这个字段的示例）</span>
+
+<span class="c1">#修改ImagePolicyWebhook的配置文件/etc/kubernetes/controlconf/kubeconfig.yaml</span>
+vim<span class="w"> </span>kubeconfig.yaml
+clusters:
+<span class="w">  </span>-<span class="w"> </span>name:<span class="w"> </span>name-of-remote-imagepolicy-service
+<span class="w">    </span>cluster:
+<span class="w">      </span>certificate-authority:<span class="w"> </span>/path/to/ca.pem<span class="w">    </span>
+<span class="w">      </span>server:<span class="w"> </span>https://wakanda:8080/image_policy<span class="w"> </span><span class="c1"># 把这里改成题目给的地址</span>
+
+users:
+<span class="w">  </span>-<span class="w"> </span>name:<span class="w"> </span>name-of-api-server
+<span class="w">    </span>user:
+<span class="w">      </span>client-certificate:<span class="w"> </span>/path/to/cert.pem<span class="w"> </span>
+<span class="w">      </span>client-key:<span class="w"> </span>/path/to/key.pem<span class="w">     </span>
+
+<span class="c1">#修改apiserver配置</span>
+vim<span class="w"> </span>/etc/kubernetes/manifests/kube-apiserver.yaml
+<span class="c1">#添加两项配置，开启admission plugin和admission controller配置文件的位置</span>
+-<span class="w"> </span>--enable-admission-plugins<span class="o">=</span>NodeRestriction,ImagePolicyWebhook<span class="w"> </span><span class="c1">#NodeRestriction是自带的，在后面加上ImagePolicyWebhook即可</span>
+-<span class="w"> </span>--admission-control-config-file<span class="o">=</span><span class="s2">&quot;/etc/kubernetes/controlconf/admission_configuration.json&quot;</span>
+
+<span class="c1">#apiserver需要检查是否挂载了配置文件的目录，没有的话，自己写volume和volumeMount挂载进去</span>
+...
+<span class="w">  </span>volumeMounts:
+<span class="w">  </span>-<span class="w"> </span>mountPath:<span class="w"> </span>/etc/kubernetes/controlconf
+<span class="w">    </span>name:<span class="w"> </span>config
+...
+volumes:
+-<span class="w"> </span>hostPath:
+<span class="w">    </span>path:<span class="w"> </span>/etc/kubernetes/controlconf
+<span class="w">    </span>type:<span class="w"> </span>DirectoryOrCreate
+<span class="w">  </span>name:<span class="w"> </span>config
+
+<span class="c1">#重启kubelet</span>
+systemctl<span class="w"> </span>restart<span class="w"> </span>kubelet
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="c1">#exit回到login node部署示例的pod</span>
+kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>/root/KSSC00202/vulnerable-resource.yml
+</code></pre></div>
+
+<p><div class="callout callout-tip" markdown="1"><br />
+<p class="callout-title">要点总结</p></p>
+<ul>
+<li>admission_configuration里面修改defaultAllow false</li>
+<li>kubeconfig里面修改扫描器endpoint</li>
+<li>kube-apiserver.yaml里面：</li>
+<li>添加enable-admission-plugins ImagePolicyWebhook</li>
+<li>添加配置文件路径--admission-control-config-file（写的是json文件）</li>
+<li>添加volume和volumeMounts把存放配置文件的路径挂进去</li>
+</ul>
+</div>
+<h1 id="14-修改deploy的security-context">14 修改deploy的security context</h1>
+<h2 id="task_13">Task</h2>
+<p>修改运行在namespace app，名为lamp-deployment的现有 Deployment，使其容器：</p>
+<ol>
+<li>使用用户ID 10000运行</li>
+<li>使用一个只读的根文件系统</li>
+<li>禁止特权提升</li>
+</ol>
+<h2 id="answer_13">Answer</h2>
+<ul>
+<li>官网搜securitycontext</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="c1">#自己环境搭建</span>
+kubectl<span class="w"> </span>create<span class="w"> </span>ns<span class="w"> </span>app
+kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w">  </span>/home/candidate/finer-sunbeam/lamp-deployment.yaml
+<span class="c1">#切换集群环境</span>
+kubectl<span class="w"> </span>config<span class="w"> </span>use-context<span class="w"> </span>KSRS00502
+<span class="c1">#获取deployment的yaml文件</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>deploy<span class="w"> </span>lamp-deployment<span class="w"> </span>-n<span class="w"> </span>app<span class="w"> </span>-o<span class="w"> </span>yaml<span class="w"> </span>&gt;<span class="w"> </span>la.yaml
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="l l-Scalar l-Scalar-Plain">vim la.yaml</span>
+<span class="l l-Scalar l-Scalar-Plain">apiVersion</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">apps/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Deployment</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">lamp-deployment</span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">app</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">replicas</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="w">  </span><span class="nt">selector</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">matchLabels</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">lamp-deployment</span>
+<span class="w">  </span><span class="nt">template</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">metadata</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">         </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">lamp-deployment</span>
+<span class="w">    </span><span class="nt">spec</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">containers</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+<span class="w">        </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">docker.io/xianchao/nginx:v1</span>
+<span class="w">        </span><span class="nt">imagePullPolicy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">IfNotPresent</span>
+<span class="w">        </span><span class="nt">securityContext</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">runAsUser</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10000</span>
+<span class="w">          </span><span class="nt">allowPrivilegeEscalation</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">          </span><span class="nt">readOnlyRootFilesystem</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+
+<span class="l l-Scalar l-Scalar-Plain">k apply -f la.yaml</span>
+</code></pre></div>
+
+<p><div class="callout callout-warning" markdown="1"><br />
+<p class="callout-title">注意</p></p>
+<ul>
+<li>
+<p>securityContext在两个位置都有：</p>
+</li>
+<li>
+<p>po.spec.securityContext</p>
+</li>
+<li>po.spec.containers.securityContext</li>
+</ul>
+<p>这个题就在container字段下面写就行，有几个container就写几个。</p>
+</div>
+<h1 id="15-gvisor">15 gVisor</h1>
+<h2 id="task_14">Task</h2>
+<ul>
+<li>该cluster 使用containerd 作为CRI运行时。containerd的默认运行时处理程序是runc。containerd 已准备好支持额外的运行时处理程序runsc（gVisor）</li>
+<li>使用名为runsc的现有运行时处理程序，创建一个名为untrusted 的 RuntimeClass。更新 namespace client 中的所有 Pod 以在 gVisor（runsc） 上运行。</li>
+<li>你可以在/home/candidate/KSMV00301/runtime-class.yaml找到一个模板清单文件。</li>
+</ul>
+<h2 id="answer_14">Answer</h2>
+<ul>
+<li>官网搜：runtime class</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="c1">#切换集群环境</span>
+kubectl<span class="w"> </span>config<span class="w"> </span>use-context<span class="w"> </span>KSMV00301
+<span class="c1">#创建runtime class</span>
+vim<span class="w"> </span>/home/candidate/KSMV00301/runtime-class.yaml
+<span class="c1"># RuntimeClass is defined in the node.k8s.io API group</span>
+apiVersion:<span class="w"> </span>node.k8s.io/v1
+kind:<span class="w"> </span>RuntimeClass
+metadata:
+<span class="w">  </span><span class="c1"># The name the RuntimeClass will be referenced by.</span>
+<span class="w">  </span><span class="c1"># RuntimeClass is a non-namespaced resource.</span>
+<span class="w">  </span>name:<span class="w"> </span>untrusted<span class="w"> </span>
+<span class="c1"># The name of the corresponding CRI configuration</span>
+handler:<span class="w"> </span>runsc
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="c1">#获取client ns中的deployment</span>
+k<span class="w"> </span>get<span class="w"> </span>deploy<span class="w"> </span>-n<span class="w"> </span>client
+k<span class="w"> </span>get<span class="w"> </span>po<span class="w"> </span>-n<span class="w"> </span>client
+<span class="c1">#导出deploy的yaml</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>deploy<span class="w"> </span>run-client<span class="w"> </span>-n<span class="w"> </span>client<span class="w"> </span>-o<span class="w"> </span>yaml<span class="w"> </span>&gt;<span class="w"> </span>run-deploy.yaml
+
+vim<span class="w"> </span>run-deploy.yaml
+<span class="c1">#在deploy.spec.template.spec.runtimeClassName配置（和containers字段同级）</span>
+runtimeClassName:<span class="w"> </span>untrusted
+
+<span class="c1">#重新部署</span>
+k<span class="w"> </span>delete<span class="w"> </span>-f<span class="w"> </span>run-deploy.yaml
+k<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>run-deploy.yaml
+</code></pre></div>
+
+<h1 id="16-k8s-准入控制">16 k8s 准入控制</h1>
+<h2 id="task_15">Task</h2>
+<p>Context：集群处于测试目的，已经配置为未经身份验证和未经授权的访问，授予匿名用户cluster-admin的权限。现在要加固安全配置。</p>
+<ul>
+<li>重新配置cluster的k8s API服务器，以确保只允许经过身份验证和授权的REST请求。</li>
+<li>使用授权模式Node,RBAC和准入控制器NodeRestriction。</li>
+<li>删除用户system:anonymous的ClusterRoleBinding来进行清理。注意：所有kubectl配置环境也被配置使用未经身份验证和未经授权的访问。不必更改，但注意一旦完成cluster的安全加固，kubectl的配置将无法工作。</li>
+<li>可以使用位于cluster的master节点上，cluster原本的kubectl配置文件/etc/kubernetes/admin.conf，以确保经过身份验证的授权的请求仍然被允许。</li>
+</ul>
+<h2 id="answer_15">Answer</h2>
+<div class="highlight"><pre><span></span><code><span class="c1">#切换集群</span>
+kubectl<span class="w"> </span>config<span class="w"> </span>use-context<span class="w"> </span>KSCH00101
+ssh<span class="w"> </span>ksch00101-master
+<span class="c1">#修改apiserver参数</span>
+vim<span class="w"> </span>/etc/kubernetes/manifests/kube-apiserver.yaml
+<span class="c1">#原始内容如下：</span>
+-<span class="w"> </span>--authorization-mode<span class="o">=</span>AlwaysAllow
+-<span class="w"> </span>--enable-admission-plugins<span class="o">=</span>AlwaysAdmit
+
+<span class="c1">#修改成:</span>
+-<span class="w"> </span>--authorization-mode<span class="o">=</span>Node,RBAC<span class="w"> </span><span class="c1">#注意，只保留Node,RBAC这两个，中间是英文状态下的逗号。在最新考试中，这一行默认可能已经有了，但也需要检查确认。</span>
+-<span class="w"> </span>--enable-admission-plugins<span class="o">=</span>NodeRestriction
+
+systemctl<span class="w"> </span>restart<span class="w"> </span>kubelet
+<span class="c1">#exit回到login node，查询clusterrolebinding并删除</span>
+kubectl<span class="w"> </span>config<span class="w"> </span>use-context<span class="w"> </span>KSCH00101
+k<span class="w"> </span>get<span class="w"> </span>clusterrolebinding<span class="w"> </span>system:anonymous
+k<span class="w"> </span>delete<span class="w"> </span>clusterrolebinding<span class="w"> </span>system:anynomous
+</code></pre></div>
+
+<p><div class="callout callout-warning" markdown="1"><br />
+<p class="callout-title">注意</p></p>
+<ul>
+<li>apiserver配置修改完之后，login node就用不了kubectl了。按照题目提示，可以在master上：</li>
+</ul>
+<p><code>kubectl get nodes --kubeconfig=/etc/kubernetes/admin.conf</code>继续操作kubectl</p>
+</div>
+    </div>
+  </article>
+  <aside class="toc">
+    <p class="toc-label">本页目录</p>
+    <ul>
+  <li><a href="#apparmor介绍">AppArmor介绍</a></li>
+  <li><a href="#task">Task</a></li>
+  <li><a href="#answer">Answer</a></li>
+  <li><a href="#kube-bench介绍">kube-bench介绍</a></li>
+  <li><a href="#task_1">Task</a></li>
+  <li><a href="#answer_1">Answer</a></li>
+  <li><a href="#task_2">Task</a></li>
+  <li><a href="#answer_2">Answer</a></li>
+  <li><a href="#介绍">介绍</a></li>
+  <li><a href="#task_3">Task</a></li>
+  <li><a href="#answer_3">Answer</a></li>
+  <li><a href="#task_4">Task</a></li>
+  <li><a href="#answer_4">Answer</a></li>
+  <li><a href="#task_5">Task</a></li>
+  <li><a href="#answer_5">Answer</a></li>
+  <li><a href="#task_6">Task</a></li>
+  <li><a href="#answer_6">Answer</a></li>
+  <li><a href="#task_7">Task</a></li>
+  <li><a href="#answer_7">Answer</a></li>
+  <li><a href="#task_8">Task</a></li>
+  <li><a href="#answer_8">Answer</a></li>
+  <li><a href="#task_9">Task</a></li>
+  <li><a href="#answer_9">Answer</a></li>
+  <li><a href="#编辑auditing-policy的yaml文件">编辑auditing policy的yaml文件</a></li>
+  <li><a href="#原始文件不动按照题目要求在rules下面的-level字段新增配置即可可以从官网复制">原始文件不动，按照题目要求，在rules下面的-level字段新增配置即可。可以从官网复制。</a></li>
+  <li><a href="#task_10">Task</a></li>
+  <li><a href="#answer_10">Answer</a></li>
+  <li><a href="#task_11">Task</a></li>
+  <li><a href="#answer_11">Answer</a></li>
+  <li><a href="#task_12">Task</a></li>
+  <li><a href="#answer_12">Answer</a></li>
+  <li><a href="#task_13">Task</a></li>
+  <li><a href="#answer_13">Answer</a></li>
+  <li><a href="#task_14">Task</a></li>
+  <li><a href="#answer_14">Answer</a></li>
+  <li><a href="#task_15">Task</a></li>
+  <li><a href="#answer_15">Answer</a></li>
+</ul>
+  </aside>
+
+</div>
+
+</main>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>Learning Notes</span>
+    <a href="https://github.com/hangx969/learning-notes">GitHub</a>
+  </div>
+</footer>
+<script src="../../../static/search.js"></script>
+</body>
+</html>

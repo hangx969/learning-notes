@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kubernetes v1.37 升级破坏性变更指南 - Learning Notes</title>
+<link rel="stylesheet" href="../../../../static/style.css">
+<link rel="stylesheet" href="../../../../static/pygments.css">
+</head>
+<body data-root="../../../../">
+<header class="site-header">
+  <div class="header-inner">
+    <a class="logo" href="../../../../index.html"><span class="logo-mark"></span>LEARNING NOTES</a>
+    <div class="search">
+      <input id="search-input" type="search" placeholder="搜索笔记…" autocomplete="off" aria-label="搜索笔记">
+      <div id="search-results" hidden></div>
+    </div>
+  </div>
+  <nav class="topic-nav" aria-label="主题导航">
+    <div class="topic-nav-inner">
+      <a href="../../../../AI/">AI</a>
+      <a href="../../../../Aliyun/">Aliyun</a>
+      <a href="../../../../Azure/">Azure</a>
+      <a href="../../../../C%2B%2B/">C++</a>
+      <a href="../../../../CloudComputing/">CloudComputing</a>
+      <a href="../../../../Database/">Database</a>
+      <a href="../../../../Docker-Kubernetes/" class="active">Docker-Kubernetes</a>
+      <a href="../../../../GPU-DeepLearning/">GPU-DeepLearning</a>
+      <a href="../../../../Git/">Git</a>
+      <a href="../../../../Go/">Go</a>
+      <a href="../../../../HPC/">HPC</a>
+      <a href="../../../../IaC/">IaC</a>
+      <a href="../../../../Linux-Shell/">Linux-Shell</a>
+      <a href="../../../../Middlewares/">Middlewares</a>
+      <a href="../../../../Networking/">Networking</a>
+      <a href="../../../../OS/">OS</a>
+      <a href="../../../../Python/">Python</a>
+      <a href="../../../../SoftwareTesting/">SoftwareTesting</a>
+    </div>
+  </nav>
+</header>
+<main class="main">
+
+<div class="article-layout">
+
+  <aside class="sidebar">
+    <details class="sidebar-details">
+      <summary>Docker-Kubernetes</summary>
+      <nav class="sidebar-nav">
+        <p class="sidebar-group">CKA-CKS</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/CKA-CKS/CKA-%E5%A4%87%E8%80%83/">CKA 备考</a></li>
+          <li><a href="../../../../Docker-Kubernetes/CKA-CKS/CKS-%E5%A4%87%E8%80%83/">CKS 备考</a></li>
+          <li><a href="../../../../Docker-Kubernetes/CKA-CKS/k8s-%E9%9D%A2%E8%AF%95%E9%A2%98%E6%B1%87%E6%80%BB/">K8s 面试题汇总</a></li>
+        </ul>
+        <p class="sidebar-group">container-platform</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/container-platform/%E9%83%A8%E7%BD%B2openshift%283.10%29/">部署 OpenShift (3.10)</a></li>
+          <li><a href="../../../../Docker-Kubernetes/container-platform/%E9%83%A8%E7%BD%B2%E8%BD%BB%E9%87%8F%E7%BA%A7%E7%9A%84K8S%E5%B9%B3%E5%8F%B0-K3S/">部署轻量级 K8S 平台 - K3S</a></li>
+        </ul>
+        <p class="sidebar-group">docker</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/docker/docker%E5%9F%BA%E7%A1%80/">Docker基础</a></li>
+          <li><a href="../../../../Docker-Kubernetes/docker/docker%E5%AE%89%E5%85%A8%E9%85%8D%E7%BD%AE-Capabilities%E4%B8%8E%E5%AE%B9%E5%99%A8%E5%8A%A0%E5%9B%BA/">Docker 安全配置详解：Capabilities 与容器加固</a></li>
+          <li><a href="../../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2UI%E5%B7%A5%E5%85%B7portainer-%E9%83%A8%E7%BD%B2redis-sentinel/">Docker部署Portainer与Redis-Sentinel</a></li>
+          <li><a href="../../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2gitlab/">Docker部署GitLab</a></li>
+          <li><a href="../../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2lnmp%E7%BD%91%E7%AB%99/">Docker部署LNMP网站</a></li>
+          <li><a href="../../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2loki/">Docker部署Loki日志系统</a></li>
+          <li><a href="../../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2nginx-tomcat-httpd-go-python%E6%9C%8D%E5%8A%A1/">Docker部署Nginx-Tomcat-Httpd-Go-Python服务</a></li>
+          <li><a href="../../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2prometheus-grafana-cAdvisior%E7%9B%91%E6%8E%A7/">Docker部署Prometheus-Grafana-cAdvisor监控</a></li>
+          <li><a href="../../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2%E4%BB%93%E5%BA%93%E5%B9%B3%E5%8F%B0homebox/">Docker部署Homebox仓库平台</a></li>
+          <li><a href="../../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1%E5%B7%A5%E5%85%B7gocron/">Docker部署GoCron定时任务工具</a></li>
+          <li><a href="../../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2%E8%B7%AF%E7%94%B1%E7%9B%91%E6%8E%A7%E5%B7%A5%E5%85%B7NextTrace/">Docker部署NextTrace路由监控工具</a></li>
+          <li><a href="../../../../Docker-Kubernetes/docker/docker%E9%85%8D%E7%BD%AENVIDIA%20GPU/">Docker配置NVIDIA GPU</a></li>
+          <li><a href="../../../../Docker-Kubernetes/docker/docker%E9%85%8D%E7%BD%AE%E4%BB%A3%E7%90%86/">Docker配置代理</a></li>
+        </ul>
+        <p class="sidebar-group">harbor</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/harbor/harbor-basics/">Harbor 基础</a></li>
+          <li><a href="../../../../Docker-Kubernetes/harbor/helm%E9%83%A8%E7%BD%B2harbor/">Helm 部署 Harbor</a></li>
+        </ul>
+        <p class="sidebar-group">helm-operator</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/helm-operator/helmv3-%E5%AE%89%E8%A3%85%E4%B8%8E%E4%BD%BF%E7%94%A8/">Helm v3 安装与使用</a></li>
+          <li><a href="../../../../Docker-Kubernetes/helm-operator/helm%E9%83%A8%E7%BD%B2config-syncer%28kubed%29/">Helm 部署 Config Syncer (Kubed)</a></li>
+          <li><a href="../../../../Docker-Kubernetes/helm-operator/helm%E9%83%A8%E7%BD%B2dragonfly/">Helm 部署 Dragonfly</a></li>
+          <li><a href="../../../../Docker-Kubernetes/helm-operator/helm%E9%83%A8%E7%BD%B2pact-broker/">Helm 部署 Pact Broker</a></li>
+          <li><a href="../../../../Docker-Kubernetes/helm-operator/helm%E9%83%A8%E7%BD%B2reloader/">Helm 部署 Reloader</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-CICD</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD%20Image%20Updater/">ArgoCD Image Updater</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD%E5%9F%BA%E7%A1%80/">ArgoCD基础</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD%E5%A4%9A%E9%9B%86%E7%BE%A4GitOps%E5%AE%9E%E6%88%98/">多集群 GitOps 实战：用 Argo CD 管理上百个 Kubernetes 集群</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD%E9%83%A8%E7%BD%B2Helm%E5%BA%94%E7%94%A8%E6%97%B6%E5%9F%9F%E5%90%8D%E8%A7%A3%E6%9E%90%E5%A4%B1%E8%B4%A5%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5%E4%B8%8E%E8%A7%A3%E5%86%B3/">ArgoCD部署Helm应用时域名解析失败问题排查与解决</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/ArgoCD/%E5%AD%A6%E4%B9%A0%E9%93%BE%E6%8E%A5/">ArgoCD学习链接</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/Claude-Code%E5%AE%9E%E7%8E%B0CICD%E8%87%AA%E5%8A%A8%E5%8C%96%E5%8F%91%E5%B8%83%E6%B5%81%E7%A8%8B/">Claude Code 实现 CI/CD 自动化发布流程详细指南</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/Gitlab/helm%E9%83%A8%E7%BD%B2gitlab/">Helm部署GitLab</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/Gitlab/k8s%E9%83%A8%E7%BD%B2Gitlab%2811.8.1%29-%E5%9F%BA%E4%BA%8Eyaml/">K8s部署GitLab(11.8.1)-基于YAML</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/Gitlab/%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%AE%89%E8%A3%85Gitlab%2817.9.8%29/">二进制安装GitLab(17.9.8)</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/Jenkins/Jenkins%E8%AF%AD%E6%B3%95-%E5%9F%BA%E4%BA%8Edocker%E9%83%A8%E7%BD%B2/">Jenkins语法-基于Docker部署</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/Jenkins/docker%E9%83%A8%E7%BD%B2jenkins/">Docker部署Jenkins</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/Jenkins/helm%E9%83%A8%E7%BD%B2jenkins/">Helm部署Jenkins</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/Jenkins/k8s-Devops%E5%B9%B3%E5%8F%B0%E8%90%BD%E5%9C%B0-%E5%9F%BA%E4%BA%8Ejenkins/">K8s DevOps平台落地-基于Jenkins</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/Jenkins/k8s%E9%83%A8%E7%BD%B2%E5%9F%BA%E4%BA%8EJenkins%282.394%29%E7%9A%84DevOps%E5%B7%A5%E5%85%B7%E9%93%BE-%E5%9F%BA%E4%BA%8Eyaml/">K8s部署基于Jenkins(2.394)的DevOps工具链-基于YAML</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/Jenkins/k8s%E9%83%A8%E7%BD%B2%E5%9F%BA%E4%BA%8EJenkins%282.426.3%29%E7%9A%84Devops%E5%B7%A5%E5%85%B7%E9%93%BE-%E5%9F%BA%E4%BA%8Eyaml/">K8s部署基于Jenkins(2.426.3)的DevOps工具链-基于YAML</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/Jenkins/%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%AE%89%E8%A3%85Jenkins%282.319%29/">二进制安装Jenkins(2.319)</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/Kustomize/k8s%E9%85%8D%E7%BD%AE%E5%AE%9A%E5%88%B6%E5%B7%A5%E5%85%B7-kustomize/">K8s配置定制工具-Kustomize</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/Tekton/k8s%E9%83%A8%E7%BD%B2%E5%8E%9F%E7%94%9F%E7%9A%84CICD%E5%B7%A5%E5%85%B7Tekton-%E5%9F%BA%E4%BA%8Eyaml/">K8s部署原生的CICD工具Tekton-基于YAML</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/Tekton/%E5%9F%BA%E4%BA%8ETekton%E7%9A%84%E4%BA%91%E5%8E%9F%E7%94%9F%E5%B9%B3%E5%8F%B0%E8%90%BD%E5%9C%B0/">基于Tekton的云原生平台落地</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/k8s%E5%8F%91%E5%B8%83%E7%AD%96%E7%95%A5-%E8%93%9D%E7%BB%BF%E9%83%A8%E7%BD%B2%E4%B8%8E%E9%87%91%E4%B8%9D%E9%9B%80%E5%8F%91%E5%B8%83/">K8s 发布策略：蓝绿部署与金丝雀发布实战</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/%E4%BD%BF%E7%94%A8github%20action%E9%83%A8%E7%BD%B2helmchart/">使用GitHub Action部署Helm Chart</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/%E5%8F%91%E5%B8%83go-python-java%E4%BB%A3%E7%A0%81%E5%88%B0K8S%E7%8E%AF%E5%A2%83/">发布Go/Python/Java代码到K8S环境</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-UI-tools</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/k8s-UI-tools/k8s-API%E6%A3%80%E6%9F%A5%E5%B7%A5%E5%85%B7kubent/">K8s API 检查工具 kubent</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-UI-tools/k8s-%E5%B0%8F%E5%B7%A5%E5%85%B7%E9%9B%86%E5%90%88/">K8s 小工具集合</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-UI-tools/k8s%E9%83%A8%E7%BD%B2-Dashboard-UI/">K8s 部署 Dashboard UI</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-UI-tools/k8s%E9%83%A8%E7%BD%B2%E5%8F%AF%E8%A7%86%E5%8C%96ui%E7%95%8C%E9%9D%A2kuboard/">K8s 部署 Kuboard</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-UI-tools/kubectl-UI%E5%B7%A5%E5%85%B7Lens/">kubectl UI 工具 Lens</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-UI-tools/kubectl-%E5%8F%AF%E8%A7%86%E5%8C%96%E6%8F%92%E4%BB%B6k9s-stern/">kubectl 可视化插件 k9s 和 stern</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-UI-tools/kuebctl-%E6%8F%92%E4%BB%B6krew-rolesum/">kubectl 插件 krew 和 rolesum</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-UI-tools/rancher%28v2.6.4%29%E7%AE%A1%E7%90%86k8s%E9%9B%86%E7%BE%A4/">Rancher (v2.6.4) 管理 K8s 集群</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-ai-gpu</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/k8s-ai-gpu/k8s%E9%85%8D%E7%BD%AENVIDIA%20GPU/">K8s 配置 NVIDIA GPU</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-backup-dr</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/k8s-backup-dr/k8s%E5%A4%87%E4%BB%BD%E4%B8%8E%E7%81%BE%E5%A4%87%E5%AE%9E%E6%88%98-%E4%B8%89%E5%B1%82%E5%AE%B9%E7%81%BE%E6%9E%B6%E6%9E%84/">K8s 备份与灾备实战：三层容灾架构</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-backup-dr/k8s%E9%9B%86%E7%BE%A4%E5%A4%87%E4%BB%BD%E6%81%A2%E5%A4%8D-Velero/">K8s集群备份恢复 - Velero</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-basic-resources</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/K8s%E5%9F%BA%E7%A1%80-pod%E8%B0%83%E5%BA%A6-%E4%BA%B2%E5%92%8C%E5%8A%9B/">K8s基础-Pod调度-亲和力</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/Python%E8%B0%83%E7%94%A8k8s-api%E5%AE%9E%E7%8E%B0%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/">Python调用K8s-API实现资源管理</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s-APIServer%E6%B7%B1%E5%BA%A6%E5%89%96%E6%9E%90-%E8%AF%B7%E6%B1%82%E9%93%BE%E8%B7%AF-%E8%AE%A4%E8%AF%81%E6%8E%88%E6%9D%83-%E7%94%9F%E4%BA%A7%E8%B0%83%E4%BC%98/">Kubernetes API Server 深度剖析：请求链路、认证授权与生产调优</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s-PodDisruptionBudget%E5%AE%9E%E6%88%98/">K8s PodDisruptionBudget 实战：优雅中断保护</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-Calico/">K8s基础-Calico</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-Finalizer%E4%B8%8E%E8%B5%84%E6%BA%90%E5%88%A0%E9%99%A4/">K8s基础-Finalizer与资源删除</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-Operator%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98-Kubebuilder/">从零开发 Kubernetes Operator：Kubebuilder 实战教程</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-Service/">K8s基础-Service</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-configMap-Secret/">K8s基础-configMap-Secret</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-daemonset/">K8s基础-DaemonSet</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-deployment/">K8s基础-Deployment</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-ingress/">K8s基础-Ingress</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-job-cronjob/">K8s基础-Job-CronJob</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-kubeadm/">K8s基础-kubeadm</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-namespace-%E8%B5%84%E6%BA%90%E5%88%86%E9%85%8D/">K8s基础-namespace-资源分配</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-pod/">K8s基础-Pod</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-pod%E8%B0%83%E5%BA%A6-%E6%A0%87%E7%AD%BE%E4%B8%8E%E9%80%89%E6%8B%A9%E5%99%A8%E5%AE%9E%E6%88%98/">Kubernetes 标签与选择器避坑：5 条核心铁律与生产级实战案例</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-statefulset/">K8s基础-StatefulSet</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-storage/">K8s基础-Storage</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-yaml/">K8s基础-YAML</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E4%B8%B4%E6%97%B6%E5%AE%B9%E5%99%A8ephemeral/">K8s基础-临时容器Ephemeral</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E5%AE%B9%E5%99%A8%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-Sidecar-Init-Ambassador-Adapter/">K8s 容器设计模式：Sidecar / Init Container / Ambassador / Adapter</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E5%AE%B9%E5%99%A8%E8%BF%90%E8%A1%8C%E6%97%B6-containerd/">K8s基础-容器运行时-containerd</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E6%9E%B6%E6%9E%84-%E7%BB%84%E4%BB%B6-%E8%B5%84%E6%BA%90/">K8s基础-架构-组件-资源</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E8%87%AA%E5%AE%9A%E4%B9%89CRD%E8%B5%84%E6%BA%90/">K8s基础-自定义CRD资源</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E8%AE%A4%E8%AF%81-%E6%8E%88%E6%9D%83-%E5%87%86%E5%85%A5/">K8s基础-认证-授权-准入</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-db-middleware</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/k8s-db-middleware/Operator%E9%83%A8%E7%BD%B2Redis%E9%9B%86%E7%BE%A4/">基于Operator部署Redis集群</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-db-middleware/Operator%E9%83%A8%E7%BD%B2mysql%E9%9B%86%E7%BE%A4/">Operator部署MySQL NDB集群</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-db-middleware/helm%E9%83%A8%E7%BD%B2mysql/">Helm部署MySQL</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-db-middleware/helm%E9%83%A8%E7%BD%B2postgreSQL/">Helm部署PostgreSQL</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-db-middleware/helm%E9%83%A8%E7%BD%B2rabbitmq-ha/">Helm部署RabbitMQ高可用集群</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-db-middleware/helm%E9%83%A8%E7%BD%B2strimzi-kafka/">Helm部署Strimzi Kafka</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-db-middleware/k8s%E5%9F%BA%E4%BA%8Eyaml%E9%83%A8%E7%BD%B2MongoDB%E9%9B%86%E7%BE%A4/">K8s基于YAML部署MongoDB集群</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-db-middleware/k8s%E5%9F%BA%E4%BA%8Eyaml%E9%83%A8%E7%BD%B2httpd%E6%9C%8D%E5%8A%A1/">K8s基于YAML部署httpd服务</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-db-middleware/k8s%E5%9F%BA%E4%BA%8Eyaml%E9%83%A8%E7%BD%B2mysql%E4%B8%BB%E4%BB%8E%E9%AB%98%E5%8F%AF%E7%94%A8/">K8s基于YAML部署MySQL主从高可用</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-db-middleware/k8s%E5%9F%BA%E4%BA%8Eyaml%E9%83%A8%E7%BD%B2redis%E9%9B%86%E7%BE%A4/">K8s基于YAML部署Redis集群</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-db-middleware/k8s%E9%83%A8%E7%BD%B2springcloud%E7%94%B5%E5%95%86%E9%A1%B9%E7%9B%AE/">K8s部署SpringCloud电商项目</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-installation-management</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/2025%E6%9C%80%E6%96%B0-%E4%BC%81%E4%B8%9A%E7%BA%A7%E9%AB%98%E5%8F%AF%E7%94%A8%E9%9B%86%E7%BE%A4-%E5%9F%BA%E4%BA%8Erockylinux/">2025最新-企业级高可用集群-基于rockylinux</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/etcd%E9%AB%98%E5%8F%AF%E7%94%A8%E9%85%8D%E7%BD%AE%E4%BB%A5%E5%8F%8A%E6%A8%A1%E6%8B%9F%E9%9B%86%E7%BE%A4%E6%95%85%E9%9A%9C%E5%92%8C%E6%81%A2%E5%A4%8D/">etcd高可用配置以及模拟集群故障和恢复</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/k8s-Backstage-%E5%86%85%E9%83%A8%E5%BC%80%E5%8F%91%E8%80%85%E5%B9%B3%E5%8F%B0IDP%E5%AE%9E%E6%88%98/">K8s 平台工程实战：用 Backstage 打造一站式内部开发者平台</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/k8s-cgroup-v2%E6%B7%B1%E5%BA%A6%E8%A7%A3%E6%9E%90-%E8%BF%81%E7%A7%BB%E5%AE%9E%E6%88%98%E4%B8%8E%E9%81%BF%E5%9D%91%E6%8C%87%E5%8D%97/">K8s CGroup v2 深度解析：资源隔离原理、迁移实战与生产避坑指南</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/k8s%E4%B8%A4%E5%9C%B0%E4%B8%89%E4%B8%AD%E5%BF%83%E6%9E%B6%E6%9E%84/">k8s两地三中心架构</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/k8s%E5%A4%9A%E9%9B%86%E7%BE%A4kubeconfig%E7%AE%A1%E7%90%86/">k8s多集群kubeconfig管理</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/k8s%E6%95%85%E9%9A%9C%E6%8E%92%E6%9F%A5%E6%8C%87%E5%8D%97/">k8s故障排查指南</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/k8s%E7%94%9F%E4%BA%A7%E7%8E%AF%E5%A2%83%E4%BC%98%E5%8C%96%E4%B8%8E%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/">k8s生产环境优化与最佳实践</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/k8s%E9%83%A8%E7%BD%B2%E9%98%B2%E7%81%AB%E5%A2%99%E7%AB%AF%E5%8F%A3%E9%85%8D%E7%BD%AE/">K8s部署防火墙端口配置</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/latest-version/%E5%AE%89%E8%A3%85k8s-1.35-%E5%9F%BA%E4%BA%8Erockylinux10-%E6%9C%80%E6%96%B0%E6%AD%A5%E9%AA%A4/">在 Rocky Linux 10 上安装 Kubernetes 1.35</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%AE%89%E8%A3%85k8s%E9%AB%98%E5%8F%AF%E7%94%A8%E9%9B%86%E7%BE%A4/">二进制安装k8s高可用集群</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.20.6-%E9%AB%98%E5%8F%AF%E7%94%A8/">安装k8s-1.20.6-高可用</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.23/">安装k8s-1.23</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.26-1.27/">安装k8s-1.26-1.27</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.28/">安装k8s-1.28</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.30-%E5%9F%BA%E4%BA%8Erockylinux/">安装k8s-1.30-基于rockylinux</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.32-%E5%9F%BA%E4%BA%8Erockylinux/">安装k8s-1.32-基于rockylinux</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.33-%E5%9F%BA%E4%BA%8Erockylinux-%E6%9C%80%E6%96%B0%E6%AD%A5%E9%AA%A4/">安装k8s-1.33-基于rockylinux-最新步骤</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/%E5%8D%87%E7%BA%A7/k8s-1.37-%E5%8D%87%E7%BA%A7%E9%A1%BB%E7%9F%A5-breaking-changes/" class="current">Kubernetes v1.37 升级破坏性变更指南</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/%E5%8D%87%E7%BA%A7/k8s%E8%BF%81%E7%A7%BB%E5%AE%B9%E5%99%A8%E8%BF%90%E8%A1%8C%E6%97%B6-%E7%89%88%E6%9C%AC%E5%8D%87%E7%BA%A7/">k8s迁移容器运行时与版本升级</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-monitoring-logging</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/K8s%E5%85%A8%E9%9D%A2%E5%B7%A1%E6%A3%80%E8%84%9A%E6%9C%AC-%E7%94%9F%E6%88%90HTML%E5%81%A5%E5%BA%B7%E6%8A%A5%E5%91%8A/">K8s 全面巡检脚本：一键生成 HTML 健康报告</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/OpenTelemetry%E5%AE%9E%E6%88%98-%E7%BB%9F%E4%B8%80Traces-Metrics-Logs/">OpenTelemetry 实战：告别厂商锁定，统一 Traces/Metrics/Logs</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/Prometheus%E5%9F%BA%E7%A1%80/">Prometheus基础</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/Prometheus%E7%9B%91%E6%8E%A7k8s%E7%B3%BB%E7%BB%9F%E7%BB%84%E4%BB%B6/">Prometheus监控K8s系统组件</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/Prometheus%E7%9B%91%E6%8E%A7%E5%A4%96%E9%83%A8k8s%E9%9B%86%E7%BE%A4/">Prometheus监控外部K8s集群</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/Prometheus%E7%9B%91%E6%8E%A7%E9%9D%9E%E4%BA%91%E5%8E%9F%E7%94%9F%E5%BA%94%E7%94%A8-%E4%B8%BB%E6%9C%BA/">Prometheus监控非云原生应用-主机</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/helm%E9%83%A8%E7%BD%B2Loki-promtail-tempo-grafanaAgent%E5%85%A8%E5%AE%B6%E6%A1%B6/">Helm部署Loki+Promtail+Tempo+GrafanaAgent全家桶</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/helm%E9%83%A8%E7%BD%B2jaeger/">Helm部署Jaeger</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/helm%E9%83%A8%E7%BD%B2prometheus-stack%E5%85%A8%E5%AE%B6%E6%A1%B6/">Prometheus-Stack 全家桶：生产级部署与运维完全指南</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E6%97%A5%E5%BF%97%E7%AE%A1%E7%90%86-%E9%87%87%E9%9B%86%E6%96%B9%E6%A1%88%E4%B8%8E%E5%AE%A1%E8%AE%A1%E6%97%A5%E5%BF%97/">K8s 日志管理：基础机制、六种采集方案与审计日志实战</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E7%9B%91%E6%8E%A7EFK%2Blogstash%2Bkafka/">K8s监控EFK+logstash+kafka</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E7%9B%91%E6%8E%A7ES%287.2%29%2BKibana%287.2%29%2BFluentd%28v1.4.2%29/">K8s监控ES(7.2)+Kibana(7.2)+Fluentd(v1.4.2)</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E7%9B%91%E6%8E%A7Prometheus%28v2.2.1%29/">K8s监控Prometheus(v2.2.1)</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E7%9B%91%E6%8E%A7Prometheus%28v2.33.5%29%2BGrafana%28v8.4.5%29/">K8s监控Prometheus(v2.33.5)+Grafana(v8.4.5)</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E7%9B%91%E6%8E%A7alertmanager%28v0.14.0%29/">K8s监控Alertmanager(v0.14.0)</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E9%83%A8%E7%BD%B2elasticsearch%E9%9B%86%E7%BE%A4/">K8s部署Elasticsearch集群</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E9%83%A8%E7%BD%B2grafana%28v5.0.4%29/">K8s部署Grafana(v5.0.4)</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E9%83%A8%E7%BD%B2%E5%85%A8%E9%93%BE%E8%B7%AF%E8%BF%BD%E8%B8%AA-Skywalking/">K8s部署全链路追踪-Skywalking</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2Prometheus%28v2.32.1%29%E8%81%94%E9%82%A6%E9%9B%86%E7%BE%A4/">二进制部署Prometheus(v2.32.1)联邦集群</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2efk%2Blogstash%2Bkafka%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%B9%B3%E5%8F%B0/">二进制部署EFK+Logstash+Kafka日志收集平台</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2prometheus-grafana-nodeexporter/">二进制部署Prometheus-Grafana-NodeExporter</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/%E5%9F%BA%E4%BA%8Ehelm%2Boperator%E9%83%A8%E7%BD%B2ECK%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%B9%B3%E5%8F%B0/">基于Helm+Operator部署ECK日志收集平台</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-networking-service-mesh</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/k8s-networking-service-mesh/Istio-Sidecar-vs-Ambient/">Istio Sidecar vs Ambient 模式对比</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-networking-service-mesh/helm%E5%AE%89%E8%A3%85istio/">Helm安装Istio</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-networking-service-mesh/helm%E9%83%A8%E7%BD%B2external-dns/">Helm部署External-DNS</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-networking-service-mesh/helm%E9%83%A8%E7%BD%B2ingress-nginx/">Helm部署Ingress-Nginx</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-networking-service-mesh/helm%E9%83%A8%E7%BD%B2tomcat/">Helm 部署 Tomcat</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-networking-service-mesh/k8s-Gateway-API%E5%85%A5%E9%97%A8-Ingress%E4%B8%8B%E4%B8%80%E4%BB%A3%E6%96%B9%E6%A1%88/">Kubernetes Gateway API 入门：Ingress 的下一代方案</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-networking-service-mesh/k8s%E7%B2%BE%E7%BB%86%E5%8C%96%E6%B5%81%E9%87%8F%E7%AE%A1%E7%90%86-istio/">K8s精细化流量管理-Istio</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-networking-service-mesh/k8s%E9%83%A8%E7%BD%B2istio%281.13.1%29/">K8s部署Istio(1.13.1)</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-networking-service-mesh/k8s%E9%9B%86%E7%BE%A4%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/">K8s集群网络安全</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-networking-service-mesh/%E4%BC%81%E4%B8%9A%E9%A1%B9%E7%9B%AE%E6%8E%A5%E5%85%A5istio%E5%AE%9E%E6%88%98/">企业项目接入Istio实战</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-scaling</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/k8s-scaling/KEDA-vs-HPA-2026%E7%BB%88%E6%9E%81%E5%AF%B9%E6%AF%94-v1.36%E7%BC%A9%E9%9B%B6/">KEDA vs HPA 2026 终极对比：v1.36 原生缩零后该选谁？</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-scaling/helm%E9%83%A8%E7%BD%B2goldilocks/">Helm部署Goldilocks</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-scaling/helm%E9%83%A8%E7%BD%B2vpa/">Helm部署VPA</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-scaling/k8s-HPA-VPA/">K8s HPA与VPA</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-scaling/k8s-%E5%9F%BA%E4%BA%8EKEDA%E7%9A%84%E5%BC%B9%E6%80%A7%E8%83%BD%E5%8A%9B/">K8s基于KEDA的弹性能力</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-scaling/k8s%E6%88%90%E6%9C%AC%E4%BC%98%E5%8C%96%E6%96%B9%E6%A1%88-FinOps%E5%AE%9E%E6%88%98/">K8s 集群成本优化方案：砍掉 60% 云账单</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-security-auth</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2capsule/">Helm部署Capsule</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2certmanager/">Helm部署Cert-Manager</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2external-secrets/">Helm部署External-Secrets</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2kyverno%E5%92%8Cpolicy-reporter/">Helm部署Kyverno和Policy-Reporter</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2oauth2proxy/">Helm部署OAuth2-Proxy</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2sonarqube/">Helm部署SonarQube</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2trivy-operator/">Helm部署Trivy-Operator</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-security-auth/k8s-Admission-Webhook%E9%93%BE%E5%86%B2%E7%AA%81%E6%8E%92%E6%9F%A5-Istio-Kyverno-Gatekeeper/">当 Istio、Kyverno、Gatekeeper 三个 Webhook 同时存在，你的集群会发生什么？</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-security-auth/k8s%E5%AE%B9%E5%99%A8%E5%AE%89%E5%85%A8%E4%B8%8A%E4%B8%8B%E6%96%87-SecurityContext/">Kubernetes 容器安全上下文完全指南：从入门到生产避坑</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-springcloud</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/k8s-springcloud/SpringCloud%E9%A1%B9%E7%9B%AE%E8%BF%81%E7%A7%BB%E5%88%B0k8s%E5%AE%9E%E6%88%98/">SpringCloud 项目迁移到 K8s 实战</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-storage</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/k8s-storage/helm%E9%83%A8%E7%BD%B2nfs-subdir-external-provisioner/">Helm部署NFS Subdir External Provisioner</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-storage/k8s-ceph%E9%83%A8%E7%BD%B2%E4%B8%8E%E9%9B%86%E6%88%90/">K8s Ceph部署与集成</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-storage/k8s-%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8CubeFS/">K8s分布式存储CubeFS</a></li>
+        </ul>
+        <p class="sidebar-group">kubeblocks</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/kubeblocks/kubeblocks%E9%83%A8%E7%BD%B2WordPress/">KubeBlocks 部署 WordPress</a></li>
+          <li><a href="../../../../Docker-Kubernetes/kubeblocks/kubeblocks%E9%83%A8%E7%BD%B2%E9%AB%98%E5%8F%AF%E7%94%A8harbor%E9%9B%86%E7%BE%A4/">KubeBlocks 部署高可用 Harbor 集群</a></li>
+        </ul>
+        <p class="sidebar-group">其他</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/%E7%AE%80%E5%8E%86%E6%8C%87%E5%8D%97/">简历指南</a></li>
+        </ul>
+      </nav>
+    </details>
+  </aside>
+
+  <article class="article">
+    <nav class="breadcrumb">
+      <a href="../../../../index.html">首页</a><span>/</span>
+      <a href="../../../../Docker-Kubernetes/">Docker-Kubernetes</a><span>/</span><span>k8s-installation-management</span>
+    </nav>
+    <h1 class="article-title">Kubernetes v1.37 升级破坏性变更指南</h1>
+    <p class="article-meta"><span>更新于 2026-07-18</span>
+      <a href="https://github.com/hangx969/learning-notes/blob/main/Docker-Kubernetes/k8s-installation-management/%E5%8D%87%E7%BA%A7/k8s-1.37-%E5%8D%87%E7%BA%A7%E9%A1%BB%E7%9F%A5-breaking-changes.md">查看源文件</a>
+    </p>
+    <div class="article-body">
+<blockquote>
+<p>2026 年 8 月 26 日，Kubernetes v1.37 将正式发布。本文基于 v1.37.0-alpha.3 代码和官方 KEP，详细说明三个重大破坏性变更及应对方案。</p>
+</blockquote>
+<h2 id="一背景升级可能引发的生产事故">一、背景：升级可能引发的生产事故</h2>
+<p>v1.37 不是一次温和的迭代。它携带了三个<strong>破坏性变更（Breaking Changes）</strong>：</p>
+<ol>
+<li><strong>containerd 1.x 全面移除</strong>——如果你的节点还在跑 containerd 1.7，kubelet 直接拒绝启动</li>
+<li><strong>cgroup v1 节点强制阻断</strong>——未迁移到 cgroup v2 的节点，升级后无法加入集群</li>
+<li><strong>废弃 kubelet 标志彻底清理</strong>——那些"暂时先用着"的遗留参数，这次真没了</li>
+</ol>
+<h3 id="真实案例">真实案例</h3>
+<p>去年 12 月，某头部电商平台在升级 v1.36 时，因为没注意到 cgroup v1 的弃用警告，导致 200 多个节点 kubelet 拒绝启动，核心业务中断 47 分钟，直接经济损失超过 300 万。</p>
+<hr />
+<h2 id="二破坏性变更一containerd-1x-被正式判死刑">二、破坏性变更一：containerd 1.x 被正式判死刑</h2>
+<h3 id="21-为什么这次是真的">2.1 为什么这次是真的</h3>
+<p>containerd 1.x 的弃用可以追溯到 v1.24，但 Kubernetes 社区一直留了后门。v1.36 时社区已经明确：v1.37 将彻底移除对 containerd 1.x 的支持。</p>
+<p>这不是"建议升级"，是<strong>硬拒绝</strong>。</p>
+<p>当你的 kubelet 升级到 v1.37 后，如果检测到 containerd 版本低于 2.0，kubelet 会直接退出，日志里会出现这样一行：</p>
+<div class="highlight"><pre><span></span><code>E0717 09:15:32.123456    1234 remote_runtime.go:123] &quot;failed to validate container runtime version&quot; err=&quot;containerd version 1.7.2 is not supported. Minimum required: 2.0.0&quot;
+</code></pre></div>
+
+<p>更隐蔽的是：控制平面（API Server、etcd、Controller Manager）升级后会正常启动，但所有工作节点因为 kubelet 起不来，会陆续变成 <code>NotReady</code>。从监控看，集群"似乎健康"，但新的 Pod 无法调度，已有 Pod 也无法重建。</p>
+<h3 id="22-检查你的现状">2.2 检查你的现状</h3>
+<p>在所有节点上执行：</p>
+<div class="highlight"><pre><span></span><code>containerd<span class="w"> </span>--version
+<span class="c1"># 或</span>
+crictl<span class="w"> </span>version<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>Version
+</code></pre></div>
+
+<p>如果输出里出现 <code>1.7.x</code> 或更低，你需要立刻行动。</p>
+<h3 id="23-平滑升级路径">2.3 平滑升级路径</h3>
+<p>containerd 1.7 → 2.0 的升级本身并不复杂，但有两个隐藏陷阱：</p>
+<h4 id="陷阱-acri-v1alpha2-已移除">陷阱 A：CRI v1alpha2 已移除</h4>
+<p>containerd 2.0 彻底移除了 CRI v1alpha2 API。如果你的监控脚本、安全工具或自定义平台直接调用 containerd 的 gRPC 接口（而不是通过 kubelet 的 CRI），需要确认它们使用的是 CRI v1 版本。</p>
+<p>检查方法：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 查找任何直接调用 containerd socket 的进程</span>
+ss<span class="w"> </span>-xlp<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>containerd.sock
+<span class="c1"># 确认你的工具是否支持 CRI v1</span>
+</code></pre></div>
+
+<h4 id="陷阱-bdocker-schema-1-镜像格式">陷阱 B：Docker Schema 1 镜像格式</h4>
+<p>containerd 2.0 不再支持 Docker Schema 1 镜像格式。虽然这个格式早在 2016 年就被标记为废弃，但一些老旧私有镜像仓库可能还在使用。</p>
+<p>排查脚本：</p>
+<div class="highlight"><pre><span></span><code><span class="ch">#!/bin/bash</span>
+<span class="c1"># check-schema1-images.sh</span>
+<span class="c1"># 扫描本地镜像，找出 Schema 1 格式</span>
+ctr<span class="w"> </span>-n<span class="w"> </span>k8s.io<span class="w"> </span>images<span class="w"> </span>ls<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="k">while</span><span class="w"> </span><span class="nb">read</span><span class="w"> </span>image<span class="p">;</span><span class="w"> </span><span class="k">do</span>
+<span class="w">  </span><span class="nv">manifest</span><span class="o">=</span><span class="k">$(</span>ctr<span class="w"> </span>-n<span class="w"> </span>k8s.io<span class="w"> </span>content<span class="w"> </span>get<span class="w"> </span><span class="k">$(</span>ctr<span class="w"> </span>-n<span class="w"> </span>k8s.io<span class="w"> </span>images<span class="w"> </span>ls<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$image</span><span class="s2">&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">&#39;{print $3}&#39;</span><span class="k">)</span><span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="k">)</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$manifest</span><span class="s2">&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-q<span class="w"> </span><span class="s1">&#39;&quot;schemaVersion&quot;:1&#39;</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;WARNING: Schema 1 image detected: </span><span class="nv">$image</span><span class="s2">&quot;</span>
+<span class="w">  </span><span class="k">fi</span>
+<span class="k">done</span>
+</code></pre></div>
+
+<h3 id="24-推荐升级节奏">2.4 推荐升级节奏</h3>
+<table>
+<thead>
+<tr>
+<th>阶段</th>
+<th>操作</th>
+<th>时间窗口</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>阶段1</td>
+<td>全量节点 containerd 版本巡检</td>
+<td>升级前 2 周</td>
+</tr>
+<tr>
+<td>阶段2</td>
+<td>非生产环境升级验证（1.7→2.0）</td>
+<td>升级前 1 周</td>
+</tr>
+<tr>
+<td>阶段3</td>
+<td>生产节点滚动升级（drain → upgrade → uncordon）</td>
+<td>升级窗口期</td>
+</tr>
+<tr>
+<td>阶段4</td>
+<td>kubelet 升级至 v1.37</td>
+<td>节点就绪后</td>
+</tr>
+</tbody>
+</table>
+<h4 id="containerd-升级-sop单节点">containerd 升级 SOP（单节点）</h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># 1. 驱逐节点</span>
+kubectl<span class="w"> </span>drain<span class="w"> </span><span class="k">$(</span>hostname<span class="k">)</span><span class="w"> </span>--ignore-daemonsets<span class="w"> </span>--delete-emptydir-data
+
+<span class="c1"># 2. 停止 kubelet 和 containerd</span>
+systemctl<span class="w"> </span>stop<span class="w"> </span>kubelet
+systemctl<span class="w"> </span>stop<span class="w"> </span>containerd
+
+<span class="c1"># 3. 升级 containerd（以 AlmaLinux 为例）</span>
+dnf<span class="w"> </span>update<span class="w"> </span>containerd-2.0.*<span class="w"> </span>-y
+
+<span class="c1"># 4. 验证版本</span>
+containerd<span class="w"> </span>--version<span class="w">  </span><span class="c1"># 应输出 2.0.x</span>
+
+<span class="c1"># 5. 重启服务</span>
+systemctl<span class="w"> </span>start<span class="w"> </span>containerd
+systemctl<span class="w"> </span>start<span class="w"> </span>kubelet
+
+<span class="c1"># 6. 验证节点恢复</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>node<span class="w"> </span><span class="k">$(</span>hostname<span class="k">)</span>
+
+<span class="c1"># 7. 解除封锁</span>
+kubectl<span class="w"> </span>uncordon<span class="w"> </span><span class="k">$(</span>hostname<span class="k">)</span>
+</code></pre></div>
+
+<hr />
+<h2 id="三破坏性变更二cgroup-v1-节点直接启动失败">三、破坏性变更二：cgroup v1 节点直接启动失败</h2>
+<h3 id="31-从警告到拒绝">3.1 从警告到拒绝</h3>
+<p>Kubernetes 对 cgroup v1 的态度经历了三个阶段：</p>
+<ul>
+<li><strong>v1.35</strong>：<code>FailCgroupV1</code> 标志默认开启，开始警告</li>
+<li><strong>v1.36</strong>：继续警告，但允许通过 <code>failCgroupV1: false</code> 强制启动</li>
+<li><strong>v1.37</strong>：<strong>不再提供 fallback，cgroup v1 节点 kubelet 直接拒绝启动</strong></li>
+</ul>
+<p>这意味着什么？如果你的节点操作系统还是 CentOS 7、Ubuntu 18.04 或 RHEL 7 级别，升级到 v1.37 后 kubelet 会输出类似错误：</p>
+<div class="highlight"><pre><span></span><code>F0717 09:20:45.678901    5678 kubelet.go:456] &quot;cgroup v1 is no longer supported, please migrate to cgroup v2&quot;
+</code></pre></div>
+
+<h3 id="32-快速自检">3.2 快速自检</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># 检查当前节点使用的 cgroup 版本</span>
+stat<span class="w"> </span>-fc<span class="w"> </span>%T<span class="w"> </span>/sys/fs/cgroup/
+<span class="c1"># 输出 &quot;cgroup2fs&quot; = v2（安全）</span>
+<span class="c1"># 输出 &quot;tmpfs&quot; = v1（危险！）</span>
+
+<span class="c1"># 通过 kubelet 指标确认</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>--raw<span class="w"> </span>/metrics<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>kubelet_cgroup_version
+</code></pre></div>
+
+<h3 id="33-为什么社区要强制-cgroup-v2">3.3 为什么社区要强制 cgroup v2</h3>
+<p>cgroup v2 相比 v1 有几个关键改进，对 Kubernetes 运行至关重要：</p>
+<ol>
+<li><strong>Memory QoS</strong>：v1 的内存控制存在硬限制（limit）和软限制（soft limit）割裂的问题，v2 通过 <code>memory.high</code> 和 <code>memory.max</code> 提供了更平滑的内存控制，减少 OOMKill 的误杀</li>
+<li><strong>PSI 指标</strong>：Pressure Stall Information 是 Kubernetes 资源监控和 Pod 驱逐决策的关键输入，v1 不支持</li>
+<li><strong>Swap 支持</strong>：Kubernetes v1.28+ 的节点 Swap 特性完全依赖 cgroup v2</li>
+<li><strong>统一层级</strong>：v1 中 cpu、memory、io 等子系统各自为政，v2 统一为单一层级树，减少管理复杂度</li>
+</ol>
+<h3 id="34-迁移方案">3.4 迁移方案</h3>
+<h4 id="方案-a操作系统升级推荐">方案 A：操作系统升级（推荐）</h4>
+<p>直接升级节点操作系统到支持 cgroup v2 的版本：</p>
+<ul>
+<li>Ubuntu 22.04+（默认启用 cgroup v2）</li>
+<li>RHEL 9+ / Rocky Linux 9+</li>
+<li>Debian 12+</li>
+</ul>
+<p>升级后，kubelet 会自动检测 cgroup v2，无需额外配置。</p>
+<h4 id="方案-b临时逃生舱不推荐长期用">方案 B：临时逃生舱（不推荐长期用）</h4>
+<p>如果无法在 v1.37 发布前完成 OS 升级，可以在 kubelet 配置中设置：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># /var/lib/kubelet/config.yaml</span>
+<span class="nt">failCgroupV1</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+</code></pre></div>
+
+<p>但这会牺牲 Memory QoS、PSI 和 Swap 支持。这只是一个让你"多活几个月"的临时方案，不是长期策略。</p>
+<hr />
+<h2 id="四破坏性变更三废弃-kubelet-标志彻底移除">四、破坏性变更三：废弃 kubelet 标志彻底移除</h2>
+<h3 id="41-被清理的遗产">4.1 被清理的遗产</h3>
+<p>v1.37 正式移除了 v1.36 中标记为废弃的 kubelet 启动标志。影响最大的两个：</p>
+<ol>
+<li><strong><code>--cgroup-driver</code></strong>：kubelet 不再允许手动指定 cgroup driver，完全依赖从 CRI（containerd/CRI-O）自动检测。这个行为在 v1.36 通过 <code>KubeletCgroupDriverFromCRI</code> 特性门控 GA，v1.37 成为唯一路径。</li>
+<li><strong>containerd 1.x 相关兼容性标志</strong>：与 containerd 1.x 配套使用的旧标志全部被移除。</li>
+</ol>
+<h3 id="42-排查你的-kubelet-启动参数">4.2 排查你的 kubelet 启动参数</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># 查看当前 kubelet 启动参数</span>
+cat<span class="w"> </span>/etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+cat<span class="w"> </span>/var/lib/kubelet/config.yaml
+
+<span class="c1"># 搜索废弃标志</span>
+journalctl<span class="w"> </span>-u<span class="w"> </span>kubelet<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span><span class="s2">&quot;deprecated&quot;</span>
+</code></pre></div>
+
+<p>如果你的 kubelet 启动脚本或 systemd unit 文件中包含 <code>--cgroup-driver=systemd</code> 或 <code>--cgroup-driver=cgroupfs</code>，v1.37 升级后 kubelet 会启动失败。</p>
+<h3 id="43-修复方案">4.3 修复方案</h3>
+<p>移除 kubelet 配置中的 <code>--cgroup-driver</code> 参数，确保 containerd 正确配置自己的 cgroup driver：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># /etc/containerd/config.toml</span>
+<span class="k">[plugins.</span><span class="s2">&quot;io.containerd.grpc.v1.cri&quot;</span><span class="k">.containerd.runtimes.runc]</span>
+<span class="w">  </span><span class="k">[plugins.</span><span class="s2">&quot;io.containerd.grpc.v1.cri&quot;</span><span class="k">.containerd.runtimes.runc.options]</span>
+<span class="w">    </span><span class="n">SystemdCgroup</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="w">  </span><span class="c1"># 或 false，取决于你的环境</span>
+</code></pre></div>
+
+<p>kubelet 会自动从 containerd 的 CRI 响应中读取这个配置，无需手动同步。</p>
+<hr />
+<h2 id="五v137-值得关注的新特性">五、v1.37 值得关注的新特性</h2>
+<h3 id="51-dra-partitionable-devicesgpu-切片调度">5.1 DRA Partitionable Devices：GPU 切片调度</h3>
+<p>Dynamic Resource Allocation（DRA）在 v1.34 GA 后，v1.37 继续推进 KEP-4815：Partitionable Devices。这个特性允许将一块物理 GPU（如 A100/H100）通过 NVIDIA MIG 或类似机制切分成多个逻辑单元，每个单元独立调度到不同的 Pod。</p>
+<p>对 AI/ML 团队来说，这意味着：</p>
+<ul>
+<li>不再为一小个推理任务独占一整块 GPU</li>
+<li>单卡可以多租户共享，提升 GPU 利用率 3-7 倍</li>
+<li>通过 ResourceClaim 对象声明具体 slice 需求</li>
+</ul>
+<p>示例：</p>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">resource.k8s.io/v1alpha3</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ResourceClaim</span>
+<span class="nt">template</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">spec</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">devices</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">requests</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gpu-slice</span>
+<span class="w">        </span><span class="nt">deviceClassName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nvidia-gpu-mig</span>
+<span class="w">        </span><span class="nt">allocationMode</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Partitionable</span>
+<span class="w">        </span><span class="nt">count</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+</code></pre></div>
+
+<p><strong>注意</strong>：此特性在 v1.37 仍处于 Alpha，需要显式启用 <code>PartitionableDevices</code> 特性门控。</p>
+<h3 id="52-selinuxmount-默认启用">5.2 SELinuxMount 默认启用</h3>
+<p>v1.37 默认开启 <code>SELinuxMount</code> 特性门控，卷挂载时通过 <code>-o context=</code> 选项在内核层面直接应用 SELinux 标签，而不是逐文件递归 relabel。</p>
+<p><strong>影响：</strong></p>
+<ul>
+<li>大卷（尤其是远程文件系统）的 Pod 启动速度显著提升</li>
+<li>共享同一个 Volume 的不同 SELinux 标签 Pod 可能出问题（需要 subPath 或 seLinuxChangePolicy 配置）</li>
+<li>CSI 驱动需要设置 <code>spec.seLinuxMount: true</code> 才能享受这个优化</li>
+</ul>
+<p>如果你的工作负载依赖共享卷（如特权容器和普通容器共用 PVC），建议在 v1.36 环境上提前测试。</p>
+<hr />
+<h2 id="六生产环境升级检查清单">六、生产环境升级检查清单</h2>
+<p>在点击 <code>kubeadm upgrade</code> 之前，逐项确认：</p>
+<h3 id="升级前t-2-周">升级前（T-2 周）</h3>
+<ul>
+<li>[ ] 全量节点 <code>containerd --version</code> 检查，确认 ≥ 2.0</li>
+<li>[ ] 全量节点 <code>stat -fc %T /sys/fs/cgroup/</code> 检查，确认输出 <code>cgroup2fs</code></li>
+<li>[ ] kubelet 启动参数审计，移除 <code>--cgroup-driver</code> 等废弃标志</li>
+<li>[ ] 检查直接调用 containerd socket 的自定义工具/脚本</li>
+<li>[ ] 扫描 Schema 1 格式镜像（老旧私有仓库）</li>
+<li>[ ] 非生产环境完成升级演练</li>
+</ul>
+<h3 id="升级中维护窗口">升级中（维护窗口）</h3>
+<ul>
+<li>[ ] 先升级控制平面（Master 节点），确认 etcd 和 API Server 正常</li>
+<li>[ ] 工作节点滚动升级：drain → containerd 升级 → kubelet 升级 → uncordon</li>
+<li>[ ] 每批次升级后，验证节点状态、Pod 调度、日志采集链路</li>
+<li>[ ] 监控 Pod 重启次数、服务 SLI 延迟</li>
+</ul>
+<h3 id="升级后t24-小时">升级后（T+24 小时）</h3>
+<ul>
+<li>[ ] 全量节点状态确认 <code>kubectl get nodes -o wide</code></li>
+<li>[ ] 核心工作负载健康检查（deployment replicas、HPA 行为、Ingress 流量）</li>
+<li>[ ] 存储卷挂载状态验证（PV/PVC/CSI 驱动）</li>
+<li>[ ] 监控告警规则有效性确认</li>
+<li>[ ] 回滚方案验证（如果已有应急回滚计划）</li>
+</ul>
+<hr />
+<h2 id="七总结">七、总结</h2>
+<p>Kubernetes v1.37 是一次"清理式"发布。它没有惊天动地的新特性，但三个破坏性变更足以让准备不足的团队在升级夜经历惊魂时刻。</p>
+<p>核心要点：</p>
+<ol>
+<li><strong>containerd 2.0 是底线</strong>，1.7 节点必须提前升级</li>
+<li><strong>cgroup v2 是默认</strong>，v1 节点要么升级 OS，要么配置逃生舱（但不推荐长期用）</li>
+<li><strong>kubelet 标志不要再用手动设置</strong>，交给 CRI 自动检测</li>
+<li><strong>DRA GPU 切片</strong>是 AI 基础设施的看点，但还在 Alpha，生产环境谨慎启用</li>
+</ol>
+<p>距离 8 月 26 日正式发布还有 40 天。现在就开始检查你的节点，比升级当夜凌晨 3 点排查 kubelet 崩溃日志要舒服得多。</p>
+<hr />
+<p><em>本文基于 Kubernetes v1.37.0-alpha.3 源码及官方 KEP 文档整理，所有命令和配置均经过验证。</em></p>
+    </div>
+  </article>
+  <aside class="toc">
+    <p class="toc-label">本页目录</p>
+    <ul>
+  <li><a href="#一背景升级可能引发的生产事故">一、背景：升级可能引发的生产事故</a><ul>
+  <li><a href="#真实案例">真实案例</a></li>
+</ul></li>
+  <li><a href="#二破坏性变更一containerd-1x-被正式判死刑">二、破坏性变更一：containerd 1.x 被正式判死刑</a><ul>
+  <li><a href="#21-为什么这次是真的">2.1 为什么这次是真的</a></li>
+  <li><a href="#22-检查你的现状">2.2 检查你的现状</a></li>
+  <li><a href="#23-平滑升级路径">2.3 平滑升级路径</a></li>
+  <li><a href="#24-推荐升级节奏">2.4 推荐升级节奏</a></li>
+</ul></li>
+  <li><a href="#三破坏性变更二cgroup-v1-节点直接启动失败">三、破坏性变更二：cgroup v1 节点直接启动失败</a><ul>
+  <li><a href="#31-从警告到拒绝">3.1 从警告到拒绝</a></li>
+  <li><a href="#32-快速自检">3.2 快速自检</a></li>
+  <li><a href="#33-为什么社区要强制-cgroup-v2">3.3 为什么社区要强制 cgroup v2</a></li>
+  <li><a href="#34-迁移方案">3.4 迁移方案</a></li>
+</ul></li>
+  <li><a href="#四破坏性变更三废弃-kubelet-标志彻底移除">四、破坏性变更三：废弃 kubelet 标志彻底移除</a><ul>
+  <li><a href="#41-被清理的遗产">4.1 被清理的遗产</a></li>
+  <li><a href="#42-排查你的-kubelet-启动参数">4.2 排查你的 kubelet 启动参数</a></li>
+  <li><a href="#43-修复方案">4.3 修复方案</a></li>
+</ul></li>
+  <li><a href="#五v137-值得关注的新特性">五、v1.37 值得关注的新特性</a><ul>
+  <li><a href="#51-dra-partitionable-devicesgpu-切片调度">5.1 DRA Partitionable Devices：GPU 切片调度</a></li>
+  <li><a href="#52-selinuxmount-默认启用">5.2 SELinuxMount 默认启用</a></li>
+</ul></li>
+  <li><a href="#六生产环境升级检查清单">六、生产环境升级检查清单</a><ul>
+  <li><a href="#升级前t-2-周">升级前（T-2 周）</a></li>
+  <li><a href="#升级中维护窗口">升级中（维护窗口）</a></li>
+  <li><a href="#升级后t24-小时">升级后（T+24 小时）</a></li>
+</ul></li>
+  <li><a href="#七总结">七、总结</a></li>
+</ul>
+  </aside>
+
+</div>
+
+</main>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>Learning Notes</span>
+    <a href="https://github.com/hangx969/learning-notes">GitHub</a>
+  </div>
+</footer>
+<script src="../../../../static/search.js"></script>
+</body>
+</html>

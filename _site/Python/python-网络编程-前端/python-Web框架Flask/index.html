@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Python Web框架Flask - Learning Notes</title>
+<link rel="stylesheet" href="../../../static/style.css">
+<link rel="stylesheet" href="../../../static/pygments.css">
+</head>
+<body data-root="../../../">
+<header class="site-header">
+  <div class="header-inner">
+    <a class="logo" href="../../../index.html"><span class="logo-mark"></span>LEARNING NOTES</a>
+    <div class="search">
+      <input id="search-input" type="search" placeholder="搜索笔记…" autocomplete="off" aria-label="搜索笔记">
+      <div id="search-results" hidden></div>
+    </div>
+  </div>
+  <nav class="topic-nav" aria-label="主题导航">
+    <div class="topic-nav-inner">
+      <a href="../../../AI/">AI</a>
+      <a href="../../../Aliyun/">Aliyun</a>
+      <a href="../../../Azure/">Azure</a>
+      <a href="../../../C%2B%2B/">C++</a>
+      <a href="../../../CloudComputing/">CloudComputing</a>
+      <a href="../../../Database/">Database</a>
+      <a href="../../../Docker-Kubernetes/">Docker-Kubernetes</a>
+      <a href="../../../GPU-DeepLearning/">GPU-DeepLearning</a>
+      <a href="../../../Git/">Git</a>
+      <a href="../../../Go/">Go</a>
+      <a href="../../../HPC/">HPC</a>
+      <a href="../../../IaC/">IaC</a>
+      <a href="../../../Linux-Shell/">Linux-Shell</a>
+      <a href="../../../Middlewares/">Middlewares</a>
+      <a href="../../../Networking/">Networking</a>
+      <a href="../../../OS/">OS</a>
+      <a href="../../../Python/" class="active">Python</a>
+      <a href="../../../SoftwareTesting/">SoftwareTesting</a>
+    </div>
+  </nav>
+</header>
+<main class="main">
+
+<div class="article-layout">
+
+  <aside class="sidebar">
+    <details class="sidebar-details">
+      <summary>Python</summary>
+      <nav class="sidebar-nav">
+        <p class="sidebar-group">python-基础</p>
+        <ul>
+          <li><a href="../../../Python/python-%E5%9F%BA%E7%A1%80/python-OOP/">Python 面向对象编程</a></li>
+          <li><a href="../../../Python/python-%E5%9F%BA%E7%A1%80/python-QA/">Python 知识总结与常见问题</a></li>
+          <li><a href="../../../Python/python-%E5%9F%BA%E7%A1%80/python-basics/">Python 数据类型、运算符与基础语法</a></li>
+          <li><a href="../../../Python/python-%E5%9F%BA%E7%A1%80/python-exception-handling/">Python 异常处理</a></li>
+          <li><a href="../../../Python/python-%E5%9F%BA%E7%A1%80/python-function/">Python 函数</a></li>
+          <li><a href="../../../Python/python-%E5%9F%BA%E7%A1%80/python%E5%8C%85%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7-uv/">Python 包管理工具 uv</a></li>
+          <li><a href="../../../Python/python-%E5%9F%BA%E7%A1%80/rockylinux%E9%85%8D%E7%BD%AEpython%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/">RockyLinux 配置 Python 开发环境</a></li>
+          <li><a href="../../../Python/python-%E5%9F%BA%E7%A1%80/windows%E9%85%8D%E7%BD%AEpython%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/">Windows 配置 Python 开发环境</a></li>
+        </ul>
+        <p class="sidebar-group">python-数据分析-AI大模型</p>
+        <ul>
+          <li><a href="../../../Python/python-%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-AI%E5%A4%A7%E6%A8%A1%E5%9E%8B/python-%E5%A4%84%E7%90%86excel-word/">Python处理Excel与Word文档</a></li>
+          <li><a href="../../../Python/python-%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-AI%E5%A4%A7%E6%A8%A1%E5%9E%8B/python-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E4%B8%8E%E9%A2%84%E6%B5%8B/">Python机器学习与预测</a></li>
+        </ul>
+        <p class="sidebar-group">python-网络编程-前端</p>
+        <ul>
+          <li><a href="../../../Python/python-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B-%E5%89%8D%E7%AB%AF/python-Web%E5%BC%80%E5%8F%91-HTML-CSS-JS/">Web开发基础 - HTML/CSS/JavaScript</a></li>
+          <li><a href="../../../Python/python-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B-%E5%89%8D%E7%AB%AF/python-Web%E6%A1%86%E6%9E%B6Django/">Python Web框架Django</a></li>
+          <li><a href="../../../Python/python-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B-%E5%89%8D%E7%AB%AF/python-Web%E6%A1%86%E6%9E%B6Flask/" class="current">Python Web框架Flask</a></li>
+          <li><a href="../../../Python/python-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B-%E5%89%8D%E7%AB%AF/python-request-module/">Python Requests模块</a></li>
+          <li><a href="../../../Python/python-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B-%E5%89%8D%E7%AB%AF/python-socket-module/">Python Socket模块</a></li>
+          <li><a href="../../../Python/python-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B-%E5%89%8D%E7%AB%AF/python-%E7%88%AC%E8%99%AB/">Python爬虫</a></li>
+        </ul>
+        <p class="sidebar-group">python-运维开发</p>
+        <ul>
+          <li><a href="../../../Python/python-%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91/python-GUI-tkinter/">Python GUI开发 - Tkinter</a></li>
+          <li><a href="../../../Python/python-%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91/python-Linux-operation/">Python Linux运维模块</a></li>
+          <li><a href="../../../Python/python-%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91/python-elasticsearch/">Python Elasticsearch运维</a></li>
+          <li><a href="../../../Python/python-%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91/python-fabric%E9%AB%98%E7%BA%A7%E7%94%A8%E6%B3%95/">Python Fabric高级用法</a></li>
+          <li><a href="../../../Python/python-%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91/python-kubernetes-module/">Python Kubernetes模块</a></li>
+          <li><a href="../../../Python/python-%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91/python-mysql/">Python MySQL操作</a></li>
+          <li><a href="../../../Python/python-%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91/python-nginx/">Python Nginx运维自动化</a></li>
+          <li><a href="../../../Python/python-%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91/python-postgresql/">Python PostgreSQL操作</a></li>
+          <li><a href="../../../Python/python-%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91/python-tomcat/">Python Tomcat运维自动化</a></li>
+          <li><a href="../../../Python/python-%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91/python-%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/">Python 游戏开发</a></li>
+        </ul>
+        <p class="sidebar-group">电池参数提取统计工具开发</p>
+        <ul>
+          <li><a href="../../../Python/%E7%94%B5%E6%B1%A0%E5%8F%82%E6%95%B0%E6%8F%90%E5%8F%96%E7%BB%9F%E8%AE%A1%E5%B7%A5%E5%85%B7%E5%BC%80%E5%8F%91/%E5%AE%9E%E9%AA%8C%E5%AE%A4%E7%94%B5%E6%B1%A0%E5%8F%82%E6%95%B0%E4%B8%80%E9%94%AE%E7%BB%9F%E8%AE%A1%E5%B7%A5%E5%85%B7%E5%BC%80%E5%8F%91/">实验室电池参数一键统计工具开发</a></li>
+        </ul>
+        <p class="sidebar-group">其他</p>
+        <ul>
+          <li><a href="../../../Python/script-server-%E8%84%9A%E6%9C%ACWeb%E5%8C%96%E5%B7%A5%E5%85%B7/">Script-Server：脚本 Web 化工具</a></li>
+        </ul>
+      </nav>
+    </details>
+  </aside>
+
+  <article class="article">
+    <nav class="breadcrumb">
+      <a href="../../../index.html">首页</a><span>/</span>
+      <a href="../../../Python/">Python</a><span>/</span><span>python-网络编程-前端</span>
+    </nav>
+    <h1 class="article-title">Python Web框架Flask</h1>
+    <p class="article-meta"><span>更新于 2026-04-16</span>
+      <a href="https://github.com/hangx969/learning-notes/blob/main/Python/python-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B-%E5%89%8D%E7%AB%AF/python-Web%E6%A1%86%E6%9E%B6Flask.md">查看源文件</a>
+    </p>
+    <div class="article-body">
+<h1 id="python-web框架flask">Python Web框架Flask</h1>
+<h2 id="flask介绍">Flask介绍</h2>
+<p><mark>Flask</mark> 是一个用 Python 编写的轻量级 Web 框架,主要用于快速开发 Web 应用程序和 API。</p>
+<p><div class="callout callout-info" markdown="1"><br />
+<p class="callout-title">什么是Flask?</p></p>
+<p>Flask 就像一个工具箱,可以帮助你搭建网站或 Web 应用。它提供了一些基本的功能,让你可以快速开始,而不需要从头写很多代码。</p>
+</div>
+<p><strong>核心功能</strong>:</p>
+<ul>
+<li><mark>路由</mark>:Flask 允许你定义 URL 路径(例如 http://你的网址/home),并将其映射到处理请求的函数上。</li>
+<li><mark>请求处理</mark>:Flask 能接收用户发送的数据(比如表单输入)并做出相应的处理。</li>
+<li><mark>返回响应</mark>:Flask 可以返回网页内容、JSON 数据或其他类型的信息给用户。</li>
+</ul>
+<p><div class="callout callout-important" markdown="1"><br />
+<p class="callout-title">安装</p></p>
+</div>
+<div class="highlight"><pre><span></span><code>pip3<span class="w"> </span>install<span class="w"> </span>Flask
+<span class="c1"># 国内安装速度慢,可以用清华源</span>
+pip<span class="w"> </span>install<span class="w"> </span>-i<span class="w"> </span>https://pypi.tuna.tsinghua.edu.cn/simple<span class="w"> </span>Flask
+</code></pre></div>
+
+<p><div class="callout callout-example" markdown="1"><br />
+<p class="callout-title">基础示例</p></p>
+</div>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">flask</span><span class="w"> </span><span class="kn">import</span> <span class="n">Flask</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span> <span class="c1"># 创建一个Flask应用,__name__是当前模块的名字</span>
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span> <span class="c1"># 装饰器,定义根路径的路由</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">home</span><span class="p">():</span> <span class="c1"># 当访问这个路径时调用这个函数</span>
+    <span class="k">return</span> <span class="s2">&quot;Hello from Flask&quot;</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span> <span class="c1"># 只有在直接运行这个文件的时候才会执行这段代码</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">debug</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</code></pre></div>
+
+<hr />
+<h3 id="路由routes">路由Routes</h3>
+<p>路由是指用户访问某个特定 URL 时,Flask 应该执行的代码。你可以为每个页面定义不同的路由。</p>
+<div class="highlight"><pre><span></span><code><span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/about&#39;</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">about</span><span class="p">():</span>
+    <span class="k">return</span> <span class="s1">&#39;This is the About page.&#39;</span>
+</code></pre></div>
+
+<hr />
+<h3 id="请求requests">请求Requests</h3>
+<p>处理一个用户登录表单,接收用户输入的用户名,并返回一个带有用户名的欢迎信息。</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">flask</span><span class="w"> </span><span class="kn">import</span> <span class="n">request</span><span class="p">,</span> <span class="n">Flask</span> <span class="c1"># request是flask提供的对象,用来获取用户发送的数据</span>
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/login&#39;</span><span class="p">,</span><span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;POST&#39;</span><span class="p">])</span> <span class="c1"># 定义一个路由,只接受POST请求</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">login</span><span class="p">():</span>
+    <span class="n">username</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">([</span><span class="s1">&#39;username&#39;</span><span class="p">])</span> <span class="c1"># 从表单中获取用户名。意思是用户的post请求需要提交这个字段</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;Welcome, </span><span class="si">{</span><span class="n">username</span><span class="si">}</span><span class="s1">.&#39;</span> <span class="c1"># 返回欢迎信息</span>
+</code></pre></div>
+
+<hr />
+<h3 id="返回响应responses">返回响应Responses</h3>
+<p>Flask 的处理函数可以返回文本、HTML 或 JSON 数据。</p>
+<div class="highlight"><pre><span></span><code><span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/json&#39;</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">json_response</span><span class="p">():</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;message&#39;</span><span class="p">:</span> <span class="s1">&#39;Hello, JSON!&#39;</span><span class="p">}</span> <span class="c1"># 返回JSON格式的数据</span>
+</code></pre></div>
+
+<hr />
+<h2 id="案例监控服务器健康状态">案例:监控服务器健康状态</h2>
+<p><div class="callout callout-summary" markdown="1"><br />
+<p class="callout-title">需求概述</p></p>
+<p>开发一个<strong>健康状态监控 API</strong>,实现以下目标:<br />
+1. <mark>自动化监控</mark>:定期检查服务器资源使用情况,自动记录和响应异常状态。<br />
+2. <mark>实时告警</mark>:在资源使用超过设定阈值时及时告警。<br />
+3. <mark>数据可视化</mark>:生成健康状态报告,为后续的性能分析和资源规划提供数据支持。</p>
+</div>
+<p>步骤:</p>
+<ol>
+<li>通过 API 获取服务器的监控数据。</li>
+<li>解析响应数据,提取 CPU、内存和磁盘使用率。</li>
+<li>设置阈值判断,如果 CPU 或内存使用率超过阈值,记录日志并发送告警。</li>
+<li>生成健康状态报告,包括资源使用详情和服务器状态。</li>
+</ol>
+<p>创建新目录health_check用于存放项目文件,创建app.py文件。定义<code>/api/health</code>接口,用于返回服务器健康状态。</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">flask</span><span class="w"> </span><span class="kn">import</span> <span class="n">Flask</span><span class="p">,</span> <span class="n">jsonify</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">psutil</span>
+
+<span class="c1">#创建flask应用</span>
+<span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">home</span><span class="p">():</span>
+    <span class="k">return</span> <span class="s1">&#39;This is a demo healthy check api.&#39;</span>
+
+<span class="c1"># 定义健康检查api</span>
+<span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/api/health&#39;</span><span class="p">,</span><span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">health_check</span><span class="p">():</span>
+    <span class="c1"># 获取CPU使用率</span>
+    <span class="n">cpu_usage</span> <span class="o">=</span> <span class="n">psutil</span><span class="o">.</span><span class="n">cpu_percent</span><span class="p">(</span><span class="n">interval</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="c1"># 获取内存使用率</span>
+    <span class="n">mem_usage</span> <span class="o">=</span> <span class="n">psutil</span><span class="o">.</span><span class="n">virtual_memory</span><span class="p">()</span><span class="o">.</span><span class="n">percent</span>
+    <span class="c1"># 获取磁盘使用情况</span>
+    <span class="n">disk_usage</span> <span class="o">=</span> <span class="n">psutil</span><span class="o">.</span><span class="n">disk_usage</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">percent</span>
+    <span class="c1"># 判断服务器状态</span>
+    <span class="n">status</span><span class="o">=</span><span class="s1">&#39;unhealthy&#39;</span> <span class="k">if</span> <span class="n">cpu_usage</span> <span class="o">&gt;</span> <span class="mi">80</span> <span class="ow">or</span> <span class="n">mem_usage</span> <span class="o">&gt;</span> <span class="mi">80</span> <span class="ow">or</span> <span class="n">disk_usage</span> <span class="o">&gt;</span> <span class="mi">90</span> <span class="k">else</span> <span class="s1">&#39;healthy&#39;</span>
+    <span class="c1"># 返回json数据</span>
+    <span class="k">return</span> <span class="n">jsonify</span> <span class="p">({</span>
+        <span class="s1">&#39;cpu_usage&#39;</span><span class="p">:</span> <span class="n">cpu_usage</span><span class="p">,</span>
+        <span class="s1">&#39;mem_usage&#39;</span><span class="p">:</span> <span class="n">mem_usage</span><span class="p">,</span>
+        <span class="s1">&#39;disk_usage&#39;</span><span class="p">:</span> <span class="n">disk_usage</span><span class="p">,</span>
+        <span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="n">status</span>
+    <span class="p">})</span>
+
+<span class="c1"># 启动flask服务</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="s1">&#39;0.0.0.0&#39;</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">5000</span><span class="p">,</span> <span class="n">debug</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</code></pre></div>
+
+<hr />
+<h2 id="案例监控服务器状态并输出到日志">案例:监控服务器状态并输出到日志</h2>
+<p>基于上面的flask接口,希望把服务器的状态信息记录到日志文件中,那么在app.py同级目录再创建一个monitor.py</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">requests</span><span class="o">,</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">Formatter</span>
+
+<span class="c1"># 配置基本日志记录器</span>
+<span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span>
+    <span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">,</span>
+    <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;health_monitor/health.log&#39;</span><span class="p">,</span>
+    <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%(asctime)s</span><span class="s1">-</span><span class="si">%(levelname)s</span><span class="s1">: </span><span class="si">%(message)s</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span>
+    <span class="p">)</span>
+
+<span class="c1"># 自定义时间格式化器</span>
+<span class="n">formatter</span> <span class="o">=</span> <span class="n">Formatter</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%(asctime)s</span><span class="s1">-</span><span class="si">%(levelname)s</span><span class="s1">: </span><span class="si">%(message)s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">datefmt</span><span class="o">=</span><span class="s1">&#39;%Y%m</span><span class="si">%d</span><span class="s1"> %H:%M:%S&#39;</span><span class="p">)</span>
+<span class="c1"># logging.getLogger返回房前日志记录器</span>
+<span class="c1"># .handlers是日志记录器中负责输出日志的处理器(比如输出到控制台、文件等)</span>
+<span class="k">for</span> <span class="n">handler</span> <span class="ow">in</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">()</span><span class="o">.</span><span class="n">handlers</span><span class="p">:</span>
+    <span class="c1"># 这里遍历了所有处理器,都给他应用自定义好的格式化器</span>
+    <span class="n">handler</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">formatter</span><span class="p">)</span>
+
+<span class="c1"># 定义api接口和报警阈值</span>
+<span class="n">url</span> <span class="o">=</span> <span class="s1">&#39;http://192.168.71.56:5000/api/health&#39;</span>
+<span class="n">threshold_cpu</span> <span class="o">=</span> <span class="mi">80</span>
+<span class="n">threshold_mem</span> <span class="o">=</span> <span class="mi">75</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">check_health</span><span class="p">():</span>
+    <span class="c1"># GET api获取数据</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span><span class="p">:</span>
+        <span class="c1"># 返回内容的json格式</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+
+        <span class="c1"># 直接用get方法获取json的某个字段</span>
+        <span class="n">cpu_usage</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;cpu_usage&#39;</span><span class="p">)</span>
+        <span class="n">mem_usage</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;mem_usage&#39;</span><span class="p">)</span>
+        <span class="n">status</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;status&#39;</span><span class="p">)</span>
+
+        <span class="c1"># 告警逻辑,超过阈值就输出到日志</span>
+        <span class="k">if</span> <span class="n">cpu_usage</span> <span class="o">&gt;</span> <span class="n">threshold_mem</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Warning: CPU Usage </span><span class="si">{</span><span class="n">threshold_cpu</span><span class="si">}</span><span class="s2">%, exceed threshold </span><span class="si">{</span><span class="n">threshold_cpu</span><span class="si">}</span><span class="s2">%.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">mem_usage</span> <span class="o">&gt;</span> <span class="n">threshold_mem</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Warning: CPU Usage </span><span class="si">{</span><span class="n">threshold_mem</span><span class="si">}</span><span class="s2">%, exceed threshold </span><span class="si">{</span><span class="n">threshold_mem</span><span class="si">}</span><span class="s2">%.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># 日志输出获取到的数据</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Status: </span><span class="si">{</span><span class="n">status</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;CPU Usage: </span><span class="si">{</span><span class="n">cpu_usage</span><span class="si">}</span><span class="s2">%.&quot;</span><span class="p">)</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Memory Usage: </span><span class="si">{</span><span class="n">mem_usage</span><span class="si">}</span><span class="s2">%.&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Cannot get server health status&#39;</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">check_health</span><span class="p">()</span>
+</code></pre></div>
+
+<hr />
+<h2 id="案例自动检查并重启服务">案例:自动检查并重启服务</h2>
+<p><div class="callout callout-summary" markdown="1"><br />
+<p class="callout-title">需求</p></p>
+<p>某个关键服务在服务器上运行,当该服务异常停止时,需要通过 API 检查并自动重启该服务。</p>
+</div>
+<h3 id="判断逻辑">判断逻辑</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
+
+<span class="c1"># 定义服务状态查询接口</span>
+<span class="n">status_url</span> <span class="o">=</span> <span class="s1">&#39;https://server/api/service/status&#39;</span>
+<span class="n">restart_url</span> <span class="o">=</span> <span class="s1">&#39;https://server/api/service/restart&#39;</span>
+
+<span class="c1"># 发送请求获取服务状态</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">status_url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;Authorization&#39;</span><span class="p">:</span> <span class="s1">&#39;Bearer YOUR_API_KEY&#39;</span><span class="p">})</span>
+
+<span class="c1"># 判断服务是否停止</span>
+<span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span><span class="p">:</span>
+    <span class="c1"># 在返回值的json格式中获取status字段(需要api接口预先返回status字段)</span>
+    <span class="n">service_status</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;status&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">service_status</span> <span class="o">!=</span> <span class="s1">&#39;running&#39;</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Service has stopped running, trying to restart it...&#39;</span><span class="p">)</span>
+        <span class="c1"># 发送重启请求</span>
+        <span class="n">restart_response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">restart_url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;Authorization&#39;</span><span class="p">:</span> <span class="s1">&#39;Bearer YOUR_API_KEY&#39;</span><span class="p">})</span>
+        <span class="c1"># 重启成功,返回值200</span>
+        <span class="k">if</span> <span class="n">restart_response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Service restarted successfully&#39;</span><span class="p">)</span>
+        <span class="c1"># 重启失败</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Service restarted failed.&#39;</span><span class="p">)</span>
+<span class="c1"># 状态吗不是200,未能获取到服务状态</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Cannot obtain service status.&#39;</span><span class="p">)</span>
+</code></pre></div>
+
+<hr />
+<h3 id="api接口定义">API接口定义</h3>
+<p><div class="callout callout-note" markdown="1"><br />
+<p class="callout-title">实现说明</p></p>
+<p>上面脚本中的status_url和restart_url都需要在flask应用中预先定义好。<br />
+通过 Flask 来实现服务状态的检查和重启操作,特别是针对 <mark>Nginx</mark> 服务的监控。</p>
+</div>
+<p>实现步骤:</p>
+<ol>
+<li>获取 Nginx 服务状态:使用 <mark>systemctl</mark> 命令来检查 Nginx 服务是否在运行。</li>
+<li>重启 Nginx 服务:通过 systemctl 命令来重启 Nginx。</li>
+<li>通过 Flask 暴露 API:创建 <code>/service/status</code> 和 <code>/service/restart</code> 两个 API。</li>
+</ol>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">flask</span><span class="w"> </span><span class="kn">import</span> <span class="n">Flask</span><span class="p">,</span> <span class="n">jsonify</span><span class="p">,</span> <span class="n">request</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="c1"># 检查nginx服务状态</span>
+<span class="c1"># # 返回running说明服务正在运行,返回stopped说明服务已停止</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_status</span><span class="p">():</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># 通过systemctl检查状态</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s1">&#39;systemctl&#39;</span><span class="p">,</span> <span class="s1">&#39;is-active&#39;</span><span class="p">,</span> <span class="s1">&#39;nginx&#39;</span><span class="p">],</span>
+                                <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
+                                <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
+                                <span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="s1">&#39;running&#39;</span> <span class="k">if</span> <span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">returncode</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">result</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;active&#39;</span><span class="p">)</span> <span class="k">else</span> <span class="s1">&#39;stopped&#39;</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Error: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>
+
+<span class="c1"># 重启nginx</span>
+<span class="c1"># 返回restarted说明已经重启</span>
+<span class="c1"># 返回其他说明产生报错</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">restart_service</span><span class="p">():</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+            <span class="p">[</span><span class="s1">&#39;systemctl&#39;</span><span class="p">,</span> <span class="s1">&#39;restart&#39;</span><span class="p">,</span> <span class="s1">&#39;nginx&#39;</span><span class="p">],</span>
+            <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
+            <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
+            <span class="n">text</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="s1">&#39;restarted&#39;</span> <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">returncode</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="sa">f</span><span class="s2">&quot;Failed to restart: </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">returncode</span><span class="si">}</span><span class="s2">.&quot;</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="c1"># 在函数里面的try...except,要用return来返回</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;Error: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span>
+
+<span class="c1"># flask定义服务状态查询接口</span>
+<span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/api/service/status&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">service_status_api</span><span class="p">():</span>
+    <span class="n">status</span> <span class="o">=</span> <span class="n">check_status</span><span class="p">()</span>
+    <span class="c1"># 定义http请求的返回</span>
+    <span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="n">status</span><span class="p">})</span>
+
+<span class="c1"># flask定义重启服务接口</span>
+<span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/api/service/restart&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">restart_service_api</span><span class="p">():</span>
+    <span class="c1"># 先检查api key认证</span>
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;Authorization&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;Bearer YOUR_API_KEY&#39;</span><span class="p">:</span>
+        <span class="c1"># 执行重启操作获取返回结果</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">restart_service</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">result</span> <span class="o">==</span> <span class="s1">&#39;restarted&#39;</span><span class="p">:</span>
+            <span class="c1"># flask的路由返回值可以在第二个参数显式设定status_code</span>
+            <span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s1">&#39;message&#39;</span><span class="p">:</span> <span class="s1">&#39;Service restarted successfully&#39;</span><span class="p">}),</span> <span class="mi">200</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s1">&#39;error&#39;</span><span class="p">:</span> <span class="sa">f</span><span class="s1">&#39;Unexpected result: </span><span class="si">{</span><span class="n">result</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">}),</span> <span class="mi">500</span>
+    <span class="c1"># 认证不通过返回401</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s1">&#39;error&#39;</span><span class="p">:</span> <span class="s1">&#39;Unauthorized&#39;</span><span class="p">}),</span> <span class="mi">401</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="s1">&#39;0.0.0.0&#39;</span><span class="p">,</span><span class="n">port</span><span class="o">=</span><span class="mi">5000</span><span class="p">)</span>
+</code></pre></div>
+
+<hr />
+<h2 id="案例系统资源监控web应用">案例:系统资源监控Web应用</h2>
+<p><div class="callout callout-summary" markdown="1"><br />
+<p class="callout-title">功能需求</p></p>
+<ul>
+<li>使用 Python 获取系统资源信息:CPU 使用率、内存使用率、根磁盘使用率和网络带宽。</li>
+<li>使用 Flask 框架提供一个 Web 前端页面,显示这些实时信息。</li>
+<li>使用 <mark>systemctl</mark> 将 Flask 应用作为服务启动。</li>
+<li>使用 <mark>Docker</mark> 容器化 Flask 应用。</li>
+<li>使用 <mark>Kubernetes</mark> 部署 Flask 应用。</li>
+</ul>
+</div>
+<h3 id="编写后端接口">编写后端接口</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">flask</span><span class="w"> </span><span class="kn">import</span> <span class="n">Flask</span><span class="p">,</span> <span class="n">render_template</span><span class="p">,</span> <span class="n">jsonify</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">psutil</span><span class="o">,</span><span class="w"> </span><span class="nn">time</span>
+
+<span class="c1"># 获取系统指标</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_cpu_usage</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">psutil</span><span class="o">.</span><span class="n">cpu_percent</span><span class="p">(</span><span class="n">interval</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">get_memory_usage</span><span class="p">():</span>
+    <span class="n">memory</span> <span class="o">=</span> <span class="n">psutil</span><span class="o">.</span><span class="n">virtual_memory</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">memory</span><span class="o">.</span><span class="n">percent</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">get_disk_usage</span><span class="p">():</span>
+    <span class="n">disk</span> <span class="o">=</span> <span class="n">psutil</span><span class="o">.</span><span class="n">disk_usage</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">disk</span><span class="o">.</span><span class="n">percent</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">get_network_usage</span><span class="p">():</span>
+    <span class="n">net_io</span> <span class="o">=</span> <span class="n">psutil</span><span class="o">.</span><span class="n">net_io_counters</span><span class="p">()</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s1">&#39;bytes_sent&#39;</span><span class="p">:</span> <span class="n">net_io</span><span class="o">.</span><span class="n">bytes_sent</span><span class="p">,</span>
+        <span class="s1">&#39;bytes_recv&#39;</span><span class="p">:</span> <span class="n">net_io</span><span class="o">.</span><span class="n">bytes_recv</span>
+    <span class="p">}</span>
+
+<span class="c1"># 创建flask应用</span>
+<span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">index</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s2">&quot;index.html&quot;</span><span class="p">)</span>
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/get_system_info&#39;</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_system_info</span><span class="p">():</span>
+    <span class="n">system_info</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;cpu&#39;</span><span class="p">:</span> <span class="n">get_cpu_usage</span><span class="p">(),</span>
+        <span class="s1">&#39;memory&#39;</span><span class="p">:</span> <span class="n">get_memory_usage</span><span class="p">(),</span>
+        <span class="s1">&#39;disk&#39;</span><span class="p">:</span> <span class="n">get_disk_usage</span><span class="p">(),</span>
+        <span class="s1">&#39;network&#39;</span><span class="p">:</span> <span class="n">get_network_usage</span><span class="p">()</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">system_info</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="s1">&#39;0.0.0.0&#39;</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">5000</span><span class="p">)</span>
+</code></pre></div>
+
+<hr />
+<h3 id="编写前端页面">编写前端页面</h3>
+<p>前端页面文件名为index.html,放到app.py同级目录的子目录templates/里面</p>
+<div class="highlight"><pre><span></span><code><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="p">&lt;</span><span class="nt">html</span> <span class="na">lang</span><span class="o">=</span><span class="s">&quot;en&quot;</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">head</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">meta</span> <span class="na">charset</span><span class="o">=</span><span class="s">&quot;UTF-8&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">meta</span> <span class="na">name</span><span class="o">=</span><span class="s">&quot;viewport&quot;</span> <span class="na">content</span><span class="o">=</span><span class="s">&quot;width=device-width, initial-scale=1.0&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">title</span><span class="p">&gt;</span>System Monitoring Dashboard<span class="p">&lt;/</span><span class="nt">title</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">style</span><span class="p">&gt;</span>
+<span class="w">        </span><span class="nt">body</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">font-family</span><span class="p">:</span><span class="w"> </span><span class="n">Arial</span><span class="p">,</span><span class="w"> </span><span class="kc">sans-serif</span><span class="p">;</span><span class="w"> </span><span class="k">margin</span><span class="p">:</span><span class="w"> </span><span class="mi">20</span><span class="kt">px</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">        </span><span class="p">.</span><span class="nc">status</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">font-size</span><span class="p">:</span><span class="w"> </span><span class="mi">20</span><span class="kt">px</span><span class="p">;</span><span class="w"> </span><span class="k">margin-bottom</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="kt">px</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">    </span><span class="p">&lt;/</span><span class="nt">style</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">head</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">h1</span><span class="p">&gt;</span>System Monitoring Dashboard<span class="p">&lt;/</span><span class="nt">h1</span><span class="p">&gt;</span>
+
+    <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;status&quot;</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">strong</span><span class="p">&gt;</span>CPU Usage:<span class="p">&lt;/</span><span class="nt">strong</span><span class="p">&gt;</span> <span class="p">&lt;</span><span class="nt">span</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;cpu&quot;</span><span class="p">&gt;</span>Loading...<span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>%
+    <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;status&quot;</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">strong</span><span class="p">&gt;</span>Memory Usage:<span class="p">&lt;/</span><span class="nt">strong</span><span class="p">&gt;</span> <span class="p">&lt;</span><span class="nt">span</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;memory&quot;</span><span class="p">&gt;</span>Loading...<span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>%
+    <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;status&quot;</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">strong</span><span class="p">&gt;</span>Disk Usage:<span class="p">&lt;/</span><span class="nt">strong</span><span class="p">&gt;</span> <span class="p">&lt;</span><span class="nt">span</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;disk&quot;</span><span class="p">&gt;</span>Loading...<span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>%
+    <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;status&quot;</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">strong</span><span class="p">&gt;</span>Network Sent:<span class="p">&lt;/</span><span class="nt">strong</span><span class="p">&gt;</span> <span class="p">&lt;</span><span class="nt">span</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;net_sent&quot;</span><span class="p">&gt;</span>Loading...<span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span> bytes
+    <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;status&quot;</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">strong</span><span class="p">&gt;</span>Network Received:<span class="p">&lt;/</span><span class="nt">strong</span><span class="p">&gt;</span> <span class="p">&lt;</span><span class="nt">span</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;net_recv&quot;</span><span class="p">&gt;</span>Loading...<span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span> bytes
+    <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+
+    <span class="p">&lt;</span><span class="nt">script</span><span class="p">&gt;</span>
+<span class="w">        </span><span class="kd">function</span><span class="w"> </span><span class="nx">updateSystemInfo</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nx">fetch</span><span class="p">(</span><span class="s1">&#39;/get_system_info&#39;</span><span class="p">)</span>
+<span class="w">                </span><span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">response</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">response</span><span class="p">.</span><span class="nx">json</span><span class="p">())</span>
+<span class="w">                </span><span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">data</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;cpu&#39;</span><span class="p">).</span><span class="nx">innerText</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">data</span><span class="p">.</span><span class="nx">cpu</span><span class="p">;</span>
+<span class="w">                    </span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;memory&#39;</span><span class="p">).</span><span class="nx">innerText</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">data</span><span class="p">.</span><span class="nx">memory</span><span class="p">;</span>
+<span class="w">                    </span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;disk&#39;</span><span class="p">).</span><span class="nx">innerText</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">data</span><span class="p">.</span><span class="nx">disk</span><span class="p">;</span>
+<span class="w">                    </span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;net_sent&#39;</span><span class="p">).</span><span class="nx">innerText</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">data</span><span class="p">.</span><span class="nx">network</span><span class="p">.</span><span class="nx">bytes_sent</span><span class="p">;</span>
+<span class="w">                    </span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;net_recv&#39;</span><span class="p">).</span><span class="nx">innerText</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">data</span><span class="p">.</span><span class="nx">network</span><span class="p">.</span><span class="nx">bytes_recv</span><span class="p">;</span>
+<span class="w">                </span><span class="p">});</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">        </span><span class="nx">setInterval</span><span class="p">(</span><span class="nx">updateSystemInfo</span><span class="p">,</span><span class="w"> </span><span class="mf">1000</span><span class="p">);</span>
+<span class="w">        </span><span class="nx">updateSystemInfo</span><span class="p">();</span>
+<span class="w">    </span><span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">html</span><span class="p">&gt;</span>
+</code></pre></div>
+
+<hr />
+<h3 id="linux机器安装依赖">Linux机器安装依赖</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># reuiqrements.txt</span>
+<span class="nv">Flask</span><span class="o">==</span><span class="m">2</span>.2.3
+<span class="nv">psutil</span><span class="o">==</span><span class="m">5</span>.9.4
+
+<span class="c1"># 安装依赖</span>
+yum<span class="w"> </span>install<span class="w">  </span>python3.12-devel<span class="w"> </span>libffi-devel<span class="w"> </span>-y
+pip3<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements.txt<span class="w"> </span>-i<span class="w"> </span>https://pypi.tuna.tsinghua.edu.cn/simple
+pip3<span class="w"> </span>install<span class="w"> </span>--upgrade<span class="w"> </span>Flask<span class="w"> </span>Werkzeug<span class="w"> </span>-i<span class="w"> </span>https://pypi.tuna.tsinghua.edu.cn/simple
+</code></pre></div>
+
+<hr />
+<h3 id="配置systemd启动">配置systemd启动</h3>
+<div class="highlight"><pre><span></span><code>chown<span class="w"> </span>-R<span class="w"> </span>root:root<span class="w"> </span>/data/monitor-app
+chmod<span class="w"> </span>-R<span class="w"> </span><span class="m">755</span><span class="w"> </span>/data/monitor-app
+
+<span class="c1"># 为了让 Flask 应用作为 Linux 服务运行,创建 app.service 文件。/etc/systemd/system/app.service:systemd 服务配置</span>
+tee<span class="w"> </span>/usr/lib/systemd/system/app.service<span class="w"> </span><span class="s">&lt;&lt;&#39;EOF&#39;</span>
+<span class="s">[Unit]</span>
+<span class="s">Description=System Monitoring Flask App</span>
+<span class="s">After=network.target</span>
+
+<span class="s">[Service]</span>
+<span class="s">[Service]</span>
+<span class="s">User=root</span>
+<span class="s">WorkingDirectory=/data/monitor-app</span>
+<span class="s">ExecStart=/usr/bin/python /data/monitor-app/app.py</span>
+<span class="s">Restart=always</span>
+<span class="s">Environment=FLASK_APP=/data/monitor-app/app.py</span>
+<span class="s">StandardOutput=file:/data/monitor-app/app.log</span>
+<span class="s">StandardError=file:/data/monitor-app/app_error.log</span>
+
+<span class="s">[Install]</span>
+<span class="s">WantedBy=multi-user.target</span>
+<span class="s">EOF</span>
+
+<span class="c1">#启动服务</span>
+systemctl<span class="w"> </span>daemon-reload
+systemctl<span class="w"> </span>start<span class="w"> </span>app.service
+systemctl<span class="w"> </span>status<span class="w"> </span>app.service
+</code></pre></div>
+
+<hr />
+<h3 id="docker运行">Docker运行</h3>
+<div class="highlight"><pre><span></span><code>tee<span class="w"> </span>Dockerfile<span class="w"> </span><span class="s">&lt;&lt;&#39;EOF&#39;</span>
+<span class="s"># 使用官方 Python 镜像</span>
+<span class="s">FROM python:3.7</span>
+<span class="s"># 设置工作目录</span>
+<span class="s">WORKDIR /app</span>
+<span class="s"># 复制项目文件到容器内</span>
+<span class="s">COPY . /app</span>
+<span class="s"># 安装依赖</span>
+<span class="s">RUN pip3 install --no-cache-dir -r requirements.txt</span>
+<span class="s">RUN pip3 install --upgrade Flask Werkzeug</span>
+<span class="s"># 开放 5000 端口</span>
+<span class="s">EXPOSE 5000</span>
+<span class="s"># 启动 Flask 应用</span>
+<span class="s">CMD [&quot;python&quot;, &quot;app.py&quot;]</span>
+<span class="s">EOF</span>
+
+<span class="c1"># 做镜像</span>
+docker<span class="w"> </span>build<span class="w"> </span>-t<span class="w"> </span>system-monitoring-app:v1<span class="w"> </span>.
+<span class="c1"># 启动容器</span>
+docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>-p<span class="w"> </span><span class="m">15000</span>:5000<span class="w"> </span>system-monitoring-app:v1
+</code></pre></div>
+
+<hr />
+<h3 id="k8s运行">K8s运行</h3>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">apps/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Deployment</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">python-flask-app</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">replicas</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="w">  </span><span class="nt">selector</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">matchLabels</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">python-flask-app</span>
+<span class="w">  </span><span class="nt">template</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">metadata</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">python-flask-app</span>
+<span class="w">    </span><span class="nt">spec</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">containers</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">python-flask-app</span>
+<span class="w">        </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">system-monitoring-app:v1</span>
+<span class="w">        </span><span class="nt">imagePullPolicy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">IfNotPresent</span>
+<span class="w">        </span><span class="nt">ports</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">containerPort</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5000</span>
+<span class="nn">---</span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Service</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">python-flask-app-service</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">selector</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">python-flask-app</span>
+<span class="w">  </span><span class="nt">ports</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">protocol</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TCP</span>
+<span class="w">      </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span><span class="w">          </span><span class="c1"># 服务暴露的端口</span>
+<span class="w">      </span><span class="nt">targetPort</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5000</span><span class="w">   </span><span class="c1"># 容器内运行的端口</span>
+<span class="w">      </span><span class="nt">nodePort</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30080</span><span class="w">    </span><span class="c1"># (可选)指定 NodePort 的端口号,通常在 30000-32767 范围内</span>
+<span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">NodePort</span><span class="w">         </span><span class="c1"># 设置服务类型为 NodePort</span>
+</code></pre></div>
+
+<hr />
+<h2 id="相关笔记">相关笔记</h2>
+<ul>
+<li><a class="wikilink" href="../../../Python/python-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B-%E5%89%8D%E7%AB%AF/python-Web%E6%A1%86%E6%9E%B6Django/">python-Web框架Django</a> - Django Web框架</li>
+<li><a class="wikilink" href="../../../Python/python-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B-%E5%89%8D%E7%AB%AF/python-request-module/">python-request-module</a> - requests HTTP库</li>
+<li><a class="wikilink" href="../../../Python/python-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B-%E5%89%8D%E7%AB%AF/python-Web%E5%BC%80%E5%8F%91-HTML-CSS-JS/">python-Web开发-HTML-CSS-JS</a> - HTML/CSS/JS前端开发</li>
+<li><a class="wikilink" href="../../../Python/python-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B-%E5%89%8D%E7%AB%AF/python-socket-module/">python-socket-module</a> - Socket网络编程</li>
+</ul>
+    </div>
+  </article>
+  <aside class="toc">
+    <p class="toc-label">本页目录</p>
+    <ul>
+  <li><a href="#flask介绍">Flask介绍</a><ul>
+  <li><a href="#路由routes">路由Routes</a></li>
+  <li><a href="#请求requests">请求Requests</a></li>
+  <li><a href="#返回响应responses">返回响应Responses</a></li>
+</ul></li>
+  <li><a href="#案例监控服务器健康状态">案例:监控服务器健康状态</a></li>
+  <li><a href="#案例监控服务器状态并输出到日志">案例:监控服务器状态并输出到日志</a></li>
+  <li><a href="#案例自动检查并重启服务">案例:自动检查并重启服务</a><ul>
+  <li><a href="#判断逻辑">判断逻辑</a></li>
+  <li><a href="#api接口定义">API接口定义</a></li>
+</ul></li>
+  <li><a href="#案例系统资源监控web应用">案例:系统资源监控Web应用</a><ul>
+  <li><a href="#编写后端接口">编写后端接口</a></li>
+  <li><a href="#编写前端页面">编写前端页面</a></li>
+  <li><a href="#linux机器安装依赖">Linux机器安装依赖</a></li>
+  <li><a href="#配置systemd启动">配置systemd启动</a></li>
+  <li><a href="#docker运行">Docker运行</a></li>
+  <li><a href="#k8s运行">K8s运行</a></li>
+</ul></li>
+  <li><a href="#相关笔记">相关笔记</a></li>
+</ul>
+  </aside>
+
+</div>
+
+</main>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>Learning Notes</span>
+    <a href="https://github.com/hangx969/learning-notes">GitHub</a>
+  </div>
+</footer>
+<script src="../../../static/search.js"></script>
+</body>
+</html>

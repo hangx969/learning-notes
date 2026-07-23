@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Shell 脚本 - Learning Notes</title>
+<link rel="stylesheet" href="../../static/style.css">
+<link rel="stylesheet" href="../../static/pygments.css">
+</head>
+<body data-root="../../">
+<header class="site-header">
+  <div class="header-inner">
+    <a class="logo" href="../../index.html"><span class="logo-mark"></span>LEARNING NOTES</a>
+    <div class="search">
+      <input id="search-input" type="search" placeholder="搜索笔记…" autocomplete="off" aria-label="搜索笔记">
+      <div id="search-results" hidden></div>
+    </div>
+  </div>
+  <nav class="topic-nav" aria-label="主题导航">
+    <div class="topic-nav-inner">
+      <a href="../../AI/">AI</a>
+      <a href="../../Aliyun/">Aliyun</a>
+      <a href="../../Azure/">Azure</a>
+      <a href="../../C%2B%2B/">C++</a>
+      <a href="../../CloudComputing/">CloudComputing</a>
+      <a href="../../Database/">Database</a>
+      <a href="../../Docker-Kubernetes/">Docker-Kubernetes</a>
+      <a href="../../GPU-DeepLearning/">GPU-DeepLearning</a>
+      <a href="../../Git/">Git</a>
+      <a href="../../Go/">Go</a>
+      <a href="../../HPC/">HPC</a>
+      <a href="../../IaC/">IaC</a>
+      <a href="../../Linux-Shell/" class="active">Linux-Shell</a>
+      <a href="../../Middlewares/">Middlewares</a>
+      <a href="../../Networking/">Networking</a>
+      <a href="../../OS/">OS</a>
+      <a href="../../Python/">Python</a>
+      <a href="../../SoftwareTesting/">SoftwareTesting</a>
+    </div>
+  </nav>
+</header>
+<main class="main">
+
+<div class="article-layout">
+
+  <aside class="sidebar">
+    <details class="sidebar-details">
+      <summary>Linux-Shell</summary>
+      <nav class="sidebar-nav">
+        <p class="sidebar-group">其他</p>
+        <ul>
+          <li><a href="../../Linux-Shell/LVM-RAID/">LVM 与 RAID</a></li>
+          <li><a href="../../Linux-Shell/Linux-learning-notes/">Linux 学习笔记</a></li>
+          <li><a href="../../Linux-Shell/Linux%E7%BB%88%E7%AB%AF%E9%85%8D%E7%BD%AEproxy/">Linux终端配置代理</a></li>
+          <li><a href="../../Linux-Shell/MacBook%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/">MacBook 开发环境配置</a></li>
+          <li><a href="../../Linux-Shell/Ubuntu-unattended-upgrade%E7%AE%A1%E7%90%86/">Ubuntu安全补丁</a></li>
+          <li><a href="../../Linux-Shell/Ubuntu-%E4%BF%AE%E6%94%B9%E5%90%AF%E5%8A%A8%E5%86%85%E6%A0%B8/">Ubuntu修改启动内核</a></li>
+          <li><a href="../../Linux-Shell/Ubuntu%E5%9F%BA%E7%A1%80%E6%93%8D%E4%BD%9C/">Ubuntu基础操作</a></li>
+          <li><a href="../../Linux-Shell/Ubuntu%E5%AE%89%E8%A3%85Wechat/">Ubuntu安装Wechat</a></li>
+          <li><a href="../../Linux-Shell/Ubuntu%E5%AE%89%E8%A3%85%E6%98%BE%E5%8D%A1%E9%A9%B1%E5%8A%A8/">Ubuntu安装显卡驱动</a></li>
+          <li><a href="../../Linux-Shell/Ubuntu%E9%83%A8%E7%BD%B2vftpd/">Ubuntu部署vsftpd</a></li>
+          <li><a href="../../Linux-Shell/VMWare-using-notes/">VMWare虚拟机挂载共享目录</a></li>
+          <li><a href="../../Linux-Shell/ansible%E5%AE%89%E8%A3%85-rockylinux8/">Ansible安装 - Rocky Linux 8</a></li>
+          <li><a href="../../Linux-Shell/inotifywait%E7%9B%91%E6%8E%A7%E6%96%87%E4%BB%B6%E5%8F%98%E5%8C%96/">inotifywait监控文件变化</a></li>
+          <li><a href="../../Linux-Shell/linux%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E7%AE%A1%E7%90%86/">Linux环境变量管理</a></li>
+          <li><a href="../../Linux-Shell/nmcli%E7%AE%A1%E7%90%86%E7%BD%91%E7%BB%9C%E9%85%8D%E7%BD%AE/">nmcli管理网络配置</a></li>
+          <li><a href="../../Linux-Shell/samba%E6%96%87%E4%BB%B6%E5%85%B1%E4%BA%AB%E6%9C%8D%E5%8A%A1/">Samba文件共享服务</a></li>
+          <li><a href="../../Linux-Shell/screen%E5%90%8E%E5%8F%B0%E8%BF%90%E8%A1%8C%E4%BB%BB%E5%8A%A1/">screen后台运行任务</a></li>
+          <li><a href="../../Linux-Shell/shell-scripts/" class="current">Shell 脚本</a></li>
+          <li><a href="../../Linux-Shell/ssh%E8%BF%9C%E7%A8%8B%E6%89%A7%E8%A1%8C%E5%A4%9A%E4%B8%AA%E5%91%BD%E4%BB%A4/">SSH远程执行多个命令</a></li>
+          <li><a href="../../Linux-Shell/ssh%E8%BF%9E%E6%8E%A5/">SSH连接</a></li>
+          <li><a href="../../Linux-Shell/vscode/">VSCode命令行安装插件</a></li>
+          <li><a href="../../Linux-Shell/%E5%BC%80%E6%BA%90%E5%A0%A1%E5%9E%92%E6%9C%BAjumpserver%E9%83%A8%E7%BD%B2/">开源堡垒机JumpServer部署</a></li>
+          <li><a href="../../Linux-Shell/%E7%B3%BB%E7%BB%9F%E4%BF%A1%E6%81%AF%E6%9F%A5%E7%9C%8B/">系统信息查看</a></li>
+          <li><a href="../../Linux-Shell/%E9%85%8D%E7%BD%AEzsh%E7%BB%88%E7%AB%AF/">配置zsh终端</a></li>
+        </ul>
+      </nav>
+    </details>
+  </aside>
+
+  <article class="article">
+    <nav class="breadcrumb">
+      <a href="../../index.html">首页</a><span>/</span>
+      <a href="../../Linux-Shell/">Linux-Shell</a>
+    </nav>
+    <h1 class="article-title">Shell 脚本</h1>
+    <p class="article-meta"><span>更新于 2026-04-16</span>
+      <a href="https://github.com/hangx969/learning-notes/blob/main/Linux-Shell/shell-scripts.md">查看源文件</a>
+    </p>
+    <div class="article-body">
+<h1 id="删除用户脚本">删除用户脚本</h1>
+<div class="highlight"><pre><span></span><code><span class="ch">#!/bin/bash</span>
+<span class="c1">#</span>
+<span class="c1"># Delete_User - Automates the 4 steps to remove an account</span>
+<span class="c1">#</span>
+<span class="c1">#################################################################</span>
+<span class="c1"># </span>
+<span class="c1"># Define Functions</span>
+<span class="c1">#</span>
+<span class="c1">#################################################################</span>
+<span class="k">function</span><span class="w"> </span>get_answer<span class="w"> </span><span class="o">{</span>
+<span class="c1">#</span>
+<span class="w">  </span><span class="nb">unset</span><span class="w"> </span>ANSWER
+<span class="w">  </span><span class="nv">ASK_COUNT</span><span class="o">=</span><span class="m">0</span>
+<span class="c1">#</span>
+<span class="w">  </span><span class="k">while</span><span class="w"> </span><span class="o">[</span><span class="w"> </span>-z<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$ANSWER</span><span class="s2">&quot;</span><span class="w"> </span><span class="o">]</span><span class="w"> </span><span class="c1"># while no answer is given, keep asking</span>
+<span class="w">  </span><span class="k">do</span>
+<span class="w">    </span><span class="nv">ASK_COUNT</span><span class="o">=</span>$<span class="o">[</span><span class="w"> </span><span class="nv">$ASK_COUNT</span><span class="w"> </span>+<span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="o">]</span>
+<span class="c1">#</span>
+<span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="nv">$ASK_COUNT</span><span class="w"> </span><span class="k">in</span><span class="w">      </span><span class="c1"># If user gives no answer in time allowed</span>
+<span class="w">    </span><span class="m">2</span><span class="o">)</span>
+<span class="w">      </span><span class="nb">echo</span><span class="w"> </span>
+<span class="w">      </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Please answer the question.&quot;</span>
+<span class="w">      </span><span class="nb">echo</span>
+<span class="w">    </span><span class="p">;;</span>
+<span class="w">    </span><span class="m">3</span><span class="o">)</span>
+<span class="w">      </span><span class="nb">echo</span><span class="w"> </span>
+<span class="w">      </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;One last try... please answer the question.&quot;</span>
+<span class="w">      </span><span class="nb">echo</span>
+<span class="w">    </span><span class="p">;;</span>
+<span class="w">    </span><span class="m">4</span><span class="o">)</span>
+<span class="w">      </span><span class="nb">echo</span><span class="w"> </span>
+<span class="w">      </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Since you refuse to answer the question...&quot;</span>
+<span class="w">      </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;exiting program.&quot;</span>
+<span class="w">      </span><span class="nb">echo</span>
+<span class="w">      </span><span class="c1">#</span>
+<span class="w">      </span><span class="nb">exit</span>
+<span class="w">    </span><span class="p">;;</span>
+<span class="w">    </span><span class="k">esac</span>
+<span class="c1">#</span>
+<span class="w">    </span><span class="nb">echo</span>
+<span class="c1">#  </span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span>-n<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$LINE2</span><span class="s2">&quot;</span><span class="w"> </span><span class="o">]</span>
+<span class="w">    </span><span class="k">then</span>
+<span class="w">      </span><span class="nb">echo</span><span class="w"> </span><span class="nv">$LINE1</span><span class="w">      </span><span class="c1"># Print 2 lines</span>
+<span class="w">      </span><span class="nb">echo</span><span class="w"> </span>-e<span class="w"> </span><span class="nv">$LINE2</span><span class="s2">&quot; \c&quot;</span>
+<span class="w">    </span><span class="k">else</span><span class="w">          </span><span class="c1"># Print 1 line</span>
+<span class="w">      </span><span class="nb">echo</span><span class="w"> </span>-e<span class="w"> </span><span class="nv">$LINE1</span><span class="s2">&quot; \c&quot;</span>
+<span class="w">    </span><span class="k">fi</span>
+<span class="c1">#</span>
+<span class="c1"># Allow 60 seconds to answer before time-out</span>
+<span class="w">    </span><span class="nb">read</span><span class="w"> </span>-t<span class="w"> </span><span class="m">60</span><span class="w"> </span>ANSWER
+<span class="w">  </span><span class="k">done</span>
+<span class="c1">#</span>
+<span class="c1"># Do a little variable clean-up</span>
+<span class="c1">#</span>
+<span class="w">  </span><span class="nb">unset</span><span class="w"> </span>LINE1
+<span class="w">  </span><span class="nb">unset</span><span class="w"> </span>LINE2
+<span class="c1">#</span>
+<span class="o">}</span><span class="w">    </span><span class="c1">#end of get_answer function</span>
+<span class="c1">#</span>
+<span class="c1">#################################################################</span>
+<span class="k">function</span><span class="w"> </span>process_answer<span class="w"> </span><span class="o">{</span>
+<span class="c1">#</span>
+<span class="w">  </span><span class="k">case</span><span class="w"> </span><span class="nv">$ANSWER</span><span class="w"> </span><span class="k">in</span>
+<span class="w">  </span>y<span class="p">|</span>Y<span class="p">|</span>YES<span class="p">|</span>yes<span class="p">|</span>yEs<span class="p">|</span>yeS<span class="p">|</span>YEs<span class="p">|</span>yES<span class="o">)</span>
+<span class="w">  </span><span class="c1"># If user answers &quot;yes&quot;.do nothing.</span>
+<span class="w">  </span><span class="p">;;</span>
+<span class="w">  </span>*<span class="o">)</span>
+<span class="w">  </span><span class="c1"># If user answers anything but &quot;yes&quot;, exit script</span>
+<span class="w">    </span><span class="nb">echo</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="nv">$EXIT_LINE1</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="nv">$EXIT_LINE2</span>
+<span class="w">    </span><span class="nb">echo</span>
+<span class="w">    </span><span class="nb">exit</span>
+<span class="w">  </span><span class="p">;;</span>
+<span class="w">  </span><span class="k">esac</span>
+<span class="w">  </span><span class="c1">#</span>
+<span class="w">  </span><span class="c1"># Do a little variable clean-up</span>
+<span class="w">  </span><span class="nb">unset</span><span class="w"> </span>EXIT_LINE1
+<span class="w">  </span><span class="nb">unset</span><span class="w"> </span>EXIT_LINE2
+<span class="c1">#</span>
+<span class="o">}</span><span class="w"> </span><span class="c1">#End of process_answer function</span>
+<span class="c1">#</span>
+<span class="c1">################################################################</span>
+<span class="c1">#</span>
+<span class="c1"># End of Function Definitions</span>
+<span class="c1">#</span>
+<span class="c1">############### Main Script #################################</span>
+<span class="c1">#</span>
+<span class="c1"># Get name of User Account to check</span>
+<span class="c1">#</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Step #1 - Determine User Account name to delete &quot;</span>
+<span class="nb">echo</span>
+<span class="nv">LINE1</span><span class="o">=</span><span class="s2">&quot;Please enter the username of the user&quot;</span>
+<span class="nv">LINE2</span><span class="o">=</span><span class="s2">&quot;account you wish to delete from system:&quot;</span>
+get_answer
+<span class="nv">USER_ACCOUNT</span><span class="o">=</span><span class="nv">$ANSWER</span>
+<span class="c1">#</span>
+<span class="c1"># Double check with script user that this is the correct User Account</span>
+<span class="c1">#</span>
+<span class="nv">LINE1</span><span class="o">=</span><span class="s2">&quot;Is </span><span class="nv">$USER_ACCOUNT</span><span class="s2"> the user account&quot;</span>
+<span class="nv">LINE2</span><span class="o">=</span><span class="s2">&quot;you wish to delete from the system?[ y/n ]:&quot;</span>
+get_answer
+<span class="c1">#</span>
+<span class="c1">############################################################</span>
+<span class="c1">#</span>
+<span class="c1"># Check that USER_ACCOUNT is really an account on the system</span>
+<span class="c1">#</span>
+<span class="nv">USER_ACCOUNT_RECORD</span><span class="o">=</span><span class="k">$(</span>cat<span class="w"> </span>/etc/passwd<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-w<span class="w"> </span><span class="nv">$USER_ACCOUNT</span><span class="k">)</span>
+<span class="c1">#</span>
+<span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="nv">$?</span><span class="w"> </span>-eq<span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="o">]</span><span class="w">      </span><span class="c1"># If the account is not found, exit script</span>
+<span class="k">then</span>
+<span class="w">  </span><span class="nb">echo</span><span class="w"> </span>
+<span class="w">  </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Account, </span><span class="nv">$USER_ACCOUNT</span><span class="s2">, not found.&quot;</span>
+<span class="w">  </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Leaving the script...&quot;</span>
+<span class="w">  </span><span class="nb">echo</span>
+<span class="w">  </span><span class="nb">exit</span>
+<span class="k">fi</span>
+<span class="c1">#</span>
+<span class="nb">echo</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;I found this record:&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="nv">$USER_ACCOUNT_RECORD</span>
+<span class="nb">echo</span>
+<span class="c1">#</span>
+<span class="nv">LINE1</span><span class="o">=</span><span class="s2">&quot;Is this the correct User Account?[y/n]:&quot;</span>
+get_answer
+<span class="c1">#</span>
+<span class="c1">#</span>
+<span class="c1"># Call process_answer function:</span>
+<span class="c1">#  if user answers anything but &quot;yes&quot;, exit script</span>
+<span class="c1">#</span>
+<span class="nv">EXIT_LINE1</span><span class="o">=</span><span class="s2">&quot;Because the account, </span><span class="nv">$USER_ACCOUNT</span><span class="s2">, is not &quot;</span>
+<span class="nv">EXIT_LINE2</span><span class="o">=</span><span class="s2">&quot;the one you wish to delete, we are leaving the script...&quot;</span>
+process_anser
+<span class="c1">#</span>
+<span class="c1">##############################################################</span>
+<span class="c1">#</span>
+<span class="c1"># Search for any running processes that belong to the User Account</span>
+<span class="c1">#</span>
+<span class="nb">echo</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Step #2 - Find process on system belonging to user account&quot;</span>
+<span class="nb">echo</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$USER_ACCOUNT</span><span class="s2"> has the following processes running: &quot;</span>
+<span class="nb">echo</span>
+<span class="c1">#</span>
+ps<span class="w"> </span>-u<span class="w"> </span><span class="nv">$USER_ACCOUNT</span><span class="w">      </span><span class="c1">#List the processes running</span>
+<span class="c1">#</span>
+<span class="k">case</span><span class="w"> </span><span class="nv">$?</span><span class="w"> </span><span class="k">in</span>
+<span class="m">1</span><span class="o">)</span><span class="w">      </span><span class="c1"># No processes running for this User Account</span>
+<span class="w">  </span><span class="c1">#</span>
+<span class="w">  </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;There are no processes for this account currently running.&quot;</span>
+<span class="w">  </span><span class="nb">echo</span>
+<span class="p">;;</span>
+<span class="m">0</span><span class="o">)</span><span class="w">  </span><span class="c1"># Processes running for this User Account.</span>
+<span class="w">  </span><span class="c1"># Ask Script User if wants us to kill the processes.</span>
+<span class="w">  </span><span class="c1">#</span>
+<span class="w">  </span><span class="nb">unset</span><span class="w"> </span>ANSWER<span class="w">      </span><span class="c1"># I think this line is not needed</span>
+<span class="w">  </span><span class="nv">LINE1</span><span class="o">=</span><span class="s2">&quot;Would you like me to kill the process(es)? [y/n]:&quot;</span>
+<span class="w">  </span>get_answer
+<span class="w">  </span><span class="c1">#</span>
+<span class="w">  </span><span class="k">case</span><span class="w"> </span><span class="nv">$ANSWER</span><span class="w"> </span><span class="k">in</span>
+<span class="w">  </span>y<span class="p">|</span>Y<span class="p">|</span>YES<span class="p">|</span>yes<span class="p">|</span>Yes<span class="p">|</span>yEs<span class="p">|</span>yeS<span class="p">|</span>YEs<span class="p">|</span>yES<span class="o">)</span><span class="w">    </span><span class="c1"># if user answer &quot;yes&quot;,</span>
+<span class="w">    </span><span class="c1">#kill User Account processes</span>
+<span class="w">    </span><span class="c1">#</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span>
+<span class="w">    </span><span class="c1">#</span>
+<span class="w">    </span><span class="c1"># Clean-up temp file upon signals</span>
+<span class="w">    </span><span class="c1">#</span>
+<span class="w">    </span><span class="nb">trap</span><span class="w"> </span><span class="s2">&quot;rm </span><span class="nv">$USER_ACCOUNT_Running_Process</span><span class="s2">.rpt&quot;</span><span class="w"> </span>SIGTERM<span class="w"> </span>SIGINT<span class="w"> </span>SIGQUIT
+<span class="w">    </span><span class="c1">#</span>
+<span class="w">    </span><span class="c1"># List user processes running</span>
+<span class="w">    </span>ps<span class="w"> </span>-u<span class="w"> </span><span class="nv">$USER_ACCOUNT</span><span class="w"> </span>&gt;<span class="w"> </span><span class="nv">$USER_ACCOUNT_Running_Process</span>.rpt
+<span class="w">    </span><span class="c1">#</span>
+<span class="w">    </span><span class="nb">exec</span><span class="w"> </span>&lt;<span class="w"> </span><span class="nv">$USER_ACCOUNT_Running_Process</span>.rpt<span class="w">    </span><span class="c1"># Make report Std Input</span>
+<span class="w">    </span><span class="c1">#</span>
+<span class="w">    </span><span class="nb">read</span><span class="w"> </span>USER_PROCESS_REC<span class="w">        </span><span class="c1"># First record will be blank</span>
+<span class="w">    </span><span class="nb">read</span><span class="w"> </span>USER_PROCESS_REC
+<span class="w">    </span><span class="c1">#</span>
+<span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="nv">$?</span><span class="w"> </span>-eq<span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="o">]</span>
+<span class="w">    </span><span class="k">do</span>
+<span class="w">      </span><span class="c1"># obtain PID</span>
+<span class="w">      </span><span class="nv">USER_PID</span><span class="o">=</span><span class="k">$(</span><span class="nb">echo</span><span class="w"> </span><span class="nv">$USER_PROCESS_REC</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>cut<span class="w"> </span>-d<span class="w"> </span><span class="s2">&quot; &quot;</span><span class="w"> </span>-f1<span class="w"> </span><span class="k">)</span>
+<span class="w">      </span><span class="nb">kill</span><span class="w"> </span>-9<span class="w"> </span><span class="nv">$USER_PID</span>
+<span class="w">      </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Killed process </span><span class="nv">$USER_PID</span><span class="s2">&quot;</span>
+<span class="w">      </span><span class="nb">read</span><span class="w"> </span>USER_PROCESS_REC
+<span class="w">    </span><span class="k">done</span>
+<span class="w">    </span><span class="c1">#</span>
+<span class="w">    </span><span class="nb">echo</span>
+<span class="w">    </span><span class="c1">#</span>
+<span class="w">    </span>rm<span class="w"> </span><span class="nv">$USER_ACCOUNT_Running_Process</span>.rpt<span class="w">      </span><span class="c1"># Remove temp report</span>
+<span class="w">  </span><span class="p">;;</span>
+<span class="w">  </span>*<span class="o">)</span><span class="w"> </span><span class="c1"># If user answers anything but &quot;yes&quot;, do not kill.</span>
+<span class="w">    </span><span class="nb">echo</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Will not kill the process(es).&quot;</span>
+<span class="w">    </span><span class="nb">echo</span>
+<span class="w">  </span><span class="p">;;</span>
+<span class="w">  </span><span class="k">esac</span>
+<span class="p">;;</span>
+<span class="k">esac</span>
+<span class="c1">###################################################################################</span>
+<span class="c1">#</span>
+<span class="c1"># Create a report of all files owned by User Account</span>
+<span class="c1">#</span>
+<span class="nb">echo</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Step #3 - Find files on system belonging to user account&quot;</span>
+<span class="nb">echo</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Creating a report of all files owned by </span><span class="nv">$USER_ACCOUNT</span><span class="s2">.&quot;</span>
+<span class="nb">echo</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;It is recommended that you backup/archive these files.&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;and then do one of two things:&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot; 1) Delete the files&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot; 2) Change the files&#39; ownership to a current user account.&quot;</span>
+<span class="nb">echo</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Please wait. This may take a while...&quot;</span>
+<span class="c1">#</span>
+<span class="nv">REPORT_DATE</span><span class="o">=</span><span class="sb">`</span>date<span class="w"> </span>+%y%m%d<span class="sb">`</span>
+<span class="nv">REPORT_FILE</span><span class="o">=</span><span class="nv">$USER_ACCOUNT</span><span class="s2">&quot;_Files_&quot;</span><span class="nv">$REPORT_DATE</span><span class="s2">&quot;.rpt&quot;</span>
+<span class="c1">#</span>
+find<span class="w"> </span>/<span class="w"> </span>-user<span class="w"> </span><span class="nv">$USER_ACCOUNT</span><span class="w"> </span>&gt;<span class="w"> </span><span class="nv">$REPORT_FILE</span><span class="w"> </span><span class="m">2</span>&gt;/dev/null
+<span class="c1">#</span>
+<span class="nb">echo</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Report is complete.&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Name of report:  </span><span class="nv">$REPORT_FILE</span><span class="s2">&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Location of report:     `pwd`&quot;</span>
+<span class="nb">echo</span>
+<span class="c1">################################################################</span>
+<span class="c1">#</span>
+<span class="c1"># Remove User Account</span>
+<span class="nb">echo</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Step #4 - Remove user account&quot;</span>
+<span class="nb">echo</span>
+<span class="c1">#</span>
+<span class="nv">LINE1</span><span class="o">=</span><span class="s2">&quot;Do you wish to remove </span><span class="nv">$USER_ACCOUNT</span><span class="s2">&#39;s account from system? [y/n]:&quot;</span>
+get_answer
+<span class="c1">#</span>
+<span class="c1"># Cass process_answer function:</span>
+<span class="c1">#  if user answers anything but &quot;yes&quot;, exit script</span>
+<span class="c1">#</span>
+<span class="nv">EXIT_LINE1</span><span class="o">=</span><span class="s2">&quot;Since you do not wish to remove the user account.&quot;</span>
+<span class="nv">EXIT_LINE2</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$USER_ACCOUNT</span><span class="s2"> at this time, exiting the script...&quot;</span>
+process_answer
+<span class="c1">#</span>
+userdel<span class="w"> </span><span class="nv">$USER_ACCOUNT</span><span class="w">      </span><span class="c1"># delete user account</span>
+<span class="nb">echo</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;User account, </span><span class="nv">$USER_ACCOUNT</span><span class="s2">, has been removed&quot;</span>
+<span class="nb">echo</span>
+</code></pre></div>
+
+<hr />
+<h1 id="当服务器线程数超过2500时自动dump线程数最高的java进程的内存及线程栈">当服务器线程数超过2500时自动dump线程数最高的java进程的内存及线程栈</h1>
+<div class="highlight"><pre><span></span><code><span class="ch">#!/usr/bin/env bash</span>
+<span class="c1"># 来源: https://blog.csdn.net/qianghaohao/article/details/80379118 </span>
+<span class="c1"># 服务器线程数达到 2500 以上时 dump 线程数最多的 java 进程的线程及内存</span>
+<span class="nb">source</span><span class="w"> </span>~/.bashrc
+<span class="nv">cur_thread_num</span><span class="o">=</span><span class="sb">`</span>ps<span class="w"> </span>-efL<span class="w"> </span><span class="p">|</span><span class="w"> </span>wc<span class="w"> </span>-l<span class="sb">`</span>
+<span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="nv">$cur_thread_num</span><span class="w"> </span>-le<span class="w"> </span><span class="m">2500</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">    </span><span class="nb">exit</span><span class="w"> </span><span class="m">0</span>
+<span class="k">fi</span>
+
+<span class="nv">cur_date</span><span class="o">=</span><span class="sb">`</span>date<span class="w"> </span>+<span class="s2">&quot;%Y-%m-%d_%H-%M-%S&quot;</span><span class="sb">`</span>
+<span class="nb">cd</span><span class="w"> </span>./dumpfile
+<span class="c1"># 服务器当前线程 dump 到文件:按照线程数由大到小排序显示</span>
+ps<span class="w"> </span>-efL<span class="w"> </span>--sort<span class="w"> </span>-nlwp<span class="w"> </span>&gt;<span class="w"> </span>server_thread_dump_<span class="nv">$cur_date</span>
+<span class="c1"># dump 线程数最多的 jvm 的线程及内存</span>
+<span class="nv">most_thread_num_pid</span><span class="o">=</span><span class="sb">`</span>cat<span class="w"> </span>server_thread_dump_<span class="nv">$cur_date</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>sed<span class="w"> </span>-n<span class="w"> </span><span class="s1">&#39;2p&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">&#39;{print $2}&#39;</span><span class="sb">`</span>
+nohup<span class="w"> </span>jstack<span class="w"> </span>-l<span class="w"> </span><span class="nv">$most_thread_num_pid</span><span class="w"> </span>&gt;<span class="w"> </span>java_app_thread_dump_<span class="si">${</span><span class="nv">cur_date</span><span class="si">}</span>_pid_<span class="si">${</span><span class="nv">most_thread_num_pid</span><span class="si">}</span><span class="w"> </span><span class="p">&amp;</span>
+nohup<span class="w"> </span>jmap<span class="w"> </span>-dump:format<span class="o">=</span>b,file<span class="o">=</span>java_app_mem_dump_<span class="si">${</span><span class="nv">cur_date</span><span class="si">}</span>_pid_<span class="si">${</span><span class="nv">most_thread_num_pid</span><span class="si">}</span><span class="w"> </span><span class="nv">$most_thread_num_pid</span><span class="w"> </span><span class="p">&amp;</span>
+
+<span class="nb">exit</span><span class="w"> </span><span class="m">0</span>
+</code></pre></div>
+
+<hr />
+<h1 id="查看磁盘目录使用并排序">查看磁盘目录使用并排序</h1>
+<div class="highlight"><pre><span></span><code><span class="ch">#!/bin/bash</span>
+<span class="c1">#</span>
+<span class="c1"># Big_Users - find big disk space users in various directories</span>
+<span class="c1">#############################################################</span>
+<span class="c1">#Parameters for script</span>
+<span class="c1">#</span>
+<span class="nv">CHECK_DIRECTORIES</span><span class="o">=</span><span class="s2">&quot;/var/log /home&quot;</span><span class="w"> </span><span class="c1">#directories to check，need to modify the script to get usage for specific directory</span>
+<span class="c1">#</span>
+<span class="c1">######################### Main Script #######################</span>
+<span class="c1">#</span>
+<span class="nv">DATE</span><span class="o">=</span><span class="k">$(</span>date<span class="w"> </span><span class="s1">&#39;+%m%d%y&#39;</span><span class="k">)</span><span class="w">             </span><span class="c1">#Date for report file</span>
+<span class="c1">#</span>
+<span class="nb">exec</span><span class="w"> </span>&gt;<span class="w"> </span>disk_space_<span class="nv">$DATE</span>.rpt<span class="w">         </span><span class="c1">#Make report file Std Output</span>
+<span class="c1">#</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Top Ten Disk Space Usage&quot;</span><span class="w">     </span><span class="c1">#Report header for while report</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;for </span><span class="nv">$CHECK_DIRECTORIES</span><span class="s2"> Directories&quot;</span>
+<span class="c1">#</span>
+<span class="k">for</span><span class="w"> </span>DIR_CHECK<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="nv">$CHECK_DIRECTORIES</span><span class="w">       </span><span class="c1">#loop to du directories</span>
+<span class="k">do</span>
+<span class="w">  </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">  </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;The </span><span class="nv">$DIR_CHECK</span><span class="s2"> Directory:&quot;</span><span class="w">  </span><span class="c1">#Title header for each directory</span>
+<span class="c1">#</span>
+<span class="c1">#  Creating a listing of top ten disk space users</span>
+<span class="w">  </span>du<span class="w"> </span>-Sh<span class="w"> </span><span class="nv">$DIR_CHECK</span><span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="w"> </span><span class="p">|</span>
+<span class="w">  </span>sort<span class="w"> </span>-rn<span class="w"> </span><span class="p">|</span>
+<span class="w">  </span>sed<span class="w"> </span><span class="s1">&#39;{11,$D; =}&#39;</span><span class="w"> </span><span class="p">|</span>
+<span class="w">  </span>sed<span class="w"> </span><span class="s1">&#39;N; s/\n/ /&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>
+<span class="w">  </span>gawk<span class="w"> </span><span class="s1">&#39;{printf $1 &quot;:&quot; &quot;\t&quot; $2 &quot;\t&quot; $3 &quot;\n&quot;}&#39;</span>
+<span class="c1">#</span>
+<span class="k">done</span><span class="w">                </span><span class="c1">#End of for loop for du directories</span>
+</code></pre></div>
+
+<hr />
+<h1 id="查看某目录使用量">查看某目录使用量</h1>
+<div class="highlight"><pre><span></span><code><span class="nv">dir</span><span class="o">=</span><span class="si">${</span><span class="nv">1</span><span class="k">:-</span><span class="p">/</span><span class="si">}</span><span class="w"> </span><span class="c1">#指定目录 作为脚本第一个参数，默认是/</span>
+<span class="nv">depth</span><span class="o">=</span><span class="si">${</span><span class="nv">2</span><span class="k">:-</span><span class="nv">5</span><span class="si">}</span><span class="w"> </span><span class="c1">#指定深度 作为脚本第二个参数，默认是5层</span>
+<span class="nv">exclude_dir</span><span class="o">=</span><span class="k">$(</span>df<span class="w"> </span><span class="p">|</span>awk<span class="w"> </span><span class="s1">&#39;NR&gt;1 {print $6}&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-wv<span class="w"> </span><span class="si">${</span><span class="nv">dir</span><span class="si">}</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">&#39;{print &quot;--exclude=&quot;$1&quot;&quot;}&#39;</span><span class="k">)</span>
+du<span class="w"> </span>-h<span class="w"> </span>--max-depth<span class="o">=</span><span class="si">${</span><span class="nv">depth</span><span class="si">}</span><span class="w"> </span><span class="si">${</span><span class="nv">exclude_dir</span><span class="si">}</span><span class="w"> </span><span class="si">${</span><span class="nv">dir</span><span class="si">}</span><span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">&#39;$1~/G$/{print $0}&#39;</span>
+</code></pre></div>
+
+<hr />
+<h1 id="根据pid过滤进程信息">根据PID过滤进程信息</h1>
+<div class="highlight"><pre><span></span><code><span class="ch">#! /bin/bash</span>
+<span class="c1"># Function: 根据用户输入的PID，过滤出该PID所有的信息</span>
+<span class="nb">read</span><span class="w"> </span>-p<span class="w"> </span><span class="s2">&quot;请输入要查询的PID: &quot;</span><span class="w"> </span>P
+<span class="nv">n</span><span class="o">=</span><span class="sb">`</span>ps<span class="w"> </span>-aux<span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">&#39;$2~/^&#39;</span><span class="nv">$P</span><span class="s1">&#39;$/{print $11}&#39;</span><span class="p">|</span>wc<span class="w"> </span>-l<span class="sb">`</span>
+<span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="nv">$n</span><span class="w"> </span>-eq<span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="k">then</span>
+<span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;该PID不存在！！&quot;</span>
+<span class="w"> </span><span class="nb">exit</span>
+<span class="k">fi</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;--------------------------------&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;进程PID: </span><span class="nv">$P</span><span class="s2">&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;进程命令：`ps -aux| awk &#39;</span><span class="nv">$2</span><span class="s2">~/^&#39;</span><span class="nv">$P</span><span class="s2">&#39;</span>$<span class="s2">/{print </span><span class="nv">$11</span><span class="s2">}&#39;`&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;进程所属用户: `ps -aux| awk &#39;</span><span class="nv">$2</span><span class="s2">~/^&#39;</span><span class="nv">$P</span><span class="s2">&#39;</span>$<span class="s2">/{print </span><span class="nv">$1</span><span class="s2">}&#39;`&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;CPU占用率：`ps -aux| awk &#39;</span><span class="nv">$2</span><span class="s2">~/^&#39;</span><span class="nv">$P</span><span class="s2">&#39;</span>$<span class="s2">/{print </span><span class="nv">$3</span><span class="s2">}&#39;`%&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;内存占用率：`ps -aux| awk &#39;</span><span class="nv">$2</span><span class="s2">~/^&#39;</span><span class="nv">$P</span><span class="s2">&#39;</span>$<span class="s2">/{print </span><span class="nv">$4</span><span class="s2">}&#39;`%&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;进程开始运行的时刻：`ps -aux| awk &#39;</span><span class="nv">$2</span><span class="s2">~/^&#39;</span><span class="nv">$P</span><span class="s2">&#39;</span>$<span class="s2">/{print </span><span class="nv">$9</span><span class="s2">}&#39;`&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;进程运行的时间：`ps -aux| awk &#39;</span><span class="nv">$2</span><span class="s2">~/^&#39;</span><span class="nv">$P</span><span class="s2">&#39;</span>$<span class="s2">/{print </span><span class="nv">$10</span><span class="s2">}&#39;`&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;进程状态：`ps -aux| awk &#39;</span><span class="nv">$2</span><span class="s2">~/^&#39;</span><span class="nv">$P</span><span class="s2">&#39;</span>$<span class="s2">/{print </span><span class="nv">$8</span><span class="s2">}&#39;`&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;进程虚拟内存：`ps -aux| awk &#39;</span><span class="nv">$2</span><span class="s2">~/^&#39;</span><span class="nv">$P</span><span class="s2">&#39;</span>$<span class="s2">/{print </span><span class="nv">$5</span><span class="s2">}&#39;`&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;进程共享内存：`ps -aux| awk &#39;</span><span class="nv">$2</span><span class="s2">~/^&#39;</span><span class="nv">$P</span><span class="s2">&#39;</span>$<span class="s2">/{print </span><span class="nv">$6</span><span class="s2">}&#39;`&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;--------------------------------&quot;</span>
+</code></pre></div>
+
+<hr />
+<h1 id="根据进程名显示所有线程">根据进程名显示所有线程</h1>
+<div class="highlight"><pre><span></span><code><span class="ch">#! /bin/bash</span>
+<span class="c1"># Function: 根据输入的程序的名字过滤出所对应的PID，并显示出详细信息，如果有几个PID，则全部显示</span>
+<span class="nb">read</span><span class="w"> </span>-p<span class="w"> </span><span class="s2">&quot;请输入要查询的进程名：&quot;</span><span class="w"> </span>NAME
+<span class="nv">N</span><span class="o">=</span><span class="sb">`</span>ps<span class="w"> </span>-aux<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="nv">$NAME</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-v<span class="w"> </span>grep<span class="w"> </span><span class="p">|</span><span class="w"> </span>wc<span class="w"> </span>-l<span class="sb">`</span><span class="w"> </span><span class="c1">##统计进程总数</span>
+<span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="nv">$N</span><span class="w"> </span>-le<span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="k">then</span>
+<span class="w">  </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;该进程名没有运行！&quot;</span>
+<span class="k">fi</span>
+<span class="nv">i</span><span class="o">=</span><span class="m">1</span>
+<span class="k">while</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="nv">$N</span><span class="w"> </span>-gt<span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="o">]</span>
+<span class="k">do</span>
+<span class="w">  </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;进程PID: `ps -aux | grep </span><span class="nv">$NAME</span><span class="s2"> | grep -v grep | awk &#39;NR==&#39;</span><span class="nv">$i</span><span class="s2">&#39;{print </span><span class="nv">$0</span><span class="s2">}&#39;| awk &#39;{print </span><span class="nv">$2</span><span class="s2">}&#39;`&quot;</span>
+<span class="w">  </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;进程命令：`ps -aux | grep </span><span class="nv">$NAME</span><span class="s2"> | grep -v grep | awk &#39;NR==&#39;</span><span class="nv">$i</span><span class="s2">&#39;{print </span><span class="nv">$0</span><span class="s2">}&#39;| awk &#39;{print </span><span class="nv">$11</span><span class="s2">}&#39;`&quot;</span>
+<span class="w">  </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;进程所属用户: `ps -aux | grep </span><span class="nv">$NAME</span><span class="s2"> | grep -v grep | awk &#39;NR==&#39;</span><span class="nv">$i</span><span class="s2">&#39;{print </span><span class="nv">$0</span><span class="s2">}&#39;| awk &#39;{print </span><span class="nv">$1</span><span class="s2">}&#39;`&quot;</span>
+<span class="w">  </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;CPU占用率：`ps -aux | grep </span><span class="nv">$NAME</span><span class="s2"> | grep -v grep | awk &#39;NR==&#39;</span><span class="nv">$i</span><span class="s2">&#39;{print </span><span class="nv">$0</span><span class="s2">}&#39;| awk &#39;{print </span><span class="nv">$3</span><span class="s2">}&#39;`%&quot;</span>
+<span class="w">  </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;内存占用率：`ps -aux | grep </span><span class="nv">$NAME</span><span class="s2"> | grep -v grep | awk &#39;NR==&#39;</span><span class="nv">$i</span><span class="s2">&#39;{print </span><span class="nv">$0</span><span class="s2">}&#39;| awk &#39;{print </span><span class="nv">$4</span><span class="s2">}&#39;`%&quot;</span>
+<span class="w">  </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;进程开始运行的时刻：`ps -aux | grep </span><span class="nv">$NAME</span><span class="s2"> | grep -v grep | awk &#39;NR==&#39;</span><span class="nv">$i</span><span class="s2">&#39;{print </span><span class="nv">$0</span><span class="s2">}&#39;| awk &#39;{print </span><span class="nv">$9</span><span class="s2">}&#39;`&quot;</span>
+<span class="w">  </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;进程运行的时间：` ps -aux | grep </span><span class="nv">$NAME</span><span class="s2"> | grep -v grep | awk &#39;NR==&#39;</span><span class="nv">$i</span><span class="s2">&#39;{print </span><span class="nv">$0</span><span class="s2">}&#39;| awk &#39;{print </span><span class="nv">$11</span><span class="s2">}&#39;`&quot;</span>
+<span class="w">  </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;进程状态：`ps -aux | grep </span><span class="nv">$NAME</span><span class="s2"> | grep -v grep | awk &#39;NR==&#39;</span><span class="nv">$i</span><span class="s2">&#39;{print </span><span class="nv">$0</span><span class="s2">}&#39;| awk &#39;{print </span><span class="nv">$8</span><span class="s2">}&#39;`&quot;</span>
+<span class="w">  </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;进程虚拟内存：`ps -aux | grep </span><span class="nv">$NAME</span><span class="s2"> | grep -v grep | awk &#39;NR==&#39;</span><span class="nv">$i</span><span class="s2">&#39;{print </span><span class="nv">$0</span><span class="s2">}&#39;| awk &#39;{print </span><span class="nv">$5</span><span class="s2">}&#39;`&quot;</span>
+<span class="w">  </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;进程共享内存：`ps -aux | grep </span><span class="nv">$NAME</span><span class="s2"> | grep -v grep | awk &#39;NR==&#39;</span><span class="nv">$i</span><span class="s2">&#39;{print </span><span class="nv">$0</span><span class="s2">}&#39;| awk &#39;{print </span><span class="nv">$6</span><span class="s2">}&#39;`&quot;</span>
+<span class="w">  </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;***************************************************************&quot;</span>
+<span class="w">  </span><span class="nb">let</span><span class="w"> </span>N--<span class="w"> </span>i++
+<span class="k">done</span>
+</code></pre></div>
+
+<hr />
+<h1 id="根据用户名查询用户信息">根据用户名查询用户信息</h1>
+<div class="highlight"><pre><span></span><code><span class="ch">#! /bin/bash</span>
+<span class="c1"># Function：根据用户名查询该用户的所有信息</span>
+<span class="nb">read</span><span class="w"> </span>-p<span class="w"> </span><span class="s2">&quot;请输入要查询的用户名：&quot;</span><span class="w"> </span>A
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;------------------------------&quot;</span>
+<span class="nv">n</span><span class="o">=</span><span class="sb">`</span>cat<span class="w"> </span>/etc/passwd<span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span>-F:<span class="w"> </span><span class="s1">&#39;$1~/^&#39;</span><span class="nv">$A</span><span class="s1">&#39;$/{print}&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>wc<span class="w"> </span>-l<span class="sb">`</span>
+<span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="nv">$n</span><span class="w"> </span>-eq<span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="k">then</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;该用户不存在&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;------------------------------&quot;</span>
+<span class="k">else</span>
+<span class="w">  </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;该用户的用户名：</span><span class="nv">$A</span><span class="s2">&quot;</span>
+<span class="w">  </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;该用户的UID：`cat /etc/passwd | awk -F: &#39;</span><span class="nv">$1</span><span class="s2">~/^&#39;</span><span class="nv">$A</span><span class="s2">&#39;</span>$<span class="s2">/{print}&#39;|awk -F: &#39;{print </span><span class="nv">$3</span><span class="s2">}&#39;`&quot;</span>
+<span class="w">  </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;该用户的组为：`id </span><span class="nv">$A</span><span class="s2"> | awk {&#39;print </span><span class="nv">$3</span><span class="s2">&#39;}`&quot;</span>
+<span class="w">  </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;该用户的GID为：`cat /etc/passwd | awk -F: &#39;</span><span class="nv">$1</span><span class="s2">~/^&#39;</span><span class="nv">$A</span><span class="s2">&#39;</span>$<span class="s2">/{print}&#39;|awk -F: &#39;{print </span><span class="nv">$4</span><span class="s2">}&#39;`&quot;</span>
+<span class="w">  </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;该用户的家目录为：`cat /etc/passwd | awk -F: &#39;</span><span class="nv">$1</span><span class="s2">~/^&#39;</span><span class="nv">$A</span><span class="s2">&#39;</span>$<span class="s2">/{print}&#39;|awk -F: &#39;{print </span><span class="nv">$6</span><span class="s2">}&#39;`&quot;</span>
+<span class="w">  </span><span class="nv">Login</span><span class="o">=</span><span class="sb">`</span>cat<span class="w"> </span>/etc/passwd<span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span>-F:<span class="w"> </span><span class="s1">&#39;$1~/^&#39;</span><span class="nv">$A</span><span class="s1">&#39;$/{print}&#39;</span><span class="p">|</span>awk<span class="w"> </span>-F:<span class="w"> </span><span class="s1">&#39;{print $7}&#39;</span><span class="sb">`</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="nv">$Login</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s2">&quot;/bin/bash&quot;</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="k">then</span>
+<span class="w">  </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;该用户有登录系统的权限！！&quot;</span>
+<span class="w">  </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;------------------------------&quot;</span>
+<span class="w">  </span><span class="k">elif</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="nv">$Login</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s2">&quot;/sbin/nologin&quot;</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="k">then</span>
+<span class="w">  </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;该用户没有登录系统的权限！！&quot;</span>
+<span class="w">  </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;------------------------------&quot;</span>
+<span class="w">  </span><span class="k">fi</span>
+<span class="k">fi</span>
+</code></pre></div>
+
+<hr />
+<h1 id="加固用户密码配置">加固用户密码配置</h1>
+<div class="highlight"><pre><span></span><code><span class="ch">#! /bin/bash</span>
+<span class="c1"># Function:对账户的密码的一些加固</span>
+<span class="nb">read</span><span class="w"> </span>-p<span class="w"> </span><span class="s2">&quot;设置密码最多可多少天不修改：&quot;</span><span class="w"> </span>A
+<span class="nb">read</span><span class="w"> </span>-p<span class="w"> </span><span class="s2">&quot;设置密码修改之间最小的天数：&quot;</span><span class="w"> </span>B
+<span class="nb">read</span><span class="w"> </span>-p<span class="w"> </span><span class="s2">&quot;设置密码最短的长度：&quot;</span><span class="w"> </span>C
+<span class="nb">read</span><span class="w"> </span>-p<span class="w"> </span><span class="s2">&quot;设置密码失效前多少天通知用户：&quot;</span><span class="w"> </span>D
+sed<span class="w"> </span>-i<span class="w"> </span><span class="s1">&#39;/^PASS_MAX_DAYS/c\PASS_MAX_DAYS &#39;</span><span class="nv">$A</span><span class="s1">&#39;&#39;</span><span class="w"> </span>/etc/login.defs
+sed<span class="w"> </span>-i<span class="w"> </span><span class="s1">&#39;/^PASS_MIN_DAYS/c\PASS_MIN_DAYS &#39;</span><span class="nv">$B</span><span class="s1">&#39;&#39;</span><span class="w"> </span>/etc/login.defs
+sed<span class="w"> </span>-i<span class="w"> </span><span class="s1">&#39;/^PASS_MIN_LEN/c\PASS_MIN_LEN &#39;</span><span class="nv">$C</span><span class="s1">&#39;&#39;</span><span class="w"> </span>/etc/login.defs
+sed<span class="w"> </span>-i<span class="w"> </span><span class="s1">&#39;/^PASS_WARN_AGE/c\PASS_WARN_AGE &#39;</span><span class="nv">$D</span><span class="s1">&#39;&#39;</span><span class="w"> </span>/etc/login.defs
+
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;已对密码进行加固，新用户不得和旧密码相同，且新密码必须同时包含数字、小写字母，大写字母！！&quot;</span>
+sed<span class="w"> </span>-i<span class="w"> </span><span class="s1">&#39;/pam_pwquality.so/c\password requisite pam_pwquality.so try_first_pass local_users_only retry=3 authtok_type= difok=1 minlen=8 ucredit=-1 lcredit=-1 dcredit=-1&#39;</span><span class="w"> </span>/etc/pam.d/system-auth
+
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;已对密码进行加固，如果输入错误密码超过3次，则锁定账户！！&quot;</span>
+<span class="nv">n</span><span class="o">=</span><span class="sb">`</span>cat<span class="w"> </span>/etc/pam.d/sshd<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s2">&quot;auth required pam_tally2.so &quot;</span><span class="p">|</span>wc<span class="w"> </span>-l<span class="sb">`</span>
+<span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="nv">$n</span><span class="w"> </span>-eq<span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="k">then</span>
+sed<span class="w"> </span>-i<span class="w"> </span><span class="s1">&#39;/%PAM-1.0/a\auth required pam_tally2.so deny=3 unlock_time=150 even_deny_root root_unlock_time300&#39;</span><span class="w"> </span>/etc/pam.d/sshd
+<span class="k">fi</span>
+
+<span class="nb">echo</span><span class="w">  </span><span class="s2">&quot;已设置禁止root用户远程登录！！&quot;</span>
+sed<span class="w"> </span>-i<span class="w"> </span><span class="s1">&#39;/PermitRootLogin/c\PermitRootLogin no&#39;</span><span class="w">  </span>/etc/ssh/sshd_config
+
+<span class="nb">read</span><span class="w"> </span>-p<span class="w"> </span><span class="s2">&quot;设置历史命令保存条数：&quot;</span><span class="w"> </span>E
+<span class="nb">read</span><span class="w"> </span>-p<span class="w"> </span><span class="s2">&quot;设置账户自动注销时间：&quot;</span><span class="w"> </span>F
+sed<span class="w"> </span>-i<span class="w"> </span><span class="s1">&#39;/^HISTSIZE/c\HISTSIZE=&#39;</span><span class="nv">$E</span><span class="s1">&#39;&#39;</span><span class="w"> </span>/etc/profile
+sed<span class="w"> </span>-i<span class="w"> </span><span class="s1">&#39;/^HISTSIZE/a\TMOUT=&#39;</span><span class="nv">$F</span><span class="s1">&#39;&#39;</span><span class="w"> </span>/etc/profile
+
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;已设置只允许wheel组的用户可以使用su命令切换到root用户！&quot;</span>
+sed<span class="w"> </span>-i<span class="w"> </span><span class="s1">&#39;/pam_wheel.so use_uid/c\auth required pam_wheel.so use_uid &#39;</span><span class="w"> </span>/etc/pam.d/su
+<span class="nv">n</span><span class="o">=</span><span class="sb">`</span>cat<span class="w"> </span>/etc/login.defs<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>SU_WHEEL_ONLY<span class="w"> </span><span class="p">|</span><span class="w"> </span>wc<span class="w"> </span>-l<span class="sb">`</span>
+<span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="nv">$n</span><span class="w"> </span>-eq<span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="k">then</span>
+<span class="nb">echo</span><span class="w"> </span>SU_WHEEL_ONLY<span class="w"> </span>yes<span class="w"> </span>&gt;&gt;<span class="w"> </span>/etc/login.defs
+<span class="k">fi</span>
+
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;即将对系统中的账户进行检查....&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;系统中有登录权限的用户有：&quot;</span>
+awk<span class="w"> </span>-F:<span class="w"> </span><span class="s1">&#39;($7==&quot;/bin/bash&quot;){print $1}&#39;</span><span class="w"> </span>/etc/passwd
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;********************************************&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;系统中UID=0的用户有：&quot;</span>
+awk<span class="w"> </span>-F:<span class="w"> </span><span class="s1">&#39;($3==&quot;0&quot;){print $1}&#39;</span><span class="w"> </span>/etc/passwd
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;********************************************&quot;</span>
+<span class="nv">N</span><span class="o">=</span><span class="sb">`</span>awk<span class="w"> </span>-F:<span class="w"> </span><span class="s1">&#39;($2==&quot;&quot;){print $1}&#39;</span><span class="w"> </span>/etc/shadow<span class="p">|</span>wc<span class="w"> </span>-l<span class="sb">`</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;系统中空密码用户有：</span><span class="nv">$N</span><span class="s2">&quot;</span>
+<span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="nv">$N</span><span class="w"> </span>-eq<span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="k">then</span>
+<span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;恭喜你，系统中无空密码用户！！&quot;</span>
+<span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;********************************************&quot;</span>
+<span class="k">else</span>
+<span class="w"> </span><span class="nv">i</span><span class="o">=</span><span class="m">1</span>
+<span class="w"> </span><span class="k">while</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="nv">$N</span><span class="w"> </span>-gt<span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="o">]</span>
+<span class="w"> </span><span class="k">do</span>
+<span class="w">    </span><span class="nv">None</span><span class="o">=</span><span class="sb">`</span>awk<span class="w"> </span>-F:<span class="w"> </span><span class="s1">&#39;($2==&quot;&quot;){print $1}&#39;</span><span class="w"> </span>/etc/shadow<span class="p">|</span>awk<span class="w"> </span><span class="s1">&#39;NR==&#39;</span><span class="nv">$i</span><span class="s1">&#39;{print}&#39;</span><span class="sb">`</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;------------------------&quot;</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="nv">$None</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;必须为空用户设置密码！！&quot;</span>
+<span class="w">    </span>passwd<span class="w"> </span><span class="nv">$None</span>
+<span class="w">    </span><span class="nb">let</span><span class="w"> </span>N--
+<span class="w"> </span><span class="k">done</span>
+<span class="w"> </span><span class="nv">M</span><span class="o">=</span><span class="sb">`</span>awk<span class="w"> </span>-F:<span class="w"> </span><span class="s1">&#39;($2==&quot;&quot;){print $1}&#39;</span><span class="w"> </span>/etc/shadow<span class="p">|</span>wc<span class="w"> </span>-l<span class="sb">`</span>
+<span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="nv">$M</span><span class="w"> </span>-eq<span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="k">then</span>
+<span class="w">  </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;恭喜，系统中已经没有空密码用户了！&quot;</span>
+<span class="w"> </span><span class="k">else</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;系统中还存在空密码用户：</span><span class="nv">$M</span><span class="s2">&quot;</span>
+<span class="w"> </span><span class="k">fi</span>
+<span class="k">fi</span>
+
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;即将对系统中重要文件进行锁定，锁定后将无法添加删除用户和组&quot;</span>
+<span class="nb">read</span><span class="w"> </span>-p<span class="w"> </span><span class="s2">&quot;警告：此脚本运行后将无法添加删除用户和组！！确定输入Y，取消输入N；Y/N：&quot;</span><span class="w"> </span>i
+<span class="k">case</span><span class="w"> </span><span class="nv">$i</span><span class="w"> </span><span class="k">in</span>
+<span class="w">      </span><span class="o">[</span>Y,y<span class="o">])</span>
+<span class="w">            </span>chattr<span class="w"> </span>+i<span class="w"> </span>/etc/passwd
+<span class="w">            </span>chattr<span class="w"> </span>+i<span class="w"> </span>/etc/shadow
+<span class="w">            </span>chattr<span class="w"> </span>+i<span class="w"> </span>/etc/group
+<span class="w">            </span>chattr<span class="w"> </span>+i<span class="w"> </span>/etc/gshadow
+<span class="w">            </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;锁定成功！&quot;</span>
+<span class="p">;;</span>
+<span class="w">      </span><span class="o">[</span>N,n<span class="o">])</span>
+<span class="w">            </span>chattr<span class="w"> </span>-i<span class="w"> </span>/etc/passwd
+<span class="w">            </span>chattr<span class="w"> </span>-i<span class="w"> </span>/etc/shadow
+<span class="w">            </span>chattr<span class="w"> </span>-i<span class="w"> </span>/etc/group
+<span class="w">            </span>chattr<span class="w"> </span>-i<span class="w"> </span>/etc/gshadow
+<span class="w">            </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;取消锁定成功！！&quot;</span>
+<span class="p">;;</span>
+<span class="w">       </span>*<span class="o">)</span>
+<span class="w">            </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;请输入Y/y or N/n&quot;</span>
+<span class="k">esac</span>
+</code></pre></div>
+
+<hr />
+<h1 id="列出排名前10的内存占用进程">列出排名前10的内存占用进程</h1>
+<div class="highlight"><pre><span></span><code>ps<span class="w"> </span>aux<span class="w"> </span><span class="p">|</span><span class="w"> </span>sort<span class="w"> </span>-rk<span class="w"> </span><span class="m">4</span>,4<span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-n<span class="w"> </span><span class="m">10</span>
+</code></pre></div>
+
+<hr />
+<h1 id="iptables自动屏蔽访问网站频繁的ip">iptables自动屏蔽访问网站频繁的IP</h1>
+<ul>
+<li>使用场景：针对恶意访问网站情况</li>
+<li>根据访问日志（以 nginx 的 logs 中记录访问的 access.log 日志文件为例，检测短期访问大于100的IP，并使用iptables命令进行屏蔽，同时将禁用的IP放到/tmp/deny_ip.log文件中）</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="ch">#!/bin/bash</span>
+<span class="nv">DATE</span><span class="o">=</span><span class="k">$(</span>date<span class="w"> </span>+%d/%b/%Y:%H:%M<span class="k">)</span>
+<span class="nv">LOG_FILE</span><span class="o">=</span>/usr/local/nginx/logs/demo2.access.log
+<span class="nv">ABNORMAL_IP</span><span class="o">=</span><span class="k">$(</span>tail<span class="w"> </span>-n5000<span class="w"> </span><span class="nv">$LOG_FILE</span><span class="w"> </span><span class="p">|</span>grep<span class="w"> </span><span class="nv">$DATE</span><span class="w"> </span><span class="p">|</span>awk<span class="w"> </span><span class="s1">&#39;{a[$1]++}END{for(i in a)if(a[i]&gt;100)print i}&#39;</span><span class="k">)</span>
+<span class="k">for</span><span class="w"> </span>IP<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="nv">$ABNORMAL_IP</span><span class="p">;</span><span class="w"> </span><span class="k">do</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="k">$(</span>iptables<span class="w"> </span>-vnL<span class="w"> </span><span class="p">|</span>grep<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$IP</span><span class="s2">&quot;</span><span class="k">)</span><span class="w"> </span>-eq<span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">        </span>iptables<span class="w"> </span>-I<span class="w"> </span>INPUT<span class="w"> </span>-s<span class="w"> </span><span class="nv">$IP</span><span class="w"> </span>-j<span class="w"> </span>DROP
+<span class="w">        </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span>date<span class="w"> </span>+<span class="s1">&#39;%F_%T&#39;</span><span class="k">)</span><span class="s2"> </span><span class="nv">$IP</span><span class="s2">&quot;</span><span class="w"> </span>&gt;&gt;<span class="w"> </span>/tmp/deny_ip.log
+<span class="w">    </span><span class="k">fi</span>
+<span class="k">done</span>
+</code></pre></div>
+
+<hr />
+<h1 id="自动发布-java-项目tomcat">自动发布 Java 项目（Tomcat）</h1>
+<div class="highlight"><pre><span></span><code><span class="ch">#!/bin/bash</span>
+<span class="nv">DATE</span><span class="o">=</span><span class="k">$(</span>date<span class="w"> </span>+%F_%T<span class="k">)</span>
+
+<span class="nv">TOMCAT_NAME</span><span class="o">=</span><span class="nv">$1</span>
+<span class="nv">TOMCAT_DIR</span><span class="o">=</span>/usr/local/<span class="nv">$TOMCAT_NAME</span>
+<span class="nv">ROOT</span><span class="o">=</span><span class="nv">$TOMCAT_DIR</span>/webapps/ROOT
+
+<span class="nv">BACKUP_DIR</span><span class="o">=</span>/data/backup
+<span class="nv">WORK_DIR</span><span class="o">=</span>/tmp
+<span class="nv">PROJECT_NAME</span><span class="o">=</span>tomcat-java-demo
+
+<span class="c1"># 拉取代码</span>
+<span class="nb">cd</span><span class="w"> </span><span class="nv">$WORK_DIR</span>
+<span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span>!<span class="w"> </span>-d<span class="w"> </span><span class="nv">$PROJECT_NAME</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">   </span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/xxxx/tomcat-java-demo
+<span class="w">   </span><span class="nb">cd</span><span class="w"> </span><span class="nv">$PROJECT_NAME</span>
+<span class="k">else</span>
+<span class="w">   </span><span class="nb">cd</span><span class="w"> </span><span class="nv">$PROJECT_NAME</span>
+<span class="w">   </span>git<span class="w"> </span>pull
+<span class="k">fi</span>
+
+<span class="c1"># 构建</span>
+mvn<span class="w"> </span>clean<span class="w"> </span>package<span class="w"> </span>-Dmaven.test.skip<span class="o">=</span><span class="nb">true</span>
+<span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="nv">$?</span><span class="w"> </span>-ne<span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">   </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;maven build failure!&quot;</span>
+<span class="w">   </span><span class="nb">exit</span><span class="w"> </span><span class="m">1</span>
+<span class="k">fi</span>
+
+<span class="c1"># 部署</span>
+<span class="nv">TOMCAT_PID</span><span class="o">=</span><span class="k">$(</span>ps<span class="w"> </span>-ef<span class="w"> </span><span class="p">|</span>grep<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$TOMCAT_NAME</span><span class="s2">&quot;</span><span class="w"> </span><span class="p">|</span>egrep<span class="w"> </span>-v<span class="w"> </span><span class="s2">&quot;grep|</span><span class="nv">$$</span><span class="s2">&quot;</span><span class="w"> </span><span class="p">|</span>awk<span class="w"> </span><span class="s1">&#39;NR==1{print $2}&#39;</span><span class="k">)</span>
+<span class="o">[</span><span class="w"> </span>-n<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$TOMCAT_PID</span><span class="s2">&quot;</span><span class="w"> </span><span class="o">]</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">kill</span><span class="w"> </span>-9<span class="w"> </span><span class="nv">$TOMCAT_PID</span>
+<span class="o">[</span><span class="w"> </span>-d<span class="w"> </span><span class="nv">$ROOT</span><span class="w"> </span><span class="o">]</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>mv<span class="w"> </span><span class="nv">$ROOT</span><span class="w"> </span><span class="nv">$BACKUP_DIR</span>/<span class="si">${</span><span class="nv">TOMCAT_NAME</span><span class="si">}</span>_ROOT<span class="nv">$DATE</span>
+unzip<span class="w"> </span><span class="nv">$WORK_DIR</span>/<span class="nv">$PROJECT_NAME</span>/target/*.war<span class="w"> </span>-d<span class="w"> </span><span class="nv">$ROOT</span>
+<span class="nv">$TOMCAT_DIR</span>/bin/startup.sh
+</code></pre></div>
+
+<hr />
+<h1 id="nginx日志分析">Nginx日志分析</h1>
+<div class="highlight"><pre><span></span><code><span class="ch">#!/bin/bash</span>
+<span class="c1"># 日志格式: $remote_addr - $remote_user [$time_local] &quot;$request&quot; $status $body_bytes_sent &quot;$http_referer&quot; &quot;$http_user_agent&quot; &quot;$http_x_forwarded_for&quot;</span>
+<span class="nv">LOG_FILE</span><span class="o">=</span><span class="nv">$1</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;统计访问最多的10个IP&quot;</span>
+awk<span class="w"> </span><span class="s1">&#39;{a[$1]++}END{print &quot;UV:&quot;,length(a);for(v in a)print v,a[v]}&#39;</span><span class="w"> </span><span class="nv">$LOG_FILE</span><span class="w"> </span><span class="p">|</span>sort<span class="w"> </span>-k2<span class="w"> </span>-nr<span class="w"> </span><span class="p">|</span>head<span class="w"> </span>-10
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;----------------------&quot;</span>
+
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;统计时间段访问最多的IP&quot;</span>
+awk<span class="w"> </span><span class="s1">&#39;$4&gt;=&quot;[01/Dec/2018:13:20:25&quot; &amp;&amp; $4&lt;=&quot;[27/Nov/2018:16:20:49&quot;{a[$1]++}END{for(v in a)print v,a[v]}&#39;</span><span class="w"> </span><span class="nv">$LOG_FILE</span><span class="w"> </span><span class="p">|</span>sort<span class="w"> </span>-k2<span class="w"> </span>-nr<span class="p">|</span>head<span class="w"> </span>-10
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;----------------------&quot;</span>
+
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;统计访问最多的10个页面&quot;</span>
+awk<span class="w"> </span><span class="s1">&#39;{a[$7]++}END{print &quot;PV:&quot;,length(a);for(v in a){if(a[v]&gt;10)print v,a[v]}}&#39;</span><span class="w"> </span><span class="nv">$LOG_FILE</span><span class="w"> </span><span class="p">|</span>sort<span class="w"> </span>-k2<span class="w"> </span>-nr
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;----------------------&quot;</span>
+
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;统计访问页面状态码数量&quot;</span>
+awk<span class="w"> </span><span class="s1">&#39;{a[$7&quot; &quot;$9]++}END{for(v in a){if(a[v]&gt;5)print v,a[v]}}&#39;</span>
+</code></pre></div>
+
+<hr />
+<h1 id="查看网卡实时流量">查看网卡实时流量</h1>
+<div class="highlight"><pre><span></span><code><span class="ch">#!/bin/bash</span>
+<span class="nv">NIC</span><span class="o">=</span><span class="nv">$1</span>
+<span class="nb">echo</span><span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot; In ------ Out&quot;</span>
+<span class="k">while</span><span class="w"> </span>true<span class="p">;</span><span class="w"> </span><span class="k">do</span>
+<span class="w">    </span><span class="nv">OLD_IN</span><span class="o">=</span><span class="k">$(</span>awk<span class="w"> </span><span class="s1">&#39;$0~&quot;&#39;</span><span class="nv">$NIC</span><span class="s1">&#39;&quot;{print $2}&#39;</span><span class="w"> </span>/proc/net/dev<span class="k">)</span>
+<span class="w">    </span><span class="nv">OLD_OUT</span><span class="o">=</span><span class="k">$(</span>awk<span class="w"> </span><span class="s1">&#39;$0~&quot;&#39;</span><span class="nv">$NIC</span><span class="s1">&#39;&quot;{print $10}&#39;</span><span class="w"> </span>/proc/net/dev<span class="k">)</span>
+<span class="w">    </span>sleep<span class="w"> </span><span class="m">1</span>
+<span class="w">    </span><span class="nv">NEW_IN</span><span class="o">=</span><span class="k">$(</span>awk<span class="w">  </span><span class="s1">&#39;$0~&quot;&#39;</span><span class="nv">$NIC</span><span class="s1">&#39;&quot;{print $2}&#39;</span><span class="w"> </span>/proc/net/dev<span class="k">)</span>
+<span class="w">    </span><span class="nv">NEW_OUT</span><span class="o">=</span><span class="k">$(</span>awk<span class="w"> </span><span class="s1">&#39;$0~&quot;&#39;</span><span class="nv">$NIC</span><span class="s1">&#39;&quot;{print $10}&#39;</span><span class="w"> </span>/proc/net/dev<span class="k">)</span>
+<span class="w">    </span><span class="nv">IN</span><span class="o">=</span><span class="k">$(</span><span class="nb">printf</span><span class="w"> </span><span class="s2">&quot;%.1f%s&quot;</span><span class="w"> </span><span class="s2">&quot;</span><span class="k">$((</span><span class="o">(</span><span class="nv">$NEW_IN</span><span class="o">-</span><span class="nv">$OLD_IN</span><span class="o">)/</span><span class="m">1024</span><span class="k">))</span><span class="s2">&quot;</span><span class="w"> </span><span class="s2">&quot;KB/s&quot;</span><span class="k">)</span>
+<span class="w">    </span><span class="nv">OUT</span><span class="o">=</span><span class="k">$(</span><span class="nb">printf</span><span class="w"> </span><span class="s2">&quot;%.1f%s&quot;</span><span class="w"> </span><span class="s2">&quot;</span><span class="k">$((</span><span class="o">(</span><span class="nv">$NEW_OUT</span><span class="o">-</span><span class="nv">$OLD_OUT</span><span class="o">)/</span><span class="m">1024</span><span class="k">))</span><span class="s2">&quot;</span><span class="w"> </span><span class="s2">&quot;KB/s&quot;</span><span class="k">)</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$IN</span><span class="s2"> </span><span class="nv">$OUT</span><span class="s2">&quot;</span>
+<span class="w">    </span>sleep<span class="w"> </span><span class="m">1</span>
+<span class="k">done</span>
+</code></pre></div>
+
+<hr />
+<h1 id="批量检查网站是否异常并发邮件">批量检查网站是否异常并发邮件</h1>
+<div class="highlight"><pre><span></span><code><span class="ch">#!/bin/bash  </span>
+<span class="nv">URL_LIST</span><span class="o">=</span><span class="s2">&quot;www.baidu.com www.ctnrs.com www.der-matech.net.cn www.der-matech.com.cn www.der-matech.cn www.der-matech.top www.der-matech.org&quot;</span>
+<span class="k">for</span><span class="w"> </span>URL<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="nv">$URL_LIST</span><span class="p">;</span><span class="w"> </span><span class="k">do</span>
+<span class="w">    </span><span class="nv">FAIL_COUNT</span><span class="o">=</span><span class="m">0</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="o">((</span><span class="nv">i</span><span class="o">=</span><span class="m">1</span><span class="p">;</span>i&lt;<span class="o">=</span><span class="m">3</span><span class="p">;</span>i++<span class="o">))</span><span class="p">;</span><span class="w"> </span><span class="k">do</span>
+<span class="w">        </span><span class="nv">HTTP_CODE</span><span class="o">=</span><span class="k">$(</span>curl<span class="w"> </span>-o<span class="w"> </span>/dev/null<span class="w"> </span>--connect-timeout<span class="w"> </span><span class="m">3</span><span class="w"> </span>-s<span class="w"> </span>-w<span class="w"> </span><span class="s2">&quot;%{http_code}&quot;</span><span class="w"> </span><span class="nv">$URL</span><span class="k">)</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="nv">$HTTP_CODE</span><span class="w"> </span>-eq<span class="w"> </span><span class="m">200</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">            </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$URL</span><span class="s2"> OK&quot;</span>
+<span class="w">            </span><span class="k">break</span>
+<span class="w">        </span><span class="k">else</span>
+<span class="w">            </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$URL</span><span class="s2"> retry </span><span class="nv">$FAIL_COUNT</span><span class="s2">&quot;</span>
+<span class="w">            </span><span class="nb">let</span><span class="w"> </span>FAIL_COUNT++
+<span class="w">        </span><span class="k">fi</span>
+<span class="w">    </span><span class="k">done</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="nv">$FAIL_COUNT</span><span class="w"> </span>-eq<span class="w"> </span><span class="m">3</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">        </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Warning: </span><span class="nv">$URL</span><span class="s2"> Access failure!&quot;</span>
+<span class="w">  </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;网站</span><span class="nv">$URL坏掉</span><span class="s2">，请及时处理&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>mail<span class="w"> </span>-s<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$URL网站高危</span><span class="s2">&quot;</span><span class="w"> </span>xxxxx@163.com
+<span class="w">    </span><span class="k">fi</span>
+<span class="k">done</span>
+</code></pre></div>
+
+<hr />
+<h1 id="目录入侵检测与告警">目录入侵检测与告警</h1>
+<div class="highlight"><pre><span></span><code><span class="ch">#!/bin/bash</span>
+
+<span class="nv">MON_DIR</span><span class="o">=</span>/opt
+inotifywait<span class="w"> </span>-mqr<span class="w"> </span>--format<span class="w"> </span>%f<span class="w"> </span>-e<span class="w"> </span>create<span class="w"> </span><span class="nv">$MON_DIR</span><span class="w"> </span><span class="p">|</span><span class="se">\</span>
+<span class="k">while</span><span class="w"> </span><span class="nb">read</span><span class="w"> </span>files<span class="p">;</span><span class="w"> </span><span class="k">do</span>
+<span class="w">   </span><span class="c1">#同步文件</span>
+<span class="w">   </span>rsync<span class="w"> </span>-avz<span class="w"> </span>/opt<span class="w"> </span>/tmp/opt
+<span class="w">  </span><span class="c1">#检测文件是否被修改</span>
+<span class="w">   </span><span class="c1">#echo &quot;$(date +&#39;%F %T&#39;) create $files&quot; | mail -s &quot;dir monitor&quot; xxx@163.com</span>
+<span class="k">done</span>
+</code></pre></div>
+
+<hr />
+<h1 id="一键查看服务器利用率">一键查看服务器利用率</h1>
+<div class="highlight"><pre><span></span><code><span class="ch">#!/bin/bash</span>
+<span class="k">function</span><span class="w"> </span>cpu<span class="o">(){</span>
+
+<span class="w"> </span><span class="nv">util</span><span class="o">=</span><span class="k">$(</span>vmstat<span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">&#39;{if(NR==3)print $13+$14}&#39;</span><span class="k">)</span>
+<span class="w"> </span><span class="nv">iowait</span><span class="o">=</span><span class="k">$(</span>vmstat<span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">&#39;{if(NR==3)print $16}&#39;</span><span class="k">)</span>
+<span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;CPU -使用率：</span><span class="si">${</span><span class="nv">util</span><span class="si">}</span><span class="s2">% ,等待磁盘IO相应使用率：</span><span class="si">${</span><span class="nv">iowait</span><span class="si">}</span><span class="s2">:</span><span class="si">${</span><span class="nv">iowait</span><span class="si">}</span><span class="s2">%&quot;</span>
+
+<span class="o">}</span>
+<span class="k">function</span><span class="w"> </span>memory<span class="w"> </span><span class="o">(){</span>
+
+<span class="w"> </span><span class="nv">total</span><span class="o">=</span><span class="sb">`</span>free<span class="w"> </span>-m<span class="w"> </span><span class="p">|</span>awk<span class="w"> </span><span class="s1">&#39;{if(NR==2)printf &quot;%.1f&quot;,$2/1024}&#39;</span><span class="sb">`</span>
+<span class="w">    </span><span class="nv">used</span><span class="o">=</span><span class="sb">`</span>free<span class="w"> </span>-m<span class="w"> </span><span class="p">|</span>awk<span class="w"> </span><span class="s1">&#39;{if(NR==2) printf &quot;%.1f&quot;,($2-$NF)/1024}&#39;</span><span class="sb">`</span>
+<span class="w">    </span><span class="nv">available</span><span class="o">=</span><span class="sb">`</span>free<span class="w"> </span>-m<span class="w"> </span><span class="p">|</span>awk<span class="w"> </span><span class="s1">&#39;{if(NR==2) printf &quot;%.1f&quot;,$NF/1024}&#39;</span><span class="sb">`</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;内存 - 总大小: </span><span class="si">${</span><span class="nv">total</span><span class="si">}</span><span class="s2">G , 使用: </span><span class="si">${</span><span class="nv">used</span><span class="si">}</span><span class="s2">G , 剩余: </span><span class="si">${</span><span class="nv">available</span><span class="si">}</span><span class="s2">G&quot;</span>
+<span class="o">}</span>
+<span class="k">function</span><span class="w"> </span>disk<span class="o">(){</span>
+
+<span class="w"> </span><span class="nv">fs</span><span class="o">=</span><span class="k">$(</span>df<span class="w"> </span>-h<span class="w"> </span><span class="p">|</span>awk<span class="w"> </span><span class="s1">&#39;/^\/dev/{print $1}&#39;</span><span class="k">)</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span>p<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="nv">$fs</span><span class="p">;</span><span class="w"> </span><span class="k">do</span>
+<span class="w">        </span><span class="nv">mounted</span><span class="o">=</span><span class="k">$(</span>df<span class="w"> </span>-h<span class="w"> </span><span class="p">|</span>awk<span class="w"> </span><span class="s1">&#39;$1==&quot;&#39;</span><span class="nv">$p</span><span class="s1">&#39;&quot;{print $NF}&#39;</span><span class="k">)</span>
+<span class="w">        </span><span class="nv">size</span><span class="o">=</span><span class="k">$(</span>df<span class="w"> </span>-h<span class="w"> </span><span class="p">|</span>awk<span class="w"> </span><span class="s1">&#39;$1==&quot;&#39;</span><span class="nv">$p</span><span class="s1">&#39;&quot;{print $2}&#39;</span><span class="k">)</span>
+<span class="w">        </span><span class="nv">used</span><span class="o">=</span><span class="k">$(</span>df<span class="w"> </span>-h<span class="w"> </span><span class="p">|</span>awk<span class="w"> </span><span class="s1">&#39;$1==&quot;&#39;</span><span class="nv">$p</span><span class="s1">&#39;&quot;{print $3}&#39;</span><span class="k">)</span>
+<span class="w">        </span><span class="nv">used_percent</span><span class="o">=</span><span class="k">$(</span>df<span class="w"> </span>-h<span class="w"> </span><span class="p">|</span>awk<span class="w"> </span><span class="s1">&#39;$1==&quot;&#39;</span><span class="nv">$p</span><span class="s1">&#39;&quot;{print $5}&#39;</span><span class="k">)</span>
+<span class="w">        </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;硬盘 - 挂载点: </span><span class="nv">$mounted</span><span class="s2"> , 总大小: </span><span class="nv">$size</span><span class="s2"> , 使用: </span><span class="nv">$used</span><span class="s2"> , 使用率: </span><span class="nv">$used_percent</span><span class="s2">&quot;</span>
+<span class="w">    </span><span class="k">done</span>
+
+<span class="o">}</span>
+<span class="k">function</span><span class="w"> </span>tcp_status<span class="o">()</span><span class="w"> </span><span class="o">{</span>
+<span class="w">    </span><span class="nv">summary</span><span class="o">=</span><span class="k">$(</span>ss<span class="w"> </span>-antp<span class="w"> </span><span class="p">|</span>awk<span class="w"> </span><span class="s1">&#39;{status[$1]++}END{for(i in status) printf i&quot;:&quot;status[i]&quot; &quot;}&#39;</span><span class="k">)</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;TCP连接状态 - </span><span class="nv">$summary</span><span class="s2">&quot;</span>
+<span class="o">}</span>
+cpu
+memory
+disk
+tcp_status
+</code></pre></div>
+
+<hr />
+<h1 id="以sudo运行整个shell脚本">以sudo运行整个shell脚本</h1>
+<ul>
+<li>将 sudo 放在 shell 脚本的首中，会以 root 身份运行整个程序。 例如自动化系统升级或包管理器包装器——不再需要用 sudo 预先准备一切</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="ch">#!/usr/bin/sudo /bin/bash</span>
+</code></pre></div>
+
+<hr />
+<h1 id="将视频转换为gif动图">将视频转换为gif动图</h1>
+<ul>
+<li>需要系统安装 ffmpeg , ubuntu 中可以通过 <code>sudo apt install ffmpeg</code> 安装。</li>
+</ul>
+<div class="highlight"><pre><span></span><code>ffmpeg<span class="w"> </span>-ss<span class="w"> </span><span class="m">00</span>:00:03<span class="w"> </span>-t<span class="w"> </span><span class="m">3</span><span class="w"> </span>-i<span class="w"> </span>test.mov<span class="w"> </span>-s<span class="w"> </span>640x360<span class="w"> </span>-r<span class="w">  </span><span class="m">15</span><span class="w">  </span>dongtu.gif
+</code></pre></div>
+
+<ul>
+<li><code>-ss 00:00:03</code> 表示从第 <code>00</code> 分钟 <code>03</code> 秒开始制作 GIF，如果你想从第 9 秒开始，则输入 <code>-ss 00:00:09</code>，或者 <code>-ss 9</code>，支持小数点，所以也可以输入 <code>-ss 00:00:11.3</code>，或者 <code>-ss 34.6</code> 之类的，如果不加该命令，则从 0 秒开始制作； </li>
+<li><code>-t 3</code> 表示把持续 3 秒的视频转换为 GIF，你可以把它改为其他数字，例如 1.5，7 等等，时间越长，GIF 体积越大，如果不加该命令，则把整个视频转为 GIF； </li>
+<li><code>-i</code> 表示 invert； </li>
+<li>test.mov 就是你要转换的视频，名称最好不要有中文，不要留空格，支持多种视频格式； </li>
+<li><code>-s 640x360</code> 是 GIF 的分辨率，视频分辨率可能是 1080p，但你制作的 GIF 可以转为 720p 等，允许自定义，分辨率越高体积越大，如果不加该命令，则保持分辨率不变； </li>
+<li><code>-r “15”</code> 表示帧率，网上下载的视频帧率通常为 24，设为 15 效果挺好了，帧率越高体积越大，如果不加该命令，则保持帧率不变；</li>
+<li>dongtu.gif：就是你要输出的文件，你也可以把它命名为 hello.gif 等等。</li>
+</ul>
+<hr />
+<h1 id="批量监控服务器磁盘使用率">批量监控服务器磁盘使用率</h1>
+<div class="highlight"><pre><span></span><code><span class="ch">#!/bin/bash  </span>
+<span class="nv">HOST_INFO</span><span class="o">=</span>host.info<span class="w">  </span>
+
+<span class="c1"># 遍历host.info文件中的每个IP地址  </span>
+<span class="k">for</span><span class="w"> </span>IP<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="k">$(</span>awk<span class="w"> </span><span class="s1">&#39;/^[^#]/{print $1}&#39;</span><span class="w"> </span><span class="nv">$HOST_INFO</span><span class="k">)</span><span class="p">;</span><span class="w"> </span><span class="k">do</span><span class="w">  </span>
+<span class="w">    </span><span class="c1"># 根据IP地址获取对应的用户名和端口号  </span>
+<span class="w">    </span><span class="nv">USER</span><span class="o">=</span><span class="k">$(</span>awk<span class="w"> </span>-v<span class="w"> </span><span class="nv">ip</span><span class="o">=</span><span class="nv">$IP</span><span class="w"> </span><span class="s1">&#39;ip==$1{print $2}&#39;</span><span class="w"> </span><span class="nv">$HOST_INFO</span><span class="k">)</span><span class="w">  </span>
+<span class="w">    </span><span class="nv">PORT</span><span class="o">=</span><span class="k">$(</span>awk<span class="w"> </span>-v<span class="w"> </span><span class="nv">ip</span><span class="o">=</span><span class="nv">$IP</span><span class="w"> </span><span class="s1">&#39;ip==$1{print $3}&#39;</span><span class="w"> </span><span class="nv">$HOST_INFO</span><span class="k">)</span><span class="w">  </span>
+<span class="w">    </span><span class="nv">TMP_FILE</span><span class="o">=</span>/tmp/disk.tmp<span class="w">  </span>
+
+<span class="w">    </span><span class="c1"># 通过SSH远程执行df -h命令，获取磁盘使用情况并保存到临时文件中  </span>
+<span class="w">    </span>ssh<span class="w"> </span>-p<span class="w"> </span><span class="nv">$PORT</span><span class="w"> </span><span class="nv">$USER</span>@<span class="nv">$IP</span><span class="w"> </span><span class="s1">&#39;df -h&#39;</span><span class="w"> </span>&gt;<span class="w"> </span><span class="nv">$TMP_FILE</span><span class="w">  </span>
+
+<span class="w">    </span><span class="c1"># 提取每个分区的名称和使用率，并判断是否超过阈值  </span>
+<span class="w">    </span><span class="nv">USE_RATE_LIST</span><span class="o">=</span><span class="k">$(</span>awk<span class="w"> </span><span class="s1">&#39;BEGIN{OFS=&quot;=&quot;}/^\/dev/{print $NF,int($5)}&#39;</span><span class="w"> </span><span class="nv">$TMP_FILE</span><span class="k">)</span><span class="w">  </span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span>USE_RATE<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="nv">$USE_RATE_LIST</span><span class="p">;</span><span class="w"> </span><span class="k">do</span><span class="w">  </span>
+<span class="w">        </span><span class="nv">PART_NAME</span><span class="o">=</span><span class="si">${</span><span class="nv">USE_RATE</span><span class="p">%=*</span><span class="si">}</span><span class="w">  </span><span class="c1"># 提取分区名称  </span>
+<span class="w">        </span><span class="nv">USE_RATE</span><span class="o">=</span><span class="si">${</span><span class="nv">USE_RATE</span><span class="p">#*=</span><span class="si">}</span><span class="w">   </span><span class="c1"># 提取使用率  </span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="nv">$USE_RATE</span><span class="w"> </span>-ge<span class="w"> </span><span class="m">80</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span><span class="w">  </span><span class="c1"># 判断使用率是否超过80%  </span>
+<span class="w">            </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Warning: </span><span class="nv">$PART_NAME</span><span class="s2"> Partition usage </span><span class="nv">$USE_RATE</span><span class="s2">% on server </span><span class="nv">$IP</span><span class="s2">!&quot;</span><span class="w">  </span>
+<span class="w">        </span><span class="k">fi</span><span class="w">  </span>
+<span class="w">    </span><span class="k">done</span><span class="w">  </span>
+<span class="k">done</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="c1">#host.info</span>
+<span class="m">172</span>.16.183.75<span class="w"> </span>root<span class="w"> </span><span class="m">22</span>
+<span class="m">172</span>.16.183.76<span class="w"> </span>root<span class="w"> </span><span class="m">22</span>
+</code></pre></div>
+
+<hr />
+<h1 id="使用rsync备份目录">使用rsync备份目录</h1>
+<ul>
+<li>https://mp.weixin.qq.com/s/k-qOKIWHgfwngNG_YlylKA</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="ch">#!/bin/bash</span>
+
+<span class="c1"># 检查是否安装了rsync</span>
+<span class="k">if</span><span class="w"> </span>!<span class="w"> </span><span class="nb">command</span><span class="w"> </span>-v<span class="w"> </span>rsync<span class="w"> </span><span class="p">&amp;</span>&gt;<span class="w"> </span>/dev/null<span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;rsync 未安装。正在安装...&quot;</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="o">[[</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$OSTYPE</span><span class="s2">&quot;</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s2">&quot;linux-gnu&quot;</span>*<span class="w"> </span><span class="o">]]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span>-x<span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span><span class="nb">command</span><span class="w"> </span>-v<span class="w"> </span>apt-get<span class="k">)</span><span class="s2">&quot;</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">            </span>sudo<span class="w"> </span>apt-get<span class="w"> </span>update<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>sudo<span class="w"> </span>apt-get<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>rsync
+<span class="w">        </span><span class="k">elif</span><span class="w"> </span><span class="o">[</span><span class="w"> </span>-x<span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span><span class="nb">command</span><span class="w"> </span>-v<span class="w"> </span>yum<span class="k">)</span><span class="s2">&quot;</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">            </span>sudo<span class="w"> </span>yum<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>rsync
+<span class="w">        </span><span class="k">elif</span><span class="w"> </span><span class="o">[</span><span class="w"> </span>-x<span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span><span class="nb">command</span><span class="w"> </span>-v<span class="w"> </span>dnf<span class="k">)</span><span class="s2">&quot;</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">            </span>sudo<span class="w"> </span>dnf<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>rsync
+<span class="w">        </span><span class="k">else</span>
+<span class="w">            </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;无法检测到合适的包管理器，请手动安装rsync。&quot;</span>
+<span class="w">            </span><span class="nb">exit</span><span class="w"> </span><span class="m">1</span>
+<span class="w">        </span><span class="k">fi</span>
+<span class="w">    </span><span class="k">elif</span><span class="w"> </span><span class="o">[[</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$OSTYPE</span><span class="s2">&quot;</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s2">&quot;darwin&quot;</span>*<span class="w"> </span><span class="o">]]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span>!<span class="w"> </span><span class="nb">command</span><span class="w"> </span>-v<span class="w"> </span>brew<span class="w"> </span><span class="p">&amp;</span>&gt;<span class="w"> </span>/dev/null<span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">            </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Homebrew 未安装。请先安装Homebrew。&quot;</span>
+<span class="w">            </span><span class="nb">exit</span><span class="w"> </span><span class="m">1</span>
+<span class="w">        </span><span class="k">fi</span>
+<span class="w">        </span>brew<span class="w"> </span>install<span class="w"> </span>rsync
+<span class="w">    </span><span class="k">else</span>
+<span class="w">        </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;不支持的操作系统，请手动安装rsync。&quot;</span>
+<span class="w">        </span><span class="nb">exit</span><span class="w"> </span><span class="m">1</span>
+<span class="w">    </span><span class="k">fi</span>
+
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;rsync 安装完成。&quot;</span>
+<span class="k">else</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;rsync 已安装。&quot;</span>
+<span class="k">fi</span>
+
+<span class="c1">#要备份的文件目录</span>
+<span class="nb">read</span><span class="w"> </span>-p<span class="w"> </span><span class="s2">&quot;请输入要备份的源目录: &quot;</span><span class="w"> </span>BACKUP_SOURCE_DIR
+
+<span class="c1"># 获取当前时间和昨天的日期</span>
+<span class="nv">NOW</span><span class="o">=</span><span class="k">$(</span>date<span class="w"> </span>+%Y%m%d%H%M<span class="k">)</span>
+<span class="nv">YESTERDAY</span><span class="o">=</span><span class="k">$(</span>date<span class="w"> </span>-d<span class="w"> </span><span class="s2">&quot;yesterday&quot;</span><span class="w"> </span>+%Y%m%d<span class="k">)</span>
+
+<span class="c1"># 配置备份系统存放的目录</span>
+<span class="nv">BACKUP_HOME</span><span class="o">=</span><span class="s2">&quot;/srv/backups&quot;</span>
+<span class="nv">CURRENT_LINK</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$BACKUP_HOME</span><span class="s2">/current&quot;</span>
+<span class="nv">SNAPSHOT_DIR</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$BACKUP_HOME</span><span class="s2">/snapshots&quot;</span>
+<span class="nv">ARCHIVES_DIR</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$BACKUP_HOME</span><span class="s2">/archives&quot;</span>
+
+<span class="c1"># 创建备份文件存放目录</span>
+mkdir<span class="w"> </span>-p<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$SNAPSHOT_DIR</span><span class="s2">&quot;</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$ARCHIVES_DIR</span><span class="s2">&quot;</span><span class="w"> </span><span class="p">&amp;</span>&gt;<span class="w"> </span>/dev/null
+
+<span class="c1"># 使用rsync进行备份</span>
+rsync<span class="w"> </span>-azH<span class="w"> </span>--link-dest<span class="o">=</span><span class="s2">&quot;</span><span class="nv">$CURRENT_LINK</span><span class="s2">&quot;</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$BACKUP_SOURCE_DIR</span><span class="s2">&quot;</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$SNAPSHOT_DIR</span><span class="s2">/</span><span class="nv">$NOW</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="o">&amp;&amp;</span><span class="w"> </span>ln<span class="w"> </span>-snf<span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span>ls<span class="w"> </span>-1d<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$SNAPSHOT_DIR</span><span class="s2">&quot;</span>/*<span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-n<span class="w"> </span><span class="m">1</span><span class="k">)</span><span class="s2">&quot;</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$CURRENT_LINK</span><span class="s2">&quot;</span>
+
+<span class="c1"># 归档</span>
+<span class="c1"># 如果快照是昨天的，将其压缩归档</span>
+<span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="k">$(</span>ls<span class="w"> </span>-d<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$SNAPSHOT_DIR</span><span class="s2">&quot;</span>/<span class="s2">&quot;</span><span class="nv">$YESTERDAY</span><span class="s2">&quot;</span>*<span class="w"> </span><span class="m">2</span>&gt;<span class="w"> </span>/dev/null<span class="w"> </span><span class="p">|</span><span class="w"> </span>wc<span class="w"> </span>-l<span class="k">)</span><span class="w"> </span>-ne<span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">  </span>tar<span class="w"> </span>-czf<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$ARCHIVES_DIR</span><span class="s2">/</span><span class="nv">$YESTERDAY</span><span class="s2">.tar.gz&quot;</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$SNAPSHOT_DIR</span><span class="s2">/</span><span class="nv">$YESTERDAY</span><span class="s2">&quot;</span>*<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="o">&amp;&amp;</span><span class="w"> </span>rm<span class="w"> </span>-rf<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$SNAPSHOT_DIR</span><span class="s2">/</span><span class="nv">$YESTERDAY</span><span class="s2">&quot;</span>*
+<span class="k">fi</span>
+</code></pre></div>
+
+<hr />
+<h1 id="创建指定大小的单个测试文件">创建指定大小的单个测试文件</h1>
+<div class="highlight"><pre><span></span><code>dd<span class="w"> </span><span class="k">if</span><span class="o">=</span>/dev/zero<span class="w"> </span><span class="nv">of</span><span class="o">=</span>testfile<span class="w"> </span><span class="nv">bs</span><span class="o">=</span>1G<span class="w"> </span><span class="nv">count</span><span class="o">=</span><span class="m">200</span>
+</code></pre></div>
+
+<hr />
+<h1 id="创建多个指定大小的测试文件">创建多个指定大小的测试文件</h1>
+<div class="highlight"><pre><span></span><code><span class="ch">#!/bin/bash</span>
+
+<span class="k">for</span><span class="w"> </span>i<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="o">{</span><span class="m">1</span>..100<span class="o">}</span>
+<span class="k">do</span>
+<span class="w">   </span>dd<span class="w"> </span><span class="k">if</span><span class="o">=</span>/dev/zero<span class="w"> </span><span class="nv">of</span><span class="o">=</span>testfile<span class="nv">$i</span><span class="w"> </span><span class="nv">bs</span><span class="o">=</span>1M<span class="w"> </span><span class="nv">count</span><span class="o">=</span><span class="m">1</span>
+<span class="k">done</span>
+</code></pre></div>
+
+<hr />
+<h1 id="后台运行命令">后台运行命令</h1>
+<h2 id="nohup">nohup</h2>
+<ul>
+<li><code>nohup</code>命令可以让你的程序在后台静默运行，即使你退出了终端。例如：</li>
+</ul>
+<div class="highlight"><pre><span></span><code>nohup<span class="w"> </span>cp<span class="w"> </span>/path/to/source<span class="w"> </span>/path/to/destination<span class="w"> </span><span class="p">&amp;</span>
+</code></pre></div>
+
+<ul>
+<li>
+<p><code>&amp;</code>符号会让命令在后台运行。</p>
+</li>
+<li>
+<p>使用<code>nohup</code>命令运行的程序，其标准输出和标准错误默认都会被重定向到一个名为<code>nohup.out</code>的文件中。所以，你可以通过检查这个文件来查看<code>cp</code>命令是否成功完成，以及是否有任何错误信息。</p>
+</li>
+<li>
+<p>例如，你可以使用<code>tail</code>命令来查看<code>nohup.out</code>文件的最后几行：</p>
+</li>
+</ul>
+<div class="highlight"><pre><span></span><code>tail<span class="w"> </span>nohup.out
+tail<span class="w"> </span>-f<span class="w"> </span>-n<span class="w"> </span><span class="m">1</span><span class="w"> </span>nohup.out<span class="w"> </span><span class="c1">#持续监控最后一行的输出</span>
+</code></pre></div>
+
+<ul>
+<li>如果<code>cp</code>命令成功完成，那么<code>nohup.out</code>文件可能不会有任何输出。如果<code>cp</code>命令遇到错误，那么错误信息将会被写入<code>nohup.out</code>文件。</li>
+</ul>
+<h2 id="screen">screen</h2>
+<p>另一种方法是使用<code>screen</code>命令，它可以创建一个或多个shell会话，这些会话可以在后台运行，也可以在需要时恢复。例如，你可以这样使用<code>screen</code>命令：</p>
+<div class="highlight"><pre><span></span><code>screen
+cp<span class="w"> </span>/path/to/source<span class="w"> </span>/path/to/destination
+</code></pre></div>
+
+<p>然后按<code>Ctrl+A</code>然后<code>D</code>来断开<code>screen</code>会话。你可以随时使用<code>screen -r</code>命令来恢复会话。</p>
+    </div>
+  </article>
+  <aside class="toc">
+    <p class="toc-label">本页目录</p>
+    <ul>
+  <li><a href="#nohup">nohup</a></li>
+  <li><a href="#screen">screen</a></li>
+</ul>
+  </aside>
+
+</div>
+
+</main>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>Learning Notes</span>
+    <a href="https://github.com/hangx969/learning-notes">GitHub</a>
+  </div>
+</footer>
+<script src="../../static/search.js"></script>
+</body>
+</html>

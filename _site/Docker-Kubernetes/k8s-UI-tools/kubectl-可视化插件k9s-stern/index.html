@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>kubectl 可视化插件 k9s 和 stern - Learning Notes</title>
+<link rel="stylesheet" href="../../../static/style.css">
+<link rel="stylesheet" href="../../../static/pygments.css">
+</head>
+<body data-root="../../../">
+<header class="site-header">
+  <div class="header-inner">
+    <a class="logo" href="../../../index.html"><span class="logo-mark"></span>LEARNING NOTES</a>
+    <div class="search">
+      <input id="search-input" type="search" placeholder="搜索笔记…" autocomplete="off" aria-label="搜索笔记">
+      <div id="search-results" hidden></div>
+    </div>
+  </div>
+  <nav class="topic-nav" aria-label="主题导航">
+    <div class="topic-nav-inner">
+      <a href="../../../AI/">AI</a>
+      <a href="../../../Aliyun/">Aliyun</a>
+      <a href="../../../Azure/">Azure</a>
+      <a href="../../../C%2B%2B/">C++</a>
+      <a href="../../../CloudComputing/">CloudComputing</a>
+      <a href="../../../Database/">Database</a>
+      <a href="../../../Docker-Kubernetes/" class="active">Docker-Kubernetes</a>
+      <a href="../../../GPU-DeepLearning/">GPU-DeepLearning</a>
+      <a href="../../../Git/">Git</a>
+      <a href="../../../Go/">Go</a>
+      <a href="../../../HPC/">HPC</a>
+      <a href="../../../IaC/">IaC</a>
+      <a href="../../../Linux-Shell/">Linux-Shell</a>
+      <a href="../../../Middlewares/">Middlewares</a>
+      <a href="../../../Networking/">Networking</a>
+      <a href="../../../OS/">OS</a>
+      <a href="../../../Python/">Python</a>
+      <a href="../../../SoftwareTesting/">SoftwareTesting</a>
+    </div>
+  </nav>
+</header>
+<main class="main">
+
+<div class="article-layout">
+
+  <aside class="sidebar">
+    <details class="sidebar-details">
+      <summary>Docker-Kubernetes</summary>
+      <nav class="sidebar-nav">
+        <p class="sidebar-group">CKA-CKS</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/CKA-CKS/CKA-%E5%A4%87%E8%80%83/">CKA 备考</a></li>
+          <li><a href="../../../Docker-Kubernetes/CKA-CKS/CKS-%E5%A4%87%E8%80%83/">CKS 备考</a></li>
+          <li><a href="../../../Docker-Kubernetes/CKA-CKS/k8s-%E9%9D%A2%E8%AF%95%E9%A2%98%E6%B1%87%E6%80%BB/">K8s 面试题汇总</a></li>
+        </ul>
+        <p class="sidebar-group">container-platform</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/container-platform/%E9%83%A8%E7%BD%B2openshift%283.10%29/">部署 OpenShift (3.10)</a></li>
+          <li><a href="../../../Docker-Kubernetes/container-platform/%E9%83%A8%E7%BD%B2%E8%BD%BB%E9%87%8F%E7%BA%A7%E7%9A%84K8S%E5%B9%B3%E5%8F%B0-K3S/">部署轻量级 K8S 平台 - K3S</a></li>
+        </ul>
+        <p class="sidebar-group">docker</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E5%9F%BA%E7%A1%80/">Docker基础</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E5%AE%89%E5%85%A8%E9%85%8D%E7%BD%AE-Capabilities%E4%B8%8E%E5%AE%B9%E5%99%A8%E5%8A%A0%E5%9B%BA/">Docker 安全配置详解：Capabilities 与容器加固</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2UI%E5%B7%A5%E5%85%B7portainer-%E9%83%A8%E7%BD%B2redis-sentinel/">Docker部署Portainer与Redis-Sentinel</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2gitlab/">Docker部署GitLab</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2lnmp%E7%BD%91%E7%AB%99/">Docker部署LNMP网站</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2loki/">Docker部署Loki日志系统</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2nginx-tomcat-httpd-go-python%E6%9C%8D%E5%8A%A1/">Docker部署Nginx-Tomcat-Httpd-Go-Python服务</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2prometheus-grafana-cAdvisior%E7%9B%91%E6%8E%A7/">Docker部署Prometheus-Grafana-cAdvisor监控</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2%E4%BB%93%E5%BA%93%E5%B9%B3%E5%8F%B0homebox/">Docker部署Homebox仓库平台</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1%E5%B7%A5%E5%85%B7gocron/">Docker部署GoCron定时任务工具</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2%E8%B7%AF%E7%94%B1%E7%9B%91%E6%8E%A7%E5%B7%A5%E5%85%B7NextTrace/">Docker部署NextTrace路由监控工具</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%85%8D%E7%BD%AENVIDIA%20GPU/">Docker配置NVIDIA GPU</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%85%8D%E7%BD%AE%E4%BB%A3%E7%90%86/">Docker配置代理</a></li>
+        </ul>
+        <p class="sidebar-group">harbor</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/harbor/harbor-basics/">Harbor 基础</a></li>
+          <li><a href="../../../Docker-Kubernetes/harbor/helm%E9%83%A8%E7%BD%B2harbor/">Helm 部署 Harbor</a></li>
+        </ul>
+        <p class="sidebar-group">helm-operator</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/helm-operator/helmv3-%E5%AE%89%E8%A3%85%E4%B8%8E%E4%BD%BF%E7%94%A8/">Helm v3 安装与使用</a></li>
+          <li><a href="../../../Docker-Kubernetes/helm-operator/helm%E9%83%A8%E7%BD%B2config-syncer%28kubed%29/">Helm 部署 Config Syncer (Kubed)</a></li>
+          <li><a href="../../../Docker-Kubernetes/helm-operator/helm%E9%83%A8%E7%BD%B2dragonfly/">Helm 部署 Dragonfly</a></li>
+          <li><a href="../../../Docker-Kubernetes/helm-operator/helm%E9%83%A8%E7%BD%B2pact-broker/">Helm 部署 Pact Broker</a></li>
+          <li><a href="../../../Docker-Kubernetes/helm-operator/helm%E9%83%A8%E7%BD%B2reloader/">Helm 部署 Reloader</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-CICD</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD%20Image%20Updater/">ArgoCD Image Updater</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD%E5%9F%BA%E7%A1%80/">ArgoCD基础</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD%E5%A4%9A%E9%9B%86%E7%BE%A4GitOps%E5%AE%9E%E6%88%98/">多集群 GitOps 实战：用 Argo CD 管理上百个 Kubernetes 集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD%E9%83%A8%E7%BD%B2Helm%E5%BA%94%E7%94%A8%E6%97%B6%E5%9F%9F%E5%90%8D%E8%A7%A3%E6%9E%90%E5%A4%B1%E8%B4%A5%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5%E4%B8%8E%E8%A7%A3%E5%86%B3/">ArgoCD部署Helm应用时域名解析失败问题排查与解决</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/ArgoCD/%E5%AD%A6%E4%B9%A0%E9%93%BE%E6%8E%A5/">ArgoCD学习链接</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Claude-Code%E5%AE%9E%E7%8E%B0CICD%E8%87%AA%E5%8A%A8%E5%8C%96%E5%8F%91%E5%B8%83%E6%B5%81%E7%A8%8B/">Claude Code 实现 CI/CD 自动化发布流程详细指南</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Gitlab/helm%E9%83%A8%E7%BD%B2gitlab/">Helm部署GitLab</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Gitlab/k8s%E9%83%A8%E7%BD%B2Gitlab%2811.8.1%29-%E5%9F%BA%E4%BA%8Eyaml/">K8s部署GitLab(11.8.1)-基于YAML</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Gitlab/%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%AE%89%E8%A3%85Gitlab%2817.9.8%29/">二进制安装GitLab(17.9.8)</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Jenkins/Jenkins%E8%AF%AD%E6%B3%95-%E5%9F%BA%E4%BA%8Edocker%E9%83%A8%E7%BD%B2/">Jenkins语法-基于Docker部署</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Jenkins/docker%E9%83%A8%E7%BD%B2jenkins/">Docker部署Jenkins</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Jenkins/helm%E9%83%A8%E7%BD%B2jenkins/">Helm部署Jenkins</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Jenkins/k8s-Devops%E5%B9%B3%E5%8F%B0%E8%90%BD%E5%9C%B0-%E5%9F%BA%E4%BA%8Ejenkins/">K8s DevOps平台落地-基于Jenkins</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Jenkins/k8s%E9%83%A8%E7%BD%B2%E5%9F%BA%E4%BA%8EJenkins%282.394%29%E7%9A%84DevOps%E5%B7%A5%E5%85%B7%E9%93%BE-%E5%9F%BA%E4%BA%8Eyaml/">K8s部署基于Jenkins(2.394)的DevOps工具链-基于YAML</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Jenkins/k8s%E9%83%A8%E7%BD%B2%E5%9F%BA%E4%BA%8EJenkins%282.426.3%29%E7%9A%84Devops%E5%B7%A5%E5%85%B7%E9%93%BE-%E5%9F%BA%E4%BA%8Eyaml/">K8s部署基于Jenkins(2.426.3)的DevOps工具链-基于YAML</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Jenkins/%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%AE%89%E8%A3%85Jenkins%282.319%29/">二进制安装Jenkins(2.319)</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Kustomize/k8s%E9%85%8D%E7%BD%AE%E5%AE%9A%E5%88%B6%E5%B7%A5%E5%85%B7-kustomize/">K8s配置定制工具-Kustomize</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Tekton/k8s%E9%83%A8%E7%BD%B2%E5%8E%9F%E7%94%9F%E7%9A%84CICD%E5%B7%A5%E5%85%B7Tekton-%E5%9F%BA%E4%BA%8Eyaml/">K8s部署原生的CICD工具Tekton-基于YAML</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Tekton/%E5%9F%BA%E4%BA%8ETekton%E7%9A%84%E4%BA%91%E5%8E%9F%E7%94%9F%E5%B9%B3%E5%8F%B0%E8%90%BD%E5%9C%B0/">基于Tekton的云原生平台落地</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/k8s%E5%8F%91%E5%B8%83%E7%AD%96%E7%95%A5-%E8%93%9D%E7%BB%BF%E9%83%A8%E7%BD%B2%E4%B8%8E%E9%87%91%E4%B8%9D%E9%9B%80%E5%8F%91%E5%B8%83/">K8s 发布策略：蓝绿部署与金丝雀发布实战</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/%E4%BD%BF%E7%94%A8github%20action%E9%83%A8%E7%BD%B2helmchart/">使用GitHub Action部署Helm Chart</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/%E5%8F%91%E5%B8%83go-python-java%E4%BB%A3%E7%A0%81%E5%88%B0K8S%E7%8E%AF%E5%A2%83/">发布Go/Python/Java代码到K8S环境</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-UI-tools</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-UI-tools/k8s-API%E6%A3%80%E6%9F%A5%E5%B7%A5%E5%85%B7kubent/">K8s API 检查工具 kubent</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-UI-tools/k8s-%E5%B0%8F%E5%B7%A5%E5%85%B7%E9%9B%86%E5%90%88/">K8s 小工具集合</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-UI-tools/k8s%E9%83%A8%E7%BD%B2-Dashboard-UI/">K8s 部署 Dashboard UI</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-UI-tools/k8s%E9%83%A8%E7%BD%B2%E5%8F%AF%E8%A7%86%E5%8C%96ui%E7%95%8C%E9%9D%A2kuboard/">K8s 部署 Kuboard</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-UI-tools/kubectl-UI%E5%B7%A5%E5%85%B7Lens/">kubectl UI 工具 Lens</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-UI-tools/kubectl-%E5%8F%AF%E8%A7%86%E5%8C%96%E6%8F%92%E4%BB%B6k9s-stern/" class="current">kubectl 可视化插件 k9s 和 stern</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-UI-tools/kuebctl-%E6%8F%92%E4%BB%B6krew-rolesum/">kubectl 插件 krew 和 rolesum</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-UI-tools/rancher%28v2.6.4%29%E7%AE%A1%E7%90%86k8s%E9%9B%86%E7%BE%A4/">Rancher (v2.6.4) 管理 K8s 集群</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-ai-gpu</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-ai-gpu/k8s%E9%85%8D%E7%BD%AENVIDIA%20GPU/">K8s 配置 NVIDIA GPU</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-backup-dr</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-backup-dr/k8s%E5%A4%87%E4%BB%BD%E4%B8%8E%E7%81%BE%E5%A4%87%E5%AE%9E%E6%88%98-%E4%B8%89%E5%B1%82%E5%AE%B9%E7%81%BE%E6%9E%B6%E6%9E%84/">K8s 备份与灾备实战：三层容灾架构</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-backup-dr/k8s%E9%9B%86%E7%BE%A4%E5%A4%87%E4%BB%BD%E6%81%A2%E5%A4%8D-Velero/">K8s集群备份恢复 - Velero</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-basic-resources</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/K8s%E5%9F%BA%E7%A1%80-pod%E8%B0%83%E5%BA%A6-%E4%BA%B2%E5%92%8C%E5%8A%9B/">K8s基础-Pod调度-亲和力</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/Python%E8%B0%83%E7%94%A8k8s-api%E5%AE%9E%E7%8E%B0%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/">Python调用K8s-API实现资源管理</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s-APIServer%E6%B7%B1%E5%BA%A6%E5%89%96%E6%9E%90-%E8%AF%B7%E6%B1%82%E9%93%BE%E8%B7%AF-%E8%AE%A4%E8%AF%81%E6%8E%88%E6%9D%83-%E7%94%9F%E4%BA%A7%E8%B0%83%E4%BC%98/">Kubernetes API Server 深度剖析：请求链路、认证授权与生产调优</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s-PodDisruptionBudget%E5%AE%9E%E6%88%98/">K8s PodDisruptionBudget 实战：优雅中断保护</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-Calico/">K8s基础-Calico</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-Finalizer%E4%B8%8E%E8%B5%84%E6%BA%90%E5%88%A0%E9%99%A4/">K8s基础-Finalizer与资源删除</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-Operator%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98-Kubebuilder/">从零开发 Kubernetes Operator：Kubebuilder 实战教程</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-Service/">K8s基础-Service</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-configMap-Secret/">K8s基础-configMap-Secret</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-daemonset/">K8s基础-DaemonSet</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-deployment/">K8s基础-Deployment</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-ingress/">K8s基础-Ingress</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-job-cronjob/">K8s基础-Job-CronJob</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-kubeadm/">K8s基础-kubeadm</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-namespace-%E8%B5%84%E6%BA%90%E5%88%86%E9%85%8D/">K8s基础-namespace-资源分配</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-pod/">K8s基础-Pod</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-pod%E8%B0%83%E5%BA%A6-%E6%A0%87%E7%AD%BE%E4%B8%8E%E9%80%89%E6%8B%A9%E5%99%A8%E5%AE%9E%E6%88%98/">Kubernetes 标签与选择器避坑：5 条核心铁律与生产级实战案例</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-statefulset/">K8s基础-StatefulSet</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-storage/">K8s基础-Storage</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-yaml/">K8s基础-YAML</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E4%B8%B4%E6%97%B6%E5%AE%B9%E5%99%A8ephemeral/">K8s基础-临时容器Ephemeral</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E5%AE%B9%E5%99%A8%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-Sidecar-Init-Ambassador-Adapter/">K8s 容器设计模式：Sidecar / Init Container / Ambassador / Adapter</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E5%AE%B9%E5%99%A8%E8%BF%90%E8%A1%8C%E6%97%B6-containerd/">K8s基础-容器运行时-containerd</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E6%9E%B6%E6%9E%84-%E7%BB%84%E4%BB%B6-%E8%B5%84%E6%BA%90/">K8s基础-架构-组件-资源</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E8%87%AA%E5%AE%9A%E4%B9%89CRD%E8%B5%84%E6%BA%90/">K8s基础-自定义CRD资源</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E8%AE%A4%E8%AF%81-%E6%8E%88%E6%9D%83-%E5%87%86%E5%85%A5/">K8s基础-认证-授权-准入</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-db-middleware</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/Operator%E9%83%A8%E7%BD%B2Redis%E9%9B%86%E7%BE%A4/">基于Operator部署Redis集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/Operator%E9%83%A8%E7%BD%B2mysql%E9%9B%86%E7%BE%A4/">Operator部署MySQL NDB集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/helm%E9%83%A8%E7%BD%B2mysql/">Helm部署MySQL</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/helm%E9%83%A8%E7%BD%B2postgreSQL/">Helm部署PostgreSQL</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/helm%E9%83%A8%E7%BD%B2rabbitmq-ha/">Helm部署RabbitMQ高可用集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/helm%E9%83%A8%E7%BD%B2strimzi-kafka/">Helm部署Strimzi Kafka</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/k8s%E5%9F%BA%E4%BA%8Eyaml%E9%83%A8%E7%BD%B2MongoDB%E9%9B%86%E7%BE%A4/">K8s基于YAML部署MongoDB集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/k8s%E5%9F%BA%E4%BA%8Eyaml%E9%83%A8%E7%BD%B2httpd%E6%9C%8D%E5%8A%A1/">K8s基于YAML部署httpd服务</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/k8s%E5%9F%BA%E4%BA%8Eyaml%E9%83%A8%E7%BD%B2mysql%E4%B8%BB%E4%BB%8E%E9%AB%98%E5%8F%AF%E7%94%A8/">K8s基于YAML部署MySQL主从高可用</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/k8s%E5%9F%BA%E4%BA%8Eyaml%E9%83%A8%E7%BD%B2redis%E9%9B%86%E7%BE%A4/">K8s基于YAML部署Redis集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/k8s%E9%83%A8%E7%BD%B2springcloud%E7%94%B5%E5%95%86%E9%A1%B9%E7%9B%AE/">K8s部署SpringCloud电商项目</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-installation-management</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/2025%E6%9C%80%E6%96%B0-%E4%BC%81%E4%B8%9A%E7%BA%A7%E9%AB%98%E5%8F%AF%E7%94%A8%E9%9B%86%E7%BE%A4-%E5%9F%BA%E4%BA%8Erockylinux/">2025最新-企业级高可用集群-基于rockylinux</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/etcd%E9%AB%98%E5%8F%AF%E7%94%A8%E9%85%8D%E7%BD%AE%E4%BB%A5%E5%8F%8A%E6%A8%A1%E6%8B%9F%E9%9B%86%E7%BE%A4%E6%95%85%E9%9A%9C%E5%92%8C%E6%81%A2%E5%A4%8D/">etcd高可用配置以及模拟集群故障和恢复</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/k8s-Backstage-%E5%86%85%E9%83%A8%E5%BC%80%E5%8F%91%E8%80%85%E5%B9%B3%E5%8F%B0IDP%E5%AE%9E%E6%88%98/">K8s 平台工程实战：用 Backstage 打造一站式内部开发者平台</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/k8s-cgroup-v2%E6%B7%B1%E5%BA%A6%E8%A7%A3%E6%9E%90-%E8%BF%81%E7%A7%BB%E5%AE%9E%E6%88%98%E4%B8%8E%E9%81%BF%E5%9D%91%E6%8C%87%E5%8D%97/">K8s CGroup v2 深度解析：资源隔离原理、迁移实战与生产避坑指南</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/k8s%E4%B8%A4%E5%9C%B0%E4%B8%89%E4%B8%AD%E5%BF%83%E6%9E%B6%E6%9E%84/">k8s两地三中心架构</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/k8s%E5%A4%9A%E9%9B%86%E7%BE%A4kubeconfig%E7%AE%A1%E7%90%86/">k8s多集群kubeconfig管理</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/k8s%E6%95%85%E9%9A%9C%E6%8E%92%E6%9F%A5%E6%8C%87%E5%8D%97/">k8s故障排查指南</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/k8s%E7%94%9F%E4%BA%A7%E7%8E%AF%E5%A2%83%E4%BC%98%E5%8C%96%E4%B8%8E%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/">k8s生产环境优化与最佳实践</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/k8s%E9%83%A8%E7%BD%B2%E9%98%B2%E7%81%AB%E5%A2%99%E7%AB%AF%E5%8F%A3%E9%85%8D%E7%BD%AE/">K8s部署防火墙端口配置</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/latest-version/%E5%AE%89%E8%A3%85k8s-1.35-%E5%9F%BA%E4%BA%8Erockylinux10-%E6%9C%80%E6%96%B0%E6%AD%A5%E9%AA%A4/">在 Rocky Linux 10 上安装 Kubernetes 1.35</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%AE%89%E8%A3%85k8s%E9%AB%98%E5%8F%AF%E7%94%A8%E9%9B%86%E7%BE%A4/">二进制安装k8s高可用集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.20.6-%E9%AB%98%E5%8F%AF%E7%94%A8/">安装k8s-1.20.6-高可用</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.23/">安装k8s-1.23</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.26-1.27/">安装k8s-1.26-1.27</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.28/">安装k8s-1.28</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.30-%E5%9F%BA%E4%BA%8Erockylinux/">安装k8s-1.30-基于rockylinux</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.32-%E5%9F%BA%E4%BA%8Erockylinux/">安装k8s-1.32-基于rockylinux</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.33-%E5%9F%BA%E4%BA%8Erockylinux-%E6%9C%80%E6%96%B0%E6%AD%A5%E9%AA%A4/">安装k8s-1.33-基于rockylinux-最新步骤</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/%E5%8D%87%E7%BA%A7/k8s-1.37-%E5%8D%87%E7%BA%A7%E9%A1%BB%E7%9F%A5-breaking-changes/">Kubernetes v1.37 升级破坏性变更指南</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/%E5%8D%87%E7%BA%A7/k8s%E8%BF%81%E7%A7%BB%E5%AE%B9%E5%99%A8%E8%BF%90%E8%A1%8C%E6%97%B6-%E7%89%88%E6%9C%AC%E5%8D%87%E7%BA%A7/">k8s迁移容器运行时与版本升级</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-monitoring-logging</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/K8s%E5%85%A8%E9%9D%A2%E5%B7%A1%E6%A3%80%E8%84%9A%E6%9C%AC-%E7%94%9F%E6%88%90HTML%E5%81%A5%E5%BA%B7%E6%8A%A5%E5%91%8A/">K8s 全面巡检脚本：一键生成 HTML 健康报告</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/OpenTelemetry%E5%AE%9E%E6%88%98-%E7%BB%9F%E4%B8%80Traces-Metrics-Logs/">OpenTelemetry 实战：告别厂商锁定，统一 Traces/Metrics/Logs</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/Prometheus%E5%9F%BA%E7%A1%80/">Prometheus基础</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/Prometheus%E7%9B%91%E6%8E%A7k8s%E7%B3%BB%E7%BB%9F%E7%BB%84%E4%BB%B6/">Prometheus监控K8s系统组件</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/Prometheus%E7%9B%91%E6%8E%A7%E5%A4%96%E9%83%A8k8s%E9%9B%86%E7%BE%A4/">Prometheus监控外部K8s集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/Prometheus%E7%9B%91%E6%8E%A7%E9%9D%9E%E4%BA%91%E5%8E%9F%E7%94%9F%E5%BA%94%E7%94%A8-%E4%B8%BB%E6%9C%BA/">Prometheus监控非云原生应用-主机</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/helm%E9%83%A8%E7%BD%B2Loki-promtail-tempo-grafanaAgent%E5%85%A8%E5%AE%B6%E6%A1%B6/">Helm部署Loki+Promtail+Tempo+GrafanaAgent全家桶</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/helm%E9%83%A8%E7%BD%B2jaeger/">Helm部署Jaeger</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/helm%E9%83%A8%E7%BD%B2prometheus-stack%E5%85%A8%E5%AE%B6%E6%A1%B6/">Prometheus-Stack 全家桶：生产级部署与运维完全指南</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E6%97%A5%E5%BF%97%E7%AE%A1%E7%90%86-%E9%87%87%E9%9B%86%E6%96%B9%E6%A1%88%E4%B8%8E%E5%AE%A1%E8%AE%A1%E6%97%A5%E5%BF%97/">K8s 日志管理：基础机制、六种采集方案与审计日志实战</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E7%9B%91%E6%8E%A7EFK%2Blogstash%2Bkafka/">K8s监控EFK+logstash+kafka</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E7%9B%91%E6%8E%A7ES%287.2%29%2BKibana%287.2%29%2BFluentd%28v1.4.2%29/">K8s监控ES(7.2)+Kibana(7.2)+Fluentd(v1.4.2)</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E7%9B%91%E6%8E%A7Prometheus%28v2.2.1%29/">K8s监控Prometheus(v2.2.1)</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E7%9B%91%E6%8E%A7Prometheus%28v2.33.5%29%2BGrafana%28v8.4.5%29/">K8s监控Prometheus(v2.33.5)+Grafana(v8.4.5)</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E7%9B%91%E6%8E%A7alertmanager%28v0.14.0%29/">K8s监控Alertmanager(v0.14.0)</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E9%83%A8%E7%BD%B2elasticsearch%E9%9B%86%E7%BE%A4/">K8s部署Elasticsearch集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E9%83%A8%E7%BD%B2grafana%28v5.0.4%29/">K8s部署Grafana(v5.0.4)</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E9%83%A8%E7%BD%B2%E5%85%A8%E9%93%BE%E8%B7%AF%E8%BF%BD%E8%B8%AA-Skywalking/">K8s部署全链路追踪-Skywalking</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2Prometheus%28v2.32.1%29%E8%81%94%E9%82%A6%E9%9B%86%E7%BE%A4/">二进制部署Prometheus(v2.32.1)联邦集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2efk%2Blogstash%2Bkafka%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%B9%B3%E5%8F%B0/">二进制部署EFK+Logstash+Kafka日志收集平台</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2prometheus-grafana-nodeexporter/">二进制部署Prometheus-Grafana-NodeExporter</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/%E5%9F%BA%E4%BA%8Ehelm%2Boperator%E9%83%A8%E7%BD%B2ECK%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%B9%B3%E5%8F%B0/">基于Helm+Operator部署ECK日志收集平台</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-networking-service-mesh</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/Istio-Sidecar-vs-Ambient/">Istio Sidecar vs Ambient 模式对比</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/helm%E5%AE%89%E8%A3%85istio/">Helm安装Istio</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/helm%E9%83%A8%E7%BD%B2external-dns/">Helm部署External-DNS</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/helm%E9%83%A8%E7%BD%B2ingress-nginx/">Helm部署Ingress-Nginx</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/helm%E9%83%A8%E7%BD%B2tomcat/">Helm 部署 Tomcat</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/k8s-Gateway-API%E5%85%A5%E9%97%A8-Ingress%E4%B8%8B%E4%B8%80%E4%BB%A3%E6%96%B9%E6%A1%88/">Kubernetes Gateway API 入门：Ingress 的下一代方案</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/k8s%E7%B2%BE%E7%BB%86%E5%8C%96%E6%B5%81%E9%87%8F%E7%AE%A1%E7%90%86-istio/">K8s精细化流量管理-Istio</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/k8s%E9%83%A8%E7%BD%B2istio%281.13.1%29/">K8s部署Istio(1.13.1)</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/k8s%E9%9B%86%E7%BE%A4%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/">K8s集群网络安全</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/%E4%BC%81%E4%B8%9A%E9%A1%B9%E7%9B%AE%E6%8E%A5%E5%85%A5istio%E5%AE%9E%E6%88%98/">企业项目接入Istio实战</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-scaling</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-scaling/KEDA-vs-HPA-2026%E7%BB%88%E6%9E%81%E5%AF%B9%E6%AF%94-v1.36%E7%BC%A9%E9%9B%B6/">KEDA vs HPA 2026 终极对比：v1.36 原生缩零后该选谁？</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-scaling/helm%E9%83%A8%E7%BD%B2goldilocks/">Helm部署Goldilocks</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-scaling/helm%E9%83%A8%E7%BD%B2vpa/">Helm部署VPA</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-scaling/k8s-HPA-VPA/">K8s HPA与VPA</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-scaling/k8s-%E5%9F%BA%E4%BA%8EKEDA%E7%9A%84%E5%BC%B9%E6%80%A7%E8%83%BD%E5%8A%9B/">K8s基于KEDA的弹性能力</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-scaling/k8s%E6%88%90%E6%9C%AC%E4%BC%98%E5%8C%96%E6%96%B9%E6%A1%88-FinOps%E5%AE%9E%E6%88%98/">K8s 集群成本优化方案：砍掉 60% 云账单</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-security-auth</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2capsule/">Helm部署Capsule</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2certmanager/">Helm部署Cert-Manager</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2external-secrets/">Helm部署External-Secrets</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2kyverno%E5%92%8Cpolicy-reporter/">Helm部署Kyverno和Policy-Reporter</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2oauth2proxy/">Helm部署OAuth2-Proxy</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2sonarqube/">Helm部署SonarQube</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2trivy-operator/">Helm部署Trivy-Operator</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/k8s-Admission-Webhook%E9%93%BE%E5%86%B2%E7%AA%81%E6%8E%92%E6%9F%A5-Istio-Kyverno-Gatekeeper/">当 Istio、Kyverno、Gatekeeper 三个 Webhook 同时存在，你的集群会发生什么？</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/k8s%E5%AE%B9%E5%99%A8%E5%AE%89%E5%85%A8%E4%B8%8A%E4%B8%8B%E6%96%87-SecurityContext/">Kubernetes 容器安全上下文完全指南：从入门到生产避坑</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-springcloud</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-springcloud/SpringCloud%E9%A1%B9%E7%9B%AE%E8%BF%81%E7%A7%BB%E5%88%B0k8s%E5%AE%9E%E6%88%98/">SpringCloud 项目迁移到 K8s 实战</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-storage</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-storage/helm%E9%83%A8%E7%BD%B2nfs-subdir-external-provisioner/">Helm部署NFS Subdir External Provisioner</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-storage/k8s-ceph%E9%83%A8%E7%BD%B2%E4%B8%8E%E9%9B%86%E6%88%90/">K8s Ceph部署与集成</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-storage/k8s-%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8CubeFS/">K8s分布式存储CubeFS</a></li>
+        </ul>
+        <p class="sidebar-group">kubeblocks</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/kubeblocks/kubeblocks%E9%83%A8%E7%BD%B2WordPress/">KubeBlocks 部署 WordPress</a></li>
+          <li><a href="../../../Docker-Kubernetes/kubeblocks/kubeblocks%E9%83%A8%E7%BD%B2%E9%AB%98%E5%8F%AF%E7%94%A8harbor%E9%9B%86%E7%BE%A4/">KubeBlocks 部署高可用 Harbor 集群</a></li>
+        </ul>
+        <p class="sidebar-group">其他</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/%E7%AE%80%E5%8E%86%E6%8C%87%E5%8D%97/">简历指南</a></li>
+        </ul>
+      </nav>
+    </details>
+  </aside>
+
+  <article class="article">
+    <nav class="breadcrumb">
+      <a href="../../../index.html">首页</a><span>/</span>
+      <a href="../../../Docker-Kubernetes/">Docker-Kubernetes</a><span>/</span><span>k8s-UI-tools</span>
+    </nav>
+    <h1 class="article-title">kubectl 可视化插件 k9s 和 stern</h1>
+    <p class="article-meta"><span>更新于 2026-04-16</span>
+      <a href="https://github.com/hangx969/learning-notes/blob/main/Docker-Kubernetes/k8s-UI-tools/kubectl-%E5%8F%AF%E8%A7%86%E5%8C%96%E6%8F%92%E4%BB%B6k9s-stern.md">查看源文件</a>
+    </p>
+    <div class="article-body">
+<h1 id="k9s">k9s</h1>
+<ul>
+<li>kubectl可视化插件：<a href="https://github.com/derailed/k9s">k9s GitHub</a></li>
+<li>安装指南：<a href="https://k9scli.io/topics/install/">k9s 安装文档</a></li>
+</ul>
+<h1 id="在线安装">在线安装</h1>
+<ol>
+<li>方法1：via <a href="https://webinstall.dev/">webi</a> (在现在rockylinux vm上使用的方法)</li>
+</ol>
+<p><sub>~</sub>sh<br />
+   curl -sS https://webinstall.dev/k9s | bash<br />
+   ~~~</p>
+<ol>
+<li>方法2：在ubuntu上</li>
+</ol>
+<p><sub>~</sub>sh<br />
+   wget https://github.com/derailed/k9s/releases/download/v0.40.5/k9s_linux_amd64.deb &amp;&amp; apt install ./k9s_linux_amd64.deb &amp;&amp; rm k9s_linux_amd64.deb<br />
+   ~~~</p>
+<ol>
+<li>方法3：via snap</li>
+</ol>
+<p><sub>~</sub>sh<br />
+   snap install k9s --devmode<br />
+   ~~~</p>
+<h2 id="使用">使用</h2>
+<ul>
+<li>vim风格，在主页面上</li>
+<li>：来输入资源类型</li>
+<li>
+<p>/来输入filter</p>
+</li>
+<li>
+<p>常用命令</p>
+</li>
+</ul>
+<p><sub>~</sub>sh<br />
+  # List all available CLI options<br />
+  $ k9s help</p>
+<p># To get info about K9s runtime (logs, configs, etc..)<br />
+  $ k9s info</p>
+<p># To run K9s in a given namespace<br />
+  $ k9s -n mycoolns</p>
+<p># Start K9s in an existing KubeConfig context<br />
+  $ k9s --context coolCtx</p>
+<p># Start K9s in readonly mode - with all modification commands disabled<br />
+  $ k9s --readonly<br />
+  ~~~</p>
+<h2 id="快捷键">快捷键</h2>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>命令</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>显示活跃的键盘助记符和帮助</td>
+<td><code>?</code></td>
+<td></td>
+</tr>
+<tr>
+<td>显示集群上所有可用的别名和资源</td>
+<td><code>ctrl-a</code> or <code>:alias</code></td>
+<td></td>
+</tr>
+<tr>
+<td>退出 K9s</td>
+<td><code>:q</code>, <code>ctrl-c</code></td>
+<td></td>
+</tr>
+<tr>
+<td>查看pod</td>
+<td><code>:</code>po⏎</td>
+<td>接受单数，复数，短名或别名如 <code>pod</code> 或 <code>pods</code></td>
+</tr>
+<tr>
+<td>查看给定名称空间中的资源</td>
+<td><code>:</code>alias namespace⏎</td>
+<td></td>
+</tr>
+<tr>
+<td>过滤字段</td>
+<td><code>/</code>filter⏎</td>
+<td>支持 Regex2，如 ` fred</td>
+</tr>
+<tr>
+<td>反向正则表达式过滤</td>
+<td><code>/</code>! filter⏎</td>
+<td>保留所有 <em>不匹配</em> 的东西。日志未实现。</td>
+</tr>
+<tr>
+<td>按标签过滤资源视图</td>
+<td><code>/</code>-l label-selector⏎</td>
+<td></td>
+</tr>
+<tr>
+<td>模糊查找给定的资源</td>
+<td><code>/</code>-f filter⏎</td>
+<td></td>
+</tr>
+<tr>
+<td>退出视图 / 命令 / 过滤模式</td>
+<td><code>&lt;esc&gt;</code></td>
+<td></td>
+</tr>
+<tr>
+<td>键映射来描述(describe)，查看(view)，编辑(edit)，查看日志(logs)，…</td>
+<td><code>d</code>,<code>v</code>, <code>e</code>,<code>l</code>,…</td>
+<td></td>
+</tr>
+<tr>
+<td>查看并切换到另一个 Kubernetes 上下文</td>
+<td><code>:</code>ctx⏎</td>
+<td></td>
+</tr>
+<tr>
+<td>查看并切换到另一个 Kubernetes 上下文</td>
+<td><code>:</code>ctx context-name⏎</td>
+<td></td>
+</tr>
+<tr>
+<td>查看namespace</td>
+<td><code>:</code>ns⏎</td>
+<td></td>
+</tr>
+<tr>
+<td>查看所有已保存的资源</td>
+<td><code>:</code>screendump or sd⏎</td>
+<td></td>
+</tr>
+<tr>
+<td>要删除资源 (按<code>TAB</code>并输入<code>Enter</code>)</td>
+<td><code>ctrl-d</code></td>
+<td></td>
+</tr>
+<tr>
+<td>杀死一个资源 (没有确认对话框!)</td>
+<td><code>ctrl-k</code></td>
+<td></td>
+</tr>
+<tr>
+<td>切换宽列</td>
+<td><code>ctrl-w</code></td>
+<td>等同于 <code>kubectl ... -o wide</code></td>
+</tr>
+<tr>
+<td>切换错误状态</td>
+<td><code>ctrl-z</code></td>
+<td>查看有错误的资源</td>
+</tr>
+<tr>
+<td>运行 pulses（脉冲）视图</td>
+<td><code>:</code>pulses or pu⏎</td>
+<td></td>
+</tr>
+<tr>
+<td>运行 XRay视图</td>
+<td><code>:</code>xray RESOURCE [NAMESPACE]⏎</td>
+<td>资源可以是以下之一：po, svc, dp, rs, sts, ds, NAMESPACE 参数可选</td>
+</tr>
+<tr>
+<td>运行 Popeye（评估跑分） 视图</td>
+<td><code>:</code>popeye or pop⏎</td>
+<td>参阅 <a href="https://popeyecli.io/">https://popeyecli.io</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="过滤功能">过滤功能</h2>
+<ul>
+<li>它的过滤功能非常强大，使得你可以非常快速的定位资源，比如我想要看 traefik 的所有 CRD，操作如下：</li>
+</ul>
+<p><sub>~</sub>sh<br />
+  ctrl+a<br />
+  /traefik<br />
+  ~~~</p>
+<h2 id="pulse">Pulse</h2>
+<ul>
+<li>进入监控模式，不过需要metrics-server在集群内运行</li>
+</ul>
+<h2 id="xray">Xray</h2>
+<ul>
+<li>XRay 会提供以某个 Kubernetes 资源为维度的关联关系，像 X 光一样，透射到资源的内部。比如查看deploy资源的关联关系：</li>
+</ul>
+<p><sub>~</sub>sh<br />
+  :xray deploy<br />
+  ~~~</p>
+<h2 id="popeye">popeye</h2>
+<blockquote>
+<p><a href="https://popeyecli.io/">Popeye</a> 是 K9s 作者开发的另一个 K8s 命令行工具，现已被集成进 K9s，它可以实时扫描你的集群，并报告潜在的问题，比如：引用完整性、配置错误、资源使用等。</p>
+</blockquote>
+<ul>
+<li>
+<p>通过 <code>:popeye</code> 命令可以进入 Popeye 的总览视图，然后可以通过在给定的资源条目上按 <code>Enter</code> 键来查看更为详细的检测报告。</p>
+</li>
+<li>
+<p>Popeye 还支持一个配置文件，即 <code>spinach.yml</code>，该文件提供了自定义扫描资源的内容，并根据自己的策略设置不同的严重程度。</p>
+</li>
+<li>
+<p>请阅读 <a href="https://popeyecli.io/#the-spinachyaml-configuration">Popeye 文档</a>，了解如何自定义报告。<code>spinach.yml</code> 文件将从 K9s 的主目录<code>$HOME/.k9s/MY_CLUSTER_CONTEXT_NAME_spinach.yml</code> 中读取。</p>
+</li>
+</ul>
+<h2 id="k9s插件功能">k9s插件功能</h2>
+<p>K9s 允许你通过 <a href="https://github.com/derailed/k9s#plugins">插件机制</a> 定义自己的集群命令来扩展你的命令行和工具。K9s 会查看 <code>$HOME/.k9s/plugin.yml</code> 来定位所有可用的插件。一个插件的定义如下：</p>
+<ul>
+<li><code>shortCut</code> 快捷键选项代表用户键入激活插件的组合键。</li>
+<li><code>confirm</code> 确认选项（启用时）让你看到将要执行的命令，并给你一个确认或阻止执行的选项。</li>
+<li><code>description</code> 说明将被打印在 K9s 菜单中的快捷方式旁边。</li>
+<li><code>scopes</code> 作用域为与插件相关联的视图定义了资源名称/简称的集合。你可以指定所有，为所有视图提供这个快捷方式。 </li>
+<li><code>command</code> 代表插件在激活时运行的临时命令。 </li>
+<li><code>background</code> 指定命令是否在后台运行。</li>
+<li><code>args</code> 指定适用于上述命令的各种参数。</li>
+</ul>
+<p>K9s 同时提供了额外的环境变量，供你自定义插件的参数。目前，可用的环境变量如下：</p>
+<ul>
+<li><code>$NAMESPACE</code>：选定的资源命名空间 </li>
+<li><code>$NAME</code>：所选资源名称 </li>
+<li><code>$CONTAINER</code> ：当前容器（如果适用）</li>
+<li><code>$FILTER</code>：当前的过滤器（如果有）</li>
+<li><code>$KUBECONFIG</code>：KubeConfig 文件的位置 </li>
+<li><code>$CLUSTER</code>：当前的集群名称 </li>
+<li><code>$CONTEXT</code>：当前的上下文名称 </li>
+<li><code>$USER</code>：当前用户 </li>
+<li><code>$GROUPS</code>：当前的用户组 </li>
+<li><code>$POD</code>：容器视图中的 Pod </li>
+</ul>
+<h1 id="stern">stern</h1>
+<ul>
+<li>查看pod log的插件：<a href="https://github.com/stern/stern#installation">stern GitHub</a></li>
+</ul>
+<h2 id="安装">安装</h2>
+<p>If you use <a href="https://krew.sigs.k8s.io/">Krew</a> which is the package manager for kubectl plugins, you can install like this:</p>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>krew<span class="w"> </span>install<span class="w"> </span>stern
+</code></pre></div>
+
+<h2 id="使用_1">使用</h2>
+<div class="highlight"><pre><span></span><code>实时查看当前<span class="w"> </span>Namespace<span class="w"> </span>中所有<span class="w"> </span>Pod<span class="w"> </span>中所有容器的日志
+$<span class="w"> </span>stern<span class="w">  </span>.
+
+实时查看<span class="w"> </span>Pod<span class="w"> </span>中指定容器的日志
+$<span class="w"> </span>stern<span class="w"> </span>envvars<span class="w"> </span>--container<span class="w"> </span>gateway
+
+实时查看指定命名空间中除指定容器外的所有容器的日志
+$<span class="w"> </span>stern<span class="w"> </span>-n<span class="w"> </span>staging<span class="w"> </span>--exclude-container<span class="w"> </span>istio-proxy<span class="w"> </span>.
+
+实时查看指定时间范围内容器的日志，下面的例子表示是<span class="w"> </span><span class="m">15</span><span class="w"> </span>分钟内
+$<span class="w"> </span>stern<span class="w"> </span>auth<span class="w"> </span>-t<span class="w"> </span>--since<span class="w"> </span>15m
+
+实时查看指定命名空间中容器的日志
+$<span class="w"> </span>stern<span class="w"> </span>kubernetes-dashboard<span class="w"> </span>--namespace<span class="w"> </span>kube-system
+
+实时查看所有命名空间中符合指定标签容器的日志
+$<span class="w"> </span>stern<span class="w"> </span>--all-namespaces<span class="w"> </span>-l<span class="w"> </span><span class="nv">run</span><span class="o">=</span>nginx
+</code></pre></div>
+
+<h2 id="k9s通过plugin与stern集成">k9s通过plugin与stern集成</h2>
+<p><a href="https://github.com/wercker/stern">Stern</a> 是一款社区知名的 K8s 集群服务日志查询工具，虽然 k9s 已然集成了部分 Stern 的功能，但操作不太直接也无法连接管道操作（ <code>|</code> ），我们可以利用插件创建一个可以查询当前命名空间下多个 Pod 的快捷命令。</p>
+<div class="highlight"><pre><span></span><code><span class="l l-Scalar l-Scalar-Plain">tee -a $HOME/.k9s/plugin.yml &lt;&lt;&#39;EOF&#39;</span>
+<span class="l l-Scalar l-Scalar-Plain">plugin</span><span class="p p-Indicator">:</span>
+<span class="w">  </span><span class="nt">stern</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">shortCut</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Ctrl-L</span>
+<span class="w">    </span><span class="nt">confirm</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Logs</span><span class="nv"> </span><span class="s">(Stern)&quot;</span>
+<span class="w">    </span><span class="nt">scopes</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pods</span>
+<span class="w">    </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/usr/local/bin/stern</span><span class="w"> </span><span class="c1"># NOTE! Look for the command at this location.</span>
+<span class="w">    </span><span class="nt">background</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">    </span><span class="nt">args</span><span class="p">:</span>
+<span class="w">     </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">--tail</span>
+<span class="w">     </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100</span>
+<span class="w">     </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$FILTER</span><span class="w">      </span><span class="c1"># NOTE! Pulls the filter out of the pod view.</span>
+<span class="w">     </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">-n</span>
+<span class="w">     </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$NAMESPACE</span><span class="w">   </span><span class="c1"># Use current namespace</span>
+<span class="w">     </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">--context</span>
+<span class="w">     </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$CONTEXT</span><span class="w">     </span><span class="c1"># Use current k8s context</span>
+<span class="l l-Scalar l-Scalar-Plain">EOF</span>
+</code></pre></div>
+
+<h1 id="离线安装k9s">离线安装k9s</h1>
+<h2 id="下载安装包">下载安装包</h2>
+<p>先从github下载amd64版本安装包：<a href="https://github.com/derailed/k9s/releases">Releases · derailed/k9s</a></p>
+<p>安装包放到/root/下</p>
+<h2 id="本地安装脚本">本地安装脚本</h2>
+<div class="highlight"><pre><span></span><code><span class="ch">#!/bin/bash</span>
+
+<span class="c1">############################################################</span>
+<span class="c1"># K9s Local Installation Script</span>
+<span class="c1"># Modified to install from local tar.gz file instead of downloading</span>
+<span class="c1">############################################################</span>
+
+<span class="c1"># Configuration for local installation</span>
+<span class="nv">K9S_LOCAL_ARCHIVE</span><span class="o">=</span><span class="s2">&quot;/root/k9s_Linux_amd64.tar.gz&quot;</span>
+<span class="nv">INSTALL_DIR</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$HOME</span><span class="s2">/.local/bin&quot;</span>
+
+<span class="c1"># Check if local archive exists, if so use local installation</span>
+<span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span>-f<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$K9S_LOCAL_ARCHIVE</span><span class="s2">&quot;</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Found local k9s archive, installing from: </span><span class="nv">$K9S_LOCAL_ARCHIVE</span><span class="s2">&quot;</span>
+
+<span class="w">    </span><span class="c1"># Create installation directory</span>
+<span class="w">    </span>mkdir<span class="w"> </span>-p<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$INSTALL_DIR</span><span class="s2">&quot;</span>
+
+<span class="w">    </span><span class="c1"># Create temporary directory for extraction</span>
+<span class="w">    </span><span class="nv">TEMP_DIR</span><span class="o">=</span><span class="k">$(</span>mktemp<span class="w"> </span>-d<span class="k">)</span>
+
+<span class="w">    </span><span class="c1"># Extract and install</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Extracting k9s from local archive...&quot;</span>
+<span class="w">    </span>tar<span class="w"> </span>-xzf<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$K9S_LOCAL_ARCHIVE</span><span class="s2">&quot;</span><span class="w"> </span>-C<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$TEMP_DIR</span><span class="s2">&quot;</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span>-f<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$TEMP_DIR</span><span class="s2">/k9s&quot;</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">        </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Installing k9s to </span><span class="nv">$INSTALL_DIR</span><span class="s2">/k9s&quot;</span>
+<span class="w">        </span>cp<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$TEMP_DIR</span><span class="s2">/k9s&quot;</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$INSTALL_DIR</span><span class="s2">/k9s&quot;</span>
+<span class="w">        </span>chmod<span class="w"> </span>+x<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$INSTALL_DIR</span><span class="s2">/k9s&quot;</span>
+
+<span class="w">        </span><span class="c1"># Clean up</span>
+<span class="w">        </span>rm<span class="w"> </span>-rf<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$TEMP_DIR</span><span class="s2">&quot;</span>
+
+<span class="w">        </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;k9s installed successfully to </span><span class="nv">$INSTALL_DIR</span><span class="s2">/k9s&quot;</span>
+<span class="w">        </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Make sure </span><span class="nv">$INSTALL_DIR</span><span class="s2"> is in your PATH to use k9s command&quot;</span>
+<span class="w">        </span><span class="nb">exit</span><span class="w"> </span><span class="m">0</span>
+<span class="w">    </span><span class="k">else</span>
+<span class="w">        </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Error: k9s binary not found in archive&quot;</span>
+<span class="w">        </span>rm<span class="w"> </span>-rf<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$TEMP_DIR</span><span class="s2">&quot;</span>
+<span class="w">        </span><span class="nb">exit</span><span class="w"> </span><span class="m">1</span>
+<span class="w">    </span><span class="k">fi</span>
+<span class="k">fi</span>
+
+<span class="c1"># Fallback to original webi installation if local archive not found</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Local archive not found at </span><span class="nv">$K9S_LOCAL_ARCHIVE</span><span class="s2">, falling back to webi installation...&quot;</span>
+
+<span class="nb">export</span><span class="w"> </span><span class="nv">WEBI_PKG</span><span class="o">=</span><span class="s1">&#39;k9s@stable&#39;</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">WEBI_HOST</span><span class="o">=</span><span class="s1">&#39;https://webi.sh&#39;</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">WEBI_CHECKSUM</span><span class="o">=</span><span class="s1">&#39;adad246e&#39;</span>
+
+<span class="c1">#########################################</span>
+<span class="c1">#                                       #</span>
+<span class="c1"># Display Debug Info in Case of Failure #</span>
+<span class="c1">#                                       #</span>
+<span class="c1">#########################################</span>
+
+fn_show_welcome<span class="o">()</span><span class="w"> </span><span class="o">{</span><span class="w"> </span><span class="o">(</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">    </span><span class="c1"># invert t_task and t_pkg for top-level welcome message</span>
+<span class="w">    </span><span class="nb">printf</span><span class="w"> </span>--<span class="w"> </span><span class="s2">&quot;&gt;&gt;&gt; %s %s  &lt;&lt;&lt;\n&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">        </span><span class="s2">&quot;</span><span class="k">$(</span>t_pkg<span class="w"> </span><span class="s1">&#39;Welcome to&#39;</span><span class="k">)</span><span class="s2"> </span><span class="k">$(</span>t_task<span class="w"> </span><span class="s1">&#39;Webi&#39;</span><span class="k">)$(</span>t_pkg<span class="w"> </span><span class="s1">&#39;!&#39;</span><span class="k">)</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">        </span><span class="s2">&quot;</span><span class="k">$(</span>t_dim<span class="w"> </span><span class="s2">&quot;- modern tools, instant installs.&quot;</span><span class="k">)</span><span class="s2">&quot;</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;    We expect your experience to be </span><span class="k">$(</span>t_em<span class="w"> </span><span class="s1">&#39;absolutely perfect&#39;</span><span class="k">)</span><span class="s2">!&quot;</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;    </span><span class="k">$(</span>t_attn<span class="w"> </span><span class="s1">&#39;Success&#39;</span><span class="k">)</span><span class="s2">? Star it!   </span><span class="k">$(</span>t_url<span class="w"> </span><span class="s1">&#39;https://github.com/webinstall/webi-installers&#39;</span><span class="k">)</span><span class="s2">&quot;</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;    </span><span class="k">$(</span>t_attn<span class="w"> </span><span class="s1">&#39;Problem&#39;</span><span class="k">)</span><span class="s2">? Report it: </span><span class="k">$(</span>t_url<span class="w"> </span><span class="s1">&#39;https://github.com/webinstall/webi-installers/issues&#39;</span><span class="k">)</span><span class="s2">&quot;</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;                        </span><span class="k">$(</span>t_dim<span class="w"> </span><span class="s2">&quot;(your system is&quot;</span><span class="k">)</span><span class="s2"> </span><span class="k">$(</span>t_host<span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span>fn_get_os<span class="k">)</span><span class="s2">&quot;</span><span class="k">)</span><span class="s2">/</span><span class="k">$(</span>t_host<span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span>uname<span class="w"> </span>-m<span class="k">)</span><span class="s2">&quot;</span><span class="k">)</span><span class="s2"> </span><span class="k">$(</span>t_dim<span class="w"> </span><span class="s2">&quot;with&quot;</span><span class="k">)</span><span class="s2"> </span><span class="k">$(</span>t_host<span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span>fn_get_libc<span class="k">)</span><span class="s2">&quot;</span><span class="k">)</span><span class="s2"> </span><span class="k">$(</span>t_dim<span class="w"> </span><span class="s2">&quot;&amp;&quot;</span><span class="k">)</span><span class="s2"> </span><span class="k">$(</span>t_host<span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span>fn_get_http_client_name<span class="k">)</span><span class="s2">&quot;</span><span class="k">)$(</span>t_dim<span class="w"> </span><span class="s2">&quot;)&quot;</span><span class="k">)</span><span class="s2">&quot;</span>
+
+<span class="w">    </span>sleep<span class="w"> </span><span class="m">0</span>.2
+<span class="o">)</span><span class="p">;</span><span class="w"> </span><span class="o">}</span>
+
+fn_get_os<span class="o">()</span><span class="w"> </span><span class="o">{</span><span class="w"> </span><span class="o">(</span>
+<span class="w">    </span><span class="c1"># Ex:</span>
+<span class="w">    </span><span class="c1">#     GNU/Linux</span>
+<span class="w">    </span><span class="c1">#     Android</span>
+<span class="w">    </span><span class="c1">#     Linux (often Alpine, musl)</span>
+<span class="w">    </span><span class="c1">#     Darwin</span>
+<span class="w">    </span><span class="nv">b_os</span><span class="o">=</span><span class="s2">&quot;</span><span class="k">$(</span>uname<span class="w"> </span>-o<span class="w"> </span><span class="m">2</span>&gt;<span class="w"> </span>/dev/null<span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="k">)</span><span class="s2">&quot;</span>
+<span class="w">    </span><span class="nv">b_sys</span><span class="o">=</span><span class="s2">&quot;</span><span class="k">$(</span>uname<span class="w"> </span>-s<span class="k">)</span><span class="s2">&quot;</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="nb">test</span><span class="w"> </span>-z<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">b_os</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="nb">test</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">b_os</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">b_sys</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">        </span><span class="c1"># ex: &#39;Darwin&#39; (and plain, non-GNU &#39;Linux&#39;)</span>
+<span class="w">        </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">b_sys</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="m">0</span>
+<span class="w">    </span><span class="k">fi</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">b_os</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-q<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">b_sys</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">        </span><span class="c1"># ex: &#39;GNU/Linux&#39;</span>
+<span class="w">        </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">b_os</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="m">0</span>
+<span class="w">    </span><span class="k">fi</span>
+
+<span class="w">    </span><span class="c1"># ex: &#39;Android/Linux&#39;</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">b_os</span><span class="si">}</span><span class="s2">/</span><span class="si">${</span><span class="nv">b_sys</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="o">)</span><span class="p">;</span><span class="w"> </span><span class="o">}</span>
+
+fn_get_libc<span class="o">()</span><span class="w"> </span><span class="o">{</span><span class="w"> </span><span class="o">(</span>
+<span class="w">    </span><span class="c1"># Ex:</span>
+<span class="w">    </span><span class="c1">#     musl</span>
+<span class="w">    </span><span class="c1">#     libc</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span>ldd<span class="w"> </span>/bin/ls<span class="w"> </span><span class="m">2</span>&gt;<span class="w"> </span>/dev/null<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-q<span class="w"> </span><span class="s1">&#39;musl&#39;</span><span class="w"> </span><span class="m">2</span>&gt;<span class="w"> </span>/dev/null<span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">        </span><span class="nb">echo</span><span class="w"> </span><span class="s1">&#39;musl&#39;</span>
+<span class="w">    </span><span class="k">elif</span><span class="w"> </span>fn_get_os<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-q<span class="w"> </span><span class="s1">&#39;GNU|Linux&#39;</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">        </span><span class="nb">echo</span><span class="w"> </span><span class="s1">&#39;gnu&#39;</span>
+<span class="w">    </span><span class="k">else</span>
+<span class="w">        </span><span class="nb">echo</span><span class="w"> </span><span class="s1">&#39;libc&#39;</span>
+<span class="w">    </span><span class="k">fi</span>
+<span class="o">)</span><span class="p">;</span><span class="w"> </span><span class="o">}</span>
+
+fn_get_http_client_name<span class="o">()</span><span class="w"> </span><span class="o">{</span><span class="w"> </span><span class="o">(</span>
+<span class="w">    </span><span class="c1"># Ex:</span>
+<span class="w">    </span><span class="c1">#     curl</span>
+<span class="w">    </span><span class="c1">#     curl+wget</span>
+<span class="w">    </span><span class="nv">b_client</span><span class="o">=</span><span class="s2">&quot;&quot;</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="nb">command</span><span class="w"> </span>-v<span class="w"> </span>curl<span class="w"> </span>&gt;<span class="w"> </span>/dev/null<span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">        </span><span class="nv">b_client</span><span class="o">=</span><span class="s2">&quot;curl&quot;</span>
+<span class="w">    </span><span class="k">fi</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="nb">command</span><span class="w"> </span>-v<span class="w"> </span>wget<span class="w"> </span>&gt;<span class="w"> </span>/dev/null<span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="nb">test</span><span class="w"> </span>-z<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">b_client</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">            </span><span class="nv">b_client</span><span class="o">=</span><span class="s2">&quot;wget&quot;</span>
+<span class="w">        </span><span class="k">else</span>
+<span class="w">            </span><span class="nv">b_client</span><span class="o">=</span><span class="s2">&quot;curl+wget&quot;</span>
+<span class="w">        </span><span class="k">fi</span>
+<span class="w">    </span><span class="k">fi</span>
+
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">b_client</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="o">)</span><span class="p">;</span><span class="w"> </span><span class="o">}</span>
+
+<span class="c1">#########################################</span>
+<span class="c1">#                                       #</span>
+<span class="c1">#      For Making the Display Nice      #</span>
+<span class="c1">#                                       #</span>
+<span class="c1">#########################################</span>
+
+<span class="c1"># Term Types</span>
+t_cmd<span class="o">()</span><span class="w"> </span><span class="o">{</span><span class="w"> </span><span class="o">(</span>fn_printf<span class="w"> </span><span class="s1">&#39;\e[2m\e[35m%s\e[39m\e[22m&#39;</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">1</span><span class="si">}</span><span class="s2">&quot;</span><span class="o">)</span><span class="p">;</span><span class="w"> </span><span class="o">}</span>
+t_host<span class="o">()</span><span class="w"> </span><span class="o">{</span><span class="w"> </span><span class="o">(</span>fn_printf<span class="w"> </span><span class="s1">&#39;\e[2m\e[33m%s\e[39m\e[22m&#39;</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">1</span><span class="si">}</span><span class="s2">&quot;</span><span class="o">)</span><span class="p">;</span><span class="w"> </span><span class="o">}</span>
+t_link<span class="o">()</span><span class="w"> </span><span class="o">{</span><span class="w"> </span><span class="o">(</span>fn_printf<span class="w"> </span><span class="s1">&#39;\e[1m\e[36m%s\e[39m\e[22m&#39;</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">1</span><span class="si">}</span><span class="s2">&quot;</span><span class="o">)</span><span class="p">;</span><span class="w"> </span><span class="o">}</span>
+t_path<span class="o">()</span><span class="w"> </span><span class="o">{</span><span class="w"> </span><span class="o">(</span>fn_printf<span class="w"> </span><span class="s1">&#39;\e[2m\e[32m%s\e[39m\e[22m&#39;</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">1</span><span class="si">}</span><span class="s2">&quot;</span><span class="o">)</span><span class="p">;</span><span class="w"> </span><span class="o">}</span>
+t_pkg<span class="o">()</span><span class="w"> </span><span class="o">{</span><span class="w"> </span><span class="o">(</span>fn_printf<span class="w"> </span><span class="s1">&#39;\e[1m\e[32m%s\e[39m\e[22m&#39;</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">1</span><span class="si">}</span><span class="s2">&quot;</span><span class="o">)</span><span class="p">;</span><span class="w"> </span><span class="o">}</span>
+t_task<span class="o">()</span><span class="w"> </span><span class="o">{</span><span class="w"> </span><span class="o">(</span>fn_printf<span class="w"> </span><span class="s1">&#39;\e[36m%s\e[39m&#39;</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">1</span><span class="si">}</span><span class="s2">&quot;</span><span class="o">)</span><span class="p">;</span><span class="w"> </span><span class="o">}</span>
+t_url<span class="o">()</span><span class="w"> </span><span class="o">{</span><span class="w"> </span><span class="o">(</span>fn_printf<span class="w"> </span><span class="s1">&#39;\e[2m%s\e[22m&#39;</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">1</span><span class="si">}</span><span class="s2">&quot;</span><span class="o">)</span><span class="p">;</span><span class="w"> </span><span class="o">}</span>
+
+<span class="c1"># Levels</span>
+t_info<span class="o">()</span><span class="w"> </span><span class="o">{</span><span class="w"> </span><span class="o">(</span>fn_printf<span class="w"> </span><span class="s1">&#39;\e[1m\e[36m%s\e[39m\e[22m&#39;</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">1</span><span class="si">}</span><span class="s2">&quot;</span><span class="o">)</span><span class="p">;</span><span class="w"> </span><span class="o">}</span>
+t_attn<span class="o">()</span><span class="w"> </span><span class="o">{</span><span class="w"> </span><span class="o">(</span>fn_printf<span class="w"> </span><span class="s1">&#39;\e[1m\e[33m%s\e[39m\e[22m&#39;</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">1</span><span class="si">}</span><span class="s2">&quot;</span><span class="o">)</span><span class="p">;</span><span class="w"> </span><span class="o">}</span>
+t_warn<span class="o">()</span><span class="w"> </span><span class="o">{</span><span class="w"> </span><span class="o">(</span>fn_printf<span class="w"> </span><span class="s1">&#39;\e[1m\e[33m%s\e[39m\e[22m&#39;</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">1</span><span class="si">}</span><span class="s2">&quot;</span><span class="o">)</span><span class="p">;</span><span class="w"> </span><span class="o">}</span>
+t_err<span class="o">()</span><span class="w"> </span><span class="o">{</span><span class="w"> </span><span class="o">(</span>fn_printf<span class="w"> </span><span class="s1">&#39;\e[31m%s\e[39m&#39;</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">1</span><span class="si">}</span><span class="s2">&quot;</span><span class="o">)</span><span class="p">;</span><span class="w"> </span><span class="o">}</span>
+
+<span class="c1"># Styles</span>
+t_bold<span class="o">()</span><span class="w"> </span><span class="o">{</span><span class="w"> </span><span class="o">(</span>fn_printf<span class="w"> </span><span class="s1">&#39;\e[1m%s\e[22m&#39;</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">1</span><span class="si">}</span><span class="s2">&quot;</span><span class="o">)</span><span class="p">;</span><span class="w"> </span><span class="o">}</span>
+t_dim<span class="o">()</span><span class="w"> </span><span class="o">{</span><span class="w"> </span><span class="o">(</span>fn_printf<span class="w"> </span><span class="s1">&#39;\e[2m%s\e[22m&#39;</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">1</span><span class="si">}</span><span class="s2">&quot;</span><span class="o">)</span><span class="p">;</span><span class="w"> </span><span class="o">}</span>
+t_em<span class="o">()</span><span class="w"> </span><span class="o">{</span><span class="w"> </span><span class="o">(</span>fn_printf<span class="w"> </span><span class="s1">&#39;\e[3m%s\e[23m&#39;</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">1</span><span class="si">}</span><span class="s2">&quot;</span><span class="o">)</span><span class="p">;</span><span class="w"> </span><span class="o">}</span>
+t_under<span class="o">()</span><span class="w"> </span><span class="o">{</span><span class="w"> </span><span class="o">(</span>fn_printf<span class="w"> </span><span class="s1">&#39;\e[4m%s\e[24m&#39;</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">1</span><span class="si">}</span><span class="s2">&quot;</span><span class="o">)</span><span class="p">;</span><span class="w"> </span><span class="o">}</span>
+
+<span class="c1"># FG Colors</span>
+t_cyan<span class="o">()</span><span class="w"> </span><span class="o">{</span><span class="w"> </span><span class="o">(</span>fn_printf<span class="w"> </span><span class="s1">&#39;\e[36m%s\e[39m&#39;</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">1</span><span class="si">}</span><span class="s2">&quot;</span><span class="o">)</span><span class="p">;</span><span class="w"> </span><span class="o">}</span>
+t_green<span class="o">()</span><span class="w"> </span><span class="o">{</span><span class="w"> </span><span class="o">(</span>fn_printf<span class="w"> </span><span class="s1">&#39;\e[32m%s\e[39m&#39;</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">1</span><span class="si">}</span><span class="s2">&quot;</span><span class="o">)</span><span class="p">;</span><span class="w"> </span><span class="o">}</span>
+t_magenta<span class="o">()</span><span class="w"> </span><span class="o">{</span><span class="w"> </span><span class="o">(</span>fn_printf<span class="w"> </span><span class="s1">&#39;\e[35m%s\e[39m&#39;</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">1</span><span class="si">}</span><span class="s2">&quot;</span><span class="o">)</span><span class="p">;</span><span class="w"> </span><span class="o">}</span>
+t_yellow<span class="o">()</span><span class="w"> </span><span class="o">{</span><span class="w"> </span><span class="o">(</span>fn_printf<span class="w"> </span><span class="s1">&#39;\e[33m%s\e[39m&#39;</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">1</span><span class="si">}</span><span class="s2">&quot;</span><span class="o">)</span><span class="p">;</span><span class="w"> </span><span class="o">}</span>
+
+fn_printf<span class="o">()</span><span class="w"> </span><span class="o">{</span><span class="w"> </span><span class="o">(</span>
+<span class="w">    </span><span class="nv">a_style</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">1</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="w">    </span><span class="nv">a_text</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">2</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span>fn_is_tty<span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">        </span><span class="c1">#shellcheck disable=SC2059</span>
+<span class="w">        </span><span class="nb">printf</span><span class="w"> </span>--<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">a_style</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">a_text</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="w">    </span><span class="k">else</span>
+<span class="w">        </span><span class="nb">printf</span><span class="w"> </span>--<span class="w"> </span><span class="s1">&#39;%s&#39;</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">a_text</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="w">    </span><span class="k">fi</span>
+<span class="o">)</span><span class="p">;</span><span class="w"> </span><span class="o">}</span>
+
+fn_sub_home<span class="o">()</span><span class="w"> </span><span class="o">{</span><span class="w"> </span><span class="o">(</span>
+<span class="w">    </span><span class="nv">my_rel</span><span class="o">=</span><span class="si">${</span><span class="nv">HOME</span><span class="si">}</span>
+<span class="w">    </span><span class="nv">my_abs</span><span class="o">=</span><span class="si">${</span><span class="nv">1</span><span class="si">}</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">my_abs</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>sed<span class="w"> </span><span class="s2">&quot;s:^</span><span class="si">${</span><span class="nv">my_rel</span><span class="si">}</span><span class="s2">:~:&quot;</span>
+<span class="o">)</span><span class="p">;</span><span class="w"> </span><span class="o">}</span>
+
+<span class="c1">###################################</span>
+<span class="c1">#                                 #</span>
+<span class="c1">#       Detect HTTP Client        #</span>
+<span class="c1">#                                 #</span>
+<span class="c1">###################################</span>
+
+fn_wget<span class="o">()</span><span class="w"> </span><span class="o">{</span><span class="w"> </span><span class="o">(</span>
+<span class="w">    </span><span class="c1"># Doc:</span>
+<span class="w">    </span><span class="c1">#     Downloads the file at the given url to the given path</span>
+<span class="w">    </span><span class="nv">a_url</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">1</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="w">    </span><span class="nv">a_path</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">2</span><span class="si">}</span><span class="s2">&quot;</span>
+
+<span class="w">    </span><span class="nv">cmd_wget</span><span class="o">=</span><span class="s2">&quot;wget -c -q --user-agent&quot;</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span>fn_is_tty<span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">        </span><span class="nv">cmd_wget</span><span class="o">=</span><span class="s2">&quot;wget -c -q --show-progress --user-agent&quot;</span>
+<span class="w">    </span><span class="k">fi</span>
+<span class="w">    </span><span class="c1"># busybox wget doesn&#39;t support --show-progress</span>
+<span class="w">    </span><span class="c1"># See</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span>readlink<span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span><span class="nb">command</span><span class="w"> </span>-v<span class="w"> </span>wget<span class="k">)</span><span class="s2">&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-q<span class="w"> </span>busybox<span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">        </span><span class="nv">cmd_wget</span><span class="o">=</span><span class="s2">&quot;wget --user-agent&quot;</span>
+<span class="w">    </span><span class="k">fi</span>
+
+<span class="w">    </span><span class="nv">b_triple_ua</span><span class="o">=</span><span class="s2">&quot;</span><span class="k">$(</span>fn_get_target_triple_user_agent<span class="k">)</span><span class="s2">&quot;</span>
+<span class="w">    </span><span class="nv">b_agent</span><span class="o">=</span><span class="s2">&quot;webi/wget </span><span class="si">${</span><span class="nv">b_triple_ua</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="nb">command</span><span class="w"> </span>-v<span class="w"> </span>curl<span class="w"> </span>&gt;<span class="w"> </span>/dev/null<span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">        </span><span class="nv">b_agent</span><span class="o">=</span><span class="s2">&quot;webi/wget+curl </span><span class="si">${</span><span class="nv">b_triple_ua</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="w">    </span><span class="k">fi</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span>!<span class="w"> </span><span class="nv">$cmd_wget</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">b_agent</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">a_url</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span>-O<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">a_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">        </span><span class="nb">echo</span><span class="w"> </span>&gt;<span class="p">&amp;</span><span class="m">2</span><span class="w"> </span><span class="s2">&quot;    </span><span class="k">$(</span>t_err<span class="w"> </span><span class="s2">&quot;failed to download (wget)&quot;</span><span class="k">)</span><span class="s2"> &#39;</span><span class="k">$(</span>t_url<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">a_url</span><span class="si">}</span><span class="s2">&quot;</span><span class="k">)</span><span class="s2">&#39;&quot;</span>
+<span class="w">        </span><span class="nb">echo</span><span class="w"> </span>&gt;<span class="p">&amp;</span><span class="m">2</span><span class="w"> </span><span class="s2">&quot;    </span><span class="nv">$cmd_wget</span><span class="s2"> &#39;</span><span class="si">${</span><span class="nv">b_agent</span><span class="si">}</span><span class="s2">&#39; &#39;</span><span class="si">${</span><span class="nv">a_url</span><span class="si">}</span><span class="s2">&#39; -O &#39;</span><span class="si">${</span><span class="nv">a_path</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
+<span class="w">        </span><span class="nb">echo</span><span class="w"> </span>&gt;<span class="p">&amp;</span><span class="m">2</span><span class="w"> </span><span class="s2">&quot;    </span><span class="k">$(</span>wget<span class="w"> </span>-V<span class="k">)</span><span class="s2">&quot;</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="m">1</span>
+<span class="w">    </span><span class="k">fi</span>
+<span class="o">)</span><span class="p">;</span><span class="w"> </span><span class="o">}</span>
+
+fn_curl<span class="o">()</span><span class="w"> </span><span class="o">{</span><span class="w"> </span><span class="o">(</span>
+<span class="w">    </span><span class="c1"># Doc:</span>
+<span class="w">    </span><span class="c1">#     Downloads the file at the given url to the given path</span>
+<span class="w">    </span><span class="nv">a_url</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">1</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="w">    </span><span class="nv">a_path</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">2</span><span class="si">}</span><span class="s2">&quot;</span>
+
+<span class="w">    </span><span class="nv">cmd_curl</span><span class="o">=</span><span class="s2">&quot;curl -f -sSL -#&quot;</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span>fn_is_tty<span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">        </span><span class="nv">cmd_curl</span><span class="o">=</span><span class="s2">&quot;curl -f -sSL&quot;</span>
+<span class="w">    </span><span class="k">fi</span>
+
+<span class="w">    </span><span class="nv">b_triple_ua</span><span class="o">=</span><span class="s2">&quot;</span><span class="k">$(</span>fn_get_target_triple_user_agent<span class="k">)</span><span class="s2">&quot;</span>
+<span class="w">    </span><span class="nv">b_agent</span><span class="o">=</span><span class="s2">&quot;webi/curl </span><span class="si">${</span><span class="nv">b_triple_ua</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="nb">command</span><span class="w"> </span>-v<span class="w"> </span>wget<span class="w"> </span>&gt;<span class="w"> </span>/dev/null<span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">        </span><span class="nv">b_agent</span><span class="o">=</span><span class="s2">&quot;webi/curl+wget </span><span class="si">${</span><span class="nv">b_triple_ua</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="w">    </span><span class="k">fi</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span>!<span class="w"> </span><span class="nv">$cmd_curl</span><span class="w"> </span>-A<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">b_agent</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">a_url</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span>-o<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">a_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">        </span><span class="nb">echo</span><span class="w"> </span>&gt;<span class="p">&amp;</span><span class="m">2</span><span class="w"> </span><span class="s2">&quot;    </span><span class="k">$(</span>t_err<span class="w"> </span><span class="s2">&quot;failed to download (curl)&quot;</span><span class="k">)</span><span class="s2"> &#39;</span><span class="k">$(</span>t_url<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">a_url</span><span class="si">}</span><span class="s2">&quot;</span><span class="k">)</span><span class="s2">&#39;&quot;</span>
+<span class="w">        </span><span class="nb">echo</span><span class="w"> </span>&gt;<span class="p">&amp;</span><span class="m">2</span><span class="w"> </span><span class="s2">&quot;    </span><span class="nv">$cmd_curl</span><span class="s2"> -A &#39;</span><span class="si">${</span><span class="nv">b_agent</span><span class="si">}</span><span class="s2">&#39; &#39;</span><span class="si">${</span><span class="nv">a_url</span><span class="si">}</span><span class="s2">&#39; -o &#39;</span><span class="si">${</span><span class="nv">a_path</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
+<span class="w">        </span><span class="nb">echo</span><span class="w"> </span>&gt;<span class="p">&amp;</span><span class="m">2</span><span class="w"> </span><span class="s2">&quot;    </span><span class="k">$(</span>curl<span class="w"> </span>-V<span class="k">)</span><span class="s2">&quot;</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="m">1</span>
+<span class="w">    </span><span class="k">fi</span>
+<span class="o">)</span><span class="p">;</span><span class="w"> </span><span class="o">}</span>
+
+fn_get_target_triple_user_agent<span class="o">()</span><span class="w"> </span><span class="o">{</span><span class="w"> </span><span class="o">(</span>
+<span class="w">    </span><span class="c1"># Ex:</span>
+<span class="w">    </span><span class="c1">#     x86_64/unknown GNU/Linux/5.15.107-2-pve gnu</span>
+<span class="w">    </span><span class="c1">#     arm64/unknown Darwin/22.6.0 libc</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span>uname<span class="w"> </span>-m<span class="k">)</span><span class="s2">/unknown </span><span class="k">$(</span>fn_get_os<span class="k">)</span><span class="s2">/</span><span class="k">$(</span>uname<span class="w"> </span>-r<span class="k">)</span><span class="s2"> </span><span class="k">$(</span>fn_get_libc<span class="k">)</span><span class="s2">&quot;</span>
+<span class="o">)</span><span class="p">;</span><span class="w"> </span><span class="o">}</span>
+
+fn_download_to_path<span class="o">()</span><span class="w"> </span><span class="o">{</span><span class="w"> </span><span class="o">(</span>
+<span class="w">    </span><span class="nv">a_url</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">1</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="w">    </span><span class="nv">a_path</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">2</span><span class="si">}</span><span class="s2">&quot;</span>
+
+<span class="w">    </span>mkdir<span class="w"> </span>-p<span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span>dirname<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">a_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="k">)</span><span class="s2">&quot;</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="nb">command</span><span class="w"> </span>-v<span class="w"> </span>curl<span class="w"> </span>&gt;<span class="w"> </span>/dev/null<span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">        </span>fn_curl<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">a_url</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">a_path</span><span class="si">}</span><span class="s2">.part&quot;</span>
+<span class="w">    </span><span class="k">elif</span><span class="w"> </span><span class="nb">command</span><span class="w"> </span>-v<span class="w"> </span>wget<span class="w"> </span>&gt;<span class="w"> </span>/dev/null<span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">        </span>fn_wget<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">a_url</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">a_path</span><span class="si">}</span><span class="s2">.part&quot;</span>
+<span class="w">    </span><span class="k">else</span>
+<span class="w">        </span><span class="nb">echo</span><span class="w"> </span>&gt;<span class="p">&amp;</span><span class="m">2</span><span class="w"> </span><span class="s2">&quot;    </span><span class="k">$(</span>t_err<span class="w"> </span><span class="s2">&quot;failed to detect HTTP client (curl, wget)&quot;</span><span class="k">)</span><span class="s2">&quot;</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="m">1</span>
+<span class="w">    </span><span class="k">fi</span>
+<span class="w">    </span>mv<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">a_path</span><span class="si">}</span><span class="s2">.part&quot;</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">a_path</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="o">)</span><span class="p">;</span><span class="w"> </span><span class="o">}</span>
+
+<span class="c1">##############################################</span>
+<span class="c1">#                                            #</span>
+<span class="c1"># Install or Update Webi and Install Package #</span>
+<span class="c1">#                                            #</span>
+<span class="c1">##############################################</span>
+
+webi_bootstrap<span class="o">()</span><span class="w"> </span><span class="o">{</span><span class="w"> </span><span class="o">(</span>
+<span class="w">    </span><span class="nv">a_path</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">1</span><span class="si">}</span><span class="s2">&quot;</span>
+
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span>t_task<span class="w"> </span><span class="s1">&#39;Bootstrapping&#39;</span><span class="k">)</span><span class="s2"> </span><span class="k">$(</span>t_pkg<span class="w"> </span><span class="s1">&#39;Webi&#39;</span><span class="k">)</span><span class="s2">&quot;</span>
+
+<span class="w">    </span><span class="nv">b_path_rel</span><span class="o">=</span><span class="s2">&quot;</span><span class="k">$(</span>fn_sub_home<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">a_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="k">)</span><span class="s2">&quot;</span>
+<span class="w">    </span><span class="nv">b_checksum</span><span class="o">=</span><span class="s2">&quot;&quot;</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="nb">test</span><span class="w"> </span>-r<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">a_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">        </span><span class="nv">b_checksum</span><span class="o">=</span><span class="s2">&quot;</span><span class="k">$(</span>fn_checksum<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">a_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="k">)</span><span class="s2">&quot;</span>
+<span class="w">    </span><span class="k">fi</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="nb">test</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$b_checksum</span><span class="s2">&quot;</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">WEBI_CHECKSUM</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">        </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;    </span><span class="k">$(</span>t_dim<span class="w"> </span><span class="s1">&#39;Found&#39;</span><span class="k">)</span><span class="s2"> </span><span class="k">$(</span>t_path<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">b_path_rel</span><span class="si">}</span><span class="s2">&quot;</span><span class="k">)</span><span class="s2">&quot;</span>
+<span class="w">        </span>sleep<span class="w"> </span><span class="m">0</span>.1
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="m">0</span>
+<span class="w">    </span><span class="k">fi</span>
+
+<span class="w">    </span><span class="nv">b_webi_file_url</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">WEBI_HOST</span><span class="si">}</span><span class="s2">/packages/webi/webi.sh&quot;</span>
+<span class="w">    </span><span class="nv">b_tmp</span><span class="o">=</span><span class="s1">&#39;&#39;</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="nb">test</span><span class="w"> </span>-r<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">a_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">        </span><span class="nv">b_ts</span><span class="o">=</span><span class="s2">&quot;</span><span class="k">$(</span>date<span class="w"> </span>-u<span class="w"> </span><span class="s1">&#39;+%s&#39;</span><span class="k">)</span><span class="s2">&quot;</span>
+<span class="w">        </span><span class="nv">b_tmp</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">a_path</span><span class="si">}</span><span class="s2">.</span><span class="si">${</span><span class="nv">b_ts</span><span class="si">}</span><span class="s2">.bak&quot;</span>
+<span class="w">        </span>mv<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">a_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">b_tmp</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="w">        </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;    Updating </span><span class="k">$(</span>t_path<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">b_path_rel</span><span class="si">}</span><span class="s2">&quot;</span><span class="k">)</span><span class="s2">&quot;</span>
+<span class="w">    </span><span class="k">fi</span>
+
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;    Downloading </span><span class="k">$(</span>t_url<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">b_webi_file_url</span><span class="si">}</span><span class="s2">&quot;</span><span class="k">)</span><span class="s2">&quot;</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;        to </span><span class="k">$(</span>t_path<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">b_path_rel</span><span class="si">}</span><span class="s2">&quot;</span><span class="k">)</span><span class="s2">&quot;</span>
+<span class="w">    </span>fn_download_to_path<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">b_webi_file_url</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">a_path</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="w">    </span>chmod<span class="w"> </span>u+x<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">a_path</span><span class="si">}</span><span class="s2">&quot;</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="nb">test</span><span class="w"> </span>-r<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">b_tmp</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">        </span>rm<span class="w"> </span>-f<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">b_tmp</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="w">    </span><span class="k">fi</span>
+<span class="o">)</span><span class="p">;</span><span class="w"> </span><span class="o">}</span>
+
+fn_checksum<span class="o">()</span><span class="w"> </span><span class="o">{</span>
+<span class="w">    </span><span class="nv">a_filepath</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">1</span><span class="si">}</span><span class="s2">&quot;</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="nb">command</span><span class="w"> </span>-v<span class="w"> </span>sha1sum<span class="w"> </span>&gt;<span class="w"> </span>/dev/null<span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">        </span>sha1sum<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">a_filepath</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>cut<span class="w"> </span>-d<span class="s1">&#39; &#39;</span><span class="w"> </span>-f1<span class="w"> </span><span class="p">|</span><span class="w"> </span>cut<span class="w"> </span>-c<span class="w"> </span><span class="m">1</span>-8
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="m">0</span>
+<span class="w">    </span><span class="k">fi</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="nb">command</span><span class="w"> </span>-v<span class="w"> </span>shasum<span class="w"> </span>&gt;<span class="w"> </span>/dev/null<span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">        </span>shasum<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">a_filepath</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>cut<span class="w"> </span>-d<span class="s1">&#39; &#39;</span><span class="w"> </span>-f1<span class="w"> </span><span class="p">|</span><span class="w"> </span>cut<span class="w"> </span>-c<span class="w"> </span><span class="m">1</span>-8
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="m">0</span>
+<span class="w">    </span><span class="k">fi</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="nb">command</span><span class="w"> </span>-v<span class="w"> </span>sha1<span class="w"> </span>&gt;<span class="w"> </span>/dev/null<span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">        </span>sha1<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">a_filepath</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>cut<span class="w"> </span>-d<span class="s1">&#39;=&#39;</span><span class="w"> </span>-f2<span class="w"> </span><span class="p">|</span><span class="w"> </span>cut<span class="w"> </span>-c<span class="w"> </span><span class="m">2</span>-9
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="m">0</span>
+<span class="w">    </span><span class="k">fi</span>
+
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span>&gt;<span class="p">&amp;</span><span class="m">2</span><span class="w"> </span><span class="s2">&quot;    warn: no sha1 sum program&quot;</span>
+<span class="w">    </span>date<span class="w"> </span><span class="s1">&#39;+%F %H:%M&#39;</span>
+<span class="o">}</span>
+
+<span class="c1">##############################################</span>
+<span class="c1">#                                            #</span>
+<span class="c1">#          Detect TTY and run main           #</span>
+<span class="c1">#                                            #</span>
+<span class="c1">##############################################</span>
+
+fn_is_tty<span class="o">()</span><span class="w"> </span><span class="o">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="nb">test</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">WEBI_TTY</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;tty&#39;</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="m">0</span>
+<span class="w">    </span><span class="k">fi</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="m">1</span>
+<span class="o">}</span>
+
+fn_detect_tty<span class="o">()</span><span class="w"> </span><span class="o">{</span><span class="w"> </span><span class="o">(</span>
+<span class="w">    </span><span class="c1"># stdin will NOT be a tty if it&#39;s being piped</span>
+<span class="w">    </span><span class="c1"># stdout &amp; stderr WILL be a tty even when piped</span>
+<span class="w">    </span><span class="c1"># they are not a tty if being captured or redirected</span>
+<span class="w">    </span><span class="c1"># &#39;set -i&#39; is NOT available in sh</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="nb">test</span><span class="w"> </span>-t<span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">test</span><span class="w"> </span>-t<span class="w"> </span><span class="m">2</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="m">0</span>
+<span class="w">    </span><span class="k">fi</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="m">1</span>
+<span class="o">)</span><span class="p">;</span><span class="w"> </span><span class="o">}</span>
+
+main<span class="o">()</span><span class="w"> </span><span class="o">{</span><span class="w"> </span><span class="o">(</span>
+<span class="w">    </span><span class="nb">set</span><span class="w"> </span>-e
+<span class="w">    </span><span class="nb">set</span><span class="w"> </span>-u
+
+<span class="w">    </span><span class="nv">WEBI_TTY</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">WEBI_TTY</span><span class="k">:-</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="nb">test</span><span class="w"> </span>-z<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">WEBI_TTY</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span>fn_detect_tty<span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">            </span><span class="nv">WEBI_TTY</span><span class="o">=</span><span class="s2">&quot;tty&quot;</span>
+<span class="w">        </span><span class="k">fi</span>
+<span class="w">        </span><span class="nb">export</span><span class="w"> </span>WEBI_TTY
+<span class="w">    </span><span class="k">fi</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="nb">test</span><span class="w"> </span>-z<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">WEBI_WELCOME</span><span class="k">:-</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">        </span>fn_show_welcome
+<span class="w">    </span><span class="k">fi</span>
+<span class="w">    </span><span class="nb">export</span><span class="w"> </span><span class="nv">WEBI_WELCOME</span><span class="o">=</span><span class="s1">&#39;shown&#39;</span>
+
+<span class="w">    </span><span class="c1"># note: we may support custom locations in the future</span>
+<span class="w">    </span><span class="nb">export</span><span class="w"> </span><span class="nv">WEBI_HOME</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">HOME</span><span class="si">}</span><span class="s2">/.local&quot;</span>
+<span class="w">    </span><span class="nv">b_home</span><span class="o">=</span><span class="s2">&quot;</span><span class="k">$(</span>fn_sub_home<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">WEBI_HOME</span><span class="si">}</span><span class="s2">&quot;</span><span class="k">)</span><span class="s2">&quot;</span>
+<span class="w">    </span><span class="nv">b_webi_path</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">WEBI_HOME</span><span class="si">}</span><span class="s2">/bin/webi&quot;</span>
+<span class="w">    </span><span class="nv">b_webi_path_rel</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">b_home</span><span class="si">}</span><span class="s2">/bin/webi&quot;</span>
+
+<span class="w">    </span><span class="nv">WEBI_CURRENT</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">WEBI_CURRENT</span><span class="k">:-</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="nb">test</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">WEBI_CURRENT</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span>!<span class="o">=</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">WEBI_CHECKSUM</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">        </span>webi_bootstrap<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">b_webi_path</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="w">        </span><span class="nb">export</span><span class="w"> </span><span class="nv">WEBI_CURRENT</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">WEBI_CHECKSUM</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="w">    </span><span class="k">fi</span>
+
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;    Running </span><span class="k">$(</span>t_cmd<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">b_webi_path_rel</span><span class="si">}</span><span class="s2"> </span><span class="si">${</span><span class="nv">WEBI_PKG</span><span class="si">}</span><span class="s2">&quot;</span><span class="k">)</span><span class="s2">&quot;</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+
+<span class="w">    </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">b_webi_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">WEBI_PKG</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="o">)</span><span class="p">;</span><span class="w"> </span><span class="o">}</span>
+
+main
+</code></pre></div>
+
+<h2 id="安装_1">安装</h2>
+<div class="highlight"><pre><span></span><code>chmod<span class="w"> </span>+x<span class="w"> </span>k9s-local-install.sh
+./k9s0local-install.sh
+
+<span class="nb">echo</span><span class="w"> </span><span class="s1">&#39;export PATH=&quot;$HOME/.local/bin:$PATH&quot;&#39;</span><span class="w"> </span>&gt;&gt;<span class="w"> </span>~/.bashrc
+<span class="nb">source</span><span class="w"> </span>~/.bashrc
+</code></pre></div>
+
+<p>再新开一个terminal就可以运行K9s了</p>
+    </div>
+  </article>
+  <aside class="toc">
+    <p class="toc-label">本页目录</p>
+    <ul>
+  <li><a href="#使用">使用</a></li>
+  <li><a href="#快捷键">快捷键</a></li>
+  <li><a href="#过滤功能">过滤功能</a></li>
+  <li><a href="#pulse">Pulse</a></li>
+  <li><a href="#xray">Xray</a></li>
+  <li><a href="#popeye">popeye</a></li>
+  <li><a href="#k9s插件功能">k9s插件功能</a></li>
+  <li><a href="#安装">安装</a></li>
+  <li><a href="#使用_1">使用</a></li>
+  <li><a href="#k9s通过plugin与stern集成">k9s通过plugin与stern集成</a></li>
+  <li><a href="#下载安装包">下载安装包</a></li>
+  <li><a href="#本地安装脚本">本地安装脚本</a></li>
+  <li><a href="#安装_1">安装</a></li>
+</ul>
+  </aside>
+
+</div>
+
+</main>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>Learning Notes</span>
+    <a href="https://github.com/hangx969/learning-notes">GitHub</a>
+  </div>
+</footer>
+<script src="../../../static/search.js"></script>
+</body>
+</html>

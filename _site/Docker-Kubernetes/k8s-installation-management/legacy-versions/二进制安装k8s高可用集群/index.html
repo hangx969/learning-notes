@@ -1,0 +1,2287 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>二进制安装k8s高可用集群 - Learning Notes</title>
+<link rel="stylesheet" href="../../../../static/style.css">
+<link rel="stylesheet" href="../../../../static/pygments.css">
+</head>
+<body data-root="../../../../">
+<header class="site-header">
+  <div class="header-inner">
+    <a class="logo" href="../../../../index.html"><span class="logo-mark"></span>LEARNING NOTES</a>
+    <div class="search">
+      <input id="search-input" type="search" placeholder="搜索笔记…" autocomplete="off" aria-label="搜索笔记">
+      <div id="search-results" hidden></div>
+    </div>
+  </div>
+  <nav class="topic-nav" aria-label="主题导航">
+    <div class="topic-nav-inner">
+      <a href="../../../../AI/">AI</a>
+      <a href="../../../../Aliyun/">Aliyun</a>
+      <a href="../../../../Azure/">Azure</a>
+      <a href="../../../../C%2B%2B/">C++</a>
+      <a href="../../../../CloudComputing/">CloudComputing</a>
+      <a href="../../../../Database/">Database</a>
+      <a href="../../../../Docker-Kubernetes/" class="active">Docker-Kubernetes</a>
+      <a href="../../../../GPU-DeepLearning/">GPU-DeepLearning</a>
+      <a href="../../../../Git/">Git</a>
+      <a href="../../../../Go/">Go</a>
+      <a href="../../../../HPC/">HPC</a>
+      <a href="../../../../IaC/">IaC</a>
+      <a href="../../../../Linux-Shell/">Linux-Shell</a>
+      <a href="../../../../Middlewares/">Middlewares</a>
+      <a href="../../../../Networking/">Networking</a>
+      <a href="../../../../OS/">OS</a>
+      <a href="../../../../Python/">Python</a>
+      <a href="../../../../SoftwareTesting/">SoftwareTesting</a>
+    </div>
+  </nav>
+</header>
+<main class="main">
+
+<div class="article-layout">
+
+  <aside class="sidebar">
+    <details class="sidebar-details">
+      <summary>Docker-Kubernetes</summary>
+      <nav class="sidebar-nav">
+        <p class="sidebar-group">CKA-CKS</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/CKA-CKS/CKA-%E5%A4%87%E8%80%83/">CKA 备考</a></li>
+          <li><a href="../../../../Docker-Kubernetes/CKA-CKS/CKS-%E5%A4%87%E8%80%83/">CKS 备考</a></li>
+          <li><a href="../../../../Docker-Kubernetes/CKA-CKS/k8s-%E9%9D%A2%E8%AF%95%E9%A2%98%E6%B1%87%E6%80%BB/">K8s 面试题汇总</a></li>
+        </ul>
+        <p class="sidebar-group">container-platform</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/container-platform/%E9%83%A8%E7%BD%B2openshift%283.10%29/">部署 OpenShift (3.10)</a></li>
+          <li><a href="../../../../Docker-Kubernetes/container-platform/%E9%83%A8%E7%BD%B2%E8%BD%BB%E9%87%8F%E7%BA%A7%E7%9A%84K8S%E5%B9%B3%E5%8F%B0-K3S/">部署轻量级 K8S 平台 - K3S</a></li>
+        </ul>
+        <p class="sidebar-group">docker</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/docker/docker%E5%9F%BA%E7%A1%80/">Docker基础</a></li>
+          <li><a href="../../../../Docker-Kubernetes/docker/docker%E5%AE%89%E5%85%A8%E9%85%8D%E7%BD%AE-Capabilities%E4%B8%8E%E5%AE%B9%E5%99%A8%E5%8A%A0%E5%9B%BA/">Docker 安全配置详解：Capabilities 与容器加固</a></li>
+          <li><a href="../../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2UI%E5%B7%A5%E5%85%B7portainer-%E9%83%A8%E7%BD%B2redis-sentinel/">Docker部署Portainer与Redis-Sentinel</a></li>
+          <li><a href="../../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2gitlab/">Docker部署GitLab</a></li>
+          <li><a href="../../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2lnmp%E7%BD%91%E7%AB%99/">Docker部署LNMP网站</a></li>
+          <li><a href="../../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2loki/">Docker部署Loki日志系统</a></li>
+          <li><a href="../../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2nginx-tomcat-httpd-go-python%E6%9C%8D%E5%8A%A1/">Docker部署Nginx-Tomcat-Httpd-Go-Python服务</a></li>
+          <li><a href="../../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2prometheus-grafana-cAdvisior%E7%9B%91%E6%8E%A7/">Docker部署Prometheus-Grafana-cAdvisor监控</a></li>
+          <li><a href="../../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2%E4%BB%93%E5%BA%93%E5%B9%B3%E5%8F%B0homebox/">Docker部署Homebox仓库平台</a></li>
+          <li><a href="../../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1%E5%B7%A5%E5%85%B7gocron/">Docker部署GoCron定时任务工具</a></li>
+          <li><a href="../../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2%E8%B7%AF%E7%94%B1%E7%9B%91%E6%8E%A7%E5%B7%A5%E5%85%B7NextTrace/">Docker部署NextTrace路由监控工具</a></li>
+          <li><a href="../../../../Docker-Kubernetes/docker/docker%E9%85%8D%E7%BD%AENVIDIA%20GPU/">Docker配置NVIDIA GPU</a></li>
+          <li><a href="../../../../Docker-Kubernetes/docker/docker%E9%85%8D%E7%BD%AE%E4%BB%A3%E7%90%86/">Docker配置代理</a></li>
+        </ul>
+        <p class="sidebar-group">harbor</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/harbor/harbor-basics/">Harbor 基础</a></li>
+          <li><a href="../../../../Docker-Kubernetes/harbor/helm%E9%83%A8%E7%BD%B2harbor/">Helm 部署 Harbor</a></li>
+        </ul>
+        <p class="sidebar-group">helm-operator</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/helm-operator/helmv3-%E5%AE%89%E8%A3%85%E4%B8%8E%E4%BD%BF%E7%94%A8/">Helm v3 安装与使用</a></li>
+          <li><a href="../../../../Docker-Kubernetes/helm-operator/helm%E9%83%A8%E7%BD%B2config-syncer%28kubed%29/">Helm 部署 Config Syncer (Kubed)</a></li>
+          <li><a href="../../../../Docker-Kubernetes/helm-operator/helm%E9%83%A8%E7%BD%B2dragonfly/">Helm 部署 Dragonfly</a></li>
+          <li><a href="../../../../Docker-Kubernetes/helm-operator/helm%E9%83%A8%E7%BD%B2pact-broker/">Helm 部署 Pact Broker</a></li>
+          <li><a href="../../../../Docker-Kubernetes/helm-operator/helm%E9%83%A8%E7%BD%B2reloader/">Helm 部署 Reloader</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-CICD</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD%20Image%20Updater/">ArgoCD Image Updater</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD%E5%9F%BA%E7%A1%80/">ArgoCD基础</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD%E5%A4%9A%E9%9B%86%E7%BE%A4GitOps%E5%AE%9E%E6%88%98/">多集群 GitOps 实战：用 Argo CD 管理上百个 Kubernetes 集群</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD%E9%83%A8%E7%BD%B2Helm%E5%BA%94%E7%94%A8%E6%97%B6%E5%9F%9F%E5%90%8D%E8%A7%A3%E6%9E%90%E5%A4%B1%E8%B4%A5%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5%E4%B8%8E%E8%A7%A3%E5%86%B3/">ArgoCD部署Helm应用时域名解析失败问题排查与解决</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/ArgoCD/%E5%AD%A6%E4%B9%A0%E9%93%BE%E6%8E%A5/">ArgoCD学习链接</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/Claude-Code%E5%AE%9E%E7%8E%B0CICD%E8%87%AA%E5%8A%A8%E5%8C%96%E5%8F%91%E5%B8%83%E6%B5%81%E7%A8%8B/">Claude Code 实现 CI/CD 自动化发布流程详细指南</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/Gitlab/helm%E9%83%A8%E7%BD%B2gitlab/">Helm部署GitLab</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/Gitlab/k8s%E9%83%A8%E7%BD%B2Gitlab%2811.8.1%29-%E5%9F%BA%E4%BA%8Eyaml/">K8s部署GitLab(11.8.1)-基于YAML</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/Gitlab/%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%AE%89%E8%A3%85Gitlab%2817.9.8%29/">二进制安装GitLab(17.9.8)</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/Jenkins/Jenkins%E8%AF%AD%E6%B3%95-%E5%9F%BA%E4%BA%8Edocker%E9%83%A8%E7%BD%B2/">Jenkins语法-基于Docker部署</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/Jenkins/docker%E9%83%A8%E7%BD%B2jenkins/">Docker部署Jenkins</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/Jenkins/helm%E9%83%A8%E7%BD%B2jenkins/">Helm部署Jenkins</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/Jenkins/k8s-Devops%E5%B9%B3%E5%8F%B0%E8%90%BD%E5%9C%B0-%E5%9F%BA%E4%BA%8Ejenkins/">K8s DevOps平台落地-基于Jenkins</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/Jenkins/k8s%E9%83%A8%E7%BD%B2%E5%9F%BA%E4%BA%8EJenkins%282.394%29%E7%9A%84DevOps%E5%B7%A5%E5%85%B7%E9%93%BE-%E5%9F%BA%E4%BA%8Eyaml/">K8s部署基于Jenkins(2.394)的DevOps工具链-基于YAML</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/Jenkins/k8s%E9%83%A8%E7%BD%B2%E5%9F%BA%E4%BA%8EJenkins%282.426.3%29%E7%9A%84Devops%E5%B7%A5%E5%85%B7%E9%93%BE-%E5%9F%BA%E4%BA%8Eyaml/">K8s部署基于Jenkins(2.426.3)的DevOps工具链-基于YAML</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/Jenkins/%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%AE%89%E8%A3%85Jenkins%282.319%29/">二进制安装Jenkins(2.319)</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/Kustomize/k8s%E9%85%8D%E7%BD%AE%E5%AE%9A%E5%88%B6%E5%B7%A5%E5%85%B7-kustomize/">K8s配置定制工具-Kustomize</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/Tekton/k8s%E9%83%A8%E7%BD%B2%E5%8E%9F%E7%94%9F%E7%9A%84CICD%E5%B7%A5%E5%85%B7Tekton-%E5%9F%BA%E4%BA%8Eyaml/">K8s部署原生的CICD工具Tekton-基于YAML</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/Tekton/%E5%9F%BA%E4%BA%8ETekton%E7%9A%84%E4%BA%91%E5%8E%9F%E7%94%9F%E5%B9%B3%E5%8F%B0%E8%90%BD%E5%9C%B0/">基于Tekton的云原生平台落地</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/k8s%E5%8F%91%E5%B8%83%E7%AD%96%E7%95%A5-%E8%93%9D%E7%BB%BF%E9%83%A8%E7%BD%B2%E4%B8%8E%E9%87%91%E4%B8%9D%E9%9B%80%E5%8F%91%E5%B8%83/">K8s 发布策略：蓝绿部署与金丝雀发布实战</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/%E4%BD%BF%E7%94%A8github%20action%E9%83%A8%E7%BD%B2helmchart/">使用GitHub Action部署Helm Chart</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/%E5%8F%91%E5%B8%83go-python-java%E4%BB%A3%E7%A0%81%E5%88%B0K8S%E7%8E%AF%E5%A2%83/">发布Go/Python/Java代码到K8S环境</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-UI-tools</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/k8s-UI-tools/k8s-API%E6%A3%80%E6%9F%A5%E5%B7%A5%E5%85%B7kubent/">K8s API 检查工具 kubent</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-UI-tools/k8s-%E5%B0%8F%E5%B7%A5%E5%85%B7%E9%9B%86%E5%90%88/">K8s 小工具集合</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-UI-tools/k8s%E9%83%A8%E7%BD%B2-Dashboard-UI/">K8s 部署 Dashboard UI</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-UI-tools/k8s%E9%83%A8%E7%BD%B2%E5%8F%AF%E8%A7%86%E5%8C%96ui%E7%95%8C%E9%9D%A2kuboard/">K8s 部署 Kuboard</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-UI-tools/kubectl-UI%E5%B7%A5%E5%85%B7Lens/">kubectl UI 工具 Lens</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-UI-tools/kubectl-%E5%8F%AF%E8%A7%86%E5%8C%96%E6%8F%92%E4%BB%B6k9s-stern/">kubectl 可视化插件 k9s 和 stern</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-UI-tools/kuebctl-%E6%8F%92%E4%BB%B6krew-rolesum/">kubectl 插件 krew 和 rolesum</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-UI-tools/rancher%28v2.6.4%29%E7%AE%A1%E7%90%86k8s%E9%9B%86%E7%BE%A4/">Rancher (v2.6.4) 管理 K8s 集群</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-ai-gpu</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/k8s-ai-gpu/k8s%E9%85%8D%E7%BD%AENVIDIA%20GPU/">K8s 配置 NVIDIA GPU</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-backup-dr</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/k8s-backup-dr/k8s%E5%A4%87%E4%BB%BD%E4%B8%8E%E7%81%BE%E5%A4%87%E5%AE%9E%E6%88%98-%E4%B8%89%E5%B1%82%E5%AE%B9%E7%81%BE%E6%9E%B6%E6%9E%84/">K8s 备份与灾备实战：三层容灾架构</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-backup-dr/k8s%E9%9B%86%E7%BE%A4%E5%A4%87%E4%BB%BD%E6%81%A2%E5%A4%8D-Velero/">K8s集群备份恢复 - Velero</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-basic-resources</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/K8s%E5%9F%BA%E7%A1%80-pod%E8%B0%83%E5%BA%A6-%E4%BA%B2%E5%92%8C%E5%8A%9B/">K8s基础-Pod调度-亲和力</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/Python%E8%B0%83%E7%94%A8k8s-api%E5%AE%9E%E7%8E%B0%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/">Python调用K8s-API实现资源管理</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s-APIServer%E6%B7%B1%E5%BA%A6%E5%89%96%E6%9E%90-%E8%AF%B7%E6%B1%82%E9%93%BE%E8%B7%AF-%E8%AE%A4%E8%AF%81%E6%8E%88%E6%9D%83-%E7%94%9F%E4%BA%A7%E8%B0%83%E4%BC%98/">Kubernetes API Server 深度剖析：请求链路、认证授权与生产调优</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s-PodDisruptionBudget%E5%AE%9E%E6%88%98/">K8s PodDisruptionBudget 实战：优雅中断保护</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-Calico/">K8s基础-Calico</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-Finalizer%E4%B8%8E%E8%B5%84%E6%BA%90%E5%88%A0%E9%99%A4/">K8s基础-Finalizer与资源删除</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-Operator%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98-Kubebuilder/">从零开发 Kubernetes Operator：Kubebuilder 实战教程</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-Service/">K8s基础-Service</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-configMap-Secret/">K8s基础-configMap-Secret</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-daemonset/">K8s基础-DaemonSet</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-deployment/">K8s基础-Deployment</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-ingress/">K8s基础-Ingress</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-job-cronjob/">K8s基础-Job-CronJob</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-kubeadm/">K8s基础-kubeadm</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-namespace-%E8%B5%84%E6%BA%90%E5%88%86%E9%85%8D/">K8s基础-namespace-资源分配</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-pod/">K8s基础-Pod</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-pod%E8%B0%83%E5%BA%A6-%E6%A0%87%E7%AD%BE%E4%B8%8E%E9%80%89%E6%8B%A9%E5%99%A8%E5%AE%9E%E6%88%98/">Kubernetes 标签与选择器避坑：5 条核心铁律与生产级实战案例</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-statefulset/">K8s基础-StatefulSet</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-storage/">K8s基础-Storage</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-yaml/">K8s基础-YAML</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E4%B8%B4%E6%97%B6%E5%AE%B9%E5%99%A8ephemeral/">K8s基础-临时容器Ephemeral</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E5%AE%B9%E5%99%A8%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-Sidecar-Init-Ambassador-Adapter/">K8s 容器设计模式：Sidecar / Init Container / Ambassador / Adapter</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E5%AE%B9%E5%99%A8%E8%BF%90%E8%A1%8C%E6%97%B6-containerd/">K8s基础-容器运行时-containerd</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E6%9E%B6%E6%9E%84-%E7%BB%84%E4%BB%B6-%E8%B5%84%E6%BA%90/">K8s基础-架构-组件-资源</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E8%87%AA%E5%AE%9A%E4%B9%89CRD%E8%B5%84%E6%BA%90/">K8s基础-自定义CRD资源</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E8%AE%A4%E8%AF%81-%E6%8E%88%E6%9D%83-%E5%87%86%E5%85%A5/">K8s基础-认证-授权-准入</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-db-middleware</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/k8s-db-middleware/Operator%E9%83%A8%E7%BD%B2Redis%E9%9B%86%E7%BE%A4/">基于Operator部署Redis集群</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-db-middleware/Operator%E9%83%A8%E7%BD%B2mysql%E9%9B%86%E7%BE%A4/">Operator部署MySQL NDB集群</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-db-middleware/helm%E9%83%A8%E7%BD%B2mysql/">Helm部署MySQL</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-db-middleware/helm%E9%83%A8%E7%BD%B2postgreSQL/">Helm部署PostgreSQL</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-db-middleware/helm%E9%83%A8%E7%BD%B2rabbitmq-ha/">Helm部署RabbitMQ高可用集群</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-db-middleware/helm%E9%83%A8%E7%BD%B2strimzi-kafka/">Helm部署Strimzi Kafka</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-db-middleware/k8s%E5%9F%BA%E4%BA%8Eyaml%E9%83%A8%E7%BD%B2MongoDB%E9%9B%86%E7%BE%A4/">K8s基于YAML部署MongoDB集群</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-db-middleware/k8s%E5%9F%BA%E4%BA%8Eyaml%E9%83%A8%E7%BD%B2httpd%E6%9C%8D%E5%8A%A1/">K8s基于YAML部署httpd服务</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-db-middleware/k8s%E5%9F%BA%E4%BA%8Eyaml%E9%83%A8%E7%BD%B2mysql%E4%B8%BB%E4%BB%8E%E9%AB%98%E5%8F%AF%E7%94%A8/">K8s基于YAML部署MySQL主从高可用</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-db-middleware/k8s%E5%9F%BA%E4%BA%8Eyaml%E9%83%A8%E7%BD%B2redis%E9%9B%86%E7%BE%A4/">K8s基于YAML部署Redis集群</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-db-middleware/k8s%E9%83%A8%E7%BD%B2springcloud%E7%94%B5%E5%95%86%E9%A1%B9%E7%9B%AE/">K8s部署SpringCloud电商项目</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-installation-management</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/2025%E6%9C%80%E6%96%B0-%E4%BC%81%E4%B8%9A%E7%BA%A7%E9%AB%98%E5%8F%AF%E7%94%A8%E9%9B%86%E7%BE%A4-%E5%9F%BA%E4%BA%8Erockylinux/">2025最新-企业级高可用集群-基于rockylinux</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/etcd%E9%AB%98%E5%8F%AF%E7%94%A8%E9%85%8D%E7%BD%AE%E4%BB%A5%E5%8F%8A%E6%A8%A1%E6%8B%9F%E9%9B%86%E7%BE%A4%E6%95%85%E9%9A%9C%E5%92%8C%E6%81%A2%E5%A4%8D/">etcd高可用配置以及模拟集群故障和恢复</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/k8s-Backstage-%E5%86%85%E9%83%A8%E5%BC%80%E5%8F%91%E8%80%85%E5%B9%B3%E5%8F%B0IDP%E5%AE%9E%E6%88%98/">K8s 平台工程实战：用 Backstage 打造一站式内部开发者平台</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/k8s-cgroup-v2%E6%B7%B1%E5%BA%A6%E8%A7%A3%E6%9E%90-%E8%BF%81%E7%A7%BB%E5%AE%9E%E6%88%98%E4%B8%8E%E9%81%BF%E5%9D%91%E6%8C%87%E5%8D%97/">K8s CGroup v2 深度解析：资源隔离原理、迁移实战与生产避坑指南</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/k8s%E4%B8%A4%E5%9C%B0%E4%B8%89%E4%B8%AD%E5%BF%83%E6%9E%B6%E6%9E%84/">k8s两地三中心架构</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/k8s%E5%A4%9A%E9%9B%86%E7%BE%A4kubeconfig%E7%AE%A1%E7%90%86/">k8s多集群kubeconfig管理</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/k8s%E6%95%85%E9%9A%9C%E6%8E%92%E6%9F%A5%E6%8C%87%E5%8D%97/">k8s故障排查指南</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/k8s%E7%94%9F%E4%BA%A7%E7%8E%AF%E5%A2%83%E4%BC%98%E5%8C%96%E4%B8%8E%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/">k8s生产环境优化与最佳实践</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/k8s%E9%83%A8%E7%BD%B2%E9%98%B2%E7%81%AB%E5%A2%99%E7%AB%AF%E5%8F%A3%E9%85%8D%E7%BD%AE/">K8s部署防火墙端口配置</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/latest-version/%E5%AE%89%E8%A3%85k8s-1.35-%E5%9F%BA%E4%BA%8Erockylinux10-%E6%9C%80%E6%96%B0%E6%AD%A5%E9%AA%A4/">在 Rocky Linux 10 上安装 Kubernetes 1.35</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%AE%89%E8%A3%85k8s%E9%AB%98%E5%8F%AF%E7%94%A8%E9%9B%86%E7%BE%A4/" class="current">二进制安装k8s高可用集群</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.20.6-%E9%AB%98%E5%8F%AF%E7%94%A8/">安装k8s-1.20.6-高可用</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.23/">安装k8s-1.23</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.26-1.27/">安装k8s-1.26-1.27</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.28/">安装k8s-1.28</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.30-%E5%9F%BA%E4%BA%8Erockylinux/">安装k8s-1.30-基于rockylinux</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.32-%E5%9F%BA%E4%BA%8Erockylinux/">安装k8s-1.32-基于rockylinux</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.33-%E5%9F%BA%E4%BA%8Erockylinux-%E6%9C%80%E6%96%B0%E6%AD%A5%E9%AA%A4/">安装k8s-1.33-基于rockylinux-最新步骤</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/%E5%8D%87%E7%BA%A7/k8s-1.37-%E5%8D%87%E7%BA%A7%E9%A1%BB%E7%9F%A5-breaking-changes/">Kubernetes v1.37 升级破坏性变更指南</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/%E5%8D%87%E7%BA%A7/k8s%E8%BF%81%E7%A7%BB%E5%AE%B9%E5%99%A8%E8%BF%90%E8%A1%8C%E6%97%B6-%E7%89%88%E6%9C%AC%E5%8D%87%E7%BA%A7/">k8s迁移容器运行时与版本升级</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-monitoring-logging</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/K8s%E5%85%A8%E9%9D%A2%E5%B7%A1%E6%A3%80%E8%84%9A%E6%9C%AC-%E7%94%9F%E6%88%90HTML%E5%81%A5%E5%BA%B7%E6%8A%A5%E5%91%8A/">K8s 全面巡检脚本：一键生成 HTML 健康报告</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/OpenTelemetry%E5%AE%9E%E6%88%98-%E7%BB%9F%E4%B8%80Traces-Metrics-Logs/">OpenTelemetry 实战：告别厂商锁定，统一 Traces/Metrics/Logs</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/Prometheus%E5%9F%BA%E7%A1%80/">Prometheus基础</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/Prometheus%E7%9B%91%E6%8E%A7k8s%E7%B3%BB%E7%BB%9F%E7%BB%84%E4%BB%B6/">Prometheus监控K8s系统组件</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/Prometheus%E7%9B%91%E6%8E%A7%E5%A4%96%E9%83%A8k8s%E9%9B%86%E7%BE%A4/">Prometheus监控外部K8s集群</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/Prometheus%E7%9B%91%E6%8E%A7%E9%9D%9E%E4%BA%91%E5%8E%9F%E7%94%9F%E5%BA%94%E7%94%A8-%E4%B8%BB%E6%9C%BA/">Prometheus监控非云原生应用-主机</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/helm%E9%83%A8%E7%BD%B2Loki-promtail-tempo-grafanaAgent%E5%85%A8%E5%AE%B6%E6%A1%B6/">Helm部署Loki+Promtail+Tempo+GrafanaAgent全家桶</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/helm%E9%83%A8%E7%BD%B2jaeger/">Helm部署Jaeger</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/helm%E9%83%A8%E7%BD%B2prometheus-stack%E5%85%A8%E5%AE%B6%E6%A1%B6/">Prometheus-Stack 全家桶：生产级部署与运维完全指南</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E6%97%A5%E5%BF%97%E7%AE%A1%E7%90%86-%E9%87%87%E9%9B%86%E6%96%B9%E6%A1%88%E4%B8%8E%E5%AE%A1%E8%AE%A1%E6%97%A5%E5%BF%97/">K8s 日志管理：基础机制、六种采集方案与审计日志实战</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E7%9B%91%E6%8E%A7EFK%2Blogstash%2Bkafka/">K8s监控EFK+logstash+kafka</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E7%9B%91%E6%8E%A7ES%287.2%29%2BKibana%287.2%29%2BFluentd%28v1.4.2%29/">K8s监控ES(7.2)+Kibana(7.2)+Fluentd(v1.4.2)</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E7%9B%91%E6%8E%A7Prometheus%28v2.2.1%29/">K8s监控Prometheus(v2.2.1)</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E7%9B%91%E6%8E%A7Prometheus%28v2.33.5%29%2BGrafana%28v8.4.5%29/">K8s监控Prometheus(v2.33.5)+Grafana(v8.4.5)</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E7%9B%91%E6%8E%A7alertmanager%28v0.14.0%29/">K8s监控Alertmanager(v0.14.0)</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E9%83%A8%E7%BD%B2elasticsearch%E9%9B%86%E7%BE%A4/">K8s部署Elasticsearch集群</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E9%83%A8%E7%BD%B2grafana%28v5.0.4%29/">K8s部署Grafana(v5.0.4)</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E9%83%A8%E7%BD%B2%E5%85%A8%E9%93%BE%E8%B7%AF%E8%BF%BD%E8%B8%AA-Skywalking/">K8s部署全链路追踪-Skywalking</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2Prometheus%28v2.32.1%29%E8%81%94%E9%82%A6%E9%9B%86%E7%BE%A4/">二进制部署Prometheus(v2.32.1)联邦集群</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2efk%2Blogstash%2Bkafka%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%B9%B3%E5%8F%B0/">二进制部署EFK+Logstash+Kafka日志收集平台</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2prometheus-grafana-nodeexporter/">二进制部署Prometheus-Grafana-NodeExporter</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/%E5%9F%BA%E4%BA%8Ehelm%2Boperator%E9%83%A8%E7%BD%B2ECK%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%B9%B3%E5%8F%B0/">基于Helm+Operator部署ECK日志收集平台</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-networking-service-mesh</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/k8s-networking-service-mesh/Istio-Sidecar-vs-Ambient/">Istio Sidecar vs Ambient 模式对比</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-networking-service-mesh/helm%E5%AE%89%E8%A3%85istio/">Helm安装Istio</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-networking-service-mesh/helm%E9%83%A8%E7%BD%B2external-dns/">Helm部署External-DNS</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-networking-service-mesh/helm%E9%83%A8%E7%BD%B2ingress-nginx/">Helm部署Ingress-Nginx</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-networking-service-mesh/helm%E9%83%A8%E7%BD%B2tomcat/">Helm 部署 Tomcat</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-networking-service-mesh/k8s-Gateway-API%E5%85%A5%E9%97%A8-Ingress%E4%B8%8B%E4%B8%80%E4%BB%A3%E6%96%B9%E6%A1%88/">Kubernetes Gateway API 入门：Ingress 的下一代方案</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-networking-service-mesh/k8s%E7%B2%BE%E7%BB%86%E5%8C%96%E6%B5%81%E9%87%8F%E7%AE%A1%E7%90%86-istio/">K8s精细化流量管理-Istio</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-networking-service-mesh/k8s%E9%83%A8%E7%BD%B2istio%281.13.1%29/">K8s部署Istio(1.13.1)</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-networking-service-mesh/k8s%E9%9B%86%E7%BE%A4%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/">K8s集群网络安全</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-networking-service-mesh/%E4%BC%81%E4%B8%9A%E9%A1%B9%E7%9B%AE%E6%8E%A5%E5%85%A5istio%E5%AE%9E%E6%88%98/">企业项目接入Istio实战</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-scaling</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/k8s-scaling/KEDA-vs-HPA-2026%E7%BB%88%E6%9E%81%E5%AF%B9%E6%AF%94-v1.36%E7%BC%A9%E9%9B%B6/">KEDA vs HPA 2026 终极对比：v1.36 原生缩零后该选谁？</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-scaling/helm%E9%83%A8%E7%BD%B2goldilocks/">Helm部署Goldilocks</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-scaling/helm%E9%83%A8%E7%BD%B2vpa/">Helm部署VPA</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-scaling/k8s-HPA-VPA/">K8s HPA与VPA</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-scaling/k8s-%E5%9F%BA%E4%BA%8EKEDA%E7%9A%84%E5%BC%B9%E6%80%A7%E8%83%BD%E5%8A%9B/">K8s基于KEDA的弹性能力</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-scaling/k8s%E6%88%90%E6%9C%AC%E4%BC%98%E5%8C%96%E6%96%B9%E6%A1%88-FinOps%E5%AE%9E%E6%88%98/">K8s 集群成本优化方案：砍掉 60% 云账单</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-security-auth</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2capsule/">Helm部署Capsule</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2certmanager/">Helm部署Cert-Manager</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2external-secrets/">Helm部署External-Secrets</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2kyverno%E5%92%8Cpolicy-reporter/">Helm部署Kyverno和Policy-Reporter</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2oauth2proxy/">Helm部署OAuth2-Proxy</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2sonarqube/">Helm部署SonarQube</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2trivy-operator/">Helm部署Trivy-Operator</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-security-auth/k8s-Admission-Webhook%E9%93%BE%E5%86%B2%E7%AA%81%E6%8E%92%E6%9F%A5-Istio-Kyverno-Gatekeeper/">当 Istio、Kyverno、Gatekeeper 三个 Webhook 同时存在，你的集群会发生什么？</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-security-auth/k8s%E5%AE%B9%E5%99%A8%E5%AE%89%E5%85%A8%E4%B8%8A%E4%B8%8B%E6%96%87-SecurityContext/">Kubernetes 容器安全上下文完全指南：从入门到生产避坑</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-springcloud</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/k8s-springcloud/SpringCloud%E9%A1%B9%E7%9B%AE%E8%BF%81%E7%A7%BB%E5%88%B0k8s%E5%AE%9E%E6%88%98/">SpringCloud 项目迁移到 K8s 实战</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-storage</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/k8s-storage/helm%E9%83%A8%E7%BD%B2nfs-subdir-external-provisioner/">Helm部署NFS Subdir External Provisioner</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-storage/k8s-ceph%E9%83%A8%E7%BD%B2%E4%B8%8E%E9%9B%86%E6%88%90/">K8s Ceph部署与集成</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-storage/k8s-%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8CubeFS/">K8s分布式存储CubeFS</a></li>
+        </ul>
+        <p class="sidebar-group">kubeblocks</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/kubeblocks/kubeblocks%E9%83%A8%E7%BD%B2WordPress/">KubeBlocks 部署 WordPress</a></li>
+          <li><a href="../../../../Docker-Kubernetes/kubeblocks/kubeblocks%E9%83%A8%E7%BD%B2%E9%AB%98%E5%8F%AF%E7%94%A8harbor%E9%9B%86%E7%BE%A4/">KubeBlocks 部署高可用 Harbor 集群</a></li>
+        </ul>
+        <p class="sidebar-group">其他</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/%E7%AE%80%E5%8E%86%E6%8C%87%E5%8D%97/">简历指南</a></li>
+        </ul>
+      </nav>
+    </details>
+  </aside>
+
+  <article class="article">
+    <nav class="breadcrumb">
+      <a href="../../../../index.html">首页</a><span>/</span>
+      <a href="../../../../Docker-Kubernetes/">Docker-Kubernetes</a><span>/</span><span>k8s-installation-management</span>
+    </nav>
+    <h1 class="article-title">二进制安装k8s高可用集群</h1>
+    <p class="article-meta"><span>更新于 2026-07-18</span>
+      <a href="https://github.com/hangx969/learning-notes/blob/main/Docker-Kubernetes/k8s-installation-management/legacy-versions/%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%AE%89%E8%A3%85k8s%E9%AB%98%E5%8F%AF%E7%94%A8%E9%9B%86%E7%BE%A4.md">查看源文件</a>
+    </p>
+    <div class="article-body">
+<h1 id="二进制安装-vs-kubeadm安装">二进制安装 vs kubeadm安装</h1>
+<ul>
+<li>
+<p>kubeadm是官方提供的开源工具，用于快速搭建kubernetes集群，相当于用程序脚本帮我们装好了集群，属于自动部署，简化部署操作，自动部署屏蔽了很多细节，使得对各个模块感知很少，如果对k8s架构组件理解不深的话，遇到问题比较难排查。Kubeadm初始化k8s，所有的组件都是以pod形式运行的，具备故障自恢复能力。kubeadm适合需要经常部署k8s，或者对自动化要求比较高的场景下使用。</p>
+</li>
+<li>
+<p>二进制：在官网下载相关组件的二进制包，如果手动安装，对kubernetes理解也会更全面。 </p>
+</li>
+<li>
+<p>Kubeadm和二进制都适合生产环境，在生产环境运行都很稳定，具体如何选择，可以根据实际项目进行评估。</p>
+</li>
+</ul>
+<h1 id="二进制安装多master高可用集群1207">二进制安装多master高可用集群1.20.7</h1>
+<h2 id="架构图">架构图</h2>
+<p><img alt="image-20240226215935013" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202402262159081.png" /></p>
+<h2 id="实验机器规划">实验机器规划</h2>
+<ul>
+<li>
+<p>操作系统：centos7.9</p>
+</li>
+<li>
+<p>配置：4Gib内存/4vCPU/50G硬盘</p>
+</li>
+</ul>
+<blockquote>
+<p>[!tip] 如果VM是从20G磁盘扩容到了50G，那么在VMWare上加完磁盘容量后需要扩容文件系统。由于使用的镜像的根分区是用的LVM，所以需要LVM扩容。参考文档：<a href="https://blog.csdn.net/yangfenggh/article/details/130475248">LVM扩容指南</a></p>
+</blockquote>
+<ul>
+<li>
+<p>网络：NAT</p>
+</li>
+<li>
+<p>开启虚拟机的虚拟化</p>
+</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>K8S集群角色</th>
+<th>Ip</th>
+<th>主机名</th>
+<th>安装的组件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>控制节点</td>
+<td>172.16.183.76</td>
+<td>binmaster1</td>
+<td>apiserver、controller-manager、scheduler、etcd、docker、keepalived、nginx</td>
+</tr>
+<tr>
+<td>控制节点</td>
+<td>172.16.183.77</td>
+<td>binmaster2</td>
+<td>apiserver、controller-manager、scheduler、etcd、docker、keepalived、nginx</td>
+</tr>
+<tr>
+<td>控制节点</td>
+<td>172.16.183.78</td>
+<td>binmaster3</td>
+<td>apiserver、controller-manager、scheduler、etcd、docker</td>
+</tr>
+<tr>
+<td>工作节点</td>
+<td>172.16.183.79</td>
+<td>binnode1</td>
+<td>kubelet、kube-proxy、docker、calico、coredns</td>
+</tr>
+<tr>
+<td>Vip</td>
+<td>172.16.183.75</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h2 id="实验环境准备">实验环境准备</h2>
+<h3 id="设置静态ip">设置静态IP</h3>
+<div class="highlight"><pre><span></span><code>vi<span class="w"> </span>/etc/sysconfig/network-scripts/ifcfg-ens33
+
+<span class="nv">TYPE</span><span class="o">=</span>Ethernet
+<span class="nv">PROXY_METHOD</span><span class="o">=</span>none
+<span class="nv">BROWSER_ONLY</span><span class="o">=</span>no
+<span class="nv">BOOTPROTO</span><span class="o">=</span>static<span class="w"> </span><span class="c1">#static表示静态ip地址</span>
+<span class="nv">IPADDR</span><span class="o">=</span><span class="m">172</span>.16.183.76<span class="w"> </span><span class="c1">#ip地址，需要跟自己电脑所在网段一致</span>
+<span class="nv">NETMASK</span><span class="o">=</span><span class="m">255</span>.255.255.0
+<span class="nv">GATEWAY</span><span class="o">=</span><span class="m">172</span>.16.183.2
+<span class="nv">DNS1</span><span class="o">=</span><span class="m">172</span>.16.183.2
+<span class="nv">DEFROUTE</span><span class="o">=</span>yes
+<span class="nv">IPV4_FAILURE_FATAL</span><span class="o">=</span>no
+<span class="nv">IPV6INIT</span><span class="o">=</span>yes
+<span class="nv">IPV6_AUTOCONF</span><span class="o">=</span>yes
+<span class="nv">IPV6_DEFROUTE</span><span class="o">=</span>yes
+<span class="nv">IPV6_FAILURE_FATAL</span><span class="o">=</span>no
+<span class="nv">IPV6_ADDR_GEN_MODE</span><span class="o">=</span>stable-privacy
+<span class="nv">NAME</span><span class="o">=</span>ens33<span class="w"> </span><span class="c1">#网卡名字，跟DEVICE名字保持一致即可</span>
+<span class="nv">DEVICE</span><span class="o">=</span>ens33<span class="w"> </span><span class="c1">#网卡设备名，ip addr可看到自己的这个网卡设备名</span>
+<span class="nv">ONBOOT</span><span class="o">=</span>yes<span class="w"> </span><span class="c1">#开机自启动网络，必须是yes</span>
+</code></pre></div>
+
+<blockquote>
+<ul>
+<li>VMware上由模板机复制过来的VM，要删掉网卡配置的UUID字段</li>
+</ul>
+</blockquote>
+<h3 id="修改主机名">修改主机名</h3>
+<div class="highlight"><pre><span></span><code>hostnamectl<span class="w"> </span>set-hostname<span class="w"> </span>binmaster1<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>bash<span class="w"> </span><span class="c1">#binmaster2 binmaster3 binnode1</span>
+</code></pre></div>
+
+<h3 id="配置hosts文件">配置hosts文件</h3>
+<div class="highlight"><pre><span></span><code>tee<span class="w"> </span>-a<span class="w"> </span>/etc/hosts<span class="w"> </span><span class="s">&lt;&lt; &#39;EOF&#39;</span>
+<span class="s">172.16.183.76   binmaster1</span>
+<span class="s">172.16.183.77   binmaster2</span>
+<span class="s">172.16.183.78   binmaster3</span>
+<span class="s">172.16.183.79   binnode1</span>
+<span class="s">EOF</span>
+</code></pre></div>
+
+<h3 id="配置ssh免密登录">配置ssh免密登录</h3>
+<div class="highlight"><pre><span></span><code>ssh-keygen<span class="w"> </span>-t<span class="w"> </span>rsa
+ssh-copy-id<span class="w"> </span>-i<span class="w"> </span>.ssh/id_rsa.pub<span class="w"> </span>binmaster1
+</code></pre></div>
+
+<h3 id="关闭firewalld">关闭firewalld</h3>
+<div class="highlight"><pre><span></span><code>systemctl<span class="w"> </span>stop<span class="w"> </span>firewalld<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>systemctl<span class="w"> </span>disable<span class="w"> </span>firewalld
+</code></pre></div>
+
+<h3 id="关闭selinux">关闭Selinux</h3>
+<div class="highlight"><pre><span></span><code>sed<span class="w"> </span>-i<span class="w"> </span><span class="s1">&#39;s/SELINUX=enforcing/SELINUX=disabled/g&#39;</span><span class="w"> </span>/etc/selinux/config
+reboot<span class="w"> </span>-f
+</code></pre></div>
+
+<h3 id="关闭交换分区">关闭交换分区</h3>
+<div class="highlight"><pre><span></span><code>swapoff<span class="w"> </span>-a
+vim<span class="w"> </span>/etc/fstab
+<span class="c1">#/dev/mapper/centos-swap swap      swap    defaults        0 0</span>
+</code></pre></div>
+
+<h3 id="修改内核参数-开路由转发">修改内核参数-开路由转发</h3>
+<div class="highlight"><pre><span></span><code>modprobe<span class="w"> </span>br_netfilter<span class="w"> </span>
+lsmod<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>br_netfilter
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;modprobe br_netfilter&quot;</span><span class="w"> </span>&gt;&gt;<span class="w"> </span>/etc/profile
+cat<span class="w"> </span>&gt;<span class="w"> </span>/etc/sysctl.d/k8s.conf<span class="w"> </span><span class="s">&lt;&lt;EOF</span>
+<span class="s">net.bridge.bridge-nf-call-ip6tables = 1</span>
+<span class="s">net.bridge.bridge-nf-call-iptables = 1</span>
+<span class="s">net.ipv4.ip_forward = 1 </span>
+<span class="s">EOF</span>
+sysctl<span class="w"> </span>-p<span class="w"> </span>/etc/sysctl.d/k8s.conf<span class="w"> </span>
+</code></pre></div>
+
+<h3 id="配置阿里云repo源">配置阿里云repo源</h3>
+<div class="highlight"><pre><span></span><code><span class="c1">#安装rzsz命令</span>
+yum<span class="w"> </span>install<span class="w"> </span>lrzsz<span class="w"> </span>-y
+<span class="c1">#安装scp</span>
+yum<span class="w"> </span>install<span class="w"> </span>openssh-clients<span class="w"> </span>-y
+<span class="c1">#备份基础repo源</span>
+mkdir<span class="w"> </span>/root/repo.bak/
+mv<span class="w"> </span>/etc/yum.repos.d/*<span class="w"> </span>/root/repo.bak/
+<span class="c1">#下载阿里云的repo源</span>
+<span class="c1">#把CentOS-Base.repo文件上传到master1主机的/etc/yum.repos.d/目录下</span>
+<span class="c1">#或者直接创建/etc/yum.repos.d/CentOS-Base.repo</span>
+vi<span class="w"> </span>/etc/yum.repos.d/CentOS-Base.repo
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="c1"># CentOS-Base.repo</span>
+<span class="c1">#</span>
+<span class="c1"># The mirror system uses the connecting IP address of the client and the</span>
+<span class="c1"># update status of each mirror to pick mirrors that are updated to and</span>
+<span class="c1"># geographically close to the client.  You should use this for CentOS updates</span>
+<span class="c1"># unless you are manually picking other mirrors.</span>
+<span class="c1">#</span>
+<span class="c1"># If the mirrorlist= does not work for you, as a fall back you can try the </span>
+<span class="c1"># remarked out baseurl= line instead.</span>
+<span class="c1">#</span>
+<span class="c1">#</span>
+
+<span class="k">[base]</span>
+<span class="na">name</span><span class="o">=</span><span class="s">CentOS-$releasever - Base - mirrors.aliyun.com</span>
+<span class="na">failovermethod</span><span class="o">=</span><span class="s">priority</span>
+<span class="na">baseurl</span><span class="o">=</span><span class="s">http://mirrors.aliyun.com/centos/$releasever/os/$basearch/</span>
+<span class="w">        </span><span class="na">http</span><span class="o">:</span><span class="s">//mirrors.aliyuncs.com/centos/$releasever/os/$basearch/</span>
+<span class="w">        </span><span class="na">http</span><span class="o">:</span><span class="s">//mirrors.cloud.aliyuncs.com/centos/$releasever/os/$basearch/</span>
+<span class="na">gpgcheck</span><span class="o">=</span><span class="s">1</span>
+<span class="na">gpgkey</span><span class="o">=</span><span class="s">http://mirrors.aliyun.com/centos/RPM-GPG-KEY-CentOS-7</span>
+
+<span class="c1">#released updates </span>
+<span class="k">[updates]</span>
+<span class="na">name</span><span class="o">=</span><span class="s">CentOS-$releasever - Updates - mirrors.aliyun.com</span>
+<span class="na">failovermethod</span><span class="o">=</span><span class="s">priority</span>
+<span class="na">baseurl</span><span class="o">=</span><span class="s">http://mirrors.aliyun.com/centos/$releasever/updates/$basearch/</span>
+<span class="w">        </span><span class="na">http</span><span class="o">:</span><span class="s">//mirrors.aliyuncs.com/centos/$releasever/updates/$basearch/</span>
+<span class="w">        </span><span class="na">http</span><span class="o">:</span><span class="s">//mirrors.cloud.aliyuncs.com/centos/$releasever/updates/$basearch/</span>
+<span class="na">gpgcheck</span><span class="o">=</span><span class="s">1</span>
+<span class="na">gpgkey</span><span class="o">=</span><span class="s">http://mirrors.aliyun.com/centos/RPM-GPG-KEY-CentOS-7</span>
+
+<span class="c1">#additional packages that may be useful</span>
+<span class="k">[extras]</span>
+<span class="na">name</span><span class="o">=</span><span class="s">CentOS-$releasever - Extras - mirrors.aliyun.com</span>
+<span class="na">failovermethod</span><span class="o">=</span><span class="s">priority</span>
+<span class="na">baseurl</span><span class="o">=</span><span class="s">http://mirrors.aliyun.com/centos/$releasever/extras/$basearch/</span>
+<span class="w">        </span><span class="na">http</span><span class="o">:</span><span class="s">//mirrors.aliyuncs.com/centos/$releasever/extras/$basearch/</span>
+<span class="w">        </span><span class="na">http</span><span class="o">:</span><span class="s">//mirrors.cloud.aliyuncs.com/centos/$releasever/extras/$basearch/</span>
+<span class="na">gpgcheck</span><span class="o">=</span><span class="s">1</span>
+<span class="na">gpgkey</span><span class="o">=</span><span class="s">http://mirrors.aliyun.com/centos/RPM-GPG-KEY-CentOS-7</span>
+
+<span class="c1">#additional packages that extend functionality of existing packages</span>
+<span class="k">[centosplus]</span>
+<span class="na">name</span><span class="o">=</span><span class="s">CentOS-$releasever - Plus - mirrors.aliyun.com</span>
+<span class="na">failovermethod</span><span class="o">=</span><span class="s">priority</span>
+<span class="na">baseurl</span><span class="o">=</span><span class="s">http://mirrors.aliyun.com/centos/$releasever/centosplus/$basearch/</span>
+<span class="w">        </span><span class="na">http</span><span class="o">:</span><span class="s">//mirrors.aliyuncs.com/centos/$releasever/centosplus/$basearch/</span>
+<span class="w">        </span><span class="na">http</span><span class="o">:</span><span class="s">//mirrors.cloud.aliyuncs.com/centos/$releasever/centosplus/$basearch/</span>
+<span class="na">gpgcheck</span><span class="o">=</span><span class="s">1</span>
+<span class="na">enabled</span><span class="o">=</span><span class="s">0</span>
+<span class="na">gpgkey</span><span class="o">=</span><span class="s">http://mirrors.aliyun.com/centos/RPM-GPG-KEY-CentOS-7</span>
+
+<span class="c1">#contrib - packages by Centos Users</span>
+<span class="k">[contrib]</span>
+<span class="na">name</span><span class="o">=</span><span class="s">CentOS-$releasever - Contrib - mirrors.aliyun.com</span>
+<span class="na">failovermethod</span><span class="o">=</span><span class="s">priority</span>
+<span class="na">baseurl</span><span class="o">=</span><span class="s">http://mirrors.aliyun.com/centos/$releasever/contrib/$basearch/</span>
+<span class="w">        </span><span class="na">http</span><span class="o">:</span><span class="s">//mirrors.aliyuncs.com/centos/$releasever/contrib/$basearch/</span>
+<span class="w">        </span><span class="na">http</span><span class="o">:</span><span class="s">//mirrors.cloud.aliyuncs.com/centos/$releasever/contrib/$basearch/</span>
+<span class="na">gpgcheck</span><span class="o">=</span><span class="s">1</span>
+<span class="na">enabled</span><span class="o">=</span><span class="s">0</span>
+<span class="na">gpgkey</span><span class="o">=</span><span class="s">http://mirrors.aliyun.com/centos/RPM-GPG-KEY-CentOS-7</span>
+</code></pre></div>
+
+<h3 id="配置阿里云docker源">配置阿里云docker源</h3>
+<div class="highlight"><pre><span></span><code>yum<span class="w"> </span>install<span class="w"> </span>yum-utils<span class="w"> </span>-y
+yum-config-manager<span class="w"> </span>--add-repo<span class="w"> </span>http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo<span class="w"> </span>
+<span class="c1">#会把阿里云的docker源的配置给拉下来。</span>
+</code></pre></div>
+
+<h3 id="安装基础软件包">安装基础软件包</h3>
+<div class="highlight"><pre><span></span><code>yum<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>device-mapper-persistent-data<span class="w"> </span>lvm2<span class="w"> </span>wget<span class="w"> </span>net-tools<span class="w"> </span>nfs-utils<span class="w"> </span>lrzsz<span class="w"> </span>gcc<span class="w"> </span>gcc-c++<span class="w"> </span>make<span class="w"> </span>cmake<span class="w"> </span>libxml2-devel<span class="w"> </span>openssl-devel<span class="w"> </span>curl<span class="w"> </span>curl-devel<span class="w"> </span>unzip<span class="w"> </span>sudo<span class="w"> </span>ntp<span class="w"> </span>libaio-devel<span class="w"> </span>wget<span class="w"> </span>vim<span class="w"> </span>ncurses-devel<span class="w"> </span>autoconf<span class="w"> </span>automake<span class="w"> </span>zlib-devel<span class="w"> </span>python-devel<span class="w"> </span>epel-release<span class="w"> </span>openssh-server<span class="w"> </span>socat<span class="w"> </span>conntrack<span class="w"> </span>telnet<span class="w"> </span>ipvsadm<span class="w"> </span>openssh-clients
+</code></pre></div>
+
+<blockquote>
+<p>yum install如果出现报错：GPG key retrieval failed: [Errno 14] curl#37 - "Couldn't open file /etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-7"</p>
+<p>意思是，yum源开启了GPG校验，需要在/etc/pki/rpm-gpg目录下存在对应安装文件的公钥文件，才能完成校验。</p>
+<p>可以关闭掉校验：</p>
+<p><sub>~</sub>bash<br />
+sed -i 's/pgcheck=1/pgcheck=0/g' /etc/yum.repos.d/epel.repo<br />
+~~~</p>
+</blockquote>
+<h3 id="配置时间同步">配置时间同步</h3>
+<div class="highlight"><pre><span></span><code><span class="c1">#安装ntpdate命令</span>
+yum<span class="w"> </span>install<span class="w"> </span>ntpdate<span class="w"> </span>-y
+<span class="c1">#跟网络时间做同步</span>
+ntpdate<span class="w"> </span>cn.pool.ntp.org
+<span class="c1">#把时间同步做成计划任务</span>
+crontab<span class="w"> </span>-e
+*<span class="w"> </span>*/1<span class="w"> </span>*<span class="w"> </span>*<span class="w"> </span>*<span class="w"> </span>/usr/sbin/ntpdate<span class="w">   </span>cn.pool.ntp.org
+<span class="c1">#重启crond服务</span>
+service<span class="w"> </span>crond<span class="w"> </span>restart
+</code></pre></div>
+
+<h3 id="安装iptables">安装iptables</h3>
+<div class="highlight"><pre><span></span><code><span class="c1">#安装iptables</span>
+yum<span class="w"> </span>install<span class="w"> </span>iptables-services<span class="w"> </span>-y
+<span class="c1">#禁用iptables</span>
+service<span class="w"> </span>iptables<span class="w"> </span>stop<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>systemctl<span class="w"> </span>disable<span class="w"> </span>iptables
+<span class="c1">#清空防火墙规则</span>
+iptables<span class="w"> </span>-F
+</code></pre></div>
+
+<h3 id="开启ipvs">开启IPVS</h3>
+<ul>
+<li>不开启ipvs将会使用iptables进行数据包转发，但是效率低，所以官网推荐需要开通ipvs。</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="c1">#把ipvs.modules上传到/etc/sysconfig/modules/目录下</span>
+vim<span class="w"> </span>/etc/sysconfig/modules/ipvs.modules
+<span class="c1">#脚本内容：</span>
+<span class="c1">#!/bin/bash</span>
+<span class="nv">ipvs_modules</span><span class="o">=</span><span class="s2">&quot;ip_vs ip_vs_lc ip_vs_wlc ip_vs_rr ip_vs_wrr ip_vs_lblc ip_vs_lblcr ip_vs_dh ip_vs_sh ip_vs_nq ip_vs_sed ip_vs_ftp nf_conntrack&quot;</span>
+<span class="k">for</span><span class="w"> </span>kernel_module<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="si">${</span><span class="nv">ipvs_modules</span><span class="si">}</span><span class="p">;</span><span class="w"> </span><span class="k">do</span>
+<span class="w"> </span>/sbin/modinfo<span class="w"> </span>-F<span class="w"> </span>filename<span class="w"> </span><span class="si">${</span><span class="nv">kernel_module</span><span class="si">}</span><span class="w"> </span>&gt;<span class="w"> </span>/dev/null<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span>
+<span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="m">0</span><span class="w"> </span>-eq<span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w"> </span>/sbin/modprobe<span class="w"> </span><span class="si">${</span><span class="nv">kernel_module</span><span class="si">}</span>
+<span class="w"> </span><span class="k">fi</span>
+<span class="k">done</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="c1">#赋权，加载内核模块</span>
+chmod<span class="w"> </span><span class="m">755</span><span class="w"> </span>/etc/sysconfig/modules/ipvs.modules<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>bash<span class="w"> </span>/etc/sysconfig/modules/ipvs.modules<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>lsmod<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>ip_vs
+</code></pre></div>
+
+<blockquote>
+<ul>
+<li>
+<p>ipvs (IP Virtual Server) 实现了传输层负载均衡，也就是我们常说的4层LAN交换，作为 Linux 内核的一部分。ipvs运行在主机上，在真实服务器集群前充当负载均衡器。ipvs可以将基于TCP和UDP的服务请求转发到真实服务器上，并使真实服务器的服务在单个 IP 地址上显示为虚拟服务。</p>
+</li>
+<li>
+<p>kube-proxy支持 iptables 和 ipvs 两种模式， 在kubernetes v1.8 中引入了 ipvs 模式，在 v1.9 中处于 beta 阶段，在 v1.11 中已经正式可用了。iptables 模式在 v1.1 中就添加支持了，从 v1.2 版本开始 iptables 就是 kube-proxy 默认的操作模式，ipvs 和 iptables 都是基于netfilter的，但是ipvs采用的是hash表，因此当service数量达到一定规模时，hash查表的速度优势就会显现出来，从而提高service的服务性能。那么 ipvs 模式和 iptables 模式之间有哪些差异呢？</p>
+</li>
+</ul>
+<p>1、ipvs 为大型集群提供了更好的可扩展性和性能</p>
+<p>2、ipvs 支持比 iptables 更复杂的复制均衡算法（最小负载、最少连接、加权等等）</p>
+<p>3、ipvs 支持服务器健康检查和连接重试等功能</p>
+</blockquote>
+<h3 id="安装配置docker-ce">安装配置docker-ce</h3>
+<ul>
+<li>安装</li>
+</ul>
+<div class="highlight"><pre><span></span><code>yum<span class="w"> </span>install<span class="w"> </span>docker-ce<span class="w"> </span>docker-ce-cli<span class="w"> </span>containerd.io<span class="w"> </span>-y<span class="w"> </span>
+systemctl<span class="w"> </span>start<span class="w"> </span>docker<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>systemctl<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>docker.service<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>systemctl<span class="w"> </span>status<span class="w"> </span>docker
+</code></pre></div>
+
+<ul>
+<li>配置镜像加速器</li>
+</ul>
+<div class="highlight"><pre><span></span><code>tee<span class="w"> </span>/etc/docker/daemon.json<span class="w"> </span><span class="s">&lt;&lt; &#39;EOF&#39;</span>
+<span class="s">{</span>
+<span class="s"> &quot;registry-mirrors&quot;:[&quot;https://docker.m.daocloud.io&quot;],</span>
+<span class="s">  &quot;exec-opts&quot;: [&quot;native.cgroupdriver=systemd&quot;]</span>
+<span class="s">} </span>
+<span class="s">EOF</span>
+systemctl<span class="w"> </span>daemon-reload
+systemctl<span class="w"> </span>restart<span class="w"> </span>docker
+systemctl<span class="w"> </span>status<span class="w"> </span>docker
+<span class="c1">#修改docker文件驱动为systemd，默认为cgroupfs，kubelet默认使用systemd，两者必须一致才可以。</span>
+</code></pre></div>
+
+<h2 id="搭建etcd集群">搭建etcd集群</h2>
+<h3 id="配置ectd工作目录">配置ectd工作目录</h3>
+<div class="highlight"><pre><span></span><code><span class="c1">#3台master上</span>
+mkdir<span class="w"> </span>-p<span class="w"> </span>/etc/etcd/ssl
+</code></pre></div>
+
+<h3 id="安装签发证书工具cfssl">安装签发证书工具cfssl</h3>
+<blockquote>
+<p>cfssl 是 CloudFlare 开源的一款PKI/TLS工具。 CFSSL 包含一个命令行工具(cfssl, cfssljson)用于签名，可以生成CA，签发证书<br />
+使用cfssl需要两个文件：<br />
+1、创建自己的内部服务使用的CA认证中心<br />
+2、运行认证中心需要一个CA证书和相应的私钥。后者是极其敏感的数据。任何知道私钥的人都可以充当CA颁发证书。因此，私钥的保护至关重要</p>
+</blockquote>
+<div class="highlight"><pre><span></span><code><span class="c1">#在master1上</span>
+mkdir<span class="w"> </span>/data/work<span class="w"> </span>-p
+<span class="nb">cd</span><span class="w"> </span>/data/work/
+<span class="c1">#cfssl-certinfo_linux-amd64 、cfssljson_linux-amd64 、cfssl_linux-amd64上传到/data/work/目录下</span>
+ls
+cfssl-certinfo_linux-amd64<span class="w">  </span>cfssljson_linux-amd64<span class="w">  </span>cfssl_linux-amd64
+<span class="c1">#把文件变成可执行权限</span>
+chmod<span class="w"> </span>+x<span class="w"> </span>*
+mv<span class="w"> </span>cfssl_linux-amd64<span class="w"> </span>/usr/local/bin/cfssl
+mv<span class="w"> </span>cfssljson_linux-amd64<span class="w"> </span>/usr/local/bin/cfssljson
+mv<span class="w"> </span>cfssl-certinfo_linux-amd64<span class="w"> </span>/usr/local/bin/cfssl-certinfo
+</code></pre></div>
+
+<h3 id="配置ca证书请求">配置CA证书请求</h3>
+<div class="highlight"><pre><span></span><code><span class="c1">#生成ca证书请求文件,mater1上</span>
+<span class="c1">#CA证书请求文件，也被称为CSR（Certificate Signing Request），是一种由服务器管理员或者网站所有者生成的特殊文件。它包含了公钥以及一些附加信息，如组织名称、常用名称（例如网站域名）等。这个文件会被发送给证书颁发机构（CA，Certificate Authority），CA会基于这个请求生成一个数字证书。</span>
+<span class="nb">cd</span><span class="w"> </span>/data/work/
+tee<span class="w"> </span>-a<span class="w"> </span>ca-csr.json<span class="w"> </span><span class="s">&lt;&lt; &#39;EOF&#39;</span>
+<span class="s">{</span>
+<span class="s">  &quot;CN&quot;: &quot;kubernetes&quot;,</span>
+<span class="s">  &quot;key&quot;: {</span>
+<span class="s">      &quot;algo&quot;: &quot;rsa&quot;,</span>
+<span class="s">      &quot;size&quot;: 2048</span>
+<span class="s">  },</span>
+<span class="s">  &quot;names&quot;: [</span>
+<span class="s">    {</span>
+<span class="s">      &quot;C&quot;: &quot;CN&quot;,</span>
+<span class="s">      &quot;ST&quot;: &quot;Hubei&quot;,</span>
+<span class="s">      &quot;L&quot;: &quot;Wuhan&quot;,</span>
+<span class="s">      &quot;O&quot;: &quot;k8s&quot;,</span>
+<span class="s">      &quot;OU&quot;: &quot;system&quot;</span>
+<span class="s">    }</span>
+<span class="s">  ],</span>
+<span class="s">  &quot;ca&quot;: {</span>
+<span class="s">          &quot;expiry&quot;: &quot;87600h&quot;</span>
+<span class="s">  }</span>
+<span class="s">}</span>
+<span class="s">EOF</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code>cfssl<span class="w"> </span>gencert<span class="w"> </span>-initca<span class="w"> </span>ca-csr.json<span class="w">  </span><span class="p">|</span><span class="w"> </span>cfssljson<span class="w"> </span>-bare<span class="w"> </span>ca
+</code></pre></div>
+
+<blockquote>
+<p>注： </p>
+<ul>
+<li>
+<p>CN：Common Name（公用名称），kube-apiserver 从证书中提取该字段作为请求的用户名 (User Name)；浏览器使用该字段验证网站是否合法；对于 SSL 证书，一般为网站域名；而对于代码签名证书则为申请单位名称；而对于客户端证书则为证书申请者的姓名。</p>
+</li>
+<li>
+<p>O：Organization（单位名称），kube-apiserver 从证书中提取该字段作为请求用户所属的组 (Group)；对于 SSL 证书，一般为网站域名；而对于代码签名证书则为申请单位名称；而对于客户端单位证书则为证书申请者所在单位名称。</p>
+</li>
+<li>
+<p>L 字段：所在城市</p>
+</li>
+<li>
+<p>S 字段：所在省份</p>
+</li>
+<li>
+<p>C 字段：只能是国家字母缩写，如中国：CN</p>
+</li>
+<li>
+<p><code>cfssljson</code>是CloudFlare的PKI(TLS/SSL)工具包cfssl的一部分。这个命令主要用于处理cfssl生成的JSON格式的输出。</p>
+</li>
+<li>
+<p><code>cfssljson</code>的主要功能是从cfssl的输出中提取和写入证书，私钥和证书链。这对于自动化处理证书生成和部署非常有用。</p>
+</li>
+<li>
+<p>例如，你可以使用cfssl和cfssljson生成一个新的自签名证书：</p>
+</li>
+</ul>
+<p><code>sh
+cfssl gencert -initca ca-csr.json | cfssljson -bare ca</code></p>
+<ul>
+<li>在这个例子中，<code>cfssl gencert -initca ca-csr.json</code>生成一个新的自签名证书和私钥，然后通过管道传递给<code>cfssljson -bare ca</code>，它从JSON输出中提取证书和私钥，并将它们分别写入<code>ca.pem</code>和<code>ca-key.pem</code>文件。后面所有证书都是由ca.pem这个证书来颁发的</li>
+</ul>
+</blockquote>
+<h3 id="生成ca证书文件">生成CA证书文件</h3>
+<div class="highlight"><pre><span></span><code>tee<span class="w"> </span>-a<span class="w"> </span>ca-config.json<span class="w"> </span><span class="s">&lt;&lt; &#39;EOF&#39;</span>
+<span class="s">{</span>
+<span class="s">  &quot;signing&quot;: {</span>
+<span class="s">      &quot;default&quot;: {</span>
+<span class="s">          &quot;expiry&quot;: &quot;87600h&quot;</span>
+<span class="s">        },</span>
+<span class="s">      &quot;profiles&quot;: {</span>
+<span class="s">          &quot;kubernetes&quot;: {</span>
+<span class="s">              &quot;usages&quot;: [</span>
+<span class="s">                  &quot;signing&quot;,</span>
+<span class="s">                  &quot;key encipherment&quot;,</span>
+<span class="s">                  &quot;server auth&quot;,</span>
+<span class="s">                  &quot;client auth&quot;</span>
+<span class="s">              ],</span>
+<span class="s">              &quot;expiry&quot;: &quot;87600h&quot;</span>
+<span class="s">          }</span>
+<span class="s">      }</span>
+<span class="s">  }</span>
+<span class="s">}</span>
+<span class="s">EOF</span>
+</code></pre></div>
+
+<h3 id="生成etcd证书">生成etcd证书</h3>
+<div class="highlight"><pre><span></span><code><span class="c1">#配置etcd证书请求，hosts的ip变成自己etcd所在节点的ip。可以预先写进去一些冗余的IP，方便后面扩容。 </span>
+tee<span class="w"> </span>-a<span class="w"> </span>etcd-csr.json<span class="w"> </span><span class="s">&lt;&lt; &#39;EOF&#39;</span>
+<span class="s">{</span>
+<span class="s">  &quot;CN&quot;: &quot;etcd&quot;,</span>
+<span class="s">  &quot;hosts&quot;: [</span>
+<span class="s">    &quot;127.0.0.1&quot;,</span>
+<span class="s">    &quot;172.16.183.76&quot;,</span>
+<span class="s">    &quot;172.16.183.77&quot;,</span>
+<span class="s">    &quot;172.16.183.78&quot;,</span>
+<span class="s">    &quot;172.16.183.79&quot;,</span>
+<span class="s">    &quot;172.16.183.75&quot;</span>
+<span class="s">  ],</span>
+<span class="s">  &quot;key&quot;: {</span>
+<span class="s">    &quot;algo&quot;: &quot;rsa&quot;,</span>
+<span class="s">    &quot;size&quot;: 2048</span>
+<span class="s">  },</span>
+<span class="s">  &quot;names&quot;: [{</span>
+<span class="s">    &quot;C&quot;: &quot;CN&quot;,</span>
+<span class="s">    &quot;ST&quot;: &quot;Hubei&quot;,</span>
+<span class="s">    &quot;L&quot;: &quot;Wuhan&quot;,</span>
+<span class="s">    &quot;O&quot;: &quot;k8s&quot;,</span>
+<span class="s">    &quot;OU&quot;: &quot;system&quot;</span>
+<span class="s">  }]</span>
+<span class="s">} </span>
+<span class="s">EOF</span>
+<span class="c1">#上述文件hosts字段中IP为所有etcd节点的集群内部通信IP，可以预留几个，做扩容用? </span>
+cfssl<span class="w"> </span>gencert<span class="w"> </span>-ca<span class="o">=</span>ca.pem<span class="w"> </span>-ca-key<span class="o">=</span>ca-key.pem<span class="w"> </span>-config<span class="o">=</span>ca-config.json<span class="w"> </span>-profile<span class="o">=</span>kubernetes<span class="w"> </span>etcd-csr.json<span class="w"> </span><span class="p">|</span><span class="w"> </span>cfssljson<span class="w">  </span>-bare<span class="w"> </span>etcd
+ls<span class="w"> </span>etcd*.pem
+<span class="c1">#etcd-key.pem  etcd.pem</span>
+</code></pre></div>
+
+<blockquote>
+<p>在生成证书过程中需要有四类文件</p>
+<ol>
+<li>*.csr - 证书请求文件,base64格式，有-----BEGIN CERTIFICATE REQUEST-----标识</li>
+<li>*csr.json - 证书请求文件，是上面格式的再封装，便于传给cfssl，json格式，大括号开始</li>
+<li>*-key.pem - 私匙文件，base64格式，有-----BEGIN RSA PRIVATE KEY-----标识</li>
+<li>*.pem - 证书文件，base64格式，可以用cfssl certinfo -cert 文件名查看有效期，有-----BEGIN CERTIFICATE-----标识</li>
+</ol>
+</blockquote>
+<h3 id="部署etcd集群">部署etcd集群</h3>
+<h4 id="上传镜像">上传镜像</h4>
+<ul>
+<li>上传etcd-v3.4.13-linux-amd64.tar.gz上传到master1的/data/work目录下</li>
+</ul>
+<div class="highlight"><pre><span></span><code>tar<span class="w"> </span>-xf<span class="w"> </span>etcd-v3.4.13-linux-amd64.tar.gz
+cp<span class="w"> </span>-p<span class="w"> </span>etcd-v3.4.13-linux-amd64/etcd*<span class="w"> </span>/usr/local/bin/
+<span class="c1">#拷贝到另外两台</span>
+scp<span class="w"> </span>-r<span class="w">  </span>etcd-v3.4.13-linux-amd64/etcd*<span class="w"> </span>binmaster2:/usr/local/bin/
+scp<span class="w"> </span>-r<span class="w">  </span>etcd-v3.4.13-linux-amd64/etcd*<span class="w"> </span>binmaster3:/usr/local/bin/
+</code></pre></div>
+
+<h4 id="创建配置文件">创建配置文件</h4>
+<div class="highlight"><pre><span></span><code>tee<span class="w"> </span>-a<span class="w"> </span>etcd.conf<span class="w"> </span><span class="s">&lt;&lt; &#39;EOF&#39; </span>
+<span class="s">#[Member]</span>
+<span class="s">ETCD_NAME=&quot;etcd1&quot;</span>
+<span class="s">ETCD_DATA_DIR=&quot;/var/lib/etcd/default.etcd&quot;</span>
+<span class="s">ETCD_LISTEN_PEER_URLS=&quot;https://172.16.183.76:2380&quot;</span>
+<span class="s">ETCD_LISTEN_CLIENT_URLS=&quot;https://172.16.183.76:2379,http://127.0.0.1:2379&quot;</span>
+<span class="s">#[Clustering]</span>
+<span class="s">ETCD_INITIAL_ADVERTISE_PEER_URLS=&quot;https://172.16.183.76:2380&quot;</span>
+<span class="s">ETCD_ADVERTISE_CLIENT_URLS=&quot;https://172.16.183.76:2379&quot;</span>
+<span class="s">ETCD_INITIAL_CLUSTER=&quot;etcd1=https://172.16.183.76:2380,etcd2=https://172.16.183.77:2380,etcd3=https://172.16.183.78:2380&quot;</span>
+<span class="s">ETCD_INITIAL_CLUSTER_TOKEN=&quot;etcd-cluster&quot;</span>
+<span class="s">ETCD_INITIAL_CLUSTER_STATE=&quot;new&quot;</span>
+<span class="s">EOF</span>
+</code></pre></div>
+
+<blockquote>
+<p>ETCD_NAME：节点名称，集群中唯一 </p>
+<p>ETCD_DATA_DIR：数据目录 </p>
+<p>ETCD_LISTEN_PEER_URLS：集群通信监听地址 </p>
+<p>ETCD_LISTEN_CLIENT_URLS：客户端访问监听地址 </p>
+<p>ETCD_INITIAL_ADVERTISE_PEER_URLS：集群通告地址 </p>
+<p>ETCD_ADVERTISE_CLIENT_URLS：客户端通告地址 </p>
+<p>ETCD_INITIAL_CLUSTER：集群节点地址</p>
+<p>ETCD_INITIAL_CLUSTER_TOKEN：集群Token</p>
+<p>ETCD_INITIAL_CLUSTER_STATE：加入集群的当前状态，new是新集群，existing表示加入已有集群</p>
+</blockquote>
+<h4 id="创建启动服务文件">创建启动服务文件</h4>
+<div class="highlight"><pre><span></span><code><span class="c1">#master1上</span>
+tee<span class="w"> </span>-a<span class="w"> </span>etcd.service<span class="w"> </span><span class="s">&lt;&lt; &#39;EOF&#39;</span>
+<span class="s">[Unit]</span>
+<span class="s">Description=Etcd Server</span>
+<span class="s">After=network.target</span>
+<span class="s">After=network-online.target</span>
+<span class="s">Wants=network-online.target</span>
+
+<span class="s">[Service]</span>
+<span class="s">Type=notify</span>
+<span class="s">EnvironmentFile=-/etc/etcd/etcd.conf</span>
+<span class="s">WorkingDirectory=/var/lib/etcd/</span>
+<span class="s">ExecStart=/usr/local/bin/etcd \</span>
+<span class="s">  --cert-file=/etc/etcd/ssl/etcd.pem \</span>
+<span class="s">  --key-file=/etc/etcd/ssl/etcd-key.pem \</span>
+<span class="s">  --trusted-ca-file=/etc/etcd/ssl/ca.pem \</span>
+<span class="s">  --peer-cert-file=/etc/etcd/ssl/etcd.pem \</span>
+<span class="s">  --peer-key-file=/etc/etcd/ssl/etcd-key.pem \</span>
+<span class="s">  --peer-trusted-ca-file=/etc/etcd/ssl/ca.pem \</span>
+<span class="s">  --peer-client-cert-auth \</span>
+<span class="s">  --client-cert-auth</span>
+<span class="s">Restart=on-failure</span>
+<span class="s">RestartSec=5</span>
+<span class="s">LimitNOFILE=65536</span>
+
+<span class="s">[Install]</span>
+<span class="s">WantedBy=multi-user.target</span>
+<span class="s">EOF</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="c1">#master1上，把前面生成的证书文件转移到/etc/etcd/ssl/</span>
+<span class="nb">cd</span><span class="w"> </span>/data/work
+cp<span class="w"> </span>ca*.pem<span class="w"> </span>/etc/etcd/ssl/
+cp<span class="w"> </span>etcd*.pem<span class="w"> </span>/etc/etcd/ssl/
+cp<span class="w"> </span>etcd.conf<span class="w"> </span>/etc/etcd/
+cp<span class="w"> </span>etcd.service<span class="w"> </span>/usr/lib/systemd/system/<span class="w"> </span><span class="c1"># 这是系统启动脚本的目录</span>
+<span class="k">for</span><span class="w"> </span>i<span class="w"> </span><span class="k">in</span><span class="w"> </span>binmaster2<span class="w"> </span>binmaster3<span class="p">;</span><span class="k">do</span><span class="w"> </span>rsync<span class="w"> </span>-vaz<span class="w"> </span>etcd.conf<span class="w"> </span><span class="nv">$i</span>:/etc/etcd/<span class="p">;</span><span class="k">done</span>
+<span class="k">for</span><span class="w"> </span>i<span class="w"> </span><span class="k">in</span><span class="w"> </span>binmaster2<span class="w"> </span>binmaster3<span class="p">;</span><span class="k">do</span><span class="w"> </span>rsync<span class="w"> </span>-vaz<span class="w"> </span>etcd*.pem<span class="w"> </span>ca*.pem<span class="w"> </span><span class="nv">$i</span>:/etc/etcd/ssl/<span class="p">;</span><span class="k">done</span>
+<span class="k">for</span><span class="w"> </span>i<span class="w"> </span><span class="k">in</span><span class="w"> </span>binmaster2<span class="w"> </span>binmaster3<span class="p">;</span><span class="k">do</span><span class="w"> </span>rsync<span class="w"> </span>-vaz<span class="w"> </span>etcd.service<span class="w"> </span><span class="nv">$i</span>:/usr/lib/systemd/system/<span class="p">;</span><span class="k">done</span>
+</code></pre></div>
+
+<h4 id="启动etcd集群">启动etcd集群</h4>
+<div class="highlight"><pre><span></span><code><span class="c1">#3台master上，创建etcd的数据目录</span>
+mkdir<span class="w"> </span>-p<span class="w"> </span>/var/lib/etcd/default.etcd
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="c1">#master2上</span>
+tee<span class="w"> </span>-a<span class="w"> </span>/etc/etcd/etcd.conf<span class="w"> </span><span class="s">&lt;&lt; &#39;EOF&#39; </span>
+<span class="s">#[Member]</span>
+<span class="s">ETCD_NAME=&quot;etcd2&quot;</span>
+<span class="s">ETCD_DATA_DIR=&quot;/var/lib/etcd/default.etcd&quot;</span>
+<span class="s">ETCD_LISTEN_PEER_URLS=&quot;https://172.16.183.77:2380&quot;</span>
+<span class="s">ETCD_LISTEN_CLIENT_URLS=&quot;https://172.16.183.77:2379,http://127.0.0.1:2379&quot;</span>
+<span class="s">#[Clustering]</span>
+<span class="s">ETCD_INITIAL_ADVERTISE_PEER_URLS=&quot;https://172.16.183.77:2380&quot;</span>
+<span class="s">ETCD_ADVERTISE_CLIENT_URLS=&quot;https://172.16.183.77:2379&quot;</span>
+<span class="s">ETCD_INITIAL_CLUSTER=&quot;etcd1=https://172.16.183.76:2380,etcd2=https://172.16.183.77:2380,etcd3=https://172.16.183.78:2380&quot;</span>
+<span class="s">ETCD_INITIAL_CLUSTER_TOKEN=&quot;etcd-cluster&quot;</span>
+<span class="s">ETCD_INITIAL_CLUSTER_STATE=&quot;new&quot;</span>
+<span class="s">EOF</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="c1">#master3上</span>
+tee<span class="w"> </span>-a<span class="w"> </span>/etc/etcd/etcd.conf<span class="w"> </span><span class="s">&lt;&lt; &#39;EOF&#39;</span>
+<span class="s">#[Member]</span>
+<span class="s">ETCD_NAME=&quot;etcd3&quot;</span>
+<span class="s">ETCD_DATA_DIR=&quot;/var/lib/etcd/default.etcd&quot;</span>
+<span class="s">ETCD_LISTEN_PEER_URLS=&quot;https://172.16.183.78:2380&quot;</span>
+<span class="s">ETCD_LISTEN_CLIENT_URLS=&quot;https://172.16.183.78:2379,http://127.0.0.1:2379&quot;</span>
+<span class="s">#[Clustering]</span>
+<span class="s">ETCD_INITIAL_ADVERTISE_PEER_URLS=&quot;https://172.16.183.78:2380&quot;</span>
+<span class="s">ETCD_ADVERTISE_CLIENT_URLS=&quot;https://172.16.183.78:2379&quot;</span>
+<span class="s">ETCD_INITIAL_CLUSTER=&quot;etcd1=https://172.16.183.76:2380,etcd2=https://172.16.183.77:2380,etcd3=https://172.16.183.78:2380&quot;</span>
+<span class="s">ETCD_INITIAL_CLUSTER_TOKEN=&quot;etcd-cluster&quot;</span>
+<span class="s">ETCD_INITIAL_CLUSTER_STATE=&quot;new&quot;</span>
+<span class="s">EOF</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="c1">#master1\2\3上</span>
+systemctl<span class="w"> </span>daemon-reload
+systemctl<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>etcd.service
+systemctl<span class="w"> </span>start<span class="w"> </span>etcd.service
+<span class="c1">#启动etcd的时候，先启动master1的etcd服务，会一直卡住在启动的状态，然后接着再启动master2的etcd，这样master1这个节点etcd才会正常起来</span>
+<span class="c1">#3台上检查etcd状态</span>
+systemctl<span class="w"> </span>status<span class="w"> </span>etcd
+</code></pre></div>
+
+<h3 id="查看etcd集群健康状态">查看etcd集群健康状态</h3>
+<div class="highlight"><pre><span></span><code><span class="c1">#master1上</span>
+<span class="nv">ETCDCTL_API</span><span class="o">=</span><span class="m">3</span><span class="w"> </span><span class="c1">#设置etcdctl api版本为3</span>
+<span class="nb">echo</span><span class="w"> </span><span class="nv">$ETCDCTL_API</span>
+/usr/local/bin/etcdctl<span class="w"> </span>--write-out<span class="o">=</span>table<span class="w"> </span>--cacert<span class="o">=</span>/etc/etcd/ssl/ca.pem<span class="w"> </span>--cert<span class="o">=</span>/etc/etcd/ssl/etcd.pem<span class="w"> </span>--key<span class="o">=</span>/etc/etcd/ssl/etcd-key.pem<span class="w"> </span>--endpoints<span class="o">=</span>https://172.16.183.76:2379,https://172.16.183.77:2379,https://172.16.183.78:2379<span class="w">  </span>endpoint<span class="w"> </span>health
+</code></pre></div>
+
+<h2 id="安装k8s组件">安装k8s组件</h2>
+<ul>
+<li>Kubernetes API的请求从发起到其持久化⼊库的流程如下：</li>
+<li>认证阶段（Authentication）<ul>
+<li>判断⽤户是否为能够访问集群的合法⽤户。</li>
+<li>apiserver⽬前提供了9种认证机制。每⼀种认证机制被实例化后会成为认证器（Authenticator），每⼀个认证器都被封装在http.Handler请求处理函数中，它们接收组件或客户端的请求并认证请求。</li>
+<li>假设所有的认证器都被启⽤，当客户端发送请求到kube-apiserver服务，该请求会进⼊Authentication Handler函数（处理认证相关的Handler函数）。在Authentication Handler函数中，会遍历已启⽤的认证器列表，尝试执⾏每个认证器，当有⼀个认证器返回true时，则认证成功，否则继续尝试下⼀个认证器；如果⽤户是个⾮法⽤户，那apiserver会返回⼀个401的状态码，并终⽌该请求。</li>
+</ul>
+</li>
+<li>clientCA认证<ul>
+<li>X509认证是Kubernetes组件间默认使⽤的认证⽅式，同时也是kubectl客户端对应的kube-config中经常使⽤到的访问凭证。它是⼀个⽐较安全的⽅式。</li>
+<li>⾸先访问者会使⽤由集群CA签发的，或是添加在apiserver配置中的授信CA签发的客户端证书去访问apiserver。apiserver在接收到请求后，会进⾏TLS的握⼿流程。</li>
+<li>除了验证证书的合法性，apiserver还会校验客户端证书的请求源地址等信息，开启双向认证。</li>
+</ul>
+</li>
+</ul>
+<h3 id="下载安装包">下载安装包</h3>
+<ul>
+<li>二进制包所在的github地址如下：<a href="https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/">Kubernetes CHANGELOG</a>，可以按照版本下载二进制包。控制节点组件，找到Server Binaries，下载amd64版本的。server binaries二进制包里面就包含了：controller-manager，apiserver，scheduler等控制平面组件。其实也包含了工作节点需要的kubelet和kubeproxy</li>
+<li>这里下载的是1.20.7版本</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="c1">#把kubernetes-server-linux-amd64.tar.gz上传到master1上的/data/work目录下:</span>
+<span class="c1">#master1上</span>
+<span class="nb">cd</span><span class="w"> </span>/data/work
+tar<span class="w"> </span>zxvf<span class="w"> </span>kubernetes-server-linux-amd64.tar.gz
+<span class="nb">cd</span><span class="w"> </span>kubernetes/server/bin/
+cp<span class="w"> </span>kube-apiserver<span class="w"> </span>kube-controller-manager<span class="w"> </span>kube-scheduler<span class="w"> </span>kubectl<span class="w"> </span>/usr/local/bin/
+rsync<span class="w"> </span>-vaz<span class="w"> </span>kube-apiserver<span class="w"> </span>kube-controller-manager<span class="w"> </span>kube-scheduler<span class="w"> </span>kubectl<span class="w"> </span>binmaster2:/usr/local/bin/
+rsync<span class="w"> </span>-vaz<span class="w"> </span>kube-apiserver<span class="w"> </span>kube-controller-manager<span class="w"> </span>kube-scheduler<span class="w"> </span>kubectl<span class="w"> </span>binmaster3:/usr/local/bin/
+<span class="c1">#kubelet kubeproxy放到工作节点</span>
+scp<span class="w"> </span>kubelet<span class="w"> </span>kube-proxy<span class="w"> </span>binnode1:/usr/local/bin/
+<span class="nb">cd</span><span class="w"> </span>/data/work/
+mkdir<span class="w"> </span>-p<span class="w"> </span>/etc/kubernetes/ssl/
+mkdir<span class="w"> </span>-p<span class="w"> </span>/var/log/kubernetes
+</code></pre></div>
+
+<h3 id="部署apiserver组件">部署apiserver组件</h3>
+<h4 id="bootstrapping机制">bootstrapping机制</h4>
+<ul>
+<li>启动TLS Bootstrapping 机制</li>
+<li>Master apiserver启用TLS认证后，每个节点的 kubelet 组件都要使用由 apiserver 使用的 CA 签发的有效证书才能与 apiserver 通讯，当Node节点很多时，这种客户端证书颁发需要大量工作，同样也会增加集群扩展复杂度。</li>
+<li>
+<p>为了简化流程，Kubernetes引入了TLS bootstraping机制来自动颁发客户端证书，kubelet会以一个低权限用户自动向apiserver申请证书，kubelet的证书由apiserver动态签署。</p>
+</li>
+<li>
+<p>Bootstrap 是很多系统中都存在的程序，比如 Linux 的bootstrap，bootstrap 一般都是作为预先配置在开启或者系统启动的时候加载，这可以用来生成一个指定环境。Kubernetes 的 kubelet 在启动时同样可以加载一个这样的配置文件，这个文件的内容类似如下形式：</p>
+</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">clusters</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">null</span>
+<span class="nt">contexts</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">context</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">cluster</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kubernetes</span>
+<span class="w">    </span><span class="nt">user</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kubelet-bootstrap</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
+<span class="nt">current-context</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Config</span>
+<span class="nt">preferences</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span>
+<span class="nt">users</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kubelet-bootstrap</span>
+<span class="w">  </span><span class="nt">user</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span>
+</code></pre></div>
+
+<ul>
+<li>Bootstrap具体引导过程</li>
+<li>TLS 作用 <br />
+    TLS 的作用就是对通讯加密，防止中间人窃听；同时如果证书不信任的话根本就无法与 apiserver 建立连接，更不用提有没有权限向apiserver请求指定内容。</li>
+<li>RBAC 作用 <br />
+    当 TLS 解决了通讯问题后，那么权限问题就应由 RBAC 解决；RBAC 中规定了一个用户或者用户组(subject)具有请求哪些 api 的权限；在配合 TLS 加密的时候，实际上 apiserver 读取客户端证书的 <code>CN</code> 字段作为用户名，读取 <code>O</code> 字段作为用户组.</li>
+<li>
+<p>以上说明：第一，想要与 apiserver 通讯就必须采用由 apiserver CA 签发的证书，这样才能形成信任关系，建立 TLS 连接；第二，可以<strong>通过证书的 CN、O 字段来提供 RBAC 所需的用户与用户组</strong>。</p>
+</li>
+<li>
+<p>kubelet 首次启动流程 </p>
+</li>
+<li>
+<p>TLS bootstrapping 功能是让 kubelet 组件去 apiserver 申请证书，然后用于连接 apiserver；那么第一次启动时没有证书如何连接 apiserver ?</p>
+</li>
+<li>
+<p>在apiserver 配置中指定了一个 <code>token.csv</code> 文件，该文件中是一个预设的用户配置；</p>
+<ul>
+<li>同时该用户的Token和apiserver CA签发的用户被写入了kubelet的<code>bootstrap.kubeconfig</code> 配置文件中；</li>
+<li>这样在首次请求时，kubelet 使用 <code>bootstrap.kubeconfig</code> 中被apiserver CA信任的用户与apiserver连接，使用 <code>bootstrap.kubeconfig</code> 中的用户 Token 来向 apiserver 声明自己的 RBAC 授权身份.</li>
+</ul>
+</li>
+<li>
+<p>token.csv格式:</p>
+<p><code>3940fd7fbb391d1b4d861ad17a1f0613,kubelet-bootstrap,10001,"system:kubelet-bootstrap"</code></p>
+</li>
+<li>
+<p>首次启动时，可能与遇到 kubelet 报 401 无权访问 apiserver 的错误；这是因为在默认情况下，kubelet 通过 <code>bootstrap.kubeconfig</code> 中的预设用户 Token 声明了自己的身份，然后创建 CSR 请求。但是不要忘记这个用户在我们不处理的情况下他没任何权限的，包括创建CSR请求的权限也没有。所以需要创建一个 <code>ClusterRoleBinding</code>，将预设用户 <code>kubelet-bootstrap</code> 与内置的 <code>ClusterRole system:node-bootstrapper</code> 绑定到一起，使其能够发起 CSR 请求。</p>
+</li>
+</ul>
+<h4 id="创建tokencsv文件">创建token.csv文件</h4>
+<div class="highlight"><pre><span></span><code><span class="c1">#master1上</span>
+cat<span class="w"> </span>&gt;<span class="w"> </span>token.csv<span class="w"> </span><span class="s">&lt;&lt; EOF</span>
+<span class="s">$(head -c 16 /dev/urandom | od -An -t x | tr -d &#39; &#39;),kubelet-bootstrap,10001,&quot;system:kubelet-bootstrap&quot;</span>
+<span class="s">EOF</span>
+<span class="c1">#格式：token，用户名，UID，用户组</span>
+</code></pre></div>
+
+<h4 id="创建csr请求文件">创建csr请求文件</h4>
+<ul>
+<li>
+<p>集群中所有系统组件与apiserver通讯⽤到的证书，其实都是由集群根CA签发的</p>
+</li>
+<li>
+<p>注：如果 hosts 字段不为空则需要指定授权使用该证书的 IP 或域名列表。由于该证书后续被 kubernetes master 集群使用，需要将master节点的IP都填上，同时还需要填写 service 网络的首个IP。(一般是 kube-apiserver 指定的 service-cluster-ip-range 网段的第一个IP，如 10.255.0.1)</p>
+</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="c1">#master1上</span>
+tee<span class="w"> </span>-a<span class="w"> </span>kube-apiserver-csr.json<span class="w"> </span><span class="s">&lt;&lt; &#39;EOF&#39;</span>
+<span class="s">{</span>
+<span class="s">  &quot;CN&quot;: &quot;kubernetes&quot;,</span>
+<span class="s">  &quot;hosts&quot;: [</span>
+<span class="s">    &quot;127.0.0.1&quot;,</span>
+<span class="s">    &quot;172.16.183.76&quot;,</span>
+<span class="s">    &quot;172.16.183.77&quot;,</span>
+<span class="s">    &quot;172.16.183.78&quot;,</span>
+<span class="s">    &quot;172.16.183.79&quot;,</span>
+<span class="s">    &quot;172.16.183.75&quot;,</span>
+<span class="s">    &quot;10.255.0.1&quot;,</span>
+<span class="s">    &quot;kubernetes&quot;,</span>
+<span class="s">    &quot;kubernetes.default&quot;,</span>
+<span class="s">    &quot;kubernetes.default.svc&quot;,</span>
+<span class="s">    &quot;kubernetes.default.svc.cluster&quot;,</span>
+<span class="s">    &quot;kubernetes.default.svc.cluster.local&quot;</span>
+<span class="s">  ],</span>
+<span class="s">  &quot;key&quot;: {</span>
+<span class="s">    &quot;algo&quot;: &quot;rsa&quot;,</span>
+<span class="s">    &quot;size&quot;: 2048</span>
+<span class="s">  },</span>
+<span class="s">  &quot;names&quot;: [</span>
+<span class="s">    {</span>
+<span class="s">      &quot;C&quot;: &quot;CN&quot;,</span>
+<span class="s">      &quot;ST&quot;: &quot;Hubei&quot;,</span>
+<span class="s">      &quot;L&quot;: &quot;Wuhan&quot;,</span>
+<span class="s">      &quot;O&quot;: &quot;k8s&quot;,</span>
+<span class="s">      &quot;OU&quot;: &quot;system&quot;</span>
+<span class="s">    }</span>
+<span class="s">  ]</span>
+<span class="s">}</span>
+<span class="s">EOF</span>
+</code></pre></div>
+
+<h4 id="生成证书">生成证书</h4>
+<div class="highlight"><pre><span></span><code><span class="c1">#master1上</span>
+cfssl<span class="w"> </span>gencert<span class="w"> </span>-ca<span class="o">=</span>ca.pem<span class="w"> </span>-ca-key<span class="o">=</span>ca-key.pem<span class="w"> </span>-config<span class="o">=</span>ca-config.json<span class="w"> </span>-profile<span class="o">=</span>kubernetes<span class="w"> </span>kube-apiserver-csr.json<span class="w"> </span><span class="p">|</span><span class="w"> </span>cfssljson<span class="w"> </span>-bare<span class="w"> </span>kube-apiserver
+</code></pre></div>
+
+<h4 id="创建apiserver的配置文件">创建apiserver的配置文件</h4>
+<div class="highlight"><pre><span></span><code><span class="c1">#master1上</span>
+tee<span class="w"> </span>-a<span class="w"> </span>kube-apiserver.conf<span class="w"> </span><span class="s">&lt;&lt; &#39;EOF&#39;</span>
+<span class="s">KUBE_APISERVER_OPTS=&quot;--enable-admission-plugins=NamespaceLifecycle,NodeRestriction,LimitRanger,ServiceAccount,DefaultStorageClass,ResourceQuota \</span>
+<span class="s">  --anonymous-auth=false \</span>
+<span class="s">  --bind-address=172.16.183.76 \</span>
+<span class="s">  --secure-port=6443 \</span>
+<span class="s">  --advertise-address=172.16.183.76 \</span>
+<span class="s">  --insecure-port=0 \</span>
+<span class="s">  --authorization-mode=Node,RBAC \</span>
+<span class="s">  --runtime-config=api/all=true \</span>
+<span class="s">  --enable-bootstrap-token-auth \</span>
+<span class="s">  --service-cluster-ip-range=10.255.0.0/16 \</span>
+<span class="s">  --token-auth-file=/etc/kubernetes/token.csv \</span>
+<span class="s">  --service-node-port-range=30000-50000 \</span>
+<span class="s">  --tls-cert-file=/etc/kubernetes/ssl/kube-apiserver.pem  \</span>
+<span class="s">  --tls-private-key-file=/etc/kubernetes/ssl/kube-apiserver-key.pem \</span>
+<span class="s">  --client-ca-file=/etc/kubernetes/ssl/ca.pem \</span>
+<span class="s">  --kubelet-client-certificate=/etc/kubernetes/ssl/kube-apiserver.pem \</span>
+<span class="s">  --kubelet-client-key=/etc/kubernetes/ssl/kube-apiserver-key.pem \</span>
+<span class="s">  --service-account-key-file=/etc/kubernetes/ssl/ca-key.pem \</span>
+<span class="s">  --service-account-signing-key-file=/etc/kubernetes/ssl/ca-key.pem  \</span>
+<span class="s">  --service-account-issuer=https://kubernetes.default.svc.cluster.local \</span>
+<span class="s">  --etcd-cafile=/etc/etcd/ssl/ca.pem \</span>
+<span class="s">  --etcd-certfile=/etc/etcd/ssl/etcd.pem \</span>
+<span class="s">  --etcd-keyfile=/etc/etcd/ssl/etcd-key.pem \</span>
+<span class="s">  --etcd-servers=https://172.16.183.76:2379,https://172.16.183.77:2379,https://172.16.183.78:2379 \</span>
+<span class="s">  --enable-swagger-ui=true \</span>
+<span class="s">  --allow-privileged=true \</span>
+<span class="s">  --apiserver-count=3 \</span>
+<span class="s">  --audit-log-maxage=30 \</span>
+<span class="s">  --audit-log-maxbackup=3 \</span>
+<span class="s">  --audit-log-maxsize=100 \</span>
+<span class="s">  --audit-log-path=/var/log/kube-apiserver-audit.log \</span>
+<span class="s">  --event-ttl=1h \</span>
+<span class="s">  --alsologtostderr=true \</span>
+<span class="s">  --logtostderr=false \</span>
+<span class="s">  --log-dir=/var/log/kubernetes \</span>
+<span class="s">  --v=4&quot;</span>
+<span class="s">EOF</span>
+</code></pre></div>
+
+<blockquote>
+<p>注： </p>
+<p>--logtostderr：启用日志 </p>
+<p>--v：日志等级 </p>
+<p>--log-dir：日志目录 </p>
+<p>--etcd-servers：etcd集群地址 </p>
+<p>--bind-address：监听地址 </p>
+<p>--secure-port：https安全端口 </p>
+<p>--advertise-address：集群通告地址 </p>
+<p>--allow-privileged：启用授权 </p>
+<p>--service-cluster-ip-range：Service虚拟IP地址段 </p>
+<p>--enable-admission-plugins：准入控制模块 </p>
+<p>--authorization-mode：认证授权，启用RBAC授权和节点自管理 </p>
+<p>--enable-bootstrap-token-auth：启用TLS bootstrap机制 </p>
+<p>--token-auth-file：bootstrap token文件 </p>
+<p>--service-node-port-range：Service nodeport类型默认分配端口范围 </p>
+<p>--kubelet-client-xxx：apiserver访问kubelet客户端证书 </p>
+<p>--tls-xxx-file：apiserver https证书 </p>
+<p>--etcd-xxxfile：连接Etcd集群证书 –</p>
+<p>-audit-log-xxx：审计日志</p>
+</blockquote>
+<h4 id="创建服务启动文件">创建服务启动文件</h4>
+<div class="highlight"><pre><span></span><code><span class="c1">#master1上</span>
+tee<span class="w"> </span>-a<span class="w"> </span>kube-apiserver.service<span class="w"> </span><span class="s">&lt;&lt; &#39;EOF&#39;</span>
+<span class="s">[Unit]</span>
+<span class="s">Description=Kubernetes API Server</span>
+<span class="s">Documentation=https://github.com/kubernetes/kubernetes</span>
+<span class="s">After=etcd.service</span>
+<span class="s">Wants=etcd.service</span>
+
+<span class="s">[Service]</span>
+<span class="s">EnvironmentFile=-/etc/kubernetes/kube-apiserver.conf</span>
+<span class="s">ExecStart=/usr/local/bin/kube-apiserver $KUBE_APISERVER_OPTS</span>
+<span class="s">Restart=on-failure</span>
+<span class="s">RestartSec=5</span>
+<span class="s">Type=notify</span>
+<span class="s">LimitNOFILE=65536</span>
+
+<span class="s">[Install]</span>
+<span class="s">WantedBy=multi-user.target</span>
+<span class="s">EOF</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code>cp<span class="w"> </span>ca*.pem<span class="w"> </span>/etc/kubernetes/ssl
+cp<span class="w"> </span>kube-apiserver*.pem<span class="w"> </span>/etc/kubernetes/ssl/
+cp<span class="w"> </span>token.csv<span class="w"> </span>/etc/kubernetes/
+cp<span class="w"> </span>kube-apiserver.conf<span class="w"> </span>/etc/kubernetes/
+cp<span class="w"> </span>kube-apiserver.service<span class="w"> </span>/usr/lib/systemd/system/
+rsync<span class="w"> </span>-vaz<span class="w"> </span>token.csv<span class="w"> </span>binmaster2:/etc/kubernetes/
+rsync<span class="w"> </span>-vaz<span class="w"> </span>token.csv<span class="w"> </span>binmaster3:/etc/kubernetes/
+rsync<span class="w"> </span>-vaz<span class="w"> </span>kube-apiserver*.pem<span class="w"> </span>binmaster2:/etc/kubernetes/ssl/
+rsync<span class="w"> </span>-vaz<span class="w"> </span>kube-apiserver*.pem<span class="w"> </span>binmaster3:/etc/kubernetes/ssl/
+rsync<span class="w"> </span>-vaz<span class="w"> </span>ca*.pem<span class="w"> </span>binmaster2:/etc/kubernetes/ssl/
+rsync<span class="w"> </span>-vaz<span class="w"> </span>ca*.pem<span class="w"> </span>binmaster3:/etc/kubernetes/ssl/
+rsync<span class="w"> </span>-vaz<span class="w"> </span>kube-apiserver.conf<span class="w"> </span>binmaster2:/etc/kubernetes/
+rsync<span class="w"> </span>-vaz<span class="w"> </span>kube-apiserver.conf<span class="w"> </span>binmaster3:/etc/kubernetes/
+rsync<span class="w"> </span>-vaz<span class="w"> </span>kube-apiserver.service<span class="w"> </span>binmaster2:/usr/lib/systemd/system/
+rsync<span class="w"> </span>-vaz<span class="w"> </span>kube-apiserver.service<span class="w"> </span>binmaster3:/usr/lib/systemd/system/
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="c1">#修改master2和master3上的kube-apiserver.conf文件的IP地址(--bind-address，--advertise-address)</span>
+<span class="c1">#3台master上执行</span>
+systemctl<span class="w"> </span>daemon-reload
+systemctl<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>kube-apiserver
+systemctl<span class="w"> </span>start<span class="w"> </span>kube-apiserver
+systemctl<span class="w"> </span>status<span class="w"> </span>kube-apiserver
+curl<span class="w"> </span>--insecure<span class="w"> </span>https://172.16.183.76:6443/
+<span class="c1">#上面看到401，这个是正常的的状态，还没认证</span>
+</code></pre></div>
+
+<h3 id="部署kubectl组件">部署kubectl组件</h3>
+<h4 id="配置kubeconfig文件">配置kubeconfig文件</h4>
+<ul>
+<li>Kubectl操作资源的时候，怎么知道连接到哪个集群？需要一个文件/etc/kubernetes/admin.conf，kubectl会根据这个文件的配置，去访问k8s资源。/etc/kubernetes/admin.conf文件记录了访问的k8s集群，和用到的证书。</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="c1">#可以设置一个环境变量KUBECONFIG，这样操作kubectl，就会自动加载KUBECONFIG来操作要管理哪个集群的k8s资源了</span>
+<span class="c1">#直接命令行定义环境变量，只对当前的shell有效</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">KUBECONFIG</span><span class="o">=</span>/etc/kubernetes/admin.conf
+<span class="c1">#编辑/etc/profile，对于所有用户，永久生效（也可以在用户家目录下的.bash_profile增加环境变量，对当前用户永久生效）</span>
+tee<span class="w"> </span>-a<span class="w"> </span>/etc/profile<span class="w"> </span><span class="s">&lt;&lt; &#39;EOF&#39;</span>
+<span class="s">export KUBECONFIG=/etc/kubernetes/admin.conf</span>
+<span class="s">EOF</span>
+<span class="nb">source</span><span class="w"> </span>/etc/profile
+<span class="c1">#也可以按照下面方法，这个是在kubeadm初始化k8s的时候会告诉我们要用的方法</span>
+cp<span class="w"> </span>/etc/kubernetes/admin.conf<span class="w"> </span>/root/.kube/config<span class="w"> </span>
+<span class="c1">#如果设置了KUBECONFIG，那就会先找到KUBECONFIG去操作k8s，如果没有KUBECONFIG变量，那就会使用/root/.kube/config文件决定管理哪个k8s集群的资源。</span>
+</code></pre></div>
+
+<p><mark>二进制安装这里没有admin.conf这个文件，直接就用/root/.kube/config，所以不用做上面的步骤</mark></p>
+<h4 id="创建csr请求文件_1">创建csr请求文件</h4>
+<div class="highlight"><pre><span></span><code><span class="c1">#master1上</span>
+<span class="nb">cd</span><span class="w"> </span>/data/work
+<span class="c1">#创建一个集群管理员的user，叫admin，组是system:master，这个组已经预先内置了cluster-admin的权限。</span>
+tee<span class="w"> </span>-a<span class="w"> </span>admin-csr.json<span class="w"> </span><span class="s">&lt;&lt; &#39;EOF&#39; </span>
+<span class="s">{</span>
+<span class="s">  &quot;CN&quot;: &quot;admin&quot;,</span>
+<span class="s">  &quot;hosts&quot;: [],</span>
+<span class="s">  &quot;key&quot;: {</span>
+<span class="s">    &quot;algo&quot;: &quot;rsa&quot;,</span>
+<span class="s">    &quot;size&quot;: 2048</span>
+<span class="s">  },</span>
+<span class="s">  &quot;names&quot;: [</span>
+<span class="s">    {</span>
+<span class="s">      &quot;C&quot;: &quot;CN&quot;,</span>
+<span class="s">      &quot;ST&quot;: &quot;Hubei&quot;,</span>
+<span class="s">      &quot;L&quot;: &quot;Wuhan&quot;,</span>
+<span class="s">      &quot;O&quot;: &quot;system:masters&quot;,             </span>
+<span class="s">      &quot;OU&quot;: &quot;system&quot;</span>
+<span class="s">    }</span>
+<span class="s">  ]</span>
+<span class="s">}</span>
+<span class="s">EOF</span>
+</code></pre></div>
+
+<blockquote>
+<p>说明：</p>
+<ul>
+<li>
+<p>后续 kube-apiserver 使用 RBAC 对客户端(如 kubelet、kube-proxy、Pod)请求进行授权； </p>
+</li>
+<li>
+<p>kube-apiserver 预定义了一些 RBAC 使用的 RoleBindings，如 cluster-admin 将 Group system:masters 与 Role cluster-admin 绑定，该 Role 授予了调用apiserver的所有API的权限； </p>
+</li>
+<li>
+<p>O指定该证书的 Group 为 system:masters，kubelet 使用该证书访问apiserver时，由于证书被 CA 签名，所以认证通过；同时由于证书用户组为经过预授权的 system:masters，所以被授予访问所有 API 的权限；</p>
+</li>
+</ul>
+<p>注： </p>
+<ul>
+<li>这个admin证书是将来生成管理员用的kube config 配置文件用的，现在我们一般建议使用RBAC来对kubernetes进行角色权限控制，kubernetes将证书中的CN字段作为User， O 字段作为 Group； "O": "system:masters", 必须是system:masters，否则后面kubectl create clusterrolebinding报错。</li>
+</ul>
+</blockquote>
+<h4 id="生成证书_1">生成证书</h4>
+<div class="highlight"><pre><span></span><code><span class="c1">#master1上</span>
+<span class="nb">cd</span><span class="w"> </span>/data/work
+<span class="c1">#用apiserver的证书颁发机构，给kubectl客户端签发了一个admin客户端证书</span>
+cfssl<span class="w"> </span>gencert<span class="w"> </span>-ca<span class="o">=</span>ca.pem<span class="w"> </span>-ca-key<span class="o">=</span>ca-key.pem<span class="w"> </span>-config<span class="o">=</span>ca-config.json<span class="w"> </span>-profile<span class="o">=</span>kubernetes<span class="w"> </span>admin-csr.json<span class="w"> </span><span class="p">|</span><span class="w"> </span>cfssljson<span class="w"> </span>-bare<span class="w"> </span>admin
+cp<span class="w"> </span>admin*.pem<span class="w"> </span>/etc/kubernetes/ssl/
+</code></pre></div>
+
+<h4 id="配置安全上下文">配置安全上下文</h4>
+<ul>
+<li>创建kubeconfig配置文件</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="c1">#kubeconfig 为 kubectl 的配置文件，包含访问 apiserver 的所有信息，如 apiserver 地址、CA 证书和自身使用的证书（这里如果报错找不到kubeconfig路径，请手动复制到相应路径下，没有则忽略）</span>
+<span class="c1">#1.设置集群参数</span>
+<span class="nb">cd</span><span class="w"> </span>/data/work
+kubectl<span class="w"> </span>config<span class="w"> </span>set-cluster<span class="w"> </span>kubernetes<span class="w"> </span>--certificate-authority<span class="o">=</span>ca.pem<span class="w"> </span>--embed-certs<span class="o">=</span><span class="nb">true</span><span class="w"> </span>--server<span class="o">=</span>https://172.16.183.76:6443<span class="w"> </span>--kubeconfig<span class="o">=</span>kube.config<span class="w"> </span><span class="c1">#这一步会生成kube.config文件，就是后面的/kube/config文件。</span>
+<span class="c1">##查看kube.config内容</span>
+vim<span class="w"> </span>kube.config
+<span class="c1">#2.设置客户端认证参数</span>
+kubectl<span class="w"> </span>config<span class="w"> </span>set-credentials<span class="w"> </span>admin<span class="w"> </span>--client-certificate<span class="o">=</span>admin.pem<span class="w"> </span>--client-key<span class="o">=</span>admin-key.pem<span class="w"> </span>--embed-certs<span class="o">=</span><span class="nb">true</span><span class="w"> </span>--kubeconfig<span class="o">=</span>kube.config
+<span class="c1">#3.设置上下文参数</span>
+kubectl<span class="w"> </span>config<span class="w"> </span>set-context<span class="w"> </span>kubernetes<span class="w"> </span>--cluster<span class="o">=</span>kubernetes<span class="w"> </span>--user<span class="o">=</span>admin<span class="w"> </span>--kubeconfig<span class="o">=</span>kube.config
+<span class="c1">#4.设置当前上下文</span>
+kubectl<span class="w"> </span>config<span class="w"> </span>use-context<span class="w"> </span>kubernetes<span class="w"> </span>--kubeconfig<span class="o">=</span>kube.config
+mkdir<span class="w"> </span>~/.kube<span class="w"> </span>-p
+cp<span class="w"> </span>kube.config<span class="w"> </span>~/.kube/config
+<span class="c1">#5.授权kubernetes证书访问kubelet api权限，目的是可以创建资源。#注意这里的用户是kubernetes，这是前面apiserver的ca-csr文件里面定义的CN=kubernetes，代表给apiserver赋予api的权限</span>
+kubectl<span class="w"> </span>create<span class="w"> </span>clusterrolebinding<span class="w"> </span>kube-apiserver:kubelet-apis<span class="w"> </span>--clusterrole<span class="o">=</span>system:kubelet-api-admin<span class="w"> </span>--user<span class="w"> </span>kubernetes
+
+<span class="c1">##查看集群组件状态</span>
+kubectl<span class="w"> </span>cluster-info
+kubectl<span class="w"> </span>get<span class="w"> </span>componentstatuses
+kubectl<span class="w"> </span>get<span class="w"> </span>all<span class="w"> </span>--all-namespaces
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="c1">#同步kubectl文件到其他节点</span>
+<span class="c1">##master2和3上</span>
+mkdir<span class="w"> </span>/root/.kube/<span class="w"> </span>-p
+<span class="c1">##master1上</span>
+rsync<span class="w"> </span>-vaz<span class="w"> </span>/root/.kube/config<span class="w"> </span>binmaster2:/root/.kube/
+rsync<span class="w"> </span>-vaz<span class="w"> </span>/root/.kube/config<span class="w"> </span>binmaster3:/root/.kube/
+<span class="c1">#配置kubectl子命令补全</span>
+<span class="c1">##master1上</span>
+yum<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>bash-completion
+<span class="nb">source</span><span class="w"> </span>/usr/share/bash-completion/bash_completion
+<span class="nb">source</span><span class="w"> </span>&lt;<span class="o">(</span>kubectl<span class="w"> </span>completion<span class="w"> </span>bash<span class="o">)</span>
+kubectl<span class="w"> </span>completion<span class="w"> </span>bash<span class="w"> </span>&gt;<span class="w"> </span>~/.kube/completion.bash.inc
+<span class="nb">source</span><span class="w"> </span><span class="s1">&#39;/root/.kube/completion.bash.inc&#39;</span>
+<span class="nb">source</span><span class="w"> </span><span class="nv">$HOME</span>/.bash_profile
+</code></pre></div>
+
+<h3 id="部署kube-controller-manager组件">部署kube-controller-manager组件</h3>
+<h4 id="创建csr请求文件_2">创建csr请求文件</h4>
+<div class="highlight"><pre><span></span><code><span class="c1">#master1上</span>
+<span class="nb">cd</span><span class="w"> </span>/data/work
+tee<span class="w"> </span>-a<span class="w"> </span>kube-controller-manager-csr.json<span class="w"> </span><span class="s">&lt;&lt; &#39;EOF&#39; </span>
+<span class="s">{</span>
+<span class="s">    &quot;CN&quot;: &quot;system:kube-controller-manager&quot;,</span>
+<span class="s">    &quot;key&quot;: {</span>
+<span class="s">        &quot;algo&quot;: &quot;rsa&quot;,</span>
+<span class="s">        &quot;size&quot;: 2048</span>
+<span class="s">    },</span>
+<span class="s">    &quot;hosts&quot;: [</span>
+<span class="s">      &quot;127.0.0.1&quot;,</span>
+<span class="s">      &quot;172.16.183.76&quot;,</span>
+<span class="s">      &quot;172.16.183.77&quot;,</span>
+<span class="s">      &quot;172.16.183.78&quot;,</span>
+<span class="s">      &quot;172.16.183.79&quot;</span>
+<span class="s">    ],</span>
+<span class="s">    &quot;names&quot;: [</span>
+<span class="s">      {</span>
+<span class="s">        &quot;C&quot;: &quot;CN&quot;,</span>
+<span class="s">        &quot;ST&quot;: &quot;Hubei&quot;,</span>
+<span class="s">        &quot;L&quot;: &quot;Wuhan&quot;,</span>
+<span class="s">        &quot;O&quot;: &quot;system:kube-controller-manager&quot;,</span>
+<span class="s">        &quot;OU&quot;: &quot;system&quot;</span>
+<span class="s">      }</span>
+<span class="s">    ]</span>
+<span class="s">}</span>
+<span class="s">EOF</span>
+</code></pre></div>
+
+<blockquote>
+<p>注：hosts 列表包含所有 kube-controller-manager 节点 IP； CN 为 system:kube-controller-manager、O 为 system:kube-controller-manager，kubernetes 内置的 ClusterRoleBindings system:kube-controller-manager 赋予 kube-controller-manager 工作所需的权限</p>
+</blockquote>
+<h4 id="生成证书_2">生成证书</h4>
+<div class="highlight"><pre><span></span><code><span class="c1">#master1上</span>
+<span class="nb">cd</span><span class="w"> </span>/data/work
+cfssl<span class="w"> </span>gencert<span class="w"> </span>-ca<span class="o">=</span>ca.pem<span class="w"> </span>-ca-key<span class="o">=</span>ca-key.pem<span class="w"> </span>-config<span class="o">=</span>ca-config.json<span class="w"> </span>-profile<span class="o">=</span>kubernetes<span class="w"> </span>kube-controller-manager-csr.json<span class="w"> </span><span class="p">|</span><span class="w"> </span>cfssljson<span class="w"> </span>-bare<span class="w"> </span>kube-controller-manager
+</code></pre></div>
+
+<h4 id="创建kube-controller-manager的kubeconfig">创建kube-controller-manager的kubeconfig</h4>
+<div class="highlight"><pre><span></span><code><span class="c1">#master1上</span>
+<span class="nb">cd</span><span class="w"> </span>/data/work
+<span class="c1">#1.设置集群参数，指定apiserver信任的</span>
+kubectl<span class="w"> </span>config<span class="w"> </span>set-cluster<span class="w"> </span>kubernetes<span class="w"> </span>--certificate-authority<span class="o">=</span>ca.pem<span class="w"> </span>--embed-certs<span class="o">=</span><span class="nb">true</span><span class="w"> </span>--server<span class="o">=</span>https://172.16.183.76:6443<span class="w"> </span>--kubeconfig<span class="o">=</span>kube-controller-manager.kubeconfig
+<span class="c1">#2.设置客户端认证参数,指定客户端使用的证书</span>
+kubectl<span class="w"> </span>config<span class="w"> </span>set-credentials<span class="w"> </span>system:kube-controller-manager<span class="w"> </span>--client-certificate<span class="o">=</span>kube-controller-manager.pem<span class="w"> </span>--client-key<span class="o">=</span>kube-controller-manager-key.pem<span class="w"> </span>--embed-certs<span class="o">=</span><span class="nb">true</span><span class="w"> </span>--kubeconfig<span class="o">=</span>kube-controller-manager.kubeconfig
+<span class="c1">#3.设置上下文参数</span>
+kubectl<span class="w"> </span>config<span class="w"> </span>set-context<span class="w"> </span>system:kube-controller-manager<span class="w"> </span>--cluster<span class="o">=</span>kubernetes<span class="w"> </span>--user<span class="o">=</span>system:kube-controller-manager<span class="w"> </span>--kubeconfig<span class="o">=</span>kube-controller-manager.kubeconfig
+<span class="c1">#4.设置当前上下文</span>
+kubectl<span class="w"> </span>config<span class="w"> </span>use-context<span class="w"> </span>system:kube-controller-manager<span class="w"> </span>--kubeconfig<span class="o">=</span>kube-controller-manager.kubeconfig
+</code></pre></div>
+
+<h4 id="创建配置文件kube-controller-managerconf">创建配置文件kube-controller-manager.conf</h4>
+<div class="highlight"><pre><span></span><code><span class="c1">#master1上</span>
+<span class="nb">cd</span><span class="w"> </span>/data/work
+tee<span class="w"> </span>-a<span class="w"> </span>kube-controller-manager.conf<span class="w"> </span><span class="s">&lt;&lt;&#39;EOF&#39;</span>
+<span class="s">KUBE_CONTROLLER_MANAGER_OPTS=&quot;--port=0 \</span>
+<span class="s">  --secure-port=10252 \</span>
+<span class="s">  --bind-address=127.0.0.1 \</span>
+<span class="s">  --kubeconfig=/etc/kubernetes/kube-controller-manager.kubeconfig \</span>
+<span class="s">  --service-cluster-ip-range=10.255.0.0/16 \</span>
+<span class="s">  --cluster-name=kubernetes \</span>
+<span class="s">  --cluster-signing-cert-file=/etc/kubernetes/ssl/ca.pem \</span>
+<span class="s">  --cluster-signing-key-file=/etc/kubernetes/ssl/ca-key.pem \</span>
+<span class="s">  --allocate-node-cidrs=true \</span>
+<span class="s">  --cluster-cidr=10.0.0.0/16 \</span>
+<span class="s">  --experimental-cluster-signing-duration=87600h \</span>
+<span class="s">  --root-ca-file=/etc/kubernetes/ssl/ca.pem \</span>
+<span class="s">  --service-account-private-key-file=/etc/kubernetes/ssl/ca-key.pem \</span>
+<span class="s">  --leader-elect=true \</span>
+<span class="s">  --feature-gates=RotateKubeletServerCertificate=true \</span>
+<span class="s">  --controllers=*,bootstrapsigner,tokencleaner \</span>
+<span class="s">  --horizontal-pod-autoscaler-use-rest-clients=true \</span>
+<span class="s">  --horizontal-pod-autoscaler-sync-period=10s \</span>
+<span class="s">  --tls-cert-file=/etc/kubernetes/ssl/kube-controller-manager.pem \</span>
+<span class="s">  --tls-private-key-file=/etc/kubernetes/ssl/kube-controller-manager-key.pem \</span>
+<span class="s">  --use-service-account-credentials=true \</span>
+<span class="s">  --alsologtostderr=true \</span>
+<span class="s">  --logtostderr=false \</span>
+<span class="s">  --log-dir=/var/log/kubernetes \</span>
+<span class="s">  --v=2&quot;</span>
+<span class="s">EOF</span>
+<span class="c1">#这里的--bind-address=127.0.0.1 ，绑定了本机IP而非网卡IP，官方在1.20之后是这样设计的，为了避免物理机上curl能访问到，更安全。</span>
+</code></pre></div>
+
+<h4 id="创建启动文件">创建启动文件</h4>
+<div class="highlight"><pre><span></span><code><span class="c1">#master1上</span>
+<span class="nb">cd</span><span class="w"> </span>/data/work
+tee<span class="w"> </span>-a<span class="w"> </span>kube-controller-manager.service<span class="w"> </span><span class="s">&lt;&lt; &#39;EOF&#39; </span>
+<span class="s">[Unit]</span>
+<span class="s">Description=Kubernetes Controller Manager</span>
+<span class="s">Documentation=https://github.com/kubernetes/kubernetes</span>
+<span class="s">[Service]</span>
+<span class="s">EnvironmentFile=-/etc/kubernetes/kube-controller-manager.conf</span>
+<span class="s">ExecStart=/usr/local/bin/kube-controller-manager $KUBE_CONTROLLER_MANAGER_OPTS</span>
+<span class="s">Restart=on-failure</span>
+<span class="s">RestartSec=5</span>
+<span class="s">[Install]</span>
+<span class="s">WantedBy=multi-user.target</span>
+<span class="s">EOF</span>
+</code></pre></div>
+
+<h4 id="启动服务">启动服务</h4>
+<div class="highlight"><pre><span></span><code><span class="c1">#master1上</span>
+<span class="nb">cd</span><span class="w"> </span>/data/work
+cp<span class="w"> </span>kube-controller-manager*.pem<span class="w"> </span>/etc/kubernetes/ssl/
+cp<span class="w"> </span>kube-controller-manager.kubeconfig<span class="w"> </span>/etc/kubernetes/
+cp<span class="w"> </span>kube-controller-manager.conf<span class="w"> </span>/etc/kubernetes/
+cp<span class="w"> </span>kube-controller-manager.service<span class="w"> </span>/usr/lib/systemd/system/
+rsync<span class="w"> </span>-vaz<span class="w"> </span>kube-controller-manager*.pem<span class="w"> </span>binmaster2:/etc/kubernetes/ssl/
+rsync<span class="w"> </span>-vaz<span class="w"> </span>kube-controller-manager*.pem<span class="w"> </span>binmaster3:/etc/kubernetes/ssl/
+rsync<span class="w"> </span>-vaz<span class="w"> </span>kube-controller-manager.kubeconfig<span class="w"> </span>kube-controller-manager.conf<span class="w"> </span>binmaster2:/etc/kubernetes/
+rsync<span class="w"> </span>-vaz<span class="w"> </span>kube-controller-manager.kubeconfig<span class="w"> </span>kube-controller-manager.conf<span class="w"> </span>binmaster3:/etc/kubernetes/
+rsync<span class="w"> </span>-vaz<span class="w"> </span>kube-controller-manager.service<span class="w"> </span>binmaster2:/usr/lib/systemd/system/
+rsync<span class="w"> </span>-vaz<span class="w"> </span>kube-controller-manager.service<span class="w"> </span>binmaster3:/usr/lib/systemd/system/
+<span class="c1">#master1、2、3上</span>
+systemctl<span class="w"> </span>daemon-reload<span class="w"> </span>
+systemctl<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>kube-controller-manager
+systemctl<span class="w"> </span>start<span class="w"> </span>kube-controller-manager
+systemctl<span class="w"> </span>status<span class="w"> </span>kube-controller-manager
+ss<span class="w"> </span>-antulp<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="m">10252</span><span class="w"> </span><span class="c1">#查看端口占用</span>
+</code></pre></div>
+
+<h2 id="部署kube-scheduler组件">部署kube-scheduler组件</h2>
+<h3 id="创建csr请求">创建csr请求</h3>
+<div class="highlight"><pre><span></span><code><span class="c1">#master1上</span>
+<span class="nb">cd</span><span class="w"> </span>/data/work
+tee<span class="w"> </span>-a<span class="w"> </span>kube-scheduler-csr.json<span class="w"> </span><span class="s">&lt;&lt;&#39;EOF&#39;</span>
+<span class="s">{</span>
+<span class="s">    &quot;CN&quot;: &quot;system:kube-scheduler&quot;,</span>
+<span class="s">    &quot;hosts&quot;: [</span>
+<span class="s">      &quot;127.0.0.1&quot;,</span>
+<span class="s">      &quot;172.16.183.76&quot;,</span>
+<span class="s">      &quot;172.16.183.77&quot;,</span>
+<span class="s">      &quot;172.16.183.78&quot;,</span>
+<span class="s">      &quot;172.16.183.79&quot;</span>
+<span class="s">    ],</span>
+<span class="s">    &quot;key&quot;: {</span>
+<span class="s">        &quot;algo&quot;: &quot;rsa&quot;,</span>
+<span class="s">        &quot;size&quot;: 2048</span>
+<span class="s">    },</span>
+<span class="s">    &quot;names&quot;: [</span>
+<span class="s">      {</span>
+<span class="s">        &quot;C&quot;: &quot;CN&quot;,</span>
+<span class="s">        &quot;ST&quot;: &quot;Hubei&quot;,</span>
+<span class="s">        &quot;L&quot;: &quot;Wuhan&quot;,</span>
+<span class="s">        &quot;O&quot;: &quot;system:kube-scheduler&quot;,</span>
+<span class="s">        &quot;OU&quot;: &quot;system&quot;</span>
+<span class="s">      }</span>
+<span class="s">    ]</span>
+<span class="s">}</span>
+<span class="s">EOF</span>
+</code></pre></div>
+
+<blockquote>
+<ul>
+<li>证书请求文件让system:kube-scheduler这个用户被api-server信任，后面scheduler就能访问apiserver了，至于权限是由kubernetes 内置的 ClusterRoleBindings system:kube-scheduler 将赋予 kube-scheduler 工作所需的权限。</li>
+<li>hosts 列表包含所有 kube-scheduler 节点 IP； CN 为 system:kube-scheduler、O 为 system:kube-scheduler，</li>
+</ul>
+</blockquote>
+<h3 id="生成证书_3">生成证书</h3>
+<div class="highlight"><pre><span></span><code>cfssl<span class="w"> </span>gencert<span class="w"> </span>-ca<span class="o">=</span>ca.pem<span class="w"> </span>-ca-key<span class="o">=</span>ca-key.pem<span class="w"> </span>-config<span class="o">=</span>ca-config.json<span class="w"> </span>-profile<span class="o">=</span>kubernetes<span class="w"> </span>kube-scheduler-csr.json<span class="w"> </span><span class="p">|</span><span class="w"> </span>cfssljson<span class="w"> </span>-bare<span class="w"> </span>kube-scheduler
+</code></pre></div>
+
+<h3 id="创建kubeconfig">创建kubeconfig</h3>
+<ol>
+<li>设置集群参数</li>
+</ol>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>config<span class="w"> </span>set-cluster<span class="w"> </span>kubernetes<span class="w"> </span>--certificate-authority<span class="o">=</span>ca.pem<span class="w"> </span>--embed-certs<span class="o">=</span><span class="nb">true</span><span class="w"> </span>--server<span class="o">=</span>https://172.16.183.76:6443<span class="w"> </span>--kubeconfig<span class="o">=</span>kube-scheduler.kubeconfig
+</code></pre></div>
+
+<ol>
+<li>设置客户端认证参数</li>
+</ol>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>config<span class="w"> </span>set-credentials<span class="w"> </span>system:kube-scheduler<span class="w"> </span>--client-certificate<span class="o">=</span>kube-scheduler.pem<span class="w"> </span>--client-key<span class="o">=</span>kube-scheduler-key.pem<span class="w"> </span>--embed-certs<span class="o">=</span><span class="nb">true</span><span class="w"> </span>--kubeconfig<span class="o">=</span>kube-scheduler.kubeconfig
+</code></pre></div>
+
+<ol>
+<li>设置上下文参数</li>
+</ol>
+<div class="highlight"><pre><span></span><code><span class="c1">#上下文的名称随便起，但是用户和集群要写对，跟证书请求文件中一致</span>
+kubectl<span class="w"> </span>config<span class="w"> </span>set-context<span class="w"> </span>system:kube-scheduler<span class="w"> </span>--cluster<span class="o">=</span>kubernetes<span class="w"> </span>--user<span class="o">=</span>system:kube-scheduler<span class="w"> </span>--kubeconfig<span class="o">=</span>kube-scheduler.kubeconfig
+</code></pre></div>
+
+<ol>
+<li>设置当前上下文</li>
+</ol>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>config<span class="w"> </span>use-context<span class="w"> </span>system:kube-scheduler<span class="w"> </span>--kubeconfig<span class="o">=</span>kube-scheduler.kubeconfig
+</code></pre></div>
+
+<h3 id="创建配置文件kube-schedulerconf">创建配置文件kube-scheduler.conf</h3>
+<div class="highlight"><pre><span></span><code>tee<span class="w"> </span>-a<span class="w"> </span>kube-scheduler.conf<span class="w"> </span><span class="s">&lt;&lt;&#39;EOF&#39; </span>
+<span class="s">KUBE_SCHEDULER_OPTS=&quot;--address=127.0.0.1 \</span>
+<span class="s">--kubeconfig=/etc/kubernetes/kube-scheduler.kubeconfig \</span>
+<span class="s">--leader-elect=true \</span>
+<span class="s">--alsologtostderr=true \</span>
+<span class="s">--logtostderr=false \</span>
+<span class="s">--log-dir=/var/log/kubernetes \</span>
+<span class="s">--v=2&quot;</span>
+<span class="s">EOF</span>
+<span class="c1">#kube-scheduler.kubeconfig里面已经指定了apiserver地址以及证书。</span>
+</code></pre></div>
+
+<h3 id="创建服务启动文件_1">创建服务启动文件</h3>
+<div class="highlight"><pre><span></span><code>tee<span class="w"> </span>-a<span class="w"> </span>kube-scheduler.service<span class="w"> </span><span class="s">&lt;&lt;&#39;EOF&#39; </span>
+<span class="s">[Unit]</span>
+<span class="s">Description=Kubernetes Scheduler</span>
+<span class="s">Documentation=https://github.com/kubernetes/kubernetes</span>
+
+<span class="s">[Service]</span>
+<span class="s">EnvironmentFile=-/etc/kubernetes/kube-scheduler.conf</span>
+<span class="s">ExecStart=/usr/local/bin/kube-scheduler $KUBE_SCHEDULER_OPTS</span>
+<span class="s">Restart=on-failure</span>
+<span class="s">RestartSec=5</span>
+
+<span class="s">[Install]</span>
+<span class="s">WantedBy=multi-user.target</span>
+<span class="s">EOF</span>
+</code></pre></div>
+
+<h3 id="启动服务_1">启动服务</h3>
+<div class="highlight"><pre><span></span><code><span class="c1">#master1上</span>
+cp<span class="w"> </span>kube-scheduler*.pem<span class="w"> </span>/etc/kubernetes/ssl/
+cp<span class="w"> </span>kube-scheduler.kubeconfig<span class="w"> </span>/etc/kubernetes/
+cp<span class="w"> </span>kube-scheduler.conf<span class="w"> </span>/etc/kubernetes/
+cp<span class="w"> </span>kube-scheduler.service<span class="w"> </span>/usr/lib/systemd/system/
+rsync<span class="w"> </span>-vaz<span class="w"> </span>kube-scheduler*.pem<span class="w"> </span>binmaster2:/etc/kubernetes/ssl/
+rsync<span class="w"> </span>-vaz<span class="w"> </span>kube-scheduler*.pem<span class="w"> </span>binmaster3:/etc/kubernetes/ssl/
+rsync<span class="w"> </span>-vaz<span class="w"> </span>kube-scheduler.kubeconfig<span class="w"> </span>kube-scheduler.conf<span class="w"> </span>binmaster2:/etc/kubernetes/
+rsync<span class="w"> </span>-vaz<span class="w"> </span>kube-scheduler.kubeconfig<span class="w"> </span>kube-scheduler.conf<span class="w"> </span>binmaster3:/etc/kubernetes/
+rsync<span class="w"> </span>-vaz<span class="w"> </span>kube-scheduler.service<span class="w"> </span>binmaster2:/usr/lib/systemd/system/
+rsync<span class="w"> </span>-vaz<span class="w"> </span>kube-scheduler.service<span class="w"> </span>binmaster3:/usr/lib/systemd/system/
+<span class="c1">#master 1、2、3上</span>
+systemctl<span class="w"> </span>daemon-reload
+systemctl<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>kube-scheduler
+systemctl<span class="w"> </span>start<span class="w"> </span>kube-scheduler
+systemctl<span class="w"> </span>status<span class="w"> </span>kube-scheduler
+</code></pre></div>
+
+<h2 id="导入coredns镜像包">导入coredns镜像包</h2>
+<div class="highlight"><pre><span></span><code><span class="c1">#把pause-cordns.tar.gz上传到node1节点，手动解压。pause和coredns是工作节点调度创建pod需要用到。</span>
+docker<span class="w"> </span>load<span class="w"> </span>-i<span class="w"> </span>pause-cordns.tar.gz
+</code></pre></div>
+
+<h2 id="部署kubelet组件">部署kubelet组件</h2>
+<ul>
+<li>kubelet： 每个Node节点上的kubelet定期就会调用API Server的REST接口报告自身状态，API Server接收这些信息后，将节点状态信息更新到etcd中。kubelet也通过API Server监听Pod信息，从而对Node机器上的POD进行管理，如创建、删除、更新Pod。</li>
+<li>master节点上不需要调度pod，所以不需要安装kubelet </li>
+</ul>
+<h3 id="配置bootstrap-token">配置bootstrap token</h3>
+<div class="highlight"><pre><span></span><code><span class="c1">#在master1上</span>
+<span class="nb">cd</span><span class="w"> </span>/data/work/
+<span class="nv">BOOTSTRAP_TOKEN</span><span class="o">=</span><span class="k">$(</span>awk<span class="w"> </span>-F<span class="w"> </span><span class="s2">&quot;,&quot;</span><span class="w"> </span><span class="s1">&#39;{print $1}&#39;</span><span class="w"> </span>/etc/kubernetes/token.csv<span class="k">)</span>
+kubectl<span class="w"> </span>config<span class="w"> </span>set-cluster<span class="w"> </span>kubernetes<span class="w"> </span>--certificate-authority<span class="o">=</span>ca.pem<span class="w"> </span>--embed-certs<span class="o">=</span><span class="nb">true</span><span class="w"> </span>--server<span class="o">=</span>https://172.16.183.76:6443<span class="w"> </span>--kubeconfig<span class="o">=</span>kubelet-bootstrap.kubeconfig
+kubectl<span class="w"> </span>config<span class="w"> </span>set-credentials<span class="w"> </span>kubelet-bootstrap<span class="w"> </span>--token<span class="o">=</span><span class="si">${</span><span class="nv">BOOTSTRAP_TOKEN</span><span class="si">}</span><span class="w"> </span>--kubeconfig<span class="o">=</span>kubelet-bootstrap.kubeconfig
+kubectl<span class="w"> </span>config<span class="w"> </span>set-context<span class="w"> </span>default<span class="w"> </span>--cluster<span class="o">=</span>kubernetes<span class="w"> </span>--user<span class="o">=</span>kubelet-bootstrap<span class="w"> </span>--kubeconfig<span class="o">=</span>kubelet-bootstrap.kubeconfig
+kubectl<span class="w"> </span>config<span class="w"> </span>use-context<span class="w"> </span>default<span class="w"> </span>--kubeconfig<span class="o">=</span>kubelet-bootstrap.kubeconfig
+kubectl<span class="w"> </span>create<span class="w"> </span>clusterrolebinding<span class="w"> </span>kubelet-bootstrap<span class="w"> </span>--clusterrole<span class="o">=</span>system:node-bootstrapper<span class="w"> </span>--user<span class="o">=</span>kubelet-bootstrap
+</code></pre></div>
+
+<h3 id="创建配置文件kubeletjson">创建配置文件kubelet.json</h3>
+<ul>
+<li>"cgroupDriver": "systemd"要和docker的驱动一致。</li>
+<li>address替换为各个worker节点的IP地址。</li>
+</ul>
+<div class="highlight"><pre><span></span><code>tee<span class="w"> </span>-a<span class="w"> </span>kubelet.json<span class="w"> </span><span class="s">&lt;&lt;&#39;EOF&#39;</span>
+<span class="s">{</span>
+<span class="s">  &quot;kind&quot;: &quot;KubeletConfiguration&quot;,</span>
+<span class="s">  &quot;apiVersion&quot;: &quot;kubelet.config.k8s.io/v1beta1&quot;,</span>
+<span class="s">  &quot;authentication&quot;: {</span>
+<span class="s">    &quot;x509&quot;: {</span>
+<span class="s">      &quot;clientCAFile&quot;: &quot;/etc/kubernetes/ssl/ca.pem&quot;</span>
+<span class="s">    },</span>
+<span class="s">    &quot;webhook&quot;: {</span>
+<span class="s">      &quot;enabled&quot;: true,</span>
+<span class="s">      &quot;cacheTTL&quot;: &quot;2m0s&quot;</span>
+<span class="s">    },</span>
+<span class="s">    &quot;anonymous&quot;: {</span>
+<span class="s">      &quot;enabled&quot;: false</span>
+<span class="s">    }</span>
+<span class="s">  },</span>
+<span class="s">  &quot;authorization&quot;: {</span>
+<span class="s">    &quot;mode&quot;: &quot;Webhook&quot;,</span>
+<span class="s">    &quot;webhook&quot;: {</span>
+<span class="s">      &quot;cacheAuthorizedTTL&quot;: &quot;5m0s&quot;,</span>
+<span class="s">      &quot;cacheUnauthorizedTTL&quot;: &quot;30s&quot;</span>
+<span class="s">    }</span>
+<span class="s">  },</span>
+<span class="s">  &quot;address&quot;: &quot;172.16.183.79&quot;,</span>
+<span class="s">  &quot;port&quot;: 10250,</span>
+<span class="s">  &quot;readOnlyPort&quot;: 10255,</span>
+<span class="s">  &quot;cgroupDriver&quot;: &quot;systemd&quot;,</span>
+<span class="s">  &quot;hairpinMode&quot;: &quot;promiscuous-bridge&quot;,</span>
+<span class="s">  &quot;serializeImagePulls&quot;: false,</span>
+<span class="s">  &quot;featureGates&quot;: {</span>
+<span class="s">    &quot;RotateKubeletClientCertificate&quot;: true,</span>
+<span class="s">    &quot;RotateKubeletServerCertificate&quot;: true</span>
+<span class="s">  },</span>
+<span class="s">  &quot;clusterDomain&quot;: &quot;cluster.local.&quot;,</span>
+<span class="s">  &quot;clusterDNS&quot;: [&quot;10.255.0.2&quot;]</span>
+<span class="s">}</span>
+<span class="s">EOF</span>
+</code></pre></div>
+
+<h3 id="创建kubelet服务启动文件">创建kubelet服务启动文件</h3>
+<div class="highlight"><pre><span></span><code>tee<span class="w"> </span>-a<span class="w"> </span>kubelet.service<span class="w"> </span><span class="s">&lt;&lt;&#39;EOF&#39;</span>
+<span class="s">[Unit]</span>
+<span class="s">Description=Kubernetes Kubelet</span>
+<span class="s">Documentation=https://github.com/kubernetes/kubernetes</span>
+<span class="s">After=docker.service</span>
+<span class="s">Requires=docker.service</span>
+<span class="s">[Service]</span>
+<span class="s">WorkingDirectory=/var/lib/kubelet</span>
+<span class="s">ExecStart=/usr/local/bin/kubelet \</span>
+<span class="s">  --bootstrap-kubeconfig=/etc/kubernetes/kubelet-bootstrap.kubeconfig \ #这个config是为了kubelet第一次和apiserver通信的时候自动生成证书保存到下面的目录里面</span>
+<span class="s">  --cert-dir=/etc/kubernetes/ssl \</span>
+<span class="s">  --kubeconfig=/etc/kubernetes/kubelet.kubeconfig \</span>
+<span class="s">  --config=/etc/kubernetes/kubelet.json \</span>
+<span class="s">  --network-plugin=cni \</span>
+<span class="s">  --pod-infra-container-image=k8s.gcr.io/pause:3.2 \</span>
+<span class="s">  --alsologtostderr=true \</span>
+<span class="s">  --logtostderr=false \</span>
+<span class="s">  --log-dir=/var/log/kubernetes \</span>
+<span class="s">  --v=2</span>
+<span class="s">  #如果1.24以上用containerd作为容器运行时，加这个参数</span>
+<span class="s">  --container-runtime-endpoint=unix:///run/containerd/containerd.sock</span>
+<span class="s">Restart=on-failure</span>
+<span class="s">RestartSec=5</span>
+
+<span class="s">[Install]</span>
+<span class="s">WantedBy=multi-user.target</span>
+<span class="s">EOF</span>
+</code></pre></div>
+
+<ul>
+<li>kubelet 启动时实际需要指定两个配置⽂件</li>
+<li>--kubeconfig 指定的是kube-config ⽂件，其中内置了集群根CA 公钥以及⾃⼰作为客户端的公钥和私钥</li>
+<li>--config 指定的是kubelet的配置</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="c1">#node1上</span>
+mkdir<span class="w"> </span>/etc/kubernetes/ssl<span class="w"> </span>-p
+<span class="c1">#master1上</span>
+scp<span class="w"> </span>kubelet-bootstrap.kubeconfig<span class="w"> </span>kubelet.json<span class="w"> </span>binnode1:/etc/kubernetes/
+scp<span class="w"> </span>ca.pem<span class="w"> </span>binnode1:/etc/kubernetes/ssl/
+scp<span class="w"> </span>kubelet.service<span class="w"> </span>binnode1:/usr/lib/systemd/system/
+</code></pre></div>
+
+<h3 id="启动kubelet服务">启动kubelet服务</h3>
+<div class="highlight"><pre><span></span><code><span class="c1">#node1上</span>
+mkdir<span class="w"> </span>/var/lib/kubelet
+mkdir<span class="w"> </span>/var/log/kubernetes
+systemctl<span class="w"> </span>daemon-reload
+systemctl<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>kubelet
+systemctl<span class="w"> </span>start<span class="w"> </span>kubelet
+systemctl<span class="w"> </span>status<span class="w"> </span>kubelet
+<span class="c1">#确认kubelet服务启动成功后，接着到binmaster1节点上Approve一下bootstrap请求</span>
+<span class="c1">#执行如下命令可以看到一个worker节点发送了一个 CSR 请求：</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>csr
+kubectl<span class="w"> </span>certificate<span class="w"> </span>approve<span class="w"> </span>node-csr-xxxx
+kubectl<span class="w"> </span>get<span class="w"> </span>nodes
+<span class="c1">#会显示binnode1的notready状态，是因为还未安装网络插件。kubelet暂时不能与apiserver通信</span>
+</code></pre></div>
+
+<h2 id="部署kube-proxy组件">部署kube-proxy组件</h2>
+<h3 id="创建csr请求_1">创建csr请求</h3>
+<div class="highlight"><pre><span></span><code><span class="c1">#在master1上</span>
+<span class="nb">cd</span><span class="w"> </span>/data/work/
+tee<span class="w"> </span>-a<span class="w"> </span>kube-proxy-csr.json<span class="w"> </span><span class="s">&lt;&lt;&#39;EOF&#39; </span>
+<span class="s">{</span>
+<span class="s">  &quot;CN&quot;: &quot;system:kube-proxy&quot;,</span>
+<span class="s">  &quot;key&quot;: {</span>
+<span class="s">    &quot;algo&quot;: &quot;rsa&quot;,</span>
+<span class="s">    &quot;size&quot;: 2048</span>
+<span class="s">  },</span>
+<span class="s">  &quot;names&quot;: [</span>
+<span class="s">    {</span>
+<span class="s">      &quot;C&quot;: &quot;CN&quot;,</span>
+<span class="s">      &quot;ST&quot;: &quot;Hubei&quot;,</span>
+<span class="s">      &quot;L&quot;: &quot;Wuhan&quot;,</span>
+<span class="s">      &quot;O&quot;: &quot;k8s&quot;,</span>
+<span class="s">      &quot;OU&quot;: &quot;system&quot;</span>
+<span class="s">    }</span>
+<span class="s">  ]</span>
+<span class="s">}</span>
+<span class="s">EOF</span>
+</code></pre></div>
+
+<h3 id="生成证书_4">生成证书</h3>
+<div class="highlight"><pre><span></span><code><span class="c1">#在master1上</span>
+cfssl<span class="w"> </span>gencert<span class="w"> </span>-ca<span class="o">=</span>ca.pem<span class="w"> </span>-ca-key<span class="o">=</span>ca-key.pem<span class="w"> </span>-config<span class="o">=</span>ca-config.json<span class="w"> </span>-profile<span class="o">=</span>kubernetes<span class="w"> </span>kube-proxy-csr.json<span class="w"> </span><span class="p">|</span><span class="w"> </span>cfssljson<span class="w"> </span>-bare<span class="w"> </span>kube-proxy
+</code></pre></div>
+
+<h3 id="创建kubeconfig文件">创建kubeconfig文件</h3>
+<div class="highlight"><pre><span></span><code><span class="c1">#在master1上</span>
+kubectl<span class="w"> </span>config<span class="w"> </span>set-cluster<span class="w"> </span>kubernetes<span class="w"> </span>--certificate-authority<span class="o">=</span>ca.pem<span class="w"> </span>--embed-certs<span class="o">=</span><span class="nb">true</span><span class="w"> </span>--server<span class="o">=</span>https://172.16.183.76:6443<span class="w"> </span>--kubeconfig<span class="o">=</span>kube-proxy.kubeconfig
+kubectl<span class="w"> </span>config<span class="w"> </span>set-credentials<span class="w"> </span>kube-proxy<span class="w"> </span>--client-certificate<span class="o">=</span>kube-proxy.pem<span class="w"> </span>--client-key<span class="o">=</span>kube-proxy-key.pem<span class="w"> </span>--embed-certs<span class="o">=</span><span class="nb">true</span><span class="w"> </span>--kubeconfig<span class="o">=</span>kube-proxy.kubeconfig
+kubectl<span class="w"> </span>config<span class="w"> </span>set-context<span class="w"> </span>default<span class="w"> </span>--cluster<span class="o">=</span>kubernetes<span class="w"> </span>--user<span class="o">=</span>kube-proxy<span class="w"> </span>--kubeconfig<span class="o">=</span>kube-proxy.kubeconfig
+kubectl<span class="w"> </span>config<span class="w"> </span>use-context<span class="w"> </span>default<span class="w"> </span>--kubeconfig<span class="o">=</span>kube-proxy.kubeconfig
+</code></pre></div>
+
+<h3 id="创建kube-proxy配置文件">创建kube-proxy配置文件</h3>
+<div class="highlight"><pre><span></span><code><span class="c1">#在master1上</span>
+tee<span class="w"> </span>-a<span class="w"> </span>kube-proxy.yaml<span class="w"> </span><span class="s">&lt;&lt;&#39;EOF&#39;</span>
+<span class="s">apiVersion: kubeproxy.config.k8s.io/v1alpha1</span>
+<span class="s">bindAddress: 172.16.183.79</span>
+<span class="s">clientConnection:</span>
+<span class="s">  kubeconfig: /etc/kubernetes/kube-proxy.kubeconfig</span>
+<span class="s">clusterCIDR: 172.16.183.0/24</span>
+<span class="s">healthzBindAddress: 172.16.183.79:10256</span>
+<span class="s">kind: KubeProxyConfiguration</span>
+<span class="s">metricsBindAddress: 172.16.183.79:10249</span>
+<span class="s">mode: &quot;ipvs&quot;</span>
+<span class="s">EOF</span>
+</code></pre></div>
+
+<h3 id="创建服务启动文件_2">创建服务启动文件</h3>
+<div class="highlight"><pre><span></span><code><span class="c1">#在master1上</span>
+tee<span class="w"> </span>-a<span class="w"> </span>kube-proxy.service<span class="w"> </span><span class="s">&lt;&lt;&#39;EOF&#39;</span>
+<span class="s">[Unit]</span>
+<span class="s">Description=Kubernetes Kube-Proxy Server</span>
+<span class="s">Documentation=https://github.com/kubernetes/kubernetes</span>
+<span class="s">After=network.target</span>
+
+<span class="s">[Service]</span>
+<span class="s">WorkingDirectory=/var/lib/kube-proxy</span>
+<span class="s">ExecStart=/usr/local/bin/kube-proxy \</span>
+<span class="s">  --config=/etc/kubernetes/kube-proxy.yaml \</span>
+<span class="s">  --alsologtostderr=true \</span>
+<span class="s">  --logtostderr=false \</span>
+<span class="s">  --log-dir=/var/log/kubernetes \</span>
+<span class="s">  --v=2</span>
+<span class="s">Restart=on-failure</span>
+<span class="s">RestartSec=5</span>
+<span class="s">LimitNOFILE=65536</span>
+
+<span class="s">[Install]</span>
+<span class="s">WantedBy=multi-user.target</span>
+<span class="s">EOF</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code>scp<span class="w">  </span>kube-proxy.kubeconfig<span class="w"> </span>kube-proxy.yaml<span class="w"> </span>binnode1:/etc/kubernetes/
+scp<span class="w">  </span>kube-proxy.service<span class="w"> </span>binnode1:/usr/lib/systemd/system/
+</code></pre></div>
+
+<h3 id="启动服务_2">启动服务</h3>
+<div class="highlight"><pre><span></span><code><span class="c1">#node1上</span>
+mkdir<span class="w"> </span>-p<span class="w"> </span>/var/lib/kube-proxy
+systemctl<span class="w"> </span>daemon-reload
+systemctl<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>kube-proxy
+systemctl<span class="w"> </span>start<span class="w"> </span>kube-proxy
+systemctl<span class="w"> </span>status<span class="w"> </span>kube-proxy
+</code></pre></div>
+
+<h2 id="部署calico组件">部署calico组件</h2>
+<div class="highlight"><pre><span></span><code><span class="c1">#上传calico镜像，calico.tar.gz上传到node1节点，手动解压。calico pod运行在工作节点</span>
+docker<span class="w"> </span>load<span class="w"> </span>-i<span class="w"> </span>calico.tar.gz
+<span class="c1">#把calico.yaml文件上传到master1上的的/data/work目录</span>
+kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>calico.yaml
+</code></pre></div>
+
+<h2 id="部署coredns组件">部署coredns组件</h2>
+<div class="highlight"><pre><span></span><code><span class="c1">#上传coredns.yaml到master1</span>
+kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>coredns.yaml
+<span class="c1">#测试coredns</span>
+kubectl<span class="w"> </span>run<span class="w"> </span>busybox<span class="w"> </span>--image<span class="w"> </span>busybox:1.28<span class="w"> </span>--restart<span class="o">=</span>Never<span class="w"> </span>--rm<span class="w"> </span>-it<span class="w"> </span>busybox<span class="w"> </span>--<span class="w"> </span>sh
+ping<span class="w"> </span>www.baidu.com
+nslookup<span class="w"> </span>kubernetes.default.svc.cluster.local<span class="w"> </span><span class="c1">#解析内部Service的名称，是通过coreDNS去解析的。</span>
+</code></pre></div>
+
+<h2 id="keepalivednginx实现apiserver高可用">keepalived+nginx实现apiserver高可用</h2>
+<h3 id="准备epelrepo">准备epel.repo</h3>
+<div class="highlight"><pre><span></span><code><span class="c1">#把epel.repo上传到binmaster1的/etc/yum.repos.d目录下.</span>
+scp<span class="w"> </span>/etc/yum.repos.d/epel.repo<span class="w"> </span>binmaster2:/etc/yum.repos.d/
+scp<span class="w"> </span>/etc/yum.repos.d/epel.repo<span class="w"> </span>binmaster3:/etc/yum.repos.d/
+scp<span class="w"> </span>/etc/yum.repos.d/epel.repo<span class="w"> </span>binnode1:/etc/yum.repos.d/
+<span class="c1">#安装nginx主备</span>
+<span class="c1">#在master1和master2上做nginx主备安装</span>
+yum<span class="w"> </span>install<span class="w"> </span>nginx<span class="w"> </span>keepalived<span class="w"> </span>-y
+</code></pre></div>
+
+<h3 id="修改nginx配置文件">修改nginx配置文件</h3>
+<div class="highlight"><pre><span></span><code><span class="c1">#在master1和master2上，修改nginx配置文件。主备一样</span>
+mkdir<span class="w"> </span>-p<span class="w"> </span>/etc/nginx/
+tee<span class="w"> </span>/etc/nginx/nginx.conf<span class="w"> </span><span class="s">&lt;&lt;&#39;EOF&#39;</span>
+<span class="s">user nginx;</span>
+<span class="s">worker_processes auto;</span>
+<span class="s">error_log /var/log/nginx/error.log;</span>
+<span class="s">pid /run/nginx.pid;</span>
+
+<span class="s">include /usr/share/nginx/modules/*.conf;</span>
+
+<span class="s">events {</span>
+<span class="s">    worker_connections 1024;</span>
+<span class="s">}</span>
+
+<span class="s"># 四层负载均衡，为两台Master apiserver组件提供负载均衡</span>
+<span class="s">stream {</span>
+
+<span class="s">    log_format  main  &#39;$remote_addr $upstream_addr - [$time_local] $status $upstream_bytes_sent&#39;;</span>
+
+<span class="s">    access_log  /var/log/nginx/k8s-access.log  main;</span>
+
+<span class="s">    upstream k8s-apiserver {</span>
+<span class="s">       server 172.16.183.76:6443;   # binmaster1 APISERVER IP:PORT</span>
+<span class="s">       server 172.16.183.77:6443;   # binmaster2 APISERVER IP:PORT</span>
+<span class="s">       server 172.16.183.78:6443;   # binmaster3 APISERVER IP:PORT</span>
+
+<span class="s">    }</span>
+
+<span class="s">    server {</span>
+<span class="s">       listen 16443; # 由于nginx与master节点复用，这个监听端口不能是6443，否则会冲突。访问master1的16443端口，请求会被代理到upstream的3台节点</span>
+<span class="s">       proxy_pass k8s-apiserver;</span>
+<span class="s">    }</span>
+<span class="s">}</span>
+
+<span class="s">http {</span>
+<span class="s">    log_format  main  &#39;$remote_addr - $remote_user [$time_local] &quot;$request&quot; &#39;</span>
+<span class="s">                      &#39;$status $body_bytes_sent &quot;$http_referer&quot; &#39;</span>
+<span class="s">                      &#39;&quot;$http_user_agent&quot; &quot;$http_x_forwarded_for&quot;&#39;;</span>
+
+<span class="s">    access_log  /var/log/nginx/access.log  main;</span>
+
+<span class="s">    sendfile            on;</span>
+<span class="s">    tcp_nopush          on;</span>
+<span class="s">    tcp_nodelay         on;</span>
+<span class="s">    keepalive_timeout   65;</span>
+<span class="s">    types_hash_max_size 2048;</span>
+
+<span class="s">    include             /etc/nginx/mime.types;</span>
+<span class="s">    default_type        application/octet-stream;</span>
+
+<span class="s">    server {</span>
+<span class="s">        listen       80 default_server;</span>
+<span class="s">        server_name  _;</span>
+
+<span class="s">        location / {</span>
+<span class="s">        }</span>
+<span class="s">    }</span>
+<span class="s">}</span>
+<span class="s">EOF</span>
+</code></pre></div>
+
+<h3 id="修改keepalived配置文件">修改keepalived配置文件</h3>
+<h4 id="主keepalived节点">主keepalived节点</h4>
+<div class="highlight"><pre><span></span><code><span class="c1">#主keepalived配置 - keepalived主要用来提供VIP</span>
+mkdir<span class="w"> </span>-p<span class="w"> </span>/etc/keepalived/
+tee<span class="w"> </span>/etc/keepalived/keepalived.conf<span class="w"> </span><span class="s">&lt;&lt;&#39;EOF&#39;</span>
+<span class="s">global_defs { </span>
+<span class="s">   notification_email { </span>
+<span class="s">     acassen@firewall.loc </span>
+<span class="s">     failover@firewall.loc </span>
+<span class="s">     sysadmin@firewall.loc </span>
+<span class="s">   } </span>
+<span class="s">   notification_email_from Alexandre.Cassen@firewall.loc  </span>
+<span class="s">   smtp_server 127.0.0.1 </span>
+<span class="s">   smtp_connect_timeout 30 </span>
+<span class="s">   router_id NGINX_MASTER</span>
+<span class="s">} </span>
+
+<span class="s">vrrp_script check_nginx {</span>
+<span class="s">    script &quot;/etc/keepalived/check_nginx.sh&quot;</span>
+<span class="s">}</span>
+
+<span class="s">vrrp_instance VI_1 { </span>
+<span class="s">    state MASTER </span>
+<span class="s">    interface ens33  # 修改为实际网卡名</span>
+<span class="s">    virtual_router_id 51 # VRRP 路由 ID实例，每个实例是唯一的 </span>
+<span class="s">    priority 100    # 优先级，备服务器设置 90 </span>
+<span class="s">    advert_int 1    # 指定VRRP 心跳包通告间隔时间，默认1秒 </span>
+<span class="s">    authentication { </span>
+<span class="s">        auth_type PASS      </span>
+<span class="s">        auth_pass 1111 </span>
+<span class="s">    }  </span>
+<span class="s">    # 虚拟IP</span>
+<span class="s">    virtual_ipaddress { </span>
+<span class="s">        172.16.183.75/24</span>
+<span class="s">    } </span>
+<span class="s">    track_script {</span>
+<span class="s">        check_nginx</span>
+<span class="s">    } </span>
+<span class="s">}</span>
+<span class="s">EOF</span>
+<span class="c1">#vrrp_script：指定检查nginx工作状态脚本（根据nginx状态判断是否故障转移）</span>
+<span class="c1">#virtual_ipaddress：虚拟IP（VIP）</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="c1">#master1上</span>
+<span class="nb">cd</span><span class="w"> </span>~
+tee<span class="w"> </span>/etc/keepalived/check_nginx.sh<span class="w"> </span><span class="s">&lt;&lt;&#39;EOF&#39; </span>
+<span class="s">#!/bin/bash</span>
+<span class="s">count=$(ps -ef |grep nginx | grep sbin | egrep -cv &quot;grep|$$&quot;)</span>
+<span class="s">if [ &quot;$count&quot; -eq 0 ];then</span>
+<span class="s">    systemctl stop keepalived</span>
+<span class="s">fi</span>
+<span class="s">EOF</span>
+chmod<span class="w"> </span>+x<span class="w">  </span>/etc/keepalived/check_nginx.sh
+</code></pre></div>
+
+<h4 id="备keepalived节点">备keepalived节点</h4>
+<div class="highlight"><pre><span></span><code>tee<span class="w"> </span>/etc/keepalived/keepalived.conf<span class="w"> </span><span class="s">&lt;&lt;&#39;EOF&#39;</span>
+<span class="s">global_defs { </span>
+<span class="s">   notification_email { </span>
+<span class="s">     acassen@firewall.loc </span>
+<span class="s">     failover@firewall.loc </span>
+<span class="s">     sysadmin@firewall.loc </span>
+<span class="s">   } </span>
+<span class="s">   notification_email_from Alexandre.Cassen@firewall.loc  </span>
+<span class="s">   smtp_server 127.0.0.1 </span>
+<span class="s">   smtp_connect_timeout 30 </span>
+<span class="s">   router_id NGINX_BACKUP</span>
+<span class="s">} </span>
+
+<span class="s">vrrp_script check_nginx {</span>
+<span class="s">    script &quot;/etc/keepalived/check_nginx.sh&quot;</span>
+<span class="s">}</span>
+
+<span class="s">vrrp_instance VI_1 { </span>
+<span class="s">    state BACKUP </span>
+<span class="s">    interface ens33</span>
+<span class="s">    virtual_router_id 51 # VRRP 路由 ID实例，每个实例是唯一的 </span>
+<span class="s">    priority 90</span>
+<span class="s">    advert_int 1</span>
+<span class="s">    authentication { </span>
+<span class="s">        auth_type PASS      </span>
+<span class="s">        auth_pass 1111 </span>
+<span class="s">    }  </span>
+<span class="s">    virtual_ipaddress { </span>
+<span class="s">        172.16.183.75/24</span>
+<span class="s">    } </span>
+<span class="s">    track_script {</span>
+<span class="s">        check_nginx</span>
+<span class="s">    } </span>
+<span class="s">}</span>
+<span class="s">EOF</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="c1">#master2上</span>
+<span class="nb">cd</span><span class="w"> </span>~
+cat<span class="w"> </span>/etc/keepalived/check_nginx.sh<span class="w"> </span>
+<span class="c1">#!/bin/bash</span>
+<span class="nv">count</span><span class="o">=</span><span class="k">$(</span>ps<span class="w"> </span>-ef<span class="w"> </span><span class="p">|</span>grep<span class="w"> </span>nginx<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>sbin<span class="w"> </span><span class="p">|</span><span class="w"> </span>egrep<span class="w"> </span>-cv<span class="w"> </span><span class="s2">&quot;grep|</span><span class="nv">$$</span><span class="s2">&quot;</span><span class="k">)</span>
+<span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$count</span><span class="s2">&quot;</span><span class="w"> </span>-eq<span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="k">then</span>
+<span class="w">    </span>systemctl<span class="w"> </span>stop<span class="w"> </span>keepalived
+<span class="k">fi</span>
+chmod<span class="w"> </span>+x<span class="w"> </span>/etc/keepalived/check_nginx.sh
+<span class="c1">#注：keepalived根据脚本返回状态码（0为工作正常，非0不正常）判断是否故障转移。当nginx服务出现故障时，自动停止keepalived服务，触发故障切换。VIP就会切走。</span>
+</code></pre></div>
+
+<h3 id="启动服务_3">启动服务</h3>
+<div class="highlight"><pre><span></span><code><span class="c1">#master1和2上</span>
+systemctl<span class="w"> </span>daemon-reload
+yum<span class="w"> </span>install<span class="w"> </span>nginx-mod-stream<span class="w"> </span>-y
+systemctl<span class="w"> </span>start<span class="w"> </span>nginx
+systemctl<span class="w"> </span>start<span class="w"> </span>keepalived
+systemctl<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>nginx<span class="w"> </span>keepalived
+</code></pre></div>
+
+<ul>
+<li>测试keepalived工作：stop掉master1上的nginx，vip会漂移到master2上</li>
+</ul>
+<p><code>service stop nginx</code></p>
+<h3 id="配置worker节点与master的连接">配置worker节点与master的连接</h3>
+<div class="highlight"><pre><span></span><code><span class="c1">#目前所有的Worker Node组件连接都还是master1 Node，如果不改为连接VIP走负载均衡器，那么Master还是单点故障。</span>
+<span class="c1">#因此接下来就是要改所有Worker Node（kubectl get node命令查看到的节点）组件配置文件，由原来172.16.183.76修改为172.16.183.75（VIP）。</span>
+<span class="c1">#在所有Worker Node执行：</span>
+sed<span class="w"> </span>-i<span class="w"> </span><span class="s1">&#39;s#172.16.183.76:6443#172.16.183.75:16443#&#39;</span><span class="w"> </span>/etc/kubernetes/kubelet-bootstrap.kubeconfig
+sed<span class="w"> </span>-i<span class="w"> </span><span class="s1">&#39;s#172.16.183.76:6443#172.16.183.75:16443#&#39;</span><span class="w"> </span>/etc/kubernetes/kubelet.json
+sed<span class="w"> </span>-i<span class="w"> </span><span class="s1">&#39;s#172.16.183.76:6443#172.16.183.75:16443#&#39;</span><span class="w"> </span>/etc/kubernetes/kubelet.kubeconfig
+sed<span class="w"> </span>-i<span class="w"> </span><span class="s1">&#39;s#172.16.183.76:6443#172.16.183.75:16443#&#39;</span><span class="w"> </span>/etc/kubernetes/kube-proxy.yaml
+sed<span class="w"> </span>-i<span class="w"> </span><span class="s1">&#39;s#172.16.183.76:6443#172.16.183.75:16443#&#39;</span><span class="w"> </span>/etc/kubernetes/kube-proxy.kubeconfig
+systemctl<span class="w"> </span>restart<span class="w"> </span>kubelet<span class="w"> </span>kube-proxy
+</code></pre></div>
+
+<p>?question:不是有3台master节点吗？VIP漂移只发生在两个master上？master3是否也要设置为备用节点？ 不需要，k8s组件请求apiserver的时候走的是VIP+16443端口，也就是nginx，nginx配置中已经将请求代理给了upstream的3台master。</p>
+<h1 id="二进制组件升级">二进制组件升级</h1>
+<h2 id="下载二进制包">下载二进制包</h2>
+<ul>
+<li>二进制包所在的github地址如下：<a href="https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/">Kubernetes CHANGELOG</a>，可以按照版本下载二进制包。控制节点组件，找到Server Binaries，下载amd64版本的。server binaries二进制包里面就包含了：controller-manager，apiserver，scheduler等控制平面组件。其实也包含了工作节点需要的kubelet和kubeproxy</li>
+</ul>
+<h2 id="master节点升级">master节点升级</h2>
+<ul>
+<li>备份二进制文件</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span>/usr/bin
+mv<span class="w"> </span>kubectl<span class="w"> </span>kubectl.bak
+systemctl<span class="w"> </span>stop<span class="w"> </span>kube-apiserver
+systemctl<span class="w"> </span>stop<span class="w"> </span>kube-scheduler
+systemctl<span class="w"> </span>stop<span class="w"> </span>kube-controller-manager
+mv<span class="w"> </span>kube-apiserver<span class="w"> </span>kube-apiserver.bak
+mv<span class="w"> </span>kube-controller-manager<span class="w"> </span>kube-controller-manager.bak
+mv<span class="w"> </span>kube-scheduler<span class="w"> </span>kube-scheduler.bak
+</code></pre></div>
+
+<ul>
+<li>升级</li>
+</ul>
+<div class="highlight"><pre><span></span><code>tar<span class="w"> </span>xf<span class="w"> </span>kubernetes-server-linux-amd64.tar.gz
+cp<span class="w"> </span>kubernetes/server/bin/kubectl<span class="w"> </span>/usr/bin/
+cp<span class="w"> </span>kubernetes/server/bin/<span class="o">{</span>kube-apiserver,kube-controller-manager,kube-scheduler<span class="o">}</span><span class="w"> </span>/usr/bin/
+</code></pre></div>
+
+<ul>
+<li>启动服务</li>
+</ul>
+<div class="highlight"><pre><span></span><code>systemctl<span class="w"> </span>start<span class="w"> </span>kube-apiserver
+systemctl<span class="w"> </span>start<span class="w"> </span>kube-controller-manager
+systemctl<span class="w"> </span>start<span class="w"> </span>kube-scheduler
+</code></pre></div>
+
+<blockquote>
+<p>如果升级完某些服务起不来，有可能是因为配置文件某些参数并不支持。可以查看服务状态中的报错:</p>
+<p><code>systemctl status kube-apiserver -l</code></p>
+</blockquote>
+<h2 id="工作节点升级">工作节点升级</h2>
+<ul>
+<li>备份二进制文件</li>
+</ul>
+<div class="highlight"><pre><span></span><code>systemctl<span class="w"> </span>stop<span class="w"> </span>kubelet
+systemctl<span class="w"> </span>stop<span class="w"> </span>kube-proxy
+<span class="nb">cd</span><span class="w"> </span>/usr/bin
+mv<span class="w"> </span>kubelet<span class="w"> </span>kubelet.bak
+mv<span class="w"> </span>kube-proxy<span class="w"> </span>kube-proxy.bak
+</code></pre></div>
+
+<ul>
+<li>升级</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="c1">#回到控制节点，把二进制文件分发到node节点</span>
+scp<span class="w"> </span>kubernetes/server/bin/<span class="o">{</span>kubelet,kube-proxy<span class="o">}</span><span class="w"> </span>node:/usr/bin/
+</code></pre></div>
+
+<ul>
+<li>启动服务</li>
+</ul>
+<div class="highlight"><pre><span></span><code>systemctl<span class="w"> </span>daemon-reload<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>systemctl<span class="w"> </span>start<span class="w"> </span>kubelet
+systemctl<span class="w"> </span>daemon-reload<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>systemctl<span class="w"> </span>start<span class="w"> </span>kube-proxy
+</code></pre></div>
+
+<h1 id="二进制安装多master集群-125">二进制安装多master集群-1.25</h1>
+<h2 id="环境准备">环境准备</h2>
+<ul>
+<li>
+<p>机器规划</p>
+</li>
+<li>
+<p>podSubnet（pod网段） 10.244.0.0/16</p>
+</li>
+<li>serviceSubnet（service网段）: 10.96.0.0/12</li>
+<li>操作系统：centos7.9</li>
+<li>配置： 4Gib内存/4vCPU/60G硬盘</li>
+<li>网络：NAT模式</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>K8S集群角色</th>
+<th>IP</th>
+<th>主机名</th>
+<th>安装的组件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>控制节点</td>
+<td>192.168.40.180</td>
+<td>xianchaomaster1</td>
+<td>apiserver、controller-manager、schedule、etcd、kube-proxy、容器运行时、keepalived、nginx</td>
+</tr>
+<tr>
+<td>控制节点</td>
+<td>192.168.40.181</td>
+<td>xianchaomaster2</td>
+<td>apiserver、controller-manager、schedule、etcd、kube-proxy、容器运行时、keepalived、nginx</td>
+</tr>
+<tr>
+<td>控制节点</td>
+<td>192.168.40.182</td>
+<td>xianchaomaster3</td>
+<td>apiserver、controller-manager、schedule、etcd、kube-proxy、容器运行时、keepalived、nginx</td>
+</tr>
+<tr>
+<td>工作节点</td>
+<td>192.168.40.183</td>
+<td>xianchaonode1</td>
+<td>Kube-proxy、calico、coredns、容器运行时、kubelet</td>
+</tr>
+<tr>
+<td>VIP</td>
+<td>192.168.40.199</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>
+<p>配置静态IP</p>
+</li>
+<li>
+<p>关闭selinux</p>
+</li>
+<li>
+<p>配置机器主机名</p>
+</li>
+<li>
+<p>配置hosts文件</p>
+</li>
+<li>
+<p>配置时间同步</p>
+</li>
+<li>
+<p>安装基础软件包</p>
+</li>
+<li>
+<p>配置ssh互信</p>
+</li>
+<li>
+<p>关闭swap分区</p>
+</li>
+<li>
+<p>开启内核转发</p>
+</li>
+<li>
+<p>关闭firewalld防火墙</p>
+</li>
+<li>
+<p>配置aliyun repo源</p>
+</li>
+</ul>
+<p><sub>~</sub>sh<br />
+  #docker repo源<br />
+  yum install yum-utils -y<br />
+  yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo</p>
+<p>#containerd repo源<br />
+  #k8s repo源</p>
+<p>#containerd repo源<br />
+  containerd repo源  <br />
+  ~~~</p>
+<h2 id="安装containerd">安装containerd</h2>
+<div class="highlight"><pre><span></span><code><span class="c1">#所有节点安装</span>
+yum<span class="w"> </span>install<span class="w">  </span>containerd.io-1.6.6<span class="w"> </span>-y
+mkdir<span class="w"> </span>-p<span class="w"> </span>/etc/containerd
+containerd<span class="w"> </span>config<span class="w"> </span>default<span class="w"> </span>&gt;<span class="w"> </span>/etc/containerd/config.toml
+vim<span class="w"> </span>/etc/containerd/config.toml
+<span class="c1">#把SystemdCgroup = false修改成SystemdCgroup = true</span>
+<span class="c1">#把sandbox_image = &quot;k8s.gcr.io/pause:3.6&quot;修改sandbox_image=&quot;registry.aliyuncs.com/google_containers/pause:3.7&quot;</span>
+systemctl<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>containerd<span class="w">  </span>--now
+</code></pre></div>
+
+<ul>
+<li>配置containerd镜像加速器</li>
+</ul>
+<div class="highlight"><pre><span></span><code>vim<span class="w"> </span>/etc/containerd/config.toml文件
+<span class="c1">#找到config_path = &quot;&quot;，修改成如下目录：config_path = &quot;/etc/containerd/certs.d&quot;</span>
+mkdir<span class="w"> </span>/etc/containerd/certs.d/docker.io/<span class="w"> </span>-p
+vim<span class="w"> </span>/etc/containerd/certs.d/docker.io/hosts.toml
+<span class="c1">#写入如下内容：</span>
+<span class="o">[</span>host.<span class="s2">&quot;https://docker.m.daocloud.io&quot;</span><span class="o">]</span>
+<span class="w">  </span><span class="nv">capabilities</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">[</span><span class="s2">&quot;pull&quot;</span><span class="o">]</span>
+<span class="c1">#重启containerd：</span>
+systemctl<span class="w"> </span>restart<span class="w"> </span>containerd
+</code></pre></div>
+
+<h2 id="安装crictl">安装crictl</h2>
+<ul>
+<li>安装包可以从这里下载：<a href="https://github.com/kubernetes-sigs/cri-tools/releases/">cri-tools releases</a></li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="c1">#所有节点</span>
+wget<span class="w"> </span>https://github.com/kubernetes-sigs/cri-tools/releases/download/v1.24.2/crictl-v1.24.2-linux-amd64.tar.gz
+tar<span class="w"> </span>zxvf<span class="w"> </span>crictl-v1.24.2-linux-amd64.tar.gz<span class="w"> </span>-C<span class="w"> </span>/usr/bin/
+cat<span class="w"> </span>&gt;<span class="w"> </span>/etc/crictl.yaml<span class="w"> </span><span class="s">&lt;&lt;EOF</span>
+<span class="s">runtime-endpoint: unix:///run/containerd/containerd.sock</span>
+<span class="s">image-endpoint: unix:///run/containerd/containerd.sock</span>
+<span class="s">timeout: 10</span>
+<span class="s">debug: false</span>
+<span class="s">EOF</span>
+systemctl<span class="w"> </span>restart<span class="w">  </span>containerd
+</code></pre></div>
+
+<h2 id="安装docker">安装docker</h2>
+<div class="highlight"><pre><span></span><code><span class="c1">#所有节点</span>
+yum<span class="w"> </span>install<span class="w">  </span>docker-ce<span class="w">  </span>-y
+systemctl<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>docker<span class="w"> </span>--now
+</code></pre></div>
+
+<ul>
+<li>配置加速器</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="c1">#配置docker镜像加速器，k8s所有节点均按照以下配置</span>
+vim<span class="w"> </span>/etc/docker/daemon.json
+<span class="c1">#写入如下内容：</span>
+<span class="o">{</span>
+<span class="w"> </span><span class="s2">&quot;registry-mirrors&quot;</span>:<span class="o">[</span><span class="s2">&quot;https://docker.m.daocloud.io&quot;</span><span class="o">]</span>
+<span class="o">}</span><span class="w"> </span>
+<span class="c1">#重启docker：</span>
+systemctl<span class="w"> </span>restart<span class="w"> </span>docker
+</code></pre></div>
+
+<h1 id="搭建etcd集群_1">搭建etcd集群</h1>
+<p>同上面1.20.7</p>
+<h1 id="安装k8s组件_1">安装k8s组件</h1>
+<p>同上面1.20.7</p>
+<ul>
+<li>
+<p>注：镜像解压用ctr -n=k8s.io images import</p>
+</li>
+<li>
+<p>最后多一步：对系统用户kubernetes做授权</p>
+</li>
+</ul>
+<p><sub>~</sub>sh<br />
+  kubectl create clusterrolebinding kubernetes-kubectl --clusterrole=cluster-admin --user=kubernetes<br />
+  ~~~</p>
+    </div>
+  </article>
+  <aside class="toc">
+    <p class="toc-label">本页目录</p>
+    <ul>
+  <li><a href="#架构图">架构图</a></li>
+  <li><a href="#实验机器规划">实验机器规划</a></li>
+  <li><a href="#实验环境准备">实验环境准备</a><ul>
+  <li><a href="#设置静态ip">设置静态IP</a></li>
+  <li><a href="#修改主机名">修改主机名</a></li>
+  <li><a href="#配置hosts文件">配置hosts文件</a></li>
+  <li><a href="#配置ssh免密登录">配置ssh免密登录</a></li>
+  <li><a href="#关闭firewalld">关闭firewalld</a></li>
+  <li><a href="#关闭selinux">关闭Selinux</a></li>
+  <li><a href="#关闭交换分区">关闭交换分区</a></li>
+  <li><a href="#修改内核参数-开路由转发">修改内核参数-开路由转发</a></li>
+  <li><a href="#配置阿里云repo源">配置阿里云repo源</a></li>
+  <li><a href="#配置阿里云docker源">配置阿里云docker源</a></li>
+  <li><a href="#安装基础软件包">安装基础软件包</a></li>
+  <li><a href="#配置时间同步">配置时间同步</a></li>
+  <li><a href="#安装iptables">安装iptables</a></li>
+  <li><a href="#开启ipvs">开启IPVS</a></li>
+  <li><a href="#安装配置docker-ce">安装配置docker-ce</a></li>
+</ul></li>
+  <li><a href="#搭建etcd集群">搭建etcd集群</a><ul>
+  <li><a href="#配置ectd工作目录">配置ectd工作目录</a></li>
+  <li><a href="#安装签发证书工具cfssl">安装签发证书工具cfssl</a></li>
+  <li><a href="#配置ca证书请求">配置CA证书请求</a></li>
+  <li><a href="#生成ca证书文件">生成CA证书文件</a></li>
+  <li><a href="#生成etcd证书">生成etcd证书</a></li>
+  <li><a href="#部署etcd集群">部署etcd集群</a></li>
+  <li><a href="#查看etcd集群健康状态">查看etcd集群健康状态</a></li>
+</ul></li>
+  <li><a href="#安装k8s组件">安装k8s组件</a><ul>
+  <li><a href="#下载安装包">下载安装包</a></li>
+  <li><a href="#部署apiserver组件">部署apiserver组件</a></li>
+  <li><a href="#部署kubectl组件">部署kubectl组件</a></li>
+  <li><a href="#部署kube-controller-manager组件">部署kube-controller-manager组件</a></li>
+</ul></li>
+  <li><a href="#部署kube-scheduler组件">部署kube-scheduler组件</a><ul>
+  <li><a href="#创建csr请求">创建csr请求</a></li>
+  <li><a href="#生成证书_3">生成证书</a></li>
+  <li><a href="#创建kubeconfig">创建kubeconfig</a></li>
+  <li><a href="#创建配置文件kube-schedulerconf">创建配置文件kube-scheduler.conf</a></li>
+  <li><a href="#创建服务启动文件_1">创建服务启动文件</a></li>
+  <li><a href="#启动服务_1">启动服务</a></li>
+</ul></li>
+  <li><a href="#导入coredns镜像包">导入coredns镜像包</a></li>
+  <li><a href="#部署kubelet组件">部署kubelet组件</a><ul>
+  <li><a href="#配置bootstrap-token">配置bootstrap token</a></li>
+  <li><a href="#创建配置文件kubeletjson">创建配置文件kubelet.json</a></li>
+  <li><a href="#创建kubelet服务启动文件">创建kubelet服务启动文件</a></li>
+  <li><a href="#启动kubelet服务">启动kubelet服务</a></li>
+</ul></li>
+  <li><a href="#部署kube-proxy组件">部署kube-proxy组件</a><ul>
+  <li><a href="#创建csr请求_1">创建csr请求</a></li>
+  <li><a href="#生成证书_4">生成证书</a></li>
+  <li><a href="#创建kubeconfig文件">创建kubeconfig文件</a></li>
+  <li><a href="#创建kube-proxy配置文件">创建kube-proxy配置文件</a></li>
+  <li><a href="#创建服务启动文件_2">创建服务启动文件</a></li>
+  <li><a href="#启动服务_2">启动服务</a></li>
+</ul></li>
+  <li><a href="#部署calico组件">部署calico组件</a></li>
+  <li><a href="#部署coredns组件">部署coredns组件</a></li>
+  <li><a href="#keepalivednginx实现apiserver高可用">keepalived+nginx实现apiserver高可用</a><ul>
+  <li><a href="#准备epelrepo">准备epel.repo</a></li>
+  <li><a href="#修改nginx配置文件">修改nginx配置文件</a></li>
+  <li><a href="#修改keepalived配置文件">修改keepalived配置文件</a></li>
+  <li><a href="#启动服务_3">启动服务</a></li>
+  <li><a href="#配置worker节点与master的连接">配置worker节点与master的连接</a></li>
+</ul></li>
+  <li><a href="#下载二进制包">下载二进制包</a></li>
+  <li><a href="#master节点升级">master节点升级</a></li>
+  <li><a href="#工作节点升级">工作节点升级</a></li>
+  <li><a href="#环境准备">环境准备</a></li>
+  <li><a href="#安装containerd">安装containerd</a></li>
+  <li><a href="#安装crictl">安装crictl</a></li>
+  <li><a href="#安装docker">安装docker</a></li>
+</ul>
+  </aside>
+
+</div>
+
+</main>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>Learning Notes</span>
+    <a href="https://github.com/hangx969/learning-notes">GitHub</a>
+  </div>
+</footer>
+<script src="../../../../static/search.js"></script>
+</body>
+</html>

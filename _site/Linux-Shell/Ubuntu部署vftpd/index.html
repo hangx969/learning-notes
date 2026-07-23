@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ubuntu部署vsftpd - Learning Notes</title>
+<link rel="stylesheet" href="../../static/style.css">
+<link rel="stylesheet" href="../../static/pygments.css">
+</head>
+<body data-root="../../">
+<header class="site-header">
+  <div class="header-inner">
+    <a class="logo" href="../../index.html"><span class="logo-mark"></span>LEARNING NOTES</a>
+    <div class="search">
+      <input id="search-input" type="search" placeholder="搜索笔记…" autocomplete="off" aria-label="搜索笔记">
+      <div id="search-results" hidden></div>
+    </div>
+  </div>
+  <nav class="topic-nav" aria-label="主题导航">
+    <div class="topic-nav-inner">
+      <a href="../../AI/">AI</a>
+      <a href="../../Aliyun/">Aliyun</a>
+      <a href="../../Azure/">Azure</a>
+      <a href="../../C%2B%2B/">C++</a>
+      <a href="../../CloudComputing/">CloudComputing</a>
+      <a href="../../Database/">Database</a>
+      <a href="../../Docker-Kubernetes/">Docker-Kubernetes</a>
+      <a href="../../GPU-DeepLearning/">GPU-DeepLearning</a>
+      <a href="../../Git/">Git</a>
+      <a href="../../Go/">Go</a>
+      <a href="../../HPC/">HPC</a>
+      <a href="../../IaC/">IaC</a>
+      <a href="../../Linux-Shell/" class="active">Linux-Shell</a>
+      <a href="../../Middlewares/">Middlewares</a>
+      <a href="../../Networking/">Networking</a>
+      <a href="../../OS/">OS</a>
+      <a href="../../Python/">Python</a>
+      <a href="../../SoftwareTesting/">SoftwareTesting</a>
+    </div>
+  </nav>
+</header>
+<main class="main">
+
+<div class="article-layout">
+
+  <aside class="sidebar">
+    <details class="sidebar-details">
+      <summary>Linux-Shell</summary>
+      <nav class="sidebar-nav">
+        <p class="sidebar-group">其他</p>
+        <ul>
+          <li><a href="../../Linux-Shell/LVM-RAID/">LVM 与 RAID</a></li>
+          <li><a href="../../Linux-Shell/Linux-learning-notes/">Linux 学习笔记</a></li>
+          <li><a href="../../Linux-Shell/Linux%E7%BB%88%E7%AB%AF%E9%85%8D%E7%BD%AEproxy/">Linux终端配置代理</a></li>
+          <li><a href="../../Linux-Shell/MacBook%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/">MacBook 开发环境配置</a></li>
+          <li><a href="../../Linux-Shell/Ubuntu-unattended-upgrade%E7%AE%A1%E7%90%86/">Ubuntu安全补丁</a></li>
+          <li><a href="../../Linux-Shell/Ubuntu-%E4%BF%AE%E6%94%B9%E5%90%AF%E5%8A%A8%E5%86%85%E6%A0%B8/">Ubuntu修改启动内核</a></li>
+          <li><a href="../../Linux-Shell/Ubuntu%E5%9F%BA%E7%A1%80%E6%93%8D%E4%BD%9C/">Ubuntu基础操作</a></li>
+          <li><a href="../../Linux-Shell/Ubuntu%E5%AE%89%E8%A3%85Wechat/">Ubuntu安装Wechat</a></li>
+          <li><a href="../../Linux-Shell/Ubuntu%E5%AE%89%E8%A3%85%E6%98%BE%E5%8D%A1%E9%A9%B1%E5%8A%A8/">Ubuntu安装显卡驱动</a></li>
+          <li><a href="../../Linux-Shell/Ubuntu%E9%83%A8%E7%BD%B2vftpd/" class="current">Ubuntu部署vsftpd</a></li>
+          <li><a href="../../Linux-Shell/VMWare-using-notes/">VMWare虚拟机挂载共享目录</a></li>
+          <li><a href="../../Linux-Shell/ansible%E5%AE%89%E8%A3%85-rockylinux8/">Ansible安装 - Rocky Linux 8</a></li>
+          <li><a href="../../Linux-Shell/inotifywait%E7%9B%91%E6%8E%A7%E6%96%87%E4%BB%B6%E5%8F%98%E5%8C%96/">inotifywait监控文件变化</a></li>
+          <li><a href="../../Linux-Shell/linux%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E7%AE%A1%E7%90%86/">Linux环境变量管理</a></li>
+          <li><a href="../../Linux-Shell/nmcli%E7%AE%A1%E7%90%86%E7%BD%91%E7%BB%9C%E9%85%8D%E7%BD%AE/">nmcli管理网络配置</a></li>
+          <li><a href="../../Linux-Shell/samba%E6%96%87%E4%BB%B6%E5%85%B1%E4%BA%AB%E6%9C%8D%E5%8A%A1/">Samba文件共享服务</a></li>
+          <li><a href="../../Linux-Shell/screen%E5%90%8E%E5%8F%B0%E8%BF%90%E8%A1%8C%E4%BB%BB%E5%8A%A1/">screen后台运行任务</a></li>
+          <li><a href="../../Linux-Shell/shell-scripts/">Shell 脚本</a></li>
+          <li><a href="../../Linux-Shell/ssh%E8%BF%9C%E7%A8%8B%E6%89%A7%E8%A1%8C%E5%A4%9A%E4%B8%AA%E5%91%BD%E4%BB%A4/">SSH远程执行多个命令</a></li>
+          <li><a href="../../Linux-Shell/ssh%E8%BF%9E%E6%8E%A5/">SSH连接</a></li>
+          <li><a href="../../Linux-Shell/vscode/">VSCode命令行安装插件</a></li>
+          <li><a href="../../Linux-Shell/%E5%BC%80%E6%BA%90%E5%A0%A1%E5%9E%92%E6%9C%BAjumpserver%E9%83%A8%E7%BD%B2/">开源堡垒机JumpServer部署</a></li>
+          <li><a href="../../Linux-Shell/%E7%B3%BB%E7%BB%9F%E4%BF%A1%E6%81%AF%E6%9F%A5%E7%9C%8B/">系统信息查看</a></li>
+          <li><a href="../../Linux-Shell/%E9%85%8D%E7%BD%AEzsh%E7%BB%88%E7%AB%AF/">配置zsh终端</a></li>
+        </ul>
+      </nav>
+    </details>
+  </aside>
+
+  <article class="article">
+    <nav class="breadcrumb">
+      <a href="../../index.html">首页</a><span>/</span>
+      <a href="../../Linux-Shell/">Linux-Shell</a>
+    </nav>
+    <h1 class="article-title">Ubuntu部署vsftpd</h1>
+    <p class="article-meta"><span>更新于 2026-04-16</span>
+      <a href="https://github.com/hangx969/learning-notes/blob/main/Linux-Shell/Ubuntu%E9%83%A8%E7%BD%B2vftpd.md">查看源文件</a>
+    </p>
+    <div class="article-body">
+<h1 id="ftp和vftpd介绍">FTP和vftpd介绍</h1>
+<h2 id="vftpd">vftpd</h2>
+<ul>
+<li>vsftpd（very secure FTP daemon）是Linux下的一款小巧轻快、安全易用的FTP服务器软件。本教程介绍如何在Linux实例上安装并配置vsftpd。</li>
+</ul>
+<h2 id="ftp">FTP</h2>
+<h3 id="工作模式">工作模式</h3>
+<ul>
+<li>
+<p>FTP（File Transfer Protocol）是一种文件传输协议，基于客户端/服务器架构。用户通过一个支持FTP协议的客户机程序，连接到在远程主机上的FTP服务器程序。用户通过客户机程序向服务器程序发出命令，服务器程序执行用户所发出的命令，并将执行的结果返回到客户机。</p>
+</li>
+<li>
+<p>支持以下两种工作模式：</p>
+</li>
+<li>
+<p>主动模式：客户端向FTP服务器发送端口信息，由<strong>服务器主动连接</strong>该端口。</p>
+<ul>
+<li>主动模式的工作顺序：<br />
+  - Client先和Server通过21端口建立连接；<br />
+  - Client向Server发送指令，指令中包含了Client要通过 N 号端口来传输什么数据；<br />
+  - Server打开自己的20端口，去 <strong>主动连接</strong> Client的 N 号端口来传输数据</li>
+</ul>
+</li>
+<li>
+<p>被动模式：FTP服务器开启并发送端口信息给客户端，由<strong>客户端连接该端口</strong>，服务器被动接受连接。</p>
+<ul>
+<li>建立连接的方式和主动模式相同；</li>
+<li>建立连接后，与主动方式不同，Client不会提交PORT命令并允许Server来回连它的数据端口，而是提交PASV命令。</li>
+<li>Server会开启一个任意的非特权端口（P &gt; 1024），并发送PORT P命令给Client。</li>
+<li>Client发起从本地端口到Server的端口 P 的连接用来传送数据。</li>
+</ul>
+</li>
+<li>
+<p>说明：大多数FTP客户端都在局域网中，没有独立的公网IP地址，且有防火墙阻拦，主动模式下FTP服务器企图与客户端的高位随机端口建立连接，而这个端口很有可能被客户端的防火墙阻塞掉。因此，如无特殊需求，建议您将FTP服务器配置为被动模式。</p>
+</li>
+</ul>
+<h3 id="tcp连接机制">TCP连接机制</h3>
+<ul>
+<li>FTP会话属于复合TCP连接，主动模式中开放20和21端口。</li>
+<li>控制连接： TCP port 21 ，负责发送FTP的命令信息（比如说登陆的指定，用户名和密码等）。</li>
+<li>数据连接： TCP port 20 ，负责上传/下载数据。</li>
+</ul>
+<h3 id="认证模式">认证模式</h3>
+<ul>
+<li>匿名用户模式：</li>
+<li>“ftp”或者“anonymous”。这类用户是指在FTP服务器中没有指定帐户，但是其仍然可以进行匿名访问某些公开的资源。</li>
+<li>
+<p>任何人无需密码验证就可以直接登录到FTP服务器。这种模式最不安全，一般只用来保存不重要的公开文件，不推荐在生产环境中使用。</p>
+</li>
+<li>
+<p>本地用户模式：</p>
+</li>
+<li>是FTP服务器本机的系统用户账号。</li>
+<li>当这类用户登录FTP服务器的时候，其默认的主目录就是其帐号命名的目录。但是，其还可以变更到其他目录中去。如系统的主目录等等。</li>
+<li>
+<p>当开放本地账户的时候，我们往往会做chroot（禁锢家目录）来保证安全。</p>
+</li>
+<li>
+<p>虚拟用户模式：</p>
+</li>
+<li>账号信息存放在独立的文件或者数据库内。不是本地账号，不能登陆操作系统，安全性比较高。</li>
+<li>只能访问服务器为其提供的FTP服务，而不能访问系统的其它资源。</li>
+<li>所以，如果想让用户对FTP服务器站内具有写权限（可以上传数据到服务器），但又不允许访问系统其它资源，可以使用虚拟用户来提高系统的安全性。</li>
+<li>创建虚拟用户需要使用pam</li>
+</ul>
+<h3 id="数据传输模式">数据传输模式</h3>
+<ul>
+<li>数据的传输模式，分别为ASCII模式（文本序列）和Binary（二进制）模式。</li>
+</ul>
+<h3 id="端口修改">端口修改</h3>
+<ul>
+<li>
+<p>默认情况下，FTP服务器的控制连接端口是21，数据连接端口是20。但是，你可以通过修改vsftpd的配置文件来改变这些默认设置。</p>
+</li>
+<li>
+<p>在vsftpd的配置文件（通常位于/etc/vsftpd/vsftpd.conf）中，你可以设置以下参数来修改端口：</p>
+</li>
+<li>
+<p>listen_port：这个参数用于设置FTP服务器的控制连接端口。例如，如果你想将控制连接端口改为2121，你可以在配置文件中添加以下行：listen_port=2121。</p>
+</li>
+<li>
+<p>ftp_data_port：这个参数用于设置FTP服务器的数据连接端口。例如，如果你想将数据连接端口改为2020，你可以在配置文件中添加以下行：ftp_data_port=2020。</p>
+</li>
+<li>
+<p>修改完配置文件后，你需要重启vsftpd服务以使新的设置生效。</p>
+</li>
+</ul>
+<h3 id="开启被动模式并指定端口范围">开启被动模式并指定端口范围</h3>
+<p>在vsftpd中启用被动模式（PASV）需要在vsftpd的配置文件中设置一些参数。以下是启用被动模式所需的步骤：</p>
+<ol>
+<li>打开vsftpd的配置文件，通常位于<code>/etc/vsftpd/vsftpd.conf</code>。</li>
+<li>在配置文件中添加或修改以下参数：</li>
+<li><code>pasv_enable=YES</code>：启用被动模式。</li>
+<li><code>pasv_min_port</code>和<code>pasv_max_port</code>：设置被动模式的端口范围。例如，<code>pasv_min_port=40000</code>和<code>pasv_max_port=50000</code>将设置端口范围为40000到50000。</li>
+<li>保存并关闭配置文件。</li>
+<li>
+<p>重启vsftpd服务以使新的设置生效。</p>
+</li>
+<li>
+<p>安装完成之后，默认的配置位于 <code>/etc/vsftpd.conf</code></p>
+</li>
+<li>
+<p>vsftpd 对每个配置的选项都设置了一个默认值，服务器启动之后，在 <code>vsftpd.conf</code> 中配置的选项会覆盖服务器中的默认值</p>
+</li>
+</ol>
+<h2 id="配置文件">配置文件</h2>
+<h3 id="访问权限">访问权限</h3>
+<div class="highlight"><pre><span></span><code><span class="c1">#是否允许匿名登录，默认允许，如果允许，用户名 ftp 和 anonymous 都会被当做匿名登录</span>
+<span class="c1">#为了安全，一般不允许匿名登录</span>
+<span class="na">anonymous_enable</span><span class="o">=</span><span class="s">NO</span>
+
+<span class="c1">#是否允许匿名上传，默认不允许，如果允许 write_enable 选项需要设置为 YES</span>
+<span class="c1">#为了安全，一般不允许</span>
+<span class="na">anon_upload_enable</span><span class="o">=</span><span class="s">NO</span>
+
+<span class="c1">#是否允许本地用户登录，默认不允许，如果允许，在 ``` /etc/passwd``` 中的用户都可以登录 FTP 服务器</span>
+<span class="c1">#如果不予许匿名登录的话，这个选项需要设置为允许</span>
+<span class="na">local_enable</span><span class="o">=</span><span class="s">YES</span>
+
+<span class="c1">#是否允许在FTP服务器上写入, 默认不允许，如果有上传文件、删除文件等需求，一般都是开启的</span>
+<span class="na">write_enable</span><span class="o">=</span><span class="s">YES</span>
+
+<span class="c1">#设置写入服务器文件的权限掩码值，如果值是八进制需要以 0 开头，否则会当作十进制</span>
+<span class="c1">#值为 022，能满足大部分FTP的需求</span>
+<span class="na">local_umask</span><span class="o">=</span><span class="s">022</span>
+</code></pre></div>
+
+<h3 id="锁定访问目录">锁定访问目录</h3>
+<div class="highlight"><pre><span></span><code><span class="c1">#默认为 NO， 如果设置为 YES，表示用户通过FTP客户端登录之后只能在FTP服务器指定的目录中，不允许切出目录</span>
+<span class="na">chroot_local_user</span><span class="o">=</span><span class="s">YES</span>
+
+<span class="c1">#用户名插入到本地 FTP 主目录中</span>
+<span class="na">user_sub_token</span><span class="o">=</span><span class="s">$USER</span>
+
+<span class="c1">#定义用户 FTP 主目录，用户登录成功之后，vsftpd 服务器会切换到此目录</span>
+<span class="c1">#此时 FTP 客户端会位于此目录中，后续的上传以及下载都是针对这个目录的</span>
+<span class="na">local_root</span><span class="o">=</span><span class="s">/home/$USER/ftp</span>
+</code></pre></div>
+
+<ul>
+<li>把登录的用户锁定在指定的目录中，避免用户访问不应该访问的目录，这里我们设置成只允许访问自己的 home 目录中的 ftp 目录，例如：新添加一个用户 <code>testuser</code> 专门用于上传下载， <code>testuser</code> 通过 FTP 客户端成功登录后，会自动切换到 <code>/home/testuser/ftp</code> 目录，并且不允许切出该目录</li>
+<li>注意：用户上传和下载都是在限定的目录中，所以一般都是把锁定目录设置到剩余空间比较大的磁盘中</li>
+</ul>
+<h3 id="限定用户登录">限定用户登录</h3>
+<div class="highlight"><pre><span></span><code><span class="c1">#如果设置为 YES ，vsftpd 将会从 userlist_file 选项指定的文件读取用户列表</span>
+<span class="na">userlist_enable</span><span class="o">=</span><span class="s">YES</span>
+
+<span class="c1">#设置用户列表配置文件, 如果 /etc/vsftpd/user_list 不存在需要手工创建</span>
+<span class="na">userlist_file</span><span class="o">=</span><span class="s">/etc/vsftpd/user_list</span>
+
+<span class="c1">#此选项检查 userlist_enable 选项，当 userlist_enable 为 YES 时</span>
+<span class="c1">#如果 userlist_deny 设置为 NO ， 表示只允许 userlist_file 中的用户登录</span>
+<span class="c1">#如果 userlist_deny 设置为 YES， 表示禁止 userlist_file 中的用户登录，允许其他用户登录</span>
+<span class="na">userlist_deny</span><span class="o">=</span><span class="s">NO</span>
+</code></pre></div>
+
+<h3 id="修改端口">修改端口</h3>
+<div class="highlight"><pre><span></span><code><span class="c1">#如果启用，vsftpd 将在独立模式下运行，vsftpd 本身将负责侦听和处理传入的连接</span>
+<span class="na">listen</span><span class="o">=</span><span class="s">NO</span>
+
+<span class="c1"># 跟 listen 选型类似，但是此选项是侦听在 IPV6 上的 socket</span>
+<span class="c1"># 而 listen 是 IPV4， 此选项和 listen 是互斥的，不能同时设置为 YES</span>
+<span class="na">listen_ipv6</span><span class="o">=</span><span class="s">YES</span>
+
+<span class="c1">#服务器侦听端口，也是命令端口, 默认是21，修改之后, 防火墙需要做相应的调整</span>
+<span class="c1">#同时 FTP 客户端登录的时候需要指定端口号</span>
+<span class="c1">#为了增强安全性，配置的时候一般都会修改</span>
+<span class="na">listen_port</span><span class="o">=</span><span class="s">48888</span>
+
+<span class="c1">#开启被动模式</span>
+<span class="na">pasv_enable</span><span class="o">=</span><span class="s">YES</span>
+
+<span class="c1">#被动模式下，服务器的地址，默认是内网地址</span>
+<span class="c1">#如果在云服务器上部署，需要修改成公网IP</span>
+<span class="na">pasv_address</span><span class="o">=</span><span class="s">192.168.70.20</span>
+
+<span class="c1">#设置被动模式下，建立数据传输可使用的端口范围的最小值。</span>
+<span class="c1">#建议把端口范围设置在一段比较高的范围内，例如50000~50010，有助于提高访问FTP服务器的安全性</span>
+<span class="na">pasv_min_port</span><span class="o">=</span><span class="s">50000</span>
+
+<span class="c1">#设置被动模式下，建立数据传输可使用的端口范围的最大值</span>
+<span class="na">pasv_max_port</span><span class="o">=</span><span class="s">50020</span>
+</code></pre></div>
+
+<h3 id="日志配置">日志配置</h3>
+<div class="highlight"><pre><span></span><code><span class="c1">#是否记录上传下载日志，默认是不记录，如果设置为记录</span>
+<span class="c1">#默认日志文件位于 /var/log/vsftpd.log， 如果配置了 vsftpd_log_file 选项，会覆盖默认日志文件</span>
+<span class="na">xferlog_enable</span><span class="o">=</span><span class="s">YES</span>
+
+<span class="c1">#记录上传下载的日志</span>
+<span class="na">xferlog_file</span><span class="o">=</span><span class="s">/var/log/xferlog</span>
+
+<span class="c1">#是否按照标准格式记录日志</span>
+<span class="na">xferlog_std_format</span><span class="o">=</span><span class="s">YES</span>
+</code></pre></div>
+
+<h3 id="其他配置">其他配置</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># vsftpd 使用的 PAM 服务名字</span>
+<span class="na">pam_service_name</span><span class="o">=</span><span class="s">vsftpd</span>
+<span class="na">tcp_wrappers</span><span class="o">=</span><span class="s">YES</span>
+<span class="c1"># 这两个配置使用默认生成的选项即可，不用做任何修改</span>
+</code></pre></div>
+
+<hr />
+<h1 id="ubuntu部署vftpd服务端">Ubuntu部署vftpd服务端</h1>
+<h2 id="安装">安装</h2>
+<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>apt-get<span class="w"> </span>install<span class="w"> </span>vsftpd
+</code></pre></div>
+
+<h2 id="配置本地用户模式">配置本地用户模式</h2>
+<div class="highlight"><pre><span></span><code>adduser<span class="w"> </span>ftptest
+<span class="c1">#adduser 是 Debian 和 Ubuntu 系统中的一个脚本，它是 useradd 的一个更友好的前端。这个脚本会自动创建新用户的主目录，复制 /etc/skel 目录中的文件，以及进行其他一些设置。它也会提供一个交互式的界面来收集新用户的信息，如全名和密码。</span>
+<span class="c1">#密码azsxdcfv</span>
+<span class="c1">#运行以下命令创建一个供FTP服务使用的文件目录。</span>
+mkdir<span class="w"> </span>/var/ftp/test<span class="w"> </span>-p
+<span class="c1">#运行以下命令更改/var/ftp/test目录的拥有者为ftptest。</span>
+chown<span class="w"> </span>-R<span class="w"> </span>ftptest:ftptest<span class="w"> </span>/var/ftp/test
+</code></pre></div>
+
+<h2 id="主动模式配置文件">主动模式配置文件</h2>
+<ul>
+<li>编辑/etc/vsftpd.conf</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="c1">#修改下列参数的值 </span>
+<span class="nv">anonymous_enable</span><span class="o">=</span>NO<span class="w"> </span><span class="c1">#禁止匿名登录FTP服务器 </span>
+<span class="nv">local_enable</span><span class="o">=</span>YES<span class="w"> </span><span class="c1">#允许本地用户登录FTP服务器</span>
+<span class="nv">listen</span><span class="o">=</span>YES<span class="w"> </span><span class="c1">#监听IPv4 sockets </span>
+<span class="c1">#在行首添加#注释掉以下参数</span>
+<span class="w"> </span><span class="c1">#listen_ipv6=YES             #关闭监听IPv6 sockets #添加下列参数 </span>
+<span class="nv">local_root</span><span class="o">=</span>/var/ftp/test<span class="w">     </span><span class="c1">#设置本地用户登录后所在目录 </span>
+<span class="nv">chroot_local_user</span><span class="o">=</span>YES<span class="w"> </span><span class="c1">#全部用户被限制在主目录 </span>
+<span class="nv">chroot_list_enable</span><span class="o">=</span>YES<span class="w"> </span><span class="c1">#启用例外用户名单 </span>
+<span class="nv">chroot_list_file</span><span class="o">=</span>/etc/vsftpd/chroot_list<span class="w">  </span><span class="c1">#指定例外用户列表文件，列表中用户不被锁定在主目录</span>
+<span class="nv">allow_writeable_chroot</span><span class="o">=</span>YES<span class="w"> </span>
+<span class="nv">pasv_enable</span><span class="o">=</span>YES<span class="w"> </span><span class="c1">#开启被动模式 </span>
+<span class="nv">pasv_address</span><span class="o">=</span>&lt;FTP服务器公网IP地址&gt;<span class="w">     </span><span class="c1">#本教程中为Linux实例公网IP </span>
+<span class="nv">pasv_min_port</span><span class="o">=</span>&lt;port<span class="w"> </span>number&gt;<span class="w">          </span><span class="c1">#设置被动模式下，建立数据传输可使用的端口范围的最小值 </span>
+<span class="nv">pasv_max_port</span><span class="o">=</span>&lt;port<span class="w"> </span>number&gt;<span class="w">          </span><span class="c1">#设置被动模式下，建立数据传输可使用的端口范围的最大值</span>
+</code></pre></div>
+
+<ul>
+<li>全配置文件</li>
+</ul>
+<p><sub>~</sub>bash<br />
+  # Example config file /etc/vsftpd.conf<br />
+  #<br />
+  # The default compiled in settings are fairly paranoid. This sample file<br />
+  # loosens things up a bit, to make the ftp daemon more usable.<br />
+  # Please see vsftpd.conf.5 for all compiled in defaults.<br />
+  #<br />
+  # READ THIS: This example file is NOT an exhaustive list of vsftpd options.<br />
+  # Please read the vsftpd.conf.5 manual page to get a full idea of vsftpd's<br />
+  # capabilities.<br />
+  #<br />
+  #<br />
+  # Run standalone?  vsftpd can run either from an inetd or as a standalone<br />
+  # daemon started from an initscript.<br />
+  listen=YES<br />
+  #<br />
+  # This directive enables listening on IPv6 sockets. By default, listening<br />
+  # on the IPv6 "any" address (::) will accept connections from both IPv6<br />
+  # and IPv4 clients. It is not necessary to listen on <em>both</em> IPv4 and IPv6<br />
+  # sockets. If you want that (perhaps because you want to listen on specific<br />
+  # addresses) then you must run two copies of vsftpd with two configuration<br />
+  # files.<br />
+  listen_ipv6=NO<br />
+  #<br />
+  # Allow anonymous FTP? (Disabled by default).<br />
+  anonymous_enable=NO<br />
+  #<br />
+  # Uncomment this to allow local users to log in.<br />
+  local_enable=YES<br />
+  #<br />
+  # Uncomment this to enable any form of FTP write command.<br />
+  write_enable=YES<br />
+  #<br />
+  # Default umask for local users is 077. You may wish to change this to 022,<br />
+  # if your users expect that (022 is used by most other ftpd's)<br />
+  local_umask=022<br />
+  #<br />
+  # Uncomment this to allow the anonymous FTP user to upload files. This only<br />
+  # has an effect if the above global write enable is activated. Also, you will<br />
+  # obviously need to create a directory writable by the FTP user.<br />
+  anon_upload_enable=NO<br />
+  #<br />
+  # Uncomment this if you want the anonymous FTP user to be able to create<br />
+  # new directories.<br />
+  #anon_mkdir_write_enable=YES<br />
+  #<br />
+  # Activate directory messages - messages given to remote users when they<br />
+  # go into a certain directory.<br />
+  dirmessage_enable=YES<br />
+  #<br />
+  # If enabled, vsftpd will display directory listings with the time<br />
+  # in  your  local  time  zone.  The default is to display GMT. The<br />
+  # times returned by the MDTM FTP command are also affected by this<br />
+  # option.<br />
+  use_localtime=YES<br />
+  #<br />
+  # Activate logging of uploads/downloads.<br />
+  xferlog_enable=YES<br />
+  #<br />
+  # Make sure PORT transfer connections originate from port 20 (ftp-data).<br />
+  connect_from_port_20=YES<br />
+  #<br />
+  # If you want, you can arrange for uploaded anonymous files to be owned by<br />
+  # a different user. Note! Using "root" for uploaded files is not<br />
+  # recommended!<br />
+  #chown_uploads=YES<br />
+  #chown_username=whoever<br />
+  #<br />
+  # You may override where the log file goes if you like. The default is shown<br />
+  # below.<br />
+  #xferlog_file=/var/log/vsftpd.log<br />
+  #<br />
+  # If you want, you can have your log file in standard ftpd xferlog format.<br />
+  # Note that the default log file location is /var/log/xferlog in this case.<br />
+  #xferlog_std_format=YES<br />
+  #<br />
+  # You may change the default value for timing out an idle session.<br />
+  #idle_session_timeout=600<br />
+  #<br />
+  # You may change the default value for timing out a data connection.<br />
+  #data_connection_timeout=120<br />
+  #<br />
+  # It is recommended that you define on your system a unique user which the<br />
+  # ftp server can use as a totally isolated and unprivileged user.<br />
+  #nopriv_user=ftpsecure<br />
+  #<br />
+  # Enable this and the server will recognise asynchronous ABOR requests. Not<br />
+  # recommended for security (the code is non-trivial). Not enabling it,<br />
+  # however, may confuse older FTP clients.<br />
+  #async_abor_enable=YES<br />
+  #<br />
+  # By default the server will pretend to allow ASCII mode but in fact ignore<br />
+  # the request. Turn on the below options to have the server actually do ASCII<br />
+  # mangling on files when in ASCII mode.<br />
+  # Beware that on some FTP servers, ASCII support allows a denial of service<br />
+  # attack (DoS) via the command "SIZE /big/file" in ASCII mode. vsftpd<br />
+  # predicted this attack and has always been safe, reporting the size of the<br />
+  # raw file.<br />
+  # ASCII mangling is a horrible feature of the protocol.<br />
+  #ascii_upload_enable=YES<br />
+  #ascii_download_enable=YES<br />
+  #<br />
+  # You may fully customise the login banner string:<br />
+  #ftpd_banner=Welcome to blah FTP service.<br />
+  #<br />
+  # You may specify a file of disallowed anonymous e-mail addresses. Apparently<br />
+  # useful for combatting certain DoS attacks.<br />
+  #deny_email_enable=YES<br />
+  # (default follows)<br />
+  #banned_email_file=/etc/vsftpd.banned_emails<br />
+  #<br />
+  # You may restrict local users to their home directories.  See the FAQ for<br />
+  # the possible risks in this before using chroot_local_user or<br />
+  # chroot_list_enable below.<br />
+  chroot_local_user=YES<br />
+  #<br />
+  # You may specify an explicit list of local users to chroot() to their home<br />
+  # directory. If chroot_local_user is YES, then this list becomes a list of<br />
+  # users to NOT chroot().<br />
+  # (Warning! chroot'ing can be very dangerous. If using chroot, make sure that<br />
+  # the user does not have write access to the top level directory within the<br />
+  # chroot)<br />
+  #chroot_local_user=YES<br />
+  #chroot_list_enable=YES<br />
+  # (default follows)<br />
+  #chroot_list_file=/etc/vsftpd/chroot_list<br />
+  #<br />
+  # You may activate the "-R" option to the builtin ls. This is disabled by<br />
+  # default to avoid remote users being able to cause excessive I/O on large<br />
+  # sites. However, some broken FTP clients such as "ncftp" and "mirror" assume<br />
+  # the presence of the "-R" option, so there is a strong case for enabling it.<br />
+  #ls_recurse_enable=YES<br />
+  #<br />
+  # Customization<br />
+  #<br />
+  # Some of vsftpd's settings don't fit the filesystem layout by<br />
+  # default.<br />
+  #<br />
+  # This option should be the name of a directory which is empty.  Also, the<br />
+  # directory should not be writable by the ftp user. This directory is used<br />
+  # as a secure chroot() jail at times vsftpd does not require filesystem<br />
+  # access.<br />
+  secure_chroot_dir=/var/run/vsftpd/empty<br />
+  #<br />
+  # This string is the name of the PAM service vsftpd will use.<br />
+  pam_service_name=vsftpd<br />
+  #<br />
+  # This option specifies the location of the RSA certificate to use for SSL<br />
+  # encrypted connections.<br />
+  rsa_cert_file=/etc/ssl/certs/ssl-cert-snakeoil.pem<br />
+  rsa_private_key_file=/etc/ssl/private/ssl-cert-snakeoil.key<br />
+  ssl_enable=NO</p>
+<p>#<br />
+  # Uncomment this to indicate that vsftpd use a utf8 filesystem.<br />
+  #utf8_filesystem=YES<br />
+  local_root=/var/ftp/test<br />
+  pasv_enable=YES<br />
+  pasv_address=172.16.183.130<br />
+  pasv_min_port=50000<br />
+  pasv_max_port=50020<br />
+  allow_writeable_chroot=YES<br />
+  ~~~</p>
+<h2 id="编辑chroot_list">编辑chroot_list</h2>
+<p>创建chroot_list文件，并在文件中写入例外用户名单。</p>
+<ol>
+<li>
+<p>运行<code>vim /etc/vsftpd/chroot_list</code>命令创建chroot_list文件。</p>
+</li>
+<li>
+<p>输入例外用户名单。此名单中的用户不会被锁定在主目录，可以访问其他目录。</p>
+</li>
+<li><code>chmod 644 /etc/vsftpd/chroot_list</code>赋权</li>
+</ol>
+<p><div class="callout callout-note" markdown="1"><br />
+<p class="callout-title">没有例外用户时，也必须创建chroot_list文件，内容可为空。</p></p>
+</div>
+<ol>
+<li>
+<p>重启vsftpd服务。</p>
+</li>
+<li>
+<p>服务端防火墙开启对应端口</p>
+</li>
+</ol>
+<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>ufw<span class="w"> </span>allow<span class="w"> </span><span class="m">20</span><span class="w"> </span><span class="m">21</span><span class="w"> </span><span class="m">50000</span>:50020/tcp
+</code></pre></div>
+
+<h2 id="客户端测试">客户端测试</h2>
+<h3 id="登录">登录</h3>
+<div class="highlight"><pre><span></span><code><span class="c1">#客户端安装ftp</span>
+sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>ftp
+<span class="c1">#访问ftp,不加端口默认走21</span>
+ftp<span class="w"> </span><span class="m">172</span>.16.183.130
+</code></pre></div>
+
+<h3 id="常用命令">常用命令</h3>
+<div class="highlight"><pre><span></span><code><span class="nb">pwd</span><span class="w"> </span><span class="c1">#FTP服务器上的 /var/ftp/test 目录就是 FTP 的根目录</span>
+ls
+put<span class="w"> </span>demo1.txt<span class="w"> </span><span class="c1">#将客户端当前目录的demo1.txt文件上传到服务端当前目录</span>
+<span class="c1">#客户端从哪个目录下执行的ftp命令，当前目录就是那里</span>
+get<span class="w"> </span>demo.py<span class="w"> </span><span class="c1">#下载服务端当前目录的demo.py到客户端当前目录</span>
+<span class="c1">#mget &lt;filename1&gt; &lt;filename2&gt; ...：下载多个文件到本地。</span>
+<span class="c1">#mput &lt;filename1&gt; &lt;filename2&gt; ...：上传多个本地文件到服务器。</span>
+<span class="c1">#delete &lt;filename&gt;：删除服务器上的指定文件。</span>
+<span class="c1">#mkdir &lt;directory&gt;：在服务器上创建新的目录。</span>
+<span class="c1">#rmdir &lt;directory&gt;：删除服务器上的指定目录。</span>
+<span class="c1">#quit：退出FTP会话。</span>
+</code></pre></div>
+
+<h2 id="修改ftp监听端口">修改ftp监听端口</h2>
+<div class="highlight"><pre><span></span><code><span class="c1">#配置文件添加</span>
+<span class="c1">#服务器侦听端口，也是命令端口, 默认是21，修改之后, 防火墙需要做相应的调整</span>
+<span class="c1">#同时 FTP 客户端登录的时候需要指定端口号</span>
+<span class="c1">#为了增强安全性，配置的时候一般都会修改</span>
+<span class="nv">listen_port</span><span class="o">=</span><span class="m">48888</span>
+<span class="c1">#数据连接端口修改</span>
+<span class="nv">ftp_data_port</span><span class="o">=</span><span class="m">48889</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="c1">#防火墙开启48888</span>
+sudo<span class="w"> </span>ufw<span class="w"> </span>allow<span class="w"> </span><span class="m">48888</span>/tcp<span class="w"> </span><span class="m">48889</span>/tcp
+<span class="c1">#重启vsftpd</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="c1">#客户端连接</span>
+ftp<span class="w"> </span><span class="m">172</span>.16.183.130<span class="w"> </span><span class="m">48888</span>
+</code></pre></div>
+
+<p><div class="callout callout-info" markdown="1"><br />
+<p class="callout-title">参考文档</p></p>
+<ul>
+<li><a href="https://zhuanlan.zhihu.com/p/111582376">vsftpd详解 - 知乎</a></li>
+<li><a href="https://www.cnblogs.com/wanng/p/how-to-install-ftp-server.html">FTP服务器安装教程 - 博客园</a></li>
+</ul>
+</div>
+    </div>
+  </article>
+  <aside class="toc">
+    <p class="toc-label">本页目录</p>
+    <ul>
+  <li><a href="#vftpd">vftpd</a></li>
+  <li><a href="#ftp">FTP</a><ul>
+  <li><a href="#工作模式">工作模式</a></li>
+  <li><a href="#tcp连接机制">TCP连接机制</a></li>
+  <li><a href="#认证模式">认证模式</a></li>
+  <li><a href="#数据传输模式">数据传输模式</a></li>
+  <li><a href="#端口修改">端口修改</a></li>
+  <li><a href="#开启被动模式并指定端口范围">开启被动模式并指定端口范围</a></li>
+</ul></li>
+  <li><a href="#配置文件">配置文件</a><ul>
+  <li><a href="#访问权限">访问权限</a></li>
+  <li><a href="#锁定访问目录">锁定访问目录</a></li>
+  <li><a href="#限定用户登录">限定用户登录</a></li>
+  <li><a href="#修改端口">修改端口</a></li>
+  <li><a href="#日志配置">日志配置</a></li>
+  <li><a href="#其他配置">其他配置</a></li>
+</ul></li>
+  <li><a href="#安装">安装</a></li>
+  <li><a href="#配置本地用户模式">配置本地用户模式</a></li>
+  <li><a href="#主动模式配置文件">主动模式配置文件</a></li>
+  <li><a href="#编辑chroot_list">编辑chroot_list</a></li>
+  <li><a href="#客户端测试">客户端测试</a><ul>
+  <li><a href="#登录">登录</a></li>
+  <li><a href="#常用命令">常用命令</a></li>
+</ul></li>
+  <li><a href="#修改ftp监听端口">修改ftp监听端口</a></li>
+</ul>
+  </aside>
+
+</div>
+
+</main>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>Learning Notes</span>
+    <a href="https://github.com/hangx969/learning-notes">GitHub</a>
+  </div>
+</footer>
+<script src="../../static/search.js"></script>
+</body>
+</html>

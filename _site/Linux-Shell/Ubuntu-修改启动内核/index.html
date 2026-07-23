@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ubuntu修改启动内核 - Learning Notes</title>
+<link rel="stylesheet" href="../../static/style.css">
+<link rel="stylesheet" href="../../static/pygments.css">
+</head>
+<body data-root="../../">
+<header class="site-header">
+  <div class="header-inner">
+    <a class="logo" href="../../index.html"><span class="logo-mark"></span>LEARNING NOTES</a>
+    <div class="search">
+      <input id="search-input" type="search" placeholder="搜索笔记…" autocomplete="off" aria-label="搜索笔记">
+      <div id="search-results" hidden></div>
+    </div>
+  </div>
+  <nav class="topic-nav" aria-label="主题导航">
+    <div class="topic-nav-inner">
+      <a href="../../AI/">AI</a>
+      <a href="../../Aliyun/">Aliyun</a>
+      <a href="../../Azure/">Azure</a>
+      <a href="../../C%2B%2B/">C++</a>
+      <a href="../../CloudComputing/">CloudComputing</a>
+      <a href="../../Database/">Database</a>
+      <a href="../../Docker-Kubernetes/">Docker-Kubernetes</a>
+      <a href="../../GPU-DeepLearning/">GPU-DeepLearning</a>
+      <a href="../../Git/">Git</a>
+      <a href="../../Go/">Go</a>
+      <a href="../../HPC/">HPC</a>
+      <a href="../../IaC/">IaC</a>
+      <a href="../../Linux-Shell/" class="active">Linux-Shell</a>
+      <a href="../../Middlewares/">Middlewares</a>
+      <a href="../../Networking/">Networking</a>
+      <a href="../../OS/">OS</a>
+      <a href="../../Python/">Python</a>
+      <a href="../../SoftwareTesting/">SoftwareTesting</a>
+    </div>
+  </nav>
+</header>
+<main class="main">
+
+<div class="article-layout no-toc">
+
+  <aside class="sidebar">
+    <details class="sidebar-details">
+      <summary>Linux-Shell</summary>
+      <nav class="sidebar-nav">
+        <p class="sidebar-group">其他</p>
+        <ul>
+          <li><a href="../../Linux-Shell/LVM-RAID/">LVM 与 RAID</a></li>
+          <li><a href="../../Linux-Shell/Linux-learning-notes/">Linux 学习笔记</a></li>
+          <li><a href="../../Linux-Shell/Linux%E7%BB%88%E7%AB%AF%E9%85%8D%E7%BD%AEproxy/">Linux终端配置代理</a></li>
+          <li><a href="../../Linux-Shell/MacBook%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/">MacBook 开发环境配置</a></li>
+          <li><a href="../../Linux-Shell/Ubuntu-unattended-upgrade%E7%AE%A1%E7%90%86/">Ubuntu安全补丁</a></li>
+          <li><a href="../../Linux-Shell/Ubuntu-%E4%BF%AE%E6%94%B9%E5%90%AF%E5%8A%A8%E5%86%85%E6%A0%B8/" class="current">Ubuntu修改启动内核</a></li>
+          <li><a href="../../Linux-Shell/Ubuntu%E5%9F%BA%E7%A1%80%E6%93%8D%E4%BD%9C/">Ubuntu基础操作</a></li>
+          <li><a href="../../Linux-Shell/Ubuntu%E5%AE%89%E8%A3%85Wechat/">Ubuntu安装Wechat</a></li>
+          <li><a href="../../Linux-Shell/Ubuntu%E5%AE%89%E8%A3%85%E6%98%BE%E5%8D%A1%E9%A9%B1%E5%8A%A8/">Ubuntu安装显卡驱动</a></li>
+          <li><a href="../../Linux-Shell/Ubuntu%E9%83%A8%E7%BD%B2vftpd/">Ubuntu部署vsftpd</a></li>
+          <li><a href="../../Linux-Shell/VMWare-using-notes/">VMWare虚拟机挂载共享目录</a></li>
+          <li><a href="../../Linux-Shell/ansible%E5%AE%89%E8%A3%85-rockylinux8/">Ansible安装 - Rocky Linux 8</a></li>
+          <li><a href="../../Linux-Shell/inotifywait%E7%9B%91%E6%8E%A7%E6%96%87%E4%BB%B6%E5%8F%98%E5%8C%96/">inotifywait监控文件变化</a></li>
+          <li><a href="../../Linux-Shell/linux%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E7%AE%A1%E7%90%86/">Linux环境变量管理</a></li>
+          <li><a href="../../Linux-Shell/nmcli%E7%AE%A1%E7%90%86%E7%BD%91%E7%BB%9C%E9%85%8D%E7%BD%AE/">nmcli管理网络配置</a></li>
+          <li><a href="../../Linux-Shell/samba%E6%96%87%E4%BB%B6%E5%85%B1%E4%BA%AB%E6%9C%8D%E5%8A%A1/">Samba文件共享服务</a></li>
+          <li><a href="../../Linux-Shell/screen%E5%90%8E%E5%8F%B0%E8%BF%90%E8%A1%8C%E4%BB%BB%E5%8A%A1/">screen后台运行任务</a></li>
+          <li><a href="../../Linux-Shell/shell-scripts/">Shell 脚本</a></li>
+          <li><a href="../../Linux-Shell/ssh%E8%BF%9C%E7%A8%8B%E6%89%A7%E8%A1%8C%E5%A4%9A%E4%B8%AA%E5%91%BD%E4%BB%A4/">SSH远程执行多个命令</a></li>
+          <li><a href="../../Linux-Shell/ssh%E8%BF%9E%E6%8E%A5/">SSH连接</a></li>
+          <li><a href="../../Linux-Shell/vscode/">VSCode命令行安装插件</a></li>
+          <li><a href="../../Linux-Shell/%E5%BC%80%E6%BA%90%E5%A0%A1%E5%9E%92%E6%9C%BAjumpserver%E9%83%A8%E7%BD%B2/">开源堡垒机JumpServer部署</a></li>
+          <li><a href="../../Linux-Shell/%E7%B3%BB%E7%BB%9F%E4%BF%A1%E6%81%AF%E6%9F%A5%E7%9C%8B/">系统信息查看</a></li>
+          <li><a href="../../Linux-Shell/%E9%85%8D%E7%BD%AEzsh%E7%BB%88%E7%AB%AF/">配置zsh终端</a></li>
+        </ul>
+      </nav>
+    </details>
+  </aside>
+
+  <article class="article">
+    <nav class="breadcrumb">
+      <a href="../../index.html">首页</a><span>/</span>
+      <a href="../../Linux-Shell/">Linux-Shell</a>
+    </nav>
+    <h1 class="article-title">Ubuntu修改启动内核</h1>
+    <p class="article-meta"><span>更新于 2026-04-16</span>
+      <a href="https://github.com/hangx969/learning-notes/blob/main/Linux-Shell/Ubuntu-%E4%BF%AE%E6%94%B9%E5%90%AF%E5%8A%A8%E5%86%85%E6%A0%B8.md">查看源文件</a>
+    </p>
+    <div class="article-body">
+<ul>
+<li>检查已安装的内核</li>
+</ul>
+<div class="highlight"><pre><span></span><code>dpkg<span class="w"> </span>--list<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>linux-image
+
+ii<span class="w">  </span>linux-image-5.15.0-102-generic<span class="w">          </span><span class="m">5</span>.15.0-102.112<span class="w">                          </span>amd64<span class="w">        </span>Signed<span class="w"> </span>kernel<span class="w"> </span>image<span class="w"> </span>generic
+ii<span class="w">  </span>linux-image-5.15.0-78-generic<span class="w">           </span><span class="m">5</span>.15.0-78.85<span class="w">                            </span>amd64<span class="w">        </span>Signed<span class="w"> </span>kernel<span class="w"> </span>image<span class="w"> </span>generic
+ii<span class="w">  </span>linux-image-5.15.0-88-generic<span class="w">           </span><span class="m">5</span>.15.0-88.98<span class="w">                            </span>amd64<span class="w">        </span>Signed<span class="w"> </span>kernel<span class="w"> </span>image<span class="w"> </span>generic
+ii<span class="w">  </span>linux-image-generic<span class="w">                     </span><span class="m">5</span>.15.0.102.99<span class="w">                           </span>amd64<span class="w">        </span>Generic<span class="w"> </span>Linux<span class="w"> </span>kernel<span class="w"> </span>image
+</code></pre></div>
+
+<ul>
+<li>检查内核启动顺序</li>
+</ul>
+<div class="highlight"><pre><span></span><code>grep<span class="w"> </span><span class="s1">&#39;menuentry&#39;</span><span class="w"> </span>/boot/grub/grub.cfg
+
+menuentry<span class="w"> </span><span class="s1">&#39;Ubuntu&#39;</span><span class="w"> </span>--class<span class="w"> </span>ubuntu<span class="w"> </span>--class<span class="w"> </span>gnu-linux<span class="w"> </span>--class<span class="w"> </span>gnu<span class="w"> </span>--class<span class="w"> </span>os<span class="w"> </span><span class="nv">$menuentry_id_option</span><span class="w"> </span><span class="s1">&#39;gnulinux-simple-685552fd-4f93-41d4-9337-29b88e63493a&#39;</span><span class="w"> </span><span class="o">{</span>
+submenu<span class="w"> </span><span class="s1">&#39;Advanced options for Ubuntu&#39;</span><span class="w"> </span><span class="nv">$menuentry_id_option</span><span class="w"> </span><span class="s1">&#39;gnulinux-advanced-685552fd-4f93-41d4-9337-29b88e63493a&#39;</span><span class="w"> </span><span class="o">{</span>
+<span class="w">        </span>menuentry<span class="w"> </span><span class="s1">&#39;Ubuntu, with Linux 5.15.0-102-generic&#39;</span><span class="w"> </span>--class<span class="w"> </span>ubuntu<span class="w"> </span>--class<span class="w"> </span>gnu-linux<span class="w"> </span>--class<span class="w"> </span>gnu<span class="w"> </span>--class<span class="w"> </span>os<span class="w"> </span><span class="nv">$menuentry_id_option</span><span class="w"> </span><span class="s1">&#39;gnulinux-5.15.0-102-generic-advanced-685552fd-4f93-41d4-9337-29b88e63493a&#39;</span><span class="w"> </span><span class="o">{</span>
+<span class="w">        </span>menuentry<span class="w"> </span><span class="s1">&#39;Ubuntu, with Linux 5.15.0-102-generic (recovery mode)&#39;</span><span class="w"> </span>--class<span class="w"> </span>ubuntu<span class="w"> </span>--class<span class="w"> </span>gnu-linux<span class="w"> </span>--class<span class="w"> </span>gnu<span class="w"> </span>--class<span class="w"> </span>os<span class="w"> </span><span class="nv">$menuentry_id_option</span><span class="w"> </span><span class="s1">&#39;gnulinux-5.15.0-102-generic-recovery-685552fd-4f93-41d4-9337-29b88e63493a&#39;</span><span class="w"> </span><span class="o">{</span>
+<span class="w">        </span>menuentry<span class="w"> </span><span class="s1">&#39;Ubuntu, with Linux 5.15.0-88-generic&#39;</span><span class="w"> </span>--class<span class="w"> </span>ubuntu<span class="w"> </span>--class<span class="w"> </span>gnu-linux<span class="w"> </span>--class<span class="w"> </span>gnu<span class="w"> </span>--class<span class="w"> </span>os<span class="w"> </span><span class="nv">$menuentry_id_option</span><span class="w"> </span><span class="s1">&#39;gnulinux-5.15.0-88-generic-advanced-685552fd-4f93-41d4-9337-29b88e63493a&#39;</span><span class="w"> </span><span class="o">{</span>
+<span class="w">        </span>menuentry<span class="w"> </span><span class="s1">&#39;Ubuntu, with Linux 5.15.0-88-generic (recovery mode)&#39;</span><span class="w"> </span>--class<span class="w"> </span>ubuntu<span class="w"> </span>--class<span class="w"> </span>gnu-linux<span class="w"> </span>--class<span class="w"> </span>gnu<span class="w"> </span>--class<span class="w"> </span>os<span class="w"> </span><span class="nv">$menuentry_id_option</span><span class="w"> </span><span class="s1">&#39;gnulinux-5.15.0-88-generic-recovery-685552fd-4f93-41d4-9337-29b88e63493a&#39;</span><span class="w"> </span><span class="o">{</span>
+<span class="w">        </span>menuentry<span class="w"> </span><span class="s1">&#39;Ubuntu, with Linux 5.15.0-78-generic&#39;</span><span class="w"> </span>--class<span class="w"> </span>ubuntu<span class="w"> </span>--class<span class="w"> </span>gnu-linux<span class="w"> </span>--class<span class="w"> </span>gnu<span class="w"> </span>--class<span class="w"> </span>os<span class="w"> </span><span class="nv">$menuentry_id_option</span><span class="w"> </span><span class="s1">&#39;gnulinux-5.15.0-78-generic-advanced-685552fd-4f93-41d4-9337-29b88e63493a&#39;</span><span class="w"> </span><span class="o">{</span>
+<span class="w">        </span>menuentry<span class="w"> </span><span class="s1">&#39;Ubuntu, with Linux 5.15.0-78-generic (recovery mode)&#39;</span><span class="w"> </span>--class<span class="w"> </span>ubuntu<span class="w"> </span>--class<span class="w"> </span>gnu-linux<span class="w"> </span>--class<span class="w"> </span>gnu<span class="w"> </span>--class<span class="w"> </span>os<span class="w"> </span><span class="nv">$menuentry_id_option</span><span class="w"> </span><span class="s1">&#39;gnulinux-5.15.0-78-generic-recovery-685552fd-4f93-41d4-9337-29b88e63493a&#39;</span><span class="w"> </span><span class="o">{</span>
+</code></pre></div>
+
+<ul>
+<li>修改内核启动顺序，固定为5.15</li>
+</ul>
+<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>vim<span class="w"> </span>/etc/default/grub
+
+<span class="nv">GRUB_DEFAULT</span><span class="o">=</span><span class="m">0</span>
+<span class="c1">#修改为</span>
+<span class="nv">GRUB_DEFAULT</span><span class="o">=</span><span class="s2">&quot;Advanced options for Ubuntu&gt;Ubuntu, with Linux 5.15.0-88-generic&quot;</span>
+
+sudo<span class="w"> </span>update-grub
+</code></pre></div>
+
+<ul>
+<li>
+<p>卸载旧版本内核</p>
+</li>
+<li>
+<p>mark hold一下现在的内核版本，保持住现在的内核版本不升级</p>
+</li>
+</ul>
+<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>apt-mark<span class="w"> </span>hold<span class="w"> </span>linux-headers-generic<span class="w"> </span>linux-image-generic<span class="w"> </span>linux-generic
+</code></pre></div>
+    </div>
+  </article>
+
+</div>
+
+</main>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>Learning Notes</span>
+    <a href="https://github.com/hangx969/learning-notes">GitHub</a>
+  </div>
+</footer>
+<script src="../../static/search.js"></script>
+</body>
+</html>

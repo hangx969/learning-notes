@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Slurm Node Exporter - Learning Notes</title>
+<link rel="stylesheet" href="../../static/style.css">
+<link rel="stylesheet" href="../../static/pygments.css">
+</head>
+<body data-root="../../">
+<header class="site-header">
+  <div class="header-inner">
+    <a class="logo" href="../../index.html"><span class="logo-mark"></span>LEARNING NOTES</a>
+    <div class="search">
+      <input id="search-input" type="search" placeholder="搜索笔记…" autocomplete="off" aria-label="搜索笔记">
+      <div id="search-results" hidden></div>
+    </div>
+  </div>
+  <nav class="topic-nav" aria-label="主题导航">
+    <div class="topic-nav-inner">
+      <a href="../../AI/">AI</a>
+      <a href="../../Aliyun/">Aliyun</a>
+      <a href="../../Azure/">Azure</a>
+      <a href="../../C%2B%2B/">C++</a>
+      <a href="../../CloudComputing/">CloudComputing</a>
+      <a href="../../Database/">Database</a>
+      <a href="../../Docker-Kubernetes/">Docker-Kubernetes</a>
+      <a href="../../GPU-DeepLearning/">GPU-DeepLearning</a>
+      <a href="../../Git/">Git</a>
+      <a href="../../Go/">Go</a>
+      <a href="../../HPC/" class="active">HPC</a>
+      <a href="../../IaC/">IaC</a>
+      <a href="../../Linux-Shell/">Linux-Shell</a>
+      <a href="../../Middlewares/">Middlewares</a>
+      <a href="../../Networking/">Networking</a>
+      <a href="../../OS/">OS</a>
+      <a href="../../Python/">Python</a>
+      <a href="../../SoftwareTesting/">SoftwareTesting</a>
+    </div>
+  </nav>
+</header>
+<main class="main">
+
+<div class="article-layout">
+
+  <aside class="sidebar">
+    <details class="sidebar-details">
+      <summary>HPC</summary>
+      <nav class="sidebar-nav">
+        <p class="sidebar-group">其他</p>
+        <ul>
+          <li><a href="../../HPC/CentOS7-slurm23.02-%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%AE%89%E8%A3%85/">CentOS7 Slurm 23.02 二进制安装</a></li>
+          <li><a href="../../HPC/PBS-cases/">PBS 实际案例</a></li>
+          <li><a href="../../HPC/PBS/">PBS 作业调度系统</a></li>
+          <li><a href="../../HPC/Slurm-node-exporter/" class="current">Slurm Node Exporter</a></li>
+          <li><a href="../../HPC/Ubuntu-2204-slurm-22.05.11-binary-installation/">Ubuntu 22.04 Slurm 22.05.11 Binary Installation (Production)</a></li>
+          <li><a href="../../HPC/Ubuntu2204-slurm-%2023.11-deb%E5%AE%89%E8%A3%85/">Ubuntu 22.04 Slurm 23.11 deb安装</a></li>
+          <li><a href="../../HPC/Ubuntu2204-slurm-22.05.11-%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%AE%89%E8%A3%85/">Ubuntu 22.04 Slurm 22.05.11 二进制安装</a></li>
+        </ul>
+      </nav>
+    </details>
+  </aside>
+
+  <article class="article">
+    <nav class="breadcrumb">
+      <a href="../../index.html">首页</a><span>/</span>
+      <a href="../../HPC/">HPC</a>
+    </nav>
+    <h1 class="article-title">Slurm Node Exporter</h1>
+    <p class="article-meta"><span>更新于 2026-04-16</span>
+      <a href="https://github.com/hangx969/learning-notes/blob/main/HPC/Slurm-node-exporter.md">查看源文件</a>
+    </p>
+    <div class="article-body">
+<h1 id="slurm-node-exporter">Slurm Node Exporter</h1>
+<hr />
+<h2 id="旧版exporter">旧版exporter</h2>
+<p><div class="callout callout-info" markdown="1"><br />
+<p class="callout-title">参考资料</p></p>
+<ul>
+<li>https://erdong.site/prometheus-notes/chapter03-Exporter/3.24-slurm-exporter.html</li>
+<li>https://github.com/vpenso/prometheus-slurm-exporter</li>
+<li>编译指南: https://github.com/vpenso/prometheus-slurm-exporter/blob/master/DEVELOPMENT.md</li>
+</ul>
+</div>
+<h3 id="在线部署">在线部署</h3>
+<ol>
+<li>下载安装包解压并复制</li>
+</ol>
+<div class="highlight"><pre><span></span><code><span class="c1">#去slurm工作节点</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">VERSION</span><span class="o">=</span><span class="m">1</span>.15<span class="w"> </span><span class="nv">OS</span><span class="o">=</span>linux<span class="w"> </span><span class="nv">ARCH</span><span class="o">=</span>amd64
+wget<span class="w"> </span>https://dl.google.com/go/go<span class="nv">$VERSION</span>.<span class="nv">$OS</span>-<span class="nv">$ARCH</span>.tar.gz
+tar<span class="w"> </span>-xzvf<span class="w"> </span>go<span class="nv">$VERSION</span>.<span class="nv">$OS</span>-<span class="nv">$ARCH</span>.tar.gz
+<span class="nb">export</span><span class="w"> </span><span class="nv">PATH</span><span class="o">=</span><span class="nv">$PWD</span>/go/bin:<span class="nv">$PATH</span>
+
+<span class="c1"># clone the source code</span>
+git<span class="w"> </span>clone<span class="w"> </span>https://github.com/vpenso/prometheus-slurm-exporter.git
+<span class="nb">cd</span><span class="w"> </span>prometheus-slurm-exporter
+make
+
+<span class="c1">#Slurm Exporter 部署非常简单,下载最新的安装包,然后解压,将解压好的 prometheus-slurm-exporter 文件拷贝到/usr/bin/prometheus-slurm-exporter 就完成了第一步,然后将下面的 SystemD 的启动文件 slurm-exporter.service 拷贝到指定目录就完成了。</span>
+cp<span class="w"> </span>prometheus-slurm-exporter/bin/prometheus-slurm-exporter<span class="w"> </span>/usr/bin/prometheus-slurm-exporter
+
+tee<span class="w"> </span>/etc/systemd/system/slurm-exporter.service<span class="w"> </span><span class="s">&lt;&lt;&#39;EOF&#39;</span>
+<span class="s">[Unit]</span>
+<span class="s">Description=Prometheus SLURM Exporter</span>
+
+<span class="s">[Service]</span>
+<span class="s">ExecStart=/usr/bin/prometheus-slurm-exporter -listen-address :9092</span>
+<span class="s">Restart=always</span>
+<span class="s">RestartSec=15</span>
+
+<span class="s">[Install]</span>
+<span class="s">WantedBy=multi-user.target</span>
+<span class="s">EOF</span>
+
+<span class="c1">#启动 Slurm Exporter</span>
+systemctl<span class="w"> </span>daemon-reload
+systemctl<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>slurm-exporter.service<span class="w"> </span>--now
+systemctl<span class="w"> </span>restart<span class="w"> </span>slurm-exporter.service
+</code></pre></div>
+
+<hr />
+<h3 id="离线环境部署">离线环境部署</h3>
+<div class="highlight"><pre><span></span><code><span class="c1">##去在线环境下载go依赖##</span>
+<span class="c1">#下载go 1.15</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">VERSION</span><span class="o">=</span><span class="m">1</span>.15<span class="w"> </span><span class="nv">OS</span><span class="o">=</span>linux<span class="w"> </span><span class="nv">ARCH</span><span class="o">=</span>amd64
+wget<span class="w"> </span>https://dl.google.com/go/go<span class="nv">$VERSION</span>.<span class="nv">$OS</span>-<span class="nv">$ARCH</span>.tar.gz
+tar<span class="w"> </span>-xzvf<span class="w"> </span>go<span class="nv">$VERSION</span>.<span class="nv">$OS</span>-<span class="nv">$ARCH</span>.tar.gz
+<span class="nb">export</span><span class="w"> </span><span class="nv">PATH</span><span class="o">=</span><span class="nv">$PWD</span>/go/bin:<span class="nv">$PATH</span>
+
+<span class="c1">#下载源码包</span>
+git<span class="w"> </span>clone<span class="w"> </span>https://github.com/vpenso/prometheus-slurm-exporter.git
+<span class="nb">cd</span><span class="w"> </span>prometheus-slurm-exporter
+mkdir<span class="w"> </span>vendor
+<span class="c1">#下载依赖到vendor中</span>
+go<span class="w"> </span>mod<span class="w"> </span>download
+go<span class="w"> </span>mod<span class="w"> </span>vendor
+<span class="c1">#打包整个源码包到离线环境</span>
+
+<span class="c1">###离线环境中,编辑makefile###</span>
+<span class="nb">cd</span><span class="w"> </span>prometheus-slurm-exporter
+vim<span class="w"> </span>Makefile
+<span class="c1">#如下,注释掉go mod download和go test部分,避免联网</span>
+<span class="nv">PROJECT_NAME</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>prometheus-slurm-exporter
+SHELL<span class="w"> </span>:<span class="o">=</span><span class="w"> </span><span class="k">$(</span>shell<span class="w"> </span>which<span class="w"> </span>bash<span class="k">)</span><span class="w"> </span>-eu<span class="w"> </span>-o<span class="w"> </span>pipefail
+
+GOPATH<span class="w"> </span>:<span class="o">=</span><span class="w"> </span><span class="k">$(</span>shell<span class="w"> </span><span class="nb">pwd</span><span class="k">)</span>/go/modules
+GOBIN<span class="w"> </span>:<span class="o">=</span><span class="w"> </span>bin/<span class="k">$(</span>PROJECT_NAME<span class="k">)</span>
+GOFILES<span class="w"> </span>:<span class="o">=</span><span class="w"> </span><span class="k">$(</span>shell<span class="w"> </span>ls<span class="w"> </span>*.go<span class="k">)</span>
+
+.PHONY:<span class="w"> </span>build
+build:<span class="w"> </span><span class="nb">test</span><span class="w"> </span><span class="k">$(</span>GOBIN<span class="k">)</span>
+
+<span class="k">$(</span>GOBIN<span class="k">)</span>:<span class="w"> </span>go/modules/pkg/mod<span class="w"> </span><span class="k">$(</span>GOFILES<span class="k">)</span>
+<span class="w">        </span>mkdir<span class="w"> </span>-p<span class="w"> </span>bin
+<span class="w">        </span>@echo<span class="w"> </span><span class="s2">&quot;Building </span><span class="k">$(</span>GOBIN<span class="k">)</span><span class="s2">&quot;</span>
+<span class="w">        </span>go<span class="w"> </span>build<span class="w"> </span>-v<span class="w"> </span>-o<span class="w"> </span><span class="k">$(</span>GOBIN<span class="k">)</span><span class="w"> </span>-mod<span class="o">=</span>vendor
+
+go/modules/pkg/mod:<span class="w"> </span>go.mod
+<span class="w">        </span><span class="c1">#go mod download</span>
+
+.PHONY:<span class="w"> </span><span class="nb">test</span>
+test:<span class="w"> </span>go/modules/pkg/mod<span class="w"> </span><span class="k">$(</span>GOFILES<span class="k">)</span>
+<span class="w">        </span><span class="c1">#go test -v</span>
+
+run:<span class="w"> </span><span class="k">$(</span>GOBIN<span class="k">)</span>
+<span class="w">        </span><span class="k">$(</span>GOBIN<span class="k">)</span>
+
+clean:
+<span class="w">        </span>go<span class="w"> </span>clean<span class="w"> </span>-modcache
+<span class="w">        </span>rm<span class="w"> </span>-fr<span class="w"> </span>bin/<span class="w"> </span>go/
+
+<span class="c1">#编译</span>
+make
+
+<span class="c1">#部署服务</span>
+cp<span class="w"> </span>prometheus-slurm-exporter/bin/prometheus-slurm-exporter<span class="w"> </span>/usr/bin/prometheus-slurm-exporter
+
+tee<span class="w"> </span>/etc/systemd/system/slurm-exporter.service<span class="w"> </span><span class="s">&lt;&lt;&#39;EOF&#39;</span>
+<span class="s">[Unit]</span>
+<span class="s">Description=Prometheus SLURM Exporter</span>
+
+<span class="s">[Service]</span>
+<span class="s">ExecStart=/usr/bin/prometheus-slurm-exporter -listen-address :9092</span>
+<span class="s">Restart=always</span>
+<span class="s">RestartSec=15</span>
+
+<span class="s">[Install]</span>
+<span class="s">WantedBy=multi-user.target</span>
+<span class="s">EOF</span>
+
+<span class="c1">#启动 Slurm Exporter</span>
+systemctl<span class="w"> </span>daemon-reload
+systemctl<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>slurm-exporter.service<span class="w"> </span>--now
+systemctl<span class="w"> </span>restart<span class="w"> </span>slurm-exporter.service
+</code></pre></div>
+
+<hr />
+<h3 id="可以收集的监控指标">可以收集的监控指标</h3>
+<p>使用 Slurm Exporter 可以收集很多的指标,包括 CPU、GPU、机器节点、提交的作业、作业分区的状态、每个账户和用户的作业信息、调度器的信息,我们大概看一下具体是什么。</p>
+<h4 id="cpu-的状态">CPU 的状态</h4>
+<ul>
+<li><mark>Allocated</mark>: 已经被分配给作业的 CPU 数量。</li>
+<li><mark>Idle</mark>: 没有被分配给做而已,空闲的 CPU 数量。</li>
+<li><mark>Other</mark>: 暂时无法使用的 CPU 数量,不能使用的原因有多种,可能是机器坏了,也可能是被管理员设置了这些机器不能用于作业分配,一般是处于维护或者特殊用途</li>
+<li><mark>Total</mark>: CPU 总数</li>
+</ul>
+<h4 id="gpu-的状态">GPU 的状态</h4>
+<ul>
+<li><mark>Allocated</mark>: 已经被分配给作业的 GPU 数量。</li>
+<li><mark>Other</mark>: GPUs which are unavailable for use at the moment.</li>
+<li><mark>Total</mark>: GPU 卡的总数.</li>
+<li><mark>Utilization</mark>: 集群中总的 GPU 使用率.</li>
+</ul>
+<p><div class="callout callout-tip" markdown="1"><br />
+<p class="callout-title">GPU计费</p></p>
+<p>从==0.19版本==开始,GPU计费必须在命令行中添加 <code>-gpu-acct</code> 选项来显式启用,否则它将不会被激活。</p>
+</div>
+<h4 id="机器节点的状态">机器节点的状态</h4>
+<ul>
+<li><mark>Allocated</mark>: 已经被分配给作业的节点。</li>
+<li><mark>Completing</mark>: 与这些节点关联的所有作业都在完成过程中。</li>
+<li><mark>Down</mark>: 不能使用的节点.</li>
+<li><mark>Drain</mark>: 处于这个状态的节点有 2 中不同的状态,</li>
+<li>drained 状态的节点(被系统管理员都标记为不可用)</li>
+<li>处于 drained 状态的节点(当前正在执行作业,但不会分配给新的作业)。</li>
+<li><mark>Fail</mark>: 这些节点预计很快就会失败,并且无法响应系统管理员的请求,也无法使用它们。</li>
+<li><mark>Error</mark>: 当前处于错误状态且不能运行任何作业的节点</li>
+<li><mark>Idle</mark>: 未分配给任何作业的节点,因此可供使用。</li>
+<li><mark>Maint</mark>: 当前被标记为维护标志的节点。</li>
+<li><mark>Mixed</mark>: 这些节点已经分配了一些cpu,而其他cpu处于空闲状态。</li>
+<li><mark>Resv</mark>: 这些节点处于高级预订状态,通常不可用。</li>
+</ul>
+<p><div class="callout callout-note" markdown="1"><br />
+<p class="callout-title">从0.18版本开始的额外节点信息</p></p>
+<p>Slurm也提取并导出了每个已知节点的以下信息:<br />
+- CPU:分配的cpu个数、空闲cpu个数、其他cpu个数和总数。<br />
+- 内存:已分配和总内存。<br />
+- 标签:主机名及其Slurm状态(例如空闲、混合、分配、耗尽等)</p>
+</div>
+<h4 id="作业状态">作业状态</h4>
+<ul>
+<li><mark>PENDING</mark>: 等待分配资源的作业.</li>
+<li><mark>PENDING_DEPENDENCY</mark>: 由于未执行的作业依赖关系而等待的作业。</li>
+<li><mark>RUNNING</mark>: 目前的已经分配资源并且正在执行的作业。</li>
+<li><mark>SUSPENDED</mark>: 作业有分配,但执行已经被暂停,cpu已经被释放给其他作业。</li>
+<li><mark>CANCELLED</mark>: 被用户或系统管理员明确取消的作业。</li>
+<li><mark>COMPLETING</mark>: 正在完成的作业</li>
+<li><mark>COMPLETED</mark>: 作业运行完成,终止了所有节点上的所有进程,退出码为0。</li>
+<li><mark>CONFIGURING</mark>: 作业已经分配了资源,但正在等待它们准备好使用。</li>
+<li><mark>FAILED</mark>: 作业以非零退出码或其他失败条件终止。</li>
+<li><mark>TIMEOUT</mark>: 作业在达到限制的时间后就终止了。</li>
+<li><mark>PREEMPTED</mark>: 由于抢占而终止作业。</li>
+<li><mark>NODE_FAIL</mark>: 由于一个或多个分配的节点失败而终止作业。</li>
+</ul>
+<h4 id="作业分区的状态">作业分区的状态</h4>
+<ul>
+<li>每个分区运行/挂起的作业,分配给Slurm帐户和用户。</li>
+<li>每个分区的总/分配/空闲CPU加上每个用户ID的已用CPU。</li>
+</ul>
+<h4 id="每个账户和用户的作业信息">每个账户和用户的作业信息</h4>
+<ul>
+<li>Running/Pending/Suspended 每个账号的作业.</li>
+<li>Running/Pending/Suspended 每个用户的作业</li>
+</ul>
+<h4 id="调度器的信息">调度器的信息</h4>
+<ul>
+<li><mark>Server Thread count</mark>: 当前活动的slurmctld线程数。</li>
+<li><mark>Queue size</mark>: scheduler queue 的长度</li>
+<li><mark>DBD Agent queue size</mark>: SlurmDBD 的消息队列的长度。</li>
+<li><mark>Last cycle</mark>: 上一个调度周期的时间(以微秒为单位)。</li>
+<li><mark>Mean cycle</mark>:自上次重置以来调度周期的平均值。</li>
+<li><mark>Cycles per minute</mark>: 每分钟调度执行的计数器。</li>
+<li><mark>(Backfill) Last cycle</mark>: 最后一次回填周期的时间(以微秒计)。</li>
+<li><mark>(Backfill) Mean cycle</mark>: 自上次重置以来,以微秒计的平均回填调度周期。</li>
+<li><mark>(Backfill) Depth mean</mark>: 自上次重置以来的回填调度周期中已处理作业的平均值。</li>
+<li><mark>(Backfill) Total Backfilled Jobs (since last slurm start)</mark>: 自从上次Slurm启动以来,大量的作业得以恢复。</li>
+<li><mark>(Backfill) Total Backfilled Jobs (since last stats cycle start)</mark>: 自上次统计复位以来,由于回填而启动的作业数量。</li>
+<li><mark>(Backfill) Total backfilled heterogeneous Job components</mark>: 自上次Slurm启动以来,由于回填,异构作业组件的数量开始增加。</li>
+</ul>
+<hr />
+<h3 id="prometheus配置">prometheus配置</h3>
+<p>添加下面的config:</p>
+<div class="highlight"><pre><span></span><code>scrape_configs:
+<span class="w">  </span>-<span class="w"> </span>job_name:<span class="w"> </span><span class="s1">&#39;my_slurm_exporter&#39;</span>
+<span class="w">    </span>scrape_interval:<span class="w">  </span>30s
+<span class="w">    </span>scrape_timeout:<span class="w">   </span>30s
+<span class="w">    </span>static_configs:
+<span class="w">    </span>-<span class="w"> </span>targets:<span class="w"> </span><span class="o">[</span><span class="s1">&#39;172.16.183.134:9092&#39;</span><span class="o">]</span>
+</code></pre></div>
+
+<h3 id="grafana配置">grafana配置</h3>
+<ul>
+<li>使用dashboard: https://grafana.com/grafana/dashboards/4323-slurm-dashboard/</li>
+</ul>
+<hr />
+<h2 id="新版exporterslurm-dashboard-v2">新版exporter+Slurm Dashboard V2</h2>
+<h3 id="部署">部署</h3>
+<p><div class="callout callout-note" markdown="1"><br />
+<p class="callout-title">版本说明</p></p>
+<p>前面的slurm exporter停止维护了,现在有新的exporter: https://github.com/rivosinc/prometheus-slurm-exporter</p>
+</div>
+<div class="highlight"><pre><span></span><code><span class="c1">#下载二进制包解压,直接有了二进制文件</span>
+tar<span class="w"> </span>zxvf<span class="w"> </span>prometheus-slurm-exporter_1.6.4_linux_amd64.tar.gz
+<span class="c1">#拷贝到bin目录</span>
+cp<span class="w"> </span>./prometheus-slurm-exporter<span class="w"> </span>/usr/bin/prometheus-slurm-exporter
+
+<span class="c1">#用systemd管理服务</span>
+tee<span class="w"> </span>/etc/systemd/system/slurm-exporter.service<span class="w"> </span><span class="s">&lt;&lt;&#39;EOF&#39;</span>
+<span class="s">[Unit]</span>
+<span class="s">Description=Prometheus SLURM Exporter New</span>
+
+<span class="s">[Service]</span>
+<span class="s">ExecStart=/usr/bin/prometheus-slurm-exporter -slurm.collect-diags -slurm.collect-licenses -slurm.collect-limits</span>
+<span class="s">Restart=always</span>
+<span class="s">RestartSec=15</span>
+
+<span class="s">[Install]</span>
+<span class="s">WantedBy=multi-user.target</span>
+<span class="s">EOF</span>
+
+<span class="c1">#启动 Slurm Exporter</span>
+systemctl<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>slurm-exporter<span class="w"> </span>--now
+</code></pre></div>
+
+<p><div class="callout callout-tip" markdown="1"><br />
+<p class="callout-title">参数说明</p></p>
+<p>Usage of /usr/bin/prometheus-slurm-exporter:<br />
+  - <code>-slurm.cli-fallback</code>: drop the --json arg and revert back to standard squeue for performance reasons (default true)<br />
+  - <code>-slurm.collect-diags</code>: Collect daemon diagnostics stats from slurm<br />
+  - <code>-slurm.collect-licenses</code>: Collect license info from slurm<br />
+  - <code>-slurm.collect-limits</code>: Collect account and user limits from slurm<br />
+  - <code>-slurm.diag-cli string</code>: sdiag cli override<br />
+  - <code>-slurm.lic-cli string</code>: squeue cli override<br />
+  - <code>-slurm.poll-limit float</code>: throttle for slurmctld (default: 10s)<br />
+  - <code>-slurm.sacctmgr-cli string</code>: saactmgr cli override<br />
+  - <code>-slurm.sinfo-cli string</code>: sinfo cli override<br />
+  - <code>-slurm.squeue-cli string</code>: squeue cli override<br />
+  - <code>-trace.enabled</code>: Set up Post endpoint for collecting traces<br />
+  - <code>-trace.path string</code>: POST path to upload job proc info<br />
+  - <code>-trace.rate uint</code>: number of seconds proc info should stay in memory before being marked as stale (default 10)<br />
+  - <code>-web.listen-address string</code>: Address to listen on for telemetry "(default: :9092)"</p>
+</div>
+<h3 id="prometheus配置_1">prometheus配置</h3>
+<p>添加下面的config:</p>
+<div class="highlight"><pre><span></span><code>scrape_configs:
+<span class="w">  </span>-<span class="w"> </span>job_name:<span class="w"> </span><span class="s1">&#39;slurm_exporter&#39;</span>
+<span class="w">    </span>scrape_interval:<span class="w">  </span>30s
+<span class="w">    </span>scrape_timeout:<span class="w">   </span>30s
+<span class="w">    </span>static_configs:
+<span class="w">    </span>-<span class="w"> </span>targets:<span class="w"> </span><span class="o">[</span><span class="s1">&#39;172.16.183.134:9092&#39;</span><span class="o">]</span>
+<span class="w">    </span>-<span class="w"> </span>targets:<span class="w"> </span><span class="o">[</span><span class="s1">&#39;172.16.183.133:9092&#39;</span><span class="o">]</span>
+<span class="w">    </span>-<span class="w"> </span>targets:<span class="w"> </span><span class="o">[</span><span class="s1">&#39;172.16.183.135:9092&#39;</span><span class="o">]</span>
+</code></pre></div>
+
+<p><div class="callout callout-warning" markdown="1"><br />
+<p class="callout-title">注意</p></p>
+<p>这个版本不太好用,不如老的那版exporter数据多</p>
+</div>
+<hr />
+<h2 id="相关笔记">相关笔记</h2>
+<ul>
+<li><a class="wikilink" href="../../HPC/CentOS7-slurm23.02-%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%AE%89%E8%A3%85/">CentOS7-slurm23.02-二进制安装</a> - CentOS7 Slurm部署</li>
+<li><a class="wikilink" href="../../HPC/Ubuntu2204-slurm-22.05.11-%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%AE%89%E8%A3%85/">Ubuntu2204-slurm-22.05.11-二进制安装</a> - Ubuntu Slurm部署</li>
+<li><a class="wikilink" href="../../HPC/Ubuntu-2204-slurm-22.05.11-binary-installation/">Ubuntu-2204-slurm-22.05.11-binary-installation</a> - Ubuntu Slurm生产环境部署</li>
+<li><a class="wikilink" href="../../HPC/PBS/">PBS</a> - PBS作业调度系统</li>
+</ul>
+    </div>
+  </article>
+  <aside class="toc">
+    <p class="toc-label">本页目录</p>
+    <ul>
+  <li><a href="#旧版exporter">旧版exporter</a><ul>
+  <li><a href="#在线部署">在线部署</a></li>
+  <li><a href="#离线环境部署">离线环境部署</a></li>
+  <li><a href="#可以收集的监控指标">可以收集的监控指标</a></li>
+  <li><a href="#prometheus配置">prometheus配置</a></li>
+  <li><a href="#grafana配置">grafana配置</a></li>
+</ul></li>
+  <li><a href="#新版exporterslurm-dashboard-v2">新版exporter+Slurm Dashboard V2</a><ul>
+  <li><a href="#部署">部署</a></li>
+  <li><a href="#prometheus配置_1">prometheus配置</a></li>
+</ul></li>
+  <li><a href="#相关笔记">相关笔记</a></li>
+</ul>
+  </aside>
+
+</div>
+
+</main>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>Learning Notes</span>
+    <a href="https://github.com/hangx969/learning-notes">GitHub</a>
+  </div>
+</footer>
+<script src="../../static/search.js"></script>
+</body>
+</html>

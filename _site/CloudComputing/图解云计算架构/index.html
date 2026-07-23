@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>图解云计算架构 - Learning Notes</title>
+<link rel="stylesheet" href="../../static/style.css">
+<link rel="stylesheet" href="../../static/pygments.css">
+</head>
+<body data-root="../../">
+<header class="site-header">
+  <div class="header-inner">
+    <a class="logo" href="../../index.html"><span class="logo-mark"></span>LEARNING NOTES</a>
+    <div class="search">
+      <input id="search-input" type="search" placeholder="搜索笔记…" autocomplete="off" aria-label="搜索笔记">
+      <div id="search-results" hidden></div>
+    </div>
+  </div>
+  <nav class="topic-nav" aria-label="主题导航">
+    <div class="topic-nav-inner">
+      <a href="../../AI/">AI</a>
+      <a href="../../Aliyun/">Aliyun</a>
+      <a href="../../Azure/">Azure</a>
+      <a href="../../C%2B%2B/">C++</a>
+      <a href="../../CloudComputing/" class="active">CloudComputing</a>
+      <a href="../../Database/">Database</a>
+      <a href="../../Docker-Kubernetes/">Docker-Kubernetes</a>
+      <a href="../../GPU-DeepLearning/">GPU-DeepLearning</a>
+      <a href="../../Git/">Git</a>
+      <a href="../../Go/">Go</a>
+      <a href="../../HPC/">HPC</a>
+      <a href="../../IaC/">IaC</a>
+      <a href="../../Linux-Shell/">Linux-Shell</a>
+      <a href="../../Middlewares/">Middlewares</a>
+      <a href="../../Networking/">Networking</a>
+      <a href="../../OS/">OS</a>
+      <a href="../../Python/">Python</a>
+      <a href="../../SoftwareTesting/">SoftwareTesting</a>
+    </div>
+  </nav>
+</header>
+<main class="main">
+
+<div class="article-layout">
+
+  <aside class="sidebar">
+    <details class="sidebar-details">
+      <summary>CloudComputing</summary>
+      <nav class="sidebar-nav">
+        <p class="sidebar-group">其他</p>
+        <ul>
+          <li><a href="../../CloudComputing/Auth/">认证协议与SSO</a></li>
+          <li><a href="../../CloudComputing/Openstack/">OpenStack</a></li>
+          <li><a href="../../CloudComputing/%E4%BA%91%E5%8E%9F%E7%94%9F/">云原生概念介绍</a></li>
+          <li><a href="../../CloudComputing/%E5%9B%BE%E8%A7%A3%E4%BA%91%E8%AE%A1%E7%AE%97%E6%9E%B6%E6%9E%84/" class="current">图解云计算架构</a></li>
+          <li><a href="../../CloudComputing/%E5%A4%A7%E8%AF%9D%E4%BA%91%E8%AE%A1%E7%AE%97/">大话云计算</a></li>
+          <li><a href="../../CloudComputing/%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4-%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BA%E4%BA%91%E8%AE%A1%E7%AE%97/">深入浅出云计算</a></li>
+          <li><a href="../../CloudComputing/%E6%B7%B1%E5%85%A5%E5%89%96%E6%9E%90Kubernetes/">深入剖析Kubernetes</a></li>
+        </ul>
+      </nav>
+    </details>
+  </aside>
+
+  <article class="article">
+    <nav class="breadcrumb">
+      <a href="../../index.html">首页</a><span>/</span>
+      <a href="../../CloudComputing/">CloudComputing</a>
+    </nav>
+    <h1 class="article-title">图解云计算架构</h1>
+    <p class="article-meta"><span>更新于 2026-04-16</span>
+      <a href="https://github.com/hangx969/learning-notes/blob/main/CloudComputing/%E5%9B%BE%E8%A7%A3%E4%BA%91%E8%AE%A1%E7%AE%97%E6%9E%B6%E6%9E%84.md">查看源文件</a>
+    </p>
+    <div class="article-body">
+<h1 id="服务器资源">服务器资源</h1>
+<ul>
+<li>用于登录的密钥对</li>
+<li>采用SSH公钥认证来认证用户身份。用户创建密钥对,把公钥注册到虚拟机。</li>
+<li>如果创建虚拟机的时候指定为key的方式,那么cloud-init会在首次启动的时候,接收指定的公钥,配置SSH。</li>
+</ul>
+<h1 id="对象存储">对象存储</h1>
+<ul>
+<li>存储 - 容器 - 对象(文件)</li>
+<li>容器中不能再创建容器,但是可以创建目录。</li>
+<li>比如dir01目录下的file01文件,其被作为"dir01/file01"这个对象被存储到容器中。</li>
+</ul>
+<h1 id="web-api">Web API</h1>
+<ul>
+<li>Amazon引领了将Web API应用到云计算中,2006年发布EC2和S3,用户可以通过web API完成对计算资源的调度。</li>
+</ul>
+<h2 id="web-api的组成">Web API的组成</h2>
+<ul>
+<li>认证 + 操作 + 对象(资源)</li>
+<li>资源:有一个主键来唯一标识,可以是UUID、名字等。主键下面又有各种属性信息。</li>
+<li>操作:CRUD等,有两种实现方法:<ul>
+<li>向资源的URI发送请求时,通过HTTP方法来实现不同的动作。</li>
+<li>通过URI中的查询参数的不同取值来表示不同的动作。</li>
+</ul>
+</li>
+</ul>
+<h2 id="构成资源的uri">构成资源的URI</h2>
+<ul>
+<li>API的调用地址 - endpoint,本质就是URL。</li>
+</ul>
+<h3 id="dns虚拟主机域名注册管理机构">DNS、虚拟主机、域名注册管理机构</h3>
+<ul>
+<li>FQDN和IP地址可以是1对多,也可以是多对一。</li>
+<li>FQDN:IP=1:N的时候,DNS会轮流从多个IP地址中返回一个IP地址,称为DNS循环复用(round-robin)。CDN、LB就用了DNS循环复用。</li>
+</ul>
+<h4 id="dns查询">DNS查询</h4>
+<ul>
+<li>客户端向缓存服务器发起的查询:递归查询;缓存服务器如果没有命中,那么会代替客户端向权威DNS服务器进行迭代查询。</li>
+</ul>
+    </div>
+  </article>
+  <aside class="toc">
+    <p class="toc-label">本页目录</p>
+    <ul>
+  <li><a href="#web-api的组成">Web API的组成</a></li>
+  <li><a href="#构成资源的uri">构成资源的URI</a><ul>
+  <li><a href="#dns虚拟主机域名注册管理机构">DNS、虚拟主机、域名注册管理机构</a></li>
+</ul></li>
+</ul>
+  </aside>
+
+</div>
+
+</main>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>Learning Notes</span>
+    <a href="https://github.com/hangx969/learning-notes">GitHub</a>
+  </div>
+</footer>
+<script src="../../static/search.js"></script>
+</body>
+</html>

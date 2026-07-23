@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Azure Storage - Learning Notes</title>
+<link rel="stylesheet" href="../../static/style.css">
+<link rel="stylesheet" href="../../static/pygments.css">
+</head>
+<body data-root="../../">
+<header class="site-header">
+  <div class="header-inner">
+    <a class="logo" href="../../index.html"><span class="logo-mark"></span>LEARNING NOTES</a>
+    <div class="search">
+      <input id="search-input" type="search" placeholder="搜索笔记…" autocomplete="off" aria-label="搜索笔记">
+      <div id="search-results" hidden></div>
+    </div>
+  </div>
+  <nav class="topic-nav" aria-label="主题导航">
+    <div class="topic-nav-inner">
+      <a href="../../AI/">AI</a>
+      <a href="../../Aliyun/">Aliyun</a>
+      <a href="../../Azure/" class="active">Azure</a>
+      <a href="../../C%2B%2B/">C++</a>
+      <a href="../../CloudComputing/">CloudComputing</a>
+      <a href="../../Database/">Database</a>
+      <a href="../../Docker-Kubernetes/">Docker-Kubernetes</a>
+      <a href="../../GPU-DeepLearning/">GPU-DeepLearning</a>
+      <a href="../../Git/">Git</a>
+      <a href="../../Go/">Go</a>
+      <a href="../../HPC/">HPC</a>
+      <a href="../../IaC/">IaC</a>
+      <a href="../../Linux-Shell/">Linux-Shell</a>
+      <a href="../../Middlewares/">Middlewares</a>
+      <a href="../../Networking/">Networking</a>
+      <a href="../../OS/">OS</a>
+      <a href="../../Python/">Python</a>
+      <a href="../../SoftwareTesting/">SoftwareTesting</a>
+    </div>
+  </nav>
+</header>
+<main class="main">
+
+<div class="article-layout">
+
+  <aside class="sidebar">
+    <details class="sidebar-details">
+      <summary>Azure</summary>
+      <nav class="sidebar-nav">
+        <p class="sidebar-group">Customer Support</p>
+        <ul>
+          <li><a href="../../Azure/Customer%20Support/Email%20Templates/">Email Templates</a></li>
+        </ul>
+        <p class="sidebar-group">其他</p>
+        <ul>
+          <li><a href="../../Azure/0_Azure-VM-VMSS/">Azure VM and VMSS</a></li>
+          <li><a href="../../Azure/10_Azure-devops-agent-pool-management/">Azure DevOps Agent Pool Management</a></li>
+          <li><a href="../../Azure/11_Azure-Policy/">Azure Policy</a></li>
+          <li><a href="../../Azure/1_Azure-Linux-VM-troubheshooting/">Azure Linux VM Troubleshooting</a></li>
+          <li><a href="../../Azure/2_AKS-basics/">AKS Basics</a></li>
+          <li><a href="../../Azure/3_AKS-workload-identity/">AKS Workload Identity</a></li>
+          <li><a href="../../Azure/4_AKS-SecretProviderClass-KeyVault/">AKS SecretProviderClass with KeyVault</a></li>
+          <li><a href="../../Azure/5_Azure-Storage/" class="current">Azure Storage</a></li>
+          <li><a href="../../Azure/6_Azure-Networking/">Azure Networking</a></li>
+          <li><a href="../../Azure/7_ACR-ACI/">Azure Container Registry &amp; Azure Container Instances</a></li>
+          <li><a href="../../Azure/8_Azure-devops-basics/">Azure DevOps Basics</a></li>
+          <li><a href="../../Azure/9_Azure-devops-self-host-agents/">Azure DevOps Self-Hosted Agents</a></li>
+          <li><a href="../../Azure/IO-monitor/">IO Monitor</a></li>
+          <li><a href="../../Azure/Jfrog-artifactory-Azure/">JFrog Artifactory on Azure</a></li>
+          <li><a href="../../Azure/Kusto%20Query/">Kusto Query Language (KQL) Reference</a></li>
+          <li><a href="../../Azure/browser%20trace/">Browser Trace (HAR)</a></li>
+          <li><a href="../../Azure/command-line-tools/">Command Line Tools</a></li>
+          <li><a href="../../Azure/fiddler/">Fiddler</a></li>
+          <li><a href="../../Azure/perfMon%20ProcessMon/">PerfMon &amp; ProcessMon</a></li>
+          <li><a href="../../Azure/postman/">Postman</a></li>
+        </ul>
+      </nav>
+    </details>
+  </aside>
+
+  <article class="article">
+    <nav class="breadcrumb">
+      <a href="../../index.html">首页</a><span>/</span>
+      <a href="../../Azure/">Azure</a>
+    </nav>
+    <h1 class="article-title">Azure Storage</h1>
+    <p class="article-meta"><span>更新于 2026-04-16</span>
+      <a href="https://github.com/hangx969/learning-notes/blob/main/Azure/5_Azure-Storage.md">查看源文件</a>
+    </p>
+    <div class="article-body">
+<h1 id="azure-storage">Azure Storage</h1>
+<h2 id="related-notes">Related Notes</h2>
+<ul>
+<li><a class="wikilink" href="../../Azure/0_Azure-VM-VMSS/">Azure/0_Azure-VM-VMSS</a></li>
+<li><a class="wikilink" href="../../Azure/2_AKS-basics/">Azure/2_AKS-basics</a></li>
+</ul>
+<hr />
+<h2 id="storage-types">Storage Types</h2>
+<p><img alt="image-20241214113847766" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202412141138840.png" /></p>
+<ul>
+<li>Access to each storage type is through a <mark>storage account</mark></li>
+</ul>
+<hr />
+<h2 id="storage-redundancy">Storage Redundancy</h2>
+<p><img alt="image-20241214110808699" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202412141108871.png" /></p>
+<ul>
+<li><mark>LRS</mark>: Local redundancy, 3 copies within a single datacenter, read/write balanced across the 3 copies. Datacenter failure poses risk.</li>
+<li><mark>GRS</mark>: Geo-redundant, different regions. Primary region has 3 copies; secondary region gets 3 async copies, but secondary is not readable/writable unless failover is initiated.</li>
+<li><mark>RA-GRS</mark>: Compared to GRS, secondary region's 3 copies are also readable.</li>
+<li><mark>ZRS</mark>: Data replicated across different Availability Zones within the same region, 3 copies across 3 AZs.</li>
+<li><mark>GZRS</mark>: ZRS + 3 backup copies in another region.</li>
+</ul>
+<hr />
+<h2 id="storage-account-endpoints">Storage Account Endpoints</h2>
+<p>Storage accounts provide a unique namespace for data in Azure. Each object has an address that includes the unique account name. Combine the account name with the Azure Storage service endpoint to form the storage account endpoint. Construct the URL to access an object by appending the object's location to the endpoint. For example, a blob URL: <code>http://mystorageaccount.blob.core.chinacloudapi.cn/mycontainer/myblob</code></p>
+<hr />
+<h2 id="azure-blob">Azure Blob</h2>
+<p><mark>Binary Large Object</mark> - Azure's object storage solution for the cloud, suitable for storing large amounts of binary objects. Use cases:</p>
+<ul>
+<li>Serve images and documents directly to browsers for distributed access</li>
+<li>Video and audio streaming</li>
+<li>Backup, restore, disaster recovery, archiving</li>
+<li>Azure managed service analytics</li>
+</ul>
+<p>Blob has three types:</p>
+<ul>
+<li><mark>Block Blob</mark>: Stores text and binary data</li>
+<li><mark>Append Blob</mark>: Optimized for append operations, suitable for storing data from VMs</li>
+<li><mark>Page Blob</mark>: Stores large random-access files, suitable for storing VHD as VM disks</li>
+</ul>
+<h3 id="blob-access-tiers">Blob Access Tiers</h3>
+<ul>
+<li><mark>Hot tier</mark>: Frequently accessed data</li>
+<li><mark>Cool tier</mark>: Infrequently used but immediately accessible data (short-term backup and DR). Minimum <mark>30 days</mark> storage.</li>
+<li><mark>Archive access tier</mark>: Offline tier, optimized for rarely accessed data. Must rehydrate to cool/hot tier for read/modify. Minimum <mark>180 days</mark> storage, otherwise extra charges.</li>
+</ul>
+<hr />
+<h2 id="azure-managed-disk">Azure Managed Disk</h2>
+<p>Azure managed, used with Azure VMs. Analogous to physical disks in on-premises servers but virtualized. Types: <mark>Premium SSD</mark>, <mark>Standard SSD</mark>, <mark>Standard HDD</mark>.</p>
+<h3 id="disk-types">Disk Types</h3>
+<ol>
+<li>
+<p><strong>OS Disk</strong>: Pre-installed OS, contains boot volume</p>
+</li>
+<li>
+<p><strong>Data Disk</strong></p>
+</li>
+<li>
+<p><strong>Temporary Disk</strong></p>
+</li>
+<li>Most VMs include this; it is NOT a managed disk</li>
+<li>Used for page files (memory swap partition), uses host machine disk</li>
+<li>On Linux typically <code>/dev/sdb</code>, default mount point <code>/mnt/resource</code></li>
+<li>On Windows typically <code>D:\</code></li>
+</ol>
+<p><div class="callout callout-warning" markdown="1"><br />
+<p class="callout-title">Temporary Disk Data Loss</p></p>
+<p>During VM failure, temporary storage does NOT migrate. Never store important data on temporary disk.</p>
+</div>
+<hr />
+<h2 id="authorization">Authorization</h2>
+<h3 id="access-key">Access Key</h3>
+<ul>
+<li>When creating a storage account, Azure generates two <mark>512-bit</mark> storage account access keys</li>
+<li>These keys authorize access to data via shared key authorization</li>
+<li>Access Keys are essentially root passwords, providing <strong>all access to all services</strong></li>
+<li>Use either key; typically use the first and reserve the second for key rotation</li>
+</ul>
+<h3 id="sas-token">SAS Token</h3>
+<ul>
+<li><mark>SAS</mark> (Shared Access Signature) grants limited access to <strong>containers and blobs</strong> in a storage account</li>
+<li>When creating SAS, specify constraints: which storage resources, what permissions, and the validity period</li>
+<li>SAS is signed using access keys, two methods:</li>
+<li>Signed with AAD-provided keys = <mark>User Delegation SAS</mark></li>
+<li>Signed with storage account keys = Service SAS / Account SAS</li>
+</ul>
+<h3 id="management-plane-and-data-plane">Management Plane and Data Plane</h3>
+<ul>
+<li><a href="https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/control-plane-and-data-plane">控制平面和数据平面操作 - Azure 资源管理器 | 微软文档</a></li>
+</ul>
+<hr />
+<h2 id="logging">Logging</h2>
+<ul>
+<li>Enable analytics logging for blob, queue, and table in Portal -&gt; Diagnostics -&gt; set Logging content and retention period</li>
+<li>Logs are stored in the <mark><code>$logs</code></mark> container, downloadable via azcopy/explorer</li>
+<li>Log analysis:</li>
+<li><a href="https://docs.microsoft.com/zh-cn/rest/api/storageservices/storage-analytics-log-format">存储分析日志格式 (REST API) | Microsoft Docs</a></li>
+<li><a href="https://docs.microsoft.com/zh-cn/rest/api/storageservices/storage-analytics-logged-operations-and-status-messages">存储分析记录的操作和状态消息 (REST API) | Microsoft Docs</a></li>
+</ul>
+<p><div class="callout callout-example" markdown="1"><br />
+<p class="callout-title">Convert Storage Logs with PowerShell</p></p>
+</div>
+<div class="highlight"><pre><span></span><code><span class="nv">$Columns</span> <span class="p">=</span> 
+     <span class="p">(</span>   <span class="s2">&quot;version-number&quot;</span><span class="p">,</span>
+         <span class="s2">&quot;request-start-time&quot;</span><span class="p">,</span>
+         <span class="s2">&quot;operation-type&quot;</span><span class="p">,</span>
+         <span class="s2">&quot;request-status&quot;</span><span class="p">,</span>
+         <span class="s2">&quot;http-status-code&quot;</span><span class="p">,</span>
+         <span class="s2">&quot;end-to-end-latency-in-ms&quot;</span><span class="p">,</span>
+         <span class="s2">&quot;server-latency-in-ms&quot;</span><span class="p">,</span>
+         <span class="s2">&quot;authentication-type&quot;</span><span class="p">,</span>
+         <span class="s2">&quot;requester-account-name&quot;</span><span class="p">,</span>
+         <span class="s2">&quot;owner-account-name&quot;</span><span class="p">,</span>
+         <span class="s2">&quot;service-type&quot;</span><span class="p">,</span>
+         <span class="s2">&quot;request-url&quot;</span><span class="p">,</span>
+         <span class="s2">&quot;requested-object-key&quot;</span><span class="p">,</span>
+         <span class="s2">&quot;request-id-header&quot;</span><span class="p">,</span>
+         <span class="s2">&quot;operation-count&quot;</span><span class="p">,</span>
+         <span class="s2">&quot;requester-ip-address&quot;</span><span class="p">,</span>
+         <span class="s2">&quot;request-version-header&quot;</span><span class="p">,</span>
+         <span class="s2">&quot;request-header-size&quot;</span><span class="p">,</span>
+         <span class="s2">&quot;request-packet-size&quot;</span><span class="p">,</span>
+         <span class="s2">&quot;response-header-size&quot;</span><span class="p">,</span>
+         <span class="s2">&quot;response-packet-size&quot;</span><span class="p">,</span>
+         <span class="s2">&quot;request-content-length&quot;</span><span class="p">,</span>
+         <span class="s2">&quot;request-md5&quot;</span><span class="p">,</span>
+         <span class="s2">&quot;server-md5&quot;</span><span class="p">,</span>
+         <span class="s2">&quot;etag-identifier&quot;</span><span class="p">,</span>
+         <span class="s2">&quot;last-modified-time&quot;</span><span class="p">,</span>
+         <span class="s2">&quot;conditions-used&quot;</span><span class="p">,</span>
+         <span class="s2">&quot;user-agent-header&quot;</span><span class="p">,</span>
+         <span class="s2">&quot;referrer-header&quot;</span><span class="p">,</span>
+         <span class="s2">&quot;client-request-id&quot;</span>
+     <span class="p">)</span>
+
+<span class="nv">$logs</span> <span class="p">=</span> <span class="nb">Import-Csv</span> <span class="s2">&quot;C:\Users\v-hangx.FAREAST\Desktop\000000.log&quot;</span> <span class="n">-Delimiter</span> <span class="s2">&quot;;&quot;</span> <span class="n">-Header</span> <span class="nv">$Columns</span>
+
+<span class="nv">$logs</span> <span class="p">|</span> <span class="nb">Out-GridView</span> <span class="n">-Title</span> <span class="s2">&quot;Storage Analytic Log Parser&quot;</span>
+</code></pre></div>
+
+<hr />
+<h2 id="performance-analysis">Performance Analysis</h2>
+<ul>
+<li><strong>Performance metrics:</strong></li>
+<li><mark>IOPS</mark>: Input/Output per second. For OLTP applications (e.g., online retail), high concurrency demands with insert/update-intensive transactions.</li>
+<li><mark>Throughput</mark>: Data volume sent to disk in a given time interval. For data warehouse applications, single requests access large data volumes (scan-intensive).</li>
+<li>
+<p>Relationship: <mark>IOPS * IO Size = Throughput</mark></p>
+</li>
+<li>
+<p><strong>IOPS analysis tools:</strong></p>
+</li>
+<li>
+<p>Use <strong>PerfMon</strong> for Windows, <strong>iostat</strong> for Linux</p>
+<ul>
+<li><a href="https://linux.die.net/man/1/iostat">iostat(1) - Linux man page</a></li>
+<li><a href="https://docs.microsoft.com/zh-cn/windows/win32/perfctrs/performance-counters-portal">性能计数器 - Win32 apps | Microsoft Docs</a></li>
+</ul>
+</li>
+<li>
+<p><strong>Optimization:</strong></p>
+</li>
+<li>IO requests are the unit of input/output operations for applications<ul>
+<li>OLTP: large amounts of random IO</li>
+<li>Data warehouse: large sequential IO</li>
+</ul>
+</li>
+<li>Reduce IO size to improve IOPS (e.g., 8KB for OLTP); increase IO size for throughput (e.g., 1024KB for data warehouse)</li>
+<li>Cache has separate IOPS and throughput tied to VM size; as read time extends, cache warms up. Azure Premium Storage VMs use <mark>BlobCache</mark> (host RAM + local SSD combination).</li>
+</ul>
+<hr />
+<h2 id="caching">Caching</h2>
+<p>Cache is stored on physical host machine disk, provided by Compute resources, with good performance.</p>
+<ul>
+<li><mark>ReadOnly</mark>:</li>
+<li>Reduces read latency, achieves higher IOPS and throughput</li>
+<li>
+<p>Cached reads happen on local VM and local SSD, much faster than data disk reads (which happen on Blob)</p>
+</li>
+<li>
+<p><mark>ReadWrite</mark>:</p>
+</li>
+<li>Default for OS disk</li>
+<li>
+<p>Uses appropriate methods to write data from cache to permanent disk</p>
+</li>
+<li>
+<p><mark>None</mark>:</p>
+</li>
+<li>Only data disks support this; OS disks do not</li>
+<li>Setting OS disk cache to None will internally override to ReadOnly</li>
+</ul>
+<p><div class="callout callout-example" markdown="1"><br />
+<p class="callout-title">SQL Server on Premium Storage</p></p>
+<ol>
+<li>Configure <mark>ReadOnly</mark> cache on premium storage disks hosting <strong>data files</strong></li>
+<li>Fast cache reads shorten SQL Server query time</li>
+<li>Reading from cache provides more throughput for SQL Server for backup/restore, bulk load, index rebuild</li>
+<li>Configure <mark>None</mark> cache on premium storage disks hosting <strong>log files</strong></li>
+<li>Log files primarily have frequent write operations; ReadOnly cache is not beneficial</li>
+</ol>
+</div>
+<hr />
+<h2 id="queue-depth">Queue Depth</h2>
+<ul>
+<li>Queue depth is closely related to multi-threading. Queue depth indicates the degree of parallelism an application can achieve.</li>
+<li>High queue depth allows more operations to queue on disk. The disk can plan ahead and process optimally.</li>
+<li>Too high queue depth can negatively impact application latency.</li>
+<li>Formula: <mark>IOPS * Latency = Queue Depth</mark></li>
+<li>Striped volumes should maintain enough queue depth so each disk has its own peak queue depth. For example, if queue depth is 2 with 4 striped disks, only 2 disks will be busy. Configure queue depth to keep all disks busy.</li>
+</ul>
+<hr />
+<h2 id="aks-upload-files-to-storage">AKS Upload Files to Storage</h2>
+<h3 id="curl-test-pod-connecting-to-storage">curl Test Pod Connecting to Storage</h3>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>run<span class="w"> </span>curl-testing<span class="w"> </span>--image<span class="w"> </span>curl:latest<span class="w">  </span>--image-pull-policy<span class="o">=</span>IfNotPresent<span class="w"> </span>--restart<span class="o">=</span>Never<span class="w"> </span>--rm<span class="w"> </span>-it<span class="w"> </span>curl-testing<span class="w"> </span>--<span class="w"> </span>curl<span class="w"> </span><span class="s2">&quot;https://&lt;sa name&gt;.blob.core.chinacloudapi.cn/&lt;container name&gt;/&lt;file name&gt;?&lt;sas&gt;&quot;</span>
+curl:<span class="w"> </span><span class="o">(</span><span class="m">7</span><span class="o">)</span><span class="w"> </span>Failed<span class="w"> </span>to<span class="w"> </span>connect<span class="w"> </span>to<span class="w"> </span>curl-testing<span class="w"> </span>port<span class="w"> </span><span class="m">80</span>:<span class="w"> </span>Connection<span class="w"> </span>refused
+curl:<span class="w"> </span><span class="o">(</span><span class="m">6</span><span class="o">)</span><span class="w"> </span>Could<span class="w"> </span>not<span class="w"> </span>resolve<span class="w"> </span>host:<span class="w"> </span>curl
+<span class="c1">########################################</span>
+<span class="c1">## Testing Connection Success</span>
+<span class="c1">########################################</span>
+</code></pre></div>
+
+<hr />
+<h3 id="upload-via-azcopy">Upload via azcopy</h3>
+<h4 id="vm-testing">VM Testing</h4>
+<ul>
+<li>apt install azcopy: https://learn.microsoft.com/zh-cn/azure/storage/common/storage-use-azcopy-v10?tabs=apt#install-azcopy-on-linux-by-using-a-package-manager</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="c1">#curl -sSL -O https://packages.microsoft.com/config/ubuntu/22.04/packages-microsoft-prod.deb</span>
+<span class="c1">#dpkg -i packages-microsoft-prod.deb &amp;&amp; rm packages-microsoft-prod.deb</span>
+<span class="c1">#apt-get update &amp;&amp; apt-get install azcopy</span>
+wget<span class="w"> </span>-O<span class="w"> </span>azcopy_v10.tar.gz<span class="w"> </span>https://aka.ms/downloadazcopy-v10-linux<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>tar<span class="w"> </span>-xf<span class="w"> </span>azcopy_v10.tar.gz<span class="w"> </span>--strip-components<span class="o">=</span><span class="m">1</span>
+</code></pre></div>
+
+<ul>
+<li>Upload without SAS -- <strong>fails</strong> (needs authentication):</li>
+</ul>
+<div class="highlight"><pre><span></span><code>./azcopy<span class="w"> </span>copy<span class="w"> </span><span class="s1">&#39;test.log&#39;</span><span class="w"> </span><span class="s1">&#39;https://&lt;sa name&gt;.blob.core.chinacloudapi.cn/&lt;container name&gt;/test.log&#39;</span>
+</code></pre></div>
+
+<ul>
+<li>Upload with container-level SAS -- <strong>success</strong>:</li>
+</ul>
+<div class="highlight"><pre><span></span><code>./azcopy<span class="w"> </span>copy<span class="w"> </span><span class="s1">&#39;test.log&#39;</span><span class="w"> </span><span class="s1">&#39;https://&lt;sa name&gt;.blob.core.chinacloudapi.cn/&lt;container name&gt;?&lt;sas&gt;&#39;</span>
+</code></pre></div>
+
+<ul>
+<li>Upload with VM's <mark>system-assigned identity</mark>:</li>
+<li>Grant identity <mark>Storage Blob Contributor</mark> on the storage account</li>
+<li>
+<p>Upload directly without SAS token:</p>
+<p><code>sh
+./azcopy copy 'test.log' 'https://&lt;sa name&gt;.blob.core.chinacloudapi.cn/&lt;container name&gt;'</code></p>
+</li>
+</ul>
+<h4 id="aks-pod-testing">AKS Pod Testing</h4>
+<ul>
+<li>Get azcopy in pod -- busybox and alpine images cannot run azcopy after download:</li>
+</ul>
+<p><code>sh
+  kubectl run apline --image apline:latest  --image-pull-policy=IfNotPresent --restart=Never --rm -it -- sh</code></p>
+<ul>
+<li>Try ubuntu, container has root -- <strong>success</strong>:</li>
+</ul>
+<p>```sh<br />
+  kubectl run ubuntu --image ubuntu:22.04  --image-pull-policy=IfNotPresent --restart=Never --rm -it -- /bin/bash</p>
+<p>./azcopy login --identity --identity-client-id <client id><br />
+  #这里用aks的kubelet identity，sa层面赋予Storage Blob Contributor角色<br />
+  #测试上传<br />
+  echo "tesetingfromakspod" &gt;&gt; test.log<br />
+  ./azcopy copy 'test.log' 'https://<sa name>.blob.core.chinacloudapi.cn/<container name>'<br />
+  ```</p>
+<ul>
+<li>
+<p>AKS kubelet identity: https://techcommunity.microsoft.com/t5/fasttrack-for-azure/aks-review-2-1-identity-amp-access-control-cluster-operator-amp/ba-p/3716906</p>
+</li>
+<li>
+<p>Full commands to run in pod:</p>
+</li>
+</ul>
+<div class="highlight"><pre><span></span><code>apt-get<span class="w"> </span>update<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>apt-get<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>wget
+wget<span class="w"> </span>-O<span class="w"> </span>azcopy_v10.tar.gz<span class="w"> </span>https://aka.ms/downloadazcopy-v10-linux<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>tar<span class="w"> </span>-xf<span class="w"> </span>azcopy_v10.tar.gz<span class="w"> </span>--strip-components<span class="o">=</span><span class="m">1</span>
+./azcopy<span class="w"> </span>login<span class="w"> </span>--identity<span class="w"> </span>--identity-client-id<span class="w"> </span>&lt;client-id&gt;<span class="w"> </span><span class="c1">#--aad-endpoint https://login.partner.microsoftonline.cn</span>
+./azcopy<span class="w"> </span>copy<span class="w"> </span><span class="s1">&#39;&lt;file name&gt;&#39;</span><span class="w"> </span><span class="s1">&#39;https://&lt;sa name&gt;.blob.core.chinacloudapi.cn/&lt;container name&gt;&#39;</span>
+</code></pre></div>
+
+<h4 id="workload-identity-with-azcopy">Workload Identity with azcopy</h4>
+<p>Previously used kubelet identity. Now test with <mark>workload identity</mark> (just mount the service account, no need to specify UAI ID).</p>
+<p>azcopy 10.25+ supports login with workload identity:</p>
+<ul>
+<li>https://github.com/Azure/azure-storage-azcopy/issues/2545#issuecomment-2136833573</li>
+<li>azcopy env vars: https://learn.microsoft.com/zh-cn/azure/storage/common/storage-ref-azcopy-configuration-settings</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="l l-Scalar l-Scalar-Plain">tee pod-wi-ubuntu.yaml &lt;&lt;&#39;EOF&#39;</span>
+<span class="nn">---</span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Pod</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-test-wi</span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;ns name&gt;</span>
+<span class="w">  </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">azure.workload.identity/use</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;true&quot;</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">serviceAccountName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;sa name&gt;</span>
+<span class="w">  </span><span class="nt">containers</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ubuntu</span>
+<span class="w">      </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ubuntu:22.04</span>
+<span class="w">      </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;/bin/sh&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">      </span><span class="nt">args</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;-c&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;while</span><span class="nv"> </span><span class="s">true;</span><span class="nv"> </span><span class="s">do</span><span class="nv"> </span><span class="s">echo</span><span class="nv"> </span><span class="s">hello;</span><span class="nv"> </span><span class="s">sleep</span><span class="nv"> </span><span class="s">10;done&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">      </span><span class="nt">env</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">STORAGE_ACCOUNT_NAME</span>
+<span class="w">        </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;sa name&gt;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">STORAGE_CONTAINER_NAME</span>
+<span class="w">        </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;container name&gt;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AZCOPY_AUTO_LOGIN_TYPE</span>
+<span class="w">        </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">WORKLOAD</span>
+<span class="l l-Scalar l-Scalar-Plain">EOF</span>
+
+<span class="c1">##job的yaml需要添加的字段##</span>
+<span class="c1">#1. 加一个label</span>
+<span class="w">  </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">azure.workload.identity/use</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;true&quot;</span>
+
+<span class="c1">#2. 加环境变量</span>
+<span class="nt">env</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">STORAGE_ACCOUNT_NAME</span>
+<span class="w">  </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;sa name&gt;</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">STORAGE_CONTAINER_NAME</span>
+<span class="w">  </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;container name&gt;</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AZCOPY_AUTO_LOGIN_TYPE</span>
+<span class="w">  </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">WORKLOAD</span>
+
+<span class="c1">#3. job的command改成下面:</span>
+<span class="l l-Scalar l-Scalar-Plain">apt-get update &amp;&amp; apt-get install -y wget</span>
+<span class="l l-Scalar l-Scalar-Plain">wget -O azcopy_v10.tar.gz https://aka.ms/downloadazcopy-v10-linux &amp;&amp; tar -xf azcopy_v10.tar.gz --strip-components=1</span>
+<span class="l l-Scalar l-Scalar-Plain">./azcopy copy &#39;&lt;file name&gt;&#39; &#39;https://&lt;sa name&gt;.blob.core.chinacloudapi.cn/&lt;container name&gt;&#39; --put-md5</span>
+</code></pre></div>
+
+<p><div class="callout callout-note" markdown="1"><br />
+<p class="callout-title">Blob MD5 for Large Files</p></p>
+<p>Azure Blob's MD5 for large file uploads needs to be manually specified:<br />
+- https://learn.microsoft.com/en-us/answers/questions/282572/md5-hash-calculation-for-large-files<br />
+- https://technet2.github.io/Wiki/blogs/windowsazurestorage/windows-azure-blob-md5-overview.html<br />
+- https://azure.rvr.cloud/azcopy-sync.html</p>
+</div>
+<h4 id="workload-identity-with-az-login">Workload Identity with az login</h4>
+<ul>
+<li>Directly install az cli in main container (up to 700 MB will be installed, too big, the pod will crash during installation)</li>
+</ul>
+<p>https://learn.microsoft.com/zh-cn/cli/azure/install-azure-cli-linux?pivots=apt</p>
+<ul>
+<li>Sidecar container approach:</li>
+</ul>
+<p>https://learn.microsoft.com/zh-cn/cli/azure/run-azure-cli-docker</p>
+<div class="highlight"><pre><span></span><code><span class="l l-Scalar l-Scalar-Plain">tee pod-sidecar.yaml &lt;&lt;&#39;EOF&#39;</span>
+<span class="l l-Scalar l-Scalar-Plain">apiVersion</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Pod</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-test-wi</span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mapapps</span>
+<span class="w">  </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">azure.workload.identity/use</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;true&quot;</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">serviceAccountName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;sa name&gt;</span>
+<span class="w">  </span><span class="nt">containers</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ubuntu</span>
+<span class="w">      </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ubuntu:22.04</span>
+<span class="w">      </span><span class="nt">imagePullPolicy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">IfNotPresent</span>
+<span class="w">      </span><span class="nt">command</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/bin/sh</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">-c</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">&gt;</span>
+<span class="w">        </span><span class="no">while true; do echo hello &gt;&gt; /mnt/test.txt; sleep 10; done</span>
+<span class="w">      </span><span class="nt">volumeMounts</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">localstorage</span>
+<span class="w">        </span><span class="nt">mountPath</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/mnt</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sidecar-azlogin</span>
+<span class="w">      </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">azure-cli:cbl-mariner2.0</span>
+<span class="w">      </span><span class="nt">command</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/bin/sh</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">-c</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">        </span><span class="no">az login --service-principal -u $AZURE_CLIENT_ID -t $AZURE_TENANT_ID --federated-token $AZURE_FEDERATED_TOKEN_FILE &amp;&amp; \</span>
+<span class="w">        </span><span class="no">az storage blob upload --account-name &lt;sa name&gt; --container-name &lt;container name&gt; --name test.txt --file /mnt/test.txt</span>
+<span class="w">      </span><span class="nt">volumeMounts</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">localstorage</span>
+<span class="w">        </span><span class="nt">mountPath</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/mnt</span>
+<span class="w">  </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">localstorage</span>
+<span class="w">    </span><span class="nt">emptyDir</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span>
+<span class="l l-Scalar l-Scalar-Plain">EOF</span>
+</code></pre></div>
+
+<p><div class="callout callout-info" markdown="1"><br />
+<p class="callout-title">Workload Identity Environment Variables</p></p>
+<p>Every pod with WI has these environment variables:<br />
+<code>sh
+Environment:
+      AZURE_CLIENT_ID:             &lt;client id&gt;
+      AZURE_TENANT_ID:             &lt;tenant id&gt;
+      AZURE_FEDERATED_TOKEN_FILE:  /var/run/secrets/azure/tokens/azure-identity-token
+      AZURE_AUTHORITY_HOST:        https://login.chinacloudapi.cn</code></p>
+<p>Login command:<br />
+<code>sh
+az cloud set --name AzureChinaCloud &amp;&amp; az login --service-principal --username "${AZURE_CLIENT_ID}" --tenant "${AZURE_TENANT_ID}" --federated-token "$(cat $AZURE_FEDERATED_TOKEN_FILE)"</code></p>
+<p>Upload command:<br />
+<code>sh
+az storage blob upload --account-name &lt;sa name&gt; --container-name &lt;container name&gt; --name test.txt --file /mnt/test.txt --auth-mode login</code></p>
+</div>
+<div class="highlight"><pre><span></span><code><span class="c1">#azcli pod单独测试</span>
+<span class="l l-Scalar l-Scalar-Plain">tee pod-azcli.yaml &lt;&lt;&#39;EOF&#39;</span>
+<span class="l l-Scalar l-Scalar-Plain">apiVersion</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Pod</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-test-azcli</span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;ns name&gt;</span>
+<span class="w">  </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">azure.workload.identity/use</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;true&quot;</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">serviceAccountName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;sa name&gt;</span>
+<span class="w">  </span><span class="nt">containers</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sidecar-azlogin</span>
+<span class="w">      </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">azure-cli:cbl-mariner2.0</span>
+<span class="w">      </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;/bin/sh&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">      </span><span class="nt">args</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;-c&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;while</span><span class="nv"> </span><span class="s">true;</span><span class="nv"> </span><span class="s">do</span><span class="nv"> </span><span class="s">echo</span><span class="nv"> </span><span class="s">hello;</span><span class="nv"> </span><span class="s">sleep</span><span class="nv"> </span><span class="s">10;done&quot;</span><span class="p p-Indicator">]</span>
+<span class="l l-Scalar l-Scalar-Plain">EOF</span>
+</code></pre></div>
+
+<p><div class="callout callout-warning" markdown="1"><br />
+<p class="callout-title">AZ CLI Container Resource Requirements</p></p>
+<p>The MS-provided azcli container will crash when running az commands if CPU/memory is too low. Set request to at least <mark>200m CPU</mark> and <mark>500Mi memory</mark>.</p>
+</div>
+<hr />
+<h3 id="upload-via-pv-mounting-blob">Upload via PV Mounting Blob</h3>
+<ul>
+<li>Create secret:</li>
+</ul>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>create<span class="w"> </span>secret<span class="w"> </span>generic<span class="w"> </span>&lt;secret<span class="w"> </span>name&gt;<span class="w"> </span>--from-literal<span class="w"> </span><span class="nv">sazurestorageaccountname</span><span class="o">=</span>&lt;sa<span class="w"> </span>name&gt;<span class="w"> </span>--from-literal<span class="w"> </span><span class="nv">azurestorageaccountkey</span><span class="o">=</span><span class="s2">&quot;&lt;key value&gt;&quot;</span><span class="w"> </span>--type<span class="o">=</span>Opaque
+</code></pre></div>
+
+<ul>
+<li>Create PV:</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="l l-Scalar l-Scalar-Plain">tee pv-download.yaml &lt;&lt;&#39;EOF&#39;</span>
+<span class="l l-Scalar l-Scalar-Plain">apiVersion</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PersistentVolume</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">annotations</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">pv.kubernetes.io/provisioned-by</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">blob.csi.azure.com</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pv-blob-download</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">capacity</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">storage</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10Gi</span>
+<span class="w">  </span><span class="nt">accessModes</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ReadWriteMany</span>
+<span class="w">  </span><span class="nt">persistentVolumeReclaimPolicy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Retain</span><span class="w">  </span><span class="c1"># If set as &quot;Delete&quot; container would be removed after pvc deletion</span>
+<span class="w">  </span><span class="nt">storageClassName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">managed-blobfuse-premium-lrs</span>
+<span class="w">  </span><span class="nt">mountOptions</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">-o allow_other</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">--file-cache-timeout-in-seconds=120</span>
+<span class="w">  </span><span class="nt">csi</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">driver</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">blob.csi.azure.com</span>
+<span class="w">    </span><span class="c1"># volumeid has to be unique for every identical storage blob container in the cluster</span>
+<span class="w">    </span><span class="c1"># character `#`and `/` are reserved for internal use and cannot be used in volumehandle</span>
+<span class="w">    </span><span class="nt">volumeHandle</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;handle name&gt;</span>
+<span class="w">    </span><span class="nt">volumeAttributes</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">containerName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;container name&gt;</span>
+<span class="w">    </span><span class="nt">nodeStageSecretRef</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;secret name&gt;</span>
+<span class="w">      </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
+<span class="l l-Scalar l-Scalar-Plain">EOF</span>
+</code></pre></div>
+
+<ul>
+<li>Create PVC:</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="l l-Scalar l-Scalar-Plain">tee pvc-download.yaml &lt;&lt;&#39;EOF&#39;</span>
+<span class="l l-Scalar l-Scalar-Plain">apiVersion</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PersistentVolumeClaim</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pvc-blob-download</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">accessModes</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ReadWriteMany</span>
+<span class="w">  </span><span class="nt">resources</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">requests</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">storage</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10Gi</span>
+<span class="w">  </span><span class="nt">volumeName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pv-blob-download</span>
+<span class="w">  </span><span class="nt">storageClassName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">managed-blobfuse-premium-lrs</span>
+<span class="l l-Scalar l-Scalar-Plain">EOF</span>
+</code></pre></div>
+
+<h4 id="workload-identity-with-pv">Workload Identity with PV</h4>
+<ul>
+<li>Test simple pod mount:</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="l l-Scalar l-Scalar-Plain">tee pod-wi-ubuntu.yaml &lt;&lt;&#39;EOF&#39;</span>
+<span class="l l-Scalar l-Scalar-Plain">apiVersion</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Pod</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-test-wi</span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;ns name&gt;</span>
+<span class="w">  </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">azure.workload.identity/use</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;true&quot;</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">serviceAccountName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;sa name&gt;</span>
+<span class="w">  </span><span class="nt">containers</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ubuntu</span>
+<span class="w">      </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ubuntu:22.04</span>
+<span class="w">      </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;/bin/sh&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">      </span><span class="nt">args</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;-c&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;while</span><span class="nv"> </span><span class="s">true;</span><span class="nv"> </span><span class="s">do</span><span class="nv"> </span><span class="s">echo</span><span class="nv"> </span><span class="s">hello;</span><span class="nv"> </span><span class="s">sleep</span><span class="nv"> </span><span class="s">10;done&quot;</span><span class="p p-Indicator">]</span>
+<span class="l l-Scalar l-Scalar-Plain">EOF</span>
+
+<span class="l l-Scalar l-Scalar-Plain">k exec -it pod-test-wi -n &lt;ns name&gt; -- /bin/bash</span>
+<span class="c1">#查看token</span>
+<span class="l l-Scalar l-Scalar-Plain">cat /run/secrets/azure/tokens/azure-identity-token</span>
+</code></pre></div>
+
+<ul>
+<li>Test job mounting blob</li>
+</ul>
+<p>PV:</p>
+<div class="highlight"><pre><span></span><code><span class="l l-Scalar l-Scalar-Plain">tee pv-upload.yaml &lt;&lt;&#39;EOF&#39;</span>
+<span class="l l-Scalar l-Scalar-Plain">apiVersion</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PersistentVolume</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">annotations</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">pv.kubernetes.io/provisioned-by</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">blob.csi.azure.com</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pv-blob-upload</span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;ns name&gt;</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">capacity</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">storage</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10Gi</span>
+<span class="w">  </span><span class="nt">accessModes</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ReadWriteMany</span>
+<span class="w">  </span><span class="nt">persistentVolumeReclaimPolicy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Retain</span><span class="w">  </span><span class="c1"># If set as &quot;Delete&quot; container would be removed after pvc deletion</span>
+<span class="w">  </span><span class="nt">storageClassName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">managed-blobfuse-premium-lrs</span>
+<span class="w">  </span><span class="nt">mountOptions</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">-o allow_other</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">--file-cache-timeout-in-seconds=120</span>
+<span class="w">  </span><span class="nt">csi</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">driver</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">blob.csi.azure.com</span>
+<span class="w">    </span><span class="c1"># volumeid has to be unique for every identical storage blob container in the cluster</span>
+<span class="w">    </span><span class="c1"># character `#`and `/` are reserved for internal use and cannot be used in volumehandle</span>
+<span class="w">    </span><span class="nt">volumeHandle</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;handle name&gt;</span>
+<span class="w">    </span><span class="nt">volumeAttributes</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">storageAccount</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;sa name&gt;</span>
+<span class="w">      </span><span class="nt">containerName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;container name&gt;</span>
+<span class="w">      </span><span class="nt">AzureStorageAuthType</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MSI</span>
+<span class="w">      </span><span class="nt">AzureStorageIdentityClientID</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;client id&gt;</span>
+<span class="w">      </span><span class="nt">AzureStorageIdentityResourceID</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;uai id&gt;</span>
+<span class="w">      </span><span class="c1">#MSIEndpoint: </span>
+<span class="l l-Scalar l-Scalar-Plain">EOF</span>
+</code></pre></div>
+
+<p>PVC:</p>
+<div class="highlight"><pre><span></span><code><span class="l l-Scalar l-Scalar-Plain">tee pvc-download.yaml &lt;&lt;&#39;EOF&#39;</span>
+<span class="l l-Scalar l-Scalar-Plain">apiVersion</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PersistentVolumeClaim</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pvc-blob-upload</span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;ns name&gt;</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">accessModes</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ReadWriteMany</span>
+<span class="w">  </span><span class="nt">resources</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">requests</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">storage</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10Gi</span>
+<span class="w">  </span><span class="nt">volumeName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pv-blob-upload</span>
+<span class="w">  </span><span class="nt">storageClassName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">managed-blobfuse-premium-lrs</span>
+<span class="l l-Scalar l-Scalar-Plain">EOF</span>
+</code></pre></div>
+
+<p>Dynamic PV provisioning test:</p>
+<div class="highlight"><pre><span></span><code><span class="l l-Scalar l-Scalar-Plain">tee pod-wi-ubuntu.yaml &lt;&lt;&#39;EOF&#39;</span>
+<span class="nn">---</span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Pod</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-test-wi</span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;ns name&gt;</span>
+<span class="w">  </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">azure.workload.identity/use</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;true&quot;</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">serviceAccountName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;sa name&gt;</span>
+<span class="w">  </span><span class="nt">containers</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ubuntu</span>
+<span class="w">      </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ubuntu:22.04</span>
+<span class="w">      </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;/bin/sh&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">      </span><span class="nt">args</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;-c&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;while</span><span class="nv"> </span><span class="s">true;</span><span class="nv"> </span><span class="s">do</span><span class="nv"> </span><span class="s">echo</span><span class="nv"> </span><span class="s">hello;</span><span class="nv"> </span><span class="s">sleep</span><span class="nv"> </span><span class="s">10;done&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">      </span><span class="nt">volumeMounts</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">storage</span>
+<span class="w">          </span><span class="nt">mountPath</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/mnt/storage</span>
+<span class="w">  </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">storage</span>
+<span class="w">      </span><span class="nt">persistentVolumeClaim</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">claimName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pvc-blob-upload</span>
+
+<span class="nn">---</span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PersistentVolumeClaim</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pvc-blob-upload</span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;ns name&gt;</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">accessModes</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ReadWriteMany</span>
+<span class="w">  </span><span class="nt">resources</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">requests</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">storage</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10Gi</span>
+<span class="w">  </span><span class="nt">storageClassName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">managed-blobfuse-premium-lrs</span>
+<span class="l l-Scalar l-Scalar-Plain">EOF</span>
+</code></pre></div>
+
+<hr />
+<h2 id="download-files-get-md5">Download Files - Get MD5</h2>
+<ul>
+<li>How to download files using container-level SAS token?</li>
+</ul>
+<p>Simply append the filename to the URL. Both sides need to sync the filename.</p>
+<ul>
+<li>How to get blob MD5 value?</li>
+</ul>
+<p>The SAS URL response header contains <mark>Content-MD5</mark> field. Use <code>curl -i</code> to view it directly.</p>
+<p><img alt="image-20241010170509800" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202410101725170.png" /></p>
+<div class="highlight"><pre><span></span><code>curl<span class="w"> </span>-i<span class="w"> </span><span class="s2">&quot;https://&lt;sa name&gt;.blob.core.chinacloudapi.cn/&lt;container name&gt;/values.yaml?xxxxxxxxxx&quot;</span>
+HTTP/1.1<span class="w"> </span><span class="m">200</span><span class="w"> </span>OK
+Content-Length:<span class="w"> </span><span class="m">111</span>
+Content-Type:<span class="w"> </span>application/x-yaml
+Content-MD5:<span class="w"> </span>+s1+xxxxxxxxxxxxxxxxxx
+Last-Modified:<span class="w"> </span>Tue,<span class="w"> </span><span class="m">08</span><span class="w"> </span>Oct<span class="w"> </span><span class="m">2024</span><span class="w"> </span><span class="m">03</span>:25:34<span class="w"> </span>GMT
+Accept-Ranges:<span class="w"> </span>bytes
+ETag:<span class="w"> </span><span class="s2">&quot;xxx&quot;</span>
+Server:<span class="w"> </span>Windows-Azure-Blob/1.0<span class="w"> </span>Microsoft-HTTPAPI/2.0
+x-ms-request-id:<span class="w"> </span>xxxx
+x-ms-version:<span class="w"> </span><span class="m">2022</span>-11-02
+x-ms-creation-time:<span class="w"> </span>Fri,<span class="w"> </span><span class="m">27</span><span class="w"> </span>Sep<span class="w"> </span><span class="m">2024</span><span class="w"> </span><span class="m">06</span>:50:32<span class="w"> </span>GMT
+x-ms-lease-status:<span class="w"> </span>unlocked
+x-ms-lease-state:<span class="w"> </span>available
+x-ms-blob-type:<span class="w"> </span>BlockBlob
+x-ms-server-encrypted:<span class="w"> </span><span class="nb">true</span>
+</code></pre></div>
+
+<hr />
+<h2 id="automated-blob-download-script-recommendations">Automated Blob Download Script Recommendations</h2>
+<p>Background:</p>
+<ol>
+<li>Files are uploaded to Azure Storage Account. Each update creates a new blob file in the same directory for download.</li>
+<li>A long-lived directory-level SAS Token is provided. It can list all files in the directory along with creation time, MD5 checksums, etc.</li>
+</ol>
+<h3 id="list-all-files-with-sas-token">List All Files with SAS Token</h3>
+<ol>
+<li>SAS URL format:</li>
+</ol>
+<div class="highlight"><pre><span></span><code>https://&lt;sa<span class="w"> </span>name&gt;.blob.core.chinacloudapi.cn/&lt;container<span class="w"> </span>name&gt;?sp<span class="o">=</span>rl<span class="p">&amp;</span><span class="nv">st</span><span class="o">=</span><span class="m">2024</span>-10-11T06:04:27Z<span class="p">&amp;</span><span class="nv">se</span><span class="o">=</span><span class="m">2024</span>-10-11T14:04:27Z<span class="p">&amp;</span><span class="nv">sip</span><span class="o">=</span><span class="m">101</span>.95.105.42<span class="p">&amp;</span><span class="nv">spr</span><span class="o">=</span>https<span class="p">&amp;</span><span class="nv">sv</span><span class="o">=</span><span class="m">2022</span>-11-02<span class="p">&amp;</span><span class="nv">sr</span><span class="o">=</span>c<span class="p">&amp;</span><span class="nv">sig</span><span class="o">=</span>xxx
+</code></pre></div>
+
+<p>Where:</p>
+<ul>
+<li><code>https://&lt;sa name&gt;.blob.core.chinacloudapi.cn/&lt;container&gt;</code> is the storage directory path</li>
+<li>
+<p><code>sp=rl&amp;st=...&amp;sig=xxx</code> is the SAS Token value</p>
+</li>
+<li>
+<p>Add <mark><code>restype=container&amp;comp=list&amp;</code></mark> between the directory path and SAS Token to list all files and info:</p>
+</li>
+<li>
+<p>Assembled URL: <code>https://&lt;sa name&gt;.blob.core.chinacloudapi.cn/&lt;container name&gt;?restype=container&amp;comp=list&amp;sp=rl&amp;st=2024-10-11T06:04:27Z&amp;se=2024-10-11T14:04:27Z&amp;sip=101.95.105.42&amp;spr=https&amp;sv=2022-11-02&amp;sr=c&amp;sig=xxx</code></p>
+</li>
+<li>
+<p>Example command:</p>
+<p><code>sh
+ curl -X GET "https://&lt;sa name&gt;.blob.core.chinacloudapi.cn/&lt;container name&gt;?restype=container&amp;comp=list&amp;sp=rl&amp;st=2024-10-11T06:04:27Z&amp;se=2024-10-11T14:04:27Z&amp;sip=101.95.105.42&amp;spr=https&amp;sv=2022-11-02&amp;sr=c&amp;sig=xxx"</code></p>
+</li>
+<li>
+<p>Returns XML format:</p>
+<p><code>xml
+ &lt;?xml version="1.0" encoding="utf-8"?&gt;
+ &lt;EnumerationResults ServiceEndpoint="https://&lt;sa name&gt;.blob.core.chinacloudapi.cn/" ContainerName="&lt;container name&gt;"&gt;
+     &lt;Blobs&gt;
+         &lt;Blob&gt;
+             &lt;Name&gt;test.log&lt;/Name&gt;
+             &lt;Properties&gt;
+                 &lt;Creation-Time&gt;Tue, 08 Oct 2024 08:33:51 GMT&lt;/Creation-Time&gt;
+                 &lt;Last-Modified&gt;Thu, 10 Oct 2024 08:17:07 GMT&lt;/Last-Modified&gt;
+                 &lt;Etag&gt;xxx&lt;/Etag&gt;
+                 &lt;Content-Length&gt;19&lt;/Content-Length&gt;
+                 &lt;Content-Type&gt;text/plain&lt;/Content-Type&gt;
+                 &lt;Content-Encoding /&gt;
+                 &lt;Content-Language /&gt;
+                 &lt;Content-CRC64 /&gt;
+                 &lt;Content-MD5&gt;xxx&lt;/Content-MD5&gt;
+                 &lt;Cache-Control /&gt;
+                 &lt;Content-Disposition /&gt;
+                 &lt;BlobType&gt;BlockBlob&lt;/BlobType&gt;
+                 &lt;AccessTier&gt;Hot&lt;/AccessTier&gt;
+                 &lt;AccessTierInferred&gt;true&lt;/AccessTierInferred&gt;
+                 &lt;LeaseStatus&gt;unlocked&lt;/LeaseStatus&gt;
+                 &lt;LeaseState&gt;available&lt;/LeaseState&gt;
+                 &lt;ServerEncrypted&gt;true&lt;/ServerEncrypted&gt;
+             &lt;/Properties&gt;
+             &lt;OrMetadata /&gt;
+         &lt;/Blob&gt;
+     &lt;NextMarker /&gt;
+ &lt;/EnumerationResults&gt;</code></p>
+</li>
+</ul>
+<h3 id="download-files-with-sas-url">Download Files with SAS URL</h3>
+<ol>
+<li>Append the blob filename (obtained from listing) to the SAS URL container path:</li>
+</ol>
+<div class="highlight"><pre><span></span><code>curl<span class="w"> </span><span class="s2">&quot;https://&lt;sa name&gt;.blob.core.chinacloudapi.cn/&lt;container name&gt;/test.log?sp=rl&amp;st=2024-10-11T06:04:27Z&amp;se=2024-10-11T14:04:27Z&amp;sip=101.95.105.42&amp;spr=https&amp;sv=2022-11-02&amp;sr=c&amp;sig=xxx&quot;</span>
+</code></pre></div>
+    </div>
+  </article>
+  <aside class="toc">
+    <p class="toc-label">本页目录</p>
+    <ul>
+  <li><a href="#related-notes">Related Notes</a></li>
+  <li><a href="#storage-types">Storage Types</a></li>
+  <li><a href="#storage-redundancy">Storage Redundancy</a></li>
+  <li><a href="#storage-account-endpoints">Storage Account Endpoints</a></li>
+  <li><a href="#azure-blob">Azure Blob</a><ul>
+  <li><a href="#blob-access-tiers">Blob Access Tiers</a></li>
+</ul></li>
+  <li><a href="#azure-managed-disk">Azure Managed Disk</a><ul>
+  <li><a href="#disk-types">Disk Types</a></li>
+</ul></li>
+  <li><a href="#authorization">Authorization</a><ul>
+  <li><a href="#access-key">Access Key</a></li>
+  <li><a href="#sas-token">SAS Token</a></li>
+  <li><a href="#management-plane-and-data-plane">Management Plane and Data Plane</a></li>
+</ul></li>
+  <li><a href="#logging">Logging</a></li>
+  <li><a href="#performance-analysis">Performance Analysis</a></li>
+  <li><a href="#caching">Caching</a></li>
+  <li><a href="#queue-depth">Queue Depth</a></li>
+  <li><a href="#aks-upload-files-to-storage">AKS Upload Files to Storage</a><ul>
+  <li><a href="#curl-test-pod-connecting-to-storage">curl Test Pod Connecting to Storage</a></li>
+  <li><a href="#upload-via-azcopy">Upload via azcopy</a></li>
+  <li><a href="#upload-via-pv-mounting-blob">Upload via PV Mounting Blob</a></li>
+</ul></li>
+  <li><a href="#download-files-get-md5">Download Files - Get MD5</a></li>
+  <li><a href="#automated-blob-download-script-recommendations">Automated Blob Download Script Recommendations</a><ul>
+  <li><a href="#list-all-files-with-sas-token">List All Files with SAS Token</a></li>
+  <li><a href="#download-files-with-sas-url">Download Files with SAS URL</a></li>
+</ul></li>
+</ul>
+  </aside>
+
+</div>
+
+</main>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>Learning Notes</span>
+    <a href="https://github.com/hangx969/learning-notes">GitHub</a>
+  </div>
+</footer>
+<script src="../../static/search.js"></script>
+</body>
+</html>

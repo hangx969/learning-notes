@@ -1,0 +1,1590 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>K8s部署SpringCloud电商项目 - Learning Notes</title>
+<link rel="stylesheet" href="../../../static/style.css">
+<link rel="stylesheet" href="../../../static/pygments.css">
+</head>
+<body data-root="../../../">
+<header class="site-header">
+  <div class="header-inner">
+    <a class="logo" href="../../../index.html"><span class="logo-mark"></span>LEARNING NOTES</a>
+    <div class="search">
+      <input id="search-input" type="search" placeholder="搜索笔记…" autocomplete="off" aria-label="搜索笔记">
+      <div id="search-results" hidden></div>
+    </div>
+  </div>
+  <nav class="topic-nav" aria-label="主题导航">
+    <div class="topic-nav-inner">
+      <a href="../../../AI/">AI</a>
+      <a href="../../../Aliyun/">Aliyun</a>
+      <a href="../../../Azure/">Azure</a>
+      <a href="../../../C%2B%2B/">C++</a>
+      <a href="../../../CloudComputing/">CloudComputing</a>
+      <a href="../../../Database/">Database</a>
+      <a href="../../../Docker-Kubernetes/" class="active">Docker-Kubernetes</a>
+      <a href="../../../GPU-DeepLearning/">GPU-DeepLearning</a>
+      <a href="../../../Git/">Git</a>
+      <a href="../../../Go/">Go</a>
+      <a href="../../../HPC/">HPC</a>
+      <a href="../../../IaC/">IaC</a>
+      <a href="../../../Linux-Shell/">Linux-Shell</a>
+      <a href="../../../Middlewares/">Middlewares</a>
+      <a href="../../../Networking/">Networking</a>
+      <a href="../../../OS/">OS</a>
+      <a href="../../../Python/">Python</a>
+      <a href="../../../SoftwareTesting/">SoftwareTesting</a>
+    </div>
+  </nav>
+</header>
+<main class="main">
+
+<div class="article-layout">
+
+  <aside class="sidebar">
+    <details class="sidebar-details">
+      <summary>Docker-Kubernetes</summary>
+      <nav class="sidebar-nav">
+        <p class="sidebar-group">CKA-CKS</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/CKA-CKS/CKA-%E5%A4%87%E8%80%83/">CKA 备考</a></li>
+          <li><a href="../../../Docker-Kubernetes/CKA-CKS/CKS-%E5%A4%87%E8%80%83/">CKS 备考</a></li>
+          <li><a href="../../../Docker-Kubernetes/CKA-CKS/k8s-%E9%9D%A2%E8%AF%95%E9%A2%98%E6%B1%87%E6%80%BB/">K8s 面试题汇总</a></li>
+        </ul>
+        <p class="sidebar-group">container-platform</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/container-platform/%E9%83%A8%E7%BD%B2openshift%283.10%29/">部署 OpenShift (3.10)</a></li>
+          <li><a href="../../../Docker-Kubernetes/container-platform/%E9%83%A8%E7%BD%B2%E8%BD%BB%E9%87%8F%E7%BA%A7%E7%9A%84K8S%E5%B9%B3%E5%8F%B0-K3S/">部署轻量级 K8S 平台 - K3S</a></li>
+        </ul>
+        <p class="sidebar-group">docker</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E5%9F%BA%E7%A1%80/">Docker基础</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E5%AE%89%E5%85%A8%E9%85%8D%E7%BD%AE-Capabilities%E4%B8%8E%E5%AE%B9%E5%99%A8%E5%8A%A0%E5%9B%BA/">Docker 安全配置详解：Capabilities 与容器加固</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2UI%E5%B7%A5%E5%85%B7portainer-%E9%83%A8%E7%BD%B2redis-sentinel/">Docker部署Portainer与Redis-Sentinel</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2gitlab/">Docker部署GitLab</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2lnmp%E7%BD%91%E7%AB%99/">Docker部署LNMP网站</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2loki/">Docker部署Loki日志系统</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2nginx-tomcat-httpd-go-python%E6%9C%8D%E5%8A%A1/">Docker部署Nginx-Tomcat-Httpd-Go-Python服务</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2prometheus-grafana-cAdvisior%E7%9B%91%E6%8E%A7/">Docker部署Prometheus-Grafana-cAdvisor监控</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2%E4%BB%93%E5%BA%93%E5%B9%B3%E5%8F%B0homebox/">Docker部署Homebox仓库平台</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1%E5%B7%A5%E5%85%B7gocron/">Docker部署GoCron定时任务工具</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2%E8%B7%AF%E7%94%B1%E7%9B%91%E6%8E%A7%E5%B7%A5%E5%85%B7NextTrace/">Docker部署NextTrace路由监控工具</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%85%8D%E7%BD%AENVIDIA%20GPU/">Docker配置NVIDIA GPU</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%85%8D%E7%BD%AE%E4%BB%A3%E7%90%86/">Docker配置代理</a></li>
+        </ul>
+        <p class="sidebar-group">harbor</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/harbor/harbor-basics/">Harbor 基础</a></li>
+          <li><a href="../../../Docker-Kubernetes/harbor/helm%E9%83%A8%E7%BD%B2harbor/">Helm 部署 Harbor</a></li>
+        </ul>
+        <p class="sidebar-group">helm-operator</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/helm-operator/helmv3-%E5%AE%89%E8%A3%85%E4%B8%8E%E4%BD%BF%E7%94%A8/">Helm v3 安装与使用</a></li>
+          <li><a href="../../../Docker-Kubernetes/helm-operator/helm%E9%83%A8%E7%BD%B2config-syncer%28kubed%29/">Helm 部署 Config Syncer (Kubed)</a></li>
+          <li><a href="../../../Docker-Kubernetes/helm-operator/helm%E9%83%A8%E7%BD%B2dragonfly/">Helm 部署 Dragonfly</a></li>
+          <li><a href="../../../Docker-Kubernetes/helm-operator/helm%E9%83%A8%E7%BD%B2pact-broker/">Helm 部署 Pact Broker</a></li>
+          <li><a href="../../../Docker-Kubernetes/helm-operator/helm%E9%83%A8%E7%BD%B2reloader/">Helm 部署 Reloader</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-CICD</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD%20Image%20Updater/">ArgoCD Image Updater</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD%E5%9F%BA%E7%A1%80/">ArgoCD基础</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD%E5%A4%9A%E9%9B%86%E7%BE%A4GitOps%E5%AE%9E%E6%88%98/">多集群 GitOps 实战：用 Argo CD 管理上百个 Kubernetes 集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD%E9%83%A8%E7%BD%B2Helm%E5%BA%94%E7%94%A8%E6%97%B6%E5%9F%9F%E5%90%8D%E8%A7%A3%E6%9E%90%E5%A4%B1%E8%B4%A5%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5%E4%B8%8E%E8%A7%A3%E5%86%B3/">ArgoCD部署Helm应用时域名解析失败问题排查与解决</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/ArgoCD/%E5%AD%A6%E4%B9%A0%E9%93%BE%E6%8E%A5/">ArgoCD学习链接</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Claude-Code%E5%AE%9E%E7%8E%B0CICD%E8%87%AA%E5%8A%A8%E5%8C%96%E5%8F%91%E5%B8%83%E6%B5%81%E7%A8%8B/">Claude Code 实现 CI/CD 自动化发布流程详细指南</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Gitlab/helm%E9%83%A8%E7%BD%B2gitlab/">Helm部署GitLab</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Gitlab/k8s%E9%83%A8%E7%BD%B2Gitlab%2811.8.1%29-%E5%9F%BA%E4%BA%8Eyaml/">K8s部署GitLab(11.8.1)-基于YAML</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Gitlab/%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%AE%89%E8%A3%85Gitlab%2817.9.8%29/">二进制安装GitLab(17.9.8)</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Jenkins/Jenkins%E8%AF%AD%E6%B3%95-%E5%9F%BA%E4%BA%8Edocker%E9%83%A8%E7%BD%B2/">Jenkins语法-基于Docker部署</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Jenkins/docker%E9%83%A8%E7%BD%B2jenkins/">Docker部署Jenkins</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Jenkins/helm%E9%83%A8%E7%BD%B2jenkins/">Helm部署Jenkins</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Jenkins/k8s-Devops%E5%B9%B3%E5%8F%B0%E8%90%BD%E5%9C%B0-%E5%9F%BA%E4%BA%8Ejenkins/">K8s DevOps平台落地-基于Jenkins</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Jenkins/k8s%E9%83%A8%E7%BD%B2%E5%9F%BA%E4%BA%8EJenkins%282.394%29%E7%9A%84DevOps%E5%B7%A5%E5%85%B7%E9%93%BE-%E5%9F%BA%E4%BA%8Eyaml/">K8s部署基于Jenkins(2.394)的DevOps工具链-基于YAML</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Jenkins/k8s%E9%83%A8%E7%BD%B2%E5%9F%BA%E4%BA%8EJenkins%282.426.3%29%E7%9A%84Devops%E5%B7%A5%E5%85%B7%E9%93%BE-%E5%9F%BA%E4%BA%8Eyaml/">K8s部署基于Jenkins(2.426.3)的DevOps工具链-基于YAML</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Jenkins/%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%AE%89%E8%A3%85Jenkins%282.319%29/">二进制安装Jenkins(2.319)</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Kustomize/k8s%E9%85%8D%E7%BD%AE%E5%AE%9A%E5%88%B6%E5%B7%A5%E5%85%B7-kustomize/">K8s配置定制工具-Kustomize</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Tekton/k8s%E9%83%A8%E7%BD%B2%E5%8E%9F%E7%94%9F%E7%9A%84CICD%E5%B7%A5%E5%85%B7Tekton-%E5%9F%BA%E4%BA%8Eyaml/">K8s部署原生的CICD工具Tekton-基于YAML</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Tekton/%E5%9F%BA%E4%BA%8ETekton%E7%9A%84%E4%BA%91%E5%8E%9F%E7%94%9F%E5%B9%B3%E5%8F%B0%E8%90%BD%E5%9C%B0/">基于Tekton的云原生平台落地</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/k8s%E5%8F%91%E5%B8%83%E7%AD%96%E7%95%A5-%E8%93%9D%E7%BB%BF%E9%83%A8%E7%BD%B2%E4%B8%8E%E9%87%91%E4%B8%9D%E9%9B%80%E5%8F%91%E5%B8%83/">K8s 发布策略：蓝绿部署与金丝雀发布实战</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/%E4%BD%BF%E7%94%A8github%20action%E9%83%A8%E7%BD%B2helmchart/">使用GitHub Action部署Helm Chart</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/%E5%8F%91%E5%B8%83go-python-java%E4%BB%A3%E7%A0%81%E5%88%B0K8S%E7%8E%AF%E5%A2%83/">发布Go/Python/Java代码到K8S环境</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-UI-tools</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-UI-tools/k8s-API%E6%A3%80%E6%9F%A5%E5%B7%A5%E5%85%B7kubent/">K8s API 检查工具 kubent</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-UI-tools/k8s-%E5%B0%8F%E5%B7%A5%E5%85%B7%E9%9B%86%E5%90%88/">K8s 小工具集合</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-UI-tools/k8s%E9%83%A8%E7%BD%B2-Dashboard-UI/">K8s 部署 Dashboard UI</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-UI-tools/k8s%E9%83%A8%E7%BD%B2%E5%8F%AF%E8%A7%86%E5%8C%96ui%E7%95%8C%E9%9D%A2kuboard/">K8s 部署 Kuboard</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-UI-tools/kubectl-UI%E5%B7%A5%E5%85%B7Lens/">kubectl UI 工具 Lens</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-UI-tools/kubectl-%E5%8F%AF%E8%A7%86%E5%8C%96%E6%8F%92%E4%BB%B6k9s-stern/">kubectl 可视化插件 k9s 和 stern</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-UI-tools/kuebctl-%E6%8F%92%E4%BB%B6krew-rolesum/">kubectl 插件 krew 和 rolesum</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-UI-tools/rancher%28v2.6.4%29%E7%AE%A1%E7%90%86k8s%E9%9B%86%E7%BE%A4/">Rancher (v2.6.4) 管理 K8s 集群</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-ai-gpu</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-ai-gpu/k8s%E9%85%8D%E7%BD%AENVIDIA%20GPU/">K8s 配置 NVIDIA GPU</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-backup-dr</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-backup-dr/k8s%E5%A4%87%E4%BB%BD%E4%B8%8E%E7%81%BE%E5%A4%87%E5%AE%9E%E6%88%98-%E4%B8%89%E5%B1%82%E5%AE%B9%E7%81%BE%E6%9E%B6%E6%9E%84/">K8s 备份与灾备实战：三层容灾架构</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-backup-dr/k8s%E9%9B%86%E7%BE%A4%E5%A4%87%E4%BB%BD%E6%81%A2%E5%A4%8D-Velero/">K8s集群备份恢复 - Velero</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-basic-resources</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/K8s%E5%9F%BA%E7%A1%80-pod%E8%B0%83%E5%BA%A6-%E4%BA%B2%E5%92%8C%E5%8A%9B/">K8s基础-Pod调度-亲和力</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/Python%E8%B0%83%E7%94%A8k8s-api%E5%AE%9E%E7%8E%B0%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/">Python调用K8s-API实现资源管理</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s-APIServer%E6%B7%B1%E5%BA%A6%E5%89%96%E6%9E%90-%E8%AF%B7%E6%B1%82%E9%93%BE%E8%B7%AF-%E8%AE%A4%E8%AF%81%E6%8E%88%E6%9D%83-%E7%94%9F%E4%BA%A7%E8%B0%83%E4%BC%98/">Kubernetes API Server 深度剖析：请求链路、认证授权与生产调优</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s-PodDisruptionBudget%E5%AE%9E%E6%88%98/">K8s PodDisruptionBudget 实战：优雅中断保护</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-Calico/">K8s基础-Calico</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-Finalizer%E4%B8%8E%E8%B5%84%E6%BA%90%E5%88%A0%E9%99%A4/">K8s基础-Finalizer与资源删除</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-Operator%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98-Kubebuilder/">从零开发 Kubernetes Operator：Kubebuilder 实战教程</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-Service/">K8s基础-Service</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-configMap-Secret/">K8s基础-configMap-Secret</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-daemonset/">K8s基础-DaemonSet</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-deployment/">K8s基础-Deployment</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-ingress/">K8s基础-Ingress</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-job-cronjob/">K8s基础-Job-CronJob</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-kubeadm/">K8s基础-kubeadm</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-namespace-%E8%B5%84%E6%BA%90%E5%88%86%E9%85%8D/">K8s基础-namespace-资源分配</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-pod/">K8s基础-Pod</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-pod%E8%B0%83%E5%BA%A6-%E6%A0%87%E7%AD%BE%E4%B8%8E%E9%80%89%E6%8B%A9%E5%99%A8%E5%AE%9E%E6%88%98/">Kubernetes 标签与选择器避坑：5 条核心铁律与生产级实战案例</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-statefulset/">K8s基础-StatefulSet</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-storage/">K8s基础-Storage</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-yaml/">K8s基础-YAML</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E4%B8%B4%E6%97%B6%E5%AE%B9%E5%99%A8ephemeral/">K8s基础-临时容器Ephemeral</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E5%AE%B9%E5%99%A8%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-Sidecar-Init-Ambassador-Adapter/">K8s 容器设计模式：Sidecar / Init Container / Ambassador / Adapter</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E5%AE%B9%E5%99%A8%E8%BF%90%E8%A1%8C%E6%97%B6-containerd/">K8s基础-容器运行时-containerd</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E6%9E%B6%E6%9E%84-%E7%BB%84%E4%BB%B6-%E8%B5%84%E6%BA%90/">K8s基础-架构-组件-资源</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E8%87%AA%E5%AE%9A%E4%B9%89CRD%E8%B5%84%E6%BA%90/">K8s基础-自定义CRD资源</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E8%AE%A4%E8%AF%81-%E6%8E%88%E6%9D%83-%E5%87%86%E5%85%A5/">K8s基础-认证-授权-准入</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-db-middleware</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/Operator%E9%83%A8%E7%BD%B2Redis%E9%9B%86%E7%BE%A4/">基于Operator部署Redis集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/Operator%E9%83%A8%E7%BD%B2mysql%E9%9B%86%E7%BE%A4/">Operator部署MySQL NDB集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/helm%E9%83%A8%E7%BD%B2mysql/">Helm部署MySQL</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/helm%E9%83%A8%E7%BD%B2postgreSQL/">Helm部署PostgreSQL</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/helm%E9%83%A8%E7%BD%B2rabbitmq-ha/">Helm部署RabbitMQ高可用集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/helm%E9%83%A8%E7%BD%B2strimzi-kafka/">Helm部署Strimzi Kafka</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/k8s%E5%9F%BA%E4%BA%8Eyaml%E9%83%A8%E7%BD%B2MongoDB%E9%9B%86%E7%BE%A4/">K8s基于YAML部署MongoDB集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/k8s%E5%9F%BA%E4%BA%8Eyaml%E9%83%A8%E7%BD%B2httpd%E6%9C%8D%E5%8A%A1/">K8s基于YAML部署httpd服务</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/k8s%E5%9F%BA%E4%BA%8Eyaml%E9%83%A8%E7%BD%B2mysql%E4%B8%BB%E4%BB%8E%E9%AB%98%E5%8F%AF%E7%94%A8/">K8s基于YAML部署MySQL主从高可用</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/k8s%E5%9F%BA%E4%BA%8Eyaml%E9%83%A8%E7%BD%B2redis%E9%9B%86%E7%BE%A4/">K8s基于YAML部署Redis集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/k8s%E9%83%A8%E7%BD%B2springcloud%E7%94%B5%E5%95%86%E9%A1%B9%E7%9B%AE/" class="current">K8s部署SpringCloud电商项目</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-installation-management</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/2025%E6%9C%80%E6%96%B0-%E4%BC%81%E4%B8%9A%E7%BA%A7%E9%AB%98%E5%8F%AF%E7%94%A8%E9%9B%86%E7%BE%A4-%E5%9F%BA%E4%BA%8Erockylinux/">2025最新-企业级高可用集群-基于rockylinux</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/etcd%E9%AB%98%E5%8F%AF%E7%94%A8%E9%85%8D%E7%BD%AE%E4%BB%A5%E5%8F%8A%E6%A8%A1%E6%8B%9F%E9%9B%86%E7%BE%A4%E6%95%85%E9%9A%9C%E5%92%8C%E6%81%A2%E5%A4%8D/">etcd高可用配置以及模拟集群故障和恢复</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/k8s-Backstage-%E5%86%85%E9%83%A8%E5%BC%80%E5%8F%91%E8%80%85%E5%B9%B3%E5%8F%B0IDP%E5%AE%9E%E6%88%98/">K8s 平台工程实战：用 Backstage 打造一站式内部开发者平台</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/k8s-cgroup-v2%E6%B7%B1%E5%BA%A6%E8%A7%A3%E6%9E%90-%E8%BF%81%E7%A7%BB%E5%AE%9E%E6%88%98%E4%B8%8E%E9%81%BF%E5%9D%91%E6%8C%87%E5%8D%97/">K8s CGroup v2 深度解析：资源隔离原理、迁移实战与生产避坑指南</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/k8s%E4%B8%A4%E5%9C%B0%E4%B8%89%E4%B8%AD%E5%BF%83%E6%9E%B6%E6%9E%84/">k8s两地三中心架构</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/k8s%E5%A4%9A%E9%9B%86%E7%BE%A4kubeconfig%E7%AE%A1%E7%90%86/">k8s多集群kubeconfig管理</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/k8s%E6%95%85%E9%9A%9C%E6%8E%92%E6%9F%A5%E6%8C%87%E5%8D%97/">k8s故障排查指南</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/k8s%E7%94%9F%E4%BA%A7%E7%8E%AF%E5%A2%83%E4%BC%98%E5%8C%96%E4%B8%8E%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/">k8s生产环境优化与最佳实践</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/k8s%E9%83%A8%E7%BD%B2%E9%98%B2%E7%81%AB%E5%A2%99%E7%AB%AF%E5%8F%A3%E9%85%8D%E7%BD%AE/">K8s部署防火墙端口配置</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/latest-version/%E5%AE%89%E8%A3%85k8s-1.35-%E5%9F%BA%E4%BA%8Erockylinux10-%E6%9C%80%E6%96%B0%E6%AD%A5%E9%AA%A4/">在 Rocky Linux 10 上安装 Kubernetes 1.35</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%AE%89%E8%A3%85k8s%E9%AB%98%E5%8F%AF%E7%94%A8%E9%9B%86%E7%BE%A4/">二进制安装k8s高可用集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.20.6-%E9%AB%98%E5%8F%AF%E7%94%A8/">安装k8s-1.20.6-高可用</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.23/">安装k8s-1.23</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.26-1.27/">安装k8s-1.26-1.27</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.28/">安装k8s-1.28</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.30-%E5%9F%BA%E4%BA%8Erockylinux/">安装k8s-1.30-基于rockylinux</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.32-%E5%9F%BA%E4%BA%8Erockylinux/">安装k8s-1.32-基于rockylinux</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.33-%E5%9F%BA%E4%BA%8Erockylinux-%E6%9C%80%E6%96%B0%E6%AD%A5%E9%AA%A4/">安装k8s-1.33-基于rockylinux-最新步骤</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/%E5%8D%87%E7%BA%A7/k8s-1.37-%E5%8D%87%E7%BA%A7%E9%A1%BB%E7%9F%A5-breaking-changes/">Kubernetes v1.37 升级破坏性变更指南</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/%E5%8D%87%E7%BA%A7/k8s%E8%BF%81%E7%A7%BB%E5%AE%B9%E5%99%A8%E8%BF%90%E8%A1%8C%E6%97%B6-%E7%89%88%E6%9C%AC%E5%8D%87%E7%BA%A7/">k8s迁移容器运行时与版本升级</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-monitoring-logging</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/K8s%E5%85%A8%E9%9D%A2%E5%B7%A1%E6%A3%80%E8%84%9A%E6%9C%AC-%E7%94%9F%E6%88%90HTML%E5%81%A5%E5%BA%B7%E6%8A%A5%E5%91%8A/">K8s 全面巡检脚本：一键生成 HTML 健康报告</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/OpenTelemetry%E5%AE%9E%E6%88%98-%E7%BB%9F%E4%B8%80Traces-Metrics-Logs/">OpenTelemetry 实战：告别厂商锁定，统一 Traces/Metrics/Logs</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/Prometheus%E5%9F%BA%E7%A1%80/">Prometheus基础</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/Prometheus%E7%9B%91%E6%8E%A7k8s%E7%B3%BB%E7%BB%9F%E7%BB%84%E4%BB%B6/">Prometheus监控K8s系统组件</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/Prometheus%E7%9B%91%E6%8E%A7%E5%A4%96%E9%83%A8k8s%E9%9B%86%E7%BE%A4/">Prometheus监控外部K8s集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/Prometheus%E7%9B%91%E6%8E%A7%E9%9D%9E%E4%BA%91%E5%8E%9F%E7%94%9F%E5%BA%94%E7%94%A8-%E4%B8%BB%E6%9C%BA/">Prometheus监控非云原生应用-主机</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/helm%E9%83%A8%E7%BD%B2Loki-promtail-tempo-grafanaAgent%E5%85%A8%E5%AE%B6%E6%A1%B6/">Helm部署Loki+Promtail+Tempo+GrafanaAgent全家桶</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/helm%E9%83%A8%E7%BD%B2jaeger/">Helm部署Jaeger</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/helm%E9%83%A8%E7%BD%B2prometheus-stack%E5%85%A8%E5%AE%B6%E6%A1%B6/">Prometheus-Stack 全家桶：生产级部署与运维完全指南</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E6%97%A5%E5%BF%97%E7%AE%A1%E7%90%86-%E9%87%87%E9%9B%86%E6%96%B9%E6%A1%88%E4%B8%8E%E5%AE%A1%E8%AE%A1%E6%97%A5%E5%BF%97/">K8s 日志管理：基础机制、六种采集方案与审计日志实战</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E7%9B%91%E6%8E%A7EFK%2Blogstash%2Bkafka/">K8s监控EFK+logstash+kafka</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E7%9B%91%E6%8E%A7ES%287.2%29%2BKibana%287.2%29%2BFluentd%28v1.4.2%29/">K8s监控ES(7.2)+Kibana(7.2)+Fluentd(v1.4.2)</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E7%9B%91%E6%8E%A7Prometheus%28v2.2.1%29/">K8s监控Prometheus(v2.2.1)</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E7%9B%91%E6%8E%A7Prometheus%28v2.33.5%29%2BGrafana%28v8.4.5%29/">K8s监控Prometheus(v2.33.5)+Grafana(v8.4.5)</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E7%9B%91%E6%8E%A7alertmanager%28v0.14.0%29/">K8s监控Alertmanager(v0.14.0)</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E9%83%A8%E7%BD%B2elasticsearch%E9%9B%86%E7%BE%A4/">K8s部署Elasticsearch集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E9%83%A8%E7%BD%B2grafana%28v5.0.4%29/">K8s部署Grafana(v5.0.4)</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E9%83%A8%E7%BD%B2%E5%85%A8%E9%93%BE%E8%B7%AF%E8%BF%BD%E8%B8%AA-Skywalking/">K8s部署全链路追踪-Skywalking</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2Prometheus%28v2.32.1%29%E8%81%94%E9%82%A6%E9%9B%86%E7%BE%A4/">二进制部署Prometheus(v2.32.1)联邦集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2efk%2Blogstash%2Bkafka%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%B9%B3%E5%8F%B0/">二进制部署EFK+Logstash+Kafka日志收集平台</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2prometheus-grafana-nodeexporter/">二进制部署Prometheus-Grafana-NodeExporter</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/%E5%9F%BA%E4%BA%8Ehelm%2Boperator%E9%83%A8%E7%BD%B2ECK%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%B9%B3%E5%8F%B0/">基于Helm+Operator部署ECK日志收集平台</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-networking-service-mesh</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/Istio-Sidecar-vs-Ambient/">Istio Sidecar vs Ambient 模式对比</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/helm%E5%AE%89%E8%A3%85istio/">Helm安装Istio</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/helm%E9%83%A8%E7%BD%B2external-dns/">Helm部署External-DNS</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/helm%E9%83%A8%E7%BD%B2ingress-nginx/">Helm部署Ingress-Nginx</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/helm%E9%83%A8%E7%BD%B2tomcat/">Helm 部署 Tomcat</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/k8s-Gateway-API%E5%85%A5%E9%97%A8-Ingress%E4%B8%8B%E4%B8%80%E4%BB%A3%E6%96%B9%E6%A1%88/">Kubernetes Gateway API 入门：Ingress 的下一代方案</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/k8s%E7%B2%BE%E7%BB%86%E5%8C%96%E6%B5%81%E9%87%8F%E7%AE%A1%E7%90%86-istio/">K8s精细化流量管理-Istio</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/k8s%E9%83%A8%E7%BD%B2istio%281.13.1%29/">K8s部署Istio(1.13.1)</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/k8s%E9%9B%86%E7%BE%A4%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/">K8s集群网络安全</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/%E4%BC%81%E4%B8%9A%E9%A1%B9%E7%9B%AE%E6%8E%A5%E5%85%A5istio%E5%AE%9E%E6%88%98/">企业项目接入Istio实战</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-scaling</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-scaling/KEDA-vs-HPA-2026%E7%BB%88%E6%9E%81%E5%AF%B9%E6%AF%94-v1.36%E7%BC%A9%E9%9B%B6/">KEDA vs HPA 2026 终极对比：v1.36 原生缩零后该选谁？</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-scaling/helm%E9%83%A8%E7%BD%B2goldilocks/">Helm部署Goldilocks</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-scaling/helm%E9%83%A8%E7%BD%B2vpa/">Helm部署VPA</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-scaling/k8s-HPA-VPA/">K8s HPA与VPA</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-scaling/k8s-%E5%9F%BA%E4%BA%8EKEDA%E7%9A%84%E5%BC%B9%E6%80%A7%E8%83%BD%E5%8A%9B/">K8s基于KEDA的弹性能力</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-scaling/k8s%E6%88%90%E6%9C%AC%E4%BC%98%E5%8C%96%E6%96%B9%E6%A1%88-FinOps%E5%AE%9E%E6%88%98/">K8s 集群成本优化方案：砍掉 60% 云账单</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-security-auth</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2capsule/">Helm部署Capsule</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2certmanager/">Helm部署Cert-Manager</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2external-secrets/">Helm部署External-Secrets</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2kyverno%E5%92%8Cpolicy-reporter/">Helm部署Kyverno和Policy-Reporter</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2oauth2proxy/">Helm部署OAuth2-Proxy</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2sonarqube/">Helm部署SonarQube</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2trivy-operator/">Helm部署Trivy-Operator</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/k8s-Admission-Webhook%E9%93%BE%E5%86%B2%E7%AA%81%E6%8E%92%E6%9F%A5-Istio-Kyverno-Gatekeeper/">当 Istio、Kyverno、Gatekeeper 三个 Webhook 同时存在，你的集群会发生什么？</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/k8s%E5%AE%B9%E5%99%A8%E5%AE%89%E5%85%A8%E4%B8%8A%E4%B8%8B%E6%96%87-SecurityContext/">Kubernetes 容器安全上下文完全指南：从入门到生产避坑</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-springcloud</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-springcloud/SpringCloud%E9%A1%B9%E7%9B%AE%E8%BF%81%E7%A7%BB%E5%88%B0k8s%E5%AE%9E%E6%88%98/">SpringCloud 项目迁移到 K8s 实战</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-storage</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-storage/helm%E9%83%A8%E7%BD%B2nfs-subdir-external-provisioner/">Helm部署NFS Subdir External Provisioner</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-storage/k8s-ceph%E9%83%A8%E7%BD%B2%E4%B8%8E%E9%9B%86%E6%88%90/">K8s Ceph部署与集成</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-storage/k8s-%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8CubeFS/">K8s分布式存储CubeFS</a></li>
+        </ul>
+        <p class="sidebar-group">kubeblocks</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/kubeblocks/kubeblocks%E9%83%A8%E7%BD%B2WordPress/">KubeBlocks 部署 WordPress</a></li>
+          <li><a href="../../../Docker-Kubernetes/kubeblocks/kubeblocks%E9%83%A8%E7%BD%B2%E9%AB%98%E5%8F%AF%E7%94%A8harbor%E9%9B%86%E7%BE%A4/">KubeBlocks 部署高可用 Harbor 集群</a></li>
+        </ul>
+        <p class="sidebar-group">其他</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/%E7%AE%80%E5%8E%86%E6%8C%87%E5%8D%97/">简历指南</a></li>
+        </ul>
+      </nav>
+    </details>
+  </aside>
+
+  <article class="article">
+    <nav class="breadcrumb">
+      <a href="../../../index.html">首页</a><span>/</span>
+      <a href="../../../Docker-Kubernetes/">Docker-Kubernetes</a><span>/</span><span>k8s-db-middleware</span>
+    </nav>
+    <h1 class="article-title">K8s部署SpringCloud电商项目</h1>
+    <p class="article-meta"><span>更新于 2026-04-16</span>
+      <a href="https://github.com/hangx969/learning-notes/blob/main/Docker-Kubernetes/k8s-db-middleware/k8s%E9%83%A8%E7%BD%B2springcloud%E7%94%B5%E5%95%86%E9%A1%B9%E7%9B%AE.md">查看源文件</a>
+    </p>
+    <div class="article-body">
+<h1 id="部署harbor">部署Harbor</h1>
+<h2 id="环境规划">环境规划</h2>
+<table>
+<thead>
+<tr>
+<th>主机名</th>
+<th>IP</th>
+<th>配置</th>
+<th>网络</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>harbor</td>
+<td>172.16.183.74</td>
+<td>4c/4G/60G硬盘</td>
+<td>NAT</td>
+</tr>
+</tbody>
+</table>
+<h2 id="安装准备">安装准备</h2>
+<ul>
+<li>更换阿里的yum源 </li>
+</ul>
+<div class="highlight"><pre><span></span><code>mv<span class="w"> </span>/etc/yum.repos.d/CentOS-Base.repo<span class="w">  </span>/etc/yum.repos.d/CentOS-Base.repo.backup
+wget<span class="w"> </span>-O<span class="w"> </span>/etc/yum.repos.d/CentOS-Base.repo<span class="w"> </span>http://mirrors.aliyun.com/repo/Centos-7.repo
+</code></pre></div>
+
+<ul>
+<li>安装软件包</li>
+</ul>
+<div class="highlight"><pre><span></span><code>yum<span class="w"> </span>-y<span class="w"> </span>install<span class="w"> </span>wget<span class="w"> </span>net-tools<span class="w"> </span>nfs-utils<span class="w"> </span>lrzsz<span class="w"> </span>gcc<span class="w"> </span>gcc-c++<span class="w"> </span>make<span class="w"> </span>cmake<span class="w"> </span>libxml2-devel<span class="w"> </span>openssl-devel<span class="w"> </span>curl<span class="w"> </span>curl-devel<span class="w"> </span>unzip<span class="w"> </span>sudo<span class="w"> </span>ntp<span class="w"> </span>libaio-devel<span class="w"> </span>wget<span class="w"> </span>vim<span class="w"> </span>ncurses-devel<span class="w"> </span>autoconf<span class="w"> </span>automake<span class="w"> </span>zlib-devel<span class="w">  </span>python-devel<span class="w"> </span>epel-release<span class="w"> </span>openssh-server<span class="w"> </span>socat<span class="w">  </span>ipvsadm<span class="w"> </span>conntrack<span class="w"> </span>ntpdate<span class="w"> </span>yum-utils<span class="w"> </span>device-mapper-persistent-data<span class="w">  </span>lvm2
+</code></pre></div>
+
+<ul>
+<li>添加docker软件源 </li>
+</ul>
+<div class="highlight"><pre><span></span><code>yum-config-manager<span class="w"> </span>--add-repo<span class="w"> </span>http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
+</code></pre></div>
+
+<ul>
+<li>配置防火墙</li>
+</ul>
+<div class="highlight"><pre><span></span><code>systemctl<span class="w"> </span>stop<span class="w"> </span>firewalld<span class="w">  </span><span class="o">&amp;&amp;</span><span class="w"> </span>systemctl<span class="w">  </span>disable<span class="w"> </span>firewalld
+</code></pre></div>
+
+<ul>
+<li>时间同步</li>
+</ul>
+<div class="highlight"><pre><span></span><code>ntpdate<span class="w"> </span>cn.pool.ntp.org
+<span class="c1">#编辑计划任务，每分钟做一次同步</span>
+crontab<span class="w"> </span>-e
+*<span class="w"> </span>*/1<span class="w"> </span>*<span class="w"> </span>*<span class="w"> </span>*<span class="w"> </span>/usr/sbin/ntpdate<span class="w">   </span>cn.pool.ntp.org
+</code></pre></div>
+
+<ul>
+<li>重启crond服务</li>
+</ul>
+<div class="highlight"><pre><span></span><code>service<span class="w"> </span>crond<span class="w"> </span>restart
+</code></pre></div>
+
+<ul>
+<li>关闭selinux</li>
+</ul>
+<div class="highlight"><pre><span></span><code>sed<span class="w"> </span>-i<span class="w">  </span><span class="s1">&#39;s/SELINUX=enforcing/SELINUX=disabled/g&#39;</span><span class="w"> </span>/etc/sysconfig/selinux
+sed<span class="w"> </span>-i<span class="w">  </span><span class="s1">&#39;s/SELINUX=enforcing/SELINUX=disabled/g&#39;</span><span class="w"> </span>/etc/selinux/config
+reboot<span class="w"> </span>-f
+<span class="c1">#注：生产环境不要reboot -f，要正常关机重启</span>
+</code></pre></div>
+
+<ul>
+<li>修改内核参数</li>
+</ul>
+<div class="highlight"><pre><span></span><code>modprobe<span class="w"> </span>br_netfilter
+tee<span class="w"> </span>-a<span class="w"> </span>/etc/sysctl.d/k8s.conf<span class="w"> </span><span class="s">&lt;&lt;&#39;EOF&#39;</span>
+<span class="s">net.bridge.bridge-nf-call-ip6tables = 1</span>
+<span class="s">net.bridge.bridge-nf-call-iptables = 1</span>
+<span class="s">EOF</span>
+sysctl<span class="w"> </span>--system
+</code></pre></div>
+
+<ul>
+<li>配置hosts文件</li>
+</ul>
+<p><code>sh
+  tee -a /etc/hosts &lt;&lt;'EOF'
+  172.16.183.74 harbor
+  172.16.183.75 master1
+  172.16.183.76 node1
+  EOF
+  #master1和node1添加harbor
+  tee -a /etc/hosts &lt;&lt;'EOF'
+  172.16.183.74 harbor
+  EOF</code></p>
+<ul>
+<li>主机间无密码登录</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="c1">#master1上</span>
+<span class="nb">cd</span><span class="w"> </span>/root<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>ssh-keygen<span class="w"> </span>-t<span class="w"> </span>rsa
+ssh-copy-id<span class="w"> </span>-i<span class="w"> </span>.ssh/id_rsa.pub<span class="w"> </span>root@harbor
+</code></pre></div>
+
+<h2 id="安装docker">安装docker</h2>
+<ul>
+<li>安装</li>
+</ul>
+<div class="highlight"><pre><span></span><code>yum<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>docker-ce-19.03.7-3.el7
+systemctl<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>docker<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>systemctl<span class="w"> </span>start<span class="w"> </span>docker<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>systemctl<span class="w"> </span>status<span class="w"> </span>docker
+<span class="c1">#修改docker配置文件</span>
+cat<span class="w"> </span>&gt;<span class="w"> </span>/etc/docker/daemon.json<span class="w"> </span><span class="s">&lt;&lt;EOF</span>
+<span class="s">{</span>
+<span class="s">&quot;registry-mirrors&quot;:[&quot;https://rsbud4vc.mirror.aliyuncs.com&quot;,&quot;https://registry.docker-cn.com&quot;,&quot;https://docker.mirrors.ustc.edu.cn&quot;,&quot;https://dockerhub.azk8s.cn&quot;,&quot;http://hub-mirror.c.163.com&quot;,&quot;http://qtid6917.mirror.aliyuncs.com&quot;], </span>
+<span class="s">&quot;insecure-registries&quot;:[&quot;172.16.183.74&quot;]</span>
+<span class="s">}</span>
+<span class="s">EOF</span>
+systemctl<span class="w"> </span>daemon-reload<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>systemctl<span class="w"> </span>restart<span class="w"> </span>docker<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>systemctl<span class="w"> </span>status<span class="w"> </span>docker
+</code></pre></div>
+
+<ul>
+<li>开启机器的bridge模式</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="c1">#永久生效</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">vm.swappiness = 0</span>
+<span class="s2">net.bridge.bridge-nf-call-iptables = 1</span>
+<span class="s2">net.ipv4.ip_forward = 1</span>
+<span class="s2">net.bridge.bridge-nf-call-ip6tables = 1</span>
+<span class="s2">&quot;&quot;&quot;</span><span class="w"> </span>&gt;<span class="w"> </span>/etc/sysctl.conf
+sysctl<span class="w"> </span>-p<span class="w"> </span>/etc/sysctl.conf
+</code></pre></div>
+
+<h2 id="安装harbor">安装Harbor</h2>
+<ol>
+<li>为harbor创建自签发证书</li>
+</ol>
+<p><code>bash
+   mkdir /data/ssl -p
+   cd /data/ssl/
+   #生成一个3072位的key，也就是私钥
+   openssl genrsa -out ca.key 3072
+   #生成一个数字证书ca.pem，3650表示证书的有效时间是10年。后续根据ca.pem根证书来签发信任的客户端证书
+   openssl req -new -x509 -days 3650 -key ca.key -out ca.pem 
+   #生成域名的证书
+   #生成一个3072位的key，也就是私钥
+   openssl genrsa -out harbor.key  3072
+   #生成一个证书请求文件，一会签发证书时需要的。CN写主机名harbor
+   openssl req -new -key harbor.key -out harbor.csr
+   #签发证书：
+   openssl x509 -req -in harbor.csr -CA ca.pem -CAkey ca.key -CAcreateserial -out harbor.pem -days 3650
+   #验证证书有效
+   openssl x509 -noout -text -in harbor.pem</code></p>
+<ol>
+<li>安装harbor</li>
+</ol>
+<p>```bash<br />
+   #创建安装目录<br />
+   mkdir /data/install -p<br />
+   #安装harbor<br />
+   #/data/ssl目录下有如下文件：ca.key  ca.pem  ca.srl  harbor.csr  harbor.key  harbor.pem<br />
+   cd /data/install/<br />
+   #把harbor的离线包harbor-offline-installer-v2.3.0-rc3.tgz上传到这个目录，离线包在课件里提供了<br />
+   #下载harbor离线包的地址：<br />
+   #https://github.com/goharbor/harbor<br />
+   #解压：<br />
+   tar zxvf harbor-offline-installer-v2.3.0-rc3.tgz<br />
+   cd harbor<br />
+   cp harbor.yml.tmpl harbor.yml </p>
+<p>vim harbor.yml<br />
+   #修改配置文件：<br />
+   hostname: harbor #修改hostname，跟上面签发的证书域名保持一致<br />
+   #协议用https<br />
+   certificate: /data/ssl/harbor.pem<br />
+   private_key: /data/ssl/harbor.key<br />
+   #邮件和ldap不需要配置，在harbor的web界面可以配置，其他配置采用默认即可。<br />
+   ```</p>
+<ol>
+<li>
+<p>安装docker-compose</p>
+</li>
+<li>
+<p>docker-compose项目是Docker官方的开源项目，负责实现对Docker容器集群的快速编排。Docker-Compose的工程配置文件默认为docker-compose.yml，Docker-Compose运行目录下的必要有一个docker-compose.yml。docker-compose可以管理多个docker实例。</p>
+</li>
+</ol>
+<p><code>sh
+   #配置k8s源
+   cat &gt;  /etc/yum.repos.d/kubernetes.repo  &lt;&lt;EOF
+   [kubernetes]
+   name=Kubernetes
+   baseurl=https://mirrors.aliyun.com/kubernetes/yum/repos/kubernetes-el7-x86_64
+   enabled=1
+   gpgcheck=0
+   EOF</code></p>
+<p><code>bash
+   yum install docker-compose -y
+   #安装harbor依赖的的离线镜像包docker-harbor-2-3-0.tar.gz上传到harbor机器解压。docker compose要用
+   docker load -i docker-harbor-2-3-0.tar.gz 
+   cd /data/install/harbor &amp;&amp; ./install.sh
+   #出现✔ ----Harbor has been installed and started successfully.---- 表明安装成功。</code></p>
+<ol>
+<li>harbor启动和停止</li>
+</ol>
+<p><code>bash
+   #如何停掉harbor：
+   cd /data/install/harbor &amp;&amp; docker-compose stop 
+   #如何启动harbor：
+   sudo su
+   cd /data/install/harbor &amp;&amp; docker-compose start</code></p>
+<p>#注：harbor默认的账号密码：admin/Harbor12345</p>
+<ol>
+<li>
+<p>图形化界面访问harbor</p>
+</li>
+<li>
+<p>在C:\Windows\System32\drivers\etc下修改hosts文件，添加 harbor 。浏览器访问：https://harbor/</p>
+</li>
+</ol>
+<h2 id="harbor私有仓库使用">harbor私有仓库使用</h2>
+<div class="highlight"><pre><span></span><code><span class="c1">#在k8s工作机节点上修改docker镜像源</span>
+<span class="c1">#修改docker配置 </span>
+vim<span class="w"> </span>/etc/docker/daemon.json
+
+<span class="o">{</span><span class="w">  </span><span class="s2">&quot;registry-mirrors&quot;</span>:<span class="w"> </span><span class="o">[</span><span class="s2">&quot;https://rsbud4vc.mirror.aliyuncs.com&quot;</span>,<span class="s2">&quot;https://registry.docker-cn.com&quot;</span>,<span class="s2">&quot;https://docker.mirrors.ustc.edu.cn&quot;</span>,<span class="s2">&quot;https://dockerhub.azk8s.cn&quot;</span>,<span class="s2">&quot;http://hub-mirror.c.163.com&quot;</span><span class="o">]</span>,
+<span class="s2">&quot;insecure-registries&quot;</span>:<span class="w"> </span><span class="o">[</span><span class="s2">&quot;172.16.183.74&quot;</span>,<span class="s2">&quot;harbor&quot;</span><span class="o">]</span>
+<span class="o">}</span>
+<span class="c1">#注意：配置新增加了一行内容如下：&quot;insecure-registries&quot;: [&quot;172.16.183.74&quot;,&quot;harbor&quot;]</span>
+<span class="c1">#上面增加的内容表示我们内网访问harbor的时候走的是http，172.16.183.74是安装harbor机器的ip</span>
+<span class="c1">#修改配置之后使配置生效：</span>
+systemctl<span class="w"> </span>daemon-reload<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>systemctl<span class="w"> </span>restart<span class="w"> </span>docker<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>systemctl<span class="w"> </span>status<span class="w"> </span>docker
+<span class="c1">#登录仓库</span>
+docker<span class="w"> </span>login<span class="w"> </span><span class="m">172</span>.16.183.74
+<span class="c1">#将本地镜像上传到仓库</span>
+docker<span class="w"> </span>load<span class="w"> </span>-i<span class="w"> </span>tomcat.tar.gz
+docker<span class="w"> </span>tag<span class="w"> </span>tomcat:latest<span class="w">  </span><span class="m">172</span>.16.183.74/test/tomcat:v1
+docker<span class="w"> </span>push<span class="w"> </span><span class="m">172</span>.16.183.74/test/tomcat:v1<span class="w"> </span>
+<span class="c1">#从仓库拉取镜像</span>
+docker<span class="w"> </span>rmi<span class="w"> </span>-f<span class="w"> </span><span class="m">172</span>.16.183.74/test/tomcat:v1
+docker<span class="w"> </span>pull<span class="w"> </span><span class="m">172</span>.16.183.74/test/tomcat:v1
+</code></pre></div>
+
+<h1 id="部署ingress">部署ingress</h1>
+<h2 id="ingress介绍">ingress介绍</h2>
+<ul>
+<li>
+<p>Ingress官网定义：Ingress可以把进入到集群内部的请求转发到集群中的一些服务上，从而可以把服务映射到集群外部。Ingress 能把集群内Service 配置成外网能够访问的 URL，流量负载均衡，提供基于域名访问的虚拟主机等。</p>
+</li>
+<li>
+<p>Ingress简单的理解就是你原来需要改Nginx配置，然后配置各种域名对应哪个 Service，现在把这个动作抽象出来，变成一个 Ingress 对象，你可以用 yaml 创建，每次不要去改Nginx 了，直接改yaml然后创建/更新就行了；那么问题来了：”Nginx 该怎么处理？”</p>
+</li>
+<li>
+<p>Ingress Controller 这东西就是解决 “Nginx 的处理方式” 的；Ingress Controller 通过与 Kubernetes API 交互，动态的去感知集群中Ingress规则变化，然后读取他，按照他自己模板生成一段 Nginx 配置，再写到 Nginx Pod 里，最后 reload 一下。</p>
+</li>
+<li>
+<p>Ingress Controller是一个七层负载均衡调度器，客户端的请求先到达这个七层负载均衡调度器，由七层负载均衡器在反向代理到后端pod，常见的七层负载均衡器有nginx、traefik。</p>
+</li>
+<li>
+<p>以我们熟悉的nginx为例，假如请求到达nginx，会通过upstream反向代理到后端pod应用，但是后端pod的ip地址是一直在变化的，因此在后端pod前需要加一个service，这个service只是起到分组的作用，那么我们upstream只需要填写service地址即可。</p>
+</li>
+</ul>
+<p><img alt="image-20240325171557723" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202403251716829.png" /></p>
+<h2 id="安装ingress-controller">安装ingress controller</h2>
+<p>Ingress-controller官网：<a href="https://github.com/kubernetes/ingress-nginx/">ingress-nginx - GitHub</a></p>
+<div class="highlight"><pre><span></span><code><span class="c1">#把kube-webhook-certgen-v1.1.1.tar.gz和ingress-nginx-controllerv1.1.1.tar.gz镜像上传到xianchaonode1节点，手动解压镜像：</span>
+docker<span class="w"> </span>load<span class="w"> </span>-i<span class="w"> </span>ingress-nginx-controllerv1.1.1.tar.gz
+docker<span class="w"> </span>load<span class="w"> </span>-i<span class="w"> </span>kube-webhook-certgen-v1.1.1.tar.gz
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="c1">#更新yaml文件，下面需要的yaml文件在课件，可上传到master1机器上：</span>
+<span class="c1">#安装Ingress conrtroller需要的yaml所在的github地址：</span>
+<span class="c1">#https://github.com/kubernetes/ingress-nginx/blob/main/deploy/static/provider/baremetal/deploy.yaml</span>
+kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>deploy.yaml
+kubectl<span class="w"> </span>create<span class="w"> </span>clusterrolebinding<span class="w"> </span>clusterrolebinding-user-3<span class="w">  </span>--clusterrole<span class="o">=</span>cluster-admin<span class="w"> </span>--user<span class="o">=</span>system:serviceaccount:ingress-nginx:ingress-nginx
+</code></pre></div>
+
+<h2 id="测试部署tomcat服务">测试部署tomcat服务</h2>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Service</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tomcat</span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">selector</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tomcat</span>
+<span class="w">    </span><span class="nt">release</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">canary</span>
+<span class="w">  </span><span class="nt">ports</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">http</span>
+<span class="w">    </span><span class="nt">targetPort</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8080</span>
+<span class="w">    </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8080</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ajp</span>
+<span class="w">    </span><span class="nt">targetPort</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8009</span>
+<span class="w">    </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8009</span>
+<span class="nn">---</span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">apps/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Deployment</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tomcat-deploy</span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">replicas</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span>
+<span class="w">  </span><span class="nt">selector</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">matchLabels</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tomcat</span>
+<span class="w">      </span><span class="nt">release</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">canary</span>
+<span class="w">  </span><span class="nt">template</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">metadata</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tomcat</span>
+<span class="w">        </span><span class="nt">release</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">canary</span>
+<span class="w">    </span><span class="nt">spec</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">containers</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tomcat</span>
+<span class="w">        </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tomcat:8.5.34-jre8-alpine</span><span class="w">   </span>
+<span class="w">        </span><span class="nt">ports</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">http</span>
+<span class="w">          </span><span class="nt">containerPort</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8080</span>
+<span class="w">          </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ajp</span>
+<span class="w">          </span><span class="nt">containerPort</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8009</span>
+<span class="nn">---</span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">networking.k8s.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Ingress</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ingress-myapp</span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
+<span class="w">  </span><span class="nt">annotations</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">kubernetes.io/ingress.class</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;nginx&quot;</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">rules</span><span class="p">:</span><span class="w">  </span><span class="c1">#定义后端转发的规则</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tomcat.lucky.com</span><span class="w"> </span><span class="c1">#通过域名进行转发</span>
+<span class="w">    </span><span class="nt">http</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">paths</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/</span><span class="w">  </span><span class="c1">#配置访问路径，如果通过url进行转发，需要修改；空默认为访问的路径为&quot;/&quot;</span>
+<span class="w">        </span><span class="nt">pathType</span><span class="p">:</span><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">Prefix</span>
+<span class="w">        </span><span class="nt">backend</span><span class="p">:</span><span class="w">  </span><span class="c1">#配置后端服务</span>
+<span class="w">         </span><span class="nt">service</span><span class="p">:</span>
+<span class="w">           </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tomcat</span>
+<span class="w">           </span><span class="nt">port</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">number</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8080</span>
+</code></pre></div>
+
+<h1 id="微服务介绍">微服务介绍</h1>
+<ul>
+<li>微服务是一种软件开发架构模式，用于构建应用程序。它是一种将单个应用程序拆分为一组小型、独立的服务的方法。每个微服务都是一个独立的、可独立部署和扩展的单元，通过轻量级通信机制相互交互。</li>
+<li>微服务架构的核心思想是将应用程序拆分为一组小型服务，每个服务专注于特定的业务功能。每个微服务都有自己的数据库和业务逻辑，并且可以使用不同的编程语言和技术栈进行开发。这使得团队可以独立地开发、测试、部署和扩展每个微服务，而不会对其他服务产生影响。</li>
+<li>微服务通过使用轻量级的通信协议（如REST或消息队列）来进行服务之间的通信。这些服务可以在不同的服务器上部署，可以通过API进行交互。由于每个微服务都是独立的，因此可以独立进行水平扩展，以满足高负载和高可用性的需求。</li>
+</ul>
+<p><img alt="image-20240325190734586" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202403251907677.png" /></p>
+<h2 id="需要考虑的问题">需要考虑的问题</h2>
+<ol>
+<li>统一的配置管理中心</li>
+<li>服务拆分以后，服务的数量非常多，如果所有的配置都以配置文件的方式放在应用本地的话，非常难以管理，可以想象当有几百上千个进程中有一个配置出现了问题，是很难将它找出来的，因而需要有统一的配置中心，来管理所有的配置，进行统一的配置下发。</li>
+<li>在微服务中，配置往往分为几类，一类是几乎不变的配置，这种配置可以直接打在容器镜像里面，第二类是启动时就会确定的配置，这种配置往往通过环境变量，在容器启动的时候传进去，第三类就是统一的配置，需要通过配置中心进行下发，例如在大促的情况下，有些功能需要降级，哪些功能可以降级，哪些功能不能降级，都可以在配置文件中统一配置。</li>
+<li>全链路监控</li>
+<li>系统和应用的监控<ul>
+<li>监控系统和服务的健康状态和性能瓶颈，当系统出现异常的时候，监控系统可以配合告警系统，及时地发现，通知，干预，从而保障系统的顺利运行。</li>
+</ul>
+</li>
+<li>调用关系的监控</li>
+<li>对代码调用关系进行监控</li>
+<li>日志收集<ul>
+<li>业务层面、代码层面、系统层面</li>
+</ul>
+</li>
+</ol>
+<h2 id="常见微服务框架">常见微服务框架</h2>
+<ol>
+<li>Spring Cloud：</li>
+<li>Spring Cloud是基于Java的微服务框架，构建在Spring Framework之上。它提供了一系列工具和库，用于快速开发和部署微服务应用程序。Spring Cloud包括服务注册与发现、负载均衡、断路器、配置管理等功能，如Eureka、Ribbon、Hystrix、Config等。</li>
+<li>主要是面向开发的，开发用这个写代码。</li>
+<li>springcloud项目部署到k8s的话，一些功能就可以用k8s提供的功能来实现了。</li>
+<li>Netflix OSS：</li>
+<li>Netflix开源了一套用于构建可扩展、高性能微服务的工具集，被广泛应用于微服务架构中。这些工具包括服务注册与发现（Eureka）、负载均衡（Ribbon）、断路器（Hystrix）、网关（Zuul）、分布式跟踪（Zipkin）等。</li>
+<li>Kubernetes：</li>
+<li>Kubernetes是一个容器编排平台，也可以用于部署和管理微服务。它提供了强大的容器编排、服务发现、自动伸缩和负载均衡等功能。Kubernetes能够管理和调度微服务的容器实例，并提供故障恢复和自动扩展能力。</li>
+<li>Service Mesh：</li>
+<li>Service Mesh是一种用于管理微服务通信的新型架构模式。它通过在微服务之间插入一个专用的代理层，提供了诸如服务发现、负载均衡、安全认证、故障恢复等功能。常见的Service Mesh实现包括Envoy、Linkerd和Istio。</li>
+</ol>
+<h1 id="springcloud">SpringCloud</h1>
+<h2 id="介绍">介绍</h2>
+<ul>
+<li>官网：<a href="https://spring.io/projects/spring-cloud/">Spring Cloud</a></li>
+</ul>
+<p><img alt="" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202403251916020.png" /></p>
+<p>Spring Cloud是一个开源的、用于构建分布式系统的框架。它基于Spring框架，提供了一套用于开发和管理分布式应用程序的工具和组件。</p>
+<p>通俗地说，当我们构建一个大型的软件系统时，通常需要将系统拆分成多个独立的服务，每个服务负责完成特定的功能。这些服务可能需要在不同的计算机或服务器上运行，它们之间需要相互通信和协作。Spring Cloud就是为了简化这个分布式系统的开发和管理而设计的。</p>
+<p>Spring Cloud提供了许多有用的功能和组件，包括服务注册与发现、负载均衡、断路器、配置管理、消息总线等。这些功能可以帮助开发人员轻松地构建具有弹性、可伸缩性和高可用性的分布式系统。</p>
+<p>其中，服务注册与发现是Spring Cloud的核心特性之一。它允许开发人员注册和发现各个服务的实例，使得服务能够相互发现并进行通信。负载均衡则可以平衡服务之间的请求流量，提高系统的性能和可靠性。断路器模式可以防止服务之间的故障传播，提高系统的稳定性。配置管理则可以集中管理各个服务的配置信息，方便进行动态配置和更新。</p>
+<p>开发人员使用SpringCloud的方式：</p>
+<ol>
+<li>服务开发：开发人员使用Spring Cloud框架构建各个微服务应用程序。他们可以使用Spring Boot来创建独立的、可运行的微服务应用，并使用Spring Cloud提供的组件和库来处理服务注册与发现、负载均衡、断路器等功能。开发人员可以使用Spring Cloud Netflix、Spring Cloud Alibaba等子项目，根据项目需求选择适合的组件。</li>
+<li>服务注册与发现：开发人员使用Spring Cloud提供的服务注册与发现组件，如Eureka或Consul，将各个微服务实例注册到注册中心，并实现服务之间的相互发现。</li>
+<li>负载均衡：开发人员可以使用Spring Cloud提供的负载均衡组件，如Ribbon，来平衡微服务实例之间的请求流量，提高系统的性能和可靠性。</li>
+<li>断路器：开发人员可以使用Spring Cloud的断路器组件，如Hystrix或Resilience4j，来实现容错和故障保护机制，防止故障的传播并提高系统的稳定性。</li>
+<li>配置管理：开发人员可以使用Spring Cloud的配置管理组件，如Spring Cloud Config，将配置信息集中管理，实现动态配置和更新。</li>
+</ol>
+<p>运维人员使用Spring Cloud的方式：</p>
+<ol>
+<li>部署和管理：运维人员负责将开发人员开发的微服务应用程序部署到适当的环境中，如云服务器或容器平台。他们可以使用Docker、Kubernetes等工具来管理微服务的部署和运行。</li>
+<li>监控和日志：运维人员需要监控微服务的运行状态、性能指标和日志信息。Spring Cloud提供了一些监控和管理工具，如Spring Boot Actuator和Spring Cloud Sleuth，可以帮助运维人员监控和管理微服务。</li>
+<li>自动化运维：运维人员可以使用Spring Cloud提供的自动化运维工具，如Spring Cloud Data Flow，来管理和监控大规模的微服务应用程序。这些工具可以简化运维任务，提高效率。</li>
+<li>故障处理和恢复：运维人员需要处理微服务中可能出现的故障，并采取相应的措施进行恢复。他们可以借助Spring Cloud提供的断路器和容错机制，来处理和隔离故障，保证整个系统的可用性。</li>
+</ol>
+<h2 id="组件">组件</h2>
+<h3 id="eureka">Eureka</h3>
+<ul>
+<li>服务注册发现框架；服务提供者将自己的信息注册到注册中心，而服务消费者则从注册中心获取服务提供者的信息</li>
+<li>服务提供者被称为服务实例。每个服务实例都会向注册中心注册自己的信息，包括服务名称、IP 地址、端口号等</li>
+</ul>
+<h3 id="zuul">Zuul</h3>
+<ul>
+<li>
+<p>服务网关，网关是微服务架构中的入口点，它扮演着转发请求、认证授权、负载均衡、缓存等功能的角色。</p>
+</li>
+<li>
+<p>Zuul 提供了一个统一的入口点，客户端只需与 Zuul 进行交互，无需关心后端服务的具体地址和细节</p>
+</li>
+</ul>
+<p><img alt="image-20240325193754333" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202403251937421.png" /></p>
+<h3 id="api-gateway">API Gateway</h3>
+<ul>
+<li>Spring Cloud已经放弃Zuul了。现在Spring Cloud中引用的还是Zuul 1.x版本，而这个版本是基于过滤器的，是阻塞IO，不支持长连接，spring官网上也已经没有zuul的组件了，所以介绍SpringCloud原生的网关产品Gateway。Spring Cloud Gateway 在性能和可扩展性方面更加出色。</li>
+</ul>
+<h3 id="springcloud-config">SpringCloud Config</h3>
+<ul>
+<li>Spring Cloud 提供的一个分布式配置管理工具，用于集中管理和提供应用程序的配置信息。它允许将配置文件存储在配置服务器中，并通过客户端将配置动态地分发给不同的服务实例。</li>
+<li>组件</li>
+<li>配置服务器（Config Server）：配置服务器是一个独立的组件，需要单独装出来，用于存储和管理配置文件。它可以从本地文件系统、Git 仓库或其他外部存储中获取配置文件，并提供 REST 接口供客户端访问。</li>
+<li>配置文件：配置文件是应用程序的配置信息，如数据库连接、服务端口、日志级别等。Spring Cloud Config 使用约定的文件命名规则（例如 application.properties 或 application.yml）来标识不同的配置文件。</li>
+<li>配置客户端（Config Client）：配置客户端是服务实例或应用程序，通过向配置服务器发起请求获取自身所需的配置信息。它与配置服务器进行交互，并将配置信息加载到应用程序中。</li>
+<li>配置刷新（Refresh）：配置刷新是指在运行时更新配置信息，而无需重启应用程序。通过发送请求到配置服务器的 /actuator/refresh 端点，可以触发配置的刷新，使客户端重新加载最新的配置。</li>
+</ul>
+<h3 id="ribbon">Ribbon</h3>
+<ul>
+<li>
+<p>客户端框架；服务消费者的请求分发到多个服务提供者实例之间，以实现请求的分散和负载均衡。</p>
+</li>
+<li>
+<p>与 Nginx 的关系： Ribbon 和 Nginx 都是常用的负载均衡技术，但它们运行在不同的层级和角色上。</p>
+</li>
+<li>
+<p>Ribbon 是运行在服务消费者端的负载均衡器，它通过在客户端进行负载均衡，在客户端经过一系列算法来均衡调用服务，将请求分发到多个服务提供者实例。</p>
+<ul>
+<li>它可以Ribbon 工作时分两步：<br />
+  第一步：从Eureka Server中获取服务注册信息列表，它优先选择在同一个 Zone 且负载较少的 Server。<br />
+  第二步：根据用户指定的策略，在从Server取到的服务注册列表中选择一个地址，其中Ribbon提供了多种策略，例如轮询、随机等。</li>
+</ul>
+<p><img alt="image-20240325193442519" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202403251934619.png" /></p>
+</li>
+<li>
+<p>Nginx 是一种独立的反向代理服务器，通常部署在服务提供者前面的服务器层。它通过在服务器端进行负载均衡，所有请求统一交给nginx，由nginx实现负载均衡请求转发。将请求转发到后端的多个服务提供者。</p>
+</li>
+</ul>
+<h3 id="hystrix">Hystrix</h3>
+<ul>
+<li>服务容错组件；</li>
+<li>服务雪崩</li>
+<li>假设有A、B、C三个服务，服务A --&gt; B --&gt; C，假设服务C因为请求量大，扛不住请求，变得不可用，这样就是积累大量的请求，服务B的请求也会阻塞，会逐渐耗尽线程资源，使得服务B变得不可用，那么服务A在调用服务B就会出现问题，导致服务A也不可用，那么整条链路的服务调用都失败了，我们称之为雪崩。</li>
+<li>在微服务架构中，在高并发情况下，如果请求数量达到一定极限（可以自己设置阈值），超出了设置的阈值，Hystrix会自动开启服务保护功能，然后通过服务降级的方式返回一个友好的提示给客户端（“当前请求人数多，请稍后重试”等）。假设当10个请求中，有10%失败时，熔断器就会打开，此时再调用此服务，将会直接返回失败，不再调远程服务。直到10s之后，重新检测该触发条件，判断是否把熔断器关闭，或者继续打开。</li>
+</ul>
+<h3 id="archaius">Archaius</h3>
+<ul>
+<li>服务配置组件；</li>
+</ul>
+<h3 id="servo">Servo</h3>
+<ul>
+<li>Metrics组件；</li>
+</ul>
+<h3 id="blitz4j">Blitz4j</h3>
+<ul>
+<li>日志组件。</li>
+</ul>
+<h3 id="pinpoint">Pinpoint</h3>
+<ul>
+<li>全链路监控组件，对代码做监控。</li>
+</ul>
+<h2 id="spring-cloud与spring-boot">spring cloud与spring boot</h2>
+<ul>
+<li>
+<p>Spring Boot用于简化Java应用程序的开发，而Spring Cloud则是在Spring Boot基础上提供了构建分布式系统所需的工具和组件。</p>
+</li>
+<li>
+<p>Spring Boot为Spring Cloud提供了基础设施和开箱即用的功能，使得Spring Cloud的使用更加便捷和高效。</p>
+</li>
+<li>
+<p>因此，通常在使用Spring Cloud时会使用Spring Boot作为底层框架。</p>
+</li>
+</ul>
+<h1 id="springcloud项目部署到k8s">SpringCloud项目部署到K8S</h1>
+<h2 id="如何进行服务发现">如何进行服务发现</h2>
+<ul>
+<li>如果是把Springcloud项目迁移到k8s，可以使用原来的Eureka，这 样可以避免开发人员对原来的代码进行大量的修改。通常情况下，我们的线上的服务在迁移到k8s环境下的时候，都是采用平滑迁移的方案。服务治理与注册中心等都是采用原先的组件。比如springcloud应用，在k8s环境下还是用原来的一套注册中心（如eureka），服务治理（hystrix，ribbon）等。</li>
+<li>K8S自带的服务发现</li>
+<li>service：service解决了对后端pod进行负载均衡和自动发现的能力，这是依靠kube-proxy代理把service ip与pod ip的对应关系写到node的防火墙规则里面。但是用service的IP不方便，最好需要有域名解析。</li>
+<li>coredns可以解决Service的发现问题，k8s将Service的名称当做域名注册到coredns中，通过Service的名称就可以访问其提供的服务。Coredns支持的域名格式：<br />
+<code>&lt;service_name&gt;.&lt;namespace&gt;.svc.&lt;cluster_domain&gt;</code>。<br />
+    默认的域名是<code>&lt;service_name&gt;.&lt;namespace&gt;.svc.cluster.local</code></li>
+</ul>
+<h2 id="如何进行配置管理">如何进行配置管理</h2>
+<ul>
+<li>K8S自带的：创建一个configmap，对应着一份配置文件，可以将该资源通过数据卷的形式映射到Pod上，这样Pod就能用上这个配置文件了。 </li>
+<li>spring cloud自带的：spring-cloud-starter-kubernetes-config </li>
+<li>spring-cloud-starter-kubernetes-config是spring-cloud-starter-kubernetes框架下的一个库，作用是将kubernetes的configmap与SpringCloud Config结合起来。</li>
+<li>通过spring-cloud-starter-kubernetes-config，我们的应用就像在通过SpringCloud Config取得配置信息，只不过这里的配置信息来自kubernetes的configmap，而不是SpringCloud Config server，SpringCloud Config来配置的应用几乎不用修改代码，仅仅调整了配置和依赖，就能顺利迁移到kubernetes之上，直接使用原生的配置服务，并且SpringCloud Config Server也可以不用在kubernetes上部署了。</li>
+</ul>
+<h2 id="如何进行负载均衡">如何进行负载均衡</h2>
+<ul>
+<li>通过springcloud的Ribbon，也可通过k8s的service、Ingress-nginx-Controller</li>
+</ul>
+<h2 id="如何对外发布应用">如何对外发布应用</h2>
+<ul>
+<li>通过Ingress</li>
+</ul>
+<p><img alt="image-20240329083508314" src="/home/s0001969/.config/Typora/typora-user-images/image-20240329083508314.png" /></p>
+<h2 id="流程">流程</h2>
+<ol>
+<li>把Springcloud开发的java代码做到镜像里：可以基于dockerfile文件做镜像</li>
+<li>把镜像传到镜像仓库里，比方说harbor私有镜像</li>
+<li>创建pod，可以用deployment或者statefulset创建</li>
+<li>部署四层代理Service</li>
+<li>搭建七层代理Ingress-nginx-controller</li>
+<li>数据持久化：ceph、nfs、云存储</li>
+<li>搭建监控系统和日志收集系统：prometheus+alertmagaer+grafana、EFK+logstash+kafka</li>
+<li>
+<p>链路监控：pinpoint、zipkin、skywalking</p>
+</li>
+<li>
+<p>完善：可以基于Jenkins+k8s构建一个自动化的CICD流水线</p>
+</li>
+<li>开发代码-&gt;提交代码到代码仓库-&gt;Jenkins调k8s API-&gt;动态生成Jenkins Slave Pod。</li>
+<li>Slave Pod里做如下内容： 拉取git上的代码-&gt;编译代码-&gt;打包镜像-&gt;推送镜像到镜像仓库harbor或者docker hub-&gt;Slave Pod工作完成之后自动删除-&gt;通过k8s编排服务发布到测试、生产平台-&gt;通过Ingress发布服务</li>
+</ol>
+<p><img alt="image-20240329083839029" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202403290838080.png" /></p>
+<h1 id="安装配置mysql">安装配置mysql</h1>
+<h2 id="特点">特点</h2>
+<ul>
+<li>体积小、速度快、开源。</li>
+</ul>
+<h2 id="安装">安装</h2>
+<div class="highlight"><pre><span></span><code><span class="c1">#在master节点</span>
+wget<span class="w"> </span>http://repo.mysql.com/mysql-community-release-el7-5.noarch.rpm
+rpm<span class="w"> </span>-ivh<span class="w"> </span>mysql-community-release-el7-5.noarch.rpm
+yum<span class="w"> </span>install<span class="w"> </span>mysql-server<span class="w"> </span>-y
+chown<span class="w"> </span>mysql:mysql<span class="w"> </span>-R<span class="w"> </span>/var/lib/mysql
+</code></pre></div>
+
+<h2 id="初始化">初始化</h2>
+<div class="highlight"><pre><span></span><code><span class="c1">#初始化mysql</span>
+mysqld<span class="w"> </span>--initialize
+systemctl<span class="w"> </span>start<span class="w"> </span>mysqld<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>systemctl<span class="w"> </span>status<span class="w"> </span>mysqld
+<span class="c1">#mysql安装成功后，默认的root用户密码为空，你可以使用以下命令来创建root用户的密码，密码设置成111111</span>
+mysqladmin<span class="w"> </span>-u<span class="w"> </span>root<span class="w"> </span>password<span class="w"> </span><span class="s2">&quot;111111&quot;</span>
+<span class="c1">#登陆数据库</span>
+mysql<span class="w"> </span>-uroot<span class="w"> </span>-p111111
+<span class="c1">#创建数据库tb_order、tb_product、tb_stock</span>
+create<span class="w"> </span>database<span class="w"> </span>tb_product<span class="p">;</span>
+create<span class="w"> </span>database<span class="w"> </span>tb_stock<span class="p">;</span>
+create<span class="w"> </span>database<span class="w"> </span>tb_order<span class="p">;</span>
+</code></pre></div>
+
+<h2 id="导入数据">导入数据</h2>
+<div class="highlight"><pre><span></span><code><span class="c1">#数据文件已经提前准备好，上传到/root/下</span>
+use<span class="w"> </span>tb_order
+<span class="nb">source</span><span class="w"> </span>/root/order.sql
+
+use<span class="w"> </span>tb_stock
+<span class="nb">source</span><span class="w"> </span>/root/stock.sql
+
+use<span class="w"> </span>tb_product
+<span class="nb">source</span><span class="w"> </span>/root/product.sql
+</code></pre></div>
+
+<h2 id="授权数据库">授权数据库</h2>
+<div class="highlight"><pre><span></span><code>grant<span class="w"> </span>all<span class="w"> </span>on<span class="w"> </span>*.*<span class="w"> </span>to<span class="w"> </span><span class="s1">&#39;root&#39;</span>@<span class="s1">&#39;%&#39;</span><span class="w"> </span>identified<span class="w"> </span>by<span class="w"> </span><span class="s1">&#39;111111&#39;</span><span class="p">;</span>
+flush<span class="w"> </span>privileges<span class="p">;</span>
+</code></pre></div>
+
+<h1 id="将springlcloud项目部署到k8s平台">将springlcloud项目部署到K8S平台</h1>
+<h2 id="安装openjdk和maven">安装openjdk和maven</h2>
+<div class="highlight"><pre><span></span><code><span class="c1">#master上操作</span>
+yum<span class="w"> </span>install<span class="w"> </span>java-1.8.0-openjdk<span class="w">  </span>maven-3.0.5*<span class="w"> </span>-y
+</code></pre></div>
+
+<h2 id="配置微服务源码">配置微服务源码</h2>
+<div class="highlight"><pre><span></span><code><span class="c1">#上传微服务的源代码</span>
+unzip<span class="w"> </span>microservic-test.zip
+<span class="nb">cd</span><span class="w"> </span>microservic-test
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="c1">#修改源代码，更改数据库源代码地址</span>
+<span class="c1">#库存数据库</span>
+vim<span class="w"> </span>/root/microservic-test/stock-service/stock-service-biz/src/main/resources/application-fat.yml
+jdbc:mysql://172.16.183.75:3306/tb_stock?characterEncoding<span class="o">=</span>utf-8<span class="w">  </span>
+<span class="c1">#变成自己的数据库地址</span>
+
+<span class="c1">#产品数据库</span>
+vim<span class="w"> </span>/root/microservic-test/product-service/product-service-biz/src/main/resources/application-fat.yml<span class="w"> </span>
+jdbc:mysql://172.16.183.75:3306/tb_product?characterEncoding<span class="o">=</span>utf-8
+<span class="c1">#变成自己的数据库地址</span>
+
+<span class="c1">#订单数据库</span>
+vim<span class="w"> </span>/root/microservic-test/order-service/order-service-biz/src/main/resources/application-fat.yml
+url:<span class="w"> </span>jdbc:mysql://172.16.183.75:3306/tb_order?characterEncoding<span class="o">=</span>utf-8<span class="w"> </span>
+<span class="c1">#变成自己的数据库地址</span>
+</code></pre></div>
+
+<h2 id="maven编译构建打包源代码">maven编译构建打包源代码</h2>
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span>/root/microservic-test
+mvn<span class="w"> </span>clean<span class="w"> </span>package<span class="w"> </span>-D<span class="w"> </span>maven.test.skip<span class="o">=</span><span class="nb">true</span>
+<span class="c1">#打包完生成jar包，后面需要把jar包打成镜像。</span>
+</code></pre></div>
+
+<h2 id="k8s中部署eureka">k8s中部署eureka</h2>
+<ul>
+<li>配置docker配置</li>
+</ul>
+<div class="highlight"><pre><span></span><code>cat<span class="w"> </span>&gt;<span class="w"> </span>/etc/docker/daemon.json<span class="w"> </span><span class="s">&lt;&lt;EOF</span>
+<span class="s">{</span>
+<span class="s">&quot;registry-mirrors&quot;:[&quot;https://rsbud4vc.mirror.aliyuncs.com&quot;,&quot;https://registry.docker-cn.com&quot;,&quot;https://docker.mirrors.ustc.edu.cn&quot;,&quot;https://dockerhub.azk8s.cn&quot;,&quot;http://hub-mirror.c.163.com&quot;,&quot;http://qtid6917.mirror.aliyuncs.com&quot;],</span>
+<span class="s">&quot;insecure-registries&quot;:[&quot;172.16.183.74&quot;,&quot;harbor&quot;], </span>
+<span class="s">&quot;exec-opts&quot;:[&quot;native.cgroupdriver=systemd&quot;]</span>
+<span class="s">}</span>
+<span class="s">EOF</span>
+</code></pre></div>
+
+<ul>
+<li>登录harbor</li>
+</ul>
+<div class="highlight"><pre><span></span><code>docker<span class="w"> </span>login<span class="w"> </span><span class="m">172</span>.16.183.74
+<span class="c1">#admin</span>
+<span class="c1">#Harbor12345</span>
+<span class="c1">#登录失败就重启harbor实例</span>
+</code></pre></div>
+
+<ul>
+<li>创建拉取私有镜像需要的secret</li>
+</ul>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>create<span class="w"> </span>ns<span class="w"> </span>ms
+kubectl<span class="w"> </span>create<span class="w"> </span>secret<span class="w"> </span>docker-registry<span class="w"> </span>registry-pull-secret<span class="w"> </span>--docker-server<span class="o">=</span><span class="m">172</span>.16.183.74<span class="w"> </span>--docker-username<span class="o">=</span>admin<span class="w"> </span>--docker-password<span class="o">=</span>Harbor12345<span class="w">  </span>-n<span class="w"> </span>ms
+<span class="c1">#docker-registry是secret的类型</span>
+</code></pre></div>
+
+<ul>
+<li>
+<p>harbor上创建项目：microsoftservice</p>
+</li>
+<li>
+<p>构建镜像</p>
+</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="c1">#上传java-8.tar.gz，这个是dockerfile构建镜像依赖的基础镜像包</span>
+docker<span class="w"> </span>load<span class="w"> </span>-i<span class="w"> </span>jave-8.tar.gz
+<span class="nb">cd</span><span class="w"> </span>/root/microservic-test/eureka-service
+docker<span class="w"> </span>build<span class="w"> </span>-t<span class="w">  </span><span class="m">172</span>.16.183.74/microservice/eureka:v1<span class="w"> </span>.
+docker<span class="w"> </span>push<span class="w"> </span><span class="m">172</span>.16.183.74/microservice/eureka:v1
+</code></pre></div>
+
+<ul>
+<li>部署服务</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span>/root/microservic-test/k8s
+<span class="c1">#修改eureka.yaml文件，把镜像变成image: 172.16.183.74/microservice/eureka:v1</span>
+kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>eureka.yaml<span class="w"> </span><span class="c1">#yaml文件里面定义了ingress、svc、sts</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-n<span class="w"> </span>ms
+<span class="c1">#eureka是以stateful set形式部署的。pod有域名。</span>
+<span class="c1">#pod域名对应ingress-nginx-controller所在的node节点的IP地址。</span>
+<span class="c1">#电脑host添加 172.16.183.76 eureka.ctnrs.com，即可访问web UI界面。</span>
+</code></pre></div>
+
+<p><img alt="image-20240401092624071" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202404010926267.png" /></p>
+<h2 id="k8s中部署网关gateway服务">k8s中部署网关gateway服务</h2>
+<ul>
+<li>构建镜像</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w">  </span>microservic-test/gateway-service/
+docker<span class="w"> </span>build<span class="w"> </span>-t<span class="w"> </span><span class="m">172</span>.16.183.74/microservice/gateway:v1<span class="w"> </span>.
+docker<span class="w"> </span>push<span class="w"> </span><span class="m">172</span>.16.183.74/microservice/gateway:v1
+</code></pre></div>
+
+<ul>
+<li>部署服务</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span>/root/microservic-test/k8s
+<span class="c1">#修改gateway.yaml文件，把镜像变成image: 172.16.183.74/microservice/gateway:v1</span>
+kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>gateway.yaml
+<span class="c1">#gateway的域名是gateway.ctnrs.com，IP是ingress controller对应的IP。修改host文件后即可域名访问</span>
+</code></pre></div>
+
+<h2 id="k8s中部署前端portal页面">k8s中部署前端portal页面</h2>
+<ul>
+<li>构建镜像</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w">  </span>/root/microservic-test/portal-service
+docker<span class="w"> </span>build<span class="w"> </span>-t<span class="w">  </span><span class="m">172</span>.16.183.74/microservice/portal:v1<span class="w"> </span>.
+docker<span class="w"> </span>push<span class="w">   </span><span class="m">172</span>.16.183.74/microservice/portal:v1
+</code></pre></div>
+
+<ul>
+<li>部署服务</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span>/root/microservic-test/k8s
+<span class="c1">#修改portal.yaml文件，把镜像变成image: 172.16.183.74/microservice/portal:v1</span>
+kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>portal.yaml
+<span class="c1">#eureka.ctnrs.com中查看portal服务是否注册</span>
+<span class="c1">#portal前端页面为：portal.ctnrs.com</span>
+</code></pre></div>
+
+<h2 id="k8s中部署订单服务">k8s中部署订单服务</h2>
+<ul>
+<li>构建镜像</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span>/root/microservic-test/order-service/order-service-biz
+docker<span class="w"> </span>build<span class="w"> </span>-t<span class="w">  </span><span class="m">172</span>.16.183.74/microservice/order:v1<span class="w"> </span>.
+docker<span class="w"> </span>push<span class="w">   </span><span class="m">172</span>.16.183.74/microservice/order:v1
+</code></pre></div>
+
+<ul>
+<li>部署服务</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span>/root/microservic-test/k8s
+<span class="c1">#修改order.yaml文件，把镜像变成image: 172.16.183.74/microservice/order:v1</span>
+kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>order.yaml
+</code></pre></div>
+
+<h2 id="k8s中部署产品服务">k8s中部署产品服务</h2>
+<ul>
+<li>构建镜像</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w">  </span>/root/microservic-test/product-service/product-service-biz
+docker<span class="w"> </span>build<span class="w"> </span>-t<span class="w">  </span><span class="m">172</span>.16.183.74/microservice/product:v1<span class="w"> </span>.
+docker<span class="w"> </span>push<span class="w">   </span><span class="m">172</span>.16.183.74/microservice/product:v1
+</code></pre></div>
+
+<ul>
+<li>部署服务</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span>/root/microservic-test/k8s
+<span class="c1">#修改product.yaml文件，把镜像变成image: 172.16.183.74/microservice/product:v1</span>
+kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>product.yaml
+</code></pre></div>
+
+<h2 id="k8s中部署库存服务">k8s中部署库存服务</h2>
+<ul>
+<li>构建镜像</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w">  </span>/root/microservic-test/stock-service/stock-service-biz
+docker<span class="w"> </span>build<span class="w"> </span>-t<span class="w">  </span><span class="m">172</span>.16.183.74/microservice/stock:v1<span class="w"> </span>.
+docker<span class="w"> </span>push<span class="w"> </span><span class="m">172</span>.16.183.74/microservice/stock:v1
+</code></pre></div>
+
+<ul>
+<li>部署服务</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span>/root/microservic-test/k8s
+<span class="c1">#修改stock.yaml文件，把镜像变成image: 172.16.183.74/microservice/stock:v1</span>
+kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>stock.yaml
+<span class="c1">#eureka.ctnrs.com中检查各项服务已经部署完成。</span>
+</code></pre></div>
+
+<h2 id="注意">注意</h2>
+<ul>
+<li>基于containerd的集群，拉镜像时会出现harbor登录失败的问题，此时需要配置containerd访问harbor。修改所有节点的containerd配置文件：/etc/containerd/config.toml。</li>
+<li>重启containerd和kubelet</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="nv">disabled_plugins</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">[]</span>
+<span class="nv">imports</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">[]</span>
+<span class="nv">oom_score</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span>
+<span class="nv">plugin_dir</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="nv">required_plugins</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">[]</span>
+<span class="nv">root</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;/var/lib/containerd&quot;</span>
+<span class="nv">state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;/run/containerd&quot;</span>
+<span class="nv">temp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="nv">version</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">2</span>
+
+<span class="o">[</span>cgroup<span class="o">]</span>
+<span class="w">  </span><span class="nv">path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+
+<span class="o">[</span>debug<span class="o">]</span>
+<span class="w">  </span><span class="nv">address</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">  </span><span class="nv">format</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">  </span><span class="nv">gid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span>
+<span class="w">  </span><span class="nv">level</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">  </span><span class="nv">uid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span>
+
+<span class="o">[</span>grpc<span class="o">]</span>
+<span class="w">  </span><span class="nv">address</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;/run/containerd/containerd.sock&quot;</span>
+<span class="w">  </span><span class="nv">gid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span>
+<span class="w">  </span><span class="nv">max_recv_message_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">16777216</span>
+<span class="w">  </span><span class="nv">max_send_message_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">16777216</span>
+<span class="w">  </span><span class="nv">tcp_address</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">  </span><span class="nv">tcp_tls_ca</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">  </span><span class="nv">tcp_tls_cert</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">  </span><span class="nv">tcp_tls_key</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">  </span><span class="nv">uid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span>
+
+<span class="o">[</span>metrics<span class="o">]</span>
+<span class="w">  </span><span class="nv">address</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">  </span><span class="nv">grpc_histogram</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span>
+
+<span class="o">[</span>plugins<span class="o">]</span>
+
+<span class="w">  </span><span class="o">[</span>plugins.<span class="s2">&quot;io.containerd.gc.v1.scheduler&quot;</span><span class="o">]</span>
+<span class="w">    </span><span class="nv">deletion_threshold</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span>
+<span class="w">    </span><span class="nv">mutation_threshold</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">100</span>
+<span class="w">    </span><span class="nv">pause_threshold</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span>.02
+<span class="w">    </span><span class="nv">schedule_delay</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;0s&quot;</span>
+<span class="w">    </span><span class="nv">startup_delay</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;100ms&quot;</span>
+
+<span class="w">  </span><span class="o">[</span>plugins.<span class="s2">&quot;io.containerd.grpc.v1.cri&quot;</span><span class="o">]</span>
+<span class="w">    </span><span class="nv">device_ownership_from_security_context</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span>
+<span class="w">    </span><span class="nv">disable_apparmor</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span>
+<span class="w">    </span><span class="nv">disable_cgroup</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span>
+<span class="w">    </span><span class="nv">disable_hugetlb_controller</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span>
+<span class="w">    </span><span class="nv">disable_proc_mount</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span>
+<span class="w">    </span><span class="nv">disable_tcp_service</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span>
+<span class="w">    </span><span class="nv">enable_selinux</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span>
+<span class="w">    </span><span class="nv">enable_tls_streaming</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span>
+<span class="w">    </span><span class="nv">enable_unprivileged_icmp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span>
+<span class="w">    </span><span class="nv">enable_unprivileged_ports</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span>
+<span class="w">    </span><span class="nv">ignore_image_defined_volumes</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span>
+<span class="w">    </span><span class="nv">max_concurrent_downloads</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">3</span>
+<span class="w">    </span><span class="nv">max_container_log_line_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">16384</span>
+<span class="w">    </span><span class="nv">netns_mounts_under_state_dir</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span>
+<span class="w">    </span><span class="nv">restrict_oom_score_adj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span>
+<span class="w">    </span><span class="nv">sandbox_image</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;registry.aliyuncs.com/google_containers/pause:3.7&quot;</span>
+<span class="w">    </span><span class="nv">selinux_category_range</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1024</span>
+<span class="w">    </span><span class="nv">stats_collect_period</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">10</span>
+<span class="w">    </span><span class="nv">stream_idle_timeout</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;4h0m0s&quot;</span>
+<span class="w">    </span><span class="nv">stream_server_address</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;127.0.0.1&quot;</span>
+<span class="w">    </span><span class="nv">stream_server_port</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;0&quot;</span>
+<span class="w">    </span><span class="nv">systemd_cgroup</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span>
+<span class="w">    </span><span class="nv">tolerate_missing_hugetlb_controller</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span>
+<span class="w">    </span><span class="nv">unset_seccomp_profile</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+
+<span class="w">    </span><span class="o">[</span>plugins.<span class="s2">&quot;io.containerd.grpc.v1.cri&quot;</span>.cni<span class="o">]</span>
+<span class="w">      </span><span class="nv">bin_dir</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;/opt/cni/bin&quot;</span>
+<span class="w">      </span><span class="nv">conf_dir</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;/etc/cni/net.d&quot;</span>
+<span class="w">      </span><span class="nv">conf_template</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">      </span><span class="nv">ip_pref</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">      </span><span class="nv">max_conf_num</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span>
+
+<span class="w">    </span><span class="o">[</span>plugins.<span class="s2">&quot;io.containerd.grpc.v1.cri&quot;</span>.containerd<span class="o">]</span>
+<span class="w">      </span><span class="nv">default_runtime_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;runc&quot;</span>
+<span class="w">      </span><span class="nv">disable_snapshot_annotations</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span>
+<span class="w">      </span><span class="nv">discard_unpacked_layers</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span>
+<span class="w">      </span><span class="nv">ignore_rdt_not_enabled_errors</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span>
+<span class="w">      </span><span class="nv">no_pivot</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span>
+<span class="w">      </span><span class="nv">snapshotter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;overlayfs&quot;</span>
+
+<span class="w">      </span><span class="o">[</span>plugins.<span class="s2">&quot;io.containerd.grpc.v1.cri&quot;</span>.containerd.default_runtime<span class="o">]</span>
+<span class="w">        </span><span class="nv">base_runtime_spec</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">        </span><span class="nv">cni_conf_dir</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">        </span><span class="nv">cni_max_conf_num</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span>
+<span class="w">        </span><span class="nv">container_annotations</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">[]</span>
+<span class="w">        </span><span class="nv">pod_annotations</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">[]</span>
+<span class="w">        </span><span class="nv">privileged_without_host_devices</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span>
+<span class="w">        </span><span class="nv">runtime_engine</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">        </span><span class="nv">runtime_path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">        </span><span class="nv">runtime_root</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">        </span><span class="nv">runtime_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+
+<span class="w">        </span><span class="o">[</span>plugins.<span class="s2">&quot;io.containerd.grpc.v1.cri&quot;</span>.containerd.default_runtime.options<span class="o">]</span>
+
+<span class="w">      </span><span class="o">[</span>plugins.<span class="s2">&quot;io.containerd.grpc.v1.cri&quot;</span>.containerd.runtimes<span class="o">]</span>
+
+<span class="w">        </span><span class="o">[</span>plugins.<span class="s2">&quot;io.containerd.grpc.v1.cri&quot;</span>.containerd.runtimes.runc<span class="o">]</span>
+<span class="w">          </span><span class="nv">base_runtime_spec</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">          </span><span class="nv">cni_conf_dir</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">          </span><span class="nv">cni_max_conf_num</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span>
+<span class="w">          </span><span class="nv">container_annotations</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">[]</span>
+<span class="w">          </span><span class="nv">pod_annotations</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">[]</span>
+<span class="w">          </span><span class="nv">privileged_without_host_devices</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span>
+<span class="w">          </span><span class="nv">runtime_engine</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">          </span><span class="nv">runtime_path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">          </span><span class="nv">runtime_root</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">          </span><span class="nv">runtime_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;io.containerd.runc.v2&quot;</span>
+
+<span class="w">          </span><span class="o">[</span>plugins.<span class="s2">&quot;io.containerd.grpc.v1.cri&quot;</span>.containerd.runtimes.runc.options<span class="o">]</span>
+<span class="w">            </span><span class="nv">BinaryName</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">            </span><span class="nv">CriuImagePath</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">            </span><span class="nv">CriuPath</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">            </span><span class="nv">CriuWorkPath</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">            </span><span class="nv">IoGid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span>
+<span class="w">            </span><span class="nv">IoUid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span>
+<span class="w">            </span><span class="nv">NoNewKeyring</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span>
+<span class="w">            </span><span class="nv">NoPivotRoot</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span>
+<span class="w">            </span><span class="nv">Root</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">            </span><span class="nv">ShimCgroup</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">            </span><span class="nv">SystemdCgroup</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span>
+
+<span class="w">      </span><span class="o">[</span>plugins.<span class="s2">&quot;io.containerd.grpc.v1.cri&quot;</span>.containerd.untrusted_workload_runtime<span class="o">]</span>
+<span class="w">        </span><span class="nv">base_runtime_spec</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">        </span><span class="nv">cni_conf_dir</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">        </span><span class="nv">cni_max_conf_num</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span>
+<span class="w">        </span><span class="nv">container_annotations</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">[]</span>
+<span class="w">        </span><span class="nv">pod_annotations</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">[]</span>
+<span class="w">        </span><span class="nv">privileged_without_host_devices</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span>
+<span class="w">        </span><span class="nv">runtime_engine</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">        </span><span class="nv">runtime_path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">        </span><span class="nv">runtime_root</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">        </span><span class="nv">runtime_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+
+<span class="w">        </span><span class="o">[</span>plugins.<span class="s2">&quot;io.containerd.grpc.v1.cri&quot;</span>.containerd.untrusted_workload_runtime.options<span class="o">]</span>
+
+<span class="w">    </span><span class="o">[</span>plugins.<span class="s2">&quot;io.containerd.grpc.v1.cri&quot;</span>.image_decryption<span class="o">]</span>
+<span class="w">      </span><span class="nv">key_model</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;node&quot;</span>
+<span class="c1">#===============这一块是harbor配置======================#</span>
+<span class="w">    </span><span class="o">[</span>plugins.<span class="s2">&quot;io.containerd.grpc.v1.cri&quot;</span>.registry<span class="o">]</span>
+<span class="w">      </span><span class="nv">config_path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+
+<span class="w">      </span><span class="o">[</span>plugins.<span class="s2">&quot;io.containerd.grpc.v1.cri&quot;</span>.registry.auths<span class="o">]</span>
+<span class="w">      </span><span class="o">[</span>plugins.<span class="s2">&quot;io.containerd.grpc.v1.cri&quot;</span>.registry.configs<span class="o">]</span>
+<span class="w">        </span><span class="o">[</span>plugins.<span class="s2">&quot;io.containerd.grpc.v1.cri&quot;</span>.registry.configs.<span class="s2">&quot;172.16.183.74&quot;</span>.tls<span class="o">]</span><span class="w"> </span><span class="c1">#harbor server的Ip</span>
+<span class="w">            </span><span class="nv">insecure_skip_verify</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span>
+<span class="w">        </span><span class="o">[</span>plugins.<span class="s2">&quot;io.containerd.grpc.v1.cri&quot;</span>.registry.configs.<span class="s2">&quot;172.16.183.74&quot;</span>.auth<span class="o">]</span><span class="w"> </span><span class="c1">#harbor server的Ip</span>
+<span class="w">            </span><span class="nv">username</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;admin&quot;</span><span class="w"> </span><span class="c1">#配置账号密码</span>
+<span class="w">            </span><span class="nv">password</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;Harbor12345&quot;</span>
+
+<span class="w">      </span><span class="o">[</span>plugins.<span class="s2">&quot;io.containerd.grpc.v1.cri&quot;</span>.registry.headers<span class="o">]</span>
+
+<span class="w">      </span><span class="o">[</span>plugins.<span class="s2">&quot;io.containerd.grpc.v1.cri&quot;</span>.registry.mirrors<span class="o">]</span>
+<span class="w">         </span><span class="o">[</span>plugins.<span class="s2">&quot;io.containerd.grpc.v1.cri&quot;</span>.registry.mirrors.<span class="s2">&quot;172.16.183.74&quot;</span><span class="o">]</span><span class="w"> </span><span class="c1">#harbor server的Ip</span>
+<span class="w">            </span><span class="nv">endpoint</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">[</span><span class="s2">&quot;https://172.16.183.74:443&quot;</span><span class="o">]</span><span class="w"> </span><span class="c1">#harbor server的Ip</span>
+<span class="w">          </span><span class="o">[</span>plugins.<span class="s2">&quot;io.containerd.grpc.v1.cri&quot;</span>.registry.mirrors.<span class="s2">&quot;docker.io&quot;</span><span class="o">]</span>
+<span class="w">             </span><span class="nv">endpoint</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">[</span><span class="s2">&quot;https://vh3bm52y.mirror.aliyuncs.com&quot;</span>,<span class="s2">&quot;https://registry.docker-cn.com&quot;</span><span class="o">]</span>
+<span class="c1">#================================================================</span>
+<span class="w">    </span><span class="o">[</span>plugins.<span class="s2">&quot;io.containerd.grpc.v1.cri&quot;</span>.x509_key_pair_streaming<span class="o">]</span>
+<span class="w">      </span><span class="nv">tls_cert_file</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">      </span><span class="nv">tls_key_file</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+
+<span class="w">  </span><span class="o">[</span>plugins.<span class="s2">&quot;io.containerd.internal.v1.opt&quot;</span><span class="o">]</span>
+<span class="w">    </span><span class="nv">path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;/opt/containerd&quot;</span>
+
+<span class="w">  </span><span class="o">[</span>plugins.<span class="s2">&quot;io.containerd.internal.v1.restart&quot;</span><span class="o">]</span>
+<span class="w">    </span><span class="nv">interval</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;10s&quot;</span>
+
+<span class="w">  </span><span class="o">[</span>plugins.<span class="s2">&quot;io.containerd.internal.v1.tracing&quot;</span><span class="o">]</span>
+<span class="w">    </span><span class="nv">sampling_ratio</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span>.0
+<span class="w">    </span><span class="nv">service_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;containerd&quot;</span>
+
+<span class="w">  </span><span class="o">[</span>plugins.<span class="s2">&quot;io.containerd.metadata.v1.bolt&quot;</span><span class="o">]</span>
+<span class="w">    </span><span class="nv">content_sharing_policy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;shared&quot;</span>
+
+<span class="w">  </span><span class="o">[</span>plugins.<span class="s2">&quot;io.containerd.monitor.v1.cgroups&quot;</span><span class="o">]</span>
+<span class="w">    </span><span class="nv">no_prometheus</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span>
+
+<span class="w">  </span><span class="o">[</span>plugins.<span class="s2">&quot;io.containerd.runtime.v1.linux&quot;</span><span class="o">]</span>
+<span class="w">    </span><span class="nv">no_shim</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span>
+<span class="w">    </span><span class="nv">runtime</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;runc&quot;</span>
+<span class="w">    </span><span class="nv">runtime_root</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">    </span><span class="nv">shim</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;containerd-shim&quot;</span>
+<span class="w">    </span><span class="nv">shim_debug</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span>
+
+<span class="w">  </span><span class="o">[</span>plugins.<span class="s2">&quot;io.containerd.runtime.v2.task&quot;</span><span class="o">]</span>
+<span class="w">    </span><span class="nv">platforms</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">[</span><span class="s2">&quot;linux/amd64&quot;</span><span class="o">]</span>
+<span class="w">    </span><span class="nv">sched_core</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span>
+
+<span class="w">  </span><span class="o">[</span>plugins.<span class="s2">&quot;io.containerd.service.v1.diff-service&quot;</span><span class="o">]</span>
+<span class="w">    </span><span class="nv">default</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">[</span><span class="s2">&quot;walking&quot;</span><span class="o">]</span>
+
+<span class="w">  </span><span class="o">[</span>plugins.<span class="s2">&quot;io.containerd.service.v1.tasks-service&quot;</span><span class="o">]</span>
+<span class="w">    </span><span class="nv">rdt_config_file</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+
+<span class="w">  </span><span class="o">[</span>plugins.<span class="s2">&quot;io.containerd.snapshotter.v1.aufs&quot;</span><span class="o">]</span>
+<span class="w">    </span><span class="nv">root_path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+
+<span class="w">  </span><span class="o">[</span>plugins.<span class="s2">&quot;io.containerd.snapshotter.v1.btrfs&quot;</span><span class="o">]</span>
+<span class="w">    </span><span class="nv">root_path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+
+<span class="w">  </span><span class="o">[</span>plugins.<span class="s2">&quot;io.containerd.snapshotter.v1.devmapper&quot;</span><span class="o">]</span>
+<span class="w">    </span><span class="nv">async_remove</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span>
+<span class="w">    </span><span class="nv">base_image_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">    </span><span class="nv">discard_blocks</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span>
+<span class="w">    </span><span class="nv">fs_options</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">    </span><span class="nv">fs_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">    </span><span class="nv">pool_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">    </span><span class="nv">root_path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+
+<span class="w">  </span><span class="o">[</span>plugins.<span class="s2">&quot;io.containerd.snapshotter.v1.native&quot;</span><span class="o">]</span>
+<span class="w">    </span><span class="nv">root_path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+
+<span class="w">  </span><span class="o">[</span>plugins.<span class="s2">&quot;io.containerd.snapshotter.v1.overlayfs&quot;</span><span class="o">]</span>
+<span class="w">    </span><span class="nv">root_path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">    </span><span class="nv">upperdir_label</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span>
+
+<span class="w">  </span><span class="o">[</span>plugins.<span class="s2">&quot;io.containerd.snapshotter.v1.zfs&quot;</span><span class="o">]</span>
+<span class="w">    </span><span class="nv">root_path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+
+<span class="w">  </span><span class="o">[</span>plugins.<span class="s2">&quot;io.containerd.tracing.processor.v1.otlp&quot;</span><span class="o">]</span>
+<span class="w">    </span><span class="nv">endpoint</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">    </span><span class="nv">insecure</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span>
+<span class="w">    </span><span class="nv">protocol</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+
+<span class="o">[</span>proxy_plugins<span class="o">]</span>
+
+<span class="o">[</span>stream_processors<span class="o">]</span>
+
+<span class="w">  </span><span class="o">[</span>stream_processors.<span class="s2">&quot;io.containerd.ocicrypt.decoder.v1.tar&quot;</span><span class="o">]</span>
+<span class="w">    </span><span class="nv">accepts</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">[</span><span class="s2">&quot;application/vnd.oci.image.layer.v1.tar+encrypted&quot;</span><span class="o">]</span>
+<span class="w">    </span><span class="nv">args</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">[</span><span class="s2">&quot;--decryption-keys-path&quot;</span>,<span class="w"> </span><span class="s2">&quot;/etc/containerd/ocicrypt/keys&quot;</span><span class="o">]</span>
+<span class="w">    </span><span class="nv">env</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">[</span><span class="s2">&quot;OCICRYPT_KEYPROVIDER_CONFIG=/etc/containerd/ocicrypt/ocicrypt_keyprovider.conf&quot;</span><span class="o">]</span>
+<span class="w">    </span><span class="nv">path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;ctd-decoder&quot;</span>
+<span class="w">    </span><span class="nv">returns</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;application/vnd.oci.image.layer.v1.tar&quot;</span>
+
+<span class="w">  </span><span class="o">[</span>stream_processors.<span class="s2">&quot;io.containerd.ocicrypt.decoder.v1.tar.gzip&quot;</span><span class="o">]</span>
+<span class="w">    </span><span class="nv">accepts</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">[</span><span class="s2">&quot;application/vnd.oci.image.layer.v1.tar+gzip+encrypted&quot;</span><span class="o">]</span>
+<span class="w">    </span><span class="nv">args</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">[</span><span class="s2">&quot;--decryption-keys-path&quot;</span>,<span class="w"> </span><span class="s2">&quot;/etc/containerd/ocicrypt/keys&quot;</span><span class="o">]</span>
+<span class="w">    </span><span class="nv">env</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">[</span><span class="s2">&quot;OCICRYPT_KEYPROVIDER_CONFIG=/etc/containerd/ocicrypt/ocicrypt_keyprovider.conf&quot;</span><span class="o">]</span>
+<span class="w">    </span><span class="nv">path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;ctd-decoder&quot;</span>
+<span class="w">    </span><span class="nv">returns</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;application/vnd.oci.image.layer.v1.tar+gzip&quot;</span>
+
+<span class="o">[</span>timeouts<span class="o">]</span>
+<span class="w">  </span><span class="s2">&quot;io.containerd.timeout.bolt.open&quot;</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;0s&quot;</span>
+<span class="w">  </span><span class="s2">&quot;io.containerd.timeout.shim.cleanup&quot;</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;5s&quot;</span>
+<span class="w">  </span><span class="s2">&quot;io.containerd.timeout.shim.load&quot;</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;5s&quot;</span>
+<span class="w">  </span><span class="s2">&quot;io.containerd.timeout.shim.shutdown&quot;</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;3s&quot;</span>
+<span class="w">  </span><span class="s2">&quot;io.containerd.timeout.task.state&quot;</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;2s&quot;</span>
+
+<span class="o">[</span>ttrpc<span class="o">]</span>
+<span class="w">  </span><span class="nv">address</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">  </span><span class="nv">gid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span>
+<span class="w">  </span><span class="nv">uid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span>
+</code></pre></div>
+
+<h1 id="全链路监控">全链路监控</h1>
+<h2 id="介绍_1">介绍</h2>
+<ul>
+<li>在分布式微服务架构中，系统为了接收并处理一个前端用户请求，需要让多个微服务应用协同工作，其中的每一个微服务应用都可以用不同的编程语言构建，由不同的团队开发，并可以通过多个对等的应用实例实现水平扩展，甚至分布在横跨多个数据中心的数千台服务器上。单个用户请求会引发不同应用之间产生一串顺序性的调用关系，如果要对这些调用关系进行监控，了解每个应用如何调用，这就产生了全链路监控。</li>
+</ul>
+<p><img alt="image-20240404212358708" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202404042124892.png" /></p>
+<h2 id="常见工具">常见工具</h2>
+<ul>
+<li>Zipkin</li>
+<li><strong>github：</strong><a href="https://github.com/openzipkin/zipkin">openzipkin/zipkin - GitHub</a></li>
+<li>
+<p>zipkin是一个分布式的追踪系统，它能够帮助你收集服务架构中解决问题需要的时间数据，功能包括收集和查找这些数据。如果日志文件中有跟踪ID，可以直接跳转到它。否则，可以根据服务、操作名称、标记和持续时间等属性进行查询。例如在服务中花费的时间百分比，以及哪些环节操作失败。特点是轻量，使用部署简单。zipkin还提供了一个UI界面，它能够显示通过每个应用程序的跟踪请求数。这有助于识别聚合行为，包括错误路径或对不推荐使用的服务的调用。</p>
+</li>
+<li>
+<p>Skywalking</p>
+</li>
+<li>github: <a href="https://github.com/apache/incubator-skywalking">apache/incubator-skywalking - GitHub</a></li>
+<li>
+<p>skywalking是本土开源的调用链追踪系统，包括监控、跟踪、诊断功能，目前已加入Apache孵化器，专门为微服务、云本地和基于容器（Docker、Kubernetes、Mesos）架构设计。</p>
+</li>
+<li>
+<p>Pinpoint</p>
+</li>
+<li>
+<p>github: <a href="https://github.com/naver/pinpoint">naver/pinpoint - GitHub</a></p>
+</li>
+<li>
+<p>pinpoint是韩国人开源的基于字节码注入的调用链分析，以及应用监控分析工具。Pinpoint提供了一个解决方案，可以帮助分析系统的整体结构，以及通过跟踪分布式应用程序中的事务来分析其中的组件是如何相互连接的。</p>
+</li>
+<li>对代码无侵入，把pinpoint代理包放到源码路径下面，编译就行。</li>
+</ul>
+<h1 id="pinpoint监控微服务">pinpoint监控微服务</h1>
+<h2 id="环境准备">环境准备</h2>
+<ul>
+<li>新建一台pinpoint机器：</li>
+<li>172.16.180.73</li>
+<li>初始化步骤与前面相同。</li>
+</ul>
+<h2 id="安装docker_1">安装docker</h2>
+<div class="highlight"><pre><span></span><code>yum<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>docker-ce-19.03.7-3.el7
+systemctl<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>docker<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>systemctl<span class="w"> </span>start<span class="w"> </span>docker<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>systemctl<span class="w"> </span>status<span class="w"> </span>docker
+<span class="c1">#修改docker配置文件</span>
+cat<span class="w"> </span>&gt;<span class="w"> </span>/etc/docker/daemon.json<span class="w"> </span><span class="s">&lt;&lt;EOF</span>
+<span class="s">{</span>
+<span class="s">&quot;registry-mirrors&quot;:[&quot;https://rsbud4vc.mirror.aliyuncs.com&quot;,&quot;https://registry.docker-cn.com&quot;,&quot;https://docker.mirrors.ustc.edu.cn&quot;,&quot;https://dockerhub.azk8s.cn&quot;,&quot;http://hub-mirror.c.163.com&quot;,&quot;http://qtid6917.mirror.aliyuncs.com&quot;], </span>
+<span class="s">&quot;insecure-registries&quot;:[&quot;172.16.183.74&quot;]</span>
+<span class="s">}</span>
+<span class="s">EOF</span>
+systemctl<span class="w"> </span>daemon-reload<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>systemctl<span class="w"> </span>restart<span class="w"> </span>docker<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>systemctl<span class="w"> </span>status<span class="w"> </span>docker
+</code></pre></div>
+
+<h2 id="安装pinpoint">安装pinpoint</h2>
+<div class="highlight"><pre><span></span><code>yum<span class="w"> </span>install<span class="w"> </span>docker-compose<span class="w"> </span>-y
+<span class="c1"># 拉取安装pinpoint服务需要的镜像，把pinpoint-image.tar.gz镜像压缩包上传到pinpoint机器上，手动解压：</span>
+docker<span class="w"> </span>load<span class="w"> </span>-i<span class="w"> </span>pinpoint-image.tar.gz
+<span class="c1">#通过下面命令也可以把安装pinpoint需要的镜像在线获取，但是速度较慢，可以通过上面手动解压方式拉取</span>
+docker-compose<span class="w"> </span>pull<span class="w"> </span>
+
+<span class="c1">#把pinpoint-docker-2.0.1.zip上传到pinpoint机器上，unzip解压</span>
+unzip<span class="w"> </span>pinpoint-docker-2.0.1.zip
+
+<span class="nb">cd</span><span class="w"> </span>pinpoint-docker-2.0.1
+<span class="c1">#修改docker-compose.yml文件的version版本，如2.2，变成自己支持的版本</span>
+<span class="c1">#version: &quot;3.6&quot; 变成 version: &quot;2.2&quot;</span>
+
+<span class="c1">#启动服务</span>
+docker-compose<span class="w"> </span>up<span class="w"> </span>-d<span class="w"> </span>
+<span class="c1">#查看对应的服务是否启动</span>
+docker<span class="w"> </span>ps<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>pinpoint<span class="w"> </span>
+<span class="c1">#找到pinpoint-web，可看到在宿主机绑定的端口是8079，</span>
+<span class="c1">#在浏览器访问ip:8079即可访问pinpoint的web ui界面(http://172.16.183.73:8079)</span>
+</code></pre></div>
+
+<h2 id="部署电商项目-带pinpoint客户端-0404到这里">部署电商项目-带pinpoint客户端 -- 0404到这里</h2>
+<ul>
+<li>上传源码包到master1</li>
+</ul>
+<div class="highlight"><pre><span></span><code>unzip<span class="w"> </span>microservic-test-dev1.zip
+</code></pre></div>
+
+<ul>
+<li>配置数据库连接地址</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="c1">#1）修改库存数据库</span>
+vim<span class="w"> </span>/root/microservic-test-dev1/stock-service/stock-service-biz/src/main/resources/application-fat.yml
+jdbc:mysql://172.16.183.75:3306/tb_stock?characterEncoding<span class="o">=</span>utf-8<span class="w">  </span>
+
+<span class="c1">#2）修改产品数据库</span>
+vim<span class="w"> </span>/root/microservic-test-dev1/product-service/product-service-biz/src/main/resources/application-fat.yml
+jdbc:mysql://172.16.183.75:3306/tb_product?characterEncoding<span class="o">=</span>utf-8
+
+<span class="c1">#3）修改订单数据库</span>
+vim<span class="w"> </span>/root/microservic-test-dev1/order-service/order-service-biz/src/main/resources/application-fat.yml
+url:<span class="w"> </span>jdbc:mysql://172.16.183.75:3306/tb_order?characterEncoding<span class="o">=</span>utf-8<span class="w"> </span>
+</code></pre></div>
+
+<ul>
+<li>修改配置，指定pinpoint服务端</li>
+</ul>
+<p><div class="callout callout-tip" markdown="1"><br />
+<p class="callout-title">pinpoint包来源</p></p>
+<p>部署完pinpoint,在右侧设置里面点击installation,会给pinpoint的github链接，下载下来解压出来一个pinpoint目录，放到你的项目源码路径下</p>
+</div>
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w">  </span>/root/microservic-test-dev1/product-service/product-service-biz/pinpoint
+<span class="c1">#打开pinpoint.config，需要修改的地方如下：</span>
+profiler.collector.ip<span class="o">=</span><span class="m">172</span>.16.183.73
+
+<span class="nb">cd</span><span class="w"> </span>/root/microservic-test-dev1/order-service/order-service-biz/pinpoint
+<span class="c1">#打开pinpoint.config，需要修改的地方如下：</span>
+profiler.collector.ip<span class="o">=</span><span class="m">172</span>.16.183.73
+
+<span class="nb">cd</span><span class="w"> </span>/root/microservic-test-dev1/stock-service/stock-service-biz/pinpoint
+<span class="c1">#打开pinpoint.config，需要修改的地方如下：</span>
+profiler.collector.ip<span class="o">=</span><span class="m">172</span>.16.183.73
+
+<span class="nb">cd</span><span class="w"> </span>/root/microservic-test-dev1/portal-service/pinpoint
+<span class="c1">#打开pinpoint.config，需要修改的地方如下：</span>
+profiler.collector.ip<span class="o">=</span><span class="m">172</span>.16.183.73
+
+<span class="nb">cd</span><span class="w"> </span>/root/microservic-test-dev1/gateway-service/pinpoint
+<span class="c1">#打开pinpoint.config，需要修改的地方如下：</span>
+profiler.collector.ip<span class="o">=</span><span class="m">172</span>.16.183.73
+
+<span class="nb">cd</span><span class="w"> </span>/root/microservic-test-dev1/eureka-service/pinpoint
+<span class="c1">#打开pinpoint.config，需要修改的地方如下：</span>
+profiler.collector.ip<span class="o">=</span><span class="m">172</span>.16.183.73
+
+<span class="c1">#上面修改的ip是部署pinpoint的机器的ip地址，也就是pinpoint的服务端</span>
+</code></pre></div>
+
+<h2 id="通过maven编译打包构建代码">通过Maven编译、打包、构建代码</h2>
+<div class="highlight"><pre><span></span><code><span class="c1">#控制节点操作</span>
+<span class="nb">cd</span><span class="w"> </span>/root/microservic-test-dev1
+mvn<span class="w"> </span>clean<span class="w"> </span>package<span class="w"> </span>-D<span class="w"> </span>maven.test.skip<span class="o">=</span><span class="nb">true</span>
+</code></pre></div>
+
+<h2 id="部署带pinpoint客户端的产品服务">部署带pinpoint客户端的产品服务</h2>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>create<span class="w"> </span>ns<span class="w"> </span>ms<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>kubectl<span class="w"> </span>create<span class="w"> </span>secret<span class="w"> </span>docker-registry<span class="w"> </span>registry-pull-secret<span class="w"> </span>--docker-server<span class="o">=</span><span class="m">172</span>.16.183.74<span class="w"> </span>--docker-username<span class="o">=</span>admin<span class="w"> </span>--docker-password<span class="o">=</span>Harbor12345<span class="w">  </span>-n<span class="w"> </span>ms
+
+<span class="nb">cd</span><span class="w"> </span>/root/microservic-test-dev1/product-service/product-service-biz
+docker<span class="w"> </span>build<span class="w"> </span>-t<span class="w"> </span><span class="m">172</span>.16.183.74/microservice/product:v2<span class="w"> </span>.
+docker<span class="w"> </span>push<span class="w"> </span><span class="m">172</span>.16.183.74/microservice/product:v2
+
+<span class="nb">cd</span><span class="w">  </span>/root/microservic-test-dev1/k8s
+<span class="c1">#修改product.yaml文件，把镜像变成image: 172.16.183.74/microservice/product:v2</span>
+
+<span class="c1">#pinpoint端即可看到新建出来的服务</span>
+http://172.16.183.73:8079
+</code></pre></div>
+
+<h2 id="部署带pinpoint客户端的订单服务">部署带pinpoint客户端的订单服务</h2>
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w">  </span>/root/microservic-test-dev1/order-service/order-service-biz
+docker<span class="w">  </span>build<span class="w"> </span>-t<span class="w">  </span><span class="m">172</span>.16.183.74/microservice/order:v2<span class="w"> </span>.
+docker<span class="w"> </span>push<span class="w">   </span><span class="m">172</span>.16.183.74/microservice/order:v2
+docker<span class="w"> </span>push<span class="w">   </span><span class="m">172</span>.16.183.74/microservice/order:v2
+<span class="nb">cd</span><span class="w"> </span>/root/microservic-test-dev1/k8s
+<span class="c1">#修改order.yaml文件，把镜像变成image: 172.16.183.74/microservice/order:v2</span>
+kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>order.yaml
+kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-n<span class="w"> </span>ms<span class="w">  </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>order
+</code></pre></div>
+
+<h2 id="部署带pinpoint-agent端的stock服务">部署带pinpoint agent端的stock服务</h2>
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w">  </span>/root/microservic-test-dev1/stock-service/stock-service-biz
+docker<span class="w"> </span>build<span class="w"> </span>-t<span class="w">  </span><span class="m">172</span>.16.183.74/microservice/stock:v2<span class="w"> </span>.
+docker<span class="w"> </span>push<span class="w">   </span><span class="m">172</span>.16.183.74/microservice/stock:v2
+<span class="nb">cd</span><span class="w"> </span>/root/microservic-test-dev1/k8s
+<span class="c1">#修改stock.yaml文件，把镜像变成image: 172.16.183.74/microservice/stock:v2</span>
+kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>stock.yaml
+kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-n<span class="w"> </span>ms<span class="w">  </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>stock
+</code></pre></div>
+
+<h2 id="部署带pinpoint-agent端的portal服务">部署带pinpoint agent端的portal服务</h2>
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span>/root/microservic-test-dev1/portal-service/
+docker<span class="w"> </span>build<span class="w"> </span>-t<span class="w">  </span><span class="m">172</span>.16.183.74/microservice/portal:v2<span class="w"> </span>.
+docker<span class="w"> </span>push<span class="w">   </span><span class="m">172</span>.16.183.74/microservice/portal:v2
+<span class="nb">cd</span><span class="w"> </span>/root/microservic-test-dev1/k8s
+<span class="c1">#修改portal.yaml文件，把镜像变成image: 172.16.183.74/microservice/portal:v2</span>
+kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>portal.yaml
+kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-n<span class="w"> </span>ms<span class="w">  </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>portal
+</code></pre></div>
+
+<h2 id="部署带pinpoint-agent端的网关服务">部署带pinpoint agent端的网关服务</h2>
+<div class="highlight"><pre><span></span><code><span class="c1">#1）构建镜像</span>
+<span class="nb">cd</span><span class="w">  </span>/root/microservic-test-dev1/gateway-service/
+docker<span class="w"> </span>build<span class="w"> </span>-t<span class="w">  </span><span class="m">172</span>.16.183.74/microservice/gateway:v2<span class="w"> </span>.
+docker<span class="w"> </span>push<span class="w"> </span><span class="m">172</span>.16.183.74/microservice/gateway:v2
+<span class="c1">#2）部署服务</span>
+<span class="nb">cd</span><span class="w"> </span>/root/microservic-test-dev1/k8s
+修改gateway.yaml文件，把镜像变成image:<span class="w"> </span><span class="m">172</span>.16.183.74/microservice/gateway:v2
+<span class="c1">#3）更新yaml文件</span>
+kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>gateway.yaml
+<span class="c1">#4）查看pod状态</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-n<span class="w"> </span>ms<span class="w">  </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>gateway
+<span class="c1">#5）看到如下running说明pod运行正常</span>
+gateway-c94f4d95c-2dqvw<span class="w">   </span><span class="m">1</span>/1<span class="w">     </span>Running<span class="w">   </span><span class="m">0</span><span class="w">          </span>31s
+gateway-c94f4d95c-l4jmq<span class="w">    </span><span class="m">1</span>/1<span class="w">     </span>Running<span class="w">   </span><span class="m">0</span><span class="w">          </span>31s
+<span class="c1">#6）配置hosts文件</span>
+<span class="c1">#gateway的域名是gateway.ctnrs.com，需要在电脑找到hosts文件，再增加一行如下：</span>
+<span class="m">192</span>.168.1.64<span class="w">  </span>gateway.ctnrs.com
+<span class="c1">#在浏览器访问eureka.ctnrs.com</span>
+</code></pre></div>
+    </div>
+  </article>
+  <aside class="toc">
+    <p class="toc-label">本页目录</p>
+    <ul>
+  <li><a href="#环境规划">环境规划</a></li>
+  <li><a href="#安装准备">安装准备</a></li>
+  <li><a href="#安装docker">安装docker</a></li>
+  <li><a href="#安装harbor">安装Harbor</a></li>
+  <li><a href="#harbor私有仓库使用">harbor私有仓库使用</a></li>
+  <li><a href="#ingress介绍">ingress介绍</a></li>
+  <li><a href="#安装ingress-controller">安装ingress controller</a></li>
+  <li><a href="#测试部署tomcat服务">测试部署tomcat服务</a></li>
+  <li><a href="#需要考虑的问题">需要考虑的问题</a></li>
+  <li><a href="#常见微服务框架">常见微服务框架</a></li>
+  <li><a href="#介绍">介绍</a></li>
+  <li><a href="#组件">组件</a><ul>
+  <li><a href="#eureka">Eureka</a></li>
+  <li><a href="#zuul">Zuul</a></li>
+  <li><a href="#api-gateway">API Gateway</a></li>
+  <li><a href="#springcloud-config">SpringCloud Config</a></li>
+  <li><a href="#ribbon">Ribbon</a></li>
+  <li><a href="#hystrix">Hystrix</a></li>
+  <li><a href="#archaius">Archaius</a></li>
+  <li><a href="#servo">Servo</a></li>
+  <li><a href="#blitz4j">Blitz4j</a></li>
+  <li><a href="#pinpoint">Pinpoint</a></li>
+</ul></li>
+  <li><a href="#spring-cloud与spring-boot">spring cloud与spring boot</a></li>
+  <li><a href="#如何进行服务发现">如何进行服务发现</a></li>
+  <li><a href="#如何进行配置管理">如何进行配置管理</a></li>
+  <li><a href="#如何进行负载均衡">如何进行负载均衡</a></li>
+  <li><a href="#如何对外发布应用">如何对外发布应用</a></li>
+  <li><a href="#流程">流程</a></li>
+  <li><a href="#特点">特点</a></li>
+  <li><a href="#安装">安装</a></li>
+  <li><a href="#初始化">初始化</a></li>
+  <li><a href="#导入数据">导入数据</a></li>
+  <li><a href="#授权数据库">授权数据库</a></li>
+  <li><a href="#安装openjdk和maven">安装openjdk和maven</a></li>
+  <li><a href="#配置微服务源码">配置微服务源码</a></li>
+  <li><a href="#maven编译构建打包源代码">maven编译构建打包源代码</a></li>
+  <li><a href="#k8s中部署eureka">k8s中部署eureka</a></li>
+  <li><a href="#k8s中部署网关gateway服务">k8s中部署网关gateway服务</a></li>
+  <li><a href="#k8s中部署前端portal页面">k8s中部署前端portal页面</a></li>
+  <li><a href="#k8s中部署订单服务">k8s中部署订单服务</a></li>
+  <li><a href="#k8s中部署产品服务">k8s中部署产品服务</a></li>
+  <li><a href="#k8s中部署库存服务">k8s中部署库存服务</a></li>
+  <li><a href="#注意">注意</a></li>
+  <li><a href="#介绍_1">介绍</a></li>
+  <li><a href="#常见工具">常见工具</a></li>
+  <li><a href="#环境准备">环境准备</a></li>
+  <li><a href="#安装docker_1">安装docker</a></li>
+  <li><a href="#安装pinpoint">安装pinpoint</a></li>
+  <li><a href="#部署电商项目-带pinpoint客户端-0404到这里">部署电商项目-带pinpoint客户端 -- 0404到这里</a></li>
+  <li><a href="#通过maven编译打包构建代码">通过Maven编译、打包、构建代码</a></li>
+  <li><a href="#部署带pinpoint客户端的产品服务">部署带pinpoint客户端的产品服务</a></li>
+  <li><a href="#部署带pinpoint客户端的订单服务">部署带pinpoint客户端的订单服务</a></li>
+  <li><a href="#部署带pinpoint-agent端的stock服务">部署带pinpoint agent端的stock服务</a></li>
+  <li><a href="#部署带pinpoint-agent端的portal服务">部署带pinpoint agent端的portal服务</a></li>
+  <li><a href="#部署带pinpoint-agent端的网关服务">部署带pinpoint agent端的网关服务</a></li>
+</ul>
+  </aside>
+
+</div>
+
+</main>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>Learning Notes</span>
+    <a href="https://github.com/hangx969/learning-notes">GitHub</a>
+  </div>
+</footer>
+<script src="../../../static/search.js"></script>
+</body>
+</html>

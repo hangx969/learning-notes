@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>计算机组成原理 - Learning Notes</title>
+<link rel="stylesheet" href="../../static/style.css">
+<link rel="stylesheet" href="../../static/pygments.css">
+</head>
+<body data-root="../../">
+<header class="site-header">
+  <div class="header-inner">
+    <a class="logo" href="../../index.html"><span class="logo-mark"></span>LEARNING NOTES</a>
+    <div class="search">
+      <input id="search-input" type="search" placeholder="搜索笔记…" autocomplete="off" aria-label="搜索笔记">
+      <div id="search-results" hidden></div>
+    </div>
+  </div>
+  <nav class="topic-nav" aria-label="主题导航">
+    <div class="topic-nav-inner">
+      <a href="../../AI/">AI</a>
+      <a href="../../Aliyun/">Aliyun</a>
+      <a href="../../Azure/">Azure</a>
+      <a href="../../C%2B%2B/">C++</a>
+      <a href="../../CloudComputing/">CloudComputing</a>
+      <a href="../../Database/">Database</a>
+      <a href="../../Docker-Kubernetes/">Docker-Kubernetes</a>
+      <a href="../../GPU-DeepLearning/">GPU-DeepLearning</a>
+      <a href="../../Git/">Git</a>
+      <a href="../../Go/">Go</a>
+      <a href="../../HPC/">HPC</a>
+      <a href="../../IaC/">IaC</a>
+      <a href="../../Linux-Shell/">Linux-Shell</a>
+      <a href="../../Middlewares/">Middlewares</a>
+      <a href="../../Networking/">Networking</a>
+      <a href="../../OS/" class="active">OS</a>
+      <a href="../../Python/">Python</a>
+      <a href="../../SoftwareTesting/">SoftwareTesting</a>
+    </div>
+  </nav>
+</header>
+<main class="main">
+
+<div class="article-layout">
+
+  <aside class="sidebar">
+    <details class="sidebar-details">
+      <summary>OS</summary>
+      <nav class="sidebar-nav">
+        <p class="sidebar-group">其他</p>
+        <ul>
+          <li><a href="../../OS/OS-%E7%A3%81%E7%9B%98%E7%AE%A1%E7%90%86/">OS - 磁盘管理与IO</a></li>
+          <li><a href="../../OS/OS/">操作系统</a></li>
+          <li><a href="../../OS/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86/" class="current">计算机组成原理</a></li>
+        </ul>
+      </nav>
+    </details>
+  </aside>
+
+  <article class="article">
+    <nav class="breadcrumb">
+      <a href="../../index.html">首页</a><span>/</span>
+      <a href="../../OS/">OS</a>
+    </nav>
+    <h1 class="article-title">计算机组成原理</h1>
+    <p class="article-meta"><span>更新于 2026-04-16</span>
+      <a href="https://github.com/hangx969/learning-notes/blob/main/OS/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86.md">查看源文件</a>
+    </p>
+    <div class="article-body">
+<h1 id="计算机组成原理">计算机组成原理</h1>
+<h2 id="1-计算机发展简史">1 计算机发展简史</h2>
+<h3 id="计算机发展的四个阶段">计算机发展的四个阶段</h3>
+<ol>
+<li>1946-1957：电子管计算机</li>
+<li>二战中英国为破解德国密文设计的</li>
+<li>ENIAC：战争中计算导弹参数；大且操作复杂</li>
+<li>1957-1964：晶体管计算机</li>
+<li>贝尔实验室发明晶体管</li>
+<li>MIT：TX-0；PDP-1，配备512*512显示器</li>
+<li>集成度高；空间占用小；功耗低</li>
+<li>1964-1980：集成电路计算机</li>
+<li>德州仪器发明集成电路</li>
+<li>降低尺寸和功耗</li>
+<li>IBM：system360，操作系统雏形</li>
+<li>1980-now：超大规模集成电路计算机</li>
+<li>芯片中集成了百万级别的晶体管</li>
+</ol>
+<h3 id="微型计算机的发展历史">微型计算机的发展历史</h3>
+<ul>
+<li>2000左右，出现了高于1GHz的CPU，字长32位</li>
+<li>单核CPU越来越复杂，不再遵循摩尔定律，出现多核CPU</li>
+</ul>
+<h3 id="计算机分类">计算机分类</h3>
+<ul>
+<li>
+<p>超级计算机</p>
+</li>
+<li>
+<p>衡量单位 1 TFlops/s = 每秒一万次浮点运算</p>
+</li>
+<li>
+<p>世界第一：IBM summit 200795 TFlop/s；中国第一：神威太湖之光125436 TFlops/s</p>
+</li>
+<li>
+<p>大型计算机</p>
+</li>
+<li>
+<p>阿里2008年提出 去 IOE 行动：（IBM系统、Oracle数据库、EMC存储）</p>
+</li>
+<li>
+<p>小型计算机</p>
+</li>
+<li>
+<p>普通服务器，已经构成了大规模企业计算的中枢</p>
+</li>
+<li>
+<p>工作站</p>
+</li>
+<li>
+<p>微型计算机</p>
+</li>
+</ul>
+<h3 id="计算机体系结构">计算机体系结构</h3>
+<ol>
+<li>冯诺依曼体系</li>
+<li>早期计算机仅包含固定程序 -&gt; 改变程序意味着重新设计专有电路 -&gt; 设计出通用电路、将程序存储起来</li>
+<li>创造通用的指令集结构，将运算转换为指令</li>
+<li>将程序指令和数据一起存储</li>
+<li>组件：<ul>
+<li>存储器、控制器、运算器、输出输出设备</li>
+</ul>
+</li>
+<li>现代计算机都是冯诺依曼体系</li>
+<li>CPU = 控制器 + 运算器</li>
+<li>早期冯诺依曼结构：存储器和CPU分开 -&gt; CPU快 存储器慢 -&gt; CPU空转等待存储器 -&gt; 冯诺依曼瓶颈</li>
+<li>现代计算机结构<ul>
+<li>在冯诺依曼结构上改进，将存储器包括进CPU</li>
+<li>现代CPU以存储器为核心</li>
+</ul>
+</li>
+<li>CPU类型简单区分<ul>
+<li>x86 / x64：基于架构的复杂指令集，二者CPU位数不同</li>
+<li>x86 = x86_32 （32位）; x64 = x86_64 （64位）</li>
+<li>x64 / amd64：都是64位处理器，二者公司不同</li>
+<li>x64：Intel公司</li>
+<li>amd64：amd公司</li>
+<li>对于安装程序而言，二者一样</li>
+<li>ARM架构</li>
+<li>x86架构主要用于PC；ARM架构主要用于手机和pad</li>
+<li>arm架构32位：arm v7；arm架构64位：arm64</li>
+</ul>
+</li>
+</ol>
+<h3 id="计算机层次与编程语言">计算机层次与编程语言</h3>
+<ol>
+<li>
+<p>程序翻译和程序解释</p>
+</li>
+<li>
+<p>翻译是将高级语言通过编译器转化为为机器语言；解释是将高级语言解释为低级语言</p>
+</li>
+<li>程序翻译：C/C++、Golang；程序解释：python，Php，JavaScript；</li>
+<li>
+<p>翻译+解析：Java（Java代码 --编译--&gt; JVM字节码 --解释--&gt; 机器码）</p>
+</li>
+<li>
+<p>层次</p>
+</li>
+</ol>
+<p>硬件逻辑层 - 微程序机器层 - 传统机器层 - 操作系统层 - 汇编语言层 - 高级语言层 - 应用层</p>
+<ul>
+<li>
+<p>硬件逻辑层：</p>
+<p>门电路、逻辑电路</p>
+</li>
+<li>
+<p>微程序层：</p>
+<p>微指令集 - 微程序 - 硬件执行</p>
+</li>
+<li>
+<p>传统机器层</p>
+<p>CPU指令集（机器指令）- 微程序解析</p>
+</li>
+<li>
+<p>操作系统层</p>
+<ul>
+<li>向上提供建议操作界面；向下对接了指令系统，管理硬件资源；软件和硬件之间的适配层</li>
+</ul>
+</li>
+<li>
+<p>汇编语言层</p>
+</li>
+</ul>
+    </div>
+  </article>
+  <aside class="toc">
+    <p class="toc-label">本页目录</p>
+    <ul>
+  <li><a href="#1-计算机发展简史">1 计算机发展简史</a><ul>
+  <li><a href="#计算机发展的四个阶段">计算机发展的四个阶段</a></li>
+  <li><a href="#微型计算机的发展历史">微型计算机的发展历史</a></li>
+  <li><a href="#计算机分类">计算机分类</a></li>
+  <li><a href="#计算机体系结构">计算机体系结构</a></li>
+  <li><a href="#计算机层次与编程语言">计算机层次与编程语言</a></li>
+</ul></li>
+</ul>
+  </aside>
+
+</div>
+
+</main>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>Learning Notes</span>
+    <a href="https://github.com/hangx969/learning-notes">GitHub</a>
+  </div>
+</footer>
+<script src="../../static/search.js"></script>
+</body>
+</html>

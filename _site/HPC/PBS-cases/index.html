@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PBS 实际案例 - Learning Notes</title>
+<link rel="stylesheet" href="../../static/style.css">
+<link rel="stylesheet" href="../../static/pygments.css">
+</head>
+<body data-root="../../">
+<header class="site-header">
+  <div class="header-inner">
+    <a class="logo" href="../../index.html"><span class="logo-mark"></span>LEARNING NOTES</a>
+    <div class="search">
+      <input id="search-input" type="search" placeholder="搜索笔记…" autocomplete="off" aria-label="搜索笔记">
+      <div id="search-results" hidden></div>
+    </div>
+  </div>
+  <nav class="topic-nav" aria-label="主题导航">
+    <div class="topic-nav-inner">
+      <a href="../../AI/">AI</a>
+      <a href="../../Aliyun/">Aliyun</a>
+      <a href="../../Azure/">Azure</a>
+      <a href="../../C%2B%2B/">C++</a>
+      <a href="../../CloudComputing/">CloudComputing</a>
+      <a href="../../Database/">Database</a>
+      <a href="../../Docker-Kubernetes/">Docker-Kubernetes</a>
+      <a href="../../GPU-DeepLearning/">GPU-DeepLearning</a>
+      <a href="../../Git/">Git</a>
+      <a href="../../Go/">Go</a>
+      <a href="../../HPC/" class="active">HPC</a>
+      <a href="../../IaC/">IaC</a>
+      <a href="../../Linux-Shell/">Linux-Shell</a>
+      <a href="../../Middlewares/">Middlewares</a>
+      <a href="../../Networking/">Networking</a>
+      <a href="../../OS/">OS</a>
+      <a href="../../Python/">Python</a>
+      <a href="../../SoftwareTesting/">SoftwareTesting</a>
+    </div>
+  </nav>
+</header>
+<main class="main">
+
+<div class="article-layout">
+
+  <aside class="sidebar">
+    <details class="sidebar-details">
+      <summary>HPC</summary>
+      <nav class="sidebar-nav">
+        <p class="sidebar-group">其他</p>
+        <ul>
+          <li><a href="../../HPC/CentOS7-slurm23.02-%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%AE%89%E8%A3%85/">CentOS7 Slurm 23.02 二进制安装</a></li>
+          <li><a href="../../HPC/PBS-cases/" class="current">PBS 实际案例</a></li>
+          <li><a href="../../HPC/PBS/">PBS 作业调度系统</a></li>
+          <li><a href="../../HPC/Slurm-node-exporter/">Slurm Node Exporter</a></li>
+          <li><a href="../../HPC/Ubuntu-2204-slurm-22.05.11-binary-installation/">Ubuntu 22.04 Slurm 22.05.11 Binary Installation (Production)</a></li>
+          <li><a href="../../HPC/Ubuntu2204-slurm-%2023.11-deb%E5%AE%89%E8%A3%85/">Ubuntu 22.04 Slurm 23.11 deb安装</a></li>
+          <li><a href="../../HPC/Ubuntu2204-slurm-22.05.11-%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%AE%89%E8%A3%85/">Ubuntu 22.04 Slurm 22.05.11 二进制安装</a></li>
+        </ul>
+      </nav>
+    </details>
+  </aside>
+
+  <article class="article">
+    <nav class="breadcrumb">
+      <a href="../../index.html">首页</a><span>/</span>
+      <a href="../../HPC/">HPC</a>
+    </nav>
+    <h1 class="article-title">PBS 实际案例</h1>
+    <p class="article-meta"><span>更新于 2026-04-16</span>
+      <a href="https://github.com/hangx969/learning-notes/blob/main/HPC/PBS-cases.md">查看源文件</a>
+    </p>
+    <div class="article-body">
+<h1 id="pbs-实际案例">PBS 实际案例</h1>
+<hr />
+<h2 id="gpu节点异常重启">GPU节点异常重启</h2>
+<h3 id="background">background</h3>
+<p>挂载了==lustre==的GPU计算节点在任务执行过程中 Hang 死后触发 <mark>Kdump</mark> 机制致使系统自动重启。</p>
+<p>系统信息：</p>
+<ol>
+<li>系统版本是：<mark>SUSE Linux Enterprise Server 12 SP5</mark></li>
+<li>内核版本：Kernel-4.12.14-122.91</li>
+<li>Lustre 客户端版本：2.12.6_ddn42-1</li>
+</ol>
+<h3 id="troubleshooting">Troubleshooting</h3>
+<ul>
+<li>根据Kdump（内核dump文件）分析原因，发现Kernel在调用Lustre模块执行 <code>[_raw_write_lock]</code> 操作的时候出现了==空指针==。DDN 技术团队做出了分析，认为此次告警问题是由于 Lustre 客户端在 lustreclient-2.12.6_ddn42-1.x86_64 版本下触发了一个已知的 bug。</li>
+<li>参考：https://wiki.lustre.org/Lustre_2.15.0_Changelog</li>
+</ul>
+<h3 id="solution">Solution</h3>
+<p><div class="callout callout-tip" markdown="1"><br />
+<p class="callout-title">升级建议</p></p>
+<p>DDN Lustre服务端最新版本为==6.3.1==，建议搭配Lustre客户端==2.14.0-ddn168==版本，同时需要升级SFA OS、磁盘固件、Enclosure固件至新版本以获取更好的兼容性。</p>
+</div>
+<hr />
+<h2 id="cudaerrorunknown">cudaErrorUnknown</h2>
+<h3 id="background_1">background</h3>
+<ul>
+<li>GPU节点上的<a class="wikilink" href="../../HPC/PBS/">PBS</a>任务执行过程中异常退出，应用报错==cudaErrorUnknown==。</li>
+</ul>
+<p>系统信息：</p>
+<ul>
+<li>系统版本是：SUSE Linux Enterprise Server 12 SP5</li>
+<li>CUDA 版本 <mark>12.0</mark></li>
+<li>Nvidia driver版本 <mark>525.125.06</mark></li>
+</ul>
+<h3 id="troubleshooting_1">Troubleshooting</h3>
+<ul>
+<li>应用实际是在执行命令：<code>singularity run  --nv ./video_log_downsample_20240205-1600.sif &lt;input_MF4_file&gt; --downsample &lt;output_zvlf_file&gt;</code> ，命令本地执行也会失败，singularity一运行就退出了，没创建容器。故而判断与PBS无关。</li>
+<li>这个报错会在两个GPU节点随机出现，大都是在节点重启之后一段时间有问题，过一段时间或者节点跑完GPU测试程序的话，就自动恢复了。</li>
+</ul>
+<h3 id="solution_1">Solution</h3>
+<p><div class="callout callout-important" markdown="1"><br />
+<p class="callout-title">解决方案</p></p>
+<ul>
+<li>参考singularity文档：https://docs.sylabs.io/guides/3.5/user-guide/gpu.html#cuda-error-unknown-when-everything-seems-to-be-correctly-configured，CUDA依赖一些内核模块，并不是所有的内核模块都会在系统启动后加载。在host上直接调用cuda，==nvidia_uvm==模块会自动加载；但是singularity --nv调用cuda，这个模块就不会自动加载，导致cudaErrorUnknown的问题。</li>
+<li>建议系统启动后以root执行<code>modprobe nvidia_uvm</code>来加载模块、并且开启GPU的==persistence mode==。</li>
+</ul>
+</div>
+<hr />
+<h2 id="timezone错误">Timezone错误</h2>
+<h3 id="background_2">background</h3>
+<ul>
+<li>PBS某些任务在计算节点上会报错：<mark>Timezone not found Asia/Beijing</mark></li>
+<li>系统版本是：SUSE Linux Enterprise Server 12 SP5</li>
+</ul>
+<h3 id="troubleshooting_2">Troubleshooting</h3>
+<ul>
+<li>追溯任务代码中的定义，是读取<code>/etc/sysconfig/clock</code>文件，以及PBS环境变量<code>TZ</code>来获取时区。这两个配置在节点上是==Asia/Beijing==，所以报错。</li>
+</ul>
+<h3 id="solution_2">Solution</h3>
+<ul>
+<li>操作系统层面，首先确保timedatectl的系统时钟设置为==Asia/Shanghai==</li>
+</ul>
+<p><sub>~</sub>sh<br />
+  timedatectl set-timezone Asia/Shanghai<br />
+  systemctl restart systemd-timesyncd<br />
+  ~~~</p>
+<ul>
+<li>操作系统层面，修改硬件时钟/etc/sysconfig/clock为Asia/Shanghai</li>
+</ul>
+<p><sub>~</sub>sh<br />
+  cat /etc/sysconfig/clock<br />
+  TIMEZONE="Asia/Shanghai"<br />
+  DEFAULT_TIMEZONE="US/Eastern"<br />
+  HWCLOCK="-u"<br />
+  ~~~</p>
+<ul>
+<li>PBS层面，PBS会在安装时引用当时操作系统变量写在<code>/var/spoolpbs/pbs_environment</code>中，将这个文件中的时区改为Asia/Shanghai，重启PBS服务。</li>
+</ul>
+<p><div class="callout callout-note" markdown="1"><br />
+<p class="callout-title">关于时区管理</p></p>
+<p>根据SUSE官网 https://www.suse.com/support/kb/doc/?id=000018825 ，<code>/etc/sysconfig/clock</code>是legacy的获取时区方式，<code>timedatectl</code>是modern的方式，这两种在系统中并存，长期建议是直接删掉<code>/etc/sysconfig/clock</code>，只用timedatectl来管理时区。</p>
+</div>
+<hr />
+<h2 id="相关笔记">相关笔记</h2>
+<ul>
+<li><a class="wikilink" href="../../HPC/PBS/">PBS</a> - PBS作业调度系统介绍</li>
+<li><a class="wikilink" href="../../HPC/CentOS7-slurm23.02-%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%AE%89%E8%A3%85/">CentOS7-slurm23.02-二进制安装</a> - Slurm vs PBS 对比</li>
+</ul>
+    </div>
+  </article>
+  <aside class="toc">
+    <p class="toc-label">本页目录</p>
+    <ul>
+  <li><a href="#gpu节点异常重启">GPU节点异常重启</a><ul>
+  <li><a href="#background">background</a></li>
+  <li><a href="#troubleshooting">Troubleshooting</a></li>
+  <li><a href="#solution">Solution</a></li>
+</ul></li>
+  <li><a href="#cudaerrorunknown">cudaErrorUnknown</a><ul>
+  <li><a href="#background_1">background</a></li>
+  <li><a href="#troubleshooting_1">Troubleshooting</a></li>
+  <li><a href="#solution_1">Solution</a></li>
+</ul></li>
+  <li><a href="#timezone错误">Timezone错误</a><ul>
+  <li><a href="#background_2">background</a></li>
+  <li><a href="#troubleshooting_2">Troubleshooting</a></li>
+  <li><a href="#solution_2">Solution</a></li>
+</ul></li>
+  <li><a href="#相关笔记">相关笔记</a></li>
+</ul>
+  </aside>
+
+</div>
+
+</main>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>Learning Notes</span>
+    <a href="https://github.com/hangx969/learning-notes">GitHub</a>
+  </div>
+</footer>
+<script src="../../static/search.js"></script>
+</body>
+</html>

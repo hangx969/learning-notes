@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>云企业网 CEN 与转发路由器 TR - Learning Notes</title>
+<link rel="stylesheet" href="../../../static/style.css">
+<link rel="stylesheet" href="../../../static/pygments.css">
+</head>
+<body data-root="../../../">
+<header class="site-header">
+  <div class="header-inner">
+    <a class="logo" href="../../../index.html"><span class="logo-mark"></span>LEARNING NOTES</a>
+    <div class="search">
+      <input id="search-input" type="search" placeholder="搜索笔记…" autocomplete="off" aria-label="搜索笔记">
+      <div id="search-results" hidden></div>
+    </div>
+  </div>
+  <nav class="topic-nav" aria-label="主题导航">
+    <div class="topic-nav-inner">
+      <a href="../../../AI/">AI</a>
+      <a href="../../../Aliyun/" class="active">Aliyun</a>
+      <a href="../../../Azure/">Azure</a>
+      <a href="../../../C%2B%2B/">C++</a>
+      <a href="../../../CloudComputing/">CloudComputing</a>
+      <a href="../../../Database/">Database</a>
+      <a href="../../../Docker-Kubernetes/">Docker-Kubernetes</a>
+      <a href="../../../GPU-DeepLearning/">GPU-DeepLearning</a>
+      <a href="../../../Git/">Git</a>
+      <a href="../../../Go/">Go</a>
+      <a href="../../../HPC/">HPC</a>
+      <a href="../../../IaC/">IaC</a>
+      <a href="../../../Linux-Shell/">Linux-Shell</a>
+      <a href="../../../Middlewares/">Middlewares</a>
+      <a href="../../../Networking/">Networking</a>
+      <a href="../../../OS/">OS</a>
+      <a href="../../../Python/">Python</a>
+      <a href="../../../SoftwareTesting/">SoftwareTesting</a>
+    </div>
+  </nav>
+</header>
+<main class="main">
+
+<div class="article-layout">
+
+  <aside class="sidebar">
+    <details class="sidebar-details">
+      <summary>Aliyun</summary>
+      <nav class="sidebar-nav">
+        <p class="sidebar-group">存储</p>
+        <ul>
+          <li><a href="../../../Aliyun/%E5%AD%98%E5%82%A8/%E5%AF%B9%E8%B1%A1%E5%AD%98%E5%82%A8OSS/">对象存储OSS</a></li>
+          <li><a href="../../../Aliyun/%E5%AD%98%E5%82%A8/%E6%95%B0%E6%8D%AE%E6%B9%96-HDFS-POSIX/">数据湖-HDFS-POSIX</a></li>
+          <li><a href="../../../Aliyun/%E5%AD%98%E5%82%A8/%E8%B7%A8%E5%9F%9F%E5%85%B1%E4%BA%ABCORS/">跨域共享CORS</a></li>
+        </ul>
+        <p class="sidebar-group">数据库</p>
+        <ul>
+          <li><a href="../../../Aliyun/%E6%95%B0%E6%8D%AE%E5%BA%93/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93RDS/">关系型数据库RDS</a></li>
+          <li><a href="../../../Aliyun/%E6%95%B0%E6%8D%AE%E5%BA%93/%E6%95%B0%E6%8D%AE%E4%BC%A0%E8%BE%93%E6%9C%8D%E5%8A%A1DTS/">数据传输服务DTS</a></li>
+        </ul>
+        <p class="sidebar-group">网络</p>
+        <ul>
+          <li><a href="../../../Aliyun/%E7%BD%91%E7%BB%9C/ACK%E7%BD%91%E7%BB%9C%E8%A7%84%E5%88%92%E4%B8%8E%E6%88%90%E6%9C%AC%E4%BC%98%E5%8C%96/">ACK 网络规划与成本优化</a></li>
+          <li><a href="../../../Aliyun/%E7%BD%91%E7%BB%9C/CEN-TR/" class="current">云企业网 CEN 与转发路由器 TR</a></li>
+          <li><a href="../../../Aliyun/%E7%BD%91%E7%BB%9C/DDoS%E9%AB%98%E9%98%B2/">DDoS 防护</a></li>
+          <li><a href="../../../Aliyun/%E7%BD%91%E7%BB%9C/DNS-CDN-SSL/">DNS、CDN 与 SSL 证书</a></li>
+          <li><a href="../../../Aliyun/%E7%BD%91%E7%BB%9C/VPC/">专有网络 VPC</a></li>
+          <li><a href="../../../Aliyun/%E7%BD%91%E7%BB%9C/WAF/">Web 应用防火墙 WAF</a></li>
+          <li><a href="../../../Aliyun/%E7%BD%91%E7%BB%9C/%E4%BA%91%E5%AE%89%E5%85%A8%E4%B8%AD%E5%BF%83-%E4%BA%91%E9%98%B2%E7%81%AB%E5%A2%99/">云安全中心与云防火墙</a></li>
+          <li><a href="../../../Aliyun/%E7%BD%91%E7%BB%9C/%E7%BD%91%E5%85%B3-VPN-%E4%B8%93%E7%BA%BF/">网关-VPN-专线</a></li>
+          <li><a href="../../../Aliyun/%E7%BD%91%E7%BB%9C/%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1SLB/">负载均衡 SLB</a></li>
+        </ul>
+        <p class="sidebar-group">计算</p>
+        <ul>
+          <li><a href="../../../Aliyun/%E8%AE%A1%E7%AE%97/ECS/">弹性计算服务ECS</a></li>
+          <li><a href="../../../Aliyun/%E8%AE%A1%E7%AE%97/%E4%B8%BB%E6%9C%BA%E8%BF%81%E7%A7%BB%E5%B7%A5%E5%85%B7SMC/">主机迁移工具SMC</a></li>
+          <li><a href="../../../Aliyun/%E8%AE%A1%E7%AE%97/%E4%BA%91%E7%9B%98-%E5%BF%AB%E7%85%A7-%E9%95%9C%E5%83%8F/">云盘、快照与镜像</a></li>
+          <li><a href="../../../Aliyun/%E8%AE%A1%E7%AE%97/%E5%BC%B9%E6%80%A7%E4%BC%B8%E7%BC%A9ESS/">弹性伸缩ESS</a></li>
+        </ul>
+        <p class="sidebar-group">资源管理</p>
+        <ul>
+          <li><a href="../../../Aliyun/%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/FinOps-%E4%BA%91%E6%88%90%E6%9C%AC%E4%BC%98%E5%8C%96%E5%AE%9E%E6%88%98/">FinOps - 云成本优化实战</a></li>
+          <li><a href="../../../Aliyun/%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/Landing%20Zone/">Landing Zone</a></li>
+        </ul>
+        <p class="sidebar-group">其他</p>
+        <ul>
+          <li><a href="../../../Aliyun/ACP%E8%80%83%E8%AF%95/">ACP云计算工程师考试笔记</a></li>
+        </ul>
+      </nav>
+    </details>
+  </aside>
+
+  <article class="article">
+    <nav class="breadcrumb">
+      <a href="../../../index.html">首页</a><span>/</span>
+      <a href="../../../Aliyun/">Aliyun</a><span>/</span><span>网络</span>
+    </nav>
+    <h1 class="article-title">云企业网 CEN 与转发路由器 TR</h1>
+    <p class="article-meta"><span>更新于 2026-04-16</span>
+      <a href="https://github.com/hangx969/learning-notes/blob/main/Aliyun/%E7%BD%91%E7%BB%9C/CEN-TR.md">查看源文件</a>
+    </p>
+    <div class="article-body">
+<h1 id="云企业网-cen">云企业网 CEN</h1>
+<p>文档： https://help.aliyun.com/zh/cen/product-overview/what-is-cen?spm=a2c4g.11174283.0.0.4aca5905RWQ7VN</p>
+<p>作用：打通不同地域的内网<a class="wikilink" href="../../../Aliyun/%E7%BD%91%E7%BB%9C/VPC/">Aliyun/网络/VPC</a>连接，需要靠TR来实现。</p>
+<p><div class="callout callout-note" markdown="1"><br />
+<p class="callout-title">通过CEN连接的两个VPC之间是否可以互相通信？</p></p>
+<p>可以，只要通过 CEN（云企业网）正确打通路由和授权，两个接入的 VPC 就能互通。CEN 会在不同账号/地域的 VPC 之间建立传输通道。</p>
+<p><strong>条件</strong>：各 VPC 的路由表需要把对端网段指向 CEN，安全组/ACL 放行对端流量，并且在CEN 中完成实例互访授权（同账号自动生效，跨账号需接受邀请）。</p>
+<p>如果要隔离，只需在 CEN 中禁用实例互访或在网络策略层面限制。</p>
+</div>
+<hr />
+<h2 id="应用场景">应用场景</h2>
+<ul>
+<li><strong>同地域网络组网</strong>：这个region创建一个TR，本Region的<a class="wikilink" href="../../../Aliyun/%E7%BD%91%E7%BB%9C/VPC/">Aliyun/网络/VPC</a>连接到TR即可</li>
+<li><strong>跨地域网络组网</strong>：每个Region都创建一个TR，各个Region的VPC加入到各自Region的TR，不同Region之间的TR也做互联</li>
+<li><strong>混合云组网</strong>：物理专线+VBR，SAG+CCN，<a class="wikilink" href="../../../Aliyun/%E7%BD%91%E7%BB%9C/%E7%BD%91%E5%85%B3-VPN-%E4%B8%93%E7%BA%BF/">VPN网关</a>，都可以通过连接到TR，实现互联互通</li>
+</ul>
+<hr />
+<h2 id="企业复杂组网">企业复杂组网</h2>
+<h3 id="统一vpc出口">统一VPC出口</h3>
+<p>所有VPC都走同一个VPC的出口EIP访问公网。</p>
+<p><div class="callout callout-summary" markdown="1"><br />
+<p class="callout-title">实现场景</p></p>
+<p>您可以通过转发路由器的多种路由功能定义灵活的路由策略，使云上部署的所有VPC实例从==统一的互联网出口==访问互联网，便于集中管控，提高您业务的安全性。</p>
+</div>
+<p><strong>主要操作</strong>：</p>
+<ul>
+<li>创建转发路由器实例后，将所有VPC实例连接至转发路由器实例，依据互通地域创建跨地域连接，然后通过创建自定义路由表、自定义路由条目等路由功能：<ul>
+<li>引导云上所有VPC实例去往互联网的流量从统一出口访问互联网。</li>
+</ul>
+</li>
+</ul>
+<h3 id="多vpc间流量安全互访">多VPC间流量安全互访</h3>
+<p><div class="callout callout-summary" markdown="1"><br />
+<p class="callout-title">实现场景</p></p>
+<p>您可以通过转发路由器的多种路由功能定义灵活的路由策略，将VPC实例间互相访问的流量划分为==可信流量==和==不可信的流量==，引导不可信的流量先经过安全服务VPC进行流量过滤，并只允许过滤后的流量相互通信，提高网络的安全性。</p>
+</div>
+<p><strong>主要操作</strong>：</p>
+<ul>
+<li>创建转发路由器实例后，将所有VPC实例连接至转发路由器实例，依据互通地域创建跨地域连接，然后通过创建自定义路由表、自定义路由条目等路由功能：<ul>
+<li>引导不可信的流量先经过安全服务VPC进行流量过滤，然后只允许过滤后的流量相互通信。</li>
+</ul>
+</li>
+</ul>
+<p>https://help.aliyun.com/zh/cen/use-cases/use-an-enterprise-edition-transit-router-to-enable-and-secure-network-communication#task-2076151</p>
+<h3 id="多cen实例下的网络使用共享服务">多CEN实例下的网络使用共享服务</h3>
+<p><div class="callout callout-summary" markdown="1"><br />
+<p class="callout-title">实现场景</p></p>
+<p>一个VPC实例支持同时连接多个转发路由器实例。<br />
+如果您拥有多个云企业网实例，不同云企业网实例下的网络均需要访问某一个VPC实例下的服务，您可以将该VPC实例连接至不同云企业网实例下的转发路由器上，然后通过转发路由器的多种路由功能实现不同云企业网实例的网络均可以访问该VPC实例的服务。</p>
+</div>
+<p><strong>主要操作</strong>：</p>
+<ul>
+<li>将需要共享服务的VPC实例连接至各个云企业网实例下的转发路由器上，然后依据互通需求在各个转发路由器上添加相关路由配置，实现多个云企业网实例下的网络均可以访问该VPC实例的服务。</li>
+</ul>
+<hr />
+<h1 id="tr-转发路由器">TR 转发路由器</h1>
+<p>转发路由器是地域范围内的核心转发组件，<mark>一个Region支持创建一个TR</mark>。</p>
+<hr />
+<h2 id="路由表">路由表</h2>
+<p>TR通过路由表进行流量转发。</p>
+<ul>
+<li><strong>默认路由表</strong>：自动给每个TR创建</li>
+<li><strong>自定义路由表</strong>：与默认路由表及其他自定义路由表互不相通，可以实现访问隔离</li>
+<li><strong>关联转发</strong>【VPC访问别人看哪张表】：实例连接与转发路由器路由表可以创建关联转发关系。关联转发关系创建后，转发路由器会依据网络实例连接关联的路由表转发其流量。</li>
+<li><strong>路由学习</strong>【VPC把自己登记到哪张表方便别人看】：网络实例连接到TR之后，可以创建路由学习关系，TR路由表可以自动学习该网络实例的路由</li>
+</ul>
+<p><div class="callout callout-info" markdown="1"><br />
+<p class="callout-title">类比理解</p></p>
+<p>把 <strong>TR 比作一个"超级巨大的中央邮局"</strong>，把连接到 TR 的 <strong><a class="wikilink" href="../../../Aliyun/%E7%BD%91%E7%BB%9C/VPC/">Aliyun/网络/VPC</a>（专有网络）比作不同的"公司办事处"</strong>。</p>
+</div>
+<h3 id="默认路由表-default-route-table">默认路由表 (Default Route Table)</h3>
+<ul>
+<li><strong>概念</strong>：TR 实例创建时，系统会自动赠送一张路由表。</li>
+<li><strong>通俗理解</strong>：这是邮局的<strong>"大厅通用地图"</strong>。</li>
+<li><strong>作用</strong>：如果你不搞特殊化（不配置自定义路由表），所有连进来的办事处（VPC）都会默认看这就这张地图来决定包裹往哪发。默认情况下，所有连进来的 VPC 都在这里交换信息，大家都能互相连通。</li>
+</ul>
+<h3 id="自定义路由表-custom-route-table">自定义路由表 (Custom Route Table)</h3>
+<ul>
+<li><strong>概念</strong>：用户自己创建的路由表，默认是空的。它与默认路由表、其他自定义路由表==完全隔离==。</li>
+<li><strong>通俗理解</strong>：这是邮局里的<strong>"VIP 私密小黑屋"</strong>。</li>
+<li><strong>作用</strong>：<ul>
+<li><strong>隔离</strong>：你可以把这张地图锁在小黑屋里，只有特定的人（VPC）能进来看。</li>
+<li><strong>特殊策略</strong>：大厅地图可能显示"去上海走A门"，但小黑屋的地图可以写"去上海走B门"或者"根本不许去上海"。</li>
+<li><strong>场景</strong>：比如你有"生产环境 VPC"和"测试环境 VPC"，你不想让测试环境访问生产环境，你就给它们分别建两个不同的"小黑屋（自定义路由表）"，让它们彼此看不见对方的路线。</li>
+</ul>
+</li>
+</ul>
+<hr />
+<p><div class="callout callout-important" markdown="1"><br />
+<p class="callout-title">流量怎么走 = 进门查谁的表 (关联) + 表里有什么路 (学习)</p></p>
+</div>
+<h3 id="关联转发-association-进门查谁的表">关联转发 (Association) -- "进门查谁的表"</h3>
+<ul>
+<li><strong>概念</strong>：建立网络实例连接（如 VPC 连接）与某张路由表的关系。</li>
+<li><strong>通俗理解</strong>：这是给办事处（VPC）发的<strong>"入场指引牌"</strong>。</li>
+<li><strong>核心逻辑</strong>：<ul>
+<li>当流量<strong>从 VPC 出来，进入 TR</strong> 的那一刻，TR 问："我该查哪张表来转发这个包？"</li>
+<li>"关联"就是告诉 TR："VPC-A 发来的包，请去查'路由表-1'；VPC-B 发来的包，请去查'路由表-2'"。</li>
+</ul>
+</li>
+<li><mark>一个 VPC 连接同一时间只能关联一张路由表</mark>（你不能同时既在"大厅"又在"小黑屋"）。</li>
+</ul>
+<h3 id="路由学习-route-propagationlearning-表里有什么路">路由学习 (Route Propagation/Learning) -- "表里有什么路"</h3>
+<ul>
+<li><strong>概念</strong>：将网络实例（如 VPC）里的路由条目，自动同步到 TR 的某张路由表中。</li>
+<li><strong>通俗理解</strong>：这是<strong>"把你的地址登记到地图上"</strong>。</li>
+<li><strong>核心逻辑</strong>：<ul>
+<li>如果 VPC-A 的网段是 <code>192.168.1.0/24</code>，且它与'路由表-2'建立了<strong>路由学习</strong>关系。</li>
+<li>那么'路由表-2'上就会自动多出一行字："要去 <code>192.168.1.0/24</code>，请转发给 VPC-A"。</li>
+<li>如果没有"学习"，路由表就是一张白纸，即使你"关联"进来了，查表发现是空的，流量也会被丢弃（也就是网络不通）。</li>
+</ul>
+</li>
+<li><mark>一个 VPC 的路由可以同时被多张路由表学习</mark>（你的地址可以同时出现在"大厅地图"和"VIP地图"上）。</li>
+</ul>
+<hr />
+<p><div class="callout callout-example" markdown="1"><br />
+<p class="callout-title">综合示例：生产VPC 与 测试VPC 隔离</p></p>
+<p>假设你有两个 VPC：<strong>生产VPC</strong> 和 <strong>测试VPC</strong>。你想让它们都连到 TR，但<strong>互相隔离不通</strong>。</p>
+<ol>
+<li><strong>创建路由表</strong>：<ul>
+<li>创建一张 <strong>"生产路由表"</strong>。</li>
+<li>创建一张 <strong>"测试路由表"</strong>。</li>
+</ul>
+</li>
+<li><strong>配置关联（决定查哪张表）</strong>：<ul>
+<li>设置：<strong>生产VPC</strong> 关联 → <strong>生产路由表</strong>。<ul>
+<li><em>含义：生产VPC发出的流量，只查生产路由表。</em></li>
+</ul>
+</li>
+<li>设置：<strong>测试VPC</strong> 关联 → <strong>测试路由表</strong>。<ul>
+<li><em>含义：测试VPC发出的流量，只查测试路由表。</em></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>配置学习（决定表里有谁的地址）</strong>：<ul>
+<li>设置：<strong>生产路由表</strong> 学习 ← <strong>生产VPC</strong>。<ul>
+<li><em>含义：生产路由表里有了去往生产VPC的路。</em></li>
+</ul>
+</li>
+<li>设置：<strong>测试路由表</strong> 学习 ← <strong>测试VPC</strong>。<ul>
+<li><em>含义：测试路由表里有了去往测试VPC的路。</em></li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<p><strong>结果分析</strong>：<br />
+当 <strong>生产VPC</strong> 想发数据给 <strong>测试VPC</strong> 时：<br />
+1. 流量进入 TR，根据关联关系，TR 打开了 <strong>"生产路由表"</strong>。<br />
+2. TR 查表发现：表里只有去往"生产VPC"的路（因为只学习了生产VPC），<strong>根本没有</strong>去往"测试VPC"的路。<br />
+3. <strong>结果</strong>：路不通，丢包。<mark>实现了隔离</mark>。</p>
+</div>
+<hr />
+<h2 id="网络实例连接">网络实例连接</h2>
+<p>网络实例连接是转发路由器与其他组件的连接种类，可分为：</p>
+<ol>
+<li><strong>VPC连接</strong></li>
+<li><strong>VBR连接</strong>（边界路由器，高速通道用的）</li>
+<li><strong>CCN连接</strong>（云连接网，智能接入网关SAG用的)</li>
+<li><strong><a class="wikilink" href="../../../Aliyun/%E7%BD%91%E7%BB%9C/%E7%BD%91%E5%85%B3-VPN-%E4%B8%93%E7%BA%BF/">VPN连接</a></strong>（IPSec与TR的连接）</li>
+<li><strong>跨地域连接</strong>：不同Region之间的TR attach（在CEN portal - 跨地域网络连接里面创建，就是跨地域TR attach）</li>
+</ol>
+<p><div class="callout callout-warning" markdown="1"><br />
+<p class="callout-title">TR Attach没有传递性</p></p>
+<p>Region A和Region B建立了TR跨区域连接，Region B和Region C建立了TR跨区域连接。那么Region A和Region C==并不会自动产生连接==，还是得重新创建跨区域连接。</p>
+</div>
+    </div>
+  </article>
+  <aside class="toc">
+    <p class="toc-label">本页目录</p>
+    <ul>
+  <li><a href="#应用场景">应用场景</a></li>
+  <li><a href="#企业复杂组网">企业复杂组网</a><ul>
+  <li><a href="#统一vpc出口">统一VPC出口</a></li>
+  <li><a href="#多vpc间流量安全互访">多VPC间流量安全互访</a></li>
+  <li><a href="#多cen实例下的网络使用共享服务">多CEN实例下的网络使用共享服务</a></li>
+</ul></li>
+  <li><a href="#路由表">路由表</a><ul>
+  <li><a href="#默认路由表-default-route-table">默认路由表 (Default Route Table)</a></li>
+  <li><a href="#自定义路由表-custom-route-table">自定义路由表 (Custom Route Table)</a></li>
+  <li><a href="#关联转发-association-进门查谁的表">关联转发 (Association) -- &#34;进门查谁的表&#34;</a></li>
+  <li><a href="#路由学习-route-propagationlearning-表里有什么路">路由学习 (Route Propagation/Learning) -- &#34;表里有什么路&#34;</a></li>
+</ul></li>
+  <li><a href="#网络实例连接">网络实例连接</a></li>
+</ul>
+  </aside>
+
+</div>
+
+</main>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>Learning Notes</span>
+    <a href="https://github.com/hangx969/learning-notes">GitHub</a>
+  </div>
+</footer>
+<script src="../../../static/search.js"></script>
+</body>
+</html>

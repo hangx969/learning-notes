@@ -1,0 +1,1461 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>软件测试直播课笔记 - Learning Notes</title>
+<link rel="stylesheet" href="../../static/style.css">
+<link rel="stylesheet" href="../../static/pygments.css">
+</head>
+<body data-root="../../">
+<header class="site-header">
+  <div class="header-inner">
+    <a class="logo" href="../../index.html"><span class="logo-mark"></span>LEARNING NOTES</a>
+    <div class="search">
+      <input id="search-input" type="search" placeholder="搜索笔记…" autocomplete="off" aria-label="搜索笔记">
+      <div id="search-results" hidden></div>
+    </div>
+  </div>
+  <nav class="topic-nav" aria-label="主题导航">
+    <div class="topic-nav-inner">
+      <a href="../../AI/">AI</a>
+      <a href="../../Aliyun/">Aliyun</a>
+      <a href="../../Azure/">Azure</a>
+      <a href="../../C%2B%2B/">C++</a>
+      <a href="../../CloudComputing/">CloudComputing</a>
+      <a href="../../Database/">Database</a>
+      <a href="../../Docker-Kubernetes/">Docker-Kubernetes</a>
+      <a href="../../GPU-DeepLearning/">GPU-DeepLearning</a>
+      <a href="../../Git/">Git</a>
+      <a href="../../Go/">Go</a>
+      <a href="../../HPC/">HPC</a>
+      <a href="../../IaC/">IaC</a>
+      <a href="../../Linux-Shell/">Linux-Shell</a>
+      <a href="../../Middlewares/">Middlewares</a>
+      <a href="../../Networking/">Networking</a>
+      <a href="../../OS/">OS</a>
+      <a href="../../Python/">Python</a>
+      <a href="../../SoftwareTesting/" class="active">SoftwareTesting</a>
+    </div>
+  </nav>
+</header>
+<main class="main">
+
+<div class="article-layout">
+
+  <aside class="sidebar">
+    <details class="sidebar-details">
+      <summary>SoftwareTesting</summary>
+      <nav class="sidebar-nav">
+        <p class="sidebar-group">其他</p>
+        <ul>
+          <li><a href="../../SoftwareTesting/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B%E5%9F%BA%E7%A1%80/">软件工程基础</a></li>
+          <li><a href="../../SoftwareTesting/%E8%BD%AF%E4%BB%B6%E6%B5%8B%E8%AF%95%E7%9B%B4%E6%92%AD%E8%AF%BE%E7%AC%94%E8%AE%B0/" class="current">软件测试直播课笔记</a></li>
+        </ul>
+      </nav>
+    </details>
+  </aside>
+
+  <article class="article">
+    <nav class="breadcrumb">
+      <a href="../../index.html">首页</a><span>/</span>
+      <a href="../../SoftwareTesting/">SoftwareTesting</a>
+    </nav>
+    <h1 class="article-title">软件测试直播课笔记</h1>
+    <p class="article-meta"><span>更新于 2026-04-16</span>
+      <a href="https://github.com/hangx969/learning-notes/blob/main/SoftwareTesting/%E8%BD%AF%E4%BB%B6%E6%B5%8B%E8%AF%95%E7%9B%B4%E6%92%AD%E8%AF%BE%E7%AC%94%E8%AE%B0.md">查看源文件</a>
+    </p>
+    <div class="article-body">
+<h1 id="软件测试培训">软件测试培训</h1>
+<hr />
+<h2 id="1019">10.19</h2>
+<h3 id="xampp安装配置">xampp安装配置</h3>
+<p>xampp简易建站程序</p>
+<ul>
+<li>
+<p>extend</p>
+</li>
+<li>
+<p>apache</p>
+</li>
+</ul>
+<p>提供网络服务器</p>
+<ul>
+<li>
+<p>MariaDB</p>
+</li>
+<li>
+<p>PHP</p>
+</li>
+<li>
+<p>Perl</p>
+</li>
+</ul>
+<p><div class="callout callout-note" markdown="1"><br />
+<p class="callout-title">xampp里面的<code>htdocs</code>目录相当于浏览器中的<code>localhost</code>路径</p></p>
+</div>
+<h3 id="zentao">zentao</h3>
+<hr />
+<h2 id="1021">10.21</h2>
+<h3 id="软件的研发过程">软件的研发过程</h3>
+<p><mark>立项 - 需求分析 - 系统架构设计（Top Level Design） - 系统详细设计（Detailed Design）- 系统实现 - 测试 - 产品运维</mark></p>
+<h3 id="测试在产品中的阶段">测试在产品中的阶段</h3>
+<p><mark>单元测试 - 集成测试 - 系统测试 - 验收测试</mark></p>
+<p><div class="callout callout-important" markdown="1"><br />
+<p class="callout-title">在软件研发过程中，越早进入越好。</p></p>
+</div>
+<h3 id="测试过程">测试过程</h3>
+<p>测试规划 - 测试策划（方针、策略） - 测试计划 - 测试用例 - 测试规格说明书</p>
+<h4 id="测试活动开展">测试活动开展</h4>
+<p>测试过程监控：进度、质量</p>
+<h4 id="测试方针">测试方针</h4>
+<p>系统类型、开发模式、项目范围、建立测试计划</p>
+<h4 id="软件开发模式">软件开发模式</h4>
+<h5 id="瀑布模型">瀑布模型</h5>
+<ul>
+<li>
+<p>按照软件开发流程推进，每个阶段完成后需要提供大量文档作为下一阶段的输入。</p>
+</li>
+<li>
+<p>特别不喜欢需求变更</p>
+</li>
+<li>
+<p>需求RMD</p>
+</li>
+</ul>
+<h5 id="敏捷模型">敏捷模型</h5>
+<ul>
+<li>把一个项目拆分成多个端对端的小项目（end-end，可以单独开发测试交付的小项目）小冲刺、快速迭代。</li>
+<li>小项目中由==story==组成，一个team花费若干时间对一个小项目进行冲刺（<mark>sprint</mark>）不强调文档，成员face-to-face</li>
+<li>缺点：小team需要不同的工种加进来，形成利益共同体，会对公司的组织架构产生挑战。</li>
+</ul>
+<h4 id="测试策略怎么做">测试策略：怎么做</h4>
+<ul>
+<li><mark>单元测试</mark>：</li>
+</ul>
+<p>白盒测试，代码走查、审查review（技术经理 把关），评审（大佬们 针对重要代码），逻辑覆盖</p>
+<ul>
+<li>静态测试：不run</li>
+<li>
+<p>动态测试：run</p>
+</li>
+<li>
+<p><mark>集成测试</mark>：</p>
+</li>
+<li>
+<p>整体组装测试：第一次整体组装运行，叫做==smoke test==</p>
+</li>
+<li>
+<p>渐增式集成测试：模块逐渐组装</p>
+</li>
+<li>
+<p><mark>系统测试</mark>：</p>
+</li>
+</ul>
+<p>可用性、易用性、可靠性、安全性、可维护性、可移植性。</p>
+<ul>
+<li>压测、负载测试</li>
+<li>可靠性：如果有错误发生，恢复的时间衡量，SLA</li>
+<li>
+<p>可维护性：扩展、维护的方便；模块之间的消息是可以跟踪、解释的，便于troubleshooting</p>
+</li>
+<li>
+<p><mark>验收测试</mark></p>
+</li>
+<li>
+<p><mark>alpha测试</mark>：用户参与，但测试是在开发一方的测试环境</p>
+</li>
+<li>
+<p><mark>beta测试</mark>：用户和最终用户参与，测试是在用户一方的测试或生产环境</p>
+</li>
+</ul>
+<h3 id="各种环境">各种环境</h3>
+<ul>
+<li>
+<p>开发者</p>
+</li>
+<li>
+<p>开发环境 || 测试环境</p>
+<p>两者之间数据不能渗透的；除非是版本发布之后，通过一些自动化部署工具，比如==Jenkins==，把新版本自动部署到测试环境，并且自动配置生成一些测试脚本，生成测试报告......</p>
+</li>
+<li>
+<p>用户</p>
+</li>
+<li>
+<p>测试环境 || 生产环境</p>
+</li>
+</ul>
+<hr />
+<h2 id="1026">10.26</h2>
+<h3 id="考试前检查环境">考试前检查环境</h3>
+<ul>
+<li>宿主机中的禅道环境和xampp工具</li>
+<li>浏览器的插件；</li>
+<li>虚拟机中的eclipse、pycharm以及python版本；</li>
+<li>宿主机ping通虚拟机（有时是ping不通的）</li>
+</ul>
+<p><div class="callout callout-warning" markdown="1"><br />
+<p class="callout-title">注意：我们学习时的禅道和xampp是安装到虚拟机中的。</p></p>
+<p>（用户名密码：admin/Admin123，访问网址：http://localhost/zentao/www/my）</p>
+</div>
+<h3 id="回归测试">回归测试</h3>
+<h4 id="是什么">是什么</h4>
+<p>在某个版本基础上，进行了测试，发现了缺陷；在这些缺陷被开发解决后，我们需要验证的包括：</p>
+<ul>
+<li>缺陷报告的问题是否已经解决？</li>
+<li>该解决方案是否引入了新的问题？</li>
+</ul>
+<p>所以在提交解决方案之后，需要进行==回归测试==，目的是判断是否解决原有问题和引入新的问题。</p>
+<h4 id="缺陷的处理流程">缺陷的处理流程</h4>
+<ul>
+<li>（瀑布模型）</li>
+</ul>
+<p>发现缺陷 - 提交bug（zentao中的激活） - bug审核确认 - 分配给开发 - 开发确认 复现 - 提交解决方案（zentao中的解决） - <strong>回归测试</strong>（zentao中的确认 or 未确认）</p>
+<ul>
+<li>（敏捷模型）</li>
+</ul>
+<p>发现缺陷 - 提交bug - 开发解决 - <strong>回归测试</strong></p>
+<h3 id="操作题325">操作题3.25</h3>
+<p><div class="callout callout-important" markdown="1"><br />
+<p class="callout-title">这是个20分的题，需要很熟练，20分钟内完成。</p></p>
+</div>
+<p><strong>执行发送邮件的回归测试</strong></p>
+<ol>
+<li>
+<p>配置禅道 - 导入项目</p>
+</li>
+<li>
+<p>zentao - 组织 - 用户 - 批量添加用户 </p>
+</li>
+<li>
+<p>建立新的项目，将文档中的说明粘贴到项目描述中。建立好之后在项目 - 概况 中可以看到。</p>
+<p><img alt="image-20221105104830393" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202211051048501.png" /></p>
+</li>
+<li>
+<p>建立冲刺和版本信息</p>
+</li>
+<li>
+<p>由于是回归测试，bug是属于旧版本V1的。</p>
+<p>在测试 - bug中，需要填写 冲刺 和 版本 的信息。</p>
+<p>所以要先去建立冲刺和版本。</p>
+<p>建立冲刺：</p>
+<p><img alt="image-20221105105010084" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202211051050137.png" /></p>
+<p>冲刺里面：添加团队成员：</p>
+<p><img alt="image-20221105105150196" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202211051051235.png" /></p>
+<p>建立版本</p>
+<p>冲刺 - 测试 - 版本：新建V1和V2           <img alt="image-20221105105317977" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202211051053026.png" />                <img alt="image-20221105105530665" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202211051055705.png" /></p>
+<blockquote>
+<p>[!note] 注意：版本是在冲刺里面</p>
+</blockquote>
+</li>
+<li>
+<p>建立bug</p>
+</li>
+</ol>
+<p>注意：优先级别忘选</p>
+<p><img alt="image-20221105110142019" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202211051101078.png" /></p>
+<ol>
+<li>
+<p>将bug建立测试用例</p>
+</li>
+<li>
+<p>打开bug - 建用例</p>
+</li>
+</ol>
+<p><img alt="image-20221105110820245" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202211051108300.png" /></p>
+<p><img alt="image-20221105111731006" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202211051117044.png" /></p>
+<ol>
+<li>
+<p>执行回归测试，验证bug是否被解决</p>
+</li>
+<li>
+<p>bug1，测试下来与预期结果不符：</p>
+<p>不需要转bug，直接点关闭就行。（因为只是对bug进行的校验）</p>
+<p><img alt="image-20221105112314420" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202211051123487.png" /></p>
+<p>回到bug1里面：把 结果 改成现在发现的结果，把影响版本加上v2</p>
+<p><img alt="image-20221105112714266" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202211051127335.png" /></p>
+</li>
+<li>
+<p>bug2：测试下来，同样是失败的。也回到bug界面改一下结果和影响版本</p>
+</li>
+<li>
+<p>bug3：测试下来没过，回去改一下bug</p>
+</li>
+<li>
+<p>注意：如果bug被解决了，回到bug里面，把版本加上V2，然后把bug改成已确认、已解决。</p>
+<ul>
+<li>bug的状态：<mark>激活/已解决</mark></li>
+</ul>
+<p>已解决这个状态是开发改完代码，认为改好了，才设的。</p>
+<p>激活是测试完发现没改好，重新指定为bug。</p>
+<ul>
+<li>bug的确认：<mark>已确认/未确认</mark></li>
+</ul>
+<p>如果测试完已解决bug，需要把状态改为已解决、已确认。</p>
+<p>如果测试完发现bug没解决，需要把状态改为激活、未确认</p>
+</li>
+<li>
+<p>导出bug和测试用例</p>
+</li>
+</ol>
+<p><img alt="image-20221105113446997" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202211051134043.png" /></p>
+<ol>
+<li>导出项目概况</li>
+</ol>
+<p>Win10 截图快捷键：Win Shift S</p>
+<p><img alt="image-20221105113909031" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202211051139119.png" /></p>
+<p><div class="callout callout-tip" markdown="1"><br />
+<p class="callout-title">本题注意事项</p></p>
+<ul>
+<li>先把excel表中的bug导入到项目中 - 记得创建sprint、导入用户、版本V1、V2</li>
+<li>原则上，导入的bug的状态，都应该是fixed。</li>
+<li>根据bug生成testcase，注意testcase的标题和bug是反着的。<br />
+  给bug或者testcase写标题用简洁的方式来写。<br />
+  如：打开xxx页面后输入xxx和yyy，操作结果。</li>
+<li>以新版本的软件为基础，运行testcase，验证。</li>
+<li>如果bug仍然存在，bug状态保持激活，要把实测结果改成最新测出来的结果，bug版本上加上V2版本。</li>
+<li>如果bug不存在了，bug要变成<strong>解决+确认</strong>，并且影响的版本要加上V2</li>
+<li>题目要求的文件，记得导出保存上传</li>
+</ul>
+</div>
+<hr />
+<h2 id="1028">10.28</h2>
+<h3 id="有关数据库操作">有关数据库操作</h3>
+<p>mysql数据库登陆、创建数据库、创建表、在表中增加数据、查询表的数据。</p>
+<h3 id="考试mysql环境准备">考试mysql环境准备</h3>
+<ul>
+<li>
+<p>xampp的mysql路径下：<code>C:\xampp\mysql</code></p>
+</li>
+<li>
+<p>在<code>C:\xampp\mysql\bin</code>目录下启动cmd</p>
+</li>
+</ul>
+<p>（直接在地址栏输入cmd即可）</p>
+<p>登录MySQL：</p>
+<p><code>sql
+  mysql -u root -p
+  # passwd是空的</code></p>
+<p><img alt="image-20221105134808027" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202211051348075.png" /></p>
+<ul>
+<li>创建数据库</li>
+</ul>
+<p><code>sql
+  CREATE DATABASE db_school DEFAULT CHARACTER SET GB2312; 
+  -- 指定编码，中文GB2312</code></p>
+<ul>
+<li>使用数据库</li>
+</ul>
+<p><code>sql
+  USE db_school;</code></p>
+<ul>
+<li>在数据库中，创建表</li>
+</ul>
+<p><code>CREATE TABLE 表名(字段名1 数据类型 默认值 约束，...字段名2 数据类型 默认值 约束);</code></p>
+<ul>
+<li>
+<p>数据类型</p>
+<p><code>int(9)</code> -- 表示整数的范围</p>
+<p><code>number(9)</code> --整数，总共9个数字组成</p>
+<p><code>number(9,2)</code> -- 小数，总共9位，小数点后2位</p>
+<p><code>char(9)</code> --总共9个字符</p>
+<p><code>varchar(25)</code> -- 最多25个字符，但是有几个就算几个；前面的是固定位数，不足就补齐。</p>
+<p><code>ENUM('F','M')</code>: 指定使用指定数据： 枚举。</p>
+</li>
+<li>
+<p>约束</p>
+<ul>
+<li>
+<p>非空约束：<mark>NOT NULL</mark>；（如果数据为空就会报错）</p>
+</li>
+<li>
+<p>唯一约束：<mark>UNIQUE</mark>；</p>
+</li>
+<li>
+<p><mark>PRIMARY KEY</mark>：主键 -- 能代表这个记录，主键唯一且非空。</p>
+</li>
+</ul>
+<p>这些约束可以在字段中定义（行级约束）；也可以在所有的字段最后定义（表级约束）</p>
+</li>
+</ul>
+<p><code>sql
+  -- 创建学生表，字段：学号，姓名，性别，班级
+  CREATE TABLE t_student(
+      stu_no CHAR(9) PRIMARY KEY,
+      name VARCHAR(50) NOT NULL,
+      gender ENUM('F', 'M') DEFAULT 'F',
+      class_no VARCHAR(15)  -- 注意最后一行这里不能有逗号
+  ) DEFAULT CHARSET=GB2312;  -- 注意之类要有分号结束</code></p>
+<ul>
+<li>查看表的结构</li>
+</ul>
+<p><code>sql
+  DESC t_student;</code></p>
+<ul>
+<li>在表中增加数据</li>
+</ul>
+<p><code>INSERT INTO 表名（字段1， 字段2， 字段3...）values（值1， 值2，值3...）</code></p>
+<p>```sql<br />
+  INSERT INTO t_student <br />
+  (stu_no, name, gender, class_no)<br />
+  VALUES<br />
+  ('202210281', 'Zhangsan', 'M', 'abc001');</p>
+<p>COMMIT; -- 对修改进行确认<br />
+  ```</p>
+<ul>
+<li>查询数据</li>
+</ul>
+<p><code>sql
+  SELECT stu_no, name, gender
+  FROM t_student
+  where gender='M';</code></p>
+<p><div class="callout callout-info" markdown="1"><br />
+<p class="callout-title">SQL语句执行次序</p></p>
+</div>
+<table>
+<thead>
+<tr>
+<th>语句</th>
+<th>执行次序</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>select</td>
+<td>3 -- 做完行筛选，再做列筛选</td>
+</tr>
+<tr>
+<td>from</td>
+<td>1 -- 选择数据集合</td>
+</tr>
+<tr>
+<td>where</td>
+<td>2 -- 对选定的数据集合进行 行筛选（记录筛选）</td>
+</tr>
+<tr>
+<td>order by</td>
+<td>4 -- 最后进行排序</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>SQL脚本以及脚本执行</li>
+</ul>
+<p><code>sql
+  source xxx.sql
+  -- 或者 -- 
+  @xxx.sql</code></p>
+<hr />
+<h2 id="1102">11.02</h2>
+<h3 id="121操作题-写sql脚本">1.2.1操作题 -- 写SQL脚本</h3>
+<ul>
+<li>新建一个notepad文件</li>
+</ul>
+<p>注意文件格式和编码格式ANSI。</p>
+<p><img alt="image-20221105181408424" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202211051814473.png" /></p>
+<ul>
+<li>notepad里面编写脚本：</li>
+</ul>
+<blockquote>
+<p>[!warning] 注意：加了判断语句，如果数据库存在就删掉。<br />
+考试环境：在宿主机的xampp下，<code>C:\xampp\mysql\bin</code>目录下启动cmd</p>
+</blockquote>
+<p>```sql<br />
+  -- 考试环境：在宿主机的xampp下，C:\xampp\mysql\bin目录下启动cmd</p>
+<p>-- 如果该数据库已存在就删除<br />
+  DROP DATABASE IF EXISTS db_eshop;</p>
+<p>-- 创建数据库</p>
+<p>CREATE DATABASE db_eshop DEFAULT CHARACTER SET GB2312;</p>
+<p>USE db_eshop;</p>
+<p>-- 创建表</p>
+<p>CREATE TABLE products(<br />
+    pid CHAR(10) NOT NULL,<br />
+    Pname VARCHAR(50) NOT NULL,<br />
+    Pclass VARCHAR(50) NOT NULL,<br />
+    PRIMARY KEY(pid)<br />
+  )DEFAULT CHARSET=GB2312;</p>
+<p>-- 增加数据</p>
+<p>INSERT INTO products(pid, pname, pclass) VALUES('A001','手套','劳保用品');<br />
+  ```</p>
+<ul>
+<li>技巧：</li>
+</ul>
+<p>如何将excel中50列数据全部变成INSERT INTO的插入语句？</p>
+<ul>
+<li>
+<p>在商品表中添加列，把INSERT INTO语句插进去：</p>
+<p><img alt="image-20221105184134497" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202211051841564.png" /></p>
+<blockquote>
+<p>[!warning] 注意 单引号在excel中要写成两个单引号 ''</p>
+<p><img alt="image-20221105184331508" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202211051843545.png" /></p>
+</blockquote>
+</li>
+<li>
+<p>把50行语句粘贴至notepad，把空格全部替换掉。然后粘贴到脚本中。</p>
+</li>
+<li>
+<p>保存sql脚本，在cmd中运行</p>
+</li>
+</ul>
+<p><code>sql
+  source C:\\Users\\test\\Desktop\\2022001\\1.2.1\\1.2.1.sql</code></p>
+<ul>
+<li>运行好之后，查询并保存结果</li>
+</ul>
+<p><code>sql
+  -- 查看数据并保存
+  SELECT pid,pname,pclass FROM products INTO OUTFILE "C:\\Users\\test\\Desktop\\2022001\\1.2.1\\1.2.1.txt";</code></p>
+<blockquote>
+<p>[!note] 注意：路径要用双引号</p>
+</blockquote>
+<hr />
+<h2 id="1104">11.04</h2>
+<h3 id="junit-白盒单元测试">JUnit 白盒单元测试</h3>
+<ul>
+<li>配置Eclipse新建项目</li>
+</ul>
+<p><img alt="image-20221105191257789" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202211051912839.png" /></p>
+<ul>
+<li>
+<p>在项目的src下面新建package，命名一般是域名反过来（com.test）</p>
+</li>
+<li>
+<p>在package下面新建class，编写一个Bmi计算的类</p>
+</li>
+</ul>
+<p>```java<br />
+  package com.ms.test;</p>
+<p>public class BmiFunc {<br />
+    /<em><br />
+     * Bmi = 体重/（身高平方）<br />
+     * Bmi &lt; 18.5 : too thin<br />
+     * Bmi &lt; 24: normal<br />
+     * Bmi &lt; 28: a little overweight<br />
+     * Bmi &lt; 32: overweight<br />
+     * or : heavily over weight<br />
+</em>/<br />
+    private float height;<br />
+    private float weight;</p>
+<div class="highlight"><pre><span></span><code>//构造函数
+public BmiFunc() {
+
+}
+
+public BmiFunc(float height, float weight) {
+    this.weight = weight;
+    this.height = height;
+}
+
+//获取数据的接口
+public float getHeight() {
+    return this.height;
+}
+
+public float getWeight() {
+    return this.weight;
+}
+
+//设定数据的方法
+public void setHeight(float h) {
+    this.height = h;
+}
+
+public void setWeight(float w) {
+    this.weight = w;
+}
+
+//计算bmi指数
+public float bmiRate() {
+    return this.weight / (this.height * this.height);
+}
+
+// 判断bmi
+public String bmiJudge() {
+    float rslt = bmiRate();  //先计算
+    if (rslt &lt;= 18.5) {
+        return &quot;1&quot;;
+    } else if (rslt &lt;= 24.0) {
+        return &quot;2&quot;;
+    } else if (rslt &lt;= 28.0) {
+        return &quot;3&quot;;
+    }else if (rslt &lt;= 32.0){
+        return &quot;4&quot;;
+    }else {
+        return &quot;5&quot;;
+    }
+}
+</code></pre></div>
+
+<p>}<br />
+  ```</p>
+<ul>
+<li>在项目的src下面新建Junit Test Case</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202211052033229.png" alt="image-20221105203342158" style="zoom:50%;" /></p>
+<p><img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202211052041745.png" alt="image-20221105204102678" style="zoom:50%;" /></p>
+<ul>
+<li>excel表写测试用例</li>
+</ul>
+<p><img alt="image-20221105205523896" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202211052055950.png" />                                                </p>
+<ul>
+<li>Junit里面写单元测试代码</li>
+</ul>
+<p>```java<br />
+  package com.test;</p>
+<p>import static org.junit.jupiter.api.Assertions.*;</p>
+<p>import org.junit.jupiter.api.Test;</p>
+<p>import com.ms.test.BmiFunc;</p>
+<p>class testBmi {</p>
+<div class="highlight"><pre><span></span><code>@Test
+void testcase1() {
+    BmiFunc bj = new BmiFunc(2.0f, 70.0f);  //这个函数也是一个对象，new一个对象出来
+    String rslt = bj.bmiJudge();
+    //断言，就是进行测试判断。第一个参数是实际结果；第二个参数是预期结果
+    assertEquals(&quot;1&quot;, rslt);
+}
+
+@Test
+void testcase2() {
+    BmiFunc bj = new BmiFunc(2.0f, 74.0f);  //这个函数也是一个对象，new一个对象出来
+    String rslt = bj.bmiJudge();
+    //断言，就是进行测试判断。实际结果是rslt，预期结果是&quot;1&quot;
+    assertEquals(&quot;1&quot;, rslt);
+}
+
+@Test
+void testcase3() {
+    BmiFunc bj = new BmiFunc(2.0f, 90.0f);  //这个函数也是一个对象，new一个对象出来
+    String rslt = bj.bmiJudge();
+    //断言，就是进行测试判断。实际结果是rslt，预期结果是&quot;1&quot;
+    assertEquals(&quot;2&quot;, rslt);
+}
+
+@Test
+void testcase4() {
+    BmiFunc bj = new BmiFunc(2.0f, 96.0f);  //这个函数也是一个对象，new一个对象出来
+    String rslt = bj.bmiJudge();
+    //断言，就是进行测试判断。实际结果是rslt，预期结果是&quot;1&quot;
+    assertEquals(&quot;2&quot;, rslt);
+}
+
+@Test
+void testcase5() {
+    BmiFunc bj = new BmiFunc(2.0f, 109.0f);  //这个函数也是一个对象，new一个对象出来
+    String rslt = bj.bmiJudge();
+    //断言，就是进行测试判断。实际结果是rslt，预期结果是&quot;1&quot;
+    assertEquals(&quot;3&quot;, rslt);
+}
+
+@Test
+void testcase6() {
+    BmiFunc bj = new BmiFunc(2.0f, 112.0f);  //这个函数也是一个对象，new一个对象出来
+    String rslt = bj.bmiJudge();
+    //断言，就是进行测试判断。实际结果是rslt，预期结果是&quot;1&quot;
+    assertEquals(&quot;3&quot;, rslt);
+}
+
+@Test
+void testcase7() {
+    BmiFunc bj = new BmiFunc(2.0f, 123.0f);  //这个函数也是一个对象，new一个对象出来
+    String rslt = bj.bmiJudge();
+    //断言，就是进行测试判断。实际结果是rslt，预期结果是&quot;1&quot;
+    assertEquals(&quot;4&quot;, rslt);
+}
+
+@Test
+void testcase8() {
+    BmiFunc bj = new BmiFunc(2.0f, 128.0f);  //这个函数也是一个对象，new一个对象出来
+    String rslt = bj.bmiJudge();
+    //断言，就是进行测试判断。实际结果是rslt，预期结果是&quot;1&quot;
+    assertEquals(&quot;4&quot;, rslt);
+}
+
+@Test
+void testcase9() {
+    BmiFunc bj = new BmiFunc(2.0f, 130.0f);  //这个函数也是一个对象，new一个对象出来
+    String rslt = bj.bmiJudge();
+    //断言，就是进行测试判断。实际结果是rslt，预期结果是&quot;1&quot;
+    assertEquals(&quot;5&quot;, rslt);
+}
+</code></pre></div>
+
+<p>}</p>
+<p>```</p>
+<ul>
+<li>
+<p>在testcase1方法上右键运行，获取单个断言成功or失败的结果；</p>
+</li>
+<li>
+<p>在class TestBmiFunc上右键运行，获取里面所有的testcase的结果。</p>
+</li>
+</ul>
+<h3 id="junit黑盒测试">Junit黑盒测试</h3>
+<ul>
+<li>把代码打成jar包</li>
+</ul>
+<p>file - export - jar file</p>
+<ul>
+<li>
+<p>新建项目</p>
+</li>
+<li>
+<p>在src下面新建文件夹lib，把jar包复制粘贴进来</p>
+</li>
+</ul>
+<p><img alt="image-20221105220023854" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202211052200914.png" /></p>
+<ul>
+<li>Jar包右键 - Add to Build Path</li>
+</ul>
+<p><img alt="image-20221105220142514" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202211052201562.png" /></p>
+<ul>
+<li>src下面新建JUnit Test Case，写好单元测试代码，同上。</li>
+</ul>
+<h3 id="111操作题">1.1.1操作题</h3>
+<ul>
+<li>
+<p>阅读题目要求、函数说明</p>
+</li>
+<li>
+<p>eclipse里面新建项目、项目中新建lib文件夹，导入jar包(直接拖进来，或者文件复制粘贴) - build path - add to build path</p>
+</li>
+<li>
+<p>src下面新建Junit Test Case</p>
+</li>
+</ul>
+<p>别忘了import给的类：</p>
+<p><code>java
+  //package.class
+  import callphone.CheckPhone;</code></p>
+<p><img alt="image-20221105223905543" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202211052239608.png" /></p>
+<ul>
+<li>excel中编辑测试用例，并按照测试用例写单元测试代码</li>
+</ul>
+<p>```java<br />
+  package com.test;</p>
+<p>import static org.junit.jupiter.api.Assertions.*;</p>
+<p>import org.junit.jupiter.api.Test;</p>
+<p>import callphone.CheckPhone;</p>
+<p>class callPhoneTest {</p>
+<div class="highlight"><pre><span></span><code>@Test
+void testcase1() {
+    CheckPhone cp =  new CheckPhone();
+    boolean rslt = cp.checkNum(&quot;123456789&quot;);
+    assertEquals(false, rslt);
+}
+
+@Test
+void testcase2() {
+    CheckPhone cp =  new CheckPhone();
+    boolean rslt = cp.checkNum(&quot;123456789123&quot;);
+    assertEquals(false, rslt);
+}
+
+@Test
+void testcase3() {
+    CheckPhone cp =  new CheckPhone();
+    boolean rslt = cp.checkNum(&quot;1234567891a&quot;);
+    assertEquals(false, rslt);
+}
+
+@Test
+void testcase4() {
+    CheckPhone cp =  new CheckPhone();
+    boolean rslt = cp.checkNum(&quot;21345678912&quot;);
+    assertEquals(false, rslt);
+}
+
+@Test
+void testcase5() {
+    CheckPhone cp =  new CheckPhone();
+    boolean rslt = cp.checkNum(&quot;12345678912&quot;);
+    assertEquals(true, rslt);
+}
+</code></pre></div>
+
+<p>}<br />
+  ```</p>
+<ul>
+<li>
+<p>运行单元测试获取结果(class名右键运行)</p>
+</li>
+<li>
+<p>将结果写入测试用例表</p>
+</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>序号</th>
+<th>输入数据</th>
+<th>测试说明</th>
+<th>实际输出</th>
+<th>期望输出</th>
+<th>测试结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p><img alt="image-20221105224736465" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202211052247524.png" /></p>
+<ul>
+<li>保存单元测试的Java文件、截图、测试用例表到考试文件夹</li>
+</ul>
+<p><div class="callout callout-tip" markdown="1"><br />
+<p class="callout-title">重点</p></p>
+<ul>
+<li>写测试用例表: 序号-输入数据-测试描述-实际输出-期望输出-测试结果<br />
+  采用等价类方法，要记得算上边界条件和特殊条件（输入为空等）。</li>
+<li>new一个类的实例出来，函数调用：<code>实例名.函数名（）</code></li>
+<li>断言的方法：<br />
+<code>java
+  assertEquals(期望值，实际值变量)</code></li>
+</ul>
+</div>
+<hr />
+<h2 id="1109-场景测试">11.09 场景测试</h2>
+<h3 id="了解概念">了解概念</h3>
+<ul>
+<li>按照测试流程来分：单元 - 集成 - 系统 - 验收。</li>
+<li>按照测试方法：白盒、黑盒、回归测试、<mark>场景测试</mark>、分组测试。</li>
+</ul>
+<h3 id="场景测试">场景测试</h3>
+<h4 id="定义">定义</h4>
+<ul>
+<li>基于用例的场景测试：用户 操作测试对象的实际过程</li>
+<li>根据测试流程来做的各种测试，都是需求分析之后的，这些可能和实际应用之间存在差异。需求比能不能描述出用户的真正目的。</li>
+<li>基于软件实际使用场景，通过测试用例，描述完整的==基本流==；基本流确定后，包含多个==备选流==（即基本流出现偏差）。</li>
+</ul>
+<h4 id="how">How？</h4>
+<ul>
+<li>利益驱动：人们想要获得某个功能，他们怎么才能得到这个功能？</li>
+<li>事务驱动：执行步骤是什么？需求的数据是什么？输入和输出是什么？</li>
+<li>参考竞品：优点</li>
+</ul>
+<h4 id="理想的测试场景">理想的测试场景</h4>
+<ul>
+<li><mark>肥皂剧测试</mark>：源于真实生活、夸张、浓缩、有趣。</li>
+</ul>
+<h3 id="操作题212">操作题2.1.2</h3>
+<h4 id="部署环境">部署环境</h4>
+<ul>
+<li>学习环境：安装了xampp+zentao，删除了原来的mysql和tomcat，导致没有电子商城系统。</li>
+<li>解决：安装mysql和Tomcat，把提供的电子商城项目部署在自己安装的tomcat中；或者再重开一个虚拟机，还原到原来的环境。</li>
+<li>初始win10系统中，浏览器打开：<strong>localhost/EShop/</strong>，观察连通性</li>
+<li>安装了zentao的虚拟机中，浏览器打开：<strong>&lt;初始虚拟机IP地址&gt;/EShop/</strong>,观察连通性。这样在zentao的学习环境中就可以访问电子商城系统了。</li>
+</ul>
+<h4 id="题目执行">题目执行</h4>
+<ul>
+<li>
+<p>新建项目</p>
+</li>
+<li>
+<p>新建功能测试用例，把基本流和备选流分别创建测试用例。</p>
+</li>
+<li>
+<p>依次对项目进行测试。</p>
+</li>
+<li>
+<p>如果发现bug，即某一步失败了，在测试用例的执行界面中，测试结果选择失败，并且转bug：</p>
+</li>
+</ul>
+<p><img alt="image-20221112132804399" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202211121328646.png" /></p>
+<ul>
+<li>Bug标题改一下，加上细节描述；优先级也要改成2</li>
+</ul>
+<p><img alt="image-20221112134508115" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202211121345188.png" /></p>
+<ul>
+<li>如果某一步卡住了，后面的步骤要都选为阻塞状态：</li>
+</ul>
+<p><img alt="image-20221112135317537" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202211121353611.png" /></p>
+<p>转bug的的界面的对勾点到失败的这一步就行</p>
+<hr />
+<h2 id="1111">11.11</h2>
+<h3 id="分组测试">分组测试</h3>
+<h4 id="概念">概念</h4>
+<ul>
+<li>测试过程中，如果需要进行多组输入，穷尽是测试代价比较大。</li>
+<li>采用组合测试的方法减少测试用例。</li>
+<li>步骤：测试对象 - 输入空间建模 - 产生组合设计 - 生成测试用例 - 执行测试用例</li>
+</ul>
+<h4 id="例题221">例题2.2.1</h4>
+<h5 id="pict">pict</h5>
+<ul>
+<li>
+<p>创建分组用例的算法工具。计算每个输入数据的组合种类。</p>
+</li>
+<li>
+<p>使用方法：notepad建立供选文件，标点符号要用英文的，格式要用ANSI：</p>
+</li>
+</ul>
+<p><img alt="image-20221112150132871" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202211121501939.png" /></p>
+<p><code>/o: N</code>，N是分组的类型，基本上是每个字段算一组。</p>
+<p><img alt="image-20221112150155180" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202211121501220.png" /></p>
+<p>如果全覆盖的用例不算多的话，就挨个建立测试用例，去测试，失败的转bug。html页面每次换了新的参数，要刷新。</p>
+<h3 id="python基础知识">Python基础知识</h3>
+<ul>
+<li>变量只是内存中地址的一个别名。不分类型。</li>
+<li>变量名字最好遵守：望文生义；小写字母，下划线分隔，不要驼峰！！</li>
+<li>浮点数运算，牵扯到二进制和十进制转换，会产生略微的误差。</li>
+</ul>
+<h4 id="编码">编码</h4>
+<p>英文字符：用==ASCII==编码；汉字用==gbk==或==gb2312==；台湾繁体字用big5。</p>
+<ul>
+<li>
+<p>gbk或者gb2312:</p>
+</li>
+<li>
+<p>两个字节编码一个汉字，每个字节的最高位都是1；第一个字节称为区码；第二个字节是位码。</p>
+</li>
+<li>
+<p>不同方式的编码类型会造成混乱</p>
+</li>
+<li>
+<p>==UTF-8==编码</p>
+</li>
+<li>
+<p>对于英语体系，原有的ASC编码不变一个字符一个字节 ；对于汉字，一个汉字三个字节。</p>
+</li>
+<li>
+<p>编码转换</p>
+</li>
+</ul>
+<p><code>python
+  b_str = "抽烟喝酒烫头"
+  # encode方法
+  b_utf8 = b_str.encode("utf8")
+  b_gbk = b_str.encode("gbk")
+  # decode方法
+  b_str = b_utf8.decode("utf8")</code></p>
+<h4 id="占位符">占位符</h4>
+<div class="highlight"><pre><span></span><code><span class="n">price</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="nb">input</span><span class="p">(</span><span class="s2">&quot;请输入苹果的单价：&quot;</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;苹果的单价为</span><span class="si">{</span><span class="n">price</span><span class="si">}</span><span class="s2">元&quot;</span><span class="p">)</span>
+<span class="c1"># f&quot;{变量名}&quot; ，的用法，大括号会成为占位符，里面的变量会生效。</span>
+</code></pre></div>
+
+<h4 id="tuple元组">tuple元组</h4>
+<div class="highlight"><pre><span></span><code><span class="n">x</span><span class="p">,</span><span class="n">y</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span> <span class="c1"># 拆包，把2，3这个元组拆给了下x，y</span>
+<span class="n">a_tuple</span><span class="o">=</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="c1"># 组包，把x，y组装成了元组，赋值给a_tuple</span>
+<span class="n">x</span><span class="p">,</span><span class="n">y</span> <span class="o">=</span> <span class="n">y</span><span class="p">,</span><span class="n">x</span> <span class="c1"># 交换俩变量的值的写法，实际是右边的y，x先组包，再拆包给y，x</span>
+</code></pre></div>
+
+<h4 id="set集合">set集合</h4>
+<ul>
+<li>无序、唯一，用<code>{ }</code>表示。可以用来去重。</li>
+</ul>
+<h4 id="函数传参">函数传参</h4>
+<ul>
+<li><code>func(*nums)</code> 传入不定长参数，打包成元组。</li>
+<li><code>func(**kwarg)</code> 传入k，v字典参数，打包成字典。</li>
+</ul>
+<h4 id="文件读写">文件读写</h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># 文件的读写之前，需要打开文件，open</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;a.csv&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf8&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;name,age,gender</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;zhangsan,21，M</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+</code></pre></div>
+
+<hr />
+<h2 id="1118-selenium">11.18 selenium</h2>
+<h3 id="python-selenium基本用法">python Selenium基本用法</h3>
+<ul>
+<li>检查chrome版本和chromedriver版本</li>
+</ul>
+<p><img alt="image-20221119163746011" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202211191637238.png" /></p>
+<p><img alt="image-20221119163838221" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202211191638280.png" /></p>
+<p>这两个版本不一致的话，selenium运行不了，会报版本不一致错误。</p>
+<ul>
+<li>
+<p>更新chromedriver的方法：</p>
+<ul>
+<li>在官网：<a href="http://chromedriver.storage.googleapis.com/index.html">chromedriver.storage.googleapis.com/index.html</a>中下载小版本一致的驱动程序exe文件（107.0.5304.xxx），放到python39的路径中（用<code>where python</code>来查询python路径）覆盖旧版本。</li>
+</ul>
+</li>
+<li>
+<p>浏览器中安装Selenium IDE插件</p>
+</li>
+</ul>
+<p>google的话本地插件程序拖进去；edge的话是直接在线搜索安装。</p>
+<ul>
+<li>检查百度输入框的id</li>
+</ul>
+<p><img alt="image-20221119164625823" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202211191646891.png" /></p>
+<p>输入框的id是==kw==</p>
+<ul>
+<li>
+<p>同理，检查百度一下按钮的ID：<mark>su</mark></p>
+</li>
+<li>
+<p>写自动化测试代码</p>
+</li>
+</ul>
+<p>```python<br />
+  from selenium import webdriver<br />
+  from selenium.webdriver.common.by import By<br />
+  import time</p>
+<p>#获取浏览器对象，打开网页<br />
+  chrome = webdriver.Chrome()<br />
+  chrome.get("http://www.baidu.com")<br />
+  time.sleep(3)</p>
+<p># 检查百度输入框的ID叫kw，获取这个输入框，并输入内容<br />
+  input_s = chrome.find_element(By.ID, "kw")<br />
+  input_s.send_keys("python")<br />
+  time.sleep(3)</p>
+<p># 检查百度一下的按钮的ID叫su，获取这个button按钮，并点击<br />
+  btn_s = chrome.find_element(By.ID, "su")<br />
+  btn_s.click()<br />
+  time.sleep(5)</p>
+<p># 关闭浏览器<br />
+  chrome.close()<br />
+  ```</p>
+<h3 id="浏览器selenium基本用法">浏览器selenium基本用法</h3>
+<ul>
+<li>
+<p>打开selenium ide界面</p>
+</li>
+<li>
+<p>从浏览器的扩展程序界面打开</p>
+</li>
+<li>
+<p>或者直接从扩展程序的index.html文件进去</p>
+<p><img alt="image-20221119173218232" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202211191732301.png" /></p>
+</li>
+<li>
+<p>新建project</p>
+</li>
+<li>
+<p>输入网址 - 点击 REC - 执行操作（输入python点击百度一下）- 点击stop - 命名</p>
+</li>
+<li>
+<p>在command里面就能看到操作的分解步骤：</p>
+</li>
+</ul>
+<p><img alt="image-20221119181106543" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202211191811623.png" /></p>
+<p>如果不需要某个command，就在下面点 // 把这个command disable掉</p>
+<ul>
+<li>导出项目为python pytest文件</li>
+</ul>
+<p><img alt="image-20221119181528726" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202211191815781.png" /></p>
+<ul>
+<li>
+<p>pytest文件导入到pycharm</p>
+</li>
+<li>
+<p>右键class名 - 运行测试（如果失败可以尝试在pycharm的settings - Tool里面把testing选择pytest）</p>
+</li>
+</ul>
+<p><img alt="image-20221119182056470" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202211191820542.png" /></p>
+<hr />
+<h2 id="1123-python操作题311">11.23 python操作题3.1.1</h2>
+<h3 id="环境配置">环境配置</h3>
+<ul>
+<li>
+<p>考试环境没有打开Selenium，在浏览器中打开扩展页，enable起来。</p>
+</li>
+<li>
+<p>提供的脚本server.py，在该文件夹中打开cmd，运行<code>python server.py</code>，会启动服务器，并监听端口7272。这时启动浏览器，访问localhost:7272就能访问服务器。</p>
+</li>
+</ul>
+<h3 id="测试登陆界面的步骤">测试登陆界面的步骤</h3>
+<ul>
+<li>打开到server登录界面，打开selenium ide，新建项目，输入网址开始录制。</li>
+</ul>
+<p><img alt="image-20221127102258084" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202211271022213.png" /></p>
+<ul>
+<li>
+<p>在server登录界面输入用户名密码开始登录，显示错误值之后，停止录制。</p>
+</li>
+<li>
+<p>在项目界面输入target网址</p>
+</li>
+</ul>
+<p><img alt="image-20221127102519263" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202211271025319.png" /></p>
+<ul>
+<li>为了校验确实是跳到了Error Page，需要加上一句断言来判断：</li>
+</ul>
+<p><img alt="image-20221127104503516" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202211271045584.png" /></p>
+<ul>
+<li>
+<p>输入好之后，点击左上角Run来测试一下能不能跑起来。OK之后保存side文件，export为python test文件，去pycharm建项目打开它。</p>
+</li>
+<li>
+<p>把pycharm里面的settings - tools - Python Integrated Tools - Testing 改为 pytest</p>
+</li>
+</ul>
+<p><img alt="image-20221127105113518" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202211271051578.png" /></p>
+<ul>
+<li>得根据题目要求 - 导入user文件中的用户名密码 - 循环测试代码 编写</li>
+</ul>
+<p>```python<br />
+  def test_invalidLogin(self):  # 在这里导入用户名密码来测试</p>
+<div class="highlight"><pre><span></span><code>  # input users.csv path
+  fn = r&quot;C:\Users\test\Desktop\2022001\3.1.1\3.1.1\users.csv&quot;
+
+  self.driver.get(&quot;http://localhost:7272/&quot;)
+  self.driver.set_window_size(1050, 840)
+
+  # input username and passwd
+  with open(fn, &#39;r&#39;, encoding=&#39;utf8&#39;) as f:
+      for line in f:
+          # 最后一个字符是换行符，省略掉；csv是用, 来作为分割的。
+          uname, pwd = line[:-1].split(&#39;,&#39;)
+
+          # 因为测试是多次执行的，执行完还要回来重新输入，但是每次回来都会保留上次输入的文件名
+          # 所以click方法之后，加上clear，先清除文本框，再输入新的用户名和密码
+          self.driver.find_element(By.ID, &quot;username_field&quot;).click()
+          self.driver.find_element(By.ID, &quot;username_field&quot;).clear()
+          self.driver.find_element(By.ID, &quot;username_field&quot;).send_keys(uname)
+
+          self.driver.find_element(By.ID, &quot;password_field&quot;).click()
+          self.driver.find_element(By.ID, &quot;password_field&quot;).clear()
+          self.driver.find_element(By.ID, &quot;password_field&quot;).send_keys(pwd)
+          self.driver.find_element(By.ID, &quot;login_button&quot;).click()
+
+          assert self.driver.find_element(By.CSS_SELECTOR, &quot;h1&quot;).text == &quot;Error Page&quot;
+          # 判断完一次就back回去开始下一次
+          self.driver.back()
+</code></pre></div>
+
+<p>```</p>
+<ul>
+<li>截图保存测试结果</li>
+</ul>
+<h3 id="另一道题测试eshop">另一道题：测试ESHOP</h3>
+<ul>
+<li>注意：EShop环境在原始的虚拟机中，URL是<code>http://localhost:8080/EShop</code></li>
+</ul>
+<blockquote>
+<p>[!note] 注意在考试环境中的EShop是不加8080端口的</p>
+</blockquote>
+<ul>
+<li>
+<p>assert识别文本可以有两种判断方式：</p>
+</li>
+<li>
+<p>assert text</p>
+</li>
+<li>
+<p>assert element present</p>
+<p><img alt="image-20221127145618379" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202211271456545.png" /></p>
+</li>
+<li>
+<p>脚本几乎一样</p>
+</li>
+</ul>
+<p>```python<br />
+  class TestEshopValidLogin():<br />
+      def setup_method(self, method):<br />
+          self.driver = webdriver.Chrome()<br />
+          self.vars = {}</p>
+<div class="highlight"><pre><span></span><code>  def teardown_method(self, method):
+      self.driver.quit()
+
+  def test_eshopValidLogin(self):
+      self.driver.get(&quot;http://localhost/EShop/mer.do?method=browseIndexMer&quot;)
+      self.driver.set_window_size(1050, 840)
+
+      fn = r&quot;C:\Users\test\Desktop\user.csv&quot;
+      with open(fn, &#39;r&#39;, encoding=&#39;utf8&#39;) as f:
+          for line in f:
+              usr, psw = line[:-1].split(&#39;,&#39;)
+
+              self.driver.find_element(By.NAME, &quot;loginName&quot;).click()
+              self.driver.find_element(By.NAME, &quot;loginName&quot;).clear()
+              self.driver.find_element(By.NAME, &quot;loginName&quot;).send_keys(usr)
+
+              self.driver.find_element(By.NAME, &quot;loginPwd&quot;).click()
+              self.driver.find_element(By.NAME, &quot;loginPwd&quot;).clear()
+              self.driver.find_element(By.NAME, &quot;loginPwd&quot;).send_keys(psw)
+
+              self.driver.find_element(By.CSS_SELECTOR, &quot;.UserRegster &gt; input:nth-child(2)&quot;).click()
+              elements = self.driver.find_elements(By.XPATH, &quot;//span[contains(.,\&#39;安全退出\&#39;)]&quot;)
+              assert len(elements) &gt; 0
+              self.driver.back()
+</code></pre></div>
+
+<p>```</p>
+<blockquote>
+<p>[!tip] 注意事项<br />
+- usr、pwd的获取：去除最后的换行符，用逗号分隔<br />
+- 每次输入usr、pwd之前，都要先清除文本框<br />
+- 每次循环最后都<code>back()</code>一下</p>
+</blockquote>
+<hr />
+<h2 id="1123理论题部分">11.23理论题部分</h2>
+<h3 id="职业道德部分">职业道德部分</h3>
+<p>参考PPT</p>
+<h3 id="操作系统部分">操作系统部分</h3>
+<h4 id="linux">Linux</h4>
+<ul>
+<li>Linux中一般将guest account来宾用户设置为==nobody==。权限较低，不能登录</li>
+<li>Linux init启动进程需要读取 <mark>/etc/inittab</mark> 文件</li>
+<li>用来设置命令别名alias的文件为 <mark>profile</mark></li>
+</ul>
+<h4 id="windows">windows</h4>
+<ul>
+<li>win10系统中自带 <mark>tasklist</mark> 命令用于显示每个进程中主持的服务</li>
+<li>连接到共享文件夹或者共享打印机时，使用的登录方式是：<mark>网络登录</mark></li>
+<li>win10默认文件系统：<mark>NTFS</mark></li>
+</ul>
+<h3 id="网络">网络</h3>
+<ul>
+<li>
+<p>逻辑功能上，分为==资源子网==和==通信子网==</p>
+</li>
+<li>
+<p>MAC地址是一个 ==6 字节==的二进制串</p>
+</li>
+</ul>
+<h3 id="软件工程">软件工程</h3>
+<ul>
+<li>
+<p><mark>软件=程序+文档+数据</mark>；<mark>程序=算法+数据结构</mark></p>
+</li>
+<li>
+<p>软件可以分为：系统软件、应用软件、工具软件</p>
+</li>
+<li>
+<p><mark>软件工程三要素：方法+工具+过程</mark></p>
+</li>
+<li>
+<p>敏捷开发：</p>
+</li>
+<li>响应变更胜过遵循计划、个体与交互胜过流程与工具、可工作的软件胜过文档。</li>
+<li>是通过用户故事来定义每一阶段的目标</li>
+<li>及早、持续交付有价值的软件</li>
+<li>测试管理 - 产品待办事项、冲刺</li>
+<li>
+<p>测试人员负责：自动测试脚本、用户故事、测试结果日志 （单元测试一般是开发做的）</p>
+</li>
+<li>
+<p>主流构建标准</p>
+</li>
+<li>构建or组件：不同的应用有相似的流程，称为==MVC模型==，构建提供了基本流程或思路；我们需要做的是用语言把模型开发出来，提供一些数据放进去。</li>
+<li>
+<p><mark>DOM</mark>：Document - object - module，是操作文档相关应用的构建</p>
+</li>
+<li>
+<p>软件产品质量</p>
+</li>
+</ul>
+<p><img alt="img" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202302251521722.jpeg" /></p>
+<ul>
+<li>
+<p>可辨识性属于：易用性；信息安全性包含了可核查性子特性；可移植性包含：易安装性、适应性；兼容性=共存+互操作性</p>
+</li>
+<li>
+<p><mark>B/S</mark>（浏览器 服务器）和==C/S==（客户端 服务器）架构的区别：</p>
+</li>
+<li>
+<p>BS体系功能构件相对集中，扩展性差；CS体系功能构件相对分散</p>
+</li>
+<li>BS缺乏对动态页面的支持，无法集成数据库处理能力，数据库查询操作慢</li>
+</ul>
+<h3 id="软件测试">软件测试</h3>
+<ul>
+<li>
+<p>场景测试</p>
+</li>
+<li>
+<p>基本流：系统从初始态 - 终止态</p>
+</li>
+<li>异常流 实际是一种：备选流；备选流越多，出现意外的异常流概率就越少。</li>
+<li>
+<p>场景是通过交互序列产生的</p>
+</li>
+<li>
+<p>组合测试</p>
+</li>
+<li>
+<p>单一选择测试：每个测试输入的每个可能的取值，都至少包含在整个测试用例集合中一次</p>
+</li>
+<li>
+<p>驱动测试</p>
+</li>
+<li>
+<p><mark>关键字驱动测试</mark></p>
+<p>数据、脚本、业务的分离</p>
+</li>
+<li>
+<p><mark>数据驱动测试</mark></p>
+<ul>
+<li>将测试逻辑与测试数据分开</li>
+</ul>
+</li>
+<li>
+<p>软件本地化测试：测试界面翻译</p>
+</li>
+<li>
+<p>回归测试</p>
+</li>
+<li>
+<p>目标是验证缺陷得到了正确修复，同时没有影响原有功能。</p>
+</li>
+<li>
+<p>验收测试</p>
+</li>
+<li>
+<p>alpha测试：在开发环境完成测试；beta测试：在用户环境完成测试</p>
+</li>
+<li>
+<p>风险控制</p>
+</li>
+<li>
+<p>使用盗版测试工具属于：<mark>投机风险</mark></p>
+</li>
+<li>给设备买保险属于：<mark>风险转移</mark></li>
+<li>测试人员风险属于技术风险</li>
+</ul>
+<h4 id="各种测试过程">各种测试过程</h4>
+<ul>
+<li>测试用例规格说明 - 从测试依据导出测试用例</li>
+<li>为测试环境需求提供满足声明：测试环境准备报告</li>
+<li>测试策划过程成功 - 产生测试计划</li>
+<li><mark>测试人员分配 + 测试度量标准 + 测试工具选用 = 测试计划</mark>。（不包含测试用例）</li>
+<li>测试监控过程产生 - 变更后的测试计划 + 测试状态报告 + 风险信息</li>
+<li>测试策略：强调怎么做，说明设计原则</li>
+<li>测试规程 安排的执行次序优于包含的测试用例的优先级。</li>
+<li><mark>W模型</mark>，测试团队越早介入越好，在需求分析就介入项目。</li>
+</ul>
+<p><div class="callout callout-note" markdown="1"><br />
+<p class="callout-title">组织级测试过程</p></p>
+<p>用于开发和管理组织级测试规格说明，包含：组织级测试方针和组织级测试策略。<br />
+- ==组织级测试方针==是执行性文档，描述组织内的测试目的、目标和总体范围<br />
+- ==组织级测试策略==是详细的技术文档，定义了如何执行测试，是通用文档。</p>
+</div>
+<h4 id="测试工具和应用">测试工具和应用</h4>
+<ul>
+<li>
+<p>Katalon Studio内置的脚本语言：<mark>Groovy</mark>；UFT用的是：<mark>VB</mark>；LoadRunner用的是：<mark>C</mark>；Ranorex Studio用的是==C#==</p>
+</li>
+<li>
+<p>Selenium </p>
+</li>
+<li>
+<p>WebDriver定位策略有：<code>By.id</code>, <code>By.name</code>, <code>By.ClassName</code>等；定位属性动态变化用<code>By.xpath</code></p>
+</li>
+<li>断言来判断输入值是否正确：<mark>assertValue</mark></li>
+<li>IDE使用open打开浏览器</li>
+<li>Selenium WebServer通过JSON协议与各种绑定的语言通信</li>
+</ul>
+<h3 id="devops">DevOps</h3>
+<ul>
+<li><mark>Jenkins</mark>：持续集成工具，自动生成软件新版本、自动部署、自动化回归测试跑测试脚本。</li>
+<li>开发、运营、质量管理三个团队之间的沟通协作整合</li>
+</ul>
+<h3 id="数据库">数据库</h3>
+<ul>
+<li>数据库管理系统 属于 系统软件</li>
+<li>系统软件：支持应用软件运行</li>
+<li>数据库中的主键默认创建索引 <mark>PRIMARY KEY</mark>；创建表的时候是不能直接指定索引的，除非指定主键，默认主键有索引的。</li>
+<li>用户权限授予、取消</li>
+<li>授予：<mark>GRANT</mark></li>
+<li>取消：<code>REVOKE SELECT ON Customer FROM User1</code></li>
+<li><code>Revoke/GRANT + Role或者CRUD语句 on 哪个表 FROM 哪个用户</code></li>
+<li><mark>VIEW视图</mark></li>
+<li>从大表里面选出部分列的数据展示（比如取出一些敏感数据列）</li>
+<li><code>CREATE VIEW</code> 必须包含 <code>SELECT</code></li>
+<li>存储过程</li>
+<li>可以执行已命名的SQL语句</li>
+<li>对数据库和表进行更新：<code>alter database</code>、<code>alter table</code></li>
+</ul>
+<h3 id="java">Java</h3>
+<ul>
+<li>Java的环境变量==JAVA_HOME==指向Java安装路径<code>\Java\Jdk</code></li>
+<li>Jdk是开发环境，Jre是运行环境；jdk包含了Jre</li>
+<li>Java环境变量classpath指向 <code>%JAVA_HOME%\lib</code>和<code>%JAVA_HOME%\lib\tools.jar</code></li>
+<li><code>%JAVA_HOME%</code> 就是 <code>\Java\Jdk</code></li>
+</ul>
+<p><div class="callout callout-info" markdown="1"><br />
+<p class="callout-title">Java6还需要配置环境变量；Java8不需要配了</p></p>
+</div>
+<hr />
+<p><div class="callout callout-summary" markdown="1"><br />
+<p class="callout-title">相关笔记</p></p>
+<ul>
+<li><a class="wikilink" href="../../SoftwareTesting/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B%E5%9F%BA%E7%A1%80/">SoftwareTesting/软件工程基础</a> - 软件工程基础知识</li>
+<li><a class="wikilink" href="../../Database/MySQL%E5%85%A5%E9%97%A8/">Database/MySQL入门</a> - MySQL数据库基础</li>
+</ul>
+</div>
+    </div>
+  </article>
+  <aside class="toc">
+    <p class="toc-label">本页目录</p>
+    <ul>
+  <li><a href="#1019">10.19</a><ul>
+  <li><a href="#xampp安装配置">xampp安装配置</a></li>
+  <li><a href="#zentao">zentao</a></li>
+</ul></li>
+  <li><a href="#1021">10.21</a><ul>
+  <li><a href="#软件的研发过程">软件的研发过程</a></li>
+  <li><a href="#测试在产品中的阶段">测试在产品中的阶段</a></li>
+  <li><a href="#测试过程">测试过程</a></li>
+  <li><a href="#各种环境">各种环境</a></li>
+</ul></li>
+  <li><a href="#1026">10.26</a><ul>
+  <li><a href="#考试前检查环境">考试前检查环境</a></li>
+  <li><a href="#回归测试">回归测试</a></li>
+  <li><a href="#操作题325">操作题3.25</a></li>
+</ul></li>
+  <li><a href="#1028">10.28</a><ul>
+  <li><a href="#有关数据库操作">有关数据库操作</a></li>
+  <li><a href="#考试mysql环境准备">考试mysql环境准备</a></li>
+</ul></li>
+  <li><a href="#1102">11.02</a><ul>
+  <li><a href="#121操作题-写sql脚本">1.2.1操作题 -- 写SQL脚本</a></li>
+</ul></li>
+  <li><a href="#1104">11.04</a><ul>
+  <li><a href="#junit-白盒单元测试">JUnit 白盒单元测试</a></li>
+  <li><a href="#junit黑盒测试">Junit黑盒测试</a></li>
+  <li><a href="#111操作题">1.1.1操作题</a></li>
+</ul></li>
+  <li><a href="#1109-场景测试">11.09 场景测试</a><ul>
+  <li><a href="#了解概念">了解概念</a></li>
+  <li><a href="#场景测试">场景测试</a></li>
+  <li><a href="#操作题212">操作题2.1.2</a></li>
+</ul></li>
+  <li><a href="#1111">11.11</a><ul>
+  <li><a href="#分组测试">分组测试</a></li>
+  <li><a href="#python基础知识">Python基础知识</a></li>
+</ul></li>
+  <li><a href="#1118-selenium">11.18 selenium</a><ul>
+  <li><a href="#python-selenium基本用法">python Selenium基本用法</a></li>
+  <li><a href="#浏览器selenium基本用法">浏览器selenium基本用法</a></li>
+</ul></li>
+  <li><a href="#1123-python操作题311">11.23 python操作题3.1.1</a><ul>
+  <li><a href="#环境配置">环境配置</a></li>
+  <li><a href="#测试登陆界面的步骤">测试登陆界面的步骤</a></li>
+  <li><a href="#另一道题测试eshop">另一道题：测试ESHOP</a></li>
+</ul></li>
+  <li><a href="#1123理论题部分">11.23理论题部分</a><ul>
+  <li><a href="#职业道德部分">职业道德部分</a></li>
+  <li><a href="#操作系统部分">操作系统部分</a></li>
+  <li><a href="#网络">网络</a></li>
+  <li><a href="#软件工程">软件工程</a></li>
+  <li><a href="#软件测试">软件测试</a></li>
+  <li><a href="#devops">DevOps</a></li>
+  <li><a href="#数据库">数据库</a></li>
+  <li><a href="#java">Java</a></li>
+</ul></li>
+</ul>
+  </aside>
+
+</div>
+
+</main>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>Learning Notes</span>
+    <a href="https://github.com/hangx969/learning-notes">GitHub</a>
+  </div>
+</footer>
+<script src="../../static/search.js"></script>
+</body>
+</html>

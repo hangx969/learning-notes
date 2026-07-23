@@ -1,0 +1,1097 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Obsidian + Claude Code：AI 驱动的知识库完整指南 - Learning Notes</title>
+<link rel="stylesheet" href="../../../static/style.css">
+<link rel="stylesheet" href="../../../static/pygments.css">
+</head>
+<body data-root="../../../">
+<header class="site-header">
+  <div class="header-inner">
+    <a class="logo" href="../../../index.html"><span class="logo-mark"></span>LEARNING NOTES</a>
+    <div class="search">
+      <input id="search-input" type="search" placeholder="搜索笔记…" autocomplete="off" aria-label="搜索笔记">
+      <div id="search-results" hidden></div>
+    </div>
+  </div>
+  <nav class="topic-nav" aria-label="主题导航">
+    <div class="topic-nav-inner">
+      <a href="../../../AI/" class="active">AI</a>
+      <a href="../../../Aliyun/">Aliyun</a>
+      <a href="../../../Azure/">Azure</a>
+      <a href="../../../C%2B%2B/">C++</a>
+      <a href="../../../CloudComputing/">CloudComputing</a>
+      <a href="../../../Database/">Database</a>
+      <a href="../../../Docker-Kubernetes/">Docker-Kubernetes</a>
+      <a href="../../../GPU-DeepLearning/">GPU-DeepLearning</a>
+      <a href="../../../Git/">Git</a>
+      <a href="../../../Go/">Go</a>
+      <a href="../../../HPC/">HPC</a>
+      <a href="../../../IaC/">IaC</a>
+      <a href="../../../Linux-Shell/">Linux-Shell</a>
+      <a href="../../../Middlewares/">Middlewares</a>
+      <a href="../../../Networking/">Networking</a>
+      <a href="../../../OS/">OS</a>
+      <a href="../../../Python/">Python</a>
+      <a href="../../../SoftwareTesting/">SoftwareTesting</a>
+    </div>
+  </nav>
+</header>
+<main class="main">
+
+<div class="article-layout">
+
+  <aside class="sidebar">
+    <details class="sidebar-details">
+      <summary>AI</summary>
+      <nav class="sidebar-nav">
+        <p class="sidebar-group">AI-视觉</p>
+        <ul>
+          <li><a href="../../../AI/AI-%E8%A7%86%E8%A7%89/AI-Animation-Skill-%E7%A7%91%E6%99%AE%E5%8A%A8%E7%94%BB/">AI-Animation-Skill - HTML科普动画生成</a></li>
+          <li><a href="../../../AI/AI-%E8%A7%86%E8%A7%89/AI%E5%81%9APPT-ppt-master/">AI做PPT - ppt-master</a></li>
+          <li><a href="../../../AI/AI-%E8%A7%86%E8%A7%89/Markdown-Viewer-Skills-Markdown%E4%B8%AD%E7%9B%B4%E6%8E%A5%E7%94%BB%E5%9B%BE/">Markdown Viewer Skills：让 AI 写文档时顺手把图也画了</a></li>
+          <li><a href="../../../AI/AI-%E8%A7%86%E8%A7%89/effective-html-AI%E7%9B%B4%E5%87%BAHTML%E5%B7%A5%E5%85%B7%E5%AE%9E%E6%B5%8B/">effective-html：让 AI 直接输出 HTML 而非 Markdown</a></li>
+          <li><a href="../../../AI/AI-%E8%A7%86%E8%A7%89/html-anything-AI%E7%94%9F%E6%88%90HTML%E5%85%A8%E5%9C%BA%E6%99%AF%E5%B7%A5%E5%85%B7/">html-anything：AI 生成 HTML 全场景工具</a></li>
+          <li><a href="../../../AI/AI-%E8%A7%86%E8%A7%89/html-ppt-skill-%E5%AE%9E%E6%B5%8B%E6%8C%87%E5%8D%97/">html-ppt-skill - HTML幻灯片生成</a></li>
+          <li><a href="../../../AI/AI-%E8%A7%86%E8%A7%89/%E8%A7%86%E8%A7%89%E8%AE%BE%E8%AE%A1%E6%8F%90%E7%A4%BA%E8%AF%8D/">视觉设计提示词</a></li>
+        </ul>
+        <p class="sidebar-group">AIOps</p>
+        <ul>
+          <li><a href="../../../AI/AIOps/AIOps%E5%AE%9E%E6%88%98-Golang%E6%89%8B%E6%90%93K8s%E6%99%BA%E8%83%BD%E8%BF%90%E7%BB%B4%E5%B7%A5%E5%85%B7%E9%93%BE/">AIOps 实战：Golang 手搓 K8s 智能运维工具链</a></li>
+          <li><a href="../../../AI/AIOps/Kubernetes-MCP-Server-Dify%E6%99%BA%E8%83%BD%E8%BF%90%E7%BB%B4/">AI 接管 Kubernetes 运维——Kubernetes MCP Server + Dify</a></li>
+        </ul>
+        <p class="sidebar-group">ClaudeCode</p>
+        <ul>
+          <li><a href="../../../AI/ClaudeCode/CLAUDE.md%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5-12%E6%9D%A1%E8%A7%84%E5%88%99%E6%A8%A1%E6%9D%BF/">Mnilax：CLAUDE.md 规则从 Karpathy 的 4 条增加到 12 条，错误率从 41% 降到 3%</a></li>
+          <li><a href="../../../AI/ClaudeCode/CLAUDE.md%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5-21%E6%9D%A1%E6%8C%87%E4%BB%A4%E6%B8%85%E5%8D%95/">Mayank Agarwal：21 条 CLAUDE.md 指令，让 Claude 真正懂你</a></li>
+          <li><a href="../../../AI/ClaudeCode/CLAUDE.md%E7%BB%B4%E6%8A%A4%E5%B7%A5%E7%A8%8B-%E5%9B%9B%E5%B1%82%E5%8A%A0%E8%BD%BD%E4%B8%8E%E6%8C%87%E4%BB%A4%E9%A2%84%E7%AE%97/">CLAUDE.md 维护工程：四层加载与指令预算</a></li>
+          <li><a href="../../../AI/ClaudeCode/Claude%20Code%20%E5%9F%BA%E7%A1%80%E6%8C%87%E5%8D%97/">Claude Code 使用指南</a></li>
+          <li><a href="../../../AI/ClaudeCode/Claude%20Code%20%E6%89%A9%E5%B1%95%E4%BD%93%E7%B3%BB/">Claude Code 扩展体系</a></li>
+          <li><a href="../../../AI/ClaudeCode/Claude-Code-Harness%E5%AE%9E%E6%88%98-%E6%9C%80%E5%B0%8F%E5%8F%AF%E7%94%A8%E7%B3%BB%E7%BB%9F/">Harness 实战：从零搭建最小可用的 Harness 系统</a></li>
+          <li><a href="../../../AI/ClaudeCode/Claude-Code%E4%B8%BA%E4%BB%80%E4%B9%88%E7%94%A8grep%E4%B8%8D%E7%94%A8RAG/">为什么 Claude Code 不用 RAG 检索代码，而是 grep？</a></li>
+          <li><a href="../../../AI/ClaudeCode/Claude-Fable-5-system-prompt/">Claude Fable 5 — System Prompt</a></li>
+          <li><a href="../../../AI/ClaudeCode/Claude-Skill%E8%B4%A8%E6%A3%80%E5%B7%A5%E5%85%B7-SkillCraft/">Claude Skill 质检工具 Skill Craft</a></li>
+          <li><a href="../../../AI/ClaudeCode/Git-Worktree-AI%E5%BC%80%E5%8F%91%E5%AE%9E%E8%B7%B5%E6%8C%87%E5%8D%97/">Vibe Coding 时代的 Git Worktree 实践指南</a></li>
+          <li><a href="../../../AI/ClaudeCode/%E5%A4%9A%E6%99%BA%E8%83%BD%E4%BD%93%E5%8D%8F%E4%BD%9C-Subagents%E4%B8%8EAgent-Teams/">Claude Code 多智能体协作：Subagents 与 Agent Teams</a></li>
+        </ul>
+        <p class="sidebar-group">Codex</p>
+        <ul>
+          <li><a href="../../../AI/Codex/Codex-config-toml-%E5%85%A8%E9%87%8F%E9%85%8D%E7%BD%AE%E5%8F%82%E8%80%83/">OpenAI Codex config.toml 全量配置参考</a></li>
+          <li><a href="../../../AI/Codex/Codex-%E7%9C%81Token%E5%B7%A5%E5%85%B7%E5%AE%9E%E6%B5%8B-Ponytail-Headroom-RTK/">Codex 省 Token 工具实测：Ponytail、Headroom、RTK-AI</a></li>
+        </ul>
+        <p class="sidebar-group">GithubCopilot</p>
+        <ul>
+          <li><a href="../../../AI/GithubCopilot/Copilot%20CLI/">GitHub Copilot CLI</a></li>
+        </ul>
+        <p class="sidebar-group">Hermes-agent</p>
+        <ul>
+          <li><a href="../../../AI/Hermes-agent/Hermes-Agent-%E6%BB%A1%E9%85%8D%E6%8C%87%E5%8D%97%E4%B8%8E%E7%94%9F%E6%80%81%E8%B5%84%E6%BA%90/">Hermes Agent 满配指南与生态资源</a></li>
+          <li><a href="../../../AI/Hermes-agent/Hermes-Curator-Skill%E8%86%A8%E8%83%80%E6%B2%BB%E7%90%86/">Skill 太多导致上下文膨胀怎么办？来自 Hermes Agent 的实践</a></li>
+          <li><a href="../../../AI/Hermes-agent/Hermes%E4%B8%8EOpenClaw%E5%AF%B9%E6%AF%94%E5%8F%8A%E9%A3%9E%E4%B9%A6%E6%8E%A5%E5%85%A5%E6%8C%87%E5%8D%97/">Hermes Agent全解析：与OpenClaw对比及飞书接入指南</a></li>
+          <li><a href="../../../AI/Hermes-agent/Ubuntu%2025.10%20%E5%AE%89%E8%A3%85%E4%B8%8E%E4%BD%BF%E7%94%A8%20Hermes%20Agent%20%E6%8C%87%E5%8D%97/">Ubuntu 25.10 安装与使用 Hermes Agent 指南</a></li>
+        </ul>
+        <p class="sidebar-group">Obsidian</p>
+        <ul>
+          <li><a href="../../../AI/Obsidian/Obsidian-Vault%E6%A8%A1%E6%9D%BF%E5%BA%93%E5%90%88%E9%9B%86-48%E4%B8%AA%E5%AE%9D%E8%97%8Fvault/">Obsidian Vault 模板库合集：48 个 GitHub 宝藏 vault</a></li>
+          <li><a href="../../../AI/Obsidian/Obsidian%E5%8F%AF%E8%A7%86%E5%8C%96Skills-Excalidraw-Mermaid-Canvas/">Obsidian 可视化 Skills — Excalidraw / Mermaid / Canvas</a></li>
+          <li><a href="../../../AI/Obsidian/obsidian-claude-code-AI%E7%9F%A5%E8%AF%86%E5%BA%93%E5%AE%8C%E6%95%B4%E6%8C%87%E5%8D%97/" class="current">Obsidian + Claude Code：AI 驱动的知识库完整指南</a></li>
+        </ul>
+        <p class="sidebar-group">OpenClaw</p>
+        <ul>
+          <li><a href="../../../AI/OpenClaw/CoPaw/">CoPaw</a></li>
+          <li><a href="../../../AI/OpenClaw/OpenClaw-Channels/">OpenClaw Channel 配置</a></li>
+          <li><a href="../../../AI/OpenClaw/OpenClaw-K8s%E6%99%BA%E8%83%BD%E8%BF%90%E7%BB%B4%E5%AE%9E%E6%88%98/">用 OpenClaw 智能体网关接管 K8s 日常运维：从只读巡检到低风险变更</a></li>
+          <li><a href="../../../AI/OpenClaw/OpenClaw-Skills-Plugins/">OpenClaw Skills 与插件</a></li>
+          <li><a href="../../../AI/OpenClaw/OpenClaw-Workspace-%E8%BF%90%E7%BB%B4/">OpenClaw Workspace 运维实战</a></li>
+          <li><a href="../../../AI/OpenClaw/OpenClaw-%E5%9F%BA%E7%A1%80-%E5%AE%89%E8%A3%85/">OpenClaw 基础与安装</a></li>
+          <li><a href="../../../AI/OpenClaw/Openclaw-AIOps/">OpenClaw AIOps</a></li>
+          <li><a href="../../../AI/OpenClaw/Openclaw-%E5%A4%9A%E6%99%BA%E8%83%BD%E4%BD%93/">OpenClaw 多智能体</a></li>
+          <li><a href="../../../AI/OpenClaw/Ubuntu-2510-Setup-Guide/">Ubuntu 25.10 (Questing) 初始化配置指南</a></li>
+          <li><a href="../../../AI/OpenClaw/%E9%A3%9E%E4%B9%A6CLI%E7%94%BB%E6%9D%BF-%E4%B8%80%E5%8F%A5%E8%AF%9D%E7%94%9F%E6%88%90%E6%9E%B6%E6%9E%84%E5%9B%BE/">飞书 CLI 画板：一句话生成架构图</a></li>
+        </ul>
+        <p class="sidebar-group">代码知识图谱</p>
+        <ul>
+          <li><a href="../../../AI/%E4%BB%A3%E7%A0%81%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/CodeGraph-%E4%BB%A3%E7%A0%81%E8%AF%AD%E4%B9%89%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/">CodeGraph：给 Claude Code 先画一张代码地图，工具调用砍掉 92%</a></li>
+          <li><a href="../../../AI/%E4%BB%A3%E7%A0%81%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/Graphify-%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1%E5%B7%A5%E5%85%B7/">Graphify：软件工程知识图谱工具</a></li>
+          <li><a href="../../../AI/%E4%BB%A3%E7%A0%81%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/Understand-Anything-%E4%BB%A3%E7%A0%81%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1%E5%8F%AF%E8%A7%86%E5%8C%96/">Understand-Anything：AI 代码知识图谱可视化工具</a></li>
+          <li><a href="../../../AI/%E4%BB%A3%E7%A0%81%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/code-review-graph-%E6%9C%AC%E5%9C%B0%E4%BB%A3%E7%A0%81%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/">开源 Claude Code 本地代码知识图谱：code-review-graph 完整上手攻略</a></li>
+          <li><a href="../../../AI/%E4%BB%A3%E7%A0%81%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/shiji-kb-AI%E5%8F%B2%E8%AE%B0%E7%9F%A5%E8%AF%86%E5%BA%93%E4%B8%8E%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1%E6%9E%84%E9%80%A0%E6%96%B9%E6%B3%95%E8%AE%BA/">shiji-kb：AI 史记知识库与可复用知识图谱构造方法论</a></li>
+        </ul>
+        <p class="sidebar-group">行业动态</p>
+        <ul>
+          <li><a href="../../../AI/%E8%A1%8C%E4%B8%9A%E5%8A%A8%E6%80%81/AI%E6%97%B6%E4%BB%A3%E7%9A%84Git%E7%89%88%E6%9C%AC%E7%AE%A1%E7%90%86%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/">AI 时代的 Git 版本管理最佳实践</a></li>
+          <li><a href="../../../AI/%E8%A1%8C%E4%B8%9A%E5%8A%A8%E6%80%81/Anthropic%E5%B7%A5%E7%A8%8B%E5%B8%88%E5%8A%9B%E6%8E%A8HTML%E5%8F%96%E4%BB%A3Markdown-Karpathy%E9%99%84%E8%AE%AE/">Anthropic 工程师力推 HTML 取代 Markdown —— Karpathy 附议</a></li>
+          <li><a href="../../../AI/%E8%A1%8C%E4%B8%9A%E5%8A%A8%E6%80%81/Claude-Code%E5%88%9B%E5%A7%8B%E4%BA%BA%E7%BA%A2%E6%9D%89%E5%A4%A7%E4%BC%9A%E4%B8%83%E4%B8%AA%E5%88%A4%E6%96%AD/">Claude Code 创始人在红杉大会上的 7 个重要判断</a></li>
+          <li><a href="../../../AI/%E8%A1%8C%E4%B8%9A%E5%8A%A8%E6%80%81/Loop-Engineering-%E4%BB%8EPrompt%E5%88%B0%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%81%E6%B0%B4%E7%BA%BF/">Loop Engineering：从 Prompt 到自动化流水线</a></li>
+          <li><a href="../../../AI/%E8%A1%8C%E4%B8%9A%E5%8A%A8%E6%80%81/OpenCodeReview-%E9%98%BF%E9%87%8CAI%E4%BB%A3%E7%A0%81%E5%AE%A1%E6%9F%A5%E5%B7%A5%E7%A8%8B%E5%8C%96/">OpenCodeReview：阿里开源的 AI 代码审查工程化工具</a></li>
+          <li><a href="../../../AI/%E8%A1%8C%E4%B8%9A%E5%8A%A8%E6%80%81/TypeScript-vs-Python-AI-Agent%E6%97%B6%E4%BB%A3%E7%9A%84%E8%AF%AD%E8%A8%80%E4%B9%8B%E4%BA%89/">为什么 AI Agent 时代，TypeScript 正在抢走 Python 的主场？</a></li>
+        </ul>
+        <p class="sidebar-group">其他</p>
+        <ul>
+          <li><a href="../../../AI/HarnessKit/">HarnessKit — AI 编码智能体统一管理工具</a></li>
+          <li><a href="../../../AI/%E6%8F%90%E7%A4%BA%E8%AF%8D/">提示词</a></li>
+        </ul>
+      </nav>
+    </details>
+  </aside>
+
+  <article class="article">
+    <nav class="breadcrumb">
+      <a href="../../../index.html">首页</a><span>/</span>
+      <a href="../../../AI/">AI</a><span>/</span><span>Obsidian</span>
+    </nav>
+    <h1 class="article-title">Obsidian + Claude Code：AI 驱动的知识库完整指南</h1>
+    <p class="article-meta"><span>更新于 2026-06-03</span>
+      <a href="https://github.com/hangx969/learning-notes/blob/main/AI/Obsidian/obsidian-claude-code-AI%E7%9F%A5%E8%AF%86%E5%BA%93%E5%AE%8C%E6%95%B4%E6%8C%87%E5%8D%97.md">查看源文件</a>
+    </p>
+    <div class="article-body">
+<h1 id="obsidian-claude-codeai-驱动的知识库完整指南">Obsidian + Claude Code：AI 驱动的知识库完整指南</h1>
+<blockquote>
+<p>你不需要成为笔记达人。你只需要把笔记存成 AI 能直读的格式，然后让 AI 接管剩下的事。</p>
+</blockquote>
+<hr />
+<h2 id="一你的笔记软件里躺着多少僵尸">一、你的笔记软件里躺着多少僵尸</h2>
+<p>回忆一下，你上次打开笔记软件是什么时候？不是打开来记东西，而是打开来 <strong>找东西、复用东西</strong> 。</p>
+<p>大概率你找不到。</p>
+<p>印象笔记里躺着 2018 年收藏的文章，已经忘了为什么收藏。备忘录里塞满随手记的想法，但这些想法之间没有任何关联。微信收藏夹里那成百上千篇"以后再看"——从此以后真的再也没看。</p>
+<p>我记下来的不是知识，是 <strong>信息的坟场</strong> 。</p>
+<p>不是不努力。每条笔记记录的当下都是有价值的。但从"记下来"到"用起来"中间隔着一道鸿沟——整理、关联、检索、复用，这件事人脑天生不擅长。</p>
+<p>直到我把笔记搬到 Obsidian，把 Claude Code 接进来，让 AI 当全职管理员之后，这道鸿沟才算迈过去。今天分享我搭这套体系的过程，给你一份能直接抄的路径。</p>
+<hr />
+<h2 id="二为什么是-obsidian-claude-code">二、为什么是 Obsidian + Claude Code</h2>
+<h3 id="先说结论">先说结论</h3>
+<p><strong>Obsidian + Claude Code 是 2026 年个人知识管理的最优解</strong> ——前提是你做的是个人知识管理，不是团队协作。</p>
+<p>理由三句话：</p>
+<p>第一，Markdown 是 LLM（大语言模型）的母语。你的笔记格式决定了 AI 能帮你到什么程度。<br />
+第二，本地文件让 AI 零摩擦读写。Obsidian 的 Vault 就是一个 Markdown 文件夹，Claude Code 进去是有完整权限的管理员，不是隔着 API 传话的外人。<br />
+第三，AI 时代"整理"这件事不再是人的责任。你只管记录和思考，整理交给 AI。</p>
+<h3 id="知识库类软件的现状">知识库类软件的现状</h3>
+<p>当前市面上的知识库软件大致可以分为三类，各有不足：</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>代表产品</th>
+<th>优势</th>
+<th>不足</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>传统笔记</td>
+<td>语雀、印象笔记</td>
+<td>整理、记录、协作齐全</td>
+<td><mark>没有 AI</mark>，知识存进去就"死"了</td>
+</tr>
+<tr>
+<td>AI + 知识库</td>
+<td>腾讯 IMA、秘塔 AI 搜索</td>
+<td>能上传文档做问答</td>
+<td>更像内容聚合社区，产出形式受限</td>
+</tr>
+<tr>
+<td>纯 AI 工具</td>
+<td>元宝、豆包、Kimi</td>
+<td>AI 能力强，写作/总结/翻译</td>
+<td><mark>没有本地知识库</mark>，知识无法沉淀</td>
+</tr>
+</tbody>
+</table>
+<p><div class="callout callout-summary" markdown="1"><br />
+<p class="callout-title">核心矛盾</p></p>
+<p>要么没脑子，要么没记忆，要么有脑子有记忆但==不是你的==。</p>
+</div>
+<h3 id="markdown-是-llm-的母语">Markdown 是 LLM 的母语</h3>
+<p>大语言模型的训练数据里，Markdown 是最主要的格式之一。GitHub 上几十亿个 README.md、技术文档、博客文章、教程，AI 全读过。它对 <code>##</code> 标题、 <code>**加粗**</code> 、 <code>-</code> 列表的理解，像你对中文标点一样自然。</p>
+<p>具体三个特性：</p>
+<p><strong>Token 效率</strong> 。同样的信息，用 Markdown 表示比 JSON 或 XML 紧凑很多（花叔手册里给到 30-50% 的差值，自己跑过一次类似比例）。意味着同样的上下文窗口能装下更多笔记。Claude 1M token 大窗口大概能放下中等规模的整个知识库——对绝大多数人来说，纯文本 + 长上下文这套已经够用，根本不用先去搞向量数据库。</p>
+<p><strong>结构天然清晰</strong> 。 <code>##</code> 是标题、 <code>&gt;</code> 是引用、 <code>```</code> 是代码块。这些标记本身就是结构分隔符，不需要告诉 AI"这是标题"，Markdown 语法自己在说。</p>
+<p><strong>AI 的默认输出格式</strong> 。让 ChatGPT 或 Claude 回答问题，回复就是 Markdown。你的知识库用 Markdown，AI 进来就像回家。</p>
+<p>反过来——如果你的笔记存在 Apple Notes 里，AI 摸不到。存在 Notion 里，AI 只能通过 API 间接访问，权限受限、速度受限、操作受限。存在印象笔记里，格式私有，导出困难。</p>
+<p>笔记格式决定了 AI 能帮你到什么程度。</p>
+<h3 id="本地文件-ai-直接读写">本地文件 = AI 直接读写</h3>
+<p>Obsidian 的 Vault 是什么？一个文件夹。</p>
+<p>不是数据库、不是云端服务、不是私有格式。就是你电脑上的一个文件夹，里面全是 <code>.md</code> 文件。Obsidian 做的事情是给这个文件夹加了一层 UI——双向链接、图谱视图、搜索、插件。但底层文件从头到尾都是标准 Markdown。</p>
+<p>Claude Code 的工作方式是直接操作本地文件系统。读文件、写文件、搜索文件、移动文件、重命名，所有操作都是对文件系统的直接访问，不需要 API、不需要认证、不需要网络请求。</p>
+<p>把 Claude Code 指向一个 Obsidian Vault，立刻就能工作：</p>
+<div class="highlight"><pre><span></span><code>cd ~/Obsidian/我的vault
+claude
+</code></pre></div>
+
+<p>这个差异不是"体验好一点"，是 <strong>能做 vs 不能做</strong> 的区别。在 Obsidian 里 Claude Code 是管家，在 Notion 里它是只能传话的外人。</p>
+<h3 id="三个独立的十亿级项目殊途同归">三个独立的十亿级项目殊途同归</h3>
+<p>如果只是理论分析，你可能觉得"听起来有道理但也就那样"。但有一个论据让我没法忽视——</p>
+<p>三个完全独立的、十亿美元级别的项目，没有互相参考，做出了同一个架构决策。</p>
+<p><strong>Manus</strong> ，AI Agent 公司，2026 年 Meta 拟以 20 亿美元收购，后被中方监管叫停。Manus 的 Agent 在执行长任务时用什么存记忆？ <code>task_plan.md</code> 和 <code>notes.md</code> ——Markdown 文件。</p>
+<p><strong>OpenClaw</strong> ，开源 AI Agent 框架，GitHub 上 35 万 + 颗星。Agent 的知识存在哪？ <code>MEMORY.md</code> 。Agent 的人格定义存在哪？ <code>SOUL.md</code> ——还是 Markdown 文件。</p>
+<p><strong>Claude Code</strong> ，Anthropic 自家的 AI 编程工具。项目上下文存哪？ <code>CLAUDE.md</code> 。用户长期记忆存哪？ <code>memory/</code> 目录下的 Markdown 文件。</p>
+<p>三个不同的团队，解决不同的问题，服务不同的用户。在没有互相参考的情况下，做出了同一个选择： <strong>用 Markdown 文件作为 AI Agent 的记忆层</strong> 。</p>
+<p>不是向量数据库，不是 SQL，不是 JSON。就是 <code>.md</code> 文件。</p>
+<h3 id="为什么选-obsidian">为什么选 Obsidian</h3>
+<p><a href="https://obsidian.md">Obsidian</a> 在海外已有 <mark>150 万月活用户</mark>，开发者、研究者、写作者用得特别多。</p>
+<p><div class="callout callout-info" markdown="1"><br />
+<p class="callout-title">关于 Obsidian 公司</p></p>
+<ul>
+<li>完全没有接受风投，全靠用户付费</li>
+<li>年收入约 <strong>2500 万美元</strong>，续费率 <strong>90%+</strong></li>
+</ul>
+</div>
+<p><strong>核心优势：</strong></p>
+<ul>
+<li><strong>本地存储</strong> — 所有笔记就是电脑上的 <code>.md</code> 文本文件，不依赖任何云服务，数据从头到尾在自己手里</li>
+<li><strong>双向链接</strong> — 笔记之间用 <code>[[wikilink]]</code> 互相关联，形成知识网络</li>
+<li><strong>Graph View</strong> — 可视化所有笔记的关联关系，哪些知识孤立、哪些高频被引用，一目了然</li>
+</ul>
+<p><div class="callout callout-warning" markdown="1"><br />
+<p class="callout-title">之前的门槛</p></p>
+<p>要装插件、配同步、学 Markdown 语法、研究方法论（Zettelkasten、PARA、MOC），光折腾"怎么用"就能把人劝退。</p>
+</div>
+<p><mark>但现在不一样了。</mark> Claude Code 的生态起来之后，Obsidian 的使用门槛大幅降低——你不需要懂那些方法论，Claude Code 替你搞定。</p>
+<hr />
+<h2 id="三核心理念karpathy-llm-wiki-模式">三、核心理念：Karpathy LLM Wiki 模式</h2>
+<p><div class="callout callout-abstract" markdown="1"><br />
+<p class="callout-title">核心理念</p></p>
+<p>基于 <a href="https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f">Karpathy LLM Wiki</a> 模式：<strong>你永远不自己写 wiki——LLM 写并维护全部内容。你负责：策划来源、探索方向、提出好问题。LLM 负责：总结、交叉引用、归档和簿记。</strong></p>
+</div>
+<p>这个思路来自 Andrej Karpathy 2026 年 4 月那条 1600 万浏览的推文。</p>
+<p>他说的核心是一个观点转换： <strong>AI 不是检索器，是编译器</strong> 。</p>
+<p>传统 RAG（检索增强生成）的逻辑是每次提问都重头搜索原始材料、拼接、生成回答，回答用完即弃，下次再问还得从零开始——<strong>每次查询都从零发现知识，没有积累</strong>。</p>
+<p>LLM Wiki 的做法完全不同：<strong>LLM 增量构建并维护一个持久化的 wiki</strong>——一组结构化、互相链接的 markdown 文件，位于你和原始资料之间。每当新资料进入，LLM 不是简单索引，而是阅读、提取关键信息、整合到现有 wiki 中——更新实体页、修订主题摘要、标注新旧数据的矛盾、强化或挑战已有综述。知识被<strong>编译一次，持续更新</strong>，而非每次查询重新推导。</p>
+<p><div class="callout callout-tip" markdown="1"><br />
+<p class="callout-title">比喻</p></p>
+<p>Obsidian 是 IDE；LLM 是程序员；Wiki 是代码库。</p>
+</div>
+<h3 id="三层架构">三层架构</h3>
+<table>
+<thead>
+<tr>
+<th>层级</th>
+<th>说明</th>
+<th>所有权</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Raw Sources（原始来源）</strong></td>
+<td>你写的笔记、剪藏的文章、论文、图片、数据文件。<strong>不可变</strong>，LLM 只读不改。这是你的事实来源。</td>
+<td>人类策划</td>
+</tr>
+<tr>
+<td><strong>Wiki（编译知识层）</strong></td>
+<td>LLM 生成的 markdown 文件目录：摘要、实体页、概念页、对比、综览、综述。LLM 完全拥有此层，创建页面、更新、维护交叉引用、保持一致性。</td>
+<td>LLM 拥有</td>
+</tr>
+<tr>
+<td><strong>Schema（规约文件）</strong></td>
+<td>一份文档（如 <code>CLAUDE.md</code>）告诉 LLM wiki 的结构约定、工作流程。这是核心配置文件——让 LLM 成为有纪律的 wiki 维护者而非通用聊天机器人。</td>
+<td>人类与 LLM 共同演进</td>
+</tr>
+<tr>
+<td><img alt="image.png" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260603102943288.png" /></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>落到 Obsidian 里就是 raw → wiki → output 三层结构：</p>
+<div class="highlight"><pre><span></span><code>Vault/
+├── raw/      # 你扔进来的原始素材，只增不改
+├── wiki/     # AI 编译过的可复用知识
+│   ├── concepts/   # 概念页（每个概念一篇）
+│   ├── entities/   # 人物 / 产品页
+│   ├── sources/    # 原始来源摘要
+│   └── topics/     # 主题分析页
+└── output/   # 基于 wiki 生成的报告 / 分析
+</code></pre></div>
+
+<h3 id="三大操作">三大操作</h3>
+<h4 id="1-ingest摄入">1. Ingest（摄入）</h4>
+<p>新来源放入原始资料集，指示 LLM 处理：<br />
+- 阅读来源，讨论关键要点<br />
+- 在 wiki 中写摘要页<br />
+- 更新索引<br />
+- 更新相关实体页和概念页（单个来源可能触及 10-15 个 wiki 页面）<br />
+- 在日志中追加条目</p>
+<h4 id="2-query查询">2. Query（查询）</h4>
+<p>对 wiki 提问。LLM 搜索相关页面、阅读、综合回答并附引用。<strong>好的回答应被归档回 wiki 作为新页面</strong>——你的探索也在知识库中复利积累。</p>
+<h4 id="3-lint健康检查">3. Lint（健康检查）</h4>
+<p>定期要求 LLM 检查 wiki 健康度：<br />
+- 页面间矛盾<br />
+- 被新来源取代的过时声明<br />
+- 无入链的孤儿页面<br />
+- 被提及但缺少独立页面的重要概念<br />
+- 缺失的交叉引用<br />
+- 可通过搜索填补的数据空白</p>
+<h3 id="索引与日志">索引与日志</h3>
+<table>
+<thead>
+<tr>
+<th>文件</th>
+<th>用途</th>
+<th>特点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>index.md</code></td>
+<td><strong>面向内容</strong>。wiki 中所有页面的目录——链接 + 一行摘要 + 元数据。按类别组织。</td>
+<td>LLM 每次摄入时更新。查询时先读索引定位相关页面。</td>
+</tr>
+<tr>
+<td><code>log.md</code></td>
+<td><strong>面向时间线</strong>。仅追加的操作记录——摄入、查询、lint。</td>
+<td>条目格式如 <code>## [2026-04-16] ingest \| 文章标题</code>，便于 grep 解析。</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="四30-分钟上手搭建">四、30 分钟上手搭建</h2>
+<h3 id="第一步cd-进-vault启动-claude-code">第一步：cd 进 Vault，启动 Claude Code</h3>
+<p>如果你已经有一个装满 Markdown 文件的文件夹，直接拿它当 Vault。Obsidian 不会改你的任何文件，只是加一层 UI。</p>
+<div class="highlight"><pre><span></span><code>cd ~/Documents/我的vault
+claude
+</code></pre></div>
+
+<p>完事。Claude Code 启动后自动获得整个 Vault 目录的读写权限——读笔记、新建文件、搜索内容、重命名、移动、删除全都可以，不需要任何配置。</p>
+<p>第一次启动可以试一句"我的 Vault 里有什么？帮我概览一下"，作为冒烟测试。</p>
+<h3 id="第二步写一份-claudemd-给-ai-看">第二步：写一份 CLAUDE.md 给 AI 看</h3>
+<p>光有读写权限还不够。Claude Code 第一次进入你的 Vault 像新员工第一天上班，指着满屋子文件柜说"你随便看"——他要么无从下手，要么乱翻一气。</p>
+<p>需要一份 <strong>员工手册</strong> 。在 Vault 根目录创建 <code>CLAUDE.md</code> ，Claude Code 每次启动都会读它。最少四块内容：</p>
+<div class="highlight"><pre><span></span><code># 我的知识库
+
+## 关于我
+- 你的身份和职业
+- 关注领域 3-5 个
+- 偏好（用中文、不要过度格式化等）
+
+## Vault 结构
+- daily/：每日记录
+- notes/：永久笔记
+- projects/：进行中的项目
+- raw/：待整理的原始素材
+- archive/：已完成或不再活跃的内容
+
+## 笔记 Front Matter（必填）
+新建笔记时使用：
+---
+title: 笔记标题
+tags: []
+created: YYYY-MM-DD
+type: fleeting | literature | permanent
+summary: 一句话摘要
+---
+
+## 行为规则
+- 可以：加标签、建 [[双向链接]]、生成摘要、整理分类
+- 不可以：删除已有笔记内容、修改原始记录
+- 创建新笔记必须遵循 Front Matter 模板
+</code></pre></div>
+
+<p>这份手册不需要一上来就完美。三五行起步，每次 Claude Code 犯错就加一条规则——半年下来它会自然长成一份很详尽的指南。</p>
+<h3 id="第三步每个大目录补一份-indexmd">第三步：每个大目录补一份 index.md</h3>
+<p>Claude Code 进入一个文件夹，看到 50 个文件需要逐个扫描判断。但如果你在文件夹里放一份 3-5 行的 <code>index.md</code> ，它先读这一份，3 秒钟就知道这里是干啥的、关键文件在哪。</p>
+<div class="highlight"><pre><span></span><code># notes/ — 永久笔记
+
+存放经过思考整理的、可被反复引用的判断。
+
+## 命名规范
+按&quot;主题-标题.md&quot;命名
+
+## 关键文件
+- [[卡尼曼-思考快与慢]] — 认知偏差经典
+- [[芒格-穷查理宝典]] — 跨学科思维模型
+
+## AI 操作规则
+- 创建新笔记必须带完整 Front Matter
+- 修改前先 grep Vault 是否已有相关概念
+</code></pre></div>
+
+<p>这个习惯做下来之后效率提升非常明显。原来 Claude Code 每次都要 ls 一遍才能定位，现在直接定向跳进对应文件夹拿上下文。</p>
+<h3 id="第四步装-obsidian-skills">第四步：装 obsidian-skills</h3>
+<p>最后一步。Obsidian 的 Markdown 有些独有语法（ <code>[[wikilinks]]</code> 双向链接、callout 提示框、<code>.canvas</code> 空间笔记），Claude Code 默认不一定懂——它可能把 <code>[[]]</code> 当成普通 Markdown 链接处理，搞坏格式。</p>
+<p>Obsidian CEO kepano 亲自做了 <code>obsidian-skills</code> 这套官方 Skill 集，教 Claude Code 正确处理这些非标准语法。安装就一行命令：</p>
+<div class="highlight"><pre><span></span><code>cd ~/Obsidian/我的vault
+git clone https://github.com/kepano/obsidian-skills.git .claude/skills/obsidian-skills
+</code></pre></div>
+
+<p>下次 Claude Code 启动时会自动加载，从此处理 <code>[[]]</code> 、callout、<code>.canvas</code> 、<code>.base</code> 都不会出错。</p>
+<p>到这里 30 分钟够了。</p>
+<hr />
+<h2 id="五三个关键工具打通-obsidian-ai">五、三个关键工具：打通 Obsidian × AI</h2>
+<p>上面四步是基础版。如果想让 Obsidian 和 AI 的集成更深入，以下三个工具可按需使用。</p>
+<h3 id="1-claudian-插件">1. Claudian 插件</h3>
+<blockquote>
+<p>直接把 Claude Code 嵌进 Obsidian 侧边栏，选中笔记就能让 AI 总结、扩写、找关联，整个过程不离开编辑器。</p>
+</blockquote>
+<p>🔗 GitHub: <a href="https://github.com/YishenTu/claudian">YishenTu/claudian</a></p>
+<p><div class="callout callout-tip" markdown="1"><br />
+<p class="callout-title">安装步骤</p></p>
+<ol>
+<li>在 <a href="https://github.com/YishenTu/claudian/releases">Release</a> 中下载 <code>main.js</code>、<code>manifest.json</code>、<code>styles.css</code></li>
+<li>放到 <code>.obsidian/plugins/claudian/</code> 目录</li>
+<li>重启 Obsidian → 插件页面启用 Claudian</li>
+<li>在设置中配置 Claude Code 相关环境变量</li>
+<li>侧边栏打开 Claudian 即可使用</li>
+</ol>
+</div>
+<h3 id="2-obsidian-skills">2. Obsidian Skills</h3>
+<blockquote>
+<p>让 Claude Code 理解 Obsidian 的格式——双向链接、标签、属性、嵌入，全都认得。</p>
+</blockquote>
+<p>🔗 GitHub: <a href="https://github.com/kepano/obsidian-skills">kepano/obsidian-skills</a></p>
+<p><div class="callout callout-tip" markdown="1"><br />
+<p class="callout-title">安装步骤</p></p>
+<ol>
+<li>下载 Skills 文件</li>
+<li>放到 vault 的 <code>.claude/</code> 目录下即可</li>
+</ol>
+</div>
+<h3 id="3-obsidian-local-api-claude-mcp">3. Obsidian Local API + Claude MCP</h3>
+<blockquote>
+<p>配好后 Claude Code 可以直接==搜索、读取、创建、修改==你的笔记，AI 直接操作知识库，无需手动复制粘贴。</p>
+</blockquote>
+<p><strong>依赖项：</strong></p>
+<ul>
+<li><strong>Local REST API 插件</strong>：<a href="https://github.com/coddingtonbear/obsidian-local-rest-api">coddingtonbear/obsidian-local-rest-api</a></li>
+<li>插件市场直接搜 <code>Local REST API</code>，下载并开启</li>
+<li>拿到 <code>API Key</code>、<code>Host</code>、<code>Port</code> 即可</li>
+<li><strong>MCP 服务端</strong>：<a href="https://github.com/MarkusPfundstein/mcp-obsidian">MarkusPfundstein/mcp-obsidian</a></li>
+</ul>
+<p><div class="callout callout-example" markdown="1"><br />
+<p class="callout-title">MCP 配置</p></p>
+<p>放到 vault 目录（<code>.claude/settings.json</code>）或 Claude 全局配置均可：<br />
+<code>json
+{
+  "mcpServers": {
+    "mcp-obsidian": {
+      "command": "uvx",
+      "args": ["mcp-obsidian"],
+      "env": {
+        "OBSIDIAN_API_KEY": "你的_API_KEY",
+        "OBSIDIAN_HOST": "127.0.0.1",
+        "OBSIDIAN_PORT": "27124",
+        "OBSIDIAN_PROTOCOL": "https"
+      }
+    }
+  }
+}</code></p>
+</div>
+<hr />
+<h2 id="六日常操作谱系">六、日常操作谱系</h2>
+<p>搭建完成后，你和 LLM 的日常互动有六大类操作。</p>
+<h3 id="1-ingest摄入-知识进来">1. Ingest（摄入）— 知识进来</h3>
+<p><div class="callout callout-quote" markdown="1"><br />
+<p class="callout-title">新笔记写完后，一句话让 LLM 完成全部后续工作。</p></p>
+</div>
+<table>
+<thead>
+<tr>
+<th>你说</th>
+<th>LLM 做什么</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>"请摄入 <code>Docker-Kubernetes/xxx.md</code>"</td>
+<td>阅读 → 写摘要 → 更新概念/实体页 → 更新索引和日志</td>
+</tr>
+<tr>
+<td>"请摄入 <code>Python/python-运维开发/</code> 目录下的新文档"</td>
+<td>批量摄入整个目录</td>
+</tr>
+<tr>
+<td>"我新建了 <code>Rust/</code> 目录，里面有 5 篇文档，请摄入"</td>
+<td>新领域首次摄入</td>
+</tr>
+<tr>
+<td>"这篇文档更新了很多内容，请重新摄入"</td>
+<td>旧文档大幅修改后重新编译</td>
+</tr>
+</tbody>
+</table>
+<p><div class="callout callout-important" markdown="1"><br />
+<p class="callout-title">核心原则</p></p>
+<p>你只需要告诉 LLM <mark>文件路径或目录路径</mark>，其余流程（写摘要、更新交叉引用、维护索引）全部自动完成。</p>
+</div>
+<h3 id="2-query查询-向知识库提问">2. Query（查询）— 向知识库提问</h3>
+<p><div class="callout callout-quote" markdown="1"><br />
+<p class="callout-title">这是<strong>最高频</strong>的日常操作。不需要自己翻文档，直接问。</p></p>
+</div>
+<table>
+<thead>
+<tr>
+<th>你说</th>
+<th>LLM 做什么</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>"K8s 的 HPA 和 KEDA 有什么区别？"</td>
+<td>搜索相关 wiki 页面，综合回答并附引用</td>
+</tr>
+<tr>
+<td>"我们仓库里关于 Prometheus 高可用有哪些方案？"</td>
+<td>汇总你笔记中记录的所有 HA 方案</td>
+</tr>
+<tr>
+<td>"Azure 和阿里云的网络产品怎么对标？"</td>
+<td>读取实体页 + 批量摘要，生成对比</td>
+</tr>
+<tr>
+<td>"帮我回顾一下 ArgoCD 的所有笔记要点"</td>
+<td>读取 entity 页 + source 摘要，结构化回顾</td>
+</tr>
+</tbody>
+</table>
+<p><div class="callout callout-success" markdown="1"><br />
+<p class="callout-title">关键习惯</p></p>
+<p>如果回答有分析价值，追一句 <strong>"归档到 wiki"</strong>。这样你的每次提问都在积累知识，而非一次性消耗——<mark>知识复利</mark>。</p>
+</div>
+<h3 id="3-lint健康检查-维护质量">3. Lint（健康检查）— 维护质量</h3>
+<p><div class="callout callout-quote" markdown="1"><br />
+<p class="callout-title">定期检查知识库健康度，保持结构整洁。</p></p>
+</div>
+<table>
+<thead>
+<tr>
+<th>你说</th>
+<th>频率建议</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>"跑一次 lint"</td>
+<td>每周 / 批量操作后</td>
+</tr>
+<tr>
+<td>"检查一下断链"</td>
+<td>重命名或删除文件后</td>
+</tr>
+<tr>
+<td>"哪些概念被提到很多次但还没有独立页面？"</td>
+<td>每月</td>
+</tr>
+<tr>
+<td>"哪些实体页内容太薄需要增强？"</td>
+<td>每月</td>
+</tr>
+</tbody>
+</table>
+<p>Lint 检查的内容：<br />
+- 断链（wikilink 指向不存在的文件）<br />
+- 孤儿页（没有任何入链的页面）<br />
+- 缺失概念（被多次提及但没有独立页面）<br />
+- 页面间矛盾<br />
+- 过时内容<br />
+- 缺失的交叉引用</p>
+<h3 id="4-restructure结构调整-知识重组">4. Restructure（结构调整）— 知识重组</h3>
+<p><div class="callout callout-quote" markdown="1"><br />
+<p class="callout-title">当知识积累到一定程度，结构需要演进。</p></p>
+</div>
+<table>
+<thead>
+<tr>
+<th>你说</th>
+<th>场景</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>"Prometheus 内容越来越多了，拆分出一个可观测性子地图"</td>
+<td>新建 map</td>
+</tr>
+<tr>
+<td>"把 <code>容器运行时</code> 拆成 Docker Engine 和 containerd 两个实体页"</td>
+<td>概念拆分</td>
+</tr>
+<tr>
+<td>"这几个概念其实是一回事，合并一下"</td>
+<td>概念合并</td>
+</tr>
+<tr>
+<td>"帮 Python 领域建一个专题地图"</td>
+<td>新建 map</td>
+</tr>
+<tr>
+<td>"CLAUDE.md 的 Ingest 流程要加一步 xxx"</td>
+<td>Schema 演进</td>
+</tr>
+</tbody>
+</table>
+<h3 id="5-review回顾-知识复盘">5. Review（回顾）— 知识复盘</h3>
+<p><div class="callout callout-quote" markdown="1"><br />
+<p class="callout-title">宏观审视知识库的全貌和成长。</p></p>
+</div>
+<table>
+<thead>
+<tr>
+<th>你说</th>
+<th>LLM 做什么</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>"最近一周知识库有什么变化？"</td>
+<td>读 <code>log.md</code>，汇总最近操作</td>
+</tr>
+<tr>
+<td>"给我一个知识库现状报告"</td>
+<td>统计页面数、覆盖度、红链数</td>
+</tr>
+<tr>
+<td>"Docker-Kubernetes 领域的知识覆盖够完整吗？"</td>
+<td>读取实体页"知识空白"章节，分析覆盖度</td>
+</tr>
+<tr>
+<td>"帮我列出所有标记为 stub 的实体页"</td>
+<td>找出需要增强的薄弱页面</td>
+</tr>
+</tbody>
+</table>
+<h3 id="6-export导出-知识输出">6. Export（导出）— 知识输出</h3>
+<p><div class="callout callout-quote" markdown="1"><br />
+<p class="callout-title">知识库的最终价值在于输出。</p></p>
+</div>
+<table>
+<thead>
+<tr>
+<th>你说</th>
+<th>输出场景</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>"基于 wiki 里的 K8s 知识，准备一个 CKA 复习大纲"</td>
+<td>考试备考</td>
+</tr>
+<tr>
+<td>"帮我写一份监控方案的技术分享 PPT 大纲"</td>
+<td>团队分享</td>
+</tr>
+<tr>
+<td>"基于 Aliyun 和 Azure 的对比，生成多云选型报告"</td>
+<td>架构决策</td>
+</tr>
+<tr>
+<td>"把 Helm 实体页的内容整理成一篇博客"</td>
+<td>内容创作</td>
+</tr>
+</tbody>
+</table>
+<h3 id="推荐节奏">推荐节奏</h3>
+<p><div class="callout callout-example" markdown="1"><br />
+<p class="callout-title">日常节奏</p></p>
+<table>
+<thead>
+<tr>
+<th>频率</th>
+<th>操作</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>每天</strong></td>
+<td>Query（随时提问，有价值就归档）</td>
+</tr>
+<tr>
+<td><strong>每周</strong></td>
+<td>Ingest（新笔记摄入）+ Lint（快速健康检查）</td>
+</tr>
+<tr>
+<td><strong>每月</strong></td>
+<td>Review（覆盖度回顾）+ Restructure（按需调整结构）</td>
+</tr>
+<tr>
+<td><strong>按需</strong></td>
+<td>Export（基于积累的知识产出价值）</td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr />
+<h2 id="七装完之后让-ai-帮你做的第一件事">七、装完之后让 AI 帮你做的第一件事</h2>
+<p>四步搭完是底子，真正让你感受到价值的是接下来这件事—— <strong>让 AI 整理一批散乱的笔记</strong> 。</p>
+<p>找一批以前在备忘录、微信收藏、印象笔记里的乱账，转成 Markdown（Claude Code 也能帮你转）扔进 Vault 的 <code>raw/</code> 目录。然后告诉它：</p>
+<div class="highlight"><pre><span></span><code>帮我整理 raw/ 下的散乱笔记。
+读取所有文件，按主题分类，给每条笔记加 Front Matter，
+建立 [[双向链接]]，最后给每个文件夹生成 index.md。
+</code></pre></div>
+
+<p>接下来你会看到 Claude Code 工作：</p>
+<ul>
+<li>扫描分类，按主题把笔记移到对应文件夹</li>
+<li>给每条加 Front Matter（标题、标签、摘要）</li>
+<li>发现笔记间关联，自动插入 <code>[[双向链接]]</code></li>
+<li>给每个文件夹生成 index.md</li>
+</ul>
+<p>五分钟，也许更快。</p>
+<p>整理完打开 Obsidian 的图谱视图。原来散落的点开始形成网络，一条关于"注意力"的笔记连向了卡尼曼读书笔记，也连向社交媒体的思考——这些关联以前只在你脑子里模糊存在，现在变成可见可点击的链接。</p>
+<p>MakeUseOf 有一位作者的案例值得参考—5 年笔记没标签、没链接、没结构、试过三次手动整理都放弃的烂账，他用 Claude Code + Obsidian 90 分钟整理完。我没那么多年的笔记可整，但跑了一遍我自己散落在备忘录里的几百条素材，5 分钟就跑出了第一版分类——比我预期的快得多。</p>
+<hr />
+<h2 id="八现有知识库现状分析">八、现有知识库现状分析</h2>
+<h3 id="现有结构">现有结构</h3>
+<div class="highlight"><pre><span></span><code>learning-notes/          ← Obsidian vault, git 仓库
+├── AI/                  ← 16 篇（AI 工具、提示词、Claude Code）
+├── Aliyun/              ← 19 篇（阿里云）
+├── Azure/               ← 21 篇
+├── C++/                 ← 1 篇
+├── CloudComputing/      ← 7 篇
+├── Database/            ← 3 篇
+├── Docker-Kubernetes/   ← 145 篇（最大领域）
+├── Git/                 ← 2 篇
+├── Go/                  ← 9 篇
+├── GPU-DeepLearning/    ← 4 篇
+├── HPC/                 ← 7 篇
+├── IaC/                 ← 2 篇
+├── Linux-Shell/         ← 24 篇
+├── Middlewares/         ← 3 篇
+├── Networking/          ← 2 篇
+├── OS/                  ← 3 篇
+├── Python/              ← 27 篇
+├── SoftwareTesting/     ← 少量
+├── KnowledgeBase/       ← 已有初步编译层（index、maps、concepts、analysis）
+└── .claude/             ← Claude Code skills
+</code></pre></div>
+
+<ul>
+<li><strong>总计约 350 篇 markdown 文档，17 个主题领域</strong></li>
+<li>已有 <code>KnowledgeBase/</code> 目录做了初步编译（INDEX.md、domain-map、概念页等），但未按 LLM Wiki 模式设计</li>
+<li>现有文档既是"原始来源"也是"知识页"，角色未分离</li>
+</ul>
+<h3 id="与-karpathy-模式的差距">与 Karpathy 模式的差距</h3>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>Karpathy 模式</th>
+<th>当前状态</th>
+<th>差距</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>原始来源不可变性</td>
+<td>raw/ 目录只读</td>
+<td>无 raw/，笔记随时可编辑</td>
+<td>需明确原始来源层</td>
+</tr>
+<tr>
+<td>wiki 编译层</td>
+<td>LLM 生成的结构化 wiki 目录</td>
+<td>KnowledgeBase/ 有雏形但不完整</td>
+<td>需扩充为完整 wiki 层</td>
+</tr>
+<tr>
+<td>Schema 文件</td>
+<td>CLAUDE.md 定义结构和工作流</td>
+<td>无专门 schema</td>
+<td>需创建</td>
+</tr>
+<tr>
+<td>index.md</td>
+<td>全 wiki 目录，每页一行摘要</td>
+<td>KnowledgeBase/INDEX.md 有但粒度粗</td>
+<td>需细化</td>
+</tr>
+<tr>
+<td>log.md</td>
+<td>仅追加操作日志</td>
+<td>不存在</td>
+<td>需创建</td>
+</tr>
+<tr>
+<td>Ingest 流程</td>
+<td>标准化：读源→写摘要→更新索引→更新实体/概念页</td>
+<td>无标准流程</td>
+<td>需定义</td>
+</tr>
+<tr>
+<td>Query 归档</td>
+<td>好答案归档回 wiki</td>
+<td>不存在</td>
+<td>需定义</td>
+</tr>
+<tr>
+<td>Lint 流程</td>
+<td>定期检查矛盾、孤儿页、缺失概念</td>
+<td>maintenance/ 有断链报告</td>
+<td>需扩展</td>
+</tr>
+<tr>
+<td>交叉引用</td>
+<td>系统化的 <code>[[wikilink]]</code> 网络</td>
+<td>部分存在但不系统</td>
+<td>需加强</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="九改造行动计划">九、改造行动计划</h2>
+<h3 id="原则">原则</h3>
+<ol>
+<li><strong>不动现有文档</strong>：现有 350 篇笔记视为 Raw Sources（原始来源层），保持不可变</li>
+<li><strong>KnowledgeBase/ 作为 Wiki 层</strong>：LLM 在此生成和维护所有编译内容</li>
+<li><strong>渐进式改造</strong>：不需要一步到位，先建立骨架，再逐步摄入</li>
+<li><strong>LLM 做重活</strong>：所有 wiki 页面由 LLM 编写和维护</li>
+</ol>
+<h3 id="phase-0建立-schemaday-1">Phase 0：建立 Schema（Day 1）</h3>
+<p><strong>目标</strong>：创建 <code>CLAUDE.md</code>，定义 wiki 的结构规约和操作流程。</p>
+<p>Schema 应包含：目录结构定义、页面规约（frontmatter、链接格式、模板）、操作流程（Ingest/Query/Lint）。</p>
+<h3 id="phase-1调整-wiki-目录结构day-1-2">Phase 1：调整 Wiki 目录结构（Day 1-2）</h3>
+<p><strong>目标</strong>：在现有 <code>KnowledgeBase/</code> 基础上补齐目录。</p>
+<ul>
+<li>[ ] 创建 <code>KnowledgeBase/sources/</code> 目录（原始来源摘要页存放处）</li>
+<li>[ ] 创建 <code>KnowledgeBase/entities/</code> 目录（工具/平台实体页存放处）</li>
+<li>[ ] 创建 <code>KnowledgeBase/log.md</code>（操作日志）</li>
+<li>[ ] 重构 <code>KnowledgeBase/index.md</code>，按 sources / concepts / entities / maps / analysis 分类</li>
+</ul>
+<h3 id="phase-2按领域优先级摄入原始来源day-3-14">Phase 2：按领域优先级摄入原始来源（Day 3-14）</h3>
+<p>按成熟度和篇数排序，优先摄入核心领域：</p>
+<table>
+<thead>
+<tr>
+<th>批次</th>
+<th>领域</th>
+<th>篇数</th>
+<th>优先级</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Docker-Kubernetes</td>
+<td>145</td>
+<td>🔴 最高</td>
+<td>核心专业领域，最大知识量</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Azure</td>
+<td>21</td>
+<td>🔴 高</td>
+<td>工作相关云平台</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Aliyun</td>
+<td>19</td>
+<td>🔴 高</td>
+<td>工作相关云平台</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Python</td>
+<td>27</td>
+<td>🟡 中</td>
+<td>运维开发语言</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Linux-Shell</td>
+<td>24</td>
+<td>🟡 中</td>
+<td>基础运维能力</td>
+</tr>
+<tr>
+<td>6</td>
+<td>AI</td>
+<td>16</td>
+<td>🟡 中</td>
+<td>AI 工具使用</td>
+</tr>
+<tr>
+<td>7</td>
+<td>其余领域</td>
+<td>~50</td>
+<td>🟢 低</td>
+<td>Go、HPC、IaC、DB 等</td>
+</tr>
+</tbody>
+</table>
+<p>每个领域的摄入流程（以 Claude Code 会话执行）：</p>
+<div class="highlight"><pre><span></span><code>请摄入 Docker-Kubernetes/k8s-basic-resources/ 目录中的所有文档：
+1. 逐篇阅读，在 KnowledgeBase/sources/ 写摘要页
+2. 提取关键概念，创建或更新 KnowledgeBase/concepts/ 页面
+3. 提取关键实体（工具/平台），创建或更新 KnowledgeBase/entities/ 页面
+4. 更新 KnowledgeBase/maps/kubernetes-map.md
+5. 更新 KnowledgeBase/index.md
+6. 在 KnowledgeBase/log.md 追加记录
+</code></pre></div>
+
+<h3 id="phase-3建立-lint-机制day-14">Phase 3：建立 Lint 机制（Day 14+）</h3>
+<ul>
+<li>[ ] 每周执行一次 lint 检查 prompt：</li>
+</ul>
+<div class="highlight"><pre><span></span><code>请对 KnowledgeBase/ 执行健康检查：
+1. 检查所有 wikilink 是否有效（断链报告）
+2. 找出无入链的孤儿页面
+3. 找出在多个页面中被提到但没有独立页面的重要概念
+4. 检查 sources/ 摘要与原始文档是否一致（是否有过时内容）
+5. 建议缺失的交叉引用
+6. 在 log.md 记录本次 lint
+</code></pre></div>
+
+<h3 id="phase-4query-归档习惯持续">Phase 4：Query 归档习惯（持续）</h3>
+<p>建立习惯：当在 Claude Code 会话中产生有价值的分析或对比时，将其归档到 wiki：</p>
+<div class="highlight"><pre><span></span><code>请将刚才的分析归档到 KnowledgeBase/analysis/[主题].md，
+并更新 index.md 和相关概念页的交叉引用。
+</code></pre></div>
+
+<hr />
+<h2 id="十想再玩深一点的三个方向">十、想再玩深一点的三个方向</h2>
+<p>整理完之后大概率你会想要更多。这里给三个进阶方向，按性价比排序，不一定全做但都值得知道。</p>
+<h3 id="方向一让-ai-把笔记编译成可复用的-wiki">方向一：让 AI 把笔记编译成可复用的 wiki</h3>
+<p>每次写完一篇文章，让 Claude Code 把里面"可独立成立的知识点"提炼到 wiki/。下次写相关主题时它先读 wiki，不重新调研。三层加配套的 SCHEMA.md（写清楚命名规范、Front Matter 模板、 <code>[[]]</code> 规则），效果是知识从一次性消耗变成永久资产。</p>
+<p>这一步的重点不是装新工具，是 <strong>改变心智</strong> ：让 AI 在你这边积累，而不是每次重置。</p>
+<h3 id="方向二自动-backlinksagentic-note-taking">方向二：自动 backlinks（Agentic Note-Taking）</h3>
+<p><code>[[双向链接]]</code> 很好，但你得记得去建。写日记顺手提到"今天和老王吃饭、聊了塔勒布"，不主动输入 <code>[[老王]]</code> 、 <code>[[塔勒布]]</code> ，这条日记和你之前关于这两个人的笔记就没关系。</p>
+<p>德国开发者 Stefan Imhoff 之前每天花 10-15 分钟手动给日记加 <code>[[]]</code> 。后来他用 Claude Code 写了一个工作流：</p>
+<div class="highlight"><pre><span></span><code>读取今天的日记。
+找出所有人名、地名、书名、概念。
+对每一个：搜索 Vault 是否已有对应笔记；
+有就把纯文本替换成 [[wikilink]]，
+没有就在 wiki/ 下建一个占位页（stub）再链接。
+</code></pre></div>
+
+<p>10 分钟的手工活变成几秒钟。更彻底的是它不会漏——你可能忘了 Vault 里有某个概念页，它不会忘。</p>
+<p>把这个动作做成 CLAUDE.md 里的一条规则（"我说'处理今天的日记'时执行上面流程"），从此你写笔记时不需要管 <code>[[]]</code> ，写完一个命令织网。</p>
+<h3 id="方向三把-claude-code-嵌入-obsidian加语义搜索">方向三：把 Claude Code 嵌入 Obsidian，加语义搜索</h3>
+<p>如果你已经经常切窗口（Obsidian 看 → 终端跑 → Obsidian 看），三个插件能让体验提一档：</p>
+<p><strong>Claudian</strong> ：把 Claude Code 的对话界面嵌进 Obsidian 侧边栏。右侧给指令、主编辑区实时看到笔记变化，少了一次 Alt+Tab。</p>
+<p><strong>Smart Connections</strong> ：Obsidian 自带搜索是关键词匹配——搜"投资"找不到"资产配置"。Smart Connections 用 AI embedding（把笔记转成向量）给 Vault 建语义索引，相关概念都能搜到。打开任何笔记时侧边栏自动显示语义最近的其他笔记，经常会发现自己没意识到的关联。</p>
+<p><strong>Copilot for Obsidian</strong> ：Vault 级别的 RAG 问答。问"我之前关于定价策略写过什么"，它从你自己的笔记里答，每个观点带出处。和直接问 ChatGPT 的区别是——回答来自你自己的知识，不是互联网通用信息。</p>
+<p>三个不必都装。优先级是 Smart Connections &gt; Claudian &gt; Copilot——语义搜索是日常每次都用的，回报最稳；Claudian 是体验优化，看你切窗口频率；Copilot 是有了一定笔记规模（500 篇以上）才真值得装的，否则可问的东西不够。</p>
+<hr />
+<h2 id="十一实用工具建议">十一、实用工具建议</h2>
+<table>
+<thead>
+<tr>
+<th>工具</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Obsidian Graph View</strong></td>
+<td>可视化 wiki 连接结构，发现孤儿页和 hub 页</td>
+</tr>
+<tr>
+<td><strong>Obsidian Web Clipper</strong></td>
+<td>浏览器扩展，将网页文章转为 markdown 存入 raw 层</td>
+</tr>
+<tr>
+<td><strong>Obsidian Dataview</strong></td>
+<td>查询 frontmatter，生成动态表格和列表</td>
+</tr>
+<tr>
+<td><strong>qmd</strong></td>
+<td>本地 markdown 搜索引擎（BM25 + 向量混合搜索），wiki 增长后替代 index.md</td>
+</tr>
+<tr>
+<td><strong>git</strong></td>
+<td>wiki 本身就是 git 仓库，天然有版本历史、分支和协作能力</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="十二预期成果">十二、预期成果</h2>
+<p>改造完成后，知识库将具备：</p>
+<ol>
+<li><strong>清晰的三层分离</strong>：原始笔记（只读）→ wiki 编译层（LLM 维护）→ schema（共同演进）</li>
+<li><strong>知识复利</strong>：每次摄入新来源都会丰富已有的概念网络，而非孤立存放</li>
+<li><strong>高效查询</strong>：通过 index.md 和结构化的 wiki 页面，LLM 能快速定位和综合回答</li>
+<li><strong>维护成本近零</strong>：LLM 处理所有交叉引用更新、一致性维护、日志记录</li>
+<li><strong>可视化知识图谱</strong>：Obsidian Graph View 展示概念间关联</li>
+</ol>
+<hr />
+<h2 id="十三我用了一周后的几个判断">十三、我用了一周后的几个判断</h2>
+<p><strong>一定做的三件事</strong> ：装 obsidian-skills、补 index.md、Front Matter 加 type 和 summary 字段。这三件投入不超过 1 小时，但日常每次操作都受益。尤其 type 字段的三态（fleeting / literature / permanent），AI 扫 Vault 时按 type 决定处理策略，这件事一旦开始用就回不去了。</p>
+<p><strong>不要照抄大博主们 Skills 的做法</strong> 。一上来不要装一堆 Skill，那是他用了一年多积累出来的。先用几个月，等你明确知道自己缺什么能力的时候，再去找对应的 Skill——否则你只是在收集工具不在解决问题。</p>
+<p><strong>多 Vault 不要太早搞</strong> 。先用一个 Vault，500 篇以下别拆。等到出现两类内容 <strong>完全不交叉</strong> （比如工作机密 vs 个人日记，或者写公众号 vs 学术研究）、且你确实在频繁切换上下文时才拆——过早拆分会增加管理成本而不解决任何问题。</p>
+<p><strong>先写后整理</strong> 。我自己第一次搭体系时踩过的最大坑是"系统先行"——花一下午研究各种方法论、设计完美分类，一周后发现实际笔记根本不符合预设，整套推翻重来。后来想明白笔记系统得从笔记里长出来，不是从设计图纸里长出来。</p>
+<p><strong>40 万字以内不需要向量数据库</strong> 。Claude 的上下文窗口够大，纯文本 wiki + index.md 导航，AI 找到相关知识的速度和准确度都很高。超过百万字级别再考虑加语义搜索。</p>
+<hr />
+<h2 id="最后一句">最后一句</h2>
+<p>这套体系的核心不是 Obsidian，也不是 Claude Code。是 <strong>整理这件事不再是你的责任</strong> 。</p>
+<p>过去几十年所有的笔记工具，从 Word 到 Notion，都假设"整理是你的事"。AI 改变的是这个假设——你只管记录和思考，整理交给 AI。</p>
+<p>工具会变。今天是 Obsidian，明天可能是别的。但你 Vault 里的那些 Markdown 文件，它们一直是你的。</p>
+<p>要试的话路径很短：找一篇你最近想存的文章存成 <code>.md</code> ，扔进一个新建的文件夹， <code>cd</code> 进去 <code>claude</code> 起个对话——剩下 AI 会问你三个问题然后开始干活。</p>
+    </div>
+  </article>
+  <aside class="toc">
+    <p class="toc-label">本页目录</p>
+    <ul>
+  <li><a href="#一你的笔记软件里躺着多少僵尸">一、你的笔记软件里躺着多少僵尸</a></li>
+  <li><a href="#二为什么是-obsidian-claude-code">二、为什么是 Obsidian + Claude Code</a><ul>
+  <li><a href="#先说结论">先说结论</a></li>
+  <li><a href="#知识库类软件的现状">知识库类软件的现状</a></li>
+  <li><a href="#markdown-是-llm-的母语">Markdown 是 LLM 的母语</a></li>
+  <li><a href="#本地文件-ai-直接读写">本地文件 = AI 直接读写</a></li>
+  <li><a href="#三个独立的十亿级项目殊途同归">三个独立的十亿级项目殊途同归</a></li>
+  <li><a href="#为什么选-obsidian">为什么选 Obsidian</a></li>
+</ul></li>
+  <li><a href="#三核心理念karpathy-llm-wiki-模式">三、核心理念：Karpathy LLM Wiki 模式</a><ul>
+  <li><a href="#三层架构">三层架构</a></li>
+  <li><a href="#三大操作">三大操作</a></li>
+  <li><a href="#索引与日志">索引与日志</a></li>
+</ul></li>
+  <li><a href="#四30-分钟上手搭建">四、30 分钟上手搭建</a><ul>
+  <li><a href="#第一步cd-进-vault启动-claude-code">第一步：cd 进 Vault，启动 Claude Code</a></li>
+  <li><a href="#第二步写一份-claudemd-给-ai-看">第二步：写一份 CLAUDE.md 给 AI 看</a></li>
+  <li><a href="#第三步每个大目录补一份-indexmd">第三步：每个大目录补一份 index.md</a></li>
+  <li><a href="#第四步装-obsidian-skills">第四步：装 obsidian-skills</a></li>
+</ul></li>
+  <li><a href="#五三个关键工具打通-obsidian-ai">五、三个关键工具：打通 Obsidian × AI</a><ul>
+  <li><a href="#1-claudian-插件">1. Claudian 插件</a></li>
+  <li><a href="#2-obsidian-skills">2. Obsidian Skills</a></li>
+  <li><a href="#3-obsidian-local-api-claude-mcp">3. Obsidian Local API + Claude MCP</a></li>
+</ul></li>
+  <li><a href="#六日常操作谱系">六、日常操作谱系</a><ul>
+  <li><a href="#1-ingest摄入-知识进来">1. Ingest（摄入）— 知识进来</a></li>
+  <li><a href="#2-query查询-向知识库提问">2. Query（查询）— 向知识库提问</a></li>
+  <li><a href="#3-lint健康检查-维护质量">3. Lint（健康检查）— 维护质量</a></li>
+  <li><a href="#4-restructure结构调整-知识重组">4. Restructure（结构调整）— 知识重组</a></li>
+  <li><a href="#5-review回顾-知识复盘">5. Review（回顾）— 知识复盘</a></li>
+  <li><a href="#6-export导出-知识输出">6. Export（导出）— 知识输出</a></li>
+  <li><a href="#推荐节奏">推荐节奏</a></li>
+</ul></li>
+  <li><a href="#七装完之后让-ai-帮你做的第一件事">七、装完之后让 AI 帮你做的第一件事</a></li>
+  <li><a href="#八现有知识库现状分析">八、现有知识库现状分析</a><ul>
+  <li><a href="#现有结构">现有结构</a></li>
+  <li><a href="#与-karpathy-模式的差距">与 Karpathy 模式的差距</a></li>
+</ul></li>
+  <li><a href="#九改造行动计划">九、改造行动计划</a><ul>
+  <li><a href="#原则">原则</a></li>
+  <li><a href="#phase-0建立-schemaday-1">Phase 0：建立 Schema（Day 1）</a></li>
+  <li><a href="#phase-1调整-wiki-目录结构day-1-2">Phase 1：调整 Wiki 目录结构（Day 1-2）</a></li>
+  <li><a href="#phase-2按领域优先级摄入原始来源day-3-14">Phase 2：按领域优先级摄入原始来源（Day 3-14）</a></li>
+  <li><a href="#phase-3建立-lint-机制day-14">Phase 3：建立 Lint 机制（Day 14+）</a></li>
+  <li><a href="#phase-4query-归档习惯持续">Phase 4：Query 归档习惯（持续）</a></li>
+</ul></li>
+  <li><a href="#十想再玩深一点的三个方向">十、想再玩深一点的三个方向</a><ul>
+  <li><a href="#方向一让-ai-把笔记编译成可复用的-wiki">方向一：让 AI 把笔记编译成可复用的 wiki</a></li>
+  <li><a href="#方向二自动-backlinksagentic-note-taking">方向二：自动 backlinks（Agentic Note-Taking）</a></li>
+  <li><a href="#方向三把-claude-code-嵌入-obsidian加语义搜索">方向三：把 Claude Code 嵌入 Obsidian，加语义搜索</a></li>
+</ul></li>
+  <li><a href="#十一实用工具建议">十一、实用工具建议</a></li>
+  <li><a href="#十二预期成果">十二、预期成果</a></li>
+  <li><a href="#十三我用了一周后的几个判断">十三、我用了一周后的几个判断</a></li>
+  <li><a href="#最后一句">最后一句</a></li>
+</ul>
+  </aside>
+
+</div>
+
+</main>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>Learning Notes</span>
+    <a href="https://github.com/hangx969/learning-notes">GitHub</a>
+  </div>
+</footer>
+<script src="../../../static/search.js"></script>
+</body>
+</html>

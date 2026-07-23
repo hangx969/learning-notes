@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PicGo-GitHub 图床配置 - Learning Notes</title>
+<link rel="stylesheet" href="../../static/style.css">
+<link rel="stylesheet" href="../../static/pygments.css">
+</head>
+<body data-root="../../">
+<header class="site-header">
+  <div class="header-inner">
+    <a class="logo" href="../../index.html"><span class="logo-mark"></span>LEARNING NOTES</a>
+    <div class="search">
+      <input id="search-input" type="search" placeholder="搜索笔记…" autocomplete="off" aria-label="搜索笔记">
+      <div id="search-results" hidden></div>
+    </div>
+  </div>
+  <nav class="topic-nav" aria-label="主题导航">
+    <div class="topic-nav-inner">
+      <a href="../../AI/">AI</a>
+      <a href="../../Aliyun/">Aliyun</a>
+      <a href="../../Azure/">Azure</a>
+      <a href="../../C%2B%2B/">C++</a>
+      <a href="../../CloudComputing/">CloudComputing</a>
+      <a href="../../Database/">Database</a>
+      <a href="../../Docker-Kubernetes/">Docker-Kubernetes</a>
+      <a href="../../GPU-DeepLearning/">GPU-DeepLearning</a>
+      <a href="../../Git/" class="active">Git</a>
+      <a href="../../Go/">Go</a>
+      <a href="../../HPC/">HPC</a>
+      <a href="../../IaC/">IaC</a>
+      <a href="../../Linux-Shell/">Linux-Shell</a>
+      <a href="../../Middlewares/">Middlewares</a>
+      <a href="../../Networking/">Networking</a>
+      <a href="../../OS/">OS</a>
+      <a href="../../Python/">Python</a>
+      <a href="../../SoftwareTesting/">SoftwareTesting</a>
+    </div>
+  </nav>
+</header>
+<main class="main">
+
+<div class="article-layout">
+
+  <aside class="sidebar">
+    <details class="sidebar-details">
+      <summary>Git</summary>
+      <nav class="sidebar-nav">
+        <p class="sidebar-group">其他</p>
+        <ul>
+          <li><a href="../../Git/Picgo-github%E5%9B%BE%E5%BA%8A%E9%85%8D%E7%BD%AE/" class="current">PicGo-GitHub 图床配置</a></li>
+          <li><a href="../../Git/git-learning/">Git 学习笔记</a></li>
+        </ul>
+      </nav>
+    </details>
+  </aside>
+
+  <article class="article">
+    <nav class="breadcrumb">
+      <a href="../../index.html">首页</a><span>/</span>
+      <a href="../../Git/">Git</a>
+    </nav>
+    <h1 class="article-title">PicGo-GitHub 图床配置</h1>
+    <p class="article-meta"><span>更新于 2026-04-16</span>
+      <a href="https://github.com/hangx969/learning-notes/blob/main/Git/Picgo-github%E5%9B%BE%E5%BA%8A%E9%85%8D%E7%BD%AE.md">查看源文件</a>
+    </p>
+    <div class="article-body">
+<h1 id="picgo-github-图床配置">PicGo-GitHub 图床配置</h1>
+<h2 id="背景">背景</h2>
+<ul>
+<li>用typora编辑的Markdown文件中的图片通常是保存在本地路径下，更换电脑或者文件移动后，图片容易挂掉。</li>
+<li>利用Picgo将typora中的图片自动上传至github，实现图片持久化。</li>
+</ul>
+<h2 id="配置方法">配置方法</h2>
+<p>github、picgo、typora都需要配置。</p>
+<h3 id="github配置">github配置</h3>
+<ul>
+<li>创建一个公有仓库，用于存放图片</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202209111314538.png" alt="image-20220911131456460" style="zoom:50%;" /></p>
+<ul>
+<li>
+<p>获取access token</p>
+</li>
+<li>
+<p>settings - developer settings - Personal access tokens</p>
+</li>
+<li>
+<p>用于让picgo自动上传至仓库。</p>
+</li>
+<li>
+<p>生成之后需要手动复制到本地，因为之后该token就不可见了。</p>
+</li>
+</ul>
+<p><img alt="image-20220911131547101" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202209111315144.png" /></p>
+<h3 id="picgo配置">Picgo配置</h3>
+<ul>
+<li>
+<p>下载：<a href="https://molunerfinn.com/PicGo/">PicGo (molunerfinn.com)</a></p>
+</li>
+<li>
+<p>注意：Picgo的插件需要Node.js，<a href="https://nodejs.org/en/">Node.js (nodejs.org)</a></p>
+</li>
+<li>
+<p>安装github-plus插件</p>
+</li>
+</ul>
+<p><img alt="image-20220911132003628" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202209111320685.png" /></p>
+<ul>
+<li>
+<p>配置图床设置</p>
+</li>
+<li>
+<p>注意repo的路径中不能有空格！</p>
+</li>
+<li>
+<p>branch要填main而非master</p>
+</li>
+<li>
+<p>token填github复制出来的的access token</p>
+</li>
+</ul>
+<p><img alt="image-20220911132056970" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202209111320007.png" /></p>
+<ul>
+<li>
+<p>配置Picgo：</p>
+</li>
+<li>
+<p>Picgo相当于一个http server让typora将图片文件上传，Server的监听端口需要与typora中的配置一致。</p>
+</li>
+</ul>
+<p><img alt="image-20220911132334774" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202209111323821.png" /></p>
+<ul>
+<li>设置中打开时间戳重命名</li>
+</ul>
+<p><img alt="image-20220911132544225" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202209111325254.png" /></p>
+<h3 id="typora配置">Typora配置</h3>
+<p>偏好设置 - 图像：</p>
+<p><img alt="image-20220911132923566" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202209111329625.png" /></p>
+<p>可点击验证图片选项，测试上传是否能成功。</p>
+<h3 id="obsidian配置">obsidian配置</h3>
+<p>装一个Image auto upload 插件，配置github仓库地址，token，picgo监听端口。即可粘贴图片的同时自动上传。</p>
+<h3 id="troubleshooting">Troubleshooting</h3>
+<p><div class="callout callout-warning" markdown="1"><br />
+<p class="callout-title">常见报错</p></p>
+<p>根据配置中遇到的报错经验：<br />
+- PicGo 设置中的 repo 路径有空格，会导致 404 报错。<br />
+- PicGo 设置中的时间戳命名如果没开的话，会导致文件名重复，typora 上传失败，picgo 日志中会有 detect second instance 信息。</p>
+</div>
+<p><div class="callout callout-tip" markdown="1"><br />
+<p class="callout-title">图片不显示</p></p>
+<p>typora 中图片上传成功，但是 typora 中不显示。可能是 GitHub 图片被屏蔽；解决办法是修改 host 文件（<code>C:\Windows\System32\drivers\etc\hosts</code>），加上：</p>
+</div>
+<div class="highlight"><pre><span></span><code><span class="m">185</span>.199.108.133<span class="w"> </span>raw.githubusercontent.com
+<span class="m">185</span>.199.109.133<span class="w"> </span>raw.githubusercontent.com
+<span class="m">185</span>.199.110.133<span class="w"> </span>raw.githubusercontent.com
+<span class="m">185</span>.199.111.133<span class="w"> </span>raw.githubusercontent.com
+</code></pre></div>
+    </div>
+  </article>
+  <aside class="toc">
+    <p class="toc-label">本页目录</p>
+    <ul>
+  <li><a href="#背景">背景</a></li>
+  <li><a href="#配置方法">配置方法</a><ul>
+  <li><a href="#github配置">github配置</a></li>
+  <li><a href="#picgo配置">Picgo配置</a></li>
+  <li><a href="#typora配置">Typora配置</a></li>
+  <li><a href="#obsidian配置">obsidian配置</a></li>
+  <li><a href="#troubleshooting">Troubleshooting</a></li>
+</ul></li>
+</ul>
+  </aside>
+
+</div>
+
+</main>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>Learning Notes</span>
+    <a href="https://github.com/hangx969/learning-notes">GitHub</a>
+  </div>
+</footer>
+<script src="../../static/search.js"></script>
+</body>
+</html>

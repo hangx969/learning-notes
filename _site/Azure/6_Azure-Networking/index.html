@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Azure Networking - Learning Notes</title>
+<link rel="stylesheet" href="../../static/style.css">
+<link rel="stylesheet" href="../../static/pygments.css">
+</head>
+<body data-root="../../">
+<header class="site-header">
+  <div class="header-inner">
+    <a class="logo" href="../../index.html"><span class="logo-mark"></span>LEARNING NOTES</a>
+    <div class="search">
+      <input id="search-input" type="search" placeholder="搜索笔记…" autocomplete="off" aria-label="搜索笔记">
+      <div id="search-results" hidden></div>
+    </div>
+  </div>
+  <nav class="topic-nav" aria-label="主题导航">
+    <div class="topic-nav-inner">
+      <a href="../../AI/">AI</a>
+      <a href="../../Aliyun/">Aliyun</a>
+      <a href="../../Azure/" class="active">Azure</a>
+      <a href="../../C%2B%2B/">C++</a>
+      <a href="../../CloudComputing/">CloudComputing</a>
+      <a href="../../Database/">Database</a>
+      <a href="../../Docker-Kubernetes/">Docker-Kubernetes</a>
+      <a href="../../GPU-DeepLearning/">GPU-DeepLearning</a>
+      <a href="../../Git/">Git</a>
+      <a href="../../Go/">Go</a>
+      <a href="../../HPC/">HPC</a>
+      <a href="../../IaC/">IaC</a>
+      <a href="../../Linux-Shell/">Linux-Shell</a>
+      <a href="../../Middlewares/">Middlewares</a>
+      <a href="../../Networking/">Networking</a>
+      <a href="../../OS/">OS</a>
+      <a href="../../Python/">Python</a>
+      <a href="../../SoftwareTesting/">SoftwareTesting</a>
+    </div>
+  </nav>
+</header>
+<main class="main">
+
+<div class="article-layout">
+
+  <aside class="sidebar">
+    <details class="sidebar-details">
+      <summary>Azure</summary>
+      <nav class="sidebar-nav">
+        <p class="sidebar-group">Customer Support</p>
+        <ul>
+          <li><a href="../../Azure/Customer%20Support/Email%20Templates/">Email Templates</a></li>
+        </ul>
+        <p class="sidebar-group">其他</p>
+        <ul>
+          <li><a href="../../Azure/0_Azure-VM-VMSS/">Azure VM and VMSS</a></li>
+          <li><a href="../../Azure/10_Azure-devops-agent-pool-management/">Azure DevOps Agent Pool Management</a></li>
+          <li><a href="../../Azure/11_Azure-Policy/">Azure Policy</a></li>
+          <li><a href="../../Azure/1_Azure-Linux-VM-troubheshooting/">Azure Linux VM Troubleshooting</a></li>
+          <li><a href="../../Azure/2_AKS-basics/">AKS Basics</a></li>
+          <li><a href="../../Azure/3_AKS-workload-identity/">AKS Workload Identity</a></li>
+          <li><a href="../../Azure/4_AKS-SecretProviderClass-KeyVault/">AKS SecretProviderClass with KeyVault</a></li>
+          <li><a href="../../Azure/5_Azure-Storage/">Azure Storage</a></li>
+          <li><a href="../../Azure/6_Azure-Networking/" class="current">Azure Networking</a></li>
+          <li><a href="../../Azure/7_ACR-ACI/">Azure Container Registry &amp; Azure Container Instances</a></li>
+          <li><a href="../../Azure/8_Azure-devops-basics/">Azure DevOps Basics</a></li>
+          <li><a href="../../Azure/9_Azure-devops-self-host-agents/">Azure DevOps Self-Hosted Agents</a></li>
+          <li><a href="../../Azure/IO-monitor/">IO Monitor</a></li>
+          <li><a href="../../Azure/Jfrog-artifactory-Azure/">JFrog Artifactory on Azure</a></li>
+          <li><a href="../../Azure/Kusto%20Query/">Kusto Query Language (KQL) Reference</a></li>
+          <li><a href="../../Azure/browser%20trace/">Browser Trace (HAR)</a></li>
+          <li><a href="../../Azure/command-line-tools/">Command Line Tools</a></li>
+          <li><a href="../../Azure/fiddler/">Fiddler</a></li>
+          <li><a href="../../Azure/perfMon%20ProcessMon/">PerfMon &amp; ProcessMon</a></li>
+          <li><a href="../../Azure/postman/">Postman</a></li>
+        </ul>
+      </nav>
+    </details>
+  </aside>
+
+  <article class="article">
+    <nav class="breadcrumb">
+      <a href="../../index.html">首页</a><span>/</span>
+      <a href="../../Azure/">Azure</a>
+    </nav>
+    <h1 class="article-title">Azure Networking</h1>
+    <p class="article-meta"><span>更新于 2026-04-16</span>
+      <a href="https://github.com/hangx969/learning-notes/blob/main/Azure/6_Azure-Networking.md">查看源文件</a>
+    </p>
+    <div class="article-body">
+<h1 id="azure-networking">Azure Networking</h1>
+<h2 id="related-notes">Related Notes</h2>
+<ul>
+<li><a class="wikilink" href="../../Azure/0_Azure-VM-VMSS/">Azure/0_Azure-VM-VMSS</a></li>
+<li><a class="wikilink" href="../../Azure/2_AKS-basics/">Azure/2_AKS-basics</a></li>
+</ul>
+<hr />
+<h2 id="network-connectivity-testing-commands">Network Connectivity Testing Commands</h2>
+<h3 id="psping">psping</h3>
+<p>TCP connection, test if port is open: <a href="https://learn.microsoft.com/en-us/sysinternals/downloads/psping">PsPing - Sysinternals | Microsoft Learn</a></p>
+<div class="highlight"><pre><span></span><code>psping<span class="w"> </span>&lt;<span class="nb">source</span><span class="w"> </span>machine_ip&gt;:<span class="w"> </span><span class="m">443</span><span class="w"> </span>和<span class="w"> </span><span class="m">9443</span><span class="w"> </span>
+</code></pre></div>
+
+<h3 id="telnet">telnet</h3>
+<div class="highlight"><pre><span></span><code>虚拟机连不上，可以用telnet来看一下端口可达性
+telnet<span class="w"> </span><span class="m">168</span>.63.129.16<span class="w"> </span><span class="m">80</span>
+</code></pre></div>
+
+<h3 id="nc">nc</h3>
+<p>Test TCP connection:</p>
+<div class="highlight"><pre><span></span><code>nc<span class="w"> </span>-vz<span class="w"> </span>mcr.azk8s.cn<span class="w"> </span><span class="m">443</span>
+-z：Zero-I/O<span class="w"> </span>mode,<span class="w"> </span>report<span class="w"> </span>connection<span class="w"> </span>status<span class="w"> </span>only
+-v,<span class="w"> </span>--verbose<span class="w"> </span>Set<span class="w"> </span>verbosity<span class="w"> </span>level<span class="w"> </span><span class="o">(</span>can<span class="w"> </span>be<span class="w"> </span>used<span class="w"> </span>several<span class="w"> </span><span class="nb">times</span><span class="o">)</span>
+</code></pre></div>
+
+<h3 id="dig">dig</h3>
+<p>dig (Domain Information Groper) is a flexible tool for interrogating DNS domain name servers. It performs DNS lookups and displays answers from queried name servers.</p>
+<div class="highlight"><pre><span></span><code>dig<span class="w"> </span>mcr.azk8s.cn<span class="w"> </span><span class="m">443</span>
+dig<span class="w"> </span>mcr.azk8s.cn<span class="w"> </span>
+</code></pre></div>
+
+<p>Dig usage:</p>
+<ul>
+<li><code>@</code> to specify the name server</li>
+<li><code>-t</code> to specify the record type to resolve</li>
+<li><code>A</code> is the record type: resolves domain name to IP</li>
+</ul>
+<div class="highlight"><pre><span></span><code>dig<span class="w"> </span>-t<span class="w"> </span>A<span class="w"> </span>svc-sts-nginx.default.svc.cluster.local<span class="w"> </span>@10.0.0.10
+</code></pre></div>
+
+<h3 id="curl">curl</h3>
+<ul>
+<li>Test external network connectivity. Without parameters, curl sends a GET request.</li>
+<li><code>curl myip.ipip.net</code> (only proves outbound internet access works)</li>
+</ul>
+<p><img alt="image-20231030202611975" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202310302026034.png" /></p>
+<ul>
+<li><code>curl ipconfig.me</code>: also shows your public IP</li>
+</ul>
+<h3 id="siege">siege</h3>
+<ul>
+<li>Generates sustained access requests, used for <mark>load testing</mark>.</li>
+</ul>
+<div class="highlight"><pre><span></span><code>siege<span class="w"> </span>-c<span class="w"> </span><span class="m">15</span><span class="w"> </span>-t<span class="w"> </span>20m<span class="w"> </span>https://fibonnodeis.chinacloudsites.cn
+</code></pre></div>
+
+<h3 id="tcpdump">tcpdump</h3>
+<p>Network packet capture, on Linux we typically use <mark>tcpdump</mark>:</p>
+<div class="highlight"><pre><span></span><code>tcpdump<span class="w"> </span>-i<span class="w"> </span>any<span class="w"> </span>host<span class="w"> </span>&lt;Pod-IP&gt;<span class="w"> </span>-C<span class="w"> </span><span class="m">10</span><span class="w"> </span>-W<span class="w"> </span><span class="m">10</span><span class="w"> </span>-w<span class="w"> </span><span class="m">31983</span>.pcap
+<span class="c1">#&lt;Pod-IP&gt; 需修改为Pod的IP地址，作为过滤条件。</span>
+<span class="c1">#-C是每个文件大小的上限，以M为单位。</span>
+<span class="c1">#-W是最多写入多少个抓包文件，编号从0开始，到9写满后，从0号文件开始循环写。</span>
+<span class="c1">#也就是说上述指令在抓包时最多会占用大约10 *10 = 100M的磁盘空间，您可以根据实际情况进行配置</span>
+<span class="c1">#考虑到网络包通常都很大，所以我们应该需要设置一个监控脚本来监控应用日志，如果发现应用日志有相关报错，我们可以kill掉tcpdump的收集进程</span>
+</code></pre></div>
+
+<h3 id="windows-network-capture">Windows Network Capture</h3>
+<ol>
+<li>Run as admin in cmd, <code>C:\temp\netshtrace.etl</code> is the output path:</li>
+</ol>
+<p><code>bash
+   netsh.exe trace start capture=yes maxsize=500M overwrite=yes tracefile=C:\temp\netshtrace.etl</code></p>
+<p><img alt="image-20231030203953076" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202310302039136.png" /></p>
+<ol>
+<li>
+<p>Reproduce the issue</p>
+</li>
+<li>
+<p>Stop capture:</p>
+</li>
+</ol>
+<p><code>bash
+   netsh.exe trace stop</code></p>
+<p><img alt="image-20231030204052140" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202310302040199.png" /></p>
+<hr />
+<h2 id="vnet">VNET</h2>
+<ul>
+<li>VNet allows many types of Azure resources (e.g., Azure VMs) to securely communicate with each other, the Internet, and on-premises networks.</li>
+</ul>
+<p>From <a href="https://docs.azure.cn/zh-cn/virtual-network/virtual-networks-overview">https://docs.azure.cn/zh-cn/virtual-network/virtual-networks-overview</a></p>
+<ul>
+<li>A virtual network is communication between devices, servers, and virtual machines over the Internet. Azure Virtual Network (VNet) is a private network with interconnected Azure resources such as Azure VMs, infrastructure, and networking. It supports communication between various Azure resources over the Internet. In a virtual network, contiguous IP address blocks are used to create multiple subnet networks. From <a href="https://k21academy.com/microsoft-azure/az-303/azure-networking/">https://k21academy.com/microsoft-azure/az-303/azure-networking/</a></li>
+</ul>
+<p><div class="callout callout-tip" markdown="1"><br />
+<p class="callout-title">VNet Outbound Without Public IP</p></p>
+<p>When resources in a VNet don't have a Public IP, can they access the Internet? <mark>YES</mark>. Through Private IP, when sending data externally through the VNet, NAT translates Private IP to Public IP. Inbound traffic is also NAT-translated to Private IP.</p>
+</div>
+<hr />
+<h2 id="public-ip-and-private-ip">Public IP and Private IP</h2>
+<ul>
+<li><strong>Private</strong> -- Private IP addresses allow communication between resources within an Azure resource group. Resources cannot access the private IP from outside the network. Resources that can connect using private addresses include VM network interfaces, ILB (internal load balancers), and application gateways.</li>
+<li><strong>Public</strong> -- Public IP addresses allow Azure resources to communicate with public-facing Azure services over the Internet. Resources that can connect using public addresses include VM network interfaces, public-facing ILB, application gateways, VPN gateways, and Azure Firewall.</li>
+</ul>
+<p>From <a href="https://k21academy.com/microsoft-azure/az-303/azure-networking/">https://k21academy.com/microsoft-azure/az-303/azure-networking/</a></p>
+<hr />
+<h2 id="subnet">Subnet</h2>
+<ul>
+<li>A subnet is a portion of a network covering a range of IP addresses. In Azure, a VNet can be divided into smaller subnets. When creating a VNet in Azure, you need to specify the subnet range and topology. The IP address range in a subnet will be a sub-portion of the larger block of IP addresses used in the VNet. VMs and resources in the network will be assigned IP addresses from these subnets.</li>
+</ul>
+<p><div class="callout callout-important" markdown="1"><br />
+<p class="callout-title">Azure Reserved IPs</p></p>
+<p>Azure reserves the <mark>first four IPs</mark> and the <mark>last IP</mark> in each subnet for its own use.</p>
+</div>
+<p>From <a href="https://k21academy.com/microsoft-azure/az-303/azure-networking/">https://k21academy.com/microsoft-azure/az-303/azure-networking/</a></p>
+<hr />
+<h2 id="nsg">NSG</h2>
+<ul>
+<li>A Network Security Group acts as a firewall at the network level. It filters traffic passing through Azure resources in a virtual network. NSG is a set of security rules that define priority, source/destination, protocol, direction, port range, and action. Using these rules, NSG allows or denies inbound and outbound traffic.</li>
+</ul>
+<p>From <a href="https://k21academy.com/microsoft-azure/az-303/azure-networking/">https://k21academy.com/microsoft-azure/az-303/azure-networking/</a></p>
+<hr />
+<h2 id="gateway">Gateway</h2>
+<ul>
+<li>
+<p>A gateway is essentially the IP address through which one network accesses other networks.</p>
+</li>
+<li>
+<p>For example, with Network A (IP range <code>192.168.1.1~192.168.1.254</code>, subnet mask <code>255.255.255.0</code>) and Network B (IP range <code>192.168.2.1~192.168.2.254</code>, subnet mask <code>255.255.255.0</code>), without a router, TCP/IP communication between the two networks is impossible, even if connected to the same switch/hub. TCP/IP protocol uses the subnet mask to determine hosts are on different networks.</p>
+</li>
+<li>
+<p>To enable communication between these networks, a <mark>gateway</mark> is required. If a host in Network A finds the destination is not on the local network, it forwards the packet to its own gateway, which forwards to Network B's gateway, which then delivers to the destination host.</p>
+</li>
+<li>
+<p>So, only by setting the gateway IP address correctly can TCP/IP enable inter-network communication.</p>
+</li>
+<li>
+<p>The gateway IP address belongs to a device with routing capability: a router, a server with routing protocol enabled, or a proxy server.</p>
+</li>
+</ul>
+<hr />
+<h2 id="azure-relay">Azure Relay</h2>
+<p><a href="https://docs.azure.cn/zh-cn/azure-relay/relay-what-is-it">什么是 Azure 中继？ - Azure Relay | Azure Docs</a></p>
+<hr />
+<h2 id="private-and-service-endpoint">Private and Service Endpoint</h2>
+<p>Azure Private Endpoints and Service Endpoints can both be used to enhance security and control network access. Key differences:</p>
+<ol>
+<li>
+<p><strong>Definition and Scope</strong>: Private Endpoints target individual Azure resources (e.g., VMs, storage accounts), while Service Endpoints target service identifiers (e.g., Azure Storage, Azure SQL Database).</p>
+</li>
+<li>
+<p><strong>Network Path</strong>: Private Endpoints create a <mark>private IP address</mark> in the VNet, connecting Azure resources directly to a subnet. Resources can be accessed via the VNet's private IP without going through the public Internet. Service Endpoints connect through the Azure resource's virtual network service endpoint to the service identifier.</p>
+</li>
+<li>
+<p><strong>Security</strong>: Private Endpoints improve security by restricting traffic to the Azure resource's private IP address. Service Endpoints improve security by restricting traffic to the specific service's IP address range.</p>
+</li>
+</ol>
+<p><div class="callout callout-note" markdown="1"><br />
+<p class="callout-title">Private Endpoint DNS Resolution</p></p>
+<p>When a storage account has a private endpoint configured, DNS resolution from within the subnet first resolves the public endpoint (e.g., <code>artifactorysa.file.core.chinacloudapi.cn</code>) via CNAME to the private endpoint (e.g., <code>artifactorysa.privatelink.file.core.chinacloudapi.cn</code>), which then resolves to the private IP.</p>
+<p>Your local DNS needs to forward the public endpoint to Azure DNS for resolution, or you can directly configure the public endpoint to the private IP in <code>/etc/hosts</code>.</p>
+</div>
+<hr />
+<h2 id="loadbalancer">Loadbalancer</h2>
+<ul>
+<li>
+<p><mark>Load Balancer</mark> works at the transport layer</p>
+</li>
+<li>
+<p>Methods to access VMSS:</p>
+</li>
+<li>
+<p>Assign each VM its own public IP (expensive)</p>
+</li>
+<li>
+<p>Use Load Balancer with NAT:</p>
+<ul>
+<li>Assign public IP to LB, LB routes traffic through each VM's port to individual VM instances</li>
+<li>By default, NAT rules are added to LB, forwarding remote connection traffic to each VM on given ports</li>
+</ul>
+</li>
+</ul>
+<hr />
+<h2 id="vm-internal-network-access-options">VM Internal Network Access Options</h2>
+<p><div class="callout callout-warning" markdown="1"><br />
+<p class="callout-title">Security Risk</p></p>
+<p>Assigning public IPs to multiple VMs risks port scanning and brute force attacks.</p>
+</div>
+<ul>
+<li><strong>Option 1:</strong></li>
+<li>
+<p>Deploy many VMs in a VNet, but only one jump box VM has a public IP. Connect to other VMs through this jump box VM's NIC to reach other VMs' NICs.</p>
+</li>
+<li>
+<p><strong>Option 2:</strong></p>
+</li>
+<li>
+<p>Set up gateways on both the corporate network and the VNet, connect to VMs via <mark>VPN</mark>.</p>
+</li>
+<li>
+<p><strong>Option 3:</strong></p>
+</li>
+<li>Purchase a <mark>dedicated line</mark> (ExpressRoute) for direct private access from on-premises to the datacenter.</li>
+</ul>
+    </div>
+  </article>
+  <aside class="toc">
+    <p class="toc-label">本页目录</p>
+    <ul>
+  <li><a href="#related-notes">Related Notes</a></li>
+  <li><a href="#network-connectivity-testing-commands">Network Connectivity Testing Commands</a><ul>
+  <li><a href="#psping">psping</a></li>
+  <li><a href="#telnet">telnet</a></li>
+  <li><a href="#nc">nc</a></li>
+  <li><a href="#dig">dig</a></li>
+  <li><a href="#curl">curl</a></li>
+  <li><a href="#siege">siege</a></li>
+  <li><a href="#tcpdump">tcpdump</a></li>
+  <li><a href="#windows-network-capture">Windows Network Capture</a></li>
+</ul></li>
+  <li><a href="#vnet">VNET</a></li>
+  <li><a href="#public-ip-and-private-ip">Public IP and Private IP</a></li>
+  <li><a href="#subnet">Subnet</a></li>
+  <li><a href="#nsg">NSG</a></li>
+  <li><a href="#gateway">Gateway</a></li>
+  <li><a href="#azure-relay">Azure Relay</a></li>
+  <li><a href="#private-and-service-endpoint">Private and Service Endpoint</a></li>
+  <li><a href="#loadbalancer">Loadbalancer</a></li>
+  <li><a href="#vm-internal-network-access-options">VM Internal Network Access Options</a></li>
+</ul>
+  </aside>
+
+</div>
+
+</main>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>Learning Notes</span>
+    <a href="https://github.com/hangx969/learning-notes">GitHub</a>
+  </div>
+</footer>
+<script src="../../static/search.js"></script>
+</body>
+</html>

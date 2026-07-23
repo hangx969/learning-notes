@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>shiji-kb：AI 史记知识库与可复用知识图谱构造方法论 - Learning Notes</title>
+<link rel="stylesheet" href="../../../static/style.css">
+<link rel="stylesheet" href="../../../static/pygments.css">
+</head>
+<body data-root="../../../">
+<header class="site-header">
+  <div class="header-inner">
+    <a class="logo" href="../../../index.html"><span class="logo-mark"></span>LEARNING NOTES</a>
+    <div class="search">
+      <input id="search-input" type="search" placeholder="搜索笔记…" autocomplete="off" aria-label="搜索笔记">
+      <div id="search-results" hidden></div>
+    </div>
+  </div>
+  <nav class="topic-nav" aria-label="主题导航">
+    <div class="topic-nav-inner">
+      <a href="../../../AI/" class="active">AI</a>
+      <a href="../../../Aliyun/">Aliyun</a>
+      <a href="../../../Azure/">Azure</a>
+      <a href="../../../C%2B%2B/">C++</a>
+      <a href="../../../CloudComputing/">CloudComputing</a>
+      <a href="../../../Database/">Database</a>
+      <a href="../../../Docker-Kubernetes/">Docker-Kubernetes</a>
+      <a href="../../../GPU-DeepLearning/">GPU-DeepLearning</a>
+      <a href="../../../Git/">Git</a>
+      <a href="../../../Go/">Go</a>
+      <a href="../../../HPC/">HPC</a>
+      <a href="../../../IaC/">IaC</a>
+      <a href="../../../Linux-Shell/">Linux-Shell</a>
+      <a href="../../../Middlewares/">Middlewares</a>
+      <a href="../../../Networking/">Networking</a>
+      <a href="../../../OS/">OS</a>
+      <a href="../../../Python/">Python</a>
+      <a href="../../../SoftwareTesting/">SoftwareTesting</a>
+    </div>
+  </nav>
+</header>
+<main class="main">
+
+<div class="article-layout">
+
+  <aside class="sidebar">
+    <details class="sidebar-details">
+      <summary>AI</summary>
+      <nav class="sidebar-nav">
+        <p class="sidebar-group">AI-视觉</p>
+        <ul>
+          <li><a href="../../../AI/AI-%E8%A7%86%E8%A7%89/AI-Animation-Skill-%E7%A7%91%E6%99%AE%E5%8A%A8%E7%94%BB/">AI-Animation-Skill - HTML科普动画生成</a></li>
+          <li><a href="../../../AI/AI-%E8%A7%86%E8%A7%89/AI%E5%81%9APPT-ppt-master/">AI做PPT - ppt-master</a></li>
+          <li><a href="../../../AI/AI-%E8%A7%86%E8%A7%89/Markdown-Viewer-Skills-Markdown%E4%B8%AD%E7%9B%B4%E6%8E%A5%E7%94%BB%E5%9B%BE/">Markdown Viewer Skills：让 AI 写文档时顺手把图也画了</a></li>
+          <li><a href="../../../AI/AI-%E8%A7%86%E8%A7%89/effective-html-AI%E7%9B%B4%E5%87%BAHTML%E5%B7%A5%E5%85%B7%E5%AE%9E%E6%B5%8B/">effective-html：让 AI 直接输出 HTML 而非 Markdown</a></li>
+          <li><a href="../../../AI/AI-%E8%A7%86%E8%A7%89/html-anything-AI%E7%94%9F%E6%88%90HTML%E5%85%A8%E5%9C%BA%E6%99%AF%E5%B7%A5%E5%85%B7/">html-anything：AI 生成 HTML 全场景工具</a></li>
+          <li><a href="../../../AI/AI-%E8%A7%86%E8%A7%89/html-ppt-skill-%E5%AE%9E%E6%B5%8B%E6%8C%87%E5%8D%97/">html-ppt-skill - HTML幻灯片生成</a></li>
+          <li><a href="../../../AI/AI-%E8%A7%86%E8%A7%89/%E8%A7%86%E8%A7%89%E8%AE%BE%E8%AE%A1%E6%8F%90%E7%A4%BA%E8%AF%8D/">视觉设计提示词</a></li>
+        </ul>
+        <p class="sidebar-group">AIOps</p>
+        <ul>
+          <li><a href="../../../AI/AIOps/AIOps%E5%AE%9E%E6%88%98-Golang%E6%89%8B%E6%90%93K8s%E6%99%BA%E8%83%BD%E8%BF%90%E7%BB%B4%E5%B7%A5%E5%85%B7%E9%93%BE/">AIOps 实战：Golang 手搓 K8s 智能运维工具链</a></li>
+          <li><a href="../../../AI/AIOps/Kubernetes-MCP-Server-Dify%E6%99%BA%E8%83%BD%E8%BF%90%E7%BB%B4/">AI 接管 Kubernetes 运维——Kubernetes MCP Server + Dify</a></li>
+        </ul>
+        <p class="sidebar-group">ClaudeCode</p>
+        <ul>
+          <li><a href="../../../AI/ClaudeCode/CLAUDE.md%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5-12%E6%9D%A1%E8%A7%84%E5%88%99%E6%A8%A1%E6%9D%BF/">Mnilax：CLAUDE.md 规则从 Karpathy 的 4 条增加到 12 条，错误率从 41% 降到 3%</a></li>
+          <li><a href="../../../AI/ClaudeCode/CLAUDE.md%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5-21%E6%9D%A1%E6%8C%87%E4%BB%A4%E6%B8%85%E5%8D%95/">Mayank Agarwal：21 条 CLAUDE.md 指令，让 Claude 真正懂你</a></li>
+          <li><a href="../../../AI/ClaudeCode/CLAUDE.md%E7%BB%B4%E6%8A%A4%E5%B7%A5%E7%A8%8B-%E5%9B%9B%E5%B1%82%E5%8A%A0%E8%BD%BD%E4%B8%8E%E6%8C%87%E4%BB%A4%E9%A2%84%E7%AE%97/">CLAUDE.md 维护工程：四层加载与指令预算</a></li>
+          <li><a href="../../../AI/ClaudeCode/Claude%20Code%20%E5%9F%BA%E7%A1%80%E6%8C%87%E5%8D%97/">Claude Code 使用指南</a></li>
+          <li><a href="../../../AI/ClaudeCode/Claude%20Code%20%E6%89%A9%E5%B1%95%E4%BD%93%E7%B3%BB/">Claude Code 扩展体系</a></li>
+          <li><a href="../../../AI/ClaudeCode/Claude-Code-Harness%E5%AE%9E%E6%88%98-%E6%9C%80%E5%B0%8F%E5%8F%AF%E7%94%A8%E7%B3%BB%E7%BB%9F/">Harness 实战：从零搭建最小可用的 Harness 系统</a></li>
+          <li><a href="../../../AI/ClaudeCode/Claude-Code%E4%B8%BA%E4%BB%80%E4%B9%88%E7%94%A8grep%E4%B8%8D%E7%94%A8RAG/">为什么 Claude Code 不用 RAG 检索代码，而是 grep？</a></li>
+          <li><a href="../../../AI/ClaudeCode/Claude-Fable-5-system-prompt/">Claude Fable 5 — System Prompt</a></li>
+          <li><a href="../../../AI/ClaudeCode/Claude-Skill%E8%B4%A8%E6%A3%80%E5%B7%A5%E5%85%B7-SkillCraft/">Claude Skill 质检工具 Skill Craft</a></li>
+          <li><a href="../../../AI/ClaudeCode/Git-Worktree-AI%E5%BC%80%E5%8F%91%E5%AE%9E%E8%B7%B5%E6%8C%87%E5%8D%97/">Vibe Coding 时代的 Git Worktree 实践指南</a></li>
+          <li><a href="../../../AI/ClaudeCode/%E5%A4%9A%E6%99%BA%E8%83%BD%E4%BD%93%E5%8D%8F%E4%BD%9C-Subagents%E4%B8%8EAgent-Teams/">Claude Code 多智能体协作：Subagents 与 Agent Teams</a></li>
+        </ul>
+        <p class="sidebar-group">Codex</p>
+        <ul>
+          <li><a href="../../../AI/Codex/Codex-config-toml-%E5%85%A8%E9%87%8F%E9%85%8D%E7%BD%AE%E5%8F%82%E8%80%83/">OpenAI Codex config.toml 全量配置参考</a></li>
+          <li><a href="../../../AI/Codex/Codex-%E7%9C%81Token%E5%B7%A5%E5%85%B7%E5%AE%9E%E6%B5%8B-Ponytail-Headroom-RTK/">Codex 省 Token 工具实测：Ponytail、Headroom、RTK-AI</a></li>
+        </ul>
+        <p class="sidebar-group">GithubCopilot</p>
+        <ul>
+          <li><a href="../../../AI/GithubCopilot/Copilot%20CLI/">GitHub Copilot CLI</a></li>
+        </ul>
+        <p class="sidebar-group">Hermes-agent</p>
+        <ul>
+          <li><a href="../../../AI/Hermes-agent/Hermes-Agent-%E6%BB%A1%E9%85%8D%E6%8C%87%E5%8D%97%E4%B8%8E%E7%94%9F%E6%80%81%E8%B5%84%E6%BA%90/">Hermes Agent 满配指南与生态资源</a></li>
+          <li><a href="../../../AI/Hermes-agent/Hermes-Curator-Skill%E8%86%A8%E8%83%80%E6%B2%BB%E7%90%86/">Skill 太多导致上下文膨胀怎么办？来自 Hermes Agent 的实践</a></li>
+          <li><a href="../../../AI/Hermes-agent/Hermes%E4%B8%8EOpenClaw%E5%AF%B9%E6%AF%94%E5%8F%8A%E9%A3%9E%E4%B9%A6%E6%8E%A5%E5%85%A5%E6%8C%87%E5%8D%97/">Hermes Agent全解析：与OpenClaw对比及飞书接入指南</a></li>
+          <li><a href="../../../AI/Hermes-agent/Ubuntu%2025.10%20%E5%AE%89%E8%A3%85%E4%B8%8E%E4%BD%BF%E7%94%A8%20Hermes%20Agent%20%E6%8C%87%E5%8D%97/">Ubuntu 25.10 安装与使用 Hermes Agent 指南</a></li>
+        </ul>
+        <p class="sidebar-group">Obsidian</p>
+        <ul>
+          <li><a href="../../../AI/Obsidian/Obsidian-Vault%E6%A8%A1%E6%9D%BF%E5%BA%93%E5%90%88%E9%9B%86-48%E4%B8%AA%E5%AE%9D%E8%97%8Fvault/">Obsidian Vault 模板库合集：48 个 GitHub 宝藏 vault</a></li>
+          <li><a href="../../../AI/Obsidian/Obsidian%E5%8F%AF%E8%A7%86%E5%8C%96Skills-Excalidraw-Mermaid-Canvas/">Obsidian 可视化 Skills — Excalidraw / Mermaid / Canvas</a></li>
+          <li><a href="../../../AI/Obsidian/obsidian-claude-code-AI%E7%9F%A5%E8%AF%86%E5%BA%93%E5%AE%8C%E6%95%B4%E6%8C%87%E5%8D%97/">Obsidian + Claude Code：AI 驱动的知识库完整指南</a></li>
+        </ul>
+        <p class="sidebar-group">OpenClaw</p>
+        <ul>
+          <li><a href="../../../AI/OpenClaw/CoPaw/">CoPaw</a></li>
+          <li><a href="../../../AI/OpenClaw/OpenClaw-Channels/">OpenClaw Channel 配置</a></li>
+          <li><a href="../../../AI/OpenClaw/OpenClaw-K8s%E6%99%BA%E8%83%BD%E8%BF%90%E7%BB%B4%E5%AE%9E%E6%88%98/">用 OpenClaw 智能体网关接管 K8s 日常运维：从只读巡检到低风险变更</a></li>
+          <li><a href="../../../AI/OpenClaw/OpenClaw-Skills-Plugins/">OpenClaw Skills 与插件</a></li>
+          <li><a href="../../../AI/OpenClaw/OpenClaw-Workspace-%E8%BF%90%E7%BB%B4/">OpenClaw Workspace 运维实战</a></li>
+          <li><a href="../../../AI/OpenClaw/OpenClaw-%E5%9F%BA%E7%A1%80-%E5%AE%89%E8%A3%85/">OpenClaw 基础与安装</a></li>
+          <li><a href="../../../AI/OpenClaw/Openclaw-AIOps/">OpenClaw AIOps</a></li>
+          <li><a href="../../../AI/OpenClaw/Openclaw-%E5%A4%9A%E6%99%BA%E8%83%BD%E4%BD%93/">OpenClaw 多智能体</a></li>
+          <li><a href="../../../AI/OpenClaw/Ubuntu-2510-Setup-Guide/">Ubuntu 25.10 (Questing) 初始化配置指南</a></li>
+          <li><a href="../../../AI/OpenClaw/%E9%A3%9E%E4%B9%A6CLI%E7%94%BB%E6%9D%BF-%E4%B8%80%E5%8F%A5%E8%AF%9D%E7%94%9F%E6%88%90%E6%9E%B6%E6%9E%84%E5%9B%BE/">飞书 CLI 画板：一句话生成架构图</a></li>
+        </ul>
+        <p class="sidebar-group">代码知识图谱</p>
+        <ul>
+          <li><a href="../../../AI/%E4%BB%A3%E7%A0%81%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/CodeGraph-%E4%BB%A3%E7%A0%81%E8%AF%AD%E4%B9%89%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/">CodeGraph：给 Claude Code 先画一张代码地图，工具调用砍掉 92%</a></li>
+          <li><a href="../../../AI/%E4%BB%A3%E7%A0%81%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/Graphify-%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1%E5%B7%A5%E5%85%B7/">Graphify：软件工程知识图谱工具</a></li>
+          <li><a href="../../../AI/%E4%BB%A3%E7%A0%81%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/Understand-Anything-%E4%BB%A3%E7%A0%81%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1%E5%8F%AF%E8%A7%86%E5%8C%96/">Understand-Anything：AI 代码知识图谱可视化工具</a></li>
+          <li><a href="../../../AI/%E4%BB%A3%E7%A0%81%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/code-review-graph-%E6%9C%AC%E5%9C%B0%E4%BB%A3%E7%A0%81%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/">开源 Claude Code 本地代码知识图谱：code-review-graph 完整上手攻略</a></li>
+          <li><a href="../../../AI/%E4%BB%A3%E7%A0%81%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/shiji-kb-AI%E5%8F%B2%E8%AE%B0%E7%9F%A5%E8%AF%86%E5%BA%93%E4%B8%8E%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1%E6%9E%84%E9%80%A0%E6%96%B9%E6%B3%95%E8%AE%BA/" class="current">shiji-kb：AI 史记知识库与可复用知识图谱构造方法论</a></li>
+        </ul>
+        <p class="sidebar-group">行业动态</p>
+        <ul>
+          <li><a href="../../../AI/%E8%A1%8C%E4%B8%9A%E5%8A%A8%E6%80%81/AI%E6%97%B6%E4%BB%A3%E7%9A%84Git%E7%89%88%E6%9C%AC%E7%AE%A1%E7%90%86%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/">AI 时代的 Git 版本管理最佳实践</a></li>
+          <li><a href="../../../AI/%E8%A1%8C%E4%B8%9A%E5%8A%A8%E6%80%81/Anthropic%E5%B7%A5%E7%A8%8B%E5%B8%88%E5%8A%9B%E6%8E%A8HTML%E5%8F%96%E4%BB%A3Markdown-Karpathy%E9%99%84%E8%AE%AE/">Anthropic 工程师力推 HTML 取代 Markdown —— Karpathy 附议</a></li>
+          <li><a href="../../../AI/%E8%A1%8C%E4%B8%9A%E5%8A%A8%E6%80%81/Claude-Code%E5%88%9B%E5%A7%8B%E4%BA%BA%E7%BA%A2%E6%9D%89%E5%A4%A7%E4%BC%9A%E4%B8%83%E4%B8%AA%E5%88%A4%E6%96%AD/">Claude Code 创始人在红杉大会上的 7 个重要判断</a></li>
+          <li><a href="../../../AI/%E8%A1%8C%E4%B8%9A%E5%8A%A8%E6%80%81/Loop-Engineering-%E4%BB%8EPrompt%E5%88%B0%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%81%E6%B0%B4%E7%BA%BF/">Loop Engineering：从 Prompt 到自动化流水线</a></li>
+          <li><a href="../../../AI/%E8%A1%8C%E4%B8%9A%E5%8A%A8%E6%80%81/OpenCodeReview-%E9%98%BF%E9%87%8CAI%E4%BB%A3%E7%A0%81%E5%AE%A1%E6%9F%A5%E5%B7%A5%E7%A8%8B%E5%8C%96/">OpenCodeReview：阿里开源的 AI 代码审查工程化工具</a></li>
+          <li><a href="../../../AI/%E8%A1%8C%E4%B8%9A%E5%8A%A8%E6%80%81/TypeScript-vs-Python-AI-Agent%E6%97%B6%E4%BB%A3%E7%9A%84%E8%AF%AD%E8%A8%80%E4%B9%8B%E4%BA%89/">为什么 AI Agent 时代，TypeScript 正在抢走 Python 的主场？</a></li>
+        </ul>
+        <p class="sidebar-group">其他</p>
+        <ul>
+          <li><a href="../../../AI/HarnessKit/">HarnessKit — AI 编码智能体统一管理工具</a></li>
+          <li><a href="../../../AI/%E6%8F%90%E7%A4%BA%E8%AF%8D/">提示词</a></li>
+        </ul>
+      </nav>
+    </details>
+  </aside>
+
+  <article class="article">
+    <nav class="breadcrumb">
+      <a href="../../../index.html">首页</a><span>/</span>
+      <a href="../../../AI/">AI</a><span>/</span><span>代码知识图谱</span>
+    </nav>
+    <h1 class="article-title">shiji-kb：AI 史记知识库与可复用知识图谱构造方法论</h1>
+    <p class="article-meta"><span>更新于 2026-06-30</span>
+      <a href="https://github.com/hangx969/learning-notes/blob/main/AI/%E4%BB%A3%E7%A0%81%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/shiji-kb-AI%E5%8F%B2%E8%AE%B0%E7%9F%A5%E8%AF%86%E5%BA%93%E4%B8%8E%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1%E6%9E%84%E9%80%A0%E6%96%B9%E6%B3%95%E8%AE%BA.md">查看源文件</a>
+    </p>
+    <div class="article-body">
+<h2 id="项目介绍">项目介绍</h2>
+<p>shiji-kb：一个开源的古籍知识工程项目。做了两件事：</p>
+<p>第一，用AI将《史记》130篇、57万字全部转化为结构化知识——18类实体近10万次标注、3,185个事件、7,652条关系、675项知识单元；</p>
+<p>第二，把整个过程沉淀为26个可复用的知识库构造方法论Skill文档，覆盖从校勘到知识推理的9大阶段。换一部书，管线不变，参数调整，即可构造新的知识库。</p>
+<p>传统文史研究的核心困境是人力瓶颈，而中国古典文献的总量以亿字计，这个宝库还没有被充分挖掘。这个项目最开始的初心是要回答一直以来的问题：<strong>AI能否把"皓首穷经"从数十年压缩到数周？AI能否把知识变为活的？</strong></p>
+<p>当前实践下来答案是肯定的。一个人加一群AI Agent可以完成全部工作。</p>
+<p>项目创作者为西瓜（鲍捷），一个研究人工智能知识工程30+年的文史爱好者。</p>
+<p><strong>Github地址（开源）</strong>：https://github.com/baojie/shiji-kb</p>
+<p><strong>在线体验</strong>：https://baojie.github.io/shiji-kb</p>
+<hr />
+<h2 id="核心成果">核心成果</h2>
+<table>
+<thead>
+<tr>
+<th>类别</th>
+<th>数量</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>文本标注</td>
+<td>130篇，57.7万字</td>
+<td>18类实体语义标注，100%覆盖</td>
+</tr>
+<tr>
+<td>实体</td>
+<td>12,380词条，99,214次标注</td>
+<td>人名4,112、地名1,861、官职2,158等18类</td>
+</tr>
+<tr>
+<td>事件</td>
+<td>3,185个，11类事件类型</td>
+<td>98.7%事件已标注公元纪年（前2700年～前87年）</td>
+</tr>
+<tr>
+<td>事件关系</td>
+<td>7,652条，9种类型</td>
+<td>含1,876个跨章换乘（互见/共人/共地/同期）</td>
+</tr>
+<tr>
+<td>事件地铁图</td>
+<td>130条线路</td>
+<td>支持缩放/拖拽/搜索/实体链接/原文引用</td>
+</tr>
+<tr>
+<td>知识单元</td>
+<td>434事实 + 241技能</td>
+<td>7,497个实体关联</td>
+</tr>
+<tr>
+<td>方法论Skill</td>
+<td>26个文档，9大阶段</td>
+<td><strong>可复用，适用于其他任何书籍</strong></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="功能特性">功能特性</h2>
+<h3 id="语法高亮18类实体一眼看懂谁在哪里做了什么">语法高亮：18类实体，一眼看懂谁在哪里做了什么</h3>
+<p>打开任何一篇，古文不再是黑字白底的方块字——人名、地名、官职、时间、朝代、邦国、氏族、身份、制度、族群、器物、天文、生物、数量、神话、典籍、礼仪、刑法，18类实体各有颜色。平均每6个字就有一个实体被识别上色。对话也被标记——斜体加淡褐底色，让"王侯将相宁有种乎！"从叙述中浮现。</p>
+<p>除了语法高亮之外，还做了语义排版（实验状态），词和句层面的工作都开启了。</p>
+<h3 id="三家注弹窗一千年前的注释即点即现实验中">三家注弹窗：一千年前的注释即点即现（实验中）</h3>
+<p>裴骃《集解》、司马贞《索隐》、张守节《正义》——已对齐到正文的具体句子。鼠标悬停，注释自动浮现。不用翻书，不用离开页面。</p>
+<h3 id="事件知识图谱3185个事件-7652条关系">事件知识图谱：3,185个事件 + 7,652条关系</h3>
+<p>从130篇中提取了3,185个历史事件（战争、继位、政治、改革、家族等11类），98.7%标注了公元纪年。事件之间建立了7,652条关系——因果、延续、包含、对立、互见等9种类型，其中1,876条跨章关系让分散在不同篇章的同一段历史重新连接。</p>
+<h3 id="事件地铁图用地铁线路的方式看历史实验中">事件地铁图：用地铁线路的方式看历史（实验中）</h3>
+<p>130篇 = 130条地铁线路，3,185个事件 = 3,185个站点，跨章关系 = 换乘连线。支持缩放、拖拽、搜索，点击站点可跳转到原文。时间轴横跨公元前2700年到前87年——整部《史记》的全景图。</p>
+<h3 id="实体索引12380个词条18类分类页面">实体索引：12,380个词条，18类分类页面</h3>
+<p>所有实体汇总为结构化索引，每类一个独立页面（人名、地名、官职、时间、朝代、邦国、器物……共18类）。含595条别名映射（刘邦=沛公=汉王=高祖=高帝=刘季），644处语义消歧。点击任何实体，看它在130篇中的全部出处。</p>
+<h3 id="知识单元434项事实-241项可操作的历史技能">知识单元：434项事实 + 241项可操作的历史技能</h3>
+<p><strong>事实层</strong>：434项知识单元，覆盖人物传记、诸侯国、军事战役等14个主题。每项含定义、上下文、关联实体、原文出处。</p>
+<p><strong>技能层</strong>：241项从《史记》叙事中提炼的实战案例——治国理政57项（如推恩令：用分封瓦解诸侯）、军事战略54项（如背水一战：置之死地而后生）、外交谈判24项。不是成语，是有时间、人物、过程、结果的完整案例。</p>
+<h3 id="十表渲染两千年来最难用的年表变好用了">十表渲染：两千年来最难用的年表变好用了</h3>
+<p>十二诸侯年表——15列×637行，362年间14个政权——在纸质书上几乎不可用。现在：表头吸顶、交替行背景色、悬停高亮、表内实体照样标注。</p>
+<h3 id="史记争霸游戏实验中">史记争霸游戏（实验中）</h3>
+<p>基于知识图谱数据的策略游戏。人物能力值来自《史记》记载，势力版图来自标注的地名关系。</p>
+<p>游戏仓库：https://github.com/baojie/shiji-kb/tree/main/app/game</p>
+<hr />
+<h2 id="26个方法论skill换一部书可上手构建">26个方法论Skill：换一部书，可上手构建</h2>
+<p><strong>这是整个项目最有价值的部分，《史记》只是一个起点。</strong> 《史记》处理过程中的skill已完整沉淀下来，是一套可复用方法论。</p>
+<p>26个Skill文档，覆盖从原始文本到知识应用的9大阶段：</p>
+<table>
+<thead>
+<tr>
+<th>阶段</th>
+<th>Skill数</th>
+<th>核心文档</th>
+<th>干什么</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>校勘</td>
+<td>1</td>
+<td>SKILL_01</td>
+<td>多版本比对，底本校正</td>
+</tr>
+<tr>
+<td>结构分析</td>
+<td>6</td>
+<td>SKILL_02~02f</td>
+<td>章节切分、段落编号、结构语义分析</td>
+</tr>
+<tr>
+<td>实体构建</td>
+<td>4</td>
+<td>SKILL_03~03e</td>
+<td>18类NER标注、消歧、多轮反思审查</td>
+</tr>
+<tr>
+<td>事件构建</td>
+<td>5</td>
+<td>SKILL_04~04e</td>
+<td>事件提取、十表处理、纪年推断、年代审查、年份消歧</td>
+</tr>
+<tr>
+<td>关系构建</td>
+<td>2</td>
+<td>SKILL_05a~05b</td>
+<td>9种事件关系、人物关系+家谱</td>
+</tr>
+<tr>
+<td>本体构建</td>
+<td>1</td>
+<td>SKILL_06a</td>
+<td>词表→分类树→OWL/RDF</td>
+</tr>
+<tr>
+<td>逻辑推理</td>
+<td>1</td>
+<td>SKILL_07</td>
+<td>矛盾检测、规律发现</td>
+</tr>
+<tr>
+<td>SKU构造</td>
+<td>1</td>
+<td>SKILL_08</td>
+<td>知识单元化</td>
+</tr>
+<tr>
+<td>应用构造</td>
+<td>3</td>
+<td>SKILL_09~09b</td>
+<td>阅读器、地铁图、游戏化</td>
+</tr>
+</tbody>
+</table>
+<p><strong>换一本书，需要调整的只是：</strong> 实体类型（佛经需增加"佛教术语"类）、体裁分类（编年体和纪传体提示词不同）、别名规则、年份体系。<strong>框架不变，参数变。</strong></p>
+<h3 id="扩展路线">扩展路线</h3>
+<table>
+<thead>
+<tr>
+<th>目标</th>
+<th>字数</th>
+<th>现状</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>史记（已完成）</td>
+<td>57万字</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>汉书、后汉书、三国志</td>
+<td>~200万字</td>
+<td>近期</td>
+</tr>
+<tr>
+<td>二十四史全集</td>
+<td>~4,600万字</td>
+<td>中期</td>
+</tr>
+<tr>
+<td>资治通鉴系列</td>
+<td>~700万字</td>
+<td>中期</td>
+</tr>
+<tr>
+<td>诸子百家、四库全书</td>
+<td>数亿字</td>
+<td>远期</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="怎么用这个项目">怎么用这个项目</h2>
+<h3 id="一直接在线阅读零门槛">一、直接在线阅读（零门槛）</h3>
+<p>打开 https://baojie.github.io/shiji-kb ，选章节即可。</p>
+<p><strong>推荐体验路线：</strong></p>
+<table>
+<thead>
+<tr>
+<th>顺序</th>
+<th>看什么</th>
+<th>链接</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>项羽本纪——鸿门宴、乌江自刎，最精彩的叙事</td>
+<td>007章</td>
+</tr>
+<tr>
+<td>2</td>
+<td>刺客列传——荆轲刺秦，对话高亮效果最佳</td>
+<td>086章</td>
+</tr>
+<tr>
+<td>3</td>
+<td>十二诸侯年表——362年全景，感受表格渲染</td>
+<td>014章</td>
+</tr>
+<tr>
+<td>4</td>
+<td>实体索引——按人名/地名/官职分类浏览</td>
+<td>索引首页</td>
+</tr>
+<tr>
+<td>5</td>
+<td>事件地铁图——130条线路的全景历史</td>
+<td>地铁图</td>
+</tr>
+<tr>
+<td>6</td>
+<td>史记争霸——策略游戏</td>
+<td>游戏</td>
+</tr>
+</tbody>
+</table>
+<h3 id="二搭配ai使用研究创作">二、搭配AI使用（研究/创作）</h3>
+<div class="highlight"><pre><span></span><code>git clone https://github.com/baojie/shiji-kb.git
+</code></pre></div>
+
+<p>仓库里的结构化数据（JSON/Markdown）可以直接喂给Claude、GPT等大模型：</p>
+<table>
+<thead>
+<tr>
+<th>数据目录</th>
+<th>内容</th>
+<th>适合问什么</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>kg/events/data/</code></td>
+<td>3,185个事件+关系</td>
+<td>"秦统一六国的完整时间线"</td>
+</tr>
+<tr>
+<td><code>kg/entities/data/</code></td>
+<td>12,380个实体+别名</td>
+<td>"韩非和李斯的所有交集"</td>
+</tr>
+<tr>
+<td><code>kg/chronology/data/</code></td>
+<td>380位君主在位年+公元映射</td>
+<td>"公元前260年发生了什么"</td>
+</tr>
+<tr>
+<td><code>kg/genealogy/data/</code></td>
+<td>帝王世系图</td>
+<td>"刘邦的后代有谁当了皇帝"</td>
+</tr>
+<tr>
+<td><code>kg/relations/data/</code></td>
+<td>人物关系网络</td>
+<td>"项羽阵营的核心人物关系"</td>
+</tr>
+<tr>
+<td><code>ontology/skus/</code></td>
+<td>675项知识单元</td>
+<td>"《史记》中有哪些外交策略"</td>
+</tr>
+</tbody>
+</table>
+<h3 id="三用skill处理其他任何书籍开发者">三、用Skill处理其他任何书籍（开发者）</h3>
+<p>这是项目最大的复用价值。26个Skill文档在 <code>skills/</code> 目录下，每个都是完整的操作手册。</p>
+<p><strong>最简路径：</strong></p>
+<div class="highlight"><pre><span></span><code>将这些skill和你的文本，交给claude/或者任何agent，根据这一套方法论，帮我构造一个xxx知识库。
+</code></pre></div>
+
+<p>每个Skill文档包含：输入输出规范、标注规则、质检工具、常见错误、反思修正流程。直接照着做就行。</p>
+<h3 id="四做内容创作素材引擎">四、做内容创作（素材引擎）</h3>
+<table>
+<thead>
+<tr>
+<th>创作场景</th>
+<th>怎么用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>历史小说/剧本</td>
+<td><code>kg/events/</code> 查事件时间线，<code>kg/relations/</code> 查人物关系</td>
+</tr>
+<tr>
+<td>历史游戏</td>
+<td><code>ontology/skus/</code> 的241项技能直接转化为游戏技能卡</td>
+</tr>
+<tr>
+<td>短剧/短视频</td>
+<td><code>ontology/eureka.md</code> 里的洞见就是现成的选题</td>
+</tr>
+<tr>
+<td>教学备课</td>
+<td>实体索引页面按类别浏览，配合三家注弹窗</td>
+</tr>
+<tr>
+<td>学术研究</td>
+<td>事件关系做一致性检验，自动发现记载矛盾</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="知识结构化之后会发生什么">知识结构化之后，会发生什么</h2>
+<p>项目在知识提取过程中意外发现了20多个跨章洞察——这些不是预设的研究假设，而是知识图谱结构化后自然涌现的模式。</p>
+<hr />
+<h2 id="核心价值">核心价值</h2>
+<p>这个项目的核心价值不是"给《史记》加了颜色"——是把"书变成知识库"这件事的完整方法论开源了。</p>
+<p>26个Skill、9大阶段、每个工序都有lint和validate工具。一个人加AI，用同一条管线，可以处理任何书籍。《史记》57万字是第一个试验田，二十四史4,600万字是下一步。</p>
+<p>最终愿景：<strong>建立一个由AI Agent维护和持续进化的知识网络，让任何人都能以问答、可视化、推理的方式探索数千年的智慧。</strong></p>
+<p>GitHub：https://github.com/baojie/shiji-kb</p>
+    </div>
+  </article>
+  <aside class="toc">
+    <p class="toc-label">本页目录</p>
+    <ul>
+  <li><a href="#项目介绍">项目介绍</a></li>
+  <li><a href="#核心成果">核心成果</a></li>
+  <li><a href="#功能特性">功能特性</a><ul>
+  <li><a href="#语法高亮18类实体一眼看懂谁在哪里做了什么">语法高亮：18类实体，一眼看懂谁在哪里做了什么</a></li>
+  <li><a href="#三家注弹窗一千年前的注释即点即现实验中">三家注弹窗：一千年前的注释即点即现（实验中）</a></li>
+  <li><a href="#事件知识图谱3185个事件-7652条关系">事件知识图谱：3,185个事件 + 7,652条关系</a></li>
+  <li><a href="#事件地铁图用地铁线路的方式看历史实验中">事件地铁图：用地铁线路的方式看历史（实验中）</a></li>
+  <li><a href="#实体索引12380个词条18类分类页面">实体索引：12,380个词条，18类分类页面</a></li>
+  <li><a href="#知识单元434项事实-241项可操作的历史技能">知识单元：434项事实 + 241项可操作的历史技能</a></li>
+  <li><a href="#十表渲染两千年来最难用的年表变好用了">十表渲染：两千年来最难用的年表变好用了</a></li>
+  <li><a href="#史记争霸游戏实验中">史记争霸游戏（实验中）</a></li>
+</ul></li>
+  <li><a href="#26个方法论skill换一部书可上手构建">26个方法论Skill：换一部书，可上手构建</a><ul>
+  <li><a href="#扩展路线">扩展路线</a></li>
+</ul></li>
+  <li><a href="#怎么用这个项目">怎么用这个项目</a><ul>
+  <li><a href="#一直接在线阅读零门槛">一、直接在线阅读（零门槛）</a></li>
+  <li><a href="#二搭配ai使用研究创作">二、搭配AI使用（研究/创作）</a></li>
+  <li><a href="#三用skill处理其他任何书籍开发者">三、用Skill处理其他任何书籍（开发者）</a></li>
+  <li><a href="#四做内容创作素材引擎">四、做内容创作（素材引擎）</a></li>
+</ul></li>
+  <li><a href="#知识结构化之后会发生什么">知识结构化之后，会发生什么</a></li>
+  <li><a href="#核心价值">核心价值</a></li>
+</ul>
+  </aside>
+
+</div>
+
+</main>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>Learning Notes</span>
+    <a href="https://github.com/hangx969/learning-notes">GitHub</a>
+  </div>
+</footer>
+<script src="../../../static/search.js"></script>
+</body>
+</html>

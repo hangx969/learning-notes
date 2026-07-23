@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>云原生开发基础 - Learning Notes</title>
+<link rel="stylesheet" href="../../static/style.css">
+<link rel="stylesheet" href="../../static/pygments.css">
+</head>
+<body data-root="../../">
+<header class="site-header">
+  <div class="header-inner">
+    <a class="logo" href="../../index.html"><span class="logo-mark"></span>LEARNING NOTES</a>
+    <div class="search">
+      <input id="search-input" type="search" placeholder="搜索笔记…" autocomplete="off" aria-label="搜索笔记">
+      <div id="search-results" hidden></div>
+    </div>
+  </div>
+  <nav class="topic-nav" aria-label="主题导航">
+    <div class="topic-nav-inner">
+      <a href="../../AI/">AI</a>
+      <a href="../../Aliyun/">Aliyun</a>
+      <a href="../../Azure/">Azure</a>
+      <a href="../../C%2B%2B/">C++</a>
+      <a href="../../CloudComputing/">CloudComputing</a>
+      <a href="../../Database/">Database</a>
+      <a href="../../Docker-Kubernetes/">Docker-Kubernetes</a>
+      <a href="../../GPU-DeepLearning/">GPU-DeepLearning</a>
+      <a href="../../Git/">Git</a>
+      <a href="../../Go/" class="active">Go</a>
+      <a href="../../HPC/">HPC</a>
+      <a href="../../IaC/">IaC</a>
+      <a href="../../Linux-Shell/">Linux-Shell</a>
+      <a href="../../Middlewares/">Middlewares</a>
+      <a href="../../Networking/">Networking</a>
+      <a href="../../OS/">OS</a>
+      <a href="../../Python/">Python</a>
+      <a href="../../SoftwareTesting/">SoftwareTesting</a>
+    </div>
+  </nav>
+</header>
+<main class="main">
+
+<div class="article-layout">
+
+  <aside class="sidebar">
+    <details class="sidebar-details">
+      <summary>Go</summary>
+      <nav class="sidebar-nav">
+        <p class="sidebar-group">其他</p>
+        <ul>
+          <li><a href="../../Go/client-go-K8s%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%BC%80%E5%8F%91/">Client-Go K8s客户端开发</a></li>
+          <li><a href="../../Go/go-web%E5%BC%80%E5%8F%91/">Go Web开发</a></li>
+          <li><a href="../../Go/go-%E5%9F%BA%E7%A1%80-01-%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE-%E5%9F%BA%E7%A1%80/">Go环境配置与基础</a></li>
+          <li><a href="../../Go/go-%E5%9F%BA%E7%A1%80-02-%E6%95%B0%E7%BB%84-%E5%88%87%E7%89%87-map/">Go数组、切片与Map</a></li>
+          <li><a href="../../Go/go-%E5%9F%BA%E7%A1%80-03-%E5%8F%98%E9%87%8F-%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B-%E8%BF%90%E7%AE%97/">Go变量、数据类型与运算</a></li>
+          <li><a href="../../Go/go-%E5%9F%BA%E7%A1%80-04-%E5%88%86%E6%94%AF-%E5%BE%AA%E7%8E%AF/">Go分支与循环控制</a></li>
+          <li><a href="../../Go/go-%E5%9F%BA%E7%A1%80-05-%E5%87%BD%E6%95%B0-%E5%8C%85/">Go函数与包</a></li>
+          <li><a href="../../Go/go-%E5%9F%BA%E7%A1%80-06-%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86/">Go错误处理</a></li>
+          <li><a href="../../Go/go-%E6%8E%A5%E5%8F%A3/">什么是接口interface</a></li>
+          <li><a href="../../Go/go-%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1/">Go面向对象编程</a></li>
+          <li><a href="../../Go/%E4%BA%91%E5%8E%9F%E7%94%9F%E5%BC%80%E5%8F%91-%E5%9F%BA%E7%A1%80/" class="current">云原生开发基础</a></li>
+        </ul>
+      </nav>
+    </details>
+  </aside>
+
+  <article class="article">
+    <nav class="breadcrumb">
+      <a href="../../index.html">首页</a><span>/</span>
+      <a href="../../Go/">Go</a>
+    </nav>
+    <h1 class="article-title">云原生开发基础</h1>
+    <p class="article-meta"><span>更新于 2026-07-11</span>
+      <a href="https://github.com/hangx969/learning-notes/blob/main/Go/%E4%BA%91%E5%8E%9F%E7%94%9F%E5%BC%80%E5%8F%91-%E5%9F%BA%E7%A1%80.md">查看源文件</a>
+    </p>
+    <div class="article-body">
+<h1 id="云原生开发基础">云原生开发基础</h1>
+<h2 id="开发语言选哪种">开发语言选哪种</h2>
+<ul>
+<li><mark>Java</mark><ul>
+<li>优点：跨平台能力强，运行稳定，安全性高，生态系统完善。适合企业级用开发。</li>
+<li>缺点：代码量较大，开发速度慢，部署复杂（jre、jdk），资源消耗大</li>
+</ul>
+</li>
+<li><mark>Python</mark><ul>
+<li>优点：易学易用，代码简洁，生态系统丰富，适合快速开发。自动化测试、脚本、科学计算、数据分析适用。</li>
+<li>缺点：性能较低，不适合处理大型数据和高并发场景</li>
+</ul>
+</li>
+<li><mark>Go</mark><ul>
+<li>优点：性能卓越，支持高并发，内存管理自动化，适合云原生领域（CNCF上90%以上都是Go开发的）。gRPC作为微服务间通信机制越来越流行，Go对于gRPC支持性很好。区块链、加密货币等应用基本都是go开发的。</li>
+<li>缺点：年轻，生态系统较小</li>
+</ul>
+</li>
+<li><mark>PHP</mark><ul>
+<li>优点：易于学习，开发速度快，社区活跃，适用于Web开发</li>
+<li>缺点：性能较低，架构设计欠缺，不适合大型项目</li>
+</ul>
+</li>
+</ul>
+<p><div class="callout callout-tip" markdown="1"><br />
+<p class="callout-title">云原生首选</p></p>
+<p>Go 是云原生领域的首选语言，==CNCF 上 90% 以上的项目==都是用 Go 开发的（如 Kubernetes、Docker、etcd 等）。</p>
+</div>
+<hr />
+<h2 id="解释型和编译型语言">解释型和编译型语言</h2>
+<ul>
+<li><mark>编译型</mark>：将源代码通过编译器转化为一个可运行的包（机器码、二进制），然后在计算机上直接执行。因为机器码是计算机直接认识的，所以运行速度比解释型语言更快。跨平台比较好。</li>
+<li><mark>解释型</mark>：不需要编译成机器码，不用构建成二进制包。而是由解释器逐行解释执行程序代码。解释器需要动态翻译代码，所以运行速度比解释型语言慢一些，但开发效率高，更加易于调试和修改（某一行报错了直接就定位到了）。</li>
+</ul>
+<hr />
+<h2 id="强类型语言和弱类型语言">强类型语言和弱类型语言</h2>
+<ul>
+<li><mark>强一致性</mark>：声明变量需要指定变量数据类型</li>
+<li><mark>弱一致性</mark>：声明变量不需要指定变量数据类型</li>
+</ul>
+<hr />
+<h2 id="最佳实践">最佳实践</h2>
+<h3 id="变量命名规范">变量命名规范</h3>
+<ul>
+<li>使用有意义的名称</li>
+<li>变量名小写字母开头，多个单词下划线分割 或 者驼峰命名，选一种用</li>
+<li>避免使用保留关键字</li>
+</ul>
+<h3 id="函数命名规范">函数命名规范</h3>
+<ul>
+<li>描述函数功能的有意义名称</li>
+<li>小写字母开头，而且用驼峰命名</li>
+<li>如果函数返回布尔值，函数名前面加上 <code>is</code>，<code>has</code>，<code>can</code> 等前缀。比如 <code>isValid</code></li>
+<li>如果函数是一个事件处理程序，通常用 <code>on</code> 开头，比如 <code>onClick</code></li>
+<li>如果函数需要被别处访问，推荐以==大写字母==开头</li>
+</ul>
+<h3 id="注释">注释</h3>
+<ul>
+<li>详细一些</li>
+</ul>
+<hr />
+<p><strong>相关笔记：</strong> <a class="wikilink" href="../../Go/go-%E5%9F%BA%E7%A1%80-01-%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE-%E5%9F%BA%E7%A1%80/">go-基础-01-环境配置-基础</a> | <a class="wikilink" href="../../Go/go-%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1/">go-面向对象</a> | <a class="wikilink" href="../../Go/go-web%E5%BC%80%E5%8F%91/">go-web开发</a></p>
+    </div>
+  </article>
+  <aside class="toc">
+    <p class="toc-label">本页目录</p>
+    <ul>
+  <li><a href="#开发语言选哪种">开发语言选哪种</a></li>
+  <li><a href="#解释型和编译型语言">解释型和编译型语言</a></li>
+  <li><a href="#强类型语言和弱类型语言">强类型语言和弱类型语言</a></li>
+  <li><a href="#最佳实践">最佳实践</a><ul>
+  <li><a href="#变量命名规范">变量命名规范</a></li>
+  <li><a href="#函数命名规范">函数命名规范</a></li>
+  <li><a href="#注释">注释</a></li>
+</ul></li>
+</ul>
+  </aside>
+
+</div>
+
+</main>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>Learning Notes</span>
+    <a href="https://github.com/hangx969/learning-notes">GitHub</a>
+  </div>
+</footer>
+<script src="../../static/search.js"></script>
+</body>
+</html>

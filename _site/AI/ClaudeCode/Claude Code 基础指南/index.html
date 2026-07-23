@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Claude Code 使用指南 - Learning Notes</title>
+<link rel="stylesheet" href="../../../static/style.css">
+<link rel="stylesheet" href="../../../static/pygments.css">
+</head>
+<body data-root="../../../">
+<header class="site-header">
+  <div class="header-inner">
+    <a class="logo" href="../../../index.html"><span class="logo-mark"></span>LEARNING NOTES</a>
+    <div class="search">
+      <input id="search-input" type="search" placeholder="搜索笔记…" autocomplete="off" aria-label="搜索笔记">
+      <div id="search-results" hidden></div>
+    </div>
+  </div>
+  <nav class="topic-nav" aria-label="主题导航">
+    <div class="topic-nav-inner">
+      <a href="../../../AI/" class="active">AI</a>
+      <a href="../../../Aliyun/">Aliyun</a>
+      <a href="../../../Azure/">Azure</a>
+      <a href="../../../C%2B%2B/">C++</a>
+      <a href="../../../CloudComputing/">CloudComputing</a>
+      <a href="../../../Database/">Database</a>
+      <a href="../../../Docker-Kubernetes/">Docker-Kubernetes</a>
+      <a href="../../../GPU-DeepLearning/">GPU-DeepLearning</a>
+      <a href="../../../Git/">Git</a>
+      <a href="../../../Go/">Go</a>
+      <a href="../../../HPC/">HPC</a>
+      <a href="../../../IaC/">IaC</a>
+      <a href="../../../Linux-Shell/">Linux-Shell</a>
+      <a href="../../../Middlewares/">Middlewares</a>
+      <a href="../../../Networking/">Networking</a>
+      <a href="../../../OS/">OS</a>
+      <a href="../../../Python/">Python</a>
+      <a href="../../../SoftwareTesting/">SoftwareTesting</a>
+    </div>
+  </nav>
+</header>
+<main class="main">
+
+<div class="article-layout">
+
+  <aside class="sidebar">
+    <details class="sidebar-details">
+      <summary>AI</summary>
+      <nav class="sidebar-nav">
+        <p class="sidebar-group">AI-视觉</p>
+        <ul>
+          <li><a href="../../../AI/AI-%E8%A7%86%E8%A7%89/AI-Animation-Skill-%E7%A7%91%E6%99%AE%E5%8A%A8%E7%94%BB/">AI-Animation-Skill - HTML科普动画生成</a></li>
+          <li><a href="../../../AI/AI-%E8%A7%86%E8%A7%89/AI%E5%81%9APPT-ppt-master/">AI做PPT - ppt-master</a></li>
+          <li><a href="../../../AI/AI-%E8%A7%86%E8%A7%89/Markdown-Viewer-Skills-Markdown%E4%B8%AD%E7%9B%B4%E6%8E%A5%E7%94%BB%E5%9B%BE/">Markdown Viewer Skills：让 AI 写文档时顺手把图也画了</a></li>
+          <li><a href="../../../AI/AI-%E8%A7%86%E8%A7%89/effective-html-AI%E7%9B%B4%E5%87%BAHTML%E5%B7%A5%E5%85%B7%E5%AE%9E%E6%B5%8B/">effective-html：让 AI 直接输出 HTML 而非 Markdown</a></li>
+          <li><a href="../../../AI/AI-%E8%A7%86%E8%A7%89/html-anything-AI%E7%94%9F%E6%88%90HTML%E5%85%A8%E5%9C%BA%E6%99%AF%E5%B7%A5%E5%85%B7/">html-anything：AI 生成 HTML 全场景工具</a></li>
+          <li><a href="../../../AI/AI-%E8%A7%86%E8%A7%89/html-ppt-skill-%E5%AE%9E%E6%B5%8B%E6%8C%87%E5%8D%97/">html-ppt-skill - HTML幻灯片生成</a></li>
+          <li><a href="../../../AI/AI-%E8%A7%86%E8%A7%89/%E8%A7%86%E8%A7%89%E8%AE%BE%E8%AE%A1%E6%8F%90%E7%A4%BA%E8%AF%8D/">视觉设计提示词</a></li>
+        </ul>
+        <p class="sidebar-group">AIOps</p>
+        <ul>
+          <li><a href="../../../AI/AIOps/AIOps%E5%AE%9E%E6%88%98-Golang%E6%89%8B%E6%90%93K8s%E6%99%BA%E8%83%BD%E8%BF%90%E7%BB%B4%E5%B7%A5%E5%85%B7%E9%93%BE/">AIOps 实战：Golang 手搓 K8s 智能运维工具链</a></li>
+          <li><a href="../../../AI/AIOps/Kubernetes-MCP-Server-Dify%E6%99%BA%E8%83%BD%E8%BF%90%E7%BB%B4/">AI 接管 Kubernetes 运维——Kubernetes MCP Server + Dify</a></li>
+        </ul>
+        <p class="sidebar-group">ClaudeCode</p>
+        <ul>
+          <li><a href="../../../AI/ClaudeCode/CLAUDE.md%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5-12%E6%9D%A1%E8%A7%84%E5%88%99%E6%A8%A1%E6%9D%BF/">Mnilax：CLAUDE.md 规则从 Karpathy 的 4 条增加到 12 条，错误率从 41% 降到 3%</a></li>
+          <li><a href="../../../AI/ClaudeCode/CLAUDE.md%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5-21%E6%9D%A1%E6%8C%87%E4%BB%A4%E6%B8%85%E5%8D%95/">Mayank Agarwal：21 条 CLAUDE.md 指令，让 Claude 真正懂你</a></li>
+          <li><a href="../../../AI/ClaudeCode/CLAUDE.md%E7%BB%B4%E6%8A%A4%E5%B7%A5%E7%A8%8B-%E5%9B%9B%E5%B1%82%E5%8A%A0%E8%BD%BD%E4%B8%8E%E6%8C%87%E4%BB%A4%E9%A2%84%E7%AE%97/">CLAUDE.md 维护工程：四层加载与指令预算</a></li>
+          <li><a href="../../../AI/ClaudeCode/Claude%20Code%20%E5%9F%BA%E7%A1%80%E6%8C%87%E5%8D%97/" class="current">Claude Code 使用指南</a></li>
+          <li><a href="../../../AI/ClaudeCode/Claude%20Code%20%E6%89%A9%E5%B1%95%E4%BD%93%E7%B3%BB/">Claude Code 扩展体系</a></li>
+          <li><a href="../../../AI/ClaudeCode/Claude-Code-Harness%E5%AE%9E%E6%88%98-%E6%9C%80%E5%B0%8F%E5%8F%AF%E7%94%A8%E7%B3%BB%E7%BB%9F/">Harness 实战：从零搭建最小可用的 Harness 系统</a></li>
+          <li><a href="../../../AI/ClaudeCode/Claude-Code%E4%B8%BA%E4%BB%80%E4%B9%88%E7%94%A8grep%E4%B8%8D%E7%94%A8RAG/">为什么 Claude Code 不用 RAG 检索代码，而是 grep？</a></li>
+          <li><a href="../../../AI/ClaudeCode/Claude-Fable-5-system-prompt/">Claude Fable 5 — System Prompt</a></li>
+          <li><a href="../../../AI/ClaudeCode/Claude-Skill%E8%B4%A8%E6%A3%80%E5%B7%A5%E5%85%B7-SkillCraft/">Claude Skill 质检工具 Skill Craft</a></li>
+          <li><a href="../../../AI/ClaudeCode/Git-Worktree-AI%E5%BC%80%E5%8F%91%E5%AE%9E%E8%B7%B5%E6%8C%87%E5%8D%97/">Vibe Coding 时代的 Git Worktree 实践指南</a></li>
+          <li><a href="../../../AI/ClaudeCode/%E5%A4%9A%E6%99%BA%E8%83%BD%E4%BD%93%E5%8D%8F%E4%BD%9C-Subagents%E4%B8%8EAgent-Teams/">Claude Code 多智能体协作：Subagents 与 Agent Teams</a></li>
+        </ul>
+        <p class="sidebar-group">Codex</p>
+        <ul>
+          <li><a href="../../../AI/Codex/Codex-config-toml-%E5%85%A8%E9%87%8F%E9%85%8D%E7%BD%AE%E5%8F%82%E8%80%83/">OpenAI Codex config.toml 全量配置参考</a></li>
+          <li><a href="../../../AI/Codex/Codex-%E7%9C%81Token%E5%B7%A5%E5%85%B7%E5%AE%9E%E6%B5%8B-Ponytail-Headroom-RTK/">Codex 省 Token 工具实测：Ponytail、Headroom、RTK-AI</a></li>
+        </ul>
+        <p class="sidebar-group">GithubCopilot</p>
+        <ul>
+          <li><a href="../../../AI/GithubCopilot/Copilot%20CLI/">GitHub Copilot CLI</a></li>
+        </ul>
+        <p class="sidebar-group">Hermes-agent</p>
+        <ul>
+          <li><a href="../../../AI/Hermes-agent/Hermes-Agent-%E6%BB%A1%E9%85%8D%E6%8C%87%E5%8D%97%E4%B8%8E%E7%94%9F%E6%80%81%E8%B5%84%E6%BA%90/">Hermes Agent 满配指南与生态资源</a></li>
+          <li><a href="../../../AI/Hermes-agent/Hermes-Curator-Skill%E8%86%A8%E8%83%80%E6%B2%BB%E7%90%86/">Skill 太多导致上下文膨胀怎么办？来自 Hermes Agent 的实践</a></li>
+          <li><a href="../../../AI/Hermes-agent/Hermes%E4%B8%8EOpenClaw%E5%AF%B9%E6%AF%94%E5%8F%8A%E9%A3%9E%E4%B9%A6%E6%8E%A5%E5%85%A5%E6%8C%87%E5%8D%97/">Hermes Agent全解析：与OpenClaw对比及飞书接入指南</a></li>
+          <li><a href="../../../AI/Hermes-agent/Ubuntu%2025.10%20%E5%AE%89%E8%A3%85%E4%B8%8E%E4%BD%BF%E7%94%A8%20Hermes%20Agent%20%E6%8C%87%E5%8D%97/">Ubuntu 25.10 安装与使用 Hermes Agent 指南</a></li>
+        </ul>
+        <p class="sidebar-group">Obsidian</p>
+        <ul>
+          <li><a href="../../../AI/Obsidian/Obsidian-Vault%E6%A8%A1%E6%9D%BF%E5%BA%93%E5%90%88%E9%9B%86-48%E4%B8%AA%E5%AE%9D%E8%97%8Fvault/">Obsidian Vault 模板库合集：48 个 GitHub 宝藏 vault</a></li>
+          <li><a href="../../../AI/Obsidian/Obsidian%E5%8F%AF%E8%A7%86%E5%8C%96Skills-Excalidraw-Mermaid-Canvas/">Obsidian 可视化 Skills — Excalidraw / Mermaid / Canvas</a></li>
+          <li><a href="../../../AI/Obsidian/obsidian-claude-code-AI%E7%9F%A5%E8%AF%86%E5%BA%93%E5%AE%8C%E6%95%B4%E6%8C%87%E5%8D%97/">Obsidian + Claude Code：AI 驱动的知识库完整指南</a></li>
+        </ul>
+        <p class="sidebar-group">OpenClaw</p>
+        <ul>
+          <li><a href="../../../AI/OpenClaw/CoPaw/">CoPaw</a></li>
+          <li><a href="../../../AI/OpenClaw/OpenClaw-Channels/">OpenClaw Channel 配置</a></li>
+          <li><a href="../../../AI/OpenClaw/OpenClaw-K8s%E6%99%BA%E8%83%BD%E8%BF%90%E7%BB%B4%E5%AE%9E%E6%88%98/">用 OpenClaw 智能体网关接管 K8s 日常运维：从只读巡检到低风险变更</a></li>
+          <li><a href="../../../AI/OpenClaw/OpenClaw-Skills-Plugins/">OpenClaw Skills 与插件</a></li>
+          <li><a href="../../../AI/OpenClaw/OpenClaw-Workspace-%E8%BF%90%E7%BB%B4/">OpenClaw Workspace 运维实战</a></li>
+          <li><a href="../../../AI/OpenClaw/OpenClaw-%E5%9F%BA%E7%A1%80-%E5%AE%89%E8%A3%85/">OpenClaw 基础与安装</a></li>
+          <li><a href="../../../AI/OpenClaw/Openclaw-AIOps/">OpenClaw AIOps</a></li>
+          <li><a href="../../../AI/OpenClaw/Openclaw-%E5%A4%9A%E6%99%BA%E8%83%BD%E4%BD%93/">OpenClaw 多智能体</a></li>
+          <li><a href="../../../AI/OpenClaw/Ubuntu-2510-Setup-Guide/">Ubuntu 25.10 (Questing) 初始化配置指南</a></li>
+          <li><a href="../../../AI/OpenClaw/%E9%A3%9E%E4%B9%A6CLI%E7%94%BB%E6%9D%BF-%E4%B8%80%E5%8F%A5%E8%AF%9D%E7%94%9F%E6%88%90%E6%9E%B6%E6%9E%84%E5%9B%BE/">飞书 CLI 画板：一句话生成架构图</a></li>
+        </ul>
+        <p class="sidebar-group">代码知识图谱</p>
+        <ul>
+          <li><a href="../../../AI/%E4%BB%A3%E7%A0%81%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/CodeGraph-%E4%BB%A3%E7%A0%81%E8%AF%AD%E4%B9%89%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/">CodeGraph：给 Claude Code 先画一张代码地图，工具调用砍掉 92%</a></li>
+          <li><a href="../../../AI/%E4%BB%A3%E7%A0%81%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/Graphify-%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1%E5%B7%A5%E5%85%B7/">Graphify：软件工程知识图谱工具</a></li>
+          <li><a href="../../../AI/%E4%BB%A3%E7%A0%81%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/Understand-Anything-%E4%BB%A3%E7%A0%81%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1%E5%8F%AF%E8%A7%86%E5%8C%96/">Understand-Anything：AI 代码知识图谱可视化工具</a></li>
+          <li><a href="../../../AI/%E4%BB%A3%E7%A0%81%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/code-review-graph-%E6%9C%AC%E5%9C%B0%E4%BB%A3%E7%A0%81%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/">开源 Claude Code 本地代码知识图谱：code-review-graph 完整上手攻略</a></li>
+          <li><a href="../../../AI/%E4%BB%A3%E7%A0%81%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/shiji-kb-AI%E5%8F%B2%E8%AE%B0%E7%9F%A5%E8%AF%86%E5%BA%93%E4%B8%8E%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1%E6%9E%84%E9%80%A0%E6%96%B9%E6%B3%95%E8%AE%BA/">shiji-kb：AI 史记知识库与可复用知识图谱构造方法论</a></li>
+        </ul>
+        <p class="sidebar-group">行业动态</p>
+        <ul>
+          <li><a href="../../../AI/%E8%A1%8C%E4%B8%9A%E5%8A%A8%E6%80%81/AI%E6%97%B6%E4%BB%A3%E7%9A%84Git%E7%89%88%E6%9C%AC%E7%AE%A1%E7%90%86%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/">AI 时代的 Git 版本管理最佳实践</a></li>
+          <li><a href="../../../AI/%E8%A1%8C%E4%B8%9A%E5%8A%A8%E6%80%81/Anthropic%E5%B7%A5%E7%A8%8B%E5%B8%88%E5%8A%9B%E6%8E%A8HTML%E5%8F%96%E4%BB%A3Markdown-Karpathy%E9%99%84%E8%AE%AE/">Anthropic 工程师力推 HTML 取代 Markdown —— Karpathy 附议</a></li>
+          <li><a href="../../../AI/%E8%A1%8C%E4%B8%9A%E5%8A%A8%E6%80%81/Claude-Code%E5%88%9B%E5%A7%8B%E4%BA%BA%E7%BA%A2%E6%9D%89%E5%A4%A7%E4%BC%9A%E4%B8%83%E4%B8%AA%E5%88%A4%E6%96%AD/">Claude Code 创始人在红杉大会上的 7 个重要判断</a></li>
+          <li><a href="../../../AI/%E8%A1%8C%E4%B8%9A%E5%8A%A8%E6%80%81/Loop-Engineering-%E4%BB%8EPrompt%E5%88%B0%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%81%E6%B0%B4%E7%BA%BF/">Loop Engineering：从 Prompt 到自动化流水线</a></li>
+          <li><a href="../../../AI/%E8%A1%8C%E4%B8%9A%E5%8A%A8%E6%80%81/OpenCodeReview-%E9%98%BF%E9%87%8CAI%E4%BB%A3%E7%A0%81%E5%AE%A1%E6%9F%A5%E5%B7%A5%E7%A8%8B%E5%8C%96/">OpenCodeReview：阿里开源的 AI 代码审查工程化工具</a></li>
+          <li><a href="../../../AI/%E8%A1%8C%E4%B8%9A%E5%8A%A8%E6%80%81/TypeScript-vs-Python-AI-Agent%E6%97%B6%E4%BB%A3%E7%9A%84%E8%AF%AD%E8%A8%80%E4%B9%8B%E4%BA%89/">为什么 AI Agent 时代，TypeScript 正在抢走 Python 的主场？</a></li>
+        </ul>
+        <p class="sidebar-group">其他</p>
+        <ul>
+          <li><a href="../../../AI/HarnessKit/">HarnessKit — AI 编码智能体统一管理工具</a></li>
+          <li><a href="../../../AI/%E6%8F%90%E7%A4%BA%E8%AF%8D/">提示词</a></li>
+        </ul>
+      </nav>
+    </details>
+  </aside>
+
+  <article class="article">
+    <nav class="breadcrumb">
+      <a href="../../../index.html">首页</a><span>/</span>
+      <a href="../../../AI/">AI</a><span>/</span><span>ClaudeCode</span>
+    </nav>
+    <h1 class="article-title">Claude Code 使用指南</h1>
+    <p class="article-meta"><span>更新于 2026-06-07</span>
+      <a href="https://github.com/hangx969/learning-notes/blob/main/AI/ClaudeCode/Claude%20Code%20%E5%9F%BA%E7%A1%80%E6%8C%87%E5%8D%97.md">查看源文件</a>
+    </p>
+    <div class="article-body">
+<h1 id="claude-code-使用指南">Claude Code 使用指南</h1>
+<h2 id="项目结构与启动原则">项目结构与启动原则</h2>
+<p><div class="callout callout-warning" markdown="1"><br />
+<p class="callout-title">重要：单一项目原则</p></p>
+<p>Claude Code 是基于项目文件夹的工具，它在生成 <code>claude.md</code> 时会参考整个 codebase 代码库。如果启动目录包含多个项目，会导致==上下文混乱和逻辑冲突==</p>
+</div>
+<p><strong>问题场景</strong>：在做新需求时，AI 既会参考空间里的 A 项目，也会参考 B 项目，容易出错。</p>
+<p><strong>最佳实践</strong>：<br />
+- ✅ 每个完整项目都有自己的单独文件夹<br />
+- ✅ 在终端里进入到具体项目文件夹后启动 CC<br />
+- ✅ 确保参考的 codebase 只包含当前项目</p>
+<hr />
+<h2 id="模式选择">模式选择</h2>
+<p>在 Claude Code 中有 <mark>3 种模式</mark>，通过 <code>Shift+Tab</code> 可以切换：</p>
+<h3 id="1-普通模式">1️⃣ 普通模式</h3>
+<p><div class="callout callout-info" markdown="1"><br />
+<p class="callout-title">普通模式</p></p>
+<p>进入主界面就是普通模式，适合一般的对话和任务执行。</p>
+</div>
+<h3 id="2-plan-模式">2️⃣ Plan 模式</h3>
+<p><div class="callout callout-tip" markdown="1"><br />
+<p class="callout-title">推荐：Plan 模式</p></p>
+<p>这个模式只会讨论沟通，<strong>不会执行写代码</strong>。在项目前期需要规划功能时使用，会自动给出计划方案并与你确认是否执行。</p>
+</div>
+<h3 id="3-自动接受编辑模式">3️⃣ 自动接受编辑模式</h3>
+<p><div class="callout callout-check" markdown="1"><br />
+<p class="callout-title">自动执行模式</p></p>
+<p>根据与 AI 讨论的方案，自动进行任务执行（如写代码）。</p>
+</div>
+<p><strong>推荐工作流</strong>：<br />
+1. 一开始使用 <strong>Plan 模式</strong>（最佳）<br />
+2. 与 CC 讨论需求，让它不断调整方案和文档建议<br />
+3. 确定好后退出 Plan 模式<br />
+4. 切换到普通或自动接受模式执行</p>
+<hr />
+<h2 id="思考模式">思考模式</h2>
+<p><div class="callout callout-important" markdown="1"><br />
+<p class="callout-title">Extended Thinking（扩展思考）</p></p>
+<p>在 Claude Code 中可以通过 <code>think</code> 提示词来激活思考模式。</p>
+</div>
+<h3 id="思考层级">思考层级</h3>
+<p>思考程度依次增强：</p>
+<div class="highlight"><pre><span></span><code>&quot;think&quot; &lt; &quot;think hard&quot; &lt; &quot;think harder&quot; &lt; &quot;ultrathink&quot;
+</code></pre></div>
+
+<h3 id="工作原理">工作原理</h3>
+<p>通过调节 <mark>思考预算</mark>（即模型在内部推理阶段可用的资源/token 数），让模型在遇到复杂任务时"多花点时间思考"再出结果：<br />
+- ✅ 效果会更好<br />
+- ⚠️ 费用也会更多</p>
+<p><div class="callout callout-note" markdown="1"><br />
+<p class="callout-title">注意</p></p>
+<p>这个扩展思考模式不是切换模型，只是让同一个模型在内部保留更多推理步骤或 token 数来思考更久。</p>
+</div>
+<p><strong>示例用法</strong>：</p>
+<div class="highlight"><pre><span></span><code>think harder 分析这段代码的作用
+</code></pre></div>
+
+<hr />
+<h2 id="claudemd-创建">Claude.md 创建</h2>
+<p><div class="callout callout-abstract" markdown="1"><br />
+<p class="callout-title">Claude.md 是什么？</p></p>
+<p>这是一个特殊文件，类似官方提供的你和 CC 之间的 <mark>备忘录</mark>。Claude 在开始对话时会自动将其内容拉入上下文。</p>
+</div>
+<h3 id="用途">用途</h3>
+<p>可以记录：<br />
+- 🔹 个人习惯（特殊偏好、常用命令、代码风格等）<br />
+- 🔹 项目要求（项目背景、注意事项、测试说明等）<br />
+- 🔹 一切你想要 Claude 知悉的事项</p>
+<h3 id="claudemd-的两个级别">Claude.md 的两个级别</h3>
+<table>
+<thead>
+<tr>
+<th>级别</th>
+<th>作用范围</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>用户级</strong></td>
+<td>全局生效</td>
+<td>不关联项目，任何项目都会遵守</td>
+</tr>
+<tr>
+<td><strong>项目级</strong></td>
+<td>仅当前项目</td>
+<td>只对该项目生效，切换项目后失效</td>
+</tr>
+</tbody>
+</table>
+<h3 id="创建方式">创建方式</h3>
+<p><strong>方式 1：使用 <code>/init</code> 命令</strong></p>
+<div class="highlight"><pre><span></span><code>/init
+</code></pre></div>
+
+<p>会自动参考项目空间 codebase 生成文档。</p>
+<p><strong>方式 2：使用 <code>#</code> 添加 Memory</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 这里添加 memory 的实际内容</span>
+</code></pre></div>
+
+<p>然后选择添加到用户级还是项目级。</p>
+<h3 id="查看-claudemd">查看 Claude.md</h3>
+<p>使用 <code>/memory</code> 命令查看记录内容（项目级和用户级都可查看）：</p>
+<div class="highlight"><pre><span></span><code>/memory
+</code></pre></div>
+
+<hr />
+<h2 id="工作流管理">工作流管理</h2>
+<p><div class="callout callout-quote" markdown="1"><br />
+<p class="callout-title">核心原则</p></p>
+<p>文档，文档，还是文档！只要把需求细节都讲清楚，让它照着文档做，选个好模型，做出来的产品与预期不会偏离太多。</p>
+</div>
+<h3 id="spec-工作流">Spec 工作流</h3>
+<p><strong>Spec</strong> 即 <mark>规范规格</mark>，用规格文档来驱动 AI 开发。可以理解为这个规格是 AI 要遵守的唯一契约，必须按照 spec 文档执行。</p>
+<h4 id="spec-四部曲">Spec 四部曲</h4>
+<h5 id="1-写需求文档">1️⃣ 写需求文档</h5>
+<p><div class="callout callout-tip" markdown="1"><br />
+<p class="callout-title">需求文档要点</p></p>
+<p>这个文档无关技术，主要关于：<br />
+- 项目描述<br />
+- 功能需求<br />
+- 目标人群</p>
+</div>
+<p>将模糊想法转化为结构化需求，让 AI 生成一个规范文档。</p>
+<h5 id="2-写技术文档">2️⃣ 写技术文档</h5>
+<p>把刚生成的规范文档以及你的技术偏好、项目约束发给 AI：<br />
+- 框架选择<br />
+- 编程语言<br />
+- 测试计划<br />
+- 其他技术约束</p>
+<p>让它生成一个完整的技术文档。</p>
+<h5 id="3-写-todo-文档">3️⃣ 写 TODO 文档</h5>
+<p>把上面的两个文档再发给 AI，让它参考这两个文档：<br />
+- 将功能需求拆分成具体的、可执行的子任务<br />
+- 每个任务都可以独立实现和测试</p>
+<h5 id="4-实现-implementation">4️⃣ 实现 (Implementation)</h5>
+<ol>
+<li>让 AI 把上面的 3 个文档汇总成一个大的 <code>spec.md</code></li>
+<li>发给你确认，有问题就修改</li>
+<li>确认无误后发给 AI，让它进行代码编写</li>
+</ol>
+<h3 id="spec-vs-claudemd">Spec vs Claude.md</h3>
+<table>
+<thead>
+<tr>
+<th>对比项</th>
+<th>Claude.md</th>
+<th>Spec 文档</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>侧重点</td>
+<td>全局习惯和偏好</td>
+<td>具体功能的详细实现计划</td>
+</tr>
+<tr>
+<td>作用范围</td>
+<td>相对更大</td>
+<td>聚焦单个功能/需求</td>
+</tr>
+<tr>
+<td>使用建议</td>
+<td>记录长期有效的规则</td>
+<td>针对特定需求的详细方案</td>
+</tr>
+</tbody>
+</table>
+<p><div class="callout callout-note" markdown="1"><br />
+<p class="callout-title">简单需求</p></p>
+<p>对于简单小需求，只写一个即可。</p>
+</div>
+<h3 id="上下文问题的解决">上下文问题的解决</h3>
+<p><div class="callout callout-bug" markdown="1"><br />
+<p class="callout-title">问题：上下文丢失</p></p>
+<p>现在模型上下文都很有限，如果上下文用满后再开一个窗口，不能把这些上下文内容 100% 记录，就会造成上下文丢失，开发效果会大大折扣。</p>
+</div>
+<p><strong>解决方案</strong>：文档记录正好解决了这一问题，可以让 AI 看到完整的上下文背景信息。</p>
+<hr />
+<h2 id="个人工作流实践">个人工作流实践</h2>
+<p>我的工作流习惯：</p>
+<ol>
+<li><strong>准备阶段</strong>：先自己写个大致文档需求</li>
+<li><strong>讨论阶段</strong>：发给 AI 并基于这个文档讨论沟通，让它给建议</li>
+<li><strong>确认阶段</strong>：让它把讨论过程中确认的信息完整复述，确保双方理解无误</li>
+<li><strong>文档化阶段</strong>：确认无误后让它更新到之前的文档中</li>
+<li>包含 spec 完整环节（技术文档、任务拆分等）</li>
+<li>生成最终文档</li>
+<li><strong>执行阶段</strong>：将最终文档发给它，让它开始执行</li>
+<li><strong>测试阶段</strong>：测试需求效果</li>
+</ol>
+<hr />
+<h2 id="工具实战指南">工具实战指南</h2>
+<p><div class="callout callout-important" markdown="1"><br />
+<p class="callout-title">三大核心能力</p></p>
+<ul>
+<li><strong>Plugin 系统</strong>：让它从工具变成平台</li>
+<li><strong>Subagent</strong>：让它更智能地理解和执行任务</li>
+<li><strong>MCP 增强</strong>：让它能连接更广阔的工具生态</li>
+</ul>
+</div>
+<h3 id="场景-1微服务拆分决策高风险架构决策">场景 1：微服务拆分决策（高风险架构决策）</h3>
+<p><strong>背景</strong>：单体应用用户量暴涨，考虑拆微服务，但怕拆坏了。</p>
+<h4 id="step-1深度思考-sequential-thinking-mcp">Step 1：深度思考 (sequential-thinking MCP)</h4>
+<div class="highlight"><pre><span></span><code>分析我们这个单体应用，是否适合拆微服务？考虑：
+- 团队规模（15人）
+- 技术栈（Spring Boot 单体）
+- QPS（5000）
+- 业务复杂度
+- 运维能力
+- 迁移成本
+</code></pre></div>
+
+<p><strong>输出</strong>：完整推理链，3 个方案对比（不拆/部分拆/全拆）</p>
+<h4 id="step-2查技术方案-context7-mcp">Step 2：查技术方案 (context7 MCP)</h4>
+<div class="highlight"><pre><span></span><code>查 Spring Cloud Alibaba 的服务拆分最佳实践和 Seata 分布式事务方案
+</code></pre></div>
+
+<p><strong>输出</strong>：官方文档相关章节，4 种事务方案对比</p>
+<h4 id="step-3记录决策-memory-mcp">Step 3：记录决策 (memory MCP)</h4>
+<div class="highlight"><pre><span></span><code>记住：我们的微服务拆分原则：
+1. 按业务域拆，不按技术层拆
+2. 优先拆读多写少的服务
+...
+</code></pre></div>
+
+<h4 id="step-4制定执行计划-subagent-backend-architect">Step 4：制定执行计划 (SubAgent: backend-architect)</h4>
+<div class="highlight"><pre><span></span><code>基于上述决策，制定详细的微服务拆分计划：
+1. 识别服务边界
+2. 设计迁移方案（分阶段，可回滚）
+...
+</code></pre></div>
+
+<p><strong>输出</strong>：6 步完整迁移计划</p>
+<hr />
+<h3 id="场景-2生产事故快速响应争分夺秒">场景 2：生产事故快速响应（争分夺秒）</h3>
+<p><div class="callout callout-danger" markdown="1"><br />
+<p class="callout-title">事故场景</p></p>
+<p>"线上支付服务挂了，订单超时率 80%"</p>
+</div>
+<p><strong>自动触发 Skill</strong>：<code>incident-response</code></p>
+<h4 id="阶段-1并行排查3-个-subagent-同时工作">阶段 1：并行排查（3 个 SubAgent 同时工作）</h4>
+<table>
+<thead>
+<tr>
+<th>SubAgent</th>
+<th>任务</th>
+<th>发现</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>devops-troubleshooter</code></td>
+<td>扫描日志</td>
+<td>大量数据库慢查询</td>
+</tr>
+<tr>
+<td><code>performance-engineer</code></td>
+<td>检查资源</td>
+<td>CPU/内存正常，但数据库连接池打满</td>
+</tr>
+<tr>
+<td><code>database-optimizer</code></td>
+<td>分析 SQL</td>
+<td>某个 SQL 从 0.1s 变成 5s</td>
+</tr>
+</tbody>
+</table>
+<h4 id="阶段-2根因定位-sequential-thinking-mcp">阶段 2：根因定位 (sequential-thinking MCP)</h4>
+<div class="highlight"><pre><span></span><code>基于上述数据，分析根因：
+- SQL 为何突然变慢？
+- 为何今天才出问题？
+...
+</code></pre></div>
+
+<p><strong>输出</strong>：<mark>根因：订单表数据量突破 1000 万，某个未加索引的查询开始全表扫描</mark></p>
+<h4 id="阶段-3生成止损方案-skill-内部逻辑">阶段 3：生成止损方案 (Skill 内部逻辑)</h4>
+<p><strong>输出</strong>：3 个方案对比（快速/中期/根治）</p>
+<h4 id="阶段-4执行一键复制命令">阶段 4：执行（一键复制命令）</h4>
+<p><strong>输出</strong>：可执行命令</p>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>scale...
+ALTER<span class="w"> </span>TABLE...
+</code></pre></div>
+
+<h4 id="最后记录到-memory-memory-mcp">最后：记录到 memory (memory MCP)</h4>
+<div class="highlight"><pre><span></span><code>记住：订单表到 1000 万行会有性能问题，需提前分库分表
+</code></pre></div>
+
+<hr />
+<h3 id="场景-3接手遗留项目快速上手">场景 3：接手遗留项目（快速上手）</h3>
+<p><strong>背景</strong>：接手一个 2 年没人维护的老项目，代码无文档。</p>
+<h4 id="step-1项目全貌扫描-subagent-explore">Step 1：项目全貌扫描 (SubAgent: Explore)</h4>
+<div class="highlight"><pre><span></span><code>探索这个项目：
+1. 识别技术栈和依赖
+2. 找到核心模块和入口
+...
+</code></pre></div>
+
+<p><strong>输出</strong>（10 分钟）：项目架构图、核心模块清单、风险清单</p>
+<h4 id="step-2关键逻辑理解并行调用-3-个-subagent">Step 2：关键逻辑理解（并行调用 3 个 SubAgent）</h4>
+<table>
+<thead>
+<tr>
+<th>SubAgent</th>
+<th>任务</th>
+<th>输出</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>backend-architect</code></td>
+<td>分析用户登录流程</td>
+<td>登录流程时序图</td>
+</tr>
+<tr>
+<td><code>database-optimizer</code></td>
+<td>分析数据库设计</td>
+<td>ER 图</td>
+</tr>
+<tr>
+<td><code>security-auditor</code></td>
+<td>扫描安全漏洞</td>
+<td>7 个安全风险点</td>
+</tr>
+</tbody>
+</table>
+<h4 id="step-3技术债评估-skill-tech-debt-manager">Step 3：技术债评估 (Skill: tech-debt-manager)</h4>
+<p><strong>输出</strong>：<br />
+- 高优先级技术债（5 个）<br />
+- 建议优先偿还的 3 个</p>
+<h4 id="step-4依赖升级计划-skill-dependency-upgrade-check">Step 4：依赖升级计划 (Skill: dependency-upgrade-check)</h4>
+<p><strong>检测到</strong>：<br />
+- 3 个依赖有已知 CVE 漏洞<br />
+- 生成分阶段升级计划</p>
+<h4 id="step-5知识沉淀-memory-mcp">Step 5：知识沉淀 (memory MCP)</h4>
+<div class="highlight"><pre><span></span><code>把这个项目的关键信息记住：
+- 核心模块和职责
+- 数据库表和字段含义
+...
+</code></pre></div>
+
+<hr />
+<h3 id="场景-4新功能完整开发流程端到端">场景 4：新功能完整开发流程（端到端）</h3>
+<h4 id="phase-1需求分析-sequential-thinking-mcp">Phase 1：需求分析 (sequential-thinking MCP)</h4>
+<div class="highlight"><pre><span></span><code>分析积分系统需求：
+- 核心功能：赚积分、花积分...
+- 风险：超发、作弊、性能
+</code></pre></div>
+
+<p><strong>输出</strong>：功能拆解、技术方案选型（Redis+MySQL 双写）</p>
+<h4 id="phase-2查技术方案-context7-mcp">Phase 2：查技术方案 (context7 MCP)</h4>
+<div class="highlight"><pre><span></span><code>查 Redis 分布式锁的最佳实践和积分系统的反作弊方案
+</code></pre></div>
+
+<p><strong>输出</strong>：Redisson 分布式锁示例、防御手段</p>
+<h4 id="phase-3数据库设计-subagent-database-optimizer">Phase 3：数据库设计 (SubAgent: database-optimizer)</h4>
+<div class="highlight"><pre><span></span><code>设计积分系统的数据库表结构...
+</code></pre></div>
+
+<p><strong>输出</strong>：完整 DDL、索引设计</p>
+<h4 id="phase-4开发写代码">Phase 4：开发（写代码）</h4>
+<p>正常开发过程</p>
+<h4 id="phase-5code-review-skill-smart-code-review">Phase 5：Code Review (Skill: smart-code-review)</h4>
+<p><strong>自动触发</strong>：检查并发安全、SQL 性能、异常处理...</p>
+<h4 id="phase-6提交前检查斜杠命令commit">Phase 6：提交前检查（斜杠命令：<code>/commit</code>）</h4>
+<p><strong>自动执行</strong>：<br />
+- 运行单测<br />
+- 检查代码规范<br />
+- 生成 commit message</p>
+<h4 id="phase-7记录-memory-mcp">Phase 7：记录 (memory MCP)</h4>
+<div class="highlight"><pre><span></span><code>记住积分系统的实现：
+- 用 Redis 计数器 + MySQL 持久化
+...
+</code></pre></div>
+
+<hr />
+<h3 id="场景-5技术栈升级高风险迁移">场景 5：技术栈升级（高风险迁移）</h3>
+<p><strong>背景</strong>：Vue 2 升级到 Vue 3，涉及 200+ 组件。</p>
+<h4 id="step-1影响面评估-subagent-frontend-developer">Step 1：影响面评估 (SubAgent: frontend-developer)</h4>
+<div class="highlight"><pre><span></span><code>分析这个 Vue 2 项目升级到 Vue 3 的影响：
+- 哪些 API 发生了 breaking change
+...
+</code></pre></div>
+
+<p><strong>输出</strong>：<br />
+- 需要改动的文件清单（185 个）<br />
+- 不兼容的库（3 个）<br />
+- 估算工作量：15 人天</p>
+<h4 id="step-2查迁移指南-context7-mcp">Step 2：查迁移指南 (context7 MCP)</h4>
+<div class="highlight"><pre><span></span><code>查 Vue 3 官方迁移指南和常见坑
+</code></pre></div>
+
+<p><strong>输出</strong>：官方 migration guide、社区常见问题合集</p>
+<h4 id="step-3制定迁移计划-sequential-thinking-mcp">Step 3：制定迁移计划 (sequential-thinking MCP)</h4>
+<div class="highlight"><pre><span></span><code>制定分阶段、可回滚的 Vue 3 迁移计划...
+</code></pre></div>
+
+<p><strong>输出</strong>：5 个阶段的迁移计划，每阶段的回滚方案</p>
+<h4 id="step-4自动化迁移-skill-migration-script">Step 4：自动化迁移 (Skill: migration-script)</h4>
+<p><strong>执行</strong>：用 ast-grep 批量替换：<code>this.$xxx</code> → Composition API</p>
+<h4 id="step-5逐批验证-skill-migration-validator">Step 5：逐批验证 (Skill: migration-validator)</h4>
+<p>每迁移一批：<br />
+- ✅ 运行单测<br />
+- ✅ 运行 E2E 测试<br />
+- ✅ 检查 bundle size</p>
+<h4 id="step-6记录-memory-mcp">Step 6：记录 (memory MCP)</h4>
+<div class="highlight"><pre><span></span><code>记住 Vue 2→3 迁移的坑：
+- Element UI 要换成 Element Plus
+...
+</code></pre></div>
+
+<hr />
+<h2 id="综合实战">综合实战</h2>
+<p><div class="callout callout-example" markdown="1"><br />
+<p class="callout-title">实战任务</p></p>
+<p>基于你团队最烦的事，写一个 Skill 或斜杠命令：<br />
+- 代码提交流程<br />
+- PR 创建流程<br />
+- 新人环境配置<br />
+- 等等</p>
+</div>
+<h3 id="验收标准做到这-5-点算成功">验收标准（做到这 5 点算成功）</h3>
+<ul>
+<li>[ ] 说 "查 React 19 最新文档"，能调用 context7 返回结果</li>
+<li>[ ] 说 "分析该不该用微服务"，能用 sequential-thinking 深度推理</li>
+<li>[ ] 说 "记住我们用 PostgreSQL"，下次相关问题能自动调用 memory</li>
+<li>[ ] 说 "准备提交代码"，能自动触发 pre-commit-check (Skill)</li>
+<li>[ ] 输入 <code>/release</code>，能执行完整发布流程（用上面自己定义的 slash command 实现）</li>
+</ul>
+<p><div class="callout callout-success" markdown="1"><br />
+<p class="callout-title">升级完成</p></p>
+<p>做到这 5 点，你的 Claude 就从 <mark>聊天助手</mark> 升级成 <mark>智能工作流系统</mark> 了。</p>
+</div>
+<hr />
+<h2 id="最佳实践">最佳实践</h2>
+<h3 id="1-不要贪多先用三件套起步">1️⃣ 不要贪多，先用三件套起步</h3>
+<p><div class="callout callout-tip" markdown="1"><br />
+<p class="callout-title">推荐起步配置</p></p>
+</div>
+<p><strong>MCP（必装 3 件套）</strong>：<br />
+- <code>memory</code> - 记忆管理<br />
+- <code>context7</code> - 文档查询<br />
+- <code>sequential-thinking</code> - 深度推理</p>
+<p><strong>Skills（先写 3 个）</strong>：<br />
+- 代码检查<br />
+- 文档同步<br />
+- 依赖评估</p>
+<p><strong>SubAgents</strong>：<br />
+- 遇到复杂问题再调度<br />
+- 不用提前学</p>
+<p>其他的，等这 3 个用顺了再说。</p>
+<h3 id="2-设计自己团队的工作流剧本">2️⃣ 设计自己团队的工作流剧本</h3>
+<p>把团队最烦的 3 件事自动化：</p>
+<ol>
+<li><strong>代码提交流程</strong>（自动检查 + commit）</li>
+<li><strong>生产事故响应</strong>（并行排查 + 生成方案）</li>
+<li><strong>新人入职流程</strong>（自动化环境 + 知识导入）</li>
+</ol>
+<p><div class="callout callout-important" markdown="1"><br />
+<p class="callout-title">投入产出比</p></p>
+<p>这 3 个做好，投入产出比最高。</p>
+</div>
+<h3 id="3-让知识沉淀而不只是用一次">3️⃣ 让知识沉淀，而不只是用一次</h3>
+<p><strong>用 memory MCP 记录</strong>：<br />
+- 团队踩过的坑<br />
+- 重要的架构决策<br />
+- 经常用的配置和规范</p>
+<p><div class="callout callout-quote" markdown="1"><br />
+<p class="callout-title">核心理念</p></p>
+<p>好的工具链会自己长知识。</p>
+</div>
+<hr />
+<h2 id="相关资源">相关资源</h2>
+<ul>
+<li>Claude Code 配置</li>
+<li>MCP 服务器配置</li>
+<li>Skill 开发指南</li>
+<li>SubAgent 使用手册</li>
+</ul>
+<h1 id="claude-codeguide-productivityai-tools-developmentworkflow">claude-code/guide #productivity/ai-tools #development/workflow</h1>
+    </div>
+  </article>
+  <aside class="toc">
+    <p class="toc-label">本页目录</p>
+    <ul>
+  <li><a href="#项目结构与启动原则">项目结构与启动原则</a></li>
+  <li><a href="#模式选择">模式选择</a><ul>
+  <li><a href="#1-普通模式">1️⃣ 普通模式</a></li>
+  <li><a href="#2-plan-模式">2️⃣ Plan 模式</a></li>
+  <li><a href="#3-自动接受编辑模式">3️⃣ 自动接受编辑模式</a></li>
+</ul></li>
+  <li><a href="#思考模式">思考模式</a><ul>
+  <li><a href="#思考层级">思考层级</a></li>
+  <li><a href="#工作原理">工作原理</a></li>
+</ul></li>
+  <li><a href="#claudemd-创建">Claude.md 创建</a><ul>
+  <li><a href="#用途">用途</a></li>
+  <li><a href="#claudemd-的两个级别">Claude.md 的两个级别</a></li>
+  <li><a href="#创建方式">创建方式</a></li>
+  <li><a href="#查看-claudemd">查看 Claude.md</a></li>
+</ul></li>
+  <li><a href="#工作流管理">工作流管理</a><ul>
+  <li><a href="#spec-工作流">Spec 工作流</a></li>
+  <li><a href="#spec-vs-claudemd">Spec vs Claude.md</a></li>
+  <li><a href="#上下文问题的解决">上下文问题的解决</a></li>
+</ul></li>
+  <li><a href="#个人工作流实践">个人工作流实践</a></li>
+  <li><a href="#工具实战指南">工具实战指南</a><ul>
+  <li><a href="#场景-1微服务拆分决策高风险架构决策">场景 1：微服务拆分决策（高风险架构决策）</a></li>
+  <li><a href="#场景-2生产事故快速响应争分夺秒">场景 2：生产事故快速响应（争分夺秒）</a></li>
+  <li><a href="#场景-3接手遗留项目快速上手">场景 3：接手遗留项目（快速上手）</a></li>
+  <li><a href="#场景-4新功能完整开发流程端到端">场景 4：新功能完整开发流程（端到端）</a></li>
+  <li><a href="#场景-5技术栈升级高风险迁移">场景 5：技术栈升级（高风险迁移）</a></li>
+</ul></li>
+  <li><a href="#综合实战">综合实战</a><ul>
+  <li><a href="#验收标准做到这-5-点算成功">验收标准（做到这 5 点算成功）</a></li>
+</ul></li>
+  <li><a href="#最佳实践">最佳实践</a><ul>
+  <li><a href="#1-不要贪多先用三件套起步">1️⃣ 不要贪多，先用三件套起步</a></li>
+  <li><a href="#2-设计自己团队的工作流剧本">2️⃣ 设计自己团队的工作流剧本</a></li>
+  <li><a href="#3-让知识沉淀而不只是用一次">3️⃣ 让知识沉淀，而不只是用一次</a></li>
+</ul></li>
+  <li><a href="#相关资源">相关资源</a></li>
+</ul>
+  </aside>
+
+</div>
+
+</main>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>Learning Notes</span>
+    <a href="https://github.com/hangx969/learning-notes">GitHub</a>
+  </div>
+</footer>
+<script src="../../../static/search.js"></script>
+</body>
+</html>

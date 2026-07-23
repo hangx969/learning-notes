@@ -1,0 +1,1466 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Helm部署Strimzi Kafka - Learning Notes</title>
+<link rel="stylesheet" href="../../../static/style.css">
+<link rel="stylesheet" href="../../../static/pygments.css">
+</head>
+<body data-root="../../../">
+<header class="site-header">
+  <div class="header-inner">
+    <a class="logo" href="../../../index.html"><span class="logo-mark"></span>LEARNING NOTES</a>
+    <div class="search">
+      <input id="search-input" type="search" placeholder="搜索笔记…" autocomplete="off" aria-label="搜索笔记">
+      <div id="search-results" hidden></div>
+    </div>
+  </div>
+  <nav class="topic-nav" aria-label="主题导航">
+    <div class="topic-nav-inner">
+      <a href="../../../AI/">AI</a>
+      <a href="../../../Aliyun/">Aliyun</a>
+      <a href="../../../Azure/">Azure</a>
+      <a href="../../../C%2B%2B/">C++</a>
+      <a href="../../../CloudComputing/">CloudComputing</a>
+      <a href="../../../Database/">Database</a>
+      <a href="../../../Docker-Kubernetes/" class="active">Docker-Kubernetes</a>
+      <a href="../../../GPU-DeepLearning/">GPU-DeepLearning</a>
+      <a href="../../../Git/">Git</a>
+      <a href="../../../Go/">Go</a>
+      <a href="../../../HPC/">HPC</a>
+      <a href="../../../IaC/">IaC</a>
+      <a href="../../../Linux-Shell/">Linux-Shell</a>
+      <a href="../../../Middlewares/">Middlewares</a>
+      <a href="../../../Networking/">Networking</a>
+      <a href="../../../OS/">OS</a>
+      <a href="../../../Python/">Python</a>
+      <a href="../../../SoftwareTesting/">SoftwareTesting</a>
+    </div>
+  </nav>
+</header>
+<main class="main">
+
+<div class="article-layout">
+
+  <aside class="sidebar">
+    <details class="sidebar-details">
+      <summary>Docker-Kubernetes</summary>
+      <nav class="sidebar-nav">
+        <p class="sidebar-group">CKA-CKS</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/CKA-CKS/CKA-%E5%A4%87%E8%80%83/">CKA 备考</a></li>
+          <li><a href="../../../Docker-Kubernetes/CKA-CKS/CKS-%E5%A4%87%E8%80%83/">CKS 备考</a></li>
+          <li><a href="../../../Docker-Kubernetes/CKA-CKS/k8s-%E9%9D%A2%E8%AF%95%E9%A2%98%E6%B1%87%E6%80%BB/">K8s 面试题汇总</a></li>
+        </ul>
+        <p class="sidebar-group">container-platform</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/container-platform/%E9%83%A8%E7%BD%B2openshift%283.10%29/">部署 OpenShift (3.10)</a></li>
+          <li><a href="../../../Docker-Kubernetes/container-platform/%E9%83%A8%E7%BD%B2%E8%BD%BB%E9%87%8F%E7%BA%A7%E7%9A%84K8S%E5%B9%B3%E5%8F%B0-K3S/">部署轻量级 K8S 平台 - K3S</a></li>
+        </ul>
+        <p class="sidebar-group">docker</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E5%9F%BA%E7%A1%80/">Docker基础</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E5%AE%89%E5%85%A8%E9%85%8D%E7%BD%AE-Capabilities%E4%B8%8E%E5%AE%B9%E5%99%A8%E5%8A%A0%E5%9B%BA/">Docker 安全配置详解：Capabilities 与容器加固</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2UI%E5%B7%A5%E5%85%B7portainer-%E9%83%A8%E7%BD%B2redis-sentinel/">Docker部署Portainer与Redis-Sentinel</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2gitlab/">Docker部署GitLab</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2lnmp%E7%BD%91%E7%AB%99/">Docker部署LNMP网站</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2loki/">Docker部署Loki日志系统</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2nginx-tomcat-httpd-go-python%E6%9C%8D%E5%8A%A1/">Docker部署Nginx-Tomcat-Httpd-Go-Python服务</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2prometheus-grafana-cAdvisior%E7%9B%91%E6%8E%A7/">Docker部署Prometheus-Grafana-cAdvisor监控</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2%E4%BB%93%E5%BA%93%E5%B9%B3%E5%8F%B0homebox/">Docker部署Homebox仓库平台</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1%E5%B7%A5%E5%85%B7gocron/">Docker部署GoCron定时任务工具</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2%E8%B7%AF%E7%94%B1%E7%9B%91%E6%8E%A7%E5%B7%A5%E5%85%B7NextTrace/">Docker部署NextTrace路由监控工具</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%85%8D%E7%BD%AENVIDIA%20GPU/">Docker配置NVIDIA GPU</a></li>
+          <li><a href="../../../Docker-Kubernetes/docker/docker%E9%85%8D%E7%BD%AE%E4%BB%A3%E7%90%86/">Docker配置代理</a></li>
+        </ul>
+        <p class="sidebar-group">harbor</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/harbor/harbor-basics/">Harbor 基础</a></li>
+          <li><a href="../../../Docker-Kubernetes/harbor/helm%E9%83%A8%E7%BD%B2harbor/">Helm 部署 Harbor</a></li>
+        </ul>
+        <p class="sidebar-group">helm-operator</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/helm-operator/helmv3-%E5%AE%89%E8%A3%85%E4%B8%8E%E4%BD%BF%E7%94%A8/">Helm v3 安装与使用</a></li>
+          <li><a href="../../../Docker-Kubernetes/helm-operator/helm%E9%83%A8%E7%BD%B2config-syncer%28kubed%29/">Helm 部署 Config Syncer (Kubed)</a></li>
+          <li><a href="../../../Docker-Kubernetes/helm-operator/helm%E9%83%A8%E7%BD%B2dragonfly/">Helm 部署 Dragonfly</a></li>
+          <li><a href="../../../Docker-Kubernetes/helm-operator/helm%E9%83%A8%E7%BD%B2pact-broker/">Helm 部署 Pact Broker</a></li>
+          <li><a href="../../../Docker-Kubernetes/helm-operator/helm%E9%83%A8%E7%BD%B2reloader/">Helm 部署 Reloader</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-CICD</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD%20Image%20Updater/">ArgoCD Image Updater</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD%E5%9F%BA%E7%A1%80/">ArgoCD基础</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD%E5%A4%9A%E9%9B%86%E7%BE%A4GitOps%E5%AE%9E%E6%88%98/">多集群 GitOps 实战：用 Argo CD 管理上百个 Kubernetes 集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD%E9%83%A8%E7%BD%B2Helm%E5%BA%94%E7%94%A8%E6%97%B6%E5%9F%9F%E5%90%8D%E8%A7%A3%E6%9E%90%E5%A4%B1%E8%B4%A5%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5%E4%B8%8E%E8%A7%A3%E5%86%B3/">ArgoCD部署Helm应用时域名解析失败问题排查与解决</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/ArgoCD/%E5%AD%A6%E4%B9%A0%E9%93%BE%E6%8E%A5/">ArgoCD学习链接</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Claude-Code%E5%AE%9E%E7%8E%B0CICD%E8%87%AA%E5%8A%A8%E5%8C%96%E5%8F%91%E5%B8%83%E6%B5%81%E7%A8%8B/">Claude Code 实现 CI/CD 自动化发布流程详细指南</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Gitlab/helm%E9%83%A8%E7%BD%B2gitlab/">Helm部署GitLab</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Gitlab/k8s%E9%83%A8%E7%BD%B2Gitlab%2811.8.1%29-%E5%9F%BA%E4%BA%8Eyaml/">K8s部署GitLab(11.8.1)-基于YAML</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Gitlab/%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%AE%89%E8%A3%85Gitlab%2817.9.8%29/">二进制安装GitLab(17.9.8)</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Jenkins/Jenkins%E8%AF%AD%E6%B3%95-%E5%9F%BA%E4%BA%8Edocker%E9%83%A8%E7%BD%B2/">Jenkins语法-基于Docker部署</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Jenkins/docker%E9%83%A8%E7%BD%B2jenkins/">Docker部署Jenkins</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Jenkins/helm%E9%83%A8%E7%BD%B2jenkins/">Helm部署Jenkins</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Jenkins/k8s-Devops%E5%B9%B3%E5%8F%B0%E8%90%BD%E5%9C%B0-%E5%9F%BA%E4%BA%8Ejenkins/">K8s DevOps平台落地-基于Jenkins</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Jenkins/k8s%E9%83%A8%E7%BD%B2%E5%9F%BA%E4%BA%8EJenkins%282.394%29%E7%9A%84DevOps%E5%B7%A5%E5%85%B7%E9%93%BE-%E5%9F%BA%E4%BA%8Eyaml/">K8s部署基于Jenkins(2.394)的DevOps工具链-基于YAML</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Jenkins/k8s%E9%83%A8%E7%BD%B2%E5%9F%BA%E4%BA%8EJenkins%282.426.3%29%E7%9A%84Devops%E5%B7%A5%E5%85%B7%E9%93%BE-%E5%9F%BA%E4%BA%8Eyaml/">K8s部署基于Jenkins(2.426.3)的DevOps工具链-基于YAML</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Jenkins/%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%AE%89%E8%A3%85Jenkins%282.319%29/">二进制安装Jenkins(2.319)</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Kustomize/k8s%E9%85%8D%E7%BD%AE%E5%AE%9A%E5%88%B6%E5%B7%A5%E5%85%B7-kustomize/">K8s配置定制工具-Kustomize</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Tekton/k8s%E9%83%A8%E7%BD%B2%E5%8E%9F%E7%94%9F%E7%9A%84CICD%E5%B7%A5%E5%85%B7Tekton-%E5%9F%BA%E4%BA%8Eyaml/">K8s部署原生的CICD工具Tekton-基于YAML</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/Tekton/%E5%9F%BA%E4%BA%8ETekton%E7%9A%84%E4%BA%91%E5%8E%9F%E7%94%9F%E5%B9%B3%E5%8F%B0%E8%90%BD%E5%9C%B0/">基于Tekton的云原生平台落地</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/k8s%E5%8F%91%E5%B8%83%E7%AD%96%E7%95%A5-%E8%93%9D%E7%BB%BF%E9%83%A8%E7%BD%B2%E4%B8%8E%E9%87%91%E4%B8%9D%E9%9B%80%E5%8F%91%E5%B8%83/">K8s 发布策略：蓝绿部署与金丝雀发布实战</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/%E4%BD%BF%E7%94%A8github%20action%E9%83%A8%E7%BD%B2helmchart/">使用GitHub Action部署Helm Chart</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-CICD/%E5%8F%91%E5%B8%83go-python-java%E4%BB%A3%E7%A0%81%E5%88%B0K8S%E7%8E%AF%E5%A2%83/">发布Go/Python/Java代码到K8S环境</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-UI-tools</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-UI-tools/k8s-API%E6%A3%80%E6%9F%A5%E5%B7%A5%E5%85%B7kubent/">K8s API 检查工具 kubent</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-UI-tools/k8s-%E5%B0%8F%E5%B7%A5%E5%85%B7%E9%9B%86%E5%90%88/">K8s 小工具集合</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-UI-tools/k8s%E9%83%A8%E7%BD%B2-Dashboard-UI/">K8s 部署 Dashboard UI</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-UI-tools/k8s%E9%83%A8%E7%BD%B2%E5%8F%AF%E8%A7%86%E5%8C%96ui%E7%95%8C%E9%9D%A2kuboard/">K8s 部署 Kuboard</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-UI-tools/kubectl-UI%E5%B7%A5%E5%85%B7Lens/">kubectl UI 工具 Lens</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-UI-tools/kubectl-%E5%8F%AF%E8%A7%86%E5%8C%96%E6%8F%92%E4%BB%B6k9s-stern/">kubectl 可视化插件 k9s 和 stern</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-UI-tools/kuebctl-%E6%8F%92%E4%BB%B6krew-rolesum/">kubectl 插件 krew 和 rolesum</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-UI-tools/rancher%28v2.6.4%29%E7%AE%A1%E7%90%86k8s%E9%9B%86%E7%BE%A4/">Rancher (v2.6.4) 管理 K8s 集群</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-ai-gpu</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-ai-gpu/k8s%E9%85%8D%E7%BD%AENVIDIA%20GPU/">K8s 配置 NVIDIA GPU</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-backup-dr</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-backup-dr/k8s%E5%A4%87%E4%BB%BD%E4%B8%8E%E7%81%BE%E5%A4%87%E5%AE%9E%E6%88%98-%E4%B8%89%E5%B1%82%E5%AE%B9%E7%81%BE%E6%9E%B6%E6%9E%84/">K8s 备份与灾备实战：三层容灾架构</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-backup-dr/k8s%E9%9B%86%E7%BE%A4%E5%A4%87%E4%BB%BD%E6%81%A2%E5%A4%8D-Velero/">K8s集群备份恢复 - Velero</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-basic-resources</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/K8s%E5%9F%BA%E7%A1%80-pod%E8%B0%83%E5%BA%A6-%E4%BA%B2%E5%92%8C%E5%8A%9B/">K8s基础-Pod调度-亲和力</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/Python%E8%B0%83%E7%94%A8k8s-api%E5%AE%9E%E7%8E%B0%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/">Python调用K8s-API实现资源管理</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s-APIServer%E6%B7%B1%E5%BA%A6%E5%89%96%E6%9E%90-%E8%AF%B7%E6%B1%82%E9%93%BE%E8%B7%AF-%E8%AE%A4%E8%AF%81%E6%8E%88%E6%9D%83-%E7%94%9F%E4%BA%A7%E8%B0%83%E4%BC%98/">Kubernetes API Server 深度剖析：请求链路、认证授权与生产调优</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s-PodDisruptionBudget%E5%AE%9E%E6%88%98/">K8s PodDisruptionBudget 实战：优雅中断保护</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-Calico/">K8s基础-Calico</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-Finalizer%E4%B8%8E%E8%B5%84%E6%BA%90%E5%88%A0%E9%99%A4/">K8s基础-Finalizer与资源删除</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-Operator%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98-Kubebuilder/">从零开发 Kubernetes Operator：Kubebuilder 实战教程</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-Service/">K8s基础-Service</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-configMap-Secret/">K8s基础-configMap-Secret</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-daemonset/">K8s基础-DaemonSet</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-deployment/">K8s基础-Deployment</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-ingress/">K8s基础-Ingress</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-job-cronjob/">K8s基础-Job-CronJob</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-kubeadm/">K8s基础-kubeadm</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-namespace-%E8%B5%84%E6%BA%90%E5%88%86%E9%85%8D/">K8s基础-namespace-资源分配</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-pod/">K8s基础-Pod</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-pod%E8%B0%83%E5%BA%A6-%E6%A0%87%E7%AD%BE%E4%B8%8E%E9%80%89%E6%8B%A9%E5%99%A8%E5%AE%9E%E6%88%98/">Kubernetes 标签与选择器避坑：5 条核心铁律与生产级实战案例</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-statefulset/">K8s基础-StatefulSet</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-storage/">K8s基础-Storage</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-yaml/">K8s基础-YAML</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E4%B8%B4%E6%97%B6%E5%AE%B9%E5%99%A8ephemeral/">K8s基础-临时容器Ephemeral</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E5%AE%B9%E5%99%A8%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-Sidecar-Init-Ambassador-Adapter/">K8s 容器设计模式：Sidecar / Init Container / Ambassador / Adapter</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E5%AE%B9%E5%99%A8%E8%BF%90%E8%A1%8C%E6%97%B6-containerd/">K8s基础-容器运行时-containerd</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E6%9E%B6%E6%9E%84-%E7%BB%84%E4%BB%B6-%E8%B5%84%E6%BA%90/">K8s基础-架构-组件-资源</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E8%87%AA%E5%AE%9A%E4%B9%89CRD%E8%B5%84%E6%BA%90/">K8s基础-自定义CRD资源</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E8%AE%A4%E8%AF%81-%E6%8E%88%E6%9D%83-%E5%87%86%E5%85%A5/">K8s基础-认证-授权-准入</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-db-middleware</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/Operator%E9%83%A8%E7%BD%B2Redis%E9%9B%86%E7%BE%A4/">基于Operator部署Redis集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/Operator%E9%83%A8%E7%BD%B2mysql%E9%9B%86%E7%BE%A4/">Operator部署MySQL NDB集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/helm%E9%83%A8%E7%BD%B2mysql/">Helm部署MySQL</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/helm%E9%83%A8%E7%BD%B2postgreSQL/">Helm部署PostgreSQL</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/helm%E9%83%A8%E7%BD%B2rabbitmq-ha/">Helm部署RabbitMQ高可用集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/helm%E9%83%A8%E7%BD%B2strimzi-kafka/" class="current">Helm部署Strimzi Kafka</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/k8s%E5%9F%BA%E4%BA%8Eyaml%E9%83%A8%E7%BD%B2MongoDB%E9%9B%86%E7%BE%A4/">K8s基于YAML部署MongoDB集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/k8s%E5%9F%BA%E4%BA%8Eyaml%E9%83%A8%E7%BD%B2httpd%E6%9C%8D%E5%8A%A1/">K8s基于YAML部署httpd服务</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/k8s%E5%9F%BA%E4%BA%8Eyaml%E9%83%A8%E7%BD%B2mysql%E4%B8%BB%E4%BB%8E%E9%AB%98%E5%8F%AF%E7%94%A8/">K8s基于YAML部署MySQL主从高可用</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/k8s%E5%9F%BA%E4%BA%8Eyaml%E9%83%A8%E7%BD%B2redis%E9%9B%86%E7%BE%A4/">K8s基于YAML部署Redis集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-db-middleware/k8s%E9%83%A8%E7%BD%B2springcloud%E7%94%B5%E5%95%86%E9%A1%B9%E7%9B%AE/">K8s部署SpringCloud电商项目</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-installation-management</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/2025%E6%9C%80%E6%96%B0-%E4%BC%81%E4%B8%9A%E7%BA%A7%E9%AB%98%E5%8F%AF%E7%94%A8%E9%9B%86%E7%BE%A4-%E5%9F%BA%E4%BA%8Erockylinux/">2025最新-企业级高可用集群-基于rockylinux</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/etcd%E9%AB%98%E5%8F%AF%E7%94%A8%E9%85%8D%E7%BD%AE%E4%BB%A5%E5%8F%8A%E6%A8%A1%E6%8B%9F%E9%9B%86%E7%BE%A4%E6%95%85%E9%9A%9C%E5%92%8C%E6%81%A2%E5%A4%8D/">etcd高可用配置以及模拟集群故障和恢复</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/k8s-Backstage-%E5%86%85%E9%83%A8%E5%BC%80%E5%8F%91%E8%80%85%E5%B9%B3%E5%8F%B0IDP%E5%AE%9E%E6%88%98/">K8s 平台工程实战：用 Backstage 打造一站式内部开发者平台</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/k8s-cgroup-v2%E6%B7%B1%E5%BA%A6%E8%A7%A3%E6%9E%90-%E8%BF%81%E7%A7%BB%E5%AE%9E%E6%88%98%E4%B8%8E%E9%81%BF%E5%9D%91%E6%8C%87%E5%8D%97/">K8s CGroup v2 深度解析：资源隔离原理、迁移实战与生产避坑指南</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/k8s%E4%B8%A4%E5%9C%B0%E4%B8%89%E4%B8%AD%E5%BF%83%E6%9E%B6%E6%9E%84/">k8s两地三中心架构</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/k8s%E5%A4%9A%E9%9B%86%E7%BE%A4kubeconfig%E7%AE%A1%E7%90%86/">k8s多集群kubeconfig管理</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/k8s%E6%95%85%E9%9A%9C%E6%8E%92%E6%9F%A5%E6%8C%87%E5%8D%97/">k8s故障排查指南</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/k8s%E7%94%9F%E4%BA%A7%E7%8E%AF%E5%A2%83%E4%BC%98%E5%8C%96%E4%B8%8E%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/">k8s生产环境优化与最佳实践</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/k8s%E9%83%A8%E7%BD%B2%E9%98%B2%E7%81%AB%E5%A2%99%E7%AB%AF%E5%8F%A3%E9%85%8D%E7%BD%AE/">K8s部署防火墙端口配置</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/latest-version/%E5%AE%89%E8%A3%85k8s-1.35-%E5%9F%BA%E4%BA%8Erockylinux10-%E6%9C%80%E6%96%B0%E6%AD%A5%E9%AA%A4/">在 Rocky Linux 10 上安装 Kubernetes 1.35</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%AE%89%E8%A3%85k8s%E9%AB%98%E5%8F%AF%E7%94%A8%E9%9B%86%E7%BE%A4/">二进制安装k8s高可用集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.20.6-%E9%AB%98%E5%8F%AF%E7%94%A8/">安装k8s-1.20.6-高可用</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.23/">安装k8s-1.23</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.26-1.27/">安装k8s-1.26-1.27</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.28/">安装k8s-1.28</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.30-%E5%9F%BA%E4%BA%8Erockylinux/">安装k8s-1.30-基于rockylinux</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.32-%E5%9F%BA%E4%BA%8Erockylinux/">安装k8s-1.32-基于rockylinux</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.33-%E5%9F%BA%E4%BA%8Erockylinux-%E6%9C%80%E6%96%B0%E6%AD%A5%E9%AA%A4/">安装k8s-1.33-基于rockylinux-最新步骤</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/%E5%8D%87%E7%BA%A7/k8s-1.37-%E5%8D%87%E7%BA%A7%E9%A1%BB%E7%9F%A5-breaking-changes/">Kubernetes v1.37 升级破坏性变更指南</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-installation-management/%E5%8D%87%E7%BA%A7/k8s%E8%BF%81%E7%A7%BB%E5%AE%B9%E5%99%A8%E8%BF%90%E8%A1%8C%E6%97%B6-%E7%89%88%E6%9C%AC%E5%8D%87%E7%BA%A7/">k8s迁移容器运行时与版本升级</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-monitoring-logging</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/K8s%E5%85%A8%E9%9D%A2%E5%B7%A1%E6%A3%80%E8%84%9A%E6%9C%AC-%E7%94%9F%E6%88%90HTML%E5%81%A5%E5%BA%B7%E6%8A%A5%E5%91%8A/">K8s 全面巡检脚本：一键生成 HTML 健康报告</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/OpenTelemetry%E5%AE%9E%E6%88%98-%E7%BB%9F%E4%B8%80Traces-Metrics-Logs/">OpenTelemetry 实战：告别厂商锁定，统一 Traces/Metrics/Logs</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/Prometheus%E5%9F%BA%E7%A1%80/">Prometheus基础</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/Prometheus%E7%9B%91%E6%8E%A7k8s%E7%B3%BB%E7%BB%9F%E7%BB%84%E4%BB%B6/">Prometheus监控K8s系统组件</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/Prometheus%E7%9B%91%E6%8E%A7%E5%A4%96%E9%83%A8k8s%E9%9B%86%E7%BE%A4/">Prometheus监控外部K8s集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/Prometheus%E7%9B%91%E6%8E%A7%E9%9D%9E%E4%BA%91%E5%8E%9F%E7%94%9F%E5%BA%94%E7%94%A8-%E4%B8%BB%E6%9C%BA/">Prometheus监控非云原生应用-主机</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/helm%E9%83%A8%E7%BD%B2Loki-promtail-tempo-grafanaAgent%E5%85%A8%E5%AE%B6%E6%A1%B6/">Helm部署Loki+Promtail+Tempo+GrafanaAgent全家桶</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/helm%E9%83%A8%E7%BD%B2jaeger/">Helm部署Jaeger</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/helm%E9%83%A8%E7%BD%B2prometheus-stack%E5%85%A8%E5%AE%B6%E6%A1%B6/">Prometheus-Stack 全家桶：生产级部署与运维完全指南</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E6%97%A5%E5%BF%97%E7%AE%A1%E7%90%86-%E9%87%87%E9%9B%86%E6%96%B9%E6%A1%88%E4%B8%8E%E5%AE%A1%E8%AE%A1%E6%97%A5%E5%BF%97/">K8s 日志管理：基础机制、六种采集方案与审计日志实战</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E7%9B%91%E6%8E%A7EFK%2Blogstash%2Bkafka/">K8s监控EFK+logstash+kafka</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E7%9B%91%E6%8E%A7ES%287.2%29%2BKibana%287.2%29%2BFluentd%28v1.4.2%29/">K8s监控ES(7.2)+Kibana(7.2)+Fluentd(v1.4.2)</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E7%9B%91%E6%8E%A7Prometheus%28v2.2.1%29/">K8s监控Prometheus(v2.2.1)</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E7%9B%91%E6%8E%A7Prometheus%28v2.33.5%29%2BGrafana%28v8.4.5%29/">K8s监控Prometheus(v2.33.5)+Grafana(v8.4.5)</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E7%9B%91%E6%8E%A7alertmanager%28v0.14.0%29/">K8s监控Alertmanager(v0.14.0)</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E9%83%A8%E7%BD%B2elasticsearch%E9%9B%86%E7%BE%A4/">K8s部署Elasticsearch集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E9%83%A8%E7%BD%B2grafana%28v5.0.4%29/">K8s部署Grafana(v5.0.4)</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E9%83%A8%E7%BD%B2%E5%85%A8%E9%93%BE%E8%B7%AF%E8%BF%BD%E8%B8%AA-Skywalking/">K8s部署全链路追踪-Skywalking</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2Prometheus%28v2.32.1%29%E8%81%94%E9%82%A6%E9%9B%86%E7%BE%A4/">二进制部署Prometheus(v2.32.1)联邦集群</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2efk%2Blogstash%2Bkafka%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%B9%B3%E5%8F%B0/">二进制部署EFK+Logstash+Kafka日志收集平台</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2prometheus-grafana-nodeexporter/">二进制部署Prometheus-Grafana-NodeExporter</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-monitoring-logging/%E5%9F%BA%E4%BA%8Ehelm%2Boperator%E9%83%A8%E7%BD%B2ECK%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%B9%B3%E5%8F%B0/">基于Helm+Operator部署ECK日志收集平台</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-networking-service-mesh</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/Istio-Sidecar-vs-Ambient/">Istio Sidecar vs Ambient 模式对比</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/helm%E5%AE%89%E8%A3%85istio/">Helm安装Istio</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/helm%E9%83%A8%E7%BD%B2external-dns/">Helm部署External-DNS</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/helm%E9%83%A8%E7%BD%B2ingress-nginx/">Helm部署Ingress-Nginx</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/helm%E9%83%A8%E7%BD%B2tomcat/">Helm 部署 Tomcat</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/k8s-Gateway-API%E5%85%A5%E9%97%A8-Ingress%E4%B8%8B%E4%B8%80%E4%BB%A3%E6%96%B9%E6%A1%88/">Kubernetes Gateway API 入门：Ingress 的下一代方案</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/k8s%E7%B2%BE%E7%BB%86%E5%8C%96%E6%B5%81%E9%87%8F%E7%AE%A1%E7%90%86-istio/">K8s精细化流量管理-Istio</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/k8s%E9%83%A8%E7%BD%B2istio%281.13.1%29/">K8s部署Istio(1.13.1)</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/k8s%E9%9B%86%E7%BE%A4%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/">K8s集群网络安全</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-networking-service-mesh/%E4%BC%81%E4%B8%9A%E9%A1%B9%E7%9B%AE%E6%8E%A5%E5%85%A5istio%E5%AE%9E%E6%88%98/">企业项目接入Istio实战</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-scaling</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-scaling/KEDA-vs-HPA-2026%E7%BB%88%E6%9E%81%E5%AF%B9%E6%AF%94-v1.36%E7%BC%A9%E9%9B%B6/">KEDA vs HPA 2026 终极对比：v1.36 原生缩零后该选谁？</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-scaling/helm%E9%83%A8%E7%BD%B2goldilocks/">Helm部署Goldilocks</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-scaling/helm%E9%83%A8%E7%BD%B2vpa/">Helm部署VPA</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-scaling/k8s-HPA-VPA/">K8s HPA与VPA</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-scaling/k8s-%E5%9F%BA%E4%BA%8EKEDA%E7%9A%84%E5%BC%B9%E6%80%A7%E8%83%BD%E5%8A%9B/">K8s基于KEDA的弹性能力</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-scaling/k8s%E6%88%90%E6%9C%AC%E4%BC%98%E5%8C%96%E6%96%B9%E6%A1%88-FinOps%E5%AE%9E%E6%88%98/">K8s 集群成本优化方案：砍掉 60% 云账单</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-security-auth</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2capsule/">Helm部署Capsule</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2certmanager/">Helm部署Cert-Manager</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2external-secrets/">Helm部署External-Secrets</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2kyverno%E5%92%8Cpolicy-reporter/">Helm部署Kyverno和Policy-Reporter</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2oauth2proxy/">Helm部署OAuth2-Proxy</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2sonarqube/">Helm部署SonarQube</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2trivy-operator/">Helm部署Trivy-Operator</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/k8s-Admission-Webhook%E9%93%BE%E5%86%B2%E7%AA%81%E6%8E%92%E6%9F%A5-Istio-Kyverno-Gatekeeper/">当 Istio、Kyverno、Gatekeeper 三个 Webhook 同时存在，你的集群会发生什么？</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-security-auth/k8s%E5%AE%B9%E5%99%A8%E5%AE%89%E5%85%A8%E4%B8%8A%E4%B8%8B%E6%96%87-SecurityContext/">Kubernetes 容器安全上下文完全指南：从入门到生产避坑</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-springcloud</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-springcloud/SpringCloud%E9%A1%B9%E7%9B%AE%E8%BF%81%E7%A7%BB%E5%88%B0k8s%E5%AE%9E%E6%88%98/">SpringCloud 项目迁移到 K8s 实战</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-storage</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/k8s-storage/helm%E9%83%A8%E7%BD%B2nfs-subdir-external-provisioner/">Helm部署NFS Subdir External Provisioner</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-storage/k8s-ceph%E9%83%A8%E7%BD%B2%E4%B8%8E%E9%9B%86%E6%88%90/">K8s Ceph部署与集成</a></li>
+          <li><a href="../../../Docker-Kubernetes/k8s-storage/k8s-%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8CubeFS/">K8s分布式存储CubeFS</a></li>
+        </ul>
+        <p class="sidebar-group">kubeblocks</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/kubeblocks/kubeblocks%E9%83%A8%E7%BD%B2WordPress/">KubeBlocks 部署 WordPress</a></li>
+          <li><a href="../../../Docker-Kubernetes/kubeblocks/kubeblocks%E9%83%A8%E7%BD%B2%E9%AB%98%E5%8F%AF%E7%94%A8harbor%E9%9B%86%E7%BE%A4/">KubeBlocks 部署高可用 Harbor 集群</a></li>
+        </ul>
+        <p class="sidebar-group">其他</p>
+        <ul>
+          <li><a href="../../../Docker-Kubernetes/%E7%AE%80%E5%8E%86%E6%8C%87%E5%8D%97/">简历指南</a></li>
+        </ul>
+      </nav>
+    </details>
+  </aside>
+
+  <article class="article">
+    <nav class="breadcrumb">
+      <a href="../../../index.html">首页</a><span>/</span>
+      <a href="../../../Docker-Kubernetes/">Docker-Kubernetes</a><span>/</span><span>k8s-db-middleware</span>
+    </nav>
+    <h1 class="article-title">Helm部署Strimzi Kafka</h1>
+    <p class="article-meta"><span>更新于 2026-06-28</span>
+      <a href="https://github.com/hangx969/learning-notes/blob/main/Docker-Kubernetes/k8s-db-middleware/helm%E9%83%A8%E7%BD%B2strimzi-kafka.md">查看源文件</a>
+    </p>
+    <div class="article-body">
+<h1 id="介绍">介绍</h1>
+<h2 id="kafka">Kafka</h2>
+<ul>
+<li>Kafka 是一种高吞吐量的分布式发布订阅消息系统。主要用于实时数据流的处理和分析。它可以处理大量的实时数据，并提供高吞吐量、可扩展性和容错性。即使是非常普通的硬件Kafka也可以支持每秒数百万的消息。采用生产者消费者模型。</li>
+</ul>
+<p>2、相关术语：</p>
+<ul>
+<li>Broker： Kafka集群包含一个或多个服务器，服务器被称为broker。Kafka的数据是分布式存储在各个Broker上的。每个Broker都会存储一部分Topic的Partition。Kafka的Broker主要用于存储和处理实时数据流。</li>
+<li>Topic： 每条发布到Kafka集群的消息都有一个类别，这个类别被称为Topic。（物理上不同Topic的消息分开存储，逻辑上一个Topic的消息虽然保存于一个或多个broker上，但用户只需指定消息的Topic，即可生产或消费数据，而不必关心数据存于何处）</li>
+<li>Partition： Partition是物理上的概念，每个Topic包含一个或多个Partition。</li>
+<li>Producer： 负责发布消息到Kafka broker</li>
+<li>Consumer： 消息消费者，向Kafka broker读取消息的客户端。</li>
+</ul>
+<blockquote>
+<p>消费者的偏移量：</p>
+<p>在Kafka中，消费者的偏移量（Consumer Offset）是一个非常重要的概念。它表示消费者在特定的主题和分区中已经消费到的位置。</p>
+<p>Kafka的主题（Topic）被划分为一个或多个分区（Partition），每个分区中的消息都是有序的，并且每条消息在分区中都有一个唯一的序号，这个序号就是偏移量（Offset）。当消费者从分区中读取消息时，它会维护一个指针，这个指针指向下一条需要读取的消息的位置，这个位置就是消费者的偏移量。</p>
+<p>消费者的偏移量是消费者消费消息的基础，通过维护每个消费者的偏移量，Kafka可以支持消息的重复消费，也就是说，消费者可以随时将偏移量回退到之前的位置，重新消费已经消费过的消息。同时，通过正确地管理消费者的偏移量，Kafka还可以实现消费者的故障恢复和负载均衡。</p>
+</blockquote>
+<h2 id="strimzi-kafka-operator">strimzi-kafka-operator</h2>
+<ul>
+<li>
+<p>生产环境推荐的kafka部署方式为operator方式部署，Strimzi是目前最主流的operator方案。集群数据量较小的话，可以采用NFS共享存储，数据量较大的话可使用local pv存储。</p>
+</li>
+<li>
+<p>官网地址：<a href="https://strimzi.io/docs/operators/latest/deploying.html#deploying-cluster-operator-helm-chart-str">Strimzi Deploying Guide</a></p>
+</li>
+<li>
+<p>release page：<a href="https://github.com/strimzi/strimzi-kafka-operator/releases">strimzi-kafka-operator Releases - GitHub</a></p>
+</li>
+<li>
+<p>artifact hub: <a href="https://artifacthub.io/packages/helm/strimzi-kafka-operator/strimzi-kafka-operator">strimzi-kafka-operator - ArtifactHub</a></p>
+</li>
+<li>
+<p>cluster operator部署出来之后，再去手动创建kafka cluster、topic operator、user operator等CRD资源。</p>
+</li>
+<li>
+<p>cluster operator提供了这些CRD资源</p>
+</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Strimzi resource</th>
+<th style="text-align: left;">Long name</th>
+<th style="text-align: left;">Short name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Kafka</td>
+<td style="text-align: left;">kafka</td>
+<td style="text-align: left;">k</td>
+</tr>
+<tr>
+<td style="text-align: left;">Kafka Node Pool</td>
+<td style="text-align: left;">kafkanodepool</td>
+<td style="text-align: left;">knp</td>
+</tr>
+<tr>
+<td style="text-align: left;">Kafka Topic</td>
+<td style="text-align: left;">kafkatopic</td>
+<td style="text-align: left;">kt</td>
+</tr>
+<tr>
+<td style="text-align: left;">Kafka User</td>
+<td style="text-align: left;">kafkauser</td>
+<td style="text-align: left;">ku</td>
+</tr>
+<tr>
+<td style="text-align: left;">Kafka Connect</td>
+<td style="text-align: left;">kafkaconnect</td>
+<td style="text-align: left;">kc</td>
+</tr>
+<tr>
+<td style="text-align: left;">Kafka Connector</td>
+<td style="text-align: left;">kafkaconnector</td>
+<td style="text-align: left;">kctr</td>
+</tr>
+<tr>
+<td style="text-align: left;">Kafka MirrorMaker</td>
+<td style="text-align: left;">kafkamirrormaker</td>
+<td style="text-align: left;">kmm</td>
+</tr>
+<tr>
+<td style="text-align: left;">Kafka MirrorMaker 2</td>
+<td style="text-align: left;">kafkamirrormaker2</td>
+<td style="text-align: left;">kmm2</td>
+</tr>
+<tr>
+<td style="text-align: left;">Kafka Bridge</td>
+<td style="text-align: left;">kafkabridge</td>
+<td style="text-align: left;">kb</td>
+</tr>
+<tr>
+<td style="text-align: left;">Kafka Rebalance</td>
+<td style="text-align: left;">kafkarebalance</td>
+<td style="text-align: left;">kr</td>
+</tr>
+</tbody>
+</table>
+<h2 id="kafka-ui">kafka-ui</h2>
+<ul>
+<li>官网地址：<a href="https://docs.kafka-ui.provectus.io/">Kafka UI Documentation</a></li>
+<li>release page: <a href="https://github.com/provectus/kafka-ui/releases">kafka-ui Releases - GitHub</a></li>
+<li>artifact hub: <a href="https://artifacthub.io/packages/helm/kafka-ui/kafka-ui">kafka-ui - ArtifactHub</a></li>
+</ul>
+<h2 id="kafka-mirror-maker">kafka-mirror-maker</h2>
+<ul>
+<li>
+<p>官网地址：<a href="https://strimzi.io/docs/operators/latest/deploying.html#kafka-mirror-maker-str">Strimzi - Kafka Mirror Maker</a></p>
+</li>
+<li>
+<p>解决 Kafka 集群之间数据复制和数据同步的问题而诞生的 Kafka 官方的数据复制工具。在实际生产中，经常被用来实现 Kafka 数据的备份，迁移和灾备等目的。其实现原理是通过从Source Cluster消费消息，然后将消息生产到Target Cluster，即普通的消息生产和消费。用户只要通过简单的consumer配置和producer配置，启动Mirror，就可以实现准实时的数据同步。</p>
+</li>
+</ul>
+<h1 id="部署srtimzi-kafka-operator">部署srtimzi-kafka-operator</h1>
+<h2 id="下载">下载</h2>
+<div class="highlight"><pre><span></span><code>helm<span class="w"> </span>repo<span class="w"> </span>add<span class="w"> </span>strimzi<span class="w"> </span>https://strimzi.io/charts/
+helm<span class="w"> </span>repo<span class="w"> </span>update<span class="w"> </span>strimzi
+helm<span class="w"> </span>pull<span class="w"> </span>strimzi/strimzi-kafka-operator<span class="w"> </span>--version<span class="w"> </span><span class="m">0</span>.42.0
+</code></pre></div>
+
+<h2 id="配置">配置</h2>
+<ul>
+<li>开启了dashboard、watchAnyNamespace</li>
+</ul>
+<h2 id="安装">安装</h2>
+<div class="highlight"><pre><span></span><code>helm<span class="w"> </span>upgrade<span class="w"> </span>-i<span class="w"> </span>strimzi-kafka-operator<span class="w"> </span>-n<span class="w"> </span>kafka<span class="w"> </span>--create-namespace<span class="w"> </span>.<span class="w"> </span>--values<span class="w"> </span>values.yaml<span class="w">  </span><span class="c1">#--skip-crds --values $VALUES_FILE</span>
+</code></pre></div>
+
+<h2 id="卸载">卸载</h2>
+<p>完全卸载strimzi-kafka-operator之后要把CRD也删干净：</p>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>delete<span class="w"> </span>crd<span class="w"> </span>kafkabridges<span class="w"> </span>kafkaconnectors<span class="w"> </span>kafkaconnects<span class="w"> </span>kafkamirrormaker2s<span class="w"> </span>kafkamirrormakers<span class="w"> </span>kafkanodepools<span class="w"> </span>kafkarebalances<span class="w"> </span>kafkas<span class="w"> </span>kafkatopics<span class="w"> </span>kafkausers
+</code></pre></div>
+
+<h2 id="升级">升级</h2>
+<p>注意，strimzi-kafka-operator对kafka的版本是有要求的，升级strimzi的时候，需要检查现有的kafka版本是否适配：</p>
+<ul>
+<li>
+<p>说明：<a href="https://strimzi.io/docs/operators/0.45.0/deploying.html#Strimzi%20upgrade%20paths">Strimzi Upgrade Paths</a></p>
+</li>
+<li>
+<p>strimzi和kafka的supported version对应表：<a href="https://strimzi.io/downloads/">Strimzi Downloads</a></p>
+</li>
+</ul>
+<p>如果希望升级到的strimzi版本，不支持现在的kafka版本，那么需要先把strimzi升级到支持当前kafka版本的最低版本。然后把kafka升级到新版，再升级strimzi到最新版。</p>
+<h1 id="部署kafka-cluster和broker">部署kafka cluster和broker</h1>
+<ul>
+<li>cluster operator部署完之后，去部署下面几个CRD资源，这些资源也是以helm chart形式部署，chart name：commoninfra-kafka-config</li>
+</ul>
+<h2 id="kafka-cluster">kafka-cluster</h2>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kafka.strimzi.io/v1beta2</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Kafka</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{{</span><span class="w"> </span><span class="nv">.Values.commoninfra.kafka.name</span><span class="w"> </span><span class="p p-Indicator">}}</span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kafka</span>
+<span class="w">  </span><span class="nt">annotations</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">strimzi.io/kraft</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;enabled&quot;</span>
+<span class="w">    </span><span class="nt">strimzi.io/node-pools</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;enabled&quot;</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">kafka</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{{</span><span class="w"> </span><span class="nv">.Values.commoninfra.kafka.version</span><span class="w"> </span><span class="p p-Indicator">}}</span>
+<span class="w">    </span><span class="nt">listeners</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tls</span>
+<span class="w">        </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">9093</span>
+<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">internal</span>
+<span class="w">        </span><span class="nt">tls</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">        </span><span class="nt">authentication</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tls</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">external</span>
+<span class="w">        </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">9094</span>
+<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">loadbalancer</span>
+<span class="w">        </span><span class="nt">tls</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">        </span><span class="nt">authentication</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tls</span>
+<span class="w">        </span><span class="nt">configuration</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">bootstrap</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">annotations</span><span class="p">:</span>
+<span class="w">              </span><span class="c1">#service.beta.kubernetes.io/azure-load-balancer-internal: &quot;true&quot;</span>
+<span class="w">              </span><span class="c1">#external-dns.alpha.kubernetes.io/hostname: kafka.{{ .Values.environment }}.{{ .Values.product }}#.{{ .Values.dns.domain }}</span>
+<span class="w">              </span><span class="c1">#external-dns.alpha.kubernetes.io/ttl: &quot;600&quot;</span>
+<span class="w">            </span><span class="nt">alternativeNames</span><span class="p">:</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kafka.{{ .Values.environment }}.{{ .Values.product }}</span><span class="w"> </span><span class="c1">#.{{ .Values.dns.domain }}</span>
+<span class="w">          </span><span class="nt">brokers</span><span class="p">:</span>
+<span class="w">            </span><span class="p p-Indicator">{{</span><span class="nv">- $root</span><span class="w"> </span><span class="p p-Indicator">:</span><span class="nv">= . -</span><span class="p p-Indicator">}}</span>
+<span class="w">            </span><span class="p p-Indicator">{{</span><span class="nv">- range $i</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">$e</span><span class="w"> </span><span class="p p-Indicator">:</span><span class="nv">= until (int .Values.commoninfra.kafka.replicas)</span><span class="w"> </span><span class="p p-Indicator">}}</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">broker</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{{</span><span class="w"> </span><span class="nv">$i</span><span class="w"> </span><span class="p p-Indicator">}}</span>
+<span class="w">              </span><span class="nt">annotations</span><span class="p">:</span>
+<span class="w">                </span><span class="c1">#service.beta.kubernetes.io/azure-load-balancer-internal: &quot;true&quot;</span>
+<span class="w">                </span><span class="c1">#external-dns.alpha.kubernetes.io/hostname: kafka-broker-{{ $i }}.{{ $root.Values.environment }}.{{ $root.Values.product }}.{{ $root.Values.dns.domain }}</span>
+<span class="w">                </span><span class="c1">#external-dns.alpha.kubernetes.io/ttl: &quot;600&quot;</span>
+<span class="w">              </span><span class="nt">advertisedHost</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kafka-broker-{{ $i }}.{{ $root.Values.environment }}.{{ $root.Values.product }}</span><span class="w"> </span><span class="c1">#.{{ $root.Values.dns.domain }}</span>
+<span class="w">            </span><span class="p p-Indicator">{{</span><span class="nv">- end</span><span class="w"> </span><span class="p p-Indicator">}}</span>
+<span class="w">    </span><span class="nt">authorization</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">simple</span>
+<span class="w">    </span><span class="nt">resources</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{{</span><span class="nv">- .Values.commoninfra.kafka.kafka_resources | toYaml | trim | nindent 6</span><span class="w"> </span><span class="p p-Indicator">}}</span>
+<span class="w">    </span><span class="nt">jvmOptions</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">-Xms</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2500m</span>
+<span class="w">      </span><span class="nt">-Xmx</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2500m</span>
+<span class="w">    </span><span class="nt">config</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">offsets.topic.replication.factor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
+<span class="w">      </span><span class="nt">transaction.state.log.replication.factor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
+<span class="w">      </span><span class="nt">transaction.state.log.min.isr</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span>
+<span class="w">      </span><span class="nt">default.replication.factor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
+<span class="w">      </span><span class="nt">min.insync.replicas</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span>
+<span class="w">      </span><span class="nt">log.retention.ms</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">604800000</span>
+<span class="w">      </span><span class="nt">delete.topic.enable</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">      </span><span class="nt">num.partitions</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">6</span>
+<span class="w">      </span><span class="nt">log.segment.bytes</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">104857600</span>
+<span class="w">      </span><span class="nt">log.roll.ms</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">86400000</span>
+<span class="w">      </span><span class="nt">auto.create.topics.enable</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">      </span><span class="nt">socket.send.buffer.bytes</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">102400</span>
+<span class="w">      </span><span class="nt">socket.receive.buffer.bytes</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">102400</span>
+<span class="w">      </span><span class="nt">socket.request.max.bytes</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">104857600</span>
+<span class="w">      </span><span class="nt">replica.fetch.max.bytes</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">104857600</span>
+<span class="w">      </span><span class="nt">message.max.bytes</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">104857600</span>
+<span class="w">    </span><span class="nt">metricsConfig</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">jmxPrometheusExporter</span>
+<span class="w">      </span><span class="nt">valueFrom</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">configMapKeyRef</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kafka-metrics</span>
+<span class="w">          </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kafka-metrics-config.yml</span>
+<span class="w">    </span><span class="nt">template</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">clusterCaCert</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">metadata</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">annotations</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">kubed.appscode.com/sync</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;config-sync-kafka&quot;</span>
+<span class="w">  </span><span class="nt">entityOperator</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">topicOperator</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">resources</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">requests</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">128Mi</span>
+<span class="w">          </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;100m&quot;</span>
+<span class="w">        </span><span class="nt">limits</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">128Mi</span>
+<span class="w">          </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;750m&quot;</span>
+<span class="w">      </span><span class="nt">jvmOptions</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">-Xms</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">256m</span>
+<span class="w">        </span><span class="nt">-Xmx</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">256m</span>
+<span class="w">    </span><span class="nt">userOperator</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">resources</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">requests</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">128Mi</span>
+<span class="w">          </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;100m&quot;</span>
+<span class="w">        </span><span class="nt">limits</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">128Mi</span>
+<span class="w">          </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;750m&quot;</span>
+<span class="w">      </span><span class="nt">jvmOptions</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">-Xms</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">256m</span>
+<span class="w">        </span><span class="nt">-Xmx</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">256m</span>
+<span class="w">  </span><span class="nt">kafkaExporter</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span>
+</code></pre></div>
+
+<h2 id="kafka-broker-nodepool">kafka-broker-nodepool</h2>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kafka.strimzi.io/v1beta2</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">KafkaNodePool</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kafka</span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kafka</span>
+<span class="w">  </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">strimzi.io/cluster</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{{</span><span class="w"> </span><span class="nv">.Values.commoninfra.kafka.name</span><span class="w"> </span><span class="p p-Indicator">}}</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">replicas</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{{</span><span class="w"> </span><span class="nv">.Values.commoninfra.kafka.replicas</span><span class="w"> </span><span class="p p-Indicator">}}</span>
+<span class="w">  </span><span class="nt">roles</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">broker</span>
+<span class="w">  </span><span class="nt">storage</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{{</span><span class="w"> </span><span class="nv">.Values.commoninfra.kafka.storage.type</span><span class="w"> </span><span class="p p-Indicator">}}</span>
+<span class="w">    </span><span class="nt">size</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{{</span><span class="w"> </span><span class="nv">.Values.commoninfra.kafka.storage.size</span><span class="w"> </span><span class="p p-Indicator">}}</span>
+<span class="w">    </span><span class="nt">class</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{{</span><span class="w"> </span><span class="nv">.Values.commoninfra.kafka.storage.class</span><span class="w"> </span><span class="p p-Indicator">}}</span>
+</code></pre></div>
+
+<h2 id="kafka-controller-nodepool">kafka-controller-nodepool</h2>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kafka.strimzi.io/v1beta2</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">KafkaNodePool</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">controller</span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kafka</span>
+<span class="w">  </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">strimzi.io/cluster</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{{</span><span class="w"> </span><span class="nv">.Values.commoninfra.kafka.name</span><span class="w"> </span><span class="p p-Indicator">}}</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">replicas</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{{</span><span class="w"> </span><span class="nv">.Values.commoninfra.kafka.replicas</span><span class="w"> </span><span class="p p-Indicator">}}</span>
+<span class="w">  </span><span class="nt">roles</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">controller</span>
+<span class="w">  </span><span class="nt">resources</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{{</span><span class="nv">- .Values.commoninfra.kafka.kafka_controller_resources | toYaml | trim | nindent 4</span><span class="w"> </span><span class="p p-Indicator">}}</span>
+<span class="w">  </span><span class="nt">storage</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{{</span><span class="w"> </span><span class="nv">.Values.commoninfra.kafka.storage.type</span><span class="w"> </span><span class="p p-Indicator">}}</span>
+<span class="w">    </span><span class="nt">size</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{{</span><span class="w"> </span><span class="nv">.Values.commoninfra.kafka.storage.size</span><span class="w"> </span><span class="p p-Indicator">}}</span>
+<span class="w">    </span><span class="nt">class</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{{</span><span class="w"> </span><span class="nv">.Values.commoninfra.kafka.storage.class</span><span class="w"> </span><span class="p p-Indicator">}}</span>
+</code></pre></div>
+
+<blockquote>
+<p>以上两种KafkaNodepool:</p>
+<ol>
+<li><strong>Controller角色</strong>：</li>
+<li><strong>Controller</strong>是Kafka集群中的管理节点，负责管理分区（Partition）和副本（Replica）的状态。它负责监控Broker的健康状态，并在Broker失效时进行故障转移，确保集群的高可用性。Controller还负责处理分区领导者的选举和副本的同步。</li>
+<li><strong>Broker角色</strong>：</li>
+<li><strong>Broker</strong>是Kafka集群中的消息存储和处理节点。它负责接收生产者发送的消息，并将消息存储在相应的分区中。同时，Broker也负责处理消费者拉取消息的请求。一个Kafka集群通常由多个Broker组成，每个Broker可以容纳多个主题（Topic）和分区（Partition）。</li>
+</ol>
+<p>（Kafka 3.4+ 支持分离 Controller 角色，独立管理避免单点故障）</p>
+</blockquote>
+<h2 id="kafka-metrics-config">kafka-metrics-config</h2>
+<div class="highlight"><pre><span></span><code><span class="c1"># This file is copy from</span>
+<span class="c1"># https://github.com/strimzi/strimzi-kafka-operator/blob/&lt;strimzi_version&gt;/examples/metrics/kafka-metrics.yaml</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ConfigMap</span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kafka-metrics</span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kafka</span>
+<span class="w">  </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">strimzi</span>
+<span class="nt">data</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">kafka-metrics-config.yml</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">    </span><span class="no"># See https://github.com/prometheus/jmx_exporter for more info about JMX Prometheus Exporter metrics</span>
+<span class="w">    </span><span class="no">lowercaseOutputName: true</span>
+<span class="w">    </span><span class="no">rules:</span>
+<span class="w">    </span><span class="no"># Special cases and very specific rules</span>
+<span class="w">    </span><span class="no">- pattern: kafka.server&lt;type=(.+), name=(.+), clientId=(.+), topic=(.+), partition=(.*)&gt;&lt;&gt;Value</span>
+<span class="w">      </span><span class="no">name: kafka_server_$1_$2</span>
+<span class="w">      </span><span class="no">type: GAUGE</span>
+<span class="w">      </span><span class="no">labels:</span>
+<span class="w">        </span><span class="no">clientId: &quot;$3&quot;</span>
+<span class="w">        </span><span class="no">topic: &quot;$4&quot;</span>
+<span class="w">        </span><span class="no">partition: &quot;$5&quot;</span>
+<span class="w">    </span><span class="no">- pattern: kafka.server&lt;type=(.+), name=(.+), clientId=(.+), brokerHost=(.+), brokerPort=(.+)&gt;&lt;&gt;Value</span>
+<span class="w">      </span><span class="no">name: kafka_server_$1_$2</span>
+<span class="w">      </span><span class="no">type: GAUGE</span>
+<span class="w">      </span><span class="no">labels:</span>
+<span class="w">        </span><span class="no">clientId: &quot;$3&quot;</span>
+<span class="w">        </span><span class="no">broker: &quot;$4:$5&quot;</span>
+<span class="w">    </span><span class="no">- pattern: kafka.server&lt;type=(.+), cipher=(.+), protocol=(.+), listener=(.+), networkProcessor=(.+)&gt;&lt;&gt;connections</span>
+<span class="w">      </span><span class="no">name: kafka_server_$1_connections_tls_info</span>
+<span class="w">      </span><span class="no">type: GAUGE</span>
+<span class="w">      </span><span class="no">labels:</span>
+<span class="w">        </span><span class="no">cipher: &quot;$2&quot;</span>
+<span class="w">        </span><span class="no">protocol: &quot;$3&quot;</span>
+<span class="w">        </span><span class="no">listener: &quot;$4&quot;</span>
+<span class="w">        </span><span class="no">networkProcessor: &quot;$5&quot;</span>
+<span class="w">    </span><span class="no">- pattern: kafka.server&lt;type=(.+), clientSoftwareName=(.+), clientSoftwareVersion=(.+), listener=(.+), networkProcessor=(.+)&gt;&lt;&gt;connections</span>
+<span class="w">      </span><span class="no">name: kafka_server_$1_connections_software</span>
+<span class="w">      </span><span class="no">type: GAUGE</span>
+<span class="w">      </span><span class="no">labels:</span>
+<span class="w">        </span><span class="no">clientSoftwareName: &quot;$2&quot;</span>
+<span class="w">        </span><span class="no">clientSoftwareVersion: &quot;$3&quot;</span>
+<span class="w">        </span><span class="no">listener: &quot;$4&quot;</span>
+<span class="w">        </span><span class="no">networkProcessor: &quot;$5&quot;</span>
+<span class="w">    </span><span class="no">- pattern: &quot;kafka.server&lt;type=(.+), listener=(.+), networkProcessor=(.+)&gt;&lt;&gt;(.+-total):&quot;</span>
+<span class="w">      </span><span class="no">name: kafka_server_$1_$4</span>
+<span class="w">      </span><span class="no">type: COUNTER</span>
+<span class="w">      </span><span class="no">labels:</span>
+<span class="w">        </span><span class="no">listener: &quot;$2&quot;</span>
+<span class="w">        </span><span class="no">networkProcessor: &quot;$3&quot;</span>
+<span class="w">    </span><span class="no">- pattern: &quot;kafka.server&lt;type=(.+), listener=(.+), networkProcessor=(.+)&gt;&lt;&gt;(.+):&quot;</span>
+<span class="w">      </span><span class="no">name: kafka_server_$1_$4</span>
+<span class="w">      </span><span class="no">type: GAUGE</span>
+<span class="w">      </span><span class="no">labels:</span>
+<span class="w">        </span><span class="no">listener: &quot;$2&quot;</span>
+<span class="w">        </span><span class="no">networkProcessor: &quot;$3&quot;</span>
+<span class="w">    </span><span class="no">- pattern: kafka.server&lt;type=(.+), listener=(.+), networkProcessor=(.+)&gt;&lt;&gt;(.+-total)</span>
+<span class="w">      </span><span class="no">name: kafka_server_$1_$4</span>
+<span class="w">      </span><span class="no">type: COUNTER</span>
+<span class="w">      </span><span class="no">labels:</span>
+<span class="w">        </span><span class="no">listener: &quot;$2&quot;</span>
+<span class="w">        </span><span class="no">networkProcessor: &quot;$3&quot;</span>
+<span class="w">    </span><span class="no">- pattern: kafka.server&lt;type=(.+), listener=(.+), networkProcessor=(.+)&gt;&lt;&gt;(.+)</span>
+<span class="w">      </span><span class="no">name: kafka_server_$1_$4</span>
+<span class="w">      </span><span class="no">type: GAUGE</span>
+<span class="w">      </span><span class="no">labels:</span>
+<span class="w">        </span><span class="no">listener: &quot;$2&quot;</span>
+<span class="w">        </span><span class="no">networkProcessor: &quot;$3&quot;</span>
+<span class="w">    </span><span class="no"># Some percent metrics use MeanRate attribute</span>
+<span class="w">    </span><span class="no"># Ex) kafka.server&lt;type=(KafkaRequestHandlerPool), name=(RequestHandlerAvgIdlePercent)&gt;&lt;&gt;MeanRate</span>
+<span class="w">    </span><span class="no">- pattern: kafka.(\w+)&lt;type=(.+), name=(.+)Percent\w*&gt;&lt;&gt;MeanRate</span>
+<span class="w">      </span><span class="no">name: kafka_$1_$2_$3_percent</span>
+<span class="w">      </span><span class="no">type: GAUGE</span>
+<span class="w">    </span><span class="no"># Generic gauges for percents</span>
+<span class="w">    </span><span class="no">- pattern: kafka.(\w+)&lt;type=(.+), name=(.+)Percent\w*&gt;&lt;&gt;Value</span>
+<span class="w">      </span><span class="no">name: kafka_$1_$2_$3_percent</span>
+<span class="w">      </span><span class="no">type: GAUGE</span>
+<span class="w">    </span><span class="no">- pattern: kafka.(\w+)&lt;type=(.+), name=(.+)Percent\w*, (.+)=(.+)&gt;&lt;&gt;Value</span>
+<span class="w">      </span><span class="no">name: kafka_$1_$2_$3_percent</span>
+<span class="w">      </span><span class="no">type: GAUGE</span>
+<span class="w">      </span><span class="no">labels:</span>
+<span class="w">        </span><span class="no">&quot;$4&quot;: &quot;$5&quot;</span>
+<span class="w">    </span><span class="no"># Generic per-second counters with 0-2 key/value pairs</span>
+<span class="w">    </span><span class="no">- pattern: kafka.(\w+)&lt;type=(.+), name=(.+)PerSec\w*, (.+)=(.+), (.+)=(.+)&gt;&lt;&gt;Count</span>
+<span class="w">      </span><span class="no">name: kafka_$1_$2_$3_total</span>
+<span class="w">      </span><span class="no">type: COUNTER</span>
+<span class="w">      </span><span class="no">labels:</span>
+<span class="w">        </span><span class="no">&quot;$4&quot;: &quot;$5&quot;</span>
+<span class="w">        </span><span class="no">&quot;$6&quot;: &quot;$7&quot;</span>
+<span class="w">    </span><span class="no">- pattern: kafka.(\w+)&lt;type=(.+), name=(.+)PerSec\w*, (.+)=(.+)&gt;&lt;&gt;Count</span>
+<span class="w">      </span><span class="no">name: kafka_$1_$2_$3_total</span>
+<span class="w">      </span><span class="no">type: COUNTER</span>
+<span class="w">      </span><span class="no">labels:</span>
+<span class="w">        </span><span class="no">&quot;$4&quot;: &quot;$5&quot;</span>
+<span class="w">    </span><span class="no">- pattern: kafka.(\w+)&lt;type=(.+), name=(.+)PerSec\w*&gt;&lt;&gt;Count</span>
+<span class="w">      </span><span class="no">name: kafka_$1_$2_$3_total</span>
+<span class="w">      </span><span class="no">type: COUNTER</span>
+<span class="w">    </span><span class="no"># Generic gauges with 0-2 key/value pairs</span>
+<span class="w">    </span><span class="no">- pattern: kafka.(\w+)&lt;type=(.+), name=(.+), (.+)=(.+), (.+)=(.+)&gt;&lt;&gt;Value</span>
+<span class="w">      </span><span class="no">name: kafka_$1_$2_$3</span>
+<span class="w">      </span><span class="no">type: GAUGE</span>
+<span class="w">      </span><span class="no">labels:</span>
+<span class="w">        </span><span class="no">&quot;$4&quot;: &quot;$5&quot;</span>
+<span class="w">        </span><span class="no">&quot;$6&quot;: &quot;$7&quot;</span>
+<span class="w">    </span><span class="no">- pattern: kafka.(\w+)&lt;type=(.+), name=(.+), (.+)=(.+)&gt;&lt;&gt;Value</span>
+<span class="w">      </span><span class="no">name: kafka_$1_$2_$3</span>
+<span class="w">      </span><span class="no">type: GAUGE</span>
+<span class="w">      </span><span class="no">labels:</span>
+<span class="w">        </span><span class="no">&quot;$4&quot;: &quot;$5&quot;</span>
+<span class="w">    </span><span class="no">- pattern: kafka.(\w+)&lt;type=(.+), name=(.+)&gt;&lt;&gt;Value</span>
+<span class="w">      </span><span class="no">name: kafka_$1_$2_$3</span>
+<span class="w">      </span><span class="no">type: GAUGE</span>
+<span class="w">    </span><span class="no"># Emulate Prometheus &#39;Summary&#39; metrics for the exported &#39;Histogram&#39;s.</span>
+<span class="w">    </span><span class="no"># Note that these are missing the &#39;_sum&#39; metric!</span>
+<span class="w">    </span><span class="no">- pattern: kafka.(\w+)&lt;type=(.+), name=(.+), (.+)=(.+), (.+)=(.+)&gt;&lt;&gt;Count</span>
+<span class="w">      </span><span class="no">name: kafka_$1_$2_$3_count</span>
+<span class="w">      </span><span class="no">type: COUNTER</span>
+<span class="w">      </span><span class="no">labels:</span>
+<span class="w">        </span><span class="no">&quot;$4&quot;: &quot;$5&quot;</span>
+<span class="w">        </span><span class="no">&quot;$6&quot;: &quot;$7&quot;</span>
+<span class="w">    </span><span class="no">- pattern: kafka.(\w+)&lt;type=(.+), name=(.+), (.+)=(.*), (.+)=(.+)&gt;&lt;&gt;(\d+)thPercentile</span>
+<span class="w">      </span><span class="no">name: kafka_$1_$2_$3</span>
+<span class="w">      </span><span class="no">type: GAUGE</span>
+<span class="w">      </span><span class="no">labels:</span>
+<span class="w">        </span><span class="no">&quot;$4&quot;: &quot;$5&quot;</span>
+<span class="w">        </span><span class="no">&quot;$6&quot;: &quot;$7&quot;</span>
+<span class="w">        </span><span class="no">quantile: &quot;0.$8&quot;</span>
+<span class="w">    </span><span class="no">- pattern: kafka.(\w+)&lt;type=(.+), name=(.+), (.+)=(.+)&gt;&lt;&gt;Count</span>
+<span class="w">      </span><span class="no">name: kafka_$1_$2_$3_count</span>
+<span class="w">      </span><span class="no">type: COUNTER</span>
+<span class="w">      </span><span class="no">labels:</span>
+<span class="w">        </span><span class="no">&quot;$4&quot;: &quot;$5&quot;</span>
+<span class="w">    </span><span class="no">- pattern: kafka.(\w+)&lt;type=(.+), name=(.+), (.+)=(.*)&gt;&lt;&gt;(\d+)thPercentile</span>
+<span class="w">      </span><span class="no">name: kafka_$1_$2_$3</span>
+<span class="w">      </span><span class="no">type: GAUGE</span>
+<span class="w">      </span><span class="no">labels:</span>
+<span class="w">        </span><span class="no">&quot;$4&quot;: &quot;$5&quot;</span>
+<span class="w">        </span><span class="no">quantile: &quot;0.$6&quot;</span>
+<span class="w">    </span><span class="no">- pattern: kafka.(\w+)&lt;type=(.+), name=(.+)&gt;&lt;&gt;Count</span>
+<span class="w">      </span><span class="no">name: kafka_$1_$2_$3_count</span>
+<span class="w">      </span><span class="no">type: COUNTER</span>
+<span class="w">    </span><span class="no">- pattern: kafka.(\w+)&lt;type=(.+), name=(.+)&gt;&lt;&gt;(\d+)thPercentile</span>
+<span class="w">      </span><span class="no">name: kafka_$1_$2_$3</span>
+<span class="w">      </span><span class="no">type: GAUGE</span>
+<span class="w">      </span><span class="no">labels:</span>
+<span class="w">        </span><span class="no">quantile: &quot;0.$4&quot;</span>
+<span class="w">    </span><span class="no"># KRaft overall related metrics</span>
+<span class="w">    </span><span class="no"># distinguish between always increasing COUNTER (total and max) and variable GAUGE (all others) metrics</span>
+<span class="w">    </span><span class="no">- pattern: &quot;kafka.server&lt;type=raft-metrics&gt;&lt;&gt;(.+-total|.+-max):&quot;</span>
+<span class="w">      </span><span class="no">name: kafka_server_raftmetrics_$1</span>
+<span class="w">      </span><span class="no">type: COUNTER</span>
+<span class="w">    </span><span class="no">- pattern: &quot;kafka.server&lt;type=raft-metrics&gt;&lt;&gt;(.+):&quot;</span>
+<span class="w">      </span><span class="no">name: kafka_server_raftmetrics_$1</span>
+<span class="w">      </span><span class="no">type: GAUGE</span>
+<span class="w">    </span><span class="no"># KRaft &quot;low level&quot; channels related metrics</span>
+<span class="w">    </span><span class="no"># distinguish between always increasing COUNTER (total and max) and variable GAUGE (all others) metrics</span>
+<span class="w">    </span><span class="no">- pattern: &quot;kafka.server&lt;type=raft-channel-metrics&gt;&lt;&gt;(.+-total|.+-max):&quot;</span>
+<span class="w">      </span><span class="no">name: kafka_server_raftchannelmetrics_$1</span>
+<span class="w">      </span><span class="no">type: COUNTER</span>
+<span class="w">    </span><span class="no">- pattern: &quot;kafka.server&lt;type=raft-channel-metrics&gt;&lt;&gt;(.+):&quot;</span>
+<span class="w">      </span><span class="no">name: kafka_server_raftchannelmetrics_$1</span>
+<span class="w">      </span><span class="no">type: GAUGE</span>
+<span class="w">    </span><span class="no"># Broker metrics related to fetching metadata topic records in KRaft mode</span>
+<span class="w">    </span><span class="no">- pattern: &quot;kafka.server&lt;type=broker-metadata-metrics&gt;&lt;&gt;(.+):&quot;</span>
+<span class="w">      </span><span class="no">name: kafka_server_brokermetadatametrics_$1</span>
+<span class="w">      </span><span class="no">type: GAUGE</span>
+</code></pre></div>
+
+<h2 id="strimzi-pod-monitor">strimzi-pod-monitor</h2>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">monitoring.coreos.com/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PodMonitor</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cluster-operator-metrics</span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">monitoring</span>
+<span class="w">  </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">strimzi</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">selector</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">matchLabels</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">strimzi.io/kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cluster-operator</span>
+<span class="w">  </span><span class="nt">namespaceSelector</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">any</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">  </span><span class="nt">podMetricsEndpoints</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/metrics</span>
+<span class="w">    </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">http</span>
+<span class="nn">---</span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">monitoring.coreos.com/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PodMonitor</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">entity-operator-metrics</span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">monitoring</span>
+<span class="w">  </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">strimzi</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">selector</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">matchLabels</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">app.kubernetes.io/name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">entity-operator</span>
+<span class="w">  </span><span class="nt">namespaceSelector</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">any</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">  </span><span class="nt">podMetricsEndpoints</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/metrics</span>
+<span class="w">    </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">healthcheck</span>
+<span class="nn">---</span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">monitoring.coreos.com/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PodMonitor</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">bridge-metrics</span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">monitoring</span>
+<span class="w">  </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">strimzi</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">selector</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">matchLabels</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">strimzi.io/kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">KafkaBridge</span>
+<span class="w">  </span><span class="nt">namespaceSelector</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">any</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">  </span><span class="nt">podMetricsEndpoints</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/metrics</span>
+<span class="w">    </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">rest-api</span>
+<span class="nn">---</span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">monitoring.coreos.com/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PodMonitor</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kafka-resources-metrics</span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">monitoring</span>
+<span class="w">  </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">strimzi</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">selector</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">matchExpressions</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;strimzi.io/kind&quot;</span>
+<span class="w">        </span><span class="nt">operator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">In</span>
+<span class="w">        </span><span class="nt">values</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;Kafka&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;KafkaConnect&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;KafkaMirrorMaker&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;KafkaMirrorMaker2&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="nt">namespaceSelector</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">any</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">  </span><span class="nt">podMetricsEndpoints</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/metrics</span>
+<span class="w">    </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tcp-prometheus</span>
+<span class="w">    </span><span class="nt">relabelings</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">separator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">;</span>
+<span class="w">      </span><span class="nt">regex</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">__meta_kubernetes_pod_label_(strimzi_io_.+)</span>
+<span class="w">      </span><span class="nt">replacement</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$1</span>
+<span class="w">      </span><span class="nt">action</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">labelmap</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">sourceLabels</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">__meta_kubernetes_namespace</span><span class="p p-Indicator">]</span>
+<span class="w">      </span><span class="nt">separator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">;</span>
+<span class="w">      </span><span class="nt">regex</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">(.*)</span>
+<span class="w">      </span><span class="nt">targetLabel</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">namespace</span>
+<span class="w">      </span><span class="nt">replacement</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$1</span>
+<span class="w">      </span><span class="nt">action</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">replace</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">sourceLabels</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">__meta_kubernetes_pod_name</span><span class="p p-Indicator">]</span>
+<span class="w">      </span><span class="nt">separator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">;</span>
+<span class="w">      </span><span class="nt">regex</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">(.*)</span>
+<span class="w">      </span><span class="nt">targetLabel</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kubernetes_pod_name</span>
+<span class="w">      </span><span class="nt">replacement</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$1</span>
+<span class="w">      </span><span class="nt">action</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">replace</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">sourceLabels</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">__meta_kubernetes_pod_node_name</span><span class="p p-Indicator">]</span>
+<span class="w">      </span><span class="nt">separator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">;</span>
+<span class="w">      </span><span class="nt">regex</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">(.*)</span>
+<span class="w">      </span><span class="nt">targetLabel</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">node_name</span>
+<span class="w">      </span><span class="nt">replacement</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$1</span>
+<span class="w">      </span><span class="nt">action</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">replace</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">sourceLabels</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">__meta_kubernetes_pod_host_ip</span><span class="p p-Indicator">]</span>
+<span class="w">      </span><span class="nt">separator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">;</span>
+<span class="w">      </span><span class="nt">regex</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">(.*)</span>
+<span class="w">      </span><span class="nt">targetLabel</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">node_ip</span>
+<span class="w">      </span><span class="nt">replacement</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$1</span>
+<span class="w">      </span><span class="nt">action</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">replace</span>
+</code></pre></div>
+
+<h2 id="values">values</h2>
+<ul>
+<li>values.yaml</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="nt">environment</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;hanxux&quot;</span>
+<span class="nt">cloud</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;azurechinacloud&quot;</span><span class="w"> </span><span class="c1">#azurecloudchina</span>
+<span class="nt">product</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;local&quot;</span>
+<span class="c1">#dns:</span>
+<span class="w">  </span><span class="c1">#domain: &quot;onepilot.azurecn.autoheim.net&quot;</span>
+<span class="w">  </span><span class="c1">#subscription_id: &quot;e8aaa21f-52cf-48d2-9293-796ab1dddaeb&quot;</span>
+<span class="w">  </span><span class="c1">#resource_group_name: &quot;rg-es-identity-dns-chinanorth3&quot;</span>
+<span class="nt">commoninfra</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">kafka</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kafka</span>
+<span class="w">    </span><span class="nt">zoneredundant</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;false&quot;</span>
+<span class="w">    </span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3.7.1</span>
+<span class="w">    </span><span class="nt">replicas</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
+<span class="w">    </span><span class="nt">storage</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">persistent-claim</span>
+<span class="w">      </span><span class="nt">size</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;1Gi&quot;</span>
+<span class="w">      </span><span class="nt">class</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sc-nfs</span>
+<span class="w">    </span><span class="nt">kafka_controller_resources</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">requests</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">300m</span>
+<span class="w">        </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">200Mi</span>
+<span class="w">      </span><span class="nt">limits</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">600m</span>
+<span class="w">        </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2Gi</span>
+<span class="w">    </span><span class="nt">kafka_resources</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">requests</span><span class="p">:</span>
+<span class="w">        </span><span class="c1">## see https://github.com/strimzi/strimzi-kafka-bridge/issues/731</span>
+<span class="w">        </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">300m</span>
+<span class="w">        </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">200Mi</span>
+<span class="w">      </span><span class="nt">limits</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">600m</span>
+<span class="w">        </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2Gi</span>
+</code></pre></div>
+
+<p><div class="callout callout-tip" markdown="1"><br />
+<p class="callout-title">提示</p></p>
+<ul>
+<li>上面的是仿照ado中的配置，但是在本地nodepool创建不出来。</li>
+<li>下面用官网给的示例可以成功创建：<a href="https://github.com/strimzi/strimzi-kafka-operator/blob/0.44.0/examples/kafka/kraft/kafka-single-node.yaml">kafka-single-node.yaml - GitHub</a></li>
+</ul>
+</div>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kafka.strimzi.io/v1beta2</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">KafkaNodePool</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dual-role</span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kafka</span>
+<span class="w">  </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">strimzi.io/cluster</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-cluster</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">replicas</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="w">  </span><span class="nt">roles</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">controller</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">broker</span>
+<span class="w">  </span><span class="nt">storage</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">jbod</span>
+<span class="w">    </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span>
+<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">persistent-claim</span>
+<span class="w">        </span><span class="nt">size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1Gi</span>
+<span class="w">        </span><span class="nt">class</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sc-nfs</span>
+<span class="w">        </span><span class="nt">deleteClaim</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">        </span><span class="nt">kraftMetadata</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">shared</span>
+<span class="l l-Scalar l-Scalar-Plain">--</span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kafka.strimzi.io/v1beta2</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Kafka</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-cluster</span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kafka</span>
+<span class="w">  </span><span class="nt">annotations</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">strimzi.io/node-pools</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">enabled</span>
+<span class="w">    </span><span class="nt">strimzi.io/kraft</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">enabled</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">kafka</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3.7.1</span>
+<span class="w">    </span><span class="c1">#metadataVersion: 3.8-IV0</span>
+<span class="w">    </span><span class="nt">authorization</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">simple</span>
+<span class="w">    </span><span class="nt">listeners</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">plain</span>
+<span class="w">        </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">9092</span>
+<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">internal</span>
+<span class="w">        </span><span class="nt">tls</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tls</span>
+<span class="w">        </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">9093</span>
+<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">internal</span>
+<span class="w">        </span><span class="nt">tls</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">    </span><span class="nt">config</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">offsets.topic.replication.factor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="w">      </span><span class="nt">transaction.state.log.replication.factor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="w">      </span><span class="nt">transaction.state.log.min.isr</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="w">      </span><span class="nt">default.replication.factor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="w">      </span><span class="nt">min.insync.replicas</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="w">  </span><span class="nt">entityOperator</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">topicOperator</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span>
+<span class="w">    </span><span class="nt">userOperator</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span>
+</code></pre></div>
+
+<h2 id="安装_1">安装</h2>
+<div class="highlight"><pre><span></span><code>helm<span class="w"> </span>upgrade<span class="w"> </span>-i<span class="w"> </span>commoninfra-kafka-config<span class="w"> </span>-n<span class="w"> </span>kube-system<span class="w"> </span>.<span class="w"> </span>--values<span class="w"> </span>./values/values.yaml<span class="w"> </span><span class="c1">#--set oauth.secretProviderIdentityId=$secretProviderIdentityId</span>
+</code></pre></div>
+
+<h2 id="卸载_1">卸载</h2>
+<p>如果报错invalid cluster id，先把helm release uninstall掉，再把kafka的PVC和PV删干净，再重新部署。</p>
+<h1 id="部署kafka-ui">部署kafka-ui</h1>
+<h2 id="kafka-ui-config">kafka-ui-config</h2>
+<ul>
+<li>template/kafka_ui_user.yaml</li>
+</ul>
+<p><sub>~</sub>yaml<br />
+  apiVersion: kafka.strimzi.io/v1beta1<br />
+  kind: KafkaUser<br />
+  metadata:<br />
+    name: kafka-ui-client<br />
+    labels:<br />
+      strimzi.io/cluster: my-cluster<br />
+    namespace: kafka<br />
+  spec:<br />
+    authentication:<br />
+      type: tls<br />
+    authorization:<br />
+      acls:<br />
+        {{- with .Values.acls }}<br />
+          {{- toYaml . | nindent 6 }}<br />
+        {{- end }}<br />
+        - resource:<br />
+            name: 'kafka-ui-client'<br />
+            patternType: literal<br />
+            type: group<br />
+          operations:<br />
+            - All<br />
+        - resource:<br />
+            type: cluster<br />
+          operations:<br />
+            - Describe<br />
+            - DescribeConfigs<br />
+      type: simple<br />
+    template:<br />
+      secret:<br />
+        metadata:<br />
+          annotations:<br />
+            kubed.appscode.com/sync: "config-sync-app=kafka-ui" #config-syncer会把这个secret自动同步到具有标签config-sync-app=kafka-ui的namespace<br />
+  ~~~</p>
+<ul>
+<li>values.yaml</li>
+</ul>
+<p><sub>~</sub>yaml<br />
+  acls:<br />
+    - resource:<br />
+        name: '<em>'<br />
+        patternType: literal<br />
+        type: topic<br />
+      operations:<br />
+        - Read<br />
+        - Write<br />
+        - Describe<br />
+        - DescribeConfigs<br />
+        - Alter<br />
+        - AlterConfigs<br />
+    - resource:<br />
+        name: '</em>'<br />
+        patternType: literal<br />
+        type: group<br />
+      operations:<br />
+        - Describe<br />
+        - Read<br />
+  ~~~</p>
+<ul>
+<li>安装</li>
+</ul>
+<p><sub>~</sub>sh<br />
+  helm upgrade -i commoninfra-kafka-ui-config -n kafka . --values $VALUES_FILE<br />
+  ~~~</p>
+<h2 id="kafka-ui本体">kafka-ui本体</h2>
+<ul>
+<li>下载安装</li>
+</ul>
+<div class="highlight"><pre><span></span><code>helm<span class="w"> </span>repo<span class="w"> </span>add<span class="w"> </span>kafka-ui<span class="w"> </span>https://provectus.github.io/kafka-ui-charts
+helm<span class="w"> </span>repo<span class="w"> </span>update<span class="w"> </span>kafka-ui
+helm<span class="w"> </span>pull<span class="w"> </span>kafka-ui/kafka-ui<span class="w"> </span>--version<span class="w"> </span><span class="m">0</span>.7.6
+helm<span class="w"> </span>upgrade<span class="w"> </span>-i<span class="w"> </span>kafka-ui<span class="w"> </span>-n<span class="w"> </span>kafka<span class="w"> </span>--values<span class="w"> </span>values.yaml
+</code></pre></div>
+
+<ul>
+<li>配置ingress和tls</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="c1"># 先创建certificate</span>
+<span class="l l-Scalar l-Scalar-Plain">tee certificate-kafka-ui.yaml &lt;&lt;&#39;EOF&#39;</span>
+<span class="l l-Scalar l-Scalar-Plain">apiVersion</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cert-manager.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Certificate</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cert-kafka-ui</span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kafka</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">secretName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kafka-ui-tls-cert-secret</span>
+<span class="w">  </span><span class="nt">privateKey</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">rotationPolicy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Always</span>
+<span class="w">  </span><span class="nt">commonName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kafka-ui.hanxux.local</span>
+<span class="w">  </span><span class="nt">dnsNames</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kafka-ui.hanxux.local</span>
+<span class="w">  </span><span class="nt">usages</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">digital signature</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">key encipherment</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">server auth</span>
+<span class="w">  </span><span class="nt">issuerRef</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">selfsigned</span>
+<span class="w">    </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ClusterIssuer</span>
+<span class="l l-Scalar l-Scalar-Plain">EOF</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="nt">ingress</span><span class="p">:</span>
+<span class="w">  </span><span class="c1"># Enable ingress resource</span>
+<span class="w">  </span><span class="nt">enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+
+<span class="w">  </span><span class="c1"># Annotations for the Ingress</span>
+<span class="w">  </span><span class="nt">annotations</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">nginx.ingress.kubernetes.io/auth-url</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;http://oauth2-proxy.oauth2-proxy.svc.cluster.local/oauth2/auth&quot;</span>
+<span class="w">    </span><span class="nt">nginx.ingress.kubernetes.io/auth-signin</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;https://oauth2proxy.hanxux.local/oauth2/start?rd=https%3A%2F%2Fkafka-ui.hanxux.local&quot;</span>
+
+<span class="w">  </span><span class="c1"># ingressClassName for the Ingress</span>
+<span class="w">  </span><span class="nt">ingressClassName</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;nginx-default&quot;</span>
+
+<span class="w">  </span><span class="c1"># The path for the Ingress</span>
+<span class="w">  </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;/&quot;</span>
+
+<span class="w">  </span><span class="c1"># The path type for the Ingress</span>
+<span class="w">  </span><span class="nt">pathType</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Prefix&quot;</span>
+
+<span class="w">  </span><span class="c1"># The hostname for the Ingress</span>
+<span class="w">  </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;kafka-ui.hanxux.local&quot;</span>
+<span class="w">  </span><span class="nt">tls</span><span class="p">:</span>
+<span class="w">    </span><span class="c1"># Enable TLS termination for the Ingress</span>
+<span class="w">    </span><span class="nt">enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">    </span><span class="c1"># the name of a pre-created Secret containing a TLS private key and certificate</span>
+<span class="w">    </span><span class="nt">secretName</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;cert-kafka-ui&quot;</span>
+</code></pre></div>
+
+<ul>
+<li>配置oauth2proxy：ingress添加annotations：</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="nt">annotations</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">nginx.ingress.kubernetes.io/auth-url</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;http://oauth2-proxy.oauth2-proxy.svc.cluster.local/oauth2/auth&quot;</span>
+<span class="w">  </span><span class="nt">nginx.ingress.kubernetes.io/auth-signin</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;https://oauth2proxy.hanxux.local/oauth2/start?rd=https%3A%2F%2Fkafka-ui.hanxux.local&quot;</span>
+</code></pre></div>
+
+<ul>
+<li>安装</li>
+</ul>
+<div class="highlight"><pre><span></span><code>helm<span class="w"> </span>upgrade<span class="w"> </span>-i<span class="w"> </span>kafka-ui<span class="w"> </span>-n<span class="w"> </span>kafka<span class="w"> </span>.<span class="w"> </span>--values<span class="w"> </span>values.yaml
+</code></pre></div>
+
+<h2 id="kafka-ui连接cluster">kafka-ui连接cluster</h2>
+<ul>
+<li>通过values.yaml环境变量来配置的。</li>
+<li>ado里面配置的使用kafka-ui-client的secret做认证，在本地部署有点问题，遂添加AUTH_TYPE=DISABLED参数，在UI上就能看到online的cluster了。这样部署的话前面的kafka-ui-config就暂时不需要了。</li>
+<li>配置方法可以参考官网：<a href="https://docs.kafka-ui.provectus.io/configuration/configuration-file">Kafka UI Configuration</a></li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="nt">env</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MANAGEMENT_HEALTH_LDAP_ENABLED</span>
+<span class="w">    </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;FALSE&quot;</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AUTH_TYPE</span>
+<span class="w">    </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;DISABLED&quot;</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">DYNAMIC_CONFIG_ENABLED</span>
+<span class="w">    </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;true&quot;</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">LOGGING_LEVEL_PROVECTUS</span>
+<span class="w">    </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">info</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">KAFKA_CLUSTERS_0_NAME</span>
+<span class="w">    </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-cluster</span>
+<span class="w">  </span><span class="c1"># - name: KAFKA_CLUSTERS_0_PROPERTIES_SECURITY_PROTOCOL</span>
+<span class="w">  </span><span class="c1">#   value: SSL</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS</span>
+<span class="w">    </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-cluster-kafka-bootstrap.kafka.svc:9092</span>
+<span class="w">  </span><span class="c1">#- name: KAFKA_CLUSTERS_0_SCHEMAREGISTRY</span>
+<span class="w">    </span><span class="c1">#value: http://apicurio-schema-registry.apicurio-schema-registry.svc:8080/apis/ccompat/v6</span>
+<span class="c1">#   - name: KAFKA_CLUSTERS_0_PROPERTIES_SSL_TRUSTSTORE_TYPE</span>
+<span class="c1">#     value: &quot;PKCS12&quot;</span>
+<span class="c1">#   - name: KAFKA_CLUSTERS_0_PROPERTIES_SSL_TRUSTSTORE_PASSWORD</span>
+<span class="c1">#     valueFrom:</span>
+<span class="c1">#       secretKeyRef:</span>
+<span class="c1">#         name: kafka-cluster-ca-cert</span>
+<span class="c1">#         key: ca.password</span>
+<span class="c1">#   - name: KAFKA_CLUSTERS_0_PROPERTIES_SSL_TRUSTSTORE_LOCATION</span>
+<span class="c1">#     value: &quot;/etc/kafka/ca-secret/ca.p12&quot;</span>
+<span class="c1">#   - name: KAFKA_CLUSTERS_0_PROPERTIES_SSL_KEYSTORE_TYPE</span>
+<span class="c1">#     value: &quot;PKCS12&quot;</span>
+<span class="c1">#   - name: KAFKA_CLUSTERS_0_PROPERTIES_SSL_KEYSTORE_PASSWORD</span>
+<span class="c1">#     valueFrom:</span>
+<span class="c1">#       secretKeyRef:</span>
+<span class="c1">#         name: kafka-ui-client</span>
+<span class="c1">#         key: user.password</span>
+<span class="c1">#   - name: KAFKA_CLUSTERS_0_PROPERTIES_SSL_KEYSTORE_LOCATION</span>
+<span class="c1">#     value: &quot;/etc/kafka/client-secret/user.p12&quot;</span>
+
+<span class="c1"># volumeMounts:</span>
+<span class="c1">#   - name: kafka-ui-client</span>
+<span class="c1">#     mountPath: &quot;/etc/kafka/client-secret/&quot;</span>
+<span class="c1">#   - name: kafka-cluster-ca-cert</span>
+<span class="c1">#     mountPath: &quot;/etc/kafka/ca-secret/&quot;</span>
+
+<span class="c1"># volumes:</span>
+<span class="c1">#   - name: kafka-ui-client</span>
+<span class="c1">#     secret:</span>
+<span class="c1">#       secretName: kafka-ui-client</span>
+<span class="c1">#   - name: kafka-cluster-ca-cert</span>
+<span class="c1">#     secret:</span>
+<span class="c1">#       secretName: kafka-cluster-ca-cert</span>
+</code></pre></div>
+
+<hr />
+<h1 id="kafka-生产避坑副本同步与云厂商默认配置陷阱">Kafka 生产避坑：副本同步与云厂商默认配置陷阱</h1>
+<blockquote>
+<p>来源：一次凌晨 2 点 Kafka 事故复盘——3 个消费者只有 1 个在工作，另外 2 个副本压根没同步。根因不是网络故障、代码 Bug 或硬件损坏，而是云厂商的"默认配置"在作祟。</p>
+</blockquote>
+<h2 id="事故还原">事故还原</h2>
+<h3 id="事故配置">事故配置</h3>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>配置值</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>replication.factor</code></td>
+<td>3</td>
+<td>每个分区 3 个副本</td>
+</tr>
+<tr>
+<td><code>min.insync.replicas</code></td>
+<td><strong>1</strong></td>
+<td>最少同步副本数</td>
+</tr>
+<tr>
+<td><code>acks</code></td>
+<td>1</td>
+<td>生产者确认机制</td>
+</tr>
+</tbody>
+</table>
+<h3 id="触发链">触发链</h3>
+<ol>
+<li>凌晨 1:30，一个 Broker 节点磁盘故障离线</li>
+<li>该节点上的副本全部不可用</li>
+<li><code>min.insync.replicas=1</code> → 集群认为"只要 1 个副本存活"就算健康</li>
+<li>离线 Broker 恰好是 Leader，其他 2 个 Follower 数据未完全同步</li>
+<li>新 Leader 选举后，部分分区数据出现"空洞"</li>
+<li>消费者读取到不一致数据，业务逻辑异常</li>
+</ol>
+<h3 id="根因">根因</h3>
+<p><code>min.insync.replicas=1</code> 允许 Leader 确认写入时只要自己收到数据就算成功，不需要等待任何 Follower 确认。在多副本场景下，等于把数据一致性交给了运气。<br />
+<img alt="image.png" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260628231459615.png" /></p>
+<h2 id="kafka-副本同步核心参数">Kafka 副本同步核心参数</h2>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>replication.factor</code></td>
+<td>总共有多少个副本（包括 Leader）</td>
+</tr>
+<tr>
+<td><code>min.insync.replicas</code></td>
+<td>至少需要多少个副本完成同步，生产者才收到写入成功确认</td>
+</tr>
+<tr>
+<td><code>acks=all</code></td>
+<td>生产者要求 Leader 等待所有 ISR（In-Sync Replicas）副本确认后才返回成功</td>
+</tr>
+<tr>
+<td><code>unclean.leader.election.enable</code></td>
+<td>是否允许非 ISR 副本成为 Leader（生产环境必须设为 false）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="mininsyncreplicas-对数据可靠性的影响">min.insync.replicas 对数据可靠性的影响</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">min.insync.replicas</th>
+<th style="text-align: center;">允许丢失的副本数</th>
+<th style="text-align: center;">数据可靠性</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">2 个可以同时丢失</td>
+<td style="text-align: center;">⚠️ 低（有丢数据风险）</td>
+</tr>
+<tr>
+<td style="text-align: center;"><strong>2</strong></td>
+<td style="text-align: center;">1 个可以丢失</td>
+<td style="text-align: center;">✅ 中（多数场景够用）</td>
+</tr>
+<tr>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">0 个可以丢失</td>
+<td style="text-align: center;">高（强一致性，但性能有损）</td>
+</tr>
+</tbody>
+</table>
+<h2 id="生产环境标准配置">生产环境标准配置</h2>
+<h3 id="kafka-核心参数">Kafka 核心参数</h3>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th style="text-align: center;">开发/测试</th>
+<th style="text-align: center;"><strong>生产环境</strong></th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>replication.factor</code></td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;"><strong>3</strong></td>
+<td>至少 3 副本</td>
+</tr>
+<tr>
+<td><code>min.insync.replicas</code></td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;"><strong>2</strong></td>
+<td>至少 2 个副本同步</td>
+</tr>
+<tr>
+<td><code>acks</code></td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;"><strong>all</strong></td>
+<td>等待所有 ISR 确认</td>
+</tr>
+<tr>
+<td><code>unclean.leader.election.enable</code></td>
+<td style="text-align: center;">true</td>
+<td style="text-align: center;"><strong>false</strong></td>
+<td>禁止非 ISR 副本成为 Leader</td>
+</tr>
+</tbody>
+</table>
+<h3 id="topic-创建">Topic 创建</h3>
+<div class="highlight"><pre><span></span><code>kafka-topics<span class="w"> </span>--create<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--topic<span class="w"> </span>order-events<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--partitions<span class="w"> </span><span class="m">6</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--replication-factor<span class="w"> </span><span class="m">3</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--config<span class="w"> </span>min.insync.replicas<span class="o">=</span><span class="m">2</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--config<span class="w"> </span>unclean.leader.election.enable<span class="o">=</span><span class="nb">false</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--zookeeper<span class="w"> </span>localhost:2181
+</code></pre></div>
+
+<h3 id="生产者端配置java">生产者端配置（Java）</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Properties</span><span class="w"> </span><span class="n">props</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Properties</span><span class="p">();</span>
+<span class="n">props</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="s">&quot;acks&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;all&quot;</span><span class="p">);</span><span class="w">                                   </span><span class="c1">// 等待所有 ISR 确认</span>
+<span class="n">props</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="s">&quot;retries&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">);</span><span class="w">                                    </span><span class="c1">// 失败重试</span>
+<span class="n">props</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="s">&quot;enable.idempotence&quot;</span><span class="p">,</span><span class="w"> </span><span class="kc">true</span><span class="p">);</span><span class="w">                      </span><span class="c1">// 开启幂等性</span>
+<span class="n">props</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="s">&quot;max.in.flight.requests.per.connection&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span><span class="w">      </span><span class="c1">// 保证顺序</span>
+</code></pre></div>
+
+<h3 id="监控告警">监控告警</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Prometheus 告警规则</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">alert</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">KafkaMinISRTooLow</span>
+<span class="w">  </span><span class="nt">expr</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kafka_topic_partition_min_isr &lt; 2</span>
+<span class="w">  </span><span class="nt">for</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1m</span>
+<span class="w">  </span><span class="nt">annotations</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">summary</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Topic</span><span class="nv"> </span><span class="s">{{$labels.topic}}</span><span class="nv"> </span><span class="s">的</span><span class="nv"> </span><span class="s">minISR</span><span class="nv"> </span><span class="s">配置小于</span><span class="nv"> </span><span class="s">2&quot;</span>
+
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">alert</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">KafkaUnderReplicatedPartitions</span>
+<span class="w">  </span><span class="nt">expr</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kafka_controller_under_replicated_partitions &gt; 0</span>
+<span class="w">  </span><span class="nt">for</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30s</span>
+<span class="w">  </span><span class="nt">annotations</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">summary</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;存在未同步的分区副本&quot;</span>
+</code></pre></div>
+
+<h2 id="通用原则云厂商默认配置审查清单">通用原则：云厂商默认配置审查清单</h2>
+<p>云厂商的默认配置通常是"最低可行配置"——让你先跑起来，不是"生产可用"。</p>
+<h3 id="常见组件的坑人默认配置">常见组件的"坑人默认配置"</h3>
+<table>
+<thead>
+<tr>
+<th>组件</th>
+<th>默认配置</th>
+<th>风险</th>
+<th>生产建议</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Kafka</strong></td>
+<td><code>min.insync.replicas=1</code></td>
+<td>丢数据风险</td>
+<td>设置为 2（3 副本时）</td>
+</tr>
+<tr>
+<td><strong>MySQL RDS</strong></td>
+<td>单可用区</td>
+<td>可用区故障即停服</td>
+<td>多可用区部署 + 自动备份</td>
+</tr>
+<tr>
+<td><strong>Redis</strong></td>
+<td>禁用 AOF 持久化</td>
+<td>重启丢数据</td>
+<td>开启 AOF + appendfsync everysec</td>
+</tr>
+<tr>
+<td><strong>Nginx</strong></td>
+<td>keepalive_timeout=75s</td>
+<td>连接堆积</td>
+<td>调整为 15-30s</td>
+</tr>
+<tr>
+<td><strong>K8s Deployment</strong></td>
+<td>replicas=1</td>
+<td>单点故障</td>
+<td>replicas≥2 + PDB</td>
+</tr>
+</tbody>
+</table>
+<h3 id="部署前审查六问">部署前审查六问</h3>
+<ol>
+<li><strong>高可用</strong>：是否跨可用区部署？故障转移机制是什么？</li>
+<li><strong>数据持久性</strong>：是否有数据丢失风险？备份策略是什么？</li>
+<li><strong>监控告警</strong>：关键指标是否配置了告警？</li>
+<li><strong>容量规划</strong>：默认配额是否够用？有没有隐藏限制？</li>
+<li><strong>升级策略</strong>：自动升级是否开启？有没有兼容性问题？</li>
+<li><strong>费用</strong>：默认配置会产生哪些额外费用（如跨 AZ 流量费）？</li>
+</ol>
+<h3 id="三个不要">三个不要</h3>
+<ol>
+<li><strong>不要相信"开箱即用"</strong>——云厂商的默认配置是"最低可行配置"，不是"最佳配置"</li>
+<li><strong>不要只看控制台</strong>——很多关键参数藏在配置文件或 API 里，控制台不显示</li>
+<li><strong>不要复制粘贴</strong>——理解每个参数的含义再调</li>
+</ol>
+<blockquote>
+<p><strong>"能用"和"可靠"之间，差的是你对每一个配置参数的理解和对生产环境的敬畏。</strong></p>
+</blockquote>
+    </div>
+  </article>
+  <aside class="toc">
+    <p class="toc-label">本页目录</p>
+    <ul>
+  <li><a href="#kafka">Kafka</a></li>
+  <li><a href="#strimzi-kafka-operator">strimzi-kafka-operator</a></li>
+  <li><a href="#kafka-ui">kafka-ui</a></li>
+  <li><a href="#kafka-mirror-maker">kafka-mirror-maker</a></li>
+  <li><a href="#下载">下载</a></li>
+  <li><a href="#配置">配置</a></li>
+  <li><a href="#安装">安装</a></li>
+  <li><a href="#卸载">卸载</a></li>
+  <li><a href="#升级">升级</a></li>
+  <li><a href="#kafka-cluster">kafka-cluster</a></li>
+  <li><a href="#kafka-broker-nodepool">kafka-broker-nodepool</a></li>
+  <li><a href="#kafka-controller-nodepool">kafka-controller-nodepool</a></li>
+  <li><a href="#kafka-metrics-config">kafka-metrics-config</a></li>
+  <li><a href="#strimzi-pod-monitor">strimzi-pod-monitor</a></li>
+  <li><a href="#values">values</a></li>
+  <li><a href="#安装_1">安装</a></li>
+  <li><a href="#卸载_1">卸载</a></li>
+  <li><a href="#kafka-ui-config">kafka-ui-config</a></li>
+  <li><a href="#kafka-ui本体">kafka-ui本体</a></li>
+  <li><a href="#kafka-ui连接cluster">kafka-ui连接cluster</a></li>
+  <li><a href="#事故还原">事故还原</a><ul>
+  <li><a href="#事故配置">事故配置</a></li>
+  <li><a href="#触发链">触发链</a></li>
+  <li><a href="#根因">根因</a></li>
+</ul></li>
+  <li><a href="#kafka-副本同步核心参数">Kafka 副本同步核心参数</a><ul>
+  <li><a href="#mininsyncreplicas-对数据可靠性的影响">min.insync.replicas 对数据可靠性的影响</a></li>
+</ul></li>
+  <li><a href="#生产环境标准配置">生产环境标准配置</a><ul>
+  <li><a href="#kafka-核心参数">Kafka 核心参数</a></li>
+  <li><a href="#topic-创建">Topic 创建</a></li>
+  <li><a href="#生产者端配置java">生产者端配置（Java）</a></li>
+  <li><a href="#监控告警">监控告警</a></li>
+</ul></li>
+  <li><a href="#通用原则云厂商默认配置审查清单">通用原则：云厂商默认配置审查清单</a><ul>
+  <li><a href="#常见组件的坑人默认配置">常见组件的&#34;坑人默认配置&#34;</a></li>
+  <li><a href="#部署前审查六问">部署前审查六问</a></li>
+  <li><a href="#三个不要">三个不要</a></li>
+</ul></li>
+</ul>
+  </aside>
+
+</div>
+
+</main>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>Learning Notes</span>
+    <a href="https://github.com/hangx969/learning-notes">GitHub</a>
+  </div>
+</footer>
+<script src="../../../static/search.js"></script>
+</body>
+</html>

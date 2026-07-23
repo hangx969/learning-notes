@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GPU Exporter 与 Grafana 监控 - Learning Notes</title>
+<link rel="stylesheet" href="../../static/style.css">
+<link rel="stylesheet" href="../../static/pygments.css">
+</head>
+<body data-root="../../">
+<header class="site-header">
+  <div class="header-inner">
+    <a class="logo" href="../../index.html"><span class="logo-mark"></span>LEARNING NOTES</a>
+    <div class="search">
+      <input id="search-input" type="search" placeholder="搜索笔记…" autocomplete="off" aria-label="搜索笔记">
+      <div id="search-results" hidden></div>
+    </div>
+  </div>
+  <nav class="topic-nav" aria-label="主题导航">
+    <div class="topic-nav-inner">
+      <a href="../../AI/">AI</a>
+      <a href="../../Aliyun/">Aliyun</a>
+      <a href="../../Azure/">Azure</a>
+      <a href="../../C%2B%2B/">C++</a>
+      <a href="../../CloudComputing/">CloudComputing</a>
+      <a href="../../Database/">Database</a>
+      <a href="../../Docker-Kubernetes/">Docker-Kubernetes</a>
+      <a href="../../GPU-DeepLearning/" class="active">GPU-DeepLearning</a>
+      <a href="../../Git/">Git</a>
+      <a href="../../Go/">Go</a>
+      <a href="../../HPC/">HPC</a>
+      <a href="../../IaC/">IaC</a>
+      <a href="../../Linux-Shell/">Linux-Shell</a>
+      <a href="../../Middlewares/">Middlewares</a>
+      <a href="../../Networking/">Networking</a>
+      <a href="../../OS/">OS</a>
+      <a href="../../Python/">Python</a>
+      <a href="../../SoftwareTesting/">SoftwareTesting</a>
+    </div>
+  </nav>
+</header>
+<main class="main">
+
+<div class="article-layout no-toc">
+
+  <aside class="sidebar">
+    <details class="sidebar-details">
+      <summary>GPU-DeepLearning</summary>
+      <nav class="sidebar-nav">
+        <p class="sidebar-group">其他</p>
+        <ul>
+          <li><a href="../../GPU-DeepLearning/GPU-basics/">GPU 基础与环境配置</a></li>
+          <li><a href="../../GPU-DeepLearning/GPU-exporter-grafana/" class="current">GPU Exporter 与 Grafana 监控</a></li>
+          <li><a href="../../GPU-DeepLearning/NVIDIA-GPU-%E5%BC%80%E5%90%AFpersistent%20mode/">NVIDIA GPU 开启 Persistent Mode</a></li>
+          <li><a href="../../GPU-DeepLearning/Server-basics/">服务器入门基础</a></li>
+        </ul>
+      </nav>
+    </details>
+  </aside>
+
+  <article class="article">
+    <nav class="breadcrumb">
+      <a href="../../index.html">首页</a><span>/</span>
+      <a href="../../GPU-DeepLearning/">GPU-DeepLearning</a>
+    </nav>
+    <h1 class="article-title">GPU Exporter 与 Grafana 监控</h1>
+    <p class="article-meta"><span>更新于 2026-04-16</span>
+      <a href="https://github.com/hangx969/learning-notes/blob/main/GPU-DeepLearning/GPU-exporter-grafana.md">查看源文件</a>
+    </p>
+    <div class="article-body">
+<h1 id="部署开源gpu_exporter">部署开源gpu_exporter</h1>
+<ul>
+<li>这里在宿主机上部署exporter，在vmware虚机上的prometheus抓数据</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="c1">#下载解压二进制包</span>
+<span class="c1">#https://github.com/utkuozdemir/nvidia_gpu_exporter/releases/tag/v1.2.1</span>
+wget<span class="w"> </span>https://github.com/utkuozdemir/nvidia_gpu_exporter/releases/download/v1.2.1/nvidia_gpu_exporter_1.2.1_linux_x86_64.tar.gz
+tar<span class="w"> </span>zxvf<span class="w"> </span>nvidia_gpu_exporter_1.2.1_linux_x86_64.tar.gz
+<span class="c1">#创建systemd服务启动文件</span>
+sudo<span class="w"> </span>cp<span class="w"> </span>nvidia_gpu_exporter<span class="w"> </span>/usr/bin/nvidia_gpu_exporter<span class="w"> </span>
+sudo<span class="w"> </span>tee<span class="w"> </span>/etc/systemd/system/nvidia-gpu-exporter.service<span class="w"> </span><span class="s">&lt;&lt;&#39;EOF&#39;</span>
+<span class="s">[Unit]</span>
+<span class="s">Description=NVIDIA GPU Exporter</span>
+
+<span class="s">[Service]</span>
+<span class="s">ExecStart=/usr/bin/nvidia_gpu_exporter</span>
+<span class="s">Restart=always</span>
+<span class="s">RestartSec=15</span>
+
+<span class="s">[Install]</span>
+<span class="s">WantedBy=multi-user.target</span>
+<span class="s">EOF</span>
+<span class="c1">#启动 Exporter </span>
+systemctl<span class="w"> </span>daemon-reload
+systemctl<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>nvidia-gpu-exporter.service<span class="w"> </span>--now
+systemctl<span class="w"> </span>restart<span class="w"> </span>nvidia-gpu-exporter.service
+<span class="c1">#检查指标</span>
+curl<span class="w"> </span>localhost:9835/metrics
+</code></pre></div>
+
+<h1 id="prometheus抓取数据">prometheus抓取数据</h1>
+<ul>
+<li>添加job</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">job_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;gpu-exporter&quot;</span><span class="w">  </span>
+<span class="w">  </span><span class="nt">static_configs</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">targets</span><span class="p">:</span><span class="w"> </span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;10.12.0.247:9835&#39;</span>
+<span class="w">    </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">gpu</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nvidia-rtx2000-ada</span>
+<span class="w">      </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gpu-exporter</span>
+</code></pre></div>
+
+<p>有个问题是宿主机内网IP会变，用hostname的话prometheus会报解析失败。我的思路：建一个pushgateway，宿主机推送到上面，prometheus去上面拉数据。</p>
+<h1 id="grafana数据展示">grafana数据展示</h1>
+<ul>
+<li><a href="https://grafana.com/grafana/dashboards/14574-nvidia-gpu-metrics/">NVIDIA GPU Metrics Dashboard</a></li>
+</ul>
+<p><div class="callout callout-warning" markdown="1"><br />
+<p class="callout-title">时间同步</p></p>
+<p>Prometheus 抓取的数据非常依赖于系统时间准确，Grafana server 需要同步时间。</p>
+</div>
+    </div>
+  </article>
+
+</div>
+
+</main>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>Learning Notes</span>
+    <a href="https://github.com/hangx969/learning-notes">GitHub</a>
+  </div>
+</footer>
+<script src="../../static/search.js"></script>
+</body>
+</html>

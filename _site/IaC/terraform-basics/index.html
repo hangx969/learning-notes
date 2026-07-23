@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Terraform 基础 - Learning Notes</title>
+<link rel="stylesheet" href="../../static/style.css">
+<link rel="stylesheet" href="../../static/pygments.css">
+</head>
+<body data-root="../../">
+<header class="site-header">
+  <div class="header-inner">
+    <a class="logo" href="../../index.html"><span class="logo-mark"></span>LEARNING NOTES</a>
+    <div class="search">
+      <input id="search-input" type="search" placeholder="搜索笔记…" autocomplete="off" aria-label="搜索笔记">
+      <div id="search-results" hidden></div>
+    </div>
+  </div>
+  <nav class="topic-nav" aria-label="主题导航">
+    <div class="topic-nav-inner">
+      <a href="../../AI/">AI</a>
+      <a href="../../Aliyun/">Aliyun</a>
+      <a href="../../Azure/">Azure</a>
+      <a href="../../C%2B%2B/">C++</a>
+      <a href="../../CloudComputing/">CloudComputing</a>
+      <a href="../../Database/">Database</a>
+      <a href="../../Docker-Kubernetes/">Docker-Kubernetes</a>
+      <a href="../../GPU-DeepLearning/">GPU-DeepLearning</a>
+      <a href="../../Git/">Git</a>
+      <a href="../../Go/">Go</a>
+      <a href="../../HPC/">HPC</a>
+      <a href="../../IaC/" class="active">IaC</a>
+      <a href="../../Linux-Shell/">Linux-Shell</a>
+      <a href="../../Middlewares/">Middlewares</a>
+      <a href="../../Networking/">Networking</a>
+      <a href="../../OS/">OS</a>
+      <a href="../../Python/">Python</a>
+      <a href="../../SoftwareTesting/">SoftwareTesting</a>
+    </div>
+  </nav>
+</header>
+<main class="main">
+
+<div class="article-layout">
+
+  <aside class="sidebar">
+    <details class="sidebar-details">
+      <summary>IaC</summary>
+      <nav class="sidebar-nav">
+        <p class="sidebar-group">其他</p>
+        <ul>
+          <li><a href="../../IaC/terraform-basics/" class="current">Terraform 基础</a></li>
+          <li><a href="../../IaC/terraform-container-management/">Terraform 容器管理</a></li>
+          <li><a href="../../IaC/terraform-docs/">Terraform-docs 文档生成工具</a></li>
+        </ul>
+      </nav>
+    </details>
+  </aside>
+
+  <article class="article">
+    <nav class="breadcrumb">
+      <a href="../../index.html">首页</a><span>/</span>
+      <a href="../../IaC/">IaC</a>
+    </nav>
+    <h1 class="article-title">Terraform 基础</h1>
+    <p class="article-meta"><span>更新于 2026-04-16</span>
+      <a href="https://github.com/hangx969/learning-notes/blob/main/IaC/terraform-basics.md">查看源文件</a>
+    </p>
+    <div class="article-body">
+<h1 id="介绍">介绍</h1>
+<ul>
+<li>
+<p>ARM template和Bicep都是仅用于Azure的</p>
+</li>
+<li>
+<p>Terraform是 Hashicorp发明，基于Go语言</p>
+</li>
+<li>
+<p>脚本采用HCL语言：</p>
+</li>
+<li>
+<p>声明式脚本语言，Infrastructure as Code，通过目标状态和现在状态的对比，来实现资源的变更。</p>
+</li>
+<li>
+<p>脚本即文档</p>
+</li>
+<li>
+<p>比ARM template少30%</p>
+</li>
+</ul>
+<h1 id="terraform-三个阶段">Terraform 三个阶段</h1>
+<ul>
+<li>terraform init</li>
+<li>
+<p>检查脚本使用了哪些provider，会下载下来。</p>
+</li>
+<li>
+<p>terraform plan</p>
+</li>
+<li>提示登录到azure</li>
+<li>
+<p>会计算出来通过哪几步达到目标状态</p>
+</li>
+<li>
+<p>terraform apply</p>
+</li>
+<li>执行变更，会提示是否变更。如果需要跳过提示的话，加参数 --auto-approve。</li>
+</ul>
+<h1 id="基本文件">基本文件</h1>
+<ul>
+<li>main.tf</li>
+<li>
+<p>部署的骨头架子，存放主要的代码</p>
+</li>
+<li>
+<p>variable.tf</p>
+</li>
+<li>
+<p>集中存储变量</p>
+</li>
+<li>
+<p>terraform.tfvars</p>
+</li>
+<li>覆盖一些变量，作为变量的临时定义处</li>
+<li>terraform.tfstate文件</li>
+<li>以json文件的格式描述了所有被terraform管理的资源状态，会拿这个文件和main.tf文件作比对，找到差异。</li>
+</ul>
+<h1 id="配置文件maintf组成">配置文件main.tf组成</h1>
+<ul>
+<li>
+<p>Provider部分：用哪家的provider   </p>
+</li>
+<li>
+<p>resource部分：创建什么资源</p>
+</li>
+<li>
+<p>variable部分：集中存储变量、参数</p>
+</li>
+<li>
+<p>output文件</p>
+</li>
+<li>某些值需要在等资源创建出来之后才有。比如资源ID等。</li>
+<li>如果这些值需要在其他地方被使用，可以把这些值放到output文件里面。</li>
+</ul>
+<h1 id="示例">示例</h1>
+<h2 id="创建azure资源组">创建azure资源组</h2>
+<ul>
+<li>main.tf文件</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="nb">terraform</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nb">required_providers</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nb">azurerm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="na">source</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;hashicorp/azurerm&quot;</span>
+<span class="w">      </span><span class="na">version</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;3.100.0&quot;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kr">provider</span><span class="w"> </span><span class="nv">&quot;azurerm&quot;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nb">features</span><span class="w"> </span><span class="p">{}</span><span class="c1"> #This is required for v2+ of the provider even if empty or plan will fail</span>
+<span class="c1">    # Configuration options</span>
+<span class="w">    </span><span class="na">environment</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;china&quot;</span>
+<span class="p">}</span>
+
+<span class="kr">resource</span><span class="w"> </span><span class="nc">&quot;azurerm_resource_group&quot;</span><span class="w"> </span><span class="nv">&quot;ExampleRG&quot;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="na">name</span><span class="w">     </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;HangXu-ExampleRG&quot;</span>
+<span class="w">  </span><span class="na">location</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;chinanorth3&quot;</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="c1">#使用azcli的方式登录</span>
+az<span class="w"> </span>cloud<span class="w"> </span><span class="nb">set</span><span class="w"> </span>--name<span class="w"> </span>AzureChinaCloud
+az<span class="w"> </span>login<span class="w"> </span>-t<span class="w"> </span>5748bdcc-52eb-4a8e-be69-29d0645fadbf<span class="w"> </span>
+az<span class="w"> </span>account<span class="w"> </span><span class="nb">set</span><span class="w"> </span>--name<span class="w"> </span><span class="s2">&quot;onepilot-dev&quot;</span>
+<span class="c1">#执行部署</span>
+terraform<span class="w"> </span>plan<span class="w"> </span>-out<span class="o">=</span>./tf-plan
+terraform<span class="w"> </span>apply<span class="w"> </span><span class="s2">&quot;./tf-plan&quot;</span>
+</code></pre></div>
+
+<h1 id="variable存储变量">variable存储变量</h1>
+<ul>
+<li>main.tf</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="c1"># 3 Files</span>
+<span class="c1"># main.tf – The main configuration file for resource deployment.</span>
+<span class="c1"># variables.tf – The file for variables used for the deployment.</span>
+<span class="c1"># terraform.tfvars – The variable definition file used to set the variables for the deployment.</span>
+
+<span class="nb">terraform</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nb">required_providers</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nb">azurerm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="na">source</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;hashicorp/azurerm&quot;</span>
+<span class="w">      </span><span class="na">version</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;3.100.0&quot;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kr">provider</span><span class="w"> </span><span class="nv">&quot;azurerm&quot;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nb">features</span><span class="p">{}</span>
+<span class="w">  </span><span class="na">environment</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;china&quot;</span>
+<span class="p">}</span>
+
+<span class="c1"># Local is a also a varibale, it&#39;s for repetitive use.</span>
+<span class="nb">locals</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nb">tags</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="na">owner</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;hangxu&quot;</span>
+<span class="w">    </span><span class="na">usage</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;LearnTerraform&quot;</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">#Create a Resource Group, note &quot;resourcegroup&quot; is a local name for Terraform only</span>
+<span class="kr">resource</span><span class="w"> </span><span class="nc">&quot;azurerm_resource_group&quot;</span><span class="w"> </span><span class="nv">&quot;resourcegroup&quot;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="na">name</span><span class="w">     </span><span class="o">=</span><span class="w"> </span><span class="nv">var.rsgname</span><span class="c1"> #call Variable</span>
+<span class="w">  </span><span class="na">location</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">var.location</span><span class="c1"> #call Variable</span>
+<span class="w">  </span><span class="na">tags</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">local.tags</span><span class="c1"> # #call Local</span>
+<span class="p">}</span>
+
+<span class="c1">#Create a Storage Account</span>
+<span class="kr">resource</span><span class="w"> </span><span class="nc">&quot;azurerm_storage_account&quot;</span><span class="w"> </span><span class="nv">&quot;storageaccount&quot;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="na">name</span><span class="w">                     </span><span class="o">=</span><span class="w"> </span><span class="nv">var.stgactname</span>
+<span class="w">  </span><span class="na">resource_group_name</span><span class="w">      </span><span class="o">=</span><span class="w"> </span><span class="nv">azurerm_resource_group.resourcegroup.name</span>
+<span class="w">  </span><span class="na">location</span><span class="w">                 </span><span class="o">=</span><span class="w"> </span><span class="nv">azurerm_resource_group.resourcegroup.location</span>
+<span class="w">  </span><span class="na">account_tier</span><span class="w">             </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;Standard&quot;</span>
+<span class="w">  </span><span class="na">account_replication_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;LRS&quot;</span>
+<span class="w">  </span><span class="na">tags</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">local.tags</span>
+<span class="w">  </span><span class="p">}</span>
+</code></pre></div>
+
+<ul>
+<li>variable.tf</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="c1"># Variables can be in main.tf, but it&#39;s a mess, so we seperated it</span>
+
+<span class="kr">variable</span><span class="w"> </span><span class="nv">&quot;location&quot;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="na">type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">string</span>
+<span class="w">  </span><span class="na">description</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;Location for deployment&quot;</span>
+<span class="w">  </span><span class="na">default</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;chinanorth3&quot;</span>
+<span class="p">}</span>
+
+<span class="kr">variable</span><span class="w"> </span><span class="nv">&quot;rsgname&quot;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="na">type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">string</span>
+<span class="w">  </span><span class="na">description</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;Resource Group Name&quot;</span>
+<span class="w">  </span><span class="na">default</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;Hangxu-TerraformRG&quot;</span>
+<span class="p">}</span>
+
+<span class="kr">variable</span><span class="w"> </span><span class="nv">&quot;stgactname&quot;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="na">type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">string</span>
+<span class="w">  </span><span class="na">description</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;Storage Account Name&quot;</span><span class="c1"> #Storage Account should be globally unique</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<ul>
+<li>terraform.tfvars</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="c1"># 虽然我们可以通过这种方式指定variable，terraform plan -var=&quot;stgactname=cirtest332244423&quot;</span>
+<span class="c1"># 但很不方便，所以我们创建terraform.tfvars文件</span>
+
+<span class="na">location</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;chinanorth3&quot;</span>
+<span class="na">rsgname</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;Hangxu-TerraformRG&quot;</span>
+<span class="na">stgactname</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;hangxutestsa&quot;</span>
+</code></pre></div>
+
+<ul>
+<li>variable.tf和terraform.tfvars的区别</li>
+<li>主要用于声明在Terraform配置中使用的变量。你可以在这个文件中定义变量的类型、默认值和描述等信息。</li>
+<li>主要用于设置在Terraform配置中声明的变量的值。在执行<code>terraform apply</code>或<code>terraform plan</code>命令时，Terraform会自动加载这个文件，并使用其中的值来填充变量。</li>
+<li><code>variables.tf</code>用于声明变量，而<code>terraform.tfvars</code>用于为这些变量设置值。这种分离的方式使得你可以在不同的环境中使用不同的<code>terraform.tfvars</code>文件，而不需要修改Terraform的主配置。</li>
+</ul>
+<h1 id="module可复用的基础架构代码">module可复用的基础架构代码</h1>
+<ul>
+<li>
+<p>在Terraform中，模块（Module）是一种可重用的、自包含的包，它封装了一组相关的资源。模块可以被视为一种函数或者微服务，它接收一组输入变量，然后输出一组资源。</p>
+</li>
+<li>
+<p>模块的主要作用有：</p>
+</li>
+<li>
+<p><strong>代码重用</strong>：你可以将常用的配置封装成模块，然后在多个地方重用，避免了代码的重复。</p>
+</li>
+<li>
+<p><strong>组织代码</strong>：你可以使用模块来组织你的Terraform代码，将复杂的配置分解成一组可管理的模块。</p>
+</li>
+<li>
+<p><strong>共享代码</strong>：你可以将模块发布到Terraform Registry，让其他人可以使用你的模块。</p>
+</li>
+</ul>
+<p>例如，你的<code>main.tf</code>文件中的存储账户资源可以被封装成一个模块，然后在其他地方重用。模块的定义可能如下：</p>
+<p>```terraform<br />
+  module "storage_account" {<br />
+    source  = "Azure/storage/azurerm"<br />
+    version = "1.5.0"</p>
+<div class="highlight"><pre><span></span><code>name                     = var.stgactname
+resource_group_name      = azurerm_resource_group.resourcegroup.name
+location                 = azurerm_resource_group.resourcegroup.location
+account_tier             = &quot;Standard&quot;
+account_replication_type = &quot;LRS&quot;
+tags = local.tags
+</code></pre></div>
+
+<p>}<br />
+  ```</p>
+<p>然后在其他地方使用这个模块，只需要提供输入变量：</p>
+<p>```terraform<br />
+  module "storage_account" {<br />
+    source = "../modules/storage_account"</p>
+<div class="highlight"><pre><span></span><code>stgactname = &quot;my_storage_account&quot;
+# other variables...
+</code></pre></div>
+
+<p>}<br />
+  ```</p>
+<p>这样，你就可以在多个地方重用这个存储账户的配置，而不需要每次都写一遍相同的代码。</p>
+<ul>
+<li>在基础架构的目录中，root根目录下面会有main.tf/variables.tf/terraform.tfvar，可以创建一个modules目录，里面同样定义main.tf等，在其他地方可以引用这个modules文件中的资源定义。</li>
+</ul>
+<h1 id="outputs获取模块的输出">outputs获取模块的输出</h1>
+<ul>
+<li>示例 - 创建outputs.tf</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="c1"># output &quot;Resource Group&quot; name, to be used as an input variable for &quot;Storage Account&quot;</span>
+
+<span class="kr">output</span><span class="w"> </span><span class="nv">&quot;rg_name_out&quot;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="na">value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">azurerm_resource_group.example.name</span><span class="c1"> # 资源类型.资源名.name</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<ul>
+<li>示例 - 引用outputs.tf中的值</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="c1"># call &quot;StorageAccount&quot; module which has 3 variables</span>
+<span class="kr">module</span><span class="w"> </span><span class="nv">&quot;StorageAccount&quot;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="na">source</span><span class="w"> </span><span class="o">=</span><span class="s2">&quot;./StorageAccount&quot;</span>
+<span class="w">  </span><span class="na">basename</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;learntfmodule&quot;</span>
+<span class="w">  </span><span class="na">resource_group_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">module.ResourceGroup.rg_name_out</span><span class="c1"> #引用来自Resource Group module的outputs</span>
+<span class="w">  </span><span class="na">location</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;chinanorth3&quot;</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<ul>
+<li>modules子目录中定义的outputs可以作为主模块或者其他子模块的输入，来引用。</li>
+<li>根目录中定义的outputs.tf可以作为terraform apply的输出，显示到terminal上。</li>
+</ul>
+<h1 id="backend状态文件存储">backend状态文件存储</h1>
+<p><div class="callout callout-info" markdown="1"><br />
+<p class="callout-title">Terraform 状态文件</p></p>
+<p>Terraform的状态文件（通常命名为<code>terraform.tfstate</code>）是Terraform管理和跟踪资源的关键组件。Terraform使用这个文件来记录它所管理的各种资源的信息，以及这些资源的配置和属性。</p>
+<p>以下是Terraform状态文件的主要用途：</p>
+<ol>
+<li><strong>映射资源到实际资源</strong>：Terraform使用状态文件来映射你的配置文件中定义的资源到实际的云资源。例如，你可能在配置文件中定义了一个AWS EC2实例，Terraform会在状态文件中记录这个实例的ID，以便在将来的操作中找到它。</li>
+<li><strong>存储元数据</strong>：状态文件还包含了关于你的Terraform环境的元数据，例如Terraform的版本号，以及你的提供者的版本号。</li>
+<li><strong>跟踪更改</strong>：每次你运行<code>terraform apply</code>时，Terraform都会更新状态文件，以反映你的环境的最新状态。这使得Terraform能够知道哪些资源已经被创建，哪些资源已经被修改，哪些资源已经被删除。</li>
+<li><strong>支持团队协作</strong>：通过共享状态文件，团队成员可以共享对Terraform环境的视图，这对于团队协作非常重要。</li>
+</ol>
+<p>需要注意的是，由于状态文件可能包含敏感信息，因此需要妥善保管。在生产环境中，通常会使用远程状态存储（如Terraform Cloud或AWS S3）来安全地存储和共享状态文件。</p>
+</div>
+<ul>
+<li>我们都知道在执行部署计划之后，当前目录中就产生了名叫 “terraform.states” 的 Terraform 的状态文件，该文件中记录了已部署资源的状态。默认情况下，在执行部署计划后，Terraform 的状态文件会存储在本地，但是这样往往就造成一些弊端：</li>
+</ul>
+<p>（1）不适用团队之间协助，就好比在数据库中对同一条数据进行操作时，就会引起异常</p>
+<p>（2）状态文件中包含一些机密信息，会造成一定的机密泄露</p>
+<p>（3）如果不慎将本地的状态文件删除掉的话，已执行部署计划的资源的管理将很难在通过 Terraform 进行管理</p>
+<p>所以，Terraform 是支持在远端存储状态文件，也就是在 Azure Storage Account 中存储远端状态文件，Terraform 状态的存储是由一个称之为Backend的组件决定的，local state使用的是local backend。并且其他所有的Backend在使用之前都需要在模板中显式定义并通过 <strong>terraform init</strong> 来实现加载和配置。</p>
+<ul>
+<li>
+<p>可以把terraform状态文件保存到存储账户中：<a href="https://www.cnblogs.com/AllenMaster/p/14274731.html">Terraform 远端存储状态文件到 Azure Storage</a></p>
+</li>
+<li>
+<p>当你运行<code>terraform init</code>命令时，Terraform会初始化后端，并将本地状态文件迁移到远程状态存储。在后续的<code>terraform apply</code>或<code>terraform destroy</code>操作中，Terraform会直接从远程状态存储读取和写入状态。</p>
+</li>
+<li>如果你想从远程状态存储拉取最新的状态，你可以运行<code>terraform refresh</code>命令。如果你想将远程状态下载到本地，你可以运行<code>terraform state pull</code>命令。如果你想将本地状态推送到远程存储，你可以运行<code>terraform state push</code>命令。</li>
+<li>需要注意的是，使用远程状态存储需要考虑安全性和访问控制。例如，你可能需要配置适当的IAM策略来限制对S3 bucket的访问，或者使用服务器端加密来保护存储在bucket中的状态文件。</li>
+</ul>
+<h1 id="import导入已有资源">import导入已有资源</h1>
+<ul>
+<li>项目根目录创建一个imports.tf文件</li>
+</ul>
+<p><sub>~</sub>json<br />
+  tee imports.tf &lt;&lt;'EOF'<br />
+  import {<br />
+      to = azurerm_storage_account.infrasa<br />
+      id = "/subscriptions/9365cbc6-1cc4-4ab2-bd5f-2cb518cc2a51/resourceGroups/rg-mapapps-dev-mmatransfer/providers/Microsoft.Storage/storageAccounts/samapappsdevmmatransfer"<br />
+  }<br />
+  EOF<br />
+  ~~~</p>
+<ul>
+<li>terraform导入</li>
+</ul>
+<p><sub>~</sub>sh<br />
+  terraform plan -generate-config-out=generated_resources.tf<br />
+  ~~~</p>
+<ul>
+<li>在generated_resources.tf中即可看到资源定义</li>
+</ul>
+<h1 id="terraform源参数">Terraform源参数</h1>
+<p>Terraform 为所有资源类型提供了一组通用的元参数,包括:</p>
+<ul>
+<li>count - 控制资源实例的数量</li>
+<li>for_each - 基于集合创建多个实例</li>
+<li>depends_on - 显式声明依赖关系</li>
+<li>provider - 指定使用的 provider</li>
+<li>lifecycle - 控制资源生命周期行为</li>
+</ul>
+<p>示例：<code>count</code> 的工作原理，条件创建逻辑:</p>
+<ul>
+<li><strong>当 <code>count = 1</code></strong> (vpc_cen_grant 不为 null)</li>
+<li>创建 <strong>1个</strong> 资源实例</li>
+<li>资源引用: <code>alicloud_cen_transit_router_grant_attachment.vpc_cen_grant[0]</code></li>
+<li><strong>当 <code>count = 0</code></strong> (vpc_cen_grant 为 null)</li>
+<li>创建 <strong>0个</strong> 资源实例</li>
+<li>相当于此资源<strong>不存在</strong>,Terraform 跳过此资源</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="kr">resource</span><span class="w"> </span><span class="nc">&quot;alicloud_cen_transit_router_grant_attachment&quot;</span><span class="w"> </span><span class="nv">&quot;vpc_cen_grant&quot;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="na">count</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">var.vpc.vpc_cen_grant</span><span class="w"> </span><span class="p">!=</span><span class="w"> </span><span class="kt">null</span><span class="w"> </span><span class="p">?</span><span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="m">0</span>
+<span class="c1">  # ... 其他属性</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>count 是 Terraform 核心功能,与具体的云资源类型无关。任何 Terraform 资源(AWS、Azure、阿里云等)都可以使用 count 来控制创建数量, 包括 0 个(即不创建)。</p>
+<h1 id="terraform-questions">terraform questions</h1>
+<p>Basic：</p>
+<ol>
+<li>What is Terraform, and why is it used in the context of infrastructure automation? </li>
+</ol>
+<p>Terraform is an open-source infrastructure as code (IaC) tool developed by HashiCorp. It allows you to define and manage your infrastructure declaratively using a simple and human- readable configuration language. </p>
+<p>Terraform is used for infrastructure automation to provision and manage resources across various cloud providers and on-premises environments in a consistent and reproducible manner. </p>
+<ol>
+<li>What is the Terraform state file, and why is it important? </li>
+</ol>
+<p>The Terraform state file is a JSON or binary file that stores the current state of the managed infrastructure. It records resource metadata, dependencies, and other relevant information. The state file is critical for Terraform's operation as it allows the tool to understand the existing infrastructure and track changes over time. </p>
+<p>It helps Terraform determine the delta between the desired state and the actual state during subsequent runs, enabling it to apply the necessary updates accurately. </p>
+<ol>
+<li>What is the purpose of the Terraform plan command? </li>
+</ol>
+<p>The Terraform plan command is used to create an execution plan that shows the changes Terraform will apply to the infrastructure. It compares the desired state defined in the configuration with the current state recorded in the state file. </p>
+<p>The plan command provides a summary of the actions Terraform will take, such as creating, modifying, or deleting resources. It allows you to review and verify the changes before applying them to the infrastructure. </p>
+<ol>
+<li>What is the purpose of the "Terraform init" command? </li>
+</ol>
+<p>The "Terraform init" command initializes a Terraform working directory. It downloads and installs the necessary provider plugins, sets up the backend configuration, and prepares the directory for Terraform operations. </p>
+<ol>
+<li>What are Terraform variables, and how can you use them in your infrastructure code? </li>
+</ol>
+<p>Terraform variables allow you to parameterize your infrastructure code and make it more reusable and configurable. Variables can be defined in Terraform configuration files or separate variable files. You can use variables to customize resource configurations, such as specifying the number of instances or setting environment-specific values. </p>
+<p>By leveraging variables, you can avoid hardcoding values and easily reuse and share your infrastructure code across different environments. </p>
+<ol>
+<li>How does Terraform handle variable interpolation in strings? </li>
+</ol>
+<p>Terraform allows variable interpolation in strings using the "${var.NAME}" syntax. When the configuration is processed, Terraform replaces the variable references with their corresponding values. </p>
+<p>Intermediate：</p>
+<ol>
+<li>How can you organize your Terraform codebase for better maintainability?</li>
+</ol>
+<p>To organize a Terraform codebase for better maintainability, you can adopt various practices:</p>
+<p><strong><em>*Modularization*</em></strong>: Break down the codebase into reusable modules, encapsulating related resources and configurations.</p>
+<p><strong><em>*Folder Structure*</em></strong>: Organize files into logical folders based on resource types, environments, or modules.</p>
+<p><strong><em>*Naming Conventions*</em></strong>: Use consistent and descriptive naming conventions for resources, variables, and modules.</p>
+<p><strong><em>*Documentation*</em></strong>: Include comments, README files, or documentation to provide guidance and context for the codebase.</p>
+<p><strong><em>*Version Control*</em></strong>: Utilize a version control system like Git to track changes, collaborate, and roll back if needed.</p>
+<p>By following these practices, you can enhance code readability, reusability, and collaboration, making the codebase easier to maintain and evolve.</p>
+<ol>
+<li>Explain the concept of Terraform providers and their role in resource provisioning. </li>
+</ol>
+<p>Terraform providers are plugins that enable Terraform to interact with specific infrastructure platforms, such as AWS, Azure, or GCP. They provide a way for Terraform to manage and provision resources on these platforms. Each provider implements resource types and APIs to create, update, and delete resources. </p>
+<p>By configuring a provider in Terraform, you can leverage its resource types to define infrastructure as code and manage the lifecycle of resources on the target platform </p>
+<ol>
+<li>What is the purpose of Terraform modules, and how do they promote reusability? </li>
+</ol>
+<p>Terraform modules are self-contained packages of Terraform configurations that encapsulate a specific set of resources and their associated dependencies. Modules promote reusability by allowing you to define and share infrastructure components across projects and teams. </p>
+<p>With modules, you can abstract complex configurations into reusable building blocks, reducing duplication, and improving maintainability. Modules can be published and consumed internally or through public module registries, enabling code sharing and collaboration. </p>
+<ol>
+<li>How does Terraform handle drift detection and reconciliation? </li>
+</ol>
+<p>Terraform handles drift detection by comparing the state stored in the state file with the current state of the infrastructure. During a Terraform application, it detects any differences between the two states and identifies resources that have drifted. </p>
+<p>To reconcile the drift, Terraform determines the necessary actions (create, update, or delete) to bring the infrastructure back to the desired state defined in the configuration. By applying the changes, Terraform ensures that the infrastructure aligns with the intended configuration and resolves any discrepancies. </p>
+<ol>
+<li>Describe how Terraform applies changes to your infrastructure and what happens during a Terraform application. </li>
+</ol>
+<p>During a Terraform application, Terraform examines the configuration and state to determine the changes needed to reach the desired state. It creates an execution plan that outlines the actions required for resource creation, modification, or deletion. After confirming the execution plan, Terraform applies the changes by invoking the respective provider APIs. </p>
+<p>It provisions or updates resources according to the plan and updates the state file with the new infrastructure state. Terraform captures the output values of the resources, which can be used for further configuration or reference in subsequent Terraform runs. </p>
+<ol>
+<li>How can you manage secrets and sensitive data in Terraform?</li>
+</ol>
+<p>Managing secrets and sensitive data in Terraform require careful consideration to ensure security. Best practices include:</p>
+<p>· Storing secrets outside of version-controlled files, using tools like HashiCorp Vault or cloud-specific secret management services.</p>
+<p>· Utilizing Terraform input variables or environment variables to pass sensitive values securely during runtime.</p>
+<p>· Encrypting sensitive data using tools like Terraform Vault provider or native encryption mechanisms provided by the infrastructure platform.</p>
+<p>· Avoid writing secrets in plain text within Terraform configurations or logs.</p>
+<p>By following these practices, you can protect sensitive information and minimize the risk of exposing secrets unintentionally.</p>
+<p>Advanced：</p>
+<ol>
+<li>Explain the role of Terraform data sources and how you can use them.</li>
+</ol>
+<p>Terraform data sources allow you to fetch and reference information from external systems or existing resources. They provide a way to query and import data into your Terraform configurations.</p>
+<p>You can use data sources to retrieve attributes or metadata from various sources such as cloud providers, databases, or APIs. This data can then be used to make decisions, configure resources, or establish dependencies within your infrastructure.</p>
+<ol>
+<li>How can you perform blue-green deployments using Terraform?</li>
+</ol>
+<p>Blue-green deployments involve creating two identical environments (blue and green) and switching traffic from one to the other. In Terraform, you can achieve this by creating two sets of infrastructure resources with slight differences, such as different AWS Auto Scaling Groups or Azure Virtual Machine Scale Sets.</p>
+<p>Once the new environment (green) is provisioned and tested, you can update the load balancer or DNS records to direct traffic to the green environment. Terraform enables you to manage the infrastructure changes required for blue-green deployments in a declarative and automated manner.</p>
+<ol>
+<li>How can you integrate Terraform with CI/CD pipelines?</li>
+</ol>
+<p>Terraform can be integrated with <a href="https://www.turing.com/kb/ci-cd-pipeline">CI/CD pipelines</a> to automate the deployment and management of infrastructure. Here's the typical process:</p>
+<p>· Commit the Terraform configurations to a version control system (e.g., Git).</p>
+<p>· Set up a CI/CD pipeline that monitors changes to the Terraform code repository.</p>
+<p>· In the pipeline, execute Terraform commands such as init, validate, and plan to ensure the configurations are valid and generate an execution plan.</p>
+<p>· Use Terraform's apply command to create or modify infrastructure based on the approved changes.</p>
+<p>· Optionally, leverage infrastructure testing and verification tools to validate the deployed infrastructure.</p>
+<p>· Finally, trigger additional pipeline stages for application deployment, testing, and release.</p>
+<ol>
+<li>How can you manage Terraform state locking for team collaboration?</li>
+</ol>
+<p>Terraform state locking is crucial for preventing concurrent modifications to the same infrastructure. To manage state locking for team collaboration, you can use a remote backend with built-in state locking support.</p>
+<p>Terraform supports various remote backends like Amazon S3, Azure Storage, or HashiCorp Consul. By configuring a remote backend, Terraform automatically handles the state locking, ensuring that only one user or process can modify the state at a time.</p>
+<p>This prevents conflicts and data corruption when multiple team members are working on the same infrastructure concurrently.</p>
+<ol>
+<li>How can you perform rolling updates or zero-downtime deployments with Terraform?</li>
+</ol>
+<p>Rolling updates or zero-downtime deployments involve updating infrastructure components without causing service disruptions. With Terraform, you can achieve this by utilizing features such as rolling deployment strategies and lifecycle hooks.</p>
+<p>For example, you can define an AWS Auto Scaling Group with a rolling update policy to gradually replace instances while ensuring the overall availability of the application. Terraform allows you to specify update policies, health checks, and other parameters to control the pace and behavior of updates, minimizing downtime and ensuring smooth transitions.</p>
+    </div>
+  </article>
+  <aside class="toc">
+    <p class="toc-label">本页目录</p>
+    <ul>
+  <li><a href="#创建azure资源组">创建azure资源组</a></li>
+</ul>
+  </aside>
+
+</div>
+
+</main>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>Learning Notes</span>
+    <a href="https://github.com/hangx969/learning-notes">GitHub</a>
+  </div>
+</footer>
+<script src="../../static/search.js"></script>
+</body>
+</html>

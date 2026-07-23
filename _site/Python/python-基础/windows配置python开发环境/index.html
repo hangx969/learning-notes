@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Windows 配置 Python 开发环境 - Learning Notes</title>
+<link rel="stylesheet" href="../../../static/style.css">
+<link rel="stylesheet" href="../../../static/pygments.css">
+</head>
+<body data-root="../../../">
+<header class="site-header">
+  <div class="header-inner">
+    <a class="logo" href="../../../index.html"><span class="logo-mark"></span>LEARNING NOTES</a>
+    <div class="search">
+      <input id="search-input" type="search" placeholder="搜索笔记…" autocomplete="off" aria-label="搜索笔记">
+      <div id="search-results" hidden></div>
+    </div>
+  </div>
+  <nav class="topic-nav" aria-label="主题导航">
+    <div class="topic-nav-inner">
+      <a href="../../../AI/">AI</a>
+      <a href="../../../Aliyun/">Aliyun</a>
+      <a href="../../../Azure/">Azure</a>
+      <a href="../../../C%2B%2B/">C++</a>
+      <a href="../../../CloudComputing/">CloudComputing</a>
+      <a href="../../../Database/">Database</a>
+      <a href="../../../Docker-Kubernetes/">Docker-Kubernetes</a>
+      <a href="../../../GPU-DeepLearning/">GPU-DeepLearning</a>
+      <a href="../../../Git/">Git</a>
+      <a href="../../../Go/">Go</a>
+      <a href="../../../HPC/">HPC</a>
+      <a href="../../../IaC/">IaC</a>
+      <a href="../../../Linux-Shell/">Linux-Shell</a>
+      <a href="../../../Middlewares/">Middlewares</a>
+      <a href="../../../Networking/">Networking</a>
+      <a href="../../../OS/">OS</a>
+      <a href="../../../Python/" class="active">Python</a>
+      <a href="../../../SoftwareTesting/">SoftwareTesting</a>
+    </div>
+  </nav>
+</header>
+<main class="main">
+
+<div class="article-layout">
+
+  <aside class="sidebar">
+    <details class="sidebar-details">
+      <summary>Python</summary>
+      <nav class="sidebar-nav">
+        <p class="sidebar-group">python-基础</p>
+        <ul>
+          <li><a href="../../../Python/python-%E5%9F%BA%E7%A1%80/python-OOP/">Python 面向对象编程</a></li>
+          <li><a href="../../../Python/python-%E5%9F%BA%E7%A1%80/python-QA/">Python 知识总结与常见问题</a></li>
+          <li><a href="../../../Python/python-%E5%9F%BA%E7%A1%80/python-basics/">Python 数据类型、运算符与基础语法</a></li>
+          <li><a href="../../../Python/python-%E5%9F%BA%E7%A1%80/python-exception-handling/">Python 异常处理</a></li>
+          <li><a href="../../../Python/python-%E5%9F%BA%E7%A1%80/python-function/">Python 函数</a></li>
+          <li><a href="../../../Python/python-%E5%9F%BA%E7%A1%80/python%E5%8C%85%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7-uv/">Python 包管理工具 uv</a></li>
+          <li><a href="../../../Python/python-%E5%9F%BA%E7%A1%80/rockylinux%E9%85%8D%E7%BD%AEpython%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/">RockyLinux 配置 Python 开发环境</a></li>
+          <li><a href="../../../Python/python-%E5%9F%BA%E7%A1%80/windows%E9%85%8D%E7%BD%AEpython%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/" class="current">Windows 配置 Python 开发环境</a></li>
+        </ul>
+        <p class="sidebar-group">python-数据分析-AI大模型</p>
+        <ul>
+          <li><a href="../../../Python/python-%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-AI%E5%A4%A7%E6%A8%A1%E5%9E%8B/python-%E5%A4%84%E7%90%86excel-word/">Python处理Excel与Word文档</a></li>
+          <li><a href="../../../Python/python-%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-AI%E5%A4%A7%E6%A8%A1%E5%9E%8B/python-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E4%B8%8E%E9%A2%84%E6%B5%8B/">Python机器学习与预测</a></li>
+        </ul>
+        <p class="sidebar-group">python-网络编程-前端</p>
+        <ul>
+          <li><a href="../../../Python/python-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B-%E5%89%8D%E7%AB%AF/python-Web%E5%BC%80%E5%8F%91-HTML-CSS-JS/">Web开发基础 - HTML/CSS/JavaScript</a></li>
+          <li><a href="../../../Python/python-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B-%E5%89%8D%E7%AB%AF/python-Web%E6%A1%86%E6%9E%B6Django/">Python Web框架Django</a></li>
+          <li><a href="../../../Python/python-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B-%E5%89%8D%E7%AB%AF/python-Web%E6%A1%86%E6%9E%B6Flask/">Python Web框架Flask</a></li>
+          <li><a href="../../../Python/python-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B-%E5%89%8D%E7%AB%AF/python-request-module/">Python Requests模块</a></li>
+          <li><a href="../../../Python/python-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B-%E5%89%8D%E7%AB%AF/python-socket-module/">Python Socket模块</a></li>
+          <li><a href="../../../Python/python-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B-%E5%89%8D%E7%AB%AF/python-%E7%88%AC%E8%99%AB/">Python爬虫</a></li>
+        </ul>
+        <p class="sidebar-group">python-运维开发</p>
+        <ul>
+          <li><a href="../../../Python/python-%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91/python-GUI-tkinter/">Python GUI开发 - Tkinter</a></li>
+          <li><a href="../../../Python/python-%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91/python-Linux-operation/">Python Linux运维模块</a></li>
+          <li><a href="../../../Python/python-%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91/python-elasticsearch/">Python Elasticsearch运维</a></li>
+          <li><a href="../../../Python/python-%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91/python-fabric%E9%AB%98%E7%BA%A7%E7%94%A8%E6%B3%95/">Python Fabric高级用法</a></li>
+          <li><a href="../../../Python/python-%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91/python-kubernetes-module/">Python Kubernetes模块</a></li>
+          <li><a href="../../../Python/python-%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91/python-mysql/">Python MySQL操作</a></li>
+          <li><a href="../../../Python/python-%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91/python-nginx/">Python Nginx运维自动化</a></li>
+          <li><a href="../../../Python/python-%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91/python-postgresql/">Python PostgreSQL操作</a></li>
+          <li><a href="../../../Python/python-%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91/python-tomcat/">Python Tomcat运维自动化</a></li>
+          <li><a href="../../../Python/python-%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91/python-%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/">Python 游戏开发</a></li>
+        </ul>
+        <p class="sidebar-group">电池参数提取统计工具开发</p>
+        <ul>
+          <li><a href="../../../Python/%E7%94%B5%E6%B1%A0%E5%8F%82%E6%95%B0%E6%8F%90%E5%8F%96%E7%BB%9F%E8%AE%A1%E5%B7%A5%E5%85%B7%E5%BC%80%E5%8F%91/%E5%AE%9E%E9%AA%8C%E5%AE%A4%E7%94%B5%E6%B1%A0%E5%8F%82%E6%95%B0%E4%B8%80%E9%94%AE%E7%BB%9F%E8%AE%A1%E5%B7%A5%E5%85%B7%E5%BC%80%E5%8F%91/">实验室电池参数一键统计工具开发</a></li>
+        </ul>
+        <p class="sidebar-group">其他</p>
+        <ul>
+          <li><a href="../../../Python/script-server-%E8%84%9A%E6%9C%ACWeb%E5%8C%96%E5%B7%A5%E5%85%B7/">Script-Server：脚本 Web 化工具</a></li>
+        </ul>
+      </nav>
+    </details>
+  </aside>
+
+  <article class="article">
+    <nav class="breadcrumb">
+      <a href="../../../index.html">首页</a><span>/</span>
+      <a href="../../../Python/">Python</a><span>/</span><span>python-基础</span>
+    </nav>
+    <h1 class="article-title">Windows 配置 Python 开发环境</h1>
+    <p class="article-meta"><span>更新于 2026-04-16</span>
+      <a href="https://github.com/hangx969/learning-notes/blob/main/Python/python-%E5%9F%BA%E7%A1%80/windows%E9%85%8D%E7%BD%AEpython%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83.md">查看源文件</a>
+    </p>
+    <div class="article-body">
+<h1 id="windows-配置-python-开发环境">Windows 配置 Python 开发环境</h1>
+<h2 id="安装python">安装python</h2>
+<ol>
+<li>python官网下载对应版本的python(windows installer 64 bit):https://www.python.org/downloads/</li>
+<li>选择自定义安装,勾选所有选项,安装。</li>
+<li>在cmd中运行python命令查看python版本信息。</li>
+</ol>
+<p>相关内容参见 <a class="wikilink" href="../../../Python/python-%E5%9F%BA%E7%A1%80/rockylinux%E9%85%8D%E7%BD%AEpython%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/">RockyLinux 配置 Python 开发环境</a> 和 <a class="wikilink" href="../../../Python/python-%E5%9F%BA%E7%A1%80/python%E5%8C%85%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7-uv/">Python 包管理工具 uv</a></p>
+<hr />
+<h2 id="vs-code-配置">VS Code 配置</h2>
+<p><div class="callout callout-tip" markdown="1"><br />
+<p class="callout-title">推荐安装的插件</p></p>
+<ul>
+<li>GitLens</li>
+<li>CodeRunner</li>
+<li>Prettier - Code Formatter</li>
+<li>ESLint</li>
+<li>Live Server</li>
+<li>Output Colorizer</li>
+<li>Path Intellisense</li>
+</ul>
+</div>
+<p><div class="callout callout-warning" markdown="1"><br />
+<p class="callout-title">VS Code output 控制台输出中文乱码解决办法</p></p>
+<p>```python</p>
+<h1 id="在代码中输入以下几行">在代码中输入以下几行:</h1>
+<p>import sys<br />
+import io<br />
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')<br />
+```</p>
+</div>
+<hr />
+<h2 id="pycharm-配置">PyCharm 配置</h2>
+<blockquote>
+<p>https://mp.weixin.qq.com/s/w1cGfl6jUFF5ghvdxWGWzQ</p>
+</blockquote>
+<p>Pycharm作为Python开发最常用的IDE之一,不仅兼容性好,而且功能也相当丰富,比如调试、语法高亮、智能提示等等功能,它还支持web开发框架比如Django等,当你熟悉了它之后,开发效率是相当之高的。</p>
+<h3 id="常用小技巧">常用小技巧</h3>
+<h4 id="1-设置代码字体">1. 设置代码字体</h4>
+<p>点击左上角的"File"(文件),选择"Settings"(设置),输入"font"(字体)找到"Font",在"Size"(大小)里面设置数字,默认是12,建议18或者20就可以了。</p>
+<h4 id="2-设置菜单界面文字大小">2. 设置菜单界面文字大小</h4>
+<p>这里跟上面有些区别,上面是调整代码文字大小,但并没有改变菜单界面的文字大小,如果你的菜单界面文字比较小,那么你就需要去调整一下菜单界面的文字大小了,点击左上角的"File",选择"Settings",输入"font",找到"Appearance",在"Use custom font"前面打勾之后,就可以在后面的Size里面选择你喜欢的字体大小了。</p>
+<h4 id="3-快速多行注释或者取消多行注释">3. 快速多行注释或者取消多行注释</h4>
+<p>虽然我们在写代码中可以用"#"来进行单行注释,但如果有多行代码需要注释,那么一行一行来敲"#"就有点麻烦,这里我们可以用鼠标选中多行代码,然后按 <mark>Ctrl+/</mark> 就能进行多行代码的注释了,同时也可以取消多行代码的注释。</p>
+<h4 id="4-代码格式化规范代码">4. 代码格式化,规范代码</h4>
+<p>在我们刚开始写代码的时候,难免会出现代码写得不规范的问题,虽然说并不影响运行,但是可读性比较低,尤其是当你去读一个比较长且不规范的代码的时候,你就会体会其中痛苦。</p>
+<p><div class="callout callout-tip" markdown="1"><br />
+<p class="callout-title">自动格式化</p></p>
+<p>我们只要在写完代码之后,找到菜单栏的"Code",点击一下"Reformat Code"就能自动地将代码进行规范化处理。</p>
+</div>
+<h4 id="5-快速修改同一个变量或类">5. 快速修改同一个变量或类</h4>
+<p>在写代码中时我们经常要定义很多变量或类,变量或类在写代码时可能会在多个地方被使用,那如果我们需要把代码里的某一个变量或类全部修改,那么我们是一处一处去修改吗？</p>
+<p><div class="callout callout-tip" markdown="1"><br />
+<p class="callout-title">全局重命名</p></p>
+<p>我们只需要选中需要重新命名的变量或类,右键弹出选项中选择Refactor,然后点击Rename,就可以进行全局修改了。</p>
+</div>
+<h4 id="6-快速查找变量函数等等">6. 快速查找变量、函数等等</h4>
+<p>当我们的代码比较长的时候,如果是从头到尾去滑动来查找某个变量或者函数就很麻烦,这个时候我们就需要用到快捷键 <mark>Ctrl+F</mark> 来进行快速查找。比如说我想在贪吃蛇这个项目里面去查找一下"runGame"这个函数是在哪里用到的,那么我们就只需要用 Ctrl+F 调出小窗口,然后输入关键字"runGame"就能查到代码中"runGame"出现的所有位置。</p>
+<h4 id="7-查找修改历史">7. 查找修改历史</h4>
+<p>写项目的时候是经常要修改的,有时候需要来回改好几天才能完成,但如果我们今天打开pycharm去添加一个新功能,做了很久之后又不想要了,想弄回昨天的版本,但时间比较长了,撤销也扯不回来了,该怎么办？</p>
+<p><div class="callout callout-tip" markdown="1"><br />
+<p class="callout-title">查找修改历史</p></p>
+<p>pycharm还是很人性化的,你所做的每一步改变,它都帮你存有历史记录,只需要右击文件,在Local History里面就能查到所有的历史版本。</p>
+</div>
+<p>拿个最简单的例子,比如说我现在的代码里面多了一个功能做"执行完毕之后提示'执行结束'",我不需要它,但我此刻已经无法撤销了,该怎么办？这个时候我们就可以去Local History查找历史版本,把现有版本改回历史版本。(除了直接删除,直接删除不是我们的目的)</p>
+<p><img alt="图片" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202505301724790.gif" /></p>
+<h4 id="8-安装配置pip国内源">8. 安装配置pip国内源</h4>
+<p>我们在用pip去安装一些资源的时候,pycharm默认是给我们去下载国外的资源的,有时候会因为网络等问题导致安装失败,其实我们可以做一下配置,让它去下载国内的资源就可以解决了。</p>
+<p>最常见的就是去清华大学的开源镜像站下载,这个我们只需要在pycharm设置一下,以后它就会自己去国内下载了。</p>
+<p><div class="callout callout-note" markdown="1"><br />
+<p class="callout-title">设置方法</p></p>
+<p>点击右上角"File" -&gt; 点击"Settings" -&gt; 找到Project下面的"Python interpreter" -&gt; 点击"+" -&gt; 点击"Manage Repositories" -&gt; 点击"+" -&gt; 输入清华大学开源软件镜像站地址:https://pypi.tuna.tsinghua.edu.cn/simple</p>
+</div>
+<h4 id="9-安装包">9. 安装包</h4>
+<p>写代码实现某些功能的时候我们经常要安装软件包,所以给pycharm安装包这个这个功能是必须要掌握的。</p>
+<p><div class="callout callout-note" markdown="1"><br />
+<p class="callout-title">安装方法</p></p>
+<p>点击左上角"File" -&gt; 点击"Settings" -&gt; 找到Project下面的"Python interpreter" -&gt; 点击"+" -&gt; 输入你想安装的包的名字,例如"pygame",然后点击下面的"Install Package"就开始安装了,安装完成就可以用了。</p>
+</div>
+<p>注意一点就是安装完成后才能用,在界面下方会有下载的进度条：</p>
+<h4 id="10-调试">10. 调试</h4>
+<p>写代码的时候我们很容易会报错,但有时候报错我们自己在明面上也是很难看出问题的,那么这个时候我们就需要调试了,这也是开发过程中常用的一个技巧。</p>
+<p><div class="callout callout-tip" markdown="1"><br />
+<p class="callout-title">调试方法</p></p>
+<p>怎么调试？在你觉得可能会出错的那行代码左边单击一下就会出现一个红点,我们称之为==断点==,只要程序运行到断点的位置就会自动停下来。设置完断点之后,我们右键选择"Debug 项目名"来进行运行,然后到了运行界面,我们一步一步走,同时可以看出里面的一些变量的值的变化情况。</p>
+</div>
+<p>调试也有比较多的门道,具体的调试技巧大家可以去网上搜索一下,我就不在这里过多解释了。</p>
+<hr />
+<h3 id="常用快捷键">常用快捷键</h3>
+<p>最后,给大家附上Pycharm常用的快捷键汇总,祝你们在写代码的过程中越写越顺。</p>
+<p><img alt="图片" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202209112211527.jpeg" /></p>
+    </div>
+  </article>
+  <aside class="toc">
+    <p class="toc-label">本页目录</p>
+    <ul>
+  <li><a href="#安装python">安装python</a></li>
+  <li><a href="#vs-code-配置">VS Code 配置</a></li>
+  <li><a href="#pycharm-配置">PyCharm 配置</a><ul>
+  <li><a href="#常用小技巧">常用小技巧</a></li>
+  <li><a href="#常用快捷键">常用快捷键</a></li>
+</ul></li>
+</ul>
+  </aside>
+
+</div>
+
+</main>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>Learning Notes</span>
+    <a href="https://github.com/hangx969/learning-notes">GitHub</a>
+  </div>
+</footer>
+<script src="../../../static/search.js"></script>
+</body>
+</html>

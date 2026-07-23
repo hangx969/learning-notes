@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Anthropic 工程师力推 HTML 取代 Markdown —— Karpathy 附议 - Learning Notes</title>
+<link rel="stylesheet" href="../../../static/style.css">
+<link rel="stylesheet" href="../../../static/pygments.css">
+</head>
+<body data-root="../../../">
+<header class="site-header">
+  <div class="header-inner">
+    <a class="logo" href="../../../index.html"><span class="logo-mark"></span>LEARNING NOTES</a>
+    <div class="search">
+      <input id="search-input" type="search" placeholder="搜索笔记…" autocomplete="off" aria-label="搜索笔记">
+      <div id="search-results" hidden></div>
+    </div>
+  </div>
+  <nav class="topic-nav" aria-label="主题导航">
+    <div class="topic-nav-inner">
+      <a href="../../../AI/" class="active">AI</a>
+      <a href="../../../Aliyun/">Aliyun</a>
+      <a href="../../../Azure/">Azure</a>
+      <a href="../../../C%2B%2B/">C++</a>
+      <a href="../../../CloudComputing/">CloudComputing</a>
+      <a href="../../../Database/">Database</a>
+      <a href="../../../Docker-Kubernetes/">Docker-Kubernetes</a>
+      <a href="../../../GPU-DeepLearning/">GPU-DeepLearning</a>
+      <a href="../../../Git/">Git</a>
+      <a href="../../../Go/">Go</a>
+      <a href="../../../HPC/">HPC</a>
+      <a href="../../../IaC/">IaC</a>
+      <a href="../../../Linux-Shell/">Linux-Shell</a>
+      <a href="../../../Middlewares/">Middlewares</a>
+      <a href="../../../Networking/">Networking</a>
+      <a href="../../../OS/">OS</a>
+      <a href="../../../Python/">Python</a>
+      <a href="../../../SoftwareTesting/">SoftwareTesting</a>
+    </div>
+  </nav>
+</header>
+<main class="main">
+
+<div class="article-layout">
+
+  <aside class="sidebar">
+    <details class="sidebar-details">
+      <summary>AI</summary>
+      <nav class="sidebar-nav">
+        <p class="sidebar-group">AI-视觉</p>
+        <ul>
+          <li><a href="../../../AI/AI-%E8%A7%86%E8%A7%89/AI-Animation-Skill-%E7%A7%91%E6%99%AE%E5%8A%A8%E7%94%BB/">AI-Animation-Skill - HTML科普动画生成</a></li>
+          <li><a href="../../../AI/AI-%E8%A7%86%E8%A7%89/AI%E5%81%9APPT-ppt-master/">AI做PPT - ppt-master</a></li>
+          <li><a href="../../../AI/AI-%E8%A7%86%E8%A7%89/Markdown-Viewer-Skills-Markdown%E4%B8%AD%E7%9B%B4%E6%8E%A5%E7%94%BB%E5%9B%BE/">Markdown Viewer Skills：让 AI 写文档时顺手把图也画了</a></li>
+          <li><a href="../../../AI/AI-%E8%A7%86%E8%A7%89/effective-html-AI%E7%9B%B4%E5%87%BAHTML%E5%B7%A5%E5%85%B7%E5%AE%9E%E6%B5%8B/">effective-html：让 AI 直接输出 HTML 而非 Markdown</a></li>
+          <li><a href="../../../AI/AI-%E8%A7%86%E8%A7%89/html-anything-AI%E7%94%9F%E6%88%90HTML%E5%85%A8%E5%9C%BA%E6%99%AF%E5%B7%A5%E5%85%B7/">html-anything：AI 生成 HTML 全场景工具</a></li>
+          <li><a href="../../../AI/AI-%E8%A7%86%E8%A7%89/html-ppt-skill-%E5%AE%9E%E6%B5%8B%E6%8C%87%E5%8D%97/">html-ppt-skill - HTML幻灯片生成</a></li>
+          <li><a href="../../../AI/AI-%E8%A7%86%E8%A7%89/%E8%A7%86%E8%A7%89%E8%AE%BE%E8%AE%A1%E6%8F%90%E7%A4%BA%E8%AF%8D/">视觉设计提示词</a></li>
+        </ul>
+        <p class="sidebar-group">AIOps</p>
+        <ul>
+          <li><a href="../../../AI/AIOps/AIOps%E5%AE%9E%E6%88%98-Golang%E6%89%8B%E6%90%93K8s%E6%99%BA%E8%83%BD%E8%BF%90%E7%BB%B4%E5%B7%A5%E5%85%B7%E9%93%BE/">AIOps 实战：Golang 手搓 K8s 智能运维工具链</a></li>
+          <li><a href="../../../AI/AIOps/Kubernetes-MCP-Server-Dify%E6%99%BA%E8%83%BD%E8%BF%90%E7%BB%B4/">AI 接管 Kubernetes 运维——Kubernetes MCP Server + Dify</a></li>
+        </ul>
+        <p class="sidebar-group">ClaudeCode</p>
+        <ul>
+          <li><a href="../../../AI/ClaudeCode/CLAUDE.md%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5-12%E6%9D%A1%E8%A7%84%E5%88%99%E6%A8%A1%E6%9D%BF/">Mnilax：CLAUDE.md 规则从 Karpathy 的 4 条增加到 12 条，错误率从 41% 降到 3%</a></li>
+          <li><a href="../../../AI/ClaudeCode/CLAUDE.md%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5-21%E6%9D%A1%E6%8C%87%E4%BB%A4%E6%B8%85%E5%8D%95/">Mayank Agarwal：21 条 CLAUDE.md 指令，让 Claude 真正懂你</a></li>
+          <li><a href="../../../AI/ClaudeCode/CLAUDE.md%E7%BB%B4%E6%8A%A4%E5%B7%A5%E7%A8%8B-%E5%9B%9B%E5%B1%82%E5%8A%A0%E8%BD%BD%E4%B8%8E%E6%8C%87%E4%BB%A4%E9%A2%84%E7%AE%97/">CLAUDE.md 维护工程：四层加载与指令预算</a></li>
+          <li><a href="../../../AI/ClaudeCode/Claude%20Code%20%E5%9F%BA%E7%A1%80%E6%8C%87%E5%8D%97/">Claude Code 使用指南</a></li>
+          <li><a href="../../../AI/ClaudeCode/Claude%20Code%20%E6%89%A9%E5%B1%95%E4%BD%93%E7%B3%BB/">Claude Code 扩展体系</a></li>
+          <li><a href="../../../AI/ClaudeCode/Claude-Code-Harness%E5%AE%9E%E6%88%98-%E6%9C%80%E5%B0%8F%E5%8F%AF%E7%94%A8%E7%B3%BB%E7%BB%9F/">Harness 实战：从零搭建最小可用的 Harness 系统</a></li>
+          <li><a href="../../../AI/ClaudeCode/Claude-Code%E4%B8%BA%E4%BB%80%E4%B9%88%E7%94%A8grep%E4%B8%8D%E7%94%A8RAG/">为什么 Claude Code 不用 RAG 检索代码，而是 grep？</a></li>
+          <li><a href="../../../AI/ClaudeCode/Claude-Fable-5-system-prompt/">Claude Fable 5 — System Prompt</a></li>
+          <li><a href="../../../AI/ClaudeCode/Claude-Skill%E8%B4%A8%E6%A3%80%E5%B7%A5%E5%85%B7-SkillCraft/">Claude Skill 质检工具 Skill Craft</a></li>
+          <li><a href="../../../AI/ClaudeCode/Git-Worktree-AI%E5%BC%80%E5%8F%91%E5%AE%9E%E8%B7%B5%E6%8C%87%E5%8D%97/">Vibe Coding 时代的 Git Worktree 实践指南</a></li>
+          <li><a href="../../../AI/ClaudeCode/%E5%A4%9A%E6%99%BA%E8%83%BD%E4%BD%93%E5%8D%8F%E4%BD%9C-Subagents%E4%B8%8EAgent-Teams/">Claude Code 多智能体协作：Subagents 与 Agent Teams</a></li>
+        </ul>
+        <p class="sidebar-group">Codex</p>
+        <ul>
+          <li><a href="../../../AI/Codex/Codex-config-toml-%E5%85%A8%E9%87%8F%E9%85%8D%E7%BD%AE%E5%8F%82%E8%80%83/">OpenAI Codex config.toml 全量配置参考</a></li>
+          <li><a href="../../../AI/Codex/Codex-%E7%9C%81Token%E5%B7%A5%E5%85%B7%E5%AE%9E%E6%B5%8B-Ponytail-Headroom-RTK/">Codex 省 Token 工具实测：Ponytail、Headroom、RTK-AI</a></li>
+        </ul>
+        <p class="sidebar-group">GithubCopilot</p>
+        <ul>
+          <li><a href="../../../AI/GithubCopilot/Copilot%20CLI/">GitHub Copilot CLI</a></li>
+        </ul>
+        <p class="sidebar-group">Hermes-agent</p>
+        <ul>
+          <li><a href="../../../AI/Hermes-agent/Hermes-Agent-%E6%BB%A1%E9%85%8D%E6%8C%87%E5%8D%97%E4%B8%8E%E7%94%9F%E6%80%81%E8%B5%84%E6%BA%90/">Hermes Agent 满配指南与生态资源</a></li>
+          <li><a href="../../../AI/Hermes-agent/Hermes-Curator-Skill%E8%86%A8%E8%83%80%E6%B2%BB%E7%90%86/">Skill 太多导致上下文膨胀怎么办？来自 Hermes Agent 的实践</a></li>
+          <li><a href="../../../AI/Hermes-agent/Hermes%E4%B8%8EOpenClaw%E5%AF%B9%E6%AF%94%E5%8F%8A%E9%A3%9E%E4%B9%A6%E6%8E%A5%E5%85%A5%E6%8C%87%E5%8D%97/">Hermes Agent全解析：与OpenClaw对比及飞书接入指南</a></li>
+          <li><a href="../../../AI/Hermes-agent/Ubuntu%2025.10%20%E5%AE%89%E8%A3%85%E4%B8%8E%E4%BD%BF%E7%94%A8%20Hermes%20Agent%20%E6%8C%87%E5%8D%97/">Ubuntu 25.10 安装与使用 Hermes Agent 指南</a></li>
+        </ul>
+        <p class="sidebar-group">Obsidian</p>
+        <ul>
+          <li><a href="../../../AI/Obsidian/Obsidian-Vault%E6%A8%A1%E6%9D%BF%E5%BA%93%E5%90%88%E9%9B%86-48%E4%B8%AA%E5%AE%9D%E8%97%8Fvault/">Obsidian Vault 模板库合集：48 个 GitHub 宝藏 vault</a></li>
+          <li><a href="../../../AI/Obsidian/Obsidian%E5%8F%AF%E8%A7%86%E5%8C%96Skills-Excalidraw-Mermaid-Canvas/">Obsidian 可视化 Skills — Excalidraw / Mermaid / Canvas</a></li>
+          <li><a href="../../../AI/Obsidian/obsidian-claude-code-AI%E7%9F%A5%E8%AF%86%E5%BA%93%E5%AE%8C%E6%95%B4%E6%8C%87%E5%8D%97/">Obsidian + Claude Code：AI 驱动的知识库完整指南</a></li>
+        </ul>
+        <p class="sidebar-group">OpenClaw</p>
+        <ul>
+          <li><a href="../../../AI/OpenClaw/CoPaw/">CoPaw</a></li>
+          <li><a href="../../../AI/OpenClaw/OpenClaw-Channels/">OpenClaw Channel 配置</a></li>
+          <li><a href="../../../AI/OpenClaw/OpenClaw-K8s%E6%99%BA%E8%83%BD%E8%BF%90%E7%BB%B4%E5%AE%9E%E6%88%98/">用 OpenClaw 智能体网关接管 K8s 日常运维：从只读巡检到低风险变更</a></li>
+          <li><a href="../../../AI/OpenClaw/OpenClaw-Skills-Plugins/">OpenClaw Skills 与插件</a></li>
+          <li><a href="../../../AI/OpenClaw/OpenClaw-Workspace-%E8%BF%90%E7%BB%B4/">OpenClaw Workspace 运维实战</a></li>
+          <li><a href="../../../AI/OpenClaw/OpenClaw-%E5%9F%BA%E7%A1%80-%E5%AE%89%E8%A3%85/">OpenClaw 基础与安装</a></li>
+          <li><a href="../../../AI/OpenClaw/Openclaw-AIOps/">OpenClaw AIOps</a></li>
+          <li><a href="../../../AI/OpenClaw/Openclaw-%E5%A4%9A%E6%99%BA%E8%83%BD%E4%BD%93/">OpenClaw 多智能体</a></li>
+          <li><a href="../../../AI/OpenClaw/Ubuntu-2510-Setup-Guide/">Ubuntu 25.10 (Questing) 初始化配置指南</a></li>
+          <li><a href="../../../AI/OpenClaw/%E9%A3%9E%E4%B9%A6CLI%E7%94%BB%E6%9D%BF-%E4%B8%80%E5%8F%A5%E8%AF%9D%E7%94%9F%E6%88%90%E6%9E%B6%E6%9E%84%E5%9B%BE/">飞书 CLI 画板：一句话生成架构图</a></li>
+        </ul>
+        <p class="sidebar-group">代码知识图谱</p>
+        <ul>
+          <li><a href="../../../AI/%E4%BB%A3%E7%A0%81%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/CodeGraph-%E4%BB%A3%E7%A0%81%E8%AF%AD%E4%B9%89%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/">CodeGraph：给 Claude Code 先画一张代码地图，工具调用砍掉 92%</a></li>
+          <li><a href="../../../AI/%E4%BB%A3%E7%A0%81%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/Graphify-%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1%E5%B7%A5%E5%85%B7/">Graphify：软件工程知识图谱工具</a></li>
+          <li><a href="../../../AI/%E4%BB%A3%E7%A0%81%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/Understand-Anything-%E4%BB%A3%E7%A0%81%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1%E5%8F%AF%E8%A7%86%E5%8C%96/">Understand-Anything：AI 代码知识图谱可视化工具</a></li>
+          <li><a href="../../../AI/%E4%BB%A3%E7%A0%81%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/code-review-graph-%E6%9C%AC%E5%9C%B0%E4%BB%A3%E7%A0%81%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/">开源 Claude Code 本地代码知识图谱：code-review-graph 完整上手攻略</a></li>
+          <li><a href="../../../AI/%E4%BB%A3%E7%A0%81%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/shiji-kb-AI%E5%8F%B2%E8%AE%B0%E7%9F%A5%E8%AF%86%E5%BA%93%E4%B8%8E%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1%E6%9E%84%E9%80%A0%E6%96%B9%E6%B3%95%E8%AE%BA/">shiji-kb：AI 史记知识库与可复用知识图谱构造方法论</a></li>
+        </ul>
+        <p class="sidebar-group">行业动态</p>
+        <ul>
+          <li><a href="../../../AI/%E8%A1%8C%E4%B8%9A%E5%8A%A8%E6%80%81/AI%E6%97%B6%E4%BB%A3%E7%9A%84Git%E7%89%88%E6%9C%AC%E7%AE%A1%E7%90%86%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/">AI 时代的 Git 版本管理最佳实践</a></li>
+          <li><a href="../../../AI/%E8%A1%8C%E4%B8%9A%E5%8A%A8%E6%80%81/Anthropic%E5%B7%A5%E7%A8%8B%E5%B8%88%E5%8A%9B%E6%8E%A8HTML%E5%8F%96%E4%BB%A3Markdown-Karpathy%E9%99%84%E8%AE%AE/" class="current">Anthropic 工程师力推 HTML 取代 Markdown —— Karpathy 附议</a></li>
+          <li><a href="../../../AI/%E8%A1%8C%E4%B8%9A%E5%8A%A8%E6%80%81/Claude-Code%E5%88%9B%E5%A7%8B%E4%BA%BA%E7%BA%A2%E6%9D%89%E5%A4%A7%E4%BC%9A%E4%B8%83%E4%B8%AA%E5%88%A4%E6%96%AD/">Claude Code 创始人在红杉大会上的 7 个重要判断</a></li>
+          <li><a href="../../../AI/%E8%A1%8C%E4%B8%9A%E5%8A%A8%E6%80%81/Loop-Engineering-%E4%BB%8EPrompt%E5%88%B0%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%81%E6%B0%B4%E7%BA%BF/">Loop Engineering：从 Prompt 到自动化流水线</a></li>
+          <li><a href="../../../AI/%E8%A1%8C%E4%B8%9A%E5%8A%A8%E6%80%81/OpenCodeReview-%E9%98%BF%E9%87%8CAI%E4%BB%A3%E7%A0%81%E5%AE%A1%E6%9F%A5%E5%B7%A5%E7%A8%8B%E5%8C%96/">OpenCodeReview：阿里开源的 AI 代码审查工程化工具</a></li>
+          <li><a href="../../../AI/%E8%A1%8C%E4%B8%9A%E5%8A%A8%E6%80%81/TypeScript-vs-Python-AI-Agent%E6%97%B6%E4%BB%A3%E7%9A%84%E8%AF%AD%E8%A8%80%E4%B9%8B%E4%BA%89/">为什么 AI Agent 时代，TypeScript 正在抢走 Python 的主场？</a></li>
+        </ul>
+        <p class="sidebar-group">其他</p>
+        <ul>
+          <li><a href="../../../AI/HarnessKit/">HarnessKit — AI 编码智能体统一管理工具</a></li>
+          <li><a href="../../../AI/%E6%8F%90%E7%A4%BA%E8%AF%8D/">提示词</a></li>
+        </ul>
+      </nav>
+    </details>
+  </aside>
+
+  <article class="article">
+    <nav class="breadcrumb">
+      <a href="../../../index.html">首页</a><span>/</span>
+      <a href="../../../AI/">AI</a><span>/</span><span>行业动态</span>
+    </nav>
+    <h1 class="article-title">Anthropic 工程师力推 HTML 取代 Markdown —— Karpathy 附议</h1>
+    <p class="article-meta"><span>更新于 2026-05-13</span>
+      <a href="https://github.com/hangx969/learning-notes/blob/main/AI/%E8%A1%8C%E4%B8%9A%E5%8A%A8%E6%80%81/Anthropic%E5%B7%A5%E7%A8%8B%E5%B8%88%E5%8A%9B%E6%8E%A8HTML%E5%8F%96%E4%BB%A3Markdown-Karpathy%E9%99%84%E8%AE%AE.md">查看源文件</a>
+    </p>
+    <div class="article-body">
+<blockquote>
+<p>来源：量子位 QbitAI（Jay），2026-05-12<br />
+Thariq 原文：https://x.com/trq212/status/2052809885763747935<br />
+Karpathy 回应：https://x.com/karpathy/status/2053872850101285137</p>
+</blockquote>
+<hr />
+<h2 id="anthropic-工程师力推-html为什么">Anthropic 工程师力推 HTML，为什么？</h2>
+<p>Anthropic 工程师 Thariq 发表长文，核心观点：<strong>Markdown 当死</strong>，应全面转向 HTML 作为 AI 输出格式。</p>
+<blockquote>
+<p>我现在几乎不怎么亲手编辑这些文件了，更多是拿它们当规范、参考文档或者头脑风暴的产出。就算真要改，通常也是直接丢给 Claude 去修。</p>
+</blockquote>
+<p>HTML 大于 MD 的 5 点理由：</p>
+<p><img alt="image.png" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260513140336534.png" /></p>
+<h3 id="1信息密度碾压">1、信息密度碾压</h3>
+<p>Markdown 能做什么？标题、加粗、列表、代码块。差不多了。</p>
+<p>但 HTML 可以做的事情，多到离谱——表格、CSS 样式、SVG 矢量图、JavaScript 交互、Canvas 画布、绝对定位的空间布局……</p>
+<p>几乎没有任何一类信息，是 AI 读得懂但 HTML 表达不了的。</p>
+<p><img alt="image.png" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260513140425571.png" /></p>
+<p>Claude Code 在 Markdown 里用 ASCII 码画流程图，或用 Unicode 色块去「估算颜色」——就像逼着一个画家用筷子画油画，还要求人家必须画出个蒙娜丽莎。<br />
+<img alt="image.png" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260513140452101.png" /></p>
+<h3 id="2可读性">2、可读性</h3>
+<p>Thariq 一直这么觉得，超过 100 行的 Markdown 文件，他基本就不读了。更别提让团队里其他人去读。</p>
+<p>但 HTML 应该会好一点。AI 可以把同样的信息组织成带标签页、带导航、带折叠区块的页面，甚至可以做成响应式的，手机上看也舒服。<br />
+<img alt="image.png" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260513140545223.png" /></p>
+<h3 id="3分享成本几乎为零">3、分享成本几乎为零</h3>
+<p>Markdown 文件你怎么分享？发附件。对方还得找个能渲染的工具打开。</p>
+<p>HTML 呢？往 S3 上一传，甩个链接，浏览器直接打开。发给同事或老板，发给朋友炫耀，都很方便。</p>
+<p>你的 spec、你的报告、你的 PR 说明，被别人真正读到的概率，HTML 比 Markdown 高出太多了。这也是为什么，AI 时代，个人网站成了新的简历形式。</p>
+<h3 id="4双向交互">4、双向交互</h3>
+<p>HTML 是可以交互的。</p>
+<ul>
+<li>让 Claude 给设计稿加上滑块和旋钮，拖一拖就能调整参数</li>
+<li>让它做一个可拖拽的看板来重新排列任务优先级</li>
+<li>让它做一个实时预览的 Prompt 编辑器——左边改 Prompt，右边立即看到填充效果，改完了点一个 Copy 按钮，把参数直接粘贴 Claude Code<br />
+<img alt="image.png" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260513140603256.png" /></li>
+</ul>
+<h3 id="5快乐">5、快乐</h3>
+<p>用 HTML 做东西，更好玩。</p>
+<p>当你跟一个工具协作时感到快乐，你就会更愿意投入，更愿意打磨，最终产出的东西质量就是更高。大家之所以会沉迷于 vibe coding，不就是因为找回了那份原始的快乐吗。</p>
+<hr />
+<h2 id="thariq-的用法清单">Thariq 的用法清单</h2>
+<h3 id="1规划和探索">1、规划和探索</h3>
+<p>开始一个项目的时候，不再写一个 plan.md，而是让 Claude Code 生成一组 HTML 文件。</p>
+<p>先做头脑风暴，把几个方向做成可视化的对比页面。然后选一个方向深入，做 mockup、写代码片段。最后整理成一份实施计划。</p>
+<p>Prompt 参考：</p>
+<blockquote>
+<p>我不确定入门引导页该怎么做。生成 6 种完全不同的方案——布局、语气、信息密度都要有差异——放在一个 HTML 文件里用网格排列，让我能并排比较。每种方案标注它做了什么取舍。</p>
+</blockquote>
+<p><img alt="image.png" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260513140627890.png" /></p>
+<h3 id="2代码审查">2、代码审查</h3>
+<p>在 Markdown 里看 diff，太痛苦了。</p>
+<p>但 HTML 可以渲染真正的 diff 视图，加上行内批注、按严重程度标颜色、画流程图来解释代码逻辑。</p>
+<p>Thariq 说，他现在每个 PR 都会附一个 HTML 格式的代码说明。<br />
+<img alt="image.png" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260513140640915.png" /></p>
+<h3 id="3设计和原型">3、设计和原型</h3>
+<p>HTML 在交互方面就是天生优势，很适合用来做前端。<br />
+<img alt="image.png" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260513140700544.png" /></p>
+<h3 id="4报告和研究">4、报告和研究</h3>
+<p>让 Claude Code 去翻你的 Slack、你的代码库、你的 git 历史、互联网上的资料，然后把所有信息整合成一份可读性极高的 HTML 报告。</p>
+<p>可以是一份长文档，可以是一个交互式的解释器，甚至，可以是一个幻灯片。<br />
+<img alt="image.png" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260513140716391.png" /></p>
+<h3 id="5一次性编辑器">5、一次性编辑器</h3>
+<p>当你用纯文字很难描述你想要什么的时候，让 Claude 给你做一个「一次性编辑器」。</p>
+<ul>
+<li>30 个 Linear ticket 需要重新排优先级 → 做一个拖拽看板，预排一遍，调整完，点一下按钮导出成 Markdown</li>
+<li>调一个 system prompt → 做一个左右分栏的编辑器，左边改 Prompt，右边实时预览，带 token 计数器和 copy 按钮<br />
+<img alt="image.png" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260513140726834.png" /></li>
+</ul>
+<p>奢侈，用完就扔。但它帮你省下的时间和脑力，远超你花在描述需求上的 30 秒。</p>
+<hr />
+<h2 id="qa代价与权衡">Q&amp;A：代价与权衡</h2>
+<h3 id="token-成本">Token 成本</h3>
+<p>实测：425 个 Markdown 文件一年约烧 6600 美元上下文成本；换成 HTML 后，直接涨到 1.1 万美元——每年多花 5000 美元。</p>
+<p>Thariq 承认，HTML 生成时间大概是 Markdown 的 2 到 4 倍。<strong>但他觉得值</strong>——因为你真的会去读它，而且读完之后获得的信息量远超一份你看两眼就关掉的 MD 文件。</p>
+<p>随着 Opus 4.7 的 100 万 token 上下文窗口，这点额外开销其实感知不强。</p>
+<h3 id="版本控制">版本控制</h3>
+<p>HTML 的 diff 很吵，很难 review。Thariq 没有给出完美的解决方案。</p>
+<p>以衡量 trade off 为主——如果用 HTML 的场景主要是一次性的规划文档、报告、代码审查说明这类东西，版本控制的需求本来就没那么强。</p>
+<hr />
+<h2 id="卡帕西也附议了">卡帕西也附议了</h2>
+<p>Karpathy 跑出来附议：</p>
+<blockquote>
+<p>当下最值得尝试的热门建议：试试要求输出 HTML。</p>
+</blockquote>
+<p>但角度不太一样，Karpathy 更宏观一点，他画了一条从文字到视觉的进化路线：</p>
+<ul>
+<li><strong>纯文本</strong>（难读，费劲）</li>
+<li><strong>Markdown</strong>（加粗、斜体、标题，稍微好看点）</li>
+<li><strong>HTML</strong>（还是代码驱动的，但在图形、布局、交互上灵活太多了）</li>
+<li><strong>……</strong><br />
+<img alt="image.png" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260513140800834.png" /></li>
+</ul>
+<p>至于这条路的终点，Karpathy 表示，可能是某种由扩散模型直接生成的交互式视频。</p>
+<p>Karpathy 还提了一个很有意思的点：<strong>输入端也需要进化。</strong></p>
+<p>光靠语音也不够，他觉得自己需要能「指」东西——指着屏幕上的某个位置说「这里改一下」，就像你身边坐着一个人的时候会自然做的那样。</p>
+<p>现在的解决方案是截图，或者像 Stitch 里那样可以圈出来，但大家肯定都能感受到，还是不够极致。</p>
+<hr />
+<h2 id="哥白尼式智能观">哥白尼式智能观</h2>
+<p>这件事的意义，远不止格式标准之争这么简单。</p>
+<p>Markdown 是为人类设计的。它简单、直觉、容易手写手编。它存在的全部理由，就是「方便人类使用」。</p>
+<p>但现在，谁在写这些文件？不是你。是 AI。谁在读这些文件？也越来越多地，不只是你。是你和 AI 一起读。甚至有时候，只有 AI 在读。</p>
+<p>HTML 确实有些信息冗余。但它是半结构化的——能精确定位、精准修改，扔进浏览器就能直接出预览。而这些特质，恰恰完美适配了现在的 vibe coding 工作流。</p>
+<p>所有曾经为了「方便人类操作」而精心设计的东西，都在被重新审视。不是因为它们不好，而是因为它们曾经优化的那个唯一目标——人类体验——现在只能退居其次，变成众多目标中的一个了。</p>
+<p>这让人想起陶哲轩说过的一段话——我们正在经历一场认知上的哥白尼革命：</p>
+<blockquote>
+<p>曾经我们以为人类智能是宇宙的中心，而现在终于发现，宇宙中存在着各种截然不同的智能形态，各有其独特的优势与局限。</p>
+</blockquote>
+<p>CLI 正在回归，自然语言正在取代 GUI，代码本身正在变成一种中间产物，而不是最终产品。所有曾经为了「方便人类操作」而精心设计的东西，都在被重新审视。</p>
+<p>当创作者和消费者都不再是纯粹的人类时，那个为「纯粹人类」设计的世界，或许……注定会逐渐坍塌。<br />
+<img alt="image.png" src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260513140839966.png" /></p>
+    </div>
+  </article>
+  <aside class="toc">
+    <p class="toc-label">本页目录</p>
+    <ul>
+  <li><a href="#anthropic-工程师力推-html为什么">Anthropic 工程师力推 HTML，为什么？</a><ul>
+  <li><a href="#1信息密度碾压">1、信息密度碾压</a></li>
+  <li><a href="#2可读性">2、可读性</a></li>
+  <li><a href="#3分享成本几乎为零">3、分享成本几乎为零</a></li>
+  <li><a href="#4双向交互">4、双向交互</a></li>
+  <li><a href="#5快乐">5、快乐</a></li>
+</ul></li>
+  <li><a href="#thariq-的用法清单">Thariq 的用法清单</a><ul>
+  <li><a href="#1规划和探索">1、规划和探索</a></li>
+  <li><a href="#2代码审查">2、代码审查</a></li>
+  <li><a href="#3设计和原型">3、设计和原型</a></li>
+  <li><a href="#4报告和研究">4、报告和研究</a></li>
+  <li><a href="#5一次性编辑器">5、一次性编辑器</a></li>
+</ul></li>
+  <li><a href="#qa代价与权衡">Q&amp;amp;A：代价与权衡</a><ul>
+  <li><a href="#token-成本">Token 成本</a></li>
+  <li><a href="#版本控制">版本控制</a></li>
+</ul></li>
+  <li><a href="#卡帕西也附议了">卡帕西也附议了</a></li>
+  <li><a href="#哥白尼式智能观">哥白尼式智能观</a></li>
+</ul>
+  </aside>
+
+</div>
+
+</main>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>Learning Notes</span>
+    <a href="https://github.com/hangx969/learning-notes">GitHub</a>
+  </div>
+</footer>
+<script src="../../../static/search.js"></script>
+</body>
+</html>

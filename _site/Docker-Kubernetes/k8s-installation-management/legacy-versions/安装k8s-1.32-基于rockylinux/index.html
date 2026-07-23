@@ -1,0 +1,1324 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>安装k8s-1.32-基于rockylinux - Learning Notes</title>
+<link rel="stylesheet" href="../../../../static/style.css">
+<link rel="stylesheet" href="../../../../static/pygments.css">
+</head>
+<body data-root="../../../../">
+<header class="site-header">
+  <div class="header-inner">
+    <a class="logo" href="../../../../index.html"><span class="logo-mark"></span>LEARNING NOTES</a>
+    <div class="search">
+      <input id="search-input" type="search" placeholder="搜索笔记…" autocomplete="off" aria-label="搜索笔记">
+      <div id="search-results" hidden></div>
+    </div>
+  </div>
+  <nav class="topic-nav" aria-label="主题导航">
+    <div class="topic-nav-inner">
+      <a href="../../../../AI/">AI</a>
+      <a href="../../../../Aliyun/">Aliyun</a>
+      <a href="../../../../Azure/">Azure</a>
+      <a href="../../../../C%2B%2B/">C++</a>
+      <a href="../../../../CloudComputing/">CloudComputing</a>
+      <a href="../../../../Database/">Database</a>
+      <a href="../../../../Docker-Kubernetes/" class="active">Docker-Kubernetes</a>
+      <a href="../../../../GPU-DeepLearning/">GPU-DeepLearning</a>
+      <a href="../../../../Git/">Git</a>
+      <a href="../../../../Go/">Go</a>
+      <a href="../../../../HPC/">HPC</a>
+      <a href="../../../../IaC/">IaC</a>
+      <a href="../../../../Linux-Shell/">Linux-Shell</a>
+      <a href="../../../../Middlewares/">Middlewares</a>
+      <a href="../../../../Networking/">Networking</a>
+      <a href="../../../../OS/">OS</a>
+      <a href="../../../../Python/">Python</a>
+      <a href="../../../../SoftwareTesting/">SoftwareTesting</a>
+    </div>
+  </nav>
+</header>
+<main class="main">
+
+<div class="article-layout">
+
+  <aside class="sidebar">
+    <details class="sidebar-details">
+      <summary>Docker-Kubernetes</summary>
+      <nav class="sidebar-nav">
+        <p class="sidebar-group">CKA-CKS</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/CKA-CKS/CKA-%E5%A4%87%E8%80%83/">CKA 备考</a></li>
+          <li><a href="../../../../Docker-Kubernetes/CKA-CKS/CKS-%E5%A4%87%E8%80%83/">CKS 备考</a></li>
+          <li><a href="../../../../Docker-Kubernetes/CKA-CKS/k8s-%E9%9D%A2%E8%AF%95%E9%A2%98%E6%B1%87%E6%80%BB/">K8s 面试题汇总</a></li>
+        </ul>
+        <p class="sidebar-group">container-platform</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/container-platform/%E9%83%A8%E7%BD%B2openshift%283.10%29/">部署 OpenShift (3.10)</a></li>
+          <li><a href="../../../../Docker-Kubernetes/container-platform/%E9%83%A8%E7%BD%B2%E8%BD%BB%E9%87%8F%E7%BA%A7%E7%9A%84K8S%E5%B9%B3%E5%8F%B0-K3S/">部署轻量级 K8S 平台 - K3S</a></li>
+        </ul>
+        <p class="sidebar-group">docker</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/docker/docker%E5%9F%BA%E7%A1%80/">Docker基础</a></li>
+          <li><a href="../../../../Docker-Kubernetes/docker/docker%E5%AE%89%E5%85%A8%E9%85%8D%E7%BD%AE-Capabilities%E4%B8%8E%E5%AE%B9%E5%99%A8%E5%8A%A0%E5%9B%BA/">Docker 安全配置详解：Capabilities 与容器加固</a></li>
+          <li><a href="../../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2UI%E5%B7%A5%E5%85%B7portainer-%E9%83%A8%E7%BD%B2redis-sentinel/">Docker部署Portainer与Redis-Sentinel</a></li>
+          <li><a href="../../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2gitlab/">Docker部署GitLab</a></li>
+          <li><a href="../../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2lnmp%E7%BD%91%E7%AB%99/">Docker部署LNMP网站</a></li>
+          <li><a href="../../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2loki/">Docker部署Loki日志系统</a></li>
+          <li><a href="../../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2nginx-tomcat-httpd-go-python%E6%9C%8D%E5%8A%A1/">Docker部署Nginx-Tomcat-Httpd-Go-Python服务</a></li>
+          <li><a href="../../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2prometheus-grafana-cAdvisior%E7%9B%91%E6%8E%A7/">Docker部署Prometheus-Grafana-cAdvisor监控</a></li>
+          <li><a href="../../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2%E4%BB%93%E5%BA%93%E5%B9%B3%E5%8F%B0homebox/">Docker部署Homebox仓库平台</a></li>
+          <li><a href="../../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1%E5%B7%A5%E5%85%B7gocron/">Docker部署GoCron定时任务工具</a></li>
+          <li><a href="../../../../Docker-Kubernetes/docker/docker%E9%83%A8%E7%BD%B2%E8%B7%AF%E7%94%B1%E7%9B%91%E6%8E%A7%E5%B7%A5%E5%85%B7NextTrace/">Docker部署NextTrace路由监控工具</a></li>
+          <li><a href="../../../../Docker-Kubernetes/docker/docker%E9%85%8D%E7%BD%AENVIDIA%20GPU/">Docker配置NVIDIA GPU</a></li>
+          <li><a href="../../../../Docker-Kubernetes/docker/docker%E9%85%8D%E7%BD%AE%E4%BB%A3%E7%90%86/">Docker配置代理</a></li>
+        </ul>
+        <p class="sidebar-group">harbor</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/harbor/harbor-basics/">Harbor 基础</a></li>
+          <li><a href="../../../../Docker-Kubernetes/harbor/helm%E9%83%A8%E7%BD%B2harbor/">Helm 部署 Harbor</a></li>
+        </ul>
+        <p class="sidebar-group">helm-operator</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/helm-operator/helmv3-%E5%AE%89%E8%A3%85%E4%B8%8E%E4%BD%BF%E7%94%A8/">Helm v3 安装与使用</a></li>
+          <li><a href="../../../../Docker-Kubernetes/helm-operator/helm%E9%83%A8%E7%BD%B2config-syncer%28kubed%29/">Helm 部署 Config Syncer (Kubed)</a></li>
+          <li><a href="../../../../Docker-Kubernetes/helm-operator/helm%E9%83%A8%E7%BD%B2dragonfly/">Helm 部署 Dragonfly</a></li>
+          <li><a href="../../../../Docker-Kubernetes/helm-operator/helm%E9%83%A8%E7%BD%B2pact-broker/">Helm 部署 Pact Broker</a></li>
+          <li><a href="../../../../Docker-Kubernetes/helm-operator/helm%E9%83%A8%E7%BD%B2reloader/">Helm 部署 Reloader</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-CICD</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD%20Image%20Updater/">ArgoCD Image Updater</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD%E5%9F%BA%E7%A1%80/">ArgoCD基础</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD%E5%A4%9A%E9%9B%86%E7%BE%A4GitOps%E5%AE%9E%E6%88%98/">多集群 GitOps 实战：用 Argo CD 管理上百个 Kubernetes 集群</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD%E9%83%A8%E7%BD%B2Helm%E5%BA%94%E7%94%A8%E6%97%B6%E5%9F%9F%E5%90%8D%E8%A7%A3%E6%9E%90%E5%A4%B1%E8%B4%A5%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5%E4%B8%8E%E8%A7%A3%E5%86%B3/">ArgoCD部署Helm应用时域名解析失败问题排查与解决</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/ArgoCD/%E5%AD%A6%E4%B9%A0%E9%93%BE%E6%8E%A5/">ArgoCD学习链接</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/Claude-Code%E5%AE%9E%E7%8E%B0CICD%E8%87%AA%E5%8A%A8%E5%8C%96%E5%8F%91%E5%B8%83%E6%B5%81%E7%A8%8B/">Claude Code 实现 CI/CD 自动化发布流程详细指南</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/Gitlab/helm%E9%83%A8%E7%BD%B2gitlab/">Helm部署GitLab</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/Gitlab/k8s%E9%83%A8%E7%BD%B2Gitlab%2811.8.1%29-%E5%9F%BA%E4%BA%8Eyaml/">K8s部署GitLab(11.8.1)-基于YAML</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/Gitlab/%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%AE%89%E8%A3%85Gitlab%2817.9.8%29/">二进制安装GitLab(17.9.8)</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/Jenkins/Jenkins%E8%AF%AD%E6%B3%95-%E5%9F%BA%E4%BA%8Edocker%E9%83%A8%E7%BD%B2/">Jenkins语法-基于Docker部署</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/Jenkins/docker%E9%83%A8%E7%BD%B2jenkins/">Docker部署Jenkins</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/Jenkins/helm%E9%83%A8%E7%BD%B2jenkins/">Helm部署Jenkins</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/Jenkins/k8s-Devops%E5%B9%B3%E5%8F%B0%E8%90%BD%E5%9C%B0-%E5%9F%BA%E4%BA%8Ejenkins/">K8s DevOps平台落地-基于Jenkins</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/Jenkins/k8s%E9%83%A8%E7%BD%B2%E5%9F%BA%E4%BA%8EJenkins%282.394%29%E7%9A%84DevOps%E5%B7%A5%E5%85%B7%E9%93%BE-%E5%9F%BA%E4%BA%8Eyaml/">K8s部署基于Jenkins(2.394)的DevOps工具链-基于YAML</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/Jenkins/k8s%E9%83%A8%E7%BD%B2%E5%9F%BA%E4%BA%8EJenkins%282.426.3%29%E7%9A%84Devops%E5%B7%A5%E5%85%B7%E9%93%BE-%E5%9F%BA%E4%BA%8Eyaml/">K8s部署基于Jenkins(2.426.3)的DevOps工具链-基于YAML</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/Jenkins/%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%AE%89%E8%A3%85Jenkins%282.319%29/">二进制安装Jenkins(2.319)</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/Kustomize/k8s%E9%85%8D%E7%BD%AE%E5%AE%9A%E5%88%B6%E5%B7%A5%E5%85%B7-kustomize/">K8s配置定制工具-Kustomize</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/Tekton/k8s%E9%83%A8%E7%BD%B2%E5%8E%9F%E7%94%9F%E7%9A%84CICD%E5%B7%A5%E5%85%B7Tekton-%E5%9F%BA%E4%BA%8Eyaml/">K8s部署原生的CICD工具Tekton-基于YAML</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/Tekton/%E5%9F%BA%E4%BA%8ETekton%E7%9A%84%E4%BA%91%E5%8E%9F%E7%94%9F%E5%B9%B3%E5%8F%B0%E8%90%BD%E5%9C%B0/">基于Tekton的云原生平台落地</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/k8s%E5%8F%91%E5%B8%83%E7%AD%96%E7%95%A5-%E8%93%9D%E7%BB%BF%E9%83%A8%E7%BD%B2%E4%B8%8E%E9%87%91%E4%B8%9D%E9%9B%80%E5%8F%91%E5%B8%83/">K8s 发布策略：蓝绿部署与金丝雀发布实战</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/%E4%BD%BF%E7%94%A8github%20action%E9%83%A8%E7%BD%B2helmchart/">使用GitHub Action部署Helm Chart</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-CICD/%E5%8F%91%E5%B8%83go-python-java%E4%BB%A3%E7%A0%81%E5%88%B0K8S%E7%8E%AF%E5%A2%83/">发布Go/Python/Java代码到K8S环境</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-UI-tools</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/k8s-UI-tools/k8s-API%E6%A3%80%E6%9F%A5%E5%B7%A5%E5%85%B7kubent/">K8s API 检查工具 kubent</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-UI-tools/k8s-%E5%B0%8F%E5%B7%A5%E5%85%B7%E9%9B%86%E5%90%88/">K8s 小工具集合</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-UI-tools/k8s%E9%83%A8%E7%BD%B2-Dashboard-UI/">K8s 部署 Dashboard UI</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-UI-tools/k8s%E9%83%A8%E7%BD%B2%E5%8F%AF%E8%A7%86%E5%8C%96ui%E7%95%8C%E9%9D%A2kuboard/">K8s 部署 Kuboard</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-UI-tools/kubectl-UI%E5%B7%A5%E5%85%B7Lens/">kubectl UI 工具 Lens</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-UI-tools/kubectl-%E5%8F%AF%E8%A7%86%E5%8C%96%E6%8F%92%E4%BB%B6k9s-stern/">kubectl 可视化插件 k9s 和 stern</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-UI-tools/kuebctl-%E6%8F%92%E4%BB%B6krew-rolesum/">kubectl 插件 krew 和 rolesum</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-UI-tools/rancher%28v2.6.4%29%E7%AE%A1%E7%90%86k8s%E9%9B%86%E7%BE%A4/">Rancher (v2.6.4) 管理 K8s 集群</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-ai-gpu</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/k8s-ai-gpu/k8s%E9%85%8D%E7%BD%AENVIDIA%20GPU/">K8s 配置 NVIDIA GPU</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-backup-dr</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/k8s-backup-dr/k8s%E5%A4%87%E4%BB%BD%E4%B8%8E%E7%81%BE%E5%A4%87%E5%AE%9E%E6%88%98-%E4%B8%89%E5%B1%82%E5%AE%B9%E7%81%BE%E6%9E%B6%E6%9E%84/">K8s 备份与灾备实战：三层容灾架构</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-backup-dr/k8s%E9%9B%86%E7%BE%A4%E5%A4%87%E4%BB%BD%E6%81%A2%E5%A4%8D-Velero/">K8s集群备份恢复 - Velero</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-basic-resources</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/K8s%E5%9F%BA%E7%A1%80-pod%E8%B0%83%E5%BA%A6-%E4%BA%B2%E5%92%8C%E5%8A%9B/">K8s基础-Pod调度-亲和力</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/Python%E8%B0%83%E7%94%A8k8s-api%E5%AE%9E%E7%8E%B0%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/">Python调用K8s-API实现资源管理</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s-APIServer%E6%B7%B1%E5%BA%A6%E5%89%96%E6%9E%90-%E8%AF%B7%E6%B1%82%E9%93%BE%E8%B7%AF-%E8%AE%A4%E8%AF%81%E6%8E%88%E6%9D%83-%E7%94%9F%E4%BA%A7%E8%B0%83%E4%BC%98/">Kubernetes API Server 深度剖析：请求链路、认证授权与生产调优</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s-PodDisruptionBudget%E5%AE%9E%E6%88%98/">K8s PodDisruptionBudget 实战：优雅中断保护</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-Calico/">K8s基础-Calico</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-Finalizer%E4%B8%8E%E8%B5%84%E6%BA%90%E5%88%A0%E9%99%A4/">K8s基础-Finalizer与资源删除</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-Operator%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98-Kubebuilder/">从零开发 Kubernetes Operator：Kubebuilder 实战教程</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-Service/">K8s基础-Service</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-configMap-Secret/">K8s基础-configMap-Secret</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-daemonset/">K8s基础-DaemonSet</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-deployment/">K8s基础-Deployment</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-ingress/">K8s基础-Ingress</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-job-cronjob/">K8s基础-Job-CronJob</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-kubeadm/">K8s基础-kubeadm</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-namespace-%E8%B5%84%E6%BA%90%E5%88%86%E9%85%8D/">K8s基础-namespace-资源分配</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-pod/">K8s基础-Pod</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-pod%E8%B0%83%E5%BA%A6-%E6%A0%87%E7%AD%BE%E4%B8%8E%E9%80%89%E6%8B%A9%E5%99%A8%E5%AE%9E%E6%88%98/">Kubernetes 标签与选择器避坑：5 条核心铁律与生产级实战案例</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-statefulset/">K8s基础-StatefulSet</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-storage/">K8s基础-Storage</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-yaml/">K8s基础-YAML</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E4%B8%B4%E6%97%B6%E5%AE%B9%E5%99%A8ephemeral/">K8s基础-临时容器Ephemeral</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E5%AE%B9%E5%99%A8%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-Sidecar-Init-Ambassador-Adapter/">K8s 容器设计模式：Sidecar / Init Container / Ambassador / Adapter</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E5%AE%B9%E5%99%A8%E8%BF%90%E8%A1%8C%E6%97%B6-containerd/">K8s基础-容器运行时-containerd</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E6%9E%B6%E6%9E%84-%E7%BB%84%E4%BB%B6-%E8%B5%84%E6%BA%90/">K8s基础-架构-组件-资源</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E8%87%AA%E5%AE%9A%E4%B9%89CRD%E8%B5%84%E6%BA%90/">K8s基础-自定义CRD资源</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-basic-resources/k8s%E5%9F%BA%E7%A1%80-%E8%AE%A4%E8%AF%81-%E6%8E%88%E6%9D%83-%E5%87%86%E5%85%A5/">K8s基础-认证-授权-准入</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-db-middleware</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/k8s-db-middleware/Operator%E9%83%A8%E7%BD%B2Redis%E9%9B%86%E7%BE%A4/">基于Operator部署Redis集群</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-db-middleware/Operator%E9%83%A8%E7%BD%B2mysql%E9%9B%86%E7%BE%A4/">Operator部署MySQL NDB集群</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-db-middleware/helm%E9%83%A8%E7%BD%B2mysql/">Helm部署MySQL</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-db-middleware/helm%E9%83%A8%E7%BD%B2postgreSQL/">Helm部署PostgreSQL</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-db-middleware/helm%E9%83%A8%E7%BD%B2rabbitmq-ha/">Helm部署RabbitMQ高可用集群</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-db-middleware/helm%E9%83%A8%E7%BD%B2strimzi-kafka/">Helm部署Strimzi Kafka</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-db-middleware/k8s%E5%9F%BA%E4%BA%8Eyaml%E9%83%A8%E7%BD%B2MongoDB%E9%9B%86%E7%BE%A4/">K8s基于YAML部署MongoDB集群</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-db-middleware/k8s%E5%9F%BA%E4%BA%8Eyaml%E9%83%A8%E7%BD%B2httpd%E6%9C%8D%E5%8A%A1/">K8s基于YAML部署httpd服务</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-db-middleware/k8s%E5%9F%BA%E4%BA%8Eyaml%E9%83%A8%E7%BD%B2mysql%E4%B8%BB%E4%BB%8E%E9%AB%98%E5%8F%AF%E7%94%A8/">K8s基于YAML部署MySQL主从高可用</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-db-middleware/k8s%E5%9F%BA%E4%BA%8Eyaml%E9%83%A8%E7%BD%B2redis%E9%9B%86%E7%BE%A4/">K8s基于YAML部署Redis集群</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-db-middleware/k8s%E9%83%A8%E7%BD%B2springcloud%E7%94%B5%E5%95%86%E9%A1%B9%E7%9B%AE/">K8s部署SpringCloud电商项目</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-installation-management</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/2025%E6%9C%80%E6%96%B0-%E4%BC%81%E4%B8%9A%E7%BA%A7%E9%AB%98%E5%8F%AF%E7%94%A8%E9%9B%86%E7%BE%A4-%E5%9F%BA%E4%BA%8Erockylinux/">2025最新-企业级高可用集群-基于rockylinux</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/etcd%E9%AB%98%E5%8F%AF%E7%94%A8%E9%85%8D%E7%BD%AE%E4%BB%A5%E5%8F%8A%E6%A8%A1%E6%8B%9F%E9%9B%86%E7%BE%A4%E6%95%85%E9%9A%9C%E5%92%8C%E6%81%A2%E5%A4%8D/">etcd高可用配置以及模拟集群故障和恢复</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/k8s-Backstage-%E5%86%85%E9%83%A8%E5%BC%80%E5%8F%91%E8%80%85%E5%B9%B3%E5%8F%B0IDP%E5%AE%9E%E6%88%98/">K8s 平台工程实战：用 Backstage 打造一站式内部开发者平台</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/k8s-cgroup-v2%E6%B7%B1%E5%BA%A6%E8%A7%A3%E6%9E%90-%E8%BF%81%E7%A7%BB%E5%AE%9E%E6%88%98%E4%B8%8E%E9%81%BF%E5%9D%91%E6%8C%87%E5%8D%97/">K8s CGroup v2 深度解析：资源隔离原理、迁移实战与生产避坑指南</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/k8s%E4%B8%A4%E5%9C%B0%E4%B8%89%E4%B8%AD%E5%BF%83%E6%9E%B6%E6%9E%84/">k8s两地三中心架构</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/k8s%E5%A4%9A%E9%9B%86%E7%BE%A4kubeconfig%E7%AE%A1%E7%90%86/">k8s多集群kubeconfig管理</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/k8s%E6%95%85%E9%9A%9C%E6%8E%92%E6%9F%A5%E6%8C%87%E5%8D%97/">k8s故障排查指南</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/k8s%E7%94%9F%E4%BA%A7%E7%8E%AF%E5%A2%83%E4%BC%98%E5%8C%96%E4%B8%8E%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/">k8s生产环境优化与最佳实践</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/k8s%E9%83%A8%E7%BD%B2%E9%98%B2%E7%81%AB%E5%A2%99%E7%AB%AF%E5%8F%A3%E9%85%8D%E7%BD%AE/">K8s部署防火墙端口配置</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/latest-version/%E5%AE%89%E8%A3%85k8s-1.35-%E5%9F%BA%E4%BA%8Erockylinux10-%E6%9C%80%E6%96%B0%E6%AD%A5%E9%AA%A4/">在 Rocky Linux 10 上安装 Kubernetes 1.35</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%AE%89%E8%A3%85k8s%E9%AB%98%E5%8F%AF%E7%94%A8%E9%9B%86%E7%BE%A4/">二进制安装k8s高可用集群</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.20.6-%E9%AB%98%E5%8F%AF%E7%94%A8/">安装k8s-1.20.6-高可用</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.23/">安装k8s-1.23</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.26-1.27/">安装k8s-1.26-1.27</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.28/">安装k8s-1.28</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.30-%E5%9F%BA%E4%BA%8Erockylinux/">安装k8s-1.30-基于rockylinux</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.32-%E5%9F%BA%E4%BA%8Erockylinux/" class="current">安装k8s-1.32-基于rockylinux</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.33-%E5%9F%BA%E4%BA%8Erockylinux-%E6%9C%80%E6%96%B0%E6%AD%A5%E9%AA%A4/">安装k8s-1.33-基于rockylinux-最新步骤</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/%E5%8D%87%E7%BA%A7/k8s-1.37-%E5%8D%87%E7%BA%A7%E9%A1%BB%E7%9F%A5-breaking-changes/">Kubernetes v1.37 升级破坏性变更指南</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-installation-management/%E5%8D%87%E7%BA%A7/k8s%E8%BF%81%E7%A7%BB%E5%AE%B9%E5%99%A8%E8%BF%90%E8%A1%8C%E6%97%B6-%E7%89%88%E6%9C%AC%E5%8D%87%E7%BA%A7/">k8s迁移容器运行时与版本升级</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-monitoring-logging</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/K8s%E5%85%A8%E9%9D%A2%E5%B7%A1%E6%A3%80%E8%84%9A%E6%9C%AC-%E7%94%9F%E6%88%90HTML%E5%81%A5%E5%BA%B7%E6%8A%A5%E5%91%8A/">K8s 全面巡检脚本：一键生成 HTML 健康报告</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/OpenTelemetry%E5%AE%9E%E6%88%98-%E7%BB%9F%E4%B8%80Traces-Metrics-Logs/">OpenTelemetry 实战：告别厂商锁定，统一 Traces/Metrics/Logs</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/Prometheus%E5%9F%BA%E7%A1%80/">Prometheus基础</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/Prometheus%E7%9B%91%E6%8E%A7k8s%E7%B3%BB%E7%BB%9F%E7%BB%84%E4%BB%B6/">Prometheus监控K8s系统组件</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/Prometheus%E7%9B%91%E6%8E%A7%E5%A4%96%E9%83%A8k8s%E9%9B%86%E7%BE%A4/">Prometheus监控外部K8s集群</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/Prometheus%E7%9B%91%E6%8E%A7%E9%9D%9E%E4%BA%91%E5%8E%9F%E7%94%9F%E5%BA%94%E7%94%A8-%E4%B8%BB%E6%9C%BA/">Prometheus监控非云原生应用-主机</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/helm%E9%83%A8%E7%BD%B2Loki-promtail-tempo-grafanaAgent%E5%85%A8%E5%AE%B6%E6%A1%B6/">Helm部署Loki+Promtail+Tempo+GrafanaAgent全家桶</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/helm%E9%83%A8%E7%BD%B2jaeger/">Helm部署Jaeger</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/helm%E9%83%A8%E7%BD%B2prometheus-stack%E5%85%A8%E5%AE%B6%E6%A1%B6/">Prometheus-Stack 全家桶：生产级部署与运维完全指南</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E6%97%A5%E5%BF%97%E7%AE%A1%E7%90%86-%E9%87%87%E9%9B%86%E6%96%B9%E6%A1%88%E4%B8%8E%E5%AE%A1%E8%AE%A1%E6%97%A5%E5%BF%97/">K8s 日志管理：基础机制、六种采集方案与审计日志实战</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E7%9B%91%E6%8E%A7EFK%2Blogstash%2Bkafka/">K8s监控EFK+logstash+kafka</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E7%9B%91%E6%8E%A7ES%287.2%29%2BKibana%287.2%29%2BFluentd%28v1.4.2%29/">K8s监控ES(7.2)+Kibana(7.2)+Fluentd(v1.4.2)</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E7%9B%91%E6%8E%A7Prometheus%28v2.2.1%29/">K8s监控Prometheus(v2.2.1)</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E7%9B%91%E6%8E%A7Prometheus%28v2.33.5%29%2BGrafana%28v8.4.5%29/">K8s监控Prometheus(v2.33.5)+Grafana(v8.4.5)</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E7%9B%91%E6%8E%A7alertmanager%28v0.14.0%29/">K8s监控Alertmanager(v0.14.0)</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E9%83%A8%E7%BD%B2elasticsearch%E9%9B%86%E7%BE%A4/">K8s部署Elasticsearch集群</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E9%83%A8%E7%BD%B2grafana%28v5.0.4%29/">K8s部署Grafana(v5.0.4)</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/k8s%E9%83%A8%E7%BD%B2%E5%85%A8%E9%93%BE%E8%B7%AF%E8%BF%BD%E8%B8%AA-Skywalking/">K8s部署全链路追踪-Skywalking</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2Prometheus%28v2.32.1%29%E8%81%94%E9%82%A6%E9%9B%86%E7%BE%A4/">二进制部署Prometheus(v2.32.1)联邦集群</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2efk%2Blogstash%2Bkafka%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%B9%B3%E5%8F%B0/">二进制部署EFK+Logstash+Kafka日志收集平台</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2prometheus-grafana-nodeexporter/">二进制部署Prometheus-Grafana-NodeExporter</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-monitoring-logging/%E5%9F%BA%E4%BA%8Ehelm%2Boperator%E9%83%A8%E7%BD%B2ECK%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E5%B9%B3%E5%8F%B0/">基于Helm+Operator部署ECK日志收集平台</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-networking-service-mesh</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/k8s-networking-service-mesh/Istio-Sidecar-vs-Ambient/">Istio Sidecar vs Ambient 模式对比</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-networking-service-mesh/helm%E5%AE%89%E8%A3%85istio/">Helm安装Istio</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-networking-service-mesh/helm%E9%83%A8%E7%BD%B2external-dns/">Helm部署External-DNS</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-networking-service-mesh/helm%E9%83%A8%E7%BD%B2ingress-nginx/">Helm部署Ingress-Nginx</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-networking-service-mesh/helm%E9%83%A8%E7%BD%B2tomcat/">Helm 部署 Tomcat</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-networking-service-mesh/k8s-Gateway-API%E5%85%A5%E9%97%A8-Ingress%E4%B8%8B%E4%B8%80%E4%BB%A3%E6%96%B9%E6%A1%88/">Kubernetes Gateway API 入门：Ingress 的下一代方案</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-networking-service-mesh/k8s%E7%B2%BE%E7%BB%86%E5%8C%96%E6%B5%81%E9%87%8F%E7%AE%A1%E7%90%86-istio/">K8s精细化流量管理-Istio</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-networking-service-mesh/k8s%E9%83%A8%E7%BD%B2istio%281.13.1%29/">K8s部署Istio(1.13.1)</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-networking-service-mesh/k8s%E9%9B%86%E7%BE%A4%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/">K8s集群网络安全</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-networking-service-mesh/%E4%BC%81%E4%B8%9A%E9%A1%B9%E7%9B%AE%E6%8E%A5%E5%85%A5istio%E5%AE%9E%E6%88%98/">企业项目接入Istio实战</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-scaling</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/k8s-scaling/KEDA-vs-HPA-2026%E7%BB%88%E6%9E%81%E5%AF%B9%E6%AF%94-v1.36%E7%BC%A9%E9%9B%B6/">KEDA vs HPA 2026 终极对比：v1.36 原生缩零后该选谁？</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-scaling/helm%E9%83%A8%E7%BD%B2goldilocks/">Helm部署Goldilocks</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-scaling/helm%E9%83%A8%E7%BD%B2vpa/">Helm部署VPA</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-scaling/k8s-HPA-VPA/">K8s HPA与VPA</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-scaling/k8s-%E5%9F%BA%E4%BA%8EKEDA%E7%9A%84%E5%BC%B9%E6%80%A7%E8%83%BD%E5%8A%9B/">K8s基于KEDA的弹性能力</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-scaling/k8s%E6%88%90%E6%9C%AC%E4%BC%98%E5%8C%96%E6%96%B9%E6%A1%88-FinOps%E5%AE%9E%E6%88%98/">K8s 集群成本优化方案：砍掉 60% 云账单</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-security-auth</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2capsule/">Helm部署Capsule</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2certmanager/">Helm部署Cert-Manager</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2external-secrets/">Helm部署External-Secrets</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2kyverno%E5%92%8Cpolicy-reporter/">Helm部署Kyverno和Policy-Reporter</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2oauth2proxy/">Helm部署OAuth2-Proxy</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2sonarqube/">Helm部署SonarQube</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-security-auth/helm%E9%83%A8%E7%BD%B2trivy-operator/">Helm部署Trivy-Operator</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-security-auth/k8s-Admission-Webhook%E9%93%BE%E5%86%B2%E7%AA%81%E6%8E%92%E6%9F%A5-Istio-Kyverno-Gatekeeper/">当 Istio、Kyverno、Gatekeeper 三个 Webhook 同时存在，你的集群会发生什么？</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-security-auth/k8s%E5%AE%B9%E5%99%A8%E5%AE%89%E5%85%A8%E4%B8%8A%E4%B8%8B%E6%96%87-SecurityContext/">Kubernetes 容器安全上下文完全指南：从入门到生产避坑</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-springcloud</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/k8s-springcloud/SpringCloud%E9%A1%B9%E7%9B%AE%E8%BF%81%E7%A7%BB%E5%88%B0k8s%E5%AE%9E%E6%88%98/">SpringCloud 项目迁移到 K8s 实战</a></li>
+        </ul>
+        <p class="sidebar-group">k8s-storage</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/k8s-storage/helm%E9%83%A8%E7%BD%B2nfs-subdir-external-provisioner/">Helm部署NFS Subdir External Provisioner</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-storage/k8s-ceph%E9%83%A8%E7%BD%B2%E4%B8%8E%E9%9B%86%E6%88%90/">K8s Ceph部署与集成</a></li>
+          <li><a href="../../../../Docker-Kubernetes/k8s-storage/k8s-%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8CubeFS/">K8s分布式存储CubeFS</a></li>
+        </ul>
+        <p class="sidebar-group">kubeblocks</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/kubeblocks/kubeblocks%E9%83%A8%E7%BD%B2WordPress/">KubeBlocks 部署 WordPress</a></li>
+          <li><a href="../../../../Docker-Kubernetes/kubeblocks/kubeblocks%E9%83%A8%E7%BD%B2%E9%AB%98%E5%8F%AF%E7%94%A8harbor%E9%9B%86%E7%BE%A4/">KubeBlocks 部署高可用 Harbor 集群</a></li>
+        </ul>
+        <p class="sidebar-group">其他</p>
+        <ul>
+          <li><a href="../../../../Docker-Kubernetes/%E7%AE%80%E5%8E%86%E6%8C%87%E5%8D%97/">简历指南</a></li>
+        </ul>
+      </nav>
+    </details>
+  </aside>
+
+  <article class="article">
+    <nav class="breadcrumb">
+      <a href="../../../../index.html">首页</a><span>/</span>
+      <a href="../../../../Docker-Kubernetes/">Docker-Kubernetes</a><span>/</span><span>k8s-installation-management</span>
+    </nav>
+    <h1 class="article-title">安装k8s-1.32-基于rockylinux</h1>
+    <p class="article-meta"><span>更新于 2026-04-16</span>
+      <a href="https://github.com/hangx969/learning-notes/blob/main/Docker-Kubernetes/k8s-installation-management/legacy-versions/%E5%AE%89%E8%A3%85k8s-1.32-%E5%9F%BA%E4%BA%8Erockylinux.md">查看源文件</a>
+    </p>
+    <div class="article-body">
+<h1 id="环境准备">环境准备</h1>
+<h2 id="实验环境规划">实验环境规划</h2>
+<ul>
+<li>操作系统：rockylinux8</li>
+<li>网络：NAT模式，可以确保机器在任何网络都能ssh连接 </li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>K8S集群角色</th>
+<th>IP</th>
+<th>主机名</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>控制节点</td>
+<td>172.16.183.100</td>
+<td>rm1</td>
+</tr>
+<tr>
+<td>工作节点</td>
+<td>172.16.183.101</td>
+<td>rn1</td>
+</tr>
+</tbody>
+</table>
+<h2 id="安装前准备">安装前准备</h2>
+<ul>
+<li>软件包安装</li>
+</ul>
+<div class="highlight"><pre><span></span><code>yum<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>device-mapper-persistent-data<span class="w"> </span>lvm2<span class="w"> </span>wget<span class="w"> </span>net-tools<span class="w"> </span>nfs-utils<span class="w"> </span>lrzsz<span class="w"> </span>gcc<span class="w"> </span>gcc-c++<span class="w"> </span>make<span class="w"> </span>cmake<span class="w"> </span>libxml2-devel<span class="w"> </span>openssl-devel<span class="w"> </span>curl<span class="w"> </span>curl-devel<span class="w"> </span>unzip<span class="w"> </span>sudo<span class="w"> </span>libaio-devel<span class="w"> </span>wget<span class="w"> </span>vim<span class="w"> </span>ncurses-devel<span class="w"> </span>autoconf<span class="w"> </span>automake<span class="w"> </span>epel-release<span class="w"> </span>openssh-server<span class="w"> </span>telnet<span class="w"> </span>vim
+yum<span class="w"> </span>update<span class="w"> </span>-y
+</code></pre></div>
+
+<ul>
+<li>配置网络</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="c1">#查看网卡名</span>
+ip<span class="w"> </span>addr
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="c1">#编辑网卡配置文件</span>
+vim<span class="w"> </span>/etc/sysconfig/network-scripts/ifcfg-ens160
+<span class="c1">#修改成如下内容：</span>
+<span class="nv">TYPE</span><span class="o">=</span>Ethernet
+<span class="nv">PROXY_METHOD</span><span class="o">=</span>none
+<span class="nv">BROWSER_ONLY</span><span class="o">=</span>no
+<span class="nv">BOOTPROTO</span><span class="o">=</span>static
+<span class="nv">IPADDR</span><span class="o">=</span><span class="m">172</span>.16.183.100
+<span class="nv">NETMASK</span><span class="o">=</span><span class="m">255</span>.255.255.0
+<span class="nv">GATEWAY</span><span class="o">=</span><span class="m">172</span>.16.183.2
+<span class="nv">DNS1</span><span class="o">=</span><span class="m">172</span>.16.183.2
+<span class="nv">DEFROUTE</span><span class="o">=</span>yes
+<span class="nv">IPV4_FAILURE_FATAL</span><span class="o">=</span>no
+<span class="nv">IPV6INIT</span><span class="o">=</span>yes
+<span class="nv">IPV6_AUTOCONF</span><span class="o">=</span>yes
+<span class="nv">IPV6_DEFROUTE</span><span class="o">=</span>yes
+<span class="nv">IPV6_FAILURE_FATAL</span><span class="o">=</span>no
+<span class="nv">IPV6_ADDR_GEN_MODE</span><span class="o">=</span>stable-privacy
+<span class="nv">NAME</span><span class="o">=</span>ens160
+<span class="nv">DEVICE</span><span class="o">=</span>ens160
+<span class="nv">ONBOOT</span><span class="o">=</span>yes
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code>nmcli<span class="w"> </span>connection<span class="w"> </span>reload<span class="w"> </span>
+nmcli<span class="w"> </span>c<span class="w"> </span>up<span class="w"> </span>ens160
+</code></pre></div>
+
+<blockquote>
+<p>也可以用nmcli来修改(rockylinux上不太好用，改配置文件好用)</p>
+<p><sub>~</sub>sh<br />
+nmcli connection modify ens160 ipv4.method manual connection.autoconnect yes #修改IP地址为手动配置，并且设置开机启动<br />
+nmcli connection modify ens160 ipv4.addresses 172.16.183.100/24 #修改IP地址和掩码<br />
+nmcli connection modify ens160 ipv4.gateway 172.16.183.2 #修改网关<br />
+nmcli connection modify ens160 ipv4.dns 172.16.183.2 #修改DNS，多个DNS以逗号分隔<br />
+nmcli connection down ens160 <br />
+nmcli connection up ens160 <br />
+~~~</p>
+</blockquote>
+<ul>
+<li>关闭selinux</li>
+</ul>
+<div class="highlight"><pre><span></span><code>sed<span class="w"> </span>-i<span class="w"> </span><span class="s1">&#39;s/SELINUX=enforcing/SELINUX=disabled/g&#39;</span><span class="w"> </span>/etc/selinux/config
+reboot
+</code></pre></div>
+
+<ul>
+<li>配置主机名</li>
+</ul>
+<div class="highlight"><pre><span></span><code>hostnamectl<span class="w"> </span>set-hostname<span class="w"> </span>rm1<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>bash
+</code></pre></div>
+
+<ul>
+<li>配置hosts</li>
+</ul>
+<div class="highlight"><pre><span></span><code>tee<span class="w"> </span>-a<span class="w"> </span>/etc/hosts<span class="w"> </span><span class="s">&lt;&lt;&#39;EOF&#39;</span>
+<span class="s">172.16.183.100   rm1  </span>
+<span class="s">172.16.183.101   rn1</span>
+<span class="s">EOF</span>
+</code></pre></div>
+
+<ul>
+<li>配置ssh互信</li>
+</ul>
+<div class="highlight"><pre><span></span><code>ssh-keygen
+ssh-copy-id<span class="w"> </span>rn1
+</code></pre></div>
+
+<ul>
+<li>关闭swap，并把swap的lv重新分配到/</li>
+</ul>
+<div class="highlight"><pre><span></span><code>swapoff<span class="w"> </span>-a
+vim<span class="w"> </span>/etc/fstab<span class="w">   </span>
+<span class="c1">#/dev/mapper/centos-swap swap      swap    defaults        0 0</span>
+
+lvs
+<span class="c1">#看到swap占用了3.91G的LVM</span>
+<span class="w">  </span><span class="c1">#root rl -wi-ao---- 35.08g                                                    </span>
+<span class="w">  </span><span class="c1">#swap rl -wi-a-----  3.91g</span>
+lvdisplay
+<span class="c1">#获取到LV Path /dev/rl/swap</span>
+<span class="c1">#删除这个lv</span>
+lvremove<span class="w"> </span>/dev/rl/swap
+<span class="c1">#获取vg剩余空间</span>
+vgs
+<span class="c1">#VFree = 3.91G</span>
+<span class="c1">#扩容lv</span>
+lvextend<span class="w"> </span>-L<span class="w"> </span>+3.91G<span class="w"> </span>/dev/rl/root
+<span class="c1">#扩容文件系统（xfs系统）</span>
+xfs_growfs<span class="w"> </span>/
+<span class="c1">#检查根分区</span>
+df<span class="w"> </span>-h
+</code></pre></div>
+
+<p>删除交换分区后必须重新配置 grub、BLS 引导条目、dracut 和 initramfs，否则重启会卡住或报 "找不到 swap" 错误：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 1. 查看当前 GRUB_CMDLINE_LINUX 的完整内容（确认要删的参数）</span>
+grep<span class="w"> </span>GRUB_CMDLINE_LINUX<span class="w"> </span>/etc/default/grub
+<span class="c1"># 典型输出（VG 名可能含主机名，如 rl_rm1，也可能是 rl）：</span>
+<span class="c1"># GRUB_CMDLINE_LINUX=&quot;crashkernel=... resume=/dev/mapper/rl-swap rd.lvm.lv=rl/root rd.lvm.lv=rl/swap rhgb quiet&quot;</span>
+
+<span class="c1"># 2. 修改 /etc/default/grub，删除 swap 相关参数（影响未来新装内核的默认参数）</span>
+<span class="c1">#    删除 resume= 参数（指向 swap 设备，用于休眠恢复）</span>
+sed<span class="w"> </span>-i<span class="w"> </span><span class="s1">&#39;s/ resume=[^ &quot;]*//&#39;</span><span class="w"> </span>/etc/default/grub
+<span class="c1">#    删除 rd.lvm.lv=.../swap 参数（告诉 dracut 激活 swap LV）</span>
+sed<span class="w"> </span>-i<span class="w"> </span><span class="s1">&#39;s/ rd\.lvm\.lv=[^ &quot;]*swap//&#39;</span><span class="w"> </span>/etc/default/grub
+
+<span class="c1"># 3. 验证 /etc/default/grub 修改结果</span>
+grep<span class="w"> </span>GRUB_CMDLINE_LINUX<span class="w"> </span>/etc/default/grub
+
+<span class="c1"># 4.【关键】使用 grubby 更新已有的 BLS 引导条目</span>
+<span class="c1">#    Rocky Linux 使用 BLS（Boot Loader Specification），内核启动参数存储在</span>
+<span class="c1">#    /boot/loader/entries/*.conf 中。仅修改 /etc/default/grub 不会更新已有的 BLS 条目！</span>
+<span class="c1">#    必须用 grubby 删除所有已有内核条目中的 swap 相关参数：</span>
+grubby<span class="w"> </span>--update-kernel<span class="o">=</span>ALL<span class="w"> </span>--remove-args<span class="o">=</span><span class="s2">&quot;resume rd.lvm.lv=rl/swap&quot;</span>
+<span class="c1"># 注意：rd.lvm.lv=rl/swap 中的 rl 替换为实际 VG 名（通过 vgs 查看）</span>
+
+<span class="c1"># 验证 BLS 条目已更新（确认 resume 和 swap 参数已消失）</span>
+grubby<span class="w"> </span>--info<span class="o">=</span>ALL<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s2">&quot;resume|swap&quot;</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;BLS 条目已清理干净&quot;</span>
+
+<span class="c1"># 5. 清除 dracut 的 resume 模块配置</span>
+<span class="c1">#    dracut 有独立的 resume 配置，仅清理引导参数不够！</span>
+<span class="c1">#    dracut -f 时 resume 模块仍会自动将已删除的 swap 设备写入 initramfs，</span>
+<span class="c1">#    导致启动时 initramfs 尝试激活不存在的 swap LV 用于休眠恢复，系统卡住。</span>
+rm<span class="w"> </span>-f<span class="w"> </span>/etc/dracut.conf.d/resume.conf
+<span class="c1"># 显式禁用 resume 模块，防止 dracut 自动探测残留的 swap 引用</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s1">&#39;omit_dracutmodules+=&quot; resume &quot;&#39;</span><span class="w"> </span>&gt;<span class="w"> </span>/etc/dracut.conf.d/noresume.conf
+<span class="c1"># 如果存在 systemd-hibernate-resume 服务也一并禁用</span>
+systemctl<span class="w"> </span>disable<span class="w"> </span>systemd-hibernate-resume@*.service<span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="nb">true</span>
+
+<span class="c1"># 6. 重新生成 initramfs（此步不可跳过，必须在上一步清除 resume 配置之后执行）</span>
+dracut<span class="w"> </span>-f
+
+<span class="c1"># 7. 重新生成 grub 配置（无论 UEFI 还是 Legacy BIOS 统一用此命令）</span>
+grub2-mkconfig<span class="w"> </span>-o<span class="w"> </span>/boot/grub2/grub.cfg
+
+<span class="c1"># 8. 重启验证</span>
+init<span class="w"> </span><span class="m">6</span>
+</code></pre></div>
+
+<blockquote>
+<p>如果有扩盘需求，关机后在VMWare中扩盘，进系统扩容LVM：</p>
+<p><sub>~</sub>sh</p>
+<h1 id="lsblk看到nvme0n1盘容量已经扩容了现在新建分区扩容到lvm">lsblk看到nvme0n1盘容量已经扩容了，现在新建分区，扩容到LVM</h1>
+<p>fdisk /dev/nvme0n1</p>
+<h1 id="新建一个nvme0n1p3分区type为8e">新建一个nvme0n1p3分区，type为8e</h1>
+<h1 id="w保存">w保存</h1>
+<p>partprobe /dev/nvme0n1<br />
+pvcreate /dev/nvme0n1p3<br />
+vgextend rl /dev/nvme0n1p3<br />
+lvextend -L +40G /dev/rl/root<br />
+xfs_growfs /dev/rl/root<br />
+~~~</p>
+</blockquote>
+<ul>
+<li>修改内核参数</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="c1">#将br_netfilter模块添加到 Linux 内核中。这是Linux网桥的核心模块，提供网络包转发和过滤。Kubernetes需要网络插件（如 Flannel、Calico）实现容器间通信，而这些网络插件通常会用Linux网桥来进行数据包转发和过滤。</span>
+modprobe<span class="w"> </span>br_netfilter
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;modprobe br_netfilter&quot;</span><span class="w"> </span>&gt;&gt;<span class="w"> </span>/etc/profile
+<span class="c1">#开启包过滤</span>
+tee<span class="w"> </span>/etc/sysctl.d/k8s.conf<span class="w"> </span><span class="s">&lt;&lt;&#39;EOF&#39;</span>
+<span class="s">net.bridge.bridge-nf-call-ip6tables = 1</span>
+<span class="s">net.bridge.bridge-nf-call-iptables = 1</span>
+<span class="s">net.ipv4.ip_forward = 1</span>
+<span class="s">EOF</span>
+
+sysctl<span class="w"> </span>-p<span class="w"> </span>/etc/sysctl.d/k8s.conf
+</code></pre></div>
+
+<ul>
+<li>关闭防火墙</li>
+</ul>
+<div class="highlight"><pre><span></span><code>systemctl<span class="w"> </span>stop<span class="w"> </span>firewalld<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>systemctl<span class="w"> </span>disable<span class="w"> </span>firewalld
+</code></pre></div>
+
+<ul>
+<li>配置时间同步</li>
+</ul>
+<div class="highlight"><pre><span></span><code>yum<span class="w"> </span>-y<span class="w"> </span>install<span class="w"> </span>chrony
+systemctl<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>chronyd<span class="w"> </span>--now<span class="w"> </span>
+
+tee<span class="w"> </span>-a<span class="w"> </span>/etc/chrony.conf<span class="w"> </span><span class="s">&lt;&lt;&#39;EOF&#39;  </span>
+<span class="s">server ntp1.aliyun.com iburst</span>
+<span class="s">server ntp2.aliyun.com iburst</span>
+<span class="s">server ntp1.tencent.com iburst</span>
+<span class="s">server ntp2.tencent.com iburst</span>
+<span class="s">EOF</span>
+<span class="c1">#Iburst: 如果设置该选项，前四轮询之间的间隔将是2秒，而不是minpoll。 这对于在chronyd启动后快速获得时钟的第一次更新非常有用。即：重启chronyd后，2秒后，直接同步一次时间。</span>
+crontab<span class="w"> </span>-e
+*<span class="w"> </span>*<span class="w"> </span>*<span class="w"> </span>*<span class="w"> </span>*<span class="w"> </span>/usr/bin/systemctl<span class="w"> </span>restart<span class="w"> </span>chronyd
+systemctl<span class="w"> </span>restart<span class="w"> </span>crond
+</code></pre></div>
+
+<ul>
+<li>配置aliyun docker repo源</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="c1">#配置国内安装docker和containerd的阿里云在线源</span>
+yum<span class="w"> </span>install<span class="w"> </span>yum-utils<span class="w"> </span>-y
+yum-config-manager<span class="w"> </span>--add-repo<span class="w"> </span>http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
+yum<span class="w"> </span>clean<span class="w"> </span>all<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>yum<span class="w"> </span>makecache
+</code></pre></div>
+
+<h1 id="组件安装">组件安装</h1>
+<h2 id="docker">docker</h2>
+<div class="highlight"><pre><span></span><code><span class="c1">#docker也要安装，docker跟containerd不冲突，安装docker是为了能基于dockerfile构建镜像</span>
+<span class="c1">#安装24.0.6的docker，是为了不与containerd版本冲突。否则docker版本过高，containerd也跟着变成高版本了。</span>
+yum<span class="w"> </span>install<span class="w"> </span>docker-ce-24.0.6<span class="w"> </span>-y
+systemctl<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>docker<span class="w"> </span>--now
+<span class="c1">#配置docker镜像加速器，k8s所有节点均按照以下配置</span>
+tee<span class="w"> </span>/etc/docker/daemon.json<span class="w"> </span><span class="s">&lt;&lt;&#39;EOF&#39;</span>
+<span class="s">{</span>
+<span class="s"> &quot;registry-mirrors&quot;:[&quot;https://docker.m.daocloud.io&quot;]</span>
+<span class="s">} </span>
+<span class="s">EOF</span>
+<span class="c1">#重启docker：</span>
+systemctl<span class="w"> </span>daemon-reload<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>systemctl<span class="w"> </span>restart<span class="w"> </span>docker<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>systemctl<span class="w"> </span>status<span class="w"> </span>docker
+</code></pre></div>
+
+<h2 id="containerd">containerd</h2>
+<ul>
+<li>当前k8s版本推荐1.6.22版本的containerd，比较稳定。</li>
+</ul>
+<div class="highlight"><pre><span></span><code>yum<span class="w"> </span>install<span class="w"> </span>containerd.io-1.6.22*<span class="w">  </span>-y
+<span class="nb">cd</span><span class="w"> </span>/etc/containerd
+<span class="c1">#rm -rf *</span>
+</code></pre></div>
+
+<ul>
+<li>如果有harbor环境，修改config.toml为以下。（将\<harbor IP>替换为安装harbor机器的IP），除此之外，还修改了以下内容：</li>
+<li>SystemdCgroup = true</li>
+<li>sandbox_image修改成了aliyun镜像库</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="n">tee</span><span class="w"> </span><span class="err">/</span><span class="n">etc</span><span class="err">/</span><span class="n">containerd</span><span class="err">/</span><span class="n">config</span><span class="p">.</span><span class="n">toml</span><span class="w"> </span><span class="err">&lt;&lt;</span><span class="s1">&#39;EOF&#39;</span>
+<span class="n">disabled_plugins</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[]</span>
+<span class="n">imports</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[]</span>
+<span class="n">oom_score</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span>
+<span class="n">plugin_dir</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="n">required_plugins</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[]</span>
+<span class="n">root</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;/var/lib/containerd&quot;</span>
+<span class="n">state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;/run/containerd&quot;</span>
+<span class="n">temp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="n">version</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span>
+
+<span class="k">[cgroup]</span>
+<span class="w">  </span><span class="n">path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+
+<span class="k">[debug]</span>
+<span class="w">  </span><span class="n">address</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">  </span><span class="n">format</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">  </span><span class="n">gid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span>
+<span class="w">  </span><span class="n">level</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">  </span><span class="n">uid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span>
+
+<span class="k">[grpc]</span>
+<span class="w">  </span><span class="n">address</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;/run/containerd/containerd.sock&quot;</span>
+<span class="w">  </span><span class="n">gid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span>
+<span class="w">  </span><span class="n">max_recv_message_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">16777216</span>
+<span class="w">  </span><span class="n">max_send_message_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">16777216</span>
+<span class="w">  </span><span class="n">tcp_address</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">  </span><span class="n">tcp_tls_ca</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">  </span><span class="n">tcp_tls_cert</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">  </span><span class="n">tcp_tls_key</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">  </span><span class="n">uid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span>
+
+<span class="k">[metrics]</span>
+<span class="w">  </span><span class="n">address</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">  </span><span class="n">grpc_histogram</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span>
+
+<span class="k">[plugins]</span>
+
+<span class="w">  </span><span class="k">[plugins.</span><span class="s2">&quot;io.containerd.gc.v1.scheduler&quot;</span><span class="k">]</span>
+<span class="w">    </span><span class="n">deletion_threshold</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span>
+<span class="w">    </span><span class="n">mutation_threshold</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">100</span>
+<span class="w">    </span><span class="n">pause_threshold</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.02</span>
+<span class="w">    </span><span class="n">schedule_delay</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;0s&quot;</span>
+<span class="w">    </span><span class="n">startup_delay</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;100ms&quot;</span>
+
+<span class="w">  </span><span class="k">[plugins.</span><span class="s2">&quot;io.containerd.grpc.v1.cri&quot;</span><span class="k">]</span>
+<span class="w">    </span><span class="n">device_ownership_from_security_context</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span>
+<span class="w">    </span><span class="n">disable_apparmor</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span>
+<span class="w">    </span><span class="n">disable_cgroup</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span>
+<span class="w">    </span><span class="n">disable_hugetlb_controller</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span>
+<span class="w">    </span><span class="n">disable_proc_mount</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span>
+<span class="w">    </span><span class="n">disable_tcp_service</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span>
+<span class="w">    </span><span class="n">enable_selinux</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span>
+<span class="w">    </span><span class="n">enable_tls_streaming</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span>
+<span class="w">    </span><span class="n">enable_unprivileged_icmp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span>
+<span class="w">    </span><span class="n">enable_unprivileged_ports</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span>
+<span class="w">    </span><span class="n">ignore_image_defined_volumes</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span>
+<span class="w">    </span><span class="n">max_concurrent_downloads</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span>
+<span class="w">    </span><span class="n">max_container_log_line_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">16384</span>
+<span class="w">    </span><span class="n">netns_mounts_under_state_dir</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span>
+<span class="w">    </span><span class="n">restrict_oom_score_adj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span>
+<span class="w">    </span><span class="n">sandbox_image</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;registry.cn-hangzhou.aliyuncs.com/google_containers/pause:3.7&quot;</span>
+<span class="w">    </span><span class="n">selinux_category_range</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1024</span>
+<span class="w">    </span><span class="n">stats_collect_period</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">10</span>
+<span class="w">    </span><span class="n">stream_idle_timeout</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;4h0m0s&quot;</span>
+<span class="w">    </span><span class="n">stream_server_address</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;127.0.0.1&quot;</span>
+<span class="w">    </span><span class="n">stream_server_port</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;0&quot;</span>
+<span class="w">    </span><span class="n">systemd_cgroup</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span>
+<span class="w">    </span><span class="n">tolerate_missing_hugetlb_controller</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span>
+<span class="w">    </span><span class="n">unset_seccomp_profile</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+
+<span class="w">    </span><span class="k">[plugins.</span><span class="s2">&quot;io.containerd.grpc.v1.cri&quot;</span><span class="k">.cni]</span>
+<span class="w">      </span><span class="n">bin_dir</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;/opt/cni/bin&quot;</span>
+<span class="w">      </span><span class="n">conf_dir</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;/etc/cni/net.d&quot;</span>
+<span class="w">      </span><span class="n">conf_template</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">      </span><span class="n">ip_pref</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">      </span><span class="n">max_conf_num</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span>
+
+<span class="w">    </span><span class="k">[plugins.</span><span class="s2">&quot;io.containerd.grpc.v1.cri&quot;</span><span class="k">.containerd]</span>
+<span class="w">      </span><span class="n">default_runtime_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;runc&quot;</span>
+<span class="w">      </span><span class="n">disable_snapshot_annotations</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span>
+<span class="w">      </span><span class="n">discard_unpacked_layers</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span>
+<span class="w">      </span><span class="n">ignore_rdt_not_enabled_errors</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span>
+<span class="w">      </span><span class="n">no_pivot</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span>
+<span class="w">      </span><span class="n">snapshotter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;overlayfs&quot;</span>
+
+<span class="w">      </span><span class="k">[plugins.</span><span class="s2">&quot;io.containerd.grpc.v1.cri&quot;</span><span class="k">.containerd.default_runtime]</span>
+<span class="w">        </span><span class="n">base_runtime_spec</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">        </span><span class="n">cni_conf_dir</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">        </span><span class="n">cni_max_conf_num</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span>
+<span class="w">        </span><span class="n">container_annotations</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[]</span>
+<span class="w">        </span><span class="n">pod_annotations</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[]</span>
+<span class="w">        </span><span class="n">privileged_without_host_devices</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span>
+<span class="w">        </span><span class="n">runtime_engine</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">        </span><span class="n">runtime_path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">        </span><span class="n">runtime_root</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">        </span><span class="n">runtime_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+
+<span class="w">        </span><span class="k">[plugins.</span><span class="s2">&quot;io.containerd.grpc.v1.cri&quot;</span><span class="k">.containerd.default_runtime.options]</span>
+
+<span class="w">      </span><span class="k">[plugins.</span><span class="s2">&quot;io.containerd.grpc.v1.cri&quot;</span><span class="k">.containerd.runtimes]</span>
+
+<span class="w">        </span><span class="k">[plugins.</span><span class="s2">&quot;io.containerd.grpc.v1.cri&quot;</span><span class="k">.containerd.runtimes.runc]</span>
+<span class="w">          </span><span class="n">base_runtime_spec</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">          </span><span class="n">cni_conf_dir</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">          </span><span class="n">cni_max_conf_num</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span>
+<span class="w">          </span><span class="n">container_annotations</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[]</span>
+<span class="w">          </span><span class="n">pod_annotations</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[]</span>
+<span class="w">          </span><span class="n">privileged_without_host_devices</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span>
+<span class="w">          </span><span class="n">runtime_engine</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">          </span><span class="n">runtime_path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">          </span><span class="n">runtime_root</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">          </span><span class="n">runtime_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;io.containerd.runc.v2&quot;</span>
+
+<span class="w">          </span><span class="k">[plugins.</span><span class="s2">&quot;io.containerd.grpc.v1.cri&quot;</span><span class="k">.containerd.runtimes.runc.options]</span>
+<span class="w">            </span><span class="n">BinaryName</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">            </span><span class="n">CriuImagePath</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">            </span><span class="n">CriuPath</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">            </span><span class="n">CriuWorkPath</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">            </span><span class="n">IoGid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span>
+<span class="w">            </span><span class="n">IoUid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span>
+<span class="w">            </span><span class="n">NoNewKeyring</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span>
+<span class="w">            </span><span class="n">NoPivotRoot</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span>
+<span class="w">            </span><span class="n">Root</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">            </span><span class="n">ShimCgroup</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">            </span><span class="n">SystemdCgroup</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span>
+
+<span class="w">      </span><span class="k">[plugins.</span><span class="s2">&quot;io.containerd.grpc.v1.cri&quot;</span><span class="k">.containerd.untrusted_workload_runtime]</span>
+<span class="w">        </span><span class="n">base_runtime_spec</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">        </span><span class="n">cni_conf_dir</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">        </span><span class="n">cni_max_conf_num</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span>
+<span class="w">        </span><span class="n">container_annotations</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[]</span>
+<span class="w">        </span><span class="n">pod_annotations</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[]</span>
+<span class="w">        </span><span class="n">privileged_without_host_devices</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span>
+<span class="w">        </span><span class="n">runtime_engine</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">        </span><span class="n">runtime_path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">        </span><span class="n">runtime_root</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">        </span><span class="n">runtime_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+
+<span class="w">        </span><span class="k">[plugins.</span><span class="s2">&quot;io.containerd.grpc.v1.cri&quot;</span><span class="k">.containerd.untrusted_workload_runtime.options]</span>
+
+<span class="w">    </span><span class="k">[plugins.</span><span class="s2">&quot;io.containerd.grpc.v1.cri&quot;</span><span class="k">.image_decryption]</span>
+<span class="w">      </span><span class="n">key_model</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;node&quot;</span>
+
+<span class="w">    </span><span class="k">[plugins.</span><span class="s2">&quot;io.containerd.grpc.v1.cri&quot;</span><span class="k">.registry]</span>
+<span class="w">      </span><span class="n">config_path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+
+<span class="w">      </span><span class="k">[plugins.</span><span class="s2">&quot;io.containerd.grpc.v1.cri&quot;</span><span class="k">.registry.auths]</span>
+
+<span class="w">      </span><span class="k">[plugins.</span><span class="s2">&quot;io.containerd.grpc.v1.cri&quot;</span><span class="k">.registry.configs]</span>
+<span class="w">        </span><span class="k">[plugins.</span><span class="s2">&quot;io.containerd.grpc.v1.cri&quot;</span><span class="k">.registry.configs.</span><span class="s2">&quot;172.16.183.100:32002&quot;</span><span class="k">.tls]</span>
+<span class="w">            </span><span class="n">insecure_skip_verify</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span>
+<span class="w">            </span><span class="n">ca_file</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">            </span><span class="n">cert_file</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">            </span><span class="n">key_file</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">        </span><span class="k">[plugins.</span><span class="s2">&quot;io.containerd.grpc.v1.cri&quot;</span><span class="k">.registry.configs.</span><span class="s2">&quot;172.16.183.100:32002&quot;</span><span class="k">.auth]</span>
+<span class="w">            </span><span class="n">username</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;admin&quot;</span>
+<span class="w">            </span><span class="n">password</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;Harbor12345&quot;</span>
+
+<span class="w">      </span><span class="k">[plugins.</span><span class="s2">&quot;io.containerd.grpc.v1.cri&quot;</span><span class="k">.registry.headers]</span>
+
+<span class="w">      </span><span class="k">[plugins.</span><span class="s2">&quot;io.containerd.grpc.v1.cri&quot;</span><span class="k">.registry.mirrors]</span>
+<span class="w">         </span><span class="k">[plugins.</span><span class="s2">&quot;io.containerd.grpc.v1.cri&quot;</span><span class="k">.registry.mirrors.</span><span class="s2">&quot;172.16.183.100:32002&quot;</span><span class="k">]</span>
+<span class="w">            </span><span class="n">endpoint</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;http://172.16.183.100:32002&quot;</span><span class="p">]</span>
+<span class="w">          </span><span class="k">[plugins.</span><span class="s2">&quot;io.containerd.grpc.v1.cri&quot;</span><span class="k">.registry.mirrors.</span><span class="s2">&quot;docker.io&quot;</span><span class="k">]</span>
+<span class="w">             </span><span class="n">endpoint</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;https://docker.m.daocloud.io&quot;</span><span class="p">]</span>
+
+<span class="w">    </span><span class="k">[plugins.</span><span class="s2">&quot;io.containerd.grpc.v1.cri&quot;</span><span class="k">.x509_key_pair_streaming]</span>
+<span class="w">      </span><span class="n">tls_cert_file</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">      </span><span class="n">tls_key_file</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+
+<span class="w">  </span><span class="k">[plugins.</span><span class="s2">&quot;io.containerd.internal.v1.opt&quot;</span><span class="k">]</span>
+<span class="w">    </span><span class="n">path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;/opt/containerd&quot;</span>
+
+<span class="w">  </span><span class="k">[plugins.</span><span class="s2">&quot;io.containerd.internal.v1.restart&quot;</span><span class="k">]</span>
+<span class="w">    </span><span class="n">interval</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;10s&quot;</span>
+
+<span class="w">  </span><span class="k">[plugins.</span><span class="s2">&quot;io.containerd.internal.v1.tracing&quot;</span><span class="k">]</span>
+<span class="w">    </span><span class="n">sampling_ratio</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.0</span>
+<span class="w">    </span><span class="n">service_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;containerd&quot;</span>
+
+<span class="w">  </span><span class="k">[plugins.</span><span class="s2">&quot;io.containerd.metadata.v1.bolt&quot;</span><span class="k">]</span>
+<span class="w">    </span><span class="n">content_sharing_policy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;shared&quot;</span>
+
+<span class="w">  </span><span class="k">[plugins.</span><span class="s2">&quot;io.containerd.monitor.v1.cgroups&quot;</span><span class="k">]</span>
+<span class="w">    </span><span class="n">no_prometheus</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span>
+
+<span class="w">  </span><span class="k">[plugins.</span><span class="s2">&quot;io.containerd.runtime.v1.linux&quot;</span><span class="k">]</span>
+<span class="w">    </span><span class="n">no_shim</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span>
+<span class="w">    </span><span class="n">runtime</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;runc&quot;</span>
+<span class="w">    </span><span class="n">runtime_root</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">    </span><span class="n">shim</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;containerd-shim&quot;</span>
+<span class="w">    </span><span class="n">shim_debug</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span>
+
+<span class="w">  </span><span class="k">[plugins.</span><span class="s2">&quot;io.containerd.runtime.v2.task&quot;</span><span class="k">]</span>
+<span class="w">    </span><span class="n">platforms</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;linux/amd64&quot;</span><span class="p">]</span>
+<span class="w">    </span><span class="n">sched_core</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span>
+
+<span class="w">  </span><span class="k">[plugins.</span><span class="s2">&quot;io.containerd.service.v1.diff-service&quot;</span><span class="k">]</span>
+<span class="w">    </span><span class="n">default</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;walking&quot;</span><span class="p">]</span>
+
+<span class="w">  </span><span class="k">[plugins.</span><span class="s2">&quot;io.containerd.service.v1.tasks-service&quot;</span><span class="k">]</span>
+<span class="w">    </span><span class="n">rdt_config_file</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+
+<span class="w">  </span><span class="k">[plugins.</span><span class="s2">&quot;io.containerd.snapshotter.v1.aufs&quot;</span><span class="k">]</span>
+<span class="w">    </span><span class="n">root_path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+
+<span class="w">  </span><span class="k">[plugins.</span><span class="s2">&quot;io.containerd.snapshotter.v1.btrfs&quot;</span><span class="k">]</span>
+<span class="w">    </span><span class="n">root_path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+
+<span class="w">  </span><span class="k">[plugins.</span><span class="s2">&quot;io.containerd.snapshotter.v1.devmapper&quot;</span><span class="k">]</span>
+<span class="w">    </span><span class="n">async_remove</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span>
+<span class="w">    </span><span class="n">base_image_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">    </span><span class="n">discard_blocks</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span>
+<span class="w">    </span><span class="n">fs_options</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">    </span><span class="n">fs_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">    </span><span class="n">pool_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">    </span><span class="n">root_path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+
+<span class="w">  </span><span class="k">[plugins.</span><span class="s2">&quot;io.containerd.snapshotter.v1.native&quot;</span><span class="k">]</span>
+<span class="w">    </span><span class="n">root_path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+
+<span class="w">  </span><span class="k">[plugins.</span><span class="s2">&quot;io.containerd.snapshotter.v1.overlayfs&quot;</span><span class="k">]</span>
+<span class="w">    </span><span class="n">root_path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">    </span><span class="n">upperdir_label</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span>
+
+<span class="w">  </span><span class="k">[plugins.</span><span class="s2">&quot;io.containerd.snapshotter.v1.zfs&quot;</span><span class="k">]</span>
+<span class="w">    </span><span class="n">root_path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+
+<span class="w">  </span><span class="k">[plugins.</span><span class="s2">&quot;io.containerd.tracing.processor.v1.otlp&quot;</span><span class="k">]</span>
+<span class="w">    </span><span class="n">endpoint</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">    </span><span class="n">insecure</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span>
+<span class="w">    </span><span class="n">protocol</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+
+<span class="k">[proxy_plugins]</span>
+
+<span class="k">[stream_processors]</span>
+
+<span class="w">  </span><span class="k">[stream_processors.</span><span class="s2">&quot;io.containerd.ocicrypt.decoder.v1.tar&quot;</span><span class="k">]</span>
+<span class="w">    </span><span class="n">accepts</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;application/vnd.oci.image.layer.v1.tar+encrypted&quot;</span><span class="p">]</span>
+<span class="w">    </span><span class="n">args</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;--decryption-keys-path&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;/etc/containerd/ocicrypt/keys&quot;</span><span class="p">]</span>
+<span class="w">    </span><span class="n">env</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;OCICRYPT_KEYPROVIDER_CONFIG=/etc/containerd/ocicrypt/ocicrypt_keyprovider.conf&quot;</span><span class="p">]</span>
+<span class="w">    </span><span class="n">path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;ctd-decoder&quot;</span>
+<span class="w">    </span><span class="n">returns</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;application/vnd.oci.image.layer.v1.tar&quot;</span>
+
+<span class="w">  </span><span class="k">[stream_processors.</span><span class="s2">&quot;io.containerd.ocicrypt.decoder.v1.tar.gzip&quot;</span><span class="k">]</span>
+<span class="w">    </span><span class="n">accepts</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;application/vnd.oci.image.layer.v1.tar+gzip+encrypted&quot;</span><span class="p">]</span>
+<span class="w">    </span><span class="n">args</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;--decryption-keys-path&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;/etc/containerd/ocicrypt/keys&quot;</span><span class="p">]</span>
+<span class="w">    </span><span class="n">env</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;OCICRYPT_KEYPROVIDER_CONFIG=/etc/containerd/ocicrypt/ocicrypt_keyprovider.conf&quot;</span><span class="p">]</span>
+<span class="w">    </span><span class="n">path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;ctd-decoder&quot;</span>
+<span class="w">    </span><span class="n">returns</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;application/vnd.oci.image.layer.v1.tar+gzip&quot;</span>
+
+<span class="k">[timeouts]</span>
+<span class="w">  </span><span class="s2">&quot;io.containerd.timeout.bolt.open&quot;</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;0s&quot;</span>
+<span class="w">  </span><span class="s2">&quot;io.containerd.timeout.shim.cleanup&quot;</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;5s&quot;</span>
+<span class="w">  </span><span class="s2">&quot;io.containerd.timeout.shim.load&quot;</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;5s&quot;</span>
+<span class="w">  </span><span class="s2">&quot;io.containerd.timeout.shim.shutdown&quot;</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;3s&quot;</span>
+<span class="w">  </span><span class="s2">&quot;io.containerd.timeout.task.state&quot;</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;2s&quot;</span>
+
+<span class="k">[ttrpc]</span>
+<span class="w">  </span><span class="n">address</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">  </span><span class="n">gid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span>
+<span class="w">  </span><span class="n">uid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span>
+<span class="n">EOF</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code>systemctl<span class="w"> </span>daemon-reload<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>systemctl<span class="w"> </span>start<span class="w"> </span>containerd<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>systemctl<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>containerd
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="c1">#修改/etc/crictl.yaml文件，指定k8s的运行时和拉取镜像都使用containerd</span>
+<span class="c1">#这个文件是 crictl 工具的配置文件，用于指定与 containerd 交互的相关设置：</span>
+<span class="c1">#指定unix:///run/containerd/containerd.sock 是为了告诉 crictl 使用 Unix 域套接字的方式来连接 containerd 的 API。containerd 提供了一个 socket 文件 /run/containerd/containerd.sock，crictl 通过连接该 socket 文件，可以与 containerd 进行通信，管理容器和镜像等操作。</span>
+<span class="c1">#runtime-endpoint：指定 containerd 的运行时接口地址：crictl 可以与 containerd 通信来管理容器生命周期和资源隔离。</span>
+<span class="c1">#image-endpoint：指定 containerd 的镜像接口地址：以便 crictl 可以与 containerd 通信来管理镜像的拉取和推送。</span>
+<span class="c1">#timeout：指定 crictl 等待 containerd 响应的最大时间，避免出现无响应的情况。</span>
+<span class="c1">#debug：开启或关闭 crictl 的调试模式，方便排查问题。</span>
+
+cat<span class="w"> </span>&gt;<span class="w"> </span>/etc/crictl.yaml<span class="w"> </span><span class="s">&lt;&lt;EOF</span>
+<span class="s">runtime-endpoint: unix:///run/containerd/containerd.sock</span>
+<span class="s">image-endpoint: unix:///run/containerd/containerd.sock</span>
+<span class="s">timeout: 10</span>
+<span class="s">debug: false</span>
+<span class="s">EOF</span>
+systemctl<span class="w"> </span>restart<span class="w"> </span>containerd
+</code></pre></div>
+
+<h2 id="k8s-1323">k8s-1.32.3</h2>
+<div class="highlight"><pre><span></span><code><span class="c1">#配置安装k8s组件需要的阿里云的repo源 </span>
+cat<span class="w"> </span>&gt;<span class="w"> </span>/etc/yum.repos.d/kubernetes.repo<span class="w"> </span><span class="s">&lt;&lt;EOF</span>
+<span class="s">[kubernetes]</span>
+<span class="s">name=Kubernetes</span>
+<span class="s">baseurl=https://mirrors.aliyun.com/kubernetes-new/core/stable/v1.32/rpm/</span>
+<span class="s">enabled=1</span>
+<span class="s">gpgcheck=1</span>
+<span class="s">gpgkey=https://mirrors.aliyun.com/kubernetes-new/core/stable/v1.32/rpm/repodata/repomd.xml.key</span>
+<span class="s">EOF</span>
+<span class="c1">#其中baseurl是指定仓库的URL地址。这个仓库是Kubernetes针对CentOS 7 x86_64架构的yum仓库，yum会从这个指定的URL地址获取Kubernetes的安装包和依赖包，从而进行安装。使用阿里云镜像站可以提高安装速度和稳定性。</span>
+yum<span class="w"> </span>clean<span class="w"> </span>all<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>yum<span class="w"> </span>makecache
+yum<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>kubelet-1.32.3<span class="w"> </span>kubeadm-1.32.3<span class="w"> </span>kubectl-1.32.3
+systemctl<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>kubelet
+</code></pre></div>
+
+<h1 id="kubeadm初始化k8s集群">kubeadm初始化k8s集群</h1>
+<h2 id="初始化集群">初始化集群</h2>
+<div class="highlight"><pre><span></span><code>kubeadm<span class="w"> </span>config<span class="w"> </span>print<span class="w"> </span>init-defaults<span class="w"> </span>&gt;<span class="w"> </span>kubeadm.yaml
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="l l-Scalar l-Scalar-Plain">tee kubeadm.yaml &lt;&lt;&#39;EOF&#39;</span>
+<span class="l l-Scalar l-Scalar-Plain">apiVersion</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kubeadm.k8s.io/v1beta3</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">InitConfiguration</span>
+<span class="nt">localAPIEndpoint</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">advertiseAddress</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">172.16.183.100</span><span class="w"> </span><span class="c1">#控制节点的ip</span>
+<span class="w">  </span><span class="nt">bindPort</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">6443</span>
+<span class="nt">nodeRegistration</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">criSocket</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">unix:///run/containerd/containerd.sock</span><span class="w">  </span><span class="c1">#指定containerd容器运行时</span>
+<span class="w">  </span><span class="nt">imagePullPolicy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">IfNotPresent</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">rm1</span><span class="w"> </span><span class="c1">#控制节点主机名</span>
+<span class="w">  </span><span class="nt">taints</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">null</span>
+<span class="nn">---</span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kubeadm.k8s.io/v1beta3</span>
+<span class="nt">certificatesDir</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/etc/kubernetes/pki</span>
+<span class="nt">clusterName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kubernetes</span>
+<span class="nt">controllerManager</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span>
+<span class="nt">dns</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span>
+<span class="nt">etcd</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">local</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">dataDir</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/var/lib/etcd</span>
+<span class="nt">imageRepository</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">registry.cn-hangzhou.aliyuncs.com/google_containers</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ClusterConfiguration</span>
+<span class="nt">kubernetesVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1.32.0</span><span class="w"> </span>
+<span class="nt">networking</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">dnsDomain</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cluster.local</span>
+<span class="w">  </span><span class="nt">podSubnet</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10.244.0.0/16</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">serviceSubnet</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10.96.0.0/12</span><span class="w"> </span>
+<span class="nt">scheduler</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span>
+<span class="nn">---</span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kubeproxy.config.k8s.io/v1alpha1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">KubeProxyConfiguration</span>
+<span class="nt">mode</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ipvs</span>
+<span class="nn">---</span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kubelet.config.k8s.io/v1beta1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">KubeletConfiguration</span>
+<span class="nt">cgroupDriver</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">systemd</span>
+<span class="l l-Scalar l-Scalar-Plain">EOF</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code>kubeadm<span class="w"> </span>init<span class="w"> </span>--config<span class="o">=</span>kubeadm.yaml<span class="w"> </span>--ignore-preflight-errors<span class="o">=</span>SystemVerification
+</code></pre></div>
+
+<h2 id="配置kubeconfig">配置kubeconfig</h2>
+<div class="highlight"><pre><span></span><code>mkdir<span class="w"> </span>-p<span class="w"> </span><span class="nv">$HOME</span>/.kube
+cp<span class="w"> </span>-i<span class="w"> </span>/etc/kubernetes/admin.conf<span class="w"> </span><span class="nv">$HOME</span>/.kube/config
+chown<span class="w"> </span><span class="k">$(</span>id<span class="w"> </span>-u<span class="k">)</span>:<span class="k">$(</span>id<span class="w"> </span>-g<span class="k">)</span><span class="w"> </span><span class="nv">$HOME</span>/.kube/config
+
+<span class="c1">#1. 设置kubectl的alias为k：</span>
+whereis<span class="w"> </span>kubectl<span class="w"> </span><span class="c1">## kubectl: /usr/bin/kubectl</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;alias k=/usr/bin/kubectl&quot;</span>&gt;&gt;/etc/profile
+<span class="nb">source</span><span class="w"> </span>/etc/profile
+<span class="c1">#2. 设置alias的自动补全：</span>
+<span class="nb">source</span><span class="w"> </span>&lt;<span class="o">(</span>kubectl<span class="w"> </span>completion<span class="w"> </span>bash<span class="w"> </span><span class="p">|</span><span class="w"> </span>sed<span class="w"> </span><span class="s1">&#39;s/kubectl/k/g&#39;</span><span class="o">)</span>
+<span class="c1">#3. 解决每次启动k都会失效，要重新刷新环境变量（source /etc/profile）的问题：在~/.bashrc文件中添加以下代码：source /etc/profile</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;source /etc/profile&quot;</span><span class="w"> </span>&gt;&gt;<span class="w"> </span>~/.bashrc
+<span class="c1">#4. 给alias k也配置补全</span>
+tee<span class="w"> </span>-a<span class="w"> </span>~/.bashrc<span class="w"> </span><span class="s">&lt;&lt;&#39;EOF&#39;</span>
+<span class="s">alias k=&#39;kubectl&#39;</span>
+<span class="s">complete -o default -F __start_kubectl k</span>
+<span class="s">source &lt;(kubectl completion bash)</span>
+<span class="s">EOF</span>
+<span class="c1">##使命令生效</span>
+<span class="nb">source</span><span class="w"> </span>~/.bashrc
+</code></pre></div>
+
+<h2 id="扩容工作节点">扩容工作节点</h2>
+<div class="highlight"><pre><span></span><code><span class="c1">#master上</span>
+kubeadm<span class="w"> </span>token<span class="w"> </span>create<span class="w"> </span>--print-join-command
+<span class="c1">#把rnode1加入k8s集群，加上参数：--ignore-preflight-errors=SystemVerification</span>
+<span class="c1">#打工作节点label</span>
+kubectl<span class="w"> </span>label<span class="w"> </span>nodes<span class="w"> </span>rn1<span class="w"> </span>node-role.kubernetes.io/work<span class="o">=</span>worker
+</code></pre></div>
+
+<h2 id="安装calico">安装calico</h2>
+<div class="highlight"><pre><span></span><code><span class="c1">#上传calico镜像包和yaml文件，解压</span>
+<span class="c1">##在线下载地址为：https://docs.projectcalico.org/manifests/calico.yaml</span>
+ctr<span class="w"> </span>-n<span class="o">=</span>k8s.io<span class="w"> </span>images<span class="w"> </span>import<span class="w"> </span>calico.tar.gz
+<span class="c1">#修改calico.yaml中网卡名称</span>
+<span class="c1">#- name: CLUSTER_TYPE</span>
+<span class="c1">#  value: &quot;k8s,bgp&quot;</span>
+<span class="c1"># 上面这一段的下面添加：（指定calico从ens33跨节点通信，不指定的话，会走lo的IP，没办法跨节点通信，也就没办法给pod划分IP）</span>
+-<span class="w"> </span>name:<span class="w"> </span>IP_AUTODETECTION_METHOD
+<span class="w">  </span>value:<span class="w"> </span><span class="s2">&quot;interface=ens160&quot;</span>
+
+kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>calico.yaml
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="c1">#测试网络访问</span>
+kubectl<span class="w"> </span>run<span class="w"> </span>busybox<span class="w"> </span>--image<span class="w"> </span>busybox:1.28<span class="w">  </span>--image-pull-policy<span class="o">=</span>IfNotPresent<span class="w"> </span>--restart<span class="o">=</span>Never<span class="w"> </span>--rm<span class="w"> </span>-it<span class="w"> </span>busybox<span class="w"> </span>--<span class="w"> </span>sh
+<span class="c1"># ping www.baidu.com</span>
+<span class="c1"># nslookup kubernetes.default.svc.cluster.local</span>
+</code></pre></div>
+
+<h1 id="延长k8s证书">延长k8s证书</h1>
+<h2 id="查看证书过期时间">查看证书过期时间</h2>
+<div class="highlight"><pre><span></span><code><span class="c1">#在master节点上执行</span>
+openssl<span class="w"> </span>x509<span class="w"> </span>-in<span class="w"> </span>/etc/kubernetes/pki/ca.crt<span class="w"> </span>-noout<span class="w"> </span>-text<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span>Not
+openssl<span class="w"> </span>x509<span class="w"> </span>-in<span class="w"> </span>/etc/kubernetes/pki/apiserver.crt<span class="w"> </span>-noout<span class="w"> </span>-text<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span>Not
+</code></pre></div>
+
+<h2 id="延长证书有效期的脚本">延长证书有效期的脚本</h2>
+<div class="highlight"><pre><span></span><code><span class="ch">#!/bin/bash</span>
+<span class="c1">#hanxianchao,微信: luckylucky421302</span>
+<span class="nb">set</span><span class="w"> </span>-o<span class="w"> </span>errexit
+<span class="nb">set</span><span class="w"> </span>-o<span class="w"> </span>pipefail
+<span class="c1"># set -o xtrace</span>
+
+log::err<span class="o">()</span><span class="w"> </span><span class="o">{</span>
+<span class="w">  </span><span class="nb">printf</span><span class="w"> </span><span class="s2">&quot;[</span><span class="k">$(</span>date<span class="w"> </span>+<span class="s1">&#39;%Y-%m-%dT%H:%M:%S.%N%z&#39;</span><span class="k">)</span><span class="s2">]: \033[31mERROR: \033[0m</span><span class="nv">$@</span><span class="s2">\n&quot;</span>
+<span class="o">}</span>
+
+log::info<span class="o">()</span><span class="w"> </span><span class="o">{</span>
+<span class="w">  </span><span class="nb">printf</span><span class="w"> </span><span class="s2">&quot;[</span><span class="k">$(</span>date<span class="w"> </span>+<span class="s1">&#39;%Y-%m-%dT%H:%M:%S.%N%z&#39;</span><span class="k">)</span><span class="s2">]: \033[32mINFO: \033[0m</span><span class="nv">$@</span><span class="s2">\n&quot;</span>
+<span class="o">}</span>
+
+log::warning<span class="o">()</span><span class="w"> </span><span class="o">{</span>
+<span class="w">  </span><span class="nb">printf</span><span class="w"> </span><span class="s2">&quot;[</span><span class="k">$(</span>date<span class="w"> </span>+<span class="s1">&#39;%Y-%m-%dT%H:%M:%S.%N%z&#39;</span><span class="k">)</span><span class="s2">]: \033[33mWARNING: \033[0m</span><span class="nv">$@</span><span class="s2">\n&quot;</span>
+<span class="o">}</span>
+
+check_file<span class="o">()</span><span class="w"> </span><span class="o">{</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="o">[[</span><span class="w"> </span>!<span class="w"> </span>-r<span class="w">  </span><span class="si">${</span><span class="nv">1</span><span class="si">}</span><span class="w"> </span><span class="o">]]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">    </span>log::err<span class="w"> </span><span class="s2">&quot;can not find </span><span class="si">${</span><span class="nv">1</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="w">    </span><span class="nb">exit</span><span class="w"> </span><span class="m">1</span>
+<span class="w">  </span><span class="k">fi</span>
+<span class="o">}</span>
+
+<span class="c1"># get x509v3 subject alternative name from the old certificate</span>
+cert::get_subject_alt_name<span class="o">()</span><span class="w"> </span><span class="o">{</span>
+<span class="w">  </span><span class="nb">local</span><span class="w"> </span><span class="nv">cert</span><span class="o">=</span><span class="si">${</span><span class="nv">1</span><span class="si">}</span>.crt
+<span class="w">  </span>check_file<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">cert</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="w">  </span><span class="nb">local</span><span class="w"> </span><span class="nv">alt_name</span><span class="o">=</span><span class="k">$(</span>openssl<span class="w"> </span>x509<span class="w"> </span>-text<span class="w"> </span>-noout<span class="w"> </span>-in<span class="w"> </span><span class="si">${</span><span class="nv">cert</span><span class="si">}</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-A1<span class="w"> </span><span class="s1">&#39;Alternative&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-n1<span class="w"> </span><span class="p">|</span><span class="w"> </span>sed<span class="w"> </span><span class="s1">&#39;s/[[:space:]]*Address//g&#39;</span><span class="k">)</span>
+<span class="w">  </span><span class="nb">printf</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">alt_name</span><span class="si">}</span><span class="s2">\n&quot;</span>
+<span class="o">}</span>
+
+<span class="c1"># get subject from the old certificate</span>
+cert::get_subj<span class="o">()</span><span class="w"> </span><span class="o">{</span>
+<span class="w">  </span><span class="nb">local</span><span class="w"> </span><span class="nv">cert</span><span class="o">=</span><span class="si">${</span><span class="nv">1</span><span class="si">}</span>.crt
+<span class="w">  </span>check_file<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">cert</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="w">  </span><span class="nb">local</span><span class="w"> </span><span class="nv">subj</span><span class="o">=</span><span class="k">$(</span>openssl<span class="w"> </span>x509<span class="w"> </span>-text<span class="w"> </span>-noout<span class="w"> </span>-in<span class="w"> </span><span class="si">${</span><span class="nv">cert</span><span class="si">}</span><span class="w">  </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s2">&quot;Subject:&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>sed<span class="w"> </span><span class="s1">&#39;s/Subject:/\//g;s/\,/\//;s/[[:space:]]//g&#39;</span><span class="k">)</span>
+<span class="w">  </span><span class="nb">printf</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">subj</span><span class="si">}</span><span class="s2">\n&quot;</span>
+<span class="o">}</span>
+
+cert::backup_file<span class="o">()</span><span class="w"> </span><span class="o">{</span>
+<span class="w">  </span><span class="nb">local</span><span class="w"> </span><span class="nv">file</span><span class="o">=</span><span class="si">${</span><span class="nv">1</span><span class="si">}</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="o">[[</span><span class="w"> </span>!<span class="w"> </span>-e<span class="w"> </span><span class="si">${</span><span class="nv">file</span><span class="si">}</span>.old-<span class="k">$(</span>date<span class="w"> </span>+%Y%m%d<span class="k">)</span><span class="w"> </span><span class="o">]]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">    </span>cp<span class="w"> </span>-rp<span class="w"> </span><span class="si">${</span><span class="nv">file</span><span class="si">}</span><span class="w"> </span><span class="si">${</span><span class="nv">file</span><span class="si">}</span>.old-<span class="k">$(</span>date<span class="w"> </span>+%Y%m%d<span class="k">)</span>
+<span class="w">    </span>log::info<span class="w"> </span><span class="s2">&quot;backup </span><span class="si">${</span><span class="nv">file</span><span class="si">}</span><span class="s2"> to </span><span class="si">${</span><span class="nv">file</span><span class="si">}</span><span class="s2">.old-</span><span class="k">$(</span>date<span class="w"> </span>+%Y%m%d<span class="k">)</span><span class="s2">&quot;</span>
+<span class="w">  </span><span class="k">else</span>
+<span class="w">    </span>log::warning<span class="w"> </span><span class="s2">&quot;does not backup, </span><span class="si">${</span><span class="nv">file</span><span class="si">}</span><span class="s2">.old-</span><span class="k">$(</span>date<span class="w"> </span>+%Y%m%d<span class="k">)</span><span class="s2"> already exists&quot;</span>
+<span class="w">  </span><span class="k">fi</span>
+<span class="o">}</span>
+
+<span class="c1"># generate certificate whit client, server or peer</span>
+<span class="c1"># Args:</span>
+<span class="c1">#   $1 (the name of certificate)</span>
+<span class="c1">#   $2 (the type of certificate, must be one of client, server, peer)</span>
+<span class="c1">#   $3 (the subject of certificates)</span>
+<span class="c1">#   $4 (the validity of certificates) (days)</span>
+<span class="c1">#   $5 (the x509v3 subject alternative name of certificate when the type of certificate is server or peer)</span>
+cert::gen_cert<span class="o">()</span><span class="w"> </span><span class="o">{</span>
+<span class="w">  </span><span class="nb">local</span><span class="w"> </span><span class="nv">cert_name</span><span class="o">=</span><span class="si">${</span><span class="nv">1</span><span class="si">}</span>
+<span class="w">  </span><span class="nb">local</span><span class="w"> </span><span class="nv">cert_type</span><span class="o">=</span><span class="si">${</span><span class="nv">2</span><span class="si">}</span>
+<span class="w">  </span><span class="nb">local</span><span class="w"> </span><span class="nv">subj</span><span class="o">=</span><span class="si">${</span><span class="nv">3</span><span class="si">}</span>
+<span class="w">  </span><span class="nb">local</span><span class="w"> </span><span class="nv">cert_days</span><span class="o">=</span><span class="si">${</span><span class="nv">4</span><span class="si">}</span>
+<span class="w">  </span><span class="nb">local</span><span class="w"> </span><span class="nv">alt_name</span><span class="o">=</span><span class="si">${</span><span class="nv">5</span><span class="si">}</span>
+<span class="w">  </span><span class="nb">local</span><span class="w"> </span><span class="nv">cert</span><span class="o">=</span><span class="si">${</span><span class="nv">cert_name</span><span class="si">}</span>.crt
+<span class="w">  </span><span class="nb">local</span><span class="w"> </span><span class="nv">key</span><span class="o">=</span><span class="si">${</span><span class="nv">cert_name</span><span class="si">}</span>.key
+<span class="w">  </span><span class="nb">local</span><span class="w"> </span><span class="nv">csr</span><span class="o">=</span><span class="si">${</span><span class="nv">cert_name</span><span class="si">}</span>.csr
+<span class="w">  </span><span class="nb">local</span><span class="w"> </span><span class="nv">csr_conf</span><span class="o">=</span><span class="s2">&quot;distinguished_name = dn\n[dn]\n[v3_ext]\nkeyUsage = critical, digitalSignature, keyEncipherment\n&quot;</span>
+
+<span class="w">  </span>check_file<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">key</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="w">  </span>check_file<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">cert</span><span class="si">}</span><span class="s2">&quot;</span>
+
+<span class="w">  </span><span class="c1"># backup certificate when certificate not in ${kubeconf_arr[@]}</span>
+<span class="w">  </span><span class="c1"># kubeconf_arr=(&quot;controller-manager.crt&quot; &quot;scheduler.crt&quot; &quot;admin.crt&quot; &quot;kubelet.crt&quot;)</span>
+<span class="w">  </span><span class="c1"># if [[ ! &quot;${kubeconf_arr[@]}&quot; =~ &quot;${cert##*/}&quot; ]]; then</span>
+<span class="w">  </span><span class="c1">#   cert::backup_file &quot;${cert}&quot;</span>
+<span class="w">  </span><span class="c1"># fi</span>
+
+<span class="w">  </span><span class="k">case</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">cert_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span><span class="k">in</span>
+<span class="w">    </span>client<span class="o">)</span>
+<span class="w">      </span>openssl<span class="w"> </span>req<span class="w"> </span>-new<span class="w">  </span>-key<span class="w"> </span><span class="si">${</span><span class="nv">key</span><span class="si">}</span><span class="w"> </span>-subj<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">subj</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span>-reqexts<span class="w"> </span>v3_ext<span class="w"> </span><span class="se">\</span>
+<span class="w">        </span>-config<span class="w"> </span>&lt;<span class="o">(</span><span class="nb">printf</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">csr_conf</span><span class="si">}</span><span class="s2"> extendedKeyUsage = clientAuth\n&quot;</span><span class="o">)</span><span class="w"> </span>-out<span class="w"> </span><span class="si">${</span><span class="nv">csr</span><span class="si">}</span>
+<span class="w">      </span>openssl<span class="w"> </span>x509<span class="w"> </span>-in<span class="w"> </span><span class="si">${</span><span class="nv">csr</span><span class="si">}</span><span class="w"> </span>-req<span class="w"> </span>-CA<span class="w"> </span><span class="si">${</span><span class="nv">CA_CERT</span><span class="si">}</span><span class="w"> </span>-CAkey<span class="w"> </span><span class="si">${</span><span class="nv">CA_KEY</span><span class="si">}</span><span class="w"> </span>-CAcreateserial<span class="w"> </span>-extensions<span class="w"> </span>v3_ext<span class="w"> </span><span class="se">\</span>
+<span class="w">        </span>-extfile<span class="w"> </span>&lt;<span class="o">(</span><span class="nb">printf</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">csr_conf</span><span class="si">}</span><span class="s2"> extendedKeyUsage = clientAuth\n&quot;</span><span class="o">)</span><span class="w"> </span>-days<span class="w"> </span><span class="si">${</span><span class="nv">cert_days</span><span class="si">}</span><span class="w"> </span>-out<span class="w"> </span><span class="si">${</span><span class="nv">cert</span><span class="si">}</span>
+<span class="w">      </span>log::info<span class="w"> </span><span class="s2">&quot;generated </span><span class="si">${</span><span class="nv">cert</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="w">    </span><span class="p">;;</span>
+<span class="w">    </span>server<span class="o">)</span>
+<span class="w">      </span>openssl<span class="w"> </span>req<span class="w"> </span>-new<span class="w">  </span>-key<span class="w"> </span><span class="si">${</span><span class="nv">key</span><span class="si">}</span><span class="w"> </span>-subj<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">subj</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span>-reqexts<span class="w"> </span>v3_ext<span class="w"> </span><span class="se">\</span>
+<span class="w">        </span>-config<span class="w"> </span>&lt;<span class="o">(</span><span class="nb">printf</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">csr_conf</span><span class="si">}</span><span class="s2"> extendedKeyUsage = serverAuth\nsubjectAltName = </span><span class="si">${</span><span class="nv">alt_name</span><span class="si">}</span><span class="s2">\n&quot;</span><span class="o">)</span><span class="w"> </span>-out<span class="w"> </span><span class="si">${</span><span class="nv">csr</span><span class="si">}</span>
+<span class="w">      </span>openssl<span class="w"> </span>x509<span class="w"> </span>-in<span class="w"> </span><span class="si">${</span><span class="nv">csr</span><span class="si">}</span><span class="w"> </span>-req<span class="w"> </span>-CA<span class="w"> </span><span class="si">${</span><span class="nv">CA_CERT</span><span class="si">}</span><span class="w"> </span>-CAkey<span class="w"> </span><span class="si">${</span><span class="nv">CA_KEY</span><span class="si">}</span><span class="w"> </span>-CAcreateserial<span class="w"> </span>-extensions<span class="w"> </span>v3_ext<span class="w"> </span><span class="se">\</span>
+<span class="w">        </span>-extfile<span class="w"> </span>&lt;<span class="o">(</span><span class="nb">printf</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">csr_conf</span><span class="si">}</span><span class="s2"> extendedKeyUsage = serverAuth\nsubjectAltName = </span><span class="si">${</span><span class="nv">alt_name</span><span class="si">}</span><span class="s2">\n&quot;</span><span class="o">)</span><span class="w"> </span>-days<span class="w"> </span><span class="si">${</span><span class="nv">cert_days</span><span class="si">}</span><span class="w"> </span>-out<span class="w"> </span><span class="si">${</span><span class="nv">cert</span><span class="si">}</span>
+<span class="w">      </span>log::info<span class="w"> </span><span class="s2">&quot;generated </span><span class="si">${</span><span class="nv">cert</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="w">    </span><span class="p">;;</span>
+<span class="w">    </span>peer<span class="o">)</span>
+<span class="w">      </span>openssl<span class="w"> </span>req<span class="w"> </span>-new<span class="w">  </span>-key<span class="w"> </span><span class="si">${</span><span class="nv">key</span><span class="si">}</span><span class="w"> </span>-subj<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">subj</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span>-reqexts<span class="w"> </span>v3_ext<span class="w"> </span><span class="se">\</span>
+<span class="w">        </span>-config<span class="w"> </span>&lt;<span class="o">(</span><span class="nb">printf</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">csr_conf</span><span class="si">}</span><span class="s2"> extendedKeyUsage = serverAuth, clientAuth\nsubjectAltName = </span><span class="si">${</span><span class="nv">alt_name</span><span class="si">}</span><span class="s2">\n&quot;</span><span class="o">)</span><span class="w"> </span>-out<span class="w"> </span><span class="si">${</span><span class="nv">csr</span><span class="si">}</span>
+<span class="w">      </span>openssl<span class="w"> </span>x509<span class="w"> </span>-in<span class="w"> </span><span class="si">${</span><span class="nv">csr</span><span class="si">}</span><span class="w"> </span>-req<span class="w"> </span>-CA<span class="w"> </span><span class="si">${</span><span class="nv">CA_CERT</span><span class="si">}</span><span class="w"> </span>-CAkey<span class="w"> </span><span class="si">${</span><span class="nv">CA_KEY</span><span class="si">}</span><span class="w"> </span>-CAcreateserial<span class="w"> </span>-extensions<span class="w"> </span>v3_ext<span class="w"> </span><span class="se">\</span>
+<span class="w">        </span>-extfile<span class="w"> </span>&lt;<span class="o">(</span><span class="nb">printf</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">csr_conf</span><span class="si">}</span><span class="s2"> extendedKeyUsage = serverAuth, clientAuth\nsubjectAltName = </span><span class="si">${</span><span class="nv">alt_name</span><span class="si">}</span><span class="s2">\n&quot;</span><span class="o">)</span><span class="w"> </span>-days<span class="w"> </span><span class="si">${</span><span class="nv">cert_days</span><span class="si">}</span><span class="w"> </span>-out<span class="w"> </span><span class="si">${</span><span class="nv">cert</span><span class="si">}</span>
+<span class="w">      </span>log::info<span class="w"> </span><span class="s2">&quot;generated </span><span class="si">${</span><span class="nv">cert</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="w">    </span><span class="p">;;</span>
+<span class="w">    </span>*<span class="o">)</span>
+<span class="w">      </span>log::err<span class="w"> </span><span class="s2">&quot;unknow, unsupported etcd certs type: </span><span class="si">${</span><span class="nv">cert_type</span><span class="si">}</span><span class="s2">, supported type: client, server, peer&quot;</span>
+<span class="w">      </span><span class="nb">exit</span><span class="w"> </span><span class="m">1</span>
+<span class="w">  </span><span class="k">esac</span>
+
+<span class="w">  </span>rm<span class="w"> </span>-f<span class="w"> </span><span class="si">${</span><span class="nv">csr</span><span class="si">}</span>
+<span class="o">}</span>
+
+cert::update_kubeconf<span class="o">()</span><span class="w"> </span><span class="o">{</span>
+<span class="w">  </span><span class="nb">local</span><span class="w"> </span><span class="nv">cert_name</span><span class="o">=</span><span class="si">${</span><span class="nv">1</span><span class="si">}</span>
+<span class="w">  </span><span class="nb">local</span><span class="w"> </span><span class="nv">kubeconf_file</span><span class="o">=</span><span class="si">${</span><span class="nv">cert_name</span><span class="si">}</span>.conf
+<span class="w">  </span><span class="nb">local</span><span class="w"> </span><span class="nv">cert</span><span class="o">=</span><span class="si">${</span><span class="nv">cert_name</span><span class="si">}</span>.crt
+<span class="w">  </span><span class="nb">local</span><span class="w"> </span><span class="nv">key</span><span class="o">=</span><span class="si">${</span><span class="nv">cert_name</span><span class="si">}</span>.key
+
+<span class="w">  </span><span class="c1"># generate  certificate</span>
+<span class="w">  </span>check_file<span class="w"> </span><span class="si">${</span><span class="nv">kubeconf_file</span><span class="si">}</span>
+<span class="w">  </span><span class="c1"># get the key from the old kubeconf</span>
+<span class="w">  </span>grep<span class="w"> </span><span class="s2">&quot;client-key-data&quot;</span><span class="w"> </span><span class="si">${</span><span class="nv">kubeconf_file</span><span class="si">}</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="o">{</span><span class="s1">&#39;print$2&#39;</span><span class="o">}</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>base64<span class="w"> </span>-d<span class="w"> </span>&gt;<span class="w"> </span><span class="si">${</span><span class="nv">key</span><span class="si">}</span>
+<span class="w">  </span><span class="c1"># get the old certificate from the old kubeconf</span>
+<span class="w">  </span>grep<span class="w"> </span><span class="s2">&quot;client-certificate-data&quot;</span><span class="w"> </span><span class="si">${</span><span class="nv">kubeconf_file</span><span class="si">}</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="o">{</span><span class="s1">&#39;print$2&#39;</span><span class="o">}</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>base64<span class="w"> </span>-d<span class="w"> </span>&gt;<span class="w"> </span><span class="si">${</span><span class="nv">cert</span><span class="si">}</span>
+<span class="w">  </span><span class="c1"># get subject from the old certificate</span>
+<span class="w">  </span><span class="nb">local</span><span class="w"> </span><span class="nv">subj</span><span class="o">=</span><span class="k">$(</span>cert::get_subj<span class="w"> </span><span class="si">${</span><span class="nv">cert_name</span><span class="si">}</span><span class="k">)</span>
+<span class="w">  </span>cert::gen_cert<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">cert_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span><span class="s2">&quot;client&quot;</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">subj</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">CAER_DAYS</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="w">  </span><span class="c1"># get certificate base64 code</span>
+<span class="w">  </span><span class="nb">local</span><span class="w"> </span><span class="nv">cert_base64</span><span class="o">=</span><span class="k">$(</span>base64<span class="w"> </span>-w<span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="si">${</span><span class="nv">cert</span><span class="si">}</span><span class="k">)</span>
+
+<span class="w">  </span><span class="c1"># backup kubeconf</span>
+<span class="w">  </span><span class="c1"># cert::backup_file &quot;${kubeconf_file}&quot;</span>
+
+<span class="w">  </span><span class="c1"># set certificate base64 code to kubeconf</span>
+<span class="w">  </span>sed<span class="w"> </span>-i<span class="w"> </span><span class="s1">&#39;s/client-certificate-data:.*/client-certificate-data: &#39;</span><span class="si">${</span><span class="nv">cert_base64</span><span class="si">}</span><span class="s1">&#39;/g&#39;</span><span class="w"> </span><span class="si">${</span><span class="nv">kubeconf_file</span><span class="si">}</span>
+
+<span class="w">  </span>log::info<span class="w"> </span><span class="s2">&quot;generated new </span><span class="si">${</span><span class="nv">kubeconf_file</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="w">  </span>rm<span class="w"> </span>-f<span class="w"> </span><span class="si">${</span><span class="nv">cert</span><span class="si">}</span>
+<span class="w">  </span>rm<span class="w"> </span>-f<span class="w"> </span><span class="si">${</span><span class="nv">key</span><span class="si">}</span>
+
+<span class="w">  </span><span class="c1"># set config for kubectl</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="o">[[</span><span class="w"> </span><span class="si">${</span><span class="nv">cert_name</span><span class="p">##*/</span><span class="si">}</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s2">&quot;admin&quot;</span><span class="w"> </span><span class="o">]]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">    </span>mkdir<span class="w"> </span>-p<span class="w"> </span>~/.kube
+<span class="w">    </span>cp<span class="w"> </span>-fp<span class="w"> </span><span class="si">${</span><span class="nv">kubeconf_file</span><span class="si">}</span><span class="w"> </span>~/.kube/config
+<span class="w">    </span>log::info<span class="w"> </span><span class="s2">&quot;copy the admin.conf to ~/.kube/config for kubectl&quot;</span>
+<span class="w">  </span><span class="k">fi</span>
+<span class="o">}</span>
+
+cert::update_etcd_cert<span class="o">()</span><span class="w"> </span><span class="o">{</span>
+<span class="w">  </span><span class="nv">PKI_PATH</span><span class="o">=</span><span class="si">${</span><span class="nv">KUBE_PATH</span><span class="si">}</span>/pki/etcd
+<span class="w">  </span><span class="nv">CA_CERT</span><span class="o">=</span><span class="si">${</span><span class="nv">PKI_PATH</span><span class="si">}</span>/ca.crt
+<span class="w">  </span><span class="nv">CA_KEY</span><span class="o">=</span><span class="si">${</span><span class="nv">PKI_PATH</span><span class="si">}</span>/ca.key
+
+<span class="w">  </span>check_file<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">CA_CERT</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="w">  </span>check_file<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">CA_KEY</span><span class="si">}</span><span class="s2">&quot;</span>
+
+<span class="w">  </span><span class="c1"># generate etcd server certificate</span>
+<span class="w">  </span><span class="c1"># /etc/kubernetes/pki/etcd/server</span>
+<span class="w">  </span><span class="nv">CART_NAME</span><span class="o">=</span><span class="si">${</span><span class="nv">PKI_PATH</span><span class="si">}</span>/server
+<span class="w">  </span><span class="nv">subject_alt_name</span><span class="o">=</span><span class="k">$(</span>cert::get_subject_alt_name<span class="w"> </span><span class="si">${</span><span class="nv">CART_NAME</span><span class="si">}</span><span class="k">)</span>
+<span class="w">  </span>cert::gen_cert<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">CART_NAME</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span><span class="s2">&quot;peer&quot;</span><span class="w"> </span><span class="s2">&quot;/CN=etcd-server&quot;</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">CAER_DAYS</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">subject_alt_name</span><span class="si">}</span><span class="s2">&quot;</span>
+
+<span class="w">  </span><span class="c1"># generate etcd peer certificate</span>
+<span class="w">  </span><span class="c1"># /etc/kubernetes/pki/etcd/peer</span>
+<span class="w">  </span><span class="nv">CART_NAME</span><span class="o">=</span><span class="si">${</span><span class="nv">PKI_PATH</span><span class="si">}</span>/peer
+<span class="w">  </span><span class="nv">subject_alt_name</span><span class="o">=</span><span class="k">$(</span>cert::get_subject_alt_name<span class="w"> </span><span class="si">${</span><span class="nv">CART_NAME</span><span class="si">}</span><span class="k">)</span>
+<span class="w">  </span>cert::gen_cert<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">CART_NAME</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span><span class="s2">&quot;peer&quot;</span><span class="w"> </span><span class="s2">&quot;/CN=etcd-peer&quot;</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">CAER_DAYS</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">subject_alt_name</span><span class="si">}</span><span class="s2">&quot;</span>
+
+<span class="w">  </span><span class="c1"># generate etcd healthcheck-client certificate</span>
+<span class="w">  </span><span class="c1"># /etc/kubernetes/pki/etcd/healthcheck-client</span>
+<span class="w">  </span><span class="nv">CART_NAME</span><span class="o">=</span><span class="si">${</span><span class="nv">PKI_PATH</span><span class="si">}</span>/healthcheck-client
+<span class="w">  </span>cert::gen_cert<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">CART_NAME</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span><span class="s2">&quot;client&quot;</span><span class="w"> </span><span class="s2">&quot;/O=system:masters/CN=kube-etcd-healthcheck-client&quot;</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">CAER_DAYS</span><span class="si">}</span><span class="s2">&quot;</span>
+
+<span class="w">  </span><span class="c1"># generate apiserver-etcd-client certificate</span>
+<span class="w">  </span><span class="c1"># /etc/kubernetes/pki/apiserver-etcd-client</span>
+<span class="w">  </span>check_file<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">CA_CERT</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="w">  </span>check_file<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">CA_KEY</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="w">  </span><span class="nv">PKI_PATH</span><span class="o">=</span><span class="si">${</span><span class="nv">KUBE_PATH</span><span class="si">}</span>/pki
+<span class="w">  </span><span class="nv">CART_NAME</span><span class="o">=</span><span class="si">${</span><span class="nv">PKI_PATH</span><span class="si">}</span>/apiserver-etcd-client
+<span class="w">  </span>cert::gen_cert<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">CART_NAME</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span><span class="s2">&quot;client&quot;</span><span class="w"> </span><span class="s2">&quot;/O=system:masters/CN=kube-apiserver-etcd-client&quot;</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">CAER_DAYS</span><span class="si">}</span><span class="s2">&quot;</span>
+
+<span class="w">  </span><span class="c1"># restart etcd</span>
+<span class="w">  </span>docker<span class="w"> </span>ps<span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">&#39;/k8s_etcd/{print$1}&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>xargs<span class="w"> </span>-r<span class="w"> </span>-I<span class="w"> </span><span class="s1">&#39;{}&#39;</span><span class="w"> </span>docker<span class="w"> </span>restart<span class="w"> </span><span class="o">{}</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="nb">true</span>
+<span class="w">  </span>log::info<span class="w"> </span><span class="s2">&quot;restarted etcd&quot;</span>
+<span class="o">}</span>
+
+cert::update_master_cert<span class="o">()</span><span class="w"> </span><span class="o">{</span>
+<span class="w">  </span><span class="nv">PKI_PATH</span><span class="o">=</span><span class="si">${</span><span class="nv">KUBE_PATH</span><span class="si">}</span>/pki
+<span class="w">  </span><span class="nv">CA_CERT</span><span class="o">=</span><span class="si">${</span><span class="nv">PKI_PATH</span><span class="si">}</span>/ca.crt
+<span class="w">  </span><span class="nv">CA_KEY</span><span class="o">=</span><span class="si">${</span><span class="nv">PKI_PATH</span><span class="si">}</span>/ca.key
+
+<span class="w">  </span>check_file<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">CA_CERT</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="w">  </span>check_file<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">CA_KEY</span><span class="si">}</span><span class="s2">&quot;</span>
+
+<span class="w">  </span><span class="c1"># generate apiserver server certificate</span>
+<span class="w">  </span><span class="c1"># /etc/kubernetes/pki/apiserver</span>
+<span class="w">  </span><span class="nv">CART_NAME</span><span class="o">=</span><span class="si">${</span><span class="nv">PKI_PATH</span><span class="si">}</span>/apiserver
+<span class="w">  </span><span class="nv">subject_alt_name</span><span class="o">=</span><span class="k">$(</span>cert::get_subject_alt_name<span class="w"> </span><span class="si">${</span><span class="nv">CART_NAME</span><span class="si">}</span><span class="k">)</span>
+<span class="w">  </span>cert::gen_cert<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">CART_NAME</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span><span class="s2">&quot;server&quot;</span><span class="w"> </span><span class="s2">&quot;/CN=kube-apiserver&quot;</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">CAER_DAYS</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">subject_alt_name</span><span class="si">}</span><span class="s2">&quot;</span>
+
+<span class="w">  </span><span class="c1"># generate apiserver-kubelet-client certificate</span>
+<span class="w">  </span><span class="c1"># /etc/kubernetes/pki/apiserver-kubelet-client</span>
+<span class="w">  </span><span class="nv">CART_NAME</span><span class="o">=</span><span class="si">${</span><span class="nv">PKI_PATH</span><span class="si">}</span>/apiserver-kubelet-client
+<span class="w">  </span>cert::gen_cert<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">CART_NAME</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span><span class="s2">&quot;client&quot;</span><span class="w"> </span><span class="s2">&quot;/O=system:masters/CN=kube-apiserver-kubelet-client&quot;</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">CAER_DAYS</span><span class="si">}</span><span class="s2">&quot;</span>
+
+<span class="w">  </span><span class="c1"># generate kubeconf for controller-manager,scheduler,kubectl and kubelet</span>
+<span class="w">  </span><span class="c1"># /etc/kubernetes/controller-manager,scheduler,admin,kubelet.conf</span>
+<span class="w">  </span>cert::update_kubeconf<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">KUBE_PATH</span><span class="si">}</span><span class="s2">/controller-manager&quot;</span>
+<span class="w">  </span>cert::update_kubeconf<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">KUBE_PATH</span><span class="si">}</span><span class="s2">/scheduler&quot;</span>
+<span class="w">  </span>cert::update_kubeconf<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">KUBE_PATH</span><span class="si">}</span><span class="s2">/admin&quot;</span>
+<span class="w">  </span><span class="nb">set</span><span class="w"> </span>+e
+<span class="w">  </span>grep<span class="w"> </span>kubelet-client-current.pem<span class="w"> </span>/etc/kubernetes/kubelet.conf<span class="w"> </span>&gt;<span class="w"> </span>/dev/null<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span>
+<span class="w">  </span><span class="nv">kubelet_cert_auto_update</span><span class="o">=</span><span class="nv">$?</span>
+<span class="w">  </span><span class="nb">set</span><span class="w"> </span>-e
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="o">[[</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$kubelet_cert_auto_update</span><span class="s2">&quot;</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s2">&quot;0&quot;</span><span class="w"> </span><span class="o">]]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">    </span>log::warning<span class="w"> </span><span class="s2">&quot;does not need to update kubelet.conf&quot;</span>
+<span class="w">  </span><span class="k">else</span>
+<span class="w">    </span>cert::update_kubeconf<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">KUBE_PATH</span><span class="si">}</span><span class="s2">/kubelet&quot;</span>
+<span class="w">  </span><span class="k">fi</span>
+
+<span class="w">  </span><span class="c1"># generate front-proxy-client certificate</span>
+<span class="w">  </span><span class="c1"># use front-proxy-client ca</span>
+<span class="w">  </span><span class="nv">CA_CERT</span><span class="o">=</span><span class="si">${</span><span class="nv">PKI_PATH</span><span class="si">}</span>/front-proxy-ca.crt
+<span class="w">  </span><span class="nv">CA_KEY</span><span class="o">=</span><span class="si">${</span><span class="nv">PKI_PATH</span><span class="si">}</span>/front-proxy-ca.key
+<span class="w">  </span>check_file<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">CA_CERT</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="w">  </span>check_file<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">CA_KEY</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="w">  </span><span class="nv">CART_NAME</span><span class="o">=</span><span class="si">${</span><span class="nv">PKI_PATH</span><span class="si">}</span>/front-proxy-client
+<span class="w">  </span>cert::gen_cert<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">CART_NAME</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span><span class="s2">&quot;client&quot;</span><span class="w"> </span><span class="s2">&quot;/CN=front-proxy-client&quot;</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">CAER_DAYS</span><span class="si">}</span><span class="s2">&quot;</span>
+
+<span class="w">  </span><span class="c1"># restart apiserve, controller-manager, scheduler and kubelet</span>
+<span class="w">  </span>docker<span class="w"> </span>ps<span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">&#39;/k8s_kube-apiserver/{print$1}&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>xargs<span class="w"> </span>-r<span class="w"> </span>-I<span class="w"> </span><span class="s1">&#39;{}&#39;</span><span class="w"> </span>docker<span class="w"> </span>restart<span class="w"> </span><span class="o">{}</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="nb">true</span>
+<span class="w">  </span>log::info<span class="w"> </span><span class="s2">&quot;restarted kube-apiserver&quot;</span>
+<span class="w">  </span>docker<span class="w"> </span>ps<span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">&#39;/k8s_kube-controller-manager/{print$1}&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>xargs<span class="w"> </span>-r<span class="w"> </span>-I<span class="w"> </span><span class="s1">&#39;{}&#39;</span><span class="w"> </span>docker<span class="w"> </span>restart<span class="w"> </span><span class="o">{}</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="nb">true</span>
+<span class="w">  </span>log::info<span class="w"> </span><span class="s2">&quot;restarted kube-controller-manager&quot;</span>
+<span class="w">  </span>docker<span class="w"> </span>ps<span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">&#39;/k8s_kube-scheduler/{print$1}&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>xargs<span class="w"> </span>-r<span class="w"> </span>-I<span class="w"> </span><span class="s1">&#39;{}&#39;</span><span class="w"> </span>docker<span class="w"> </span>restart<span class="w"> </span><span class="o">{}</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="nb">true</span>
+<span class="w">  </span>log::info<span class="w"> </span><span class="s2">&quot;restarted kube-scheduler&quot;</span>
+<span class="w">  </span>systemctl<span class="w"> </span>restart<span class="w"> </span>kubelet
+<span class="w">  </span>log::info<span class="w"> </span><span class="s2">&quot;restarted kubelet&quot;</span>
+<span class="o">}</span>
+
+main<span class="o">()</span><span class="w"> </span><span class="o">{</span>
+<span class="w">  </span><span class="nb">local</span><span class="w"> </span><span class="nv">node_tpye</span><span class="o">=</span><span class="nv">$1</span>
+
+<span class="w">  </span><span class="nv">KUBE_PATH</span><span class="o">=</span>/etc/kubernetes
+<span class="w">  </span><span class="nv">CAER_DAYS</span><span class="o">=</span><span class="m">36500</span>
+
+<span class="w">  </span><span class="c1"># backup $KUBE_PATH to $KUBE_PATH.old-$(date +%Y%m%d)</span>
+<span class="w">  </span>cert::backup_file<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">KUBE_PATH</span><span class="si">}</span><span class="s2">&quot;</span>
+
+<span class="w">  </span><span class="k">case</span><span class="w"> </span><span class="si">${</span><span class="nv">node_tpye</span><span class="si">}</span><span class="w"> </span><span class="k">in</span>
+<span class="w">    </span>etcd<span class="o">)</span>
+<span class="w">      </span><span class="c1"># update etcd certificates</span>
+<span class="w">      </span>cert::update_etcd_cert
+<span class="w">    </span><span class="p">;;</span>
+<span class="w">    </span>master<span class="o">)</span>
+<span class="w">      </span><span class="c1"># update master certificates and kubeconf</span>
+<span class="w">      </span>cert::update_master_cert
+<span class="w">    </span><span class="p">;;</span>
+<span class="w">    </span>all<span class="o">)</span>
+<span class="w">      </span><span class="c1"># update etcd certificates</span>
+<span class="w">      </span>cert::update_etcd_cert
+<span class="w">      </span><span class="c1"># update master certificates and kubeconf</span>
+<span class="w">      </span>cert::update_master_cert
+<span class="w">    </span><span class="p">;;</span>
+<span class="w">    </span>*<span class="o">)</span>
+<span class="w">      </span>log::err<span class="w"> </span><span class="s2">&quot;unknow, unsupported certs type: </span><span class="si">${</span><span class="nv">cert_type</span><span class="si">}</span><span class="s2">, supported type: all, etcd, master&quot;</span>
+<span class="w">      </span><span class="nb">printf</span><span class="w"> </span><span class="s2">&quot;Documentation: hanxianchao</span>
+<span class="s2">  example:</span>
+<span class="s2">    &#39;\033[32m./update-kubeadm-cert.sh all\033[0m&#39; update all etcd certificates, master certificates and kubeconf</span>
+<span class="s2">      /etc/kubernetes</span>
+<span class="s2">      ├── admin.conf</span>
+<span class="s2">      ├── controller-manager.conf</span>
+<span class="s2">      ├── scheduler.conf</span>
+<span class="s2">      ├── kubelet.conf</span>
+<span class="s2">      └── pki</span>
+<span class="s2">          ├── apiserver.crt</span>
+<span class="s2">          ├── apiserver-etcd-client.crt</span>
+<span class="s2">          ├── apiserver-kubelet-client.crt</span>
+<span class="s2">          ├── front-proxy-client.crt</span>
+<span class="s2">          └── etcd</span>
+<span class="s2">              ├── healthcheck-client.crt</span>
+<span class="s2">              ├── peer.crt</span>
+<span class="s2">              └── server.crt</span>
+
+<span class="s2">    &#39;\033[32m./update-kubeadm-cert.sh etcd\033[0m&#39; update only etcd certificates</span>
+<span class="s2">      /etc/kubernetes</span>
+<span class="s2">      └── pki</span>
+<span class="s2">          ├── apiserver-etcd-client.crt</span>
+<span class="s2">          └── etcd</span>
+<span class="s2">              ├── healthcheck-client.crt</span>
+<span class="s2">              ├── peer.crt</span>
+<span class="s2">              └── server.crt</span>
+
+<span class="s2">    &#39;\033[32m./update-kubeadm-cert.sh master\033[0m&#39; update only master certificates and kubeconf</span>
+<span class="s2">      /etc/kubernetes</span>
+<span class="s2">      ├── admin.conf</span>
+<span class="s2">      ├── controller-manager.conf</span>
+<span class="s2">      ├── scheduler.conf</span>
+<span class="s2">      ├── kubelet.conf</span>
+<span class="s2">      └── pki</span>
+<span class="s2">          ├── apiserver.crt</span>
+<span class="s2">          ├── apiserver-kubelet-client.crt</span>
+<span class="s2">          └── front-proxy-client.crt</span>
+<span class="s2">&quot;</span>
+<span class="w">      </span><span class="nb">exit</span><span class="w"> </span><span class="m">1</span>
+<span class="w">    </span><span class="k">esac</span>
+<span class="o">}</span>
+
+main<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$@</span><span class="s2">&quot;</span>
+</code></pre></div>
+
+<h2 id="运行脚本">运行脚本</h2>
+<div class="highlight"><pre><span></span><code>chmod<span class="w"> </span>+x<span class="w"> </span>update-kubeadm-cert.sh
+./update-kubeadm-cert.sh<span class="w"> </span>all
+
+<span class="c1">#检查kube-system pod</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-n<span class="w"> </span>kube-system
+
+<span class="c1">#检查证书有效期</span>
+<span class="c1">#在master节点上</span>
+openssl<span class="w"> </span>x509<span class="w"> </span>-in<span class="w"> </span>/etc/kubernetes/pki/ca.crt<span class="w"> </span>-noout<span class="w"> </span>-text<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span>Not
+openssl<span class="w"> </span>x509<span class="w"> </span>-in<span class="w"> </span>/etc/kubernetes/pki/apiserver.crt<span class="w"> </span>-noout<span class="w"> </span>-text<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span>Not
+</code></pre></div>
+    </div>
+  </article>
+  <aside class="toc">
+    <p class="toc-label">本页目录</p>
+    <ul>
+  <li><a href="#实验环境规划">实验环境规划</a></li>
+  <li><a href="#安装前准备">安装前准备</a></li>
+  <li><a href="#docker">docker</a></li>
+  <li><a href="#containerd">containerd</a></li>
+  <li><a href="#k8s-1323">k8s-1.32.3</a></li>
+  <li><a href="#初始化集群">初始化集群</a></li>
+  <li><a href="#配置kubeconfig">配置kubeconfig</a></li>
+  <li><a href="#扩容工作节点">扩容工作节点</a></li>
+  <li><a href="#安装calico">安装calico</a></li>
+  <li><a href="#查看证书过期时间">查看证书过期时间</a></li>
+  <li><a href="#延长证书有效期的脚本">延长证书有效期的脚本</a></li>
+  <li><a href="#运行脚本">运行脚本</a></li>
+</ul>
+  </aside>
+
+</div>
+
+</main>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>Learning Notes</span>
+    <a href="https://github.com/hangx969/learning-notes">GitHub</a>
+  </div>
+</footer>
+<script src="../../../../static/search.js"></script>
+</body>
+</html>

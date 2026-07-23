@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Python Socket模块 - Learning Notes</title>
+<link rel="stylesheet" href="../../../static/style.css">
+<link rel="stylesheet" href="../../../static/pygments.css">
+</head>
+<body data-root="../../../">
+<header class="site-header">
+  <div class="header-inner">
+    <a class="logo" href="../../../index.html"><span class="logo-mark"></span>LEARNING NOTES</a>
+    <div class="search">
+      <input id="search-input" type="search" placeholder="搜索笔记…" autocomplete="off" aria-label="搜索笔记">
+      <div id="search-results" hidden></div>
+    </div>
+  </div>
+  <nav class="topic-nav" aria-label="主题导航">
+    <div class="topic-nav-inner">
+      <a href="../../../AI/">AI</a>
+      <a href="../../../Aliyun/">Aliyun</a>
+      <a href="../../../Azure/">Azure</a>
+      <a href="../../../C%2B%2B/">C++</a>
+      <a href="../../../CloudComputing/">CloudComputing</a>
+      <a href="../../../Database/">Database</a>
+      <a href="../../../Docker-Kubernetes/">Docker-Kubernetes</a>
+      <a href="../../../GPU-DeepLearning/">GPU-DeepLearning</a>
+      <a href="../../../Git/">Git</a>
+      <a href="../../../Go/">Go</a>
+      <a href="../../../HPC/">HPC</a>
+      <a href="../../../IaC/">IaC</a>
+      <a href="../../../Linux-Shell/">Linux-Shell</a>
+      <a href="../../../Middlewares/">Middlewares</a>
+      <a href="../../../Networking/">Networking</a>
+      <a href="../../../OS/">OS</a>
+      <a href="../../../Python/" class="active">Python</a>
+      <a href="../../../SoftwareTesting/">SoftwareTesting</a>
+    </div>
+  </nav>
+</header>
+<main class="main">
+
+<div class="article-layout">
+
+  <aside class="sidebar">
+    <details class="sidebar-details">
+      <summary>Python</summary>
+      <nav class="sidebar-nav">
+        <p class="sidebar-group">python-基础</p>
+        <ul>
+          <li><a href="../../../Python/python-%E5%9F%BA%E7%A1%80/python-OOP/">Python 面向对象编程</a></li>
+          <li><a href="../../../Python/python-%E5%9F%BA%E7%A1%80/python-QA/">Python 知识总结与常见问题</a></li>
+          <li><a href="../../../Python/python-%E5%9F%BA%E7%A1%80/python-basics/">Python 数据类型、运算符与基础语法</a></li>
+          <li><a href="../../../Python/python-%E5%9F%BA%E7%A1%80/python-exception-handling/">Python 异常处理</a></li>
+          <li><a href="../../../Python/python-%E5%9F%BA%E7%A1%80/python-function/">Python 函数</a></li>
+          <li><a href="../../../Python/python-%E5%9F%BA%E7%A1%80/python%E5%8C%85%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7-uv/">Python 包管理工具 uv</a></li>
+          <li><a href="../../../Python/python-%E5%9F%BA%E7%A1%80/rockylinux%E9%85%8D%E7%BD%AEpython%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/">RockyLinux 配置 Python 开发环境</a></li>
+          <li><a href="../../../Python/python-%E5%9F%BA%E7%A1%80/windows%E9%85%8D%E7%BD%AEpython%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/">Windows 配置 Python 开发环境</a></li>
+        </ul>
+        <p class="sidebar-group">python-数据分析-AI大模型</p>
+        <ul>
+          <li><a href="../../../Python/python-%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-AI%E5%A4%A7%E6%A8%A1%E5%9E%8B/python-%E5%A4%84%E7%90%86excel-word/">Python处理Excel与Word文档</a></li>
+          <li><a href="../../../Python/python-%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-AI%E5%A4%A7%E6%A8%A1%E5%9E%8B/python-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E4%B8%8E%E9%A2%84%E6%B5%8B/">Python机器学习与预测</a></li>
+        </ul>
+        <p class="sidebar-group">python-网络编程-前端</p>
+        <ul>
+          <li><a href="../../../Python/python-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B-%E5%89%8D%E7%AB%AF/python-Web%E5%BC%80%E5%8F%91-HTML-CSS-JS/">Web开发基础 - HTML/CSS/JavaScript</a></li>
+          <li><a href="../../../Python/python-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B-%E5%89%8D%E7%AB%AF/python-Web%E6%A1%86%E6%9E%B6Django/">Python Web框架Django</a></li>
+          <li><a href="../../../Python/python-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B-%E5%89%8D%E7%AB%AF/python-Web%E6%A1%86%E6%9E%B6Flask/">Python Web框架Flask</a></li>
+          <li><a href="../../../Python/python-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B-%E5%89%8D%E7%AB%AF/python-request-module/">Python Requests模块</a></li>
+          <li><a href="../../../Python/python-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B-%E5%89%8D%E7%AB%AF/python-socket-module/" class="current">Python Socket模块</a></li>
+          <li><a href="../../../Python/python-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B-%E5%89%8D%E7%AB%AF/python-%E7%88%AC%E8%99%AB/">Python爬虫</a></li>
+        </ul>
+        <p class="sidebar-group">python-运维开发</p>
+        <ul>
+          <li><a href="../../../Python/python-%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91/python-GUI-tkinter/">Python GUI开发 - Tkinter</a></li>
+          <li><a href="../../../Python/python-%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91/python-Linux-operation/">Python Linux运维模块</a></li>
+          <li><a href="../../../Python/python-%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91/python-elasticsearch/">Python Elasticsearch运维</a></li>
+          <li><a href="../../../Python/python-%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91/python-fabric%E9%AB%98%E7%BA%A7%E7%94%A8%E6%B3%95/">Python Fabric高级用法</a></li>
+          <li><a href="../../../Python/python-%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91/python-kubernetes-module/">Python Kubernetes模块</a></li>
+          <li><a href="../../../Python/python-%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91/python-mysql/">Python MySQL操作</a></li>
+          <li><a href="../../../Python/python-%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91/python-nginx/">Python Nginx运维自动化</a></li>
+          <li><a href="../../../Python/python-%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91/python-postgresql/">Python PostgreSQL操作</a></li>
+          <li><a href="../../../Python/python-%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91/python-tomcat/">Python Tomcat运维自动化</a></li>
+          <li><a href="../../../Python/python-%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91/python-%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/">Python 游戏开发</a></li>
+        </ul>
+        <p class="sidebar-group">电池参数提取统计工具开发</p>
+        <ul>
+          <li><a href="../../../Python/%E7%94%B5%E6%B1%A0%E5%8F%82%E6%95%B0%E6%8F%90%E5%8F%96%E7%BB%9F%E8%AE%A1%E5%B7%A5%E5%85%B7%E5%BC%80%E5%8F%91/%E5%AE%9E%E9%AA%8C%E5%AE%A4%E7%94%B5%E6%B1%A0%E5%8F%82%E6%95%B0%E4%B8%80%E9%94%AE%E7%BB%9F%E8%AE%A1%E5%B7%A5%E5%85%B7%E5%BC%80%E5%8F%91/">实验室电池参数一键统计工具开发</a></li>
+        </ul>
+        <p class="sidebar-group">其他</p>
+        <ul>
+          <li><a href="../../../Python/script-server-%E8%84%9A%E6%9C%ACWeb%E5%8C%96%E5%B7%A5%E5%85%B7/">Script-Server：脚本 Web 化工具</a></li>
+        </ul>
+      </nav>
+    </details>
+  </aside>
+
+  <article class="article">
+    <nav class="breadcrumb">
+      <a href="../../../index.html">首页</a><span>/</span>
+      <a href="../../../Python/">Python</a><span>/</span><span>python-网络编程-前端</span>
+    </nav>
+    <h1 class="article-title">Python Socket模块</h1>
+    <p class="article-meta"><span>更新于 2026-04-16</span>
+      <a href="https://github.com/hangx969/learning-notes/blob/main/Python/python-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B-%E5%89%8D%E7%AB%AF/python-socket-module.md">查看源文件</a>
+    </p>
+    <div class="article-body">
+<h1 id="python-socket模块">Python Socket模块</h1>
+<h2 id="介绍">介绍</h2>
+<p><mark>socket</mark> 模块是 Python 标准库,专门用于网络通信的套接字编程。套接字是进行网络通信的端点,通过它可以在网络中发送和接收数据。它在实现网络应用程序时起到关键作用,支持多种网络协议,包括传输控制协议(<mark>TCP</mark>)和用户数据报协议(<mark>UDP</mark>)。</p>
+<p><div class="callout callout-info" markdown="1"><br />
+<p class="callout-title">套接字的基本概念</p></p>
+</div>
+<ul>
+<li><strong>套接字(Socket)</strong>:在客户端和服务器之间进行通信的端点。每个套接字都有一个唯一的 IP 地址和端口号组合,标识网络中的特定服务。</li>
+<li><strong>IP 地址</strong>:用于标识网络中的设备。可以是 IPv4 或 IPv6 格式。</li>
+<li><strong>端口号</strong>:用于标识特定的应用程序或服务。常用的端口号如 <mark>80</mark>(HTTP)和 <mark>443</mark>(HTTPS)</li>
+</ul>
+<p><div class="callout callout-summary" markdown="1"><br />
+<p class="callout-title">客户端-服务器模型</p></p>
+</div>
+<p><strong>服务器(Server)</strong>:<br />
+- 服务器是一个长期运行的程序,它在特定的<strong>IP地址和端口</strong>上监听来自客户端的请求。<br />
+- 服务器接收到请求后,可以处理该请求并返回相应的数据<br />
+- 使用 <code>socket.socket()</code> 创建一个套接字并调用 <code>bind()</code> 方法绑定到指定的地址和端口,接着使用 <code>listen()</code> 方法开始监听。</p>
+<p><strong>客户端(Client)</strong>:<br />
+- 客户端是发起请求的程序,它连接到服务器以请求服务或数据。<br />
+- 客户端使用 <code>socket.socket()</code> 创建一个套接字,并使用 <code>connect()</code> 方法连接到服务器的 IP 地址和端口。<br />
+- 连接成功后,客户端可以发送请求并接收服务器的响应。</p>
+<hr />
+<h2 id="server端实现">Server端实现</h2>
+<h3 id="创建套接字socketsocket">创建套接字socket.socket()</h3>
+<p>功能: 创建一个新的套接字对象,用于建立服务器端的网络连接。</p>
+<p>语法:<code>socket.socket([family[, type[, proto]]])</code></p>
+<p>参数:</p>
+<ul>
+<li><mark>family</mark>:地址簇,决定套接字所使用的网络协议。常见的值有:</li>
+<li><code>socket.AF_INET</code>:IPv4 地址族。</li>
+<li>
+<p><code>socket.AF_INET6</code>:IPv6 地址族。</p>
+</li>
+<li>
+<p><mark>type</mark>:套接字类型,决定套接字的通信方式。常见的值有:</p>
+</li>
+<li><code>socket.SOCK_STREAM</code>:TCP 套接字,提供可靠的、面向连接的服务。</li>
+<li>
+<p><code>socket.SOCK_DGRAM</code>:UDP 套接字,提供无连接的服务。</p>
+</li>
+<li>
+<p>proto:协议号,通常为 0,表示使用默认协议。</p>
+</li>
+</ul>
+<p>返回值 :返回一个套接字对象。</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">socket</span>
+<span class="c1"># 创建TCP套接字</span>
+<span class="n">sock</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">AF_INET</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">SOCK_STREAM</span><span class="p">)</span>
+</code></pre></div>
+
+<hr />
+<h3 id="绑定到ip端口socketbind">绑定到IP端口socket.bind()</h3>
+<p>功能:将套接字绑定到特定的地址和端口,以便接收数据。</p>
+<p>语法:<code>socket.bind(address)</code></p>
+<p>参数:</p>
+<ul>
+<li>address:一个二元组 <mark>(host, port)</mark>,表示要绑定的地址和端口。例如 <code>('localhost', 8080)</code>。</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">socket</span>
+<span class="c1"># 创建TCP套接字</span>
+<span class="n">sock</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">AF_INET</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">SOCK_STREAM</span><span class="p">)</span>
+<span class="c1"># 将套接字绑定到特定地址和端口,以便接收数据</span>
+<span class="n">sock</span><span class="o">.</span><span class="n">bind</span><span class="p">((</span><span class="s1">&#39;localhost&#39;</span><span class="p">,</span><span class="mi">8080</span><span class="p">))</span> <span class="c1"># 注意参数必须是一个元组,括号括起来</span>
+</code></pre></div>
+
+<hr />
+<h3 id="开始监听socketlisten">开始监听socket.listen()</h3>
+<p>功能:使套接字进入监听状态,准备接受客户端的连接请求。</p>
+<p>语法:<code>socket.listen([backlog])</code></p>
+<p>参数:</p>
+<ul>
+<li><mark>backlog</mark>:表示可以挂起的连接请求的最大数量。通常设置为 5 或更高。</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">socket</span>
+<span class="c1"># 创建TCP套接字</span>
+<span class="n">sock</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">AF_INET</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">SOCK_STREAM</span><span class="p">)</span>
+<span class="c1"># 将套接字绑定到特定地址和端口,以便接收数据</span>
+<span class="n">sock</span><span class="o">.</span><span class="n">bind</span><span class="p">((</span><span class="s1">&#39;localhost&#39;</span><span class="p">,</span><span class="mi">8080</span><span class="p">))</span>
+<span class="c1"># 开始监听</span>
+<span class="n">sock</span><span class="o">.</span><span class="n">listen</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+</code></pre></div>
+
+<hr />
+<h3 id="接受连接请求socketaccept">接受连接请求socket.accept()</h3>
+<p>功能:接受一个客户端连接请求,返回新的套接字对象和客户端地址。</p>
+<p>语法: <code>socket.accept()</code></p>
+<p>返回值: 返回一个二元组 <mark>(conn, addr)</mark>:</p>
+<ul>
+<li>conn:新的套接字对象,用于与客户端进行通信。</li>
+<li>addr:客户端的地址信息,通常是 (IP 地址, 端口号)</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">socket</span>
+<span class="c1"># 创建TCP套接字</span>
+<span class="n">sock</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">AF_INET</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">SOCK_STREAM</span><span class="p">)</span>
+<span class="c1"># 将套接字绑定到特定地址和端口,以便接收数据</span>
+<span class="n">sock</span><span class="o">.</span><span class="n">bind</span><span class="p">((</span><span class="s1">&#39;localhost&#39;</span><span class="p">,</span><span class="mi">8080</span><span class="p">))</span>
+<span class="c1"># 开始监听</span>
+<span class="n">sock</span><span class="o">.</span><span class="n">listen</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<span class="c1"># 接受客户端请求,返回新的套接字对象和客户端地址</span>
+<span class="n">conn</span><span class="p">,</span> <span class="n">addr</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">accept</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Connection comes from: </span><span class="si">{</span><span class="n">addr</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+
+<hr />
+<h3 id="发送数据socketsend">发送数据socket.send()</h3>
+<p>功能:向套接字发送数据。</p>
+<p>语法:<code>socket.send(bytes)</code></p>
+<p>参数:</p>
+<ul>
+<li>bytes:要发送的数据,必须是==字节对象==。</li>
+</ul>
+<p>返回值:返回实际发送的字节数。</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">socket</span>
+<span class="c1"># 创建TCP套接字</span>
+<span class="n">sock</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">AF_INET</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">SOCK_STREAM</span><span class="p">)</span>
+<span class="c1"># 将套接字绑定到特定地址和端口,以便接收数据</span>
+<span class="n">sock</span><span class="o">.</span><span class="n">bind</span><span class="p">((</span><span class="s1">&#39;localhost&#39;</span><span class="p">,</span><span class="mi">8080</span><span class="p">))</span>
+<span class="c1"># 开始监听</span>
+<span class="n">sock</span><span class="o">.</span><span class="n">listen</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<span class="c1"># 接受客户端请求,返回新的套接字对象和客户端地址</span>
+<span class="n">conn</span><span class="p">,</span> <span class="n">addr</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">accept</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Connection comes from: </span><span class="si">{</span><span class="n">addr</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="c1"># 向套接字发送数据(必须是字节对象)</span>
+<span class="n">conn</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;python&#39;</span><span class="p">)</span>
+</code></pre></div>
+
+<hr />
+<h3 id="接收数据socketrecv">接收数据socket.recv()</h3>
+<p>功能:从套接字接收数据。</p>
+<p>语法:<code>socket.recv(bufsize)</code></p>
+<p>参数:</p>
+<ul>
+<li><mark>bufsize</mark>:接收数据的最大字节数。</li>
+</ul>
+<p>返回值: 返回接收到的数据,类型为字节对象。</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">socket</span>
+<span class="c1"># 创建TCP套接字</span>
+<span class="n">sock</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">AF_INET</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">SOCK_STREAM</span><span class="p">)</span>
+<span class="c1"># 将套接字绑定到特定地址和端口,以便接收数据</span>
+<span class="n">sock</span><span class="o">.</span><span class="n">bind</span><span class="p">((</span><span class="s1">&#39;localhost&#39;</span><span class="p">,</span><span class="mi">8080</span><span class="p">))</span>
+<span class="c1"># 开始监听</span>
+<span class="n">sock</span><span class="o">.</span><span class="n">listen</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<span class="c1"># 接受客户端请求,返回新的套接字对象。</span>
+<span class="n">conn</span><span class="p">,</span> <span class="n">addr</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">accept</span><span class="p">()</span> <span class="c1"># conn是新的套接字对象,用于与客户端进行通信。</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Connection comes from: </span><span class="si">{</span><span class="n">addr</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="c1"># 向套接字发送数据(必须是字节对象)</span>
+<span class="n">conn</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;python&#39;</span><span class="p">)</span>
+<span class="c1"># 从套接字接受数据,注意这里用的是conn.recv,从这个特定的套接字对象获取数据</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">1024</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Data received: </span><span class="si">{</span><span class="n">data</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="c1"># 把字节对象decode</span>
+</code></pre></div>
+
+<hr />
+<h3 id="关闭套接字socketclose">关闭套接字socket.close()</h3>
+<p>功能:关闭套接字,释放相关资源。</p>
+<p>语法:<code>socket.close()</code></p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">socket</span>
+<span class="c1"># 创建TCP套接字</span>
+<span class="n">sock</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">AF_INET</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">SOCK_STREAM</span><span class="p">)</span>
+<span class="c1"># 将套接字绑定到特定地址和端口,以便接收数据</span>
+<span class="n">sock</span><span class="o">.</span><span class="n">bind</span><span class="p">(((</span><span class="s1">&#39;localhost&#39;</span><span class="p">,</span><span class="mi">8080</span><span class="p">)))</span>
+<span class="c1"># 开始监听</span>
+<span class="n">sock</span><span class="o">.</span><span class="n">listen</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<span class="c1"># 接受客户端请求,返回新的套接字对象和客户端地址</span>
+<span class="n">conn</span><span class="p">,</span> <span class="n">addr</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">accept</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Connection comes from: </span><span class="si">{</span><span class="n">addr</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="c1"># 向套接字发送数据(必须是字节对象)</span>
+<span class="n">conn</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;python&#39;</span><span class="p">)</span>
+<span class="c1"># 从套接字接受数据</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">1024</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Data received: </span><span class="si">{</span><span class="n">data</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="c1"># 关闭连接和套接字</span>
+<span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+<span class="n">sock</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</code></pre></div>
+
+<hr />
+<h2 id="client端的实现">Client端的实现</h2>
+<h3 id="创建套接字socketsocket_1">创建套接字socket.socket()</h3>
+<p>与server端相同</p>
+<h3 id="连接到服务端socketconnect">连接到服务端socket.connect()</h3>
+<p>功能: 连接到指定的服务端地址。</p>
+<p>语法:<code>socket.connect(ADDRESS)</code></p>
+<p>参数:</p>
+<ul>
+<li>address: 一个二元组==(host, port)==,表示服务端的地址和端口,例如:<code>('localhost',8080)</code></li>
+</ul>
+<h3 id="发送数据socketsend_1">发送数据socket.send()</h3>
+<p>与server端相同</p>
+<h3 id="接受数据socketrecv">接受数据socket.recv()</h3>
+<p>与server端相同</p>
+<h3 id="客户端代码">客户端代码</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">socket</span>
+<span class="c1"># 创建TCP套接字</span>
+<span class="n">sock</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">AF_INET</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">SOCK_STREAM</span><span class="p">)</span>
+<span class="c1"># 连接到特定地址和端口</span>
+<span class="n">sock</span><span class="o">.</span><span class="n">connect</span><span class="p">((</span><span class="s1">&#39;localhost&#39;</span><span class="p">,</span><span class="mi">8080</span><span class="p">))</span>
+<span class="c1"># 向服务端发送数据(必须是字节对象)</span>
+<span class="n">sock</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;Hello from client&#39;</span><span class="p">)</span>
+<span class="c1"># 从套接字接受数据</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">sock</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">1024</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Data received from server: </span><span class="si">{</span><span class="n">data</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="c1"># 关闭连接和套接字</span>
+<span class="n">sock</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</code></pre></div>
+
+<p><div class="callout callout-summary" markdown="1"><br />
+<p class="callout-title">双向通信流程</p></p>
+<ol>
+<li><strong>服务端</strong>:等待客户端连接。连接成功后,服务端向客户端发送"python"。然后等待从客户端接收数据。当接收到客户端发送的数据"Hello from client"时,打印输出。</li>
+<li><strong>客户端</strong>:服务端向客户端发送"python",客户端接收到并打印。客户端向服务端发送"Hello from client",服务端接收并打印。</li>
+</ol>
+<p>这样双方完成一次双向数据传输。</p>
+</div>
+<hr />
+<h2 id="案例简易聊天服务器">案例:简易聊天服务器</h2>
+<p><div class="callout callout-summary" markdown="1"><br />
+<p class="callout-title">需求</p></p>
+<p>构建一个简单的聊天服务器,允许多个客户端连接并交换信息。使用 <mark>threading</mark> 实现多线程处理。</p>
+</div>
+<h3 id="服务端">服务端</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">socket</span><span class="o">,</span><span class="w"> </span><span class="nn">threading</span>
+
+<span class="c1"># 定义处理客户端请求的函数</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">client_handler</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">addr</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Client </span><span class="si">{</span><span class="n">addr</span><span class="si">}</span><span class="s2"> has connected&quot;</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">1024</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">msg</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Client </span><span class="si">{</span><span class="n">addr</span><span class="si">}</span><span class="s2"> has closed connection&quot;</span><span class="p">)</span>
+                <span class="k">break</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Message from </span><span class="si">{</span><span class="n">addr</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">msg</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">conn</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;Message is sent&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Connection from </span><span class="si">{</span><span class="n">addr</span><span class="si">}</span><span class="s2"> has closed&quot;</span><span class="p">)</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="c1"># 创建tcp套接字</span>
+    <span class="n">server</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">AF_INET</span><span class="p">,</span><span class="n">socket</span><span class="o">.</span><span class="n">SOCK_STREAM</span><span class="p">)</span>
+    <span class="c1"># 绑定IP和端口</span>
+    <span class="n">server</span><span class="o">.</span><span class="n">bind</span><span class="p">((</span><span class="s1">&#39;localhost&#39;</span><span class="p">,</span><span class="mi">8080</span><span class="p">))</span>
+    <span class="c1"># 开始监听连接,在服务器处理现有连接请求之前,最多可以排队等待的连接请求的数量是 5。</span>
+    <span class="c1"># 如果此队列已满,新到的连接请求将被拒绝或导致客户端出现连接错误。</span>
+    <span class="n">server</span><span class="o">.</span><span class="n">listen</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Chat server has started, waiting for client connection.&quot;</span><span class="p">)</span>
+
+    <span class="c1"># 开始接收客户端消息</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="c1"># 使用accept()方法阻塞等待客户端连接。</span>
+        <span class="n">conn</span><span class="p">,</span> <span class="n">addr</span> <span class="o">=</span> <span class="n">server</span><span class="o">.</span><span class="n">accept</span><span class="p">()</span>
+        <span class="c1"># 为每个客户端创建一个线程,处理请求</span>
+        <span class="c1"># 指定线程的目标函数为 handle_client,即当这个线程启动时,会执行 handle_client 函数。</span>
+        <span class="n">client_thread</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">client_handler</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">addr</span><span class="p">))</span>
+        <span class="c1"># 启动这个线程。</span>
+        <span class="c1"># 此时,handle_client 函数将在新的线程中运行,服务端能继续接受新的客户端连接,而不被当前连接的处理所阻塞</span>
+        <span class="n">client_thread</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+<span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Server error: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="k">finally</span><span class="p">:</span>
+    <span class="n">server</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</code></pre></div>
+
+<h3 id="客户端">客户端</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">socket</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">start_client</span><span class="p">():</span>
+    <span class="c1"># 创建套接字</span>
+    <span class="n">client</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">AF_INET</span><span class="p">,</span><span class="n">socket</span><span class="o">.</span><span class="n">SOCK_STREAM</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># 连接到服务端</span>
+        <span class="n">client</span><span class="o">.</span><span class="n">connect</span><span class="p">((</span><span class="s1">&#39;localhost&#39;</span><span class="p">,</span><span class="mi">8080</span><span class="p">))</span>
+        <span class="c1"># 输入消息部分用无限循环,输入exit才推出</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s2">&quot;Please input message, input &#39;exit&#39; to exit.</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">msg</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;exit&#39;</span><span class="p">:</span>
+                <span class="k">break</span>
+            <span class="c1"># 发送套接字,用utf-8编码为字节数据</span>
+            <span class="n">client</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">))</span>
+            <span class="c1"># 发送完同时接收server端消息</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">1024</span><span class="p">)</span>
+            <span class="c1"># server端消息要decode出来</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Server response: </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Client Error: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="n">client</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">start_client</span><span class="p">()</span>
+</code></pre></div>
+
+<hr />
+<h2 id="案例创建ftp服务器">案例:创建FTP服务器</h2>
+<p><div class="callout callout-summary" markdown="1"><br />
+<p class="callout-title">需求</p></p>
+<p>创建一个 TCP 服务器,服务器端负责传输文件,而客户端连接到服务器并接收文件。</p>
+</div>
+<h3 id="服务端_1">服务端</h3>
+<p>创建套接字并发送文件</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">socket</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">send_file</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span><span class="n">filename</span><span class="p">):</span>
+    <span class="c1"># 要用rb模式,二进制打开文件,可以直接用conn.send发数据</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="c1"># 分块读取文件,防止内存占用过高</span>
+        <span class="c1"># := 海象运算符,将右边的值赋值给左边,同时返回赋值结果。即while判断的是赋值结果(右边的值)</span>
+        <span class="k">while</span><span class="p">(</span><span class="n">chunk</span> <span class="o">:=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1024</span><span class="p">)):</span>
+            <span class="n">conn</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">chunk</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;File transfer finished.&quot;</span><span class="p">)</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="c1"># 创建套接字</span>
+    <span class="n">server</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">AF_INET</span><span class="p">,</span><span class="n">socket</span><span class="o">.</span><span class="n">SOCK_STREAM</span><span class="p">)</span>
+    <span class="c1"># 绑定IP和端口号</span>
+    <span class="n">server</span><span class="o">.</span><span class="n">bind</span><span class="p">((</span><span class="s1">&#39;192.168.71.66&#39;</span><span class="p">,</span><span class="mi">8080</span><span class="p">))</span>
+    <span class="c1"># 开始监听</span>
+    <span class="n">server</span><span class="o">.</span><span class="n">listen</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;FTP server started, waiting for client connection.&quot;</span><span class="p">)</span>
+    <span class="c1"># 接受客户端连接</span>
+    <span class="n">conn</span><span class="p">,</span><span class="n">addr</span> <span class="o">=</span> <span class="n">server</span><span class="o">.</span><span class="n">accept</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Client </span><span class="si">{</span><span class="n">addr</span><span class="si">}</span><span class="s2"> has connected.&quot;</span><span class="p">)</span>
+    <span class="c1"># 调用发送文件的函数分块传输文件</span>
+    <span class="n">send_file</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="s1">&#39;requests_module.py&#39;</span><span class="p">)</span>
+
+<span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Server Error: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="k">finally</span><span class="p">:</span>
+    <span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">server</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Connetion to </span><span class="si">{</span><span class="n">addr</span><span class="si">}</span><span class="s2"> has closed.&quot;</span><span class="p">)</span>
+</code></pre></div>
+
+<p><div class="callout callout-note" markdown="1"><br />
+<p class="callout-title">海象运算符 <code>:=</code></p></p>
+<p><code>:=</code> 运算符,也称为"海象运算符"(Walrus Operator),是 Python 3.8 引入的一种语法,用于在表达式中进行赋值操作。它允许在一个表达式中同时完成变量赋值和使用赋值结果,从而提高代码的简洁性和可读性。</p>
+<p><strong>赋值与返回值结合</strong>:<br />
+<code>:=</code> 运算符将右侧的值赋给左侧的变量,同时返回赋值的结果。</p>
+<p><strong>简化代码</strong>:<br />
+```python</p>
+<h1 id="使用-运算符">使用 := 运算符</h1>
+<p>while (chunk := f.read(1024)):<br />
+    process(chunk)<br />
+<code>等价于:</code>python</p>
+<h1 id="不使用-运算符">不使用 := 运算符</h1>
+<p>chunk = f.read(1024)<br />
+while chunk:<br />
+    process(chunk)<br />
+    chunk = f.read(1024)<br />
+```</p>
+<p><strong>适用场景</strong>:<br />
+- <strong>循环</strong>: 在循环中动态更新变量值。<br />
+- <strong>条件判断</strong>: 在 <code>if</code> 或 <code>while</code> 中直接使用赋值结果。<br />
+- <strong>列表推导</strong>: 在列表推导中保存中间结果以避免重复计算。</p>
+</div>
+<p><div class="callout callout-example" markdown="1"><br />
+<p class="callout-title">在循环中使用</p></p>
+<p><code>python
+while (data := socket.recv(1024)):
+    print(data)</code></p>
+</div>
+<p><div class="callout callout-example" markdown="1"><br />
+<p class="callout-title">在条件判断中使用</p></p>
+<p><code>python
+if (result := expensive_function()) &gt; 0:
+    print(f"Result is {result}")</code></p>
+</div>
+<hr />
+<h3 id="客户端_1">客户端</h3>
+<p>连接到服务端并接收文件</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">socket</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">recv_file</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+    <span class="c1"># 要用wb模式写文件,因为recv就是接收的二进制</span>
+    <span class="c1"># 不写b就会报错:Client Error: write() argument must be str, not bytes</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="c1"># 分块接收数据</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">1024</span><span class="p">)</span>
+            <span class="c1"># 接收到空数据说明发完了</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="p">:</span>
+                <span class="k">break</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;File received.&quot;</span><span class="p">)</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">client</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">AF_INET</span><span class="p">,</span><span class="n">socket</span><span class="o">.</span><span class="n">SOCK_STREAM</span><span class="p">)</span>
+    <span class="n">client</span><span class="o">.</span><span class="n">connect</span><span class="p">((</span><span class="s1">&#39;192.168.71.66&#39;</span><span class="p">,</span><span class="mi">8080</span><span class="p">))</span>
+    <span class="n">recv_file</span><span class="p">(</span><span class="n">client</span><span class="p">,</span> <span class="s1">&#39;requests_module.py&#39;</span><span class="p">)</span>
+<span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Client Error: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="k">finally</span><span class="p">:</span>
+    <span class="n">client</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</code></pre></div>
+
+<hr />
+<h2 id="案例创建简单http服务器">案例:创建简单HTTP服务器</h2>
+<p><div class="callout callout-summary" markdown="1"><br />
+<p class="callout-title">需求</p></p>
+<p>实现一个简单的HTTP服务器,可以接收客户端的请求并返回静态网页内容。</p>
+</div>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">socket</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">handler_request</span><span class="p">(</span><span class="n">conn</span><span class="p">):</span>
+    <span class="c1"># 接收客户端请求</span>
+    <span class="n">request</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">1024</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Request received: </span><span class="si">{</span><span class="n">request</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="c1"># 构造返回内容是一个静态网页</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">&quot;HTTP/1.1 200 OK</span><span class="se">\r\n</span><span class="s2">Content-Type: text/html</span><span class="se">\r\n\r\n</span><span class="s2">&lt;h1&gt;Hello,World!&lt;/h1&gt;&quot;</span>
+    <span class="c1"># 发送返回值</span>
+    <span class="n">conn</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+    <span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+<span class="c1"># 创建套接字</span>
+<span class="n">server</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">AF_INET</span><span class="p">,</span><span class="n">socket</span><span class="o">.</span><span class="n">SOCK_STREAM</span><span class="p">)</span>
+<span class="n">server</span><span class="o">.</span><span class="n">bind</span><span class="p">((</span><span class="s1">&#39;localhost&#39;</span><span class="p">,</span><span class="mi">8080</span><span class="p">))</span>
+<span class="n">server</span><span class="o">.</span><span class="n">listen</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;HTTP server has started, waiting for client connection.&quot;</span><span class="p">)</span>
+
+<span class="n">conn</span><span class="p">,</span><span class="n">addr</span> <span class="o">=</span> <span class="n">server</span><span class="o">.</span><span class="n">accept</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Client </span><span class="si">{</span><span class="n">addr</span><span class="si">}</span><span class="s2"> connected.&quot;</span><span class="p">)</span>
+<span class="c1"># 客户端连接后,调用函数来接收并处理请求(返回一个静态页面)</span>
+<span class="n">handler_request</span><span class="p">(</span><span class="n">conn</span><span class="p">)</span>
+<span class="n">server</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</code></pre></div>
+
+<hr />
+<h2 id="相关笔记">相关笔记</h2>
+<ul>
+<li><a class="wikilink" href="../../../Python/python-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B-%E5%89%8D%E7%AB%AF/python-request-module/">python-request-module</a> - requests HTTP库</li>
+<li><a class="wikilink" href="../../../Python/python-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B-%E5%89%8D%E7%AB%AF/python-Web%E6%A1%86%E6%9E%B6Flask/">python-Web框架Flask</a> - Flask Web框架</li>
+<li><a class="wikilink" href="../../../Python/python-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B-%E5%89%8D%E7%AB%AF/python-Web%E6%A1%86%E6%9E%B6Django/">python-Web框架Django</a> - Django Web框架</li>
+<li><a class="wikilink" href="../../../Python/python-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B-%E5%89%8D%E7%AB%AF/python-%E7%88%AC%E8%99%AB/">python-爬虫</a> - Python爬虫开发</li>
+</ul>
+    </div>
+  </article>
+  <aside class="toc">
+    <p class="toc-label">本页目录</p>
+    <ul>
+  <li><a href="#介绍">介绍</a></li>
+  <li><a href="#server端实现">Server端实现</a><ul>
+  <li><a href="#创建套接字socketsocket">创建套接字socket.socket()</a></li>
+  <li><a href="#绑定到ip端口socketbind">绑定到IP端口socket.bind()</a></li>
+  <li><a href="#开始监听socketlisten">开始监听socket.listen()</a></li>
+  <li><a href="#接受连接请求socketaccept">接受连接请求socket.accept()</a></li>
+  <li><a href="#发送数据socketsend">发送数据socket.send()</a></li>
+  <li><a href="#接收数据socketrecv">接收数据socket.recv()</a></li>
+  <li><a href="#关闭套接字socketclose">关闭套接字socket.close()</a></li>
+</ul></li>
+  <li><a href="#client端的实现">Client端的实现</a><ul>
+  <li><a href="#创建套接字socketsocket_1">创建套接字socket.socket()</a></li>
+  <li><a href="#连接到服务端socketconnect">连接到服务端socket.connect()</a></li>
+  <li><a href="#发送数据socketsend_1">发送数据socket.send()</a></li>
+  <li><a href="#接受数据socketrecv">接受数据socket.recv()</a></li>
+  <li><a href="#客户端代码">客户端代码</a></li>
+</ul></li>
+  <li><a href="#案例简易聊天服务器">案例:简易聊天服务器</a><ul>
+  <li><a href="#服务端">服务端</a></li>
+  <li><a href="#客户端">客户端</a></li>
+</ul></li>
+  <li><a href="#案例创建ftp服务器">案例:创建FTP服务器</a><ul>
+  <li><a href="#服务端_1">服务端</a></li>
+  <li><a href="#客户端_1">客户端</a></li>
+</ul></li>
+  <li><a href="#案例创建简单http服务器">案例:创建简单HTTP服务器</a></li>
+  <li><a href="#相关笔记">相关笔记</a></li>
+</ul>
+  </aside>
+
+</div>
+
+</main>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>Learning Notes</span>
+    <a href="https://github.com/hangx969/learning-notes">GitHub</a>
+  </div>
+</footer>
+<script src="../../../static/search.js"></script>
+</body>
+</html>

@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JFrog Artifactory on Azure - Learning Notes</title>
+<link rel="stylesheet" href="../../static/style.css">
+<link rel="stylesheet" href="../../static/pygments.css">
+</head>
+<body data-root="../../">
+<header class="site-header">
+  <div class="header-inner">
+    <a class="logo" href="../../index.html"><span class="logo-mark"></span>LEARNING NOTES</a>
+    <div class="search">
+      <input id="search-input" type="search" placeholder="搜索笔记…" autocomplete="off" aria-label="搜索笔记">
+      <div id="search-results" hidden></div>
+    </div>
+  </div>
+  <nav class="topic-nav" aria-label="主题导航">
+    <div class="topic-nav-inner">
+      <a href="../../AI/">AI</a>
+      <a href="../../Aliyun/">Aliyun</a>
+      <a href="../../Azure/" class="active">Azure</a>
+      <a href="../../C%2B%2B/">C++</a>
+      <a href="../../CloudComputing/">CloudComputing</a>
+      <a href="../../Database/">Database</a>
+      <a href="../../Docker-Kubernetes/">Docker-Kubernetes</a>
+      <a href="../../GPU-DeepLearning/">GPU-DeepLearning</a>
+      <a href="../../Git/">Git</a>
+      <a href="../../Go/">Go</a>
+      <a href="../../HPC/">HPC</a>
+      <a href="../../IaC/">IaC</a>
+      <a href="../../Linux-Shell/">Linux-Shell</a>
+      <a href="../../Middlewares/">Middlewares</a>
+      <a href="../../Networking/">Networking</a>
+      <a href="../../OS/">OS</a>
+      <a href="../../Python/">Python</a>
+      <a href="../../SoftwareTesting/">SoftwareTesting</a>
+    </div>
+  </nav>
+</header>
+<main class="main">
+
+<div class="article-layout">
+
+  <aside class="sidebar">
+    <details class="sidebar-details">
+      <summary>Azure</summary>
+      <nav class="sidebar-nav">
+        <p class="sidebar-group">Customer Support</p>
+        <ul>
+          <li><a href="../../Azure/Customer%20Support/Email%20Templates/">Email Templates</a></li>
+        </ul>
+        <p class="sidebar-group">其他</p>
+        <ul>
+          <li><a href="../../Azure/0_Azure-VM-VMSS/">Azure VM and VMSS</a></li>
+          <li><a href="../../Azure/10_Azure-devops-agent-pool-management/">Azure DevOps Agent Pool Management</a></li>
+          <li><a href="../../Azure/11_Azure-Policy/">Azure Policy</a></li>
+          <li><a href="../../Azure/1_Azure-Linux-VM-troubheshooting/">Azure Linux VM Troubleshooting</a></li>
+          <li><a href="../../Azure/2_AKS-basics/">AKS Basics</a></li>
+          <li><a href="../../Azure/3_AKS-workload-identity/">AKS Workload Identity</a></li>
+          <li><a href="../../Azure/4_AKS-SecretProviderClass-KeyVault/">AKS SecretProviderClass with KeyVault</a></li>
+          <li><a href="../../Azure/5_Azure-Storage/">Azure Storage</a></li>
+          <li><a href="../../Azure/6_Azure-Networking/">Azure Networking</a></li>
+          <li><a href="../../Azure/7_ACR-ACI/">Azure Container Registry &amp; Azure Container Instances</a></li>
+          <li><a href="../../Azure/8_Azure-devops-basics/">Azure DevOps Basics</a></li>
+          <li><a href="../../Azure/9_Azure-devops-self-host-agents/">Azure DevOps Self-Hosted Agents</a></li>
+          <li><a href="../../Azure/IO-monitor/">IO Monitor</a></li>
+          <li><a href="../../Azure/Jfrog-artifactory-Azure/" class="current">JFrog Artifactory on Azure</a></li>
+          <li><a href="../../Azure/Kusto%20Query/">Kusto Query Language (KQL) Reference</a></li>
+          <li><a href="../../Azure/browser%20trace/">Browser Trace (HAR)</a></li>
+          <li><a href="../../Azure/command-line-tools/">Command Line Tools</a></li>
+          <li><a href="../../Azure/fiddler/">Fiddler</a></li>
+          <li><a href="../../Azure/perfMon%20ProcessMon/">PerfMon &amp; ProcessMon</a></li>
+          <li><a href="../../Azure/postman/">Postman</a></li>
+        </ul>
+      </nav>
+    </details>
+  </aside>
+
+  <article class="article">
+    <nav class="breadcrumb">
+      <a href="../../index.html">首页</a><span>/</span>
+      <a href="../../Azure/">Azure</a>
+    </nav>
+    <h1 class="article-title">JFrog Artifactory on Azure</h1>
+    <p class="article-meta"><span>更新于 2026-04-16</span>
+      <a href="https://github.com/hangx969/learning-notes/blob/main/Azure/Jfrog-artifactory-Azure.md">查看源文件</a>
+    </p>
+    <div class="article-body">
+<h1 id="jfrog-artifactory-on-azure">JFrog Artifactory on Azure</h1>
+<h2 id="related-notes">Related Notes</h2>
+<ul>
+<li><a class="wikilink" href="../../Azure/2_AKS-basics/">Azure/2_AKS-basics</a></li>
+<li><a class="wikilink" href="../../Azure/7_ACR-ACI/">Azure/7_ACR-ACI</a></li>
+<li><a class="wikilink" href="../../Azure/5_Azure-Storage/">Azure/5_Azure-Storage</a></li>
+</ul>
+<hr />
+<h2 id="jfrog-artifactory-overview">JFrog Artifactory Overview</h2>
+<ul>
+<li>
+<p>官网：https://jfrog.com/help/r/jfrog-installation-setup-documentation/installation-configuration</p>
+</li>
+<li>
+<p>目录结构</p>
+</li>
+<li>==app==是程序目录，包含Artifactory应用程序的二进制文件和配置文件。它通常包括软件本身、所需的库（libraries）、脚本以及其他与应用程序运行相关的文件，一般不需要持久化</li>
+<li>==var==是数据目录，这个目录包含了所有的用户数据，需要持久化</li>
+</ul>
+<div class="highlight"><pre><span></span><code>JFROG_HOME
+<span class="w">  </span>└──<span class="w"> </span>&lt;product&gt;
+<span class="w">     </span>├──<span class="w"> </span>app
+<span class="w">     </span>│<span class="w">   </span>├──<span class="w"> </span>bin
+<span class="w">     </span>│<span class="w">   </span>├──<span class="w"> </span>run
+<span class="w">     </span>│<span class="w">   </span>├──<span class="w"> </span>doc
+<span class="w">     </span>│<span class="w">   </span>├──<span class="w"> </span>&lt;third-party&gt;
+<span class="w">     </span>│<span class="w">   </span>│<span class="w">   </span>├──<span class="w"> </span>java
+<span class="w">     </span>│<span class="w">   </span>│<span class="w">   </span>├──<span class="w"> </span>yq
+<span class="w">     </span>│<span class="w">   </span>│<span class="w">   </span>└──<span class="w"> </span>others
+<span class="w">     </span>│<span class="w">   </span>└──<span class="w"> </span>&lt;service&gt;
+<span class="w">     </span>│<span class="w">   </span>│<span class="w">   </span>├──<span class="w"> </span>bin
+<span class="w">     </span>│<span class="w">   </span>│<span class="w">   </span>└──<span class="w"> </span>lib
+<span class="w">     </span>│<span class="w">   </span>└──<span class="w"> </span>misc
+<span class="w">     </span>│
+<span class="w">     </span>└──<span class="w"> </span>var
+<span class="w">        </span>├──<span class="w"> </span>backup
+<span class="w">        </span>│<span class="w">   </span>└──<span class="w"> </span>&lt;service&gt;
+<span class="w">        </span>├──<span class="w"> </span>bootstrap
+<span class="w">        </span>│<span class="w">   </span>└──<span class="w"> </span>&lt;service&gt;
+<span class="w">        </span>├──<span class="w"> </span>data
+<span class="w">        </span>│<span class="w">   </span>└──<span class="w"> </span>&lt;service&gt;
+<span class="w">        </span>├──<span class="w"> </span>etc
+<span class="w">        </span>│<span class="w">   </span>├──<span class="w"> </span>system.yaml
+<span class="w">        </span>│<span class="w">   </span>├──<span class="w"> </span>&lt;service&gt;
+<span class="w">        </span>│<span class="w">   </span>└──<span class="w"> </span>security
+<span class="w">        </span>│<span class="w">       </span>└──master.key
+<span class="w">        </span>│<span class="w">       </span>└──join.key
+<span class="w">        </span>├──<span class="w"> </span>log
+<span class="w">        </span>│<span class="w">   </span>└──<span class="w"> </span>&lt;service<span class="w"> </span>logs&gt;
+<span class="w">        </span>│<span class="w">   </span>└──<span class="w"> </span>archived
+<span class="w">        </span>│<span class="w">       </span>└──<span class="w"> </span>&lt;archived<span class="w"> </span>service<span class="w"> </span>logs&gt;
+<span class="w">        </span>└──<span class="w"> </span>work
+<span class="w">            </span>└──<span class="w"> </span>&lt;service&gt;
+</code></pre></div>
+
+<hr />
+<h2 id="artifactory部署到aci">Artifactory部署到ACI</h2>
+<h3 id="prepare-vnet">Prepare Vnet</h3>
+<ul>
+<li>Create Vnet with address range 10.225.130.0/24, create 2 subnets</li>
+<li>subnet-aci: 10.225.130.64/26</li>
+<li>subnet-artifactory: 10.225.130.0/26</li>
+</ul>
+<h3 id="prepare-image">Prepare Image</h3>
+<ul>
+<li>create ACR：acrcdstest</li>
+</ul>
+<div class="highlight"><pre><span></span><code>az<span class="w"> </span>cloud<span class="w"> </span><span class="nb">set</span><span class="w"> </span>--name<span class="w"> </span>AzureChinaCloud<span class="w"> </span>
+az<span class="w"> </span>login<span class="w"> </span>-t<span class="w"> </span>&lt;tenant-id&gt;
+az<span class="w"> </span>acr<span class="w"> </span>list
+az<span class="w"> </span>acr<span class="w"> </span>login<span class="w"> </span>--n<span class="w"> </span>acrcdstest
+docker<span class="w"> </span>pull<span class="w"> </span>releases-docker.jfrog.io/jfrog/artifactory-oss:latest
+<span class="c1">#pulled 7.90.9</span>
+docker<span class="w"> </span>tag<span class="w"> </span>releases-docker.jfrog.io/jfrog/artifactory-oss:latest<span class="w"> </span>acrcdstest.azurecr.cn/artifactory:latest
+docker<span class="w"> </span>push<span class="w"> </span>acrcdstest.azurecr.cn/artifactory:latest
+</code></pre></div>
+
+<h3 id="prepare-storage">Prepare Storage</h3>
+<ul>
+<li>
+<p>ACI mount azure file：https://docs.azure.cn/zh-cn/container-instances/container-instances-volume-azure-files#deploy-container-and-mount-volume---yaml</p>
+</li>
+<li>
+<p>Create sa and file share</p>
+</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="c1"># Change these four parameters as needed</span>
+<span class="nv">ACI_PERS_RESOURCE_GROUP</span><span class="o">=</span>rg-artifactory-demo
+<span class="nv">ACI_PERS_STORAGE_ACCOUNT_NAME</span><span class="o">=</span>artisa
+<span class="nv">ACI_PERS_LOCATION</span><span class="o">=</span>chinanorth3
+<span class="nv">ACI_PERS_SHARE_NAME</span><span class="o">=</span>artishare
+
+<span class="c1"># Create the storage account with the parameters</span>
+az<span class="w"> </span>storage<span class="w"> </span>account<span class="w"> </span>create<span class="w"> </span>--resource-group<span class="w"> </span><span class="nv">$ACI_PERS_RESOURCE_GROUP</span><span class="w"> </span>--name<span class="w"> </span><span class="nv">$ACI_PERS_STORAGE_ACCOUNT_NAME</span><span class="w"> </span>--location<span class="w"> </span><span class="nv">$ACI_PERS_LOCATION</span><span class="w"> </span>--sku<span class="w"> </span>Standard_LRS
+<span class="c1">#az storage account create --resource-group rg-artifactory-cds-test --name artifactorysatest --location chinanorth3 --sku Standard_LRS</span>
+
+<span class="c1"># Create the file share</span>
+az<span class="w"> </span>storage<span class="w"> </span>share<span class="w"> </span>create<span class="w"> </span>--name<span class="w"> </span><span class="nv">$ACI_PERS_SHARE_NAME</span><span class="w"> </span>--account-name<span class="w"> </span><span class="nv">$ACI_PERS_STORAGE_ACCOUNT_NAME</span>
+<span class="c1">#az storage share create --name artisharetest --account-name artifactorysatest</span>
+
+<span class="c1"># Get credentials</span>
+<span class="nv">STORAGE_KEY</span><span class="o">=</span><span class="k">$(</span>az<span class="w"> </span>storage<span class="w"> </span>account<span class="w"> </span>keys<span class="w"> </span>list<span class="w"> </span>--resource-group<span class="w"> </span><span class="nv">$ACI_PERS_RESOURCE_GROUP</span><span class="w"> </span>--account-name<span class="w"> </span><span class="nv">$ACI_PERS_STORAGE_ACCOUNT_NAME</span><span class="w"> </span>--query<span class="w"> </span><span class="s2">&quot;[0].value&quot;</span><span class="w"> </span>--output<span class="w"> </span>tsv<span class="k">)</span>
+<span class="c1">#STORAGE_KEY=$(az storage account keys list --resource-group rg-artifactory-cds-test --account-name artifactorysatest --query &quot;[0].value&quot; --output tsv)</span>
+<span class="nb">echo</span><span class="w"> </span><span class="nv">$STORAGE_KEY</span>
+</code></pre></div>
+
+<ul>
+<li>create a folder named "etc" in fileshare.</li>
+<li>create config file locally and upload to azure file share/etc</li>
+<li>url can be obtained from azure portal - postgresql - connect - connect from your app - JDBC</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="nt">shared</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">database</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">driver</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">org.postgresql.Driver</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">postgresql</span>
+<span class="w">    </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">jdbc:postgresql://pg-artifactory.postgres.database.chinacloudapi.cn:5432/postgres?user=artifactory&amp;password=Passw0rd&amp;sslmode=require</span>
+<span class="w">    </span><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">artifactory</span>
+<span class="w">    </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Passw0rd</span>
+</code></pre></div>
+
+<h3 id="prepare-postgresql">Prepare PostgreSQL</h3>
+<ul>
+<li>Create a postgresql in a VNET</li>
+<li>admin - Passw0rd</li>
+</ul>
+<h3 id="aci-deployment">ACI Deployment</h3>
+<p><div class="callout callout-tip" markdown="1"><br />
+<p class="callout-title">Best Practices</p></p>
+<ul>
+<li>容器组 IP 地址在创建或删除后可能会发生更改。 建议不要让应用程序代码依赖于容器组的 IP 地址。 如果想维护静态 IP 地址，还建议使用 <a href="https://docs.azure.cn/zh-cn/container-instances/container-instances-nat-gateway">NAT 网关</a>或<a href="https://docs.azure.cn/zh-cn/container-instances/container-instances-application-gateway">应用程序网关</a>。</li>
+<li>ACI 服务保留以下服务功能端口：<mark>22、1025-1027、3389-3399、9999、19000、19080、19390、19100、20000-30000、49152-65534</mark>。 请避免在容器组定义中使用这些端口。</li>
+<li>可在 Azure 容器实例上部署的容器映像的最大大小为 <mark>15 GB</mark>。根据部署时的确切可用性，你也许可以部署更大的映像，但不能保证映像大小更大。</li>
+</ul>
+</div>
+<div class="highlight"><pre><span></span><code>az<span class="w"> </span>container<span class="w"> </span>create<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--resource-group<span class="w"> </span><span class="nv">$ACI_PERS_RESOURCE_GROUP</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--name<span class="w"> </span>artifactory<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--location<span class="w"> </span>chinanorth3<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--image<span class="w"> </span>acrcdstest.azurecr.cn/artifactory:latest<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--registry-login-server<span class="w"> </span>acrcdstest.azurecr.cn<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--registry-username<span class="w"> </span>acrcdstest<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--registry-password<span class="w"> </span>&lt;password&gt;<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--subnet<span class="w"> </span>&lt;snet-id&gt;<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--ports<span class="w"> </span><span class="m">8081</span><span class="w"> </span><span class="m">8082</span><span class="se">\</span>
+<span class="w">    </span>--cpu<span class="w"> </span><span class="m">2</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--memory<span class="w"> </span><span class="m">4</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--azure-file-volume-account-name<span class="w"> </span><span class="nv">$ACI_PERS_STORAGE_ACCOUNT_NAME</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--azure-file-volume-account-key<span class="w"> </span><span class="nv">$STORAGE_KEY</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--azure-file-volume-share-name<span class="w"> </span><span class="nv">$ACI_PERS_SHARE_NAME</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--azure-file-volume-mount-path<span class="w"> </span>/var/opt/jfrog/artifactory<span class="w"> </span>
+</code></pre></div>
+
+<ul>
+<li>login UI using containerIP:8082/ui (default username: admin, passwd: password)</li>
+<li>edit admin password after logged in</li>
+</ul>
+<p><div class="callout callout-warning" markdown="1"><br />
+<p class="callout-title">Warning</p></p>
+<p>ACI部署artifactory会出现各种各样的artifactory报错，导致容器起不来。遂放弃。</p>
+</div>
+<hr />
+<h2 id="artifactory-docker部署到azure-vm">Artifactory-Docker部署到Azure VM</h2>
+<p>https://jfrog.com/help/r/jfrog-installation-setup-documentation/install-artifactory-single-node-with-docker</p>
+<ul>
+<li>VM environment</li>
+<li>Ubuntu 22.04</li>
+<li>
+<p>docker version: 27.2.1</p>
+</li>
+<li>
+<p>Artifactory requirement:<br />
+  https://jfrog.com/help/r/jfrog-installation-setup-documentation/install-artifactory-single-node-with-helm-charts?section=UUID-5a5bc1a4-b867-9be2-2902-04b3ce759902_UUID-6560a094-94c2-ca03-359f-ccb55be0e480</p>
+</li>
+<li>
+<p>Create a postgresql flexible server</p>
+</li>
+<li>
+<p>set up data folder</p>
+</li>
+<li>create a data disk (32G), format to ext4 and mount it to /app/jfrog as data store path.</li>
+<li>configure fstab</li>
+</ul>
+<div class="highlight"><pre><span></span><code>mkdir<span class="w"> </span>/app/jfrog
+<span class="nb">export</span><span class="w"> </span><span class="nv">JFROG_HOME</span><span class="o">=</span>/app/jfrog
+mkdir<span class="w"> </span>-p<span class="w"> </span><span class="nv">$JFROG_HOME</span>/artifactory/var/etc/
+<span class="nb">cd</span><span class="w"> </span><span class="nv">$JFROG_HOME</span>/artifactory/var/etc/
+touch<span class="w"> </span>./system.yaml
+chown<span class="w"> </span>-R<span class="w"> </span><span class="m">1030</span>:1030<span class="w"> </span><span class="nv">$JFROG_HOME</span>/artifactory/var
+</code></pre></div>
+
+<ul>
+<li>setup pgsql connection</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="l l-Scalar l-Scalar-Plain">tee $JFROG_HOME/artifactory/var/etc/system.yaml &lt;&lt;&#39;EOF&#39;</span>
+<span class="l l-Scalar l-Scalar-Plain">shared</span><span class="p p-Indicator">:</span>
+<span class="w">    </span><span class="nt">database</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">driver</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">org.postgresql.Driver</span>
+<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">postgresql</span>
+<span class="w">        </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">jdbc:postgresql://artipgsql.postgres.database.chinacloudapi.cn:5432/artifactory?user=artifactory&amp;password=Passw0rd&amp;sslmode=require</span>
+<span class="w">        </span><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;username&gt;</span>
+<span class="w">        </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;password&gt;</span>
+<span class="l l-Scalar l-Scalar-Plain">EOF</span>
+</code></pre></div>
+
+<ul>
+<li>run container</li>
+</ul>
+<div class="highlight"><pre><span></span><code>docker<span class="w"> </span>run<span class="w"> </span>--name<span class="w"> </span>artifactory<span class="w"> </span>-v<span class="w"> </span><span class="nv">$JFROG_HOME</span>/artifactory/var/:/var/opt/jfrog/artifactory<span class="w"> </span>-d<span class="w"> </span>-p<span class="w"> </span><span class="m">8081</span>:8081<span class="w"> </span>-p<span class="w"> </span><span class="m">80</span>:8082<span class="w"> </span>acrcdstest.azurecr.cn/artifactory:latest<span class="w"> </span>
+</code></pre></div>
+
+<ul>
+<li>visit home page: http://\&lt;VM-IP&gt;/ui/ with username admin/passwd Passw0rd</li>
+</ul>
+<hr />
+<h2 id="artifactory-deployment部署到aks">Artifactory Deployment部署到AKS</h2>
+<ul>
+<li>
+<p>Create private aks cluster</p>
+</li>
+<li>
+<p>use external pgsql:<br />
+  name: artipgsql<br />
+  database: artifactory-aks</p>
+</li>
+<li>
+<p>ns</p>
+</li>
+</ul>
+<p><code>sh
+  k create ns artifactory</code></p>
+<ul>
+<li>Create an azure file share as data path, mount it to aks</li>
+</ul>
+<p>https://docs.azure.cn/zh-cn/aks/azure-csi-files-storage-provision#using-azure-tags</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Change these four parameters as needed</span>
+<span class="nv">ACI_PERS_RESOURCE_GROUP</span><span class="o">=</span>rg-artifactory-demo
+<span class="nv">ACI_PERS_STORAGE_ACCOUNT_NAME</span><span class="o">=</span>artifactorysa
+<span class="nv">ACI_PERS_LOCATION</span><span class="o">=</span>chinanorth3
+<span class="nv">ACI_PERS_SHARE_NAME</span><span class="o">=</span>artishare
+
+<span class="c1"># Create the storage account with the parameters</span>
+az<span class="w"> </span>storage<span class="w"> </span>account<span class="w"> </span>create<span class="w"> </span>--resource-group<span class="w"> </span><span class="nv">$ACI_PERS_RESOURCE_GROUP</span><span class="w"> </span>--name<span class="w"> </span><span class="nv">$ACI_PERS_STORAGE_ACCOUNT_NAME</span><span class="w"> </span>--location<span class="w"> </span><span class="nv">$ACI_PERS_LOCATION</span><span class="w"> </span>--sku<span class="w"> </span>Standard_LRS
+<span class="c1">#az storage account create --resource-group rg-artifactory-cds-test --name artifactorysatest --location chinanorth3 --sku Standard_LRS</span>
+
+<span class="c1"># Create the file share</span>
+az<span class="w"> </span>storage<span class="w"> </span>share<span class="w"> </span>create<span class="w"> </span>--name<span class="w"> </span><span class="nv">$ACI_PERS_SHARE_NAME</span><span class="w"> </span>--account-name<span class="w"> </span><span class="nv">$ACI_PERS_STORAGE_ACCOUNT_NAME</span>
+<span class="c1">#az storage share create --name artisharetest --account-name artifactorysatest</span>
+
+<span class="c1"># Get credentials</span>
+<span class="nv">STORAGE_KEY</span><span class="o">=</span><span class="k">$(</span>az<span class="w"> </span>storage<span class="w"> </span>account<span class="w"> </span>keys<span class="w"> </span>list<span class="w"> </span>--resource-group<span class="w"> </span><span class="nv">$ACI_PERS_RESOURCE_GROUP</span><span class="w"> </span>--account-name<span class="w"> </span><span class="nv">$ACI_PERS_STORAGE_ACCOUNT_NAME</span><span class="w"> </span>--query<span class="w"> </span><span class="s2">&quot;[0].value&quot;</span><span class="w"> </span>--output<span class="w"> </span>tsv<span class="k">)</span>
+<span class="c1">#STORAGE_KEY=$(az storage account keys list --resource-group rg-artifactory-cds-test --account-name artifactorysatest --query &quot;[0].value&quot; --output tsv)</span>
+<span class="nb">echo</span><span class="w"> </span><span class="nv">$STORAGE_KEY</span>
+
+<span class="c1"># Create secret</span>
+kubectl<span class="w"> </span>create<span class="w"> </span>secret<span class="w"> </span>generic<span class="w"> </span>azurefile-secret<span class="w"> </span>--namespace<span class="w"> </span>artifactory<span class="w"> </span>--from-literal<span class="o">=</span><span class="nv">azurestorageaccountname</span><span class="o">=</span><span class="nv">$ACI_PERS_STORAGE_ACCOUNT_NAME</span><span class="w"> </span>--from-literal<span class="o">=</span><span class="nv">azurestorageaccountkey</span><span class="o">=</span><span class="nv">$STORAGE_KEY</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="l l-Scalar l-Scalar-Plain">tee azurefile-pv-pvc.yaml &lt;&lt;&#39;EOF&#39;</span>
+<span class="l l-Scalar l-Scalar-Plain">apiVersion</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PersistentVolume</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pv-azurefile-artishare</span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">artifactory</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">capacity</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">storage</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10Gi</span>
+<span class="w">  </span><span class="nt">accessModes</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ReadWriteMany</span>
+<span class="w">  </span><span class="nt">persistentVolumeReclaimPolicy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Retain</span>
+<span class="w">  </span><span class="nt">storageClassName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">azurefile-csi</span>
+<span class="w">  </span><span class="nt">csi</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">driver</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">file.csi.azure.com</span>
+<span class="w">    </span><span class="nt">volumeHandle</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;rg-artifactory-demo#artifactorysa#artishare&quot;</span><span class="w">  </span><span class="c1"># make sure this volumeid is unique for every identical share in the cluster</span>
+<span class="w">    </span><span class="nt">volumeAttributes</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">resourceGroup</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">rg-artifactory-demo</span><span class="w">  </span><span class="c1"># optional, only set this when storage account is not in the same resource group as node</span>
+<span class="w">      </span><span class="nt">storageAccount</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">artifactorysa</span>
+<span class="w">      </span><span class="nt">shareName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">artishare</span>
+<span class="w">      </span><span class="nt">server</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">artifactorysa.privatelink.file.core.chinacloudapi.cn</span>
+<span class="w">    </span><span class="nt">nodeStageSecretRef</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">azurefile-secret</span>
+<span class="w">      </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">artifactory</span>
+<span class="w">  </span><span class="nt">mountOptions</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dir_mode=0777</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">file_mode=0777</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">uid=1030</span><span class="w"> </span><span class="c1"># set for artifactory user</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gid=1030</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mfsymlinks</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cache=strict</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nosharesock</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nobrl</span><span class="w">  </span><span class="c1"># disable sending byte range lock requests to the server and for applications which have challenges with posix locks</span>
+
+<span class="nn">---</span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PersistentVolumeClaim</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pvc-azurefile-artishare</span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">artifactory</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">accessModes</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ReadWriteMany</span>
+<span class="w">  </span><span class="nt">storageClassName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">azurefile-csi</span>
+<span class="w">  </span><span class="nt">volumeName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pv-azurefile-artishare</span><span class="w"> </span><span class="c1">#pv name</span>
+<span class="w">  </span><span class="nt">resources</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">requests</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">storage</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10Gi</span>
+
+<span class="l l-Scalar l-Scalar-Plain">EOF</span>
+</code></pre></div>
+
+<ul>
+<li>config file upload to file share</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="l l-Scalar l-Scalar-Plain">tee system.yaml &lt;&lt;&#39;EOF&#39;</span>
+<span class="l l-Scalar l-Scalar-Plain">shared</span><span class="p p-Indicator">:</span>
+<span class="w">    </span><span class="nt">database</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">driver</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">org.postgresql.Driver</span>
+<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">postgresql</span>
+<span class="w">        </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;pgsql-connection-url&gt;</span>
+<span class="w">        </span><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;username&gt;</span>
+<span class="w">        </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;password&gt;</span>
+<span class="l l-Scalar l-Scalar-Plain">EOF</span>
+</code></pre></div>
+
+<ul>
+<li>copy system.yaml from VM which has mounted the file share</li>
+</ul>
+<div class="highlight"><pre><span></span><code>mkdir<span class="w"> </span>/mnt/artishare/etc/security/<span class="w"> </span>-p
+cp<span class="w"> </span>./system.yaml<span class="w"> </span>/mnt/artishare/etc/
+<span class="c1">#尝试提前写入两个key</span>
+mkdir<span class="w"> </span>/mnt/artishare/etc/security<span class="w"> </span>-p
+openssl<span class="w"> </span>rand<span class="w"> </span>-hex<span class="w"> </span><span class="m">32</span><span class="w"> </span>&gt;<span class="w"> </span>/mnt/artishare/etc/security/master.key
+openssl<span class="w"> </span>rand<span class="w"> </span>-hex<span class="w"> </span><span class="m">32</span><span class="w"> </span>&gt;<span class="w"> </span>/mnt/artishare/etc/security/join.key
+</code></pre></div>
+
+<ul>
+<li>pod</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="l l-Scalar l-Scalar-Plain">tee deploy-artifactory.yaml &lt;&lt;&#39;EOF&#39;</span>
+<span class="l l-Scalar l-Scalar-Plain">apiVersion</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">apps/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Deployment</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">deploy-artifactory-demo</span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">artifactory</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">replicas</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="w">  </span><span class="nt">selector</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">matchLabels</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">artifactory</span>
+<span class="w">  </span><span class="nt">template</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">metadata</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">artifactory</span>
+<span class="w">    </span><span class="nt">spec</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">containers</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">artifactory</span>
+<span class="w">        </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">acrcdstest.azurecr.cn/artifactory:latest</span>
+<span class="w">        </span><span class="nt">imagePullPolicy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">IfNotPresent</span>
+<span class="w">        </span><span class="nt">env</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">http_proxy</span>
+<span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&quot;</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">HTTP_PROXY</span>
+<span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&quot;</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https_proxy</span>
+<span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&quot;</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">HTTPS_PROXY</span>
+<span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&quot;</span>
+<span class="w">        </span><span class="nt">ports</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">containerPort</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8081</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">containerPort</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8082</span>
+<span class="w">        </span><span class="nt">volumeMounts</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">fileshare-artifactory</span>
+<span class="w">          </span><span class="nt">mountPath</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/var/opt/jfrog/artifactory</span>
+<span class="w">          </span><span class="nt">readOnly</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">        </span><span class="c1">#- name: cm-system</span>
+<span class="w">          </span><span class="c1">#mountPath: /var/opt/jfrog/artifactory/etc/</span>
+<span class="w">          </span><span class="c1">#readOnly: false</span>
+<span class="w">      </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">fileshare-artifactory</span>
+<span class="w">        </span><span class="nt">persistentVolumeClaim</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">claimName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pvc-azurefile-artishare</span>
+<span class="w">      </span><span class="c1">#- name: cm-system </span>
+<span class="w">        </span><span class="c1">#configMap:</span>
+<span class="w">          </span><span class="c1">#name: artifactory-config</span>
+<span class="l l-Scalar l-Scalar-Plain">EOF</span>
+</code></pre></div>
+
+<p><div class="callout callout-warning" markdown="1"><br />
+<p class="callout-title">Warning</p></p>
+<p>总是报错：<br />
+- Caught exception in GET /artifactory/api/system/ping<br />
+- Missing required services: [jffe]<br />
+- 即使把key文件放到指定位置了也识别不到，遂放弃。</p>
+</div>
+<hr />
+<h2 id="artifactory-helm部署到aks">Artifactory-Helm部署到AKS</h2>
+<ul>
+<li>add helm repo</li>
+</ul>
+<div class="highlight"><pre><span></span><code>helm<span class="w"> </span>repo<span class="w"> </span>add<span class="w"> </span>jfrog<span class="w"> </span>https://charts.jfrog.io
+helm<span class="w"> </span>repo<span class="w"> </span>update
+</code></pre></div>
+
+<ul>
+<li>create master key as k8s secret</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="c1"># Create a key</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">MASTER_KEY</span><span class="o">=</span><span class="k">$(</span>openssl<span class="w"> </span>rand<span class="w"> </span>-hex<span class="w"> </span><span class="m">32</span><span class="k">)</span>
+<span class="nb">echo</span><span class="w"> </span><span class="si">${</span><span class="nv">MASTER_KEY</span><span class="si">}</span>
+
+<span class="c1"># Create a secret containing the key. The key in the secret must be named master-key</span>
+kubectl<span class="w"> </span>create<span class="w"> </span>secret<span class="w"> </span>generic<span class="w"> </span>masterkey-secret<span class="w"> </span>-n<span class="w"> </span>artifactory<span class="w"> </span>--from-literal<span class="o">=</span>master-key<span class="o">=</span><span class="si">${</span><span class="nv">MASTER_KEY</span><span class="si">}</span>
+</code></pre></div>
+
+<p><div class="callout callout-important" markdown="1"><br />
+<p class="callout-title">Important</p></p>
+<p>In either case, make sure to pass the same master key on all future calls to Helm install and Helm upgrade. This means always passing<br />
+<code>--set artifactory.masterKey=${MASTER_KEY}</code> (for the custom master key) or<br />
+<code>--set artifactory.masterKeySecretName=my-masterkey-secret</code> (for the manual secret) and verifying that the contents of the secret remain unchanged.</p>
+</div>
+<ul>
+<li>create join key as k8s secret</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="c1"># Create a key</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">JOIN_KEY</span><span class="o">=</span><span class="k">$(</span>openssl<span class="w"> </span>rand<span class="w"> </span>-hex<span class="w"> </span><span class="m">32</span><span class="k">)</span>
+<span class="nb">echo</span><span class="w"> </span><span class="si">${</span><span class="nv">JOIN_KEY</span><span class="si">}</span>
+
+<span class="c1"># Create a secret containing the key. The key in the secret must be named join-key</span>
+kubectl<span class="w"> </span>create<span class="w"> </span>secret<span class="w"> </span>generic<span class="w"> </span>joinkey-secret<span class="w"> </span>-n<span class="w"> </span>artifactory<span class="w"> </span>--from-literal<span class="o">=</span>join-key<span class="o">=</span><span class="si">${</span><span class="nv">JOIN_KEY</span><span class="si">}</span>
+</code></pre></div>
+
+<ul>
+<li>configure pgsql in helm</li>
+<li>https://jfrog.com/help/r/jfrog-installation-setup-documentation/configure-artifactory-to-use-postgresql-single-node</li>
+<li>artifactory-oss/charts/artifactory/values.yaml的1645行修改</li>
+<li>install</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="c1">#这个命令无效</span>
+helm<span class="w"> </span>upgrade<span class="w"> </span>--install<span class="w"> </span>artifactory<span class="w"> </span>--set<span class="w"> </span>artifactory.masterKeySecretName<span class="o">=</span>masterkey-secret<span class="w"> </span>--set<span class="w"> </span>artifactory.joinKeySecretName<span class="o">=</span>joinkey-secret<span class="w"> </span>--namespace<span class="w"> </span>artifactory<span class="w"> </span>--create-namespace<span class="w"> </span>jfrog/artifactory
+
+<span class="c1">#这个命令没有用到自定义的image</span>
+helm<span class="w"> </span>install<span class="w"> </span>artifactory-oss<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--set<span class="w"> </span>artifactory.masterKeySecretName<span class="o">=</span>masterkey-secret<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--set<span class="w"> </span>artifactory.joinKeySecretName<span class="o">=</span>joinkey-secret<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--set<span class="w"> </span>artifactory.nginx.enabled<span class="o">=</span><span class="nb">false</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--set<span class="w"> </span>artifactory.postgresql.enabled<span class="o">=</span><span class="nb">false</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--set<span class="w"> </span>postgresql.enabled<span class="o">=</span><span class="nb">false</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--set<span class="w"> </span>artifactory.artifactory.service.type<span class="o">=</span>NodePort<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--set<span class="w"> </span>artifactory.artifactory.resources.requests.cpu<span class="o">=</span><span class="s2">&quot;500m&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--set<span class="w"> </span>artifactory.artifactory.resources.limits.cpu<span class="o">=</span><span class="s2">&quot;2&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--set<span class="w"> </span>artifactory.artifactory.resources.requests.memory<span class="o">=</span><span class="s2">&quot;1Gi&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--set<span class="w"> </span>artifactory.artifactory.resources.limits.memory<span class="o">=</span><span class="s2">&quot;4Gi&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--set<span class="w"> </span>artifactory.artifactory.image.registry<span class="o">=</span>acrcdstest.azurecr.cn<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--set<span class="w"> </span>artifactory.artifactory.image.repository<span class="o">=</span>artifactory<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--set<span class="w"> </span>artifactory.artifactory.image.tag<span class="o">=</span>latest<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>jfrog/artifactory-oss<span class="w"> </span>-n<span class="w"> </span>artifactory
+
+<span class="c1"># 手动传入key、指定valus.yaml</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">MASTER_KEY</span><span class="o">=</span><span class="k">$(</span>openssl<span class="w"> </span>rand<span class="w"> </span>-hex<span class="w"> </span><span class="m">32</span><span class="k">)</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">JOIN_KEY</span><span class="o">=</span><span class="k">$(</span>openssl<span class="w"> </span>rand<span class="w"> </span>-hex<span class="w"> </span><span class="m">32</span><span class="k">)</span>
+helm<span class="w"> </span>install<span class="w"> </span>artifactory-oss<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--set<span class="w"> </span>artifactory.masterKey<span class="o">=</span><span class="si">${</span><span class="nv">MASTER_KEY</span><span class="si">}</span><span class="w"> </span><span class="se">\ </span>
+<span class="w">  </span>--set<span class="w"> </span>artifactory.joinKey<span class="o">=</span><span class="si">${</span><span class="nv">JOIN_KEY</span><span class="si">}</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--set<span class="w"> </span>artifactory.nginx.enabled<span class="o">=</span><span class="nb">false</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--set<span class="w"> </span>artifactory.postgresql.enabled<span class="o">=</span><span class="nb">false</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--set<span class="w"> </span>postgresql.enabled<span class="o">=</span><span class="nb">false</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--set<span class="w"> </span>artifactory.artifactory.service.type<span class="o">=</span>NodePort<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--set<span class="w"> </span>artifactory.artifactory.resources.requests.cpu<span class="o">=</span><span class="s2">&quot;500m&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--set<span class="w"> </span>artifactory.artifactory.resources.limits.cpu<span class="o">=</span><span class="s2">&quot;2&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--set<span class="w"> </span>artifactory.artifactory.resources.requests.memory<span class="o">=</span><span class="s2">&quot;1Gi&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--set<span class="w"> </span>artifactory.artifactory.resources.limits.memory<span class="o">=</span><span class="s2">&quot;4Gi&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--set<span class="w"> </span>artifactory.artifactory.image.registry<span class="o">=</span>acrcdstest.azurecr.cn<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--set<span class="w"> </span>artifactory.artifactory.image.repository<span class="o">=</span>artifactory<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--set<span class="w"> </span>artifactory.artifactory.image.tag<span class="o">=</span>latest<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>jfrog/artifactory-oss<span class="w"> </span>-n<span class="w"> </span>artifactory<span class="w"> </span>-f<span class="w"> </span>values.yaml
+
+<span class="c1">#dryrun</span>
+helm<span class="w"> </span>install<span class="w"> </span>artifactory-oss<span class="w"> </span><span class="se">\</span>
+--set<span class="w"> </span>artifactory.masterKey<span class="o">=</span><span class="si">${</span><span class="nv">MASTER_KEY</span><span class="si">}</span><span class="w"> </span><span class="se">\</span>
+--set<span class="w"> </span>artifactory.joinKey<span class="o">=</span><span class="si">${</span><span class="nv">JOIN_KEY</span><span class="si">}</span><span class="w"> </span><span class="se">\</span>
+--set<span class="w"> </span>artifactory.nginx.enabled<span class="o">=</span><span class="nb">false</span><span class="w"> </span><span class="se">\</span>
+--set<span class="w"> </span>artifactory.postgresql.enabled<span class="o">=</span><span class="nb">false</span><span class="w"> </span><span class="se">\</span>
+--set<span class="w"> </span>postgresql.enabled<span class="o">=</span><span class="nb">false</span><span class="w"> </span><span class="se">\</span>
+--set<span class="w"> </span>artifactory.artifactory.service.type<span class="o">=</span>NodePort<span class="w"> </span><span class="se">\</span>
+--set<span class="w"> </span>artifactory.artifactory.resources.requests.cpu<span class="o">=</span><span class="s2">&quot;500m&quot;</span><span class="w"> </span><span class="se">\</span>
+--set<span class="w"> </span>artifactory.artifactory.resources.limits.cpu<span class="o">=</span><span class="s2">&quot;2&quot;</span><span class="w"> </span><span class="se">\</span>
+--set<span class="w"> </span>artifactory.artifactory.resources.requests.memory<span class="o">=</span><span class="s2">&quot;1Gi&quot;</span><span class="w"> </span><span class="se">\</span>
+--set<span class="w"> </span>artifactory.artifactory.resources.limits.memory<span class="o">=</span><span class="s2">&quot;4Gi&quot;</span><span class="w"> </span><span class="se">\</span>
+--set<span class="w"> </span>artifactory.artifactory.image.registry<span class="o">=</span>acrcdstest.azurecr.cn<span class="w"> </span><span class="se">\</span>
+--set<span class="w"> </span>artifactory.artifactory.image.repository<span class="o">=</span>artifactory<span class="w"> </span><span class="se">\</span>
+--set<span class="w"> </span>artifactory.artifactory.image.tag<span class="o">=</span>latest<span class="w"> </span><span class="se">\</span>
+--set<span class="w"> </span>router.image.registry<span class="o">=</span>acrcdstest.azurecr.cn<span class="w"> </span><span class="se">\</span>
+--set<span class="w"> </span>router.image.repository<span class="o">=</span>router<span class="w"> </span><span class="se">\</span>
+--set<span class="w"> </span>router.image.tag<span class="o">=</span><span class="m">7</span>.118.2<span class="w"> </span><span class="se">\</span>
+--set<span class="w"> </span>initContainers.image.registry<span class="o">=</span>acrcdstest.azurecr.cn<span class="w"> </span><span class="se">\</span>
+--set<span class="w"> </span>initContainers.image.repository<span class="o">=</span>ubi-minimal<span class="w"> </span><span class="se">\</span>
+--set<span class="w"> </span>initContainers.image.tag<span class="o">=</span><span class="m">9</span>.4.949.1716471857<span class="w"> </span><span class="se">\</span>
+jfrog/artifactory-oss<span class="w"> </span>-n<span class="w"> </span>artifactory<span class="w"> </span>-f<span class="w"> </span>values.yaml<span class="w"> </span>--dry-run<span class="w"> </span>--debug<span class="w"> </span>&gt;<span class="w"> </span>result.txt
+
+<span class="c1">##！！！initcontainer的image始终没办法修改成ACR里面的。。。</span>
+</code></pre></div>
+
+<ul>
+<li>uninstall</li>
+</ul>
+<div class="highlight"><pre><span></span><code>helm<span class="w"> </span>uninstall<span class="w"> </span>jfrog/artifactory-oss<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>sleep<span class="w"> </span><span class="m">90</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>kubectl<span class="w"> </span>delete<span class="w"> </span>pvc<span class="w"> </span>-l<span class="w"> </span><span class="nv">app</span><span class="o">=</span>artifactory
+</code></pre></div>
+
+<ul>
+<li>delete artifactory</li>
+</ul>
+<p><div class="callout callout-warning" markdown="1"><br />
+<p class="callout-title">Warning</p></p>
+<p>Deleting Artifactory will also delete your data volumes and you will lose all of your data. You must back up all this information before deletion. You do not need to uninstall Artifactory before deleting it.</p>
+</div>
+<div class="highlight"><pre><span></span><code>helm<span class="w"> </span>delete<span class="w"> </span>jfrog/artifactory-oss<span class="w"> </span>--namespace<span class="w"> </span>artifactory
+</code></pre></div>
+
+<hr />
+<h2 id="rancher安装artifactory">Rancher安装Artifactory</h2>
+<ul>
+<li>单独开一台虚机，启动rancher容器</li>
+</ul>
+<p><div class="callout callout-note" markdown="1"><br />
+<p class="callout-title">Note</p></p>
+<p>注意：Ubuntu 2204有bug导致容器中的K3S起不来：https://github.com/rancher/rancher/issues/36238</p>
+</div>
+<div class="highlight"><pre><span></span><code><span class="c1">#ubuntu 2004上安装latest rancher可以起来</span>
+docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>--restart<span class="o">=</span>unless-stopped<span class="w"> </span>-p<span class="w"> </span><span class="m">80</span>:80<span class="w"> </span>-p<span class="w"> </span><span class="m">443</span>:443<span class="w"> </span>--privileged<span class="w"> </span>acrcdstest.azurecr.cn/rancher:latest
+<span class="c1">#按照提示获取登录密码</span>
+</code></pre></div>
+
+<ul>
+<li>azure 创建 sp</li>
+</ul>
+<div class="highlight"><pre><span></span><code>az<span class="w"> </span>ad<span class="w"> </span>sp<span class="w"> </span>create-for-rbac<span class="w"> </span>--scope<span class="w"> </span>&lt;rg-resource-id&gt;<span class="w"> </span>--role<span class="w"> </span>Contributor
+</code></pre></div>
+
+<p><div class="callout callout-warning" markdown="1"><br />
+<p class="callout-title">Warning</p></p>
+<p>rancher无法导入AKS集群，他会默认集群在china east，导致无法获取到api version，但是这个配置无处改变，遂放弃</p>
+</div>
+<hr />
+<h2 id="artifactory-cpp-ce-helm部署到aks">Artifactory-cpp-ce-Helm部署到AKS</h2>
+<ul>
+<li>
+<p>外部azure pgsql先创建好</p>
+</li>
+<li>
+<p>helm文件配置</p>
+</li>
+<li>先在helm配置文件中修改image地址到ACR</li>
+<li>配置system.yaml中的database字段到外部azure pgsql（参数配置要找到对应的values.yaml），</li>
+<li>配置关闭nginx、内部pgsql等功能（找到外部和内部两个values.yaml）</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="c1">#key用手动生成的</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">MASTER_KEY</span><span class="o">=</span><span class="k">$(</span>openssl<span class="w"> </span>rand<span class="w"> </span>-hex<span class="w"> </span><span class="m">32</span><span class="k">)</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">JOIN_KEY</span><span class="o">=</span><span class="k">$(</span>openssl<span class="w"> </span>rand<span class="w"> </span>-hex<span class="w"> </span><span class="m">32</span><span class="k">)</span>
+helm<span class="w"> </span>install<span class="w"> </span>artifactory-cpp-ce<span class="w">  </span>./<span class="w"> </span><span class="se">\</span>
+--set<span class="w"> </span>artifactory.masterKey<span class="o">=</span><span class="si">${</span><span class="nv">MASTER_KEY</span><span class="si">}</span><span class="w"> </span><span class="se">\</span>
+--set<span class="w"> </span>artifactory.joinKey<span class="o">=</span><span class="si">${</span><span class="nv">JOIN_KEY</span><span class="si">}</span><span class="w"> </span><span class="se">\</span>
+--set<span class="w"> </span>artifactory.nginx.enabled<span class="o">=</span><span class="nb">false</span><span class="w"> </span><span class="se">\</span>
+--set<span class="w"> </span>artifactory.postgresql.enabled<span class="o">=</span><span class="nb">false</span><span class="w"> </span><span class="se">\</span>
+--set<span class="w"> </span>postgresql.enabled<span class="o">=</span><span class="nb">false</span><span class="w"> </span><span class="se">\</span>
+--set<span class="w"> </span>artifactory.artifactory.service.type<span class="o">=</span>NodePort<span class="w"> </span><span class="se">\</span>
+--set<span class="w"> </span>artifactory.artifactory.resources.requests.cpu<span class="o">=</span><span class="s2">&quot;500m&quot;</span><span class="w"> </span><span class="se">\</span>
+--set<span class="w"> </span>artifactory.artifactory.resources.limits.cpu<span class="o">=</span><span class="s2">&quot;2&quot;</span><span class="w"> </span><span class="se">\</span>
+--set<span class="w"> </span>artifactory.artifactory.resources.requests.memory<span class="o">=</span><span class="s2">&quot;1Gi&quot;</span><span class="w"> </span><span class="se">\</span>
+--set<span class="w"> </span>artifactory.artifactory.resources.limits.memory<span class="o">=</span><span class="s2">&quot;4Gi&quot;</span><span class="w"> </span><span class="se">\</span>
+-n<span class="w"> </span>artifactory<span class="w"> </span>-f<span class="w"> </span>values.yaml<span class="w"> </span><span class="c1">#--dry-run --debug &gt; result.txt</span>
+
+<span class="c1">#key用secret</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">MASTER_KEY</span><span class="o">=</span><span class="k">$(</span>openssl<span class="w"> </span>rand<span class="w"> </span>-hex<span class="w"> </span><span class="m">32</span><span class="k">)</span>
+<span class="nb">echo</span><span class="w"> </span><span class="si">${</span><span class="nv">MASTER_KEY</span><span class="si">}</span>
+kubectl<span class="w"> </span>create<span class="w"> </span>secret<span class="w"> </span>generic<span class="w"> </span>masterkey-secret<span class="w"> </span>-n<span class="w"> </span>artifactory<span class="w"> </span>--from-literal<span class="o">=</span>master-key<span class="o">=</span><span class="si">${</span><span class="nv">MASTER_KEY</span><span class="si">}</span>
+
+<span class="nb">export</span><span class="w"> </span><span class="nv">JOIN_KEY</span><span class="o">=</span><span class="k">$(</span>openssl<span class="w"> </span>rand<span class="w"> </span>-hex<span class="w"> </span><span class="m">32</span><span class="k">)</span>
+<span class="nb">echo</span><span class="w"> </span><span class="si">${</span><span class="nv">JOIN_KEY</span><span class="si">}</span>
+kubectl<span class="w"> </span>create<span class="w"> </span>secret<span class="w"> </span>generic<span class="w"> </span>joinkey-secret<span class="w"> </span>-n<span class="w"> </span>artifactory<span class="w"> </span>--from-literal<span class="o">=</span>join-key<span class="o">=</span><span class="si">${</span><span class="nv">JOIN_KEY</span><span class="si">}</span>
+
+helm<span class="w"> </span>install<span class="w"> </span>artifactory-cpp-ce<span class="w">  </span>./<span class="w"> </span><span class="se">\</span>
+--set<span class="w"> </span>artifactory.nginx.enabled<span class="o">=</span><span class="nb">false</span><span class="w"> </span><span class="se">\</span>
+--set<span class="w"> </span>artifactory.postgresql.enabled<span class="o">=</span><span class="nb">false</span><span class="w"> </span><span class="se">\</span>
+--set<span class="w"> </span>postgresql.enabled<span class="o">=</span><span class="nb">false</span><span class="w"> </span><span class="se">\</span>
+--set<span class="w"> </span>artifactory.artifactory.service.type<span class="o">=</span>NodePort<span class="w"> </span><span class="se">\</span>
+--set<span class="w"> </span>artifactory.artifactory.resources.requests.cpu<span class="o">=</span><span class="s2">&quot;500m&quot;</span><span class="w"> </span><span class="se">\</span>
+--set<span class="w"> </span>artifactory.artifactory.resources.limits.cpu<span class="o">=</span><span class="s2">&quot;2&quot;</span><span class="w"> </span><span class="se">\</span>
+--set<span class="w"> </span>artifactory.artifactory.resources.requests.memory<span class="o">=</span><span class="s2">&quot;1Gi&quot;</span><span class="w"> </span><span class="se">\</span>
+--set<span class="w"> </span>artifactory.artifactory.resources.limits.memory<span class="o">=</span><span class="s2">&quot;4Gi&quot;</span><span class="w"> </span><span class="se">\</span>
+-n<span class="w"> </span>artifactory<span class="w"> </span>-f<span class="w"> </span>values.yaml
+</code></pre></div>
+
+<ul>
+<li>internal LB代理pod，selector复制helm里面的tag进来。注意后面tag变化之后也要修改iLB的selector</li>
+</ul>
+<p>doc: https://docs.azure.cn/zh-cn/aks/internal-lb?tabs=set-service-annotations</p>
+<div class="highlight"><pre><span></span><code><span class="l l-Scalar l-Scalar-Plain">tee iLB.yaml &lt;&lt;&#39;EOF&#39;</span>
+<span class="l l-Scalar l-Scalar-Plain">apiVersion</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Service</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ilb-artifactory-cpp-demo</span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">artifactory</span>
+<span class="w">  </span><span class="nt">annotations</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">service.beta.kubernetes.io/azure-load-balancer-ipv4</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;internal-ip&gt;</span><span class="w"> </span><span class="c1"># fixed internal IP</span>
+<span class="w">    </span><span class="nt">service.beta.kubernetes.io/azure-load-balancer-internal</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;true&quot;</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">LoadBalancer</span>
+<span class="w">  </span><span class="nt">ports</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span>
+<span class="w">    </span><span class="nt">targetPort</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8082</span>
+<span class="w">  </span><span class="nt">selector</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">artifactory</span>
+<span class="w">    </span><span class="nt">component</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">artifactory</span>
+<span class="w">    </span><span class="nt">release</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">artifactory-cpp-ce</span>
+<span class="l l-Scalar l-Scalar-Plain">EOF</span>
+</code></pre></div>
+
+<ul>
+<li>查看release</li>
+</ul>
+<div class="highlight"><pre><span></span><code>helm<span class="w"> </span>list<span class="w"> </span>-n<span class="w"> </span>artifactory
+</code></pre></div>
+
+<ul>
+<li>升级release</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="c1">#cd到helm项目目录</span>
+helm<span class="w"> </span>upgrade<span class="w"> </span>artifactory-cpp-ce<span class="w"> </span>-n<span class="w"> </span>artifactory<span class="w"> </span>.
+</code></pre></div>
+
+<ul>
+<li>卸载release</li>
+</ul>
+<div class="highlight"><pre><span></span><code>helm<span class="w"> </span>uninstall<span class="w"> </span>artifactory-cpp-ce<span class="w"> </span>-n<span class="w"> </span>artifactory
+</code></pre></div>
+    </div>
+  </article>
+  <aside class="toc">
+    <p class="toc-label">本页目录</p>
+    <ul>
+  <li><a href="#related-notes">Related Notes</a></li>
+  <li><a href="#jfrog-artifactory-overview">JFrog Artifactory Overview</a></li>
+  <li><a href="#artifactory部署到aci">Artifactory部署到ACI</a><ul>
+  <li><a href="#prepare-vnet">Prepare Vnet</a></li>
+  <li><a href="#prepare-image">Prepare Image</a></li>
+  <li><a href="#prepare-storage">Prepare Storage</a></li>
+  <li><a href="#prepare-postgresql">Prepare PostgreSQL</a></li>
+  <li><a href="#aci-deployment">ACI Deployment</a></li>
+</ul></li>
+  <li><a href="#artifactory-docker部署到azure-vm">Artifactory-Docker部署到Azure VM</a></li>
+  <li><a href="#artifactory-deployment部署到aks">Artifactory Deployment部署到AKS</a></li>
+  <li><a href="#artifactory-helm部署到aks">Artifactory-Helm部署到AKS</a></li>
+  <li><a href="#rancher安装artifactory">Rancher安装Artifactory</a></li>
+  <li><a href="#artifactory-cpp-ce-helm部署到aks">Artifactory-cpp-ce-Helm部署到AKS</a></li>
+</ul>
+  </aside>
+
+</div>
+
+</main>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>Learning Notes</span>
+    <a href="https://github.com/hangx969/learning-notes">GitHub</a>
+  </div>
+</footer>
+<script src="../../static/search.js"></script>
+</body>
+</html>
