@@ -117,8 +117,8 @@ date: 2026-04-17
 
 | 页面 | 原始来源 | 摘要 |
 |------|---------|------|
-| [k8s-report-skills](sources/k8s-report-skills-summary.md) | [AI/skills/k8s-report-skills](../AI/skills/k8s-report-skills/SKILL.md) | Python 版：kubernetes 客户端 + Jinja2，6 大巡检维度，Agent API 集成 |
-| ↑ 同上 | [AI/skills/k8s-inspect-skills](../AI/skills/k8s-inspect-skills/SKILL.md) | Shell 版：kubectl + 深色仪表盘 HTML，7 大模块含证书/网络检查 |
+| [k8s-report-skills](sources/k8s-report-skills-summary.md) | [AI/skills/k8s-report-skills](AI/AIOps/AIOps-skills/k8s-report-skills/SKILL.md) | Python 版：kubernetes 客户端 + Jinja2，6 大巡检维度，Agent API 集成 |
+| ↑ 同上 | [AI/skills/k8s-inspect-skills](AI/AIOps/AIOps-skills/k8s-inspect-skills/SKILL.md) | Shell 版：kubectl + 深色仪表盘 HTML，7 大模块含证书/网络检查 |
 
 ### AI/agents（OpenClaw 多智能体定义 ✅）
 

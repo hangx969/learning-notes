@@ -12,7 +12,7 @@ sources:
   - "[[AI/OpenClaw/CoPaw]]"
   - "[[AI/OpenClaw/Ubuntu-2510-Setup-Guide]]"
   - "[[AI/OpenClaw/OpenClaw-Workspace-运维]]"
-  - "[[AI/agents/aiops/IDENTITY.md]]"
+  - "[[AI/AIOps/agents身份文件/aiops/IDENTITY]]"
   - "[[AI/OpenClaw/OpenClaw-K8s智能运维实战]]"
   - "[[AI/OpenClaw/飞书CLI画板-一句话生成架构图]]"
 ---
@@ -107,14 +107,14 @@ OpenClaw 和 [[KnowledgeBase/entities/Claude-Code|Claude Code]] 同属 AI Agent 
 
 | 智能体 | 角色 | 附带 Skills |
 |--------|------|-------------|
-| [[AI/agents/aiops/IDENTITY.md\|aiops]] | AIOps 架构师（调度核心） | k8s-install-orchestrator |
-| [[AI/agents/linux/IDENTITY.md\|linux]] | Linux 专家 | rocky-linux10-init |
-| [[AI/agents/container/IDENTITY.md\|container]] | 容器专家 | docker-runtime-install |
-| [[AI/agents/k8s/IDENTITY.md\|k8s]] | K8s 专家 | k8s-cluster-install |
-| [[AI/agents/architect/IDENTITY.md\|architect]] | 架构师 | — |
-| [[AI/agents/backend-engineer/IDENTITY.md\|backend]] | 后端工程师 | — |
-| [[AI/agents/frontend-engineer/IDENTITY.md\|frontend]] | 前端工程师 | — |
-| [[AI/agents/pm/IDENTITY.md\|pm]] | 产品经理 | — |
+| [[AI/AIOps/agents身份文件/aiops/IDENTITY\|aiops]] | AIOps 架构师（调度核心） | k8s-install-orchestrator |
+| [[AI/AIOps/agents身份文件/linux/IDENTITY\|linux]] | Linux 专家 | rocky-linux10-init |
+| [[AI/AIOps/agents身份文件/container/IDENTITY\|container]] | 容器专家 | docker-runtime-install |
+| [[AI/AIOps/agents身份文件/k8s/IDENTITY\|k8s]] | K8s 专家 | k8s-cluster-install |
+| [[AI/AIOps/agents身份文件/architect/IDENTITY\|architect]] | 架构师 | — |
+| [[AI/AIOps/agents身份文件/backend-engineer/IDENTITY\|backend]] | 后端工程师 | — |
+| [[AI/AIOps/agents身份文件/frontend-engineer/IDENTITY\|frontend]] | 前端工程师 | — |
+| [[AI/AIOps/agents身份文件/pm/IDENTITY\|pm]] | 产品经理 | — |
 
 ## 关联概念
 - [[KnowledgeBase/entities/Claude-Code|Claude-Code]]

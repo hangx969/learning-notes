@@ -9,8 +9,8 @@ sources:
   - "[[AI/ClaudeCode/Claude Code 扩展体系]]"
   - "[[AI/ClaudeCode/多智能体协作-Subagents与Agent-Teams]]"
   - "[[AI/Obsidian/obsidian-claude-code-AI知识库完整指南]]"
-  - "[[AI/skills/k8s-report-skills/SKILL.md]]"
-  - "[[AI/skills/k8s-inspect-skills/SKILL.md]]"
+  - "[[AI/AIOps/AIOps-skills/k8s-report-skills/SKILL]]"
+  - "[[AI/AIOps/AIOps-skills/k8s-inspect-skills/SKILL]]"
   - "[[AI/ClaudeCode/Claude-Skill质检工具-SkillCraft]]"
   - "[[AI/ClaudeCode/Claude-Code-Harness实战-最小可用系统]]"
   - "[[AI/行业动态/Claude-Code创始人红杉大会七个判断]]"
@@ -213,8 +213,8 @@ Plugin 是应用级打包容器，将多种扩展机制捆绑为一个可分发�
 - [[AI/ClaudeCode/Claude Code 扩展体系]]：四层扩展机制全解——MCP（10+ 服务器配置）、Skills（3 层使用模式 + 质量治理 + excalidraw-diagram-generator 等开源推荐）、Slash Commands（手动工作流）、Plugin（打包分发）
 - [[AI/ClaudeCode/多智能体协作-Subagents与Agent-Teams]]：SubAgent（5 组件架构、适用场景评级）+ Agent Teams（Team Lead/Teammates/Task List/Mailbox、竞争假设调试）+ 开源 Agent 生态（wshobson/agents：112 个 Agent、72 个插件）
 - [[AI/Obsidian/obsidian-claude-code-AI知识库完整指南]]：Obsidian 集成方案（Claudian + Skills + MCP）、Markdown 母语论证、30 分钟上手路径、Karpathy Wiki 三层架构
-- [[AI/skills/k8s-report-skills/SKILL.md]]：自研 K8s 巡检 Skill（Python 版）——kubernetes 客户端 + Jinja2 HTML 报告，Agent API 集成
-- [[AI/skills/k8s-inspect-skills/SKILL.md]]：自研 K8s 巡检 Skill（Shell 版）——kubectl + 深色仪表盘 HTML 报告，7 大巡检模块含证书和网络检查
+- [[AI/AIOps/AIOps-skills/k8s-report-skills/SKILL]]：自研 K8s 巡检 Skill（Python 版）——kubernetes 客户端 + Jinja2 HTML 报告，Agent API 集成
+- [[AI/AIOps/AIOps-skills/k8s-inspect-skills/SKILL]]：自研 K8s 巡检 Skill（Shell 版）——kubectl + 深色仪表盘 HTML 报告，7 大巡检模块含证书和网络检查
 - [[KnowledgeBase/sources/ClaudeCode基础指南-summary|ClaudeCode基础指南摘要]]：3 种模式、Extended Thinking、Claude.md、5 大实战场景
 - [[KnowledgeBase/sources/Claude-Code扩展体系-summary|扩展体系摘要]]：MCP/Skills/Slash Commands/Plugin 四层扩展
 - [[KnowledgeBase/sources/obsidian-claude-AI知识库完整指南-summary|AI知识库完整指南摘要]]：Claudian/Skills/MCP 三种集成方式、Markdown 母语论证、Karpathy Wiki 三层架构

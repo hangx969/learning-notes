@@ -7,10 +7,10 @@ tags:
 date: 2026-04-18
 sources:
   - "[[AI/OpenClaw/Openclaw-多智能体]]"
-  - "[[AI/agents/aiops/IDENTITY.md]]"
-  - "[[AI/agents/k8s/IDENTITY.md]]"
-  - "[[AI/agents/linux/IDENTITY.md]]"
-  - "[[AI/agents/container/IDENTITY.md]]"
+  - "[[AI/AIOps/agents身份文件/aiops/IDENTITY]]"
+  - "[[AI/AIOps/agents身份文件/k8s/IDENTITY]]"
+  - "[[AI/AIOps/agents身份文件/linux/IDENTITY]]"
+  - "[[AI/AIOps/agents身份文件/container/IDENTITY]]"
 aliases:
   - agents-export
 ---

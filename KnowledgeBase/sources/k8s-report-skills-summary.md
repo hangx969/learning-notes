@@ -6,10 +6,10 @@ tags:
   - kubernetes/monitoring
 date: 2026-04-17
 sources:
-  - "[[AI/skills/k8s-report-skills/SKILL.md]]"
-  - "[[AI/skills/k8s-report-skills/k8s_inspector.py]]"
-  - "[[AI/skills/k8s-inspect-skills/SKILL.md]]"
-  - "[[AI/skills/k8s-inspect-skills/k8s_inspect.sh]]"
+  - "[[AI/AIOps/AIOps-skills/k8s-report-skills/SKILL]]"
+  - "[[k8s_inspector.py]]"
+  - "[[AI/AIOps/AIOps-skills/k8s-inspect-skills/SKILL]]"
+  - "[[k8s_inspect.sh]]"
 aliases:
   - k8s-report-skills
   - k8s-inspect-skills

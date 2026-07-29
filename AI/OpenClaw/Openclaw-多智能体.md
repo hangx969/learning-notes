@@ -399,13 +399,13 @@ openclaw agents add frontend-engineer --workspace ~/.openclaw/workspace-frontend
 可以主动调用self-improving skill来自我进化。
 ```
 #### AGENTS.md
-→ [[AI/agents/architect/AGENTS.md]]
+→ [[AI/AIOps/agents身份文件/architect/AGENTS]]
 
 #### IDENTITY.md
-→ [[AI/agents/architect/IDENTITY.md]]
+→ [[AI/AIOps/agents身份文件/architect/IDENTITY]]
 
 #### SOUL.md
-→ [[AI/agents/architect/SOUL.md]]
+→ [[AI/AIOps/agents身份文件/architect/SOUL]]
 
 ### PM
 #### Prompt
@@ -414,13 +414,13 @@ openclaw agents add frontend-engineer --workspace ~/.openclaw/workspace-frontend
 ```
 
 #### AGENTS.md
-→ [[AI/agents/pm/AGENTS.md]]
+→ [[AI/AIOps/agents身份文件/pm/AGENTS]]
 
 #### IDENTITY.md
-→ [[AI/agents/pm/IDENTITY.md]]
+→ [[AI/AIOps/agents身份文件/pm/IDENTITY]]
 
 #### SOUL.md
-→ [[AI/agents/pm/SOUL.md]]
+→ [[AI/AIOps/agents身份文件/pm/SOUL]]
 
 ### 前端
 #### Prompt
@@ -429,13 +429,13 @@ openclaw agents add frontend-engineer --workspace ~/.openclaw/workspace-frontend
 ```
 
 #### AGENTS.md
-→ [[AI/agents/frontend-engineer/AGENTS.md]]
+→ [[AI/AIOps/agents身份文件/frontend-engineer/AGENTS]]
 
 #### IDENTITY.md
-→ [[AI/agents/frontend-engineer/IDENTITY.md]]
+→ [[AI/AIOps/agents身份文件/frontend-engineer/IDENTITY]]
 
 #### SOUL.md
-→ [[AI/agents/frontend-engineer/SOUL.md]]
+→ [[AI/AIOps/agents身份文件/frontend-engineer/SOUL]]
 
 ### 后端
 #### Prompt
@@ -444,13 +444,13 @@ openclaw agents add frontend-engineer --workspace ~/.openclaw/workspace-frontend
 ```
 
 #### AGENTS.md
-→ [[AI/agents/backend-engineer/AGENTS.md]]
+→ [[AI/AIOps/agents身份文件/backend-engineer/AGENTS]]
 
 #### IDENTITY.md
-→ [[AI/agents/backend-engineer/IDENTITY.md]]
+→ [[AI/AIOps/agents身份文件/backend-engineer/IDENTITY]]
 
 #### SOUL.md
-→ [[AI/agents/backend-engineer/SOUL.md]]
+→ [[AI/AIOps/agents身份文件/backend-engineer/SOUL]]
 
 # 实现多智能体AIOps团队
 
@@ -487,14 +487,14 @@ k8s：负责K8s相关工作的处理
 ```
 
 #### AGENTS.md
-→ [[AI/agents/aiops/AGENTS.md]]
+→ [[AI/AIOps/agents身份文件/aiops/AGENTS]]
 
 
 #### IDENTITY.md
-→ [[AI/agents/aiops/IDENTITY.md]]
+→ [[AI/AIOps/agents身份文件/aiops/IDENTITY]]
 
 #### SOUL.md
-→ [[AI/agents/aiops/SOUL.md]]
+→ [[AI/AIOps/agents身份文件/aiops/SOUL]]
 
 
 ### linux专家
@@ -512,14 +512,14 @@ Linux专家智能体，只处理Linux相关工作，不处理任何容器、K8s�
 ```
 
 #### AGENTS.md
-→ [[AI/agents/linux/AGENTS.md]]
+→ [[AI/AIOps/agents身份文件/linux/AGENTS]]
 
 
 #### IDENTITY.md
-→ [[AI/agents/linux/IDENTITY.md]]
+→ [[AI/AIOps/agents身份文件/linux/IDENTITY]]
 
 #### SOUL.md
-→ [[AI/agents/linux/SOUL.md]]
+→ [[AI/AIOps/agents身份文件/linux/SOUL]]
 
 
 ### container专家
@@ -536,14 +536,14 @@ Linux专家智能体，只处理Linux相关工作，不处理任何容器、K8s�
 ```
 
 #### AGENTS.md
-→ [[AI/agents/container/AGENTS.md]]
+→ [[AI/AIOps/agents身份文件/container/AGENTS]]
 
 
 #### IDENTITY.md
-→ [[AI/agents/container/IDENTITY.md]]
+→ [[AI/AIOps/agents身份文件/container/IDENTITY]]
 
 #### SOUL.md
-→ [[AI/agents/container/SOUL.md]]
+→ [[AI/AIOps/agents身份文件/container/SOUL]]
 
 
 ### k8s专家
@@ -560,13 +560,13 @@ K8s专家智能体，只处理K8s相关工作，不处理任何Linux、容器方
 ```
 
 #### AGENTS.md
-→ [[AI/agents/k8s/AGENTS.md]]
+→ [[AI/AIOps/agents身份文件/k8s/AGENTS]]
 
 #### IDENTITY.md
-→ [[AI/agents/k8s/IDENTITY.md]]
+→ [[AI/AIOps/agents身份文件/k8s/IDENTITY]]
 
 #### SOUL.md
-→ [[AI/agents/k8s/SOUL.md]]
+→ [[AI/AIOps/agents身份文件/k8s/SOUL]]
 
 
 ## Skills开发
@@ -576,7 +576,7 @@ K8s专家智能体，只处理K8s相关工作，不处理任何Linux、容器方
 
 ### linux初始化skills
 这里以rockylinux的命令为例：
-→ 生成的 Skill 文件：[[AI/agents/linux/skills/rocky-linux10-init/SKILL.md]]
+→ 生成的 Skill 文件：[[AI/AIOps/agents身份文件/linux/skills/rocky-linux10-init/SKILL]]
 
 #### Prompt
 ```text
@@ -606,7 +606,7 @@ K8s专家智能体，只处理K8s相关工作，不处理任何Linux、容器方
 
 ### 容器运行时安装Skill
 
-→ 生成的 Skill 文件：[[AI/agents/container/skills/docker-runtime-install/SKILL.md]]
+→ 生成的 Skill 文件：[[AI/AIOps/agents身份文件/container/skills/docker-runtime-install/SKILL]]
 
 #### Prompt
 ```text
@@ -635,7 +635,7 @@ ClaWHub 上有一个可以直接用：[docker-essentials](https://clawhub.ai/arn
 
 ### k8s安装skill
 
-→ 生成的 Skill 文件：[[AI/agents/k8s/skills/k8s-cluster-install/SKILL.md]]
+→ 生成的 Skill 文件：[[AI/AIOps/agents身份文件/k8s/skills/k8s-cluster-install/SKILL]]
 
 #### Prompt
 ```text
@@ -662,7 +662,7 @@ ClaWHub 上有一个可以直接用：[docker-essentials](https://clawhub.ai/arn
 
 ### 任务编排skill
 
-→ 生成的 Skill 文件：[[AI/agents/aiops/skills/k8s-install-orchestrator/SKILL.md]]
+→ 生成的 Skill 文件：[[AI/AIOps/agents身份文件/aiops/skills/k8s-install-orchestrator/SKILL]]
 
 #### Prompt
 ```text
