@@ -1,0 +1,1160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Infrastructure Well-Architected Review</title>
+<style>
+  :root {
+    --hc-dark: #15181e;
+    --hc-deep: #0d0e12;
+    --hc-white: #ffffff;
+    --hc-light-bg: #f1f2f3;
+    --hc-text-on-dark: #efeff1;
+    --hc-text-secondary: #d5d7db;
+    --hc-text-on-light: #3b3d45;
+    --hc-helper: #656a76;
+    --hc-border: rgb(97, 104, 117);
+    --hc-border-light: rgba(178, 182, 189, 0.4);
+    --hc-terraform: #7b42bc;
+    --hc-action-blue: #1060ff;
+    --hc-link-blue: #2264d6;
+    --hc-bright-blue: #2b89ff;
+    --hc-amber: #bb5a00;
+    --hc-amber-light: #fbeabf;
+    --hc-red: #c62828;
+    --hc-red-deep: #731e25;
+    --hc-score-green: #43a047;
+    --hc-score-yellow: #f9a825;
+    --hc-score-red: #e53935;
+    --hc-shadow: rgba(97, 104, 117, 0.05) 0px 1px 1px, rgba(97, 104, 117, 0.05) 0px 2px 2px;
+  }
+
+  html { scroll-behavior: smooth; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    background: var(--hc-white);
+    color: var(--hc-text-on-light);
+    line-height: 1.63;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Navigation */
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--hc-dark);
+    border-bottom: 1px solid var(--hc-border);
+    padding: 16px 0;
+  }
+  .nav-inner {
+    max-width: 1150px;
+    margin: 0 auto;
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .nav-brand {
+    font-size: 19px;
+    font-weight: 700;
+    color: var(--hc-text-on-dark);
+    letter-spacing: -0.2px;
+  }
+  .nav-meta {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--hc-helper);
+    text-transform: uppercase;
+    letter-spacing: 1.3px;
+  }
+
+  /* Container */
+  .container {
+    max-width: 1150px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  /* Hero / Executive Summary */
+  .hero {
+    padding: 64px 0 48px;
+    text-align: center;
+    background: var(--hc-white);
+  }
+  .hero .subtitle {
+    font-size: 22px;
+    font-weight: 600;
+    line-height: 1.50;
+    color: #000000;
+    max-width: 800px;
+    margin: 0 auto 24px;
+    font-feature-settings: "kern";
+  }
+
+  /* Overall Score Badge */
+  .overall-score {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 20px;
+    border-radius: 5px;
+    font-size: 18px;
+    font-weight: 600;
+  }
+  .overall-score__number {
+    font-size: 36px;
+    font-weight: 700;
+    font-feature-settings: "kern";
+  }
+  .score--green {
+    background: rgba(67, 160, 71, 0.12);
+    color: var(--hc-score-green);
+    border: 1px solid rgba(67, 160, 71, 0.35);
+  }
+  .score--yellow {
+    background: rgba(249, 168, 37, 0.12);
+    color: var(--hc-score-yellow);
+    border: 1px solid rgba(249, 168, 37, 0.35);
+  }
+  .score--red {
+    background: rgba(229, 57, 53, 0.12);
+    color: var(--hc-score-red);
+    border: 1px solid rgba(229, 57, 53, 0.35);
+  }
+
+  /* Section Divider */
+  .section-divider {
+    border: none;
+    border-top: 1px solid var(--hc-border-light);
+    margin: 0;
+  }
+
+  /* Score Dashboard */
+  .score-dashboard {
+    padding: 48px 0;
+    background: var(--hc-light-bg);
+  }
+  .score-dashboard__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+    align-items: center;
+  }
+
+  /* Radar Chart */
+  .radar-chart {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .radar-chart svg {
+    max-width: 360px;
+    width: 100%;
+    height: auto;
+  }
+  .radar-chart .grid-line {
+    fill: none;
+    stroke: var(--hc-border-light);
+    stroke-width: 1;
+  }
+  .radar-chart .grid-line-mid {
+    stroke-dasharray: 4 4;
+  }
+  .radar-chart .axis-line {
+    stroke: var(--hc-border-light);
+    stroke-width: 1;
+  }
+  .radar-chart .score-area {
+    fill: rgba(123, 66, 188, 0.15);
+    stroke: var(--hc-terraform);
+    stroke-width: 2.5;
+  }
+  .radar-chart .score-point {
+    fill: var(--hc-terraform);
+    r: 5;
+  }
+  .radar-chart .axis-label {
+    font-size: 13px;
+    font-weight: 600;
+    fill: var(--hc-text-on-light);
+    text-anchor: middle;
+    dominant-baseline: middle;
+    text-transform: uppercase;
+    letter-spacing: 1.3px;
+  }
+  .radar-chart .score-label {
+    font-size: 14px;
+    font-weight: 700;
+    text-anchor: middle;
+    dominant-baseline: middle;
+  }
+
+  /* Pillar Score Cards */
+  .pillar-scores {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .pillar-score-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--hc-white);
+    border: 1px solid var(--hc-border-light);
+    border-radius: 8px;
+    padding: 16px 20px;
+    box-shadow: var(--hc-shadow);
+    transition: border-color 0.2s ease;
+  }
+  .pillar-score-card:hover {
+    border-color: var(--hc-terraform);
+  }
+  .pillar-score-card__name {
+    font-size: 15px;
+    font-weight: 600;
+    color: #000000;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+  }
+  .pillar-score-card__name:hover {
+    color: var(--hc-link-blue);
+  }
+  .pillar-score-card__badge {
+    font-size: 20px;
+    font-weight: 700;
+    padding: 4px 14px;
+    border-radius: 5px;
+    min-width: 70px;
+    text-align: center;
+  }
+  .badge--green {
+    background: rgba(67, 160, 71, 0.12);
+    color: var(--hc-score-green);
+    border: 1px solid rgba(67, 160, 71, 0.30);
+  }
+  .badge--yellow {
+    background: rgba(249, 168, 37, 0.12);
+    color: var(--hc-score-yellow);
+    border: 1px solid rgba(249, 168, 37, 0.30);
+  }
+  .badge--red {
+    background: rgba(229, 57, 53, 0.12);
+    color: var(--hc-score-red);
+    border: 1px solid rgba(229, 57, 53, 0.30);
+  }
+  .pillar-score-card__weight {
+    font-size: 12px;
+    color: var(--hc-helper);
+    margin-left: 8px;
+  }
+
+  /* Pillar Section Header */
+  .pillar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .pillar-header h2 {
+    font-size: 34px;
+    font-weight: 700;
+    line-height: 1.18;
+    font-feature-settings: "kern";
+  }
+  .pillar-header__badge {
+    font-size: 24px;
+    font-weight: 700;
+    padding: 6px 18px;
+    border-radius: 5px;
+    flex-shrink: 0;
+  }
+
+  /* Collapsible Severity Sections */
+  .severity-group {
+    margin-bottom: 8px;
+  }
+  .severity-group summary {
+    list-style: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    border-radius: 5px;
+    font-size: 14px;
+    font-weight: 600;
+    user-select: none;
+    transition: background 0.15s ease;
+  }
+  .severity-group summary::-webkit-details-marker { display: none; }
+  .severity-group summary::before {
+    content: "+";
+    font-size: 16px;
+    font-weight: 700;
+    width: 20px;
+    text-align: center;
+    flex-shrink: 0;
+    color: var(--hc-helper);
+  }
+  .severity-group[open] summary::before {
+    content: "\2212";
+  }
+  .severity-group--critical summary {
+    background: rgba(229, 57, 53, 0.08);
+    color: var(--hc-score-red);
+    border: 1px solid rgba(229, 57, 53, 0.25);
+  }
+  .severity-group--warning summary {
+    background: rgba(187, 90, 0, 0.08);
+    color: var(--hc-amber);
+    border: 1px solid rgba(187, 90, 0, 0.25);
+  }
+  .severity-group--info summary {
+    background: rgba(16, 96, 255, 0.08);
+    color: var(--hc-action-blue);
+    border: 1px solid rgba(16, 96, 255, 0.25);
+  }
+  .severity-group__count {
+    font-weight: 700;
+    font-size: 16px;
+  }
+  .severity-group .issue-list {
+    margin-top: 8px;
+  }
+
+  /* Dark Section — light mode: uses #f1f2f3 background */
+  .dark-section {
+    background: var(--hc-light-bg);
+    padding: 64px 0;
+    margin: 0 -9999px;
+    padding-left: 9999px;
+    padding-right: 9999px;
+  }
+  .dark-section .container {
+    max-width: 1150px;
+    margin: 0 auto;
+  }
+  .dark-section .pillar-header h2 {
+    color: #000000;
+  }
+
+  /* Light Section — light mode: uses white background */
+  .light-section {
+    padding: 64px 0;
+    background: var(--hc-white);
+    margin: 0 -9999px;
+    padding-left: 9999px;
+    padding-right: 9999px;
+  }
+  .light-section .container {
+    max-width: 1150px;
+    margin: 0 auto;
+  }
+  .light-section .pillar-header h2 {
+    color: #000000;
+  }
+
+  /* Issue Cards */
+  .issue-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .issue-card {
+    background: var(--hc-white);
+    border: 1px solid var(--hc-border-light);
+    border-radius: 8px;
+    padding: 20px;
+    transition: box-shadow 0.2s ease;
+    box-shadow: var(--hc-shadow);
+  }
+  .issue-card:hover {
+    box-shadow: rgba(97, 104, 117, 0.1) 0px 2px 8px, rgba(97, 104, 117, 0.08) 0px 4px 12px;
+  }
+  .issue-card__header {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+  .issue-card__icon {
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+  }
+  .issue-card__icon--critical {
+    background: var(--hc-score-red);
+    color: var(--hc-white);
+  }
+  .issue-card__icon--warning {
+    background: var(--hc-amber);
+    color: var(--hc-white);
+  }
+  .issue-card__icon--info {
+    background: var(--hc-action-blue);
+    color: var(--hc-white);
+  }
+  .issue-card__title {
+    font-size: 17px;
+    font-weight: 700;
+    line-height: 1.25;
+    color: #000000;
+  }
+  .issue-card__body {
+    font-size: 14px;
+    line-height: 1.63;
+    color: var(--hc-text-on-light);
+    padding-left: 34px;
+  }
+  .issue-card__file {
+    display: inline-block;
+    margin-top: 6px;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 13px;
+    color: var(--hc-terraform);
+    background: rgba(123, 66, 188, 0.10);
+    padding: 2px 8px;
+    border-radius: 3px;
+  }
+  .issue-card__fix {
+    margin-top: 8px;
+    font-size: 13px;
+    color: var(--hc-score-green);
+    padding-left: 34px;
+  }
+
+  /* Light surface issue cards — on white sections, use light-bg to contrast */
+  .issue-card--light {
+    background: var(--hc-light-bg);
+    border: 1px solid var(--hc-border-light);
+  }
+  .issue-card--light:hover {
+    box-shadow: rgba(97, 104, 117, 0.08) 0px 2px 8px, rgba(97, 104, 117, 0.06) 0px 4px 12px;
+  }
+  .issue-card--light .issue-card__title { color: #000000; }
+  .issue-card--light .issue-card__body { color: var(--hc-text-on-light); }
+  .issue-card--light .issue-card__file { color: var(--hc-terraform); }
+  .issue-card--light .issue-card__fix { color: var(--hc-score-green); }
+
+  /* Empty State */
+  .empty-state {
+    text-align: center;
+    padding: 32px 24px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+  }
+  .empty-state--dark {
+    background: var(--hc-white);
+    border: 1px solid var(--hc-border-light);
+  }
+  .empty-state--dark p { color: var(--hc-helper); font-size: 15px; }
+  .empty-state--light {
+    background: var(--hc-light-bg);
+    border: 1px solid var(--hc-border-light);
+  }
+  .empty-state--light p { color: var(--hc-helper); font-size: 15px; }
+
+  /* Context lead text */
+  .context-lead {
+    font-size: 16px;
+    font-weight: 400;
+    color: var(--hc-text-on-light);
+    margin-bottom: 12px;
+    line-height: 1.63;
+  }
+
+  /* Context Section */
+  .context-section {
+    padding: 48px 0;
+    background: var(--hc-white);
+    margin: 0 -9999px;
+    padding-left: 9999px;
+    padding-right: 9999px;
+  }
+  .context-section .container {
+    max-width: 1150px;
+    margin: 0 auto;
+  }
+
+  /* Subsection Header */
+  .subsection-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .subsection-header--bordered {
+    margin-top: 40px;
+    padding-top: 24px;
+    border-top: 1px solid var(--hc-border);
+  }
+  .subsection-header h3 {
+    font-size: 26px;
+    font-weight: 700;
+    color: #000000;
+    font-feature-settings: "kern";
+    line-height: 1.19;
+  }
+  .subsection-header__icon {
+    font-size: 22px;
+  }
+
+  /* Region tags — uniform color */
+  .region-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .region-tag {
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 3px 7px;
+    border-radius: 5px;
+    color: var(--hc-terraform);
+    background: rgba(123, 66, 188, 0.08);
+    border: 1px solid rgba(123, 66, 188, 0.25);
+  }
+
+  /* Expand/Collapse Button */
+  .expand-toggle {
+    margin-top: 8px;
+    margin-bottom: 16px;
+  }
+  .expand-toggle summary {
+    list-style: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 9px 15px;
+    border: 1px solid var(--hc-border-light);
+    border-radius: 5px;
+    background: var(--hc-white);
+    color: var(--hc-text-on-light);
+    font-size: 14px;
+    font-weight: 500;
+    user-select: none;
+    transition: background 0.15s ease, border-color 0.15s ease;
+    box-shadow: var(--hc-shadow);
+  }
+  .expand-toggle summary::-webkit-details-marker { display: none; }
+  .expand-toggle summary:hover {
+    border-color: var(--hc-terraform);
+    color: #000000;
+  }
+  .expand-toggle summary::after {
+    content: " \25BC";
+    font-size: 10px;
+    color: var(--hc-helper);
+  }
+  .expand-toggle[open] summary::after {
+    content: " \25B2";
+  }
+  .expand-toggle .expand-content {
+    margin-top: 16px;
+  }
+
+  /* Regional Impact Section */
+  .region-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 16px;
+    margin-top: 16px;
+  }
+  .region-card {
+    background: var(--hc-light-bg);
+    border: 1px solid var(--hc-border-light);
+    border-radius: 8px;
+    padding: 24px;
+    box-shadow: var(--hc-shadow);
+  }
+  .region-card__title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--hc-text-on-light);
+    text-transform: uppercase;
+    letter-spacing: 1.3px;
+    margin-bottom: 12px;
+  }
+  .region-resource-list {
+    list-style: none;
+    padding: 0;
+  }
+  .region-resource-list li {
+    font-size: 14px;
+    line-height: 1.63;
+    color: var(--hc-text-on-light);
+    padding: 4px 0 4px 20px;
+    position: relative;
+  }
+  .region-resource-list li::before {
+    content: "\203A";
+    position: absolute;
+    left: 4px;
+    color: var(--hc-terraform);
+    font-weight: 700;
+  }
+  .region-summary {
+    margin-top: 24px;
+    font-size: 15px;
+    line-height: 1.63;
+    color: var(--hc-text-on-light);
+    background: var(--hc-light-bg);
+    border: 1px solid var(--hc-border-light);
+    border-radius: 8px;
+    padding: 24px;
+  }
+
+  /* Cost Estimation Section */
+  .cost-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+  .cost-summary-card {
+    background: var(--hc-light-bg);
+    border: 1px solid var(--hc-border-light);
+    border-radius: 8px;
+    padding: 24px;
+    text-align: center;
+    box-shadow: var(--hc-shadow);
+  }
+  .cost-summary-card__label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--hc-helper);
+    text-transform: uppercase;
+    letter-spacing: 1.3px;
+    margin-bottom: 8px;
+  }
+  .cost-summary-card__value {
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--hc-score-green);
+    line-height: 1.10;
+    font-feature-settings: "kern";
+  }
+  .cost-summary-card__value--total {
+    color: #000000;
+  }
+  .cost-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 16px;
+    font-size: 14px;
+  }
+  .cost-table caption {
+    font-size: 19px;
+    font-weight: 700;
+    color: #000000;
+    text-align: left;
+    padding-bottom: 16px;
+    font-feature-settings: "kern";
+  }
+  .cost-table th {
+    text-align: left;
+    padding: 12px 16px;
+    color: var(--hc-helper);
+    font-weight: 600;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 1.3px;
+    border-bottom: 1px solid var(--hc-border-light);
+  }
+  .cost-table td {
+    padding: 12px 16px;
+    color: var(--hc-text-on-light);
+    border-bottom: 1px solid var(--hc-border-light);
+  }
+  .cost-table tr:last-child td { border-bottom: none; }
+  .cost-table .cost-value {
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    color: var(--hc-score-green);
+    font-weight: 600;
+  }
+  .cost-table .cost-resource {
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    color: var(--hc-terraform);
+    font-size: 13px;
+  }
+  .cost-breakdown {
+    background: var(--hc-light-bg);
+    border: 1px solid var(--hc-border-light);
+    border-radius: 8px;
+    padding: 24px;
+    margin-top: 16px;
+  }
+
+  /* Production Notice Banner */
+  .prod-notice {
+    margin-top: 32px;
+    background: rgba(115, 30, 37, 0.08);
+    border: 1px solid rgba(115, 30, 37, 0.30);
+    border-radius: 8px;
+    padding: 32px;
+  }
+  .prod-notice__header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .prod-notice__icon { font-size: 20px; }
+  .prod-notice__title {
+    font-size: 19px;
+    font-weight: 700;
+    line-height: 1.21;
+    color: #000000;
+    font-feature-settings: "kern";
+  }
+  .prod-notice__label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--hc-helper);
+    text-transform: uppercase;
+    letter-spacing: 1.3px;
+    margin-bottom: 8px;
+  }
+  .prod-notice__envs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+  .prod-notice__env-tag {
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 13px;
+    color: var(--hc-score-red);
+    background: rgba(229, 57, 53, 0.10);
+    padding: 3px 7px;
+    border-radius: 5px;
+    font-weight: 600;
+    border: 1px solid rgba(229, 57, 53, 0.30);
+  }
+  .prod-notice__resources,
+  .prod-notice__risks {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 20px;
+  }
+  .prod-notice__resources li,
+  .prod-notice__risks li {
+    font-size: 15px;
+    line-height: 1.63;
+    color: var(--hc-text-on-light);
+    padding: 4px 0 4px 20px;
+    position: relative;
+  }
+  .prod-notice__resources li::before {
+    content: "\203A";
+    position: absolute;
+    left: 4px;
+    color: var(--hc-score-red);
+    font-weight: 700;
+  }
+  .prod-notice__risks li::before {
+    content: "\2022";
+    position: absolute;
+    left: 4px;
+    color: var(--hc-amber);
+  }
+  .prod-notice__warning {
+    font-size: 14px;
+    line-height: 1.63;
+    color: var(--hc-amber);
+    background: rgba(187, 90, 0, 0.08);
+    border-left: 3px solid var(--hc-amber);
+    padding: 12px 16px;
+    border-radius: 0 5px 5px 0;
+  }
+
+  /* Footer */
+  .footer {
+    padding: 40px 0;
+    border-top: 1px solid var(--hc-border-light);
+    text-align: center;
+    background: var(--hc-white);
+  }
+  .footer p {
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--hc-helper);
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .hero .subtitle { font-size: 18px; }
+    .score-dashboard__grid { grid-template-columns: 1fr; gap: 32px; }
+    .pillar-header h2 { font-size: 26px; }
+    .issue-card__body { padding-left: 0; margin-top: 8px; }
+    .issue-card__fix { padding-left: 0; }
+    .region-grid { grid-template-columns: 1fr; }
+    .cost-summary { grid-template-columns: 1fr; }
+    .cost-summary-card__value { font-size: 24px; }
+  }
+
+  @media (max-width: 479px) {
+    .hero .subtitle { font-size: 16px; }
+    .hero { padding: 40px 0 24px; }
+    .dark-section, .light-section, .context-section { padding: 40px 0; }
+    .nav-meta { display: none; }
+    .pillar-header { flex-direction: column; align-items: flex-start; gap: 8px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav class="nav">
+  <div class="nav-inner">
+    <span class="nav-brand">Infrastructure Well-Architected Review</span>
+    <span class="nav-meta">Generated: 2026-07-31 07:16:21 &middot; Branch: main</span>
+  </div>
+</nav>
+
+<!-- Hero / Executive Summary — title removed, subtitle is the primary text -->
+<section class="hero">
+  <div class="container">
+    <p class="subtitle">This PR vendors a Datadog OpenFGA lifecycle monitoring module from lightning-core into resto-common for configuration-storage, adapting it to a 2-tier (prod/non-prod) region-grouped model; terraform fmt and tflint are clean and no security, cost, or performance issues were found. One reliability issue confirmed via live Datadog data should be fixed before merge: the prod-tier Revolution DORA webhook name is derived from the team string (&quot;permanents-1&quot;) but the team&#x27;s actual webhook integration is named &quot;permanents1&quot; (no hyphen), so DORA incident capture will silently fail to route for these new monitors while Teams/Opsgenie alerting remains unaffected.</p>
+    <div class="overall-score score--green">
+      <span class="overall-score__number">98</span>/100
+    </div>
+  </div>
+</section>
+
+<hr class="section-divider">
+
+<!-- Score Dashboard -->
+<section class="score-dashboard">
+  <div class="container">
+    <div class="score-dashboard__grid">
+
+      <!-- Radar Chart -->
+      <div class="radar-chart">
+        <svg viewBox="0 0 400 400">
+          <polygon class="grid-line" points="200,50 342.66,153.47 288.17,342.66 111.83,342.66 57.34,153.47" />
+          <polygon class="grid-line grid-line-mid" points="200,100 296.44,178.31 264.12,296.44 135.88,296.44 103.56,178.31" />
+          <polygon class="grid-line" points="200,150 250.22,203.16 240.06,250.22 159.94,250.22 149.78,203.16" />
+          <line class="axis-line" x1="200" y1="200" x2="200" y2="50" />
+          <line class="axis-line" x1="200" y1="200" x2="342.66" y2="153.47" />
+          <line class="axis-line" x1="200" y1="200" x2="288.17" y2="342.66" />
+          <line class="axis-line" x1="200" y1="200" x2="111.83" y2="342.66" />
+          <line class="axis-line" x1="200" y1="200" x2="57.34" y2="153.47" />
+          <polygon class="score-area" points="200.00,50.00 335.53,155.97 288.17,321.35 111.83,321.35 57.34,153.65" />
+          <text class="axis-label" x="200" y="30">Security</text>
+          <text class="axis-label" x="365" y="148">Reliability</text>
+          <text class="axis-label" x="310" y="368">Cost</text>
+          <text class="axis-label" x="90" y="368">OpEx</text>
+          <text class="axis-label" x="35" y="148">Performance</text>
+        </svg>
+      </div>
+
+      <!-- Pillar Scores — names are anchor links to pillar sections -->
+      <div class="pillar-scores">
+        <div class="pillar-score-card">
+          <a href="#pillar-security" class="pillar-score-card__name">Security<span class="pillar-score-card__weight">(30%)</span></a>
+          <span class="pillar-score-card__badge badge--green">100</span>
+        </div>
+        <div class="pillar-score-card">
+          <a href="#pillar-reliability" class="pillar-score-card__name">Reliability<span class="pillar-score-card__weight">(25%)</span></a>
+          <span class="pillar-score-card__badge badge--green">95</span>
+        </div>
+        <div class="pillar-score-card">
+          <a href="#pillar-cost" class="pillar-score-card__name">Cost Optimization<span class="pillar-score-card__weight">(15%)</span></a>
+          <span class="pillar-score-card__badge badge--green">100</span>
+        </div>
+        <div class="pillar-score-card">
+          <a href="#pillar-opex" class="pillar-score-card__name">Operational Excellence<span class="pillar-score-card__weight">(20%)</span></a>
+          <span class="pillar-score-card__badge badge--green">100</span>
+        </div>
+        <div class="pillar-score-card">
+          <a href="#pillar-performance" class="pillar-score-card__name">Performance Efficiency<span class="pillar-score-card__weight">(10%)</span></a>
+          <span class="pillar-score-card__badge badge--green">100</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<hr class="section-divider">
+
+<!-- ============================================================ -->
+<!-- CONTEXT: Regional Impact + Cost Estimation (between dashboard and pillars) -->
+<!-- ============================================================ -->
+<section class="context-section">
+  <div class="container">
+
+    <!-- Regional Impact Analysis -->
+    <div class="subsection-header">
+      <span class="subsection-header__icon">&#x1F30D;</span>
+      <h3>Regional Impact Analysis</h3>
+    </div>
+    <p class="context-lead">This PR will impact following regions:</p>
+
+    <!-- Region tags — all same color, no GCP/Ali differentiation -->
+    <div class="region-tags">
+    <span class="region-tag">d2</span>
+  <span class="region-tag">s2</span>
+  <span class="region-tag">pp2</span>
+  <span class="region-tag">r1</span>
+  <span class="region-tag">r2</span>
+  <span class="region-tag">r3</span>
+  <span class="region-tag">r4</span>
+  <span class="region-tag">r8</span>
+</div>
+
+    <!-- Expandable region detail -->
+    <details class="expand-toggle">
+      <summary>More</summary>
+      <div class="expand-content">
+        <div class="region-grid">
+<div class="region-card">
+  <div class="region-card__title">GCP Resources (d2, s2, pp2, r1, r2, r3, r4, r8)</div>
+  <ul class="region-resource-list"><li>openfga_lifecycle_monitors (non-prod tier) (Datadog Monitor (query alert)): 3 monitors (reporting failures, migration failures, dual-read mismatch) grouped by market_region across d2, s2, pp2; routes to non-prod Teams channel only</li>
+<li>openfga_lifecycle_monitors (prod tier) (Datadog Monitor (query alert)): 3 monitors (reporting failures, migration failures, dual-read mismatch) grouped by market_region across r1, r2, r3, r4, r8; routes to prod Teams channel + Opsgenie + Revolution DORA webhook</li></ul>
+</div>
+</div>
+        <div class="region-summary">Adds 6 Datadog query-alert monitors (3 monitor types x 2 tiers) for configuration-storage&#x27;s OpenFGA lifecycle, scoped to GCP regions only (d2, s2, pp2 non-prod; r1, r2, r3, r4, r8 prod) — no Alicloud regions, consistent with resto-common&#x27;s existing region convention. No compute/storage/database resources are created.</div>
+        <div class="prod-notice">
+  <div class="prod-notice__header">
+    <span class="prod-notice__icon">&#x26A0;</span>
+    <h3 class="prod-notice__title">Production Impact</h3>
+  </div>
+  <div class="prod-notice__label">Affected Environments</div>
+  <div class="prod-notice__envs"><span class="prod-notice__env-tag">prod</span></div>
+  <div class="prod-notice__label">Resources</div>
+  <ul class="prod-notice__resources"><li>openfga_lifecycle_monitors (prod tier) — 3 datadog_monitor resources for configuration-storage</li></ul>
+  <div class="prod-notice__label">Risks</div>
+  <ul class="prod-notice__risks"><li>Prod-tier alert messages reference a Revolution DORA webhook name derived from `team` (&quot;@webhook-revolution_dora_incident-permanents-1&quot;) that does not match the team&#x27;s actual, already-established webhook integration name (&quot;@webhook-revolution_dora_incident-permanents1&quot;, no hyphen) confirmed via live Datadog monitor data — DORA incident capture for this monitor will silently fail to route while Teams/Opsgenie notifications remain unaffected.</li></ul>
+  <div class="prod-notice__warning">These changes affect production infrastructure. Ensure staging validation is complete before merging.</div>
+</div>
+      </div>
+    </details>
+
+    <div class="subsection-header subsection-header--bordered">
+      <span class="subsection-header__icon">&#x1F4B0;</span>
+      <h3>Cost Estimation</h3>
+    </div>
+    
+
+  </div>
+</section>
+
+<hr class="section-divider">
+
+<!-- ============================================================ -->
+<!-- PILLAR 1: Security (Dark Section) -->
+<!-- ============================================================ -->
+<section class="dark-section" id="pillar-security">
+  <div class="container">
+    <div class="pillar-header">
+      <h2>Security</h2>
+      <span class="pillar-header__badge badge--green">100/100</span>
+    </div>
+    <details class="severity-group severity-group--critical">
+      <summary><span class="severity-group__count">0</span> Critical</summary>
+      <div class="issue-list">
+        <div class="empty-state empty-state--dark"><p>No critical issues.</p></div>
+      </div>
+    </details>
+    <details class="severity-group severity-group--warning">
+      <summary><span class="severity-group__count">0</span> Warnings</summary>
+      <div class="issue-list">
+        <div class="empty-state empty-state--dark"><p>No warnings.</p></div>
+      </div>
+    </details>
+    <details class="severity-group severity-group--info">
+      <summary><span class="severity-group__count">0</span> Info</summary>
+      <div class="issue-list">
+        <div class="empty-state empty-state--dark"><p>No informational items.</p></div>
+      </div>
+    </details>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- PILLAR 2: Reliability (Light Section) -->
+<!-- ============================================================ -->
+<section class="light-section" id="pillar-reliability">
+  <div class="container">
+    <div class="pillar-header">
+      <h2>Reliability</h2>
+      <span class="pillar-header__badge badge--green">95/100</span>
+    </div>
+    <details class="severity-group severity-group--critical">
+      <summary><span class="severity-group__count">0</span> Critical</summary>
+      <div class="issue-list">
+        <div class="empty-state empty-state--light"><p>No critical issues.</p></div>
+      </div>
+    </details>
+    <details class="severity-group severity-group--warning">
+      <summary><span class="severity-group__count">1</span> Warnings</summary>
+      <div class="issue-list">
+        <div class="issue-card issue-card--light">
+  <div class="issue-card__header">
+    <div class="issue-card__icon issue-card__icon--warning">!</div>
+    <h3 class="issue-card__title">module.openfga_lifecycle_monitors.local.service_notifications</h3>
+  </div>
+  <div class="issue-card__body">
+    The Revolution DORA webhook mention is derived as format(&quot;@webhook-revolution_dora_incident-%s&quot;, s.team) with s.team = &quot;permanents-1&quot; (set in openfga_monitors.tf), producing &quot;@webhook-revolution_dora_incident-permanents-1&quot;. Live Datadog data (queried via MCP) shows every existing monitor for this same team uses the integration name &quot;@webhook-revolution_dora_incident-permanents1&quot; (no hyphen) — e.g. monitor IDs 101296693, 31297907, 23686335, 90130990 all reference &quot;webhook-revolution_dora_incident-permanents1&quot;. lightning-core&#x27;s own monitoring/main.tf confirms this explicitly: the permanents-1 team block sets team = &quot;permanents-1&quot; but hardcodes revolution_webhook = &quot;@webhook-revolution_dora_incident-permanents1&quot; as a literal override rather than deriving it from `team`, because the two values differ for this specific team. This module derives the webhook name purely from `team` via string formatting, so for prod alerts on this new monitor the DORA webhook mention will reference a non-existent integration and silently fail to route, while Opsgenie and the Teams channel mentions (which use explicit prod_channel/opsgenie fields, not derived from `team`) will still work correctly.
+    <span class="issue-card__file">infrastructure/platform/common/openfga_lifecycle_monitors/main.tf:79</span>
+  </div>
+  <div class="issue-card__fix">Fix: Add an explicit `revolution` (or `dora_webhook`) field to the openfga_settings object type, and set it to &quot;@webhook-revolution_dora_incident-permanents1&quot; for configuration-storage instead of deriving it from `team` — mirroring how prod_channel/non_prod_channel/opsgenie are already explicit fields rather than derived strings. Verify the correct webhook name with the team that owns the Revolution DORA integration before merging, since this only affects the prod tier&#x27;s alert messages and is not caught by `terraform validate`.</div>
+</div>
+      </div>
+    </details>
+    <details class="severity-group severity-group--info">
+      <summary><span class="severity-group__count">0</span> Info</summary>
+      <div class="issue-list">
+        <div class="empty-state empty-state--light"><p>No informational items.</p></div>
+      </div>
+    </details>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- PILLAR 3: Cost Optimization (Dark Section) -->
+<!-- ============================================================ -->
+<section class="dark-section" id="pillar-cost">
+  <div class="container">
+    <div class="pillar-header">
+      <h2>Cost Optimization</h2>
+      <span class="pillar-header__badge badge--green">100/100</span>
+    </div>
+    <details class="severity-group severity-group--critical">
+      <summary><span class="severity-group__count">0</span> Critical</summary>
+      <div class="issue-list">
+        <div class="empty-state empty-state--dark"><p>No critical issues.</p></div>
+      </div>
+    </details>
+    <details class="severity-group severity-group--warning">
+      <summary><span class="severity-group__count">0</span> Warnings</summary>
+      <div class="issue-list">
+        <div class="empty-state empty-state--dark"><p>No warnings.</p></div>
+      </div>
+    </details>
+    <details class="severity-group severity-group--info">
+      <summary><span class="severity-group__count">1</span> Info</summary>
+      <div class="issue-list">
+        <div class="issue-card">
+  <div class="issue-card__header">
+    <div class="issue-card__icon issue-card__icon--info">i</div>
+    <h3 class="issue-card__title">module.openfga_lifecycle_monitors</h3>
+  </div>
+  <div class="issue-card__body">
+    This PR creates 6 datadog_monitor resources (3 monitor types x 2 tiers) on metrics the service already emits per the PR description. No new custom metrics are introduced, so no incremental Datadog custom-metric ingestion cost is expected. Standard Datadog Enterprise/Pro plans do not meter cost per monitor count, so this change has no material billing impact.
+    <span class="issue-card__file">infrastructure/platform/common/openfga_monitors.tf:293</span>
+  </div>
+  <div class="issue-card__fix">Fix: No action needed. If the org&#x27;s Datadog contract caps total monitor count or is on a per-monitor-billed plan, confirm with the team managing the Datadog contract before merging additional monitors at scale.</div>
+</div>
+      </div>
+    </details>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- PILLAR 4: Operational Excellence (Light Section) -->
+<!-- ============================================================ -->
+<section class="light-section" id="pillar-opex">
+  <div class="container">
+    <div class="pillar-header">
+      <h2>Operational Excellence</h2>
+      <span class="pillar-header__badge badge--green">100/100</span>
+    </div>
+    <details class="severity-group severity-group--critical">
+      <summary><span class="severity-group__count">0</span> Critical</summary>
+      <div class="issue-list">
+        <div class="empty-state empty-state--light"><p>No critical issues.</p></div>
+      </div>
+    </details>
+    <details class="severity-group severity-group--warning">
+      <summary><span class="severity-group__count">0</span> Warnings</summary>
+      <div class="issue-list">
+        <div class="empty-state empty-state--light"><p>No warnings.</p></div>
+      </div>
+    </details>
+    <details class="severity-group severity-group--info">
+      <summary><span class="severity-group__count">2</span> Info</summary>
+      <div class="issue-list">
+        <div class="issue-card issue-card--light">
+  <div class="issue-card__header">
+    <div class="issue-card__icon issue-card__icon--info">i</div>
+    <h3 class="issue-card__title">terraform.required_providers.datadog</h3>
+  </div>
+  <div class="issue-card__body">
+    datadog provider is pinned with an unbounded lower-bound constraint (&quot;&gt;= 3.53.0&quot;) rather than a range with an upper bound. This matches the existing convention in the repo root (infrastructure/platform/common/terraform.tf uses the identical &quot;&gt;= 3.53.0&quot;), so it is not a new deviation introduced by this PR.
+    <span class="issue-card__file">infrastructure/platform/common/openfga_lifecycle_monitors/provider.tf:5</span>
+  </div>
+  <div class="issue-card__fix">Fix: No action required for this PR specifically; consider tightening to a range (e.g. &quot;&gt;= 3.53.0, &lt; 4.0.0&quot;) repo-wide in a separate change if unpinned major-version upgrades are a concern.</div>
+</div>
+<div class="issue-card issue-card--light">
+  <div class="issue-card__header">
+    <div class="issue-card__icon issue-card__icon--info">i</div>
+    <h3 class="issue-card__title">priority2_message.tftpl</h3>
+  </div>
+  <div class="issue-card__body">
+    Vendored template diverges from the lightning-core original: the recovery branch now re-posts to `${channel}` (the original only sent `opsgenie_close` on recovery, with no channel re-notification), and the alert branch newly renders `${revolution}` (the original computed a `revolution` local but never passed or rendered it in any template). These look like deliberate adaptations rather than accidental drift, but are worth a maintainer&#x27;s explicit sign-off since they change notification volume/behavior versus the module this was vendored from.
+    <span class="issue-card__file">infrastructure/platform/common/openfga_lifecycle_monitors/priority2_message.tftpl:8</span>
+  </div>
+  <div class="issue-card__fix">Fix: Confirm with the module owner/reviewer that (a) recovery messages should now also post to the team channel, and (b) whether the Revolution DORA integration needs an explicit &#x27;close&#x27; mention on recovery (similar to opsgenie_close) to resolve the incident, or if it auto-resolves from the monitor&#x27;s recovery webhook payload.</div>
+</div>
+      </div>
+    </details>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- PILLAR 5: Performance Efficiency (Dark Section) -->
+<!-- ============================================================ -->
+<section class="dark-section" id="pillar-performance">
+  <div class="container">
+    <div class="pillar-header">
+      <h2>Performance Efficiency</h2>
+      <span class="pillar-header__badge badge--green">100/100</span>
+    </div>
+    <details class="severity-group severity-group--critical">
+      <summary><span class="severity-group__count">0</span> Critical</summary>
+      <div class="issue-list">
+        <div class="empty-state empty-state--dark"><p>No critical issues.</p></div>
+      </div>
+    </details>
+    <details class="severity-group severity-group--warning">
+      <summary><span class="severity-group__count">0</span> Warnings</summary>
+      <div class="issue-list">
+        <div class="empty-state empty-state--dark"><p>No warnings.</p></div>
+      </div>
+    </details>
+    <details class="severity-group severity-group--info">
+      <summary><span class="severity-group__count">0</span> Info</summary>
+      <div class="issue-list">
+        <div class="empty-state empty-state--dark"><p>No informational items.</p></div>
+      </div>
+    </details>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="container">
+    <p>Infrastructure Well-Architected Review &middot; Static Analysis Report</p>
+  </div>
+</footer>
+
+</body>
+</html>
