@@ -422,7 +422,7 @@ services:
     shm_size: 16gb
     image: registry.cn-beijing.aliyuncs.com/dotbalo/vllm-openai:latest
     restart: always
-    command: --port 8080 --served-model-name Qwen3-Embedding-4B --model /data/models/Qwen3-Embedding-4B --gpu_memory_utilization 0.9 --tensor-parallel-size 1 --max-model-len 8192 --max-num-batched-tokens 8192 --api-key dotbalo
+    command: --port 8080 --served-model-name Qwen3-Embedding-4B --model /data/models/Qwen3-Embedding-4B --gpu_memory_utilization 0.9 --tensor-parallel-size 1 --max-model-len 8192 --max-num-batched-tokens 8192 --api-key xxxx
     volumes:
       - /data/models/Qwen3-Embedding-4B:/data/models/Qwen3-Embedding-4B
     healthcheck:
@@ -454,7 +454,7 @@ services:
 ```bash
 curl http://localhost:18080/v1/embeddings \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer dotbalo" \
+  -H "Authorization: Bearer xxxx" \
   -d '{
     "model": "Qwen3-Embedding-4B",
     "input": ["人工智能正在改变世界", "vLLM 是一个高性能推理引擎"]
@@ -477,7 +477,7 @@ services:
     shm_size: 16gb
     image: registry.cn-beijing.aliyuncs.com/dotbalo/vllm-openai:latest
     restart: always
-    command: --port 8080 --served-model-name Qwen3-Reranker-4B --model /data/models/Qwen3-Reranker-4B --gpu_memory_utilization 0.9 --tensor-parallel-size 1 --max-model-len 32768 --max-num-batched-tokens 32768 --api-key dotbalo --hf-overrides '{"architectures":["Qwen3ForSequenceClassification"],"classifier_from_token":["yes","no"],"is_original_qwen3_reranker":true}'
+    command: --port 8080 --served-model-name Qwen3-Reranker-4B --model /data/models/Qwen3-Reranker-4B --gpu_memory_utilization 0.9 --tensor-parallel-size 1 --max-model-len 32768 --max-num-batched-tokens 32768 --api-key xxxx --hf-overrides '{"architectures":["Qwen3ForSequenceClassification"],"classifier_from_token":["yes","no"],"is_original_qwen3_reranker":true}'
     volumes:
       - /data/models/Qwen3-Reranker-4B:/data/models/Qwen3-Reranker-4B
     healthcheck:
@@ -515,7 +515,7 @@ services:
 ```bash
 curl http://localhost:18080/v1/rerank \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer dotbalo" \
+  -H "Authorization: Bearer xxxx" \
   -d '{
     "model": "Qwen3-Reranker-4B",
     "query": "如何修改密码？",
@@ -538,7 +538,7 @@ curl http://localhost:18080/v1/rerank \
 ```bash
 curl http://localhost:18080/v1/rerank \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer dotbalo" \
+  -H "Authorization: Bearer xxxx" \
   -d '{
     "model": "Qwen3-Reranker-4B",
     "query": "如何修改密码？",
@@ -620,3 +620,152 @@ docker logs -f litellm-litellm-1
 
 - Username: `admin`
 - Password: `litellm_password`（即部署时配置的 `LITELLM_MASTER_KEY`）
+- 登录后即可进入 LiteLLM 管理后台，左侧导航栏包含 AI Gateway（Virtual Keys、Playground、Models + Endpoints、Agentic、MCP Servers、Skills、Guardrails、Policies、Tools）、Observability（Usage、Logs、Guardrails Monitor）、Access Control（Teams、Internal Users、Organizations）等模块。
+
+### 基础使用
+#### 添加模型
+
+在 **Models + Endpoints** 页面点击 **Add Model**，按照如下格式添加模型：
+
+- **Provider**：选择 `vllm`
+- **LiteLLM Model Name(s)**：`Qwen3.5-4B`
+- **Model Mappings**：Public Model Name 与 LiteLLM Model Name 均填写 `Qwen3.5-4B`
+- **Mode**：`Chat - /chat/completions`
+- **API Base**：`http://1.1.1.1:8080/v1`（填写实际的 vllm 服务地址）
+- **API Key**：`xxx`（对应 vllm 启动时配置的 `--api-key`）
+
+填写完成后点击 **Test Connect** 测试连接，返回 "Connection to Qwen3.5-4B successful!" 表示测试通过，之后点击 **Add Model** 完成添加。
+
+添加完成后，可以通过 **Playground** 进行测试：在 Configurations 中选择 Virtual UI Session 及对应的 Select Model（如 `Qwen3.5-4B`），即可在右侧对话框中发送测试消息。
+
+同样的方式也可以添加外部的模型，比如添加 deepseek 的模型：
+
+- **Provider**：选择 `Deepseek`
+- **LiteLLM Model Name(s)**：`deepseek-v4-pro`
+- **Model Mappings**：Public Model Name 与 LiteLLM Model Name 均填写 `deepseek-v4-pro`
+- **Mode**：`Chat - /chat/completions`
+- **API Key**：填写 deepseek 平台的 API Key
+
+除了直接选择供应商，也可以选择 **OpenAI**，然后手动输入 deepseek 的接口地址同样可行，该方式适用于所有符合 OpenAI 接口的模型：
+
+- **Provider**：选择 `OpenAI`
+- **LiteLLM Model Name(s)**：`Custom Model Name (Enter below)` → `deepseek-v4-pro`
+- **Model Mappings**：Public Model Name 与 LiteLLM Model Name 均填写 `deepseek-v4-pro`
+- **Mode**：`Chat - /chat/completions`
+- **API Base**：`https://api.deepseek.com`
+
+#### 虚拟 Key 管理
+
+添加模型后，创建一个虚拟 key，之后就可以通过 LiteLLM 访问后端的模型。
+
+在 **Key Ownership** 中选择 `You`，填写 Key Name（如 `xxxx`），在 Models 中选择授权的模型（如 `Qwen3.5-4B`），点击 **Create Key**。
+
+创建后需要记录生成的 key（离开页面后将无法再次查看）：
+
+```
+Virtual Key: sk-cRyZdFtJ8WSDZxpjEAUxTw
+```
+
+接下来使用 litellm 通过该 Key 访问已授权的模型：
+
+```bash
+# curl -H "Authorization: Bearer sk-cRyZdFtJ8WSDZxpjEAUxTw" -X POST http://127.0.0.1:4000/v1/chat/completions -H "Content-Type: application/json" -d '{"model": "Qwen3.5-4B","stream": true, "messages": [{"role": "user", "content": "介绍下你自己"}]}'
+```
+
+### 记录问答详情
+
+模型调用日志可以在可观测性——logs 中查询，但是默认情况下，litellm 未记录模型调用的 request 和 response 数据（显示为空的 `{}`）。
+
+如果需要开启，可以在设置中开启：**Settings → Admin Settings → Logging Settings**，打开 **Store Prompts in Spend Logs** 开关，并配置 **Maximum Spend Logs Retention Period**（如 `7d`），点击 **Save Settings**。
+
+开启后就可以在 Logs 中显示请求详情，包括完整的 Request（model、stream、messages、metadata 等）和 Response（模型回复内容）。
+
+### 团队管理
+
+生产环境中，为了实现更加细粒度的权限管理和成本管控，建议为每个部门、项目组或不同系统等维度创建单独的 team，之后单独分配权限和成本控制。
+
+假设现在希望为开发和测试团队进行细粒度管理，使开发团队只能访问 Qwen3.5-4B 的模型，测试团队只能使用 Deepseek 模型。
+
+首先为两个团队在 litellm 上创建对应的 Team：
+
+- 创建开发团队 `development`，Models 只选择 `Qwen3.5-4B`
+- 创建测试团队 `test`，Models 只选择 `deepseek-v4-pro`
+
+创建团队时还可以配置 Max Budget（USD）、Reset Budget（daily/weekly/monthly）、Tokens per minute Limit（TPM）、Requests per minute Limit（RPM）等。
+
+接下来为每个团队分配虚拟 key：在 **Key Ownership** 中选择 `Service Account`，选择对应 Team（如 `test`），填写 Service Account ID（如 `test-team`），Models 选择 `All Team Models`，点击 **Create Key**。
+
+创建 Key 后，测试权限隔离是否正常。首先测试 test 团队的 key 是否可以访问 Qwen3 模型：
+
+```bash
+# curl -H "Authorization: Bearer sk-gPy_Dc2avf6sH8wWwu8VRw" -X POST http://127.0.0.1:4000/v1/chat/completions -H "Content-Type: application/json" -d '{"model": "Qwen3.5-4B","stream": true, "messages": [{"role": "user", "content": "介绍下你自己"}]}'
+```
+
+```json
+{"error":{"message":"team not allowed to access model. This team can only access models=['deepseek-v4-pro']. Tried to access Qwen3.5-4B","type":"team_model_access_denied","param":"model","code":"403"}}
+```
+
+提示当前 Key 不能访问 Qwen3.5-4B 模型，更改为 deepseek 模型后问答正常。除了使用 curl 命令，也可以通过 playground 进行测试：选择 test 团队的 Key，Select Model 选择 `deepseek-v4-pro` 会报同样的 403 错误（提示只能访问 `Qwen3.5-4B`，说明该 Key 实际绑定的是开发团队），切换为 `Qwen3.5-4B` 模型后正常问答。
+
+### 团队用户管理
+
+除了利用 ServiceAccount，还可以为每个团队的成员分配账户。比如创建一个测试团队的用户，并且分配该用户的 key：
+
+在 **Access Control → Internal Users** 页面点击 **Invite User**，填写：
+
+- **User Email**：`xxxx@163.com`
+- **Global Proxy Role**：`Internal User (View Only) - view their own keys, view their own spend`
+- **Team**：`test`
+
+点击 **Invite User** 后生成 Invitation Link，接下来用户可以通过邀请链接登录 LiteLLM，设置密码（如 `password_litellm`）完成 Sign Up。
+
+接下来创建该用户的 key，建议 key name 按照 `team-用户名` 格式命名：
+
+- **Key Ownership**：选择 `Another User`
+- **User ID**：`xxxx@163.com`
+- **Team**：`test`
+- **Key Name**：`test-xxxx`
+
+当前 key 只能访问当前 team 有权限的模型：
+
+```bash
+# curl -H "Authorization: Bearer sk-1k_6cjksNc0vo13LqZa40g" -X POST http://127.0.0.1:4000/v1/chat/completions -H "Content-Type: application/json" -d '{"model": "Qwen3.5-4B","stream": true, "messages": [{"role": "user", "content": "介绍下你自己"}]}'
+```
+
+```json
+{"error":{"message":"team not allowed to access model. This team can only access models=['deepseek-v4-pro']. Tried to access Qwen3.5-4B","type":"team_model_access_denied","param":"model","code":"403"}}
+```
+
+此时可以在 Logs 中查到当前用户的访问日志（包括 Type、Status、Session ID、Request ID、Cost、Duration、TTFT、Team Name、Key Hash 等字段）。
+
+### 成本管理
+
+如果想要限制某个用户或者某个团队的模型成本，需要配置每个模型的成本。
+
+在 **Models + Endpoints** 页面选中对应模型（如 `Qwen3.5-4B`），点击 **Edit Settings**，配置：
+
+- **Max Budget (USD)**：`1`（最多可使用的成本为 1 美元）
+- **Soft Budget (USD)**：`0.5`（并且达到 0.5 美元发送提示）
+- **Soft Budget Alerting Emails**：`xxxx@163.com`
+
+保存后点击 **Save Changes**。
+
+也可以设置按天限制或者按照其它周期限制，**Reset Budget** 支持 `daily`、`weekly`、`monthly`。
+
+接下来发送请求，测试成本管控是否正常：
+
+```bash
+# curl -H "Authorization: Bearer sk-An1rHO3RWiA7LDh4jA8rtQ" -X POST http://127.0.0.1:4000/v1/chat/completions -H "Content-Type: application/json" -d '{"model": "Qwen3.5-4B","stream": true, "messages": [{"role": "user", "content": "列举一下北京比较著名的景点有哪些？"}]}'
+```
+
+在 **Usage** 页面可以按 Team 查看用量和使用详情，包括 Total Spend、Total Requests、Successful/Failed Requests、Daily Spend、Spend Per Team、Top Virtual Keys、Top Models 等维度的统计。在 **Teams** 列表中也可以看到每个团队的 Spend / Budget（如 `development` 团队 `$0.04 / $1.00`）。
+
+成本达到限制会有如下提示：
+
+```bash
+curl -H "Authorization: Bearer xxx" -X POST http://127.0.0.1:4000/v1/chat/completions -H "Content-Type: application/json" -d '{"model": "Qwen3.5-4B","stream": true, "messages": [{"role": "user", "content": "列举一下北京比较著名的景点有哪些？"}]}'
+```
+
+```json
+{"error":{"message":"Budget has been exceeded! Team=9cbca9c9-53f1-4387-bbb4-a0c8a7b21530 Current cost: 0.03890300000000001, Max budget: 0.02","type":"budget_exceeded","param":null,"code":"429"}}
+```
