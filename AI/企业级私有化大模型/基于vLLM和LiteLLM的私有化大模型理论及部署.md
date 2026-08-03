@@ -698,7 +698,7 @@ Virtual Key: sk-cRyZdFtJ8WSDZxpjEAUxTw
 创建 Key 后，测试权限隔离是否正常。首先测试 test 团队的 key 是否可以访问 Qwen3 模型：
 
 ```bash
-# curl -H "Authorization: Bearer sk-gPy_Dc2avf6sH8wWwu8VRw" -X POST http://127.0.0.1:4000/v1/chat/completions -H "Content-Type: application/json" -d '{"model": "Qwen3.5-4B","stream": true, "messages": [{"role": "user", "content": "介绍下你自己"}]}'
+curl -H "Authorization: Bearer sk-gPy_Dc2avf6sH8wWwu8VRw" -X POST http://127.0.0.1:4000/v1/chat/completions -H "Content-Type: application/json" -d '{"model": "Qwen3.5-4B","stream": true, "messages": [{"role": "user", "content": "介绍下你自己"}]}'
 ```
 
 ```json
@@ -729,7 +729,7 @@ Virtual Key: sk-cRyZdFtJ8WSDZxpjEAUxTw
 当前 key 只能访问当前 team 有权限的模型：
 
 ```bash
-# curl -H "Authorization: Bearer sk-1k_6cjksNc0vo13LqZa40g" -X POST http://127.0.0.1:4000/v1/chat/completions -H "Content-Type: application/json" -d '{"model": "Qwen3.5-4B","stream": true, "messages": [{"role": "user", "content": "介绍下你自己"}]}'
+curl -H "Authorization: Bearer sk-1k_6cjksNc0vo13LqZa40g" -X POST http://127.0.0.1:4000/v1/chat/completions -H "Content-Type: application/json" -d '{"model": "Qwen3.5-4B","stream": true, "messages": [{"role": "user", "content": "介绍下你自己"}]}'
 ```
 
 ```json
@@ -755,7 +755,7 @@ Virtual Key: sk-cRyZdFtJ8WSDZxpjEAUxTw
 接下来发送请求，测试成本管控是否正常：
 
 ```bash
-# curl -H "Authorization: Bearer sk-An1rHO3RWiA7LDh4jA8rtQ" -X POST http://127.0.0.1:4000/v1/chat/completions -H "Content-Type: application/json" -d '{"model": "Qwen3.5-4B","stream": true, "messages": [{"role": "user", "content": "列举一下北京比较著名的景点有哪些？"}]}'
+curl -H "Authorization: Bearer sk-An1rHO3RWiA7LDh4jA8rtQ" -X POST http://127.0.0.1:4000/v1/chat/completions -H "Content-Type: application/json" -d '{"model": "Qwen3.5-4B","stream": true, "messages": [{"role": "user", "content": "列举一下北京比较著名的景点有哪些？"}]}'
 ```
 
 在 **Usage** 页面可以按 Team 查看用量和使用详情，包括 Total Spend、Total Requests、Successful/Failed Requests、Daily Spend、Spend Per Team、Top Virtual Keys、Top Models 等维度的统计。在 **Teams** 列表中也可以看到每个团队的 Spend / Budget（如 `development` 团队 `$0.04 / $1.00`）。
