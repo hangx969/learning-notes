@@ -378,7 +378,7 @@ kubectl exec -ti volume-test -- bash
 环境准备好后，就可以通过 VLLM 部署模型。首先创建模型存储的 PVC：
 
 ```yaml
-tee qwen35-4b-pvc.yaml <<'E
+tee qwen35-4b-pvc.yaml <<'EOF'
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -390,21 +390,20 @@ spec:
   resources:
     requests:
       storage: 20Gi # 根据模型大小进行调整
+EOF
 ```
 
 创建 PVC：
 
 ```bash
-# kubectl create ns models
-namespace/models created
-# kubectl create -f qwen35-4b-pvc.yaml -n models
-persistentvolumeclaim/qwen35-4b-pvc created
+kubectl create ns models
+kubectl create -f qwen35-4b-pvc.yaml -n models
 ```
 
 接下来使用一个 Job，提前下载模型：
 
-```yaml
-# cat model-download-job.yaml
+```bash
+tee model-download-job.yaml <<'EOF'
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -440,28 +439,25 @@ spec:
         - name: model-storage
           persistentVolumeClaim:
             claimName: qwen35-4b-pvc
+EOF
 ```
 
 查看 Pod：
 
 ```bash
-# kubectl get po -n models
-NAME                                    READY   STATUS    RESTARTS   AGE
-qwen35-4b-model-downloader-7w7sg        1/1     Running   0          2m12s
+kubectl get po -n models
 ```
 
 查看下载日志：
 
 ```bash
-# kubectl logs -f qwen35-4b-model-downloader-7w7sg -n models
-开始从 ModelScope 下载 Qwen/Qwen3.5-4B 模型...
-Downloading [model.safetensors-00002-of-00002.safetensors]: 12%|██ | 441M/3.72G [01:19<09:52, 5.95MB/s]
+kubectl logs -f qwen35-4b-model-downloader-7w7sg -n models
 ```
 
 确认下载的文件：
 
 ```bash
-# kubectl exec qwen35-4b-model-downloader-7w7sg -n models -- ls /data/modelscope/Qwen/
+kubectl exec qwen35-4b-model-downloader-7w7sg -n models -- ls /data/modelscope/Qwen/
 Qwen3___5-4B
 ```
 
@@ -470,9 +466,7 @@ Qwen3___5-4B
 模型下载完成后，即可部署模型：
 
 ```bash
-# kubectl get po -n models
-NAME                                    READY   STATUS      RESTARTS   AGE
-qwen35-4b-model-downloader-7w7sg        0/1     Completed   0          15m
+kubectl get po -n models
 ```
 
 创建部署文件：
@@ -511,7 +505,7 @@ spec:
             - "--max_num_batched_tokens"
             - "65536"
             - "--api-key"
-            - "dotbalo"
+            - "xxxx"
           ports:
             - containerPort: 8080
           env:
@@ -589,15 +583,13 @@ spec:
 查看启动状态：
 
 ```bash
-# kubectl get po -n models
-NAME                                     READY   STATUS    RESTARTS   AGE
-qwen3-5-4b-deployment-5884f54f56-l729w   1/1     Running   0          7m18s
+kubectl get po -n models
 ```
 
 模型访问测试：
 
 ```bash
-# curl -H "Authorization: Bearer dotbalo" -X POST http://127.0.0.1:32656/v1/chat/completions -H "Content-Type: application/json" -d '{"model": "Qwen3.5-4B","stream": true, "messages": [{"role": "user", "content": "介绍下你自己"}]}'
+curl -H "Authorization: Bearer xxxx" -X POST http://127.0.0.1:32656/v1/chat/completions -H "Content-Type: application/json" -d '{"model": "Qwen3.5-4B","stream": true, "messages": [{"role": "user", "content": "介绍下你自己"}]}'
 ```
 
 ## 1.4 LiteLLM 高可用落地
@@ -607,91 +599,41 @@ qwen3-5-4b-deployment-5884f54f56-l729w   1/1     Running   0          7m18s
 在 K8s 集群中安装 Redis 哨兵，用于 LiteLLM 的缓存使用：
 
 ```bash
-# tar xf redis.tar.gz
-# cd redis
-# helm install redis . -n litellm --create-namespace
-NAME: redis
-NAMESPACE: litellm
-STATUS: deployed
-REVISION: 1
-DESCRIPTION: Install complete
-TEST SUITE: None
-NOTES:
-CHART NAME: redis
-CHART VERSION: 27.0.15
-APP VERSION: 8.8.0
+tar xf redis.tar.gz
+cd redis
+helm install redis . -n litellm --create-namespace
 ```
 
 查看 Redis 状态：
 
 ```bash
-# kubectl get po -n litellm
-NAME           READY   STATUS    RESTARTS   AGE
-redis-node-0   2/2     Running   0          2m20s
-redis-node-1   2/2     Running   0          77s
-redis-node-2   2/2     Running   0          42s
+kubectl get po -n litellm
 ```
 
 测试哨兵状态：
 
 ```bash
-# kubectl exec -ti redis-node-0 -n litellm -- bash
-Defaulted container "redis" out of: redis, sentinel
-I have no name! [ / ]$ redis-cli -h redis -p 26379
-redis:26379> auth dotbalo_123
-OK
-redis:26379> SENTINEL replicas mymaster
-1) 1) "name"
-   2) "redis-node-2.redis-headless.litellm.svc.cluster.local:6379"
-   3) "ip"
-   4) "redis-node-2.redis-headless.litellm.svc.cluster.local"
-   5) "port"
-   6) "6379"
-   7) "runid"
-   8) "830d07ad649f79f341553a5c0862ce425e5f148f"
-   9) "flags"
-  10) "slave"
-  ...
-  11) "role-reported"
-  12) "slave"
-  ...
-  13) "master-host"
-  14) "redis-node-0.redis-headless.litellm.svc.cluster.local"
-  15) "master-port"
-  16) "6379"
-  ...
-17) 1) "name"
-   18) "redis-node-1.redis-headless.litellm.svc.cluster.local:6379"
-   ...
-  19) "master-host"
-  20) "redis-node-0.redis-headless.litellm.svc.cluster.local"
-  21) "master-port"
-  22) "6379"
+kubectl exec -ti redis-node-0 -n litellm -- bash
 ```
 
 Redis 单节点部署：
 
 ```bash
-# kubectl create -f redis-single.yaml -n litellm
-persistentvolumeclaim/redis-single created
-deployment.apps/redis-single created
-service/redis-single created
+kubectl create -f redis-single.yaml -n litellm
 ```
 
 查看状态：
 
 ```bash
-# kubectl get po -n litellm -l app=redis-single
-NAME                            READY   STATUS    RESTARTS   AGE
-redis-single-578d7d75f7-2mqh7   1/1     Running   0          33s
+kubectl get po -n litellm -l app=redis-single
 ```
 
 测试 Redis：
 
 ```bash
-# kubectl exec -ti redis-single-578d7d75f7-2mqh7 -n litellm -- bash
+kubectl exec -ti redis-single-578d7d75f7-2mqh7 -n litellm -- bash
 I have no name! [ / ]$ redis-cli -h redis-single
-redis-single:6379> auth dotbalo_redis
+redis-single:6379> auth xxxx_redis
 OK
 redis-single:6379> set a 1
 OK
@@ -704,36 +646,20 @@ redis-single:6379> get a
 在 Kubernetes 集群中按照高可用 PG 数据库：
 
 ```bash
-# tar xf postgresql-ha.tar.gz
-# cd postgresql-ha/
-# helm install pg -n litellm .
-NAME: pg
-NAMESPACE: litellm
-STATUS: deployed
-REVISION: 1
-DESCRIPTION: Install complete
-TEST SUITE: None
-NOTES:
-CHART NAME: postgresql-ha
-CHART VERSION: 16.3.2
-APP VERSION: 17.6.0
+tar xf postgresql-ha.tar.gz
+cd postgresql-ha/
 ```
 
 查看状态：
 
 ```bash
-# kubectl get po -n litellm
-NAME                                         READY   STATUS    RESTARTS   AGE
-pg-postgresql-ha-pgpool-74f76c59fd-gkgs9     1/1     Running   0          77s
-pg-postgresql-ha-postgresql-0                1/1     Running   0          77s
-pg-postgresql-ha-postgresql-1                1/1     Running   0          77s
-pg-postgresql-ha-postgresql-2                1/1     Running   0          77s
+kubectl get po -n litellm
 ```
 
 链接测试：
 
 ```bash
-# kubectl exec -ti pg-postgresql-ha-pgpool-74f76c59fd-gkgs9 -n litellm -- bash
+kubectl exec -ti pg-postgresql-ha-pgpool-74f76c59fd-gkgs9 -n litellm -- bash
 I have no name!@pg-postgresql-ha-pgpool-74f76c59fd-gkgs9:/$ psql -U postgres -h pg-postgresql-ha-pgpool
 Password for user postgres: postgres_litellm
 postgres=# \l
@@ -748,38 +674,28 @@ postgres=# \l
 部署 LiteLLM：
 
 ```bash
-# kubectl create -f litellm-deploy.yaml -n litellm
-configmap/litellm-config-file created
-deployment.apps/litellm-deployment created
-service/litellm-service created
+kubectl create -f litellm-deploy.yaml -n litellm
 ```
 
 查看状态：
 
 ```bash
-# kubectl get po -n litellm
-NAME                                    READY   STATUS    RESTARTS   AGE
-litellm-deployment-5c7687b5cb-cmn92     1/1     Running   0          10m
-litellm-deployment-5c7687b5cb-j85pw     1/1     Running   0          10m
+kubectl get po -n litellm
 ```
 
 访问测试：
 
 ```bash
-# kubectl get svc -n litellm
-NAME              TYPE       CLUSTER-IP     EXTERNAL-IP   PORT(S)          AGE
-litellm-service   NodePort   10.96.103.178  <none>        4000:31398/TCP   16m
+kubectl get svc -n litellm
 ```
 
-登录 LiteLLM 后台后，接下来就可以添加之前部署的模型服务，和基础课程添加过程一致，将 **API Base** 填写为 K8s Service 地址（如 `http://qwen3-5-4b-service.models:8080/v1`），API Key 填写为 `dotbalo`。
+登录 LiteLLM 后台后，接下来就可以添加之前部署的模型服务，和基础课程添加过程一致，将 **API Base** 填写为 K8s Service 地址（如 `http://qwen3-5-4b-service.models:8080/v1`），API Key 填写为 `xxxx`。
 
 使用 LiteLLM 调用模型测试：
 
 ```bash
-# kubectl get svc -n litellm
-NAME              TYPE       CLUSTER-IP     EXTERNAL-IP   PORT(S)          AGE
-litellm-service   NodePort   10.96.103.178  <none>        4000:31398/TCP   4h3m
-# curl -H "Authorization: Bearer sk-tvE6JKo-Q54_dkQIdXYnlg" -X POST http://127.0.0.1:31398/v1/chat/completions -H "Content-Type: application/json" -d '{"model": "Qwen3.5-4B","stream": true, "messages": [{"role": "user", "content": "介绍下你自己"}]}'
+kubectl get svc -n litellm
+curl -H "Authorization: Bearer sk-tvE6JKo-Q54_dkQIdXYnlg" -X POST http://127.0.0.1:31398/v1/chat/completions -H "Content-Type: application/json" -d '{"model": "Qwen3.5-4B","stream": true, "messages": [{"role": "user", "content": "介绍下你自己"}]}'
 ```
 
 ### 1.4.4 限流测试
@@ -806,7 +722,7 @@ LiteLLM 支持如下三种限流方案：
 测试每分钟请求数量限制：
 
 ```bash
-# curl -H "Authorization: Bearer sk-tvE6JKo-Q54_dkQIdXYnlg" -X POST http://127.0.0.1:31398/v1/chat/completions -H "Content-Type: application/json" -d '{"model": "Qwen3.5-4B","stream": true, "messages": [{"role": "user", "content": "介绍下你自己"}]}'
+curl -H "Authorization: Bearer sk-tvE6JKo-Q54_dkQIdXYnlg" -X POST http://127.0.0.1:31398/v1/chat/completions -H "Content-Type: application/json" -d '{"model": "Qwen3.5-4B","stream": true, "messages": [{"role": "user", "content": "介绍下你自己"}]}'
 ```
 
 ```json
@@ -824,7 +740,7 @@ LiteLLM 支持如下三种限流方案：
 同一个问题，连续问会直接返回结果（命中 Redis 缓存，无需重新推理）：
 
 ```bash
-# curl -H "Authorization: Bearer sk-tvE6JKo-Q54_dkQIdXYnlg" -X POST http://127.0.0.1:31398/v1/chat/completions -H "Content-Type: application/json" -d '{"model": "Qwen3.5-4B","stream": true, "messages": [{"role": "user", "content": "介绍下你自己 2"}]}'
+curl -H "Authorization: Bearer sk-tvE6JKo-Q54_dkQIdXYnlg" -X POST http://127.0.0.1:31398/v1/chat/completions -H "Content-Type: application/json" -d '{"model": "Qwen3.5-4B","stream": true, "messages": [{"role": "user", "content": "介绍下你自己 2"}]}'
 ```
 
 流式返回示例（节选）：
@@ -839,54 +755,40 @@ data: [DONE]
 
 ### 1.5.1 HAMI 部署
 
-官方文档：https://project-hami.io/zh/docs/installation/prerequisites
+官方文档： https://project-hami.io/zh/docs/installation/prerequisites
 
 HAMI 管理 GPU 机器，需要先给 GPU 机器添加 `gpu=on` 的标签：
 
 ```bash
-# kubectl label nodes {nodeid} gpu=on
+kubectl label nodes {nodeid} gpu=on
 ```
 
 HAMI 的安装依赖当前 K8s 的版本，所有先获取当前的 K8s 版本：
 
 ```bash
-# kubectl version
-Client Version: v1.35.3
-Kustomize Version: v5.7.1
-Server Version: v1.35.3
+kubectl version
 ```
 
 安装 HAMI：
 
 ```bash
-# helm repo add hami-charts https://project-hami.github.io/HAMi/
-"hami-charts" has been added to your repositories
-# helm pull hami-charts/hami
+helm repo add hami-charts https://project-hami.github.io/HAMi/
+helm pull hami-charts/hami
 # 解压安装包，修改镜像配置
-# sed -i 's#docker.io#m.daocloud.io/docker.io#g' values.yaml
-# helm install hami . --set scheduler.kubeScheduler.imageTag=v1.35.3 -n kube-system
-NAMESPACE: kube-system
-STATUS: deployed
-REVISION: 1
-DESCRIPTION: Install complete
-TEST SUITE: None
-NOTES:
-** Please be patient while the chart is being deployed **
-Resource name: nvidia.com/gpu
+sed -i 's#docker.io#m.daocloud.io/docker.io#g' values.yaml
+helm install hami . --set scheduler.kubeScheduler.imageTag=v1.35.3 -n kube-system
 ```
 
 查看启动状态：
 
 ```bash
-# kubectl get pods -n kube-system | grep hami
-hami-device-plugin-s6s7t          2/2     Running   0          15m
-hami-scheduler-7bf45bf76c-l7gnf   2/2     Running   0          15m
+kubectl get pods -n kube-system | grep hami
 ```
 
 查看注册的 GPU 资源信息：
 
 ```bash
-# kubectl describe node | grep nvidia.com/gpu:
+kubectl describe node | grep nvidia.com/gpu:
 nvidia.com/gpu:     20 # 每个 GPU 卡*10
 ```
 
@@ -895,7 +797,7 @@ nvidia.com/gpu:     20 # 每个 GPU 卡*10
 创建测试 Pod：
 
 ```yaml
-# cat 1-gpu-test.yaml
+tee 1-gpu-test.yaml <<'EOF'
 apiVersion: v1
 kind: Pod
 metadata:
@@ -922,12 +824,13 @@ spec:
   resources:
     limits:
       nvidia.com/gpu: 1
+EOF
 ```
 
 查看日志：
 
 ```bash
-# kubectl logs -f hami-gpu-test
+kubectl logs -f hami-gpu-test
 ```
 
 上述分配了 1 个 vGPU，但是为指定显存和核心数，所以会独占一个显卡，和无虚拟化一致。
@@ -970,7 +873,7 @@ metadata:
 设备类型可以通过 `nvidia-smi` 命令查看：
 
 ```bash
-# nvidia-smi -L
+nvidia-smi -L
 GPU 0: NVIDIA A10 Ada Generation
 GPU 1: NVIDIA A10 Ada Generation
 ```
@@ -999,9 +902,7 @@ resources:
 查看启动状态：
 
 ```bash
-# kubectl get po -n models -owide
-NAME                                     READY   STATUS    RESTARTS   AGE     IP                NODE   NOMINATED NODE   READINESS GATES
-qwen3-5-4b-deployment-6bcb86877b-qxtnr   1/1     Running   0          6m3s    172.16.165.208    gpu    <none>           <none>
+kubectl get po -n models -owide
 ```
 
 查看显存占用：
@@ -1013,7 +914,3 @@ qwen3-5-4b-deployment-6bcb86877b-qxtnr   1/1     Running   0          6m3s    17
 | 1  NVIDIA A10 Ada Gene...   Off | 00000000:BD:00.0 Off |                  0 |
 | 30% 45C  P8   28W / 285W |     38MiB / 49140MiB |      0%    Default |
 ```
-
-## 1.6 定位符
-
-（原文档此章节暂无内容）
