@@ -122,7 +122,7 @@ dnf update -y
 # 重启服务器
 reboot
 
-# 禁用 Linux 驱动 nouveau
+# 禁用 Linux 驱动 nouveau，和英伟达官方驱动有冲突
 grep "blacklist nouveau" /etc/modprobe.d/blacklist.conf || echo 
 "blacklist nouveau" >> /etc/modprobe.d/blacklist.conf
 
