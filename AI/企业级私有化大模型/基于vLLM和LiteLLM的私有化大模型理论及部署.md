@@ -205,14 +205,13 @@ systemctl restart docker
 首先安装 modelscope 工具，推荐 Python 3.12+。
 ```sh
 yum install -y python312
-# 创建虚拟环境
-python -m venv modelscope
+# 用python3.12创建虚拟环境
+python3.12 -m venv modelscope
 source modelscope/bin/activate
 ```
 
 安装 modelscope：
 ```bash
-source modelscope/bin/activate
 pip install modelscope -i https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple
 ```
 
