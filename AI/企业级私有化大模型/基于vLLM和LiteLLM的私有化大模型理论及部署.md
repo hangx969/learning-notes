@@ -272,7 +272,7 @@ services:
               count: all
 ```
 
-
+通过count: all，让docker能看见所有GPU卡；用CUDA_VISIBLE_DEVICES: "0"指定模型在哪些GPU卡上启动。-- 这是比较推荐的配置
 
 启动模型：
 
