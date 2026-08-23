@@ -319,7 +319,7 @@ docker compose up
 
 如果模型较大，单个显卡显存较小，可以使用多个显卡启动一个模型，多卡启动除了可以突破单卡启动的限制外，还能利用多卡并行计算，提升模型推理速度。
 
-配置多卡启动只需要添加 `--tensor-parallel-size` 参数即可，多卡启动也同时支持显存使用率的配置。
+配置多卡启动只需要添加 `--tensor-parallel-size` 参数即可，多卡启动也同时支持显存使用率的配置。但是仅支持2^n 的数量（2，4，8，...）
 
 假设使用两个卡启动，配置如下：
 
@@ -362,7 +362,8 @@ docker-compose down
 docker-compose up -d
 ```
 
-注意，如果 GPU 机器没有 nvlink（通过 `nvidia-smi topo -m` 命令查询），建议关闭 P2P 和 IB，添加如下环境变量即可：
+nvlink让GPU卡直接通信，不通过PCIE。
+注意，如果 GPU 机器没有 nvlink（通过 `nvidia-smi topo -m` 命令查询：GPU），建议关闭 P2P 和 IB，添加如下环境变量即可：
 
 ```yaml
 NCCL_IB_DISABLE: "1"  # 禁用点对点通信，GPU之间的数据交换将转为通过系统内存和CPU中转
