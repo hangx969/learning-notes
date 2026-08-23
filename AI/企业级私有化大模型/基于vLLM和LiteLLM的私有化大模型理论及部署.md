@@ -199,7 +199,7 @@ systemctl restart docker
 ## 模型下载
 
 模型下载：
-- 推荐魔塔社区： https://modelscope.cn/
+- 推荐魔塔社区： https://modelscope.cn/ （是阿里云的）
 - 建议用modelscope 工具下载。
 
 首先安装 modelscope 工具，推荐 Python 3.12+。
@@ -232,7 +232,7 @@ vLLM文档： https://docs.vllm.ai/en/stable/usage/
 创建模型启动的 docker-compose 文件：
 ```bash
 mkdir /data/modelCompose/Qwen3.5-4B -p
-cd  /data/modelCompose/Qwen3.5-4B
+cd /data/modelCompose/Qwen3.5-4B
 vim docker-compose.yaml
 ```
 
@@ -244,7 +244,9 @@ services:
     # m.daocloud.io/docker.io/vllm/vllm-openai:latest
     image: registry.cn-beijing.aliyuncs.com/dotbalo/vllm-openai:latest
     restart: always
+    # served-model-name对外发布的名称，和模型名称保持一致
     command: --port 8080 --served-model-name Qwen3.5-4B --model /data/models/Qwen3.5-4B
+    # 模型挂载进容器内的路径和外面保持一致即可
     volumes:
       - /data/models/Qwen3.5-4B:/data/models/Qwen3.5-4B
     healthcheck:
@@ -261,6 +263,7 @@ services:
       LC_ALL: C.UTF-8
       CUDA_VISIBLE_DEVICES: "0"
       NVIDIA_VISIBLE_DEVICES: "all"
+    # 把宿主机的所有gpu卡挂载进来  
     deploy:
       resources:
         reservations:
@@ -268,6 +271,8 @@ services:
             - capabilities: [gpu]
               count: all
 ```
+
+
 
 启动模型：
 
