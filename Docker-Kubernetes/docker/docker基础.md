@@ -137,7 +137,7 @@ Got permission denied while trying to connect to the Docker daemon socket at uni
 chmod 666 /var/run/docker.sock
 ```
 
-## docker安装-ubuntu
+## docker安装-ubuntu2204
 
 ~~~sh
 # Switch to root account
@@ -148,7 +148,7 @@ apt install apt-transport-https ca-certificates curl software-properties-common
 # add aliyun docker source
 add-apt-repository "deb [arch=amd64] http://mirrors.aliyun.com/docker-ce/linux/ubuntu $(lsb_release -cs) stable"
 # import GPG keys
-curl -fsSL http://mirrors.aliyun.com/docker-ce/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+curl -fsSL http://mirrors.aliyun.com/docker-ce/linux/ubuntu/gpg | sudo apt-key add -
 # double check apt source for docker
 apt update
 apt-cache policy docker-ce
@@ -179,6 +179,52 @@ gpasswd -a $USER docker
 newgrp docker
 ```
 
+## docker安装-ubuntu2510
+
+```bash
+# ===== 1. 卸载可能冲突的旧版本/发行版自带的 docker 相关包 =====
+sudo apt remove -y docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc
+
+# ===== 2. 清理之前残留的 docker 源配置，避免冲突 =====
+sudo rm -f /etc/apt/sources.list.d/docker.list
+
+# ===== 3. 安装依赖 =====
+sudo apt update
+sudo apt install -y ca-certificates curl
+
+# ===== 4. 创建密钥存放目录 =====
+sudo install -m 0755 -d /etc/apt/keyrings
+
+# ===== 5. 下载 Docker GPG 密钥（用阿里云镜像，比官方源更稳定）=====
+sudo curl -fsSL --retry 5 --retry-delay 2 http://mirrors.aliyun.com/docker-ce/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+
+# 验证密钥文件是否下载成功（应该看到 "-----BEGIN PGP PUBLIC KEY BLOCK-----"）
+head -5 /etc/apt/keyrings/docker.asc
+
+# 赋予密钥文件可读权限
+sudo chmod a+r /etc/apt/keyrings/docker.asc
+
+# ===== 6. 添加 Docker 软件源（自动识别当前系统代号，如 questing）=====
+echo \
+"deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] http://mirrors.aliyun.com/docker-ce/linux/ubuntu \
+$(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+# ===== 7. 更新软件包索引并安装 Docker =====
+sudo apt update
+sudo apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+
+# ===== 8. 验证安装是否成功 =====
+sudo docker run hello-world
+
+# ===== 9.（可选）让 Docker 开机自启 =====
+sudo systemctl enable docker
+sudo systemctl status docker
+
+# ===== 10.（可选）允许当前用户免 sudo 运行 docker 命令 =====
+sudo usermod -aG docker $USER
+# 执行完上面这条后需要重新登录（退出 SSH 再登录）才会生效
+```
 ## docker安装-windows
 
 1. 首先安装scoop,参考[这里](../helm/helmv3-安装与使用.md)
