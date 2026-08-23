@@ -423,7 +423,12 @@ modelscope download --model Qwen/Qwen3-Embedding-4B --local_dir /data/models/Qwe
 ```
 
 ### Embedding模型部署
-创建 Embedding 模型的启动文件：
+创建 Embedding 模型的启动文件 (8k上下文就够了)：
+```bash
+mkdir /data/modelCompose/Qwen3-Embedding-4B -p
+cd /data/modelCompose/Qwen3-Embedding-4B
+vim docker-compose.yaml
+```
 
 ```yaml
 version: '3.9'
@@ -432,7 +437,7 @@ services:
     shm_size: 16gb
     image: registry.cn-beijing.aliyuncs.com/dotbalo/vllm-openai:latest
     restart: always
-    command: --port 8080 --served-model-name Qwen3-Embedding-4B --model /data/models/Qwen3-Embedding-4B --gpu_memory_utilization 0.9 --tensor-parallel-size 1 --max-model-len 8192 --max-num-batched-tokens 8192 --api-key xxxx
+    command: --port 8080 --served-model-name Qwen3-Embedding-4B --model /data/models/Qwen3-Embedding-4B --gpu_memory_utilization 0.5 --tensor-parallel-size 1 --max-model-len 8192 --max-num-batched-tokens 8192 --api-key xxxx
     volumes:
       - /data/models/Qwen3-Embedding-4B:/data/models/Qwen3-Embedding-4B
     healthcheck:
@@ -447,9 +452,7 @@ services:
       TZ: Asia/Shanghai
       LANG: C.UTF-8
       LC_ALL: C.UTF-8
-      NCCL_IB_DISABLE: "1"
-      NCCL_P2P_DISABLE: "1"
-      CUDA_VISIBLE_DEVICES: "2"
+      CUDA_VISIBLE_DEVICES: "0"
       NVIDIA_VISIBLE_DEVICES: "all"
     deploy:
       resources:
@@ -479,6 +482,11 @@ Input 参数可以是字符串，也可以是列表，向量化后的数据在�
 
 ### Reranker模型部署
 创建 Rerank 模型部署文件：
+```bash
+mkdir /data/modelCompose/Qwen3-Reranker-4B -p
+cd /data/modelCompose/Qwen3-Reranker-4B
+vim docker-compose.yaml
+```
 
 ```yaml
 version: '3.9'
@@ -487,7 +495,7 @@ services:
     shm_size: 16gb
     image: registry.cn-beijing.aliyuncs.com/dotbalo/vllm-openai:latest
     restart: always
-    command: --port 8080 --served-model-name Qwen3-Reranker-4B --model /data/models/Qwen3-Reranker-4B --gpu_memory_utilization 0.9 --tensor-parallel-size 1 --max-model-len 32768 --max-num-batched-tokens 32768 --api-key xxxx --hf-overrides '{"architectures":["Qwen3ForSequenceClassification"],"classifier_from_token":["yes","no"],"is_original_qwen3_reranker":true}'
+    command: --port 8080 --served-model-name Qwen3-Reranker-4B --model /data/models/Qwen3-Reranker-4B --gpu_memory_utilization 0.5 --tensor-parallel-size 1 --max-model-len 32768 --max-num-batched-tokens 32768 --api-key xxxx --hf-overrides '{"architectures":["Qwen3ForSequenceClassification"],"classifier_from_token":["yes","no"],"is_original_qwen3_reranker":true}'
     volumes:
       - /data/models/Qwen3-Reranker-4B:/data/models/Qwen3-Reranker-4B
     healthcheck:
@@ -504,7 +512,7 @@ services:
       LC_ALL: C.UTF-8
       NCCL_IB_DISABLE: "1"
       NCCL_P2P_DISABLE: "1"
-      CUDA_VISIBLE_DEVICES: "2"
+      CUDA_VISIBLE_DEVICES: "0"
       NVIDIA_VISIBLE_DEVICES: "all"
     deploy:
       resources:
