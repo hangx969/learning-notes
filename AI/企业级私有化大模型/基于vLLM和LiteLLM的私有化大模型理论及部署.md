@@ -510,8 +510,6 @@ services:
       TZ: Asia/Shanghai
       LANG: C.UTF-8
       LC_ALL: C.UTF-8
-      NCCL_IB_DISABLE: "1"
-      NCCL_P2P_DISABLE: "1"
       CUDA_VISIBLE_DEVICES: "0"
       NVIDIA_VISIBLE_DEVICES: "all"
     deploy:
@@ -573,8 +571,12 @@ curl http://localhost:18080/v1/rerank \
 
 ## LiteLLM部署和配置
 官网： https://docs.litellm.ai/docs/proxy/docker_quick_start
+一个liteLLM本身，一个pgsql数据库；如果QPS非常高，或者k8s多副本部署，还需要一个Redis做缓冲和内存共享。
 ### 部署LiteLLM
 创建部署文件：
+```bash
+
+```
 
 ```yaml
 services:
