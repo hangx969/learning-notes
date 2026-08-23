@@ -174,15 +174,14 @@ net.ipv4.ip_forward = 1
 net.bridge.bridge-nf-call-ip6tables = 1
 EOF
 
-sudo sysctl --system
+sysctl --system
 yum install docker-ce -y
 systemctl enable --now docker
 ```
 
 ```sh
-# 配置Nvidia Runtime
-curl -fsSL https://nvidia.github.io/libnvidiacontainer/stable/rpm/nvidia-container-toolkit.repo | sudo tee 
-/etc/yum.repos.d/nvidia-container-toolkit.repo
+# 配置Nvidia Runtime，让docker识别GPU
+curl -fsSL https://nvidia.github.io/libnvidia-container/stable/rpm/nvidia-container-toolkit.repo | sudo tee /etc/yum.repos.d/nvidia-container-toolkit.repo
 
 # 安装 Toolkit
 dnf clean all
@@ -205,6 +204,7 @@ systemctl restart docker
 
 首先安装 modelscope 工具，推荐 Python 3.12+。
 ```sh
+yum install -y python312
 # 创建虚拟环境
 python -m venv modelscope
 source modelscope/bin/activate
