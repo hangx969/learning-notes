@@ -363,11 +363,12 @@ docker-compose up -d
 ```
 
 nvlink让GPU卡直接通信，不通过PCIE。
-注意，如果 GPU 机器没有 nvlink（通过 `nvidia-smi topo -m` 命令查询：GPU），建议关闭 P2P 和 IB，添加如下环境变量即可：
+注意，如果 GPU 机器没有 nvlink（通过 `nvidia-smi topo -m` 命令查询：GPU0链接GPU0的参数不是X），那么建议关闭 P2P 和 IB，添加如下环境变量即可：
 
 ```yaml
-NCCL_IB_DISABLE: "1"  # 禁用点对点通信，GPU之间的数据交换将转为通过系统内存和CPU中转
-NCCL_P2P_DISABLE: "1" # 禁用 IB 网络，让 NCCL 使用最通用的 PCIe 进行通信
+environment:
+  NCCL_IB_DISABLE: "1"  # 禁用点对点通信，GPU之间的数据交换将转为通过系统内存和CPU中转
+  NCCL_P2P_DISABLE: "1" # 禁用 IB 网络，让 NCCL 使用最通用的 PCIe 进行通信
 ```
 
 ### 配置上下文
@@ -384,6 +385,7 @@ NCCL_P2P_DISABLE: "1" # 禁用 IB 网络，让 NCCL 使用最通用的 PCIe 进�
 除了 `--max-model-len` 参数，还需要配置 `--max-num-batched-tokens` 参数配合使用，该参数用于控制单批次处理输入和输出的 token 总和，建议 `max-num-batched-tokens >= max-model-len`，通常配置两个参数相等即可。
 
 比如配置为 64k 上下文（注意配置上下文时，需要计算显存是否足够，如果不够会导致模型无法启动）：
+- Qwen3.5-4B-FP16 16K上下文。显存需求：4 * 16 /8 + 16 * 0.5 + 5 = 21GB
 
 ```bash
 --port 8080 --served-model-name Qwen3.5-4B --model /data/models/Qwen3.5-4B --gpu_memory_utilization 0.95 --tensor-parallel-size 2 --max-model-len 65536 --max-num-batched-tokens 65536
