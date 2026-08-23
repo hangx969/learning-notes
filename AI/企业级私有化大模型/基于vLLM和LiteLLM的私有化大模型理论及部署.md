@@ -653,7 +653,7 @@ docker logs -f litellm-litellm-1
 - **Model Mappings**：Public Model Name 与 LiteLLM Model Name 均填写 `Qwen3.5-4B`
 - **Mode**：`Chat - /chat/completions`
 - **API Base**：`http://1.1.1.1:8080/v1`（填写实际的 vllm 服务地址）
-- **API Key**：`xxx`（对应 vllm 启动时配置的 `--api-key`）
+- **API Key**：`xxx`（对应 vllm 启动时配置的 `--api-key`，这个不是对外的api key，对外的需要在virtual key中配置）
 
 填写完成后点击 **Test Connect** 测试连接，返回 "Connection to Qwen3.5-4B successful!" 表示测试通过，之后点击 **Add Model** 完成添加。
 
