@@ -300,14 +300,21 @@ curl -X POST http://127.0.0.1:18080/v1/chat/completions -H "Content-Type: applic
 
 ### 限制 GPU 使用率
 
-如果显卡显存较大，而模型较小，建议按量分配显存，这样单卡即可启动多个模型，避免显存的浪费。配置显存使用率，只需要添加 `--gpu_memory_utilization` 参数即可。
+如果显卡显存较大，而模型较小，建议按量分配显存，这样单卡即可启动多个模型，避免显存的浪费。比如一个48GB的卡，启动一个小模型，如果不加限制，也有可能分配40GB显存，不需要这么多，造成浪费。
 
-假如分配 2 号卡的 95% 给模型使用，只需要配置 `--gpu_memory_utilization 0.95` 的参数即可：
+配置显存使用率，只需要添加 `--gpu_memory_utilization` 参数即可。假如分配 2 号卡的 95% 给模型使用，只需要配置 `--gpu_memory_utilization 0.95` 的参数即可：
 
 ```bash
---port 8080 --served-model-name Qwen3.5-4B --model /data/models/Qwen3.5-4B --gpu_memory_utilization 0.95
+vim /data/modelCompose/Qwen3.5-4B/docker-compose.yaml
+
+# --port 8080 --served-model-name Qwen3.5-4B --model /data/models/Qwen3.5-4B --gpu_memory_utilization 0.95
+
+cd /data/modelCompose/Qwen3.5-4B/
+docker compose down
+docker compose up
 ```
 
+注意如果限制的太小了，模型启动过程中可能会报错显存不够。-- 可以去减小上下文大小（KV cache占用），也可以提高gpu分配率。
 ### 多卡启动
 
 如果模型较大，单个显卡显存较小，可以使用多个显卡启动一个模型，多卡启动除了可以突破单卡启动的限制外，还能利用多卡并行计算，提升模型推理速度。
