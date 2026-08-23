@@ -377,18 +377,18 @@ environment:
 
 最大上下文建议根据实际需求进行配置，如果不清楚具体使用多少上下文，可以根据如下场景配置：
 
-- 聊天机器人、问答系统：推荐设置为 4096 ~ 8192。
-- 中长篇内容生成、摘要：推荐设置为 8192 ~ 16384。
-- 法律文书分析、代码仓库理解等长文本任务：推荐设置为 16384 ~ 32768。
-- Openclaw 相关任务：推荐设置为 65536 以上。
+- 聊天机器人、问答系统：推荐设置为 4096 ~ 8192 (4k-8k)。
+- 中长篇内容生成、摘要：推荐设置为 8192 ~ 16384 (8k-16k)。
+- 法律文书分析、代码仓库理解等长文本任务：推荐设置为 16384 ~ 32768 (16k-32k)。
+- Openclaw 相关任务：推荐设置为 65536 (64k) 以上。
 
 除了 `--max-model-len` 参数，还需要配置 `--max-num-batched-tokens` 参数配合使用，该参数用于控制单批次处理输入和输出的 token 总和，建议 `max-num-batched-tokens >= max-model-len`，通常配置两个参数相等即可。
 
 比如配置为 64k 上下文（注意配置上下文时，需要计算显存是否足够，如果不够会导致模型无法启动）：
-- Qwen3.5-4B-FP16 16K上下文。显存需求：4 * 16 /8 + 16 * 0.5 + 5 = 21GB
+- Qwen3.5-4B, BF16, 64K上下文。显存需求：4 * 16 /8 + 64 * 0.5 + 5 = 45GB
 
 ```bash
---port 8080 --served-model-name Qwen3.5-4B --model /data/models/Qwen3.5-4B --gpu_memory_utilization 0.95 --tensor-parallel-size 2 --max-model-len 65536 --max-num-batched-tokens 65536
+--port 8080 --served-model-name Qwen3.5-4B --model /data/models/Qwen3.5-4B --gpu_memory_utilization 0.95 --max-model-len 65536 --max-num-batched-tokens 65536
 ```
 
 启动后，可以看到上下文配置的日志：
@@ -405,7 +405,7 @@ vllm 启动模型时，支持配置 API Key，防止模型接口泄露，造成 
 --port 8080 --served-model-name Qwen3.5-4B --model /data/models/Qwen3.5-4B --gpu_memory_utilization 0.6 --tensor-parallel-size 2 --max-model-len 65536 --max-num-batched-tokens 65536 --api-key "xxxx"
 ```
 
-启动后，再次访问模型接口，需要添加认证信息：
+启动后，再次访问模型接口，需要添加请求头，包含api-key：
 
 ```bash
 curl -H "Authorization: Bearer xxxx" -X POST http://127.0.0.1:18080/v1/chat/completions -H "Content-Type: application/json" -d '{"model": "Qwen3.5-4B","stream": true, "messages": [{"role": "user", "content": "介绍下你自己"}]}'
@@ -417,8 +417,9 @@ curl -H "Authorization: Bearer xxxx" -X POST http://127.0.0.1:18080/v1/chat/comp
 VLLM 部署 Embedding 和 Rerank 模型和文本生成模型没有明显区别，只需要下载对应的模型，然后启动即可。比如部署 Qwen 系列的 Embedding 和 Rerank 模型，首先下载模型：
 
 ```bash
-modelscope download --model Qwen/Qwen3-Reranker-4B --local_dir Qwen3-Reranker-4B
-modelscope download --model Qwen/Qwen3-Embedding-4B --local_dir Qwen3-Embedding-4B
+source modelscope/bin/activate
+modelscope download --model Qwen/Qwen3-Reranker-4B --local_dir /data/models/Qwen3-Reranker-4B
+modelscope download --model Qwen/Qwen3-Embedding-4B --local_dir /data/models/Qwen3-Embedding-4B
 ```
 
 ### Embedding模型部署
