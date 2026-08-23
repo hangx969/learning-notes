@@ -155,20 +155,18 @@ sed -ri '/^[^#]*swap/s@^@#@' /etc/fstab
 
 # 更改源及安装必备工具
 sed -e 's|^mirrorlist=|#mirrorlist=|g' \
- -e 
-'s|^#baseurl=http://dl.rockylinux.org/$contentdir|baseurl=https://mirrors.al
-iyun.com/rockylinux|g' \
+ -e 's|^#baseurl=http://dl.rockylinux.org/$contentdir|baseurl=https://mirrors.aliyun.com/rockylinux|g' \
  -i.bak \
  /etc/yum.repos.d/*.repo
-dnf makecache
+ dnf makecache
 
-yum install wget jq psmisc vim net-tools telnet yum-utils device-mapper-persistent-data lvm2 git
+yum install -y wget jq psmisc vim net-tools telnet yum-utils device-mapper-persistent-data lvm2 git
 
 # docker安装
-yum-config-manager --add-repo https://mirrors.aliyun.com/dockerce/linux/centos/docker-ce.repo
+yum-config-manager --add-repo https://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
 
-sudo modprobe overlay
-sudo modprobe br_netfilter
+modprobe overlay
+modprobe br_netfilter
 
 cat <<EOF | sudo tee /etc/sysctl.d/99-kubernetes-cri.conf
 net.bridge.bridge-nf-call-iptables = 1
