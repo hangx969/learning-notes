@@ -113,7 +113,6 @@ vLLM文档： https://docs.vllm.ai/en/stable/
 
 ## 驱动安装
 - 英伟达官网下载最新驱动： https://www.nvidia.com/en-us/drivers/unix/
-	- `wget https://us.download.nvidia.com/XFree86/Linux-x86_64/595.91.07/NVIDIA-Linux-x86_64-595.91.07.run`
 - 安装依赖：
 ```sh
 # 安装依赖包
