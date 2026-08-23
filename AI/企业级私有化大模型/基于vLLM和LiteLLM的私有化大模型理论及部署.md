@@ -123,21 +123,18 @@ dnf update -y
 reboot
 
 # 禁用 Linux 驱动 nouveau，和英伟达官方驱动有冲突
-grep "blacklist nouveau" /etc/modprobe.d/blacklist.conf || echo 
-"blacklist nouveau" >> /etc/modprobe.d/blacklist.conf
-
-grep "options nouveau modeset=0" /etc/modprobe.d/blacklist.conf || 
-echo "options nouveau modeset=0" >> /etc/modprobe.d/blacklist.conf
+grep "blacklist nouveau" /etc/modprobe.d/blacklist.conf || echo "blacklist nouveau" >> /etc/modprobe.d/blacklist.conf
+# 内核中卸载该驱动
+grep "options nouveau modeset=0" /etc/modprobe.d/blacklist.conf ||echo "options nouveau modeset=0" >> /etc/modprobe.d/blacklist.conf
 
 dracut --force /boot/initramfs-$(uname -r).img
 dracut --force --omit-drivers nouveau
 reboot
 
-# 检查 nouveau 是否关闭
-lsmod | grep nouveau # 没有结果说明已经关闭
+# 检查 nouveau 是否关闭。没有结果说明已经关闭
+lsmod | grep nouveau
 # 安装驱动
-chmod +x NVIDIA-Linux-*.run && ./NVIDIA-Linux-*.run -q -s --no-dkms --
-no-x-check 
+chmod +x NVIDIA-Linux-*.run && ./NVIDIA-Linux-*.run -q -s --no-dkms --no-x-check 
 # 安装完成后，重启服务器
 reboot
 nvidia-smi
