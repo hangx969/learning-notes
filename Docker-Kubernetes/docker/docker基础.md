@@ -148,7 +148,7 @@ apt install apt-transport-https ca-certificates curl software-properties-common
 # add aliyun docker source
 add-apt-repository "deb [arch=amd64] http://mirrors.aliyun.com/docker-ce/linux/ubuntu $(lsb_release -cs) stable"
 # import GPG keys
-curl -fsSL http://mirrors.aliyun.com/docker-ce/linux/ubuntu/gpg | sudo apt-key add -
+curl -fsSL http://mirrors.aliyun.com/docker-ce/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
 # double check apt source for docker
 apt update
 apt-cache policy docker-ce

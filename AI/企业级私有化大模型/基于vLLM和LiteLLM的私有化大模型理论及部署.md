@@ -575,7 +575,8 @@ curl http://localhost:18080/v1/rerank \
 ### 部署LiteLLM
 创建部署文件：
 ```bash
-
+mkdir -p litellm
+vim docker-compose.yaml
 ```
 
 ```yaml
