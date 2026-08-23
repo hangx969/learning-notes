@@ -601,7 +601,7 @@ services:
       start_period: 40s
 
   db:
-    image: registry.cn-beijing.aliyuncs.com/dotbalo/postgres:17.2
+    image: postgres:17.2
     restart: always
     container_name: litellm_db
     environment:
