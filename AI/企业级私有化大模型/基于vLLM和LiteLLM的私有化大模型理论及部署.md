@@ -622,13 +622,13 @@ services:
 下载镜像：
 
 ```bash
-docker-compose pull
+docker compose pull
 ```
 
 启动 litellm：
 
 ```bash
-docker-compose up -d
+docker compose up -d
 ```
 
 查看日志：
