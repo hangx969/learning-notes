@@ -652,7 +652,7 @@ docker logs -f litellm-litellm-1
 - **LiteLLM Model Name(s)**：`Qwen3.5-4B`
 - **Model Mappings**：Public Model Name 与 LiteLLM Model Name 均填写 `Qwen3.5-4B`
 - **Mode**：`Chat - /chat/completions`
-- **API Base**：`http://1.1.1.1:8080/v1`（填写实际的 vllm 服务地址）
+- **API Base**：`http://10.197.237.72:18080/v1`（填写实际的 vllm 服务地址，同一机器或者内网互通，就写内网IP：宿主机暴露18080端口，加/v1后缀）
 - **API Key**：`xxx`（对应 vllm 启动时配置的 `--api-key`，这个不是对外的api key，对外的需要在virtual key中配置）
 
 填写完成后点击 **Test Connect** 测试连接，返回 "Connection to Qwen3.5-4B successful!" 表示测试通过，之后点击 **Add Model** 完成添加。
@@ -687,7 +687,7 @@ docker logs -f litellm-litellm-1
 Virtual Key: sk-cRyZdFtJ8WSDZxpjEAUxTw
 ```
 
-接下来使用 litellm 通过该 Key 访问已授权的模型：
+接下来使用 litellm 通过该 Key 访问已授权的模型（访问liteLLM的接口）：
 
 ```bash
 # curl -H "Authorization: Bearer sk-cRyZdFtJ8WSDZxpjEAUxTw" -X POST http://127.0.0.1:4000/v1/chat/completions -H "Content-Type: application/json" -d '{"model": "Qwen3.5-4B","stream": true, "messages": [{"role": "user", "content": "介绍下你自己"}]}'
