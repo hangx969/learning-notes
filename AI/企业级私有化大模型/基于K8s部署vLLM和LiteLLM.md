@@ -902,11 +902,6 @@ kubectl get po -n models -owide
 ```
 
 查看显存占用：
-
-```
-| 0  NVIDIA A10 Ada Gene...   Off | 00000000:99:00.0 Off |                  0 |
-| 30% 51C  P8   33W / 285W |  27117MiB / 49140MiB |      0%    Default |
-|                                                                        N/A |
-| 1  NVIDIA A10 Ada Gene...   Off | 00000000:BD:00.0 Off |                  0 |
-| 30% 45C  P8   28W / 285W |     38MiB / 49140MiB |      0%    Default |
+```bash
+nvidia-smi
 ```
