@@ -458,7 +458,7 @@ kubectl logs -f qwen35-4b-model-downloader-7w7sg -n models
 
 ```bash
 kubectl exec qwen35-4b-model-downloader-7w7sg -n models -- ls /data/modelscope/Qwen/
-Qwen3___5-4B
+Qwen3.5-4B
 ```
 
 ### 1.3.2 部署模型
@@ -497,7 +497,7 @@ spec:
             - "--served-model-name"
             - "Qwen3.5-4B"
             - "--model"
-            - "/data/modelscope/Qwen/Qwen3___5-4B" # 模型路径指向 PVC 挂载点下的具体模型目录
+            - "/data/modelscope/Qwen/Qwen3.5-4B" # 模型路径指向 PVC 挂载点下的具体模型目录
             - "--gpu_memory_utilization"
             - "0.6"
             - "--max-model-len"
@@ -849,11 +849,7 @@ resources:
 以上代表分配两个显卡，每个显卡分配 3000Mi 显存。创建后查看日志：
 
 ```
-| 0  NVIDIA A10 Ada Gene...   Off | 00000000:99:00.0 Off |                  0 |
-| 30% 41C  P8   31W / 285W |     0MiB / 3000MiB  |      0%    Default |
-|                                                                        N/A |
-| 1  NVIDIA A10 Ada Gene...   Off | 00000000:BD:00.0 Off |                  0 |
-| 30% 42C  P8   28W / 285W |     0MiB / 3000MiB  |      0%    Default |
+nvidia-smi
 ```
 
 注意：`nvidia.com/gpu` 和 `nvidia.com/gpumem` 不能超过物理机真实显卡数量和显存大小。
