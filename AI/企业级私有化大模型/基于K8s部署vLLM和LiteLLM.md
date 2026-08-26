@@ -335,7 +335,7 @@ kubectl get po -n longhorn-system
 等待服务启动后，创建 PVC 和 Pod 测试。首先创建 PVC：
 
 ```bash
-tee longhorn-pvc-test.yaml <<'EOF
+tee longhorn-pvc-test.yaml <<'EOF'
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -358,7 +358,7 @@ kubectl get pvc
 创建测试 Pod：
 
 ```bash
-tee longhorn-pod-test.yaml <<'EOF
+tee longhorn-pod-test.yaml <<'EOF'
 apiVersion: v1
 kind: Pod
 metadata:
@@ -397,7 +397,7 @@ kubectl exec -ti volume-test -- bash
 
 环境准备好后，就可以通过 VLLM 部署模型。首先创建模型存储的 PVC：
 
-```yaml
+```bash
 tee qwen35-4b-pvc.yaml <<'EOF'
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -816,7 +816,7 @@ nvidia.com/gpu:     20 # 每个 GPU 卡*10
 
 创建测试 Pod：
 
-```yaml
+```bash
 tee 1-gpu-test.yaml <<'EOF'
 apiVersion: v1
 kind: Pod
