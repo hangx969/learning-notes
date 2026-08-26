@@ -5,13 +5,15 @@
 - 弹性伸缩和负载均衡
 - 高可用性和故障恢复
 - 生态集成和工具链支持
-## K8s管理GPU的技术架构
+### K8s管理GPU的技术架构
 k8s原生不支持调度GPU的，cpu、memory等资源是kubelet从主机上采集之后发给api-server的，默认是不涉及GPU的。
 想要k8s支持GPU调度，需要借助工具：
 - NVIDIA Device Plugin（把GPU信息发送给kubelet，kubelet发给api-server）
-- NVIDIA Toolkit
-- NVIDIA Driver Manager
-- NVIDIA DCGM
+- NVIDIA Container Toolkit（让容器内的应用可以访问主机上的GPU）
+- NVIDIA Driver Manager（安装和管理节点上的NVIDIA驱动）
+- NVIDIA DCGM（采集GPU性能指标）
+### K8s GPU operator
+由NVIDIA开发，自动管理所有用于配置GPU需要的工具。
 
 ## 1.1 GPU 环境准备
 
