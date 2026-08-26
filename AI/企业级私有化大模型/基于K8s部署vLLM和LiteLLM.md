@@ -1,3 +1,18 @@
+## K8s部署大模型
+优势：
+- 资源调度与优化
+- 多租户隔离与资源分配
+- 弹性伸缩和负载均衡
+- 高可用性和故障恢复
+- 生态集成和工具链支持
+## K8s管理GPU的技术架构
+k8s原生不支持调度GPU的，cpu、memory等资源是kubelet从主机上采集之后发给api-server的，默认是不涉及GPU的。
+想要k8s支持GPU调度，需要借助工具：
+- NVIDIA Device Plugin（把GPU信息发送给kubelet，kubelet发给api-server）
+- NVIDIA Toolkit
+- NVIDIA Driver Manager
+- NVIDIA DCGM
+
 ## 1.1 GPU 环境准备
 
 ### 1.1.1 GPU 机器申请
@@ -104,6 +119,7 @@ net.bridge.bridge-nf-call-iptables  = 1
 net.ipv4.ip_forward                 = 1
 net.bridge.bridge-nf-call-ip6tables = 1
 EOF
+
 sudo sysctl --system
 
 sudo mkdir -p /etc/containerd
