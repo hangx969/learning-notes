@@ -107,12 +107,14 @@ yum-config-manager --add-repo https://mirrors.aliyun.com/docker-ce/linux/centos/
 
 安装 Containerd：
 
-```bash
+```sh
 yum install containerd.io -y
+
 cat <<EOF | sudo tee /etc/modules-load.d/containerd.conf
 overlay
 br_netfilter
 EOF
+
 sudo modprobe overlay
 sudo modprobe br_netfilter
 
