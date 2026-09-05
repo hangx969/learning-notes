@@ -24,7 +24,7 @@ tags:
 
 所以问题从“写好一篇笔记”变成了“让一组笔记能够被找到、被关联、被更新和被再次使用”。
 
-![图片](https://mmbiz.qpic.cn/mmbiz_png/zW6S9vt0cS82NhpIVL1IbDFdprtutDkQwC52XQ0vbZzpKnc2CURTMhYJxOFjsZIW8zxLMd0icsibBibb3TQ2Ln0ylRvUOttAG4cfkEIib0tSp08/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1#imgIndex=0)
+![图片](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260905211049559.webp)
 
 同一主题的内容先分散在不同卡片里，再通过双链和定期整理形成知识关系。
 
@@ -36,11 +36,11 @@ Obsidian 把内容保存在 Vault 中，笔记、附件、Canvas 和 Bases 都�
 
 本地使用时，Obsidian 保持运行并打开目标 Vault，Agent 通过 obsidian-cli 调用它完成读写。这样，Obsidian 可以继续维护笔记的链接、属性和索引。
 
-![图片](https://mmbiz.qpic.cn/sz_mmbiz_png/zW6S9vt0cS84y2GUp8hxXCoM9MoevjF2ibZbYI0q3Uk9wRRLfrNckKrN2NhstvvAvujCy8KnvNg5SD86OjSgqQCpMADxwRH5nslytLPLw0Yo/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1#imgIndex=1)
+![图片](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260905211201946.webp)
 
 Vault 保存内容，Obsidian 负责组织内容之间的关系
 
-![图片](https://mmbiz.qpic.cn/mmbiz_png/zW6S9vt0cS88Y5Cwg6OpW5nVaJVMfU5tGh1wQIOIbmYaCpS2K6YZqZYpCNJWxws49aTGCo7Lrk0MSyMnVL1FF8feq8vZpcgg6Don2jicZqME/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1#imgIndex=2)
+![图片](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260905211424555.webp)
 
 本地 Agent 通过 CLI 调用正在运行的 Obsidian 实例
 
@@ -52,7 +52,7 @@ Agent 的作用不只是回答问题，还包括维护知识库。一个简单�
 
 因此，目录约定、检索顺序和写入边界可以放进共同的 AGENTS.md 和 TOOLS.md。例如先查可复用的领域知识，再查主题 Index，最后回到项目原始资料；如果知识库和代码对同一个事实说法不一致，以代码和线上实现为准。
 
-![图片](https://mmbiz.qpic.cn/mmbiz_png/zW6S9vt0cS9LbSHC3nZAtdo5B92ibdPVEkLckFIus80dNUVdicOUg7X0zQOcGoUb642vHcw5P0iaMjKx9Fl3icEPEuuOruhPVkWcdJQpazdNZ3w/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1#imgIndex=3)
+![图片](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260905211427475.webp)
 
 Agent 不只记录卡片，还要把相关内容连接起来
 
@@ -62,7 +62,7 @@ Agent 不只记录卡片，还要把相关内容连接起来
 
 这次的做法是先复制一次，完成从本地 Vault 到远程 Vault 的迁移；迁移完成后，远程 Vault 成为团队共同使用的版本，本地 Vault 不再承担日常同步职责。成员各自使用自己的 Agent，这些 Agent 都通过 MCP 访问同一个远程 Vault。
 
-![图片](https://mmbiz.qpic.cn/mmbiz_png/zW6S9vt0cS8jIOMXJo8LEicPxOEibKknvwchSKC2EfRus2ia4PKL9eK5K9dCdaO6yNIBVDMpBiaiaZ3nXibg3qQK06jZaQibhdCn6l9cgtw1iaiaPBXw/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1#imgIndex=4)
+![图片](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260905211430479.webp)
 
 成员使用各自的 Agent，通过 MCP 访问同一份远程 Vault
 
@@ -74,25 +74,25 @@ Obsidian 不是一个只提供接口的后台服务，它还包含图形界面�
 
 Kubernetes 配置为单副本 StatefulSet，并挂载 Config PVC 和 Vault PVC。Config PVC 保存插件、桌面配置和运行状态；Vault PVC 保存笔记与附件。
 
-![图片](https://mmbiz.qpic.cn/mmbiz_png/zW6S9vt0cSicnshicxx9Ih2zEtUoicglmsQqT76Y0LIHFSke4Aq3iaA56dZhLgCorObmJNxhhqfNKzuNgLSDJpLBU0K4BnNKtCBu5uENX7owjfo/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1#imgIndex=5)
+![图片](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260905211433464.webp)
 
 远程 Obsidian 工作区由镜像、Pod、PVC 和浏览器入口共同组成
 
 部署完成后，团队成员通过浏览器进入远程桌面中的 Obsidian：
 
-![图片](https://mmbiz.qpic.cn/mmbiz_png/zW6S9vt0cS9QX618wnYWYNJJzfGpC3A0FyqvgDmm6tLue9I63bWEaN7fSoTz9kKzR2fKwRiboYPibF6qzSlynzfNafW3D7wFBPXreTiaL06ILI/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1#imgIndex=6)
+![图片](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260905211436726.webp)
 
 团队成员首次进入远程 Obsidian 工作区
 
 当前 Pod 使用 hostNetwork: true，并配置固定节点的 hostPort: 8300，浏览器通过节点 IP 访问远程 Obsidian。这个方案适用于单个工作区、节点地址已知且浏览器能够访问的场景。如果将来不希望用户依赖某个节点地址，可以增加云负载均衡，为团队提供一个固定的访问地址；若还需要统一域名、HTTPS 证书或登录认证，再增加网关。
 
-![图片](https://mmbiz.qpic.cn/mmbiz_png/zW6S9vt0cS8uHM3KwXZlFcUibRkqoiaicgr95FKuUdyibPEHVM2kuEMTlpO2Vh4vZF5zXBUrQZDk6zx7Fic6aZ9ocpvEUa6rvNT51wZmaJMyw9g0/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1#imgIndex=7)
+![图片](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260905211439720.webp)
 
 节点直连、云负载均衡和网关，分别适用于不同的访问需求
 
 已有本地 Vault 先打包上传，再通过远程工作区中的文件管理入口解压到持久化存储中，最后由 Obsidian 打开这个目录。
 
-![图片](https://mmbiz.qpic.cn/mmbiz_png/zW6S9vt0cS85IcDjHvpSBBicJxP0DqXiaKAeiafrH0lplvoibLd3eLwVkVU5axMFagIwHztXcZp1fDzuABSqzfyB9bPDWwCMialwRVQMe68KVPFM/640?wx_fmt=png#imgIndex=8)
+![图片](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260905211442668.png)
 
 本地 Vault 已迁移到远程工作区
 
@@ -102,7 +102,7 @@ Kubernetes 配置为单副本 StatefulSet，并挂载 Config PVC 和 Vault PVC�
 
 团队成员现在可以通过 8300 使用远程 Obsidian，但 Agent 还需要一条专门的调用通道。Agent 这一侧是 MCP Client，负责发起连接和调用工具；远程 Obsidian 插件提供 MCP Server，负责接收请求，并通过正在运行的 Obsidian 访问当前打开的 Vault。
 
-![图片](https://mmbiz.qpic.cn/mmbiz_png/zW6S9vt0cSiclMqqYnTIbw5zHNSBR31W2FxSVWUdl0RYhy1obVpmWRKQX999QmDXetyaYlC2rfD5lLsqyibvXrqh9NDhdARmq7EnEoVlibDCyE/640?wx_fmt=png#imgIndex=9)
+![图片](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260905211445680.png)
 
 Agent 侧的 MCP Client 与远程 Obsidian 插件提供的 MCP Server 双向通信，Server 再访问当前打开的 Vault。
 
@@ -122,7 +122,7 @@ http://<节点IP>:8301/mcp/
 
 这是一种整文件粒度的乐观并发控制。它允许多个 Agent 同时读取，但提交时检查整份文件是否仍然是刚才读到的版本；即使两个 Agent 修改的是不同段落，后提交者持旧版本提交时仍会被拒绝。实际使用时，只需要把“先读取版本、提交时携带 ifMatch、冲突后重新读取”写进 skill 或 Agent 的写入规则中。实测中，多个请求持有同一版本并发提交时，只有一个成功，其余请求被拒绝。
 
-![图片](https://mmbiz.qpic.cn/sz_mmbiz_png/zW6S9vt0cSibBPg1iaTayr8YrY2dHMcoTSnJkLGpQWNOBGIWuK9iacwjrjyfPOrF8lQC2wtrtq0x49ugfWMkuWe7JSqOzDT0eeyL24kFeNgbrs/640?wx_fmt=png#imgIndex=10)
+![图片](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260905211449013.png)
 
 多个 Agent 修改同一文件时，提交请求通过 version 和 ifMatch 判断是否允许写入。
 
@@ -132,7 +132,7 @@ http://<节点IP>:8301/mcp/
 
 围绕这条闭环，可以建设三个衡量指标。
 
-![图片](https://mmbiz.qpic.cn/sz_mmbiz_png/zW6S9vt0cS9ZmTS1J0XfHHDEUyXN9x734k8zII0S8rw53d8Wdn04xakhBjPCXqyJH0azCLXHk8OPqmlDsICH7z4Sa6KobciaicliaYWAYuKAX0/640?wx_fmt=png#imgIndex=11)
+![图片](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260905211451966.png)
 
 从检索质量与效率、知识复用率、沉淀闭环完成率三个观察点，判断系统是否真正进入团队工作。
 
@@ -155,5 +155,3 @@ Trace 能记录 Agent 找了什么、怎么找的，但不能单独证明结果�
 持续观察写回、审核、正式发布和后续复用这些记录，就能判断新经验有没有真正完成沉淀闭环。这里的后续复用需要在提前设定的观察周期内发生。
 
 当团队持续使用系统时，这三类记录会逐渐积累：Trace 说明 Agent 查得准不准、快不快，任务结果说明知识有没有真正用上，知识记录说明新经验有没有继续回流，共同构成上线后的闭环验证。
-
-![图片](https://mmbiz.qpic.cn/mmbiz_png/vI9nYe94fsGxu3P5YibTO899okS0X9WaLmQCtia4U8Eu1xWCz9t8Qtq9PH6T1bTcxibiaCIkGzAxpeRkRFYqibVmwSw/640?wx_fmt=other&wxfrom=5&wx_lazy=1&wx_co=1&tp=webp#imgIndex=20)

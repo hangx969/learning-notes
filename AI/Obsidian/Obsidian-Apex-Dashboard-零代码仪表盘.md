@@ -13,7 +13,7 @@ tags:
 
 今天要介绍的这个插件，叫做 **Apex Dashboard** 。它能帮你 **零代码搭建高颜值个人工作台** ，把散乱的笔记、任务、项目聚合在一个页面上，让 Obsidian 真正成为你的「第二大脑控制中心」。
 
-![图片](https://mmbiz.qpic.cn/sz_mmbiz_png/uSN9RggjCZ0z3qPwx4O4x5pFV3pth5077KHZ4FacrSpoAy03ibicWRGYIaHLgbvcsJzrubPrYxoYKfUSicL6E0TecwaKSXtficX4Re0DL6Qc8EI/640?wx_fmt=png&from=appmsg&watermark=1&tp=webp&wxfrom=5&wx_lazy=1#imgIndex=0)
+![图片](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260905211457877.webp)
 
 ## 🏠 什么是 Apex Dashboard？
 
@@ -35,12 +35,12 @@ tags:
 2. 关闭安全模式
 3. 搜索「 **Apex Dashboard** 」并安装
 4. 安装后点击「启用」
-	![图片](https://mmbiz.qpic.cn/sz_mmbiz_png/uSN9RggjCZ04y0rofZibjzYuQGoT06sGHcD6DIVk16zdUOMgoExRN9OCicgkft1f1HQe4gIgcKbgMstuAKheSA86DyOzs59EwdXlbfjnVbZPo/640?wx_fmt=png&from=appmsg&watermark=1&tp=webp&wxfrom=5&wx_lazy=1#imgIndex=1)
+	![图片](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260905211501208.webp)
 - ✅ 成功标志：左侧边栏出现 **小房子图标**
 
 安装完成后，任何时候点击这个房子图标，就能回到你的专属工作台了。
 
-![图片](https://mmbiz.qpic.cn/mmbiz_png/uSN9RggjCZ3fwlnia3t5IUtOJc1za0qkvWJ9IoVDIIf4fWas5u1sLGPc3PdqlW6016hYlQQ8zqLKHRqXAQpuMpUYpxkg4MvDj6g8JDniauzzQ/640?wx_fmt=png&from=appmsg&tp=webp&wxfrom=5&wx_lazy=1#imgIndex=2)
+![图片](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260905211504144.webp)
 
 ## 🚀 快速上手：一键生成工作台
 
@@ -50,7 +50,7 @@ tags:
 2. 系统会自动在库根目录创建 `dashboard.md` 文件
 3. 这就是你的 **永久仪表盘首页** 了
 4. 一定要点击这栏就能打开主页的侧边栏了
-	![图片](https://mmbiz.qpic.cn/mmbiz_png/uSN9RggjCZ1OR4vEAVNqrESuPg4aeyWGTJRIUWFWbiadNAC1kJzfgO50OjeuP5gKKicXzvUp8UtSybvxJ8b2s6McCe6DwZvTF605FcXgEwLXE/640?wx_fmt=png&from=appmsg&watermark=1&tp=webp&wxfrom=5&wx_lazy=1#imgIndex=3)
+	![图片](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260905211507153.webp)
 
 所有布局、卡片、数据都保存在这个文件里，不用担心丢失配置。
 

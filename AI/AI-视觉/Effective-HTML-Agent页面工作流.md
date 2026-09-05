@@ -23,13 +23,13 @@ tags:
 
 最近我在 GitHub 上看到一个项目，正好管这些事情。
 
-![图片](https://mmbiz.qpic.cn/mmbiz_png/VDCUoW3UiblIvkdLE6rCj4mnTJbXxd5rIbEfbe3wRjbaBKIn0xCib1j0rhhfcPoCkXVh9zFX61MBQoClyu2HZBHpq4JkeSAUcZnyicbtIlAwuA/640?wx_fmt=png&from=appmsg&watermark=1&tp=webp&wxfrom=5&wx_lazy=1#imgIndex=0)
+![图片](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260905211510363.webp)
 
 它叫 Effective HTML。
 
 目前项目已经接近3000个Star。
 
-![图片](https://mmbiz.qpic.cn/sz_mmbiz_png/VDCUoW3UiblLreV7fQ8xoIrAYn8E8LEWPe5PfjrYUrlITNZkYgUcsULkPUds4F7qic6Cz54kAD8WHtRw8osMtFTvJDqFvzvoSnsiabIWOKia8yg/640?wx_fmt=png&from=appmsg&watermark=1&tp=webp&wxfrom=5&wx_lazy=1#imgIndex=1)
+![图片](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260905211513385.webp)
 
 简单来说，它就是一套给 Coding Agent 用的 HTML Skills。
 
@@ -45,7 +45,7 @@ Effective HTML 补的就是这部分。
 
 它有六个 Skill。
 
-![图片](https://mmbiz.qpic.cn/sz_mmbiz_png/VDCUoW3UiblKlXoibUFic6uPprola1zibk9RIEgLpN2kQA90n5Nib5qqBgAMmIHtNBKIvlrTJTVxr8CbiagbJXfDcqhYiaOZIKqSwOUx3icT6EibFd48/640?wx_fmt=png&from=appmsg&watermark=1&tp=webp&wxfrom=5&wx_lazy=1#imgIndex=2)
+![图片](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260905211516381.webp)
 
 最外层的 `html` 用来做任务判断。
 
@@ -57,15 +57,15 @@ Effective HTML 补的就是这部分。
 
 还没有确定页面结构的情况下，就先用 `html-wireframe` 。
 
-![图片](https://mmbiz.qpic.cn/mmbiz_png/VDCUoW3UiblLcEVp6JR2O0emjibXzPL30PO9D5xPdE9uKRzz7gBbVDULCkL6b19H6jFZjoU38TGgUyoGfHmDcsAmXkGWfQAM7QiakowOdmWAAA/640?wx_fmt=png&from=appmsg&watermark=1&tp=webp&wxfrom=5&wx_lazy=1#imgIndex=3)
+![图片](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260905211519356.webp)
 
 已经有明确的结构了，要做一个可以点击操作的页面，就交给 `html-prototype` 。
 
-![图片](https://mmbiz.qpic.cn/mmbiz_png/VDCUoW3UiblLQWCKseDNpvaB0mc34SxcgZR7IvjEsNGUzpJRKLCgPYjoWUuECTt8AkVnR3XlS6V8ibWN4pDaNZESwbGQ7P87MLlNAhRRBjPMs/640?wx_fmt=png&from=appmsg&watermark=1&tp=webp&wxfrom=5&wx_lazy=1#imgIndex=4)
+![图片](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260905211522364.webp)
 
 要展示系统架构、业务流程或调用关系的时候就用 `html-diagram` 。
 
-![图片](https://mmbiz.qpic.cn/sz_mmbiz_png/VDCUoW3UiblLFHkm1t9ickUuRju7SQsQU9brJqMiaOYsnA1RgfqkbhUreChbBCtJiaefJLDhk0W4Vh1oIMMHBOV9HBjiaxw1qB3yeqTjvfHyaibZI/640?wx_fmt=png&from=appmsg&watermark=1#imgIndex=5)
+![图片](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260905211525529.png)
 
 另外还有html-plan负责计划，design-artifact负责视觉。
 
@@ -89,7 +89,7 @@ html-wireframe 做的事情很简单，就是把页面的骨架先搭起来。
 
 主要就是灰度、边框和简单的区块，品牌色、阴影、渐变等等先放一放。
 
-![图片](https://mmbiz.qpic.cn/mmbiz_png/VDCUoW3UiblIMurkgicr1MMaonBRvsjFpewPcjqaVMuSQhXguzX9Ppw85E0ywkBHRQPrakdkGnb5o6IflH8icXPicWsmicvTR9fcZoghoHgyAibak/640?wx_fmt=png&from=appmsg&watermark=1#imgIndex=6)
+![图片](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260905211528447.png)
 
 现在只看结构。
 
@@ -113,7 +113,7 @@ html-wireframe 做的事情很简单，就是把页面的骨架先搭起来。
 
 这样就可以把静态页面变成可以操作的原型了。
 
-![图片](https://mmbiz.qpic.cn/sz_mmbiz_png/VDCUoW3UiblLvq20EN0GeOHvdDBmicwt1gmVErUuia3yctaNcvurPjU9ZIPj3Nia8LnicGXQ3fQYBkmaZjBA4APicCkyMouIc0BoDHkWLV0D8ZKEo/640?wx_fmt=png&from=appmsg&watermark=1#imgIndex=7)
+![图片](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260905211531541.png)
 
 比如登录页，密码输错要给出提示，提交的时候要显示加载状态，成功和失败都要有相应的反馈。
 
@@ -137,7 +137,7 @@ html-wireframe 做的事情很简单，就是把页面的骨架先搭起来。
 
 确定了形式之后，再用 HTML、CSS、SVG 或 Canvas 来实现。
 
-![图片](https://mmbiz.qpic.cn/mmbiz_png/VDCUoW3UiblJU2nWxlPAKEkuqZskkK5lLaicvhJrDMadSGicE5VRar1NQ2JiaEwhEjc7IlNphrtXg8QSFgNYKRHu0ueeAgDgCyJLqiarucU6Td8M/640?wx_fmt=png&from=appmsg&watermark=1#imgIndex=8)
+![图片](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260905211534478.png)
 
 这一点挺实用。
 
