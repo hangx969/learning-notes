@@ -289,6 +289,7 @@ date: 2026-04-17
 | [全库文档盘点](inventory/repository-inventory.md) | 全部文档逐一列出 |
 | [领域内容特点分析](inventory/domain-summary.md) | 17 个领域的成熟度与优先级 |
 | [断链报告](maintenance/broken-links-report.md) | wikilink 有效性检查 |
+| [[KnowledgeBase/maintenance/broken-links-2026-09-05|断链检查报告 2026-09-05]] | 2026-09-05 KnowledgeBase wikilink 断链检查结果 |
 | [命名规范](maintenance/naming-normalization.md) | 文件命名约定 |
 | [增量维护流程](maintenance/update-workflow.md) | 新增文档后的更新步骤 |
 

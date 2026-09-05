@@ -1717,3 +1717,9 @@ date: 2026-04-17
   - 完整的升级检查清单（升级前/中/后）
 - 影响实体：[[KnowledgeBase/entities/Kubernetes]]、[[KnowledgeBase/entities/containerd]]
 - 影响概念：[[KnowledgeBase/concepts/cgroup]]、[[KnowledgeBase/concepts/容器运行时]]
+
+## [2026-09-05] lint | 断链检查
+
+- 检查 `KnowledgeBase/` 下 129 个 Markdown 页面，共 3046 个 wikilink。
+- 发现严格口径断链 344 条；其中 25 条疑似由 `\|` 转义显示分隔符导致，25 条去掉反斜杠后可解析。
+- 生成维护报告：[[KnowledgeBase/maintenance/broken-links-2026-09-05|断链检查报告 2026-09-05]]。
