@@ -5,7 +5,7 @@ tags:
   - knowledgebase/ai
 aliases:
   - AI Workflow Map
-date: 2026-04-16
+date: 2026-09-05
 ---
 
 # 🤖 AI 工作流专题地图
@@ -40,6 +40,7 @@ date: 2026-04-16
 1. [[AI/Codex/Codex-config-toml-全量配置参考|config.toml 全量配置参考]] — 配置字段与扩展机制
 2. [[AI/Codex/Codex-两个设置提升体验|两个体验设置]] — 普通模式主动澄清与经验性 Juice 自检
 3. [[AI/Codex/Codex-省Token工具实测-Ponytail-Headroom-RTK|省 Token 工具实测]] — 约束 Agent 输出的工具实践
+4. [[0raw/在 Codex 里随时切换不同厂家的 Harness|Codex Host 多 Harness 接入]] — 统一入口与角色化跨 Agent 协作的项目介绍（待验证）
 
 ### OpenClaw 路径
 1. [[AI/OpenClaw/OpenClaw-基础-安装|OpenClaw-基础-安装]] — 入门安装
