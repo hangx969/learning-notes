@@ -52,8 +52,8 @@ date: 2026-04-17
 
 | 页面 | 摘要 |
 |------|------|
-| [Kubernetes](entities/Kubernetes.md) | 容器编排平台，153 篇文章覆盖全生命周期 |
-| [Docker](entities/Docker.md) | 容器运行时，12 篇覆盖基础与服务部署实战 |
+| [Kubernetes](entities/Kubernetes.md) | 容器编排平台，155 篇文章覆盖全生命周期 |
+| [Docker](entities/Docker.md) | 容器运行时，14 篇覆盖基础、镜像分发与服务部署实战 |
 | [Helm](entities/Helm.md) | Kubernetes 包管理器 |
 | [ArgoCD](entities/ArgoCD.md) | GitOps 持续交付工具 |
 | [Jenkins](entities/Jenkins.md) | CI/CD 自动化服务器 |
@@ -137,7 +137,8 @@ date: 2026-04-17
 
 | 页面 | 覆盖文档数 | 摘要 |
 |------|:---------:|------|
-| [Docker](sources/docker-batch-summary.md) | 12 | Docker 基础、GPU 配置、服务部署实战（GitLab/Prometheus/Loki 等） |
+| [Docker](sources/docker-batch-summary.md) | 13 | Docker 基础、镜像离线分发、GPU 配置与服务部署实战（GitLab/Prometheus/Loki 等） |
+| [[KnowledgeBase/sources/docker-image-download-summary|Docker 镜像无引擎下载]] | 1 | Registry 直接拉取、多架构选择、断点续传、重试与 tar 离线导入 |
 | [Docker 安全加固](sources/docker-security-capabilities-summary.md) | 1 | Capabilities 最小化、no-new-privileges 防提权、User Namespace/只读文件系统/资源限制纵深防御 |
 | [K8s 基础资源](sources/k8s-basic-resources-batch-summary.md) | 22 | Pod/Deployment/Service/Ingress/ConfigMap/Storage/RBAC/CRD/Operator/API Server 深度剖析/Finalizer |
 | [K8s 标签与选择器](sources/k8s-labels-selectors-summary.md) | 1 | 5 条 SRE 铁律（selector 匹配/节点调度/成本归因/版本陷阱/单值原则）、4 个翻车案例、`app.kubernetes.io/*` 命名规范 |
@@ -151,10 +152,12 @@ date: 2026-04-17
 | [K8s 网络与服务网格](sources/k8s-networking-service-mesh-batch-summary.md) | 7 | Ingress-Nginx/External-DNS/Calico/Istio 流量管理 |
 | [K8s 安全认证](sources/k8s-security-auth-batch-summary.md) | 8 | Cert-Manager/External Secrets/Kyverno(含1.18新特性)/OAuth2 Proxy/Trivy/SonarQube/Security Context |
 | [Kyverno 1.18](sources/kyverno-1.18-summary.md) | 1 | CNCF 毕业后首版：SSRF 防护、CLI 扩展、CEL 策略演进、性能与可观测性提升 |
-| [K8s 扩缩容与存储](sources/k8s-scaling-storage-batch-summary.md) | 8 | HPA/VPA/KEDA/Karpenter 扩缩容 + FinOps 成本优化 + NFS/Longhorn/Rook-Ceph 存储 |
+| [K8s 扩缩容与存储](sources/k8s-scaling-storage-batch-summary.md) | 9 | HPA/VPA/KEDA/Karpenter 扩缩容 + FinOps 成本优化 + PV/PVC 数据保护 + NFS/Ceph/CubeFS 存储 |
+| [PV/PVC 回收策略](sources/k8s-pv-pvc-reclaim-policy-summary.md) | 1 | PVC 删除后的 PV 回收策略、Released 复用风险、快照与 StatefulSet 安全删除 |
 | [K8s 中间件与 UI](sources/k8s-db-middleware-UI-batch-summary.md) | 19 | Redis/MySQL/PostgreSQL/Kafka/RabbitMQ 部署 + Dashboard/Rancher/k9s 管理工具 |
 | [RabbitMQ HA](sources/rabbitmq-ha-summary.md) | 1 | Helm 部署 RabbitMQ 高可用集群（StatefulSet）、aliyun Chart 配置、旧版 API 兼容修复 |
-| [K8s 杂项](sources/k8s-misc-batch-summary.md) | 18 | Helm 工具链/CKA-CKS/KubeBlocks/Harbor/K3S/Velero/GPU |
+| [K8s 杂项](sources/k8s-misc-batch-summary.md) | 19 | Helm 工具链/CKA-CKS/KubeBlocks/Harbor/K3S/Velero/GPU |
+| [K8s NVIDIA Device Plugin](sources/k8s-nvidia-device-plugin-summary.md) | 1 | NVIDIA GPU 驱动与 Container Toolkit 前置检查、Device Plugin/Helm/GPU Operator 部署、验证与故障排查 |
 | [K8s 备份与灾备](sources/k8s-backup-dr-summary.md) | 1 | 三层容灾架构（etcd 快照/Velero/应用数据）、自动化备份 CronJob、六大生产避坑、RTO/RPO 目标 |
 
 ### Azure（已摄入 ✅）
@@ -269,7 +272,7 @@ date: 2026-04-17
 |------|------|
 | [领域地图](maps/domain-map.md) | 按技术领域导航全库 |
 | [工具地图](maps/tool-map.md) | 按工具/平台聚合知识 |
-| [Kubernetes 专题](maps/kubernetes-map.md) | 146 篇 K8s 生态知识导航 |
+| [Kubernetes 专题](maps/kubernetes-map.md) | 155 篇 K8s 生态知识导航 |
 | [AI 工作流专题](maps/ai-workflow-map.md) | Claude Code + OpenClaw + AI 辅助运维 |
 | [Claude Code & OpenClaw 专题](maps/claude-code-openclaw-map.md) | AI 编程与开源 AI 工具 |
 | [云平台专题](maps/cloud-platform-map.md) | Aliyun + Azure 对标 |
@@ -306,7 +309,7 @@ date: 2026-04-17
 
 | 领域 | 篇数 | 成熟度 | 入口 |
 |------|------|:------:|------|
-| Docker-Kubernetes | 153 | 🟢 | [kubernetes-map](maps/kubernetes-map.md) |
+| Docker-Kubernetes | 155 | 🟢 | [kubernetes-map](maps/kubernetes-map.md) |
 | Python | 27 | 🟢 | [python-devops-map](maps/python-devops-map.md) |
 | Linux-Shell | 24 | 🟡 | [linux-ops-map](maps/linux-ops-map.md) |
 | Azure | 21 | 🟢 | [cloud-platform-map](maps/cloud-platform-map.md) |

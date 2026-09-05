@@ -23,7 +23,7 @@ date: 2026-04-16
 - `k8s-monitoring-logging/`（20 篇）— Prometheus、Grafana、EFK、Loki、Jaeger、Skywalking
 - `k8s-CICD/`（19 篇）— Jenkins、ArgoCD、GitLab、Tekton、Kustomize、GitHub Actions
 - `k8s-installation-management/`（16 篇）— K8s 1.20~1.35 多版本安装、生产优化、故障排查
-- `docker/`（12 篇）— Docker 基础与各类服务部署
+- `docker/`（13 篇）— Docker 基础、镜像离线分发与各类服务部署
 - `k8s-networking-service-mesh/`（7 篇）— Istio、Ingress-Nginx、NetworkPolicy
 
 **代表性文章：**

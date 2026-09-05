@@ -5,13 +5,13 @@ tags:
   - knowledgebase/kubernetes
 aliases:
   - K8s Map
-date: 2026-04-16
+date: 2026-09-05
 ---
 
 # ☸️ Kubernetes 专题地图
 
 > [!info] 专题范围
-> 覆盖 Docker-Kubernetes 目录下 ==153 篇文档==，从容器基础到企业级 K8s 全生命周期管理。
+> 覆盖 Docker-Kubernetes 目录下 ==155 篇文档==，从容器基础到企业级 K8s 全生命周期管理。
 
 ---
 
@@ -127,8 +127,8 @@ Cert-Manager、External-Secrets、Kyverno+Policy-Reporter（含 1.18 新特性�
 ### 扩缩容（5 篇）
 HPA-VPA、KEDA、Goldilocks、VPA Helm、[[Docker-Kubernetes/k8s-scaling/k8s成本优化方案-FinOps实战|K8s FinOps 成本优化]]
 
-### 存储（3 篇）
-NFS Provisioner、Ceph、CubeFS
+### 存储（4 篇）
+NFS Provisioner、Ceph、CubeFS、[[Docker-Kubernetes/k8s-storage/k8s删除PVC后PV数据保护与复用避坑|PV/PVC 数据保护与复用避坑]]
 
 ### 中间件部署（11 篇）
 MySQL(3)、Redis(2)、PostgreSQL、Kafka(Strimzi)、RabbitMQ HA、MongoDB、httpd、SpringCloud
@@ -136,14 +136,14 @@ MySQL(3)、Redis(2)、PostgreSQL、Kafka(Strimzi)、RabbitMQ HA、MongoDB、http
 ### 其他
 | 子目录 | 篇数 | 代表 |
 |--------|------|------|
-| Docker | 12 | [[Docker-Kubernetes/docker/docker基础|docker基础]] |
+| Docker | 13 | [[Docker-Kubernetes/docker/docker基础|docker基础]] |
 | Helm/Operator | 6 | [[Docker-Kubernetes/helm-operator/helmv3-安装与使用|helmv3-安装与使用]] |
 | UI 工具 | 8 | k9s、Lens、Dashboard、Kuboard、Rancher |
 | Harbor | 2 | [[Docker-Kubernetes/harbor/harbor-basics|harbor-basics]] |
 | CKA/CKS | 3 | [[Docker-Kubernetes/CKA-CKS/CKA-备考|CKA-备考]] |
 | KubeBlocks | 2 | WordPress、Harbor 高可用 |
 | 备份 | 1 | [[Docker-Kubernetes/k8s-backup-dr/k8s集群备份恢复-Velero|k8s集群备份恢复-Velero]] |
-| GPU | 1 | [[Docker-Kubernetes/k8s-ai-gpu/k8s配置NVIDIA GPU|k8s配置NVIDIA GPU]] |
+| GPU | 2 | [[Docker-Kubernetes/k8s-ai-gpu/k8s配置NVIDIA GPU|k8s配置NVIDIA GPU]]、[[Docker-Kubernetes/k8s-ai-gpu/从零部署 NVIDIA Device Plugin：K8s 识别 GPU 的“第一块敲门砖”|NVIDIA Device Plugin 部署]] |
 
 ---
 

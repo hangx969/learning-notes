@@ -4,7 +4,7 @@ tags:
   - knowledgebase/source
   - docker-kubernetes/scaling
   - docker-kubernetes/storage
-date: 2026-04-17
+date: 2026-09-05
 sources:
   - "[[Docker-Kubernetes/k8s-scaling/helm部署goldilocks]]"
   - "[[Docker-Kubernetes/k8s-scaling/helm部署vpa]]"
@@ -14,18 +14,19 @@ sources:
   - "[[Docker-Kubernetes/k8s-storage/helm部署nfs-subdir-external-provisioner]]"
   - "[[Docker-Kubernetes/k8s-storage/k8s-ceph部署与集成]]"
   - "[[Docker-Kubernetes/k8s-scaling/k8s成本优化方案-FinOps实战]]"
+  - "[[Docker-Kubernetes/k8s-storage/k8s删除PVC后PV数据保护与复用避坑]]"
 ---
 
 ## 元信息
 
 - **原始目录**: `Docker-Kubernetes/k8s-scaling/` 与 `Docker-Kubernetes/k8s-storage/`
-- **文档数量**: 8 篇（扩缩容 5 篇 + 存储 3 篇）
-- **领域**: Kubernetes 自动扩缩容（HPA/VPA/KEDA）与分布式存储（NFS/Ceph/CubeFS）
+- **文档数量**: 9 篇（扩缩容 5 篇 + 存储 4 篇）
+- **领域**: Kubernetes 自动扩缩容（HPA/VPA/KEDA）与存储生命周期（PV/PVC/StorageClass）及分布式存储（NFS/Ceph/CubeFS）
 - **摄入日期**: 2026-04-17
 
 ## 整体概述
 
-本批次摘要覆盖了 Kubernetes 集群的两大基础能力：自动扩缩容和持久化存储。扩缩容部分系统性介绍了 HPA（水平扩缩）、VPA（垂直扩缩）、KEDA（事件驱动扩缩）三种方案及其部署工具（Goldilocks 资源推荐），从原生能力到高级事件驱动扩展形成完整体系。存储部分涵盖了从简单的 NFS 动态供应到企业级分布式存储（Ceph、CubeFS）的部署与 K8s 集成，为有状态应用提供可靠的数据持久化方案。
+本批次摘要覆盖了 Kubernetes 集群的两大基础能力：自动扩缩容和持久化存储。扩缩容部分系统性介绍了 HPA（水平扩缩）、VPA（垂直扩缩）、KEDA（事件驱动扩缩）三种方案及其部署工具（Goldilocks 资源推荐），从原生能力到高级事件驱动扩展形成完整体系。存储部分涵盖了从 PV/PVC/StorageClass 生命周期与数据保护，到简单的 NFS 动态供应和企业级分布式存储（Ceph、CubeFS）的部署与 K8s 集成，为有状态应用提供可靠的数据持久化方案。
 
 ## 各文档摘要
 
@@ -103,6 +104,16 @@ sources:
 - 最低要求：3 Monitor + 2 Manager + 3 OSD
 - 生产环境强烈建议二进制安装在服务器上，不要装在 K8s 中（数据恢复困难）
 
+### [[Docker-Kubernetes/k8s-storage/k8s删除PVC后PV数据保护与复用避坑|删除 PVC 后 PV 数据保护与复用避坑]]
+
+**核心内容**: 解释 PVC 删除后 PV 的回收策略、`Released` PV 复用风险和有状态服务的安全删除流程。
+
+- 动态供给 PV 常见默认策略是 `Delete`，删除 PVC 可能触发 CSI 或云厂商 API 销毁底层卷
+- 修改 StorageClass 不会回溯已有 PV，存量数据盘必须逐个检查并 patch `persistentVolumeReclaimPolicy`
+- `Retain` 后的 PV 可能停留在 `Released`，清理 `claimRef` 前必须确认旧数据可弃或已有备份
+- StatefulSet 的 `volumeClaimTemplates` 同样继承 StorageClass 策略，删除前应使用快照或备份保护数据
+- 删除前 SOP：确认策略 → 创建并验证快照 → 必要时改为 Retain → 删除后检查 PV 与底层卷状态
+
 ## 涉及的概念与实体
 
 - [[KnowledgeBase/concepts/HPA]]: 水平 Pod 自动扩缩容
@@ -120,6 +131,7 @@ sources:
 - [[KnowledgeBase/entities/Ceph]]: 企业级分布式存储系统
 - [[KnowledgeBase/entities/NFS]]: 网络文件系统
 - [[KnowledgeBase/entities/Knative]]: Serverless 框架（KPA 来源）
+- [[KnowledgeBase/concepts/Finalizer]]: PVC/PV 删除过程中的保护钩子
 
 ### [[Docker-Kubernetes/k8s-scaling/k8s成本优化方案-FinOps实战|K8s 成本优化方案——FinOps 实战]]
 
@@ -141,4 +153,5 @@ sources:
 3. **Metrics Server 枢纽角色**: HPA 和 VPA 均依赖 Metrics Server 提供资源指标，是扩缩容体系的基础组件。
 4. **资源优化闭环**: VPA Recommender 提供推荐值 -> Goldilocks 可视化展示 -> 运维人员调整 request/limit -> HPA 基于 request 计算扩缩比例，形成资源优化闭环。
 5. **存储选型权衡**: NFS（简单但非高可用） -> CubeFS（云原生友好但无块存储） -> Ceph（功能全面但运维复杂），三种方案适用于不同规模和复杂度的场景。
-6. **KEDA 与 Serverless**: KEDA 的缩容到 0 能力与 Knative/KPA 的 Serverless 模式理念一致，反映了事件驱动架构在 K8s 中的深入应用。
+6. **存储删除安全边界**: StorageClass 提供供给模板，PV 的 `persistentVolumeReclaimPolicy` 决定具体删除行为；`Retain`、快照和备份共同构成有状态数据的恢复边界。
+7. **KEDA 与 Serverless**: KEDA 的缩容到 0 能力与 Knative/KPA 的 Serverless 模式理念一致，反映了事件驱动架构在 K8s 中的深入应用。

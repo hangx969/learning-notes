@@ -3,11 +3,12 @@ title: StorageClass
 tags:
   - knowledgebase/concept
   - kubernetes/storage
-date: 2026-05-04
+date: 2026-09-05
 sources:
   - "[[Docker-Kubernetes/k8s-basic-resources/k8s基础-storage]]"
   - "[[Docker-Kubernetes/k8s-storage/helm部署nfs-subdir-external-provisioner]]"
   - "[[Docker-Kubernetes/k8s-storage/k8s-ceph部署与集成]]"
+  - "[[Docker-Kubernetes/k8s-storage/k8s删除PVC后PV数据保护与复用避坑]]"
 aliases:
   - 存储类
   - SC
@@ -25,6 +26,7 @@ StorageClass 是 Kubernetes 提供的动态创建 PersistentVolume（PV）的模
 - **动态供应**：StorageClass 的核心价值是实现 PV 的动态供应。创建 PVC 时只需指定 `storageClassName`，Kubernetes 即自动创建匹配的 PV，无需管理员预先手动创建
 - **Provisioner（供应商）**：每个 StorageClass 必须指定 `provisioner` 字段，声明使用哪种 CSI 存储插件。同一集群可同时存在多个 StorageClass 对接不同存储后端（如 `nfs.csi.k8s.io`、`rbd.csi.ceph.com`）
 - **回收策略（reclaimPolicy）**：定义 PVC 删除后 PV 的处理方式。动态存储默认为 `Delete`（PV 随 PVC 一起删除），生产环境管理员手动维护的 PV 推荐 `Retain`（保留数据，需手动清理）
+- **策略作用范围**：修改 StorageClass 的 `reclaimPolicy` 只影响后续动态创建的 PV，不会回溯修改已有 PV；存量数据盘必须直接检查或 patch PV 自身的 `spec.persistentVolumeReclaimPolicy`
 - **卷绑定模式（volumeBindingMode）**：`Immediate` 表示 PVC 创建后立即绑定 PV；`WaitForFirstConsumer` 表示等待 Pod 调度后再绑定，适用于 Local PV 等需要与 Pod 同节点的场景
 - **默认存储类**：可通过 annotation `storageclass.kubernetes.io/is-default-class: "true"` 设置默认 StorageClass，PVC 未指定 `storageClassName` 时自动使用默认类
 - **Parameters**：StorageClass 的 `parameters` 字段传递存储后端的配置参数，如 NFS 的 server 地址和共享路径、Ceph 的 pool 名称等
@@ -42,6 +44,7 @@ StorageClass 是 Kubernetes 提供的动态创建 PersistentVolume（PV）的模
 - [[Docker-Kubernetes/k8s-basic-resources/k8s基础-storage]]：系统性介绍了 StorageClass 的概念、CSI 机制、NFS 存储类的两种实现方式（nfs-subdir 插件和 CSI Driver）、默认存储类设置，以及结合 StatefulSet volumeClaimTemplates 的使用
 - [[Docker-Kubernetes/k8s-storage/helm部署nfs-subdir-external-provisioner]]：通过 Helm 部署 nfs-subdir-external-provisioner 实现 NFS StorageClass 动态供应的完整实战
 - [[Docker-Kubernetes/k8s-storage/k8s-ceph部署与集成]]：Ceph 分布式存储的部署与 K8s 集成，涉及 RBD StorageClass 配置
+- [[Docker-Kubernetes/k8s-storage/k8s删除PVC后PV数据保护与复用避坑]]：围绕 PVC 删除后的 Delete/Retain 行为、Released PV 的 claimRef 复用风险、StatefulSet 和快照保护给出操作 SOP
 - [[Docker-Kubernetes/k8s-db-middleware/k8s基于yaml部署mysql主从高可用]]：包含 NFS Provisioner 的完整搭建流程，通过 StorageClass 动态供给 PV
 
 ## 知识空白

@@ -10,6 +10,15 @@ date: 2026-04-17
 > 仅追加的操作记录——摄入、查询、lint、结构调整。
 > 最新条目在最上方。
 
+## [2026-09-05] ingest | NVIDIA Device Plugin：K8s 识别 GPU
+
+- **来源**：深栈运维，2026-08-28，微信公众号；原始剪藏位于 `0raw/`
+- **清洗**：去除作者署名、联系方式、赞赏和目录导航；保留 GPU 调度链路、前置依赖、三种部署方式、验证命令、故障排查和运行时行为等技术内容，并规范 Bash 代码块与图片说明
+- **归档**：`0raw/从零部署 NVIDIA Device Plugin：K8s 识别 GPU 的“第一块敲门砖”.md` → `Docker-Kubernetes/k8s-ai-gpu/从零部署 NVIDIA Device Plugin：K8s 识别 GPU 的“第一块敲门砖”.md`
+- **新建文件**：`KnowledgeBase/sources/k8s-nvidia-device-plugin-summary.md` — 来源摘要页
+- **更新页面**：`KnowledgeBase/sources/k8s-misc-batch-summary.md`、`KnowledgeBase/entities/NVIDIA.md`、`KnowledgeBase/entities/Kubernetes.md`、`KnowledgeBase/maps/kubernetes-map.md`、`KnowledgeBase/INDEX.md`
+- **核心知识**：Device Plugin 通过 NVML 发现 GPU 并注册 `nvidia.com/gpu`；Helm、静态 DaemonSet、GPU Operator 三种部署路径；驱动/Toolkit/containerd 前置检查；节点资源、插件日志和 CUDA 测试 Pod 三层验证；常见错误的分层排障顺序
+
 ---
 
 ## [2026-07-18] ingest | K8s Finalizer 与资源删除机制
@@ -1731,3 +1740,18 @@ date: 2026-04-17
 - 保留技术内容：普通模式主动澄清的 `config.toml` 配置、完整 Juice 检查提示、使用顺序；移除公众号引流与互动话术。
 - 新增 [[KnowledgeBase/sources/codex-两个设置提升体验-summary|来源摘要]] 和 [[KnowledgeBase/entities/Codex|Codex 实体页]]，并更新 [[KnowledgeBase/maps/ai-workflow-map|AI 工作流专题地图]] 与 `INDEX.md`。
 - 将 Juice 相关结论标注为作者经验，避免作为已验证的模型质量指标。
+
+## [2026-09-05] ingest | 删除 PVC 后 PV 数据保护与复用避坑
+
+- 清洗 `0raw/删 PV 数据没了？避 3 坑.md` 并归档至 `Docker-Kubernetes/k8s-storage/k8s删除PVC后PV数据保护与复用避坑.md`；保留回收策略、PV/PVC 命令、Released 复用、StatefulSet、VolumeSnapshot、恢复 SOP 与 FAQ，移除作者署名和微信赞赏页脚。
+- 新增来源摘要：`KnowledgeBase/sources/k8s-pv-pvc-reclaim-policy-summary.md`。
+- 更新 `KnowledgeBase/sources/k8s-scaling-storage-batch-summary.md`：文档数 8→9，新增 PV/PVC 生命周期与数据保护小节；Kubernetes 总文档数随本次摄入由 154→155。
+- 更新 `KnowledgeBase/concepts/StorageClass.md`、`KnowledgeBase/concepts/Finalizer.md`、`KnowledgeBase/entities/Kubernetes.md`、`KnowledgeBase/maps/kubernetes-map.md`、`KnowledgeBase/index.md` 与 `Docker-Kubernetes/index.md` 的交叉引用、存储文档数和导航。
+- 核心知识：动态供给 PV 的 `Delete` 可能销毁底层云盘；修改 StorageClass 不会回溯已有 PV；`Retain` 后的 `Released` PV 复用前必须审查 claimRef 和旧数据；删除重要 PVC 前应确认快照/备份，CSI Finalizer 强制清理需谨慎。
+
+## [2026-09-05] ingest | Docker 镜像无引擎下载与 tar 导出
+
+- 清洗 `0raw/不依赖本地docker环境 从Docker Hub 下载镜像到本地 并保存为tar镜像文件.md` 并存入 `Docker-Kubernetes/docker/docker无需本地环境从DockerHub下载镜像并保存为tar.md`。
+- 保留技术内容：Registry 直接拉取、manifest list/OCI index、多架构与 digest 选择、分层断点续传、Range 限制、指数退避重试、Python 依赖及 `docker load` 导入。
+- 新增 [[KnowledgeBase/sources/docker-image-download-summary|来源摘要]]，更新 [[KnowledgeBase/entities/Docker|Docker 实体页]]、Docker 批次摘要、工具/领域地图、文档盘点和 `INDEX.md`。
+- 移除正文作者署名、引流话术和免责声明（保留作者元数据）；标注原文 `docker_pull_v2.py` 与示例 `docker_pull.py` 的命名差异。

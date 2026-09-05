@@ -10,7 +10,7 @@ tags:
   - docker-kubernetes/k8s-springcloud
   - docker-kubernetes/k8s-backup-dr
   - docker-kubernetes/k8s-ai-gpu
-date: 2026-04-17
+date: 2026-09-05
 sources:
   - "[[Docker-Kubernetes/helm-operator/helmv3-安装与使用]]"
   - "[[Docker-Kubernetes/helm-operator/helm部署config-syncer(kubed)]]"
@@ -30,18 +30,19 @@ sources:
   - "[[Docker-Kubernetes/k8s-springcloud/SpringCloud项目迁移到k8s实战]]"
   - "[[Docker-Kubernetes/k8s-backup-dr/k8s集群备份恢复-Velero]]"
   - "[[Docker-Kubernetes/k8s-ai-gpu/k8s配置NVIDIA GPU]]"
+  - "[[Docker-Kubernetes/k8s-ai-gpu/从零部署 NVIDIA Device Plugin：K8s 识别 GPU 的“第一块敲门砖”]]"
 ---
 
 ## 元信息
 
 - **原始目录**: `Docker-Kubernetes/helm-operator/`、`Docker-Kubernetes/CKA-CKS/`、`Docker-Kubernetes/kubeblocks/`、`Docker-Kubernetes/harbor/`、`Docker-Kubernetes/container-platform/`、`Docker-Kubernetes/k8s-springcloud/`、`Docker-Kubernetes/k8s-backup-dr/`、`Docker-Kubernetes/k8s-ai-gpu/`
-- **文档数量**: 18 篇（8 个子目录汇总）
+- **文档数量**: 19 篇（8 个子目录汇总）
 - **领域**: Helm 工具链、K8s 认证备考、KubeBlocks 数据库管理、Harbor 镜像仓库、容器平台（OpenShift/K3S）、SpringCloud 迁移、备份恢复、GPU 配置
 - **摄入日期**: 2026-04-17
 
 ## 整体概述
 
-本批次文档覆盖 Kubernetes 生态的多个专题领域。Helm 工具链部分包含 Helm 本身的安装使用以及通过 Helm 部署各类运维工具（Config Syncer、Dragonfly、Pact Broker、Reloader、Tomcat）。认证备考部分涵盖 CKA/CKS 考试准备和常见面试题。KubeBlocks 展示了用统一 Operator 快速部署 WordPress 和高可用 Harbor 的方案。此外还包含 Harbor 镜像仓库基础与 Helm 部署、OpenShift 和 K3S 容器平台、SpringCloud 微服务迁移到 K8s、Velero 集群备份恢复以及 NVIDIA GPU 在 K8s 中的配置实践。
+本批次文档覆盖 Kubernetes 生态的多个专题领域。Helm 工具链部分包含 Helm 本身的安装使用以及通过 Helm 部署各类运维工具（Config Syncer、Dragonfly、Pact Broker、Reloader、Tomcat）。认证备考部分涵盖 CKA/CKS 考试准备和常见面试题。KubeBlocks 展示了用统一 Operator 快速部署 WordPress 和高可用 Harbor 的方案。此外还包含 Harbor 镜像仓库基础与 Helm 部署、OpenShift 和 K3S 容器平台、SpringCloud 微服务迁移到 K8s、Velero 集群备份恢复，以及 NVIDIA GPU 在 K8s 中从驱动和容器运行时到 Device Plugin/GPU Operator 的完整配置实践。
 
 ## 各文档摘要
 
@@ -206,6 +207,16 @@ sources:
   - 通过 `runtimeClassName: nvidia`、`resources.limits` 和 `nodeSelector` 声明 GPU 需求
   - GPU 节点通常设置 `NoSchedule` taint 防止非 GPU 工作负载调度
   - GPU 作为"扩展资源"需要 Device Plugin 向 K8s 注册
+
+### [[Docker-Kubernetes/k8s-ai-gpu/从零部署 NVIDIA Device Plugin：K8s 识别 GPU 的“第一块敲门砖”|从零部署 NVIDIA Device Plugin]]
+
+- **核心内容**: 解释 NVIDIA Device Plugin 如何让 K8s 识别并分配 GPU，覆盖驱动、NVIDIA Container Toolkit、containerd runtime 前置检查，以及 Helm、静态 DaemonSet、GPU Operator 三种部署方式。
+- **关键知识点**:
+  - Device Plugin 通过 NVML 发现 GPU，并向 K8s 注册 `nvidia.com/gpu` 扩展资源
+  - Helm 适合版本化部署，GPU Operator 统一管理驱动、插件、运行时和 DCGM 监控
+  - 通过节点资源、插件日志和 CUDA 测试 Pod 验证部署结果
+  - `no GPU found`、`Unknown runtime specified nvidia` 和 GPU 数量为 0 的分层排障顺序
+  - Device Plugin 是持续运行的 DaemonSet，负责响应 Kubelet 的 Allocate 请求
 
 ## 涉及的概念与实体
 

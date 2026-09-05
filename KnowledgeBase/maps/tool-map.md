@@ -69,7 +69,7 @@ date: 2026-04-16
 ## 容器与编排
 
 ### Docker
-**相关文档（12+ 篇）：**
+**相关文档（13+ 篇）：**
 - [[Docker-Kubernetes/docker/docker基础|docker基础]] ⭐ 推荐入口
 - [[Docker-Kubernetes/docker/docker配置NVIDIA GPU|docker配置NVIDIA GPU]]
 - [[Docker-Kubernetes/docker/docker配置代理|docker配置代理]]
@@ -78,6 +78,7 @@ date: 2026-04-16
 - [[Docker-Kubernetes/docker/docker部署prometheus-grafana-cAdvisior监控|docker部署prometheus-grafana-cAdvisior监控]]
 - [[Docker-Kubernetes/docker/docker部署nginx-tomcat-httpd-go-python服务|docker部署nginx-tomcat-httpd-go-python服务]]
 - [[Docker-Kubernetes/docker/docker部署lnmp网站|docker部署lnmp网站]]
+- [[Docker-Kubernetes/docker/docker无需本地环境从DockerHub下载镜像并保存为tar|无需本地 Docker 环境下载镜像并导出 tar]] — Registry 直连、多架构与断点续传
 - 及更多部署实战...
 
 **概念页：** [[KnowledgeBase/entities/Docker|Docker]]

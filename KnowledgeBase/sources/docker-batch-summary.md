@@ -3,7 +3,7 @@ title: Docker 来源批量摘要
 tags:
   - knowledgebase/source
   - docker-kubernetes/docker
-date: 2026-04-17
+date: 2026-09-05
 sources:
   - "[[Docker-Kubernetes/docker/docker基础]]"
   - "[[Docker-Kubernetes/docker/docker部署UI工具portainer-部署redis-sentinel]]"
@@ -17,13 +17,14 @@ sources:
   - "[[Docker-Kubernetes/docker/docker部署路由监控工具NextTrace]]"
   - "[[Docker-Kubernetes/docker/docker配置NVIDIA GPU]]"
   - "[[Docker-Kubernetes/docker/docker配置代理]]"
+  - "[[Docker-Kubernetes/docker/docker无需本地环境从DockerHub下载镜像并保存为tar]]"
 ---
 
 # Docker 来源批量摘要
 
 ## 元信息
 - **原始目录**：`Docker-Kubernetes/docker/`
-- **文档数量**：12 篇
+- **文档数量**：13 篇
 - **领域**：Docker-Kubernetes
 - **摄入日期**：2026-04-17
 
@@ -121,6 +122,14 @@ sources:
   - `~/.docker/config.json` 仅为容器内进程配置代理，不影响镜像拉取
   - Chrome 插件 Docker Image Downloader 可直接下载 docker.io/gcr.io 镜像
 
+### [[Docker-Kubernetes/docker/docker无需本地环境从DockerHub下载镜像并保存为tar|Docker镜像无引擎下载与 tar 导出]]
+- **核心内容**：使用 Python 脚本直接从 Docker Hub、quay.io 等 Registry 下载镜像层并生成 `.tar` 文件，不依赖本地 Docker Engine。
+- **关键知识点**：
+  - 自动处理 manifest list / OCI index，并可按操作系统、CPU 架构或 digest 选择镜像
+  - 通过 `layer_gzip.tar` 和 `layer.tar` 实现分层断点续传
+  - 对网络超时、连接重置和 HTTP 5xx 进行最多 5 次指数退避重试
+  - 生成的 tar 文件可在目标 Docker 主机上使用 `docker load -i` 导入
+
 ## 涉及的概念与实体
 - [[KnowledgeBase/entities/Docker|Docker]]
 - [[KnowledgeBase/entities/Docker-Compose|Docker Compose]]
@@ -139,3 +148,4 @@ sources:
 - **监控与日志形成闭环**：Prometheus+Grafana+cAdvisor 提供指标监控，Loki+Promtail+Grafana 提供日志收集，两者共用 Grafana 展示层，形成统一的可观测性方案。
 - **生产环境关注点**：多篇文档涉及安全配置（密码设置、端口规划）、性能优化（关闭不必要服务、资源限制）和持久化（数据卷挂载），反映了从实验到生产的关注点转移。
 - **GPU 与代理属于进阶配置**：这两篇文档针对特定场景（深度学习、网络受限环境），是 Docker 基础之上的高级运维实践。
+- **镜像离线分发补充**：新增文档覆盖 Registry 直接下载、跨架构选择和离线 `docker load`，补足了受限网络环境下的镜像迁移场景。

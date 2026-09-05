@@ -18,13 +18,14 @@ sources:
   - "[[Docker-Kubernetes/docker/docker配置NVIDIA GPU]]"
   - "[[Docker-Kubernetes/docker/docker配置代理]]"
   - "[[Docker-Kubernetes/docker/docker安全配置-Capabilities与容器加固]]"
+  - "[[Docker-Kubernetes/docker/docker无需本地环境从DockerHub下载镜像并保存为tar]]"
 ---
 
 # Docker
 
 ## 简介
 
-Docker 是一种容器化技术，提供镜像构建、容器运行、网络管理和存储编排能力。本仓库记录了 Docker 从安装配置到生产级服务部署的 12 篇实战文档，是进入 [[KnowledgeBase/entities/Kubernetes|Kubernetes]] 生态的前置基础。所有源文档的详细摘要见 [[KnowledgeBase/sources/docker-batch-summary|Docker 来源批量摘要]]。
+Docker 是一种容器化技术，提供镜像构建、容器运行、网络管理和存储编排能力。本仓库记录了 Docker 从安装配置到生产级服务部署的 14 篇实战文档，是进入 [[KnowledgeBase/entities/Kubernetes|Kubernetes]] 生态的前置基础。所有源文档的详细摘要见 [[KnowledgeBase/sources/docker-batch-summary|Docker 来源批量摘要]]。
 
 ## 核心功能
 
@@ -33,6 +34,7 @@ Docker 是一种容器化技术，提供镜像构建、容器运行、网络管�
 - **镜像加速**：阿里云镜像源配置，解决国内拉取速度问题
 - **内核参数调优**：开启 `bridge-nf-call-iptables` 和 `ip_forward`，确保容器网络正常工作
 - **私有仓库**：[[KnowledgeBase/entities/Harbor|Harbor]] 私有镜像仓库搭建，企业级镜像管理
+- **镜像离线分发**：无需本地 Docker Engine，直接从 Registry 下载镜像层并导出为 `.tar`，支持多架构选择、断点续传和自动重试
 
 ### 镜像构建与编排
 - **Dockerfile**：支持多种语言（Nginx、Tomcat、Httpd、Go、Python）的镜像构建，从手动容器内配置到 Dockerfile 自动化构建
@@ -88,6 +90,10 @@ Docker 是一种容器化技术，提供镜像构建、容器运行、网络管�
 | 运行时 | [[KnowledgeBase/entities/containerd|containerd]]（Docker 引擎中剥离的核心运行时） |
 | DevOps | [[KnowledgeBase/entities/GitLab|GitLab]]、[[KnowledgeBase/entities/Redis|Redis]] |
 | GPU | [[KnowledgeBase/entities/NVIDIA GPU|NVIDIA GPU]] |
+
+### 镜像分发专题
+
+- [[Docker-Kubernetes/docker/docker无需本地环境从DockerHub下载镜像并保存为tar|无需本地 Docker 环境下载镜像并导出 tar]]：Registry API 拉取、多架构选择、断点续传与 `docker load` 导入
 
 ## 知识空白
 

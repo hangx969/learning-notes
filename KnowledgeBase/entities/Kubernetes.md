@@ -3,7 +3,7 @@ title: Kubernetes
 tags:
   - knowledgebase/entity
   - docker-kubernetes
-date: 2026-04-17
+date: 2026-09-05
 sources:
   - "[[KnowledgeBase/sources/k8s-basic-resources-batch-summary]]"
   - "[[KnowledgeBase/sources/k8s-installation-management-batch-summary]]"
@@ -17,13 +17,14 @@ sources:
   - "[[KnowledgeBase/sources/k8s-cgroup-v2-summary]]"
   - "[[KnowledgeBase/sources/k8s-backup-dr-summary]]"
   - "[[KnowledgeBase/sources/k8s-pdb-summary]]"
+  - "[[KnowledgeBase/sources/k8s-nvidia-device-plugin-summary]]"
 ---
 
 # Kubernetes
 
 ## 简介
 
-Kubernetes（K8s）是容器编排平台，源自 Google Borg 系统，2014 年开源，2018 年从 CNCF 毕业。本仓库以 **153 篇文章**覆盖了 K8s 全生命周期，包括基础资源、集群安装与管理、监控日志、CI/CD、网络与服务网格、安全认证、扩缩容、存储、数据库中间件、UI 工具、备份恢复、GPU 配置、认证考试等主题。全部源文档的详细摘要见上方 `sources` 中列出的 9 份批量摘要页面。
+Kubernetes（K8s）是容器编排平台，源自 Google Borg 系统，2014 年开源，2018 年从 CNCF 毕业。本仓库以 **155 篇文章**覆盖了 K8s 全生命周期，包括基础资源、集群安装与管理、监控日志、CI/CD、网络与服务网格、安全认证、扩缩容、存储、数据库中间件、UI 工具、备份恢复、GPU 配置、认证考试等主题。全部源文档的详细摘要见上方 `sources` 中列出的批量摘要页面。
 
 ## 核心架构知识（从 145 篇中提炼）
 
@@ -130,18 +131,20 @@ Kubernetes（K8s）是容器编排平台，源自 Google Borg 系统，2014 年�
 - Capsule Tenant：一组 Namespace 的逻辑分组，RBAC + ResourceQuota + NetworkPolicy 策略隔离
 - Security Context：UID/GID 管理 + Capabilities（drop ALL + 按需 add）+ 特权模式禁止 + sysctl + seccomp + Pod 安全标准三级策略
 
-### 扩缩容与存储（7 篇）
+### 扩缩容与存储（9 篇）
 详见 [[KnowledgeBase/sources/k8s-scaling-storage-batch-summary|k8s-scaling-storage 批量摘要]]
 
 **扩缩容四层体系**：HPA（Pod 水平，基于 CPU/内存）-> VPA（Pod 垂直，调整 request/limit）-> KEDA（事件驱动，支持缩容到 0）-> Cluster Autoscaler（节点级别弹性）。Goldilocks 提供 VPA 推荐值可视化。
 
-**存储三种方案**：NFS（简单但非高可用）-> CubeFS（云原生友好但无块存储）-> Ceph（功能全面但运维复杂，支持 RBD/CephFS/RADOS Gateway 三种类型）。
+**存储基础与方案**：PV/PVC/StorageClass 负责持久化资源的声明与供给；NFS（简单但非高可用）-> CubeFS（云原生友好但无块存储）-> Ceph（功能全面但运维复杂，支持 RBD/CephFS/RADOS Gateway 三种类型）。
 
 **核心要点**：
 - HPA 算法：`sum(实际使用量) / 使用率限额 + 1`，默认 30s 检测、5min 稳定期
 - KEDA 支持数十种外部事件源（Kafka、RabbitMQ、HTTP、Cron 等），独特优势是缩容到 0
 - Ceph 生产环境强烈建议二进制安装在服务器上，不要装在 K8s 中
 - NFS exports 配置需写宿主机网段（非 Pod 网段），因 PV 先挂载到宿主机再挂载到 Pod
+- 动态供给 PV 的 `Delete` 策略可能在删除 PVC 时销毁底层云盘；重要数据应使用 `Retain` 并在删除前确认快照或备份
+- 修改 StorageClass 不会回溯修改存量 PV；`Released` PV 复用前要审查 `claimRef` 和旧数据，StatefulSet 也要审查级联删除行为
 
 ### 数据库中间件与 UI 工具（18 篇）
 详见 [[KnowledgeBase/sources/k8s-db-middleware-UI-batch-summary|k8s-db-middleware-UI 批量摘要]]
@@ -150,10 +153,10 @@ Kubernetes（K8s）是容器编排平台，源自 Google Borg 系统，2014 年�
 
 **UI 工具链**：Dashboard（Web 原生）、Kuboard（国产增强）、Lens（桌面 IDE，内置 Prometheus）、k9s（终端 TUI，Vim 风格）、Rancher（企业级多集群管理平台）、krew 插件管理器。
 
-### 杂项专题（18 篇）
+### 杂项专题（19 篇）
 详见 [[KnowledgeBase/sources/k8s-misc-batch-summary|k8s-misc 批量摘要]]
 
-覆盖 [[KnowledgeBase/entities/Helm|Helm]] v3 安装与使用、Config Syncer 跨 Namespace 同步、Dragonfly P2P 镜像分发（100 节点拉取 2GB 镜像可节约 99% 带宽）、Reloader 配置变更自动重启、CKA/CKS 认证备考、KubeBlocks 统一数据库管理、Harbor 镜像仓库（docker-compose/Helm/KubeBlocks 三种部署方式）、OpenShift（企业 PaaS）、K3S（轻量级边缘计算，仅需 512M 内存）、SpringCloud 迁移到 K8s、Velero 备份恢复（不推荐用于数据库，应使用 mysqldump/pg_dump）、K8s 配置 NVIDIA GPU（Device Plugin + taint 隔离）。
+覆盖 [[KnowledgeBase/entities/Helm|Helm]] v3 安装与使用、Config Syncer 跨 Namespace 同步、Dragonfly P2P 镜像分发（100 节点拉取 2GB 镜像可节约 99% 带宽）、Reloader 配置变更自动重启、CKA/CKS 认证备考、KubeBlocks 统一数据库管理、Harbor 镜像仓库（docker-compose/Helm/KubeBlocks 三种部署方式）、OpenShift（企业 PaaS）、K3S（轻量级边缘计算，仅需 512M 内存）、SpringCloud 迁移到 K8s、Velero 备份恢复（不推荐用于数据库，应使用 mysqldump/pg_dump）、K8s 配置 NVIDIA GPU（Device Plugin + taint 隔离），以及从驱动和容器运行时准备到 Device Plugin/GPU Operator 部署验证的完整实践。
 
 ### 备份与灾备（2 篇）
 详见 [[KnowledgeBase/sources/k8s-backup-dr-summary|K8s 备份与灾备摘要]]

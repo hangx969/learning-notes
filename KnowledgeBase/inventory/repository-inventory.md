@@ -278,7 +278,7 @@ date: 2026-04-16
 | [[Docker-Kubernetes/k8s-installation-management/legacy-versions/安装k8s-1.32-基于rockylinux|安装k8s-1.32-基于rockylinux]] | K8s 1.32 | ✅ | ✅ |
 | [[Docker-Kubernetes/k8s-installation-management/legacy-versions/安装k8s-1.33-基于rockylinux-最新步骤|安装k8s-1.33-基于rockylinux-最新步骤]] | K8s 1.33 | ✅ | ✅ |
 
-### docker/（12 篇）
+### docker/（13 篇）
 
 | 文件 | 标题 | FM | 链 |
 |------|------|:--:|:--:|
@@ -294,6 +294,7 @@ date: 2026-04-16
 | [[Docker-Kubernetes/docker/docker部署路由监控工具NextTrace|docker部署路由监控工具NextTrace]] | NextTrace | ✅ | ❌ |
 | [[Docker-Kubernetes/docker/docker配置NVIDIA GPU|docker配置NVIDIA GPU]] | Docker GPU | ✅ | ❌ |
 | [[Docker-Kubernetes/docker/docker配置代理|docker配置代理]] | Docker代理 | ✅ | ❌ |
+| [[Docker-Kubernetes/docker/docker无需本地环境从DockerHub下载镜像并保存为tar|docker无需本地环境下载镜像并保存为tar]] | Docker镜像离线分发 | ✅ | ❌ |
 
 ### 其他子目录（58 篇）
 

@@ -1,12 +1,12 @@
 # Docker-Kubernetes/ — 容器与编排
 
-146 篇文档，全库最大领域（占 48%），覆盖 Docker 基础到 K8s 生产级全栈。
+147 篇文档，全库最大领域（占 48%），覆盖 Docker 基础到 K8s 生产级全栈。
 
 ## 子目录结构
 
 | 子目录 | 篇数 | 核心内容 |
 |--------|------|----------|
-| docker/ | 12 | Docker 基础、GPU 配置、服务部署实战 |
+| docker/ | 13 | Docker 基础、镜像离线分发、GPU 配置与服务部署实战 |
 | k8s-basic-resources/ | 20 | Pod/Deployment/Service/Ingress/ConfigMap/Storage/RBAC/CRD |
 | k8s-installation-management/ | 16 | v1.20→v1.35 安装演进、企业高可用、etcd HA |
 | k8s-monitoring-logging/ | 21 | Prometheus 全栈、EFK/Loki 日志、Jaeger/SkyWalking 链路追踪 |
@@ -14,7 +14,7 @@
 | k8s-networking-service-mesh/ | 7 | Ingress-Nginx/Calico/Istio 流量管理 |
 | k8s-security-auth/ | 7 | Cert-Manager/External Secrets/Kyverno/OAuth2 Proxy |
 | k8s-scaling/ | 4 | HPA/VPA/KEDA/Karpenter 弹性扩缩容 |
-| k8s-storage/ | 3 | Ceph/CubeFS/NFS 分布式存储 |
+| k8s-storage/ | 4 | Ceph/CubeFS/NFS 分布式存储、PV/PVC 数据保护 |
 | k8s-db-middleware/ | 11 | Redis/MySQL/PostgreSQL/Kafka/RabbitMQ 集群部署 |
 | k8s-UI-tools/ | 8 | Dashboard/Rancher/k9s/Lens 管理工具 |
 | helm-operator/ | 6 | Helm v3 工具链、Operator 模式 |
