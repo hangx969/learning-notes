@@ -17,6 +17,7 @@ date: 2026-04-16
 
 ## 核心概念
 - [[KnowledgeBase/entities/Claude-Code|Claude-Code]] — AI 编码与知识管理助手
+- [[KnowledgeBase/entities/Codex|Codex]] — AI 编程助手，支持配置化交互与工具扩展
 - [[KnowledgeBase/entities/OpenClaw|OpenClaw]] — AI 多智能体运维平台
 - [[KnowledgeBase/entities/MCP|MCP]] — Model Context Protocol
 - [[KnowledgeBase/entities/Obsidian|Obsidian]] — 知识管理工具
@@ -34,6 +35,11 @@ date: 2026-04-16
 6. [[AI/ClaudeCode/CLAUDE.md最佳实践-21条指令清单|CLAUDE.md 21 条指令]] — 五维度通用指令清单（沟通/行为/上下文/记忆/安全）
 7. [[AI/ClaudeCode/CLAUDE.md最佳实践-12条规则模板|CLAUDE.md 12 条规则]] — Karpathy 4 条 + 8 条新规则，实测错误率 41%→3%
 8. [[code-review-graph-本地代码知识图谱|code-review-graph 代码知识图谱]] — 本地 AST 图谱 + MCP 接入，blast-radius 影响范围分析
+
+### Codex 路径
+1. [[AI/Codex/Codex-config-toml-全量配置参考|config.toml 全量配置参考]] — 配置字段与扩展机制
+2. [[AI/Codex/Codex-两个设置提升体验|两个体验设置]] — 普通模式主动澄清与经验性 Juice 自检
+3. [[AI/Codex/Codex-省Token工具实测-Ponytail-Headroom-RTK|省 Token 工具实测]] — 约束 Agent 输出的工具实践
 
 ### OpenClaw 路径
 1. [[AI/OpenClaw/OpenClaw-基础-安装|OpenClaw-基础-安装]] — 入门安装

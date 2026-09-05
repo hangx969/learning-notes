@@ -1723,3 +1723,11 @@ date: 2026-04-17
 - 检查 `KnowledgeBase/` 下 129 个 Markdown 页面，共 3046 个 wikilink。
 - 发现严格口径断链 344 条；其中 25 条疑似由 `\|` 转义显示分隔符导致，25 条去掉反斜杠后可解析。
 - 生成维护报告：[[KnowledgeBase/maintenance/broken-links-2026-09-05|断链检查报告 2026-09-05]]。
+
+
+## [2026-09-05] ingest | Codex 两个体验设置
+
+- 清洗 `0raw/2个设置，让Codex体验翻倍.md` 并归档至 [[AI/Codex/Codex-两个设置提升体验]]。
+- 保留技术内容：普通模式主动澄清的 `config.toml` 配置、完整 Juice 检查提示、使用顺序；移除公众号引流与互动话术。
+- 新增 [[KnowledgeBase/sources/codex-两个设置提升体验-summary|来源摘要]] 和 [[KnowledgeBase/entities/Codex|Codex 实体页]]，并更新 [[KnowledgeBase/maps/ai-workflow-map|AI 工作流专题地图]] 与 `INDEX.md`。
+- 将 Juice 相关结论标注为作者经验，避免作为已验证的模型质量指标。

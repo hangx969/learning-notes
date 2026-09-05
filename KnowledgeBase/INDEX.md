@@ -66,6 +66,7 @@ date: 2026-04-17
 | [Aliyun](entities/Aliyun.md) | 阿里云公有云平台 |
 | [Terraform](entities/Terraform.md) | 基础设施即代码工具 |
 | [Claude-Code](entities/Claude-Code.md) | AI 编程助手 |
+| [[KnowledgeBase/entities/Codex|Codex]] | AI 编程助手；配置、主动澄清与工作流优化 |
 | [MCP](entities/MCP.md) | Model Context Protocol |
 | [OpenClaw](entities/OpenClaw.md) | 开源 AI 工具平台 |
 | [Obsidian](entities/Obsidian.md) | 知识管理与笔记工具 |
@@ -112,6 +113,12 @@ date: 2026-04-17
 | [CodeGraph](sources/codegraph-summary.md) | [[CodeGraph-代码语义知识图谱]] | 代码语义图谱，工具调用减少 92%、探索速度提升 71%，19 种语言 + 框架路由映射，本地 AST 不依赖外部 |
 | [Fable 5 System Prompt](sources/claude-fable5-system-prompt-summary.md) | [[AI/ClaudeCode/Claude-Fable-5-system-prompt]] | Claude Fable 5 完整系统提示词（~125K 字符）：Mythos-class 新层级、行为规约体系、~15 个内置工具、沙箱架构、Artifact/Claudeception、版权硬限制 |
 | [Git Worktree AI 实践](sources/git-worktree-ai-dev-summary.md) | [[Git-Worktree-AI开发实践指南]] | 一个 AI 会话 = 一个 Worktree，并行开发/紧急修复/多方案探索，5 个实践踩坑 |
+
+### AI/Codex（已摄入 ✅）
+
+| 页面 | 原始来源 | 摘要 |
+|------|---------|------|
+| [[KnowledgeBase/sources/codex-两个设置提升体验-summary|Codex 两个体验设置]] | [[AI/Codex/Codex-两个设置提升体验]] | 普通模式主动澄清配置 + Juice 提示的经验性自检 |
 
 ### AI/skills（自研 Skills ✅）
 
