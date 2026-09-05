@@ -6,7 +6,7 @@ tags:
 aliases:
   - 知识库首页
   - KB Index
-date: 2026-09-05
+date: 2026-04-17
 ---
 
 # 📚 Learning Notes 知识库
@@ -119,7 +119,6 @@ date: 2026-09-05
 | 页面 | 原始来源 | 摘要 |
 |------|---------|------|
 | [[KnowledgeBase/sources/codex-两个设置提升体验-summary|Codex 两个体验设置]] | [[AI/Codex/Codex-两个设置提升体验]] | 普通模式主动澄清配置 + Juice 提示的经验性自检 |
-| [[KnowledgeBase/sources/codex-host-harness-summary|Codex Host 多厂商 Harness 接入]] | [[0raw/在 Codex 里随时切换不同厂家的 Harness]] | `codex-host` 统一接入多厂商 Harness，并以独立 Thread 支持角色化协作（待验证） |
 
 ### AI/skills（自研 Skills ✅）
 

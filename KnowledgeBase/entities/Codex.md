@@ -8,7 +8,6 @@ sources:
   - "[[AI/Codex/Codex-config-toml-全量配置参考]]"
   - "[[AI/Codex/Codex-省Token工具实测-Ponytail-Headroom-RTK]]"
   - "[[AI/Codex/Codex-两个设置提升体验]]"
-  - "[[0raw/在 Codex 里随时切换不同厂家的 Harness]]"
 aliases:
   - OpenAI Codex
 ---
@@ -37,7 +36,6 @@ Codex 是面向软件工程任务的 AI 编程助手。本仓库覆盖其 `confi
 - [[AI/Codex/Codex-config-toml-全量配置参考]]：覆盖配置字段、特性开关、权限、MCP、Hooks 和 Agents。
 - [[AI/Codex/Codex-省Token工具实测-Ponytail-Headroom-RTK]]：讨论通过工具与约束减少 Token 消耗的实践。
 - [[AI/Codex/Codex-两个设置提升体验]]：记录普通模式主动澄清配置与 Juice 提示的经验性自检方式。
-- [[0raw/在 Codex 里随时切换不同厂家的 Harness]]：介绍以 `codex-host` 将多个厂商 Harness 接入 Codex 的设想；兼容性与支持范围尚待验证。
 
 ## 知识空白
 - 不同 Codex 版本中各配置项的支持范围与默认值。
