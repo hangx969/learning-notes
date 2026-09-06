@@ -65,7 +65,8 @@ date: 2026-04-16
 ### 补充
 - [[AI/HarnessKit|HarnessKit]] — AI 编码智能体统一管理工具（Skills/MCP/Plugins/Hooks 跨 Agent 管理）
 - [[AI/GithubCopilot/Copilot CLI|Copilot CLI]] — GitHub Copilot CLI
-- [[提示词|提示词]] — 提示词工程
+- [[AI/提示词/提示词|提示词库]] — 按需求澄清、学习研究、分析决策、AI 编程、写作表达和自我探索分类
+- [[KnowledgeBase/concepts/提示词工程|提示词工程]] — 目标、上下文、约束、交互流程与验证闭环
 
 ---
 
@@ -111,6 +112,7 @@ date: 2026-04-16
 ---
 
 ## 📑 来源摘要
+- [[KnowledgeBase/sources/12个常用Prompt-summary|12 个常用 Prompt 摘要]] — 问题澄清、学习研究、解决问题、决策与自我探索
 - [[KnowledgeBase/sources/cloudops-agent-batch-summary|CloudOps-Agent 批量摘要]] — 57 篇，三语言智能 OnCall Agent
 - [[KnowledgeBase/sources/rag-agent-batch-summary|RAG-Agent 批量摘要]] — 33 篇，企业 RAG 知识库系统
 - [[KnowledgeBase/sources/hermes-agent-batch-summary|Hermes-agent 批量摘要]] — 4 篇，Hermes Agent 安装、资源合集、架构解析与 Curator Skill 治理

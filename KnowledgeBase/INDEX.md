@@ -43,6 +43,7 @@ date: 2026-04-17
 | [RBAC](concepts/RBAC.md) | Kubernetes 基于角色的访问控制 |
 | [联邦集群](concepts/联邦集群.md) | Kubernetes 多集群统一管理与跨集群调度 |
 | [ServiceMesh](concepts/ServiceMesh.md) | → 服务网格（别名页）|
+| [[KnowledgeBase/concepts/提示词工程|提示词工程]] | 通过目标、上下文、约束、交互流程和验证标准提升模型输出的可靠性 |
 
 ---
 
@@ -119,6 +120,12 @@ date: 2026-04-17
 | 页面 | 原始来源 | 摘要 |
 |------|---------|------|
 | [[KnowledgeBase/sources/codex-两个设置提升体验-summary|Codex 两个体验设置]] | [[AI/Codex/Codex-两个设置提升体验]] | 普通模式主动澄清配置 + Juice 提示的经验性自检 |
+
+### AI/提示词（已摄入 ✅）
+
+| 页面 | 原始来源 | 摘要 |
+|------|---------|------|
+| [[KnowledgeBase/sources/12个常用Prompt-summary|12 个常用 Prompt]] | [[0raw/都Agent时代了，我还是想分享给你这12个我最常用的Prompt。]] | 12 个提示词，覆盖问题澄清、学习研究、解题、决策与自我探索；已按主题并入提示词库 |
 
 ### AI/skills（自研 Skills ✅）
 
