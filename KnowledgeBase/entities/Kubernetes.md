@@ -12,6 +12,7 @@ sources:
   - "[[KnowledgeBase/sources/k8s-networking-service-mesh-batch-summary]]"
   - "[[KnowledgeBase/sources/k8s-security-auth-batch-summary]]"
   - "[[KnowledgeBase/sources/k8s-scaling-storage-batch-summary]]"
+  - "[[KnowledgeBase/sources/k8s-volume-health-monitor-summary]]"
   - "[[KnowledgeBase/sources/k8s-db-middleware-UI-batch-summary]]"
   - "[[KnowledgeBase/sources/k8s-misc-batch-summary]]"
   - "[[KnowledgeBase/sources/k8s-cgroup-v2-summary]]"
@@ -25,9 +26,9 @@ sources:
 
 ## 简介
 
-Kubernetes（K8s）是容器编排平台，源自 Google Borg 系统，2014 年开源，2018 年从 CNCF 毕业。本仓库以 **156 篇文章**覆盖了 K8s 全生命周期，包括基础资源、集群安装与管理、监控日志、CI/CD、网络与服务网格、安全认证、扩缩容、存储、数据库中间件、UI 工具、备份恢复、GPU 配置、认证考试等主题。全部源文档的详细摘要见上方 `sources` 中列出的批量摘要页面。
+Kubernetes（K8s）是容器编排平台，源自 Google Borg 系统，2014 年开源，2018 年从 CNCF 毕业。本仓库以 **158 篇文章**覆盖了 K8s 全生命周期，包括基础资源、集群安装与管理、监控日志、CI/CD、网络与服务网格、安全认证、扩缩容、存储、数据库中间件、UI 工具、备份恢复、GPU 配置、认证考试等主题。全部源文档的详细摘要见上方 `sources` 中列出的批量摘要页面。
 
-## 核心架构知识（从 145 篇中提炼）
+## 核心架构知识（从 146 篇中提炼）
 
 ### 控制平面与数据平面
 - **API Server**：所有组件通信的中枢，唯一与 etcd 交互的组件
@@ -133,7 +134,7 @@ Kubernetes（K8s）是容器编排平台，源自 Google Borg 系统，2014 年�
 - Capsule Tenant：一组 Namespace 的逻辑分组，RBAC + ResourceQuota + NetworkPolicy 策略隔离
 - Security Context：UID/GID 管理 + Capabilities（drop ALL + 按需 add）+ 特权模式禁止 + sysctl + seccomp + Pod 安全标准三级策略
 
-### 扩缩容与存储（10 篇）
+### 扩缩容与存储（12 篇）
 详见 [[KnowledgeBase/sources/k8s-scaling-storage-batch-summary|k8s-scaling-storage 批量摘要]]
 
 **扩缩容四层体系**：HPA（Pod 水平，基于 CPU/内存）-> VPA（Pod 垂直，调整 request/limit）-> KEDA（事件驱动，支持缩容到 0）-> Cluster Autoscaler（节点级别弹性）。Goldilocks 提供 VPA 推荐值可视化。
@@ -148,6 +149,10 @@ Kubernetes（K8s）是容器编排平台，源自 Google Borg 系统，2014 年�
 - 动态供给 PV 的 `Delete` 策略可能在删除 PVC 时销毁底层云盘；重要数据应使用 `Retain` 并在删除前确认快照或备份
 - 修改 StorageClass 不会回溯修改存量 PV；`Released` PV 复用前要审查 `claimRef` 和旧数据，StatefulSet 也要审查级联删除行为
 - KServe 可将 vLLM `running + waiting` 请求数交给 KEDA，再通过 External Metrics API 驱动 HPA，示例验证了模型服务 `1 -> 2 -> 1` 的请求指标扩缩容
+- Kubernetes 1.37 的 `HPAScaleToZero` 允许原生 HPA 基于 External/Object 指标将异步 Worker 缩到 0；从 0 拉起的冷启动、指标源可用性和就绪探针决定生产边界
+- KEDA 与原生 HPA 不能同时管理同一个 Deployment；KEDA 适合直接连接事件源，原生 HPA 适合已有 External 指标链路的场景
+- Volume Health Monitor 通过 4 个 CSI RPC 将卷健康写入 `PVC.status.healthStatus`、`Pod.status.volumeHealth` 和 `CSINode.status.storageHealth`，补足 PVC 长期 `Bound` 但底层已降级的可观测性盲区
+- 该特性以 Kubernetes 1.37 Alpha 为前提，必须同时验证 feature gate 与 CSI 驱动版本，并把 `Degraded`/`Inaccessible` 分级接入告警和 remediation
 
 ### 数据库中间件与 UI 工具（18 篇）
 详见 [[KnowledgeBase/sources/k8s-db-middleware-UI-batch-summary|k8s-db-middleware-UI 批量摘要]]

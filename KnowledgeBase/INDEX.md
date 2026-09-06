@@ -54,7 +54,7 @@ date: 2026-04-17
 
 | 页面 | 摘要 |
 |------|------|
-| [Kubernetes](entities/Kubernetes.md) | 容器编排平台，156 篇文章覆盖全生命周期 |
+| [Kubernetes](entities/Kubernetes.md) | 容器编排平台，158 篇文章覆盖全生命周期 |
 | [Docker](entities/Docker.md) | 容器运行时，14 篇覆盖基础、镜像分发与服务部署实战 |
 | [Helm](entities/Helm.md) | Kubernetes 包管理器 |
 | [ArgoCD](entities/ArgoCD.md) | GitOps 持续交付工具 |
@@ -161,8 +161,9 @@ date: 2026-04-17
 | [K8s 网络与服务网格](sources/k8s-networking-service-mesh-batch-summary.md) | 7 | Ingress-Nginx/External-DNS/Calico/Istio 流量管理 |
 | [K8s 安全认证](sources/k8s-security-auth-batch-summary.md) | 8 | Cert-Manager/External Secrets/Kyverno(含1.18新特性)/OAuth2 Proxy/Trivy/SonarQube/Security Context |
 | [Kyverno 1.18](sources/kyverno-1.18-summary.md) | 1 | CNCF 毕业后首版：SSRF 防护、CLI 扩展、CEL 策略演进、性能与可观测性提升 |
-| [K8s 扩缩容与存储](sources/k8s-scaling-storage-batch-summary.md) | 10 | HPA/VPA/KEDA/KServe/Karpenter 扩缩容 + FinOps 成本优化 + PV/PVC 数据保护 + NFS/Ceph/CubeFS 存储 |
+| [K8s 扩缩容与存储](sources/k8s-scaling-storage-batch-summary.md) | 12 | HPA/VPA/KEDA/KServe/Karpenter 扩缩容 + 原生 HPA Scale-to-Zero + FinOps 成本优化 + PV/PVC 数据保护 + NFS/Ceph/CubeFS 存储 |
 | [KServe + KEDA 请求指标扩缩容](sources/kserve-keda-request-autoscaling-summary.md) | 1 | KServe/vLLM 指标经 Prometheus、KEDA、External Metrics API 驱动 HPA，实现 1→2→1 扩缩容 |
+| [[KnowledgeBase/sources/k8s-hpa-scale-to-zero-1.37-summary|K8s 1.37 HPA Scale-to-Zero]] | 1 | HPAScaleToZero Beta、External/Object 指标、Worker 缩零、冷启动防抖与 KEDA 迁移清单 |
 | [PV/PVC 回收策略](sources/k8s-pv-pvc-reclaim-policy-summary.md) | 1 | PVC 删除后的 PV 回收策略、Released 复用风险、快照与 StatefulSet 安全删除 |
 | [K8s 中间件与 UI](sources/k8s-db-middleware-UI-batch-summary.md) | 19 | Redis/MySQL/PostgreSQL/Kafka/RabbitMQ 部署 + Dashboard/Rancher/k9s 管理工具 |
 | [RabbitMQ HA](sources/rabbitmq-ha-summary.md) | 1 | Helm 部署 RabbitMQ 高可用集群（StatefulSet）、aliyun Chart 配置、旧版 API 兼容修复 |

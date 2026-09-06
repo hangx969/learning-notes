@@ -1808,3 +1808,24 @@ date: 2026-04-17
 - 保留事故数据、错误配置、时间线、Liveness/Readiness/Startup 分工、端点实现、监控排查命令和工程治理措施；移除作者宣传与公众号引流。
 - 补充技术校正：探针时间倍数属于经验性建议；示例 Prometheus 指标并非 kubelet 固定指标；PDB 与 HPA 不能直接阻止 Liveness 误杀。
 - 新增 [[KnowledgeBase/sources/k8s-probe-restart-storm-summary|来源摘要]]，更新 K8s 基础资源批量摘要、[[KnowledgeBase/entities/Kubernetes]]、[[KnowledgeBase/maps/kubernetes-map|Kubernetes 主题地图]] 和 KnowledgeBase/index.md。
+
+
+## [2026-09-06] ingest | Kubernetes Volume Health Monitor 存储健康监控
+
+- 清洗 `0raw/让存储故障现形：Kubernetes Volume Health Monitor 原理与生产接入.md`，移除作者署名、重复引言、赞赏尾注和排版噪音，归档至 `Docker-Kubernetes/k8s-storage/让存储故障现形：Kubernetes Volume Health Monitor 原理与生产接入.md`。
+- 新增来源摘要：[[KnowledgeBase/sources/k8s-volume-health-monitor-summary]]。
+- 更新 `k8s-scaling-storage` 批量摘要、Kubernetes 实体、Observability 概念、Prometheus 实体、Kubernetes 专题地图、知识库索引和 Docker-Kubernetes 目录索引。
+- 核心知识：4 个 CSI 健康 RPC 分别写入 PVC、Pod 和 CSINode；1.37 Alpha 需要 feature gate 与 CSI 驱动双重支持；Prometheus 告警应区分 `Degraded`/`Inaccessible`，remediation 需带冷却、重试上限和人工确认。
+
+## [2026-09-06] ingest | K8s 1.37 原生 HPA Scale-to-Zero
+
+- 清洗 `0raw/告别 KEDA：K8s 1.37 原生 HPA Scale-to-Zero 落地实战，空闲 Worker 直接缩到 0.md` 并归档至 `Docker-Kubernetes/k8s-scaling/k8s-1.37原生HPA-Scale-to-Zero实战.md`；保留 `HPAScaleToZero` 原理、External/Object 指标、HPA YAML、冷启动/防抖/就绪探针、六个生产陷阱、监控建议和 KEDA 迁移清单，移除作者宣传、公众号引流、下期预告与赞赏尾段。
+- 新增 `KnowledgeBase/sources/k8s-hpa-scale-to-zero-1.37-summary.md`；更新 `KnowledgeBase/sources/k8s-scaling-storage-batch-summary.md`，文档数由 10 篇增至 11 篇（扩缩容 7 篇、存储 4 篇）。
+- 更新 `KnowledgeBase/entities/Kubernetes.md`、`KnowledgeBase/entities/Prometheus.md`、`KnowledgeBase/maps/kubernetes-map.md`、`KnowledgeBase/INDEX.md` 和 `Docker-Kubernetes/index.md` 的交叉引用与文档计数。
+- 原始来源文件保留在 `0raw/`，未修改、未移动、未删除。
+
+## [2026-09-06] update | 合并并发 K8s 扩缩容与存储摄入
+
+- 回读时发现同日另有 `Kubernetes Volume Health Monitor` 摄入已合并到 `k8s-scaling-storage` 批量摘要；在保留该变更的基础上，将批量摘要统一校正为 12 篇（扩缩容 7 篇、存储 5 篇）。
+- 同步校正 `KnowledgeBase/entities/Kubernetes.md` 与 `KnowledgeBase/maps/kubernetes-map.md` 的 K8s 总文档数为 158 篇，并校正 `KnowledgeBase/INDEX.md` 的 Kubernetes 与扩缩容/存储计数。
+- 本次新增的原生 HPA Scale-to-Zero 归档、来源摘要、Prometheus 交叉引用和目标目录文件均保留。

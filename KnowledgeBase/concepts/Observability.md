@@ -17,12 +17,13 @@ aliases:
 ## 核心要点
 - 三大支柱互补：Metrics 告诉你"出了问题"，Logs 告诉你"哪里出了问题"，Traces 告诉你"为什么出了问题"
 - Prometheus + Grafana 是 K8s 生态的事实标准监控栈，通过 ServiceMonitor CRD 实现自动服务发现
+- Volume Health Monitor 将 CSI 驱动的卷健康状态结构化到 PVC、Pod 和 CSINode，扩展了 Kubernetes 存储可观测性；Alpha 阶段需与厂商监控互补
 - 日志方案从 EFK 向 Loki 演进：Loki 不索引日志内容，成本显著降低
 - OpenTelemetry 正在统一三大支柱的数据采集标准（OTLP 协议）
 - 可观测性不等于监控：监控是已知问题的检测，可观测性是未知问题的探索
 
 ## 在本仓库中的覆盖
-主要集中在 `Docker-Kubernetes/k8s-monitoring-logging/` 目录下，共 20 篇文章，涵盖指标监控、日志收集、全链路追踪三大方向。
+主要集中在 `Docker-Kubernetes/k8s-monitoring-logging/` 目录下，涵盖指标监控、日志收集、全链路追踪三大方向；Kubernetes 存储目录还补充了 Volume Health Monitor 的 CSI 健康信号接入。
 
 
 - [[Docker-Kubernetes/k8s-monitoring-logging/Prometheus基础|Prometheus基础]]
@@ -45,6 +46,7 @@ aliases:
 - [[Docker-Kubernetes/k8s-monitoring-logging/k8s部署elasticsearch集群|k8s部署elasticsearch集群]]
 - [[Docker-Kubernetes/k8s-monitoring-logging/二进制部署efk+logstash+kafka日志收集平台|二进制部署efk+logstash+kafka日志收集平台]]
 - [[Docker-Kubernetes/k8s-monitoring-logging/基于helm+operator部署ECK日志收集平台|基于helm+operator部署ECK日志收集平台]]
+- [[Docker-Kubernetes/k8s-storage/让存储故障现形：Kubernetes Volume Health Monitor 原理与生产接入|Kubernetes Volume Health Monitor 原理与生产接入]]
 
 ## 与其他概念的关系
 - [[KnowledgeBase/concepts/日志系统|日志系统]]

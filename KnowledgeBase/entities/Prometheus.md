@@ -6,6 +6,7 @@ date: 2026-09-06
 sources:
   - "[[KnowledgeBase/sources/k8s-monitoring-logging-batch-summary|k8s-monitoring-logging 来源批量摘要]]"
   - "[[KnowledgeBase/sources/kserve-keda-request-autoscaling-summary|KServe + KEDA 请求指标扩缩容摘要]]"
+  - "[[KnowledgeBase/sources/k8s-hpa-scale-to-zero-1.37-summary|K8s 1.37 HPA Scale-to-Zero 摘要]]"
 aliases:
   - prometheus
   - Prom
@@ -39,6 +40,8 @@ Prometheus 是开源的系统监控与告警工具，采用拉取（pull）模�
 - kube-prometheus-stack 是 Prometheus Operator 的 [[KnowledgeBase/entities/Helm|Helm]] Chart 封装，包含 Prometheus、Alertmanager、[[KnowledgeBase/entities/Grafana|Grafana]]、kube-state-metrics、node-exporter
 - **Operator 模式**：通过 ServiceMonitor / ScrapeConfig CRD 声明式管理监控目标
 - **模型服务监控**：通过 ServiceMonitor 采集 KServe Predictor 暴露的 vLLM `/metrics`，为 KEDA 提供请求指标
+- **HPA Scale-to-Zero 指标链路**：Prometheus 采集队列深度后，经 Prometheus Adapter 暴露为 `external.metrics.k8s.io`，供原生 HPA 从 0 恢复副本
+- **存储健康监控**：可通过 exporter 将 `PVC.status.healthStatus`、`Pod.status.volumeHealth` 和 `CSINode.status.storageHealth` 转换为 Prometheus gauge，再按卷、Pod、节点和状态告警
 
 ### Alertmanager
 - 工作流程：PENDING -> FIRING -> 分组等待 -> 发送通知
@@ -51,6 +54,7 @@ Prometheus 是开源的系统监控与告警工具，采用拉取（pull）模�
 
 ## 使用场景
 - K8s 集群监控：通过 ServiceMonitor 自动发现并采集容器指标
+- 存储故障监控：消费 CSI Volume Health Monitor 信号，区分 `Degraded` 与 `Inaccessible` 并关联 PVC、Pod、节点和底层卷 ID
 - 告警中心：Alertmanager 实现告警分组、路由、静默和抑制
 - 长期存储：与 Thanos/VictoriaMetrics 集成实现跨集群指标聚合
 
@@ -70,6 +74,8 @@ Prometheus 是开源的系统监控与告警工具，采用拉取（pull）模�
 - [[Docker-Kubernetes/k8s-monitoring-logging/helm部署prometheus-stack全家桶|helm部署prometheus-stack全家桶]]
 - [[Docker-Kubernetes/docker/docker部署prometheus-grafana-cAdvisior监控|docker部署prometheus-grafana-cAdvisior监控]]
 - [[Docker-Kubernetes/k8s-scaling/KServe+KEDA实战-基于请求指标实现服务自动扩缩容|KServe + KEDA 基于请求指标自动扩缩容]]
+- [[Docker-Kubernetes/k8s-scaling/k8s-1.37原生HPA-Scale-to-Zero实战|K8s 1.37 原生 HPA Scale-to-Zero]]
+- [[Docker-Kubernetes/k8s-storage/让存储故障现形：Kubernetes Volume Health Monitor 原理与生产接入|Kubernetes Volume Health Monitor 原理与生产接入]]
 
 ## 相关概念与实体
 - [[KnowledgeBase/entities/Grafana|Grafana]]

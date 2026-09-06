@@ -16,18 +16,20 @@ sources:
   - "[[Docker-Kubernetes/k8s-storage/k8s-ceph部署与集成]]"
   - "[[Docker-Kubernetes/k8s-scaling/k8s成本优化方案-FinOps实战]]"
   - "[[Docker-Kubernetes/k8s-storage/k8s删除PVC后PV数据保护与复用避坑]]"
+  - "[[Docker-Kubernetes/k8s-storage/让存储故障现形：Kubernetes Volume Health Monitor 原理与生产接入]]"
+  - "[[Docker-Kubernetes/k8s-scaling/k8s-1.37原生HPA-Scale-to-Zero实战]]"
 ---
 
 ## 元信息
 
 - **原始目录**: `Docker-Kubernetes/k8s-scaling/` 与 `Docker-Kubernetes/k8s-storage/`
-- **文档数量**: 10 篇（扩缩容 6 篇 + 存储 4 篇）
+- **文档数量**: 12 篇（扩缩容 7 篇 + 存储 5 篇）
 - **领域**: Kubernetes 自动扩缩容（HPA/VPA/KEDA/KServe）与存储生命周期（PV/PVC/StorageClass）及分布式存储（NFS/Ceph/CubeFS）
 - **摄入日期**: 2026-04-17
 
 ## 整体概述
 
-本批次摘要覆盖了 Kubernetes 集群的两大基础能力：自动扩缩容和持久化存储。扩缩容部分系统性介绍了 HPA（水平扩缩）、VPA（垂直扩缩）、KEDA（事件驱动扩缩）和 KServe 模型服务请求指标扩缩容，以及相关部署工具（Goldilocks 资源推荐），从原生能力到模型推理场景形成完整体系。存储部分涵盖了从 PV/PVC/StorageClass 生命周期与数据保护，到简单的 NFS 动态供应和企业级分布式存储（Ceph、CubeFS）的部署与 K8s 集成，为有状态应用提供可靠的数据持久化方案。
+本批次摘要覆盖了 Kubernetes 集群的两大基础能力：自动扩缩容和持久化存储。扩缩容部分系统性介绍了 HPA（水平扩缩）、VPA（垂直扩缩）、KEDA（事件驱动扩缩）和 KServe 模型服务请求指标扩缩容，以及相关部署工具（Goldilocks 资源推荐），从原生能力到模型推理场景形成完整体系，并补充 Kubernetes 1.37 `HPAScaleToZero` 对异步 Worker 的原生缩零实践。存储部分涵盖了从 PV/PVC/StorageClass 生命周期与数据保护，到简单的 NFS 动态供应、企业级分布式存储（Ceph、CubeFS）以及 CSI 卷健康监控的部署与 K8s 集成，为有状态应用提供可靠的数据持久化和故障可观测能力。
 
 ## 各文档摘要
 
@@ -80,6 +82,16 @@ sources:
 - 示例设置 `target.value: 1`、副本范围 1～2，HPA 缩容稳定窗口为 300 秒
 - 使用 HAMi DRA 在单 GPU 节点为每个副本申请 3Gi 显存和 20% GPU 核心
 
+### [[Docker-Kubernetes/k8s-scaling/k8s-1.37原生HPA-Scale-to-Zero实战|K8s 1.37 原生 HPA Scale-to-Zero]]
+
+**核心内容**: 介绍 `HPAScaleToZero` Beta 特性如何让原生 HPA 基于 External/Object 指标将队列 Worker 缩到 0，并给出冷启动、防抖、监控和 KEDA 迁移建议。
+
+- 仅 External/Object 指标适合缩零，CPU/内存 Resource 指标不能解决 0 副本时的需求表达问题
+- 使用 Prometheus 采集队列深度或 Kafka lag，经 Prometheus Adapter 暴露为 `external.metrics.k8s.io`
+- HPA 使用 `autoscaling/v2`、`minReplicas: 0`、300 秒缩容稳定窗口，并可通过扩容策略加快回弹
+- 生产关键点包括冷启动延迟、readinessProbe、指标源高可用、镜像预热和 Scale-to-Zero 告警基线
+- KEDA 仍适合直接连接多种消息中间件；迁移期不得让 KEDA 与原生 HPA 同时管理一个 Deployment
+
 ### [[Docker-Kubernetes/k8s-scaling/k8s-HPA-VPA|HPA 与 VPA 自动扩缩容]]
 
 **核心内容**: 系统性介绍 K8s 四种自动扩缩容方案（HPA、VPA、KPA、Cluster Autoscaler）的原理、工作机制和使用约束。
@@ -127,6 +139,14 @@ sources:
 - StatefulSet 的 `volumeClaimTemplates` 同样继承 StorageClass 策略，删除前应使用快照或备份保护数据
 - 删除前 SOP：确认策略 → 创建并验证快照 → 必要时改为 Retain → 删除后检查 PV 与底层卷状态
 
+### [[Docker-Kubernetes/k8s-storage/让存储故障现形：Kubernetes Volume Health Monitor 原理与生产接入|Kubernetes Volume Health Monitor]]
+
+**核心内容**: 介绍 Kubernetes 1.37 Alpha Volume Health Monitor 如何通过 4 个 CSI RPC 将卷健康状态写入 PVC、Pod 和 CSINode，并接入 Prometheus 告警与谨慎的故障切换流程。
+
+- 控制器侧写入 `PVC.status.healthStatus`，节点侧写入 `Pod.status.volumeHealth` 和 `CSINode.status.storageHealth`
+- 前提是控制平面、kubelet 开启 feature gate，且 CSI 驱动实现 4 个健康 RPC
+- `Degraded` 与 `Inaccessible` 分级处理，remediation 需要冷却、重试上限和人工确认
+
 ## 涉及的概念与实体
 
 - [[KnowledgeBase/concepts/HPA]]: 水平 Pod 自动扩缩容
@@ -145,6 +165,7 @@ sources:
 - [[KnowledgeBase/entities/NFS]]: 网络文件系统
 - [[KnowledgeBase/entities/Knative]]: Serverless 框架（KPA 来源）
 - [[KnowledgeBase/concepts/Finalizer]]: PVC/PV 删除过程中的保护钩子
+- [[KnowledgeBase/concepts/Observability|Observability]]: CSI 卷健康状态的可观测性入口
 - [[KnowledgeBase/entities/Prometheus]]: 采集 vLLM 指标并提供 PromQL 查询
 
 ### [[Docker-Kubernetes/k8s-scaling/k8s成本优化方案-FinOps实战|K8s 成本优化方案——FinOps 实战]]
