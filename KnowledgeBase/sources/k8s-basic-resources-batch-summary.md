@@ -3,8 +3,9 @@ title: K8s基础资源 来源批量摘要
 tags:
   - knowledgebase/source
   - docker-kubernetes/k8s-basic-resources
-date: 2026-04-17
+date: 2026-09-06
 sources:
+  - "[[0raw/一场由健康探针引发的Pod重启风暴——K8s LivenessReadiness Probe配置不当的深度复盘]]"
   - "[[Docker-Kubernetes/k8s-basic-resources/K8s基础-pod调度-亲和力]]"
   - "[[Docker-Kubernetes/k8s-basic-resources/Python调用k8s-api实现资源管理]]"
   - "[[Docker-Kubernetes/k8s-basic-resources/k8s基础-Calico]]"
@@ -51,12 +52,15 @@ sources:
   - K8s 相比纯 Docker 的优势：弹性伸缩、服务发现、自愈、滚动更新、声明式管理
 
 ### [[Docker-Kubernetes/k8s-basic-resources/k8s基础-pod|K8s基础-Pod]]
-- 核心内容：Pod 作为 K8s 最小部署单元的核心概念，包括 Pause 容器的作用、多容器协作模式、Pod 字段配置（端口、启动命令、resources、环境变量）。
+- 核心内容：Pod 作为 K8s 最小部署单元的核心概念，包括 Pause 容器、多容器协作、字段配置和健康探针；新增一次 Liveness/Readiness 配置不当引发 300+ Pod 连锁重启的生产复盘。
 - 关键知识点：
   - Pause（infra）容器负责网络和存储共享，是 Pod 内所有容器的根
   - Pod 内容器共享 Network Namespace，通过 localhost 互访
   - `containerPort` 仅为声明性字段，不决定实际暴露端口
   - requests 资源直接划分给 Pod，即使未使用也会占用节点资源
+  - Liveness 只应检查重启能够修复的进程内部故障，外部依赖状态应由 Readiness 谨慎处理
+  - Readiness 应先摘流，Liveness 应保守重启；慢启动应用使用 Startup Probe 隔离启动阶段
+  - PDB 和 HPA 不能直接阻止 Liveness 误杀，探针变更仍需灰度、监控和快速回滚
 
 ### [[Docker-Kubernetes/k8s-basic-resources/k8s基础-deployment|K8s基础-Deployment]]
 - 核心内容：Deployment 控制器的概念与工作原理，包括 ReplicaSet 管理、滚动更新策略（maxSurge/maxUnavailable）、金丝雀发布与回滚机制。

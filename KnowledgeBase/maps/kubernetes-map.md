@@ -5,7 +5,7 @@ tags:
   - knowledgebase/kubernetes
 aliases:
   - K8s Map
-date: 2026-09-05
+date: 2026-09-06
 ---
 
 # ☸️ Kubernetes 专题地图
@@ -37,7 +37,7 @@ date: 2026-09-05
 ### 第二阶段：K8s 核心资源
 3. [[Docker-Kubernetes/k8s-basic-resources/k8s基础-架构-组件-资源|k8s基础-架构-组件-资源]] — 架构总览
 4. [[Docker-Kubernetes/k8s-basic-resources/k8s基础-yaml|k8s基础-yaml]] — YAML 编写
-5. [[Docker-Kubernetes/k8s-basic-resources/k8s基础-pod|k8s基础-pod]] — Pod
+5. [[Docker-Kubernetes/k8s-basic-resources/k8s基础-pod|k8s基础-pod]] — Pod、Startup/Liveness/Readiness 探针与重启风暴复盘
 6. [[Docker-Kubernetes/k8s-basic-resources/k8s基础-deployment|k8s基础-deployment]] — Deployment
 7. [[Docker-Kubernetes/k8s-basic-resources/k8s基础-Service|k8s基础-Service]] — Service
 8. [[Docker-Kubernetes/k8s-basic-resources/k8s基础-ingress|k8s基础-ingress]] — Ingress（2399 行深度文章）
@@ -72,7 +72,7 @@ date: 2026-09-05
 | 主题 | 文章 |
 |------|------|
 | 架构 | [[Docker-Kubernetes/k8s-basic-resources/k8s基础-架构-组件-资源|k8s基础-架构-组件-资源]] |
-| Pod | [[Docker-Kubernetes/k8s-basic-resources/k8s基础-pod|k8s基础-pod]]、[[Docker-Kubernetes/k8s-basic-resources/K8s基础-pod调度-亲和力|K8s基础-pod调度-亲和力]]、[[Docker-Kubernetes/k8s-basic-resources/k8s基础-临时容器ephemeral|k8s基础-临时容器ephemeral]] |
+| Pod | [[Docker-Kubernetes/k8s-basic-resources/k8s基础-pod|k8s基础-pod（含探针失效案例）]]、[[Docker-Kubernetes/k8s-basic-resources/K8s基础-pod调度-亲和力|K8s基础-pod调度-亲和力]]、[[Docker-Kubernetes/k8s-basic-resources/k8s基础-临时容器ephemeral|k8s基础-临时容器ephemeral]] |
 | 工作负载 | [[Docker-Kubernetes/k8s-basic-resources/k8s基础-deployment|k8s基础-deployment]]、[[Docker-Kubernetes/k8s-basic-resources/k8s基础-daemonset|k8s基础-daemonset]]、[[Docker-Kubernetes/k8s-basic-resources/k8s基础-statefulset|k8s基础-statefulset]]、[[Docker-Kubernetes/k8s-basic-resources/k8s基础-job-cronjob|k8s基础-job-cronjob]] |
 | 网络 | [[Docker-Kubernetes/k8s-basic-resources/k8s基础-Service|k8s基础-Service]]、[[Docker-Kubernetes/k8s-basic-resources/k8s基础-ingress|k8s基础-ingress]]、[[Docker-Kubernetes/k8s-basic-resources/k8s基础-Calico|k8s基础-Calico]] |
 | 存储 | [[Docker-Kubernetes/k8s-basic-resources/k8s基础-storage|k8s基础-storage]] |

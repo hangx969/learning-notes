@@ -1800,3 +1800,11 @@ date: 2026-04-17
 - 新增 [[KnowledgeBase/sources/ai-code-review-validation-loop-summary|来源摘要]] 与 [[KnowledgeBase/concepts/AI代码审查|AI 代码审查概念页]]。
 - 更新 [[KnowledgeBase/entities/Claude-Code]]、[[KnowledgeBase/entities/Codex]]、[[KnowledgeBase/maps/ai-workflow-map|AI 工作流专题地图]]、KnowledgeBase/index.md 和 AI/index.md。
 - 将具体审查命令与深度参数标记为需按当前产品版本确认；本次新增链接均可解析。
+
+
+## [2026-09-06] update | Pod 健康探针重启风暴案例
+
+- 将 [[0raw/一场由健康探针引发的Pod重启风暴——K8s LivenessReadiness Probe配置不当的深度复盘]] 清洗后追加至 [[Docker-Kubernetes/k8s-basic-resources/k8s基础-pod#探针失效真实案例]]。
+- 保留事故数据、错误配置、时间线、Liveness/Readiness/Startup 分工、端点实现、监控排查命令和工程治理措施；移除作者宣传与公众号引流。
+- 补充技术校正：探针时间倍数属于经验性建议；示例 Prometheus 指标并非 kubelet 固定指标；PDB 与 HPA 不能直接阻止 Liveness 误杀。
+- 新增 [[KnowledgeBase/sources/k8s-probe-restart-storm-summary|来源摘要]]，更新 K8s 基础资源批量摘要、[[KnowledgeBase/entities/Kubernetes]]、[[KnowledgeBase/maps/kubernetes-map|Kubernetes 主题地图]] 和 KnowledgeBase/index.md。

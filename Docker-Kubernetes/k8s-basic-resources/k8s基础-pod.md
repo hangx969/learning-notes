@@ -793,3 +793,281 @@ kubectl logs mypod -c container-name
 kubectl get events
 kubectl get events --field-selector involvedObject.name=podName
 ```
+
+
+---
+
+# 探针失效真实案例
+
+> [!info] 案例来源
+> 本章节整理自 [[0raw/一场由健康探针引发的Pod重启风暴——K8s LivenessReadiness Probe配置不当的深度复盘]]。保留事故时间线、错误配置、修复方案和工程治理措施，并对 PDB、HPA 的保护边界补充说明。
+
+## 事故概况
+
+一次旨在“更快发现不健康 Pod”的 Liveness Probe 参数调整，在数据库慢查询和连接池争用期间放大了瞬时抖动。订单服务的健康接口从约 50 ms 增长到 3.2 秒，刚好超过 3 秒超时阈值。Liveness 在 10 秒内连续失败两次后开始重启 Pod，剩余副本承担更多流量，进一步压垮数据库连接池，最终形成级联重启。
+
+事故期间：
+
+- 订单服务从 40 个 Pod 快速下降到约 6 个可用副本；
+- 支付服务从 20 个 Pod 下降到约 3 个可用副本；
+- 300 多个 Pod 在约 5 分钟内发生连锁重启；
+- 上游订单服务故障继续通过 RPC 超时传播到支付服务；
+- 核心业务最终出现大面积 502 和不可用。
+
+## 触发事故的配置变化
+
+变更前：
+
+~~~yaml
+livenessProbe:
+  httpGet:
+    path: /healthz
+    port: 8080
+  initialDelaySeconds: 30
+  periodSeconds: 10
+  timeoutSeconds: 5
+  failureThreshold: 3
+~~~
+
+变更后：
+
+~~~yaml
+livenessProbe:
+  httpGet:
+    path: /healthz
+    port: 8080
+  initialDelaySeconds: 10
+  periodSeconds: 5
+  timeoutSeconds: 3
+  failureThreshold: 2
+~~~
+
+这组参数意味着：
+
+- 探针每 5 秒执行一次；
+- 一次请求超过 3 秒即记为失败；
+- 连续失败 2 次便触发容器重启；
+- 从首次失败到触发重启，实际容错窗口只有约 10 秒。
+
+更严重的是，**/healthz** 不只是检查进程是否存活，还同步检查数据库、Redis 和消息队列。外部依赖的瞬时抖动因此被错误解释为“进程已经无法恢复，必须重启”。
+
+## 故障时间线
+
+| 时间 | 事件 |
+|---|---|
+| 15:12 | 慢查询触发，订单服务数据库连接池开始紧张 |
+| 15:13 | /healthz 响应达到 3.2 秒，第一次超过 3 秒超时 |
+| 15:13 | 5 秒后第二次超时，Liveness 判定失败 |
+| 15:13 | kubelet 开始重启订单服务 Pod |
+| 15:14 | 多个 Pod 被终止，剩余 Pod 承担更多流量 |
+| 15:14 | 剩余 Pod 的连接池进一步过载，健康检查普遍超时 |
+| 15:15 | 订单服务 Pod 大量进入 CrashLoopBackOff |
+| 15:16 | 支付服务因依赖订单服务而发生 RPC 超时，其健康检查也开始失败 |
+| 15:17 | 支付服务 Pod 被连续重启 |
+| 15:18 | 核心业务大面积不可用 |
+
+故障形成了正反馈：
+
+~~~text
+数据库短暂抖动
+  → Liveness 超时
+  → Pod 被重启
+  → 剩余 Pod 流量和连接压力上升
+  → 更多健康检查超时
+  → 更多 Pod 被重启
+~~~
+
+## 为什么 Readiness 没有阻止重启风暴
+
+当时的 Readiness 配置为：
+
+~~~yaml
+readinessProbe:
+  httpGet:
+    path: /ready
+    port: 8080
+  initialDelaySeconds: 5
+  periodSeconds: 10
+  timeoutSeconds: 3
+  failureThreshold: 3
+  successThreshold: 1
+~~~
+
+Readiness 需要连续失败 3 次，每次间隔 10 秒，约 30 秒后才把 Pod 从 Service 后端摘除；Liveness 却约 10 秒便触发重启。结果是：
+
+1. Liveness 先于 Readiness 采取破坏性动作；
+2. Pod 还没来得及通过摘流获得恢复窗口，就被 kubelet 重启；
+3. 新容器启动后再次承受流量和依赖压力；
+4. 健康检查再次超时，进入循环。
+
+Readiness 的职责是控制是否接收流量，Liveness 的职责是处理进程已经无法自愈的状态。前者通常应更快、更敏感；后者应更保守。
+
+## 三个根因
+
+### 1. Liveness 检查了外部依赖
+
+Liveness 失败会触发容器重启，因此只应检测重启能够修复的进程内部故障，例如主循环卡死或不可恢复的死锁。
+
+数据库、缓存、消息队列和下游 RPC 的失败通常不应直接导致 Liveness 失败。重启应用不会修复外部依赖，反而可能制造连接风暴和流量转移。
+
+| 探针 | 要回答的问题 | 失败结果 | 推荐检查内容 |
+|---|---|---|---|
+| Startup | 应用是否已完成启动 | 超过启动容忍期后重启 | 初始化、迁移、缓存预热等启动条件 |
+| Liveness | 进程是否已无法自愈 | 重启容器 | 进程内部状态，不依赖外部系统 |
+| Readiness | 当前是否能安全接收请求 | 从 Service 后端摘除 | 处理请求所需的关键依赖和容量 |
+
+### 2. Readiness 比 Liveness 更慢
+
+原配置中，Readiness 约 30 秒后摘流，Liveness 约 10 秒后重启，破坏性动作先于保护性动作。
+
+修复后的示例：
+
+~~~yaml
+readinessProbe:
+  httpGet:
+    path: /ready
+    port: 8080
+  initialDelaySeconds: 10
+  periodSeconds: 5
+  timeoutSeconds: 3
+  failureThreshold: 2
+  successThreshold: 1
+
+livenessProbe:
+  httpGet:
+    path: /live
+    port: 8080
+  initialDelaySeconds: 30
+  periodSeconds: 20
+  timeoutSeconds: 5
+  failureThreshold: 5
+~~~
+
+该示例让 Readiness 最快约 10 秒摘流，而 Liveness 约 100 秒后才考虑重启，为应用自愈和外部依赖恢复留下缓冲窗口。
+
+> [!warning] 不要机械套用倍数
+> “Liveness 容忍窗口至少是 Readiness 的两倍”可以作为保守启发式，但不是 Kubernetes 的通用公式。参数应根据应用启动时间、正常延迟分布、依赖恢复时间、错误预算和可接受故障发现时间，通过压测与故障演练确定。
+
+### 3. 慢启动应用没有 Startup Probe
+
+只靠 **initialDelaySeconds** 很难同时兼顾慢启动与运行期故障发现。Startup Probe 成功之前，Liveness 和 Readiness 不会开始执行，可把启动阶段与运行阶段分离。
+
+~~~yaml
+startupProbe:
+  httpGet:
+    path: /startup
+    port: 8080
+  periodSeconds: 5
+  failureThreshold: 30
+
+livenessProbe:
+  httpGet:
+    path: /live
+    port: 8080
+  periodSeconds: 20
+  timeoutSeconds: 5
+  failureThreshold: 5
+
+readinessProbe:
+  httpGet:
+    path: /ready
+    port: 8080
+  periodSeconds: 5
+  timeoutSeconds: 3
+  failureThreshold: 2
+~~~
+
+这里为启动阶段提供最多约 150 秒的容忍时间。一旦 Startup 成功，运行期探针才接管。
+
+## 健康检查端点设计
+
+建议把三个端点按语义拆开：
+
+~~~go
+// /startup：检查初始化工作是否完成
+func startupHandler(w http.ResponseWriter, r *http.Request) {
+    if !dbPool.IsInitialized() || !cache.IsWarmed() {
+        w.WriteHeader(http.StatusServiceUnavailable)
+        return
+    }
+    w.WriteHeader(http.StatusOK)
+}
+
+// /live：极轻量，只证明进程仍能响应
+func liveHandler(w http.ResponseWriter, r *http.Request) {
+    // 不检查数据库、缓存、消息队列等外部依赖
+    w.WriteHeader(http.StatusOK)
+}
+
+// /ready：检查当前是否可以接收业务流量
+func readyHandler(w http.ResponseWriter, r *http.Request) {
+    ctx, cancel := context.WithTimeout(r.Context(), time.Second)
+    defer cancel()
+
+    if err := dbPool.Ping(ctx); err != nil {
+        w.WriteHeader(http.StatusServiceUnavailable)
+        return
+    }
+    w.WriteHeader(http.StatusOK)
+}
+~~~
+
+设计原则：
+
+1. **/live 不因外部依赖失败而返回非 200。** 外部系统抖动通常不能通过重启当前容器修复。
+2. **/ready 可以检查关键依赖，但必须有严格超时。** 多个依赖最好分别设置超时，避免一个依赖拖住整个端点。
+3. **健康端点本身不能成为瓶颈。** 避免复杂计算、长链路调用和大量 I/O。
+4. **谨慎决定 Readiness 是否检查共享依赖。** 如果数据库整体故障导致所有 Pod 同时 NotReady，Service 可能失去全部后端；需要结合降级能力、故障模式和流量策略设计。
+5. **探针路径应有明确语义。** 使用 /startup、/live、/ready 比笼统的 /healthz 更容易避免职责混淆。
+
+## 监控与诊断
+
+应监控探针成功率、延迟、容器重启和可用副本变化。指标名称取决于应用和监控组件，下面是原文给出的示意查询，不代表 kubelet 默认暴露同名指标：
+
+~~~promql
+rate(probe_success_total{probe="liveness"}[5m])
+
+histogram_quantile(
+  0.99,
+  probe_duration_seconds{probe="liveness"}
+)
+~~~
+
+现场排查至少包括：
+
+~~~bash
+kubectl describe pod <pod-name>
+kubectl logs <pod-name> --previous
+kubectl get events --field-selector involvedObject.name=<pod-name>
+kubectl get pod <pod-name> -o yaml
+~~~
+
+重点确认：
+
+- Last State 和容器退出原因；
+- Events 中是否出现 Liveness probe failed；
+- Restart Count 的增长速度；
+- 探针实际超时、失败阈值与周期；
+- 依赖延迟是否在重启前已经升高；
+- 可用副本下降是否导致剩余 Pod 负载增加。
+
+## 事故后的工程治理
+
+1. 建立 Probe 配置标准，生产探针变更必须经过 Code Review。
+2. 在 CI/CD 中检查高风险配置，例如 Liveness 引用外部依赖、过短容忍窗口、缺少 Startup Probe。
+3. 为 Pod 重启率、探针失败率和可用副本骤降设置告警。
+4. 探针参数变更先灰度到少量副本，并观察完整故障窗口。
+5. 定期进行依赖变慢、连接池耗尽和探针超时的故障演练。
+6. 结合滚动更新策略、拓扑分布、反亲和性和足够副本数降低同时失效风险。
+
+> [!danger] PDB 与 HPA 的保护边界
+> PodDisruptionBudget 主要约束自愿中断，例如节点排空；它不能阻止 kubelet 因 Liveness 失败而重启容器，也不能直接阻止应用自身崩溃。HPA 的 minReplicas 只约束期望副本下限，不能保证这些副本在探针误杀期间保持 Ready。二者可以增强整体可用性，但不能代替正确的探针语义、参数和故障隔离。
+
+## 复盘结论
+
+- 瞬时依赖故障不等于进程死亡。
+- 只有“重启能够修复”的故障才适合由 Liveness 处理。
+- Readiness 应先摘流，Liveness 应谨慎重启。
+- 慢启动应用应使用 Startup Probe 隔离启动阶段。
+- 探针参数不是越敏感越好，必须根据真实延迟和恢复时间验证。
+- 批量修改核心服务探针属于高风险变更，应灰度发布并准备快速回滚。

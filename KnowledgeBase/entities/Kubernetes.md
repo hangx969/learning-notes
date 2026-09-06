@@ -3,7 +3,7 @@ title: Kubernetes
 tags:
   - knowledgebase/entity
   - docker-kubernetes
-date: 2026-09-05
+date: 2026-09-06
 sources:
   - "[[KnowledgeBase/sources/k8s-basic-resources-batch-summary]]"
   - "[[KnowledgeBase/sources/k8s-installation-management-batch-summary]]"
@@ -18,6 +18,7 @@ sources:
   - "[[KnowledgeBase/sources/k8s-backup-dr-summary]]"
   - "[[KnowledgeBase/sources/k8s-pdb-summary]]"
   - "[[KnowledgeBase/sources/k8s-nvidia-device-plugin-summary]]"
+  - "[[KnowledgeBase/sources/k8s-probe-restart-storm-summary]]"
 ---
 
 # Kubernetes
@@ -41,6 +42,7 @@ Kubernetes（K8s）是容器编排平台，源自 Google Borg 系统，2014 年�
 - **Pause 容器**：Pod 内所有容器的网络和存储共享根，容器间通过 localhost 互访
 - **Operator = CRD + Controller**：无需修改 K8s 源码即可扩展 API，适合复杂有状态应用管理
 - **PodDisruptionBudget（PDB）**：自愿中断（drain/滚动更新/升级）时的可用性保护，通过 `minAvailable` 或 `maxUnavailable` 约束同时不可用的 Pod 数量，详见 [[Docker-Kubernetes/k8s-basic-resources/k8s-PodDisruptionBudget实战]]
+- **健康探针分工**：Startup 隔离启动阶段，Readiness 控制摘流，Liveness 仅处理重启能够修复的进程内部故障；外部依赖抖动不应直接触发容器重启，详见 [[Docker-Kubernetes/k8s-basic-resources/k8s基础-pod#探针失效真实案例]]
 
 ### 网络体系三层协同
 - **Calico**（底层网络连通性）：IPIP 模式隧道封装配置简单，BGP 模式直接路由性能更优
