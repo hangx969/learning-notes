@@ -1,5 +1,5 @@
 ---
-title: "shiji-kb：AI 史记知识库与知识图谱构造方法论"
+title: shiji-kb：AI 史记知识库与知识图谱构造方法论
 tags:
   - knowledgebase/source
   - AI/知识图谱
@@ -7,7 +7,7 @@ tags:
   - 数字人文
 date: 2026-06-30
 sources:
-  - "[[AI/代码知识图谱/shiji-kb-AI史记知识库与知识图谱构造方法论]]"
+  - "[[shiji-kb-AI史记知识库与知识图谱构造方法论]]"
 aliases:
   - shiji-kb 摘要
 ---
@@ -15,7 +15,7 @@ aliases:
 # shiji-kb：AI 史记知识库与知识图谱构造方法论
 
 ## 元信息
-- **原始文档**：[[AI/代码知识图谱/shiji-kb-AI史记知识库与知识图谱构造方法论]]
+- **原始文档**：[[shiji-kb-AI史记知识库与知识图谱构造方法论]]
 - **领域**：AI / 知识图谱 / 知识工程
 - **摄入日期**：2026-06-30
 - **项目地址**：https://github.com/baojie/shiji-kb
