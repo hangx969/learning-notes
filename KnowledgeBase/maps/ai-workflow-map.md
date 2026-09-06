@@ -41,6 +41,13 @@ date: 2026-04-16
 2. [[AI/Codex/Codex-两个设置提升体验|两个体验设置]] — 普通模式主动澄清与经验性 Juice 自检
 3. [[AI/Codex/Codex-省Token工具实测-Ponytail-Headroom-RTK|省 Token 工具实测]] — 约束 Agent 输出的工具实践
 
+### AI 代码审查与知识图谱
+1. [[AI/Code review和知识图谱/AI代码审查闭环-验证优先与敏感信息清理|AI 代码审查闭环]] — 质量门禁、真实运行、安全扫描、敏感信息清理与对抗式测试
+2. [[AI/Code review和知识图谱/code-review-graph-本地代码知识图谱|code-review-graph]] — 用本地 AST 图谱分析调用链与改动影响范围
+3. [[AI/Code review和知识图谱/CodeGraph-代码语义知识图谱|CodeGraph]] — 预建代码语义关系，减少 Agent 扫描成本
+4. [[AI/Code review和知识图谱/Graphify-软件工程知识图谱工具|Graphify]] — 统一查询代码、文档与多媒体资料关系
+5. [[AI/Code review和知识图谱/Understand-Anything-代码知识图谱可视化|Understand-Anything]] — 代码库结构可视化与交互问答
+
 ### OpenClaw 路径
 1. [[AI/OpenClaw/OpenClaw-基础-安装|OpenClaw-基础-安装]] — 入门安装
 2. [[AI/OpenClaw/OpenClaw-Channels|OpenClaw-Channels]] — Channel 配置
@@ -76,7 +83,7 @@ date: 2026-04-16
 
 | 文章 | 主题 | 关键词 |
 |------|------|--------|
-| [[AI/ClaudeCode/ClaudeCode基础指南|ClaudeCode基础指南]] | 全面指南 | 安装、配置、使用场景 |
+| [[AI/ClaudeCode/Claude Code 基础指南|ClaudeCode基础指南]] | 全面指南 | 安装、配置、使用场景 |
 | [[AI/ClaudeCode/Claude Code 扩展体系|扩展体系]] | 四层扩展机制 | MCP、Skills、Slash Commands、Plugin |
 | [[AI/ClaudeCode/多智能体协作-Subagents与Agent-Teams|多智能体协作]] | Subagents 与 Agent Teams | 并行任务、团队协作 |
 | [[AI/ClaudeCode/Claude-Skill质检工具-SkillCraft|Skill Craft 质检工具]] | Skill 质量工程 | 7 类失效模式、三层评估、check/fix/create/audit |
@@ -112,6 +119,7 @@ date: 2026-04-16
 ---
 
 ## 📑 来源摘要
+- [[KnowledgeBase/sources/ai-code-review-validation-loop-summary|AI 代码审查验证闭环]] — 完整上下文、真实运行、安全与信息清理
 - [[KnowledgeBase/sources/12个常用Prompt-summary|12 个常用 Prompt 摘要]] — 问题澄清、学习研究、解决问题、决策与自我探索
 - [[KnowledgeBase/sources/cloudops-agent-batch-summary|CloudOps-Agent 批量摘要]] — 57 篇，三语言智能 OnCall Agent
 - [[KnowledgeBase/sources/rag-agent-batch-summary|RAG-Agent 批量摘要]] — 33 篇，企业 RAG 知识库系统

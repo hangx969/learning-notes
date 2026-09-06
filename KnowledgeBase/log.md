@@ -1785,3 +1785,18 @@ date: 2026-04-17
 - 修正 [[AI/提示词/提问与需求澄清提示词]]、[[AI/提示词/学习研究与事实核查提示词]]、[[AI/提示词/分析决策与解决问题提示词]] 中代码块内挤在同一行的有序项。
 - 将每个编号项拆为独立行，并修复“苏格拉底式问诊”中第 3～5 项的错误粘连与缩进；提示词语义保持不变。
 - 扫描 AI/提示词/ 下全部 7 个 Markdown 文件，代码块内未再发现同一行包含多个有序编号的情况。
+
+
+## [2026-09-06] restructure | AI 代码审查与知识图谱目录重命名
+
+- 用户将目录从 AI/代码知识图谱/ 重命名为 AI/Code review和知识图谱/。
+- 更新 AI/index.md 的目录名称与文档数（5→6），修正 CodeGraph 来源摘要中的 Graphify 显式路径。
+- 当前知识页已无旧目录路径引用；既有 log.md 中的旧路径作为历史记录保留。
+
+## [2026-09-06] ingest | AI 代码审查验证闭环
+
+- 清洗 [[0raw/用 AI 审核 AI 的代码，踩了一堆坑之后我的方法]] 并归档至 [[AI/Code review和知识图谱/AI代码审查闭环-验证优先与敏感信息清理]]。
+- 保留完整技术内容：Lint/类型检查/单元测试/集成测试/E2E 门禁、独立 Worktree、完整仓库上下文、真实运行验证、安全扫描、敏感信息清理、对抗式测试和项目级审查配置；移除作者宣传和公众号引流。
+- 新增 [[KnowledgeBase/sources/ai-code-review-validation-loop-summary|来源摘要]] 与 [[KnowledgeBase/concepts/AI代码审查|AI 代码审查概念页]]。
+- 更新 [[KnowledgeBase/entities/Claude-Code]]、[[KnowledgeBase/entities/Codex]]、[[KnowledgeBase/maps/ai-workflow-map|AI 工作流专题地图]]、KnowledgeBase/index.md 和 AI/index.md。
+- 将具体审查命令与深度参数标记为需按当前产品版本确认；本次新增链接均可解析。

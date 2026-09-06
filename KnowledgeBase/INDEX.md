@@ -43,6 +43,7 @@ date: 2026-04-17
 | [RBAC](concepts/RBAC.md) | Kubernetes 基于角色的访问控制 |
 | [联邦集群](concepts/联邦集群.md) | Kubernetes 多集群统一管理与跨集群调度 |
 | [ServiceMesh](concepts/ServiceMesh.md) | → 服务网格（别名页）|
+| [[KnowledgeBase/concepts/AI代码审查|AI 代码审查]] | 以完整上下文、确定性门禁、真实运行和人工判断验证 AI 生成代码 |
 | [[KnowledgeBase/concepts/提示词工程|提示词工程]] | 通过目标、上下文、约束、交互流程和验证标准提升模型输出的可靠性 |
 
 ---
@@ -244,6 +245,7 @@ date: 2026-04-17
 | [shiji-kb 知识图谱构造方法论](sources/shiji-kb-knowledge-graph-summary.md) | 1 | 开源古籍知识工程：AI 将《史记》57 万字结构化（10 万实体/3185 事件/7652 关系），沉淀 26 个可复用 Skill（9 大阶段） |
 | [K8s MCP Server + Dify](sources/k8s-mcp-server-dify-summary.md) | 1 | Dify + Kubernetes MCP Server 智能运维，实时集群感知/自然语言运维/自动故障分析/企业知识库 |
 | [AIOps Golang 工具链](sources/aiops-golang-k8s-toolchain-summary.md) | 1 | Go 三层递进工具链：Cobra CLI 基座 → Function Calling ChatOps → RAG 故障诊断，含完整源码 |
+| [[KnowledgeBase/sources/ai-code-review-validation-loop-summary|AI 代码审查验证闭环]] | 1 | 质量门禁、完整仓库上下文、真实运行、安全扫描、敏感信息清理与对抗式测试 |
 
 ### IaC/Terraform 容器管理（已摄入 ✅）
 

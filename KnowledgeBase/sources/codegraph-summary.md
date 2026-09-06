@@ -34,5 +34,5 @@ CodeGraph 为代码库预建语义知识图谱（函数调用链、类继承、�
 - [[KnowledgeBase/entities/Claude-Code]]
 
 ## 值得注意
-- 与知识库中的 [[AI/Graphify-软件工程知识图谱工具|Graphify]] 定位不同：CodeGraph 专注代码 AST 图谱（减少 Agent 工具调用），Graphify 覆盖代码+文档+PDF+视频的全资料知识图谱
+- 与知识库中的 [[AI/Code review和知识图谱/Graphify-软件工程知识图谱工具|Graphify]] 定位不同：CodeGraph 专注代码 AST 图谱（减少 Agent 工具调用），Graphify 覆盖代码+文档+PDF+视频的全资料知识图谱
 - 本质是给 Claude Code 做了一层"代码记忆"缓存，与 CLAUDE.md 的"项目规则记忆"互补

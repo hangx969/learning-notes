@@ -20,6 +20,7 @@ sources:
   - "[[AI/ClaudeCode/Claude-Code为什么用grep不用RAG]]"
   - "[[AI/ClaudeCode/Claude-Fable-5-system-prompt]]"
   - "[[Git-Worktree-AI开发实践指南]]"
+  - "[[AI/Code review和知识图谱/AI代码审查闭环-验证优先与敏感信息清理]]"
 ---
 
 # Claude Code
@@ -229,6 +230,7 @@ Plugin 是应用级打包容器，将多种扩展机制捆绑为一个可分发�
 - [[AI/ClaudeCode/CLAUDE.md最佳实践-12条规则模板]]：Mnilax 12 条规则模板——Karpathy 4 条 + 8 条新规则，30 个代码库实测错误率 41%→3%，含 200 行天花板发现和 6 条反面经验
 
 - [[code-review-graph-本地代码知识图谱]]：本地代码知识图谱工具——Tree-sitter AST 解析→SQLite 图谱→MCP 接入 Claude Code，blast-radius 影响范围分析，2900 文件增量索引 2 秒
+- [[AI/Code review和知识图谱/AI代码审查闭环-验证优先与敏感信息清理]]：以质量门禁、完整仓库上下文、真实运行、安全扫描、敏感信息清理和对抗式测试构成 AI 代码审查闭环
 - [[AI/ClaudeCode/Claude-Code为什么用grep不用RAG]]：Agentic Search 架构解析——Glob+Grep(ripgrep)+Read 替代 RAG，Boris Cherny 播客原话+亚马逊论文实锤+Cursor 反面论证
 - [[AI/ClaudeCode/Claude-Fable-5-system-prompt]]：Claude Fable 5 完整系统提示词——Mythos-class 新层级、行为规约体系、~15 个内置工具、沙箱架构、Artifact/Claudeception、MCP 连接器流程、版权硬限制、Skill 强制规则
 - [[Git-Worktree-AI开发实践指南]]：Git Worktree 并行开发实践——"一个 AI 会话 = 一个 Worktree"原则、紧急修复/多方案探索场景、5 个实践踩坑（与 CC 原生 EnterWorktree 工具吻合）
