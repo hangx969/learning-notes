@@ -4,11 +4,12 @@ tags:
   - knowledgebase/source
   - docker-kubernetes/scaling
   - docker-kubernetes/storage
-date: 2026-09-05
+date: 2026-09-06
 sources:
   - "[[Docker-Kubernetes/k8s-scaling/helm部署goldilocks]]"
   - "[[Docker-Kubernetes/k8s-scaling/helm部署vpa]]"
   - "[[Docker-Kubernetes/k8s-scaling/k8s-基于KEDA的弹性能力]]"
+  - "[[Docker-Kubernetes/k8s-scaling/KServe+KEDA实战-基于请求指标实现服务自动扩缩容]]"
   - "[[Docker-Kubernetes/k8s-scaling/k8s-HPA-VPA]]"
   - "[[Docker-Kubernetes/k8s-storage/k8s-分布式存储CubeFS]]"
   - "[[Docker-Kubernetes/k8s-storage/helm部署nfs-subdir-external-provisioner]]"
@@ -20,13 +21,13 @@ sources:
 ## 元信息
 
 - **原始目录**: `Docker-Kubernetes/k8s-scaling/` 与 `Docker-Kubernetes/k8s-storage/`
-- **文档数量**: 9 篇（扩缩容 5 篇 + 存储 4 篇）
-- **领域**: Kubernetes 自动扩缩容（HPA/VPA/KEDA）与存储生命周期（PV/PVC/StorageClass）及分布式存储（NFS/Ceph/CubeFS）
+- **文档数量**: 10 篇（扩缩容 6 篇 + 存储 4 篇）
+- **领域**: Kubernetes 自动扩缩容（HPA/VPA/KEDA/KServe）与存储生命周期（PV/PVC/StorageClass）及分布式存储（NFS/Ceph/CubeFS）
 - **摄入日期**: 2026-04-17
 
 ## 整体概述
 
-本批次摘要覆盖了 Kubernetes 集群的两大基础能力：自动扩缩容和持久化存储。扩缩容部分系统性介绍了 HPA（水平扩缩）、VPA（垂直扩缩）、KEDA（事件驱动扩缩）三种方案及其部署工具（Goldilocks 资源推荐），从原生能力到高级事件驱动扩展形成完整体系。存储部分涵盖了从 PV/PVC/StorageClass 生命周期与数据保护，到简单的 NFS 动态供应和企业级分布式存储（Ceph、CubeFS）的部署与 K8s 集成，为有状态应用提供可靠的数据持久化方案。
+本批次摘要覆盖了 Kubernetes 集群的两大基础能力：自动扩缩容和持久化存储。扩缩容部分系统性介绍了 HPA（水平扩缩）、VPA（垂直扩缩）、KEDA（事件驱动扩缩）和 KServe 模型服务请求指标扩缩容，以及相关部署工具（Goldilocks 资源推荐），从原生能力到模型推理场景形成完整体系。存储部分涵盖了从 PV/PVC/StorageClass 生命周期与数据保护，到简单的 NFS 动态供应和企业级分布式存储（Ceph、CubeFS）的部署与 K8s 集成，为有状态应用提供可靠的数据持久化方案。
 
 ## 各文档摘要
 
@@ -66,6 +67,18 @@ sources:
 - 架构：Controller -> Scaler -> HPA 协同完成扩缩容
 - 支持数十种外部事件源：Kafka、RabbitMQ、HTTP 请求数、Cron 定时等
 - 独特优势：缩容到 0（Serverless 模式），适用于大数据处理等场景
+
+### [[Docker-Kubernetes/k8s-scaling/KServe+KEDA实战-基于请求指标实现服务自动扩缩容|KServe + KEDA 基于请求指标自动扩缩容]]
+
+**核心内容**: 通过 KServe + vLLM + Prometheus + KEDA + HPA 的完整 Demo，使用正在处理和排队请求数作为模型服务扩缩容信号，并验证副本从 `1 -> 2 -> 1` 的变化。
+
+- 扩缩容链路：KServe Predictor Deployment → vLLM `/metrics` → Prometheus → KEDA → External Metrics API → HPA
+- 实测 KEDA 2.17.2，必须确认 `external.metrics.k8s.io` Metrics API Server 可用，只有 CRD 就绪并不够
+- `vllm:num_requests_running + vllm:num_requests_waiting` 同时反映执行中和排队中的请求压力
+- KServe 使用 `autoscalerClass: keda`、`minReplicas`、`maxReplicas` 和 `autoScaling.metrics` 声明外部 Prometheus 指标
+- 通过 ServiceMonitor 选择 KServe Predictor Service，Prometheus Operator 将各 Predictor Pod 作为独立 Target
+- 示例设置 `target.value: 1`、副本范围 1～2，HPA 缩容稳定窗口为 300 秒
+- 使用 HAMi DRA 在单 GPU 节点为每个副本申请 3Gi 显存和 20% GPU 核心
 
 ### [[Docker-Kubernetes/k8s-scaling/k8s-HPA-VPA|HPA 与 VPA 自动扩缩容]]
 
@@ -132,6 +145,7 @@ sources:
 - [[KnowledgeBase/entities/NFS]]: 网络文件系统
 - [[KnowledgeBase/entities/Knative]]: Serverless 框架（KPA 来源）
 - [[KnowledgeBase/concepts/Finalizer]]: PVC/PV 删除过程中的保护钩子
+- [[KnowledgeBase/entities/Prometheus]]: 采集 vLLM 指标并提供 PromQL 查询
 
 ### [[Docker-Kubernetes/k8s-scaling/k8s成本优化方案-FinOps实战|K8s 成本优化方案——FinOps 实战]]
 
@@ -155,3 +169,4 @@ sources:
 5. **存储选型权衡**: NFS（简单但非高可用） -> CubeFS（云原生友好但无块存储） -> Ceph（功能全面但运维复杂），三种方案适用于不同规模和复杂度的场景。
 6. **存储删除安全边界**: StorageClass 提供供给模板，PV 的 `persistentVolumeReclaimPolicy` 决定具体删除行为；`Retain`、快照和备份共同构成有状态数据的恢复边界。
 7. **KEDA 与 Serverless**: KEDA 的缩容到 0 能力与 Knative/KPA 的 Serverless 模式理念一致，反映了事件驱动架构在 K8s 中的深入应用。
+8. **推理服务扩缩容信号**: 对 KServe/vLLM 模型服务，`running + waiting` 请求数比 CPU/内存利用率更直接反映推理排队压力，但仍需结合模型加载时间、GPU 调度和 HPA 稳定窗口压测。

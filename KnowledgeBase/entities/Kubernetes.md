@@ -24,7 +24,7 @@ sources:
 
 ## 简介
 
-Kubernetes（K8s）是容器编排平台，源自 Google Borg 系统，2014 年开源，2018 年从 CNCF 毕业。本仓库以 **155 篇文章**覆盖了 K8s 全生命周期，包括基础资源、集群安装与管理、监控日志、CI/CD、网络与服务网格、安全认证、扩缩容、存储、数据库中间件、UI 工具、备份恢复、GPU 配置、认证考试等主题。全部源文档的详细摘要见上方 `sources` 中列出的批量摘要页面。
+Kubernetes（K8s）是容器编排平台，源自 Google Borg 系统，2014 年开源，2018 年从 CNCF 毕业。本仓库以 **156 篇文章**覆盖了 K8s 全生命周期，包括基础资源、集群安装与管理、监控日志、CI/CD、网络与服务网格、安全认证、扩缩容、存储、数据库中间件、UI 工具、备份恢复、GPU 配置、认证考试等主题。全部源文档的详细摘要见上方 `sources` 中列出的批量摘要页面。
 
 ## 核心架构知识（从 145 篇中提炼）
 
@@ -131,7 +131,7 @@ Kubernetes（K8s）是容器编排平台，源自 Google Borg 系统，2014 年�
 - Capsule Tenant：一组 Namespace 的逻辑分组，RBAC + ResourceQuota + NetworkPolicy 策略隔离
 - Security Context：UID/GID 管理 + Capabilities（drop ALL + 按需 add）+ 特权模式禁止 + sysctl + seccomp + Pod 安全标准三级策略
 
-### 扩缩容与存储（9 篇）
+### 扩缩容与存储（10 篇）
 详见 [[KnowledgeBase/sources/k8s-scaling-storage-batch-summary|k8s-scaling-storage 批量摘要]]
 
 **扩缩容四层体系**：HPA（Pod 水平，基于 CPU/内存）-> VPA（Pod 垂直，调整 request/limit）-> KEDA（事件驱动，支持缩容到 0）-> Cluster Autoscaler（节点级别弹性）。Goldilocks 提供 VPA 推荐值可视化。
@@ -145,6 +145,7 @@ Kubernetes（K8s）是容器编排平台，源自 Google Borg 系统，2014 年�
 - NFS exports 配置需写宿主机网段（非 Pod 网段），因 PV 先挂载到宿主机再挂载到 Pod
 - 动态供给 PV 的 `Delete` 策略可能在删除 PVC 时销毁底层云盘；重要数据应使用 `Retain` 并在删除前确认快照或备份
 - 修改 StorageClass 不会回溯修改存量 PV；`Released` PV 复用前要审查 `claimRef` 和旧数据，StatefulSet 也要审查级联删除行为
+- KServe 可将 vLLM `running + waiting` 请求数交给 KEDA，再通过 External Metrics API 驱动 HPA，示例验证了模型服务 `1 -> 2 -> 1` 的请求指标扩缩容
 
 ### 数据库中间件与 UI 工具（18 篇）
 详见 [[KnowledgeBase/sources/k8s-db-middleware-UI-batch-summary|k8s-db-middleware-UI 批量摘要]]

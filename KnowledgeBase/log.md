@@ -1755,3 +1755,11 @@ date: 2026-04-17
 - 保留技术内容：Registry 直接拉取、manifest list/OCI index、多架构与 digest 选择、分层断点续传、Range 限制、指数退避重试、Python 依赖及 `docker load` 导入。
 - 新增 [[KnowledgeBase/sources/docker-image-download-summary|来源摘要]]，更新 [[KnowledgeBase/entities/Docker|Docker 实体页]]、Docker 批次摘要、工具/领域地图、文档盘点和 `INDEX.md`。
 - 移除正文作者署名、引流话术和免责声明（保留作者元数据）；标注原文 `docker_pull_v2.py` 与示例 `docker_pull.py` 的命名差异。
+
+## [2026-09-06] ingest | KServe + KEDA 基于请求指标自动扩缩容
+
+- 清洗 `0raw/KServe + KEDA 实战：基于请求指标实现服务自动扩缩容.md` 并归档至 `Docker-Kubernetes/k8s-scaling/KServe+KEDA实战-基于请求指标实现服务自动扩缩容.md`。
+- 保留完整技术内容：KEDA 2.17.2、kube-prometheus-stack、KServe InferenceService、HAMi DRA GPU 共享、ServiceMonitor、Prometheus 查询、External Metrics API、持续负载及 `1 -> 2 -> 1` 扩缩容验证；移除作者署名、往期回顾和公众号引流尾段，去除重复/装饰性图片。
+- 新增来源摘要：`KnowledgeBase/sources/kserve-keda-request-autoscaling-summary.md`。
+- 更新 `KnowledgeBase/sources/k8s-scaling-storage-batch-summary.md`、`KnowledgeBase/entities/Kubernetes.md`、`KnowledgeBase/entities/Prometheus.md`、`KnowledgeBase/maps/kubernetes-map.md`、`KnowledgeBase/INDEX.md` 与 `Docker-Kubernetes/index.md`。
+- 核心知识：KServe Predictor → vLLM `/metrics` → Prometheus → KEDA → External Metrics API → HPA；使用 `running + waiting` 请求数作为扩缩容信号，并结合 300 秒缩容稳定窗口完成实测验证。

@@ -13,7 +13,7 @@
 | k8s-CICD/ | 19 | Jenkins/ArgoCD/GitLab CI/Tekton/GitHub Actions |
 | k8s-networking-service-mesh/ | 7 | Ingress-Nginx/Calico/Istio 流量管理 |
 | k8s-security-auth/ | 7 | Cert-Manager/External Secrets/Kyverno/OAuth2 Proxy |
-| k8s-scaling/ | 4 | HPA/VPA/KEDA/Karpenter 弹性扩缩容 |
+| k8s-scaling/ | 5 | HPA/VPA/KEDA/KServe/Karpenter 弹性扩缩容 |
 | k8s-storage/ | 4 | Ceph/CubeFS/NFS 分布式存储、PV/PVC 数据保护 |
 | k8s-db-middleware/ | 11 | Redis/MySQL/PostgreSQL/Kafka/RabbitMQ 集群部署 |
 | k8s-UI-tools/ | 8 | Dashboard/Rancher/k9s/Lens 管理工具 |

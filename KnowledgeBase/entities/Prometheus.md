@@ -2,9 +2,10 @@
 title: Prometheus
 tags:
   - knowledgebase/entity
-date: 2026-04-17
+date: 2026-09-06
 sources:
   - "[[KnowledgeBase/sources/k8s-monitoring-logging-batch-summary|k8s-monitoring-logging 来源批量摘要]]"
+  - "[[KnowledgeBase/sources/kserve-keda-request-autoscaling-summary|KServe + KEDA 请求指标扩缩容摘要]]"
 aliases:
   - prometheus
   - Prom
@@ -37,6 +38,7 @@ Prometheus 是开源的系统监控与告警工具，采用拉取（pull）模�
 - 手动 YAML 部署单个组件 -> 二进制部署联邦集群 -> **Helm 一键部署 kube-prometheus-stack 全家桶**
 - kube-prometheus-stack 是 Prometheus Operator 的 [[KnowledgeBase/entities/Helm|Helm]] Chart 封装，包含 Prometheus、Alertmanager、[[KnowledgeBase/entities/Grafana|Grafana]]、kube-state-metrics、node-exporter
 - **Operator 模式**：通过 ServiceMonitor / ScrapeConfig CRD 声明式管理监控目标
+- **模型服务监控**：通过 ServiceMonitor 采集 KServe Predictor 暴露的 vLLM `/metrics`，为 KEDA 提供请求指标
 
 ### Alertmanager
 - 工作流程：PENDING -> FIRING -> 分组等待 -> 发送通知
@@ -67,6 +69,7 @@ Prometheus 是开源的系统监控与告警工具，采用拉取（pull）模�
 - [[Docker-Kubernetes/k8s-monitoring-logging/二进制部署prometheus-grafana-nodeexporter|二进制部署prometheus-grafana-nodeexporter]]
 - [[Docker-Kubernetes/k8s-monitoring-logging/helm部署prometheus-stack全家桶|helm部署prometheus-stack全家桶]]
 - [[Docker-Kubernetes/docker/docker部署prometheus-grafana-cAdvisior监控|docker部署prometheus-grafana-cAdvisior监控]]
+- [[Docker-Kubernetes/k8s-scaling/KServe+KEDA实战-基于请求指标实现服务自动扩缩容|KServe + KEDA 基于请求指标自动扩缩容]]
 
 ## 相关概念与实体
 - [[KnowledgeBase/entities/Grafana|Grafana]]

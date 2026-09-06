@@ -52,7 +52,7 @@ date: 2026-04-17
 
 | 页面 | 摘要 |
 |------|------|
-| [Kubernetes](entities/Kubernetes.md) | 容器编排平台，155 篇文章覆盖全生命周期 |
+| [Kubernetes](entities/Kubernetes.md) | 容器编排平台，156 篇文章覆盖全生命周期 |
 | [Docker](entities/Docker.md) | 容器运行时，14 篇覆盖基础、镜像分发与服务部署实战 |
 | [Helm](entities/Helm.md) | Kubernetes 包管理器 |
 | [ArgoCD](entities/ArgoCD.md) | GitOps 持续交付工具 |
@@ -152,7 +152,8 @@ date: 2026-04-17
 | [K8s 网络与服务网格](sources/k8s-networking-service-mesh-batch-summary.md) | 7 | Ingress-Nginx/External-DNS/Calico/Istio 流量管理 |
 | [K8s 安全认证](sources/k8s-security-auth-batch-summary.md) | 8 | Cert-Manager/External Secrets/Kyverno(含1.18新特性)/OAuth2 Proxy/Trivy/SonarQube/Security Context |
 | [Kyverno 1.18](sources/kyverno-1.18-summary.md) | 1 | CNCF 毕业后首版：SSRF 防护、CLI 扩展、CEL 策略演进、性能与可观测性提升 |
-| [K8s 扩缩容与存储](sources/k8s-scaling-storage-batch-summary.md) | 9 | HPA/VPA/KEDA/Karpenter 扩缩容 + FinOps 成本优化 + PV/PVC 数据保护 + NFS/Ceph/CubeFS 存储 |
+| [K8s 扩缩容与存储](sources/k8s-scaling-storage-batch-summary.md) | 10 | HPA/VPA/KEDA/KServe/Karpenter 扩缩容 + FinOps 成本优化 + PV/PVC 数据保护 + NFS/Ceph/CubeFS 存储 |
+| [KServe + KEDA 请求指标扩缩容](sources/kserve-keda-request-autoscaling-summary.md) | 1 | KServe/vLLM 指标经 Prometheus、KEDA、External Metrics API 驱动 HPA，实现 1→2→1 扩缩容 |
 | [PV/PVC 回收策略](sources/k8s-pv-pvc-reclaim-policy-summary.md) | 1 | PVC 删除后的 PV 回收策略、Released 复用风险、快照与 StatefulSet 安全删除 |
 | [K8s 中间件与 UI](sources/k8s-db-middleware-UI-batch-summary.md) | 19 | Redis/MySQL/PostgreSQL/Kafka/RabbitMQ 部署 + Dashboard/Rancher/k9s 管理工具 |
 | [RabbitMQ HA](sources/rabbitmq-ha-summary.md) | 1 | Helm 部署 RabbitMQ 高可用集群（StatefulSet）、aliyun Chart 配置、旧版 API 兼容修复 |
@@ -272,7 +273,7 @@ date: 2026-04-17
 |------|------|
 | [领域地图](maps/domain-map.md) | 按技术领域导航全库 |
 | [工具地图](maps/tool-map.md) | 按工具/平台聚合知识 |
-| [Kubernetes 专题](maps/kubernetes-map.md) | 155 篇 K8s 生态知识导航 |
+| [Kubernetes 专题](maps/kubernetes-map.md) | 156 篇 K8s 生态知识导航 |
 | [AI 工作流专题](maps/ai-workflow-map.md) | Claude Code + OpenClaw + AI 辅助运维 |
 | [Claude Code & OpenClaw 专题](maps/claude-code-openclaw-map.md) | AI 编程与开源 AI 工具 |
 | [云平台专题](maps/cloud-platform-map.md) | Aliyun + Azure 对标 |
@@ -309,7 +310,7 @@ date: 2026-04-17
 
 | 领域 | 篇数 | 成熟度 | 入口 |
 |------|------|:------:|------|
-| Docker-Kubernetes | 155 | 🟢 | [kubernetes-map](maps/kubernetes-map.md) |
+| Docker-Kubernetes | 156 | 🟢 | [kubernetes-map](maps/kubernetes-map.md) |
 | Python | 27 | 🟢 | [python-devops-map](maps/python-devops-map.md) |
 | Linux-Shell | 24 | 🟡 | [linux-ops-map](maps/linux-ops-map.md) |
 | Azure | 21 | 🟢 | [cloud-platform-map](maps/cloud-platform-map.md) |
