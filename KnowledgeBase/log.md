@@ -1763,3 +1763,18 @@ date: 2026-04-17
 - 新增来源摘要：`KnowledgeBase/sources/kserve-keda-request-autoscaling-summary.md`。
 - 更新 `KnowledgeBase/sources/k8s-scaling-storage-batch-summary.md`、`KnowledgeBase/entities/Kubernetes.md`、`KnowledgeBase/entities/Prometheus.md`、`KnowledgeBase/maps/kubernetes-map.md`、`KnowledgeBase/INDEX.md` 与 `Docker-Kubernetes/index.md`。
 - 核心知识：KServe Predictor → vLLM `/metrics` → Prometheus → KEDA → External Metrics API → HPA；使用 `running + waiting` 请求数作为扩缩容信号，并结合 300 秒缩容稳定窗口完成实测验证。
+
+
+## [2026-09-06] ingest | 12 个常用 Prompt 与提示词主题库重组
+
+- 摄入 [[0raw/都Agent时代了，我还是想分享给你这12个我最常用的Prompt。]]，移除公众号引流、作者宣传、赞赏、装饰图片和重复铺垫，完整保留 12 个可复用 Prompt。
+- 将原 [[AI/提示词/提示词|提示词集合]] 重组为入口页，并新增 6 个主题页：需求澄清、学习研究与事实核查、分析决策与解决问题、AI 编程协作、写作与表达、自我探索与人生设计。
+- 重复内容按快速版/完整版合并；补充联网能力、95% 启发式阈值、真实人物观点归因和自我探索非诊断用途等使用边界。
+- 新增 [[KnowledgeBase/sources/12个常用Prompt-summary|来源摘要]] 与 [[KnowledgeBase/concepts/提示词工程|提示词工程概念页]]，更新 [[KnowledgeBase/maps/ai-workflow-map|AI 工作流专题地图]] 和 KnowledgeBase/index.md。
+
+## [2026-09-06] lint | 提示词摄入后 Wiki 健康检查
+
+- 检查全 vault 850 个 Markdown 文件；KnowledgeBase/ 共 135 个页面、3146 个 wikilink。
+- 本次新增或重组的 9 个文件全部存在，新增页面断链 0，KnowledgeBase 页面基础 frontmatter 完整率 135/135。
+- 全 Wiki 严格口径发现未解析 wikilink 299 条（246 个唯一目标），其中 log.md 历史记录 26 条；发现孤儿页 28 个，均为既有维护债务。
+- 生成 [[KnowledgeBase/maintenance/wiki-lint-2026-09-06|Wiki 健康检查 2026-09-06]]；本次新增概念页和来源摘要均已获得 index 与主题地图入链。
