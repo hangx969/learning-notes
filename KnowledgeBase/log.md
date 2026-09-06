@@ -1829,3 +1829,11 @@ date: 2026-04-17
 - 回读时发现同日另有 `Kubernetes Volume Health Monitor` 摄入已合并到 `k8s-scaling-storage` 批量摘要；在保留该变更的基础上，将批量摘要统一校正为 12 篇（扩缩容 7 篇、存储 5 篇）。
 - 同步校正 `KnowledgeBase/entities/Kubernetes.md` 与 `KnowledgeBase/maps/kubernetes-map.md` 的 K8s 总文档数为 158 篇，并校正 `KnowledgeBase/INDEX.md` 的 Kubernetes 与扩缩容/存储计数。
 - 本次新增的原生 HPA Scale-to-Zero 归档、来源摘要、Prometheus 交叉引用和目标目录文件均保留。
+
+
+## [2026-09-06] ingest | 大模型精度与量化：FP64 到 NVFP4
+
+- 清洗并归档 `0raw/一文讲清 FP64、FP32、TF32、BF16、FP16、FP8、INT8、INT4、NVFP4.md` 至 `AI/企业级私有化大模型/大模型精度与量化：FP64到NVFP4.md`；移除作者署名、目录和提示性噪声，保留精度格式、缩放机制、显存估算及训练/推理选择等技术内容。
+- 通过 PicGo 上传原文中的 7 张图片，并将归档文档中的图片链接替换为图床地址。
+- 新增 [[KnowledgeBase/concepts/混合精度与模型量化]] 与 [[KnowledgeBase/sources/model-precision-quantization-summary|来源摘要]]；更新 [[KnowledgeBase/entities/NVIDIA]]、[[KnowledgeBase/entities/CUDA]]、[[KnowledgeBase/maps/domain-map]] 与 `KnowledgeBase/INDEX.md`。
+- 关键边界：文章中的 70B 显存示例仅估算权重，未包含 KV Cache、运行时和系统开销；NVFP4 性能/精度数据保留为来源中的 NVIDIA 评测语境。

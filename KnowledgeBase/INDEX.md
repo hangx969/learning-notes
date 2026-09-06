@@ -45,6 +45,7 @@ date: 2026-04-17
 | [ServiceMesh](concepts/ServiceMesh.md) | → 服务网格（别名页）|
 | [[KnowledgeBase/concepts/AI代码审查|AI 代码审查]] | 以完整上下文、确定性门禁、真实运行和人工判断验证 AI 生成代码 |
 | [[KnowledgeBase/concepts/提示词工程|提示词工程]] | 通过目标、上下文、约束、交互流程和验证标准提升模型输出的可靠性 |
+| [[KnowledgeBase/concepts/混合精度与模型量化|混合精度与模型量化]] | 大模型数值格式、混合精度、低比特量化及其显存/吞吐取舍 |
 
 ---
 
@@ -80,10 +81,10 @@ date: 2026-04-17
 | [Kafka](entities/Kafka.md) | 分布式消息队列/事件流平台（stub） |
 | [Loki](entities/Loki.md) | 轻量级日志聚合系统（stub） |
 | [MySQL](entities/MySQL.md) | 开源关系型数据库（stub） |
-| [NVIDIA](entities/NVIDIA.md) | GPU 硬件厂商（stub） |
+| [[KnowledgeBase/entities/NVIDIA|NVIDIA]] | GPU 硬件厂商，覆盖 Tensor Core 精度与 NVFP4 相关内容 |
 | [PBS](entities/PBS.md) | HPC 作业调度系统（stub） |
 | [containerd](entities/containerd.md) | K8s 默认容器运行时（stub） |
-| [CUDA](entities/CUDA.md) | NVIDIA GPU 计算平台（stub） |
+| [[KnowledgeBase/entities/CUDA|CUDA]] | NVIDIA GPU 计算平台，关联精度格式与硬件支持 |
 | [Calico](entities/Calico.md) | K8s CNI 网络插件（stub） |
 | [Docker Compose](entities/Docker-Compose.md) | 单机多容器编排工具（stub） |
 | [Kustomize](entities/Kustomize.md) | K8s 原生配置管理工具（stub） |
@@ -248,6 +249,12 @@ date: 2026-04-17
 | [K8s MCP Server + Dify](sources/k8s-mcp-server-dify-summary.md) | 1 | Dify + Kubernetes MCP Server 智能运维，实时集群感知/自然语言运维/自动故障分析/企业知识库 |
 | [AIOps Golang 工具链](sources/aiops-golang-k8s-toolchain-summary.md) | 1 | Go 三层递进工具链：Cobra CLI 基座 → Function Calling ChatOps → RAG 故障诊断，含完整源码 |
 | [[KnowledgeBase/sources/ai-code-review-validation-loop-summary|AI 代码审查验证闭环]] | 1 | 质量门禁、完整仓库上下文、真实运行、安全扫描、敏感信息清理与对抗式测试 |
+
+### AI/企业级私有化大模型（已摄入 ✅）
+
+| 页面 | 覆盖文档数 | 摘要 |
+|------|:---------:|------|
+| [[KnowledgeBase/sources/model-precision-quantization-summary|大模型精度与量化：FP64 到 NVFP4 来源摘要]] | 1 | FP64/FP32/TF32/BF16/FP16/FP8/INT8/INT4/NVFP4 的结构、scale、显存估算及训练/推理选择 |
 
 ### IaC/Terraform 容器管理（已摄入 ✅）
 

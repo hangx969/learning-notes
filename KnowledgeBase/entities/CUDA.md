@@ -25,3 +25,6 @@ CUDA（Compute Unified Device Architecture）是 NVIDIA 推出的并行计算平
 - [[KnowledgeBase/entities/NVIDIA|NVIDIA]]：CUDA 的开发厂商
 - [[KnowledgeBase/entities/Slurm|Slurm]]：HPC 集群中管理 CUDA 计算任务
 - [[KnowledgeBase/entities/Docker|Docker]]：容器化 CUDA 工作负载
+
+- [[KnowledgeBase/concepts/混合精度与模型量化]]：CUDA 与 GPU 架构共同决定可用的数据类型、Tensor Core 加速和量化实现。
+- [[AI/企业级私有化大模型/大模型精度与量化：FP64到NVFP4]]：从 TF32、FP8、NVFP4 的硬件支持角度说明精度选择不能脱离 CUDA/框架版本。

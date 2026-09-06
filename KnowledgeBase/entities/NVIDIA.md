@@ -33,3 +33,6 @@ NVIDIA 是全球领先的 GPU 硬件厂商，其 GPU 产品广泛用于深度学
 - [[KnowledgeBase/entities/Slurm|Slurm]]：HPC 集群中 NVIDIA GPU 资源调度
 - [[KnowledgeBase/entities/Docker|Docker]]：Docker GPU 运行时（nvidia-docker）
 - [[KnowledgeBase/entities/Kubernetes|Kubernetes]]：K8s GPU 设备插件与调度
+
+- [[KnowledgeBase/concepts/混合精度与模型量化]]：大模型数值格式、混合精度与低比特量化的抽象概念。
+- [[AI/企业级私有化大模型/大模型精度与量化：FP64到NVFP4]]：介绍 NVIDIA Tensor Core 上的 TF32/FP8，以及 Blackwell 相关的 NVFP4 4-bit 浮点路线。
