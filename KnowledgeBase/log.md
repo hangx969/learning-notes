@@ -1837,3 +1837,12 @@ date: 2026-04-17
 - 通过 PicGo 上传原文中的 7 张图片，并将归档文档中的图片链接替换为图床地址。
 - 新增 [[KnowledgeBase/concepts/混合精度与模型量化]] 与 [[KnowledgeBase/sources/model-precision-quantization-summary|来源摘要]]；更新 [[KnowledgeBase/entities/NVIDIA]]、[[KnowledgeBase/entities/CUDA]]、[[KnowledgeBase/maps/domain-map]] 与 `KnowledgeBase/INDEX.md`。
 - 关键边界：文章中的 70B 显存示例仅估算权重，未包含 KV Cache、运行时和系统开销；NVFP4 性能/精度数据保留为来源中的 NVIDIA 评测语境。
+
+
+## [2026-09-06] ingest | KV Cache 从原理到集群调度
+
+- 读取 [[0raw/KV Cache - 一图看懂 KV Cache：从诞生到集群调度]]，未修改、未移动、未删除 Raw Source；清洗后归档至 [[AI/企业级私有化大模型/KV Cache-从原理到集群调度]]。
+- 保留完整技术内容：KV Cache 与 Attention、Prefill/Decode、TTFT/TPOT、生命周期、显存估算、HBM/SRAM 带宽瓶颈、Prefix Cache、Prefill/Decode 分离与集群负载均衡；移除作者宣传性署名和尾部引流文案。
+- 通过 PicGo 的 githubPlus/github-images 图床上传原文 5 张图片，并将正文图片替换为对应的 `raw.githubusercontent.com/hangx969/upload-images-md/main/20260906154809144.png`～`...148.png` 链接。
+- 新增 [[KnowledgeBase/sources/kv-cache-inference-cluster-summary|来源摘要]] 与 [[KnowledgeBase/concepts/KV Cache|KV Cache 概念页]]；更新 vLLM 部署笔记、混合精度概念页、AI/index.md，并在知识库索引和领域地图追加本次新增条目。
+- 关键边界：原文 O(n²)→O(n) 与 70B×128K×64 人≈640 GB 等数字是入门级简化/示例；生产容量规划需结合 GQA/MQA、KV 精度、框架块管理、运行时、通信开销与压测。

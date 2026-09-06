@@ -56,7 +56,7 @@ AI 生成每个字时，都要拿当前的问题去和每道菜的"标签"比对
 
 **有了 KV Cache，计算量从 O(n²) 降到 O(n)。** 这就是为什么你现在能和 AI 流畅聊天。
 
-![KV Cache 是什么：有无缓存对比](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202609061548091144.png)
+![KV Cache 是什么：有无缓存对比](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260906154809144.png)
 
 ## 二、KV Cache 怎么产生的？
 
@@ -72,7 +72,7 @@ AI 不会一个字一个字读，而是 **一口气把所有字同时读进去**
 
 这一步的特点是： **算力全开，GPU 忙得飞起** 。耗时叫 **TTFT** （首字延迟）——你从发送消息到看到第一个字的时间。
 
-![KV Cache 怎么产生：Prefill 流程](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202609061548091145.png)
+![KV Cache 怎么产生：Prefill 流程](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260906154809145.png)
 
 ### Decode：上菜——一个字一个字蹦
 
@@ -93,7 +93,7 @@ AI 不会一个字一个字读，而是 **一口气把所有字同时读进去**
 | GPU 利用率 | 高 | **不到 1%** |
 | 指标 | TTFT（等多久看到第一个字） | TPOT（每个字间隔多久） |
 
-![Decode 阶段：逐字生成复用缓存](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202609061548091146.png)
+![Decode 阶段：逐字生成复用缓存](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260906154809146.png)
 
 ## 三、KV Cache 的生命周期
 
@@ -138,7 +138,7 @@ Decode 阶段每生成一个字，都要把整个 KV Cache 从仓库搬到工作
 
 这就是 FlashAttention 的意义——它重新安排计算顺序，让厨师在工作台上一次多切几刀，减少往返仓库的次数。
 
-![GPU 内部 KV Cache 流转：HBM→SRAM→计算](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202609061548091147.png)
+![GPU 内部 KV Cache 流转：HBM→SRAM→计算](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260906154809147.png)
 
 ## 五、集群中：KV Cache 是共享资源
 
@@ -169,7 +169,7 @@ Prefill 节点算完后，把 KV Cache 通过网络传给 Decode 节点。各干
 
 就像餐厅满了，服务员带你去另一桌，菜继续上，你感觉不到换了位置。
 
-![集群中 KV Cache 的流转](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202609061548091148.png)
+![集群中 KV Cache 的流转](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260906154809148.png)
 
 ## 总结
 

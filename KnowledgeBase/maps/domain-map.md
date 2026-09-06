@@ -174,3 +174,8 @@ date: 2026-04-16
 
 **来源摘要：** [[KnowledgeBase/sources/misc-domains-batch-summary|杂项领域批量摘要]]、[[KnowledgeBase/sources/iac-terraform-container-summary|Terraform 容器管理摘要]]
 | C++ | 1 | [[C++/C++LearningNotes|C++LearningNotes]] | 编程语言 |
+
+
+## 🤖 AI · 企业级私有化大模型（增量）
+
+- [[AI/企业级私有化大模型/KV Cache-从原理到集群调度]] — KV Cache 生命周期、Prefill/Decode、显存带宽瓶颈与 Prefix Cache/PD 分离/负载均衡

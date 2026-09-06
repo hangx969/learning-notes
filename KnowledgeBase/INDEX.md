@@ -366,3 +366,18 @@ date: 2026-04-17
 1. [VPC](../Aliyun/网络/VPC.md) + [Azure-Networking](../Azure/6_Azure-Networking.md) → 云网络对比
 2. [负载均衡SLB](../Aliyun/网络/负载均衡SLB.md) + [AKS-basics](../Azure/2_AKS-basics.md) → 负载均衡与 K8s 托管服务
 3. [python-Linux-operation](../Python/python-运维开发/python-Linux-operation.md) → 自动化运维脚本
+
+
+## 📌 本次新增 | KV Cache
+
+### 概念页
+
+- [[KnowledgeBase/concepts/KV Cache|KV Cache]] — Attention K/V 复用、Prefill/Decode、PagedAttention、显存带宽与集群调度
+
+### 来源摘要
+
+- [[KnowledgeBase/sources/kv-cache-inference-cluster-summary|KV Cache 从诞生到集群调度来源摘要]] — KV Cache 生命周期、Prefill/Decode、显存带宽瓶颈、Prefix Cache、PD 分离与负载均衡
+
+### 归档文章
+
+- [[AI/企业级私有化大模型/KV Cache-从原理到集群调度]] — 从 Attention 复用到集群调度的完整技术文章
