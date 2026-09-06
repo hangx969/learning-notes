@@ -16,7 +16,7 @@ sources:
   - "[[AI/OpenClaw/CoPaw]]"
   - "[[AI/OpenClaw/Ubuntu-2510-Setup-Guide]]"
   - "[[AI/GithubCopilot/Copilot CLI]]"
-  - "[[AI/提示词]]"
+  - "[[提示词]]"
 ---
 
 ## 元信息
@@ -103,7 +103,7 @@ sources:
   - 支持通过 JSON 配置文件管理 MCP Server
   - 文档链接指向 GitHub 官方文档
 
-### [[AI/提示词|提示词]]
+### [[提示词|提示词]]
 
 - **核心内容**：通用提示词集合与技巧，涵盖作图、PPT 生成、去 AI 味、自优化 prompt、角色选定、追问式对话、辩论式思考、失败预演、反向提示、双层解释法
 - **关键知识点**：

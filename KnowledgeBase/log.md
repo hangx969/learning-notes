@@ -723,7 +723,7 @@ date: 2026-04-17
 ## [2026-04-23] restructure | AI-视觉目录：提示词抽离 + awesome-design-md 归集
 
 - **操作**：
-  1. 从 [[AI/提示词]] 抽离"作图"、"PPT"、"Claude Design 系统提示词"三个视觉设计章节，合并为 [[AI/AI-视觉/视觉设计提示词]]
+  1. 从 [[提示词]] 抽离"作图"、"PPT"、"Claude Design 系统提示词"三个视觉设计章节，合并为 [[AI/AI-视觉/视觉设计提示词]]
   2. 将 `AI/awesome-design-md/`（67 个品牌 DESIGN.md）整体移入 `AI/AI-视觉/awesome-design-md/`
   3. 原 提示词.md 中保留交叉引用指向新文件
   4. 修复所有 wikilink 引用（README.md 中 67 个品牌链接 + log.md）

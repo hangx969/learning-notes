@@ -65,7 +65,7 @@ date: 2026-04-16
 ### 补充
 - [[AI/HarnessKit|HarnessKit]] — AI 编码智能体统一管理工具（Skills/MCP/Plugins/Hooks 跨 Agent 管理）
 - [[AI/GithubCopilot/Copilot CLI|Copilot CLI]] — GitHub Copilot CLI
-- [[AI/提示词|提示词]] — 提示词工程
+- [[提示词|提示词]] — 提示词工程
 
 ---
 
