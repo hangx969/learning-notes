@@ -17,6 +17,7 @@ Python/python-manuscripts/**/venv
 .DS_Store
 .claudian/
 .claude/*
+.agents/skills/
 _site/
 __pycache__/
 *.pyc
