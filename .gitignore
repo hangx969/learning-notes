@@ -18,6 +18,8 @@ Python/python-manuscripts/**/venv
 .claudian/
 .claude/*
 .agents/skills/
+.terraform/
+0raw/
 _site/
 __pycache__/
 *.pyc
