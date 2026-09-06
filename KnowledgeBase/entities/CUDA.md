@@ -4,7 +4,9 @@ tags:
   - knowledgebase/entity
   - gpu
   - computing-platform
-date: 2026-04-17
+date: 2026-09-06
+sources:
+  - "[[0raw/一文讲清 FP64、FP32、TF32、BF16、FP16、FP8、INT8、INT4、NVFP4]]"
 aliases:
   - CUDA Toolkit
 ---
