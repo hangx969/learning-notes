@@ -261,6 +261,7 @@ date: 2026-04-17
 | 页面 | 覆盖文档数 | 摘要 |
 |------|:---------:|------|
 | [[KnowledgeBase/sources/model-precision-quantization-summary|大模型精度与量化：FP64 到 NVFP4 来源摘要]] | 1 | FP64/FP32/TF32/BF16/FP16/FP8/INT8/INT4/NVFP4 的结构、scale、显存估算及训练/推理选择 |
+| [[KnowledgeBase/sources/kserve-vllm-inferenceservice-summary|KServe 部署 vLLM 来源摘要]] | 1 | InferenceService Standard、Envoy Gateway、PVC 模型存储、GPU 资源与 OpenAI 兼容 API 完整链路 |
 
 ### IaC/Terraform 容器管理（已摄入 ✅）
 

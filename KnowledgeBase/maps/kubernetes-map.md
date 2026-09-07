@@ -5,7 +5,7 @@ tags:
   - knowledgebase/kubernetes
 aliases:
   - K8s Map
-date: 2026-09-06
+date: 2026-09-07
 ---
 
 # ☸️ Kubernetes 专题地图
@@ -63,6 +63,7 @@ date: 2026-09-06
 20. [[Docker-Kubernetes/k8s-networking-service-mesh/k8s精细化流量管理-istio|k8s精细化流量管理-istio]] — 服务网格
 21. [[Docker-Kubernetes/k8s-scaling/k8s-HPA-VPA|k8s-HPA-VPA]] — 自动扩缩容
 22. [[Docker-Kubernetes/k8s-security-auth/helm部署kyverno和policy-reporter|helm部署kyverno和policy-reporter]] — 策略管理（含 1.18 新特性）
+23. [[AI/企业级私有化大模型/一个 Deployment 就能跑 vLLM，为什么还需要 KServe？|KServe 部署 vLLM]] — 用 InferenceService 统一编排模型、Runtime、GPU 与访问入口
 
 ---
 

@@ -1859,3 +1859,11 @@ date: 2026-04-17
 ## [2026-09-07] update | Effective HTML 安装兼容说明
 
 - 在合并后的文章和来源摘要中补充 `skills.sh` 登记、Claude Agent Skill 格式、`.claude-plugin` 兼容性及 Claude Desktop 加载方式。
+
+## [2026-09-07] ingest | KServe 部署 vLLM 与 InferenceService
+
+- 读取 [[0raw/一个 Deployment 就能跑 vLLM，为什么还需要 KServe？]]，原始剪藏保持不变；清洗后归档至 [[AI/企业级私有化大模型/一个 Deployment 就能跑 vLLM，为什么还需要 KServe？]]。
+- 移除作者宣传、往期回顾、关注转发引导和装饰性尾图；保留 KServe 定位、部署模式选择、cert-manager、Envoy Gateway、KServe 0.18.0、PVC 模型加载、InferenceService YAML、状态验证与 OpenAI 兼容 API 调用等完整技术内容。
+- 新增 [[KnowledgeBase/sources/kserve-vllm-inferenceservice-summary|来源摘要]]；更新 [[KnowledgeBase/entities/Kubernetes]]、[[KnowledgeBase/maps/kubernetes-map|Kubernetes 专题地图]]、`AI/index.md` 与 `KnowledgeBase/INDEX.md`。
+- 关键边界：vLLM 是推理引擎，KServe 是模型服务编排与控制层；Standard/Knative 属于 InferenceService 部署模式，LLMInferenceService 是独立 API；hostPath PV 仅适合单节点验证。
+- `mcp-obsidian` 完成原文读取、新文档写入与日志追加；既有页面因 MCP PATCH 版本不兼容，使用最小本地补丁更新。

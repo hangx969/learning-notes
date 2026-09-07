@@ -40,3 +40,4 @@
 | [[AI/企业级私有化大模型/基于K8s部署vLLM和LiteLLM]] | Kubernetes GPU 服务部署上下文 |
 | [[AI/企业级私有化大模型/大模型精度与量化：FP64到NVFP4]] | 数值格式、量化与训练/推理取舍 |
 | [[AI/企业级私有化大模型/KV Cache-从原理到集群调度]] | KV Cache 生命周期、显存带宽瓶颈与集群调度 |
+| [[AI/企业级私有化大模型/一个 Deployment 就能跑 vLLM，为什么还需要 KServe？]] | KServe Standard、Envoy Gateway、PVC 模型加载与 OpenAI 兼容接口实操 |
