@@ -21,6 +21,8 @@ sources:
   - "[[AI/ClaudeCode/Claude-Fable-5-system-prompt]]"
   - "[[Git-Worktree-AI开发实践指南]]"
   - "[[AI/Code review和知识图谱/AI代码审查闭环-验证优先与敏感信息清理]]"
+  - "[[AI/AI-视觉/Effective-HTML-Agent页面工作流]]"
+  - "[[AI/AI-视觉/effective-html-AI直出HTML工具实测]]"
 ---
 
 # Claude Code
@@ -212,6 +214,8 @@ Plugin 是应用级打包容器，将多种扩展机制捆绑为一个可分发�
 
 - [[Claude Code 基础指南]]：模式选择、思考模式、Claude.md、Spec 工作流、实战场景、最佳实践（最全面的综合指南）
 - [[AI/ClaudeCode/Claude Code 扩展体系]]：四层扩展机制全解——MCP（10+ 服务器配置）、Skills（3 层使用模式 + 质量治理 + excalidraw-diagram-generator 等开源推荐）、Slash Commands（手动工作流）、Plugin（打包分发）
+- [[AI/AI-视觉/Effective-HTML-Agent页面工作流]]：Effective HTML 页面工作流——任务判断、线框、交互原型、架构图、计划和视觉设计，并支持通过插件安装。
+- [[KnowledgeBase/sources/effective-html-agent-workflow-summary|Effective HTML 来源摘要]]：HTML 直出、自包含视觉交付、设计范本及与 Markdown Viewer Skills、html-anything、Mermaid 的定位对比。
 - [[AI/ClaudeCode/多智能体协作-Subagents与Agent-Teams]]：SubAgent（5 组件架构、适用场景评级）+ Agent Teams（Team Lead/Teammates/Task List/Mailbox、竞争假设调试）+ 开源 Agent 生态（wshobson/agents：112 个 Agent、72 个插件）
 - [[AI/Obsidian/obsidian-claude-code-AI知识库完整指南]]：Obsidian 集成方案（Claudian + Skills + MCP）、Markdown 母语论证、30 分钟上手路径、Karpathy Wiki 三层架构
 - [[AI/AIOps/AIOps-skills/k8s-report-skills/SKILL]]：自研 K8s 巡检 Skill（Python 版）——kubernetes 客户端 + Jinja2 HTML 报告，Agent API 集成

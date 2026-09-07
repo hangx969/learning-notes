@@ -9,6 +9,8 @@ sources:
   - "[[AI/Codex/Codex-省Token工具实测-Ponytail-Headroom-RTK]]"
   - "[[AI/Codex/Codex-两个设置提升体验]]"
   - "[[AI/Code review和知识图谱/AI代码审查闭环-验证优先与敏感信息清理]]"
+  - "[[AI/AI-视觉/Effective-HTML-Agent页面工作流]]"
+  - "[[AI/AI-视觉/effective-html-AI直出HTML工具实测]]"
 aliases:
   - OpenAI Codex
 ---
@@ -22,6 +24,7 @@ Codex 是面向软件工程任务的 AI 编程助手。本仓库覆盖其 `confi
 - **配置与权限控制**：通过 `config.toml` 设置模型、推理强度、审批与沙箱、MCP、Hooks、Skills 等运行参数。
 - **交互式任务执行**：可在执行前或过程中澄清需求；`default_mode_request_user_input` 可将该能力扩展到普通模式（以当前版本支持为准）。
 - **工作流优化**：借助约束、Skills 与 Hooks 减少不必要的工具调用和输出；重要结果仍须用测试与审查验证。
+- **视觉交付**：可通过 Effective HTML Skills 先确定页面结构，再生成交互式、自包含的 HTML 报告、架构图或计划页。
 - **代码审查与验证**：检查改动风险，并通过项目测试、真实场景和对抗式用例验证审查结论。
 
 ## 使用场景
@@ -39,6 +42,8 @@ Codex 是面向软件工程任务的 AI 编程助手。本仓库覆盖其 `confi
 - [[AI/Codex/Codex-省Token工具实测-Ponytail-Headroom-RTK]]：讨论通过工具与约束减少 Token 消耗的实践。
 - [[AI/Codex/Codex-两个设置提升体验]]：记录普通模式主动澄清配置与 Juice 提示的经验性自检方式。
 - [[AI/Code review和知识图谱/AI代码审查闭环-验证优先与敏感信息清理]]：记录完整仓库上下文、真实运行验证、安全扫描和发布前敏感信息清理的审查闭环。
+- [[AI/AI-视觉/Effective-HTML-Agent页面工作流]]：Effective HTML 的页面制作工作流，以及 Codex 插件安装方式。
+- [[KnowledgeBase/sources/effective-html-agent-workflow-summary|Effective HTML 来源摘要]]：HTML 直出、自包含交付、交互式图表和 Markdown 的适用边界。
 
 ## 知识空白
 - 不同 Codex 版本中各配置项的支持范围与默认值。

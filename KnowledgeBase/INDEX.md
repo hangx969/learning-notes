@@ -136,6 +136,12 @@ date: 2026-04-17
 | [k8s-report-skills](sources/k8s-report-skills-summary.md) | [AI/skills/k8s-report-skills](AI/AIOps/AIOps-skills/k8s-report-skills/SKILL.md) | Python 版：kubernetes 客户端 + Jinja2，6 大巡检维度，Agent API 集成 |
 | ↑ 同上 | [AI/skills/k8s-inspect-skills](AI/AIOps/AIOps-skills/k8s-inspect-skills/SKILL.md) | Shell 版：kubectl + 深色仪表盘 HTML，7 大模块含证书/网络检查 |
 
+### AI/AI-视觉（已摄入 ✅）
+
+| 页面 | 原始来源 | 摘要 |
+|------|---------|------|
+| [[KnowledgeBase/sources/effective-html-agent-workflow-summary|Effective HTML Agent 页面工作流]] | [[AI/AI-视觉/Effective-HTML-Agent页面工作流]]、[[AI/AI-视觉/effective-html-AI直出HTML工具实测]] | 任务路由、线框→原型→图表→视觉设计，以及 HTML 直出、自包含交付、设计范本和同类工具边界 |
+
 ### AI/agents（OpenClaw 多智能体定义 ✅）
 
 | 页面 | 原始来源 | 摘要 |

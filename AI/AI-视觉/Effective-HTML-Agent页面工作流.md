@@ -1,12 +1,16 @@
 ---
-title: "Effective HTML：Agent 页面制作工作流"
-source: "https://mp.weixin.qq.com/s/EWFsQChEmC4aGfuQ1lcpgA"
+title: "Effective HTML：Agent 页面制作与 HTML 交付工作流"
+source:
+  - "https://mp.weixin.qq.com/s/EWFsQChEmC4aGfuQ1lcpgA"
+  - "https://mp.weixin.qq.com/s/UpwCCgiK8BkT9P8U74x_Vw"
 created: 2026-09-05
+updated: 2026-09-07
 tags:
   - ai-visual
   - html
   - skills
   - ai-agent
+  - effective-html
 ---
 
 现在让Codex 做网页已经很快了。
@@ -41,9 +45,43 @@ tags:
 
 Effective HTML 补的就是这部分。
 
+## 它解决的另一个问题：AI 应该输出什么
+
+用 AI 写系统架构说明，常见结果是一大段 Markdown；复制到文档里看起来像那么回事，但真正需要交付给同事时，流程图、排版和交互还得另行处理。让 AI 画图也不一定能解决问题：它可能只给出一段 Mermaid 语法，必须经过渲染器才能看到结果，样式也不容易继续调整，更谈不上交互。
+
+Effective HTML 的核心做法，是让 Coding Agent 直接输出**自包含的 HTML 文件**，而不是把 Markdown 当成最终交付物。双击文件就能在浏览器中打开，浏览器本身就是运行时；页面可以包含排版、可交互图表、暗色模式和状态切换，不需要额外安装运行环境。
+
+### HTML 与 Markdown，各有适合的交付场景
+
+| HTML 擅长的地方 | 说明 |
+|---|---|
+| **视觉表达力** | 排版、色彩、动画和交互能力远超 Markdown |
+| **自包含交付** | 一个 HTML 文件就是最终页面，打开即可查看 |
+| **交互性** | 架构图可以点击节点、演示数据流，报告可以加入标签页和状态切换 |
+
+| Markdown 擅长的地方 | 说明 |
+|---|---|
+| **版本控制友好** | Git diff 能清楚看出文字和结构改动 |
+| **纯文本生态** | 搜索、grep 和管道处理都很自然 |
+| **写作速度快** | 随手记录和持续编辑仍然是 Markdown 的优势 |
+
+所以 Effective HTML 不是要替代 Markdown，而是补上 AI 输出格式缺失的一环：需要交付一个“看”的东西时优先考虑 HTML；需要持续“读”和“改”的知识内容时，Markdown 仍然更合适。
+
+## 先给 Agent 一套视觉范本
+
+项目背后还有一套叫 `html-effectiveness` 的参考示例库（作者 Thariq Shihipar），包含 20 个经过设计的 HTML 模板，覆盖代码审查报告、设计系统文档、原型动画、流程图、事故报告和功能开关面板等场景。
+
+这些示例不只是 CSS 模板，更像是“这类内容应该如何组织和呈现”的设计范本。Agent 有了可参考的模式，就不必从零猜测页面应该长什么样，输出的结构、信息层级和交互方式也更容易贴合任务。
+
 ## 先不要急着写页面
 
-它有六个 Skill。
+它可以从两个层面理解。按交付入口看，有三个核心 Skill：
+
+- **`html`**：通用生成器，也是最外层的任务判断入口。适合项目对比报告、功能介绍页等一般 HTML 交付，实测可以生成卡片布局、颜色区分、表格对比、暗色模式切换，并在刷新后记住偏好。
+- **`html-diagram`**：架构图和关系图专用。可以生成全屏 SVG 交互式图表，让节点可点击、数据流可动画演示，并高亮请求路径。
+- **`html-plan`**：计划文档专用。将项目计划或需求整理成简洁、清晰、实用的 HTML 页面，重点是信息组织而不是过度设计。
+
+按页面制作过程细化后，第一篇文章进一步拆成六个 Skill：`html`、`html-wireframe`、`html-prototype`、`html-diagram`、`html-plan` 和 `design-artifact`。后面重点介绍这种“先结构、再交互、再视觉”的工作流。
 
 ![图片](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260905211516381.webp)
 
@@ -169,6 +207,13 @@ npx skills add plannotator/effective-html
 npx skills add plannotator/effective-html --skill html-prototype
 ```
 
+如果只需要架构图或计划页，也可以按需安装：
+
+```bash
+npx skills add plannotator/effective-html --skill html-diagram
+npx skills add plannotator/effective-html --skill html-plan
+```
+
 Codex 用户直接通过插件来安装：
 
 ```
@@ -178,10 +223,21 @@ codex plugin add plannotator-effective-html@effective-html
 
 安装好之后就可以直接让Agent按照这些规则来写页面了。
 
+## 与同类工具的定位
+
+| 工具 | 定位 | 输出格式 | 适用场景 |
+|---|---|---|---|
+| **effective-html** | AI 直出自包含 HTML | HTML | 报告、架构图、演示文档 |
+| **Markdown Viewer Skills** | Markdown 内嵌图表 | Markdown + 代码块 | 技术文档配图（PlantUML/Vega/Graphviz） |
+| **html-anything** | AI 生成任意 HTML 页面 | HTML | 全场景 HTML 生成 |
+| **Mermaid** | 文本描述生成流程图 | SVG（需渲染器） | 简单流程图和时序图 |
+
+项目地址：https://github.com/plannotator/effective-html
+
+参考示例：https://thariqs.github.io/html-effectiveness
+
 ## 写在最后
 
 Effective HTML 把做页面的流程提前定好了，用Agent来写页面可以少走很多弯路。
 
 如果你经常用Codex来写页面的话，可以安装一下试一试。
-
-项目地址：https://github.com/plannotator/effective-html
