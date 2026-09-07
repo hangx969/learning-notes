@@ -723,7 +723,7 @@ date: 2026-04-17
 ## [2026-04-23] restructure | AI-视觉目录：提示词抽离 + awesome-design-md 归集
 
 - **操作**：
-  1. 从 [[提示词]] 抽离"作图"、"PPT"、"Claude Design 系统提示词"三个视觉设计章节，合并为 [[AI/AI-视觉/视觉设计提示词]]
+  1. 从 [[提示词]] 抽离"作图"、"PPT"、"Claude Design 系统提示词"三个视觉设计章节，合并为 [[视觉设计提示词]]
   2. 将 `AI/awesome-design-md/`（67 个品牌 DESIGN.md）整体移入 `AI/AI-视觉/awesome-design-md/`
   3. 原 提示词.md 中保留交叉引用指向新文件
   4. 修复所有 wikilink 引用（README.md 中 67 个品牌链接 + log.md）
@@ -1846,3 +1846,16 @@ date: 2026-04-17
 - 通过 PicGo 的 githubPlus/github-images 图床上传原文 5 张图片，并将正文图片替换为对应的 `raw.githubusercontent.com/hangx969/upload-images-md/main/20260906154809144.png`～`...148.png` 链接。
 - 新增 [[KnowledgeBase/sources/kv-cache-inference-cluster-summary|来源摘要]] 与 [[KnowledgeBase/concepts/KV Cache|KV Cache 概念页]]；更新 vLLM 部署笔记、混合精度概念页、AI/index.md，并在知识库索引和领域地图追加本次新增条目。
 - 关键边界：原文 O(n²)→O(n) 与 70B×128K×64 人≈640 GB 等数字是入门级简化/示例；生产容量规划需结合 GQA/MQA、KV 精度、框架块管理、运行时、通信开销与压测。
+
+
+## [2026-09-07] restructure + ingest | Effective HTML 页面工作流合并
+
+- 经用户授权，将 `AI/AI-视觉/effective-html-AI直出HTML工具实测.md` 的内容按逻辑整合进 `AI/AI-视觉/Effective-HTML-Agent页面工作流.md`；保留第二篇原文件，第一篇新增第二篇来源 URL 和更新时间元数据。
+- 合并后的文章统一了两个 Skill 口径：三个核心交付入口（`html` / `html-diagram` / `html-plan`）与六个阶段化 Skill（补充 `html-wireframe` / `html-prototype` / `design-artifact`）；补充 HTML vs Markdown 适用边界、`html-effectiveness` 20 个参考范本、实测交互特性和同类工具定位表。
+- 新建 [[KnowledgeBase/sources/effective-html-agent-workflow-summary|Effective HTML Agent 页面制作与 HTML 交付工作流来源摘要]]。
+- 更新 [[KnowledgeBase/concepts/提示词工程|提示词工程]]、[[KnowledgeBase/entities/Claude-Code|Claude Code]]、[[KnowledgeBase/entities/Codex|Codex]]、[[KnowledgeBase/maps/ai-workflow-map|AI 工作流专题地图]] 和 `KnowledgeBase/INDEX.md`。
+
+
+## [2026-09-07] update | Effective HTML 安装兼容说明
+
+- 在合并后的文章和来源摘要中补充 `skills.sh` 登记、Claude Agent Skill 格式、`.claude-plugin` 兼容性及 Claude Desktop 加载方式。

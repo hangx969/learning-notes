@@ -221,6 +221,8 @@ codex plugin marketplace add plannotator/effective-html
 codex plugin add plannotator-effective-html@effective-html
 ```
 
+项目登记在 `skills.sh` 上，采用 Claude Agent 的 Skill 格式，同时兼容 `.claude-plugin` 格式，可在 Claude Desktop 中作为插件加载。
+
 安装好之后就可以直接让Agent按照这些规则来写页面了。
 
 ## 与同类工具的定位

@@ -42,7 +42,7 @@ Effective HTML 是面向 Coding Agent 的 HTML Skills 集合，目标不是让 A
 9. **视觉设计要匹配场景**：`design-artifact` 约束字体、颜色、布局和动效，避免紫蓝渐变、满屏圆角卡片、黑底荧光色和不必要的动画；已有设计规范时优先复用。
 10. **参考范本降低猜测成本**：`html-effectiveness` 参考库（作者 Thariq Shihipar）包含 20 个 HTML 示例，覆盖代码审查报告、设计系统文档、原型动画、流程图、事故报告和功能开关面板等。它们提供的是内容组织和交互呈现范式，不只是 CSS 模板。
 11. **实测交互特性**：通用报告可以生成卡片布局、颜色区分、表格对比、暗色模式切换，并在刷新后记住偏好；架构图可以生成全屏 SVG，支持节点点击、数据流动画和请求路径高亮；计划页则强调简洁、清晰和实用。
-12. **安装方式**：完整安装使用 `npx skills add plannotator/effective-html`；也可以只安装 `html-prototype`、`html-diagram` 或 `html-plan`。Codex 用户还可以通过 `codex plugin marketplace add plannotator/effective-html` 和 `codex plugin add plannotator-effective-html@effective-html` 安装。
+12. **安装方式与兼容性**：完整安装使用 `npx skills add plannotator/effective-html`；也可以只安装 `html-prototype`、`html-diagram` 或 `html-plan`。Codex 用户还可以通过 `codex plugin marketplace add plannotator/effective-html` 和 `codex plugin add plannotator-effective-html@effective-html` 安装。项目登记在 `skills.sh`，采用 Claude Agent Skill 格式，并兼容 `.claude-plugin`，可在 Claude Desktop 中作为插件加载。
 13. **同类工具的边界**：effective-html 面向自包含 HTML 交付；Markdown Viewer Skills 面向 Markdown 中嵌入图表；html-anything 面向任意 HTML 生成；Mermaid 适合简单流程图和时序图，但需要渲染器。
 
 ## 涉及的概念与实体
