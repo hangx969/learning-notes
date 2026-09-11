@@ -297,6 +297,47 @@ If you genuinely think a convention is harmful, surface it. Don't fork silently.
 Default to surfacing uncertainty, not hiding it.
 ```
 
+### 极简版
+
+```markdown
+# AGENTS.md
+
+Guidelines for reliable coding assistance.
+
+## Think Before Coding
+
+* Understand the request and relevant code before editing.
+* Surface important assumptions, ambiguity, and conflicts.
+* Prefer the simplest solution that fully satisfies the request.
+* Do not invent requirements.
+
+## Make Surgical Changes
+
+* Change only what is necessary.
+* Follow existing codebase conventions.
+* Do not refactor, reformat, or clean unrelated code.
+* Remove only unused code introduced by your changes.
+
+Every changed line should trace back to the user's request.
+
+## Verify Your Work
+
+* For non-trivial tasks, define a brief plan and success criteria.
+* Reproduce bugs when practical before fixing them.
+* Run relevant tests or checks after changes.
+* Never claim something was verified if it was skipped or failed.
+
+## Prefer Determinism
+
+Use code/tools for deterministic tasks when practical; use the model for judgment and reasoning.
+
+## Be Explicit
+
+Surface uncertainty, tradeoffs, failed checks, and remaining work instead of hiding them.
+
+Prefer small, focused, verified changes over clever or speculative solutions.
+```
+
 ---
 
 ## 八、心智模型
