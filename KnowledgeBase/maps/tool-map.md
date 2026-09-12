@@ -29,6 +29,19 @@ date: 2026-04-16
 
 ---
 
+### Codex
+**相关文档（6 篇）：**
+- [[AI/Codex/Codex-Harness架构-任务循环与扩展|Codex Harness 架构]] ⭐ 推荐入口 — Agent 主循环、上下文、工具执行、状态记忆与扩展入口
+- [[AI/Codex/Codex-config-toml-全量配置参考|config.toml 全量配置参考]] — 配置字段与扩展机制
+- [[AI/Codex/Codex-复杂项目-HANDOFF上下文交接|复杂项目 HANDOFF]] — 长任务上下文交接
+- [[AI/Codex/Codex-两个设置提升体验|两个体验设置]] — 普通模式主动澄清与体验优化
+- [[AI/Codex/Codex-省Token工具实测-Ponytail-Headroom-RTK|省 Token 工具实测]] — 约束 Agent 输出的工具实践
+- [[AI/Codex/在 Codex 里随时切换不同厂家的 Harness|切换不同厂家的 Harness]] — 多 Harness 接入与切换
+
+**概念页：** [[KnowledgeBase/entities/Codex|Codex]]
+
+---
+
 ### OpenClaw
 **相关文档（7 篇）：**
 - [[AI/OpenClaw/OpenClaw-基础-安装|OpenClaw-基础-安装]] ⭐ 推荐入口

@@ -69,7 +69,7 @@ date: 2026-04-17
 | [Aliyun](entities/Aliyun.md) | 阿里云公有云平台 |
 | [Terraform](entities/Terraform.md) | 基础设施即代码工具 |
 | [Claude-Code](entities/Claude-Code.md) | AI 编程助手 |
-| [[KnowledgeBase/entities/Codex|Codex]] | AI 编程助手；配置、主动澄清与工作流优化 |
+| [[KnowledgeBase/entities/Codex|Codex]] | AI 编程助手；Harness 任务循环、配置、工具执行与工作流优化 |
 | [MCP](entities/MCP.md) | Model Context Protocol |
 | [OpenClaw](entities/OpenClaw.md) | 开源 AI 工具平台 |
 | [Obsidian](entities/Obsidian.md) | 知识管理与笔记工具 |
@@ -121,6 +121,7 @@ date: 2026-04-17
 
 | 页面 | 原始来源 | 摘要 |
 |------|---------|------|
+| [[KnowledgeBase/sources/codex-harness-architecture-summary|Codex Harness 架构]] | [[AI/Codex/Codex-Harness架构-任务循环与扩展]] | 从 App Server、Session、Agent 主循环，到上下文、工具执行、状态记忆及 Skills/MCP/Hooks/子 Agent 扩展 |
 | [[KnowledgeBase/sources/codex-两个设置提升体验-summary|Codex 两个体验设置]] | [[AI/Codex/Codex-两个设置提升体验]] | 普通模式主动澄清配置 + Juice 提示的经验性自检 |
 
 ### AI/提示词（已摄入 ✅）

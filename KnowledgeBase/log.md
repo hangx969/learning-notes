@@ -10,6 +10,16 @@ date: 2026-04-17
 > 仅追加的操作记录——摄入、查询、lint、结构调整。
 > 最新条目在最上方。
 
+## [2026-09-12] ingest | Codex Harness 架构
+
+- **来源**：小林 coding《面试官得瑟：“你懂 Codex 的 Harness 架构吗？”》，原始剪藏位于 `0raw/`
+- **清洗与整理**：去除作者开场、系列宣传和文末引流；保留 App Server、Session、Agent 主循环、上下文管理、StepContext、工具路由与执行、审批/沙箱、状态持久化、长期记忆、Skills/MCP/Hooks 和子 Agent 等技术内容
+- **图片**：42 张微信图床图片经 PicGo CLI（GitHub Plus）上传至 `hangx969/upload-images-md`，正文已替换为 `.webp` 图床链接
+- **归档**：`0raw/面试官得瑟：“你懂Codex的Harness架构吗？”，我笑了：“何止懂？我还看过源码”，他愣了.....md` → `AI/Codex/Codex-Harness架构-任务循环与扩展.md`
+- **新建文件**：`KnowledgeBase/sources/codex-harness-architecture-summary.md` — 来源摘要页
+- **更新页面**：`KnowledgeBase/entities/Codex.md`、`KnowledgeBase/maps/ai-workflow-map.md`、`KnowledgeBase/INDEX.md`、`AI/index.md`
+- **边界说明**：文章是作者基于开源仓库的架构解读，摘要页标明了具体源码行为需以当前 Codex 版本和官方资料为准
+
 ## [2026-09-05] ingest | NVIDIA Device Plugin：K8s 识别 GPU
 
 - **来源**：深栈运维，2026-08-28，微信公众号；原始剪藏位于 `0raw/`

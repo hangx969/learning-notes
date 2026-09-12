@@ -17,7 +17,7 @@ date: 2026-04-16
 
 ## 核心概念
 - [[KnowledgeBase/entities/Claude-Code|Claude-Code]] — AI 编码与知识管理助手
-- [[KnowledgeBase/entities/Codex|Codex]] — AI 编程助手，支持配置化交互与工具扩展
+- [[KnowledgeBase/entities/Codex|Codex]] — AI 编程助手，支持 Harness 任务循环、配置化交互与工具扩展
 - [[KnowledgeBase/entities/OpenClaw|OpenClaw]] — AI 多智能体运维平台
 - [[KnowledgeBase/entities/MCP|MCP]] — Model Context Protocol
 - [[KnowledgeBase/entities/Obsidian|Obsidian]] — 知识管理工具
@@ -37,9 +37,10 @@ date: 2026-04-16
 8. [[code-review-graph-本地代码知识图谱|code-review-graph 代码知识图谱]] — 本地 AST 图谱 + MCP 接入，blast-radius 影响范围分析
 
 ### Codex 路径
-1. [[AI/Codex/Codex-config-toml-全量配置参考|config.toml 全量配置参考]] — 配置字段与扩展机制
-2. [[AI/Codex/Codex-两个设置提升体验|两个体验设置]] — 普通模式主动澄清与经验性 Juice 自检
-3. [[AI/Codex/Codex-省Token工具实测-Ponytail-Headroom-RTK|省 Token 工具实测]] — 约束 Agent 输出的工具实践
+1. [[AI/Codex/Codex-Harness架构-任务循环与扩展|Codex Harness 架构]] — App Server、Agent 主循环、上下文、工具执行、状态记忆与扩展入口
+2. [[AI/Codex/Codex-config-toml-全量配置参考|config.toml 全量配置参考]] — 配置字段与扩展机制
+3. [[AI/Codex/Codex-两个设置提升体验|两个体验设置]] — 普通模式主动澄清与经验性 Juice 自检
+4. [[AI/Codex/Codex-省Token工具实测-Ponytail-Headroom-RTK|省 Token 工具实测]] — 约束 Agent 输出的工具实践
 
 ### AI 代码审查与知识图谱
 1. [[AI/Code review和知识图谱/AI代码审查闭环-验证优先与敏感信息清理|AI 代码审查闭环]] — 质量门禁、真实运行、安全扫描、敏感信息清理与对抗式测试
@@ -144,6 +145,7 @@ date: 2026-04-16
 - [[KnowledgeBase/sources/hermes-agent-batch-summary|Hermes-agent 批量摘要]] — 4 篇，Hermes Agent 安装、资源合集、架构解析与 Curator Skill 治理
 - [[KnowledgeBase/sources/k8s-report-skills-summary|K8s 巡检 Skills 摘要]] — K8s 集群巡检 Python/Shell 技能
 - [[KnowledgeBase/sources/obsidian-claude-AI知识库完整指南-summary|AI知识库完整指南摘要]] — Obsidian+Claude Code 完整指南（理念+工具+操作+计划）
+- [[KnowledgeBase/sources/codex-harness-architecture-summary|Codex Harness 架构摘要]] — Agent 主循环、上下文与工具执行的架构解读
 
 ---
 

@@ -7,6 +7,7 @@
 | 子目录 | 篇数 | 说明 |
 |--------|------|------|
 | ClaudeCode/ | 5 | Claude Code 基础指南、扩展体系、多智能体协作、Skill 质检、Harness 安全约束 |
+| Codex/ | 6 | Codex 配置、Harness 任务循环、上下文与工具执行、交互体验和 Token 优化 |
 | OpenClaw/ | 7 | 安装、Channels、Skills 插件、CoPaw、AIOps、多智能体、Ubuntu 环境 |
 | Obsidian/ | 2 | AI 知识库完整指南（三文合并）、可视化 Skills |
 | Hermes-agent/ | 3 | 满配指南与生态资源（两篇合并）、Ubuntu 安装、架构解析与 OpenClaw 对比 |
@@ -23,6 +24,7 @@
 
 - [[Claude Code 基础指南]] — Claude Code 入门必读
 - [[AI/ClaudeCode/Claude Code 扩展体系]] — MCP/Skills/Slash Commands/Plugin 四层扩展
+- [[AI/Codex/Codex-Harness架构-任务循环与扩展]] — Codex Harness 架构：从任务循环到工具执行
 - [[AI/OpenClaw/OpenClaw-基础-安装]] — OpenClaw 入门
 - [[AI/Obsidian/obsidian-claude-code-AI知识库完整指南]] — Obsidian+Claude Code 知识库完整指南（理念+搭建+操作+计划）
 - [[AI/HarnessKit]] — AI 编码智能体统一管理工具
