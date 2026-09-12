@@ -11,6 +11,7 @@ sources:
   - "[[KnowledgeBase/sources/kubectx-kubens-multi-cluster-summary]]"
   - "[[KnowledgeBase/sources/k8s-monitoring-logging-batch-summary]]"
   - "[[KnowledgeBase/sources/k8s-CICD-batch-summary]]"
+  - "[[KnowledgeBase/sources/kustomize-base-overlay-summary]]"
   - "[[KnowledgeBase/sources/k8s-networking-service-mesh-batch-summary]]"
   - "[[KnowledgeBase/sources/k8s-security-auth-batch-summary]]"
   - "[[KnowledgeBase/sources/k8s-scaling-storage-batch-summary]]"
@@ -106,7 +107,7 @@ Kubernetes（K8s）是容器编排平台，源自 Google Borg 系统，2014 年�
 - EFK 适合 TB 级大规模日志，Loki 适合轻量级场景
 - Kafka 作为缓冲层解决高吞吐日志延迟：Fluentd -> Kafka -> Logstash -> ES
 
-### CI/CD（19 篇）
+### CI/CD（21 篇）
 详见 [[KnowledgeBase/sources/k8s-CICD-batch-summary|k8s-CICD 批量摘要]]
 
 覆盖 [[KnowledgeBase/entities/ArgoCD|ArgoCD]]（GitOps 持续交付、Image Updater、DNS 排查）、[[KnowledgeBase/entities/Jenkins|Jenkins]]（多版本部署、Pipeline 语法、DevOps 平台落地）、Tekton（云原生 Pipeline）、[[KnowledgeBase/entities/Kustomize|Kustomize]]（Base+Overlay 配置定制）、GitHub Actions（Self-hosted Runner）、多语言应用发布（Go/Python/Java）。
@@ -115,6 +116,7 @@ Kubernetes（K8s）是容器编排平台，源自 Google Borg 系统，2014 年�
 - GitOps（ArgoCD Pull 模式）vs 传统 CI/CD（Jenkins Push 模式）两种部署哲学
 - 通用发版流程：GitLab 提交 -> Jenkins 构建 -> Docker 镜像 -> Harbor 推送 -> K8s 部署
 - Tekton 核心优势：云原生、标准化 CRD、事件驱动，Pipeline 直接映射为 K8s Pod
+- Kustomize 通过 Base 复用公共资源、Overlay 描述环境差异；部署前应依次渲染、比较并应用最终清单
 - 云原生演进：Jenkins（VM 时代）-> Tekton（K8s 原生）-> ArgoCD（GitOps）
 
 ### 网络与服务网格（7 篇）

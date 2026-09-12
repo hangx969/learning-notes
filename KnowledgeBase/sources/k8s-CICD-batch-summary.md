@@ -3,7 +3,7 @@ title: k8s-CICD 来源批量摘要
 tags:
   - knowledgebase/source
   - docker-kubernetes/cicd
-date: 2026-04-17
+date: 2026-09-12
 sources:
   - "[[Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD Image Updater]]"
   - "[[Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD基础]]"
@@ -22,6 +22,7 @@ sources:
   - "[[Docker-Kubernetes/k8s-CICD/Tekton/k8s部署原生的CICD工具Tekton-基于yaml]]"
   - "[[Docker-Kubernetes/k8s-CICD/Tekton/基于Tekton的云原生平台落地]]"
   - "[[Docker-Kubernetes/k8s-CICD/Kustomize/k8s配置定制工具-kustomize]]"
+  - "[[Docker-Kubernetes/k8s-CICD/Kustomize/Kustomize入门-Base与Overlay多环境配置]]"
   - "[[Docker-Kubernetes/k8s-CICD/使用github action部署helmchart]]"
   - "[[Docker-Kubernetes/k8s-CICD/发布go-python-java代码到K8S环境]]"
   - "[[Docker-Kubernetes/k8s-CICD/Claude-Code实现CICD自动化发布流程]]"
@@ -30,7 +31,7 @@ sources:
 ## 元信息
 
 - **原始目录**: `Docker-Kubernetes/k8s-CICD/`（含子目录 ArgoCD、Gitlab、Jenkins、Kustomize、Tekton）
-- **文档数量**: 20 篇
+- **文档数量**: 21 篇
 - **领域**: Kubernetes CI/CD 持续集成与持续部署
 - **摄入日期**: 2026-04-17
 
@@ -174,6 +175,14 @@ sources:
 - 自 K8s 1.14 起集成在 kubectl 中（`kubectl apply -k`）
 - 与 Helm 模板引擎不同，直接操作原生资源文件
 - 支持分层管理（Base/Overlay）和环境感知（dev/prod/qa）
+
+### [[Docker-Kubernetes/k8s-CICD/Kustomize/Kustomize入门-Base与Overlay多环境配置|Kustomize Base 与 Overlay 多环境配置]]
+
+**核心内容**: 从多环境 YAML 重复和配置漂移问题出发，建立 Base 复用公共配置、Overlay 只描述环境差异的 Kustomize 入门模型。
+
+- 解释 Kustomize 不是控制器、传统模板引擎或 Release 管理器，并区分 `kubectl kustomize`、`diff -k` 与 `apply -k`
+- 系统覆盖 `resources`、`namespace`、`images`、`replicas`、`labels`、`patches` 六个常用字段及匹配边界
+- 推荐使用 `resources`、`labels`、`patches` 等当前字段，并提醒独立版与 kubectl 内置版存在版本差异
 
 ### [[Docker-Kubernetes/k8s-CICD/使用github action部署helmchart|GitHub Actions 部署 Helm Chart]]
 

@@ -124,6 +124,15 @@ date: 2026-04-16
 
 ---
 
+### Kustomize
+**相关文档（2 篇）：**
+- [[Docker-Kubernetes/k8s-CICD/Kustomize/Kustomize入门-Base与Overlay多环境配置|Base 与 Overlay 多环境配置]] ⭐ 推荐入口
+- [[Docker-Kubernetes/k8s-CICD/Kustomize/k8s配置定制工具-kustomize|Kustomize 综合使用指南]] — 基础用法、生成器与进阶特性
+
+**概念页：** [[KnowledgeBase/entities/Kustomize|Kustomize]]
+
+---
+
 ### Istio
 **相关文档（7 篇）：**
 - [[Docker-Kubernetes/k8s-networking-service-mesh/k8s精细化流量管理-istio|k8s精细化流量管理-istio]] ⭐ 推荐入口

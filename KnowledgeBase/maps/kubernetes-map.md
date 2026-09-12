@@ -19,6 +19,7 @@ date: 2026-09-12
 - [[KnowledgeBase/entities/Kubernetes|Kubernetes]] — K8s 概念页
 - [[KnowledgeBase/entities/Docker|Docker]] — 容器基础
 - [[KnowledgeBase/entities/Helm|Helm]] — 包管理
+- [[KnowledgeBase/entities/Kustomize|Kustomize]] — Base/Overlay 配置定制
 - [[KnowledgeBase/entities/Ingress|Ingress]] — 流量入口
 - [[KnowledgeBase/concepts/容器运行时|容器运行时]] — containerd/Docker Engine
 - [[KnowledgeBase/concepts/服务网格|服务网格]] — Istio
@@ -55,15 +56,16 @@ date: 2026-09-12
 16. [[Docker-Kubernetes/k8s-monitoring-logging/k8s日志管理-采集方案与审计日志|k8s日志管理综合]] — 日志架构
 
 ### 第五阶段：CI/CD
-17. [[Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD基础|ArgoCD基础]] — GitOps
-18. [[Docker-Kubernetes/k8s-CICD/Jenkins/k8s-Devops平台落地-基于jenkins|k8s-Devops平台落地-基于jenkins]] — Jenkins DevOps
-19. [[Docker-Kubernetes/k8s-CICD/Tekton/基于Tekton的云原生平台落地|基于Tekton的云原生平台落地]] — 云原生 CI/CD
+17. [[Docker-Kubernetes/k8s-CICD/Kustomize/Kustomize入门-Base与Overlay多环境配置|Kustomize Base 与 Overlay 入门]] — 多环境配置定制
+18. [[Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD基础|ArgoCD基础]] — GitOps
+19. [[Docker-Kubernetes/k8s-CICD/Jenkins/k8s-Devops平台落地-基于jenkins|k8s-Devops平台落地-基于jenkins]] — Jenkins DevOps
+20. [[Docker-Kubernetes/k8s-CICD/Tekton/基于Tekton的云原生平台落地|基于Tekton的云原生平台落地]] — 云原生 CI/CD
 
 ### 第六阶段：高级特性
-20. [[Docker-Kubernetes/k8s-networking-service-mesh/k8s精细化流量管理-istio|k8s精细化流量管理-istio]] — 服务网格
-21. [[Docker-Kubernetes/k8s-scaling/k8s-HPA-VPA|k8s-HPA-VPA]] — 自动扩缩容
-22. [[Docker-Kubernetes/k8s-security-auth/helm部署kyverno和policy-reporter|helm部署kyverno和policy-reporter]] — 策略管理（含 1.18 新特性）
-23. [[AI/企业级私有化大模型/一个 Deployment 就能跑 vLLM，为什么还需要 KServe？|KServe 部署 vLLM]] — 用 InferenceService 统一编排模型、Runtime、GPU 与访问入口
+21. [[Docker-Kubernetes/k8s-networking-service-mesh/k8s精细化流量管理-istio|k8s精细化流量管理-istio]] — 服务网格
+22. [[Docker-Kubernetes/k8s-scaling/k8s-HPA-VPA|k8s-HPA-VPA]] — 自动扩缩容
+23. [[Docker-Kubernetes/k8s-security-auth/helm部署kyverno和policy-reporter|helm部署kyverno和policy-reporter]] — 策略管理（含 1.18 新特性）
+24. [[AI/企业级私有化大模型/一个 Deployment 就能跑 vLLM，为什么还需要 KServe？|KServe 部署 vLLM]] — 用 InferenceService 统一编排模型、Runtime、GPU 与访问入口
 
 ---
 
@@ -103,14 +105,14 @@ date: 2026-09-12
 | 日志选型 | [[Docker-Kubernetes/k8s-monitoring-logging/k8s日志管理-采集方案与审计日志|六种采集方案+审计日志]] |
 | OTel | [[Docker-Kubernetes/k8s-monitoring-logging/OpenTelemetry实战-统一Traces-Metrics-Logs|OpenTelemetry 统一可观测性实战]] |
 
-### CI/CD（19 篇）
+### CI/CD（21 篇）
 | 工具 | 文章数 | 代表 |
 |------|--------|------|
 | Jenkins | 7 | [[Docker-Kubernetes/k8s-CICD/Jenkins/k8s-Devops平台落地-基于jenkins|k8s-Devops平台落地-基于jenkins]] |
 | ArgoCD | 4 | [[Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD基础|ArgoCD基础]] |
 | GitLab | 3 | [[Docker-Kubernetes/k8s-CICD/Gitlab/二进制安装Gitlab(17.9.8)|二进制安装Gitlab(17.9.8)]] |
 | Tekton | 2 | [[Docker-Kubernetes/k8s-CICD/Tekton/基于Tekton的云原生平台落地|基于Tekton的云原生平台落地]] |
-| Kustomize | 1 | [[Docker-Kubernetes/k8s-CICD/Kustomize/k8s配置定制工具-kustomize|k8s配置定制工具-kustomize]] |
+| Kustomize | 2 | [[Docker-Kubernetes/k8s-CICD/Kustomize/Kustomize入门-Base与Overlay多环境配置|Base 与 Overlay 入门]]、[[Docker-Kubernetes/k8s-CICD/Kustomize/k8s配置定制工具-kustomize|综合使用指南]] |
 | 其他 | 3 | GitHub Actions、发布代码到 K8S、Claude Code AI CI/CD |
 
 ### 网络与服务网格（7 篇）
@@ -159,4 +161,4 @@ MySQL(3)、Redis(2)、PostgreSQL、Kafka(Strimzi)、RabbitMQ HA、MongoDB、http
 ---
 
 ## 🛠️ 相关工具
-[[KnowledgeBase/entities/Helm|Helm]]、[[KnowledgeBase/entities/Prometheus|Prometheus]]、[[KnowledgeBase/entities/Grafana|Grafana]]、[[KnowledgeBase/entities/Istio|Istio]]、[[KnowledgeBase/entities/ArgoCD|ArgoCD]]、[[KnowledgeBase/entities/Jenkins|Jenkins]]、[[KnowledgeBase/entities/Docker|Docker]]
+[[KnowledgeBase/entities/Helm|Helm]]、[[KnowledgeBase/entities/Kustomize|Kustomize]]、[[KnowledgeBase/entities/Prometheus|Prometheus]]、[[KnowledgeBase/entities/Grafana|Grafana]]、[[KnowledgeBase/entities/Istio|Istio]]、[[KnowledgeBase/entities/ArgoCD|ArgoCD]]、[[KnowledgeBase/entities/Jenkins|Jenkins]]、[[KnowledgeBase/entities/Docker|Docker]]

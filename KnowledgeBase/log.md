@@ -1906,3 +1906,12 @@ date: 2026-04-17
 - 依据 Kubernetes 与 kubectx/kube-ps1 官方文档完成技术校正：KUBECONFIG 同名键采用“第一个文件胜出”；无参数交互选择依赖 fzf；动态颜色使用 `KUBE_PS1_CTX_COLOR_FUNCTION`；移除固定旧版本下载方式。
 - 新增 [[KnowledgeBase/sources/kubectx-kubens-multi-cluster-summary|来源摘要]]；更新安装管理批量摘要、Kubernetes 实体、Kubernetes 专题地图、Docker-Kubernetes 入口和知识库索引。
 - 在 [[Docker-Kubernetes/k8s-basic-resources/k8s基础-认证-授权-准入#kubeconfig文件]] 增加跨目录入口，确保从用户建议的基础资源主题也能定位到整合文章。
+
+
+## [2026-09-12] ingest | Kustomize Base 与 Overlay 多环境配置
+
+- 读取并保留 [[0raw/Kustomize 入门：用 Base 和 Overlay 管理 Kubernetes 多环境配置|原始剪藏]]，清洗后归档至 [[Docker-Kubernetes/k8s-CICD/Kustomize/Kustomize入门-Base与Overlay多环境配置]]。
+- 保留多环境配置漂移背景、Kustomize 能力边界、Base/Overlay 模型、六个常用字段、构建/差异检查/部署命令和版本说明；移除作者署名、下篇预告与公众号分类尾注。
+- 修复剪藏产生的重复编号、项目符号和无语言代码围栏，并与既有 [[Docker-Kubernetes/k8s-CICD/Kustomize/k8s配置定制工具-kustomize|Kustomize 综合笔记]] 建立关联。
+- 新增 [[KnowledgeBase/sources/kustomize-base-overlay-summary|来源摘要]]，补全 [[KnowledgeBase/entities/Kustomize|Kustomize 实体页]]，更新 CI/CD 批量摘要、Kubernetes 实体、Kubernetes 专题地图、工具地图与知识库索引。
+- 依据 Kubernetes 官方文档和 Kustomize 当前源码核对版本边界：新项目优先使用 `resources`、`labels`、`patches`；独立版与 `kubectl` 内置版的字段支持应以实际版本为准。

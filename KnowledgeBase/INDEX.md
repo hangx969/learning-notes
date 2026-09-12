@@ -87,7 +87,7 @@ date: 2026-04-17
 | [[KnowledgeBase/entities/CUDA|CUDA]] | NVIDIA GPU 计算平台，关联精度格式与硬件支持 |
 | [Calico](entities/Calico.md) | K8s CNI 网络插件（stub） |
 | [Docker Compose](entities/Docker-Compose.md) | 单机多容器编排工具（stub） |
-| [Kustomize](entities/Kustomize.md) | K8s 原生配置管理工具（stub） |
+| [Kustomize](entities/Kustomize.md) | K8s 原生无模板配置定制工具，覆盖 Base/Overlay、多环境差异与当前字段边界 |
 | [NFS](entities/NFS.md) | 网络文件系统存储（stub） |
 | [Nginx](entities/Nginx.md) | Web 服务器与反向代理（stub） |
 | [PostgreSQL](entities/PostgreSQL.md) | 开源关系型数据库（stub） |
@@ -166,7 +166,8 @@ date: 2026-04-17
 | [K8s 安装管理](sources/k8s-installation-management-batch-summary.md) | 17 | v1.20→v1.35 安装演进、企业高可用、etcd HA、运行时迁移、cgroup v2 |
 | [K8s CGroup v2](sources/k8s-cgroup-v2-summary.md) | 1 | cgroup v1→v2 架构演进、K8s 实战配置（kubelet/containerd 对齐）、5 个生产踩坑案例、Prometheus 监控告警 |
 | [K8s 监控日志](sources/k8s-monitoring-logging-batch-summary.md) | 22 | Prometheus 全栈、EFK/Loki 日志、Jaeger/SkyWalking 链路追踪、日志管理+六种采集方案+审计日志（三合一）、OpenTelemetry 统一可观测性、集群巡检脚本 |
-| [K8s CI/CD](sources/k8s-CICD-batch-summary.md) | 20 | Jenkins/ArgoCD/GitLab CI/Tekton/Kustomize/GitHub Actions/Claude Code AI CI/CD |
+| [K8s CI/CD](sources/k8s-CICD-batch-summary.md) | 21 | Jenkins/ArgoCD/GitLab CI/Tekton/Kustomize/GitHub Actions/Claude Code AI CI/CD |
+| [[KnowledgeBase/sources/kustomize-base-overlay-summary|Kustomize Base 与 Overlay 多环境配置]] | 1 | Base/Overlay 分层、六个常用字段、构建/差异检查/部署顺序与弃用字段边界 |
 | [K8s 发布策略](sources/k8s-release-strategy-summary.md) | 1 | 蓝绿部署/金丝雀发布三种方案（原生/Nginx Ingress/Argo Rollouts）、选型决策树、数据库兼容性 |
 | [K8s 网络与服务网格](sources/k8s-networking-service-mesh-batch-summary.md) | 7 | Ingress-Nginx/External-DNS/Calico/Istio 流量管理 |
 | [K8s 安全认证](sources/k8s-security-auth-batch-summary.md) | 8 | Cert-Manager/External Secrets/Kyverno(含1.18新特性)/OAuth2 Proxy/Trivy/SonarQube/Security Context |
