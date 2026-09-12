@@ -157,6 +157,7 @@ date: 2026-04-17
 | [Docker 安全加固](sources/docker-security-capabilities-summary.md) | 1 | Capabilities 最小化、no-new-privileges 防提权、User Namespace/只读文件系统/资源限制纵深防御 |
 | [K8s 基础资源](sources/k8s-basic-resources-batch-summary.md) | 22 | Pod/Deployment/Service/Ingress/ConfigMap/Storage/RBAC/CRD/Operator/API Server 深度剖析/Finalizer |
 | [[KnowledgeBase/sources/kubectl-server-side-apply-summary|kubectl Server-side Apply]] | 1（整合） | CSA 三路合并、SSA 字段所有权、CRD schema 与 Helm 4 迁移边界 |
+| [[KnowledgeBase/sources/kubectx-kubens-multi-cluster-summary|kubectx 与 kubens 多集群切换]] | 1（整合） | context/namespace 快速切换、fzf、kube-ps1、多 kubeconfig 合并及生产防误操作 |
 | [[KnowledgeBase/sources/k8s-probe-restart-storm-summary|K8s 健康探针重启风暴]] | 1 | Liveness 误判外部依赖抖动引发 300+ Pod 连锁重启，覆盖探针分工、时间窗口、监控和治理 |
 | [K8s 标签与选择器](sources/k8s-labels-selectors-summary.md) | 1 | 5 条 SRE 铁律（selector 匹配/节点调度/成本归因/版本陷阱/单值原则）、4 个翻车案例、`app.kubernetes.io/*` 命名规范 |
 | [K8s 容器设计模式](sources/k8s-container-design-patterns-summary.md) | 4（合并） | Sidecar/Init Container/Ambassador/Adapter 四大模式：核心理念、场景、完整 YAML、选型对比 |

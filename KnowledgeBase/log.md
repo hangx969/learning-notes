@@ -1887,3 +1887,12 @@ date: 2026-04-17
 - 修复 6 个实际受影响文件中的 12 个标签：AIOps K8s 编排 Skill、Claude Fable 5 system prompt、k9s 快捷键表、kubeadm 配置说明、HPA/CA 命令和 Linux `stat` 命令。
 - 精确扫描额外发现并修复第一轮遗漏的 k9s `<esc>` 与 `stat <filename>`；第一轮列出的 7 个代码围栏文件无需修改。
 - 全库 Markdown-aware 复扫结果：`FILES=0`、`OPEN=0`、`CLOSE=0`。同步更正 [[KnowledgeBase/maintenance/unclosed-html-tags-2026-09-12|维护报告]] 与知识库索引。
+
+
+## [2026-09-12] ingest | kubectx/kubens 多集群上下文切换
+
+- 读取并保留 [[0raw/多集群切换乱？用kubectx]]，将其技术内容整合进既有 [[Docker-Kubernetes/k8s-installation-management/k8s多集群kubeconfig管理#kubectx 与 kubens：多集群快速切换]]，未在 k8s-basic-resources 下创建重复主题文章。
+- 保留并整理 context 原理、跨平台安装、kubectx/kubens 用法、fzf 交互选择、kube-ps1 动态着色、多 kubeconfig 合并和生产防误操作清单。
+- 依据 Kubernetes 与 kubectx/kube-ps1 官方文档完成技术校正：KUBECONFIG 同名键采用“第一个文件胜出”；无参数交互选择依赖 fzf；动态颜色使用 `KUBE_PS1_CTX_COLOR_FUNCTION`；移除固定旧版本下载方式。
+- 新增 [[KnowledgeBase/sources/kubectx-kubens-multi-cluster-summary|来源摘要]]；更新安装管理批量摘要、Kubernetes 实体、Kubernetes 专题地图、Docker-Kubernetes 入口和知识库索引。
+- 在 [[Docker-Kubernetes/k8s-basic-resources/k8s基础-认证-授权-准入#kubeconfig文件]] 增加跨目录入口，确保从用户建议的基础资源主题也能定位到整合文章。

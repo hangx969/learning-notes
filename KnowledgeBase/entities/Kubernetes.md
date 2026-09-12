@@ -8,6 +8,7 @@ sources:
   - "[[KnowledgeBase/sources/k8s-basic-resources-batch-summary]]"
   - "[[KnowledgeBase/sources/kubectl-server-side-apply-summary]]"
   - "[[KnowledgeBase/sources/k8s-installation-management-batch-summary]]"
+  - "[[KnowledgeBase/sources/kubectx-kubens-multi-cluster-summary]]"
   - "[[KnowledgeBase/sources/k8s-monitoring-logging-batch-summary]]"
   - "[[KnowledgeBase/sources/k8s-CICD-batch-summary]]"
   - "[[KnowledgeBase/sources/k8s-networking-service-mesh-batch-summary]]"
@@ -47,6 +48,7 @@ Kubernetes（K8s）是容器编排平台，源自 Google Borg 系统，2014 年�
 - **Operator = CRD + Controller**：无需修改 K8s 源码即可扩展 API，适合复杂有状态应用管理
 - **PodDisruptionBudget（PDB）**：自愿中断（drain/滚动更新/升级）时的可用性保护，通过 `minAvailable` 或 `maxUnavailable` 约束同时不可用的 Pod 数量，详见 [[Docker-Kubernetes/k8s-basic-resources/k8s-PodDisruptionBudget实战]]
 - **健康探针分工**：Startup 隔离启动阶段，Readiness 控制摘流，Liveness 仅处理重启能够修复的进程内部故障；外部依赖抖动不应直接触发容器重启，详见 [[Docker-Kubernetes/k8s-basic-resources/k8s基础-pod#探针失效真实案例]]
+- **多集群上下文管理**：context 绑定 cluster、user 和 namespace；kubectx/kubens 简化切换，kube-ps1 暴露当前位置，但真正的生产权限边界仍是独立凭证和 RBAC，详见 [[Docker-Kubernetes/k8s-installation-management/k8s多集群kubeconfig管理#kubectx 与 kubens：多集群快速切换]]
 
 ### 网络体系三层协同
 - **Calico**（底层网络连通性）：IPIP 模式隧道封装配置简单，BGP 模式直接路由性能更优
@@ -81,7 +83,7 @@ Kubernetes（K8s）是容器编排平台，源自 Google Borg 系统，2014 年�
 ### 安装与管理（17 篇）
 详见 [[KnowledgeBase/sources/k8s-installation-management-batch-summary|k8s-installation-management 批量摘要]]
 
-覆盖 k8s 1.20 至 1.35 多版本 kubeadm 安装（CentOS -> Rocky Linux 迁移路径）、二进制安装高可用集群（keepalived + nginx）、企业级高可用集群规划、etcd 高可用配置与故障恢复、两地三中心与异地多活架构（Karmada、智能 DNS/GTM）、生产环境优化最佳实践、容器运行时迁移与版本升级、故障排查指南、多集群 kubeconfig 管理。
+覆盖 k8s 1.20 至 1.35 多版本 kubeadm 安装（CentOS -> Rocky Linux 迁移路径）、二进制安装高可用集群（keepalived + nginx）、企业级高可用集群规划、etcd 高可用配置与故障恢复、两地三中心与异地多活架构（Karmada、智能 DNS/GTM）、生产环境优化最佳实践、容器运行时迁移与版本升级、故障排查指南，以及 kubectx/kubens、kube-ps1、OIDC 登录和多文件合并等多集群 kubeconfig 管理实践。
 
 **核心要点**：
 - 生产环境控制节点资源：0-100 节点用 8C+32G，100-250 用 16C+32G，250-500 需 etcd 分离

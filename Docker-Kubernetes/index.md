@@ -26,6 +26,7 @@
 
 - [[Docker-Kubernetes/docker/docker基础]] — Docker 入门
 - [[Docker-Kubernetes/k8s-basic-resources/k8s基础-架构-组件-资源]] — K8s 架构总览
+- [[Docker-Kubernetes/k8s-installation-management/k8s多集群kubeconfig管理]] — 多集群 kubeconfig、kubectx/kubens 与生产防误操作
 - [[Docker-Kubernetes/k8s-installation-management/latest-version/安装k8s-1.35-基于rockylinux10-最新步骤]] — 最新版安装
 - [[Docker-Kubernetes/k8s-monitoring-logging/helm部署prometheus-stack全家桶]] — 监控全家桶
 - [[Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD基础]] — GitOps 入门

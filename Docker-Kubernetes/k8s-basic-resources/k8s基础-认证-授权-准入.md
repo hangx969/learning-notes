@@ -715,6 +715,8 @@ kubectl create rolebinding app-view \
 
 ### kubeconfig文件
 
+多集群 kubeconfig 合并、context/namespace 切换及 kubectx/kubens 防误操作实践，见 [[Docker-Kubernetes/k8s-installation-management/k8s多集群kubeconfig管理]]。
+
 - [使用 kubeconfig 文件组织集群访问 | Kubernetes](https://kubernetes.io/zh-cn/docs/concepts/configuration/organize-cluster-access-kubeconfig/)
 
 - 在K8S集群当中,当我们使用kubectl操作k8s资源时候,需要确定我们用哪个用户访问哪个k8s集群,kubectl操作k8s集群资源会去/root/.kube目录下找config文件,可以通过kubectl查看config文件配置,如下:

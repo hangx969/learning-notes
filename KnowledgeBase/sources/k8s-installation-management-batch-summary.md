@@ -3,8 +3,9 @@ title: k8s-installation-management 来源批量摘要
 tags:
   - knowledgebase/source
   - docker-kubernetes/installation-management
-date: 2026-04-17
+date: 2026-09-12
 sources:
+  - "[[0raw/多集群切换乱？用kubectx]]"
   - "[[Docker-Kubernetes/k8s-installation-management/latest-version/安装k8s-1.35-基于rockylinux10-最新步骤]]"
   - "[[Docker-Kubernetes/k8s-installation-management/legacy-versions/安装k8s-1.33-基于rockylinux-最新步骤]]"
   - "[[Docker-Kubernetes/k8s-installation-management/legacy-versions/安装k8s-1.32-基于rockylinux]]"
@@ -148,12 +149,15 @@ sources:
   - Pod 和 Service 连接超时的常见排查思路
 
 ### [[Docker-Kubernetes/k8s-installation-management/k8s多集群kubeconfig管理|k8s多集群kubeconfig管理]]
-- 核心内容：在一台机器上管理多个 K8s 集群的 kubeconfig 配置方法。
+- 核心内容：在一台机器上管理多个 K8s 集群的 kubeconfig 配置、上下文切换、OIDC 登录与生产防误操作。
 - 关键知识点：
   - 方案一：kubectl config set-cluster/set-credentials/set-context 命令
   - 方案二：KUBECONFIG 环境变量指向多个文件
   - 方案三：kubectl config view --flatten 合并配置
   - 方案四：krew 插件 konfig 管理 kubeconfig
+  - kubectx 快速切换、回退和重命名 context，kubens 设置默认 namespace，fzf 提供交互式模糊选择
+  - kube-ps1 常驻显示 context/namespace；生产环境应配合最小权限凭证、RBAC 和隔离/只读 shell
+  - 多文件合并发生同名冲突时第一个文件胜出；flatten 输出可能内联敏感凭证，必须限制文件权限
 
 ### [[Docker-Kubernetes/k8s-installation-management/k8s-cgroup-v2深度解析-迁移实战与避坑指南|K8s CGroup v2 深度解析]]
 - 核心内容：从内核原理到 K8s 实战，系统讲解 cgroup v1→v2 迁移全流程，含 5 个生产踩坑案例和监控告警配置。
