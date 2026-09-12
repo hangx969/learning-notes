@@ -811,7 +811,7 @@ XFS ：large data files
 
   - — 普通文件，l 链接，d 目录，c 字符设备文件（鼠标键盘等） ，b 块设备（硬盘），p管道文件，s socket文件
 
-  - 查看文件状态 stat <filename>
+  - 查看文件状态：`stat <filename>`
 
 - 1-3位：**所有者**权限 rwx
 

@@ -159,7 +159,7 @@ Use this as a style guide, not as a fixed template.
 ### To linux specialist
 
 - Task: initialize the following Linux machines for K8s preparation
-- Machine list: <raw user input>
+- Machine list: `<raw user input>`
 - Constraint: must use the machine initialization skill only
 - Constraint: must not add extra operations or scripts
 - Constraint: if any required variable is missing and cannot be discovered safely, stop and ask
@@ -169,7 +169,7 @@ Use this as a style guide, not as a fixed template.
 
 - Task: install Docker and containerd on the following machines
 - Precondition: Linux initialization already completed
-- Machine list: <raw user input>
+- Machine list: `<raw user input>`
 - Constraint: must use the container runtime installation skill only
 - Constraint: must not add extra operations or scripts
 - Constraint: if any required variable is missing and cannot be discovered safely, stop and ask
@@ -180,9 +180,9 @@ Use this as a style guide, not as a fixed template.
 - Task: install and initialize a Kubernetes cluster on the following machines
 - Precondition: Linux initialization already completed
 - Precondition: Docker and containerd installation already completed
-- Machine list: <raw user input>
-- Role mapping: <user-provided role mapping>
-- Version: <user-provided version or latest>
+- Machine list: `<raw user input>`
+- Role mapping: `<user-provided role mapping>`
+- Version: `<user-provided version or latest>`
 - Constraint: must use the Kubernetes installation skill only
 - Constraint: must not add extra operations or scripts
 - Constraint: if any required variable is missing and cannot be discovered safely, stop and ask

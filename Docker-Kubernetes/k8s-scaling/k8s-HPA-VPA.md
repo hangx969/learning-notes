@@ -81,7 +81,7 @@ Horizonal Pod Autoscaling，pod水平自动伸缩。一般是扩缩容deployment
   5）节点上pod驱逐后无处可去，即没有其他node能调度这个pod
   6）节点有注解：`"cluster-autoscaler.kubernetes.io/scale-down-disabled": "true"`(在CA 1.0.3或更高版本中受支持)
 
-  > kubectl annotate node <nodename> cluster-autoscaler.kubernetes.io/scale-down-disabled=true
+  > `kubectl annotate node <nodename> cluster-autoscaler.kubernetes.io/scale-down-disabled=true`
 
 - cluster autoscaler适用的云厂商
   - [GCE](https://kubernetes.io/docs/concepts/cluster-administration/cluster-management/)

@@ -65,7 +65,7 @@ kubeadm 在执行安装之前进行了相当细致的环境检测:
 
 ​    1) 在 kube-system 命名空间创建 ConfigMap kubeadm-config,同时对其配置 RBAC 权限;
 
-​    2) 在 kube-system 命名空间创建 ConfigMap kubelet-config-<version>,同时对其配置 RBAC 权限;
+​    2) 在 kube-system 命名空间创建 ConfigMap `kubelet-config-<version>`,同时对其配置 RBAC 权限;
 
 ​    3) 为当前节点(Master)打标记:node-role.kubernetes.io/master=;
 

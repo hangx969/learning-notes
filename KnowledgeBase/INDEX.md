@@ -328,7 +328,7 @@ date: 2026-04-17
 | [断链报告](maintenance/broken-links-report.md) | wikilink 有效性检查 |
 | [[KnowledgeBase/maintenance/broken-links-2026-09-05|断链检查报告 2026-09-05]] | 2026-09-05 KnowledgeBase wikilink 断链检查结果 |
 | [[KnowledgeBase/maintenance/wiki-lint-2026-09-06|Wiki 健康检查 2026-09-06]] | 提示词摄入后的断链、孤儿页、frontmatter、一致性与交叉引用检查 |
-| [[KnowledgeBase/maintenance/unclosed-html-tags-2026-09-12|未闭合 HTML 标签扫描 2026-09-12]] | 全库发现 12 个文件、33 个可能干扰 Obsidian 渲染的未闭合标签候选 |
+| [[KnowledgeBase/maintenance/unclosed-html-tags-2026-09-12|未闭合 HTML 标签扫描 2026-09-12]] | Markdown-aware 复扫并修复 6 个文件、12 个标签；最终未闭合标签为 0 |
 | [命名规范](maintenance/naming-normalization.md) | 文件命名约定 |
 | [增量维护流程](maintenance/update-workflow.md) | 新增文档后的更新步骤 |
 

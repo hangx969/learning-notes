@@ -75,7 +75,7 @@ aliases:
 | 反向正则表达式过滤                                           | `/`! filter⏎                  | 保留所有 *不匹配* 的东西。日志未实现。                       |
 | 按标签过滤资源视图                                           | `/`-l label-selector⏎         |                                                              |
 | 模糊查找给定的资源                                           | `/`-f filter⏎                 |                                                              |
-| 退出视图 / 命令 / 过滤模式                                   | `<esc>`                       |                                                              |
+| 退出视图 / 命令 / 过滤模式                                   | `Esc`                         |                                                              |
 | 键映射来描述(describe)，查看(view)，编辑(edit)，查看日志(logs)，… | `d`,`v`, `e`,`l`,…            |                                                              |
 | 查看并切换到另一个 Kubernetes 上下文                         | `:`ctx⏎                       |                                                              |
 | 查看并切换到另一个 Kubernetes 上下文                         | `:`ctx context-name⏎          |                                                              |

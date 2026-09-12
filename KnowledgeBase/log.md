@@ -1880,3 +1880,10 @@ date: 2026-04-17
 - 扫描 vault 中的 Markdown，排除 frontmatter、围栏代码、行内代码、HTML 注释、自闭合标签和允许省略结束标签的元素。
 - 修复后的 `k8s基础-yaml.md` 已通过检查；其两张图床图片在 Obsidian Live Preview 中均成功生成图片组件。
 - 其余共发现 12 个文件、33 个未闭合标签候选，详见 [[KnowledgeBase/maintenance/unclosed-html-tags-2026-09-12|扫描报告]]；本次按用户要求仅列出，未批量修改这些文件。
+
+## [2026-09-12] update + lint | 修复全库未闭合 HTML 标签
+
+- 使用 Markdown 语法树复核上一轮文本扫描；确认引用块代码围栏中的 `<pdb-name>`、`<module>`、`<<EOF` 等属于误报，因此保留原始可复制命令和代码输出。
+- 修复 6 个实际受影响文件中的 12 个标签：AIOps K8s 编排 Skill、Claude Fable 5 system prompt、k9s 快捷键表、kubeadm 配置说明、HPA/CA 命令和 Linux `stat` 命令。
+- 精确扫描额外发现并修复第一轮遗漏的 k9s `<esc>` 与 `stat <filename>`；第一轮列出的 7 个代码围栏文件无需修改。
+- 全库 Markdown-aware 复扫结果：`FILES=0`、`OPEN=0`、`CLOSE=0`。同步更正 [[KnowledgeBase/maintenance/unclosed-html-tags-2026-09-12|维护报告]] 与知识库索引。
