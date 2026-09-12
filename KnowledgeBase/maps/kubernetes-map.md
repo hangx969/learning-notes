@@ -5,7 +5,7 @@ tags:
   - knowledgebase/kubernetes
 aliases:
   - K8s Map
-date: 2026-09-07
+date: 2026-09-12
 ---
 
 # ☸️ Kubernetes 专题地图
@@ -36,7 +36,7 @@ date: 2026-09-07
 
 ### 第二阶段：K8s 核心资源
 3. [[Docker-Kubernetes/k8s-basic-resources/k8s基础-架构-组件-资源|k8s基础-架构-组件-资源]] — 架构总览
-4. [[Docker-Kubernetes/k8s-basic-resources/k8s基础-yaml|k8s基础-yaml]] — YAML 编写
+4. [[k8s基础-yaml-apply|k8s基础-yaml-apply]] — YAML 编写、CSA/SSA 合并机制与字段所有权
 5. [[Docker-Kubernetes/k8s-basic-resources/k8s基础-pod|k8s基础-pod]] — Pod、Startup/Liveness/Readiness 探针与重启风暴复盘
 6. [[Docker-Kubernetes/k8s-basic-resources/k8s基础-deployment|k8s基础-deployment]] — Deployment
 7. [[Docker-Kubernetes/k8s-basic-resources/k8s基础-Service|k8s基础-Service]] — Service

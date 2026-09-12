@@ -3,9 +3,10 @@ title: K8s基础资源 来源批量摘要
 tags:
   - knowledgebase/source
   - docker-kubernetes/k8s-basic-resources
-date: 2026-09-06
+date: 2026-09-12
 sources:
   - "[[0raw/一场由健康探针引发的Pod重启风暴——K8s LivenessReadiness Probe配置不当的深度复盘]]"
+  - "[[0raw/kubectl apply 背后的真相：为什么 Server-side Apply 正在成为标配]]"
   - "[[Docker-Kubernetes/k8s-basic-resources/K8s基础-pod调度-亲和力]]"
   - "[[Docker-Kubernetes/k8s-basic-resources/Python调用k8s-api实现资源管理]]"
   - "[[Docker-Kubernetes/k8s-basic-resources/k8s基础-Calico]]"
@@ -20,7 +21,7 @@ sources:
   - "[[Docker-Kubernetes/k8s-basic-resources/k8s基础-pod]]"
   - "[[Docker-Kubernetes/k8s-basic-resources/k8s基础-statefulset]]"
   - "[[Docker-Kubernetes/k8s-basic-resources/k8s基础-storage]]"
-  - "[[Docker-Kubernetes/k8s-basic-resources/k8s基础-yaml]]"
+  - "[[k8s基础-yaml-apply]]"
   - "[[Docker-Kubernetes/k8s-basic-resources/k8s基础-临时容器ephemeral]]"
   - "[[Docker-Kubernetes/k8s-basic-resources/k8s基础-容器运行时-containerd]]"
   - "[[Docker-Kubernetes/k8s-basic-resources/k8s基础-架构-组件-资源]]"
@@ -126,13 +127,16 @@ sources:
   - PV/PVC 分离存储管理与使用，PV 由管理员创建，PVC 由用户申请
   - 应用场景：用户数据、模型文件、配置文件、共享数据、日志文件
 
-### [[Docker-Kubernetes/k8s-basic-resources/k8s基础-yaml|K8s基础-YAML]]
-- 核心内容：YAML 语法基础与 Kubernetes 资源 YAML 文件的编写规范，包括一级属性（apiVersion、kind、metadata、spec、status）和 spec 子属性详解。
+### [[k8s基础-yaml-apply|K8s基础-YAML]]
+- 核心内容：YAML 语法基础、Kubernetes 资源字段，以及 Client-side Apply 与 Server-side Apply 的合并机制和字段所有权模型。
 - 关键知识点：
   - YAML 数据类型：纯量、数组、对象、对象列表、map
   - Pod YAML 一级属性：apiVersion、kind、metadata、spec、status
   - imagePullPolicy 三种策略：Always、IfNotPresent、Never
   - 使用 `kubectl explain` 逐层查询 YAML 字段定义
+  - CSA 依赖 last-applied、live state 与新 manifest 做三路合并，多工具共管时可能静默覆盖
+  - SSA 通过 `managedFields` 追踪字段所有权，并把字段争用转化为显式冲突
+  - CRD 列表的 map/atomic 合并语义取决于结构化 schema 和 `x-kubernetes-list-*` 注释
 
 ### [[Docker-Kubernetes/k8s-basic-resources/K8s基础-pod调度-亲和力|K8s基础-Pod调度-亲和力]]
 - 核心内容：K8s 四种 Pod 调度方式（自动调度、定向调度、亲和性调度、污点调度）及拓扑域概念，通过标签和亲和力规则精确控制 Pod 部署位置。

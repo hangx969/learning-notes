@@ -283,10 +283,10 @@ SSA 把所有权追踪挪到 API Server，通过 `managedFields` 记录「谁拥
 
 实用建议：
 
-- • 新项目直接上 `kubectl apply --server-side`，或用 Argo CD / Helm 4 这些默认支持 SSA 的工具链
-- • 多工具共管同一资源的团队，尽快迁移，别再被「副本数莫名回退」折磨
-- • 写 CRD/operator 时务必加对 `x-kubernetes-list-type` 注释，否则 SSA 会按 atomic 替你「整体替换」列表
-- • 排查字段冲突时，先 `kubectl get <obj> -o yaml --show-managed-fields` 看所有权归属
+- 新项目直接上 `kubectl apply --server-side`，或用 Argo CD / Helm 4 这些默认支持 SSA 的工具链
+- 多工具共管同一资源的团队，尽快迁移，别再被「副本数莫名回退」折磨
+- 写 CRD/operator 时务必加对 `x-kubernetes-list-type` 注释，否则 SSA 会按 atomic 替你「整体替换」列表
+- 排查字段冲突时，先 `kubectl get <obj> -o yaml --show-managed-fields` 看所有权归属
 
 Kubernetes 从 1.22 就支持了 SSA，Helm 4 的默认启用终于让生态跟上了节奏。是时候把 `--server-side` 变成你的默认肌肉记忆了。
 

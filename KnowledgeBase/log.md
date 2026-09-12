@@ -1867,3 +1867,16 @@ date: 2026-04-17
 - 新增 [[KnowledgeBase/sources/kserve-vllm-inferenceservice-summary|来源摘要]]；更新 [[KnowledgeBase/entities/Kubernetes]]、[[KnowledgeBase/maps/kubernetes-map|Kubernetes 专题地图]]、`AI/index.md` 与 `KnowledgeBase/INDEX.md`。
 - 关键边界：vLLM 是推理引擎，KServe 是模型服务编排与控制层；Standard/Knative 属于 InferenceService 部署模式，LLMInferenceService 是独立 API；hostPath PV 仅适合单节点验证。
 - `mcp-obsidian` 完成原文读取、新文档写入与日志追加；既有页面因 MCP PATCH 版本不兼容，使用最小本地补丁更新。
+
+## [2026-09-12] ingest | kubectl Client-side Apply 与 Server-side Apply
+
+- 清洗 [[0raw/kubectl apply 背后的真相：为什么 Server-side Apply 正在成为标配]]，将技术内容整合进 [[k8s基础-yaml-apply#kubectl apply：Client-side Apply 与 Server-side Apply]]，没有创建重复的主题文章。
+- 保留 CSA 三路合并、HPA 静默覆盖案例、SSA 字段所有权、CRD schema、Helm 4 迁移和排障命令；移除关注引导、题库广告和好文推荐。
+- 将会被 Obsidian 解析为 HTML 的 `<object>`、`<[]Object>` 类型标记改为行内代码，恢复后续标题与图床图片的 Live Preview 渲染。
+- 新增 [[KnowledgeBase/sources/kubectl-server-side-apply-summary|来源摘要]]，并更新 Kubernetes 实体页、基础资源批量摘要、Kubernetes 专题地图和知识库索引。
+
+## [2026-09-12] lint | 未闭合 HTML 标签扫描
+
+- 扫描 vault 中的 Markdown，排除 frontmatter、围栏代码、行内代码、HTML 注释、自闭合标签和允许省略结束标签的元素。
+- 修复后的 `k8s基础-yaml.md` 已通过检查；其两张图床图片在 Obsidian Live Preview 中均成功生成图片组件。
+- 其余共发现 12 个文件、33 个未闭合标签候选，详见 [[KnowledgeBase/maintenance/unclosed-html-tags-2026-09-12|扫描报告]]；本次按用户要求仅列出，未批量修改这些文件。
