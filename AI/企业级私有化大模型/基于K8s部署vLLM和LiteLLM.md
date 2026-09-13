@@ -160,10 +160,10 @@ systemctl enable --now kubelet
 kubeadm config images pull \
   --image-repository registry.cn-hangzhou.aliyuncs.com/google_containers --kubernetes-version 1.36.0
 # 初始化集群
-kubeadm init --apiserver-advertise-address 192.168.181.134  --image-repository registry.cn-hangzhou.aliyuncs.com/google_containers --cri-socket "unix:///var/run/containerd/containerd.sock" --kubernetes-version 1.36.0
+kubeadm init --apiserver-advertise-address xxxx  --image-repository registry.cn-hangzhou.aliyuncs.com/google_containers --cri-socket "unix:///var/run/containerd/containerd.sock" --kubernetes-version 1.36.0
 # 加入其它节点
-kubeadm join 192.168.181.134:6443 --token cg0bkg.w83qlih44rjby2jk \
-    --discovery-token-ca-cert-hash sha256:4efd525d2708c60bd450b0bd3f22a850283738f49b23e04334301a4ca07a1a8f
+kubeadm join 192.168.181.134:6443 --token xxx \
+    --discovery-token-ca-cert-hash sha256:xxx
 ```
 
 配置 kubeconfig：
