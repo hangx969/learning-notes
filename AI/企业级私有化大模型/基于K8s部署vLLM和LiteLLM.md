@@ -447,8 +447,9 @@ kubectl wait --for=jsonpath='{.status.phase}'=Bound \
   pvc/qwen35-4b-pvc -n models --timeout=5m
 ```
 
-模型文件本地导入：
-不要直接向 `/var/lib/longhorn` 写入文件。应创建一个临时 Job，同时将节点上的模型目录以只读 `hostPath` 挂载为源目录，并将 PVC 挂载为目标目录。Job 完成复制后逐文件计算 SHA256，确认源目录和 PVC 中的文件完全一致：
+### 模型文件本地导入
+如果本地已经有下载好的模型文件：
+不要直接向 `/var/lib/longhorn` 写入文件。应创建一个临时 Job，同时将节点上的模型目录以只读 `hostPath` 挂载为源目录，并将 PVC 挂载为目标目录。Job 完成复制。
 
 ```bash
 tee model-import-job.yaml <<'EOF'
