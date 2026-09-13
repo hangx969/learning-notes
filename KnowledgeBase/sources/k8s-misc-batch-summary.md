@@ -10,7 +10,7 @@ tags:
   - docker-kubernetes/k8s-springcloud
   - docker-kubernetes/k8s-backup-dr
   - docker-kubernetes/k8s-ai-gpu
-date: 2026-09-05
+date: 2026-09-13
 sources:
   - "[[Docker-Kubernetes/helm-operator/helmv3-安装与使用]]"
   - "[[Docker-Kubernetes/helm-operator/helm部署config-syncer(kubed)]]"
@@ -25,6 +25,7 @@ sources:
   - "[[Docker-Kubernetes/kubeblocks/kubeblocks部署高可用harbor集群]]"
   - "[[Docker-Kubernetes/harbor/harbor-basics]]"
   - "[[Docker-Kubernetes/harbor/helm部署harbor]]"
+  - "[[Docker-Kubernetes/harbor/Dragonfly与Harbor-P2P镜像分发]]"
   - "[[Docker-Kubernetes/container-platform/部署openshift(3.10)]]"
   - "[[Docker-Kubernetes/container-platform/部署轻量级的K8S平台-K3S]]"
   - "[[Docker-Kubernetes/k8s-springcloud/SpringCloud项目迁移到k8s实战]]"
@@ -36,13 +37,13 @@ sources:
 ## 元信息
 
 - **原始目录**: `Docker-Kubernetes/helm-operator/`、`Docker-Kubernetes/CKA-CKS/`、`Docker-Kubernetes/kubeblocks/`、`Docker-Kubernetes/harbor/`、`Docker-Kubernetes/container-platform/`、`Docker-Kubernetes/k8s-springcloud/`、`Docker-Kubernetes/k8s-backup-dr/`、`Docker-Kubernetes/k8s-ai-gpu/`
-- **文档数量**: 19 篇（8 个子目录汇总）
+- **文档数量**: 20 篇（8 个子目录汇总）
 - **领域**: Helm 工具链、K8s 认证备考、KubeBlocks 数据库管理、Harbor 镜像仓库、容器平台（OpenShift/K3S）、SpringCloud 迁移、备份恢复、GPU 配置
 - **摄入日期**: 2026-04-17
 
 ## 整体概述
 
-本批次文档覆盖 Kubernetes 生态的多个专题领域。Helm 工具链部分包含 Helm 本身的安装使用以及通过 Helm 部署各类运维工具（Config Syncer、Dragonfly、Pact Broker、Reloader、Tomcat）。认证备考部分涵盖 CKA/CKS 考试准备和常见面试题。KubeBlocks 展示了用统一 Operator 快速部署 WordPress 和高可用 Harbor 的方案。此外还包含 Harbor 镜像仓库基础与 Helm 部署、OpenShift 和 K3S 容器平台、SpringCloud 微服务迁移到 K8s、Velero 集群备份恢复，以及 NVIDIA GPU 在 K8s 中从驱动和容器运行时到 Device Plugin/GPU Operator 的完整配置实践。
+本批次文档覆盖 Kubernetes 生态的多个专题领域。Helm 工具链部分包含 Helm 本身的安装使用以及通过 Helm 部署各类运维工具（Config Syncer、Dragonfly、Pact Broker、Reloader、Tomcat）。认证备考部分涵盖 CKA/CKS 考试准备和常见面试题。KubeBlocks 展示了用统一 Operator 快速部署 WordPress 和高可用 Harbor 的方案。此外还包含 Harbor 镜像仓库基础、Helm 部署及 Dragonfly P2P 源站卸载，OpenShift 和 K3S 容器平台、SpringCloud 微服务迁移到 K8s、Velero 集群备份恢复，以及 NVIDIA GPU 在 K8s 中从驱动和容器运行时到 Device Plugin/GPU Operator 的完整配置实践。
 
 ## 各文档摘要
 
@@ -161,6 +162,15 @@ sources:
   - 使用 cert-manager 创建 TLS 证书
   - 支持 ingress、clusterIP、nodePort、loadBalancer 多种暴露方式
 
+### [[Docker-Kubernetes/harbor/Dragonfly与Harbor-P2P镜像分发|Dragonfly + Harbor P2P 镜像分发]]
+
+- **核心内容**: 解释大规模 Kubernetes 与 AI/GPU 集群中，Dragonfly 如何通过分块、Peer 交换、Seed Peer 回源和 Scheduler 调度降低 Harbor 源站压力。
+- **关键知识点**:
+  - Harbor 负责镜像仓库与治理，Dragonfly 负责 P2P 分发与缓存，二者不是替代关系
+  - Scheduler 属于控制面；Peer、Seed Peer 和源站构成主要数据路径
+  - P2P 优化大规模并发的整体吞吐和源站压力，不保证单节点更快
+  - Dragonfly v1 已归档且与 v2 不兼容；Harbor P2P Preheat 需要外部 P2P 引擎
+
 ### [[Docker-Kubernetes/container-platform/部署openshift(3.10)|部署OpenShift]]
 
 - **核心内容**: OpenShift 容器应用平台的基础概念、架构组件和与 K8s 的对比。
@@ -239,7 +249,7 @@ sources:
 
 1. **Helm 作为统一部署手段**: Helm Chart 贯穿几乎所有工具和服务的部署（Harbor、Dragonfly、Reloader、Config Syncer、Tomcat、Kafka），是 K8s 生态的核心包管理基础设施。
 2. **KubeBlocks 与独立部署对比**: KubeBlocks 一键部署 HA 数据库的能力（WordPress 场景的 MySQL、Harbor 场景的 PostgreSQL+Redis）与手动通过 Helm/YAML 部署形成对比，体现了更高层次的抽象和自动化。
-3. **Harbor 多维度覆盖**: Harbor 在本批次中出现多次 -- 基础安装（docker-compose）、Helm 部署（K8s 上）、KubeBlocks 高可用方案，展示了同一组件在不同场景下的部署演进。
+3. **Harbor 多维度覆盖**: Harbor 在本批次中出现多次 -- 基础安装（docker-compose）、Helm 部署（K8s 上）、KubeBlocks 高可用方案，以及 Dragonfly P2P 分发与预热，展示了同一组件从仓库存储到大规模分发的架构演进。
 4. **安全主题链路**: CKS 备考中的 AppArmor/kube-bench 与面试题中的容器运行时安全问题相呼应，可串联为 K8s 安全知识体系。
 5. **边缘与轻量化**: K3S 的边缘计算定位与 OpenShift 的企业级全栈平台形成两极对比，展示了 K8s 生态从轻量到重量级的完整光谱。
 6. **数据保护全链路**: Velero 的备份恢复方案与面试题中关于日志丢失风险、Pod 稳定性的讨论互相补充，构成 K8s 数据保护的完整视角。

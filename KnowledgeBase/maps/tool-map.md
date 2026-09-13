@@ -151,7 +151,19 @@ date: 2026-04-16
 **相关文档：**
 - [[Docker-Kubernetes/harbor/harbor-basics|harbor-basics]] ⭐ 推荐入口
 - [[Docker-Kubernetes/harbor/helm部署harbor|helm部署harbor]]
+- [[Docker-Kubernetes/harbor/Dragonfly与Harbor-P2P镜像分发|Dragonfly + Harbor P2P 镜像分发]] — AI/GPU 集群镜像与大文件源站卸载
 - [[Docker-Kubernetes/kubeblocks/kubeblocks部署高可用harbor集群|kubeblocks部署高可用harbor集群]]
+
+**概念页：** [[KnowledgeBase/entities/Harbor|Harbor]]
+
+---
+
+### Dragonfly
+**相关文档：**
+- [[Docker-Kubernetes/harbor/Dragonfly与Harbor-P2P镜像分发|Dragonfly + Harbor P2P 镜像分发]] ⭐ 推荐入口
+- [[Docker-Kubernetes/helm-operator/helm部署dragonfly|helm部署dragonfly]]
+
+**概念页：** [[KnowledgeBase/entities/Dragonfly|Dragonfly]]
 
 ---
 

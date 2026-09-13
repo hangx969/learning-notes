@@ -19,6 +19,7 @@ sources:
   - "[[Docker-Kubernetes/docker/docker配置代理]]"
   - "[[Docker-Kubernetes/docker/docker安全配置-Capabilities与容器加固]]"
   - "[[Docker-Kubernetes/docker/docker无需本地环境从DockerHub下载镜像并保存为tar]]"
+  - "[[KnowledgeBase/sources/dragonfly-harbor-p2p-distribution-summary]]"
 ---
 
 # Docker
@@ -94,6 +95,7 @@ Docker 是一种容器化技术，提供镜像构建、容器运行、网络管�
 ### 镜像分发专题
 
 - [[Docker-Kubernetes/docker/docker无需本地环境从DockerHub下载镜像并保存为tar|无需本地 Docker 环境下载镜像并导出 tar]]：Registry API 拉取、多架构选择、断点续传与 `docker load` 导入
+- [[Docker-Kubernetes/harbor/Dragonfly与Harbor-P2P镜像分发|Dragonfly 与 Harbor P2P 镜像分发]]：通过 Peer 分块交换降低大规模并发拉取时的 Registry 源站压力
 
 ## 知识空白
 

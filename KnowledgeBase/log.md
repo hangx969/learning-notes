@@ -1915,3 +1915,12 @@ date: 2026-04-17
 - 修复剪藏产生的重复编号、项目符号和无语言代码围栏，并与既有 [[Docker-Kubernetes/k8s-CICD/Kustomize/k8s配置定制工具-kustomize|Kustomize 综合笔记]] 建立关联。
 - 新增 [[KnowledgeBase/sources/kustomize-base-overlay-summary|来源摘要]]，补全 [[KnowledgeBase/entities/Kustomize|Kustomize 实体页]]，更新 CI/CD 批量摘要、Kubernetes 实体、Kubernetes 专题地图、工具地图与知识库索引。
 - 依据 Kubernetes 官方文档和 Kustomize 当前源码核对版本边界：新项目优先使用 `resources`、`labels`、`patches`；独立版与 `kubectl` 内置版的字段支持应以实际版本为准。
+
+## [2026-09-13] ingest | Dragonfly + Harbor P2P 镜像与大文件分发
+
+- 读取并保留 [[0raw/Dragonfly + Harbor：为什么 AI 集群越来越需要 P2P 镜像分发？|原始剪藏]]，清洗后归档至 [[Docker-Kubernetes/harbor/Dragonfly与Harbor-P2P镜像分发]]。
+- 保留 Harbor 集中拉取瓶颈、文件分块、Peer 交换、新旧 Dragonfly 架构、测试数据、适用场景、优缺点和 AI 模型分发等技术内容；移除作者署名和公众号目录尾注。
+- 将剪藏后挤成单行的字符流程图恢复为 15 个 Mermaid 图，并校正 Scheduler 控制面、Peer/Seed Peer 数据面及 Manager 可选部署关系。
+- 通过本机 PicGo 的 githubPlus/github-images 配置上传原文 13 张图片，正文已全部替换为 `raw.githubusercontent.com/hangx969/upload-images-md` 图床链接。
+- 新增 [[KnowledgeBase/sources/dragonfly-harbor-p2p-distribution-summary|来源摘要]]、[[KnowledgeBase/entities/Dragonfly|Dragonfly 实体页]] 和 [[KnowledgeBase/concepts/P2P分发|P2P 分发概念页]]，补全 [[KnowledgeBase/entities/Harbor|Harbor 实体页]]，并更新 Kubernetes/Docker 实体、专题地图、工具地图及索引。
+- 根据 Dragonfly v2 与 Harbor 官方文档补充版本边界：Dragonfly v1 已归档且与 v2 不兼容；Harbor P2P Preheat 依赖外部 P2P 引擎，版本组合需按官方兼容矩阵确认。

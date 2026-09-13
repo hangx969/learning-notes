@@ -46,6 +46,7 @@ date: 2026-04-17
 | [[KnowledgeBase/concepts/AI代码审查|AI 代码审查]] | 以完整上下文、确定性门禁、真实运行和人工判断验证 AI 生成代码 |
 | [[KnowledgeBase/concepts/提示词工程|提示词工程]] | 通过目标、上下文、约束、交互流程和验证标准提升模型输出的可靠性 |
 | [[KnowledgeBase/concepts/混合精度与模型量化|混合精度与模型量化]] | 大模型数值格式、混合精度、低比特量化及其显存/吞吐取舍 |
+| [[KnowledgeBase/concepts/P2P分发|P2P 分发]] | 通过分块、Peer 交换与缓存降低大规模数据分发的源站压力 |
 
 ---
 
@@ -55,7 +56,7 @@ date: 2026-04-17
 
 | 页面 | 摘要 |
 |------|------|
-| [Kubernetes](entities/Kubernetes.md) | 容器编排平台，158 篇文章覆盖全生命周期 |
+| [Kubernetes](entities/Kubernetes.md) | 容器编排平台，159 篇文章覆盖全生命周期 |
 | [Docker](entities/Docker.md) | 容器运行时，14 篇覆盖基础、镜像分发与服务部署实战 |
 | [Helm](entities/Helm.md) | Kubernetes 包管理器 |
 | [ArgoCD](entities/ArgoCD.md) | GitOps 持续交付工具 |
@@ -75,7 +76,8 @@ date: 2026-04-17
 | [Obsidian](entities/Obsidian.md) | 知识管理与笔记工具 |
 | [Hermes-Agent](entities/Hermes-Agent.md) | AI Agent 框架（持久记忆、自我进化） |
 | [Slurm](entities/Slurm.md) | HPC 作业调度系统 |
-| [Harbor](entities/Harbor.md) | 企业级容器镜像仓库（stub） |
+| [Harbor](entities/Harbor.md) | 企业级 OCI 镜像仓库，可作为 Dragonfly P2P 分发源站并配置预热策略 |
+| [[KnowledgeBase/entities/Dragonfly|Dragonfly]] | 面向云原生与 AI 基础设施的 P2P 镜像和大文件分发系统 |
 | [Redis](entities/Redis.md) | 高性能键值数据库（stub） |
 | [GitLab](entities/GitLab.md) | DevOps 全生命周期平台（stub） |
 | [Kafka](entities/Kafka.md) | 分布式消息队列/事件流平台（stub） |
@@ -178,7 +180,8 @@ date: 2026-04-17
 | [PV/PVC 回收策略](sources/k8s-pv-pvc-reclaim-policy-summary.md) | 1 | PVC 删除后的 PV 回收策略、Released 复用风险、快照与 StatefulSet 安全删除 |
 | [K8s 中间件与 UI](sources/k8s-db-middleware-UI-batch-summary.md) | 19 | Redis/MySQL/PostgreSQL/Kafka/RabbitMQ 部署 + Dashboard/Rancher/k9s 管理工具 |
 | [RabbitMQ HA](sources/rabbitmq-ha-summary.md) | 1 | Helm 部署 RabbitMQ 高可用集群（StatefulSet）、aliyun Chart 配置、旧版 API 兼容修复 |
-| [K8s 杂项](sources/k8s-misc-batch-summary.md) | 19 | Helm 工具链/CKA-CKS/KubeBlocks/Harbor/K3S/Velero/GPU |
+| [K8s 杂项](sources/k8s-misc-batch-summary.md) | 20 | Helm 工具链/CKA-CKS/KubeBlocks/Harbor/Dragonfly/K3S/Velero/GPU |
+| [[KnowledgeBase/sources/dragonfly-harbor-p2p-distribution-summary|Dragonfly 与 Harbor P2P 分发]] | 1 | Harbor 源站卸载、Peer 分块交换、AI 大文件分发、新旧架构和版本边界 |
 | [K8s NVIDIA Device Plugin](sources/k8s-nvidia-device-plugin-summary.md) | 1 | NVIDIA GPU 驱动与 Container Toolkit 前置检查、Device Plugin/Helm/GPU Operator 部署、验证与故障排查 |
 | [K8s 备份与灾备](sources/k8s-backup-dr-summary.md) | 1 | 三层容灾架构（etcd 快照/Velero/应用数据）、自动化备份 CronJob、六大生产避坑、RTO/RPO 目标 |
 

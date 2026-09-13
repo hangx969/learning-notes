@@ -1,6 +1,6 @@
 # Docker-Kubernetes/ — 容器与编排
 
-148 篇文档，全库最大领域（占 48%），覆盖 Docker 基础到 K8s 生产级全栈。
+149 篇文档，全库最大领域（占 48%），覆盖 Docker 基础到 K8s 生产级全栈。
 
 ## 子目录结构
 
@@ -18,7 +18,7 @@
 | k8s-db-middleware/ | 11 | Redis/MySQL/PostgreSQL/Kafka/RabbitMQ 集群部署 |
 | k8s-UI-tools/ | 8 | Dashboard/Rancher/k9s/Lens 管理工具 |
 | helm-operator/ | 6 | Helm v3 工具链、Operator 模式 |
-| harbor/ | 2 | Harbor 镜像仓库 |
+| harbor/ | 3 | Harbor 镜像仓库与 Dragonfly P2P 分发 |
 | CKA-CKS/ | 3 | 认证考试备考 |
 | 其他 | 7 | K3S/KubeBlocks/Velero/GPU/SpringCloud 迁移 |
 
@@ -30,7 +30,8 @@
 - [[Docker-Kubernetes/k8s-installation-management/latest-version/安装k8s-1.35-基于rockylinux10-最新步骤]] — 最新版安装
 - [[Docker-Kubernetes/k8s-monitoring-logging/helm部署prometheus-stack全家桶]] — 监控全家桶
 - [[Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD基础]] — GitOps 入门
+- [[Docker-Kubernetes/harbor/Dragonfly与Harbor-P2P镜像分发]] — Harbor 源站卸载与 AI 集群 P2P 镜像/大文件分发
 
 ## 知识库导航
 
-→ [[KnowledgeBase/maps/kubernetes-map]] — K8s 专题地图（146 篇导航）
+→ [[KnowledgeBase/maps/kubernetes-map]] — K8s 专题地图（147 篇导航）

@@ -142,7 +142,7 @@ MySQL(3)、Redis(2)、PostgreSQL、Kafka(Strimzi)、RabbitMQ HA、MongoDB、http
 | Docker | 13 | [[Docker-Kubernetes/docker/docker基础|docker基础]] |
 | Helm/Operator | 6 | [[Docker-Kubernetes/helm-operator/helmv3-安装与使用|helmv3-安装与使用]] |
 | UI 工具 | 8 | k9s、Lens、Dashboard、Kuboard、Rancher |
-| Harbor | 2 | [[Docker-Kubernetes/harbor/harbor-basics|harbor-basics]] |
+| Harbor | 3 | [[Docker-Kubernetes/harbor/Dragonfly与Harbor-P2P镜像分发|Dragonfly + Harbor P2P 镜像分发]] |
 | CKA/CKS | 3 | [[Docker-Kubernetes/CKA-CKS/CKA-备考|CKA-备考]] |
 | KubeBlocks | 2 | WordPress、Harbor 高可用 |
 | 备份 | 1 | [[Docker-Kubernetes/k8s-backup-dr/k8s集群备份恢复-Velero|k8s集群备份恢复-Velero]] |
@@ -161,4 +161,4 @@ MySQL(3)、Redis(2)、PostgreSQL、Kafka(Strimzi)、RabbitMQ HA、MongoDB、http
 ---
 
 ## 🛠️ 相关工具
-[[KnowledgeBase/entities/Helm|Helm]]、[[KnowledgeBase/entities/Kustomize|Kustomize]]、[[KnowledgeBase/entities/Prometheus|Prometheus]]、[[KnowledgeBase/entities/Grafana|Grafana]]、[[KnowledgeBase/entities/Istio|Istio]]、[[KnowledgeBase/entities/ArgoCD|ArgoCD]]、[[KnowledgeBase/entities/Jenkins|Jenkins]]、[[KnowledgeBase/entities/Docker|Docker]]
+[[KnowledgeBase/entities/Helm|Helm]]、[[KnowledgeBase/entities/Kustomize|Kustomize]]、[[KnowledgeBase/entities/Prometheus|Prometheus]]、[[KnowledgeBase/entities/Grafana|Grafana]]、[[KnowledgeBase/entities/Istio|Istio]]、[[KnowledgeBase/entities/ArgoCD|ArgoCD]]、[[KnowledgeBase/entities/Jenkins|Jenkins]]、[[KnowledgeBase/entities/Docker|Docker]]、[[KnowledgeBase/entities/Harbor|Harbor]]、[[KnowledgeBase/entities/Dragonfly|Dragonfly]]

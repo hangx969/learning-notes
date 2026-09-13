@@ -3,7 +3,7 @@ title: Kubernetes
 tags:
   - knowledgebase/entity
   - docker-kubernetes
-date: 2026-09-12
+date: 2026-09-13
 sources:
   - "[[KnowledgeBase/sources/k8s-basic-resources-batch-summary]]"
   - "[[KnowledgeBase/sources/kubectl-server-side-apply-summary]]"
@@ -18,6 +18,7 @@ sources:
   - "[[KnowledgeBase/sources/k8s-volume-health-monitor-summary]]"
   - "[[KnowledgeBase/sources/k8s-db-middleware-UI-batch-summary]]"
   - "[[KnowledgeBase/sources/k8s-misc-batch-summary]]"
+  - "[[KnowledgeBase/sources/dragonfly-harbor-p2p-distribution-summary]]"
   - "[[KnowledgeBase/sources/k8s-cgroup-v2-summary]]"
   - "[[KnowledgeBase/sources/k8s-backup-dr-summary]]"
   - "[[KnowledgeBase/sources/k8s-pdb-summary]]"
@@ -30,7 +31,7 @@ sources:
 
 ## 简介
 
-Kubernetes（K8s）是容器编排平台，源自 Google Borg 系统，2014 年开源，2018 年从 CNCF 毕业。本仓库以 **158 篇文章**覆盖了 K8s 全生命周期，包括基础资源、集群安装与管理、监控日志、CI/CD、网络与服务网格、安全认证、扩缩容、存储、数据库中间件、UI 工具、备份恢复、GPU 配置、认证考试等主题。全部源文档的详细摘要见上方 `sources` 中列出的批量摘要页面。
+Kubernetes（K8s）是容器编排平台，源自 Google Borg 系统，2014 年开源，2018 年从 CNCF 毕业。本仓库以 **159 篇文章**覆盖了 K8s 全生命周期，包括基础资源、集群安装与管理、监控日志、CI/CD、网络与服务网格、安全认证、扩缩容、存储、数据库中间件、UI 工具、备份恢复、GPU 配置、认证考试等主题。全部源文档的详细摘要见上方 `sources` 中列出的批量摘要页面。
 
 ## 核心架构知识（从 146 篇中提炼）
 
@@ -169,10 +170,10 @@ Kubernetes（K8s）是容器编排平台，源自 Google Borg 系统，2014 年�
 
 **UI 工具链**：Dashboard（Web 原生）、Kuboard（国产增强）、Lens（桌面 IDE，内置 Prometheus）、k9s（终端 TUI，Vim 风格）、Rancher（企业级多集群管理平台）、krew 插件管理器。
 
-### 杂项专题（19 篇）
+### 杂项专题（20 篇）
 详见 [[KnowledgeBase/sources/k8s-misc-batch-summary|k8s-misc 批量摘要]]
 
-覆盖 [[KnowledgeBase/entities/Helm|Helm]] v3 安装与使用、Config Syncer 跨 Namespace 同步、Dragonfly P2P 镜像分发（100 节点拉取 2GB 镜像可节约 99% 带宽）、Reloader 配置变更自动重启、CKA/CKS 认证备考、KubeBlocks 统一数据库管理、Harbor 镜像仓库（docker-compose/Helm/KubeBlocks 三种部署方式）、OpenShift（企业 PaaS）、K3S（轻量级边缘计算，仅需 512M 内存）、SpringCloud 迁移到 K8s、Velero 备份恢复（不推荐用于数据库，应使用 mysqldump/pg_dump）、K8s 配置 NVIDIA GPU（Device Plugin + taint 隔离），以及从驱动和容器运行时准备到 Device Plugin/GPU Operator 部署验证的完整实践。
+覆盖 [[KnowledgeBase/entities/Helm|Helm]] v3 安装与使用、Config Syncer 跨 Namespace 同步、[[KnowledgeBase/entities/Dragonfly|Dragonfly]] P2P 镜像与 AI 大文件分发、Reloader 配置变更自动重启、CKA/CKS 认证备考、KubeBlocks 统一数据库管理、[[KnowledgeBase/entities/Harbor|Harbor]] 镜像仓库（docker-compose/Helm/KubeBlocks 三种部署方式）与 P2P Preheat、OpenShift、K3S、SpringCloud 迁移、Velero 备份恢复，以及 NVIDIA GPU 配置实践。Dragonfly 的 Scheduler 属于控制面，Peer、Seed Peer 与 Harbor 源站构成主要数据路径；P2P 的收益应以并发规模、对象大小、网络拓扑和运维成本共同评估。
 
 ### 备份与灾备（2 篇）
 详见 [[KnowledgeBase/sources/k8s-backup-dr-summary|K8s 备份与灾备摘要]]
