@@ -309,6 +309,7 @@ kubectl logs cuda-vectoradd
 官方文档： https://longhorn.io/docs/1.12.0/deploy/install/install-with-helm/
 
 #### 1.2.3.1 Longhorn
+前置条件：安装Longhorn 必需的 iscsi-initiator-utils 和 nfs-utils
 
 添加 Longhorn Helm 仓库：
 
@@ -323,6 +324,7 @@ helm pull longhorn/longhorn
 ```bash
 tar xf longhorn.tar.gz
 cd longhorn/
+# 国内机器，在values中把global.imageRegistry改成m.daocloud.io/docker.io
 helm install longhorn . -n longhorn-system --create-namespace --version 1.12.0
 ```
 
