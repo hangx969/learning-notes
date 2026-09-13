@@ -251,10 +251,14 @@ image:
   repository: m.daocloud.io/registry.k8s.io/nfd/node-feature-discovery
 ```
 
-之后安装即可：
+如果服务器已经按照 1.1.2 安装了 NVIDIA 驱动，需要通过 `driver.enabled=false` 禁止 GPU Operator 重复安装驱动，避免覆盖现有驱动或产生版本冲突。当前 Kubernetes 使用 Containerd，因此同时明确指定 `operator.defaultRuntime=containerd`：
 
 ```bash
-helm install gpu-operator   -n gpu-operator --create-namespace   .
+helm install gpu-operator . \
+  -n gpu-operator \
+  --create-namespace \
+  --set driver.enabled=false \
+  --set operator.defaultRuntime=containerd
 ```
 
 查看 Pod 状态：
@@ -309,24 +313,41 @@ kubectl logs cuda-vectoradd
 官方文档： https://longhorn.io/docs/1.12.0/deploy/install/install-with-helm/
 
 #### 1.2.3.1 Longhorn
-前置条件：安装Longhorn 必需的 iscsi-initiator-utils 和 nfs-utils
+
+Longhorn 依赖 iSCSI 和 NFS 客户端。Rocky Linux 需要安装 `iscsi-initiator-utils` 和 `nfs-utils`，启用 `iscsid`，并加载 `dm_crypt` 内核模块。将模块写入 `modules-load.d` 后，服务器重启时也会自动加载：
+
+```bash
+dnf install iscsi-initiator-utils nfs-utils -y
+systemctl enable --now iscsid
+modprobe dm_crypt
+echo dm_crypt > /etc/modules-load.d/longhorn.conf
+
+# 检查服务和模块状态
+systemctl is-active iscsid
+lsmod | grep dm_crypt
+```
 
 添加 Longhorn Helm 仓库：
 
 ```bash
 helm repo add longhorn https://charts.longhorn.io
 helm repo update
-helm pull longhorn/longhorn
+helm pull longhorn/longhorn --version 1.12.0
 ```
 
 安装 Longhorn：
 
 ```bash
-tar xf longhorn.tar.gz
+tar xf longhorn-1.12.0.tgz
 cd longhorn/
-# 国内机器，在values中把global.imageRegistry改成m.daocloud.io/docker.io
+# 国内机器，将 global.imageRegistry 设置为 m.daocloud.io/docker.io
 # 针对单节点，把默认卷副本数和默认 StorageClass 副本数设为 1
-helm install longhorn . -n longhorn-system --create-namespace --version 1.12.0
+helm install longhorn . \
+  -n longhorn-system \
+  --create-namespace \
+  --set global.imageRegistry=m.daocloud.io/docker.io \
+  --set defaultSettings.defaultReplicaCount=1 \
+  --set persistence.defaultClassReplicaCount=1
 ```
 
 查看服务状态：
