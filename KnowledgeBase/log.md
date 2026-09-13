@@ -1924,3 +1924,4 @@ date: 2026-04-17
 - 通过本机 PicGo 的 githubPlus/github-images 配置上传原文 13 张图片，正文已全部替换为 `raw.githubusercontent.com/hangx969/upload-images-md` 图床链接。
 - 新增 [[KnowledgeBase/sources/dragonfly-harbor-p2p-distribution-summary|来源摘要]]、[[KnowledgeBase/entities/Dragonfly|Dragonfly 实体页]] 和 [[KnowledgeBase/concepts/P2P分发|P2P 分发概念页]]，补全 [[KnowledgeBase/entities/Harbor|Harbor 实体页]]，并更新 Kubernetes/Docker 实体、专题地图、工具地图及索引。
 - 根据 Dragonfly v2 与 Harbor 官方文档补充版本边界：Dragonfly v1 已归档且与 v2 不兼容；Harbor P2P Preheat 依赖外部 P2P 引擎，版本组合需按官方兼容矩阵确认。
+- 验证校正：本文实际包含并通过解析的 Mermaid 流程图为 17 个，上述“15 个”以本条为准更正。
