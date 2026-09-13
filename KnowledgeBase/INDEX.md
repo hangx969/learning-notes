@@ -95,6 +95,9 @@ date: 2026-04-17
 | [PostgreSQL](entities/PostgreSQL.md) | 开源关系型数据库（stub） |
 | [Rancher](entities/Rancher.md) | K8s 多集群管理平台（stub） |
 | [Kyverno](entities/Kyverno.md) | K8s 原生策略引擎（CNCF 毕业项目） |
+| [[KnowledgeBase/entities/Ollama|Ollama]] | 面向本地开发、Demo 与 PoC 的模型下载、管理和运行工具 |
+| [[KnowledgeBase/entities/vLLM|vLLM]] | 高吞吐 LLM Serving Runtime，覆盖 KV Cache、并行推理与 OpenAI 兼容 API |
+| [[KnowledgeBase/entities/ModelScope|ModelScope]] | 模型与数据集平台，可作为国内模型下载及离线资产准备入口 |
 
 ---
 
@@ -269,6 +272,7 @@ date: 2026-04-17
 |------|:---------:|------|
 | [[KnowledgeBase/sources/model-precision-quantization-summary|大模型精度与量化：FP64 到 NVFP4 来源摘要]] | 1 | FP64/FP32/TF32/BF16/FP16/FP8/INT8/INT4/NVFP4 的结构、scale、显存估算及训练/推理选择 |
 | [[KnowledgeBase/sources/kserve-vllm-inferenceservice-summary|KServe 部署 vLLM 来源摘要]] | 1 | InferenceService Standard、Envoy Gateway、PVC 模型存储、GPU 资源与 OpenAI 兼容 API 完整链路 |
+| [[KnowledgeBase/sources/local-llm-runtime-selection-summary|大模型本地部署选型来源摘要]] | 1 | Ollama/vLLM/SGLang/vLLM-Omni 选型、模型与镜像离线交付、GPU 显存和容器化边界 |
 
 ### IaC/Terraform 容器管理（已摄入 ✅）
 
@@ -349,7 +353,7 @@ date: 2026-04-17
 | Linux-Shell | 24 | 🟡 | [linux-ops-map](maps/linux-ops-map.md) |
 | Azure | 21 | 🟢 | [cloud-platform-map](maps/cloud-platform-map.md) |
 | Aliyun | 19 | 🟢 | [cloud-platform-map](maps/cloud-platform-map.md) |
-| AI | 128 | 🟢 | [ai-workflow-map](maps/ai-workflow-map.md) |
+| AI | 129 | 🟢 | [ai-workflow-map](maps/ai-workflow-map.md) |
 | Go | 9 | 🟡 | [go-基础-01-环境配置-基础](go-基础-01-环境配置-基础.md) |
 | CloudComputing | 7 | 🟡 | [云原生](../CloudComputing/云原生.md) |
 | HPC | 7 | 🟡 | [CentOS7-slurm23.02-二进制安装](../HPC/CentOS7-slurm23.02-二进制安装.md) |

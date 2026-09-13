@@ -8,6 +8,7 @@ sources:
   - "[[0raw/KV Cache - 一图看懂 KV Cache：从诞生到集群调度]]"
   - "[[AI/企业级私有化大模型/基于vLLM和LiteLLM的私有化大模型理论及部署]]"
   - "[[AI/企业级私有化大模型/KV Cache-从原理到集群调度]]"
+  - "[[AI/企业级私有化大模型/大模型本地部署选型-Ollama-vLLM-SGLang-vLLM-Omni]]"
 aliases:
   - Key-Value Cache
   - KV 缓存
@@ -40,6 +41,7 @@ KV Cache 是 Transformer Attention 在处理上下文时保存的 Key 和 Value 
 - [[0raw/KV Cache - 一图看懂 KV Cache：从诞生到集群调度]]：原始文章，覆盖 KV Cache 定义、Prefill/Decode、生命周期、单节点带宽瓶颈与集群调度。
 - [[AI/企业级私有化大模型/KV Cache-从原理到集群调度]]：清洗后的归档版本，正文图片已替换为 PicGo 图床链接。
 - [[AI/企业级私有化大模型/基于vLLM和LiteLLM的私有化大模型理论及部署]]：覆盖 PagedAttention、KV Cache 显存估算和 vLLM 服务部署。
+- [[AI/企业级私有化大模型/大模型本地部署选型-Ollama-vLLM-SGLang-vLLM-Omni]]：把 KV Cache 放入 vLLM/SGLang 选型、上下文长度、显存比例、并发和 PD 分离的工程权衡中。
 
 ## 知识空白
 

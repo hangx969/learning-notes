@@ -20,13 +20,14 @@ sources:
   - "[[Docker-Kubernetes/docker/docker安全配置-Capabilities与容器加固]]"
   - "[[Docker-Kubernetes/docker/docker无需本地环境从DockerHub下载镜像并保存为tar]]"
   - "[[KnowledgeBase/sources/dragonfly-harbor-p2p-distribution-summary]]"
+  - "[[AI/企业级私有化大模型/大模型本地部署选型-Ollama-vLLM-SGLang-vLLM-Omni]]"
 ---
 
 # Docker
 
 ## 简介
 
-Docker 是一种容器化技术，提供镜像构建、容器运行、网络管理和存储编排能力。本仓库记录了 Docker 从安装配置到生产级服务部署的 14 篇实战文档，是进入 [[KnowledgeBase/entities/Kubernetes|Kubernetes]] 生态的前置基础。所有源文档的详细摘要见 [[KnowledgeBase/sources/docker-batch-summary|Docker 来源批量摘要]]。
+Docker 是一种容器化技术，提供镜像构建、容器运行、网络管理和存储编排能力。本仓库记录了 Docker 从安装配置到生产级服务部署的 15 篇实战文档，是进入 [[KnowledgeBase/entities/Kubernetes|Kubernetes]] 生态的前置基础。所有源文档的详细摘要见 [[KnowledgeBase/sources/docker-batch-summary|Docker 来源批量摘要]]。
 
 ## 核心功能
 
@@ -96,6 +97,10 @@ Docker 是一种容器化技术，提供镜像构建、容器运行、网络管�
 
 - [[Docker-Kubernetes/docker/docker无需本地环境从DockerHub下载镜像并保存为tar|无需本地 Docker 环境下载镜像并导出 tar]]：Registry API 拉取、多架构选择、断点续传与 `docker load` 导入
 - [[Docker-Kubernetes/harbor/Dragonfly与Harbor-P2P镜像分发|Dragonfly 与 Harbor P2P 镜像分发]]：通过 Peer 分块交换降低大规模并发拉取时的 Registry 源站压力
+
+### AI 推理容器化
+
+- [[AI/企业级私有化大模型/大模型本地部署选型-Ollama-vLLM-SGLang-vLLM-Omni|大模型本地部署选型]]：比较宿主机与 Docker 的依赖隔离、离线复制、GPU 可见性和部署粒度；生产环境建议一个模型 Worker 一个容器。
 
 ## 知识空白
 

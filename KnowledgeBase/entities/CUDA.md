@@ -7,6 +7,7 @@ tags:
 date: 2026-09-06
 sources:
   - "[[0raw/一文讲清 FP64、FP32、TF32、BF16、FP16、FP8、INT8、INT4、NVFP4]]"
+  - "[[AI/企业级私有化大模型/大模型本地部署选型-Ollama-vLLM-SGLang-vLLM-Omni]]"
 aliases:
   - CUDA Toolkit
 ---
@@ -30,3 +31,4 @@ CUDA（Compute Unified Device Architecture）是 NVIDIA 推出的并行计算平
 
 - [[KnowledgeBase/concepts/混合精度与模型量化]]：CUDA 与 GPU 架构共同决定可用的数据类型、Tensor Core 加速和量化实现。
 - [[AI/企业级私有化大模型/大模型精度与量化：FP64到NVFP4]]：从 TF32、FP8、NVFP4 的硬件支持角度说明精度选择不能脱离 CUDA/框架版本。
+- [[AI/企业级私有化大模型/大模型本地部署选型-Ollama-vLLM-SGLang-vLLM-Omni]]：说明宿主机与容器中的驱动/CUDA Runtime 边界、依赖隔离和 GPU Serving 兼容性。

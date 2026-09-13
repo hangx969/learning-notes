@@ -17,6 +17,7 @@
 | CloudOps-Agent-项目/ | 57 | 三语言智能 OnCall Agent（Go/Java/Python） |
 | RAG-Agent-项目/ | 33 | 企业 RAG 知识库系统（Spring Boot + ES） |
 | Code review和知识图谱/ | 6 | AI 代码审查闭环、CodeGraph、Graphify、code-review-graph、Understand-Anything、shiji-kb 知识图谱构造方法论 |
+| 企业级私有化大模型/ | 6 | 模型精度与 KV Cache、vLLM/KServe 部署、本地推理 Runtime 选型与离线交付 |
 | 行业动态/ | 3 | Boris Cherny 红杉大会七个判断、HTML 取代 Markdown、AI 时代 Git 版本管理 |
 | GithubCopilot/ | 1 | Copilot CLI |
 
@@ -43,3 +44,4 @@
 | [[AI/企业级私有化大模型/大模型精度与量化：FP64到NVFP4]] | 数值格式、量化与训练/推理取舍 |
 | [[AI/企业级私有化大模型/KV Cache-从原理到集群调度]] | KV Cache 生命周期、显存带宽瓶颈与集群调度 |
 | [[AI/企业级私有化大模型/一个 Deployment 就能跑 vLLM，为什么还需要 KServe？]] | KServe Standard、Envoy Gateway、PVC 模型加载与 OpenAI 兼容接口实操 |
+| [[AI/企业级私有化大模型/大模型本地部署选型-Ollama-vLLM-SGLang-vLLM-Omni]] | Ollama、vLLM、SGLang、vLLM-Omni 选型，模型与镜像离线交付及容器化边界 |

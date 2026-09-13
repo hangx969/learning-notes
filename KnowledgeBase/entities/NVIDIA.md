@@ -8,6 +8,7 @@ date: 2026-09-06
 sources:
   - "[[KnowledgeBase/sources/k8s-nvidia-device-plugin-summary]]"
   - "[[0raw/一文讲清 FP64、FP32、TF32、BF16、FP16、FP8、INT8、INT4、NVFP4]]"
+  - "[[AI/企业级私有化大模型/大模型本地部署选型-Ollama-vLLM-SGLang-vLLM-Omni]]"
 ---
 
 ## 简介
@@ -37,3 +38,4 @@ NVIDIA 是全球领先的 GPU 硬件厂商，其 GPU 产品广泛用于深度学
 
 - [[KnowledgeBase/concepts/混合精度与模型量化]]：大模型数值格式、混合精度与低比特量化的抽象概念。
 - [[AI/企业级私有化大模型/大模型精度与量化：FP64到NVFP4]]：介绍 NVIDIA Tensor Core 上的 TF32/FP8，以及 Blackwell 相关的 NVFP4 4-bit 浮点路线。
+- [[AI/企业级私有化大模型/大模型本地部署选型-Ollama-vLLM-SGLang-vLLM-Omni]]：覆盖 NVIDIA Container Toolkit、GPU 可见性、显存余量和多 Runtime 容器化。

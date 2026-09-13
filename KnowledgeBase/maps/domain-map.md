@@ -118,6 +118,7 @@ date: 2026-04-16
 - [[AI/企业级私有化大模型/基于vLLM和LiteLLM的私有化大模型理论及部署]] — vLLM/LiteLLM 私有化部署、权重与 KV Cache 显存规划
 - [[AI/企业级私有化大模型/基于K8s部署vLLM和LiteLLM]] — Kubernetes GPU 服务部署上下文
 - [[AI/企业级私有化大模型/大模型精度与量化：FP64到NVFP4]] — FP64 到 NVFP4 的数值格式、量化与训练/推理取舍
+- [[AI/企业级私有化大模型/大模型本地部署选型-Ollama-vLLM-SGLang-vLLM-Omni]] — 四种推理 Runtime 选型、模型与镜像离线交付、GPU 显存及容器化部署
 - [[KnowledgeBase/concepts/混合精度与模型量化]] — 统一连接数值精度、显存、吞吐、硬件和软件栈
 
 ---
@@ -179,3 +180,4 @@ date: 2026-04-16
 ## 🤖 AI · 企业级私有化大模型（增量）
 
 - [[AI/企业级私有化大模型/KV Cache-从原理到集群调度]] — KV Cache 生命周期、Prefill/Decode、显存带宽瓶颈与 Prefix Cache/PD 分离/负载均衡
+- [[AI/企业级私有化大模型/大模型本地部署选型-Ollama-vLLM-SGLang-vLLM-Omni]] — Ollama、vLLM、SGLang、vLLM-Omni 定位与从单机到模型平台的演进
