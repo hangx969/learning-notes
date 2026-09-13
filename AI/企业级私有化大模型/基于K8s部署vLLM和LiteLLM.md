@@ -419,7 +419,7 @@ kubectl exec -ti volume-test -- bash
 
 ### 1.3.1 模型文件预下载
 
-环境准备好后，就可以通过 VLLM 部署模型。首先创建模型存储的 PVC：
+环境准备好后，就可以通过 VLLM 部署模型。当前模型已经下载到 Kubernetes 节点的 `/data/models/Qwen3.5-4B`，实际大小约为 8.8 GiB，因此创建一个 12 GiB 的 Longhorn PVC：
 
 ```bash
 tee qwen35-4b-pvc.yaml <<'EOF'
@@ -427,83 +427,113 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: qwen35-4b-pvc
+  namespace: models
 spec:
   accessModes:
     - ReadWriteOnce
   storageClassName: longhorn
   resources:
     requests:
-      storage: 20Gi # 根据模型大小进行调整
+      storage: 12Gi # 根据模型实际大小和预留空间进行调整
 EOF
 ```
 
 创建 PVC：
 
 ```bash
-kubectl create ns models
-kubectl create -f qwen35-4b-pvc.yaml -n models
+kubectl create namespace models --dry-run=client -o yaml | kubectl apply -f -
+kubectl apply -f qwen35-4b-pvc.yaml
+kubectl wait --for=jsonpath='{.status.phase}'=Bound \
+  pvc/qwen35-4b-pvc -n models --timeout=5m
 ```
 
-接下来使用一个 Job，提前下载模型：
+模型文件本地导入：
+不要直接向 `/var/lib/longhorn` 写入文件。应创建一个临时 Job，同时将节点上的模型目录以只读 `hostPath` 挂载为源目录，并将 PVC 挂载为目标目录。Job 完成复制后逐文件计算 SHA256，确认源目录和 PVC 中的文件完全一致：
 
 ```bash
-tee model-download-job.yaml <<'EOF'
+tee model-import-job.yaml <<'EOF'
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: qwen35-4b-model-downloader
+  name: qwen35-4b-model-import
+  namespace: models
 spec:
-  backoffLimit: 3
+  backoffLimit: 0
   template:
     spec:
-      restartPolicy: OnFailure
+      nodeSelector:
+        kubernetes.io/hostname: izuf62nmmrsj356g2ju67ez
+      restartPolicy: Never
       containers:
-        - name: downloader
-          image: registry.cn-beijing.aliyuncs.com/dotbalo/vllm-openai:latest
-          command: ["/bin/sh", "-c"]
+        - name: importer
+          image: m.daocloud.io/docker.io/library/busybox:1.36.1
+          command: ["sh", "-ceu"]
           args:
             - |
-              echo "开始从 ModelScope 下载 Qwen/Qwen3.5-4B 模型..."
-              python3 -c "
-              from modelscope import snapshot_download
-              model_dir = snapshot_download('Qwen/Qwen3.5-4B', cache_dir='/data/modelscope')
-              print(f'模型下载完成，路径: {model_dir}')
-              "
-          env:
-            - name: VLLM_USE_MODELSCOPE
-              value: "true"
-            - name: MODELSCOPE_CACHE
-              value: "/data/modelscope"
-            - name: TZ
-              value: "Asia/Shanghai"
+              target=/target/Qwen/Qwen3.5-4B
+
+              if [ -e "${target}" ] && [ -n "$(ls -A "${target}" 2>/dev/null)" ]; then
+                echo "目标目录非空，停止以避免覆盖已有模型"
+                exit 1
+              fi
+
+              mkdir -p "${target}"
+              cp -a /source/. "${target}/"
+              sync
+
+              (
+                cd /source
+                find . -type f -exec sha256sum {} \; | sort
+              ) > /tmp/source.sha256
+
+              (
+                cd "${target}"
+                find . -type f -exec sha256sum {} \; | sort
+              ) > /tmp/target.sha256
+
+              cmp /tmp/source.sha256 /tmp/target.sha256
+              echo "模型复制及 SHA256 校验完成"
+              du -sh "${target}"
+              find "${target}" -type f | wc -l
           volumeMounts:
+            - name: local-model
+              mountPath: /source
+              readOnly: true
             - name: model-storage
-              mountPath: /data/modelscope
+              mountPath: /target
       volumes:
+        - name: local-model
+          hostPath:
+            path: /data/models/Qwen3.5-4B
+            type: Directory
         - name: model-storage
           persistentVolumeClaim:
             claimName: qwen35-4b-pvc
 EOF
 ```
 
-查看 Pod：
+创建导入 Job 并等待完成：
 
 ```bash
-kubectl get po -n models
+kubectl apply -f model-import-job.yaml
+kubectl wait --for=condition=complete \
+  job/qwen35-4b-model-import -n models --timeout=30m
 ```
 
-查看下载日志：
+查看复制和 SHA256 校验结果：
 
 ```bash
-kubectl logs -f qwen35-4b-model-downloader-7w7sg -n models
+kubectl logs job/qwen35-4b-model-import -n models
 ```
 
-确认下载的文件：
+确认成功后删除临时 Job 及其 Pod，但保留 PVC 中的模型文件：
 
 ```bash
-kubectl exec qwen35-4b-model-downloader-7w7sg -n models -- ls /data/modelscope/Qwen/
-Qwen3.5-4B
+kubectl delete job qwen35-4b-model-import -n models
+kubectl get pvc qwen35-4b-pvc -n models
 ```
+
+后续部署将该 PVC 挂载到 `/data/modelscope` 后，模型路径仍为 `/data/modelscope/Qwen/Qwen3.5-4B`。本地源目录应保留到模型服务启动和推理验证成功后，再根据磁盘空间情况决定是否删除。
 
 ### 1.3.2 部署模型
 文档： https://docs.vllm.ai/en/latest/deployment/k8s/
