@@ -1925,3 +1925,14 @@ date: 2026-04-17
 - 新增 [[KnowledgeBase/sources/dragonfly-harbor-p2p-distribution-summary|来源摘要]]、[[KnowledgeBase/entities/Dragonfly|Dragonfly 实体页]] 和 [[KnowledgeBase/concepts/P2P分发|P2P 分发概念页]]，补全 [[KnowledgeBase/entities/Harbor|Harbor 实体页]]，并更新 Kubernetes/Docker 实体、专题地图、工具地图及索引。
 - 根据 Dragonfly v2 与 Harbor 官方文档补充版本边界：Dragonfly v1 已归档且与 v2 不兼容；Harbor P2P Preheat 依赖外部 P2P 引擎，版本组合需按官方兼容矩阵确认。
 - 验证校正：本文实际包含并通过解析的 Mermaid 流程图为 17 个，上述“15 个”以本条为准更正。
+
+
+## [2026-09-13] ingest | 大模型本地部署 Runtime 选型与离线交付
+
+- 读取并保留 [[0raw/大模型本地部署到底怎么选？Ollama、vLLM、SGLang、vLLM-Omni 一次讲透|原始剪藏]]，清洗后归档至 [[AI/企业级私有化大模型/大模型本地部署选型-Ollama-vLLM-SGLang-vLLM-Omni]]。
+- 将原文 51 个重复、过短的章节收敛为 11 个工程主题，保留 ModelScope 下载、目录规划、rsync/tar、Docker 离线镜像、四种 Runtime、显存参数、容器粒度和模型平台架构等技术内容。
+- 将失效的字符流程图恢复为 13 个 Mermaid 图；Obsidian 内置解析验证为 13/13 通过。
+- 原始剪藏不含 Markdown/HTML 图片引用或图片 URL；原公众号页面拒绝自动提取，因此本次没有可交给 PicGo 上传的原图，未虚构或替换图片。
+- 依据 vLLM、SGLang、vLLM-Omni 与 ModelScope 官方文档补充版本与安全边界：显存比例不是硬隔离、PD 分离需要 KV 传输、Omni 模型支持按版本核对、远程代码仅对可信固定 Revision 启用。
+- 新增 [[KnowledgeBase/sources/local-llm-runtime-selection-summary|来源摘要]]、[[KnowledgeBase/entities/Ollama|Ollama]]、[[KnowledgeBase/entities/vLLM|vLLM]] 和 [[KnowledgeBase/entities/ModelScope|ModelScope]] 实体页；同步更新 Docker/CUDA/NVIDIA/KV Cache、AI 与工具地图及知识库索引。
+- 验证结果：正文围栏成对、13 个 Mermaid 全部通过解析、新增核心页面无未解析 wikilink、`git diff --check` 通过，原始 `0raw` 文件无改动。
