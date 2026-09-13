@@ -506,6 +506,9 @@ Qwen3.5-4B
 ```
 
 ### 1.3.2 部署模型
+文档： https://docs.vllm.ai/en/latest/deployment/k8s/
+- 单单部署一个模型，用yaml部署即可
+- 如果有分布式计算、模型微调、调度等需求，可以用一些开源框架比如KServe，llm-d等： https://docs.vllm.ai/en/latest/deployment/integrations/kserve/
 
 模型下载完成后，即可部署模型：
 
