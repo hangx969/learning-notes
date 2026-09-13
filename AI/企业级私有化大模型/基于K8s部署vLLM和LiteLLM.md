@@ -325,6 +325,7 @@ helm pull longhorn/longhorn
 tar xf longhorn.tar.gz
 cd longhorn/
 # 国内机器，在values中把global.imageRegistry改成m.daocloud.io/docker.io
+# 针对单节点，把默认卷副本数和默认 StorageClass 副本数设为 1
 helm install longhorn . -n longhorn-system --create-namespace --version 1.12.0
 ```
 
