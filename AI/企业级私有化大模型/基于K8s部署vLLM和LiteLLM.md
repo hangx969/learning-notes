@@ -672,9 +672,11 @@ curl -H "Authorization: Bearer xxxx" -X POST http://127.0.0.1:32656/v1/chat/comp
 
 ## 1.4 LiteLLM 高可用落地
 
+![image.png](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260914221055928.png)
+
 ### 1.4.1 高可用 Redis 部署
 
-在 K8s 集群中安装 Redis 哨兵，用于 LiteLLM 的缓存使用：
+在 K8s 集群中安装 Redis 哨兵，用于 LiteLLM 的缓存使用（高于1000RPS，推荐使用Redis缓存）：
 
 ```bash
 tar xf redis.tar.gz
