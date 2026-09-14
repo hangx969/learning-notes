@@ -577,11 +577,11 @@ spec:
             - "--model"
             - "/data/modelscope/Qwen/Qwen3.5-4B" # 模型路径指向 PVC 挂载点下的具体模型目录
             - "--gpu_memory_utilization"
-            - "0.6"
+            - "0.9"
             - "--max-model-len"
-            - "65536"
+            - "16384"
             - "--max_num_batched_tokens"
-            - "65536"
+            - "16384"
             - "--api-key"
             - "xxxx"
           ports:
