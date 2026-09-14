@@ -78,7 +78,7 @@ date: 2026-04-16
 5. [[AI/AI-视觉/AI-Animation-Skill-科普动画|AI-Animation-Skill]] — 使用 HTML 模板生成可录制的科普动画
 
 ### 补充
-- [[AI/HarnessKit|HarnessKit]] — AI 编码智能体统一管理工具（Skills/MCP/Plugins/Hooks 跨 Agent 管理）
+- [[HarnessKit|HarnessKit]] — AI 编码智能体统一管理工具（Skills/MCP/Plugins/Hooks 跨 Agent 管理）
 - [[AI/GithubCopilot/Copilot CLI|Copilot CLI]] — GitHub Copilot CLI
 - [[AI/提示词/提示词|提示词库]] — 按需求澄清、学习研究、分析决策、AI 编程、写作表达和自我探索分类
 - [[KnowledgeBase/concepts/提示词工程|提示词工程]] — 目标、上下文、约束、交互流程与验证闭环
@@ -159,4 +159,4 @@ date: 2026-04-16
 ---
 
 ## 🛠️ 相关工具
-[[KnowledgeBase/entities/Claude-Code|Claude-Code]]、[[KnowledgeBase/entities/OpenClaw|OpenClaw]]、[[KnowledgeBase/entities/Hermes-Agent|Hermes Agent]]、[[KnowledgeBase/entities/MCP|MCP]]、[[KnowledgeBase/entities/Obsidian|Obsidian]]、[[AI/HarnessKit|HarnessKit]]
+[[KnowledgeBase/entities/Claude-Code|Claude-Code]]、[[KnowledgeBase/entities/OpenClaw|OpenClaw]]、[[KnowledgeBase/entities/Hermes-Agent|Hermes Agent]]、[[KnowledgeBase/entities/MCP|MCP]]、[[KnowledgeBase/entities/Obsidian|Obsidian]]、[[HarnessKit|HarnessKit]]

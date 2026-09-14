@@ -1331,7 +1331,7 @@ date: 2026-04-17
 
 - **来源**：GitHub 仓库 https://github.com/RealZST/HarnessKit（README + API 元数据）
 - **操作**：
-  - 新建 [[AI/HarnessKit]]：工具介绍文章（功能特性、支持的 Agent、安装使用、安全审计、与其他 AI 工具的关系）
+  - 新建 [[HarnessKit]]：工具介绍文章（功能特性、支持的 Agent、安装使用、安全审计、与其他 AI 工具的关系）
   - 新建 [[KnowledgeBase/sources/harnesskit-summary]]：来源摘要页
   - 更新 [[KnowledgeBase/maps/ai-workflow-map]]：补充阅读列表 + 相关工具
   - 更新 [[KnowledgeBase/INDEX.md]]：新增 HarnessKit 来源摘要条目

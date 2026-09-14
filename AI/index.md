@@ -28,7 +28,7 @@
 - [[AI/Codex/Codex-Harness架构-任务循环与扩展]] — Codex Harness 架构：从任务循环到工具执行
 - [[AI/OpenClaw/OpenClaw-基础-安装]] — OpenClaw 入门
 - [[AI/Obsidian/obsidian-claude-code-AI知识库完整指南]] — Obsidian+Claude Code 知识库完整指南（理念+搭建+操作+计划）
-- [[AI/HarnessKit]] — AI 编码智能体统一管理工具
+- [[HarnessKit]] — AI 编码智能体统一管理工具
 
 ## 知识库导航
 

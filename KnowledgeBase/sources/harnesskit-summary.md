@@ -5,7 +5,7 @@ tags:
   - AI/agent-management
 date: 2026-05-05
 sources:
-  - "[[AI/HarnessKit]]"
+  - "[[HarnessKit]]"
 aliases:
   - HarnessKit摘要
 ---
@@ -13,7 +13,7 @@ aliases:
 # HarnessKit 来源摘要
 
 ## 元信息
-- **原始文档**：[[AI/HarnessKit]]
+- **原始文档**：[[HarnessKit]]
 - **领域**：AI Agent 管理工具
 - **摄入日期**：2026-05-05
 

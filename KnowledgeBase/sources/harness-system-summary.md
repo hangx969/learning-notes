@@ -40,4 +40,4 @@ aliases:
 - 文章提供了三个拦截器的**完整可运行代码**（pre-tool-guard.py / post-output-guard.py / session-summary.sh）和 settings.local.json 注册配置，可直接复用
 - 踩坑经验：post-output-guard 检测 `password` 变量名导致误报率过高，解决方案是只检测真正的密钥格式（16位+字母数字组合前带 `=`/`:`）
 - 编排层流程应按需启用——简单需求直接实现，复杂需求才走规范流程，"流程是为复杂度服务的，不是必须遵守的教条"
-- 与 [[AI/HarnessKit|HarnessKit]]（Rust 跨 Agent 管理工具）是不同维度的工具：本文 Harness 聚焦单项目安全约束，HarnessKit 聚焦多 Agent 配置统一管理
+- 与 [[HarnessKit|HarnessKit]]（Rust 跨 Agent 管理工具）是不同维度的工具：本文 Harness 聚焦单项目安全约束，HarnessKit 聚焦多 Agent 配置统一管理
