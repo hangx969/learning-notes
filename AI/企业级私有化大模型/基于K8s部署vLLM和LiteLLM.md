@@ -464,7 +464,7 @@ kubectl wait --for=jsonpath='{.status.phase}'=Bound \
   pvc/qwen35-4b-pvc -n models --timeout=5m
 ```
 
-#### 模型文件本地导入
+### 模型文件本地导入
 如果本地已经有下载好的模型文件：
 不要直接向 `/var/lib/longhorn` 写入文件。应创建一个临时 Job，同时将节点上的模型目录以只读 `hostPath` 挂载为源目录，并将 PVC 挂载为目标目录。Job 完成复制。
 
@@ -566,9 +566,9 @@ kubectl get pvc qwen35-4b-pvc -n models
 kubectl get pvc qwen35-4b-pvc -n models
 ```
 
-创建 `qwen35-vllm.yaml`，在同一个多文档 YAML 中定义 Secret、Deployment 和 Service。Secret 中只保留 `VLLM_API_KEY_PLACEHOLDER` 占位符，应用时在内存中替换，真实 API Key 不写入文章或 YAML 文件。
-
-镜像入口点已经是 `vllm serve`，因此通过 `args` 传入参数。vLLM 0.23.0 弃用了 `--model`，模型路径必须作为 `args` 的第一个位置参数。单节点只有一块 GPU，且 PVC 为 `ReadWriteOnce`，Deployment 使用 `Recreate`，避免 RollingUpdate 时新旧 Pod 争用同一块 GPU 和 PVC：
+- 创建 `qwen35-vllm.yaml`，在同一个多文档 YAML 中定义 Secret、Deployment 和 Service。Secret 中只保留 `VLLM_API_KEY_PLACEHOLDER` 占位符，应用时在内存中替换，真实 API Key 不写入文章或 YAML 文件。
+- 镜像入口点已经是 `vllm serve`，因此通过 `args` 传入参数。vLLM 0.23.0 弃用了 `--model`，模型路径必须作为 `args` 的第一个位置参数。
+- 单节点只有一块 GPU，且 PVC 为 `ReadWriteOnce`，Deployment 使用 `Recreate`，避免 RollingUpdate 时新旧 Pod 争用同一块 GPU 和 PVC：
 
 ```yaml
 apiVersion: v1
@@ -765,7 +765,7 @@ unset VLLM_API_KEY
 ```bash
 tar xf redis.tar.gz
 cd redis
-helm install redis . -n litellm --create-namespace
+helm install redis . -n litellm --create-namespace /
 ```
 
 查看 Redis 状态：
