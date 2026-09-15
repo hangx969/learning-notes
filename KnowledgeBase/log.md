@@ -1961,3 +1961,19 @@ date: 2026-04-17
 - 依据 Kubernetes 与 KEDA 官方资料校正 `HPAScaleToZero` 为 Kubernetes 1.37 Beta、KEDA 0↔1 与 HPA 1↔N 的职责边界，以及 KEDA fallback 的归属；同步更新 Prometheus、KServe、Kubernetes 地图和索引引用。
 - 两篇旧正文的删除已通过 mcp-obsidian 发起，但因当前环境的 MCP 自动审批额度耗尽而暂未执行；待额度恢复后删除：`KEDA-vs-HPA-2026终极对比-v1.36缩零.md`、`KServe+KEDA实战-基于请求指标实现服务自动扩缩容.md`。
 - 当前校验：主文档 19 个 YAML 代码块解析通过，围栏成对，Obsidian 识别 59 个标题，无未解析 wikilink，`dev:errors` 无错误，`git diff --check` 通过。
+
+
+## [2026-09-15] restructure | Istio 文档整合
+
+- 将 `helm安装istio.md`、`k8s部署istio(1.13.1).md`、`Istio-Sidecar-vs-Ambient.md` 合并到 [[Docker-Kubernetes/k8s-networking-service-mesh/k8s精细化流量管理-istio|Istio 服务网格：架构、部署与精细化流量治理]]
+- 以原 `k8s精细化流量管理-istio` 的 Bookinfo 与流量治理流程为主线，补充 Helm、历史版本部署、Sidecar/Ambient 选型、超时与重试，并修正可执行配置中的字段与缩进
+- 删除合并后的三篇旧文，更新 Istio/Helm 实体页、服务网格概念页、主题地图、来源摘要和发布策略交叉引用
+- 验证：主文 Frontmatter、27 个 YAML 代码块和代码围栏通过检查；主文无未解析 wikilink；Obsidian 控制台无错误
+
+
+## [2026-09-15] lint | Istio 文档整合验证
+
+- 目录核对：`k8s-networking-service-mesh/` 共 7 篇，三篇被合并旧文均已删除
+- 语法检查：综合指南 Frontmatter 可解析，27 个 YAML 代码块解析通过，Markdown 代码围栏闭合，`git diff --check` 通过
+- 链接检查：综合指南及本次更新的 Wiki 页面无未解析链接；`KnowledgeBase/log.md` 保留 1 条指向旧 Sidecar/Ambient 文件的历史操作记录，按日志仅追加规则未回写
+- Obsidian 检查：受影响页面元数据已刷新，开发者控制台无错误

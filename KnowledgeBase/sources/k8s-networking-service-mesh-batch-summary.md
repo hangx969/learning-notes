@@ -74,14 +74,14 @@ sources:
 
 - [[KnowledgeBase/concepts/ServiceMesh]]: 服务网格架构，流量治理下沉到基础设施
 - [[KnowledgeBase/entities/Ingress|Ingress]]: K8s 七层代理入口，南北流量管理
-- [[KnowledgeBase/concepts/Sidecar]]: Envoy 代理注入模式
-- [[KnowledgeBase/concepts/流量管理]]: 熔断、超时、重试、金丝雀发布、蓝绿部署
+- [[Docker-Kubernetes/k8s-networking-service-mesh/k8s精细化流量管理-istio#Sidecar 与 Ambient 工作模式|Sidecar]]: Envoy 代理注入模式
+- [[Docker-Kubernetes/k8s-networking-service-mesh/k8s精细化流量管理-istio#Bookinfo 流量治理实践|流量管理]]: 熔断、超时、重试、金丝雀发布、蓝绿部署
 - [[KnowledgeBase/entities/Istio]]: 服务网格平台
-- [[KnowledgeBase/entities/Envoy]]: 数据面代理
-- [[KnowledgeBase/entities/Ingress-Nginx]]: K8s Ingress 控制器
-- [[KnowledgeBase/entities/External-DNS]]: DNS 自动同步工具
-- [[KnowledgeBase/entities/CoreDNS]]: K8s 集群 DNS 服务
-- [[KnowledgeBase/entities/Pilot]]: Istio 控制面服务发现组件
+- [[Docker-Kubernetes/k8s-networking-service-mesh/k8s精细化流量管理-istio#Envoy|Envoy]]: 数据面代理
+- [[Docker-Kubernetes/k8s-networking-service-mesh/helm部署ingress-nginx|Ingress-Nginx]]: K8s Ingress 控制器
+- [[Docker-Kubernetes/k8s-networking-service-mesh/helm部署external-dns|External-DNS]]: DNS 自动同步工具
+- [[Docker-Kubernetes/k8s-basic-resources/k8s基础-架构-组件-资源#Addons(CoreDNS,Calico)|CoreDNS]]: K8s 集群 DNS 服务
+- [[Docker-Kubernetes/k8s-networking-service-mesh/k8s精细化流量管理-istio#Pilot|Pilot]]: Istio 控制面服务发现组件
 
 ## 交叉主题发现
 
