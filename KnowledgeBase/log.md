@@ -1953,3 +1953,11 @@ date: 2026-04-17
 - 对照官方文档校正 HPA 公式与默认周期、Kubernetes 1.37 `HPAScaleToZero` 状态、Scale-to-Zero 指标目标值，并补充 VPA In-place 模式及 `Auto` 弃用说明。
 - 旧的两个文件保留为兼容入口并指向主文档章节；同步更新来源摘要、Kubernetes/Helm/Prometheus 实体页、Kubernetes 地图和 Wiki 索引。
 - 验证结果：主文档与兼容入口 frontmatter 可解析，96 条代码围栏成对，20 个 YAML 代码块均通过语法解析，43 个 Markdown 标题被 Obsidian 正确识别；主文档、兼容入口和专项来源摘要均无未解析 wikilink，Obsidian 未捕获渲染错误，`git diff --check` 通过。
+
+## [2026-09-15] restructure | KEDA、HPA 与 KServe 扩缩容文章整合
+
+- 将 `k8s-基于KEDA的弹性能力.md`、`KEDA-vs-HPA-2026终极对比-v1.36缩零.md` 与 `KServe+KEDA实战-基于请求指标实现服务自动扩缩容.md` 的技术内容整合到 [[Docker-Kubernetes/k8s-scaling/k8s-基于KEDA的弹性能力|Kubernetes KEDA 事件驱动自动扩缩容：原理、选型与 KServe 实战]]。
+- 按“需求与架构 → HPA/KEDA/Scale-to-Zero 边界 → 资源模型 → 部署 → Cron/RabbitMQ/MySQL/Redis/Kafka → KServe + vLLM → 生产治理”重排章节，保留命令、YAML、指标链路和实测扩缩容过程。
+- 依据 Kubernetes 与 KEDA 官方资料校正 `HPAScaleToZero` 为 Kubernetes 1.37 Beta、KEDA 0↔1 与 HPA 1↔N 的职责边界，以及 KEDA fallback 的归属；同步更新 Prometheus、KServe、Kubernetes 地图和索引引用。
+- 两篇旧正文的删除已通过 mcp-obsidian 发起，但因当前环境的 MCP 自动审批额度耗尽而暂未执行；待额度恢复后删除：`KEDA-vs-HPA-2026终极对比-v1.36缩零.md`、`KServe+KEDA实战-基于请求指标实现服务自动扩缩容.md`。
+- 当前校验：主文档 19 个 YAML 代码块解析通过，围栏成对，Obsidian 识别 59 个标题，无未解析 wikilink，`dev:errors` 无错误，`git diff --check` 通过。
