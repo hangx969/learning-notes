@@ -765,7 +765,10 @@ unset VLLM_API_KEY
 ```bash
 tar xf redis.tar.gz
 cd redis
-helm install redis . -n litellm --create-namespace /
+helm install redis . -n litellm --create-namespace \
+  --set global.imageRegistry=m.daocloud.io/docker.io \
+  --set global.defaultStorageClass=longhorn \
+  --set global.storageClass=longhorn
 ```
 
 查看 Redis 状态：
@@ -778,6 +781,9 @@ kubectl get po -n litellm
 
 ```bash
 kubectl exec -ti redis-node-0 -n litellm -- bash
+redis-cli -h redis -p 26379
+auth xxx
+SETENIAL replicas mymaster
 ```
 
 Redis 单节点部署：
