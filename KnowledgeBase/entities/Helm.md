@@ -61,7 +61,7 @@ Helm 基础位于 `Docker-Kubernetes/helm-operator/`，同时大量 helm 部署�
 - [[Docker-Kubernetes/k8s-monitoring-logging/helm部署jaeger|helm部署jaeger]]
 - [[Docker-Kubernetes/k8s-monitoring-logging/基于helm+operator部署ECK日志收集平台|基于helm+operator部署ECK日志收集平台]]
 - [[Docker-Kubernetes/k8s-networking-service-mesh/helm部署ingress-nginx|helm部署ingress-nginx]]
-- [[Docker-Kubernetes/k8s-networking-service-mesh/helm安装istio|helm安装istio]]
+- [[Docker-Kubernetes/k8s-networking-service-mesh/k8s精细化流量管理-istio#Helm 安装|Helm 安装 Istio]]
 - [[Docker-Kubernetes/k8s-networking-service-mesh/helm部署external-dns|helm部署external-dns]]
 - [[Docker-Kubernetes/k8s-CICD/Jenkins/helm部署jenkins|helm部署jenkins]]
 - [[Docker-Kubernetes/harbor/helm部署harbor|helm部署harbor]]

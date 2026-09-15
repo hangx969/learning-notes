@@ -2,10 +2,10 @@
 title: Istio
 tags:
   - knowledgebase/entity
-date: 2026-04-17
+date: 2026-09-15
 sources:
   - "[[KnowledgeBase/sources/k8s-networking-service-mesh-batch-summary|k8s-networking-service-mesh 来源批量摘要]]"
-  - "[[Docker-Kubernetes/k8s-networking-service-mesh/Istio-Sidecar-vs-Ambient]]"
+  - "[[Docker-Kubernetes/k8s-networking-service-mesh/k8s精细化流量管理-istio]]"
 aliases:
   - istio
   - Istio Service Mesh
@@ -14,7 +14,7 @@ aliases:
 # Istio
 
 ## 简介
-Istio 是 Kubernetes 生态中最主流的服务网格（Service Mesh）实现，提供流量管理、可观测性、安全通信等能力。本仓库以 7 篇文章记录了 Istio 的部署、精细化流量管理与企业项目接入实战。
+Istio 是 Kubernetes 生态中的主流服务网格（Service Mesh）实现，提供流量管理、可观测性和安全通信等能力。本仓库以一篇综合指南和一篇企业接入实战为主线，覆盖部署、工作模式与精细化流量治理。
 
 ## 核心功能
 
@@ -31,7 +31,7 @@ Istio 是 Kubernetes 生态中最主流的服务网格（Service Mesh）实现�
 
 ### 部署方式
 - **[[KnowledgeBase/entities/Helm|Helm]] 分步安装**（v1.27.1）：istio-base -> istiod -> gateway，三个 Chart 按顺序安装
-- **istioctl 安装**（v1.13.1）：命令行一键部署
+- **istioctl 安装**：支持 IstioOperator 配置，并保留 Kubernetes 1.23 + Istio 1.13.1 的历史实验记录
 - Gateway 配置 NodePort 类型暴露，适用于本地裸金属集群
 
 ### 流量管理
@@ -48,7 +48,7 @@ Istio 是 Kubernetes 生态中最主流的服务网格（Service Mesh）实现�
 ### Sidecar vs Ambient 模式
 - **Sidecar 模式**：每 Pod 一个 Envoy 代理，天生 L7 治理能力，代价是常驻资源开销
 - **Ambient 模式**：分层代理——节点级 Ztunnel（L4）全覆盖 + Waypoint（L7）按需引入
-- L4 相比 L7 可节省 CPU 20%~60%、P99 延迟 10%~40%、内存 15%~40%
+- 原始测试材料记录了 L4 相对 L7 的资源与延迟收益区间；实际结果需要按业务协议和策略复杂度压测
 - 迁移策略：Ambient-first + 混合模式，按业务域分层（低风险→核心），保留 Sidecar 回滚路径
 - 选型关键：L7 治理需求深度、成本瓶颈类型、分批迁移与可回滚验证能力
 
@@ -64,11 +64,8 @@ Istio 是 Kubernetes 生态中最主流的服务网格（Service Mesh）实现�
 主要集中在 `Docker-Kubernetes/k8s-networking-service-mesh/` 目录。
 
 
-- [[Docker-Kubernetes/k8s-networking-service-mesh/k8s部署istio(1.13.1)|k8s部署istio(1.13.1)]]
-- [[Docker-Kubernetes/k8s-networking-service-mesh/helm安装istio|helm安装istio]]
-- [[Docker-Kubernetes/k8s-networking-service-mesh/k8s精细化流量管理-istio|k8s精细化流量管理-istio]]
+- [[Docker-Kubernetes/k8s-networking-service-mesh/k8s精细化流量管理-istio|Istio 服务网格：架构、部署与精细化流量治理]]
 - [[Docker-Kubernetes/k8s-networking-service-mesh/企业项目接入istio实战|企业项目接入istio实战]]
-- [[Docker-Kubernetes/k8s-networking-service-mesh/Istio-Sidecar-vs-Ambient|Istio-Sidecar-vs-Ambient]]
 - [[Docker-Kubernetes/k8s-networking-service-mesh/helm部署ingress-nginx|helm部署ingress-nginx]]
 - [[Docker-Kubernetes/k8s-networking-service-mesh/helm部署external-dns|helm部署external-dns]]
 - [[Docker-Kubernetes/k8s-networking-service-mesh/k8s集群网络安全|k8s集群网络安全]]
@@ -80,6 +77,6 @@ Istio 是 Kubernetes 生态中最主流的服务网格（Service Mesh）实现�
 - [[KnowledgeBase/entities/Prometheus|Prometheus]]
 
 ## 知识空白
-- Istio Ambient Mesh 实战部署与性能基准测试
+- Istio Ambient Mesh 的可复现实战与性能基准测试
 - Istio 与 Gateway API 的集成
 - 多集群 Istio 服务网格

@@ -1,16 +1,28 @@
 ---
-title: K8s精细化流量管理-Istio
+title: Istio 服务网格：架构、部署与精细化流量治理
 tags:
   - kubernetes
   - networking
   - istio
+  - service-mesh
+  - ambient
+date: 2026-09-15
 aliases:
   - istio流量管理
+  - Helm安装Istio
+  - K8s部署Istio(1.13.1)
+  - Istio Sidecar vs Ambient 模式对比
+  - Istio Ambient
+  - Sidecar vs Ambient
 ---
 
-# 服务网格背景
+# Istio 服务网格：架构、部署与精细化流量治理
 
-## 为什么要用服务网格
+本文从服务网格的设计动机出发，依次说明 Istio 的架构与工作模式、核心资源、安装与运维方式，并以 Bookinfo 为主线演示流量发布、灰度、A/B 测试、负载均衡、熔断、故障注入、超时与重试。
+
+## 服务网格背景
+
+### 为什么要用服务网格
 
 应用架构演变：单体应用 -- 微服务 -- 函数即服务
 
@@ -28,7 +40,7 @@ aliases:
 3. 为了解决上述问题，引入了服务网格：
    - 把上述流量治理的功能下沉到了基础设施。开发人员只需要聚焦自己的业务逻辑就行了。
 
-## 服务网格
+### 服务网格
 
 SeriviceMesh有Buoyant公司CEO William Morgan发起，目标位解决微服务之间的复杂链路问题。
 
@@ -38,7 +50,7 @@ ServiceMesh将程序开发的网络功能和程序本身解耦，网络功能下
 
 服务网格最常用的架构就是一个服务对应一个sidecar proxy。
 
-### 核心功能
+#### 核心功能
 
 1. 负载均衡
 
@@ -72,31 +84,31 @@ ServiceMesh将程序开发的网络功能和程序本身解耦，网络功能下
 
    服务网格代理与应用语言无关。
 
-## 产品对比
+### 产品对比
 
-### Linkerd
+#### Linkerd
 
 - Buoyant公司在2016年率先开源的高性能网络代理程序。是服务网格的鼻祖，标志着Service Mesh时代的开始。
 - 配置和管理比较复杂。
 
-### Envoy
+#### Envoy
 
 - 高性能服务网格程序，为云原生设计。但是他并不是一款完整的服务网格产品，只是个网络代理程序。
 - Istio和Kuma属于比较完整的服务网格程序，是基于Envoy开发的。
 
-### Kuma
+#### Kuma
 
 - 由Kong开发并提供支持，是一个通用的现代服务网格控制平面。基于Envoy构建。
 
-### Istio
+#### Istio
 
 - Istio受Google、IBM、Lyft等公司的支持和推广，于2017年5月发布。底层为Envoy。
 - 因为有大厂支持和背书，是现在服务网格产品的首选。
 - 很多云计算大厂的k8s产品带的服务网格功能，底层也是接入的istio。
 
-# istio功能
+## Istio 功能与架构
 
-## 文档
+### 参考文档
 
 官方文档：[Istio - What is Istio](https://istio.io/docs/concepts/what-is-istio/)
 
@@ -104,25 +116,25 @@ Github地址：[istio/istio](https://github.com/istio/istio/releases)
 
 详解文章：[Istio详解 - 掘金](https://juejin.cn/post/7310878133720301604)
 
-## 核心功能
+### 核心功能
 
 Istio是一个开源的服务网格（Service Mesh）产品，专为微服务架构设计，用于透明的管理微服务间的通信、安全、监控和流量策略。
 
-Istio通过sidecar拦截并控制服务间的所有流量，将复杂的微服务治理从业务代码中剥离，病下沉到基础设施层，使开发者更专注于业务逻辑，以提升开发效率。
+在 Sidecar 模式下，Istio 通过 Envoy 拦截并控制服务间流量，将复杂的微服务治理从业务代码中剥离并下沉到基础设施层，使开发者更专注于业务逻辑。Ambient 模式则以节点级 Ztunnel 承担 L4 能力，并按需引入 Waypoint 提供 L7 治理。
 
 以下是Istio的一些基本特性：
 
 1. 代理注入：Istio使用Envoy作为其数据面代理，通过注入Envoy代理到每个微服务的Pod中，实现对流量的控制和管理。这种代理注入的方式无需修改应用代码，提供了一种非侵入式的部署方式。（部署好istio，会自动在创建的pod里面注入一个sidecar envoy容器）
 2. 服务发现：Istio通过在代理中集成服务注册和发现机制，实现对微服务实例的自动发现和路由。它能够动态地将流量转发到可用的服务实例，并支持多种服务发现的机制 
-3. 负载均衡：Istio提供了丰富的负载均衡策略，可以根据不同的需求进行流量的分发和负载均衡，包括轮询、加权轮询、故障感知等。（Istio主要工作在六层）
+3. 负载均衡：Istio 提供轮询、最小请求、随机和故障感知等策略，并可同时治理 L4 与 L7 流量。
 4. 流量管理：Istio可以实现对流量的灵活管理和控制，支持流量切分、A/B测试、金丝雀发布等高级流量管理功能。它可以帮助开发人员更好地控制和管理微服务架构中的流量。
 5. 故障恢复：Istio提供了故障恢复机制，包括超时控制、重试、断路器和熔断等。它能够自动检测和处理微服务中的故障，并提供弹性和可靠性。
 6. 安全性：Istio提供了丰富的安全功能，包括双向TLS流量加密（mTLS）、身份认证和授权、访问控制（用的比较少，开发者还是更愿意在程序内部处理认证逻辑）等。它可以通过自动注入代理，对服务间的通信进行加密和验证，提供了更高层次的安全保障。
 7. 集群出入口流量管理：入口流量，可以代替ingress-controller提供外部访问入口；出口流量，可以让集群出口流量固定到某一个出口出去。
 
-### 流量管理
+#### 流量管理
 
-#### 熔断
+##### 熔断
 
 - 熔断是一种故障保护机制，用于在服务之间的通信中防止故障扩散，并提供更好的容错能力。在微服务架构中，一个应用通常由许多小型的、相互协作的服务组成。当某个服务发生故障或变得不可用时，如果不采取措施，可能会导致连锁反应，影响到整个系统的可用性。熔断机制旨在解决这个问题，其核心思想是在服务之间设置阈值和超时时间，并对请求进行监控。当服务的错误率或响应时间超过预设的阈值时，熔断器会打开，拒绝向该服务发送更多请求，并快速失败返回错误，而不是等待超时。
 - 应用场景
@@ -132,25 +144,23 @@ Istio通过sidecar拦截并控制服务间的所有流量，将复杂的微服�
   4. 自动重试: 一旦目标服务恢复，熔断器会逐渐允许一部分流量通过，如果没有再次出现问题，会逐渐恢复到正常状态，否则继续保持熔断状态。
 - 在高并发情况下，如果请求数量达到一定极限（可以自己设置阈值），超出了设置的阈值，断路器会自动开启服务保护功能，通过服务降级的方式返回一个友好的提示给客户端。假设当10个请求中，有10%失败时，熔断器就会打开，此时再调用此服务，将会直接返回失败，不再调远程服务。直到10s之后，重新检测该触发条件，判断是否把熔断器关闭或者继续打开。
 
-#### 超时
+##### 超时
 
 - 在 Kubernetes（K8s）集群中结合 Istio，可以使用 Istio 的流量管理功能来控制服务之间的请求超时。超时是指在一定时间内，如果某个请求没有得到及时响应，就会被认为是超时。通过设置请求超时时间，可以对服务之间的通信进行控制，确保请求在合理的时间内得到响应，避免请求无限期地等待导致资源浪费或影响整体系统的响应性能。
 
   Istio 的超时控制允许你为每个服务之间的请求设置最大的等待时间。当某个请求在指定的超时时间内没有得到响应时，Istio 会终止该请求并返回一个错误响应给客户端。这样可以防止请求在后端服务长时间等待，从而避免请求积压，同时提高系统的稳定性和可用性。
 
-#### 重试
+##### 重试
 
 - 重试机制就是如果调用服务失败，Envoy 代理尝试连接服务的最大次数。而默认情况下，Envoy 代理在失败后并不会尝试重新连接服务。
 
-# istio架构
+### 架构总览
 
 ![image-20240212203342339](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202402122033623.png)
 
 Istio从逻辑上分为数据平面和控制平面：
 
-- 控制平面：
-  - 负责管理和配置数据平面的流量策略。由管理员创建的Istio资源会解析成相关的配置下发到数据平面
-  - **istio 1.5+中使用了一个全新的部署模式，重建了控制平面，将原有的多个组件整合为一个单体结构istiod，这个组件是控制平面的核心，管理Istio的所有功能，主要包括Pilot、Mixer、Citadel等服务组件，是以三个进程运行的。**
+- 控制平面：负责管理和配置数据平面的流量策略。管理员创建 Istio 资源后，控制平面会把资源转换为代理可理解的配置并下发。Istio 1.5 起以 `istiod` 作为统一控制平面；早期版本中的 Pilot、Citadel、Galley、Mixer 等职责已经合并、替代或移除。
 
 - 数据平面：
   - 由一组以Sidecar方式部署的智能代理容器组成。这些代理承载并控制微服务之间的所有网络通信，管理入口和出口流量，类似于一线员工。
@@ -159,7 +169,7 @@ Istio从逻辑上分为数据平面和控制平面：
     - Sidecar模式：为集群中启动的pod部署一个Envoy代理，或者为在虚拟机上运行的服务并行创建一个Envoy代理。
     - Ambient模式：在每个节点上启动四层代理Ztunnel，也可以在每个命名空间启动一个Envoy（waypoint）。出现这种模式是因为sidecar也需要占用资源，pod量上去之后，大量的sidecar也要占用很多资源。这种模式在节点上启动一个代理，这个代理故障会影响整个节点的流量。
 
-## 工作模式对比
+### Sidecar 与 Ambient 工作模式
 
 | 对比项   | 对比维度     | Sidecar                              | Ambient                                                      |
 | -------- | ------------ | ------------------------------------ | ------------------------------------------------------------ |
@@ -172,21 +182,37 @@ Istio从逻辑上分为数据平面和控制平面：
 |          | 启动延迟     | pod启动时需要等待Sidecar就绪         | Pod启动无需等待代理，延迟更低                                |
 | 性能对比 | 调用延迟     | 每个请求经过两次Envoy代理            | 四层经过Ztunnel，七层经过Waypoint。（跨ns、跨节点时，经过多跳Ztunnel和Waypoint，延迟可能更多） |
 
-Sidecar模式官方也是推荐在生产环境中使用，非常成熟稳定，而且服务网格大部分功能都支持。
+Sidecar 是“每个 Pod 一个全功能代理”，Ambient 是“L4 默认覆盖、L7 按需引入”的分层代理。两者不是简单的新旧替代关系，应根据功能、资源成本和迁移风险选择。
 
-Ambient在官网一直是标成Beta版本，不推荐在生产环境中使用，有些功能不支持，比如跨集群、虚拟机服务代理等。
+#### 性能与成本边界
 
-# istio组件
+L4 相比 L7 的资源节省幅度取决于协议、连接模型和策略复杂度。原始测试材料给出的区间为：CPU 约 20%～60%、P99 延迟约 10%～40%、内存约 15%～40%；这些是特定场景的观测区间，不能当作通用承诺。短连接越多，或路由匹配、镜像、重试、WASM 等 L7 策略越复杂，L7 代理成本通常越明显。
 
-## 控制平面
+> [!note] “完全零复制”并不现实
+> 代理执行治理逻辑需要读取数据，mTLS 加解密也有 CPU 成本，跨进程数据路径无法完全共享内存。可优化的方向是少解析（L4 优先）、少策略（只启用必要能力）和少链路（避免不必要的镜像与过滤器）。
 
-### Pilot
+#### 选型与迁移
+
+- 适合优先评估 Ambient：服务数量大、Sidecar 常驻成本明显，大量流量只需要 L4 安全与连通能力。
+- 适合继续使用 Sidecar：深度依赖复杂 L7 能力、当前架构已长期稳定，或缺少充分的迁移和回归验证窗口。
+- 推荐采用分域、分批、可回滚的混合迁移：低风险域 → 中风险域 → 核心域；先让 L4 跑稳，再按需引入 Waypoint。
+- 迁移前后统一观察 P99、5xx、CPU/内存，并为核心链路保留回滚路径。
+
+做选型前先回答三个问题：业务需要多少 L7 治理；主要瓶颈是资源成本还是稳定性；团队是否具备分批迁移和可回滚验证能力。
+
+参考来源：[Istio Sidecar vs Ambient：不是“谁先进”，而是“谁更省、谁更稳、谁更适合你现在”](https://mp.weixin.qq.com/s/eU4w9RpIvP6CGXSzKFpZfA)
+
+### Istio 组件
+
+#### 控制平面
+
+##### Pilot
 
 Pilot主要用于监听API Server，动态获取集群中的svc和endpoint信息，将配置的路由规则、负载均衡策略转换为Envoy可理解的配置，下发到各个Sidecar中。
 
 ![image-20240212204831402](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202402122048477.png)
 
-###  Citadel
+##### Citadel（历史组件职责）
 
 - Citadel负责Istio中的身份和凭据管理，提供安全相关功能。它用于为服务生成和分发TLS证书，以实现服务之间的安全通信。
 
@@ -194,15 +220,15 @@ Pilot主要用于监听API Server，动态获取集群中的svc和endpoint信息
 
   ![image-20240212205143030](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202402122051084.png)
 
-### Galley
+##### Galley（历史组件职责）
 
 - Galley是Istio的配置管理组件，负责验证、转换和分发配置给其他Istio组件。它监听Kubernetes的配置更改，例如Service、Deployment等，根据规则和策略生成Istio所需的配置，并将其提供给Pilot和其他组件。
 - Gallery使用Mesh Configuration Protocol和其他组件进行配置交互。
 - Galley可以被看作是团队中的文件管理员。它负责管理团队中所有的文件和信息，确保每个队员都能得到正确的信息和文件。当有新的文件产生或者文件发生变化时，Galley会及时通知团队中的每个成员，确保大家都使用的是最新的文件，不会出现信息不同步的问题。
 
-## 数据平面
+#### 数据平面
 
-### Envoy
+##### Envoy
 
 - Envoy是Istio中的代理，pod开启了istio功能，会在pod里自动注入Envoy sidecar容器，它负责处理服务之间的所有网络通信，拦截并转发所有的HTTP、TCP和gRPC流量。Envoy提供强大的流量控制和管理功能，如路由、重试、超时和故障注入等。
 
@@ -212,7 +238,7 @@ Pilot主要用于监听API Server，动态获取集群中的svc和endpoint信息
 
   ![image-20240212205022521](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202402122050589.png)
 
-## 组件调用关系
+#### 组件调用关系
 
 <img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202402131741612.png" alt="image-20240213174135452" style="zoom: 67%;" />
 
@@ -222,13 +248,13 @@ Pilot主要用于监听API Server，动态获取集群中的svc和endpoint信息
 4. 负载均衡：服务发起方的Envoy根据配置的负载均衡策略选择服务实例，并连接对应的实例地址。上图中，数据面的各个Envoy从Pilot中获取forecast服务的负载均衡配置，并执行负载均衡动作。 
 5. 流量治理：Envoy 从 Pilot 中获取配置的流量规则，在拦截到 Inbound 流量和Outbound 流量时执行治理逻辑。上图中， frontend 服务侧的 Envoy 从 Pilot 中获取流量治理规则，并根据该流量治理规则将不同特征的流量分发到forecast服务的v1或v2版本。 
 6. 访问安全：在服务间访问时通过双方的Envoy进行双向认证和通道加密，并基于服务的身份进行授权管理。上图中，Pilot下发安全相关配置，在frontend服务和forecast服务的Envoy上自动加载证书和密钥来实现双向认证，其中的证书和密钥由另一个管理面组件 Citadel维护。 
-7. 服务监测：在服务间通信时，通信双方的Envoy都会连接管理面组件Mixer上报访问数据，并通过Mixer将数据转发给对应的监控后端。上图中，frontend服务对forecast服务的访问监控指标、日志和调用链都可以通过这种方式收集到对应的监控后端。 
-8. 策略执行：在进行服务访问时，通过Mixer连接后端服务来控制服务间的访问，判断对访问是放行还是拒绝。上图中，Mixer 后端可以对接一个限流服务对从frontend服务到forecast服务的访问进行速率控制等操作。 
+7. 服务监测：数据面代理生成指标、访问日志和追踪信息，并交给对应的可观测性后端。早期架构使用 Mixer 汇聚遥测；新版本已把相关能力移入代理和控制平面扩展机制。
+8. 策略执行：代理依据控制平面下发的策略执行访问控制、限流等逻辑。早期版本可通过 Mixer 对接策略后端；新版本不再依赖 Mixer。
 9. 外部访问：在网格的入口处有一个Envoy扮演入口网关的角 色。上图中，外部服务通过Gateway访问入口服务 frontend，对 frontend服务的负载均衡和一些流量治理策略都在这个Gateway上执行。
 
-# istio核心资源
+## Istio 核心资源
 
-## DestinationRule
+### DestinationRule
 
 目标规则，将服务划分为多个版本（子集），同时可以对不同版本进行配置负载均衡和连接池等策略。
 
@@ -238,9 +264,9 @@ Pilot主要用于监听API Server，动态获取集群中的svc和endpoint信息
 2. 负载均衡策略：支持配置各种负载均衡算法（如轮询、随机、最小链接数等）
 3. 熔断器：支持配置最大连接数、熔断等
 
-## VirtualService
+### VirtualService
 
-Istio路由规则的核心，用于控制流量走向。和Ingress类似，支持HTTP、gPRC、TCP等协议。
+Istio 路由规则的核心，用于控制流量走向。和 Ingress 类似，支持 HTTP、gRPC、TCP 等协议。
 
 控制南北流量：可以声明一个域名实现集群外访问。与Ingress类似。
 
@@ -252,7 +278,7 @@ Istio路由规则的核心，用于控制流量走向。和Ingress类似，支�
 2. A/B测试：支持基于请求头、URI、权重等条件的流量分配
 3. 重试：支持错误重试、故障注入、链接超时等策略
 
-## Gateway
+### Gateway
 
 Istio集群的出入口网关，处理对外的流量。通常和VirtualService结合实现内外流量的统一治理。
 
@@ -263,18 +289,18 @@ Istio集群的出入口网关，处理对外的流量。通常和VirtualService�
 3. 域名：可以根据域名进行路由转发
 4. 出口管控：可以将出口的流量固定从EgressGateway的服务中代理出去
 
-### Ingressgateway
+#### IngressGateway
 
 - ingressgateway是Istio中的一个特殊网关，它作为整个网格的入口，接收外部请求，并将它们引导到内部的服务。
 - 可以将它比作一个大门保安，负责接收外部人员的访问请求，然后根据配置的规则将请求分发给网格内部的服务。
 - 可以类比为ingress-nginx controller。在本地实验环境部署中，本地域名+ingressgateway svc的高位端口访问到集群服务。
 
-### egressgateway
+#### EgressGateway
 
 - egressgateway是Istio中的另一个特殊网关，它负责处理网格内部服务对集群外部服务的访问请求。
 - 可以将它看作是一个网格内部的出口，负责将内部服务需要访问的外部服务请求发送到外部。
 
-## 核心资源逻辑架构
+### 核心资源逻辑架构
 
 ![image-20250826154253315](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202508261542496.png)
 
@@ -286,11 +312,11 @@ Istio集群的出入口网关，处理对外的流量。通常和VirtualService�
 
 以上三种资源不是实际存在的，只是一些配置，Istio拿到这些资源，翻译成Envoy认识的配置，实际本质上起作用的还是Envoy、IngressGateway。
 
-## 核心资源定义
+### 核心资源定义
 
 官网文档：[Istio Traffic Management](https://istio.io/latest/docs/reference/config/networking/)
 
-### DestinationRule
+#### DestinationRule
 
 [Istio / Destination Rule](https://istio.io/latest/docs/reference/config/networking/destination-rule/)
 
@@ -302,18 +328,18 @@ metadata:
 spec:
   host: ratings.prod.svc.cluster.local # 路由规则的目标。客户端向服务端发送请求时用的地址。一般是写svc FQDN
   trafficPolicy: # 针对这一个svc，配置流量规则配置
-    loadbalancer:
+    loadBalancer:
       simple: LEAST_REQUEST # 最小请求算法
   subsets: # 版本划分
   - name: v3 # 自己起一个版本名称
     labels:
       version: v3
     trafficPolicy: # 还可以对不同版本的服务做配置，这里的会覆盖掉外面的trafficPolicy
-      loadbalancer:
+      loadBalancer:
         simple: ROUND_ROBIN # 轮询算法
 ~~~
 
-### VirtualService
+#### VirtualService
 
 [Istio / Virtual Service](https://istio.io/latest/docs/reference/config/networking/virtual-service/)
 
@@ -334,7 +360,7 @@ spec:
   - my-gateway
   http: # 配置七层代理规则 - 某个路径路由到哪个服务
   - match:
-    - url:
+    - uri:
         prefix: /productpage/v1/
     route:
     - destination:
@@ -346,7 +372,7 @@ spec:
         host: productpage.nsA.svc.cluster.local
 ~~~
 
-### Gateway
+#### Gateway
 
 [Istio / Gateway](https://istio.io/latest/docs/reference/config/networking/gateway/)
 
@@ -372,11 +398,11 @@ spec:
 
 不推荐把所有的域名全放在一个Gateway资源里面，这样翻译出来的Envoy配置文件会变得很大。
 
-# istio生产环境高可用架构
+## 生产环境高可用架构
 
 回顾Ingress Controller的高可用架构：ingress Controller的pod所在的宿主机暴露80/443端口，前端有个负载均衡器LB（F5、SLB、LVS、HAProxy等），购买的公网域名绑定到LB的IP上。LB配置80/443端口，解析到ingress-conrtoller的节点的80/443上，ingress-controller再把流量代理到后端svc-pod。
 
-## istio gateway架构
+### Istio Gateway 架构
 
 对于istio也是类似的：
 
@@ -386,21 +412,21 @@ Istio Gateway和ingress-controller一样，也是有一个端口在宿主机上�
 
 服务发布到公网，需要在前端LB上配置IP或者代理，指向后端的istio gateway的端口号，由istio gateway再代理到后端服务。
 
-## 设备选型问题
+### 与 Ingress Controller 的选型
 
 istio gateway和ingress controller功能一样，实际使用中用哪个？
 
 在功能层面，istio gateway完全覆盖ingress controller的功能（反之则不行）。所以建议网关直接用istio gateway。
 
-# itsio部署
+## Istio 安装与部署
 
-## 版本release表
+### 版本与兼容性
 
 官网版本支持表：[Istio Supported Releases](https://istio.io/latest/docs/releases/supported-releases/#support-status-of-istioreleases)
 
 github release：[Releases - istio/istio](https://github.com/istio/istio/releases)
 
-## 安装istioctl
+### 使用 istioctl 安装
 
 Istio自带istioctl工具，用来操作istio。
 
@@ -410,20 +436,132 @@ wget https://github.com/istio/istio/releases/download/1.27.0/istio-1.27.0-linux-
 #解压后，将Istio的客户端工具istioctl，移动到/usr/local/bin 目录下： 
 tar xf istio-1.27.0-linux-amd64.tar.gz 
 cd istio-1.27.0 && mv bin/istioctl /usr/local/bin/ 
-istioctl version 
+istioctl version
 ~~~
 
-## 声明istioOperator资源 - 测试环境
+#### Helm 安装
+
+参考：[Istio Helm 安装文档](https://istio.io/latest/zh/docs/setup/install/helm/)、[GitHub Releases](https://github.com/istio/istio)、[Artifact Hub - base](https://artifacthub.io/packages/helm/istio-official/base)、[Artifact Hub - istiod](https://artifacthub.io/packages/helm/istio-official/istiod)、[Artifact Hub - gateway](https://artifacthub.io/packages/helm/istio-official/gateway)。以下以 1.27.1 为示例版本：
+
+~~~sh
+helm repo add istio https://istio-release.storage.googleapis.com/charts
+helm repo update
+
+# 如需离线保存 Chart
+helm pull istio/base --version 1.27.1
+helm pull istio/istiod --version 1.27.1
+helm pull istio/gateway --version 1.27.1
+
+# 安装顺序：CRD/base -> control plane -> gateway
+helm upgrade --install istio-base istio/base \
+  --namespace istio-system --create-namespace \
+  --version 1.27.1 --set defaultRevision=default
+~~~
+
+`istiod-values.dev.yaml`：
+
+~~~yaml
+meshConfig:
+  enablePrometheusMerge: true
+  accessLogEncoding: JSON
+  accessLogFile: /dev/stdout
+
+global:
+  defaultResources:
+    requests:
+      cpu: 50m
+      memory: 128Mi
+  hub: m.daocloud.io/docker.io/istio
+  imagePullPolicy: IfNotPresent
+~~~
+
+~~~sh
+helm upgrade --install istiod istio/istiod \
+  --namespace istio-system --version 1.27.1 \
+  -f istiod-values.dev.yaml --wait
+~~~
+
+`gateway-values.dev.yaml`：
+
+~~~yaml
+service:
+  type: NodePort
+  ports:
+    - name: status-port
+      port: 15020
+      protocol: TCP
+      targetPort: 15020
+      nodePort: 30520
+    - name: http2
+      port: 80
+      protocol: TCP
+      targetPort: 8080
+      nodePort: 30080
+    - name: https
+      port: 443
+      protocol: TCP
+      targetPort: 8443
+      nodePort: 30443
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: "2"
+    memory: 1Gi
+
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 80
+
+imagePullPolicy: IfNotPresent
+~~~
+
+~~~sh
+helm upgrade --install istio-ingress istio/gateway \
+  --namespace istio-system --version 1.27.1 \
+  -f gateway-values.dev.yaml --wait
+~~~
+
+Kiali、Jaeger、Prometheus、Grafana 等附加组件不随上述核心 Chart 一起安装；实验环境可使用 Istio release 包中的 `samples/addons/` 清单，生产环境应按各组件自己的生命周期独立管理。
+
+#### 历史环境记录：Kubernetes 1.23 + Istio 1.13.1
+
+以下内容用于复现实验室中的旧环境，不代表当前版本兼容性建议。版本选择应以当前 [Istio Supported Releases](https://istio.io/latest/docs/releases/supported-releases/) 为准。
+
+~~~sh
+tar zxvf istio-1.13.1.tar.gz
+cd istio-1.13.1
+export PATH="$PWD/bin:$PATH"
+install -m 0755 bin/istioctl /usr/local/bin/istioctl
+
+# 离线环境在工作节点导入所需镜像
+docker load -i pilot.tar.gz
+docker load -i proxyv2.tar.gz
+docker load -i httpbin.tar.gz
+
+# demo profile 仅用于学习和功能验证
+istioctl install --set profile=demo -y
+kubectl get pods -n istio-system
+
+# 卸载
+istioctl x uninstall --purge -y
+~~~
+
+### IstioOperator 配置：测试环境
 
 对于istio安装，也是建议用istioctl工具安装，首先需要声明istioOperator的配置：
 
-### 创建istio-system ns
+#### 创建 istio-system Namespace
 
 ~~~sh
 kubectl create ns istio-system
 ~~~
 
-### 声明istioOperator配置
+#### 声明 IstioOperator 配置
 
 创建istio-operator.yaml：
 
@@ -468,7 +606,7 @@ spec:
             targetPort: 8443 
 ~~~
 
-### 安装istio
+#### 安装 Istio
 
 ~~~sh
 istioctl install -f istio-operator.yaml
@@ -476,7 +614,7 @@ istioctl install -f istio-operator.yaml
 # Proceed? (y/N) y 
 ~~~
 
-#### profile选项
+##### Profile 选项
 
 - 使用 `istioctl` 安装 Istio 时，会根据指定的 profile 来选择使用的 Istio 配置文件。
 
@@ -484,11 +622,9 @@ istioctl install -f istio-operator.yaml
 
 - 在 Istio 的安装过程中，profile 参数可以指定为以下一些值：
 
-  - demo：适用于**生产环境**，包含`istiod`、`ingressgateway`、`egressgateway`
-
-  - default：这是一个最小配置，仅包含最基本的组件，如`istiod`和`ingressgateway` 
-
-  - minimal：这个配置相对更加精简，只包含了必需的组件，适用于资源受限或轻量级的环境。只会安装`istiod`。
+  - `demo`：用于演示和功能验证，启用较多能力和较高日志级别，不建议直接用于生产。
+  - `default`：生产部署的常用起点，通常包含 `istiod` 和 ingress gateway。
+  - `minimal`：只安装控制平面 `istiod`，适合使用独立网关或资源受限的场景。
 
 - istioctl install 本质上是根据选择的 profile 来加载对应的 YAML 配置文件，并将配置部署到 Kubernetes 集群中。
 
@@ -500,19 +636,19 @@ istioctl install -f istio-operator.yaml
 
   这将打印出 demo 配置的完整内容，包括各个组件的配置选项。你也可以在 Istio 官方文档中找到各种预定义的 profile 配置选项的详细信息。
 
-## 声明istioOperator资源 - 生产环境
+### IstioOperator 配置：生产环境
 
 测试环境安装出来的isitio和ingressgateway只有一个副本。生产环境建议两个以上的服务。
 
-### 创建istio-system ns
+#### 创建 istio-system Namespace
 
 ~~~sh
 kubectl create ns istio-system
 ~~~
 
-### 声明istioOperator配置
+#### 声明 IstioOperator 配置
 
-istio组件的
+生产环境至少为控制平面和入口网关配置多副本、HPA、资源请求与限制：
 
 ~~~yaml
 apiVersion: install.istio.io/v1alpha1 
@@ -575,7 +711,7 @@ spec:
             targetPort: 8443
 ~~~
 
-### 安装istio
+#### 安装 Istio
 
 ~~~sh
 istioctl install -f istio-operator.yaml 
@@ -583,14 +719,14 @@ istioctl install -f istio-operator.yaml
 # Proceed? (y/N) y 
 ~~~
 
-# istio自动注入sidecar
+## Sidecar 自动注入与退出
 
-istio自动注入sidecar的方式有两种：
+Istio 自动注入 Sidecar 的方式有两种：
 
-1. Namespace级别：添加`istio-injection=enabled`（disabled就关闭自动注入）的标签到指定的namespace，那么该namespace下的pod1都会被自动注入一个Sidecar。
-2. Pod级别：添加`sidecar.istio.io/inject=true`（false就关闭自动注入）的标签到指定的pod，那么该pod会被注入sidecar。
+1. Namespace 级别：给 Namespace 添加 `istio-injection=enabled` 标签；在该 Namespace 中新建或重建的 Pod 会被自动注入 Sidecar。
+2. Pod 级别：在 Pod template 的 annotations 中设置 `sidecar.istio.io/inject: "true"`；设为 `"false"` 可覆盖 Namespace 的自动注入设置。
 
-## 测试sidecar注入
+### 测试 Sidecar 注入
 
 创建测试ns：
 
@@ -615,12 +751,13 @@ kubectl apply -f sleep.yaml -n istio-test
 ~~~yaml
   template: 
     metadata: 
-      labels: 
-        app: sleep 
-        sidecar.istio.io/inject: "true" 
+      labels:
+        app: sleep
+      annotations:
+        sidecar.istio.io/inject: "true"
 ~~~
 
-## 关闭sidecar注入
+### 关闭 Sidecar 注入
 
 如果某个服务不想被注入sidecar，可以添加`sidecar.istio.io/inject=false`的标签即可：
 
@@ -632,9 +769,10 @@ vim curl.yaml
 ~~~yaml
 template: 
   metadata: 
-    labels: 
-      app: curl 
-      sidecar.istio.io/inject: "false" 
+      labels:
+        app: curl
+      annotations:
+        sidecar.istio.io/inject: "false"
   spec: 
     terminationGracePeriodSeconds: 0 
     serviceAccountName: curl 
@@ -654,17 +792,19 @@ kubectl label namespace istio-test istio-injection-
 > - 打开某个ns的istio sidecar注入，其中个别pod不需要sidecar，就打标签关闭注入。
 > - 单独开某几个pod的情况比较少
 
-# istio可视化工具Kiali
+## 可观测性组件
+
+### Kiali
 
 Kiali为Istio提供了可视化的界面，可以在Kiali上进行观测流量的走向、调用链，同时还可以使用Kiali进行配置管理。
 
-## 安装
+#### 安装 Kiali
 
 kiali就在istio的安装包中，service改成NodePort，直接安装即可
 
-~~~yaml
-vim ./istio-1.27/samples/addons/kiali.yaml
+在 `samples/addons/kiali.yaml` 中将 Kiali Service 调整为 NodePort：
 
+~~~yaml
 apiVersion: v1 
 kind: Service 
 metadata: 
@@ -672,25 +812,32 @@ metadata:
   namespace: "istio-system" 
 spec: 
   type: NodePort
-  
-# 安装
+~~~
+
+~~~sh
 kubectl apply -f ./istio-1.27/samples/addons/kiali.yaml
 # 通过NodePort高位端口访问UI界面
 ~~~
 
-# 安装链路追踪jaeger
+### Jaeger 链路追踪
 
 除了Kiali 之外，还可以安装一个链路追踪的工具，安装该工具可以在Kiali的Workloads页面，查看某个服务的Traces信息：
 
-~~~yaml
+~~~sh
 cd ./istio-1.27.0/samples/addons
 
 # 首先更改镜像地址 
 vim samples/addons/jaeger.yaml 
-image: "m.daocloud.io/docker.io/jaegertracing/all-in-one:1.67.0"
-
 # 更改名称为tracing的svc为NodePort
-vim samples/addons/jaeger.yaml 
+vim samples/addons/jaeger.yaml
+~~~
+
+需要修改的关键配置：
+
+~~~yaml
+# Deployment/Pod template 中的镜像
+image: "m.daocloud.io/docker.io/jaegertracing/all-in-one:1.67.0"
+---
 apiVersion: v1
 kind: Service
 metadata:
@@ -712,7 +859,9 @@ spec:
       targetPort: 16685
   selector:
     app: jaeger
+~~~
 
+~~~sh
 # 创建
 kubectl create -f samples/addons/jaeger.yaml
 
@@ -721,7 +870,7 @@ kubectl create -f samples/addons/jaeger.yaml
 
 > [!tip] 注意：公司如果真需要上链路追踪，建议用更专业的Skywalking。jaeger这个比较简单而且也不太好用。
 
-# 集成prometheus+grafana
+### Prometheus 与 Grafana
 
 Istio 默认暴露了很多监控指标，比如请求数量统计、请求持续时间以及Service和工作负载的指标，这些指标可以使用Prometheus进行收集，Grafana进行展示。
 
@@ -731,7 +880,7 @@ Istio 内置了Prometheus和Grafana的安装文件，直接安装即可。
 >
 > 但是建议istio的prometheus和grafana单独安装，因为集群自己的prometheus需要监控很多集群其他指标，不建议再接入istio的指标。istio用自己独立的prometheus和grafana即可。
 
-## 安装
+#### 安装
 
 ~~~sh
 # 同样需要修改镜像地址 
@@ -749,7 +898,7 @@ kubectl create -f samples/addons/prometheus.yaml -f samples/addons/grafana.yaml
 # 完成后通过NodePort高位端口访问grafana
 ~~~
 
-## Grafana dashboard
+#### Grafana Dashboard
 
 进入到Grafana dashboard可以看到默认已经加进去了istio相关的dashboard。
 
@@ -769,11 +918,11 @@ kubectl create -f samples/addons/prometheus.yaml -f samples/addons/grafana.yaml
 
 1. 可以看到服务间访问的链路情况。
 
-# istio流量治理实践
+## Bookinfo 流量治理实践
 
 istio官网提供了BookInfo项目：[Istio Bookinfo Application](https://istio.io/latest/docs/examples/bookinfo/)
 
-## 部署bookinfo项目
+### 部署 Bookinfo 项目
 
 创建ns并添加自动注入标签：
 
@@ -800,11 +949,11 @@ image: m.daocloud.io/docker.io/istio/examples-bookinfo-productpage-v1:1.20.3
 kubectl apply -f samples/bookinfo/platform/kube/bookinfo.yaml -n bookinfo 
 ~~~
 
-## 使用域名发布服务
+### 使用域名发布服务
 
 接下来创建Istio的Gateway和VirtualService实现域名访问Bookinfo项目。
 
-### 创建Gateway
+#### 创建 Gateway
 
 首先创建Gateway，假设发布的域名是`bookinfo.kubeasy.com`。Gateway配置如下所示：
 
@@ -828,7 +977,7 @@ spec:
     - "bookinfo.kubeasy.com" # 发布域名
 ~~~
 
-### 创建VirtualService
+#### 创建 VirtualService
 
 接下来创建VirtualService，实现对不同微服务的访问
 
@@ -869,7 +1018,7 @@ spec:
 kubectl apply -f bookinfo-gateway.yaml -f bookinfo-vs.yaml -n bookinfo
 ~~~
 
-### 发布域名
+#### 发布域名
 
 接下来，在宿主机上将域名bookinfo.kubeasy.com解析至集群任意一个安装了kube-proxy的节点IP上。通过ingressgateway的Service的NodePort即可访问到Bookinfo：
 
@@ -885,13 +1034,13 @@ kubectl get svc -n istio-system istio-ingressgateway
 
 3. 然后去kiali - traffic graph里面看到流量链路图。
 
-## 地址重写和重定向
+### 地址重写和重定向
 
 Istio 同样支持访问地址的重写和重定向，这个功能一般用于新旧域名的替换和移动端、桌面端互相跳转。效果是访问某个域名的某个路径时，自动跳转到另一个域名的另一个路径。
 
 详细配置文档：[Istio HTTPRedirect](https://istio.io/latest/docs/reference/config/networking/virtual-service/#HTTPRedirect) 
 
-### 域名重定向
+#### 域名重定向
 
 比如将`bookinfo.kubeasy.com/hangx`跳转到` edu.51cto.com/lecturer/11062970.html`，在VS里面配置：
 
@@ -935,11 +1084,11 @@ spec:
 kubectl apply -f bookinfo-vs.yaml -n bookinfo
 ~~~
 
-### 地址重写
+#### 地址重写
 
 地址重写的一个典型应用场景就是：
 
-1. 同一个域名代理了很多后端服务，比如：test.com --> a、b、b三个服务，需要通过test.com/a、test.com/b、test.com/c来路由到不同后端服务
+1. 同一个域名代理多个后端服务，例如 `test.com` 对应 a、b、c 三个服务，需要通过 `/a`、`/b`、`/c` 路由到不同后端。
 2. 但是对于a、b、c服务的三个后端pod，开发出来对外暴露的接口都是/api。你直接访问test.com/a报404，因为pod根本没暴露这个接口，人家暴露的是/api
 3. 这就需要根据域名/路径，重定向到后端服务。比如将test.com/a重写为test.com/api，route配置为a服务的svc。
 
@@ -989,7 +1138,7 @@ spec:
 kubectl apply -f bookinfo-vs.yaml -n bookinfo
 ~~~
 
-## istio实现灰度发布
+### 灰度发布
 
 使用Istio进行细粒度的流量管理，步骤如下：
 
@@ -998,7 +1147,7 @@ kubectl apply -f bookinfo-vs.yaml -n bookinfo
 3. 部署新版本
 4. 使用VS逐渐切换比例流量到新版本
 
-### 创建DR划分子集
+#### 创建 DestinationRule 划分子集
 
 在bookinfo项目中，有三个版本的reviews服务（svc只有一个，pod有三个版本的共存；每组的pod都打好了标签version=v1、v2、v3）。
 
@@ -1027,7 +1176,7 @@ spec:
 kubectl apply -f bookinfo-canary-dr.yaml -n bookinfo
 ~~~
 
-### 创建VS路由流量
+#### 创建 VirtualService 路由流量
 
 1. 首先将所有流量路由到v1：
 
@@ -1047,7 +1196,7 @@ spec:
 ~~~
 
 ~~~sh
-kubectl apply -f vs-reviews-v1-all.yaml -n bookinfo
+kubectl apply -f vs-reviews-canary.yaml -n bookinfo
 ~~~
 
 2. 开发了v2版本上线，现在把20%流量切到v2作为灰度发布：
@@ -1073,7 +1222,7 @@ spec:
 ~~~
 
 ~~~sh
-kubectl apply -f vs-reviews-v1-all.yaml -n bookinfo
+kubectl apply -f vs-reviews-v2-all.yaml -n bookinfo
 ~~~
 
 3. 将流量全部导向v2
@@ -1097,7 +1246,7 @@ spec:
 kubectl apply -f vs-reviews-v1-all.yaml -n bookinfo
 ~~~
 
-## istio实现A/B测试
+### A/B 测试
 
 Istio也支持基于请求头、uri、schema等方式的细粒度流量管理，这种路由方式比较适用于新版本上线时的AB测试。
 
@@ -1139,7 +1288,7 @@ kubectl apply -f vs-ab-json-v3.yaml -n bookinfo
 2. 当AB测试完成后，可以再接上一个灰度发布，20%到v3，80%到v2。
 3. 灰度发布完成后，再完全切换流量到v3
 
-## istio负载均衡算法
+### 负载均衡算法
 
 k8s原生可以调整节点级别kube-proxy ipvs的负载均衡算法，但是不支持精细化到pod级别的负载均衡算法，Istio可以。
 
@@ -1159,7 +1308,7 @@ Istio原生支持多种负载均衡算法，比如ROUND_ROBIN、LEAST_REQUEST、
 
 5. UNSPECIFIED：未指定负载均衡算法，Istio将选择一个合适的默认算法，不推荐使用。
 
-### 更改负载均衡算法
+#### 更改负载均衡算法
 
 更改负载均衡算法需要在DR上配置，因为DR才是控制流量作用到pod上的。
 
@@ -1192,13 +1341,13 @@ spec:
 kubectl apply -f bookinfo-canary-dr.yaml -n bookinfo
 ~~~
 
-## istio熔断配置
+### 熔断与连接池
 
 Istio支持熔断机制，可以实现在高并发时对服务进行过载保护。比如部署了一个大模型服务，只能同时支持100用户请求。此时来了高于100个请求，就会造成服务宕机，影响前100个正常用户的访问。这样影响太大。可以设置熔断，超过最大并发量的时候，新进来的请求返回一个“当前繁忙，请稍后再试”之类的友好提示。
 
 假设对ratings进行熔断，希望在并发请求数超过3，并且存在1个以上的待处理请求，就触发熔断。因为熔断也是在最终实例pod上生效的，也是在DR上配置的。
 
-### DR配置熔断
+#### DestinationRule 配置熔断
 
 此时可以配置ratings的DestinationRule如下所示： 
 
@@ -1229,7 +1378,7 @@ spec:
       version: v1 
 ~~~
 
-### fortio压测
+#### Fortio 压测
 
 istio安装包提供了压测工具fortio，先部署一下：
 
@@ -1269,9 +1418,19 @@ Code 503 : 15 (75.0 %)
 
 说明触发了熔断，pod没有直接挂掉，实现了过载保护。
 
-## istio故障注入
+#### 参数含义与调优方法
 
-### 延迟
+- `maxConnections`：到单个目标实例的 TCP 最大连接数，应结合应用并发能力、连接复用方式和 Pod 资源上限压测确定。
+- `http1MaxPendingRequests`：HTTP/1.1 最大挂起请求数，超过阈值的新请求会被拒绝，用于阻止队列无限增长。
+- `maxRequestsPerConnection`：单连接最多处理的请求数，可限制过长连接，但过小会增加建连成本。
+- `consecutive5xxErrors` / `consecutiveGatewayErrors`：触发实例驱逐前允许的连续错误数。
+- `interval`：异常实例检测周期；`baseEjectionTime`：基础驱逐时长；`maxEjectionPercent`：最多可同时驱逐的实例比例。
+
+参数没有通用最优值。应从应用真实的并发上限、P99、错误率、连接模型和副本数出发，在测试环境逐步增加压力；生产配置还要避免 `maxEjectionPercent` 过高导致剩余实例过载。
+
+### 故障注入
+
+#### 延迟
 
 主要用来测试链路可靠性，比如三个服务A-B-C，由于偶发网络延迟高，C服务响应变慢，是否会影响A、B服务？这是链路可靠性的问题，需要我们进行测试。
 
@@ -1280,7 +1439,7 @@ Code 503 : 15 (75.0 %)
 ~~~sh
 kubectl create deploy -n bookinfo debug-tools --image=registry.cn-beijing.aliyuncs.com/dotbalo/debug-tools -- sleep 36000
 
-kubectl exec -ti debug-tools-5887bf6774-598tc  -n bookinfo –- bash
+kubectl exec -ti debug-tools-5887bf6774-598tc -n bookinfo -- bash
 time curl -I -s details:9080
 ~~~
 
@@ -1318,7 +1477,7 @@ time curl -I -s details:9080
 
 假设我们有A服务去访问details服务，设置的超时时间为2s，这样通过延迟故障注入，我们可以测试这个超时时间配置是否生效。
 
-### 中断
+#### 中断
 
 注入中断故障，可以模拟服务返回指定的状态码（400、503等），上游服务的处理是否符合预期。（上游服务如果接收到异常状态码，也抛出异常，那就不正确了；需要配置上异常处理才算是合理的代码）
 
@@ -1339,8 +1498,161 @@ spec:
         percentage: 
           value: 100 
         httpStatus: 400 # 故障状态码 
-     route: 
-     - destination: 
-         host: details 
+    route:
+    - destination:
+        host: details
 ~~~
 
+### 超时实践：Nginx 调用 Tomcat
+
+生产环境中，上游等待下游响应过久会积压请求，最终可能造成级联故障。这个实验让客户端访问 Nginx，Nginx 再代理 Tomcat：Tomcat 被注入 10 秒延迟，而客户端到 Nginx 的路由超时为 2 秒，因此客户端会在约 2 秒后收到超时响应。
+
+先部署两个服务；实验 Namespace 需要启用 Sidecar 注入：
+
+~~~yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:1.14-alpine
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-svc
+spec:
+  selector:
+    app: nginx
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tomcat
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tomcat
+  template:
+    metadata:
+      labels:
+        app: tomcat
+    spec:
+      containers:
+        - name: tomcat
+          image: docker.io/kubeguide/tomcat-app:v1
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tomcat-svc
+spec:
+  selector:
+    app: tomcat
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+~~~
+
+将 Nginx 的 `/` 代理到 `http://tomcat-svc.default.svc.cluster.local:8080`，然后应用下面的路由策略：
+
+~~~yaml
+apiVersion: networking.istio.io/v1
+kind: VirtualService
+metadata:
+  name: nginx-timeout
+spec:
+  hosts:
+    - nginx-svc
+  http:
+    - timeout: 2s
+      route:
+        - destination:
+            host: nginx-svc
+---
+apiVersion: networking.istio.io/v1
+kind: VirtualService
+metadata:
+  name: tomcat-delay
+spec:
+  hosts:
+    - tomcat-svc
+  http:
+    - fault:
+        delay:
+          fixedDelay: 10s
+          percentage:
+            value: 100
+      route:
+        - destination:
+            host: tomcat-svc
+~~~
+
+验证：
+
+~~~sh
+kubectl run busybox --image=busybox:1.28 --restart=Never --rm -it -- /bin/sh
+
+# Tomcat 约 10 秒返回
+time wget -q -O - http://tomcat-svc.default.svc.cluster.local:8080
+
+# Nginx 路由约 2 秒超时
+time wget -q -O - http://nginx-svc.default.svc.cluster.local:80
+~~~
+
+### 重试实践与边界
+
+重试用于处理短暂网络故障或瞬时 5xx，但只应对幂等请求启用，并设置单次超时和总超时预算，避免重试放大下游压力。策略应绑定到调用方实际访问的目标主机；Nginx 访问 Tomcat 时，`hosts` 应是 `tomcat-svc`：
+
+~~~yaml
+apiVersion: networking.istio.io/v1
+kind: VirtualService
+metadata:
+  name: tomcat-retry
+spec:
+  hosts:
+    - tomcat-svc
+  http:
+    - timeout: 8s
+      retries:
+        attempts: 3
+        perTryTimeout: 2s
+        retryOn: 5xx,connect-failure,reset
+      route:
+        - destination:
+            host: tomcat-svc
+~~~
+
+`attempts: 3` 表示初始请求失败后最多重试 3 次，`perTryTimeout` 限制每次尝试，`timeout` 限制整次请求的总预算。可通过调用方 Pod 的 `istio-proxy` 日志验证重试行为：
+
+~~~sh
+kubectl logs -f deploy/nginx -c istio-proxy
+~~~
+
+> [!warning] 故障注入与重试测试要分开
+> Istio 的 HTTP 故障注入用于模拟异常路径，不应直接当作验证重试次数的后端故障源。验证重试时，应让测试服务真实返回可重试状态码或主动断开连接，然后结合代理日志和请求计数确认实际尝试次数。
+
+## 运维检查清单
+
+1. 安装前核对 Kubernetes 与 Istio 的版本兼容矩阵，并明确使用 Sidecar、Ambient 还是混合模式。
+2. 生产环境为 `istiod` 和 ingress gateway 配置多副本、反亲和、PDB、HPA 与合理的资源请求。
+3. 修改 VirtualService、DestinationRule、Gateway 后，用 `istioctl analyze` 检查配置，再观察控制平面 Push Errors、5xx 与 P99。
+4. 灰度、重试、熔断和故障注入均先在测试环境压测；确保有明确的回滚步骤和流量恢复路径。
+5. 删除 Namespace 注入标签不会移除已有 Sidecar；需要滚动重建工作负载才能生效。

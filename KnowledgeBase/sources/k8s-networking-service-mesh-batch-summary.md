@@ -3,21 +3,19 @@ title: k8s-networking-service-mesh 来源批量摘要
 tags:
   - knowledgebase/source
   - docker-kubernetes/networking
-date: 2026-04-17
+date: 2026-09-15
 sources:
   - "[[Docker-Kubernetes/k8s-networking-service-mesh/helm部署external-dns]]"
   - "[[Docker-Kubernetes/k8s-networking-service-mesh/helm部署ingress-nginx]]"
   - "[[Docker-Kubernetes/k8s-networking-service-mesh/k8s集群网络安全]]"
-  - "[[Docker-Kubernetes/k8s-networking-service-mesh/helm安装istio]]"
   - "[[Docker-Kubernetes/k8s-networking-service-mesh/k8s精细化流量管理-istio]]"
-  - "[[Docker-Kubernetes/k8s-networking-service-mesh/k8s部署istio(1.13.1)]]"
   - "[[Docker-Kubernetes/k8s-networking-service-mesh/企业项目接入istio实战]]"
 ---
 
 ## 元信息
 
 - **原始目录**: `Docker-Kubernetes/k8s-networking-service-mesh/`
-- **文档数量**: 7 篇
+- **文档数量**: 5 篇
 - **领域**: Kubernetes 网络、Ingress 控制器、服务网格（Istio）、DNS 与网络安全
 - **摄入日期**: 2026-04-17
 
@@ -53,32 +51,15 @@ sources:
 - kube-hunter：自动化查找集群安全漏洞
 - kubeaudit/Polaris：评估 Pod 和 Deployment 配置安全性
 
-### [[Docker-Kubernetes/k8s-networking-service-mesh/helm安装istio|Helm 安装 Istio]]
+### [[Docker-Kubernetes/k8s-networking-service-mesh/k8s精细化流量管理-istio|Istio 服务网格：架构、部署与精细化流量治理]]
 
-**核心内容**: 通过 Helm 分步安装 Istio（v1.27.1）的三个组件：base chart、istiod 控制面、gateway 网关。
-
-- 安装顺序：istio-base -> istiod -> gateway
-- istiod 配置：Prometheus 指标合并、JSON 格式访问日志、资源请求
-- Gateway 配置：NodePort 类型暴露，适用于本地集群
-- 使用 daocloud 镜像代理解决国内镜像拉取问题
-
-### [[Docker-Kubernetes/k8s-networking-service-mesh/k8s精细化流量管理-istio|Istio 精细化流量管理]]
-
-**核心内容**: 系统性介绍服务网格背景、核心功能以及 Istio 在微服务流量治理中的定位，对比了 Linkerd 等竞品。
+**核心内容**: 合并后的综合指南系统介绍服务网格背景、Istio 架构和核心资源，并贯通 istioctl/Helm 部署、Sidecar/Ambient 选型以及 Bookinfo 流量治理实践。
 
 - 服务网格解决的问题：服务间通信、流量精细化管理、安全通信、多语言治理、可观测性
-- 核心功能：负载均衡、服务发现、熔断降级、动态路由、故障注入、错误重试、安全通信
-- 架构演变：单体应用 -> 微服务 -> 服务网格，流量治理功能下沉到基础设施
-- 对比 SpringCloud/Nacos：服务网格语言无关，无需侵入业务代码
-
-### [[Docker-Kubernetes/k8s-networking-service-mesh/k8s部署istio(1.13.1)|Istio 1.13.1 部署与架构]]
-
-**核心内容**: 详细介绍 Istio 基础架构（数据平面 Envoy + 控制平面 istiod），包含流量管理（熔断、超时、重试）的深入讲解。
-
-- Istio 1.5+ 将原有多组件（Pilot、Mixer、Citadel）整合为 istiod 单体
-- Pilot：服务发现与配置分发；Envoy：Sidecar 代理拦截所有流量
-- 熔断机制：快速失败返回、故障隔离、恢复机制、自动重试
-- 超时控制：防止请求无限期等待，提高系统稳定性
+- 安装路径：istioctl + IstioOperator、Helm 分步安装，以及 Kubernetes 1.23 + Istio 1.13.1 历史环境记录
+- 工作模式：Sidecar 与 Ambient 的 L4/L7 分层、成本边界、分批迁移和回滚策略
+- 核心资源：Gateway、VirtualService、DestinationRule 的职责与组合关系
+- 实践主线：Bookinfo 域名发布、重写/重定向、灰度、A/B 测试、负载均衡、熔断、故障注入、超时和重试
 
 ### [[Docker-Kubernetes/k8s-networking-service-mesh/企业项目接入istio实战|企业项目接入 Istio 实战]]
 

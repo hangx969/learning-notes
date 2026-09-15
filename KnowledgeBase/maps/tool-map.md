@@ -125,7 +125,7 @@ date: 2026-04-16
 - [[Docker-Kubernetes/k8s-monitoring-logging/helm部署Loki-promtail-tempo-grafanaAgent全家桶|helm部署Loki-promtail-tempo-grafanaAgent全家桶]]
 - [[Docker-Kubernetes/k8s-CICD/Jenkins/helm部署jenkins|helm部署jenkins]]
 - [[Docker-Kubernetes/k8s-networking-service-mesh/helm部署ingress-nginx|helm部署ingress-nginx]]
-- [[Docker-Kubernetes/k8s-networking-service-mesh/helm安装istio|helm安装istio]]
+- [[Docker-Kubernetes/k8s-networking-service-mesh/k8s精细化流量管理-istio#Helm 安装|Helm 安装 Istio]]
 - [[cert-manager 实战：Helm 部署、TLS 自动签发与续期|cert-manager 实战：Helm 部署、TLS 自动签发与续期]]
 - 及更多 Helm 部署实战...
 
@@ -153,10 +153,8 @@ date: 2026-04-16
 ---
 
 ### Istio
-**相关文档（7 篇）：**
-- [[Docker-Kubernetes/k8s-networking-service-mesh/k8s精细化流量管理-istio|k8s精细化流量管理-istio]] ⭐ 推荐入口
-- [[Docker-Kubernetes/k8s-networking-service-mesh/helm安装istio|helm安装istio]]
-- [[Docker-Kubernetes/k8s-networking-service-mesh/k8s部署istio(1.13.1)|k8s部署istio(1.13.1)]]
+**相关文档（5 篇）：**
+- [[Docker-Kubernetes/k8s-networking-service-mesh/k8s精细化流量管理-istio|Istio 服务网格：架构、部署与精细化流量治理]] ⭐ 推荐入口
 - [[Docker-Kubernetes/k8s-networking-service-mesh/企业项目接入istio实战|企业项目接入istio实战]]
 - [[Docker-Kubernetes/k8s-networking-service-mesh/k8s集群网络安全|k8s集群网络安全]]
 - [[Docker-Kubernetes/k8s-networking-service-mesh/helm部署external-dns|helm部署external-dns]]

@@ -116,13 +116,13 @@ date: 2026-09-12
 | 其他 | 3 | GitHub Actions、发布代码到 K8S、Claude Code AI CI/CD |
 
 ### 网络与服务网格（7 篇）
-- [[Docker-Kubernetes/k8s-networking-service-mesh/k8s精细化流量管理-istio|k8s精细化流量管理-istio]]
-- [[Docker-Kubernetes/k8s-networking-service-mesh/helm安装istio|helm安装istio]]
-- [[Docker-Kubernetes/k8s-networking-service-mesh/k8s部署istio(1.13.1)|k8s部署istio(1.13.1)]]
+- [[Docker-Kubernetes/k8s-networking-service-mesh/k8s精细化流量管理-istio|Istio 服务网格：架构、部署与精细化流量治理]]
 - [[Docker-Kubernetes/k8s-networking-service-mesh/企业项目接入istio实战|企业项目接入istio实战]]
 - [[Docker-Kubernetes/k8s-networking-service-mesh/helm部署ingress-nginx|helm部署ingress-nginx]]
 - [[Docker-Kubernetes/k8s-networking-service-mesh/helm部署external-dns|helm部署external-dns]]
 - [[Docker-Kubernetes/k8s-networking-service-mesh/k8s集群网络安全|k8s集群网络安全]]
+- [[Docker-Kubernetes/k8s-networking-service-mesh/k8s-Gateway-API入门-Ingress下一代方案|Gateway API 入门]]
+- [[Docker-Kubernetes/k8s-networking-service-mesh/helm部署tomcat|Helm 部署 Tomcat]]
 
 ### 安全与认证（8 篇）
 [[KnowledgeBase/entities/Cert-Manager|Cert-Manager]]（Helm、自签名、HTTP01/DNS01、Cloudflare/Azure DNS、自动续期）、External-Secrets、Kyverno+Policy-Reporter（含 1.18 新特性）、OAuth2-Proxy、Capsule、SonarQube、Trivy-Operator、[[k8s容器安全上下文-SecurityContext|Security Context 完全指南]]
