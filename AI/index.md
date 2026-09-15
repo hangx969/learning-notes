@@ -39,7 +39,7 @@
 
 | 文章 | 主题 |
 |------|------|
-| [[AI/企业级私有化大模型/基于vLLM和LiteLLM的私有化大模型理论及部署]] | vLLM/LiteLLM 私有化部署、权重与 KV Cache 显存规划 |
+| [[基于docker部署vLLM和LiteLLM私有化大模型]] | vLLM/LiteLLM 私有化部署、权重与 KV Cache 显存规划 |
 | [[AI/企业级私有化大模型/基于K8s部署vLLM和LiteLLM]] | Kubernetes GPU 服务部署上下文 |
 | [[AI/企业级私有化大模型/大模型精度与量化：FP64到NVFP4]] | 数值格式、量化与训练/推理取舍 |
 | [[AI/企业级私有化大模型/KV Cache-从原理到集群调度]] | KV Cache 生命周期、显存带宽瓶颈与集群调度 |

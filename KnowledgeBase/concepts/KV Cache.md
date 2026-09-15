@@ -6,7 +6,7 @@ tags:
 date: 2026-09-06
 sources:
   - "[[0raw/KV Cache - 一图看懂 KV Cache：从诞生到集群调度]]"
-  - "[[AI/企业级私有化大模型/基于vLLM和LiteLLM的私有化大模型理论及部署]]"
+  - "[[基于docker部署vLLM和LiteLLM私有化大模型]]"
   - "[[AI/企业级私有化大模型/KV Cache-从原理到集群调度]]"
   - "[[AI/企业级私有化大模型/大模型本地部署选型-Ollama-vLLM-SGLang-vLLM-Omni]]"
 aliases:
@@ -33,14 +33,14 @@ KV Cache 是 Transformer Attention 在处理上下文时保存的 Key 和 Value 
 ## 与其他概念的关系
 
 - [[KnowledgeBase/concepts/混合精度与模型量化]]：KV Cache 的精度字节数直接影响单请求显存；量化可减少占用，但需要验证质量和框架支持。
-- [[AI/企业级私有化大模型/基于vLLM和LiteLLM的私有化大模型理论及部署]]：从 PagedAttention、KV Cache 显存公式和并发容量角度介绍私有化推理。
+- [[基于docker部署vLLM和LiteLLM私有化大模型]]：从 PagedAttention、KV Cache 显存公式和并发容量角度介绍私有化推理。
 - [[AI/企业级私有化大模型/基于K8s部署vLLM和LiteLLM]]：提供 Kubernetes GPU 服务部署背景，可用于承接 KV Cache 的资源调度设计。
 
 ## 在本仓库中的覆盖
 
 - [[0raw/KV Cache - 一图看懂 KV Cache：从诞生到集群调度]]：原始文章，覆盖 KV Cache 定义、Prefill/Decode、生命周期、单节点带宽瓶颈与集群调度。
 - [[AI/企业级私有化大模型/KV Cache-从原理到集群调度]]：清洗后的归档版本，正文图片已替换为 PicGo 图床链接。
-- [[AI/企业级私有化大模型/基于vLLM和LiteLLM的私有化大模型理论及部署]]：覆盖 PagedAttention、KV Cache 显存估算和 vLLM 服务部署。
+- [[基于docker部署vLLM和LiteLLM私有化大模型]]：覆盖 PagedAttention、KV Cache 显存估算和 vLLM 服务部署。
 - [[AI/企业级私有化大模型/大模型本地部署选型-Ollama-vLLM-SGLang-vLLM-Omni]]：把 KV Cache 放入 vLLM/SGLang 选型、上下文长度、显存比例、并发和 PD 分离的工程权衡中。
 
 ## 知识空白

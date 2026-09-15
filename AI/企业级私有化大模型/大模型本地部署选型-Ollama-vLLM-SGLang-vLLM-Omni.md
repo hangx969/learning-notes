@@ -616,7 +616,7 @@ flowchart LR
 
 ## 相关文档
 
-- [[AI/企业级私有化大模型/基于vLLM和LiteLLM的私有化大模型理论及部署]]
+- [[基于docker部署vLLM和LiteLLM私有化大模型]]
 - [[AI/企业级私有化大模型/基于K8s部署vLLM和LiteLLM]]
 - [[AI/企业级私有化大模型/KV Cache-从原理到集群调度]]
 - [[AI/企业级私有化大模型/大模型精度与量化：FP64到NVFP4]]

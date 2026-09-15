@@ -38,7 +38,7 @@ aliases:
 - [[KnowledgeBase/concepts/混合精度与模型量化]]
 - [[KnowledgeBase/entities/NVIDIA]]
 - [[KnowledgeBase/entities/CUDA]]
-- [[AI/企业级私有化大模型/基于vLLM和LiteLLM的私有化大模型理论及部署]]
+- [[基于docker部署vLLM和LiteLLM私有化大模型]]
 
 ## 值得注意
 

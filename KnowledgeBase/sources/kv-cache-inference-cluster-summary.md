@@ -36,7 +36,7 @@ aliases:
 
 - [[KnowledgeBase/concepts/KV Cache]]
 - [[KnowledgeBase/concepts/混合精度与模型量化]]
-- [[AI/企业级私有化大模型/基于vLLM和LiteLLM的私有化大模型理论及部署]]
+- [[基于docker部署vLLM和LiteLLM私有化大模型]]
 - [[AI/企业级私有化大模型/基于K8s部署vLLM和LiteLLM]]
 
 ## 值得注意

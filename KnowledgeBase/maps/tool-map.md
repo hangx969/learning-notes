@@ -81,7 +81,7 @@ date: 2026-04-16
 
 **推荐入口：**
 - [[AI/企业级私有化大模型/大模型本地部署选型-Ollama-vLLM-SGLang-vLLM-Omni|大模型本地部署选型]] — Ollama、vLLM、SGLang、vLLM-Omni 的定位、离线交付与部署边界
-- [[AI/企业级私有化大模型/基于vLLM和LiteLLM的私有化大模型理论及部署|vLLM 与 LiteLLM 私有化部署]] — 权重、KV Cache、显存和统一网关
+- [[基于docker部署vLLM和LiteLLM私有化大模型|vLLM 与 LiteLLM 私有化部署]] — 权重、KV Cache、显存和统一网关
 - [[AI/企业级私有化大模型/一个 Deployment 就能跑 vLLM，为什么还需要 KServe？|KServe 部署 vLLM]] — 声明式模型服务、网关与弹性
 
 **实体页：** [[KnowledgeBase/entities/Ollama|Ollama]]、[[KnowledgeBase/entities/vLLM|vLLM]]、[[KnowledgeBase/entities/ModelScope|ModelScope]]

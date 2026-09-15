@@ -115,7 +115,7 @@ date: 2026-04-16
 
 
 **企业级私有化大模型：**
-- [[AI/企业级私有化大模型/基于vLLM和LiteLLM的私有化大模型理论及部署]] — vLLM/LiteLLM 私有化部署、权重与 KV Cache 显存规划
+- [[基于docker部署vLLM和LiteLLM私有化大模型]] — vLLM/LiteLLM 私有化部署、权重与 KV Cache 显存规划
 - [[AI/企业级私有化大模型/基于K8s部署vLLM和LiteLLM]] — Kubernetes GPU 服务部署上下文
 - [[AI/企业级私有化大模型/大模型精度与量化：FP64到NVFP4]] — FP64 到 NVFP4 的数值格式、量化与训练/推理取舍
 - [[AI/企业级私有化大模型/大模型本地部署选型-Ollama-vLLM-SGLang-vLLM-Omni]] — 四种推理 Runtime 选型、模型与镜像离线交付、GPU 显存及容器化部署

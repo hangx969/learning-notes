@@ -5,7 +5,7 @@ tags:
   - ai/inference-serving
 date: 2026-09-13
 sources:
-  - "[[AI/企业级私有化大模型/基于vLLM和LiteLLM的私有化大模型理论及部署]]"
+  - "[[基于docker部署vLLM和LiteLLM私有化大模型]]"
   - "[[AI/企业级私有化大模型/基于K8s部署vLLM和LiteLLM]]"
   - "[[AI/企业级私有化大模型/一个 Deployment 就能跑 vLLM，为什么还需要 KServe？]]"
   - "[[AI/企业级私有化大模型/大模型本地部署选型-Ollama-vLLM-SGLang-vLLM-Omni]]"
@@ -52,7 +52,7 @@ vLLM 是面向大语言模型的高吞吐推理与服务引擎，提供高效 KV
 
 ## 在本仓库中的覆盖
 
-- [[AI/企业级私有化大模型/基于vLLM和LiteLLM的私有化大模型理论及部署]]：权重、KV Cache、显存估算和 LiteLLM 网关。
+- [[基于docker部署vLLM和LiteLLM私有化大模型]]：权重、KV Cache、显存估算和 LiteLLM 网关。
 - [[AI/企业级私有化大模型/基于K8s部署vLLM和LiteLLM]]：Kubernetes GPU 服务部署。
 - [[AI/企业级私有化大模型/一个 Deployment 就能跑 vLLM，为什么还需要 KServe？]]：InferenceService、Gateway API、PVC 与自动扩缩容。
 - [[AI/企业级私有化大模型/大模型本地部署选型-Ollama-vLLM-SGLang-vLLM-Omni]]：与 Ollama、SGLang、vLLM-Omni 的选型及离线交付。

@@ -279,23 +279,22 @@ kubectl get po -n gpu-operator
 kubectl describe node | grep Allocatable: -A 10
 ```
 
-> [!warning] 重启后 GPU 资源变为 `0` 的处理
-> 如果 `nvidia-device-plugin` 日志出现 `couldn't initialize inotify: too many open files`，说明主机的 inotify 实例数已达到上限。先确认限制和当前用量，再提高限制并重建 device-plugin Pod：
->
-> ```bash
-> sysctl fs.inotify.max_user_instances
-> find /proc/[0-9]*/fd -lname anon_inode:inotify 2>/dev/null | wc -l
->
-> echo 'fs.inotify.max_user_instances = 1024' > /etc/sysctl.d/99-kubernetes-inotify.conf
-> sysctl --system
->
-> kubectl delete pod -n gpu-operator -l app=nvidia-device-plugin-daemonset
-> kubectl wait -n gpu-operator \
->   --for=condition=Ready pod \
->   -l app=nvidia-device-plugin-daemonset \
->   --timeout=180s
-> kubectl get node -o jsonpath='{.items[0].status.allocatable.nvidia\.com/gpu}{"\n"}'
-> ```
+**重启后 GPU 资源变为 `0` 的处理：** 如果 `nvidia-device-plugin` 日志出现 `couldn't initialize inotify: too many open files`，说明主机的 inotify 实例数已达到上限。先确认限制和当前用量，再提高限制并重建 device-plugin Pod：
+
+```bash
+sysctl fs.inotify.max_user_instances
+find /proc/[0-9]*/fd -lname anon_inode:inotify 2>/dev/null | wc -l
+
+echo 'fs.inotify.max_user_instances = 1024' > /etc/sysctl.d/99-kubernetes-inotify.conf
+sysctl --system
+
+kubectl delete pod -n gpu-operator -l app=nvidia-device-plugin-daemonset
+kubectl wait -n gpu-operator \
+  --for=condition=Ready pod \
+  -l app=nvidia-device-plugin-daemonset \
+  --timeout=180s
+kubectl get node -o jsonpath='{.items[0].status.allocatable.nvidia\.com/gpu}{"\n"}'
+```
 
 创建 GPU 测试服务：
 
@@ -465,7 +464,7 @@ kubectl wait --for=jsonpath='{.status.phase}'=Bound \
   pvc/qwen35-4b-pvc -n models --timeout=5m
 ```
 
-### 模型文件本地导入
+#### 模型文件本地导入
 如果本地已经有下载好的模型文件：
 不要直接向 `/var/lib/longhorn` 写入文件。应创建一个临时 Job，同时将节点上的模型目录以只读 `hostPath` 挂载为源目录，并将 PVC 挂载为目标目录。Job 完成复制。
 
@@ -555,8 +554,10 @@ kubectl get pvc qwen35-4b-pvc -n models
 后续部署将该 PVC 挂载到 `/data/modelscope` 后，模型路径仍为 `/data/modelscope/Qwen/Qwen3.5-4B`。本地源目录应保留到模型服务启动和推理验证成功后，再根据磁盘空间情况决定是否删除。
 
 ### 1.3.2 部署模型
+
 文档： https://docs.vllm.ai/en/latest/deployment/k8s/
-- 单单部署一个模型，用yaml部署即可
+
+- 仅部署一个模型时，用 YAML 部署即可
 - 如果有分布式计算、模型微调、调度等需求，可以用一些开源框架比如KServe，llm-d等： https://docs.vllm.ai/en/latest/deployment/integrations/kserve/
 
 确认模型 PVC 已经处于 `Bound` 状态：
@@ -565,19 +566,20 @@ kubectl get pvc qwen35-4b-pvc -n models
 kubectl get pvc qwen35-4b-pvc -n models
 ```
 
-生成 API Key 并保存为 Secret，避免在 Deployment YAML 中写入明文密钥：
+创建 `qwen35-vllm.yaml`，在同一个多文档 YAML 中定义 Secret、Deployment 和 Service。Secret 中只保留 `VLLM_API_KEY_PLACEHOLDER` 占位符，应用时在内存中替换，真实 API Key 不写入文章或 YAML 文件。
 
-```bash
-VLLM_API_KEY="$(openssl rand -hex 32)"
-kubectl create secret generic vllm-api-key \
-  -n models \
-  --from-literal=api-key="${VLLM_API_KEY}"
-unset VLLM_API_KEY
-```
-
-创建 `qwen35-vllm.yaml`。镜像入口点已经是 `vllm serve`，因此通过 `args` 传入参数；vLLM 0.23.0 要求模型路径作为位置参数。单节点只有一块 GPU，且 PVC 为 `ReadWriteOnce`，Deployment 使用 `Recreate`，避免 RollingUpdate 时新旧 Pod 争用同一块 GPU 和 PVC：
+镜像入口点已经是 `vllm serve`，因此通过 `args` 传入参数。vLLM 0.23.0 弃用了 `--model`，模型路径必须作为 `args` 的第一个位置参数。单节点只有一块 GPU，且 PVC 为 `ReadWriteOnce`，Deployment 使用 `Recreate`，避免 RollingUpdate 时新旧 Pod 争用同一块 GPU 和 PVC：
 
 ```yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: vllm-api-key
+  namespace: models
+type: Opaque
+stringData:
+  api-key: "VLLM_API_KEY_PLACEHOLDER" # 应用时替换，不要把真实密钥提交到 Git
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -695,10 +697,24 @@ spec:
   type: NodePort # 非必须
 ```
 
-应用部署文件并等待 Pod 就绪：
+生成随机 API Key，在标准输出管道中替换占位符并直接提交给 API Server。由于生成的是十六进制字符串，可以安全地作为 `sed` 替换值；不要直接执行 `kubectl apply -f qwen35-vllm.yaml`，否则会把占位符保存为真实密钥：
 
 ```bash
-kubectl apply -f qwen35-vllm.yaml
+DEPLOYMENT_EXISTS=false
+kubectl get deployment qwen3-5-4b-deployment -n models >/dev/null 2>&1 \
+  && DEPLOYMENT_EXISTS=true
+
+VLLM_API_KEY="$(openssl rand -hex 32)"
+sed "s/VLLM_API_KEY_PLACEHOLDER/${VLLM_API_KEY}/g" qwen35-vllm.yaml \
+  | kubectl apply -f -
+unset VLLM_API_KEY
+
+# 现有部署轮换 Secret 后，必须重建 Pod 才能读取新的环境变量
+if [ "${DEPLOYMENT_EXISTS}" = true ]; then
+  kubectl rollout restart deployment/qwen3-5-4b-deployment -n models
+fi
+unset DEPLOYMENT_EXISTS
+
 kubectl rollout status deployment/qwen3-5-4b-deployment \
   -n models \
   --timeout=15m
