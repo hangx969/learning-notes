@@ -4,10 +4,10 @@ tags:
   - knowledgebase/source
   - kubernetes/autoscaling
   - docker-kubernetes/scaling
-date: 2026-09-06
+date: 2026-09-15
 sources:
   - "[[0raw/告别 KEDA：K8s 1.37 原生 HPA Scale-to-Zero 落地实战，空闲 Worker 直接缩到 0]]"
-  - "[[Docker-Kubernetes/k8s-scaling/k8s-1.37原生HPA-Scale-to-Zero实战]]"
+  - "[[Docker-Kubernetes/k8s-scaling/k8s-HPA-VPA]]"
 aliases:
   - HPA Scale-to-Zero 摘要
   - HPAScaleToZero 摘要
@@ -18,7 +18,7 @@ aliases:
 ## 元信息
 
 - **原始文档**：[[0raw/告别 KEDA：K8s 1.37 原生 HPA Scale-to-Zero 落地实战，空闲 Worker 直接缩到 0]]
-- **归档文档**：[[Docker-Kubernetes/k8s-scaling/k8s-1.37原生HPA-Scale-to-Zero实战]]
+- **整合文档**：[[Docker-Kubernetes/k8s-scaling/k8s-HPA-VPA#五、Kubernetes 1.37 原生 HPA Scale-to-Zero|Kubernetes 自动扩缩容实战 → Scale-to-Zero]]
 - **来源作者**：WAKE UP技术
 - **发布时间**：2026-08-13
 - **领域**：Kubernetes HPA、External/Object 指标、事件驱动扩缩容与 Worker 成本优化
@@ -31,8 +31,8 @@ aliases:
 ## 关键知识点
 
 1. Resource（CPU/内存）指标无法在 0 副本时表达每 Pod 平均需求；Scale-to-Zero 需要与副本数无关的 External/Object 指标。
-2. 来源文章将 `HPAScaleToZero` 描述为 Kubernetes 1.37 Beta 特性；特性门控、API 字段和目标语义必须按官方文档与目标集群验证。
-3. HPA 示例使用 `minReplicas: 0`、`maxReplicas: 20`、`autoscaling/v2` 和队列指标 `queue_messages_visible`，并配置 300 秒缩容稳定窗口。
+2. Kubernetes 官方文档将 `HPAScaleToZero` 标为 1.37 起 Beta 且默认启用；kube-apiserver 与 kube-controller-manager 都必须启用该门控。
+3. 整合后的 HPA 示例使用 `minReplicas: 0`、`maxReplicas: 20`、`autoscaling/v2` 和队列指标 `queue_messages_visible`，以 `AverageValue: "1"` 避免零目标值成为计算分母，并配置 300 秒缩容稳定窗口。
 4. Prometheus 可以采集队列深度或 Kafka consumer group lag，经 Prometheus Adapter 暴露为 `external.metrics.k8s.io`，供 HPA 读取。
 5. HPA 中的 `metric.name` 必须与 Adapter 显式暴露的指标名一致，否则指标会显示 `<unknown>`，扩缩容无法按预期工作。
 6. 从 0 拉起 Worker 会经历调度、拉镜像、启动进程、建立依赖连接和预热；镜像预拉、节点池亲和、readinessProbe 和消息重试可以降低风险。
@@ -47,10 +47,10 @@ aliases:
 - [[KnowledgeBase/entities/Prometheus|Prometheus]]
 - [[Docker-Kubernetes/k8s-scaling/k8s-HPA-VPA|HPA 与 VPA 自动扩缩容]]
 - [[Docker-Kubernetes/k8s-scaling/k8s-基于KEDA的弹性能力|KEDA 事件驱动扩缩容]]
-- [[Docker-Kubernetes/k8s-scaling/k8s-1.37原生HPA-Scale-to-Zero实战|归档文章]]
+- [[Docker-Kubernetes/k8s-scaling/k8s-HPA-VPA#五、Kubernetes 1.37 原生 HPA Scale-to-Zero|整合文章中的 Scale-to-Zero 章节]]
 
 ## 值得注意
 
-- 本文是对来源文章的技术整理，不等同于对 Kubernetes 1.37 当前实现的独立验证；上线前应核对官方版本文档、特性门控状态和目标集群行为。
+- 2026-09-15 已对照 Kubernetes 官方 HPA 与 feature gate 文档校正版本状态和目标值表达；上线前仍应核对目标发行版与集群实际行为。
 - `HPAScaleToZero` 的缩零能力依赖 External/Object 指标和指标适配链路；Prometheus、Prometheus Adapter、APIService 和 HPA 指标名需要逐层验证。
 - 示例强调的是异步 Worker 的成本与延迟权衡，不能把缩零能力直接套用到低延迟 API、长连接服务或需要预热缓存的服务。

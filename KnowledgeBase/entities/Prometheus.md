@@ -74,7 +74,7 @@ Prometheus 是开源的系统监控与告警工具，采用拉取（pull）模�
 - [[Docker-Kubernetes/k8s-monitoring-logging/helm部署prometheus-stack全家桶|helm部署prometheus-stack全家桶]]
 - [[Docker-Kubernetes/docker/docker部署prometheus-grafana-cAdvisior监控|docker部署prometheus-grafana-cAdvisior监控]]
 - [[Docker-Kubernetes/k8s-scaling/KServe+KEDA实战-基于请求指标实现服务自动扩缩容|KServe + KEDA 基于请求指标自动扩缩容]]
-- [[Docker-Kubernetes/k8s-scaling/k8s-1.37原生HPA-Scale-to-Zero实战|K8s 1.37 原生 HPA Scale-to-Zero]]
+- [[Docker-Kubernetes/k8s-scaling/k8s-HPA-VPA#五、Kubernetes 1.37 原生 HPA Scale-to-Zero|K8s 1.37 原生 HPA Scale-to-Zero]]
 - [[Docker-Kubernetes/k8s-storage/让存储故障现形：Kubernetes Volume Health Monitor 原理与生产接入|Kubernetes Volume Health Monitor 原理与生产接入]]
 
 ## 相关概念与实体

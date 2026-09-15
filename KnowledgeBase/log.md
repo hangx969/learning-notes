@@ -1944,3 +1944,11 @@ date: 2026-04-17
 - 将原文字符流程重绘为 6 个 Mermaid 图，覆盖人工与自动化流程、资源关系、HTTP01/DNS01 选型、ACME 校验、Staging 到 Production 和自动续期；Obsidian 内置解析器验证为 6/6 通过。
 - 新增 [[KnowledgeBase/sources/cert-manager-tls-automation-summary|来源摘要]]、[[KnowledgeBase/entities/Cert-Manager|Cert-Manager 实体页]] 和 [[KnowledgeBase/concepts/证书管理|证书管理概念页]]；同步更新安全认证批量摘要、Kubernetes/Helm/Ingress 实体页、Kubernetes/工具地图与知识库索引。
 - 验证结果：目标正文与 3 个新增知识页 frontmatter 可解析、核心页面无未解析 wikilink、代码围栏成对、Obsidian 渲染侧未捕获错误、`git diff --check` 通过；支持页中仍存在历史断链，本次未新增。
+
+
+## [2026-09-15] restructure | HPA、VPA 与 Scale-to-Zero 三文整合
+
+- 将 `Docker-Kubernetes/k8s-scaling/k8s-HPA-VPA.md`、`helm部署vpa.md` 与 `k8s-1.37原生HPA-Scale-to-Zero实战.md` 整合为一篇主文档，按“选型 → 指标基础 → HPA 原理与实战 → Scale-to-Zero → VPA 部署与实战 → 协同治理”重排章节。
+- 保留原有 HPA CPU/内存/PHP 实战、Metrics Server 完整清单、VPA Helm/脚本部署、nginx/hamster/MySQL 案例、推荐算法、自定义 Recommender、Scale-to-Zero 冷启动与 KEDA 迁移等技术内容；合并重复定义和配置。
+- 对照官方文档校正 HPA 公式与默认周期、Kubernetes 1.37 `HPAScaleToZero` 状态、Scale-to-Zero 指标目标值，并补充 VPA In-place 模式及 `Auto` 弃用说明。
+- 旧的两个文件保留为兼容入口并指向主文档章节；同步更新来源摘要、Kubernetes/Helm/Prometheus 实体页、Kubernetes 地图和 Wiki 索引。

@@ -150,7 +150,7 @@ Kubernetes（K8s）是容器编排平台，源自 Google Borg 系统，2014 年�
 **存储基础与方案**：PV/PVC/StorageClass 负责持久化资源的声明与供给；NFS（简单但非高可用）-> CubeFS（云原生友好但无块存储）-> Ceph（功能全面但运维复杂，支持 RBD/CephFS/RADOS Gateway 三种类型）。
 
 **核心要点**：
-- HPA 算法：`sum(实际使用量) / 使用率限额 + 1`，默认 30s 检测、5min 稳定期
+- HPA 基础算法：`ceil(currentReplicas × currentMetricValue / desiredMetricValue)`；默认同步周期 15 秒、缩容稳定窗口 300 秒，扩容默认无稳定窗口
 - KEDA 支持数十种外部事件源（Kafka、RabbitMQ、HTTP、Cron 等），独特优势是缩容到 0
 - Ceph 生产环境强烈建议二进制安装在服务器上，不要装在 K8s 中
 - NFS exports 配置需写宿主机网段（非 Pod 网段），因 PV 先挂载到宿主机再挂载到 Pod

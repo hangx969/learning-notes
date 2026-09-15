@@ -4,10 +4,9 @@ tags:
   - knowledgebase/source
   - docker-kubernetes/scaling
   - docker-kubernetes/storage
-date: 2026-09-06
+date: 2026-09-15
 sources:
   - "[[Docker-Kubernetes/k8s-scaling/helm部署goldilocks]]"
-  - "[[Docker-Kubernetes/k8s-scaling/helm部署vpa]]"
   - "[[Docker-Kubernetes/k8s-scaling/k8s-基于KEDA的弹性能力]]"
   - "[[Docker-Kubernetes/k8s-scaling/KServe+KEDA实战-基于请求指标实现服务自动扩缩容]]"
   - "[[Docker-Kubernetes/k8s-scaling/k8s-HPA-VPA]]"
@@ -17,13 +16,12 @@ sources:
   - "[[Docker-Kubernetes/k8s-scaling/k8s成本优化方案-FinOps实战]]"
   - "[[Docker-Kubernetes/k8s-storage/k8s删除PVC后PV数据保护与复用避坑]]"
   - "[[Docker-Kubernetes/k8s-storage/让存储故障现形：Kubernetes Volume Health Monitor 原理与生产接入]]"
-  - "[[Docker-Kubernetes/k8s-scaling/k8s-1.37原生HPA-Scale-to-Zero实战]]"
 ---
 
 ## 元信息
 
 - **原始目录**: `Docker-Kubernetes/k8s-scaling/` 与 `Docker-Kubernetes/k8s-storage/`
-- **文档数量**: 12 篇（扩缩容 7 篇 + 存储 5 篇）
+- **文档数量**: 10 篇整合正文（扩缩容 5 篇 + 存储 5 篇；另保留 2 个兼容入口）
 - **领域**: Kubernetes 自动扩缩容（HPA/VPA/KEDA/KServe）与存储生命周期（PV/PVC/StorageClass）及分布式存储（NFS/Ceph/CubeFS）
 - **摄入日期**: 2026-04-17
 
@@ -42,23 +40,6 @@ sources:
 - 支持 `--on-by-default` 为所有 Namespace 创建 VPA 对象
 - 可通过 `--exclude-namespaces` 和 `--ignore-controller-kind` 排除特定资源
 - 集成 OAuth2 Proxy 实现访问认证
-
-### [[Docker-Kubernetes/k8s-scaling/helm部署vpa|Helm 部署 VPA]]
-
-**核心内容**: VPA（垂直 Pod 自动扩缩容）自动为 Pod 设置合理的 resource request，通过 Fairwinds Helm Chart 部署。含四种 updateMode 深入解析、推荐算法原理、与 HPA 共存方案。
-
-- 三个组件：Updater（更新 Pod 资源）、Admission Controller（拦截创建请求）、Recommender（推荐资源值）
-- 必须依赖 Metrics Server（Chart 可自带安装）
-- kubeadm 集群中自带 Metrics Server 子 Chart 可能启动失败（需 `--kubelet-insecure-tls`）
-- 可仅启用 Recommender 模式（不自动更新，只提供推荐）
-- 四种 updateMode（Off/Initial/Auto/Recreate）：生产建议先 Off 观察 1-2 周，核心服务用 Initial
-- 推荐算法：指数衰减直方图，CPU 基于 P95、Memory 基于高水位、默认 8 天历史窗口
-- VPA + HPA 共存：分离控制维度（VPA 管 Memory，HPA 管 CPU），不能同时对同一资源使用
-- 驱逐风险：配合 PDB 限制 maxUnavailable，核心服务避免 Auto/Recreate 模式
-- 实战案例：MySQL StatefulSet Off→Initial 渐进式优化，单 Pod 节省 550m CPU + 800Mi 内存
-- 避坑：OOMKill 恶性循环（minAllowed 须大于空闲基准）、JVM 应用推荐偏差（minAllowed ≥ -Xms）、频繁重建干扰 Prometheus 监控
-- 自定义 Recommender：支持 Prometheus 后端 + 自定义历史窗口（14d）
-- 渐进式落地四阶段：观察期（Off）→ 灰度验证（Initial）→ 生产推广（Auto + 保护）→ 长期维护
 
 ### [[Docker-Kubernetes/k8s-scaling/k8s-基于KEDA的弹性能力|KEDA 事件驱动扩缩容]]
 
@@ -82,25 +63,18 @@ sources:
 - 示例设置 `target.value: 1`、副本范围 1～2，HPA 缩容稳定窗口为 300 秒
 - 使用 HAMi DRA 在单 GPU 节点为每个副本申请 3Gi 显存和 20% GPU 核心
 
-### [[Docker-Kubernetes/k8s-scaling/k8s-1.37原生HPA-Scale-to-Zero实战|K8s 1.37 原生 HPA Scale-to-Zero]]
+### [[Docker-Kubernetes/k8s-scaling/k8s-HPA-VPA|Kubernetes 自动扩缩容：HPA、VPA 与 Scale-to-Zero]]
 
-**核心内容**: 介绍 `HPAScaleToZero` Beta 特性如何让原生 HPA 基于 External/Object 指标将队列 Worker 缩到 0，并给出冷启动、防抖、监控和 KEDA 迁移建议。
+**核心内容**: 将原 HPA/VPA 总览、Helm 部署 VPA 和 Kubernetes 1.37 原生 HPA Scale-to-Zero 三篇正文整合为一篇，按“选型→指标基础→HPA→Scale-to-Zero→VPA→生产治理”组织。
 
-- 仅 External/Object 指标适合缩零，CPU/内存 Resource 指标不能解决 0 副本时的需求表达问题
-- 使用 Prometheus 采集队列深度或 Kafka lag，经 Prometheus Adapter 暴露为 `external.metrics.k8s.io`
-- HPA 使用 `autoscaling/v2`、`minReplicas: 0`、300 秒缩容稳定窗口，并可通过扩容策略加快回弹
-- 生产关键点包括冷启动延迟、readinessProbe、指标源高可用、镜像预热和 Scale-to-Zero 告警基线
-- KEDA 仍适合直接连接多种消息中间件；迁移期不得让 KEDA 与原生 HPA 同时管理一个 Deployment
-
-### [[Docker-Kubernetes/k8s-scaling/k8s-HPA-VPA|HPA 与 VPA 自动扩缩容]]
-
-**核心内容**: 系统性介绍 K8s 四种自动扩缩容方案（HPA、VPA、KPA、Cluster Autoscaler）的原理、工作机制和使用约束。
-
-- HPA：基于 Metrics Server 的 CPU/内存水平扩缩，默认 30s 检测、5min 稳定期，算法相对保守
-- VPA：垂直调整 Pod 的 request/limit，不能与 HPA 同时使用，优化节点资源利用率
-- KPA（Knative Pod Autoscaler）：基于并发请求数扩缩，可与 HPA 混用
-- Cluster Autoscaler：节点级别弹性伸缩，自动创建/删除节点
-- HPA 要求 Pod 必须配置 requests，算法为 `sum(实际使用量) / 使用率限额 + 1`
+- 四层体系：HPA 调整 Pod 副本、VPA 调整资源 requests、KPA 按 Knative 并发缩放、Cluster Autoscaler 调整节点容量
+- 指标基础：Metrics Server、Resource/Custom/External Metrics API、Helm 与 Manifest 安装、kubeadm kubelet TLS 排障
+- HPA：默认 15 秒控制循环、`ceil(currentReplicas × currentMetric / desiredMetric)` 算法、300 秒缩容稳定窗口，以及 CPU/内存/PHP 压测实战
+- Scale-to-Zero：Kubernetes 1.37 Beta `HPAScaleToZero`、Object/External 指标、`minReplicas: 0`、冷启动治理、告警和 KEDA 迁移
+- VPA：Recommender/Updater/Admission Controller、Fairwinds Helm 与上游脚本安装、nginx/hamster/MySQL 实战
+- VPA 模式：除 Off/Initial/Recreate 外补充 InPlaceOrRecreate/InPlace，并标注 Auto 已被上游弃用
+- HPA 与 VPA 可以在不同资源或不同指标维度共存；禁止同时控制同一 CPU/内存维度
+- 生产治理：PDB、minAllowed/maxAllowed、OOM/JVM/监控空洞、自定义 Recommender 与渐进式落地
 
 ### [[Docker-Kubernetes/k8s-storage/k8s-分布式存储CubeFS|K8s 分布式存储 CubeFS]]
 
