@@ -649,6 +649,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: qwen3-5-4b-service
+  namespace: models
 spec:
   selector:
     app: qwen3-5-4b
