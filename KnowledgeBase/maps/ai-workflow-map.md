@@ -38,9 +38,7 @@ date: 2026-04-16
 
 ### Codex 路径
 1. [[AI/Codex/Codex-Harness架构-任务循环与扩展|Codex Harness 架构]] — App Server、Agent 主循环、上下文、工具执行、状态记忆与扩展入口
-2. [[AI/Codex/Codex-config-toml-全量配置参考|config.toml 全量配置参考]] — 配置字段与扩展机制
-3. [[AI/Codex/Codex-两个设置提升体验|两个体验设置]] — 普通模式主动澄清与经验性 Juice 自检
-4. [[AI/Codex/Codex-省Token工具实测-Ponytail-Headroom-RTK|省 Token 工具实测]] — 约束 Agent 输出的工具实践
+2. [[AI/Codex/Codex-使用技巧和最佳实践|Codex 使用技巧和最佳实践]] — 配置、安全边界、主动澄清、Token 优化、HANDOFF 与多 Harness 协作
 
 ### AI 代码审查与知识图谱
 1. [[AI/Code review和知识图谱/AI代码审查闭环-验证优先与敏感信息清理|AI 代码审查闭环]] — 质量门禁、真实运行、安全扫描、敏感信息清理与对抗式测试

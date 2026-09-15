@@ -3,7 +3,7 @@ title: Harbor
 tags:
   - knowledgebase/entity
   - container-registry
-date: 2026-09-13
+date: 2026-09-15
 sources:
   - "[[KnowledgeBase/sources/k8s-misc-batch-summary]]"
   - "[[KnowledgeBase/sources/dragonfly-harbor-p2p-distribution-summary]]"
@@ -43,8 +43,7 @@ Harbor 是 CNCF 开源的企业级 OCI 制品与容器镜像仓库，为容器�
 
 ## 在本仓库中的覆盖
 
-- [[Docker-Kubernetes/harbor/harbor-basics]]：自签名证书、Docker Compose 安装和基本镜像操作
-- [[Docker-Kubernetes/harbor/helm部署harbor]]：使用 Helm 在 Kubernetes 中部署 Harbor
+- [[Docker-Kubernetes/harbor/harbor-basics|Harbor 部署与使用指南]]：整合 Docker Compose、Helm、镜像与 OCI Chart 操作、Kubernetes 拉取及 TLS 配置
 - [[Docker-Kubernetes/harbor/Dragonfly与Harbor-P2P镜像分发]]：Harbor 源站瓶颈、Dragonfly P2P 卸载和 AI 大文件分发
 - [[Docker-Kubernetes/kubeblocks/kubeblocks部署高可用harbor集群]]：使用外部 PostgreSQL 与 Redis 构建高可用后端
 

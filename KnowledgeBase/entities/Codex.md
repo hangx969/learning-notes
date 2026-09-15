@@ -3,12 +3,10 @@ title: Codex
 tags:
   - knowledgebase/entity
   - ai/codex
-date: 2026-09-12
+date: 2026-09-15
 sources:
   - "[[AI/Codex/Codex-Harness架构-任务循环与扩展]]"
-  - "[[AI/Codex/Codex-config-toml-全量配置参考]]"
-  - "[[AI/Codex/Codex-省Token工具实测-Ponytail-Headroom-RTK]]"
-  - "[[AI/Codex/Codex-两个设置提升体验]]"
+  - "[[AI/Codex/Codex-使用技巧和最佳实践]]"
   - "[[AI/Code review和知识图谱/AI代码审查闭环-验证优先与敏感信息清理]]"
   - "[[AI/AI-视觉/Effective-HTML-Agent页面工作流]]"
   - "[[AI/AI-视觉/effective-html-AI直出HTML工具实测]]"
@@ -44,9 +42,7 @@ Codex 是面向软件工程任务的 AI 编程助手。本仓库覆盖其 `confi
 ## 在本仓库中的覆盖
 - [[AI/Codex/Codex-Harness架构-任务循环与扩展]]：从 App Server、Session 和 Agent 主循环，到上下文、工具执行、持久化记忆及 Skills/MCP/Hooks/子 Agent 扩展。
 - [[KnowledgeBase/sources/codex-harness-architecture-summary|Codex Harness 架构来源摘要]]：文章的结构化知识点与版本边界说明。
-- [[AI/Codex/Codex-config-toml-全量配置参考]]：覆盖配置字段、特性开关、权限、MCP、Hooks 和 Agents。
-- [[AI/Codex/Codex-省Token工具实测-Ponytail-Headroom-RTK]]：讨论通过工具与约束减少 Token 消耗的实践。
-- [[AI/Codex/Codex-两个设置提升体验]]：记录普通模式主动澄清配置与 Juice 提示的经验性自检方式。
+- [[AI/Codex/Codex-使用技巧和最佳实践]]：整合配置与权限基线、主动澄清、Token 优化、HANDOFF 上下文交接和多 Harness 协作，并区分可验证实践与作者经验。
 - [[AI/Code review和知识图谱/AI代码审查闭环-验证优先与敏感信息清理]]：记录完整仓库上下文、真实运行验证、安全扫描和发布前敏感信息清理的审查闭环。
 - [[AI/AI-视觉/Effective-HTML-Agent页面工作流]]：Effective HTML 的页面制作工作流，以及 Codex 插件安装方式。
 - [[KnowledgeBase/sources/effective-html-agent-workflow-summary|Effective HTML 来源摘要]]：HTML 直出、自包含交付、交互式图表和 Markdown 的适用边界。

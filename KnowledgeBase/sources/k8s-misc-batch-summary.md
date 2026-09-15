@@ -10,7 +10,7 @@ tags:
   - docker-kubernetes/k8s-springcloud
   - docker-kubernetes/k8s-backup-dr
   - docker-kubernetes/k8s-ai-gpu
-date: 2026-09-13
+date: 2026-09-15
 sources:
   - "[[Docker-Kubernetes/helm-operator/helmv3-安装与使用]]"
   - "[[Docker-Kubernetes/helm-operator/helm部署config-syncer(kubed)]]"
@@ -24,7 +24,6 @@ sources:
   - "[[Docker-Kubernetes/kubeblocks/kubeblocks部署WordPress]]"
   - "[[Docker-Kubernetes/kubeblocks/kubeblocks部署高可用harbor集群]]"
   - "[[Docker-Kubernetes/harbor/harbor-basics]]"
-  - "[[Docker-Kubernetes/harbor/helm部署harbor]]"
   - "[[Docker-Kubernetes/harbor/Dragonfly与Harbor-P2P镜像分发]]"
   - "[[Docker-Kubernetes/container-platform/部署openshift(3.10)]]"
   - "[[Docker-Kubernetes/container-platform/部署轻量级的K8S平台-K3S]]"
@@ -144,23 +143,15 @@ sources:
   - KubeBlocks 通过 replication 模式创建主备集群，支持自动故障转移
   - PostgreSQL 和 Redis 集群创建只需一条命令
 
-### [[Docker-Kubernetes/harbor/harbor-basics|Harbor基础]]
+### [[Docker-Kubernetes/harbor/harbor-basics|Harbor 部署与使用指南]]
 
-- **核心内容**: Harbor 企业级 Docker 镜像仓库的基础介绍、自签发证书配置和安装流程。
+- **核心内容**: Harbor 的完整部署与使用入口，覆盖 Docker Compose、Kubernetes Helm、Ingress/TLS、镜像推拉、containerd 接入和 Helm OCI Chart 内网化。
 - **关键知识点**:
-  - Harbor 由 VMware 开源，支持 RBAC、LDAP、日志审核、镜像复制
-  - 基于 docker-compose 部署
-  - 自签发证书流程：CA 根证书 -> 域名证书签发
-  - 默认账号密码：admin/Harbor12345
-
-### [[Docker-Kubernetes/harbor/helm部署harbor|Helm部署Harbor]]
-
-- **核心内容**: 使用 Helm Chart 在 K8s 上部署 Harbor，配置 Ingress 和 TLS 证书。
-- **关键知识点**:
-  - Helm 3 支持 OCI 格式的容器注册中心存储 Chart
-  - Harbor 支持存储和管理容器镜像和 Helm Chart
-  - 使用 cert-manager 创建 TLS 证书
-  - 支持 ingress、clusterIP、nodePort、loadBalancer 多种暴露方式
+  - Harbor 是企业级 OCI 制品仓库，支持 RBAC、LDAP、审计、镜像复制及容器镜像与 Helm Chart 管理
+  - 可按场景选择 Docker Compose 或 Helm 部署；Helm 部署需协调证书、externalURL、Ingress 和持久化配置
+  - Kubernetes 可通过 containerd Registry 配置与 imagePullSecret 拉取私有镜像
+  - Harbor 2.8+ 直接以 OCI Artifact 管理 Helm Chart；旧版本可选 ChartMuseum
+  - 自签名 CA、跳过 TLS 校验和默认管理员凭据仅适合受控实验环境
 
 ### [[Docker-Kubernetes/harbor/Dragonfly与Harbor-P2P镜像分发|Dragonfly + Harbor P2P 镜像分发]]
 

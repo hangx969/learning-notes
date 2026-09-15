@@ -5,7 +5,7 @@ tags:
   - knowledgebase/tools
 aliases:
   - Tool Map
-date: 2026-04-16
+date: 2026-09-15
 ---
 
 # 工具地图
@@ -30,13 +30,9 @@ date: 2026-04-16
 ---
 
 ### Codex
-**相关文档（6 篇）：**
-- [[AI/Codex/Codex-Harness架构-任务循环与扩展|Codex Harness 架构]] ⭐ 推荐入口 — Agent 主循环、上下文、工具执行、状态记忆与扩展入口
-- [[AI/Codex/Codex-config-toml-全量配置参考|config.toml 全量配置参考]] — 配置字段与扩展机制
-- [[AI/Codex/Codex-复杂项目-HANDOFF上下文交接|复杂项目 HANDOFF]] — 长任务上下文交接
-- [[AI/Codex/Codex-两个设置提升体验|两个体验设置]] — 普通模式主动澄清与体验优化
-- [[AI/Codex/Codex-省Token工具实测-Ponytail-Headroom-RTK|省 Token 工具实测]] — 约束 Agent 输出的工具实践
-- [[AI/Codex/在 Codex 里随时切换不同厂家的 Harness|切换不同厂家的 Harness]] — 多 Harness 接入与切换
+**相关文档（2 篇）：**
+- [[AI/Codex/Codex-Harness架构-任务循环与扩展|Codex Harness 架构]] — Agent 主循环、上下文、工具执行、状态记忆与扩展入口
+- [[AI/Codex/Codex-使用技巧和最佳实践|Codex 使用技巧和最佳实践]] ⭐ 推荐入口 — 配置、安全边界、主动澄清、Token 优化、HANDOFF 与多 Harness 协作
 
 **概念页：** [[KnowledgeBase/entities/Codex|Codex]]
 
@@ -120,7 +116,7 @@ date: 2026-04-16
 ### Helm
 **相关文档（20+ 篇）：**
 - [[Docker-Kubernetes/helm-operator/helmv3-安装与使用|helmv3-安装与使用]] ⭐ 推荐入口
-- [[Docker-Kubernetes/harbor/helm部署harbor|helm部署harbor]]
+- [[Docker-Kubernetes/harbor/harbor-basics|Harbor 部署与使用指南]]
 - [[Docker-Kubernetes/k8s-monitoring-logging/helm部署prometheus-stack全家桶|helm部署prometheus-stack全家桶]]
 - [[Docker-Kubernetes/k8s-monitoring-logging/helm部署Loki-promtail-tempo-grafanaAgent全家桶|helm部署Loki-promtail-tempo-grafanaAgent全家桶]]
 - [[Docker-Kubernetes/k8s-CICD/Jenkins/helm部署jenkins|helm部署jenkins]]
@@ -166,8 +162,7 @@ date: 2026-04-16
 
 ### Harbor
 **相关文档：**
-- [[Docker-Kubernetes/harbor/harbor-basics|harbor-basics]] ⭐ 推荐入口
-- [[Docker-Kubernetes/harbor/helm部署harbor|helm部署harbor]]
+- [[Docker-Kubernetes/harbor/harbor-basics|Harbor 部署与使用指南]] ⭐ 推荐入口
 - [[Docker-Kubernetes/harbor/Dragonfly与Harbor-P2P镜像分发|Dragonfly + Harbor P2P 镜像分发]] — AI/GPU 集群镜像与大文件源站卸载
 - [[Docker-Kubernetes/kubeblocks/kubeblocks部署高可用harbor集群|kubeblocks部署高可用harbor集群]]
 

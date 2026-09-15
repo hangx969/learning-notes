@@ -1,744 +1,314 @@
 ---
-title: Harbor 基础
+title: Harbor 部署与使用指南
 tags:
   - kubernetes
   - harbor
   - docker
+  - helm
+  - containerd
+date: 2026-09-15
 aliases:
   - harbor基础
+  - helm部署harbor
+  - Helm 部署 Harbor
 ---
 
-# Docker私有镜像仓库harbor
+# Harbor 部署与使用指南
 
-## Harbor介绍
+Harbor 是面向云原生制品的企业级私有 Registry，可统一存储和管理容器镜像、Helm Chart 等 OCI Artifact，并提供 RBAC、LDAP、审计、复制和 Web 管理等能力。
 
-- Docker容器应用的开发和运行离不开可靠的镜像管理，虽然Docker官方也提供了公共的镜像仓库，但是从安全和效率等方面考虑，部署我们私有环境内的Registry也是非常必要的。
+- 项目地址：[goharbor/harbor](https://github.com/goharbor/harbor)
+- Helm Chart：[Harbor Helm Releases](https://github.com/goharbor/harbor-helm/releases)
+- Artifact Hub：[Harbor](https://artifacthub.io/packages/helm/harbor/harbor)
+- OCI Chart 文档：[Working with OCI Helm Charts](https://goharbor.io/docs/main/working-with-projects/working-with-oci/working-with-helm-oci-charts/)
 
-- Harbor是由VMware公司开源的企业级的Docker Registry管理项目，它包括权限管理(RBAC)、LDAP、日志审核、管理界面、自我注册、镜像复制和中文支持等功能。
+本文按“部署 Harbor → 推拉镜像 → Kubernetes 接入 → 管理 Helm Chart → TLS 配置”的顺序整理。示例中的域名、IP、版本、StorageClass 和口令均需替换为实际环境值。
 
-- 官网地址：[Harbor GitHub](https://github.com/goharbor/harbor)
+> [!warning] 示例凭据
+> 文中的 `admin/Harbor12345` 是示例或旧版本默认凭据，只适合实验环境。生产环境应在首次部署时修改管理员密码，并优先使用项目级 Robot Account。
 
-## Harbor安装配置
+## 1. 部署方式选择
 
-1. 创建VM。为harbor创建自签发证书
+| 场景 | 推荐方式 | 说明 |
+| --- | --- | --- |
+| 单机实验、离线环境 | Docker Compose | 组件集中在一台主机，部署和维护简单 |
+| Kubernetes 集群 | Helm | 便于通过 Ingress、PVC、cert-manager 和 values 管理 |
+| 高可用生产环境 | Helm + 外部依赖 | 数据库、Redis、对象存储等需按实际 HA 设计 |
 
-   ```bash
-   #设置主机名
-   hostnamectl set-hostname harbor && bash
-   
-   mkdir /data/ssl -p
-   cd /data/ssl/
-   #生成一个3072位的key，也就是私钥
-   openssl genrsa -out ca.key 3072
-   #生成一个数字证书ca.pem，3650表示证书的有效时间是3年。后续根据ca.pem根证书来签发信任的客户端证书
-   openssl req -new -x509 -days 3650 -key ca.key -out ca.pem 
-   #生成域名的证书
-   #生成一个3072位的key，也就是私钥
-   openssl genrsa -out harbor.key  3072
-   #生成一个证书请求文件，一会签发证书时需要的
-   openssl req -new -key harbor.key -out harbor.csr
-   #签发证书：
-   openssl x509 -req -in harbor.csr -CA ca.pem -CAkey ca.key -CAcreateserial -out harbor.pem -days 3650
-   ```
+## 2. 使用 Docker Compose 部署 Harbor
 
-2. 安装docker（harbor是基于docker-compose的）
+以下流程来自 Harbor 2.3.x 的历史实验环境。新部署应下载目标版本对应的离线安装包，并以该版本的 `harbor.yml.tmpl` 和官方文档为准。
 
-3. 安装harbor
+### 2.1 配置主机名与自签名证书
 
-   ```bash
-   #配置hosts文件
-   vim /etc/hosts
-   #添加：
-   10.0.0.4 hangxdockerlab
-   10.0.0.5 harbor
-   #创建安装目录
-   mkdir /data/install -p
-   cd /data/install/
-   #安装harbor
-   #/data/ssl目录下有如下文件：ca.key  ca.pem  ca.srl  harbor.csr  harbor.key  harbor.pem
-   cd /data/install/
-   #把harbor的离线包harbor-offline-installer-v2.3.0-rc3.tgz上传到这个目录，离线包在课件里提供了
-   #下载harbor离线包的地址：
-   #https://github.com/goharbor/harbor
-   #解压：
-   tar zxvf harbor-offline-installer-v2.3.0-rc3.tgz
-   cd harbor
-   cp harbor.yml.tmpl harbor.yml 
-   
-   vim harbor.yml
-   #修改配置文件：
-   hostname: harbor #修改hostname，跟上面签发的证书域名保持一致
-   #协议用https
-   certificate: /data/ssl/harbor.pem
-   private_key: /data/ssl/harbor.key
-   #邮件和ldap不需要配置，在harbor的web界面可以配置，其他配置采用默认即可。
-   #注：harbor默认的账号密码：admin/Harbor12345
-   ```
-   
-4. 安装docker-compose
+~~~bash
+hostnamectl set-hostname harbor
 
-   docker-compose项目是Docker官方的开源项目，负责实现对Docker容器集群的快速编排。Docker-Compose的工程配置文件默认为docker-compose.yml，Docker-Compose运行目录下的必要有一个docker-compose.yml。docker-compose可以管理多个docker实例。
+mkdir -p /data/ssl
+cd /data/ssl
 
-   ```bash
-   #上传docker-compose-Linux-x86_64文件到harbor机器，这是harbor的依赖
-   mv docker-compose-Linux-x86_64.64 /usr/bin/docker-compose
-   chmod +x /usr/bin/docker-compose
-   
-   #安装harbor依赖的的离线镜像包docker-harbor-2-3-0.tar.gz上传到harbor机器，通过docker load -i解压
-   docker load -i docker-harbor-2-3-0.tar.gz 
-   cd /data/install/harbor
-   ./install.sh
-   #出现✔ ----Harbor has been installed and started successfully.---- 表明安装成功。
-   ```
+# CA 私钥与根证书
+openssl genrsa -out ca.key 3072
+openssl req -new -x509 -days 3650 -key ca.key -out ca.pem
 
-   > [!note] 注
-   >
-   > - docker-compose可以直接yum install docker-compose或者apt install docker-compose
-   >
-   > - 离线镜像包docker-harbor-2-3-0.tar.gz如果不上传，install.sh会自动拉取
-   >
-   > - 安装过程中如果报错类似HTTP error chucked，执行`pip install 'urllib3<2'`
-
-5. harbor启动和停止
-
-   ```bash
-   #如何停掉harbor：
-   cd /data/install/harbor
-   docker-compose stop 
-   #如何启动harbor：
-   sudo su
-   cd /data/install/harbor
-   docker-compose start
-   ```
-
-6. 图形化界面访问harbor
-
-   - 在harbor同一个VNET下创建了一台Windows VM，在C:\Windows\System32\drivers\etc下修改hosts文件，添加 harbor 10.0.0.5。浏览器访问：https://harbor
-   - Harbor VM NSG开放443端口，直接访问公网IP就行（https://20.205.104.235）
-
-## harbor私有镜像仓库使用
-
-```bash
-#在docker lab机器上修改docker镜像源
-#修改docker配置 
-vim /etc/docker/daemon.json
-
-{  "registry-mirrors": ["https://rsbud4vc.mirror.aliyuncs.com","https://registry.docker-cn.com","https://docker.mirrors.ustc.edu.cn","https://dockerhub.azk8s.cn","http://hub-mirror.c.163.com"],
-"insecure-registries": ["10.0.0.5","harbor"]
-}
-#注意：配置新增加了一行内容如下："insecure-registries": ["10.0.0.5","harbor"]
-#上面增加的内容表示我们内网访问harbor的时候走的是http，10.0.0.5是安装harbor机器的ip
-
-#修改配置之后使配置生效：
-systemctl daemon-reload && systemctl restart docker
-#查看docker是否启动成功
-systemctl status docker
-
-#登录仓库
-docker login 10.0.0.5
-
-#将本地镜像上传到仓库
-docker load -i tomcat.tar.gz
-docker tag tomcat:latest  10.0.0.5/test/tomcat:v1
-docker push 10.0.0.5/test/tomcat:v1 
-
-#从仓库拉取镜像
-docker rmi -f 10.0.0.5/test/tomcat:v1
-docker pull 10.0.0.5/test/tomcat:v1
-```
-
-# k8s基于containerd从harbor拉取镜像
-
-## 升级containerd
-
-- 在安装1.28的k8s的时候，装的是1.6.6的containerd，还不支持harbor，需要升级containerd。
-
-- 给虚机打个快照。
-
-- 目前适配k8s 1.24之后的所有版本的containerd的稳定版本为：1.6.22，就装这个版本。
-
-  ~~~sh
-  yum remove containerd.io -y
-  yum install containerd.io-1.6.22* -y
-  cd /etc/containerd/
-  rm -rf *
-  #上传config.toml文件
-  yum install docker-ce -y
-  systemctl start docker --now
-  ~~~
-
-## containerd配置文件修改
-
-- 修改`/etc/containerd/config.toml`配置文件里的harbor的ip地址，变成自己真实环境的harbor的ip
-
-- 修改完之后重启containerd
-
-  ~~~sh
-  systemctl restart containerd
-  ~~~
-
-- containerd配置文件如下：
-
-### 基于ip的harbor
-
-~~~toml
-disabled_plugins = []
-imports = []
-oom_score = 0
-plugin_dir = ""
-required_plugins = []
-root = "/var/lib/containerd"
-state = "/run/containerd"
-temp = ""
-version = 2
-
-[cgroup]
-  path = ""
-
-[debug]
-  address = ""
-  format = ""
-  gid = 0
-  level = ""
-  uid = 0
-
-[grpc]
-  address = "/run/containerd/containerd.sock"
-  gid = 0
-  max_recv_message_size = 16777216
-  max_send_message_size = 16777216
-  tcp_address = ""
-  tcp_tls_ca = ""
-  tcp_tls_cert = ""
-  tcp_tls_key = ""
-  uid = 0
-
-[metrics]
-  address = ""
-  grpc_histogram = false
-
-[plugins]
-
-  [plugins."io.containerd.gc.v1.scheduler"]
-    deletion_threshold = 0
-    mutation_threshold = 100
-    pause_threshold = 0.02
-    schedule_delay = "0s"
-    startup_delay = "100ms"
-
-  [plugins."io.containerd.grpc.v1.cri"]
-    device_ownership_from_security_context = false
-    disable_apparmor = false
-    disable_cgroup = false
-    disable_hugetlb_controller = true
-    disable_proc_mount = false
-    disable_tcp_service = true
-    enable_selinux = false
-    enable_tls_streaming = false
-    enable_unprivileged_icmp = false
-    enable_unprivileged_ports = false
-    ignore_image_defined_volumes = false
-    max_concurrent_downloads = 3
-    max_container_log_line_size = 16384
-    netns_mounts_under_state_dir = false
-    restrict_oom_score_adj = false
-    sandbox_image = "registry.aliyuncs.com/google_containers/pause:3.7"
-    selinux_category_range = 1024
-    stats_collect_period = 10
-    stream_idle_timeout = "4h0m0s"
-    stream_server_address = "127.0.0.1"
-    stream_server_port = "0"
-    systemd_cgroup = false
-    tolerate_missing_hugetlb_controller = true
-    unset_seccomp_profile = ""
-
-    [plugins."io.containerd.grpc.v1.cri".cni]
-      bin_dir = "/opt/cni/bin"
-      conf_dir = "/etc/cni/net.d"
-      conf_template = ""
-      ip_pref = ""
-      max_conf_num = 1
-
-    [plugins."io.containerd.grpc.v1.cri".containerd]
-      default_runtime_name = "runc"
-      disable_snapshot_annotations = true
-      discard_unpacked_layers = false
-      ignore_rdt_not_enabled_errors = false
-      no_pivot = false
-      snapshotter = "overlayfs"
-
-      [plugins."io.containerd.grpc.v1.cri".containerd.default_runtime]
-        base_runtime_spec = ""
-        cni_conf_dir = ""
-        cni_max_conf_num = 0
-        container_annotations = []
-        pod_annotations = []
-        privileged_without_host_devices = false
-        runtime_engine = ""
-        runtime_path = ""
-        runtime_root = ""
-        runtime_type = ""
-
-        [plugins."io.containerd.grpc.v1.cri".containerd.default_runtime.options]
-
-      [plugins."io.containerd.grpc.v1.cri".containerd.runtimes]
-
-        [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc]
-          base_runtime_spec = ""
-          cni_conf_dir = ""
-          cni_max_conf_num = 0
-          container_annotations = []
-          pod_annotations = []
-          privileged_without_host_devices = false
-          runtime_engine = ""
-          runtime_path = ""
-          runtime_root = ""
-          runtime_type = "io.containerd.runc.v2"
-
-          [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc.options]
-            BinaryName = ""
-            CriuImagePath = ""
-            CriuPath = ""
-            CriuWorkPath = ""
-            IoGid = 0
-            IoUid = 0
-            NoNewKeyring = false
-            NoPivotRoot = false
-            Root = ""
-            ShimCgroup = ""
-            SystemdCgroup = true
-
-      [plugins."io.containerd.grpc.v1.cri".containerd.untrusted_workload_runtime]
-        base_runtime_spec = ""
-        cni_conf_dir = ""
-        cni_max_conf_num = 0
-        container_annotations = []
-        pod_annotations = []
-        privileged_without_host_devices = false
-        runtime_engine = ""
-        runtime_path = ""
-        runtime_root = ""
-        runtime_type = ""
-
-        [plugins."io.containerd.grpc.v1.cri".containerd.untrusted_workload_runtime.options]
-
-    [plugins."io.containerd.grpc.v1.cri".image_decryption]
-      key_model = "node"
-
-    [plugins."io.containerd.grpc.v1.cri".registry]
-      config_path = ""
-
-      [plugins."io.containerd.grpc.v1.cri".registry.auths]
-      #=================这里是手动新加进来的 配置harbor模块=========================
-      [plugins."io.containerd.grpc.v1.cri".registry.configs]
-        [plugins."io.containerd.grpc.v1.cri".registry.configs."10.0.0.5".tls] #harbor server的Ip
-            insecure_skip_verify = true
-        [plugins."io.containerd.grpc.v1.cri".registry.configs."10.0.0.5".auth] #harbor server的Ip
-            username = "admin" #配置账号密码
-            password = "Harbor12345"
-
-      [plugins."io.containerd.grpc.v1.cri".registry.headers]
-
-      [plugins."io.containerd.grpc.v1.cri".registry.mirrors]
-         [plugins."io.containerd.grpc.v1.cri".registry.mirrors."10.0.0.5"] #harbor server的Ip
-            endpoint = ["https://10.0.0.5:443"] #harbor server的Ip
-          [plugins."io.containerd.grpc.v1.cri".registry.mirrors."docker.io"]
-             endpoint = ["https://vh3bm52y.mirror.aliyuncs.com","https://registry.docker-cn.com"]
-    #==================================
-    [plugins."io.containerd.grpc.v1.cri".x509_key_pair_streaming]
-      tls_cert_file = ""
-      tls_key_file = ""
-
-  [plugins."io.containerd.internal.v1.opt"]
-    path = "/opt/containerd"
-
-  [plugins."io.containerd.internal.v1.restart"]
-    interval = "10s"
-
-  [plugins."io.containerd.internal.v1.tracing"]
-    sampling_ratio = 1.0
-    service_name = "containerd"
-
-  [plugins."io.containerd.metadata.v1.bolt"]
-    content_sharing_policy = "shared"
-
-  [plugins."io.containerd.monitor.v1.cgroups"]
-    no_prometheus = false
-
-  [plugins."io.containerd.runtime.v1.linux"]
-    no_shim = false
-    runtime = "runc"
-    runtime_root = ""
-    shim = "containerd-shim"
-    shim_debug = false
-
-  [plugins."io.containerd.runtime.v2.task"]
-    platforms = ["linux/amd64"]
-    sched_core = false
-
-  [plugins."io.containerd.service.v1.diff-service"]
-    default = ["walking"]
-
-  [plugins."io.containerd.service.v1.tasks-service"]
-    rdt_config_file = ""
-
-  [plugins."io.containerd.snapshotter.v1.aufs"]
-    root_path = ""
-
-  [plugins."io.containerd.snapshotter.v1.btrfs"]
-    root_path = ""
-
-  [plugins."io.containerd.snapshotter.v1.devmapper"]
-    async_remove = false
-    base_image_size = ""
-    discard_blocks = false
-    fs_options = ""
-    fs_type = ""
-    pool_name = ""
-    root_path = ""
-
-  [plugins."io.containerd.snapshotter.v1.native"]
-    root_path = ""
-
-  [plugins."io.containerd.snapshotter.v1.overlayfs"]
-    root_path = ""
-    upperdir_label = false
-
-  [plugins."io.containerd.snapshotter.v1.zfs"]
-    root_path = ""
-
-  [plugins."io.containerd.tracing.processor.v1.otlp"]
-    endpoint = ""
-    insecure = false
-    protocol = ""
-
-[proxy_plugins]
-
-[stream_processors]
-
-  [stream_processors."io.containerd.ocicrypt.decoder.v1.tar"]
-    accepts = ["application/vnd.oci.image.layer.v1.tar+encrypted"]
-    args = ["--decryption-keys-path", "/etc/containerd/ocicrypt/keys"]
-    env = ["OCICRYPT_KEYPROVIDER_CONFIG=/etc/containerd/ocicrypt/ocicrypt_keyprovider.conf"]
-    path = "ctd-decoder"
-    returns = "application/vnd.oci.image.layer.v1.tar"
-
-  [stream_processors."io.containerd.ocicrypt.decoder.v1.tar.gzip"]
-    accepts = ["application/vnd.oci.image.layer.v1.tar+gzip+encrypted"]
-    args = ["--decryption-keys-path", "/etc/containerd/ocicrypt/keys"]
-    env = ["OCICRYPT_KEYPROVIDER_CONFIG=/etc/containerd/ocicrypt/ocicrypt_keyprovider.conf"]
-    path = "ctd-decoder"
-    returns = "application/vnd.oci.image.layer.v1.tar+gzip"
-
-[timeouts]
-  "io.containerd.timeout.bolt.open" = "0s"
-  "io.containerd.timeout.shim.cleanup" = "5s"
-  "io.containerd.timeout.shim.load" = "5s"
-  "io.containerd.timeout.shim.shutdown" = "3s"
-  "io.containerd.timeout.task.state" = "2s"
-
-[ttrpc]
-  address = ""
-  gid = 0
-  uid = 0
+# Harbor 私钥、CSR 与服务端证书
+openssl genrsa -out harbor.key 3072
+openssl req -new -key harbor.key -out harbor.csr
+openssl x509 -req -in harbor.csr \
+  -CA ca.pem -CAkey ca.key -CAcreateserial \
+  -out harbor.pem -days 3650
 ~~~
 
-### 基于域名的harbor
+证书的 CN/SAN 必须与客户端使用的 Harbor 域名一致。客户端还需要信任签发该证书的 CA。
 
-~~~toml
-disabled_plugins = []
-imports = []
-oom_score = 0
-plugin_dir = ""
-required_plugins = []
-root = "/var/lib/containerd"
-state = "/run/containerd"
-temp = ""
-version = 2
+### 2.2 安装并配置 Harbor
 
-[cgroup]
-  path = ""
+先安装 Docker 和 Docker Compose，再准备主机解析和离线安装包：
 
-[debug]
-  address = ""
-  format = ""
-  gid = 0
-  level = ""
-  uid = 0
-
-[grpc]
-  address = "/run/containerd/containerd.sock"
-  gid = 0
-  max_recv_message_size = 16777216
-  max_send_message_size = 16777216
-  tcp_address = ""
-  tcp_tls_ca = ""
-  tcp_tls_cert = ""
-  tcp_tls_key = ""
-  uid = 0
-
-[metrics]
-  address = ""
-  grpc_histogram = false
-
-[plugins]
-
-  [plugins."io.containerd.gc.v1.scheduler"]
-    deletion_threshold = 0
-    mutation_threshold = 100
-    pause_threshold = 0.02
-    schedule_delay = "0s"
-    startup_delay = "100ms"
-
-  [plugins."io.containerd.grpc.v1.cri"]
-    device_ownership_from_security_context = false
-    disable_apparmor = false
-    disable_cgroup = false
-    disable_hugetlb_controller = true
-    disable_proc_mount = false
-    disable_tcp_service = true
-    enable_selinux = false
-    enable_tls_streaming = false
-    enable_unprivileged_icmp = false
-    enable_unprivileged_ports = false
-    ignore_image_defined_volumes = false
-    max_concurrent_downloads = 3
-    max_container_log_line_size = 16384
-    netns_mounts_under_state_dir = false
-    restrict_oom_score_adj = false
-    sandbox_image = "registry.cn-hangzhou.aliyuncs.com/google_containers/pause:3.7"
-    selinux_category_range = 1024
-    stats_collect_period = 10
-    stream_idle_timeout = "4h0m0s"
-    stream_server_address = "127.0.0.1"
-    stream_server_port = "0"
-    systemd_cgroup = false
-    tolerate_missing_hugetlb_controller = true
-    unset_seccomp_profile = ""
-
-    [plugins."io.containerd.grpc.v1.cri".cni]
-      bin_dir = "/opt/cni/bin"
-      conf_dir = "/etc/cni/net.d"
-      conf_template = ""
-      ip_pref = ""
-      max_conf_num = 1
-
-    [plugins."io.containerd.grpc.v1.cri".containerd]
-      default_runtime_name = "runc"
-      disable_snapshot_annotations = true
-      discard_unpacked_layers = false
-      ignore_rdt_not_enabled_errors = false
-      no_pivot = false
-      snapshotter = "overlayfs"
-
-      [plugins."io.containerd.grpc.v1.cri".containerd.default_runtime]
-        base_runtime_spec = ""
-        cni_conf_dir = ""
-        cni_max_conf_num = 0
-        container_annotations = []
-        pod_annotations = []
-        privileged_without_host_devices = false
-        runtime_engine = ""
-        runtime_path = ""
-        runtime_root = ""
-        runtime_type = ""
-
-        [plugins."io.containerd.grpc.v1.cri".containerd.default_runtime.options]
-
-      [plugins."io.containerd.grpc.v1.cri".containerd.runtimes]
-
-        [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc]
-          base_runtime_spec = ""
-          cni_conf_dir = ""
-          cni_max_conf_num = 0
-          container_annotations = []
-          pod_annotations = []
-          privileged_without_host_devices = false
-          runtime_engine = ""
-          runtime_path = ""
-          runtime_root = ""
-          runtime_type = "io.containerd.runc.v2"
-
-          [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc.options]
-            BinaryName = ""
-            CriuImagePath = ""
-            CriuPath = ""
-            CriuWorkPath = ""
-            IoGid = 0
-            IoUid = 0
-            NoNewKeyring = false
-            NoPivotRoot = false
-            Root = ""
-            ShimCgroup = ""
-            SystemdCgroup = true
-
-      [plugins."io.containerd.grpc.v1.cri".containerd.untrusted_workload_runtime]
-        base_runtime_spec = ""
-        cni_conf_dir = ""
-        cni_max_conf_num = 0
-        container_annotations = []
-        pod_annotations = []
-        privileged_without_host_devices = false
-        runtime_engine = ""
-        runtime_path = ""
-        runtime_root = ""
-        runtime_type = ""
-
-        [plugins."io.containerd.grpc.v1.cri".containerd.untrusted_workload_runtime.options]
-
-    [plugins."io.containerd.grpc.v1.cri".image_decryption]
-      key_model = "node"
-
-    [plugins."io.containerd.grpc.v1.cri".registry]
-      config_path = ""
-      #=================这里是手动新加进来的 配置harbor模块=========================
-      [plugins."io.containerd.grpc.v1.cri".registry.auths]
-
-      [plugins."io.containerd.grpc.v1.cri".registry.configs]
-        [plugins."io.containerd.grpc.v1.cri".registry.configs."harbor.hanxux.local".tls]
-            insecure_skip_verify = true
-            ca_file = ""
-            cert_file = ""
-            key_file = ""
-        [plugins."io.containerd.grpc.v1.cri".registry.configs."harbor.hanxux.local".auth]
-            username = "admin"
-            password = "Harbor12345"
-
-      [plugins."io.containerd.grpc.v1.cri".registry.headers]
-
-      [plugins."io.containerd.grpc.v1.cri".registry.mirrors]
-         [plugins."io.containerd.grpc.v1.cri".registry.mirrors."harbor.hanxux.local"]
-            endpoint = ["http://harbor.hanxux.local"]
-           [plugins."io.containerd.grpc.v1.cri".registry.mirrors."docker.io"]
-             endpoint = ["https://y8y6vosv.mirror.aliyuncs.com","https://docker.lmirror.top","https://docker.m.daocloud.io", "https://hub.uuuadc.top","https://docker.anyhub.us.kg","https://dockerhub.jobcher.com","https://dockerhub.icu","https://docker.ckyl.me","https://docker.awsl9527.cn","https://docker.laoex.link"]
-#==================================
-    [plugins."io.containerd.grpc.v1.cri".x509_key_pair_streaming]
-      tls_cert_file = ""
-      tls_key_file = ""
-
-  [plugins."io.containerd.internal.v1.opt"]
-    path = "/opt/containerd"
-
-  [plugins."io.containerd.internal.v1.restart"]
-    interval = "10s"
-
-  [plugins."io.containerd.internal.v1.tracing"]
-    sampling_ratio = 1.0
-    service_name = "containerd"
-
-  [plugins."io.containerd.metadata.v1.bolt"]
-    content_sharing_policy = "shared"
-
-  [plugins."io.containerd.monitor.v1.cgroups"]
-    no_prometheus = false
-
-  [plugins."io.containerd.runtime.v1.linux"]
-    no_shim = false
-    runtime = "runc"
-    runtime_root = ""
-    shim = "containerd-shim"
-    shim_debug = false
-
-  [plugins."io.containerd.runtime.v2.task"]
-    platforms = ["linux/amd64"]
-    sched_core = false
-
-  [plugins."io.containerd.service.v1.diff-service"]
-    default = ["walking"]
-
-  [plugins."io.containerd.service.v1.tasks-service"]
-    rdt_config_file = ""
-
-  [plugins."io.containerd.snapshotter.v1.aufs"]
-    root_path = ""
-
-  [plugins."io.containerd.snapshotter.v1.btrfs"]
-    root_path = ""
-
-  [plugins."io.containerd.snapshotter.v1.devmapper"]
-    async_remove = false
-    base_image_size = ""
-    discard_blocks = false
-    fs_options = ""
-    fs_type = ""
-    pool_name = ""
-    root_path = ""
-
-  [plugins."io.containerd.snapshotter.v1.native"]
-    root_path = ""
-
-  [plugins."io.containerd.snapshotter.v1.overlayfs"]
-    root_path = ""
-    upperdir_label = false
-
-  [plugins."io.containerd.snapshotter.v1.zfs"]
-    root_path = ""
-
-  [plugins."io.containerd.tracing.processor.v1.otlp"]
-    endpoint = ""
-    insecure = false
-    protocol = ""
-
-[proxy_plugins]
-
-[stream_processors]
-
-  [stream_processors."io.containerd.ocicrypt.decoder.v1.tar"]
-    accepts = ["application/vnd.oci.image.layer.v1.tar+encrypted"]
-    args = ["--decryption-keys-path", "/etc/containerd/ocicrypt/keys"]
-    env = ["OCICRYPT_KEYPROVIDER_CONFIG=/etc/containerd/ocicrypt/ocicrypt_keyprovider.conf"]
-    path = "ctd-decoder"
-    returns = "application/vnd.oci.image.layer.v1.tar"
-
-  [stream_processors."io.containerd.ocicrypt.decoder.v1.tar.gzip"]
-    accepts = ["application/vnd.oci.image.layer.v1.tar+gzip+encrypted"]
-    args = ["--decryption-keys-path", "/etc/containerd/ocicrypt/keys"]
-    env = ["OCICRYPT_KEYPROVIDER_CONFIG=/etc/containerd/ocicrypt/ocicrypt_keyprovider.conf"]
-    path = "ctd-decoder"
-    returns = "application/vnd.oci.image.layer.v1.tar+gzip"
-
-[timeouts]
-  "io.containerd.timeout.bolt.open" = "0s"
-  "io.containerd.timeout.shim.cleanup" = "5s"
-  "io.containerd.timeout.shim.load" = "5s"
-  "io.containerd.timeout.shim.shutdown" = "3s"
-  "io.containerd.timeout.task.state" = "2s"
-
-[ttrpc]
-  address = ""
-  gid = 0
-  uid = 0
-~~~
-
-> [!warning] 注意：所有k8s节点都需要在/etc/hosts里面加上harbor域名和node ip的映射。
-
-## 配置docker
-
-- 在需要拉镜像的机器上配置docker登录harbor
-
-~~~sh
-vim /etc/docker/daemon.json
-#添加下面一行(harbor ip，主机名)，记得在上一行末尾加上逗号。
-#内网登录不用走https，走http就行。
-"insecure-registries": ["10.0.0.5","harbor"]
-
-systemctl daemon-reload
-systemctl restart docker
-
-vim /etc/hosts
-#添加harbor域名
+~~~bash
+# /etc/hosts 示例
+10.0.0.4 hangxdockerlab
 10.0.0.5 harbor
 
-#测试docker登录推送镜像
-docker login 10.0.0.5
-docker pull nginx
-docker tag docker.io/library/nginx:latest 10.0.0.5/test/nginx:latest #harbor IP/项目名/镜像名
-docker push 10.0.0.5/test/nginx:latest
+mkdir -p /data/install
+cd /data/install
+tar zxvf harbor-offline-installer-v2.3.0-rc3.tgz
+cd harbor
+cp harbor.yml.tmpl harbor.yml
 ~~~
 
-## 创建pod
+编辑 `harbor.yml` 的关键项：
 
-- 配置为从harbor拉镜像
+~~~yaml
+hostname: harbor
+
+https:
+  port: 443
+  certificate: /data/ssl/harbor.pem
+  private_key: /data/ssl/harbor.key
+~~~
+
+如果 Docker Compose 未通过系统包安装，可将对应平台的二进制放入 PATH：
+
+~~~bash
+mv docker-compose-Linux-x86_64 /usr/bin/docker-compose
+chmod +x /usr/bin/docker-compose
+~~~
+
+加载离线镜像并安装：
+
+~~~bash
+docker load -i docker-harbor-2-3-0.tar.gz
+cd /data/install/harbor
+./install.sh
+~~~
+
+未预先加载离线镜像时，安装程序会尝试在线拉取。旧环境若出现与 urllib3 版本相关的 HTTP chunked error，可检查 Python 依赖兼容性；原实验的临时处理为：
+
+~~~bash
+pip install 'urllib3<2'
+~~~
+
+### 2.3 启停与访问
+
+~~~bash
+cd /data/install/harbor
+docker-compose stop
+docker-compose start
+~~~
+
+客户端必须能解析 Harbor 域名，并允许访问 443 端口。例如 Windows 可在 `C:\Windows\System32\drivers\etc\hosts` 中添加 `10.0.0.5 harbor`，然后访问 `https://harbor`。
+
+## 3. 使用 Helm 在 Kubernetes 部署 Harbor
+
+### 3.1 下载 Chart
+
+~~~bash
+helm repo add harbor https://helm.goharbor.io
+helm repo update harbor
+helm pull harbor/harbor --version 1.18.0
+~~~
+
+### 3.2 使用 cert-manager 准备 TLS 证书
+
+以下示例假定 `harbor` Namespace 和名为 `selfsigned` 的 `ClusterIssuer` 已存在：
+
+~~~yaml
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: cert-harbor
+  namespace: harbor
+spec:
+  secretName: harbor-tls-cert-secret
+  privateKey:
+    rotationPolicy: Always
+  commonName: harbor.hanxux.local
+  dnsNames:
+    - harbor.hanxux.local
+  usages:
+    - digital signature
+    - key encipherment
+    - server auth
+  issuerRef:
+    name: selfsigned
+    kind: ClusterIssuer
+~~~
+
+### 3.3 配置 Ingress、外部 URL 与持久化
+
+在 Chart 的 `values.yaml` 中至少确认以下配置：
+
+~~~yaml
+expose:
+  type: ingress
+  tls:
+    enabled: true
+    certSource: secret
+    secret:
+      secretName: harbor-tls-cert-secret
+  ingress:
+    hosts:
+      core: harbor.hanxux.local
+    controller: default
+    className: nginx-default
+    annotations:
+      ingress.kubernetes.io/ssl-redirect: "true"
+      ingress.kubernetes.io/proxy-body-size: "0"
+      nginx.ingress.kubernetes.io/ssl-redirect: "true"
+      nginx.ingress.kubernetes.io/proxy-body-size: "0"
+
+externalURL: "https://harbor.hanxux.local"
+~~~
+
+`externalURL` 会参与生成 Registry 鉴权地址。如果缺失，登录时可能出现以下错误：
+
+~~~text
+Get "/service/token?...": unsupported protocol scheme ""
+~~~
+
+原实验使用 Chart 内置的 PostgreSQL 和 Redis。持久化配置需要在首次安装前规划好：如果 PVC 创建时使用了不合适的 AccessMode，后续通常无法通过 `helm upgrade` 直接修改。只有底层存储支持时才使用 `ReadWriteMany`。
+
+> [!warning] Ingress 外部认证
+> 为 Harbor Ingress 增加 oauth2-proxy 的 `auth-url` / `auth-signin` 后，可能导致 `helm registry login` 等非浏览器客户端无法完成认证。UI 单点登录与 Registry API 认证应分别设计。
+
+### 3.4 安装或升级
+
+~~~bash
+helm upgrade --install harbor ./harbor-1.18.0.tgz \
+  --namespace harbor \
+  --create-namespace \
+  -f values.yaml
+~~~
+
+安装后检查工作负载、Ingress、PVC 和证书状态，再通过 `https://harbor.hanxux.local` 访问 UI。
+
+## 4. Docker 推拉镜像
+
+### 4.1 配置客户端
+
+如果实验环境使用 HTTP 或未受信任的自签名证书，可在 `/etc/docker/daemon.json` 配置不安全仓库：
+
+~~~json
+{
+  "registry-mirrors": [
+    "https://registry.docker-cn.com",
+    "https://docker.mirrors.ustc.edu.cn"
+  ],
+  "insecure-registries": [
+    "10.0.0.5",
+    "harbor.hanxux.local"
+  ]
+}
+~~~
+
+~~~bash
+systemctl daemon-reload
+systemctl restart docker
+systemctl status docker
+~~~
+
+> [!warning] 生产环境
+> `insecure-registries` 和跳过 TLS 校验只适合受控实验环境。生产环境应向 Docker/Containerd 分发 CA，保持完整的 TLS 校验。
+
+### 4.2 登录、推送与拉取
+
+先在 Harbor 中创建目标项目，例如 `test` 或 `platform-external`：
+
+~~~bash
+docker login harbor.hanxux.local
+
+docker load -i tomcat.tar.gz
+docker tag tomcat:latest harbor.hanxux.local/test/tomcat:v1
+docker push harbor.hanxux.local/test/tomcat:v1
+
+docker rmi harbor.hanxux.local/test/tomcat:v1
+docker pull harbor.hanxux.local/test/tomcat:v1
+~~~
+
+## 5. Kubernetes 从 Harbor 拉取镜像
+
+### 5.1 containerd 节点配置
+
+原 Kubernetes 1.28 实验环境把 containerd 从 1.6.6 升级到 1.6.22。该版本选择属于历史环境记录，不代表所有 Harbor 接入都必须升级；操作前应检查 Kubernetes、CRI 与 containerd 的兼容矩阵，并先备份配置或创建虚机快照。
+
+~~~bash
+yum remove containerd.io -y
+yum install 'containerd.io-1.6.22*' -y
+systemctl restart containerd
+~~~
+
+旧版 `config.toml` 的 Registry 配置可按 IP 或域名设置。以下只保留需要合并进 `/etc/containerd/config.toml` 的 Harbor 相关片段，其他 CRI、runtime、CNI 与 snapshotter 配置应保留环境现值。
+
+按 IP 接入 HTTPS Harbor：
+
+~~~toml
+[plugins."io.containerd.grpc.v1.cri".registry.configs."10.0.0.5".tls]
+  insecure_skip_verify = true
+
+[plugins."io.containerd.grpc.v1.cri".registry.configs."10.0.0.5".auth]
+  username = "admin"
+  password = "Harbor12345"
+
+[plugins."io.containerd.grpc.v1.cri".registry.mirrors."10.0.0.5"]
+  endpoint = ["https://10.0.0.5:443"]
+~~~
+
+按域名接入 HTTP Harbor：
+
+~~~toml
+[plugins."io.containerd.grpc.v1.cri".registry.configs."harbor.hanxux.local".tls]
+  insecure_skip_verify = true
+
+[plugins."io.containerd.grpc.v1.cri".registry.configs."harbor.hanxux.local".auth]
+  username = "admin"
+  password = "Harbor12345"
+
+[plugins."io.containerd.grpc.v1.cri".registry.mirrors."harbor.hanxux.local"]
+  endpoint = ["http://harbor.hanxux.local"]
+~~~
+
+配置域名时，所有 Kubernetes 节点都必须能解析该域名。修改后重启并检查 containerd：
+
+~~~bash
+echo '10.0.0.5 harbor.hanxux.local' >> /etc/hosts
+systemctl restart containerd
+systemctl status containerd
+~~~
+
+> [!note] 原实验现象
+> 某次旧版配置中，Pod 即使设置 `IfNotPresent` 且节点已有镜像，containerd 仍重新访问 Registry；注释 Harbor Registry 配置后恢复本地镜像识别。该现象应结合镜像完整引用、标签、CRI image 列表和 containerd 日志进一步定位，不宜直接归因于 Harbor。
+
+### 5.2 使用 imagePullSecret
+
+不建议把长期管理员密码写进每个节点的 containerd 配置。可在目标 Namespace 创建 Registry Secret，并在 Pod 或 ServiceAccount 中引用：
+
+~~~bash
+kubectl create secret docker-registry registry-pull-secret \
+  --docker-server=harbor.hanxux.local \
+  --docker-username=admin \
+  --docker-password='Harbor12345'
+~~~
 
 ~~~yaml
 apiVersion: v1
@@ -747,446 +317,226 @@ metadata:
   name: nginx-test-harbor
   namespace: default
 spec:
-  containers:
-  - image: 10.0.0.5/test/nginx:latest
-    imagePullPolicy: Always
-    name: nginx-pod
-    ports:
-    - name: nginx-port
-      containerPort: 80
-      protocol: TCP
-~~~
-
-- 注：使用中发现，给containerd的config.toml配置了harbor之后，新部署的pod，即使镜像已经在本地，并且设置为IfNoePresent，containerd并不会识别到本地的镜像，反而会去镜像源拉取。将config中关于harbor的配置注释掉之后，又可以识别到本地镜像了。
-
-# k8s基于docker从harbor拉取镜像
-
-## 改docker配置文件
-
-~~~sh
-#修改docker配置文件，需要在k8s每个节点都修改docker配置文件。
-cat > /etc/docker/daemon.json <<EOF
-{
- "registry-mirrors":["https://y8y6vosv.mirror.aliyuncs.com","https://registry.docker-cn.com","https://docker.mirrors.ustc.edu.cn","https://dockerhub.azk8s.cn","http://hub-mirror.c.163.com"],
-  "exec-opts": ["native.cgroupdriver=systemd"],
-  "insecure-registries":["10.0.0.5","harbor"], 
-}
-EOF
-
-systemctl daemon-reload && systemctl restart docker
-~~~
-
-## 配置hosts
-
-~~~sh
-# 每台机器的/etc/hosts文件加上harbor地址
-vim /etc/hosts
-# 10.0.0.5 harbor
-~~~
-
-## 创建secret
-
-~~~sh
-kubectl create secret docker-registry registry-pull-secret --docker-server=10.0.0.5 --docker-username=admin --docker-password=Harbor12345
-#kubectl create secret --help可以看到，这个命令自带docker-registry参数
-#kubectl create secret docker-registry --help，可以看到这个命令自带配置docker地址和用户名密码的参数
-~~~
-
-## pod挂载secret拉取镜像
-
-~~~yaml
-apiVersion: v1
-kind: Pod
-metadata:
-  name: nginx
-  namespace: default
-spec:
   imagePullSecrets:
-  - name: registry-pull-secret
+    - name: registry-pull-secret
   containers:
-  - name: nginx
-    image: 10.0.0.5/library/nginx:latest
-    imagePullPolicy: Always
+    - name: nginx
+      image: harbor.hanxux.local/library/nginx:latest
+      imagePullPolicy: Always
+      ports:
+        - name: nginx-port
+          containerPort: 80
+          protocol: TCP
 ~~~
 
-# 使用harbor作为helm chart仓库实现内网部署
+Secret 是 Namespace 级资源；多个 Namespace 使用时需分别创建，或通过对应 ServiceAccount 统一引用。
 
-- 制作好的chart包可以传到chart仓库进行共享，chart仓库可以是公有仓库或者使用Harbor搭建的私有仓库。
+### 5.3 使用 Docker Runtime 的旧集群
 
-## chart仓库
+如果旧 Kubernetes 集群仍使用 Docker Runtime，需要在每个节点配置 `insecure-registries`、域名解析并重启 Docker。随后同样通过 `imagePullSecrets` 提供私有仓库凭据。此流程不适用于已经迁移到 containerd/CRI-O 的节点。
 
-- chart仓库是打包的chart存储和分享的位置。chart仓库由chart包和包含了仓库中所有chart索引的特殊文件index.yaml。通常描述chart的index.yaml也托管在同一个服务器上作为来源文件。
+## 6. 使用 Harbor 管理 Helm OCI Chart
 
-## 基于OCI的注册中心
+### 6.1 版本差异
 
-- 从Helm 3开始，可以使用具有 OCI支持的容器注册中心来存储和共享chart包。从Helm v3.8.0开始，默认启用OCI支持。
+- Helm 3 支持将 Chart 存储在 OCI Registry；从 Helm 3.8.0 起 OCI 支持默认启用。
+- Harbor 2.8 及以后直接将 Chart 作为 OCI Artifact 管理，与镜像显示在同一项目中，不再提供独立 Charts 页面。
+- Harbor 2.8 之前可通过 ChartMuseum 使用传统 Chart Repository。安装时执行 `./install.sh --with-chartmuseum`；已有环境可运行 `./prepare --with-chartmuseum` 后再执行 `docker-compose up -d`。
 
-- 以下是几种chart可以使用的托管容器注册中心，都支持OCI，例如：
+### 6.2 打包、推送与拉取 Chart
 
-  - Amazon ECR
+先在 Harbor 创建目标项目，然后执行：
 
-  - Azure Container Registry
+~~~bash
+helm registry login harbor.hanxux.local --insecure
 
-  - Docker Hub
+# 必须在包含 Chart.yaml 的目录中执行
+helm package .
 
-  - Google Artifact Registry
+helm push commoninfra-0.0.1.tgz \
+  oci://harbor.hanxux.local/platform-external/ \
+  --insecure-skip-tls-verify
 
-  - IBM Cloud Container Registry
+helm pull oci://harbor.hanxux.local/platform-external/commoninfra \
+  --version 0.0.1 \
+  --insecure-skip-tls-verify
+~~~
 
-  - JFrog Artifactory
+纯 HTTP Registry 可使用 `--plain-http`。出现 `x509: certificate signed by unknown authority` 时，推荐向客户端安装 CA；`--insecure-skip-tls-verify` 仅作为实验环境的临时方案。
 
-- 同样的，harbor作为是一款云原生制品仓库，可以存储和管理容器镜像、Helm Chart 等 Artifact，同样启用了OCI支持。
+从 Harbor 中的 OCI Chart 安装：
 
-## 上传自定义chart到harbor
+~~~bash
+helm install <release_name> \
+  oci://<harbor_address>/<project>/<chart_name> \
+  --version <version> \
+  -f values.yaml \
+  --insecure-skip-tls-verify
+~~~
 
-如果Harbor版本低于2.8，安装harbor时需要启用chartmuseum。
+### 6.3 将第三方 Chart 和镜像同步到内网 Harbor
 
-### harbor启用helm chart仓库（harbor 2.8之前）
+以 Harbor 官方 Chart 为例，先下载并把默认镜像仓库替换为私有 Harbor：
 
-默认新版 harbor 不会启用 chart repository service，如果启用安装方式要添加一个参数 `--with-chartmuseum`
-
-```sh
-$ ./install.sh --with-chartmuseum
-```
-
-如果是后期修改配置文件，可以使用 `./prepare --with-chartmuseum` 后，再 `docker-compose up -d`
-
-启用后Harbor中有独立的Helm Charts页面。Charts支持UI上传、helm push两种上传chart的方式。
-
-### **Harbor2.8（包括）之后管理Helm Charts**
-
-harbor版本大于等于2.8，按照下面的命令直接推送chart即可。Harbor中Charts与Image保存在相同目录下，没有单独的页面。
-
-```sh
-# 登录helm仓库
-helm registry login harbor.test.com --insecure
-
-# 提前在harbor中创建好harbor项目。上传不再支持UI界面，必须使用helm push
-helm push my-hello-1.0.tgz oci://harbor.test.com/library/
-#Error: failed to do request: Head "https://harbor.test.com/v2/library/my-hello/blobs/sha256:0db1fb6272f773572edb9ebad8c7fb902a76166bf14d896d3790f2a82f524838": tls: failed to verify certificate: x509: certificate signed by unknown authority
-# 加--insecure-skip-tls-verify跳过tls验证
-helm push my-hello-1.0.tgz oci://harbor.test.com/library/ --insecure-skip-tls-verify
-# 下载chart执行下面命令，命令可以从harbor界面复制
-helm pull oci://harbor.test.com/library/my-hello --version 1.0 -insecure-skip-tls-verify
-```
-
-这样就实现了chart上传到harbor仓库。
-
-## 修改第三方chart重新打包推送到harbor
-
-- 这里演示将harbor的官方chart从官方仓库下载后，修改镜像仓库地址，重新打包上传到私有仓库harbor，方便内部后续进行部署。
-
-```sh
-# 下载harbor官方的helm chart，这里可以换成其他chart进行测试
+~~~bash
 helm repo add harbor https://helm.goharbor.io
 helm repo update
-helm pull harbor/harbor
+helm pull harbor/harbor --version 1.15.0
 tar xf harbor-1.15.0.tgz
 cd harbor
-# 修改value.yaml中的镜像仓库为私有harbor
-sed -i 's/repository: goharbor/repository: harbor.test.com\/harbor/g' values.yaml
-# 重新打包chart
+
+sed -i 's/repository: goharbor/repository: harbor.hanxux.local\/harbor/g' values.yaml
 helm package .
-```
 
-- 将chart推送到harbor：
+helm push harbor-1.15.0.tgz \
+  oci://harbor.hanxux.local/harbor \
+  --insecure-skip-tls-verify
+~~~
 
-```sh
-helm push harbor-1.15.0.tgz oci://harbor.test.com/harbor --insecure-skip-tls-verify
-```
+下面的脚本从已部署的 `harbor` Namespace 收集实际镜像，重新打 Tag 并推送到私有项目。运行前应确认目标项目已创建，并检查同名镜像是否可能覆盖已有 Tag。
 
-- 拉取部署chart所需的容器镜像并重新打tag推送到harbor，该过程通过如下脚本进行：
+~~~bash
+#!/usr/bin/env bash
+set -euo pipefail
 
-```sh
-# 脚本内容
-cat images-pull-push-2-harbor.sh
 NAMESPACE="harbor"
-kubectl get pods -n $NAMESPACE -o jsonpath="{range .items[*]}{.spec.containers[*].image}{'\n'}{end}" | sort |
+HARBOR_URL="harbor.hanxux.local"
+HARBOR_PROJECT="harbor"
 
-NAMESPACE="harbor"              # 命名空间
-HARBOR_URL="harbor.test.com"    # harbor访问的域名
-HARBOR_PROJECT="harbor"         # 镜像项目名称
+IMAGES=$(kubectl get pods -n "$NAMESPACE" \
+  -o jsonpath="{range .items[*]}{.spec.containers[*].image}{'\n'}{end}" \
+  | sort -u)
 
-# 获取所有Pod的镜像
-IMAGES=$(kubectl get pods -n $NAMESPACE -o jsonpath="{range .items[*]}{.spec.containers[*].image}{'\n'}{end}" | sort | uniq)
+docker login "$HARBOR_URL"
 
-# 登录Harbor
-docker login $HARBOR_URL -u admin -p Harbor12345
-
-# 拉取镜像、重新tag并推送到Harbor
 for IMAGE in $IMAGES; do
-  IMAGE_NAME=$(echo $IMAGE | awk -F'/' '{print $NF}')
+  IMAGE_NAME=$(echo "$IMAGE" | awk -F/ '{print $NF}')
   NEW_TAG="$HARBOR_URL/$HARBOR_PROJECT/$IMAGE_NAME"
 
-  # 拉取原镜像
-  docker pull $IMAGE
-
-  # 重新tag镜像
-  docker tag $IMAGE $NEW_TAG
-
-  # 推送到Harbor
-  docker push $NEW_TAG
-
-  # 删除本地镜像
-  docker rmi $IMAGE
-  docker rmi $NEW_TAG
+  docker pull "$IMAGE"
+  docker tag "$IMAGE" "$NEW_TAG"
+  docker push "$NEW_TAG"
+  docker rmi "$IMAGE" "$NEW_TAG"
 done
-
-# 运行脚本
-sh images-pull-push-2-harbor.sh
-```
-
-最终在harbor的harbor项目下，同时存放了harbor的chart和部署所需的镜像。
-
-## chart部署验证
-
-~~~sh
-#验证上传到harbor的chart：
-#下载chart
-helm pull oci://harbor.test.com/harbor/harbor --version 1.15.0 --insecure-skip-tls-verify
-helm upgrade --install harbor harbor-1.15.0.tgz --namespace harbor --create-namespace \
-   --set expose.type=ingress \
-   --set expose.ingress.className=nginx \
-   --set expose.ingress.hosts.core=harbor.abc.com \
-   --set expose.ingress.hosts.notary=notary.abc.com \
-   --set externalURL=https://harbor.abc.com \
-   --set harborAdminPassword="Harbor12345" \
-   --set persistence.persistentVolumeClaim.registry.storageClass="openebs-hostpath" \
-   --set persistence.persistentVolumeClaim.jobservice.jobLog.storageClass="openebs-hostpath" \
-   --set persistence.persistentVolumeClaim.database.storageClass="openebs-hostpath" \
-   --set persistence.persistentVolumeClaim.redis.storageClass="openebs-hostpath" \
-   --set persistence.persistentVolumeClaim.trivy.storageClass="openebs-hostpath"
 ~~~
 
-测试安装chart正常，且会从harbor拉取镜像，这样就可以实现官方chart的内网部署。同理一切官方发布的chart都可以使用类似的过程修改重新打包后部署到自己的私有harbor仓库中。
+> [!warning] 镜像命名冲突
+> 该脚本只保留镜像引用的最后一段。同名镜像来自不同上游路径时可能冲突；正式迁移应保留完整仓库路径，或维护显式映射表。
 
-# nginx实现harbor双向认证 -- 方案失败不可用
+验证内网 Chart：
 
-> [!note] 双向认证方案：使用 Nginx 代理 Harbor镜像仓库，Nginx开启双向认证
+~~~bash
+helm pull oci://harbor.test.com/harbor/harbor \
+  --version 1.15.0 \
+  --insecure-skip-tls-verify
 
-## 环境配置
-
-harbor和nginx装到同一台机器：
-
-| 名称      | 版本信息      |
-| --------- | ------------- |
-| IP        | 172.16.183.81 |
-| hostname  | rocky-2       |
-| OS        | rocky linux 8 |
-| Harbor    | 2.10.3        |
-| Nginx     | 1.14.1-9      |
-| Docker    | 26.1.3        |
-| Continerd | 1.6.22        |
-
-- 安装containerd
-
-~~~sh
-yum install containerd.io-1.6.22*  -y
+helm upgrade --install harbor harbor-1.15.0.tgz \
+  --namespace harbor \
+  --create-namespace \
+  --set expose.type=ingress \
+  --set expose.ingress.className=nginx \
+  --set expose.ingress.hosts.core=harbor.abc.com \
+  --set expose.ingress.hosts.notary=notary.abc.com \
+  --set externalURL=https://harbor.abc.com \
+  --set harborAdminPassword='Harbor12345' \
+  --set persistence.persistentVolumeClaim.registry.storageClass=openebs-hostpath \
+  --set persistence.persistentVolumeClaim.jobservice.jobLog.storageClass=openebs-hostpath \
+  --set persistence.persistentVolumeClaim.database.storageClass=openebs-hostpath \
+  --set persistence.persistentVolumeClaim.redis.storageClass=openebs-hostpath \
+  --set persistence.persistentVolumeClaim.trivy.storageClass=openebs-hostpath
 ~~~
 
-- 安装nginx
+## 7. TLS 与客户端证书
 
-~~~sh
-yum install nginx -y
+### 7.1 Docker 信任自签名 CA 或使用双向 TLS
+
+将证书放在以 Registry 主机名命名的目录中：
+
+~~~text
+/etc/docker/certs.d/rocky-2/ca.crt
+/etc/docker/certs.d/rocky-2/client.cert
+/etc/docker/certs.d/rocky-2/client.key
 ~~~
 
-## 配置证书
+~~~bash
+systemctl restart docker
+~~~
 
-- 生成CA证书
+### 7.2 containerd、ctr、crictl 与 nerdctl
 
-~~~sh
+旧版 containerd CRI 配置可指定 CA 和客户端证书：
+
+~~~toml
+[plugins."io.containerd.grpc.v1.cri".registry.configs."reg.mydomain.com".tls]
+  ca_file = "/etc/containerd/certs.d/reg.mydomain.com/ca.crt"
+  cert_file = "/etc/containerd/certs.d/reg.mydomain.com/client.cert"
+  key_file = "/etc/containerd/certs.d/reg.mydomain.com/client.key"
+~~~
+
+`crictl` 和 `nerdctl` 使用的证书目录示例：
+
+~~~text
+/etc/containerd/certs.d/reg.mydomain.com/ca.crt
+/etc/containerd/certs.d/reg.mydomain.com/client.cert
+/etc/containerd/certs.d/reg.mydomain.com/client.key
+~~~
+
+~~~bash
+systemctl restart containerd
+~~~
+
+## 8. 历史实验与已知问题
+
+原文记录过“Harbor 与 Nginx 同机，由 Nginx 代理 Harbor 并要求客户端证书”的实验，环境为 Rocky Linux 8、Harbor 2.10.3、Nginx 1.14.1、Docker 26.1.3 和 containerd 1.6.22。该方案最终标记为失败，不能作为可复用部署方案。
+
+实验中使用的证书链路包括：
+
+~~~bash
 mkdir -p /data/ca
 cd /data/ca
-#生成CA私钥
+
+# CA
 openssl genrsa -out ca.key 2048
-#生成CA证书
-openssl req -new -x509 -days 365 -key ca.key -out ca.crt -subj "/C=CN/ST=Beijing/L=Beijing/O=Personal/OU=Personal/CN=Registry CA"
-#创建v3.ext文件
-cat > v3.ext <<-EOF
+openssl req -new -x509 -days 365 -key ca.key -out ca.crt \
+  -subj "/C=CN/ST=Beijing/L=Beijing/O=Personal/OU=Personal/CN=Registry CA"
+
+cat > v3.ext <<'EOF'
 authorityKeyIdentifier=keyid,issuer
 basicConstraints=CA:FALSE
-keyUsage = digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment
-extendedKeyUsage = serverAuth
-subjectAltName = @alt_names
+keyUsage=digitalSignature,nonRepudiation,keyEncipherment,dataEncipherment
+extendedKeyUsage=serverAuth
+subjectAltName=@alt_names
 
 [alt_names]
 DNS.1=rocky-2
 EOF
-~~~
 
-- 生成服务端证书
-
-~~~sh
-#生成服务端私钥
+# 服务端证书
 openssl genrsa -out server.key 2048
-#生成服务端CSR（证书签名请求）
-openssl req -new -key server.key -out server.csr -subj "/C=CN/ST=Beijing/L=Beijing/O=Personal/OU=Personal/CN=rocky-2"
-#使用CA证书签名生成服务端证书
-openssl x509 -req -in server.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out server.crt -days 365 -extfile v3.ext
-~~~
+openssl req -new -key server.key -out server.csr \
+  -subj "/C=CN/ST=Beijing/L=Beijing/O=Personal/OU=Personal/CN=rocky-2"
+openssl x509 -req -in server.csr -CA ca.crt -CAkey ca.key \
+  -CAcreateserial -out server.crt -days 365 -extfile v3.ext
 
-- 生成客户端证书
-
-```sh
-#生成客户端私钥
+# 客户端证书
 openssl genrsa -out client.key 2048
-#生成客户端CSR
-openssl req -new -key client.key -out client.csr -subj "/C=CN/ST=Beijing/L=Beijing/O=Personal/OU=Personal/CN=Registry client"
-#使用CA证书签名生成客户端证书
-openssl x509 -req -in client.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out client.crt -days 365
-#生成cert格式客户端证书
+openssl req -new -key client.key -out client.csr \
+  -subj "/C=CN/ST=Beijing/L=Beijing/O=Personal/OU=Personal/CN=Registry client"
+openssl x509 -req -in client.csr -CA ca.crt -CAkey ca.key \
+  -CAcreateserial -out client.crt -days 365
 openssl x509 -inform PEM -in client.crt -out client.cert
-```
-
-- 证书上传
-
-  > 根证书（ca.crt）和服务端证书（server.cert、server.key）上传至Nginx服务器和Harbor服务器使用（rocky-2: 172.16.183.81）
-
-  ~~~sh
-  ls /data/ca
-  ca.crt  ca.key  ca.srl  client.cert  client.crt  client.csr  client.key  server.crt  server.csr  server.key  v3.ext
-  ~~~
-
-  > 根证书（ca.crt）和客户端证书（client.cert、client.key）上传至容器环境服务器使用（rocky-1: 172.16.183.80）
-
-  ~~~sh
-  scp /data/ca/ca.crt root@rocky-1:/data/ca/ca.crt
-  scp /data/ca/client.cert root@rocky-1:/data/ca/client.cert
-  scp /data/ca/client.key root@rocky-1:/data/ca/client.key
-  ~~~
-
-## 安装配置harbor
-
-（下载地址：[Harbor v2.10.3 Release](https://github.com/goharbor/harbor/releases/tag/v2.10.3)）
-
-~~~sh
-tar zxvf harbor-offline-installer-v2.10.3.tgz
-cd harbor
-cp harbor.yml.tmpl harbor.yml
-#修改配置文件
-vim harbor.yml
-#关闭http连接：注释掉http配置
-#修改hostname，跟上面签发的证书域名保持一致
-hostname: rocky-2 
-#协议用https，配置https连接中证书信息，修改https端口号为8443，和nginx代理地址端口保持一致
-certificate: /data/ca/server.crt #服务端证书
-private_key: /data/ca/server.key #服务端密钥
-#邮件和ldap不需要配置，在harbor的web界面可以配置，其他配置采用默认即可。
 ~~~
 
-~~~sh
-#安装harbor依赖的的离线镜像包docker-harbor-2-3-0.tar.gz上传到harbor机器，通过docker load -i解压（如果不上传，install.sh会自动拉取）
-cd /root/harbor
-./install.sh
-#出现✔ ----Harbor has been installed and started successfully.---- 表明安装成功。
-#如何停掉harbor：
-cd /root/harbor
-docker-compose stop 
-#如何启动harbor：
-sudo su
-cd /root/harbor
-docker-compose start
-~~~
+> [!danger] 不可直接复用
+> 原 Nginx 代理配置存在问题，且 mTLS 会同时影响 Docker、containerd、Helm 和浏览器客户端。若确需双向认证，应重新设计端到端证书校验、Token Service 路由、上传大小、流式传输及客户端证书分发，并完成镜像 Push/Pull 和 Helm OCI 的联合验证。
 
-- harbor默认的账号密码：admin/Harbor12345
+## 9. 验证清单
 
-## 配置nginx -- 有问题
-
-- 增加代理Harbor配置，Harbor地址为 127.0.0.1:8443 （Nginx和Harbor部署在一台服务器）
-
-```sh
-tee /etc/nginx/conf.d/harbor.conf <<'EOF'
-  upstream harbor {
-    server 127.0.0.1:8443;
-}
-
-  server {
-    listen 443 ssl;
-    server_name rocky-2;
-    server_tokens off;
-# SSL
-    ssl_certificate /data/ca/server.crt;
-    ssl_certificate_key /data/ca/server.key;
-
-    ssl_client_certificate /data/ca/ca.crt;
-    ssl_verify_client on;
-
-# Recommendations from https://raymii.org/s/tutorials/Strong_SSL_Security_On_nginx.html
-    ssl_protocols TLSv1.2;
-    ssl_ciphers '!aNULL:kECDH+AESGCM:ECDH+AESGCM:RSA+AESGCM:kECDH+AES:ECDH+AES:RSA+AES:';
-    ssl_prefer_server_ciphers on;
-    ssl_session_cache shared:SSL:10m;
-
-# disable any limits to avoid HTTP 413 for large image uploads
-    client_max_body_size 0;
-
-# required to avoid HTTP 411: see Issue #1486 (https://github.com/docker/docker/issues/1486)
-    chunked_transfer_encoding on;
-
-# Add extra headers
-    add_header Strict-Transport-Security "max-age=31536000; includeSubdomains; preload";
-    add_header X-Frame-Options DENY;
-    add_header Content-Security-Policy "frame-ancestors 'none'";
-
-    location /{
-      proxy_pass https://harbor/;
-      proxy_set_header Host $http_host;
-      proxy_set_header X-Real-IP $remote_addr;
-      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-#proxy_set_header X-Forwarded-Proto $x_forwarded_proto;
-
-      proxy_cookie_path / "/; HttpOnly; Secure";
-
-      proxy_buffering off;
-      proxy_request_buffering off;
-}
-  }
-EOF
-```
-
-~~~sh
-#使配置生效
-nginx -t
-nginx -s reload
-~~~
-
-> [!warning] nginx配置下发不下去，因为harbor的部署已经有nginx的容器在跑了，端口80会冲突，无法刷新自己装的nginx的配置
-
-## 容器环境证书配置
-
-### docker
-
-- 存放证书
-
-~~~sh
-/etc/docker/certs.d/rocky-2/ca.crt
-/etc/docker/certs.d/rocky-2/client.cert
-/etc/docker/certs.d/rocky-2/client.key
-systemctl restart docker
-~~~
-
-### Containerd配置
-
-- ctr存放证书（Kubernetes默认使用）
-
-```sh
-      [plugins."io.containerd.grpc.v1.cri".registry.configs]
-        [plugins."io.containerd.grpc.v1.cri".registry.configs."reg.mydomain.com".tls]
-          ca_file = "/etc/containerd/certs.d/reg.mydomain.com/ca.crt"
-          cert_file = "/etc/containerd/certs.d/reg.mydomain.com/client.cert"
-          key_file = "/etc/containerd/certs.d/reg.mydomain.com/client.key"
-```
-
-- crictl和nerdctl存放证书
-
-```sh
-/etc/containerd/certs.d/reg.mydomain.com/ca.crt
-/etc/containerd/certs.d/reg.mydomain.com/client.cert
-/etc/containerd/certs.d/reg.mydomain.com/client.key
-```
-
-- 重启Containerd服务
-
-```sh
-systemctl restart containerd
-```
+- Harbor UI 可通过预期域名和 HTTPS 访问。
+- Docker 登录、Push、Pull 均成功。
+- Kubernetes Pod 能通过 `imagePullSecret` 拉取私有镜像。
+- containerd 重启后无配置解析错误，CRI 仍正常工作。
+- Helm OCI Chart 能登录、推送、拉取和安装。
+- Ingress、`externalURL`、证书 SAN 与客户端访问域名一致。
+- PVC 的 StorageClass、容量和 AccessMode 满足实际后端能力。
+- 生产环境已移除默认管理员口令和不必要的 TLS 跳过选项。

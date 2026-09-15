@@ -129,7 +129,7 @@ date: 2026-04-17
 | 页面 | 原始来源 | 摘要 |
 |------|---------|------|
 | [[KnowledgeBase/sources/codex-harness-architecture-summary|Codex Harness 架构]] | [[AI/Codex/Codex-Harness架构-任务循环与扩展]] | 从 App Server、Session、Agent 主循环，到上下文、工具执行、状态记忆及 Skills/MCP/Hooks/子 Agent 扩展 |
-| [[KnowledgeBase/sources/codex-两个设置提升体验-summary|Codex 两个体验设置]] | [[AI/Codex/Codex-两个设置提升体验]] | 普通模式主动澄清配置 + Juice 提示的经验性自检 |
+| [[KnowledgeBase/sources/codex-使用技巧和最佳实践-summary|Codex 使用技巧和最佳实践]] | [[AI/Codex/Codex-使用技巧和最佳实践]] | 配置与权限基线、主动澄清、Token 优化、HANDOFF 上下文交接和多 Harness 协作 |
 
 ### AI/提示词（已摄入 ✅）
 

@@ -1977,3 +1977,14 @@ date: 2026-04-17
 - 语法检查：综合指南 Frontmatter 可解析，27 个 YAML 代码块解析通过，Markdown 代码围栏闭合，`git diff --check` 通过
 - 链接检查：综合指南及本次更新的 Wiki 页面无未解析链接；`KnowledgeBase/log.md` 保留 1 条指向旧 Sidecar/Ambient 文件的历史操作记录，按日志仅追加规则未回写
 - Obsidian 检查：受影响页面元数据已刷新，开发者控制台无错误
+
+## [2026-09-15] restructure | Codex 使用技巧和最佳实践
+
+- 将 5 篇 Codex 文章整合为 `AI/Codex/Codex-使用技巧和最佳实践.md`，按配置基线、需求澄清、Token 优化、HANDOFF 和多 Harness 协作重组，并保留配置字段、命令、实测数据与适用边界
+- 删除 5 篇已合并的旧文章；创建新的来源摘要，并将旧体验设置摘要改为已合并跳转页
+- 更新 `KnowledgeBase/INDEX.md`、`KnowledgeBase/maps/tool-map.md`、`KnowledgeBase/maps/ai-workflow-map.md` 和 `KnowledgeBase/entities/Codex.md`
+
+## [2026-09-15] restructure | Harbor 部署与使用指南
+
+- 将 Docker Compose 部署、Kubernetes Helm 部署、镜像推拉、containerd 接入、Helm OCI Chart 和 TLS 配置整合到 [[Docker-Kubernetes/harbor/harbor-basics|Harbor 部署与使用指南]]，合并重复内容并标注历史版本及失败实验边界
+- 删除已被合并的 `Docker-Kubernetes/harbor/helm部署harbor.md`，同步更新 Harbor、Helm、工具地图和 K8s 杂项来源摘要中的引用
