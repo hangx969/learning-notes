@@ -14,8 +14,9 @@ aliases:
   - K8s 1.37 原生 HPA 缩容到 0
   - HPAScaleToZero
 date: 2026-09-15
-sources:
-  - "[[0raw/告别 KEDA：K8s 1.37 原生 HPA Scale-to-Zero 落地实战，空闲 Worker 直接缩到 0]]"
+source: "https://mp.weixin.qq.com/s/HBmYINXQDECAR664aF31mQ?scene=1&click_id=1921215008"
+author: WAKE UP技术
+published: 2026-08-13
 ---
 
 # Kubernetes 自动扩缩容实战：HPA、VPA 与 Scale-to-Zero
@@ -1164,5 +1165,8 @@ kubectl get vpa -A -o json | jq '.items[] | {
 - [Kubernetes Autoscaler：VPA Known Limitations](https://github.com/kubernetes/autoscaler/blob/master/vertical-pod-autoscaler/docs/known-limitations.md)
 - [Fairwinds VPA Helm Chart](https://github.com/FairwindsOps/charts/tree/master/stable/vpa)
 - [Metrics Server](https://github.com/kubernetes-sigs/metrics-server)
+- [Metrics Server v0.6.1](https://github.com/kubernetes-sigs/metrics-server/releases/tag/v0.6.1)
+- [GKE Cluster Autoscaler](https://cloud.google.com/container-engine/docs/cluster-autoscaler)
 - [K8s VPA 垂直自动扩缩容：你真的会用吗？](https://mp.weixin.qq.com/s/FfNIwJJrF9XpBSZMNcffag)
 - [Kubernetes VPA 深度解析：从手动调参到自动资源配置的完整实战](https://mp.weixin.qq.com/s/fxp4cBRXUG9XRluke62f-w)
+- [告别 KEDA：K8s 1.37 原生 HPA Scale-to-Zero 落地实战](https://mp.weixin.qq.com/s/HBmYINXQDECAR664aF31mQ?scene=1&click_id=1921215008)

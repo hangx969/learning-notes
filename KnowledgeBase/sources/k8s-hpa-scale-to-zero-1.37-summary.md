@@ -6,7 +6,6 @@ tags:
   - docker-kubernetes/scaling
 date: 2026-09-15
 sources:
-  - "[[0raw/告别 KEDA：K8s 1.37 原生 HPA Scale-to-Zero 落地实战，空闲 Worker 直接缩到 0]]"
   - "[[Docker-Kubernetes/k8s-scaling/k8s-HPA-VPA]]"
 aliases:
   - HPA Scale-to-Zero 摘要
@@ -17,7 +16,7 @@ aliases:
 
 ## 元信息
 
-- **原始文档**：[[0raw/告别 KEDA：K8s 1.37 原生 HPA Scale-to-Zero 落地实战，空闲 Worker 直接缩到 0]]
+- **来源文章**：[告别 KEDA：K8s 1.37 原生 HPA Scale-to-Zero 落地实战](https://mp.weixin.qq.com/s/HBmYINXQDECAR664aF31mQ?scene=1&click_id=1921215008)
 - **整合文档**：[[Docker-Kubernetes/k8s-scaling/k8s-HPA-VPA#五、Kubernetes 1.37 原生 HPA Scale-to-Zero|Kubernetes 自动扩缩容实战 → Scale-to-Zero]]
 - **来源作者**：WAKE UP技术
 - **发布时间**：2026-08-13

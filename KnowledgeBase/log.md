@@ -1952,3 +1952,4 @@ date: 2026-04-17
 - 保留原有 HPA CPU/内存/PHP 实战、Metrics Server 完整清单、VPA Helm/脚本部署、nginx/hamster/MySQL 案例、推荐算法、自定义 Recommender、Scale-to-Zero 冷启动与 KEDA 迁移等技术内容；合并重复定义和配置。
 - 对照官方文档校正 HPA 公式与默认周期、Kubernetes 1.37 `HPAScaleToZero` 状态、Scale-to-Zero 指标目标值，并补充 VPA In-place 模式及 `Auto` 弃用说明。
 - 旧的两个文件保留为兼容入口并指向主文档章节；同步更新来源摘要、Kubernetes/Helm/Prometheus 实体页、Kubernetes 地图和 Wiki 索引。
+- 验证结果：主文档与兼容入口 frontmatter 可解析，96 条代码围栏成对，20 个 YAML 代码块均通过语法解析，43 个 Markdown 标题被 Obsidian 正确识别；主文档、兼容入口和专项来源摘要均无未解析 wikilink，Obsidian 未捕获渲染错误，`git diff --check` 通过。
