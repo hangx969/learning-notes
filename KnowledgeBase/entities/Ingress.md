@@ -47,6 +47,7 @@ Kubernetes Ingress 是集群对外暴露 HTTP/HTTPS 服务的 API 资源，通�
 - [[Docker-Kubernetes/k8s-basic-resources/k8s基础-ingress|k8s基础-ingress]]
 - [[Docker-Kubernetes/k8s-networking-service-mesh/helm部署ingress-nginx|helm部署ingress-nginx]]
 - [[Docker-Kubernetes/k8s-networking-service-mesh/helm部署external-dns|helm部署external-dns]]
+- [[cert-manager 实战：Helm 部署、TLS 自动签发与续期|cert-manager 实战：Helm 部署、TLS 自动签发与续期]]
 - [[Docker-Kubernetes/k8s-basic-resources/k8s基础-Service|k8s基础-Service]]
 - [[Docker-Kubernetes/k8s-networking-service-mesh/k8s集群网络安全|k8s集群网络安全]]
 
@@ -54,8 +55,9 @@ Kubernetes Ingress 是集群对外暴露 HTTP/HTTPS 服务的 API 资源，通�
 - [[KnowledgeBase/entities/Kubernetes|Kubernetes]]
 - [[KnowledgeBase/entities/Istio|Istio]]
 - [[KnowledgeBase/entities/Helm|Helm]]
+- [[KnowledgeBase/entities/Cert-Manager|Cert-Manager]]
+- [[KnowledgeBase/concepts/证书管理|证书管理]]
 
 ## 知识空白
 - Kubernetes Gateway API 作为 Ingress 的继任者
 - Ingress Controller 对比（Nginx vs Traefik vs Envoy）
-- Ingress 与 Cert-Manager 自动化证书管理

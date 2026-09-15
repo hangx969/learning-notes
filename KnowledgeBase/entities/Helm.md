@@ -65,7 +65,8 @@ Helm 基础位于 `Docker-Kubernetes/helm-operator/`，同时大量 helm 部署�
 - [[Docker-Kubernetes/k8s-networking-service-mesh/helm部署external-dns|helm部署external-dns]]
 - [[Docker-Kubernetes/k8s-CICD/Jenkins/helm部署jenkins|helm部署jenkins]]
 - [[Docker-Kubernetes/harbor/helm部署harbor|helm部署harbor]]
-- [[Docker-Kubernetes/k8s-security-auth/helm部署certmanager|helm部署certmanager]]
+- [[cert-manager 实战：Helm 部署、TLS 自动签发与续期|cert-manager 实战：Helm 部署、TLS 自动签发与续期]]
+- [[KnowledgeBase/sources/cert-manager-tls-automation-summary|cert-manager TLS 自动化摘要]]：OCI Chart、本地 Chart、CRD 和配置 Chart 管理
 - [[Docker-Kubernetes/k8s-security-auth/helm部署kyverno和policy-reporter|helm部署kyverno和policy-reporter]]
 - [[Docker-Kubernetes/k8s-security-auth/helm部署trivy-operator|helm部署trivy-operator]]
 - [[Docker-Kubernetes/k8s-scaling/helm部署vpa|helm部署vpa]]
@@ -77,6 +78,7 @@ Helm 基础位于 `Docker-Kubernetes/helm-operator/`，同时大量 helm 部署�
 - [[KnowledgeBase/entities/Prometheus|Prometheus]]
 - [[KnowledgeBase/entities/Istio|Istio]]
 - [[KnowledgeBase/entities/Ingress|Ingress]]
+- [[KnowledgeBase/entities/Cert-Manager|Cert-Manager]]
 
 ## 知识空白
 - Helm Chart 开发与测试最佳实践

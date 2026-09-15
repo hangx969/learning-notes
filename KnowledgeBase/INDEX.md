@@ -47,6 +47,7 @@ date: 2026-04-17
 | [[KnowledgeBase/concepts/提示词工程|提示词工程]] | 通过目标、上下文、约束、交互流程和验证标准提升模型输出的可靠性 |
 | [[KnowledgeBase/concepts/混合精度与模型量化|混合精度与模型量化]] | 大模型数值格式、混合精度、低比特量化及其显存/吞吐取舍 |
 | [[KnowledgeBase/concepts/P2P分发|P2P 分发]] | 通过分块、Peer 交换与缓存降低大规模数据分发的源站压力 |
+| [[KnowledgeBase/concepts/证书管理|证书管理]] | TLS 证书与私钥的签发、校验、分发、续期、审计和安全边界 |
 
 ---
 
@@ -59,6 +60,7 @@ date: 2026-04-17
 | [Kubernetes](entities/Kubernetes.md) | 容器编排平台，159 篇文章覆盖全生命周期 |
 | [Docker](entities/Docker.md) | 容器运行时，14 篇覆盖基础、镜像分发与服务部署实战 |
 | [Helm](entities/Helm.md) | Kubernetes 包管理器 |
+| [[KnowledgeBase/entities/Cert-Manager|Cert-Manager]] | Kubernetes 原生证书生命周期控制器，支持 ACME、自签名与自动续期 |
 | [ArgoCD](entities/ArgoCD.md) | GitOps 持续交付工具 |
 | [Jenkins](entities/Jenkins.md) | CI/CD 自动化服务器 |
 | [Prometheus](entities/Prometheus.md) | 云原生监控系统 |
@@ -176,6 +178,7 @@ date: 2026-04-17
 | [K8s 发布策略](sources/k8s-release-strategy-summary.md) | 1 | 蓝绿部署/金丝雀发布三种方案（原生/Nginx Ingress/Argo Rollouts）、选型决策树、数据库兼容性 |
 | [K8s 网络与服务网格](sources/k8s-networking-service-mesh-batch-summary.md) | 7 | Ingress-Nginx/External-DNS/Calico/Istio 流量管理 |
 | [K8s 安全认证](sources/k8s-security-auth-batch-summary.md) | 8 | Cert-Manager/External Secrets/Kyverno(含1.18新特性)/OAuth2 Proxy/Trivy/SonarQube/Security Context |
+| [[KnowledgeBase/sources/cert-manager-tls-automation-summary|cert-manager TLS 自动化]] | 1（整合） | Helm 安装、自签名 Pod TLS、HTTP01/DNS01、Cloudflare/Azure DNS、续期、排障与回滚 |
 | [Kyverno 1.18](sources/kyverno-1.18-summary.md) | 1 | CNCF 毕业后首版：SSRF 防护、CLI 扩展、CEL 策略演进、性能与可观测性提升 |
 | [K8s 扩缩容与存储](sources/k8s-scaling-storage-batch-summary.md) | 12 | HPA/VPA/KEDA/KServe/Karpenter 扩缩容 + 原生 HPA Scale-to-Zero + FinOps 成本优化 + PV/PVC 数据保护 + NFS/Ceph/CubeFS 存储 |
 | [KServe + KEDA 请求指标扩缩容](sources/kserve-keda-request-autoscaling-summary.md) | 1 | KServe/vLLM 指标经 Prometheus、KEDA、External Metrics API 驱动 HPA，实现 1→2→1 扩缩容 |

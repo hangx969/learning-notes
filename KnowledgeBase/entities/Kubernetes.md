@@ -138,7 +138,7 @@ Kubernetes（K8s）是容器编排平台，源自 Google Borg 系统，2014 年�
 
 **核心要点**：
 - 安全工具链：Kyverno（准入控制）+ Trivy（镜像扫描）+ SonarQube（代码扫描）构成从代码到运行时的完整安全防线
-- Cert-Manager 核心资源：ClusterIssuer/Issuer + Certificate -> K8s Secret
+- [[KnowledgeBase/entities/Cert-Manager|Cert-Manager]] 核心资源：Issuer/ClusterIssuer → Certificate/CertificateRequest → Order/Challenge → TLS Secret；覆盖 HTTP01/DNS01 与自动续期
 - Capsule Tenant：一组 Namespace 的逻辑分组，RBAC + ResourceQuota + NetworkPolicy 策略隔离
 - Security Context：UID/GID 管理 + Capabilities（drop ALL + 按需 add）+ 特权模式禁止 + sysctl + seccomp + Pod 安全标准三级策略
 

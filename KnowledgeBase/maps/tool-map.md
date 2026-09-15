@@ -126,10 +126,20 @@ date: 2026-04-16
 - [[Docker-Kubernetes/k8s-CICD/Jenkins/helm部署jenkins|helm部署jenkins]]
 - [[Docker-Kubernetes/k8s-networking-service-mesh/helm部署ingress-nginx|helm部署ingress-nginx]]
 - [[Docker-Kubernetes/k8s-networking-service-mesh/helm安装istio|helm安装istio]]
-- [[Docker-Kubernetes/k8s-security-auth/helm部署certmanager|helm部署certmanager]]
+- [[cert-manager 实战：Helm 部署、TLS 自动签发与续期|cert-manager 实战：Helm 部署、TLS 自动签发与续期]]
 - 及更多 Helm 部署实战...
 
 **概念页：** [[KnowledgeBase/entities/Helm|Helm]]
+
+---
+
+### Cert-Manager
+
+**相关文档：**
+- [[cert-manager 实战：Helm 部署、TLS 自动签发与续期|cert-manager 实战：Helm 部署、TLS 自动签发与续期]] ⭐ 推荐入口
+- [[KnowledgeBase/sources/cert-manager-tls-automation-summary|来源摘要]]
+
+**概念与实体：** [[KnowledgeBase/entities/Cert-Manager|Cert-Manager]]、[[KnowledgeBase/concepts/证书管理|证书管理]]
 
 ---
 

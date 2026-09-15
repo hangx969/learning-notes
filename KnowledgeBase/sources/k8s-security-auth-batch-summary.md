@@ -3,10 +3,10 @@ title: k8s-security-auth 来源批量摘要
 tags:
   - knowledgebase/source
   - docker-kubernetes/security
-date: 2026-04-17
+date: 2026-09-15
 sources:
   - "[[Docker-Kubernetes/k8s-security-auth/helm部署capsule]]"
-  - "[[Docker-Kubernetes/k8s-security-auth/helm部署certmanager]]"
+  - "[[cert-manager 实战：Helm 部署、TLS 自动签发与续期]]"
   - "[[Docker-Kubernetes/k8s-security-auth/helm部署external-secrets]]"
   - "[[Docker-Kubernetes/k8s-security-auth/helm部署kyverno和policy-reporter]]"
   - "[[Docker-Kubernetes/k8s-security-auth/helm部署oauth2proxy]]"
@@ -37,14 +37,17 @@ sources:
 - Tenant Owner 需属于 Capsule User Group（通过证书 O 字段、外部 IdP 组或 ServiceAccount 配置）
 - 用户认证通过 OpenSSL 证书（CN/O 字段）+ kubeconfig 实现
 
-### [[Docker-Kubernetes/k8s-security-auth/helm部署certmanager|Helm 部署 Cert-Manager]]
+### [[cert-manager 实战：Helm 部署、TLS 自动签发与续期|Helm 部署 Cert-Manager]]
 
 **核心内容**: Cert-Manager 是 K8s 全能证书管理工具，支持基于 ACME 协议与 Let's Encrypt 签发免费证书并自动续期。
 
 - 证书分类：Root CA、中间 CA、终端实体证书
-- 核心资源：ClusterIssuer/Issuer（证书颁发者）、Certificate（证书对象，生成 K8s Secret）
-- 支持 Self-signed、ACME（Let's Encrypt）等多种 Issuer 类型
-- CRDs 需设置 `crds.enabled=true` 和 `crds.keep=true`
+- 核心链路：Issuer/ClusterIssuer → Certificate/CertificateRequest → Order/Challenge → TLS Secret → Ingress/Pod
+- 支持 Self-signed、ACME（Let's Encrypt）、内部 CA、Vault、Venafi 等 Issuer 类型
+- ACME 同时覆盖 HTTP01 与 DNS01，并保留 Cloudflare、Azure DNS Workload Identity 和通配符证书实战
+- 生产流程包括 Staging 验证、自动续期、到期监控、Webhook/Challenge 排障、验收与回滚
+- Helm 同时保留 OCI Chart 和本地 Chart 两种安装路径；版本固定并按实际环境核对兼容矩阵
+- 详见 [[KnowledgeBase/sources/cert-manager-tls-automation-summary|cert-manager TLS 自动化来源摘要]]
 
 ### [[Docker-Kubernetes/k8s-security-auth/helm部署external-secrets|Helm 部署 External Secrets]]
 

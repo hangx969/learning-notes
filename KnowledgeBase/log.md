@@ -1936,3 +1936,11 @@ date: 2026-04-17
 - 依据 vLLM、SGLang、vLLM-Omni 与 ModelScope 官方文档补充版本与安全边界：显存比例不是硬隔离、PD 分离需要 KV 传输、Omni 模型支持按版本核对、远程代码仅对可信固定 Revision 启用。
 - 新增 [[KnowledgeBase/sources/local-llm-runtime-selection-summary|来源摘要]]、[[KnowledgeBase/entities/Ollama|Ollama]]、[[KnowledgeBase/entities/vLLM|vLLM]] 和 [[KnowledgeBase/entities/ModelScope|ModelScope]] 实体页；同步更新 Docker/CUDA/NVIDIA/KV Cache、AI 与工具地图及知识库索引。
 - 验证结果：正文围栏成对、13 个 Mermaid 全部通过解析、新增核心页面无未解析 wikilink、`git diff --check` 通过，原始 `0raw` 文件无改动。
+
+## [2026-09-15] ingest | cert-manager Helm 部署与 TLS 自动化整合
+
+- 读取并保留 [[0raw/K8s cert-manager实战：让TLS证书自动签发和续期|原始剪藏]]，按证书生命周期主线整合进 [[cert-manager 实战：Helm 部署、TLS 自动签发与续期|cert-manager 实战：Helm 部署、TLS 自动签发与续期]]；原始 0raw 文件保持不变。
+- 合并重复的 cert-manager 定位、Certificate/Ingress 接入和续期说明，同时完整保留 OCI 与本地 Chart 安装、自签名 Pod TLS、HTTP01/DNS01、Cloudflare、Azure DNS Workload Identity、通配符、PKCS#12、Helm 配置管理、故障案例和回滚命令。
+- 将原文字符流程重绘为 6 个 Mermaid 图，覆盖人工与自动化流程、资源关系、HTTP01/DNS01 选型、ACME 校验、Staging 到 Production 和自动续期；Obsidian 内置解析器验证为 6/6 通过。
+- 新增 [[KnowledgeBase/sources/cert-manager-tls-automation-summary|来源摘要]]、[[KnowledgeBase/entities/Cert-Manager|Cert-Manager 实体页]] 和 [[KnowledgeBase/concepts/证书管理|证书管理概念页]]；同步更新安全认证批量摘要、Kubernetes/Helm/Ingress 实体页、Kubernetes/工具地图与知识库索引。
+- 验证结果：目标正文与 3 个新增知识页 frontmatter 可解析、核心页面无未解析 wikilink、代码围栏成对、Obsidian 渲染侧未捕获错误、`git diff --check` 通过；支持页中仍存在历史断链，本次未新增。

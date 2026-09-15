@@ -125,7 +125,7 @@ date: 2026-09-12
 - [[Docker-Kubernetes/k8s-networking-service-mesh/k8s集群网络安全|k8s集群网络安全]]
 
 ### 安全与认证（8 篇）
-Cert-Manager、External-Secrets、Kyverno+Policy-Reporter（含 1.18 新特性）、OAuth2-Proxy、Capsule、SonarQube、Trivy-Operator、[[k8s容器安全上下文-SecurityContext|Security Context 完全指南]]
+[[KnowledgeBase/entities/Cert-Manager|Cert-Manager]]（Helm、自签名、HTTP01/DNS01、Cloudflare/Azure DNS、自动续期）、External-Secrets、Kyverno+Policy-Reporter（含 1.18 新特性）、OAuth2-Proxy、Capsule、SonarQube、Trivy-Operator、[[k8s容器安全上下文-SecurityContext|Security Context 完全指南]]
 
 ### 扩缩容（7 篇）
 HPA-VPA、KEDA、Goldilocks、VPA Helm、[[Docker-Kubernetes/k8s-scaling/k8s成本优化方案-FinOps实战|K8s FinOps 成本优化]]、[[Docker-Kubernetes/k8s-scaling/KServe+KEDA实战-基于请求指标实现服务自动扩缩容|KServe + KEDA 请求指标扩缩容]]、[[Docker-Kubernetes/k8s-scaling/k8s-1.37原生HPA-Scale-to-Zero实战|K8s 1.37 原生 HPA Scale-to-Zero]]
