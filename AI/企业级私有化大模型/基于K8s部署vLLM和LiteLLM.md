@@ -759,7 +759,12 @@ unset VLLM_API_KEY
 ![image.png](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260914221055928.png)
 
 ### 1.4.1 高可用 Redis 部署
+文档： https://docs.litellm.com.cn/docs/proxy/config_settings。
+需要两个redis：
+- 哨兵redis用作缓存（# Caching settings）
+- 单节点redis用作限流（router_settings:）（限流用的redis仅支持单节点。后续支持哨兵之后，用同一个哨兵redis就行）
 
+#### 哨兵Redis - 缓存用
 在 K8s 集群中安装 Redis 哨兵，用于 LiteLLM 的缓存使用（高于1000RPS，推荐使用Redis缓存）：
 
 ```bash
@@ -785,6 +790,8 @@ redis-cli -h redis -p 26379
 auth xxx
 SETENIAL replicas mymaster
 ```
+
+#### 单节点redis - 限流用
 
 Redis 单节点部署：
 
