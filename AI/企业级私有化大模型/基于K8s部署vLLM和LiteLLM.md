@@ -279,6 +279,24 @@ kubectl get po -n gpu-operator
 kubectl describe node | grep Allocatable: -A 10
 ```
 
+> [!warning] 重启后 GPU 资源变为 `0` 的处理
+> 如果 `nvidia-device-plugin` 日志出现 `couldn't initialize inotify: too many open files`，说明主机的 inotify 实例数已达到上限。先确认限制和当前用量，再提高限制并重建 device-plugin Pod：
+>
+> ```bash
+> sysctl fs.inotify.max_user_instances
+> find /proc/[0-9]*/fd -lname anon_inode:inotify 2>/dev/null | wc -l
+>
+> echo 'fs.inotify.max_user_instances = 1024' > /etc/sysctl.d/99-kubernetes-inotify.conf
+> sysctl --system
+>
+> kubectl delete pod -n gpu-operator -l app=nvidia-device-plugin-daemonset
+> kubectl wait -n gpu-operator \
+>   --for=condition=Ready pod \
+>   -l app=nvidia-device-plugin-daemonset \
+>   --timeout=180s
+> kubectl get node -o jsonpath='{.items[0].status.allocatable.nvidia\.com/gpu}{"\n"}'
+> ```
+
 创建 GPU 测试服务：
 
 ```bash
@@ -541,13 +559,23 @@ kubectl get pvc qwen35-4b-pvc -n models
 - 单单部署一个模型，用yaml部署即可
 - 如果有分布式计算、模型微调、调度等需求，可以用一些开源框架比如KServe，llm-d等： https://docs.vllm.ai/en/latest/deployment/integrations/kserve/
 
-模型下载完成后，即可部署模型：
+确认模型 PVC 已经处于 `Bound` 状态：
 
 ```bash
-kubectl get po -n models
+kubectl get pvc qwen35-4b-pvc -n models
 ```
 
-创建部署文件：
+生成 API Key 并保存为 Secret，避免在 Deployment YAML 中写入明文密钥：
+
+```bash
+VLLM_API_KEY="$(openssl rand -hex 32)"
+kubectl create secret generic vllm-api-key \
+  -n models \
+  --from-literal=api-key="${VLLM_API_KEY}"
+unset VLLM_API_KEY
+```
+
+创建 `qwen35-vllm.yaml`。镜像入口点已经是 `vllm serve`，因此通过 `args` 传入参数；vLLM 0.23.0 要求模型路径作为位置参数。单节点只有一块 GPU，且 PVC 为 `ReadWriteOnce`，Deployment 使用 `Recreate`，避免 RollingUpdate 时新旧 Pod 争用同一块 GPU 和 PVC：
 
 ```yaml
 apiVersion: apps/v1
@@ -559,6 +587,8 @@ metadata:
     app: qwen3-5-4b
 spec:
   replicas: 1
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app: qwen3-5-4b
@@ -570,23 +600,22 @@ spec:
       containers:
         - name: qwen3-5-4b
           image: registry.cn-beijing.aliyuncs.com/dotbalo/vllm-openai:latest
-          command:
+          imagePullPolicy: IfNotPresent
+          args:
+            - "/data/modelscope/Qwen/Qwen3.5-4B" # PVC 挂载点下的模型目录
             - "--port"
             - "8080"
             - "--served-model-name"
             - "Qwen3.5-4B"
-            - "--model"
-            - "/data/modelscope/Qwen/Qwen3.5-4B" # 模型路径指向 PVC 挂载点下的具体模型目录
-            - "--gpu_memory_utilization"
+            - "--gpu-memory-utilization"
             - "0.9"
             - "--max-model-len"
             - "16384"
-            - "--max_num_batched_tokens"
+            - "--max-num-batched-tokens"
             - "16384"
-            - "--api-key"
-            - "xxxx"
           ports:
-            - containerPort: 8080
+            - name: http
+              containerPort: 8080
           env:
             - name: TZ
               value: "Asia/Shanghai"
@@ -602,6 +631,11 @@ spec:
               value: "true"
             - name: MODELSCOPE_CACHE
               value: "/data/modelscope"
+            - name: VLLM_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: vllm-api-key
+                  key: api-key
           resources:
             limits:
               nvidia.com/gpu: 1
@@ -610,29 +644,29 @@ spec:
           volumeMounts:
             - name: model-storage
               mountPath: /data/modelscope
+              readOnly: true
             - name: dshm
               mountPath: /dev/shm
           startupProbe:
             httpGet:
               path: /health
-              port: 8080
+              port: http
             # 给予最长 15 分钟（900 秒）的启动时间，每 10 秒探测一次
             # 如果 90 次（900/10）探测都失败，容器才会被重启
             failureThreshold: 90
             periodSeconds: 10
+            timeoutSeconds: 5
           livenessProbe:
             httpGet:
               path: /health
-              port: 8080
-            initialDelaySeconds: 60
+              port: http
             periodSeconds: 30
             timeoutSeconds: 10
             failureThreshold: 3
           readinessProbe:
             httpGet:
               path: /health
-              port: 8080
-            initialDelaySeconds: 30
+              port: http
             periodSeconds: 15
             timeoutSeconds: 10
             failureThreshold: 3
@@ -654,22 +688,54 @@ spec:
   selector:
     app: qwen3-5-4b
   ports:
-    - protocol: TCP
+    - name: http
+      protocol: TCP
       port: 8080
-      targetPort: 8080
+      targetPort: http
   type: NodePort # 非必须
+```
+
+应用部署文件并等待 Pod 就绪：
+
+```bash
+kubectl apply -f qwen35-vllm.yaml
+kubectl rollout status deployment/qwen3-5-4b-deployment \
+  -n models \
+  --timeout=15m
 ```
 
 查看启动状态：
 
 ```bash
-kubectl get po -n models
+kubectl get po,pvc,svc -n models -o wide
+kubectl logs deployment/qwen3-5-4b-deployment -n models --tail=100
 ```
 
-模型访问测试：
+模型访问测试。NodePort 由 Kubernetes 动态分配，不要写死示例端口；`enable_thinking=false` 用于让这次连通性测试只返回最终答案：
 
 ```bash
-curl -H "Authorization: Bearer xxxx" -X POST http://127.0.0.1:32656/v1/chat/completions -H "Content-Type: application/json" -d '{"model": "Qwen3.5-4B","stream": true, "messages": [{"role": "user", "content": "介绍下你自己"}]}'
+NODE_PORT="$(kubectl get service qwen3-5-4b-service \
+  -n models \
+  -o jsonpath='{.spec.ports[0].nodePort}')"
+VLLM_API_KEY="$(kubectl get secret vllm-api-key \
+  -n models \
+  -o jsonpath='{.data.api-key}' | base64 -d)"
+
+curl -sS "http://127.0.0.1:${NODE_PORT}/v1/chat/completions" \
+  -H "Authorization: Bearer ${VLLM_API_KEY}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "Qwen3.5-4B",
+    "stream": false,
+    "temperature": 0,
+    "max_tokens": 64,
+    "chat_template_kwargs": {"enable_thinking": false},
+    "messages": [
+      {"role": "user", "content": "只回复：K8S_VLLM_OK"}
+    ]
+  }'
+
+unset VLLM_API_KEY
 ```
 
 ## 1.4 LiteLLM 高可用落地
