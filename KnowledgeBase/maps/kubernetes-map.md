@@ -127,8 +127,8 @@ date: 2026-09-12
 ### 安全与认证（8 篇）
 [[KnowledgeBase/entities/Cert-Manager|Cert-Manager]]（Helm、自签名、HTTP01/DNS01、Cloudflare/Azure DNS、自动续期）、External-Secrets、Kyverno+Policy-Reporter（含 1.18 新特性）、OAuth2-Proxy、Capsule、SonarQube、Trivy-Operator、[[k8s容器安全上下文-SecurityContext|Security Context 完全指南]]
 
-### 扩缩容（7 篇）
-[[Docker-Kubernetes/k8s-scaling/k8s-HPA-VPA|HPA、VPA 与原生 Scale-to-Zero]]、KEDA、Goldilocks、[[Docker-Kubernetes/k8s-scaling/k8s成本优化方案-FinOps实战|K8s FinOps 成本优化]]、[[Docker-Kubernetes/k8s-scaling/KServe+KEDA实战-基于请求指标实现服务自动扩缩容|KServe + KEDA 请求指标扩缩容]]
+### 扩缩容（4 篇）
+[[Docker-Kubernetes/k8s-scaling/k8s-HPA-VPA|HPA、VPA 与原生 Scale-to-Zero]]、[[Docker-Kubernetes/k8s-scaling/k8s-基于KEDA的弹性能力|KEDA 事件驱动扩缩容与 KServe 实战]]、Goldilocks、[[Docker-Kubernetes/k8s-scaling/k8s成本优化方案-FinOps实战|K8s FinOps 成本优化]]
 
 ### 存储（5 篇）
 NFS Provisioner、Ceph、CubeFS、[[Docker-Kubernetes/k8s-storage/k8s删除PVC后PV数据保护与复用避坑|PV/PVC 数据保护与复用避坑]]、[[Docker-Kubernetes/k8s-storage/让存储故障现形：Kubernetes Volume Health Monitor 原理与生产接入|Kubernetes Volume Health Monitor]]

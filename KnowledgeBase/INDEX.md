@@ -180,7 +180,7 @@ date: 2026-04-17
 | [K8s 安全认证](sources/k8s-security-auth-batch-summary.md) | 8 | Cert-Manager/External Secrets/Kyverno(含1.18新特性)/OAuth2 Proxy/Trivy/SonarQube/Security Context |
 | [[KnowledgeBase/sources/cert-manager-tls-automation-summary|cert-manager TLS 自动化]] | 1（整合） | Helm 安装、自签名 Pod TLS、HTTP01/DNS01、Cloudflare/Azure DNS、续期、排障与回滚 |
 | [Kyverno 1.18](sources/kyverno-1.18-summary.md) | 1 | CNCF 毕业后首版：SSRF 防护、CLI 扩展、CEL 策略演进、性能与可观测性提升 |
-| [K8s 扩缩容与存储](sources/k8s-scaling-storage-batch-summary.md) | 10（整合后） | HPA/VPA/KEDA/KServe/Karpenter 扩缩容 + 原生 HPA Scale-to-Zero + FinOps 成本优化 + PV/PVC 数据保护 + NFS/Ceph/CubeFS 存储 |
+| [K8s 扩缩容与存储](sources/k8s-scaling-storage-batch-summary.md) | 9（整合后） | HPA/VPA、KEDA/KServe、Goldilocks 与 FinOps + 原生 HPA Scale-to-Zero + PV/PVC 数据保护 + NFS/Ceph/CubeFS 存储 |
 | [KServe + KEDA 请求指标扩缩容](sources/kserve-keda-request-autoscaling-summary.md) | 1 | KServe/vLLM 指标经 Prometheus、KEDA、External Metrics API 驱动 HPA，实现 1→2→1 扩缩容 |
 | [[KnowledgeBase/sources/k8s-hpa-scale-to-zero-1.37-summary|K8s 1.37 HPA Scale-to-Zero]] | 1 | HPAScaleToZero Beta、External/Object 指标、Worker 缩零、冷启动防抖与 KEDA 迁移清单 |
 | [PV/PVC 回收策略](sources/k8s-pv-pvc-reclaim-policy-summary.md) | 1 | PVC 删除后的 PV 回收策略、Released 复用风险、快照与 StatefulSet 安全删除 |

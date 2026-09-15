@@ -503,4 +503,4 @@ KServe 的价值不只是启动一个模型进程，而是把模型地址、Runt
 - [[AI/企业级私有化大模型/基于K8s部署vLLM和LiteLLM]]
 - [[基于docker部署vLLM和LiteLLM私有化大模型]]
 - [[AI/企业级私有化大模型/KV Cache-从原理到集群调度]]
-- [[Docker-Kubernetes/k8s-scaling/KServe+KEDA实战-基于请求指标实现服务自动扩缩容]]
+- [[Docker-Kubernetes/k8s-scaling/k8s-基于KEDA的弹性能力#KServe + KEDA：基于请求指标的模型服务实战|KServe + KEDA 请求指标扩缩容]]

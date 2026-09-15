@@ -8,7 +8,6 @@ date: 2026-09-15
 sources:
   - "[[Docker-Kubernetes/k8s-scaling/helm部署goldilocks]]"
   - "[[Docker-Kubernetes/k8s-scaling/k8s-基于KEDA的弹性能力]]"
-  - "[[Docker-Kubernetes/k8s-scaling/KServe+KEDA实战-基于请求指标实现服务自动扩缩容]]"
   - "[[Docker-Kubernetes/k8s-scaling/k8s-HPA-VPA]]"
   - "[[Docker-Kubernetes/k8s-storage/k8s-分布式存储CubeFS]]"
   - "[[Docker-Kubernetes/k8s-storage/helm部署nfs-subdir-external-provisioner]]"
@@ -21,7 +20,7 @@ sources:
 ## 元信息
 
 - **原始目录**: `Docker-Kubernetes/k8s-scaling/` 与 `Docker-Kubernetes/k8s-storage/`
-- **文档数量**: 10 篇整合正文（扩缩容 5 篇 + 存储 5 篇；另保留 2 个兼容入口）
+- **文档数量**: 9 篇整合正文（扩缩容 4 篇 + 存储 5 篇）
 - **领域**: Kubernetes 自动扩缩容（HPA/VPA/KEDA/KServe）与存储生命周期（PV/PVC/StorageClass）及分布式存储（NFS/Ceph/CubeFS）
 - **摄入日期**: 2026-04-17
 
@@ -43,25 +42,14 @@ sources:
 
 ### [[Docker-Kubernetes/k8s-scaling/k8s-基于KEDA的弹性能力|KEDA 事件驱动扩缩容]]
 
-**核心内容**: KEDA 是下一代事件驱动自动扩缩器，支持基于事件、消息队列、流量、自定义指标和定时策略的扩缩容，甚至支持缩容到 0。
+**核心内容**: 统一整理 KEDA 的事件驱动扩缩容原理、与 HPA/原生 Scale-to-Zero 的选型边界、资源模型、多事件源实践，以及 KServe + vLLM 请求指标实战。
 
-- 解决原生 HPA 仅基于 CPU/内存的局限性
-- 核心 CRD：ScaledObject（控制 Deployment 副本数）、ScaledJob（触发一次性 Job）、TriggerAuthentication（外部事件源认证）
-- 架构：Controller -> Scaler -> HPA 协同完成扩缩容
-- 支持数十种外部事件源：Kafka、RabbitMQ、HTTP 请求数、Cron 定时等
-- 独特优势：缩容到 0（Serverless 模式），适用于大数据处理等场景
-
-### [[Docker-Kubernetes/k8s-scaling/KServe+KEDA实战-基于请求指标实现服务自动扩缩容|KServe + KEDA 基于请求指标自动扩缩容]]
-
-**核心内容**: 通过 KServe + vLLM + Prometheus + KEDA + HPA 的完整 Demo，使用正在处理和排队请求数作为模型服务扩缩容信号，并验证副本从 `1 -> 2 -> 1` 的变化。
-
-- 扩缩容链路：KServe Predictor Deployment → vLLM `/metrics` → Prometheus → KEDA → External Metrics API → HPA
-- 实测 KEDA 2.17.2，必须确认 `external.metrics.k8s.io` Metrics API Server 可用，只有 CRD 就绪并不够
-- `vllm:num_requests_running + vllm:num_requests_waiting` 同时反映执行中和排队中的请求压力
-- KServe 使用 `autoscalerClass: keda`、`minReplicas`、`maxReplicas` 和 `autoScaling.metrics` 声明外部 Prometheus 指标
-- 通过 ServiceMonitor 选择 KServe Predictor Service，Prometheus Operator 将各 Predictor Pod 作为独立 Target
-- 示例设置 `target.value: 1`、副本范围 1～2，HPA 缩容稳定窗口为 300 秒
-- 使用 HAMi DRA 在单 GPU 节点为每个副本申请 3Gi 显存和 20% GPU 核心
+- KEDA Operator 负责 `0 ↔ 1`，生成的 HPA 负责 `1 ↔ N`；Kubernetes 1.37 原生 HPA 缩零并未替代 KEDA 的事件源、认证和 ScaledJob 能力
+- 核心 CRD：ScaledObject、ScaledJob、TriggerAuthentication 与 ClusterTriggerAuthentication
+- 通用实战覆盖 Cron、RabbitMQ、MySQL、Redis 与 Kafka，并保留完整命令和 YAML
+- KServe 实战链路：Predictor Deployment → vLLM `/metrics` → Prometheus → KEDA → External Metrics API → HPA
+- 实测 KEDA 2.17.2；必须确认 `external.metrics.k8s.io` 可用，只有 CRD 就绪并不够
+- 使用 `vllm:num_requests_running + vllm:num_requests_waiting` 驱动 1→2→1，并通过 HAMi DRA 在单 GPU 节点共享 GPU
 
 ### [[Docker-Kubernetes/k8s-scaling/k8s-HPA-VPA|Kubernetes 自动扩缩容：HPA、VPA 与 Scale-to-Zero]]
 
