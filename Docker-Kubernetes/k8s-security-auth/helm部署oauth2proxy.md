@@ -208,8 +208,6 @@ helm upgrade -i oauth2-proxy -n oauth2-proxy --create-namespace . -f values.yaml
 
 # 回调URL
 
-
-
 回调 URL 是 OAuth2 授权流程中，**授权服务器（GitHub）在用户完成授权后，将用户重定向回去的目标地址**。
 
 使用回调URL的优点：
