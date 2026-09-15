@@ -759,64 +759,171 @@ unset VLLM_API_KEY
 ![image.png](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260914221055928.png)
 
 ### 1.4.1 高可用 Redis 部署
-文档： https://docs.litellm.com.cn/docs/proxy/config_settings。
-需要两个redis：
-- 哨兵redis用作缓存（# Caching settings）
-- 单节点redis用作限流（router_settings:）（限流用的redis仅支持单节点。后续支持哨兵之后，用同一个哨兵redis就行）
 
-#### 哨兵Redis - 缓存用
-在 K8s 集群中安装 Redis 哨兵，用于 LiteLLM 的缓存使用（高于1000RPS，推荐使用Redis缓存）：
+参考文档：
+
+- LiteLLM 配置：https://docs.litellm.com.cn/docs/proxy/config_settings
+- Bitnami Redis Helm Chart：https://github.com/bitnami/charts/tree/main/bitnami/redis
+
+需要部署两个相互独立的 Redis Release：
+
+- `redis`：3 个 Redis + Sentinel Pod，用作 LiteLLM 缓存（`general_settings.cache`）。
+- `redis-single`：单节点 Redis，用作 LiteLLM 路由限流（`router_settings`）。当前限流 Redis 按单节点方式接入；后续 LiteLLM 支持 Sentinel 后，可再评估共用缓存 Redis。
+
+> [!NOTE]
+> 本文是单节点 K8s 集群。3 个 Sentinel Pod 可以处理 Redis 进程或 Pod 故障，但都运行在同一台 ECS 上，无法提供节点级高可用；Longhorn 卷副本数同样应保持为 `1`。
+
+先创建命名空间和两个独立的认证 Secret。下面的命令只在 Secret 不存在时生成密码，重复执行不会静默轮换已有密码：
 
 ```bash
-tar xf redis.tar.gz
-cd redis
-helm install redis . -n litellm --create-namespace \
+kubectl create namespace litellm --dry-run=client -o yaml | kubectl apply -f -
+
+for secret_name in redis-sentinel-auth redis-standalone-auth; do
+  if ! kubectl get secret "${secret_name}" -n litellm >/dev/null 2>&1; then
+    password_file=$(mktemp)
+    chmod 600 "${password_file}"
+    openssl rand -hex 32 > "${password_file}"
+    kubectl create secret generic "${secret_name}" -n litellm \
+      --from-file=redis-password="${password_file}"
+    shred -u "${password_file}"
+  fi
+done
+```
+
+本机根盘约有 17 GiB 可用空间，低于 Longhorn 默认的 25% 最小剩余空间阈值，首次创建卷时会看到 `ReplicaSchedulingFailure: disks are unavailable`。对于这个单节点实验环境，将阈值调整为 10% 后再重新创建失败的空卷：
+
+```bash
+kubectl -n longhorn-system get settings.longhorn.io \
+  storage-minimal-available-percentage
+
+kubectl -n longhorn-system patch settings.longhorn.io \
+  storage-minimal-available-percentage \
+  --type=merge -p '{"value":"10"}'
+```
+
+> [!WARNING]
+> 该设置影响整个 Longhorn 集群，不是 Redis Helm 参数。只有确认磁盘仍有足够空间、且卷确实因 25% 阈值无法调度时才应降低；生产环境应优先扩容磁盘并保留更高的安全余量。
+
+#### Redis Sentinel - 缓存用
+
+使用 Bitnami Redis Chart `28.1.0` 部署 3 个 Redis + Sentinel Pod，Sentinel master set 为 `mymaster`、quorum 为 `2`。每个 Redis 数据 PVC 均从默认的 `8Gi` 调整为 `1Gi`：
+
+```bash
+helm upgrade --install redis \
+  oci://m.daocloud.io/docker.io/bitnamicharts/redis \
+  --version 28.1.0 \
+  --namespace litellm \
   --set global.imageRegistry=m.daocloud.io/docker.io \
   --set global.defaultStorageClass=longhorn \
-  --set global.storageClass=longhorn
+  --set global.security.allowInsecureImages=true \
+  --set image.digest=sha256:ffa455a3ad00bccc24dfde113ef55329dde687da242e9feb6ccd2b30eb93e8f3 \
+  --set sentinel.image.digest=sha256:97433fd14ea945c164ac514c162e2d2a017e9044fdc7ec46abf12a92f4660770 \
+  --set architecture=replication \
+  --set sentinel.enabled=true \
+  --set sentinel.masterSet=mymaster \
+  --set sentinel.quorum=2 \
+  --set replica.replicaCount=3 \
+  --set master.persistence.storageClass=longhorn \
+  --set master.persistence.size=1Gi \
+  --set replica.persistence.storageClass=longhorn \
+  --set replica.persistence.size=1Gi \
+  --set auth.existingSecret=redis-sentinel-auth \
+  --set auth.existingSecretPasswordKey=redis-password \
+  --wait --timeout 10m
 ```
 
-查看 Redis 状态：
+`global.security.allowInsecureImages=true` 是 Bitnami Chart 使用自定义镜像仓库时所需的镜像校验开关，并不表示关闭 Redis 密码认证。镜像仍固定到了本次验证通过的不可变 digest。
+
+查看 Pod、Service 和 PVC 状态：
 
 ```bash
-kubectl get po -n litellm
+helm status redis -n litellm
+kubectl get sts,pod,svc,pvc -n litellm \
+  -l app.kubernetes.io/instance=redis
 ```
 
-测试哨兵状态：
+验证 Sentinel master、quorum、replica 数量和读写；测试键会在最后删除，不需要创建临时测试 Pod：
 
 ```bash
-kubectl exec -ti redis-node-0 -n litellm -- bash
-redis-cli -h redis -p 26379
-auth xxx
-SETENIAL replicas mymaster
+REDIS_PASSWORD=$(kubectl get secret redis-sentinel-auth -n litellm \
+  -o jsonpath='{.data.redis-password}' | base64 -d)
+
+kubectl exec redis-node-0 -n litellm -c redis -- \
+  env REDISCLI_AUTH="${REDIS_PASSWORD}" redis-cli --raw \
+  -h redis -p 26379 SENTINEL get-master-addr-by-name mymaster
+
+kubectl exec redis-node-0 -n litellm -c redis -- \
+  env REDISCLI_AUTH="${REDIS_PASSWORD}" redis-cli --raw \
+  -h redis -p 26379 SENTINEL ckquorum mymaster
+
+kubectl exec redis-node-0 -n litellm -c redis -- \
+  env REDISCLI_AUTH="${REDIS_PASSWORD}" sh -c \
+  'redis-cli --raw -h redis -p 26379 SENTINEL replicas mymaster | grep -c "^name$"'
+
+kubectl exec redis-node-0 -n litellm -c redis -- \
+  env REDISCLI_AUTH="${REDIS_PASSWORD}" redis-cli --raw \
+  -h redis -p 6379 SET litellm-sentinel-test ok
+kubectl exec redis-node-0 -n litellm -c redis -- \
+  env REDISCLI_AUTH="${REDIS_PASSWORD}" redis-cli --raw \
+  -h redis -p 6379 GET litellm-sentinel-test
+kubectl exec redis-node-0 -n litellm -c redis -- \
+  env REDISCLI_AUTH="${REDIS_PASSWORD}" redis-cli --raw \
+  -h redis -p 6379 DEL litellm-sentinel-test
+
+unset REDIS_PASSWORD
 ```
 
-#### 单节点redis - 限流用
+供 LiteLLM 使用的集群内地址为：
 
-Redis 单节点部署：
+- Sentinel：`redis.litellm.svc.cluster.local:26379`
+- Sentinel master set：`mymaster`
+- Redis 服务：`redis.litellm.svc.cluster.local:6379`
+
+#### 单节点 Redis - 限流用
+
+使用同一个 Chart 的 `standalone` 架构部署独立 Redis，数据 PVC 同样设置为 `1Gi`：
 
 ```bash
-kubectl create -f redis-single.yaml -n litellm
+helm upgrade --install redis-single \
+  oci://m.daocloud.io/docker.io/bitnamicharts/redis \
+  --version 28.1.0 \
+  --namespace litellm \
+  --set global.imageRegistry=m.daocloud.io/docker.io \
+  --set global.defaultStorageClass=longhorn \
+  --set global.security.allowInsecureImages=true \
+  --set image.digest=sha256:ffa455a3ad00bccc24dfde113ef55329dde687da242e9feb6ccd2b30eb93e8f3 \
+  --set architecture=standalone \
+  --set master.persistence.storageClass=longhorn \
+  --set master.persistence.size=1Gi \
+  --set auth.existingSecret=redis-standalone-auth \
+  --set auth.existingSecretPasswordKey=redis-password \
+  --wait --timeout 10m
 ```
 
-查看状态：
+验证状态和读写，随后删除测试键：
 
 ```bash
-kubectl get po -n litellm -l app=redis-single
+helm status redis-single -n litellm
+kubectl get sts,pod,svc,pvc -n litellm \
+  -l app.kubernetes.io/instance=redis-single
+
+REDIS_PASSWORD=$(kubectl get secret redis-standalone-auth -n litellm \
+  -o jsonpath='{.data.redis-password}' | base64 -d)
+
+kubectl exec redis-single-master-0 -n litellm -c redis -- \
+  env REDISCLI_AUTH="${REDIS_PASSWORD}" redis-cli --raw \
+  SET litellm-rate-limit-test ok
+kubectl exec redis-single-master-0 -n litellm -c redis -- \
+  env REDISCLI_AUTH="${REDIS_PASSWORD}" redis-cli --raw \
+  GET litellm-rate-limit-test
+kubectl exec redis-single-master-0 -n litellm -c redis -- \
+  env REDISCLI_AUTH="${REDIS_PASSWORD}" redis-cli --raw \
+  DEL litellm-rate-limit-test
+
+unset REDIS_PASSWORD
 ```
 
-测试 Redis：
-
-```bash
-kubectl exec -ti redis-single-578d7d75f7-2mqh7 -n litellm -- bash
-I have no name! [ / ]$ redis-cli -h redis-single
-redis-single:6379> auth xxxx_redis
-OK
-redis-single:6379> set a 1
-OK
-redis-single:6379> get a
-"1"
-```
+供 LiteLLM 限流使用的集群内地址为 `redis-single-master.litellm.svc.cluster.local:6379`。
 
 ### 1.4.2 高可用 Postgresql 部署
 
