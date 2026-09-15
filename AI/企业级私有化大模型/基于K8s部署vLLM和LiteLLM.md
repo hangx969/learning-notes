@@ -554,6 +554,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: qwen3-5-4b-deployment
+  namespace: models
   labels:
     app: qwen3-5-4b
 spec:
