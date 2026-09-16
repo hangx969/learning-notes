@@ -116,7 +116,7 @@ date: 2026-09-15
 ### Helm
 **相关文档（20+ 篇）：**
 - [[Docker-Kubernetes/helm-operator/helmv3-安装与使用|helmv3-安装与使用]] ⭐ 推荐入口
-- [[Docker-Kubernetes/harbor/harbor-basics|Harbor 部署与使用指南]]
+- [[Harbor 部署与使用指南|Harbor 部署与使用指南]]
 - [[Docker-Kubernetes/k8s-monitoring-logging/helm部署prometheus-stack全家桶|helm部署prometheus-stack全家桶]]
 - [[Docker-Kubernetes/k8s-monitoring-logging/helm部署Loki-promtail-tempo-grafanaAgent全家桶|helm部署Loki-promtail-tempo-grafanaAgent全家桶]]
 - [[Docker-Kubernetes/k8s-CICD/Jenkins/helm部署jenkins|helm部署jenkins]]
@@ -162,7 +162,7 @@ date: 2026-09-15
 
 ### Harbor
 **相关文档：**
-- [[Docker-Kubernetes/harbor/harbor-basics|Harbor 部署与使用指南]] ⭐ 推荐入口
+- [[Harbor 部署与使用指南|Harbor 部署与使用指南]] ⭐ 推荐入口
 - [[Docker-Kubernetes/harbor/Dragonfly与Harbor-P2P镜像分发|Dragonfly + Harbor P2P 镜像分发]] — AI/GPU 集群镜像与大文件源站卸载
 - [[Docker-Kubernetes/kubeblocks/kubeblocks部署高可用harbor集群|kubeblocks部署高可用harbor集群]]
 

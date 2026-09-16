@@ -1986,5 +1986,5 @@ date: 2026-04-17
 
 ## [2026-09-15] restructure | Harbor 部署与使用指南
 
-- 将 Docker Compose 部署、Kubernetes Helm 部署、镜像推拉、containerd 接入、Helm OCI Chart 和 TLS 配置整合到 [[Docker-Kubernetes/harbor/harbor-basics|Harbor 部署与使用指南]]，合并重复内容并标注历史版本及失败实验边界
+- 将 Docker Compose 部署、Kubernetes Helm 部署、镜像推拉、containerd 接入、Helm OCI Chart 和 TLS 配置整合到 [[Harbor 部署与使用指南|Harbor 部署与使用指南]]，合并重复内容并标注历史版本及失败实验边界
 - 删除已被合并的 `Docker-Kubernetes/harbor/helm部署harbor.md`，同步更新 Harbor、Helm、工具地图和 K8s 杂项来源摘要中的引用

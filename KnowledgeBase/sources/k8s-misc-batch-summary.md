@@ -23,7 +23,7 @@ sources:
   - "[[Docker-Kubernetes/CKA-CKS/k8s-面试题汇总]]"
   - "[[Docker-Kubernetes/kubeblocks/kubeblocks部署WordPress]]"
   - "[[Docker-Kubernetes/kubeblocks/kubeblocks部署高可用harbor集群]]"
-  - "[[Docker-Kubernetes/harbor/harbor-basics]]"
+  - "[[Harbor 部署与使用指南]]"
   - "[[Docker-Kubernetes/harbor/Dragonfly与Harbor-P2P镜像分发]]"
   - "[[Docker-Kubernetes/container-platform/部署openshift(3.10)]]"
   - "[[Docker-Kubernetes/container-platform/部署轻量级的K8S平台-K3S]]"
@@ -143,7 +143,7 @@ sources:
   - KubeBlocks 通过 replication 模式创建主备集群，支持自动故障转移
   - PostgreSQL 和 Redis 集群创建只需一条命令
 
-### [[Docker-Kubernetes/harbor/harbor-basics|Harbor 部署与使用指南]]
+### [[Harbor 部署与使用指南|Harbor 部署与使用指南]]
 
 - **核心内容**: Harbor 的完整部署与使用入口，覆盖 Docker Compose、Kubernetes Helm、Ingress/TLS、镜像推拉、containerd 接入和 Helm OCI Chart 内网化。
 - **关键知识点**:

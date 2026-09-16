@@ -64,7 +64,7 @@ Helm 基础位于 `Docker-Kubernetes/helm-operator/`，同时大量 helm 部署�
 - [[Docker-Kubernetes/k8s-networking-service-mesh/k8s精细化流量管理-istio#Helm 安装|Helm 安装 Istio]]
 - [[Docker-Kubernetes/k8s-networking-service-mesh/helm部署external-dns|helm部署external-dns]]
 - [[Docker-Kubernetes/k8s-CICD/Jenkins/helm部署jenkins|helm部署jenkins]]
-- [[Docker-Kubernetes/harbor/harbor-basics|Harbor 部署与使用指南]]
+- [[Harbor 部署与使用指南|Harbor 部署与使用指南]]
 - [[cert-manager 实战：Helm 部署、TLS 自动签发与续期|cert-manager 实战：Helm 部署、TLS 自动签发与续期]]
 - [[KnowledgeBase/sources/cert-manager-tls-automation-summary|cert-manager TLS 自动化摘要]]：OCI Chart、本地 Chart、CRD 和配置 Chart 管理
 - [[Docker-Kubernetes/k8s-security-auth/helm部署kyverno和policy-reporter|helm部署kyverno和policy-reporter]]
