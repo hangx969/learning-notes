@@ -9,19 +9,19 @@ aliases:
   - zsh和oh-my-zsh配置
 ---
 
-# zsh
+# Zsh 终端配置
 
-- 是Linux命令解释器的一种，CentOS默认的命令解释器是Bash，常用的还有sh、csh和tcsh。对比默认的Bash，Zsh的功能更强大，拥有大量插件，可以实现更强大的命令补全，命令高亮等功能。
-
----
-
-# ohmyzsh
-
-- OhMyZsh是一款开源工具，可以用于管理Zsh（Linux命令解释器的一种）的配置。使用OhMyZsh可以让你看起来像有10年工作经验的程序员，OhMyZsh有几百种插件可以供你使用，还有各种炫酷的主题。OhMyZsh非常流行，在Github上已经有`137K+`Star！
+Zsh 是命令解释器。它提供命令补全等功能，也可以通过插件添加语法高亮和输入建议。
 
 ---
 
-# macOS 配置
+## Oh My Zsh
+
+Oh My Zsh 是管理 Zsh 配置的开源框架，提供主题与插件。
+
+---
+
+## macOS 配置
 
 macOS 15 默认使用 Zsh，可直接安装 Oh My Zsh。安装、主题和插件示例也适用于 [[Linux-Shell/MacBook开发环境配置|MacBook 开发环境]]。
 
@@ -42,7 +42,7 @@ source "$ZSH/oh-my-zsh.sh"
 
 ---
 
-# 安装zsh
+## Linux 安装 Zsh
 
 - 安装Zsh的方法很多，使用yum来安装很方便，不过OhMyZsh官方建议安装`5.0.8`以上版本，我们先来看下yum中的zsh版本号；
 
@@ -95,7 +95,7 @@ zsh --version
 
 ---
 
-# 安装onmyzsh
+## 安装 Oh My Zsh
 
 - 接下来我们来安装OhMyZsh，直接使用如下命令安装；
 
@@ -126,7 +126,7 @@ chsh -s $(which zsh)
 
 ![图片](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202401081016712.png)
 
-## 主题修改
+## 主题配置
 
 - OhMyZsh的主题非常丰富，自带主题都在`themes`文件夹中；
 
@@ -157,12 +157,12 @@ git clone https://github.com/romkatv/powerlevel10k.git "${ZSH_CUSTOM:-$HOME/.oh-
 vim ~/.zshrc
 #修改主题配置为powerlevel10k
 ZSH_THEME="powerlevel10k/powerlevel10k"
-source ~/.zshrc
+exec zsh
 ```
 
-## 使用插件
+## 插件
 
-- OhMyZsh的自带插件都在`plugins`目录下，统计了下，多达305个。
+Oh My Zsh 自带的插件位于 `plugins` 目录，也可以从第三方仓库安装插件。
 
 ### zsh-syntax-highlighting
 
@@ -218,7 +218,7 @@ git clone https://github.com/zsh-users/zsh-history-substring-search ${ZSH_CUSTOM
 - 作为自带插件无需下载，直接修改配置文件`.zshrc`，在plugins中添加插件`docker`；
 - 当我们输入docker开头的命令时，使用`Tab`键可以出现提示并自动补全。
 
-#### git
+### git
 
 > [!tip] 自带插件，添加了很多git的快捷命令。
 
@@ -237,7 +237,7 @@ git clone https://github.com/zsh-users/zsh-history-substring-search ${ZSH_CUSTOM
 | gb       | git branch     |
 | glg      | git log --stat |
 
-#### z
+### z
 
 > [!tip] 自带插件，可以快速跳转到上个cd的目录下。
 

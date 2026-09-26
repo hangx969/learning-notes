@@ -10,13 +10,15 @@ aliases:
   - Mac开发环境
 ---
 
-# 配置 Zsh 与 Oh My Zsh
+# MacBook 开发环境配置
+
+## 配置 Zsh 与 Oh My Zsh
 
 macOS 15 默认使用 Zsh。Oh My Zsh 的安装、主题和插件配置集中记录在 [[Linux-Shell/配置zsh终端#macOS 配置|Zsh 终端配置]]，包括此处使用的 `af-magic`、Powerlevel9k/10k、`zsh-syntax-highlighting` 和 `zsh-autosuggestions`。
 
 ---
 
-# 安装homebrew
+## 安装 Homebrew
 
 homebrew官网：
 
@@ -42,7 +44,7 @@ echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zshrc
 source ~/.zshrc
 ~~~
 
-## homebrew换源
+## Homebrew 换源
 中国内地用户可能由于网络问题无法安装，可尝试修改Homebrew安装源以解决此问题。以使用中科大开源镜像站为例：
 
 **设置Hombrew安装源为科大源**
@@ -55,7 +57,7 @@ export HOMEBREW_BOTTLE_DOMAIN="https://mirrors.ustc.edu.cn/homebrew-bottles"
 export HOMEBREW_API_DOMAIN="https://mirrors.ustc.edu.cn/homebrew-bottles/api"
 brew update
 ```
-# 安装git
+## 安装 Git
 
 用homebrew安装：
 
@@ -63,7 +65,7 @@ brew update
 brew install git
 ~~~
 
-# 安装python3
+## 安装 Python 3
 
 用homebrew安装：
 
@@ -71,7 +73,7 @@ brew install git
 brew install python
 ~~~
 
-# 安装kubectl
+## 安装 kubectl
 
 用homebrew安装：https://kubernetes.io/docs/tasks/tools/install-kubectl-macos/#install-with-homebrew-on-macos
 
@@ -79,7 +81,7 @@ brew install python
 brew install kubectl
 ~~~
 
-## 配置自动补全
+### 配置自动补全
 
 https://kubernetes.io/docs/tasks/tools/install-kubectl-macos/#optional-kubectl-configurations-and-plugins
 
@@ -91,7 +93,7 @@ compinit
 source <(kubectl completion zsh)
 ~~~
 
-## 配置alias
+### 配置别名
 
 有现成工具可以用：https://github.com/ahmetb/kubectl-aliases
 
@@ -106,18 +108,18 @@ source <(kubectl completion zsh)
 
 1. 测试`k v`看能不能补全和运行
 
-# 安装Obsidian
+## 安装 Obsidian
 官网下载安装包安装即可。
-## 插件
+### 插件
 1. Editing Toolbar
 2. Outliner
 3. Git
 4. awesome image 
 
-## 主题
+### 主题
 - Baseline
 - Blue Topaz
 
-## 不同Vault配置
+### 不同 Vault 配置
 每个vault下面会有一个.obsidian目录，保存了所有主题、插件等设置。
 更换其他vault打开之后，由于换了新的.obsidian配置目录，所以原先的配置并不存在。此时将一个配置好的vault的.obsidian目录里面的所有内容复制到新vault即可。
