@@ -340,10 +340,9 @@ date: 2026-09-15
 ## HPC 工具
 
 ### Slurm
-**相关文档（4 篇）：**
+**相关文档（3 篇）：**
 - [[HPC/CentOS7-slurm23.02-二进制安装|CentOS7-slurm23.02-二进制安装]] ⭐ 推荐入口
-- [[HPC/Ubuntu2204-slurm-22.05.11-安装指南|Ubuntu 22.04 Slurm 22.05.11（测试与生产）]]
-- [[Ubuntu2204-slurm-23.11-deb安装|Ubuntu2204-slurm- 23.11-deb安装]]
+- [[HPC/Ubuntu2204-Slurm-安装指南|Ubuntu 22.04 Slurm 22.05.11 与 23.11.4（源码与 deb 包）]]
 - [[HPC/Slurm-node-exporter|Slurm-node-exporter]]
 
 **概念页：** [[KnowledgeBase/entities/Slurm|Slurm]]

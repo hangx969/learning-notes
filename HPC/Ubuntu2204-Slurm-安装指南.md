@@ -1,5 +1,5 @@
 ---
-title: Ubuntu 22.04 Slurm 22.05.11 源码编译安装指南（测试与生产环境）
+title: Ubuntu 22.04 Slurm 22.05.11 与 23.11.4 安装与配置指南
 tags:
   - hpc/slurm
   - linux/ubuntu
@@ -11,30 +11,35 @@ aliases:
   - Slurm测试环境部署
   - Ubuntu Slurm 22.05 Production
   - Slurm H800 GPU Cluster
+  - Ubuntu2204-slurm-22.05.11-安装指南
   - Ubuntu2204-slurm-22.05.11-二进制安装
   - Ubuntu2204-slurm-22.05.11-binary-installation
+  - Ubuntu Slurm 23.11 deb安装
+  - Slurm deb包安装
+  - Ubuntu2204-slurm-23.11-deb安装
 date: 2026-09-26
 ---
 
-# Ubuntu 22.04 Slurm 22.05.11 源码编译安装指南
+# Ubuntu 22.04 Slurm 安装与配置指南
 
-这份笔记把三节点测试环境和 H800 生产环境的部署记录合在一起。两套环境共用 MUNGE 认证、Slurm 源码编译、slurmdbd 和作业提交的基本流程；主机名、分区、资源、目录和调度参数分别保留，操作时应先选定一套环境，再按该环境的章节执行。文中的 `./configure`、`make`、`make install` 是**源码编译安装**，不是安装预编译二进制包。
+本指南汇总三套 Ubuntu 22.04 实例：Slurm 22.05.11 三节点测试环境、22.05.11 H800 生产环境，以及 Slurm 23.11.4 三节点 deb 包实验环境。先按下表选择一套拓扑，再使用对应版本的安装与配置章节；主机名、分区、目录和资源参数不可跨版本拼接。MUNGE 密钥的安全生成与分发流程共用，作业命令的参数说明集中在文末。
 
 > [!warning] 使用前核对
-> 两套配置记录的是不同集群，不能混用主机名、分区、spool 路径与资源参数。下方已用受限权限替换原记录中临时 `chmod 777` 的 MUNGE 密钥复制方式，并将数据库密码改为占位值；生产环境的资源、抢占日志和 Epilog 清理范围仍须在目标集群核对。
+> 三套配置记录的是不同集群，不能混用主机名、分区、spool 路径与资源参数。下方已用受限权限替换原记录中临时 `chmod 777` 的 MUNGE 密钥复制方式，并将数据库密码改为占位值；生产环境的资源、抢占日志和 Epilog 清理范围仍须在目标集群核对。
 
 ## 环境对照与阅读顺序
 
 | 场景 | 控制/管理节点 | 计算节点 | 登录节点 | 配置重点 |
 | --- | --- | --- | --- | --- |
-| 测试环境 | `m1` (`172.16.183.133`) | `c1` (`172.16.183.134`) | `l1` (`172.16.183.135`) | `hpc01` 集群、`cpu` 分区 |
-| 生产环境 | `CN01Z99SLU001` (`10.21.105.20`) | `cn01dl00[1-4]` (`10.21.105.11-14`) | `CN01Z99SLU002` (`10.21.105.21`) | `jade-slurm` 集群、H800 GPU 与 `zprod*` 分区 |
+| 测试环境（22.05.11 源码编译） | `m1` (`172.16.183.133`) | `c1` (`172.16.183.134`) | `l1` (`172.16.183.135`) | `hpc01` 集群、`cpu` 分区 |
+| 生产环境（22.05.11 源码编译） | `CN01Z99SLU001` (`10.21.105.20`) | `cn01dl00[1-4]` (`10.21.105.11-14`) | `CN01Z99SLU002` (`10.21.105.21`) | `jade-slurm` 集群、H800 GPU 与 `zprod*` 分区 |
+| deb 实验环境（23.11.4 源码构建 deb） | `um1` (`172.16.183.130`) | `uc1` (`172.16.183.131`) | `ul1` (`172.16.183.132`) | `ubuntutestcluster` 集群、`debug` 分区 |
 
-1. 先完成所选环境的 MUNGE 安装与跨节点认证，再配置 Slurm。
-2. 控制节点运行 `slurmdbd` 和 `slurmctld`；计算节点运行 `slurmd`；登录节点安装客户端并保持相同的 `slurm.conf`。
-3. 先用该环境实际存在的分区和节点验收，再参考通用作业示例。
+1. 先完成所选环境的网络、账户与 MUNGE 安装及跨节点认证，再配置 Slurm；22.05.11 使用 `./configure && make && make install`，23.11.4 从源码构建 deb 包后安装。
+2. 控制节点运行 `slurmctld`、计算节点运行 `slurmd`，登录节点安装客户端并保持相同的 `slurm.conf`；22.05.11 配置了 `slurmdbd`，23.11.4 实验只安装其软件包，尚未配置数据库服务。
+3. 先用该环境实际存在的分区和节点验收，再参考通用作业示例。23.11.4 的 `debug` 分区仅配置 `uc1`，`MaxTime=1`。
 
-## MUNGE 共享密钥：两种环境共用的安全流程
+## MUNGE 共享密钥：三种环境共用的安全流程
 
 参与本轮分发的节点先创建相同 UID/GID 的 `munge` 用户并安装 MUNGE；控制节点**只生成一次**共享密钥。以下命令不需要开放 `/etc/munge` 的写权限；密钥在控制节点为 `munge:munge`、`0400`，远端暂存目录仅供登录用户访问。分发失败时检查并清理远端 `$HOME/.munge-transfer`。
 
@@ -46,12 +51,13 @@ sudo chown munge:munge /etc/munge/munge.key
 sudo chmod 0400 /etc/munge/munge.key
 ~~~
 
-在控制节点的同一个 Bash 会话中，按场景设置 `targets` 后运行分发脚本。`ubuntu@`、`test@` 来自原部署记录；若实际 SSH 用户不同，先调整列表并确认该用户可通过 `sudo` 安装密钥。测试环境在 `c1`、`l1` 安装 MUNGE 后分发；生产环境可先分发登录节点，等四台计算节点安装 MUNGE 后再运行一次分发脚本，**不要重新生成密钥**。
+在控制节点的同一个 Bash 会话中，按场景设置 `targets` 后运行分发脚本。`ubuntu@`、`test@` 来自原部署记录；若实际 SSH 用户不同，先调整列表并确认该用户可通过 `sudo` 安装密钥。测试环境在 `c1`、`l1` 安装 MUNGE 后分发；生产环境可先分发登录节点，等四台计算节点安装 MUNGE 后再运行一次分发脚本；23.11.4 环境分发到 `uc1`、`ul1`。**同一集群不要重新生成密钥**。原 23.11.4 记录使用 root SSH；若未开启，应改用可 `sudo` 的 SSH 用户。
 
 ~~~sh
 # 测试环境：targets=(c1 l1)
 # 生产登录节点：targets=(ubuntu@CN01Z99SLU002)
 # 生产计算节点：targets=(test@cn01dl001 test@cn01dl002 test@cn01dl003 test@cn01dl004)
+# 23.11.4 deb 实验：targets=(root@uc1 root@ul1)
 # 运行前选择并取消注释其中一行
 
 (
@@ -70,7 +76,7 @@ sudo chmod 0400 /etc/munge/munge.key
 
 最后在每台节点上确认 `sudo stat -c '%U:%G %a' /etc/munge/munge.key` 为 `munge:munge 400`，再启动 MUNGE 并用下文的 `munge -n | ssh ... unmunge` 验证跨节点认证。
 
-## 测试环境：m1 / c1 / l1
+## 22.05.11 源码编译测试环境：m1 / c1 / l1
 
 本节保留测试环境的网络准备、逐节点安装命令和完整 `slurm.conf`。实验镜像为 [Ubuntu 22.04.4 Server](https://mirrors.tuna.tsinghua.edu.cn/ubuntu-releases/22.04/ubuntu-22.04.4-live-server-amd64.iso)。原记录的实验账户信息为 `hangx hangx / root root`（历史凭据，复用前应更换）；网关和 DNS 记录见下方环境准备。测试 `slurm.conf` 只有 `cpu` 分区和一台 `c1` 计算节点。
 
@@ -178,7 +184,7 @@ sudo systemctl daemon-reload && sudo systemctl start rngd && sudo systemctl enab
 sudo apt -y install munge libmunge-dev libmunge2
 ~~~
 
-- 在 `m1` 上按[[#MUNGE 共享密钥：两种环境共用的安全流程|共用密钥流程]]生成密钥，待 `c1` 和 `l1` 均安装 MUNGE 后，设置 `targets=(c1 l1)` 分发同一密钥。原记录采用的 1024 字节随机密钥和两台目标节点均保留在该流程中。
+- 在 `m1` 上按[[#MUNGE 共享密钥：三种环境共用的安全流程|共用密钥流程]]生成密钥，待 `c1` 和 `l1` 均安装 MUNGE 后，设置 `targets=(c1 l1)` 分发同一密钥。原记录采用的 1024 字节随机密钥和两台目标节点均保留在该流程中。
 
 - 检查账户是否存在
 
@@ -769,7 +775,7 @@ source /etc/profile
 
 ---
 
-## 生产环境：CN01Z99SLU001 / cn01dl00[1-4] / CN01Z99SLU002
+## 22.05.11 源码编译生产环境：CN01Z99SLU001 / cn01dl00[1-4] / CN01Z99SLU002
 
 本节保留生产环境的批量 SSH 操作、H800 GPU 资源定义、分区优先级、记账配置和节点脚本。MUNGE/Slurm 用户分别使用统一 UID/GID 1108/1109；执行远程命令前需确认 `test`、`ubuntu` 或 `root` 在目标主机上的登录与提权方式。生产配置中的路径和资源数值应与实际节点核对。
 
@@ -821,7 +827,7 @@ sudo systemctl daemon-reload && sudo systemctl start rngd && sudo systemctl enab
 sudo apt install munge libmunge-dev libmunge2
 ~~~
 
-- 在 `CN01Z99SLU001` 上按[[#MUNGE 共享密钥：两种环境共用的安全流程|共用密钥流程]]生成密钥；登录节点安装 MUNGE 后，设置 `targets=(ubuntu@CN01Z99SLU002)` 分发。四台计算节点稍后安装 MUNGE，再分发**同一把**密钥。
+- 在 `CN01Z99SLU001` 上按[[#MUNGE 共享密钥：三种环境共用的安全流程|共用密钥流程]]生成密钥；登录节点安装 MUNGE 后，设置 `targets=(ubuntu@CN01Z99SLU002)` 分发。四台计算节点稍后安装 MUNGE，再分发**同一把**密钥。
 
 - 检查账户是否存在
 
@@ -913,7 +919,7 @@ apt install munge libmunge-dev libmunge2
 # MUNGE 安装后不需要将 /etc/munge 或 munge.key 设为全员可写。
 ~~~
 
-- 在管理节点设置 `targets=(test@cn01dl001 test@cn01dl002 test@cn01dl003 test@cn01dl004)`，按[[#MUNGE 共享密钥：两种环境共用的安全流程|共用密钥流程]]分发已有密钥。下面继续核对计算节点的运行目录权限。
+- 在管理节点设置 `targets=(test@cn01dl001 test@cn01dl002 test@cn01dl003 test@cn01dl004)`，按[[#MUNGE 共享密钥：三种环境共用的安全流程|共用密钥流程]]分发已有密钥。下面继续核对计算节点的运行目录权限。
 
 ~~~sh
 #相关目录文件修改权限
@@ -1666,9 +1672,406 @@ done
 
 ---
 
+## 23.11.4 deb 包实验环境：um1 / uc1 / ul1
+
+原记录的 Ubuntu 22.04.4 实验机器为 2 vCPU、4 GB，用户信息为 `hangx hangx / root root`（历史凭据，不要复用），三节点分别为 `um1`、`uc1`、`ul1`。本流程先从 Slurm 23.11.4 源码构建 deb 包，再按节点角色安装；它不是直接从 Ubuntu 仓库安装 Slurm。
+
+### 环境准备
+
+- IP配置
+
+  - Ubuntu系统安装时,可以在网卡配置页面,将ens33设置为静态IP。
+  - Gateway: 172.16.183.2
+  - name servers: 8.8.8.8,114.114.114.114
+
+~~~sh
+sudo vim /etc/netplan/00-installer-config.yaml
+# This is the network config written by 'subiquity'
+network:
+  ethernets:
+    ens33:
+      addresses:
+      - 172.16.183.130/24
+      nameservers:
+        addresses:
+        - 8.8.8.8
+        - 114.114.114.114
+      routes:
+      - to: default
+        via: 172.16.183.2
+  version: 2
+~~~
+
+- apt源设置
+
+  - Ubuntu系统安装时,在mirror address页面上,配置为清华镜像源: https://mirrors.tuna.tsinghua.edu.cn/help/ubuntu/
+
+  - 设置主机名
+
+~~~sh
+sudo hostnamectl set-hostname um1 && bash
+sudo hostnamectl set-hostname uc1 && bash
+sudo hostnamectl set-hostname ul1 && bash
+~~~
+
+- 添加hosts
+
+~~~sh
+cat >> /etc/hosts << EOF
+172.16.183.130 um1
+172.16.183.131 uc1
+172.16.183.132 ul1
+EOF
+~~~
+
+- 修改资源限制
+
+~~~sh
+cat >> /etc/security/limits.conf << EOF
+* hard nofile 1000000
+* soft nofile 1000000
+* soft core unlimited
+* soft stack 10240
+* soft memlock unlimited
+* hard memlock unlimited
+EOF
+~~~
+
+- 配置时区
+
+~~~sh
+#安装ntpdate命令
+apt install ntpdate -y
+#跟网络时间做同步
+ntpdate cn.pool.ntp.org
+#把时间同步做成计划任务
+crontab -e
+* */1 * * * /usr/sbin/ntpdate   cn.pool.ntp.org
+#重启crond服务
+systemctl restart cron
+~~~
+
+- 配置ssh免登录
+
+~~~sh
+ssh-keygen
+ssh-copy-id -i ~/.ssh/id_rsa.pub um1
+ssh-copy-id -i ~/.ssh/id_rsa.pub uc1
+ssh-copy-id -i ~/.ssh/id_rsa.pub ul1
+~~~
+
+---
+
+### 配置 MUNGE
+
+23.11.4 环境同样在所有节点创建 UID/GID 为 1108 的 `munge` 用户；原记录仅安装 `munge` 包（22.05.11 同时安装 `libmunge-dev`、`libmunge2`），管理节点使用 `rng-tools`/`rngd`。用户与熵源命令及 `munge -n`、`unmunge`、`remunge` 验证方法已在上方 22.05.11 测试环境的 MUNGE 章节列出，目标主机改为 `um1`、`uc1`、`ul1`。
+
+~~~sh
+# 每台节点：先核对 UID/GID 1108 未占用，再创建用户并安装 MUNGE
+getent group 1108
+sudo groupadd -g 1108 munge
+sudo useradd -m -c "Munge Uid 'N' Gid Emporium" -d /var/lib/munge -u 1108 -g munge -s /sbin/nologin munge
+sudo apt -y install munge
+
+# 仅在 um1 生成一次共享密钥，并使用上方的受限分发流程
+# targets=(root@uc1 root@ul1)；若 root SSH 不可用，改为可 sudo 的 SSH 用户
+# 原记录另列 create-munge-key 作为生成命令；不要在各节点分别运行，以免密钥不同。
+
+# 所有节点：恢复属主和权限，启动并验证服务
+sudo chown munge:munge /etc/munge/munge.key
+sudo chmod 0400 /etc/munge/munge.key
+sudo systemctl enable --now munge
+sudo systemctl status munge
+munge -n | unmunge
+remunge
+~~~
+
+~~~sh
+# 从 um1 测试跨节点凭据；也可从计算/登录节点反向测试
+munge -n | ssh uc1 unmunge
+munge -n | ssh ul1 unmunge
+~~~
+
+### 配置slurm
+
+- 创建slurm用户
+
+~~~sh
+#所有节点上
+groupadd -g 1109 slurm
+useradd -m -c "Slurm manager" -d /var/lib/slurm -u 1109 -g slurm -s /bin/bash slurm
+~~~
+
+- 检查slurm用户存在
+
+~~~sh
+id slurm
+~~~
+
+- 从 Slurm 23.11.4 源码构建 deb 包（原记录在所有节点执行）
+
+  https://slurm.schedmd.com/quickstart_admin.html#debuild
+
+~~~sh
+wget https://download.schedmd.com/slurm/slurm-23.11.4.tar.bz2
+#Install basic Debian package build requirements:
+apt-get install build-essential fakeroot devscripts equivs
+#Unpack the distributed tarball:
+tar -xaf slurm*tar.bz2
+cd slurm-23.11.4
+#Install the Slurm package dependencies:
+#mk-build-deps是一个用于处理Debian包构建依赖的工具。它可以创建一个虚拟的Debian包,这个虚拟的包依赖于你的源代码包的所有构建依赖。当你安装这个虚拟的包时,所有的构建依赖也会被自动安装。-i选项告诉mk-build-deps在创建虚拟的包之后,立即尝试安装它。debian/control是Debian包的控制文件,它包含了关于包的元数据,例如包的名称、版本、描述,以及构建依赖等信息。
+mk-build-deps -i debian/control
+#Build the Slurm packages:
+#构建二进制包,但不对改变的文件和源代码包进行签名。这个命令通常在你信任源代码,并且不需要签名的情况下使用。
+debuild -b -uc -us
+~~~
+
+> [!tip] 按节点角色安装 deb 包
+> `debuild` 会将包放在源码目录的上一级。原记录使用逐个 `dpkg -i`；这里将相同的软件包组合改用 `apt install ./...deb` 安装，以便处理依赖。每台目标节点都需先获得这些包，或在节点上完成相同构建。
+
+~~~sh
+# um1（控制节点）
+cd ..
+sudo apt install ./slurm-smd_23.11.4-1_amd64.deb ./slurm-smd-slurmctld_23.11.4-1_amd64.deb ./slurm-smd-client_23.11.4-1_amd64.deb ./slurm-smd-slurmdbd_23.11.4-1_amd64.deb
+
+# uc1（计算节点）
+cd ..
+sudo apt install ./slurm-smd_23.11.4-1_amd64.deb ./slurm-smd-slurmd_23.11.4-1_amd64.deb ./slurm-smd-client_23.11.4-1_amd64.deb
+
+# ul1（登录节点）
+cd ..
+sudo apt install ./slurm-smd_23.11.4-1_amd64.deb ./slurm-smd-client_23.11.4-1_amd64.deb
+~~~
+
+- 配置控制节点 Slurm。原环境规划写 2 vCPU、4 GB 内存，但原 `slurm.conf` 写 `RealMemory=5886` MiB，二者矛盾。下面保留原值作历史记录；运行前在 `uc1` 用 `nproc`、`lscpu`、`free -m` 核对，并据实修改 `NodeName=uc1`。`MaxTime=1` 是一分钟，通用示例中的 5 分钟作业不能直接提交到 `debug`。本实验未提供 `slurmdbd.conf` 或启动 `slurmdbd` 的步骤，记账功能不能视为已配置。
+
+  ~~~sh
+  #查看CPUs
+  nproc
+  #查看Sockets、CoresPerSocket、ThreadsPerCore
+  lscpu
+  #查看RealMemory
+  free -m
+  ~~~
+
+~~~sh
+#master节点上
+tee /etc/slurm/slurm.conf << 'EOF'
+
+# slurm.conf file generated by configurator.html.
+# Put this file on all nodes of your cluster.
+# See the slurm.conf man page for more information.
+#
+ClusterName=ubuntutestcluster
+SlurmctldHost=um1
+#SlurmctldHost=
+#
+#DisableRootJobs=NO
+#EnforcePartLimits=NO
+#Epilog=
+#EpilogSlurmctld=
+#FirstJobId=1
+#MaxJobId=67043328
+#GresTypes=
+#GroupUpdateForce=0
+#GroupUpdateTime=600
+#JobFileAppend=0
+#JobRequeue=1
+#JobSubmitPlugins=lua
+#KillOnBadExit=0
+#LaunchType=launch/slurm
+#Licenses=foo*4,bar
+#MailProg=/bin/mail
+#MaxJobCount=10000
+#MaxStepCount=40000
+#MaxTasksPerNode=512
+#MpiDefault=
+#MpiParams=ports=#-#
+#PluginDir=
+#PlugStackConfig=
+#PrivateData=jobs
+ProctrackType=proctrack/cgroup
+#Prolog=
+#PrologFlags=
+#PrologSlurmctld=
+#PropagatePrioProcess=0
+#PropagateResourceLimits=
+#PropagateResourceLimitsExcept=
+#RebootProgram=
+ReturnToService=1
+SlurmctldPidFile=/var/run/slurmctld.pid
+SlurmctldPort=6817
+SlurmdPidFile=/var/run/slurmd.pid
+SlurmdPort=6818
+SlurmdSpoolDir=/var/spool/slurm/slurmd
+SlurmUser=slurm
+#SlurmdUser=root
+#SrunEpilog=
+#SrunProlog=
+StateSaveLocation=/var/spool/slurm/slurmctld
+#SwitchType=
+#TaskEpilog=
+TaskPlugin=task/affinity,task/cgroup
+#TaskProlog=
+#TopologyPlugin=topology/tree
+#TmpFS=/tmp
+#TrackWCKey=no
+#TreeWidth=
+#UnkillableStepProgram=
+#UsePAM=0
+#
+#
+# TIMERS
+#BatchStartTimeout=10
+#CompleteWait=0
+#EpilogMsgTime=2000
+#GetEnvTimeout=2
+#HealthCheckInterval=0
+#HealthCheckProgram=
+InactiveLimit=0
+KillWait=30
+#MessageTimeout=10
+#ResvOverRun=0
+MinJobAge=300
+#OverTimeLimit=0
+SlurmctldTimeout=120
+SlurmdTimeout=300
+#UnkillableStepTimeout=60
+#VSizeFactor=0
+Waittime=0
+#
+#
+# SCHEDULING
+#DefMemPerCPU=0
+#MaxMemPerCPU=0
+#SchedulerTimeSlice=30
+SchedulerType=sched/backfill
+SelectType=select/cons_tres
+#
+#
+# JOB PRIORITY
+#PriorityFlags=
+#PriorityType=priority/multifactor
+#PriorityDecayHalfLife=
+#PriorityCalcPeriod=
+#PriorityFavorSmall=
+#PriorityMaxAge=
+#PriorityUsageResetPeriod=
+#PriorityWeightAge=
+#PriorityWeightFairshare=
+#PriorityWeightJobSize=
+#PriorityWeightPartition=
+#PriorityWeightQOS=
+#
+#
+# LOGGING AND ACCOUNTING
+#AccountingStorageEnforce=0
+#AccountingStorageHost=
+#AccountingStoragePass=
+#AccountingStoragePort=
+#AccountingStorageType=
+#AccountingStorageUser=
+#AccountingStoreFlags=
+#JobCompHost=
+#JobCompLoc=
+#JobCompParams=
+#JobCompPass=
+#JobCompPort=
+JobCompType=jobcomp/none
+#JobCompUser=
+#JobContainerType=
+JobAcctGatherFrequency=30
+#JobAcctGatherType=
+SlurmctldDebug=info
+SlurmctldLogFile=/var/log/slurm/slurmctld.log
+SlurmdDebug=info
+SlurmdLogFile=/var/log/slurm/slurmd.log
+#SlurmSchedLogFile=
+#SlurmSchedLogLevel=
+#DebugFlags=
+#
+#
+# POWER SAVE SUPPORT FOR IDLE NODES (optional)
+#SuspendProgram=
+#ResumeProgram=
+#SuspendTimeout=
+#ResumeTimeout=
+#ResumeRate=
+#SuspendExcNodes=
+#SuspendExcParts=
+#SuspendRate=
+#SuspendTime=
+#
+#
+# COMPUTE NODES
+NodeName=uc1 NodeAddr=172.16.183.131 CPUs=2 RealMemory=5886 Sockets=2 CoresPerSocket=1 ThreadsPerCore=1 State=UNKNOWN
+PartitionName=debug Nodes=ALL Default=YES MaxTime=1 State=UP
+EOF
+~~~
+
+- 配置同步/权限修改
+
+~~~sh
+# 复制配置文件到其他节点
+#其他节点
+mkdir -p /etc/slurm
+#master节点
+scp -p /etc/slurm/*.conf root@uc1:/etc/slurm/
+scp -p /etc/slurm/*.conf root@ul1:/etc/slurm/
+# 设置文件权限,所有节点执行
+#chmod 0755 /var/spool
+#chown -R slurm:slurm /var/spool
+mkdir -p /var/spool/slurm
+chown slurm: /var/spool/slurm
+mkdir -p /var/log/slurm
+chown slurm: /var/log/slurm
+mkdir -p /var/spool/slurm
+chown slurm: /var/spool/slurm
+mkdir -p /var/log/slurm
+chown slurm: /var/log/slurm
+~~~
+
+---
+
+### 启动服务
+
+~~~sh
+#um1上
+systemctl enable slurmctld
+systemctl start slurmctld
+systemctl status slurmctld
+#uc1上
+systemctl enable slurmd
+systemctl start slurmd
+systemctl status slurmd
+~~~
+
+---
+
+### 23.11.4 环境验收与 PBS 对照
+
+原文“常用命令”与本指南下方的作业测试章节高度重复，其中 `compute`/`c1`/`c2`、`srun -N2` 和 `low` QOS 与此环境仅有的 `debug`/`uc1` 配置不符。以下命令按此配置校正；下方通用章节仍保留交互作业、`sbatch`、Python、`salloc`、`sacct`、`squeue`、`scancel` 与节点恢复命令的参数说明。`debug` 分区的时间上限为 1 分钟，提交脚本须相应缩短。
+
+~~~sh
+sinfo
+scontrol show partition
+scontrol show node uc1
+srun -p debug -w uc1 -N1 hostname
+squeue -a
+# 仅在查明并修复 DOWN 原因后恢复该节点
+scontrol update nodename=uc1 state=resume
+~~~
+
+原文附带的 PBS 与 Slurm 对照图及参考文章：
+
+![PBS vs Slurm 对照图](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202403221554549.png)
+
+[HPC 调度基础：Slurm 集群的部署与配置](https://www.ctyun.cn/developer/article/363542369067077)
+
 ## 作业调度与故障排查
 
-以下命令主要来自测试环境。单节点示例已改为配置中存在的 `cpu` 分区；带 `c2`、`c[1-2]`、`compute`、`low` QOS 等名称的历史示例仍保留其原始意图，但**不属于上面的三节点测试拓扑**，须按实际分区、QOS 和节点改写后运行。生产环境应改用 `zprod*` 分区和 `cn01dl00[1-4]` 节点。Python/sbatch 示例保留原有参数讲解和输出记录。
+以下命令主要来自 22.05.11 测试环境。单节点示例已改为该环境存在的 `cpu` 分区；带 `c2`、`c[1-2]`、`compute`、`low` QOS 等名称的历史示例仍保留其原始意图，但**不属于上面的三节点测试拓扑**，须按实际分区、QOS 和节点改写后运行。22.05.11 生产环境应改用 `zprod*` 分区和 `cn01dl00[1-4]` 节点；23.11.4 实验环境应改用 `debug` 分区和 `uc1`，并遵守 1 分钟上限。Python/sbatch 示例保留原有参数讲解和输出记录。
 
 ### 作业调度测试
 
@@ -1899,7 +2302,7 @@ sacctmgr list assoc
 
 ---
 
-## 已确认修正与待核实项
+## 版本差异与待核实项
 
 - 生产 `slurm.conf` 中指向 `/etc/slurm/epilog.d/90-zen` 的第二个 `Prolog=` 已改为 `Epilog=`；这是对应作业结束脚本的配置项。
 - 生产账户命令将未定义的 `ztest` 改为该文实际定义的 `zprodtest`；同步命令中的 `root@@` 改为 `root@`。
@@ -1908,11 +2311,12 @@ sacctmgr list assoc
 - MUNGE 密钥分发已改为受限暂存与 `munge:munge 0400` 安装；数据库示例已移除固定密码和全局授权。正式使用前须替换密码占位值，并核对目标节点资源与分区。
 - 生产 Epilog 已移除未使用的 `squeue` 调用，并约束删除路径；通过 `slurmd.log` 识别抢占仍是原记录的环境假设，删除范围、日志格式和执行时序须在目标集群验证。
 
+- 23.11.4 的 deb 包构建方法与节点角色包名已与官方指南核对；其 4 GB/`RealMemory=5886` 冲突、缺少 cgroup/记账配置，以及原文旧主机名作业示例已标明，不应照抄到目标集群。
+
 参考：[Slurm 管理员快速入门](https://slurm.schedmd.com/quickstart_admin.html)、[认证配置](https://slurm.schedmd.com/authentication.html)、[Accounting 与数据库权限](https://slurm.schedmd.com/accounting.html)、[Prolog 与 Epilog 指南](https://slurm.schedmd.com/prolog_epilog.html)、[slurm.conf 参数](https://slurm.schedmd.com/slurm.conf.html)。以上在线文档为当前版本；22.05.11 的实际配置兼容性仍需在目标集群验证。
 
 ## 相关笔记
 
 - [[HPC/CentOS7-slurm23.02-二进制安装]] - CentOS 7 Slurm 部署
-- [[HPC/Ubuntu2204-slurm-23.11-deb安装]] - Ubuntu 22.04 Slurm 23.11 deb 安装
 - [[HPC/Slurm-node-exporter]] - Slurm 监控
 - [[HPC/PBS]] - PBS 作业调度系统

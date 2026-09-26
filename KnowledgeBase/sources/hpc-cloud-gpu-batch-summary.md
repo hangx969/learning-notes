@@ -10,8 +10,7 @@ sources:
   - "[[HPC/PBS-cases]]"
   - "[[HPC/PBS]]"
   - "[[HPC/Slurm-node-exporter]]"
-  - "[[HPC/Ubuntu2204-slurm-22.05.11-安装指南]]"
-  - "[[Ubuntu2204-slurm-23.11-deb安装]]"
+  - "[[HPC/Ubuntu2204-Slurm-安装指南]]"
   - "[[HPC/CentOS7-slurm23.02-二进制安装]]"
   - "[[CloudComputing/深入剖析Kubernetes]]"
   - "[[CloudComputing/Openstack]]"
@@ -30,8 +29,8 @@ sources:
 
 | 属性       | 内容                                                                 |
 | ---------- | -------------------------------------------------------------------- |
-| 来源目录   | `HPC/`（6 篇）、`CloudComputing/`（7 篇）、`GPU-DeepLearning/`（4 篇） |
-| 文档总数   | 17 篇                                                                |
+| 来源目录   | `HPC/`（5 篇）、`CloudComputing/`（7 篇）、`GPU-DeepLearning/`（4 篇） |
+| 文档总数   | 16 篇                                                                |
 | 摄入日期   | 2026-04-17                                                           |
 
 ---
@@ -61,11 +60,8 @@ sources:
 #### [[HPC/Slurm-node-exporter|Slurm Node Exporter]]
 记录两代 Slurm Prometheus Exporter 的部署方式：旧版基于 Go 编译的 prometheus-slurm-exporter（含在线与离线部署步骤），提供 Slurm 集群指标到 Prometheus 的采集方案，通过 systemd 服务管理，监听 9092 端口。
 
-#### [[HPC/Ubuntu2204-slurm-22.05.11-安装指南|Ubuntu 22.04 Slurm 22.05.11 源码编译安装指南]]
-整合三节点测试环境和 H800 GPU 生产环境：保留测试环境的网络、时间同步与 SSH 准备，以及生产环境的 Management/Login/Compute 多节点部署、MUNGE 认证、GPU 分区、账户和 Prolog/Epilog 配置。
-
-#### [[Ubuntu2204-slurm-23.11-deb安装|Ubuntu 22.04 Slurm 23.11 deb 安装]]
-实验环境下通过 deb 包安装 Slurm 23.11 的完整指南，包含 IP 规划（um1/uc1/ul1 三节点）、网络配置（netplan）、apt 源设置、主机名与 hosts 配置、资源限制调优等环境准备步骤。
+#### [[HPC/Ubuntu2204-Slurm-安装指南|Ubuntu 22.04 Slurm 22.05.11 与 23.11.4 安装指南]]
+合并三个部署场景：22.05.11 三节点测试环境和 H800 GPU 生产环境保留网络、时间同步、Management/Login/Compute 部署、MUNGE、GPU 分区、账户和 Prolog/Epilog 配置；23.11.4 实验环境保留 um1/uc1/ul1 规划、Netplan、apt 源、资源限制、源码构建 deb 包和节点配置。
 
 #### [[HPC/CentOS7-slurm23.02-二进制安装|CentOS7 Slurm 23.02 二进制安装]]
 CentOS 7 环境下 Slurm 23.02 的部署指南，一个控制节点（m1）加两个计算节点（c1/c2），包含防火墙关闭、SELinux 禁用、资源限制配置等 CentOS 特有步骤，并提供丰富的参考文档链接（北大、上海交大 HPC 文档等）。

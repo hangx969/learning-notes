@@ -293,7 +293,7 @@ date: 2026-04-17
 
 | 页面 | 覆盖文档数 | 摘要 |
 |------|:---------:|------|
-| [HPC-Cloud-GPU](sources/hpc-cloud-gpu-batch-summary.md) | 17 | Slurm 调度/PBS/GPU 管理、云原生/微服务/ServiceMesh、GPU 硬件/CUDA/驱动 |
+| [HPC-Cloud-GPU](sources/hpc-cloud-gpu-batch-summary.md) | 16 | Slurm 调度/PBS/GPU 管理、云原生/微服务/ServiceMesh、GPU 硬件/CUDA/驱动 |
 
 ### 杂项领域（已摄入 ✅）
 
@@ -359,7 +359,7 @@ date: 2026-04-17
 | AI | 129 | 🟢 | [ai-workflow-map](maps/ai-workflow-map.md) |
 | Go | 9 | 🟡 | [go-基础-01-环境配置-基础](go-基础-01-环境配置-基础.md) |
 | CloudComputing | 7 | 🟡 | [云原生](../CloudComputing/云原生.md) |
-| HPC | 6 | 🟡 | [CentOS7-slurm23.02-二进制安装](../HPC/CentOS7-slurm23.02-二进制安装.md) |
+| HPC | 5 | 🟡 | [CentOS7-slurm23.02-二进制安装](../HPC/CentOS7-slurm23.02-二进制安装.md) |
 | GPU-DeepLearning | 4 | 🟠 | [GPU-basics](../GPU-DeepLearning/GPU-basics.md) |
 | Database | 3 | 🟡 | [MySQL入门](../Database/MySQL入门.md) |
 | Middlewares | 3 | 🟠 | [Kafka](../Middlewares/Kafka.md) |
