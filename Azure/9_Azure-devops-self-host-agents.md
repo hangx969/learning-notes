@@ -37,7 +37,7 @@ date: 2026-04-16
 
 ---
 
-## Agent与Pipeline通信
+## Agent 与 Pipeline 通信
 
 https://learn.microsoft.com/en-us/azure/devops/pipelines/agents/agents?view=azure-devops&tabs=yaml%2Cbrowser#communication
 
@@ -47,7 +47,7 @@ https://learn.microsoft.com/en-us/azure/devops/pipelines/agents/agents?view=azur
 
 ---
 
-## Agent版本
+## Agent 版本
 
 https://learn.microsoft.com/en-us/azure/devops/pipelines/agents/v3-agent?view=azure-devops
 
@@ -57,13 +57,13 @@ https://learn.microsoft.com/en-us/azure/devops/pipelines/agents/v3-agent?view=az
 
 ---
 
-## Agent手动注册
+## Agent 手动注册
 
 https://learn.microsoft.com/en-us/azure/devops/pipelines/agents/linux-agent?view=azure-devops
 
 ---
 
-## Agent认证
+## Agent 认证
 
 https://learn.microsoft.com/en-us/azure/devops/pipelines/agents/personal-access-token-agent-registration?view=azure-devops
 
@@ -78,11 +78,11 @@ https://learn.microsoft.com/en-us/azure/devops/pipelines/agents/personal-access-
 
 ## Agent Custom Image
 
-对于self-hosted agent，我们往往需要创建custom image，安装各种pipeline中需要用到的工具。
+Self-hosted Agent 通常需要预装 Pipeline 依赖。可先制作自定义 VM 镜像，再用于创建 Agent 实例。
 
 ### Packer
 
-==Packer==是一个自动化构建OS image的工具，可以与Azure集成，将image自动化创建到Azure shared image gallery中。
+==Packer== 可自动构建 OS 镜像，并将 Azure 镜像版本发布到 Azure Compute Gallery。
 
 - Packer官网：https://developer.hashicorp.com/packer/install?product_intent=packer#linux
 - Azure文档-如何用Packer制作Azure VM Image：https://learn.microsoft.com/en-us/azure/virtual-machines/linux/build-image-with-packer
@@ -117,7 +117,7 @@ connectedServiceType: 'azure'
 > [!note]
 > PackerBuild@1 到2025年依然不支持hcl格式的config文件：https://github.com/microsoft/azure-pipelines-tasks/issues/16753，所以hcl的template用不了。改成json template可用。
 
-#### Packer template注意事项
+#### Packer Template 注意事项
 
 > [!important]
 > - `build_resource_group_name` - 要求这个rg必须已经提前存在。要去image_gallery.tf文件里面预先创建出来
@@ -214,9 +214,9 @@ az resource invoke-action \
 - 添加vmss agent pool需要一个认证过程，登录的账户要对vmss的sub具有==Owner==或者==User Access Admin==角色。
 - 如果有现成的service connection，可以不用认证。
 
-### 手动创建Agent Pool
+### 手动创建 Agent Pool
 
-1. 去image gallery definition里面用custom imageCreate VM，模仿VMSS的配置创建新的VM
+1. 从 Image Gallery Definition 中的自定义镜像创建 VM，并参考 VMSS 的配置。
 
 2. 进入VM，手动执行一下repo中的cloud init中的脚本、注册脚本：
 
@@ -248,7 +248,7 @@ az resource invoke-action \
 
 3. 等待注册脚本执行完成，去azure devops agent pool中查看是否有新agent加进来，状态是否为online。
 
-### 手动管理Agent进程
+### 手动管理 Agent 进程
 
 https://learn.microsoft.com/en-us/azure/devops/pipelines/agents/linux-agent?view=azure-devops&tabs=IP-V4#run-interactively
 

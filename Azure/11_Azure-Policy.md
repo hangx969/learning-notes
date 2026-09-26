@@ -19,15 +19,15 @@ date: 2026-04-16
 
 ---
 
-## Azure Policy 介绍
+## Azure Policy 简介
 
 ![image-20250608103002542](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202506081030628.png)
 
-In Azure, Everything is made up of ==resources==, resources are defined in ==resource providers==. Resources have properties and actions, which can be limited by policy. Policy sits on top of ARM and any CRUD will pass through it!
+Azure resources are managed through resource providers. Azure Policy evaluates matching resource requests and compliance against assigned rules; the effect determines whether to audit, modify, deploy, or deny. Evaluation depends on the policy mode and resource type.
 
 ![image-20250608102808405](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202506081028519.png)
 
-### Policy的特点
+### Policy 的特点
 
 可以在==Root Mgmt Group== - ==Mgmt Group== - ==ResourceGroup== - ==Resource==不同级别设定policy，而且都是继承的。除非在assign的时候设置了exclusion。
 
@@ -53,7 +53,7 @@ policy的本质：
 }
 ```
 
-### Policy的Call Flow
+### Policy 请求流程
 
 Call flow for Policy:
 
@@ -136,7 +136,7 @@ gentle version of Deny。
 
 #### Disabled
 
-满足某些条件之后，policy本身会被disable掉。no action is taken
+`disabled` effect 不执行策略规则，可用于暂时停用单个策略分配的效果；策略定义本身不会因此被禁用。见 [Disabled effect](https://learn.microsoft.com/en-us/azure/governance/policy/concepts/effect-disabled)。
 
 #### Modify
 
@@ -181,7 +181,7 @@ compliance status有如下状态：
 
 [确定不合规的原因 - Azure 策略|微软文档 (microsoft.com)](https://docs.microsoft.com/en-us/azure/governance/policy/how-to/determine-non-compliance)
 
-### 把不合规的变成合规的
+### 修正不合规资源
 
 [Remediate non-compliant resources - Azure Policy | Microsoft Docs](https://docs.microsoft.com/en-us/azure/governance/policy/how-to/remediate-resources)
 

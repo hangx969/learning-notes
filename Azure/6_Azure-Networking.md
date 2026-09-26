@@ -28,13 +28,13 @@ date: 2026-04-16
 TCP connection, test if port is open: [PsPing - Sysinternals | Microsoft Learn](https://learn.microsoft.com/en-us/sysinternals/downloads/psping)
 
 ```bash
-psping <source machine_ip>: 443 和 9443 
+psping <target-ip>:443
+psping <target-ip>:9443
 ```
 
 ### telnet
 
 ```bash
-虚拟机连不上，可以用telnet来看一下端口可达性
 telnet 168.63.129.16 80
 ```
 
@@ -44,8 +44,6 @@ Test TCP connection:
 
 ```bash
 nc -vz mcr.azk8s.cn 443
--z：Zero-I/O mode, report connection status only
--v, --verbose Set verbosity level (can be used several times)
 ```
 
 ### dig
@@ -53,9 +51,10 @@ nc -vz mcr.azk8s.cn 443
 dig (Domain Information Groper) is a flexible tool for interrogating DNS domain name servers. It performs DNS lookups and displays answers from queried name servers.
 
 ```bash
-dig mcr.azk8s.cn 443
-dig mcr.azk8s.cn 
+dig mcr.azk8s.cn
 ```
+
+`dig` queries DNS records; it does not test an HTTPS service port. Use `nc -vz mcr.azk8s.cn 443` for that check.
 
 Dig usage:
 
@@ -128,7 +127,7 @@ tcpdump -i any host <Pod-IP> -C 10 -W 10 -w 31983.pcap
 - A virtual network is communication between devices, servers, and virtual machines over the Internet. Azure Virtual Network (VNet) is a private network with interconnected Azure resources such as Azure VMs, infrastructure, and networking. It supports communication between various Azure resources over the Internet. In a virtual network, contiguous IP address blocks are used to create multiple subnet networks. From <https://k21academy.com/microsoft-azure/az-303/azure-networking/>
 
 > [!tip] VNet Outbound Without Public IP
-> When resources in a VNet don't have a Public IP, can they access the Internet? ==YES==. Through Private IP, when sending data externally through the VNet, NAT translates Private IP to Public IP. Inbound traffic is also NAT-translated to Private IP.
+> Internet access requires an outbound method such as a NAT gateway, a load balancer outbound rule, or a public IP. Some existing nonprivate subnets still provide default outbound access, but new VNet subnets created with API versions released after March 31, 2026 are private by default. Inbound access needs its own configured path. See [Default outbound access](https://learn.microsoft.com/en-us/azure/virtual-network/ip-services/default-outbound-access).
 
 ---
 
@@ -197,7 +196,7 @@ Azure Private Endpoints and Service Endpoints can both be used to enhance securi
 
 ---
 
-## Loadbalancer
+## Load Balancer
 
 - ==Load Balancer== works at the transport layer
 

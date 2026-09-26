@@ -25,20 +25,18 @@ date: 2026-04-16
 
 Expanded OS disk size in Azure portal but the Linux filesystem is not expanded.
 
-### Solve
+### Resolution
 
-Help cx to expand the root filesystem:
+To expand the root filesystem:
 
 [如何在 Linux 虚拟机上扩展根文件系统 | Azure Docs](https://docs.azure.cn/en-us/articles/azure-operations-guide/virtual-machines/linux/aog-virtual-machines-qa-linux-root-file-system-extension)
 
-- Backup the OS disk first
-- `df -h` check the root file system usage
-
-- In CentOS 6:
-  - Expand the /sda1 partition: ==fdisk==
-  - Reboot
-  - Expand the root filesystem: ==resize2fs==
-  - Then the root fs will be expanded.
+1. Back up the OS disk.
+2. Check root filesystem usage with `df -h`.
+3. For the CentOS 6 procedure in the linked article:
+   - Expand `/dev/sda1` with `fdisk`.
+   - Reboot.
+   - Expand the filesystem with `resize2fs`.
 
 > [!info] Useful Disk Commands
 > `df -h` provides information on the overall disk space usage, showing statistics for each mounted file system.
@@ -55,9 +53,9 @@ Help cx to expand the root filesystem:
 
 ### Issue
 
-VM started failure with filesystem corrupted.
+The VM fails to start because its filesystem is corrupted.
 
-### Solve
+### Resolution
 
 [文件系统损坏导致虚拟机无法正常启动的问题及解决方法 | Azure Docs](https://docs.azure.cn/en-us/articles/azure-operations-guide/virtual-machines/linux/aog-virtual-machines-troubleshoot-restart)
 
@@ -78,9 +76,9 @@ VM started failure with filesystem corrupted.
 
 ### Issue
 
-- cx deleted a data disk but in fstab, the disk info is still there ==> VM cannot start (we can get error message ==dependency failed== in serial log)
+A data disk was removed, but its entry remains in `/etc/fstab`. The VM cannot start, and the serial log shows `dependency failed`.
 
-### Solve
+### Resolution
 
 - Mount the issue VM disk to a rescue VM as a data disk
 - Edit the fstab, either comment out the corresponding line in fstab or add ==nofail== to this line
@@ -96,7 +94,7 @@ VM started failure with filesystem corrupted.
 
   **Error** in network definition `/etc/netplan/50-cloud-init.yaml` line 8 column 12: unknown key dhcp4-overrides
 
-### Solve
+### Resolution
 
 - Netplan is a command-line network configuration utility for Linux-based operating systems, including Ubuntu. It is used to configure and manage network interfaces and network settings, such as IP addresses, DNS settings, and routing tables.
 - Netplan is the default network configuration tool on ==Ubuntu 17.10== and later.
@@ -114,7 +112,7 @@ VM started failure with filesystem corrupted.
 - Customers running Ubuntu 18.04 who had ==Unattended-Upgrades== enabled, would receive a **systemd version** upgrade that resulted in Domain Name System (DNS) resolution errors.
 - There is a bug in this new version of systemd, it cleared the content in `/etc/resolv.conf`, causing DNS error.
 
-### Solve
+### Resolution
 
 > [!tip] Quick Fix
 > Reboot VM to get DNS conf back, or manually write the content back to `/etc/resolv.conf`.
@@ -149,7 +147,7 @@ VM started failure with filesystem corrupted.
 
 ### Internal OS Issue
 
-- sshd not started
+- `sshd` is not running
 - CPU/memory pressure causing sshd service not operational
 - Wrong configuration in `/etc/ssh/sshd_config`
 
@@ -168,7 +166,7 @@ VM started failure with filesystem corrupted.
 
 Cx reported a VM restarted unexpectedly.
 
-### Solve
+### Resolution
 
 - Collect OS logs in `/var/log/`, and check messages
 - Find that the VM is a node of a ==pacemaker cluster==

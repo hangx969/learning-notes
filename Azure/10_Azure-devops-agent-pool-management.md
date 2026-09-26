@@ -21,9 +21,9 @@ date: 2026-04-16
 
 ---
 
-## Az DevOps CLI
+## Azure DevOps CLI
 
-### 登录DevOps
+### 登录 Azure DevOps
 
 https://learn.microsoft.com/en-us/azure/devops/cli/log-in-via-pat?view=azure-devops&tabs=windows
 
@@ -32,11 +32,11 @@ echo "xxx" | az devops login --organization https://dev.azure.com/xxx
 cat PAT.txt | az devops login --organization https://dev.azure.com/xxx
 ```
 
-### 操作Agent Pool
+### 管理 Agent Pool
 
 https://learn.microsoft.com/en-us/cli/azure/pipelines/pool?view=azure-cli-latest
 
-- 获取pool id
+- 获取 Pool ID：
 
 ```sh
 az pipelines pool list  > pools.json
@@ -48,7 +48,7 @@ az pipelines pool list  > pools.json
   az pipelines pool show	--id 56
   ```
 
-### 操作Agents
+### 管理 Agents
 
 https://learn.microsoft.com/en-us/cli/azure/pipelines/agent?view=azure-cli-latest
 
@@ -62,13 +62,15 @@ https://learn.microsoft.com/en-us/cli/azure/pipelines/agent?view=azure-cli-lates
 
 - delete: azcli没有提供删除agent的命令，只能通过REST API来操作
 
-### 检测Agent Current Status
+### 检测 Agent 当前状态
+
+`--include-assigned-request true` 可查看 Agent 是否有正在运行的 Job。
 
 ```sh
 az pipelines agent show \
 --id 77398 \
 --pool-id 56 \
---include-assigned-request true \ #关键在于这个参数可以获取agent现在是否正有job在跑。这个参数也是通过REST API发送的。
+--include-assigned-request true \
 --include-last-completed-request true \
 --output jsonc
 # --debug 可以看到azcli发送REST API的具体过程和参数
@@ -107,7 +109,7 @@ az pipelines agent show \
 
 ## Azure DevOps REST API
 
-### 删除Offline的Agent
+### 删除离线 Agent
 
 shell脚本实现
 
@@ -157,7 +159,7 @@ chmod +x azure-devops-delete-offline-agents.sh
 ./azure-devops-delete-offline-agents.sh <pool_id>
 ```
 
-### 检测Agent Current Status
+### 检测 Agent 当前状态
 
 用Get Agent API检查每个具体agent信息：
 

@@ -21,7 +21,9 @@ date: 2026-04-16
 
 ---
 
-## VM - IaaS Service
+## Azure VM Architecture
+
+### VM - IaaS Service
 
 - ==IaaS==: Cloud provides servers, virtualization, storage, and networking; users configure dev environments, manage apps and data
 - ==PaaS==: Cloud provides complete dev environment; users develop apps and manage data
@@ -31,7 +33,7 @@ date: 2026-04-16
 
 ---
 
-## VM Physical Node Architecture
+### VM Physical Node Architecture
 
 VM is deployed in Windows Server physical machines, which reside on racks. Racks have management hardware called ==Fabric==, controlled by ==Fabric Controller==.
 
@@ -47,19 +49,19 @@ Fabric capabilities:
 
 ---
 
-## VM Deployment Architecture
+### VM Deployment Architecture
 
-### Fabric
+#### Fabric
 
 ![image-20250607215705735](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202506072157003.png)
 
-### Host Agent
+#### Host Agent
 
 Fabric creates nodes (physical nodes where VMs reside). Physical nodes have a ==Host Agent==:
 
 <img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202506072159883.png" alt="image-20250607215905744" style="zoom:50%;" />
 
-### Guest Agent
+#### Guest Agent
 
 Physical nodes contain multiple VMs. VMs have a ==Guest Agent==:
 
@@ -95,7 +97,7 @@ waagent --version
 systemctl status waagent
 ```
 
-### Wire Server
+#### Wire Server
 
 Guest Agent communicates with Host Agent through ==Wire Server==. Wire Server docs:
 
@@ -137,7 +139,7 @@ telnet 168.63.129.16 32526
 
 ---
 
-## Azure Resource Manager
+### Azure Resource Manager
 
 ![image-20250608093651506](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202506080936637.png)
 
@@ -153,7 +155,7 @@ Example of VM deployment:
 
 ---
 
-## VM ARM Deployment Process
+### VM ARM Deployment Process
 
 SRP, CRP, NRP etc. create corresponding resources respectively:
 
@@ -161,7 +163,7 @@ SRP, CRP, NRP etc. create corresponding resources respectively:
 
 ---
 
-## VM Regional Code
+### VM Regional Code
 
 | Region       | Code |
 | ------------ | ---- |
@@ -172,15 +174,15 @@ SRP, CRP, NRP etc. create corresponding resources respectively:
 
 ---
 
-## VM Platform Maintenance
+### VM Platform Maintenance
 
 [维护和更新 - Azure Virtual Machines | Microsoft Docs](https://docs.microsoft.com/zh-cn/azure/virtual-machines/maintenance-and-updates?toc=%2Fazure%2Fvirtual-machines%2Flinux%2Ftoc.json&bc=%2Fazure%2Fvirtual-machines%2Flinux%2Fbreadcrumb%2Ftoc.json)
 
 [Maintenance and updates - Azure Virtual Machines | Microsoft Docs](https://docs.microsoft.com/en-us/azure/virtual-machines/maintenance-and-updates)
 
-### Types
+#### Types
 
-VM updates and deployments are roughly divided into 2 types:
+VM maintenance can be grouped by whether it requires a restart:
 
 [https://docs.azure.cn/zh-cn/virtual-machines/maintenance-notifications](https://docs.azure.cn/zh-cn/virtual-machines/maintenance-notifications)
 
@@ -190,7 +192,7 @@ VM updates and deployments are roughly divided into 2 types:
 > [!info] Memory-Preserving Updates
 > Memory-preserving updates typically complete within ~10 seconds. For this type of deployment, the platform does not send notifications. However, you can obtain platform maintenance/deployment info through VM Metadata Service. See [Azure 中适用于Windows VM 的计划事件](https://docs.azure.cn/zh-cn/virtual-machines/windows/scheduled-events).
 
-### Alerts
+#### Alerts
 
 VM health status alerting. Common monitoring options:
 
@@ -205,9 +207,9 @@ VM health status alerting. Common monitoring options:
 
 ---
 
-# Azure VM Basics
+## Azure VM Basics
 
-## VM Availability Options
+### VM Availability Options
 
 - **Fault Domain**
   - Physical grouping
@@ -225,8 +227,8 @@ VM health status alerting. Common monitoring options:
 
 - **Availability Zones**
   - Physically independent zones with separate power, networking, etc.
-  - Use zone-replicated VMs; if one datacenter goes down, replicated VMs activate in another
-  - Each zone has at least ==3 datacenters==, each with independent power, cooling, and networking
+  - Deploy application replicas across zones for resilience. A VM is placed in a zone; Azure does not automatically replicate that VM to another zone.
+  - Each availability zone consists of one or more datacenters with independent power, cooling, and networking; regions that support availability zones have at least three zones. See [Availability zones for VMSS](https://learn.microsoft.com/en-us/azure/virtual-machine-scale-sets/virtual-machine-scale-sets-use-availability-zones).
   - Can be understood as a larger-scale fault domain and update domain
   - Protects against entire datacenter failures
   - Azure China limited support (North3 supports)
@@ -235,7 +237,7 @@ VM health status alerting. Common monitoring options:
 
 - **VM Scale Sets** - Build load-balanced clusters
 
-### Create VM in Availability Set
+#### Create VM in Availability Set
 
 [使用 Azure PowerShell 在可用性集中部署 VM - Azure 虚拟机 | 微软文档](https://docs.microsoft.com/en-us/azure/virtual-machines/windows/tutorial-availability-sets)
 
@@ -243,13 +245,13 @@ VM health status alerting. Common monitoring options:
 
 ---
 
-## VM SKU Naming Convention
+### VM SKU Naming Convention
 
 ![image-20250607220348948](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202506072203223.png)
 
 ---
 
-## VM Extension
+### VM Extension
 
 Azure VM Extensions are small programs providing deployment, configuration, and automation.
 
@@ -276,9 +278,9 @@ Related docs:
 - [Troubleshooting Azure Windows VM Agent - Virtual Machines | Microsoft Learn](https://learn.microsoft.com/en-us/troubleshoot/azure/virtual-machines/windows-azure-guest-agent)
 - [Troubleshoot Agent and extension issues - Azure Backup | Microsoft Learn](https://learn.microsoft.com/en-us/azure/backup/backup-azure-troubleshoot-vm-backup-fails-snapshot-timeout#the-agent-installed-in-the-vm-but-unresponsive-for-windows-vms)
 
-### Common Extensions
+#### Common Extensions
 
-#### VMAccess
+##### VMAccess
 
 **What?**
 
@@ -297,7 +299,7 @@ Steps:
 - [重置对 Azure Linux VM 的访问 | 微软文档](https://docs.microsoft.com/en-us/azure/virtual-machines/extensions/vmaccess)
 - [azure-linux-extensions/VMAccess | GitHub](https://github.com/Azure/azure-linux-extensions/tree/master/VMAccess)
 
-#### Run Command
+##### Run Command
 
 Can run custom commands in a VM.
 
@@ -308,7 +310,7 @@ Can run custom commands in a VM.
 
 ---
 
-## VM Image and Snapshot
+### VM Image and Snapshot
 
 **What is Image:**
 
@@ -332,7 +334,7 @@ Docs:
 
 ---
 
-## Azure VM Boot Diagnostics
+### Azure VM Boot Diagnostics
 
 [Azure 中 VM 的启动诊断 | 微软文档](https://docs.microsoft.com/en-us/troubleshoot/azure/virtual-machines/boot-diagnostics)
 
@@ -350,9 +352,9 @@ In Portal, use ==screen display== / ==serial log== to view VM boot issues. Use s
 
 ---
 
-# Azure VM Troubleshooting
+## Azure VM Troubleshooting
 
-## Recovery VM
+### Recovery VM
 
 > [!summary] Recovery VM Process
 > When a VM has boot or SSH issues, create a snapshot of the OS Disk, then create a Recovery Disk from the snapshot and attach it to a recovery VM for troubleshooting.
@@ -382,21 +384,21 @@ This method is suitable when Guest Agent is inaccessible, or for resetting local
 
 ---
 
-## Mount OS Disk
+### Mount OS Disk
 
 When the filesystem is mounted as ==read-only== due to incorrect fstab settings and internal files cannot be modified, the Hyper-V boot mode approach is difficult. Workaround: attach the issue disk as a data disk to another VM, mount it to a directory, edit fstab. After changes, re-attach to the nested VM for further operations.
 
 ---
 
-## Mount Disk + chroot
+### Mount Disk + chroot
 
 Related doc: [How to troubleshoot the chroot environment in a Linux Rescue VM - Virtual Machines | Microsoft Learn](https://learn.microsoft.com/en-us/troubleshoot/azure/virtual-machines/chroot-environment-linux#rhelcentosoracle-6x--oracle-8x--rhelcentos-7x-with-raw-partitions)
 
 ---
 
-# Azure VMSS
+## Azure VMSS
 
-==VMSS== (Virtual Machine Scale Sets) is a combination of independent VMs that is load-balanced, can automatically scale VM instances based on demand. Features centralized management, configuration, and updating of large numbers of VMs. Key advantage over manual creation is automated configuration, automatic load balancing. Suitable for large-scale compute tasks and workloads with varying demand over time, saving cost and time.
+==VMSS== (Virtual Machine Scale Sets) manages a group of VM instances with centralized configuration, updates, and scaling. When configured with a load balancer, it can distribute traffic across instances. VMSS is useful for workloads whose capacity changes over time.
 
 - [Azure virtual machine scale sets overview | Microsoft Docs](https://docs.microsoft.com/en-us/azure/virtual-machine-scale-sets/overview)
 - [Azure 虚拟机规模集概述 | Azure Docs](https://docs.azure.cn/zh-cn/virtual-machine-scale-sets/overview)
@@ -407,7 +409,7 @@ Related doc: [How to troubleshoot the chroot environment in a Linux Rescue VM - 
 
 ---
 
-## VMSS - Load Balancer
+### VMSS - Load Balancer
 
 Load Balancer works at the transport layer. Methods to access VMSS:
 
@@ -419,14 +421,14 @@ Load Balancer works at the transport layer. Methods to access VMSS:
 
 ---
 
-## VMSS Auto-scale
+### VMSS Auto-scale
 
 - [教程 - 使用 Azure CLI 自动缩放规模集 | Azure Docs](https://docs.azure.cn/zh-cn/virtual-machine-scale-sets/tutorial-autoscale-cli)
 - [在 Azure 门户中自动缩放虚拟机规模集 | 微软文档](https://docs.microsoft.com/en-us/azure/virtual-machine-scale-sets/virtual-machine-scale-sets-autoscale-portal)
 
 ---
 
-# VM Security
+## VM Security
 
 > [!important] Azure VM Security Best Practices
 

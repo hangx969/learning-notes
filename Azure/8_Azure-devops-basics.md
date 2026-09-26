@@ -24,7 +24,6 @@ date: 2026-04-16
 
 ## Trigger
 
-- An agent is computing infrastructure with installed agent software that runs one job at a time.
 - You can configure a pipeline to run upon a **push to a repository**, **at scheduled times**, or **upon the completion of another build**.
 
 ---
@@ -54,7 +53,7 @@ date: 2026-04-16
 
 ## Job
 
-- 一个job包含多个steps，一个job在多个agent上运行。
+- 一个 Job 包含多个 Step；同一个 Job 的所有 Step 在同一个 Agent 上运行。
 - 常用于需要同时在多个环境中并行运行时：For example, you might want to build two configurations - x86 and x64. In this case, you have one stage and two jobs. One job would be for x86 and the other job would be for x64.
 
 ---
@@ -62,8 +61,8 @@ date: 2026-04-16
 ## Steps
 
 - 是一个pipeline中最小的执行单元，一个step中可以执行一个task或者一个script
-- 每个steps是独立的运行环境，steps之间不会共享环境变量。
-- steps通过logging command来与agent通信：https://learn.microsoft.com/en-us/azure/devops/pipelines/scripts/logging-commands?view=azure-devops&tabs=bash，可以通过logging commands来产生新的环境变量，传递给下一个step
+- 每个 Step 在独立进程中运行，进程环境变量不会自动传递给下一个 Step。
+- Step 可以通过 [logging command](https://learn.microsoft.com/en-us/azure/devops/pipelines/scripts/logging-commands?view=azure-devops&tabs=bash) 设置 Pipeline 变量，供后续 Step 使用。
 
 ### Task
 
@@ -106,7 +105,7 @@ agent directory structure: https://learn.microsoft.com/en-us/azure/devops/pipeli
 
 ## Agent
 
-- 一个agent一次就运行一个job，一次运行多个job要用==parallel job==
+- 一个 Agent 同时运行一个 Job；并行运行多个 Job 需要多个可用 Agent 和并行作业容量。
 
 ---
 
@@ -134,9 +133,11 @@ For each job, an agent:
 
 ---
 
-## Jobs
+## Reference
 
-### 格式
+### Jobs
+
+#### YAML 格式
 
 https://learn.microsoft.com/en-us/azure/devops/pipelines/process/phases?view=azure-devops&tabs=yaml#define-a-single-job
 
@@ -144,31 +145,31 @@ https://learn.microsoft.com/en-us/azure/devops/pipelines/process/phases?view=azu
 
 ---
 
-## Stages
+### Stages
 
 https://learn.microsoft.com/en-us/azure/devops/pipelines/process/stages?view=azure-devops&tabs=yaml
 
 ---
 
-## Tasks/Scripts
+### Tasks and Scripts
 
 https://learn.microsoft.com/en-us/azure/devops/pipelines/tasks/reference/?view=azure-pipelines&viewFallbackFrom=azure-devops
 
 ---
 
-## Templates
+### Templates
 
 https://learn.microsoft.com/en-us/azure/devops/pipelines/process/templates?view=azure-devops&pivots=templates-includes
 
 ---
 
-## Variables
+### Variables
 
 https://learn.microsoft.com/en-us/azure/devops/pipelines/process/variables?view=azure-devops&tabs=yaml%2Cbatch
 
 ---
 
-## Resources
+### Resources
 
 https://learn.microsoft.com/en-us/azure/devops/pipelines/process/about-resources?view=azure-devops&tabs=yaml
 

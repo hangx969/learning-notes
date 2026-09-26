@@ -23,13 +23,13 @@ date: 2026-04-16
 
 ## Architecture and Components
 
-### AKS Container Runtime
+### Container Runtime
 
 [Cluster configuration in Azure Kubernetes Services (AKS) - Azure Kubernetes Service | Microsoft Docs](https://docs.microsoft.com/en-us/azure/aks/cluster-configuration)
 
 ![image-20231031091153864](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202310310911624.png)
 
-### AKS Cluster Composition
+### Cluster Components
 
 ![image-20231031091235694](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202310310912766.png)
 
@@ -64,28 +64,28 @@ Managed by users. Components:
 
 - AKS consumes node VM resources for cluster management. Node resources may be less than total VM resources. Check allocatable resources:
 
-  ```
+  ```sh
   kubectl describe node [NODE_NAME]
   ```
 
-- Rules:
-  - Larger nodes = more management overhead = more reserved resources
-  - Define ==requests== and ==limits== for resources (scheduling vs maximum). Docker implements container limits via cgroup.
-  - Two resource types are reserved:
+#### Reservation Rules
 
-    - **CPU**
-      - CPU unit is ==millicores== (CPU time). 1000m = full CPU time divided into 1000 shares.
-      - More host cores = more reserved resources.
+- Larger nodes have more resources reserved for cluster management
+- Define ==requests== for scheduling and ==limits== for maximum usage. Container runtimes enforce limits through cgroups.
+- Reserved resources include:
 
-    - **Memory**
-      - Unit: Mi = 1024 * 1024 (1024-based)
-      - kubelet daemon: node needs at least ==750Mi== memory; below this, Pods get killed.
-      - Tiered reservation for kubelet (kube-reserved):
-        - 25% of the first 4 GB
-        - 20% of the next 4 GB (up to 8 GB)
-        - 10% of the next 8 GB (up to 16 GB)
-        - 6% of the next 112 GB (up to 128 GB)
-        - 2% of anything above 128 GB
+  - **CPU**
+    - 1000m equals one CPU.
+    - More host cores mean more reserved resources.
+  - **Memory**
+    - Mi uses a 1024-based unit: 1 Mi = 1024 × 1024 bytes.
+    - The kubelet reserves memory; the note below uses a 750 Mi hard eviction threshold.
+    - Tiered kubelet reservation:
+      - 25% of the first 4 GB
+      - 20% of the next 4 GB (up to 8 GB)
+      - 10% of the next 8 GB (up to 16 GB)
+      - 6% of the next 112 GB (up to 128 GB)
+      - 2% of anything above 128 GB
 
 > [!example] Memory Reservation Calculation
 > For a node with 7 GB memory, 34% is non-allocatable (including 750Mi hard eviction threshold):
@@ -216,7 +216,7 @@ PV can use ==Azure Managed Disk== or ==Azure File Share==.
 
   ![image-20231031160101114](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202310311601163.png)
 
-### Intree and CSI
+### In-tree and CSI Drivers
 
 - ==Intree==: K8s natively supports some storage PV types, but they live in the K8s repo, tightly coupled. Updates are bound together, developers must follow K8s community rules. CSI solves these problems by decoupling third-party storage code from K8s.
 
@@ -227,7 +227,7 @@ PV can use ==Azure Managed Disk== or ==Azure File Share==.
 
   ![image-20231031161135450](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202310311611525.png)
 
-### KB: Create azurefile-csi-premium
+### Create an azurefile-csi-premium StorageClass
 
 1. Azure CLI 2.42+ required. See [安装 Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli).
 
@@ -325,7 +325,7 @@ A shim interface layer implements the CRI specification. Kubelet accesses docker
 
 ---
 
-## AKS VKB
+## AKS Node Operations
 
 ### Install kubectl
 
@@ -886,7 +886,7 @@ az aks show -g aksTest -n aksTest --query "identity"
 
 ---
 
-## AzureLinux
+## Azure Linux
 
 Azure Linux Container Host for AKS is now available, optimized for running container workloads on AKS. Maintained by Microsoft, based on Microsoft Azure Linux (open-source Linux distribution).
 

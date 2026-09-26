@@ -21,44 +21,20 @@ date: 2026-04-16
 
 ## Enable Workload Identity in AKS
 
-- AKS Workload Identity dependencies:
-
-[在 Azure Kubernetes 服务 (AKS) 上使用 Azure AD 工作负载标识（预览版） - Azure Kubernetes Service | Azure Docs](https://docs.azure.cn/zh-cn/aks/workload-identity-overview)
+AKS Workload Identity lets a Kubernetes service account use a federated Azure identity. See [AKS Workload Identity deployment](https://docs.azure.cn/zh-cn/aks/workload-identity-deploy-cluster).
 
 ### Prerequisites
 
-- Install ==Az CLI 2.40.0== or higher
+- Install Azure CLI 2.47.0 or later.
 
   [如何安装 Azure CLI | Microsoft Learn](https://learn.microsoft.com/zh-cn/cli/azure/install-azure-cli)
 
-- Install aks-preview Extension
-
-```sh
-az extension add --name aks-preview
-az extension update --name aks-preview 
-```
-
-- Login az cli
+- Select Azure China, sign in, then select the subscription:
 
 ```sh
 az cloud set -n AzureChinaCloud
-az account set --subscription <name or id>
 az login
-```
-
-### Register Feature Flag
-
-- Register ==EnableWorkloadIdentityPreview== feature flag
-
-```sh
-#注册
-az feature register --namespace "Microsoft.ContainerService" --name "EnableWorkloadIdentityPreview"
-
-#查看注册状态
-az feature list -o table --query "[?contains(name, 'Microsoft.ContainerService/EnableWorkloadIdentityPreview')].{Name:name,State:properties.state}"
-
-#等待几分钟，当状态变为registered后，刷新资源提供程序的注册状态
-az provider register --namespace Microsoft.ContainerService
+az account set --subscription <name-or-id>
 ```
 
 ### Update Cluster
@@ -86,8 +62,9 @@ export AKS_OIDC_ISSUER="$(az aks show -g <resource group name> -n <cluster name>
 export SUBSCRIPTION_ID="$(az account show --query id --output tsv)" 
 export USER_ASSIGNED_IDENTITY_NAME="myIdentity" 
 export RG_NAME="myResourceGroup" 
-export LOCATION="chinanorth" 
+export LOCATION="chinanorth"
 az identity create --name "${USER_ASSIGNED_IDENTITY_NAME}" --resource-group "${RG_NAME}" --location "${LOCATION}" --subscription "${SUBSCRIPTION_ID}"
+export USER_ASSIGNED_CLIENT_ID="$(az identity show --name "${USER_ASSIGNED_IDENTITY_NAME}" --resource-group "${RG_NAME}" --query clientId -o tsv)"
 ```
 
 ### Create Kubernetes Service Account
@@ -98,15 +75,13 @@ export SERVICE_ACCOUNT_NAME="workload-identity-sa"
 export SERVICE_ACCOUNT_NAMESPACE="my-namespace"
 ```
 
-```yaml
+```sh
 cat <<EOF | kubectl apply -f -
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   annotations:
     azure.workload.identity/client-id: "${USER_ASSIGNED_CLIENT_ID}"
-  labels:
-    azure.workload.identity/use: "true"
   name: "${SERVICE_ACCOUNT_NAME}"
   namespace: "${SERVICE_ACCOUNT_NAMESPACE}"
 EOF
@@ -115,12 +90,18 @@ EOF
 ### Create Federated Identity Credential
 
 ```sh
-az identity federated-credential create --name <federated Identity name> --identity-name "${USER_ASSIGNED_IDENTITY_NAME}"--resource-group "${RG_NAME}" --issuer "${AKS_OIDC_ISSUER}" --subject system:serviceaccount:"${SERVICE_ACCOUNT_NAMESPACE}":"${SERVICE_ACCOUNT_NAME}"
+export FEDERATED_CREDENTIAL_NAME="myFederatedCredential"
+az identity federated-credential create \
+  --name "${FEDERATED_CREDENTIAL_NAME}" \
+  --identity-name "${USER_ASSIGNED_IDENTITY_NAME}" \
+  --resource-group "${RG_NAME}" \
+  --issuer "${AKS_OIDC_ISSUER}" \
+  --subject "system:serviceaccount:${SERVICE_ACCOUNT_NAMESPACE}:${SERVICE_ACCOUNT_NAME}"
 ```
 
 ---
 
-## Lab - Pod with Workload Identity Accessing KeyVault
+## Lab: Pod Accessing Key Vault with Workload Identity
 
 ### Set Environment
 
@@ -152,12 +133,14 @@ export KEYVAULT_URL="$(az keyvault show -g ${RESOURCE_GROUP} -n ${KEYVAULT_NAME}
 ### Set Policy
 
 ```sh
-az keyvault set-policy --name "${KEYVAULT_NAME}" \ --secret-permissions get \ --spn "${USER_ASSIGNED_IDENTITY_CLIENT_ID}" 
+az keyvault set-policy --name "${KEYVAULT_NAME}" \
+  --secret-permissions get \
+  --spn "${USER_ASSIGNED_IDENTITY_CLIENT_ID}"
 ```
 
 ### Create Workload (a Pod)
 
-```yaml
+```sh
 cat <<EOF | kubectl apply -f -
 apiVersion: v1
 kind: Pod
@@ -183,12 +166,12 @@ EOF
 
 ---
 
-## Lab - Pod with WI Getting AccessToken
+## Lab: Obtain an Access Token in a Pod
 
 - [sample-dotnet-worker-servicebus-queue/deploy-app-with-workload-identity.yaml at main](https://github.com/kedacore/sample-dotnet-worker-servicebus-queue/blob/main/deploy/workload-identity/deploy-app-with-workload-identity.yaml)
 
-```yaml
-cat order-processor.yaml <<'EOF'
+```sh
+cat > order-processor.yaml <<'EOF'
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -238,7 +221,7 @@ POST endpoint can be found in AAD - App registration - endpoints.
 
 ---
 
-## Lab - Pod with WI Directly Getting Access Token
+## Lab: Obtain an Access Token Directly in a Pod
 
 - Mount service account, the Azure access token is available at `cat /run/secrets/azure/tokens/azure-identity-token`:
 

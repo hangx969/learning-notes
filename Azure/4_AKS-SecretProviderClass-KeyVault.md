@@ -21,7 +21,7 @@ date: 2026-04-16
 
 ## Introduction
 
-- ==SecretProviderClass== is an AKS plugin responsible for converting Azure Key Vault secrets into Kubernetes Secrets
+- `SecretProviderClass` configures the Azure Key Vault provider for the Secrets Store CSI Driver. A Pod can mount Key Vault content as a volume. To sync mounted content into a Kubernetes Secret, define `secretObjects` and start a Pod that mounts the volume. The synced Secret is removed when consuming Pods are deleted. See [AKS configuration options](https://learn.microsoft.com/en-us/azure/aks/csi-secrets-store-configuration-options#sync-mounted-content-with-a-kubernetes-secret).
 - Reference docs:
   - Azure docs: https://docs.azure.cn/en-us/aks/csi-secrets-store-configuration-options
   - SecretProviderClass supported parameters: https://github.com/Azure/secrets-store-csi-driver-provider-azure/blob/master/website/content/en/getting-started/usage/_index.md
@@ -61,7 +61,7 @@ spec:
           objectName: <Azure-Key-vault-secret-name>
           objectType: secret
           objectVersion: ""
-# This creates an actual kubernetes secret that we can mount to pods
+  # Sync the mounted Key Vault value to a Kubernetes Secret when a Pod mounts this volume.
   secretObjects:
   - secretName: <kubernetes-secret-name-to-be-generated> # Note that the namespace of newly created secret will be the same as this SecretProviderClass
     data:
@@ -71,4 +71,4 @@ spec:
 ```
 
 > [!note] Namespace
-> The namespace of the newly created Kubernetes secret will be the same as the SecretProviderClass.
+> The synced Kubernetes Secret is created in the same namespace as the `SecretProviderClass`, after a Pod mounts the CSI volume.

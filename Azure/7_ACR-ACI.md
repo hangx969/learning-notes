@@ -35,12 +35,7 @@ date: 2026-04-16
 
   [支持的内容格式 - Azure Container Registry | Azure Docs](https://docs.azure.cn/zh-cn/container-registry/container-registry-image-formats)
 
-- ==存储库==
-
-  名称相同但是标记不同的镜像；标记不同的含义有两种：
-
-  1. tag不同
-  2. namespace不同
+- ==存储库==：按名称组织镜像和制品。同一存储库可包含不同 tag 或 digest；namespace 是存储库名称的一部分。参见[注册表概念](https://docs.azure.cn/zh-cn/container-registry/container-registry-concepts)。
 
 - ==容器镜像==
 
@@ -64,13 +59,13 @@ az acr manifest list-metadata --name azure-vote-front --registry xhacrtest
 
 [关于注册表、存储库、映像和项目 - Azure Container Registry | Azure Docs](https://docs.azure.cn/zh-cn/container-registry/container-registry-concepts#addressing-an-artifact)
 
-- ACR要用完全限定URL：\<registry name>. azurecr. cn
+- 使用完整的登录服务器名称，例如 `myregistry.azurecr.cn`。
 
-### ACR的SKU
+### ACR SKU
 
 [注册表服务层级和功能 - Azure Container Registry | Azure Docs](https://docs.azure.cn/zh-cn/container-registry/container-registry-skus)
 
-### 推送image到ACR
+### 推送镜像到 ACR
 
 [快速入门 - 创建注册表 - Azure CLI - Azure Container Registry | Azure Docs](https://docs.azure.cn/zh-cn/container-registry/container-registry-get-started-azure-cli#push-image-to-registry)
 
@@ -78,7 +73,7 @@ az acr manifest list-metadata --name azure-vote-front --registry xhacrtest
 
 - 使用 [docker tag](https://docs.docker.com/engine/reference/commandline/tag/) 命令标记映像。 使用 ACR 实例的登录服务器名称替换 \<acrLoginServer>
 
-### image异地复制、区域冗余
+### 镜像异地复制与区域冗余
 
 [教程 - 创建异地复制注册表 - Azure Container Registry | Azure Docs](https://docs.azure.cn/zh-cn/container-registry/container-registry-tutorial-prepare-registry)
 
@@ -104,19 +99,19 @@ az acr manifest list-metadata --name azure-vote-front --registry xhacrtest
 
 在 ACR 任务中启用 Azure 资源的托管标识，使**该任务无需提供或管理凭据**即可访问其他 Azure 资源。 例如，使用托管标识可让某个任务步骤将容器映像提取或推送到其他注册表。
 
-### ACR登录
+### ACR 登录
 
 To authenticate with an Azure Container Registry, you can use the `az acr login` command with the name of the registry:
 
 ```bash
 #This command will authenticate your Docker CLI with the Azure Container Registry and allow you to push and pull images
-az acr login --name <registry_name>
+az acr login --name myregistry
 #Alternatively, you can use the docker login command with the fully qualified name of the registry, This command will prompt you for your Azure Container Registry username and password, which you can find in the Azure portal under "Access keys" in the container registry's settings.
-docker login <registry_name>.azurecr.io
+docker login myregistry.azurecr.cn
 #After authenticating, you can use the Docker CLI to push and pull images to and from the Azure Container Registry.
 ```
 
-### ACR清理image
+### ACR 镜像清理
 
 [清除标记和清单- Azure Container Registry | Azure Docs](https://nam06.safelinks.protection.outlook.com/?url=https%3A%2F%2Fdocs.azure.cn%2Fzh-cn%2Fcontainer-registry%2Fcontainer-registry-auto-purge%23run-in-an-on-demand-task&data=05|01|hangx%40microsoft.com|868fb1a8d7154d8ab7d008db60d8ba91|72f988bf86f141af91ab2d7cd011db47|1|0|638210256247290568|Unknown|TWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D|3000|||&sdata=%2F5gQ7fDh3nDcu7%2FMwoCKDM1wxhKeM72DhpwxQ7RkXZo%3D&reserved=0)
 
@@ -125,7 +120,7 @@ docker login <registry_name>.azurecr.io
 - `--filter`是必需的选项，如果您需要对所有repository进行清理，请使用类似如下方式。
 
   ```bash
-  PURGE_CMD="acr purge --filter '*:.*'--untagged --ago 180d --dry-run" 
+  PURGE_CMD="acr purge --filter '*:.*' --untagged --ago 180d --dry-run"
   ```
 
 > [!warning]
@@ -142,7 +137,7 @@ az acr check-health #测试ACR健康情况
 az aks check-acr --name <aks name> --resource-group <aks rg> --acr <acr name> #查看AKS与ACR连接性
 ```
 
-### AzureChina注册表endpoint
+### Azure China 注册表端点
 
 - 不过由于docker.io的镜像仓库，其IP所在的地理位置位于海外，在整个网络链路上涉及到的节点比较多，确实会存在网络拥塞导致的拉取镜像慢或是失败的情况。
 

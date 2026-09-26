@@ -42,7 +42,7 @@ date: 2026-04-16
 
 ## Storage Account Endpoints
 
-Storage accounts provide a unique namespace for data in Azure. Each object has an address that includes the unique account name. Combine the account name with the Azure Storage service endpoint to form the storage account endpoint. Construct the URL to access an object by appending the object's location to the endpoint. For example, a blob URL: `http://mystorageaccount.blob.core.chinacloudapi.cn/mycontainer/myblob`
+A storage account provides a unique namespace. Its endpoint combines the account name with the Azure Storage service domain; append the container and blob path to address an object. Example: `https://mystorageaccount.blob.core.chinacloudapi.cn/mycontainer/myblob`.
 
 ---
 
@@ -75,11 +75,9 @@ Azure managed, used with Azure VMs. Analogous to physical disks in on-premises s
 
 ### Disk Types
 
-1. **OS Disk**: Pre-installed OS, contains boot volume
-
-2. **Data Disk**
-
-3. **Temporary Disk**
+- **OS disk**: Contains the operating system and boot volume.
+- **Data disk**: Stores application data.
+- **Temporary disk**:
    - Most VMs include this; it is NOT a managed disk
    - Used for page files (memory swap partition), uses host machine disk
    - On Linux typically `/dev/sdb`, default mount point `/mnt/resource`
@@ -101,7 +99,7 @@ Azure managed, used with Azure VMs. Analogous to physical disks in on-premises s
 
 ### SAS Token
 
-- ==SAS== (Shared Access Signature) grants limited access to **containers and blobs** in a storage account
+- ==SAS== (Shared Access Signature) grants scoped access to storage resources
 - When creating SAS, specify constraints: which storage resources, what permissions, and the validity period
 - SAS is signed using access keys, two methods:
   - Signed with AAD-provided keys = ==User Delegation SAS==
