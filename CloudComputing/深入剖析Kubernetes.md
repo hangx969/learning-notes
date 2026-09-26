@@ -12,9 +12,11 @@ aliases:
   - 深入剖析K8s
 ---
 
-# 容器技术入门
+# 深入剖析 Kubernetes
 
-## 1 从进程说开去
+## 容器技术入门
+
+### 1 从进程说开去
 
 > [!abstract] 核心概念
 > - 容器技术的兴起源于PaaS技术的普及
@@ -22,9 +24,9 @@ aliases:
 > - 容器技术的核心功能，就是通过约束、修改进程的动态表现，为其创造出一个”边界”。
 > - 对于 Docker 等大多数 Linux 容器来说，**Cgroups** 技术是用来制造约束的主要手段，而 **Namespace** 技术则是用来修改进程视图的主要方法。
 
-### Namespace
+#### Namespace
 
-#### 原理
+##### 原理
 
 - Lab：
   - docker run -it: 告诉了 Docker 项目在启动容器后，需要给我们分配一个文本输入 / 输出环境，也就是 TTY，跟容器的标准输入相关联，这样我们就可以和这个 Docker 容器进行交互了。而 /bin/sh 就是我们要在 Docker 容器里运行的程序。
@@ -65,7 +67,7 @@ aliases:
   - 所以说，容器，其实是一种特殊的进程而已。跟真实存在的虚拟机不同，在使用Docker 的时候，并没有一个真正的“Docker 容器”运行在宿主机里面。Docker 项目帮助用户启动的，还是原来的应用进程，只不过在创建这些进程时，Docker 为它们加上了各种各样的 Namespace 参数。
   - 这时，这些进程就会觉得自己是各自 PID Namespace 里的第 1 号进程，只能看到各自Mount Namespace 里挂载的目录和文件，只能访问到各自 Network Namespace 里的网络设备，就仿佛运行在一个个“容器”里面，与世隔绝。
 
-#### Namespace延伸出的容器的优势
+##### Namespace延伸出的容器的优势
 
 - 与虚拟机对比的优势：
   - 在虚拟机与容器技术的对比图里，不应该把 Docker Engine 或者任何容器管理工具放在跟 Hypervisor 相同的位置，因为它们并不像 Hypervisor 那样对应用进程的隔离环境负责，也不会创建任何实体的“容器”，真正对隔离环境负责的是宿主机操作系统本身。所以，在这个对比图里，我们应该把 Docker 画在跟应用同级别并且靠边的位置。这意味着，用户运行在容器里的应用进程，跟宿主机上的其他进程一样，都由宿主机操作系统统一管理，只不过这些被隔离的进程拥有额外设置过的 Namespace 参数。而 Docker 项目在这里扮演的角色，更多的是旁路式的辅助和管理工作。
@@ -76,7 +78,7 @@ aliases:
 
 <img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202309062149068.png" alt="image-20230906214926967" style="zoom:50%;" />
 
-#### Namespace的弊端
+##### Namespace的弊端
 
 > [!warning] 隔离不彻底
 > 基于 Linux Namespace 的隔离机制相比于虚拟化技术也有很多不足之处，其中最主要的问题就是：隔离得不彻底。
@@ -92,9 +94,9 @@ aliases:
 
 ---
 
-## 2 隔离与限制
+### 2 隔离与限制
 
-### Cgroup
+#### Cgroup
 
 > [!info] Cgroups
 > - Linux Cgroups 就是 Linux 内核中用来为进程设置资源限制的一个重要功能。
@@ -103,7 +105,7 @@ aliases:
 
 ![image-20240725224401832](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202407252244962.png)
 
-#### 原理
+##### 原理
 
 - Linux中，Cgroup给用户暴露出来的操作接口是文件系统，即以文件和目录的形式，组织在操作系统得/sys/fs/cgroup下.
 
@@ -159,12 +161,12 @@ aliases:
     docker run -it --cpu-period=100000 --cpu-quota=20000 ubuntu /bin/bash
     ```
 
-#### 容器与进程
+##### 容器与进程
 
 - 由于一个容器的本质就是一个进程，用户的应用进程实际上就是容器里 PID=1 的进程，也是其他后续创建的所有进程的父进程。
 - 这就意味着，在一个容器中，你没办法同时运行两个不同的应用，除非你能事先找到一个公共的 PID=1 的程序来充当两个不同应用的父进程，这也是为什么很多人都会用 systemd 或者 supervisord 这样的软件来代替应用本身作为容器的启动进程。
 
-#### cgroup的不足
+##### cgroup的不足
 
 - Cgroups 对资源的限制能力也有很多不完善的地方，被提及最多的自然是 /proc 文件系统的问题：，Linux 下的 /proc 目录存储的是记录当前内核运行状态的一系列特殊文件，用户可以通过访问这些文件，查看系统以及当前正在运行的进程的信息，比如 CPU 使用情况、内存占用率等，这些文件也是top 指令查看系统信息的主要数据来源。
   - 你如果在容器里执行 top 指令，就会发现，它显示的信息居然是宿主机的 CPU 和内存数据，而不是当前容器的数据。
@@ -174,14 +176,14 @@ aliases:
 
 ---
 
-## 3 深入理解容器镜像
+### 3 深入理解容器镜像
 
-### Mount namespace
+#### Mount namespace
 
 - mount namaspace创建一个完全独立的文件系统，用mount namespace挂载的进程就可以在自己的隔离目录下（比如 /tmp）下操作，完全不受到宿主机以及其他容器的影响。
 - 但是mount namespace改变的是容器进程对挂载点的认知，只有在挂载操作发生之后，进程的视图才会被改变。在此之前，新容器会继承宿主机的各个挂载点。
 
-### chroot
+#### chroot
 
 - chroot可以实现容器进程重新挂载整个根目录，到指定的位置。
 
@@ -198,7 +200,7 @@ aliases:
 
 - 实际上，mount namespacec就是基于chroot改良而来的。
 
-### rootfs
+#### rootfs
 
 - 一般会在chroot到的容器根目录上挂载一个完成测操作系统文件系统，比如Ubuntu 18.04 ISO。这样在容器启动后，执行ls / 就能看到根目录下的内容。
 - 这个挂载到容器的根目录上，用来为容器进程提供隔离后执行环境的文件系统，就称为容器镜像，也就是rootfs。
@@ -213,7 +215,7 @@ aliases:
 >
 > Docker 项目在最后一步的切换上会优先使用pivot_root 系统调用，如果系统不支持，才会使用 chroot。这两个系统调用虽然功能类似，但是也有细微的区别。
 
-### Union FS / Layer
+#### Union FS / Layer
 
 > [!tip] 参考文章
 > - [Union FS 教程](https://mp.weixin.qq.com/s/0enVkNjDMDh68WMNb2sEpQ)
@@ -248,7 +250,7 @@ aliases:
      - 如果要删除只读层的一个文件：Aufs会在rw层创建一个whiteout文件，把只读层的文件遮挡起来。（假如删除只读层的foo文件，那么会在rw层创建一个.wh.foo的文件。当联合挂载之后，foo就会被.wh.foo遮挡起来。）
      - 如果想要修改只读层的文件：需要知道相同的文件，上层会覆盖掉下层。首先会从上到下检查有没有这个文件，找到之后，就复制到可读写层里面进行修改。修改的结果就会作用到下层的文件。这就叫copy-on-write。
 
-### Lab - 制作容器镜像并上传
+#### Lab - 制作容器镜像并上传
 
 - 编写python代码
 
@@ -257,16 +259,16 @@ aliases:
   from flask import Flask
   import socket
   import os
-  
+
   app = Flask(__name__)
-  
+
   # 如果当前环境中有 NAME 这个环境变量，就打印到Hello后；否则打印hello world。最后再打印出hostname
   @app.route('/')
   def hello():
       html = "<h3>Hello {name}!</h3>" \
              "<b>Hostname:</b> {hostname}<br/>"
       return html.format(name=os.getenv("NAME", "world"), hostname=socket.gethostname())
-  
+
   if __name__ == "__main__":
       app.run(host='0.0.0.0', port=80)
   ```
@@ -284,7 +286,7 @@ aliases:
   ```dockerfile
   # 使用官方提供的 Python 开发镜像作为基础镜像
   FROM python:2.7-slim
-  # 将工作目录切换为 /app 
+  # 将工作目录切换为 /app
   #（使用 WORKDIR 指令可以来指定工作目录（或者称为当前目录），以后各层的当前目录就被改为指定的目录，如该目录不存在，WORKDIR 会帮你建立目录。https://blog.csdn.net/qq_35423190/article/details/131471048）
   WORKDIR /app
   # 将当前目录下的所有内容复制到 /app 下
@@ -299,13 +301,13 @@ aliases:
   # 这里，app.py 的实际路径是 /app/app.py。所以，CMD [“python”, “app.py”] 等价于"docker run python app.py"。
   CMD ["python", "python-helloworld-app.py"]
   ```
-  
+
   > [!note] Dockerfile 原语说明
   > - Dockerfile 的设计思想，是使用一些标准的原语（即大写的词语），描述我们所要构建的 Docker 镜像。并且这些原语，都是按顺序处理的。
   > - 在使用 Dockerfile 时，你可能还会看到一个叫作 ENTRYPOINT 的原语。实际上，它和 CMD 都是 Docker 容器进程启动所必需的参数，完整执行格式是：”ENTRYPOINT CMD”。
   > - 但是，默认情况下，Docker 会为你提供一个隐含的 ENTRYPOINT，即：**/bin/sh -c**。所以，在不指定 ENTRYPOINT 时，比如在我们这个例子里，实际上运行在容器里的完整进程是：/bin/sh -c “python app.py”，即 CMD 的内容就是 ENTRYPOINT 的参数。
   > - Dockerfile 里的原语并不都是指对容器内部的操作。就比如 ADD，它指的是把当前目录（即 Dockerfile 所在的目录）里的文件，复制到指定容器内的目录当中。
-  
+
 - 制作镜像
 
   ```bash
@@ -335,7 +337,7 @@ aliases:
   ```bash
   curl http://localhost:4000
   #<h3>Hello World!</h3><b>Hostname:</b> bb9c14f75291<br/>
-  
+
   docker exec -it /bin/sh
   #进入到容器内部
   ```
@@ -352,7 +354,7 @@ aliases:
 
   ```bash
   kubectl create deployment python-helloworld-app --image=xhacrtest.azurecr.cn/python-helloworld-app:v1 --port=80 --replicas=3
-  
+
   kubectl expose deployment python-helloworld-app --port=80 --target-port=80 --type=LoadBalancer
   # pod通过lb暴露服务：
   #NAME                    TYPE           CLUSTER-IP     EXTERNAL-IP      PORT(S)        AGE
@@ -363,7 +365,7 @@ aliases:
   # 也可以访问lb的公网IP：curl http://52.131.217.15
   ```
 
-### docker exec的原理
+#### docker exec的原理
 
 - Linux Namespace 创建的隔离空间虽然看不见摸不着，但一个进程的 Namespace 信息在宿主机上是确确实实存在的，并且是以一个文件的方式存在。
 
@@ -372,7 +374,7 @@ aliases:
   ```bash
   docker inspect --format '{{ .State.Pid }}' bb9c14f75291 #查看这个容器进程在宿主机上的pid
   #3639347
-  
+
   ls -l /proc/3639347/ns
   #查看宿主机的 proc 文件，看到这个 25686 进程的所有 Namespace 对应的文件：
   total 0
@@ -389,13 +391,13 @@ aliases:
   - 一个进程的每种 Linux Namespace，都在它对应的 /proc/[进程号]/ns 下有一个对应的虚拟文件，并且链接到一个真实的 Namespace 文件上。
   - 这也就意味着：一个进程，可以选择加入到某个进程已有的 Namespace 当中，从而达到“进入”这个进程所在容器的目的，这正是 docker exec 的实现原理。这个操作所依赖的，乃是一个名叫 setns() 的 Linux 系统调用。
 
-### dockerinit容器进程
+#### dockerinit容器进程
 
 - Docker 创建的一个容器初始化进程(dockerinit)，而不是应用进程 (ENTRYPOINT + CMD)。
 - dockerinit 会负责完成根目录的准备、挂载设备和目录、配置 hostname 等一系列需要在容器内进行的初始化操作。
 - 最后，它通过 execv() 系统调用，让应用进程取代自己，成为容器里的 PID=1 的进程。
 
-### Volume
+#### Volume
 
 > [!question] Volume 解决的问题
 > - 容器内的文件、目录，如何让宿主机读取到？
@@ -406,7 +408,7 @@ aliases:
 - Docker支持两种挂载volume的方式：
 
   ```bash
-  docker run -v /test ... 
+  docker run -v /test ...
   docker run -v /home:/test ...
   ```
 
@@ -421,7 +423,7 @@ aliases:
 
 ---
 
-## 4 谈谈Kubernetes的本质
+### 4 谈谈Kubernetes的本质
 
 > [!abstract] 容器的两部分
 > 1. 一组联合挂载在 /var/lib/docker/aufs/mnt 上的 rootfs，这一部分我们称为”容器镜像”（Container Image），是容器的静态视图。
@@ -429,21 +431,21 @@ aliases:
 >
 > 作为一名开发者，并不关心容器运行时，在开发-测试-发布过程中，承载信息的是容器镜像。正因为如此，Docker项目出现不久，就走向了容器编排技术的上层建筑。
 
-### kubernetes组件简介
+#### kubernetes组件简介
 
 ![image-20230916132922210](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202309161329375.png)
 
-- 在 Kubernetes 项目中，kubelet 主要负责同容器运行时（比如 Docker 项目）打交道。而这个交互所依赖的，是一个称作 **CRI（Container Runtime Interface）的远程调用接口**，这个接口定义了容器运行时的各项核心操作。
+- 在 Kubernetes 项目中，kubelet 主要负责同容器运行时（比如 containerd 或 CRI-O）打交道。而这个交互所依赖的，是一个称作 **CRI（Container Runtime Interface，容器运行时接口）** 的接口，这个接口定义了容器运行时的各项核心操作。
   - 比如：启动一个容器需要的所有参数。这也是为何 Kubernetes 并不关心你部署的是什么容器运行时、使用的什么技术实现，只要你的这个容器运行时能够运行标准的容器镜像，它就可以通过实现 CRI 接入到Kubernetes当中。
 
-- 而具体的容器运行时，比如 Docker 项目，则一般通过 OCI 这个容器运行时规范同底层的Linux 操作系统进行交互
+- 而具体的容器运行时，比如 containerd 或 CRI-O，则一般通过 OCI 这个容器运行时规范同底层的Linux 操作系统进行交互
   - 即：把 CRI 请求翻译成对 Linux 操作系统的调用（操作 Linux Namespace 和 Cgroups 等）。
 
 - kubelet 还通过 gRPC 协议同一个叫作 Device Plugin 的插件进行交互。这个插件是 Kubernetes 项目用来管理 GPU 等宿主机物理设备的主要组件，也是基于Kubernetes 项目进行机器学习训练、高性能作业支持等工作必须关注的功能。
 
-- kubelet 的另一个重要功能，则是调用网络插件和存储插件为容器配置网络和持久化存储。这两个插件与 kubelet 进行交互的接口，分别是 CNI Container Networking Interface）和 CSI（Container Storage Interface）。
+- kubelet 的另一个重要功能，则是调用网络插件和存储插件为容器配置网络和持久化存储。这两个插件与 kubelet 进行交互的接口，分别是 CNI（Container Networking Interface）和 CSI（Container Storage Interface）。
 
-### K8S解决的本质问题
+#### K8S解决的本质问题
 
 - Kubernetes 项目要着重解决的问题，则来自于 Borg 的研究人员在论文中提到的一个非常重要的观点：
   - 运行在大规模集群中的各种任务之间，实际上存在着各种各样的关系。这些关系的处理，才是作业编排和管理系统最困难的地方。
@@ -452,7 +454,7 @@ aliases:
   - 更常见的情况则是，一个应用被部署在虚拟机里之后，你还得手动维护很多跟它协作的守护进程（Daemon），用来处理它的日志搜集、灾难恢复、数据备份等辅助工作。
 - 容器技术普及之后，那些原先拥挤在同一个虚拟机里的各个应用、组件、守护进程，都可以被分别做成镜像，然后运行在一个个专属的容器中。它们之间互不干涉，拥有各自的资源配额，可以被调度在整个集群里的任何一台机器上。而这，正是一个 PaaS 系统最理想的工作状态，也是所谓“微服务”思想得以落地的先决条件。
 
-### 声明式API
+#### 声明式API
 
 - 在 Kubernetes 项目中，我们所推崇的使用方法是：
 
@@ -461,37 +463,36 @@ aliases:
 
   就是所谓的“声明式 API”。这种 API 对应的“编排对象”和“服务对象”，都是 Kubernetes 项目中的 API 对象（API Object）。这就是 Kubernetes 最核心的设计理念。
 
-### 编排和调度
+#### 编排和调度
 
 - 实际上，过去很多的集群管理项目（比如 Yarn、Mesos，以及 Swarm）所擅长的，都是把一个容器，按照某种规则，放置在某个最佳节点上运行起来。这种功能，我们称为“调度”。
 - 而 Kubernetes 项目所擅长的，是按照用户的意愿和整个系统的规则，完全自动化地处理好容器之间的各种关系。这种功能，就是我们经常听到的一个概念：编排。
 
 ---
 
-# 5 K8s集群搭建实践
+## 5 K8s集群搭建实践
 
-## kubeadm
+### kubeadm
 
 - 为简化pod部署，社区发起了一个独立的部署工具：kubeadm。通过kubeadm init和kubeadm join两条简单指令来完成集群部署。
 
-### 工作原理
+#### 工作原理
 
 - k8s每一个组件都是需要被执行的单独的二进制文件。如果不用二进制文件，是否能用容器来部署k8s组件？
-  - 其他的都可以，但是kubelet无法被容器化：因为kubelet负责跟容器运行时打交道，还负责配置容器网络、管理容器数据卷。即需要直接操作宿主机。
-  - 如果kubelet运行在一个容器里面，直接操作宿主机就会变得很麻烦：例如比如用户在容器中挂载NFA，kubelet需要在宿主机指定目录上挂载NFS远程目录。如果kubelet运行在容器中，就无法直接操作宿主机文件系统。
+  - kubeadm 通常让 kubelet 作为宿主机服务运行，控制平面组件则以静态 Pod 运行：因为kubelet负责跟容器运行时打交道，还负责配置容器网络、管理容器数据卷。即需要直接操作宿主机。
+  - 如果kubelet运行在一个容器里面，直接操作宿主机就会变得很麻烦：例如用户在容器中挂载 NFS，kubelet需要在宿主机指定目录上挂载NFS远程目录。如果 kubelet 运行在容器中，就需要额外挂载和权限配置才能操作宿主机文件系统。
 - kubeadm选择了一种妥协方案：
-  - 把kubelet运行在宿主机上，然后用容器来部署其他的k8s组件。所以使用kubeadm的第一步就是在机器上手动安装kubeadm、kubelet、kubectl三个二进制文件。apt-get install kubeadm即可安装打包好的安装包。
+  - 把kubelet运行在宿主机上，然后用容器来部署其他的k8s组件。所以使用kubeadm的第一步就是在机器上手动安装kubeadm、kubelet、kubectl三个二进制文件。可通过对应发行版的软件包管理器安装 kubeadm、kubelet 和 kubectl，具体命令以目标版本的官方安装文档为准。
 
-### 工作流程
+#### 工作流程
 
 1. Preflight check：预先检查前置条件
 2. 生成k8s对外提供服务所需的证书和对应目录。
    - k8s对外提供服务需要通过https访问apiserver，需要配置证书。
    - 另外用户通过kubectl获取容器日志等streaming操作时，需要通过apiserver向kubelet发起请求。这个连接也需要是安全的。
-   - 证书生成之后，kubeadm会为其他组件生成访问apiserver的配置文件，路径是：/etc/kubernetes/conf。这些文件里面记录的是，当前这个Master 节点的服务器地址、监听端口、证书目录等信息。这样，对应的客户端（比如 scheduler，kubelet 等），可以直接加载相应的文件，使
-     用里面的信息与 kube-apiserver 建立安全连接。
-3. 会为master组生成pod配置文件，apiserver、controller-manager、kube-scheduler、etcd，都会被用pod方式部署。
-   - 这个时候k8s集群尚未生成，不是使用docker run来启动容器的。而是利用了特殊的容器启动机制“Static pod”，允许将需要部署的pod的yaml文件，放在一个指定的目录里，当这个节点上的kubelet启动时就会自动检查这个目录，加载所有的pod yaml文件启动他们。
+   - 证书生成之后，kubeadm会为其他组件生成访问apiserver的配置文件，路径通常位于 `/etc/kubernetes/`，例如 `admin.conf`、`kubelet.conf`。这些文件里面记录的是，当前这个Master 节点的服务器地址、监听端口、证书目录等信息。这样，对应的客户端（比如 scheduler，kubelet 等），可以直接加载相应的文件，使用里面的信息与 kube-apiserver 建立安全连接。
+3. 会为控制平面组件生成静态 Pod 清单：API Server、Controller Manager、Scheduler，以及在使用本地 etcd 时的 etcd。
+   - 这个时候k8s集群尚未生成，不是由 `docker run` 手动启动，而是使用静态 Pod（Static Pod）机制，允许将需要部署的pod的yaml文件，放在一个指定的目录里，当这个节点上的kubelet启动时就会自动检查这个目录，加载所有的pod yaml文件启动他们。
    - kubeadm中，这个目录是：/etc/kubernetes/manifests
 4. kubeadm为集群生成一个bootstrap token：只要持有这个token，任何一个安装了kubelet和kubeadm的节点，都可以通过kubeadm join加入到这个集群当中。（这个token会在kubeadm init结束后被打印出来）
 5. token生成之后，kubeadm会将master节点的重要信息，通过configmap方式保存在etcd中，以供后续部署节点使用。这个configmap的名字是cluster-info。
@@ -500,7 +501,7 @@ aliases:
 > [!note] 源代码位置
 > kubeadm的源代码就在kubernetes/cmd/kubeadm下，其中/app/phases文件夹下面的代码就代表了以上的每一个步骤（？在实验环境没找到）
 
-### yaml文件与容器化应用
+#### yaml文件与容器化应用
 
 以下面的yaml文件为例：
 
@@ -510,20 +511,20 @@ kind: Deployment
 metadata:
   name: nginx-deployment
 spec:
+  replicas: 2
   selector:
-   matchLabels:
-     app: nginx
-replicas: 2
-template: #以下都是pod的模板
-  metadata:
-    labels:
+    matchLabels:
       app: nginx
-  spec:
-    containers:
-    - name: nginx
-      image: nginx:1.7.9
-      ports:
-      - containerPort: 80
+  template: # 以下是 Pod 模板
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:1.7.9
+          ports:
+            - containerPort: 80
 ```
 
 - 一个yaml文件就是一个API对象。使用一种控制器对象（deployment）控制另一种API对象（pod）就称为控制器模式。而deployment就是controller。
@@ -531,18 +532,18 @@ template: #以下都是pod的模板
 - 一个 Kubernetes 的 API 对象的定义，大多可以分为 Metadata 和 Spec 两个部分。前者存放的是这个对象的元数据，对所有 API 对象来说，这一部分的字段和格式基本上是一样的；而后者存放的，则是属于这个对象独有的定义，用来描述它所要表达的功能。
 
   - metadata是API对象的标识。
-  - 与metadata同级的字段annotation，专门用来携带k-v格式的内部信息，供k8s使用的，一般是在pod运行后加到这个API对象上。
+  - `metadata.annotations` 字段，专门用来携带k-v格式的内部信息，供k8s使用的，一般是在pod运行后加到这个API对象上。
 
 ---
 
-# 6 容器编排和作业管理
+## 6 容器编排和作业管理
 
-## 为什么需要pod
+### 为什么需要pod
 
 > [!note]
 > 容器的本质就是云计算系统中的进程，容器镜像就是这个系统中的.exe安装包；而K8s就是操作系统。
 
-### pod的实现原理
+#### pod的实现原理
 
 - POD只是一个逻辑概念，其实是一组共享了Network namespace和volume的容器。k8s真正处理的，还是host上linux容器的namespace和cgroups，而并不存在一个pod的边界或者隔离环境。
 
@@ -551,7 +552,7 @@ template: #以下都是pod的模板
   - k8s中，pod的实现需要使用一个中间容器，这个容器叫作 Infra 容器。在这个 Pod 中，Infra 容器永远都是第一个被创建的容器，而其他用户定义的容器，则通过 Join Network Namespace 的方式，与 Infra 容器关联在一起。
 
     <img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202310092139421.png" alt="image-20231009213946196" style="zoom:33%;" />
-  
+
   - 这个 Pod 里有两个用户容器 A 和 B，还有一个 Infra 容器。在Kubernetes 项目里，Infra 容器一定要占用极少的资源，所以它使用的是一个非常特殊的镜像，叫作：k8s.gcr.io/pause。这个镜像是一个用汇编语言编写的、永远处于“暂停”状态的容器，解压后的大小也只有 100~200 KB左右。
   - 这就意味着容器A、B在network层面：
     - 可以直接使用 localhost 进行通信；
@@ -564,12 +565,14 @@ template: #以下都是pod的模板
     - k8s只要把volume定义在pod层面即可，
     - 这样，一个 Volume 对应的宿主机目录对于 Pod 来说就只有一个，Pod 里的容器只要声明挂载这个 Volume，就一定可以共享这个 Volume 对应的宿主机目录。
 
-### Pod的意义 - 容器设计原理 - Sidecar
+#### Pod的意义 - 容器设计原理 - Sidecar
 
 > [!tip] Sidecar设计思想
 > Pod 这种”超亲密关系”容器的设计思想，实际上就是希望，当用户想在一个容器里跑多个功能并不相关的应用时，应该优先考虑它们是不是更应该被描述成一个 Pod 里的多个容器。
 
-1. 一个典型例子：有一个 Java Web 应用的 WAR 包，它需要被放在 Tomcat 的 webapps 目录下运行起来。
+##### 示例一：部署 Java Web 应用的 WAR 包
+
+有一个 Java Web 应用的 WAR 包，需要放在 Tomcat 的 webapps 目录下运行。
 
 - 如果把war包整合到tomcat镜像里，每次更新war包或者tomcat都得重做镜像，麻烦。
 
@@ -612,15 +615,16 @@ template: #以下都是pod的模板
 
 - 上述例子就是容器设计模式中的side-car。sidecar 指的就是我们可以在一个 Pod 中，启动一个辅助容器，来完成一些独立于主进程（主容器）之外的工作。
 
-2. 第二个例子是容器的日志收集
+##### 示例二：收集容器日志
 
 - 比如有一个应用，不断地把日志文件输出到容器的 /var/log 目录中。可以把Pod里的 Volume 挂载到应用容器的 /var/log 目录上，同时在这个 Pod 里同时运行一个 sidecar 容器，它也声明挂载同一个 Volume 到自己的 /var/log 目录上。
 - 接下来 sidecar 容器就只需要做一件事儿，那就是不断地从自己的 /var/log 目录里读取日志文件，转发到 MongoDB 或者 Elasticsearch 中存储起来。这样，一个最基本的日志收集工作就完成了。
 
-3. Pod 的另一个重要特性是，它的所有容器都共享同一个 NetworkNamespace。这就使得很多与 Pod 网络相关的配置和管理，也都可以交给 sidecar 完
-   成，而完全无须干涉用户容器。这里最典型的例子莫过于 Istio 这个微服务治理项目了。
+##### 示例三：共享 Pod 网络命名空间
 
-### pod基本概念
+Pod 的另一个重要特性是，它的所有容器都共享同一个 Network Namespace。这就使得很多与 Pod 网络相关的配置和管理，也都可以交给 sidecar 完成，而完全无须干涉用户容器。这里最典型的例子莫过于 Istio 这个微服务治理项目了。
+
+#### pod基本概念
 
 > [!tip] Pod的理解
 > 可以把Pod看作是传统环境里面的”机器”，而容器是这个机器里面的用户程序。所以，凡是调度、网络、存储、安全相关的属性，基本都是Pod级别的。
@@ -677,15 +681,11 @@ template: #以下都是pod的模板
   - Unknown
     - pod状态不能持续的被kubelet报告给api server。有可能是kubelet与master通信出了问题。
 
-### Pod进阶使用
+#### Pod进阶使用
 
 > [!info] Projected Volume
-> K8s中有几种特殊的volume，作用是为容器提供预先定义好的数据，又叫做Projected Volume。
+> `projected` 是一种卷类型，可将多个受支持的数据源投射到容器的同一目录。
 >
-> Projected Volume一共有四种：Secret、ConfigMap、Downward API、ServiceAccountToken
+> `projected` 卷可将 Secret、ConfigMap、Downward API、ServiceAccountToken、ClusterTrustBundle、PodCertificate 等来源映射到同一目录；具体可用类型取决于 Kubernetes 版本。
 
-- Secret
-
-  
-
-
+- Secret（待补充）

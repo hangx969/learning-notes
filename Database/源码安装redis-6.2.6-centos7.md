@@ -16,9 +16,8 @@ date: 2026-04-16
 
 # 源码安装Redis-6.2.6-CentOS7
 
----
 
-## redis使用场景
+## Redis 使用场景
 
 - 很多大型电商网站、视频直播和游戏应用等,存在大规模数据访问,对数据查询效率要求高,且数据结构简单,不涉及太多关联查询。这种场景使用Redis,在速度上对传统磁盘数据库有很大优势,能够有效减少数据库磁盘IO,提高数据查询效率,减轻管理维护工作量,降低数据库存储成本
 - Redis对传统磁盘数据库是一个重要的补充,尤其是支持高并发访问的互联网应用必不可少的基础服务。电商网站的商品类目、推荐系统以及秒杀抢购活动,适宜使用Redis缓存数据库。
@@ -40,14 +39,16 @@ date: 2026-04-16
 
 ---
 
-## 源码安装redis单节点-v6.2.6
+## 源码安装 Redis 6.2.6 单节点
 
 > [!info] 7.2.3版本安装步骤相同
 
 ### 安装依赖
 
 ```sh
-yum -y install cpp binutils glibc glibc-kernheaders glibc-common glibc-devel gcc make centos-release-scl devtoolset-9-gcc devtoolset-9-c++ devtoolset-9-binutils scl enable devtoolset-9
+yum -y install cpp binutils glibc glibc-kernheaders glibc-common glibc-devel gcc make centos-release-scl
+yum -y install devtoolset-9-gcc devtoolset-9-gcc-c++ devtoolset-9-binutils
+scl enable devtoolset-9 bash
 ```
 
 ### 编译安装redis
@@ -57,9 +58,10 @@ yum -y install cpp binutils glibc glibc-kernheaders glibc-common glibc-devel gcc
 wget https://download.redis.io/releases/redis-6.2.6.tar.gz
 tar -zxvf  redis-6.2.6.tar.gz
 cd redis-6.2.6/
+REDIS_SOURCE_DIR=$(pwd)
 make -j 4
 #创建一个目录,作为redis安装目录
-mkdir /usr/local/redis-6.2.6
+mkdir -p /usr/local/redis-6.2.6
 #正式安装Redis,加PREFIX参数指定Redis安装到/usr/local/redis-6.2.6目录下,如果不加的话直接执行make install的话,默认就会生成到/usr/local/bin下。
 make PREFIX=/usr/local/redis-6.2.6 install
 cd /usr/local/redis-6.2.6
@@ -71,7 +73,7 @@ mkdir etc logs data
 - Redis的启动需要指定配置文件,在我们解压的源码包里就有默认配置文件,为了方便,这里把它复制一份到Redis的安装目录下:
 
 ```sh
-cp /redis-6.2.6/redis.conf /usr/local/redis-6.2.6/etc/
+cp "$REDIS_SOURCE_DIR/redis.conf" /usr/local/redis-6.2.6/etc/
 ```
 
 ### 配置redis
@@ -80,7 +82,7 @@ cp /redis-6.2.6/redis.conf /usr/local/redis-6.2.6/etc/
 
 ```sh
 cd /usr/local/redis-6.2.6
-grep -Ev "#|$^" etc/redis.conf #过滤出所有非注释行、非空行
+grep -Ev '^[[:space:]]*(#|$)' etc/redis.conf #过滤出所有非注释行、非空行
 #修改以下参数
 bind 0.0.0.0	#设置哪些IP可以连接Redis-server,4个0表示全部外部计算机都可以连接,危险
 port 6379 #Redis的默认端口6379
@@ -146,7 +148,7 @@ echo never > /sys/kernel/mm/transparent_hugepage/enabled
 
 ---
 
-## redis主从复制的部署
+## Redis 主从复制部署
 
 ### 背景
 
@@ -158,7 +160,7 @@ echo never > /sys/kernel/mm/transparent_hugepage/enabled
 
 复制方式:
 
-- 主从复制是通过异步传播数据的方式进行的,即主节点将数据变更写入到本地 RDB 快照文件,并将快照文件和增量数据发送给从节点。
+- 主从复制异步传播数据。全量同步可使用 RDB 快照传输数据集，之后通过复制流发送增量写入；满足条件时也可进行部分同步。
 
 > [!tip] 主从模式应用场景
 > - ==读写分离==: 主从模式允许将读请求分发到从节点,从而减轻主节点的读取压力。这对于读多写少的应用场景非常有用,提高了整体性能和响应速度。
@@ -399,7 +401,7 @@ repl_backlog_histlen:28
 127.0.0.1:6379>
 ```
 
-### Summary
+### 小结
 
 > [!important] 主从模式的局限性
 > - 主从模式中的主服务器仍然是==单点故障==的可能来源。如果主服务器发生故障,整个系统可能会受到影响。
@@ -408,7 +410,7 @@ repl_backlog_histlen:28
 
 ---
 
-## redis哨兵模式部署
+## Redis Sentinel 部署
 
 ### 背景
 
@@ -442,8 +444,8 @@ repl_backlog_histlen:28
 - 复制redis解压目录下的sentinel配置文件
 
 ```sh
-cp sentinel.conf /usr/local/redis-6.2.6/bin
-vim sentinel.conf
+cp sentinel.conf /usr/local/redis-6.2.6/etc/sentinel.conf
+vim /usr/local/redis-6.2.6/etc/sentinel.conf
 protected-mode no  # 不启用保护,让其他节点都能访问这台哨兵
 port 26379   #端口
 daemonize yes  # 开启后台运行
@@ -454,8 +456,8 @@ dir "/usr/local/redis-6.2.6/sentinel"   # 工作空间目录
 # 配置哨兵,mymaster是昵称可以自定义
 # master内网IP master端口
 # 最后一个2代表至少有两个哨兵确认master宕机时才能认定该master失效；
-# 其中的一个哨兵就可以去开始执行故障转移
-sentinel monitor mymaster 192.168.10.125 6379 2
+# 实际故障转移还需要 Sentinel 多数派授权；2 个 Sentinel 中任意 1 个故障后无法完成故障转移。
+sentinel monitor mymaster 192.168.1.137 6379 2
 # 密码
 sentinel auth-pass mymaster 123456
 # master被sentinel认定为失效的间隔时间,单位:毫秒,即30秒
@@ -469,16 +471,16 @@ sentinel failover-timeout mymaster 180000
 - 复制sentinel配置文件到另一台节点
 
 ```sh
-scp sentinel.conf root@192.168.1.137:/usr/local/redis-6.2.6
+scp /usr/local/redis-6.2.6/etc/sentinel.conf root@192.168.1.138:/usr/local/redis-6.2.6/etc/sentinel.conf
 ```
 
 ### 启动哨兵模式并测试
 
 ```sh
 #两台主机都执行
-redis-sentinel sentinel.conf
+/usr/local/redis-6.2.6/bin/redis-sentinel /usr/local/redis-6.2.6/etc/sentinel.conf
 #测试:停掉192.168.1.137的6379实例master
-#在192.168.1.138的redis实例测试,可以发现master已经实现故障转移:
+# 当前仅有 2 个 Sentinel 时无法完成此故障转移；以下输出仅作为增加第三个独立 Sentinel 后的示例：
 redis-cli  -h 127.0.0.1 -p 6381
 127.0.0.1:6381> info Replication
 # Replication
@@ -500,15 +502,15 @@ repl_backlog_histlen:322805
 #可以通过调整sentinel down-after-milliseconds和sentinelfailover-timeout参数控制故障切换的时间长短。
 ```
 
-### Summary
+### 小结
 
 > [!summary] 哨兵模式总结
-> - 采用2个哨兵实现对6个redis实例的监测,并实现自动故障切换。当默认的 Redis 主节点宕掉之后,如果使用了 Redis Sentinel 进行主从切换(故障转移),Sentinel 会选择一个健康的从节点晋升为新的主节点,而不是默认的主节点恢复。
-> - =="一主二从三哨兵"==是一种常见的 Redis 高可用配置,但是否是最佳实践取决于具体的应用场景和需求。这种配置有一些优点,如提供了基本的高可用性、故障转移功能和读取负载均衡。
+> - 本例仅有 2 个 Sentinel。若主节点所在主机同时故障，剩余 1 个 Sentinel 无法获得多数授权，故障转移不会发生。可靠部署至少需要 3 个位于独立故障域的 Sentinel。故障转移成功时，Sentinel 会选出健康副本作为新主节点。
+> - “一主二从三哨兵”是常见起点。三个 Sentinel 应部署在彼此独立的故障域；具体节点数仍需结合故障模型确定。
 
 ---
 
-## redis cluster模式部署
+## Redis Cluster 部署
 
 ### 背景
 
@@ -519,10 +521,8 @@ repl_backlog_histlen:322805
 
 ### 实例配置
 
-- Redis Cluster采用无中心结构,每个节点都可以保存数据和整个集群状态,每个节点都和其他所有节点连接。Cluster一般由多个节点组成,节点数量至少为==6个==才能保证组成完整高可用的集群,其中三个为 主节点,三个为从节点。三个主节点会分配槽,处理客户端的命令请求,而从节点可用在主节点故障后,顶替主节点。
-- 需要准备6个Redis实例:
-  - 第一台服务器:192.168.1.137；6个redis实例(6371-6376)
-  - 第二台服务器:192.168.1.138；6个redis实例(6371-6376)
+- Redis Cluster 将 16,384 个槽分配给主节点。可运行的集群至少需要 3 个主节点；为容忍节点故障，官方建议使用 3 主 3 从的 6 节点部署。副本可在主节点故障后接替其槽。
+- 本例使用 6 个 Redis 实例，均部署在 `192.168.1.137`，端口为 `6371`～`6376`。生产环境应将主节点及其副本分散到独立故障域。
 
 - 创建目录
 
@@ -578,20 +578,20 @@ find /usr/local/redis/cluster/conf -type f -name '*.conf' -exec sed -i 's/192.16
 - 启动所有实例
 
 ```sh
-/usr/local/redis/bin/redis-server /usr/local/redis/cluster/conf/redis-6371.conf
-/usr/local/redis/bin/redis-server /usr/local/redis/cluster/conf/redis-6372.conf
-/usr/local/redis/bin/redis-server /usr/local/redis/cluster/conf/redis-6373.conf
-/usr/local/redis/bin/redis-server /usr/local/redis/cluster/conf/redis-6374.conf
-/usr/local/redis/bin/redis-server /usr/local/redis/cluster/conf/redis-6375.conf
-/usr/local/redis/bin/redis-server /usr/local/redis/cluster/conf/redis-6376.conf
+/usr/local/redis-6.2.6/bin/redis-server /usr/local/redis/cluster/conf/redis-6371.conf
+/usr/local/redis-6.2.6/bin/redis-server /usr/local/redis/cluster/conf/redis-6372.conf
+/usr/local/redis-6.2.6/bin/redis-server /usr/local/redis/cluster/conf/redis-6373.conf
+/usr/local/redis-6.2.6/bin/redis-server /usr/local/redis/cluster/conf/redis-6374.conf
+/usr/local/redis-6.2.6/bin/redis-server /usr/local/redis/cluster/conf/redis-6375.conf
+/usr/local/redis-6.2.6/bin/redis-server /usr/local/redis/cluster/conf/redis-6376.conf
 ```
 
 ### 集群配置
 
-- 两台服务器上都配置集群
+- 在 6 个实例均启动后，执行一次集群创建命令
 
 ```sh
-/usr/local/redis/bin/redis-cli -a 123456 --cluster create \
+/usr/local/redis-6.2.6/bin/redis-cli -a 123456 --cluster create \
 192.168.1.137:6371 192.168.1.137:6372 \
 192.168.1.137:6373 192.168.1.137:6374 \
 192.168.1.137:6375 192.168.1.137:6376 \
@@ -603,7 +603,7 @@ find /usr/local/redis/cluster/conf -type f -name '*.conf' -exec sed -i 's/192.16
 - 集群检查
 
 ```sh
-/usr/local/redis/bin/redis-cli -a 123456 --cluster check 192.168.1.137:6371
+/usr/local/redis-6.2.6/bin/redis-cli -a 123456 --cluster check 192.168.1.137:6371
 # 主节点信息
 192.168.1.137:6371 (694ce7e6...) -> 0 keys | 5461 slots | 1 slaves.
 192.168.1.137:6372 (bc13ea49...) -> 0 keys | 5462 slots | 1 slaves.
@@ -652,7 +652,7 @@ tail -f -n 1000 /usr/local/redis/cluster/log/redis-6374.log
 - 查看节点信息
 
 ```sh
-/usr/local/redis/bin/redis-cli -c -a 123456 -h 192.168.1.137 -p 6376
+/usr/local/redis-6.2.6/bin/redis-cli -c -a 123456 -h 192.168.1.137 -p 6376
 cluster info   #查看集群
 cluster nodes    #查看节点
 ```
@@ -661,7 +661,7 @@ cluster nodes    #查看节点
 
 ```sh
 #连接6376节点
-/usr/local/redis/bin/redis-cli -c -a 123456 -h 192.168.1.137 -p 6376
+/usr/local/redis-6.2.6/bin/redis-cli -c -a 123456 -h 192.168.1.137 -p 6376
 
 192.168.1.137:6376> set name test
 -> Redirected to slot [5798] located at 192.168.1.137:6372
@@ -684,7 +684,7 @@ OK
 - 经常出现集群创建出现错误,信息如下:
 
 ```sh
-/usr/local/redis/bin/redis-cli -a 123456 --cluster create \
+/usr/local/redis-6.2.6/bin/redis-cli -a 123456 --cluster create \
 > 192.168.1.137:6371 192.168.1.137:6372 \
 > 192.168.1.137:6373 192.168.1.137:6374 \
 > 192.168.1.137:6375 192.168.1.137:6376 \
@@ -698,25 +698,25 @@ Warning: Using a password with '-a' or '-u' option on the command line interface
 - 清理节点数据
 
 ```sh
-/usr/local/redis/bin/redis-cli -a 123456 -h 192.168.1.137 -p 6371
+/usr/local/redis-6.2.6/bin/redis-cli -a 123456 -h 192.168.1.137 -p 6371
 > CLUSTER NODES
 > FLUSHALL           # 清空节点数据:
 #2)清空集群data文件夹
 #3)停止redis实例
 pkill redis
 #4)重启redis实例
-/usr/local/redis/bin/redis-server /usr/local/redis/cluster/conf/redis-6371.conf
-/usr/local/redis/bin/redis-server /usr/local/redis/cluster/conf/redis-6372.conf
-/usr/local/redis/bin/redis-server /usr/local/redis/cluster/conf/redis-6373.conf
-/usr/local/redis/bin/redis-server /usr/local/redis/cluster/conf/redis-6374.conf
-/usr/local/redis/bin/redis-server /usr/local/redis/cluster/conf/redis-6375.conf
-/usr/local/redis/bin/redis-server /usr/local/redis/cluster/conf/redis-6376.conf
+/usr/local/redis-6.2.6/bin/redis-server /usr/local/redis/cluster/conf/redis-6371.conf
+/usr/local/redis-6.2.6/bin/redis-server /usr/local/redis/cluster/conf/redis-6372.conf
+/usr/local/redis-6.2.6/bin/redis-server /usr/local/redis/cluster/conf/redis-6373.conf
+/usr/local/redis-6.2.6/bin/redis-server /usr/local/redis/cluster/conf/redis-6374.conf
+/usr/local/redis-6.2.6/bin/redis-server /usr/local/redis/cluster/conf/redis-6375.conf
+/usr/local/redis-6.2.6/bin/redis-server /usr/local/redis/cluster/conf/redis-6376.conf
 ```
 
 - 重新创建redis cluster集群
 
 ```sh
-/usr/local/redis/bin/redis-cli -a 123456 --cluster create \
+/usr/local/redis-6.2.6/bin/redis-cli -a 123456 --cluster create \
 192.168.1.137:6371 192.168.1.137:6372 \
 192.168.1.137:6373 192.168.1.137:6374 \
 192.168.1.137:6375 192.168.1.137:6376 \
@@ -726,7 +726,7 @@ pkill redis
 
 ---
 
-## redis的数据持久化
+## Redis 数据持久化
 
 ### 背景
 
@@ -741,12 +741,12 @@ pkill redis
 
 开启RDB:客户端可以通过向Redis服务器发送save或bgsave命令让服务器生成rdb文件,或者通过服务器配置文件指定触发RDB条件。
 
-#### save
+#### SAVE
 
 - 当客户端向服务器发送save命令请求进行持久化时,服务器会阻塞save命令之后的其他客户端的请求,直到数据同步完成。
 - 如果数据量太大,同步数据会执行很久,而这期间Redis服务器也无法接收其他请求,所以,最好不要在生产环境使用save命令。
 
-#### bgsave
+#### BGSAVE
 
 - 当客户端发服务发出bgsave命令时,Redis服务器主进程会forks一个子进程来数据同步,在将数据保存到rdb文件之后,子进程会退出。
 - 与save命令相比,Redis服务器在处理bgsave采用子进程进行IO写入,而主进程仍然可以接收其他请求,但forks子进程是同步的,所以forks子进程时,一样不能接收其他请求。这意味着如果forks一个子进程花费的时间太久(一般是很快的),bgsave命令仍然有阻塞其他客户的请求的情况发生。
@@ -755,7 +755,7 @@ pkill redis
 
 - 除了通过客户端发送命令外,还有一种方式,就是在Redis配置文件中的save指定到达触发RDB持久化的条件,比如【多少秒内至少达到多少写操作】就开启RDB数据同步。例如我们可以在配置文件redis.conf指定如下的选项:
 
-```mysql
+```conf
 #900s内至少达到一条写命令
 save 900 1
 #300s内至少达至10条写命令
@@ -770,7 +770,7 @@ redis-server redis.conf
 
 - RDB默认生成的文件名为dump.rdb,可以通过配置文件进行更加详细配置,比如在单机下启动多个redis服务器进程时,可以通过端口号配置不同的rdb名称,如下所示:
 
-```mysql
+```conf
 #是否压缩rdb文件
 rdbcompression yes
 #rdb文件的名称
@@ -785,14 +785,14 @@ dir ~/redis/
 
 - Redis默认不开启AOF持久化方式,我们可以在配置文件中开启并进行更加详细的配置,如下面的redis.conf文件:
 
-```mysql
+```conf
 #开启aof机制
 appendonly yes
 #aof文件名
 appendfilename "appendonly.aof"
 #写入策略,always表示每个写操作都保存到aof文件中,也可以是everysec或no
 appendfsync always
-#默认不重写aof文件
+# AOF 重写期间继续按 appendfsync 策略执行 fsync
 no-appendfsync-on-rewrite no
 #保存目录
 dir ~/redis/
@@ -813,34 +813,30 @@ dir ~/redis/
 AOF将客户端的每一次写操作都追加到aof文件末尾,比如对一个key多次执行incr命令,这时候,aof保存每一次命令到aof文件中,aof文件会变得非常大。
 
 ```mysql
-incr num 1
-incr num 2
-incr num 3
-incr num 4
-incr num 5
-incr num 6
-...
-incr num 100000
+INCR num
+INCR num
+INCR num
+# 重复执行，直到 num 达到 100000
 ```
 
 aof文件太大,加载aof文件恢复数据时,就会非常慢,为了解决这个问题,Redis支持aof文件重写,通过重写aof,可以生成一个恢复当前数据的最少命令集,比如上面的例子中那么多条命令,可以重写为:
 
-```mysql
-set num 100000
+```redis
+SET num 100000
 ```
 
-aof文件是一个二进制文件,并不是像上面的例子一样,直接保存每个命令,而使用Redis自己的格式,上面只是方便演示。
+AOF 使用 Redis 协议记录命令；上面的操作序列仅用于说明重写思路。
 
 #### 两种重写方式
 
-1. 通过在redis.conf配置文件中的选项no-appendfsync-on-rewrite可以设置是否开启重写,这种方式会在每次fsync时都重写,影响服务器性以,因此默认值为no,不推荐使用。
+1. `no-appendfsync-on-rewrite` 只控制 AOF 重写期间是否跳过 `fsync`，不负责触发重写。`no` 表示仍按 `appendfsync` 策略同步。自动重写由 `auto-aof-rewrite-percentage` 等选项控制。
 
-```mysql
-#默认不重写aof文件
+```conf
+# AOF 重写期间是否跳过 fsync
 no-appendfsync-on-rewrite no
 ```
 
-2. 客户端向服务器发送bgrewriteaof命令,也可以让服务器进行AOF重写。
+2. 客户端执行 `BGREWRITEAOF`，可以手动启动后台 AOF 重写。
 
 ```sh
 #让服务器异步重写追加aof文件命令
@@ -857,18 +853,20 @@ AOF重写方式也是异步操作,即如果要写入aof文件,则Redis主进程�
 
 在写入aof日志文件时,如果Redis服务器宕机,则aof日志文件文件会出格式错误,在重启Redis服务器时,Redis服务器会拒绝载入这个aof文件,可以通过以下步骤修复aof并恢复数据。
 
-1. 备份现在aof文件,以防万一。
-2. 使用redis-check-aof命令修复aof文件,该命令格式如下:
+1. 先备份当前 AOF 文件。
+2. 先用 `redis-check-aof` 检查损坏位置，确认可能丢失的数据范围，再决定是否修复。
+3. 如需自动修复，执行：
 
 ```sh
-redis-check-aof -fix file.aof
+redis-check-aof file.aof
+redis-check-aof --fix file.aof
 ```
 
 重启Redis服务器,加载已经修复的aof文件,恢复数据。
 
 > [!summary] RDB vs AOF 对比
-> - ==AOF优点==: AOF只是追加日志文件,因此对服务器性能影响较小,速度比RDB要快,消耗的内存较少。
-> - ==AOF缺点==: AOF方式生成的日志文件太大,即使通过AOF重写,文件体积仍然很大。恢复数据的速度比RDB慢。
+> - **AOF 优点**：可按 `appendfsync` 策略控制持久性；`everysec` 通常能在性能和数据丢失风险之间取得平衡。
+> - **AOF 缺点**：文件通常比 RDB 快照大；大数据集的恢复速度通常比 RDB 慢。可通过后台重写控制文件增长。
 
 ![image-20240813205743348](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202408132057464.png)
 

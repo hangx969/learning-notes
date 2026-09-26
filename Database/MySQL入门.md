@@ -12,7 +12,6 @@ date: 2026-04-16
 
 # MySQL入门
 
----
 
 ## 数据库概念
 
@@ -20,21 +19,21 @@ date: 2026-04-16
 
    - 采用二维表格存储数据。数据和数据之间，和字段之间有关联，数据高度一致。
 
-   - 具有**==ACID==特性：==Atomic==原子性，==Consistency==一致性，==Isolation==隔离性，==Durability==持久性**。
+   - 事务通常强调 ACID 特性：原子性（Atomicity）、一致性（Consistency）、隔离性（Isolation）和持久性（Durability）。
 
      （*事务、以及ACID特性的详细解释待补充*）
 
    - 优点：易于理解，使用方便，易于维护。
 
-   - 缺点:海量数据查询效率较低；高并发读写下，受到硬件输入输出的限制。
+   - 限制：海量数据和高并发场景通常需要结合索引、分区、缓存与硬件资源优化。
 
 2. ==非关系型数据库==：Redis、MongoDB等
 
    - 数据存储格式可以是键值对、文档、图片等，结构不固定。
 
-   - 优点：无需经过SQL解析，读写性能高；基于键值对，易于扩展
+   - 优点：可按场景选择键值、文档等数据模型；读写性能和扩展性取决于具体产品与负载。
 
-   - 缺点：不提供SQL支持，学习成本高；无事务处理。
+   - 限制：查询语言和事务能力取决于具体产品，不能一概而论。
 
 3. 数据库构成
 
@@ -50,13 +49,13 @@ date: 2026-04-16
    ```mysql
    CREATE DATABASE test_db;
    ```
-   
+
 2. 选定某个数据库
 
    ```mysql
-   USE test_db  # 选定之后才能进行增删改查操作
+   USE test_db;  -- 选定数据库后再操作数据表
    ```
-   
+
 3. 创建数据表
 
    ```mysql
@@ -98,27 +97,27 @@ date: 2026-04-16
   	> SELECT f_name, f_price
       -> FROM fruits
       -> WHERE f_price BETWEEN 2.0 AND 10.0;  # BETWEEN AND 可以用NOT修饰
-      
+
       # 可以使用IN查询指定范围内的记录
   	> SELECT *
       -> FROM fruits
       -> WHERE s_id IN (101, 102) # IN 括号内的条件满足一个即可, 也可以用NOT IN
       -> ORDER BY f_price;
-      
+
       # 可以使用like % _ 来匹配，某种字母模式。
   	> SELECT * FROM fruits
       -> WHERE f_name LIKE 'b%y'; # %匹配多个字符, _ 匹配一个字符。
-      
+
       # 查询空值
   	> SELECT c_id, c_name, c_email FROM customers
       -> WHERE c_email is NULL;
-      
+
       # AND OR 多条件查询，and 优先级高于OR
   	> SELECT f_name, f_price FROM fruits
       -> WHERE s_id = '101' AND f_price >= 5 AND f_name = 'apple';
-      
+
       # 使查询结果去重。DISTINCT
-  	> SELECT DISTINCT s_id FROM fruits
+  mysql> SELECT DISTINCT s_id FROM fruits;
   ```
 
 - 对查询结果进行排序
@@ -128,7 +127,7 @@ date: 2026-04-16
       -> ORDER BY s_id;  # 默认升序
   mysql> SELECT s_id FROM fruits
       -> ORDER BY s_id DESC; # 降序
-      
+
   mysql> SELECT f_name, f_id FROM fruits
       -> ORDER BY f_name, f_id; # 多列排序的时候，第一列值相同时，才会按照第二列的要求排序。
   ```
@@ -150,14 +149,14 @@ date: 2026-04-16
   ```mysql
   # 创建分组
   	# 统计每个s_id 各有几行
-  	> SELECT s_id, COUNT(*) AS Total FROM fruits GROUP BY s_id；
+  mysql> SELECT s_id, COUNT(*) AS Total FROM fruits GROUP BY s_id;
   	# GROUP_CONCAT 也是聚合函数，可以将某个分组下的具体字段显示出来
   	> SELECT s_id, GROUP_CONCAT(f_name) AS Names FROM fruits GROUP BY s_id; # 把每个s_id各自对应的水果数显示出来
   # 用HAVING进行过滤，只显示符合条件的分组
   	# 把s_id根据f_name进行分组，并且把f_name多于2的显示出来。
   	> SELECT s_id, GROUP_CONCAT(f_name) FROM fruits GROUP BY s_id HAVING COUNT(*)>2;
   # HAVING 和 WHERE 的区别是：WHERE在分组之前用来过滤记录，HAVING在分组之后选择记录。WHERE排除的记录不再出现在分组中。
-  	
+
   ```
 
 ---
@@ -166,7 +165,7 @@ date: 2026-04-16
 
 > [!info] 两个或多个表中存放相同意义的字段时，进行连接查询
 
-- 连接的意义 将一个表的主键 存放到另一个表 作为另一个表的外键 增强可伸缩性
+- 连接通过表之间的关联字段组合数据；常见做法是让一张表的外键引用另一张表的主键。
 - ==内连接查询==：利用比较运算符对表之间某几列数据进行比较，列出与连接条件匹配的数据行 基于相等匹配。
 
 ```mysql
@@ -176,7 +175,7 @@ mysql> SELECT fruits.s_id, s_name, f_name, f_price
     -> FROM fruits, suppliers 
     -> WHERE fruits.s_id = suppliers.s_id;
 #这是内连接的语句 限定条件用ON  基于相等测试
-mysql> SELECT fruits.s_id s_name, f_name, f_price
+mysql> SELECT fruits.s_id, s_name, f_name, f_price
     -> FROM fruits INNER JOIN suppliers
     -> ON fruits.s_id = suppliers.s_id;
 # 自连接 把自己跟自己连成一个表 用别名区分
@@ -225,18 +224,18 @@ WHERE s_id IN
 
 ### 合并查询结果
 
-==UNION== / ==UNION ALL== 将多条查询结果合并成一个表，他们的列数和数据类型必须一样。
+==UNION== / ==UNION ALL== 将多条查询结果合并；各查询的列数必须相同，对应列的数据类型应兼容。
 
 ```mysql
-# 全连接UNION 将两条SELECT语句返回的结果拼成一个表 并且可以去掉重复行，返回结果所有行都是唯一的；如果不想去掉重复行，用UNION ALL
-SELECT * FROM fruits WHERE f_price < 9;
+# UNION 默认去重；UNION ALL 保留重复行。
+SELECT * FROM fruits WHERE f_price < 9
 UNION ALL
 SELECT * FROM fruits WHERE s_id IN (101,103);
 ```
 
 ---
 
-## LC题目
+## LeetCode 题目
 
 ### LC176 第二高的薪水
 
@@ -245,14 +244,15 @@ SELECT * FROM fruits WHERE s_id IN (101,103);
   如果是空值就返回NULL ==ifNULL(a,b)== a是NULL就返回b，a不是NULL就返回a。
 
 ```mysql
-SELECT ifNULL(
-DISTINCT(salary) FROM Employee ORDER BY salary DESC limit 1,1 
-, NULL)
+SELECT IFNULL(
+    (SELECT DISTINCT salary FROM Employee ORDER BY salary DESC LIMIT 1, 1),
+    NULL
+) AS SecondHighestSalary;
 ```
 
 ### LC197 上升的温度
 
-==DATEDIFF（a，b）==是对两个日期格式的数据，求出a日期和b日期的差值。
+`DATEDIFF(a, b)` 返回日期 `a` 与 `b` 相差的天数。
 
 ---
 

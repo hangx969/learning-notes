@@ -15,7 +15,6 @@ date: 2026-04-16
 
 # MGR部署MySQL5.7
 
----
 
 ## MySQL高可用工具
 
@@ -23,7 +22,7 @@ date: 2026-04-16
 
 - ==MGR==（MySQL Group Replication）是一种数据库集群技术，允许多个 MySQL 服务器协同工作，形成一个高可用的数据库集群。当一个mysql出现故障时，其他mysql可以继续工作，确保服务的连续性和数据的高可用性。
 - MGR允许多个 MySQL 实例组成一个组，这些实例之间会自动同步数据，确保数据的一致性和高可用性。如果某个实例出现故障，其他实例会继续工作，从而保持服务的连续性。
-- MGR是mysql原生带有的，不需要安装插件。MGR集群也有一些限制和要求，例如需要使用==InnoDB==存储引擎。
+- MGR 由 MySQL 提供，但使用前需要加载 `group_replication` 插件；下文通过 `plugin_load_add` 加载。MGR集群也有一些限制和要求，例如需要使用==InnoDB==存储引擎。
 
 > [!tip] 适用于需要高度自动化和数据一致性的场景。它提供了内置的高可用性解决方案，适合不希望依赖第三方工具的用户。
 
@@ -41,7 +40,7 @@ date: 2026-04-16
 
 ---
 
-## 部署MGR一主多从集群
+## 部署 MGR 单主集群
 
 ### 环境准备
 
@@ -51,7 +50,7 @@ date: 2026-04-16
 | 192.168.40.101 | xianchaomaster2 | 3306 | 64       | CentOS 7.9 |
 | 192.168.40.102 | xianchaomaster3 | 3306 | 62       | CentOS 7.9 |
 
-### 安装mysql
+### 安装 MySQL
 
 - 配置三台hosts文件
 
@@ -73,8 +72,8 @@ systemctl start mysqld
 #启动MySQL会生成临时密码。
 #在MySQL的配置文件/etc/my.cnf中关闭密码强度审计插件，并重启MySQl服务。
 vim /etc/my.cnf	
-#修改MySQL的配置文件，在[myqld]标签处末行添加以下项：
-validate-password=OFF     	#不使用密码审计插件
+#修改MySQL的配置文件，在[mysqld]标签处末行添加以下项：
+validate_password=OFF     	#不使用密码审计插件
 
 systemctl restart mysqld
 grep 'password'  /var/log/mysqld.log #获取临时密码。
@@ -189,7 +188,7 @@ mysql> show plugins;
 #如果没有安装成功，可以执行这个命令，手动再次安装：安装插件
 mysql> install PLUGIN group_replication SONAME 'group_replication.so';
 #启动服务器xianchaomaster1上MySQL的group replication
-#设置group_replication_bootstrap_group为ON，表示这台机器是集群中的master，以后加入集群的服务器都是salve。引导只能由一台服务器完成。
+# 只在首个成员上临时启用 bootstrap，以创建复制组；这不决定后续成员的角色。
 mysql> set global group_replication_bootstrap_group=ON; 
 ~~~
 
@@ -218,14 +217,14 @@ mysql> set global group_replication_bootstrap_group=ON;
   mysql> show binlog events;
   ```
 
-### 集群中添加master2主机
+### 将 master2 加入集群
 
 - 复制组添加新实例xianchaomaster2
 
   ```mysql
   #在master2上面，修改/etc/my.cnf 配置文件，方法和之前相同。 
   vim /etc/my.cnf   #在mysqld配置，追加以下内容
-  
+
   server_id=64  #注意服务ID不能一样
   gtid_mode=ON
   enforce_gtid_consistency=ON
@@ -235,7 +234,7 @@ mysql> set global group_replication_bootstrap_group=ON;
   log_slave_updates=ON
   log_bin=binlog
   binlog_format=ROW
-  
+
   plugin_load_add='group_replication.so'
   transaction_write_set_extraction=XXHASH64
   group_replication_group_name="ce9be252-2b71-11e6-b8f4-00212844f856"  #这保持和master一样
@@ -265,7 +264,7 @@ mysql> change master to master_user='repl',master_password='123456'  for channel
 
 ~~~mysql
 #master2上
-mysql> set global group_replication_allow_local_disjoint_gtids_join=ON;
+# 加入前确认数据与 GTID 集合兼容，不绕过不相交 GTID 检查。
 mysql> start group_replication;
 #去master1上面查看复制组状态
 mysql> select * from performance_schema.replication_group_members;
@@ -273,7 +272,7 @@ mysql> select * from performance_schema.replication_group_members;
 mysql> select * from test.t1;
 ~~~
 
-### 集群中标添加master3主机
+### 将 master3 加入集群
 
 - 修改配置
 
@@ -318,7 +317,7 @@ mysql> change master to master_user='repl',master_password='123456'  for channel
 
 ~~~mysql
 #把实例添加到之前的复制组
-mysql> set global group_replication_allow_local_disjoint_gtids_join=ON;
+# 加入前确认数据与 GTID 集合兼容，不绕过不相交 GTID 检查。
 mysql> start group_replication;
 
 #在xianchaomaster1上查看复制组状态
@@ -340,45 +339,36 @@ mysql>  show variables like '%read_only%';
 
 ---
 
-## Multi-primary多主模式实现多节点同时读写
+## 切换为多主模式
 
 ### 由单主模式修改为多主模式
 
-~~~mysql
-#1、关闭xianchaomaster1单主模式，在原来单主模式的主节点执行操作如下：
-mysql -u root -p123456
-mysql> stop GROUP_REPLICATION;
-mysql> set global group_replication_single_primary_mode=OFF;
-#关闭单master模式
-mysql> set global group_replication_enforce_update_everywhere_checks=ON;
-#设置多主模式下各个节点严格一致性检查，启用了这个功能，MySQL 将会在执行更新操作前检查所有节点，确保更新操作在所有节点都能够成功执行，以避免数据不一致的情况发生。
-mysql> SET GLOBAL group_replication_bootstrap_group=ON; #启动组复制的引导过程
-mysql> START GROUP_REPLICATION; #这条命令启动了组复制。在引导过程中，此命令用于启动组复制服务，使得当前 MySQL 实例可以加入到已经存在的复制组中，或者创建一个新的复制组。
-mysql> SET GLOBAL group_replication_bootstrap_group=OFF; #关闭组复制的引导模式
-~~~
+MySQL 5.7 的组模式配置必须在所有成员上保持一致。切换前暂停客户端写入，停止全部成员的组复制，再修改模式；重新引导时应选择事务集最新的成员，不能仅凭原主节点身份判断。操作步骤见 [MySQL 5.7 组模式说明](https://dev.mysql.com/doc/refman/5.7/en/group-replication-deploying-in-multi-primary-or-single-primary-mode.html)与[重新启动复制组](https://dev.mysql.com/doc/refman/5.7/en/group-replication-restarting-group.html)。
 
-~~~mysql
-#2、master2上
-mysql -u root -p123456
-mysql> stop GROUP_REPLICATION;
-mysql> set global group_replication_allow_local_disjoint_gtids_join=ON; #允许本地节点加入即使 GTIDs 不完全一致，可以在某些情况下（如节点数据恢复或加入新节点时）帮助系统更灵活地进行复制管理和数据同步。
-mysql> set global group_replication_single_primary_mode=OFF;
-mysql> set global group_replication_enforce_update_everywhere_checks=ON;
-mysql> start group_replication;
-#查看是否只读的参数
-mysql> show variables like '%read_only%';
-~~~
+1. 在三个成员上分别执行 `STOP GROUP_REPLICATION;`，确认全部成员都已停止组复制。
+2. 在三个成员上分别设置相同的模式参数：
 
-~~~mysql
-#3、master3上
-mysql -u root -p123456
-mysql> stop GROUP_REPLICATION;
-mysql> set global group_replication_allow_local_disjoint_gtids_join=ON;
-mysql> set global group_replication_single_primary_mode=OFF;
-mysql> set global group_replication_enforce_update_everywhere_checks=ON;
-mysql> start group_replication;
-mysql> show variables like '%read_only%';
-~~~
+   ```mysql
+   SET GLOBAL group_replication_single_primary_mode = OFF;
+   SET GLOBAL group_replication_enforce_update_everywhere_checks = ON;
+   ```
+
+3. 比较各成员已执行及已认证的事务，选择事务集最新的成员引导复制组。以下命令仅在选定成员上执行：
+
+   ```mysql
+   SET GLOBAL group_replication_bootstrap_group = ON;
+   START GROUP_REPLICATION;
+   SET GLOBAL group_replication_bootstrap_group = OFF;
+   ```
+
+4. 在另外两个成员上分别执行 `START GROUP_REPLICATION;`，然后检查成员状态和只读设置：
+
+   ```mysql
+   SELECT * FROM performance_schema.replication_group_members;
+   SHOW VARIABLES LIKE '%read_only%';
+   ```
+
+> [!warning] 不要在其他成员仍运行组复制时单独引导新组，也不要长期保持 `group_replication_bootstrap_group=ON`。
 
 ### 测试集群读写
 
@@ -397,34 +387,28 @@ mysql> select * from test.t1;
 
 ### 测试节点故障
 
-~~~mysql
-#测试MGR集群中一些节点坏了， 数据还可以正常读写
-#xianchaomaster1
-systemctl stop mysqld
-#xianchaomaster3
-systemctl stop mysqld
-#xianchaomaster2
-mysql -u root -p123456
-mysql> select * from performance_schema.replication_group_members;
-mysql> insert into test.t1 values (5,'ff');
-mysql> select * from test.t1;
+三成员组需要多数派（至少 2 个成员）才能继续处理写入。依次停止一个成员并确认剩余两台仍在线；再停止第二个成员时，剩余单节点不能继续写入。恢复成员后，先检查事务状态和组成员状态，再重新加入复制组。
 
-#master1\3重新加回到集群
-systemctl start mysqld
-mysql -u root -p123456
-mysql> select * from test.t1;
-mysql> stop GROUP_REPLICATION;
-mysql> set global group_replication_allow_local_disjoint_gtids_join=ON;
-mysql> set global group_replication_single_primary_mode=OFF;
-mysql> set global group_replication_enforce_update_everywhere_checks=ON;
-mysql> start group_replication;
-mysql> select * from test.t1;
-mysql> select * from performance_schema.replication_group_members;
-~~~
+```sh
+# 在 master1 停止 MySQL，随后从 master2 或 master3 检查组状态与写入。
+systemctl stop mysqld
+
+# 如继续在 master3 停止 MySQL，master2 将失去多数派；此时不要期待 INSERT 成功。
+systemctl stop mysqld
+```
+
+```mysql
+SELECT * FROM performance_schema.replication_group_members;
+-- 成员恢复后，在恢复的实例上检查 GTID 和数据状态，再执行：
+START GROUP_REPLICATION;
+SELECT * FROM performance_schema.replication_group_members;
+```
+
+> [!warning] 如果全部成员都已离组，应按 MySQL 官方的[重新启动复制组流程](https://dev.mysql.com/doc/refman/5.7/en/group-replication-restarting-group.html)确认最新事务集后再引导，不应盲目从固定节点启动。
 
 ---
 
-## 基于nginx+keepalived实现MGR Mysql高可用
+## 使用 Nginx 和 Keepalived 提供访问入口
 
 ### 安装nginx主备
 
@@ -449,12 +433,12 @@ events {
     worker_connections 1024;
 }
 
-# 四层负载均衡，为两台Master apiserver组件提供负载均衡
+# 四层负载均衡，将 MySQL 连接转发到三个 MGR 成员
 stream {
 
     log_format  main  '$remote_addr $upstream_addr - [$time_local] $status $upstream_bytes_sent';
 
-    access_log  /var/log/nginx/k8s-access.log  main;
+    access_log  /var/log/nginx/mysql-access.log  main;
 
     upstream mysql-server {
        server 192.168.40.100:3306 weight=5 max_fails=3 fail_timeout=30s; 
@@ -612,7 +596,7 @@ systemctl start keepalived
 #测试通过VIP访问mysql
 mysql -uroot -h192.168.40.199 -P13306 -p
 #输入密码：123456可以访问MySQL。
-#模拟xianchaomaster1、xianchaomaster2、xianchaomaster3机器任意两个mysql被停掉，基于VIP均可访问mysql
+# 三成员 MGR 需要多数派；任意两个 MySQL 成员停止后，剩余成员不能继续写入。
 ~~~
 
 ---
