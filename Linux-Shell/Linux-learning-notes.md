@@ -18,403 +18,151 @@ aliases:
   - Samba SMB文件共享
 ---
 
-# Linux Basic
+# Linux 学习笔记
 
-## 001 绪论
+这篇笔记按主题整理 Linux 基础、常用命令、系统管理及发行版操作。示例分别来自 CentOS 7、RHEL、Ubuntu、Azure 等环境；执行前请核对发行版版本、设备名和路径。
 
-- Linux学习阶段：
+## 阅读导航
 
-​	基本操作命令 - 各种配置（网络 存储等） - shell 脚本 - 系统调优 - 深入了解Linux内核
+- [[#入门与虚拟机]] · [[#终端与常用命令]] · [[#用户、权限与计划任务]] · [[#存储与文件系统]]
+- [[#云平台与网络]] · [[#进程、软件与系统服务]] · [[#脚本与自动化]] · [[#发行版操作补充]] · [[#RHEL 管理摘录]] · [[#Linux 运维实操专题]]
 
-- 学习方法：
+## 入门与虚拟机
 
-  先整体后细节 - 要知道怎么查 怎么用 - 先how 再why
+### 学习路径
 
-  计算机是 做中学
+建议按以下顺序学习：
 
-  Linux是实操性 用指令要非常溜 拿过来就敲 
+1. 掌握基本命令和文件目录操作。
+2. 学习网络、存储等系统配置。
+3. 编写 Shell 脚本，理解系统调优。
+4. 进一步研究 Linux 内核。
 
-- 学习大纲：
+先建立整体认识，再查阅命令用法并动手练习；在会用的基础上理解原理。入门内容包括 Linux 安装、Vim 和目录结构。
 
-  基础篇：Linux入门 - vim和Linux的安装 - Linux目录结构
+### Linux 的应用场景
 
----
+- **服务器与运维**：运行网络服务、开发项目和自动化任务，是 Linux 的主要使用场景。
+- **开发环境**：支持 Java、Python、PHP、C 等语言及其工具链。
+- **嵌入式设备**：可以按设备需求裁剪系统和定制内核。
 
-## 002 Linux应用范围 
+### Linux 概览
 
-- Linux应用场景
+Linux 是内核；发行版在内核之上组合系统工具、软件包及管理方式，面向桌面、服务器或嵌入式等用途。常见发行版包括 Ubuntu、Debian、Fedora、RHEL、CentOS Stream、openSUSE 和 Oracle Linux。
 
-​	Linux开发项目（JavaEE、Python、PHP、C等）、运维、嵌入式等
+- **Debian 系**：Debian 和基于它的 Ubuntu。
+- **Red Hat 生态**：Fedora、RHEL 与 CentOS Stream。传统 CentOS Linux 是 RHEL 的重建版；CentOS Stream 则处于 RHEL 开发流程上游，两者不应混为一谈。
+- **SUSE 与 Slackware**：openSUSE 属于 SUSE 生态；Slackware 和 Plamo Linux 可分别查阅。Puppy Linux 有不同构建基础，不能统一归入 Slackware 系。
 
-- Linux应用领域
+### Unix 与 Linux
 
-  **服务器：**免费、高效。**这是Linux最主要的应用领域**
+- Unix 起源于 20 世纪 70 年代的贝尔实验室，发展为多用户、分时操作系统。
+- Richard Stallman 发起 GNU 计划，推动自由软件工具链的发展。
+- Linus Torvalds 开发 Linux 内核。Linux 内核与 GNU 工具及其他软件组合，形成可使用的操作系统发行版。
 
-  嵌入式：对软件进行裁剪，可对内核进行定制
+### VMware 16 与 CentOS 7 安装
 
----
+在 Windows 10 上使用 VMware 16 时，先检查宿主机虚拟化支持与相关 Windows 功能设置；是否需要启用或关闭 Hyper-V 等组件取决于 VMware 版本及宿主机环境。
 
-## 003 Linux介绍
+安装 CentOS 7 时，可手动规划 `/boot`、swap 和根分区 `/`：`/boot` 保存内核及引导文件，swap 提供交换空间，`/` 承载其余系统目录和文件。服务器常选 Minimal 安装；生产环境是否启用 kdump 应结合故障分析需求和内存预留决定。CentOS 7 已结束维护，本节主要保留历史实验环境的操作背景。
 
-- 免费、稳定、开源、可高并发的系统
-- 主要发行版：**ubuntu、Redhat、CentOS**、Debain、Fedora、SuSE、CoreOS、OracleLinux等
+### 虚拟机网络模式
 
-- Linux是内核，发行版是内核+程序包等扩展功能形成的封装版
+- **桥接**：虚拟机作为同一局域网的独立设备，通常从该网段获取地址；需避免地址冲突。
+- **NAT**：虚拟机通过宿主机的网络地址转换访问外部网络，外部主动访问通常需要额外配置。
+- **仅主机**：虚拟机与宿主机或同一虚拟网络内的机器通信，默认不能直接访问外网。
 
-Linux发行版与Windows或Mac OS（操作系统）一样，Linux由多种类型组成，称为分发,每个发行版都很相似，但是不完全一样。一般情况下，Linux发行版是各种应用程序（软件）的集合，从而来适应使用目的，除了在服务器上安装之外，其他还要提前设置，以便可以立即进行实际使用。
+### 虚拟机克隆、快照与 VMware Tools
 
-Linux发行版主要有：Debian类型、Slackware系列、Red Hat
-1.Debian类型：
-Debian拥有出色的性能，可用于嵌入式设备等众多应用。此外，它已经发展成为一种流行的Linux发行版，名为Ubuntu。 
-2.Slackware系列：
-Slackware管理方法比其他线路更复杂，对于初学者来说相对困难。Slackware著名的发行版包括openSUSE，Plamo Linux和Puppy Linux。 
-3.Red Hat：
-目前Red Hat大致分为两类，第一个是红帽企业Linux（RHEL），有些服务是要收费的。另一种是名为Fedora（Fedora）的免费发行版。
-4、Centos
-CentOS是Linux发行版之一，它是来自于Red Hat Enterprise Linux依照开放源代码规定释出的源代码所编译而成。由于出自同样的源代码，因此有些要求高度稳定性的服务器以CentOS替代商业版的Red Hat Enterprise Linux使用。
+- **克隆**：可通过 VMware 的克隆功能创建新虚拟机，也可在确认虚拟机关闭且文件完整的前提下复制虚拟机文件。克隆后需检查主机名、网络标识与地址。
+- **快照**：用于在实验前保存虚拟机状态并在需要时回退；长期保留快照会增加存储占用，不能代替备份。
+- **VMware Tools**：提供虚拟机集成功能。启用共享文件夹后，CentOS 中常见的挂载路径是 `/mnt/hgfs/`；实际取决于 VMware Tools 与挂载配置。生产环境的文件传输通常通过受控远程方式完成。
 
----
+### Linux 目录结构
 
-## 004 Unix与Linux
+Linux 以目录树组织文件、设备及部分内核接口；以 `.` 开头的文件名通常在普通列表中隐藏。以下列出常见目录的用途：
 
--  1970s 贝尔实验室+Ken Tompson + Dennis = Unix诞生 （多用户分时操作系统）
--  1980s Unix发行版 高端机型才能用 PC用不了
--  著名黑客Richard Stallman发起了**GNU计划 倡导开源精神**，大家都能阅读源代码，软件公司提供服务和培训。
--  Linus贡献了Linux Kernel（可在x86系统上运行），越来越多的人贡献了FTP、editor等功能 => GNU/Linux
+| 目录 | 用途 |
+| --- | --- |
+| `/bin`、`/sbin` | 常用命令和系统管理命令；现代发行版可能将其链接到 `/usr` 下。 |
+| `/home`、`/root` | 普通用户家目录与 root 用户家目录；`~` 表示当前用户家目录。 |
+| `/lib` | 运行时库；部分发行版同样采用到 `/usr` 的链接。 |
+| `/etc` | 系统配置。 |
+| `/opt` | 可选的第三方软件。 |
+| `/usr` | 系统提供的程序、库和只读共享数据。 |
+| `/boot` | 启动文件和内核。 |
+| `/proc`、`/sys` | 内核与进程信息的虚拟文件系统。 |
+| `/srv` | 服务提供的数据。 |
+| `/dev` | 设备文件。 |
+| `/media` | 可移动设备的挂载点。 |
+| `/mnt` | 临时手动挂载点。 |
+| `/var`、`/var/log` | 经常变化的数据及日志。 |
+| `/run` | 本次启动期间的运行时数据，通常位于内存文件系统。 |
 
----
+输入命令时，Shell 会按 `PATH` 中的目录查找可执行文件。可用 `echo "$PATH"` 查看；用户级配置可写入适用的 Shell 启动文件，例如 Bash 的 `~/.bash_profile` 或 `~/.bashrc`。
 
-## 005 VMWARE 16和CentOS 7 安装
+#### FHS
 
-- win10系统，安装之后要 控制面板-程序-打开或关闭windows功能-虚拟机 开启
+Filesystem Hierarchy Standard（文件系统层次结构标准）描述根目录及 `/usr`、`/var` 等目录的用途；实际目录布局仍以发行版为准。
 
-- 手动配置分区：
+## 终端与常用命令
 
-  Linux磁盘空间分区一般分三个区：Boot分区、Swap分区、根分区 
+### 远程登录 Linux
 
-  - Boot分区：包含启动文件和内核
-  - Swap分区：交换分区，系统内存不足时，调用硬盘的一部分，可以理解为虚拟内存。
-  - 根分区：存放用户文件
+生产环境中的 Linux 服务器通常通过网络远程管理。SSH 加密终端连接；文件可通过 SFTP、SCP 等方式传输。Telnet 默认不加密，不宜用于远程管理。
 
-- 安装模式
+连接前确认目标地址、端口、用户名和 SSH 服务状态。`ping` 只能测试 ICMP 连通性；目标禁用 ICMP 时，仍可能可以连接 SSH。Windows 与 Linux 的文本编码也取决于具体终端和系统配置，不应统一假设为 GBK 或 UTF-8。
 
-  实际生产环境会选择Minimal，不带用户界面的那种
+#### 本地终端
 
-- KDUMP 生产环境会开启 
+Linux 可提供多个虚拟终端（TTY）；可用 `Ctrl+Alt+F1` 等组合键切换，具体数量和桌面会话位置依发行版而异。
 
----
+#### SSH 服务
 
-## 007 Linux虚拟机网络连接的三种方式
+服务端通常由 OpenSSH 的 `sshd` 提供服务。在使用 systemd 的系统上，可检查其状态：
 
-- 桥接模式：虚拟系统可以与外部进行通信，但用的是主机的网段，容易发生IP冲突（占用同一个网段）
-- NAT模式：网络地址转换，虚拟系统可以和外部系统通信，不造成外部冲突 
-- 主机模式：独立系统，不与外界通信 
-
----
-
-## 008 Linux虚拟机克隆
-
-- 直接复制虚拟机文件
-- vmware自带克隆功能
-
----
-
-## 009 虚拟机快照
-
-- 就是Save and Load功能
-
----
-
-## 011 安装vmtools
-
-- 详见教程
-
-- 设置与主机的共享文件夹
-
-  在CentOS中，共享文件夹位于/mnt/hgfs/下
-
-- 实际生产环境下，上传下载是使用远程方式完成的
-
----
-
-## 012 Linux 目录结构
-
-- 树状结构 根目录下有各种子目录（规定好的）
-- Linux会把硬件
-- 资源映射成文件来管理，所以Linux里面一切皆文件，隐藏文件是以 . 开头的
-- 具体目录结构：
-  - **/bin** 存放最常使用的指令，单人维护模式下也可以执行的指令。
-  
-  - /sbin 存放系统管理员的管理程序
-  
-  - /home 用户的家目录。~表示当前用户的家目录
-  
-  - /root 系统管理员的用户主目录
-  
-  - /lib 动态链接共享库，函数库
-  
-  - **/etc 系统管理所需要的配置文件和子目录。**
-  
-  - /opt 安装包 约定俗成 放在这里
-  
-  - **/usr**：Unix System Resource，操作系统软件资源，里面放着/sbin /bin /lib等
-  
-  - **/boot Linux启动引导**
-  
-  - /proc 系统内存映射 /srv 服务启动 /sys  【这些都不能动】
-  
-  - /dev 类似windows的设备管理器，将硬件映射为文件的形式
-  
-  - /mnt 自动识别的设备 U盘 光驱等
-  
-  - /mnt 让用户临时挂载别的文件系统
-  
-  - /var 存放经常变动的文件 一般可以把日志文件放进去 （**/var/log** 系统日志）
-  
-  - /run centos7之后才有，将经常变动的项目移动到内存中暂存，不占用硬盘容量。放在内存中每次开机都变动。
-- 系统变量
-  - 位置查看：echo $PATH
-  - 作用：当输入一个命令的时候，系统需要寻找这个命令的路径，系统变量就是告诉系统去哪里寻找命令，节省时间
-  - 将新增系统变量：将目录加入到~/.bash_profile
-
-### FHS
-
-Filesystem Hierarchy Standard
-
-linux目录结构的标准规范。 定义了根目录以及/usr, /var中的内容以及应该放置的数据。 
-
----
-
-## 014 远程登录Linux
-
-- 实际生产环境中，Linux服务器是开发小组共享；上线的项目运行在公网
-- Xshell远程登录（只能做一些命令性指令），Xftp文件远程上传下载
-- XShell远程连接的条件：1、知道Linux公网IP 2、能ping通远程服务器
-- ifconfig 查看Linux公网IP地址，windows终端ping一下这个IP试试
-
-- windows编码是gbk，Linux编码用的是UTF-8
-- Telnet和SSH是用于远程访问服务器的两大协议，telnet是明码传输，ssh是加密传输
-
-### Linux终端机界面
-
-- tty1-tty6
-- linux预设6个terminal可供登录，使用 ctrl+alt+f1-f6 来切换
-
-- 开机之后默认提供一个tty，切换之后才产生新的
-
-### 远程登录的服务
-
-- systemctl status sshd.service
-
-  是通过OpenSSH server.daemon来实现的
-
----
-
-## 016 Vi和Vim
-
-Linux的文本编辑器
-
-- 三种模式：
-
-  - 正常模式（不能输入内容）
-  - 插入模式：按i进入
-  - 命令行模式：按/ or : 进入
-
-- 实例：
-
-  ```Shell
-  vim hello.java  # 创建新文件或者打开文件
-  i #进入编辑模式
-  # 按Esc 再输入:wq即可退出vim
-  # 按:可以进入命令行模式 :wq 保存退出 :q! 强制退出
-  ```
-
-- ### 快捷键
-
-  - 正常模式下：yy 复制当前行；5yy复制当前行下面的5行；p 粘贴
-  - 正常模式下：dd 删除当前行；5dd 删除当前行下面的5行
-  - 查找单词：正常模式输入/ 进入命令行模式，输入单词，回车，按n切到下一个
-  - 显示行号：正常模式输入/进入命令行模式，输入set nu，set nonu
-  - 大文件：正常模式下，移动到首行 小写gg；移动到末尾，大写G，移动到首行
-  - 撤销：正常模式，输入u
-  - 快速到某一行：1、可以在正常模式下输入 20 shift+g；2、可以在命令模式下输入:20
-
----
-
-## 017 关机 重启 用户
-
-### linux启动过程
-
-![090eb76673404b3ff67ee7ed697224f](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202312042155530.jpg)
-
-![dc019cdb971d2f32c75f931de48252d](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202312042155497.jpg)
-
-1. 按电源键，服务器启动，首先会加载BIOS或者UEFI
-2. BIOS会检测硬件是否准备就绪，例如内存、硬盘、CPU等。
-3. 硬件检测通过，会选择启动设备，可以是硬盘、光驱、网络服务器。
-4. 从设备中读取引导文件（grub），读取到之后会提示选择内核版本，操作系统等。
-5. Linux内核启动，运行用户环境，systemd将成为第一个用户空间的进程。用于管理系统中的进程和服务，并挂载文件系统。
-6. 在操作系统启动时，也会启动相关的服务或者进程，比如sshd，syslog，或者用户设置的开机启动服务。
-7. 运行启动脚本，并配置用户环境。
-8. 然后显示登录界面，提示输入用户名密码。
-
-### 关机
-
-- shutdown -h now 立刻关机
-
-- shutdown -h 1  1min之后关机
-
-- shutdown -r noe 现在重启
-
-- reboot 现在重启
-
-
-- **sync** 将内存数据同步到磁盘 关机之前要进行一遍
-
-```shell
-sync; sync; sync; reboot
+```sh
+systemctl status sshd.service # RHEL/CentOS/Rocky 等
 ```
 
-- shutdown / halt / poweroff这几个命令都是去call systemctl
+Ubuntu 的服务单元通常名为 `ssh.service`。
 
-### 用户类型
+### Vi 与 Vim
 
-- root用户：UID=0，GID=0
-- 普通用户：UID>1000
-- 系统用户：伪用户，nologin 无法登陆，0<UID<1000，是为系统中某些进程准备的，即nobody用户：
+Vim 常见操作有普通模式、插入模式和命令行模式。普通模式下按 `i` 输入文本；按 `Esc` 返回普通模式，再输入 `:wq` 保存退出或 `:q!` 放弃修改。
 
-  - nobody在linux中是一个不能登陆的帐号，一些服务进程如Apache，aquid等都采用一些特殊的帐号来运行，比如nobody,news,games等等，这是就可以防止程序本身有安全问题的时候，不会被黑客获得root权限。
+```sh
+vim hello.java
+```
 
-    1、Windows系统在安装后会自动建立一些用户帐户，在Linux系统中同样有一些用户帐户是在系统安装后就有的，就像Windows系统中的内置帐户一样。
+#### 常用快捷键
 
-    2、它们是用来完成特定任务的，比如nobody和ftp等，我们访问网页程序时，官网的服务器就是让客户以 nobody 身份登录的(相当于Windows系统中的匿名帐户); 我们匿名访问ftp时，会用到用户ftp或nobody。
+- 复制与粘贴：普通模式下 `yy` 复制当前行，`5yy` 复制从当前行开始的五行，`p` 粘贴。
+- 删除与撤销：`dd` 删除当前行，`5dd` 删除五行，`u` 撤销。
+- 查找：输入 `/关键词` 后按回车，用 `n` 跳到下一个结果。
+- 行号：输入 `:set nu` 显示，`:set nonu` 关闭。
+- 跳转：`gg` 到文件开头，`G` 到末尾；输入 `20G` 或 `:20` 到第 20 行。
 
-    3、首先，nobody是一个普通用户，非特权用户。 使用nobody用户名的'目的'是，使任何人都可以登录系统，但是其 UID 和 GID 不提供任何特权，即该uid和gid只能访问人人皆可读写的文件。
-    4、其次，许多系统中都按惯例地默认创建一个nobody，尽量'限制它的权限至最小'，当服务器向外服务时，可能会让client以nobody的身份登录。
+### Bash Shell
 
-    5、nobody就是一个普通账户，因为默认登录shell是 '/sbin/nologin'，所以这个用户是无法直接登录系统的，也就是黑客很难通过漏洞连接到你的服务器来做破坏。此外这个用户的权限也给配置的很低。因此有比较高的安全性。一切都只给最低权限。这就是nobody存在的意义。
+Shell 负责解释用户输入并启动程序；Bash（Bourne Again Shell）是常见实现。登录 Shell 取决于账户与系统配置，不能按云平台统一判断。脚本编写方法见 [[#Shell 编程]]。
 
+### 常用命令
 
-### 用户登录与注销
+#### 运行级别与 systemd 目标
 
-- 登录
+传统 SysV 运行级别使用数字 0～6：0 表示关机、1 为单用户维护、3 通常为多用户文本模式、5 通常为图形模式、6 为重启；2 和 4 的含义可能随发行版配置变化。
 
-  一般不会给你root用户权限，普通用户想要切换成root用户，输入 su - 用户名，切换成root用户（直接 su - 也行
+CentOS 7 等使用 systemd 的系统，常以 `multi-user.target` 表示多用户文本模式，以 `graphical.target` 表示图形模式：
 
-- 注销：logout 在**用户级别3**时才有效
+```sh
+systemctl get-default
+sudo systemctl set-default multi-user.target
+```
 
-- su 命令 申请切换root用户，需要输入root用户密码；sudo su 是临时申请root权限，所输入的是用户密码。
+系统恢复或重设 root 密码需遵循对应发行版的恢复流程，不能仅凭旧运行级别编号操作。
 
-### 账户
-
-- 每个用户的登陆环境在家目录中有 ~/.bash.profile 和 ~/.bashrc两个配置文件，通常个人bash环境设置都定义在~/.bashrc中
-
-- 对所有用户生效的配置文件：/etc/bash.profile 和 /etc/bash.rc 
-
----
-
-## 018 用户管理   
-
-### 添加用户
-
-useradd 用户名
-
-1、创建用户成功后，自动创建该用户的家目录，位于/home/用户名
-
-2、通过 useradd -d 指定目录 用户名 :可以给新创建的用户制定家目录
-
-### 制定、修改密码
-
-passwd 用户名 密码  （注意加上用户名，否则是给当前用户改密码）
-
-### 删除用户
-
-userdel 用户名 （保留了家目录）一般建议保留家目录
-
-userdel -r 用户名 （删除家目录）
-
-### 查询用户
-
-id 用户名
-
-### 切换用户
-
-- su - 用户名 （带 - 是切换用户的同时切换环境变量）
-
-- su 直接切换，不是登录shell，该用户的环境变量没有被切换。
-
-- 命令行#代表root用户 $代表普通用户
-- root用户切其他用户是不需要输入密码的，即使该user没设置密码。
-
-### 查看当前用户
-
-who am i 显示的是第一次登录到的用户信息
-
-### **用户组**
-
-（给组设置具体权限，把用户拉进来）
-
-groupadd 组名
-
-groupdel 删除组
-
-（如果新建用户时没有指定的组，系统会自动建一个用户名同名的组，放进去）
-
-groupadd -g 用户组 用户名：新建用户同时放到一个组里
-
-groupmod -g 用户组 用户名 ：更改用户组
-
-### **把用户拉进组** / 更改用户所在组
-
-usermod -aG 组名 用户名
-
-### 更换文件所在组
-
-chgrp 组名 文件名
-
-### 用户配置文件
-
-/etc/passwd  用户配置文件，记录用户的各种信息
-
-（查询已有用户：cat /etc/passwd）
-
-/etc/shadow  口令的配置文件 ，记录密码，登录信息啥的
-
-/etc/group  组的配置文件
-
----
-
-## 019 Bash shell
-
-shell：类似解释器的进程，把命令转换为Linux内核可以识别的命令，中国一般用bash shell
-
-Azure 用的是 Bourne Again shell （Bash）
-
----
-
-## 025 **实用指令**-01
-
-### 指定运行级别
-
-- 0 关机
-- 1 单用户【找回丢失密码】（单人维护模式仅挂载根目录）
-- 2 多用户状态没有网络
-- 3 多用户状态 有网络服务 【**使用最多**】
-- 4 保留给用户
-- 5 图形界面 【也常用】
-- 6 系统重启
-
-​		centOS 7 以后，运行级别3 等同于 multi-user.target；运行级别5 等同于 graphical.target
-
-​		查看默认的运行级别：systemctl get-default
-
-​		设置默认的运行级别：systemctl set-default multiuser.target
-
-- 找回root密码
-
-  开机界面进入单用户模式
-
-### 帮助指令
+#### 帮助指令
 
 - man 查看帮助信息
 
@@ -432,29 +180,24 @@ Azure 用的是 Bourne Again shell （Bash）
 > [!tip] 查看命令常用方法
 > curl cheat.sh/tree #可以查看命令的常用方法
 
-### 快捷键
+#### 快捷键
 
 - ctrl + a 光标移动到最前面；ctrl+e 光标移动到最后面
 
-### ls 列出当前目录文件
+#### ls 列出目录内容
 
--  -l 按行详细输出
-- -a 显示所有文件包含隐藏文件(以. 开头的是隐藏文件)
-- ls -lh 将文件大小显示为适合人类看的格式
+- `ls -l`：逐行显示权限、所有者、大小和修改时间等信息。
+- `ls -a`：包含以 `.` 开头的隐藏文件。
+- `ls -lh`：以易读单位显示文件大小。
+- `ls -al`：同时显示隐藏文件与详细信息。
 
-- ls -al 的时候，列出的信息的第二列的数字：
+下图中权限字段之后的数字为硬链接计数：多个目录项可以引用同一个 inode。
 
-  ![image-20220917160920543](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202209171636268.png)
+![image-20220917160920543](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202209171636268.png)
 
-​		是link数；每个文件都会将权限和属性记录到文件系统的i-node中；每个文件名也会连接到一个inode。
+### 文件与目录命令
 
-​		第二列的数字就是该文件的硬连接数，相当于该文件有多少个别名。
-
----
-
-## 028 文件类实用指令-02
-
-### 文件目录
+#### 文件目录
 
 - pwd  （print working directory）
 
@@ -488,7 +231,7 @@ Azure 用的是 Bourne Again shell （Bash）
 
   当这个文件已经存在时，可以将其时间标签更新为系统当前时间
 
-### 文件操作
+#### 文件操作
 
 - cp 文件复制
 
@@ -516,14 +259,14 @@ Azure 用的是 Bourne Again shell （Bash）
 - awk 命令行编程工具 不需要编译 可以用变量 字符、数字函数等。
 
   ``` shell
-  awk '{print $1,$2}' # 输出前两行
-  awk '/Enlish {print}' 
+  awk '{print $1,$2}' file.txt # 输出每行前两个字段
+  awk '/English/ {print}' file.txt # 输出包含 English 的行
   ```
 
 - sed 文本替换
 
   ```shell
-  sed -i 's/[old text]/[new text]/g' xxx.txt
+  sed -i 's/old text/new text/g' xxx.txt
   ```
 
 - rm 删除文件或者目录
@@ -532,7 +275,7 @@ Azure 用的是 Bourne Again shell （Bash）
 
   -f 强制删除不提示
 
-### 文件时间
+#### 文件时间
 
 有三个主要的变动时间：
 
@@ -548,13 +291,13 @@ ls -ll --time=atime /var/log/messages
 
 touch可以修改mtime和atime
 
-### 文件比较
+#### 文件比较
 
 - cmp 一个字母一个字母的比较
 - comm 比较两个sorted的文件
 - diff 按行比较
 
-### mv 移动/重命名
+#### mv 移动/重命名
 
 mv 旧文件名 新文件名
 
@@ -562,43 +305,40 @@ mv 源目录 新目录
 
 mv 源文件 新目录/新名字 (移动并且重命名)
 
-### cat 查看文件内容
+#### cat 查看文件内容
 
 更加安全 只能看不能改
 
 - cat -n 显示行号
 - 一般会带上管道命令 | more (管道命令是将前面的结果交给后面处理) 
 
-### head 查看开头指定行数
+#### head 查看开头指定行数
 
 head 默认查看前10行
 
 head -n 5 看前5行
 
-### tail 查看末尾指定行数
+#### tail 查看文件末尾
 
-- tail -f  可以实时监控文件末尾改变
+`tail` 默认显示末尾十行，`-n` 可指定行数；按 `Ctrl+C` 停止持续跟踪。
 
-  ```shell
-  tail -f /opt/mylog.txt
-  tail -fn 10 test.log #循环实时查看最后10行记录(最常用的)
-  ```
-  
-  实时监控 按ctrl + C 中断指令
-  
-  tail -f 只能监控echo写入的内容，vim写入的不行。因为tail -f 是基于文件的inode监控，而vim会改变文件的inode
-  
-  （Unix/Linux系统内部不使用文件名，而使用inode号码来识别文件。对于系统来说，文件名只是inode号码便于识别的别称或者绰号。）
+```sh
+tail -n 10 test.log
+tail -f /opt/mylog.txt
+tail -Fn 10 test.log # 按文件名跟踪，适合可能被替换或轮替的日志
+```
 
-### more 基于Vi的文本过滤器
+`tail -f` 默认跟踪已打开的文件描述符；当编辑器通过替换文件保存，或日志轮替生成新文件时，改用 `tail -F` 跟踪文件名。
+
+#### more 基于Vi的文本过滤器
 
 按回车一行一行看，空格一页一页看
 
-### less
+#### less
 
 分屏查看 支持各种终端 动态加载 适合查看大文件 效率高 
 
-### echo 将内容输出至控制台
+#### echo 将内容输出至控制台
 
 - echo [选项] 输出内容
 
@@ -610,7 +350,7 @@ head -n 5 看前5行
 
 - echo "xxx" >  xxx.txt  新建文件的方法2
 
-### \> 和 >> 
+#### \> 和 >>
 
 \> 是覆写 >> 是追加
 
@@ -630,7 +370,7 @@ head -n 5 看前5行
 
 - **cat 文件1 > 文件2  快捷复制文件 速度非常快**
 
-### 文件链接
+#### 文件链接
 
 - ln -s **软链接/符号链接**
 
@@ -638,7 +378,7 @@ head -n 5 看前5行
 
 
   - 基本语法： ln -s [源文件或目录]  [软连接名]
-  - 注意：如果软链接的目的路径和源文件路径不同的话，都需要使用绝对路径才能成功创建
+  - 相对路径也可用于软链接，但链接目标的相对路径是相对于软链接所在目录解析的；不确定时使用绝对路径
   - 软链接的文件Inode是不同的
 - ln  **硬链接**
 
@@ -658,7 +398,7 @@ head -n 5 看前5行
 
   - 软链接可以跨越文件系统；硬链接不能
 
-### 文件指针
+#### 文件指针
 
 inode 代表文件的数据结构
 
@@ -666,13 +406,13 @@ dentry 代表目录的数据结构
 
 inode和dentry一起构成了cache，磁盘上的文件系统
 
-### history 查看已经执行过的命令
+#### history 查看已经执行过的命令
 
 history 所有的；history 10 看最近10个；
 
-history !5 执行 history列表中行号为5的指令
+!5 重新执行当前 Shell 历史记录中事件编号为 5 的命令；执行前先核对历史内容
 
-### 文件系统类型
+#### 文件系统类型
 
 Ext3
 
@@ -680,11 +420,9 @@ Ext4
 
 XFS ：large data files
 
----
+### 时间与日期命令
 
-## 034 时间日期指令
-
-### date 
+#### date
 
 - date 显示当前时间
 - date "+%Y-%m-%d %H:%M:%S"按占位符规定的格式显示日期
@@ -692,412 +430,285 @@ XFS ：large data files
 
 - cal 显示日历
 
----
+### 查找命令
 
-## 035 查找指令
+#### find
 
-### find
+`find` 从指定路径递归搜索，可用 `-name`、`-iname`、`-user`、`-size` 等条件过滤。`-iname` 忽略文件名大小写；`-type f` 筛选普通文件，`-type d` 筛选目录。
 
-从当前目录向下递归遍历各个子目录，将查到的显示在终端
+```sh
+find /path -iname 'xxx.txt'
+find /path -type f -name 'xxx.txt'
+find /path -type d -name 'dirname'
+```
 
-- 基本语法：find [搜索范围] [选项]
+`-size +n`、`-size -n` 分别表示超过、小于指定大小；单位可用 `k`、`M`、`G` 等。
 
-  - find -name / -user / -size (+n 大于；-n 小于；n等于；单位 k M G )
-  
-  
-  - find /目录 -iname xxx.txt  (-i 忽略大小写)
-  - find /目录 -f -name xxx.txt (加上-f是查找文件)
-  - find /目录 -d -name xxx.txt (加上-f是查找目录)
-  - 不加 -f-d都查找 
-
-### whereis
+#### whereis
 
 - find有时候会比较慢，whereis会比较快。但是whereis只是去找特定的几个目录
 
-### locate
+#### locate
 
 - 利用事先建立的查找数据库，快速定位文件；保证精确度，定时更新索引数据库（大概是系统每天自动更新一次数据库）
 - 先 updatedb
 - 再 locate xxx.txt
 
-### which
+#### which
 
 - 是找 PATH环境变量下面目录的指令
 
 - 查看某个指令在哪个目录下：which ls
 
-### grep
+#### grep
 
 - 过滤查找，常常与管道符结合使用
 -  基本语法：grep [选项] 查找内容 源文件
 - 例如：cat /opt/mylog | grep -n "Hello"
 - -n：显示行号；-i：忽略大小写
 
----
+### 压缩与解压
 
-## 037 压缩和解压缩
+#### gzip 与 gunzip
 
-### gzip/gunzip
+`gzip file` 将单个文件压缩为 `file.gz`，默认会替换原文件；`gunzip file.gz` 解压。压缩多个文件为一个归档时，可与 `tar` 配合。
 
-- gzip 压缩文件，只能压缩为.gz；gunzip 解压缩，只能解压.gz
-- 压缩完，源文件就没了
-- 语法 gzip *
+#### zip 与 unzip
 
-### zip/unzip
+`zip -r archive.zip directory/` 递归打包目录；`unzip archive.zip -d /target` 解压到指定目录。目录无需预先包含子目录才能使用 `-r`。
 
-压缩/解压，项目打包发布有用
+#### tar
 
-- zip/unzip [选项] [文件名].zip [文件或者目录名] 
-- zip -r ：递归压缩，压缩整个目录（该文件夹内必须有子文件夹，才能-r递归压缩成功）
-- unzip -d [指定目录]  [待解压文件]：解压后放到指定目录
+`tar` 负责归档，`-z` 让 gzip 处理压缩或解压。常用选项：`-c` 创建归档、`-x` 解包、`-v` 显示详情、`-f` 指定归档文件；`-C` 指定解包目录。
 
-### tar 
+```sh
+tar -zcvf /opt/my.tar.gz /opt/mytest/
+tar -zcvf /opt/my.tar.gz /opt/my1.txt /opt/my2.txt
+tar -zxvf /opt/my.tar.gz -C /opt/tmp
+```
 
-- 既能压缩，又能解压；压缩成.tar.gz文件（.tar是打包文件，没压缩；.tar.gz是压缩文件）
+`.tar` 仅表示归档格式，`.tar.gz` 表示经 gzip 压缩的 tar 归档。
 
-- 基本语法：tar  [选项]  xxx.tar.gz 打包的内容
+## 用户、权限与计划任务
 
-- -c 产生.tar打包文件；-v 显示详细信息；-f 指定压缩后的文件名；-z 用gzip格式对文档进行压缩或解压；-x 解包.tar文件
+### 启动、关机、重启与用户登录
 
-- 文件名后缀有.gz，得加上-z解压缩
+#### Linux 启动过程
 
-  ```bash
-  # 压缩文件夹
-  tar -zcvf /opt/my.tar.gz /opt/mytest/
-  # 压缩俩文件
-  tar -zcvf /opt/my.tar.gz /opt/my1.txt /opt/my2.txt
-  # 解压到指定目录 -C 后面加上指定目录
-  tar -zxvf /opt/my.tar.gz -C /opt/tmp
-  ```
+![090eb76673404b3ff67ee7ed697224f](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202312042155530.jpg)
 
----
+![dc019cdb971d2f32c75f931de48252d](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202312042155497.jpg)
 
-## 040 组管理
+1. 按电源键，服务器启动，首先会加载BIOS或者UEFI
+2. BIOS会检测硬件是否准备就绪，例如内存、硬盘、CPU等。
+3. 硬件检测通过，会选择启动设备，可以是硬盘、光驱、网络服务器。
+4. 从设备中读取引导文件（grub），读取到之后会提示选择内核版本，操作系统等。
+5. Linux 内核启动；使用 systemd 的系统由其作为 PID 1 初始化用户空间、管理服务和文件系统挂载。
+6. 在操作系统启动时，也会启动相关的服务或者进程，比如sshd，syslog，或者用户设置的开机启动服务。
+7. 运行启动脚本，并配置用户环境。
+8. 然后显示登录界面，提示输入用户名密码。
 
-1. 每一个用户都必须属于一个组，可以属于多个组
-2. 每个文件而言，有：**所有者、所在组、其他组** 三个概念，每种组，都有一定的权限可以设置。每个文件只能由一个组
+#### 关机与重启
 
-- 查看所有者
+| 命令 | 用途 |
+| --- | --- |
+| `shutdown -h now` | 立即关机。 |
+| `shutdown -h +1` | 一分钟后关机。 |
+| `shutdown -r now` | 立即重启。 |
+| `reboot` | 立即重启。 |
+| `sync` | 请求将缓存的文件系统数据写回存储。 |
 
-  ls -ahl / ls -ll 一样
+关机和重启命令通常会处理文件系统同步；在特殊维护场景可先单独运行 `sync`。
 
-- 修改所有者 得有root权限
+#### 用户类型
 
-  chown 所有者：所有组 /文件、目录
+- **root**：超级用户，UID 为 0；其主组 GID 由系统配置决定，不必等于 0。
+- **普通用户**：用于交互登录，UID 范围由 `/etc/login.defs` 等配置决定，不能只凭“是否大于 1000”判断。
+- **系统用户**：供服务或后台进程使用，通常不提供交互登录。`nobody` 是常见的低权限账号，可能使用 `/sbin/nologin`；它不表示“任何人都可以登录”。服务也可以使用各自的专用账号，例如 `ftp`。
 
-- 创建组，把人放进去
+为服务分配低权限账号可以限制进程可访问的资源，但具体权限仍由文件权限和其他安全策略决定。
 
-  groupadd [组名]
+#### 用户登录与注销
 
-  useradd -g [组名] [用户名]
+- `su - 用户名` 切换为目标用户的登录环境；省略用户名时通常切换为 root，需要相应身份验证。
+- `sudo 命令` 按 sudoers 策略以指定身份执行单条命令；需要密码时通常输入当前用户的密码。`sudo -i` 可申请交互式 root 登录 Shell。
+- `exit` 或 `logout` 退出当前登录 Shell，与旧式运行级别 3 没有必然关系。
 
-- 文件的创作者就是所有者，所有者所在组就是文件的所在组
+#### 账户配置文件
 
-- chgrp 更改**文件**所在组；usermod -g 新组名 用户名（改变**用户**所在组）；usermod -d 目录名 用户名 该用户登录的初始目录；（该用户得有该目录的进入权限）
+- 用户级 Bash 配置常见于 `~/.bashrc` 和 `~/.bash_profile`；实际加载顺序取决于是否为登录 Shell。
+- 全局环境可在 `/etc/profile` 等文件中配置。RHEL 系常见 `/etc/bashrc`，Debian/Ubuntu 常见 `/etc/bash.bashrc`。
 
-- **小技巧**：查找有没有某个组
+### 用户管理
 
-  ```shell
-  cat /etc/group | grep root
-  ```
+#### 创建用户与设置密码
 
----
+`useradd` 的默认行为受发行版和 `/etc/login.defs` 影响。需要明确创建家目录时使用 `-m`；自定义家目录使用 `-d` 并配合 `-m`。
 
-## 044 权限
+```sh
+sudo useradd -m username
+sudo useradd -m -d /home/custom username
+sudo passwd username # 交互输入新密码
+```
 
-- Linux中，任何一个文件都具有User、Group、Others三种身份的权限；即：**所有者、所在组、其他组**。
-- User信息记录在：/etc/passwd里面；个人密码记录在/etc/shadow里面；群组信息记录在/etc/group里面。
-- 命令：
-  - chgrp：改变群组
-  - chown：改变所有者
-  - chmod：改变权限
+不带用户名的 `passwd` 修改当前用户的密码；命令末尾不能直接追加明文密码参数。
 
-### 权限详解
+#### 查询、切换与删除用户
 
-0-9 总共10位：- rwx rw- r--
+```sh
+id username
+whoami
+who am i
+su - username
+sudo userdel username    # 默认保留家目录
+sudo userdel -r username # 同时删除家目录和邮件目录
+```
 
-- 第0位：文件类型
+`whoami` 显示当前有效用户名；`who am i` 查询当前登录会话。`su -` 会加载目标用户的登录环境，`su` 则保留更多当前环境。root 切换到其他用户通常无需输入目标密码。
 
-  - — 普通文件，l 链接，d 目录，c 字符设备文件（鼠标键盘等） ，b 块设备（硬盘），p管道文件，s socket文件
+#### 用户组与账户文件
 
-  - 查看文件状态：`stat <filename>`
+```sh
+sudo groupadd groupname
+sudo groupdel groupname
+sudo groupmod -g 2001 groupname # 修改组的数字 GID
+sudo useradd -m -g groupname username # 新用户的主组
+sudo usermod -aG groupname username   # 加入附加组，保留现有附加组
+sudo chgrp groupname filename         # 修改文件所属组
+```
 
-- 1-3位：**所有者**权限 rwx
+新建用户是否自动建立同名主组，由系统配置决定。账户信息见 `/etc/passwd`，密码散列和密码有效期信息见 `/etc/shadow`，组信息见 `/etc/group`；可用 `cat /etc/passwd` 查看现有本地账户。
 
-  r 可读 w可写 x可执行 ，某一位是 - 代表无此权限 
+### 用户组管理
 
-- 4-6位：**所在组**权限（与文件所有者同一组的用户权限）
+用户可属于一个主组和多个附加组。文件有一个所有者与一个所属组，访问控制分别考虑所有者、所属组和其他用户。
 
-- 7-9位：**其他组**权限
+- `ls -l` 或 `stat filename` 查看文件所有者和组。
+- `chown owner:group filename` 修改文件所有者与所属组；`chgrp group filename` 只改所属组。
+- `groupadd group` 创建组；`useradd -g group username` 创建用户并指定主组；`usermod -g group username` 修改已有用户主组。
+- `usermod -d /new/home username` 修改账号记录中的家目录路径；需要迁移已有内容时还需使用相应选项并检查权限。
+- `getent group groupname` 查询组信息。
 
-- 对文件：
+### 文件权限
 
-  r：可以读取、查看（读取一个文件的话，如果知道该文件路径，则需要对目录具有x权限，对文件具有r权限才能读取该文件。不必对目录具有r权限，因为已经提前知道文件路径了，不用列出目录下的文件。）
+文件权限通常写成十位字符，例如 `-rwxrw-r--`：首位表示文件类型，其后三组分别对应所有者、所属组和其他用户。`-` 是普通文件，`d` 是目录，`l` 是符号链接；还可能有字符设备 `c`、块设备 `b`、管道 `p`、套接字 `s`。账户和组信息分别见 `/etc/passwd`、`/etc/shadow`、`/etc/group`。
 
-  w：可以修改，不代表可以删除。可删除的前提是，用户对该文件所在**目录**有**w**的权限
+#### 文件与目录的读写执行权限
 
-  x：可以执行（Windows下的可执行与Linux下不同，windows是由扩展名来决定；linux是由x权限位来表示）
+| 对象 | `r` | `w` | `x` |
+| --- | --- | --- | --- |
+| 文件 | 读取内容 | 修改内容；删除文件还取决于父目录权限 | 执行文件 |
+| 目录 | 列出目录项 | 创建、删除或重命名目录项，通常还需要 `x` | 进入目录并按路径访问其中对象 |
 
-- 对目录：
+权限位可用数字表示：`r=4`、`w=2`、`x=1`，每组相加得到如 `755`。下图保留原有示意：
 
-  r：可以ls查看文件列表
+<img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202209111347288.jpeg" alt="权限位示意" style="zoom:50%;" />
 
-  w：可以修改，可创建/删除/重命名目录
+<img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202209111348269.png" alt="数字权限示意" style="zoom:50%;" />
 
-  x：可以进入该目录。如果要开放目录给别人浏览的时候，至少要给到r和x。
+#### 修改权限
 
-- 可用数字表示
+`chmod -v` 显示变更过程；符号模式使用 `u`（所有者）、`g`（组）、`o`（其他人）、`a`（全部）。数字模式按“所有者、组、其他人”的顺序指定权限：
 
-  r = 4；w = 2；x = 1；rwx  = 7
-  
-  <img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202209111347288.jpeg" alt="img" style="zoom:50%;" />
-  
-  <img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202209111348269.png" alt="img" style="zoom:50%;" />
+```sh
+chmod u=rwx,g=rx,o=x log.txt
+chmod o+w log.txt
+chmod a-x log.txt
+chmod 755 log.txt # rwxr-xr-x
+```
 
-### 修改权限 chmod
+#### 默认权限与 umask
 
-- chmod -v 显示权限变更的过程
-
-- 方式1：+ - = / u g o a
-
-  u：所有者；g：所有组；o：其他人；a：所有人（对三种角色同时做操作）
-
-  ```shell
-  chmod u=rwx,g=rx,o=x log.txt
-  chmod o+w log.txt
-  chmod a-x log.txt
-  ```
-
-- 方式2：r=4 w=2 x=1
-
-  ```bash
-  # 将log.txt文件的权限更改为rwxr-xr-x
-  chmod 755 log.txt
-  ```
-
-  注意这九位数是默认u g o 的顺序
-
-### 新文件的默认权限
-
-可以用umask查看：例如，0022，第一位是特殊标志位，后3位是权限位。
-
-规则如下：
-
-- 默认规定，新文件要拿掉x权限，即默认最大给到：-rw-rw-rw-；默认规定，新目录不拿掉任何权限，即默认给到：drwxrwxrwx
-- umask的0022规定了在以上基础上继续拿掉哪些权限。022表示：user不被拿掉任何权限；group和others拿掉2（w）
-- 默认权限基础上减掉被umask拿掉的权限就是新创建文件和目录的默认权限：
-  - 文件：-rw-r--r--
-  - 目录：drwxr-xr-x
+新建普通文件的权限上限通常是 `666`，新建目录通常是 `777`；`umask 022` 会去掉组和其他用户的写权限，得到文件 `644`、目录 `755`。实际结果还可能受默认 ACL 等因素影响。
 
 ![image-20220917205951750](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202209172059809.png)
 
-### SUID SGID Sticky：特殊标志位
+#### SUID、SGID 与 sticky bit
 
-- SUID
-  - **只对有x权限的文件有效。**如果一个程序的所有者是root并且具有SUID属性；那么普通用户执行，如同是root在执行。
-  - -rwsr-xr-x；置于u的x位置，s 表示SUID位被设置。也可以用 4755 表示
-  - 比如/etc/passwd: ----------（即passwd只有root用户可以读写）; 但是修改密码的命令：/usr/bin/passwd: -rwsr-xr-x，那么普通用户在用passwd改自己的密码时可以跟root一样获得权限去写入passwd文件。
-- SGID
-  - 对目录设置后，该目录中【新建的文件】的所在组 都是该目录的所在组
-  - drwxrwsr-x; 置于g的x位置，也可以用 2775 表示
-- sticky
-  - 针对目录而言，如果设置了粘滞位，在该目录下的文件，只能是**root**和**创建者**可以删改，某个普通用户不能删除/改名/移动别人的文件。
-  - drwxrwxrwt；置于o的x位置 1777
+- **SUID**：对可执行文件设置后，执行时可使用文件所有者的有效 UID，例如 `/usr/bin/passwd` 需要受控地更新 `/etc/shadow`。`4755` 是一种数字表示。
+- **SGID**：对目录设置后，其中新建文件通常继承目录的所属组；`2775` 是一种数字表示。
+- **sticky bit**：常用于多人可写目录，限制用户删除或重命名其他用户的文件；`1777` 是一种数字表示。
 
----
+### 定时任务
 
-##  052 任务调度
+#### crontab：重复执行
 
-### crontab 定时任务设置 （反复执行）
+`crontab -e` 编辑当前用户的定时任务；系统级计划任务还可定义在 `/etc/crontab`。表达式 `* * * * *` 依次表示分钟、小时、日期、月份和星期。以下任务每分钟运行一次：
 
-科隆表达式，科隆是古代掌握时间的神
+```cron
+* * * * * ls -l /etc/ > /tmp/to.txt
+```
 
-- 定时调用脚本or指令
+例如将日期和日历追加到日志，保存为 `/opt/my.sh`：
 
-- crontab 
+```sh
+#!/bin/sh
+date >> /opt/mycal.txt
+cal >> /opt/mycal.txt
+```
 
-  - 设置任务调度文件：/etc/crontab
+保存脚本后执行 `chmod 744 /opt/my.sh`，再在 `crontab -e` 中添加：
 
-  - 设置个人任务到调度文件：
+```cron
+* * * * * /opt/my.sh
+```
 
-    先输入 crontab -e 
+数据库备份同样可以按计划执行。原命令将密码写在命令行且 `-u` 缺少用户名；下例改为从预先配置、只允许目标用户读取的 MySQL 选项文件获取凭据：
 
-    再输入任务：
+```cron
+0 2 * * * mysqldump --defaults-extra-file=/root/.my.cnf testdb > /home/test.bak
+```
 
-    */1 * * * * ls -l etc/ > /tmp/to.txt  (每小时的每分钟执行)
+请按运行该任务的用户、MySQL 版本和实际备份目录调整路径。
 
-- 可以用工具生成？
+#### at：一次性执行
 
-- 实例：每隔一分钟，将当前日历和时间追加到mycal.txt中。
+`atd` 负责运行一次性任务。可用 `systemctl status atd` 检查服务状态，`at 10:00` 进入交互输入并用 `Ctrl+D` 结束；`atq` 查看队列，`atrm 作业号` 删除任务。
 
-  - 思路：写一个脚本，里面包含两条指令，然后在crontab中添加定时任务执行脚本
+## 存储与文件系统
 
-    - 写脚本：
+### 磁盘分区与挂载
 
-      ```shell
-      vim my.sh
-      ```
+#### 磁盘、分区与启动方式
 
-      写入：
+- 磁盘按扇区寻址，常见逻辑扇区大小为 512 字节或 4 KiB；具体大小以设备报告为准。
+- 分区表描述磁盘上的分区范围。MBR 通常最多支持四个主分区，可借助扩展分区创建逻辑分区；采用 512 字节逻辑扇区时，其容量上限约为 2 TiB。
+- GPT 使用分区条目记录分区信息，并保留备份分区表，突破了 MBR 的主分区数量和容量限制。现代 `fdisk` 支持 GPT，也可以使用 `gdisk` 或 `parted`。
+- 文件系统创建在分区或其他块设备上；挂载是把文件系统接入目录树。挂载点必须是目录，挂载后原目录中的内容会暂时被遮蔽。
+- 设备名可能是 `/dev/sda1`、`/dev/vda1`、`/dev/nvme0n1p1` 等。用 `lsblk -f` 确认设备、文件系统、UUID 与挂载点，不要仅凭设备名猜测用途。
+- BIOS 与 UEFI 是两种固件启动方式。常见组合是 BIOS + MBR 或 UEFI + GPT；BIOS 也能从 GPT 磁盘启动，但 GRUB 等引导程序通常需要 BIOS Boot Partition。UEFI 通常从 EFI 系统分区加载引导程序。
 
-      ```shell
-      date >> /opt/mycal.txt
-      cal >> /opt/mycal.txt
-      ```
+#### 增加磁盘的示例
 
-    - **给my.sh 添加执行权限：**
+以下以虚拟机新增的 `/dev/sdb` 为例。**执行前用 `lsblk` 核实目标磁盘；分区与格式化会清除目标设备上的数据。**
 
-      ```shell
-      chmod 744 /opt/my.sh
-      ```
+1. 在虚拟机设置中添加磁盘，运行 `lsblk` 确认设备。
+2. 运行 `fdisk /dev/sdb`；按 `m` 查看帮助，按 `n` 新建分区，按提示选择分区编号和范围，最后按 `w` 写入分区表（放弃用 `q`）。创建后用 `lsblk -f` 确认分区名。
+3. 为新分区选择**一种**文件系统，例如：
 
-    - 添加定时任务：
+   ```sh
+   mkfs.ext4 /dev/sdb1
+   # 或：mkfs.xfs /dev/sdb1
+   ```
 
-      ```shell
-      crontab -e
-      ```
+4. 创建空目录并挂载；命令行挂载在重启后通常不会保留：
 
-      写入：
+   ```sh
+   mkdir -p /mnt/data
+   mount /dev/sdb1 /mnt/data
+   ```
 
-      ```shell
-      */1 * * * * /opt/my.sh
-      ```
+5. 需要开机自动挂载时，先运行 `blkid /dev/sdb1` 获取 UUID，再在 `/etc/fstab` 中添加对应条目。以下以 ext4 为例，UUID 需替换为实际值：
 
-- 实例：每天凌晨两点，将数据库testdb备份到文件中
+   ```text
+   UUID=<实际UUID> /mnt/data ext4 defaults 0 2
+   ```
 
-  ```shell
-  crontab -e
-  0 2 * * * mysqldump -u -proot testdb > /home/test.bak
-  ```
+   六列依次为设备或 UUID、挂载点、文件系统类型、挂载选项、dump 备份标记和 `fsck` 检查顺序。`0` 表示不检查，`1` 通常留给根文件系统，`2` 用于其他需要检查的文件系统。运行 `mount -a` 检查配置。
 
-### at 定时任务 （一次性执行）
+维护时可用 `mount -o remount,rw /` 将已挂载的根文件系统重新挂载为可写；只读模式下仍需注意故障原因。挂载磁盘映像可使用 `mount -o loop`。
 
-- at是一次性定时计划任务，at的守护进程atd以后台模式运行，检查作业队列来运行。
-
-  ps -ef | grep atd  (检测atd进程有没有在运行)
-
-  atd守护进程每60 s检查一次作业队列，匹配则运行此作业
-
-- at [选项] [时间]   然后输入指令  然后**ctrl+d 两次**
-
-- arq 查看任务
-
-- atrm [任务序号]： 删除任务
-
----
-
-## 058 Linux 磁盘分区和挂载
-
-### 磁盘组成
-
-- 扇区sector：最小的物理储存单位。目前有512bytes和4k两种格式。
-
-- 将扇区围成一个圆，叫磁柱。
-
-### Linux磁盘分区
-
-#### MBR
-
-- 主引导记录，硬盘第一个扇区放着512字节的主要启动记录和分区表。
-- 特点：最大支持2T硬盘，最多支持4个主分区；更多分区可以用扩展分区和逻辑分区来实现。
-
-#### GPT
-
-- 与MBR仅使用第一个512byte来记录不同，GPT使用了34个LBA区块来记录分区信息。
-- 解决了主要分区的数量限制。
-- 并不是所有操作系统都可以读取GPT分区，与开机检测程序有关。
-
-- 分区与文件系统的关系
-
-- 挂载：把某个目录分配磁盘的空间，将文件系统与目录树结合；挂载点一定是目录，该目录是进入该文件系统的入口。
-
-- Linux分区
-
-  - 一般采用SCSI硬盘，标识为 sda1、sda2、sdb1、sdb2等等
-- 查看挂载情况：lsblk / lsblk -f
-
-### 开机检测程序
-
-> [!info] BIOS/UEFI 简介
-> **即基本输入输出系统，是服务器启动后最先运行的软件。它包括基本输入输出控制程序、上电自检程序、系统启动自举程序、系统设置信息。**BIOS是服务器硬件和OS之间的抽象层，用来设置硬件，为OS运行做准备。**BIOS设置程序是储存在BIOS芯片中的。BIOS的进化版本是UEFI（Unified Extensible FirmwareInterface），即统一的可扩展固定接口。**这种接口用于操作系统自动从预启动的操作环境，加载到一种操作系统上，从而使开机程序化繁为简，节省时间。
-
-#### BIOS
-
-写入到主板上的程序，是开机的时候计算机运行的第一个程序。
-
-- 上电后，**BIOS**会确认**硬件**是否正常运行，随后去找能够开机的硬盘，并且去读取MBR
-- 没问题的话就**启动开机引导程序**。
-- 引导程序的作用是把硬盘中的OS加载到内存中运行。（OS负责启动应用程序，但是OS没有办法自己启动自己，需要引导程序来启动。）
-- 开机管理程序除了可以除了可以安装到MBR之外，还可以安装到分区槽的启动扇区（boot loader）中。实现多重引导。
-
-#### UEFI
-
-BIOS无法读取GPT格式；UEFI出现，为了代替BIOS。省去了开机自检，开机速度较快。
-
-通常磁盘分区格式会与开机检测程序一起提到：
-
-- legacy方式：MBR+BIOS方式
-- UEFI+GPT方式
-
-### 增加磁盘的操作实例
-
-- 步骤1：虚拟机设置中增加一块磁盘
-
-- 步骤2：分区命令 fdisk /dev/sdb
-
-  输入 m 看说明；输入n分区；输入 p （primary）；输入分区数量；回车 回车 回车 全部默认
-
-  再输入w 保存退出；（不想保存，输入q）
-
-- 步骤3：格式化sdb1（指定文件格式）
-
-  ```shell
-  mkfs -t ext4 /dev/sdb1 # ext4
-  mkfs.xfs /dev/sdb1 # xfs
-  ```
-
-- 步骤4 挂载到指定目录 mount /dev/sdb1 /...
-
-​	**注意：**
-
-​	**0.并不是所有目录都可以作为挂载点，挂载操作会使得原有目录隐藏，因此根目录以及系统原有目录不能作为挂载点**
-
-​	**1.挂载点一定是已经建立的空目录**。（也可以不为空，但是挂载之后，已有的内容将不可用）
-
-​	**2.用命令行挂载，是临时的，重启之后，会失效。**
-
-​	**3.MBR分区用fdisk分区；GPT用gdisk分区**
-
-- 步骤5：永久挂载
-
-  修改/etc/fstab
-
-  输入mount -a 即刻生效
-
-  - fstab 文件
-  
-    每行数据分了六个字段
-  
-    1. 分区设备文件名或者UUID
-    2. 挂载点
-    3. 文件系统的类型
-    4. 挂载参数 defaults等（auto/noauto代表是否会被mount -a主动测试挂载）
-    5. 分区是否被dump备份 （0是不备份 1 代表备份 2 不定期备份）
-    6. 分区是否被fsck检测  (0 不检测 1 高优先级 2 稍低的优先级) (先检测1优先级)
-  
-  - fstab的挂载记录是写入到/etc/mtab 和 /proc/mounts中。
-  
-- 重新挂载remount 
-
-  ```shell
-  mount -o remount,rw,auto /
-  ```
-
-  当进入单人维护模式时，根目录通常被重新挂载为只读，用这个命令重新挂载为rw
-  
-- 挂载image等大文件：mount -o loop
-
-### 查看磁盘使用情况
+#### 查看磁盘使用情况
 
 - df -h ：查询文件系统占用情况，要是读取superblock信息，会非常快。
 
@@ -1149,14 +760,14 @@ BIOS无法读取GPT格式；UEFI出现，为了代替BIOS。省去了开机自�
   列出磁盘的分区表类型和分区信息
 
   ```shell
-  parted /dev/vda1 print
+  parted /dev/vda print
   ```
 
 - partprobe
 
   更新核心分区表
 
-### 工作常用指令
+#### 工作常用指令
 
 1. 统计/opt文件夹下的目录个数
 
@@ -1192,7 +803,7 @@ BIOS无法读取GPT格式；UEFI出现，为了代替BIOS。省去了开机自�
    tree /home/
    ```
 
-### 逻辑卷管理 LVM
+#### 逻辑卷管理 LVM
 
 - What
   - Logical Volume Manager 逻辑卷管理，Linux中对磁盘分区进行管理的机制
@@ -1211,29 +822,29 @@ BIOS无法读取GPT格式；UEFI出现，为了代替BIOS。省去了开机自�
 
   一款硬盘，被格式化为物理卷（PV），其内部分为若干PE，在PV基础上创建了卷组（VG），可以把若干PV加入VG；VG相当于空间池，基于VG创建逻辑卷（LV），将LV格式化，再挂载。扩充LV的过程就是增减PE的数量，不会影响数据
 
-### 磁盘阵列 RAID
+#### 磁盘阵列 RAID
 
 - Redundant Arrays of Independent Disks. 利用许多独立的便宜磁盘，组成容量巨大的磁盘组，利用个别磁盘提供数据所产生的加成效果提升整个磁盘系统的效能
 - 最大优点：提高数据传输速率，在多个磁盘上同时存储数据
 - RAID0：数据并行写入每个磁盘，并行读取；但是没有冗余，一个盘坏掉，数据全部丢失。不适用于安全性要求高的场景
 - 注意：别把空间不同的磁盘RAID，否则性能将会被限制在最小容量的那个盘
 
-### 磁盘完整性检查 FSCK
+#### 磁盘完整性检查 FSCK
 
 - 磁盘没有mount的时候运行fsck
 
   ```bash
   umount /dev/sdc1
-  fcsk -y /dev/sdc1  # -y可以自动修复错误
-  xfs_repair /dev/sdc1 # xfs文件系统用这个
+  fsck -y /dev/sdc1  # 仅用于适用 fsck 的文件系统；-y 自动确认修复
+  xfs_repair /dev/sdc1 # XFS 文件系统使用此命令，修复前必须卸载
   ```
 
 
-### 初始化磁盘（Initrd）
+#### 初始化磁盘（Initrd）
 
 - 是系统引导过程中挂载的一个临时根文件系统，用来支持两阶段的引导过程，initrd中包含了各种可执行程序和驱动，可以挂载实际的根文件系统，然后再将initrd磁盘卸载，释放内存。
 
-### 启动管理
+#### 启动管理
 
 - UEFI or BIOS？
 
@@ -1253,316 +864,144 @@ BIOS无法读取GPT格式；UEFI出现，为了代替BIOS。省去了开机自�
   mokutil -sb-state
   ```
 
----
+### Linux 文件系统
 
-## 059 Linux文件系统
+#### inode、block 与 superblock
 
-### EXT2 文件系统特性
+以 ext 系列文件系统为例：
 
-inode、block、superblock
+- **inode** 记录文件类型、权限、所有者、时间戳及数据块位置等元数据；文件名保存在目录项中。每个文件或目录通常对应一个 inode。
+- **block** 保存文件内容或目录项。文件很小也会占用分配单位；块太大可能浪费小文件空间，太小会增加元数据开销。格式化时会将空间组织为块组。
+- **superblock** 保存文件系统的总体信息，例如块和 inode 的数量、状态等。
+- **bitmap** 标记空闲或已用的 inode 与 block，属于文件系统元数据。
 
-- inode：存放文件属性信息，一个文件占用一个inode；同时也记录该文件数据所在的block号码
-- block：记录文件的数实际内容。
-- superblock：记录此文件系统的整体信息，包括inode的使用量、使用总量等。
+例如，一个文件的 inode 指向数据块 2、3、5、7，文件系统据此定位内容。目录自己的 inode 指向目录数据块，目录项保存名称与 inode 的对应关系，因此重命名或删除目录中的条目通常需要该目录的写权限。
 
-举例：假设一个文件的inode记录了文件数据的实际放置点为2 3 5 7，那么操作系统就可以据此排列磁盘的阅读顺序，一口气将多个block的内容都读取出来。这种数据存取的方法称为**索引式文件系统**。
+FAT 使用文件分配表记录簇链，结构与 ext 的 inode 索引不同；碎片较多时，读取同一文件可能需要跨越较远的磁盘位置。inode 的大小由文件系统类型及创建参数决定，不能用固定的 ext4/XFS 字节数概括；文件数量还受可用 inode、空间及文件系统实现等限制。
 
-与之对比的是FAT文件系统，没有inode存在，每个block记录了下一个block位置，像链表一样一个一个顺序来读。【碎片整理】说的就是FAT文件系统里面的bolck太过分散，通过碎片整理来将同一个文件的block汇总到一起。提升读写速度。
+`dumpe2fs /dev/sda1` 可查看 ext 文件系统信息；应先核实设备路径。
 
-### block大小
+#### 一致性、日志与写回
 
-- 文件大于block大小，会占用多个block；文件小于单个block大小，还是会占用单个block。
-- block过大，存小文件会造成空间浪费；block过小，存大文件会造成block太多，读写缓慢。根据实际情况合理选择。
-- 格式化的时候会分为多个block groups，每个组都有super block
+意外断电可能使 inode、数据块与空闲位图不一致。ext3/ext4 的日志机制会先记录相应元数据操作，再据此缩短故障后的一致性恢复时间；日志并不等于完整数据备份。
 
-### inode
+Linux 使用页缓存改善读写性能。内存中修改过的页会标记为 dirty，并在适当时机写回磁盘；`sync` 可请求写回缓存。正常卸载或关机会尽力完成写回，突然掉电仍可能导致数据丢失或文件系统不一致。
 
-- 每个inode大小固定（128 bytes for ext2；256 bytes for ext4 and xfs）。
-- 文件系统能够创建的文件数量与inode数量有关。
+#### 其他文件系统与 XFS
 
-### 查看ext文件系统信息
+CentOS 7 的默认文件系统通常是 XFS。`ls -l /lib/$(uname -r)/kernel/fs` 可查看当前内核安装的部分文件系统模块；实际支持情况还包括内建驱动。
 
-dumpe2fs /dev/sda1
+XFS 适合大容量和高并发工作负载。其分配组（allocation group）管理数据与元数据，日志记录需要恢复的变更；可选的实时设备（realtime device）用于特殊场景，并非普通文件写入的临时区。
 
-### 目录的占用
-
-- 目录也会被分配一个inode，存储目录的权限和属性，以及分配的block的号码；block则记录目录下的文件名以及每个文件的inode号码。
-- 文件太多，一个block放不下的话，多个block来放。
-- 注意：由于文件名是存储在block里面的，所以涉及到文件名修改的操作，需要目录的w权限。
-
-### bitmap
-
-- bitmap记录了文件系统中可用的inode和block信息
-- inode bitmap，block bitmap和superblock称为metadata
-
-### 一致性检查
-
-如果在写入文件过程中，发生意外系统中断，造成inode、block与bitmap数据不一致。如果要检查就得整个文件系统检查。
-
-### 日志式文件系统：ext4/ext4
-
-在文件系统中规划出了一个区块，记录写入和修订文件的步骤：
-
-- 预备：会在日志记录区中记录准备写入的信息
-- 实际写入：开始写入文件的权限和数据，更新metadata的数据
-- 完成数据和metadata更新后，记录为完成。
-
-一致性出问题只需根据日志针对性的去找，快速恢复。
-
-### 文件系统的读写运作
-
-CPU只能读取内存中的数据，如果文件比较大，需要频繁写入磁盘、读到内存；会效率低下。
-
-Linux采用异步（async）来处理：
-
-- 系统加载到内存，如果文件被更改过；该内存区段的文件会被标记为dirty；没改过就是clean；磁盘会不定时将dirty的文件写回磁盘，保持内存磁盘的一致性。
-- 可以手动采用sync来将dirty数据写回到磁盘；正常关机之后会调用sync；但是非正常关机之后，数据未写入磁盘，再次启动可能会导致文件系统损坏。
-
-### 其他文件系统
-
-更新的速度更快的文件系统，比如xfs、reiserfs等。CentOS7开始，预设的文件系统已经开始默认为xfs了。
-
-```shell
-# 查看Linux支持的文件系统有哪些。（这个路径下是支持的文件系统的驱动程序）
-ls -l /lib/$(uname -r)/kernel/fs
-```
-
-### xfs文件系统简介
-
-ext文件系统是预先规划出所有的inode/block/superblock，不再需要进行动态配置；在磁盘容量巨大之后，格式化的时候会特别慢。而xfs文件系统就被用于高容量磁盘和高性能文件系统而用。
-
-#### 组成
-
-- 资料区
-
-  存放superblock、inode分配与追踪；inode和block都是系统需要的时候才动态配置产生。
-
-- 文件系统活动登陆区
-
-  记录文件系统的变化；异常中断后，系统会拿这个区块进行一致性检验修复，有点像日志区。
-
-- 实时运作区
-
-  有文件要建立的时候，xfs会将文件暂时放置在里面，inode分配完毕之后再写到data section中。
-
-### 查看信息
-
-```shell
-xfs_info
+```sh
+xfs_info /实际挂载点
+# 或：xfs_info /dev/实际设备
 ```
 
 ![image-20221017185539855](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202210171855949.png)
 
-### 修改UUID和label name
+XFS 的标签与 UUID 可用 `xfs_admin` 管理；ext 文件系统可用 `tune2fs` 管理相关属性。修改前应检查文件系统是否需要卸载，并核实命令选项。
+## 云平台与网络
 
-xfs_admin 和 tune2fs
+### 云平台相关配置
 
----
+#### Azure Linux Agent（waagent）
 
-## Cloud 相关配置
+waagent 负责 Azure Linux VM 的部分代理与扩展功能；资源盘和交换区的管理方式取决于镜像、代理版本和 cloud-init 配置。资源盘属于临时存储，不能存放需要持久保存的数据；设备名可能因 SCSI/NVMe 控制器和 VM 规格不同而变化，先用 `lsblk` 核实。
 
-### waagent
+代理日志通常在 `/var/log/waagent.log`，配置文件为 `/etc/waagent.conf`。以下是旧版笔记中的资源盘及交换区参数，**仅作为配置项示例**，启用前需核对当前镜像、代理与 cloud-init 的实际管理权：
 
-- Windows Azure Agent 控制了资源盘和交换区
-
-- resource disk
-
-  - temporary storage （located in /dev/sdb1）in VM
-  - 重启不友好，灾难恢复后VM重新分配
-
-- waagent 日志路径
-
-  /var/log/waagent.log
-
-- 交换区 
-
-  - 作用：当物理内存不够用的时候，释放一部分内存；被释放掉的进程可以先保存在交换区内；等到有空间时再加载回去
-  - 启用交换区
-
-  ```shell
-  vim /etc/waagent.conf  # waagent means Windows Azure Agent
-  ```
-
-  - 修改参数：
-
-
-  ​	ResourceDisk.Format=y
-
-  ​	ResourceDisk.EnableSwap=y
-
-  ​	ResourceDisk.SwapSizeMB=4096
-
-### cloud-init
-
-- 云端部署时，设置默认配置
-- waagent是Azure专属；cloud-init是通用；后者可以覆盖前者
-
-### extension
-
-- 部署之后的一些扩展功能
-- 可通过CLI Powershell Azure Resource Manager启动
-- 查看extensions路径：/var/log/azure/*
-
----
-
-## 063 网络配置
-
-- windows查看VMnet8网络配置 （ipconfig）
-- Linux查看网络配置 ifconfig  （interface configuring）
-
-### IP获取方式
-
-- 自动获取：自己用可以，但服务器不适用
-- 指定IP：详见老韩图解
-
-### 设置主机名和hosts映射
-
-- hostname 查看主机名
-- hosts文件是主机名和IP地址的映射
-- windows：C:\Windows\System32\drivers\etc\hosts 中指定主机和IP映射即可
-- Linux：/etc/hosts  指定主机名和IP的映射，在不适用DNS服务器的情况下
-
-### interface设置
-
-- 路径：/etc/network/network-scripts/ifcfg-**eth0**(device名)
-
-### 验证DNS域名解析
-
-- **dig** @8.8.8.8 Microsoft.com
-  - A 地址记录，用来指定域名的 IPv4 地址，如果需要将域名指向一个 IP 地址，就需要添加 A 记录。
-- **nslookup** microsoft.com
-- **getent hosts** microsoft.com
-- 本地DNS解析：/etc/hosts
-- DNS优先级定义：/etc/nsswitch.conf
-- **/etc/nsswitch.conf** 这个文件定义了DNS解析的优先级过程，默认下，先从本地寻找（**/etc/hosts**），如果找不到，再从**/etc/resolv.conf**中定义的DNS服务器中寻找
-- **nslookup**和**dig**直接从**/etc/resolv.conf**中定义的nameserver寻找，并不会查找本地/etc/hosts；然而**getent**会按照**/etc/nsswitch.conf** 定义的顺序来查找（默认时就会先查找/etc/hosts）
-
-### 检查端口监听状态
-
-```shell
-netstat -an | grep 80 | grep LISTEN
+```ini
+ResourceDisk.Format=y
+ResourceDisk.EnableSwap=y
+ResourceDisk.SwapSizeMB=4096
 ```
 
-### 连接端口
+swap 用于在内存紧张时将部分页面换出到磁盘，性能与数据持久性不能等同于 RAM。
 
-- 使用netcat telnet curl 连接指定端口  （http80 https 443）
-- netcat 亦可检查UDP连接；telnet只能检查TCP连接
+#### cloud-init 与扩展
 
-### 路由表
+`cloud-init` 用于云主机初始化，适用于多个云平台；Azure Linux Agent 则是 Azure 平台组件。两者功能可能交叠，资源盘、网络等配置应明确由哪一方管理。Azure VM 扩展可通过 Azure CLI、PowerShell 或 Azure Resource Manager 部署；扩展日志通常位于 `/var/log/azure/` 下。
 
-- Information on how packets are forwarded
+### 网络配置
 
-- Assist customers to add static route
+在 Windows 上可用 `ipconfig` 查看 VMnet8 等虚拟网络配置；在 Linux 上优先用 `ip addr` 查看接口地址，旧系统也可能提供 `ifconfig`。
 
-- check routing table
+#### 地址、主机名与解析
 
-  ```shell
-  netstat -r
-  route -n
-  ```
+- DHCP 自动分配地址；服务器也可以使用 DHCP 地址保留或配置静态地址，按实际网络环境选择。
+- `hostname` 查看主机名。Linux 的 `/etc/hosts` 和 Windows 的 `C:\Windows\System32\drivers\etc\hosts` 可维护本地主机名与 IP 映射。
+- 旧版 RHEL/CentOS 的网络接口配置常位于 `/etc/sysconfig/network-scripts/ifcfg-<接口名>`；较新的 NetworkManager 通常管理 keyfile 连接配置，可用 `nmcli` 查看和修改。接口名以 `ip link` 的结果为准。
+- `dig @8.8.8.8 microsoft.com` 查询指定 DNS 服务器，A 记录对应 IPv4 地址；`nslookup microsoft.com` 也可查询 DNS。
+- `getent hosts microsoft.com` 依照 `/etc/nsswitch.conf` 的 `hosts` 顺序解析，通常会考虑 `/etc/hosts`。`dig` 和 `nslookup` 直接查询 DNS，不读取 `/etc/hosts`。DNS 服务器配置通常可从 `/etc/resolv.conf` 查看。
 
-- Add route
+#### 端口与路由
 
-  ```shell
-  route add -net 10.0.2.0 netmask 255.255.255.0 dev eth0
-  route add -net 127.0.0.0 netmask 255.0.0.0 lo  # add loopback interface
-  route add default gw 192.168.10.1  # add default gateway
-  ```
+`ss -lnt` 查看监听的 TCP 端口；`netstat -an` 是旧系统中常见的替代命令。可用 `nc`、`telnet` 或 `curl` 测试目标连接；`telnet` 只测试 TCP，`nc` 可测试 TCP 或 UDP，但 UDP 探测结果需结合应用响应判断。
 
-### iptables
+`ip route` 查看路由表，旧命令还有 `netstat -r`、`route -n`。以下旧式 `route` 示例用于说明目的网络、设备和默认网关，实际地址与接口名需按环境替换：
 
-- a set of rules to decide what to do
-
-- Rules are organized into groups called **chains**
-
-  INPUT: This chain handles packets that are addressed to your server
-
-  OUTPUT: This chain handles packets that are created by your server
-
-  FORWARD: Configure your server to route requests to other machines
-
-- Chians contain 0 or more policies including ACCEPT/DROP/REJECT
-
-- how to check
-
-  ```shell
-  iptables -S
-  iptables -L
-  ```
-
-### Network trace
-
-- Net connectivity problem - network captures from source to destination to analyze
-
-- **tcpdump** : most commonly used tool to capture or filter packets
-
-- eg
-
-  ```shell
-  tcpdump -w /tmp/traces.pcap -i eth0  # capture traces in device eth0 and save it
-  ^C
-  ls -l /tmp/traces.pcap
-  ```
-
-### Network File Share (NFS)
-
-Azure Linux Academy - Foundation P.104   
-
-### Firewalld basics
-
-- Zones utilized for trust for network connections: block, drop, public, external, dmz, internal, trusted, work, home.
-
-- firewalld
-
-  ```bash
-  firewalld-cmd --state # check status
-  firewalld-cmd --list-all # list configuration
-  firewalld-cmd --get-zones # list zones
-  firewalld-cmd --get-active-zones # list active zones
-  firewalld-cmd --list-services # list allowed services
-  firewalld-cmd --list-ports # list allowed ports
-  firewall-cmd --add-service=<service name> --zone=<zone name> --pernament # allow a service
-  firewall-cmd --add-port=<port number/protocol> --zone=<zone name> --permanent # allow a port
-  firewall-cmd --remove-service=<service name> --zone=<zone name> --permanent
-  firewall-cmd --remove-port=<portnumber/protocol> --zone=<zone name> --permanent
-  firewall-cmd --reload
-  
-  ```
-
-### SELinux
-
-- An architecture for Linux that defines access to apps, processes, files by security policies.
-- Configuration file: /etc/sysconfig/selinux  (symlink to /etc/selinux/config)
-- SElinux modes: enforcing (policies are enforced), permissive (logs warnings/violations), disabled
-- SElinux policies: Targeted, miminum, MLS
-- How it works:
-  - all files, processes, ports have a label and are logically grouped 
-  - Access Vector Cache (avc) caches permissions and is checked shen a request is made.
-  - If permission is denied, an "avc:denied" massage appears in /var/log/messages and /var/log/audit/audit.log	
-
-```
-sestatus  
-getenforce  # check status of selinux
-
-setenforce 0 # temporarily enable permissive
-setenforce 1 # temporarily enable enforcing
+```sh
+route add -net 10.0.2.0 netmask 255.255.255.0 dev eth0
+route add -net 127.0.0.0 netmask 255.0.0.0 lo
+route add default gw 192.168.10.1
 ```
 
-- Trouble shooting
+#### iptables 与抓包
 
-  ```shell
-  grep -i denied | /var/log/audit/*  # 找到日志里面带denied的信息
-  ```
+iptables 规则按链组织：`INPUT` 处理发往本机的数据包，`OUTPUT` 处理本机发出的数据包，`FORWARD` 处理转发的数据包。规则或默认策略可以采用 `ACCEPT`、`DROP`、`REJECT` 等目标。用 `iptables -S` 或 `iptables -L` 查看规则；现代发行版也可能使用 nftables 或 firewalld 管理防火墙。
 
+网络连通性故障可在源端和目的端抓包分析：
 
----
+```sh
+tcpdump -w /tmp/traces.pcap -i eth0
+# 按 Ctrl-C 停止抓包
+ls -l /tmp/traces.pcap
+```
 
-## 068 进程管理
+#### NFS
+
+相关原始资料：Azure Linux Academy - Foundation，P.104。
+
+#### firewalld
+
+firewalld 用 zone 表示网络连接的信任范围，常见 zone 有 `block`、`drop`、`public`、`external`、`dmz`、`internal`、`trusted`、`work`、`home`。
+
+```sh
+firewall-cmd --state
+firewall-cmd --list-all
+firewall-cmd --get-zones
+firewall-cmd --get-active-zones
+firewall-cmd --list-services
+firewall-cmd --list-ports
+
+# 示例：在 public zone 中开放 SSH 服务或 TCP 8080 端口
+firewall-cmd --zone=public --add-service=ssh --permanent
+firewall-cmd --zone=public --add-port=8080/tcp --permanent
+# 移除时分别使用 --remove-service=ssh 或 --remove-port=8080/tcp
+firewall-cmd --reload
+```
+
+#### SELinux
+
+SELinux 通过安全策略和标签控制进程、文件、端口等对象的访问。配置文件为 `/etc/selinux/config`（部分系统的 `/etc/sysconfig/selinux` 是其符号链接）。模式有 enforcing、permissive、disabled；常见策略类型有 targeted、minimum 和 MLS。访问向量缓存（AVC）保存权限判定；拒绝事件通常可在审计日志中查询。
+
+```sh
+sestatus
+getenforce
+setenforce 0  # 临时切换为 permissive
+setenforce 1  # 临时切换为 enforcing
+grep -i denied /var/log/audit/audit.log
+```
+
+## 进程、软件与系统服务
+
+### 进程管理
 
 - 执行中的程序都是一个进程，每一个进程分配一个PID。程序是静态的，程序run起来，加载到内存中，就是一个进程。
 - 每个进程可能以两种方式存在，**前台** or **后台** ， 一般而言，系统服务以后台形式常驻
 
-### 显示进程
+#### 显示进程
 
 - ps
 
@@ -1573,8 +1012,8 @@ setenforce 1 # temporarily enable enforcing
   - 常用：
 
     ```shell
-    ps -aux | more
-    ps -aux | grep ...
+    ps aux | more
+    ps aux | grep ...
     ps -ef # 与-aux一样，只是显示的格式不同
     ```
 
@@ -1592,52 +1031,20 @@ setenforce 1 # temporarily enable enforcing
 
 - pgrep -l 进程名 （查找指定名称的进程）
 
-### 终止进程
+#### 终止进程
 
-- kill [选项] 进程号
+`kill PID` 默认向指定进程发送 TERM 信号，请进程正常退出；`kill -9 PID` 发送 KILL 信号，适合无法正常退出时使用。`killall 进程名` 按名称向匹配的进程发送信号，使用前先确认匹配范围。
 
-- killall 进程名    （子进程同时被杀掉）
+例如，先用 `ps -ef | grep sshd` 确认 SSH 会话进程，再向特定会话的 PID 发送信号。停止 SSH 服务应通过 `systemctl stop sshd`（Ubuntu 通常是 `ssh`）管理；**远程操作时停止服务会中断新的连接，应预留恢复途径。**
 
-- 常用选项 -9  强迫终止
+`killall gedit` 可结束匹配的编辑器进程；终端或其他进程同样应先确认 PID，再决定是否发送强制信号。
 
-- 案例：
-
-  1、踢掉非法登录用户
-
-  ```
-  ps -ef | grep sshd   # sshd 远程连接服务 先查看sshd的进程号
-  kill 11421 
-  ```
-
-  2、暂停远程登录功能
-
-  ```shell
-  ps -ef | grep sshd # 找到名称为/usr/sbin/sshd -D的进程号
-  kill xxxxx
-  # 恢复远程登录
-  /bin/systemctl start sshd.service
-  ```
-
-  3、终止多个gedit
-
-  ```shell
-  killall gedit  # 这是一种编辑器
-  ```
-
-  可以用于系统负载过大变卡
-
-  4、强制杀掉终端
-
-  ```shell
-  kill -9 11405
-  ```
-
-### 查看进程树
+#### 查看进程树
 
 - pstree -p (带进程号)
 - pstree -u （带用户名）
 
-### 服务管理
+#### 服务管理
 
 - 服务是运行在后台的进程，例如 mysqld，SSHD  （d：deamon 守护进程）
 
@@ -1650,7 +1057,7 @@ setenforce 1 # temporarily enable enforcing
   [*]的是自动启动的服务，按空格可以取消
 
 
-### 服务的运行级别
+#### 服务的运行级别
 
 - 0 - 6 与前面的级别一样 （常用的是3 和 5）
 
@@ -1662,7 +1069,7 @@ setenforce 1 # temporarily enable enforcing
 
   让某些服务，在某个运行级别下自启动或者不启动，重启机器生效
 
-### systemV和systemd
+#### systemV和systemd
 
 - `SystemV`和`systemd`都是Linux系统中的初始化系统（init system），负责在系统启动时启动和管理系统服务。
 
@@ -1677,7 +1084,7 @@ setenforce 1 # temporarily enable enforcing
 - 日志管理：`systemd`内置了日志管理系统`journald`，而`SystemV`没有内置的日志管理系统。
 - 依赖管理：`systemd`可以自动处理服务之间的依赖关系，而`SystemV`需要手动管理。
 
-### 服务管理
+#### 服务管理
 
 - systemctl   管理指令
 
@@ -1717,7 +1124,7 @@ setenforce 1 # temporarily enable enforcing
 
 - 高位端口？
 
-### Service trouble-shooting
+#### Service trouble-shooting
 
 - Init and systemd
 
@@ -1737,7 +1144,7 @@ setenforce 1 # temporarily enable enforcing
 
 - other important commands and services
 
-  - commands: timetablectl (synchronizayion), hostnamectl(hostname, location, ...), systemmd-resolve
+  - commands: timedatectl（时间同步）、hostnamectl（主机名等）、resolvectl（名称解析）
   - services: 
 
 - Tools in systemd commands:
@@ -1752,7 +1159,7 @@ setenforce 1 # temporarily enable enforcing
     ```
 
 
-### 动态监控进程
+#### 动态监控进程
 
 **top**
 
@@ -1764,9 +1171,9 @@ setenforce 1 # temporarily enable enforcing
 
   top -p PID （指定监视某个进程）
 
-  load average：三个值平均值大于7%的话说明负载过大，需要优化
+  load average：依次为过去 1、5、15 分钟的平均运行队列长度；需结合 CPU 核数和 I/O 等待判断负载，不能按百分比理解。
 
-  zombie 僵尸进程，进程已经死掉，但是仍然占用着内存
+  zombie 僵尸进程：子进程已退出，但父进程尚未回收退出状态；它保留进程表项，不再像运行中的进程那样占用完整内存。
 
   %CPU 的各项指标含义 ：
 
@@ -1793,7 +1200,7 @@ setenforce 1 # temporarily enable enforcing
 
 ​	  剔除用户：就是kill掉该用户的bash进程。
 
-### 监控网络状态
+#### 监控网络状态
 
 - **netstat -anp** [-an 按照一定顺序排列输出 -p 显示哪个进程在监听端口]
 
@@ -1805,133 +1212,47 @@ setenforce 1 # temporarily enable enforcing
 
   - 192.168.13.1:8226 这是windows中xshell的IP与端口
 
-- ### 验证端口
+#### 验证端口
 
   ```shell
   netstat -tulpn | grep -i ssh
   ```
 
----
+### RPM 与软件仓库
 
-## rpm包管理
+RPM 用于管理 `.rpm` 软件包。示例包名 `firefox-60.2.2-1.el7.centos.x86_64` 包含名称、版本/发行号、发行版标识和架构等信息；`i686`、`i386` 常见于 32 位包，`noarch` 表示与 CPU 架构无关。
 
-### 介绍
+| 命令 | 用途 |
+| --- | --- |
+| `rpm -qa` | 列出已安装包，可接 `grep firefox` 过滤。 |
+| `rpm -q 包名` | 查询指定包是否已安装。 |
+| `rpm -qi 包名` | 查看包信息。 |
+| `rpm -ql 包名` | 列出安装文件。 |
+| `rpm -qf /文件路径` | 查询文件所属的包。 |
+| `rpm -ivh /包路径.rpm` | 安装本地 RPM 包。 |
+| `rpm -e 包名` | 卸载包；如有依赖，可能无法直接卸载。 |
 
-- rpm：RedHat Package Manager  软件包管理工具，.RPM扩展名的文件。虽然是基于RedHat 但是被广泛采用，算是行业标准。
+`yum` 或 `dnf` 可从仓库安装软件并处理依赖，例如 `yum list installed`、`yum install 包名`、`yum -y install 包名`、`yum repolist all`。`-y` 自动确认交互提示，应先了解将发生的变更。EPEL（Extra Packages for Enterprise Linux）是面向 RHEL 及兼容发行版的附加软件包仓库。`.deb`、`.tgz` 等属于其他打包或归档格式，不由 RPM 直接管理。
 
-### 查询已安装的rpm
+#### waagent 重装示例
 
-- rpm -qa | grep firefox
+原示例说明在 Azure VM 中移走旧状态目录，再卸载并重装 WALinuxAgent。**更改代理可能影响 VM 扩展、资源盘和配置；执行前应核对当前版本、服务状态及 Azure 官方修复流程。** 以下保留操作顺序以便排查：
 
-- 返回结果：firefox-60.2.2-1.el7.centos.x86_64
+```sh
+systemctl stop waagent
+mv /var/lib/waagent /var/lib/waagent.old
+yum remove WALinuxAgent -y
+yum install WALinuxAgent -y
+systemctl start waagent
+systemctl status waagent
+ls -l /var/lib/waagent
+cat /etc/waagent.conf
+ls -l /var/log/azure
+```
 
-  - 名称：firefox
+代理日志通常位于 `/var/log/waagent.log`，配置文件为 `/etc/waagent.conf`；重新安装包是否生成新的配置和状态，应按具体发行版验证。
 
-  - 版本号：60.2.2-1
-
-  - 适用操作系统：el7.centos.x86_64 （如果是i686、i386表示32位系统，noarch表示通用）
-
-### 其他查询指令
-
-- rpm -qa  查询所有已安装的rpm软件包
-- rpm -qa | more、grep
-- rpm | q 软件包名 查询软件包是否安装
-- rpm -qi  查询软件包信息
-- rpm -ql 查询软件安装到哪里了，包里包含着什么文件
-- rpm -qf [文件]  查询这个文件隶属于哪个rpm包
-
-### rpm包卸载
-
-- rpm -e 包名（比如只写firefox即可）  //erase的意思
-- 注意：如果其他软件包依赖你要删除的软件包，可能会报错
-
-### rpm安装
-
-- rpm -ivh RPM包全路径名称  （install 安装；verbose 提示；hash 进度条）
-
-### yum
-
-- shell前端包管理器，基于RPM管理，可以自动下载安装，处理依赖性关系。
-- yum list | grep xxx  查询服务器是否有需要安装的软件；yum list installed | grep xxx 查询已安装的
-- yum install xxx  下载安装
-- yum -y install xxx  安装过程中的选项都默认自动选择
-
-### EPEL
-
-Extra Packages for Enterprise [Linux](https://www.linuxprobe.com/)
-
-Fedora推出的免费软件包的源
-
-### 干净重装 (以 waagent为例)
-
-1. Stop
-
-   ```shell
-   systemctl stop waagent
-   ```
-
-2. Move current /var/lib/waagent
-
-   ```shell
-   mv /var/lib/waagent /var/lib/waagent.old
-   ```
-
-3. Unintsall
-
-   ```shell
-   yum remove WALinuxAgent -y
-   ```
-
-4. Reinstall
-
-   ```shell
-   yum install WALinuxAgent -y
-   ```
-
-5. Restart the Azure waagent
-
-   ```shell
-   systemctl start waagent
-   ```
-
-6. Validate current status
-
-   ```shell
-   systemctl status waagent
-   ```
-
-7. check contents
-
-   ```shell
-   ls -l /var/lib/waagent
-   cat /var/log/waagent.conf
-   ```
-
-8. Check extensions
-
-   ```shell
-   cd /var/log/azure
-   ls -l
-   ```
-
-### 包管理 Package Management
-
-- Package：一个压缩文件，包含一个特定应用的所有文件。可以是.rpm .deb .tgz 类型
-
-- Packages stored in **respositories** which is a collection of packages. (资源库)
-
-- Linux respositories: a storage location from which system retrives and installs OS updates and applications
-
-- 查看仓库：
-
-  ```bash
-  yum repolist all
-  ```
-
-
----
-
-## 打印服务
+### 打印服务
 
 Common UNIX Printer System （CUPS）
 
@@ -1939,9 +1260,7 @@ Common UNIX Printer System （CUPS）
 
   cups
 
----
-
-## 系统信息查看
+### 系统信息与压力测试
 
 可用 `stress` 制造 CPU 负载，再用 `free` 和 `/proc` 观察系统资源。
 
@@ -1960,7 +1279,7 @@ cat /proc/meminfo
 free -m
 ```
 
-### 系统行为报告
+#### 系统行为报告
 
 System Activity Report
 
@@ -1971,58 +1290,30 @@ systemctl start sysstat
 sar
 ```
 
-### sosreport
+#### sosreport
 
 把系统配置、诊断信息等打包起来，可以发给Technical Support
 
 更多内存、CPU、磁盘、OS 和硬件信息命令见 [[#系统信息与资源监控]]。
 
----
+### 默认内核与 GRUB
 
-## 默认kernel变更
+系统安装多个内核后，可通过 GRUB 选择默认启动项。更改内核前应确认目标版本及恢复途径，尤其是在远程虚拟机上。
 
-- 启动时，如果有多个kernel存在，可以选择用哪个。通过GRUB（grand unified bootloader），GRUB配置文件：/boot/grub/grub.conf或者/boot/grub2/grub.cfg
+在 RHEL 系统中，优先使用 `grubby` 查看和设置默认内核，避免手工解析生成的 GRUB 配置文件：
 
-- 在一些case中，客户升级了kernel后，VM不能重新启动，所以我们要更改grub配置
+```sh
+grubby --info=ALL
+grubby --default-kernel
+grubby --set-default "/boot/vmlinuz-<目标版本>"  # 替换为实际内核路径
+grubby --default-kernel
+```
 
-  查看所有kernel版本
+重启后运行 `uname -r` 核实当前内核。旧系统也可能使用 `grub2-set-default` 配置保存的启动项；具体 GRUB 配置路径因发行版和 BIOS/UEFI 启动方式不同而异。
 
-  ```shell
-  awk -F \' '$1==menuentry " {print $2}' /boot/grub2/grub.cfg
-  ```
+### 日志管理
 
-  查看默认启动kernel版本
-
-  ```shell
-  grep -i default /etc/default/grub
-  ```
-
-  改变kernel默认启动版本
-
-  ```shell
-  vi /etc/default/grub
-  # GRUB_DEFAULT = saved (saved意思是使用GRUB_SAVEDEFAULT变量所保存的，或者grub-set-default命令设置的选项作为默认)
-  grub2-set-default 1  # 这里的序号是系统中存在的kernel列表从0开始的编号
-  ```
-
-  将配置写入cfg文件，以永久保存
-
-  ```shell
-  grub2-mkconfig -o /boot/grub2/grub.cfg
-  ```
-
-  重启
-
-  ```shell
-  reboot
-  uname -r
-  ```
-
----
-
-## 日志管理
-
-### 日志简介
+#### 日志简介
 
 - 系统信息文件，记录系统事件
 
@@ -2037,7 +1328,7 @@ sar
     ```shell
     ps aux | grep "rsyslog"
     systemctl status rsyslog.service
-    systemctl list-all-units | grep rsyslog
+    systemctl list-units --all | grep rsyslog
     ```
 
 - 日志配置文件
@@ -2060,611 +1351,217 @@ sar
   - 有一部分日志是先写到内存里，还没写到文件里；内存日志重启就清空了
   - journalctl -o verbose
 
----
+### dump 备份
 
-## 数据备份dump
-
-### 语法说明
+#### 语法说明
 
 - dump - [cu c是个具体数字：0123456789] [-f 备份后文件名] -[T 日期] [目录或者文件系统]
   - -0123456789 ：备份层级，0为最完整备份，>0是增量备份，指定最多备份几次。
 
 - 注意：xfs文件系统要用xfsdump；ext4才能用dump命令
 
----
 
-## Shell 编程
+## 脚本与自动化
 
-### 基础
+### Shell 编程
 
-- shell是命令行解释器，负责向Linux内核发送请求
+#### 基础与执行方式
 
-- 脚本格式要求
+Shell 是命令解释器。Bash 脚本通常以 `#!/usr/bin/env bash` 或 `#!/bin/bash` 开头。赋予执行权限后可运行 `chmod u+x /opt/shcode/hello.sh` 和 `/opt/shcode/hello.sh`；也可以运行 `bash hello.sh`。若脚本用了 Bash 特性，应使用 Bash 执行，不能假定 `sh` 一定指向 Bash。
 
-  - 脚本以 #!/bin/bash 开头 
+#### 变量与环境变量
 
-- 脚本执行方式
+- 常见环境变量有 `HOME`、`USER`、`PATH`、`PWD`、`SHELL`。`set` 可列出当前 Shell 的变量和函数。
+- 赋值写作 `A=value`，等号两侧不能有空格；变量名不能以数字开头。`unset A` 删除变量；`readonly A` 声明只读变量。
+- 用 `A=$(date)` 保存命令输出；反引号写法也可用，但嵌套时不如 `$(...)` 清晰。
+- `export A=value` 把变量传给后续子进程。持久配置可按使用范围放在 Shell 启动文件或 `/etc/profile` 中；修改后可用 `source /etc/profile` 在当前 Shell 重新加载。
+- `echo "$A"` 查看变量。Vim 可通过 `:set nu` 显示行号。多行注释可用 here document 写法 `: <<'COMMENT' ... COMMENT`。
 
-  - 方式1 赋予x权限，再执行
+#### 参数与状态
 
-    ```shell
-    chmod u+x /opt/shcode/hello.sh
-    ./hello.sh
-    ```
+- `$0` 是脚本名；`$1`、`$2` 等是位置参数，第 10 个及之后写作 `${10}`；`$#` 是参数个数。
+- 引用时，`"$@"` 将每个参数保留为独立字段；`"$*"` 将所有参数合并为一个字段。脚本遍历参数通常用 `for arg in "$@"; do ...; done`。
+- `$$` 是当前 Shell 的 PID，`$!` 是最近一次后台任务的 PID，`$?` 是上一条命令的退出状态（0 通常表示成功）。`/opt/shellcode/myshell.sh &` 在后台运行脚本。
 
-    方式2 sh +脚本 不用赋予权限也能执行
+#### 算术与条件
 
-    ```shell
-    sh hello.sh
-    ```
+推荐用 `$((表达式))` 进行整数运算，例如 `SUM=$((SUM + i))`。旧写法 `expr 1 + 2` 要在运算符两侧留空格，乘号需转义。`$[...]` 是旧式算术扩展写法。
 
-### 变量
+`[ ... ]` 两侧必须留空格；条件成立时退出状态为 0。整数比较包括 `-lt`、`-le`、`-eq`、`-gt`、`-ge`、`-ne`；字符串可用 `=` 比较。文件测试包括 `-r`、`-w`、`-x`、`-f`（普通文件）、`-e`（存在）和 `-d`（目录）。
 
-- 系统变量：$HOME $USER $PATH $PWD $SHELL 等；用户自定义变量
-
-- 显示系统中的所有变量 set
-
-- 变量定义：
-
-  - 定义：名字=值 （注意：中间不能有空格）
-  - 撤销变量：unset A （变量名）
-  - 声明静态变量：readonly 变量 无法被unset
-  - 注：vim中显示行号：命令行模式 :set nu
-  - 规则
-    - 变量定义中等号两侧不能有空格
-    - 变量名习惯为大写字母，不能以数字开头
-    - 将某条命令的返回值赋值给变量：
-      - A=\`date\` (`是反引号)  或者  A=$(date) 
-
-- 环境变量
-
-  - 基本语法
-
-    - 在/etc/profile中加入 export 变量名=变量值  （将shell变量输出为环境变量/全局变量，可以被多个文件共用）
-    - source /etc/profile  (写入新的环境变量之后，应该用source刷新一下)
-
-    - echo $变量名
-
-  - 注：多行注释
-
-    ```shell
-    :<<!
-    xxxx 
-    !
-    ```
-
-- 位置参数变量
-
-  - 运行脚本时，希望获取到命令行手动输入的一些参数，就要用到位置参数变量。例如 sh myshell.sh 100 200，100 200这两个参数就能被传进去
-  - 基本语法：
-    - **$n** n=代表命令本身；**n=$1**代表命令行传入的第一个参数；n=$2-9；n=${10} 10以上要用{}
-    - **$*** 代表所有参数；**$@**也代表所有参数，把各个参数区分对待？ $#代表参数的个数
-
-- 预定义变量
-
-  - 基本语法
-
-    - **$$**当前进程号PID；$!后台运行的最后一个进程号PID；**$?**最后一次执行命令的返回状态，0代表成功，非0代表失败
-
-    - 在shell脚本中运行另一个脚本
-
-      ```shell
-      /opt/shellcode/myshell.sh &
-      ```
-
-### 运算符
-
-- $((运算式)) 或者 $[运算式] 或者 expr m + n (这种写法 运算符之间有空格)；想把结果赋给某个变量，要用 ``
-- expr 乘 \\* 除/ 取余%   （用了expr才要用转义）
-
-### 判断语句
-
-- ```shell
-  if [ 23 -ge 22 ]  # [xxx]非空返回true true就是0；[ ]空的就返回false，false是>1;判断符与数字之间有空格，[ 后面 与 ] 前面都有空格
-  then echo "greater" 
-  fi
-  ```
-
-- 判断条件
-
-  - = 字符串比较
-
-  - 整数比较
-
-    - -lt 小于；-le 小于等于；-eq 等于；-gt 大于；-ne 不等于
-
-  - 文件权限判断
-
-    -r -w -x
-
-  - 文件类型判断
-
-    -f 文件存在并且是常规文件
-
-    -e 文件存在
-
-    -d 文件存在并且是个目录
-
-    ```shell
-    if [ -f aaa.txt ]
-    then
-    	echo "Yes"
-    fi
-    ```
-
-
-### 流程控制
-
-- if
-
-```shell
-if [ condition ]
-then
-代码
-fi
-
-if [condition]
-then
-代码
-elif
-代码
-fi
-
-if [ condition ]
-then
-代码
+```bash
+if [ 23 -ge 22 ]; then
+  echo "greater"
+elif [ -f aaa.txt ]; then
+  echo "file exists"
 else
-代码
+  echo "other"
 fi
 ```
 
-- case
+#### 流程控制
 
-```shell
-case $1 in
-"1" )
-echo "one"
-;;
-
-"2")
-echo "two"
-;;
-*)
-
-echo "other"
-;;
+```bash
+case "$1" in
+  1) echo "one" ;;
+  2) echo "two" ;;
+  *) echo "other" ;;
 esac
+
+for arg in "$@"; do
+  echo "num is $arg"
+done
+
+SUM=0
+for ((i = 1; i <= 100; i++)); do
+  SUM=$((SUM + i))
+done
+
+i=0
+while [ "$i" -le "${1:-0}" ]; do
+  SUM=$((SUM + i))
+  i=$((i + 1))
+done
 ```
 
-- for
+`read -p "Input NUM1=" NUM1` 显示提示并读取输入；`read -t 10 -p "Input NUM2=" NUM2` 最多等待 10 秒。
 
-  ```shell
-  # 方式1
-  for i in "$*" # $*把命令行参数看作一个整体；$@分开看命令行参数
-  do  
-  	echo "num is $i" # i在in的里面就不停的输出；但是因为$*看作整体，所以一次就一口气全输出了；$@有几个参数，for就输出几次
-  done
-  
-  #方式2
-  SUM=0
-  for((i=1; i<=100; i++))  # 这里；后面要有空格 小括号旁边没有空格
-  do
-  	SUM=$[$SUM+$i]
-  done
-  ```
+#### 函数
 
-- while
+`basename /path/to/file` 返回路径末尾的文件名，可加后缀参数去掉后缀；`dirname /path/to/file` 返回上级目录。自定义函数可写为：
 
-  ```shell
-  while [ condition ]   # 只要是中括号后面就一律加上空格
-  do
-  代码
-  done
-  
-  SUM=0
-  i=0
-  while [ $i -le $1]  # 中括号里面的条件判断不能用<= 还得用 -le那一套
-  do
-  	SUM=$[$SUM+$i]
-  	i=$[$i+1]  #自增操作
-  done
-  ```
-
-  ### 读取输入read
-
-  read(选项)(参数)
-
-  -p 指定读取时的屏幕输出提示符
-
-  -t 指定读取时的指定时间，超过时间没输入就不等待了	
-
-```shell
-read -p "Input NUM1=" NUM1
-echo "num1=$NUM1"
-
-read -t 10 -p "Input NUM2=" NUM2
-echo "num2=$NUM2" 
+```bash
+funname() {
+  # 执行动作
+  return 0
+}
 ```
 
-### 函数
+#### 定时备份示例
 
-系统函数和自定义函数
+目标：每天 02:30 备份 `/opt/shcode/fun.sh`，按时间命名归档，并删除超过 10 天的备份。先保存以下脚本为 `/opt/shcode/backup.sh`：
 
-- 系统函数
+```bash
+#!/usr/bin/env bash
+set -e
 
-  - 例如：basename 返回完整路径 / 最后的部分，用于获取文件名
-  - basename [pathname] [suffix]
-  - dirname 返回完整路径 / 前面的部分
-
-- 自定义函数
-
-  function funname()
-
-  {
-
-  ​	action;
-
-  ​	[return int;]
-
-  }
-
-### shell 编程综合案例
-
-- 需求：
-
-  - 每天凌晨2:30备份
-  - 备份开始结束，给出提示信息
-  - 备份文件以时间为文件名
-  - 检查是否有10天前的备份文件，有的话就删除
-
-- 思路分析：
-
-  编写脚本实现2 3 4项功能，用crond定时执行即可
-
-```shell
-#!/bin/bash
-
-# Backup to which location
 BACKUP=/opt/shcode/backup
-
-#get current time
 DATETIME=$(date +%Y-%m-%d_%H%M%S)
+mkdir -p "$BACKUP"
 
-#judge if backup location exists
-# 这是一个短路与 表达式 []里面的表达式为真 则执行&&后面的；这里是如果文件夹不存在的话，就创建一个 mkdir -p 代表创建多级文件夹
-[ ! -d "${BACKUP}/${DATETIME}" ] && mkdir -p "${BACKUP}/${DATETIME}"
-
-#create tar.gz for fun.sh
-tar -zcvf /opt/shcode/fun.sh ${BACKUP}/${DATETIME}/${DATETIME}.tar.gz
-
-# create tar.gz for the directory then remove the tar.gz file
-cd ${BACKUP}
-tar -zcvf ${DATETIME}.tar.gz ${DATETIME}
-rm -rf ${BACKUP}/${DATETIME}
-
-# remove the backupc files which is created before 10 days；
-#find -atime 表示寻找到多少天之前的文件；-exec 表示对前面生成的文件进行操作；{}表示对前面所有文件；/;表示结束符
-find ${BACKUP} -atime +10 -name "*.tar.gz" -exec rm {} \;
-echo "Backup completed"
+echo "Backup started: $DATETIME"
+tar -czvf "$BACKUP/$DATETIME.tar.gz" -C /opt/shcode fun.sh
+find "$BACKUP" -maxdepth 1 -type f -name '*.tar.gz' -mtime +10 -delete
+echo "Backup completed: $DATETIME"
 ```
 
----
+赋予执行权限后，先手动运行并检查归档内容：
 
-## Ubuntu
+```sh
+chmod u+x /opt/shcode/backup.sh
+/opt/shcode/backup.sh
+tar -tzf /opt/shcode/backup/2026-01-01_023000.tar.gz  # 替换为实际归档名
+```
 
-### root用户
+再用 `crontab -e` 添加 `30 2 * * * /opt/shcode/backup.sh`。`-mtime +10` 按文件修改时间筛选超过 10 个完整 24 小时周期的文件；如果需要精确到 10 天整，可按实际保留策略调整。
+## 发行版操作补充
 
-- 一开始root没有密码，用su命令会失败；要先设置密码：
+### Ubuntu 操作补充
 
-  ```shell
-  sudo passwd
-  ```
+#### root 与 sudo
 
-  设置好密码再用su，输入密码即可切换为root用户
+Ubuntu 通常不为 root 账户设置可直接使用的密码；管理任务优先用 `sudo`。如确需为 root 设置密码，可运行 `sudo passwd root`，随后才能用 `su -` 输入该密码切换。Shell 提示符常用 `$` 表示普通用户、`#` 表示 root，但不能仅凭提示符判断实际权限。
 
-- $ 代表普通用户；# 代表root用户
+#### APT 包管理
 
-### apt
+APT（Advanced Package Tool）管理 Debian/Ubuntu 软件包。可按发行版版本选择官方或可信镜像源，并检查 `sources.list` 或 `sources.list.d/` 中的仓库配置。
 
-- Advanced Package Tools
+```sh
+sudo apt update
+sudo apt install 包名
+sudo apt remove 包名
+apt show 包名
+apt source 包名  # 需启用对应的源码仓库
+```
 
-- 国内的镜像网站：会定时去国外服务器同步资源，访问速度会快一些。可以在sourcelist里面设置成从镜像网站安装，例如，在清华大学镜像站中，找到使用帮助，在对应系统版本中找到sources.list的配置
+旧版命令 `apt-get`、`apt-cache` 仍可用于脚本或特定用途。
 
-- 常用命令 （新版Ubuntu用apt代替apt-get）
+#### 远程登录
 
-  sudo apt-get update
+SSH 提供加密的远程登录。目标主机需要运行 OpenSSH 服务器，客户端使用 `ssh` 连接。如果 Ubuntu 尚未安装服务端，可运行：
 
-  sudo apt-get install xxx
+```sh
+sudo apt install openssh-server
+sudo systemctl status ssh.service
+# 修改服务端配置后：
+sudo systemctl restart ssh.service
+ssh username@目标主机IP
+```
 
-  sudo apt-get remove xxx
+远程修改 SSH 配置前应检查语法并保留现有会话，以便恢复连接。
 
-  sudo apt-cache show xxx（获取包的相关信息）
+## RHEL 管理摘录
 
-  sudo apt-get source xxx (下载该包的源代码)
+以下整理原 Red Hat Enterprise Administrator Guide 摘录。命令和默认值随 RHEL 版本及系统配置而异，操作前应核对当前系统。
 
-### 远程登录
+### 区域设置与时间
 
-- SSH：Secure Shell：是建立在应用层和传输层的安全协议；如果A机器想要被B机器远程操作，A要安装SSH服务器，B要安装SSH客户端
+- 系统区域设置通常保存在 `/etc/locale.conf`；用 `localectl` 查看或调整 locale、键盘布局。
+- RTC 是硬件时钟，关机后仍运行；UTC 是协调世界时，DST 是夏令时。`date`、`timedatectl` 和 `hwclock` 分别用于查看或管理相关时间设置。
+- `timedatectl set-time "YYYY-MM-DD HH:MM:SS"` 设置系统时间；`timedatectl list-timezones` 查看时区，`timedatectl set-timezone <时区>` 更改时区；`timedatectl set-ntp yes` 或 `no` 控制自动时间同步。`/etc/adjtime` 保存硬件时钟相关配置。通常建议硬件时钟使用 UTC。
 
-- Ubuntu 默认没有安装ssh服务
+### 用户与组
 
-  ```shell
-  apt install openssh-server
-  ```
+- `umask` 决定新文件和目录默认权限中被屏蔽的位。常见值 `022` 使同组和其他用户无写权限，但实际值需用 `umask` 查看；系统级 Shell 配置可能位于 `/etc/bashrc`。
+- `/etc/passwd` 保存用户基本信息，密码哈希及有效期信息保存在权限更严格的 `/etc/shadow`；组信息位于 `/etc/group` 和 `/etc/gshadow`。
+- 用户管理命令有 `useradd`、`usermod`、`userdel`；组管理命令有 `groupadd`、`groupmod`、`groupdel`、`gpasswd`。`pwck`、`grpck` 检查账户文件，`pwconv`、`pwunconv`、`grpconv`、`grpunconv` 转换 shadow 文件。
+- 较早系统常将 1–499 留给系统账户、500 起用于普通用户；较新系统常将 1–999 留给系统账户、1000 起用于普通用户。具体范围以 `/etc/login.defs` 和系统设置为准。
+- 创建用户后，`/etc/passwd` 中的示例记录为 `user1:x:1001:1001::/home/user1:/bin/bash`：依次是用户名、密码占位符、UID、主组 GID、注释字段、家目录和登录 Shell。是否创建家目录取决于发行版默认设置或 `useradd -m`；用 `passwd user1` 设置密码。
 
--    打开sshd服务
+#### 共享目录的 SGID
 
-  ```shell
-  systemctl restart sshd
-  ```
+默认情况下，新文件通常继承创建者的主组。对共享目录设置 SGID 后，新建文件和子目录通常继承目录所属组，适合项目协作：
 
-- 从一个Linux登录到另一个Linux (服务器集群中有用)
-
-  ```shell
-  ssh username@ip # 输入目标服务器的登陆用户名和密码
-  ```
-
-
-
----
-
-# Redhat Enterprise Administrator Guide
-
-## Chapter 1
-
-### System locale （specify bitmap fonts and code pages）
-
-- stored in /etc/locale.conf
-- system locale and keyboard can be configured by **localectl**
-
----
-
-## Chapter 2
-
-### Date and time
-
-- RTC (real time clock): hardware clock. Independent, run even shut down
-- UTC (Coordinated Unviersal Time); DST (daylight saving time): local time
-- **timedatectl** **date** **hwclock** : configure the system clock
-- after changes made, use **systemctl restart systemd-timedated.service** to restart
-- Changing current time\date : **timedatectl set-time HH:MM:SS / YYYY-MM-DD HH:MM:SS**
-- Changing time zone: **timedatectl list-timezones** / **timedatectl set-timezone xxx**
-- sync with remote server **timedatectl set-ntp yee/no**
-- **hwclock /etc/adjtime**
-
-- if NTP is used, hardware clock automatically synchronized every 11 mins.
-
-- Recommand to keep the hardware clock in UTC.
-
----
-
-## Chapter 3
-
-### Users and Groups
-
-- The settings defines what permissions are applied to a newly created file or directory is **umask**, which is configured in /etc/bashrc. Default is **022**, which only allows creators to modify, even creator's group are not allowed.
-- a list of groups: /etc/group
-
-### Passwds
-
-- /etc/passwd move to-> /etc/shadow which is only read by root user. Passwd aging Policy is also contained
-
-- Users setting tool (Graphical): Super -> Users
-
-- Connamd line tools:
-
-  - useradd usermod userdel
-  - groupadd groupmod groupdel
-  - gpasswd: for administering /etc/group
-
-  - pwck, grpck
-  - pwconv, pwunconv; grpconv, grpunconv
-
-- Default UID range:
-
-  - Previously 1 - 499 : system users; 500 + normal user
-
-    now:      1 - 999 : system users; 1000 + normal user
-
-    Default ranges of UID and GID can be changed in /etc/login.defs
-
-- Dafault GID range:
-
-  - below 1000 are for system and could not be used by users
-
-- useradd user1
-
-  then /etc/passwd is changed as follow:
-
-  ```shell
-  user1:x:1001:1001::/home/user1:bin/bash
-  # user name；x: systyem using shadow passwd; UID; GID; GECOS left blank;home directory;default shell
-  ```
-
-  Meanwhile, /etc/shadow /etc/group /etc/gshadow is also changed accordingly
-
-  /home/user1 is added. but this new user is activitated after the root user set a passwd 
-
-### group directories-setgid bit
-
-Situation: By default, in a directory, when sb. creates a file, it belongs to the primary group he belongs.
-
-Setgid bit：对一个目录设置，目录中的文件 便自动会分配上 [与目录的组相同] 的组。让文件执行者以 目录组 的权限去执行。
-
-Eg：
-
-Several users are working on files in /myproject; some are trusted to modify files.
-
-```shell
-mkdir /myproject
+```sh
 groupadd myproject
+mkdir -p /myproject
 chown root:myproject /myproject
-chmod 2775 /myproject  # setgid bit设置为2了
+chmod 2775 /myproject
+usermod -aG myproject username
 ls -ld /myproject
-usermod -aG myproject username # add user into myproject group 
 ```
 
----
+用户需要重新登录或刷新组会话，新的附加组才会生效。
 
-## Chapter 4
+### 权限提升
 
-### gain privilege
+RHEL 常用 `wheel` 组管理特权用户。`usermod -aG wheel username` 为用户添加附加组，具体 sudo 权限仍以 `/etc/sudoers` 和 `/etc/sudoers.d/` 的实际规则为准；通过 `visudo` 编辑并校验语法。典型的完整授权规则为 `username ALL=(ALL) ALL`，应按最小权限原则配置。
 
-- A special administrative group called **wheel**
+`/etc/pam.d/su` 中的 `pam_wheel.so` 规则可限制哪些用户能运行 `su`。sudo 和认证事件可通过 `journalctl` 及系统安全日志查看，日志路径随版本和 rsyslog 配置而异。原摘录还提到通过 PAM 的 `pam_tty_audit.so` 配置终端审计；启用前应先验证参数及审计范围。
 
-  ```shell
-  useradd -aG username
-  ```
+### 系统注册与支持
 
-  you can configure who has the privilege to use **su** and **sudo** command
-
-  - edit PAM configuration file for su: /etc/pam.d/su
-
-    uncomment it:
-
-    ```shell
-    # auth	required	pam_wheel.so 	use_uid
-    ```
-
-    which means that only **members in wheel** can use su command.
-
-  - **/etc/sudoers** in default: gives every user in wheel group with unlimited root access.
-
-  - only users listed in **/etc/sudoers** are allowed to use **sudo** command
-
-    - each successful authentication using sudo is logged into **/var/log/messages**,
-
-    - issuer's name is logged into **/var/log/secure**
-
-      - which one to be logged can be controlled in **/etc/pam.d/system-auth**:
-
-        add line: **session	required	pam_tty_audit.so disabled=user1,user2 enabled=user1,user2**
-
-    - To give sb. full privilege to use sudo:
-
-      type **visudo**  (visudo is a tool to manage /etc/sudoers)
-
-      find sth like root ALL=(ALL) ALL
-
-      add username ALL=(ALL) ALL
-
-      which means username can use sudo from any host and execute any command
-
-    - sudoers' passwd intervals can also be managed.
-
-
----
-
-## Chapter 5
-
-### Registering
-
-- **subscription-manager register** (register your system with the same username and passwd as Redhat Customer portal)
-
-- **subscription-manager list --available** (lsit all subscriptions)
-
-- subscription-manager attach --pool=pool_id (attach a subscription to the system)
-
-  - after system subscribed, a repository file is created in /etc/yum.repos.d/
-  - use **yum repolist** to check
-
-- remove subscription
-
-  - check sub lists: **subscription-manager list --consumed**
-
-  - find serial number
-  - **subscription-manager remove --serial= *serial_number***
-
----
-
-## Chapter 6
-
-### Redhat support tool
-
-- install -> register
-
-### Case management
-
-- Open and update
-- viewing cases
-
----
-
-## Chapter 9
+- `subscription-manager register` 注册系统；`subscription-manager list --available` 查看可用订阅；`subscription-manager list --consumed` 查看已使用订阅。
+- 旧的池绑定流程可用 `subscription-manager attach --pool=<池 ID>`，`subscription-manager remove --serial=<序列号>` 解绑。启用 Simple Content Access 的组织通常无需手动绑定订阅池。
+- 用 `dnf repolist`（旧系统可用 `yum repolist`）查看仓库。Red Hat 支持工具可用于查看、创建和更新支持案例，具体功能取决于订阅与工具版本。
 
 ### OpenSSH
 
-- client-server architecture, encoded session, more secure than telnet
-- openssh package required
-- version1 and version2 
+OpenSSH 提供加密的客户端与服务端通信，取代明文 Telnet。当前使用 SSH 协议版本 2；版本 1 已淘汰。系统级配置在 `/etc/ssh/`，用户级密钥与配置在 `~/.ssh/`。可生成密钥对，将公钥加入服务端授权列表，并用 `ssh-agent` 管理密钥。`scp` 用于加密复制文件，`sftp` 用于通过 SSH 传输文件。X11 forwarding 可把图形会话通过 SSH 通道转发；相关组件与安全配置按实际发行版安装。
 
-### Configuring OpenSSH
+### 邮件服务
 
-- files  记录着服务端、客户端的一些身份验证信息等
-  - system-wide files: **/etc/ssh**
-  - user-specific files: **~/.ssh/**
-  - 如果重装了系统，可以备份相应的文件夹，以恢复之前的设置 
+邮件从客户端提交到邮件服务器，再经传输服务器送达收件人的服务器和客户端：
 
-- generate key-pair then send the public key
-- configure ssh-agent
-- using ssh-client
-- scp: file transfer between machines, encrypted
-- sftp: open an FTP session
-
-### X11 
-
-Previously insecure port connections between systems can be mapped to specific SSH channels
-
-- yum group install X windows system
-- X11 forwarding
-
----
-
-## Chapter 12
-
-- Client - server architecture
-- server -> recipient's server -> recipient's client
-
-### Emial transport protocols
-
-- SMTP
-  - no authentication, making junk email, use **relay restriction** to limit it
-
-### Email access protocols
-
-used by clients to retrive email from servers，规定了怎样将个人计算机连接到网络上的邮件服务器的协议
-
-- Post office Protocol (POP) 
-
-  - 用户将邮件从服务器上下载到本地主机，同时删除服务器上的邮件
-  - Redhat use **Dovecot** provided by dovecot package to use POP server
-  - email are downloaded by email client apps
-  - compatible for Internet standards, such as **Multipurpose Internet Mail Extensions (MIME)**, which allows **Mail Attachments**
-
-  - most current version: POP3; POP3s service provided SSL encryprion
-
-- Internet Message Access Protocol (IMAP)
-  - 从客户端收取的邮件都保留在服务器上，同时在客户端的操作在服务器上都有标记
-  - emails remain on the server which can be checked 
-  - dovecot is also used;SSL is also supported by using syunnel program
-
-### Email program
-
-- Mail Transport Agent
-  - use SMTP (Simple Mail Transfer Protocol), 一组用于从源地址到目的地址传输邮件的规范，控制邮件的中转方式，属于TCP/IP协议簇
-  - Postfix and Sendmail
-  - fetchmail: retrieves email from remote servers and delivers it to the local MTA
-
-- Mail Delivery Program
-  - Procmail: deliver email to be read by client apps
-- Mail User Agent
-  - ### Graphical: Evolution; text-based: Mutt
-
-# Linux 运维实操专题
+- **SMTP** 用于邮件提交和服务器之间的传输。现代邮件提交通常要求身份验证和加密；中继限制用于防止开放式转发和垃圾邮件。
+- **POP3** 用于客户端取信，是否在服务器保留邮件由客户端和服务器配置决定；POP3S 使用 TLS 保护连接。Dovecot 可提供 POP3 服务。
+- **IMAP** 让邮件保存在服务器并同步文件夹、已读等状态；Dovecot 也可提供 IMAP 服务。MIME 定义邮件内容格式，支持附件等内容。
+- 邮件传输代理（MTA）如 Postfix、Sendmail；`fetchmail` 可从远端取回邮件交给本地投递流程。Procmail 可处理本地投递；邮件用户代理（MUA）如图形客户端 Evolution 和文本客户端 Mutt。
+## Linux 运维实操专题
 
 以下章节集中记录终端与环境、系统监控、网络配置、远程访问和文件共享的操作示例。执行网络切换、服务重启或同步命令前，请先核对当前系统和路径。
 
-## 配置 Zsh 终端
+### 配置 Zsh 终端
 
 Zsh 是命令解释器。它提供命令补全等功能，也可以通过插件添加语法高亮和输入建议。
 
@@ -2912,25 +1809,25 @@ plugins=(
 
 - 先访问 `~/.oh-my-zsh/custom/plugins`，离开后输入 `z plug`，即可按访问历史匹配并跳转到该目录。
 
-## 项目环境变量与 direnv
+### 项目环境变量与 direnv
 
-### 概述
+#### 概述
 
 direnv是一个环境变量管理工具，它可以扩展你的shell的环境变量。它的工作原理是根据当前目录动态地改变环境变量。具体来说，当你进入一个目录时，它会加载该目录下的.envrc文件来改变环境变量，这个过程被称为"装载"（loading）。相反，当你离开该目录时，它会卸载这些环境变量，这个过程被称为"卸载"（unloading）。
 
-### 功能
+#### 功能
 
 direnv的主要功能是管理和隔离环境变量。它可以让你在不同的项目中使用不同的环境变量，而不需要手动地去更改它们。这对于开发者来说非常有用，因为他们经常需要在不同的项目中切换，而每个项目可能需要不同的环境变量设置。通过使用direnv，开发者可以为每个项目创建一个.envrc文件，定义该项目所需的环境变量，然后direnv会自动地根据当前目录来装载和卸载这些环境变量。
 
-### 应用场景
+#### 应用场景
 
 1. 项目依赖管理：在Python项目中，你可能需要使用不同版本的Python或者不同的Python库。通过使用direnv，你可以为每个项目设置不同的Python路径和库。例如，你可以在.envrc文件中设置PYTHONPATH环境变量，指向该项目所需的Python库的路径。
 
 2. 保密信息管理：如果你的项目需要一些保密的环境变量（如API密钥），你可以使用direnv来管理这些信息，而不是把它们硬编码到你的代码中。你可以在.envrc文件中设置这些保密的环境变量，然后在代码中通过环境变量来使用这些信息。请勿将包含真实密钥的 `.envrc` 提交到版本库；这样可以避免把保密信息暴露在代码中，同时，你也可以方便地在不同的环境中使用不同的保密信息。
 
-### 用法
+#### 用法
 
-#### 安装direnv
+##### 安装direnv
 
 在Ubuntu上，你可以使用以下命令来安装direnv：
 
@@ -2948,7 +1845,7 @@ eval "$(direnv hook bash)"
 eval "$(direnv hook zsh)"
 ```
 
-#### 创建.envrc文件
+##### 创建.envrc文件
 
 在你的项目目录中，创建一个.envrc文件，并在其中添加一些环境变量。例如，你可以使用以下命令来创建一个.envrc文件，并设置API_KEY环境变量：
 
@@ -2956,7 +1853,7 @@ eval "$(direnv hook zsh)"
 echo export API_KEY=my_secret_key > .envrc
 ```
 
-#### 允许direnv加载.envrc文件
+##### 允许direnv加载.envrc文件
 
 由于安全原因，direnv默认不会加载.envrc文件。你需要使用以下命令来允许direnv加载该文件：
 
@@ -2966,11 +1863,11 @@ direnv allow
 
 现在，每当你进入该目录时，API_KEY环境变量就会被设置为my_secret_key。当你离开该目录时，API_KEY环境变量就会被卸载，这样就可以防止这个保密信息被其他项目或命令误用。
 
-## 终端代理配置
+### 终端代理配置
 
 通过 `http_proxy` 和 `https_proxy` 为支持这些变量的命令行程序配置代理。以下函数修改当前 Shell 及其后续启动的子进程；将函数加载语句加入 Shell 配置后，新终端也可调用。请按实际代理地址和端口调整示例。
 
-### 定义代理开关
+#### 定义代理开关
 
 ```sh
 tee ~/network_proxy.sh <<'EOF'
@@ -2990,7 +1887,7 @@ EOF
 source ~/network_proxy.sh
 ```
 
-### 在新终端中加载
+#### 在新终端中加载
 
 Bash 交互终端通常读取 `~/.bashrc`，Zsh 读取 `~/.zshrc`。按当前 Shell，在相应配置文件中加入一行：
 
@@ -2998,18 +1895,18 @@ Bash 交互终端通常读取 `~/.bashrc`，Zsh 读取 `~/.zshrc`。按当前 Sh
 source ~/network_proxy.sh
 ```
 
-### 使用与检查
+#### 使用与检查
 
 - 运行 `proxy_on` 开启代理，运行 `proxy_off` 关闭代理。
 - 可用 `curl cip.cc` 或 `curl myip.ipip.net` 查看出口 IP；查询服务是否可用取决于当前网络。
 
-## screen 后台会话
+### screen 后台会话
 
 一些任务需要在一个终端运行，能够保留运行日志，并不随着终端的关闭而终止。这个时候，就需要screen命令来执行这样的事。
 
-### screen命令后台运行
+#### screen命令后台运行
 
-#### 创建会话
+##### 创建会话
 
 ```sh
 screen -S baidudl
@@ -3023,7 +1920,7 @@ screen -S baidudl
 
 - 可以看到刚创建的baidudl已经创建了，接下来我们通过`screen -r baidudl`重新进入刚创建的会话
 
-#### 退出会话
+##### 退出会话
 
 ```sh
 #方法一：
@@ -3032,7 +1929,7 @@ exit
 screen -S 209684.baidudl -X quit
 ```
 
-#### 分离会话
+##### 分离会话
 
 - screen -r进入不了会话，报错："There is no screen to be resumed matching"，这通常意味着该会话正在被另一个终端使用，或者没有被正确分离（Detached）。
 
@@ -3042,15 +1939,15 @@ screen -S 209684.baidudl -X quit
 screen -D -r 209652
 ```
 
-#### 保存日志
+##### 保存日志
 
 ```sh
 screen -L -S download # 在当前目录创建 screenlog.0 日志
 ```
 
-## 系统信息与资源监控
+### 系统信息与资源监控
 
-### 查看内存使用情况
+#### 查看内存使用情况
 
 - /proc/meminfo
 
@@ -3090,7 +1987,7 @@ ps aux --sort -rss
 - htop
 
 
-### 查看CPU使用情况
+#### 查看CPU使用情况
 
 - top
 
@@ -3107,7 +2004,7 @@ ps aux --sort -rss
   - 某个进程的%CPU超过100%，说明系统有多核，按1可以看到每个核的cpu占用情况。
 
 
-### Disk使用情况
+#### Disk使用情况
 
 - df -h
   - `df -h` provides information on the overall disk space usage, showing statistics for each mounted file system.
@@ -3125,7 +2022,7 @@ ps aux --sort -rss
   - `fdisk -l` command is used to list information about the **disk partitions** on a system.
 
 
-### OS 信息查看
+#### OS 信息查看
 
 - 查看OS版本
 
@@ -3164,12 +2061,12 @@ sysctl -a
 ```
 
 
-### 查看硬件信息
+#### 查看硬件信息
 
 - lshw
 - lspci
 
-## inotifywait 文件监控与同步
+### inotifywait 文件监控与同步
 
 - 有时候我们常需要当文件变化的时候便触发某些脚本操作，比如说有文件更新了就同步文件到远程机器。在实现这个操作上，主要用到两个工具，一个是rsync，一个是inotifywait。inotifywait的作用是监控文件夹变化,rsync是用来同步，可同步到本机的其他目录或者远程服务器上。
 
@@ -3244,9 +2141,9 @@ nohup bash inotifywait.sh > output.log 2>&1
 ```
 
 
-### systemd管理rsync同步任务
+#### systemd 管理 rsync 同步任务
 
-#### 编写rsync脚本
+##### 编写rsync脚本
 
 ```sh
 #!/bin/bash
@@ -3270,7 +2167,7 @@ do
 done
 ```
 
-#### 创建systemd服务单元
+##### 创建systemd服务单元
 
 ```sh
 tee rsync-inotifywait.service <<'EOF'
@@ -3307,11 +2204,11 @@ sudo systemctl --type=service --state=active
 sudo systemctl disable rsync-inotifywait.service
 ```
 
-## nmcli 网络配置
+### nmcli 网络配置
 
 `nmcli` 用于管理 NetworkManager 的网络设备和连接配置。以下示例适用于由 NetworkManager 管理的 CentOS、RHEL、Rocky Linux 或 Ubuntu；执行前先确认目标网卡和连接配置的实际名称，不能仅凭发行版推断网络管理器。
 
-### 查看与创建连接
+#### 查看与创建连接
 
 ```sh
 nmcli device            # 查看网卡及管理状态
@@ -3321,7 +2218,7 @@ nmcli connection add con-name ens33 ifname ens33 type ethernet
 
 `ens33` 在这里既是连接配置名，也是网卡名；实际环境中两者可能不同。需要删除旧配置时，传入 `nmcli connection show` 列出的**连接配置名**，例如 `nmcli connection delete ens33`。新建以太网连接时，默认 IPv4 方法通常为自动获取地址，以下示例再改为静态地址。
 
-### 配置静态 IPv4
+#### 配置静态 IPv4
 
 假设想把网卡配置改为如下：
 
@@ -3347,11 +2244,11 @@ nmcli connection up ens33   # 重新启用连接
 nmcli connection modify ens33 ipv4.addresses 192.168.211.201/24 ipv4.gateway 192.168.211.2 ipv4.dns 8.8.8.8,114.114.114.114 ipv4.method manual connection.autoconnect yes
 ```
 
-## SSH 连接与远程执行
+### SSH 连接与远程执行
 
 SSH（Secure Shell）为远程登录和通信提供加密与身份认证，常见实现是 OpenSSH。下文用“SSH”指协议，用 `ssh` 指客户端命令。
 
-### 登录服务器与验证主机
+#### 登录服务器与验证主机
 
 ```sh
 ssh user@hostname
@@ -3360,7 +2257,7 @@ ssh -p 2222 user@hostname # 指定非默认端口
 
 `user` 是远端用户名，`hostname` 可以是主机名或 IP；默认端口是 22。首次连接时，客户端会提示确认主机密钥指纹。应先核对指纹，再信任该主机；以后会使用 `~/.ssh/known_hosts` 中的记录核对服务器身份。该文件保存主机密钥，也可以使用哈希形式保存主机名。身份认证可使用密码或公钥。
 
-### 客户端连接配置
+#### 客户端连接配置
 
 用户配置文件位于 `~/.ssh/config`。可以为常用服务器设置别名、用户名和端口：
 
@@ -3373,7 +2270,7 @@ Host remote
 
 之后执行 `ssh remote`，相当于 `ssh -p 2222 us@xxxx.yyyy.com`。
 
-### 公钥登录
+#### 公钥登录
 
 公钥认证省去每次输入账户密码。客户端保管私钥，服务器将对应公钥加入该用户的 `~/.ssh/authorized_keys`。认证时客户端用私钥签名，服务器用已登记的公钥验证签名。
 
@@ -3391,7 +2288,7 @@ Host remote
 
    首次上传通常仍需现有的登录方式；不要向服务器复制私钥。
 
-### scp 复制文件
+#### scp 复制文件
 
 `scp` 通过 SSH 在本地和远端之间加密复制文件，也支持两台远端主机之间复制。基本语法是 `scp source destination`，远端路径中的主机名和文件名用冒号连接：
 
@@ -3399,7 +2296,7 @@ Host remote
 scp user@host:example.txt ./temp.txt # 从远端用户主目录复制到本地当前目录
 ```
 
-### VS Code 配置远程服务器免密连接
+#### VS Code 配置远程服务器免密连接
 
 > [!info] 参考文档
 > [VSCode——SSH免密登录_vscode免密登录ssh_Irving.Gao的博客-CSDN博客](https://blog.csdn.net/qq_45779334/article/details/129308235)
@@ -3454,7 +2351,7 @@ scp user@host:example.txt ./temp.txt # 从远端用户主目录复制到本地�
 此时可以vscode免密远程登录到虚拟机。
 
 
-### 连接故障排查
+#### 连接故障排查
 
 - windows从公司账户切换到个人账户后，将公司账户配置文件里面的/.ssh/config文件拷贝到了个人账户的/.ssh中，在个人账户的vscode中尝试ssh连接时，报错：`Bad owner or permissions on C:\\Users\\xuhan/.ssh/config`
 
@@ -3469,7 +2366,7 @@ scp user@host:example.txt ./temp.txt # 从远端用户主目录复制到本地�
   - 核对客户端 `/etc/hosts` 和 DNS 的正反向解析。若客户端 `/etc/hosts` 中为目标 IP 配置了正确主机名，可尝试用该主机名连接；无需为客户端解析问题重启服务端 `sshd`。
 
 
-### Azure 上修改 SSH 端口（CentOS 8 示例）
+#### Azure 上修改 SSH 端口（CentOS 8 示例）
 
 以下示例将端口从 22 改为 2222。保持现有会话，直到新端口登录成功。示例使用 PuTTY 连接 Azure VM，并假定本机由 firewalld 管理防火墙。
 
@@ -3548,11 +2445,11 @@ for i in $(seq 1 4); do
 done
 ```
 
-## Samba 文件共享
+### Samba 文件共享
 
 Samba 在 Linux/Unix 上提供 SMB 文件与打印共享服务，使 Windows 和 Linux 客户端可以访问共享资源。`smb` 提供文件共享，`nmb` 用于旧式 NetBIOS 名称解析；是否需要 `nmb` 取决于客户端和网络环境。以下以 RHEL/CentOS 风格系统上的 `/share` 共享为例。
 
-### 服务端：创建用户和共享目录
+#### 服务端：创建用户和共享目录
 
 1. 创建两个不允许交互登录的系统用户，并安装 Samba：
 
@@ -3576,7 +2473,7 @@ Samba 在 Linux/Unix 上提供 SMB 文件与打印共享服务，使 Windows 和
    pdbedit -a -u user02
    ```
 
-### 服务端：配置共享与访问控制
+#### 服务端：配置共享与访问控制
 
 在 `/etc/samba/smb.conf` 中添加共享定义，随后重启 `smb`：
 
@@ -3615,11 +2512,11 @@ setsebool -P samba_enable_home_dirs on
 
 原实验列出的相关布尔值还有 `samba_create_home_dirs`、`samba_domain_controller`、`samba_export_all_ro`、`samba_export_all_rw`、`samba_load_libgfapi`、`samba_portmapper`、`samba_run_unconfined`、`samba_share_fusefs`、`samba_share_nfs`、`sanlock_use_samba`、`tmpreaper_use_samba`、`use_samba_home_dirs`、`virt_use_samba`。应按实际共享目录和权限需求选择，不必全部开启。
 
-### Windows 客户端
+#### Windows 客户端
 
 在文件资源管理器地址栏访问 `\\192.168.147.11`，输入前述 Samba 用户名和密码。若要排查已缓存的 Windows 网络连接，可先在命令提示符运行 `net use * /del`，再重新连接。
 
-### Linux 客户端
+#### Linux 客户端
 
 安装客户端工具，列出共享并连接 `myshare`：
 
