@@ -11,17 +11,19 @@ aliases:
   - GPU Exporter
 ---
 
-# 部署开源gpu_exporter
+# GPU Exporter 与 Grafana 监控
 
-- 这里在宿主机上部署exporter，在vmware虚机上的prometheus抓数据
+## 部署 NVIDIA GPU Exporter
+
+本例在 GPU 宿主机上部署 Exporter，由 VMware 虚拟机中的 Prometheus 抓取指标。
 
 ```sh
-#下载解压二进制包
-#https://github.com/utkuozdemir/nvidia_gpu_exporter/releases/tag/v1.2.1
+# 下载并解压二进制包
+# https://github.com/utkuozdemir/nvidia_gpu_exporter/releases/tag/v1.2.1
 wget https://github.com/utkuozdemir/nvidia_gpu_exporter/releases/download/v1.2.1/nvidia_gpu_exporter_1.2.1_linux_x86_64.tar.gz
 tar zxvf nvidia_gpu_exporter_1.2.1_linux_x86_64.tar.gz
-#创建systemd服务启动文件
-sudo cp nvidia_gpu_exporter /usr/bin/nvidia_gpu_exporter 
+# 创建 systemd 服务文件
+sudo cp nvidia_gpu_exporter /usr/bin/nvidia_gpu_exporter
 sudo tee /etc/systemd/system/nvidia-gpu-exporter.service <<'EOF'
 [Unit]
 Description=NVIDIA GPU Exporter
@@ -34,33 +36,32 @@ RestartSec=15
 [Install]
 WantedBy=multi-user.target
 EOF
-#启动 Exporter 
-systemctl daemon-reload
-systemctl enable nvidia-gpu-exporter.service --now
-systemctl restart nvidia-gpu-exporter.service
-#检查指标
-curl localhost:9835/metrics
+# 启动 Exporter
+sudo systemctl daemon-reload
+sudo systemctl enable nvidia-gpu-exporter.service --now
+# 检查指标
+curl http://localhost:9835/metrics
 ```
 
-# prometheus抓取数据
+## Prometheus 抓取数据
 
-- 添加job
+在 Prometheus 配置中添加以下抓取任务：
 
 ```yaml
-- job_name: "gpu-exporter"  
+- job_name: "gpu-exporter"
   static_configs:
-  - targets: 
-    - '10.12.0.247:9835'
-    labels:
-      gpu: nvidia-rtx2000-ada
-      app: gpu-exporter
+    - targets:
+        - '10.12.0.247:9835'
+      labels:
+        gpu: nvidia-rtx2000-ada
+        app: gpu-exporter
 ```
 
-有个问题是宿主机内网IP会变，用hostname的话prometheus会报解析失败。我的思路：建一个pushgateway，宿主机推送到上面，prometheus去上面拉数据。
+宿主机内网 IP 会变化，而当前 Prometheus 环境无法解析其主机名。应先修复 DNS，或通过服务发现维护抓取目标。Pushgateway 主要用于短时批处理任务，不适合作为长期运行的 Exporter 的常规抓取替代方案。
 
-# grafana数据展示
+## Grafana 数据展示
 
 - [NVIDIA GPU Metrics Dashboard](https://grafana.com/grafana/dashboards/14574-nvidia-gpu-metrics/)
 
 > [!warning] 时间同步
-> Prometheus 抓取的数据非常依赖于系统时间准确，Grafana server 需要同步时间。
+> 保持 Exporter、Prometheus 和 Grafana 所在主机的系统时间同步，便于正确采集和查看时间序列。

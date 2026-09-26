@@ -10,18 +10,24 @@ aliases:
 
 # NVIDIA GPU 开启 Persistent Mode
 
-以下为利用GPU驱动自带工具配置GPU驱动内存常驻模式开机自启动，该脚本需要系统下预安装sed、useradd、userdel、id命令，否则会执行失败。
+NVIDIA 驱动提供 `nvidia-persistenced` 服务，用于在没有活动客户端时维持 GPU 驱动状态。以下示例安装其随驱动提供的 systemd 服务，并设置开机启动。安装脚本依赖 `sed`、`useradd`、`userdel` 和 `id`。
 
-~~~sh
+## 安装服务
+
+```sh
 cd /usr/share/doc/NVIDIA_GLX-1.0/samples/
 ls
 #nvidia-persistenced-init.tar.bz2  systemd
-tar xvf nvidia-persistenced-init.tar.bz2 
+tar xvf nvidia-persistenced-init.tar.bz2
 ls
 #nvidia-persistenced-init  nvidia-persistenced-init.tar.bz2  systemd
 cd nvidia-persistenced-init/
-./install.sh 
-######
+./install.sh
+```
+
+安装成功时，输出示例如下：
+
+```text
 Checking for common requirements...
   sed found in PATH?  Yes
   useradd found in PATH?  Yes
@@ -49,12 +55,15 @@ Enabling nvidia-persistenced.service... done.
 Starting nvidia-persistenced.service... done.
 
 systemd service successfully installed.
-######
-#以上表示脚本配置成功
-~~~
+```
 
-~~~sh
-#通过以下命令检查服务状态是否正常,并执行nvidia-smi确认Persistence-M状态为on
+## 验证
+
+检查服务状态，并通过 `nvidia-smi` 确认 Persistence-M 为 `On`：
+
+```sh
 systemctl status nvidia-persistenced.service
-#配置完成后重启OS验证systemctl status nvidia-persistenced.service是否正常启动
-~~~
+nvidia-smi
+```
+
+重启系统后，再次检查服务状态与 Persistence-M。
