@@ -6,19 +6,25 @@ tags:
   - admin
   - storage
   - network
+  - kernel
+  - grub
+  - nvidia
+  - security
+  - unattended-upgrade
 aliases:
   - Ubuntu基础管理操作
+  - Ubuntu修改启动内核
+  - Ubuntu安装NVIDIA显卡驱动
+  - Ubuntu unattended-upgrade管理
 ---
 
-Ubuntu 2004配置静态IP: [为Ubuntu 20.04 设置静态IP简明教程（和把大象装冰箱一样简单）-腾讯云开发者社区-腾讯云 (tencent.com)](https://cloud.tencent.com/developer/article/1933335)
+# Ubuntu 基础操作
 
----
+以下是 Ubuntu 系统管理练习，以及启动内核、显卡驱动和安全更新的操作记录。命令中的设备名、内核版本、网络地址和驱动版本均需按本机环境核对。
 
-# 操作练习
+## 用户与软件包管理
 
-## linux admin
-
-1. User Admin
+### 用户与用户组
 
 - Create a user with your name with uid 2001, with default config
 
@@ -80,107 +86,113 @@ Ubuntu 2004配置静态IP: [为Ubuntu 20.04 设置静态IP简明教程（和把�
   groups hangx
   ~~~
 
-2. Install sshd and ensure services start on boot
+### 安装 SSH 服务
+
+~~~sh
+apt install -y openssh-server
+systemctl enable --now ssh
+~~~
+
+> [!info] apt vs apt-get
+> `apt`和`apt-get`都是Ubuntu和其他基于Debian的系统中的包管理工具。它们都可以用来安装、更新、升级和删除软件包。
+>
+> 主要的区别在于：
+>
+> 1. **用户友好性**：`apt`被设计为更用户友好，它提供了颜色编码的输出和进度条等功能。
+> 2. **命令简洁性**：`apt`的命令更简洁。例如，`apt full-upgrade`相当于`apt-get dist-upgrade`。
+> 3. **输出**：`apt`提供了更简洁、更易于阅读的输出。
+> 4. **脚本兼容性**：`apt` 面向交互使用，输出格式可能随版本变化；脚本中优先使用接口更稳定的 `apt-get` 和 `apt-cache`。这与是否为 LTS 版本无关。
+>
+> apt命令使用：
+>
+> - `apt-get install <package-name>=<version-number>` -- 安装特定版本的包
+> - `apt-cache policy package name` -- 查看一个包的可用版本
+> - `dpkg --get-selections`, `apt list --installed`可以查看已经安装的包
+> - `apt remove <package-name>` -- 卸载软件包，但是不会卸载配置文件
+> - `apt purge <package name>` -- 卸载软件包，包括配置文件
+
+### 更新软件包
+
+~~~sh
+apt update
+apt list --upgradable
+#查看kernel header的包
+apt list --installed | grep linux-header
+apt-mark hold linux-headers-6.2.0-1018-azure linux-headers-azure
+apt upgrade
+~~~
+
+上述 `linux-headers-6.2.0-1018-azure` 是原练习环境的包名，只有本机安装了该包且确需暂停升级时才应执行 `hold`；完成维护后用 `apt-mark unhold` 解除。
+
+> [!info] apt update vs apt upgrade
+> - apt update和apt upgrade的区别
+>
+> 1. **apt update**：此命令用于更新系统的包列表。它会从你在系统中配置的软件源获取最新的包信息，包括新的软件包和现有软件包的更新。这个命令不会实际安装或升级任何软件包，只是更新了系统知道的可用软件包的信息。
+> 2. **apt upgrade**：此命令用于实际升级系统中的软件包。它会查看你已经安装的软件包，并检查是否有可用的更新。如果有，它会下载并安装这些更新。这个命令需要在运行`apt update`之后运行，以确保你的系统知道所有可用的更新。
+>
+> - 如何在apt upgrade时排除掉特定的包
+>   - `apt-mark hold`排除掉特定的包
+>   - `apt-mark showhold`可以查看标记为hold的包
+>   - `apt-mark unhold`可以取消hold
+>
+> - 如何辨别哪些包是kernel header
+>   - 在Ubuntu和其他基于Debian的系统中，内核头文件通常包含在以下几个包中：
+>     - `linux-headers-generic`：这个包包含了通用内核的头文件。这些头文件对于编译大多数内核模块是必需的。
+>     - `linux-headers-$(uname -r)`：这个包包含了当前运行的特定版本内核的头文件。这些头文件对于编译针对当前内核版本的模块是必需的。
+>
+>   - 检查是否安装kernel header
+>
+>     ~~~bash
+>     dpkg-query -s linux-headers-$(uname -r)
+>     ~~~
+>
+> - 更多关于Ubuntu linux kernel的信息：[linux - ubuntu22.04 的内核版本为什么有多个？ - SegmentFault 思否](https://segmentfault.com/q/1010000044156233)
+>
+>   - ubuntu kernel：[https://ubuntu.com/kernel](https://link.segmentfault.com/?enc=wiXbkZbHsoC%2F8N1euDgGvg%3D%3D.zeyQNXTuqhLTzd3p%2B0TxOBlG%2F%2B4RYIn4VkzZz28pWhI%3D)说明，最新的LTS镜像会安装`-hwe`内核，这个是高版本的内核，通常应该是下个LTS版本使用的内核，每个版本的内核支持时间可以在上述链接找到图文说明。[https://ubuntu.com/kernel/lifecycle](https://link.segmentfault.com/?enc=N1Nt3jzKquIbBccUe3MvzA%3D%3D.B6HQsmVKJP4l21kBfysTFzGpNuij9%2BDYjvkNZtC46Fn3DcwRmjeoZiWxOuYOAUer)
+>   - 此外，ubuntu还有其他可用备选内核，参考: [https://ubuntu.com/kernel/variants#current-variant-kernels](https://link.segmentfault.com/?enc=2meiVWW6SxS0FtZ0j%2BCsHw%3D%3D.xroP7rO%2FKNQsvIjnmDu%2BE7C9%2FuRsiH4bmjz46aG%2B%2BOYbx5s933QjhuolCLSwyQeHqTPGf3%2ByrshKb5zpr8NXpw%3D%3D)
+>   - 简单来说，就是Ubuntu认为硬件更新迭代可能比较快，而LTS版本支持时间比较长(已经从20.04版本之前的5年延长到目前的10年支持)，所以旧的LTS版本可能无法跟上新硬件的适配，因此Ubuntu搞了个`HWE`包，让旧的LTS版本用上新的LTS版本的内核以便可以在不升级整个OS版本(`do-release-upgrade`)的情况下使用新版本的内核，以支持新的硬件。
+
+### 配置 fdisk 的 sudo 权限
+
+~~~sh
+visudo #visudo提供锁定和语法检查，比直接vim /etc/sudoers更有用
+#末尾添加一行：
+hangx ALL=(ALL:ALL) NOPASSWD: /usr/bin/fdisk
+#ctrkl+O 保存，ctrl+X退出
+~~~
+
+> [!info] sudoers配置语法
+> username ALL=(ALL:ALL) NOPASSWD: /path/to/command命令解释：
+>
+> - `username`：这是用户名，表示这条规则适用于哪个用户。
+> - `ALL=`：这是主机名部分，表示这条规则适用于哪些主机。在这里，`ALL`表示这条规则适用于所有主机。
+> - `(ALL:ALL)`：这是运行命令的用户和组。第一个`ALL`表示命令可以以任何其他用户的身份运行，第二个`ALL`表示命令可以以任何组的身份运行。
+> - `NOPASSWD:`：这表示用户在执行这条命令时不需要输入密码。
+> - `/path/to/command`：这是用户可以执行的命令的完整路径。
+>
+> 如何查看一个用户的sudo权限：
+>
+> ```sh
+> su - username
+> su -l
+> ```
+
+### 用户登录与 SSH 密钥
+
+1. 在发起连接的用户账户下生成密钥，并将该用户的公钥复制到 VM 上的 `hangx` 账户：
 
    ~~~sh
-   apt install -y openssh-server
-   systemctl enable --now ssh
+   ssh-keygen -t ed25519
+   ssh-copy-id -i ~/.ssh/id_ed25519.pub hangx@<VM IP>
    ~~~
 
-   > [!info] apt vs apt-get
-   > `apt`和`apt-get`都是Ubuntu和其他基于Debian的系统中的包管理工具。它们都可以用来安装、更新、升级和删除软件包。
-   >
-   > 主要的区别在于：
-   >
-   > 1. **用户友好性**：`apt`被设计为更用户友好，它提供了颜色编码的输出和进度条等功能。
-   > 2. **命令简洁性**：`apt`的命令更简洁。例如，`apt full-upgrade`相当于`apt-get dist-upgrade`。
-   > 3. **输出**：`apt`提供了更简洁、更易于阅读的输出。
-   > 4. **稳定性**：`apt-get`在长期支持（LTS）版本中更稳定。因此，对于服务器和其他需要稳定性的环境，`apt-get`可能是更好的选择。
-   >
-   > apt命令使用：
-   >
-   > - `apt-get install <package-name>=<version-number>` -- 安装特定版本的包
-   > - `apt-cache policy package name` -- 查看一个包的可用版本
-   > - `dpkg --get-selections`, `apt list --installed`可以查看已经安装的包
-   > - `apt remove <package-name>` -- 卸载软件包，但是不会卸载配置文件
-   > - `apt purge <package name>` -- 卸载软件包，包括配置文件
-
-3. Update all packages, except Kernel headers
+2. 登录后检查磁盘：
 
    ~~~sh
-   apt update
-   apt list --upgradable
-   #查看kernel header的包
-   apt list --installed | grep linux-header
-   apt-mark hold linux-headers-6.2.0-1018-azure linux-headers-azure
-   apt upgrade
+   sudo fdisk -l
    ~~~
 
-   > [!info] apt update vs apt upgrade
-   > - apt update和apt upgrade的区别
-   >
-   > 1. **apt update**：此命令用于更新系统的包列表。它会从你在系统中配置的软件源获取最新的包信息，包括新的软件包和现有软件包的更新。这个命令不会实际安装或升级任何软件包，只是更新了系统知道的可用软件包的信息。
-   > 2. **apt upgrade**：此命令用于实际升级系统中的软件包。它会查看你已经安装的软件包，并检查是否有可用的更新。如果有，它会下载并安装这些更新。这个命令需要在运行`apt update`之后运行，以确保你的系统知道所有可用的更新。
-   >
-   > - 如何在apt upgrade时排除掉特定的包
-   >   - `apt-mark hold`排除掉特定的包
-   >   - `apt-mark showhold`可以查看标记为hold的包
-   >   - `apt-mark unhold`可以取消hold
-   >
-   > - 如何辨别哪些包是kernel header
-   >   - 在Ubuntu和其他基于Debian的系统中，内核头文件通常包含在以下几个包中：
-   >     - `linux-headers-generic`：这个包包含了通用内核的头文件。这些头文件对于编译大多数内核模块是必需的。
-   >     - `linux-headers-$(uname -r)`：这个包包含了当前运行的特定版本内核的头文件。这些头文件对于编译针对当前内核版本的模块是必需的。
-   >
-   >   - 检查是否安装kernel header
-   >
-   >     ~~~bash
-   >     dpkg-query -s linux-headers-$(uname -r)
-   >     ~~~
-   >
-   > - 更多关于Ubuntu linux kernel的信息：[linux - ubuntu22.04 的内核版本为什么有多个？ - SegmentFault 思否](https://segmentfault.com/q/1010000044156233)
-   >
-   >   - ubuntu kernel：[https://ubuntu.com/kernel](https://link.segmentfault.com/?enc=wiXbkZbHsoC%2F8N1euDgGvg%3D%3D.zeyQNXTuqhLTzd3p%2B0TxOBlG%2F%2B4RYIn4VkzZz28pWhI%3D)说明，最新的LTS镜像会安装`-hwe`内核，这个是高版本的内核，通常应该是下个LTS版本使用的内核，每个版本的内核支持时间可以在上述链接找到图文说明。[https://ubuntu.com/kernel/lifecycle](https://link.segmentfault.com/?enc=N1Nt3jzKquIbBccUe3MvzA%3D%3D.B6HQsmVKJP4l21kBfysTFzGpNuij9%2BDYjvkNZtC46Fn3DcwRmjeoZiWxOuYOAUer)
-   >   - 此外，ubuntu还有其他可用备选内核，参考: [https://ubuntu.com/kernel/variants#current-variant-kernels](https://link.segmentfault.com/?enc=2meiVWW6SxS0FtZ0j%2BCsHw%3D%3D.xroP7rO%2FKNQsvIjnmDu%2BE7C9%2FuRsiH4bmjz46aG%2B%2BOYbx5s933QjhuolCLSwyQeHqTPGf3%2ByrshKb5zpr8NXpw%3D%3D)
-   >   - 简单来说，就是Ubuntu认为硬件更新迭代可能比较快，而LTS版本支持时间比较长(已经从20.04版本之前的5年延长到目前的10年支持)，所以旧的LTS版本可能无法跟上新硬件的适配，因此Ubuntu搞了个`HWE`包，让旧的LTS版本用上新的LTS版本的内核以便可以在不升级整个OS版本(`do-release-upgrade`)的情况下使用新版本的内核，以支持新的硬件。
-
-4. enable your username to run a command fdisk as root (sudoers)
-
-   ~~~sh
-   visudo #visudo提供锁定和语法检查，比直接vim /etc/sudoers更有用
-   #末尾添加一行：
-   hangx ALL=(ALL:ALL) NOPASSWD: /usr/bin/fdisk
-   #ctrkl+O 保存，ctrl+X退出
-   ~~~
-
-   > [!info] sudoers配置语法
-   > username ALL=(ALL:ALL) NOPASSWD: /path/to/command命令解释：
-   >
-   > - `username`：这是用户名，表示这条规则适用于哪个用户。
-   > - `ALL=`：这是主机名部分，表示这条规则适用于哪些主机。在这里，`ALL`表示这条规则适用于所有主机。
-   > - `(ALL:ALL)`：这是运行命令的用户和组。第一个`ALL`表示命令可以以任何其他用户的身份运行，第二个`ALL`表示命令可以以任何组的身份运行。
-   > - `NOPASSWD:`：这表示用户在执行这条命令时不需要输入密码。
-   > - `/path/to/command`：这是用户可以执行的命令的完整路径。
-   >
-   > 如何查看一个用户的sudo权限：
-   >
-   > ```sh
-   > su - username
-   > su -l
-   > ```
-
-5. login with your username
-
-   1. generate ssh public key pair for your username and enable passwordless ssh for this VM
-
-      ~~~sh
-      ssh-keygen -t rsa
-      ssh-copy-id -i /root/.ssh/id_rsa.pub hangx@<VM IP>
-      ~~~
-
-   2. run fdisk -l
-
-## Storage Admin
+## 存储管理
 
 1. Check current LVM setup
 
@@ -242,12 +254,12 @@ Ubuntu 2004配置静态IP: [为Ubuntu 20.04 设置静态IP简明教程（和把�
    > [!tip] Device busy处理
    > umount之后，执行fdisk/e2fsck/resize2fs的时候仍会有提示device busy，可以用`fuser -um`或者`lsof`查看使用分区的进程，可以用`fuser -km`杀掉占用的进程。然后再去执行resize2fs等操作。
 
-## Filesystem
+## 文件系统与 NFS
 
 - Create a mount for a directory / volume_zen and export it
 
   ~~~sh
-  mount LABEL=volume_zen /mnt/datadisk
+  mount LABEL=volume_zen /mnt/datadisk1
   #安装nfs
   apt install -y nfs-kernel-server
   #配置nfs共享
@@ -290,7 +302,9 @@ Ubuntu 2004配置静态IP: [为Ubuntu 20.04 设置静态IP简明教程（和把�
   >   - 一般应用在目录上，目录设置sgid，任何用户在其中创建的文件的属组都会继承该目录的属组，而不是用户的属组。
   >   - drwxrwsr-x; 置于g的x位置，s表示SGID位被设置，也可以用 2775 表示
 
-## Network Admin
+## 网络管理
+
+Ubuntu 20.04 静态 IP 配置参考：[教程](https://cloud.tencent.com/developer/article/1933335)。
 
 - Add a new interface and assign IP, gateway, DNS servers.
 
@@ -322,7 +336,7 @@ Ubuntu 2004配置静态IP: [为Ubuntu 20.04 设置静态IP简明教程（和把�
 - Test Connectivity
 
   ~~~sh
-  nc -vz <NIC IP>
+  nc -vz <NIC IP> <port>
   ~~~
 
 - Nslookup, A record CNAME
@@ -358,6 +372,247 @@ Ubuntu 2004配置静态IP: [为Ubuntu 20.04 设置静态IP简明教程（和把�
 
 ---
 
+## 启动内核与 GRUB
+
+### 查看已安装内核
+
+```sh
+dpkg --list | grep linux-image
+```
+
+原记录中的 Ubuntu 22.04 示例输出：
+
+```text
+ii  linux-image-5.15.0-102-generic          5.15.0-102.112                          amd64        Signed kernel image generic
+ii  linux-image-5.15.0-78-generic           5.15.0-78.85                            amd64        Signed kernel image generic
+ii  linux-image-5.15.0-88-generic           5.15.0-88.98                            amd64        Signed kernel image generic
+ii  linux-image-generic                     5.15.0.102.99                           amd64        Generic Linux kernel image
+```
+
+### 查看启动菜单
+
+```sh
+grep -E '^[[:space:]]*(menuentry|submenu) ' /boot/grub/grub.cfg
+```
+
+原记录中的菜单节选：
+
+```text
+menuentry 'Ubuntu' --class ubuntu --class gnu-linux --class gnu --class os $menuentry_id_option 'gnulinux-simple-685552fd-4f93-41d4-9337-29b88e63493a' {
+submenu 'Advanced options for Ubuntu' $menuentry_id_option 'gnulinux-advanced-685552fd-4f93-41d4-9337-29b88e63493a' {
+        menuentry 'Ubuntu, with Linux 5.15.0-102-generic' --class ubuntu --class gnu-linux --class gnu --class os $menuentry_id_option 'gnulinux-5.15.0-102-generic-advanced-685552fd-4f93-41d4-9337-29b88e63493a' {
+        menuentry 'Ubuntu, with Linux 5.15.0-102-generic (recovery mode)' --class ubuntu --class gnu-linux --class gnu --class os $menuentry_id_option 'gnulinux-5.15.0-102-generic-recovery-685552fd-4f93-41d4-9337-29b88e63493a' {
+        menuentry 'Ubuntu, with Linux 5.15.0-88-generic' --class ubuntu --class gnu-linux --class gnu --class os $menuentry_id_option 'gnulinux-5.15.0-88-generic-advanced-685552fd-4f93-41d4-9337-29b88e63493a' {
+        menuentry 'Ubuntu, with Linux 5.15.0-88-generic (recovery mode)' --class ubuntu --class gnu-linux --class gnu --class os $menuentry_id_option 'gnulinux-5.15.0-88-generic-recovery-685552fd-4f93-41d4-9337-29b88e63493a' {
+        menuentry 'Ubuntu, with Linux 5.15.0-78-generic' --class ubuntu --class gnu-linux --class gnu --class os $menuentry_id_option 'gnulinux-5.15.0-78-generic-advanced-685552fd-4f93-41d4-9337-29b88e63493a' {
+        menuentry 'Ubuntu, with Linux 5.15.0-78-generic (recovery mode)' --class ubuntu --class gnu-linux --class gnu --class os $menuentry_id_option 'gnulinux-5.15.0-78-generic-recovery-685552fd-4f93-41d4-9337-29b88e63493a' {
+```
+
+### 指定默认启动项
+
+以下示例沿用原记录的 `5.15.0-88-generic`。先核对本机实际菜单项，再编辑 `/etc/default/grub`：
+
+```sh
+sudo vim /etc/default/grub
+```
+
+将原来的 `GRUB_DEFAULT=0` 改为：
+
+```sh
+GRUB_DEFAULT="Advanced options for Ubuntu>Ubuntu, with Linux 5.15.0-88-generic"
+```
+
+```sh
+sudo update-grub
+```
+
+菜单标题会随内核版本、语言和配置变化；重启后用 `uname -r` 确认实际运行的内核。GRUB 也支持用菜单项 ID 指定默认项，ID 比标题更不容易受显示文字变化影响。
+
+### 可选：暂缓内核包升级
+
+原笔记使用 `apt-mark hold` 固定内核包；这会阻止相关内核更新，只有确实需要暂缓升级时才执行，并安排解除时间：
+
+```sh
+sudo apt-mark hold linux-headers-generic linux-image-generic linux-generic
+apt-mark showhold
+# 结束暂缓时：
+sudo apt-mark unhold linux-headers-generic linux-image-generic linux-generic
+```
+
+选择旧内核启动本身不要求执行 `hold`。原文的“卸载旧版本内核”只有标题，没有卸载命令，因此这里不补入未经验证的删除步骤。
+
+## NVIDIA 显卡驱动
+
+### 检查驱动与候选版本
+
+```sh
+nvidia-smi
+ubuntu-drivers devices
+```
+
+`nvidia-smi` 失败表示当前驱动不可用或未正常工作，不能单凭该结果判断驱动包完全没有安装。`ubuntu-drivers devices` 中的 `recommended` 是候选推荐，安装前仍应核对 Ubuntu 版本、GPU 型号和用途。
+
+### 安装驱动
+
+Ubuntu 推荐使用 `ubuntu-drivers` 自动选择适配的驱动。桌面与通用用途：
+
+```sh
+sudo ubuntu-drivers install
+```
+
+服务器或计算任务可以查看并选择 `-server` 驱动：
+
+```sh
+sudo ubuntu-drivers list --gpgpu
+sudo ubuntu-drivers install --gpgpu
+```
+
+原笔记固定版本的示例可在该包仍列于本机候选驱动、且明确需要 535 版本时使用：
+
+```sh
+sudo apt install -y nvidia-driver-535
+```
+
+`-open` 和 `-server` 是不同的驱动变体，不能一律排除；是否选择它们取决于硬件、用途和 Ubuntu 提供的候选包。
+
+### 可选：处理 Nouveau 冲突
+
+只有在 Nouveau 与目标 NVIDIA 驱动冲突、且安装流程未自动处理时，再禁用 Nouveau。原笔记的两条配置连在一起，实际应分行写入：
+
+```sh
+sudo vim /etc/modprobe.d/blacklist-nouveau.conf
+```
+
+```text
+blacklist nouveau
+options nouveau modeset=0
+```
+
+```sh
+sudo update-initramfs -u
+sudo reboot
+```
+
+重启后检查模块是否仍被加载：
+
+```sh
+lsmod | grep nouveau
+```
+
+无输出表示当前未加载 Nouveau 模块；如仍有驱动问题，再结合日志排查。
+
+### 可选：应用依赖与库路径
+
+以下是原笔记保留的应用构建依赖，**不是安装 NVIDIA 驱动的必需步骤**：
+
+```sh
+sudo apt-get install libprotobuf-dev libleveldb-dev libsnappy-dev libopencv-dev libhdf5-serial-dev protobuf-compiler
+sudo apt-get install --no-install-recommends libboost-all-dev
+sudo apt-get install libopenblas-dev liblapack-dev libatlas-base-dev
+sudo apt-get install libgflags-dev libgoogle-glog-dev liblmdb-dev
+```
+
+原笔记还记录了为应用设置共享库搜索路径的做法。仅在应用确实需要这些路径时，编辑当前用户的 `~/.bashrc`；两条 `export` 不应连在一起：
+
+```sh
+vim ~/.bashrc
+```
+
+```sh
+export LD_LIBRARY_PATH="/usr/lib/x86_64-linux-gnu:/lib/x86_64-linux-gnu${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+```
+
+```sh
+source ~/.bashrc
+```
+
+### 验证
+
+安装并按需重启后，再运行：
+
+```sh
+nvidia-smi
+```
+
 ## 安全补丁管理
 
-安全更新的检查、自动安装配置和定时任务见 [[Linux-Shell/Ubuntu-unattended-upgrade管理|Ubuntu 安全补丁管理]]。
+参考原笔记的[安全更新说明](https://zhuanlan.zhihu.com/p/74768044#%E6%96%B9%E6%B3%95%E4%B8%80%EF%BC%9A%E5%A6%82%E4%BD%95%E6%A3%80%E6%9F%A5%20Debian/Ubuntu%20%E4%B8%AD%E6%98%AF%E5%90%A6%E6%9C%89%E4%BB%BB%E4%BD%95%E5%8F%AF%E7%94%A8%E7%9A%84%E5%AE%89%E5%85%A8%E6%9B%B4%E6%96%B0%EF%BC%9F)。
+
+### 查看与手动安装
+
+```sh
+sudo unattended-upgrade --dry-run -v  # 预览可安装更新，不实际安装
+sudo unattended-upgrade -d             # 安装并输出调试信息
+sudo unattended-upgrade                # 直接安装
+```
+
+### 自动更新配置
+
+- `/etc/apt/apt.conf.d/50unattended-upgrades`：允许的更新来源和自动更新行为。原笔记中的安全来源配置示例：
+
+  ```text
+  Unattended-Upgrade::Allowed-Origins {
+      "${distro_id}:${distro_codename}-security";
+      // ESM 来源只有在相应版本和服务可用时才会生效。
+      "${distro_id}ESMApps:${distro_codename}-apps-security";
+      "${distro_id}ESM:${distro_codename}-infra-security";
+  };
+  ```
+
+  ESM Apps 提供应用包的扩展安全维护，ESM Infra 提供基础设施包的扩展安全维护。允许哪些来源取决于 Ubuntu 版本和本机配置；检查现有配置后再调整。Ubuntu 建议通过 `/etc/apt/apt.conf.d/` 中编号更靠后的独立配置文件覆盖设置，避免直接改发行版提供的 `50unattended-upgrades`。
+
+- `/etc/apt/apt.conf.d/20auto-upgrades`：周期性刷新包列表与运行自动更新。原笔记中的每日配置：
+
+  ```text
+  APT::Periodic::Update-Package-Lists "1";
+  APT::Periodic::Unattended-Upgrade "1";
+  ```
+
+  `1` 表示每天运行，`0` 表示关闭对应的周期任务。修改后用 `sudo unattended-upgrade --dry-run -v` 检查可安装更新；无须为了编辑配置而重启 `unattended-upgrades` 服务。
+
+### 按周或按季度运行
+
+如果改用 root 的 cron 定时安装，先关闭周期性自动安装，同时保留包列表刷新：
+
+```sh
+sudo vim /etc/apt/apt.conf.d/20auto-upgrades
+```
+
+```text
+APT::Periodic::Update-Package-Lists "1";
+APT::Periodic::Unattended-Upgrade "0";
+```
+
+然后编辑 root 的 crontab：
+
+```sh
+sudo crontab -e
+```
+
+以下两种计划**任选其一**：
+
+1. 每周六 02:00：
+
+   ```cron
+   0 2 * * 6 unattended-upgrade
+   ```
+
+2. 每个季度最后一个月的最后一个周六 23:59（原 VM 计划）：
+
+   ```cron
+   59 23 * 3,6,9,12 6 [ "$(date +\%m -d +7days)" != "$(date +\%m)" ] && unattended-upgrade
+   ```
+
+   第二个表达式利用“七天后月份已变化”判断本周六为当月最后一个周六。`\%` 是 crontab 中必须保留的转义。`date -d` 是 GNU date 语法，适用于这里的 Ubuntu 环境。
+
+保存 crontab 后用 `sudo crontab -l` 和 `systemctl status cron.service` 核对；通常不需要重启 cron。原笔记中的 `sudo systemctl restart cron.service` 仅在服务异常时使用。
+
+### 使用 APT 查看更新
+
+```sh
+sudo apt update
+apt list --upgradable | grep -- '-security'
+apt changelog packagename
+```
+
+`focal-security` 是 Ubuntu 20.04 LTS 的安全更新来源名称。原笔记用管道批量提取包名并调用 `apt install`，但输出格式和来源匹配可能不完整；安装前应核对候选版本，再明确安装所需包。`apt install -s` 可预览安装计划。

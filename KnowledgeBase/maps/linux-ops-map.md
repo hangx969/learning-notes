@@ -11,7 +11,7 @@ date: 2026-09-26
 # 🐧 Linux 运维专题地图
 
 > [!info] 专题范围
-> 覆盖 Linux-Shell（23 篇）为主线，关联 OS（3 篇）、HPC（5 篇）、GPU（4 篇）等基础设施知识。
+> 覆盖 Linux-Shell（20 篇）为主线，关联 OS（3 篇）、HPC（5 篇）、GPU（4 篇）等基础设施知识。
 
 ---
 
@@ -48,16 +48,13 @@ date: 2026-09-26
 16. [[Python/python-运维开发/python-Linux-operation|python-Linux-operation]] — Python 运维
 
 ### Ubuntu 专题
-17. [[Linux-Shell/Ubuntu基础操作|Ubuntu基础操作]] — 基础操作
-18. [[Linux-Shell/Ubuntu安装显卡驱动|Ubuntu安装显卡驱动]] — GPU 驱动
-19. [[Linux-Shell/Ubuntu-unattended-upgrade管理|Ubuntu-unattended-upgrade管理]] — 安全补丁
-20. [[Linux-Shell/Ubuntu-修改启动内核|Ubuntu-修改启动内核]] — 内核管理
-21. [[Linux-Shell/Ubuntu部署vftpd|Ubuntu部署vftpd]] — FTP 服务
+17. [[Linux-Shell/Ubuntu基础操作|Ubuntu基础操作]] — 基础操作、内核、GPU 驱动与安全更新
+18. [[Linux-Shell/Ubuntu部署vftpd|Ubuntu部署vftpd]] — FTP 服务
 
 ### 开发环境
-22. [[Linux-Shell/MacBook开发环境配置|MacBook开发环境配置]] — macOS
-23. [[Linux-Shell/配置zsh终端|配置zsh终端]] — zsh 终端
-24. [[Linux-Shell/vscode|vscode]] — VSCode
+19. [[Linux-Shell/MacBook开发环境配置|MacBook开发环境配置]] — macOS
+20. [[Linux-Shell/配置zsh终端|配置zsh终端]] — zsh 终端
+21. [[Linux-Shell/vscode|vscode]] — VSCode
 
 ---
 
@@ -108,12 +105,12 @@ date: 2026-09-26
 | [[GPU-DeepLearning/GPU-exporter-grafana|GPU-exporter-grafana]] | GPU 监控 |
 | [[GPU-DeepLearning/NVIDIA-GPU-开启persistent mode|NVIDIA-GPU-开启persistent mode]] | NVIDIA 优化 |
 | [[GPU-DeepLearning/Server-basics|Server-basics]] | 服务器入门 |
-| [[Linux-Shell/Ubuntu安装显卡驱动|Ubuntu安装显卡驱动]] | Ubuntu GPU 驱动 |
+| [[Linux-Shell/Ubuntu基础操作#NVIDIA 显卡驱动|Ubuntu NVIDIA 驱动]] | Ubuntu GPU 驱动 |
 
 ---
 
 ## 📑 来源摘要
-- [[KnowledgeBase/sources/linux-shell-batch-summary|Linux-Shell 批量摘要]] — 23 篇系统管理、Shell 脚本、SSH/网络、存储/LVM/NFS
+- [[KnowledgeBase/sources/linux-shell-batch-summary|Linux-Shell 批量摘要]] — 20 篇系统管理、Shell 脚本、SSH/网络、存储/LVM/NFS
 - [[KnowledgeBase/sources/hpc-cloud-gpu-batch-summary|HPC-Cloud-GPU 批量摘要]] — Slurm/PBS/GPU 管理全栈
 
 ---

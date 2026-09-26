@@ -365,7 +365,7 @@ date: 2026-09-26
 
 ---
 
-## Linux-Shell（23 篇）
+## Linux-Shell（20 篇）
 
 | 文件 | 标题 | FM | 链 |
 |------|------|:--:|:--:|
@@ -386,12 +386,9 @@ date: 2026-09-26
 | [[Linux-Shell/开源堡垒机jumpserver部署|开源堡垒机jumpserver部署]] | JumpServer | ✅ | ❌ |
 | [[Linux-Shell/系统信息查看|系统信息查看]] | 系统信息 | ✅ | ❌ |
 | [[Linux-Shell/VMWare-using-notes|VMWare-using-notes]] | VMWare | ✅ | ❌ |
-| [[Linux-Shell/Ubuntu基础操作|Ubuntu基础操作]] | Ubuntu基础 | ✅ | ❌ |
-| [[Linux-Shell/Ubuntu安装显卡驱动|Ubuntu安装显卡驱动]] | Ubuntu显卡驱动 | ✅ | ❌ |
+| [[Linux-Shell/Ubuntu基础操作|Ubuntu基础操作]] | Ubuntu基础、内核、显卡驱动与安全更新 | ✅ | ✅ |
 | [[Linux-Shell/Ubuntu安装Wechat|Ubuntu安装Wechat]] | Ubuntu Wechat | ✅ | ❌ |
 | [[Linux-Shell/Ubuntu部署vftpd|Ubuntu部署vftpd]] | vsftpd | ✅ | ❌ |
-| [[Linux-Shell/Ubuntu-unattended-upgrade管理|Ubuntu-unattended-upgrade管理]] | 安全补丁 | ✅ | ❌ |
-| [[Linux-Shell/Ubuntu-修改启动内核|Ubuntu-修改启动内核]] | 修改内核 | ✅ | ❌ |
 
 ---
 

@@ -56,7 +56,7 @@ date: 2026-09-26
 
 ---
 
-## 🐧 Linux-Shell（23 篇）
+## 🐧 Linux-Shell（20 篇）
 
 **覆盖范围：** Linux 系统管理、Shell 脚本、SSH、网络配置、Ubuntu 运维、开发环境搭建。
 

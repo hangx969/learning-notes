@@ -1,15 +1,15 @@
 # Linux-Shell — Linux 系统管理与 Shell 脚本
 
-本目录共 23 篇笔记。入门可先阅读 [[Linux-Shell/Linux-learning-notes|Linux 学习笔记]]，再按主题查阅具体操作。
+本目录共 20 篇笔记。入门可先阅读 [[Linux-Shell/Linux-learning-notes|Linux 学习笔记]]，再按主题查阅具体操作。
 
 ## 基础与系统管理
 
 - [[Linux-Shell/Linux-learning-notes|Linux 学习笔记]] — Linux 基础、命令、服务、网络及 Shell 编程。
-- [[Linux-Shell/Ubuntu基础操作|Ubuntu 基础操作]] — 用户、存储、文件系统及网络练习。
+- [[Linux-Shell/Ubuntu基础操作|Ubuntu 基础操作]] — 用户、存储、网络、启动内核、NVIDIA 驱动与安全更新。
+  - [[Linux-Shell/Ubuntu基础操作#启动内核与 GRUB|启动内核与 GRUB]]
+  - [[Linux-Shell/Ubuntu基础操作#NVIDIA 显卡驱动|NVIDIA 显卡驱动]]
+  - [[Linux-Shell/Ubuntu基础操作#安全补丁管理|安全补丁管理]]
 - [[Linux-Shell/系统信息查看|系统信息查看]] — 内存、CPU、磁盘、系统和硬件信息。
-- [[Linux-Shell/Ubuntu-unattended-upgrade管理|Ubuntu 安全补丁管理]] — 安全更新检查与定时安装。
-- [[Linux-Shell/Ubuntu-修改启动内核|Ubuntu 修改启动内核]] — GRUB 与内核选择。
-- [[Linux-Shell/Ubuntu安装显卡驱动|Ubuntu 安装显卡驱动]] — NVIDIA 驱动安装。
 - [[Linux-Shell/Ubuntu安装Wechat|Ubuntu 安装 WeChat]] — Ubuntu 桌面应用安装。
 
 ## 存储、网络与远程访问

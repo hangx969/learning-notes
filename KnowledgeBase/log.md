@@ -2032,3 +2032,9 @@ date: 2026-04-17
 - 将 `ssh远程执行多个命令.md` 并入 [[Linux-Shell/ssh连接#远程执行多个命令|SSH 连接]] 并删除旧文；将 [[Linux-Shell/Ubuntu基础操作|Ubuntu 基础操作]] 中重复的安全补丁章节改为指向 [[Linux-Shell/Ubuntu-unattended-upgrade管理|安全补丁专文]]。
 - 将 MacBook 笔记中重复的 Oh My Zsh 主题与插件说明集中到 [[Linux-Shell/配置zsh终端|Zsh 终端配置]]；保留 macOS 开发工具内容，整理目录及相关知识库引用。
 - 核对并保留 GitHub 图床图片链接；修正 Ubuntu OpenSSH 安装命令、Zsh 配置示例和 unattended-upgrades 默认来源表述。
+
+## [2026-09-26] restructure | Ubuntu 系统管理文章合并
+
+- 将 `Ubuntu-修改启动内核.md`、`Ubuntu安装显卡驱动.md` 和 `Ubuntu-unattended-upgrade管理.md` 的操作内容整合到 [[Linux-Shell/Ubuntu基础操作]]，按 GRUB、NVIDIA 驱动和安全补丁分章，并删除三篇旧文。
+- 更新 Linux-Shell 索引、知识库入口、运维地图、来源摘要、文档盘点和 README 的篇数与引用；此前日志保留为历史记录。
+- 修正 Nouveau 配置、库路径变量、驱动变体说明，以及自动更新配置和定时任务中的不准确步骤；保留原有命令示例和配置目的。

@@ -7,8 +7,6 @@ date: 2026-09-26
 sources:
   - "[[Linux-Shell/LVM-RAID]]"
   - "[[Linux-Shell/MacBook开发环境配置]]"
-  - "[[Linux-Shell/Ubuntu-unattended-upgrade管理]]"
-  - "[[Linux-Shell/Ubuntu安装显卡驱动]]"
   - "[[Linux-Shell/Ubuntu基础操作]]"
   - "[[Linux-Shell/Ubuntu部署vftpd]]"
   - "[[Linux-Shell/samba文件共享服务]]"
@@ -23,7 +21,6 @@ sources:
   - "[[Linux-Shell/Linux终端配置proxy]]"
   - "[[Linux-Shell/nmcli管理网络配置]]"
   - "[[Linux-Shell/screen后台运行任务]]"
-  - "[[Linux-Shell/Ubuntu-修改启动内核]]"
   - "[[Linux-Shell/Ubuntu安装Wechat]]"
   - "[[Linux-Shell/VMWare-using-notes]]"
   - "[[Linux-Shell/vscode]]"
@@ -33,7 +30,7 @@ sources:
 ## 元信息
 
 - **原始目录**: `Linux-Shell/`
-- **文档数量**: 23 篇（2026-09-26 合并后）
+- **文档数量**: 20 篇（2026-09-26 合并后）
 - **领域**: Linux 系统管理、Shell 脚本、网络配置、存储管理、开发环境配置、安全运维
 - **摄入日期**: 2026-04-17
 
@@ -62,32 +59,17 @@ sources:
   - macOS 默认 Zsh 与 Oh My Zsh 配置，主题和插件步骤集中在 [[Linux-Shell/配置zsh终端|Zsh 终端配置]]
   - Homebrew、kubectl、Obsidian 等工具的配置
 
-### [[Linux-Shell/Ubuntu-unattended-upgrade管理|Ubuntu 安全补丁管理]]
-
-- **核心内容**: Ubuntu 系统安全更新的自动化管理
-- **关键知识点**:
-  - `unattended-upgrade` 命令的使用（`--dry-run` 预览、`-d` 调试安装）
-  - 配置文件 `50unattended-upgrades` 和 `20auto-upgrades` 的作用与修改
-  - 通过 cron 实现每周定期自动安装安全补丁
-  - ESM（Extended Security Maintenance）安全源的配置
-
-### [[Linux-Shell/Ubuntu安装显卡驱动|Ubuntu 安装 NVIDIA 显卡驱动]]
-
-- **核心内容**: Ubuntu 系统安装 NVIDIA GPU 驱动的完整流程
-- **关键知识点**:
-  - `nvidia-smi` 检测驱动状态、`ubuntu-drivers devices` 查看推荐驱动
-  - 禁用 nouveau 开源驱动（blacklist 配置）
-  - 环境变量配置与依赖库安装
-  - 驱动版本选择注意事项（避免 one/server 版本）
-
 ### [[Linux-Shell/Ubuntu基础操作|Ubuntu 基础管理操作]]
 
-- **核心内容**: Ubuntu 系统的用户管理、软件包管理、网络配置等基础操作
+- **核心内容**: Ubuntu 的用户、软件包、存储、网络、启动内核、NVIDIA 显卡驱动与安全更新
 - **关键知识点**:
   - `adduser` vs `useradd` 的区别、用户组管理（`groupadd`、`usermod -aG`）
   - `/etc/skel` 目录与用户初始化环境
   - `apt` vs `apt-get` 的对比
-  - sshd 服务的安装与开机启动配置
+  - OpenSSH 服务的安装与开机启动配置
+  - [[Linux-Shell/Ubuntu基础操作#启动内核与 GRUB|启动内核与 GRUB]]：查看菜单、设置默认内核、按需暂缓升级
+  - [[Linux-Shell/Ubuntu基础操作#NVIDIA 显卡驱动|NVIDIA 驱动]]：检查候选包、安装及 Nouveau 排障
+  - [[Linux-Shell/Ubuntu基础操作#安全补丁管理|安全补丁管理]]：unattended-upgrades、ESM 与 cron 安排
 
 ### [[Linux-Shell/Ubuntu部署vftpd|Ubuntu 部署 vsftpd]]
 
@@ -206,15 +188,6 @@ sources:
   - 强制分离并重新附加（`screen -D -r`）
   - 保存会话日志（`screen -L -S`）
 
-### [[Linux-Shell/Ubuntu-修改启动内核|Ubuntu 修改启动内核]]
-
-- **核心内容**: Ubuntu 系统内核版本管理与 GRUB 启动配置
-- **关键知识点**:
-  - `dpkg --list | grep linux-image` 查看已安装内核
-  - GRUB 配置修改（`/etc/default/grub` 中的 `GRUB_DEFAULT`）
-  - `update-grub` 更新引导配置
-  - `apt-mark hold` 锁定当前内核版本防止升级
-
 ### [[Linux-Shell/Ubuntu安装Wechat|Ubuntu 安装微信]]
 
 - **核心内容**: 在 Ubuntu 22.04 上通过 Flatpak 安装微信
@@ -298,7 +271,7 @@ sources:
 
 3. **zsh/oh-my-zsh 重复出现**: [[Linux-Shell/配置zsh终端|配置 zsh 终端]] 和 [[Linux-Shell/MacBook开发环境配置|MacBook 开发环境配置]] 都涉及 oh-my-zsh 的安装配置，共用的主题与插件配置现集中在前者，后者保留 macOS 开发工具链并交叉引用。
 
-4. **Ubuntu 专题集群**: 共有 6 篇文档专注于 Ubuntu 系统（基础操作、安全补丁管理、显卡驱动、启动内核、安装微信、vsftpd 部署），形成了一个 Ubuntu 系统管理的子知识体系。
+4. **Ubuntu 专题集群**: 共有 3 篇文档专注于 Ubuntu 系统（基础操作、安装微信、vsftpd 部署）；基础操作页已合并安全补丁、显卡驱动和启动内核，形成了一个 Ubuntu 系统管理的子知识体系。
 
 5. **存储管理的纵深**: 从 [[Linux-Shell/LVM-RAID|LVM 与 RAID]] 的逻辑卷与磁盘阵列，到 [[Linux-Shell/系统信息查看|系统信息查看]] 中的 `df`/`du`/`lsblk`/`fdisk` 磁盘监控命令，到 [[Linux-Shell/VMWare-using-notes|VMWare 共享目录]] 的虚拟化存储挂载，覆盖了存储管理的不同层面。
 
