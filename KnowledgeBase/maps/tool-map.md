@@ -149,7 +149,7 @@ date: 2026-09-15
 ---
 
 ### Istio
-**相关文档（5 篇）：**
+**相关文档（4 篇）：**
 - [[Docker-Kubernetes/k8s-networking-service-mesh/k8s精细化流量管理-istio|Istio 服务网格：架构、部署与精细化流量治理]] ⭐ 推荐入口
 - [[Docker-Kubernetes/k8s-networking-service-mesh/企业项目接入istio实战|企业项目接入istio实战]]
 - [[Docker-Kubernetes/k8s-networking-service-mesh/k8s集群网络安全|k8s集群网络安全]]
@@ -340,10 +340,9 @@ date: 2026-09-15
 ## HPC 工具
 
 ### Slurm
-**相关文档（5 篇）：**
+**相关文档（4 篇）：**
 - [[HPC/CentOS7-slurm23.02-二进制安装|CentOS7-slurm23.02-二进制安装]] ⭐ 推荐入口
-- [[HPC/Ubuntu2204-slurm-22.05.11-二进制安装|Ubuntu2204-slurm-22.05.11-二进制安装]]
-- [[Ubuntu2204-slurm-22.05.11-binary-installation|Ubuntu-2204-slurm-22.05.11-binary-installation]]
+- [[HPC/Ubuntu2204-slurm-22.05.11-安装指南|Ubuntu 22.04 Slurm 22.05.11（测试与生产）]]
 - [[Ubuntu2204-slurm-23.11-deb安装|Ubuntu2204-slurm- 23.11-deb安装]]
 - [[HPC/Slurm-node-exporter|Slurm-node-exporter]]
 

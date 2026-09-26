@@ -1,10 +1,10 @@
-# GPU-DeepLearning/ — GPU 与深度学习基础设施
+# GPU 与深度学习基础设施
 
-4 篇文档，覆盖 GPU 硬件基础、监控、运维配置。
+本目录收录 4 篇文章，覆盖 GPU 环境配置、服务器存储、监控和运维。
 
-## 关键文件
+## 文章目录
 
-- [[GPU-DeepLearning/GPU-basics]] — GPU 基础知识（架构、型号、CUDA）
-- [[GPU-DeepLearning/Server-basics]] — GPU 服务器硬件基础
+- [[GPU-DeepLearning/GPU-basics]] — GPU 入门资料，以及裸机、Docker 和 Kubernetes 环境配置
+- [[GPU-DeepLearning/Server-basics]] — 服务器入门与 SSD 基础
 - [[GPU-DeepLearning/GPU-exporter-grafana]] — GPU 监控（Exporter + Grafana）
 - [[GPU-DeepLearning/NVIDIA-GPU-开启persistent mode]] — NVIDIA GPU 持久模式配置
