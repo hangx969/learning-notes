@@ -21,6 +21,27 @@ aliases:
 
 ---
 
+# macOS 配置
+
+macOS 15 默认使用 Zsh，可直接安装 Oh My Zsh。安装、主题和插件示例也适用于 [[Linux-Shell/MacBook开发环境配置|MacBook 开发环境]]。
+
+```sh
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+```
+
+安装器会将旧的 `~/.zshrc` 备份为 `~/.zshrc.pre-oh-my-zsh`；安装后将需要保留的配置迁移到新的 `~/.zshrc`。例如：
+
+```sh
+export ZSH="$HOME/.oh-my-zsh"
+ZSH_THEME="robbyrussell"
+plugins=(git)
+source "$ZSH/oh-my-zsh.sh"
+```
+
+下文的主题与插件章节说明 `af-magic`、Powerlevel9k/10k、`zsh-syntax-highlighting` 和 `zsh-autosuggestions` 的配置。
+
+---
+
 # 安装zsh
 
 - 安装Zsh的方法很多，使用yum来安装很方便，不过OhMyZsh官方建议安装`5.0.8`以上版本，我们先来看下yum中的zsh版本号；
@@ -123,7 +144,7 @@ source ~/.zshrc
 
 ~~~sh
 git clone https://github.com/bhilburn/powerlevel9k.git ~/.oh-my-zsh/custom/themes/powerlevel9k
-vim /root/.zshrc
+vim ~/.zshrc
 #修改主题配置为powerlevel9k
 ZSH_THEME="powerlevel9k/powerlevel9k"
 source ~/.zshrc
@@ -132,10 +153,10 @@ source ~/.zshrc
 ### powerlevel10k
 
 ```sh
-git clone https://github.com/romkatv/powerlevel10k.git $ZSH_CUSTOM/themes/powerlevel10k
-vim /root/.zshrc
+git clone https://github.com/romkatv/powerlevel10k.git "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k"
+vim ~/.zshrc
 #修改主题配置为powerlevel10k
-ZSH_THEME="powerlevel10k/powerlevel10k”
+ZSH_THEME="powerlevel10k/powerlevel10k"
 source ~/.zshrc
 ```
 

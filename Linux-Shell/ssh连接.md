@@ -7,11 +7,12 @@ tags:
   - vscode
 aliases:
   - SSH配置与使用
+  - SSH远程执行多个命令
 ---
 
 # SSH
 
-- SHH（Secure Shell）用于加密两台计算机的通信，支持各种身份验证机制，主要用于保证远程登陆和远程通信的安全。SSH 的软件架构是CS模式，其有多种实现，主要用的是开源的OpenSSH
+- SSH（Secure Shell）用于加密两台计算机的通信，支持各种身份验证机制，主要用于保证远程登录和远程通信的安全。SSH 的软件架构是 CS 模式，其有多种实现，主要用的是开源的 OpenSSH。
 
 - 一般用 大写的 SSH 表示协议，小写的 ssh 表示客户端软件
 
@@ -285,3 +286,27 @@ References:
 [SELinux入门 | 《Linux就该这么学》 (linuxprobe.com)](https://www.linuxprobe.com/selinux-introduction.html)
 
 [SSHD服务启动失败 – 笛声 (hqidi.com)](https://hqidi.com/133.html)
+
+## 远程执行多个命令
+
+### 单台服务器
+
+通过 here document 向远端 Bash 传递多条命令：
+
+```sh
+ssh user@remote_host /usr/bin/bash <<'EOF'
+pwd
+ls -l
+whoami
+EOF
+```
+
+### 多台服务器
+
+以下示例逐台连接 `cn01dl001` 至 `cn01dl004`，调整 Munge 目录和密钥权限：
+
+```sh
+for i in $(seq 1 4); do
+  ssh -t "test@cn01dl00$i" "sudo chown munge: /etc/munge/munge.key; sudo chmod 400 /etc/munge/munge.key; sudo chmod 700 /etc/munge/; sudo chmod 711 /var/lib/munge/; sudo chmod 700 /var/log/munge/; sudo chmod 755 /var/run/munge/; sudo chown munge.munge /etc/munge/munge.key;"
+done
+```

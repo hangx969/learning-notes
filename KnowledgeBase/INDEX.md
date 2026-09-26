@@ -6,7 +6,7 @@ tags:
 aliases:
   - 知识库首页
   - KB Index
-date: 2026-04-17
+date: 2026-09-26
 ---
 
 # 📚 Learning Notes 知识库
@@ -214,7 +214,7 @@ date: 2026-04-17
 
 | 页面 | 覆盖文档数 | 摘要 |
 |------|:---------:|------|
-| [Linux-Shell](sources/linux-shell-batch-summary.md) | 24 | 系统管理、Shell 脚本、SSH/网络、存储/LVM/NFS、zsh/vim/rsync 工具链 |
+| [Linux-Shell](sources/linux-shell-batch-summary.md) | 23 | 系统管理、Shell 脚本、SSH/网络、存储/LVM/NFS、zsh/vim/rsync 工具链 |
 
 ### AI - OpenClaw 与其他（已摄入 ✅）
 
@@ -353,7 +353,7 @@ date: 2026-04-17
 |------|------|:------:|------|
 | Docker-Kubernetes | 156 | 🟢 | [kubernetes-map](maps/kubernetes-map.md) |
 | Python | 27 | 🟢 | [python-devops-map](maps/python-devops-map.md) |
-| Linux-Shell | 24 | 🟡 | [linux-ops-map](maps/linux-ops-map.md) |
+| Linux-Shell | 23 | 🟡 | [linux-ops-map](maps/linux-ops-map.md) |
 | Azure | 21 | 🟢 | [cloud-platform-map](maps/cloud-platform-map.md) |
 | Aliyun | 19 | 🟢 | [cloud-platform-map](maps/cloud-platform-map.md) |
 | AI | 129 | 🟢 | [ai-workflow-map](maps/ai-workflow-map.md) |

@@ -2,7 +2,7 @@
 title: 全库文档盘点
 tags:
   - knowledgebase/inventory
-date: 2026-04-16
+date: 2026-09-26
 ---
 
 # 全库文档盘点
@@ -12,7 +12,7 @@ date: 2026-04-16
 > - **顶层目录**：17 个主题领域
 > - **有 Frontmatter**：294 个（99%）
 > - **有 Wikilink 双链**：92 个（31%）
-> - **扫描日期**：2026-04-16（全库统计为当时快照；Azure 条目于 2026-09-26 按合并结果更新）
+> - **扫描日期**：2026-04-16（全库统计为当时快照；Azure 与 Linux-Shell 条目于 2026-09-26 按合并结果更新）
 
 ---
 
@@ -365,7 +365,7 @@ date: 2026-04-16
 
 ---
 
-## Linux-Shell（24 篇）
+## Linux-Shell（23 篇）
 
 | 文件 | 标题 | FM | 链 |
 |------|------|:--:|:--:|
@@ -373,7 +373,6 @@ date: 2026-04-16
 | [[Linux-Shell/shell-scripts|shell-scripts]] | Shell 脚本 | ✅ | ✅ |
 | [[Linux-Shell/LVM-RAID|LVM-RAID]] | LVM 与 RAID | ✅ | ❌ |
 | [[Linux-Shell/ssh连接|ssh连接]] | SSH连接 | ✅ | ❌ |
-| [[Linux-Shell/ssh远程执行多个命令|ssh远程执行多个命令]] | SSH远程执行 | ✅ | ❌ |
 | [[Linux-Shell/linux环境变量管理|linux环境变量管理]] | 环境变量 | ✅ | ❌ |
 | [[Linux-Shell/nmcli管理网络配置|nmcli管理网络配置]] | nmcli网络 | ✅ | ❌ |
 | [[Linux-Shell/Linux终端配置proxy|Linux终端配置proxy]] | 终端代理 | ✅ | ❌ |

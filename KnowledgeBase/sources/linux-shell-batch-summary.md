@@ -3,7 +3,7 @@ title: Linux-Shell 来源批量摘要
 tags:
   - knowledgebase/source
   - linux-shell
-date: 2026-04-17
+date: 2026-09-26
 sources:
   - "[[Linux-Shell/LVM-RAID]]"
   - "[[Linux-Shell/MacBook开发环境配置]]"
@@ -23,7 +23,6 @@ sources:
   - "[[Linux-Shell/Linux终端配置proxy]]"
   - "[[Linux-Shell/nmcli管理网络配置]]"
   - "[[Linux-Shell/screen后台运行任务]]"
-  - "[[Linux-Shell/ssh远程执行多个命令]]"
   - "[[Linux-Shell/Ubuntu-修改启动内核]]"
   - "[[Linux-Shell/Ubuntu安装Wechat]]"
   - "[[Linux-Shell/VMWare-using-notes]]"
@@ -34,7 +33,7 @@ sources:
 ## 元信息
 
 - **原始目录**: `Linux-Shell/`
-- **文档数量**: 24 篇
+- **文档数量**: 23 篇（2026-09-26 合并后）
 - **领域**: Linux 系统管理、Shell 脚本、网络配置、存储管理、开发环境配置、安全运维
 - **摄入日期**: 2026-04-17
 
@@ -60,8 +59,7 @@ sources:
 
 - **核心内容**: macOS 上的开发终端与工具链配置
 - **关键知识点**:
-  - oh-my-zsh 安装与配置（主题 powerlevel9k/10k）
-  - 常用插件：zsh-syntax-highlighting（命令高亮）、zsh-autosuggestions（自动补全）
+  - macOS 默认 Zsh 与 Oh My Zsh 配置，主题和插件步骤集中在 [[Linux-Shell/配置zsh终端|Zsh 终端配置]]
   - Homebrew、kubectl、Obsidian 等工具的配置
 
 ### [[Linux-Shell/Ubuntu-unattended-upgrade管理|Ubuntu 安全补丁管理]]
@@ -119,6 +117,7 @@ sources:
   - 密钥登录过程（`ssh-keygen` 生成、`ssh-copy-id` 上传公钥）
   - `scp` 命令基本语法（本地与远程间的文件复制）
   - VSCode 远程免密连接配置
+  - 通过 here document 和循环在一台或多台服务器上远程执行命令
 
 ### [[Linux-Shell/配置zsh终端|配置 zsh 终端]]
 
@@ -207,14 +206,6 @@ sources:
   - 强制分离并重新附加（`screen -D -r`）
   - 保存会话日志（`screen -L -S`）
 
-### [[Linux-Shell/ssh远程执行多个命令|SSH 远程执行多个命令]]
-
-- **核心内容**: 通过 SSH 在远程服务器批量执行命令
-- **关键知识点**:
-  - 单台服务器：使用 heredoc（`<< EOF`）传递多条命令
-  - 多台服务器：`for` 循环 + `ssh -t` 批量执行
-  - `sudo` 权限命令的远程执行
-
 ### [[Linux-Shell/Ubuntu-修改启动内核|Ubuntu 修改启动内核]]
 
 - **核心内容**: Ubuntu 系统内核版本管理与 GRUB 启动配置
@@ -301,13 +292,13 @@ sources:
 
 ## 交叉主题发现
 
-1. **SSH 贯穿多个文档**: SSH 不仅在 [[Linux-Shell/ssh连接|SSH 连接]] 中作为主题详细讲解，还在 [[Linux-Shell/ansible安装-rockylinux8|Ansible 安装]]（SSH 互信）、[[Linux-Shell/ssh远程执行多个命令|SSH 远程执行]]、[[Linux-Shell/Ubuntu基础操作|Ubuntu 基础操作]]（sshd 安装）、[[Linux-Shell/开源堡垒机jumpserver部署|JumpServer 部署]] 中反复出现，说明 SSH 是 Linux 远程管理的核心基础设施。
+1. **SSH 贯穿多个文档**: SSH 不仅在 [[Linux-Shell/ssh连接|SSH 连接]] 中作为主题详细讲解，还在 [[Linux-Shell/ansible安装-rockylinux8|Ansible 安装]]（SSH 互信）、[[Linux-Shell/ssh连接#远程执行多个命令|SSH 远程执行]]、[[Linux-Shell/Ubuntu基础操作|Ubuntu 基础操作]]（sshd 安装）、[[Linux-Shell/开源堡垒机jumpserver部署|JumpServer 部署]] 中反复出现，说明 SSH 是 Linux 远程管理的核心基础设施。
 
 2. **网络配置的多层次覆盖**: 从底层的 [[Linux-Shell/nmcli管理网络配置|nmcli 网络配置]] 到应用层的 [[Linux-Shell/Linux终端配置proxy|终端代理配置]]，再到服务层的 [[Linux-Shell/Ubuntu部署vftpd|FTP 部署]] 和 [[Linux-Shell/samba文件共享服务|Samba 文件共享]]，形成了完整的网络配置知识链。
 
-3. **zsh/oh-my-zsh 重复出现**: [[Linux-Shell/配置zsh终端|配置 zsh 终端]] 和 [[Linux-Shell/MacBook开发环境配置|MacBook 开发环境配置]] 都涉及 oh-my-zsh 的安装配置，前者偏向 CentOS/Linux 服务器，后者偏向 macOS 开发机，可以考虑合并或交叉引用。
+3. **zsh/oh-my-zsh 重复出现**: [[Linux-Shell/配置zsh终端|配置 zsh 终端]] 和 [[Linux-Shell/MacBook开发环境配置|MacBook 开发环境配置]] 都涉及 oh-my-zsh 的安装配置，共用的主题与插件配置现集中在前者，后者保留 macOS 开发工具链并交叉引用。
 
-4. **Ubuntu 专题集群**: 共有 7 篇文档专注于 Ubuntu 系统（基础操作、安全补丁、显卡驱动、启动内核、安装微信、vsftpd 部署、unattended-upgrade），形成了一个 Ubuntu 系统管理的子知识体系。
+4. **Ubuntu 专题集群**: 共有 6 篇文档专注于 Ubuntu 系统（基础操作、安全补丁管理、显卡驱动、启动内核、安装微信、vsftpd 部署），形成了一个 Ubuntu 系统管理的子知识体系。
 
 5. **存储管理的纵深**: 从 [[Linux-Shell/LVM-RAID|LVM 与 RAID]] 的逻辑卷与磁盘阵列，到 [[Linux-Shell/系统信息查看|系统信息查看]] 中的 `df`/`du`/`lsblk`/`fdisk` 磁盘监控命令，到 [[Linux-Shell/VMWare-using-notes|VMWare 共享目录]] 的虚拟化存储挂载，覆盖了存储管理的不同层面。
 

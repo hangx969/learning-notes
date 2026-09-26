@@ -5,13 +5,13 @@ tags:
   - knowledgebase/linux
 aliases:
   - Linux Ops Map
-date: 2026-04-16
+date: 2026-09-26
 ---
 
 # 🐧 Linux 运维专题地图
 
 > [!info] 专题范围
-> 覆盖 Linux-Shell（24 篇）为主线，关联 OS（3 篇）、HPC（5 篇）、GPU（4 篇）等基础设施知识。
+> 覆盖 Linux-Shell（23 篇）为主线，关联 OS（3 篇）、HPC（5 篇）、GPU（4 篇）等基础设施知识。
 
 ---
 
@@ -38,27 +38,26 @@ date: 2026-04-16
 
 ### 网络与安全
 10. [[Linux-Shell/ssh连接|ssh连接]] — SSH 基础
-11. [[Linux-Shell/ssh远程执行多个命令|ssh远程执行多个命令]] — SSH 批量执行
-12. [[Linux-Shell/nmcli管理网络配置|nmcli管理网络配置]] — 网络配置
-13. [[Linux-Shell/Linux终端配置proxy|Linux终端配置proxy]] — 代理配置
-14. [[Linux-Shell/开源堡垒机jumpserver部署|开源堡垒机jumpserver部署]] — 堡垒机
+11. [[Linux-Shell/nmcli管理网络配置|nmcli管理网络配置]] — 网络配置
+12. [[Linux-Shell/Linux终端配置proxy|Linux终端配置proxy]] — 代理配置
+13. [[Linux-Shell/开源堡垒机jumpserver部署|开源堡垒机jumpserver部署]] — 堡垒机
 
 ### 自动化运维工具
-15. [[Linux-Shell/ansible安装-rockylinux8|ansible安装-rockylinux8]] — Ansible
-16. [[IaC/terraform-basics|terraform-basics]] — Terraform
-17. [[Python/python-运维开发/python-Linux-operation|python-Linux-operation]] — Python 运维
+14. [[Linux-Shell/ansible安装-rockylinux8|ansible安装-rockylinux8]] — Ansible
+15. [[IaC/terraform-basics|terraform-basics]] — Terraform
+16. [[Python/python-运维开发/python-Linux-operation|python-Linux-operation]] — Python 运维
 
 ### Ubuntu 专题
-18. [[Linux-Shell/Ubuntu基础操作|Ubuntu基础操作]] — 基础操作
-19. [[Linux-Shell/Ubuntu安装显卡驱动|Ubuntu安装显卡驱动]] — GPU 驱动
-20. [[Linux-Shell/Ubuntu-unattended-upgrade管理|Ubuntu-unattended-upgrade管理]] — 安全补丁
-21. [[Linux-Shell/Ubuntu-修改启动内核|Ubuntu-修改启动内核]] — 内核管理
-22. [[Linux-Shell/Ubuntu部署vftpd|Ubuntu部署vftpd]] — FTP 服务
+17. [[Linux-Shell/Ubuntu基础操作|Ubuntu基础操作]] — 基础操作
+18. [[Linux-Shell/Ubuntu安装显卡驱动|Ubuntu安装显卡驱动]] — GPU 驱动
+19. [[Linux-Shell/Ubuntu-unattended-upgrade管理|Ubuntu-unattended-upgrade管理]] — 安全补丁
+20. [[Linux-Shell/Ubuntu-修改启动内核|Ubuntu-修改启动内核]] — 内核管理
+21. [[Linux-Shell/Ubuntu部署vftpd|Ubuntu部署vftpd]] — FTP 服务
 
 ### 开发环境
-23. [[Linux-Shell/MacBook开发环境配置|MacBook开发环境配置]] — macOS
-24. [[Linux-Shell/配置zsh终端|配置zsh终端]] — zsh 终端
-25. [[Linux-Shell/vscode|vscode]] — VSCode
+22. [[Linux-Shell/MacBook开发环境配置|MacBook开发环境配置]] — macOS
+23. [[Linux-Shell/配置zsh终端|配置zsh终端]] — zsh 终端
+24. [[Linux-Shell/vscode|vscode]] — VSCode
 
 ---
 
@@ -79,7 +78,6 @@ date: 2026-04-16
 | 文章 | 主题 |
 |------|------|
 | [[Linux-Shell/ssh连接|ssh连接]] | SSH 连接 |
-| [[Linux-Shell/ssh远程执行多个命令|ssh远程执行多个命令]] | SSH 批量执行 |
 | [[Linux-Shell/nmcli管理网络配置|nmcli管理网络配置]] | NetworkManager |
 | [[Linux-Shell/Linux终端配置proxy|Linux终端配置proxy]] | 代理配置 |
 | [[Linux-Shell/samba文件共享服务|samba文件共享服务]] | Samba |
@@ -115,7 +113,7 @@ date: 2026-04-16
 ---
 
 ## 📑 来源摘要
-- [[KnowledgeBase/sources/linux-shell-batch-summary|Linux-Shell 批量摘要]] — 24 篇系统管理、Shell 脚本、SSH/网络、存储/LVM/NFS
+- [[KnowledgeBase/sources/linux-shell-batch-summary|Linux-Shell 批量摘要]] — 23 篇系统管理、Shell 脚本、SSH/网络、存储/LVM/NFS
 - [[KnowledgeBase/sources/hpc-cloud-gpu-batch-summary|HPC-Cloud-GPU 批量摘要]] — Slurm/PBS/GPU 管理全栈
 
 ---

@@ -39,10 +39,10 @@ sudo unattended-upgrade # 直接安装
 >     ~~~
 >     
 >     - APT::Periodic::Update-Package-Lists "1"。表示每天都会更新包列表
->     - APT::Periodic::Unattended-Upgrade "1"。表示每天都会运行`unattended-upgrades
+>     - APT::Periodic::Unattended-Upgrade "1"。表示每天都会运行 `unattended-upgrade`
 >     - （1=启用，0=禁止）
 >
-> - 默认情况下，`unattended-upgrades`只会安装安全更新。这是通过以下配置实现的：
+> - 自动更新的来源取决于当前 Ubuntu 版本及本机配置。下面是仅启用安全更新来源的配置示例，实际以 `/etc/apt/apt.conf.d/50unattended-upgrades` 等生效配置为准：
 >
 >   ```json
 >   Unattended-Upgrade::Allowed-Origins {
@@ -132,6 +132,5 @@ sudo crontab -e
 ~~~sh
 sudo systemctl restart cron.service && sudo systemctl status cron.service
 ~~~
-
 
 

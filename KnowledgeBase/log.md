@@ -2026,3 +2026,9 @@ date: 2026-04-17
 
 - 按用户授权删除 `HPC/PBS-cases.md`；三则案例已完整合并在 `HPC/PBS.md`。
 - 更新 HPC 目录和文档盘点。受保护的 `HPC/CentOS7-slurm23.02-二进制安装.md` 仍含旧链接，待单独授权后修复。
+
+## [2026-09-26] restructure | Linux-Shell 文章合并
+
+- 将 `ssh远程执行多个命令.md` 并入 [[Linux-Shell/ssh连接#远程执行多个命令|SSH 连接]] 并删除旧文；将 [[Linux-Shell/Ubuntu基础操作|Ubuntu 基础操作]] 中重复的安全补丁章节改为指向 [[Linux-Shell/Ubuntu-unattended-upgrade管理|安全补丁专文]]。
+- 将 MacBook 笔记中重复的 Oh My Zsh 主题与插件说明集中到 [[Linux-Shell/配置zsh终端|Zsh 终端配置]]；保留 macOS 开发工具内容，整理目录及相关知识库引用。
+- 核对并保留 GitHub 图床图片链接；修正 Ubuntu OpenSSH 安装命令、Zsh 配置示例和 unattended-upgrades 默认来源表述。
