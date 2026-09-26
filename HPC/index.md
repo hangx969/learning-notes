@@ -6,8 +6,8 @@
 
 - [[HPC/CentOS7-slurm23.02-二进制安装]] — CentOS 7 + Slurm 23.02
 - [[HPC/Ubuntu2204-slurm-22.05.11-二进制安装]] — Ubuntu 22.04 + Slurm 22.05（二进制）
-- [[HPC/Ubuntu-2204-slurm-22.05.11-binary-installation]] — Ubuntu 22.04 + Slurm 22.05（英文版）
-- [[HPC/Ubuntu2204-slurm- 23.11-deb安装]] — Ubuntu 22.04 + Slurm 23.11（deb 包）
+- [[Ubuntu2204-slurm-22.05.11-binary-installation]] — Ubuntu 22.04 + Slurm 22.05（英文版）
+- [[Ubuntu2204-slurm-23.11-deb安装]] — Ubuntu 22.04 + Slurm 23.11（deb 包）
 
 ## PBS
 

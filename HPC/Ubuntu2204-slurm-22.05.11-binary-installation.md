@@ -1162,6 +1162,6 @@ done
 
 - [[CentOS7-slurm23.02-二进制安装]] - CentOS7 Slurm部署
 - [[Ubuntu2204-slurm-22.05.11-二进制安装]] - Ubuntu Slurm 22.05 测试环境部署
-- [[Ubuntu2204-slurm- 23.11-deb安装]] - Ubuntu Slurm 23.11 deb安装
+- [[Ubuntu2204-slurm-23.11-deb安装]] - Ubuntu Slurm 23.11 deb安装
 - [[Slurm-node-exporter]] - Slurm监控
 - [[PBS]] - PBS作业调度系统

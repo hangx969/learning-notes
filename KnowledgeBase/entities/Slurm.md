@@ -5,9 +5,9 @@ tags:
 date: 2026-04-17
 sources:
   - "[[HPC/CentOS7-slurm23.02-二进制安装]]"
-  - "[[HPC/Ubuntu-2204-slurm-22.05.11-binary-installation]]"
+  - "[[Ubuntu2204-slurm-22.05.11-binary-installation]]"
   - "[[HPC/Ubuntu2204-slurm-22.05.11-二进制安装]]"
-  - "[[HPC/Ubuntu2204-slurm- 23.11-deb安装]]"
+  - "[[Ubuntu2204-slurm-23.11-deb安装]]"
   - "[[HPC/Slurm-node-exporter]]"
   - "[[HPC/PBS]]"
   - "[[HPC/PBS-cases]]"
@@ -32,11 +32,11 @@ Slurm 集群采用典型的三层节点架构：
 
 ### 二进制安装
 - **[[HPC/CentOS7-slurm23.02-二进制安装|CentOS 7 + Slurm 23.02]]**：一个控制节点（m1）+ 两个计算节点（c1/c2），包含防火墙关闭、SELinux 禁用等 CentOS 特有步骤
-- **[[HPC/Ubuntu-2204-slurm-22.05.11-binary-installation|Ubuntu 22.04 + Slurm 22.05.11（生产环境）]]**：面向 H800 GPU 集群的生产级部署，包含 Management/Login/Compute 多节点完整流程
+- **[[Ubuntu2204-slurm-22.05.11-binary-installation|Ubuntu 22.04 + Slurm 22.05.11（生产环境）]]**：面向 H800 GPU 集群的生产级部署，包含 Management/Login/Compute 多节点完整流程
 - **[[HPC/Ubuntu2204-slurm-22.05.11-二进制安装|Ubuntu 22.04 + Slurm 22.05.11（测试环境）]]**：三节点（m1/c1/l1）测试架构
 
 ### deb 包安装
-- **[[HPC/Ubuntu2204-slurm- 23.11-deb安装|Ubuntu 22.04 + Slurm 23.11]]**：实验环境下通过 deb 包安装，三节点（um1/uc1/ul1）
+- **[[Ubuntu2204-slurm-23.11-deb安装|Ubuntu 22.04 + Slurm 23.11]]**：实验环境下通过 deb 包安装，三节点（um1/uc1/ul1）
 
 ### 关键依赖
 - **[[KnowledgeBase/entities/Munge|Munge]] 认证**：Slurm 集群必需的认证组件，需确保所有节点 UID/GID 一致，使用 rng-tools 生成熵池，全局分发密钥
@@ -62,9 +62,9 @@ HPC 集群常配备 GPU 计算节点（如 H800），需要 Slurm 通过 GRES �
 
 
 - [[HPC/CentOS7-slurm23.02-二进制安装|CentOS7-slurm23.02-二进制安装]]
-- [[HPC/Ubuntu-2204-slurm-22.05.11-binary-installation|Ubuntu-2204-slurm-22.05.11-binary-installation]]
+- [[Ubuntu2204-slurm-22.05.11-binary-installation|Ubuntu-2204-slurm-22.05.11-binary-installation]]
 - [[HPC/Ubuntu2204-slurm-22.05.11-二进制安装|Ubuntu2204-slurm-22.05.11-二进制安装]]
-- [[HPC/Ubuntu2204-slurm- 23.11-deb安装|Ubuntu2204-slurm- 23.11-deb安装]]
+- [[Ubuntu2204-slurm-23.11-deb安装|Ubuntu2204-slurm- 23.11-deb安装]]
 - [[HPC/Slurm-node-exporter|Slurm-node-exporter]]
 - [[HPC/PBS|PBS]]
 - [[HPC/PBS-cases|PBS-cases]]

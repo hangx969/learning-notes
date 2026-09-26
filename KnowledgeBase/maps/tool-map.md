@@ -343,8 +343,8 @@ date: 2026-09-15
 **相关文档（5 篇）：**
 - [[HPC/CentOS7-slurm23.02-二进制安装|CentOS7-slurm23.02-二进制安装]] ⭐ 推荐入口
 - [[HPC/Ubuntu2204-slurm-22.05.11-二进制安装|Ubuntu2204-slurm-22.05.11-二进制安装]]
-- [[HPC/Ubuntu-2204-slurm-22.05.11-binary-installation|Ubuntu-2204-slurm-22.05.11-binary-installation]]
-- [[HPC/Ubuntu2204-slurm- 23.11-deb安装|Ubuntu2204-slurm- 23.11-deb安装]]
+- [[Ubuntu2204-slurm-22.05.11-binary-installation|Ubuntu-2204-slurm-22.05.11-binary-installation]]
+- [[Ubuntu2204-slurm-23.11-deb安装|Ubuntu2204-slurm- 23.11-deb安装]]
 - [[HPC/Slurm-node-exporter|Slurm-node-exporter]]
 
 **概念页：** [[KnowledgeBase/entities/Slurm|Slurm]]

@@ -10,8 +10,8 @@ sources:
   - "[[HPC/PBS-cases]]"
   - "[[HPC/PBS]]"
   - "[[HPC/Slurm-node-exporter]]"
-  - "[[HPC/Ubuntu-2204-slurm-22.05.11-binary-installation]]"
-  - "[[HPC/Ubuntu2204-slurm- 23.11-deb安装]]"
+  - "[[Ubuntu2204-slurm-22.05.11-binary-installation]]"
+  - "[[Ubuntu2204-slurm-23.11-deb安装]]"
   - "[[HPC/Ubuntu2204-slurm-22.05.11-二进制安装]]"
   - "[[HPC/CentOS7-slurm23.02-二进制安装]]"
   - "[[CloudComputing/深入剖析Kubernetes]]"
@@ -62,10 +62,10 @@ sources:
 #### [[HPC/Slurm-node-exporter|Slurm Node Exporter]]
 记录两代 Slurm Prometheus Exporter 的部署方式：旧版基于 Go 编译的 prometheus-slurm-exporter（含在线与离线部署步骤），提供 Slurm 集群指标到 Prometheus 的采集方案，通过 systemd 服务管理，监听 9092 端口。
 
-#### [[HPC/Ubuntu-2204-slurm-22.05.11-binary-installation|Ubuntu 22.04 Slurm 22.05.11 生产环境二进制安装]]
+#### [[Ubuntu2204-slurm-22.05.11-binary-installation|Ubuntu 22.04 Slurm 22.05.11 生产环境二进制安装]]
 面向 H800 GPU 集群的生产级 Slurm 部署文档，涵盖 Management/Login/Compute 多节点架构，详细步骤包括：Munge 认证安装（确保 UID/GID 一致）、熵池生成（rng-tools）、全局密钥分发，以及 Slurm 各组件的编译安装。
 
-#### [[HPC/Ubuntu2204-slurm- 23.11-deb安装|Ubuntu 22.04 Slurm 23.11 deb 安装]]
+#### [[Ubuntu2204-slurm-23.11-deb安装|Ubuntu 22.04 Slurm 23.11 deb 安装]]
 实验环境下通过 deb 包安装 Slurm 23.11 的完整指南，包含 IP 规划（um1/uc1/ul1 三节点）、网络配置（netplan）、apt 源设置、主机名与 hosts 配置、资源限制调优等环境准备步骤。
 
 #### [[HPC/Ubuntu2204-slurm-22.05.11-二进制安装|Ubuntu 22.04 Slurm 22.05.11 二进制安装]]

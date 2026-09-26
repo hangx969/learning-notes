@@ -315,5 +315,5 @@ scrape_configs:
 
 - [[CentOS7-slurm23.02-二进制安装]] - CentOS7 Slurm部署
 - [[Ubuntu2204-slurm-22.05.11-二进制安装]] - Ubuntu Slurm部署
-- [[Ubuntu-2204-slurm-22.05.11-binary-installation]] - Ubuntu Slurm生产环境部署
+- [[Ubuntu2204-slurm-22.05.11-binary-installation]] - Ubuntu Slurm生产环境部署
 - [[PBS]] - PBS作业调度系统
