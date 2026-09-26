@@ -22,10 +22,10 @@ date: 2026-09-26
 
 # Ubuntu 22.04 Slurm 安装与配置指南
 
-本指南汇总三套 Ubuntu 22.04 实例：Slurm 22.05.11 三节点测试环境、22.05.11 H800 生产环境，以及 Slurm 23.11.4 三节点 deb 包实验环境。先按下表选择一套拓扑，再使用对应版本的安装与配置章节；主机名、分区、目录和资源参数不可跨版本拼接。MUNGE 密钥的安全生成与分发流程共用，作业命令的参数说明集中在文末。
+本指南包含三套 Ubuntu 22.04 部署：Slurm 22.05.11 三节点测试环境、22.05.11 H800 生产环境，以及 Slurm 23.11.4 三节点 deb 包实验环境。先按下表选择一套拓扑，再使用对应版本的安装与配置章节；主机名、分区、目录和资源参数不可跨版本拼接。MUNGE 密钥的安全生成与分发流程共用，作业命令的参数说明集中在文末。
 
 > [!warning] 使用前核对
-> 三套配置记录的是不同集群，不能混用主机名、分区、spool 路径与资源参数。下方已用受限权限替换原记录中临时 `chmod 777` 的 MUNGE 密钥复制方式，并将数据库密码改为占位值；生产环境的资源、抢占日志和 Epilog 清理范围仍须在目标集群核对。
+> 三套集群的主机名、分区、spool 路径与资源参数不能混用。MUNGE 密钥只能通过受限权限分发；数据库密码占位值必须替换。生产环境的资源、抢占日志和 Epilog 清理范围须在目标集群核对。
 
 ## 环境对照与阅读顺序
 
@@ -51,7 +51,7 @@ sudo chown munge:munge /etc/munge/munge.key
 sudo chmod 0400 /etc/munge/munge.key
 ~~~
 
-在控制节点的同一个 Bash 会话中，按场景设置 `targets` 后运行分发脚本。`ubuntu@`、`test@` 来自原部署记录；若实际 SSH 用户不同，先调整列表并确认该用户可通过 `sudo` 安装密钥。测试环境在 `c1`、`l1` 安装 MUNGE 后分发；生产环境可先分发登录节点，等四台计算节点安装 MUNGE 后再运行一次分发脚本；23.11.4 环境分发到 `uc1`、`ul1`。**同一集群不要重新生成密钥**。原 23.11.4 记录使用 root SSH；若未开启，应改用可 `sudo` 的 SSH 用户。
+在控制节点的同一个 Bash 会话中，按场景设置 `targets` 后运行分发脚本。按目标节点可用的 SSH 用户调整 `ubuntu@`、`test@` 等地址，并确认该用户可通过 `sudo` 安装密钥。测试环境在 `c1`、`l1` 安装 MUNGE 后分发；生产环境可先分发登录节点，等四台计算节点安装 MUNGE 后再运行一次分发脚本；23.11.4 环境分发到 `uc1`、`ul1`。**同一集群不要重新生成密钥**。23.11.4 环境示例使用 root SSH；若未开启，应改用可 `sudo` 的 SSH 用户。
 
 ~~~sh
 # 测试环境：targets=(c1 l1)
@@ -78,7 +78,7 @@ sudo chmod 0400 /etc/munge/munge.key
 
 ## 22.05.11 源码编译测试环境：m1 / c1 / l1
 
-本节保留测试环境的网络准备、逐节点安装命令和完整 `slurm.conf`。实验镜像为 [Ubuntu 22.04.4 Server](https://mirrors.tuna.tsinghua.edu.cn/ubuntu-releases/22.04/ubuntu-22.04.4-live-server-amd64.iso)。原记录的实验账户信息为 `hangx hangx / root root`（历史凭据，复用前应更换）；网关和 DNS 记录见下方环境准备。测试 `slurm.conf` 只有 `cpu` 分区和一台 `c1` 计算节点。
+测试环境使用 [Ubuntu 22.04.4 Server](https://mirrors.tuna.tsinghua.edu.cn/ubuntu-releases/22.04/ubuntu-22.04.4-live-server-amd64.iso)。示例账户为 `hangx hangx / root root`，部署时必须设置新密码；网关和 DNS 见环境准备。该环境的 `slurm.conf` 只有 `cpu` 分区和一台 `c1` 计算节点。
 
 ### 环境准备
 
@@ -184,7 +184,7 @@ sudo systemctl daemon-reload && sudo systemctl start rngd && sudo systemctl enab
 sudo apt -y install munge libmunge-dev libmunge2
 ~~~
 
-- 在 `m1` 上按[[#MUNGE 共享密钥：三种环境共用的安全流程|共用密钥流程]]生成密钥，待 `c1` 和 `l1` 均安装 MUNGE 后，设置 `targets=(c1 l1)` 分发同一密钥。原记录采用的 1024 字节随机密钥和两台目标节点均保留在该流程中。
+- 在 `m1` 上按[[#MUNGE 共享密钥：三种环境共用的安全流程|共用密钥流程]]生成密钥，待 `c1` 和 `l1` 均安装 MUNGE 后，设置 `targets=(c1 l1)` 分发同一密钥。密钥长度为 1024 字节，目标节点为 `c1`、`l1`。
 
 - 检查账户是否存在
 
@@ -280,7 +280,7 @@ sudo cp -r ./etc/slurm*.service /etc/systemd/system/
 
 #### 配置数据库
 
-以下口令是占位值，执行 SQL 前替换为专用强密码，并在 `slurmdbd.conf` 的 `StoragePass` 使用同一值。数据库由管理员创建，因此 `slurm` 用户只获得 `slurm_acct_db.*` 权限，不需要原记录的全局 `*.*` 授权或 `WITH GRANT OPTION`。已有数据库或用户需先核对，避免重复创建。
+以下口令是占位值，执行 SQL 前替换为专用强密码，并在 `slurmdbd.conf` 的 `StoragePass` 使用同一值。数据库由管理员创建，因此 `slurm` 用户只获得 `slurm_acct_db.*` 权限，无需全局 `*.*` 授权或 `WITH GRANT OPTION`。已有数据库或用户需先核对，避免重复创建。
 
 ```sh
 sudo systemctl enable mariadb
@@ -777,7 +777,7 @@ source /etc/profile
 
 ## 22.05.11 源码编译生产环境：CN01Z99SLU001 / cn01dl00[1-4] / CN01Z99SLU002
 
-本节保留生产环境的批量 SSH 操作、H800 GPU 资源定义、分区优先级、记账配置和节点脚本。MUNGE/Slurm 用户分别使用统一 UID/GID 1108/1109；执行远程命令前需确认 `test`、`ubuntu` 或 `root` 在目标主机上的登录与提权方式。生产配置中的路径和资源数值应与实际节点核对。
+生产环境使用批量 SSH 操作、H800 GPU 资源定义、分区优先级、记账配置和节点脚本。MUNGE/Slurm 用户分别使用统一 UID/GID 1108/1109；执行远程命令前需确认 `test`、`ubuntu` 或 `root` 在目标主机上的登录与提权方式。生产配置中的路径和资源数值应与实际节点核对。
 
 ### management/login node安装munge
 
@@ -1001,7 +1001,7 @@ sudo cp -r ./etc/slurm*.service /etc/systemd/system/
 
 #### 配置数据库
 
-以下口令是占位值，执行 SQL 前替换为专用强密码，并在 `slurmdbd.conf` 的 `StoragePass` 使用同一值。数据库由管理员创建，因此 `slurm` 用户只获得 `slurm_acct_db.*` 权限，不需要原记录的全局 `*.*` 授权或 `WITH GRANT OPTION`。已有数据库或用户需先核对，避免重复创建。
+以下口令是占位值，执行 SQL 前替换为专用强密码，并在 `slurmdbd.conf` 的 `StoragePass` 使用同一值。数据库由管理员创建，因此 `slurm` 用户只获得 `slurm_acct_db.*` 权限，无需全局 `*.*` 授权或 `WITH GRANT OPTION`。已有数据库或用户需先核对，避免重复创建。
 
 ```sh
 sudo systemctl enable mariadb
@@ -1602,7 +1602,7 @@ scontrol reconfigure
 
 ### 配置epilog
 
-- 在所有计算节点创建 epilog 目录和脚本。脚本保留原有“抢占时不清理运行代码”的设计，但依赖 `slurmd.log` 文本匹配；正式启用前先用普通完成、取消和抢占三种作业验证。已移除未使用的 `squeue` 调用，并为删除路径加引号与作业 ID 检查。
+- 在所有计算节点创建 epilog 目录和脚本。脚本在抢占时不清理运行代码，判断依赖 `slurmd.log` 文本匹配；正式启用前先用普通完成、取消和抢占三种作业验证。删除路径受引号和作业 ID 检查约束。
 
 ~~~sh
 #控制节点ubuntu用户执行
@@ -1614,7 +1614,7 @@ done
 tee ./90-zen <<'EOF'
 #!/bin/bash
 
-# 原记录通过 slurmd.log 文本识别抢占；启用前须在目标集群验证日志格式。
+# 通过 slurmd.log 文本识别抢占；启用前须在目标集群验证日志格式。
 : "${SLURM_JOB_USER:?}" "${SLURM_JOB_ID:?}"
 case "$SLURM_JOB_USER" in */*|.|.. ) exit 1 ;; esac
 case "$SLURM_JOB_ID" in *[!0-9]* ) exit 1 ;; esac
@@ -1674,7 +1674,7 @@ done
 
 ## 23.11.4 deb 包实验环境：um1 / uc1 / ul1
 
-原记录的 Ubuntu 22.04.4 实验机器为 2 vCPU、4 GB，用户信息为 `hangx hangx / root root`（历史凭据，不要复用），三节点分别为 `um1`、`uc1`、`ul1`。本流程先从 Slurm 23.11.4 源码构建 deb 包，再按节点角色安装；它不是直接从 Ubuntu 仓库安装 Slurm。
+实验机器为 Ubuntu 22.04.4、2 vCPU、4 GB，三节点分别为 `um1`、`uc1`、`ul1`。示例账户为 `hangx hangx / root root`，部署时必须设置新密码。先从 Slurm 23.11.4 源码构建 deb 包，再按节点角色安装。
 
 ### 环境准备
 
@@ -1764,7 +1764,7 @@ ssh-copy-id -i ~/.ssh/id_rsa.pub ul1
 
 ### 配置 MUNGE
 
-23.11.4 环境同样在所有节点创建 UID/GID 为 1108 的 `munge` 用户；原记录仅安装 `munge` 包（22.05.11 同时安装 `libmunge-dev`、`libmunge2`），管理节点使用 `rng-tools`/`rngd`。用户与熵源命令及 `munge -n`、`unmunge`、`remunge` 验证方法已在上方 22.05.11 测试环境的 MUNGE 章节列出，目标主机改为 `um1`、`uc1`、`ul1`。
+23.11.4 环境在所有节点创建 UID/GID 为 1108 的 `munge` 用户并安装 `munge` 包；22.05.11 环境还安装 `libmunge-dev`、`libmunge2`。管理节点使用 `rng-tools`/`rngd`。用户与熵源命令及 `munge -n`、`unmunge`、`remunge` 验证方法见 22.05.11 测试环境的 MUNGE 章节；此环境的目标主机为 `um1`、`uc1`、`ul1`。
 
 ~~~sh
 # 每台节点：先核对 UID/GID 1108 未占用，再创建用户并安装 MUNGE
@@ -1775,7 +1775,7 @@ sudo apt -y install munge
 
 # 仅在 um1 生成一次共享密钥，并使用上方的受限分发流程
 # targets=(root@uc1 root@ul1)；若 root SSH 不可用，改为可 sudo 的 SSH 用户
-# 原记录另列 create-munge-key 作为生成命令；不要在各节点分别运行，以免密钥不同。
+# 也可在 um1 使用 create-munge-key 生成密钥；只选一种生成方式，切勿在各节点分别生成。
 
 # 所有节点：恢复属主和权限，启动并验证服务
 sudo chown munge:munge /etc/munge/munge.key
@@ -1808,7 +1808,7 @@ useradd -m -c "Slurm manager" -d /var/lib/slurm -u 1109 -g slurm -s /bin/bash sl
 id slurm
 ~~~
 
-- 从 Slurm 23.11.4 源码构建 deb 包（原记录在所有节点执行）
+- 从 Slurm 23.11.4 源码构建 deb 包（每台节点执行，或将构建产物分发到目标节点）
 
   https://slurm.schedmd.com/quickstart_admin.html#debuild
 
@@ -1828,7 +1828,7 @@ debuild -b -uc -us
 ~~~
 
 > [!tip] 按节点角色安装 deb 包
-> `debuild` 会将包放在源码目录的上一级。原记录使用逐个 `dpkg -i`；这里将相同的软件包组合改用 `apt install ./...deb` 安装，以便处理依赖。每台目标节点都需先获得这些包，或在节点上完成相同构建。
+> `debuild` 将包放在源码目录的上一级。每台目标节点需先获得对应软件包，或在节点上完成相同构建；使用 `apt install ./...deb` 处理包依赖。
 
 ~~~sh
 # um1（控制节点）
@@ -1844,7 +1844,7 @@ cd ..
 sudo apt install ./slurm-smd_23.11.4-1_amd64.deb ./slurm-smd-client_23.11.4-1_amd64.deb
 ~~~
 
-- 配置控制节点 Slurm。原环境规划写 2 vCPU、4 GB 内存，但原 `slurm.conf` 写 `RealMemory=5886` MiB，二者矛盾。下面保留原值作历史记录；运行前在 `uc1` 用 `nproc`、`lscpu`、`free -m` 核对，并据实修改 `NodeName=uc1`。`MaxTime=1` 是一分钟，通用示例中的 5 分钟作业不能直接提交到 `debug`。本实验未提供 `slurmdbd.conf` 或启动 `slurmdbd` 的步骤，记账功能不能视为已配置。
+- 配置控制节点 Slurm。实验主机规格为 2 vCPU、4 GB，但下面的 `slurm.conf` 设置 `RealMemory=5886` MiB，超过标称内存。运行前在 `uc1` 用 `nproc`、`lscpu`、`free -m` 核对，并据实修改 `NodeName=uc1`。`MaxTime=1` 是一分钟，超过此时限的作业不能提交到 `debug`。仅安装 `slurmdbd` 包并不能启用记账；还需配置 `slurmdbd.conf` 和数据库并启动服务。
 
   ~~~sh
   #查看CPUs
@@ -2051,7 +2051,7 @@ systemctl status slurmd
 
 ### 23.11.4 环境验收与 PBS 对照
 
-原文“常用命令”与本指南下方的作业测试章节高度重复，其中 `compute`/`c1`/`c2`、`srun -N2` 和 `low` QOS 与此环境仅有的 `debug`/`uc1` 配置不符。以下命令按此配置校正；下方通用章节仍保留交互作业、`sbatch`、Python、`salloc`、`sacct`、`squeue`、`scancel` 与节点恢复命令的参数说明。`debug` 分区的时间上限为 1 分钟，提交脚本须相应缩短。
+此环境仅配置 `debug` 分区和 `uc1` 一台计算节点，适用以下验收命令。作业时限为 1 分钟；交互作业、`sbatch`、Python、`salloc`、`sacct`、`squeue`、`scancel` 等命令的通用参数见作业调度章节，使用时须改为本环境的分区和节点。
 
 ~~~sh
 sinfo
@@ -2063,7 +2063,7 @@ squeue -a
 scontrol update nodename=uc1 state=resume
 ~~~
 
-原文附带的 PBS 与 Slurm 对照图及参考文章：
+PBS 与 Slurm 对照资料：
 
 ![PBS vs Slurm 对照图](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202403221554549.png)
 
@@ -2071,7 +2071,7 @@ scontrol update nodename=uc1 state=resume
 
 ## 作业调度与故障排查
 
-以下命令主要来自 22.05.11 测试环境。单节点示例已改为该环境存在的 `cpu` 分区；带 `c2`、`c[1-2]`、`compute`、`low` QOS 等名称的历史示例仍保留其原始意图，但**不属于上面的三节点测试拓扑**，须按实际分区、QOS 和节点改写后运行。22.05.11 生产环境应改用 `zprod*` 分区和 `cn01dl00[1-4]` 节点；23.11.4 实验环境应改用 `debug` 分区和 `uc1`，并遵守 1 分钟上限。Python/sbatch 示例保留原有参数讲解和输出记录。
+以下命令以 22.05.11 测试环境的 `cpu` 分区和 `c1` 节点为基础。涉及 `c2`、`c[1-2]`、`compute` 或 `low` QOS 的命令需要先配置对应节点、分区或 QOS。22.05.11 生产环境使用 `zprod*` 分区和 `cn01dl00[1-4]` 节点；23.11.4 实验环境使用 `debug` 分区和 `uc1`，作业时限为 1 分钟。
 
 ### 作业调度测试
 
@@ -2112,7 +2112,7 @@ scontrol update nodename=c1 state=resume
 srun -p cpu -w c1 --mem=5M -c 1 hostname
 srun -J sample-job -p cpu -w c1 -N 1 -c 1 -n 1 sh -c 'whoami; hostname; ip a'
 srun -J my-sleep -p cpu -w c1 -N 1 -c 1 -n 1 sleep 10
-# 历史多节点示例：只有新增 c2 并纳入 cpu 分区后才可执行
+# 多节点作业：先新增 c2 并纳入 cpu 分区
 # srun -J sample-job -p cpu -N 2 -c 1 -n 1 whoami;hostname;ip a;
 # srun -J my-sleep -p cpu -w c[1-2] -N 2 -c 1 -n 1 sleep 10
 srun -p cpu -w c1 sh ./a.sh
@@ -2246,19 +2246,18 @@ sacct -j ID-number
 
 ~~~sh
 #使用salloc命令提交。为需实时处理的作业分配资源,典型场景为分配资源并启动一个shell,然 后用此shell执行srun命令去执行并行任务。
-#在 cpu 分区申请一个核；原记录的 compute 分区未在本测试配置中定义
+# 在 cpu 分区申请一个核；此环境未配置 compute 分区
 salloc -p cpu -N1 -n1 -t 2:00:00 # 若已创建 low QOS，才添加 -q low
 #查看分配到的node
 squeue
              JOBID PARTITION     NAME     USER ST       TIME  NODES NODELIST(REASON)
-                70   compute interact     root  R       3:59      1 c1
-                71   compute interact     root  R       0:10      1 c2
-# 登录c2调试作业
-ssh c2
+                70       cpu interact     root  R       3:59      1 c1
+# 登录 c1 调试作业
+ssh c1
 # 取消作业
-scancel 71
+scancel 70
 # 查看作业是否还在执行
-squeue -j 71
+squeue -j 70
 ~~~
 
 #### 常见命令
@@ -2289,7 +2288,7 @@ scontrol show node node-name | grep CPU #查看指定节点cpu状态
 
 ## 账户与参考资料
 
-测试环境原记录只展示了账户与分区关联的查看命令：
+查看账户与分区的关联：
 
 ### slurm用户账户管理
 
@@ -2302,16 +2301,14 @@ sacctmgr list assoc
 
 ---
 
-## 版本差异与待核实项
+## 部署前核对
 
-- 生产 `slurm.conf` 中指向 `/etc/slurm/epilog.d/90-zen` 的第二个 `Prolog=` 已改为 `Epilog=`；这是对应作业结束脚本的配置项。
-- 生产账户命令将未定义的 `ztest` 改为该文实际定义的 `zprodtest`；同步命令中的 `root@@` 改为 `root@`。
-- 生产 Prolog/Epilog 脚本和目录由原记录的 `chmod 777` 改为 `chmod 755`，保留执行权限并避免所有用户可写。执行前仍需检查属主与实际安全策略。
-- 测试环境的单节点提交示例使用已定义的 `cpu` 分区；原记录中的两节点、`compute` 分区及 `low` QOS 示例没有相应配置，需现场改写。
-- MUNGE 密钥分发已改为受限暂存与 `munge:munge 0400` 安装；数据库示例已移除固定密码和全局授权。正式使用前须替换密码占位值，并核对目标节点资源与分区。
-- 生产 Epilog 已移除未使用的 `squeue` 调用，并约束删除路径；通过 `slurmd.log` 识别抢占仍是原记录的环境假设，删除范围、日志格式和执行时序须在目标集群验证。
-
-- 23.11.4 的 deb 包构建方法与节点角色包名已与官方指南核对；其 4 GB/`RealMemory=5886` 冲突、缺少 cgroup/记账配置，以及原文旧主机名作业示例已标明，不应照抄到目标集群。
+- 生产环境的 `Prolog=` 执行作业开始脚本，`Epilog=` 执行作业结束脚本；`/etc/slurm/epilog.d/90-zen` 应配置为 `Epilog=`。
+- 生产账户使用已定义的 `zprodtest` 分区；远程同步命令应使用目标主机的有效 `user@host` 地址。
+- Prolog/Epilog 脚本和目录需要正确属主及执行权限，不能对所有用户开放写权限；生产 Epilog 的删除范围、`slurmd.log` 抢占日志格式和执行时序须在目标集群验证。
+- 测试环境仅定义 `cpu` 分区和 `c1` 一台计算节点；两节点作业、`compute` 分区或 `low` QOS 需要先增加对应配置。
+- MUNGE 密钥在所有节点保持一致，属主为 `munge:munge`、权限为 `0400`；数据库密码占位值必须替换，数据库用户权限限制在 `slurm_acct_db.*`。
+- 23.11.4 环境需核对 4 GB 规格与 `RealMemory=5886` MiB 的冲突；要启用 cgroup 或记账，还需完成相应配置。`debug` 分区只含 `uc1`，作业时限为 1 分钟。
 
 参考：[Slurm 管理员快速入门](https://slurm.schedmd.com/quickstart_admin.html)、[认证配置](https://slurm.schedmd.com/authentication.html)、[Accounting 与数据库权限](https://slurm.schedmd.com/accounting.html)、[Prolog 与 Epilog 指南](https://slurm.schedmd.com/prolog_epilog.html)、[slurm.conf 参数](https://slurm.schedmd.com/slurm.conf.html)。以上在线文档为当前版本；22.05.11 的实际配置兼容性仍需在目标集群验证。
 
