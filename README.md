@@ -6,7 +6,7 @@
 
 涵盖云原生技术、基础设施自动化、编程语言、AI/ML 和现代 DevOps 实践的综合知识库。
 
-> **~379 篇学习笔记 · 17 个技术领域 · 129 篇知识编译层文件**
+> **~370 篇学习笔记 · 17 个技术领域 · 129 篇知识编译层文件**
 
 ## 🧭 知识库导航（KnowledgeBase）
 
@@ -34,7 +34,7 @@
 | Docker-Kubernetes | 170 | 🟢 | 基础资源→安装管理→监控日志→CI/CD→网络→安全→扩缩容→存储→中间件，全生命周期 |
 | AI¹ | 54 | 🟢 | Claude Code（9 篇深度）+ OpenClaw（8 篇）+ Hermes Agent（4 篇）+ 视觉 + 行业动态 |
 | Python | 29 | 🟢 | 基础→运维开发→网络编程→数据分析→项目实战 |
-| Linux-Shell | 21 | 🟡 | 系统管理 + Shell 脚本 + SSH/网络 + 存储/LVM/NFS |
+| Linux-Shell | 12 | 🟡 | 系统管理 + Shell 脚本 + SSH/网络 + 存储/LVM/NFS |
 | Azure | 22 | 🟢 | VM/VMSS + AKS + 网络/存储 + DevOps Pipeline + Policy |
 | Aliyun | 22 | 🟢 | ECS/ESS + VPC/SLB/WAF + OSS + RDS/DTS + Landing Zone |
 | Go | 12 | 🟡 | 环境配置→变量→控制流→OOP→云原生选型 |
@@ -105,7 +105,7 @@ learning-notes/
 ├── Azure/                         ← Azure 云平台（22 篇）
 ├── Aliyun/                        ← 阿里云（22 篇）
 ├── Python/                        ← Python 开发（29 篇）
-├── Linux-Shell/                   ← Linux 运维（21 个 Markdown 文件，含索引）
+├── Linux-Shell/                   ← Linux 运维（12 个 Markdown 文件，含索引）
 ├── Go/                            ← Go 语言（12 篇）
 └── ...                            ← HPC/GPU/Database/IaC 等
 ```

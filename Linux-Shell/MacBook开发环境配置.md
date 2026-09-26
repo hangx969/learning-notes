@@ -14,7 +14,7 @@ aliases:
 
 ## 配置 Zsh 与 Oh My Zsh
 
-macOS 15 默认使用 Zsh。Oh My Zsh 的安装、主题和插件配置集中记录在 [[Linux-Shell/配置zsh终端#macOS 配置|Zsh 终端配置]]，包括此处使用的 `af-magic`、Powerlevel9k/10k、`zsh-syntax-highlighting` 和 `zsh-autosuggestions`。
+macOS 15 默认使用 Zsh。Oh My Zsh 的安装、主题和插件配置集中记录在 [[Linux-Shell/Linux-learning-notes#macOS 配置|Zsh 终端配置]]，包括此处使用的 `af-magic`、Powerlevel9k/10k、`zsh-syntax-highlighting` 和 `zsh-autosuggestions`。
 
 ---
 

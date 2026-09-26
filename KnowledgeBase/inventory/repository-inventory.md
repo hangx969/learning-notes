@@ -365,26 +365,17 @@ date: 2026-09-26
 
 ---
 
-## Linux-Shell（20 篇）
+## Linux-Shell（11 篇）
 
 | 文件 | 标题 | FM | 链 |
 |------|------|:--:|:--:|
 | [[Linux-Shell/Linux-learning-notes|Linux-learning-notes]] | Linux 学习笔记 | ✅ | ❌ |
 | [[Linux-Shell/shell-scripts|shell-scripts]] | Shell 脚本 | ✅ | ✅ |
 | [[Linux-Shell/LVM-RAID|LVM-RAID]] | LVM 与 RAID | ✅ | ❌ |
-| [[Linux-Shell/ssh连接|ssh连接]] | SSH连接 | ✅ | ❌ |
-| [[Linux-Shell/linux环境变量管理|linux环境变量管理]] | 环境变量 | ✅ | ❌ |
-| [[Linux-Shell/nmcli管理网络配置|nmcli管理网络配置]] | nmcli网络 | ✅ | ❌ |
-| [[Linux-Shell/Linux终端配置proxy|Linux终端配置proxy]] | 终端代理 | ✅ | ❌ |
 | [[Linux-Shell/ansible安装-rockylinux8|ansible安装-rockylinux8]] | Ansible安装 | ✅ | ❌ |
-| [[Linux-Shell/配置zsh终端|配置zsh终端]] | zsh终端 | ✅ | ❌ |
 | [[Linux-Shell/MacBook开发环境配置|MacBook开发环境配置]] | MacBook配置 | ✅ | ❌ |
 | [[Linux-Shell/vscode|vscode]] | VSCode | ✅ | ❌ |
-| [[Linux-Shell/screen后台运行任务|screen后台运行任务]] | screen后台 | ✅ | ❌ |
-| [[Linux-Shell/inotifywait监控文件变化|inotifywait监控文件变化]] | inotifywait | ✅ | ❌ |
-| [[Linux-Shell/samba文件共享服务|samba文件共享服务]] | Samba | ✅ | ❌ |
 | [[Linux-Shell/开源堡垒机jumpserver部署|开源堡垒机jumpserver部署]] | JumpServer | ✅ | ❌ |
-| [[Linux-Shell/系统信息查看|系统信息查看]] | 系统信息 | ✅ | ❌ |
 | [[Linux-Shell/VMWare-using-notes|VMWare-using-notes]] | VMWare | ✅ | ❌ |
 | [[Linux-Shell/Ubuntu基础操作|Ubuntu基础操作]] | Ubuntu基础、内核、显卡驱动与安全更新 | ✅ | ✅ |
 | [[Linux-Shell/Ubuntu安装Wechat|Ubuntu安装Wechat]] | Ubuntu Wechat | ✅ | ❌ |

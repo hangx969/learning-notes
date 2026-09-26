@@ -11,7 +11,7 @@ date: 2026-09-26
 # 🐧 Linux 运维专题地图
 
 > [!info] 专题范围
-> 覆盖 Linux-Shell（20 篇）为主线，关联 OS（3 篇）、HPC（5 篇）、GPU（4 篇）等基础设施知识。
+> 覆盖 Linux-Shell（11 篇）为主线，关联 OS（3 篇）、HPC（5 篇）、GPU（4 篇）等基础设施知识。
 
 ---
 
@@ -24,22 +24,22 @@ date: 2026-09-26
 ## 📖 推荐阅读顺序
 
 ### Linux 基础
-1. [[Linux-Shell/Linux-learning-notes|Linux-learning-notes]] — 全面学习笔记（2688 行）
-2. [[Linux-Shell/linux环境变量管理|linux环境变量管理]] — 环境变量
-3. [[Linux-Shell/系统信息查看|系统信息查看]] — 系统信息
+1. [[Linux-Shell/Linux-learning-notes|Linux-learning-notes]] — 全面学习笔记（含 9 个实操专题）
+2. [[Linux-Shell/Linux-learning-notes#项目环境变量与 direnv|linux环境变量管理]] — 环境变量
+3. [[Linux-Shell/Linux-learning-notes#系统信息与资源监控|系统信息查看]] — 系统信息
 4. [[OS/OS|OS]] — 操作系统理论
 5. [[OS/OS-磁盘管理|OS-磁盘管理]] — 磁盘管理
 6. [[Linux-Shell/LVM-RAID|LVM-RAID]] — LVM 与 RAID
 
 ### Shell 脚本与自动化
 7. [[Linux-Shell/shell-scripts|shell-scripts]] — Shell 脚本实战
-8. [[Linux-Shell/screen后台运行任务|screen后台运行任务]] — 后台任务
-9. [[Linux-Shell/inotifywait监控文件变化|inotifywait监控文件变化]] — 文件监控
+8. [[Linux-Shell/Linux-learning-notes#screen 后台会话|screen后台运行任务]] — 后台任务
+9. [[Linux-Shell/Linux-learning-notes#inotifywait 文件监控与同步|inotifywait监控文件变化]] — 文件监控
 
 ### 网络与安全
-10. [[Linux-Shell/ssh连接|ssh连接]] — SSH 基础
-11. [[Linux-Shell/nmcli管理网络配置|nmcli管理网络配置]] — 网络配置
-12. [[Linux-Shell/Linux终端配置proxy|Linux终端配置proxy]] — 代理配置
+10. [[Linux-Shell/Linux-learning-notes#SSH 连接与远程执行|ssh连接]] — SSH 基础
+11. [[Linux-Shell/Linux-learning-notes#nmcli 网络配置|nmcli管理网络配置]] — 网络配置
+12. [[Linux-Shell/Linux-learning-notes#终端代理配置|Linux终端配置proxy]] — 代理配置
 13. [[Linux-Shell/开源堡垒机jumpserver部署|开源堡垒机jumpserver部署]] — 堡垒机
 
 ### 自动化运维工具
@@ -53,7 +53,7 @@ date: 2026-09-26
 
 ### 开发环境
 19. [[Linux-Shell/MacBook开发环境配置|MacBook开发环境配置]] — macOS
-20. [[Linux-Shell/配置zsh终端|配置zsh终端]] — zsh 终端
+20. [[Linux-Shell/Linux-learning-notes#配置 Zsh 终端|配置zsh终端]] — zsh 终端
 21. [[Linux-Shell/vscode|vscode]] — VSCode
 
 ---
@@ -64,8 +64,8 @@ date: 2026-09-26
 | 文章 | 主题 |
 |------|------|
 | [[Linux-Shell/Linux-learning-notes|Linux-learning-notes]] | Linux 全面学习笔记 |
-| [[Linux-Shell/linux环境变量管理|linux环境变量管理]] | 环境变量 |
-| [[Linux-Shell/系统信息查看|系统信息查看]] | 系统信息 |
+| [[Linux-Shell/Linux-learning-notes#项目环境变量与 direnv|linux环境变量管理]] | 环境变量 |
+| [[Linux-Shell/Linux-learning-notes#系统信息与资源监控|系统信息查看]] | 系统信息 |
 | [[Linux-Shell/LVM-RAID|LVM-RAID]] | LVM 与 RAID |
 | [[OS/OS|OS]] | 操作系统理论（2266 行）|
 | [[OS/OS-磁盘管理|OS-磁盘管理]] | 磁盘管理与 IO |
@@ -74,10 +74,10 @@ date: 2026-09-26
 ### 网络与安全
 | 文章 | 主题 |
 |------|------|
-| [[Linux-Shell/ssh连接|ssh连接]] | SSH 连接 |
-| [[Linux-Shell/nmcli管理网络配置|nmcli管理网络配置]] | NetworkManager |
-| [[Linux-Shell/Linux终端配置proxy|Linux终端配置proxy]] | 代理配置 |
-| [[Linux-Shell/samba文件共享服务|samba文件共享服务]] | Samba |
+| [[Linux-Shell/Linux-learning-notes#SSH 连接与远程执行|ssh连接]] | SSH 连接 |
+| [[Linux-Shell/Linux-learning-notes#nmcli 网络配置|nmcli管理网络配置]] | NetworkManager |
+| [[Linux-Shell/Linux-learning-notes#终端代理配置|Linux终端配置proxy]] | 代理配置 |
+| [[Linux-Shell/Linux-learning-notes#Samba 文件共享|samba文件共享服务]] | Samba |
 | [[Linux-Shell/开源堡垒机jumpserver部署|开源堡垒机jumpserver部署]] | JumpServer |
 | [[Networking/计算机网络基础|计算机网络基础]] | 网络理论 |
 | [[Networking/HTTP基础|HTTP基础]] | HTTP 协议 |
@@ -87,8 +87,8 @@ date: 2026-09-26
 |------|------|
 | [[Linux-Shell/shell-scripts|shell-scripts]] | Shell 脚本 |
 | [[Linux-Shell/ansible安装-rockylinux8|ansible安装-rockylinux8]] | Ansible |
-| [[Linux-Shell/inotifywait监控文件变化|inotifywait监控文件变化]] | inotifywait |
-| [[Linux-Shell/screen后台运行任务|screen后台运行任务]] | screen |
+| [[Linux-Shell/Linux-learning-notes#inotifywait 文件监控与同步|inotifywait监控文件变化]] | inotifywait |
+| [[Linux-Shell/Linux-learning-notes#screen 后台会话|screen后台运行任务]] | screen |
 
 ### HPC 调度
 | 文章 | 主题 |
@@ -110,7 +110,7 @@ date: 2026-09-26
 ---
 
 ## 📑 来源摘要
-- [[KnowledgeBase/sources/linux-shell-batch-summary|Linux-Shell 批量摘要]] — 20 篇系统管理、Shell 脚本、SSH/网络、存储/LVM/NFS
+- [[KnowledgeBase/sources/linux-shell-batch-summary|Linux-Shell 批量摘要]] — 11 篇系统管理、Shell 脚本、SSH/网络、存储/LVM/NFS
 - [[KnowledgeBase/sources/hpc-cloud-gpu-batch-summary|HPC-Cloud-GPU 批量摘要]] — Slurm/PBS/GPU 管理全栈
 
 ---

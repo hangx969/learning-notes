@@ -4,9 +4,18 @@ tags:
   - linux
   - shell
   - system-admin
+  - ssh
+  - zsh
+  - network
+  - monitoring
 aliases:
   - Linux基础
   - Linux学习笔记
+  - SSH连接
+  - 配置zsh终端
+  - Linux系统信息查看
+  - direnv环境变量管理
+  - Samba SMB文件共享
 ---
 
 # Linux Basic
@@ -2685,4 +2694,989 @@ used by clients to retrive email from servers，规定了怎样将个人计算�
 - Mail Delivery Program
   - Procmail: deliver email to be read by client apps
 - Mail User Agent
-  - ### Graphical: Evolution; text-based: Mutt 
+  - ### Graphical: Evolution; text-based: Mutt
+
+# Linux 运维实操专题
+
+以下章节集中记录终端与环境、系统监控、网络配置、远程访问和文件共享的操作示例。执行网络切换、服务重启或同步命令前，请先核对当前系统和路径。
+
+## 配置 Zsh 终端
+
+Zsh 是命令解释器。它提供命令补全等功能，也可以通过插件添加语法高亮和输入建议。
+
+
+#### Oh My Zsh
+
+Oh My Zsh 是管理 Zsh 配置的开源框架，提供主题与插件。
+
+
+#### macOS 配置
+
+macOS 15 默认使用 Zsh，可直接安装 Oh My Zsh。安装、主题和插件示例也适用于 [[Linux-Shell/MacBook开发环境配置|MacBook 开发环境]]。
+
+```sh
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+```
+
+安装器会将旧的 `~/.zshrc` 备份为 `~/.zshrc.pre-oh-my-zsh`；安装后将需要保留的配置迁移到新的 `~/.zshrc`。例如：
+
+```sh
+export ZSH="$HOME/.oh-my-zsh"
+ZSH_THEME="robbyrussell"
+plugins=(git)
+source "$ZSH/oh-my-zsh.sh"
+```
+
+下文的主题与插件章节说明 `af-magic`、Powerlevel9k/10k、`zsh-syntax-highlighting` 和 `zsh-autosuggestions` 的配置。
+
+
+#### Linux 安装 Zsh
+
+- 安装Zsh的方法很多，使用yum来安装很方便，不过OhMyZsh官方建议安装`5.0.8`以上版本，我们先来看下yum中的zsh版本号；
+
+```sh
+yum info zsh
+```
+
+- 如果你的版本号大于`5.0.8`可以使用yum来安装，使用如下命令即可，如果小于可以使用源码来安装；
+
+```
+yum -y install zsh
+```
+
+- 源码安装需要先下载Zsh的源码包，下载地址：https://zsh.sourceforge.io/Arc/source.html
+
+- 先把下载好的源码包放到指定目录，然后使用如下命令进行解压安装；
+
+```sh
+# 安装依赖
+yum -y install gcc perl-ExtUtils-MakeMaker git
+yum -y install ncurses-devel
+# 解压
+tar xvf zsh-5.9.tar.xz
+cd zsh-5.9
+# 检查安装环境依赖是否完善
+./configure
+# 编译并安装
+make && make install
+```
+
+- 安装完成后可以使用如下命令查看Zsh的路径；
+
+```sh
+whereis zsh
+```
+
+- 再把Zsh的路径添加到`/etc/shells`文件中去，在这里我们可以看到系统支持的所有命令解释器；
+
+```sh
+vim /etc/shells 
+# 添加内容如下
+/usr/local/bin/zsh
+```
+
+- 最后查看下Zsh版本号，用于检测Zsh是否安装成功了。
+
+```sh
+zsh --version
+```
+
+
+#### 安装 Oh My Zsh
+
+- 接下来我们来安装OhMyZsh，直接使用如下命令安装；
+
+```sh
+#墙外
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+#墙内
+sh -c "$(curl -fsSL https://install.ohmyz.sh/)"
+```
+
+- 如果遇到下载不下来的情况，可以先创建一个`install.sh`文件，然后从Github上复制该文件内容，再使用如下命令安装：
+
+```
+# install.sh 地址：https://github.com/ohmyzsh/ohmyzsh/blob/master/tools/install.sh
+./install.sh
+```
+
+- 安装完成后会提示你修改Linux使用的默认shell，使用如下命令可查看修改默认shell；
+
+```sh
+# 查看当前在使用的shell
+echo $SHELL
+# 也可以使用下面命令自行修改默认shell
+chsh -s $(which zsh)
+```
+
+- 安装成功后配置文件为`.zshrc`，安装目录为`.oh-my-zsh`，安装目录结构如下。
+
+![图片](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202401081016712.png)
+
+#### 主题配置
+
+- OhMyZsh的主题非常丰富，自带主题都在`themes`文件夹中；
+
+- 修改主题只需修改配置文件`.zshrc`的`ZSH_THEME`属性即可，下面我们把主题改为`af-magic`；
+
+```sh
+vim ~/.zshrc
+# 修改如下内容
+ZSH_THEME="af-magic"
+# 刷新配置，每次修改后都需要
+source ~/.zshrc
+```
+
+##### powerlevel9k
+
+~~~sh
+git clone https://github.com/bhilburn/powerlevel9k.git ~/.oh-my-zsh/custom/themes/powerlevel9k
+vim ~/.zshrc
+#修改主题配置为powerlevel9k
+ZSH_THEME="powerlevel9k/powerlevel9k"
+source ~/.zshrc
+~~~
+
+##### powerlevel10k
+
+```sh
+git clone https://github.com/romkatv/powerlevel10k.git "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k"
+vim ~/.zshrc
+#修改主题配置为powerlevel10k
+ZSH_THEME="powerlevel10k/powerlevel10k"
+exec zsh
+```
+
+#### 插件
+
+Oh My Zsh 自带的插件位于 `plugins` 目录，也可以从第三方仓库安装插件。
+
+##### zsh-syntax-highlighting
+
+> [!tip] 平时我们输入Linux命令的时候，只有在执行的时候才知道输错命令了，这款插件可以实时检测命令是否出错。
+
+- 下载插件到指定目录，使用如下命令即可；
+
+```sh
+git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
+```
+
+- 然后修改配置文件`.zshrc`，在plugins中添加插件`zsh-syntax-highlighting`；
+
+```sh
+plugins=(
+        git
+        zsh-syntax-highlighting
+)
+```
+
+- 接下来再输入命令时就有高亮提示了，正确命令会显示绿色。
+
+##### zsh-autosuggestions
+
+> [!tip] 自动补全插件，输入命令后会自动提示相关命令，使用方向键`→`可以实现自动补全。
+
+- 下载插件到指定目录，使用如下命令即可；
+
+```sh
+git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
+```
+
+- 然后修改配置文件`.zshrc`，在plugins中添加插件`zsh-autosuggestions`；
+- 此时我们输入命令前缀就会直接提示命令，然后按方向键`→`就可以实现自动补全了。
+
+##### zsh-history-substring-search
+
+> [!tip] 输入历史命令中的任意片段后，可通过绑定的按键切换匹配结果。
+
+- 下载插件到指定目录，使用如下命令即可；
+
+```
+git clone https://github.com/zsh-users/zsh-history-substring-search ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-history-substring-search
+```
+
+- 然后修改配置文件`.zshrc`，在plugins中添加插件`zsh-history-substring-search`；
+- 在 `~/.zshrc` 中绑定按键；以下示例使用方向键上、下切换匹配结果：
+
+```sh
+bindkey '^[[A' history-substring-search-up
+bindkey '^[[B' history-substring-search-down
+```
+
+##### docker
+
+> [!tip] 自带插件，可以实现docker命令补全和自动提示。
+
+- 作为自带插件无需下载，直接修改配置文件`.zshrc`，在plugins中添加插件`docker`；
+- 当我们输入docker开头的命令时，使用`Tab`键可以出现提示并自动补全。
+
+##### git
+
+> [!tip] 自带插件，添加了很多git的快捷命令。
+
+- 直接修改配置文件`.zshrc`，在plugins中添加插件`git`；
+- 该插件对于Git命令提供了非常多的快捷使用方式，比如下面的常用命令；
+
+| 快捷别名 | 命令           |
+| :------- | :------------- |
+| g        | git            |
+| gcl      | git clone      |
+| ga       | git add        |
+| gc       | git commit     |
+| ggp      | git push       |
+| ggl      | git pull       |
+| gst      | git status     |
+| gb       | git branch     |
+| glg      | git log --stat |
+
+##### z
+
+> [!tip] 自带插件，根据目录访问历史匹配并跳转到常用目录。
+
+- 直接修改配置文件`.zshrc`，在plugins中添加插件`z`，最终配置效果如下；
+
+```
+plugins=(
+        git
+        zsh-syntax-highlighting
+        zsh-autosuggestions
+        zsh-history-substring-search
+        docker
+        z
+)
+```
+
+- 先访问 `~/.oh-my-zsh/custom/plugins`，离开后输入 `z plug`，即可按访问历史匹配并跳转到该目录。
+
+## 项目环境变量与 direnv
+
+### 概述
+
+direnv是一个环境变量管理工具，它可以扩展你的shell的环境变量。它的工作原理是根据当前目录动态地改变环境变量。具体来说，当你进入一个目录时，它会加载该目录下的.envrc文件来改变环境变量，这个过程被称为"装载"（loading）。相反，当你离开该目录时，它会卸载这些环境变量，这个过程被称为"卸载"（unloading）。
+
+### 功能
+
+direnv的主要功能是管理和隔离环境变量。它可以让你在不同的项目中使用不同的环境变量，而不需要手动地去更改它们。这对于开发者来说非常有用，因为他们经常需要在不同的项目中切换，而每个项目可能需要不同的环境变量设置。通过使用direnv，开发者可以为每个项目创建一个.envrc文件，定义该项目所需的环境变量，然后direnv会自动地根据当前目录来装载和卸载这些环境变量。
+
+### 应用场景
+
+1. 项目依赖管理：在Python项目中，你可能需要使用不同版本的Python或者不同的Python库。通过使用direnv，你可以为每个项目设置不同的Python路径和库。例如，你可以在.envrc文件中设置PYTHONPATH环境变量，指向该项目所需的Python库的路径。
+
+2. 保密信息管理：如果你的项目需要一些保密的环境变量（如API密钥），你可以使用direnv来管理这些信息，而不是把它们硬编码到你的代码中。你可以在.envrc文件中设置这些保密的环境变量，然后在代码中通过环境变量来使用这些信息。请勿将包含真实密钥的 `.envrc` 提交到版本库；这样可以避免把保密信息暴露在代码中，同时，你也可以方便地在不同的环境中使用不同的保密信息。
+
+### 用法
+
+#### 安装direnv
+
+在Ubuntu上，你可以使用以下命令来安装direnv：
+
+```sh
+sudo apt-get install direnv
+```
+
+安装后按当前 Shell 在相应配置文件中启用 hook，并重启 Shell：
+
+```sh
+# Bash：加入 ~/.bashrc
+eval "$(direnv hook bash)"
+
+# Zsh：加入 ~/.zshrc
+eval "$(direnv hook zsh)"
+```
+
+#### 创建.envrc文件
+
+在你的项目目录中，创建一个.envrc文件，并在其中添加一些环境变量。例如，你可以使用以下命令来创建一个.envrc文件，并设置API_KEY环境变量：
+
+```sh
+echo export API_KEY=my_secret_key > .envrc
+```
+
+#### 允许direnv加载.envrc文件
+
+由于安全原因，direnv默认不会加载.envrc文件。你需要使用以下命令来允许direnv加载该文件：
+
+```sh
+direnv allow
+```
+
+现在，每当你进入该目录时，API_KEY环境变量就会被设置为my_secret_key。当你离开该目录时，API_KEY环境变量就会被卸载，这样就可以防止这个保密信息被其他项目或命令误用。
+
+## 终端代理配置
+
+通过 `http_proxy` 和 `https_proxy` 为支持这些变量的命令行程序配置代理。以下函数修改当前 Shell 及其后续启动的子进程；将函数加载语句加入 Shell 配置后，新终端也可调用。请按实际代理地址和端口调整示例。
+
+### 定义代理开关
+
+```sh
+tee ~/network_proxy.sh <<'EOF'
+proxy_on() {
+    export http_proxy=http://127.0.0.1:7890
+    export https_proxy="$http_proxy"
+    echo "终端代理已开启。"
+}
+
+proxy_off() {
+    unset http_proxy https_proxy
+    echo "终端代理已关闭。"
+}
+EOF
+
+# 在当前 Shell 加载函数
+source ~/network_proxy.sh
+```
+
+### 在新终端中加载
+
+Bash 交互终端通常读取 `~/.bashrc`，Zsh 读取 `~/.zshrc`。按当前 Shell，在相应配置文件中加入一行：
+
+```sh
+source ~/network_proxy.sh
+```
+
+### 使用与检查
+
+- 运行 `proxy_on` 开启代理，运行 `proxy_off` 关闭代理。
+- 可用 `curl cip.cc` 或 `curl myip.ipip.net` 查看出口 IP；查询服务是否可用取决于当前网络。
+
+## screen 后台会话
+
+一些任务需要在一个终端运行，能够保留运行日志，并不随着终端的关闭而终止。这个时候，就需要screen命令来执行这样的事。
+
+### screen命令后台运行
+
+#### 创建会话
+
+```sh
+screen -S baidudl
+```
+
+- 这样，我们就创建了一个名为baidudl的会话（session）。
+
+- 接下来，我们执行Ctrl-A D，就可以退出并保持当面会话。
+
+- 接下来，我们通过`screen -ls`查看系统运行了哪些screen会话。
+
+- 可以看到刚创建的baidudl已经创建了，接下来我们通过`screen -r baidudl`重新进入刚创建的会话
+
+#### 退出会话
+
+```sh
+#方法一：
+exit
+#方法二：
+screen -S 209684.baidudl -X quit
+```
+
+#### 分离会话
+
+- screen -r进入不了会话，报错："There is no screen to be resumed matching"，这通常意味着该会话正在被另一个终端使用，或者没有被正确分离（Detached）。
+
+- 如果确定会话没有被其他用户使用，可以尝试强制分离当前会话并重新附加：
+
+```sh
+screen -D -r 209652
+```
+
+#### 保存日志
+
+```sh
+screen -L -S download # 在当前目录创建 screenlog.0 日志
+```
+
+## 系统信息与资源监控
+
+### 查看内存使用情况
+
+- /proc/meminfo
+
+  这个动态更新的虚拟文件实际上是许多其他内存相关工具(如：free / ps / top)等的组合显示。/proc/meminfo列出了所有你想了解的内存的使用情况。进程的内存使用信息也可以通过 /proc/\<pid>/statm 和 /proc/\<pid>/status 来查看。
+
+- free -h
+
+  是对 /proc/meminfo 收集到的信息的一个概述。
+
+- ps
+
+  ps 命令显示执行时各进程的内存使用快照，可以按 RSS 排序输出。
+
+  - %MEM (percent of physical memory used),
+
+  - VSZ (total amount of virtual memory used)
+
+  - RSS (total amount of physical memory used)。
+
+```bash
+ps aux --sort -rss
+```
+
+- top
+
+  与ps作用相似，优点是可以动态更新。top命令提供了实时的运行中的程序的资源使用统计。你可以根据内存的使用和大小来进行排序。
+
+  - `top`命令的界面中，按`M`键。这将按照内存使用量对进程进行排序。（P：按CPU排序；N：按照PID排序）
+  - `RES`列代表了每个进程实际使用的物理内存大小，`%MEM`列则显示了每个进程使用的物理内存占总内存的百分比。
+
+- vmstat -s -S M
+
+  vmstat命令显示实时的和平均的统计，覆盖CPU、内存、I/O等内容。例如内存情况，不仅显示物理内存，也统计虚拟内存。
+
+- atop
+
+- htop
+
+
+### 查看CPU使用情况
+
+- top
+
+  ![image-20231204193316963](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202312041933186.png)
+
+  - cpu相关参数解释
+    - us：用户空间占CPU的百分比（像shell程序、各种语言的编译器、各种应用、web服务器和各种桌面应用都算是运行在用户地址空间的进程，这些程序如果不是处于idle状态，那么绝大多数的CPU时间都是运行在用户态）。
+    - sy：内核空间占CPU的百分比（所有进程要使用的系统资源都是由Linux内核处理的，对于操作系统的设计来说，消耗在内核态的时间应该是越少越好，在实践中有一类典型的情况会使sy变大,那就是大量的IO操作，因此在调查IO相关的问题时需要着重关注它）。
+    - ni：用户进程空间改变过优先级（ni是nice的缩写，可以通过nice值调整进程用户态的优先级，这里显示的ni表示调整过nice值的进程消耗掉的CPU时间，如果系统中没有进程被调整过nice值，那么ni就显示为0）。
+    - id：空闲CPU占用率。
+    - wa：等待输入输出的CPU时间百分比（和CPU的处理速度相比，磁盘IO操作是非常慢的，有很多这样的操作，比如，CPU在启动一个磁盘读写操作后，需要等待磁盘读写操作的结果。在磁盘读写操作完成前，CPU只能处于空闲状态。Linux系统在计算系统平均负载时会把CPU等待IO操作的时间也计算进去，所以在我们看到系统平均负载过高时，可以通过wa来判断系统的性能瓶颈是不是过多的IO操作造成的）。
+    - hi：硬中断占用百分比【硬中断是硬盘、网卡等硬件设备发送给CPU的中断消息，当CPU收到中断消息后需要进行适当的处理(消耗CPU时间)】。
+    - si：软中断占用百分比（软中断是由程序发出的中断，最终也会执行相应的处理程序，消耗CPU时间）
+  - 某个进程的%CPU超过100%，说明系统有多核，按1可以看到每个核的cpu占用情况。
+
+
+### Disk使用情况
+
+- df -h
+  - `df -h` provides information on the overall disk space usage, showing statistics for each mounted file system.
+
+- du -h
+  - `du -h` provides information about the sizes of directories and files in a specified directory or a list of directories.
+  - du -sh (summary，而不是列出全部)
+
+- lsblk -f
+
+  - `lsblk -f` command is used to list information about block devices, including file system information.
+
+- fdisk -l
+
+  - `fdisk -l` command is used to list information about the **disk partitions** on a system.
+
+
+### OS 信息查看
+
+- 查看OS版本
+
+```shell
+cat /etc/*release
+```
+
+- 查看kernel信息
+
+```shell
+uname -a
+```
+
+- 查看已加载的内核模块
+
+```shell
+lsmod
+```
+
+- 查看CPU信息
+
+```shell
+cat /proc/cpuinfo
+```
+
+- 查看存储信息
+
+```shell
+cat /proc/meminfo
+```
+
+- 查看kernel参数
+
+```shell
+sysctl -a
+```
+
+
+### 查看硬件信息
+
+- lshw
+- lspci
+
+## inotifywait 文件监控与同步
+
+- 有时候我们常需要当文件变化的时候便触发某些脚本操作，比如说有文件更新了就同步文件到远程机器。在实现这个操作上，主要用到两个工具，一个是rsync，一个是inotifywait。inotifywait的作用是监控文件夹变化,rsync是用来同步，可同步到本机的其他目录或者远程服务器上。
+
+> [!info] inotify相关工具
+> - inotify 是一个 Linux 内核提供的 API，它可以监视文件系统事件，比如文件或目录的创建、删除、修改等。
+>
+> - inotify-tools 是一套用户空间的工具，包括 inotifywait 和 inotifywatch，用于使用 inotify API。这些工具可以对文件系统事件进行监控，并生成相应的警告或日志。
+>
+> - inotifywait是一个非常实用的命令，它属于inotify-tools包，可以用来监控Linux文件系统事件。
+
+#### 安装rsync+inotifywait
+
+```sh
+# 以下为固定旧版本的源码安装示例；下载地址和依赖可能已变化
+wget http://rsync.samba.org/ftp/rsync/src/rsync-3.1.1.tar.gz
+tar zxvf rsync-3.1.1.tar.gz
+cd rsync-3.1.1
+./configure --prefix=/usr/local/rsync-3.1.1
+make
+make install
+
+wget http://github.com/downloads/rvoicilas/inotify-tools/inotify-tools-3.14.tar.gz
+tar zxvf inotify-tools-3.14.tar.gz
+cd inotify-tools-3.14
+./configure
+make
+make install
+
+# Ubuntu 上优先使用包管理器
+sudo apt install rsync inotify-tools
+```
+
+#### inotifywait基本使用
+
+```sh
+#监控文件的修改操作：
+inotifywait -m -r -e modify /path/to/file
+#监控目录或文件的属性变化：
+inotifywait -m -r -e attrib /path/to/directory
+#监控多个目录或文件的事件：
+inotifywait -m -r -e create,delete,move /path/to/directory1 /path/to/directory2 /path/to/file1 /path/to/file2
+# 监控事件并在每次事件后执行命令：
+inotifywait -m -r -e create,delete,move /path/to/directory |
+  while IFS= read -r event; do
+    /path/to/command
+  done
+```
+
+#### 创建监控同步脚本
+
+> [!warning] 同步方向
+> 下例按事件触发 `rsync`。带 `--delete` 的示例会删除目标端多余文件；运行前先确认源目录和目标目录。
+
+```sh
+#!/bin/bash
+export CNROMS_SRC=/home/ftpuser/gri/   # 同步的路径，请根据实际情况修改
+inotifywait --exclude '\.(part|swp)' -r -mq -e  modify,move_self,create,delete,move,close_write "$CNROMS_SRC" |
+  while read event;
+    do
+    rsync -vazu --progress  --password-file=/etc/rsyncd_rsync.secret  /home/ftpuser/gri/sla  rsync@10.208.1.1::gri ##这里执行同步的命令，可以改为其他的命令
+
+  done
+```
+
+```sh
+#后台运行脚本
+chmod +x inotifywait.sh
+#如果不想生成日志
+nohup bash inotifywait.sh > /dev/null 2>&1
+#如果想生成日志
+nohup bash inotifywait.sh > output.log 2>&1
+```
+
+
+### systemd管理rsync同步任务
+
+#### 编写rsync脚本
+
+```sh
+#!/bin/bash
+
+SRC_DIR="/home/s0001969/Documents/learning-notes-git"
+DEST_DIR="/home/backup/"
+LOGFILE="/var/log/rsync_sync.log"
+DELAY=10 #增加延迟时间以减少频繁同步
+
+while inotifywait -e modify,move_self,create,delete,move,close_write -r "$SRC_DIR"
+do
+    echo "Sync started at $(date)" >> "$LOGFILE"
+
+    if rsync -avhz --delete "$SRC_DIR" "$DEST_DIR"; then
+        echo "Sync successful at $(date)" >> "$LOGFILE"
+    else
+        echo "Sync failed at $(date)" >> "$LOGFILE"
+    fi
+
+    sleep $DELAY
+done
+```
+
+#### 创建systemd服务单元
+
+```sh
+tee rsync-inotifywait.service <<'EOF'
+[Unit]
+Description=Sync Service
+After=network.target
+
+[Service]
+ExecStart=/bin/bash /home/s0001969/rsync-inotifywait.sh
+Restart=Always
+User=root
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+sudo cp rsync-inotifywait.service /etc/systemd/system/
+sudo systemctl daemon-reload
+sudo systemctl enable rsync-inotifywait.service
+sudo systemctl start rsync-inotifywait.service && sudo systemctl status rsync-inotifywait.service
+```
+
+- 查看所有service
+
+```sh
+sudo systemctl --type=service
+#只查看active的
+sudo systemctl --type=service --state=active
+```
+
+- 禁用service
+
+```sh
+sudo systemctl disable rsync-inotifywait.service
+```
+
+## nmcli 网络配置
+
+### 背景
+
+- 在Linux操作系统中，我们经常通过修改网卡的配置文件来修改IP地址，这个方法确实非常的方便。但在高版本Linux中，特别是在CentOS8、RHEL8等系统中，已经完全采用NetworkManager服务来管理网络，network服务已经被废弃了,所以最好的方式就是采用nmcli命令来配置IP地址信息。
+- 以下命令适用于由 NetworkManager 管理的连接，包括相应配置下的 CentOS、RHEL、Rocky Linux 和 Ubuntu。执行前先用 `nmcli device` 确认网卡受 NetworkManager 管理；Ubuntu 也可能使用其他网络管理器。
+
+### nmcli使用
+
+- 通过nmcli命令修改IP地址，需要启动NetworkManager服务来管理系统网络
+
+```sh
+#查看网卡名称（与ip a/ip add show/ip addr效果一样）
+nmcli device
+#查看配置文件
+nmcli connection show
+#删除网卡配置信息
+nmcli connection delete <网卡名称>
+#增加网卡配置文件
+nmcli connection add con-name <配置文件名称> ifname <指定网卡名称，将此配置与网卡绑定> type <指定网卡类型>
+nmcli connection add con-name ens33 ifname ens33 type ethernet
+#默认情况下，在Ubuntu中增加网卡配置文件后，会启动DHCP功能获取IP地址。
+```
+
+假设想把网卡配置改为如下：
+
+- IP地址：192.168.211.201
+- 掩  码：255.255.255.0
+- 网  关：192.168.211.2
+- DNS地址：8.8.8.8和114.114.114.114
+
+> [!warning] 远程修改网络
+> 停用连接可能中断当前 SSH 会话；请准备控制台或其他恢复方式，并核实 IP、网关和 DNS。
+
+```sh
+nmcli connection modify ens33 ipv4.method manual connection.autoconnect yes #修改IP地址为手动配置，并且设置开机启动
+nmcli connection modify ens33 ipv4.addresses 192.168.211.201/24 #修改IP地址和掩码
+nmcli connection modify ens33 ipv4.gateway 192.168.211.2 #修改网关
+nmcli connection modify ens33 ipv4.dns 8.8.8.8,114.114.114.114 #修改DNS，多个DNS以逗号分隔
+nmcli connection down ens33 # 停用连接
+nmcli connection up ens33   # 重新启用连接
+```
+
+```sh
+# 也可以用一条命令修改
+nmcli connection modify ens33 ipv4.addresses 192.168.211.201/24 ipv4.gateway 192.168.211.2 ipv4.dns 8.8.8.8,114.114.114.114 ipv4.method manual connection.autoconnect yes
+```
+
+## SSH 连接与远程执行
+
+SSH（Secure Shell）为远程登录和通信提供加密与身份认证，常见实现是 OpenSSH。下文用“SSH”指协议，用 `ssh` 指客户端命令。
+
+### 登录服务器与验证主机
+
+```sh
+ssh user@hostname
+ssh -p 2222 user@hostname # 指定非默认端口
+```
+
+`user` 是远端用户名，`hostname` 可以是主机名或 IP；默认端口是 22。首次连接时，客户端会提示确认主机密钥指纹。应先核对指纹，再信任该主机；以后会使用 `~/.ssh/known_hosts` 中的记录核对服务器身份。该文件保存主机密钥，也可以使用哈希形式保存主机名。身份认证可使用密码或公钥。
+
+### 客户端连接配置
+
+用户配置文件位于 `~/.ssh/config`。可以为常用服务器设置别名、用户名和端口：
+
+```sshconfig
+Host remote
+    HostName xxxx.yyyy.com
+    User us
+    Port 2222
+```
+
+之后执行 `ssh remote`，相当于 `ssh -p 2222 us@xxxx.yyyy.com`。
+
+### 公钥登录
+
+公钥认证省去每次输入账户密码。客户端保管私钥，服务器将对应公钥加入该用户的 `~/.ssh/authorized_keys`。认证时客户端用私钥签名，服务器用已登记的公钥验证签名。
+
+1. 在客户端生成密钥。当前 OpenSSH 默认生成 Ed25519 密钥，通常保存为 `~/.ssh/id_ed25519` 和 `~/.ssh/id_ed25519.pub`；如果显式使用 `-t rsa`，文件名通常为 `id_rsa` 和 `id_rsa.pub`。
+
+   ```sh
+   ssh-keygen
+   ```
+
+2. 将公钥加入远端账户的 `~/.ssh/authorized_keys`，或在客户端用 `ssh-copy-id` 自动上传：
+
+   ```sh
+   ssh-copy-id -i ~/.ssh/id_ed25519.pub user@host
+   ```
+
+   首次上传通常仍需现有的登录方式；不要向服务器复制私钥。
+
+### scp 复制文件
+
+`scp` 通过 SSH 在本地和远端之间加密复制文件，也支持两台远端主机之间复制。基本语法是 `scp source destination`，远端路径中的主机名和文件名用冒号连接：
+
+```sh
+scp user@host:example.txt ./temp.txt # 从远端用户主目录复制到本地当前目录
+```
+
+### VS Code 配置远程服务器免密连接
+
+> [!info] 参考文档
+> [VSCode——SSH免密登录_vscode免密登录ssh_Irving.Gao的博客-CSDN博客](https://blog.csdn.net/qq_45779334/article/details/129308235)
+
+1. 首先需要在vscode电脑上生成公钥私钥对：
+
+   ```bash
+   ssh-keygen
+   ```
+
+   从命令输出中查看到保存路径。
+
+2. 将生成的公钥（默认 `id_ed25519.pub`）内容复制到远程主机上：
+
+   ```bash
+   vim ~/.ssh/authorized_keys #新建authorized_keys文件
+   #将公钥值复制进去
+   ```
+
+3. 赋权限
+
+   ```bash
+   chmod 700 /home/userName # 远端用户主目录需要限制写权限
+   chmod 700 ~/.ssh
+   chmod 600 ~/.ssh/authorized_keys
+   ```
+
+4. 修改ssh配置文件
+
+   ```bash
+   sudo vim /etc/ssh/sshd_config
+   # 确认 PubkeyAuthentication yes；默认配置可能已允许公钥认证
+   ```
+
+5. 如果实际修改了 sshd 配置，先运行 `sshd -t` 检查，再按发行版重启 `sshd`（RHEL 系）或 `ssh`（Ubuntu）。
+
+   ```bash
+   sudo sshd -t
+   sudo systemctl restart sshd.service # RHEL/CentOS/Rocky
+   ```
+
+6. 在vscode的ssh配置文件中加入远程主机信息
+
+   ```bash
+   Host 60.204.142.111
+     HostName 60.204.142.111
+     User root
+     Port 23333
+     IdentityFile C:\Users\hangx\.ssh\id_ed25519
+   ```
+
+此时可以vscode免密远程登录到虚拟机。
+
+
+### 连接故障排查
+
+- windows从公司账户切换到个人账户后，将公司账户配置文件里面的/.ssh/config文件拷贝到了个人账户的/.ssh中，在个人账户的vscode中尝试ssh连接时，报错：`Bad owner or permissions on C:\\Users\\xuhan/.ssh/config`
+
+  - 解决办法：
+
+![image-20240113075011013](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202401130750113.png)
+
+- vscode ssh登录vmware虚拟机时报错：Address 192.168.*.* maps to localhost, but this does not map back to the address - POSSIBLE BREAK-IN ATTEMPT!
+
+  - 是因为DNS服务器把 192.168.x.x 的地址都反向解析成 localhost 。 解决的办法就是，编辑 ssh 客户端的 /etc/hosts 文件，把出问题的IP 地址和主机名加进去，就不会报这样的错了。
+
+  - 核对客户端 `/etc/hosts` 和 DNS 的正反向解析。若客户端 `/etc/hosts` 中为目标 IP 配置了正确主机名，可尝试用该主机名连接；无需为客户端解析问题重启服务端 `sshd`。
+
+
+### Azure 上修改 SSH 端口（CentOS 8 示例）
+
+以下示例将端口从 22 改为 2222。保持现有会话，直到新端口登录成功。示例使用 PuTTY 连接 Azure VM，并假定本机由 firewalld 管理防火墙。
+
+1. 登录 VM，按需获取管理员权限：
+
+   ```sh
+   sudo su
+   ```
+
+2. 修改 `/etc/ssh/sshd_config`，将默认端口注释 `#Port 22` 改为：
+
+   ```text
+   Port 2222
+   ```
+
+3. 若使用 firewalld，先确认它的状态，然后放行 TCP 2222。启动 firewalld 前也应确认现有 SSH 端口仍允许连接。
+
+   ```sh
+   systemctl status firewalld
+   sudo firewall-cmd --permanent --zone=public --add-port=2222/tcp
+   sudo firewall-cmd --reload
+   sudo firewall-cmd --zone=public --list-ports
+   ```
+
+4. 若 SELinux 为 enforcing，为 SSH 服务登记新端口；无需为此把 SELinux 改为 permissive。
+
+   ```sh
+   getenforce
+   sudo semanage port -a -t ssh_port_t -p tcp 2222
+   ```
+
+   如果 TCP 2222 已有其他 SELinux 映射，先用 `semanage port -l` 查明归属。缺少 `semanage` 时，先安装系统对应的软件包。
+
+5. 在 Azure 门户的 VM 入站网络安全组规则中放行 TCP 2222。先保留 TCP 22 规则，以免新端口尚不可用时失去连接。
+
+6. 检查 `sshd` 配置，重启服务；在另一 PuTTY 窗口用端口 2222 重新登录：
+
+   ```sh
+   sudo sshd -t
+   sudo systemctl restart sshd.service
+   ```
+
+7. 仅在确认新连接成功后，才按需删除旧的 TCP 22 入站规则。
+
+References:
+
+[Changing the SSH port for a RHEL Azure VM - Paul S. Randal (sqlskills.com)](https://www.sqlskills.com/blogs/paul/changing-the-ssh-port-for-a-rhel-azure-vm/)
+
+[How to Change the SSH Port on Dedicated and VPS | HostGator Support](https://www.hostgator.com/help/article/how-to-change-the-ssh-port-on-dedicated-and-vps)
+
+[SELinux入门 | 《Linux就该这么学》 (linuxprobe.com)](https://www.linuxprobe.com/selinux-introduction.html)
+
+[SSHD服务启动失败 – 笛声 (hqidi.com)](https://hqidi.com/133.html)
+
+#### 远程执行多个命令
+
+##### 单台服务器
+
+通过 here document 向远端 Bash 传递多条命令：
+
+```sh
+ssh user@remote_host /usr/bin/bash <<'EOF'
+pwd
+ls -l
+whoami
+EOF
+```
+
+##### 多台服务器
+
+以下示例逐台连接 `cn01dl001` 至 `cn01dl004`，调整 Munge 目录和密钥权限：
+
+```sh
+for i in $(seq 1 4); do
+  ssh -t "test@cn01dl00$i" "sudo chown munge: /etc/munge/munge.key; sudo chmod 400 /etc/munge/munge.key; sudo chmod 700 /etc/munge/; sudo chmod 711 /var/lib/munge/; sudo chmod 700 /var/log/munge/; sudo chmod 755 /var/run/munge/; sudo chown munge.munge /etc/munge/munge.key;"
+done
+```
+
+## Samba 文件共享
+
+Samba 在 Linux/Unix 上提供 SMB 文件与打印共享服务，使 Windows 和 Linux 客户端可以访问共享资源。`smb` 提供文件共享，`nmb` 用于旧式 NetBIOS 名称解析；是否需要 `nmb` 取决于客户端和网络环境。以下以 RHEL/CentOS 风格系统上的 `/share` 共享为例。
+
+### 服务端：创建用户和共享目录
+
+1. 创建两个不允许交互登录的系统用户，并安装 Samba：
+
+   ```sh
+   useradd -s /bin/nologin user01
+   useradd -s /bin/nologin user02
+   yum -y install samba
+   ```
+
+2. 创建共享目录。原实验使用 `777` 以便快速验证；该权限允许本机所有用户写入，只适用于隔离测试。正式环境应按用户或用户组配置文件系统权限，Samba 的 `writable` 不会绕过文件系统权限。
+
+   ```sh
+   mkdir /share
+   chmod -R 777 /share/
+   ```
+
+3. 为系统用户创建 Samba 账号并交互设置密码。`smbpasswd` 与 `pdbedit` 都可添加 Samba 用户：
+
+   ```sh
+   smbpasswd -a user01
+   pdbedit -a -u user02
+   ```
+
+### 服务端：配置共享与访问控制
+
+在 `/etc/samba/smb.conf` 中添加共享定义，随后重启 `smb`：
+
+```ini
+[myshare]
+    comment = public document
+    path = /share
+    public = no
+    browseable = Yes
+    writable = Yes
+```
+
+```sh
+systemctl restart smb
+```
+
+防火墙启用时，放行 Samba 服务并重新加载规则。原实验通过停止 firewalld 测试，但正常配置应保留防火墙：
+
+```sh
+firewall-cmd --add-service=samba --permanent
+firewall-cmd --reload
+```
+
+为共享目录设置 SELinux 类型：
+
+```sh
+chcon -R -t samba_share_t /share
+```
+
+`chcon` 设置可能在重新标记文件系统时被覆盖；需要持久化时应使用相应的 SELinux 文件上下文规则。仅在确实需要访问用户家目录时，检查并开启对应布尔值：
+
+```sh
+getsebool -a | grep samba
+setsebool -P samba_enable_home_dirs on
+```
+
+常见查询结果中还可能包含 `samba_create_home_dirs`、`samba_export_all_ro`、`samba_export_all_rw`、`samba_share_fusefs`、`samba_share_nfs` 等布尔值，应按实际共享目录和权限需求选择。
+
+### Windows 客户端
+
+在文件资源管理器地址栏访问 `\\192.168.147.11`，输入前述 Samba 用户名和密码。若要排查已缓存的 Windows 网络连接，可先在命令提示符运行 `net use * /del`，再重新连接。
+
+### Linux 客户端
+
+安装客户端工具，列出共享并连接 `myshare`：
+
+```sh
+yum -y install samba-client cifs-utils
+smbclient -L 192.168.147.11 -U user01
+smbclient //192.168.147.11/myshare -U user01
+```
+
+连接后可在 `smbclient` 提示符中运行 `mkdir test_share`，验证写入权限。也可以临时挂载共享目录：
+
+```sh
+mkdir /usershare
+mount -t cifs //192.168.147.11/myshare /usershare/ -o username=user01
+ls -l /usershare/
+```
