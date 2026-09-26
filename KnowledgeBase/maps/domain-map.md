@@ -78,7 +78,7 @@ date: 2026-04-16
 - [[Azure/2_AKS-basics|2_AKS-basics]] — AKS 基础
 - [[Azure/3_AKS-workload-identity|3_AKS-workload-identity]] — Workload Identity
 - [[Azure/8_Azure-devops-basics|8_Azure-devops-basics]] — Azure DevOps
-- [[Azure/Kusto Query|Kusto Query]] — KQL 查询语言（2208 行）
+- [[14_Kusto Query|14_Kusto Query]] — KQL 查询语言（2208 行）
 
 **关联领域：** [[Aliyun/计算/ECS|ECS]]（对标 VM）、[[Docker-Kubernetes/k8s-basic-resources/k8s基础-架构-组件-资源|k8s基础-架构-组件-资源]]
 

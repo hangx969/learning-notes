@@ -11,7 +11,7 @@ sources:
   - "[[Azure/5_Azure-Storage]]"
   - "[[Azure/8_Azure-devops-basics]]"
   - "[[Azure/11_Azure-Policy]]"
-  - "[[Azure/Kusto Query]]"
+  - "[[14_Kusto Query]]"
   - "[[KnowledgeBase/sources/azure-batch-summary]]"
 ---
 
@@ -72,9 +72,9 @@ Microsoft Azure 是微软提供的公有云计算平台，涵盖计算、存储�
 
 | 工具 | 用途 | 详情 |
 |------|------|------|
-| [[Azure/Kusto Query\|KQL]] | Azure 内部诊断平台查询，覆盖 VM/AKS/ACR 等多种资源 | 关键表：LogContainerSnapshot、LogNodeSnapshot |
-| [[Azure/Azure 故障排查工具\|Azure 故障排查工具]] | 浏览器、HTTP、API 与 VM 性能排障 | HAR、Fiddler、Postman、ProcMon、PerfMon、Diskspd、FIO、iotop |
-| [[Azure/command-line-tools\|命令行工具]] | Az CLI / PowerShell / AzCopy | 中国区需指定 AzureChinaCloud 环境 |
+| [[14_Kusto Query\|KQL]] | Azure 内部诊断平台查询，覆盖 VM/AKS/ACR 等多种资源 | 关键表：LogContainerSnapshot、LogNodeSnapshot |
+| [[12_Azure 故障排查工具\|Azure 故障排查工具]] | 浏览器、HTTP、API 与 VM 性能排障 | HAR、Fiddler、Postman、ProcMon、PerfMon、Diskspd、FIO、iotop |
+| [[13_Azure命令行工具\|命令行工具]] | Az CLI / PowerShell / AzCopy | 中国区需指定 AzureChinaCloud 环境 |
 
 ### 其他
 

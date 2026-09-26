@@ -18,9 +18,9 @@ sources:
   - "[[Azure/10_Azure-devops-agent-pool-management]]"
   - "[[Azure/11_Azure-Policy]]"
   - "[[Azure/Jfrog-artifactory-Azure]]"
-  - "[[Azure/Kusto Query]]"
-  - "[[Azure/Azure 故障排查工具]]"
-  - "[[Azure/command-line-tools]]"
+  - "[[14_Kusto Query]]"
+  - "[[12_Azure 故障排查工具]]"
+  - "[[13_Azure命令行工具]]"
   - "[[Azure/Customer Support/Email Templates]]"
 ---
 
@@ -142,7 +142,7 @@ sources:
   - 需要准备 VNet、子网和容器镜像
   - 与 ACR、Azure Storage 集成
 
-### [[Azure/Kusto Query|Kusto Query Language (KQL) Reference]]
+### [[14_Kusto Query|Kusto Query Language (KQL) Reference]]
 - 核心内容：用于 Azure 诊断和故障排查的 KQL 查询语句集合，覆盖 VM、AKS、存储、ACR/ACI 等多种服务。
 - 关键知识点：
   - 关键表：LogContainerSnapshot、LogNodeSnapshot、LogContainerHealthSnapshot
@@ -150,7 +150,7 @@ sources:
   - 支持节点状态、容器健康状态、租户事件等多维度查询
   - 面向 Azure 内部诊断平台（Azurecm）
 
-### [[Azure/command-line-tools|Command Line Tools]]
+### [[13_Azure命令行工具|Command Line Tools]]
 - 核心内容：Azure 命令行工具集合，包括 Azure PowerShell、Az CLI 和 AzCopy 的安装、配置与使用。
 - 关键知识点：
   - Azure PowerShell 基于 .NET 对象，使用 cmdlet 管理资源
@@ -158,7 +158,7 @@ sources:
   - 可使用 AAD App + Client Secret 实现自动登录
   - msal.cache 存储 token，清缓存需手动删除相关文件
 
-### [[Azure/Azure 故障排查工具|Azure 故障排查工具]]
+### [[12_Azure 故障排查工具|12_Azure 故障排查工具]]
 - 核心内容：按浏览器和 HTTP 请求、Azure API、Windows 进程与性能、磁盘 I/O 的排障顺序整合五篇旧笔记。
 - 关键知识点：
   - Browser Trace 导出 HAR；Fiddler Classic 捕获并过滤 HTTP/HTTPS 会话

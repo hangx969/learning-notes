@@ -1991,5 +1991,5 @@ date: 2026-04-17
 
 ## [2026-09-26] restructure | Azure 故障排查工具
 
-- 将 Browser Trace、Fiddler、IO Monitor、PerfMon/ProcessMon 与 Postman 五篇笔记整合为 [[Azure/Azure 故障排查工具]]，按浏览器与 HTTP、API、Windows 性能和磁盘 I/O 重排；保留原有 10 张 GitHub 图床图片及技术命令。
+- 将 Browser Trace、Fiddler、IO Monitor、PerfMon/ProcessMon 与 Postman 五篇笔记整合为 [[12_Azure 故障排查工具]]，按浏览器与 HTTP、API、Windows 性能和磁盘 I/O 重排；保留原有 10 张 GitHub 图床图片及技术命令。
 - 删除五篇已合并的旧笔记，更新 [[KnowledgeBase/entities/Azure]]、[[KnowledgeBase/maps/cloud-platform-map]]、[[KnowledgeBase/sources/azure-batch-summary]] 和 [[KnowledgeBase/inventory/repository-inventory]] 中的导航与摘要。
