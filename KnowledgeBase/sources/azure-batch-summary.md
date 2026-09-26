@@ -17,14 +17,10 @@ sources:
   - "[[Azure/9_Azure-devops-self-host-agents]]"
   - "[[Azure/10_Azure-devops-agent-pool-management]]"
   - "[[Azure/11_Azure-Policy]]"
-  - "[[Azure/IO-monitor]]"
   - "[[Azure/Jfrog-artifactory-Azure]]"
   - "[[Azure/Kusto Query]]"
-  - "[[Azure/browser trace]]"
+  - "[[Azure/Azure 故障排查工具]]"
   - "[[Azure/command-line-tools]]"
-  - "[[Azure/fiddler]]"
-  - "[[Azure/perfMon ProcessMon]]"
-  - "[[Azure/postman]]"
   - "[[Azure/Customer Support/Email Templates]]"
 ---
 
@@ -32,7 +28,7 @@ sources:
 
 ## 元信息
 - **原始目录**：`Azure/`
-- **文档数量**：21 篇
+- **文档数量**：17 篇
 - **领域**：Azure
 - **摄入日期**：2026-04-17
 
@@ -138,14 +134,6 @@ sources:
   - Policy 针对资源定义，RBAC 针对用户操作
   - 支持 Audit 和 Enforcement 两大用途
 
-### [[Azure/IO-monitor|IO Monitor]]
-- 核心内容：Azure VM 磁盘 I/O 性能基准测试与监控工具，覆盖 Windows 和 Linux 平台。
-- 关键知识点：
-  - Diskspd（Windows）：测试 IOPS 和吞吐量
-  - FIO（Linux）：磁盘性能基准测试
-  - iotop/ps/top：Linux 实时 I/O 监控
-  - 可配合 PerfMon 同时收集性能计数器数据
-
 ### [[Azure/Jfrog-artifactory-Azure|JFrog Artifactory on Azure]]
 - 核心内容：在 Azure 上部署 JFrog Artifactory 的架构和步骤，包括 ACI 和 AKS 两种部署方式。
 - 关键知识点：
@@ -162,13 +150,6 @@ sources:
   - 支持节点状态、容器健康状态、租户事件等多维度查询
   - 面向 Azure 内部诊断平台（Azurecm）
 
-### [[Azure/browser trace|Browser Trace (HAR)]]
-- 核心内容：使用浏览器 HAR 追踪捕获网络请求，用于排查 Azure Portal 相关问题。
-- 关键知识点：
-  - HAR 格式记录浏览器网络请求
-  - 用于 Azure Portal 故障排查
-  - 通过浏览器开发者工具捕获
-
 ### [[Azure/command-line-tools|Command Line Tools]]
 - 核心内容：Azure 命令行工具集合，包括 Azure PowerShell、Az CLI 和 AzCopy 的安装、配置与使用。
 - 关键知识点：
@@ -177,28 +158,13 @@ sources:
   - 可使用 AAD App + Client Secret 实现自动登录
   - msal.cache 存储 token，清缓存需手动删除相关文件
 
-### [[Azure/fiddler|Fiddler]]
-- 核心内容：Fiddler Classic HTTP 调试代理的安装配置与使用技巧。
+### [[Azure/Azure 故障排查工具|Azure 故障排查工具]]
+- 核心内容：按浏览器和 HTTP 请求、Azure API、Windows 进程与性能、磁盘 I/O 的排障顺序整合五篇旧笔记。
 - 关键知识点：
-  - 需配置 HTTPS 和信任根证书
-  - 支持按进程过滤流量
-  - 常用快捷键：Ctrl+F 查找、Ctrl+1 高亮、D 找同 URL、P 找父请求
-
-### [[Azure/perfMon ProcessMon|PerfMon & ProcessMon]]
-- 核心内容：Windows 性能监控器（PerfMon）和进程监控器（ProcessMon）的使用方法。
-- 关键知识点：
-  - PerfMon 配合 Diskspd 进行磁盘基准测试
-  - 可创建 Storage Spaces 虚拟磁盘测试 IOPS 和延迟
-  - ProcessMon 保存格式为 .PML
-  - 用于复现和诊断性能问题
-
-### [[Azure/postman|Postman]]
-- 核心内容：使用 Postman 获取 Azure Access Token 并发送 ARM/AAD API 请求的方法。
-- 关键知识点：
-  - AAD Token 和 ARM Token 是不同的 access token
-  - ARM 请求需要带有 RBAC 权限的 Bearer Token
-  - 可通过 F12 从 Portal 获取 Bearer Token
-  - 用于 Azure API 调试
+  - Browser Trace 导出 HAR；Fiddler Classic 捕获并过滤 HTTP/HTTPS 会话
+  - Postman 调试 Entra ID（AAD）与 ARM API 时需使用对应目标资源的令牌
+  - Process Monitor 保存 .PML；PerfMon 与 Diskspd 同步采集性能指标
+  - Diskspd、FIO 和 iotop 分别用于 Windows/Linux 磁盘测试与持续 I/O 观察
 
 ### [[Azure/Customer Support/Email Templates|Email Templates]]
 - 核心内容：微软技术支持工程师使用的中英文邮件模板集合，覆盖初次联系、追踪进展、问题调查等场景。

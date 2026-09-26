@@ -19,7 +19,7 @@ sources:
 
 ## 简介
 
-Microsoft Azure 是微软提供的公有云计算平台，涵盖计算、存储、网络、容器、DevOps、治理等完整云服务体系。本仓库共收录 21 篇 Azure 相关笔记（详见 [[KnowledgeBase/sources/azure-batch-summary|Azure 来源批量摘要]]），内容定位为 **Azure 技术支持工程师的实战知识库**，侧重于 Azure China Cloud（中国区）的部署与运维场景。
+Microsoft Azure 是微软提供的公有云计算平台，涵盖计算、存储、网络、容器、DevOps、治理等完整云服务体系。本仓库共收录 17 篇 Azure 相关笔记（详见 [[KnowledgeBase/sources/azure-batch-summary|Azure 来源批量摘要]]），内容定位为 **Azure 技术支持工程师的实战知识库**，侧重于 Azure China Cloud（中国区）的部署与运维场景。
 
 ## 核心服务覆盖
 
@@ -73,11 +73,7 @@ Microsoft Azure 是微软提供的公有云计算平台，涵盖计算、存储�
 | 工具 | 用途 | 详情 |
 |------|------|------|
 | [[Azure/Kusto Query\|KQL]] | Azure 内部诊断平台查询，覆盖 VM/AKS/ACR 等多种资源 | 关键表：LogContainerSnapshot、LogNodeSnapshot |
-| [[Azure/IO-monitor\|IO Monitor]] | VM 磁盘 I/O 基准测试 | Diskspd (Windows) / FIO (Linux) |
-| [[Azure/fiddler\|Fiddler]] | HTTP 调试代理 | 支持 HTTPS 解密和进程级过滤 |
-| [[Azure/perfMon ProcessMon\|PerfMon]] | Windows 性能计数器采集 | 配合 Diskspd 做磁盘基准测试 |
-| [[Azure/browser trace\|Browser Trace]] | HAR 网络请求捕获 | 排查 Azure Portal 问题 |
-| [[Azure/postman\|Postman]] | Azure ARM/AAD API 调试 | 需区分 AAD Token 和 ARM Token |
+| [[Azure/Azure 故障排查工具\|Azure 故障排查工具]] | 浏览器、HTTP、API 与 VM 性能排障 | HAR、Fiddler、Postman、ProcMon、PerfMon、Diskspd、FIO、iotop |
 | [[Azure/command-line-tools\|命令行工具]] | Az CLI / PowerShell / AzCopy | 中国区需指定 AzureChinaCloud 环境 |
 
 ### 其他

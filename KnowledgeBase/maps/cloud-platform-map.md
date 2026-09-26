@@ -11,7 +11,7 @@ date: 2026-04-16
 # ☁️ 云平台专题地图
 
 > [!info] 专题范围
-> 覆盖 Aliyun（19 篇）和 Azure（21 篇）两大云平台，共 ==40 篇文档==。按功能域对标展示。
+> 覆盖 Aliyun（19 篇）和 Azure（17 篇）两大云平台，共 ==36 篇文档==。按功能域对标展示。
 
 ---
 
@@ -41,7 +41,7 @@ date: 2026-04-16
 | **迁移** | [[Aliyun/计算/主机迁移工具SMC|主机迁移工具SMC]] | — |
 | **资源管理** | [[Aliyun/资源管理/Landing Zone|Landing Zone]] | — |
 | **认证考试** | [[Aliyun/ACP考试|ACP考试]] | — |
-| **排障工具** | — | [[Azure/Kusto Query|Kusto Query]]、[[Azure/IO-monitor|IO-monitor]]、[[Azure/fiddler|fiddler]]、[[Azure/browser trace|browser trace]] |
+| **排障工具** | — | [[Azure/Kusto Query|Kusto Query]]、[[Azure/Azure 故障排查工具|Azure 故障排查工具]] |
 
 ---
 

@@ -1988,3 +1988,8 @@ date: 2026-04-17
 
 - 将 Docker Compose 部署、Kubernetes Helm 部署、镜像推拉、containerd 接入、Helm OCI Chart 和 TLS 配置整合到 [[Harbor 部署与使用指南|Harbor 部署与使用指南]]，合并重复内容并标注历史版本及失败实验边界
 - 删除已被合并的 `Docker-Kubernetes/harbor/helm部署harbor.md`，同步更新 Harbor、Helm、工具地图和 K8s 杂项来源摘要中的引用
+
+## [2026-09-26] restructure | Azure 故障排查工具
+
+- 将 Browser Trace、Fiddler、IO Monitor、PerfMon/ProcessMon 与 Postman 五篇笔记整合为 [[Azure/Azure 故障排查工具]]，按浏览器与 HTTP、API、Windows 性能和磁盘 I/O 重排；保留原有 10 张 GitHub 图床图片及技术命令。
+- 删除五篇已合并的旧笔记，更新 [[KnowledgeBase/entities/Azure]]、[[KnowledgeBase/maps/cloud-platform-map]]、[[KnowledgeBase/sources/azure-batch-summary]] 和 [[KnowledgeBase/inventory/repository-inventory]] 中的导航与摘要。

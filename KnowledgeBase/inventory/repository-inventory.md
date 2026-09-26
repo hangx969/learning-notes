@@ -12,7 +12,7 @@ date: 2026-04-16
 > - **顶层目录**：17 个主题领域
 > - **有 Frontmatter**：294 个（99%）
 > - **有 Wikilink 双链**：92 个（31%）
-> - **扫描日期**：2026-04-16
+> - **扫描日期**：2026-04-16（全库统计为当时快照；Azure 条目于 2026-09-26 按合并结果更新）
 
 ---
 
@@ -151,7 +151,7 @@ date: 2026-04-16
 
 ---
 
-## Azure（21 篇）
+## Azure（17 篇，合并后）
 
 | 文件 | 标题 | Frontmatter | 双链 |
 |------|------|:-----------:|:----:|
@@ -167,15 +167,11 @@ date: 2026-04-16
 | [[Azure/9_Azure-devops-self-host-agents|9_Azure-devops-self-host-agents]] | Azure DevOps Self-Hosted Agents | ✅ | ✅ |
 | [[Azure/10_Azure-devops-agent-pool-management|10_Azure-devops-agent-pool-management]] | Azure DevOps Agent Pool Management | ✅ | ✅ |
 | [[Azure/11_Azure-Policy|11_Azure-Policy]] | Azure Policy | ✅ | ✅ |
-| [[Azure/IO-monitor|IO-monitor]] | IO Monitor | ✅ | ✅ |
 | [[Azure/Jfrog-artifactory-Azure|Jfrog-artifactory-Azure]] | JFrog Artifactory on Azure | ✅ | ✅ |
 | [[Azure/Kusto Query|Kusto Query]] | Kusto Query Language (KQL) | ✅ | ✅ |
 | [[Azure/command-line-tools|command-line-tools]] | Command Line Tools | ✅ | ✅ |
-| [[Azure/perfMon ProcessMon|perfMon ProcessMon]] | PerfMon & ProcessMon | ✅ | ✅ |
 | [[Azure/Customer Support/Email Templates|Email Templates]] | Email Templates | ✅ | ❌ |
-| [[Azure/browser trace|browser trace]] | Browser Trace (HAR) | ✅ | ❌ |
-| [[Azure/fiddler|fiddler]] | Fiddler | ✅ | ❌ |
-| [[Azure/postman|postman]] | Postman | ✅ | ❌ |
+| [[Azure/Azure 故障排查工具|Azure 故障排查工具]] | Browser Trace、Fiddler、Postman、PerfMon、Process Monitor 与磁盘 I/O | ✅ | ✅ |
 
 ---
 
