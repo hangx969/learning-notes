@@ -352,7 +352,6 @@ date: 2026-09-15
 ### PBS
 **相关文档：**
 - [[HPC/PBS|PBS]] ⭐
-- [[HPC/PBS-cases|PBS-cases]]
 
 ---
 

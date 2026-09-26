@@ -7,7 +7,6 @@ tags:
   - gpu
 date: 2026-04-17
 sources:
-  - "[[HPC/PBS-cases]]"
   - "[[HPC/PBS]]"
   - "[[HPC/Slurm-node-exporter]]"
   - "[[HPC/Ubuntu2204-Slurm-安装指南]]"
@@ -51,8 +50,8 @@ sources:
 
 ### HPC
 
-#### [[HPC/PBS-cases|PBS 实际案例]]
-收录三个 PBS 生产环境故障案例：(1) Lustre 客户端 bug 导致 GPU 节点 Kdump 重启，解决方案为升级 Lustre 客户端至 2.14.0-ddn168；(2) Singularity 容器中出现 cudaErrorUnknown，原因是 `nvidia_uvm` 内核模块未自动加载，需手动 `modprobe` 并开启 GPU Persistent Mode；(3) PBS 任务时区报错 Asia/Beijing，需统一修改为 Asia/Shanghai。
+#### [[HPC/PBS#实际故障案例|PBS 实际故障案例]]
+收录三个 PBS 生产环境故障案例：(1) Lustre 客户端 bug 导致 GPU 节点 Kdump 重启，当时建议升级 Lustre 客户端至 2.14.0-ddn168；(2) Singularity 容器中出现 cudaErrorUnknown，原因是 `nvidia_uvm` 内核模块未自动加载，可在主机初始化驱动栈或执行 `modprobe nvidia_uvm`，并使用 `nvidia-persistenced` 避免驱动卸载；(3) PBS 任务时区报错 Asia/Beijing，需统一修改为 Asia/Shanghai。
 
 #### [[HPC/PBS|PBS 作业调度系统]]
 介绍 PBS（Portable Batch System）的背景（NASA 开发）、三大分支（OpenPBS、PBS Pro、Torque）、工作流程（qsub 提交 -> 排队 -> 资源分配 -> 执行 -> 完成），以及核心命令（pbsnodes、qsub、qstat）和 PBS 脚本编写方法，包含 shell、Python、MPI 并行作业示例。

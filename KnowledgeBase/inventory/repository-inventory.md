@@ -424,14 +424,13 @@ date: 2026-04-16
 | [[Go/go-web开发|go-web开发]] | Web开发 |
 | [[Go/云原生开发-基础|云原生开发-基础]] | 云原生开发基础 |
 
-### HPC（5 篇，全部有双链 ✅）
+### HPC（4 篇，全部有双链 ✅）
 
 | 文件 | 标题 |
 |------|------|
 | [[HPC/CentOS7-slurm23.02-二进制安装|CentOS7-slurm23.02-二进制安装]] | CentOS7 Slurm 23.02 |
 | [[HPC/Ubuntu2204-Slurm-安装指南|Ubuntu 22.04 Slurm 22.05.11 与 23.11.4 安装指南]] | 测试与生产环境源码安装、实验环境源码构建 deb 包 |
-| [[HPC/PBS|PBS]] | PBS 作业调度 |
-| [[HPC/PBS-cases|PBS-cases]] | PBS 实际案例 |
+| [[HPC/PBS|PBS]] | PBS 作业调度、部署与故障案例 |
 | [[HPC/Slurm-node-exporter|Slurm-node-exporter]] | Slurm Node Exporter |
 
 ### GPU-DeepLearning（4 篇）
@@ -469,3 +468,6 @@ date: 2026-04-16
 | Git | 2 | [[Git/git-learning|git-learning]]、[[Git/Picgo-github图床配置|Picgo-github图床配置]] |
 | SoftwareTesting | 2 | [[SoftwareTesting/软件工程基础|软件工程基础]]、[[SoftwareTesting/软件测试直播课笔记|软件测试直播课笔记]] |
 | C++ | 1 | [[C++/C++LearningNotes|C++LearningNotes]] |
+
+
+---

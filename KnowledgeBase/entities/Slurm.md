@@ -8,7 +8,6 @@ sources:
   - "[[HPC/Ubuntu2204-Slurm-安装指南]]"
   - "[[HPC/Slurm-node-exporter]]"
   - "[[HPC/PBS]]"
-  - "[[HPC/PBS-cases]]"
 aliases:
   - slurm
   - SLURM
@@ -59,7 +58,6 @@ HPC 集群常配备 GPU 计算节点（如 H800），需要 Slurm 通过 GRES �
 - [[HPC/Ubuntu2204-Slurm-安装指南|Ubuntu 22.04 Slurm 22.05.11 与 23.11.4 安装指南]]
 - [[HPC/Slurm-node-exporter|Slurm-node-exporter]]
 - [[HPC/PBS|PBS]]
-- [[HPC/PBS-cases|PBS-cases]]
 
 ## 相关概念与实体
 - [[KnowledgeBase/concepts/自动化运维|自动化运维]]
@@ -72,3 +70,6 @@ HPC 集群常配备 GPU 计算节点（如 H800），需要 Slurm 通过 GRES �
 - Slurm REST API 与自动化作业提交
 - HPC 容器化方案（Singularity / Apptainer）
 - Slurm 集群监控与 Prometheus 集成
+
+
+---

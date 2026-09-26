@@ -5,30 +5,33 @@ tags:
   - hpc/pbs-pro
   - hpc/torque
   - hpc/job-scheduling
+  - hpc/gpu
+  - hpc/lustre
+  - troubleshooting
 aliases:
   - PBS Pro
   - Portable Batch System
   - Torque
-date: 2026-04-16
+  - PBS案例
+  - PBS Troubleshooting
+date: 2026-09-26
 ---
 
 # PBS 作业调度系统
 
-- ==PBS(Portable Batch System)==是一个常用的作业调度系统,用于管理和调度计算集群中的作业。它允许用户提交作业并有效地利用集群资源,使得多个用户能够共享计算资源并按照优先级执行他们的作业。
-
-- 背景:PBS最初由NASA开发,旨在管理和调度超级计算机集群中的作业。它的设计目标是提供一个可移植、灵活和可扩展的作业管理系统,使得用户可以方便地提交、管理和跟踪作业的执行。
-
-- 作用:PBS的主要功能是管理和调度计算集群中的作业。它允许用户提交作业描述,包括作业需要的资源、执行命令、作业优先级等信息。PBS根据资源可用性、作业优先级和调度策略等因素来决定作业的执行顺序,并负责分配计算资源给作业使用。同时,PBS还提供了查询作业状态、取消作业、节点管理等功能。
+PBS（Portable Batch System）用于管理集群作业：用户提交脚本和资源需求，系统依据队列、资源可用性与调度策略安排执行，并提供作业状态查询、取消和节点管理等功能。PBS 最初由 NASA 开发。本文记录 PBS 的常用操作、PBS Pro 与 Torque 部署实践，以及实际故障案例。
 
 ---
 
 ## 版本分支
 
-PBS的目前包括==openPBS==, ==PBS Pro==和==Torque==三个主要分支.
+本文涉及 OpenPBS、PBS Professional（PBS Pro）和 Torque：
 
-- 其中OpenPBS是最早的PBS系统, 目前已经没有太多后续开发。
-- PBS pro是PBS的商业版本, 功能最为丰富。
-- Torque是Clustering公司接过了OpenPBS, 并给与后续支持的一个开源版本。
+- **OpenPBS**：PBS Professional 项目的开源版本；项目于 2020 年采用 OpenPBS 名称。
+- **PBS Professional（PBS Pro）**：与 OpenPBS 共享核心代码的商业版本。
+- **Torque**：基于早期 PBS 项目发展出的独立开源资源管理器，命令和配置与 PBS Pro 并不完全相同。
+
+参考：[OpenPBS 项目说明](https://github.com/openpbs/openpbs)、[Torque 官方介绍](https://docs.adaptivecomputing.com/torque/4-2-9/Content/topics/0-intro/introduction.htm)。
 
 ---
 
@@ -42,15 +45,15 @@ PBS的目前包括==openPBS==, ==PBS Pro==和==Torque==三个主要分支.
 
 ---
 
-## PBS命令介绍
+## 常用命令与作业脚本
 
-### 查看节点情况-pbsnodes
+### 查看节点：`pbsnodes`
 
 1. `pbsnodes -a`:这个命令将显示所有节点的详细信息,包括节点的状态、空闲核数、总核数等。
 2. `pbsnodes -l free`:这个命令将列出所有空闲的节点。
 3. `pbsnodes -l`:这个命令将列出所有节点的状态,包括空闲节点和正在运行的节点。
 
-### 提交作业-qsub
+### 提交作业：`qsub`
 
 - qsub 命令:用于提交作业脚本
 
@@ -64,7 +67,7 @@ $qsub -a date_time [-C directive_prefix]
 #参数说明:因为所采用的选项一般放在pbs 脚本中提交,所以具体见PBS 脚本选项。
 ```
 
-### 提交作业-脚本
+### 编写作业脚本
 
 - 当使用PBS管理作业时,需要编写PBS脚本文件来描述作业的要求、资源需求以及作业的执行流程。PBS脚本是一个文本文件,通常以`.pbs`为扩展名。它包含了用于描述作业要求的指令、环境设置和作业执行命令。
 
@@ -132,7 +135,7 @@ cd $PBS_O_WORKDIR
 
 qsub test.sh即可提交作业脚本
 
-### 查看作业状态-qstat
+### 查看作业状态：`qstat`
 
 - qstat 命令:用于查询作业状态信息
 
@@ -152,7 +155,7 @@ qsub test.sh即可提交作业脚本
   #X  只用于子任务,表示子任务完成
   ```
 
-### 删除作业-qdel
+### 删除作业：`qdel`
 
 - qdel 命令:用于删除已提交的作业
 
@@ -163,7 +166,7 @@ qdel [-W 间隔时间] 作业号
 qdel -W force jobid #强制删除作业
 ```
 
-### 队列管理-qmgr
+### 管理队列：`qmgr`
 
 - qmgr 命令---用于队列管理
 
@@ -178,7 +181,7 @@ qmgr -c "set server default_queue=batch"
 
 ---
 
-## PBS pro学习
+## PBS Pro 使用与管理
 
 ### 组件
 
@@ -449,7 +452,7 @@ pbsnodes pbs2 #指定节点名查看节点资源情况
     qsub -l select=1:ncpus=1:mem=100MB -l cput=03:00:00,walltime=02:00:00
     ~~~
 
-### troubleshooting
+### 故障排查
 
 - 获取job为什么没能运行的相关信息。需要以root运行
 
@@ -472,7 +475,7 @@ pbsnodes pbs2 #指定节点名查看节点资源情况
 
 ---
 
-## docker容器部署pbspro多节点
+## Docker 容器部署 PBS Pro 多节点
 
 参考教程:https://blog.csdn.net/u012460749/article/details/78583063
 
@@ -799,7 +802,7 @@ tracejob 0.pbs1 #使用tracejob JobID查看作业的进度
 
 ---
 
-## CentOS虚拟机部署torque
+## CentOS 虚拟机部署 Torque
 
 - 参考教程:https://www.cnblogs.com/liu-shaobo/p/13526084.html
 - 3台centos机器上部署==torque-6.1.3==
@@ -1120,7 +1123,7 @@ tracejob 0.pbs1 #使用tracejob JobID查看作业的进度
 
 ---
 
-## pestat安装问题
+## pestat 安装问题
 
 问题:
 
@@ -1136,8 +1139,87 @@ tracejob 0.pbs1 #使用tracejob JobID查看作业的进度
 
 ---
 
-## 相关笔记
+## 实际故障案例
 
-- [[PBS-cases]] - PBS实际案例和故障排除
+### GPU 节点异常重启：Lustre 客户端
+
+**背景**
+
+挂载 Lustre 的 GPU 计算节点在作业执行期间卡死，触发 Kdump 后自动重启。
+
+- 系统：SUSE Linux Enterprise Server 12 SP5
+- 内核：4.12.14-122.91
+- Lustre 客户端：2.12.6_ddn42-1
+
+**排查**
+
+- Kdump 显示，内核调用 Lustre 模块执行 `_raw_write_lock` 时出现空指针。DDN 技术团队判断，此次故障触发了 `lustreclient-2.12.6_ddn42-1.x86_64` 的已知问题。
+- 参考：[Lustre 2.15.0 Changelog](https://wiki.lustre.org/Lustre_2.15.0_Changelog)。
+
+**处理建议**
+
+> [!tip] 当时的版本建议
+> 原案例建议将 DDN Lustre 服务端升级至 6.3.1，客户端升级至 2.14.0-ddn168，并同步评估 SFA OS、磁盘固件和 Enclosure 固件的兼容版本。这是案例记录时的建议，实施前应按当前环境重新核对兼容矩阵。
+
+### GPU 作业报 `cudaErrorUnknown`
+
+**背景**
+
+GPU 节点上的 PBS 作业执行时异常退出，应用报 `cudaErrorUnknown`。
+
+- 系统：SUSE Linux Enterprise Server 12 SP5
+- CUDA：12.0
+- NVIDIA 驱动：525.125.06
+
+**排查**
+
+1. 应用执行以下命令时失败；在节点上脱离 PBS 直接运行也会失败，Singularity 启动后立即退出，容器未成功运行：
+
+   ```sh
+   singularity run --nv ./video_log_downsample_20240205-1600.sif <input_MF4_file> --downsample <output_zvlf_file>
+   ```
+
+2. 两个 GPU 节点均曾随机出现该问题，通常发生在重启后一段时间；等待一段时间或运行 GPU 测试程序后恢复。因此，排查重点转向节点上的 GPU 驱动初始化，而非 PBS 调度。
+
+**处理建议**
+
+> [!important] 初始化主机上的 NVIDIA 驱动栈
+> [Singularity GPU 文档](https://docs.sylabs.io/guides/3.5/user-guide/gpu.html#cuda-error-unknown-when-everything-seems-to-be-correctly-configured)指出，CUDA 所需的部分内核模块可能不会在启动时加载；容器内禁止提权，可能无法完成驱动栈初始化。可先在主机上运行 CUDA 程序，或以 root 执行 `modprobe nvidia_uvm`；再使用 `nvidia-persistenced` 避免驱动卸载。
+
+### 作业报时区错误
+
+**背景**
+
+- 部分 PBS 作业在计算节点上报错：`Timezone not found Asia/Beijing`。
+- 系统：SUSE Linux Enterprise Server 12 SP5。
+
+**排查**
+
+作业代码读取 `/etc/sysconfig/clock` 和 PBS 环境变量 `TZ` 获取时区；案例中两处均设为 `Asia/Beijing`。
+
+**处理**
+
+1. 在计算节点上将系统时区设为 `Asia/Shanghai`：
+
+   ```sh
+   timedatectl set-timezone Asia/Shanghai
+   ```
+
+2. 检查旧式时区配置文件 `/etc/sysconfig/clock`，将其中的 `TIMEZONE` 改为 `Asia/Shanghai`。原案例的文件内容如下：
+
+   ```sh
+   TIMEZONE="Asia/Shanghai"
+   DEFAULT_TIMEZONE="US/Eastern"
+   HWCLOCK="-u"
+   ```
+
+3. 检查 PBS 的 `pbs_environment` 中是否写有 `TZ=Asia/Beijing`；如有，按实际 `PBS_HOME` 修改为 `Asia/Shanghai`，并重启相关 PBS 服务。常见的 `PBS_HOME` 路径为 `/var/spool/pbs`，对应文件为 `/var/spool/pbs/pbs_environment`。
+
+> [!note] 时区配置
+> `/etc/sysconfig/clock` 是旧式系统配置文件，`timedatectl` 管理 systemd 系统的时区。此处记录了该 SLES 12 SP5 案例中的两处配置；排查时应核对应用、系统与 PBS 环境变量是否一致。PBS 环境文件路径可参照 [OpenPBS 安装日志](https://community.openpbs.org/t/error-initializing-the-pbs-dataservice/3391)。
+
+---
+
+## 相关笔记
 - [[CentOS7-slurm23.02-二进制安装]] - Slurm vs PBS 对比
 - [[Slurm-node-exporter]] - HPC集群监控
