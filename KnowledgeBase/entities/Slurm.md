@@ -70,6 +70,3 @@ HPC 集群常配备 GPU 计算节点（如 H800），需要 Slurm 通过 GRES �
 - Slurm REST API 与自动化作业提交
 - HPC 容器化方案（Singularity / Apptainer）
 - Slurm 集群监控与 Prometheus 集成
-
-
----
