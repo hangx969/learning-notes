@@ -9,9 +9,13 @@ aliases:
   - Git基础
 ---
 
-# 版本控制
+# Git 学习笔记
 
-## 版本控制工具
+本文整理版本控制、Git 的基本概念、常用命令、分支工作流及故障排查。示例中的仓库地址、分支名和文件路径需按实际环境替换。
+
+## 版本控制
+
+### 版本控制工具
 
 主流版本：
 
@@ -21,164 +25,118 @@ aliases:
 - VSS
 - TFS
 
-## 版本控制分类
+### 版本控制分类
 
-- 本地版本控制
+- **本地版本控制**：版本历史保存在本机。
+- **集中式版本控制（如 SVN）**：中央服务器保存主要版本历史，团队通过服务器共享变更。通常需要连接服务器才能同步或提交。
+- **分布式版本控制（如 Git）**：每个克隆仓库都保存项目的提交历史，可以在本地提交、查看历史和创建分支；与其他成员协作时再通过远程仓库交换提交。
 
-- 集中版本控制：SVN
+## Git 基本概念
 
-  - 版本都保存在服务器上。用户需要联网从中央服务器上拉下来最新版本再修改提交。必须联网才能工作,对带宽要求比较高。
-
-  - 用户自己电脑上只有某一部分文件。
-
-- 分布式版本控制：Git
-
-  - 每个用户电脑上都有完整的所有的版本数据。不会因为服务器坏掉造成不能工作的情况。
-
-  - 协同方法：一个人改了文件A，另一个人也改了文件A，互相把修改推送给对方就可以看到对方的修改。
-  - git是本地代码库，局域网联网就可以进行多人开发，把最终版本提价到远程即可。
-
-# Git基本理论
-
-## 基本组成
+### 工作区、暂存区与仓库
 
 ![图片](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202209111100348.png)
 
-- 工作目录 working directory
+- **工作区（working tree）**：实际编辑文件的目录。
+- **暂存区（index / staging area）**：记录下一次提交准备包含的内容。
+- **本地仓库（repository）**：保存提交历史和对象，通常位于 `.git` 目录。
+- **远程仓库（remote）**：用于与其他人共享提交的仓库，例如 GitHub 上的仓库。
 
-  平时本地写代码的地方
+### 基本工作流程
 
-- 暂存区 stage / index
-
-  临时存放改动，只是一些文件。
-
-- 仓库区：本地仓库repository
-
-- 远程仓库：remote
-
-  托管代码的服务器
-
-## 工作流程
-
-- 从远程仓库中把项目clone到本地
-
-- 在本地工作区中增删改
-- 将更改的文件add到暂存区域
-- 将暂存区域的文件commit到本地git仓库
-- 从本地仓库push到远程仓库
+1. 从远程仓库克隆项目。
+2. 在工作区新增、修改或删除文件。
+3. 使用 `git add` 将变更加入暂存区。
+4. 使用 `git commit` 在本地创建提交。
+5. 使用 `git push` 将本地提交推送到远程仓库。
 
 ![图片](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202209111100296.jpeg)
 
-## git文件状态
+### 文件状态
 
-文件四种状态
+| 状态 | 含义 |
+| --- | --- |
+| Untracked（未跟踪） | 文件尚未加入 Git 跟踪；`git add` 后可进入暂存区。 |
+| Unmodified（未修改） | 已跟踪文件与当前提交一致。 |
+| Modified（已修改） | 已跟踪文件在工作区发生变化，尚未暂存该变化。 |
+| Staged（已暂存） | 变更已加入暂存区，准备在下次提交中保存。 |
 
-- Untracked:
-  - 未跟踪, 此文件在文件夹中, 但并没有add到本地仓库, 不参与版本控制。通过git add 状态变为Staged.
-
-- Unmodified
-  - 文件已经入库, 未修改, 即版本库中的文件快照内容与文件夹中完全一致。这种类型的文件有两种去处, 如果它被修改, 而变为Modified。如果使用git rm移出版本库, 则成为Untracked文件
-
-- Modified
-  - 文件已修改, 仅仅是修改, 并没有进行其他的操作。 这个文件也有两个去处, 通过git add可进入暂存staged状态, 使用git checkout 则丢弃修改过, 返回到unmodify状态, 这个git checkout即从库中取出文件, 覆盖当前修改 !
-
-- Staged
-  - 暂存状态，文件已经暂存到暂存区。执行git commit则将修改同步到本地仓库中, 这时本地仓库中的文件和工作区文件变为一致, 文件为Unmodified状态. 执行git reset HEAD filename取消暂存, 文件状态为Modified
-
- 查看文件状态
+`git rm` 会将删除操作加入暂存区；提交后，该文件才不再被跟踪。取消暂存可用 `git restore --staged <文件路径>`；丢弃工作区中尚未暂存的修改可用 `git restore <文件路径>`。后者会丢失对应的工作区修改。
 
 ```sh
-git status [filename]
 git status
+git status -- <文件路径>
 ```
 
-# Git配置
+## Git 配置
 
--  查看所有git 配置：
+```sh
+# 查看当前生效的配置及其来源
+git config --list --show-origin
 
-  ```shell
-  git config -l
-  ```
+# 查看或编辑系统级配置
+git config --system --list
+git config --system --edit
 
-- 查看git系统配置：
+# 查看或编辑用户级配置
+git config --global --list
+git config --global --edit
 
-  ```shell
-  git config --system --list
-  git config --system -e #直接打开配置文件
-  ```
+# 设置提交身份
+git config --global user.name "你的姓名"
+git config --global user.email "you@example.com"
+```
 
--  查看git本地配置：
-
-  ```shell
-  git config --global --list
-  git config --global -e #直接打开配置文件
-  ```
-
-- 下载git bash之后首先要配的：用户名和邮箱
-
-  ```shell
-   git config --global user.email ""
-   git config --global user.name ""
-  ```
-
-# Git项目搭建
+## 创建与连接仓库
 
 ![图片](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202209111100768.png)
 
-## 创建仓库
+### 创建仓库
 
-1. 创建本地仓库
+初始化当前目录，或从远程克隆仓库：
 
-   ```bash
-   git init #会在当前路径下创建出一个隐藏文件夹 .git，存放git的版本、管理等信息
-   ```
+```sh
+git init
+git clone <仓库地址>
+```
 
-2. 克隆远程仓库
+`git init` 会创建用于保存仓库元数据的 `.git` 目录；`git clone` 会取得远程仓库可访问的提交历史。
 
-   ```bash
-   # 克隆一个项目和它的整个代码历史(版本信息)
-   $ git clone [url]  # https://gitee.com/kuangstudy/openclass.git
-   ```
+### 配置分支和远程仓库
 
-## 配置branch和remote
-
-```bash
+```sh
 git branch -M main
 git remote add origin https://github.com/hangx969/Scripts.git
 ```
 
-## 更换remote
+`git branch -M main` 会将当前分支重命名为 `main`；仅在需要时使用。添加前可先运行 `git remote -v` 检查是否已有 `origin`。
 
-有时候在一开始添加remote的时候添加的是https url，后面希望更换成ssh url：
+### 更换远程仓库地址
+
+需要将 HTTPS 地址改为 SSH 地址时：
 
 ```sh
-# 查看当前remote
 git remote -v
-# 切换remote
-git remote set-url origin git@ssh.xxxx
+git remote set-url origin git@github.com:hangx969/Scripts.git
 ```
 
-## 免密码登录git
+### 使用 SSH 连接 GitHub
 
-- github设置中加入客户端的ssh公钥。
+1. 在 GitHub 账号中添加本机 SSH 公钥。
+2. 克隆时使用 SSH 地址，或将现有 remote 改为 SSH 地址。HTTPS 连接也可用凭据管理器或访问令牌认证，无须每次手动输入凭据。
 
-- git clone项目下来的时候，使用ssh链接而非http链接。（http链接是需要MFA的，后续每次push都需要输入用户名密码）
+   <img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202412281415127.png" alt="image-20241228141528061" style="zoom:67%;" />
 
-  <img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202412281415127.png" alt="image-20241228141528061" style="zoom:67%;" />
+```sh
+git remote add origin git@github.com:hangx969/k8s-platform-tools.git
+git remote -v
+```
 
-- git remote add采用ssh的link
+已有 `origin` 时，使用 `git remote set-url origin <SSH 地址>`，不要再次执行 `git remote add`。
 
-  ```sh
-  git remote add origin git@github.com:hangx969/k8s-platform-tools.git
-  git add .
-  git commit -m "xxx"
-  git checkout -b xxx
-  git push origin xxx
-  ```
+## Git 分支管理
 
-# Git分支管理
-
-## 查看操作
+### 查看分支
 
 ```sh
 # 查看本地分支
@@ -189,516 +147,377 @@ git branch -r
 git branch -a
 ```
 
-## 获取远程分支
+### 更新远程跟踪分支
 
 ```sh
 # 从远程拉取最新的分支/标签信息到本地，顺手清理本地那些"远程已经删除"的origin/xxx分支
 git fetch -p
 ```
 
-## 删除本地分支
+### 删除本地分支
 
 ```sh
 git branch -d xxx
 ```
 
 > [!warning] 注意
-> - `-d`：安全删除，只有当这个分支的提交已经被合并到当前分支，或者 Git 认为它的改动不会丢时，才会删。
-> - `-D`：强制删除。如果这个分支上还有没合并的提交，就丢失了。
+> - `-d`：仅在分支已完全合并到其上游分支（未设置上游时为当前分支）时删除。
+> - `-D`：无论是否合并都删除分支引用；未合并的提交可能因此难以找回。
 
-## 删除远程分支
+### 删除远程分支
 
 ```sh
 git push origin --delete feature-x
 ```
 
-## 工作流程
+### 分支工作流程
 
-- master主分支应该非常稳定，用来发布新版本，一般情况下不允许在上面工作。
+以下以 `main` 为主分支、`dev` 为开发分支。实际分支名称和合并策略以仓库约定为准。
 
-- 工作一般情况下在新建的dev分支上工作，工作完后，比如要发布，或者说dev分支代码稳定后可以合并到主分支master上来。
+1. 切换到主分支并获取最新提交：
 
-- 要将修改后的代码推送到新的分支 "dev" 上，您可以按照以下步骤使用 Git 命令来操作：
+   ```sh
+   git switch main
+   git pull --rebase origin main
+   ```
 
-  1. 首先，确保您的本地仓库是最新的：
+2. 创建并切换到开发分支：
 
-     ```bash
-     git pull origin main  # 假设您从 main 分支拉取的最新代码
-     ```
+   ```sh
+   git switch -c dev
+   ```
 
-  2. 创建并切换到新的分支 "dev"：
+3. 暂存、提交并首次推送分支：
 
-     ```bash
-     git checkout -b dev
-     ```
+   ```sh
+   git add <文件路径>
+   git commit -m "描述更改"
+   git push -u origin dev
+   ```
 
-     这个命令会创建一个名为 "dev" 的新分支，并自动切换到这个分支。
-
-  3. 将您的代码更改添加到暂存区：
-
-     ```bash
-     git add .
-     # 或者您可以只添加部分文件
-     git add <文件路径>
-     ```
-
-  4. 提交您的更改：
-
-     ```bash
-     git commit -m "描述您的更改"
-     ```
-
-  5. 将 "dev" 分支推送到远程仓库：
-
-     ```bash
-     git push origin dev
-     ```
-
-     如果是第一次将这个分支推送到远程仓库，Git 会创建远程的 "dev" 分支。
-
-# Git版本管理
+## 查看历史与恢复修改
 
 ```sh
-# 查看代码提交记录
-git log
-# 查看当前环境文件变更状态
-git status
-# 查看某个文件的diff
-git diff xxx.md
-# 撤销单个文件的修改
-git checkout - xxx.md
-# 撤销所有文件的修改 (谨慎)
-git reset --hard
-# 回滚到某个commit版本（谨慎）
-git reset --hard <commit-id>
-# 回滚完之后push会被拒绝，加force（谨慎）
-git push origin feature-x --force
+git log                         # 查看提交记录
+git status                      # 查看工作区与暂存区状态
+git diff -- <文件路径>          # 查看尚未暂存的修改
+git diff --staged               # 查看已暂存的修改
+git restore -- <文件路径>       # 丢弃未暂存的工作区修改
+git restore --staged <文件路径> # 取消暂存
 ```
 
-# 开发常用流程
+> [!warning] 重置与强制推送
+> `git reset --hard` 会丢弃已跟踪文件的未提交修改；`git reset --hard <commit-id>` 还会移动当前分支。重写已共享历史后可能需要 `git push --force-with-lease`，执行前应与协作者协调并确认目标分支。
 
-## 初始化本地仓库并拉取远程仓库
+## 常用开发流程
 
-- 本地新建文件夹
+### 初始化本地仓库并连接远程
 
-- 文件夹内打开git bash
-
-  ```shell
-  git init
-  git remote add origin <git repo link>
-  git pull --rebase origin main
-  ```
-
-## 本地更改推送到远程仓库
-
-- 添加所有文件到暂存区
-
-```bash
-git add .
-
-# 如果只提交部分文件
-git status
-git add xxx.yaml 
-```
-
-- 提交暂存区的内容到本地仓库
-
-```bash
-git commit -m "comments"
-```
-
-- 新建分支
+如果远程仓库已有提交，优先直接克隆：
 
 ```sh
-git checkout -b aaa-bbb-ccc
+git clone <仓库地址>
 ```
 
-- 提交至远程仓库的新分支
+如果是在已有本地项目中初始化 Git，再添加远程仓库：
 
-```bash
-git push origin aaa-bbb-ccc
-# git -u: 第一次加了参数-u后，以后即可直接用git push代替git push origin main
+```sh
+git init
+git remote add origin <仓库地址>
+git fetch origin
 ```
 
-- 忽略文件: 被忽略的文件在 .gitignore里面，可以配置正则规则配置哪些文件不会被push到远端仓库
+确认本地与远程的提交历史关系后，再选择合并或变基。
 
-## Merge PR
+### 将本地更改推送到远程
 
-推送新分支到远程仓库之后，在远程仓库上会执行创建Pull Request、Merge Pull Request等操作。
+```sh
+git status
+git switch -c aaa-bbb-ccc        # 如需新分支，先创建并切换
+git add <文件路径>               # 按需暂存文件；git add . 会暂存当前目录下的变更
+git commit -m "描述更改"
+git push -u origin aaa-bbb-ccc   # 首次推送并设置上游分支
+```
 
-- 在github上一般采用"Merge and rebase"方式来merge PR：
+设置上游分支后，在该分支上通常可直接使用 `git push`。
 
-  1. 先对PR分支执行rebase，PR分支的commit会加到main分支的最新状态上
-  2. 再通过merge commit将PR的更改合并到main上
+### 合并 Pull Request
 
-  这样main分支上会保留一个merge commit。
+将开发分支推送到远程后，可在代码托管平台创建并合并 Pull Request。常见策略：
 
-- azure devops上一般采用"Rebase and fast-forward"：
+- **Rebase and merge**：将 PR 的提交逐个重放到目标分支，通常不创建合并提交。
+- **Merge commit**：创建合并提交，保留分叉与合并的历史。
+- **Squash and merge**：将 PR 的变更压缩为一个提交后合并。
 
-  1. 对 PR 的分支执行一个 rebase 操作，将 PR 分支上的提交重新应用到目标分支的最新状态上。
-  2. 然后通过 fast-forward merge 将这些提交直接添加到目标分支中，不会创建 merge commit。
+GitHub 和 Azure DevOps 的实际按钮名称、可用策略及分支保护规则可能不同，应以仓库配置为准。
 
-  合并后，目标分支上的提交历史是线性的，PR 的提交直接接在目标分支的最新提交之后。没有额外的 merge commit。
+### 更新本地主分支
 
-## 从远程仓库拉取更新内容到本地
+远程 PR 合并后，切换到本地 `main` 并同步：
 
-本地推送完成新分支之后，远端仓库执行了merge PR操作，这样main分支的提交记录已经改变，需要把新的main分支同步到本地仓库：
-
-```bash
-git checkout main
-git branch -D aaa-bbb-ccc
+```sh
+git switch main
 git pull --rebase origin main
 ```
 
-## Merge main到开发分支
+确认开发分支已合并且不再需要后，再用 `git branch -d aaa-bbb-ccc` 删除本地分支。
 
-比如我正在一个dev分支上开发，此时远程main分支有别人提交了新改动，我在dev分支完成开发，push之前，需要同步远程main的改动：
+### 将 main 的更新纳入开发分支
+
+开发期间如果远程 `main` 有新提交，可在推送开发分支前同步：
 
 ```sh
-# 1. 确保当前在 dev 分支
-git checkout dev
-
-# 2. 获取远程最新代码
+git switch dev
 git fetch origin
-
-# 3. 合并 main 分支到当前分支
-git rebase origin/main # 推荐，保留历史整洁
-# 或者
-git merge origin/main # 保留完整历史
-
-# 后续可以继续进行commit和push
+git rebase origin/main  # 将 dev 的提交重放到最新 main 之后
+# 或使用 git merge origin/main，保留合并历史
 ```
 
-## 给commit打tag
+`rebase` 会改写当前分支上的提交；如果分支已由多人共享，应先协调。若发生冲突，解决后运行 `git add <文件路径>` 和 `git rebase --continue`。
 
-有时候我们推送上去的commit需要打一个tag，这个tag往往会代表一个breaking change的标记。推送commit和推送tag分开操作：
+### 为提交打标签
+
+标签用于标记某个特定提交，常用于发布版本，但不一定代表破坏性变更。以下示例在 PR 合并后给最新的 `main` 提交打标签：
 
 ```sh
-# 推送开发分支
-git checkout -b feat/xxx
-git add .
-git commit -m "update for breaking changes"
-git push origin feat/xxx
-# 远程仓库先merge
-# 切到main打tag再单独推送tag
-git checkout main
+git switch main
 git pull --rebase origin main
 git tag 0.4.1
 git push origin 0.4.1
 ```
 
-# 清理操作
+## 历史与跟踪清理
 
-## 清除github repo的commit记录
+### 重建提交历史
 
-```bash
-#进入本地仓库的目录
-cd /path/to/your/repository
-#创建并切换到一个与当前分支无关的新的孤立分支。
-git checkout --orphan newBranch
-# 添加所有的文件到新分支
-git add .
-# 提交更改
-git commit -am "Initial commit"
-# 删除原始分支：因为我们将删除commit历史记录，所以不再需要原始分支
-git branch -D main
-# 将新的分支重命名为 main 分支
-git branch -m main
-# 强制将本地修改推送到远程仓库：由于我们已经改变了本地仓库的历史记录，所以必须使用强制推送选项
-git push -f origin main
-```
+> [!danger] 会重写历史
+> 以下操作会改变目标分支的提交历史。先备份仓库并与协作者协调；受保护分支可能禁止强制推送。远程旧对象、其他分支、标签和协作者的克隆不会因重建 `main` 自动清除。
 
-## 清除所有git history并覆盖到远端仓库
+如果只想让 `main` 从一个新提交开始，可在仓库中创建孤立分支：
 
 ```sh
-cd <repo dir>
-rm -rf ./git
+git switch --orphan new-main
+git add -A
+git commit -m "Initial commit"
+git branch -M main
+git push --force-with-lease origin main
+```
+
+在确认新分支可用后，再处理不再需要的本地分支。若需从所有相关历史中移除某个文件，应使用 `git-filter-repo` 等历史重写工具，并处理其他分支、标签和远程副本；仅重建 `main` 不足以完成全库清理。
+
+### 重新初始化本地仓库
+
+如果需要舍弃**本地**仓库元数据并从当前文件重新创建初始提交，可以删除 `.git` 后重新初始化。此操作会清除本地分支、标签、配置和提交历史；先备份仓库，并确认不需要这些记录。
+
+```sh
+cd <仓库目录>
+rm -rf .git
 git init
-git config user.name "xxxx"
-git config user.email "xxxxx"
-git add .
-git commit -m "initial commit with cleaned history"
-# git branch -M main
-git remote add origin <remote-repo-url> # 去github repo上copy ssh url
-git push -f origin main
+git config user.name "你的姓名"
+git config user.email "you@example.com"
+git add -A
+git commit -m "Initial commit"
+git branch -M main
+git remote add origin <远程仓库地址>
+git fetch origin main
+git push --force-with-lease origin main
 ```
 
-此操作会覆盖掉远程仓库的历史记录。完成之后，repo就只会有一个干净的提交记录，所有历史记录都会被清除。
+这只会重建并更新目标分支；其他远程引用及协作者的克隆不会自动清理。
 
-## 清理被gitignore的文件
+### 停止跟踪已被忽略的文件
 
-有时候有些文件已经被git add和commit了，但是后面在gitignore中配置忽略他们。这时需要重新track文件：
+`.gitignore` 只会忽略尚未被跟踪的文件；已提交文件需要先从索引中移除，再提交删除记录：
 
 ```sh
-# 先更改.gitignore文件
-# 取消track
-git rm --cached -r Python/python-manuscripts
-# 重新commit，移除这些文件
+# 先在 .gitignore 中添加相应规则
+git rm -r --cached -- Python/python-manuscripts
 git commit -m "Stop tracking Python/python-manuscripts files"
-# 重新add和commit
-git add .
-git commit -m "re-track files"
 git push origin main
-# 完成后，git将不再追踪这些后来配置的忽略文件
 ```
 
-# git配置代理
+`--cached` 保留工作区文件。不要在后续执行 `git add` 把这些文件重新纳入跟踪。
 
-## git代理
+## Git 代理配置
+
+### HTTP(S) 代理
+
+Git 的 `http.proxy` 配置可用于 HTTP 与 HTTPS 传输。按需设置代理，完成后再移除：
 
 ```sh
-# 设置
-git config --global http.proxy 'socks5://127.0.0.1:7890' 
-git config --global https.proxy 'socks5://127.0.0.1:7890'
-
-# 恢复
+git config --global http.proxy 'socks5://127.0.0.1:7890'
 git config --global --unset http.proxy
-git config --global --unset https.proxy
 ```
 
-## git clone ssh设置代理
+### SSH 代理
 
-```sh
-vim ~/.ssh/config
-# 全局
-# ProxyCommand nc -X 5 -x 127.0.0.1:7890 %h %p
-# 只为特定域名设定
+SSH 连接使用 `~/.ssh/config` 中的 `ProxyCommand`。以下示例仅针对 `github.com`，端口需与本机代理一致：
+
+```ssh-config
 Host github.com
     ProxyCommand nc -X 5 -x 127.0.0.1:7890 %h %p
 ```
 
-# 实用git工具
+如果 `Host github.com` 已有身份或端口配置，将这一行加入现有配置块。
 
-- GitKraken
-- tortoisegit （windows平台）
-- fork
-- sourceTree
-- git graph (vscode插件)
-- 学习git：[Learn Git Branching](https://learngitbranching.js.org/?locale=zh_CN)
-- alias： zsh自带git插件
+## 常用工具与资源
 
-# Lab
+- 图形客户端：GitKraken、TortoiseGit（Windows）、Fork、Sourcetree。
+- 编辑器扩展：VS Code 的 Git Graph。
+- 交互式练习：[Learn Git Branching](https://learngitbranching.js.org/?locale=zh_CN)。
+- 命令别名：可按需使用 Zsh 的 Git 插件。
+
+## Git 操作练习
+
+以下练习以默认分支 `main`、文件 `myfile.txt` 为例，按顺序演示提交、分支、合并、变基和远程操作。练习素材：[Git 教程](https://www.bookstack.cn/read/backlog-git-tutorial/35.md)、[视频教程](https://www.youtube.com/watch?v=tRZGeaHPoaw&ab_channel=KevinStratvert)。
+
+### 初始化与第一次提交
 
 ```sh
-# 基于以下内容创作本代码，用于讲解DevOps精讲课Git与Github章节
-# https://www.bookstack.cn/read/backlog-git-tutorial/35.md
-# https://www.youtube.com/watch?v=tRZGeaHPoaw&ab_channel=KevinStratvert
-
-# 常用命令
-git XXX -h # 询问git XXX是啥意思
-git help XXX # 更详细的解释，打开一个本地html页面给你解释
-git log --oneline # 看看我之前所有的commit历史（以简洁的形式）
-git reset XXX # 回溯到某个commit上
-
-# 事前预备
-git config --global user.name "xxxx"
-git config --global user.email "xxxx"
-git init # 初始化文件夹
-# 创建一个myfile.txt文件
-git status # 这是我们超常用的命令
-git add myfile.txt # git add . 可以track所有目录里文件
-git commit -m "first commit" # 此时此刻，照张照片，贴在相册，可以回溯
-
-# 建立分支
-git branch issue1 # 建立一个名为issue1的分支
-git branch # 查看所有分支，发现head还指在master
-
-# 切换分支
-git checkout issue1 # 切换到issue1分支，-b可以创建分支并切换，git switch -c是创建并切换（推荐）
-# 修改myfile.txt文件
+git config --global user.name "你的姓名"
+git config --global user.email "you@example.com"
+git init
+git branch -M main
+# 创建并编辑 myfile.txt
+git status
 git add myfile.txt
-git commit -m "add new content"
-# 现在master落后于issue1，head指向issue1
-
-# 合并分支 -- merge合并都是先在主线上，把其他分支往主线上合并
-# 先切换master分支，然后把issue1分支导入到master分支
-git checkout master
-# 打开myfile.txt档案以确认内容，应该是旧的
-git merge issue1 
-# 打开myfile.txt档案以确认内容，应该是新的，此时head在master上
-
-# 删除分支
-# 既然issue1分支的内容已经顺利地合并到master分支了，现在可以将其删除了
-git branch -d issue1 # 删除了issue1分支
-git branch # 检查现在只有master分支了
-
-# 并行操作
-# 首先创建issue2分支和issue3分支，并切换到issue2分支
-git branch issue2
-git branch issue3
-git checkout issue2
-git branch
-# 在issue2分支的myfile.txt添加commit命令的说明后提交
-git add .\myfile.txt
-git commit -m "add content from issue2"
-# 接着，切换到issue3分支
-git checkout issue3
-# 打开myfile.txt档案，由于在issue2分支添加了新内容，所以issue3分支的myfile.txt里没有新内容
-git add myfile.txt
-git commit -m "add content from issue3"
-# 对比切换到issue2和issue3分支
-
-# 解决合并的冲突
-# 把issue2分支和issue3分支的修改合并到master
-# 切换master分支后，与issue2分支合并
-git checkout master
-git merge issue2 # 没有冲突，这是fast-forward合并
-git merge issue3 # 出现冲突报警，由于在同一行进行了修改，所以产生了冲突
-# 打开myfile.txt文件，处理冲突
-git add myfile.txt
-git commit -m "merge issue3"
-
-# 用rebase合并
-# 合并issue3分支的时候，使用rebase可以使提交的历史记录显得更简洁
-# 现在暂时取消刚才的合并
-git reset --hard HEAD~
-# 画图解释目前的历史记录
-# 切换到issue3分支后，对master执行rebase
-git checkout issue3
-git rebase master
-# 和merge时的操作相同，修改在myfile.txt发生冲突的部分
-# rebase的时候，修改冲突后的提交不是使用commit命令，而是执行rebase命令指定 —continue选项
-# 若要取消rebase，指定 —abort选项
-git add myfile.txt
-git rebase --continue # 按i进入insert模式，输入comment，Esc后:wq保存并退出
-# 这样，在master分支的issue3分支就可以fast-forward合并了，切换到master分支后执行合并
-git checkout master
-git merge issue3
-# myfile.txt的最终内容和merge是一样的，但是历史记录拉成直线了
-
-# 创建Github Repo
-# 先在Github上创建一个Repo，创建完后，下面三行是自动生成的
-git remote add origin https://github.com/cengxiye/learn-git-2024.git # 首先将远程仓库的地址添加到本地仓库，并将其命名为 "origin"
-git branch -M main # 将当前分支（默认是master）重命名为main
-git push -u origin main # 将本地的"main"分支推送到远程仓库"origin"。-u参数用于设置"origin"作为默认的远程仓库
-# 以后可以直接使用git push而不需要指定远程仓库和分支。这个命令会将本地的"main"分支的内容推送到远程仓库，实现同步
-
-
-# 简要介绍Github
-# About，填写有关你这个Repo的信息
-# Issue，提交bug和feature request，可以assign给其他人/可以加labels等等
-# Actions，可以run test，测试你得代码
-# Projects，可以管理你的项目
-# Wiki，类似一个有关于你项目的百科
-# Security，诸如代码安全扫描等
-# Insights，查看项目数据
-# Settings，设置你的项目
-# Release，回到你Repo的主页，可以发布1.0版本你的release，你的代码被打包成zip
-
-# PUSH
-# 在main branch上，修改mytext.txt文件
-git add .\myfile..txt
-git commit -m "change file, to be pushed to origin"
-git push
-# 检查Github上的文件，已经更新
-
-# PULL
-# 在Github上修改txt
-git pull
-# 在本地main branch上，检查txt
-
-# FETCH
-# 在Github上修改txt
-git fetch 
-git diff main origin/main
-# git fetch：只是将远程仓库的变更下载到本地，不会自动合并到当前分支
-# git pull = git fetch + git merge
-
-# CLONE
-git clone https://github.com/cengxiye/sid.github.io.git
-# 适用场景：使用 git clone 通常是在开始新项目或者从头开始的时候
-# 适用场景：使用 git pull 通常是在你已经有了一个本地仓库，希望获取最新变更时
-# 操作对象：git clone 操作的对象是整个远程仓库
-# 操作对象：git pull 操作的对象是当前分支上的远程变更
-# 执行时机：git clone 只需要执行一次，创建本地仓库的拷贝
-# 执行时机：git pull 需要在你想要获取远程仓库变更时执行
+git commit -m "first commit"
+git log --oneline
 ```
 
-# Troubleshooting
+可使用 `git <子命令> -h` 查看简要帮助，或使用 `git help <子命令>` 打开完整手册。
 
-## 大文件上传报错
+### 创建、合并与删除分支
 
-- 目录中有大文件，push的时候显示超过100MB不能上传，删除这个文件之后，push仍然会提交这个文件报错。
+```sh
+git switch -c issue1
+# 修改 myfile.txt
+git add myfile.txt
+git commit -m "add new content"
 
-  - 解决：要从所有commit中把这个文件删掉，再push
+git switch main
+git merge issue1
+git branch -d issue1
+```
 
-    ```bash
-    git filter-branch --force --index-filter "git rm --cached --ignore-unmatch xxx/xxx.exe" --prune-empty --tag-name-filter cat -- --all
-    ```
+此时若 `main` 没有独立的新提交，合并通常是快进合并。
 
-- git pull时如果遇到报错
+### 并行修改与冲突
 
-  ```sh
-  fetch-pack: unexpected disconnect while reading sideband packet
-  fatal: early EOF
-  fatal: fetch-pack: invalid index-pack output
-  ```
+```sh
+git switch -c issue2 main
+# 修改 myfile.txt 并提交
+git add myfile.txt
+git commit -m "add content from issue2"
 
-  - 原因：远程仓库的文件过大，需要设置本地仓库大小。
+git switch -c issue3 main
+# 修改同一位置并提交
+git add myfile.txt
+git commit -m "add content from issue3"
 
-  - 解决：
+git switch main
+git merge issue2
+git merge issue3
+```
 
-    ```sh
-    git config http.sslVerify "false"
-    #若出现下列错误：
-    git config http.sslVerify "false" fatal: not in a git directory
-    #再继续执行即可解决
-    git config --global http.sslVerify "false"
-    #文件大小的上限设置：
-    git config --global http.postBuffer 524288000
-    ```
+如果两条分支修改了同一位置，第二次合并可能产生冲突。手动编辑文件，移除冲突标记并确定最终内容，然后完成合并：
 
-## 22端口连接报错
+```sh
+git add myfile.txt
+git commit
+```
 
-以Windows系统为例进行说明，在个人电脑上使用[Git](https://zhida.zhihu.com/search?content_id=203985854&content_type=Article&match_order=1&q=Git&zd_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ6aGlkYV9zZXJ2ZXIiLCJleHAiOjE3NTY0MzUzNTEsInEiOiJHaXQiLCJ6aGlkYV9zb3VyY2UiOiJlbnRpdHkiLCJjb250ZW50X2lkIjoyMDM5ODU4NTQsImNvbnRlbnRfdHlwZSI6IkFydGljbGUiLCJtYXRjaF9vcmRlciI6MSwiemRfdG9rZW4iOm51bGx9.h-I3dlo-ib5YFrapPGueFbAMugsU6KzUoIoIGOY7VVI&zhida_source=entity)命令来操作[GitHub](https://zhida.zhihu.com/search?content_id=203985854&content_type=Article&match_order=1&q=GitHub&zd_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ6aGlkYV9zZXJ2ZXIiLCJleHAiOjE3NTY0MzUzNTEsInEiOiJHaXRIdWIiLCJ6aGlkYV9zb3VyY2UiOiJlbnRpdHkiLCJjb250ZW50X2lkIjoyMDM5ODU4NTQsImNvbnRlbnRfdHlwZSI6IkFydGljbGUiLCJtYXRjaF9vcmRlciI6MSwiemRfdG9rZW4iOm51bGx9.-Y0FJU1F9Re3chaSQK2HXLvatrYlgGfi04phWxHMdn0&zhida_source=entity)上的项目，本来都很正常，突然某一天开始，会提示如下错误`ssh: connect to host github.com port 22: Connection Timeout`。
+### 练习变基
 
-1. 先查看下具体ssh报错：
+在**独立的练习仓库**中，可重新构造上述两条分支，从冲突发生前的状态尝试变基。不要在包含未保存工作的仓库中为练习执行 `git reset --hard`。
+
+```sh
+git switch issue3
+git rebase issue2
+# 如遇冲突，编辑 myfile.txt 后继续
+git add myfile.txt
+git rebase --continue
+# 如果要放弃变基，使用 git rebase --abort
+```
+
+变基成功后，可切回 `main` 并合并 `issue3`；如果 `main` 指向 `issue2` 的提交，通常可以快进合并。变基会改变提交 ID。
+
+### 连接 GitHub 远程仓库
+
+先在 GitHub 创建仓库，再在本地配置远程地址并推送：
+
+```sh
+git remote add origin https://github.com/cengxiye/learn-git-2024.git
+git push -u origin main
+```
+
+`-u` 用于设置上游分支，之后在该分支上通常可直接执行 `git push` 或 `git pull`。GitHub 仓库页面还提供 About、Issues、Actions、Projects、Wiki、Security、Insights、Settings 和 Releases 等功能。
+
+### 推送、拉取与克隆
+
+```sh
+# 修改 myfile.txt 后提交并推送
+git add myfile.txt
+git commit -m "change file, to be pushed to origin"
+git push
+
+# 获取远程更新并整合到当前分支
+git pull
+
+# 只获取远程信息，再比较本地与远程分支
+git fetch
+git diff main origin/main
+
+# 首次获取另一个仓库
+git clone https://github.com/cengxiye/sid.github.io.git
+```
+
+`git fetch` 只获取远程提交和引用，不会自动整合到当前分支；`git pull` 会先 fetch，再按参数或配置采用快进、合并或变基等方式整合。`git clone` 用于创建新的本地仓库副本。
+
+## 故障排查
+
+### 大文件导致推送失败
+
+如果 GitHub 拒绝包含超限文件的推送，即使工作区已经删除该文件，只要待推送的提交历史仍包含它，推送仍可能失败。先确认报错指出的文件路径，再决定是改用 Git LFS，还是在备份并协调协作者后使用 `git-filter-repo` 从相关历史中移除它。历史重写后还需检查其他分支、标签和已有克隆。
+
+如果 `git pull` 出现以下错误，不要直接认定为文件过大：
+
+```text
+fetch-pack: unexpected disconnect while reading sideband packet
+fatal: early EOF
+fatal: fetch-pack: invalid index-pack output
+```
+
+这类错误也可能来自网络中断、代理或传输链路问题。先重试并检查网络、代理及远程服务状态；不要为排查而关闭 TLS 证书校验。
+
+### GitHub SSH 22 端口连接超时
+
+出现 `ssh: connect to host github.com port 22: Connection timed out` 时，先检查 SSH 调试输出：
 
 ```sh
 ssh -vT git@github.com
 ```
 
-2. 结果会显示使用的ssh配置文件，以及连接github 22端口超时：
+如果确认是 22 端口被网络阻断，可按 GitHub 官方方案尝试 `ssh.github.com` 的 443 端口：
 
 ```sh
-OpenSSH_for_Windows_9.5p1, LibreSSL 3.8.2
-debug1: Reading configuration data C:\\Users\\xuhan/.ssh/config
-debug1: C:\\Users\\xuhan/.ssh/config line 1: Applying options for github.com
-debug1: Connecting to ssh.github.com [20.205.243.160] port 22.
+ssh -T -p 443 git@ssh.github.com
 ```
 
-> [!info] SSH 端口说明
-> GitHub 的标准 SSH 端口是 22。但在某些网络环境中（公司防火墙、ISP限制等），端口 22 可能被封锁。GitHub 提供了替代方案：通过 ssh.github.com 的 443 端口（HTTPS 端口）来进行 SSH 连接。
+测试成功后，在 `~/.ssh/config` 中配置：
 
-3. 修改这个ssh配置文件，改成连接ssh的443端口：
-
-```sh
-gsudo notepad C:\\Users\\xuhan/.ssh/config
-
+```ssh-config
 Host github.com
-  Hostname ssh.github.com
-  Port 443
+    HostName ssh.github.com
+    User git
+    Port 443
 ```
 
-4. 修改完成后测试连接github：
+再次执行 `ssh -T git@github.com` 验证身份。GitHub 返回“successfully authenticated”且提示不提供 shell 访问时，说明 SSH 认证成功。配置前若已有 `Host github.com` 块，应合并设置，避免覆盖原有的 `IdentityFile` 等选项。
 
-```sh
-ssh -T git@github.com
-```
+### 多 GitHub 账号的 SSH 密钥冲突
 
-结果显示：``Hi xxxxx! You've successfully authenticated, but GitHub does not provide shell access.`就表示一切正常了。
-
-5. 再次尝试上传下载github文件，结果显示正常：
-
-```sh
-git add .
-git commit -m "Update"
-git push origin main
-```
-
-## 多GitHub账号SSH密钥冲突导致push报错
-
-### 问题背景
+#### 问题背景
 
 在同一台机器上配置了多个 GitHub 账号的 SSH 密钥（例如工作账号 `ds-hangxu` 和个人账号 `hangx969`），push 个人仓库时报错：
 
@@ -708,54 +527,49 @@ fatal: Could not read from remote repository.
 Please make sure you have the correct access rights and the repository exists.
 ```
 
-原因是 `~/.ssh/config` 中 `Host github.com` 下配置了多个 `IdentityFile`，SSH 连接时优先使用了第一个密钥（工作账号），GitHub 将你识别为工作账号用户，而该用户没有个人仓库的权限。
+原因可能是 SSH 在连接时提供了工作账号的密钥，GitHub 因而将连接识别为没有该仓库权限的工作账号。可以用 `ssh -vT git@github.com` 查看实际尝试的密钥。
 
-### 解决办法
+#### 解决办法
 
-1. 修改 `~/.ssh/config`，为不同账号配置不同的 Host 别名，并加上 `IdentitiesOnly yes` 确保只使用指定密钥：
+1. 修改 `~/.ssh/config`，为不同账号配置不同的 Host 别名，并使用 `IdentitiesOnly yes` 指定密钥：
 
-```ssh-config
-# 工作账号
-Host github.com
-    HostName github.com
-    User git
-    IdentityFile ~/.ssh/id_ed25519_ds_github
-    IdentitiesOnly yes
+   ```ssh-config
+   # 工作账号
+   Host github.com
+       HostName github.com
+       User git
+       IdentityFile ~/.ssh/id_ed25519_ds_github
+       IdentitiesOnly yes
 
-# 个人账号
-Host github-personal
-    HostName github.com
-    User git
-    IdentityFile ~/.ssh/id_ed25519
-    IdentitiesOnly yes
-```
+   # 个人账号
+   Host github-personal
+       HostName github.com
+       User git
+       IdentityFile ~/.ssh/id_ed25519
+       IdentitiesOnly yes
+   ```
 
 2. 将个人仓库的 remote URL 改为使用别名：
 
-```sh
-cd ~/github-repo/learning-notes
-git remote set-url origin git@github-personal:hangx969/learning-notes.git
-```
+   ```sh
+   cd ~/github-repo/learning-notes
+   git remote set-url origin git@github-personal:hangx969/learning-notes.git
+   ```
 
 3. 验证连接身份：
 
-```sh
-# 验证工作账号
-ssh -T git@github.com
-# Hi ds-hangxu! You've successfully authenticated...
+   ```sh
+   # 验证工作账号
+   ssh -T git@github.com
+   # Hi ds-hangxu! You've successfully authenticated...
 
-# 验证个人账号
-ssh -T git@github-personal
-# Hi hangx969! You've successfully authenticated...
-```
+   # 验证个人账号
+   ssh -T git@github-personal
+   # Hi hangx969! You've successfully authenticated...
+   ```
 
-4. 推送测试：
-
-```sh
-git push origin main
-```
-
+4. 按仓库流程提交并推送更改。
 > [!tip] 关键点
 > - `IdentitiesOnly yes` 是关键配置，确保 SSH 只使用指定的密钥文件，不会尝试 ssh-agent 中的其他密钥。
 > - Host 别名（如 `github-personal`）仅用于 SSH 路由，Git 实际连接的仍然是 `github.com`。
-> - 所有使用个人账号的仓库都需要将 remote URL 中的 `github.com` 替换为 `github-personal`。
+> - 需要使用个人密钥的仓库，应将相应 remote URL 的主机名改为 `github-personal`。
