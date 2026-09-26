@@ -138,8 +138,6 @@ sources:
   - 结合 rsync 实现文件变化自动同步脚本
   - systemd 管理 rsync 同步任务
 
----
-
 #### nmcli 网络配置
 
 - **核心内容**: 使用 nmcli 命令管理 Linux 网络（替代传统配置文件方式）

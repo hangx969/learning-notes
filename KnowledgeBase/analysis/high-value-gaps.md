@@ -86,7 +86,6 @@ date: 2026-04-16
 | [[CloudComputing/深入剖析Kubernetes|深入剖析Kubernetes]] | K8s 理论深入 | 未被 145 篇 K8s 实操文档引用 |
 | [[CloudComputing/Auth|Auth]] | OAuth/OIDC/SAML/SSO | 未连接到 Azure AD、K8s RBAC |
 | [[Docker-Kubernetes/简历指南|简历指南]] | 求职实用 | 孤立文档 |
-| [[Linux-Shell/Linux-learning-notes|Linux-learning-notes]] | 2688 行 Linux 知识 | 未连接到任何其他文档 |
 | [[Docker-Kubernetes/k8s-installation-management/k8s两地三中心架构|k8s两地三中心架构]] | 高可用架构 | 未连接到 Aliyun/Azure 多地域 |
 | [[GPU-DeepLearning/Server-basics|Server-basics]] | 服务器硬件知识 | 未连接到 HPC、GPU |
 | [[Middlewares/Kafka|Kafka]] + [[Middlewares/RabbitMQ|RabbitMQ]] + [[Middlewares/RocketMQ|RocketMQ]] | 消息中间件对比 | 无 Frontmatter，无双链，三者之间也无互引 |
@@ -98,4 +97,3 @@ date: 2026-04-16
 1. **补概念页**：etcd、Calico、RBAC、PromQL
 2. **补专题文章**：GitOps 方法论、SRE 基础、混沌工程入门
 3. **修复孤岛**：为 CloudComputing 和 Middlewares 添加双链
-4. **强化连接**：Linux-learning-notes 拆分或添加索引

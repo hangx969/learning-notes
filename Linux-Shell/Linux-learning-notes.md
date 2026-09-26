@@ -1943,13 +1943,13 @@ Common UNIX Printer System （CUPS）
 
 ## 系统信息查看
 
-可以用 stress功能
+可用 `stress` 制造 CPU 负载，再用 `free` 和 `/proc` 观察系统资源。
 
 ```shell
 # 首先安装EPEL源
 yum -y install epel-release
 # 再安装stress
-yum --enbaleerepo=epel install stress -y
+yum --enablerepo=epel install stress -y
 # 复制一个Terminal，查看CPU
 stress -c 4
 # CPU
@@ -1975,43 +1975,7 @@ sar
 
 把系统配置、诊断信息等打包起来，可以发给Technical Support
 
-### OS 信息查看
-
-- 查看OS版本
-
-  ```shell
-  cat /etc/*release
-  ```
-
-- 查看kernel信息
-
-  ```shell
-  uname -a
-  ```
-
-- 查看安装的版本
-
-  ```shell
-  lsmod
-  ```
-
-- 查看CPU信息
-
-  ```shell
-  cat /proc/cpuinfo
-  ```
-
-- 查看存储信息
-
-  ```shell
-  cat /proc/meminfo
-  ```
-
-- 查看kernel参数
-
-  ```shell
-  sysctl -a
-  ```
+更多内存、CPU、磁盘、OS 和硬件信息命令见 [[#系统信息与资源监控]]。
 
 ---
 
@@ -2770,7 +2734,7 @@ whereis zsh
 - 再把Zsh的路径添加到`/etc/shells`文件中去，在这里我们可以看到系统支持的所有命令解释器；
 
 ```sh
-vim /etc/shells 
+vim /etc/shells
 # 添加内容如下
 /usr/local/bin/zsh
 ```
@@ -3345,27 +3309,19 @@ sudo systemctl disable rsync-inotifywait.service
 
 ## nmcli 网络配置
 
-### 背景
+`nmcli` 用于管理 NetworkManager 的网络设备和连接配置。以下示例适用于由 NetworkManager 管理的 CentOS、RHEL、Rocky Linux 或 Ubuntu；执行前先确认目标网卡和连接配置的实际名称，不能仅凭发行版推断网络管理器。
 
-- 在Linux操作系统中，我们经常通过修改网卡的配置文件来修改IP地址，这个方法确实非常的方便。但在高版本Linux中，特别是在CentOS8、RHEL8等系统中，已经完全采用NetworkManager服务来管理网络，network服务已经被废弃了,所以最好的方式就是采用nmcli命令来配置IP地址信息。
-- 以下命令适用于由 NetworkManager 管理的连接，包括相应配置下的 CentOS、RHEL、Rocky Linux 和 Ubuntu。执行前先用 `nmcli device` 确认网卡受 NetworkManager 管理；Ubuntu 也可能使用其他网络管理器。
-
-### nmcli使用
-
-- 通过nmcli命令修改IP地址，需要启动NetworkManager服务来管理系统网络
+### 查看与创建连接
 
 ```sh
-#查看网卡名称（与ip a/ip add show/ip addr效果一样）
-nmcli device
-#查看配置文件
-nmcli connection show
-#删除网卡配置信息
-nmcli connection delete <网卡名称>
-#增加网卡配置文件
-nmcli connection add con-name <配置文件名称> ifname <指定网卡名称，将此配置与网卡绑定> type <指定网卡类型>
+nmcli device            # 查看网卡及管理状态
+nmcli connection show   # 查看连接配置名称
 nmcli connection add con-name ens33 ifname ens33 type ethernet
-#默认情况下，在Ubuntu中增加网卡配置文件后，会启动DHCP功能获取IP地址。
 ```
+
+`ens33` 在这里既是连接配置名，也是网卡名；实际环境中两者可能不同。需要删除旧配置时，传入 `nmcli connection show` 列出的**连接配置名**，例如 `nmcli connection delete ens33`。新建以太网连接时，默认 IPv4 方法通常为自动获取地址，以下示例再改为静态地址。
+
+### 配置静态 IPv4
 
 假设想把网卡配置改为如下：
 
@@ -3378,10 +3334,10 @@ nmcli connection add con-name ens33 ifname ens33 type ethernet
 > 停用连接可能中断当前 SSH 会话；请准备控制台或其他恢复方式，并核实 IP、网关和 DNS。
 
 ```sh
-nmcli connection modify ens33 ipv4.method manual connection.autoconnect yes #修改IP地址为手动配置，并且设置开机启动
-nmcli connection modify ens33 ipv4.addresses 192.168.211.201/24 #修改IP地址和掩码
-nmcli connection modify ens33 ipv4.gateway 192.168.211.2 #修改网关
-nmcli connection modify ens33 ipv4.dns 8.8.8.8,114.114.114.114 #修改DNS，多个DNS以逗号分隔
+nmcli connection modify ens33 ipv4.method manual connection.autoconnect yes # 静态 IPv4 与自动连接
+nmcli connection modify ens33 ipv4.addresses 192.168.211.201/24 # IP 地址与掩码
+nmcli connection modify ens33 ipv4.gateway 192.168.211.2 # 网关
+nmcli connection modify ens33 ipv4.dns 8.8.8.8,114.114.114.114 # 多个 DNS 以逗号分隔
 nmcli connection down ens33 # 停用连接
 nmcli connection up ens33   # 重新启用连接
 ```
@@ -3657,7 +3613,7 @@ getsebool -a | grep samba
 setsebool -P samba_enable_home_dirs on
 ```
 
-常见查询结果中还可能包含 `samba_create_home_dirs`、`samba_export_all_ro`、`samba_export_all_rw`、`samba_share_fusefs`、`samba_share_nfs` 等布尔值，应按实际共享目录和权限需求选择。
+原实验列出的相关布尔值还有 `samba_create_home_dirs`、`samba_domain_controller`、`samba_export_all_ro`、`samba_export_all_rw`、`samba_load_libgfapi`、`samba_portmapper`、`samba_run_unconfined`、`samba_share_fusefs`、`samba_share_nfs`、`sanlock_use_samba`、`tmpreaper_use_samba`、`use_samba_home_dirs`、`virt_use_samba`。应按实际共享目录和权限需求选择，不必全部开启。
 
 ### Windows 客户端
 

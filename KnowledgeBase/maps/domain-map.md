@@ -61,7 +61,7 @@ date: 2026-09-26
 **覆盖范围：** Linux 系统管理、Shell 脚本、SSH、网络配置、Ubuntu 运维、开发环境搭建。
 
 **代表性文章：**
-- [[Linux-Shell/Linux-learning-notes|Linux-learning-notes]] — Linux 全面学习笔记（2688 行）
+- [[Linux-Shell/Linux-learning-notes|Linux-learning-notes]] — Linux 全面学习笔记（含 9 个实操专题）
 - [[Linux-Shell/shell-scripts|shell-scripts]] — Shell 脚本实战
 - [[Linux-Shell/ansible安装-rockylinux8|ansible安装-rockylinux8]] — Ansible 自动化
 - [[Linux-Shell/开源堡垒机jumpserver部署|开源堡垒机jumpserver部署]] — 安全运维

@@ -2038,3 +2038,9 @@ date: 2026-04-17
 - 将 `Ubuntu-修改启动内核.md`、`Ubuntu安装显卡驱动.md` 和 `Ubuntu-unattended-upgrade管理.md` 的操作内容整合到 [[Linux-Shell/Ubuntu基础操作]]，按 GRUB、NVIDIA 驱动和安全补丁分章，并删除三篇旧文。
 - 更新 Linux-Shell 索引、知识库入口、运维地图、来源摘要、文档盘点和 README 的篇数与引用；此前日志保留为历史记录。
 - 修正 Nouveau 配置、库路径变量、驱动变体说明，以及自动更新配置和定时任务中的不准确步骤；保留原有命令示例和配置目的。
+
+## [2026-09-26] restructure | Linux 运维实操专题合并
+
+- 将 Zsh、direnv、终端代理、screen、系统信息、inotifywait、nmcli、SSH 和 Samba 九篇操作笔记并入 [[Linux-Shell/Linux-learning-notes#Linux 运维实操专题|Linux 学习笔记的实操专题]]，按主题重排章节并删除旧文；保留三处 GitHub 图床链接。
+- 更新 Linux-Shell 索引、知识库入口、来源摘要、专题地图、概念页、文档盘点及其他有效引用；目录现有 11 篇笔记（含索引共 12 个 Markdown 文件）。
+- 修正 direnv 的 Zsh hook、inotifywait 执行命令示例、SSH 密钥与 SCP 示例、Azure SSH 端口与防火墙/SELinux 步骤等错误；历史日志保持追加，不改写既有条目。
