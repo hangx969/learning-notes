@@ -14,81 +14,61 @@ aliases:
 
 ## 背景
 
-- 用typora编辑的Markdown文件中的图片通常是保存在本地路径下，更换电脑或者文件移动后，图片容易挂掉。
-- 利用Picgo将typora中的图片自动上传至github，实现图片持久化。
+Typora 中使用本地路径引用图片时，换电脑或移动文件后，图片可能无法显示。可以通过 PicGo 将图片上传到 GitHub 图床，再在 Markdown 中引用远程图片地址。
 
-## 配置方法
+## 配置流程
 
-github、picgo、typora都需要配置。
+依次配置 GitHub 图片仓库、PicGo 和编辑器。
 
-### github配置
+### 1. 配置 GitHub 图片仓库
 
-- 创建一个公有仓库，用于存放图片
+1. 创建用于存放图片的公开仓库。
 
-  <img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202209111314538.png" alt="image-20220911131456460" style="zoom:50%;" />
+   <img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202209111314538.png" alt="image-20220911131456460" style="zoom:50%;" />
 
-- 获取access token
+2. 在 GitHub 的 **Settings → Developer settings → Personal access tokens** 中创建访问令牌，供 PicGo 上传图片。令牌应仅授予目标仓库所需的权限，并妥善保存；创建后无法再次查看完整令牌。
 
-  - settings - developer settings - Personal access tokens
-  - 用于让picgo自动上传至仓库。
+   ![image-20220911131547101](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202209111315144.png)
 
-  - 生成之后需要手动复制到本地，因为之后该token就不可见了。
+### 2. 配置 PicGo
 
-  ![image-20220911131547101](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202209111315144.png)
+1. [下载 PicGo](https://molunerfinn.com/PicGo/)。安装插件前，先安装 [Node.js](https://nodejs.org/en/)。
+2. 安装 `github-plus` 插件。
 
-### Picgo配置
+   ![image-20220911132003628](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202209111320685.png)
 
-- 下载：[PicGo (molunerfinn.com)](https://molunerfinn.com/PicGo/)
+3. 配置图床：
 
-- 注意：Picgo的插件需要Node.js，[Node.js (nodejs.org)](https://nodejs.org/en/)
+   - `repo`：填写仓库路径，避免加入空格。
+   - `branch`：填写图片仓库实际使用的分支名；图示仓库使用 `main`。
+   - `token`：填写上一步创建的 GitHub 访问令牌。
 
-- 安装github-plus插件
+   ![image-20220911132056970](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202209111320007.png)
 
-  ![image-20220911132003628](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202209111320685.png)
+4. 在 PicGo 中配置上传服务，并记下监听端口。Typora 中填写的端口必须与这里一致。
 
-- 配置图床设置
+   ![image-20220911132334774](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202209111323821.png)
 
-  - 注意repo的路径中不能有空格！
+5. 开启时间戳重命名，以减少图片文件名重复。
 
-  - branch要填main而非master
+   ![image-20220911132544225](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202209111325254.png)
 
-  - token填github复制出来的的access token
+### 3. 配置 Typora
 
-  ![image-20220911132056970](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202209111320007.png)
-
-- 配置Picgo：
-
-  - Picgo相当于一个http server让typora将图片文件上传，Server的监听端口需要与typora中的配置一致。
-
-  ![image-20220911132334774](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202209111323821.png)
-
-  - 设置中打开时间戳重命名
-
-  ![image-20220911132544225](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202209111325254.png)
-
-### Typora配置
-
-偏好设置 - 图像：
+打开 **偏好设置 → 图像**，按图配置 PicGo 上传，并使用图片验证功能测试上传。
 
 ![image-20220911132923566](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202209111329625.png)
 
-可点击验证图片选项，测试上传是否能成功。
-### obsidian配置
-装一个Image auto upload 插件，配置github仓库地址，token，picgo监听端口。即可粘贴图片的同时自动上传。
+### 4. 配置 Obsidian
 
-### Troubleshooting
+安装 Image auto upload 插件，按插件设置填写 GitHub 仓库、令牌和 PicGo 监听端口。配置完成后，可在粘贴图片时自动上传。
 
-> [!warning] 常见报错
-> 根据配置中遇到的报错经验：
-> - PicGo 设置中的 repo 路径有空格，会导致 404 报错。
-> - PicGo 设置中的时间戳命名如果没开的话，会导致文件名重复，typora 上传失败，picgo 日志中会有 detect second instance 信息。
+## 排查问题
 
-> [!tip] 图片不显示
-> typora 中图片上传成功，但是 typora 中不显示。可能是 GitHub 图片被屏蔽；解决办法是修改 host 文件（`C:\Windows\System32\drivers\etc\hosts`），加上：
+> [!warning] 上传失败
+> - `repo` 路径中有空格时，可能出现 404 错误。
+> - 图片文件名重复可能导致上传失败；可以检查 PicGo 日志，并开启时间戳重命名。
+> - 如果日志提示 `detect second instance`，应先检查是否同时运行了多个 PicGo 实例；此提示本身不能证明是文件名重复。
 
-```shell
-185.199.108.133 raw.githubusercontent.com
-185.199.109.133 raw.githubusercontent.com
-185.199.110.133 raw.githubusercontent.com
-185.199.111.133 raw.githubusercontent.com
-```
+> [!tip] 上传成功但 Typora 不显示图片
+> 先在浏览器中直接打开图片 URL，确认地址可访问，再检查本机网络和 DNS。不要将固定的 GitHub IP 地址长期写入 `hosts` 文件；这些地址可能变化。

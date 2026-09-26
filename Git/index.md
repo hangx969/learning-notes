@@ -1,8 +1,8 @@
-# Git/ — Git 版本控制与工具
+# Git — 版本控制与图床
 
-2 篇文档，覆盖 Git 使用与图床配置。
+本目录收录 2 篇文章，分别介绍 Git 基础与常用工作流，以及 PicGo + GitHub 图床配置。
 
-## 关键文件
+## 文章
 
-- [[Git/git-learning]] — Git 学习笔记（命令、分支、工作流）
-- [[Git/Picgo-github图床配置]] — PicGo + GitHub 图床配置
+- [[Git/git-learning|Git 学习笔记]] — Git 的基本概念、分支与版本管理、常见操作和故障排查。
+- [[Git/Picgo-github图床配置|PicGo-GitHub 图床配置]] — GitHub 图片仓库、PicGo、Typora 和 Obsidian 的配置方法。
