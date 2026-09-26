@@ -1993,3 +1993,9 @@ date: 2026-04-17
 
 - 将 Browser Trace、Fiddler、IO Monitor、PerfMon/ProcessMon 与 Postman 五篇笔记整合为 [[12_Azure 故障排查工具]]，按浏览器与 HTTP、API、Windows 性能和磁盘 I/O 重排；保留原有 10 张 GitHub 图床图片及技术命令。
 - 删除五篇已合并的旧笔记，更新 [[KnowledgeBase/entities/Azure]]、[[KnowledgeBase/maps/cloud-platform-map]]、[[KnowledgeBase/sources/azure-batch-summary]] 和 [[KnowledgeBase/inventory/repository-inventory]] 中的导航与摘要。
+
+## [2026-09-26] restructure | Ubuntu 22.04 Slurm 22.05.11 安装笔记整合
+
+- 将测试环境与 H800 生产环境两篇安装记录整合为 [[HPC/Ubuntu2204-slurm-22.05.11-安装指南]]，分别保留拓扑、完整配置与操作步骤，共用作业测试说明。
+- 修正生产环境 Epilog 配置项、`zprodtest` 分区名称、SSH 地址笔误及脚本权限；对仍需现场验证的历史命令和配置标注适用条件。
+- 删除两篇旧文，同步更新 HPC 索引、相关笔记引用、Slurm 实体页、来源摘要、地图和盘点数量。
