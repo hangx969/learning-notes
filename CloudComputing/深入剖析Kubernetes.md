@@ -18,7 +18,7 @@ aliases:
 
 ### 1 从进程说开去
 
-> [!abstract] 核心概念
+> **概要：核心概念**
 > - 容器技术的兴起源于PaaS技术的普及
 > - Docker公司发布的Docker项目具有里程碑式的意义，通过容器镜像，解决了应用打包的根本难题。
 > - 容器技术的核心功能，就是通过约束、修改进程的动态表现，为其创造出一个”边界”。
@@ -80,14 +80,14 @@ aliases:
 
 ##### Namespace的弊端
 
-> [!warning] 隔离不彻底
+> **注意：隔离不彻底**
 > 基于 Linux Namespace 的隔离机制相比于虚拟化技术也有很多不足之处，其中最主要的问题就是：隔离得不彻底。
 > 首先，既然容器只是运行在宿主机上的一种特殊的进程，那么多个容器之间使用的就还是同一个宿主机的操作系统内核。
 
 - 尽管你可以在容器里通过 Mount Namespace 单独挂载其他不同版本的操作系统文件，比如 CentOS 或者 Ubuntu，但这并不能改变**共享宿主机内核**的事实。
   - 这意味着，如果你要在 Windows 宿主机上运行 Linux 容器，或者在低版本的 Linux 宿主机上运行高版本的Linux 容器，都是行不通的。
 
-> [!warning] 不能被Namespace化的资源
+> **注意：不能被Namespace化的资源**
 > 其次，在 Linux 内核中，有很多资源和对象是不能被 Namespace 化的，最典型的例子就是：时间。
 
 - 如果你的容器中的程序使用 settimeofday(2) 系统调用修改了时间，整个宿主机的时间都会被随之修改，这显然不符合用户的预期。相比于在虚拟机里面可以随便折腾的自由度，在容器里部署应用的时候，“什么能做，什么不能做”，就是用户必须考虑的一个问题。
@@ -98,7 +98,7 @@ aliases:
 
 #### Cgroup
 
-> [!info] Cgroups
+> **说明：Cgroups**
 > - Linux Cgroups 就是 Linux 内核中用来为进程设置资源限制的一个重要功能。
 > - 它最主要的作用，就是限制一个进程组能够使用的资源上限，包括 CPU、内存、磁盘、网络带宽等等。
 > - Cgroups 还能够对进程进行优先级设置、审计，以及将进程挂起和恢复等操作。
@@ -208,16 +208,16 @@ aliases:
   - 在Linux中，这两部分是分开存放的，操作系统只有在开机启动时才会加载指定版本的内核镜像。
   - 所以rootfs只包含躯壳，没包含灵魂。实际上，同一台宿主机上的容器，都共享同一个宿主机的操作系统内核。
 
-> [!tip] 容器核心三步
+> **提示：容器核心三步**
 > 1. 启用Linux Namespace配置
 > 2. 设置指定的Cgroup参数
 > 3. 切换进程的根目录（chroot）
->
+> 
 > Docker 项目在最后一步的切换上会优先使用pivot_root 系统调用，如果系统不支持，才会使用 chroot。这两个系统调用虽然功能类似，但是也有细微的区别。
 
 #### Union FS / Layer
 
-> [!tip] 参考文章
+> **提示：参考文章**
 > - [Union FS 教程](https://mp.weixin.qq.com/s/0enVkNjDMDh68WMNb2sEpQ)
 
 - 容器直接打包整个操作系统作为应用的依赖库，实现了一致性。问题是：每一次打包容器，都需要重复制作rootfs吗？答案是：不需要。
@@ -302,11 +302,11 @@ aliases:
   CMD ["python", "python-helloworld-app.py"]
   ```
 
-  > [!note] Dockerfile 原语说明
-  > - Dockerfile 的设计思想，是使用一些标准的原语（即大写的词语），描述我们所要构建的 Docker 镜像。并且这些原语，都是按顺序处理的。
-  > - 在使用 Dockerfile 时，你可能还会看到一个叫作 ENTRYPOINT 的原语。实际上，它和 CMD 都是 Docker 容器进程启动所必需的参数，完整执行格式是：”ENTRYPOINT CMD”。
-  > - 但是，默认情况下，Docker 会为你提供一个隐含的 ENTRYPOINT，即：**/bin/sh -c**。所以，在不指定 ENTRYPOINT 时，比如在我们这个例子里，实际上运行在容器里的完整进程是：/bin/sh -c “python app.py”，即 CMD 的内容就是 ENTRYPOINT 的参数。
-  > - Dockerfile 里的原语并不都是指对容器内部的操作。就比如 ADD，它指的是把当前目录（即 Dockerfile 所在的目录）里的文件，复制到指定容器内的目录当中。
+> **说明：Dockerfile 原语说明**
+> - Dockerfile 的设计思想，是使用一些标准的原语（即大写的词语），描述我们所要构建的 Docker 镜像。并且这些原语，都是按顺序处理的。
+> - 在使用 Dockerfile 时，你可能还会看到一个叫作 ENTRYPOINT 的原语。实际上，它和 CMD 都是 Docker 容器进程启动所必需的参数，完整执行格式是：”ENTRYPOINT CMD”。
+> - 但是，默认情况下，Docker 会为你提供一个隐含的 ENTRYPOINT，即：**/bin/sh -c**。所以，在不指定 ENTRYPOINT 时，比如在我们这个例子里，实际上运行在容器里的完整进程是：/bin/sh -c “python app.py”，即 CMD 的内容就是 ENTRYPOINT 的参数。
+> - Dockerfile 里的原语并不都是指对容器内部的操作。就比如 ADD，它指的是把当前目录（即 Dockerfile 所在的目录）里的文件，复制到指定容器内的目录当中。
 
 - 制作镜像
 
@@ -399,10 +399,10 @@ aliases:
 
 #### Volume
 
-> [!question] Volume 解决的问题
+> **问题：Volume 解决的问题**
 > - 容器内的文件、目录，如何让宿主机读取到？
 > - 宿主机的文件、目录，如何让容器读取到？
->
+> 
 > Volume 机制，允许你将宿主机上指定的目录或者文件，挂载到容器里面进行读取和修改操作。
 
 - Docker支持两种挂载volume的方式：
@@ -425,10 +425,10 @@ aliases:
 
 ### 4 谈谈Kubernetes的本质
 
-> [!abstract] 容器的两部分
+> **概要：容器的两部分**
 > 1. 一组联合挂载在 /var/lib/docker/aufs/mnt 上的 rootfs，这一部分我们称为”容器镜像”（Container Image），是容器的静态视图。
 > 2. 一个由 Namespace+Cgroups 构成的隔离环境，这一部分我们称为”容器运行时”（Container Runtime），是容器的动态视图。
->
+> 
 > 作为一名开发者，并不关心容器运行时，在开发-测试-发布过程中，承载信息的是容器镜像。正因为如此，Docker项目出现不久，就走向了容器编排技术的上层建筑。
 
 #### kubernetes组件简介
@@ -498,7 +498,7 @@ aliases:
 5. token生成之后，kubeadm会将master节点的重要信息，通过configmap方式保存在etcd中，以供后续部署节点使用。这个configmap的名字是cluster-info。
 6. 安装默认插件：kube-proxy和DNS必须安装。
 
-> [!note] 源代码位置
+> **说明：源代码位置**
 > kubeadm的源代码就在kubernetes/cmd/kubeadm下，其中/app/phases文件夹下面的代码就代表了以上的每一个步骤（？在实验环境没找到）
 
 #### yaml文件与容器化应用
@@ -540,7 +540,7 @@ spec:
 
 ### 为什么需要pod
 
-> [!note]
+> **说明**
 > 容器的本质就是云计算系统中的进程，容器镜像就是这个系统中的.exe安装包；而K8s就是操作系统。
 
 #### pod的实现原理
@@ -567,7 +567,7 @@ spec:
 
 #### Pod的意义 - 容器设计原理 - Sidecar
 
-> [!tip] Sidecar设计思想
+> **提示：Sidecar设计思想**
 > Pod 这种”超亲密关系”容器的设计思想，实际上就是希望，当用户想在一个容器里跑多个功能并不相关的应用时，应该优先考虑它们是不是更应该被描述成一个 Pod 里的多个容器。
 
 ##### 示例一：部署 Java Web 应用的 WAR 包
@@ -626,7 +626,7 @@ Pod 的另一个重要特性是，它的所有容器都共享同一个 Network N
 
 #### pod基本概念
 
-> [!tip] Pod的理解
+> **提示：Pod的理解**
 > 可以把Pod看作是传统环境里面的”机器”，而容器是这个机器里面的用户程序。所以，凡是调度、网络、存储、安全相关的属性，基本都是Pod级别的。
 
 - pod中的几个重要字段
@@ -683,9 +683,9 @@ Pod 的另一个重要特性是，它的所有容器都共享同一个 Network N
 
 #### Pod进阶使用
 
-> [!info] Projected Volume
+> **说明：Projected Volume**
 > `projected` 是一种卷类型，可将多个受支持的数据源投射到容器的同一目录。
->
+> 
 > `projected` 卷可将 Secret、ConfigMap、Downward API、ServiceAccountToken、ClusterTrustBundle、PodCertificate 等来源映射到同一目录；具体可用类型取决于 Kubernetes 版本。
 
 - Secret（待补充）

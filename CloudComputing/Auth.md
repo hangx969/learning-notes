@@ -80,7 +80,7 @@ aliases:
 
       - 由于A系统的cookie不能跨域来用;但是客户端有sso认证中心的cookie,B系统先返回302,浏览器重定向给sso认证中心(www.sso.com/login?redirect=www.b.com/pageB)。
 
-      - sso识别了客户端的cookie,生成ticket,放到sso的cookie中返回给浏览器;并且再返回302,浏览器重定向回给B系统(www.b.com/pageB/Ticket=xxx)。
+      - SSO 识别浏览器携带的认证中心 Cookie 后生成 ticket，并通过重定向 URL 将浏览器带回系统 B（`www.b.com/pageB?ticket=xxx`）。
 
       - B系统接收到带着ticket的客户端请求(www.b.com/pageB?ticket=xxx),再向sso来验证一下，验证ticket通过。
 
@@ -96,8 +96,8 @@ aliases:
 
 - 认证部分在OAuth中没怎么涉及，基本是由厂商自己解决。目前比较流行的认证的协议是用的OIDC。
 
-  > [!info] OIDC与OAuth的关系
-  > OIDC是基于OAuth2.0扩展出来的协议，除了能够实现OAuth2.0的Authorization场景，也额外定义了Authentication的场景。
+> **说明：OIDC与OAuth的关系**
+> OIDC是基于OAuth2.0扩展出来的协议，除了能够实现OAuth2.0的Authorization场景，也额外定义了Authentication的场景。
 
 - OAuth在RFC6749文档中提出来的([RFC 6749: The OAuth 2.0 Authorization Framework (rfc-editor.org)](https://www.rfc-editor.org/rfc/rfc6749.html)),RFC中的OAuth的workflow如下:
 
@@ -127,7 +127,7 @@ aliases:
 - Authorization Code Grant:授权码许可
 - client credentials:客户端凭据
 
-#### 四种授权类型示例
+### 四种授权类型示例
 
 (前三种来自《码农翻身》)
 
@@ -170,15 +170,15 @@ aliases:
 如果要将token隐藏，可以采用授权码许可的方式:
 
 - 加一个授权码的中间层，当用户跳转到认证中心登录的时候，不直接颁发token,颁发一个授权码返回给redirect_URL。
-- app端拿到授权码之后，去找认证中心兑换token(**这个过程需要客户端的后端服务器去找认证中心认证**),拿到token之后就可以用api访问服务了。
+- App 获取授权码后向授权服务器兑换 token；机密客户端通常由后端完成兑换，浏览器或原生应用等公开客户端可结合 PKCE 完成兑换。
 
-> [!important] 为何要用Authorization Code
+> **重要：为何要用Authorization Code**
 > 这涉及到安全原因:
 > 1. front-end channel - 浏览器前端 - less secure
 > 2. backend channel - 后端服务器 - more secure
->
+> 
 > 授权码是通过浏览器，也就是frontend传回来的，随后client app的backend server去找IdP拿token,这个过程是安全的，有HTTPS加密保障,access token不会泄露。
->
+> 
 > 授权码仍需防止截获和注入。公开客户端应使用 PKCE；机密客户端也建议使用 PKCE，并妥善保管客户端凭据。
 
 - 安全措施:
@@ -229,12 +229,12 @@ aliases:
   - 这种情况，没有back channel,怎么安全兑换token?==》PKCE(proof key for code exchange)
     - PKCE 是授权码流程的防护机制，不是 cipher，也不是客户端身份认证。客户端先发送由随机 `code_verifier` 派生的 `code_challenge`，兑换授权码时再提交 `code_verifier`，授权服务器验证二者是否匹配。
 
-> [!note] 现行安全建议
+> **说明：现行安全建议**
 > 新应用优先采用授权码流程，并为公开客户端使用 PKCE。以下隐式许可和密码凭据许可仅作为历史流程说明。参见 [RFC 9700](https://datatracker.ietf.org/doc/html/rfc9700)。
 
 ## OIDC
 
-> [!tip] 参考视频
+> **提示：参考视频**
 > - https://www.youtube.com/watch?v=t18YB3xDfXI,https://developer.okta.com/blog/2019/10/21/illustrated-guide-to-oauth-and-oidc
 > - https://www.youtube.com/watch?v=996OiexHze0&t=7s, https://speakerdeck.com/nbarbettini/oauth-and-openid-connect-in-plain-english?slide=33
 
