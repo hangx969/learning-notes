@@ -21,7 +21,7 @@ date: 2026-09-26
 这份笔记把三节点测试环境和 H800 生产环境的部署记录合在一起。两套环境共用 MUNGE 认证、Slurm 源码编译、slurmdbd 和作业提交的基本流程；主机名、分区、资源、目录和调度参数分别保留，操作时应先选定一套环境，再按该环境的章节执行。文中的 `./configure`、`make`、`make install` 是**源码编译安装**，不是安装预编译二进制包。
 
 > [!warning] 使用前核对
-> 原始记录含具体主机名、固定数据库示例密码、MUNGE 密钥复制时的临时 `chmod 777` 命令，以及与当前示例拓扑不一致的历史作业命令。它们用于保留现场信息，不应不经核对直接在新集群执行。生产环境的 Prolog/Epilog、分区和 SSH 笔误已按上下文修正；其余依赖实际账户、网络和集群状态的步骤仍须现场确认。
+> 两套配置记录的是不同集群，不能混用主机名、分区、spool 路径与资源参数。下方已用受限权限替换原记录中临时 `chmod 777` 的 MUNGE 密钥复制方式，并将数据库密码改为占位值；生产环境的资源、抢占日志和 Epilog 清理范围仍须在目标集群核对。
 
 ## 环境对照与阅读顺序
 
@@ -33,6 +33,42 @@ date: 2026-09-26
 1. 先完成所选环境的 MUNGE 安装与跨节点认证，再配置 Slurm。
 2. 控制节点运行 `slurmdbd` 和 `slurmctld`；计算节点运行 `slurmd`；登录节点安装客户端并保持相同的 `slurm.conf`。
 3. 先用该环境实际存在的分区和节点验收，再参考通用作业示例。
+
+## MUNGE 共享密钥：两种环境共用的安全流程
+
+参与本轮分发的节点先创建相同 UID/GID 的 `munge` 用户并安装 MUNGE；控制节点**只生成一次**共享密钥。以下命令不需要开放 `/etc/munge` 的写权限；密钥在控制节点为 `munge:munge`、`0400`，远端暂存目录仅供登录用户访问。分发失败时检查并清理远端 `$HOME/.munge-transfer`。
+
+~~~sh
+# 仅在控制节点执行一次；重新生成密钥会使尚未同步的节点认证失败
+sudo install -d -o munge -g munge -m 0700 /etc/munge
+sudo dd if=/dev/urandom of=/etc/munge/munge.key bs=1024 count=1
+sudo chown munge:munge /etc/munge/munge.key
+sudo chmod 0400 /etc/munge/munge.key
+~~~
+
+在控制节点的同一个 Bash 会话中，按场景设置 `targets` 后运行分发脚本。`ubuntu@`、`test@` 来自原部署记录；若实际 SSH 用户不同，先调整列表并确认该用户可通过 `sudo` 安装密钥。测试环境在 `c1`、`l1` 安装 MUNGE 后分发；生产环境可先分发登录节点，等四台计算节点安装 MUNGE 后再运行一次分发脚本，**不要重新生成密钥**。
+
+~~~sh
+# 测试环境：targets=(c1 l1)
+# 生产登录节点：targets=(ubuntu@CN01Z99SLU002)
+# 生产计算节点：targets=(test@cn01dl001 test@cn01dl002 test@cn01dl003 test@cn01dl004)
+# 运行前选择并取消注释其中一行
+
+(
+  set -euo pipefail
+  umask 077
+  key_tmp=$(mktemp)
+  trap 'rm -f -- "$key_tmp"' EXIT
+  sudo cat /etc/munge/munge.key > "$key_tmp"
+  for target in "${targets[@]}"; do
+    ssh -t "$target" 'mkdir -p "$HOME/.munge-transfer" && chmod 700 "$HOME/.munge-transfer"'
+    scp "$key_tmp" "$target:.munge-transfer/munge.key"
+    ssh -t "$target" 'sudo install -d -o munge -g munge -m 0700 /etc/munge && sudo install -o munge -g munge -m 0400 "$HOME/.munge-transfer/munge.key" /etc/munge/munge.key && rm -f "$HOME/.munge-transfer/munge.key" && rmdir "$HOME/.munge-transfer"'
+  done
+)
+~~~
+
+最后在每台节点上确认 `sudo stat -c '%U:%G %a' /etc/munge/munge.key` 为 `munge:munge 400`，再启动 MUNGE 并用下文的 `munge -n | ssh ... unmunge` 验证跨节点认证。
 
 ## 测试环境：m1 / c1 / l1
 
@@ -142,27 +178,7 @@ sudo systemctl daemon-reload && sudo systemctl start rngd && sudo systemctl enab
 sudo apt -y install munge libmunge-dev libmunge2
 ~~~
 
-- 创建全局秘钥
-
-~~~sh
-#在Master Node生成全局使用的秘钥文件:/etc/munge/munge.key
-#装好了munge之后,/etc/munge/的权限默认是700,munge:munge; /etc/munge/munge.key的权限默认是600,munge:munge
-#临时提权,为了写入key
-sudo chmod 777 /etc/munge
-sudo chmod 777 /etc/munge/munge.key
-dd if=/dev/urandom bs=1 count=1024 > /etc/munge/munge.key
-~~~
-
-- 密钥同步到所有计算节点
-
-~~~sh
-# Master Node执行,把munge key同步到其他节点
-#其他节点上:
-sudo chmod 777 /etc/munge
-sudo chmod 777 /etc/munge/munge.key
-scp /etc/munge/munge.key c1:/etc/munge/
-scp /etc/munge/munge.key l1:/etc/munge/
-~~~
+- 在 `m1` 上按[[#MUNGE 共享密钥：两种环境共用的安全流程|共用密钥流程]]生成密钥，待 `c1` 和 `l1` 均安装 MUNGE 后，设置 `targets=(c1 l1)` 分发同一密钥。原记录采用的 1024 字节随机密钥和两台目标节点均保留在该流程中。
 
 - 检查账户是否存在
 
@@ -258,6 +274,8 @@ sudo cp -r ./etc/slurm*.service /etc/systemd/system/
 
 #### 配置数据库
 
+以下口令是占位值，执行 SQL 前替换为专用强密码，并在 `slurmdbd.conf` 的 `StoragePass` 使用同一值。数据库由管理员创建，因此 `slurm` 用户只获得 `slurm_acct_db.*` 权限，不需要原记录的全局 `*.*` 授权或 `WITH GRANT OPTION`。已有数据库或用户需先核对，避免重复创建。
+
 ```sh
 sudo systemctl enable mariadb
 sudo systemctl start mariadb
@@ -266,10 +284,9 @@ sudo systemctl status mariadb
 
 ```sh
 sudo mysql
-CREATE USER 'slurm'@'localhost' IDENTIFIED BY '123456';
-GRANT ALL ON *.* TO 'slurm'@'localhost';
-create database slurm_acct_db;
-grant all on slurm_acct_db.* to 'slurm'@'localhost' identified by '123456' with grant option;
+CREATE DATABASE slurm_acct_db;
+CREATE USER 'slurm'@'localhost' IDENTIFIED BY 'REPLACE_WITH_STRONG_PASSWORD';
+GRANT ALL PRIVILEGES ON slurm_acct_db.* TO 'slurm'@'localhost';
 exit;
 ```
 
@@ -369,7 +386,7 @@ AccountingStorageType=accounting_storage/slurmdbd
 #AccountingStorageTRES=gres/gpu
 JobCompHost=m1 #localhost?
 JobCompLoc=slurm_acct_db
-JobCompPass=123456
+JobCompPass=REPLACE_WITH_STRONG_PASSWORD
 JobCompType=jobcomp/none
 JobCompUser=slurm
 JobAcctGatherFrequency=30
@@ -422,7 +439,7 @@ PidFile=/var/run/slurmdbd.pid
 StorageType=accounting_storage/mysql
 StorageHost=localhost
 StoragePort=3306
-StoragePass=123456
+StoragePass=REPLACE_WITH_STRONG_PASSWORD
 StorageUser=slurm
 StorageLoc=slurm_acct_db
 ~~~
@@ -698,7 +715,7 @@ AccountingStorageType=accounting_storage/slurmdbd
 #AccountingStorageTRES=gres/gpu
 JobCompHost=m1 #localhost?
 JobCompLoc=slurm_acct_db
-JobCompPass=123456
+JobCompPass=REPLACE_WITH_STRONG_PASSWORD
 JobCompType=jobcomp/none
 JobCompUser=slurm
 JobAcctGatherFrequency=30
@@ -804,27 +821,7 @@ sudo systemctl daemon-reload && sudo systemctl start rngd && sudo systemctl enab
 sudo apt install munge libmunge-dev libmunge2
 ~~~
 
-- 创建全局秘钥
-
-~~~sh
-#在master节点CN01Z99SLU001上生成全局使用的秘钥文件：/etc/munge/munge.key
-#装好了munge之后，/etc/munge/的权限默认是700 munge:munge; /etc/munge/munge.key的权限默认是600，munge:munge
-#临时提权，为了写入key
-sudo chmod 777 /etc/munge
-sudo chmod 777 /etc/munge/munge.key
-dd if=/dev/urandom bs=1 count=1024 > /etc/munge/munge.key
-~~~
-
-- 密钥同步到所有计算节点
-
-~~~sh
-# master节点CN01Z99SLU001，把munge key同步到其他节点
-#其他所有节点上提权：
-sudo chmod 777 /etc/munge
-sudo chmod 777 /etc/munge/munge.key
-#master节点CN01Z99SLU001上
-scp /etc/munge/munge.key CN01Z99SLU002:/etc/munge/munge.key
-~~~
+- 在 `CN01Z99SLU001` 上按[[#MUNGE 共享密钥：两种环境共用的安全流程|共用密钥流程]]生成密钥；登录节点安装 MUNGE 后，设置 `targets=(ubuntu@CN01Z99SLU002)` 分发。四台计算节点稍后安装 MUNGE，再分发**同一把**密钥。
 
 - 检查账户是否存在
 
@@ -913,19 +910,12 @@ su test
 sudo su
 apt install munge libmunge-dev libmunge2
 
-#提权：
-for i in `seq 1 4`; do
-ssh -t test@cn01dl00$i "sudo chmod 777 /etc/munge; sudo chmod 777 /etc/munge/munge.key;";
-done
+# MUNGE 安装后不需要将 /etc/munge 或 munge.key 设为全员可写。
 ~~~
 
-- management node拷贝所有节点
+- 在管理节点设置 `targets=(test@cn01dl001 test@cn01dl002 test@cn01dl003 test@cn01dl004)`，按[[#MUNGE 共享密钥：两种环境共用的安全流程|共用密钥流程]]分发已有密钥。下面继续核对计算节点的运行目录权限。
 
 ~~~sh
-sudo su
-for i in `seq 1 4`; do
-scp /etc/munge/munge.key test@cn01dl00$i:/etc/munge/munge.key;
-done
 #相关目录文件修改权限
 for i in `seq 1 4`; do
 ssh -t test@cn01dl00$i "sudo chown munge: /etc/munge/munge.key;sudo chmod 400 /etc/munge/munge.key;sudo chmod 700 /etc/munge/;sudo chmod 711 /var/lib/munge/;sudo chmod 700 /var/log/munge/;sudo chmod 755 /var/run/munge/;sudo chown munge.munge /etc/munge/munge.key;";
@@ -1005,6 +995,8 @@ sudo cp -r ./etc/slurm*.service /etc/systemd/system/
 
 #### 配置数据库
 
+以下口令是占位值，执行 SQL 前替换为专用强密码，并在 `slurmdbd.conf` 的 `StoragePass` 使用同一值。数据库由管理员创建，因此 `slurm` 用户只获得 `slurm_acct_db.*` 权限，不需要原记录的全局 `*.*` 授权或 `WITH GRANT OPTION`。已有数据库或用户需先核对，避免重复创建。
+
 ```sh
 sudo systemctl enable mariadb
 sudo systemctl start mariadb
@@ -1013,10 +1005,9 @@ sudo systemctl status mariadb
 
 ```sh
 sudo mysql
-CREATE USER 'slurm'@'localhost' IDENTIFIED BY '123456';
-GRANT ALL ON *.* TO 'slurm'@'localhost';
-create database slurm_acct_db;
-grant all on slurm_acct_db.* to 'slurm'@'localhost' identified by '123456' with grant option;
+CREATE DATABASE slurm_acct_db;
+CREATE USER 'slurm'@'localhost' IDENTIFIED BY 'REPLACE_WITH_STRONG_PASSWORD';
+GRANT ALL PRIVILEGES ON slurm_acct_db.* TO 'slurm'@'localhost';
 exit;
 ```
 
@@ -1192,7 +1183,7 @@ JobAcctGatherFrequency=30
 # JOB PRIORITY -- test option not in hal config
 JobCompHost=cn01z99slu001 #localhost?
 JobCompLoc=slurm_acct_db
-JobCompPass=123456
+JobCompPass=REPLACE_WITH_STRONG_PASSWORD
 JobCompUser=slurm
 
 ##############################################################################################################################
@@ -1276,7 +1267,7 @@ PidFile=/var/run/slurmdbd.pid
 StorageType=accounting_storage/mysql
 StorageHost=localhost
 StoragePort=3306
-StoragePass=123456
+StoragePass=REPLACE_WITH_STRONG_PASSWORD
 StorageUser=slurm
 StorageLoc=slurm_acct_db
 ~~~
@@ -1567,21 +1558,21 @@ sacctmgr show ass format="Cluster,Account,User,Partition,QOS"
 
 ### 配置prolog
 
-- 所有计算节点上创建prolog目录和脚本
+- 在所有计算节点上以 root 创建 Prolog 脚本；目标用户名和作业 ID 由 Slurm 提供，正式启用前确认 `/raid/localtmp` 的挂载和配额策略。
 
 ~~~sh
-mkdir -p /etc/slurm/prolog.d/
-tee /etc/slurm/prolog.d/50-zen <<'EOF'
+sudo install -d -o root -g root -m 0755 /etc/slurm/prolog.d
+sudo tee /etc/slurm/prolog.d/50-zen <<'EOF'
 #!/bin/bash
-if [ ! -d "/raid/localtmp/${SLURM_JOB_USER}/${SLURM_JOB_ID}" ]
-then
-  mkdir -p /raid/localtmp/${SLURM_JOB_USER}/${SLURM_JOB_ID}
-  chown ${SLURM_JOB_USER} /raid/localtmp/${SLURM_JOB_USER}/${SLURM_JOB_ID}
+: "${SLURM_JOB_USER:?}" "${SLURM_JOB_ID:?}"
+job_dir="/raid/localtmp/$SLURM_JOB_USER/$SLURM_JOB_ID"
+if [ ! -d "$job_dir" ]; then
+  mkdir -p -- "$job_dir"
+  chown "$SLURM_JOB_USER" -- "$job_dir"
 fi
 EOF
-
-chmod 755 /etc/slurm/prolog.d/
-chmod 755 /etc/slurm/prolog.d/50-zen
+sudo chown root:root /etc/slurm/prolog.d/50-zen
+sudo chmod 0755 /etc/slurm/prolog.d/50-zen
 ~~~
 
 - uncomment掉所有节点上/etc/slurm/slurm.conf上面的prolog配置
@@ -1605,7 +1596,7 @@ scontrol reconfigure
 
 ### 配置epilog
 
-- 所有节点创建epilog目录和脚本
+- 在所有计算节点创建 epilog 目录和脚本。脚本保留原有“抢占时不清理运行代码”的设计，但依赖 `slurmd.log` 文本匹配；正式启用前先用普通完成、取消和抢占三种作业验证。已移除未使用的 `squeue` 调用，并为删除路径加引号与作业 ID 检查。
 
 ~~~sh
 #控制节点ubuntu用户执行
@@ -1617,21 +1608,19 @@ done
 tee ./90-zen <<'EOF'
 #!/bin/bash
 
-THISHOST=$(hostname)
-JOBLIST=$(/usr/local/bin/squeue -h -u ${SLURM_JOB_USER} -w ${THISHOST} -o "%i")
-JOBSHERE=$(echo $JOBLIST|wc -w)
+# 原记录通过 slurmd.log 文本识别抢占；启用前须在目标集群验证日志格式。
+: "${SLURM_JOB_USER:?}" "${SLURM_JOB_ID:?}"
+case "$SLURM_JOB_USER" in */*|.|.. ) exit 1 ;; esac
+case "$SLURM_JOB_ID" in *[!0-9]* ) exit 1 ;; esac
 RUNNING_CODE=/staging/ziit/slurm/running-code
-
 SAVE_FOR_REQUEUE=$(grep --count --max-count=1 -E "JOB $SLURM_JOB_ID ON .* CANCELLED AT .* DUE TO PREEMPTIONS" /var/log/slurm/slurmd.log)
 
-if [ -d $RUNNING_CODE/$SLURM_JOB_USER/job-$SLURM_JOB_ID ] && [ $SAVE_FOR_REQUEUE == 0 ]
-  then
-    sudo -u $SLURM_JOB_USER rm -rf $RUNNING_CODE/$SLURM_JOB_USER/job-$SLURM_JOB_ID
+if [ -d "$RUNNING_CODE/$SLURM_JOB_USER/job-$SLURM_JOB_ID" ] && [ "$SAVE_FOR_REQUEUE" -eq 0 ]; then
+  sudo -u "$SLURM_JOB_USER" rm -rf -- "$RUNNING_CODE/$SLURM_JOB_USER/job-$SLURM_JOB_ID"
 fi
 
-if [ -d /raid/localtmp/${SLURM_JOB_USER}/${SLURM_JOB_ID} ]
-  then
-    rm -rf /raid/localtmp/${SLURM_JOB_USER}/${SLURM_JOB_ID}
+if [ -d "/raid/localtmp/$SLURM_JOB_USER/$SLURM_JOB_ID" ]; then
+  rm -rf -- "/raid/localtmp/$SLURM_JOB_USER/$SLURM_JOB_ID"
 fi
 EOF
 
@@ -1718,8 +1707,11 @@ scontrol update nodename=c1 state=resume
 ~~~sh
 # --mem=5M表示申请5MB内存,-c 1表示申请1个核心。
 srun -p cpu -w c1 --mem=5M -c 1 hostname
-srun -J sample-job -p cpu -N 2 -c 1 -n 1 whoami;hostname;ip a;
-srun -J my-sleep -p cpu -w c[1-2] -N 2 -c 1 -n 1 sleep 10
+srun -J sample-job -p cpu -w c1 -N 1 -c 1 -n 1 sh -c 'whoami; hostname; ip a'
+srun -J my-sleep -p cpu -w c1 -N 1 -c 1 -n 1 sleep 10
+# 历史多节点示例：只有新增 c2 并纳入 cpu 分区后才可执行
+# srun -J sample-job -p cpu -N 2 -c 1 -n 1 whoami;hostname;ip a;
+# srun -J my-sleep -p cpu -w c[1-2] -N 2 -c 1 -n 1 sleep 10
 srun -p cpu -w c1 sh ./a.sh
 ~~~
 
@@ -1851,8 +1843,8 @@ sacct -j ID-number
 
 ~~~sh
 #使用salloc命令提交。为需实时处理的作业分配资源,典型场景为分配资源并启动一个shell,然 后用此shell执行srun命令去执行并行任务。
-#申请partition compute上申请一个核的资源
-salloc -p cpu -N1 -n1 -q low -t 2:00:00
+#在 cpu 分区申请一个核；原记录的 compute 分区未在本测试配置中定义
+salloc -p cpu -N1 -n1 -t 2:00:00 # 若已创建 low QOS，才添加 -q low
 #查看分配到的node
 squeue
              JOBID PARTITION     NAME     USER ST       TIME  NODES NODELIST(REASON)
@@ -1871,7 +1863,7 @@ squeue -j 71
 ~~~sh
 scontrol show nodes #显示所有计算节点
 #如果Compute Nodes的State=DOWN,则如下执行,将状态变成恢复
-scontrol update nodename=uc1 state=resume
+scontrol update nodename=c1 state=resume
 
 # Why is a node shown in state DOWN when the node has registered for service?
 # https://slurm.schedmd.com/faq.html#return_to_service
@@ -1913,10 +1905,10 @@ sacctmgr list assoc
 - 生产账户命令将未定义的 `ztest` 改为该文实际定义的 `zprodtest`；同步命令中的 `root@@` 改为 `root@`。
 - 生产 Prolog/Epilog 脚本和目录由原记录的 `chmod 777` 改为 `chmod 755`，保留执行权限并避免所有用户可写。执行前仍需检查属主与实际安全策略。
 - 测试环境的单节点提交示例使用已定义的 `cpu` 分区；原记录中的两节点、`compute` 分区及 `low` QOS 示例没有相应配置，需现场改写。
-- MUNGE 密钥生成和复制步骤中的临时 `chmod 777`、数据库固定示例密码，以及生产资源/调度参数依赖现场环境，未擅自替换。正式使用前应采用受限权限的密钥分发方式、专用数据库凭据，并核对节点资源与分区。
-- 生产 Epilog 中调用 `squeue` 并删除运行目录的逻辑保留原样；删除范围、抢占重排判断与脚本执行时序需在目标集群验证。
+- MUNGE 密钥分发已改为受限暂存与 `munge:munge 0400` 安装；数据库示例已移除固定密码和全局授权。正式使用前须替换密码占位值，并核对目标节点资源与分区。
+- 生产 Epilog 已移除未使用的 `squeue` 调用，并约束删除路径；通过 `slurmd.log` 识别抢占仍是原记录的环境假设，删除范围、日志格式和执行时序须在目标集群验证。
 
-参考：[Slurm 管理员快速入门](https://slurm.schedmd.com/quickstart_admin.html)、[认证配置](https://slurm.schedmd.com/authentication.html)、[Prolog 与 Epilog 指南](https://slurm.schedmd.com/prolog_epilog.html)、[slurm.conf 参数](https://slurm.schedmd.com/slurm.conf.html)。以上在线文档为当前版本；22.05.11 的实际配置兼容性仍需在目标集群验证。
+参考：[Slurm 管理员快速入门](https://slurm.schedmd.com/quickstart_admin.html)、[认证配置](https://slurm.schedmd.com/authentication.html)、[Accounting 与数据库权限](https://slurm.schedmd.com/accounting.html)、[Prolog 与 Epilog 指南](https://slurm.schedmd.com/prolog_epilog.html)、[slurm.conf 参数](https://slurm.schedmd.com/slurm.conf.html)。以上在线文档为当前版本；22.05.11 的实际配置兼容性仍需在目标集群验证。
 
 ## 相关笔记
 
