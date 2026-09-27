@@ -77,11 +77,8 @@ systemctl enable jenkins
 
 3. 生产Client P12认证文件cert.pfx，并下载至本地
    - `openssl pkcs12 -export -out /opt/crt/cert.pfx -inkey /opt/crt/client.key -in /opt/crt/client.crt -certfile /opt/crt/ca.crt` (password需要自定义并牢记)
-4. 在jenkins-云k8s中添加凭证（注：Upload certificate上次刚生成并下载至本地的cert.pfx文件，Password值添加生成cert.pfx文件时输入的密钥）
-
-![image-20240619212217567](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202406192122634.png)
-
-5. 测试连接kubernetes集群（**注：**Kubernetes Namespace值添加~/.kube/config文件中cluster部分中name的内容）
+1. 在jenkins-云k8s中添加凭证（注：Upload certificate上次刚生成并下载至本地的cert.pfx文件，Password值添加生成cert.pfx文件时输入的密钥）
+2. 测试连接kubernetes集群（**注：**Kubernetes Namespace值添加~/.kube/config文件中cluster部分中name的内容）
 
    ![image-20240619212409671](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202406192124714.png)
 
