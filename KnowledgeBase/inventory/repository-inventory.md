@@ -192,7 +192,7 @@ date: 2026-09-26
 | [[Docker-Kubernetes/k8s-basic-resources/k8s基础-job-cronjob|k8s基础-job-cronjob]] | Job-CronJob | ✅ | ❌ |
 | [[Docker-Kubernetes/k8s-basic-resources/k8s基础-Service|k8s基础-Service]] | Service | ✅ | ❌ |
 | [[Docker-Kubernetes/k8s-basic-resources/k8s基础-ingress|k8s基础-ingress]] | Ingress | ✅ | ❌ |
-| [[Docker-Kubernetes/k8s-basic-resources/k8s基础-configMap-Secret|k8s基础-configMap-Secret]] | configMap-Secret | ✅ | ❌ |
+| [[Docker-Kubernetes/k8s-configMap-secret/k8s基础-configMap-Secret|k8s基础-configMap-Secret]] | configMap-Secret | ✅ | ❌ |
 | [[Docker-Kubernetes/k8s-basic-resources/k8s基础-storage|k8s基础-storage]] | Storage | ✅ | ❌ |
 | [[Docker-Kubernetes/k8s-basic-resources/k8s基础-namespace-资源分配|k8s基础-namespace-资源分配]] | namespace-资源分配 | ✅ | ❌ |
 | [[Docker-Kubernetes/k8s-basic-resources/k8s基础-yaml|k8s基础-yaml]] | YAML | ✅ | ❌ |
@@ -304,7 +304,7 @@ date: 2026-09-26
 | k8s-scaling/ | 4 | [[Docker-Kubernetes/k8s-scaling/k8s-HPA-VPA|k8s-HPA-VPA]]、[[Docker-Kubernetes/k8s-scaling/k8s-基于KEDA的弹性能力|k8s-基于KEDA的弹性能力]] |
 | k8s-storage/ | 3 | [[Docker-Kubernetes/k8s-storage/k8s-ceph部署与集成|k8s-ceph部署与集成]]、[[Docker-Kubernetes/k8s-storage/k8s-分布式存储CubeFS|k8s-分布式存储CubeFS]] |
 | CKA-CKS/ | 3 | [[Docker-Kubernetes/CKA-CKS/CKA-备考|CKA-备考]]、[[Docker-Kubernetes/CKA-CKS/CKS-备考|CKS-备考]] |
-| harbor/ | 2 | [[Docker-Kubernetes/harbor/harbor-basics|harbor-basics]] |
+| harbor/ | 2 | [[Docker-Kubernetes/k8s-image-management/harbor-basics|harbor-basics]] |
 | container-platform/ | 2 | [[Docker-Kubernetes/container-platform/部署轻量级的K8S平台-K3S|部署轻量级的K8S平台-K3S]] |
 | kubeblocks/ | 2 | [[Docker-Kubernetes/kubeblocks/kubeblocks部署WordPress|kubeblocks部署WordPress]] |
 | k8s-springcloud/ | 1 | [[Docker-Kubernetes/k8s-springcloud/SpringCloud项目迁移到k8s实战|SpringCloud项目迁移到k8s实战]] |

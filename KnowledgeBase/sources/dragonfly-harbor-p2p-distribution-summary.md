@@ -7,7 +7,7 @@ tags:
   - ai/infrastructure
 date: 2026-09-13
 sources:
-  - "[[Docker-Kubernetes/harbor/Dragonfly与Harbor-P2P镜像分发]]"
+  - "[[Docker-Kubernetes/k8s-image-management/Dragonfly与Harbor-P2P镜像分发]]"
 aliases:
   - Dragonfly Harbor P2P 分发摘要
 ---
@@ -16,7 +16,7 @@ aliases:
 
 ## 元信息
 
-- **原始文档**：[[Docker-Kubernetes/harbor/Dragonfly与Harbor-P2P镜像分发]]
+- **原始文档**：[[Docker-Kubernetes/k8s-image-management/Dragonfly与Harbor-P2P镜像分发]]
 - **领域**：Kubernetes 镜像分发、AI 基础设施
 - **摄入日期**：2026-09-13
 - **原始来源**：[微信公众号文章](https://mp.weixin.qq.com/s/NTEYZHwnhJkh9okx_2-2gQ)

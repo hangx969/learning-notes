@@ -11,7 +11,7 @@ sources:
   - "[[Docker-Kubernetes/k8s-basic-resources/Python调用k8s-api实现资源管理]]"
   - "[[Docker-Kubernetes/k8s-basic-resources/k8s基础-Calico]]"
   - "[[Docker-Kubernetes/k8s-basic-resources/k8s基础-Service]]"
-  - "[[Docker-Kubernetes/k8s-basic-resources/k8s基础-configMap-Secret]]"
+  - "[[Docker-Kubernetes/k8s-configMap-secret/k8s基础-configMap-Secret]]"
   - "[[Docker-Kubernetes/k8s-basic-resources/k8s基础-daemonset]]"
   - "[[Docker-Kubernetes/k8s-basic-resources/k8s基础-deployment]]"
   - "[[Docker-Kubernetes/k8s-basic-resources/k8s基础-ingress]]"
@@ -111,7 +111,7 @@ sources:
   - 生产推荐：独占节点部署 + hostNetwork:true + 前端网关（F5/SLB/LVS）
   - 四层 vs 七层代理的区别与适用场景
 
-### [[Docker-Kubernetes/k8s-basic-resources/k8s基础-configMap-Secret|K8s基础-ConfigMap-Secret]]
+### [[Docker-Kubernetes/k8s-configMap-secret/k8s基础-configMap-Secret|K8s基础-ConfigMap-Secret]]
 - 核心内容：ConfigMap 用于管理非机密配置数据，Secret 用于管理敏感信息，两者均可通过环境变量或存储卷方式注入到 Pod 中。
 - 关键知识点：
   - ConfigMap 创建方式：命令行 `--from-literal`、基于文件 `--from-file`、基于目录

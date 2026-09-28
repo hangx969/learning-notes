@@ -163,7 +163,7 @@ date: 2026-09-15
 ### Harbor
 **相关文档：**
 - [[Harbor 部署与使用指南|Harbor 部署与使用指南]] ⭐ 推荐入口
-- [[Docker-Kubernetes/harbor/Dragonfly与Harbor-P2P镜像分发|Dragonfly + Harbor P2P 镜像分发]] — AI/GPU 集群镜像与大文件源站卸载
+- [[Docker-Kubernetes/k8s-image-management/Dragonfly与Harbor-P2P镜像分发|Dragonfly + Harbor P2P 镜像分发]] — AI/GPU 集群镜像与大文件源站卸载
 - [[Docker-Kubernetes/kubeblocks/kubeblocks部署高可用harbor集群|kubeblocks部署高可用harbor集群]]
 
 **概念页：** [[KnowledgeBase/entities/Harbor|Harbor]]
@@ -172,8 +172,8 @@ date: 2026-09-15
 
 ### Dragonfly
 **相关文档：**
-- [[Docker-Kubernetes/harbor/Dragonfly与Harbor-P2P镜像分发|Dragonfly + Harbor P2P 镜像分发]] ⭐ 推荐入口
-- [[Docker-Kubernetes/helm-operator/helm部署dragonfly|helm部署dragonfly]]
+- [[Docker-Kubernetes/k8s-image-management/Dragonfly与Harbor-P2P镜像分发|Dragonfly + Harbor P2P 镜像分发]] ⭐ 推荐入口
+- [[Docker-Kubernetes/k8s-image-management/helm部署dragonfly|helm部署dragonfly]]
 
 **概念页：** [[KnowledgeBase/entities/Dragonfly|Dragonfly]]
 

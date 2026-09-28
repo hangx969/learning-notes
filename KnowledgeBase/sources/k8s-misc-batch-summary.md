@@ -13,10 +13,10 @@ tags:
 date: 2026-09-15
 sources:
   - "[[Docker-Kubernetes/helm-operator/helmv3-安装与使用]]"
-  - "[[Docker-Kubernetes/helm-operator/helm部署config-syncer(kubed)]]"
-  - "[[Docker-Kubernetes/helm-operator/helm部署dragonfly]]"
-  - "[[Docker-Kubernetes/helm-operator/helm部署pact-broker]]"
-  - "[[Docker-Kubernetes/helm-operator/helm部署reloader]]"
+  - "[[Docker-Kubernetes/k8s-configMap-secret/helm部署config-syncer(kubed)]]"
+  - "[[Docker-Kubernetes/k8s-image-management/helm部署dragonfly]]"
+  - "[[Docker-Kubernetes/k8s-CICD/helm部署pact-broker]]"
+  - "[[Docker-Kubernetes/k8s-configMap-secret/helm部署reloader]]"
   - "[[helm部署tomcat]]"
   - "[[Docker-Kubernetes/CKA-CKS/CKA-备考]]"
   - "[[Docker-Kubernetes/CKA-CKS/CKS-备考]]"
@@ -24,7 +24,7 @@ sources:
   - "[[Docker-Kubernetes/kubeblocks/kubeblocks部署WordPress]]"
   - "[[Docker-Kubernetes/kubeblocks/kubeblocks部署高可用harbor集群]]"
   - "[[Harbor 部署与使用指南]]"
-  - "[[Docker-Kubernetes/harbor/Dragonfly与Harbor-P2P镜像分发]]"
+  - "[[Docker-Kubernetes/k8s-image-management/Dragonfly与Harbor-P2P镜像分发]]"
   - "[[Docker-Kubernetes/container-platform/部署openshift(3.10)]]"
   - "[[Docker-Kubernetes/container-platform/部署轻量级的K8S平台-K3S]]"
   - "[[Docker-Kubernetes/k8s-springcloud/SpringCloud项目迁移到k8s实战]]"
@@ -35,7 +35,7 @@ sources:
 
 ## 元信息
 
-- **原始目录**: `Docker-Kubernetes/helm-operator/`、`Docker-Kubernetes/CKA-CKS/`、`Docker-Kubernetes/kubeblocks/`、`Docker-Kubernetes/harbor/`、`Docker-Kubernetes/container-platform/`、`Docker-Kubernetes/k8s-springcloud/`、`Docker-Kubernetes/k8s-backup-dr/`、`Docker-Kubernetes/k8s-ai-gpu/`
+- **原始目录**: `Docker-Kubernetes/helm-operator/`、`Docker-Kubernetes/CKA-CKS/`、`Docker-Kubernetes/kubeblocks/`、`Docker-Kubernetes/k8s-image-management/`、`Docker-Kubernetes/container-platform/`、`Docker-Kubernetes/k8s-springcloud/`、`Docker-Kubernetes/k8s-backup-dr/`、`Docker-Kubernetes/k8s-ai-gpu/`
 - **文档数量**: 20 篇（8 个子目录汇总）
 - **领域**: Helm 工具链、K8s 认证备考、KubeBlocks 数据库管理、Harbor 镜像仓库、容器平台（OpenShift/K3S）、SpringCloud 迁移、备份恢复、GPU 配置
 - **摄入日期**: 2026-04-17
@@ -55,7 +55,7 @@ sources:
   - 支持资源管理、版本控制、依赖管理和 Go 模板化
   - Windows 下可通过 Scoop 包管理器安装 Helm、kubectl、krew
 
-### [[Docker-Kubernetes/helm-operator/helm部署config-syncer(kubed)|Helm部署Config Syncer]]
+### [[Docker-Kubernetes/k8s-configMap-secret/helm部署config-syncer(kubed)|Helm部署Config Syncer]]
 
 - **核心内容**: 部署 Config Syncer（原 Kubed）实现跨 Namespace 同步 ConfigMap 和 Secret，包含因 Docker Hub 镜像移除后自行构建镜像的完整流程。
 - **关键知识点**:
@@ -64,7 +64,7 @@ sources:
   - 替代方案：kubernetes-replicator
   - 构建涉及 Go 编译环境和 Makefile 修改
 
-### [[Docker-Kubernetes/helm-operator/helm部署dragonfly|Helm部署Dragonfly]]
+### [[Docker-Kubernetes/k8s-image-management/helm部署dragonfly|Helm部署Dragonfly]]
 
 - **核心内容**: Dragonfly P2P 镜像分发系统的原理和部署，解决大规模集群镜像拉取的带宽和速度问题。
 - **关键知识点**:
@@ -73,7 +73,7 @@ sources:
   - 典型场景：100 节点拉取 2GB 镜像可节约 99% 带宽
   - 采用 BitTorrent-like 分块分发机制
 
-### [[Docker-Kubernetes/helm-operator/helm部署pact-broker|Helm部署Pact Broker]]
+### [[Docker-Kubernetes/k8s-CICD/helm部署pact-broker|Helm部署Pact Broker]]
 
 - **核心内容**: 部署 Pact Broker 用于微服务契约测试管理，配置 Ingress 和 OAuth2 Proxy 认证。
 - **关键知识点**:
@@ -82,7 +82,7 @@ sources:
   - Pact Broker 集中管理契约版本
   - 集成 nginx ingress 和 oauth2-proxy 进行访问控制
 
-### [[Docker-Kubernetes/helm-operator/helm部署reloader|Helm部署Reloader]]
+### [[Docker-Kubernetes/k8s-configMap-secret/helm部署reloader|Helm部署Reloader]]
 
 - **核心内容**: 部署 Stakater Reloader 工具，监控 ConfigMap/Secret 变更并自动触发工作负载滚动更新。
 - **关键知识点**:
@@ -153,7 +153,7 @@ sources:
   - Harbor 2.8+ 直接以 OCI Artifact 管理 Helm Chart；旧版本可选 ChartMuseum
   - 自签名 CA、跳过 TLS 校验和默认管理员凭据仅适合受控实验环境
 
-### [[Docker-Kubernetes/harbor/Dragonfly与Harbor-P2P镜像分发|Dragonfly + Harbor P2P 镜像分发]]
+### [[Docker-Kubernetes/k8s-image-management/Dragonfly与Harbor-P2P镜像分发|Dragonfly + Harbor P2P 镜像分发]]
 
 - **核心内容**: 解释大规模 Kubernetes 与 AI/GPU 集群中，Dragonfly 如何通过分块、Peer 交换、Seed Peer 回源和 Scheduler 调度降低 Harbor 源站压力。
 - **关键知识点**:

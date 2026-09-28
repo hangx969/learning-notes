@@ -42,8 +42,8 @@ Dragonfly 是面向云原生与 AI 基础设施的 P2P 文件分发系统，通�
 
 ## 在本仓库中的覆盖
 
-- [[Docker-Kubernetes/harbor/Dragonfly与Harbor-P2P镜像分发]]：Harbor 源站卸载、AI 大文件分发、新旧架构与适用边界
-- [[Docker-Kubernetes/helm-operator/helm部署dragonfly]]：Dragonfly 的 Helm 部署与早期实践
+- [[Docker-Kubernetes/k8s-image-management/Dragonfly与Harbor-P2P镜像分发]]：Harbor 源站卸载、AI 大文件分发、新旧架构与适用边界
+- [[Docker-Kubernetes/k8s-image-management/helm部署dragonfly]]：Dragonfly 的 Helm 部署与早期实践
 
 ## 版本边界
 
