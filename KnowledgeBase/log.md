@@ -2044,3 +2044,9 @@ date: 2026-04-17
 - 将 Zsh、direnv、终端代理、screen、系统信息、inotifywait、nmcli、SSH 和 Samba 九篇操作笔记并入 [[Linux-Shell/Linux-learning-notes#Linux 运维实操专题|Linux 学习笔记的实操专题]]，按主题重排章节并删除旧文；保留三处 GitHub 图床链接。
 - 更新 Linux-Shell 索引、知识库入口、来源摘要、专题地图、概念页、文档盘点及其他有效引用；目录现有 11 篇笔记（含索引共 12 个 Markdown 文件）。
 - 修正 direnv 的 Zsh hook、inotifywait 执行命令示例、SSH 密钥与 SCP 示例、Azure SSH 端口与防火墙/SELinux 步骤等错误；历史日志保持追加，不改写既有条目。
+
+## [2026-09-28] restructure | Kubernetes 配置与镜像管理文章归档
+
+- 将 ConfigMap/Secret 基础、Config Syncer 和 Reloader 三篇文章归入 `Docker-Kubernetes/k8s-configMap-secret/`。
+- 将原 `Docker-Kubernetes/harbor/` 的两篇文章与 Dragonfly Helm 部署文章归入 `Docker-Kubernetes/k8s-image-management/`；Pact Broker 归入 `Docker-Kubernetes/k8s-CICD/`。
+- 更新 Docker-Kubernetes 目录、知识库来源摘要、专题地图、实体页和盘点中的现行路径引用。

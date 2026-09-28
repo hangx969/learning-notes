@@ -891,7 +891,7 @@ P2P 分发网络
 ## 相关阅读
 
 - [[Harbor 部署与使用指南|Harbor 基础]]
-- [[Docker-Kubernetes/k8s-image-management/helm部署harbor|使用 Helm 部署 Harbor]]
+- [[Docker-Kubernetes/k8s-image-management/Harbor 部署与使用指南|使用 Helm 部署 Harbor]]
 - [[Docker-Kubernetes/k8s-image-management/helm部署dragonfly|使用 Helm 部署 Dragonfly]]
 
 ---

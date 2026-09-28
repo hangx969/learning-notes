@@ -41,7 +41,7 @@ aliases:
 1. K8s
 2. Gitlab（参考[二进制安装Gitlab](./二进制安装Gitlab(17.9.8).md)）
 3. Jenkins（参考[docker部署Jenkins](./docker部署Jenkins)或者[helm部署Jenkins](./helm部署jenkins)）
-4. Harbor（参考[helm部署harbor](../harbor/helm部署harbor)）
+4. Harbor（参考[[Docker-Kubernetes/k8s-image-management/Harbor 部署与使用指南|Harbor 部署与使用指南]]）
 
 ### 工具集成
 

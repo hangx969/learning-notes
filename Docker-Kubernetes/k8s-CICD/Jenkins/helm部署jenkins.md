@@ -194,7 +194,7 @@ helm upgrade -i jenkins -n jenkins --create-namespace . -f values.yaml
 
 ### 连接harbor
 
-1. 首先需要[安装harbor](../helm/helm部署harbor.md)
+1. 首先需要[[Docker-Kubernetes/k8s-image-management/Harbor 部署与使用指南|安装 Harbor]]
 2. Jenkins中首页-->系统管理-->管理凭据-->Stores scoped to Jenkins-->全局-->添加凭据
 3. 类型：Username with Password，范围：全局，用户名和密码：写harbor的用户名密码admin/Harbor12345，ID：harbork8s。
 4. 点击Create

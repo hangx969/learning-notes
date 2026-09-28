@@ -115,7 +115,7 @@ date: 2026-09-15
 
 ### Helm
 **相关文档（20+ 篇）：**
-- [[Docker-Kubernetes/helm-operator/helmv3-安装与使用|helmv3-安装与使用]] ⭐ 推荐入口
+- [[helmv3-安装与使用|helmv3-安装与使用]] ⭐ 推荐入口
 - [[Harbor 部署与使用指南|Harbor 部署与使用指南]]
 - [[Docker-Kubernetes/k8s-monitoring-logging/helm部署prometheus-stack全家桶|helm部署prometheus-stack全家桶]]
 - [[Docker-Kubernetes/k8s-monitoring-logging/helm部署Loki-promtail-tempo-grafanaAgent全家桶|helm部署Loki-promtail-tempo-grafanaAgent全家桶]]

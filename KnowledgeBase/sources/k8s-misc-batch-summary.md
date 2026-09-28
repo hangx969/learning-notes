@@ -3,16 +3,18 @@ title: K8s杂项专题 来源批量摘要
 tags:
   - knowledgebase/source
   - docker-kubernetes/helm-operator
+  - docker-kubernetes/k8s-configMap-secret
+  - docker-kubernetes/k8s-CICD
   - docker-kubernetes/CKA-CKS
   - docker-kubernetes/kubeblocks
-  - docker-kubernetes/harbor
+  - docker-kubernetes/k8s-image-management
   - docker-kubernetes/container-platform
   - docker-kubernetes/k8s-springcloud
   - docker-kubernetes/k8s-backup-dr
   - docker-kubernetes/k8s-ai-gpu
-date: 2026-09-15
+date: 2026-09-28
 sources:
-  - "[[Docker-Kubernetes/helm-operator/helmv3-安装与使用]]"
+  - "[[helmv3-安装与使用]]"
   - "[[Docker-Kubernetes/k8s-configMap-secret/helm部署config-syncer(kubed)]]"
   - "[[Docker-Kubernetes/k8s-image-management/helm部署dragonfly]]"
   - "[[Docker-Kubernetes/k8s-CICD/helm部署pact-broker]]"
@@ -35,8 +37,8 @@ sources:
 
 ## 元信息
 
-- **原始目录**: `Docker-Kubernetes/helm-operator/`、`Docker-Kubernetes/CKA-CKS/`、`Docker-Kubernetes/kubeblocks/`、`Docker-Kubernetes/k8s-image-management/`、`Docker-Kubernetes/container-platform/`、`Docker-Kubernetes/k8s-springcloud/`、`Docker-Kubernetes/k8s-backup-dr/`、`Docker-Kubernetes/k8s-ai-gpu/`
-- **文档数量**: 20 篇（8 个子目录汇总）
+- **原始目录**: `Docker-Kubernetes/helm-operator/`、`Docker-Kubernetes/k8s-configMap-secret/`、`Docker-Kubernetes/k8s-CICD/`、`Docker-Kubernetes/CKA-CKS/`、`Docker-Kubernetes/kubeblocks/`、`Docker-Kubernetes/k8s-image-management/`、`Docker-Kubernetes/container-platform/`、`Docker-Kubernetes/k8s-springcloud/`、`Docker-Kubernetes/k8s-backup-dr/`、`Docker-Kubernetes/k8s-ai-gpu/`
+- **文档数量**: 20 篇（现分布于 10 个子目录）
 - **领域**: Helm 工具链、K8s 认证备考、KubeBlocks 数据库管理、Harbor 镜像仓库、容器平台（OpenShift/K3S）、SpringCloud 迁移、备份恢复、GPU 配置
 - **摄入日期**: 2026-04-17
 
@@ -46,7 +48,7 @@ sources:
 
 ## 各文档摘要
 
-### [[Docker-Kubernetes/helm-operator/helmv3-安装与使用|Helm v3安装与使用]]
+### [[helmv3-安装与使用|Helm v3安装与使用]]
 
 - **核心内容**: Helm v3 的概念介绍、Linux 和 Windows（Scoop）两种安装方式以及基本使用。
 - **关键知识点**:

@@ -50,7 +50,7 @@ Helm 基础位于 `Docker-Kubernetes/helm-operator/`，同时大量 helm 部署�
 - [[KnowledgeBase/sources/iac-terraform-container-summary|Terraform 容器管理摘要]]：Helm Provider 纳入 Terraform 生命周期管理
 
 
-- [[Docker-Kubernetes/helm-operator/helmv3-安装与使用|helmv3-安装与使用]]
+- [[helmv3-安装与使用|helmv3-安装与使用]]
 - [[Docker-Kubernetes/k8s-image-management/helm部署dragonfly|helm部署dragonfly]]
 - [[Docker-Kubernetes/k8s-configMap-secret/helm部署reloader|helm部署reloader]]
 - [[Docker-Kubernetes/k8s-configMap-secret/helm部署config-syncer(kubed)|helm部署config-syncer(kubed)]]

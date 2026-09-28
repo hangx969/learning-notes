@@ -2,7 +2,7 @@
 title: 全库文档盘点
 tags:
   - knowledgebase/inventory
-date: 2026-09-26
+date: 2026-09-28
 ---
 
 # 全库文档盘点
@@ -12,7 +12,7 @@ date: 2026-09-26
 > - **顶层目录**：17 个主题领域
 > - **有 Frontmatter**：294 个（99%）
 > - **有 Wikilink 双链**：92 个（31%）
-> - **扫描日期**：2026-04-16（全库统计为当时快照；Azure 与 Linux-Shell 条目于 2026-09-26 按合并结果更新）
+> - **扫描日期**：2026-04-16（全库统计为当时快照；Azure 与 Linux-Shell 条目于 2026-09-26 更新，Docker-Kubernetes 相关目录条目于 2026-09-28 调整）
 
 ---
 
@@ -179,7 +179,7 @@ date: 2026-09-26
 
 > [!note] 仓库最大领域，占全库 48.5%，覆盖 19 个子目录
 
-### k8s-basic-resources/（20 篇）
+### k8s-basic-resources/（19 篇）
 
 | 文件 | 标题 | FM | 链 |
 |------|------|:--:|:--:|
@@ -192,7 +192,6 @@ date: 2026-09-26
 | [[Docker-Kubernetes/k8s-basic-resources/k8s基础-job-cronjob|k8s基础-job-cronjob]] | Job-CronJob | ✅ | ❌ |
 | [[Docker-Kubernetes/k8s-basic-resources/k8s基础-Service|k8s基础-Service]] | Service | ✅ | ❌ |
 | [[Docker-Kubernetes/k8s-basic-resources/k8s基础-ingress|k8s基础-ingress]] | Ingress | ✅ | ❌ |
-| [[Docker-Kubernetes/k8s-configMap-secret/k8s基础-configMap-Secret|k8s基础-configMap-Secret]] | configMap-Secret | ✅ | ❌ |
 | [[Docker-Kubernetes/k8s-basic-resources/k8s基础-storage|k8s基础-storage]] | Storage | ✅ | ❌ |
 | [[Docker-Kubernetes/k8s-basic-resources/k8s基础-namespace-资源分配|k8s基础-namespace-资源分配]] | namespace-资源分配 | ✅ | ❌ |
 | [[Docker-Kubernetes/k8s-basic-resources/k8s基础-yaml|k8s基础-yaml]] | YAML | ✅ | ❌ |
@@ -229,7 +228,7 @@ date: 2026-09-26
 | [[Docker-Kubernetes/k8s-monitoring-logging/二进制部署prometheus-grafana-nodeexporter|二进制部署prometheus-grafana-nodeexporter]] | 二进制Prometheus | ✅ | ❌ |
 | [[Docker-Kubernetes/k8s-monitoring-logging/基于helm+operator部署ECK日志收集平台|基于helm+operator部署ECK日志收集平台]] | ECK日志平台 | ✅ | ❌ |
 
-### k8s-CICD/（19 篇）
+### k8s-CICD/（20 篇）
 
 | 文件 | 标题 | FM | 链 |
 |------|------|:--:|:--:|
@@ -252,6 +251,7 @@ date: 2026-09-26
 | [[Docker-Kubernetes/k8s-CICD/Kustomize/k8s配置定制工具-kustomize|k8s配置定制工具-kustomize]] | Kustomize | ✅ | ❌ |
 | [[Docker-Kubernetes/k8s-CICD/使用github action部署helmchart|使用github action部署helmchart]] | GitHub Action部署Helm | ✅ | ❌ |
 | [[Docker-Kubernetes/k8s-CICD/发布go-python-java代码到K8S环境|发布go-python-java代码到K8S环境]] | 发布代码到K8S | ✅ | ❌ |
+| [[Docker-Kubernetes/k8s-CICD/helm部署pact-broker|helm部署pact-broker]] | Pact Broker 契约测试 | ✅ | ❌ |
 
 ### k8s-installation-management/（16 篇）
 
@@ -300,11 +300,12 @@ date: 2026-09-26
 | k8s-UI-tools/ | 8 | [[Docker-Kubernetes/k8s-UI-tools/kubectl-可视化插件k9s-stern|kubectl-可视化插件k9s-stern]]、[[Docker-Kubernetes/k8s-UI-tools/rancher(v2.6.4)管理k8s集群|rancher(v2.6.4)管理k8s集群]] |
 | k8s-networking-service-mesh/ | 7 | [[Docker-Kubernetes/k8s-networking-service-mesh/k8s精细化流量管理-istio|k8s精细化流量管理-istio]]、[[Docker-Kubernetes/k8s-networking-service-mesh/helm部署ingress-nginx|helm部署ingress-nginx]] |
 | k8s-security-auth/ | 7 | [[Docker-Kubernetes/k8s-security-auth/helm部署certmanager|helm部署certmanager]]、[[Docker-Kubernetes/k8s-security-auth/helm部署kyverno和policy-reporter|helm部署kyverno和policy-reporter]] |
-| helm-operator/ | 6 | [[Docker-Kubernetes/helm-operator/helmv3-安装与使用|helmv3-安装与使用]] |
+| helm-operator/ | 1 | [[Docker-Kubernetes/helm-operator/helmv3-安装与使用|helmv3-安装与使用]] |
+| k8s-configMap-secret/ | 3 | [[Docker-Kubernetes/k8s-configMap-secret/k8s基础-configMap-Secret|k8s基础-configMap-Secret]]、[[Docker-Kubernetes/k8s-configMap-secret/helm部署config-syncer(kubed)|Config Syncer]]、[[Docker-Kubernetes/k8s-configMap-secret/helm部署reloader|Reloader]] |
 | k8s-scaling/ | 4 | [[Docker-Kubernetes/k8s-scaling/k8s-HPA-VPA|k8s-HPA-VPA]]、[[Docker-Kubernetes/k8s-scaling/k8s-基于KEDA的弹性能力|k8s-基于KEDA的弹性能力]] |
 | k8s-storage/ | 3 | [[Docker-Kubernetes/k8s-storage/k8s-ceph部署与集成|k8s-ceph部署与集成]]、[[Docker-Kubernetes/k8s-storage/k8s-分布式存储CubeFS|k8s-分布式存储CubeFS]] |
 | CKA-CKS/ | 3 | [[Docker-Kubernetes/CKA-CKS/CKA-备考|CKA-备考]]、[[Docker-Kubernetes/CKA-CKS/CKS-备考|CKS-备考]] |
-| harbor/ | 2 | [[Docker-Kubernetes/k8s-image-management/harbor-basics|harbor-basics]] |
+| k8s-image-management/ | 3 | [[Docker-Kubernetes/k8s-image-management/Harbor 部署与使用指南|Harbor 部署与使用指南]]、[[Docker-Kubernetes/k8s-image-management/Dragonfly与Harbor-P2P镜像分发|Dragonfly 与 Harbor P2P 镜像分发]]、[[Docker-Kubernetes/k8s-image-management/helm部署dragonfly|helm部署dragonfly]] |
 | container-platform/ | 2 | [[Docker-Kubernetes/container-platform/部署轻量级的K8S平台-K3S|部署轻量级的K8S平台-K3S]] |
 | kubeblocks/ | 2 | [[Docker-Kubernetes/kubeblocks/kubeblocks部署WordPress|kubeblocks部署WordPress]] |
 | k8s-springcloud/ | 1 | [[Docker-Kubernetes/k8s-springcloud/SpringCloud项目迁移到k8s实战|SpringCloud项目迁移到k8s实战]] |

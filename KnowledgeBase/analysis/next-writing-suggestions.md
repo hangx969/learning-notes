@@ -21,7 +21,7 @@ date: 2026-04-16
 **与当前仓库的关系：**
 - [[Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD基础|ArgoCD基础]] — 已有 GitOps 工具
 - [[Docker-Kubernetes/k8s-CICD/Kustomize/k8s配置定制工具-kustomize|k8s配置定制工具-kustomize]] — 配置管理
-- [[Docker-Kubernetes/helm-operator/helmv3-安装与使用|helmv3-安装与使用]] — Helm 管理
+- [[helmv3-安装与使用|helmv3-安装与使用]] — Helm 管理
 
 **能补上的空白：** GitOps 理论 → ArgoCD 实践的衔接层
 
