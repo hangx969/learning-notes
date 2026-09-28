@@ -1,6 +1,6 @@
 # Docker-Kubernetes/ — 容器与编排
 
-169 篇文档，覆盖 Docker 基础到 K8s 生产级全栈。
+168 篇文档，覆盖 Docker 基础到 K8s 生产级全栈。
 
 ## 子目录结构
 
@@ -10,7 +10,7 @@
 | k8s-basic-resources/ | 25 | Pod/Deployment/Service/Ingress/Storage/RBAC/CRD |
 | k8s-configMap-secret/ | 3 | ConfigMap/Secret 基础、跨 Namespace 同步与变更重载 |
 | k8s-installation-management/ | 16 | v1.20→v1.35 安装演进、企业高可用、etcd HA |
-| k8s-monitoring-logging/ | 21 | Prometheus 全栈、EFK/Loki 日志、Jaeger/SkyWalking 链路追踪 |
+| k8s-monitoring-logging/ | 20 | Prometheus 全栈、EFK/Loki 日志、Jaeger/SkyWalking 链路追踪 |
 | k8s-CICD/ | 24 | Jenkins/ArgoCD/GitLab CI/Tekton/GitHub Actions/Pact Broker |
 | k8s-networking-service-mesh/ | 7 | Ingress-Nginx/Calico/Istio 流量管理 |
 | k8s-security-auth/ | 7 | Cert-Manager/External Secrets/Kyverno/OAuth2 Proxy |

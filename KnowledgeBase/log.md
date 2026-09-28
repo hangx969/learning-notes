@@ -2056,3 +2056,9 @@ date: 2026-04-17
 - 将 `k8s监控Prometheus(v2.2.1).md` 与 `k8s监控Prometheus(v2.33.5)+Grafana(v8.4.5).md` 合并为 [[Docker-Kubernetes/k8s-monitoring-logging/Kubernetes原生部署Prometheus与Grafana]]，删除重复旧稿；保留 HA、应用 Exporter、Pushgateway、Grafana 与全部 11 个 GitHub 图片 URL。
 - 更新 `Docker-Kubernetes/index.md` 及 KnowledgeBase 的 Prometheus、Grafana、Observability、tool-map、来源摘要和目录盘点引用。
 - 按官方文档修正原例中的过宽 RBAC、Node Exporter 宿主机采集参数、Prometheus NFS TSDB、Grafana 匿名 Admin 与 PVC 命名空间、Pushgateway 用途和配置热加载说明。
+
+## [2026-09-28] restructure | Grafana v5 与 kube-state-metrics 内容整合
+
+- 将 `Docker-Kubernetes/k8s-monitoring-logging/k8s部署grafana(v5.0.4).md` 的独有内容并入 [[Docker-Kubernetes/k8s-monitoring-logging/Kubernetes原生部署Prometheus与Grafana]]，删除重复的旧版 Grafana Deployment 文档；保留旧版 UI、Dashboard 排障、KSM 监控步骤及 5 个 GitHub 图片 URL。
+- 按 kube-state-metrics 上游文档改正旧版工作负载 RBAC 的 `extensions` API 组、部署版本选择及 Service 注解与本文 Prometheus 发现配置的衔接；更正 `docker load -i` 镜像名参数和旧文对 Grafana 告警能力的过时概括。
+- 更新 Docker-Kubernetes 目录及 KnowledgeBase 的 Grafana、Observability、工具地图、来源摘要和盘点引用。

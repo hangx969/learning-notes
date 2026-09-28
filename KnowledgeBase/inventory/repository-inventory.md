@@ -203,7 +203,7 @@ date: 2026-09-28
 | [[Docker-Kubernetes/k8s-basic-resources/k8s基础-认证-授权-准入|k8s基础-认证-授权-准入]] | 认证-授权-准入 | ✅ | ❌ |
 | [[Docker-Kubernetes/k8s-basic-resources/Python调用k8s-api实现资源管理|Python调用k8s-api实现资源管理]] | Python调用K8s-API | ✅ | ❌ |
 
-### k8s-monitoring-logging/（21 篇；2026-09-28 更新）
+### k8s-monitoring-logging/（20 篇；2026-09-28 更新）
 
 | 文件 | 标题 | FM | 链 |
 |------|------|:--:|:--:|
@@ -220,7 +220,6 @@ date: 2026-09-28
 | [[Docker-Kubernetes/k8s-monitoring-logging/Kubernetes原生部署Prometheus与Grafana|Kubernetes 原生部署 Prometheus 与 Grafana]] | Prometheus+Grafana 原生部署 | ✅ | ✅ |
 | [[Docker-Kubernetes/k8s-monitoring-logging/k8s监控alertmanager(v0.14.0)|k8s监控alertmanager(v0.14.0)]] | Alertmanager | ✅ | ❌ |
 | [[Docker-Kubernetes/k8s-monitoring-logging/k8s部署elasticsearch集群|k8s部署elasticsearch集群]] | Elasticsearch集群 | ✅ | ❌ |
-| [[Docker-Kubernetes/k8s-monitoring-logging/k8s部署grafana(v5.0.4)|k8s部署grafana(v5.0.4)]] | Grafana | ✅ | ❌ |
 | [[Docker-Kubernetes/k8s-monitoring-logging/k8s部署全链路追踪-Skywalking|k8s部署全链路追踪-Skywalking]] | Skywalking | ✅ | ❌ |
 | [[Docker-Kubernetes/k8s-monitoring-logging/二进制部署Prometheus(v2.32.1)联邦集群|二进制部署Prometheus(v2.32.1)联邦集群]] | Prometheus联邦集群 | ✅ | ❌ |
 | [[Docker-Kubernetes/k8s-monitoring-logging/二进制部署efk+logstash+kafka日志收集平台|二进制部署efk+logstash+kafka日志收集平台]] | 二进制EFK | ✅ | ❌ |

@@ -14,7 +14,6 @@ sources:
   - "[[Docker-Kubernetes/k8s-monitoring-logging/Prometheus监控外部k8s集群]]"
   - "[[Docker-Kubernetes/k8s-monitoring-logging/Prometheus监控非云原生应用-主机]]"
   - "[[Docker-Kubernetes/k8s-monitoring-logging/k8s监控alertmanager(v0.14.0)]]"
-  - "[[Docker-Kubernetes/k8s-monitoring-logging/k8s部署grafana(v5.0.4)]]"
   - "[[Docker-Kubernetes/k8s-monitoring-logging/k8s日志管理-采集方案与审计日志]]"
   - "[[Docker-Kubernetes/k8s-monitoring-logging/k8s监控ES(7.2)+Kibana(7.2)+Fluentd(v1.4.2)]]"
   - "[[Docker-Kubernetes/k8s-monitoring-logging/k8s监控EFK+logstash+kafka]]"
@@ -32,7 +31,7 @@ sources:
 
 ## 元信息
 - **原始目录**：`Docker-Kubernetes/k8s-monitoring-logging/`
-- **文档数量**：21 篇
+- **文档数量**：20 篇
 - **领域**：Docker-Kubernetes
 - **摄入日期**：2026-04-17
 
@@ -50,11 +49,12 @@ sources:
   - 高效存储：每个采样数据约 3.5 bytes，300 万时间序列 30s 间隔保留 60 天约消耗 200G
 
 ### [[Docker-Kubernetes/k8s-monitoring-logging/Kubernetes原生部署Prometheus与Grafana|Kubernetes 原生部署 Prometheus 与 Grafana]]
-- 核心内容：合并 Prometheus v2.2.1 与 v2.33.5 + Grafana v8.4.5 的原生部署笔记，保留 HA、Node Exporter、服务发现、应用 Exporter、Pushgateway 和 Grafana 接入。
+- 核心内容：合并 Prometheus v2.2.1、Prometheus v2.33.5 + Grafana v8.4.5、Grafana v5.0.4 三篇原生部署笔记，保留 HA、Node Exporter、服务发现、应用 Exporter、Pushgateway、Grafana v8.4.5/v5.0.4、面板排障与 kube-state-metrics 接入。
 - 关键知识点：
   - 以单一主流程说明 Node Exporter DaemonSet、只读 RBAC、Prometheus 抓取配置、PVC 与 Grafana 数据源。
   - HA、远程存储和联邦承担不同职责；Prometheus 本地 TSDB 不使用 NFS。
   - 旧版应用 Exporter 和 Pushgateway 实验保留为独立场景，主机持续监控仍以拉取模式为主。
+  - Grafana v5.0.4 的数据源与面板排障截图得到保留；KSM 使用按 Kubernetes 版本选择的上游清单部署。
 
 ### [[Docker-Kubernetes/k8s-monitoring-logging/二进制部署prometheus-grafana-nodeexporter|二进制部署Prometheus-Grafana-NodeExporter]]
 - 核心内容：在非 K8s 环境中以二进制方式部署 Prometheus、Grafana 和 Node Exporter 监控栈。
@@ -109,13 +109,6 @@ sources:
   - 关键参数：group_wait（组等待时间）、group_interval（组间隔）、repeat_interval（重复发送间隔）
   - 配置 SMTP 邮件告警：smtp_smarthost、smtp_auth_password（授权码）
   - 使用 ConfigMap 挂载 alertmanager.yml 和 prometheus rules
-
-### [[Docker-Kubernetes/k8s-monitoring-logging/k8s部署grafana(v5.0.4)|K8s部署Grafana v5.0.4]]
-- 核心内容：在 K8s 中以 Deployment 方式部署 Grafana v5.0.4 可视化监控面板。
-- 关键知识点：
-  - 使用 heapster-grafana-amd64 镜像
-  - 配置匿名访问和 Admin 角色以简化实验环境
-  - Grafana 自带告警功能但生产环境推荐使用 Alertmanager
 
 ### [[Docker-Kubernetes/k8s-monitoring-logging/k8s日志管理-采集方案与审计日志|K8s 日志管理：基础机制、采集方案与审计日志]]
 - 核心内容：三篇合并——kubelet 本地日志管理 + 六种采集方案对比 + 审计日志实战。覆盖从日志基础机制到生产选型再到合规审计的完整体系。

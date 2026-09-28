@@ -7,15 +7,18 @@ tags:
   - grafana
   - node-exporter
   - pushgateway
+  - kube-state-metrics
 aliases:
   - K8s监控Prometheus(v2.2.1)
   - K8s监控Prometheus(v2.33.5)+Grafana(v8.4.5)
+  - K8s部署Grafana(v5.0.4)
+  - K8s部署Grafana监控面板
 date: 2026-09-28
 ---
 
 # Kubernetes 原生部署 Prometheus 与 Grafana
 
-本文合并了两份 Kubernetes 原生部署笔记。主流程固定使用 Prometheus `v2.33.5` 与 Grafana `v8.4.5`，保留旧版 `v2.2.1` 的架构、应用监控和 Pushgateway 实验经验。这里的版本用于复现实验，不代表当前生产版本建议。PromQL 语法集中在 [[Docker-Kubernetes/k8s-monitoring-logging/Prometheus基础|Prometheus 基础]]；Operator/Helm 部署见 [[Docker-Kubernetes/k8s-monitoring-logging/helm部署prometheus-stack全家桶|Prometheus Stack]]。
+本文合并了三份 Kubernetes 原生部署与 Grafana 笔记。主流程固定使用 Prometheus `v2.33.5` 与 Grafana `v8.4.5`，保留旧版 `v2.2.1` 的架构、应用监控和 Pushgateway 实验经验，以及 Grafana `v5.0.4` 的界面、面板排障与 kube-state-metrics 实验。这里的版本用于复现实验，不代表当前生产版本建议。PromQL 语法集中在 [[Docker-Kubernetes/k8s-monitoring-logging/Prometheus基础|Prometheus 基础]]；Operator/Helm 部署见 [[Docker-Kubernetes/k8s-monitoring-logging/helm部署prometheus-stack全家桶|Prometheus Stack]]。
 
 ## 1. 监控范围与部署方案
 
@@ -323,7 +326,9 @@ curl -X POST http://127.0.0.1:9090/-/reload
 
 也可以向进程发送 `SIGHUP`。不要通过删除 PVC 或数据目录来触发配置更新。
 
-## 4. 部署 Grafana v8.4.5
+## 4. Grafana 部署与可视化
+
+### 4.1 主流程：Grafana v8.4.5
 
 Grafana 数据目录为 `/var/lib/grafana`。旧笔记同时挂载 `/var`、`/var/lib/grafana`，并给匿名用户 Admin 权限；下面保留单一数据卷和管理员登录。示例 Secret 请在部署时填入实际密码，避免把明文写入 Git。
 
@@ -408,11 +413,76 @@ spec:
 > [!note] 历史部署差异
 > 原 Grafana 实验将 Pod 放在 `kube-system`，采用 `grafana/grafana:8.4.5` 镜像、NodePort 暴露，并示例了两个 NFS PVC；其中 PVC 却写在 `monitor-sa` 命名空间，无法被 `kube-system` 的 Pod 挂载。合并后的示例统一使用 `monitor-sa` 命名空间。
 
-## 5. 监控常见应用
+### 4.2 旧版 Grafana v5.0.4 实验记录
+
+早期实验使用 `k8s.gcr.io/heapster-grafana-amd64:v5.0.4`，在 `kube-system` 创建 `monitoring-grafana` Deployment 和 NodePort Service。它与上面的 Grafana v8.4.5 主流程承担相同的部署与数据源配置，因此无需再维护一份重复的 Deployment YAML。若需要复现旧环境，应先确认镜像来源与 Kubernetes 兼容性；`docker load -i` 的参数应是本地镜像归档文件路径，而非镜像名称。
+
+旧版 UI 中，从 **Create your first data source** 选择 Prometheus，填写 `http://prometheus.monitor-sa.svc.cluster.local:9090`，再点击 **Save & Test**。v5 实验的配置页面如下：
+
+![Grafana v5 Prometheus 数据源](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202401041805114.png)
+
+原实验从 [Grafana Dashboards](https://grafana.com/dashboards?dataSource=prometheus&search=kubernetes) 查找模板，包括 [Node Exporter Full](https://grafana.com/grafana/dashboards/1860-node-exporter-full/)，并导入 `docker_rev1.json` 与 `node_exporter.json`。这些模板可能依赖旧版 Exporter 指标，导入后要逐个验证。
+
+![Grafana v5 Dashboard 模板选择](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202401041802433.png)
+
+旧 Deployment 中的 `GF_AUTH_ANONYMOUS_ENABLED=true` 与 `GF_AUTH_ANONYMOUS_ORG_ROLE=Admin` 会赋予匿名访问者管理权限，合并后的部署示例已删除这组设置。`INFLUXDB_HOST` 也不是连接 Prometheus 数据源所必需的环境变量。
+
+原笔记把 Grafana 告警概括为“不常用”，现在应按告警源选择：Grafana 可评估和路由自身管理的规则，Prometheus 规则也可交给 Alertmanager 处理。两者都不是另一个的简单替代。
+
+### 4.3 面板没有数据时如何定位
+
+1. 在 Grafana 面板的 **Edit** 页面查看 PromQL、变量和时间范围。
+2. 把表达式复制到 Prometheus 查询页执行；如果这里也没有数据，先检查 **Status → Targets**、Exporter 指标和标签。
+3. 如果 Prometheus 有数据而面板没有，对照实际指标名、标签和值类型修改查询。旧 Dashboard 可能使用已经变化的指标名。
+
+![Grafana v5 面板查询编辑入口](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202401041637921.png)
+![Grafana v5 查看面板 PromQL](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202401041638122.png)
+![Grafana v5 面板指标排查](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202401041805995.png)
+
+## 5. kube-state-metrics：采集 Kubernetes 对象状态
+
+kube-state-metrics（KSM）监听 Kubernetes API，为 Pod、Deployment、Node 等**资源对象的状态**生成指标；它不存储指标，也不代替 Node Exporter 或 kubelet/cAdvisor 的资源用量指标。Prometheus 负责抓取并保存其 `/metrics`，Grafana 再用这些时间序列展示副本数、Pod 阶段和 Job 状态。
+
+### 5.1 安装与权限
+
+旧实验采用 `quay.io/coreos/kube-state-metrics:v1.9.0`，手写 ServiceAccount、ClusterRole、ClusterRoleBinding、Deployment 和 Service；其中 Deployment、DaemonSet、ReplicaSet 的 RBAC 规则还放在 `extensions` API 组。当前 Kubernetes 的这些工作负载应使用 `apps` 组。KSM 的镜像和所需 RBAC 也随版本变化，复现时应按 [上游兼容矩阵](https://github.com/kubernetes/kube-state-metrics#compatibility-matrix) 选择版本，并使用该版本的 [standard 清单](https://github.com/kubernetes/kube-state-metrics/tree/main/examples/standard) 作为完整部署基线，而不是直接套用 v1.9.0 的旧清单。
+
+部署关系与原实验一致：
+
+1. ServiceAccount `kube-state-metrics` 供 Deployment 调用 Kubernetes API。
+2. ClusterRole / ClusterRoleBinding 赋予所监控对象的 `list`、`watch` 权限；对应资源组由所选版本的上游清单确定。
+3. Deployment 运行 KSM；Service 将指标端口 `8080` 暴露为集群内端点。上游示例位于 `kube-system` 命名空间。
+
+例如，在已经选好兼容版本并取得其对应清单后：
+
+```sh
+# 在所选 kube-state-metrics 源码版本的根目录执行
+kubectl apply -f examples/standard/
+kubectl -n kube-system get deploy,svc kube-state-metrics
+kubectl -n kube-system port-forward svc/kube-state-metrics 8080:8080
+curl http://127.0.0.1:8080/metrics
+```
+
+本文第 3.2 节的 Prometheus 配置依赖 Service 注解发现；上游 standard Service 默认没有这组注解，因此还需按实际 Service 名称和端口添加：
+
+```sh
+kubectl -n kube-system annotate svc kube-state-metrics \
+  prometheus.io/scrape="true" prometheus.io/port="8080" --overwrite
+```
+
+### 5.2 在 Prometheus 和 Grafana 验证
+
+1. 在 Prometheus **Status → Targets** 查找 kube-state-metrics，并查询 `kube_pod_status_phase`、`kube_deployment_status_replicas_available` 等指标。
+2. Grafana 中导入原实验记录的 `Kubernetes Cluster (Prometheus)-1577674936972.json` 与 `Kubernetes cluster monitoring (via Prometheus) (k8s 1.16)-1577691996738.json`。
+3. 如果模板没有数据，先核对模板所需的指标名、标签与当前 KSM 版本，再按第 4.3 节排查查询。
+
+KSM 也用于 [[Docker-Kubernetes/k8s-monitoring-logging/Prometheus监控外部k8s集群|外部 Kubernetes 集群监控]]；该笔记记录了旧版镜像导入和远端抓取场景。
+
+## 6. 监控常见应用
 
 这些示例保留了原实验的服务、端口、Exporter、Dashboard 与关键命令。Tomcat 8、Redis 4、旧版 MySQL/Nginx Exporter 等版本仅供理解接入方式；生产部署应检查镜像维护状态、认证方式与 Service/Pod 的实际 `/metrics` 地址。Prometheus 的 `kubernetes-service-endpoints` job 只抓取带注解的 Service；外部主机或数据库可使用静态 target。更多 ServiceMonitor/ScrapeConfig 示例见 [[Docker-Kubernetes/k8s-monitoring-logging/Prometheus监控非云原生应用-主机|非云原生应用与主机监控]]。
 
-### 5.1 Tomcat
+### 6.1 Tomcat
 
 原实验使用 [tomcat_exporter](https://github.com/nlighten/tomcat_exporter)，将 `metrics.war`、`simpleclient-0.8.0.jar`、`simpleclient_common-0.8.0.jar`、`simpleclient_hotspot-0.8.0.jar`、`simpleclient_servlet-0.8.0.jar` 和 `tomcat_exporter_client-0.0.12.jar` 加入 Tomcat 镜像：
 
@@ -475,7 +545,7 @@ spec:
 
 如果用上文的 Service 注解发现规则，还需根据此 Exporter 实际暴露路径设置 `prometheus.io/path`。先用 `curl` 验证目标端点返回 Prometheus 文本格式，再检查 Targets。原笔记仅给出了 scrape 注解，未确认路径；不能仅凭注解认为采集成功。
 
-### 5.2 Redis
+### 6.2 Redis
 
 原实验把 Redis 和 `oliver006/redis_exporter` 放进同一 Pod，Redis 监听 `6379`，Exporter 监听 `9121`。Service 同时开放两个端口，其中 metrics 端口加注解供 Prometheus 发现：
 
@@ -531,7 +601,7 @@ spec:
 
 原示例使用 `redis:4` 与 `oliver006/redis_exporter:latest`，并在 Grafana 导入 `Redis Cluster-1571393212519.json`。实用时固定 Exporter 版本并确认其 Redis 连接地址；同 Pod 场景通常可通过 localhost 连接。原笔记参考：[Redis 监控实验](https://note.youdao.com/ynoteshare/index.html?id=b9f87092ce8859cd583967677ea332df&type=note)。
 
-### 5.3 MySQL
+### 6.3 MySQL
 
 原实验以 `mysqld_exporter-0.10.0.linux-amd64` 监控本机 MySQL，Exporter 端口为 `9104`。下载与目标平台匹配的归档后，按原实验步骤安装二进制：
 
@@ -570,7 +640,7 @@ curl http://127.0.0.1:9104/metrics
 
 原实验在 Grafana 导入 `mysql-overview_rev5.json`；修改配置后按第 3.4 节热加载，不必删除 Deployment。Kubernetes 内的 MySQL Exporter + ServiceMonitor 示例也见前述“非云原生应用与主机监控”。
 
-### 5.4 Nginx VTS
+### 6.4 Nginx VTS
 
 原实验为 Nginx `1.15.7` 编译 `nginx-module-vts`，再用 `nginx-vts-exporter-0.5` 把模块提供的 JSON 指标转换为 Prometheus 格式：
 
@@ -610,7 +680,7 @@ Exporter 监听 `9913`；在 `scrape_configs` 中增加：
 
 原实验的 Grafana 模板为 `nginx-vts-stats_rev2.json`。对外暴露 `/status` 前应设置访问限制。
 
-### 5.5 MongoDB
+### 6.5 MongoDB
 
 原实验以容器运行 MongoDB，使用 `percona/mongodb_exporter:0.34.0` 暴露 `9104`，宿主机映射为 `30056`。原命令先拉取 `eses/mongodb_exporter`，实际启动却使用 Percona 镜像；这里统一为运行时使用的镜像。数据库账号需具备 Exporter 要求的读取权限，并启用相应认证；仅创建 `userAdminAnyDatabase` 用户不能视为监控权限已经配置完成。按 [Percona Exporter 文档](https://github.com/percona/mongodb_exporter) 为专用用户授予 `clusterMonitor@admin` 和 `read@local`，例如在已认证的 `mongosh` 会话中执行：
 
@@ -644,11 +714,11 @@ docker run -d --name mongodb_exporter -p 30056:9104 \
 
 原实验中的 `docker exec` 容器 ID 和 `admin111111` 明文口令属于一次性环境数据，不能作为可复用部署参数。
 
-## 6. Pushgateway：短生命周期批处理指标
+## 7. Pushgateway：短生命周期批处理指标
 
 Pushgateway 接收任务主动推送的指标，**Prometheus 仍定时从 Pushgateway 拉取**。官方建议主要用于无法被抓取的、与具体机器实例无关的短生命周期批处理任务。它不会自动清理已推送的序列，也无法替代单个实例的 `up` 健康检查；不要把它当作普通主机/服务的通用防火墙穿透方案。
 
-### 6.1 启动与抓取
+### 7.1 启动与抓取
 
 ```sh
 docker run -d --name pushgateway -p 9091:9091 prom/pushgateway:VERSION
@@ -670,7 +740,7 @@ curl http://192.168.40.181:9091/metrics
 ![Pushgateway 样本标签](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202401051357493.png)
 ![Prometheus 抓取 Pushgateway 的标签](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202401051358479.png)
 
-### 6.2 推送与清理
+### 7.2 推送与清理
 
 以下保留原实验的 `test_job` 示例。任务结束或标签维度不再使用时，要负责清理过期分组：
 
@@ -692,7 +762,7 @@ curl -X DELETE \
 
 旧笔记还用 `free -m`、`awk '{print $3/$2*100}'`、`crontab */1 * * * *` 每分钟推送主机内存百分比。这保留为历史实验思路，但持续运行的主机应通过 Node Exporter 抓取；与机器绑定的短任务可考虑 Node Exporter textfile collector。Pushgateway 按 `instance` 累积指标会形成陈旧序列，并使 `up` 仅反映 Gateway 自身。
 
-## 7. 验证清单
+## 8. 验证清单
 
 1. `kubectl -n monitor-sa get pods,pvc,svc`：确认 Node Exporter、Prometheus、Grafana 及 PVC 状态。
 2. Prometheus **Status → Targets**：检查 Node Exporter、cAdvisor、API Server 和带注解的 Service；从错误提示区分 RBAC、TLS、网络、端口和指标路径问题。
@@ -708,3 +778,5 @@ curl -X DELETE \
 - [Node Exporter 容器部署说明](https://github.com/prometheus/node_exporter/blob/master/README.md)
 - [Kubernetes RBAC](https://kubernetes.io/docs/reference/access-authn-authz/rbac/)
 - [Grafana 匿名访问的安全影响](https://grafana.com/docs/grafana/latest/setup-grafana/configure-security/)
+- [kube-state-metrics 安装与版本兼容性](https://github.com/kubernetes/kube-state-metrics)
+- [Grafana 告警规则与通知](https://grafana.com/docs/grafana/latest/alerting/)
