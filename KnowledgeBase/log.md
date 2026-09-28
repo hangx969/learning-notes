@@ -2050,3 +2050,9 @@ date: 2026-04-17
 - 将 ConfigMap/Secret 基础、Config Syncer 和 Reloader 三篇文章归入 `Docker-Kubernetes/k8s-configMap-secret/`。
 - 将原 `Docker-Kubernetes/harbor/` 的两篇文章与 Dragonfly Helm 部署文章归入 `Docker-Kubernetes/k8s-image-management/`；Pact Broker 归入 `Docker-Kubernetes/k8s-CICD/`。
 - 更新 Docker-Kubernetes 目录、知识库来源摘要、专题地图、实体页和盘点中的现行路径引用。
+
+## [2026-09-28] restructure | Prometheus 原生部署文档合并
+
+- 将 `k8s监控Prometheus(v2.2.1).md` 与 `k8s监控Prometheus(v2.33.5)+Grafana(v8.4.5).md` 合并为 [[Docker-Kubernetes/k8s-monitoring-logging/Kubernetes原生部署Prometheus与Grafana]]，删除重复旧稿；保留 HA、应用 Exporter、Pushgateway、Grafana 与全部 11 个 GitHub 图片 URL。
+- 更新 `Docker-Kubernetes/index.md` 及 KnowledgeBase 的 Prometheus、Grafana、Observability、tool-map、来源摘要和目录盘点引用。
+- 按官方文档修正原例中的过宽 RBAC、Node Exporter 宿主机采集参数、Prometheus NFS TSDB、Grafana 匿名 Admin 与 PVC 命名空间、Pushgateway 用途和配置热加载说明。

@@ -188,7 +188,7 @@ date: 2026-09-15
 - [[Docker-Kubernetes/k8s-monitoring-logging/Prometheus监控k8s系统组件|Prometheus监控k8s系统组件]]
 - [[Docker-Kubernetes/k8s-monitoring-logging/Prometheus监控外部k8s集群|Prometheus监控外部k8s集群]]
 - [[Docker-Kubernetes/k8s-monitoring-logging/Prometheus监控非云原生应用-主机|Prometheus监控非云原生应用-主机]]
-- [[Docker-Kubernetes/k8s-monitoring-logging/k8s监控Prometheus(v2.33.5)+Grafana(v8.4.5)|k8s监控Prometheus(v2.33.5)+Grafana(v8.4.5)]]
+- [[Docker-Kubernetes/k8s-monitoring-logging/Kubernetes原生部署Prometheus与Grafana|Kubernetes 原生部署 Prometheus 与 Grafana]]
 - [[Docker-Kubernetes/k8s-monitoring-logging/二进制部署Prometheus(v2.32.1)联邦集群|二进制部署Prometheus(v2.32.1)联邦集群]]
 - [[Docker-Kubernetes/k8s-monitoring-logging/二进制部署prometheus-grafana-nodeexporter|二进制部署prometheus-grafana-nodeexporter]]
 - [[Docker-Kubernetes/docker/docker部署prometheus-grafana-cAdvisior监控|docker部署prometheus-grafana-cAdvisior监控]]
@@ -397,3 +397,6 @@ date: 2026-09-15
 - [[GPU-DeepLearning/NVIDIA-GPU-开启persistent mode|NVIDIA-GPU-开启persistent mode]]
 - [[Docker-Kubernetes/docker/docker配置NVIDIA GPU|docker配置NVIDIA GPU]]
 - [[Docker-Kubernetes/k8s-ai-gpu/k8s配置NVIDIA GPU|k8s配置NVIDIA GPU]]
+
+
+---

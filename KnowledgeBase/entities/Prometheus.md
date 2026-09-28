@@ -66,8 +66,7 @@ Prometheus 是开源的系统监控与告警工具，采用拉取（pull）模�
 - [[Docker-Kubernetes/k8s-monitoring-logging/Prometheus监控k8s系统组件|Prometheus监控k8s系统组件]]
 - [[Docker-Kubernetes/k8s-monitoring-logging/Prometheus监控外部k8s集群|Prometheus监控外部k8s集群]]
 - [[Docker-Kubernetes/k8s-monitoring-logging/Prometheus监控非云原生应用-主机|Prometheus监控非云原生应用-主机]]
-- [[Docker-Kubernetes/k8s-monitoring-logging/k8s监控Prometheus(v2.2.1)|k8s监控Prometheus(v2.2.1)]]
-- [[Docker-Kubernetes/k8s-monitoring-logging/k8s监控Prometheus(v2.33.5)+Grafana(v8.4.5)|k8s监控Prometheus(v2.33.5)+Grafana(v8.4.5)]]
+- [[Docker-Kubernetes/k8s-monitoring-logging/Kubernetes原生部署Prometheus与Grafana|Kubernetes 原生部署 Prometheus 与 Grafana]]
 - [[Docker-Kubernetes/k8s-monitoring-logging/k8s监控alertmanager(v0.14.0)|k8s监控alertmanager(v0.14.0)]]
 - [[Docker-Kubernetes/k8s-monitoring-logging/二进制部署Prometheus(v2.32.1)联邦集群|二进制部署Prometheus(v2.32.1)联邦集群]]
 - [[Docker-Kubernetes/k8s-monitoring-logging/二进制部署prometheus-grafana-nodeexporter|二进制部署prometheus-grafana-nodeexporter]]
@@ -87,3 +86,6 @@ Prometheus 是开源的系统监控与告警工具，采用拉取（pull）模�
 - Prometheus 长期存储方案（Thanos / Mimir）
 - Prometheus Operator 与 ServiceMonitor 深入
 - PromQL 高级查询与告警规则设计
+
+
+---

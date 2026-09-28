@@ -99,7 +99,7 @@ spec:
 
 ```sh
 kubectl -n monitor-sa get ds node-exporter
-curl http://<node-internal-ip>:9100/metrics
+curl http://192.0.2.10:9100/metrics
 ```
 
 > [!note] 版本差异
@@ -359,6 +359,8 @@ spec:
       labels:
         app: grafana
     spec:
+      securityContext:
+        fsGroup: 472
       containers:
         - name: grafana
           image: grafana/grafana:8.4.5
@@ -531,7 +533,14 @@ spec:
 
 ### 5.3 MySQL
 
-原实验以 `mysqld_exporter-0.10.0.linux-amd64` 监控本机 MySQL，Exporter 端口为 `9104`。创建专用账号并赋予采集所需权限，密码应通过安全方式注入，以下仅展示配置形状：
+原实验以 `mysqld_exporter-0.10.0.linux-amd64` 监控本机 MySQL，Exporter 端口为 `9104`。下载与目标平台匹配的归档后，按原实验步骤安装二进制：
+
+```sh
+tar -xvf mysqld_exporter-0.10.0.linux-amd64.tar.gz
+install -m 0755 mysqld_exporter-0.10.0.linux-amd64/mysqld_exporter /usr/local/bin/mysqld_exporter
+```
+
+创建专用账号并赋予采集所需权限，密码应通过安全方式注入，以下仅展示配置形状：
 
 ```sql
 CREATE USER 'mysql_exporter'@'localhost' IDENTIFIED BY '<password>';
@@ -566,6 +575,16 @@ curl http://127.0.0.1:9104/metrics
 原实验为 Nginx `1.15.7` 编译 `nginx-module-vts`，再用 `nginx-vts-exporter-0.5` 把模块提供的 JSON 指标转换为 Prometheus 格式：
 
 1. 解压模块并在 Nginx 编译参数中加入 `--add-module=/usr/local/nginx-module-vts-master`；原实验还启用 `http_ssl`、`http_stub_status`、`http_gzip_static` 等模块。
+
+   ```sh
+   unzip nginx-module-vts-master.zip
+   mv nginx-module-vts-master /usr/local/nginx-module-vts-master
+   tar zxvf nginx-1.15.7.tar.gz
+   cd nginx-1.15.7
+   ./configure --prefix=/usr/local/nginx --with-http_gzip_static_module --with-http_stub_status_module --with-http_ssl_module --with-pcre --with-file-aio --with-http_realip_module --add-module=/usr/local/nginx-module-vts-master
+   make && make install
+   ```
+
 2. 在 Nginx 的 `http` 块中配置 `vhost_traffic_status_zone;`，在 `server` 块中配置以下位置。Nginx 配置文件使用 `#` 注释，不能照搬旧笔记里的 `//`。
 3. 运行 `nginx -t`，确认 `/status/format/json` 可访问，再启动 Exporter。
 
@@ -593,10 +612,22 @@ Exporter 监听 `9913`；在 `scrape_configs` 中增加：
 
 ### 5.5 MongoDB
 
-原实验以容器运行 MongoDB，使用 `percona/mongodb_exporter:0.34.0` 暴露 `9104`，宿主机映射为 `30056`。原命令先拉取 `eses/mongodb_exporter`，实际启动却使用 Percona 镜像；这里统一为运行时使用的镜像。数据库账号需具备 Exporter 要求的读取权限，并启用相应认证；仅创建 `userAdminAnyDatabase` 用户不能视为监控权限已经配置完成。
+原实验以容器运行 MongoDB，使用 `percona/mongodb_exporter:0.34.0` 暴露 `9104`，宿主机映射为 `30056`。原命令先拉取 `eses/mongodb_exporter`，实际启动却使用 Percona 镜像；这里统一为运行时使用的镜像。数据库账号需具备 Exporter 要求的读取权限，并启用相应认证；仅创建 `userAdminAnyDatabase` 用户不能视为监控权限已经配置完成。按 [Percona Exporter 文档](https://github.com/percona/mongodb_exporter) 为专用用户授予 `clusterMonitor@admin` 和 `read@local`，例如在已认证的 `mongosh` 会话中执行：
+
+```javascript
+use admin
+db.createUser({
+  user: "mongodb_exporter",
+  pwd: "<password>",
+  roles: [
+    { role: "clusterMonitor", db: "admin" },
+    { role: "read", db: "local" }
+  ]
+})
+```
 
 ```sh
-docker run -d --name mongodb -p 27017:27017 -v /data/db:/data/db mongo:<tested-version>
+docker run -d --name mongodb -p 27017:27017 -v /data/db:/data/db mongo:7.0
 docker run -d --name mongodb_exporter -p 30056:9104 \
   percona/mongodb_exporter:0.34.0 \
   --mongodb.uri='mongodb://<exporter-user>:<password>@192.168.40.180:27017/admin'
@@ -620,7 +651,7 @@ Pushgateway 接收任务主动推送的指标，**Prometheus 仍定时从 Pushga
 ### 6.1 启动与抓取
 
 ```sh
-docker run -d --name pushgateway -p 9091:9091 prom/pushgateway:<tested-version>
+docker run -d --name pushgateway -p 9091:9091 prom/pushgateway:VERSION
 curl http://192.168.40.181:9091/metrics
 ```
 

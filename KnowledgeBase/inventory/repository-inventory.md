@@ -203,7 +203,7 @@ date: 2026-09-28
 | [[Docker-Kubernetes/k8s-basic-resources/k8s基础-认证-授权-准入|k8s基础-认证-授权-准入]] | 认证-授权-准入 | ✅ | ❌ |
 | [[Docker-Kubernetes/k8s-basic-resources/Python调用k8s-api实现资源管理|Python调用k8s-api实现资源管理]] | Python调用K8s-API | ✅ | ❌ |
 
-### k8s-monitoring-logging/（20 篇）
+### k8s-monitoring-logging/（21 篇；2026-09-28 更新）
 
 | 文件 | 标题 | FM | 链 |
 |------|------|:--:|:--:|
@@ -214,11 +214,10 @@ date: 2026-09-28
 | [[Docker-Kubernetes/k8s-monitoring-logging/Prometheus监控非云原生应用-主机|Prometheus监控非云原生应用-主机]] | 监控非云原生应用 | ✅ | ❌ |
 | [[Docker-Kubernetes/k8s-monitoring-logging/helm部署Loki-promtail-tempo-grafanaAgent全家桶|helm部署Loki-promtail-tempo-grafanaAgent全家桶]] | Loki+Tempo全家桶 | ✅ | ❌ |
 | [[Docker-Kubernetes/k8s-monitoring-logging/helm部署jaeger|helm部署jaeger]] | Jaeger | ✅ | ❌ |
-| [[Docker-Kubernetes/k8s-monitoring-logging/k8s日志管理|k8s日志管理]] | 日志管理 | ✅ | ❌ |
+| [[Docker-Kubernetes/k8s-monitoring-logging/k8s日志管理-采集方案与审计日志|K8s 日志管理]] | 日志管理 | ✅ | ❌ |
 | [[Docker-Kubernetes/k8s-monitoring-logging/k8s监控EFK+logstash+kafka|k8s监控EFK+logstash+kafka]] | EFK+Logstash+Kafka | ✅ | ❌ |
 | [[Docker-Kubernetes/k8s-monitoring-logging/k8s监控ES(7.2)+Kibana(7.2)+Fluentd(v1.4.2)|k8s监控ES(7.2)+Kibana(7.2)+Fluentd(v1.4.2)]] | ES+Kibana+Fluentd | ✅ | ❌ |
-| [[Docker-Kubernetes/k8s-monitoring-logging/k8s监控Prometheus(v2.2.1)|k8s监控Prometheus(v2.2.1)]] | Prometheus(v2.2.1) | ✅ | ❌ |
-| [[Docker-Kubernetes/k8s-monitoring-logging/k8s监控Prometheus(v2.33.5)+Grafana(v8.4.5)|k8s监控Prometheus(v2.33.5)+Grafana(v8.4.5)]] | Prometheus+Grafana | ✅ | ❌ |
+| [[Docker-Kubernetes/k8s-monitoring-logging/Kubernetes原生部署Prometheus与Grafana|Kubernetes 原生部署 Prometheus 与 Grafana]] | Prometheus+Grafana 原生部署 | ✅ | ✅ |
 | [[Docker-Kubernetes/k8s-monitoring-logging/k8s监控alertmanager(v0.14.0)|k8s监控alertmanager(v0.14.0)]] | Alertmanager | ✅ | ❌ |
 | [[Docker-Kubernetes/k8s-monitoring-logging/k8s部署elasticsearch集群|k8s部署elasticsearch集群]] | Elasticsearch集群 | ✅ | ❌ |
 | [[Docker-Kubernetes/k8s-monitoring-logging/k8s部署grafana(v5.0.4)|k8s部署grafana(v5.0.4)]] | Grafana | ✅ | ❌ |
@@ -227,6 +226,8 @@ date: 2026-09-28
 | [[Docker-Kubernetes/k8s-monitoring-logging/二进制部署efk+logstash+kafka日志收集平台|二进制部署efk+logstash+kafka日志收集平台]] | 二进制EFK | ✅ | ❌ |
 | [[Docker-Kubernetes/k8s-monitoring-logging/二进制部署prometheus-grafana-nodeexporter|二进制部署prometheus-grafana-nodeexporter]] | 二进制Prometheus | ✅ | ❌ |
 | [[Docker-Kubernetes/k8s-monitoring-logging/基于helm+operator部署ECK日志收集平台|基于helm+operator部署ECK日志收集平台]] | ECK日志平台 | ✅ | ❌ |
+| [[Docker-Kubernetes/k8s-monitoring-logging/K8s全面巡检脚本-生成HTML健康报告|K8s 全面巡检脚本]] | 集群健康报告 | ✅ | ❌ |
+| [[Docker-Kubernetes/k8s-monitoring-logging/OpenTelemetry实战-统一Traces-Metrics-Logs|OpenTelemetry 实战]] | Traces/Metrics/Logs | ✅ | ✅ |
 
 ### k8s-CICD/（20 篇）
 
@@ -456,3 +457,6 @@ date: 2026-09-28
 | Git | 2 | [[Git/git-learning|git-learning]]、[[Git/Picgo-github图床配置|Picgo-github图床配置]] |
 | SoftwareTesting | 2 | [[SoftwareTesting/软件工程基础|软件工程基础]]、[[SoftwareTesting/软件测试直播课笔记|软件测试直播课笔记]] |
 | C++ | 1 | [[C++/C++LearningNotes|C++LearningNotes]] |
+
+
+---

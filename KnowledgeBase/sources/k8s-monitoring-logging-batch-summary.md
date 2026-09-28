@@ -3,11 +3,10 @@ title: k8s-monitoring-logging 来源批量摘要
 tags:
   - knowledgebase/source
   - docker-kubernetes/monitoring-logging
-date: 2026-04-17
+date: 2026-09-28
 sources:
   - "[[Docker-Kubernetes/k8s-monitoring-logging/Prometheus基础]]"
-  - "[[Docker-Kubernetes/k8s-monitoring-logging/k8s监控Prometheus(v2.2.1)]]"
-  - "[[Docker-Kubernetes/k8s-monitoring-logging/k8s监控Prometheus(v2.33.5)+Grafana(v8.4.5)]]"
+  - "[[Docker-Kubernetes/k8s-monitoring-logging/Kubernetes原生部署Prometheus与Grafana]]"
   - "[[Docker-Kubernetes/k8s-monitoring-logging/二进制部署prometheus-grafana-nodeexporter]]"
   - "[[Docker-Kubernetes/k8s-monitoring-logging/二进制部署Prometheus(v2.32.1)联邦集群]]"
   - "[[Docker-Kubernetes/k8s-monitoring-logging/helm部署prometheus-stack全家桶]]"
@@ -33,7 +32,7 @@ sources:
 
 ## 元信息
 - **原始目录**：`Docker-Kubernetes/k8s-monitoring-logging/`
-- **文档数量**：22 篇
+- **文档数量**：21 篇
 - **领域**：Docker-Kubernetes
 - **摄入日期**：2026-04-17
 
@@ -50,19 +49,12 @@ sources:
   - 拉取（Pull）模式为主，支持 Pushgateway 推送短生命周期 job 数据
   - 高效存储：每个采样数据约 3.5 bytes，300 万时间序列 30s 间隔保留 60 天约消耗 200G
 
-### [[Docker-Kubernetes/k8s-monitoring-logging/k8s监控Prometheus(v2.2.1)|K8s部署Prometheus v2.2.1]]
-- 核心内容：在 K8s 中部署 Prometheus v2.2.1，包含 node-exporter、Prometheus Server 和高可用方案介绍。
+### [[Docker-Kubernetes/k8s-monitoring-logging/Kubernetes原生部署Prometheus与Grafana|Kubernetes 原生部署 Prometheus 与 Grafana]]
+- 核心内容：合并 Prometheus v2.2.1 与 v2.33.5 + Grafana v8.4.5 的原生部署笔记，保留 HA、Node Exporter、服务发现、应用 Exporter、Pushgateway 和 Grafana 接入。
 - 关键知识点：
-  - Prometheus 三种高可用部署模式：基本 HA、HA+远程存储、HA+远程存储+联邦集群
-  - K8s 监控体系五个层面：节点状态、节点资源、容器监控、应用监控、K8s 组件监控
-  - node-exporter 以 DaemonSet 方式部署，使用 hostNetwork 共享宿主机网络
-
-### [[Docker-Kubernetes/k8s-monitoring-logging/k8s监控Prometheus(v2.33.5)+Grafana(v8.4.5)|K8s部署Prometheus v2.33.5+Grafana v8.4.5]]
-- 核心内容：在 K8s 中部署较新版本的 Prometheus v2.33.5 和 Grafana v8.4.5，包含详细的 DaemonSet 配置。
-- 关键知识点：
-  - node-exporter 使用 hostPID、hostIPC、hostNetwork 获取宿主机完整信息
-  - 容器开启 privileged 特权模式以访问 /proc、/sys 等系统目录
-  - 配置容忍 control-plane 污点以在控制节点上也部署 node-exporter
+  - 以单一主流程说明 Node Exporter DaemonSet、只读 RBAC、Prometheus 抓取配置、PVC 与 Grafana 数据源。
+  - HA、远程存储和联邦承担不同职责；Prometheus 本地 TSDB 不使用 NFS。
+  - 旧版应用 Exporter 和 Pushgateway 实验保留为独立场景，主机持续监控仍以拉取模式为主。
 
 ### [[Docker-Kubernetes/k8s-monitoring-logging/二进制部署prometheus-grafana-nodeexporter|二进制部署Prometheus-Grafana-NodeExporter]]
 - 核心内容：在非 K8s 环境中以二进制方式部署 Prometheus、Grafana 和 Node Exporter 监控栈。
@@ -253,3 +245,6 @@ sources:
 - **Kafka 作为日志缓冲层**：多篇文档反复出现 Kafka 作为日志管道缓冲层的架构模式，解决高吞吐场景下的日志延迟问题。
 - **可观测性三大支柱覆盖**：监控（Prometheus+Grafana）、日志（EFK/Loki）、链路追踪（SkyWalking/Jaeger）构成完整的可观测性体系，多篇文档之间存在紧密的架构关联。
 - **Operator 模式普及**：从手动部署 YAML 到使用 Prometheus Operator（ServiceMonitor CRD）和 ECK Operator，声明式运维模式在监控日志领域全面普及。
+
+
+---
