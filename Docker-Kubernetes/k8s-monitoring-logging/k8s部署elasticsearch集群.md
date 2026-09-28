@@ -9,11 +9,14 @@ aliases:
   - K8s部署ES集群
 ---
 
-# ES
+# K8s部署Elasticsearch集群
+
+
+## ES
 
 - Elasticsearch是一个分布式可扩展的实时搜索和分析引擎,有restful接口,设计用于云计算中,能够达到实时搜索,稳定,可靠,快速,安装使用方便。
 
-# 创建nfs存储类
+## 创建nfs存储类
 
 - 安装nfs见CKA-storage-nfs章节
 
@@ -29,7 +32,7 @@ provisioner: example.com/nfs
 EOF
 ```
 
-# 部署ES
+## 部署ES
 
 - 准备镜像
 

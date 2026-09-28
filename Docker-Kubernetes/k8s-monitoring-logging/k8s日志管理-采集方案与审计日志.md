@@ -215,11 +215,13 @@ Fluent Bit ConfigMap 核心配置：
 ~~~
 
 **优点**：
+
 - 资源开销低，每节点一个 Agent，对业务 Pod 零侵入
 - Fluent Bit 单核可处理 **200MB/s** 以上的日志流
 - 自动附加 K8s 元数据（Pod、Namespace、Label）
 
 **缺点**：
+
 - 只能采集 stdout/stderr，容器内文件日志无法采集
 - 节点故障时，Agent 随之宕机，存在采集丢失风险
 
@@ -504,17 +506,20 @@ metadata:
 ### 6.2 生产环境推荐架构
 
 **中小规模集群（< 100 节点）：PLG Stack**
+
 - 采集层：Fluent Bit DaemonSet（< 50MB/节点）
 - 存储层：Grafana Loki（成本比 ES 低 80%）
 - 展示层：Grafana
 
 **大规模集群（> 100 节点）：EFK + Kafka 缓冲**
+
 - 采集层：Fluent Bit DaemonSet
 - 缓冲层：Kafka（削峰）
 - 存储层：Elasticsearch
 - 展示层：Kibana
 
 **面向未来：OpenTelemetry + 多后端**
+
 - 采集层：OTel Collector DaemonSet
 - 路由层：OTel Collector Gateway
 - 存储层：Loki（日志）+ Prometheus（指标）+ Tempo（链路）

@@ -7,23 +7,26 @@ aliases:
   - k8s临时容器
 ---
 
-# 临时容器
+# K8s基础-临时容器Ephemeral
+
+
+## 临时容器
 
 在Kubernetes中，Ephemeral容器（临时容器）是一种特殊类型的容器，它是为了在正在运行的Pod中临时执行诊断和调试操作而设计的。临时容器可以在Pod的生命周期中的任何时刻被添加，而无需重新启动Pod或改变现有容器的定义。
 
-## 特点
+### 特点
 
 1. **动态添加**：Ephemeral容器可以动态添加到已经运行的Pod中，这可以让运维人员或开发人员在不干扰Pod正常运行的情况下，进行故障排查或性能分析。
 2. **不包含在Pod规范中**：临时容器不像Pod中的其他常规容器，不会在Pod的初始规范中定义。它们是临时添加的，通常在需要时通过kubectl工具注入。临时容器没有端口配置，因此像 ports，livenessProbe，readinessProbe 这样的字段是不允许的。Pod 资源分配是不可变的，因此 resources 配置是不允许的。临时容器是使用 API 中的一种特殊的 ephemeralcontainers 处理器进行创建的， 而不是直接添加到 pod.spec 段，因此无法使用 kubectl edit 来添加一个临时容器，也无法通过yaml文件创建临时容器。
 3. **隔离与安全**：尽管临时容器可以访问Pod的所有资源和网络，但它们的运行和存在不会对Pod的安全性配置或其它运行容器产生影响。
 
-## 使用场景
+### 使用场景
 
 - **调试**：如果一个Pod出现问题，可以kubectl动态添加一个临时容器来执行调试工具，而不必修改原有容器的设置。当由于容器崩溃，或主容器镜像中不包含调试程序（比如shell）而导致 kubectl exec进不去主容器时，临时容器对于交互式故障排查很有用。
 - **监控和诊断**：加入一个临时容器来收集运行信息，进行性能监控或日志收集。
 - **安全审查**：动态注入临时容器来执行安全扫描或审计任务。
 
-## 示例
+### 示例
 
 假设你想为一个正在运行的Pod添加一个临时容器进行网络诊断。可以使用以下kubectl命令来实现：
 
@@ -38,7 +41,7 @@ kubectl debug [POD_NAME] -it --image=busybox --target=[POD_NAME]
 > - 教程示例：[调试运行中的Pod](https://kubernetes.io/docs/tasks/debug/debug-application/debug-running-pod/#ephemeral-container)
 > - 临时容器在1.25版本开始变成stable
 
-# 开启临时容器功能
+## 开启临时容器功能
 
 - 修改kube-apiserver配置
 
@@ -110,7 +113,7 @@ kubectl get pods -n kube-system #检查pod正常工作
 > [!warning] 注意
 > 重启apiserver会影响业务，最好集群创建完就配置上；或者配置高可用master节点
 
-# 使用临时容器
+## 使用临时容器
 
 - 创建主pod
 
@@ -206,7 +209,7 @@ kubectl attach -it -c debugger tomcat-test
 >
 > - k8s官网上都没有给出这种上传json的方法，暂时不搞这种方法了。
 
-## 示例-AKS pod添加azcli debug容器
+### 示例-AKS pod添加azcli debug容器
 
 - 有时AKS中的pod与azure交互出现问题需要排查，我们可以在pod上attach一个azcli的debug容器
 
@@ -220,7 +223,7 @@ z acr import --name "<acr name>.azurecr.cn" --source mcr.microsoft.com/azure-cli
 kubectl debug -it <pod name> -n <ns name> --image=<acr name>/azure-cli:2.66.0-cbl-mariner2.0 --target=<container name>
 ~~~
 
-# 问题
+## 问题
 
 - 目前临时容器存在一个bug：
 

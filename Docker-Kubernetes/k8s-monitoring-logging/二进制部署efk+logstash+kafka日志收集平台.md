@@ -13,12 +13,15 @@ aliases:
   - EFK+Logstash+Kafka日志平台
 ---
 
-# 流程设计
+# 二进制部署EFK+Logstash+Kafka日志收集平台
+
+
+## 流程设计
 
 - Filebeat采集日志 --> kafka topic保存日志 --> logstash从kafka读取日志、格式转换 --> elasticsearch --> kibana
 - filebeat采集日志相比logstash更轻量化,但是格式转换不方便；所以利用logstash格式转换。kafka用作缓冲,当生产中日志量大时,加缓冲可以方式日志延迟等问题。
 
-# zookeeper
+## zookeeper
 
 - ZooKeeper是Apache的一个开源项目,它是一个为分布式应用提供一致性服务的中间件,可以用于构建分布式应用。它提供的功能包括:配置管理、分布式同步、命名服务和组服务等。zookeeper就是动物园管理员,他是用来管hadoop、Hive、pig、kafka消息系统的管理员, Apache Hbase 和 Apache Solr 的分布式集群都用到了 zookeeper；Zookeeper是一个分布式的、开源的程序协调服务,是 hadoop 项目下的一个子项目。
 - 每个ZNode都可以存储数据,并且可以有子节点。ZooKeeper的节点主要用于存储和管理分布式系统中的元数据信息,例如配置信息、系统状态等。
@@ -42,21 +45,22 @@ aliases:
 - Zookeeper的选举机制
   - 过半机制
   - 安装的台数:奇数台(否则无法过半机制)
+
 - 一般情况下10台服务器需安装ZK3台；20台=>5台；50台=>7台；100台=>11台。多台好处在于可靠性高,但是过的话会导致通信延时长
 - zookeeper角色
   - leader:负责发起选举和决议的,更新系统状态
   - follower:接收客户端的请求,给客户端返回结果,在选主的过程参与投票
   - observe:接收客户端的连接,同步leader状态,不参与选主
 
-# 搭建zookeeper集群
+## 搭建zookeeper集群
 
-## 环境准备
+### 环境准备
 
 - zoo1: 172.16.183.190
 - zoo2: 172.16.183.191
 - zoo3: 172.16.183.192
 
-## 准备安装包和配置文件
+### 准备安装包和配置文件
 
 ~~~sh
 #3台机器上,解压安装包,重命名
@@ -77,7 +81,7 @@ server.2=172.16.183.191:2188:3888
 server.3=172.16.183.192:2188:3888
 ~~~
 
-## 启动zookeeper
+### 启动zookeeper
 
 ~~~sh
 #3台上
@@ -89,7 +93,7 @@ nohup ./zkServer.sh start &  #要按顺序启动1-2-3
 cat nohup.out #查看启动结果
 ~~~
 
-## 测试zookeeper
+### 测试zookeeper
 
 ~~~sh
 #测试zookeeper:
@@ -106,9 +110,9 @@ cd /opt/zookeeper/bin/
 #"hanxux"
 ~~~
 
-# 搭建kafka集群
+## 搭建kafka集群
 
-## kafka
+### kafka
 
 1、kafka介绍:Kafka 是一种高吞吐量的分布式发布订阅消息系统。主要用于实时数据流的处理和分析。它可以处理大量的实时数据,并提供高吞吐量、可扩展性和容错性。
 
@@ -130,7 +134,7 @@ cd /opt/zookeeper/bin/
 >
 > 消费者的偏移量是消费者消费消息的基础,通过维护每个消费者的偏移量,Kafka可以支持消息的重复消费,也就是说,消费者可以随时将偏移量回退到之前的位置,重新消费已经消费过的消息。同时,通过正确地管理消费者的偏移量,Kafka还可以实现消费者的故障恢复和负载均衡。
 
-## 安装kafka单节点
+### 安装kafka单节点
 
 - 准备安装包和配置文件,在zoo3上部署kafka服务
 
@@ -185,7 +189,7 @@ cd /root/kafka_2.13-3.1.0/bin
 #welcome
 ~~~
 
-## 搭建kafka高可用集群
+### 搭建kafka高可用集群
 
 - 将zoo1和zoo2加入集群,唯一不同的是broker.id和listener监听的主机IP。
 
@@ -212,7 +216,7 @@ ls /brokers/ids
 #[0, 1, 2]
 ~~~
 
-# 部署filebeat
+## 部署filebeat
 
 filebeat是轻量级的日志收集组件。在zoo2部署nginx,利用filebeat采集nginx的日志。
 
@@ -282,7 +286,7 @@ cd /root/kafka_2.13-3.1.0/bin
 ./kafka-console-consumer.sh --topic test-topic --from-beginning --bootstrap-server 172.16.183.192:9092,172.16.183.190:9092,172.16.183.191:9092
 ```
 
-# 部署logstash
+## 部署logstash
 
 - logstash用作日志采集的话,比较吃内存(约20G)。所以这里用更轻量化的filebeat采集日志,用logstash做日志格式转换。
 - 安装logstash
@@ -327,7 +331,7 @@ cd ../bin
 nohup ./logstash -f ../config/nginx.conf >> logstash.log &
 ~~~
 
-# 部署ES
+## 部署ES
 
 - elasticsearch是一个实时的,分布式的,可扩展的搜索引擎,它允许进行全文本和结构化搜索以及对日志进行分析。它通常用于索引和搜索大量日志数据,也可以用于搜索许多不同种类的文档。elasticsearch具有三大功能,搜索、分析、存储数据。
 - 在zoo2上部署es
@@ -342,7 +346,7 @@ docker load -i elasticsearch.tar.gz
 docker run -p 9200:9200 -p 9330:9300 -itd -e "discovery.type=single-node" --name es -v /es_data:/usr/share/elasticsearch/data docker.elastic.co/elasticsearch/elasticsearch:7.9.2
 ~~~
 
-# 部署kibana
+## 部署kibana
 
 - kibana是一个基于Web的图形界面,用于搜索、分析和可视化存储在Elasticsearch指标中的日志数据。Kibana功能众多,在"Visualize" 菜单界面可以将查询出的数据进行可视化展示,"Dev Tools" 菜单界面可以让户方便地通过浏览器直接与 Elasticsearch 进行交互,发送 RESTFUL对 Elasticsearch 数据进行增删改查。
 - 在zoo2上部署kibana

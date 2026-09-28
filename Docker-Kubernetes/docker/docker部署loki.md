@@ -10,14 +10,17 @@ aliases:
   - Loki部署
 ---
 
-# Loki简介
+# Docker部署Loki日志系统
+
+
+## Loki简介
 
 - 最主流的 ELK 或者 EFK 比较重,再加上现阶段对于 ES 复杂的搜索功能很多都用不上。最终选择Grafana开源的Loki日志系统。
 
 - Loki 的第一个稳定版本于 2019 年 11 月 19 日发布,是 Grafana Labs 团队最新的开源项目,是一个水平可扩展,高可用性,多租户的日志聚合系统。Loki 是专门用于聚集日志数据,重点是高可用性和可伸缩性。与竞争对手不同的是,它确实易于安装且资源效率极高。
 - 项目地址:[Grafana Loki GitHub](https://github.com/grafana/loki/)
 
-## 特性
+### 特性
 
 与其他日志聚合系统相比,Loki 具有下面的一些特性:
 
@@ -26,18 +29,18 @@ aliases:
 - 特别适合储存 Kubernetes Pod 日志;诸如 Pod 标签之类的元数据会被自动删除和编入索引。
 - 受 Grafana 原生支持,避免 kibana 和 grafana 来回切换。
 
-## 优缺点
+### 优缺点
 
 - Loki 的架构非常简单,使用了和 Prometheus 一样的标签来作为索引,通过这些标签既可以查询日志的内容也可以查询到监控的数据,不但减少了两种查询之间的切换成本,也极大地降低了日志索引的存储。
 - 与 ELK 相比,消耗的成本更低,具有成本效益。
 - 在日志的收集以及可视化上可以连用 Grafana,实现在日志上的筛选以及查看上下行的功能。
 
-## 缺点
+### 缺点
 
 - 技术比较新颖,相对应的论坛不是非常活跃。
 - 功能单一,只针对日志的查看,筛选有好的表现,对于数据的处理以及清洗没有 ELK 强大,同时与 ELK 相比,对于后期,ELK 可以连用各种技术进行日志的大数据处理,但是 loki 不行。
 
-## 架构
+### 架构
 
 ![image-20241102202018889](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202411022020952.png)
 
@@ -47,7 +50,7 @@ Loki 的架构非常简单,使用了和 Prometheus 一样的标签来作为索�
 - Promtail 是代理,负责收集日志并将其发送给 Loki 。
 - Grafana 用于 UI 展示。
 
-# docker部署loki
+## docker部署loki
 
 - 下载yaml文件
 
@@ -101,7 +104,7 @@ docker compose -f docker-compose-loki.yaml up -d
   #标签样式选job
   ~~~
 
-## promtail配置
+### promtail配置
 
 - promtail 容器为日志采集容器,配置文件在 promtail 容器/etc/promtail/config.yml,将该容器部署在需要采集日志的服务器上就能正常采集日志传回loki服务收集整理
 
@@ -128,7 +131,7 @@ scrape_configs:
 EOF
 ~~~
 
-## 增加一台服务器的日志采集
+### 增加一台服务器的日志采集
 
 - 编写配置文件
 

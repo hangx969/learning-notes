@@ -8,7 +8,10 @@ aliases:
   - Jenkins二进制安装
 ---
 
-# 安装JDK11
+# 二进制安装Jenkins(2.319)
+
+
+## 安装JDK11
 
 ~~~sh
 #Jenkins是Java编写的，所以需要先安装JDK11，这里采用yum安装，如果对版本有需求，可以直接在Oracle官网下载JDK。
@@ -20,7 +23,7 @@ rm -rf /usr/bin/java
 ln -s /usr/lib/jvm/java-11-openjdk-11.0.16.1.1-1.el7_9.x86_64/bin/java /usr/bin/java
 ~~~
 
-# 安装Jenkins
+## 安装Jenkins
 
 ~~~sh
 #离线安装
@@ -43,17 +46,18 @@ systemctl restart jenkins
 systemctl enable jenkins
 ~~~
 
-# 访问jenkins
+## 访问jenkins
 
 - 访问jenkins机器ip:198登录jenkins
 - 自动升级jenkins到最新版本，如果不升级到最新版，好多插件无法安装，升级之后在页面重启jenkins即可：http://192.168.40.186:198/restart
 
-# 内网环境安装jenkins离线插件
+## 内网环境安装jenkins离线插件
 
 - 离线插件安装地址
   - [清华大学Jenkins插件镜像](http://mirrors.tuna.tsinghua.edu.cn/jenkins/plugins/)
   - [Jenkins官方插件下载](http://updates.jenkins-ci.org/download/plugins/)
   - 可以在Jenkins官网上搜索想要下载的插件，点击”Download”按钮下载.hpi文件。
+
 - Jenkins离线插件安装方法：
   1. 方法一：
   1.在Jenkins管理页面点几“系统管理” -> “插件管理” -> “高级”。
@@ -63,10 +67,11 @@ systemctl enable jenkins
   1.将下载的.hpi文件放到Jenkins的安装目录下的“plugins”文件夹中。
   2.重启Jenkins，等待插件安装完成。
 
-# jenkins连接k8s集群
+## jenkins连接k8s集群
 
 1. 配置kubernetes plugin连接kubernetes集群
    - 点击系统管理->系统设置-添加一个云,在下拉菜单中选择kubernets并添加。注：Name值任意添加，Kubernetes URL值添加K8S apiserver连接地址和端口
+
 2. 配置云kubernetes连接K8S集群的验证文件
    - 获取K8S的/root/.kube/config文件：`cat ~/.kube/config`
    - 获取 /home/hanxianchao/.kube/config中certificate-authority-data的内容并转化成base64 encoded文件:`ecbo xxxx | base64 -d > /opt/crt/ca.crt`
@@ -77,6 +82,7 @@ systemctl enable jenkins
 
 3. 生产Client P12认证文件cert.pfx，并下载至本地
    - `openssl pkcs12 -export -out /opt/crt/cert.pfx -inkey /opt/crt/client.key -in /opt/crt/client.crt -certfile /opt/crt/ca.crt` (password需要自定义并牢记)
+
 1. 在jenkins-云k8s中添加凭证（注：Upload certificate上次刚生成并下载至本地的cert.pfx文件，Password值添加生成cert.pfx文件时输入的密钥）
 2. 测试连接kubernetes集群（**注：**Kubernetes Namespace值添加~/.kube/config文件中cluster部分中name的内容）
 

@@ -8,6 +8,9 @@ tags:
   - opentelemetry
 ---
 
+# OpenTelemetry 实战：告别厂商锁定，统一 Traces/Metrics/Logs
+
+
 > 你的监控系统，能告诉你"为什么慢"吗？
 
 ---
@@ -173,12 +176,14 @@ exporters:
 ### 3.2 商业 APM vs 开源 OTel 选型
 
 **Datadog 全家桶**：
+
 - ✅ 开箱即用，UI 精美，AI 告警智能
 - ❌ 按主机/指标数量计费，100 节点集群月费 $3000-8000+
 - ❌ 数据强绑定 Datadog，迁出成本极高
 - ❌ 数据主权问题：生产数据上传到境外服务器
 
 **开源 OTel + LGTM（Loki+Grafana+Tempo+Mimir）**：
+
 - ✅ 完全开源，数据自主
 - ✅ 遵循开放标准，后端可随时替换
 - ✅ 存储成本降低 60-80%（对象存储替代 Elasticsearch）

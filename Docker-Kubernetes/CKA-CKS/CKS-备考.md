@@ -9,9 +9,12 @@ aliases:
   - CKS备考
 ---
 
-# 1 AppArmor
+# CKS 备考
 
-## AppArmor介绍
+
+## 1 AppArmor
+
+### AppArmor介绍
 
 - k8s文档：[AppArmor - Kubernetes](https://kubernetes.io/docs/tutorials/security/apparmor/)
 - AppArmor官网：[AppArmor - Ubuntu Wiki](https://wiki.ubuntu.com/AppArmor/)
@@ -25,19 +28,21 @@ aliases:
 - 访问控制：
   - r(read) \ w(write) \ a(append) \ k(file locking mode) \ l(link mode)
   - 在配置文件中的写法：`/tmp r` 表示对/tmp下的文件可以读取。（没在配置文件中列出的文件，程序是不能访问的）
+
 - 资源限制
   - `set rlimit as<=1M` (限制使用的虚拟内存)
+
 - 网络限制
   - network `\[\[domain]\[type]\[protocol]]`
   - 允许对所有网络进行操作：`network,`
   - 允许在IPv4下使用TCP协议：`network inet tcp.`
 
 
-## Task
+### Task
 
 - 在cluster的工作节点上，实施位于/etc/apparmor.d/nginx_apparmor的现有的apparmor配置文件。编辑位于/home/candidate/KSSH00401/nginx-deploy.yaml的现有清单文件以应用AppArmor配置文件。最后，应用清单文件并创建其中指定的Pod。
 
-## Answer
+### Answer
 
 - 文档:kubernetes.io 搜apparmor
 
@@ -77,13 +82,13 @@ sudo kubectl apply -f /home/candidate/KSSH00401/nginx-deploy.yaml
 > - annotation中的container name记得要改
 > - annotations的格式是container name后面的: 跟一个空格
 
-# 2 kube-bench基准测试
+## 2 kube-bench基准测试
 
-## kube-bench介绍
+### kube-bench介绍
 
 - kube-Bench是一款针对Kubernetes的安全检测工具
 
-## Task
+### Task
 
 context：针对kubeadm创建的cluster运行CIS基准测试工具时，发现了多个必须解决的问题。
 
@@ -101,7 +106,7 @@ context：针对kubeadm创建的cluster运行CIS基准测试工具时，发现�
 
   - Ensure that the --client-cert-auth argument is set to true
 
-## Answer
+### Answer
 
 - 官网搜索：kubelet configuration
 
@@ -211,14 +216,14 @@ kubectl get nodes
 >   - **kubelet：/var/lib/kubelet/config.yaml** 
 >   - etcd: /etc/kubernetes/manifests/etcd.yaml
 
-# 3 Trivy镜像扫描
+## 3 Trivy镜像扫描
 
-## Task
+### Task
 
 - 使用Trivy开源容器扫描器检测namespace yavin中pod使用的具有严重漏洞的镜像。查找具有High或Critical漏洞的镜像，并删除使用这些镜像的pod。
 - Trivy仅预装在cluster的master节点上
 
-## Answer
+### Answer
 
 ~~~sh
 #自己练习先创建pod
@@ -250,9 +255,9 @@ k delete po trivy-1 -n trivy --force --grace-period=0
 > - 原始终端才能执行kubectl命令，exit退回到原始终端之后，需要重新执行kubectl use-context切换到集群环境。
 > - trivy命令需要ssh登录到master节点才能执行
 
-# 4 sysdig & falco
+## 4 sysdig & falco
 
-## 介绍
+### 介绍
 
 - Sysdig官网：[Sysdig](https://www.sysdig.org)
   - sysdig的定位是系统监控、分析和排障的工具
@@ -263,7 +268,7 @@ k delete po trivy-1 -n trivy --force --grace-period=0
   - Falco 包含一组丰富的规则，您可以编辑这些规则以标记特定的异常行为，并为正常的计算机操作创建允许列表。
 
 
-## Task
+### Task
 
 - 使用运行时检测工具检测在属于Pod redis的单个容器中频繁产生和执行异常的进程。 
 - cluster的工作节点上已经安装了sysdig和falco
@@ -273,7 +278,7 @@ k delete po trivy-1 -n trivy --force --grace-period=0
     - 18:18:18.688688688,root,init
     - 18:18:19.688688688,nobody,init
 
-## Answer
+### Answer
 
 ~~~sh
 #自己环境中练习时，创建pod
@@ -313,9 +318,9 @@ sysdig -M 120 -p "%evt.time,%user.uid,%proc.name" --cri unix:///run/containerd/c
 > [!warning] 注意
 > 一定去工作节点上运行sysdig，因为pod跑在工作节点上，在控制节点上sysdig没有输出的。
 
-# 5 service account
+## 5 service account
 
-## Task
+### Task
 
 Context：
 
@@ -328,7 +333,7 @@ Task：
 - 其次，使用 /home/candidate/KSCH00301/pod-manifest.yaml 中的清单文件来创建pod。
 - 最后，清理 namespace dev 中任何未使用的 ServiceAccount。
 
-## Answer
+### Answer
 
 - 文档：k8s官网搜configure service account
 
@@ -388,19 +393,20 @@ k get po -n dev -o yaml | grep serviceAccountName:
 > - default这个sa不用删除，会自动生成的。
 > - 如果pod删除较慢，直接`kubectl delete po xxx --force --grace-period=0`强制删除
 
-# 6 TLS通信加强
+## 6 TLS通信加强
 
-## Task
+### Task
 
 一个现有的Kubernetes集群，通过更新组件的TLS配置进行安全加固
 
 - 修改API server和etcd之间通信的TLS配置，对于API server
   - 删除对除了TLS1.2及更高版本之外的所有TLS版本的支持
   - 删除对**TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256**之外左右密码套件的支持
+
 - 对于etcd：
   - 删除对于除了TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256之外的所有密码套件的支持
 
-## Answer
+### Answer
 
 - 官网搜：kube-apiserver, ctrl+F搜--tls
 
@@ -441,18 +447,19 @@ k get nodes -n kube-system
 > - apiserver和etcd的要求的cipher不一定相同，注意甄别。
 > - 重启kubelet完之后，可能会花费几分钟才能显示出k get nodes的结果
 
-# 7 NetworkPolicy拒绝所有的ingress+egress流量
+## 7 NetworkPolicy拒绝所有的ingress+egress流量
 
-## Task
+### Task
 
 一个默认拒绝（default-deny）的NetworkPolicy可避免在未定义任何其他NetworkPolicy的namespace中意外公开Pod。
 
 - 在namespace development中创建一个名字为denynetwork的default-deny的NetworkPolicy
   - 此新的NetworkPolicy必须拒绝namespace development中的所有ingress+Egress流量。
   - 将新NetworkPolicy应用于在namespace development中运行的所有POD
+
 - 您可以在/home/candidate/KSCS00101/network-policy.yaml中找到模板清单文件
 
-## Answer
+### Answer
 
 - 官网搜networkpolicies --> 搜deny --> 找到 Default deny all ingress and all egress traffic
 
@@ -485,9 +492,9 @@ k apply -f network-policy.yaml
 >   - Default deny all ingress traffic
 > - “拒绝所有ns development”这个条件，在metadata.namespace这一条就满足了，不需要加namespaceSelector
 
-# 8 NetworkPolicy限制pod之间访问
+## 8 NetworkPolicy限制pod之间访问
 
-## Task
+### Task
 
 - 创建名为pod-access的NetworkPolicy来限制对在namespace development中运行的pod products-service的访问。
 
@@ -496,7 +503,7 @@ k apply -f network-policy.yaml
   1、在namespace qa中的pod
   2、位于任何namespace，带有environment: testing的pod
 
-## Answer
+### Answer
 
 - 官网搜network policies --> The NetworkPolicy resource下面复制模板
 
@@ -575,22 +582,24 @@ spec:
 >
 >   
 
-# 9 RBAC
+## 9 RBAC
 
-## Task
+### Task
 
 绑定到Pod的serviceAccount的Role授予过度的权限。完成以下任务以降低权限。
 
 - 一个名为web-pod的现有Pod已在namespace db中运行。
 - 编辑绑定到Pod的ServiceAccount：test-sa-3的现有Role：
   - 仅允许只对services类型的资源执行get操作。
+
 - 在namespace db中创建一个role：
   - 名为test-role-2
   - 并仅允许只对namespaces类型的资源执行patch操作。
+
 - 创建一个名为test-role-2-binding新RoleBinding，将新创建的 Role绑定到Pod的ServiceAccount
 - 不要删除现有RoleBinding。
 
-## Answer
+### Answer
 
 - k8s官网搜RBAC（查看create role和rolebinding的命令）
 
@@ -625,9 +634,9 @@ k create rolebinding -n db --role=test-role-2 --serviceaccount=db:test-sa-3
 > [!warning] 注意
 > 答完题看一下pod的yaml字段是不是有serviceAccountName字段，没有的话要加上。
 
-# 10 kube-apiserver审计日志记录采集
+## 10 kube-apiserver审计日志记录采集
 
-## Task
+### Task
 
 - 在cluster 中启用审计日志。为此，请启用日志后端，并确保：
 
@@ -647,7 +656,7 @@ k create rolebinding -n db --role=test-role-2 --serviceaccount=db:test-sa-3
   另外，添加一个全方位的规则以在Metadata级别记录的所有其他请求。不要忘记应用修改后的策略。
 
 
-## Answer
+### Answer
 
 - 官网搜auditing
 
@@ -755,9 +764,9 @@ systemctl restart kubelet
 >       resources: ["secrets", "configmaps"]
 > ~~~
 
-# 11 创建secret
+## 11 创建secret
 
-## Task
+### Task
 
 - 在namespace db中获取名为db1-test的现有secret的内容。
   - 将username字段存储在名为/home/candidate/old-username.txt的文件中，
@@ -777,7 +786,7 @@ systemctl restart kubelet
   - 卷名：dev-volume
   - 挂载路径：/etc/secret
 
-## Answer
+### Answer
 
 - 官网搜secret
 
@@ -826,15 +835,15 @@ k apply -f secret-pod.yaml
 > [!tip] 注意
 > 参考官网的secret、Managing Secrets using kubectl两个页面
 
-# 12 dockefile和deployment优化
+## 12 dockefile和deployment优化
 
-## Task
+### Task
 
 - 分析指定的Dockerfile（基于Ubuntu:16.04），修复其中有安全问题的两个命令。
 - 分析指定的deployment，修复其中有安全问题的两个字段。
 - 如果需要非特权用户执行某些指令，可以采用uid为65535的user nobody
 
-## Answer
+### Answer
 
 - 官网搜security context
 
@@ -892,9 +901,9 @@ USER nobody
 > [!warning] 注意
 > deployment资源中的spec.selector和template.metadata中的label是否对应了，题目中会出现不对应的情况。
 
-# 13 镜像安全ImagePolicyWebhook
+## 13 镜像安全ImagePolicyWebhook
 
-## Task
+### Task
 
 您必须在cluster的master节点上完成整个考题，所有服务和文件都已被准备好并放置在该节点上。
 
@@ -904,10 +913,11 @@ cluster上设置了容器镜像扫描器，但尚未完全集成到cluster的配
   - 启用必要的插件来创建镜像策略
   - 校验控制配置并将其更改为隐式拒绝（implicit deny）(在隐式拒绝模式下，除非明确允许，否则所有请求都会被拒绝)
   - 编辑配置以正确指向提供的HTTPS端点。
+
 - 最后，通过尝试部署易受攻击的资源/root/KSSC00202/vulnerable-resource.yml来测试配置是否有效。
 - 可以在/var/log/limagepolicy/roadrunner.log找到容器镜像扫描的日志文件
 
-## Answer
+### Answer
 
 - 官网搜:
   - ImagePolicyWebhook （在admission controllers里面）
@@ -987,9 +997,9 @@ kubectl apply -f /root/KSSC00202/vulnerable-resource.yml
 >   - 添加配置文件路径--admission-control-config-file（写的是json文件）
 >   - 添加volume和volumeMounts把存放配置文件的路径挂进去
 
-# 14 修改deploy的security context
+## 14 修改deploy的security context
 
-## Task
+### Task
 
 修改运行在namespace app，名为lamp-deployment的现有 Deployment，使其容器：
 
@@ -997,7 +1007,7 @@ kubectl apply -f /root/KSSC00202/vulnerable-resource.yml
 2. 使用一个只读的根文件系统
 3. 禁止特权提升
 
-## Answer
+### Answer
 
 - 官网搜securitycontext
 
@@ -1048,15 +1058,15 @@ k apply -f la.yaml
 >
 >   这个题就在container字段下面写就行，有几个container就写几个。
 
-# 15 gVisor
+## 15 gVisor
 
-## Task
+### Task
 
 - 该cluster 使用containerd 作为CRI运行时。containerd的默认运行时处理程序是runc。containerd 已准备好支持额外的运行时处理程序runsc（gVisor）
 - 使用名为runsc的现有运行时处理程序，创建一个名为untrusted 的 RuntimeClass。更新 namespace client 中的所有 Pod 以在 gVisor（runsc） 上运行。
 - 你可以在/home/candidate/KSMV00301/runtime-class.yaml找到一个模板清单文件。
 
-## Answer
+### Answer
 
 - 官网搜：runtime class
 
@@ -1092,9 +1102,9 @@ k delete -f run-deploy.yaml
 k apply -f run-deploy.yaml
 ~~~
 
-# 16 k8s 准入控制
+## 16 k8s 准入控制
 
-## Task
+### Task
 
 Context：集群处于测试目的，已经配置为未经身份验证和未经授权的访问，授予匿名用户cluster-admin的权限。现在要加固安全配置。
 
@@ -1103,7 +1113,7 @@ Context：集群处于测试目的，已经配置为未经身份验证和未经�
 - 删除用户system:anonymous的ClusterRoleBinding来进行清理。注意：所有kubectl配置环境也被配置使用未经身份验证和未经授权的访问。不必更改，但注意一旦完成cluster的安全加固，kubectl的配置将无法工作。
 - 可以使用位于cluster的master节点上，cluster原本的kubectl配置文件/etc/kubernetes/admin.conf，以确保经过身份验证的授权的请求仍然被允许。
 
-## Answer
+### Answer
 
 ~~~sh
 #切换集群

@@ -13,9 +13,12 @@ aliases:
   - Prometheus监控K8s控制面组件
 ---
 
-# 监控etcd-手动创建yaml
+# Prometheus监控K8s系统组件
 
-## etcd的metrics接口
+
+## 监控etcd-手动创建yaml
+
+### etcd的metrics接口
 
 Etcd原生提供了Metrics接口，所以无需任何服务就可以直接监控Etcd。但是访问Etcd的Metrics接口需要使用证书，如下所示：
 
@@ -33,7 +36,7 @@ cat /etc/kubernetes/manifests/etcd.yaml
 # 	  - --trusted-ca-file=/etc/kubernetes/pki/etcd/ca.crt
 ~~~
 
-## etcd的svc
+### etcd的svc
 
 默认没有创建etcd的svc，给他创建一个。将endpoint的IP换成etcd的pod IP
 
@@ -75,7 +78,7 @@ spec:
 curl -s --cert /etc/kubernetes/pki/etcd/server.crt --key /etc/kubernetes/pki/etcd/server.key https://10.104.93.132:2379/metrics -k
 ~~~
 
-## 创建secret并挂载
+### 创建secret并挂载
 
 创建Etcd证书的Secret（证书路径根据实际环境进行更改）：
 
@@ -99,7 +102,7 @@ prometheus:
     - etcd-ssl # 挂载etcd的证书，用于获取etcd metrics数据
 ~~~
 
-## 创建serviceMonitor
+### 创建serviceMonitor
 
 ~~~yaml
 apiVersion: monitoring.coreos.com/v1 
@@ -128,19 +131,19 @@ spec:
     - kube-system
 ~~~
 
-## 验证
+### 验证
 
 1. 登录prometheus UI去查看target中的etcd是否是up状态。
 2. 可以去grafana官网搜索etcd下载对应的dashboard，比如：[Etcd by Prometheus | Grafana Labs](https://grafana.com/grafana/dashboards/3070-etcd/)
 
-## 重点指标
+### 重点指标
 
 在这个dashboard中有一个指标叫“Disk Sync Duration”：
 
 - WAL fsync: 通常应该 < 10ms （测量将WAL条目从内存刷新到磁盘所需的时间）
 - Backend commit: 通常应该 < 25ms （测量将数据库事务提交到磁盘所需的时间）
 
-# 监控etcd-修改vaules
+## 监控etcd-修改vaules
 
 kube-prometheus-stack的values文件里面会自动处理https的metrics接口认证。并且在开启etcd监控之后，会自动安装etcd dashboard。
 
@@ -167,9 +170,9 @@ kubeEtcd:
     relabelings: []
 ~~~
 
-# 监控ControllerManager
+## 监控ControllerManager
 
-## 修改配置
+### 修改配置
 
 对于kubeadm安装的集群，controller manager默认是绑定--bind-address=127.0.0.1，这样无法通过节点IP访问到，所以要改成0.0.0.0：
 
@@ -187,7 +190,7 @@ spec:
 
 由于manifests目录下是以静态Pod运行在集群中的，所以只要修改静态Pod目录下对应的yaml文件即可。等待一会后，对应服务会自动重启，所以不需要我们手动重启。
 
-## metrics接口测试
+### metrics接口测试
 
 kube-controller-manager通常需要具有适当权限的客户端证书。应该使用admin证书去访问：
 
@@ -198,7 +201,7 @@ curl --cert /etc/kubernetes/pki/apiserver-kubelet-client.crt \
      https://192.168.40.180:10257/metrics -k | 
 ~~~
 
-## 【可选】创建secret
+### 【可选】创建secret
 
 如果是用类似etcd一样，手动创建yaml文件的方式，那么需要把admin证书创建secret并挂载进prometheus
 
@@ -214,7 +217,7 @@ prometheus:
     - controller-manager-ssl # 挂载controller-manager的证书，用于获取metrics数据
 ~~~
 
-## 配置prometheus-stack yaml
+### 配置prometheus-stack yaml
 
 用helm部署的kube-prometheus-stack，就能自动处理 TLS 配置：通过 https: true 和 insecureSkipVerify: true。不用再
 
@@ -241,13 +244,13 @@ kubeControllerManager:
     relabelings: []
 ~~~
 
-## 查看dashboard
+### 查看dashboard
 
 在kube-prometheus-stack中有自带的dashboard：Kubernetes / Controller Manager，需要在开启kubeControllerManager.enabled=true之后才会被创建。
 
-# 监控Scheduler
+## 监控Scheduler
 
-## 修改监听配置
+### 修改监听配置
 
 对于kubeadm安装的集群，scheduler默认是绑定127.0.0.1，这样无法通过节点IP访问到，所以要改成0.0.0.0：
 
@@ -264,7 +267,7 @@ spec:
 
 由于manifests目录下是以静态Pod运行在集群中的，所以只要修改静态Pod目录下对应的yaml文件即可。等待一会后，对应服务会自动重启，所以不需要我们手动重启。
 
-## 开启监控
+### 开启监控
 
 kube-prometheus-stack的配置如下：
 
@@ -291,9 +294,9 @@ kubeScheduler:
 
 开启之后就会自动创建dashboard：Kubernetes / Scheduler
 
-# 监控kubeProxy
+## 监控kubeProxy
 
-## 修改configMap
+### 修改configMap
 
 kubeProxy的配置卸载configMap中，默认没有开启metrics端口，给他开启：
 
@@ -305,7 +308,7 @@ metricsBindAddress: 0.0.0.0:10249
 
 可以删掉节点的kuibe-proxy pod重启。
 
-## 开启监控
+### 开启监控
 
 ~~~yaml
 kubeProxy:

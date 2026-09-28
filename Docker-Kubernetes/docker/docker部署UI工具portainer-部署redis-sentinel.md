@@ -10,9 +10,12 @@ aliases:
   - Redis-Sentinel部署
 ---
 
+# Docker部署Portainer与Redis-Sentinel
+
+
 Reference: [Portainer与Redis-Sentinel部署参考](https://mp.weixin.qq.com/s/pkpDv1nBjiEiCMeGPSwPeA)
 
-# 部署portainer工具
+## 部署portainer工具
 
 - docker-compose部署
 
@@ -37,20 +40,20 @@ docker-compose -f portainer.yml up -d
 - 访问宿主机IP:9876端口(username: admin, passwd: 26bN87:KP>?TzW:)
 - 点击local进行本地容器管理。更多文档参考:[Portainer官方文档](https://www.portainer.io/take-5)
 
-# portainer添加environment
+## portainer添加environment
 
 - 在rocky-1机器部署了portainer,想去监控rocky-2机器上的容器。可以在portainer UI上找到Settings - Environments - Add Environment - 选择docker Standalone - 进入environment wizard
 - 在被监控的rocky-2上pull一个agent镜像(根据wizard的提示)- 起一个agent容器 - name和environment address上填入rocky-2的地址,点击connect即可
 
-# 基于Portainer安装redis-sentinel
+## 基于Portainer安装redis-sentinel
 
-## 环境准备
+### 环境准备
 
 - 基于一台服务器完成一主二从+三个哨兵的部署架构,最终效果是:
   - 当主节点更新数据之后,从节点数据也会进行同步。
   - 当我们将主节点手动停止之后,哨兵就会选举出新的master继续进行工作。
 
-## 主从复制部署
+### 主从复制部署
 
 - 主从结构的部署,我们还是基于docker-compose创建一个名为redis-cluster.yml的文件配置一下主从信息,配置内容如下
   - 安全起见,建议尽可能不要使用6379作为对外暴露的端口号,就算使用6379也尽可能设置一个安全的密码,避免被人下挖矿程序。
@@ -108,7 +111,7 @@ docker-compose -f redis-cluster.yml up -d
   get user_name
   ~~~
 
-## 创建redis-sentinel专用网络驱动
+### 创建redis-sentinel专用网络驱动
 
 为了确保redis-sentinel可以统一管理且和其他容器隔离,我们在部署sentinel之前需要基于Portainer创建一个自定义的brige网络。创建一个名为redis-sentinel的bridge网络将主从和哨兵节点关联起来,并且和docker中的其他容器隔离开。
 
@@ -120,7 +123,7 @@ docker-compose -f redis-cluster.yml up -d
 - 重点来了,我们的redis主从节点现在都处于默认的网络驱动中,我们必须手动将其配置到redis-sentinel网络中
   - 点击容器列表,找到我们的主从节点容器,然后分别进入他们的管理列表最下方,找到network选项,在network列表中找到redis-sentinel选择join network即可。
 
-## 创建哨兵
+### 创建哨兵
 
 - 配置3个哨兵配置文件
 
@@ -224,7 +227,7 @@ EOF
 docker-compose -f redis-sentinel.yml up -d
 ~~~
 
-## 测试高可用
+### 测试高可用
 
 - console进入maste节点:`info replication`查看是否为主节点(role:master);同理,进入从节点查看(role:slave)
 - 关闭master节点:portainer界面直接stop掉master的容器

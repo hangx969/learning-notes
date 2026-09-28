@@ -13,7 +13,10 @@ aliases:
   - Docker部署Web服务
 ---
 
-# docker部署nginx服务
+# Docker部署Nginx-Tomcat-Httpd-Go-Python服务
+
+
+## docker部署nginx服务
 
 - 用centos作为基础镜像,在里面部署并配置nginx服务
 
@@ -101,7 +104,7 @@ docker inspect nginx
 
   - veth6032358@if16这个设备称为veth对,一端连到物理网卡上,另一端连到docker。访问宿主机IP:高位端口时,veth对就通过管道将请求交给要访问的容器。
 
-# dockerfile构建nginx
+## dockerfile构建nginx
 
 ```bash
 #准备目录,将dockerfile、index和centos源都放进去
@@ -138,7 +141,7 @@ docker inspect nginx
 curl 10.0.0.4:32773
 ```
 
-# dockerfile构建tomcat8
+## dockerfile构建tomcat8
 
 ```bash
 #把tomcat安装包和jdk包放到dockerfile目录
@@ -164,7 +167,7 @@ docker build -t="tomcat8:v1" . --load
 docker run --name tomcat8 -d -p 8080 tomcat8:v1
 ```
 
-# dockerfile构建httpd镜像
+## dockerfile构建httpd镜像
 
 - httpd镜像可以直接从官网下载:[Apache httpd下载页面](https://httpd.apache.org/download.cgi)
 - 准备dockerfile
@@ -215,7 +218,7 @@ docker run -d -p 2222:22 -p 8000:80 apache:v1
 #浏览器访问机器IP:8000端口
 ~~~
 
-# 基于Go代码构建镜像
+## 基于Go代码构建镜像
 
 ```bash
 #安装go
@@ -273,7 +276,7 @@ docker build -t godemo:v1 . --load
 docker run -d --name godemo -p 8080 godemo:v1
 ```
 
-# 基于python代码构建镜像
+## 基于python代码构建镜像
 
 ```python
 #获取python代码,切换到代码目录

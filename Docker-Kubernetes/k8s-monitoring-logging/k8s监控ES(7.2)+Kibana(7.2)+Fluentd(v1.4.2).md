@@ -12,9 +12,12 @@ aliases:
   - K8s部署EFK日志收集
 ---
 
-# 日志简介
+# K8s监控ES(7.2)+Kibana(7.2)+Fluentd(v1.4.2)
 
-## 日志的常见级别
+
+## 日志简介
+
+### 日志的常见级别
 
 - 日志打印通常有四种级别,从高到底分别是:ERROR、WARNING、INFO、DEBUG。应该选用哪种级别是个很重要的问题:
 
@@ -37,9 +40,9 @@ ERROR 可以打印错误和异常信息,如果不想输出太多的日志,可以
 - 日志级别中的优先级:
   - 在系统中如果开启了某一级别的日志后,就不会打印比它级别低的日志。例如,程序如果开启了INFO级别日志,DEBUG日志就不会打印,只会打印ERROR、WARNING、INFO。通常在生产环境中开启INFO日志。
 
-# 常见日志分析方案
+## 常见日志分析方案
 
-## EFK
+### EFK
 
 - 在Kubernetes集群上运行多个服务和应用程序时,日志收集系统可以帮助你快速分类和分析由Pod生成的大量日志数据。Kubernetes中比较流行的日志收集解决方案是Elasticsearch、Fluentd和Kibana(EFK)技术栈,也是官方推荐的一种方案。
 
@@ -50,7 +53,7 @@ ERROR 可以打印错误和异常信息,如果不想输出太多的日志,可以
 - Fluentd是一个流行的开源数据收集器,我们在 Kubernetes 集群节点上安装 Fluentd,通过获取容器日志文件、过滤和转换日志数据,然后将数据传递到 Elasticsearch 集群,在该集群中对其进行索引和存储。
 - (有时候F也可以是Filebeat)
 
-## ELK
+### ELK
 
 - E - Elasticsearch(简称:ES)
 
@@ -67,13 +70,13 @@ ERROR 可以打印错误和异常信息,如果不想输出太多的日志,可以
 > - F是轻量级的;L是重量级的,logstash本身占用内存就很大,如果拿它来采集日志会占用很多资源。优点是日志格式转换功能很强大。
 > - ELK也称ELK Stack
 
-## ELK+filebeat
+### ELK+filebeat
 
 ![image-20240105164228366](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202401051642422.png)
 
 - Filebeat(采集)—> Logstash(聚合、处理,转格式用,部署一个就够)—> ElasticSearch(存储)—>Kibana(展示)
 
-## 其他方案
+### 其他方案
 
 ELK日志流程可以有多种方案(不同组件可自由组合,根据自身业务配置),常见有以下:
 
@@ -88,14 +91,14 @@ ELK日志流程可以有多种方案(不同组件可自由组合,根据自身业
 > [!tip]
 > 前三种方案可能会在日志量大的时候产生延迟,所以第四种方案加了消息队列做缓冲,适合大量日志情形(每天上TB的日志)
 
-## 组件介绍
+### 组件介绍
 
-### ElasticSearch
+#### ElasticSearch
 
 - Elasticsearch 是一个分布式的免费开源搜索和分析引擎,适用于包括文本、数字、地理空间、结构化和非结构化数据等在内的所有类型的数据。Elasticsearch 在 Apache Lucene 的基础上开发而成,由 Elasticsearch N.V.(即现在的 Elastic)于 2010 年首次发布。Elasticsearch 以其简单的 REST 风格 API、分布式特性、速度和可扩展性而闻名,是 Elastic Stack 的核心组件;
 - Elastic Stack 是一套适用于数据采集、扩充、存储、分析和可视化的免费开源工具。人们通常将 Elastic Stack 称为 ELK Stack(代指 Elasticsearch、Logstash 和 Kibana),目前 Elastic Stack 包括一系列丰富的轻量型数据采集代理,这些代理统称为 Beats,可用来向 Elasticsearch 发送数据。
 
-### beats
+#### beats
 
 - Beats是一个轻量级日志采集器,Beats家族有6个成员,早期的ELK架构中使用Logstash收集、解析日志,但是Logstash对内存、cpu、io等资源消耗比较高。相比Logstash,Beats所占系统的CPU和内存几乎可以忽略不计。
 - 目前Beats包含六种工具:
@@ -112,7 +115,7 @@ ELK日志流程可以有多种方案(不同组件可自由组合,根据自身业
 
 6、Heartbeat:运行时间监控(收集系统运行时的数据)
 
-### filebeat
+#### filebeat
 
 - Filebeat是用于转发和收集日志数据的轻量级传送工具。Filebeat监视你指定的日志文件或位置,收集日志事件,并将它们转发到Elasticsearch或 Logstash中。
 
@@ -162,7 +165,7 @@ ELK日志流程可以有多种方案(不同组件可自由组合,根据自身业
     topic: elfk8stest
   ```
 
-### logstash
+#### logstash
 
 - Logstash是一个开源数据收集引擎,具有实时管道功能。Logstash可以动态地将来自不同数据源的数据统一起来,并将数据标准化到你所选择的目的地。Logstash 是一个应用程序日志、事件的传输、处理、管理和搜索的平台。你可以用它来统一对应用程序日志进行收集管理,提供 Web 接口用于查询和统计。
 
@@ -213,22 +216,22 @@ ELK日志流程可以有多种方案(不同组件可自由组合,根据自身业
 
 - 常用code插件
 
-  -  json:以JSON格式对数据进行编码或解码。
+  - json:以JSON格式对数据进行编码或解码。
 
-  -  multiline:将多行文本事件(如java异常和堆栈跟踪消息)合并为单个事件。
+  - multiline:将多行文本事件(如java异常和堆栈跟踪消息)合并为单个事件。
 
 - logstash在不考虑性能的前提下,适用于解决复杂的日志解析情况;性能有限情况下,不推荐给每台服务器部署logstash。
 
-### fluentd
+#### fluentd
 
 - fluentd是一个针对日志的收集、处理、转发系统。通过丰富的插件系统,可以收集来自于各种系统或应用的日志,转化为用户指定的格式后,转发到用户所指定的日志存储系统之中。
 - fluentbit是比fluentd更轻量的工具,适用于更小型的或者嵌入式的设备。
 
-### rsyslog
+#### rsyslog
 
 - 绝大多数 Linux 发布版本默认的 syslog 守护进程,rsyslog 可以做的不仅仅是将日志从 syslog socket 读取并写入 /var/log/messages 。它可以提取文件、解析、缓冲(磁盘和内存)以及将它们传输到多个目的地,包括 Elasticsearch
 
-# 部署es+fluentd+kibana方案
+## 部署es+fluentd+kibana方案
 
 - 部署一个有3个节点的Elasticsearch集群。我们使用3个Elasticsearch Pods可以避免高可用中的多节点群集中发生的"脑裂"的问题。 Elasticsearch脑裂可参考如下:[Elasticsearch Node Modules - Split Brain](https://www.elastic.co/guide/en/elasticsearch/reference/current/modules-node.html#split-brain)
 
@@ -240,9 +243,9 @@ ELK日志流程可以有多种方案(不同组件可自由组合,根据自身业
 
 - 可以在dockerhub里面搜到最新版的:[elasticsearch - Official Image (docker.com)](https://hub.docker.com/_/elasticsearch),[kibana - Official Image (docker.com)](https://hub.docker.com/_/kibana)、[fluentd - Official Image (docker.com)](https://hub.docker.com/_/fluentd)
 
-## 部署nfs-provisioner
+### 部署nfs-provisioner
 
-### 安装nfs服务
+#### 安装nfs服务
 
 ```sh
 #安装nfs服务,nfs server端是master1节点
@@ -265,7 +268,7 @@ exportfs -arv
 systemctl restart nfs
 ```
 
-### RBAC授权
+#### RBAC授权
 
 - nfs-provisioner需要与apiserver交互,所以需要sa rbac赋权
 
@@ -367,7 +370,7 @@ roleRef:
 > - /etc/kubernetes/manifests/kube-apiserver.yaml这个文件默认的权限是:600,不能改,改完之后就连不到apiserver了。
 > - 注意:1.27版本这个feature-gate不需要改了
 
-### 部署nfs-provisioner deploy
+#### 部署nfs-provisioner deploy
 
 ```yaml
 kind: Deployment
@@ -409,7 +412,7 @@ spec:
             path: /data/v1
 ```
 
-### 创建storage class
+#### 创建storage class
 
 ```yaml
 apiVersion: storage.k8s.io/v1
@@ -419,7 +422,7 @@ metadata:
 provisioner: example.com/nfs #该值需要和nfs provisioner deploy的env里配置的PROVISIONER_NAME值保持一致
 ```
 
-## 部署elastic search
+### 部署elastic search
 
 ```bash
 #创建namespace
@@ -549,7 +552,7 @@ spec:
   #返回json文件,说明了es集群的状态
   ```
 
-## 部署fluentd
+### 部署fluentd
 
 - 使用daemonset部署fluentd,保证每个节点都运行同样的pod副本,抓每个节点的日志。
 - 容器应用程序的输入输出日志会重定向到node节点里的json文件中,fluentd可以tail和过滤以及把日志转换成指定的格式发送到elasticsearch集群中。
@@ -658,7 +661,7 @@ spec:
           path: /var/lib/docker/containers
 ```
 
-## 部署kibana可视化UI界面
+### 部署kibana可视化UI界面
 
 ```yaml
 apiVersion: v1
@@ -723,7 +726,7 @@ spec:
 
   ![image-20240106163251702](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202401061632776.png)
 
-## 测试EFK收集业务pod日志
+### 测试EFK收集业务pod日志
 
 ```yaml
 #部署示例业务pod

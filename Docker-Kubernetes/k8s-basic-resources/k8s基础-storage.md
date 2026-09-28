@@ -7,7 +7,10 @@ aliases:
   - k8sStorage
 ---
 
-# 持久化数据
+# K8s基础-Storage
+
+
+## 持久化数据
 
 应用场景：
 
@@ -18,7 +21,7 @@ aliases:
 5. 程序数据
 6. 日志文件
 
-# Volume
+## Volume
 
 - 容器的生命周期可能很短，会被频繁地创建和销毁，保存在容器中的数据也会被清除。为了持久化保存容器的数据，kubernetes引入了**Volume**的概念。
 
@@ -29,8 +32,10 @@ kubernetes的Volume支持多种类型，比较常见的有下面几个：
 
 - 简单存储：EmptyDir、HostPath、NFS（本地host存储和网络共享文件） 
   - emptydir、hostpath、nfs等都是在pod的yaml文件中的volume中声明。
+
 - 高级存储：PV、PVC
   - pvc和pv都是要用单独的yaml文件做定义，然后在pod的yaml文件中申请使用pvc
+
 - 配置存储：ConfigMap、Secret
   - 这两个也是在单独的yaml文件中声明，在pod的yaml文件中引用使用。
 
@@ -40,7 +45,7 @@ kubernetes的Volume支持多种类型，比较常见的有下面几个：
   kubectl explain pods.spec.volumes
   ```
 
-## 直接创建volume
+### 直接创建volume
 
 直接在pod的volume字段配置各种类型的volume存储
 
@@ -63,7 +68,7 @@ spec:
       path: /data/nfs_pro
 ~~~
 
-## emptyDir
+### emptyDir
 
 - 一个EmptyDir就是Host上的一个空目录。
 
@@ -81,7 +86,7 @@ spec:
 
 <img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202311141720686.png" alt="image-20231114172051513" style="zoom:50%;" />
 
-### 容器共享数据
+#### 容器共享数据
 
 ~~~yaml
 apiVersion: apps/v1 
@@ -114,7 +119,7 @@ spec:
         emptyDir: {} 
 ~~~
 
-### 查看挂载到的宿主机路径
+#### 查看挂载到的宿主机路径
 
 
 ```bash
@@ -145,7 +150,7 @@ tree /var/lib/kubelet/pods/e948ebb2-50f2-4884-a16c-2c0dd7b3f1de
 cd /var/lib/kubelet/pods/e948ebb2-50f2-4884-a16c-2c0dd7b3f1de/volumes/kubernetes.io~empty-dir/volume-cache
 ```
 
-### 使用内存tempfs挂载
+#### 使用内存tempfs挂载
 
 EmptyDir可以绑定主机上的硬盘和内存作为Volume，比如把 `emptyDir.medium` 字段设置为`Memory`，就可以让Kubernetes使用tmpfs（内存支持的文件系统）。
 
@@ -172,7 +177,7 @@ EmptyDir可以绑定主机上的硬盘和内存作为Volume，比如把 `emptyDi
 tmpfs                   tmpfs    3.5G     0  3.5G   0% /opt
 ~~~
 
-### 限制大小
+#### 限制大小
 
 两种类型的EmptyDir都支持限制卷的大小，只需要添加sizeLimit字段即可。
 
@@ -190,7 +195,7 @@ volumes:
 
 这种方式适用于某些非云原生设计的应用，他们会把日志写到本地文件，随着时间推移会把宿主机空间占满，是个定时炸弹。可以通过限制emptyDir的大小，挂载到容器内日志输出目录，这样当日志文件超过limit，pod就变成Completed状态，同时创建一个新的pod出来。
 
-## hostPath
+### hostPath
 
 hostPath是指Pod挂载宿主机上的目录或文件，使得容器可以使用宿主机的文件系统进行存储。pod被删除这个存储卷还是存在的。所以只要同一个pod被调度到同一个节点上来，对应的数据依然是存在的。
 
@@ -235,11 +240,12 @@ hostPath.type字段说明:
 >
 > - 根据官网说明：[Kubernetes Volumes - hostPath](https://kubernetes.io/docs/concepts/storage/volumes/#hostpath)，hostPath方式存在安全隐患，需要小心使用。更推荐使用local类型volume
 
-## local
+### local
 
 - 官网链接：
   - [Kubernetes Volumes - local](https://kubernetes.io/docs/concepts/storage/volumes/#local)
   - [Kubernetes StorageClasses - local](https://kubernetes.io/docs/concepts/storage/storage-classes/#local)
+
 - 创建local需要的sc，这个sc的作用是确保pod在创建出来后才会绑定pv和pvc
 
 ~~~yaml
@@ -348,7 +354,7 @@ spec:
 > [!tip] 提示
 > github上有一个开源工具：[sig-storage-local-static-provisioner](https://github.com/kubernetes-sigs/sig-storage-local-static-provisioner/blob/master/docs/getting-started.md)，自动把指定的local路径做成PV。
 
-## NFS/NAS
+### NFS/NAS
 
 HostPath可以解决数据持久化的问题，但是一旦Node节点故障了，Pod如果转移到了别的节点，又会出现问题了，此时需要准备单独的网络存储系统，比较常用的有NFS（云平台上叫NAS）、CIFS。
 
@@ -356,7 +362,7 @@ HostPath可以解决数据持久化的问题，但是一旦Node节点故障了�
 
 <img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202311141723114.png" alt="image-20231114172333052" style="zoom:50%;" />
 
-### NFS访问权限
+#### NFS访问权限
 
 NFS的用户认证和权限控制基于RPC，在nfs3和nfs4版本中，最常用的认证机制是AUTH_UNIX。客户端上的UID/GID通过RPC传递到服务端，然后对这些ID做权限校验，这就要求客户端、服务端的UID/GID必须相同。同时，NFS支持在其文件夹上通过以下配置来设置文件夹的访问权限：
 
@@ -445,7 +451,7 @@ Lab
 
 - nfs支持多个客户端挂载，可以创建多个pod，挂载同一个nfs服务器共享出来的目录；但是nfs如果宕机了，数据也就丢失了，所以需要使用分布式存储，常见的分布式存储有glusterfs和cephfs
 
-## Downward API
+### Downward API
 
 元数据挂载，可以把pod的一些元数据以文件的形式，直接挂载到容器内的某个目录（比如标签、命名空间、pod IP等）。
 
@@ -454,13 +460,13 @@ Lab
 1. downward API配置麻烦
 2. 程序读取一个文件肯定不如读取环境变量方便
 
-## PVC
+### PVC
 
 是K8s中的一类资源。用于配置不同的存储后端。
 
 不推荐使用volume直接配置挂载持久化存储（in-tree模式），而是推荐使用PVC先绑定存储，pod再绑定PVC。
 
-# PV/PVC
+## PV/PVC
 
 为什么引入PV/PVC，因为只用volume手动做存储，无法实现以下：
 
@@ -474,7 +480,7 @@ Lab
 
 从k8s开发者角度考虑，volume的配置是在k8s原生的体系当中的，每兼容一种存储，就需要增加一些volume原生代码开发，复杂度高，不符合云原生原则。
 
-## PV
+### PV
 
 为了能够屏蔽底层存储实现的细节，方便用户使用，kubernetes引入**PV**和**PVC**两种资源对象。
 
@@ -485,10 +491,11 @@ PersistentVolume（PV）是对底层的共享存储的一种抽象。由管理�
 它是集群中的资源，其生命周期独立于使用PV的任何单个pod。PV通过yaml文件部署；PV是node级别的，不能配namespace。
 
 PV供应方式：
+
 - 静态：集群管理员创建了许多PV。它们包含可供群集用户使用的实际存储的详细信息。它们存在于Kubernetes API中，可供使用。
 - 动态：当管理员创建的静态PV都不匹配用户的PersistentVolumeClaim时，集群可能会尝试为PVC专门动态配置卷。此配置基于StorageClasses，PVC必须请求存储类，管理员必须创建并配置该存储类，以便进行动态配置。
 
-## PVC
+### PVC
 
 - PersistentVolumeClaim（PVC）是一个**持久化存储卷**，我们在创建pod时可以定义这个类型的存储卷。它类似于一个pod。Pod消耗节点资源，PVC消耗PV资源。Pod可以请求特定级别的资源（CPU和内存）。pvc在申请pv的时候也可以请求**特定的大小和访问模式**（例如，可以一次读写或多次只读）。
 
@@ -559,9 +566,9 @@ PV供应方式：
 
   f）我们在创建pvc的时候，应该确保和底下的pv能绑定，如果没有合适的pv，那么pvc就会处于pending状态。
 
-## Lab
+### Lab
 
-### HostPath PV
+#### HostPath PV
 
 ~~~yaml
 kind: PersistentVolume 
@@ -581,7 +588,7 @@ spec:
     path: "/mnt/data" 
 ~~~
 
-### NFS PV
+#### NFS PV
 
 ```bash
 #master-01创建nfs共享目录
@@ -730,25 +737,25 @@ spec:
           claimName: pvc-nfs-v2
 ```
 
-## 访问策略
+### 访问策略
 
 accessMode的官网解释：[Kubernetes PV Access Modes](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes)
 
-### ReadWriteOnce
+#### ReadWriteOnce
 
 the volume can be mounted as **read-write by a single node**. 单节点读写，只要pod在同一个节点上就可以读写。
 
 ReadWriteOnce access mode still can allow multiple pods to access the volume when the pods are running on the same node.
 
-### ReadOnlyMany
+#### ReadOnlyMany
 
 the volume can be mounted as **read-only by many nodes**. 多节点只读挂载
 
-### ReadWriteMany
+#### ReadWriteMany
 
 the volume can be mounted as **read-write by many nodes**. 多节点读写挂载
 
-### ReadWriteOncePod
+#### ReadWriteOncePod
 
 the volume can be mounted as **read-write by a single Pod.** 单Pod读写挂载
 
@@ -760,7 +767,7 @@ This is only supported for CSI volumes and Kubernetes version 1.22+.
 
 > 是否能用以上这几种访问模式，要取决于后端对接的存储是否支持这种模式。
 
-## 回收策略
+### 回收策略
 
 定义：pv.spec.persistentVolumeReclaimPolicy
 
@@ -770,12 +777,14 @@ This is only supported for CSI volumes and Kubernetes version 1.22+.
   - `"Retain"` means the volume will be left in its current phase (Released) for manual reclamation by the administrator. The default policy is Retain.
   - 当删除pvc的时候，pv仍然存在，处于released状态，但是它不能被其他pvc绑定使用，里面的数据还是存在的。
   - 我们想要继续使用这个pv，需要手动删除pv。删除pv，不会删除pv后端存储里的数据。再重建pv，当重新创建pvc时还会和这个最匹配的pv绑定。
+
 2. Delete：【动态存储建议用，因为PV不是管理员手动维护的】
   - 如果存储插件支持，删除PVC的时候，PV会一起被删除。动态存储默认为Delete。
   - 必须所有pod都没有挂载这个PVC的时候才能删掉，否则会卡住删不动。
+
 3. Recycle：（不推荐使用，1.15可能被废弃了）
 
-## PVC创建失败的原因
+### PVC创建失败的原因
 
 PVC一直Pending的原因：
 
@@ -789,13 +798,13 @@ PVC一直Pending的原因：
 1. PVC不存在
 2. PVC和pod不在同一namespace
 
-# 动态存储
+## 动态存储
 
 上面介绍的PV和PVC模式都是需要先创建好PV，然后定义好PVC和pv进行一对一的绑定。但是大规模集群PVC请求成千上万，那么就需要创建成千上万的PV，对于运维人员来说维护成本很高。这时候需要动态存储自动创建PV。
 
 动态存储依赖StorageClass和CSI实现。当创建PVC时，storageClass指定动态存储类，该类指向不同的CSI存储供应商，之后通过该CSI对接到后端存储，就可以完成PV的自动创建。
 
-## storageClass
+### storageClass
 
 Kubernetes提供一种动态创建PV的机制，即创建PV的模板。k8s集群管理员通过创建storageclass可以动态生成pv供pvc使用。
 
@@ -808,13 +817,13 @@ Kubernetes提供一种动态创建PV的机制，即创建PV的模板。k8s集群
 
 有了这两部分信息，Kubernetes就能够根据用户提交的PVC，找到对应的StorageClass，然后Kubernetes就会调用 StorageClass声明的存储插件，创建出需要的PV。
 
-## CSI
+### CSI
 
 CSI是一个标准化的存储接口，用于在容器环境集成外部存储系统，提供了统一的方式来集成各种存储系统，无论是云供应商的存储还是本地自检存储，都可以通过CSI对接到容器平台中。
 
 在同一个集群中，可以同时存在多个CSI对接不同的存储平台，之后可以通过StorageClass的provisioner字段声明该clss对接哪一种存储平台。
 
-## NFS存储类-基于nfs-subdir插件
+### NFS存储类-基于nfs-subdir插件
 
 > 安装 **nfs-subdir-external-provisioner** ，它是一个存储资源自动调配器，它可将现有的NFS服务器通过持久卷声明来支持 Kubernetes 持久卷的动态分配。
 >
@@ -945,7 +954,7 @@ spec:
           claimName: pvc-sc-nfs
 ```
 
-## NFS存储类-基于CSI
+### NFS存储类-基于CSI
 
 github地址：[kubernetes-csi/csi-driver-nfs: This driver allows Kubernetes to access NFS server on Linux node.](https://github.com/kubernetes-csi/csi-driver-nfs)
 
@@ -959,7 +968,7 @@ sed -i "s#registry.k8s.io#k8s.m.daocloud.io#g" deploy/v4.11.0/*.yaml
 ./deploy/install-driver.sh v4.11.0 local 
 ~~~
 
-### 创建存储类
+#### 创建存储类
 
 ~~~yaml
 apiVersion: storage.k8s.io/v1 
@@ -979,7 +988,7 @@ mountOptions:
   - nfsvers=4.1 
 ~~~
 
-### 挂载测试
+#### 挂载测试
 
 ~~~yaml
 # PVC
@@ -1022,7 +1031,7 @@ spec:
 > [!warning] 注意
 > 一般NFS/NAS高可用和性能不是很好，一些数据库、缓存、消息队列服务尽量不要使用NFS，生产环境中推荐使用分布式存储。如果实在没有分布式存储，那就不要部署在k8s中了。
 
-## 默认存储类
+### 默认存储类
 
 - 默认StorageClass是指当用户创建PVC时未显式指定StorageClass的情况下，Kubernetes将自动使用该StorageClass来动态配置存储卷。这大大简化了用户的操作，并确保了一致性和可靠性。文档：
 
@@ -1060,13 +1069,13 @@ spec:
   EOF
   ~~~
 
-# sts的volumeClaimTemplates 
+## sts的volumeClaimTemplates 
 
 使用StatefulSet部署有状态服务时，可以使用`volumeClaimTemplates`自动为每个Pod生成 PVC，并挂载至容器中，大大降低了手动创建管理存储的难度和复杂度。
 
 假设需要搭建一个三节点的RabbitMQ集群到K8s中，并且需要实现数据的持久化，此时可以通StatefulSet创建三个副本，并且通过volumeClaimTemplates自动绑定各自的存储。 
 
-## sts
+### sts
 
 ~~~yaml
 kind: StatefulSet
@@ -1184,7 +1193,7 @@ spec:
             storage: 4Gi
 ~~~
 
-## svc-clusterIP
+### svc-clusterIP
 
 ~~~yaml
 kind: Service
@@ -1204,7 +1213,7 @@ spec:
     app: rmq-cluster
 ~~~
 
-## svc-LB
+### svc-LB
 
 ~~~yaml
 kind: Service
@@ -1230,7 +1239,7 @@ spec:
   type: NodePort
 ~~~
 
-## cm
+### cm
 
 ~~~yaml
 kind: ConfigMap
@@ -1263,7 +1272,7 @@ data:
       queue_master_locator=min-masters
 ~~~
 
-## secret
+### secret
 
 ~~~yaml
 kind: Secret
@@ -1279,7 +1288,7 @@ stringData:
 type: Opaque
 ~~~
 
-## rbac
+### rbac
 
 ~~~yaml
 apiVersion: v1
@@ -1316,33 +1325,33 @@ subjects:
   namespace: public-service
 ~~~
 
-# PVC 在线扩容与缩容
+## PVC 在线扩容与缩容
 
 > **核心结论**：PVC 可以在线扩容（大部分场景不中断业务），但缩容——K8s 原生不支持，别想了。
 
-## 什么时候需要扩容
+### 什么时候需要扩容
 
 - 监控告警：PV 使用率 > 85%，磁盘快写满了
 - 业务反馈：Pod 写入文件时报 `No space left on device`
 - 容量规划：历史数据显示数据每月增长 20%，需要提前扩
 - 数据库扩容：MySQL/PostgreSQL 的数据目录不够用了
 
-## 扩容前三件必查事项
+### 扩容前三件必查事项
 
-### 1. 确认当前 PVC 信息
+#### 1. 确认当前 PVC 信息
 
 ```bash
 kubectl get pvc <pvc-name> -n <namespace>
 # 看 CAPACITY 和 STATUS，确认是 Bound 状态
 ```
 
-### 2. 确认 StorageClass 名称
+#### 2. 确认 StorageClass 名称
 
 ```bash
 kubectl get pvc <pvc-name> -n <namespace> -o jsonpath='{.spec.storageClassName}'
 ```
 
-### 3. 确认 StorageClass 支持扩容（最重要）
+#### 3. 确认 StorageClass 支持扩容（最重要）
 
 ```bash
 kubectl get storageclass <sc-name> -o yaml | grep -A1 allowVolumeExpansion
@@ -1361,9 +1370,9 @@ kubectl edit storageclass <sc-name>
 > [!warning] 坑
 > 有些云厂商的 CSI 驱动虽然支持 `allowVolumeExpansion`，但实际扩容时需要离线（停 Pod）。比如 UpCloud 的 CSI 驱动就只支持离线扩容。生产环境动手前先读 CSI 驱动文档。
 
-## 动手扩容
+### 动手扩容
 
-### 方式一：kubectl patch（推荐，一行搞定）
+#### 方式一：kubectl patch（推荐，一行搞定）
 
 ```bash
 kubectl patch pvc <pvc-name> -n <namespace> \
@@ -1371,21 +1380,21 @@ kubectl patch pvc <pvc-name> -n <namespace> \
 # 输出 persistentvolumeclaim/<pvc-name> patched 表示成功
 ```
 
-### 方式二：kubectl edit
+#### 方式二：kubectl edit
 
 ```bash
 kubectl edit pvc <pvc-name> -n <namespace>
 # 找到 .spec.resources.requests.storage，改成新的大小
 ```
 
-## 扩容后验证（别光看 PVC）
+### 扩容后验证（别光看 PVC）
 
 扩容指令执行后**不一定立即生效**。整个流程分两个阶段：
 
 1. **后端存储扩容**：底层 Volume 被扩到新大小
 2. **文件系统扩容**：Pod 重新挂载后，节点上的文件系统被调整
 
-### 查看扩容进度
+#### 查看扩容进度
 
 ```bash
 kubectl describe pvc <pvc-name> -n <namespace>
@@ -1393,16 +1402,16 @@ kubectl describe pvc <pvc-name> -n <namespace>
 # FileSystemResizePending = 存储后端已扩完，文件系统等 Pod 重启后自动完成
 ```
 
-### 进 Pod 确认文件系统大小（最终验证）
+#### 进 Pod 确认文件系统大小（最终验证）
 
 ```bash
 kubectl exec -it <pod-name> -n <namespace> -- df -h
 # 看到新的大小才算真正完成
 ```
 
-## 核心限制
+### 核心限制
 
-### 缩容？不支持。
+#### 缩容？不支持。
 
 K8s 从设计上就不支持 PVC 缩容。不管是 CSI 驱动还是 in-tree 插件，都不支持对底层 Volume 做实际收缩。
 
@@ -1417,10 +1426,11 @@ kubectl patch pvc my-pvc -p '{"spec":{"resources":{"requests":{"storage":"5Gi"}}
 这是 API 层面的校验，绕不过去。
 
 **扩多了怎么办？**
+
 1. 接受现实，多的容量就放在那——反正存储又不贵，留着以后用
 2. 如果一定要回收：建一个新的小 PVC，把数据拷过去，切流量，删老的
 
-### 扩容失败怎么办？（v1.34 有救了）
+#### 扩容失败怎么办？（v1.34 有救了）
 
 最常见的原因：拼写错误（想扩 100TB 写成了 1000TB）、存储配额用完、后端不支持那么大容量。
 
@@ -1447,7 +1457,7 @@ kubectl get pvc myclaim -o jsonpath='{.status.allocatedResourceStatus.storage}'
 | `ControllerResizeInfeasible` | 扩容不可行（配额/后端限制） |
 | `ControllerResizeError` | 扩容出错 |
 
-## 生产环境扩容建议
+### 生产环境扩容建议
 
 1. **扩容前先备份**——尤其是数据库的 PVC。虽然扩容操作本身不会丢数据，但万一后端存储出问题呢？
 2. **扩容时预留缓冲**——别等到磁盘 99% 才扩，建议阈值设在 80%。扩容需要时间，万一扩的过程中业务写爆了就尴尬了
@@ -1455,7 +1465,7 @@ kubectl get pvc myclaim -o jsonpath='{.status.allocatedResourceStatus.storage}'
 4. **扩容参数要慎重**——扩多大？一般按"当前已用 × 1.5"来估算，既留够缓冲又不过度浪费
 5. **检查 CSI 驱动文档**——不同厂商的驱动行为有差异：有的支持在线扩容（Pod 不用重启），有的要求离线（停 Pod），有的对文件系统类型有限制
 
-### 存储类选型建议
+#### 存储类选型建议
 
 | 场景 | 推荐 | 说明 |
 |------|------|------|
@@ -1463,7 +1473,7 @@ kubectl get pvc myclaim -o jsonpath='{.status.allocatedResourceStatus.storage}'
 | 大文件共享/日志 | 支持 RWX 的共享存储（NFS、CephFS） | 确认扩容是否支持 |
 | 非关键数据 | 普通云盘 | 便宜 |
 
-## 常见问题速查表
+### 常见问题速查表
 
 | 现象 | 可能原因 | 解决方案 |
 |------|---------|---------|

@@ -9,13 +9,16 @@ aliases:
   - Jenkins Helm部署
 ---
 
-# 介绍
+# Helm部署Jenkins
+
+
+## 介绍
 
 - 官网安装说明：[Jenkins Helm安装文档](https://www.jenkins.io/doc/book/installing/kubernetes/#install-jenkins-with-helm-v3)
 - github地址：[jenkinsci/helm-charts](https://github.com/jenkinsci/helm-charts/tree/main/charts/jenkins)
 - artifacthub地址：[Jenkins Helm Chart](https://artifacthub.io/packages/helm/jenkinsci/jenkins)
 
-# 下载
+## 下载
 
 - 下载helm chart
 
@@ -25,7 +28,7 @@ helm repo update jenkins
 helm pull jenkins/jenkins --version 5.8.68
 ~~~
 
-# 配置文件
+## 配置文件
 
 ~~~yaml
 controller:
@@ -131,15 +134,15 @@ scp -r /root/.kube/  rn1:/root/
 chown -R 1000:1000 /root/.kube/
 ~~~
 
-# 安装
+## 安装
 
 ~~~sh
 helm upgrade -i jenkins -n jenkins --create-namespace . -f values.yaml
 ~~~
 
-# 后续配置
+## 后续配置
 
-## 访问jenkins UI
+### 访问jenkins UI
 
 - 获取初始admin密码
 
@@ -151,7 +154,7 @@ helm upgrade -i jenkins -n jenkins --create-namespace . -f values.yaml
 
 - 访问ingress URL：`http://jenkins.hanxux.local`
 
-## 安装blue ocean插件
+### 安装blue ocean插件
 
 - manage jenkins - 插件管理 - available plugins - 搜索kubernetes、blueocean - 均选择download node and install after restart (kubernetes插件在新版jenkins helm chart中已经默认安装好了，这里仅安装blue ocean即可)
 
@@ -161,7 +164,7 @@ helm upgrade -i jenkins -n jenkins --create-namespace . -f values.yaml
 
 - 弹出登录界面说明插件安装没问题，可以进行后续实验。
 
-## 测试连接k8s
+### 测试连接k8s
 
 - 新建一个pipeline看是否可以执行任务
 
@@ -189,14 +192,14 @@ helm upgrade -i jenkins -n jenkins --create-namespace . -f values.yaml
   ~~~
   
 
-## 连接harbor
+### 连接harbor
 
 1. 首先需要[安装harbor](../helm/helm部署harbor.md)
 2. Jenkins中首页-->系统管理-->管理凭据-->Stores scoped to Jenkins-->全局-->添加凭据
 3. 类型：Username with Password，范围：全局，用户名和密码：写harbor的用户名密码admin/Harbor12345，ID：harbork8s。
 4. 点击Create
 
-# 编写pipeline
+## 编写pipeline
 
 1. harbor中新建项目`jenkins-demo`
 
@@ -288,9 +291,9 @@ helm upgrade -i jenkins -n jenkins --create-namespace . -f values.yaml
 
 3. 应用-->保存-->立即构建-->打开blue ocean可以看到流程，可以在交互式输入中手动点击确认
 
-# 自定义agent image
+## 自定义agent image
 
-## agent安装helm和docker
+### agent安装helm和docker
 
 自己基于jenkins的inbound-agent镜像做一个装了docker、helm、kubectl的镜像：
 
@@ -335,7 +338,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /tmp/* ~/*.tgz
 ~~~
 
-# troubleshooting
+## troubleshooting
 
 1. Jenkins Pod 启动失败，`config-reload-init` 容器报告 SSL 证书验证错误：
 

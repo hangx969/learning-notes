@@ -37,6 +37,7 @@ tags:
 ### 核心理念
 
 就像摩托车旁边的"边车"，主容器负责核心业务，边车容器负责辅助功能。两者在同一个 Pod 中运行，共享网络和存储卷。
+
 ![image.png](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260628094057298.png)
 
 ### 应用场景
@@ -47,6 +48,7 @@ tags:
 - **监控数据收集**：Prometheus exporter 采集业务指标
 
 ### 实战配置：Web 应用 + 日志收集
+
 ![image.png](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260628094125199.png)
 
 
@@ -92,6 +94,7 @@ spec:
 ### 核心理念
 
 如同"启动助手"，在 Pod 的主容器启动前执行必要的初始化任务，确保主容器运行时环境已准备就绪。Init Container 执行完毕后会自动退出并释放资源。
+
 ![image.png](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260628094143398.png)
 
 ### 应用场景
@@ -154,6 +157,7 @@ spec:
 ### 核心理念
 
 像"使者"一样，负责与外部世界沟通，为主容器提供网络代理服务。它将复杂的网络通信逻辑从主应用中解耦，让主容器专注于业务逻辑。
+
 ![image.png](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260628094201087.png)
 
 ### 应用场景
@@ -164,6 +168,7 @@ spec:
 - **API 网关功能**：作为 API 网关，处理路由、限流和监控
 
 ### 实战配置：数据库代理
+
 ![image.png](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260628094222030.png)
 
 Deployment：

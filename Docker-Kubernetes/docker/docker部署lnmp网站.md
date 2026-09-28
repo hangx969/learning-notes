@@ -11,13 +11,16 @@ aliases:
   - LNMP部署
 ---
 
-# LNMP
+# Docker部署LNMP网站
+
+
+## LNMP
 
 - LNMP指的是Linux、Nginx、MySQL和PHP的组合,通常用于搭建和运行网站。
 
-# 安装docker-compose
+## 安装docker-compose
 
-## 关闭selinux和防火墙
+### 关闭selinux和防火墙
 
 ~~~sh
 sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config
@@ -26,7 +29,7 @@ reboot -f
 systemctl stop firewalld ; systemctl disable firewalld
 ~~~
 
-## 时间同步
+### 时间同步
 
 ~~~sh
 yum install ntpdate -y
@@ -35,13 +38,13 @@ crontab -e
 * */1 * * * /usr/sbin/ntpdate   cn.pool.ntp.org
 ~~~
 
-## 安装基础软件包
+### 安装基础软件包
 
 ~~~sh
 yum install -y yum-utils device-mapper-persistent-data lvm2 wget net-tools nfs-utils lrzsz gcc gcc-c++ make cmake libxml2-devel openssl-devel curl curl-devel unzip sudo ntp libaio-devel wget vim ncurses-devel autoconf automake zlib-devel  python-devel epel-release openssh-server socat  ipvsadm conntrack ntpdate telnet ipvsadm
 ~~~
 
-## 修改内核参数
+### 修改内核参数
 
 ~~~sh
 modprobe br_netfilter
@@ -53,7 +56,7 @@ EOF
 sysctl -p /etc/sysctl.d/k8s.conf
 ~~~
 
-## 配置yum源
+### 配置yum源
 
 ~~~sh
 #上传kubernetes.repo到/etc/yum.repos.d/目录中
@@ -61,14 +64,14 @@ sysctl -p /etc/sysctl.d/k8s.conf
 yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
 ~~~
 
-## 启动docker
+### 启动docker
 
 ```sh
 yum install docker-ce docker-compose -y
 systemctl start docker && systemctl enable docker.service
 ```
 
-# 准备镜像
+## 准备镜像
 
 ~~~sh
 #上传mysql、nginx、php镜像
@@ -92,9 +95,9 @@ docker load -i php.tar.gz
 > docker-compose down
 > ```
 
-# docker-compose部署lnmp
+## docker-compose部署lnmp
 
-## 准备nginx配置文件
+### 准备nginx配置文件
 
 ~~~sh
 # nginx挂载目录
@@ -132,7 +135,7 @@ server {
 EOF
 ~~~
 
-## docker-compose yml文件
+### docker-compose yml文件
 
 ~~~yaml
 cd /root/lnmp/
@@ -196,7 +199,7 @@ EOF
 docker-compose up -d
 ~~~
 
-## 测试网站主页
+### 测试网站主页
 
 ~~~sh
 cd /root/lnmp/www/
@@ -205,7 +208,7 @@ echo "hello,welcome to study" > index.html
 http://192.168.40.200/
 ~~~
 
-## 测试php服务
+### 测试php服务
 
 ~~~sh
 tee aa.php <<'EOF'
@@ -217,7 +220,7 @@ EOF
 http://192.168.40.186/aa.php
 ~~~
 
-## 连接mysql
+### 连接mysql
 
 ~~~sh
 #安装了 `pdo`、`pdo_mysql` 和 `mysqli` 这三个扩展,这些扩展通常用于 PHP 与 MySQL 数据库进行交互。

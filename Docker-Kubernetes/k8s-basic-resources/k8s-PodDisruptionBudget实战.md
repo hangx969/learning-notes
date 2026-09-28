@@ -14,6 +14,7 @@ tags:
 ## 一、什么是 PDB
 
 Pod 中断分两种：
+
 - **非自愿中断（Involuntary）**：节点宕机、内核 panic、OOMKill，无法提前预知
 - **自愿中断（Voluntary）**：`kubectl drain`、滚动更新、集群升级，人为触发
 
@@ -233,5 +234,6 @@ spec:
 ```
 
 `maxUnavailable: 0` + `minAvailable: 2` 组合效果：
+
 - 滚动更新时先启动新 Pod（surge），确认就绪后再删除旧 Pod
 - 节点维护时最多只允许驱逐 1 个 Pod

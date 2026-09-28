@@ -8,9 +8,12 @@ aliases:
   - Docker代理配置
 ---
 
-# docker pull配置代理
+# Docker配置代理
 
-## 背景
+
+## docker pull配置代理
+
+### 背景
 
 关于 docker 配置代理服务器的 [官方文档](https://docs.docker.com/network/proxy/#configure-the-docker-client) :
 
@@ -25,13 +28,13 @@ aliases:
 
 所以这篇文章是讲如何配置运行 **容器** 的环境,与如何拉取镜像无关。如果按照这篇文档的指导,如同南辕北辙。
 
-## 环境变量
+### 环境变量
 
 常规的命令行程序如果要使用代理,需要设置两个环境变量:`HTTP_PROXY` 和 `HTTPS_PROXY` 。但是仅仅这样设置环境变量,也不能让 docker 成功拉取镜像。
 
 因为镜像的拉取和管理都是 docker daemon 的职责,所以我们要让 docker daemon 知道代理服务器的存在。而 docker daemon 是由 systemd 管理的,所以我们要从 systemd 配置入手。
 
-## 配置方法
+### 配置方法
 
 > [!info] systemd配置说明
 > The Docker daemon uses the HTTP_PROXY, HTTPS_PROXY, and NO_PROXY environmental variables in its start-up environment to configure HTTP or HTTPS proxy behavior. You cannot configure these environment variables using the daemon.json file.
@@ -71,7 +74,7 @@ aliases:
    sudo systemctl show --property=Environment docker
    ~~~
 
-# dockerhub镜像下载插件
+## dockerhub镜像下载插件
 
 有时候docker代理也无法下载一些dockerhub的镜像,总是报timeout。网上找到一个chrome插件Docker Image Downloader
 

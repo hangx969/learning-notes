@@ -8,7 +8,10 @@ aliases:
   - goldilocks资源推荐
 ---
 
-# 介绍
+# Helm部署Goldilocks
+
+
+## 介绍
 
 goldilocks是一个开源工具，帮助确定资源的resource request/limit
 
@@ -18,7 +21,7 @@ goldilocks是一个开源工具，帮助确定资源的resource request/limit
 - release page: [Goldilocks Releases](https://github.com/FairwindsOps/goldilocks/releases)
 - artifact hub: [goldilocks helm chart](https://artifacthub.io/packages/helm/fairwinds-stable/goldilocks)
 
-# 下载
+## 下载
 
 - 下载helm chart
 
@@ -28,7 +31,7 @@ helm repo update fairwinds-stable
 helm pull fairwinds-stable/goldilocks --version 9.0.1
 ~~~
 
-# 配置
+## 配置
 
 - values文件
 
@@ -66,7 +69,7 @@ dashboard:
   - `--exclude-namespaces` - when `--on-by-default` is set, exclude this comma-separated list of namespaces
   - `--ignore-controller-kind` - comma-separated list of controller kinds to ignore from automatic VPA creation. For example: `--ignore-controller-kind=Job,CronJob`
 
-# 安装
+## 安装
 
 ~~~sh
 helm upgrade -i goldilocks fairwinds-stable/goldilocks --namespace goldilocks \
@@ -76,18 +79,18 @@ helm upgrade -i goldilocks fairwinds-stable/goldilocks --namespace goldilocks \
 --version $VERSION
 ~~~
 
-# 使用
+## 使用
 
-## UI
+### UI
 
 首先在本地hosts文件中添加goldilocks.hanxux.local的映射，浏览器访问goldilocks.hanxux.local即可看到UI
 
-## 生成recommendation
+### 生成recommendation
 
 生成recommendation的原理：goldilock从vpa的recommender读取资源值
 
 [How Does Goldilocks Generate Recommendations](https://goldilocks.docs.fairwinds.com/faq/#how-does-goldilocks-generate-recommendations)
 
-## 切换updateMode
+### 切换updateMode
 
 默认情况下是采用off mode，可以通过给某个namespace加label来对其中的pod改用Auto模式：[Goldilocks Advanced Usage](https://goldilocks.docs.fairwinds.com/advanced/#cli-usage-not-recommended)

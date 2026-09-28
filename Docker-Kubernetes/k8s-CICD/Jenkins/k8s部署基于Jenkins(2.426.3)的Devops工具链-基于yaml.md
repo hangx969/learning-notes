@@ -9,9 +9,12 @@ aliases:
   - Jenkins 2.426.3 DevOps工具链
 ---
 
-# 部署Jenkins
+# K8s部署基于Jenkins(2.426.3)的DevOps工具链-基于YAML
 
-## 安装nfs服务
+
+## 部署Jenkins
+
+### 安装nfs服务
 
 可以在任一台机器上部署nfs服务
 
@@ -34,15 +37,15 @@ EOF
 exportfs -arv
 ~~~
 
-## 准备前置资源
+### 准备前置资源
 
-### namespace
+#### namespace
 
 ~~~sh
 kubectl create namespace jenkins-k8s
 ~~~
 
-### PV+PVC
+#### PV+PVC
 
 1. PV
 
@@ -88,7 +91,7 @@ kubectl create clusterrolebinding jenkins-k8s-sa-cluster -n jenkins-k8s  --clus
    - jenkins主镜像：`docker.io/jenkins/jenkins:2.426.3`
    - jenkins slave pod镜像：`docker.io/library/jenkins.agent:v2`
 
-## 部署deployment
+### 部署deployment
 
 ~~~yaml
 kind: Deployment
@@ -157,7 +160,7 @@ spec:
 > kubectl apply -f jenkins-deployment.yaml
 > ```
 
-## 部署service
+### 部署service
 
 ~~~yaml
 apiVersion: v1
@@ -181,9 +184,9 @@ spec:
     targetPort: agent
 ~~~
 
-## 配置jenkins
+### 配置jenkins
 
-### 登录
+#### 登录
 
 Nodeport暴露的jenkins服务，浏览器访问web ui:`http://172.16.183.101:30002/login?from=%2F`
 
@@ -195,20 +198,20 @@ cat  /data/v2/jenkins-home/secrets/initialAdminPassword
 
 把密码输入到“解锁Jenkins”下面的“管理员密码”中。
 
-### 初始化
+#### 初始化
 
 1. 登录后选择“安装推荐的插件”，创建第一个管理员用户，配置管理员密码。
 2. 实例配置中Jenkins URL填写http://172.16.183.101:30002
 3. 保存，提示Jenkins已就绪
 
-## 安装必要插件
+### 安装必要插件
 
 Manage Jnekins-->插件管理-->可选插件
 
 1. 搜索Kubernetes-->选择Kubernetes安装，搜索blueocean-->选择Blue Ocean安装
 2. 安装之后选择重新启动jenkins--> http://172.16.183.101:30002/restart-->重启之后登陆jenkins，插件即可生效
 
-# Jenkins连接k8s集群
+## Jenkins连接k8s集群
 
 1. 访问http://172.16.183.101:30002/configureClouds/，新增一个云，在下拉菜单中选择kubernetes并添加，kubernetes地址填https://172.16.183.100:6443 (master节点apiserver地址)
 2. 测试jenkins是否可以通信：Kubernetes名称空间填jenkins-k8s，点击连接测试，如果显示“Connected to Kubernetes”说明jenkins与k8s可以进行通信
@@ -216,7 +219,7 @@ Manage Jnekins-->插件管理-->可选插件
 
 4. 点击保存
 
-# 配置pod template
+## 配置pod template
 
 1. 在已保存的云中选择刚创建的kubernetes，进去点击Pod Templates --> Add a pod template
 
@@ -267,14 +270,14 @@ chown -R 1000.1000 /root/.kube/
 8. 在service account处填入`jenkins-k8s-sa`，是一开始部署的sa
 9. 配置好之后选择Create
 
-# 连接harbor
+## 连接harbor
 
 1. 首先需要[安装harbor](../helm/helm部署harbor.md)
 2. Jenkins中首页-->系统管理-->管理凭据-->Stores scoped to Jenkins-->全局-->添加凭据
 3. 类型：Username with Password，范围：全局，用户名和密码：写harbor的用户名密码，ID：dockerharbor。
 4. 点击Create
 
-# 编写Pipeline
+## 编写Pipeline
 
 1. harbor中新建项目`jenkins-demo`
 

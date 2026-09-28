@@ -7,9 +7,12 @@ aliases:
   - k8sYAML
 ---
 
-# yaml文件
+# K8s基础-YAML
 
-## 语法格式
+
+## yaml文件
+
+### 语法格式
 
 YAML:标记语言
 
@@ -18,7 +21,7 @@ YAML:标记语言
 - : 后面要加一个空格
 - \# 表示注释
 
-## 数据类型
+### 数据类型
 
 1. 纯量:单个值
 
@@ -69,11 +72,11 @@ heima:
     key2: value2
    ```
 
-# POD yaml文件
+## POD yaml文件
 
 > kubectl explain pod 查看pod的yaml文件写法。
 
-## 一级属性
+### 一级属性
 
 - apiVersion:k8s内部定义,用kubectl api-versions 查询
 - kind:资源类型,查看:kubectl api-resources
@@ -83,7 +86,7 @@ heima:
 - Spec `<object>`: specification,描述,是对各种资源配置的详细描述
 - Status `<object>`: 内容无需定义,k8s自动生成
 
-## spec子属性
+### spec子属性
 
 - Containers 数组:容器的详细信息
 
@@ -93,10 +96,12 @@ heima:
   - Always:总是从远程仓库下载。
   - IfNotExist:本地有就用本地,否则远程仓库下载。
   - Never:只用本地镜像,本地没有就报错。
+
 - Command:启动镜像的时候执行的命令
   - eg:busybox并不是一个程序,而是一个工具类的集合,k8s集群启动管理后,由于没有前台进程阻塞,会自动关闭,解决方法就是让其一直在运行。
   - 解决:用command写一个死循环来执行,就可以一直执行了。
   - 查看:进入容器内部看这个文件:`kubectl exec pod-command -n dev -it -c busybox /bin/sh`
+
 - args:
   - 特别说明:通过上面发现command已经可以完成启动命令和传递参数的功能,为什么这里还要提供一个args选项,用于传递参数呢?这其实跟docker有点关系,kubernetes中的command、args两项其实是实现覆盖Dockerfile中ENTRYPOINT的功能。
 
@@ -113,16 +118,18 @@ heima:
   - containerPort:容器监听的端口
   - hostport:容器端口映射到主机上的端口,如果设置,主机上只能运行一个容器的副本(其他的副本映射过来就端口冲突了),所以一般不设置。
   - 访问程序要使用pod ip:container port (集群内部访问)
+
 - resources:资源配额。
   - limits:限制容器运行的最大占用资源,一旦超过就会自动重启
   - requests:规定下限。下限的意思是只有占**用的资源到了下限才能启动**。否则会是pending状态
+
 - nodeSelector 键值对:根据键值对定义的信息,将pod调度到这些label的node上
 
-## 常用字段含义
+### 常用字段含义
 
 ![image-20240725224115645](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202407252241732.png)
 
-# kubectl apply：Client-side Apply 与 Server-side Apply
+## kubectl apply：Client-side Apply 与 Server-side Apply
 
 > [!summary]
 > Client-side Apply（CSA）在客户端基于 last-applied、live state 和新 manifest 做三路合并；Server-side Apply（SSA）由 API Server 计算差异，并通过 `managedFields` 追踪字段所有权，把多工具共管时的静默覆盖转化为显式冲突。
@@ -134,7 +141,7 @@ heima:
 
 答案都藏在 apply 的实现方式里——客户端算 diff（Client-side Apply，CSA） vs 服务端算 diff 并追踪字段所有权（Server-side Apply，SSA）。这篇文章把整个过程拆开讲清楚。
 
-## 一、Client-side Apply：默认模式下的「三路合并」
+### 一、Client-side Apply：默认模式下的「三路合并」
 
 `kubectl apply` 默认走的是客户端 apply。别被名字骗了，它并不是完全在客户端完成——先看它到底发了哪些 HTTP 请求：
 
@@ -178,7 +185,7 @@ kubectl get --raw /openapi/v3/apis/apps/v1 | jq \
 
 atomic 意味着整个列表要整体替换，没有 merge key。
 
-## 二、三路合并的致命盲区：静默覆盖
+### 二、三路合并的致命盲区：静默覆盖
 
 客户端 apply 的核心是「三路合并」，比较三个信息源：
 
@@ -202,7 +209,7 @@ kubectl get deployment my-app -o yaml
 
 在只有 kubectl 一个工具管资源的小集群里，这没问题。但在 Helm、Argo CD、operator、admission webhook 同时写同一个对象的大集群里，静默覆盖会层出不穷，而且几乎无法排查。
 
-## 三、Server-side Apply：把所有权追踪挪到服务端
+### 三、Server-side Apply：把所有权追踪挪到服务端
 
 加上 `--server-side` 就切换到 SSA：
 
@@ -235,7 +242,7 @@ API Server 用一个专门的 Go 库 `sigs.k8s.io/structured-merge-diff` 做结�
 
 这才是关键区别： **SMP 靠值来合并（看什么变了），SSA 靠所有权来合并（看谁声明了什么）**。冲突不再是「静默覆盖」，而是显式抛错：「这个字段是 helm 管的，你想改，先跟它协商」。
 
-## 四、CRD 的坑：没有 schema 就是 atomic
+### 四、CRD 的坑：没有 schema 就是 atomic
 
 SSA 对 CRD 的行为，取决于这个 CRD 有没有定义 schema、schema 怎么写的：
 
@@ -252,7 +259,7 @@ kubectl get crd <crd-name> -o yaml | grep -A 3 "x-kubernetes-list"
 
 写 operator 或 CRD 的人一定要记得加对注释——好在 Kubebuilder 等现代框架会自动生成，主流 operator 基本都是合规的。
 
-## 五、Helm 4 的迁移
+### 五、Helm 4 的迁移
 
 Helm 4 对 **新部署的 release 默认启用 SSA**，但对已有的 Helm 3 release 保持向后兼容，不会自动切换。要迁移，需要显式加 flag：
 
@@ -275,7 +282,7 @@ kubectl get deployment my-app -o yaml --show-managed-fields
 1. 1\. **Helm 3 / Helm 4 混用**：一个用 Helm 4 + server-side 升级过的 release，如果再用 Helm 3 回滚，那次回滚会退回到客户端 apply。
 2. 2\. **Helm 的 release Secret**：Helm 4 用 SSA 后，Secret 不再用来算 diff，但 `helm rollback` 和 `helm history` 仍然依赖它，别乱删。
 
-## 收尾
+### 收尾
 
 回到最初的问题： `kubectl apply` 到底做了什么？在默认的 CSA 下，它是在客户端做三路合并再发 patch，本质上是「值对值」的合并，多个工具同时写同一个对象时必然产生静默覆盖。
 
@@ -290,11 +297,11 @@ SSA 把所有权追踪挪到 API Server，通过 `managedFields` 记录「谁拥
 
 Kubernetes 从 1.22 就支持了 SSA，Helm 4 的默认启用终于让生态跟上了节奏。是时候把 `--server-side` 变成你的默认肌肉记忆了。
 
-## 延伸阅读
+### 延伸阅读
 
 - [Server-Side Apply 官方文档](https://kubernetes.io/docs/reference/using-api/server-side-apply/)
 - [Server Side Apply 详解](https://juejin.cn/post/7173328614644006942)
 
-# kubectl create -f --dry-run=client
+## kubectl create -f --dry-run=client
 
 - 快速生成yaml文件:`kubectl create deploy nginx -n nginx --image=xxx:xxx --dry-run=client -o yaml > nginx.yaml`

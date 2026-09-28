@@ -13,12 +13,15 @@ aliases:
   - EFK+logstash+kafka高吞吐量日志收集
 ---
 
-# EFK+logstash+kafka高吞吐量日志收集
+# K8s监控EFK+logstash+kafka
+
+
+## EFK+logstash+kafka高吞吐量日志收集
 
 - fluentd采集日志数据 --> kafka缓冲 --> logstash消费数据-格式转换 --> elasticsearch --> kibana
 - 这套方案加了缓冲，适合大量日志（TB每日）的环境
 
-## 部署fluentd
+### 部署fluentd
 
 - [fluentd-es-ds.yaml (GitHub)](https://github.com/kubernetes/kubernetes/blob/master/cluster/addons/fluentd-elasticsearch/fluentd-es-ds.yaml)
 
@@ -245,7 +248,7 @@ data:
   ~~~
 
 
-## fluentd接入kafka
+### fluentd接入kafka
 
 ~~~yaml
 kind: ConfigMap
@@ -352,7 +355,7 @@ data:
     </match>
 ~~~
 
-## 配置logstash
+### 配置logstash
 
 - 配置logstash消费messages日志写入elasticsearch
 
@@ -409,9 +412,9 @@ output {
   ~~~
 
 
-# EFK+logstash+kafka具体案例分享
+## EFK+logstash+kafka具体案例分享
 
-## fluentd配置文件
+### fluentd配置文件
 
 - 在 Kubernetes 集群中，Fluentd 配置文件定义了日志从哪里获取、如何处理和将其发送到哪里。可以将 Fluentd 配置文件存储为 ConfigMap。下面是一个简单的 Fluentd 配置文件，它从节点上的 Docker 容器中收集日志，并将其发送到 Kafka。
 
@@ -461,7 +464,7 @@ data:
 >    time_key time: 指定用于提取时间戳的键，这里是 time。
 >    time_format %Y-%m-%dT%H:%M:%S.%N%z: 指定时间戳的格式，这里使用了 ISO 8601 格式，包括日期和时间，并带有纳秒和时区信息。
 
-## fluentd部署
+### fluentd部署
 
 ~~~yaml
 apiVersion: apps/v1
@@ -513,7 +516,7 @@ spec:
           name: fluentd-config
 ~~~
 
-## 安装配置kafka和logstash
+### 安装配置kafka和logstash
 
 - Kafka 是一个分布式流平台，用于收集和处理大量的日志数据。Logstash是一个开源数据处理工具，可以将数据从不同来源采集、转换和发送到指定的目的地。在本例中，Kafka 用于收集 Fluentd 发送的日志数据，而 Logstash 用于将这些数据转换为 Elasticsearch 可以索引的格式。
 - 首先，需要创建一个 Kafka 集群，可以使用 Docker Compose 快速搭建一个本地 Kafka 环境。下面是一个简单的 Docker Compose 文件，它定义了一个包含一个 Kafka broker 和一个 ZooKeeper 实例的 Kafka 集群。
@@ -565,7 +568,7 @@ output {
 }
 ~~~
 
-## 安装配置Elasticsearch和Kibana
+### 安装配置Elasticsearch和Kibana
 
 - Elasticsearch 是一个分布式搜索和分析引擎，可以将大量的结构化和非结构化数据存储到一个地方，并支持实时搜索和分析。Kibana 是一个用于 Elasticsearch 的开源分析和可视化平台，可以帮助您快速理解和探索 Elasticsearch 中的数据。
 - 首先，需要创建一个 Elasticsearch 集群。可以使用 Docker Compose 快速搭建一个本地 Elasticsearch 环境。下面是一个简单的 Docker Compose 文件，它定义了一个包含三个 Elasticsearch 节点的 Elasticsearch 集群。
@@ -623,7 +626,7 @@ server.host: "0"
 elasticsearch.hosts: ["http://elasticsearch1:9200"]
 ~~~
 
-## 测试EFK系统
+### 测试EFK系统
 
 ~~~sh
 $ kubectl run --rm -it --image=alpine:3.12 test-pod -- /bin/sh

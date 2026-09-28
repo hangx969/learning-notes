@@ -9,9 +9,12 @@ aliases:
   - Prometheus远程监控K8s
 ---
 
+# Prometheus监控外部K8s集群
+
+
 - prometheus装到单独的机器上，需要监控外部k8s集群
 
-# 配置k8s的sa和授权
+## 配置k8s的sa和授权
 
 ~~~sh
 #新建monitor-sa的服务账号，通过clusterrolebing绑定到clusterrole上
@@ -43,7 +46,7 @@ tee /usr/local/prometheus-2.37.6.linux-amd64/k8s_token <<'EOF'
 EOF
 ~~~
 
-# 安装kube-state-metrics
+## 安装kube-state-metrics
 
 ~~~sh
 #在工作节点解压镜像
@@ -55,7 +58,7 @@ kubectl apply -f kube-state-metrics-deploy.yaml
 kubectl apply -f kube-state-metrics-svc.yaml
 ~~~
 
-# 配置prometheus
+## 配置prometheus
 
 ~~~sh
 #在prometheus的机器上

@@ -8,7 +8,10 @@ aliases:
   - istio企业接入
 ---
 
-# 企业内项目接入istio流程
+# 企业项目接入Istio实战
+
+
+## 企业内项目接入istio流程
 
 企业内接入istio常见有两种情况：
 
@@ -22,9 +25,9 @@ aliases:
 1. 新项目还未部署：按照istio的规范创建deployment和service，以及istio的核心资源
 2. 已经部署在集群中的：需要修改Deployment、Service，按需转换为ingressGateway对外提供服务
 
-# 项目接入istio实战
+## 项目接入istio实战
 
-## 测试项目架构
+### 测试项目架构
 
 有一个测试项目demo，架构如下：
 
@@ -34,17 +37,18 @@ aliases:
 - 两个后端服务通过/order和/receiveapi暴露访问：
   - Receive Service（转发请求到Handler Service，返回一个随机密码）
   - Order Service（查询订单，连接Mysql）
+
 - Handler Service不暴露对外访问。
 
 我们把这个项目改造为istio服务网格管理。
 
-## 部署测试项目
+### 部署测试项目
 
 ~~~sh
 kubectl create ns demo
 ~~~
 
-### mysql组件
+#### mysql组件
 
 ~~~yaml
 apiVersion: apps/v1
@@ -115,7 +119,7 @@ CREATE USER 'order'@'%' IDENTIFIED BY 'password';
 GRANT ALL ON orders.* TO 'order'@'%'; 
 ~~~
 
-### order服务
+#### order服务
 
 ~~~yaml
 apiVersion: apps/v1
@@ -201,7 +205,7 @@ spec:
         pathType: ImplementationSpecific
 ~~~
 
-### handler服务
+#### handler服务
 
 ~~~yaml
 apiVersion: apps/v1
@@ -261,7 +265,7 @@ spec:
     targetPort: 8080
 ~~~
 
-### receive服务
+#### receive服务
 
 ~~~yaml
 apiVersion: apps/v1
@@ -343,7 +347,7 @@ spec:
     targetPort: 8080
 ~~~
 
-### 前端UI
+#### 前端UI
 
 ~~~yaml
 apiVersion: apps/v1
@@ -419,15 +423,15 @@ spec:
     targetPort: 80
 ~~~
 
-### 访问项目
+#### 访问项目
 
 宿主机添加host，通过前端UI的ingress访问：`demo.test.com`
 
-## 接入istio南北流量改造
+### 接入istio南北流量改造
 
 如果想要使用Istio管理南北流量，建议服务的入口使用IngressGateway进行管理，也就是需要把之前由其他控制器管理的Ingress改造为由Istio Gateway管理（新项目直接创建即可，无需改造）。 
 
-### 确认待改造ingress
+#### 确认待改造ingress
 
 首先确认当前项目的ingress配置有哪些：
 
@@ -442,7 +446,7 @@ demo-ui        nginx-default   demo.test.com
 
 建议先改造后端再改造前端
 
-### 为项目创建Gateway
+#### 为项目创建Gateway
 
 ~~~yaml
 apiVersion: networking.istio.io/v1 
@@ -462,11 +466,11 @@ spec:
     - "demo.test.com" # 发布域名 
 ~~~
 
-### 创建VirtualService
+#### 创建VirtualService
 
 接下来需要创建VirtualService和Gateway绑定
 
-#### order服务
+##### order服务
 
 看demo-order的ingress定义，把/orders路径转发到order svc，端口号是80。创建同样规则的VirtualService：
 
@@ -495,7 +499,7 @@ spec:
 
 vs创建完成后就可以通过域名+ingressGateway端口号访问到服务了：`demo.test.com:30080/orders`
 
-#### receive服务
+##### receive服务
 
 看receive服务的ingress定义，里面有路径重写，将用户请求路径重写为第二个捕获组 (.*) 的内容，去掉 /receiveapi 前缀，转发给后端demo-receive服务的8080端口。
 
@@ -526,7 +530,7 @@ spec:
           number: 8080
 ~~~
 
-#### 前端ui服务
+##### 前端ui服务
 
 ~~~yaml
 --- 
@@ -553,15 +557,15 @@ spec:
 
 创建完成后，访问根路径`demo.test.com:30080/`验证。
 
-#### 删除ingress
+##### 删除ingress
 
 验证VirtualService和Gateway可以访问到发布的域名之后，就可以删掉现存的ingress了。
 
-## 接入istio东西流量改造
+### 接入istio东西流量改造
 
 如果需要istio管理东西流量，需要istio的sidecar注入，然后再通过DR和VS控制内部流量。
 
-### ns添加istio注入标签
+#### ns添加istio注入标签
 
 首先向demo命名空间添加istio标签：
 
@@ -569,11 +573,11 @@ spec:
 kubectl label ns demo istio-injection=enabled
 ~~~
 
-### 重建pod
+#### 重建pod
 
 rollout restart所有deployment和sts，滚动更新之后，istio sidecar会加到pod里面。
 
-### 创建dr和vs
+#### 创建dr和vs
 
 之后给需要管理东西流量的Service创建VirtualService和DestinationRule，方便更细力度控制流量。
 

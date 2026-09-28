@@ -7,7 +7,10 @@ aliases:
   - Pythonk8sAPI
 ---
 
-# 前置条件
+# Python调用K8s-API实现资源管理
+
+
+## 前置条件
 
 - 安装python(pycharm)
 
@@ -62,7 +65,7 @@ aliases:
           - containerPort: 80
   ~~~
 
-# 查看资源
+## 查看资源
 
 ~~~python
 import kubernetes
@@ -106,7 +109,7 @@ print(resp.spec.containers[0])
 print(resp.spec.containers[0].image)
 ~~~
 
-# 创建deploy
+## 创建deploy
 
 ~~~python
 from os import path
@@ -126,7 +129,7 @@ if __name__ == '__main__':
       main()
 ~~~
 
-# 修改资源
+## 修改资源
 
 ~~~python
 from os import path
@@ -147,7 +150,7 @@ if __name__=='__main__':
     main()
 ~~~
 
-# 删除资源
+## 删除资源
 
 ~~~python
 from os import path

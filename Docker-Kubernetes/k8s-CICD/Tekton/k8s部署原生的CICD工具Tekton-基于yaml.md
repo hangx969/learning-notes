@@ -8,14 +8,17 @@ aliases:
   - Tekton YAML部署
 ---
 
-# Tekton
+# K8s部署原生的CICD工具Tekton-基于YAML
 
-## 介绍
+
+## Tekton
+
+### 介绍
 
 - Tekton 是一个功能强大且灵活的 Kubernetes 原生开源框架，是谷歌开源的，功能强大且灵活，开源社区也正在快速的迭代和发展壮大，主要用于创建持续集成和交付（CI/CD）系统。通过抽象底层实现细节，用户可以跨多云平台和本地系统进行构建、测试和部署。另外，基于kubernetes CRD定义的pipeline流水线也是Tekton最重要的特征。
 - 它原本是 knative 项目里面一个叫做 build-pipeline 的子项目，用来作为 knative-build 的下一代引擎。然而，随着 k8s 社区里各种各样的需求涌入，这个子项目慢慢成长为一个通用的框架，能够提供灵活强大的能力去做基于 k8s 的构建发布。Tekton 其实只提供 Pipeline 这个一个功能，Pipeline 会被直接映射成 K8s Pod 等 API 资源。而比如应用发布过程的控制，灰度和上线策略，都是我们自己编写 K8s Controller来实现的，也就意味着 Tekton 不会在K8s 上盖一个”大帽子“，比如我们想看发布状态、日志等是直接通过 K8s 查看这个 Pipeline 对应的 Pod 的状态和日志，不需要再面对另外一个 API。
 
-## 自动发布流程
+### 自动发布流程
 
 <img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202405211038230.png" alt="image-20240521103838163" style="zoom: 67%;" />
 
@@ -27,7 +30,7 @@ aliases:
    - 如果 Git 改动里有一个应用 YAML 且该应用存在，那么将渲染和生成 Tekton Pipelines 用来升级应用。这里我们会根据应用定义 YAML 里的策略来做升级，比如做金丝雀发布、灰度升级。
    - 如果 Git 改动里有一个应用 YAML 且该应用存在且标记了“被删除”，那么将渲染和生成 Tekton Pipelines 用来删除应用。确认应用被删除后，我们才从 Git 里删除这个应用的 YAML
 
-## 术语
+### 术语
 
 Tekton 为Kubernetes 提供了多种 CRD 资源对象，可用于定义我们的流水线，主要有以下几个CRD资源对象：
 
@@ -37,9 +40,9 @@ Tekton 为Kubernetes 提供了多种 CRD 资源对象，可用于定义我们的
 - PipelineRun：类似task和taskRun的关系，pipelineRun也表示某一次实际运行的 pipeline，下发一个 pipelineRun CRD 实例到 Kubernetes后，同样也会触发一次 pipeline 的构建。
 - PipelineResource：表示pipeline输入资源，比如github上的源码，或者pipeline 输出资源，例如一个容器镜像或者构建生成的jar包等。
 
-# 安装Tekton
+## 安装Tekton
 
-## 准备镜像和安装文件
+### 准备镜像和安装文件
 
 ~~~sh
 #把tekton-0-12-0.tar.gz和busybox-v-1-0.tar.gz上传到worker node机器上，手动解压：
@@ -1503,7 +1506,7 @@ spec:
 ---
 ~~~
 
-## 验证资源创建
+### 验证资源创建
 
 ~~~sh
 kubectl get pods -n tekton-pipelines
@@ -1513,11 +1516,11 @@ kubectl api-versions
 
 
 
-# 测试Tekton构建CICD流水线
+## 测试Tekton构建CICD流水线
 
 - 我们测试一个简单的golang程序。应用程序代码，测试及dockerfile文件可在如下地址获取：[tekton-demo](https://github.com/luckylucky421/tekton-demo)
 
-## 创建task任务
+### 创建task任务
 
 ~~~yaml
 tee task-test.yaml <<'EOF' 
@@ -1544,7 +1547,7 @@ kubectl apply -f task-test.yaml
 kubectl get Task
 ~~~
 
-## 创建pipelineresource
+### 创建pipelineresource
 
 - 通过上面步骤定义了一个 Task 任务，但是该任务并不会立即执行。必须创建一个 TaskRun 引用它并提供所有必需输入的数据才行。这里我们就需要将 git 代码库作为输入，必须先创建一个 PipelineResource 对象来定义输入信息：
 
@@ -1566,7 +1569,7 @@ kubectl apply -f pipelineresource.yaml
 kubectl get PipelineResource
 ~~~
 
-## 创建taskrun
+### 创建taskrun
 
 ~~~yaml
 tee taskrun.yaml <<'EOF' 

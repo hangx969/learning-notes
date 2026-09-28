@@ -7,7 +7,10 @@ aliases:
   - k8sPod调度亲和力
 ---
 
-# 拓扑域和拓扑键
+# K8s基础-Pod调度-亲和力
+
+
+## 拓扑域和拓扑键
 
 拓扑域Topology Domain：
 
@@ -19,23 +22,23 @@ aliases:
 
 - 用于指定拓扑域，其实就是标签的key。
 
-## 划分拓扑域
+### 划分拓扑域
 
-### 基于主机
+#### 基于主机
 
 k8s每个节点都有一个标签标识节点名称：`kubernetes.io/hostname=k9s-master01`。所以每一个节点都是一个拓扑域。
 
-### 基于多区域
+#### 基于多区域
 
 比如集群在不同物理区域有节点分布。给节点打上`region=beijing`，`region=nanjing`这样的标签。
 
-### 基于数据中心
+#### 基于数据中心
 
 按照数据中心的位置，打上`zone=chaoyang`，`zone=haidian`的标签
 
-### 基于子网
+#### 基于子网
 
-# POD调度
+## POD调度
 
 > Pod 在其生命周期中只会被[调度](https://kubernetes.io/zh-cn/docs/concepts/scheduling-eviction/)一次。 一旦 Pod 被调度（分派）到某个节点，Pod 会一直在该节点运行，直到 Pod 停止或者被终止。
 
@@ -48,11 +51,11 @@ k8s提供了四种调度方式：
 3. 亲和性调度：NodeAffinity、PodAffinity、PodAntiAffinity（基于标签实现）
 4. 污点调度：Taints、Toleration（基于node）
 
-## 定向调度
+### 定向调度
 
 可以使用pods.spec.nodeName或者nodeSelector字段指定要调度到的node节点。
 
-### 标签
+#### 标签
 
 - 作用
 
@@ -86,7 +89,7 @@ k8s提供了四种调度方式：
   kubectl get pod -L version # 看key为version的pod，并打印标签值
   ```
 
-### NodeName
+#### NodeName
 
 - 直接指定pod调度到哪个node上 -- spec.nodeName
 
@@ -116,7 +119,7 @@ spec:
     - "while true; do echo hello; sleep 10; done"
 ```
 
-### nodeSelector
+#### nodeSelector
 
 - pod创建之前，由scheduler使用MatchNodeSelector调度策略进行label匹配。找到目标node再调度。是强制约束的: 没有满足条件的node，这个pod就起不来。-- pod.spec.nodeSelector
 
@@ -155,7 +158,7 @@ kubectl label nodes node-01 disk=ceph #给node打标签
 > - 如果nodeName和nodeSelector都写上，并且这两个配置的调度node冲突，就会报错：Predictate NodeAffnity Failed.
 > - NodeName优先级高，在master节点有污点的情况下，如果定义nodename=master，则会强制调度上去。
 
-## 亲和性调度
+### 亲和性调度
 
 ```bash
 kubectl explain pods.spec.affinity
@@ -174,7 +177,7 @@ kubectl explain pods.spec.affinity
 - 亲和性：如果两个应用**频繁交互**，那就有必要利用亲和性让两个应用的尽可能的靠近，这样可以减少因网络通信而带来的性能损耗。
 - 反亲和性：当应用的采用**多副本部署**时，有必要采用**反亲和性**让各个应用实例打散分布在各个node上，这样可以提高服务的高可用性。
 
-### 节点亲和性调度nodeAffinity
+#### 节点亲和性调度nodeAffinity
 
 ```bash
 kubectl explain pods.spec.affinity.nodeAffinity
@@ -185,7 +188,7 @@ kubectl explain pods.spec.affinity.nodeAffinity
 - prefered表示有节点尽量满足这个位置定义的亲和性，没有满足的也能调度：软亲和性
 - required表示必须有节点满足这个位置定义的亲和性，没有满足的就pending：硬亲和性
 
-#### 硬亲和性
+##### 硬亲和性
 
 ```bash
 kubectl explain pods.spec.affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution
@@ -221,7 +224,7 @@ spec:
     - "while true; do echo hello; sleep 10; done"
 ```
 
-#### 软亲和性
+##### 软亲和性
 
 ```bash
 kubectl explain pods.spec.affinity.nodeAffinity.preferredDuringSchedulingIgnoredDuringExecution
@@ -281,9 +284,9 @@ spec:
 
 注意节点亲和性没有反亲和性配置，实现反亲和性无非就是pod不想调度到某些pod，就写operator: NotIn某些values就行了。
 
-### pod亲和性调度
+#### pod亲和性调度
 
-#### podAffinity 
+##### podAffinity 
 
 ```bash
 kubectl explain pods.spec.affinity.podAffinity
@@ -352,7 +355,7 @@ kubectl explain pods.spec.affinity.podAffinity
       - "while true; do echo hello; sleep 10; done"
   ```
 
-#### podAntiAffinity
+##### podAntiAffinity
 
 跟podAffinity相反，yaml上同样要定义出两个信息：
 
@@ -393,9 +396,9 @@ spec:
     - "while true; do echo hello; sleep 10; done"
 ~~~
 
-# 调度实战示例
+## 调度实战示例
 
-## 同一个应用必须部署在不同的宿主机
+### 同一个应用必须部署在不同的宿主机
 
 ~~~yaml
 kind: Deployment 
@@ -427,7 +430,7 @@ spec:
           image: nginx:1.15.12 
 ~~~
 
-## 同一个应用尽量部署在不同的宿主机
+### 同一个应用尽量部署在不同的宿主机
 
 ~~~yaml
 apiVersion: apps/v1 
@@ -462,7 +465,7 @@ spec:
         image: nginx:1.15.12 
 ~~~
 
-## 同一个应用尽量分布在不同的机房
+### 同一个应用尽量分布在不同的机房
 
 ~~~yaml
 apiVersion: apps/v1 
@@ -497,7 +500,7 @@ spec:
           image: nginx:1.15.12 
 ~~~
 
-## 应用和缓存尽量部署在同一个可用域
+### 应用和缓存尽量部署在同一个可用域
 
 ~~~yaml
 apiVersion: apps/v1 
@@ -533,7 +536,7 @@ spec:
 
 缓存服务的deployment尽量也要设置成和这个my-app的pod亲和性
 
-## 计算服务必须部署至高性能机器
+### 计算服务必须部署至高性能机器
 
 假设集群中有一批机器是高性能机器，而有一些需要密集计算的服务，需要部署至这些机器，以提高计算性能，此时可以使用节点亲和力来控制Pod尽量或者必须部署至这些节点上。
 
@@ -569,7 +572,7 @@ spec:
         image: nginx:1.15.12 
 ~~~
 
-## 计算服务尽量部署到高性能机器
+### 计算服务尽量部署到高性能机器
 
 如果不强制要求，可以让计算服务尽量部署至高性能机器： 
 
@@ -608,7 +611,7 @@ affinity:
           - nvme
 ~~~
 
-## 应用尽量不部署到低性能机器
+### 应用尽量不部署到低性能机器
 
 假如已知集群中有一些机器可能性能不佳或者其他因素的影响，需要控制某个服务尽量不部署至这些机器，此时只需要把operator改为NotIn即可： 
 
@@ -642,7 +645,7 @@ template:
       image: nginx:1.15.12 
 ~~~
 
-## 拓扑域约束-应用均匀分布
+### 拓扑域约束-应用均匀分布
 
 Kubernetes 的 `spec.topologySpreadConstraints`（拓扑域约束） 是一种高级的调度策略，用于确保工作负载的副本在集群中的不同拓扑域（如节点、可用区、区域等）之间均匀分布。（和亲和性没关系，独立的字段）
 
@@ -678,10 +681,11 @@ spec:
 - whenUnsatisfiable：指定当无法满足拓扑约束时的行为
   - DoNotSchedule：不允许调度新的Pod，直到满足约束
   - ScheduleAnyway：即使不满足约束，也允许调度新的Pod
+
 - topologyKey：指定拓扑域的键
 - labelSelector：指定要应用拓扑约束的Pod的标签选择器，通常配置为当前Pod的标签
 
-# 污点与容忍
+## 污点与容忍
 
 官网链接：[Kubernetes污点与容忍](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/)
 
@@ -712,11 +716,11 @@ spec:
 1. 污点和容忍是k8s提供的强大的调度控制机制，可以实现精细化管理和调度优化。
 2. 污点用于标记节点，容忍用于控制pod的调度行为。
 
-## 污点
+### 污点
 
 相当于给节点上了锁，有钥匙（容忍）的pod才能调度上去。没有要钥匙的调度不上去。
 
-### Effect类型
+#### Effect类型
 
 污点定义是键值对数据，**key=value:effect**, key和value是**污点的标签**；effect描述污点的作用，支持如下三个选项：
 
@@ -733,7 +737,7 @@ spec:
    - 用于节点故障转移、紧急维护的场景
 
 
-### 污点操作
+#### 污点操作
 
 打污点：
 
@@ -766,7 +770,7 @@ kubectl taint node node-01 ssd=true:PreferNoSchedule-
 kubectl taint node node-01 ssf=false:PerferNoSchedule --overwtire
 ~~~
 
-### 常见内置污点
+#### 常见内置污点
 
 - node.kubernetes.io/not-ready：相当于节点状态Ready为false。节点出问题时会自动添加这个污点。会自动驱逐pod。
 - node.kubernetes.io/unreachable：Node Controller访问不到节点时会自动添加，相当于节点状态Ready的值为Unknown。会自动驱逐pod。
@@ -779,7 +783,7 @@ kubectl taint node node-01 ssf=false:PerferNoSchedule --overwtire
 
 除了前两个，后面的都是不会驱逐pod的。
 
-## 容忍
+### 容忍
 
 键值对数据，要定义出来容忍什么k、v、effect的污点。
 
@@ -793,7 +797,7 @@ kubectl taint node node-02 node-type=production:NoExcute
 kubectl taint node node-02 key: node-type-
 ```
 
-### 容忍类型
+#### 容忍类型
 
 ~~~yaml
 # 完全匹配。容忍的k，v，effect和污点的完全一样
@@ -827,7 +831,7 @@ tolerations:
   tolerationSeconds: 3600
 ~~~
 
-### 字段配置
+#### 字段配置
 
 ```yaml
 apiVersion: v1
@@ -855,9 +859,9 @@ spec:
     tolerationSeconds: 10 # NoExcute专用字段。容忍10s后就立刻被驱逐。
 ```
 
-## 污点容忍实战示例
+### 污点容忍实战示例
 
-### 主节点禁止调度
+#### 主节点禁止调度
 
 在生产环境中，Kubernetes 的主节点除了部署系统组件外，不推荐再部署任何服务，此时可 以通过添加污点来禁止调度：
 
@@ -869,7 +873,7 @@ kubectl taint node k8s-master01 node-role.kubernetes.io/control-plane:NoExecute
 
 一般建议把NoSchedule和NoExecute都加上。
 
-### 新节点禁止调度
+#### 新节点禁止调度
 
 当Kubernetes 集群添加新节点时，通常情况下不会立即调度Pod到该节点，需要经过完整 的可用性测试之后才可以调度Pod，此时也可以使用污点先临时禁止该节点的调度：
 
@@ -879,13 +883,13 @@ kubectl taint node k8s-master01 new-node=true:NoSchedule
 kubectl taint node k8s-master01 new-node=true:NoExecute 
 ~~~
 
-### 节点维护和下线
+#### 节点维护和下线
 
 当Kubernetes的节点需要进行下线维护时，此时需要先把该节点的服务进行驱逐和重新调度。
 
 此时需要根据实际情况判断是直接驱逐还是选择重新调度，比如某个Pod只有一个副本，或者某个服务比较重要，就不能直接进行驱逐，而是需要先把节点关闭调度，然后在进行服务的重新部署。
 
-#### 基于污点实现
+##### 基于污点实现
 
 关闭维护节点的调度，用NoSchedule：
 
@@ -911,7 +915,7 @@ kubectl taint node k8s-node02 maintain:NoExecute
 kubectl taint node k8s-node02 maintain- 
 ~~~
 
-#### 基于cordon实现
+##### 基于cordon实现
 
 除了自定义污点，也可以使用cordon将节点设置为维护状态： 
 
@@ -933,7 +937,7 @@ kubectl drain k8s-node01 --ignore-daemonsets --delete-emptydir-data
 kubectl uncordon k8s-node01
 ~~~
 
-### 特殊节点资源保留
+#### 特殊节点资源保留
 
 当Kubernetes中存储特殊节点时，应该尽量保持不要特殊资源的Pod不要调度到这些节点上，此时可以通过污点进行控制。
 
@@ -986,7 +990,7 @@ spec:
         image: nginx:1.15.12
 ~~~
 
-### 专用节点隔离
+#### 专用节点隔离
 
 一个Kubernetes集群，很常见会有一些专用的节点，比如ingress controller、gateway、storage或者多租户环境等。
 
@@ -1013,7 +1017,7 @@ tolerations:
   effect: NoSchedule
 ~~~
 
-### 节点宕机快速恢复
+#### 节点宕机快速恢复
 
 当Kubernetes集群中有节点故障时，Kubernetes会自动恢复故障节点上的服务：
 

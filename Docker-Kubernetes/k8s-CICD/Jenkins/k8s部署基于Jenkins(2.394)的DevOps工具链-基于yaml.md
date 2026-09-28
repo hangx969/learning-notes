@@ -9,19 +9,22 @@ aliases:
   - Jenkins 2.394 DevOps工具链
 ---
 
-# DevOps
+# K8s部署基于Jenkins(2.394)的DevOps工具链-基于YAML
 
-## 持续集成-CI
+
+## DevOps
+
+### 持续集成-CI
 
 - 持续集成强调开发人员提交了新代码之后，立刻自动的进行构建、（单元）测试。根据测试结果，我们可以确定新代码和原有代码能否正确地集成在一起。持续集成过程中很重视自动化测试验证结果，对可能出现的一些问题进行预警，以保障最终合并的代码没有问题。
 - 常见的持续集成工具：Jenkins、Gitlab CI
 
-## 持续交付
+### 持续交付
 
 - 持续交付在持续集成的基础上，将集成后的代码部署到更贴近真实运行环境的「类生产环境」（production-like environments）中。交付给质量团队或者用户，以供评审。如果评审通过，代码就进入生产阶段。
 - 如果所有的代码完成之后一起交付，会导致很多问题爆发出来，解决起来很麻烦，所以持续集成，也就是没更新一次代码，都向下交付一次，这样可以及时发现问题，及时解决，防止问题大量堆积。
 
-## 持续部署
+### 持续部署
 
 - 持续部署是指当交付的代码通过评审之后，自动部署到生产环境中。持续部署是持续交付的最高阶段。
 
@@ -29,9 +32,9 @@ aliases:
 
   ![image-20240203174605239](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202402031746374.png)
 
-# Jenkins基础
+## Jenkins基础
 
-## jenkins pipeline介绍
+### jenkins pipeline介绍
 
 Jenkins pipeline （流水线）是一套运行于jenkins上的工作流框架，将原本独立运行于单个或者多个节点的任务连接起来，实现单个任务难以完成的复杂流程编排与可视化。它把持续提交流水线（Continuous Delivery Pipeline）的任务集成到Jenkins中。**pipeline 是jenkins2.X 最核心的特性，帮助jenkins实现从CI到CD与DevOps的转变。**
 
@@ -39,12 +42,12 @@ Jenkins pipeline （流水线）是一套运行于jenkins上的工作流框架�
 - 持续交付管道(CD Pipeline)是将软件从版本控制阶段到交付给用户或客户的完整过程的自动化表现。
 - 软件的每一次更改（提交到源代码管理系统）都要经过一个复杂的过程才能被发布。
 
-## jenkins语法
+### jenkins语法
 
 - pipeline支持两种语法：Declarative声明式、Scripted pipeline脚本式
   - 声明式pipeline语法，官网：[Jenkins Pipeline语法文档](https://www.jenkins.io/doc/book/pipeline/syntax/)
 
-### 声明式语法
+#### 声明式语法
 
 - 包括以下核心流程：
 
@@ -74,7 +77,7 @@ Jenkins pipeline （流水线）是一套运行于jenkins上的工作流框架�
   }
   ~~~
 
-### environment
+#### environment
 
 - environment指令指定一系列键值对，这些键值对将被定义为所有step或stage-specific step的环境变量，具体取决于environment指令在Pipeline中的位置。
 - 该指令支持一种特殊的方法credentials()，可以通过其在Jenkins环境中的标识符来访问预定义的凭据。
@@ -96,7 +99,7 @@ pipeline {
 }
 ~~~
 
-### options
+#### options
 
 - options指令允许在Pipeline本身内配置Pipeline专用选项。Pipeline本身提供了许多选项，例如buildDiscarder，但它们也可能由插件提供，例如 timestamps。
 
@@ -126,7 +129,7 @@ pipeline {
   }　
   ~~~
 
-### parameters
+#### parameters
 
 - parameters指令提供用户在触发Pipeline时的参数列表。这些参数值通过该params对象可用于Pipeline stage中，作用域：被最外层pipeline所包裹，并且只能出现一次，参数可被全局使用
 
@@ -148,12 +151,12 @@ pipeline {
   } //构建的时候选择build with paramaters，否则识别不了parameter
   ~~~
 
-### triggers
+#### triggers
 
 - triggers指令定义了Pipeline自动化触发的方式。目前有三个可用的触发器：cron和pollSCM和upstream。
 - 被pipeline包裹，在符合条件下自动触发pipeline
 
-### tools
+#### tools
 
 - 通过tools可自动安装工具，并放置环境变量到PATH。如果agent none，这将被忽略。
 - 支持的tools：maven、jdk、gradle
@@ -175,7 +178,7 @@ pipeline {
 }
 ~~~
 
-### input
+#### input
 
 - stage 的 input 指令允许你使用 input step提示输入。
 - 在应用了 options 后，进入 stage 的 agent 或评估 when 条件前，stage 将暂停。如果 input 被批准, stage 将会继续。
@@ -209,19 +212,19 @@ pipeline {
 }
 ~~~
 
-### when
+#### when
 
-### parallel
+#### parallel
 
-### 脚本式语法
+#### 脚本式语法
 
 - Declarative pipeline对用户来说，语法更严格，有固定的组织结构，更容易生成代码段，使其成为用户更理想的选择。但是Scripted pipeline更加灵活，因为Groovy本身只能对结构和语法进行限制，对于更复杂的pipeline来说，用户可以根据自己的业务进行灵活的实现和扩展。
 
 
 
-# Jenkins+k8s+Git+DockerHub构建DevOps平台
+## Jenkins+k8s+Git+DockerHub构建DevOps平台
 
-## 环境准备
+### 环境准备
 
 - K8S环境：
 
@@ -233,9 +236,9 @@ pipeline {
   | 控制节点    | 192.168.40.180 | master1 |
   | 工作节点    | 192.168.40.181 | node1   |
 
-## 部署jenkins--yaml文件
+### 部署jenkins--yaml文件
 
-### 安装nfs
+#### 安装nfs
 
 ~~~sh
 #两台节点上都安装nfs
@@ -254,7 +257,7 @@ vim /etc/exports
 exportfs -arv
 ~~~
 
-### 安装jenkins
+#### 安装jenkins
 
 - 创建ns
 
@@ -406,7 +409,7 @@ exportfs -arv
   chown -R 1000.1000 /data/v2
   ~~~
 
-### 暴露服务
+#### 暴露服务
 
 ~~~yaml
 apiVersion: v1
@@ -430,7 +433,7 @@ spec:
     targetPort: agent
 ~~~
 
-### 配置jenkins
+#### 配置jenkins
 
 ~~~sh
 #浏览器访问192.168.40.180:30002，进到jenkins管理界面
@@ -453,9 +456,9 @@ cat /data/v2/jenkins-home/secrets/initialAdminPassword
 
 - 弹出登录界面说明插件安装没问题，可以进行后续实验。
 
-## jenkins对接k8s自动生成从节点
+### jenkins对接k8s自动生成从节点
 
-### 连接k8s集群
+#### 连接k8s集群
 
 - 访问：[configureClouds](http://192.168.40.180:30002/configureClouds/)
 
@@ -467,7 +470,7 @@ cat /data/v2/jenkins-home/secrets/initialAdminPassword
 
 ![image-20240207210712930](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202402072107183.png)
 
-### 配置pod template
+#### 配置pod template
 
 - 配置从节点的pod模板
 
@@ -488,7 +491,7 @@ cat /data/v2/jenkins-home/secrets/initialAdminPassword
 
 - apply - save保存
 
-### 配置dockerhub凭据
+#### 配置dockerhub凭据
 
 - manage credentials：
 
@@ -501,9 +504,9 @@ cat /data/v2/jenkins-home/secrets/initialAdminPassword
 
   ![image-20240208195456048](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202402081954137.png)
 
-## 自动化发布Go项目
+### 自动化发布Go项目
 
-### 流程
+#### 流程
 
 - 开发提交代码到代码仓库gitlab --> jenkins检测到代码更新 --> 调用k8s api在k8s中创建jenkins slave pod
 
@@ -511,7 +514,7 @@ cat /data/v2/jenkins-home/secrets/initialAdminPassword
 
   ![image-20240208200024244](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202402082000326.png)
 
-### 创建流水线
+#### 创建流水线
 
 - 创建三个测试用namespace
 
@@ -621,7 +624,7 @@ cat /data/v2/jenkins-home/secrets/initialAdminPassword
 - 更改源代码之后，可以在blue ocean界面再点击重新部署来重新拉代码，部署新的pod。
   - 打开blue ocean - 重运行
 
-### troubleshooting
+#### troubleshooting
 
 - 有时候jenkins-slave pod自动创建的时候会报错：
 
@@ -650,7 +653,7 @@ cat /data/v2/jenkins-home/secrets/initialAdminPassword
 
   - 重新部署calico
 
-## 按照指定版本回滚
+### 按照指定版本回滚
 
 - 更新版本之后，k8s里的deployment中会存在两个版本的replicaset，可以通过kubectl rollout来回滚
 
@@ -720,9 +723,9 @@ cat /data/v2/jenkins-home/secrets/initialAdminPassword
   #回滚到指定版本，需要替换掉namespace和version
   ~~~
 
-# jenkins+k8s+harbor实现DevOps
+## jenkins+k8s+harbor实现DevOps
 
-## 启动harbor
+### 启动harbor
 
 ~~~sh
 #在安装了harbor的机器上启动
@@ -733,14 +736,14 @@ docker-compose start
 #用户名密码：admin/Harbor12345
 ~~~
 
-## 配置jenkins credentials
+### 配置jenkins credentials
 
 - manage credentials --> 全局凭据
   - 用户名：admin
   - 密码：Harbor12345
   - ID：dockerharbor
 
-## 配置jenkins pipeline
+### 配置jenkins pipeline
 
 - 在harbor中创建新项目：jenkins-demo
 
@@ -841,9 +844,9 @@ docker-compose start
   - 原因可能是证书不被信任，可以尝试这篇文章的办法，把harbor上面的证书拷贝到slave pod里面去：[搭建好harbor服务器后，从另一台机登录时遇到的问题 - 简书 (jianshu.com)](https://www.jianshu.com/p/1bc2d2b9d3fb)
   - 或者在内网中再搭建一个harbor，通过内网IP访问。
 
-# jenkins-k8s-nexus-gitlab-harbor-sonarqube-springcloud构建devops
+## jenkins-k8s-nexus-gitlab-harbor-sonarqube-springcloud构建devops
 
-## jenkins接入Sonarqube
+### jenkins接入Sonarqube
 
 > [!note] SonarQube简介
 > SonarQube是一个开源的代码质量管理系统，用于自动化检查源代码的质量并提供报告。它支持多种编程语言，包括Java、C#、JavaScript、Python等，能够检测出代码中的错误、漏洞、代码异味等问题。SonarQube可以集成到CI/CD流程中，帮助开发团队在开发过程中持续改进代码质量。
@@ -907,9 +910,9 @@ sysctl -p
 
     注：由于版本变更，当前的示例代码扫描会出错。
 
-## 私服nexus配置
+### 私服nexus配置
 
-### 安装harbor
+#### 安装harbor
 
 1. 为harbor创建自签发证书
 
@@ -986,14 +989,14 @@ sysctl -p
    docker-compose start
    ```
 
-### jenkins注册harbor credentials
+#### jenkins注册harbor credentials
 
 - 系统管理-凭据管理-添加全局凭据
   - username：admin
   - password：Harbor12345
   - ID：dockerharbor
 
-### 安装nexus
+#### 安装nexus
 
 > [!note] Nexus简介
 > - Nexus服务器是一个代码包管理的服务器，可以理解 Nexus 服务器是一个巨大的 Library 仓库。
@@ -1052,7 +1055,7 @@ docker run -d -p 8081:8081 -p 8082:8082 -p 8083:8083 -v /etc/localtime:/etc/loca
 > - `settings.xml`文件是Maven的全局配置文件，它包含了如本地仓库的位置、镜像仓库设置、代理设置等信息。这个文件通常位于Maven安装的`conf`目录下，或者在用户的`.m2`目录下。
 > - settings.xml 中 server 元素下 id 的值必须与 POM 中 repository 或 snapshotRepository 下 id 的值完全一致
 
-## 安装gitlab
+### 安装gitlab
 
 - 安装
 
@@ -1105,7 +1108,7 @@ docker run -d -p 8081:8081 -p 8082:8082 -p 8083:8083 -v /etc/localtime:/etc/loca
   - 系统管理-凭据管理-新建全局凭据
   - 用户名root，密码12345678，ID gitlab
 
-### 配置gitlab
+#### 配置gitlab
 
 - gitlab上新建项目
 
@@ -1122,7 +1125,7 @@ docker run -d -p 8081:8081 -p 8082:8082 -p 8083:8083 -v /etc/localtime:/etc/loca
 
 - gitlab - 右上角Preferences - ssh keys - 把公钥粘贴进去 - add
 
-### 提交本地代码到gitlab
+#### 提交本地代码到gitlab
 
 ~~~sh
 yum install git -y
@@ -1141,7 +1144,7 @@ git remote add origin http://192.168.40.135/root/microservic-test.git
 git push -u origin master
 ~~~
 
-## jenkins流水线配置
+### jenkins流水线配置
 
 - 添加新的slave pod镜像：jenkins-jnlp-v2.tar.gz这个压缩包封装的镜像带有mvn命令
 
@@ -1219,7 +1222,7 @@ git push -u origin master
 
 - jenkins和gitlab、harbor比较吃资源，VMWare VM给3G内存容易OOM，20G磁盘容器用光。
 
-# Jenkins插件离线安装
+## Jenkins插件离线安装
 
 1. Jenkins离线插件下载地址：[清华大学Jenkins插件镜像](http://mirrors.tuna.tsinghua.edu.cn/jenkins/plugins/)，可以在Jenkins官网上搜索想要下载的插件，点击”Download”按钮下载.hpi文件。
 
@@ -1227,7 +1230,7 @@ git push -u origin master
    1. 方法一：在Jenkins管理页面点几“系统管理” -> “插件管理” -> “高级”。选择“上传插件”，并选择下载的.hpi文件。点击“上传”按钮，等待插件安装完成。
    2. 方法二：将下载的.hpi文件放到Jenkins的安装目录下的“plugins”文件夹中。重启Jenkins，等待插件安装完成。
 
-# Jenkins版本升级
+## Jenkins版本升级
 
 Jenkins 版本升级通常分为以下几个步骤：
 

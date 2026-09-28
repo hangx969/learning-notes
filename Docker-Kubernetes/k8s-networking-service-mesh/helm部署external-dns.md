@@ -8,7 +8,10 @@ aliases:
   - external-dns部署
 ---
 
-# 介绍
+# Helm部署External-DNS
+
+
+## 介绍
 
 - github地址：[external-dns](https://github.com/kubernetes-sigs/external-dns)
 - release pages: [external-dns releases](https://github.com/kubernetes-sigs/external-dns/releases)
@@ -23,7 +26,7 @@ aliases:
 
 - ExternalDNS 将公开的Kubernetes Service和Ingress与DNS提供商同步。与KubeDNS不同的是，它本身并不是一个DNS服务器，而只是用于对接其他DNS提供商。
 
-# 下载
+## 下载
 
 ~~~sh
 helm repo add --force-update external-dns https://kubernetes-sigs.github.io/external-dns
@@ -31,7 +34,7 @@ helm repo update external-dns
 helm pull external-dns/external-dns --version 1.14.4
 ~~~
 
-# 配置
+## 配置
 
 > [!info] 以Azure作为外部DNS为例：[Managed Identity Using Workload Identity](https://kubernetes-sigs.github.io/external-dns/v0.13.6/tutorials/azure/#managed-identity-using-workload-identity)
 
@@ -46,6 +49,7 @@ helm pull external-dns/external-dns --version 1.14.4
   - 再去域名注册机构，配置使用azure dns nameserver
   - 配置文件中的source字段指定了监控哪些服务（例如ingress、service）；provider字段指定了外部dns服务商，我们用的是azure-private-dns-zone
   - 创建ingress和service时可以通过annotations字段指定hostname，external dns就会同步到外部dns
+
 - 与Azure的身份验证：
 
   - SP or MI？
@@ -58,7 +62,7 @@ helm pull external-dns/external-dns --version 1.14.4
 
 # 
 
-# 安装
+## 安装
 
 ~~~sh
 helm upgrade -i external-dns -n external-dns . -f values.yaml --create-namespace

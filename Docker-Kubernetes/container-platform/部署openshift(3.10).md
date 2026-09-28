@@ -7,24 +7,27 @@ aliases:
   - openshift部署
 ---
 
-# Openshift基础
+# 部署 OpenShift (3.10)
 
-## 介绍
+
+## Openshift基础
+
+### 介绍
 
 - OpenShift 是红帽 Red Hat 公司开源的平台，是平台即服务（PaaS），是一种容器应用平台。允许开发人员构建、测试和部署应用。在 OpenShift 上可以进行开发、测试、部署、运维全流程，实现高度的自动化，满足企业中的应用持续集成和交付及部署的需求，同时也满足企业对于容器管理（Docker）、容器编排（K8S）的需求。
 - Openshift 是首个支持企业级 Java 的 PaaS 平台，支持 JEE6 与 JBoss 和其 Eclipse 集成开发环境以及 Maven 和 Jenkins 自动化。
 - OpenShift通常被称为容器应用平台，因为它是一个用于开发和部署容器的平台。OpenShift底层以Docker作为容器引擎驱动，以K8s作为容器编排引擎组件，并提供了开发语言，中间件，DevOps自动化流程工具和web console用户界面等元素，提供了一套完整的基于容器的应用云平台。
 
-## 发行版
+### 发行版
 
 - OpenShift的开源社区版本叫`OpenShift Origin`，现在叫`OKD`。`Red Hat在OpenShift Origin`的基础上推出了`OpenShift的企业版本`，其中包含了公有云服务`OpenShift Online`及私有云产品`OpenShift Container Platform`（以前也称为OpenShift Enterprise）
 
-## 文档
+### 文档
 
 - OpenShift 项目主页：[https://www.okd.io/](https://link.zhihu.com/?target=https%3A//www.okd.io/)。
 - OpenShift GitHub仓库：[https://github.com/openshift](https://link.zhihu.com/?target=https%3A//github.com/openshift)。
 
-## 功能
+### 功能
 
 - 容器引擎：docker；
 - 容器编排：kubernetes；
@@ -36,13 +39,13 @@ aliases:
 - 多用户接口：提供友好的 UI、命令行工具（oc，类似于 K8S 的 kubectl 以及 RESTful API，基本与 K8S 兼容）；
 - 自动化集群部署及管理：通过 Ansible 实现集群的自动化部署，为集群的自动化扩容提供接口。
 
-## 与K8S区别
+### 与K8S区别
 
 - 概念：OpenShift 是 PaaS（平台即服务），K8S 是 CaaS（容器即服务），OpenShift 内置了Kubernetes。OpenShift 底层以 Docker 作为容器引擎驱动，以 Kubernetes 作为容器编排引擎组件。
 - 部署：OpenShift 可以安装在 RHEL（Red Hat Enterprise Linux）和 RHELAH（Red Hat Eneterprise Linux Atomic Host）、CentOS 和 Fedora上；K8S 最好在 Unbuntu、Fedora、centos 和 Debian上运行，可部署在任何主要的 IaaS 上，如 IBM、AWS、Azure、GCP 和阿里云等云平台上。
 - 网络：OpenShift 提供了开箱即用的本机网络解决方案，即 OpenvSwitch，它提供三种不同的插件；K8S 没有本机网络解决方案，但提供可供第三方网络插件使用的接口。
 
-## 与K8S相同点
+### 与K8S相同点
 
 OpenShift 集成了原生的 K8S 作为容器编排组件，提供容器集群的管理，为业务应用可以提供：
 
@@ -53,7 +56,7 @@ OpenShift 集成了原生的 K8S 作为容器编排组件，提供容器集群�
 - 服务发现：可以提供负载均衡及服务发现功能；
 - 配置管理：为业务应用提供灵活的配置管理和分发规则。
 
-## 基础组件
+### 基础组件
 
 在OpenShift中，Kubernetes管理容器化应用程序，并为部署、维护和应用程序扩展提供机制。Kubernetes集群由一个或多个Master节点和一组Node节点组成。
 
@@ -63,7 +66,7 @@ OpenShift 集成了原生的 K8S 作为容器编排组件，提供容器集群�
 - Node节点
   - Node节点为容器提供运行时环境。Kubernetes集群中的每个Node节点都有需要由Master节点管理的服务。该节点还具有运行pods所需的服务，包括容器运行时、kubelet和服务代理。
 
-## 核心概念
+### 核心概念
 
 > 参考：[OpenShift 核心概念](https://blog.51cto.com/liruilong/6242033)
 
@@ -71,6 +74,7 @@ OpenShift 集成了原生的 K8S 作为容器编排组件，提供容器集群�
   - Project是一个带有附加注释的Kubernetes名称空间，是管理普通用户访问资源的中心媒介。用户必须由管理员提供相关的权限，或者如果允许创建项目，则自动访问自己的项目。
   - 在openshift中操作时，需要指定上下文是在哪一个project
   
+
 - Namespaces
   - Kubernetes命名空间提供了一种用于划分集群中资源的机制。在OpenShift中，Project是带有附加注释的Kubernetes命名空间。
 
@@ -107,6 +111,7 @@ OpenShift 集成了原生的 K8S 作为容器编排组件，提供容器集群�
   
     
   
+
 - Persistent Storage
   - 容器默认是非持久化的，所有的修改在容器销毁时都会丢失。Docker提供了持久化卷挂载的能力，Openshift除了提供持久化卷挂载的能力，还提供了一种持久化供给模型即PV（Persistent Volume）和PVC（Persistent Volume Claim）。
   - 用户在部署应用时显示的声明对持久化的需求，创建PVC，在PVC中定义所需要的存储大小，访问方式。OpenShift集群会自动寻找符合要求的PV与PVC自动对接。
@@ -134,14 +139,15 @@ OpenShift 集成了原生的 K8S 作为容器编排组件，提供容器集群�
   
     一个常见的疑问是：是不是OpenShift用到的镜像都要存放到内置的仓库？ 答案是否定的。内部的镜像仓库存放的只是S2I产生的镜像。其他镜像可以存放在集群外部的镜像仓库，如企业的镜像仓库或社区的镜像仓库。只要保证OpenShift的节点可以访问到这些镜像所在的镜像仓库即可。
   
+
 - S2I
   - Source to Image，负责将应用源码构建成镜像。
 
-# 搭建OCP测试环境
+## 搭建OCP测试环境
 
 > 可以尝试一下一键安装：[OCP 一键安装教程](https://blog.csdn.net/weixin_44258610/article/details/119773686)
 
-## 实验环境规划
+### 实验环境规划
 
 - 操作系统：centos7.9
 
@@ -167,9 +173,9 @@ OpenShift 集成了原生的 K8S 作为容器编排组件，提供容器集群�
 
 - 网络模式：NAT
 
-## 初始化实验环境
+### 初始化实验环境
 
-### 配置静态IP
+#### 配置静态IP
 
 ~~~sh
 vi /etc/sysconfig/network-scripts/ifcfg-ens33
@@ -193,7 +199,7 @@ DEVICE=ens33
 ONBOOT=yes
 ~~~
 
-### 添加磁盘
+#### 添加磁盘
 
 - vmware虚拟机设置 - 添加 - 硬盘 - ...
 
@@ -212,7 +218,7 @@ ONBOOT=yes
   mount -a #执行挂载
   ~~~
 
-### 配置VSCode ssh登录VM
+#### 配置VSCode ssh登录VM
 
 - host宿主机的/etc/hosts中添加VM的记录
 - ssh配置中使用主机名来登录
@@ -237,26 +243,26 @@ vi ~/.ssh/authorized_keys
 #将host主机的公钥粘贴进去保存，即可用VSCode免密登录VM
 ~~~
 
-### 更新centos版本
+#### 更新centos版本
 
 ~~~sh
 yum update -y
 ~~~
 
-### 安装基础软件包
+#### 安装基础软件包
 
 ~~~sh
 yum install -y device-mapper-persistent-data lvm2 wget net-tools nfs-utils lrzsz gcc gcc-c++ make cmake libxml2-devel openssl-devel curl curl-devel unzip sudo ntp libaio-devel wget vim ncurses-devel autoconf automake zlib-devel  python-devel epel-release openssh-server socat  ipvsadm conntrack telnet ipvsadm
 ~~~
 
-### 开启selinux
+#### 开启selinux
 
 ~~~sh
 sed -i 's/SELINUX=enforcing/SELINUX=permissive/g' /etc/selinux/config
 reboot -f
 ~~~
 
-### 配置主机名和hosts文件
+#### 配置主机名和hosts文件
 
 ~~~sh
 hostnamectl set-hostname ocpmaster1 && bash 
@@ -271,7 +277,7 @@ vim /etc/hosts
 172.16.183.92   ocpnode2
 ~~~
 
-### 配置无密码登录
+#### 配置无密码登录
 
 ~~~sh
 ssh-keygen
@@ -280,7 +286,7 @@ ssh-copy-id ocpnode1
 ssh-copy-id ocpnode2
 ~~~
 
-### 关闭交换分区
+#### 关闭交换分区
 
 ~~~sh
 #临时关闭
@@ -290,7 +296,7 @@ vim /etc/fstab
 #/dev/mapper/centos-swap swap      swap    defaults        0 0
 ~~~
 
-### 修改机器内核参数
+#### 修改机器内核参数
 
 ~~~sh
 modprobe br_netfilter
@@ -302,20 +308,20 @@ EOF
 sysctl -p /etc/sysctl.d/k8s.conf #sysctl -p：从指定的文件加载系统参数，如不指定即从/etc/sysctl.conf中加载
 ~~~
 
-### 关闭firewalld防火墙
+#### 关闭firewalld防火墙
 
 ~~~sh
 systemctl stop firewalld && systemctl disable firewalld
 ~~~
 
-### 配置阿里云repo源
+#### 配置阿里云repo源
 
 ~~~sh
 yum install yum-utils -y
 yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
 ~~~
 
-### 配置时间同步
+#### 配置时间同步
 
 ~~~sh
 #安装ntpdate命令
@@ -329,7 +335,7 @@ crontab -e
 service crond restart
 ~~~
 
-### 修改网卡配置文件
+#### 修改网卡配置文件
 
 ~~~sh
 vim /etc/sysconfig/network-scripts/ifcfg-ens33
@@ -339,30 +345,30 @@ NM_CONTROLLED=yes
 service network restart
 ~~~
 
-### 停掉NetworkManager
+#### 停掉NetworkManager
 
 ~~~sh
 #停掉NetworkManager
 systemctl stop NetworkManager && systemctl disable NetworkManager
 ~~~
 
-### 安装ansible
+#### 安装ansible
 
 ~~~sh
 #把ansible-2.6.5-1.el7.ans.noarch.rpm上传到master、node1、node2上
 yum install ansible-2.6.5-1.el7.ans.noarch.rpm -y
 ~~~
 
-## 准备OCP部署
+### 准备OCP部署
 
-### 解压OCP安装包
+#### 解压OCP安装包
 
 ~~~sh
 #把openshift-ansible-release-3.10.zip上传到master节点，手动解压：
 unzip openshift-ansible-release-3.10.zip
 ~~~
 
-### 安装配置docker
+#### 安装配置docker
 
 ~~~sh
 #3台都需要配置
@@ -384,7 +390,7 @@ vim /etc/docker/daemon.json
 systemctl restart docker
 ~~~
 
-### 配置私有镜像仓库
+#### 配置私有镜像仓库
 
 ~~~sh
 #仅在master上配置私有镜像仓库
@@ -425,7 +431,7 @@ threshold: 3
 docker run -d -p 5000:5000 --restart=always  --name=registry -v /opt/registry-var/config/:/etc/docker/registry/ -v /opt/registry-var/auth/:/auth/ -e "REGISTRY_AUTH=htpasswd"  -e "REGISTRY_AUTH_HTPASSWD_REALM=Registry Realm" -e REGISTRY_AUTH_HTPASSWD_PATH=/auth/htpasswd -v /opt/registry-var/:/var/lib/registry/ registry:2.5
 ~~~
 
-### 登录镜像仓库
+#### 登录镜像仓库
 
 ~~~sh
 #3台上都测试一下
@@ -434,7 +440,7 @@ username：hangxu
 pwd：hangxu
 ~~~
 
-### 修改docker存储
+#### 修改docker存储
 
 ~~~sh
 #设置docker开机自启动
@@ -449,9 +455,9 @@ docker-storage-setup
 ##!有这个提示：INFO: Storage is already configured with overlay2 driver. Can't configure it with devicemapper driver. To override, remove /etc/sysconfig/docker-storage and retry.
 ~~~
 
-## 安装OCP
+### 安装OCP
 
-### 准备镜像
+#### 准备镜像
 
 ~~~sh
 #master解压
@@ -460,7 +466,7 @@ docker load -i openshift_master_3_10.tar.gz
 docker load -i openshift_slave_3_10.tar.gz
 ~~~
 
-### 配置ansible的hosts文件
+#### 配置ansible的hosts文件
 
 ~~~sh
 #在master上
@@ -492,7 +498,7 @@ ocpnode2 openshift_node_group_name='node-config-master'
 ocpmaster1
 ~~~
 
-### 安装OCP
+#### 安装OCP
 
 ~~~sh
 #安装前预配置检查，在master上执行
@@ -516,7 +522,7 @@ ansible-playbook -i /etc/ansible/hosts openshift-ansible-release-3.10/playbooks/
 > * * * * * /usr/bin/echo  nameserver 8.8.8.8  >>/etc/resolv.conf
 > ```
 
-### 给节点打标签
+#### 给节点打标签
 
 ~~~sh
 TASK [openshift_manage_node : Set node schedulability]
@@ -526,9 +532,9 @@ oc label node ocpnode2 node-role.kubernetes.io/infra=true
 #显示complete表示安装成功
 ~~~
 
-## 访问OCP
+### 访问OCP
 
-### 新建用户
+#### 新建用户
 
 ~~~sh
 #首次新建用户密码
@@ -545,7 +551,7 @@ oc adm policy add-cluster-role-to-user cluster-admin admin
 
 - 访问：https://ocpmaster1:8443/console/catalog，usrname：admin，passwd：admin
 
-### 访问私有仓库
+#### 访问私有仓库
 
 ~~~sh
 #Master上执行如下，获取admin密码
@@ -559,7 +565,7 @@ docker login docker-registry.default.svc:5000
 #密码：sDNr30KlWs-_NyxKhqhOAyOheLz56FGBA_c_mKT2d38
 ~~~
 
-## OCP部署应用程序
+### OCP部署应用程序
 
 > 使用OpenShift时，可以通过多种方式添加应用程序。 主要方法是：
 >
@@ -571,7 +577,7 @@ docker login docker-registry.default.svc:5000
 
 - 登录web console：https://172.16.183.90:8443
 
-### docker镜像部署
+#### docker镜像部署
 
 创建第一个项目ParkSmap，用来展示世界主要公园的地图的一个程序
 
@@ -636,13 +642,13 @@ docker login docker-registry.default.svc:5000
 
 - 访问：http://172.16.183.90:30080/index.html
 
-### 通过S2I部署
+#### 通过S2I部署
 
 > - Source to Image(S2I) 是一个创建 Docker 镜像的工具，也是 openshift 上面的主要构建镜像的方式之一。
 >
 > - S2I 会依赖一个特殊的 base 镜像，这个镜像主要包括基础的运行环境，如 Python, PHP，Nginx等。因此针对某类代码，只要提供好一个标准运行环境的基础镜像。使用的时候，先把用户的代码放到这个镜像中，生成一个新的镜像就可以。
 
-#### 部署parksmap项目
+##### 部署parksmap项目
 
 接下来将要部署的示例应用程序是使用Python编程语言实现的。部署parksmap的后端程序，通过rest api获取世界主要公园的数据，部署方法如下：
 
@@ -666,7 +672,7 @@ Git Repository：写自己的github/gitee项目地址
 
 - 创建了一个build的pod（基础镜像用的是选择的python环境镜像），去把代码拉下来，构成一个新的镜像。然后用新的镜像把主pod跑起来。（新的镜像被push到了openshift私有镜像仓库）
 
-#### 部署django项目
+##### 部署django项目
 
 - Github代码地址：https://github.com/openshift-instruqt/blog-django-py，可以fork到自己的github上，或者迁移到gitee上。
 
@@ -705,11 +711,11 @@ Git Repository：写自己的github/gitee项目地址
 
 - 界面出现#2，代表第二次build在运行。
 
-# OCP CICD流程
+## OCP CICD流程
 
-## CI/CD工具链组件介绍
+### CI/CD工具链组件介绍
 
-### gogs
+#### gogs
 
 - Gogs 是一款极易搭建的自助 Git 服务，类似于github这种代码托管系统；以最简便的方式搭建简单、稳定和可扩展的自助 Git 服务。使用 Go 语言开发使得 Gogs 能够通过独立的二进制分发，并且支持 Go 语言支持的 所有平台，包括 Linux、macOS、Windows 以及 ARM 平台。 
 
@@ -717,15 +723,15 @@ Git Repository：写自己的github/gitee项目地址
 
 - github上的中文站点：[Gogs 中文说明](https://github.com/gogs/gogs/blob/master/README_ZH.md) 
 
-### nexus
+#### nexus
 
 - 为什么搭建nexus？
 
   有些公司都不提供外网给项目组人员，因此就不能访问maven中央仓库，或者公司内部的jar包在外网无法找到，所以很有必要在局域网里使用一台有外网权限的机器，搭建nexus私服，然后开发人员连到这台私服上，这样的话就可以通过这台搭建了nexus私服的电脑访问maven的远程仓库，或者从上面下载内部jar包，使得开发人员可以下载仓库中的内容，而且对于下载过的文件，局域网内下载会更加快速。还有一点优势在于，我们需要的jar包可能在中央仓库中没有，需要去其他地方下载，有了中央仓库，只需要一人找到jar包其他人就不用再去上网搜索jar包，十分方便。
 
-## 创建DevOps/CICD工作流
+### 创建DevOps/CICD工作流
 
-### 流程
+#### 流程
 
 1. 从gogs或者gitlab克隆代码
 
@@ -751,7 +757,7 @@ Git Repository：写自己的github/gitee项目地址
 
 官网地址：[OpenShift CD Demo](https://github.com/siamaksade/openshift-cd-demo/tree/origin-1.3)
 
-### OCP部署
+#### OCP部署
 
 - 依次创建三个项目
 
@@ -825,7 +831,7 @@ Git Repository：写自己的github/gitee项目地址
   #gogs账号密码：需要注册，gogs/gogs
   ~~~
 
-# openshift部署nginx
+## openshift部署nginx
 
 - 普通nginx镜像启动后pod会进入error状态，查看日志：
 
@@ -854,7 +860,7 @@ Git Repository：写自己的github/gitee项目地址
 
 > [!note] 非特权版本的nginx容器监听8080端口而非80，需要在containerPort和svc的targetport中修改为8080才能访问通
 
-# 常用命令介绍
+## 常用命令介绍
 
 - 登录oc命令
 
@@ -895,7 +901,7 @@ Git Repository：写自己的github/gitee项目地址
   oc new-app openshift/hello-openshift #--name podName 指定 应用名称
   ~~~
 
-## oc alias
+### oc alias
 
 - 把oc命令设一个alias为k
 
@@ -921,9 +927,9 @@ source <(oc completion bash)
 source ~/.bashrc
 ~~~
 
-# openshift管理
+## openshift管理
 
-## Grant permission of projects for users
+### Grant permission of projects for users
 
 Create a cluster-role which grants all permission：
 
@@ -968,7 +974,7 @@ EOF
 oc apply -f binding-namespace-admin.yaml
 ~~~
 
-## openshift pod内抓包
+### openshift pod内抓包
 
 Reference: [Red Hat Solution 4569211](https://access.redhat.com/solutions/4569211)
 

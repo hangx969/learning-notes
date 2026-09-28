@@ -11,13 +11,16 @@ aliases:
   - Prometheus监控部署
 ---
 
-# 环境准备
+# Docker部署Prometheus-Grafana-cAdvisor监控
+
+
+## 环境准备
 
 - 参考:[aiwanyun部署文档](https://www.aiwanyun.cn/archives/174)
 
 - rockylinux-8.10 (IP: 172.16.183.80),安装docker、prometheus、grafana、node_exporter
 
-# 被监控端安装node_exporter
+## 被监控端安装node_exporter
 
 - 可以从GitHub上的Prometheus项目页面下载node_exporter:[node_exporter releases](https://github.com/prometheus/node_exporter/releases)。
 - 建议选择一个稳定但不是最新版本的node_exporter进行下载,以避免潜在的问题。下载完成后,将其上传到服务器上。
@@ -51,7 +54,7 @@ systemctl start nodeexporter && systemctl enable nodeexporter && systemctl statu
 #访问宿主+9100端口既可访问Node Exporter采集的指标数据
 ~~~
 
-# docker安装prometheus
+## docker安装prometheus
 
 - 配置文件
   - /etc/prometheus/rules主要是存放告警规则的目录
@@ -190,7 +193,7 @@ docker run -i --restart=always \
 #改完配置文件可以检查yaml格式:promtool check-config prometheus.yml
 ~~~
 
-# docker安装grafana
+## docker安装grafana
 
 - 配置文件
 
@@ -219,13 +222,14 @@ docker run -i --restart=always \
   - 仪表盘=>Connections=>Data sources
   - 右上角Add data source,选择第一个Prometheus作为数据源
   - 填写上刚刚部署的Prometheus的地址(http://172.16.183.80:9000),并设置为默认数据源,然后拉到最下面保存便接入完成了。
+
 - 导入仪表板
   - 仪表板-右上角导入仪表板-(提供三个好看的面板,分别是8919,9276,11074)
   - 点击load可以加载面板
 
 > [!tip] dashboard可以在这里查找、下载:[Grafana Dashboards](https://grafana.com/grafana/dashboards/)
 
-# docker部署alertmanager
+## docker部署alertmanager
 
 - 配置文件
 
@@ -272,9 +276,9 @@ docker run -i --restart=always \
 #9002:9093 内部端口是9003,通过宿主机的9002进行访问或者代理访问。启动服务后,访问9002端口进行查看,如能进行访问,则部署成功。
 ~~~
 
-# docker部署cAdvisior容器监控
+## docker部署cAdvisior容器监控
 
-## 被控端部署cAdvisior
+### 被控端部署cAdvisior
 
 - 为了解决容器的监控问题,Google开发了一款容器监控工具cAdvisor(Container Advisor),它为容器用户提供了对其运行容器的资源使用和性能特征的直观展示。 它是一个运行守护程序,用于收集,聚合,处理和导出有关正在运行的容器的信息。
 - cAdvisor可以对节点机器上的资源及容器进行实时监控和性能数据采集,包括CPU使用情况、内存使用情况、网络吞吐量及文件系统使用情况。cAdvisor使用go语言开发,如果想了解更多请访问其官方github:[cAdvisor GitHub](https://github.com/google/cadvisor)
@@ -301,7 +305,7 @@ google/cadvisor
 #访问宿主机IP:8080端口
 ~~~
 
-## prometheus抓取cAdvisior数据
+### prometheus抓取cAdvisior数据
 
 - 修改prometheus配置文件,添加cAdvisior内容
 
@@ -334,7 +338,7 @@ EOF
 
 - 重启prometheus容器,刷新配置文件
 
-## grafana展示cAdvisior数据
+### grafana展示cAdvisior数据
 
 - [Docker cAdvisor Dashboard](https://grafana.com/grafana/dashboards/13946-docker-cadvisor/),dashboard导入13946模板
 

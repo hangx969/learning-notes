@@ -9,6 +9,9 @@ aliases:
   - Docker GPU配置
 ---
 
+# Docker配置NVIDIA GPU
+
+
 在 Linux 服务器上使用 GPU 跑深度学习的模型很正常不过。如果我们想用 Docker 实现同样的需求,就需要做些额外的工作。本质上就是我们要在容器里能看到并且使用宿主机上的显卡。在这篇文章里我们就介绍一下 Docker 使用 GPU 的环境搭建。
 
 某些命令以 Ubuntu 作为示例。首先宿主机上必现安装 Nvidia 驱动。

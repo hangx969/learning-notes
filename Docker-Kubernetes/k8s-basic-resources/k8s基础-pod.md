@@ -7,22 +7,25 @@ aliases:
   - k8sPod
 ---
 
-# POD介绍
+# K8s基础-Pod
 
-## POD特点
+
+## POD介绍
+
+### POD特点
 
 - K8s最小部署单元，里面封装了一个或多个容器。
 - pod内部的容器共享存储、网络、PID、IPC等。容器之间可以通过localhost:port互相访问。可以通过volume实现数据共享。
 - 生命周期短暂，重启之后又变成新的POD。
 
-## POD存在的意义
+### POD存在的意义
 
 1. 对于多容器协作：pod的多容器管理更加高效，更加方便（比如pod内sidecar模式集成日志收集、服务网格等）
 2. 对于强依赖服务：pod把多容器放在一起，他们之间可以通过网络共享来通信，更加高效。
 3. 简化应用的生命周期管理：k8s对pod的readiness管理比容器完善。
 4. 兼容多种运行时：适应容器技术的变化。容器化技术不一定要用docker，换成别的也要支持。
 
-## Pause容器
+### Pause容器
 
 - 每一个pod里面自动有一个根容器 pause（也叫infra容器），除此之外有许多业务容器（用户容器）。
 
@@ -38,7 +41,7 @@ aliases:
   
   <img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202310252236935.png" alt="image-20231025223642872" style="zoom:50%;" />
 
-## POD中的容器
+### POD中的容器
 
 Pod中可以同时运行多个容器。同一个Pod中的容器共享资源、网络环境，它们总是被同时调度，只有当你的容器需要紧密配合协作的时候才考虑用这种模式。例如，你有一个容器作为web服务器运行，需要用到共享的volume，有另一个“sidecar”容器来从远端获取资源更新这些文件。一些Pod有init容器和应用容器。在应用程序容器启动之前，运行初始化容器。
 
@@ -46,13 +49,13 @@ Pod中可以同时运行多个容器。同一个Pod中的容器共享资源、�
 
 2）允许容器之间共享存储卷，通过文件系统交互信息。当K8s挂载Volume到Pod上，本质上是将volume挂载到Pod中的每一个容器里。
 
-### 进入容器
+#### 进入容器
 
 ```bash
 kubectl exec -it -c <container name> -- /bin/bash
 ```
 
-## POD应用示例
+### POD应用示例
 
 1. 代码自动发版更新
 
@@ -70,24 +73,24 @@ kubectl exec -it -c <container name> -- /bin/bash
 
    <img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202310261902236.png" alt="image-20231026190227168" style="zoom:50%;" />
 
-# Pod字段配置
+## Pod字段配置
 
-## 端口号
+### 端口号
 
 容器的端口号`spec.containers.ports.containerPort`这个字段，仅仅是声明了容器暴露了哪个端口，方便查看。与实际容器里面程序暴露了什么端口没有关系。K8s并不知道程序暴露了哪个端口，并不是你pod设置了80端口，容器就暴露80，设置了81就暴露81。
 
 所以一个pod内多个容器暴露的端口在设计程序的时候就要注意不能冲突，不是pod字段里面声不一样的端口就能避免的，避免不了。
 
-## 启动命令
+### 启动命令
 
 spec.containers.command和spec.containers.args两个字段，可以覆盖容器内的entrypoint和cmd。
 
-## resources
+### resources
 
 - requests的资源是直接划分给pod的，即使pod没有使用，所以有时候即使宿主机有资源，但是不能分配了，是因为pod的request已经把资源划分完了，只不过还没实际使用。（`free -m`查看宿主机占用很小，但是实际上已经分配给了pod，所以新pod就pending了）
 - 注意：如果只配置了limits不配置requests，会自动帮你把request写成和limits一样的值。所以有时候看到没有配置requests，但是还是无法调度，可能就是这个原因。
 
-## 环境变量
+### 环境变量
 
 ~~~yaml
 env:
@@ -121,13 +124,13 @@ env:
 > status.podIP
 > status.podIPs
 
-## POD重启策略
+### POD重启策略
 
 `Pod.spec.restartPolicy`字段
 
--   Always：kubelet会定期查询容器的状态，一旦某个容器处于**退出**状态（正常退出后是Completed状态），就对其执行重启操作，这是**默认值。**【保持Always就行】
--   OnFailure：容器异常退出（也就是退出码不为0）时重启。正常退出不会重启。
--   Never： 不论任何状态，都不重启该容器。
+- Always：kubelet会定期查询容器的状态，一旦某个容器处于**退出**状态（正常退出后是Completed状态），就对其执行重启操作，这是**默认值。**【保持Always就行】
+- OnFailure：容器异常退出（也就是退出码不为0）时重启。正常退出不会重启。
+- Never： 不论任何状态，都不重启该容器。
 
 测试yaml文件：
 
@@ -147,7 +150,7 @@ spec:
    restartPolicy: Always
 ```
 
-# POD生命周期
+## POD生命周期
 
 K8S文档：[Pod 的生命周期 | Kubernetes](https://kubernetes.io/zh-cn/docs/concepts/workloads/pods/pod-lifecycle/)
 
@@ -157,13 +160,14 @@ K8S文档：[Pod 的生命周期 | Kubernetes](https://kubernetes.io/zh-cn/docs/
 - 运行Initcontainer
   - 先于主容器运行一些自定义工具程序或自定义代码。串行进行，前一个失败不会运行后一个。
   - 作用在整个pod范围的。
+
 - 运行主容器
 - 主容器启动之后--post start hook
 - 存活性探测、就绪性探测
 - 停止前钩子 (每个container都可以定义各自的钩子)
 - pod终止过程
 
-## pod创建过程
+### pod创建过程
 
 - 用户通过kubectl或其他api客户端提交需要创建的pod信息给apiServer
 
@@ -177,19 +181,20 @@ K8S文档：[Pod 的生命周期 | Kubernetes](https://kubernetes.io/zh-cn/docs/
 
   ![image-20231026203326085](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202310262033218.png)
 
-## Pod启动过程
+### Pod启动过程
 
 kubectl create pod -- pending -- ContainerCreating -- InitContainer -- Container Running -- `Startup Probe -- Liveness/Readiness Probes` -- Endpoint添加pod IP
 
 > Startup Probe是在另外两个之前运行的。
 
-## pod删除过程
+### pod删除过程
 
 - 用户向apiServer发送删除pod的命令。
 - apiServcer中的pod信息会在宽限期内（默认30s）被视为dead。以下三个步骤同步执行：
   - kubelet将pod转为Terminating状态
   - **endpoint控制器**监控到pod关闭，将与pod IP剔除。
   - 如果当前pod对象定义了`preStop钩子处理器`，terminating时同步执行。如果宽限期结束PreStop仍未结束，再获得两秒宽限期
+
 - 宽限期结束后，若pod中还存在仍在运行的进程，那么pod会收到立即终止`SIGKILL`的信号。
 - kubelet请求apiServer将此pod资源的宽限期设置为0从而完成删除操作，此时pod对于用户已不可见。
 
@@ -198,9 +203,9 @@ kubectl create pod -- pending -- ContainerCreating -- InitContainer -- Container
 kuebctl delete po xxx --force --grace-period=0
 ```
 
-## 钩子函数
+### 钩子函数
 
-### 介绍
+#### 介绍
 
 在`pod.spec.containers.lifecycle`下面定义
 
@@ -210,11 +215,12 @@ kuebctl delete po xxx --force --grace-period=0
 
   > 注意：postStart并不是在容器启动命令之前运行的，并不能保证。可以理解为是同时运行的。所以这个功能并不适合做初始化操作。初始化操作最好加一个initContianer。一些不影响程序启动的命令可以加到preStart里面
   
+
 - PreStop：
   - 删除前执行，没执行完就会阻塞在这里
   - 用于优雅关闭应用程序、通知其他系统等。
 
-### 优雅关闭
+#### 优雅关闭
 
 当用户删除含有pod的资源对象时（如RC、deployment等），K8S为了让应用程序优雅关闭（即让**程序完成正在处理的请求后再关闭**），K8S提供两种信息通知：
 
@@ -224,7 +230,7 @@ kuebctl delete po xxx --force --grace-period=0
 
 默认情况下，所有的删除操作的优雅退出时间都在30秒以内。kubectl delete命令支持--grace-period=的选项，以运行用户来修改默认值。0表示删除立即执行，并且立即从API中删除pod。在节点上，被设置了立即结束的的pod，仍然会给一个很短的优雅退出时间段，才会开始被强制杀死。
 
-### 示例
+#### 示例
 
 ```yaml
 apiVersion: v1
@@ -248,7 +254,7 @@ spec:
           # seconds: 60
 ```
 
-# Pod状态
+## Pod状态
 
 | 状态                          | 说明                                                         |
 | ----------------------------- | ------------------------------------------------------------ |
@@ -266,7 +272,7 @@ spec:
 | ContainerCreating             | Pod正在创建，一般为正在下载镜像，或者有配置不当的地方，可以通过describe查看具体原因 |
 | Evited                        | 多见于系统内存或硬盘资源不足                                 |
 
-# InitContainer
+## InitContainer
 
 - spec字段下的initContainers。可以有一个或多个，如果多个按照定义的顺序依次执行，先执行初始化容器1，再执行初始化容器2等，等初始化容器执行完具体操作之后初始化容器就退出了，只有所有的初始化容器执行完后，主容器才启动。
 
@@ -318,7 +324,7 @@ pod-init   0/1     Init:0/2   0          7s
 #Init: 0/2，表示两个初始化容器未完成
 ```
 
-# POD健康探测
+## POD健康探测
 
 [https://gitee.com/hangxu969/golang/blob/main/k8s%E8%AF%A6%E7%BB%86%E6%95%99%E7%A8%8B/Kubernetes%E8%AF%A6%E7%BB%86%E6%95%99%E7%A8%8B.md#534-%E5%AE%B9%E5%99%A8%E6%8E%A2%E6%B5%8B](https://gitee.com/hangxu969/golang/blob/main/k8s详细教程/Kubernetes详细教程.md#534-容器探测)
 
@@ -326,7 +332,7 @@ pod-init   0/1     Init:0/2   0          7s
 > - 这三种probe需要在yaml文件里面自己配。
 > - StartupProbe探测成功后才会进行LivenessProbe和ReadinessProbe。后两者是并行的，没有先后关系。
 
-## 四种探测方法
+### 四种探测方法
 
 - Exec命令：在容器内执行指定命令，如果命令执行的`退出码为0`，则认为程序正常；退出码非0，则不正常。
 - TCPSocket：将会尝试访问容器的`IP:端口`，如果能够建立这条连接（发现容器在监听这个端口），则认为程序正常，否则不正常。
@@ -334,9 +340,9 @@ pod-init   0/1     Init:0/2   0          7s
 
 - gRPC：GRPC协议的健康检查，如果响应的状态是"SERVING"，则认为容器健康。
 
-## 三种探针
+### 三种探针
 
-### StartupProbe
+#### StartupProbe
 
 - 是为了解决程序启动时间很长，启动慢问题的。如果不配这个，程序启动慢，端口起不来，livenessProbe检测不过，会一直重复被liveness探针重启，重启完程序又没启动完，又被重启了。进入CrashLookBackoff状态。（把initialDelaySeconds调高点也行，但是调高点又会造成服务漂移之后启动太慢。而且有时候服务启动的时间不固定，这样还是startupProbe更好用）
 - 当配置了startupProbe启动探针，会先禁用其他探针，直到startupProbe探针成功，成功后将退出不再进行探测；如果startupProbe探针探测失败，pod将会根据重启策略重启。
@@ -405,7 +411,7 @@ pod-init   0/1     Init:0/2   0          7s
         failureThreshold: 3 # 探测失败多少次才算失败
   ```
 
-### LivenessProbe
+#### LivenessProbe
 
 - 用指定的方式（exec、tcp、http）检测pod中的**容器是否正常运行**。
 - 如果检测失败，则认为容器不健康，Kubelet杀死容器，根据restartPolicy判断是否重启。
@@ -495,7 +501,7 @@ pod-init   0/1     Init:0/2   0          7s
   #nginx -s stop ==> 会被存活探测自动重启。
   ```
 
-### ReadinessProbe
+#### ReadinessProbe
 
 - 用于检测容器中的应用是否可以接受请求，当探测成功后才使Pod对外提供网络访问，将容器标记为就绪状态，可以加到pod前端负载。
 
@@ -560,7 +566,7 @@ spec:
 #Springboot 项目，设置 ReadinessProbe 探测 SpringBoot 项目的 8081 端口下的 /actuator/health 接口，如果探测成功则代表内部程序以及启动，就开放对外提供接口访问，否则内部应用没有成功启动，暂不对外提供访问，直到就绪探针探测成功。
 ```
 
-## 三种probe混合使用
+### 三种probe混合使用
 
 ```yaml
 apiVersion: v1
@@ -625,7 +631,7 @@ spec:
     nodePort: 31181
 ```
 
-### grpc模式（k8s 1.24+）
+#### grpc模式（k8s 1.24+）
 
 ~~~yaml
 apiVersion: v1
@@ -645,9 +651,9 @@ spec:
       initialDelaySeconds: 10
 ~~~
 
-# 生产环境建议
+## 生产环境建议
 
-## 探针参数配置
+### 探针参数配置
 
 > [!warning] 注意
 > 在生产环境中，健康检查接口是一定要配置的，否则在deployment的滚动更新中，新起来的pod就会直接顶替原来的pod，造成宕机。
@@ -664,11 +670,13 @@ pod可以通过存活探测和就绪探测对容器进行健康检查：
    - 探测间隔（periodSeconds）：默认10s，设短一些，5s
    - 探测超时时间（timeoutSeconds）：默认1s，设置为应用正常响应的范围内即可，通常是1-5s。
    - 连续失败阈值（failureThreshold）：设高一点，30次失败才认为程序没起来。这样相当于给了30*5=150s的时间启动，**只要启动起来了，就直接过了。**
+
 2. livenessProbe
    - 初始延迟（initialDelaySeconds）：默认是0s，但是建议设置为应用程序完成启动所需的时间，确保程序可以顺利完成初始化。一般设置为几秒到几分钟
    - 探测间隔（periodSeconds）：默认是10s，但是建议根据应用特点进行调整。轻量级应用，可以设置较短间隔（5-10s）；重型应用建议增加间隔（30-60s）
    - 探测超时时间（timeoutSeconds）：默认1s，设置为应用正常响应的范围内即可，通常是1-5s。
    - 连续失败阈值（failureThreshold）：一般连续2次失败即认为探测失败，减少因为短暂网络问题或偶发故障引起误报。
+
 3. readinessProbe
    - 其余参数和livenessProbe类似
    - 连续成功阈值（successThreshold）：一般设置1次成功即认为就绪，可以尽早把流量转发到已就绪的pod
@@ -690,7 +698,7 @@ pod可以通过存活探测和就绪探测对容器进行健康检查：
 > Done
 > ~~~
 
-## 宽限期设置
+### 宽限期设置
 
 宽限期默认就是30s，即使preStop设90s，也不行，等了30+2s宽限期过了之后，就强制kill pod了。
 
@@ -698,7 +706,7 @@ pod可以通过存活探测和就绪探测对容器进行健康检查：
 
 改pod的宽限期：`pod.spec.terminationGracePeriodSeconds: 90`
 
-## 零宕机发版的注意事项
+### 零宕机发版的注意事项
 
 1. 对于启动慢的程序，用startupProbe；对于所有程序，最好都加上livenessProbe和readinessProbe。
 2. 对于优雅退出，要用preStop等待程序真正执行完再退出。
@@ -708,11 +716,12 @@ pod可以通过存活探测和就绪探测对容器进行健康检查：
    - 解决1：pod下线之前，请求Eureka的接口，下线这个pod IP，而且再让eureka通知其他客户端刷新pod IP。问题：开发不愿意实现。
    - 解决2：pod下线之前，给程序发下线信号，再加一个`preStop: sleep`的时间优雅退出。
    - 解决3：当然还是迁移到k8s最好了。k8s svc endpoint的剔除、注册是非常快的。
+
 4. httpGet是比tcpSocket更可靠的检查方式：
    - 对于Java程序，可能会假死：即使端口通着，内部逻辑不执行了（可能因为内存溢出等原因）。这样tcpSocket可能探测不出来，httpGet才能检测出来。
    - 但是如果开发不想去实现httpGet的接口，退而求其次用tcpSocket。
 
-# 容器保持长时运行
+## 容器保持长时运行
 
 - 如果容器的主进程退出，Pod 通常会自动重启该容器。然而，在某些情况下，主进程的退出可能是不可避免的，这时我们需要确保容器通过其他方式持续运行。有以下几种思路：
 
@@ -777,7 +786,7 @@ pod可以通过存活探测和就绪探测对容器进行健康检查：
          command: ["your-main-process"]
      ~~~
 
-# 查看pod日志
+## 查看pod日志
 
 ```bash
 kubectl logs <pod name> 
@@ -797,12 +806,12 @@ kubectl get events --field-selector involvedObject.name=podName
 
 ---
 
-# 探针失效真实案例
+## 探针失效真实案例
 
 > [!info] 案例来源
 > 本章节整理自 [[0raw/一场由健康探针引发的Pod重启风暴——K8s LivenessReadiness Probe配置不当的深度复盘]]。保留事故时间线、错误配置、修复方案和工程治理措施，并对 PDB、HPA 的保护边界补充说明。
 
-## 事故概况
+### 事故概况
 
 一次旨在“更快发现不健康 Pod”的 Liveness Probe 参数调整，在数据库慢查询和连接池争用期间放大了瞬时抖动。订单服务的健康接口从约 50 ms 增长到 3.2 秒，刚好超过 3 秒超时阈值。Liveness 在 10 秒内连续失败两次后开始重启 Pod，剩余副本承担更多流量，进一步压垮数据库连接池，最终形成级联重启。
 
@@ -814,7 +823,7 @@ kubectl get events --field-selector involvedObject.name=podName
 - 上游订单服务故障继续通过 RPC 超时传播到支付服务；
 - 核心业务最终出现大面积 502 和不可用。
 
-## 触发事故的配置变化
+### 触发事故的配置变化
 
 变更前：
 
@@ -851,7 +860,7 @@ livenessProbe:
 
 更严重的是，**/healthz** 不只是检查进程是否存活，还同步检查数据库、Redis 和消息队列。外部依赖的瞬时抖动因此被错误解释为“进程已经无法恢复，必须重启”。
 
-## 故障时间线
+### 故障时间线
 
 | 时间 | 事件 |
 |---|---|
@@ -877,7 +886,7 @@ livenessProbe:
   → 更多 Pod 被重启
 ~~~
 
-## 为什么 Readiness 没有阻止重启风暴
+### 为什么 Readiness 没有阻止重启风暴
 
 当时的 Readiness 配置为：
 
@@ -902,9 +911,9 @@ Readiness 需要连续失败 3 次，每次间隔 10 秒，约 30 秒后才把 P
 
 Readiness 的职责是控制是否接收流量，Liveness 的职责是处理进程已经无法自愈的状态。前者通常应更快、更敏感；后者应更保守。
 
-## 三个根因
+### 三个根因
 
-### 1. Liveness 检查了外部依赖
+#### 1. Liveness 检查了外部依赖
 
 Liveness 失败会触发容器重启，因此只应检测重启能够修复的进程内部故障，例如主循环卡死或不可恢复的死锁。
 
@@ -916,7 +925,7 @@ Liveness 失败会触发容器重启，因此只应检测重启能够修复的�
 | Liveness | 进程是否已无法自愈 | 重启容器 | 进程内部状态，不依赖外部系统 |
 | Readiness | 当前是否能安全接收请求 | 从 Service 后端摘除 | 处理请求所需的关键依赖和容量 |
 
-### 2. Readiness 比 Liveness 更慢
+#### 2. Readiness 比 Liveness 更慢
 
 原配置中，Readiness 约 30 秒后摘流，Liveness 约 10 秒后重启，破坏性动作先于保护性动作。
 
@@ -948,7 +957,7 @@ livenessProbe:
 > [!warning] 不要机械套用倍数
 > “Liveness 容忍窗口至少是 Readiness 的两倍”可以作为保守启发式，但不是 Kubernetes 的通用公式。参数应根据应用启动时间、正常延迟分布、依赖恢复时间、错误预算和可接受故障发现时间，通过压测与故障演练确定。
 
-### 3. 慢启动应用没有 Startup Probe
+#### 3. 慢启动应用没有 Startup Probe
 
 只靠 **initialDelaySeconds** 很难同时兼顾慢启动与运行期故障发现。Startup Probe 成功之前，Liveness 和 Readiness 不会开始执行，可把启动阶段与运行阶段分离。
 
@@ -979,7 +988,7 @@ readinessProbe:
 
 这里为启动阶段提供最多约 150 秒的容忍时间。一旦 Startup 成功，运行期探针才接管。
 
-## 健康检查端点设计
+### 健康检查端点设计
 
 建议把三个端点按语义拆开：
 
@@ -1020,7 +1029,7 @@ func readyHandler(w http.ResponseWriter, r *http.Request) {
 4. **谨慎决定 Readiness 是否检查共享依赖。** 如果数据库整体故障导致所有 Pod 同时 NotReady，Service 可能失去全部后端；需要结合降级能力、故障模式和流量策略设计。
 5. **探针路径应有明确语义。** 使用 /startup、/live、/ready 比笼统的 /healthz 更容易避免职责混淆。
 
-## 监控与诊断
+### 监控与诊断
 
 应监控探针成功率、延迟、容器重启和可用副本变化。指标名称取决于应用和监控组件，下面是原文给出的示意查询，不代表 kubelet 默认暴露同名指标：
 
@@ -1051,7 +1060,7 @@ kubectl get pod <pod-name> -o yaml
 - 依赖延迟是否在重启前已经升高；
 - 可用副本下降是否导致剩余 Pod 负载增加。
 
-## 事故后的工程治理
+### 事故后的工程治理
 
 1. 建立 Probe 配置标准，生产探针变更必须经过 Code Review。
 2. 在 CI/CD 中检查高风险配置，例如 Liveness 引用外部依赖、过短容忍窗口、缺少 Startup Probe。
@@ -1063,7 +1072,7 @@ kubectl get pod <pod-name> -o yaml
 > [!danger] PDB 与 HPA 的保护边界
 > PodDisruptionBudget 主要约束自愿中断，例如节点排空；它不能阻止 kubelet 因 Liveness 失败而重启容器，也不能直接阻止应用自身崩溃。HPA 的 minReplicas 只约束期望副本下限，不能保证这些副本在探针误杀期间保持 Ready。二者可以增强整体可用性，但不能代替正确的探针语义、参数和故障隔离。
 
-## 复盘结论
+### 复盘结论
 
 - 瞬时依赖故障不等于进程死亡。
 - 只有“重启能够修复”的故障才适合由 Liveness 处理。

@@ -9,9 +9,12 @@ aliases:
   - Jenkins Pipeline语法
 ---
 
-# DevOps
+# Jenkins语法-基于Docker部署
 
-## 定义
+
+## DevOps
+
+### 定义
 
 Devops是Development和Operations的组合，一开始是为了解决开发人员和运维人员之间合作的避雷，强调跨团队协作与工具链整合。后面发展之后，不仅仅是开发运维，包含完整流程：开发、测试、运维、项目管理。
 
@@ -23,7 +26,7 @@ Devops核心目标：
 
 一句话总结：Devops是跨部门沟通的桥梁，利用相关工具的融合提升整个团队的工作效率。
 
-## 工具链
+### 工具链
 
 | 阶段                        | 工具示例                                           |
 | --------------------------- | -------------------------------------------------- |
@@ -35,7 +38,7 @@ Devops核心目标：
 | 制品管理（镜像或Jar包存储） | Harbor、Nexus（存Jar包比较常用）                   |
 | 服务编排                    | Kubernetes                                         |
 
-## CICD
+### CICD
 
 CICD是Devops中尤为重要的一个环节，主要是通过自动化流程实现代码从开发到生产的快速和可靠交付。
 
@@ -60,9 +63,9 @@ CICD主要分为了三个方面：
    2. 制品发布：将制品自动发布到各个环境
    3. 验收测试：验证发布后的过程是否正常
 
-## Pipeline
+### Pipeline
 
-### 定义
+#### 定义
 
 一种自动化流程框架，用于定义、管理、执行一系列有序的任务。
 
@@ -78,9 +81,9 @@ CICD主要分为了三个方面：
 
 自己写脚本处理这些事项，还得自己写失败判断逻辑、日志采集逻辑、重试逻辑，非常麻烦。
 
-### Pipeline工具
+#### Pipeline工具
 
-#### Jenkins
+##### Jenkins
 
 优点：
 
@@ -95,7 +98,7 @@ CICD主要分为了三个方面：
 - 配置复杂
 - 需要手动管理插件依赖、插件与Jenkins版本兼容性（升级Jenkins前要对jenkins做备份，升级之后插件用不了就要回滚）
 
-#### Tekton
+##### Tekton
 
 优点：
 
@@ -109,7 +112,7 @@ CICD主要分为了三个方面：
 - 学习难度大，部分功能需要自行开发集成（一些CRD要自己写）
 - 需要K8s底座支持 
 
-#### Gitlab CI
+##### Gitlab CI
 
 优点：
 
@@ -123,9 +126,9 @@ CICD主要分为了三个方面：
 - 需要自行维护Runner
 - 无权限隔离
 
-# Jenkins基础
+## Jenkins基础
 
-## Jenkins介绍
+### Jenkins介绍
 
 Jenkins是一个开源的CICD工具，用于自动化构建、测试和部署软件。支持多种编程语言和版本控制系统，可以通过插件扩展功能。在CICD领域属于行业巨头。
 
@@ -134,7 +137,7 @@ Jenkins架构是主从架构：
 - Master节点为主节点，主要用于管理任务调度、任务配置、提供web UI。
 - Agent节点为从节点，主要用于执行具体的任务，可动态扩展。
 
-## jenkins pipeline
+### jenkins pipeline
 
 分为声明式和脚本式。
 
@@ -162,7 +165,7 @@ node('linux-agent'){
 }
 ~~~
 
-### Pipeline声明式语法
+#### Pipeline声明式语法
 
 Pipeline定义了包含了整个流水线的所有内容和指令，也是声明式流水线的开始，包含三个层级结构：
 
@@ -193,11 +196,11 @@ pipeline{
 }
 ~~~
 
-### Sections
+#### Sections
 
 声明式流水线中的Sections 不是一个关键字或指令，而是包含一个或多个Agent、Stages、 Post、Directives 和 Steps 的代码区域块。
 
-#### Agent
+##### Agent
 
 Agent表示整个流水线或特定阶段中的步骤和命令执行的位置，该部分可以在pipeline块的顶层被定义，也可以在stage中再次定义，也可以同时在两处定义。 
 
@@ -296,7 +299,7 @@ Agent表示整个流水线或特定阶段中的步骤和命令执行的位置，
   } 
   ~~~
 
-#### stages
+##### stages
 
 阶段集合，包裹所有的阶段（例如：打包，部署等各个阶段）。stage: 阶段，被stages包裹，一个stages可以有多个stage
 
@@ -313,7 +316,7 @@ pipeline {
 } 
 ~~~
 
-#### steps
+##### steps
 
 Steps部分在给定的stage指令中执行的一个或多个步骤，比如在steps定义执行一条shell命令：
 
@@ -348,7 +351,7 @@ pipeline {
 } 
 ~~~
 
-#### post
+##### post
 
 Post一般用于流水线结束之后的进一步处理，比如错误通知等。Post可以针对流水线不同的结果做出不同的处理，就像开发程序的错误处理。比如python中的try catch。Post可以定义在PIpeline或stage中。支持以下条件：
 
@@ -401,11 +404,11 @@ pipeline {
 }
 ~~~
 
-### Directives
+#### Directives
 
 Directives可用于执行stage时的一些条件判断或者预处理一些数据，他也不是一个关键字或指令，而是包含了environment、options、parameters、triggers、stage、tools、input、when等配置。
 
-#### environment
+##### environment
 
 用于在流水线中配置一些环境变量，根据配置的位置决定环境变量的作用域。在pipeline中定义就作为全局环境变量，也可以配置在stage中作为该stage的环境变量。
 
@@ -435,7 +438,7 @@ pipeline {
 
 推荐把镜像tag作为环境变量放进去。
 
-#### options
+##### options
 
 options指令允许在Pipeline中配置Pipeline专用选项。Pipeline本身提供了许多选项，例如buildDiscarder，但它们也可能由插件提供，例如 timestamps。
 
@@ -468,7 +471,7 @@ pipeline {
 
 Option除了写在Pipeline顶层，还可以写在stage中，但是写在stage中的option仅支持retry、timeout、timestamps，或者是和stage相关的声明式选项，比如skipDefaultCheckout。
 
-#### parameters
+##### parameters
 
 一般用于创建一个流水线的通用模板，应用于不同的环境，比如test、dev、prod等。
 
@@ -521,7 +524,7 @@ tagFilter: '*', type: 'PT_BRANCH')
 
 如何找到都支持哪些parameters？去pipeline - Configure - Pipeline - Pipeline Syntax就会进入一个语法生成器页面，在第二个‘**Declarative Directive Generator**’里面，Sample Directive - parameters: Parameters就能看到各种支持的parameter以及类型了。
 
-#### triggers
+##### triggers
 
 在Pipeline中可以用Triggers实现自动触发流水线，可以通过Webhook、Cron、pollSCM、upstream等方式触发流水线。
 
@@ -588,7 +591,7 @@ pipeline {
 
 4. Webhook【用的最多】
 
-#### input
+##### input
 
 Input字段可以实现在流水线中交互式操作。比如选择要部署的环境、是否继续执行某个阶段等。在公司没有单独的审批平台时可以使用。
 
@@ -621,7 +624,7 @@ pipeline {
 }
 ~~~
 
-#### when
+##### when
 
 允许流水线根据给定的条件判断是否应该执行stage，when必须包含至少一个条件。如果when包含多个条件，都返回true，stage才能执行。
 
@@ -662,7 +665,7 @@ pipeline {
 } 
 ~~~
 
-#### beforeAgent
+##### beforeAgent
 
 默认情况下，如果定义了某个stage的agent，在进入到该agent后，when条件才会被评估。但是有一种情况是用docker作为slave的时候，条件判断应该是在创建slave agent之前，不符合条件就不创建slave；when为true才去创建slave。这样才比较合理，用beforeAgent参数写到when里面就可以。
 
@@ -752,7 +755,7 @@ pipeline {
 
   
 
-#### tools
+##### tools
 
 - 通过tools可自动安装工具，并放置环境变量到PATH。如果agent none，这将被忽略。
 - 支持的tools：maven、jdk、gradle
@@ -774,7 +777,7 @@ pipeline {
 }
 ~~~
 
-### 并行处理Parallel
+#### 并行处理Parallel
 
 当某几个stage都比较慢，并且都可以并行执行，就可以把这几个stage放到一个parallel里面并行处理，减少构建时间。
 
@@ -855,9 +858,9 @@ pipeline {
 } 
 ~~~
 
-## Pipeline常用变量处理
+### Pipeline常用变量处理
 
-### 内置环境变量
+#### 内置环境变量
 
 Jenkins有许多内置变量可以直接在Jenkinsfile中使用，可以通过JENKINS_URL/pipeline-syntax/globals#env获取完整列表。
 
@@ -895,9 +898,9 @@ pipeline {
 }
 ~~~
 
-### 凭证管理
+#### 凭证管理
 
-#### 用户名密码
+##### 用户名密码
 
 主要是在UI界面上添加：Manage Jenkins - Security - Credentials - Stores scoped to Jenkins - (global) - Add credentials。
 
@@ -937,7 +940,7 @@ pipeline {
 }
 ~~~
 
-#### 加密文件
+##### 加密文件
 
 如果需要加密某个文件，可以使用credential，比如连接到k8s集群的kubeconfig文件等。
 
@@ -959,9 +962,9 @@ pipeline {
 }
 ~~~
 
-## Agent配置示例
+### Agent配置示例
 
-### 基于docker slave
+#### 基于docker slave
 
 1. 假设有一个Java项目，需要用到mvn命令进行编译，此时可以用maven基础镜像作为agent，配置如下：
 
@@ -1014,7 +1017,7 @@ pipeline {
    }
    ~~~
 
-### 基于k8s slave
+#### 基于k8s slave
 
 上述示例可以用K8s slave pod实现。比定义具有3个容器的pod，分别为jnlp（负责与jenkins master通信）、build（执行构建命令）、kubectl（执行k8s命令）。在steps中，可以通过containers字段，选择在某个容器内执行命令.
 

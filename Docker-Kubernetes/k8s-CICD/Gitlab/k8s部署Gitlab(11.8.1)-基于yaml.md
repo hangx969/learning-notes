@@ -8,7 +8,10 @@ aliases:
   - K8s部署GitLab YAML
 ---
 
-# 搭建nfs供应商
+# K8s部署GitLab(11.8.1)-基于YAML
+
+
+## 搭建nfs供应商
 
 ~~~sh
 #（1）yum安装nfs，所有节点安装
@@ -29,7 +32,7 @@ exportfs -arv
 systemctl restart nfs
 ~~~
 
-# 配置存储
+## 配置存储
 
 ~~~sh
 #创建ns
@@ -141,7 +144,7 @@ kubectl apply -f pv-pvc-redis.yaml
 kubectl get pvc -n kube-ops
 ~~~
 
-# 安装postgresql服务
+## 安装postgresql服务
 
 ~~~yaml
 tee dep-postgresql.yaml <<'EOF'
@@ -224,7 +227,7 @@ EOF
 kubectl apply -f dep-postgresql.yaml
 ~~~
 
-# 安装redis服务
+## 安装redis服务
 
 ~~~yaml
 tee gitlab-redis.yaml <<'EOF'
@@ -292,7 +295,7 @@ EOF
 kubectl apply -f gitlab-redis.yaml
 ~~~
 
-# 安装gitlab服务
+## 安装gitlab服务
 
 ~~~yaml
 tee gitlab.yaml <<'EOF'
@@ -411,7 +414,7 @@ EOF
 kubectl apply -f gitlab.yaml
 ~~~
 
-## 访问gitlab UI界面
+### 访问gitlab UI界面
 
 - 查看gitlab svc的物理机映射端口`kubectl get svc svc-gitlab -n kube-ops`，浏览器访问物理机IP和端口即可访问UI界面
 

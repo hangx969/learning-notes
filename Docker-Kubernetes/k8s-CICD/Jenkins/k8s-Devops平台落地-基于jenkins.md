@@ -9,9 +9,12 @@ aliases:
   - Jenkins DevOps平台
 ---
 
-# Devops平台建设
+# K8s DevOps平台落地-基于Jenkins
 
-## 通用流程
+
+## Devops平台建设
+
+### 通用流程
 
 微服务发版的自动化流水线，一般会有如下步骤：
 
@@ -29,7 +32,7 @@ aliases:
 
 基本上所有的语言都是类似的流程，可以设计一个通用模板。
 
-## 架构设计
+### 架构设计
 
 <img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202509171636477.png" alt="image-20250917163628290" style="zoom:50%;" />
 
@@ -40,11 +43,11 @@ aliases:
 3. Jenkins（参考[docker部署Jenkins](./docker部署Jenkins)或者[helm部署Jenkins](./helm部署jenkins)）
 4. Harbor（参考[helm部署harbor](../harbor/helm部署harbor)）
 
-## 工具集成
+### 工具集成
 
 Harbor的账号密码、Gitlab的私钥、K8s证书均使用Jenkins的Credentials管理。
 
-### harbor用NodePort暴露
+#### harbor用NodePort暴露
 
 1. 如果harbor只用ingress暴露，在jnlp pod里面，kaniko容器用且仅用coreDNS解析ingress域名，导致根本解析不了harbor ingress。
 
@@ -59,7 +62,7 @@ expose:
 externalURL: "http://192.168.40.180:32002"
 ~~~
 
-### 配置harbor用户名密码
+#### 配置harbor用户名密码
 
 1. Manage Jenkins - Credentials - Stores scoped to Jenkins - (global) - Add Credentials
 
@@ -83,7 +86,7 @@ externalURL: "http://192.168.40.180:32002"
    2. HARBOR_ACCOUNT_USR：仅包含用户名的附加变量
    3. HARBOR_ACCOUNT_PSW：仅包含密码的附加变量
 
-### 配置k8s证书
+#### 配置k8s证书
 
 1. 首先需要找到集群中的KUBECONFIG，一般是kubectl节点的`~/.kube/config`文件，或者是`KUBECONFIG环境变量`所指向的文件。
 
@@ -107,13 +110,14 @@ pipeline {
 }
 ~~~
 
-### jenkins和gitlab ssh互信
+#### jenkins和gitlab ssh互信
 
 如果jenkins是docker部署在一台机器上，gitlab二进制部署在另一台机器上：
 
 1. Jenkins机器的ssh公钥：`~/.ssh/~/id_rsa_pub`内容放到gitlab上：
    1. Gitlab进去直接搜SSH Keys，点进去：Add new key
    2. 把文件内容粘过去，点Add即可
+
 2. Jenkins机器的ssh私钥：`~/.ssh/id_rsa`内容放到Jenkins自己的Credentials里面
    1. Jenkins - Manage Jenkins - Credentials - (Global) - Add Credentials
    2. Kind选SSH Username with private key
@@ -126,7 +130,7 @@ pipeline {
 
 - 找一台k8s节点，把节点上的ssh公钥放进Gitlab，私钥放进Jenkins。
 
-### jenkins集成k8s集群
+#### jenkins集成k8s集群
 
 1. 通常情况下，Jenkins Agent会通过Jenkins Master的5000端口与之通信，所以需要开启Agent的5000端口：
 
@@ -144,9 +148,9 @@ pipeline {
    3. 如果是docker部署的jenkins，Jenkins URL填`http://<宿主机 IP>:8080/`，凭据上传已经创建过的kubeconfig credential，就能自动识别出其他k8s配置了。
    4. 如果是k8s helm部署的jenkins，已经有一个创建好的cloud叫kubernetes。
 
-# 自动化流水线设计
+## 自动化流水线设计
 
-## 节点打标签
+### 节点打标签
 
 如果不需要把整个k8s集群的节点都充当创建Jenkins Slave的节点，可以选择一个或几个节点作为创建Slave的节点：
 
@@ -154,7 +158,7 @@ pipeline {
 kubectl label node rn1 build=true
 ~~~
 
-## Workspace持久化
+### Workspace持久化
 
 jenkins的workspace给他持久化存储起来。这个存储配置在jenkinsfile的workspaceVolume persistentVolumeClaimWorkspaceVolume字段里面。会自动挂载到jnlp里面。
 
@@ -174,7 +178,7 @@ spec:
       storage: 10Gi
 ~~~
 
-## build缓存持久存储
+### build缓存持久存储
 
 Jenkins在构建时，会产生一些依赖文件，这些文件最好进行持久化存储，防止重复下载。
 
@@ -196,7 +200,7 @@ spec:
       storage: 10Gi
 ~~~
 
-## Kaniko配置文件
+### Kaniko配置文件
 
 Kaniko连接harbor用的配置文件就是docker连接harbor的配置文件。
 
@@ -233,7 +237,7 @@ Kaniko连接harbor用的配置文件就是docker连接harbor的配置文件。
    kubectl create cm docker-registry-config --from-file=config.json=/root/.docker/config.json -n jenkins
    ~~~
 
-## 应用的imagePullSecret
+### 应用的imagePullSecret
 
 k8s集群中的应用deployment需要从harbor拉取镜像，所以需要创建一个给deployment用的harbor secret，创建在应用自己的ns里面：
 
@@ -241,7 +245,7 @@ k8s集群中的应用deployment需要从harbor拉取镜像，所以需要创建�
 kubectl create secret docker-registry harborkey --docker-server=192.168.40.180:32002 --docker-username=admin --docker-password=Harbor12345 -n demo
 ~~~
 
-## Jenkinsfile模板
+### Jenkinsfile模板
 
 ~~~groovy
 pipeline {
@@ -466,9 +470,9 @@ EOF
 }
 ~~~
 
-# 自动化构建Java应用
+## 自动化构建Java应用
 
-## 创建Java测试用例
+### 创建Java测试用例
 
 这里用一个示例项目：[spring-boot-project](https://gitee.com/dukuan/spring-boot-project.git)。需要导入到gitlab中
 
@@ -476,7 +480,7 @@ EOF
 2. 点New Project - Import Project - Repository by URL
 3. 输入gitee项目的URL，点击导入即可。
 
-## 创建deployment
+### 创建deployment
 
 需要先把deployment创建出来，镜像随便写一个，后面流水线会替换成最新编译出来的镜像
 
@@ -594,7 +598,7 @@ spec:
 
 创建之后pod可能无法启动，等到流水线创建完成，替换了镜像后就可以了。
 
-## 创建Jenkinsfile
+### 创建Jenkinsfile
 
 把Jenkins Pipeline文件放到代码仓库中就叫Jenkins Pipeline。
 
@@ -606,7 +610,7 @@ Jenkinsfile 放置于代码仓库中，有以下好处：
 
 在Gitlab源代码中添加一个Jenkinsfile。点击代码首页的+，选Newfile，把上面的jenkinsfile模板粘贴过来保存。注意其中的需要手动改的配置有没有写对。
 
-## 创建Dockerfile
+### 创建Dockerfile
 
 在执行流水线过程时，需要将代码的编译产物做成镜像。本次示例是Java项目，只需要把编译出来的Jar包放在有jre环境的镜像中，然后启动该Jar包即可：
 
@@ -621,7 +625,7 @@ CMD java -jar spring-cloud-eureka-0.0.1-SNAPSHOT.jar
 
 同样在gitlab项目中添加这个Dockerfile。注意：Dockerfile必须文件名是Dockerfile，否则Kaniko识别不出来
 
-## 创建Jenkins Job
+### 创建Jenkins Job
 
 1. 首页在All右边的+点击创建一个List View类型的View，名称和项目名称一致。
 
@@ -638,19 +642,19 @@ CMD java -jar spring-cloud-eureka-0.0.1-SNAPSHOT.jar
 
 6. Script Path改成项目中的jenkinsfile文件地址
 
-## 运行流水线
+### 运行流水线
 
 第一次构建，没有选择BRANCH的选项，因为第一次还没有拉取代码。第二次就会有了，需要点一下master分支。
 
-# 自动化构建Vue/H5前端应用
+## 自动化构建Vue/H5前端应用
 
 其构建方式和自动化构建 Java 基本相同，重点是更改 Deployment、Jenkinsfile 和 Dockerfile 即可。
 
-## 创建测试项目
+### 创建测试项目
 
 测试项目地址在：[vue-project](https://gitee.com/dukuan/vue-project.git)。需要导入到Gitlab的group中：New Project - Import Project
 
-## 定义deployment
+### 定义deployment
 
 相比Java应用，只需要更改资源名称和端口号即可：
 
@@ -766,7 +770,7 @@ spec:
             memory: 55Mi
 ~~~
 
-## 创建Jenkinsfile
+### 创建Jenkinsfile
 
 创建到仓库根目录。与Java的Jenkinsfile相比，需要更改的地方：
 
@@ -974,7 +978,7 @@ tagFilter: '*', type: 'PT_BRANCH')
 }
 ~~~
 
-## 创建Dockerfile
+### 创建Dockerfile
 
 创建到仓库根目录。前端应用构建之后一般会在dist目录下产生html文件，只需要拷贝到nginx目录下即可。编译镜像就找一个nginx镜像就行。
 
@@ -983,19 +987,19 @@ FROM registry.cn-beijing.aliyuncs.com/dotbalo/nginx:1.15.12
 COPY dist/* /usr/share/nginx/html/ 
 ~~~
 
-## 创建jenkins job
+### 创建jenkins job
 
 直接复制之前Java的pipeline（Create New Item里面最底下Copy from填spring-boot-project即可），只需要变更名称和仓库地址即可。
 
 pipeline创建好之后直接Build。
 
-# 自动化构建Go应用
+## 自动化构建Go应用
 
-## 创建测试项目
+### 创建测试项目
 
 测试项目地址：[go-project](https://gitee.com/dukuan/go-project.git)。导入到Gitlab中
 
-## 创建deployment
+### 创建deployment
 
 ~~~yaml
 apiVersion: v1
@@ -1109,7 +1113,7 @@ spec:
             memory: 55Mi
 ~~~
 
-## 创建Jenkinsfile
+### 创建Jenkinsfile
 
 创建到代码仓库根目录。Go项目需要更改的内容是构建容器的镜像、缓存目录、Git地址、项目名称：
 
@@ -1315,7 +1319,7 @@ tagFilter: '*', type: 'PT_BRANCH')
 }
 ~~~
 
-## 创建Dockerfile
+### 创建Dockerfile
 
 创建到代码仓库根目录。pipeline agent拉完代码，执行go build编译后，在代码目录会生成一个二进制文件。拷贝到一个linux环境就可以直接执行，所以基础镜像用一个alpine或者其他小镜像即可。
 
@@ -1332,38 +1336,41 @@ COPY ./go-project ./
 ENTRYPOINT [ "./go-project"] 
 ~~~
 
-## 创建jenkins job
+### 创建jenkins job
 
 复制前面的流水线即可。修改名称和git仓库地址。
 
-# Webhook自动触发构建
+## Webhook自动触发构建
 
 之前都是手动点击来开始构建的，比较低效。推荐按需配置自动触发构建。即提交代码之后自动触发Jenkins进行构建任务。
 
 用上面的Go项目作为示例。
 
-## Jenkins配置
+### Jenkins配置
 
 1. 找到Go项目的Job - Configure - Triggers - Build when a change is pushed to Gitlab:
    - 只勾选Push Events
+
 2. Advanced里面：
    - 勾选**Enable ci-skip**：非常好用的配置，建议开启。对于一些添加注释、修改文档的commit，不需要启动构建。在commit -m里面用“ci-skip”开头，就能不触发构建。比如git commit -m “ci-skip Edit README”
    - 勾选**Ignore WIP Merge Requests**：在开了PR出发构建的情况下，PR message带着WIP开头，也不会触发自动构建。
+
 3. Allowed branches - Filter by regex - Source Branch Regex：master - Target Branch Regex：master
 4. 点击Generate生成触发Token
 5. 点击Save
 6. 复制webhook URL:
    - Build when a change is pushed to Gitlab. GitLab webhook URL: http://jenkins.hanxux.local/project/go-project
+
 7. 复制webhook token
 
-## Gitlab配置
+### Gitlab配置
 
 1. gitlab go-project仓库中 - Settings - Webhooks - Add new webhook
 2. URL写上面复制的webhook URL，secret token写刚复制的webhook token
 3. Trigger - Push Events - All Branches
 4. Add webhook
 
-### 故障解决
+#### 故障解决
 
 1。 如果添加webhook时报错invalid url token，需要在gitlab - admin - settings - network - Outbound requests里面打开允许触发外部接口：
 
@@ -1378,17 +1385,17 @@ ENTRYPOINT [ "./go-project"]
    EOF
    ~~~
 
-## 触发构建测试
+### 触发构建测试
 
 可以在gitlab webhook界面点击Test - Push Events，回到Jenkins开是否触发了构建。
 
-# 一次构建多次部署
+## 一次构建多次部署
 
 同一个项目在企业内一般有多个环境需要部署，而一般在dev环境构建出来的镜像，在UAT、prod等环境不需要重新编译打包，因为比较耗时。直接就用dev编译好的镜像发版就行了。
 
 这个过程，需要Jenkins从Harbor获取到Image tag参数，以供用户选择。
 
-## 创建Pipeline
+### 创建Pipeline
 
 1. 新建Job，name：go-project-uat，类型为Pipeline
 2. 页面的General - This project is parameterized - Image Tag Parameter：
@@ -1397,12 +1404,13 @@ ENTRYPOINT [ "./go-project"]
    - Tag Filter Pattern: .*
    - Default Tag: latest
    - Description: Choose the image to be deployed
+
 3. 点击Advanced：
    - Registry URL填Harbor地址：http://192.168.40.180:32002
    - Registry Credential ID选添加过的Harbor用户名密码Credential
    - Verify URL取消勾选
 
-## 创建Jenkinsfile
+### 创建Jenkinsfile
 
 直接粘贴到pipeline里面Save。
 
@@ -1470,9 +1478,9 @@ spec:
 
 （注意如果提示HTTP Unauthorized，回到Configure - This project is parameterized，查看harbor的image Name是不是被自动变成`- platform-tools-local/go-project -`）把前后的空格和-删掉。）
 
-# 集成Helm发布
+## 集成Helm发布
 
-## 创建Helm模板
+### 创建Helm模板
 
 以前面的Go项目为例，改造成helm项目：
 
@@ -1531,7 +1539,7 @@ appVersion: "0.1.0"
 
 template里面的资源定义不用动，后面用helm upgrade的时候--set生成。
 
-## 上传到gitlab仓库
+### 上传到gitlab仓库
 
 ~~~sh
 # 找一台能从gitlab拉代码的机器（配置了ssh互信）
@@ -1548,7 +1556,7 @@ git cimmit -am "add chart"
 git push origin main
 ~~~
 
-## 创建Jenkinsfile
+### 创建Jenkinsfile
 
 需要把发版容器的镜像改成helm镜像，把发版命令改成helm upgrade
 

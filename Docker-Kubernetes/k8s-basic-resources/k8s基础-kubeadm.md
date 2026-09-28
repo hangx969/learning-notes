@@ -7,13 +7,16 @@ aliases:
   - k8skubeadm
 ---
 
-# kubeadm基础
+# K8s基础-kubeadm
 
-## 流程
+
+## kubeadm基础
+
+### 流程
 
 ![image-20231024122121237](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202310241221337.png)
 
-## 预检查
+### 预检查
 
 kubeadm 在执行安装之前进行了相当细致的环境检测:
 
@@ -61,7 +64,7 @@ kubeadm 在执行安装之前进行了相当细致的环境检测:
 
 ​        检查 /proc/sys/net/bridge/bridge-nf-call-iptables、/proc/sys/net/ipv6/conf/default/forwarding 内容是否为 1。
 
-## 完成安装前的配置
+### 完成安装前的配置
 
 ​    1) 在 kube-system 命名空间创建 ConfigMap kubeadm-config,同时对其配置 RBAC 权限;
 
@@ -85,9 +88,9 @@ kubeadm 在执行安装之前进行了相当细致的环境检测:
 
 ​    11) 打印 join 语句;
 
-# Kubeadm生成的k8s证书
+## Kubeadm生成的k8s证书
 
-## 证书分组
+### 证书分组
 
 - Kubernetes把证书放在了两个文件夹中
 
@@ -95,7 +98,7 @@ kubeadm 在执行安装之前进行了相当细致的环境检测:
 
   - /etc/kubernetes/pki/etcd
 
-## 集群根证书
+### 集群根证书
 
 - Kubernetes 集群根证书CA(Kubernetes集群组件的证书签发机构)
 
@@ -114,11 +117,12 @@ kubeadm 在执行安装之前进行了相当细致的环境检测:
     - /etc/kubernetes/pki/apiserver.key
 
   - 2、kubelet客户端证书, 用作 kube-apiserver 主动向 kubelet 发起请求时的客户端认证
+
 - /etc/kubernetes/pki/apiserver-kubelet-client.crt
 
 - /etc/kubernetes/pki/apiserver-kubelet-client.key
 
-## kube-apiserver代理根证书(客户端证书)
+### kube-apiserver代理根证书(客户端证书)
 
 - 用在requestheader-client-ca-file配置选项中, kube-apiserver 使用该证书来验证客户端证书是否为自己所签发
 
@@ -136,7 +140,7 @@ kubeadm 在执行安装之前进行了相当细致的环境检测:
 
     - /etc/kubernetes/pki/front-proxy-client.key
 
-## etcd 集群根证书
+### etcd 集群根证书
 
 - etcd集群所用到的证书都保存在/etc/kubernetes/pki/etcd这路径下, 这一套证书是用来专门给etcd集群服务使用的, 设计以下证书文件:
 
@@ -182,6 +186,6 @@ kubeadm 在执行安装之前进行了相当细致的环境检测:
 
     - /etc/kubernetes/pki/apiserver-etcd-client.key
 
-# kubeadm安装的k8s集群升级
+## kubeadm安装的k8s集群升级
 
 参考官网:[kubeadm集群升级文档](http://kubernetes.io/docs/tasks/administer-cluster/kubeadm/kubeadm-upgrade)

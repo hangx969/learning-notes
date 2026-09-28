@@ -10,6 +10,9 @@ aliases:
   - ArgoCD DNS解析问题
 ---
 
+# ArgoCD部署Helm应用时域名解析失败问题排查与解决
+
+
 ## 问题背景
 
 在使用 ArgoCD（v3.3.6）通过 ApplicationSet + Umbrella Chart 模式部署 external-secrets 时，Application 长期处于 `Unknown` 状态，先后出现两个阶段的报错。

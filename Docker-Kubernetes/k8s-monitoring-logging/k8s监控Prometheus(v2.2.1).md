@@ -12,21 +12,24 @@ aliases:
   - K8s部署Prometheus v2.2.1
 ---
 
-# Prometheus高可用部署方案
+# K8s监控Prometheus(v2.2.1)
 
-## 基本HA模式
+
+## Prometheus高可用部署方案
+
+### 基本HA模式
 
 ![image-20240103130932595](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202401031309673.png)
 
 - 只能确保prometheus服务的高可用,但是不解决Prometheus Server之间的数据一致性问题以及持久化问题(数据丢失后无法恢复),也无法进行动态的扩展。因此这种部署方式适合监控规模不大,Promthues Server也不会频繁发生迁移的情况,并且只需要保存短周期监控数据的场景。
 
-## 基本HA+远程存储
+### 基本HA+远程存储
 
 ![image-20240103131028372](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202401031310434.png)
 
 - 在解决了Promthues服务可用性的基础上,同时确保了数据的持久化,当Promthues Server发生宕机或者数据丢失的情况下,可以快速的恢复。 同时Promthues Server可能很好的进行迁移。因此,该方案适用于用户监控规模不大(几百台服务器的规模),但是希望能够将监控数据持久化,同时能够确保Promthues Server的可迁移性的场景。
 
-## 基本HA+远程存储+联邦集群
+### 基本HA+远程存储+联邦集群
 
 ![image-20240103131314094](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202401031313162.png)
 
@@ -34,7 +37,7 @@ aliases:
 - 例如一个Promthues Server负责采集基础设施相关的监控指标,另外一个Prometheus Server负责采集应用监控指标。再有上层Prometheus Server实现对数据的汇聚。
 - 这种方案比较耗费资源,规模较小的环境(几百台服务器)就没必要部署这种方案了。
 
-## prometheus监控k8s集群
+### prometheus监控k8s集群
 
 - 对于Kubernetes而言,我们可以把当中所有的资源分为几类:
 
@@ -56,11 +59,11 @@ aliases:
 
   5. 对k8s本身的组件做监控:apiserver、scheduler、controller-manager、kubelet、kube-proxy
 
-# 部署node-exporter
+## 部署node-exporter
 
 - node-exporter可以采集机器(物理机、虚拟机、云主机等)的监控指标数据,能够采集到的指标包括CPU, 内存,磁盘,网络,文件数等信息。
 
-## 安装node-exporter
+### 安装node-exporter
 
 ```sh
 kubectl create ns monitor-sa
@@ -134,7 +137,7 @@ spec:
             path: /
 ```
 
-## 验证exporter数据采集
+### 验证exporter数据采集
 
 ```sh
 #查看宿主机的9100端口占用
@@ -143,9 +146,9 @@ ss -antulp | grep :9100
 curl http://192.168.40.180:9100/metrics
 ```
 
-# 部署prometheus
+## 部署prometheus
 
-## 创建sa并授权
+### 创建sa并授权
 
 ```sh
 kubectl create serviceaccount monitor -n monitor-sa
@@ -158,7 +161,7 @@ kubectl create clusterrolebinding monitor-clusterrolebinding-1 -n monitor-sa --c
 
 > 这两条命令的主要区别在于它们绑定的对象不同,第一条命令是直接绑定到一个`ServiceAccount`,而第二条命令是绑定到一个表示`ServiceAccount`的用户。在实际使用中,这两种方式的效果是相同的,都是将`cluster-admin`这个`ClusterRole`的权限赋予了`monitor`命名空间下的`monitor-sa`这个`ServiceAccount`。
 
-## 创建数据存储目录
+### 创建数据存储目录
 
 ```sh
 #在node-1上创建数据目录并给满权限(否则prometheus写不进去数据)
@@ -166,9 +169,9 @@ mkdir /data
 chmod 777 /data/
 ```
 
-## 安装prometheus server服务
+### 安装prometheus server服务
 
-### 创建configmap存储配置
+#### 创建configmap存储配置
 
 ```yaml
 kind: ConfigMap
@@ -263,7 +266,7 @@ data:
 >
 > job_name: 'kubernetes-service-endpoints' :创建svc的时候加一个annotation,svc就能被这个job监控到
 
-### 创建prometheus pod
+#### 创建prometheus pod
 
 - 通过deployment把prometheus server调度到有数据目录的node-1上面
 
@@ -324,7 +327,7 @@ data:
              type: Directory
   ```
 
-### 创建svc代理prometheus server
+#### 创建svc代理prometheus server
 
 ```yaml
 apiVersion: v1
@@ -345,7 +348,7 @@ spec:
      protocol: TCP
 ```
 
-### 查看prometheus UI
+#### 查看prometheus UI
 
 - 直接访问node IP:31408
 
@@ -365,9 +368,9 @@ spec:
                        prometheus.io/scrape: true
     ```
 
-# prometheus监控常见服务
+## prometheus监控常见服务
 
-## tomcat
+### tomcat
 
 - tomcat_exporter地址:[tomcat_exporter (GitHub)](https://github.com/nlighten/tomcat_exporter)
 
@@ -450,7 +453,7 @@ spec:
 
 - prometheus中通过kubernetes-pods的job查看监控到的pod情况
 
-## redis
+### redis
 
 - 笔记地址:[有道云笔记 - Redis监控](https://note.youdao.com/ynoteshare/index.html?id=b9f87092ce8859cd583967677ea332df&type=note)
 
@@ -512,9 +515,9 @@ spec:
 
 - grafana导入"Redis Cluster-1571393212519.json",可以在grafana中监控。
 
-## mysql
+### mysql
 
-### 安装mysql和exporter
+#### 安装mysql和exporter
 
 ```sh
 yum install mysql -y
@@ -525,7 +528,7 @@ cp -ar mysqld_exporter /usr/local/bin/
 chmod +x /usr/local/bin/mysqld_exporter
 ```
 
-### 登陆mysql为mysql_exporter创建账号并授权
+#### 登陆mysql为mysql_exporter创建账号并授权
 
 ```sh
 # 创建数据库用户
@@ -536,7 +539,7 @@ GRANT PROCESS, REPLICATION CLIENT, SELECT ON *.* TO 'mysql_exporter'@'localhost'
 exit #退出mysql
 ```
 
-### 配置mysql免密连db
+#### 配置mysql免密连db
 
 ```sh
 cd mysqld_exporter-0.10.0.linux-amd64
@@ -546,14 +549,14 @@ user=mysql_exporter
 password=Abcdef123!.
 ```
 
-### 启动mysql_exporter
+#### 启动mysql_exporter
 
 ```sh
 nohup ./mysqld_exporter --config.my-cnf=./my.cnf &
 mysqld_exporter的监听端口是9104
 ```
 
-### 配置prometheus configmap
+#### 配置prometheus configmap
 
 ```yaml
 #添加下面的job
@@ -570,11 +573,11 @@ kubectl apply -f prometheus-alertmanager-deploy.yaml
 #我测试可以手动删deploy的pod,新建出来的pod会用
 ```
 
-### grafana导入mysql监控
+#### grafana导入mysql监控
 
 - mysql-overview_rev5.json
 
-## nginx
+### nginx
 
 - 下载nginx-module-vts模块(这个模块可以采集nginx数据)
 
@@ -644,7 +647,7 @@ kubectl apply -f prometheus-alertmanager-deploy.yaml
 
 - grafana导入模板:nginx-vts-stats_rev2.json
 
-## mongodb
+### mongodb
 
 - 下载MongoDB和MongoDB exporter镜像
 
@@ -685,9 +688,9 @@ kubectl apply -f prometheus-alertmanager-deploy.yaml
     - targets: ['192.168.40.180:30056']
   ```
 
-# pushgateway
+## pushgateway
 
-## 介绍
+### 介绍
 
 - Pushgateway是prometheus的一个组件,prometheus server默认是通过exporter主动获取数据(默认采取pull拉取数据),pushgateway则是通过被动方式推送数据到prometheus server,用户可以写一些自定义的监控脚本把需要监控的数据发送给pushgateway, 然后pushgateway再把数据发送给Prometheus server
 
@@ -705,7 +708,7 @@ kubectl apply -f prometheus-alertmanager-deploy.yaml
 
   - 监控下线,prometheus还会拉取到旧的监控数据,需要手动清理 pushgateway不要的数据。
 
-## 部署pushgateway
+### 部署pushgateway
 
 ```sh
 #在工作节点上
@@ -801,7 +804,7 @@ docker run -d --name pushgateway -p 9091:9091 prom/pushgateway
   */1 * * * * /usr/bin/bash  /k8s/push.sh
   ```
 
-# prometheus热加载
+## prometheus热加载
 
 - 为了每次修改配置文件可以热加载prometheus,也就是不停止prometheus就可以使配置生效,想要使配置生效可用如下热加载命令:
 
@@ -815,11 +818,11 @@ docker run -d --name pushgateway -p 9091:9091 prom/pushgateway
 
 - 另一种方式是暴力重启prometheus:kubectl delete 删掉configmap和deploy,再重新apply。这样会造成监控数据中断甚至丢失。推荐热加载。
 
-# PromQL查询语言
+## PromQL查询语言
 
 - PromQL(Prometheus Query Language)是 Prometheus 自己开发的表达式语言,语言表现力很丰富,内置函数也很多。使用它可以对时序数据进行筛选和聚合。
 
-## 数据类型
+### 数据类型
 
 PromQL 表达式计算出来的值有以下几种类型:
 
@@ -831,7 +834,7 @@ PromQL 表达式计算出来的值有以下几种类型:
 
 - 字符串 (String): 一个字符串,暂时未用
 
-### 瞬时向量选择器
+#### 瞬时向量选择器
 
 - 瞬时向量选择器用来选择一组时序在某个采样点的采样值。最简单的情况就是指定一个度量指标,选择出所有属于该度量指标的时序的当前采样值。
 - 比如下面的表达式:`apiserver_request_total`,可以通过在后面添加用大括号包围起来的一组标签键值对来对时序进行过滤。比如下面的表达式筛选出了 job 为 kubernetes-apiservers,并且 resource为 pod的时序:`apiserver_request_total{job="kubernetes-apiserver",resource="pods"}`
@@ -848,19 +851,19 @@ PromQL 表达式计算出来的值有以下几种类型:
 
 - 下面的表达式筛选出了container是kube-scheduler或kube-proxy或kube-apiserver的时序数据:`container_processes{container=~"kube-scheduler|kube-proxy|kube-apiserver"}`
 
-### 区间向量选择器
+#### 区间向量选择器
 
 - 区间向量选择器类似于瞬时向量选择器,不同的是它选择的是过去一段时间的采样值。可以通过在瞬时向量选择器后面添加包含在 [] 里的时长来得到区间向量选择器。
 - 比如下面的表达式选出了所有度量指标为apiserver_request_total且resource是pod的时序在过去1分钟的采样值:`apiserver_request_total{job="kubernetes-apiserver",resource="pods"}[1m]`
 
-### 偏移向量选择器
+#### 偏移向量选择器
 
 - 偏移修饰器用来调整基准时间,使其往前偏移一段时间。偏移修饰器紧跟在选择器后面,使用 offset 来指定要偏移的量。
 - 比如下面的表达式选择度量名称为apiserver_request_total的所有时序在 5 分钟前的采样值:`apiserver_request_total{job="kubernetes-apiserver",resource="pods"} offset 5m`
 
 - 下面的表达式选择apiserver_request_total 度量指标在 1 周前的这个时间点过去 5 分钟的采样值:`apiserver_request_total{job="kubernetes-apiserver",resource="pods"} [5m] offset 1w`
 
-## 聚合操作符
+### 聚合操作符
 
 - PromQL 的聚合操作符用来将向量里的元素聚合得更少。总共有下面这些聚合操作符:
 
@@ -902,7 +905,7 @@ PromQL 表达式计算出来的值有以下几种类型:
 
   > `rate()`函数用于计算时间序列数据的平均速率。这个函数通常用于处理计数器类型的指标
 
-## 函数
+### 函数
 
 - Prometheus 内置了一些函数来辅助计算,下面介绍一些典型的。
 

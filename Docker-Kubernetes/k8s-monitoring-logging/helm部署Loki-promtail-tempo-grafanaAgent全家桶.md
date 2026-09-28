@@ -14,11 +14,14 @@ aliases:
   - Loki+Promtail+Tempo全家桶
 ---
 
-# loki日志查询
+# Helm部署Loki+Promtail+Tempo+GrafanaAgent全家桶
+
+
+## loki日志查询
 
 参考：[Loki日志查询](https://mp.weixin.qq.com/s?__biz=Mzk0NzIyMDA4MA==&mid=2247484579&idx=1&sn=3b2be6ca22c78aae1112601341bb80e9&chksm=c37b7fbcf40cf6aab13c14177d0e0a15d97ee6f3ef1aad00e08ba7e18ff4fae84476dce61434&cur_album_id=3143335204699504647&scene=189#wechat_redirect)
 
-# kubernetes events
+## kubernetes events
 
 - 在Kubernetes集群中，事件（Events）是集群内资源对象状态变化的实时反馈，它们提供了丰富的信息来源，包括对象状态变化、配置更改和调度失败等，可以帮助运维人员了解集群内各种对象的活动状态以及变化，响应故障并进行诊断。
 - 我们可以简单的使用`kubectl get events`来获取事件，也可以装一个podevents插件`kubectl krew install podevents`，通过`kubectl podevents <pod name>`来查看事件。
@@ -35,6 +38,7 @@ aliases:
   6. OOM events: Pod内存使用率触发limit而OOM。
 
   7. 还有Image Pull Failed、Liveness Probe Failed、Container Crashed等等。
+
 - 与其他资源对象相比，Events非常活跃，数据量也很大，考虑到Etcd集群的性能问题，不太可能长时间存储在Etcd中。默认情况下Kubernetes Events只保留**一个小时**，这对于长期分析和故障排查是不够的。因此，将Kubernetes Events持久化存储，并通过可视化工具进行分析变得非常重要。
 - 收集log的组件很多，EFK比较常用，但是ES太重了。这里推荐Loki，一个高效的日志聚合器，适用于收集和存储日志数据，还非常轻量化，非常适合用于聚合存储Kubernetes Events。
 
@@ -43,7 +47,7 @@ aliases:
   - k8s-event-logger
   - evetns-operator
 
-# helm部署k8s-event-logger
+## helm部署k8s-event-logger
 
 - 有一个简单的系统`max-rocket-internet/k8s-event-logger`，它监听 Kubernetes API，接收所有事件，并以 JSON 日志形式写入。
 
@@ -77,7 +81,7 @@ aliases:
   {app="k8s-event-logger"}
   ~~~
 
-# Helm部署Loki+events-exporter
+## Helm部署Loki+events-exporter
 
 - 使用**Helm**部署**Loki**，部署挺简单，定义一个**value**文件，直接**helm install**就好。因为我们使用的场景相对简单，所以部署方式使用**singleBinary**即可，数据需要持久化。
 
@@ -159,9 +163,9 @@ helm install loki grafana/loki -n monitoring -f install-values.yaml --debug
   - 也直接在Grafana官网下载相关Dashboard，稍微改改适合我们场景。
   - 查询语句（Explain query）也非常好写。
 
-# helm部署loki-promtail-tempo全家桶
+## helm部署loki-promtail-tempo全家桶
 
-## Loki
+### Loki
 
 - 文档：[Loki Helm Install](https://grafana.com/docs/loki/latest/setup/install/helm/install-monolithic/#deploying-the-helm-chart-for-development-and-testing)
 - github release: [Loki Releases](https://github.com/grafana/loki/releases)
@@ -196,7 +200,7 @@ helm upgrade -i loki -n monitoring . -f values.yaml
 - 添加grafana数据源
   - add data source - loki - URL: http://loki.monitoring.svc.cluster.local:3100
 
-## Promtail
+### Promtail
 
 - 文档：[Promtail Docs](https://grafana.com/docs/loki/latest/send-data/promtail/)
 
@@ -224,11 +228,12 @@ helm pull grafana/promtail --version "${PROMTAIL_VERSION#promtail-}" #6.15.5
 helm upgrade -i promtail -n monitoring . -f values.yaml
 ~~~
 
-## tempo
+### tempo
 
 - 文档：
   - [Tempo Telemetry](https://grafana.org.cn/docs/tempo/latest/introduction/telemetry/)
   - [Tempo in Grafana](https://grafana.com/docs/tempo/latest/getting-started/tempo-in-grafana/)
+
 - release page: [Tempo Releases](https://github.com/grafana/tempo/releases)
 - artifact hub: [Tempo on ArtifactHub](https://artifacthub.io/packages/helm/grafana/tempo)
 
@@ -292,9 +297,9 @@ helm upgrade -i tempo -n monitoring . -f values.yaml
 >       access: proxy
 > ~~~
 
-# helm部署grafana agent
+## helm部署grafana agent
 
-## 介绍
+### 介绍
 
 - github release: [Grafana Agent Releases](https://github.com/grafana/agent/releases)
 - artifacthub: [Grafana Agent on ArtifactHub](https://artifacthub.io/packages/helm/grafana/grafana-agent)
@@ -311,7 +316,7 @@ Refer：[Grafana Agent参考](https://mp.weixin.qq.com/s?__biz=Mzk0NzIyMDA4MA==&
 
 ![image-20241112140930901](/home/s0001969/.config/Typora/typora-user-images/image-20241112140930901.png)
 
-## 下载
+### 下载
 
 ~~~sh
 helm repo add grafana https://grafana.github.io/helm-charts
@@ -319,21 +324,21 @@ helm repo update grafana
 helm pull grafana/grafana-agent --version 0.42.0
 ~~~
 
-## 配置
+### 配置
 
 - 仿照ado的values文件配置
 
-## 安装
+### 安装
 
 ~~~sh
 helm upgrade -i grafana-agent -n monitoring . -f ./values.yaml
 ~~~
 
-# python集成tempo
+## python集成tempo
 
 对于 Python 应用对接 Tempo 收集 Trace 数据，主要有两种方式：**OpenTelemetry** (推荐) 和 **Jaeger Python SDK**。我推荐使用 OpenTelemetry，因为它是现代标准且与 Tempo 集成最好。
 
-## 方案 1: OpenTelemetry (推荐)
+### 方案 1: OpenTelemetry (推荐)
 
 **1. 安装依赖**
 
@@ -506,7 +511,7 @@ opentelemetry-instrument python app.py
 CMD ["opentelemetry-instrument", "python", "app.py"]
 ```
 
-## 方案 2: Jaeger Python SDK
+### 方案 2: Jaeger Python SDK
 
 如果您更喜欢 Jaeger SDK：
 
@@ -543,7 +548,7 @@ def test_endpoint():
         return jsonify(result)
 ```
 
-## 更新 Tempo 配置
+### 更新 Tempo 配置
 
 确保您的 Tempo 配置支持接收 OTLP 数据：
 
@@ -571,7 +576,7 @@ tempo:
               endpoint: 0.0.0.0:14268
 ```
 
-## 验证追踪数据
+### 验证追踪数据
 
 **1. 检查应用日志**
 
@@ -596,7 +601,7 @@ tempo_traces_total{service_name="my-python-app"}
 tempo_traces_duration_seconds{service_name="my-python-app"}
 ```
 
-## 最佳实践
+### 最佳实践
 
 **1. Span 命名规范**
 

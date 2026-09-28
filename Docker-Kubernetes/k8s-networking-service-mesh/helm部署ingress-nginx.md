@@ -8,7 +8,10 @@ aliases:
   - ingress-nginx部署
 ---
 
-# 介绍
+# Helm部署Ingress-Nginx
+
+
+## 介绍
 
 - 官网地址：
   - [Ingress-Nginx Deploy](https://kubernetes.github.io/ingress-nginx/deploy/)
@@ -24,7 +27,7 @@ aliases:
 - 集群内节点上运行web七层代理nginx所对应的Pod, 由nginx Pod代理到集群内部的Service, Service再把流量转发给集群内部对应的Pod, 这就叫做 Ingress Controller。
 
 
-# 下载
+## 下载
 
 ~~~sh
 # curl -LO https://github.com/kubernetes/ingress-nginx/releases/download/helm-chart-$VERSION/ingress-nginx-$VERSION.tgz #4.10.1
@@ -33,16 +36,16 @@ helm repo update ingress-nginx
 helm pull ingress-nginx/ingress-nginx --version "${INGRESS_NGINX_VERSION#helm-chart-}" #4.10.1
 ~~~
 
-# 配置hostnetwork模式
+## 配置hostnetwork模式
 
 [Bare-metal considerations - Ingress-Nginx Controller](https://kubernetes.github.io/ingress-nginx/deploy/baremetal/#via-the-host-network)
 
-## hostnetwork
+### hostnetwork
 
 - `controller.service.type：cloud`上用的是LoadBalancer，本地虚拟机集群上External IP会创建不出来；所以disable掉暂时不需要service。
 - `controller.hostNetwork=true，controller.hostPort.enabled=true`，ingress-nginx pod用宿主机网络栈，并且开启节点宿主机80、443端口，否则nginx会报404
 
-## DNS policy
+### DNS policy
 
 [DNS for Services and Pods | Kubernetes](https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-s-dns-policy)
 
@@ -211,15 +214,15 @@ controller:
       enabled: true
 ~~~
 
-# 安装
+## 安装
 
 ~~~sh
 helm upgrade -i ingress-nginx -n ingress-nginx . -f values.yaml --create-namespace
 ~~~
 
-# 配置HTTPS访问
+## 配置HTTPS访问
 
-## 自签证书
+### 自签证书
 
 - 以grafana为例。
 
@@ -265,11 +268,11 @@ EOF
 
 - https访问hostname即可，由于lab用的是自签证书，所以浏览器会报连接不安全。
 
-## Letsencrypt证书
+### Letsencrypt证书
 
 - 参考azure文档：[AKS Ingress TLS](https://learn.microsoft.com/en-us/previous-versions/azure/aks/ingress-tls?tabs=azure-cli#install-cert-manager)
 
-# hostnetwork的流量代理过程
+## hostnetwork的流量代理过程
 
 基于当前的 ingress-nginx 配置，从 Windows 电脑访问 `grafana.hanxux.local` 到达 K8s 后端 Pod 的完整请求流程：
 
@@ -278,6 +281,7 @@ EOF
 ```sh
 Windows 电脑 → DNS 查询 grafana.hanxux.local
 ```
+
 - Windows 电脑上的浏览器发起对 `grafana.hanxux.local` 的 DNS 查询
 - 需要在 Windows 的 `hosts` 文件或 DNS 服务器中配置该域名指向 VMware 虚拟机的 IP 地址
 - 例如：`192.168.x.x grafana.hanxux.local`（虚拟机的 IP）
@@ -287,6 +291,7 @@ Windows 电脑 → DNS 查询 grafana.hanxux.local
 ```sh
 Windows 电脑 → VMware 虚拟网络 → K8s 节点
 ```
+
 - 请求通过 VMware 的虚拟网络接口发送到虚拟机
 - 由于您配置了 `hostNetwork: true`，ingress-nginx Pod 直接使用宿主机的网络栈
 
@@ -350,7 +355,7 @@ ingress-nginx → Grafana Service → Grafana Pod
 
 这种配置特别适合单节点或裸机部署，能够提供最直接的网络路径和最佳性能。
 
-# Nodeport模式的流量代理过程
+## Nodeport模式的流量代理过程
 
 上面是采用hostNetwork模式，请求直接到达宿主机80/443端口，被ingress-controller pod接收。还可以给ingress controller开一个NodePort service，请求先到NodePort Service再给ingress-controller。
 
@@ -472,7 +477,7 @@ netsh interface portproxy add v4tov4 listenport=443 listenaddress=0.0.0.0 connec
 1. **保持现有的 hostNetwork 模式** - 对于单节点开发环境，性能和简洁性更佳
 2. **如果需要 NodePort 模式** - 使用方案A的 iptables 端口转发，配置简单且稳定
 
-# 集成oauth2proxy
+## 集成oauth2proxy
 
 - 给ingress添加annotations：
 
@@ -487,7 +492,7 @@ annotations:
 
 - ingress可以配置的annotations：[Nginx Ingress Annotations](https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/)，可以实现其他流量控制等功能。
 
-# 实战--流量复制/流量镜像
+## 实战--流量复制/流量镜像
 
 流量镜像（Traffic Mirror）功能应用于以下两个场景：
 
@@ -497,16 +502,16 @@ annotations:
 
 <img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202501192211142.png" alt="image-20250119221126026" style="zoom:50%;" />
 
-## 准备步骤
+### 准备步骤
 
 1. 在prod集群部署应用，在staging集群部署相同应用
 2. 获取应用域名信息
    - prod：www.product-nginx.com
    - staging:www.staging-nginx.com
 
-## 流量镜像配置
+### 流量镜像配置
 
-### 说明
+#### 说明
 
 1. 将K8s Product Cluster中应用100%的访问流量镜像到K8s Stage Cluster中应用服务上，即将所有访问域名"www.product-nginx.com"的请求复制一份转发到"www.stage-nginx.com"
 
@@ -515,7 +520,7 @@ annotations:
 
 3. 在将K8s Product Cluster中应用的访问流量镜像到K8s Stage Cluster中对应的应用服务后，客户端只会收到K8s Product Cluster中的请求响应，K8s Stage Cluster中的请求响应会被丢弃。
 
-### 步骤1-配置nging-ingress configMap
+#### 步骤1-配置nging-ingress configMap
 
 在nginx-ingress-controller configmap中增加以下内容，配置多个流量接收目标：
 
@@ -541,7 +546,7 @@ data:
 
 > [!question] Q：这里是在哪个环境的ingress操作的？？
 
-### 步骤2-配置prod的ingress
+#### 步骤2-配置prod的ingress
 
 通过configuration-snippet和server-snippet修改源Ingress，增加应用的流量镜像配置。
 
@@ -596,7 +601,7 @@ spec:
         pathType: ImplementationSpecific
 ~~~
 
-### 修改coredns hosts配置
+#### 修改coredns hosts配置
 
 在K8s Product Cluster集群coredns插件中添加需要发送流量镜像的域名解析
 

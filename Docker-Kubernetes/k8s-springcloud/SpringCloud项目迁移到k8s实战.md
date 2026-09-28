@@ -7,7 +7,10 @@ aliases:
   - springcloud迁移k8s
 ---
 
-# SpringCloud项目架构
+# SpringCloud 项目迁移到 K8s 实战
+
+
+## SpringCloud项目架构
 
 1. 有一个SpringCloud项目需要迁移至K8s，该项目采用Eureka注册中心，采用前后端分离框架。
 
@@ -19,7 +22,7 @@ aliases:
 
 <img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202509231042642.png" alt="image-20250923104234590" style="zoom:50%;" />
 
-#  迁移方案
+##  迁移方案
 
 <img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202509231039534.png" alt="image-20250923103915421" style="zoom:50%;" />
 
@@ -30,14 +33,14 @@ aliases:
 - Handler：不需要暴露对外访问，通过receive转发过去的
 - UI：前端服务暴露ingress域名访问。
 
-## 迁移Eureka集群
+### 迁移Eureka集群
 
 - 代码地址：[demo-eureka](https://gitee.com/dukuan/demo-eureka)
 - 构建命令：mvn clean package
 - Java 版本：jdk 1.8
 - 构建镜像：registry.cn-beijing.aliyuncs.com/citools/maven:3.5.3
 
-### 构建及容器化
+#### 构建及容器化
 
 ~~~sh
 # 下载代码
@@ -66,7 +69,7 @@ EOF
 docker build -t demo-eureka:v0.0.1 . 
 ~~~
 
-### 部署至k8s
+#### 部署至k8s
 
 ~~~yaml
 apiVersion: apps/v1 
@@ -178,7 +181,7 @@ spec:
               number: 8080 
 ~~~
 
-## 迁移网关服务
+### 迁移网关服务
 
 代码地址：[demo-receive](https://gitee.com/dukuan/demo-receive)
 
@@ -188,7 +191,7 @@ Java 版本：jdk 1.8
 
 构建镜像：registry.cn-beijing.aliyuncs.com/citools/maven:3.5.3
 
-### 构建及容器化
+#### 构建及容器化
 
 ~~~sh
 # 下载代码
@@ -216,7 +219,7 @@ EOF
 docker build -t demo-receive:v0.0.1 .
 ~~~
 
-### 部署至K8s
+#### 部署至K8s
 
 ~~~yaml
 apiVersion: apps/v1 
@@ -305,7 +308,7 @@ spec:
               number: 8080 
 ~~~
 
-## 迁移handler服务
+### 迁移handler服务
 
 代码地址：[demo-handler](https://gitee.com/dukuan/demo-handler)
 
@@ -315,7 +318,7 @@ Java 版本：jdk 1.8
 
 构建镜像：registry.cn-beijing.aliyuncs.com/citools/maven:3.5.3
 
-### 构建及容器化
+#### 构建及容器化
 
 ~~~sh
 # 下载代码
@@ -343,7 +346,7 @@ EOF
 docker build -t registry.cn-beijing.aliyuncs.com/dotbalo/demo-handler:v0.0.1 . 
 ~~~
 
-### 部署至k8s
+#### 部署至k8s
 
 ~~~yaml
 apiVersion: apps/v1 
@@ -409,7 +412,7 @@ replicas: 1
             failureThreshold: 2
 ~~~
 
-## 迁移前端服务
+### 迁移前端服务
 
 代码地址：[demo-ui](https://gitee.com/dukuan/demo-ui)
 
@@ -419,7 +422,7 @@ Node版本：16.17+
 
 构建镜像：registry.cn-beijing.aliyuncs.com/dotbalo/node:16.17.0-apline-cnpm
 
-### 构建及容器化
+#### 构建及容器化
 
 ~~~sh
 # 下载代码
@@ -444,7 +447,7 @@ EOF
 docker build -t demo-ui:v0.0.1 . 
 ~~~
 
-### 部署至k8s
+#### 部署至k8s
 
 ~~~yaml
 apiVersion: apps/v1 
@@ -523,13 +526,13 @@ spec:
                   number: 80
 ~~~
 
-## 迁移过程总结
+### 迁移过程总结
 
 1. 容器化：只要有镜像，就能部署到K8s
 2. 确认部署方式（注册中心可能会需要sts部署，有headless svc可供其他pod使用来找到注册中心）
 3. 确认域名配置(暴露对外访问的用ingress，服务发现用service)
 
-# SpringCloud云原生架构升级
+## SpringCloud云原生架构升级
 
 Eureka作为注册中心，提供的服务发现，k8s就能实现，这涉及到套娃。所以可以去掉Eureka，去中心化，基本无代码侵入。
 

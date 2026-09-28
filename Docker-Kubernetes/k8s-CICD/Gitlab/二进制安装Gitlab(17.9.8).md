@@ -8,7 +8,10 @@ aliases:
   - GitLab二进制安装
 ---
 
-# 部署
+# 二进制安装GitLab(17.9.8)
+
+
+## 部署
 
 GitLab 在企业内经常用于代码的版本控制，也是DevOps平台中尤为重要的一个工具。
 
@@ -101,12 +104,12 @@ GitLab 在企业内经常用于代码的版本控制，也是DevOps平台中尤�
    gitlab-ctl restart
    ~~~
 
-# 使用
+## 使用
 
 1. 首先可以创建一个组：Groups - Create Group
 2. 在组内创建一个Project - Create blank project - 输入项目名称 创建
 
-# 连接Jenkins服务器
+## 连接Jenkins服务器
 
 1. Jenkins服务器上生成ssh key(如果有可以无需生成）（谁要从gitlab上拉代码，就要把谁的key放到gitlab上）
 

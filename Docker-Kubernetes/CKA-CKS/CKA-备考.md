@@ -8,9 +8,12 @@ aliases:
   - CKA备考
 ---
 
-# Ubuntu模拟环境准备
+# CKA 备考
 
-## 虚拟机创建
+
+## Ubuntu模拟环境准备
+
+### 虚拟机创建
 
 - VMWare中打开master1和node1两个虚拟机，删除快照。
 - 登录虚拟机，user：linux，passwd：linux；user：root，passwd：linux。
@@ -18,9 +21,9 @@ aliases:
   - ckamaster1：10.17.0.62
   - ckanode1：10.17.2.182
 
-## 配置OS
+### 配置OS
 
-### 修改hostname
+#### 修改hostname
 
 ~~~sh
 hostnamectl set-hostname ckamaster1 && bash
@@ -28,7 +31,7 @@ hostnamectl set-hostname ckanode1 && bash
 #bash是为了刷新环境变量
 ~~~
 
-### 修改host文件
+#### 修改host文件
 
 ~~~sh
 vim /etc/hosts
@@ -36,7 +39,7 @@ vim /etc/hosts
 10.17.1.27 ckanode1
 ~~~
 
-### 更新apt源和安装基础软件包
+#### 更新apt源和安装基础软件包
 
 ~~~sh
 apt-get update && sudo apt-get install -y apt-transport-https ca-certificates curl software-properties-common gnupg2
@@ -63,7 +66,7 @@ apt-get update && sudo apt-get install -y apt-transport-https ca-certificates cu
 > - `rm /var/lib/dpkg/lock*`：删除 dpkg 的锁定文件。这个文件防止多个进程同时更改 dpkg 的状态。
 > - `dpkg --configure -a`：配置所有未配置的包。如果 dpkg 在配置包时被中断，可以使用此命令完成配置。
 
-### 把下载的key添加到本地trusted数据库
+#### 把下载的key添加到本地trusted数据库
 
 ~~~sh
 curl -fsSL https://mirrors.ustc.edu.cn/docker-ce/linux/ubuntu/gpg | sudo apt-key add -
@@ -76,7 +79,7 @@ curl -fsSL https://mirrors.ustc.edu.cn/docker-ce/linux/ubuntu/gpg | sudo apt-key
 >    - `-L` 或 `--location`：如果服务器报告了一个新的位置，那么这个选项将使 curl 重新定向到新的位置。
 > 2. `sudo apt-key add -`：将前一个命令的输出（即 Docker 的 GPG 密钥）添加到 APT 的密钥库中。`-` 表示从标准输入读取 GPG 密钥。
 
-### 设置稳定版仓库
+#### 设置稳定版仓库
 
 ~~~sh
 add-apt-repository \
@@ -85,7 +88,7 @@ add-apt-repository \
   stable"
 ~~~
 
-### 关闭交换分区
+#### 关闭交换分区
 
 ~~~sh
 #临时关闭
@@ -95,19 +98,19 @@ vim /etc/fstab
 #注释掉swapfile这一行
 ~~~
 
-### 卸载原来就有的k8s
+#### 卸载原来就有的k8s
 
 ~~~sh
 kubeadm reset
 ~~~
 
-## 安装docker
+### 安装docker
 
 ~~~sh
 apt-get install docker-ce docker-ce-cli containerd.io -y
 ~~~
 
-### 配置docker驱动
+#### 配置docker驱动
 
 ~~~sh
 cat <<EOF | tee /etc/docker/daemon.json
@@ -127,9 +130,9 @@ mkdir -p /etc/systemd/system/docker.service.d
 systemctl daemon-reload && systemctl restart docker && systemctl enable --now docker
 ~~~
 
-## 安装k8s
+### 安装k8s
 
-### 配置k8s源
+#### 配置k8s源
 
 ~~~sh
 apt-get update && apt-get install -y apt-transport-https curl
@@ -157,7 +160,7 @@ apt-get update
 > - `--recv-keys`：这是一个 gpg 命令的选项，用于从密钥服务器接收密钥。
 > - `--keyserver keyserver.ubuntu.com`：这个选项指定了密钥服务器的地址，这里是 Ubuntu 的密钥服务器。
 
-### 安装k8s组件
+#### 安装k8s组件
 
 ~~~sh
 apt-get install -y kubelet=1.23.1-00 kubeadm=1.23.1-00 kubectl=1.23.1-00
@@ -165,9 +168,9 @@ apt-get install -y kubelet=1.23.1-00 kubeadm=1.23.1-00 kubectl=1.23.1-00
 apt-mark hold kubelet kubeadm kubectl 
 ~~~
 
-# 初始化集群
+## 初始化集群
 
-## kubeadm初始化k8s集群
+### kubeadm初始化k8s集群
 
 ~~~bash
 kubeadm config print init-defaults > kubeadm.yaml
@@ -227,7 +230,7 @@ cgroupDriver: systemd
 kubeadm init --config=kubeadm.yaml --ignore-preflight-errors=SystemVerification
 ~~~
 
-## 授权kubectl
+### 授权kubectl
 
 ~~~sh
 mkdir -p $HOME/.kube
@@ -252,7 +255,7 @@ mkdir -p $HOME/.kube
 scp $HOME/.kube/config ckanode1:/root/.kube/
 ~~~
 
-## 扩容节点
+### 扩容节点
 
 ~~~sh
 kubeadm token create --print-join-command
@@ -260,7 +263,7 @@ kubeadm join 10.17.0.247:6443 --token abcdef.0123456789abcdef --discovery-token-
 kubectl label node ckanode1 node-role.kubernetes.io/worker=worker
 ~~~
 
-# 安装calico
+## 安装calico
 
 ~~~bash
 #注：在线下载配置文件地址是： https://docs.projectcalico.org/manifests/calico.yaml
@@ -274,9 +277,9 @@ ping www.baidu.com
 nslookup kubernetes.default.svc.cluster.local
 ~~~
 
-# 1 RBAC
+## 1 RBAC
 
-## 题目
+### 题目
 
 Context：
 为部署流水线创建一个新的ClusterRole 并将其绑定到范围为特定的 namespace 的特定ServiceAccount 。
@@ -289,7 +292,7 @@ Task
 
 限于 namespace app-team1中，将新的ClusterRole deployment-clusterrole绑定到新的 ServiceAccount cicd-token。
 
-## 解答
+### 解答
 
 - kubernetes.io文档中搜rbac
 
@@ -312,13 +315,13 @@ kubectl describe rolebinding cicd-token-binding -n app-team1
 > - 资源要变复数
 > - sa要带着ns，--serviceaccount=`app-team1`:cicd-token
 
-# 2 node节点不可用
+## 2 node节点不可用
 
-## 题目
+### 题目
 
 将ek8s-node-1节点设置为不可用，然后重新调度该节点上的所有Pod
 
-## 解答
+### 解答
 
 - kubectl drain --help 来看参数
 
@@ -329,9 +332,9 @@ kubectl cordon ckanode1
 kubectl drain ckanode1 --delete-emptydir-data --ignore-daemonsets --force
 ~~~
 
-# 3 k8s版本升级
+## 3 k8s版本升级
 
-## 题目
+### 题目
 
 - 现有的Kubernetes 集群正在运行版本1.23.1。仅将master节点上的所有 Kubernetes控制平面和节点组件升级到版本1.23.2。确保在升级之前 drain master节点，并在升级后 uncordon master节点。
 - 可以使用以下命令，通过ssh连接到master节点：ssh master01
@@ -339,7 +342,7 @@ kubectl drain ckanode1 --delete-emptydir-data --ignore-daemonsets --force
 - 另外，在主节点上升级kubelet和kubectl。
 - 请不要升级工作节点，etcd，container 管理器，CNI插件， DNS服务或任何其他插件。
 
-## 解答
+### 解答
 
 - kubernetes.io搜upgrade
 
@@ -380,9 +383,9 @@ kubectl uncordon master01
 kubectl get nodes 
 ~~~
 
-# 4 etcd备份还原
+## 4 etcd备份还原
 
-## 题目
+### 题目
 
 > [!warning] 考试注意
 > 真实考试时，第3题是”升级集群”那道题。建议真正考试时，前4道题按照顺序做，特别是第4题，且做完后不要再修改，做完第3道题，如果没有exit退出到student@node-1，则无法执行etcdctl命令，另外这道题没有切换集群，用的是第3道题的集群，所以，这道题做完就不要在回来检查或者操作了，etcd不建议放到最后做，如果最后做，etcd备份还原可能把所有pod都清空了，有可能会出现，所以前4道题按照顺序做。
@@ -393,7 +396,7 @@ kubectl get nodes
   客户端证书: /opt/KUIN00601/etcd-client.crt
   客户端密钥: /opt/KUIN00601/etcd-client.key
 
-## 解答
+### 解答
 
 > [!tip] 自建环境准备
 > 自己的环境先安装etcdctl：上传etcd-v3.4.13-linux-amd64.tar.gz
@@ -431,9 +434,9 @@ ETCDCTL_API=3 etcdctl --endpoints=https://127.0.0.1:2379 \
   snapshot restore /var/lib/backup/etcd-snapshot-previous.db
 ~~~
 
-# 5 networkpolicy
+## 5 networkpolicy
 
-## 题目
+### 题目
 
 - 在现有的namespace my-app中创建一个名为allow-port-from-namespace的新NetworkPolicy。
 
@@ -443,7 +446,7 @@ ETCDCTL_API=3 etcdctl --endpoints=https://127.0.0.1:2379 \
   - 不允许对没有在监听端口9000的Pods的访问
   - 不允许非来自 namespace echo中的Pods的访问
 
-## 答案
+### 答案
 
 - kubernetes.io中搜network policies
 
@@ -483,14 +486,14 @@ spec:
 kubectl apply -f np.yaml
 ~~~
 
-# 6 四层负载均衡svc
+## 6 四层负载均衡svc
 
-## 题目
+### 题目
 
 重新配置一个已经存在的front-end的deployment，在名字为nginx 的容器里面添加一个端口配置，名字为http，暴露端口号为80，然后创建一个service，名字为front-end-svc，暴露该deployment
 的http 端口，并且service 的类型为Node Port 。
 
-## 解答
+### 解答
 
 - 官网搜service
 
@@ -539,9 +542,9 @@ spec:
       targetPort: http #targetPort可以写containerport的名字
 ~~~
 
-# 7 Ingress七层代理
+## 7 Ingress七层代理
 
-## 题目
+### 题目
 
 如下创建一个新的nginx Ingress资源：
 
@@ -555,7 +558,7 @@ spec:
 
   curl -kL <INTERNAL_IP>/hello
 
-## 解答
+### 解答
 
 - 官网搜ingress，拿到示例ingress的yaml
 
@@ -604,26 +607,26 @@ spec:
               number: 5678
 ~~~
 
-# 8 deployment实现pod扩缩容
+## 8 deployment实现pod扩缩容
 
-## 题目
+### 题目
 
 将loadbalancer 的deployment 管理的Pod 的副本数扩容成6 个
 
-## 解答
+### 解答
 
 ~~~yaml
 kubectl edit deployment loadbalancer
 #把replica改成6
 ~~~
 
-# 9 pod指定节点部署
+## 9 pod指定节点部署
 
-## 题目
+### 题目
 
 创建一个Pod，名字为nginx-kusc00401，镜像地址是nginx，调度到具有disk=spinning 标签的节点上
 
-## 解答
+### 解答
 
 - 官网搜pod，拿示例yaml，镜像改成nginx，加一个nodeSelector指定标签
 
@@ -640,13 +643,13 @@ spec:
     image: nginx
 ~~~
 
-# 10 检查Ready节点数量
+## 10 检查Ready节点数量
 
-## 题目
+### 题目
 
 检查集群中有多少节点为Ready 状态（不包括被打上 `Taint：NoSchedule` 的节点），之后将数量写到 /opt/KUSC00402/kusc00402.txt
 
-## 解答
+### 解答
 
 ~~~sh
 #先找Ready的nodes
@@ -662,13 +665,13 @@ echo x > /opt/KUSC00402/kusc00402.txt
 >
 > `-v` 参数让 grep 只输出不匹配的行，`-c` 参数让 grep 输出匹配的行数。这个命令的目的是计数不包含 "NoSchedule" 的行
 
-# 11 pod封装多个容器
+## 11 pod封装多个容器
 
-## 题目
+### 题目
 
 创建一个Pod，名字为kucc1，这个Pod 包含4容器，为nginx 、redis 、memcached 、consul
 
-## 解答
+### 解答
 
 - 官网拿pod示例yaml
 
@@ -693,13 +696,13 @@ spec:
 kubectl apply -f pod.yaml
 ~~~
 
-# 12 创建pv
+## 12 创建pv
 
-## 题目
+### 题目
 
 创建一个pv，名字为app-config，大小为2Gi，访问权限为ReadWriteMany。Volume 的类型为hostPath，路径为 /srv/app-config
 
-## 解答
+### 解答
 
 - 官网搜PersistentVolume，文档中搜hostPath，找到链接See an example of `hostPath` typed volume，拿到示例yaml
 
@@ -717,15 +720,15 @@ spec:
     path: "/srv/app-config" #加上目录
 ~~~
 
-# 13 创建pvc
+## 13 创建pvc
 
-## 题目
+### 题目
 
 创建一个名字为pv-volume 的pvc，指定storage Class 为csi-hostpath-sc，大小为10Mi
 
 然后创建一个Pod，名字为web-server，镜像为nginx，并且挂载该PVC 至/usr/share/nginx/html，挂载的权限为ReadWriteOnce。之后通过kubectl edit或者kubectl patch将pvc改成70Mi，并且`记录修改记录`。
 
-## 解答
+### 解答
 
 - 官网搜pvc，进到PV的文档里面，搜kind: PersistentVolumeClaim，拿到示例yaml
 
@@ -771,27 +774,28 @@ spec:
 
   # 14 查看pod日志
 
-## 题目
+### 题目
 
 监控名为foobar 的Pod 的日志，并过滤出具有unable-access-website 信息的行，然后将写入到 /opt/KUTR00101/foobar
 
-## 解答
+### 解答
 
 ~~~sh
 kubectl logs foobar | grep unable-access-website > /opt/KUTR00101/foobar
 ~~~
 
-# 15 side-car代理
+## 15 side-car代理
 
-## 题目
+### 题目
 
 - 将一个现有的 Pod 集成到 Kubernetes 的内置日志记录体系结构中（例如 kubectl logs）。
   添加 streaming sidecar 容器是实现此要求的一种好方法。
+
 - 使用busybox Image 来将名为sidecar 的sidecar 容器添加到现有的Pod legacy-app 上，新的sidecar 容器必须运行以下命令：
   /bin/sh -c tail -n+1 -f /var/log/legacy-app.log
   使用volume 挂载 /var/log/ 目录，确保sidecar 能访问/var/log/legacy-app.log 文件
 
-## 解答
+### 解答
 
 - 官网搜logging，拿一个sidecar的示例pod来参考，直接修改给定的pod yaml
 
@@ -841,13 +845,13 @@ kubectl apply -f sidecar.yaml
 kubectl logs counter -c sidecar
 ~~~
 
-# 16 查看pod的CPU使用
+## 16 查看pod的CPU使用
 
-## 题目
+### 题目
 
 找出标签是name=cpu-user 的Pod，并过滤出使用CPU最高的Pod，然后把它的名字写在已经存在的/opt/KUTR00401/KUTR00401.txt 文件里（注意他没有说指定namespace。所以需要使用 -A）
 
-## 解答
+### 解答
 
 ~~~sh
 kubectl top pod -A -l name=cpu-user --sort-by=cpu
@@ -870,9 +874,9 @@ echo "pod name" > /opt/KUTR00401/KUTR00401.txt
 > kubectl apply -f metrics.yaml
 > ~~~
 
-# 17 节点故障排查
+## 17 节点故障排查
 
-## 题目
+### 题目
 
 Task
 一个名为wk8s-node-0 的节点状态为NotReady，让其他恢复至正常状态，并确认所有的更改开机自动完成。
@@ -881,7 +885,7 @@ ssh wk8s-node-0
 可以使用以下命令，在该节点上获取更高权限：
 sudo -i
 
-## 解答
+### 解答
 
 ~~~sh
 ssh wk8s-node-0

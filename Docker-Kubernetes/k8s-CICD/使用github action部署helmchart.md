@@ -9,9 +9,12 @@ aliases:
   - GitHub Actions Helm部署
 ---
 
-# 准备工作
+# 使用GitHub Action部署Helm Chart
 
-## 配置github self-hosted runner-Linux
+
+## 准备工作
+
+### 配置github self-hosted runner-Linux
 
 [GitHub self-hosted runners文档](https://docs.github.com/en/actions/hosting-your-own-runners)
 
@@ -68,7 +71,7 @@ sudo ./svc.sh stop
 sudo ./svc.sh uninstall
 ~~~
 
-## 配置github self-hosted runner-windows
+### 配置github self-hosted runner-windows
 
 1. 先按照：[Add new self-hosted runner · hangx969/local-k8s-platform-tools](https://github.com/hangx969/local-k8s-platform-tools/settings/actions/runners/new)指示，配置runner。
 2. 运行./run.cmd
@@ -80,11 +83,12 @@ sudo ./svc.sh uninstall
 
 
 
-## 安装必要工具
+### 安装必要工具
 
 - kubectl
   - [kubectl krew插件](../k8s-UI-tools/kuebctl-插件krew-rolesum.md)
   - kubectl krew install kyverno插件
+
 - [helm3](../helm/helmv3-安装与使用.md)
   - [helm diff插件]([databus23/helm-diff: A helm plugin that shows a diff explaining what a helm upgrade would change](https://github.com/databus23/helm-diff?tab=readme-ov-file)): helm plugin install https://github.com/databus23/helm-diff
 
@@ -113,7 +117,7 @@ sudo ./svc.sh uninstall
 
 - `helm diff`无法用命令行安装，需要手动下载安装包解压：[Releases · databus23/helm-diff](https://github.com/databus23/helm-diff/releases)，解压到C:\Users\xuhan\AppData\Roaming\helm\plugins中
 
-## 上传并使用kubeconfig
+### 上传并使用kubeconfig
 
 1. 登录到k8s master节点上拿到kubeconfig文件：`/root/.kube/cofig`
 
@@ -145,21 +149,21 @@ jobs:
           helm lint ./helm/base --values ./helm/base/values.yaml --kubeconfig $KUBECONFIG
 ~~~
 
-## 存储其他secrets到github
+### 存储其他secrets到github
 
 1. Oauth2proxy的clientID、clientSecret、cookieSecret。redis password?
 2. slack api token
 3. Harbor username/password
 
-## secert在workflow中的使用
+### secert在workflow中的使用
 
 参考：[GitHub Reusable Workflows - Using inputs and secrets](https://docs.github.com/en/actions/sharing-automations/reusing-workflows#using-inputs-and-secrets-in-a-reusable-workflow)
 
-### 直接在workflow文件中使用secret
+#### 直接在workflow文件中使用secret
 
 用`${{ secrets.KUBECONFIG }}`格式直接引用
 
-### 在reusable模板中传递secret
+#### 在reusable模板中传递secret
 
 在reusable workflow的情况下，会有called workflow和calling workflow。注意到called workflow无法直接用`${{ secrets.KUBECONFIG }}`获取到repository secrets。所以这就需要一些trick来传递workflow。
 
@@ -209,7 +213,7 @@ jobs:
    #后面可以直接用${{ secrets.KUBECONFIG }}来引用这个值
    ~~~
 
-# 编写github action workflow
+## 编写github action workflow
 
 > [!note] 参考文档
 > - 配置self-hosted runner：[添加self-hosted runners](https://docs.github.com/zh/actions/hosting-your-own-runners/managing-self-hosted-runners/adding-self-hosted-runners)
@@ -218,7 +222,7 @@ jobs:
 > - workflow的触发条件：[Triggering a workflow](https://docs.github.com/zh/actions/writing-workflows/choosing-when-your-workflow-runs/triggering-a-workflow)
 > - reusable workflow调用：[Reusing workflows](https://docs.github.com/zh/actions/sharing-automations/reusing-workflows)
 
-# 卸载runner
+## 卸载runner
 
 - 按照文档方法移除runner：[Configuring the self-hosted runner application as a service](https://docs.github.com/en/actions/how-tos/hosting-your-own-runners/managing-self-hosted-runners/configuring-the-self-hosted-runner-application-as-a-service)
 - 有时候github上的runner会莫名其妙消失，这时候需要在本地暴力移除runner，直接删掉actions-runner目录即可

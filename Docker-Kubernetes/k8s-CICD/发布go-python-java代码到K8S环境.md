@@ -8,9 +8,12 @@ aliases:
   - K8S应用部署示例
 ---
 
-# 发布go代码到k8s-示例1
+# 发布Go/Python/Java代码到K8S环境
 
-## 部署go源码和镜像
+
+## 发布go代码到k8s-示例1
+
+### 部署go源码和镜像
 
 - 安装go
 
@@ -98,7 +101,7 @@ docker tag go-test/go-k8sdemo:v1 172.16.183.74/go-test/go-k8sdemo:v1
 docker push 172.16.183.74/go-test/go-k8sdemo:v1
 ```
 
-## 部署pod
+### 部署pod
 
 - 创建yaml文件
 
@@ -171,9 +174,9 @@ curl 172.16.183.76:30835
 #{"status":"success~welcome to study"}
 ~~~
 
-# 发布go代码到k8s-示例2
+## 发布go代码到k8s-示例2
 
-## 准备源码和镜像
+### 准备源码和镜像
 
 - 准备源码
 
@@ -256,7 +259,7 @@ docker save -o k8sgame.tar.gz docker.io/library/k8sgame:v1
 #上传到工作节点并解压
 ~~~
 
-## 创建pod
+### 创建pod
 
 ~~~yaml
 tee deployment.yaml <<'EOF' 
@@ -285,9 +288,9 @@ EOF
 kubectl exec -it guess-game-6c9b4df786-892ds -- /bin/sh
 ~~~
 
-# 发布python代码到k8s
+## 发布python代码到k8s
 
-## 准备源码和镜像
+### 准备源码和镜像
 
 ~~~sh
 tar -zxvf hello-python.tar.gz
@@ -355,7 +358,7 @@ docker tag hello-python:v1 172.16.183.74/go-test/py-k8sdemo:v1
 docker push 172.16.183.74/go-test/py-k8sdemo:v1
 ~~~
 
-## yaml文件部署
+### yaml文件部署
 
 - 创建yaml文件
 
@@ -403,7 +406,7 @@ curl 172.16.183.76:30608
 #Hello from Python!
 ~~~
 
-## helm chart部署
+### helm chart部署
 
 ~~~yaml
 # Chart.yaml
@@ -422,7 +425,7 @@ appVersion: "1.0.0"
 helm upgrade -i hello-python-demo -n devops-agent-management .
 ~~~
 
-# 发布java代码到k8s
+## 发布java代码到k8s
 
 ~~~sh
 yum install maven* -y
@@ -431,7 +434,7 @@ git clone https://gitee.com/hanxianchao66/SpringBootDemo
 cd SpringBootDemo/
 ~~~
 
-## 编译代码
+### 编译代码
 
 ~~~sh
 mvn clean package
@@ -439,7 +442,7 @@ cd /target
 #编译成功之后一般会在target目录下生成一个jar包，本地运行的话直接java -jar xxx.jar就跑起来了
 ~~~
 
-## 打包镜像
+### 打包镜像
 
 ~~~sh
 cd ..
@@ -462,7 +465,7 @@ docker build -t=test/java:v1 .
 #镜像可以传到某个镜像仓库中以供工作节点拉取（docker pull或者ctr -n=k8s.io pull）
 ~~~
 
-## 部署deployment
+### 部署deployment
 
 ~~~yaml
 apiVersion: apps/v1
@@ -487,7 +490,7 @@ spec:
       - containerPort: 8088
 ~~~
 
-## 部署四层代理
+### 部署四层代理
 
 ~~~yaml
 apiVersion: v1
@@ -506,7 +509,7 @@ spec:
     targetPort: 8088
 ~~~
 
-## 部署七层代理
+### 部署七层代理
 
 - 首先部署好ingress-controller，再去创建ingress规则
 

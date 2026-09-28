@@ -14,7 +14,10 @@ aliases:
   - kube-prometheus-stack
 ---
 
-# 一、概述
+# Prometheus-Stack 全家桶：生产级部署与运维完全指南
+
+
+## 一、概述
 
 Prometheus Operator 也称为 Kube-Prometheus-Stack。prometheus-community/kube-prometheus-stack Helm Chart 提供了与 kube-prometheus 类似的功能集。该Chart由 Prometheus 社区维护。
 
@@ -32,7 +35,7 @@ artifact hub: [kube-prometheus-stack on ArtifactHub](https://artifacthub.io/pack
 - [prometheus-community/prometheus-node-exporter](https://github.com/prometheus-community/helm-charts/tree/main/charts/prometheus-node-exporter)
 - [grafana/grafana](https://github.com/grafana/helm-charts/tree/main/charts/grafana)
 
-## Prometheus 核心特性
+### Prometheus 核心特性
 
 | 特性 | 说明 |
 |------|------|
@@ -51,7 +54,7 @@ artifact hub: [kube-prometheus-stack on ArtifactHub](https://artifacthub.io/pack
 | **Histogram** | 数据分布统计（分位数） | `http_request_duration_seconds` |
 | **Summary** | 客户端计算的分位数 | `rpc_duration_seconds` |
 
-## AlertManager 核心功能
+### AlertManager 核心功能
 
 | 功能 | 描述 |
 |------|------|
@@ -70,7 +73,7 @@ Inactive → Pending → Firing → Resolved
          但未超时    超过阈值    告警解除
 ```
 
-## kube-prometheus 组件总览
+### kube-prometheus 组件总览
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -98,7 +101,7 @@ Inactive → Pending → Firing → Resolved
 | `PrometheusRule` | 定义告警规则和记录规则 |
 | `ThanosRuler` | 定义 Thanos Ruler 实例 |
 
-## 整体架构图
+### 整体架构图
 
 ```
                               ┌─────────────────┐
@@ -134,7 +137,7 @@ Inactive → Pending → Firing → Resolved
 └─────────────────┘      └─────────────────┘
 ```
 
-## 数据流
+### 数据流
 
 ```
 ┌──────────────┐     ┌──────────────┐     ┌──────────────┐     ┌──────────────┐
@@ -155,9 +158,9 @@ Inactive → Pending → Firing → Resolved
 4. **通知发送**：AlertManager 将告警发送到配置的接收器（邮件、Slack 等）
 5. **数据查询**：Grafana 通过 PromQL 查询 Prometheus 数据进行可视化
 
-# 二、部署
+## 二、部署
 
-## 前提条件
+### 前提条件
 
 1. 准备storage class提供数据持久化，实验环境下事先部署了nfs-client的sc，并设置为default storage class
    - 默认存储类：[StorageClass](https://kubernetes.io/zh-cn/docs/concepts/storage/storage-classes/#default-storageclass)
@@ -167,7 +170,7 @@ Inactive → Pending → Firing → Resolved
    - ingress controller yaml: [ingress-nginx baremetal](https://github.com/kubernetes/ingress-nginx/tree/main/deploy/static/provider/baremetal)
    - ingressController的deployment中配置hostnetwork=true
 
-## 下载
+### 下载
 
 - 添加仓库
 
@@ -179,7 +182,7 @@ tar xzvf kube-prometheus-stack-59.1.0.tgz
 cd kube-prometheus-stack
 ~~~
 
-## helm配置
+### helm配置
 
 - 修改配置文件
 
@@ -307,19 +310,19 @@ probeSelectorNilUsesHelmValues: false
 scrapeConfigSelectorNilUsesHelmValues: false
 ~~~
 
-## 安装
+### 安装
 
 ~~~sh
 helm install kube-prometheus-stack -n monitoring --create-namespace . -f values.yaml
 ~~~
 
-## 升级
+### 升级
 
 ~~~sh
 helm upgrade -i kube-prometheus-stack -n monitoring . -f values.yaml
 ~~~
 
-## 验证安装
+### 验证安装
 
 ~~~sh
 #通过port forward转发svc端口来本地访问
@@ -328,7 +331,7 @@ kubectl port-forward svc/kube-prometheus-stack-grafana -n monitoring 9000:3000
 kubectl port-forward svc/kube-prometheus-stack-alertmanager  -n monitoring 9000:9093
 ~~~
 
-## 卸载
+### 卸载
 
 ~~~sh
 helm uninstall kube-prometheus-stack -n monitoring #--dry-run
@@ -346,9 +349,9 @@ kubectl delete crd servicemonitors.monitoring.coreos.com
 kubectl delete crd thanosrulers.monitoring.coreos.com
 ~~~
 
-## ingress访问
+### ingress访问
 
-### Http
+#### Http
 
 - 查看ingress的ip
 
@@ -374,7 +377,7 @@ kube-prometheus-stack-prometheus     nginx   prometheus.hanxux.local     172.16.
 > kubectl get secrets  -n monitoring kube-prometheus-stack-grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
 > ~~~
 
-### Https
+#### Https
 
 - 首先部署出certmanager --> 创建clusterissuer --> 创建给grafana ingress https的secret --> helm values.yaml的grafana ingress tls部分配置secret、host
 
@@ -418,7 +421,7 @@ EOF
 
 - https访问hostname即可，由于lab用的是自签证书，所以浏览器会报连接不安全。
 
-## 集成oauth2proxy认证
+### 集成oauth2proxy认证
 
 给ingress添加annotations：
 
@@ -428,9 +431,9 @@ annotations:
   nginx.ingress.kubernetes.io/auth-signin: "https://oauth2proxy.hanxux.local/oauth2/start?rd=https%3A%2F%2Fgrafana.hanxux.local"
 ~~~
 
-# 三、Grafana 管理
+## 三、Grafana 管理
 
-## Helm 管理 Grafana Dashboard
+### Helm 管理 Grafana Dashboard
 
 - dashboard可以单独打成一个helm包
 
@@ -488,7 +491,7 @@ data:
 helm upgrade -i grafana-dashboards-config -n monitoring . --values values.yaml
 ~~~
 
-## Helm 管理 Grafana Datasource
+### Helm 管理 Grafana Datasource
 
 - datasource也可以以helm chart的形式部署，例如templates目录下放datasources的yaml文件：
 
@@ -520,9 +523,9 @@ data:
 EOF
 ~~~
 
-# 四、Prometheus CRD 资源
+## 四、Prometheus CRD 资源
 
-## 常见CRD资源
+### 常见CRD资源
 
 - Prometheus：定义prometheus实例，方便配置管理。（生产环境建议单独找一台机器安装）
 - alertmanager：定义alertmanager实例（体量比较小，直接部署即可，副本数设为3即可。）
@@ -533,7 +536,7 @@ EOF
 - AlertmanagerConfig：定义Alertmenegr告警规则
 - PrometheusRule：定义告警规则（用promQL去写）
 
-## CRD更新说明
+### CRD更新说明
 
 For kube-prometheus-stack: CRDs are firstly extracted from helm charts then installed independently using kubectl apply, which is defined in pipelines.
 
@@ -541,9 +544,9 @@ The reason for installing CRDs separately is that based on [helm document](https
 
 Then they suggests that CRDs can be extracted from the helm package and be installed using kubectl apply.
 
-## service/pod monitor
+### service/pod monitor
 
-### serviceMonitor
+#### serviceMonitor
 
 Service Monitor 是 Prometheus Operator 提供的CRD，负责从其他service暴露的接口上抓取数据。可以动态生成prometheus配置，加载到prometheus当中。通过selector找到对应标签的service。
 
@@ -556,7 +559,7 @@ Service Monitor 是 Prometheus Operator 提供的CRD，负责从其他service暴
 
 - 使用说明：[ServiceMonitors Getting Started](https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/user-guides/getting-started.md#include-servicemonitors) （app需要用service暴露metrics接口，然后定义serviceMonitor资源去抓取接口数据）
 
-### podMonitor
+#### podMonitor
 
 
 pod monitor绕过了service，直接通过pod的label找到pod，抓取pod暴露的metrics接口：
@@ -580,12 +583,12 @@ spec:
   - targetPort: 8080 
 ~~~
 
-### 监控流程设计
+#### 监控流程设计
 
 1. 云原生应用：`/metrics`（serviceMonitor用的比较多）
 2. 非云原生应用：部署`exporter`，exporter本身会暴露metrics接口
 
-## Probe
+### Probe
 
 serviceMonitor和PodMonitor属于白盒监控，监控svc和pod自己暴露出来的metrics接口。
 
@@ -613,7 +616,7 @@ spec:
       - https://www.kubeasy.com
 ~~~
 
-## ScrapeConfig
+### ScrapeConfig
 
 有一些服务是安装在集群外部的，无法直接用podMonitor监控，serviceMonitor也得先创建一个指向外部的service，比较麻烦。Prometheus提供了ScrapeConfig可以采集外部服务的指标。
 
@@ -642,20 +645,20 @@ spec:
         replacement: redis-exporter.monitoring:9121
 ~~~
 
-## PrometheusRule
+### PrometheusRule
 
 PrometheusRule是Prometheus Operator中定义的CRD。有一个专门的网站可以查看各种各样的开源CRD的定义：[OperatorHub - Prometheus](https://operatorhub.io/operator/prometheus)
 
 - Alerting Rule：定义监控数据的条件，当这些条件满足时触发告警。
 - Recording Rule：定期将复杂规则的查询结果保存成一个新的时间序列，为了优化查询性能。比如，将一段时间内的平均CPU使用率保存为一个新指标。
 
-### 自带PrometheusRule
+#### 自带PrometheusRule
 
 kube-prometheus-stack的helm chart自带一些PrometheusRUle，模板文件保存在：kube-prometheus-stack/templates/prometheus/rules-1.14目录下，如果有想去掉的rule就在里面删掉。
 
 这些告警的激活情况可以在prometheus UI界面的Alerts里面查看。 
 
-### helm安装自定义PrometheusRule
+#### helm安装自定义PrometheusRule
 
 ./Chart.yaml文件
 
@@ -790,7 +793,7 @@ spec:
 helm upgrade -i commoninfra-kube-prometheus-config -n kube-system . --values ./values/dev.chinanorth3.yaml
 ~~~
 
-### ruleSelector
+#### ruleSelector
 
 - 创建完PrometheusRule之后，rules文件会被自动加载到`prometheus-kube-prometheus-stack-prometheus-0`这个pod的如下目录中：
 
@@ -803,9 +806,9 @@ helm upgrade -i commoninfra-kube-prometheus-config -n kube-system . --values ./v
   - prometheus-stack的values文件中有一个`ruleSelector`的选项，通过标签选择器来匹配PrometheusRule资源。
   - 默认情况下不做配置：匹配所有PrometheusRule资源
 
-## 常见应用 ServiceMonitor 配置
+### 常见应用 ServiceMonitor 配置
 
-### MySQL Exporter
+#### MySQL Exporter
 
 ```yaml
 apiVersion: monitoring.coreos.com/v1
@@ -833,7 +836,7 @@ spec:
 
 > Exporter 镜像：`prom/mysqld-exporter:v0.15.1`，环境变量 `DATA_SOURCE_NAME="user:password@(mysql:3306)/"`，端口 9104
 
-### Redis Exporter
+#### Redis Exporter
 
 ```yaml
 apiVersion: monitoring.coreos.com/v1
@@ -857,7 +860,7 @@ spec:
 
 > Exporter 镜像：`oliver006/redis_exporter:v1.55.0`，环境变量 `REDIS_ADDR`/`REDIS_PASSWORD`，端口 9121
 
-### Kafka Exporter
+#### Kafka Exporter
 
 ```yaml
 apiVersion: monitoring.coreos.com/v1
@@ -878,7 +881,7 @@ spec:
 
 > Exporter 镜像：`danielqsj/kafka-exporter:v1.7.0`，启动参数 `--kafka.server=kafka:9092`，端口 9308
 
-### Elasticsearch Exporter
+#### Elasticsearch Exporter
 
 ```yaml
 apiVersion: monitoring.coreos.com/v1
@@ -899,7 +902,7 @@ spec:
 
 > Exporter 镜像：`quay.io/prometheuscommunity/elasticsearch-exporter:v1.7.0`，参数 `--es.uri=http://elasticsearch:9200 --es.all --es.indices`，端口 9114
 
-### PostgreSQL Exporter
+#### PostgreSQL Exporter
 
 ```yaml
 apiVersion: monitoring.coreos.com/v1
@@ -920,7 +923,7 @@ spec:
 
 > Exporter 镜像：`quay.io/prometheuscommunity/postgres-exporter:v0.15.0`，环境变量 `DATA_SOURCE_NAME`，端口 9187
 
-## AlertmanagerConfig
+### AlertmanagerConfig
 
 ~~~yaml
 apiVersion: monitoring.coreos.con/v1alpha1
@@ -957,7 +960,7 @@ spec:
           key: password
 ~~~
 
-# 五、Target Down 排查流程
+## 五、Target Down 排查流程
 
 一般是从prometheus中看到target是down的状态。
 
@@ -966,13 +969,13 @@ spec:
 3. 确认能通过svc访问到metrics接口
 4. 确认svc的端口和scheme、serviceMonitor的一致
 
-# 六、告警规则实战
+## 六、告警规则实战
 
-## 使用技巧
+### 使用技巧
 
 有很多监控语法可能比较复杂，此时可以借助现有的Dashboard编写PrometheusRule。比如想要实现主机内存的监控，可以先从面板点击edit获取PromQL语法，复制出来稍加改动就能获取到PromQL的计算公式。再去放到PrometheusRule里面就行。
 
-## 常用监控告警文件
+### 常用监控告警文件
 
 ~~~yaml
     groups:
@@ -1072,7 +1075,7 @@ spec:
 > [!tip]
 > [awesome-prometheus-alerts](https://github.com/samber/awesome-prometheus-alerts) 这个项目中包含了常见组件的prometheus alerts
 
-## 域名访问延迟及故障告警
+### 域名访问延迟及故障告警
 
 ~~~yaml
 apiVersion: monitoring.coreos.com/v1 
@@ -1109,7 +1112,7 @@ spec:
         type: blackbox 
 ~~~
 
-## 应用活性探测
+### 应用活性探测
 
 针对基础组件也可以实现活性探测，用exporter采集数据的组件，比如MySQL和Redis监控，可以通过up指标进行监控：
 
@@ -1150,7 +1153,7 @@ spec:
         component: redis 
 ~~~
 
-## Prometheus 自身告警规则
+### Prometheus 自身告警规则
 
 监控 Prometheus 自身健康状态的告警规则，覆盖配置重载、AlertManager 连接、规则评估、WAL 损坏、存储空间等：
 
@@ -1227,13 +1230,13 @@ spec:
             summary: "Prometheus 存储空间剩余不足 10%"
 ```
 
-# 七、AlertManager 配置与通知
+## 七、AlertManager 配置与通知
 
 示例文件：[alertmanager/doc/examples/simple.yml at main · prometheus/alertmanager](https://github.com/prometheus/alertmanager/blob/main/doc/examples/simple.yml)
 
 官网说明：[Alerting Routes - Prometheus Operator](https://prometheus-operator.dev/docs/developer/alerting/)
 
-## 模板字段
+### 模板字段
 
 ~~~yaml
 # Global：全局配置，主要用来配置一些通用的配置，比如邮件通知的账号、密码、SMTP服务器、微信告警等。Global 块配置下的配置选项在本配置文件内的所有配置项下可见，但是文件内其它位置的子配置可以覆盖Global配置
@@ -1286,7 +1289,7 @@ receivers:
  templates: [] 
 ~~~
 
-## Route路由规则
+### Route路由规则
 
 ~~~yaml
 route: 
@@ -1311,15 +1314,15 @@ route:
   repeat_interval: 10m # 如果一条告警通知已成功发送，且在间隔 repeat_interval 后，该告警仍然未被设置为resolved，则会再次发送该告警通知，默认值4h
 ~~~
 
-## Slience
+### Slience
 
 比如晚上一段时间进行例行维护，肯定会引发一些告警，但是我们希望在这段维护窗口不发送告警，可以在alertmanager UI界面的Silence里面，配置matcher匹配哪些标签的告警不发送，配置多长的时间段。
 
-## 发送告警到邮件
+### 发送告警到邮件
 
 邮件通知需要先开启邮箱服务的IMAP/SMTP服务。
 
-### 基于yaml文件配置邮件告警
+#### 基于yaml文件配置邮件告警
 
 找到Alertmanager的配置文件，添加邮箱服务配置：
 
@@ -1354,7 +1357,7 @@ kubectl replace -f alertmanager-secret.yaml
 
 稍等几分钟即可在Alertmanager的Web界面看到更改的配置（Status）
 
-### AlertmanagerConfig实现邮件告警
+#### AlertmanagerConfig实现邮件告警
 
 前面的配置都是在添加邮件告警的服务配置，路由规则等。没有涉及具体的告警指标。如果需要将西定义的告警发送至邮件，可以使用AlertmanagerConfig进行单独配置，比如将Blackbox的告警发送至邮箱。
 
@@ -1399,7 +1402,7 @@ spec:
 
 
 
-## 发送告警到slack
+### 发送告警到slack
 
 > [!info]
 > - prometheus与slack集成的配置文件说明：[slack_config](https://prometheus.io/docs/alerting/latest/configuration/#slack_config)
@@ -1408,12 +1411,12 @@ spec:
 > - chat.postMessage API文档：[chat.postMessage](https://api.slack.com/methods/chat.postMessage)
 > - bot token: [Bot Token Types](https://api.slack.com/concepts/token-types#bot)
 
-### Slack端配置
+#### Slack端配置
 
 1. Slack workspace中安装一个App，拿到其Api token（bot token）
 2. 创建一个channel用来接收告警信息
 
-### alertmanager端配置
+#### alertmanager端配置
 
 1. 将bot token放到k8s里面：
 
@@ -1572,9 +1575,9 @@ spec:
 
 3. 验证slack端是否可以接收到告警信息
 
-### 发送告警到企业微信
+#### 发送告警到企业微信
 
-#### 企业微信配置
+##### 企业微信配置
 
 1. 首先需要在企业微信官网注册企业微信账号：[企业微信](https://work.weixin.qq.com/)。
 2. 注册完成后进行登录，登录后点击我的企业。
@@ -1591,7 +1594,7 @@ spec:
 
 最后还需要添加信任IP（是alertmanager所在的主机的出口公网IP地址），首先在所有的K8s节点上获取公网IP：`curl ifconfig.me`，在开发者接口 - 企业可信IP添加进去。
 
-#### Alertmanager配置
+##### Alertmanager配置
 
 企业微信配置完成后，修改Alertmanager配置文件，添加企业微信告警。
 
@@ -1607,7 +1610,7 @@ spec:
 # kubectl replace -f kube-prometheus/manifests/alertmanager-secret.yaml 
 ~~~
 
-#### AlertmanagerConfig配置告警通知
+##### AlertmanagerConfig配置告警通知
 
 首先需要创建的微信密钥的Secret：
 
@@ -1651,7 +1654,7 @@ spec:
 
 此处配置的receiver名字为wechat，toUser为@all，代表发送给所有人，也可以只发送给 部门的某一个人，只需要将此处改为USER_ID即可。
 
-#### 自定义微信告警信息
+##### 自定义微信告警信息
 
 首先修改alertmanager的全局配置文件alertmanager-secret.yaml，在stringData下面新添加一个自定义模板： 
 
@@ -1756,7 +1759,7 @@ kubectl replace -f basic-alertmanagerconfig.yaml  -n monitoring
 
 > 注意：{{ template "wechat.default.message" . }} 配置的 wechat.default.message，是模板文件里面通过 define 定义的名称：{{ define "wechat.default.message" }}，并非文件名称。 
 
-## 发送告警到钉钉
+### 发送告警到钉钉
 
 alertmanager原生不支持钉钉，所以用webhook去发送告警
 
@@ -1817,13 +1820,13 @@ spec:
 
 ---
 
-# 八、参数优化与性能调优
+## 八、参数优化与性能调优
 
 > 来源：[Prometheus + AlertManager + kube-prometheus 生产级部署完全指南](https://mp.weixin.qq.com/s/VCQ81Mn0rgP9qPKnXzFM6w)
 
-## 8.1 Prometheus 性能优化
+### 8.1 Prometheus 性能优化
 
-### 资源规划建议
+#### 资源规划建议
 
 | 指标数量 | 抓取目标数 | CPU | 内存 | 磁盘 | 抓取间隔 |
 |----------|-----------|-----|------|------|----------|
@@ -1832,7 +1835,7 @@ spec:
 | 500K-1M | 500-1000 | 8核 | 32GB | 1TB | 15s |
 | > 1M | > 1000 | 16核+ | 64GB+ | 2TB+ | 15s |
 
-### TSDB 优化参数
+#### TSDB 优化参数
 
 ```yaml
 # values-production.yaml 中的 prometheusSpec 部分
@@ -1866,7 +1869,7 @@ prometheusSpec:
       value: "1m"
 ```
 
-### 抓取配置优化
+#### 抓取配置优化
 
 ```yaml
 prometheusSpec:
@@ -1883,7 +1886,7 @@ prometheusSpec:
     - remote-write-receiver
 ```
 
-## 8.2 AlertManager 优化
+### 8.2 AlertManager 优化
 
 ```yaml
 alertmanager:
@@ -1904,7 +1907,7 @@ alertmanager:
         value: "10485760"  # 10MB
 ```
 
-## 8.3 Grafana 优化
+### 8.3 Grafana 优化
 
 ```yaml
 grafana:
@@ -1925,7 +1928,7 @@ grafana:
     GF_SECURITY_X_XSS_PROTECTION: "true"
 ```
 
-## 8.4 PromQL 查询优化
+### 8.4 PromQL 查询优化
 
 ```yaml
 # 1. 使用 rate() 而不是 increase() 计算速率
@@ -1964,9 +1967,9 @@ spec:
             )
 ```
 
-## 8.5 存储优化
+### 8.5 存储优化
 
-### NFS 挂载选项优化
+#### NFS 挂载选项优化
 
 ```yaml
 apiVersion: storage.k8s.io/v1
@@ -1990,7 +1993,7 @@ reclaimPolicy: Retain
 volumeBindingMode: WaitForFirstConsumer
 ```
 
-### 本地缓存方案
+#### 本地缓存方案
 
 ```yaml
 prometheusSpec:
@@ -2012,7 +2015,7 @@ prometheusSpec:
       mountPath: /prometheus/wal
 ```
 
-## 8.6 网络优化
+### 8.6 网络优化
 
 ```yaml
 prometheusSpec:
@@ -2031,9 +2034,9 @@ prometheusSpec:
 
 ---
 
-# 九、高可用与扩展方案
+## 九、高可用与扩展方案
 
-## 9.1 Prometheus 高可用架构
+### 9.1 Prometheus 高可用架构
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
@@ -2062,7 +2065,7 @@ prometheusSpec:
                     └─────────────────┘
 ```
 
-## 9.2 Thanos 集成配置
+### 9.2 Thanos 集成配置
 
 ```yaml
 thanosSidecar:
@@ -2084,7 +2087,7 @@ thanosSidecar:
     requests: { cpu: 100m, memory: 256Mi }
 ```
 
-## 9.3 联邦集群配置
+### 9.3 联邦集群配置
 
 ```yaml
 apiVersion: monitoring.coreos.com/v1
@@ -2111,7 +2114,7 @@ spec:
             - 'prometheus-dc3:9090'
 ```
 
-## 9.4 AlertManager 高可用
+### 9.4 AlertManager 高可用
 
 ```yaml
 alertmanager:
@@ -2134,7 +2137,7 @@ alertmanager:
         effect: "NoSchedule"
 ```
 
-## 9.5 多集群监控（Remote Write）
+### 9.5 多集群监控（Remote Write）
 
 ```yaml
 apiVersion: monitoring.coreos.com/v1
@@ -2163,9 +2166,9 @@ spec:
 
 ---
 
-# 十、故障排查与常见问题
+## 十、故障排查与常见问题
 
-## 10.1 常用排查命令
+### 10.1 常用排查命令
 
 ```bash
 # 查看 Prometheus Pod 状态与日志
@@ -2188,9 +2191,9 @@ kubectl get pv
 kubectl get storageclass
 ```
 
-## 10.2 常见问题解决
+### 10.2 常见问题解决
 
-### 问题1：Prometheus 无法发现目标
+#### 问题1：Prometheus 无法发现目标
 
 ```bash
 # 1. 检查 ServiceMonitor 标签
@@ -2206,7 +2209,7 @@ kubectl get svc -n <namespace> --show-labels
 kubectl get endpoints -n <namespace>
 ```
 
-### 问题2：告警不触发
+#### 问题2：告警不触发
 
 ```bash
 # 1. 检查告警规则是否加载（http://localhost:9090/rules）
@@ -2215,7 +2218,7 @@ kubectl get endpoints -n <namespace>
 # 4. 检查 AlertManager 连接（http://localhost:9090/status）
 ```
 
-### 问题3：NFS 挂载失败
+#### 问题3：NFS 挂载失败
 
 ```bash
 # 1. 检查 NFS 服务器
@@ -2228,7 +2231,7 @@ kubectl describe pvc <pvc-name> -n monitoring
 kubectl run test-nfs --rm -it --image=busybox -- mount -t nfs <nfs-server-ip>:/data /mnt
 ```
 
-### 问题4：Prometheus OOMKilled
+#### 问题4：Prometheus OOMKilled
 
 ```bash
 # 1. 增加内存限制
@@ -2238,7 +2241,7 @@ kubectl patch prometheus k8s -n monitoring --type merge -p '{"spec":{"resources"
 # 4. 减少保留时间（retention 改为 15d）
 ```
 
-### 问题5：镜像拉取失败
+#### 问题5：镜像拉取失败
 
 ```bash
 # 修改 values.yaml 中的镜像地址为国内源
@@ -2250,7 +2253,7 @@ kubectl create secret docker-registry regcred \
   --docker-password=password
 ```
 
-## 10.3 性能调优检查清单
+### 10.3 性能调优检查清单
 
 ```bash
 # 1. 检查 Prometheus 内存使用
@@ -2263,7 +2266,7 @@ kubectl exec -it prometheus-k8s-0 -n monitoring -c prometheus -- wget -qO- http:
 # prometheus_tsdb_head_series
 ```
 
-## 10.4 备份与恢复
+### 10.4 备份与恢复
 
 ```bash
 # 方法1：使用 Velero
@@ -2279,7 +2282,7 @@ kubectl scale sts prometheus-k8s --replicas=0 -n monitoring
 kubectl scale sts prometheus-k8s --replicas=2 -n monitoring
 ```
 
-## 10.5 生产部署检查清单
+### 10.5 生产部署检查清单
 
 - [ ] **存储**：NFS 服务器可用、StorageClass 正确、PVC 绑定成功、数据持久化验证
 - [ ] **高可用**：Prometheus 多副本、AlertManager 多副本、反亲和性、容忍污点
@@ -2291,9 +2294,9 @@ kubectl scale sts prometheus-k8s --replicas=2 -n monitoring
 
 ---
 
-# 附录
+## 附录
 
-## 常用 PromQL 速查
+### 常用 PromQL 速查
 
 ```promql
 # 节点 CPU 使用率
@@ -2323,7 +2326,7 @@ increase(kube_pod_container_status_restarts_total[1h])
 predict_linear(node_filesystem_avail_bytes{mountpoint="/"}[1h], 4 * 3600) < 0
 ```
 
-## 版本兼容参考
+### 版本兼容参考
 
 | 组件 | 版本 |
 |------|------|

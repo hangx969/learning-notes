@@ -11,17 +11,20 @@ aliases:
   - Docker基础教程
 ---
 
-# 实验环境搭建
+# Docker基础
 
-## 虚拟机搭建
+
+## 实验环境搭建
+
+### 虚拟机搭建
 
 - VM OS 版本:CentOS7
 
 - 2G内存、2vcpu
 
-## docker安装-centos
+### docker安装-centos
 
-### 简洁版
+#### 简洁版
 
 [Docker官方安装文档](https://docs.docker.com/engine/install/centos/)
 
@@ -33,7 +36,7 @@ sudo yum install docker-ce docker-ce-cli containerd.io docker-compose-plugin
 sudo systemctl start docker
 ```
 
-### 进阶版
+#### 进阶版
 
 > [!tip] 安装docker前可以配置docker阿里云的源:[docker-ce镜像_docker-ce下载地址_docker-ce安装教程-阿里巴巴开源镜像站](https://developer.aliyun.com/mirror/docker-ce)
 
@@ -137,7 +140,7 @@ Got permission denied while trying to connect to the Docker daemon socket at uni
 chmod 666 /var/run/docker.sock
 ```
 
-## docker安装-ubuntu2204
+### docker安装-ubuntu2204
 
 ~~~sh
 # Switch to root account
@@ -179,7 +182,7 @@ gpasswd -a $USER docker
 newgrp docker
 ```
 
-## docker安装-ubuntu2510
+### docker安装-ubuntu2510
 
 ```bash
 # ===== 1. 卸载可能冲突的旧版本/发行版自带的 docker 相关包 =====
@@ -225,16 +228,17 @@ sudo systemctl status docker
 sudo usermod -aG docker $USER
 # 执行完上面这条后需要重新登录（退出 SSH 再登录）才会生效
 ```
-## docker安装-windows
+
+### docker安装-windows
 
 1. 首先安装scoop,参考[这里](../helm/helmv3-安装与使用.md)
 2. scoop安装docker和gsudo:`scoop install docker gsudo`
 3. 开一个终端运行dockerd:`gsudo dockerd`
 4. 开一个终端运行docker命令:`gsudo docker images`
 
-# docker基础
+## docker基础
 
-## 基础架构演变
+### 基础架构演变
 
 1. 物理机:宕机风险高影响大,维护、扩展困难,资源利用率差,隔离性差。
 2. 虚拟机:一个物理机上创建多个虚拟机。维护扩展方便。但是多虚拟机管理不方便。
@@ -243,7 +247,7 @@ sudo usermod -aG docker $USER
 5. 容器编排/容器云:负载均衡、高可用。下一代云计算技术。
 6. Serverless:函数即服务。公有云使用较多。
 
-## docker介绍
+### docker介绍
 
 **概念:**
 
@@ -279,7 +283,7 @@ sudo usermod -aG docker $USER
 - docker镜像和容器管理依旧最为灵活,构建镜像的功能非常完善,支持异构。
 - 没有使用k8s的企业还是会使用docker来做容器管理。
 
-## docker镜像原理
+### docker镜像原理
 
 docker镜像:轻量级、可运行的独立软件包,包含了软件运行所需的所有内容:代码、runtime、library、环境变量、配置文件等。runtime 是一个通用抽象的术语,指的是计算机程序运行的时候所需要的一切代码库,框架,平台等。
 
@@ -292,7 +296,7 @@ docker镜像:轻量级、可运行的独立软件包,包含了软件运行所需
 - 对于一个精简OS,rootfs可以很小,只需包含基本命令,工具和库。底层用的是宿主机的kernel,自己只需要提供**rootfs**即可。docker镜像的最底层是boofts。bootfs几乎是不变的,各种镜像bootfs是通用的。
 - docker镜像相当于一个只读的模板,每一次操作都在其上创建一层可写层。可写层:容器层;只读层:镜像层
 
-### 工作原理
+#### 工作原理
 
 1. **核心概念:**
 
@@ -335,7 +339,7 @@ docker镜像:轻量级、可运行的独立软件包,包含了软件运行所需
      3. **容器内的所有文件修改(创建、更新、删除)都只发生在这个可写层中**,通过 CoW 机制实现。
      4. 当容器被删除时,这个可写层通常也会被丢弃(除非使用持久化卷)。
 
-## docker常用命令
+### docker常用命令
 
 - 查看docker版本
 
@@ -495,31 +499,33 @@ docker cp c6b838db2e40:/home/test.py /home
 docker commit -a="xxxx" -m="add xxx to xxx dir"  原容器ID image-name:1.0
 ```
 
-## 镜像格式组成部分
+### 镜像格式组成部分
 
 `gcr.k8s.io/coreos/prometheus-adapter:0.8`为例:
 
 - gcr.k8s.io:registry/镜像地址
 - coreos:repository/Project/命名空间/镜像目录。
   - 这个目录可以有多级
+
 - prometheus-adapter:name/镜像名称
   - 只有镜像名称没有registry和repo的时候,就默认是去`docker.io/library`去拉
+
 - 0.8:tag/版本号
 
 > [!tip] 有些镜像如果docker.io没有,用bitnami的也行。bitnami也是比较可靠的镜像库
 
-## docker部署服务通用步骤
+### docker部署服务通用步骤
 
 1. 确认需要部署的服务
 2. 了解服务运行的基础配置(配置文件、数据目录在哪里、端口号等)
 3. 找到基础镜像、下载镜像
 4. 确认配置启动服务并验证
 
-# Docker数据持久化
+## Docker数据持久化
 
 将主机目录直接挂载到容器内目录上,容器内可以对其进行修改。源文件是在宿主机上的。
 
-## Docker数据卷
+### Docker数据卷
 
 ```bash
 #为容器添加数据卷
@@ -564,7 +570,7 @@ docker volume rm volume_name1 volume_name2
 -v 卷名:容器内路径:ro (或者rw) #指定了容器对该目录的权限,如果是ro,目录内部文件只能在宿主机内改变,不能在容器内改变
 ~~~
 
-## docker数据卷容器
+### docker数据卷容器
 
 容器A挂载了一个volume,容器B通过volume-from参数,把A挂载的数据卷也挂载到自己里面,实现数据共享。本质是软连接到宿主机上的同一个目录上。
 
@@ -583,7 +589,7 @@ docker run --name volume-B --volumes-from volume-A -itd centos /bin/bash
 docker exec -it volume-B /bin/bash #可以看到容器A挂载的目录和文件
 ```
 
-## docker数据卷的备份和还原
+### docker数据卷的备份和还原
 
 ```bash
 #数据备份
@@ -596,9 +602,9 @@ docker run --volumes-from volume-B -v /root/backup/:/backup centos tar zxvf /bac
 #运行一个辅助容器,挂载上主容器volume-B的volume,然后把宿主机的/root/backup挂载到容器内的/backup,这样备份的数据就近到容器里面了。然后把备份的datavolume3解压到自己的也就是主容器的/上,实现还原。
 ```
 
-# docker容器网络
+## docker容器网络
 
-## docker0网桥
+### docker0网桥
 
 - 安装docker的时候,会生成一个docker0的虚拟网桥。
 
@@ -635,7 +641,7 @@ docker run --volumes-from volume-B -v /root/backup/:/backup centos tar zxvf /bac
 
 <img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202407252228993.png" alt="image-20240725222820817" style="zoom:67%;" />
 
-## docker link网络别名
+### docker link网络别名
 
 - docker link设置网络别名
 
@@ -662,7 +668,7 @@ docker run --volumes-from volume-B -v /root/backup/:/backup centos tar zxvf /bac
   ping webtest
   ```
 
-## docker容器网络模式
+### docker容器网络模式
 
 docker run创建Docker容器时,可以用--net选项指定容器的网络模式,Docker有以下4种网络模式:
 
@@ -715,13 +721,13 @@ ip addr  #跟net-none的设置一样
        valid_lft forever preferred_lft forever
 ```
 
-# docker资源配额
+## docker资源配额
 
 Docker通过cgroup来控制容器使用的资源限制,可以对docker限制的资源包括CPU、内存、磁盘
 
-## docker容器控制CPU
+### docker容器控制CPU
 
-### CPU份额限制
+#### CPU份额限制
 
 ```bash
 #查看配置份额的帮助命令:
@@ -743,7 +749,7 @@ docker run --help | grep cpu-shares
 
 - cgroups只在多个容器同时争抢同一个cpu资源时(CPU紧张时),cpu配额才会生效。因此,无法单纯根据某个容器的cpu份额来确定有多少cpu资源分配给它,资源分配结果取决于同时运行的其他容器的cpu分配和容器中进程运行情况。
 
-### CPU core核心限制
+#### CPU core核心限制
 
 > [!info] 从系统架构来看,目前的商用服务器大体可以分为三类架构:
 >
@@ -757,7 +763,7 @@ docker run --help | grep cpu-shares
   - --cpuset可以绑定CPU core,指定容器只能在哪个CPU上运行。
   - --cpuset-mems 对具有NUMA拓扑(具有多CPU、多内存节点)的服务器尤其有用,可以对需要高性能计算的容器进行性能最优的配置。如果服务器只有一个内存节点,则--cpuset-mems的配置基本上不会有明显效果。
 
-### Lab
+#### Lab
 
 > [!info] stress 压测工具参数
 > -?        显示帮助信息
@@ -812,7 +818,7 @@ KiB Swap:        0 total,        0 free,        0 used.  6938528 avail Mem
 10992 root      20   0    7960     96      0 R  16.3  0.0   0:09.23 stress
 ```
 
-## docker容器控制内存
+### docker容器控制内存
 
 - Docker提供参数-m, --memory=""限制容器的内存使用量。
 
@@ -824,7 +830,7 @@ cat /sys/fs/cgroup/memory/memory.limit_in_bytes
 134217728
 ```
 
-## docker容器控制IO
+### docker容器控制IO
 
 ```bash
 docker run --help | grep write-b
@@ -859,7 +865,7 @@ sys     0m0.018s
 #注: 发现1秒写2M。限制成功。
 ```
 
-## docker资源自动释放
+### docker资源自动释放
 
 ```bash
 docker run --help | grep rm
@@ -873,12 +879,12 @@ docker run -it --rm --name dockerrm centos sleep 10
 #容器起来10s就自动退出了
 ```
 
-# docker资源清理
+## docker资源清理
 
 - 随着时间的推移,docker containers 以及其他 Docker 资源(例如映像、卷和网络)可能会累积并消耗磁盘空间。因此,为了防止未使用或不必要的资源积累,Docker 清理有助于删除这些不需要的垃圾。此过程可以释放磁盘空间并提高系统性能。
 - 我们有必要定期检查 Docker 占用的磁盘空间,以保证高效的资源管理,以及防止磁盘空间耗尽。这有助于维护系统性能并避免潜在问题,例如部署失败或容器操作速度减慢。
 
-## 查看磁盘占用
+### 查看磁盘占用
 
 ~~~sh
 #此命令提供 Docker 组件(例如镜像、容器、存储卷和构建缓存)占用的总磁盘空间。
@@ -887,7 +893,7 @@ docker system df
 docker system df -v
 ~~~
 
-## 清理命令
+### 清理命令
 
 - Docker prune 命令是 Docker 环境中的清理工具。当系统磁盘空间不足时,或者当我们想确保只有必要的 Docker 组件占用系统资源时,可以使用 Docker prune。
 - docker system prune 命令删除未使用的数据,包括:
@@ -900,7 +906,7 @@ docker system df -v
 docker system prune
 ~~~
 
-## 清理悬空存储卷
+### 清理悬空存储卷
 
 ~~~sh
 #列出
@@ -911,7 +917,7 @@ docker volume rm volume_name1 volume_name2
 docker volume prune
 ~~~
 
-## 清理网络
+### 清理网络
 
 ~~~sh
 #列出
@@ -920,7 +926,7 @@ docker network ls
 docker network rm name
 ~~~
 
-## 清理none镜像
+### 清理none镜像
 
 接手一个docker环境,发现其中有大量的none镜像。none镜像不是异常镜像,而是被新镜像顶掉tag的旧镜像。怎么产生的:
 
@@ -947,6 +953,7 @@ docker system df
 ```
 
 如何正确删除:
+
 1. 建议先打一个快照
 2. 删除停止容器:`docker container prune`
 3. 删除none镜像: `docker image prune`
@@ -954,12 +961,13 @@ docker system df
 5. 验证空间: `docker system df`
 
 避坑:
+
 1. 不能直接执行`docker system prune -a` 因为会将所有没被容器使用的镜像全部删除(包括有tag的)
 2. 不要手动删除`/var/lib/docker/overlay2` ,直接破坏了docker数据层,导致docker故障
 
-# dockerfile基础
+## dockerfile基础
 
-## dockerfile定义
+### dockerfile定义
 
 Dockerfile是一个用于定义Docker镜像的文本文件。它包含了一系列的指令和参数,用于指示Docker在构建镜像时应该执行哪些操作,例如基于哪个基础镜像、复制哪些文件到镜像中、运行哪些命令等等。通过Dockerfile,开发人员可以将应用程序和其所有依赖项打包在一起,创建出一个可移植的Docker镜像,使得这个应用程序可以在任何Docker环境中都能够快速部署和运行。
 
@@ -977,7 +985,7 @@ EXPOSE 80
 ENTRYPOINT ["/usr/sbin/nginx","-g","daemon off;"]
 ```
 
-## dockerfile制作服务的过程
+### dockerfile制作服务的过程
 
 如果是二进制部署服务:
 
@@ -993,7 +1001,7 @@ dockfile制作服务镜像:
 3. 创建用户并分配权限
 4. 启动命令(CMD\ENTRYPOINT)
 
-## dockerfile语法
+### dockerfile语法
 
 - FROM
 
@@ -1215,9 +1223,9 @@ dockfile制作服务镜像:
 
   这样可以把dockerfile做成一个框架
 
-## dockerfile优化
+### dockerfile优化
 
-### image层数优化
+#### image层数优化
 
 1. Dockerfile 的指令每执行一次都会在 docker 上新建一层。所以过多无意义的层,会造成镜像膨胀过大。
 
@@ -1260,7 +1268,7 @@ tar -xvf redis.tar.gz
 
 3. 可以用`docker history <image id>`来看镜像每一层的大小。
 
-### 基础镜像优化
+#### 基础镜像优化
 
 制作业务镜像的时候,去找一个官方已经装好基础环境的镜像,比如python,jdk等。不需要基础环境的话,可以用一些精简的小镜像:
 
@@ -1286,7 +1294,7 @@ tar -xvf redis.tar.gz
   RUN adduser -D dot
   ~~~
 
-### 容器外进行文件操作
+#### 容器外进行文件操作
 
 如果需要将某个压缩文件拷贝到镜像,并且需要更改文件夹权限,在构建之前先更改完毕,再进行构建镜像。不要在镜像里面用RUN去跑:
 
@@ -1299,7 +1307,7 @@ MAINTAINER dot
 COPY xxx /mnt/xxx
 ~~~
 
-### 多阶段构建
+#### 多阶段构建
 
 FROM之后还能继续用FROM
 
@@ -1348,13 +1356,13 @@ Java程序也一样,第一阶段builder,先找一个maven的基础镜像,maven c
 
 只要是需要编译 -- 运行的程序都可以拆分成两个阶段去构建镜像。
 
-### 制作支持多操作系统的镜像
+#### 制作支持多操作系统的镜像
 
 ~~~sh
 docker build --platform linux/amd64,windows/amd64 -t myapp .
 ~~~
 
-### 使用根文件系统镜像
+#### 使用根文件系统镜像
 
 ~~~sh
 #访问 Alpine 官方网站的 下载页面,找到并下载最新版本的根文件系统 tarball。你也可以使用以下命令直接下载(这里以 3.14 版本为例)
@@ -1367,7 +1375,7 @@ docker images
 docker run -it alpine:3.14 /bin/sh
 ~~~
 
-## dockerfile安全实践
+### dockerfile安全实践
 
 1. 注意不要使用臃肿或者未经验证的基础镜像
 
@@ -1422,7 +1430,7 @@ docker run -it alpine:3.14 /bin/sh
   docker run --security-opt seccomp=default.json myimage
   ```
 
-## dockerfile制作异构镜像
+### dockerfile制作异构镜像
 
 - docker支持异构,在AMD64上可以做ARM镜像,在ARM上可以做AMD64的镜像,这个插件叫buildx。
 - 架构列表:[docker-library/official-images: Primary source of truth for the Docker "Official Images" program](https://github.com/docker-library/official-images#architectures-other-than-amd64)
@@ -1454,9 +1462,9 @@ docker buildx build --platform linux/arm64/v8 -t registry.cnbeijing.aliyuncs.com
 docker pull xxx:tag --platform linux/arm64
 ~~~
 
-## dockerfile实战
+### dockerfile实战
 
-### 制作 Vue/H5 前端镜像
+#### 制作 Vue/H5 前端镜像
 
 代码地址:[vue-project](https://gitee.com/dukuan/vue-project.git)
 
@@ -1490,7 +1498,7 @@ COPY dist/ /usr/share/nginx/html/
 docker build -t xxx:xxx .
 ~~~
 
-### 制作 Java 后端镜像
+#### 制作 Java 后端镜像
 
 代码地址:[spring-boot-project](https://gitee.com/dukuan/spring-boot-project.git)
 
@@ -1527,7 +1535,7 @@ CMD java -jar app.jar
 docker build -t xxx:xxx .
 ~~~
 
-### 制作 golang 后端镜像
+#### 制作 golang 后端镜像
 
 代码地址:[go-project](https://gitee.com/dukuan/go-project.git)
 
@@ -1569,9 +1577,9 @@ ENTRYPOINT [ "./go-project"]
 docker build -t xxx:xxx .
 ~~~
 
-# docker-compose
+## docker-compose
 
-## 背景
+### 背景
 
 - docker建议我们每一个容器中只运行一个服务,因为docker容器本身占用资源极少,所以最好是将每个服务单独的分割开来,但是这样我们又面临了一个问题:如果需要同时部署多个服务,每个服务单独写Dockerfile、构建镜像、构建容器,繁琐。
 
@@ -1586,7 +1594,7 @@ docker-compose使用的三个步骤:
 2. 使用 docker-compose.yml 定义一个完整业务单元,安排好整体应用中的各个容器服务。
 3. 最后,执行docker-compose up命令 来启动并运行整个应用程序,完成一键部署上线
 
-## 安装
+### 安装
 
 - 直接随着docker安装--是基于插件的形式安装的,不推荐
 
@@ -1604,7 +1612,7 @@ mv docker-compose-Linux-x86_64.64 /usr/bin/docker-compose
 chmod +x /usr/bin/docker-compose
 ~~~
 
-# 阿里云镜像仓库使用
+## 阿里云镜像仓库使用
 
 官网:[阿里云容器镜像服务](https://cr.console.aliyun.com/)
 
@@ -1630,9 +1638,9 @@ chmod +x /usr/bin/docker-compose
    docker push registry.cn-beijing.aliyuncs.com/dotbalo/centos:8
    ~~~
 
-# Docker私有镜像仓库harbor
+## Docker私有镜像仓库harbor
 
-## Harbor介绍
+### Harbor介绍
 
 - Docker容器应用的开发和运行离不开可靠的镜像管理,虽然Docker官方也提供了公共的镜像仓库,但是从安全和效率等方面考虑,部署我们私有环境内的Registry也是非常必要的。
 
@@ -1640,7 +1648,7 @@ chmod +x /usr/bin/docker-compose
 
 - 官网地址:[Harbor GitHub](https://github.com/goharbor/harbor)
 
-## Harbor安装配置-基于docker-compose
+### Harbor安装配置-基于docker-compose
 
 1. 为harbor创建自签发证书
 
@@ -1751,7 +1759,7 @@ chmod +x /usr/bin/docker-compose
    - 在harbor同一个VNET下创建了一台Windows VM,在C:\Windows\System32\drivers\etc下修改hosts文件,添加 harbor 10.0.0.5。浏览器访问:https://harbor
    - Harbor VM NSG开放443端口,直接访问公网IP就行(https://20.205.104.235)
 
-## harbor私有镜像仓库使用
+### harbor私有镜像仓库使用
 
 ```bash
 #在docker lab机器上修改docker镜像源
@@ -1782,17 +1790,17 @@ docker rmi -f 10.0.0.5/test/tomcat:v1
 docker pull 10.0.0.5/test/tomcat:v1
 ```
 
-## 权限管理
+### 权限管理
 
 项目管理员、维护人员、开发者是三个最常用的角色。一般给一个维护人员就够了。
 
-## 垃圾回收
+### 垃圾回收
 
 - 每个项目需要配置策略,一般是配置保留最近推送的30个tag,每周执行。这里配置的策略仅仅是清理了tag,但是底层数据存储没有清理。
 - 系统管理中需要配置清理策略:
   - 配置日志清理策略,比如每周清理日志
   - 配置垃圾清理策略,比如每周运行,用一个线程清理即可,允许回收无tag的镜像
 
-## 复制管理
+### 复制管理
 
 可以把其他镜像仓库的镜像复制过来or同步harbor镜像到其他镜像仓库。

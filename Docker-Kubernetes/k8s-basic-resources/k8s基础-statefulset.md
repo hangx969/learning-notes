@@ -7,7 +7,10 @@ aliases:
   - k8sStatefulSet
 ---
 
-# 应用的状态
+# K8s基础-StatefulSet
+
+
+## 应用的状态
 
 - 无状态和有状态应用区别
 
@@ -24,7 +27,7 @@ aliases:
     - 持久存储的目录也不一样
     - 有序，比如mysql的主从，redis等
 
-# sts介绍
+## sts介绍
 
 sts是k8s的有状态资源调度器。部署有状态且需要有序启动的服务，比如mysql、zookeeper、eureka、nacos、MongoDB、ES、redis、kafka等。
 
@@ -33,7 +36,7 @@ sts是k8s的有状态资源调度器。部署有状态且需要有序启动的�
 
 sts基于headless svc给每一个pod分配一个唯一且固定的网络标识符，各pod之间通过这个标识符来通信。
 
-# statefulSet yaml编写
+## statefulSet yaml编写
 
 ```yaml
 # headless service，用来定义pod网络标识，生成可解析的DNS记录
@@ -88,7 +91,7 @@ spec:
           mountPath: /usr/share/nginx/html
 ```
 
-# POD主机名
+## POD主机名
 
 - 每个pod有唯一**主机名**：**pod-name.service名称.名称空间.svc.cluster.local**
   
@@ -99,7 +102,7 @@ spec:
 for i in 0 1; do kubectl exec web-$i -- sh -c 'hostname';done
 ```
 
-# headless service
+## headless service
 
 - 不分配clusterIP怎么访问pod？
 
@@ -127,6 +130,7 @@ for i in 0 1; do kubectl exec web-$i -- sh -c 'hostname';done
      - 如果是headless的svc，对这个service FQDN做dns解析，会找到它所关联的pod ip
      - 如果创建的service有ip，那对这个service做dns解析，会解析到service本身ip，通过ipvs规则再找到pod
   
+
 2. headless svc一般只用作集群内部通信。要给集群外部通信，可以再创建新的svc，NodePort类型来暴露sts的pod。
 
 
@@ -141,7 +145,7 @@ for i in 0 1; do kubectl exec web-$i -- sh -c 'hostname';done
 > dig -t A svc-sts-nginx.default.svc.cluster.local @10.0.0.10
 > ```
 
-# 存储模板
+## 存储模板
 
 - 对于有状态应用都会用到持久化存储，比如mysql主从，由于主从数据库的数据是不能存放在一个目录下的，每个mysql节点都需要有自己**独立的存储空间**。
 
@@ -151,7 +155,7 @@ for i in 0 1; do kubectl exec web-$i -- sh -c 'hostname';done
 
   ![image-20240324095254313](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202403240952473.png)
 
-# 扩缩容
+## 扩缩容
 
 sts启动的时候默认是从小到大一个一个启动，上一个没起来，下一个不会启动。（也可以改成并发启动的策略）
 
@@ -161,7 +165,7 @@ sts启动的时候默认是从小到大一个一个启动，上一个没起来�
   - 扩容：pod name从小到大扩。
   - 缩容：pod name从大到小删。
 
-# 滚动更新
+## 滚动更新
 
 两种模式：OnDelete（必须手动删掉旧的才能创建新的）、RollingUpdate。现在默认是RollingUpdate
 
@@ -209,7 +213,7 @@ sts启动的时候默认是从小到大一个一个启动，上一个没起来�
   ```
 
 
-# 回滚
+## 回滚
 
 ~~~sh
 # 查看更新状态
@@ -223,7 +227,7 @@ kubectl rollout undo sts <statefulset-name> --to-revision=<revision>
 
 生产不推荐回滚，哪里配置错了直接改就行。回滚可能会造成有状态服务的异常。
 
-# 并发pod管理
+## 并发pod管理
 
 StatefulSet 可以通过`.spec.podManagementPolicy` 字段配置 Pod 的管理策略。比如有些sts服务我们只是需要有唯一标识符，并不需要按序创建，那就可以调整这个字段为Parallel。
 
@@ -232,7 +236,7 @@ StatefulSet 可以通过`.spec.podManagementPolicy` 字段配置 Pod 的管理�
 1. OrderdReady：有序管理，默认方式。Pod创建和更新按照正序和倒序进行操作。删除是同时删除。
 2. Parallel：并发管理，Pod 创建和删除同时并行启动和删除。（更新还是倒序更新）。
 
-# 案例-部署web站点
+## 案例-部署web站点
 
 ~~~yaml
 #sts

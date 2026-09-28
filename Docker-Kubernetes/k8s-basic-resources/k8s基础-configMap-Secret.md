@@ -7,13 +7,16 @@ aliases:
   - k8sconfigMapSecret
 ---
 
-# ConfigMap
+# K8s基础-configMap-Secret
+
+
+## ConfigMap
 
 我们在部署服务的时候，每个服务都有自己的配置文件，如果一台服务器上部署多个服务：nginx、tomcat、apache等，那么这些配置都存在这个节点上，假如一台服务器不能满足线上高并发的要求，需要对服务器扩容，扩容之后的服务器还是需要部署多个服务：nginx、tomcat、apache，新增加的服务器上还是要管理这些服务的配置，如果有一个服务出现问题，需要修改配置文件，每台物理节点上的配置都需要修改，这种方式肯定满足不了线上大批量的配置变更要求。
 
 所以，k8s中引入了Configmap资源对象，可以挂载到pod中，实现统一的配置管理。
 
-## 概念
+### 概念
 
 Configmap是k8s中的资源对象，用于保存非机密性的配置的，数据可以用key/value键值对的形式保存，也可通过文件的形式保存。
 
@@ -21,7 +24,7 @@ Configmap是k8s中的资源对象，用于保存非机密性的配置的，数�
 
 <img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202311151711600.png" alt="image-20231115171130386" style="zoom:67%;" />
 
-### 应用场景
+#### 应用场景
 
 有哪些配置需要管理：
 
@@ -34,21 +37,21 @@ Configmap是k8s中的资源对象，用于保存非机密性的配置的，数�
 2. configmap可以将配置信息和镜像解耦，以便实现镜像的可移植性和可复用性。因为一个configMap其实就是一系列配置信息的集合，可直接注入到Pod中给容器使用。使用微服务架构的话，存在多个服务共用配置的情况，如果每个服务中单独一份配置的话，那么更新配置就很麻烦，使用configmap可以友好的进行配置共享。
 3. configmap注入方式有两种，一种将configMap做为存储卷，一种是将configMap通过env中configMapKeyRef注入到容器中。
 
-### 局限性
+#### 局限性
 
 - ConfigMap在设计上不是用来保存大量数据的。在ConfigMap中保存的数据不可超过1 MiB。
 - 如果你需要保存超出此尺寸限制的数据，可以考虑挂载存储卷或者使用独立的数据库或者文件服务。
 
-## 创建configMap
+### 创建configMap
 
-### 命令行
+#### 命令行
 
 ```bash
 #直接在命令行中指定configmap参数创建，通过--from-literal指定k-v
 kubectl create configmap tomcat-config --from-literal=tomcat_port=8080 --from-literal=server_name=myapp.tomcat.com
 ```
 
-### 基于文件
+#### 基于文件
 
 ```bash
 #创建config文件
@@ -88,7 +91,7 @@ server {
 }
 ```
 
-### 基于目录
+#### 基于目录
 
 ```bash
 #创建目录和配置文件
@@ -110,7 +113,7 @@ my-slave.conf:
 server-id=2
 ```
 
-### 基于yaml文件
+#### 基于yaml文件
 
 单个k-v创建
 
@@ -172,7 +175,7 @@ data:
 >
 > 总的来说，`|` 和 `|-` 都用于表示多行字符串，但 `|-` 会删除尾随的换行符。
 
-### 基于环境变量
+#### 基于环境变量
 
 有时候一个文件里面保存着标准k-v格式的环境变量，希望转换成cm之后，每个key都是环境变量的name，每个value都是环境变量的value；而不是文件名作为key，所有内容整体作为value。应该怎么做？
 
@@ -188,7 +191,7 @@ EOF
 kubectl create cm env-cm --from-env-file=env-file
 ~~~
 
-### 基于literal创建
+#### 基于literal创建
 
 直接在命令行传入k-v创建cm。这种方式用得不多，因为环境变量一个一个打字太麻烦。
 
@@ -197,9 +200,9 @@ kubectl create configmap example-config --from-literal=key1=config1 --from
 literal=key2=config2 
 ~~~
 
-## 挂载cm
+### 挂载cm
 
-### 以文件形式挂载-volume
+#### 以文件形式挂载-volume
 
 ~~~yaml
 #创建cm
@@ -238,7 +241,7 @@ spec:
       name: cm-mysql
 ~~~
 
-#### 自定义挂载文件名
+##### 自定义挂载文件名
 
 默认的挂载进容器的文件名就是cm的key名。挂载的时候可以指定文件名：
 
@@ -271,7 +274,7 @@ spec:
 > [!warning] 注意
 > 如果cm里面有多个key，并且指定了items，那么只有指定了items的key会被挂进去，没指定的就不挂载进去。所以如果需要挂载所有的key，就指定所有的items。
 
-#### 自定义挂载权限
+##### 自定义挂载权限
 
 cm和secret挂载时，默认的挂载权限是644
 
@@ -303,7 +306,7 @@ spec:
       defaultMode: 0644 # 默认权限，对所有items生效。八进制。
 ~~~
 
-#### 文件挂载覆盖问题
+##### 文件挂载覆盖问题
 
 cm和secret挂载的时候，会直接覆盖掉原目录的内容。所以挂载的时候要注意目录之前有没有文件。
 
@@ -321,7 +324,7 @@ cm和secret挂载的时候，会直接覆盖掉原目录的内容。所以挂载
 > [!warning] 注意
 > 用subPath挂载进去的cm文件，不会热更新
 
-### 单一挂载环境变量-configMapKeyRef
+#### 单一挂载环境变量-configMapKeyRef
 
 ~~~yaml
 #写yaml文件创建cm
@@ -361,7 +364,7 @@ spec:
 > [!tip] 提示
 > 这种方式一个一个导入env，不是很灵活。在大部分情况下环境变量很多，需要批量导入。
 
-### 批量挂载环境变量-envFrom
+#### 批量挂载环境变量-envFrom
 
 1. envFrom和env是平级字段，env优先级更高。
 2. 这种方式，更改configMap之后，pod不会自动热更新。
@@ -384,18 +387,18 @@ spec:
   restartPolicy: Never 
 ~~~
 
-### 热更新
+#### 热更新
 
 - 挂载成volume的cm，如果更改cm里面的k-v之后，过几分钟之后（默认5分钟），会自动热加载到pod的volumeMount里面。
 - 如果是采用configMapKeyRef或者envFrom注入的cm，如果更改cm，已经挂载进去的env不会自动更新。一开始挂进去什么k-v就还是什么。需要热更新还是得手动删掉pod重建才行。
 
-## 更新configMap
+### 更新configMap
 
-### 命令行更新
+#### 命令行更新
 
 可以通过kubectl edit修改，可以通过yaml文件kubectl apply -f修改，但是修改方式要统一，防止数据不一致。
 
-### 通过源文件更新
+#### 通过源文件更新
 
 有时候就需要基于某个已存在的配置文件，更新配置文件之后，直接更新对应的configMap。这时候kubectl apply/replace都不行了。可以用dry-run参数基于源配置文件导出新的yaml，再replace
 
@@ -413,9 +416,9 @@ kubectl create cm nginx-conf --from-file=nginx.conf=nginx.conf --dry-run=client 
 kubectl create configmap example-config --from-literal=key1=config1 --from-literal=key2=config2 --dry-run=client -oyaml | kubectl replace -f -
 ~~~
 
-# Secret
+## Secret
 
-## 概念
+### 概念
 
 - Secret解决了密码、token、秘钥等敏感数据的配置问题，而不需要把这些敏感数据暴露到镜像或者Pod Spec中。Secret可以以Volume或者环境变量的方式使用。
 
@@ -426,6 +429,7 @@ kubectl create configmap example-config --from-literal=key1=config1 --from-liter
   - tls：此类型仅用于存储私钥和证书。
   - docker-registry：若要保存docker仓库的认证信息的话，就必须使用此种类型来创建。
   
+
 - yaml文件中的Secret类型：（k explain secret.type）
 
   [Secrets | Kubernetes](https://kubernetes.io/docs/concepts/configuration/secret/#secret-types)
@@ -452,9 +456,9 @@ kubectl create configmap example-config --from-literal=key1=config1 --from-liter
   
     用于被 serviceaccount 引用。serviceaccout 创建时 Kubernetes 会默认创建对应的 secret。Pod 如果使用了 serviceaccount，对应的 secret 会自动挂载到 Pod 的 /run/secrets/kubernetes.io/serviceaccount 目录中。 
 
-## 创建通用secret
+### 创建通用secret
 
-### 基于literal
+#### 基于literal
 
 ~~~sh
 #命令创建secret
@@ -465,7 +469,7 @@ kubectl create secret generic basic-auth-secret \
 --from-literal=password=securepassword
 ~~~
 
-### 基于yaml文件
+#### 基于yaml文件
 
 但是预先需要把字符串base64加密一下
 
@@ -493,7 +497,7 @@ metadata:
 type: Opaque 
 ~~~
 
-### 基于文件和目录
+#### 基于文件和目录
 
 与configMap相比多了一个generic的指定类型
 
@@ -502,7 +506,7 @@ kubectl create secret generic nginxconf --from-file=conf/nginx.conf
 kubectl create secret generic createbydir --from-file=conf/
 ~~~
 
-## 创建docker-registry类型secret
+### 创建docker-registry类型secret
 
 如果需要拉取私有仓库的镜像，需要给deploy等资源配置镜像仓库的密钥，此时可以先创建镜像仓库的密钥：
 
@@ -531,7 +535,7 @@ spec:
   ......
 ~~~
 
-## 创建域名证书secret
+### 创建域名证书secret
 
 Secret可以使用kubernetes.io/tls类型管理域名的证书，然后用于Ingress： 
 
@@ -552,11 +556,11 @@ tls.key和tls.crt如果是买的证书，在对应网站上可以下载这两个
    - secretName: nginx-test-tls 
 ~~~
 
-## 挂载secret
+### 挂载secret
 
 与挂载configMap类似
 
-### 以文件形式挂载
+#### 以文件形式挂载
 
 ~~~yaml
 apiVersion: apps/v1 
@@ -588,7 +592,7 @@ spec:
             secretName: nginxconf # 挂载进去的secret文件会被解密
 ~~~
 
-### 环境变量挂载
+#### 环境变量挂载
 
 ~~~yaml
 #pod注入secret
@@ -612,11 +616,11 @@ spec:
           key: username # secret里面的key名字
 ~~~
 
-# 使用secret拉取私有仓库镜像
+## 使用secret拉取私有仓库镜像
 
 假设有个镜像在私有仓库中，未使用账号密码是无法拉取镜像的，此时可以在部署资源中，添加docker-registry类型的Secret。 
 
-## 创建secret
+### 创建secret
 
 ~~~sh
 kubectl create secret docker-registry myregistrykey \ 
@@ -626,7 +630,7 @@ kubectl create secret docker-registry myregistrykey \
 --docker-email=xxx@qq.com 
 ~~~
 
-## 创建deployment
+### 创建deployment
 
 ~~~yaml
 apiVersion: apps/v1 
@@ -651,7 +655,7 @@ template:
       - name: myregistrykey  
 ~~~
 
-# cm和secret设置只读
+## cm和secret设置只读
 
 ConfigMap和Secret可以使用immutable字段把资源设置为只读模式，这样就不能在更新data下的任何数据，如果想变更data，需要删除重建。
 
@@ -668,17 +672,17 @@ data:
   DB_USER: root
 ~~~
 
-# K8s 1.35 新特性：EnvFiles（fileKeyRef）
+## K8s 1.35 新特性：EnvFiles（fileKeyRef）
 
 > 来源：[k8s 1.35 版本 Pod环境变量配置](https://mp.weixin.qq.com/s/Nv4qVlJDC_yNO8y8guoGkA)
 
-## 背景
+### 背景
 
 传统方式使用 ConfigMap/Secret 设置环境变量，需要**分别管理**工作负载 Pod 和配置资源，还要确保两者有序更新。对于供应商容器需要的一次性令牌、许可证密钥等临时配置，创建 ConfigMap 又显得过重。
 
 K8s 1.35 引入了 **EnvFiles** 功能：允许 kubelet 直接从 `emptyDir` 卷中的文件加载环境变量，**主容器无需挂载该卷**。典型用法是 initContainer 生成配置文件 → kubelet 在主容器启动时读取并注入。
 
-## 核心机制
+### 核心机制
 
 使用新的 `fileKeyRef` 字段（与 `configMapKeyRef`、`secretKeyRef` 平级）：
 
@@ -709,12 +713,13 @@ spec:
 ```
 
 **要点**：
+
 - `fileKeyRef` 指向一个 emptyDir 卷中的文件，文件格式为标准 `KEY=VALUE`
 - 主容器**不需要 volumeMounts**——kubelet 在启动时直接读取文件并注入环境变量
 - 文件通常由 initContainer 动态生成，适合运行时才能确定的配置（如从 Vault 拉取密钥、根据节点信息生成配置等）
 - 文件生命周期与 Pod 一致（emptyDir），Pod 销毁后自动清理
 
-## 与传统方式对比
+### 与传统方式对比
 
 | 方式 | 适用场景 | 热更新 | 额外资源 |
 |------|----------|--------|----------|
@@ -724,7 +729,7 @@ spec:
 | `--from-env-file` → ConfigMap | 批量导入 .env 文件 | ✗（需重建 Pod） | ConfigMap |
 | **`fileKeyRef`（1.35 新增）** | 运行时动态生成的配置 | ✗ | 无（emptyDir） |
 
-## 典型应用场景
+### 典型应用场景
 
 1. **initContainer 从 Vault/外部服务拉取密钥**，写入 emptyDir → 主容器通过 fileKeyRef 读取
 2. **根据节点/集群信息动态生成配置**，避免为每个环境维护单独的 ConfigMap
@@ -733,9 +738,9 @@ spec:
 > [!tip] 建议
 > K8s 1.35+ 新集群可优先使用 fileKeyRef 替代 ConfigMap 管理环境变量，减少配置资源的维护负担。对于仍在低版本集群的场景，继续使用 ConfigMap + envFrom 的方式。
 
-# 最佳实践
+## 最佳实践
 
-## ConfigMap 和 Secret 操作规范
+### ConfigMap 和 Secret 操作规范
 
 - 需提前创建ConfigMap和Secret，pod创建是依赖这俩的，必须先创建好
 - ConfigMap和Secret必须要和Pod或者是引用它资源在同一个命名空间
@@ -745,7 +750,7 @@ spec:
 - ConfigMap和Secret最好不要太大（etcd有限制，不能超过1Mi，否则etcd同步数据速度会受到影响）
 - ConfigMap和Secret支持热更新，但是程序未必支持！（比如nginx需要重启或者reload才会重新加载配置文件）
 
-## 环境变量管理规范
+### 环境变量管理规范
 
 - **分层管理**：通用配置用 ConfigMap，敏感信息用 Secret，固定不变的值直接在 Pod spec 中定义
 - **命名规范**：环境变量名统一使用**大写 + 下划线**（如 `DB_HOST`），代码中一眼可辨识

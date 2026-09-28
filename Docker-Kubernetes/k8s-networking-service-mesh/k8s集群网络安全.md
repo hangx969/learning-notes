@@ -8,26 +8,29 @@ aliases:
   - k8s网络安全
 ---
 
-# Docker容器逃逸
+# K8s集群网络安全
 
-## 漏洞描述
+
+## Docker容器逃逸
+
+### 漏洞描述
 
 - 2019年2月11日，runC的维护团队报告了一个新发现的漏洞，SUSE Linux GmbH高级软件工程师Aleksa Sarai公布了影响Docker, containerd, Podman, CRI-O等默认运行时容器runc的严重漏洞**CVE-2019-5736**。漏洞会对IT运行环境带来威胁，漏洞利用会触发容器逃逸、影响整个容器主机的安全，最终导致运行在该主机上的其他容器被入侵。漏洞影响AWS, Google Cloud等主流云平台。日前，该容器逃逸漏洞的PoC利用代码已在GitHub上公布。这是CVE-2019-5736漏洞利用的Go语言实现。漏洞利用是通过覆写和执行主机系统runc二进制文件完成的。
 
-## 漏洞原理
+### 漏洞原理
 
 - 漏洞点在于runC，RunC是一个容器运行时，最初是作为Docker的一部分开发的，后来作为一个单独的开源工具和库被提取出来。作为“低级别”容器运行时，runC主要由“高级别”容器运行时（例如Docker）用于生成和运行容器，尽管它可以用作独立工具。像Docker这样的“高级别”容器运行时通常会实现镜像创建和管理等功能，并且可以使用runC来处理与运行容器相关的任务：创建容器、将进程附加到现有容器等。在Docker 18.09.2之前的版本中使用了的runc版本小于1.0-rc6，允许攻击者重写宿主机上的runc二进制文件，攻击者可以在宿主机上以root身份执行命令。
 
 - 宿主机可联网，并且利用攻击者提供的image创建了container（攻击者写了一段go代码，配置了自己的IP，把这段代码放到了image里面）。container拥有root权限，并且该container后续被docker exec/attach。一句话描述，docker 18.09.2之前的runc存在漏洞，攻击者可以修改runc的二进制文件导致提权。
 
-## 影响版本
+### 影响版本
 
 - docker version <=18.09.2
 - RunC version <=1.0-rc6
 
-# k8s安全测试工具
+## k8s安全测试工具
 
-## kube-bench
+### kube-bench
 
 - 这是一个开源工具，用于检查 Kubernetes 集群是否符合安全标准。它会对集群进行自动化扫描，并提供详细的安全建议。
 - 安装
@@ -40,7 +43,7 @@ cd kube-bench_0.6.5_linux_amd64/
 sudo ./kube-bench
 ~~~
 
-## kube-hunter
+### kube-hunter
 
 - 这个工具可以帮助查找集群中可能存在的安全漏洞。它会执行一些自动化测试，并生成报告，以帮助你修复可能存在的问题。
 - 安装
@@ -52,7 +55,7 @@ docker run -it --rm --network host -v /tmp/kube-hunter-report:/tmp aquasec/kube-
 #执行完成后，在 /tmp/kube-hunter-report 目录下会生成报告文件 report.html。
 ~~~
 
-## kubeaudit
+### kubeaudit
 
 - 这是一个命令行工具，可用于评估Kubernetes Pod 和 Deployment 配置的安全性。它可以检查容器镜像的安全性，权限和网络配置等问题。
 - 安装
@@ -64,7 +67,7 @@ sudo chmod +x kubeaudit
 sudo ./kubeaudit
 ~~~
 
-## Polaris
+### Polaris
 
 - 这个工具可以帮助你评估集群的安全性和可靠性。它会扫描 Kubernetes 资源并提供安全建议。
 - 安装
@@ -78,7 +81,7 @@ polaris audit
 #执行完成后，会列出检查结果。
 ~~~
 
-## kubescape
+### kubescape
 
 - 这是一个开源工具，可以帮助您评估 Kubernetes 集群是否存在安全漏洞。它会检查集群中的资源，并根据规则集提供安全性建议。
 - 安装
@@ -91,7 +94,7 @@ sudo mv kubescape /usr/local/bin/
 kubescape scan framework nsa
 ~~~
 
-# 模拟攻击api-server
+## 模拟攻击api-server
 
 - 默认情况下，我们是无法访问k8s集群的apiserver和kubelet的，因为apiserver和kubelet都没有进行授权，匿名用户无法访问。
 
@@ -208,7 +211,7 @@ kubescape scan framework nsa
 >
 > - 有时候不可避免需要给匿名用户开放权限，让集群外用户去操作集群资源。建议单独创建ns来给有需求的用户使用，授权也仅在这个ns中给admin的权限。
 
-# 模拟攻击kubelet
+## 模拟攻击kubelet
 
 > [!info] kubelet默认开了三个端口
 >

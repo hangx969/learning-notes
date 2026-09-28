@@ -138,11 +138,13 @@ spec:
 ```
 
 注意事项：
+
 - 节点标签打了之后，要确认节点状态正常。`kubectl get nodes --show-labels` 看一眼
 - 如果 Pod 一直 Pending，报 `node(s) didn't match node selector`，就是节点标签和 Pod 的 nodeSelector 对不上
 - **节点标签别随便改**。改了之后，依赖这个标签调度的 Pod 不会自动重新调度——已经跑着的 Pod 不会动，但新 Pod 可能就调度不到合适的地方了
 
 **节点隔离，根据场景选方案**：
+
 - 只想把特定 Pod 调度到特定节点 → `nodeSelector` 就够了
 - 想让节点"拒绝"大部分 Pod、只有带特定 Toleration 的 Pod 能上来 → 用 Taints + Tolerations（比如节点要维护、或者节点是 spot instance 随时可能被回收）
 - 两者可以组合使用，但不是必须捆绑。**先想清楚你要解决什么问题，再选工具。**

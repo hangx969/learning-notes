@@ -7,7 +7,10 @@ aliases:
   - k8sNamespace资源分配
 ---
 
-# namespace介绍
+# K8s基础-namespace-资源分配
+
+
+## namespace介绍
 
 Namespace提供了一种将集群资源逻辑上隔离的方式,允许在同一个集群中划分多个虚拟的、逻辑上独立的集群环境,相当于集群的"虚拟化"。
 
@@ -21,7 +24,7 @@ Namespace提供了一种将集群资源逻辑上隔离的方式,允许在同一�
 kubectl create ns test
 ```
 
-## 合理的资源划分
+### 合理的资源划分
 
 资源限制的重要性:如果没有,可能会产生节点资源被异常耗尽的问题。
 
@@ -29,18 +32,18 @@ pod数量限制的重要性:应对异常pod激增的问题。举个例子,对某
 
 **生产环境一定针对每个ns,对pod数量和RS数量做限制,因为这两个资源是不受管控的资源,防止异常激增。比如限制ns级别的pod数量为512,RS数量为1024。**
 
-### 以租户为单位
+#### 以租户为单位
 
 是针对ns去限制的。
 
 1. 基于节点去划分:比如一个团队申请了5台8C16G机器加入集群,那么就限制这个团队的ns资源limit为40C80G。
 2. 基于现有资源:利用现有资源,直接划分给这个团队固定的cpu和memory
 
-### 以环境为单位
+#### 以环境为单位
 
 比如有dev、uat、prod等环境,需要预估每个环境的所有微服务情况,留一些冗余。
 
-# ResourceQuota资源
+## ResourceQuota资源
 
 ResourceQuota是k8s中用于资源管理的对象,限制ns中的资源使用量。可以:
 
@@ -78,7 +81,7 @@ spec:
 > - ns指定了ResourceQuota之后,如果创建的deployment没有显式指定requests和limits,那么pod会创建不出来。此时的状态就是deployment正常,但是pod实际数量为0,可以describe rs来看,也可以get events来看。
 > - 新创建的resourceQuota,不会影响已经在运行的服务,但是一旦出发更新或者删除,那么就会产生影响,超过的就创建不出来了
 
-# LimitRange资源
+## LimitRange资源
 
 只配置了resourceQuota是不够的,想象这样一种例子:有一个pod设置request是1m/1Mi,有一个节点已经资源马上满了,但是还是可以接受这个pod,但是这个pod随着运行吃了更多资源,这个节点就满了。
 
@@ -120,13 +123,13 @@ spec:
 >
 > 1. limitRange是针对pod去修改的,deployment的yaml不会被修改。
 
-# QoS
+## QoS
 
 想象这样一个场景:节点上面的pod由于流量高峰,资源使用量上升,超出节点资源量。这时候节点会启动一些OOM Kill的机制,杀掉pod。如果有一些重要的pod不希望被杀掉,或者尽量在最后被杀掉,怎么去保护?
 
 QoS:Quality of Service,表示程序的服务质量,K8s集群每一个pod,都会有对应的QoS级别,可以**决定pod在资源紧张时候的处理顺序**。同时可以确保关键服务的稳定性和可靠性。(QoS不是K8s的特性,Linux里面的程序也有服务质量的概念)
 
-## Guaranteed
+### Guaranteed
 
 Guaranteed级别的Pod具有最高的优先级,Kubernetes会确保这些Pod获得足够的资源,也就是Kubernetes调度器会确保这些Pod调度到能够提供所需资源的节点上。
 
@@ -146,7 +149,7 @@ requests:
 
 > 一般mysql、redis等基础组件,需要尽量配成Guaranteed,预估好资源,直接给他requests、limits配成一样的(给冗余多一点)
 
-## Burstable
+### Burstable
 
 Burstable级别的Pod具有中等优先级,Kubernetes会尽量满足其资源请求,但在资源紧张时可能会被驱逐,Kubernetes调度器会确保这些Pod调度到能够提供所需资源的节点上,如果节点上有额外的资源,这些Pod可以使用超过其请求的资源。
 
@@ -165,7 +168,7 @@ requests:
 > - 而且一般微服务CPU使用量低,所以CPU一般设置成小requests,可变得更大,这种模式就是Burstable。
 > - 对于Java,Xms和Xmx如果设置了,建议requests设成**Xmx+128Mi**,保证进程能起来,也给容器一些冗余。
 
-## BestEffort
+### BestEffort
 
 BestEffort级别的Pod是最低优先级,Kubernetes不保证这些Pod获得任何资源,在资源紧张时,这些Pod最先被驱逐。同时Kubernetes调度器会尝试将这些Pod调度到任何节点上,但不保证节点上有足够的资源。
 
@@ -173,18 +176,18 @@ BestEffort级别的Pod是最低优先级,Kubernetes不保证这些Pod获得任�
 
 > 生产环境不推荐使用,因为没有配置任何资源声明,可能会被调度到资源紧张的节点上,造成一些问题。
 
-# ns删除后卡在Terminating状态
+## ns删除后卡在Terminating状态
 
 删除命名空间时，可能因为残留资源或 finalizer 未完成，导致 namespace 一直卡在 Terminating 状态，重启 K8s 或节点都无效。
 
 > [!warning] 注意
 > 强制删除前建议先排查并清理 namespace 中的残留资源，确认无法自然释放后再使用强制手段。
 
-## 原理
+### 原理
 
 Namespace 卡在 Terminating 通常是因为 `spec.finalizers` 未被清空。解决思路：通过 API 将 namespace 的 `spec.finalizers` 置空，绕过等待。
 
-## 手动方式
+### 手动方式
 
 ```sh
 # 1. 开启 API 代理（新窗口保持运行）
@@ -199,7 +202,7 @@ curl -k -H "Content-Type: application/json" -X PUT --data-binary @temp.json \
   127.0.0.1:8001/api/v1/namespaces/$NAMESPACE/finalize
 ```
 
-## 自动化脚本
+### 自动化脚本
 
 > 来源：[实用脚本：强制删除K8s命名空间（Terminating状态）](https://mp.weixin.qq.com/s/ERIZaE08tGUtd5fs9YvR5Q)
 
@@ -247,8 +250,8 @@ kubectl proxy
 sh deleteNameSpace.sh knative-eventing
 ```
 
-# 特殊namespace
+## 特殊namespace
 
-## kube-node-lease
+### kube-node-lease
 
 - 节点的心跳信息会存放在其中,api server去里面查看心跳信息,获取node状态。

@@ -8,14 +8,17 @@ aliases:
   - tomcat部署
 ---
 
-# 介绍
+# Helm 部署 Tomcat
+
+
+## 介绍
 
 - github地址：[Bitnami Tomcat Chart](https://github.com/bitnami/charts/blob/main/bitnami/tomcat/README.md)
 
 - artifactHub地址：[Tomcat on ArtifactHub](https://artifacthub.io/packages/helm/bitnami/tomcat)
 
 
-# 下载
+## 下载
 
 ~~~sh
 helm repo add bitnami https://charts.bitnami.com/bitnami
@@ -33,7 +36,7 @@ helm pull bitnami/tomcat --version 11.7.12
 >
 > - 注意需要把charts/bitnami/common目录放到tomcat/charts/目录里面才能组成完整的helm chart，因为common是子chart需要安装。
 
-# 配置
+## 配置
 
 service用NodePort，暴露端口30080。
 
@@ -64,14 +67,14 @@ service:
     http: "30080"
 ~~~
 
-# 安装
+## 安装
 
 ~~~sh
 kubectl create ns tomcat
 helm upgrade -i tomcat -n tomcat -f values.dev.yaml .
 ~~~
 
-# 使用
+## 使用
 
 ```sh
 # 1. Get the Tomcat URL by running:

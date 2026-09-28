@@ -7,9 +7,12 @@ aliases:
   - k8s自定义CRD
 ---
 
-# Operator
+# K8s基础-自定义CRD资源
 
-## 什么是operator
+
+## Operator
+
+### 什么是operator
 
 Operator是一种用于扩展Kubernetes API的自定义控制器，可以实现**在原生资源对象上**进行自定义的资源类型。（基于原生的pod、svc等资源对象做的扩展！并不是重新造了一个新的原生资源，那得去改k8s源码。）
 
@@ -22,14 +25,14 @@ Operator是一种用于扩展Kubernetes API的自定义控制器，可以实现*
 
 - 扩展集群能力：自定义资源类型，扩展集群的调度能力
 
-## operator开发模式
+### operator开发模式
 
 - Kubernetes Operator模式是一种自定义控制器的开发模式，它允许开发人员扩展Kubernetes的功能，以管理和自动化特定的应用程序、服务或基础设施。Operator模式利用Kubernetes的自动化、可伸缩和故障恢复功能，使应用程序可以以一种声明性的方式进行管理。
 - 在Operator模式中，开发人员使用自定义控制器来监视、管理和调节应用程序的状态。控制器会根据定义的规则和策略，对资源进行创建、更新和删除操作，以确保应用程序按预期运行。为了开发Operator，通常需要使用自定义资源定义（Custom Resource Definition，CRD）来描述应用程序的自定义资源类型。
 
-## Operator组成
+### Operator组成
 
-### CRD
+#### CRD
 
 [CRD详解-微信文章](https://mp.weixin.qq.com/s/Ts9MxQOpQVaUtw6YbHXogw)
 
@@ -40,17 +43,18 @@ Operator使用CRD去定义一个新的资源类型。比如定义一个叫databa
   - 当你创建一个新的(CRD)时，Kubernetes API服务器将为你指定的每个版本创建一个新的RESTful资源路径，我们可以根据该api路径来创建一些我们自己定义的类型资源。
   - CRD可以是命名空间的，也可以是集群范围的，由CRD的作用域(scpoe)字段中所指定的，与现有的内置对象一样，删除名称空间将删除该名称空间中的所有自定义对象。CRD本身没有名称空间，所有名称空间都可以使用。
 
-### Controller
+#### Controller
 
 Operator的控制器，监视CRD的状态，根据用户配置执行相应的操作。
 
 比如先创建了一个叫database的CRD，某个controller发现自己管理的资源就叫database，那他就会拿到资源配置，生成原生的资源类型（pod、svc等），也可以执行定义的各种操作。
 
-## 对比helm和operator
+### 对比helm和operator
 
 - Helm：
   - 适合简单的程序和微服务，尤其是不需要复杂运维的应用（比如备份、还原、快照等）
   - 开发简单，无需应用了解开发知识
+
 - Operator：
   - 适合复杂的应用程序，比如数据库、缓存、消息队列等。除了部署之外，还需要一些额外任务的应用，比如备份、还原、rebalance、快照等。
   - 开发复杂，需要开发知识（go开发）。
@@ -59,14 +63,14 @@ Operator的控制器，监视CRD的状态，根据用户配置执行相应的操
 
 部署一些开源中间件，推荐使用operator去部署，有专门的组织写好了operator，不用自己写代码去实现。
 
-## operator使用步骤和工作流程
+### operator使用步骤和工作流程
 
 1. 找到operator（有专门的operator仓库`operatorhub.io`、github也可以）
 2. 创建controller（对应的仓库中会有部署步骤）
 3. 创建CRD
 4. 创建自定义资源（创建yaml文件，kind: CRD的类型，部署即可）
 
-# 自定义CRD资源-crontab
+## 自定义CRD资源-crontab
 
 - 定义
 
@@ -134,7 +138,7 @@ kubectl get CronTab
 
 - 可以看到对应类型资源已经创建成功；以上示例只是单纯的crd的使用示例，没有任何实质的作用
 
-# 自定义CRD-MongoDB
+## 自定义CRD-MongoDB
 
 - 项目地址：[MongoDB Kubernetes Operator](https://github.com/mongodb/mongodb-kubernetes-operator.git) （使用0.5.0版本）
 - 下载operator压缩包mongodb-kubernetes-operator-0.5.0.zip
@@ -291,7 +295,7 @@ spec:
 
 
 
-# 自定义CRD资源-Etcd
+## 自定义CRD资源-Etcd
 
 > [!info] 说明
 > Etcd是一个分布式键值存储系统，常用于存储共享配置和服务发现等场景。Etcd Operator是一个基于Operator模式开发的控制器，用于在Kubernetes上管理和运行Etcd集群。

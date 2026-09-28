@@ -8,7 +8,10 @@ aliases:
   - GitLab部署
 ---
 
-# docker-compose部署gitlab
+# Docker部署GitLab
+
+
+## docker-compose部署gitlab
 
 - gitlab要求至少4G内存
 - 拉取镜像
@@ -98,7 +101,7 @@ user.save!
 exit
 ~~~
 
-# 配置ssh key
+## 配置ssh key
 
 - 本地生成ssh-key
 
@@ -110,7 +113,7 @@ ssk-keygen
 - gitlab中user settings - ssh keys - add an ssh key添加自己本地的key
 - 本地git客户端直接拉取代码即可
 
-# gitlab备份与恢复
+## gitlab备份与恢复
 
 - GitLab 提供了简单的备份机制。可以通过以下命令创建备份
 

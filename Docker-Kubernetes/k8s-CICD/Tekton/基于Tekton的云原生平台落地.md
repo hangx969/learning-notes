@@ -8,7 +8,10 @@ aliases:
   - Tekton云原生CICD平台
 ---
 
-# Tekton介绍
+# 基于Tekton的云原生平台落地
+
+
+## Tekton介绍
 
 Tekton是一个云原生的CICD解决方案，是CNCF很流行的开源项目之一。Tekton以K8s CRD资源的形式部署在集群上。
 
@@ -23,7 +26,7 @@ Tekton的核心资源包括StepAction、Task、TaskRun、Pipeline、PipelineRun�
 5. 事件驱动：可以接收外部webhook事件触发流水线
 6. 社区生态：具备社区和Task Hub，可以用现成的Task
 
-## 核心资源
+### 核心资源
 
 - StepAction: 最小的工作单元。定义可以复用的工作单元的资源，一般用于定义具体的执行步骤，比如构建、扫描等。可以被task调用
 - Task: 用于定义一系列有序的步骤，每个步骤用于调用特定的工具处理特定的任务，可以指定具体的命令，也可以绑定StepActions
@@ -34,7 +37,7 @@ Tekton的核心资源包括StepAction、Task、TaskRun、Pipeline、PipelineRun�
 - TaskRun: 用于实例化特定任务(Task)，相当于真正执行Task
 - PipelineRun: 用于实例化特定流水线(Pipeline)，相当于执行Pipeline中定义的任务
 
-## 工作模式
+### 工作模式
 
 - 先定义好Pipeline，集成了多个Task：Task A --> Task B | Task C --> Task D
 
@@ -42,13 +45,13 @@ Tekton的核心资源包括StepAction、Task、TaskRun、Pipeline、PipelineRun�
 
 这样定义的原因是：Pipeline是一个通用模板，里面不定义真实的命令；PipelineRun中传入实际的参数。
 
-## 最佳实践
+### 最佳实践
 
 1. 推荐把Task作为最小单元就行了，不要再定义StepAction作为最小单元了，因为一层一层参数传递实在是太麻烦了。
 2. 推荐一个Task就定义一个Step就行了。
 3. workspace都写一个名字就行了免得搞混 
 
-# 部署Tekton
+## 部署Tekton
 
 - Tekton官网：[tekton.dev](https://tekton.dev/)
 
@@ -58,7 +61,7 @@ Tekton的核心资源包括StepAction、Task、TaskRun、Pipeline、PipelineRun�
 2. Tekton Triggers：[安装文档](https://tekton.dev/docs/installation/triggers/#installation)
 3. Tekton Dashboard：[安装文档](https://tekton.dev/docs/dashboard/install/#installing-tekton-dashboard-on-kubernetes)
 
-## Pipeline部署
+### Pipeline部署
 
 ~~~sh
 kubectl apply --filename https://storage.googleapis.com/tekton-releases/pipeline/latest/release.yaml
@@ -76,7 +79,7 @@ kubectl apply --filename https://storage.googleapis.com/tekton-releases/pipeline
 curl -o tekton-pipeline.yaml https://storage.googleapis.com/tekton-releases/pipeline/latest/release.yaml
 ~~~
 
-## Dashboard部署
+### Dashboard部署
 
 ~~~sh
 kubectl apply --filename https://storage.googleapis.com/tekton-releases/dashboard/latest/release.yaml
@@ -84,7 +87,7 @@ kubectl apply --filename https://storage.googleapis.com/tekton-releases/dashboar
 
 部署完成之后，去把dashboard的svc改成NodePort来访问
 
-## 测试Task和TaskRun
+### 测试Task和TaskRun
 
 ~~~yaml
 apiVersion: tekton.dev/v1 
@@ -115,7 +118,7 @@ taskrun创建之后，tekton会自动创建一个pod去运行task。这个pod有
 - 两个init container，是tekton自动注入的
 - 一个main container是task指定的镜像
 
-## 测试Pipeline
+### 测试Pipeline
 
 Task：可以定义参数，脚本里面引用参数
 
@@ -191,18 +194,18 @@ spec:
     value: "Tekton"
 ~~~
 
-# 常用task
+## 常用task
 
 Tekton 官方提供了很多开箱即用的Task，可以在 https://hub.tekton.dev/ 中获取。
 
-## 拉代码Task
+### 拉代码Task
 
 ~~~sh
 kubectl apply -f https://raw.githubusercontent.com/tektoncd/catalog/main/task/git-clone/0.6/git-clone.yaml
 # github地址：[tektoncd/catalog - git-clone task](https://github.com/tektoncd/catalog/blob/main/task/git-clone/0.6/git-clone.yaml)
 ~~~
 
-### 下载模板
+#### 下载模板
 
 也可以先下载下来：
 
@@ -437,7 +440,7 @@ spec:
         printf "%s" "${PARAM_URL}" > "$(results.url.path)"
 ~~~
 
-### 关注的参数
+#### 关注的参数
 
 该Task需要关注的参数:
 
@@ -494,7 +497,7 @@ git-clone task的版本和对应的pipelines.minVersion版本（即git-init镜�
     tekton.dev/pipelines.minVersion: "0.38.0"
 ~~~
 
-### 创建workspace PVC
+#### 创建workspace PVC
 
 首先需要用到的 workspace 是 output，下载的代码会保存在该 workspace。接下来给 tekton 创建一个专用的用来存储代码及工作目录的PVC：
 ~~~yaml
@@ -513,7 +516,7 @@ spec:
   - ReadWriteMany
 ~~~
 
-### 拉取公有仓库代码
+#### 拉取公有仓库代码
 
 直接创建一个TaskRun运行Task：
 
@@ -538,7 +541,7 @@ spec:
     value: main
 ~~~
 
-### 拉取私有仓库代码
+#### 拉取私有仓库代码
 
 1. 需要配置ssh私钥并挂载到task里面。在master节点上，如果没有ssh key，先创建一个：
 
@@ -579,6 +582,7 @@ data:
   - 关闭严格的主机密钥检查
   - SSH 连接时不会提示 "Are you sure you want to continue connecting (yes/no)?"
   - 自动接受未知主机的密钥
+
 - **`UserKnownHostsFile /dev/null`**:
   - 将已知主机文件重定向到 `/dev/null`(黑洞)
   - 不保存主机密钥到 `~/.ssh/known_hosts` 文件
@@ -610,7 +614,7 @@ spec:
     value: master
 ~~~
 
-### 自定义工作目录
+#### 自定义工作目录
 
 上述定义了工作目录PVC，但是拉取代码时，全部下载到了同一个目录。此时多个任务同时处理时会产生冲突。后来拉的代码会覆盖掉当前目录中的内容。
 
@@ -644,7 +648,7 @@ spec:
 
 所有可用的变量可以在[Tekton Pipeline Variables文档](https://tekton.dev/docs/pipelines/variables/#variables-available-in-a-pipeline)中获取。
 
-## 初始化Task
+### 初始化Task
 
 下载代码后，可能需要进行一些初始化操作，比如获取Commit信息、生成镜像的TAG等。
 
@@ -695,7 +699,7 @@ spec:
     name: init # task name 
 ~~~
 
-### 结果存储Results
+#### 结果存储Results
 
 有时候在一个task执行某个操作后，需要记录一下结果，然后根据这个结果去判定是否应该继续执行；或者要使用这个结果去执行其它的动作。
 
@@ -747,7 +751,7 @@ spec:
         value: $(tasks.init.results.tag)
 ~~~
 
-### 串联多任务Pipeline
+#### 串联多任务Pipeline
 
 接下来创建一个Pipeline，结合上述测试的task，进行联合工作。并且使用results传递数据。
 
@@ -833,7 +837,7 @@ spec:
       value: $(tasks.init.results.tag) 
 ~~~
 
-### PipelineRun
+#### PipelineRun
 
 创建PipelineRun运行Pipeline：
 
@@ -866,9 +870,9 @@ spec:
     value: "master"
 ~~~
 
-## 代码构建Task
+### 代码构建Task
 
-### Task
+#### Task
 
 上述任务已经实现了代码下载、初始化和数据传递的功能，接下来再添加代码构建的Task。
 
@@ -898,7 +902,7 @@ spec:
       $(params.BUILD_COMMAND) 
 ~~~
 
-### Pipeline
+#### Pipeline
 
 基于之前的pipeline，把添加build task加进去：
 
@@ -972,7 +976,7 @@ spec:
       value: $(params.BUILD_IMAGE)
 ~~~
 
-### PipelineRun
+#### PipelineRun
 
 创建pipelinerun运行pipeline：
 
@@ -1012,11 +1016,11 @@ spec:
        ls dist
 ~~~
 
-## 镜像构建Task
+### 镜像构建Task
 
 上述已经执行了代码构建，并且生成了产物，接下来可以创建一个Kaniko的Task，用于构建镜像和上传镜像，同时记录镜像地址。
 
-### Task
+#### Task
 
 ~~~yaml
 apiVersion: tekton.dev/v1 
@@ -1069,7 +1073,7 @@ spec:
         echo -n "${image}" | tee "$(results.IMAGE_URL.path)"
 ~~~
 
-### 私有仓库认证
+#### 私有仓库认证
 
 如果推送镜像到私有仓库，需要添加docker认证信息。Kaniko连接harbor用的配置文件就是docker连接harbor的配置文件。
 
@@ -1106,7 +1110,7 @@ spec:
    kubectl create secret generic docker-credentials --from-file=/root/.docker/config.json 
    ~~~
 
-### Pipeline
+#### Pipeline
 
 ~~~yaml
 apiVersion: tekton.dev/v1 
@@ -1208,7 +1212,7 @@ spec:
       value: $(params.REGISTRY)/$(params.REPOSTORY)/$(params.IMAGE_NAME):$(tasks.init.results.tag) 
 ~~~
 
-### PipelineRun
+#### PipelineRun
 
 ~~~yaml
 apiVersion: tekton.dev/v1 
@@ -1255,11 +1259,11 @@ spec:
     value: vue-project-tekton
 ~~~
 
-## 服务发版Task
+### 服务发版Task
 
 最后就可以通过一个发版的Task，把最新的镜像发布到Kubernetes。 
 
-### Task
+#### Task
 
 这里示例是kubectl发版，如果有其他发版方式比如helm等，那就创建多个task对应不同发版方式
 
@@ -1297,13 +1301,13 @@ spec:
       kubectl --kubeconfig /mnt/kubeconfig/$(params.KUBECONFIG_PATH) -n $(params.NAMESPACE) get po 
 ~~~
 
-### 挂载kubeconfig
+#### 挂载kubeconfig
 
 ~~~sh
 kubectl create secret generic kubeconfig --from-file=study-kubeconfig=/root/.kube/config  
 ~~~
 
-### 创建deployment
+#### 创建deployment
 
 创建一个承接镜像用的deployment，后面Pipeline会覆盖掉当前镜像为业务镜像：
 
@@ -1311,7 +1315,7 @@ kubectl create secret generic kubeconfig --from-file=study-kubeconfig=/root/.kub
 kubectl create deploy vue-project --image=registry.cn-beijing.aliyuncs.com/dotbalo/vue-project:20250824-040945-e929446 
 ~~~
 
-### Pipeline
+#### Pipeline
 
 ~~~yaml
 apiVersion: tekton.dev/v1 
@@ -1443,7 +1447,7 @@ spec:
       value: $(params.KUBECONFIG_PATH)
 ~~~
 
-### PipelineRun
+#### PipelineRun
 
 ~~~yaml
 apiVersion: tekton.dev/v1 
@@ -1501,11 +1505,11 @@ spec:
     value: study-kubeconfig 
 ~~~
 
-# Tekton企业落地实战
+## Tekton企业落地实战
 
-## tekton必备资源
+### tekton必备资源
 
-### 代码拉取secret
+#### 代码拉取secret
 
 1. 需要配置ssh私钥并挂载到task里面。在master节点上，如果没有ssh key，先创建一个：
 
@@ -1546,12 +1550,13 @@ data:
   - 关闭严格的主机密钥检查
   - SSH 连接时不会提示 "Are you sure you want to continue connecting (yes/no)?"
   - 自动接受未知主机的密钥
+
 - **`UserKnownHostsFile /dev/null`**:
   - 将已知主机文件重定向到 `/dev/null`(黑洞)
   - 不保存主机密钥到 `~/.ssh/known_hosts` 文件
   - 每次连接都当作新主机处理
 
-### 镜像仓库secret
+#### 镜像仓库secret
 
 如果推送镜像到私有仓库，需要添加docker认证信息。Kaniko连接harbor用的配置文件就是docker连接harbor的配置文件。
 
@@ -1588,7 +1593,7 @@ data:
    kubectl create secret generic docker-credentials --from-file=/root/.docker/config.json 
    ~~~
 
-### k8s集群secret
+#### k8s集群secret
 
 ~~~sh
 kubectl create secret generic kubeconfig --from-file=study-kubeconfig=/root/.kube/config  
@@ -1599,7 +1604,7 @@ kubectl create secret generic kubeconfig --from-file=study-kubeconfig=/root/.kub
 - 在task里面指定workspace挂载路径，在task里面的shell命令里面使用对应路径的文件
 - 在pipelinerun里面指定workspace的实体（secret、PVC等）
 
-### 代码存放workspace
+#### 代码存放workspace
 
 首先需要用到的 workspace 是 output，下载的代码会保存在该 workspace。接下来给 tekton 创建一个专用的用来存储代码及工作目录的PVC：
 
@@ -1630,7 +1635,7 @@ pipelinerun中绑定workspace和PVC：
     subPath: $(context.pipelineRun.name) 
 ~~~
 
-### 缓存workspace
+#### 缓存workspace
 
 用作构建缓存的PVC：
 
@@ -1652,9 +1657,9 @@ spec:
 
 后面是作为volume挂载到task里面。这个值不能写死，做成params，传参数进去。
 
-## tekton必备Task
+### tekton必备Task
 
-### git-clone
+#### git-clone
 
 github地址：[tektoncd/catalog - git-clone task](https://github.com/tektoncd/catalog/blob/main/task/git-clone/0.6/git-clone.yaml)
 
@@ -1891,7 +1896,7 @@ spec:
         printf "%s" "${PARAM_URL}" > "$(results.url.path)"
 ~~~
 
-### init
+#### init
 
 ~~~yaml
 apiVersion: tekton.dev/v1 
@@ -1921,7 +1926,7 @@ spec:
       echo $TAG 
 ~~~
 
-### build
+#### build
 
 加上前面创建的缓存PVC：
 
@@ -1958,7 +1963,7 @@ spec:
       claimName: tekton-cache
 ~~~
 
-### kaniko
+#### kaniko
 
 ~~~yaml
 apiVersion: tekton.dev/v1 
@@ -2011,7 +2016,7 @@ spec:
         echo -n "${image}" | tee "$(results.IMAGE_URL.path)"
 ~~~
 
-### deploy
+#### deploy
 
 ~~~yaml
 apiVersion: tekton.dev/v1 
@@ -2047,7 +2052,7 @@ spec:
       kubectl --kubeconfig /mnt/kubeconfig/$(params.KUBECONFIG_PATH) -n $(params.NAMESPACE) get po 
 ~~~
 
-## tekton必备pipeline
+### tekton必备pipeline
 
 用一个pipeline串联起所有tasks。后续对于不同语言的项目，只需要在pipelinerun中传入params中的必须参数即可。
 
@@ -2186,9 +2191,9 @@ spec:
       value: $(params.KUBECONFIG_PATH)
 ~~~
 
-## 自动化部署Java应用
+### 自动化部署Java应用
 
-### 创建Java测试用例
+#### 创建Java测试用例
 
 这里用一个示例项目：[spring-boot-project](https://gitee.com/dukuan/spring-boot-project.git)。需要导入到gitlab中
 
@@ -2196,7 +2201,7 @@ spec:
 2. 点New Project - Import Project - Repository by URL
 3. 输入gitee项目的URL，点击导入即可。
 
-### 创建deployment
+#### 创建deployment
 
 需要先把deployment apply出来，镜像随便写一个，后面流水线会替换成最新编译出来的镜像
 
@@ -2314,7 +2319,7 @@ spec:
 
 创建之后pod可能无法启动，等到流水线创建完成，替换了镜像后就可以了。
 
-### 创建Dockerfile
+#### 创建Dockerfile
 
 在执行流水线过程时，需要将代码的编译产物做成镜像。本次示例是Java项目，只需要把编译出来的Jar包放在有jre环境的镜像中，然后启动该Jar包即可：
 
@@ -2329,7 +2334,7 @@ CMD java -jar spring-cloud-eureka-0.0.1-SNAPSHOT.jar
 
 同样在gitlab项目根目录中添加这个Dockerfile。注意：Dockerfile必须文件名是Dockerfile，否则Kaniko识别不出来
 
-### pipelinerun自动发版
+#### pipelinerun自动发版
 
 ~~~yaml
 apiVersion: tekton.dev/v1beta1 
@@ -2387,13 +2392,13 @@ spec:
     value: "/root/.m2" 
 ~~~
 
-## 自动化部署Go应用
+### 自动化部署Go应用
 
-### 创建测试项目
+#### 创建测试项目
 
 测试项目地址：[go-project](https://gitee.com/dukuan/go-project.git)。导入到Gitlab中
 
-### 创建deployment
+#### 创建deployment
 
 ~~~yaml
 apiVersion: v1
@@ -2507,7 +2512,7 @@ spec:
             memory: 55Mi
 ~~~
 
-### 创建Dockerfile
+#### 创建Dockerfile
 
 创建到代码仓库根目录。pipeline agent拉完代码，执行go build编译后，在代码目录的go-project会生成一个二进制文件。拷贝到一个linux环境就可以直接执行，所以基础镜像用一个alpine或者其他小镜像即可。
 
@@ -2524,7 +2529,7 @@ COPY ./go-project ./
 ENTRYPOINT [ "./go-project"] 
 ~~~
 
-### pipelinerun自动发版
+#### pipelinerun自动发版
 
 ~~~yaml
 apiVersion: tekton.dev/v1beta1 
@@ -2584,13 +2589,13 @@ spec:
     value: "/go/pkg/" 
 ~~~
 
-## 自动化构建前端应用
+### 自动化构建前端应用
 
-### 创建测试项目
+#### 创建测试项目
 
 测试项目地址在：https://gitee.com/dukuan/vue-project.git。需要导入到Gitlab的group中：New Project - Import Project
 
-### 定义deployment
+#### 定义deployment
 
 相比Java应用，只需要更改资源名称和端口号即可：
 
@@ -2704,7 +2709,7 @@ spec:
             memory: 55Mi
 ~~~
 
-### 创建Dockerfile
+#### 创建Dockerfile
 
 创建到仓库根目录。前端应用构建之后一般会在dist目录下产生html文件，只需要拷贝到nginx目录下即可。编译镜像就找一个nginx镜像就行。
 
@@ -2713,7 +2718,7 @@ FROM registry.cn-beijing.aliyuncs.com/dotbalo/nginx:1.15.12
 COPY dist/* /usr/share/nginx/html/ 
 ~~~
 
-### pipelinerun自动发版
+#### pipelinerun自动发版
 
 ~~~yaml
 apiVersion: tekton.dev/v1beta1 

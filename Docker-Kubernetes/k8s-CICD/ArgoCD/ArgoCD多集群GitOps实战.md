@@ -149,6 +149,7 @@ spec:
 ```
 
 **多租户最佳实践**：
+
 - 平台维护受控 Helm Chart，业务只提交 values
 - 命名空间级 RBAC 最小化，集群级资源由平台 Project 管
 - 用 Kyverno / Gatekeeper 做准入校验
@@ -214,6 +215,7 @@ SaaS 平台，100 个集群按 `env/region/tenant/tier` 打标签。
 **业务团队职责**：提交应用配置、声明目标标签、维护业务 values、查看自己 Project 下的同步状态。
 
 **架构原则**：
+
 - 多大区 → 每个大区一套 Argo CD
 - 客户侧私有化 → Pull 模式，避免直连客户 API Server
 - 核心生产组件 → 不全自动铺满，必须灰度
@@ -273,6 +275,7 @@ repoServer:
 - **安全风险**：代码仓库被黑，攻击者可以修改 ArgoCD 配置指向恶意镜像仓库
 
 **最佳实践**：
+
 - **源代码仓库**（Source Repo）：应用本身的代码，开发团队维护
 - **清单库**（Manifest Repo）：ArgoCD 的 Application、AppProject、Helm Chart/Kustomize overlay，由平台/SRE 团队维护，严格控制写权限
 
@@ -287,6 +290,7 @@ Red Hat 官方推荐。想象一个团队的 `Application` 资源被误删，导
 期望状态 ≠ 实际状态。有人用 Web UI 手动改了 `syncPolicy` 或 `targetRevision`，这个修改不会自动同步回 Git。
 
 **防护措施**：
+
 - **All-in Git**：所有对 ArgoCD 配置的修改必须从 Git 仓库发起，Web UI 只用来查看状态和手动触发同步
 - **CI 中检查漂移**：在流水线中运行 `argocd app diff`，跟 Git 仓库对比，确保没有意外的配置漂移
 - **监控 ArgoCD 自身**：用 Prometheus 监控 `argocd_app_info` 指标，`OutOfSync` 状态触发告警；或用 ArgoCD notifications-controller 发送通知

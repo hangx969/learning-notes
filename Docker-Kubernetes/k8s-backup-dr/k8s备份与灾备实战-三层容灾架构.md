@@ -50,6 +50,7 @@ ETCDCTL_API=3 etcdctl snapshot status /backup/etcd-snapshot-*.db --write-out=tab
 ### 自动化 CronJob 备份 + 远程上传
 
 完整的 CronJob 方案要点：
+
 - Namespace `cluster-backup` + 专用 ServiceAccount + RBAC
 - `hostNetwork: true`（必须用宿主机网络才能访问 etcd）
 - `nodeSelector` 只调度到 master 节点 + 对应 tolerations
@@ -88,6 +89,7 @@ mv /tmp/kube-apiserver.yaml /etc/kubernetes/manifests/
 ### 架构原理
 
 Velero 由 CLI + Server（Deployment）组成：
+
 - **Backup 流程**：Controller 通过 K8s API 列出目标资源 → 序列化为 JSON → 压缩上传到 S3
 - **PV 备份**：有 CSI 快照能力时调用 CSI Driver；无 CSI 时用 Restic/Kopia 做文件级备份
 - **Restore 流程**：按依赖顺序重建（Namespace → CRD → RBAC → Deployment → Service）
@@ -146,6 +148,7 @@ etcd 02:00 快照不含 02:30 新建的资源，但 Velero 03:00 备份包含。
 ### 坑 3：Secret 备份的安全性
 
 etcd 快照包含**所有 Secret 明文数据**（TLS 私钥、数据库密码、API Token）。解决方案：
+
 - GPG 加密快照文件后再上传
 - 或使用 S3 服务端加密（SSE-S3 / SSE-KMS）
 

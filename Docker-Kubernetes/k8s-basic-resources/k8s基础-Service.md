@@ -7,9 +7,12 @@ aliases:
   - k8sService
 ---
 
-# 背景
+# K8s基础-Service
 
-## 传统服务发布
+
+## 背景
+
+### 传统服务发布
 
 服务发布种类总结：
 
@@ -33,22 +36,22 @@ K8s中（无注册中心）：服务间访问、基础组件访问走的是svc�
 
 <img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202507172058270.png" alt="image-20250717205834038" style="zoom:50%;" />
 
-## pod ip访问
+### pod ip访问
 
 - 虽然每个Pod都会分配一个单独的Pod IP，然而却存在如下两问题：
 
-  -   Pod IP 会随着Pod的重建产生变化
+  - Pod IP 会随着Pod的重建产生变化
 
-  -   Pod IP 仅仅是**集群内可见的虚拟IP**，外部无法访问 
+  - Pod IP 仅仅是**集群内可见的虚拟IP**，外部无法访问 
 
-# service介绍
+## service介绍
 
 - 这样对于访问这个服务带来了难度。因此，kubernetes设计了Service来解决这个问题，service在生命周期内，IP地址不会变。service通过标签选择器绑定相应的pod，可以通过访问service的ip来访问pod的服务。
 - Service可以看作是一组同类Pod对外的访问接口。借助Service，应用可以方便地实现服务发现和负载均衡。
 
 总结：svc为pod提供了一个抽象层，将一组具有相同功能的Pod抽象为一个逻辑上的服务。无论匹配的pod如何变化，比如重启、迁移、扩缩容等，service都能保持一个稳定的访问接口。我们不需要关心pod的具体IP和节点等细节。
 
-## endpoint
+### endpoint
 
 k8s在创建Service时，会根据标签选择器(lableSelector)来查找Pod，据此创建与Service同名的endpoint对象。当Pod 地址发生变化时，endpoint也会随之发生变化。
 
@@ -58,7 +61,7 @@ service接收前端client请求的时候，就会通过endpoint，找到转发�
 
 
 
-# 实现原理
+## 实现原理
 
 - Service在很多情况下只是一个概念，真正起作用的其实是`kube-proxy`服务进程，每个Node节点上都运行着一个kube-proxy服务进程。
 
@@ -68,9 +71,9 @@ service接收前端client请求的时候，就会通过endpoint，找到转发�
 
   ![image-20231111110951734](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202311111109863.png)
 
-## Kubeproxy工作模式
+### Kubeproxy工作模式
 
-### Userspace
+#### Userspace
 
 userspace模式下，kube-proxy会为每一个Service创建一个监听端口，发向Cluster IP的请求被Iptables规则重定向到kube-proxy监听的端口上，kube-proxy根据LB算法选择一个提供服务的Pod并和其建立链接，以将请求转发到Pod上。 该模式下，kube-proxy充当了一个四层负责均衡器的角色。由于kube-proxy运行在userspace中，在进行转发处理时会增加内核和用户空间之间的数据拷贝，虽然比较稳定，但是效率比较低。
 
@@ -78,16 +81,17 @@ userspace模式下，kube-proxy会为每一个Service创建一个监听端口，
 
  目前已废弃不用了。
 
-### iptables
+#### iptables
 
 Iptables 是 Linux 原生提供的一个功能强大的防火墙工具，可以用来设置、维护和检查 IPv4 数据包，并且支持源目地址转换等规则。在 iptables 代理模式下， kube-proxy 通过监听 Kubernetes API Server 中 Service 和 Endpoint 对象的变化，动态地更新节点上的 iptables 规则，以实现请求的转发。
 
 iptables模式下，kube-proxy为service后端的每个Pod创建对应的iptables规则，直接将发向Cluster IP的请求重定向到一个Pod IP。该模式下kube-proxy不承担四层负责均衡器的角色，只负责创建iptables规则。
 
 工作流程：
-1.  当 Service 被创建或更新时， kube-proxy 会读取 Service 和 Endpoint 对象的信息，并生成相应的 iptables 规则
-2.  这些 iptables 规则被添加到内核的 netfilter 处理链中，以拦截和转发目标为 Service IP 地址的流量
-3.  当客户端访问 Service 的 IP 地址时， iptables 规则会将流量随机重定向到后端的一个或多个Pod
+
+1. 当 Service 被创建或更新时， kube-proxy 会读取 Service 和 Endpoint 对象的信息，并生成相应的 iptables 规则
+2. 这些 iptables 规则被添加到内核的 netfilter 处理链中，以拦截和转发目标为 Service IP 地址的流量
+3. 当客户端访问 Service 的 IP 地址时， iptables 规则会将流量随机重定向到后端的一个或多个Pod
 
 优点与缺点：
 
@@ -99,7 +103,7 @@ iptables模式下，kube-proxy为service后端的每个Pod创建对应的iptable
 
 ![image-20231111111411881](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202311111114959.png)
 
-### ipvs
+#### ipvs
 
 IPVS（IP  Virtual Server）是一种基于内核的负载均衡器，ipvs模式和iptables类似，kube-proxy监控Pod的变化并创建相应的ipvs规则。
 
@@ -109,9 +113,9 @@ ipvs相对iptables转发效率更高（采用hash表，svc数量达到一定规�
 
 **工作流程：**
 
-1.  当 Service 被创建或更新时，kube-proxy 会读取 Service 和 Endpoint 对象的信息，并配置IPVS 负载均衡策略
-2.  IPVS 负载均衡器会根据配置的调度算法（如轮询、最少连接等）将请求转发到后端的一个或多个 Pod 上
-3.  当客户端访问 Service 的 IP 地址时，请求会直接被 IPVS 处理并转发到后端 Pod
+1. 当 Service 被创建或更新时，kube-proxy 会读取 Service 和 Endpoint 对象的信息，并配置IPVS 负载均衡策略
+2. IPVS 负载均衡器会根据配置的调度算法（如轮询、最少连接等）将请求转发到后端的一个或多个 Pod 上
+3. 当客户端访问 Service 的 IP 地址时，请求会直接被 IPVS 处理并转发到后端 Pod
 
 **优点与缺点：**
 
@@ -133,15 +137,15 @@ ipvs相对iptables转发效率更高（采用hash表，svc数量达到一定规�
 
 ![image-20231111111435638](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202311111114753.png)
 
-## 负载分发策略
+### 负载分发策略
 
 对Service的访问被分发到了后端的Pod上去，目前kubernetes提供了两种负载分发策略：
 
--   如果不定义，默认使用**kube-proxy的策略**，比如随机、轮询。
--   基于**客户端地址的会话保持模式**，即来自**同一个客户端**发起的所有请求都会转发到固定的一个Pod上。
+- 如果不定义，默认使用**kube-proxy的策略**，比如随机、轮询。
+- 基于**客户端地址的会话保持模式**，即来自**同一个客户端**发起的所有请求都会转发到固定的一个Pod上。
   - 此模式可以使在spec中添加**sessionAffinity:** **ClientIP**选项。意思是clientIP进来首次被分发到哪个POD，之后就一直保持与这个pod的会话。
 
-## 更改svc代理模式
+### 更改svc代理模式
 
 ~~~sh
 # 查看当前的代理模式：
@@ -159,7 +163,7 @@ curl 127.0.0.1:10249/proxyMode
 ipvs
 ~~~
 
-## 更改ipvs负载均衡算法
+### 更改ipvs负载均衡算法
 
 ~~~sh
 # 在机器上查看 ipvs 规则：
@@ -189,7 +193,7 @@ TCP 172.16.32.128:32001 lc
 -> 192.168.181.141:80 Masq 1 0 0
 ~~~
 
-# svc域名
+## svc域名
 
 - service只要创建完成，我们就可以直接解析它的域名，每一个服务创建完成后都会在集群dns中动态添加一个资源记录，添加完成后我们就可以解析了，资源记录格式是：
 
@@ -207,7 +211,7 @@ TCP 172.16.32.128:32001 lc
   ```
   
 
-# yaml字段
+## yaml字段
 
 ```yaml
 # spec
@@ -262,9 +266,9 @@ FIELDS:
 > [!warning] 注意
 > Selector字段：svc通过selector选择对应标签的pod去代理流量。
 
-# svc分类
+## svc分类
 
-## ClusterIP
+### ClusterIP
 
 - svc暴露的IP，只能在集群内访问。
 
@@ -322,7 +326,7 @@ TCP  10.99.178.109:80 rr
 > [!warning] 注意
 > clusterIP虽然在宿主机上能直接请求，但是svc的FQDN在宿主机上可能无法解析。因为宿主机的DNS不是CoreDNS。
 
-## NodePort
+### NodePort
 
 - 将pod通过node上的端口暴露给外部，可以在集群外访问服务，原理是将pod的端口（targetPort）映射到Node的一个端口（nodePort）上（3000-32767，api-server的--service-node-port-range参数来控制的），通过NodeIP：NodePort来访问。NodePort 类型的服务将在**每个节点上公开一个端口**，并将流量路由到后端 Pod。
 
@@ -353,7 +357,7 @@ spec:
     nodePort: 30380 #pod端口映射到物理机的端口
 ```
 
-## ExternalName
+### ExternalName
 
 是service的特例，没有selector、端口映射、endpoint。它是通过返回外部服务的别名来提供服务。类似于域名解析中的CNAME。
 
@@ -459,17 +463,18 @@ get a
 "uat"
 ~~~
 
-## LoadBalancer
+### LoadBalancer
 
 - 需要借助外部云环境
   - Azure文档中的LB：
     - Internal LB：[创建内部负载均衡器 - Azure Kubernetes Service | Azure Docs](https://docs.azure.cn/zh-cn/aks/internal-lb)
     - External LB：[在 Azure Kubernetes 服务 (AKS) 中使用公共负载均衡器 - Azure Kubernetes Service | Azure Docs](https://docs.azure.cn/zh-cn/aks/load-balancer-standard)
+
 - 通过一个外部LB，直接代理到pod上
 
 ![image-20231112160812381](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202311121608561.png)
 
-# 自定义endpoint资源
+## 自定义endpoint资源
 
 service不仅仅可以用在集群内部pod上，也可以用在外部IP和域名上。比如外部有一个域名或者IP，可以创建一个svc来实现集群内服务去访问。这样更方便管理，这个后端服务变化，我们只需要去改service就行了，代码不用动。
 
@@ -482,7 +487,7 @@ service不仅仅可以用在集群内部pod上，也可以用在外部IP和域�
 - 正在将工作负载转移到 Kubernetes 集群，但是一部分服务仍运行在 Kubernetes 集群
   之外的 backend。
 
-## 示例：集群引用外部mysql数据库
+### 示例：集群引用外部mysql数据库
 
 - 模拟在物理机上装一个mysql，用k8s的service来代理
 
@@ -529,13 +534,13 @@ service不仅仅可以用在集群内部pod上，也可以用在外部IP和域�
 
 CoreDNS 其实就是一个 DNS 服务，而 DNS 作为一种常见的服务发现手段，所以很多开源项目以及工程师都会使用 CoreDNS 为集群提供服务发现的功能，Kubernetes 就在集群中使用 CoreDNS 解决服务发现的问题。 
 
-# 自带svc：kubernetes
+## 自带svc：kubernetes
 
 在 Kubernetes 集群中，名称为 "kubernetes" 的 Service 是一个特殊的 Service，它提供了对 Kubernetes API server 的访问。其他组件去访问api server的时候就是走的kubernetes这个service。
 
 这个 Service 的主要作用是允许集群内的 Pod 通过 Service 网络（通常是 ClusterIP）来访问 Kubernetes API，而不需要知道 API server 的实际 IP 地址或主机名。这对于运行在 Pod 中的应用程序来说非常有用，因为它们可以使用 Kubernetes API 来查询集群状态、操作资源等，而无需关心 API server 的具体位置。
 
-# kube-proxy由iptables切换到ipvs
+## kube-proxy由iptables切换到ipvs
 
 - 在用kubeadm安装集群时，在kubeadm.yaml文件中手动定义了kube-proxy的类型
 
