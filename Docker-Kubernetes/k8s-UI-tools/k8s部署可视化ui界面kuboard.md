@@ -7,12 +7,15 @@ aliases:
   - kuboard部署
 ---
 
-# kuboard
+# K8s 部署 Kuboard
+
+
+## kuboard
 
 - 官网地址：[Kuboard 官网](https://www.kuboard.cn/)
 - 安装kuboard参考：[Kuboard 安装文档](https://www.kuboard.cn/v4/install/)
 
-# 部署kuboard
+## 部署kuboard
 
 ~~~sh
 #先安装docker，再下载kuboard_v3安装包。为测试用，直接在master1上部署
@@ -38,7 +41,7 @@ docker run -d --restart=unless-stopped --name=kuboard -p 10080:80/tcp -p 10081:1
 
   ![image-20240515210600968](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202405152106027.png)
 
-# 创建资源
+## 创建资源
 
 - 创建deploy：[https://kuboard.cn/learning/k8s-basics/deploy-app.html#%E5%AE%9E%E6%88%98-%E9%83%A8%E7%BD%B2-nginx-deployment](https://kuboard.cn/learning/k8s-basics/deploy-app.html#实战-部署-nginx-deployment)
 

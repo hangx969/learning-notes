@@ -10,14 +10,17 @@ aliases:
   - Jaeger部署
 ---
 
-# 介绍
+# Helm部署Jaeger
+
+
+## 介绍
 
 - Jaeger是一个开源的分布式追踪系统,最初由Uber开发并开源,现在是CNCF的项目之一。主要用于监控和体哦按是分布式系统中的事务。
 - 官网:[Jaeger](https://www.jaegertracing.io/)
 - helm chart github地址:[Jaeger Helm Charts](https://github.com/jaegertracing/helm-charts/tree/v2)
 - ArtifactHub地址:[Jaeger on ArtifactHub](https://artifacthub.io/packages/helm/jaegertracing/jaeger)
 
-# 下载
+## 下载
 
 - 下载helm chart
 
@@ -27,7 +30,7 @@ helm repo update jaegertracing
 helm pull jaegertracing/jaeger --version 3.4.1
 ```
 
-# 配置
+## 配置
 
 ```yaml
 provisionDataStore:
@@ -83,7 +86,7 @@ query:
 > [!note]
 > Badger是jaeger自带的k-v数据库:[Jaeger Badger](https://www.jaegertracing.io/docs/2.5/badger/)
 
-# 安装
+## 安装
 
 - 准备PVC
 
@@ -121,4 +124,4 @@ kubectl patch deployment/jaeger -n monitoring --type='json' -p='[
 ]'
 ```
 
-# 使用
+## 使用

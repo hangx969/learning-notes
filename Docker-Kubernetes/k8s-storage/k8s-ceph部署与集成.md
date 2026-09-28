@@ -7,12 +7,15 @@ aliases:
   - K8s Ceph部署
 ---
 
+# K8s Ceph部署与集成
+
+
 > [!warning] 生产环境注意
 > 生产环境中如果要用ceph，一定要非常专业精通、可以troubleshooting才能去用；而且建议二进制安装在服务器上，不要装在k8s中。否则出问题之后因为ceph是分块存储，数据非常难以还原，有极大的丢失风险。
 
-# ceph简介
+## ceph简介
 
-## 类型
+### 类型
 
 - ceph是一种开源的分布式的存储系统，包含以下几种存储类型：
 
@@ -37,22 +40,25 @@ aliases:
 > - **高性能：**读写速度快。
 > - **可扩展：**分布式存储的优势就是“分布式”，所谓的“分布式”就是能够将多个物理节点整合在一起形成共享的存储池，节点可以线性扩充，这样可以源源不断的通过扩充节点提升性能和扩大容量，这是传统存储阵列无法做到的。
 
-## 核心组件
+### 核心组件
 
 在ceph集群中，不管你是想要提供对象存储，块设备存储，还是文件系统存储，所有Ceph存储集群部署都是从设置每个Ceph节点，网络和Ceph存储开始的。 Ceph存储集群至少需要一个Ceph Monitor，Ceph Manager和Ceph OSD（对象存储守护进程）。运行Ceph Filesystem客户端时也需要Ceph元数据服务器。
 
 - Monitors：
   - Ceph监视器（ceph-mon）维护集群状态的映射，包括监视器映射，管理器映射，OSD映射和CRUSH映射。这些映射是Ceph守护进程相互协调所需的关键集群状态。监视器还负责管理守护进程和客户端之间的身份验证。冗余和高可用性通常至少需要三个监视器。
+
 - Managers：
   - Ceph Manager守护程序（ceph-mgr）负责跟踪运行时指标和Ceph集群的当前状态，包括存储利用率，当前性能指标和系统负载。 Ceph Manager守护进程还托管基于python的模块来管理和公开Ceph集群信息，包括基于Web的Ceph Dashboard和REST API。高可用性通常至少需要两名Managers。
+
 - Ceph OSD：
   - Ceph OSD（对象存储守护进程，ceph-osd）存储数据，处理数据复制，恢复，重新平衡，并通过检查其他Ceph OSD守护进程来获取心跳，为Ceph监视器和管理器提供一些监视信息。冗余和高可用性通常至少需要3个Ceph OSD。
+
 - MDS：
   - Ceph元数据服务器（MDS，ceph-mds）代表Ceph文件系统存储元数据（即，Ceph块设备和Ceph对象存储不使用MDS）。 Ceph元数据服务器允许POSIX文件系统用户执行基本命令（如ls，find等），而不会给Ceph存储集群带来巨大负担。
 
-# 搭建ceph集群准备工作
+## 搭建ceph集群准备工作
 
-## 配置3台主机静态IP
+### 配置3台主机静态IP
 
 - master1-admin是管理节点 ：192.168.40.7
 - node1-monitor是监控节点：192.168.40.8
@@ -83,7 +89,7 @@ ONBOOT=yes
 service network restart
 ~~~
 
-## 配置主机名
+### 配置主机名
 
 ~~~sh
 hostnamectl set-hostname master1-admin && bash
@@ -91,7 +97,7 @@ hostnamectl set-hostname node1-monitor && bash
 hostnamectl set-hostname node2-osd && bash
 ~~~
 
-## 配置hosts文件
+### 配置hosts文件
 
 ~~~sh
 #3台机器上/etc/hosts中增加：
@@ -100,7 +106,7 @@ hostnamectl set-hostname node2-osd && bash
 192.168.40.9   node2-osd  
 ~~~
 
-## 配置互相ssh登录
+### 配置互相ssh登录
 
 ~~~sh
 #设置root密码
@@ -113,20 +119,20 @@ ssh-copy-id node1-monitor
 ssh-copy-id node2-osd 
 ~~~
 
-## 关闭防火墙
+### 关闭防火墙
 
 ~~~sh
 #3台都执行
 systemctl stop firewalld && systemctl disable firewalld
 ~~~
 
-## 关闭selinux
+### 关闭selinux
 
 ~~~sh
 sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config
 ~~~
 
-## 配置ceph源
+### 配置ceph源
 
 ~~~sh
 #3台都执行
@@ -166,7 +172,7 @@ gpgkey=https://mirrors.aliyun.com/ceph/keys/release.asc
 priority=1
 ~~~
 
-## 配置时间同步
+### 配置时间同步
 
 ~~~sh
 service ntpd stop
@@ -178,15 +184,15 @@ crontab -e
 service crond restart
 ~~~
 
-## 安装基础软件包
+### 安装基础软件包
 
 ~~~sh
 yum install -y yum-utils device-mapper-persistent-data lvm2 wget net-tools nfs-utils lrzsz gcc gcc-c++ make cmake libxml2-devel openssl-devel curl curl-devel unzip sudo ntp libaio-devel wget vim ncurses-devel autoconf automake zlib-devel  python-devel epel-release openssh-server socat  ipvsadm conntrack ntpdate telnet deltarpm
 ~~~
 
-# 安装ceph集群
+## 安装ceph集群
 
-## 安装ceph
+### 安装ceph
 
 ~~~sh
 #master1-admin上执行，安装ceph-deploy
@@ -197,7 +203,7 @@ yum install ceph ceph-radosgw  -y
 ceph --version
 ~~~
 
-## 创建monitor节点
+### 创建monitor节点
 
 ~~~sh
 #master1-admin上创建一个目录，用于保存 ceph-deploy 生成的配置文件信息
@@ -208,7 +214,7 @@ ls
 #ceph.conf  ceph-deploy-ceph.log  ceph.mon.keyring
 ~~~
 
-## 安装ceph-monitor
+### 安装ceph-monitor
 
 ~~~sh
 #把ceph.conf配置文件里的默认副本数从3改成1 。把osd_pool_default_size = 2 加入[global]段，这样只有2个osd也能达到active+clean状态：
@@ -236,7 +242,7 @@ ceph-deploy mon create-initial
 ls *.keyring
 ~~~
 
-## 部署osd服务
+### 部署osd服务
 
 ~~~sh
 #准备osd，在master1-admin上
@@ -254,11 +260,11 @@ ceph-deploy osd activate node2-osd:/dev/sdc1
 ceph-deploy osd list master1-admin node1-monitor node2-osd
 ~~~
 
-## 创建ceph文件系统
+### 创建ceph文件系统
 
 - 要使用Ceph文件系统，你的Ceph的存储集群里至少需要存在一个Ceph的元数据服务器(mds)。
 
-### 创建mds
+#### 创建mds
 
 ~~~sh
 #master1-admin上
@@ -272,7 +278,7 @@ ceph fs ls
 > 1. 为metadata pool设置较高级别的副本级别，因为metadata的损坏可能导致整个文件系统不可用。
 > 2. 建议metadata pool使用低延时存储，比如SSD，因为metadata会直接影响客户端的响应速度。
 
-### 创建osd存储池
+#### 创建osd存储池
 
 ~~~sh
 #master1-admin上
@@ -292,7 +298,7 @@ ceph osd pool create cephfs_metadata 128
 >
 > 自己计算 pg_num 取值时可借助 pgcalc 工具：随着 OSD 数量的增加，正确的 pg_num 取值变得更加重要，因为它显著地影响着集群的行为、以及出错时的数据持久性（即灾难性事件导致数据丢失的概率）。
 
-### 创建文件系统
+#### 创建文件系统
 
 ~~~sh
 ceph fs new hangtestfs cephfs_metadata cephfs_data
@@ -304,9 +310,9 @@ ceph mds stat
 ceph -s
 ~~~
 
-# 测试k8s集群挂载ceph rbd
+## 测试k8s集群挂载ceph rbd
 
-## 安装前置软件
+### 安装前置软件
 
 ~~~sh
 # kubernetes要想使用ceph，需要在k8s的每个node节点安装ceph-common的驱动  。
@@ -322,7 +328,7 @@ scp /etc/ceph/* 192.168.40.5:/etc/ceph/
 scp /etc/ceph/* 192.168.40.6/etc/ceph/
 ~~~
 
-## 配置rbd
+### 配置rbd
 
 ~~~sh
 #master1-admin上
@@ -332,7 +338,7 @@ rbd create rbda -s 1024 -p k8srbd1 #创建1G大小的块设备
 rbd feature disable k8srbd1/rbda object-map fast-diff deep-flatten
 ~~~
 
-## 创建pod挂载ceph rbd
+### 创建pod挂载ceph rbd
 
 ~~~yaml
 apiVersion: v1
@@ -403,9 +409,9 @@ spec:
 
 - 如果是按照前面直接挂载的方式，两个pod只有1个pod能起来，另一个会提示MountVolume.WaitForAttach failed for volume "testrbd" : rbd image k8srbd1/rbda is still being used。即使设置调度到同一pod也不行。
 
-# 基于ceph rbd生成pv
+## 基于ceph rbd生成pv
 
-## 创建secret
+### 创建secret
 
 ~~~sh
 #创建ceph-secret这个k8s secret对象，这个secret对象用于k8s volume插件访问ceph集群，获取client.admin的keyring值，并用base64编码，在master1-admin（ceph管理节点）操作
@@ -422,7 +428,7 @@ data:
 kubectl apply -f ceph-secret.yaml
 ~~~
 
-## 创建osd pool
+### 创建osd pool
 
 ~~~sh
 #创建ceph rbd
@@ -431,7 +437,7 @@ rbd create rbda -s 1024 -p k8srbd1 #创建1G大小的块设备
 rbd feature disable k8srbd1/rbda object-map fast-diff deep-flatten
 ~~~
 
-## 创建pv
+### 创建pv
 
 ~~~yaml
 apiVersion: v1 
@@ -458,7 +464,7 @@ spec:
    persistentVolumeReclaimPolicy: Recycle
 ~~~
 
-## 创建pvc
+### 创建pvc
 
 ~~~yaml
 kind: PersistentVolumeClaim 
@@ -473,7 +479,7 @@ spec:
     storage: 1Gi
 ~~~
 
-## 挂载pvc
+### 挂载pvc
 
 ~~~yaml
 apiVersion: apps/v1
@@ -515,9 +521,9 @@ spec:
 
   2，给node添加label，只允许deployment所管理的pod调度到一个固定的node上。（不建议，这个node挂掉的话，服务就故障了）
 
-# 基于storage class动态生成pv
+## 基于storage class动态生成pv
 
-## ceph配置文件授权
+### ceph配置文件授权
 
 ~~~sh
 #3台ceph节点和3台k8s节点都执行。sc需要用到。
@@ -526,7 +532,7 @@ mkdir /root/.ceph/
 cp -ar /etc/ceph/ /root/.ceph/
 ~~~
 
-## 安装rbd供应商
+### 安装rbd供应商
 
 ~~~sh
 #事先上传镜像
@@ -626,7 +632,7 @@ spec:
       serviceAccount: rbd-provisioner
 ~~~
 
-## 创建ceph secret
+### 创建ceph secret
 
 ~~~sh
 #创建ceph-secret这个k8s secret对象，这个secret对象用于k8s volume插件访问ceph集群，获取client.admin的keyring值，并用base64编码，在master1-admin（ceph管理节点）操作
@@ -649,7 +655,7 @@ data:
 ceph osd pool create k8stest1 6 #创建pool，pgnum是6
 ~~~
 
-## 创建sc
+### 创建sc
 
 ~~~yaml
 apiVersion: storage.k8s.io/v1
@@ -701,7 +707,7 @@ parameters:
 > systemctl restart kubelet
 > ~~~
 
-## 创建pvc
+### 创建pvc
 
 ~~~yaml
 kind: PersistentVolumeClaim
@@ -727,7 +733,7 @@ spec:
 >
 > 这两种模式的选择取决于你的应用需求。一般来说，大多数应用都会使用`Filesystem`模式，但是一些需要高性能IO或者特殊的文件系统特性的应用可能会选择`Block`模式。
 
-## 创建pod挂载pvc
+### 创建pod挂载pvc
 
 ~~~yaml
 apiVersion: v1
@@ -751,9 +757,9 @@ spec:
       claimName: rbd-pvc
 ~~~
 
-# k8s挂载cephfs
+## k8s挂载cephfs
 
-## 创建ceph子目录
+### 创建ceph子目录
 
 ~~~sh
 ceph fs ls
@@ -771,7 +777,7 @@ mkdir podtest -p
 chmod 0777 podtest/ 
 ~~~
 
-## 创建secret
+### 创建secret
 
 ~~~sh
 #将/etc/ceph/ceph.client.admin.keyring里面的key的值转换为base64
@@ -789,7 +795,7 @@ data:
   key: W2NsaWVudC5hZG1pbl0KCWtleSA9IEFRQlRScHRseGdlaExSQUFvUFZKbG9zb2Q5dWRQU2F0WW04Q1BnPT0K
 ~~~
 
-## 创建pv
+### 创建pv
 
 ~~~yaml
 apiVersion: v1
@@ -812,7 +818,7 @@ spec:
   persistentVolumeReclaimPolicy: Recycle  
 ~~~
 
-## 创建pvc
+### 创建pvc
 
 ~~~yaml
 kind: PersistentVolumeClaim
@@ -828,7 +834,7 @@ spec:
       storage: 1Gi
 ~~~
 
-## pod挂载pvc
+### pod挂载pvc
 
 ~~~yaml
 apiVersion: v1
@@ -849,9 +855,9 @@ spec:
       claimName: cephfs-pvc
 ~~~
 
-# 基于Rook部署ceph集群
+## 基于Rook部署ceph集群
 
-## 安装ceph
+### 安装ceph
 
 参考：[Rook Quickstart Guide](https://rook.github.io/docs/rook/v1.12/Getting-Started/quickstart/#cluster-environments)
 
@@ -888,7 +894,7 @@ kubectl apply -f crds.yaml -f common.yaml -f operator.yaml
 kubectl get pods -n rook-ceph
 ~~~
 
-## 创建ceph集群
+### 创建ceph集群
 
 - 修改cluster.yaml文件（在/rook-master/deploy/examples/路径下）
 
@@ -914,15 +920,17 @@ kubectl apply -f cluster.yaml
 
 字段说明：
 
--  useAllNodes
+- useAllNodes
   - true： Rook 会在所有可用的 Kubernetes 节点上启动存储服务。这意味着每一个 Kubernetes 节点（服务器或虚拟机）都会被用来运行 Ceph 存储服务，从而使整个 Kubernetes 集群的所有节点都参与到存储服务中。
   - false： Rook 只会在指定的 Kubernetes 节点上启动存储服务。这意味着只有你明确选择的节点会被用来运行 Ceph 存储服务，而不是整个集群的所有节点。
+
 - useAllDevices：
   - true： Rook 会在所有可用的存储设备上启动存储服务。这意味着每一个被检测到的存储设备（如硬盘、SSD）都会被用来存储数据，从而充分利用所有可用的存储资源。
   - false： Rook 只会在你指定的存储设备上启动存储服务。这意味着只有你明确选择的存储设备会被用来存储数据，而不是所有可用的存储设备。
+
 - -name:”sdb”: 采用裸盘，即未格式化的磁盘。其中master1, node1, node2新加磁盘sdb，建议最少三个节点，否则后面的试验可能会出现问题
 
-## 安装ceph客户端工具
+### 安装ceph客户端工具
 
 ~~~sh
 kubectl apply -f toolbox.yaml -n rook-ceph
@@ -933,7 +941,7 @@ ceph osd status
 ceph df
 ~~~
 
-## 安装ceph dashboard
+### 安装ceph dashboard
 
 - 默认情况下，ceph dashboard已经创建好了，可以在ceph dashboard前面创建一个nodePort类型的Service暴露pod
 

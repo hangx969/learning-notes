@@ -8,13 +8,16 @@ aliases:
   - kubeblocks-wordpress
 ---
 
-# 背景
+# KubeBlocks 部署 WordPress
 
-## WordPress
+
+## 背景
+
+### WordPress
 
 - WordPress 是全球最流行的内容管理系统（CMS），自 2003 年发布以来，已成为网站建设的首选工具。其广泛的插件和主题生态系统使用户能够轻松扩展功能和美化外观。活跃的社区提供丰富的资源和支持，进一步降低了开发和维护的难度。凭借易用性、灵活性和强大的社区支持，WordPress 已成为全球数百万用户的共同选择，在网站建设领域占据了重要地位。
 
-## KubeBlocks
+### KubeBlocks
 
 - KubeBlocks 是一个可以管理多种数据库和有状态中间件的 K8s operator，支持管理 MySQL、PostgreSQL、Redis、MongoDB、Kafka、ClickHouse、Elasticsearch 等 30 余种数据库。其原理是定义一组通用和抽象的 API（CRDs）来描述各种引擎的共同属性，在其之上，数据库厂商和开发者可以通过插件来描述不同引擎的差异。
 - 使用 KubeBlocks 来部署提供 WordPress 数据库服务，可以很好解决 MariaDB 的缺陷：
@@ -23,7 +26,7 @@ aliases:
   - 拓展性强：可以独立扩展 WordPress 和数据库的副本数，分别调整它们的资源配置。
   - 快捷管理：KubeBlocks 可以快速一键部署 WordPress 所需数据库集群，无需额外操作，且内置数据库的备份和监控功能，能提高管理效率。
 
-# 安装kbcli和KubeBlocks
+## 安装kbcli和KubeBlocks
 
 > - 检查[环境要求](https://kubeblocks.io/docs/release-0.8/api_docs/installation/install-with-kbcli/install-kubeblocks-with-kbcli#environment-preparation)
 > - [安装kbcli](https://kubeblocks.io/docs/preview/user_docs/installation/install-with-kbcli/install-kbcli)
@@ -53,7 +56,7 @@ aliases:
    kbcli addon list
    ```
 
-# 一键部署高可用数据库集群
+## 一键部署高可用数据库集群
 
 > 在部署 WordPress 之前，首先需要部署一个数据库集群用于管理 WordPress 的后台数据，可使用 [kbcli](https://kubeblocks.io/docs/preview/user_docs/kubeblocks-for-apecloud-mysql/cluster-management/create-and-connect-an-apecloud-mysql-cluster) 或者 [kubectl](https://kubeblocks.io/docs/preview/api_docs/kubeblocks-for-apecloud-mysql/cluster-management/create-and-connect-an-apecloud-mysql-cluster)部署集群。
 
@@ -83,9 +86,9 @@ aliases:
 
 2. 查看集群状态，等待所有相关 Pod 变为 running 状态
 
-# 部署WordPress
+## 部署WordPress
 
-## 配置数据库
+### 配置数据库
 
 1. 根据实际需要，可以在数据库中创建若干用户，以便于 WordPress 进行角色管理。下面我们将创建一个 myadmin 用户作为 WordPress 安装时的主用户。
 
@@ -114,7 +117,7 @@ aliases:
    kubectl create secret generic mysql-secret --from-literal=mariadb-password=password
    ```
 
-## 一键安装 WordPress
+### 一键安装 WordPress
 
 1. 使用 helm install 命令安装 WordPress，同时配置前面所述参数。
 
@@ -142,7 +145,7 @@ kubectl exec -it wordpress-584444f68b-sxcss  -- bash
 mysql -h  apecloud-mysql-mysql.default.svc.cluster.local  -u Wordpress
 ```
 
-# 数据库扩容
+## 数据库扩容
 
 当出现性能瓶颈等情况，或许需要对数据库节点进行资源扩容，KubeBlocks 提供了非常方便的扩容命令，可使用 kbcli vsclae 命令轻松扩充计算资源。
 
@@ -150,7 +153,7 @@ mysql -h  apecloud-mysql-mysql.default.svc.cluster.local  -u Wordpress
 kbcli cluster vscale mycluster --components=apecloud-mysql --cpu=500m --memory=500Mi
 ```
 
-# 访问wordpress
+## 访问wordpress
 
 ~~~sh
 kubectl get svc

@@ -6,7 +6,10 @@ aliases:
   - K8s部署httpd
 ---
 
-# 镜像准备
+# K8s基于YAML部署httpd服务
+
+
+## 镜像准备
 
 - httpd镜像可以直接从官网下载：[Apache HTTP Server Download](https://httpd.apache.org/download.cgi)
 - 准备dockerfile
@@ -52,7 +55,7 @@ docker run -d -p 2222:22 -p 8000:80 apache:v1
 #浏览器访问机器IP:8000端口
 ~~~
 
-# pod部署
+## pod部署
 
 ~~~sh
 docker save -o apache apache:v1

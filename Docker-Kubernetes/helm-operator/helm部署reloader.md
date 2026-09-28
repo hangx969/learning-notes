@@ -8,7 +8,10 @@ aliases:
   - reloader部署
 ---
 
-# 介绍
+# Helm 部署 Reloader
+
+
+## 介绍
 
 - 官网地址：[Reloader GitHub](https://github.com/stakater/Reloader)
 
@@ -35,7 +38,7 @@ aliases:
 - 也可以配置ConfigMap和Secret的某一个来监控，但是不能两个**都不监控**，reloader pod会出异常。如果暂时都不想监控，可以将副本数设置为0。
 
 
-# 下载
+## 下载
 
 ~~~sh
 helm repo add stakater https://stakater.github.io/stakater-charts
@@ -43,18 +46,18 @@ helm repo update stakater
 helm pull stakater/reloader --version 1.0.115
 ~~~
 
-# 配置
+## 配置
 
 - watchGlobally: true --> 配置为全部监测即可
 
 
-# 安装
+## 安装
 
 ~~~sh
 helm upgrade -i reloader -n reloader --create-namespace . -f values.yaml
 ~~~
 
-# 使用
+## 使用
 
 - 监控所有configMap和secret并自动更新
 

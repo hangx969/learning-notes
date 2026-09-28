@@ -7,7 +7,10 @@ aliases:
   - Helm部署PostgreSQL
 ---
 
-# 介绍
+# Helm部署PostgreSQL
+
+
+## 介绍
 
 github地址：[charts/bitnami/postgresql at main · bitnami/charts](https://github.com/bitnami/charts/tree/main/bitnami/postgresql)
 
@@ -18,7 +21,7 @@ artifactHub地址：
 
 HA模式比单节点模式多了Pgpool（接入流量）、repmgr（自动切换主从状态）、witness（防止脑裂）等组件，适合用在生产环境上。
 
-# 下载
+## 下载
 
 ~~~sh
 helm repo add bitnami https://charts.bitnami.com/bitnami
@@ -36,7 +39,7 @@ helm pull bitnami/postgresql-ha --version 16.3.1 # 这个chart是用来安装HA�
 >
 > - 注意需要把charts/bitnami/common目录放到postgresql/charts/目录里面才能组成完整的helm chart，因为common是子chart需要安装。
 
-# 配置-HA模式
+## 配置-HA模式
 
 > [!warning] 生产环境注意
 > - 生产环境中不推荐使用nfs，由于其单点无高可用、性能也有问题。如果k8s中没有配置ceph等分布式储，那就不推荐把数据库等需要持久化数据的服务部署到k8s中。
@@ -55,14 +58,14 @@ witness: # 用于提供额外的投票机制，防止脑裂现象。奇数个节
   create: true
 ~~~
 
-# 安装
+## 安装
 
 ~~~sh
 kubectl create ns postgresql
 helm upgrade -i postgresql-ha -n postgresql -f values.dev.yaml .
 ~~~
 
-# 使用
+## 使用
 
 ~~~sh
 kubectl exec -ti pg-postgresql-ha-postgresql-0 -n postgresql -- bash

@@ -7,7 +7,10 @@ aliases:
   - K8s部署MongoDB
 ---
 
-# MongoDB介绍
+# K8s基于YAML部署MongoDB集群
+
+
+## MongoDB介绍
 
 - MongoDB是一款为web应用程序和互联网基础设施设计的数据库管理系统。是NoSQL类型的数据库。
 
@@ -26,7 +29,7 @@ aliases:
 
 - 数据模型因为是面向对象的，所以可以表示丰富的、有层级的数据结构，比如博客系统中能把“评论”直接怼到“文章“的文档中，而不必像myqsl一样创建三张表来描述这样的关系。
 
-# MongoDB高可用方案
+## MongoDB高可用方案
 
 1. 主从
 
@@ -44,9 +47,9 @@ aliases:
 
    优点：可以将数据自动的分解成多个块，存储在不同的节点上，每个被差分的块都有三个副本集，这样是为了数据备份和恢复，而且数据分片以后，可以利用多台廉价的存储和CPU的计算构建一个水平可扩展的计算架构，这就是我们的分布式计算
 
-# 部署MongoDB集群
+## 部署MongoDB集群
 
-## 创建数据目录和nfs share
+### 创建数据目录和nfs share
 
 ~~~sh
 mkdir /k8s/ -p
@@ -66,7 +69,7 @@ EOF
 exportfs -arv
 ~~~
 
-## 创建configMap
+### 创建configMap
 
 ~~~yaml
 tee cm-mongo.yaml <<'EOF'
@@ -87,7 +90,7 @@ data:
 EOF
 ~~~
 
-## 创建PV
+### 创建PV
 
 ~~~yaml
 apiVersion: v1
@@ -119,7 +122,7 @@ spec:
     server: 192.168.40.180
 ~~~
 
-## 创建statefulset
+### 创建statefulset
 
 ~~~sh
 #解压镜像
@@ -266,7 +269,7 @@ spec:
           storage: 2Gi
 ~~~
 
-## 初始化MongoDB集群
+### 初始化MongoDB集群
 
 ~~~sh
 kubectl exec -it mongo-1-0 -- /bin/bash
@@ -282,7 +285,7 @@ rs.add("mongo-2.default.svc.cluster.local:27017")// 将mongo-2加入集群
 #ok为1为成功
 ~~~
 
-## MongoDB服务外部访问
+### MongoDB服务外部访问
 
 ~~~yaml
 #master nodeport service

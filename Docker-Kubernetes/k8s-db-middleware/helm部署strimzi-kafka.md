@@ -8,9 +8,12 @@ aliases:
   - Strimzi Kafka Operator
 ---
 
-# 介绍
+# Helm部署Strimzi Kafka
 
-## Kafka
+
+## 介绍
+
+### Kafka
 
 - Kafka 是一种高吞吐量的分布式发布订阅消息系统。主要用于实时数据流的处理和分析。它可以处理大量的实时数据，并提供高吞吐量、可扩展性和容错性。即使是非常普通的硬件Kafka也可以支持每秒数百万的消息。采用生产者消费者模型。
 
@@ -30,7 +33,7 @@ aliases:
 >
 > 消费者的偏移量是消费者消费消息的基础，通过维护每个消费者的偏移量，Kafka可以支持消息的重复消费，也就是说，消费者可以随时将偏移量回退到之前的位置，重新消费已经消费过的消息。同时，通过正确地管理消费者的偏移量，Kafka还可以实现消费者的故障恢复和负载均衡。
 
-## strimzi-kafka-operator
+### strimzi-kafka-operator
 
 - 生产环境推荐的kafka部署方式为operator方式部署，Strimzi是目前最主流的operator方案。集群数据量较小的话，可以采用NFS共享存储，数据量较大的话可使用local pv存储。
 
@@ -56,21 +59,21 @@ aliases:
   | Kafka Bridge        | kafkabridge       | kb         |
   | Kafka Rebalance     | kafkarebalance    | kr         |
 
-## kafka-ui
+### kafka-ui
 
 - 官网地址：[Kafka UI Documentation](https://docs.kafka-ui.provectus.io/)
 - release page: [kafka-ui Releases - GitHub](https://github.com/provectus/kafka-ui/releases)
 - artifact hub: [kafka-ui - ArtifactHub](https://artifacthub.io/packages/helm/kafka-ui/kafka-ui)
 
-## kafka-mirror-maker
+### kafka-mirror-maker
 
 - 官网地址：[Strimzi - Kafka Mirror Maker](https://strimzi.io/docs/operators/latest/deploying.html#kafka-mirror-maker-str)
 
 - 解决 Kafka 集群之间数据复制和数据同步的问题而诞生的 Kafka 官方的数据复制工具。在实际生产中，经常被用来实现 Kafka 数据的备份，迁移和灾备等目的。其实现原理是通过从Source Cluster消费消息，然后将消息生产到Target Cluster，即普通的消息生产和消费。用户只要通过简单的consumer配置和producer配置，启动Mirror，就可以实现准实时的数据同步。
 
-# 部署srtimzi-kafka-operator
+## 部署srtimzi-kafka-operator
 
-## 下载
+### 下载
 
 ~~~sh
 helm repo add strimzi https://strimzi.io/charts/
@@ -78,17 +81,17 @@ helm repo update strimzi
 helm pull strimzi/strimzi-kafka-operator --version 0.42.0
 ~~~
 
-## 配置
+### 配置
 
 - 开启了dashboard、watchAnyNamespace
 
-## 安装
+### 安装
 
 ~~~sh
 helm upgrade -i strimzi-kafka-operator -n kafka --create-namespace . --values values.yaml  #--skip-crds --values $VALUES_FILE
 ~~~
 
-## 卸载
+### 卸载
 
 完全卸载strimzi-kafka-operator之后要把CRD也删干净：
 
@@ -96,7 +99,7 @@ helm upgrade -i strimzi-kafka-operator -n kafka --create-namespace . --values va
 kubectl delete crd kafkabridges kafkaconnectors kafkaconnects kafkamirrormaker2s kafkamirrormakers kafkanodepools kafkarebalances kafkas kafkatopics kafkausers
 ~~~
 
-## 升级
+### 升级
 
 注意，strimzi-kafka-operator对kafka的版本是有要求的，升级strimzi的时候，需要检查现有的kafka版本是否适配：
 
@@ -106,11 +109,11 @@ kubectl delete crd kafkabridges kafkaconnectors kafkaconnects kafkamirrormaker2s
 
 如果希望升级到的strimzi版本，不支持现在的kafka版本，那么需要先把strimzi升级到支持当前kafka版本的最低版本。然后把kafka升级到新版，再升级strimzi到最新版。
 
-# 部署kafka cluster和broker
+## 部署kafka cluster和broker
 
 - cluster operator部署完之后，去部署下面几个CRD资源，这些资源也是以helm chart形式部署，chart name：commoninfra-kafka-config
 
-## kafka-cluster
+### kafka-cluster
 
 ~~~yaml
 apiVersion: kafka.strimzi.io/v1beta2
@@ -215,7 +218,7 @@ spec:
   kafkaExporter: {}
 ~~~
 
-## kafka-broker-nodepool
+### kafka-broker-nodepool
 
 ~~~yaml
 apiVersion: kafka.strimzi.io/v1beta2
@@ -235,7 +238,7 @@ spec:
     class: {{ .Values.commoninfra.kafka.storage.class }}
 ~~~
 
-## kafka-controller-nodepool
+### kafka-controller-nodepool
 
 ~~~yaml
 apiVersion: kafka.strimzi.io/v1beta2
@@ -265,7 +268,7 @@ spec:
 >
 > （Kafka 3.4+ 支持分离 Controller 角色，独立管理避免单点故障）
 
-## kafka-metrics-config
+### kafka-metrics-config
 
 ~~~yaml
 # This file is copy from
@@ -436,7 +439,7 @@ data:
       type: GAUGE
 ~~~
 
-## strimzi-pod-monitor
+### strimzi-pod-monitor
 
 ~~~yaml
 apiVersion: monitoring.coreos.com/v1
@@ -539,7 +542,7 @@ spec:
       action: replace
 ~~~
 
-## values
+### values
 
 - values.yaml
 
@@ -639,19 +642,19 @@ spec:
     userOperator: {}
 ~~~
 
-## 安装
+### 安装
 
 ~~~sh
 helm upgrade -i commoninfra-kafka-config -n kube-system . --values ./values/values.yaml #--set oauth.secretProviderIdentityId=$secretProviderIdentityId
 ~~~
 
-## 卸载
+### 卸载
 
 如果报错invalid cluster id，先把helm release uninstall掉，再把kafka的PVC和PV删干净，再重新部署。
 
-# 部署kafka-ui
+## 部署kafka-ui
 
-## kafka-ui-config
+### kafka-ui-config
 
 - template/kafka_ui_user.yaml
 
@@ -720,7 +723,7 @@ helm upgrade -i commoninfra-kafka-config -n kube-system . --values ./values/valu
   helm upgrade -i commoninfra-kafka-ui-config -n kafka . --values $VALUES_FILE
   ~~~
 
-## kafka-ui本体
+### kafka-ui本体
 
 - 下载安装
 
@@ -800,10 +803,11 @@ annotations:
 helm upgrade -i kafka-ui -n kafka . --values values.yaml
 ~~~
 
-## kafka-ui连接cluster
+### kafka-ui连接cluster
 
 - 通过values.yaml环境变量来配置的。
   - ado里面配置的使用kafka-ui-client的secret做认证，在本地部署有点问题，遂添加AUTH_TYPE=DISABLED参数，在UI上就能看到online的cluster了。这样部署的话前面的kafka-ui-config就暂时不需要了。
+
 - 配置方法可以参考官网：[Kafka UI Configuration](https://docs.kafka-ui.provectus.io/configuration/configuration-file)
 
 ~~~yaml
@@ -862,13 +866,13 @@ env:
 
 ---
 
-# Kafka 生产避坑：副本同步与云厂商默认配置陷阱
+## Kafka 生产避坑：副本同步与云厂商默认配置陷阱
 
 > 来源：一次凌晨 2 点 Kafka 事故复盘——3 个消费者只有 1 个在工作，另外 2 个副本压根没同步。根因不是网络故障、代码 Bug 或硬件损坏，而是云厂商的"默认配置"在作祟。
 
-## 事故还原
+### 事故还原
 
-### 事故配置
+#### 事故配置
 
 | 参数 | 配置值 | 含义 |
 |------|-------|------|
@@ -876,7 +880,7 @@ env:
 | `min.insync.replicas` | **1** | 最少同步副本数 |
 | `acks` | 1 | 生产者确认机制 |
 
-### 触发链
+#### 触发链
 
 1. 凌晨 1:30，一个 Broker 节点磁盘故障离线
 2. 该节点上的副本全部不可用
@@ -885,12 +889,13 @@ env:
 5. 新 Leader 选举后，部分分区数据出现"空洞"
 6. 消费者读取到不一致数据，业务逻辑异常
 
-### 根因
+#### 根因
 
 `min.insync.replicas=1` 允许 Leader 确认写入时只要自己收到数据就算成功，不需要等待任何 Follower 确认。在多副本场景下，等于把数据一致性交给了运气。
+
 ![image.png](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260628231459615.png)
 
-## Kafka 副本同步核心参数
+### Kafka 副本同步核心参数
 
 | 参数 | 作用 |
 |------|------|
@@ -899,7 +904,7 @@ env:
 | `acks=all` | 生产者要求 Leader 等待所有 ISR（In-Sync Replicas）副本确认后才返回成功 |
 | `unclean.leader.election.enable` | 是否允许非 ISR 副本成为 Leader（生产环境必须设为 false） |
 
-### min.insync.replicas 对数据可靠性的影响
+#### min.insync.replicas 对数据可靠性的影响
 
 | min.insync.replicas | 允许丢失的副本数 | 数据可靠性 |
 |:-------------------:|:---------------:|:---------:|
@@ -907,9 +912,9 @@ env:
 | **2** | 1 个可以丢失 | ✅ 中（多数场景够用） |
 | 3 | 0 个可以丢失 | 高（强一致性，但性能有损） |
 
-## 生产环境标准配置
+### 生产环境标准配置
 
-### Kafka 核心参数
+#### Kafka 核心参数
 
 | 参数 | 开发/测试 | **生产环境** | 说明 |
 |------|:--------:|:----------:|------|
@@ -918,7 +923,7 @@ env:
 | `acks` | 1 | **all** | 等待所有 ISR 确认 |
 | `unclean.leader.election.enable` | true | **false** | 禁止非 ISR 副本成为 Leader |
 
-### Topic 创建
+#### Topic 创建
 
 ```bash
 kafka-topics --create \
@@ -930,7 +935,7 @@ kafka-topics --create \
   --zookeeper localhost:2181
 ```
 
-### 生产者端配置（Java）
+#### 生产者端配置（Java）
 
 ```java
 Properties props = new Properties();
@@ -940,7 +945,7 @@ props.put("enable.idempotence", true);                      // 开启幂等性
 props.put("max.in.flight.requests.per.connection", 1);      // 保证顺序
 ```
 
-### 监控告警
+#### 监控告警
 
 ```yaml
 # Prometheus 告警规则
@@ -957,11 +962,11 @@ props.put("max.in.flight.requests.per.connection", 1);      // 保证顺序
     summary: "存在未同步的分区副本"
 ```
 
-## 通用原则：云厂商默认配置审查清单
+### 通用原则：云厂商默认配置审查清单
 
 云厂商的默认配置通常是"最低可行配置"——让你先跑起来，不是"生产可用"。
 
-### 常见组件的"坑人默认配置"
+#### 常见组件的"坑人默认配置"
 
 | 组件 | 默认配置 | 风险 | 生产建议 |
 |------|---------|------|---------|
@@ -971,7 +976,7 @@ props.put("max.in.flight.requests.per.connection", 1);      // 保证顺序
 | **Nginx** | keepalive_timeout=75s | 连接堆积 | 调整为 15-30s |
 | **K8s Deployment** | replicas=1 | 单点故障 | replicas≥2 + PDB |
 
-### 部署前审查六问
+#### 部署前审查六问
 
 1. **高可用**：是否跨可用区部署？故障转移机制是什么？
 2. **数据持久性**：是否有数据丢失风险？备份策略是什么？
@@ -980,7 +985,7 @@ props.put("max.in.flight.requests.per.connection", 1);      // 保证顺序
 5. **升级策略**：自动升级是否开启？有没有兼容性问题？
 6. **费用**：默认配置会产生哪些额外费用（如跨 AZ 流量费）？
 
-### 三个不要
+#### 三个不要
 
 1. **不要相信"开箱即用"**——云厂商的默认配置是"最低可行配置"，不是"最佳配置"
 2. **不要只看控制台**——很多关键参数藏在配置文件或 API 里，控制台不显示

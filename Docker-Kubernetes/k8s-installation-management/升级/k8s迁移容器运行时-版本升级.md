@@ -9,15 +9,18 @@ aliases:
   - k8s版本升级
 ---
 
-# 将容器运行时从docker迁移到containerd
+# k8s迁移容器运行时与版本升级
 
-## 实验环境
+
+## 将容器运行时从docker迁移到containerd
+
+### 实验环境
 
 - master1、node1
 - k8s版本为1.23.1
 - OS版本为centos7.9
 
-## 封锁排空节点
+### 封锁排空节点
 
 - cordon、drain master节点
 
@@ -38,14 +41,14 @@ kubectl taint node k8s-node02 offline=true:NoSchedule
 kubectl taint node k8s-node02 offline=true:NoSchedule-
 ~~~
 
-## 停止并卸载docker
+### 停止并卸载docker
 
 ~~~sh
 systemctl disable docker  --now
 yum remove docker-ce docker-ce-cli -y
 ~~~
 
-## 安装配置containerd
+### 安装配置containerd
 
 - 安装containerd
 
@@ -78,7 +81,7 @@ sandbox_image = "registry.aliyuncs.com/google_containers/pause:3.7"
 systemctl enable containerd; systemctl restart containerd
 ~~~
 
-## 配置kubelet
+### 配置kubelet
 
 - 修改kubelet参数
 
@@ -100,30 +103,30 @@ metadata:
     kubeadm.alpha.kubernetes.io/cri-socket: /var/run/containerd/containerd.sock
 ~~~
 
-## 解锁节点调度
+### 解锁节点调度
 
 ~~~sh
 kubectl uncordon master1
 ~~~
 
-## 验证
+### 验证
 
 ~~~sh
 kubectl get nodes -owide
 ~~~
 
-## 迁移worker节点
+### 迁移worker节点
 
 - 遵循上面与master相同的步骤
 
-# k8s版本升级-1.23-1.24
+## k8s版本升级-1.23-1.24
 
-## 实验环境
+### 实验环境
 
 - 由1.23升级到1.24，包括了容器运行时由docker升级为containerd，升级kubernetes组件。这里接着上面升级到containerd继续进行。
 - 参考官网文档：http://kubernetes.io/docs/tasks/administer-cluster/kubeadm/kubeadm-upgrade
 
-## 封锁排空控制节点
+### 封锁排空控制节点
 
 ~~~sh
 kubectl cordon master1
@@ -140,7 +143,7 @@ kubectl taint node k8s-node02 offline=true:NoSchedule
 kubectl taint node k8s-node02 offline=true:NoSchedule-
 ~~~
 
-## 升级控制节点
+### 升级控制节点
 
 - 升级kubeadm
 
@@ -171,7 +174,7 @@ KUBELET_KUBEADM_ARGS="--pod-infra-container-image=registry.aliyuncs.com/google_c
 systemctl daemon-reload && systemctl restart kubelet
 ~~~
 
-## 升级工作节点
+### 升级工作节点
 
 - 步骤参考前面升级控制节点的步骤
 - 注意在升级kubeadm这一步命令为：
@@ -180,7 +183,7 @@ systemctl daemon-reload && systemctl restart kubelet
 kubeadm upgrade node
 ~~~
 
-# k8s patch版本升级-1.30.0-1.30.12
+## k8s patch版本升级-1.30.0-1.30.12
 
 参考：[Upgrading kubeadm clusters | Kubernetes](https://kubernetes.io/docs/tasks/administer-cluster/kubeadm/kubeadm-upgrade/)
 
@@ -192,7 +195,7 @@ yum list --showduplicates kubeadm --disableexcludes=kubernetes
 # kubeadm.x86_64  1.33.5-150500.1.1  kubernetes
 ~~~
 
-## 控制节点
+### 控制节点
 
 1. 封锁排空控制节点
 
@@ -234,7 +237,7 @@ yum list --showduplicates kubeadm --disableexcludes=kubernetes
    kubectl uncordon rm1
    ~~~
 
-## 工作节点
+### 工作节点
 
 1. 封锁排空
 
@@ -261,6 +264,7 @@ yum list --showduplicates kubeadm --disableexcludes=kubernetes
    systemctl daemon-reload && systemctl restart kubelet
    ~~~
    
+
 4. 恢复节点
 
    ~~~sh
@@ -268,9 +272,9 @@ yum list --showduplicates kubeadm --disableexcludes=kubernetes
    kubectl uncordon rn1
    ~~~
 
-# k8s minor版本升级-1.30-1.31
+## k8s minor版本升级-1.30-1.31
 
-## 升级前检查
+### 升级前检查
 
 节点需要先下线，可以使用如下步骤平滑下线：
 
@@ -305,7 +309,7 @@ yum list --showduplicates kubeadm --disableexcludes=kubernetes
 
 6. 查看有无异常的Pod：有无Pending/非Running状态的Pod
 
-## 控制节点
+### 控制节点
 
 1. 封锁排空控制节点
 
@@ -383,7 +387,7 @@ yum list --showduplicates kubeadm --disableexcludes=kubernetes
    kubectl uncordon rm1
    ~~~
 
-## 工作节点
+### 工作节点
 
 1. 封锁排空
 

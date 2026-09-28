@@ -15,36 +15,41 @@ aliases:
   - ECK日志收集平台
 ---
 
-# 云原生日志收集
+# 基于Helm+Operator部署ECK日志收集平台
 
-## 哪些日志需要收集
+
+## 云原生日志收集
+
+### 哪些日志需要收集
 
 1. 操作系统日志
    - `/var/log/messages` or `/var/log/syslog`
+
 2. k8s组件日志
    - k8s旧版,可指定日志路径,默认`/var/log/kube.*`
    - k8s新版,不能手动指定日志文件了,这不符合云原生设计要素。已经默认是收集到控制台,从而被`/var/log/message`收集了。
+
 3. 业务应用程序日志:
    - 云原生应用:输出至控制台(在`/var/log/containers`下是能看到的)
    - 非云原生:输出到本地文件,就抓这个文件;有些容器内的日志,宿主机上是不好找的,那就直接sidecar去拿容器日志。
 
-## 怎么收集
+### 怎么收集
 
-### 传统架构
+#### 传统架构
 
 1. **ELK(ElasticSearch + Logstash + Kibana)**:Logstash收集分析日志,发给ElasticSearch存储,Kibana从ES拿到数据可视化展示。
 2. 在K8s中进行了专门设计,变成**EFK(ElasticSearch + Fluentd + Kibana)**: Fluentd提供了一些配置可以把宿主机日志,k8s组件日志一锅端了全部发送到ES集群。
 3. 但是Fluentd对于亿级流量,支持性不好;而且配置复杂,很重。所以Fluentd又被替换成了**FileBeat/Fluent-bit**。但是不管怎么换,都是基于ES和Kibana的框架。
 
-### Loki轻量架构
+#### Loki轻量架构
 
 **Loki + Grafana + Promtail + Tempo**的架构,是grafana公司开发的轻量级日志框架,对于业务较少,日志流量不大的情况是比较新的框架。
 
 但是为业务扩张、日志量大做打算,还是要依赖于传统EFK框架。
 
-## 日志技术栈对比
+### 日志技术栈对比
 
-### Logstash
+#### Logstash
 
 - 成熟、功能齐全,可以收集、转换日志、对日志二次加工。
 - 可以从文件、消息队列中读取日志。
@@ -52,18 +57,18 @@ aliases:
 
 - 配置复杂,资源占用非常高。一般现在不用他收集日志,用他转换日志。
 
-### Fluentd
+#### Fluentd
 
 - 大部分情况是用在k8s环境中。原生的配置可以直接收集宿主机日志、k8s组件日志、容器日志一锅端。
 - 各种功能依赖于安装插件去实现,想要更改收集的源、发送的后端,就会配置起来很麻烦。
 - 资源占用还是很高。
 
-### Fluent-bit
+#### Fluent-bit
 
 - 轻量级Fluentd替代品,非常轻量大概只占4M内存,专门为IOT或者边缘场景设计的。
 - 新工具,功能待完善。不适合亿级流量。
 
-### Filebeat
+#### Filebeat
 
 - 也是属于ES stack厂家的一个轻量级日志收集器。
 - Auto-discovery可以自动发现k8s日志。
@@ -73,9 +78,9 @@ aliases:
 
 综合来看Filebeat是k8s上收集日志的最推荐的组件。
 
-# 生产环境日志收集架构
+## 生产环境日志收集架构
 
-## EFK+kafka集群搭建
+### EFK+kafka集群搭建
 
 <img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202507192212133.png" alt="image-20250719221238971" style="zoom:50%;" />
 
@@ -83,9 +88,9 @@ aliases:
 
 如果外部已经有了一套Kafka-Logstash-ES平台了,那么filebeat直接把日志抛到外部的Kafka的某一个topic当中就可以了。不用重复造轮子。
 
-## Filebeat日志收集方案
+### Filebeat日志收集方案
 
-### 容器日志
+#### 容器日志
 
 一般默认情况下容器日志在宿主机的/var/log/containers目录里面,filebeat可以直接获取到容器信息、pod信息、ns信息等。
 
@@ -93,18 +98,18 @@ filebeat也是pod形式部署的,怎么获取到宿主机的/var/log/containers?
 
 - filebeat用daemonset部署,用hostpath把/var/log/containers挂到filebeat的/var/log/containers。就能采集了。
 
-### 非云原生的文件日志
+#### 非云原生的文件日志
 
 比如有些app pod的日志是写到/tmp/xxx.log,可以注入一个filebeat sidecar容器:
 
 - 在app容器挂一个emptyDir的volume,共享日志路径;
 - filebeat也挂这个emptyDir Volume,把日志存到自己容器里(filebeat容器里面都映射到固定位置比如/app/xxx.log,这样配置起来比较统一),就能抓走日志了。
 
-### 操作系统和k8s组件日志
+#### 操作系统和k8s组件日志
 
 一般都在宿主机的/var/log路径下面,用hostPath挂到filebeat里面/var/log下,直接抓走。
 
-# 云原生ECK日志平台部署
+## 云原生ECK日志平台部署
 
 前面提到的ELK和EFK都是日志平台技术栈,而ECK(Elastic Cloud on k8s)是K8s的Operator,提供的是一个对ELK和EFK全生命周期管理的CRD资源。可以简化在K8s中部署、管理、扩展Elastic Stack的组件。
 
@@ -115,14 +120,14 @@ ECK的核心资源:
 - Beat:管理和部署Filebeat服务
 - Logstash:管理和部署Logstash服务
 
-## 部署Zookeeper+Kafka
+### 部署Zookeeper+Kafka
 
 注意:
 
 - 对于8.16的logstash,支持的是3.8.1的kakfa:[Logstash Kafka Plugin](https://www.elastic.co/guide/en/logstash/8.16/plugins-inputs-kafka.html#_description_35)
 - 所以要去查一下哪个helm chart版本是3.8.1的kafka:[kafka 30.1.8 · bitnami/bitnami](https://artifacthub.io/packages/helm/bitnami/kafka/30.1.8)。(helm chart版本:30.1.8)
 
-### 分别部署zk+kafka
+#### 分别部署zk+kafka
 
 用helm分别部署zookeeper和kafka集群,用的是bitnami的chart:
 
@@ -135,7 +140,7 @@ helm pull bitnami/zookeeper --version 13.8.5
 helm pull bitnami/kafka --version 32.3.6
 ```
 
-### 统一部署zk+kafka
+#### 统一部署zk+kafka
 
 不需要单独部署zk,可以用bitname/kafka helm chart里面自带的zookeeper,kafka的values这样写:
 
@@ -200,12 +205,12 @@ zookeeper:
 
 kafka安装完会有一个专门用于客户端连接的svc:`kafka.logging.svc.cluster.local:9092`,logstash和filebeat里面配置一下。
 
-## ECK operator/CRD安装
+### ECK operator/CRD安装
 
 1. 需要K8s版本>1.28。
 2. operator最好单独放到一个namespace里面,不要把operator和CRD资源都放一个namespace里面
 
-### 方法1:yaml安装
+#### 方法1:yaml安装
 
 参考:[Install ECK using the YAML manifests | Elastic Docs](https://www.elastic.co/docs/deploy-manage/deploy/cloud-on-k8s/install-using-yaml-manifest-quickstart)
 
@@ -217,7 +222,7 @@ kubectl apply -f https://download.elastic.co/downloads/eck/3.0.0/operator.yaml
 kubectl get -n elastic-system pods
 ```
 
-### 方法2:helm安装
+#### 方法2:helm安装
 
 ```sh
 helm repo add elastic https://helm.elastic.co
@@ -225,11 +230,11 @@ helm repo update
 helm pull elastic/eck-operator --version 3.0.0
 ```
 
-## 基于CRD部署ES集群
+### 基于CRD部署ES集群
 
 ES的高级配置在这里:[Elasticsearch configuration | Elastic Docs](https://www.elastic.co/docs/deploy-manage/deploy/cloud-on-k8s/elasticsearch-configuration)
 
-### yaml文件部署
+#### yaml文件部署
 
 ```yaml
 apiVersion: elasticsearch.k8s.elastic.co/v1
@@ -283,7 +288,7 @@ echo $PASSWORD
 curl -u "elastic:$PASSWORD" https://<es-http-svc-IP>:9200/_cluster/health?pretty -k
 ```
 
-## 基于CRD部署Logstash
+### 基于CRD部署Logstash
 
 logstash在这里的作用:
 
@@ -352,7 +357,7 @@ spec:
 - 官网上直接用的环境变量注入ES的信息,也可以;如果ES是外部的,那就用这里的手动配的形式。
 - ssl_certificate_authorities => "${`ES_CLUSTER`_ES_SSL_CERTIFICATE_AUTHORITY}" 注意配置正确的集群名称
 
-## 基于CRD部署Filebeat
+### 基于CRD部署Filebeat
 
 注意filebeat一定要和ES版本一致。可以配置自动发现、基于inputs的发现。
 
@@ -361,7 +366,7 @@ Filebeat的高级配置在这里:
 - [Configuration | Elastic Docs](https://www.elastic.co/docs/deploy-manage/deploy/cloud-on-k8s/configuration-beats)
 - 自动发现:[Configuration | Elastic Docs](https://www.elastic.co/docs/deploy-manage/deploy/cloud-on-k8s/configuration-beats#k8s-beat-role-based-access-control-for-beats)
 
-### 收集文件日志和按照ns标签收集日志
+#### 收集文件日志和按照ns标签收集日志
 
 ```yaml
 apiVersion: beat.k8s.elastic.co/v1beta1
@@ -520,7 +525,7 @@ rules:
 1. /var/log/containers软链到了/var/log/pods,两个都要挂进去。软链接的文件名可能会被解析一些字段。
 2. 这种配置把所有输出到控制台的容器日志一锅端全部收集走了。但是不能收集容器内的文件日志。
 
-### ns打标签
+#### ns打标签
 
 由于filebeat配置了自动发现基于namespace,所以要给想收集日志的ns打标签
 
@@ -537,7 +542,7 @@ metadata:
 kubectl label namespace kube-system filebeat=true
 ```
 
-### Filebeat收集指定namespace的日志
+#### Filebeat收集指定namespace的日志
 
 有时候可能只需要收集部分空间的日志,而并不是收集所有的日志,此时通过修改Filebeat的配置,实现只收集部分空间的日志。
 
@@ -705,11 +710,11 @@ rules:
   - watch
 ```
 
-### 收集容器内日志
+#### 收集容器内日志
 
 有些程序在设计时,并没有符合云原生设计,也就是把程序的日志直接输出到了本地文件,此时如果也需要收集日志,可以在程序的Pod内,启动一个Filebeat的容器,用于收集日志。
 
-#### 应用程序
+##### 应用程序
 
 这个app把日志写到容器里面的某个文件中了,这样kubectl log -f是看不到日志输出的。
 
@@ -760,7 +765,7 @@ spec:
           emptyDir: {}
 ```
 
-#### 添加sidecar
+##### 添加sidecar
 
 ```yaml
 apiVersion: apps/v1
@@ -878,13 +883,13 @@ data:
       keep_alive: 30s
 ```
 
-## 基于CRD部署Kibana
+### 基于CRD部署Kibana
 
 注意Kibana一定要和ES版本一致。按照集群名称找到对应的ES集群。
 
 Kibana的高级配置在这里:[Kibana configuration | Elastic Docs](https://www.elastic.co/docs/deploy-manage/deploy/cloud-on-k8s/kibana-configuration)
 
-### yaml文件部署
+#### yaml文件部署
 
 ```yaml
 apiVersion: kibana.k8s.elastic.co/v1
@@ -933,7 +938,7 @@ kubectl get kibana -n logging
 
 用户名密码和ES的一样
 
-## 用Kibana UI查看日志
+### 用Kibana UI查看日志
 
 1. 待所有的 Pod 启动完成后,即可使用 Kibana 查询日志。
 2. 用户名密码是在logstash的配置文件里面指定的(elastic/7JxHfm0659LLMPF6519aO5nu)登录 Kibana 。

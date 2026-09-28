@@ -7,9 +7,12 @@ aliases:
   - k8s-dashboard
 ---
 
-# Dashboard安装
+# K8s 部署 Dashboard UI
 
-## 镜像准备
+
+## Dashboard安装
+
+### 镜像准备
 
 ```bash
 #上传镜像和yaml文件：dashboard_2_0_0.tar.gz、metrics-scrapter-1-0-1.tar.gz、kubernetes-dashboard.yaml
@@ -22,7 +25,7 @@ ctr images import metrics-scrapter-1-0-1.tar.gz
 ctr images list
 ```
 
-## 安装配置
+### 安装配置
 
 ```bash
 #安装
@@ -43,7 +46,7 @@ kubernetes-dashboard        NodePort    10.109.139.152   <none>        443:30868
 #https://20.187.116.220:30868
 ```
 
-## 解决无法访问问题
+### 解决无法访问问题
 
 浏览器出于安全原因拒绝访问：
 
@@ -51,9 +54,9 @@ kubernetes-dashboard        NodePort    10.109.139.152   <none>        443:30868
 
 在google/Edge浏览器中，页面任意空白位置，直接键盘敲入：thisisunsafe，可以直接跳过安全报错进入页面。
 
-## 登录dashboard
+### 登录dashboard
 
-### token方式
+#### token方式
 
 - 查看安装dashboard的时候创建的SA
 
@@ -87,7 +90,7 @@ kubernetes-dashboard        NodePort    10.109.139.152   <none>        443:30868
 > kubectl create token admin-user -n kube-system --duration=365h
 > ~~~
 
-### kubeconfig方式
+#### kubeconfig方式
 
 ```bash
 #进入证书目录
@@ -110,9 +113,9 @@ kubectl config use-context dashboard-admin@kubernetes --kubeconfig=/root/dashboa
 #把刚才的kubeconfig文件dashboard-admin.conf复制到桌面,浏览器访问时使用kubeconfig认证，把刚才的dashboard-admin.conf导入到web界面，就可以登陆了.
 ```
 
-# 【附】Dashboard部署文件
+## 【附】Dashboard部署文件
 
-## dashboard.yaml
+### dashboard.yaml
 
 ~~~yaml
 # Copyright 2017 The Kubernetes Authors.
@@ -424,7 +427,7 @@ spec:
           emptyDir: {}
 ~~~
 
-## dashboard-user.yaml
+### dashboard-user.yaml
 
 ~~~yaml
 apiVersion: v1
@@ -449,7 +452,7 @@ subjects:
   namespace: kube-system
 ~~~
 
-## metrics-server
+### metrics-server
 
 ~~~yaml
 apiVersion: v1

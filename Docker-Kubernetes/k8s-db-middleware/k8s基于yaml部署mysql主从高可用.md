@@ -7,12 +7,15 @@ aliases:
   - K8s部署MySQL主从
 ---
 
+# K8s基于YAML部署MySQL主从高可用
+
+
 > [!warning] 注意
 > 如果需要mysql对性能要求很高，建议不要在k8s中部署，还是建议直接在服务器上部署
 
-# 部署nfs
+## 部署nfs
 
-## 安装nfs供应商
+### 安装nfs供应商
 
 - 上传安装包
 
@@ -121,9 +124,9 @@ EOF
 kubectl apply -f sc-nfs.yaml
 ~~~
 
-# sts部署mysql高可用服务
+## sts部署mysql高可用服务
 
-## mysql简介
+### mysql简介
 
 - MySQL是一种关系型数据库管理系统，关系数据库将数据保存在不同的表中，而不是将所有数据放在一个大仓库内，这样就增加了速度并提高了灵活性。MySQL所使用的 SQL 语言是用于访问数据库的最常用标准化语言。MySQL 软件采用了双授权政策，分为社区版和商业版，由于其体积小、速度快、总体拥有成本低，尤其是开放源码这一特点，一般中小型网站的开发都选择 MySQL 作为网站数据库。
 
@@ -136,7 +139,7 @@ kubectl apply -f sc-nfs.yaml
 
   ![image-20240428092946740](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202404280931707.png)
 
-## 部署configMap
+### 部署configMap
 
 - 创建configmap
 
@@ -162,7 +165,7 @@ EOF
 kubectl apply -f mysql-configmap.yaml
 ~~~
 
-## 部署svc
+### 部署svc
 
 - 创建svc，需要两个svc：mysql和mysql-read
 
@@ -200,7 +203,7 @@ kubectl apply -f svc-mysql.yaml
 ##用户所有写请求，必须以 DNS 记录的方式直接访问到 Master 节点，也就是 mysql-0.mysql 这条DNS记录。用户所有读请求需要访问mysql-read 这条DNS记录。
 ~~~
 
-## 部署mysql sts
+### 部署mysql sts
 
 - 准备镜像，注意镜像要上传到工作节点
 
@@ -395,7 +398,7 @@ spec:
 > 4. 最后，使用 ncat 监听 3307 端口，当接收到传输请求时，执行 xtrabackup 命令，备份 MySQL 的数据并发送给请求者。
 > 5. 因此，该代码的主要功能是根据备份信息来实现集群初始化、启动 Slave，以及在接收传输请求时备份 MySQL 数据。
 
-## 验证高可用方案
+### 验证高可用方案
 
 ~~~sh
 #上传mysql镜像到node1
@@ -419,7 +422,7 @@ mysql> select * from demo.messages;
 mysql> show slave status\G
 ~~~
 
-# 搭建简单测试用mysql
+## 搭建简单测试用mysql
 
 ~~~yaml
 ---
@@ -493,7 +496,7 @@ data:
   mysql-root-password: cGFzc3dvcmQ= # password, base64 encoded
 ~~~
 
-# 搭建简单oracle服务
+## 搭建简单oracle服务
 
 ~~~yaml
 apiVersion: v1

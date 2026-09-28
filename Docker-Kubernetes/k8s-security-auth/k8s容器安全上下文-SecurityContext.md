@@ -12,6 +12,9 @@ tags:
   - "SecurityContext"
 ---
 
+# Kubernetes 容器安全上下文完全指南：从入门到生产避坑
+
+
 ## Security Context 到底是什么
 
 Security Context 是 Kubernetes 用来定义 Pod 或容器**运行时权限与访问控制**的一组配置。它本质上是在告诉容器运行时："这个进程该以什么身份、有什么权限、能调用哪些内核功能。"
@@ -371,6 +374,7 @@ Error: container has runAsNonRoot and image will run as root
 **原因**：容器镜像默认以 root 用户运行（大多数基础镜像都是这样），而 `runAsNonRoot: true` 要求容器必须以非 root 运行。
 
 **解决**：
+
 - 方案一：设置 `runAsUser: 1000` 显式指定非 root UID
 - 方案二：修改 Dockerfile，用 `USER 1000:1000` 指定非 root 用户
 
@@ -400,6 +404,7 @@ forbidden sysctl: "net.core.somaxconn" not allowed in the pod's security context
 **原因**：不安全 sysctl 需要在节点上显式启用。
 
 **解决**：
+
 1. 确认该 sysctl 是否确实需要（很多场景其实不需要调）
 2. 联系集群管理员在 kubelet 的 `--allowed-unsafe-sysctls` 中添加
 3. 或在 Pod 安全策略/SCC 中配置 `allowedUnsafeSysctls`

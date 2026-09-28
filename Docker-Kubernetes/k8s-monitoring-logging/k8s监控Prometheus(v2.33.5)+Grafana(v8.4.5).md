@@ -10,13 +10,16 @@ aliases:
   - K8s部署Prometheus v2.33.5和Grafana v8.4.5
 ---
 
-# Prometheus v2.33.5部署
+# K8s监控Prometheus(v2.33.5)+Grafana(v8.4.5)
 
-## 部署node-exporter
+
+## Prometheus v2.33.5部署
+
+### 部署node-exporter
 
 - node-exporter可以采集机器(物理机、虚拟机、云主机等)的监控指标数据,能够采集到的指标包括CPU, 内存,磁盘,网络,文件数等信息。
 
-### 安装node-exporter
+#### 安装node-exporter
 
 ```sh
 kubectl create ns monitor-sa
@@ -90,7 +93,7 @@ spec:
             path: /
 ```
 
-### 验证exporter数据采集
+#### 验证exporter数据采集
 
 ```sh
 #查看宿主机的9100端口占用
@@ -99,9 +102,9 @@ ss -antulp | grep :9100
 curl http://192.168.40.5:9100/metrics
 ```
 
-## 部署prometheus
+### 部署prometheus
 
-### 创建sa并授权
+#### 创建sa并授权
 
 ```sh
 kubectl create serviceaccount monitor -n monitor-sa
@@ -151,7 +154,7 @@ kubectl create clusterrolebinding monitor-clusterrolebinding-1 -n monitor-sa --c
 >   name: system:serviceaccount:monitor:monitor-sa
 > ```
 
-### 创建数据存储目录
+#### 创建数据存储目录
 
 ```sh
 #在node-1上创建数据目录并给满权限(否则prometheus写不进去数据)
@@ -159,9 +162,9 @@ mkdir /data
 chmod 777 /data/
 ```
 
-### 安装prometheus server服务
+#### 安装prometheus server服务
 
-#### 创建configmap存储配置
+##### 创建configmap存储配置
 
 ```yaml
 ---
@@ -257,7 +260,7 @@ data:
 >
 > job_name: 'kubernetes-service-endpoints' :创建svc的时候加一个annotation,svc就能被这个job监控到
 
-#### 创建prometheus pod
+##### 创建prometheus pod
 
 - 通过deployment把prometheus server调度到有数据目录的node-1上面
 
@@ -344,7 +347,7 @@ data:
   >   storageClassName:  sc-nfs
   > ```
 
-#### 创建svc代理prometheus server
+##### 创建svc代理prometheus server
 
 ```yaml
 apiVersion: v1
@@ -365,9 +368,9 @@ spec:
     protocol: TCP
 ```
 
-# Grafana v8.4.5部署
+## Grafana v8.4.5部署
 
-## 部署Grafana服务
+### 部署Grafana服务
 
 ```sh
 #grafana用到的镜像为k8s.gcr.io/heapster-grafana-amd64:v5.0.4
@@ -505,7 +508,7 @@ spec:
 >   storageClassName:  sc-nfs
 > ```
 
-## 接入prometheus服务
+### 接入prometheus服务
 
 - 通过nodeIP:nodeport登陆grafana,在浏览器访问UI
 
@@ -523,6 +526,6 @@ spec:
 
 ![image-20240105161545724](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202401051615776.png)
 
-## 导入监控模板
+### 导入监控模板
 
 - import **node_exporter.json**、**docker_rev1.json** (ID为:8919,9276,11074)

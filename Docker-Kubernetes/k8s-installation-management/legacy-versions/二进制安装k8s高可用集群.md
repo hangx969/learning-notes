@@ -9,7 +9,10 @@ aliases:
   - binary install k8s
 ---
 
-# 二进制安装 vs kubeadm安装
+# 二进制安装k8s高可用集群
+
+
+## 二进制安装 vs kubeadm安装
 
 - kubeadm是官方提供的开源工具，用于快速搭建kubernetes集群，相当于用程序脚本帮我们装好了集群，属于自动部署，简化部署操作，自动部署屏蔽了很多细节，使得对各个模块感知很少，如果对k8s架构组件理解不深的话，遇到问题比较难排查。Kubeadm初始化k8s，所有的组件都是以pod形式运行的，具备故障自恢复能力。kubeadm适合需要经常部署k8s，或者对自动化要求比较高的场景下使用。
 
@@ -17,13 +20,13 @@ aliases:
 
 - Kubeadm和二进制都适合生产环境，在生产环境运行都很稳定，具体如何选择，可以根据实际项目进行评估。
 
-# 二进制安装多master高可用集群1.20.7
+## 二进制安装多master高可用集群1.20.7
 
-## 架构图
+### 架构图
 
 ![image-20240226215935013](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202402262159081.png)
 
-## 实验机器规划
+### 实验机器规划
 
 - 操作系统：centos7.9
 
@@ -43,9 +46,9 @@ aliases:
 | 工作节点    | 172.16.183.79 | binnode1   | kubelet、kube-proxy、docker、calico、coredns                 |
 | Vip         | 172.16.183.75 |            |                                                              |
 
-## 实验环境准备
+### 实验环境准备
 
-### 设置静态IP
+#### 设置静态IP
 
 ~~~sh
 vi /etc/sysconfig/network-scripts/ifcfg-ens33
@@ -72,13 +75,13 @@ ONBOOT=yes #开机自启动网络，必须是yes
 
 > - VMware上由模板机复制过来的VM，要删掉网卡配置的UUID字段
 
-### 修改主机名
+#### 修改主机名
 
 ~~~sh
 hostnamectl set-hostname binmaster1 && bash #binmaster2 binmaster3 binnode1
 ~~~
 
-### 配置hosts文件
+#### 配置hosts文件
 
 ~~~sh
 tee -a /etc/hosts << 'EOF'
@@ -89,27 +92,27 @@ tee -a /etc/hosts << 'EOF'
 EOF
 ~~~
 
-### 配置ssh免密登录
+#### 配置ssh免密登录
 
 ~~~sh
 ssh-keygen -t rsa
 ssh-copy-id -i .ssh/id_rsa.pub binmaster1
 ~~~
 
-### 关闭firewalld
+#### 关闭firewalld
 
 ~~~sh
 systemctl stop firewalld && systemctl disable firewalld
 ~~~
 
-### 关闭Selinux
+#### 关闭Selinux
 
 ~~~bash
 sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config
 reboot -f
 ~~~
 
-### 关闭交换分区
+#### 关闭交换分区
 
 ~~~bash
 swapoff -a
@@ -117,7 +120,7 @@ vim /etc/fstab
 #/dev/mapper/centos-swap swap      swap    defaults        0 0
 ~~~
 
-### 修改内核参数-开路由转发
+#### 修改内核参数-开路由转发
 
 ~~~bash
 modprobe br_netfilter 
@@ -131,7 +134,7 @@ EOF
 sysctl -p /etc/sysctl.d/k8s.conf 
 ~~~
 
-### 配置阿里云repo源
+#### 配置阿里云repo源
 
 ~~~sh
 #安装rzsz命令
@@ -212,7 +215,7 @@ enabled=0
 gpgkey=http://mirrors.aliyun.com/centos/RPM-GPG-KEY-CentOS-7
 ~~~
 
-### 配置阿里云docker源
+#### 配置阿里云docker源
 
 ~~~sh
 yum install yum-utils -y
@@ -220,7 +223,7 @@ yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/d
 #会把阿里云的docker源的配置给拉下来。
 ~~~
 
-### 安装基础软件包
+#### 安装基础软件包
 
 ~~~bash
 yum install -y device-mapper-persistent-data lvm2 wget net-tools nfs-utils lrzsz gcc gcc-c++ make cmake libxml2-devel openssl-devel curl curl-devel unzip sudo ntp libaio-devel wget vim ncurses-devel autoconf automake zlib-devel python-devel epel-release openssh-server socat conntrack telnet ipvsadm openssh-clients
@@ -236,7 +239,7 @@ yum install -y device-mapper-persistent-data lvm2 wget net-tools nfs-utils lrzsz
 > sed -i 's/pgcheck=1/pgcheck=0/g' /etc/yum.repos.d/epel.repo
 > ~~~
 
-### 配置时间同步
+#### 配置时间同步
 
 ~~~bash
 #安装ntpdate命令
@@ -250,7 +253,7 @@ crontab -e
 service crond restart
 ~~~
 
-### 安装iptables
+#### 安装iptables
 
 ~~~sh
 #安装iptables
@@ -261,7 +264,7 @@ service iptables stop && systemctl disable iptables
 iptables -F
 ~~~
 
-### 开启IPVS
+#### 开启IPVS
 
 - 不开启ipvs将会使用iptables进行数据包转发，但是效率低，所以官网推荐需要开通ipvs。
 
@@ -294,7 +297,7 @@ chmod 755 /etc/sysconfig/modules/ipvs.modules && bash /etc/sysconfig/modules/ipv
 >
 >   3、ipvs 支持服务器健康检查和连接重试等功能
 
-### 安装配置docker-ce
+#### 安装配置docker-ce
 
 - 安装
 
@@ -318,16 +321,16 @@ systemctl status docker
 #修改docker文件驱动为systemd，默认为cgroupfs，kubelet默认使用systemd，两者必须一致才可以。
 ~~~
 
-## 搭建etcd集群
+### 搭建etcd集群
 
-### 配置ectd工作目录
+#### 配置ectd工作目录
 
 ~~~sh
 #3台master上
 mkdir -p /etc/etcd/ssl
 ~~~
 
-### 安装签发证书工具cfssl
+#### 安装签发证书工具cfssl
 
 > cfssl 是 CloudFlare 开源的一款PKI/TLS工具。 CFSSL 包含一个命令行工具(cfssl, cfssljson)用于签名，可以生成CA，签发证书
 > 使用cfssl需要两个文件：
@@ -348,7 +351,7 @@ mv cfssljson_linux-amd64 /usr/local/bin/cfssljson
 mv cfssl-certinfo_linux-amd64 /usr/local/bin/cfssl-certinfo
 ~~~
 
-### 配置CA证书请求
+#### 配置CA证书请求
 
 ~~~sh
 #生成ca证书请求文件,mater1上
@@ -405,7 +408,7 @@ cfssl gencert -initca ca-csr.json  | cfssljson -bare ca
 >
 > - 在这个例子中，`cfssl gencert -initca ca-csr.json`生成一个新的自签名证书和私钥，然后通过管道传递给`cfssljson -bare ca`，它从JSON输出中提取证书和私钥，并将它们分别写入`ca.pem`和`ca-key.pem`文件。后面所有证书都是由ca.pem这个证书来颁发的
 
-### 生成CA证书文件
+#### 生成CA证书文件
 
 ~~~sh
 tee -a ca-config.json << 'EOF'
@@ -430,7 +433,7 @@ tee -a ca-config.json << 'EOF'
 EOF
 ~~~
 
-### 生成etcd证书
+#### 生成etcd证书
 
 ~~~sh
 #配置etcd证书请求，hosts的ip变成自己etcd所在节点的ip。可以预先写进去一些冗余的IP，方便后面扩容。 
@@ -471,9 +474,9 @@ ls etcd*.pem
 > 3. *-key.pem - 私匙文件，base64格式，有-----BEGIN RSA PRIVATE KEY-----标识
 > 4. *.pem - 证书文件，base64格式，可以用cfssl certinfo -cert 文件名查看有效期，有-----BEGIN CERTIFICATE-----标识
 
-### 部署etcd集群
+#### 部署etcd集群
 
-#### 上传镜像
+##### 上传镜像
 
 - 上传etcd-v3.4.13-linux-amd64.tar.gz上传到master1的/data/work目录下
 
@@ -485,7 +488,7 @@ scp -r  etcd-v3.4.13-linux-amd64/etcd* binmaster2:/usr/local/bin/
 scp -r  etcd-v3.4.13-linux-amd64/etcd* binmaster3:/usr/local/bin/
 ~~~
 
-#### 创建配置文件
+##### 创建配置文件
 
 ~~~sh
 tee -a etcd.conf << 'EOF' 
@@ -521,7 +524,7 @@ EOF
 >
 > ETCD_INITIAL_CLUSTER_STATE：加入集群的当前状态，new是新集群，existing表示加入已有集群
 
-#### 创建启动服务文件
+##### 创建启动服务文件
 
 ~~~sh
 #master1上
@@ -566,7 +569,7 @@ for i in binmaster2 binmaster3;do rsync -vaz etcd*.pem ca*.pem $i:/etc/etcd/ssl/
 for i in binmaster2 binmaster3;do rsync -vaz etcd.service $i:/usr/lib/systemd/system/;done
 ~~~
 
-#### 启动etcd集群
+##### 启动etcd集群
 
 ~~~sh
 #3台master上，创建etcd的数据目录
@@ -617,7 +620,7 @@ systemctl start etcd.service
 systemctl status etcd
 ~~~
 
-### 查看etcd集群健康状态
+#### 查看etcd集群健康状态
 
 ~~~sh
 #master1上
@@ -626,7 +629,7 @@ echo $ETCDCTL_API
 /usr/local/bin/etcdctl --write-out=table --cacert=/etc/etcd/ssl/ca.pem --cert=/etc/etcd/ssl/etcd.pem --key=/etc/etcd/ssl/etcd-key.pem --endpoints=https://172.16.183.76:2379,https://172.16.183.77:2379,https://172.16.183.78:2379  endpoint health
 ~~~
 
-## 安装k8s组件
+### 安装k8s组件
 
 - Kubernetes API的请求从发起到其持久化⼊库的流程如下：
   1. 认证阶段（Authentication）
@@ -638,7 +641,7 @@ echo $ETCDCTL_API
      - ⾸先访问者会使⽤由集群CA签发的，或是添加在apiserver配置中的授信CA签发的客户端证书去访问apiserver。apiserver在接收到请求后，会进⾏TLS的握⼿流程。
      - 除了验证证书的合法性，apiserver还会校验客户端证书的请求源地址等信息，开启双向认证。
 
-### 下载安装包
+#### 下载安装包
 
 - 二进制包所在的github地址如下：[Kubernetes CHANGELOG](https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/)，可以按照版本下载二进制包。控制节点组件，找到Server Binaries，下载amd64版本的。server binaries二进制包里面就包含了：controller-manager，apiserver，scheduler等控制平面组件。其实也包含了工作节点需要的kubelet和kubeproxy
 - 这里下载的是1.20.7版本
@@ -659,9 +662,9 @@ mkdir -p /etc/kubernetes/ssl/
 mkdir -p /var/log/kubernetes
 ~~~
 
-### 部署apiserver组件
+#### 部署apiserver组件
 
-#### bootstrapping机制
+##### bootstrapping机制
 
 - 启动TLS Bootstrapping 机制
   - Master apiserver启用TLS认证后，每个节点的 kubelet 组件都要使用由 apiserver 使用的 CA 签发的有效证书才能与 apiserver 通讯，当Node节点很多时，这种客户端证书颁发需要大量工作，同样也会增加集群扩展复杂度。
@@ -706,7 +709,7 @@ users:
 
   - 首次启动时，可能与遇到 kubelet 报 401 无权访问 apiserver 的错误；这是因为在默认情况下，kubelet 通过 `bootstrap.kubeconfig` 中的预设用户 Token 声明了自己的身份，然后创建 CSR 请求。但是不要忘记这个用户在我们不处理的情况下他没任何权限的，包括创建CSR请求的权限也没有。所以需要创建一个 `ClusterRoleBinding`，将预设用户 `kubelet-bootstrap` 与内置的 `ClusterRole system:node-bootstrapper` 绑定到一起，使其能够发起 CSR 请求。
 
-#### 创建token.csv文件
+##### 创建token.csv文件
 
 ~~~sh
 #master1上
@@ -716,7 +719,7 @@ EOF
 #格式：token，用户名，UID，用户组
 ~~~
 
-#### 创建csr请求文件
+##### 创建csr请求文件
 
 - 集群中所有系统组件与apiserver通讯⽤到的证书，其实都是由集群根CA签发的
 
@@ -758,14 +761,14 @@ tee -a kube-apiserver-csr.json << 'EOF'
 EOF
 ~~~
 
-#### 生成证书
+##### 生成证书
 
 ~~~sh
 #master1上
 cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-config.json -profile=kubernetes kube-apiserver-csr.json | cfssljson -bare kube-apiserver
 ~~~
 
-#### 创建apiserver的配置文件
+##### 创建apiserver的配置文件
 
 ~~~sh
 #master1上
@@ -847,7 +850,7 @@ EOF
 >
 > -audit-log-xxx：审计日志
 
-#### 创建服务启动文件
+##### 创建服务启动文件
 
 ~~~sh
 #master1上
@@ -900,9 +903,9 @@ curl --insecure https://172.16.183.76:6443/
 #上面看到401，这个是正常的的状态，还没认证
 ~~~
 
-### 部署kubectl组件
+#### 部署kubectl组件
 
-#### 配置kubeconfig文件
+##### 配置kubeconfig文件
 
 - Kubectl操作资源的时候，怎么知道连接到哪个集群？需要一个文件/etc/kubernetes/admin.conf，kubectl会根据这个文件的配置，去访问k8s资源。/etc/kubernetes/admin.conf文件记录了访问的k8s集群，和用到的证书。
 
@@ -922,7 +925,7 @@ cp /etc/kubernetes/admin.conf /root/.kube/config
 
 ==二进制安装这里没有admin.conf这个文件，直接就用/root/.kube/config，所以不用做上面的步骤==
 
-#### 创建csr请求文件
+##### 创建csr请求文件
 
 ~~~sh
 #master1上
@@ -961,7 +964,7 @@ EOF
 >
 > - 这个admin证书是将来生成管理员用的kube config 配置文件用的，现在我们一般建议使用RBAC来对kubernetes进行角色权限控制，kubernetes将证书中的CN字段作为User， O 字段作为 Group； "O": "system:masters", 必须是system:masters，否则后面kubectl create clusterrolebinding报错。
 
-#### 生成证书
+##### 生成证书
 
 ~~~sh
 #master1上
@@ -971,7 +974,7 @@ cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-config.json -profile=kube
 cp admin*.pem /etc/kubernetes/ssl/
 ~~~
 
-#### 配置安全上下文
+##### 配置安全上下文
 
 - 创建kubeconfig配置文件
 
@@ -1016,9 +1019,9 @@ source '/root/.kube/completion.bash.inc'
 source $HOME/.bash_profile
 ```
 
-### 部署kube-controller-manager组件
+#### 部署kube-controller-manager组件
 
-#### 创建csr请求文件
+##### 创建csr请求文件
 
 ```sh
 #master1上
@@ -1052,7 +1055,7 @@ EOF
 
 > 注：hosts 列表包含所有 kube-controller-manager 节点 IP； CN 为 system:kube-controller-manager、O 为 system:kube-controller-manager，kubernetes 内置的 ClusterRoleBindings system:kube-controller-manager 赋予 kube-controller-manager 工作所需的权限
 
-#### 生成证书
+##### 生成证书
 
 ~~~sh
 #master1上
@@ -1060,7 +1063,7 @@ cd /data/work
 cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-config.json -profile=kubernetes kube-controller-manager-csr.json | cfssljson -bare kube-controller-manager
 ~~~
 
-#### 创建kube-controller-manager的kubeconfig
+##### 创建kube-controller-manager的kubeconfig
 
 ~~~sh
 #master1上
@@ -1075,7 +1078,7 @@ kubectl config set-context system:kube-controller-manager --cluster=kubernetes -
 kubectl config use-context system:kube-controller-manager --kubeconfig=kube-controller-manager.kubeconfig
 ~~~
 
-#### 创建配置文件kube-controller-manager.conf
+##### 创建配置文件kube-controller-manager.conf
 
 ~~~sh
 #master1上
@@ -1110,7 +1113,7 @@ EOF
 #这里的--bind-address=127.0.0.1 ，绑定了本机IP而非网卡IP，官方在1.20之后是这样设计的，为了避免物理机上curl能访问到，更安全。
 ~~~
 
-#### 创建启动文件
+##### 创建启动文件
 
 ~~~sh
 #master1上
@@ -1129,7 +1132,7 @@ WantedBy=multi-user.target
 EOF
 ~~~
 
-#### 启动服务
+##### 启动服务
 
 ~~~sh
 #master1上
@@ -1152,9 +1155,9 @@ systemctl status kube-controller-manager
 ss -antulp | grep 10252 #查看端口占用
 ~~~
 
-## 部署kube-scheduler组件
+### 部署kube-scheduler组件
 
-### 创建csr请求
+#### 创建csr请求
 
 ```sh
 #master1上
@@ -1189,13 +1192,13 @@ EOF
 > - 证书请求文件让system:kube-scheduler这个用户被api-server信任，后面scheduler就能访问apiserver了，至于权限是由kubernetes 内置的 ClusterRoleBindings system:kube-scheduler 将赋予 kube-scheduler 工作所需的权限。
 > - hosts 列表包含所有 kube-scheduler 节点 IP； CN 为 system:kube-scheduler、O 为 system:kube-scheduler，
 
-### 生成证书
+#### 生成证书
 
 ```sh
 cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-config.json -profile=kubernetes kube-scheduler-csr.json | cfssljson -bare kube-scheduler
 ```
 
-### 创建kubeconfig
+#### 创建kubeconfig
 
 1. 设置集群参数
 
@@ -1222,7 +1225,7 @@ kubectl config set-context system:kube-scheduler --cluster=kubernetes --user=sys
 kubectl config use-context system:kube-scheduler --kubeconfig=kube-scheduler.kubeconfig
 ```
 
-### 创建配置文件kube-scheduler.conf
+#### 创建配置文件kube-scheduler.conf
 
 ```sh
 tee -a kube-scheduler.conf <<'EOF' 
@@ -1237,7 +1240,7 @@ EOF
 #kube-scheduler.kubeconfig里面已经指定了apiserver地址以及证书。
 ```
 
-### 创建服务启动文件
+#### 创建服务启动文件
 
 ```sh
 tee -a kube-scheduler.service <<'EOF' 
@@ -1256,7 +1259,7 @@ WantedBy=multi-user.target
 EOF
 ```
 
-### 启动服务
+#### 启动服务
 
 ```sh
 #master1上
@@ -1277,19 +1280,19 @@ systemctl start kube-scheduler
 systemctl status kube-scheduler
 ```
 
-## 导入coredns镜像包
+### 导入coredns镜像包
 
 ```sh
 #把pause-cordns.tar.gz上传到node1节点，手动解压。pause和coredns是工作节点调度创建pod需要用到。
 docker load -i pause-cordns.tar.gz
 ```
 
-## 部署kubelet组件
+### 部署kubelet组件
 
 - kubelet： 每个Node节点上的kubelet定期就会调用API Server的REST接口报告自身状态，API Server接收这些信息后，将节点状态信息更新到etcd中。kubelet也通过API Server监听Pod信息，从而对Node机器上的POD进行管理，如创建、删除、更新Pod。
 - master节点上不需要调度pod，所以不需要安装kubelet 
 
-### 配置bootstrap token
+#### 配置bootstrap token
 
 ```sh
 #在master1上
@@ -1302,7 +1305,7 @@ kubectl config use-context default --kubeconfig=kubelet-bootstrap.kubeconfig
 kubectl create clusterrolebinding kubelet-bootstrap --clusterrole=system:node-bootstrapper --user=kubelet-bootstrap
 ```
 
-### 创建配置文件kubelet.json
+#### 创建配置文件kubelet.json
 
 - "cgroupDriver": "systemd"要和docker的驱动一致。
 - address替换为各个worker节点的IP地址。
@@ -1347,7 +1350,7 @@ tee -a kubelet.json <<'EOF'
 EOF
 ```
 
-### 创建kubelet服务启动文件
+#### 创建kubelet服务启动文件
 
 ```sh
 tee -a kubelet.service <<'EOF'
@@ -1392,7 +1395,7 @@ scp ca.pem binnode1:/etc/kubernetes/ssl/
 scp kubelet.service binnode1:/usr/lib/systemd/system/
 ```
 
-### 启动kubelet服务
+#### 启动kubelet服务
 
 ```sh
 #node1上
@@ -1410,9 +1413,9 @@ kubectl get nodes
 #会显示binnode1的notready状态，是因为还未安装网络插件。kubelet暂时不能与apiserver通信
 ```
 
-## 部署kube-proxy组件
+### 部署kube-proxy组件
 
-### 创建csr请求
+#### 创建csr请求
 
 ```sh
 #在master1上
@@ -1437,14 +1440,14 @@ tee -a kube-proxy-csr.json <<'EOF'
 EOF
 ```
 
-### 生成证书
+#### 生成证书
 
 ~~~sh
 #在master1上
 cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-config.json -profile=kubernetes kube-proxy-csr.json | cfssljson -bare kube-proxy
 ~~~
 
-### 创建kubeconfig文件
+#### 创建kubeconfig文件
 
 ~~~sh
 #在master1上
@@ -1454,7 +1457,7 @@ kubectl config set-context default --cluster=kubernetes --user=kube-proxy --kube
 kubectl config use-context default --kubeconfig=kube-proxy.kubeconfig
 ~~~
 
-### 创建kube-proxy配置文件
+#### 创建kube-proxy配置文件
 
 ~~~sh
 #在master1上
@@ -1471,7 +1474,7 @@ mode: "ipvs"
 EOF
 ~~~
 
-### 创建服务启动文件
+#### 创建服务启动文件
 
 ~~~sh
 #在master1上
@@ -1503,7 +1506,7 @@ scp  kube-proxy.kubeconfig kube-proxy.yaml binnode1:/etc/kubernetes/
 scp  kube-proxy.service binnode1:/usr/lib/systemd/system/
 ~~~
 
-### 启动服务
+#### 启动服务
 
 ~~~sh
 #node1上
@@ -1514,7 +1517,7 @@ systemctl start kube-proxy
 systemctl status kube-proxy
 ~~~
 
-## 部署calico组件
+### 部署calico组件
 
 ~~~sh
 #上传calico镜像，calico.tar.gz上传到node1节点，手动解压。calico pod运行在工作节点
@@ -1523,7 +1526,7 @@ docker load -i calico.tar.gz
 kubectl apply -f calico.yaml
 ~~~
 
-## 部署coredns组件
+### 部署coredns组件
 
 ~~~sh
 #上传coredns.yaml到master1
@@ -1534,9 +1537,9 @@ ping www.baidu.com
 nslookup kubernetes.default.svc.cluster.local #解析内部Service的名称，是通过coreDNS去解析的。
 ~~~
 
-## keepalived+nginx实现apiserver高可用
+### keepalived+nginx实现apiserver高可用
 
-### 准备epel.repo
+#### 准备epel.repo
 
 ~~~sh
 #把epel.repo上传到binmaster1的/etc/yum.repos.d目录下.
@@ -1548,7 +1551,7 @@ scp /etc/yum.repos.d/epel.repo binnode1:/etc/yum.repos.d/
 yum install nginx keepalived -y
 ~~~
 
-### 修改nginx配置文件
+#### 修改nginx配置文件
 
 ~~~sh
 #在master1和master2上，修改nginx配置文件。主备一样
@@ -1612,9 +1615,9 @@ http {
 EOF
 ~~~
 
-### 修改keepalived配置文件
+#### 修改keepalived配置文件
 
-#### 主keepalived节点
+##### 主keepalived节点
 
 ~~~sh
 #主keepalived配置 - keepalived主要用来提供VIP
@@ -1672,7 +1675,7 @@ EOF
 chmod +x  /etc/keepalived/check_nginx.sh
 ~~~
 
-#### 备keepalived节点
+##### 备keepalived节点
 
 ~~~sh
 tee /etc/keepalived/keepalived.conf <<'EOF'
@@ -1725,7 +1728,7 @@ chmod +x /etc/keepalived/check_nginx.sh
 #注：keepalived根据脚本返回状态码（0为工作正常，非0不正常）判断是否故障转移。当nginx服务出现故障时，自动停止keepalived服务，触发故障切换。VIP就会切走。
 ~~~
 
-### 启动服务
+#### 启动服务
 
 ~~~sh
 #master1和2上
@@ -1740,7 +1743,7 @@ systemctl enable nginx keepalived
 
   `service stop nginx`
 
-### 配置worker节点与master的连接
+#### 配置worker节点与master的连接
 
 ~~~sh
 #目前所有的Worker Node组件连接都还是master1 Node，如果不改为连接VIP走负载均衡器，那么Master还是单点故障。
@@ -1756,13 +1759,13 @@ systemctl restart kubelet kube-proxy
 
 ?question:不是有3台master节点吗？VIP漂移只发生在两个master上？master3是否也要设置为备用节点？ 不需要，k8s组件请求apiserver的时候走的是VIP+16443端口，也就是nginx，nginx配置中已经将请求代理给了upstream的3台master。
 
-# 二进制组件升级
+## 二进制组件升级
 
-## 下载二进制包
+### 下载二进制包
 
 - 二进制包所在的github地址如下：[Kubernetes CHANGELOG](https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/)，可以按照版本下载二进制包。控制节点组件，找到Server Binaries，下载amd64版本的。server binaries二进制包里面就包含了：controller-manager，apiserver，scheduler等控制平面组件。其实也包含了工作节点需要的kubelet和kubeproxy
 
-## master节点升级
+### master节点升级
 
 - 备份二进制文件
 
@@ -1797,7 +1800,7 @@ systemctl start kube-scheduler
 >
 > `systemctl status kube-apiserver -l`
 
-## 工作节点升级
+### 工作节点升级
 
 - 备份二进制文件
 
@@ -1823,9 +1826,9 @@ systemctl daemon-reload && systemctl start kubelet
 systemctl daemon-reload && systemctl start kube-proxy
 ~~~
 
-# 二进制安装多master集群-1.25
+## 二进制安装多master集群-1.25
 
-## 环境准备
+### 环境准备
 
 - 机器规划
 
@@ -1880,7 +1883,7 @@ systemctl daemon-reload && systemctl start kube-proxy
   containerd repo源    
   ~~~
 
-## 安装containerd
+### 安装containerd
 
 ~~~sh
 #所有节点安装
@@ -1907,7 +1910,7 @@ vim /etc/containerd/certs.d/docker.io/hosts.toml
 systemctl restart containerd
 ~~~
 
-## 安装crictl
+### 安装crictl
 
 - 安装包可以从这里下载：[cri-tools releases](https://github.com/kubernetes-sigs/cri-tools/releases/)
 
@@ -1924,7 +1927,7 @@ EOF
 systemctl restart  containerd
 ~~~
 
-## 安装docker
+### 安装docker
 
 ~~~sh
 #所有节点
@@ -1945,11 +1948,11 @@ vim /etc/docker/daemon.json
 systemctl restart docker
 ~~~
 
-# 搭建etcd集群
+## 搭建etcd集群
 
 同上面1.20.7
 
-# 安装k8s组件
+## 安装k8s组件
 
 同上面1.20.7
 

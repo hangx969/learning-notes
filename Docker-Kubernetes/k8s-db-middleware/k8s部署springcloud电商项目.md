@@ -6,15 +6,18 @@ aliases:
   - K8s部署SpringCloud项目
 ---
 
-# 部署Harbor
+# K8s部署SpringCloud电商项目
 
-## 环境规划
+
+## 部署Harbor
+
+### 环境规划
 
 | 主机名 | IP            | 配置          | 网络 |
 | ------ | ------------- | ------------- | ---- |
 | harbor | 172.16.183.74 | 4c/4G/60G硬盘 | NAT  |
 
-## 安装准备
+### 安装准备
 
 - 更换阿里的yum源 
 
@@ -90,6 +93,7 @@ sysctl --system
   EOF
   ```
   
+
 - 主机间无密码登录
 
 ~~~sh
@@ -98,7 +102,7 @@ cd /root && ssh-keygen -t rsa
 ssh-copy-id -i .ssh/id_rsa.pub root@harbor
 ~~~
 
-## 安装docker 
+### 安装docker 
 
 - 安装
 
@@ -128,7 +132,7 @@ net.bridge.bridge-nf-call-ip6tables = 1
 sysctl -p /etc/sysctl.conf
 ```
 
-## 安装Harbor
+### 安装Harbor
 
 1. 为harbor创建自签发证书
 
@@ -175,6 +179,7 @@ sysctl -p /etc/sysctl.conf
    #邮件和ldap不需要配置，在harbor的web界面可以配置，其他配置采用默认即可。
    ```
    
+
 3. 安装docker-compose
 
    - docker-compose项目是Docker官方的开源项目，负责实现对Docker容器集群的快速编排。Docker-Compose的工程配置文件默认为docker-compose.yml，Docker-Compose运行目录下的必要有一个docker-compose.yml。docker-compose可以管理多个docker实例。
@@ -198,6 +203,7 @@ sysctl -p /etc/sysctl.conf
    #出现✔ ----Harbor has been installed and started successfully.---- 表明安装成功。
    ```
    
+
 4. harbor启动和停止
 
    ```bash
@@ -214,7 +220,7 @@ sysctl -p /etc/sysctl.conf
 
    - 在C:\Windows\System32\drivers\etc下修改hosts文件，添加 harbor 。浏览器访问：https://harbor/
 
-## harbor私有仓库使用
+### harbor私有仓库使用
 
 ```bash
 #在k8s工作机节点上修改docker镜像源
@@ -239,9 +245,9 @@ docker rmi -f 172.16.183.74/test/tomcat:v1
 docker pull 172.16.183.74/test/tomcat:v1
 ```
 
-# 部署ingress
+## 部署ingress
 
-## ingress介绍
+### ingress介绍
 
 - Ingress官网定义：Ingress可以把进入到集群内部的请求转发到集群中的一些服务上，从而可以把服务映射到集群外部。Ingress 能把集群内Service 配置成外网能够访问的 URL，流量负载均衡，提供基于域名访问的虚拟主机等。
 
@@ -255,7 +261,7 @@ docker pull 172.16.183.74/test/tomcat:v1
 
   ![image-20240325171557723](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202403251716829.png)
 
-## 安装ingress controller
+### 安装ingress controller
 
 Ingress-controller官网：[ingress-nginx - GitHub](https://github.com/kubernetes/ingress-nginx/)
 
@@ -273,7 +279,7 @@ kubectl apply -f deploy.yaml
 kubectl create clusterrolebinding clusterrolebinding-user-3  --clusterrole=cluster-admin --user=system:serviceaccount:ingress-nginx:ingress-nginx
 ```
 
-## 测试部署tomcat服务
+### 测试部署tomcat服务
 
 ~~~yaml
 apiVersion: v1
@@ -340,7 +346,7 @@ spec:
             number: 8080
 ~~~
 
-# 微服务介绍
+## 微服务介绍
 
 - 微服务是一种软件开发架构模式，用于构建应用程序。它是一种将单个应用程序拆分为一组小型、独立的服务的方法。每个微服务都是一个独立的、可独立部署和扩展的单元，通过轻量级通信机制相互交互。
 - 微服务架构的核心思想是将应用程序拆分为一组小型服务，每个服务专注于特定的业务功能。每个微服务都有自己的数据库和业务逻辑，并且可以使用不同的编程语言和技术栈进行开发。这使得团队可以独立地开发、测试、部署和扩展每个微服务，而不会对其他服务产生影响。
@@ -348,11 +354,12 @@ spec:
 
 ![image-20240325190734586](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202403251907677.png)
 
-## 需要考虑的问题
+### 需要考虑的问题
 
 1. 统一的配置管理中心
    - 服务拆分以后，服务的数量非常多，如果所有的配置都以配置文件的方式放在应用本地的话，非常难以管理，可以想象当有几百上千个进程中有一个配置出现了问题，是很难将它找出来的，因而需要有统一的配置中心，来管理所有的配置，进行统一的配置下发。
    - 在微服务中，配置往往分为几类，一类是几乎不变的配置，这种配置可以直接打在容器镜像里面，第二类是启动时就会确定的配置，这种配置往往通过环境变量，在容器启动的时候传进去，第三类就是统一的配置，需要通过配置中心进行下发，例如在大促的情况下，有些功能需要降级，哪些功能可以降级，哪些功能不能降级，都可以在配置文件中统一配置。
+
 2. 全链路监控
    1. 系统和应用的监控
       - 监控系统和服务的健康状态和性能瓶颈，当系统出现异常的时候，监控系统可以配合告警系统，及时地发现，通知，干预，从而保障系统的顺利运行。
@@ -361,22 +368,25 @@ spec:
    4. 日志收集
       - 业务层面、代码层面、系统层面
 
-## 常见微服务框架
+### 常见微服务框架
 
 1. Spring Cloud：
    - Spring Cloud是基于Java的微服务框架，构建在Spring Framework之上。它提供了一系列工具和库，用于快速开发和部署微服务应用程序。Spring Cloud包括服务注册与发现、负载均衡、断路器、配置管理等功能，如Eureka、Ribbon、Hystrix、Config等。
    - 主要是面向开发的，开发用这个写代码。
    - springcloud项目部署到k8s的话，一些功能就可以用k8s提供的功能来实现了。
+
 2. Netflix OSS：
    - Netflix开源了一套用于构建可扩展、高性能微服务的工具集，被广泛应用于微服务架构中。这些工具包括服务注册与发现（Eureka）、负载均衡（Ribbon）、断路器（Hystrix）、网关（Zuul）、分布式跟踪（Zipkin）等。
+
 3. Kubernetes：
    - Kubernetes是一个容器编排平台，也可以用于部署和管理微服务。它提供了强大的容器编排、服务发现、自动伸缩和负载均衡等功能。Kubernetes能够管理和调度微服务的容器实例，并提供故障恢复和自动扩展能力。
+
 4. Service Mesh：
    - Service Mesh是一种用于管理微服务通信的新型架构模式。它通过在微服务之间插入一个专用的代理层，提供了诸如服务发现、负载均衡、安全认证、故障恢复等功能。常见的Service Mesh实现包括Envoy、Linkerd和Istio。
 
-# SpringCloud
+## SpringCloud
 
-## 介绍
+### 介绍
 
 - 官网：[Spring Cloud](https://spring.io/projects/spring-cloud/)
 
@@ -405,14 +415,14 @@ Spring Cloud提供了许多有用的功能和组件，包括服务注册与发�
 3. 自动化运维：运维人员可以使用Spring Cloud提供的自动化运维工具，如Spring Cloud Data Flow，来管理和监控大规模的微服务应用程序。这些工具可以简化运维任务，提高效率。
 4. 故障处理和恢复：运维人员需要处理微服务中可能出现的故障，并采取相应的措施进行恢复。他们可以借助Spring Cloud提供的断路器和容错机制，来处理和隔离故障，保证整个系统的可用性。
 
-## 组件
+### 组件
 
-### Eureka 
+#### Eureka 
 
 - 服务注册发现框架；服务提供者将自己的信息注册到注册中心，而服务消费者则从注册中心获取服务提供者的信息
 - 服务提供者被称为服务实例。每个服务实例都会向注册中心注册自己的信息，包括服务名称、IP 地址、端口号等
 
-### Zuul 
+#### Zuul 
 
 - 服务网关，网关是微服务架构中的入口点，它扮演着转发请求、认证授权、负载均衡、缓存等功能的角色。
 
@@ -420,11 +430,11 @@ Spring Cloud提供了许多有用的功能和组件，包括服务注册与发�
 
   ![image-20240325193754333](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202403251937421.png)
 
-### API Gateway
+#### API Gateway
 
 - Spring Cloud已经放弃Zuul了。现在Spring Cloud中引用的还是Zuul 1.x版本，而这个版本是基于过滤器的，是阻塞IO，不支持长连接，spring官网上也已经没有zuul的组件了，所以介绍SpringCloud原生的网关产品Gateway。Spring Cloud Gateway 在性能和可扩展性方面更加出色。
 
-### SpringCloud Config
+#### SpringCloud Config
 
 - Spring Cloud 提供的一个分布式配置管理工具，用于集中管理和提供应用程序的配置信息。它允许将配置文件存储在配置服务器中，并通过客户端将配置动态地分发给不同的服务实例。
 - 组件
@@ -433,7 +443,7 @@ Spring Cloud提供了许多有用的功能和组件，包括服务注册与发�
   3. 配置客户端（Config Client）：配置客户端是服务实例或应用程序，通过向配置服务器发起请求获取自身所需的配置信息。它与配置服务器进行交互，并将配置信息加载到应用程序中。
   4. 配置刷新（Refresh）：配置刷新是指在运行时更新配置信息，而无需重启应用程序。通过发送请求到配置服务器的 /actuator/refresh 端点，可以触发配置的刷新，使客户端重新加载最新的配置。
 
-### Ribbon
+#### Ribbon
 
 - 客户端框架；服务消费者的请求分发到多个服务提供者实例之间，以实现请求的分散和负载均衡。
 
@@ -449,30 +459,31 @@ Spring Cloud提供了许多有用的功能和组件，包括服务注册与发�
 
   - Nginx 是一种独立的反向代理服务器，通常部署在服务提供者前面的服务器层。它通过在服务器端进行负载均衡，所有请求统一交给nginx，由nginx实现负载均衡请求转发。将请求转发到后端的多个服务提供者。
 
-### Hystrix
+#### Hystrix
 
 - 服务容错组件；
 - 服务雪崩
   - 假设有A、B、C三个服务，服务A --> B --> C，假设服务C因为请求量大，扛不住请求，变得不可用，这样就是积累大量的请求，服务B的请求也会阻塞，会逐渐耗尽线程资源，使得服务B变得不可用，那么服务A在调用服务B就会出现问题，导致服务A也不可用，那么整条链路的服务调用都失败了，我们称之为雪崩。
+
 - 在微服务架构中，在高并发情况下，如果请求数量达到一定极限（可以自己设置阈值），超出了设置的阈值，Hystrix会自动开启服务保护功能，然后通过服务降级的方式返回一个友好的提示给客户端（“当前请求人数多，请稍后重试”等）。假设当10个请求中，有10%失败时，熔断器就会打开，此时再调用此服务，将会直接返回失败，不再调远程服务。直到10s之后，重新检测该触发条件，判断是否把熔断器关闭，或者继续打开。
 
-### Archaius
+#### Archaius
 
 - 服务配置组件；
 
-### Servo
+#### Servo
 
 - Metrics组件；
 
-### Blitz4j
+#### Blitz4j
 
 - 日志组件。
 
-### Pinpoint
+#### Pinpoint
 
 - 全链路监控组件，对代码做监控。
 
-## spring cloud与spring boot
+### spring cloud与spring boot
 
 - Spring Boot用于简化Java应用程序的开发，而Spring Cloud则是在Spring Boot基础上提供了构建分布式系统所需的工具和组件。
 
@@ -483,9 +494,9 @@ Spring Cloud提供了许多有用的功能和组件，包括服务注册与发�
 - 因此，通常在使用Spring Cloud时会使用Spring Boot作为底层框架。
 
 
-# SpringCloud项目部署到K8S
+## SpringCloud项目部署到K8S
 
-## 如何进行服务发现
+### 如何进行服务发现
 
 - 如果是把Springcloud项目迁移到k8s，可以使用原来的Eureka，这 样可以避免开发人员对原来的代码进行大量的修改。通常情况下，我们的线上的服务在迁移到k8s环境下的时候，都是采用平滑迁移的方案。服务治理与注册中心等都是采用原先的组件。比如springcloud应用，在k8s环境下还是用原来的一套注册中心（如eureka），服务治理（hystrix，ribbon）等。
 - K8S自带的服务发现
@@ -494,24 +505,24 @@ Spring Cloud提供了许多有用的功能和组件，包括服务注册与发�
     `<service_name>.<namespace>.svc.<cluster_domain>`。
     默认的域名是`<service_name>.<namespace>.svc.cluster.local`
 
-## 如何进行配置管理
+### 如何进行配置管理
 
 - K8S自带的：创建一个configmap，对应着一份配置文件，可以将该资源通过数据卷的形式映射到Pod上，这样Pod就能用上这个配置文件了。 
 - spring cloud自带的：spring-cloud-starter-kubernetes-config 
   - spring-cloud-starter-kubernetes-config是spring-cloud-starter-kubernetes框架下的一个库，作用是将kubernetes的configmap与SpringCloud Config结合起来。
   - 通过spring-cloud-starter-kubernetes-config，我们的应用就像在通过SpringCloud Config取得配置信息，只不过这里的配置信息来自kubernetes的configmap，而不是SpringCloud Config server，SpringCloud Config来配置的应用几乎不用修改代码，仅仅调整了配置和依赖，就能顺利迁移到kubernetes之上，直接使用原生的配置服务，并且SpringCloud Config Server也可以不用在kubernetes上部署了。
 
-## 如何进行负载均衡
+### 如何进行负载均衡
 
 - 通过springcloud的Ribbon，也可通过k8s的service、Ingress-nginx-Controller
 
-## 如何对外发布应用
+### 如何对外发布应用
 
 - 通过Ingress
 
   ![image-20240329083508314](/home/s0001969/.config/Typora/typora-user-images/image-20240329083508314.png)
 
-## 流程
+### 流程
 
 1. 把Springcloud开发的java代码做到镜像里：可以基于dockerfile文件做镜像
 2. 把镜像传到镜像仓库里，比方说harbor私有镜像
@@ -528,13 +539,13 @@ Spring Cloud提供了许多有用的功能和组件，包括服务注册与发�
 
 ![image-20240329083839029](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202403290838080.png)
 
-# 安装配置mysql
+## 安装配置mysql
 
-## 特点
+### 特点
 
 - 体积小、速度快、开源。
 
-## 安装
+### 安装
 
 ~~~sh
 #在master节点
@@ -544,7 +555,7 @@ yum install mysql-server -y
 chown mysql:mysql -R /var/lib/mysql
 ~~~
 
-## 初始化
+### 初始化
 
 ~~~sh
 #初始化mysql
@@ -560,7 +571,7 @@ create database tb_stock;
 create database tb_order;
 ~~~
 
-## 导入数据
+### 导入数据
 
 ~~~sh
 #数据文件已经提前准备好，上传到/root/下
@@ -574,23 +585,23 @@ use tb_product
 source /root/product.sql
 ~~~
 
-## 授权数据库
+### 授权数据库
 
 ~~~sh
 grant all on *.* to 'root'@'%' identified by '111111';
 flush privileges;
 ~~~
 
-# 将springlcloud项目部署到K8S平台
+## 将springlcloud项目部署到K8S平台
 
-## 安装openjdk和maven
+### 安装openjdk和maven
 
 ~~~sh
 #master上操作
 yum install java-1.8.0-openjdk  maven-3.0.5* -y
 ~~~
 
-## 配置微服务源码
+### 配置微服务源码
 
 ~~~sh
 #上传微服务的源代码
@@ -616,7 +627,7 @@ url: jdbc:mysql://172.16.183.75:3306/tb_order?characterEncoding=utf-8
 #变成自己的数据库地址
 ~~~
 
-## maven编译构建打包源代码
+### maven编译构建打包源代码
 
 ~~~sh
 cd /root/microservic-test
@@ -624,7 +635,7 @@ mvn clean package -D maven.test.skip=true
 #打包完生成jar包，后面需要把jar包打成镜像。
 ~~~
 
-## k8s中部署eureka
+### k8s中部署eureka
 
 - 配置docker配置
 
@@ -681,7 +692,7 @@ kubectl get pods -n ms
 
 ![image-20240401092624071](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202404010926267.png)
 
-## k8s中部署网关gateway服务
+### k8s中部署网关gateway服务
 
 - 构建镜像
 
@@ -700,7 +711,7 @@ kubectl apply -f gateway.yaml
 #gateway的域名是gateway.ctnrs.com，IP是ingress controller对应的IP。修改host文件后即可域名访问
 ~~~
 
-## k8s中部署前端portal页面
+### k8s中部署前端portal页面
 
 - 构建镜像
 
@@ -720,7 +731,7 @@ kubectl apply -f portal.yaml
 #portal前端页面为：portal.ctnrs.com
 ~~~
 
-## k8s中部署订单服务
+### k8s中部署订单服务
 
 - 构建镜像
 
@@ -738,7 +749,7 @@ cd /root/microservic-test/k8s
 kubectl apply -f order.yaml
 ~~~
 
-## k8s中部署产品服务
+### k8s中部署产品服务
 
 - 构建镜像
 
@@ -756,7 +767,7 @@ cd /root/microservic-test/k8s
 kubectl apply -f product.yaml
 ~~~
 
-## k8s中部署库存服务
+### k8s中部署库存服务
 
 - 构建镜像
 
@@ -775,7 +786,7 @@ kubectl apply -f stock.yaml
 #eureka.ctnrs.com中检查各项服务已经部署完成。
 ~~~
 
-## 注意
+### 注意
 
 - 基于containerd的集群，拉镜像时会出现harbor登录失败的问题，此时需要配置containerd访问harbor。修改所有节点的containerd配置文件：/etc/containerd/config.toml。
 - 重启containerd和kubelet
@@ -1041,15 +1052,15 @@ version = 2
   uid = 0
 ~~~
 
-# 全链路监控
+## 全链路监控
 
-## 介绍
+### 介绍
 
 - 在分布式微服务架构中，系统为了接收并处理一个前端用户请求，需要让多个微服务应用协同工作，其中的每一个微服务应用都可以用不同的编程语言构建，由不同的团队开发，并可以通过多个对等的应用实例实现水平扩展，甚至分布在横跨多个数据中心的数千台服务器上。单个用户请求会引发不同应用之间产生一串顺序性的调用关系，如果要对这些调用关系进行监控，了解每个应用如何调用，这就产生了全链路监控。
 
   ![image-20240404212358708](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202404042124892.png)
 
-## 常见工具
+### 常见工具
 
 - Zipkin
   - **github：**[openzipkin/zipkin - GitHub](https://github.com/openzipkin/zipkin)
@@ -1067,15 +1078,16 @@ version = 2
   - pinpoint是韩国人开源的基于字节码注入的调用链分析，以及应用监控分析工具。Pinpoint提供了一个解决方案，可以帮助分析系统的整体结构，以及通过跟踪分布式应用程序中的事务来分析其中的组件是如何相互连接的。
   - 对代码无侵入，把pinpoint代理包放到源码路径下面，编译就行。
 
-# pinpoint监控微服务
+## pinpoint监控微服务
 
-## 环境准备
+### 环境准备
 
 - 新建一台pinpoint机器：
   - 172.16.180.73
+
 - 初始化步骤与前面相同。
 
-## 安装docker
+### 安装docker
 
 ~~~sh
 yum install -y docker-ce-19.03.7-3.el7
@@ -1090,7 +1102,7 @@ EOF
 systemctl daemon-reload && systemctl restart docker && systemctl status docker
 ~~~
 
-## 安装pinpoint
+### 安装pinpoint
 
 ~~~sh
 yum install docker-compose -y
@@ -1114,7 +1126,7 @@ docker ps | grep pinpoint
 #在浏览器访问ip:8079即可访问pinpoint的web ui界面(http://172.16.183.73:8079)
 ~~~
 
-## 部署电商项目-带pinpoint客户端 -- 0404到这里
+### 部署电商项目-带pinpoint客户端 -- 0404到这里
 
 - 上传源码包到master1
 
@@ -1171,7 +1183,7 @@ profiler.collector.ip=172.16.183.73
 #上面修改的ip是部署pinpoint的机器的ip地址，也就是pinpoint的服务端
 ~~~
 
-## 通过Maven编译、打包、构建代码
+### 通过Maven编译、打包、构建代码
 
 ~~~sh
 #控制节点操作
@@ -1179,7 +1191,7 @@ cd /root/microservic-test-dev1
 mvn clean package -D maven.test.skip=true
 ~~~
 
-## 部署带pinpoint客户端的产品服务
+### 部署带pinpoint客户端的产品服务
 
 ~~~sh
 kubectl create ns ms && kubectl create secret docker-registry registry-pull-secret --docker-server=172.16.183.74 --docker-username=admin --docker-password=Harbor12345  -n ms
@@ -1195,7 +1207,7 @@ cd  /root/microservic-test-dev1/k8s
 http://172.16.183.73:8079
 ~~~
 
-## 部署带pinpoint客户端的订单服务
+### 部署带pinpoint客户端的订单服务
 
 ~~~sh
 cd  /root/microservic-test-dev1/order-service/order-service-biz
@@ -1208,7 +1220,7 @@ kubectl apply -f order.yaml
 kubectl get pods -n ms  | grep order
 ~~~
 
-## 部署带pinpoint agent端的stock服务
+### 部署带pinpoint agent端的stock服务
 
 ```sh
 cd  /root/microservic-test-dev1/stock-service/stock-service-biz
@@ -1220,7 +1232,7 @@ kubectl apply -f stock.yaml
 kubectl get pods -n ms  | grep stock
 ```
 
-## 部署带pinpoint agent端的portal服务
+### 部署带pinpoint agent端的portal服务
 
 ~~~sh
 cd /root/microservic-test-dev1/portal-service/
@@ -1232,7 +1244,7 @@ kubectl apply -f portal.yaml
 kubectl get pods -n ms  | grep portal
 ~~~
 
-## 部署带pinpoint agent端的网关服务
+### 部署带pinpoint agent端的网关服务
 
 ~~~sh
 #1）构建镜像

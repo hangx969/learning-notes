@@ -8,7 +8,10 @@ aliases:
   - sonarqube部署
 ---
 
-# 介绍
+# Helm部署SonarQube
+
+
+## 介绍
 
 - 官网地址：
   - [SonarQube Helm Chart](https://artifacthub.io/packages/helm/sonarqube/sonarqube#production-use-case)
@@ -17,7 +20,7 @@ aliases:
 - SonarQube是一个开源的代码质量管理系统，用于自动化检查源代码的质量并提供报告。它支持多种编程语言，包括Java、C#、JavaScript、Python等，能够检测出代码中的错误、漏洞、代码异味等问题。SonarQube可以集成到CI/CD流程中，帮助开发团队在开发过程中持续改进代码质量。
 
 
-# 下载
+## 下载
 
 ~~~sh
 helm repo add --force-update sonarqube https://SonarSource.github.io/helm-chart-sonarqube
@@ -25,7 +28,7 @@ helm repo update sonarqube
 helm pull sonarqube/sonarqube --version 10.3.0+2009
 ~~~
 
-# 配置
+## 配置
 
 - 创建https证书
 
@@ -89,12 +92,12 @@ helm pull sonarqube/sonarqube --version 10.3.0+2009
 
   > [!warning] 注意：sonarqube目前暂不支持Oauth
 
-# 安装
+## 安装
 
 ~~~sh
 helm upgrade -i sonarqube -n sonarqube --create-namespace . -f values.yaml
 ~~~
 
-# 使用
+## 使用
 
 - 与azure devops集成：[Azure DevOps Integration](https://docs.sonarsource.com/sonarqube-server/10.5/devops-platform-integration/azure-devops-integration/55)

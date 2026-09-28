@@ -9,7 +9,10 @@ aliases:
   - pod故障排查
 ---
 
-# pod状态异常
+# k8s故障排查指南
+
+
+## pod状态异常
 
 ~~~sh
 kubectl get po <pod name> -o yaml
@@ -51,7 +54,7 @@ kubectl logs <pod name> -c <container name> #--all-containers
 
    - 这个状态表示pod里面的任务完成了，job或者cronjob创建pod的时候，如果pod任务完成了，会出现complete状态
 
-# pod健康探测
+## pod健康探测
 
 ~~~yaml
 #pod定义的存活性探测如下：
@@ -73,7 +76,7 @@ livenessProbe:
        initialDelaySeconds: 15 # pod启动过15s开始探测
 ~~~
 
-# pod svc超时
+## pod svc超时
 
 K8S中Pod服务连接超时主要分以下几种情况：
 
@@ -95,13 +98,13 @@ K8S中Pod服务连接超时主要分以下几种情况：
   - 可以抓包测试有无异常
   - 通过抓包修改内核参数
 
-# svc代理pod出现问题
+## svc代理pod出现问题
 
 - 直接访问pod可以请求到，但是访问pod前端service，通过请求pod有问题，请求不到。
   - iptables： 重启iptables，重启iptables不可以，重启下机器
   - ipvs：重启机器
 
-# DNS解析问题
+## DNS解析问题
 
 1. 使用 `nslookup`（需容器支持）
 
@@ -131,7 +134,7 @@ kubectl get pods -n kube-system -l k8s-app=kube-dns
 
 4. 确认 Pod 的 DNS 策略（`dnsPolicy`）是否为 `ClusterFirst`。
 
-# 防火墙问题
+## 防火墙问题
 
 怀疑网络策略（NetworkPolicy）或云平台安全组阻止外网访问。
 
@@ -152,7 +155,7 @@ iptables -t nat -L -n -v
 iptables -L -n -v
 ```
 
-# openshift中busybox无法ping
+## openshift中busybox无法ping
 
 - 报错permission denied are you root
 
@@ -168,11 +171,11 @@ iptables -L -n -v
   ~~~
   
 
-# 容器无shell如何测试外网连通性
+## 容器无shell如何测试外网连通性
 
 在 Kubernetes 集群中，某些容器镜像（如基于 `scratch` 或 `distroless` 的镜像）为了追求极简化和安全性，移除了交互式 Shell（如 `/bin/bash` 或 `/bin/sh`）以及常见网络工具（如 `curl`、`ping`）。当这类 Pod 出现外网访问异常时，传统调试方法失效，需要更高级的技巧。
 
-## 临时容器
+### 临时容器
 
 适用于容器中无网络工具，，k8s版本高于1.23。临时容器会共享目标容器的 **网络命名空间**，因此两者的网络栈（IP、端口、路由等）完全一致。退出临时容器后，它会被自动销毁，不会影响原 Pod。
 
@@ -199,7 +202,7 @@ iptables -L -n -v
    ping 8.8.8.8
    ~~~
 
-## 注入sidecar容器
+### 注入sidecar容器
 
 适用于临时容器功能不可用，但是允许修改pod配置。同一 Pod 内的所有容器共享同一个网络命名空间，因此 Sidecar 可以直接访问主容器的网络环境。
 
@@ -233,7 +236,7 @@ iptables -L -n -v
    kubectl exec -it my-pod -c network-debugger -- curl -v https://www.google.com
    ~~~
 
-## 跳板机pod代理测试
+### 跳板机pod代理测试
 
 如果无法修改目标 Pod，也没有临时容器功能，且需要模拟相同网络环境。
 
@@ -255,7 +258,7 @@ iptables -L -n -v
    nc -zv 10.244.1.5 80
    ~~~
 
-## 调试镜像选择
+### 调试镜像选择
 
 | 镜像名称            | 特点                                      | 适用场景             |
 | ------------------- | ----------------------------------------- | -------------------- |
@@ -266,17 +269,17 @@ iptables -L -n -v
 
 ---
 
-# 节点 DiskPressure 与 Kubelet 驱逐机制
+## 节点 DiskPressure 与 Kubelet 驱逐机制
 
 > 80% 的磁盘压力告警，根本不是磁盘容量耗尽，而是 Kubelet 资源驱逐机制触发了节点保护。别急着扩容——先搞懂底层原理。
 
-## NodeHasDiskPressure 不是"磁盘满了"
+### NodeHasDiskPressure 不是"磁盘满了"
 
 K8s 官方定义的 NodeHasDiskPressure 真实含义：**Kubelet 检测到节点磁盘类资源（空间/Inode）低于安全阈值，判定节点无法稳定、安全运行现有 Pod，触发节点资源保护机制。**
 
 重点是"不安全"，不是"磁盘满"。哪怕磁盘只用了 50%，只要剩余可用资源、Inode 数量跌破 Kubelet 预设阈值，就会立即触发磁盘压力状态。
 
-## 底层全链路：Kubelet 如何发现磁盘压力
+### 底层全链路：Kubelet 如何发现磁盘压力
 
 ```
 cAdvisor 采集节点文件系统指标
@@ -288,7 +291,7 @@ cAdvisor 采集节点文件系统指标
             → 资源仍不足则驱逐存量 Pod
 ```
 
-### Eviction Manager 核心循环
+#### Eviction Manager 核心循环
 
 对应源码：`pkg/kubelet/eviction`。持续周期性执行 `synchronize()` 方法，循环完成三件事：
 
@@ -296,7 +299,7 @@ cAdvisor 采集节点文件系统指标
 2. **阈值判定**：对比预设软硬驱逐阈值，判断资源是否超标
 3. **执行动作**：更新节点状态、触发垃圾回收、按需驱逐 Pod
 
-## Kubelet 监控的 3 类磁盘（90% 的人只看了 1 个）
+### Kubelet 监控的 3 类磁盘（90% 的人只看了 1 个）
 
 **任意一个触发阈值，都会触发 DiskPressure**：
 
@@ -308,11 +311,11 @@ cAdvisor 采集节点文件系统指标
 
 **核心结论**：哪怕根磁盘空间充足，只要 ImageFS、ContainerFS 资源耗尽或跌破阈值，节点依然会触发磁盘压力、驱逐 Pod。
 
-## 阈值判定：Kubelet 看的是可用资源，不是使用率
+### 阈值判定：Kubelet 看的是可用资源，不是使用率
 
 日常用 `df -h` 看的是"已用空间占比"，但 **Kubelet 的驱逐判定和使用率无关，只看可用资源**。
 
-### 默认硬驱逐阈值
+#### 默认硬驱逐阈值
 
 ```
 --eviction-hard=
@@ -326,7 +329,7 @@ cAdvisor 采集节点文件系统指标
 - `nodefs.available<10%`：节点根磁盘剩余可用空间不足 10%，触发压力
 - `inodeFree<5%`：剩余 Inode 不足 5%，同样触发磁盘压力
 
-### 最容易被忽略的杀手：Inode 耗尽
+#### 最容易被忽略的杀手：Inode 耗尽
 
 大量微小文件会快速耗尽 Inode，却几乎不占用磁盘空间：
 
@@ -341,17 +344,17 @@ df -h    # 查看磁盘空间
 df -i    # 查看 Inode 使用率（核心！）
 ```
 
-## 触发后的完整连锁反应
+### 触发后的完整连锁反应
 
-### 第一步：更新节点状态
+#### 第一步：更新节点状态
 
 节点 Condition 标记为 `DiskPressure=True`，直至资源恢复。
 
-### 第二步：调度器停止新 Pod 调度
+#### 第二步：调度器停止新 Pod 调度
 
 所有新创建、待调度的 Pod 直接陷入 Pending 状态。
 
-### 第三步：优先执行垃圾回收（不是立即驱逐！）
+#### 第三步：优先执行垃圾回收（不是立即驱逐！）
 
 **K8s 不会立即驱逐 Pod！** 这是大多数人的认知盲区。
 
@@ -360,19 +363,19 @@ df -i    # 查看 Inode 使用率（核心！）
 - **Image GC**：由 `image_gc_manager` 管控，默认每 5 分钟执行，清理超过最小存活时长（默认 2 分钟）、长期未被使用的闲置镜像
 - **Container GC**：默认每分钟执行，清理节点上已退出、终止的残留容器和无效运行时碎片资源
 
-### 第四步：资源仍不足，触发 Pod 驱逐
+#### 第四步：资源仍不足，触发 Pod 驱逐
 
 镜像、残留容器清理完毕后，若磁盘/Inode 资源依旧低于阈值，Eviction Manager 才执行最终的 Pod 驱逐。
 
-## Pod 驱逐优先级（不是随机的）
+### Pod 驱逐优先级（不是随机的）
 
-### 按 QoS 等级优先驱逐（核心规则）
+#### 按 QoS 等级优先驱逐（核心规则）
 
 **BestEffort（先驱逐）> Burstable > Guaranteed（最后驱逐）**
 
 无资源配额限制的 BestEffort Pod 优先级最高（最先被驱逐），核心 Guaranteed 业务 Pod 最后驱逐。
 
-### 同 QoS 下的辅助判定
+#### 同 QoS 下的辅助判定
 
 - 优先驱逐**磁盘资源占用更高**的 Pod（日志、emptyDir、Overlay 可写层占用大户）
 - 参考 `PriorityClass` 优先级，低优先级业务先被驱逐
@@ -380,25 +383,25 @@ df -i    # 查看 Inode 使用率（核心！）
 
 > **疯狂打日志、占用临时磁盘多的低优先级 Pod，永远是第一个被干掉的。**
 
-## 线上故障极速排查流程
+### 线上故障极速排查流程
 
 遇到 NodeHasDiskPressure 告警，别慌着扩容，按这套流程走：
 
-### 1. 查看节点压力状态与事件
+#### 1. 查看节点压力状态与事件
 
 ```bash
 kubectl describe node <节点名>
 # 重点关注：Conditions 中的 DiskPressure 状态、Event 中的驱逐与压力告警记录
 ```
 
-### 2. 核查 Kubelet 底层驱逐日志
+#### 2. 核查 Kubelet 底层驱逐日志
 
 ```bash
 journalctl -u kubelet -f
 # 检索关键词：eviction thresholds have been met、must evict pod
 ```
 
-### 3. 双维度核查磁盘与 Inode
+#### 3. 双维度核查磁盘与 Inode
 
 ```bash
 df -h    # 磁盘空间
@@ -406,7 +409,7 @@ df -i    # Inode 使用率
 # 重点排查：Inode 耗尽、ImageFS 爆满、根磁盘剩余空间不足
 ```
 
-### 4. 清理闲置镜像
+#### 4. 清理闲置镜像
 
 ```bash
 # Containerd
@@ -417,7 +420,7 @@ crictl images
 crictl rmi --prune
 ```
 
-### 5. 排查容器日志堆积（线上头号元凶）
+#### 5. 排查容器日志堆积（线上头号元凶）
 
 ```bash
 # 核心日志目录
@@ -429,7 +432,7 @@ find /var/log/containers/ -size +100M -exec ls -lh {} \;
 
 **生产中 60% 以上的磁盘压力故障，都是业务日志无限制打印、日志未轮转导致，而非镜像堆积。**
 
-## 生产最佳实践
+### 生产最佳实践
 
 | 措施 | 说明 |
 |------|------|
@@ -440,7 +443,7 @@ find /var/log/containers/ -size +100M -exec ls -lh {} \;
 | **限制 emptyDir 临时存储** | 为业务 emptyDir 配置 `sizeLimit`，禁止临时数据无限制占用节点磁盘 |
 | **前置监控预警** | 核心监控 `nodefs.available`、`imagefs.available`、`inodeFree` 三大指标 |
 
-## 总结
+### 总结
 
 **NodeHasDiskPressure 从来不是磁盘故障，而是 K8s 节点的主动保护机制。**
 

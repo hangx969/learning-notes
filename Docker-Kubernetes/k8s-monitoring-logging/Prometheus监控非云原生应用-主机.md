@@ -12,7 +12,10 @@ aliases:
   - Prometheus监控外部服务和主机
 ---
 
-# 使用exporter监控服务
+# Prometheus监控非云原生应用-主机
+
+
+## 使用exporter监控服务
 
 如果想要监控一些未提供Metrics接口的服务,比如MySQL、Redis等,需要安装对应的Exporter才能进行监控。
 
@@ -20,7 +23,7 @@ exporter一般支持监控多个实例,但是一般建议还是一个exporter监
 
 下面将使用MySQL作为一个测试用例,演示如何使用Exporter监控非云原生应用。
 
-## 部署测试用例
+### 部署测试用例
 
 ```sh
 # 部署mysql
@@ -37,7 +40,7 @@ GRANT PROCESS, REPLICATION CLIENT, SELECT ON *.* TO 'exporter'@'%';
 quit
 ```
 
-## 部署mysql exporter
+### 部署mysql exporter
 
 创建MySQL Exporter的配置文件:
 
@@ -131,7 +134,7 @@ spec:
 curl -s 10.103.67.39:9104/metrics | tail -1
 ```
 
-## 部署serviceMonitor
+### 部署serviceMonitor
 
 需要注意matchLabels和endpoints的配置,要和MySQL的Service一致
 
@@ -158,25 +161,25 @@ spec:
     - monitoring
 ```
 
-# 使用ScrapeConfig监控多实例
+## 使用ScrapeConfig监控多实例
 
 演示使用ScrapeConfig监控Redis多实例
 
-## 部署测试用例
+### 部署测试用例
 
 ```sh
 kubectl create deploy redis --image=registry.cn-beijing.aliyuncs.com/dotbalo/redis:7.2.5
 kubectl expose deploy redis --port 6379
 ```
 
-## 部署exporter
+### 部署exporter
 
 ```sh
 kubectl create deploy redis-exporter -n monitoring --image=registry.cn-beijing.aliyuncs.com/dotbalo/redis_exporter
 kubectl expose deployment redis-exporter -n monitoring --port 9121
 ```
 
-## 部署ScrapeConfig
+### 部署ScrapeConfig
 
 接下来创建ScrapeConfig即可监控不同的实例:
 
@@ -209,7 +212,7 @@ spec:
 
 部署完成后可以去prometheus-target中查看状态,可以安装dashboard展示指标
 
-# 使用Probe黑盒监控
+## 使用Probe黑盒监控
 
 参考文档:[blackbox_exporter (GitHub)](https://github.com/prometheus/blackbox_exporter)
 
@@ -243,7 +246,7 @@ spec:
 
 资源创建后即可在Prometheus-targets搜blackbox,查看到监控目标,同样可以安装dashboard,Dashboard ID为:13659
 
-# 监控外部主机
+## 监控外部主机
 
 监控Linux 的Exporter 是:[node_exporter (GitHub)](https://github.com/prometheus/node_exporter)
 

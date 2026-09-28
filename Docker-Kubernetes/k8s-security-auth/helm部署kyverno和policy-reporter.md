@@ -8,9 +8,12 @@ aliases:
   - kyverno策略引擎
 ---
 
-# kyverno
+# Helm部署Kyverno和Policy-Reporter
 
-## 介绍
+
+## kyverno
+
+### 介绍
 
 - 官网：[Kyverno Docs](https://kyverno.io/docs/)
 
@@ -24,7 +27,7 @@ aliases:
 
   ![image-20241122100328010](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202411221003152.png)
 
-## 下载
+### 下载
 
 ~~~sh
 helm repo add --force-update kyverno https://kyverno.github.io/kyverno
@@ -32,25 +35,25 @@ helm repo update kyverno
 helm pull kyverno/kyverno --version 3.2.7
 ~~~
 
-## 配置
+### 配置
 
 ~~~yaml
 #仿照ado中的配置稍作调整
 ~~~
 
-## 安装
+### 安装
 
 ~~~sh
 helm upgrade -i kyverno -n kyverno --create-namespace . -f values.yaml
 ~~~
 
-# kyverno policy
+## kyverno policy
 
-## 语法规则
+### 语法规则
 
 [Kyverno Policy语法规则](https://mp.weixin.qq.com/s/5tANwfzp8C0O2GS8fkXErA)
 
-## 安装policy
+### 安装policy
 
 ~~~sh
 export DIRECTORY="$(System.DefaultWorkingDirectory)/${{parameters.folder}}"
@@ -61,17 +64,18 @@ if test -d "$DIRECTORY/external/kyverno/policies/${{parameters.region}}"; then
 fi
 ~~~
 
-# kyverno policy reporter
+## kyverno policy reporter
 
-## 介绍
+### 介绍
 
 - kyverno自带的一个GUI界面，官网：
   - [Kyverno Policy Reporter](https://kyverno.io/docs/kyverno-policy-reporter/)
   - [Policy Reporter Docs](https://kyverno.github.io/policy-reporter/)
+
 - release page: [Policy Reporter Releases](https://github.com/kyverno/policy-reporter/releases)
 - artifact hub: [policy-reporter helm chart](https://artifacthub.io/packages/helm/policy-reporter/policy-reporter)
 
-## 下载
+### 下载
 
 ~~~sh
 helm repo add --force-update policy-reporter https://kyverno.github.io/policy-reporter
@@ -79,7 +83,7 @@ helm repo update policy-reporter
 helm pull policy-reporter/policy-reporter --version 2.24.2
 ~~~
 
-## 配置
+### 配置
 
 - 创建policy-reporter的certificate
 
@@ -142,21 +146,21 @@ ui:
           - kyverno.hanxux.local
 ~~~
 
-## 安装
+### 安装
 
 ~~~sh
 helm upgrade -i policy-reporter -n policy-reporter . -f values.yaml
 ~~~
 
-## 配置告警
+### 配置告警
 
 - 可以配置往loki和slack发消息：[Enable Targets Notification](https://kyverno.github.io/policy-reporter/guide/helm-chart-core#enable-targets-notification)
 
-## 访问
+### 访问
 
 https://kyverno.hanxux.local
 
-# 实战--策略强制pod使用harbor中的镜像
+## 实战--策略强制pod使用harbor中的镜像
 
 安装harbor和kyverno完成后，可以定义一个Policy，使得某个namespace下的所有pod都必须使用harbor中的pod，否则请求会被拒绝。(假设harbor的URL为`registry.local.harbor`)
 
@@ -196,9 +200,9 @@ spec:
 EOF
 ~~~
 
-# 实战 -- 自动修改pod的image repo
+## 实战 -- 自动修改pod的image repo
 
-## 项目背景
+### 项目背景
 
 在跨国企业中，海外 Artifactory（如 `artifactory.example.com`）经常作为统一镜像源，代理 DockerHub、GHCR、Quay 等公共仓库。当业务扩展到中国区时，由于跨境网络延迟，Pod 拉取镜像速度很慢甚至超时。
 
@@ -211,11 +215,11 @@ EOF
 - 仅在指定 namespace 中生效，避免影响系统组件
 - Kyverno 宕机时不阻塞 Pod 创建（`failurePolicy: Ignore`）
 
-## 为什么选择 MutatingPolicy（CEL）而非 ClusterPolicy（JMESPath）
+### 为什么选择 MutatingPolicy（CEL）而非 ClusterPolicy（JMESPath）
 
 Kyverno 1.18 引入了 `MutatingPolicy`（API Group: `policies.kyverno.io/v1`），使用 CEL（Common Expression Language）替代 JMESPath。在实际落地中，我们发现 MutatingPolicy 有以下优势：
 
-### 1. CEL 表达力更强
+#### 1. CEL 表达力更强
 
 ClusterPolicy 的 JMESPath `AnyIn` 通配符不支持多级路径匹配。例如 `artifactory.example.com/my-repo/*` 无法匹配 `artifactory.example.com/my-repo/datadog/agent:7.68.3-jmx`（多级子路径）。
 
@@ -227,23 +231,23 @@ variables.allowedRepos.exists(repo,
 )
 ```
 
-### 2. Webhook 机制独立
+#### 2. Webhook 机制独立
 
 ClusterPolicy 共享一套 webhook，而 MutatingPolicy 使用独立的 admission 机制（`kyverno-resource-mutating-webhook-cfg` 中的 `mpol.validate.kyverno.svc-ignore`）。在实测中，ClusterPolicy 偶尔出现 webhook 不接收请求的问题，切换到 MutatingPolicy 后立即生效。
 
-### 3. 更好的错误处理
+#### 3. 更好的错误处理
 
 CEL 表达式在编译期即可发现语法错误，而 JMESPath 的错误往往在运行时才暴露。MutatingPolicy 的 `READY` 状态可以直观反映策略是否编译通过。
 
-## 最终 Policy 设计
+### 最终 Policy 设计
 
-### 关键设计决策：单一 Policy + matchExpressions In
+#### 关键设计决策：单一 Policy + matchExpressions In
 
 **踩坑经历：** 最初尝试为每个 namespace 生成一个 MutatingPolicy（通过 Helm `range` 循环），但发现所有 MutatingPolicy 共享同一个 webhook（`kyverno-resource-mutating-webhook-cfg`），最后一个 policy 的 `namespaceSelector` 会覆盖之前所有 policy 的 selector。导致只有最后一个 namespace 的 policy 生效。
 
 **解决方案：** 使用单一 MutatingPolicy，通过 `matchExpressions` + `operator: In` 列出所有目标 namespace。
 
-### Policy YAML（Helm 模板）
+#### Policy YAML（Helm 模板）
 
 ```yaml
 {{- if .Values.kyvernoPolicy }}
@@ -313,7 +317,7 @@ spec:
 {{- end }}
 ```
 
-### Values 配置
+#### Values 配置
 
 ```yaml
 kyvernoPolicy:
@@ -328,7 +332,7 @@ kyvernoPolicy:
     - my-quay-docker-remote
 ```
 
-## 验证方法
+### 验证方法
 
 ```bash
 # 检查 policy 状态（READY 应为 true）
@@ -364,14 +368,15 @@ kubectl get pods -n tools \
   -o jsonpath='{range .items[*]}{.metadata.name}: {.spec.containers[*].image}{"\n"}{end}'
 ```
 
-## 踩坑记录
+### 踩坑记录
 
-### 1. 多 MutatingPolicy 的 webhook selector 冲突
+#### 1. 多 MutatingPolicy 的 webhook selector 冲突
+
 **现象：** 为每个 namespace 创建一个 MutatingPolicy 后，只有最后一个 namespace 的 Pod 被 mutate。
 **原因：** 所有 MutatingPolicy 共享同一个 `MutatingWebhookConfiguration`（`kyverno-resource-mutating-webhook-cfg`），webhook 的 `namespaceSelector` 被最后注册的 policy 覆盖。
 **解决：** 使用单一 MutatingPolicy + `matchExpressions.In` 列出所有目标 namespace。
 
-# Kyverno 1.18 新特性（CNCF 毕业后首个版本）
+## Kyverno 1.18 新特性（CNCF 毕业后首个版本）
 
 > 原文：https://www.cncf.io/blog/2026/05/05/announcing-kyverno-release-1-18/
 
@@ -379,7 +384,7 @@ Kyverno 1.18 现已发布，这是 Kyverno 在 CNCF 毕业后的首个版本。
 
 本次发布进一步巩固了 Kyverno 作为 Kubernetes 原生策略引擎的定位，重点投入方向包括安全、CLI 能力以及策略引擎可靠性。同时，Kyverno 也在继续向基于 CEL 的策略类型演进，为未来的 Policy as Code 奠定基础。
 
-## TL;DR
+### TL;DR
 
 Kyverno 1.18 带来了以下更新：
 
@@ -390,11 +395,11 @@ Kyverno 1.18 带来了以下更新：
 
 本次发布没有破坏性变更，但 ClusterPolicy 的弃用计划仍在推进，用户应开始迁移到新的策略类型。
 
-## 安全改进
+### 安全改进
 
 安全一直是 Kyverno 的核心支柱。1.18 版本为策略执行引入了多项重要防护能力。
 
-### 更安全的 HTTP 执行
+#### 更安全的 HTTP 执行
 
 Kyverno 策略可以通过 HTTP CEL 库调用外部服务。在 1.18 中，这一能力得到了显著加固：
 
@@ -403,11 +408,11 @@ Kyverno 策略可以通过 HTTP CEL 库调用外部服务。在 1.18 中，这�
 
 这些变化在保持高级策略场景灵活性的同时，降低了非预期外部访问的风险。
 
-## CLI 扩展与开发者体验
+### CLI 扩展与开发者体验
 
 Kyverno CLI 正在持续演进，成为策略开发和测试中的关键工具。
 
-### 扩展策略支持
+#### 扩展策略支持
 
 `kyverno apply` 和 `kyverno test` 命令现在支持：
 
@@ -418,7 +423,7 @@ Kyverno CLI 正在持续演进，成为策略开发和测试中的关键工具�
 
 这显著提升了在本地环境和 CI 流水线中测试现代策略类型的能力。
 
-### 可靠性与易用性改进
+#### 可靠性与易用性改进
 
 本次版本还修复了多个问题，涉及：
 
@@ -428,11 +433,11 @@ Kyverno CLI 正在持续演进，成为策略开发和测试中的关键工具�
 
 这些改进让用户在处理策略时获得更可预测、更友好的开发体验。
 
-## 策略引擎改进
+### 策略引擎改进
 
 Kyverno 1.18 包含多项增强，用于改进策略在大规模环境中的执行和管理方式。
 
-### 更细粒度的成功事件过滤
+#### 更细粒度的成功事件过滤
 
 新的 `successEventActions` ConfigMap 参数允许用户控制：
 
@@ -441,7 +446,7 @@ Kyverno 1.18 包含多项增强，用于改进策略在大规模环境中的执�
 
 这对于大型环境尤其有价值，因为在这些环境中，事件数量往往需要进行调优。
 
-### 性能与可扩展性
+#### 性能与可扩展性
 
 关键改进包括：
 
@@ -451,20 +456,20 @@ Kyverno 1.18 包含多项增强，用于改进策略在大规模环境中的执�
 
 这些变化让 Kyverno 在大规模生产环境中更加可靠。
 
-### CEL 与策略执行增强
+#### CEL 与策略执行增强
 
 - 新增 gzip CEL 库，支持更高级的表达式
 - 改进策略变量和条件的编译与求值
 - 改善策略类型与执行引擎之间的一致性
 
-## 镜像验证改进
+### 镜像验证改进
 
 本次版本还对镜像验证能力进行了多项针对性改进：
 
 - 对于 ClusterPolicies，`imageRegistryCredentials.secrets` 现在支持 `namespace/name` 表示法；同时，Pod 级别的 `imagePullSecrets` 会自动被用作镜像仓库凭证。这对于多租户环境很有用，因为每个命名空间通常会管理自己的 pull secrets。
 - ImageValidatingPolicy 可靠性修复，包括更好地处理签名时间戳和 TSA 证书链、Notary resolver 修复、正确的 `matchImageReferences` 过滤，以及改进命名空间级策略的 autogen 支持。
 
-## Policies Helm Chart 增强
+### Policies Helm Chart 增强
 
 policies Helm chart 也在持续演进，提供更好的自定义能力和控制能力。
 
@@ -476,7 +481,7 @@ policies Helm chart 也在持续演进，提供更好的自定义能力和控制
 
 这些改进让用户可以更容易地根据组织和运维需求定制策略。
 
-## 支持策略更新
+### 支持策略更新
 
 从 1.18 版本开始，Kyverno 将采用 "main + 1" 补丁支持模型（N-1 模型）。
 
@@ -487,7 +492,7 @@ policies Helm chart 也在持续演进，提供更好的自定义能力和控制
 
 建议用户保持使用较新的 Kyverno 版本，根据约 3 个月的支持窗口规划升级。
 
-## ClusterPolicy 弃用提醒
+### ClusterPolicy 弃用提醒
 
 ClusterPolicy 资源计划在今年晚些时候弃用。用户应开始迁移到新的策略类型：
 
@@ -505,7 +510,7 @@ ClusterPolicy 资源计划在今年晚些时候弃用。用户应开始迁移到
 2. 使用 CLI 进行充分测试
 3. 反馈功能差距或问题
 
-## Roadmap
+### Roadmap
 
 展望未来，Kyverno roadmap 将重点关注：
 
@@ -514,7 +519,7 @@ ClusterPolicy 资源计划在今年晚些时候弃用。用户应开始迁移到
 - 在多集群环境中扩展策略能力
 - 拓展 AI governance 与策略驱动自动化能力
 
-## 参考链接
+### 参考链接
 
 - 原文：https://www.cncf.io/blog/2026/05/05/announcing-kyverno-release-1-18/
 - CNCF 毕业公告：https://www.cncf.io/announcements/2026/04/02/cloud-native-computing-foundation-announces-kyverno-graduation/

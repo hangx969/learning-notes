@@ -24,6 +24,7 @@ tags:
 ## 请求到底经过了什么
 
 一个创建 Pod 的请求进入 kube-apiserver 后，经过两段 Admission：
+
 ![image.png](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260628223220277.png)
 
 ```
@@ -51,6 +52,7 @@ tags:
 `/spec/containers/0` 是一个很脆的假设。如果前面某个 webhook 改了 containers 数组（Istio 追加了 `istio-proxy`），后面的 patch 仍然按固定 index 修改，就可能改错容器。
 
 **稳妥做法**：
+
 - 镜像策略按 container name 或镜像字段匹配，不依赖数组下标
 - 对注入容器设置明确的排除规则
 - 把最终 Pod 对象作为校验对象，而不是原始 YAML
@@ -72,6 +74,7 @@ Istio 写入 `sidecar.istio.io/status`，Kyverno 写入策略处理注解。如�
 ## 坑 3：Gatekeeper 拒绝的是"最终对象"
 
 典型故障表现：
+
 - 不开 Istio 注入，Pod 正常创建
 - 开启 namespace label `istio-injection=enabled` 后，Pod 全部失败
 - 错误信息指向 Gatekeeper
@@ -80,6 +83,7 @@ Istio 写入 `sidecar.istio.io/status`，Kyverno 写入策略处理注解。如�
 **根因**：Gatekeeper 策略要求所有容器镜像必须来自企业私有仓库，但 `istio-proxy` 使用的是 `docker.io/istio/proxyv2`，策略没有豁免，就拒绝了所有开启 sidecar 的工作负载。
 
 **解决方向**：
+
 - 排除 `istio-system` 命名空间
 - 对 `istio-proxy` 单独放行
 - 对 Mesh 运行时镜像仓库设置白名单
@@ -107,6 +111,7 @@ kubectl get mutatingwebhookconfigurations -o json \
 ```
 
 重点看四个字段：
+
 - `name`：影响链路里的相对顺序
 - `namespaceSelector`：是否误匹配了系统命名空间
 - `objectSelector`：是否只作用在必要对象上
@@ -121,6 +126,7 @@ grep '"resource":"pods"' /var/log/kubernetes/audit.log \
 ```
 
 排查时建议记录三份对象：
+
 1. 用户提交的原始 YAML
 2. Mutating 之后的最终 Pod
 3. Validating 拒绝时的错误信息
@@ -147,6 +153,7 @@ Kubernetes 支持 `reinvocationPolicy: IfNeeded`——如果后面的 Mutating W
 当 Istio、Kyverno、Gatekeeper mutation 都存在时，重新调用可能让对象经历第二轮修改，最终对象更难预测。
 
 开启条件：
+
 - mutation 必须是**幂等**的
 - patch 只作用于自己负责的字段
 

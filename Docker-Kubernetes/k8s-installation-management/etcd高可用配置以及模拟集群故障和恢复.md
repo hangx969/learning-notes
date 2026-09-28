@@ -9,7 +9,10 @@ aliases:
   - etcd故障恢复
 ---
 
-# etcd高可用配置
+# etcd高可用配置以及模拟集群故障和恢复
+
+
+## etcd高可用配置
 
 - kubeadm安装的多master集群中，可以将etcd做成高可用集群
 
@@ -41,7 +44,7 @@ aliases:
   docker run --rm -it --net host -v /etc/kubernetes:/etc/kubernetes  registry.cn-hangzhou.aliyuncs.com/google_containers/etcd:3.5.4-0 etcdctl --cert /etc/kubernetes/pki/etcd/peer.crt --key /etc/kubernetes/pki/etcd/peer.key --cacert /etc/kubernetes/pki/etcd/ca.crt --endpoints=https://192.168.40.180:2379,https://192.168.40.181:2379,https://192.168.40.182:2379 endpoint health  --cluster
   ```
 
-# 模拟剔除故障节点重新加入
+## 模拟剔除故障节点重新加入
 
 - K8s集群，公司里有3个控制节点和1个工作节点，有一个控制节点master1出问题关机了，修复不成功，然后我们kubectl delete nodes master1把master1移除，移除之后，我把机器恢复了，上架了，我打算还这个机器加到k8s集群，还是做控制节点，如何做？
 
@@ -85,7 +88,7 @@ aliases:
   #在master1上执行，使其加入集群。
   ```
 
-# etcd性能分析
+## etcd性能分析
 
 - 首先安装etcdctl
 

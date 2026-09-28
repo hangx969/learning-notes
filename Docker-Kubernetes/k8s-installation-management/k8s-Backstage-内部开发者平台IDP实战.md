@@ -420,6 +420,7 @@ annotations:
 ### 9.2 PostgreSQL 高可用
 
 Catalog 数据存储在 PostgreSQL 中，是**单点故障风险**。生产建议：
+
 - 使用云厂商托管 PostgreSQL（RDS / Cloud SQL）
 - 配置自动备份
 - 如果自建，至少 1 主 2 从 + PgBouncer 连接池
@@ -427,6 +428,7 @@ Catalog 数据存储在 PostgreSQL 中，是**单点故障风险**。生产建�
 ### 9.3 渐进式导入
 
 **不要一次性注册所有服务**——Catalog 会爆炸。建议策略：
+
 1. Phase 1：选一个团队试点，注册 3-5 个服务
 2. Phase 2：配置 Software Templates，让新服务自动注册
 3. Phase 3：存量服务通过 CI 自动注册

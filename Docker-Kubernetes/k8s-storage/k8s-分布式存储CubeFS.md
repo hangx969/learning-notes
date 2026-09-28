@@ -7,9 +7,12 @@ aliases:
   - CubeFS部署
 ---
 
-# 存储架构对比
+# K8s分布式存储CubeFS
 
-## 单节点存储
+
+## 存储架构对比
+
+### 单节点存储
 
 一种常见但又失败的存储设计：一台存储服务器，挂载了很多磁盘，搭建一个nfs或者其他nas服务提供存储。
 
@@ -19,34 +22,41 @@ aliases:
 
 1. 单点故障，非高可用
    - 如果想再搭一台作为高可用，很难实时同步两台节点的数据；而且故障转移也很困难，大概率转移不过去。
+
 2. 性能瓶颈，数据阻塞
    - 存储服务器的网卡成为网络数据流量的瓶颈，一般只有一个或者两个磁盘承载读写，也会成为瓶颈。
+
 3. 存储有限，扩容复杂
 4. 安全性低，容易宕机
 5. 功能有限，只支持文件
    - 如果想实现块存储或者对象存储是不支持的
+
 6. 隔离性差，无权限管理
 
-## 分布式存储
+### 分布式存储
 
 生产环境中建议使用分布式存储。分布式存储有以下优势：
 
 1. 支持近乎无限的扩容
    - 可以通过添加节点到集群的方式扩容
    - 扩容后集群会自动balance
+
 2. 支持容错能力和数据冗余
    - 可以配置存储多份文件副本
    - 可以配置文件拆分成多份存储到不同节点上
+
 3. 支持多机房多区域部署
 4. 支持负载均衡和并行处理
    - 数据可以在多个节点并行处理，性能更好
+
 5. 支持权限管理和多用户
 6. 支持多种文件存储类型
    - 块存储（可以当做一块硬盘直接挂载到某台机器上或者容器内）、对象存储（s3、hadoop等协议）
+
 7. 支持普通硬件设计
    - nfs存储性能就依赖于高性能磁盘，分布式存储可以通过缓存、中间件等，即使在普通硬件上也可以提高性能
 
-## 分布式存储平台
+### 分布式存储平台
 
 主要对比主流的Ceph和CubeFS：
 
@@ -66,7 +76,7 @@ aliases:
 | 扩展方式   | 水平扩展、支持动态扩展                                       | 水平扩展、支持动态扩展                                       |
 | 容错机制   | 多副本嚯纠删码机制                                           | 多副本或纠删码机制（文件经常访问-多副本好一些；不经常访问-纠删码好一些） |
 
-## k8s上落地分布式存储平台
+### k8s上落地分布式存储平台
 
 裸机部署分布式存储平台，管理很复杂，而且对故障的承受能力也比较差。
 
@@ -74,15 +84,18 @@ aliases:
 
 1. 简化部署和管理
    - 不需要在每台机器上维护配置文件。用helm等工具在k8s上实现IaC，方便管理
+
 2. 自动化运维
 3. 一键式动态扩展
    - daemonset实现每个节点的配置相同
+
 4. 故障自愈和高可用性
    - 健康检查、自动故障恢复漂移
+
 5. 云原生生态集成
    - 云原生应用可以直接用CSI对接到存储
 
-# CubeFS介绍
+## CubeFS介绍
 
 官网：[CubeFS - 云原生分布式存储系统](https://www.cubefs.io/zh/docs/master/overview/introduction.html)
 
@@ -90,7 +103,7 @@ CubeFS是新一代云原生存储产品，目前已经是CNCF毕业的开源项�
 
 比如大模型服务，部署一个deepseek，671B的参数量，模型文件就得接近上TB。模型文件越多，对存储性能要求越高，放到CubeFS上，吞吐量很优秀，可以支持大模型服务。放到单节点存储上会拖慢大模型速度。
 
-## 特性
+### 特性
 
 1. 多协议：S3、POSIX、HDFS
 2. 双引擎：支持多副本和纠删码
@@ -100,7 +113,7 @@ CubeFS是新一代云原生存储产品，目前已经是CNCF毕业的开源项�
 6. 云原生：自带CSI插件，一键集成到k8s
 7. 多场景：大数据分析、机器学习、深度训练、共享存储、对象存储、数据库中间件等。
 
-## 架构
+### 架构
 
 <img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202508281651643.png" alt="image-20250828165135446" style="zoom:50%;" />
 
@@ -120,11 +133,11 @@ CubeFS是新一代云原生存储产品，目前已经是CNCF毕业的开源项�
 
    CubeFS也是支持S3协议的，object node对外提供s3协议，应用通过object node作为入口访问到对象存储。
 
-# 企业级分布式存储架构设计
+## 企业级分布式存储架构设计
 
-## 部署方式
+### 部署方式
 
-### 混合部署
+#### 混合部署
 
 混合部署指的是已经有一个现成的k8s集群，已经部署了一些业务应用，再把分布式存储平台也部署上去。
 
@@ -132,7 +145,7 @@ CubeFS是新一代云原生存储产品，目前已经是CNCF毕业的开源项�
 
 对于CubeFS的挂载，应用可以通过Master节点的service来挂载，或者通过object node来挂载对象存储。
 
-### 独立部署-基础设施集群
+#### 独立部署-基础设施集群
 
 是企业中比较常见、典型、可靠的部署方式：
 
@@ -144,13 +157,14 @@ CubeFS是新一代云原生存储产品，目前已经是CNCF毕业的开源项�
 1. 通过TCP四层协议代理的，比如mysql、redis：
    - 可以在两个集群中间加一个F5（负载均衡器）
    - 可以把服务通过NodePort暴露
+
 2. 通过HTTP七层协议代理的
    - 可以通过ingress，暴露一个内部域名，只能内网去解析。如果没有内网域名，可以在业务集群的coreDNS上配置自定义解析，解析到基础设施集群的入口。
    - 也可以通过istio ingressGateway暴露域名。
 
-## 资源分配建议
+### 资源分配建议
 
-### 总内存
+#### 总内存
 
 以CubeFS为例，元数据节点总内存计算规则：每个文件元数据占用空间2KB-4KB。
 
@@ -163,7 +177,7 @@ CubeFS是新一代云原生存储产品，目前已经是CNCF毕业的开源项�
   - 通过CubeFS默认分片大小8MB预估，可能需要10737418240/8=1342177280个文件
   - 通过计算规则，需要的内存为：1342177280*2 = 2684354560KB = 2500GB = 2.5TB
 
-### 服务器硬件
+#### 服务器硬件
 
 假设需要落地1PB CubeFS存储（需要256G内存）。
 
@@ -179,9 +193,9 @@ CubeFS是新一代云原生存储产品，目前已经是CNCF毕业的开源项�
 
 所以就把服务器盘位、硬盘容量规划好就行，内存一般不会成为瓶颈。
 
-# CubeFS部署
+## CubeFS部署
 
-## 部署架构
+### 部署架构
 
 <img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202508281805748.png" alt="image-20250828180510573" style="zoom:50%;" />
 
@@ -190,7 +204,7 @@ CubeFS是新一代云原生存储产品，目前已经是CNCF毕业的开源项�
 - `MetaNode`：元数据节点，负责存储所有的文件元信息，部署为 DaemonSet 资源。
 - `ObjectNode`：负责提供转换 S3 协议提供对象存储的能力，无状态服务，部署为 Deployment 资源。
 
-## 配置标签
+### 配置标签
 
 CubeFS 安装时会根据这些标签通过`nodeSelector`进行匹配，然后在机器创建起对应的`Pod`。
 
@@ -207,7 +221,7 @@ kubectl label node component.cubefs.io/datanode=enabled --all
 kubectl label node component.cubefs.io/objectnode=enabled --all
 ~~~
 
-## 配置数据盘
+### 配置数据盘
 
 搭建分布式存储，是需要专门挂载磁盘的。
 
@@ -246,21 +260,21 @@ mount -a
 > [!warning] 注意
 > 如果有多个数据节点，需要保证每个数据节点的磁盘数量、大小等配置是完全一致的。因为后面配置数据节点的时候，是所有数据节点统一配置的。这样出错的概率小。
 
-## helm安装
+### helm安装
 
 官网指南：[CubeFS K8s部署指南](https://www.cubefs.io/zh/docs/master/deploy/k8s.html)
 
 github地址：[cubefs-helm - GitHub](https://github.com/cubefs/cubefs-helm)
 
-### 下载helm包
+#### 下载helm包
 
 ~~~sh
 git clone https://github.com/cubefs/cubefs-helm.git
 ~~~
 
-### 配置values
+#### 配置values
 
-#### 组件和镜像
+##### 组件和镜像
 
 ~~~yaml
 # 临时关闭一些组件 
@@ -285,7 +299,7 @@ image:
   consul: m.daocloud.io/docker.io/library/consul:1.6.1 
 ~~~
 
-#### 主节点配置
+##### 主节点配置
 
 ~~~yaml
 # 主节点副本数，建议奇数 
@@ -313,7 +327,7 @@ master:
       cpu: "8000m"
 ~~~
 
-#### 元数据节点配置
+##### 元数据节点配置
 
 ~~~yaml
 metanode: 
@@ -339,7 +353,7 @@ metanode:
       cpu: "8000m" 
 ~~~
 
-#### 数据节点配置
+##### 数据节点配置
 
 ~~~yaml
 # 数据盘配置 
@@ -366,7 +380,7 @@ metanode:
       cpu: "8000m" 
 ~~~
 
-#### 对象存储节点配置
+##### 对象存储节点配置
 
 ~~~yaml
 objectnode: 
@@ -376,7 +390,7 @@ objectnode:
 domains: "objectcfs.cubefs.io,objectnode.cubefs.io" 
 ~~~
 
-### 安装CubeFS
+#### 安装CubeFS
 
 ~~~sh
 cd ./cubefs-helm/cubefs
@@ -396,11 +410,11 @@ helm upgrade -i cubefs -n cubefs . --create-namespace -f values.yaml
 
 如果遇到启动失败的，可以在对应的节点上，查看/var/log/cubefs下的日志。
 
-# CubeFS客户端部署使用
+## CubeFS客户端部署使用
 
 官网：[CubeFS CLI概览](https://www.cubefs.io/zh/docs/master/user-guide/cli/overview.html)
 
-## 下载工具包
+### 下载工具包
 
 ~~~sh
 # 下载地址: https://github.com/cubefs/cubefs/releases/ 
@@ -410,7 +424,7 @@ cp ./cfs-cli /usr/local/bin/
 cfs-cli --version
 ~~~
 
-## 客户端配置
+### 客户端配置
 
 ~~~sh
 cfs-cli cluster info
@@ -428,7 +442,7 @@ vim ~/.cfs-cli.json
 ./cfs-cli cluster info
 ~~~
 
-## 集群管理
+### 集群管理
 
 ~~~sh
 # 查看集群信息
@@ -445,7 +459,7 @@ Metanode的Total为最大可用内存，由所有metanode的MaxMemAvailWeight之
 cfs-cli cluster volDeletionDelayTime 72 
 ~~~
 
-## 元数据节点管理
+### 元数据节点管理
 
 列出所有的元数据节点，包括ID、地址、读写状态及存活状态等：
 
@@ -459,7 +473,7 @@ cfs-cli metanode list
 cfs-cli metanode info rn1:17210
 ~~~
 
-## 数据节点管理
+### 数据节点管理
 
 列举所有的数据节点，包括ID、地址、读写状态和存活状态： 
 
@@ -484,7 +498,7 @@ cfs-cli cluster stat
 
 该下线节点的datanode pod不会被删除，删掉pod重建之后，这个数据节点就会重新加入，数据空间恢复。
 
-## 数据卷管理
+### 数据卷管理
 
 数据卷可以给服务使用或者挂载到宿主机。如果是外部服务需要使用cubeFS，那就需要创建卷给外部服务用。如果存储是在k8s内部，那么就不需要创建卷了，直接用csi管理。
 
@@ -543,7 +557,7 @@ cfs-cli volume update volume-test --readonly-when-full true
 cfs-cli volume delete volume-test -y
 ~~~
 
-# CubeFS用户管理
+## CubeFS用户管理
 
 CubeFS支持多用户，可以为每个用户对每个卷分配不同的权限，同时也可为对象存储提供用户认证。
 
@@ -561,7 +575,7 @@ cfs-cli user list
 cfs-cli user delete hangx --yes
 ~~~
 
-# CubeFS挂载测试
+## CubeFS挂载测试
 
 如果k8s集群外部裸机或者虚机部署的服务也想挂载cubeFS，也是可以的，挂载完成就等于访问一个本地文件夹一样了。
 
@@ -620,9 +634,9 @@ dd if=/dev/zero of=./testdata2 bs=128M count=4
 cfs-cli volume list
 ~~~
 
-# CubeFS扩容
+## CubeFS扩容
 
-## 新加磁盘
+### 新加磁盘
 
 如果CubeFS是部署在K8s中的，扩容时需要给每个datanode都添加同样的磁盘。要注意新加的盘要和原来的盘大小、性能、型号一样，这样集群的balance不会受到影响。
 
@@ -666,7 +680,7 @@ kubectl delete po -n cubefs -l app.kubernetes.io/component=datanode
 cfs-cli cluster stat 
 ~~~
 
-## 基于主机的扩容
+### 基于主机的扩容
 
 基于主机的扩容，需要通过添加datanode节点来完成。  
 
@@ -680,11 +694,11 @@ cfs-cli cluster stat
    kubectl label node xxx component.cubefs.io/datanode=enabled
    ~~~
 
-# CubeFS对象存储
+## CubeFS对象存储
 
 程序直接连接到存储平台对文件读写操作，不需要挂载、不需要创建PV、PVC。
 
-## 对象存储基本使用
+### 对象存储基本使用
 
 要测试对象存储，可以自己写程序，或者用一些对象存储客户端工具。CubeFS自己没没有提供对象存储的客户端工具，得用别的。
 
@@ -754,7 +768,7 @@ mc rb test/buckettest
 mc alias rm test
 ~~~
 
-## 对象存储项目管理
+### 对象存储项目管理
 
 为每个项目创建用户：
 
@@ -774,9 +788,9 @@ mc config host add projecta http://10.100.82.212:1601 sTnnilRm1YPuohs0 ayIjC5uZY
 mc mb projecta/appa
 ~~~
 
-# CubeFS对接K8s
+## CubeFS对接K8s
 
-## 部署cubeFS csi
+### 部署cubeFS csi
 
 首先给需要使用cubeFS存储的节点打上CSI的标签（一般直接给所有节点打上标签即可）：
 
@@ -852,7 +866,7 @@ helm upgrade -i cubefs -n cubefs . --create-namespace -f values.yaml
 >
 > 5. 在其他模板中又发现了更多缩进错误，我提了一个github issue：[Indent Error found in spec.tolerations for some templates - Issue #53](https://github.com/cubefs/cubefs-helm/issues/53)
 
-## PV/PVC测试
+### PV/PVC测试
 
 创建pvc:
 
@@ -909,7 +923,7 @@ spec:
               name: mypvc 
 ~~~
 
-## 在线扩容
+### 在线扩容
 
 支持不停机扩容，直接把PVC的request改大，等待一段时间就生效了。Pod是不会收到影响的。
 
@@ -923,9 +937,9 @@ spec:
   storageClassName: cfs-sc 
 ~~~
 
-## CubeFS为基础组件提供存储
+### CubeFS为基础组件提供存储
 
-### mysql单实例
+#### mysql单实例
 
 单实例手动创建PVC。如果是多实例就需要用集群模式或者主从模式，用helm或者Operator去部署，在模板里面直接写storageclass就行
 
@@ -982,13 +996,13 @@ spec:
               value: mysql
 ~~~
 
-## CubeFS为大模型提供存储
+### CubeFS为大模型提供存储
 
 CubeFS对AI训练、模型存储及分发、IO加速等需求做了专门优化。所以可以直接把CubeFS作为大模型的数据存储底座。 
 
 很多位置去启动大模型服务，可以共享同一个大模型的存储。
 
-### ollama
+#### ollama
 
 ~~~yaml
 apiVersion: v1 

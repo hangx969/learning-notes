@@ -10,9 +10,12 @@ aliases:
   - kubeadm高可用安装
 ---
 
-# 企业级高可用集群架构设计
+# 2025最新-企业级高可用集群-基于rockylinux
 
-## 架构图
+
+## 企业级高可用集群架构设计
+
+### 架构图
 
 ![image-20251004212113888](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202510042121022.png)
 
@@ -31,7 +34,7 @@ aliases:
 
 3. 工作节点:一开始上3-5个,够用,后面负载高了随时动态扩容。
 
-## 控制节点资源配置
+### 控制节点资源配置
 
 | 工作节点数量  | 控制节点数量 | 控制节点配置    | Etcd节点配置                  | Master & Etcd                                  | 备注                                                                            |
 | ------- | ------ | --------- | ------------------------- | ---------------------------------------------- | ----------------------------------------------------------------------------- |
@@ -39,7 +42,7 @@ aliases:
 | 100-250 | 3      | /         | /                         | 16C + 32G + 128G SSD                           | 1. 能支撑2万个pod级别 <br />2. Etcd和Master部署到一起也是可以的                                 |
 | 250-500 | 3      | 16C + 32G | 8C + 32G + (512G SSD * 5) |                                                | 1. Etcd和Master分开部署<br />2. Etcd拆成5个节点,跨机房部署,容忍挂2个节点                           |
 
-## 工作节点资源配置
+### 工作节点资源配置
 
 1. 可以理解为无状态的,数量、CPU、内存可以随时扩容。
 2. 推荐单节点配置:(8C + 32G) / (16C + 64G)
@@ -47,23 +50,23 @@ aliases:
 
 总之,生产环境搭建集群,最低需要3主3从6个节点。
 
-## 磁盘划分
+### 磁盘划分
 
-### 控制节点
+#### 控制节点
 
 | 根分区(100G) | Etcd数据盘(100G NVME SSD) | 数据盘(500G SSD)                                           |
 | -------------- | --------------------------- | ------------------------------------------------------------ |
 | /              | /var/lib/etcd               | /data, /var/lib/kubelet, /var/lib/containers                 |
 | 存储系统数据   | 需要高性能                  | 1. 可以把磁盘分成三个区,分别挂到三个目录<br />2. 也可以只挂到/data下,创建两个目录软链到kubelet和containers【推荐】 |
 
-### 工作节点
+#### 工作节点
 
 | 根分区(100G) | 数据盘(500G SSD)                                           |
 | -------------- | ------------------------------------------------------------ |
 | /              | /data, /var/lib/kubelet, /var/lib/containers                 |
 |                | 只挂到/data下,创建两个目录软链到kubelet和containers【推荐】 |
 
-## 网络划分
+### 网络划分
 
 网段划分非常重要,属于软件层面的划分,如果划分不合适的话可能需要重建集群。
 
@@ -104,25 +107,26 @@ aliases:
    - 不能和公司内网IP重复,需要用一个不存在的,并且属于局域网内的IP。提前ping一下,ping不通才能用。
    - 私有云上搭建需要问管理员是否支持VIP。(比如某些Openstack集群可能不支持VIP)
 
-# 企业级高可用架构落地实战
+## 企业级高可用架构落地实战
 
-## 节点准备
+### 节点准备
 
 1. 实验用,准备3台VMWare VM作为Master,每台:
    - 4C4G
    - 一块自带的40G硬盘
    - 加一块10G盘,给etcd用
    - 加一块40G盘,作为数据盘
+
 2. 准备2台VM作为Node,每台:
-   -  4C4G
-   -  一块自带的40G盘
-   -  加一块40G盘作为数据盘
+   - 4C4G
+   - 一块自带的40G盘
+   - 加一块40G盘作为数据盘
 
 ```sh
 fdisk -l # 查看新增磁盘
 ```
 
-## 实验环境规划
+### 实验环境规划
 
 | 主机名  | IP                              | 备注                                                         |
 | ------- | ------------------------------- | ------------------------------------------------------------ |
@@ -138,11 +142,11 @@ fdisk -l # 查看新增磁盘
 | Pod网段     | 172.16.0.0/16                                                |
 | Service网段 | 10.96.0.0/16                                                 |
 
-## 节点磁盘挂载
+### 节点磁盘挂载
 
 实验中都用fdisk直接分区,也可以用LVM创建逻辑卷来挂载。
 
-### 挂载etcd数据盘
+#### 挂载etcd数据盘
 
 Master节点才需要这个配置
 
@@ -168,7 +172,7 @@ systemctl daemon-reload && mount -a
 df -Th
 ```
 
-### 挂载data盘
+#### 挂载data盘
 
 Master和Worker节点都要配置
 
@@ -202,7 +206,7 @@ ln -s /data/kubelet /var/lib/kubelet
 ln -s /data/containers /var/lib/containers
 ```
 
-## 基本配置
+### 基本配置
 
 所有节点更改主机名:
 
@@ -327,7 +331,7 @@ ssh-keygen -t rsa
 for i in m01 m02 m03 n01 n02 n03;do ssh-copy-id -i .ssh/id_rsa.pub $i;done
 ```
 
-## 内核优化
+### 内核优化
 
 所有节点安装ipvsadm:
 
@@ -419,7 +423,7 @@ reboot
 lsmod | grep --color=auto -e ip_vs -e nf_conntrack
 ```
 
-## 高可用组件安装
+### 高可用组件安装
 
 > [!warning] 注意
 > 1. 如果安装的不是高可用集群,不需要安装haproxy和keepalived
@@ -431,7 +435,7 @@ lsmod | grep --color=auto -e ip_vs -e nf_conntrack
 yum install -y haproxy keepalived
 ```
 
-### 配置haproxy
+#### 配置haproxy
 
 所有master节点配置haproxy:
 
@@ -482,7 +486,7 @@ EOF
 >
 > 只关心实际IP地址,实际主机名不是k8s-master01也没关系,只要IP地址正确即可
 
-### 配置keepalived
+#### 配置keepalived
 
 注意修改三个字段:
 
@@ -494,7 +498,7 @@ virtual_ipaddress {
 }
 ```
 
-#### Master01配置
+##### Master01配置
 
 ```sh
 mkdir /etc/keepalived
@@ -534,7 +538,7 @@ vrrp_instance VI_1 {
 EOF
 ```
 
-#### Master02配置
+##### Master02配置
 
 ```sh
 mkdir /etc/keepalived
@@ -574,7 +578,7 @@ vrrp_instance VI_1 {
 EOF
 ```
 
-#### Master03配置
+##### Master03配置
 
 ```sh
 mkdir /etc/keepalived
@@ -614,7 +618,7 @@ vrrp_instance VI_1 {
 EOF
 ```
 
-#### 健康检查文件
+##### 健康检查文件
 
 所有Master节点添加keepalived健康检查文件:
 
@@ -651,7 +655,7 @@ EOF
 chmod +x /etc/keepalived/check_apiserver.sh
 ```
 
-### 启动服务
+#### 启动服务
 
 所有Master节点启动服务
 
@@ -661,7 +665,7 @@ systemctl enable --now haproxy
 systemctl enable --now keepalived
 ```
 
-### 测试VIP
+#### 测试VIP
 
 所有Master和Worker节点测试VIP:
 
@@ -687,15 +691,15 @@ telnet 192.168.40.199 16443
 > 2.	是否是私有云机器(类似OpenStack)
 > 3.	上述公有云一般都是不支持keepalived,私有云可能也有限制,需要和自己的私有云管理员咨询
 
-### 快照
+#### 快照
 
 完成keepalived测试之后,可以把所有VM关机拍快照。
 
-## Runtime安装
+### Runtime安装
 
 如果安装的版本低于1.24,选择Docker和Containerd均可,高于1.24建议选择Containerd作为Runtime,不再推荐使用Docker作为Runtime。
 
-### 安装docker和containerd
+#### 安装docker和containerd
 
 所有节点安装docker和containerd:
 
@@ -719,7 +723,7 @@ EOF
 systemctl daemon-reload && systemctl restart docker && systemctl status docker
 ```
 
-### 配置containerd
+#### 配置containerd
 
 1. 首先配置Containerd所需的模块(所有节点):
 
@@ -839,7 +843,7 @@ io.containerd.snapshotter.v1          overlayfs                linux/amd64    ok
 io.containerd.grpc.v1                 cri                      linux/amd64    ok
 ```
 
-## K8s组件安装
+### K8s组件安装
 
 1. 所有节点配置源:==注意这里需要更改k8s版本号,只用写minor version,不用写patch版本==
 
@@ -875,7 +879,7 @@ systemctl enable --now kubelet
 
    基于上面下载到linux机器的rpm文件,手动安装:`rpm -ivh ./*`
 
-## 集群初始化
+### 集群初始化
 
 1. 以下操作在Master01节点执行。集群初始化只在master01执行一遍,其余节点都是join过来的。
 
@@ -991,7 +995,7 @@ kubeadm join 192.168.40.199:16443 --token xxx \
 	--discovery-token-ca-cert-hash xxx
 ```
 
-### 加入节点
+#### 加入节点
 
 如果join命令没保存,在master01运行:
 
@@ -1002,7 +1006,7 @@ kubeadm token create --print-join-command
 1. 在Master02和03上运行join命令加入集群(用带--control-plane的join命令,后面加上--ignore-preflight-errors=SystemVerification)
 2. 在Worker nodes上运行join命令加入集群(用短的join命令,后面加上--ignore-preflight-errors=SystemVerification)
 
-### 创建kubeconfig
+#### 创建kubeconfig
 
 admin.conf是集群的钥匙,安全起见最好是仅在这一台master上执行。如需在其他节点运行,需要拷贝admin.conf到对应节点。
 
@@ -1033,13 +1037,13 @@ EOF
 source ~/.bashrc
 ```
 
-### Worker node打标签
+#### Worker node打标签
 
 ```sh
 kubectl label nodes node01 node-role.kubernetes.io/work=worker
 ```
 
-### 问题排查
+#### 问题排查
 
 如果初始化失败,使用如下命令重置后再次初始化,命令如下(没有失败不要执行):
 
@@ -1060,7 +1064,7 @@ tail -f /var/log/messages | grep -v "not found"
 3.	kubeadm yaml配置问题,三个网段有交叉,出现IP地址冲突
 4.	VIP不通导致无法初始化成功,此时messages日志会有VIP超时的报错
 
-## 安装网络插件Calico
+### 安装网络插件Calico
 
 1. 所有节点禁止NetworkManager管理Calico的网络接口,防止有冲突或干扰:
 
@@ -1100,9 +1104,9 @@ ping www.baidu.com
 nslookup kubernetes.default.svc.cluster.local
 ```
 
-## 配置优化
+### 配置优化
 
-### 使用ipvs
+#### 使用ipvs
 
 将Kube-proxy改为ipvs模式,如果在初始化集群的时候注释了ipvs配置,所以需要自行修改一下:
 
@@ -1119,9 +1123,9 @@ kubectl patch daemonset kube-proxy -p "{\"spec\":{\"template\":{\"metadata\":{\"
 curl 127.0.0.1:10249/proxyMode
 ```
 
-### 延长k8s证书
+#### 延长k8s证书
 
-#### 查看证书过期时间
+##### 查看证书过期时间
 
 ```sh
 #在master节点上执行
@@ -1129,7 +1133,7 @@ openssl x509 -in /etc/kubernetes/pki/ca.crt -noout -text | grep -i Not
 openssl x509 -in /etc/kubernetes/pki/apiserver.crt -noout -text | grep -i Not
 ```
 
-#### 延长证书有效期的脚本
+##### 延长证书有效期的脚本
 
 文件命名为:update-kubeadm-cert.sh
 
@@ -1440,7 +1444,7 @@ main() {
 main "$@"
 ```
 
-#### 运行脚本
+##### 运行脚本
 
 ```sh
 chmod +x update-kubeadm-cert.sh
@@ -1455,7 +1459,7 @@ openssl x509 -in /etc/kubernetes/pki/ca.crt -noout -text | grep -i Not
 openssl x509 -in /etc/kubernetes/pki/apiserver.crt -noout -text | grep -i Not
 ```
 
-## 【可选】安装其他插件
+### 【可选】安装其他插件
 
 ```sh
 # 杜宽老师的Addon仓库
@@ -1470,7 +1474,7 @@ kubectl apply -f dashboard-user.yaml dashboard.yaml krm.yaml
 # krm默认用户名密码是admin/admin,进去之后在集群管理里面添加集群
 ```
 
-## 【可选】部署Metrics-server
+### 【可选】部署Metrics-server
 
 在新版的Kubernetes中系统资源的采集均使用Metrics-server,可以通过Metrics采集节点和Pod的内存、磁盘、CPU和网络的使用率。
 
@@ -1489,7 +1493,7 @@ kubectl create -f comp.yaml
 
 安装完之后就能用:**kubectl top node** 查看节点资源使用情况。
 
-# 集群可用性验证
+## 集群可用性验证
 
 1. 节点均正常:
 
@@ -1548,9 +1552,9 @@ kubectl create -f comp.yaml
 
 8. 节点和Pod可以正常通信:在所有节点上ping一个Pod IP看看通不通
 
-# 集群维护
+## 集群维护
 
-## 节点关机
+### 节点关机
 
 1. 公司服务器对于关机和异常断电的容忍度还是很高的。
 2. 自己笔记本的集群:
@@ -1558,7 +1562,7 @@ kubectl create -f comp.yaml
    2. 尽量避免挂起或者暂停。因为也可能会导致集群故障
    3. 不用了关机就用`shutdown -h now`。关机拍快照还节省空间。
 
-## 节点下线
+### 节点下线
 
 如果某个节点需要下线,可以使用如下步骤平滑下线:
 
@@ -1607,17 +1611,17 @@ kubectl create -f comp.yaml
    systemctl disable --now kubelet
    ```
 
-## 添加节点
+### 添加节点
 
 1. 一个全新的节点,按照上面的安装步骤,完成基础配置、内核优化、Runtime安装、K8s组件安装
 2. Master节点上运行:`kubeadm token create --print-join-command` 打印加入节点命令
 3. 新节点上join集群,打上标签`kubectl label nodes node01 node-role.kubernetes.io/work=worker`
 
-# 制作k8s安装需要的离线yum源
+## 制作k8s安装需要的离线yum源
 
 > [!info] 要全内网环境安装docker、k8s和相关依赖,需要在内部提供安装k8s、docker需要的yum源。首先需要在联网机器上把镜像拉下来。
 
-## 制作安装docker需要的离线yum源
+### 制作安装docker需要的离线yum源
 
 1、添加docker在线源
 
@@ -1638,7 +1642,7 @@ createrepo -d /mnt/docker-ce
 rpm -Uvh *.rpm --nodeps --force #这是强制安装当前文件夹中所有的rpm包,忽略依赖去安装
 ```
 
-## 制作安装k8s命令行工具需要的离线yum源
+### 制作安装k8s命令行工具需要的离线yum源
 
 1、添加k8s在线源
 
@@ -1668,7 +1672,7 @@ createrepo -d /mnt/k8s
 rpm -Uvh *.rpm --nodeps --force #这是强制安装当前文件夹中所有的rpm包,忽略依赖去安装
 ```
 
-## 制作不同版本k8s集群需要的离线镜像
+### 制作不同版本k8s集群需要的离线镜像
 
 ```bash
 #如果用docker做容器,按照下面方面制作离线镜像
@@ -1702,19 +1706,19 @@ ctr -n=k8s.io images export k8s1.28.0.tar.gz
 ctr -n=k8s.io images import k8s1.28.0.tar.gz
 ```
 
-# Windows下安装kubectl
+## Windows下安装kubectl
 
 推荐使用scoop安装:
 
 1. 安装scoop参考[scoop安装helm部分](../helm/helmv3-安装与使用.md)
 2. 安装kubectl:`scoop install kubectl kubelogin`
 
-# 安装k9s
+## 安装k9s
 
 - kubectl可视化插件:[k9s GitHub](https://github.com/derailed/k9s)
 - 安装指南:[k9s安装指南](https://k9scli.io/topics/install/)
 
-## 在线安装
+### 在线安装
 
 1. 方法1:via [webi](https://webinstall.dev/) (在现在rockylinux vm上使用的方法)
 
@@ -1734,14 +1738,14 @@ ctr -n=k8s.io images import k8s1.28.0.tar.gz
    snap install k9s --devmode
    ```
 
-## 离线安装
+### 离线安装
 
-### 下载安装包
+#### 下载安装包
 
 1. 先从github下载amd64版本安装包:[Releases · derailed/k9s](https://github.com/derailed/k9s/releases)
 2. 安装包放到/root/下
 
-### 本地安装脚本
+#### 本地安装脚本
 
 ```sh
 #!/bin/bash
@@ -2133,7 +2137,7 @@ main() { (
 main
 ```
 
-### 安装
+#### 安装
 
 ```sh
 chmod +x k9s-local-install.sh

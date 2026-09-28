@@ -7,7 +7,10 @@ aliases:
   - rancher管理k8s
 ---
 
-# Rancher介绍
+# Rancher (v2.6.4) 管理 K8s 集群
+
+
+## Rancher介绍
 
 - Rancher是一个开源的企业级多集群Kubernetes管理平台，实现了Kubernetes集群在混合云+本地数据中心的集中部署与管理，以确保集群的安全性，加速企业数字化转型。
 
@@ -16,7 +19,7 @@ aliases:
 - Rancher和k8s的区别
   - Rancher和k8s都是用来作为容器的调度与编排系统。但是rancher不仅能够管理应用容器，更重要的一点是能够管理k8s集群。Rancher2.x底层基于k8s调度引擎，通过Rancher的封装，用户可以在不熟悉k8s概念的情况下轻松的通过Rancher来部署容器到k8s集群当中。
 
-## rancher优势
+### rancher优势
 
 - 容器管理：Rancher 支持 Kubernetes，允许用户通过 Web 界面集中管理多个k8s集群。它允许用户通过简单的几步就能够部署k8s资源
 - 多云支持：Rancher 提供了对多个云提供商的支持，如 AWS、Azure、Google Cloud 等，使用户能够在不同云平台之间轻松迁移容器工作负载。
@@ -26,9 +29,9 @@ aliases:
 
 - 应用商店：Rancher 提供了应用商店（Catalog）功能，允许用户浏览和安装预定义的应用程序模板，简化了应用程序部署的过程。
 
-# Rancher部署
+## Rancher部署
 
-## 实验机器准备
+### 实验机器准备
 
 - Rancher VM
   - 192.168.40.138；hostname：rancher；memory：6G；cpu：6vCPU
@@ -38,9 +41,9 @@ aliases:
   - master1：192.168.40.180
   - node1：192.168.40.181
 
-## 安装前准备
+### 安装前准备
 
-### 配置主机名
+#### 配置主机名
 
 ~~~sh
 #配置主机名
@@ -53,27 +56,27 @@ tee -a /etc/hosts << 'EOF'
 EOF
 ~~~
 
-### 配置ssh互信
+#### 配置ssh互信
 
 ~~~sh
 ssh-keygen
 ssh-copy-id -i ~/.ssh/id_rsa.pub master1 #node1 rancher
 ~~~
 
-### 关闭防火墙
+#### 关闭防火墙
 
 ~~~sh
 systemctl stop firewalld && systemctl disable firewalld
 ~~~
 
-### 关闭selinux
+#### 关闭selinux
 
 ~~~sh
 sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config
 reboot -f
 ~~~
 
-### 关闭交换分区
+#### 关闭交换分区
 
 ~~~sh
 swapoff -a
@@ -81,7 +84,7 @@ vim /etc/fstab
 #注释掉swap部分
 ~~~
 
-### 修改内核参数
+#### 修改内核参数
 
 ~~~sh
 #br_netfilter模块用于将桥接流量转发至iptables链，br_netfilter内核参数需要开启转发。
@@ -104,7 +107,7 @@ sysctl -p /etc/sysctl.d/k8s.conf
 > - 这种方式也可以将两个EOF之间的内容写到文件中，与tee的区别是不会将内容输出到屏幕上
 > - `cat > file` 也会覆盖文件的内容。如果你希望将内容追加到文件的末尾，你可以使用 `>>` 运算符，如 `cat >> file`
 
-### 添加阿里云docker源
+#### 添加阿里云docker源
 
 ~~~sh
 yum install -y yum-utils
@@ -113,13 +116,13 @@ wget -O /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-
 yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
 ~~~
 
-### 安装常用软件包
+#### 安装常用软件包
 
 ~~~sh
 yum install -y yum-utils device-mapper-persistent-data lvm2 wget net-tools nfs-utils lrzsz gcc gcc-c++ make cmake libxml2-devel openssl-devel curl curl-devel unzip sudo ntp libaio-devel wget vim ncurses-devel autoconf automake zlib-devel  python-devel epel-release openssh-server socat  ipvsadm conntrack ntpdate 
 ~~~
 
-### 时间同步
+#### 时间同步
 
 ~~~sh
 #跟网络时间做同步
@@ -131,7 +134,7 @@ crontab -e
 service crond restart
 ~~~
 
-## 安装docker
+### 安装docker
 
 - 安装启动docker
 
@@ -173,7 +176,7 @@ systemctl restart docker
 systemctl status docker
 ~~~
 
-## 安装rancher
+### 安装rancher
 
 ~~~sh
 #Rancher2.6.4支持导入已经存在的k8s1.23+集群，所以我们安装rancher2.6.4版本
@@ -200,9 +203,9 @@ docker logs 8708d5cbcb25 2>&1 | grep "Bootstrap"
 - 登录rancher
   - 使用本地用户登录，设置密码（u:admin,p:azsxdcfvgbhn）
 
-## 通过rancher管理k8s集群
+### 通过rancher管理k8s集群
 
-### 导入集群
+#### 导入集群
 
 - 导入已有集群 - 通用 - 输入集群名称 - 创建
 
@@ -223,7 +226,7 @@ docker logs 8708d5cbcb25 2>&1 | grep "Bootstrap"
 
 - 访问**https://192.168.40.138/dashboard/home**，检查集群情况
 
-### 创建示例tomcat应用
+#### 创建示例tomcat应用
 
 - web ui创建namespace：tomcat-ns
 

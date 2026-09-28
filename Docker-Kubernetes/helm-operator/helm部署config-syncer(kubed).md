@@ -8,7 +8,10 @@ aliases:
   - config-syncer部署
 ---
 
-# 介绍
+# Helm 部署 Config Syncer (Kubed)
+
+
+## 介绍
 
 将configMap和secret同步到其他namespace的工具
 
@@ -18,7 +21,7 @@ aliases:
   - artifact hub: [Kubed on ArtifactHub](https://artifacthub.io/packages/helm/appscode/kubed)
 
 
-# 下载helm chart
+## 下载helm chart
 
 ~~~sh
 helm repo add --force-update appscode https://charts.appscode.com/stable
@@ -26,7 +29,7 @@ helm repo update appscode
 helm pull appscode/kubed --version 0.13.2
 ~~~
 
-# 构建镜像
+## 构建镜像
 
 由于在2024年2月，Appscode将config-syncer的镜像从docker.io移除了（[相关讨论](https://github.com/bytebuilders/community/discussions/62)），突然没有任何事先通知的移除dockerhub image，使得许多用户遭受了downtime。
 
@@ -68,7 +71,7 @@ docker save -o './kubed-image.tar' 'appscode/kubed:v0.13.2_linux_amd64'
 
 > 在github上有用户提到了config-syncer的替代品：[kubernetes-replicator](https://github.com/mittwald/kubernetes-replicator)，后面可以尝试一下。
 
-# 推送镜像到harbor
+## 推送镜像到harbor
 
 - 修改docker配置文件
 
@@ -92,7 +95,7 @@ docker save -o './kubed-image.tar' 'appscode/kubed:v0.13.2_linux_amd64'
   docker push harbor.hanxux.local/platform-tools-local/appscode/kubed:v0.13.2_linux_amd64
   ~~~
 
-# 配置helm chart
+## 配置helm chart
 
 1. values.yaml文件中的镜像源改成先前制作完推送到harbor的镜像
 2. 添加resource字段
@@ -118,7 +121,7 @@ config:
     - resync-period=1m
 ~~~
 
-# containerd配置从harbor拉镜像
+## containerd配置从harbor拉镜像
 
 - 编辑/etc/containerd/config.toml
 
@@ -387,7 +390,7 @@ version = 2
   uid = 0
 ~~~
 
-# 安装
+## 安装
 
 ~~~sh
 #helm template用于在不部署到集群的前提下，渲染生成yaml文件
@@ -400,7 +403,7 @@ oci://$harbor_host/$harbor_project/$helm_chart_file_name \
 -f ./external/config-syncer/values.yaml
 ~~~
 
-# 使用
+## 使用
 
 - 参考官网：[Config Syncer Namespace Selector](https://config-syncer.com/docs/v0.15.2/guides/config-syncer/intra-cluster/#namespace-selector)
 

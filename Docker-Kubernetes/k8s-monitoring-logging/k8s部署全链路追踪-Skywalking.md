@@ -11,7 +11,10 @@ aliases:
   - Skywalking全链路追踪
 ---
 
-# 链路追踪介绍
+# K8s部署全链路追踪-Skywalking
+
+
+## 链路追踪介绍
 
 为什么要用全链路追踪工具：
 
@@ -24,7 +27,7 @@ aliases:
 3. 理解服务间依赖关系
 4. 全局流量可视化
 
-## 核心概念
+### 核心概念
 
 Trace：一个请求的完整的请求流程被称为一个Trace，代表从客户端发起请求到后端完全处理的整个过程。一个trace由多个span组成。
 
@@ -32,7 +35,7 @@ Span：一个span表示trace的一部分工作，可以理解为一次函数调�
 
 trace id和span id：每个trace和span都有唯一的id。每个span id包含了指向父级span的引用。
 
-## 工作原理
+### 工作原理
 
 1. 客户端发起请求
 2. 服务A开始处理请求并创建初始Trace和Span
@@ -41,7 +44,7 @@ trace id和span id：每个trace和span都有唯一的id。每个span id包含�
 5. 所有服务处理完成后，各自产生的Span数据都会发送给追踪平台进行汇总
 6. 用户可以通过UI查看整个Trace的详细信息
 
-## 链路追踪工具
+### 链路追踪工具
 
 | 特性/工具  | SkyWalking                          | Pinpoint           | CAT                | Zipkin             | Jaeger                   |
 | ---------- | ----------------------------------- | ------------------ | ------------------ | ------------------ | ------------------------ |
@@ -55,7 +58,7 @@ trace id和span id：每个trace和span都有唯一的id。每个span id包含�
 | 易用性     | UI直观、功能全面                    | UI简单、功能专注   | UI传统             | UI简陋             | UI现代、查询功能强       |
 | 使用场景   | 中大型分布式系统                    | 方法级别细粒度追踪 | 实时监控要求高     | 轻量级追踪需求     | 云原生、微服务追踪       |
 
-# Skywalking介绍
+## Skywalking介绍
 
 Skywalking是一个针对分布式系统的应用性能监控（Application Performance Monitor，APM）和可观测性分析平台（Observability Analysis Platform）。提供了包括分布式追踪、指标监控、故障诊断信息、服务网格遥测分析、异常告警以及可视化界面等功能，可帮助开发人员和运维团队更好的理解和管理应用和服务。
 
@@ -69,7 +72,7 @@ Skywalking是一个针对分布式系统的应用性能监控（Application Perf
 6. 多语言支持：除了Java之外，还支持.NET Core, Node.js, Python, Go等多语言
 7. 多平台集成：可以与服务网格、K8s集成
 
-## 官网
+### 官网
 
 - github：[apache/skywalking: APM, Application Performance Monitoring System](https://github.com/apache/skywalking)
 - 官网：[Apache SkyWalking](https://skywalking.apache.org/)
@@ -81,19 +84,19 @@ Skywalking是一个针对分布式系统的应用性能监控（Application Perf
 
 安装：[SkyWalking Operation](https://skywalking.apache.org/docs/#Operation) （推荐安装在K8s中，因为方便做成一个高可用集群）
 
-### Helm Chart
+#### Helm Chart
 
 官网中提供了helm和operator安装两种方式。operator安装支持自动inject sidecar，但是对多语言支持还是不太灵活，所以还是推荐helm安装。
 
 helm chart github：[apache/skywalking-helm at v4.7.0](https://github.com/apache/skywalking-helm/tree/v4.7.0)
 
-## 核心术语
+### 核心术语
 
 1. Service：一组提供相同功能或业务逻辑的应用。可以是一个微服务、一个Web应用、一个数据库等。一般是按照项目去分组。
 2. Instance：服务的一个具体运行实例或者副本。在一个分布式环境中，同一个服务可能部署在多个不同的服务器或容器上，每个容器或服务器上的这个服务就是一个Instance
 3. Endpoint：服务中可以被外部访问的具体路径或者接口，端点是服务对外暴露功能的入口点。
 
-## 架构图
+### 架构图
 
 <img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202508302013712.png" alt="image-20250830201311544" style="zoom:67%;" />
 
@@ -116,11 +119,11 @@ helm chart github：[apache/skywalking-helm at v4.7.0](https://github.com/apache
 
 4. UI界面
 
-# Helm部署skywalking集群
+## Helm部署skywalking集群
 
 注意：最低需要3台4C8G的机器用于练习。
 
-## helm chart下载
+### helm chart下载
 
 ~~~sh
 # 添加Skywalking Helm源：
@@ -131,7 +134,7 @@ helm pull skywalking/skywalking --version 4.3.0
 helm pull oci://registry-1.docker.io/apache/skywalking-helm --version 4.7.0
 ~~~
 
-## 配置
+### 配置
 
 注意：本次实验选择的是ES当做后端存储。官网提到的Opensearch和ES基本是一样的，因为ES改过开源协议，出来个平替Opensearch。
 
@@ -214,7 +217,7 @@ ui:
     type: NodePort 
 ~~~
 
-## 安装
+### 安装
 
 ~~~sh
 # 删掉ES里面这两个文件：
@@ -243,17 +246,17 @@ helm upgrade -i skywalking -n skywalking . --create-namespace -f values.yaml
 >     successThreshold: 1        # 成功阈值
 > ~~~
 
-# skywalking数据接入方案
+## skywalking数据接入方案
 
 其它Agent参考文档：[SkyWalking Docs](https://skywalking.apache.org/docs/) 
 
-## Java接入方案
+### Java接入方案
 
 Java Agent 参考文档：[SkyWalking Java Agent Containerization](https://skywalking.apache.org/docs/skywalking-java/v9.4.0/en/setup/service-agent/java-agent/containerization/#kubernetes)
 
 接入Java程序，是需要一个java agent镜像注入到程序里面的。
 
-### 怎么注入
+#### 怎么注入
 
 有两种方法：
 
@@ -292,11 +295,11 @@ spec:
           value: "-javaagent:/skywalking/agent/skywalking-agent.jar"
 ~~~
 
-### 获取java agent镜像
+#### 获取java agent镜像
 
 去dockerhub直接搜`skywalking-java-agent`，找到最新版tag、以及对应的java版本，拉下来。
 
-### 启动常用环境变量
+#### 启动常用环境变量
 
 - JAVA_TOOL_OPTIONS：指定JAVA的启动参数，加载agent可以通过该变量实现，比如-javaagent:/skywalking/agent/skywalking-agent.jar
 - SW_AGENT_NAME：服务名称，建议格式<组名>::<逻辑名>，推荐配置为`命令空间::服务名称`
@@ -305,7 +308,7 @@ spec:
 
 其他变量可以参考：[SkyWalking Java Agent Configurations](https://skywalking.apache.org/docs/skywalking-java/v9.4.0/en/setup/service-agent/java-agent/configurations/)
 
-### 实战示例
+#### 实战示例
 
 接下来找一个测试服务，配置Agent并测试。首先对于服务的部署文件，需要添加如下内容：
 
@@ -409,9 +412,9 @@ spec:
 curl 10.244.43.47:8080/api/generate
 ~~~
 
-## Go接入方案
+### Go接入方案
 
-### 怎么注入
+#### 怎么注入
 
 Go程序接入skywalking，也是两种方法：
 
@@ -434,11 +437,11 @@ Go程序接入skywalking，也是两种方法：
    RUN go build -toolexec="skywalking-go-agent" -a /path/to/project 
    ~~~
 
-### 获取go agent镜像
+#### 获取go agent镜像
 
 去dockerhub直接搜`skywalking-go`，找到最新版tag、以及对应的go版本，拉下来。
 
-### 启动常用环境变量
+#### 启动常用环境变量
 
 - SW_AGENT_REPORTER_GRPC_BACKEND_SERVICE：Skywalking OAP 地址
 - SW_AGENT_NAME：服务名称，建议格式<组名>::<逻辑名>，推荐配置为命令空间::服务名称
@@ -448,7 +451,7 @@ Go程序接入skywalking，也是两种方法：
 
 - [SkyWalking Go Settings Override](https://skywalking.apache.org/docs/skywalking-go/v0.5.0/en/advanced-features/settings-override/)
 
-### 实战示例
+#### 实战示例
 
 下载测试程序：
 
@@ -571,7 +574,7 @@ curl 172.16.85.206:8080/orders
 
 skywalking UI中会看到自动加进去了“虚拟数据库”的界面，可以看到请求mysql的指标。这是skywalking可以动态发现数据库的功能。
 
-# skywalking UI介绍
+## skywalking UI介绍
 
 最常用的界面：常规服务 - 服务
 
@@ -580,13 +583,13 @@ skywalking UI中会看到自动加进去了“虚拟数据库”的界面，可�
 - 下面的Service可以看每个服务组里面包含哪些微服务；Topology可以看到拓扑图；Trace可以看到每个接口请求过程中的span，如果某个span时间很长，代表可能有问题；log中如果有报错的时候会看到
 - 在Service中点击某个微服务，可以看到这个微服务有多少个实例；点击某个示例进去可以看到更具体的指标，甚至可以看到JVM、Golang程序的堆栈、线程池等内部程序指标
 
-# skywalking接入完整项目实战
+## skywalking接入完整项目实战
 
 skywalking接入项目，只和微服务采用什么语言开发有关系，和项目架构、项目设计没关系。哪个微服务需要接入skywalking，就直接在deployment中添加环境变量，或者go项目构建带agent的镜像等。
 
 位于另一个ns内的微服务项目，都是通过skywalking的OAP server的svc来给skywalking推送数据的。
 
-# skywalking告警通知
+## skywalking告警通知
 
 Skywalking支持针对采集的Metrics数据进行监控告警，可以在异常出现时发送告警。
 
@@ -596,7 +599,7 @@ Skywalking告警核心由一组规则实现，主要包含如下三个部分：
 2. 规则Rules：告警的触发规则，默认定义在config/alarm-settings.yml文件中，支持比较运算符和逻辑运算符等
 3. 钩子Hooks：当告警被触发后，通过钩子来执行特定的操作，如发送通知等。
 
-## 配置文件管理
+### 配置文件管理
 
 默认是在oap pod中的`/skywalking/config/*`目录，但是在helm chart目录下的`files/config.d/oap/alarm-settings.yml`可以覆盖掉前者。所以直接把alarm-settings.yml文件放进`files/config.d/oap/alarm-settings.yml`，用helm管理即可。
 
@@ -614,9 +617,9 @@ helm upgrade -i skywalking -n skywalking . -f values.yaml
 cat /skywalking/config/alarm-settings.yml
 ~~~
 
-## 告警规则
+### 告警规则
 
-### 字段
+#### 字段
 
 告警规则由如下元素组成：（[Alerting Rules](https://skywalking.apache.org/docs/main/latest/en/setup/backend/backend-alarm/#rules)）
 
@@ -631,7 +634,7 @@ cat /skywalking/config/alarm-settings.yml
 
 告警表达式计算规则：[Metrics Query Expression(MQE) Syntax | Apache SkyWalking](https://skywalking.apache.org/docs/main/latest/en/api/metrics-query-expression/)
 
-### 默认规则
+#### 默认规则
 
 skywalking内置了如下的告警规则（在oap pod中的`/skywalking/config/alarm-settings.yml`里面）：
 
@@ -643,7 +646,7 @@ skywalking内置了如下的告警规则（在oap pod中的`/skywalking/config/a
 6. 数据库在过去2分钟内的平均响应时间超过1秒
 7. 端点关系在过去2分钟内的平均响应时间超过1秒
 
-### 规则表达式注意事项
+#### 规则表达式注意事项
 
 注意：以这一条为例：服务在过去3分钟内平均响应时间超过1秒，他的告警规则写法是：
 
@@ -653,7 +656,7 @@ sum(service_resp_time > 1000) >= 3
 
 这样写会和prometheus的写法不太一样，是因为prometheus是时序数据库，直接用avg(service_resp_time[3m]) >= 1000。但是skywalking不是这样。它使用一种滑动窗口的写法，具体解释看这里（[Alerting | Apache SkyWalking](https://skywalking.apache.org/docs/main/latest/en/setup/backend/backend-alarm/#rules)）。简单说就是想要看几分钟内的数据，>=后面就写几就行了。
 
-## hooks
+### hooks
 
 更多hook：[Hooks | Apache SkyWalking](https://skywalking.apache.org/docs/main/latest/en/setup/backend/backend-alarm/#hooks)
 
@@ -677,7 +680,7 @@ hooks:
         secret: xxx # 加签的值
 ~~~
 
-## 自定义告警规则
+### 自定义告警规则
 
 除了默认告警，还可以添加一些自定义告警。指标的名称可以去UI dashboard中找到想要的表，点击编辑就能看到对应的metrics名称，然后就能用来写监控规则。
 

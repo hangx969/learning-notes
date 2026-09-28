@@ -9,9 +9,12 @@ aliases:
   - apiserver优化
 ---
 
-# k8s高可用和节点规划
+# k8s生产环境优化与最佳实践
 
-## 节点数量规划
+
+## k8s高可用和节点规划
+
+### 节点数量规划
 
 1. 部署多个节点达到总部署服务的要求（每个节点配置可以小些），缺点：管理机器多
 
@@ -39,12 +42,12 @@ aliases:
 
 - 3 master管理**900个worker**都是够用的
 
-## 日志和监控
+### 日志和监控
 
 - 监控系统：prometheus+alertManager+grafana
 - 日志平台：EFK = Elasticsearch + kibana + filebeat/fluentd （节点日志+容器日志）
 
-## 服务高可用规划
+### 服务高可用规划
 
 从服务分布考虑，同一个服务的多个副本：
 
@@ -53,7 +56,7 @@ aliases:
 
 （pod之间的反亲和力）
 
-## 服务性能规划
+### 服务性能规划
 
 多工作节点的集群，某一些节点可能用的是高性能SSD，节点性能很强。对于计算密集型的服务，需要尽量部署在上面（特殊应用部署到专用节点，提升应用性能）。（节点亲和力）
 
@@ -61,52 +64,55 @@ aliases:
 
 相互依赖的服务，尽量调度到同一个域内。
 
-# 如何使用k8s管理应用
+## 如何使用k8s管理应用
 
-## 1 dockerfile制作镜像
+### 1 dockerfile制作镜像
 
 - 镜像分为：
   - 基础镜像：centos、rocklinux、ubuntu、debian等
   - 服务镜像：openjdk、nginx、mysql、tomcat等
   - 项目镜像
+
 - java或者go代码需要编译
   - java：mvn编译，生成一个jar包或者war包，放到镜像里
   - go: go build编译，生成一个二进制文件
+
 - php和python可以不用编译
   - py文件直接放到镜像里运行即可
 
-## 2 创建pod
+### 2 创建pod
 
 - deployment
 - statefulset
 - daemonset
 - job、cronjob
 
-## 3 数据持久化
+### 3 数据持久化
 
 - 容器部署过程中一般有三种数据：
   - 容器启动需要的数据，可以是配置文件
   - 启动过程产生的临时数据，需要多个容器共享
   - 运行过程中产生的业务数据
+
 - 采用hostPath、emptyDir、NFS等方式存储或共享
 
-## 4 创建四层代理
+### 4 创建四层代理
 
 - 使用svc的ClusterIP暴露集群内访问，四层代理pod
 - svc的名称和IP是由coredns来解析的
 
-## 5 创建七层代理
+### 5 创建七层代理
 
 - 一般是网站类的服务，通过ingress对外暴露应用，通过svc关联pod。
 - 通过ingressController实现pod负载均衡
 - 支持基于请求头、权重、域名等切分流量，支持TCP/UDP四层和HTTP七层的代理
 
-## 6 日志与监控
+### 6 日志与监控
 
 - prometheus监控资源状态
 - 使用EFK+logstash+kafka收集应用日志
 
-# apiserver优化
+## apiserver优化
 
 kube-apiserver是整个集群的所有请求的入口，apiserver不可用会导致集群失效。可以从以下几个方面优化：[kube-apiserver参考文档](https://kubernetes.io/docs/reference/command-line-tools-reference/kube-apiserver/)，参数优化需要在`/etc/kubernetes/manifests/kube-apiserver.yaml`文件中编辑参数
 
@@ -123,9 +129,11 @@ kube-apiserver是整个集群的所有请求的入口，apiserver不可用会导
      被阻塞，延长了平均响应时间。
      2）请求成功率（Success rate）：如果max-mutating-requests-inflight设置过大，会导致过多的请求同
      时进入apiserver，导致系统过载，请求成功率下降
+
 5. 参数优化：`--watch-cache-sizes`
    - 每个API请求都会触发API Server的相应操作，如查询、创建、修改和删除等，而watch API请求则会触发API Server对相关对象的监听，并实时返回相应的变更信息。当watch对象数量较大或者频繁变更时，会产生大量的watch事件，如果API Server不能及时处理，就可能导致响应延迟或者watch事件丢失。为了解决这个问题，Kubernetes引入了watch缓存机制，用于在API Server中缓存watch API请求返回的对象列表。通过调整watch-cache-size参数可以控制watch缓存的大小，从而保证API Server的正常运行。某些资源（Pod、Node 等）的监视缓存大小设置，以逗号分隔。每个资源对应的设置格式：resources#size，例如：例如：`--watch-cache-size=nodes#1000,pods#5000`
    - 可以通过监控watch事件的响应时间和缓存命中率等指标，来评估和调整watch-cache-size的值。建议为每个node节点配置watch-cache-size为node的pod数量的两倍左右，这样可以确保所有对象都能被缓存，并且不会出现过度缓存导致的性能问题
+
 6. etcd多实例支持：对于不同的object进行分库存储，数据和状态分离，即将event放在单独的etcd实例中。
    - Kubernetes 1.22及之前版本的etcd是由Kubernetes自己管理的，不允许将状态和网络插件存储在不同的etcd
      集群中。但是从Kubernetes 1.23版本开始，用户可以将Kubernetes状态存储和网络插件存储放在不同的etcd
@@ -133,7 +141,7 @@ kube-apiserver是整个集群的所有请求的入口，apiserver不可用会导
      etcd:2379=http://network-etcd:2379
    - 也可以将pods, nodes等object也分离在单独的etcd实例中
 
-# controller-manager优化
+## controller-manager优化
 
 > [!info] controller-manager参考文档
 > [kube-controller-manager](https://kubernetes.io/docs/reference/command-line-tools-reference/kube-controller-manager/) - 负责处理各种资源的自动化控制，如Deployment、DaemonSet等。优化Controller Manager的参数可以提高Kubernetes的性能和稳定性
@@ -141,19 +149,22 @@ kube-apiserver是整个集群的所有请求的入口，apiserver不可用会导
 1. `--controllers`参数：
    - 可以通过该参数限制Controller Manager启动的控制器数量。默认情况下，Controller Manager会启动所有控制器，但在实际情况中，可能只需要启动一部分控制器。
    - 根据实际情况，可以选择需要的控制器，避免启动不需要的控制器导致性能损失。例如：--controllers=replicaset,deployment
+
 2. `--concurrent-deployment-syncs`参数：
    - 这个参数指的是控制器每次可以并发处理的最大同步数。每个Deployment都有可能涉及到多个Pod的创建、删除、更新等操作，这些操作会被控制器处理并同步到Kubernetes集群中。而该参数限制了控制器一次可以处理的最大同步数，即控制器在同步过程中，最多可以并发处理的Deployment数量。
    - 默认情况下，每个Deployment控制器最多可以同时同步10个Deployment。如果实际环境中部署了大量的Deployment，可以适当增加该参数的值。例如：--concurrent-deployment-syncs=20。
    - --concurrent-statefulset-syncs同理
+
 3. `--node-monitor-grace-period`参数：
    - 控制的是节点失联的容忍时间，即 Kubernetes master 节点会等待多久来检测节点是否掉线。默认值是 40 秒，当节点在这个时间内无法与 API server 连接时，它将被视为不可用。
    - 作用是保护短时间的网络故障，防止假阳性的掉线。当一个节点真的宕机时，节点的kubelet 会通知 API server 并将节点标记为不可用，如果实际环境中节点数量较大，可以适当调整该参数的值，以避免控制器因等待时间过长而导致性能下降。例如：--node-monitor-grace-period=10s。
+
 4. `--terminated-pod-gc-threshold`参数：
    - 定义了 kubelet 清理终止的 pod 的最短时间。当一个 pod 终止时，kubelet 将在 terminated-pod-gc-threshold 之前等待清理 pod，如果超过这个时间，kubelet 将清理该 pod 的所有数据，包括日志、容器工作区等。
    - 这个参数的设置应该考虑集群规模和资源限制。如果集群中 Pod 数量较多，可以适当调高这个值，以减轻 API Server 的压力。但是如果设置得太高，可能会影响垃圾回收的效率，导致系统资源浪费。
    - 如果你的集群中有大量的短期任务，可以将这个值设置得更低一些，例如 30 分钟。如果你的集群中只有少量的长期任务，可以将这个值设置得更高一些，例如 6小时。
 
-# kubelet优化
+## kubelet优化
 
 [kubelet节点参考文档](https://kubernetes.io/zh-cn/docs/concepts/architecture/nodes/)
 
@@ -177,7 +188,7 @@ kube-apiserver是整个集群的所有请求的入口，apiserver不可用会导
    - 设置Pod驱逐的软性限制。当达到软性限制时，kubelet会给Pod一个grace period（默认是30秒）的时间，等待Pod自行退出，如果超过该时间仍未退出，则kubelet会尝试强制驱逐Pod。
    - --eviction-soft=memory.available=1.5Gi,nodefs.available=10%,nodefs.inodesFree=5%，这个参数设置了内存可用空间至少为 1.5GB，磁盘可用空间至少为总磁盘空间的 10%，inode 可用数量至少为总 inode 数量的 5%。如果节点上的资源使用超出这些限制，kubelet 会尝试释放缓存等资源，以避免驱逐 pod。如果这种方式无法释放足够的资源，才会考虑驱逐 pod。
 
-# kube-scheduler优化
+## kube-scheduler优化
 
 [scheduler性能调优参考文档](https://kubernetes.io/zh-cn/docs/concepts/scheduling-eviction/scheduler-perf-tuning/)
 
@@ -201,7 +212,7 @@ kube-apiserver是整个集群的所有请求的入口，apiserver不可用会导
    - 另外，需要注意的是，--preemption参数的默认值为false，即kube-scheduler默认不启用预抢占策略。如果需
      要使用预抢占策略，必须将--preemption参数设置为true。
 
-# k8s网络优化
+## k8s网络优化
 
 1. flannel
 

@@ -7,13 +7,17 @@ aliases:
   - helm安装使用
 ---
 
-# Helm介绍
+# Helm v3 安装与使用
+
+
+## Helm介绍
 
 - Helm是kubernetes的包管理工具，相当于linux环境下的yum/apt-get命令。
 - Helm可以解决的问题：运维人员写好资源文件模板，交给开发人员填写参数即可
 - Helm中的一些概念：
   - helm：命令行客户端工具，主要用于Kubernetes应用中的chart的创建、打包、发布和管理。
   - Chart：helm程序包，一系列用于描述k8s资源相关文件的集合，比方说我们部署nginx，需要deployment、svc的yaml，这两个清单文件就是一个helm程序包，在k8s中把这些yaml清单文件叫做chart图表。
+
 - 功能：
   - 资源管理：helm chart预定义yaml文件，描述各个组件的配置和模板
   - 版本控制：支持一键回滚到先前的版本
@@ -21,7 +25,7 @@ aliases:
   - 模板化：charts可以受用go模板语言，动态生成资源文件
 
 
-## 官网地址
+### 官网地址
 
 - 中文：[Helm 中文文档](https://v3.helm.sh/zh/docs/)
 
@@ -31,23 +35,23 @@ aliases:
 
 - helm与k8s的版本支持策略：[Helm | Helm版本支持策略](https://helm.sh/zh/docs/topics/version_skew/)
 
-## 教程文章
+### 教程文章
 
 - [Helm 教程文章](https://mp.weixin.qq.com/s/S_4QK6pLSrmu0PgShOZEjw)
 
-## Helm v3版本变化
+### Helm v3版本变化
 
 - 2019年11月13日，Helm团队发布Helm v3的第一个稳定版本。
 - 该版本主要变化是架构变化：
   - Helm服务端Tiller被删除（v2版本中，需要装一个Tiller服务端作为通信桥梁才能与k8s交互。v3版不需要了。）
 
-# 安装helm v3.12.3
+## 安装helm v3.12.3
 
-## 下载安装包
+### 下载安装包
 
 - 下载地址：[Helm Releases](https://github.com/helm/helm/releases)
 
-### Linux安装
+#### Linux安装
 
 ~~~sh
 # 对于k8s 1.23版本，小于等于3.11.x版本的helm是支持的
@@ -58,9 +62,9 @@ cp linux-amd64/helm /bin/  #/bin/是默认的环境变量路径之一，所以�
 helm version
 ~~~
 
-### Windows安装-基于scoop
+#### Windows安装-基于scoop
 
-#### scoop
+##### scoop
 
 Scoop是一款适用于Windows平台的命令行软件（包）管理工具，这里是[Github介绍页](https://link.zhihu.com/?target=https%3A//github.com/ScoopInstaller/Scoop)。简单来说，就是可以通过命令行工具（PowerShell、CMD等）实现软件（包）的安装管理等需求，**通过简单的一行代码实现软件的下载、安装、卸载、更新等操作**。
 
@@ -102,18 +106,18 @@ Scoop添加软件仓库的命令是`scoop bucket add bucketname (+ url可选)`�
 
 除了官方的软件仓库，Scoop也支持用户自建仓库并共享，于是又有很多大佬提供了许多好用的软件仓库。这里强推[dorado](https://link.zhihu.com/?target=https%3A//github.com/chawyehsu/dorado)仓库，里面有许多适合中国用户的软件，或者你有兴趣可以去看看仓库作者[关于Scoop更多技术方面的探讨](https://link.zhihu.com/?target=https%3A//chawyehsu.com/blog/talk-about-scoop-the-package-manager-for-windows-again)。添加`dorado`仓库的命令如下：`scoop bucket add dorado https://github.com/chawyehsu/dorado`。
 
-#### helm
+##### helm
 
 一行命令安装：`scoop install helm`
 
-# helm仓库类型
+## helm仓库类型
 
-## ChartMuseum
+### ChartMuseum
 
 - 访问方式：HTTP/HTTPS
 - 命令：helm repo add添加仓库，helm install安装应用
 
-## OCI
+### OCI
 
 - 访问方式：OCI规范（helm 3.8之后加进来的，相当于用镜像仓库存储helm chart）
 
@@ -125,9 +129,9 @@ Scoop添加软件仓库的命令是`scoop bucket add bucketname (+ url可选)`�
 
   > 官方仓库：https://artifacthub.io
 
-# helm基本使用
+## helm基本使用
 
-## 添加chart仓库
+### 添加chart仓库
 
 - 配置国内存放chart仓库的地址:
 
@@ -160,7 +164,7 @@ helm search repo aliyun
   cat /root/.config/helm/repositories.yaml 
   ~~~
 
-## 搜索和下载chart
+### 搜索和下载chart
 
 - 查看阿里云chart仓库中的memcached
 
@@ -188,7 +192,7 @@ tar zxvf memcached-2.0.1.tgz
 helm fetch stable/mysql --version 0.2.8 --untar
 ~~~
 
-## 部署chart
+### 部署chart
 
 ~~~sh
 # 指定chart: 
@@ -203,7 +207,7 @@ helm install .
 helm install https://example.com/charts/nginx-1.2.3.tgz
 ~~~
 
-## release管理
+### release管理
 
 ~~~sh
 # 查看release发布状态
@@ -220,7 +224,7 @@ helm rollback memcached 3
 helm uninstall memcached
 ~~~
 
-## helm管理crds
+### helm管理crds
 
 - crd在helm中的管理过程：[Helm CRD 管理](https://helm.sh/zh/docs/topics/charts/#%E7%94%A8%E6%88%B7%E8%87%AA%E5%AE%9A%E4%B9%89%E8%B5%84%E6%BA%90crd)
 
@@ -234,11 +238,12 @@ helm uninstall memcached
 > - CRD从不会在升级或回滚时安装。Helm只会在安装时创建CRD。
 > - CRD从不会被删除。自动删除CRD会删除集群中所有命名空间中的所有CRD内容。因此Helm不会删除CRD。
 
-## 把k8s资源加入helm管理
+### 把k8s资源加入helm管理
 
 - 某项资源是手动创建出来的，现在需要加到某个helm release里面，变成helm去管理，需要给这个资源加上label和annotations：
   - `label： "app.kubernetes.io/managed-by"="Helm"`
   - `annotation： "meta.helm.sh/release-name"="xxxx" "meta.helm.sh/release-namespace"="xxxx"`
+
 - 命令行操作：
 
 ~~~sh
@@ -254,13 +259,13 @@ kubectl get crd --no-headers -o custom-columns=":metadata.name" | grep kyverno |
 kubectl get crd --no-headers -o custom-columns=":metadata.name" | grep kyverno | xargs -I {} kubectl label crd {} app.kubernetes.io/managed-by=Helm
 ~~~
 
-# Helm常用命令演示
+## Helm常用命令演示
 
 - 官网地址：[Helm | Helm](https://helm.sh/zh/docs/helm/helm/)
 
-## helm调试命令
+### helm调试命令
 
-### helm template
+#### helm template
 
 - 如果想根据Chart导出yaml，可以使用template字段，一键导出所有部署的yaml文件
 
@@ -269,7 +274,7 @@ kubectl get crd --no-headers -o custom-columns=":metadata.name" | grep kyverno |
   helm template cert-manager jetstack/cert-manager -n cert-manager -f values.yaml > cert-manager.yaml # 导出单个
   ~~~
 
-### helm diff
+#### helm diff
 
 - 用于展示helm upgrade将会带来哪些变化：[helm-diff GitHub](https://github.com/databus23/helm-diff?tab=readme-ov-file)
 
@@ -280,7 +285,7 @@ kubectl get crd --no-headers -o custom-columns=":metadata.name" | grep kyverno |
   helm diff revision nginx-chart 1 2
   ~~~
 
-### helm lint
+#### helm lint
 
 - 用来检查chart格式是否有问题
 
@@ -294,11 +299,11 @@ kubectl get crd --no-headers -o custom-columns=":metadata.name" | grep kyverno |
   1 chart(s) linted, 0 chart(s) failed
   ~~~
 
-### helm install --dry-run
+#### helm install --dry-run
 
 - 模拟安装到集群中，看看是否会有报错
 
-## 部署chart
+### 部署chart
 
 ~~~sh
 #指定chart: 
@@ -311,7 +316,7 @@ helm install ./nginx
 helm install https://example.com/charts/nginx-1.2.3.tgz
 ~~~
 
-## 调整参数
+### 调整参数
 
 ~~~sh
 helm upgrade --set service.type="NodePort" nginx .
@@ -321,7 +326,7 @@ helm upgrade --set service.type="NodePort" nginx .
 >
 > - 命令 `helm upgrade --set service.type="NodePort" nginx .` 中，`.` 表示 Helm chart 的位置是当前目录。Helm 将在这个目录下查找 `Chart.yaml` 文件以及其他相关的模板文件来部署或升级你的应用。
 
-## 回滚版本
+### 回滚版本
 
 ~~~sh
 #查看历史版本号
@@ -332,19 +337,19 @@ helm hist nginx
 helm rollback nginx 1
 ~~~
 
-## 查看部署状态
+### 查看部署状态
 
 ~~~sh
 helm status nginx
 ~~~
 
-## 打包chart
+### 打包chart
 
 ~~~sh
 helm package /root/myapp/
 ~~~
 
-## 查看chart
+### 查看chart
 
 ~~~sh
 #inspect和show互为alias
@@ -352,15 +357,15 @@ helm inspect chart ~/myapp/
 helm show chart ~/myapp/
 ~~~
 
-# 自定义chart模板
+## 自定义chart模板
 
-## 生成chart目录模板
+### 生成chart目录模板
 
 ~~~sh
 helm create myapp
 ~~~
 
-## chart目录结构
+### chart目录结构
 
 ~~~sh
 cd myapp/
@@ -389,7 +394,7 @@ tree ./
 
 > 注意：Chart.yaml中的version什么时候需要改：如果只是更新了values.yaml里面的经常变更的配置，不需要改version；如果更新了template/目录里面的模板文件的配置，一般需要把version升级一个版本。
 
-## 编写Chart.yaml
+### 编写Chart.yaml
 
 > Helm 使用的 Go 模板是 Go 语言的一个内置包，它提供了数据驱动的模板，用于生成可读的输出。这种模板语言被广泛应用于 Go web 框架和生成文本文件。
 >
@@ -423,7 +428,7 @@ appVersion: "latest" # 镜像标签的版本号
 type: application
 ~~~
 
-## 编写deployment.yaml
+### 编写deployment.yaml
 
 ~~~yaml
 apiVersion: apps/v1
@@ -491,7 +496,7 @@ spec:
       {{- end }}
 ~~~
 
-## _helpers.hpl
+### _helpers.hpl
 
 _helpers.tpl是helm中的一个重要组成部分，通常用来定义可以被其他模板文件复用的辅助函数、片段或者变量等。
 
@@ -516,7 +521,7 @@ metadata:
 # 不写 . ，模板函数内部就无法访问 .Release.Name 和 .Chart.Name，会导致渲染错误。
 ~~~
 
-## NOTES.txt
+### NOTES.txt
 
 安装说明文件，再执行helm install/upgrade之后，helm会打印出这些信息，比如使用说明等。
 
@@ -530,11 +535,12 @@ To learn about the release, run:
  $ helm get all {{ .Release.Name }}
 ~~~
 
-## values.yaml
+### values.yaml
 
 - 比如我们要引用values.yaml文件中的image字段下的tag字段的值
   - 可以在模板文件中写成{{ .Values.image.tag }}；
   - 如果在命令行使用--set选项来应用我们可以写成 image.tag；
+
 - 修改对应的值可以直接编辑对应values.yaml文件中对应字段的值，也可以直接使用--set 指定对应字段的对应值即可；默认情况在命令行使用--set选项给出的值，都会直接被替换；没有给定的值，默认还是使用values.yaml文件中给定的默认值；
 
 ~~~yaml
@@ -608,18 +614,18 @@ tolerations: []
 affinity: {}
 ~~~
 
-## 部署chart
+### 部署chart
 
 ~~~sh
 cd ~/myapp/
 helm install nginx ./ #Chart.yaml在当前目录下，就用 ./去部署
 ~~~
 
-# Helm Chart开发语法
+## Helm Chart开发语法
 
 > 注意：template/xxx.yaml里面的Go template语法，# 注释是不生效的。意思是即使你注释了一段Go template，里面的语法也是会被渲染生效的。所以不需要某段Go template的话就直接删掉。
 
-## 常用内置变量
+### 常用内置变量
 
 ~~~sh
 Release.Name # 实例的名称，helm install指定的名字
@@ -630,9 +636,9 @@ Release.Revision # 此次修订的版本号，从1开始，每次升级回滚都
 Chart # 用来取Chart.yaml文件中的内容，可以使用Chart.Version表示应用版本，Chart.Name表示Chart的名称
 ~~~
 
-## 常用函数
+### 常用函数
 
-### 字符串函数
+#### 字符串函数
 
 ~~~sh
 trim # 去除字符串两边的空格
@@ -659,7 +665,7 @@ println # 和print效果一样，但是会在某位新加一行
 printf # 格式化字符串，用占位符实现：printf "%s has %d dots" .Name .NumberDots
 ~~~
 
-### 类型转换函数
+#### 类型转换函数
 
 ~~~sh
 atoi # 字符串转成整型
@@ -668,7 +674,7 @@ toStrings # 转换为字符串列表
 toYaml # 将列表、切片、数组、字典等，转换成已缩进的yaml块。对于整块存在的多项配置，用这个一起打包转成yaml快很好用
 ~~~
 
-### 逻辑比较函数
+#### 逻辑比较函数
 
 ~~~sh
 and # 且，多个条件必须同时成立
@@ -684,7 +690,7 @@ default # 设置默认值
 empty # 判断是否为空
 ~~~
 
-## 管道符
+### 管道符
 
 helm的管道符用 | 来表示，可以按顺序完成一系列任务，比如：
 
@@ -694,9 +700,9 @@ data:
   v2: {{ .Values.env.v2 | upper | quote }}
 ~~~
 
-## 流控制
+### 流控制
 
-### 条件语句if/else
+#### 条件语句if/else
 
 ~~~yaml
 {{ if PIPELINE }}
@@ -716,7 +722,7 @@ env: "test"
 
 > {{- 是为了去掉渲染之后的 `env:test` 这一行的上面的空行
 
-## 循环语句range
+### 循环语句range
 
 ~~~yaml
 {{ range xxx }}
@@ -724,7 +730,7 @@ env: "test"
 {{ end }}
 ~~~
 
-### 循环遍历列表
+#### 循环遍历列表
 
 ~~~yaml
 # 假设values.yaml中有这样一行列表配置：
@@ -748,7 +754,7 @@ toppings: |-
   - "Onions"
 ~~~
 
-### 循环遍历字典kv
+#### 循环遍历字典kv
 
 ~~~yaml
 # 假设values.yaml中有一个字典
@@ -767,7 +773,7 @@ favorite: |-
   food: "pizza"
 ~~~
 
-## 更改取值作用域with
+### 更改取值作用域with
 
 主要用于values中有多层的值，取值非常麻烦，非常长，而且如果改掉values中的母值，模板中的母值就都要改。用with把取值作用域框在母值下面，就方便很多：
 
@@ -789,7 +795,7 @@ food: {{ .food | upper | quote }}
 
 注意：在更改作用域的范围内，如果想要再取到其他外面的变量，需要指定$符，比如：`{{ $.Release.Name }}`
 
-# 可视化管理工具-helm dashboard
+## 可视化管理工具-helm dashboard
 
 - 一款开源helm ui插件：[Helm Dashboard GitHub](https://github.com/komodorio/helm-dashboard)
 
@@ -827,9 +833,9 @@ food: {{ .food | upper | quote }}
 
 > helm安装helm dashboard：[Helm Dashboard Chart](https://github.com/komodorio/helm-charts/tree/master/charts/helm-dashboard)
 
-# 实战-自定义chart部署flask应用并推送到harbor
+## 实战-自定义chart部署flask应用并推送到harbor
 
-## 应用代码
+### 应用代码
 
 ~~~python
 #这里使用python基于flask开发一个web服务器，该服务通过读取环境变量 USERNAME 获得用户自己定义的名称，然后监听 80 端口。对于任意 HTTP 请求，返回 Hello ${USERNAME}。比如如果设置USERNAME=world（默认场景），该服务会返回 Hello world。
@@ -849,7 +855,7 @@ if __name__ == "__main__":
 EOF
 ~~~
 
-## 构建容器镜像
+### 构建容器镜像
 
 ~~~dockerfile
 # 使用官方 Python 基础镜像
@@ -873,7 +879,7 @@ docker build -t my-hello .
 #镜像可以推送到harbor
 ~~~
 
-## 构建helm chart
+### 构建helm chart
 
 ~~~sh
 helm create my-hello
@@ -967,7 +973,7 @@ spec:
     {{- include "my-hello.selectorLabels" . | nindent 4 }}
 ~~~
 
-## 打包应用
+### 打包应用
 
 ~~~sh
 #使用Helm lint校验Chart有无语法问题。
@@ -989,7 +995,7 @@ helm lint
 helm package ./my-hello/
 ~~~
 
-## 部署应用
+### 部署应用
 
 ~~~sh
 #部署 Chart进行测试使用以下命令部署你创建的 Helm Chart
@@ -1004,7 +1010,7 @@ kubectl --namespace default port-forward $POD_NAME 8080:$CONTAINER_PORT
 curl localhost:8080
 ~~~
 
-## 参数重载
+### 参数重载
 
 ~~~sh
 #应用开发者在 values 配置中只是提供了默认的安装参数，用户也可以在安装时指定自己的配置，通过set参数传递参数。如果应用已经部署，可以用upgrade命令替代install，实现在原有部署好的应用的基础上变更配置。
@@ -1017,7 +1023,7 @@ helm upgrade my-hello my-hello-1.0.tgz -f my-new-values.yaml
 helm upgrade my-hello my-hello-1.0.tgz --set Username="K8S"
 ~~~
 
-## 修改提示信息
+### 修改提示信息
 
 ~~~sh
 #修改提示信息部署chart后的提示信息来自templates目录下的NOTES.txt文件：
@@ -1047,7 +1053,7 @@ cat my-hello/templates/NOTES.txt
 {{- end }}
 ~~~
 
-## 清理部署
+### 清理部署
 
 ~~~sh
 helm ls

@@ -7,13 +7,16 @@ aliases:
   - Helm部署MySQL
 ---
 
-# 介绍
+# Helm部署MySQL
+
+
+## 介绍
 
 github地址：[bitnami/mysql - GitHub](https://github.com/bitnami/charts/tree/main/bitnami/mysql)
 
 artifactHub地址：[bitnami/mysql - ArtifactHub](https://artifacthub.io/packages/helm/bitnami/mysql)
 
-# 下载
+## 下载
 
 ~~~sh
 helm repo add bitnami https://charts.bitnami.com/bitnami
@@ -30,7 +33,7 @@ helm pull bitnami/mysql --version 13.0.2
 >
 > - 注意需要把charts/bitnami/common目录放到mysql/charts/目录里面才能组成完整的helm chart，因为common是子chart需要安装。
 
-# 配置-单节点模式
+## 配置-单节点模式
 
 这里简单配置，用standalone模式，只有一个statefulset会被创建。service用NodePort，暴露端口30006。
 
@@ -87,7 +90,7 @@ primary:
 #     create: false
 ~~~
 
-# 配置-主从模式
+## 配置-主从模式
 
 > [!warning] 注意
 > 生产环境也不推荐主从模式，建议用集群模式（用operator安装集群模式比较方便）
@@ -143,20 +146,20 @@ primary:
       create: false
 ~~~
 
-# 安装
+## 安装
 
 ~~~sh
 kubectl create ns mysql
 helm upgrade -i mysql -n mysql -f values.dev.yaml .
 ~~~
 
-# 使用
+## 使用
 
-## 连接到mysql pod
+### 连接到mysql pod
 
 名为mysql的svc是客户端用来建立连接的。
 
-### 通过client pod连接
+#### 通过client pod连接
 
 Execute the following to get the administrator credentials:
 
@@ -179,7 +182,7 @@ To connect to your database:
       mysql -h mysql.mysql.svc.cluster.local -uroot -p"$MYSQL_ROOT_PASSWORD"
       ```
 
-### 通过mysql client cli连接
+#### 通过mysql client cli连接
 
 ~~~sh
 # Ubuntu上安装mysql client

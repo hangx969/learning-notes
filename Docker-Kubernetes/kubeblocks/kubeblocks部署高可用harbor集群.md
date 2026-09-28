@@ -8,9 +8,12 @@ aliases:
   - kubeblocks-harbor
 ---
 
-# 背景
+# KubeBlocks 部署高可用 Harbor 集群
 
-## harbor
+
+## 背景
+
+### harbor
 
 说到搭建自建 Docker 镜像仓库，业内推荐最多的是 Harbor。然而，Harbor 并没有集成高可用（HA），这使得其服务相对不那么可靠。如果开发者想要创建一个高可用 Harbor 集群，通常需要先创建和配置高可用 Redis 和 PostgreSQL 集群，但这一过程却相当麻烦。
 
@@ -19,11 +22,11 @@ aliases:
 >
 > - Harbor 环境要求: *https://goharbor.io/docs/2.11.0/install-config/installation-prereqs/*
 
-## KubeBlocks
+### KubeBlocks
 
 - KubeBlocks 是一个可以管理多种数据库和有状态中间件的 K8s operator，支持管理 MySQL、PostgreSQL、Redis、MongoDB、Kafka、ClickHouse、Elasticsearch 等 30 余种数据库。其原理是定义一组通用和抽象的 API（CRDs）来描述各种引擎的共同属性，在其之上，数据库厂商和开发者可以通过插件来描述不同引擎的差异。
 
-# 安装kbcli和KubeBlocks
+## 安装kbcli和KubeBlocks
 
 > - 检查[环境要求](https://kubeblocks.io/docs/release-0.8/api_docs/installation/install-with-kbcli/install-kubeblocks-with-kbcli#environment-preparation)
 > - [安装kbcli](https://kubeblocks.io/docs/preview/user_docs/installation/install-with-kbcli/install-kbcli)
@@ -53,7 +56,7 @@ aliases:
    kbcli addon list
    ```
 
-# 创建postgreSQL和redis集群
+## 创建postgreSQL和redis集群
 
 1. 创建一个名为 harbor 的独立 namespace，将集群资源独立出来。
 
@@ -79,11 +82,11 @@ aliases:
    kbcli cluster list --namespace harbor
    ```
 
-# 连接集群
+## 连接集群
 
 [官方文档](https://kubeblocks.io/docs/preview/api_docs/connect_database/overview-of-database-connection)根据不同的情景，提供了多种连接集群的方式。您可根据实际场景选择对应的方式。本文中我们将使用试用环境的方式来演示连接至集群。
 
-## 连接到 PostgreSQL 集群
+### 连接到 PostgreSQL 集群
 
 1. 连接至 PostgreSQL 集群。
 
@@ -105,7 +108,7 @@ aliases:
 
 此处创建的用户和数据库将在安装 Harbor 时使用。
 
-## 连接到redis集群
+### 连接到redis集群
 
 1. 连接至 Redis 集群。
 
@@ -119,7 +122,7 @@ aliases:
    ACL SETUSER test on >password ~* +@all
    ```
 
-# 安装harbor
+## 安装harbor
 
 1. 下载 Harbor Helm chart。
 
@@ -179,10 +182,10 @@ aliases:
 
 6. 检查 Pod 状态，确保所有服务都处于 Running 状态。
 
-# web-UI访问harbor
+## web-UI访问harbor
 
 - 默认是配置的ingress方式，需要在values.yaml中改为nodeport模式，修改以下字段：
-  -   type: nodePort
+  - type: nodePort
   - ​    enabled: false
   - externalURL: http://172.16.183.100:32002
 
@@ -301,7 +304,7 @@ expose:
 externalURL: http://172.16.183.100:32002
 ~~~
 
-# docker cli推镜像
+## docker cli推镜像
 
 ~~~sh
 tee /etc/docker/daemon.json <<'EOF'
@@ -316,7 +319,7 @@ docker tag prom/node-exporter:latest 172.16.183.100:32002/library/node-exporter:
 docker push 172.16.183.100:32002/library/node-exporter:latest
 ~~~
 
-# 高可用测试
+## 高可用测试
 
 本节将演示 KubeBlocks 创建的 Harbor 集群的高可用能力。我们将通过 PostgreSQL 集群主节点故障来模拟。
 
@@ -399,7 +402,7 @@ postgres=# select * from pg_stat_replication;
 
 9. 验证 Harbor 集群的服务。这里我们拉取之前推送的 `busybox` 镜像。该镜像可以成功地从 Harbor 注册表中拉取。同时，我们也推送了新镜像 `hello-world`。该镜像也能够成功推送到 Harbor 注册表。故障转移后，Harbor 集群的读写功能已恢复，证实了 KubeBlocks 提供的高可用功能的有效性。
 
-# 集群扩容
+## 集群扩容
 
 KubeBlocks 提供了垂直和水平扩容的能力。您可以通过执行以下命令轻松扩容集群。
 

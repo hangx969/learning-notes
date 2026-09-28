@@ -8,18 +8,22 @@ aliases:
   - capsule多租户
 ---
 
-# 介绍
+# Helm部署Capsule
+
+
+## 介绍
 
 - 官网：
   - [Capsule Tutorial](https://github.com/projectcapsule/capsule/blob/main/docs/content/general/tutorial.md)
   - [Kubernetes Multi-Tenancy Made Easy](https://capsule.clastix.io/docs/#kubernetes-multi-tenancy-made-easy)
   - capsule release note：[Capsule Releases](https://github.com/projectcapsule/capsule/releases/)
   
+
 - helm参数含义：[Customize the Installation](https://github.com/projectcapsule/capsule/blob/main/charts/capsule/README.md#customize-the-installation)
 - 升级到capsule 0.7.x带来的crd管理方式改变：[Upgrading to 0.7.x](https://github.com/projectcapsule/capsule/blob/main/charts/capsule/README.md#upgrading-to-07x) （CRDs可以随helm chart更新了）
 - Tenant: capsule是管理multi tenant的工具，什么是tenant？tenant在capsule的语境下可以理解为：一组namespace，可以对其做RBAC授权、设置resource quota、network policy等。
 
-# 下载
+## 下载
 
 ~~~sh
 helm repo add --force-update projectcapsule https://projectcapsule.github.io/charts
@@ -27,21 +31,21 @@ helm repo update projectcapsule
 helm pull projectcapsule/capsule --version 0.7.1
 ~~~
 
-# 配置
+## 配置
 
 - 我们ado中仅仅指定了capsuleUserGroups，用的是AAD的group
 - capsuleUserGroups解释：用于配置可以访问和管理 Capsule 功能的用户组。在默认提供的 `values.yaml` 中，指定了 `capsuleUserGroups: ["capsule.clastix.io"]`，这意味着只有属于 `capsule.clastix.io` 这个用户组的用户或服务账户可以进行与 Capsule 相关的操作。
 - 在后续创建tenant指定tenant owner时，tenant owner要被设置成capsule user group的一员。（user可以通过证书的O字段设置，group可以用外部idp的嵌套组，service account可以直接把capsule user group设置为system:serviceaccounts:tenant-system）
 
-# 安装
+## 安装
 
 ~~~sh
 helm upgrade -i capsule -n capsule-system --create-namespace . -f values.yaml
 ~~~
 
-# 使用
+## 使用
 
-## 创建user和group
+### 创建user和group
 
 - azure中可以直接用EntraID with Azure RBAC的模式把entraID group
 
@@ -92,7 +96,7 @@ helm upgrade -i capsule -n capsule-system --create-namespace . -f values.yaml
     ```
 
 
-## helm创建tenant
+### helm创建tenant
 
 - templates下面放tenant、role、rolebinding等
 
@@ -427,7 +431,7 @@ metadata:
 EOF
 ~~~
 
-## tenant层面的配置
+### tenant层面的配置
 
 - resource、ingress、priority class、storage class、network policies、image registries、label/annotations等等都可以在tenant层面进行配置。详见官网：[Capsule Tutorial](https://capsule.clastix.io/docs/general/tutorial/)
 
@@ -444,11 +448,11 @@ EOF
   ~~~
 
 
-## dashboard
+### dashboard
 
 - 对于已经部署好prometheus stack的集群来说，可以直接在capsule的helm中开启service monitor功能，配置prometheus抓取数据、grafana展示，详情参考：[Capsule Monitoring Quick Start](https://capsule.clastix.io/docs/guides/monitoring#quick-start)
 
-# webhook
+## webhook
 
 capsule会定义两种webhook：
 

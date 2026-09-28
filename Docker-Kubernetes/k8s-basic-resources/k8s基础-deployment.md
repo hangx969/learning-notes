@@ -7,9 +7,11 @@ aliases:
   - k8sDeployment
 ---
 
-# ReplicaSet - rs
+# K8s基础-Deployment
 
-## 示例
+## ReplicaSet - rs
+
+### 示例
 
 ```yaml
 apiVersion: apps/v1
@@ -38,20 +40,20 @@ spec:
         - containerPort: 80
 ```
 
-## 缺点
+### 缺点
 
 - 更新管理上不如deployment灵活。现在不推荐使用。都使用deployment来管理。
 
-# deployment
+## deployment
 
-## 概述
+### 概述
 
 - Deployment是kubernetes中最常用的资源对象，为ReplicaSet和Pod的创建提供了一种声明式的定义方法，在Deployment对象中描述一个期望的状态，Deployment控制器就会按照一定的控制速率把实际状态改成期望状态，通过定义一个Deployment控制器会创建一个新的ReplicaSet控制器。
 - 使用Deployment而不直接创建ReplicaSet是因为Deployment对象拥有许多ReplicaSet没有的特性，例如滚动升级、金丝雀发布、蓝绿部署和回滚。
 
-## 工作原理
+### 工作原理
 
-### RS管理
+#### RS管理
 
 - Deployment控制器是建立在rs之上的一个控制器，可以管理多个rs：
   - 每次更新，都会生成一个新的rs，把旧的rs替换掉；多个rs同时存在，但是只有一个rs运行。
@@ -60,7 +62,7 @@ spec:
 
 ![image-20231029220956699](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202310292209817.png)
 
-### 更新管理
+#### 更新管理
 
 > [!info] 说明
 > 只有在`deploytment.spec.template`产生变化之后，deployment才会触发更新，产生新的RS
@@ -89,7 +91,7 @@ spec:
   ```
 
 
-## yaml示例
+### yaml示例
 
 - 用kubectl explain一层一层的查下去慢慢写完yaml文件
 
@@ -118,22 +120,22 @@ spec:
         - containerPort: 80
 ```
 
-## 重启deployment
+### 重启deployment
 
 `kubectl rollout restart deploy nginx`: 会轮替重启deployment里面的pod
 
-## 扩缩容
+### 扩缩容
 
 - 修改yaml文件replicas的值，重新kubectl apply -f
 - kubectl scale deploy --replicas=5
 
 注意不要盲目扩容，特别是对于后端服务，连了数据库的那种。如果访问慢的原因并不是由于并发数不够，而是由于后端数据库有压力，比如慢查询太多、数据库CPU内存满了，盲目扩容java程序可能会导致适得其反。所以要去分析慢的原因再看优化。
 
-## 滚动更新
+### 滚动更新
 
 > 滚动更新是一种自动化程度较高的发布方式，用户体验比较平滑，是目前成熟型技术组织所采用的主流发布方式，一次滚动发布一般由若干个发布批次组成，每批的数量一般是可以配置的（可以通过发布模板定义），例如第一批1台，第二批10%，第三批50%，第四批100%。每个批次之间留观察间隔，通过手工验证或监控反馈确保没有问题再发下一批次，所以总体上滚动式发布过程是比较缓慢的
 
-### yaml定义
+#### yaml定义
 
 ```bash
 #查看rolling update的参数定义
@@ -149,7 +151,7 @@ kubectl explain deploy.spec.strategy
 kubectl describe deploy
 ```
 
-### 查看滚动更新历史版本
+#### 查看滚动更新历史版本
 
 - `kubectl rollout <参数> deploy <deploy name>`： 版本升级相关功能，支持下面的选项：
   -   status 显示当前升级状态
@@ -180,14 +182,14 @@ kubectl get rs #能看到两个rs，有一个旧版本的rs都是0.
   - 如果用kubectl set --record去改，会自动帮你加上，内容就是这个命令本身。
   - 也是可以自己指定的，在deploy的annotation里面写：`kubernetes.io/change-cause: kubectl set image deployment nginx nginx=registry.cn-beijing.aliyuncs.com/dotbalo/canary:v1 --record=true`
 
-### 回滚到历史版本
+#### 回滚到历史版本
 
 ```bash
 kubectl rollout undo deploy dep-myapp-blue --to-revision=1 
 # 也是滚动的方式，ready一个新的干掉一个旧的。
 ```
 
-### 历史保留策略
+#### 历史保留策略
 
 在默认情况下，revision 保留 10 个旧的 ReplicaSet，其余的将在后台进行垃圾回收.
 
@@ -195,7 +197,7 @@ kubectl rollout undo deploy dep-myapp-blue --to-revision=1
 
 当设置为 0 时，不保留历史记录。
 
-### 自定义更新策略
+#### 自定义更新策略
 
 maxSurge和maxUnavailable用来控制滚动更新的更新策略:
 
@@ -217,7 +219,7 @@ maxSurge和maxUnavailable用来控制滚动更新的更新策略:
 - maxSurge：和期望的副本数比，超过期望副本数最大比例（或最大值），这个值调的越大，副本更新速度越快。
 - 建议采用百分比的形式设置两者的值。
 
-#### 最佳实践
+##### 最佳实践
 
 对于非常重要的服务比如网关，建议这样配置:
 
@@ -239,7 +241,7 @@ maxSurge和maxUnavailable用来控制滚动更新的更新策略:
 
 对于普通服务，用默认的25%+25%就行了。
 
-#### 修改策略
+##### 修改策略
 
 修改deployment的更新策略:
 
@@ -282,7 +284,7 @@ spec:
         ...
 ```
 
-### 暂停和恢复更新
+#### 暂停和恢复更新
 
 kubectl set命令去更改配置，更改后立即触发更新，大多数情况下可能需要针对一个资源文件更改多处地方，而并不需要多次触发更新。
 
@@ -299,9 +301,9 @@ deployment.extensions/nginx paused
 
 进行完最后一处配置更改后，使用 `kubectl rollout resume deploy nginx` 恢复 Deployment 更新
 
-## 蓝绿部署
+### 蓝绿部署
 
-### 原理
+#### 原理
 
 - 蓝绿部署中，一共有两套系统：一套是正在提供服务系统，标记为“绿色”；另一套是准备发布的系统，标记为“蓝色”。两套系统都是功能完善的、正在运行的系统，只是系统版本和对外服务情况不同。
 
@@ -317,7 +319,7 @@ deployment.extensions/nginx paused
 
 - 当确信对外提供服务的蓝色系统工作正常，不对外提供服务的绿色系统已经不再需要的时候，蓝色系统正式成为对外提供服务系统，成为新的绿色系统。 原先的绿色系统可以销毁，将资源释放出来，用于部署下一个蓝色系统。
 
-### 优缺点
+#### 优缺点
 
 优点：
 
@@ -335,7 +337,7 @@ deployment.extensions/nginx paused
 
 4、负载均衡器/反向代理/路由/DNS处理不当，将导致流量没有切换过来情况出现
 
-### 实现
+#### 实现
 
 K8S本身不支持原生的蓝绿部署，目前最好方法是：部署deployment，更新应用程序的service以指向新的deployment部署的应用
 
@@ -425,7 +427,7 @@ spec:
 
 - 修改svc yaml文件，使其标签选择器指向blue应用
 
-## 金丝雀发布
+### 金丝雀发布
 
 > - 金丝雀发布的由来：17 世纪，英国矿井工人发现，金丝雀对瓦斯这种气体十分敏感。空气中哪怕有极其微量的瓦斯，金丝雀也会停止歌唱；当瓦斯含量超过一定限度时，虽然人类毫无察觉，金丝雀却早已毒发身亡。当时在采矿设备相对简陋的条件下，工人们每次下井都会带上一只金丝雀作为瓦斯检测指标，以便在危险状况下紧急撤离。
 >
@@ -434,7 +436,7 @@ spec:
 
 ![image-20231111103236653](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202311111032729.png)
 
-### 实现
+#### 实现
 
 ```yaml
 # 创建deployment
@@ -449,7 +451,7 @@ kubectl rollout resume deployment myapp-v1 -n blue-green
 > [!tip] 提示
 > 金丝雀发布功能，用istio实现，更加方便
 
-# 迁移服务到k8s
+## 迁移服务到k8s
 
 1. 查看镜像版本
 2. 查看暴露的端口号

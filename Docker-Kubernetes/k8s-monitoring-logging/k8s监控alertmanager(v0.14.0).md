@@ -9,14 +9,17 @@ aliases:
   - Alertmanager部署配置
 ---
 
-# Alertmanager
+# K8s监控Alertmanager(v0.14.0)
 
-## 作用
+
+## Alertmanager
+
+### 作用
 
 - 报警：指prometheus将监测到的异常事件发送给alertmanager 
 - 通知：alertmanager将报警信息发送到邮件、微信、钉钉等
 
-## 工作流程
+### 工作流程
 
 1. Prometheus Server监控目标主机上暴露的http接口（这里假设接口A），通过Promethes配置的'scrape_interval'定义的时间间隔，定期采集目标主机上监控数据。
 2. 当接口A不可用的时候，Server端会持续的尝试从接口中取数据，直到"scrape_timeout"时间后停止尝试。这时候把接口的状态变为“DOWN”。
@@ -26,13 +29,13 @@ aliases:
 6. 属于同一个Alert Group的警报，在等待的过程中可能进入新的alert，如果之前的报警已经成功发出，那么间隔“group_interval”的时间间隔后再重新发送报警信息。比如配置的是邮件报警，那么同属一个group的报警信息会汇总在一个邮件里进行发送。
 7. 如果Alert Group里的警报一直没发生变化并且已经成功发送，等待‘repeat_interval’时间间隔之后再重复发送相同的报警邮件；如果之前的警报没有成功发送，则相当于触发第6条条件，则需要等待group_interval时间间隔后重复发送。
 
-## 部署告警到邮箱
+### 部署告警到邮箱
 
-### 配置邮箱的SMTP和POP3功能
+#### 配置邮箱的SMTP和POP3功能
 
 - 在邮箱的设置中，开启POP3/IMAP/SMTP功能，生成授权码。
 
-### 配置configmap
+#### 配置configmap
 
 ~~~yaml
 kind: ConfigMap
@@ -62,7 +65,7 @@ data:
         send_resolved: true
 ~~~
 
-### 更新prometheus的configmap
+#### 更新prometheus的configmap
 
 - 这个cm中挂进去两个yml文件，prometheus.yml定义了数据采集配置，rules.yml会包含一系列告警规则
 
@@ -554,7 +557,7 @@ data:
 
 ~~~
 
-### 安装alertmanager和prometheus在同一pod
+#### 安装alertmanager和prometheus在同一pod
 
 - 对物理机上的etcd certs创建secret，prometheus的配置中增加了对etcd的监控，需要把cert文件挂进去。因为访问etcd需要证书
 
@@ -680,9 +683,9 @@ spec:
 
 - 可以通过nodeIP:30066端口查看alertmanager的UI界面，也可以通过prometheus的UI界面查看alerts
 
-## 部署告警到钉钉群
+### 部署告警到钉钉群
 
-### 创建钉钉机器人
+#### 创建钉钉机器人
 
 - 打开电脑版钉钉，创建一个群，创建自定义机器人，按如下步骤创建
 
@@ -702,7 +705,7 @@ spec:
 
 - 点击智能群助手，可以看到刚才创建的test这个机器人，点击test，就会进入到test机器人的设置界面，拿到webhook
 
-### 部署钉钉webhook插件
+#### 部署钉钉webhook插件
 
 ~~~sh
 #下载并解压安装包
@@ -712,7 +715,7 @@ cd prometheus-webhook-dingtalk-0.3.0.linux-amd64
 nohup ./prometheus-webhook-dingtalk --web.listen-address="0.0.0.0:8060" --ding.profile="cluster1=<webpook>" &
 ~~~
 
-### 配置alertmanager的configmap
+#### 配置alertmanager的configmap
 
 ~~~yaml
 kind: ConfigMap
@@ -742,17 +745,17 @@ data:
         send_resolved: true
 ~~~
 
-## 发送告警到企业微信
+### 发送告警到企业微信
 
-### 注册企业微信 
+#### 注册企业微信 
 
 - 登陆网址：[企业微信](https://work.weixin.qq.com/)
 
-### 创建应用
+#### 创建应用
 
 - 找到应用管理，创建应用，拿到应用name、agent id、secret
 
-### 配置configmap
+#### 配置configmap
 
 ~~~yaml
 kind: ConfigMap
@@ -784,7 +787,7 @@ data:
         api_secret: 
 ~~~
 
-# 常用监控告警文件
+## 常用监控告警文件
 
 ~~~yaml
     groups:

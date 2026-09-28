@@ -8,7 +8,10 @@ aliases:
   - oauth2proxy部署
 ---
 
-# 介绍
+# Helm部署OAuth2-Proxy
+
+
+## 介绍
 
 - 是一款对k8s应用做身份验证的反向代理。工作模式有两种：
 
@@ -24,7 +27,7 @@ aliases:
 
 - artifact hub: [oauth2-proxy helm chart](https://artifacthub.io/packages/helm/oauth2-proxy/oauth2-proxy)
 
-# 下载
+## 下载
 
 ~~~sh
 helm repo add --force-update oauth2-proxy https://oauth2-proxy.github.io/manifests
@@ -32,9 +35,9 @@ helm repo update oauth2-proxy
 helm pull oauth2-proxy/oauth2-proxy --version 7.7.1
 ~~~
 
-# 配置oauth2proxy
+## 配置oauth2proxy
 
-## 创建redis password
+### 创建redis password
 
 oauth的sessionStorage选择使用redis，oauth helm chart会安装redis subchart。这里需要一个redis密码，保存到secret里。
 
@@ -63,7 +66,7 @@ kubectl annotate secrets oauth2-proxy-redis -n oauth2-proxy "meta.helm.sh/releas
 > - Redis 负责会话状态存储
 > - 所有受保护的服务都能自动获得统一的身份认证
 
-## 集成github认证
+### 集成github认证
 
 1. 先去github生成一个OauthAPP：([Developer applications](https://github.com/settings/developers))，复制`client id`和`client secret`。
 
@@ -92,7 +95,7 @@ kubectl annotate secrets oauth2-proxy-redis -n oauth2-proxy "meta.helm.sh/releas
 
 4. 传入gitub oauth app的client id和secret
 
-### 方法1-创建secret保存
+#### 方法1-创建secret保存
 
 - 创建k8s secret
 
@@ -104,7 +107,7 @@ kubectl annotate secrets oauth2-proxy-redis -n oauth2-proxy "meta.helm.sh/releas
   ~~~
 
 
-### 方法2-直接写入values
+#### 方法2-直接写入values
 
 - 注：上面创建secret的方式oauth2proxy没有读取到。遂采取直接把cookie_secret、client_id和client_secret三个参数直接写到values.yaml里面的方式
 
@@ -128,7 +131,7 @@ kubectl annotate secrets oauth2-proxy-redis -n oauth2-proxy "meta.helm.sh/releas
   ~~~
 
 
-### 方法3-github secrets
+#### 方法3-github secrets
 
 - 上述方式不安全，会直接暴露secret。后续修改了secret加载方式，先存到github repository secrets里面，再从workflow中读取
 
@@ -151,7 +154,7 @@ kubectl annotate secrets oauth2-proxy-redis -n oauth2-proxy "meta.helm.sh/releas
   --kubeconfig $KUBECONFIG
   ~~~
 
-## 配置Https
+### 配置Https
 
 - 首先部署出certmanager --> 创建clusterissuer --> 创建给oauth2proxy ingress https的secret --> helm values.yaml的ingress.tls部分配置secret、host
 
@@ -198,7 +201,7 @@ ingress:
   pathType: ImplementationSpecific
 ~~~
 
-# 安装
+## 安装
 
 ~~~sh
 helm upgrade -i oauth2-proxy -n oauth2-proxy --create-namespace . -f values.yaml
@@ -206,7 +209,7 @@ helm upgrade -i oauth2-proxy -n oauth2-proxy --create-namespace . -f values.yaml
 
 - 验证安装：`oauth2proxy.hanxux.local`也要加到本机hosts文件中，https访问hostname即可看到oauthproxy的主页，有用github登录的提示。由于lab用的是自签证书，所以浏览器会报连接不安全。
 
-# 回调URL
+## 回调URL
 
 回调 URL 是 OAuth2 授权流程中，**授权服务器（GitHub）在用户完成授权后，将用户重定向回去的目标地址**。
 
@@ -227,7 +230,7 @@ helm upgrade -i oauth2-proxy -n oauth2-proxy --create-namespace . -f values.yaml
 - 回调中包含 `state` 参数，用于防止 CSRF 攻击
 - OAuth2 Proxy 验证 state 确保请求的合法性
 
-## 实际示例
+### 实际示例
 
 使用的是 ingress-nginx 的**外部认证功能**来集成 OAuth2 Proxy。以访问jenkins
 
@@ -298,7 +301,7 @@ OAuth2 Proxy 的作用：
    - `/oauth2/start`: 开始 OAuth 流程
    - `/oauth2/callback`: 处理 GitHub 回调
 
-# 使用oauth2proxy保护其他app
+## 使用oauth2proxy保护其他app
 
 - 在其他应用的ingress中添加annotations，详细说明参考ingress官网：[OAuth External Auth](https://kubernetes.github.io/ingress-nginx/examples/auth/oauth-external-auth/)
 - 这两个annotations会将请求redirect到oauth2proxy，由oauth2proxy将请求转发到配置的3rd party认证endpoint (github)

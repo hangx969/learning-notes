@@ -7,7 +7,10 @@ aliases:
   - NDB Operator部署MySQL集群
 ---
 
-# NDB Operator
+# Operator部署MySQL NDB集群
+
+
+## NDB Operator
 
 MySQL NDB Cluster 是一个分布式、高可用的数据库系统，适用于需要高并发读写、低延迟和高可用性的应用场景。MySQL NDB Cluster基于 NDB（Network Database）存储引擎，并通过多个节点协同工作来提供数据的分布存储和故障恢复能力。
 
@@ -17,7 +20,7 @@ MySQL NDB Cluster 是一个分布式、高可用的数据库系统，适用于�
 - ndb-operator官网：[MySQL :: NDB Operator 8.4 Manual](https://dev.mysql.com/doc/ndb-operator/8.4/en/)
 - github仓库：[mysql-ndb-operator - GitHub](https://github.com/mysql/mysql-ndb-operator)
 
-# 架构组件
+## 架构组件
 
 <img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202508231711571.png" alt="image-20250823171133476" style="zoom:50%;" />
 
@@ -28,9 +31,9 @@ MySQL NDB Cluster 是一个分布式、高可用的数据库系统，适用于�
 - SQL节点：SQL Node是用户与NDB Cluster交互的主要入口，提供了标准的MySQL SQL接口，允许用户通过SQL查询、插入、更新和删除数据。
 - NDB API：可以直接与NDB存储引擎进行交互的接口。
 
-# 安装NDB Operator
+## 安装NDB Operator
 
-## 方法1：基于helm
+### 方法1：基于helm
 
 [MySQL :: NDB Operator 8.4 Manual :: 2.3 Installing NDB Operator Using Helm](https://dev.mysql.com/doc/ndb-operator/8.4/en/installation-helm-chart.html)
 
@@ -40,7 +43,7 @@ helm repo update ndb-operator-repo
 helm install --namespace=ndb-operator --create-namespace ndbop ndb-operator-repo/ndb-operator
 ~~~
 
-## 方法2：基于yaml
+### 方法2：基于yaml
 
 [MySQL :: NDB Operator 8.4 Manual :: 2.4 Installing NDB Operator Using the YAML File and kubectl](https://dev.mysql.com/doc/ndb-operator/8.4/en/installation-yaml-file.html)
 
@@ -48,14 +51,14 @@ helm install --namespace=ndb-operator --create-namespace ndbop ndb-operator-repo
 kubectl apply -f https://raw.githubusercontent.com/mysql/mysql-ndb-operator/main/deploy/manifests/ndb-operator.yaml
 ~~~
 
-## 方法3：clone仓库
+### 方法3：clone仓库
 
 ~~~sh
 git clone https://github.com/mysql/mysql-ndb-operator.git
 kubectl apply -f deploy/manifests/ndb-operator.yaml 
 ~~~
 
-# 创建NDB Cluster
+## 创建NDB Cluster
 
 ~~~yaml
 apiVersion: mysql.oracle.com/v1 
@@ -85,7 +88,7 @@ spec:
 
 注：管理节点的数量是根据redundancyLevel决定的，配置成3就是3个管理节点
 
-# 连接集群
+## 连接集群
 
 mysqld的service是集群的入口服务，可以通过它访问集群
 
@@ -111,7 +114,7 @@ mysql -h example-ndb-mysqld -uroot -p
 show databases;
 ~~~
 
-# 集群外部访问
+## 集群外部访问
 
 因为mysql不涉及下一跳（与redis相比），所以直接新建一个NodePort类型的svc，后端pod指向mysqld的pod即可。
 

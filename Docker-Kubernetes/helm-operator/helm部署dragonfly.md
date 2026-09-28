@@ -110,16 +110,19 @@ Dragonfly 采用 BitTorrent-like 的分块（Piece）分发机制：
 ### 核心概念
 
 #### 1. **分片（Piece）**
+
 - 镜像被切分成多个小块（默认 4MB）
 - 每个分片可以独立传输和校验
 - 类似于下载工具的多线程下载
 
 #### 2. **任务（Task）**
+
 - 一个镜像 = 一个任务
 - 任务包含所有分片的元数据
 - 调度器负责任务的全局管理
 
 #### 3. **对等节点（Peer）**
+
 - 集群中的每个节点都是一个 Peer
 - Peer 既是下载者，也是上传者
 - 形成 P2P 网络拓扑
@@ -185,4 +188,5 @@ Dragonfly 采用 BitTorrent-like 的分块（Piece）分发机制：
 ```
 
 # Helm Chart地址
+
 [Dragonfly Helm Charts Releases](https://github.com/dragonflyoss/helm-charts/releases)

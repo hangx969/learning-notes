@@ -15,13 +15,16 @@ sources:
   - "[[0raw/多集群切换乱？用kubectx]]"
 ---
 
-# 多集群管理
+# k8s多集群kubeconfig管理
+
+
+## 多集群管理
 
 在实际生产环境中,往往需要维护多个k8s集群,如何实现在一台机器上操作多个集群。通过设置kubeconfig文件来实现。
 
-# 合并多个kubeconfig文件
+## 合并多个kubeconfig文件
 
-## 方案1：kubectl config命令
+### 方案1：kubectl config命令
 
 假设存在两套集群,集群1：master1/node1、集群2：master2/node2。现在在master1上配置访问master2的集群
 
@@ -52,7 +55,7 @@ kubectl config set-context k8smaster2-context --cluster=k8smaster2  --user=k8sma
 kubectl config use-context k8smaster2-context
 ```
 
-## 方案2：`KUBECONFIG` 环境变量指向多个文件
+### 方案2：`KUBECONFIG` 环境变量指向多个文件
 
 通过在 KUBECONFIG 环境变量中指定多个文件，可以临时将 KUBECONFIG 文件组合在一起，并在 `kubectl `中使用。如下，那么kubeconfig 是在内存中做的合并：
 
@@ -63,7 +66,7 @@ export KUBECONFIG=~/.kube/config:~/another-config-file-location
 > [!important] 多文件合并优先级
 > Kubernetes 的规则是：**第一个设置某个值或同名 map key 的文件胜出**，不是后面的文件覆盖前面的文件。例如两个文件都定义了名为 `prod` 的 context，使用前一个文件中的完整定义。可用 `kubectl config view` 检查最终合并结果。
 
-## 方案3：`flatten` 导出
+### 方案3：`flatten` 导出
 
 ```sh
 export KUBECONFIG=~/.kube/config:~/anotherconfig
@@ -74,7 +77,7 @@ kubectl config view --flatten
 
 如果需要，还可以管道输出到另外一个新文件。
 
-## 方案4：kubectl 插件 konfig
+### 方案4：kubectl 插件 konfig
 
 `kubectl` 有个 `krew` 插件包管理器，可以通过 `krew` 安装 `konfig` 实用插件来管理 kubeconfig。
 
@@ -90,11 +93,11 @@ kubectl krew install konfig
 kubectl konfig import -s new.yaml
 ```
 
-# kubectx 与 kubens：多集群快速切换
+## kubectx 与 kubens：多集群快速切换
 
 `kubectx` 用来切换 kubeconfig 中的 context，`kubens` 用来修改当前 context 的默认 namespace。它们没有引入新的 Kubernetes 连接机制，而是把 `kubectl config use-context` 和 namespace 配置封装成更短、更适合交互操作的命令。
 
-## context 的组成与切换原理
+### context 的组成与切换原理
 
 kubeconfig 的核心关系如下：
 
@@ -113,7 +116,7 @@ kubectl config use-context prod-ap-sg
 
 kubectx 的价值在于缩短命令、支持返回上一个 context、重命名长 context，并可配合 `fzf` 进行交互式模糊选择。
 
-## 安装
+### 安装
 
 优先使用项目官方列出的包管理方式，避免在笔记中固定某个可能过期的 release 版本：
 
@@ -128,7 +131,7 @@ kubectx 的价值在于缩短命令、支持返回上一个 context、重命名�
 
 Krew 方式对应的命令是 `kubectl ctx` 和 `kubectl ns`；独立安装则使用 `kubectx` 和 `kubens`。
 
-## kubectx 常用操作
+### kubectx 常用操作
 
 ```sh
 # 列出 context；安装 fzf 后会进入交互式模糊选择
@@ -155,7 +158,7 @@ kubectx -r prod-ap-sg
 
 `kubectx -r` 是本地防误操作层，不应替代 Kubernetes RBAC。生产环境仍应使用受限凭证，并把日常 context 绑定到只读或最小权限身份。
 
-## kubens 常用操作
+### kubens 常用操作
 
 ```sh
 # 列出 namespace；安装 fzf 后可交互选择
@@ -173,7 +176,7 @@ kubens namespace-404 -f
 
 执行 `kubens monitoring` 后，后续 `kubectl get pods` 默认查询 `monitoring`，无需每次附加 `-n monitoring`。切换 context 后应重新确认默认 namespace，因为 namespace 是 context 的组成部分。
 
-## 使用 kube-ps1 持续显示当前位置
+### 使用 kube-ps1 持续显示当前位置
 
 只依赖记忆区分 dev、staging、prod 风险很高。`kube-ps1` 可以把当前 context 和 namespace 常驻显示在 Bash/Zsh 提示符中。
 
@@ -217,7 +220,7 @@ PROMPT='$(kube_ps1)'$PROMPT
 
 最终提示符会持续显示类似 `[prod-ap-sg:default]` 的信息。动态颜色应使用 kube-ps1 官方的 `KUBE_PS1_CTX_COLOR_FUNCTION`，无需修改 `PROMPT_COMMAND`。
 
-## 多 kubeconfig 合并与排错
+### 多 kubeconfig 合并与排错
 
 Linux/macOS 使用冒号分隔多个文件，Windows 使用分号：
 
@@ -244,7 +247,7 @@ KUBECONFIG="${HOME}/merged-kubeconfig.yaml" kubectl config get-contexts
 
 `--flatten` 会把外部证书引用转成内联数据，便于迁移，但也会让单个文件包含更多敏感凭证。不要提交到 Git，也不要接收和直接使用不可信 kubeconfig；其中的 `exec` 凭证插件可能执行本地命令。
 
-## 生产环境防误操作清单
+### 生产环境防误操作清单
 
 - [ ] context 名称包含环境、云账号/项目和地域，避免重名。
 - [ ] 提示符持续显示 context 和 namespace，生产环境使用醒目颜色。
@@ -255,14 +258,14 @@ KUBECONFIG="${HOME}/merged-kubeconfig.yaml" kubectl config get-contexts
 - [ ] 合并后的 kubeconfig 权限设置为 `600`，不进入代码仓库或共享聊天记录。
 - [ ] `kubectx -r`、提示符颜色和 shell 包装只能辅助防呆，真正的权限边界仍是认证凭证与 RBAC。
 
-## 参考资料
+### 参考资料
 
 - [kubectx/kubens 官方仓库](https://github.com/ahmetb/kubectx)
 - [Kubernetes：使用 kubeconfig 文件组织集群访问](https://kubernetes.io/zh-cn/docs/concepts/configuration/organize-cluster-access-kubeconfig/)
 - [kube-ps1 官方仓库](https://github.com/jonmosco/kube-ps1)
 - 原始剪藏：[[0raw/多集群切换乱？用kubectx]]
 
-# OIDC 认证：kubelogin
+## OIDC 认证：kubelogin
 
 > 来源：[K8S工具推荐：告别复杂认证！Kubernetes登录神器kubelogin指南](https://mp.weixin.qq.com/s?__biz=MzkxNzAyMzA3Nw==&mid=2247485698&idx=1&sn=47443ce3322a407525cd6ccdffbffb29)
 
@@ -270,7 +273,7 @@ KUBECONFIG="${HOME}/merged-kubeconfig.yaml" kubectl config get-contexts
 
 - 官方仓库：https://github.com/int128/kubelogin
 
-## 核心特性
+### 核心特性
 
 | 特性 | 说明 |
 |------|------|
@@ -280,7 +283,7 @@ KUBECONFIG="${HOME}/merged-kubeconfig.yaml" kubectl config get-contexts
 | 加密存储 | 令牌存储在系统钥匙串中（macOS Keychain / Windows Credential Manager） |
 | 无缝集成 | 作为 kubectl 插件运行，不改变现有 kubectl 工作流 |
 
-## 安装
+### 安装
 
 ```bash
 # macOS
@@ -293,7 +296,7 @@ choco install kubelogin
 kubectl krew install oidc-login
 ```
 
-## kubeconfig 配置
+### kubeconfig 配置
 
 在 kubeconfig 的 users 段使用 exec 模式调用 kubelogin：
 
@@ -313,7 +316,7 @@ users:
 
 配置完成后，正常执行 `kubectl get pods` 等命令时会自动触发浏览器认证流程。
 
-## 适用场景
+### 适用场景
 
 - **企业 SSO 集成**：接入公司统一身份认证（Azure AD、Okta、Keycloak 等）
 - **多团队共享集群**：每个用户用自己的身份登录，便于审计和权限控制

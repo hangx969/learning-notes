@@ -8,9 +8,12 @@ aliases:
   - pact-broker部署
 ---
 
-# 介绍
+# Helm 部署 Pact Broker
 
-## 契约测试
+
+## 介绍
+
+### 契约测试
 
 微服务的契约测试是一种确保微服务之间通信正确性的方法。在微服务架构中，每个服务都是独立运行的，它们通过轻量级的通信机制（如HTTP/REST API）进行交互。因此，每个服务都需要对外提供一个清晰的接口描述，这就是微服务的契约。
 
@@ -18,10 +21,13 @@ aliases:
 
 1. **消费者驱动**
    由接口使用方（消费者）定义契约，更贴近实际需求（比如前端团队可以先定义期望的 API 格式）。
+
 2. **解耦测试**
    消费者和提供者可以独立开发测试，只需共享契约文件（无需同时启动两个服务）。
+
 3. **多语言支持**
    支持 Java、Ruby、Go、.NET、JavaScript 等主流语言（像一个多语种翻译官）。
+
 4. **契约管理**
    提供 **Pact Broker** 工具集中管理契约版本（类似合同档案馆）。
 
@@ -31,7 +37,7 @@ aliases:
 2. 微服务频繁迭代时，防止接口变更引发故障
 3. 替换服务实现技术栈时（如从 Java 改为 Go），确保接口兼容
 
-## Pact
+### Pact
 
 - 官网链接：[Pact Broker K8s 文档](https://docs.pact.io/pact_broker/kubernetes/readme)
 - github地址：[Pact Broker Chart GitHub](https://github.com/pact-foundation/pact-broker-chart)
@@ -44,13 +50,14 @@ aliases:
    - 你模拟向餐馆下单：`POST /order {菜品: "鱼香肉丝", 数量: 2}`
    - 你期望餐馆返回：`{订单号: "123", 预计送达时间: "30分钟"}`
    - Pact 会记录这个交互过程，生成一份 **契约文件**（类似订单合同）
+
 2. **提供者测试**（餐馆角度）
    - 餐馆用这份契约文件验证自己的接口：
      - 是否接受正确的请求格式？
      - 返回的数据结构是否匹配？
    - 如果验证通过，说明双方约定有效（就像餐馆确认能按约定出餐）
 
-# 下载
+## 下载
 
 ~~~sh
 helm repo add bitnami https://charts.bitnami.com/bitnami
@@ -59,7 +66,7 @@ helm repo update pact-broker
 helm pull pact-broker/pact-broker --version 1.1.0
 ~~~
 
-# 配置
+## 配置
 
 添加ingress配置：
 
@@ -128,7 +135,7 @@ postgresql:
       replicationPasswordKey: passwd # key name要自己指定
 ~~~
 
-# 安装
+## 安装
 
 ~~~sh
 helm diff upgrade pact-broker -n observability \
@@ -138,7 +145,7 @@ pact-broker/pact-broker \
 #--set global.postgresql.auth.password=$PSSWD
 ~~~
 
-# 升级
+## 升级
 
 注意由于我们安装的时候是采用默认的postgres password，不是使用已有password，所以升级的时候会被要求提供这个数据库password，获取方式如下：
 

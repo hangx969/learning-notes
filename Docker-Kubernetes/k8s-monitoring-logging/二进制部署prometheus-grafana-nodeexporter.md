@@ -9,7 +9,10 @@ aliases:
   - 二进制安装Prometheus监控栈
 ---
 
-# 二进制部署prometheus
+# 二进制部署Prometheus-Grafana-NodeExporter
+
+
+## 二进制部署prometheus
 
 - 下载安装包
   - 官网地址:[Prometheus Download](https://prometheus.io/download/),选择带有"LTS"样式的版本,这是稳定版本,推荐。
@@ -102,7 +105,7 @@ netstat -tunlp | grep 25427
 
 - 浏览器访问宿主机IP:9090端口即可
 
-# 二进制部署grafana
+## 二进制部署grafana
 
 - 下载安装包
 
@@ -130,7 +133,7 @@ systemctl start grafana.service
 systemctl enable grafana.service
 ```
 
-# rpm部署grafana
+## rpm部署grafana
 
 ```sh
 sudo yum install -y https://dl.grafana.com/enterprise/release/grafana-enterprise-10.3.3-1.x86_64.rpm
@@ -139,9 +142,9 @@ systemctl start grafana-server
 systemctl enable grafana-server
 ```
 
-# 二进制部署node_exporter
+## 二进制部署node_exporter
 
-# 被监控端二进制安装node_exporter
+## 被监控端二进制安装node_exporter
 
 - 可以从GitHub上的Prometheus项目页面下载node_exporter:[node_exporter Releases (GitHub)](https://github.com/prometheus/node_exporter/releases)。
 - 建议选择一个稳定但不是最新版本的node_exporter进行下载,以避免潜在的问题。下载完成后,将其上传到服务器上。

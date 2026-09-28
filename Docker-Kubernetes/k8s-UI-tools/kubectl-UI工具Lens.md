@@ -8,9 +8,12 @@ aliases:
   - lens
 ---
 
-# 介绍
+# kubectl UI 工具 Lens
 
-## 优点
+
+## 介绍
+
+### 优点
 
 Lens是一款kubectl IDE工具：
 
@@ -26,7 +29,7 @@ Lens是一款kubectl IDE工具：
 
 ⎈ **可和任何 Kubernetes 一起工作**：使用 EKS, AKS, GKE, Minikube, Rancher, k0s, k3s, OpenShift…？他们所有都可以正常运行。只需为您想要使用的集群导入 kubeconfigs。
 
-## 功能
+### 功能
 
 - Lens 有一个 **统一的目录（Catalog）**。将所有集群、服务、工作负载、工具、自动化和相关资源集中在一起，以便轻松访问。而且在 Catalog 上，可以很方便进行 **浏览和组织**。使用搜索、过滤、分类和标签来访问你需要工作的资源比以往任何时候都更容易。
 
@@ -39,15 +42,15 @@ Lens是一款kubectl IDE工具：
 - 自带全量 K8S 资源模板，而且是有丰富信息的模板，直接在模板上照猫画虎就可完成各类资源的创建。
 - **Helm Chart**。Lens 自带 Helm Chart 管理，允许发现和快速部署数以千计的公开可用的 Helm Chart 和管理您自己的存储库。探索已安装的 Helm Chart ，只需一次点击即可修订和升级。（这个功能不如helm dashboard做的好）
 
-## 插件
+### 插件
 
 按快捷键ctrl+shift+E进入extensions界面，可以输入extension的name或者URL来安装
 
-### lens-certificate-info
+#### lens-certificate-info
 
 查看含有证书信息的 Secret。
 
-### lens-debug-tools
+#### lens-debug-tools
 
 - 安装说明：https://github.com/pashevskii/debug-pods-lens-extension
 
@@ -73,11 +76,11 @@ Lens是一款kubectl IDE工具：
     kubectl debug -i -t -n loki-stack loki-promtail-5d5h8 --image=busybox --target promtail --attach
     ~~~
 
-### @nevalla/kube-resource-map
+#### @nevalla/kube-resource-map
 
 - 查看资源拓扑图
 
-# 安装
+## 安装
 
 - Ubuntu系统安装Lens:[官网安装指南](https://docs.k8slens.dev/getting-started/install-lens/#install-lens-desktop-from-the-apt-repository)
 

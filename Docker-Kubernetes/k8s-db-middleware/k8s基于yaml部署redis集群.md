@@ -7,7 +7,10 @@ aliases:
   - K8s部署Redis集群
 ---
 
-# redis
+# K8s基于YAML部署Redis集群
+
+
+## redis
 
 - 参考地址：[kubernetes-redis-cluster - GitHub](https://github.com/zuxqoj/kubernetes-redis-cluster)
 - Redis是一个开源的、基于内存的、高性能的key-value数据库。支持数据的持久化，可以将内存中的数据保存在磁盘中，重启的时候可以再次加载进行使用。
@@ -16,9 +19,9 @@ aliases:
 
 - Redis支持数据的备份，即master-slave模式的数据备份。
 
-## redis高可用
+### redis高可用
 
-### 主从模式
+#### 主从模式
 
 - redis支持master-slave模式，一主多从，可以设置另外多个redis server为slave，从机同步主机的数据。配置后，读写分离，主机负责写，从机只负责读。减轻主机的压力。redis实现的是最终会一致性，具体选择强一致性还是弱一致性，取决于业务场景。
 
@@ -40,7 +43,7 @@ aliases:
 >
 > 请注意，全同步和部分同步都是为了实现主从复制，而不是为了实现强一致性。在同步完成后，主服务器和从服务器的数据可能仍然会有一段时间的不一致，因为从服务器需要时间来处理接收到的写命令。
 
-### 哨兵模式
+#### 哨兵模式
 
 - Redis 哨兵模式是一种用于提供高可用性和故障转移能力的配置。哨兵模式使用 Redis Sentinel，这是一个分布式系统，用于监视 Redis 主服务器和从服务器的运行状况，并在主服务器出现故障时自动执行故障转移。
 
@@ -60,7 +63,7 @@ aliases:
 
 在一个典型的哨兵模式配置中，你会有一个主服务器，一个或多个从服务器，以及三个或更多的 Sentinel。三个 Sentinel 是为了在 Sentinel 自身出现故障时，仍然能够达成多数派，进行故障转移。
 
-### Redis-Cluster模式
+#### Redis-Cluster模式
 
 - Redis 集群模式是一种允许多个 Redis 节点协同工作，提供高可用性和数据分片功能的配置。在集群模式下，数据被分布在多个 Redis 节点上，每个节点负责维护数据的一部分。
 
@@ -80,9 +83,9 @@ aliases:
 
   请注意，尽管 Redis 集群提供了高可用性和数据分片，但它并不能保证强一致性。在主节点故障和故障转移期间，可能会丢失一些写操作。此外，Redis 集群需要至少三个主节点才能正常工作。
 
-# 部署redis
+## 部署redis
 
-## 部署nfs
+### 部署nfs
 
 - 创建NFS存储主要是为了给Redis提供稳定的后端存储，先要创建NFS，然后通过使用PV为Redis挂载一个NFS共享的路径。这样可以保证pod迁移或者重启，数据依然还是原来的数据，不会丢失
 
@@ -103,7 +106,7 @@ EOF
 exportfs -arv
 ~~~
 
-## 创建pv
+### 创建pv
 
 - redis pod创建6个，三个master三个salve，每一个Redis Pod都需要一个独立的PV来存储自己的数据
 
@@ -192,7 +195,7 @@ spec:
     path: "/data/redis/pv6"
 ~~~
 
-## 创建configMap
+### 创建configMap
 
 ~~~sh
 #redis的配置文件
@@ -210,7 +213,7 @@ EOF
 kubectl create configmap redis-conf --from-file=redis.conf
 ~~~
 
-## 部署redis服务
+### 部署redis服务
 
 ~~~sh
 #上传解压redis镜像
@@ -295,14 +298,14 @@ spec:
           storage: 500M
 ~~~
 
-## 检测域名解析
+### 检测域名解析
 
 ~~~sh
 kubectl run busybox --image busybox:1.28 --restart=Never --rm -it busybox -- sh
 nslookup redis-app-0.redis-service.default.svc.cluster.local
 ~~~
 
-# 初始化redis集群
+## 初始化redis集群
 
 - 创建好6个Redis Pod后，我们还需要利用常用的Redis-tribe工具进行集群的初始化，启动一个Ubuntu的容器，可以在该容器中安装Redis-tribe，进而初始化Redis集群。
 
@@ -359,7 +362,7 @@ kubectl exec -it redis-app-2 -- /bin/bash
 127.0.0.1:6379> cluster info
 ~~~
 
-# 创建外部访问svc
+## 创建外部访问svc
 
 ~~~yaml
 apiVersion: v1
@@ -380,7 +383,7 @@ spec:
 #也可以加一个NodePort，从集群外部访问
 ~~~
 
-# 测试集群主从切换
+## 测试集群主从切换
 
 ~~~sh
 kubectl exec -it redis-app-0 -- /bin/bash

@@ -9,7 +9,10 @@ aliases:
   - Prometheus联邦集群部署
 ---
 
-# prometheus联邦集群方案
+# 二进制部署Prometheus(v2.32.1)联邦集群
+
+
+## prometheus联邦集群方案
 
 - 对于大部分监控规模而言，我们只需要在每一个数据中心 (例如：EC2可用区，Kubernetes集群)安装一个Prometheus Server实例，就可以在各个数据中心处理上千规模的集群。同时将Prometheus Server部署到不同的数据中心可以避免网络配置的复杂性
 
@@ -19,15 +22,15 @@ aliases:
 
 - 联邦集群的核心在于每一个Prometheus Server都包含一个用于获取当前实例中监控样本的接口/federate。对于中心Prometheus Server而言，无论是从其他的Prometheus实例还是Exporter实例中获取数据实际上并没有任何差异。
 
-# 安装prometheus
+## 安装prometheus
 
-## 环境搭建
+### 环境搭建
 
 - 192.168.40.180： 主节点，主机名: prometheusserver
 - 192.168.40.181： 联邦节点1，主机名: prometheus-node1
 - 192.168.40.181: 联邦节点1的目标采集服务，部署node-exporter
 
-## 安装prometheus主节点
+### 安装prometheus主节点
 
 ~~~sh
 mkdir /apps
@@ -57,7 +60,7 @@ systemctl start prometheus
 systemctl enable prometheus
 ~~~
 
-## 安装主节点node-exporter
+### 安装主节点node-exporter
 
 ~~~sh
 cd /apps/
@@ -80,7 +83,7 @@ systemctl restart node-exporter
 systemctl enable node-exporter
 ~~~
 
-## 安装prometheus联邦节点
+### 安装prometheus联邦节点
 
 ~~~sh
 cd /apps/
@@ -109,7 +112,7 @@ systemctl restart prometheus
 systemctl enable prometheus
 ~~~
 
-## 安装联邦节点node-exporter
+### 安装联邦节点node-exporter
 
 ~~~sh
 cd /apps/
@@ -134,7 +137,7 @@ systemctl enable node-exporter
 
 > 注：以上二进制安装包可以在prometheus官网下载
 
-## 配置联邦节点node-exporter监控
+### 配置联邦节点node-exporter监控
 
 ~~~sh
 vim /apps/prometheus/prometheus.yml
@@ -149,7 +152,7 @@ systemctl restart prometheus.service
 
 - 访问联邦节点的prometheus 192.168.40.181:9090/targets，可以看到配置的job name：prometheus-node
 
-## 主节点配置联邦
+### 主节点配置联邦
 
 - 通过这个配置，Prometheus会定期从指定的目标Prometheus实例获取指标数据，并根据参数中定义的条件进行筛选。符合条件的指标数据将被保留供后续使用
 

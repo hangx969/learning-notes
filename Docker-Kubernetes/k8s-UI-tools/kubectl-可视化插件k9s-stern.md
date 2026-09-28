@@ -9,12 +9,15 @@ aliases:
   - k9s-stern
 ---
 
-# k9s
+# kubectl 可视化插件 k9s 和 stern
+
+
+## k9s
 
 - kubectl可视化插件：[k9s GitHub](https://github.com/derailed/k9s)
 - 安装指南：[k9s 安装文档](https://k9scli.io/topics/install/)
 
-# 在线安装
+## 在线安装
 
 1. 方法1：via [webi](https://webinstall.dev/) (在现在rockylinux vm上使用的方法)
 
@@ -34,7 +37,7 @@ aliases:
    snap install k9s --devmode
    ~~~
 
-## 使用
+### 使用
 
 - vim风格，在主页面上
   - ：来输入资源类型
@@ -62,7 +65,7 @@ aliases:
 
   
 
-## 快捷键
+### 快捷键
 
 | 操作                                                         | 命令                          | 备注                                                         |
 | ------------------------------------------------------------ | ----------------------------- | ------------------------------------------------------------ |
@@ -89,7 +92,7 @@ aliases:
 | 运行 XRay视图                                                | `:`xray RESOURCE [NAMESPACE]⏎ | 资源可以是以下之一：po, svc, dp, rs, sts, ds, NAMESPACE 参数可选 |
 | 运行 Popeye（评估跑分） 视图                                 | `:`popeye or pop⏎             | 参阅 [https://popeyecli.io](https://popeyecli.io/)           |
 
-## 过滤功能
+### 过滤功能
 
 - 它的过滤功能非常强大，使得你可以非常快速的定位资源，比如我想要看 traefik 的所有 CRD，操作如下：
 
@@ -98,11 +101,11 @@ aliases:
   /traefik
   ~~~
 
-## Pulse
+### Pulse
 
 - 进入监控模式，不过需要metrics-server在集群内运行
 
-## Xray
+### Xray
 
 - XRay 会提供以某个 Kubernetes 资源为维度的关联关系，像 X 光一样，透射到资源的内部。比如查看deploy资源的关联关系：
 
@@ -110,7 +113,7 @@ aliases:
   :xray deploy
   ~~~
 
-## popeye
+### popeye
 
 > [Popeye](https://popeyecli.io/) 是 K9s 作者开发的另一个 K8s 命令行工具，现已被集成进 K9s，它可以实时扫描你的集群，并报告潜在的问题，比如：引用完整性、配置错误、资源使用等。
 
@@ -120,7 +123,7 @@ aliases:
 
 - 请阅读 [Popeye 文档](https://popeyecli.io/#the-spinachyaml-configuration)，了解如何自定义报告。`spinach.yml` 文件将从 K9s 的主目录`$HOME/.k9s/MY_CLUSTER_CONTEXT_NAME_spinach.yml` 中读取。
 
-## k9s插件功能
+### k9s插件功能
 
 K9s 允许你通过 [插件机制](https://github.com/derailed/k9s#plugins) 定义自己的集群命令来扩展你的命令行和工具。K9s 会查看 `$HOME/.k9s/plugin.yml` 来定位所有可用的插件。一个插件的定义如下：
 
@@ -145,11 +148,11 @@ K9s 同时提供了额外的环境变量，供你自定义插件的参数。目�
 - `$GROUPS`：当前的用户组 
 - `$POD`：容器视图中的 Pod 
 
-# stern
+## stern
 
 - 查看pod log的插件：[stern GitHub](https://github.com/stern/stern#installation)
 
-## 安装
+### 安装
 
 If you use [Krew](https://krew.sigs.k8s.io/) which is the package manager for kubectl plugins, you can install like this:
 
@@ -157,7 +160,7 @@ If you use [Krew](https://krew.sigs.k8s.io/) which is the package manager for ku
 kubectl krew install stern
 ```
 
-## 使用
+### 使用
 
 ~~~sh
 实时查看当前 Namespace 中所有 Pod 中所有容器的日志
@@ -179,7 +182,7 @@ $ stern kubernetes-dashboard --namespace kube-system
 $ stern --all-namespaces -l run=nginx
 ~~~
 
-## k9s通过plugin与stern集成
+### k9s通过plugin与stern集成
 
 [Stern](https://github.com/wercker/stern) 是一款社区知名的 K8s 集群服务日志查询工具，虽然 k9s 已然集成了部分 Stern 的功能，但操作不太直接也无法连接管道操作（ `|` ），我们可以利用插件创建一个可以查询当前命名空间下多个 Pod 的快捷命令。
 
@@ -205,15 +208,15 @@ plugin:
 EOF
 ```
 
-# 离线安装k9s
+## 离线安装k9s
 
-## 下载安装包
+### 下载安装包
 
 先从github下载amd64版本安装包：[Releases · derailed/k9s](https://github.com/derailed/k9s/releases)
 
 安装包放到/root/下
 
-## 本地安装脚本
+### 本地安装脚本
 
 ~~~sh
 #!/bin/bash
@@ -605,7 +608,7 @@ main() { (
 main
 ~~~
 
-## 安装
+### 安装
 
 ~~~sh
 chmod +x k9s-local-install.sh

@@ -9,12 +9,15 @@ aliases:
   - krew-rolesum
 ---
 
-# 介绍
+# kubectl 插件 krew 和 rolesum
+
+
+## 介绍
 
 - 一个可视化查看k8s RBAC role的kubectl插件
 - 官网地址：[kubectl-rolesum GitHub](https://github.com/Ladicle/kubectl-rolesum)
 
-# 安装
+## 安装
 
 - 安装krew
 
@@ -50,7 +53,7 @@ aliases:
 > - Windows环境下用scoop安装helm、kubectl、krew。有关scoop安装参考[这里](../helm/helmv3-安装与使用.md)。
 > - scoop安装完krew后，还要去krew.exe目录下（D:\0Software\scoop\apps\krew\current）安装一下krew：`./krew install krew`。参考：[Installing · Krew](https://krew.sigs.k8s.io/docs/user-guide/setup/install/#windows)
 
-# 使用
+## 使用
 
 ~~~sh
 kubectl rolesum <svc name>

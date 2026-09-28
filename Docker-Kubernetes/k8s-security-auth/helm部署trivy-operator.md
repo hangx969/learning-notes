@@ -8,7 +8,10 @@ aliases:
   - trivy镜像扫描
 ---
 
-# 介绍
+# Helm部署Trivy-Operator
+
+
+## 介绍
 
 镜像漏洞扫描器
 
@@ -27,7 +30,7 @@ operator.builtInTrivyServer: true，会设置为Client Server模式，在这个�
 1. `trivy-operator`: Responsible for running scans
 2. `trivy-server-0`: Provides the Trivy vulnerability database to the trivy-operator
 
-# 下载
+## 下载
 
 ~~~sh
 helm repo add --force-update aqua https://aquasecurity.github.io/helm-charts
@@ -35,19 +38,19 @@ helm repo update aqua
 helm pull aqua/trivy-operator --version 0.24.1
 ~~~
 
-# 配置
+## 配置
 
 ~~~yaml
 #仿照ado中的配置稍作调整
 ~~~
 
-# 安装
+## 安装
 
 ~~~sh
 helm upgrade -i trivy-operator -n trivy-system --create-namespace . -f values.yaml
 ~~~
 
-# 使用
+## 使用
 
 - 查看漏洞报告
 
@@ -63,11 +66,11 @@ kubectl get vulnerabilityreports -o wide
 kubectl get configauditreports -o wide
 ~~~
 
-## vulnerability DB
+### vulnerability DB
 
 trivy会从公网镜像库下载vulnerability DB用于漏洞检测。根据[官网](https://aquasecurity.github.io/trivy-operator/v0.23.0/docs/vulnerability-scanning/trivy/#settings)，在trivy 0.23版本中，使用的镜像库默认为 `mirror.gcr.io/aquasec/trivy-db`。
 
-### 下载
+#### 下载
 
 Vulnerability DB是OCI image，不是container image，不能用docker pull下载。
 
@@ -93,7 +96,7 @@ Vulnerability DB是OCI image，不是container image，不能用docker pull下�
   oras pull ghcr.io/aquasecurity/trivy-java-db:1 # https://github.com/aquasecurity/trivy-java-db
   ~~~
 
-### 上传到ACR
+#### 上传到ACR
 
 参考文档：
 
@@ -118,7 +121,7 @@ oras push <ACR FQDN>/docker.io/aquasec/trivy-java-db:1 \
     db.tar.gz:application/vnd.aquasec.trivy.javadb.layer.v1.tar+gzip
 ~~~
 
-### [Recommended] oras cp直接复制到ACR
+#### [Recommended] oras cp直接复制到ACR
 
 ~~~sh
 az acr login -n <ACR FQDN>
@@ -129,7 +132,7 @@ oras cp ghcr.io/aquasecurity/trivy-java-db:1 <ACR FQDN>/docker.io/aquasec/trivy-
 oras cp ghcr.io/aquasecurity/trivy-db:2 <ACR FQDN>/docker.io/aquasec/trivy-db:2
 ~~~
 
-### pipeline定时任务复制DB
+#### pipeline定时任务复制DB
 
 ~~~yaml
 schedules:
@@ -187,7 +190,7 @@ stages:
             displayName: 'Copy trivy vulnerability databases'
 ~~~
 
-### 上传到harbor
+#### 上传到harbor
 
 ~~~sh
 #首先确保db的tar.gz文件位于当前目录下
@@ -206,11 +209,11 @@ oras push harbor.hanxux.local/aquasec/trivy-java-db:1 \
     --insecure
 ~~~
 
-### 在网络隔离环境用offline mode
+#### 在网络隔离环境用offline mode
 
 [Trivy Air Gap](https://trivy.dev/v0.57/docs/advanced/air-gap/)
 
-### troubleshooting
+#### troubleshooting
 
 1. 下载vulnerability DB有时会失败，参考[Troubleshooting Guide](https://trivy.dev/v0.57/docs/references/troubleshooting/#db)
 

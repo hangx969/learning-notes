@@ -9,9 +9,12 @@ aliases:
   - Prometheus基础知识
 ---
 
-# Prometheus简介
+# Prometheus基础
 
-## 介绍
+
+## Prometheus简介
+
+### 介绍
 
 - Prometheus是一个开源的系统监控和报警系统,现在已经加入到CNCF基金会,成为继k8s之后第二个在CNCF托管的项目。
 - 在kubernetes容器管理系统中,通常会搭配prometheus进行监控,同时也支持多种exporter采集数据,还支持pushgateway进行数据上报,Prometheus性能足够支撑上万台规模的集群。
@@ -19,7 +22,7 @@ aliases:
 
 - prometheus是监控平台,也是一个时序数据库,`TSDB`,专门存储大规模时间序列数据(性能指标、传感器数据、金融交易数据等),具有更高的效率和更好的性能。
 
-## 配置文档
+### 配置文档
 
 - Prometheus配置:[Prometheus Configuration Docs](https://prometheus.io/docs/prometheus/latest/configuration/configuration/)
 
@@ -28,7 +31,7 @@ aliases:
 
 - Prometheus基于k8s服务发现参考: [prometheus-kubernetes.yml (GitHub)](https://github.com/prometheus/prometheus/blob/release-2.31/documentation/examples/prometheus-kubernetes.yml)
 
-## 特点
+### 特点
 
 1. 多维度数据模型
 
@@ -36,8 +39,10 @@ aliases:
 
    - 比如:http_requests_total 接收http请求的总计数,度量名称为/api/tracks的http请求,可以打上不同的标签,获取不同的操作:method=POST的标签,method=GET的标签,查看不同的操作
    - 这个查询语言在这些度量和标签列表的基础上进行过滤和聚合。改变任何度量上的任何标签值,则会形成新的时间序列图。
+
 2. 灵活的查询语言(PromQL)
    - 可以对采集的metrics指标进行加法,乘法,连接等操作。实现可视化、告警。
+
 3. 存储简化:
    - 可以直接在本地部署,不依赖其他分布式存储;因为prometheus本身就是一个数据库。(zabbix等还需要单独部署mysql去存数据)
    - 部署多个prometheus实例,每个都是自治的独立的,都保存了完整的监控数据。一个挂了另外的还能独立工作。
@@ -54,9 +59,10 @@ aliases:
 
 6. 做高可用,可以对数据做异地备份,联邦集群,部署多套prometheus,pushgateway上报数据:
    - 比如,自己开发的应用,官网肯定没有exporter,就可以写脚本采集相应数据,用pushgateway推送到prometheus。
+
 7. 可视化和告警支持
 
-## schema
+### schema
 
 - 在时间序列中的每一个点称为一个样本(sample),样本由以下三部分组成:
 
@@ -76,9 +82,9 @@ aliases:
 
     `api_http_requests_total{method="POST", handler="/messages"}`
 
-## 数据类型
+### 数据类型
 
-### Counter
+#### Counter
 
 - Counter是计数器类型:
   - Counter 用于累计值,例如记录请求次数、任务完成数、错误发生次数。
@@ -99,7 +105,7 @@ aliases:
 
     `topk(10, http_requests_total)`
 
-### Gauge
+#### Gauge
 
 - Gauge是测量器类型:
   - Gauge是常规数值,例如温度变化、内存使用变化。
@@ -117,7 +123,7 @@ aliases:
 
 - 还可以通过PromQL内置函数`predict_linear()`基于简单线性回归的方式,对样本数据的变化趋势做出预测。例如,基于 2 小时的样本数据,来预测主机可用磁盘空间在 4 个小时之后的剩余情况:`predict_linear(node_filesystem_free{job="node"}[2h], 4 \* 3600) < 0`
 
-### histogram
+#### histogram
 
 - histogram是柱状图,在Prometheus系统的查询语言中,有三种作用:
   - 在一段时间范围内对数据进行采样(通常是请求持续时间或响应大小等),并将其计入可配置的存储桶(bucket)中. 后续可通过指定区间筛选样本,也可以统计样本总数,最后一般将数据展示为直方图。
@@ -151,7 +157,7 @@ aliases:
 
   `io_namespace_http_requests_latency_seconds_histogram_bucket{path="/",method="GET",code="200",le="0.025",} 0.0`
 
-### summary
+#### summary
 
 - 与 Histogram 类型类似,用于表示一段时间内的数据采样结果(通常是请求持续时间或响应大小等),但它直接存储了分位数(通过客户端计算,然后展示出来),而不是通过区间来计算。它也有三种作用:
 
@@ -183,7 +189,7 @@ aliases:
 
     `io_namespace_http_requests_latency_seconds_summary_count{path="/",method="GET",code="200",} 12.0`
 
-## 组件
+### 组件
 
 1. Prometheus Server: 用于收集和存储时间序列数据。
    - Retrieval负责在活跃的target主机上抓取监控指标数据
@@ -205,7 +211,7 @@ aliases:
 
 ![image-20240103104154211](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202401031041340.png)
 
-## 工作流程
+### 工作流程
 
 1. Prometheus server可定期从活跃的(up)目标主机上(target)拉取监控指标数据,目标主机的监控数据可通过配置静态job或者服务发现的方式被prometheus server采集到,这种方式默认的pull方式拉取指标;也可通过pushgateway把采集的数据上报到prometheus server中;还可通过一些组件自带的exporter采集相应组件的数据;
 
@@ -219,11 +225,11 @@ aliases:
 
 6. Grafana可接入prometheus数据源,把监控数据以图形化形式展示出
 
-## 与Zabbix对比
+### 与Zabbix对比
 
 ![image-20240103111904910](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202401031119014.png)
 
-# 安装方法
+## 安装方法
 
 1. 二进制安装:go语言开发的,安一个go包就行
 2. 容器安装
@@ -232,11 +238,11 @@ aliases:
 > [!tip]
 > 生产环境建议单独用一台工作节点去装prometheus
 
-# PromQL查询语言
+## PromQL查询语言
 
 PromQL(Prometheus Query Language)是 Prometheus 自己开发的表达式语言,语言表现力很丰富,内置函数也很多。使用它可以对时序数据进行筛选和聚合。
 
-## 数据类型
+### 数据类型
 
 PromQL 表达式计算出来的值有以下几种类型:
 
@@ -248,7 +254,7 @@ PromQL 表达式计算出来的值有以下几种类型:
 
 - 字符串 (String): 一个字符串,暂时未用
 
-### 瞬时向量选择器
+#### 瞬时向量选择器
 
 - 瞬时向量选择器用来选择一组时序在某个采样点的采样值。最简单的情况就是指定一个度量指标,选择出所有属于该度量指标的时序的当前采样值。
 - 比如下面的表达式:`apiserver_request_total`,可以通过在后面添加用大括号包围起来的一组标签键值对来对时序进行过滤。比如下面的表达式筛选出了 job 为 kubernetes-apiservers,并且 resource为 pod的时序:`apiserver_request_total{job="kubernetes-apiserver",resource="pods"}`
@@ -265,19 +271,19 @@ PromQL 表达式计算出来的值有以下几种类型:
 
 - 下面的表达式筛选出了container是kube-scheduler或kube-proxy或kube-apiserver的时序数据:`container_processes{container=~"kube-scheduler|kube-proxy|kube-apiserver"}`
 
-### 区间向量选择器
+#### 区间向量选择器
 
 - 区间向量选择器类似于瞬时向量选择器,不同的是它选择的是过去一段时间的采样值。可以通过在瞬时向量选择器后面添加包含在 [] 里的时长来得到区间向量选择器。
 - 比如下面的表达式选出了所有度量指标为apiserver_request_total且resource是pod的时序在过去1分钟的采样值:`apiserver_request_total{job="kubernetes-apiserver",resource="pods"}[1m]`
 
-### 偏移向量选择器
+#### 偏移向量选择器
 
 - 偏移修饰器用来调整基准时间,使其往前偏移一段时间。偏移修饰器紧跟在选择器后面,使用 offset 来指定要偏移的量。
 - 比如下面的表达式选择度量名称为apiserver_request_total的所有时序在 5 分钟前的采样值:`apiserver_request_total{job="kubernetes-apiserver",resource="pods"} offset 5m`
 
 - 下面的表达式选择apiserver_request_total 度量指标在 1 周前的这个时间点过去 5 分钟的采样值:`apiserver_request_total{job="kubernetes-apiserver",resource="pods"} [5m] offset 1w`
 
-## 聚合操作符
+### 聚合操作符
 
 PromQL 的聚合操作符用来将向量里的元素聚合得更少。总共有下面这些聚合操作符:
 
@@ -319,7 +325,7 @@ PromQL 的聚合操作符用来将向量里的元素聚合得更少。总共有�
 
 > `rate()`函数用于计算时间序列数据的平均速率。这个函数通常用于处理计数器类型的指标
 
-## 函数
+### 函数
 
 Prometheus 内置了一些函数来辅助计算,下面介绍一些典型的。
 
@@ -375,7 +381,7 @@ rate(prometheus_http_requests_total{handler="/-/healthy"}[1h])
 irate(prometheus_http_requests_total{handler="/-/healthy"}[1h])
 ```
 
-# Relabel机制
+## Relabel机制
 
 对监控目标的Label的重写,比如进行多重标记、过滤、分类等。(比如有些数据不想要了)
 
@@ -384,8 +390,10 @@ irate(prometheus_http_requests_total{handler="/-/healthy"}[1h])
 - 【必备】`source_labels:[meta_kubernetes_pod_name, meta_kubernetes_namespace]`
   - 源标签的key的列表
   - 读取这些标签的key对应的值,作为relabel的输入。再把这些值赋值给targetLabel
+
 - 【必备】`target_label:[instance]`
   - 指定relabel处理之后,要写入或者修改的标签的key,并将处理后的值赋值给这个标签
+
 - separator:如果source_labels有多个,将他们的值合并。默认用;连接
 - regex:匹配源标签的值,默认为`(.*)`
 - replacement: 指定再进行标签重写时用的替换值,默认为$1
@@ -397,15 +405,15 @@ irate(prometheus_http_requests_total{handler="/-/healthy"}[1h])
   - labeldrop:删除某个标签
   - labelkeep:只保留某个标签
 
-# PromQL语法实战
+## PromQL语法实战
 
-## Web UI入口
+### Web UI入口
 
 PromQL Web UI 的Graph选项卡提供了简单的用于查询数据的入口,对于PromQL的编写和校验都可以在此位置。
 
 想查看指标但是不知道都有哪些指标名称?麻烦的方法是去请求node_exporter的svc会返回所有的指标名称;简单的方法是直接在查询框里面输入前缀,想查pod就输入pod,下面会出现补全后的指标名称;想查node就输入node,以此类推。
 
-## 常用监控指标
+### 常用监控指标
 
 查看磁盘空间:
 
