@@ -1069,7 +1069,7 @@ spec:
   EOF
   ~~~
 
-## sts的volumeClaimTemplates 
+## sts的volumeClaimTemplates
 
 使用StatefulSet部署有状态服务时，可以使用`volumeClaimTemplates`自动为每个Pod生成 PVC，并挂载至容器中，大大降低了手动创建管理存储的难度和复杂度。
 

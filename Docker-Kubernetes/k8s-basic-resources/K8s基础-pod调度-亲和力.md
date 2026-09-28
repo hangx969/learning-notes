@@ -286,7 +286,7 @@ spec:
 
 #### pod亲和性调度
 
-##### podAffinity 
+##### podAffinity
 
 ```bash
 kubectl explain pods.spec.affinity.podAffinity

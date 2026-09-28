@@ -182,7 +182,7 @@ velero install \
 kubectl get BackupStorageLocation -n velero
 ```
 
-## 创建测试资源 
+## 创建测试资源
 
 创建测试ns：`kubectl create ns test`
 

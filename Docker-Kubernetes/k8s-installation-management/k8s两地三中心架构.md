@@ -34,7 +34,7 @@ aliases:
 
 ![image-20251115095652754](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202511150956881.png)
 
-## 核心技术 
+## 核心技术
 
 - 智能DNS/GTM：根据用户位置、各个中心的健康状态，将流量分发到最合适的机房。比如华北用户访问北京机房，联通用户访问联通入口等
 - 多集群管理工具：ArgoCD、Karmada（华为云开源的工具），用于统一管理分布在各个中心的K8s集群，实现全局的服务部署、配置分发等。
