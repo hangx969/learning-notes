@@ -45,9 +45,20 @@ aliases:
 - **领域**: Helm 工具链、K8s 认证备考、KubeBlocks 数据库管理、Harbor 镜像仓库、容器平台（OpenShift/K3S）、SpringCloud 迁移、备份恢复、GPU 配置
 - **摄入日期**: 2026-04-17
 
-## 整体概述
+## 摘要
 
 本批次文档覆盖 Kubernetes 生态的多个专题领域。Helm 工具链部分包含 Helm 本身的安装使用以及通过 Helm 部署各类运维工具（Config Syncer、Dragonfly、Pact Broker、Reloader、Tomcat）。认证备考部分涵盖 CKA/CKS 考试准备和常见面试题。KubeBlocks 展示了用统一 Operator 快速部署 WordPress 和高可用 Harbor 的方案。此外还包含 Harbor 镜像仓库基础、Helm 部署及 Dragonfly P2P 源站卸载，OpenShift 和 K3S 容器平台、SpringCloud 微服务迁移到 K8s、Velero 集群备份恢复，以及 NVIDIA GPU 在 K8s 中从驱动和容器运行时到 Device Plugin/GPU Operator 的完整配置实践。
+
+## 关键知识点
+
+1. Helm v3 移除了 Tiller 服务端组件，以 Chart 作为程序包，支持资源管理、版本控制、依赖管理和 Go 模板化。
+2. ConfigMap/Secret 通过 env 引用时无法热更新（面试题指出 ConfigMap 以非 subPath 方式挂载可动态更新）；Reloader 通过 annotation `reloader.stakater.com/auto: "true"` 监控变更并自动触发工作负载滚动更新，Config Syncer 用于跨 Namespace 同步 ConfigMap/Secret。
+3. Harbor 负责镜像仓库与治理，Dragonfly 负责 P2P 分发与缓存，二者不是替代关系；Dragonfly 的 Scheduler 属于控制面，Peer、Seed Peer 和源站构成主要数据路径，P2P 优化的是大规模并发下的整体吞吐和源站压力，不保证单节点更快。
+4. Harbor 原生不集成高可用，需要外部 HA 的 Redis 和 PostgreSQL；KubeBlocks 以 replication 模式一条命令即可创建支持自动故障转移的主备集群。
+5. Velero 核心资源为 Backup、Schedule、Restore、BackupStorageLocation；相比 Etcd 备份（全量但不可选择性恢复）和 GitOps（配置漂移问题）更灵活，但需要 S3 存储（文中以 Minio 作为对象存储后端）。
+6. NVIDIA Device Plugin 是持续运行的 DaemonSet，通过 NVML 发现 GPU 并向 K8s 注册 `nvidia.com/gpu` 扩展资源、响应 Kubelet 的 Allocate 请求；Pod 通过 `runtimeClassName: nvidia`、`resources.limits` 和 `nodeSelector` 声明 GPU 需求，GPU 节点通常设置 `NoSchedule` taint。
+7. K3S 将所有控制面组件打包为单个二进制文件、仅需 512M 内存，默认使用 SQLite（也支持 etcd3、MySQL、PostgreSQL），内置 containerd、Flannel、CoreDNS，主要面向边缘计算和物联网场景。
+8. AppArmor 是 Linux 强制访问控制（MAC），分 Enforcement 与 Complain 两种模式，在 K8s Pod 中通过 annotation 应用，使用 `apparmor_parser` 加载配置、`apparmor_status` 检查生效状态。
 
 ## 各文档摘要
 
@@ -249,3 +260,10 @@ aliases:
 4. **安全主题链路**: CKS 备考中的 AppArmor/kube-bench 与面试题中的容器运行时安全问题相呼应，可串联为 K8s 安全知识体系。
 5. **边缘与轻量化**: K3S 的边缘计算定位与 OpenShift 的企业级全栈平台形成两极对比，展示了 K8s 生态从轻量到重量级的完整光谱。
 6. **数据保护全链路**: Velero 的备份恢复方案与面试题中关于日志丢失风险、Pod 稳定性的讨论互相补充，构成 K8s 数据保护的完整视角。
+
+## 值得注意
+
+- **上游可用性变化**: Appscode 于 2024 年 2 月移除了 Config Syncer 的 Docker Hub 镜像，需自行通过 Dockerfile 构建或改用 kubernetes-replicator；Dragonfly v1 已归档且与 v2 不兼容。
+- **Harbor 版本与安全边界**: Harbor 2.8+ 直接以 OCI Artifact 管理 Helm Chart，旧版本可选 ChartMuseum；Harbor P2P Preheat 需要外部 P2P 引擎；自签名 CA、跳过 TLS 校验和默认管理员凭据仅适合受控实验环境。
+- **备份一致性**: 不推荐用 Velero 备份数据库数据（仅为崩溃一致性），应使用 mysqldump/pg_dump。
+- **长连接负载不均**: 面试题指出 ClusterIP Service 的 connection tracking 可能导致长连接负载不均。

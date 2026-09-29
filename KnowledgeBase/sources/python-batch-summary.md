@@ -46,9 +46,22 @@ aliases:
 
 ---
 
-## 整体概述
+## 摘要
 
 本知识库的 Python 模块是一套完整的 Python 学习与实战笔记体系，涵盖从语言基础语法到运维自动化、Web 全栈开发、数据分析与机器学习等多个应用领域。运维开发部分占比最大，重点围绕 Linux 运维场景，通过 Python 实现对 Nginx、Tomcat、MySQL、PostgreSQL、Elasticsearch、Kubernetes 等中间件和平台的自动化管理。网络编程部分从底层 Socket 通信到 HTTP 请求库，再到 Flask/Django Web 框架和爬虫技术形成完整链条。所有笔记均采用"概念讲解 + 代码示例 + 实战案例"的结构，适合作为系统性的 Python 全栈学习参考。
+
+---
+
+## 关键知识点
+
+1. subprocess 是运维自动化的基础模块：`run()`/`Popen()` 执行系统命令，需要管道或重定向时设置 `shell=True`；Nginx 配置语法检查与自动重启等案例均基于它实现。
+2. SSH 远程管理：paramiko 提供 SSH 连接与命令执行，Fabric2 在其基础上封装，`run()` 支持 hide、warn、pty、watchers 参数，交互式命令可用 Responder 自动响应，返回值包含 stdout、stderr、failed 状态。
+3. Python kubernetes 客户端加载 kubeconfig 后通过 CoreV1Api/AppsV1Api 对 Pod、Deployment、Service 执行 CRUD；相比 YAML，API 方式便于动态扩展、逻辑判断、错误处理与版本管理。
+4. uv 是用 Rust 编写的高速包管理工具，整合替代 pip 与 venv，常用命令为 `uv python install`、`uv venv`、`uv pip install`。
+5. Python 基础易混点包括深拷贝与浅拷贝、`*args`（元组参数）与 `**kwargs`（字典参数）、字典的哈希表底层实现；异常处理的完整结构为 `try-except-else-finally`。
+6. 数据库操作：MySQL 使用 mysql-connector-python，PostgreSQL 使用 psycopg2 或 SQLAlchemy；PostgreSQL 远程访问需配置 `pg_hba.conf` 与 `postgresql.conf`。
+7. socket 服务端依次调用 `socket()`、`bind()`、`listen()`、`accept()`，TCP 使用 `SOCK_STREAM`、UDP 使用 `SOCK_DGRAM`；requests 通过 params、data、json、headers、timeout 传递请求参数。
+8. 爬虫流程为发送请求 → 获取响应 → 解析数据 → 存储数据，常见反爬机制包括 IP 封禁、验证码、User-Agent 检测和请求频率限制。
 
 ---
 
@@ -374,3 +387,11 @@ aliases:
 6. **数据库操作双线并行**: MySQL 与 PostgreSQL 两篇文档形成对照学习，均涵盖安装部署、SQL 操作和 Python 库集成，便于读者对比选择适合的数据库方案。
 
 7. **tkinter 作为跨领域的 GUI 解决方案**: tkinter 不仅在专门的 GUI 开发文档中出现，还在 Nginx 管理工具、游戏开发、电池参数工具等多个实战项目中作为用户界面层，体现了其在 Python 桌面应用中的核心地位。
+
+---
+
+## 值得注意
+
+- SSH 主机密钥：paramiko `AutoAddPolicy` 会自动接受未知主机的密钥，原文提示它只适合开发和测试环境，生产环境使用无法防止连接到伪造的服务器。
+- YAML 解析安全：`yaml.load()` 解析含自定义标签的内容可能执行任意代码，原文推荐使用 `yaml.safe_load()`。
+- 可复用实战：电池参数统计工具完整记录了从 V1.0 命令行版到 tkinter GUI 的迭代，串联 re 正则提取、os 批量遍历与 openpyxl 写入 Excel，可作为小型数据处理工具的开发范例。

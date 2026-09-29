@@ -38,8 +38,18 @@ aliases:
 - **领域**：Docker-Kubernetes
 - **摄入日期**：2026-04-17
 
-## 整体概述
+## 摘要
 本批次文档系统性地覆盖了 Kubernetes 集群可观测性的三大支柱：监控（Metrics）、日志（Logging）和链路追踪（Tracing）。监控方面以 Prometheus 为核心，包含基础概念、多版本部署（容器化和二进制）、联邦集群、Operator/Helm 部署、Alertmanager 告警配置以及对 K8s 控制面组件和外部服务的监控方案。日志方面覆盖了 EFK/ELK 技术栈的多种部署形态（K8s 容器化、二进制、ECK Operator），以及轻量级 Loki 方案。链路追踪方面包含 Skywalking 和 Jaeger 两大工具的 Helm 部署实践。
+
+## 关键知识点
+1. Prometheus 以拉取（Pull）模式为主，短生命周期 job 可通过 Pushgateway 推送；数据模型为 metric name + labels 组成的时间序列，本身也是时序数据库（TSDB）。
+2. kube-prometheus-stack 是 Prometheus Operator 的 Helm Chart 封装，一键安装 Prometheus、Alertmanager、Grafana、kube-state-metrics、node-exporter，前提是具备 StorageClass 和 Ingress Controller；Exporter 通过 ServiceMonitor 或 ScrapeConfig CRD 接入。
+3. HA、远程存储和联邦承担不同职责：联邦集群由上层 Prometheus 从各节点的 /federate 接口拉取汇聚，大规模场景可用 Prometheus 分片 + Thanos 全局查询或多集群 Remote Write。
+4. Alertmanager 告警流程为 PENDING → FIRING → 分组等待 → 发送通知，由 group_wait、group_interval、repeat_interval 控制分组与重复发送节奏。
+5. kubelet 默认日志限制为 containerLogMaxSize 10Mi、containerLogMaxFiles 5（每容器最多约 50MiB），容器删除时日志同步删除；K8s Events 默认只保留一小时，需持久化（如 k8s-event-logger → Promtail → Loki）。
+6. 高吞吐日志架构为采集器（Fluentd/Filebeat）→ Kafka 缓冲 → Logstash 格式转换 → ES → Kibana，适用于 TB 级日志场景；Loki 轻量架构适合小规模场景。
+7. 审计日志策略分 None/Metadata/Request/RequestResponse 四级，可经文件 → Fluent Bit → ES/Loki 或 Webhook → Falco 采集，并与 OPA Gatekeeper 形成事前拦截 + 事后审计的安全闭环。
+8. OTel Collector 采用 Receivers → Processors → Exporters 三段式管道并以 OTLP 统一协议；OTel Operator 可零代码注入 SDK（Java/Python/Node.js/Go），尾部采样使用 Gateway StatefulSet 模式。
 
 ## 各文档摘要
 
@@ -241,6 +251,12 @@ aliases:
 - **Kafka 作为日志缓冲层**：多篇文档反复出现 Kafka 作为日志管道缓冲层的架构模式，解决高吞吐场景下的日志延迟问题。
 - **可观测性三大支柱覆盖**：监控（Prometheus+Grafana）、日志（EFK/Loki）、链路追踪（SkyWalking/Jaeger）构成完整的可观测性体系，多篇文档之间存在紧密的架构关联。
 - **Operator 模式普及**：从手动部署 YAML 到使用 Prometheus Operator（ServiceMonitor CRD）和 ECK Operator，声明式运维模式在监控日志领域全面普及。
+
+## 值得注意
+- **NFS 存储建议冲突**：原生部署文档明确 Prometheus 本地 TSDB 不使用 NFS，而 kube-prometheus-stack 文档的实验配置将 Prometheus/Alertmanager 数据持久化到 NFS StorageClass，并包含 NFS 存储优化与 NFS 挂载排障；生产环境引用后者的存储配置前需核实。
+- **存储估算需核实**：Prometheus 基础文档称每个采样约 3.5 bytes，并举例 300 万时间序列、30s 间隔、保留 60 天约消耗 200G；按每样本 3.5 bytes 推算，该场景约 5184 亿个样本、约 1.8 TB，与 200G 相差近一个数量级（原始笔记即如此表述）。
+- **权限范围差异**：监控外部集群的方案为 ServiceAccount 绑定 cluster-admin ClusterRole，而原生部署方案和巡检脚本均采用只读 RBAC。
+- **高基数风险**：日志管理文档将 Loki 高基数列为生产踩坑之一，OTel 文档也将 Cardinality 爆炸防护列为生产要点。
 
 
 ---

@@ -27,9 +27,20 @@ aliases:
 - **主要领域**：AI Agent 平台（OpenClaw）、GitHub Copilot CLI、Linux 环境配置
 - **知识层次**：从安装部署到高级多智能体协同，覆盖基础使用、插件扩展、渠道对接、AIOps 实践、多智能体架构设计
 
-## 整体概述
+## 摘要
 
 本批次文档以 **OpenClaw** 这一大模型驱动的通用 AI Agent 平台为核心，完整记录了从零搭建到生产级多智能体协同的全流程。内容涵盖：平台安装与模型接入、Skills 插件生态（办公、搜索、浏览器、自我进化、安全审计）、飞书/QQ 渠道对接、基于 K8s 的 AIOps 巡检与邮件通知、多智能体架构设计（角色拆分、IDENTITY/SOUL/AGENTS 核心文件、飞书多账号路由、agent-to-agent 通信）。此外还包括竞品 CoPaw（阿里）、Ubuntu 25.10 环境初始化、GitHub Copilot CLI 配置。
+
+## 关键知识点
+
+1. OpenClaw 通过 npm 安装，需 Node.js 22+ 与 Python 环境；配置文件位于 `~/.openclaw/openclaw.json`，gateway token 用于 WebUI 认证。
+2. 自定义模型通过 OpenAI 协议接入；GitHub Copilot 原生支持，通过 OAuth 设备授权流程接入。
+3. Skills 决定 Agent 的实际可用性：Clawhub 负责 Skill 的搜索、安装与升级；API 不含搜索能力且模型知识有截止日期，因此搜索 Skill 是关键；Agent-browser 使用 accessibility-tree 快照实现稳定的元素引用。
+4. 飞书 Channel 的 Connection Mode 选 WebSocket，需订阅 `im.message.receive_v1` 事件，首次对话需执行 pairing 命令。
+5. AIOps 的前置条件是在 OpenClaw 所在机器安装 kubectl 并配置 kubeconfig；之后可用自然语言查询节点、Pod 状态和诊断异常，巡检报告通过 imap-smtp-email Skill 发送到邮箱。
+6. 多智能体角色定义包含身份定义、任务边界、输出格式约束三要素；AGENTS.md 定义工作习惯，IDENTITY.md 定义外在人设，SOUL.md 定义核心价值观。
+7. 飞书多账号路由通过 `channels.feishu.accounts` + `bindings` 实现一个 bot 对应一个 agent；agent-to-agent 通信通过 `tools.agentToAgent` 与 `subagents.allowAgents` 配置。
+8. Ubuntu 25.10 的 APT 源采用 DEB822 格式（`/etc/apt/sources.list.d/ubuntu.sources`）；Fcitx5 中文输入法需设置 GTK_IM_MODULE/QT_IM_MODULE/XMODIFIERS 环境变量。
 
 ## 各文档摘要
 
@@ -121,3 +132,10 @@ aliases:
 3. **多智能体架构复用了角色设计模式**：IDENTITY/SOUL/AGENTS 三文件体系既用于单智能体人设定义，也是多智能体场景下每个 agent 的独立配置单元
 4. **环境配置是 AI Agent 部署的基础**：Ubuntu 初始化指南和 OpenClaw 安装指南互为补充，构成完整的 Agent 部署环境准备流程
 5. **提示词工程与 Agent 角色定义本质相通**：多智能体的角色定义（身份/边界/输出格式）本质上就是系统级提示词工程的实践
+
+## 值得注意
+
+- **代理环境变量残留**：开着代理安装 OpenClaw 和飞书插件后，OpenClaw 服务文件（`~/.config/systemd/user/openclaw-gateway.service`）中会残留 http/https/all_proxy 环境变量，关闭代理后飞书机器人无法与 OpenClaw 通信（`connect ECONNREFUSED`）；删除这些 Environment 行后执行 `systemctl --user daemon-reload` 并重启 gateway。
+- **定时任务不要用自然语言创建**：原笔记指出自然语言方式有失败几率，大概率会直接在 Linux 中生成 crontab，而不是加入 OpenClaw 的定时任务，因此推荐 `openclaw cron add`。
+- **第三方 Skill 的安全审查**：skill-vetter 是纯文档型 Skill，安装后每次安装新 Skill 都会引导完成来源、代码、权限、风险评级四步审查，风险分 LOW、MEDIUM、HIGH、EXTREME 四级。
+- **部分笔记较简略**：CoPaw 仅记录 pip 安装、初始化、启动与 WebUI 访问；Copilot CLI 主要是指向 GitHub 官方文档的链接（安装、使用、MCP 的 JSON 配置）。

@@ -78,7 +78,7 @@ aliases:
 - **领域**：AI 智能运维、Agent 架构
 - **摄入日期**：2026-05-04
 
-## 整体概述
+## 摘要
 
 本项目是一套完整的智能 OnCall Agent 系统教程，围绕「面试优先、先懂方案再落地、循序渐进无门槛」的核心逻辑，系统讲解如何从零构建一个智能 CloudOps Agent。内容覆盖 AI 基础概念扫盲、项目整体架构设计、知识库 RAG 系统、对话 Agent（ReAct 模式）、运维 Agent（Plan-Execute-Replan 模式）、Tool/MCP 外部工具集成、前后端接口设计、实战演练与项目运行，直至面试求职冲刺。项目提供 Go（Eino + GoFrame）、Java（Spring AI Alibaba + SpringBoot）、Python（LangChain + LangGraph + FastAPI）三套完整实现，体现了语言无关的 Agent 架构设计思路。
 
@@ -86,6 +86,16 @@ aliases:
 1. **知识库 Agent**：基于 RAG（检索增强生成），实现文档分片、向量化、语义召回与重排，提供企业内部知识精准问答。
 2. **对话 Agent**：基于 ReAct（推理+行动）设计模式，结合 RAG 召回与工具调用能力，实现「边想边做」的多轮智能对话。
 3. **运维 Agent**：基于 Plan-Execute-Replan 多智能体协作模式，由 Planner（规划器）、Executor（执行器）、Replanner（重规划器）协作完成告警自动响应与故障排查。
+
+## 关键知识点
+
+1. 系统采用四层架构：接入层（API）、业务层（Agent 编排）、服务层（原子能力）、存储层（向量数据库）。
+2. 三版本技术栈：Go 使用 Eino + GoFrame，Java 使用 Spring AI Alibaba + SpringBoot，Python 使用 LangChain/LangGraph + FastAPI；三种框架均通过图编排实现 Agent 流程控制。
+3. RAG 分为提问前链路（分片 -> Embedding -> 存储）和提问后链路（召回 -> 重排 -> 生成）：召回用向量相似度匹配（快但精度低），重排用文本对相似度模型（慢但精度高），最终将 Top-K 片段与用户问题一起交给大模型生成答案。
+4. 三种语言实现均使用 Milvus 作为向量数据库，模型侧使用 DeepSeek/DashScope。
+5. ReAct 是单 Agent「思考 -> 行动 -> 观察 -> 再思考」的闭环；Plan-Execute-Replan 由 Planner、Executor、Replanner 协作，按「先规划、再执行、随时调整」推进。
+6. 四个核心 Tool 覆盖全部 Agent 需求：`query_prometheus_alerts`（告警查询）、`query_internal_docs`（知识库召回，通用支撑工具）、`get_current_time`（时间感知）、`query_log`（日志检索）。
+7. 对话接口通过会话 ID 实现上下文记忆，通过 SSE 实现流式输出。
 
 ## 各章节摘要
 
@@ -206,3 +216,10 @@ aliases:
 4. **MCP 作为外部工具集成标准**：项目将 MCP（Model Context Protocol）作为 Agent 集成外部工具的标准化协议，通过 MCP 对接日志查询（腾讯云 CLS）等外部系统。这体现了 AI Agent 领域正在从碎片化的 Tool 接入走向协议标准化的趋势。
 
 5. **图编排作为三大框架的共同编排模式**：无论是 Go 的 Eino、Java 的 Spring AI Alibaba，还是 Python 的 LangGraph，三种框架都采用图（Graph）作为 Agent 工作流的编排方式。图中的节点代表处理步骤（推理、工具调用、重规划等），边代表流转条件，这种 DAG/状态机编排模式已成为 AI Agent 框架的事实标准。
+
+## 值得注意
+
+- **模式选型边界**：ReAct 是单 Agent 边想边做，适合智能对话；Plan-Execute-Replan 是多 Agent 各司其职，适合复杂运维排障。
+- **分块与 Top-K 需要权衡**：原笔记指出分块过小会丢失上下文、过大会降低检索精度，Top-K 过大影响性能、过小可能遗漏关键信息；面试题中给出的项目取值为按一级标题切分、取 Top3。
+- **日志检索经 MCP 接入**：`query_log` 通过腾讯云 CLS MCP 实现，由 MCP 将自然语言转为日志查询语句并返回结构化结果。
+- **效果数据属于面试话术**：「知识检索准确率 85%+」「运维响应时间从小时级降至分钟级」出自简历写法与面试题的示范内容；原笔记也提到系统效果评估目前主要依赖人工反馈、尚不够系统化，引用前需结合自身项目核实。

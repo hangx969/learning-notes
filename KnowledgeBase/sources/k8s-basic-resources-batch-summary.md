@@ -40,8 +40,18 @@ aliases:
 - **领域**：Docker-Kubernetes
 - **摄入日期**：2026-04-17（新增文档摄入日期：2026-07-18）
 
-## 整体概述
+## 摘要
 本批次文档系统性地覆盖了 Kubernetes 的核心基础知识，从集群架构与组件（API Server、Scheduler、Controller Manager、etcd）到各类工作负载资源（Pod、Deployment、StatefulSet、DaemonSet、Job/CronJob），再到网络（Service、Ingress、Calico）、存储（Volume、PV/PVC）、配置管理（ConfigMap、Secret）、安全（认证、授权、RBAC）以及扩展机制（CRD、Operator）、资源删除生命周期机制（Finalizer）。文档还涵盖了集群搭建工具 kubeadm、容器运行时 containerd、YAML 编写规范、临时容器调试、Python API 编程等实用主题。整体构成了一套完整的 Kubernetes 基础知识体系。
+
+## 关键知识点
+1. API Server 是所有组件通信的中枢，也是唯一与 etcd 交互的组件；请求链路依次为认证 → 授权（RBAC）→ 变更准入 → 校验 → 验证准入 → etcd 持久化 → Watch 通知。
+2. Pause（infra）容器负责 Pod 的网络和存储共享，Pod 内容器共享 Network Namespace、通过 localhost 互访；`containerPort` 仅为声明性字段，requests 即使未使用也会占用节点资源。
+3. Liveness 只应检查重启能够修复的进程内部故障并保守重启，外部依赖状态交由 Readiness 谨慎处理（先摘流），慢启动应用使用 Startup Probe 隔离启动阶段。
+4. Deployment 仅在 `spec.template` 变化时生成新 RS，滚动更新节奏由 maxSurge 和 maxUnavailable（数字或百分比）控制。
+5. StatefulSet 基于 Headless Service 为每个 Pod 分配固定 DNS（`pod-name.svc-name.ns.svc.cluster.local`），并通过 volumeClaimTemplates 为每个 Pod 自动创建独立 PVC。
+6. Service 通过标签选择器匹配 Pod 并创建同名 Endpoint；kube-proxy 的 iptables 模式在 Service 数量大时性能下降，IPVS 基于哈希表性能更优；Ingress 流量从 Ingress Controller 直达 Pod，不经过 Service。
+7. Client-side Apply 基于 last-applied、live state 与新 manifest 三路合并，多工具共管时可能静默覆盖；Server-side Apply 通过 `managedFields` 追踪字段所有权，把字段争用转化为显式冲突。
+8. `metadata.finalizers` 非空时，apiserver 只设置 `deletionTimestamp` 使资源进入 Terminating；需经 Controller 清理并移除 Finalizer 后，对象才会从 etcd 删除。
 
 ## 各文档摘要
 
@@ -260,3 +270,8 @@ aliases:
 - **从容器到编排的演进**：containerd 文档连接了 Docker 与 K8s 的技术演进线索，展示了容器运行时从 Docker 独占到 CRI 标准化的技术变革。
 - **生产环境最佳实践**：多篇文档强调了生产环境的注意事项，如 ns 级别 Pod/RS 数量限制、Ingress 独占节点 + hostNetwork、Operator 部署有状态服务等。
 - **删除生命周期与扩展机制交织**：Finalizer 机制解释了 namespace-资源分配 文档中 Namespace 卡在 Terminating 的根本原因，也与 CRD/Operator 文档中"删除命名空间级联删除自定义资源实例"直接相关——CRD 实例若带 Finalizer 且 Controller 异常，会导致整条级联删除链路卡死。
+
+## 值得注意
+- **版本边界**：CRD 自 K8s 1.7 引入；1.24 起不再自动为 ServiceAccount 创建 Secret，需手动创建 Token（`kubectl create token` 有时效，Secret 方式永久有效）；临时容器自 1.25 起为 stable，此前需通过 feature-gates 开启；nftables 作为 kube-proxy 新后端于 v1.29 引入，文中标注为 Alpha。
+- **探针误配的放大效应**：Pod 文档复盘了 Liveness/Readiness 配置不当引发 300+ Pod 连锁重启的生产事故；PDB 和 HPA 不能直接阻止 Liveness 误杀，探针变更仍需灰度、监控和快速回滚。
+- **高风险操作**：准入 Webhook 配置 `failurePolicy: Fail` 且 Webhook 不可用时，所有 Pod 创建都会失败，必须排除 kube-system；手动移除 Finalizer 会跳过清理逻辑，可能导致云盘、负载均衡器等外部资源泄漏。

@@ -25,9 +25,20 @@ aliases:
 - **领域**: Kubernetes 安全、认证授权、证书管理、策略引擎、代码质量与镜像扫描、容器安全上下文
 - **摄入日期**: 2026-04-17
 
-## 整体概述
+## 摘要
 
 本目录涵盖 Kubernetes 集群安全与认证授权领域的核心工具，包括多租户管理（Capsule）、证书自动化管理（Cert-Manager）、外部密钥同步（External Secrets）、策略引擎（Kyverno）、身份认证代理（OAuth2 Proxy）、代码质量扫描（SonarQube）以及容器镜像漏洞扫描（Trivy Operator）。所有工具均通过 Helm Chart 方式部署，文档覆盖了从下载配置到企业级使用的完整流程。
+
+## 关键知识点
+
+1. Capsule 以 Tenant CRD 将一组 Namespace 逻辑分组并统一施加 RBAC、Resource Quota、Network Policy；Tenant Owner 必须属于 Capsule User Group（`capsuleUserGroups`），可通过证书 O 字段、外部 IdP 组或 ServiceAccount 配置。
+2. Cert-Manager 签发链路为 Issuer/ClusterIssuer → Certificate/CertificateRequest → Order/Challenge → TLS Secret → Ingress/Pod；ACME 覆盖 HTTP01 与 DNS01，生产流程包括 Staging 验证、自动续期、到期监控与 Webhook/Challenge 排障。
+3. External Secrets Operator 由 SecretStore/ClusterSecretStore 指定外部密钥源与认证方式、ExternalSecret 定义同步映射，`refreshInterval` 控制拉取频率；对接 Azure Key Vault 支持 Managed Identity 与 Workload Identity。
+4. Kyverno 作为 Admission Controller 拦截 API 请求，支持 validate/mutate/generate 三类策略，Policy Reporter 提供策略执行结果的 GUI。
+5. OAuth2 Proxy 可作为独立反向代理或 Ingress-Nginx Middleware 运行，链路为 Nginx 路由 → OAuth2 Proxy 认证 → Redis 会话存储。
+6. Trivy Operator 采用 Client-Server 模式（trivy-operator 执行扫描、trivy-server 提供漏洞库），产出 VulnerabilityReport 与 ConfigAuditReport；漏洞库是 OCI Image，需用 oras 下载而非 docker pull。
+7. SecurityContext 分 Pod 级与容器级，容器级覆盖 Pod 级；推荐基线为 `drop: ALL` + 按需 `add: NET_BIND_SERVICE`、`allowPrivilegeEscalation: false`、`readOnlyRootFilesystem: true`，seccomp 使用 RuntimeDefault，fsGroupChangePolicy 使用 `OnRootMismatch`。
+8. Pod 安全标准分 Privileged/Baseline/Restricted 三级：Baseline 允许 13 种 capabilities，Restricted 仅允许 NET_BIND_SERVICE。
 
 ## 各文档摘要
 
@@ -138,3 +149,10 @@ aliases:
 3. **认证与 Ingress 集成**: OAuth2 Proxy 通过 Ingress-Nginx 的 auth-url/auth-signin annotation 实现统一认证，`k8s-scaling` 目录的 Goldilocks 也使用了同样的认证集成模式。
 4. **密钥管理闭环**: External Secrets 从 Azure Key Vault 同步密钥到 K8s，CI/CD 工具（Jenkins Credentials）和应用（Helm values）均可引用这些 K8s Secrets。
 5. **多租户与 RBAC**: Capsule 的多租户隔离与 K8s 原生 RBAC 配合，为企业级集群的团队协作提供了安全边界。
+
+## 值得注意
+
+- 安全字段可能失效：特权模式或拥有 `CAP_SYS_ADMIN` 时 `allowPrivilegeEscalation` 始终为 true，而 hostPath/CSI 卷可能隐式授予该权能；`privileged: true` 会让 seccomp 失效，二者不应同时使用。
+- 版本边界：`supplementalGroupsPolicy` 于 v1.35 GA，v1.33 Beta 阶段的行为变更会让 kubelet 拒绝在无法确保该策略的节点上运行 Pod，从 v1.32 及更早版本升级前需查阅官方升级注意事项；sysctl 安全列表按 v1.32 整理。
+- Kyverno 迁移：1.18 无破坏性变更，但 ClusterPolicy 弃用计划仍在推进，应开始迁移到新的策略类型；命名空间级策略发起的 HTTP 调用默认被禁用。
+- Cert-Manager 上线顺序：先用 Let's Encrypt Staging 验证再切 Production，且两者使用不同名称的 Issuer；文中 `v1.21.1` 为写作时的示例版本，部署前需确认稳定版本并核对 Kubernetes 兼容矩阵。

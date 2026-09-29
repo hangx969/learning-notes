@@ -22,6 +22,13 @@ Obsidian 是一款基于本地 Markdown 文件的知识管理工具，拥有 150
 - **Graph View**：可视化所有笔记的关联关系，发现孤立知识和高频引用
 - **插件生态**：社区插件极其丰富，从 Dataview 到 Local REST API
 
+## 使用场景
+
+- **AI 知识库**：通过 Claudian 插件、Obsidian Skills 和 Local REST API + mcp-obsidian，让 Claude Code 在 Vault 中搜索、读取、创建和修改笔记（见下文集成方案）
+- **LLM Wiki 运营**：本仓库即为 Obsidian Vault，按原始来源层、Wiki 编译层（`KnowledgeBase/`）和 Schema 层（`CLAUDE.md`）维护
+- **可编辑图表**：用可视化 Skills 让 AI 生成 Excalidraw、Mermaid、Canvas 图表，生成后仍可调整布局和文字，详见 [[AI/Obsidian/Obsidian可视化Skills-Excalidraw-Mermaid-Canvas|Obsidian 可视化 Skills]]
+- **内容发布**：用 Wechat Public Platform 插件把文章一键发布到微信公众号，也支持草稿、素材管理和百家号分发（见下文"实用社区插件"）
+
 ## 与 Claude Code 的集成方案
 
 本仓库记录了 3 个关键集成工具，使 Obsidian 从"笔记工具"升级为"AI 知识库"：

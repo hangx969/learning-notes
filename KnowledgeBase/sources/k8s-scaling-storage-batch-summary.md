@@ -27,9 +27,20 @@ aliases:
 - **领域**: Kubernetes 自动扩缩容（HPA/VPA/KEDA/KServe）与存储生命周期（PV/PVC/StorageClass）及分布式存储（NFS/Ceph/CubeFS）
 - **摄入日期**: 2026-04-17
 
-## 整体概述
+## 摘要
 
 本批次摘要覆盖了 Kubernetes 集群的两大基础能力：自动扩缩容和持久化存储。扩缩容部分系统性介绍了 HPA（水平扩缩）、VPA（垂直扩缩）、KEDA（事件驱动扩缩）和 KServe 模型服务请求指标扩缩容，以及相关部署工具（Goldilocks 资源推荐），从原生能力到模型推理场景形成完整体系，并补充 Kubernetes 1.37 `HPAScaleToZero` 对异步 Worker 的原生缩零实践。存储部分涵盖了从 PV/PVC/StorageClass 生命周期与数据保护，到简单的 NFS 动态供应、企业级分布式存储（Ceph、CubeFS）以及 CSI 卷健康监控的部署与 K8s 集成，为有状态应用提供可靠的数据持久化和故障可观测能力。
+
+## 关键知识点
+
+1. HPA 默认 15 秒控制循环，按 `ceil(currentReplicas × currentMetric / desiredMetric)` 计算副本数，缩容有 300 秒稳定窗口；HPA 与 VPA 可在不同资源或指标维度共存，但禁止同时控制同一 CPU/内存维度。
+2. VPA 由 Recommender、Updater、Admission Controller 组成，模式包括 Off/Initial/Recreate/InPlaceOrRecreate/InPlace，Auto 已被上游弃用；Goldilocks 依赖 VPA Recommender 提供推荐值并以 Dashboard 展示。
+3. KEDA 分工为 Operator 负责 `0 ↔ 1`、生成的 HPA 负责 `1 ↔ N`；Kubernetes 1.37 Beta `HPAScaleToZero` 可配合 `minReplicas: 0` 与 Object/External 指标原生缩零，但不替代 KEDA 的事件源、认证和 ScaledJob 能力。
+4. KServe + vLLM 扩缩容链路为 Predictor Deployment → vLLM `/metrics` → Prometheus → KEDA → External Metrics API → HPA，以 `vllm:num_requests_running + vllm:num_requests_waiting` 为信号；必须确认 `external.metrics.k8s.io` 可用，仅 CRD 就绪并不够。
+5. 动态供给 PV 常见默认回收策略为 `Delete`，删除 PVC 可能销毁底层卷；修改 StorageClass 不回溯已有 PV，需逐个 patch `persistentVolumeReclaimPolicy`，删除前按“确认策略 → 创建并验证快照 → 必要时改为 Retain → 删除后检查 PV 与底层卷”执行。
+6. 存储选型：nfs-subdir-external-provisioner 替代已归档的 nfs-client-provisioner，exports 需写宿主机网段而非 Pod 网段；Ceph 提供 RBD/CephFS/RGW 三类存储，最低 3 Monitor + 2 Manager + 3 OSD；CubeFS 轻量、云原生友好但不支持块存储。
+7. Volume Health Monitor 通过 4 个 CSI RPC 将卷健康写入 `PVC.status.healthStatus`、`Pod.status.volumeHealth` 与 `CSINode.status.storageHealth`，前提是控制平面与 kubelet 开启 feature gate 且 CSI 驱动实现这 4 个 RPC。
+8. FinOps 五层降本路径：Right-Sizing → 节点效率（Karpenter、Spot、Topology Spread）→ 调度策略（非生产环境 CronJob 定时开关投入产出比最高、PriorityClass 抢占）→ FinOps 监控（Prometheus 成本告警 + OpenCost）→ 存储网络（GP3 替代 GP2、WaitForFirstConsumer 减少跨 AZ 费用）。
 
 ## 各文档摘要
 
@@ -156,3 +167,9 @@ aliases:
 6. **存储删除安全边界**: StorageClass 提供供给模板，PV 的 `persistentVolumeReclaimPolicy` 决定具体删除行为；`Retain`、快照和备份共同构成有状态数据的恢复边界。
 7. **KEDA 与 Serverless**: KEDA 的缩容到 0 能力与 Knative/KPA 的 Serverless 模式理念一致，反映了事件驱动架构在 K8s 中的深入应用。
 8. **推理服务扩缩容信号**: 对 KServe/vLLM 模型服务，`running + waiting` 请求数比 CPU/内存利用率更直接反映推理排队压力，但仍需结合模型加载时间、GPU 调度和 HPA 稳定窗口压测。
+
+## 值得注意
+
+- 版本边界：`HPAScaleToZero` 为 Kubernetes 1.37 Beta（原文注明默认启用），Volume Health Monitor 为 1.37 Alpha，字段与行为仍可能变化，原文建议与存储厂商监控互补、不作为唯一故障判定依据；KEDA 结论基于 2.17.2 实测。
+- 文档间不一致：[[Docker-Kubernetes/k8s-scaling/k8s成本优化方案-FinOps实战|FinOps 实战]]仍按 VPA 四种模式讲解，并在第 2 周路线图启用 `Auto`；[[Docker-Kubernetes/k8s-scaling/k8s-HPA-VPA|HPA/VPA 整合篇]]则标注 `Auto` 已被上游弃用、新配置应改用显式模式。
+- 数据安全红线：`Released` PV 清理 `claimRef` 前必须确认旧数据可弃或已有备份；Ceph 原文强烈建议生产环境二进制安装在服务器上、不要装在 K8s 中（数据恢复困难）；卷健康 remediation 需要冷却、重试上限和人工确认。

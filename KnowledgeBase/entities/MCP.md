@@ -20,7 +20,7 @@ aliases:
 
 Model Context Protocol（模型上下文协议）是连接 AI 模型与外部工具、数据源的标准化桥梁协议。通过 MCP Server，AI 助手（如 Claude Code）可以调用文件系统、数据库、API、浏览器等外部资源，实现工具增强的智能交互。MCP 采用 stdio 通信方式，服务器通过 `npx` 或 `docker` 启动。
 
-## 核心机制
+## 核心功能：核心机制
 
 - **协议模型**：Client（Claude Code）↔ Server（MCP 进程），通过 stdio 通信
 - **安装方式**：`claude mcp add <name> -- <command>` 或在 JSON 配置文件中声明
@@ -66,7 +66,7 @@ Model Context Protocol（模型上下文协议）是连接 AI 模型与外部工
 |--------|------|------|
 | **mcp-obsidian** | Obsidian 笔记库读写 | Local REST API 插件 + `uvx mcp-obsidian` |
 
-## 推荐场景组合
+## 使用场景：推荐场景组合
 
 | 场景 | 推荐组合 |
 |------|---------|

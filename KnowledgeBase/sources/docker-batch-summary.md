@@ -30,8 +30,17 @@ aliases:
 - **领域**：Docker-Kubernetes
 - **摄入日期**：2026-04-17
 
-## 整体概述
+## 摘要
 本批次文档涵盖 Docker 的基础知识与实战部署场景。内容从 Docker 安装配置（CentOS/Ubuntu）、镜像管理、Dockerfile 编写、docker-compose 编排入手，延伸到多种常见服务的容器化部署实践，包括 Web 服务（Nginx、Tomcat、LNMP）、DevOps 工具（GitLab、Portainer）、监控与日志系统（Prometheus、Grafana、Loki）、以及 GPU 支持和网络代理等高级配置。整体构成了一套从入门到生产实践的 Docker 操作手册。
+
+## 关键知识点
+1. 安装 Docker 时需开启内核参数 `bridge-nf-call-iptables` 与 `ip_forward`。
+2. 宿主机高位端口到容器端口的映射基于 docker0 网桥 + veth pair。
+3. docker-compose 用于编排多服务（如 Nginx、MySQL、PHP），常用命令为 up/down/ps/start/stop。
+4. Loki 基于标签索引而非全文索引，成本低于 ELK；由 Loki（存储与查询）、Promtail（采集）、Grafana（展示）组成，与 Prometheus 标签体系兼容，可对接 alertmanager。
+5. 指标监控链路：node_exporter 以 systemd 服务运行，Prometheus 通过 `scrape_configs` 抓取，cAdvisor 采集容器级指标，Grafana 导入 Dashboard 模板展示。
+6. GPU 容器依赖链为 libnvidia-container -> nvidia-container-toolkit -> nvidia-container-runtime，使用 `--gpus all` 参数启动。
+7. 无本地 Docker Engine 时，可用 Python 脚本直接从 Registry 下载镜像层并生成 tar（支持按操作系统、CPU 架构或 digest 选择镜像，分层断点续传），再在目标主机用 `docker load -i` 导入。
 
 ## 各文档摘要
 
@@ -151,3 +160,8 @@ aliases:
 - **生产环境关注点**：多篇文档涉及安全配置（密码设置、端口规划）、性能优化（关闭不必要服务、资源限制）和持久化（数据卷挂载），反映了从实验到生产的关注点转移。
 - **GPU 与代理属于进阶配置**：这两篇文档针对特定场景（深度学习、网络受限环境），是 Docker 基础之上的高级运维实践。
 - **镜像离线分发补充**：新增文档覆盖 Registry 直接下载、跨架构选择和离线 `docker load`，补足了受限网络环境下的镜像迁移场景。
+
+## 值得注意
+- **代理配置的作用范围**：`~/.docker/config.json` 中的代理只注入容器内进程，不影响镜像拉取；拉取镜像由 docker daemon 负责，需在 systemd 的 `docker.service` 中配置 `HTTP_PROXY`/`HTTPS_PROXY`，可用 `systemctl show --property=Environment docker` 确认是否生效。
+- **GitLab 部署约束**：GitLab 容器至少需要 4G 内存；宿主机端口与容器内端口要保持一致，否则 `external_url` 无法访问。
+- **GPU 挂载的触发条件**：nvidia-container-runtime-hook 在容器启动后、Entrypoint 执行前运行，检测到 `NVIDIA_VISIBLE_DEVICES` 才调用 libnvidia-container 挂载 GPU 设备和 CUDA Driver，否则按默认 runc 执行。

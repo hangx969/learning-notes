@@ -52,9 +52,19 @@ aliases:
 - **领域**：AI RAG 知识库系统
 - **摄入日期**：2026-05-04
 
-## 整体概述
+## 摘要
 
 RAG-Agent 是一个企业级 RAG 知识库智能问答系统的完整教程项目。技术栈涵盖后端 Spring Boot 3.4.2 + Java 17、前端 Vue 3 + TypeScript（Vite 构建），数据层使用 MySQL 8.0 + Redis + Elasticsearch 8.10.0 + Apache Kafka 3.9 + MinIO。核心流程为：文档上传（支持大文件断点续传与分片上传）-> Apache Tika 文本提取 -> 智能分块 -> 豆包 Embedding 模型向量化（2048 维）-> Elasticsearch 混合索引 -> KNN 向量检索 + BM25 关键词检索融合排序 -> DeepSeek 大模型生成回答。安全层基于 Spring Security + JWT 实现 RBAC 权限控制，实时通信采用 WebSocket + WebFlux 响应式编程。项目教程共 7 大篇章，从项目介绍、工程搭建、大厂级系统设计、进阶技术深入，到 Go 语言版本、补充 FAQ，以及面试题预测与真实面经汇总，形成完整的学习闭环。
+
+## 关键知识点
+
+1. 需求分析梳理出用户管理、文档上传解析、知识库检索、聊天助手四大核心模块，整体设计采用用户层、逻辑层、数据层三层业务架构。
+2. 文件上传解析流水线：分片上传（Redis BitMap 管理分片状态）→ MinIO 存储 → Tika 文本提取 → 智能分块与向量化。
+3. 混合检索是技术核心：关键词搜索（倒排索引/BM25）与语义搜索（Embedding 向量/余弦相似度）各有局限，ES `knowledge_base` 索引以 textContent + vector 双字段支持 BM25 与 KNN 查询并融合排序，检索时叠加组织权限过滤。
+4. 聊天助手基于 WebSocket 实时通信，负责多轮对话上下文管理、Prompt 模板构建与 DeepSeek 大模型集成；RAG Prompt 设计涵盖系统提示词模板、上下文注入策略和多轮对话 Prompt 管理。
+5. 权限体系基于 Spring Security 实现 RBAC，涵盖 JWT 认证、权限拦截和组织级数据隔离；用户管理模块另负责注册登录与组织标签管理。
+6. 模型接入有 DeepSeek 在线 API 与 Ollama + DeepSeek 本地部署两条路径，Embedding 可申请阿里云或豆包 API。
+7. 工程环境依赖 Java 17、MySQL、Elasticsearch 8.10.0、Redis、MinIO、Kafka，并提供基于 Docker Compose 的一键部署；Go 版本同样提供 Docker 一键部署方案。
 
 ## 各文档摘要
 
@@ -155,3 +165,9 @@ RAG-Agent 是一个企业级 RAG 知识库智能问答系统的完整教程项�
 4. **面试导向的项目设计方法论**：项目独特之处在于从第一篇（简历撰写）到最后一篇（27 家真实面经汇总），贯穿了"以面试为终点"的学习路径设计。每个模块不仅讲解实现方案，还预测对应面试题目并提供参考答案，这种将项目实战与求职准备深度绑定的教学模式，对于 AI 方向的技术求职具有很强的实用价值。
 
 5. **MySQL/Elasticsearch/MinIO 三存储的数据一致性挑战**：系统中结构化数据存 MySQL、文本与向量存 ES、文件原件存 MinIO，三套存储系统之间的数据一致性是重要的工程难题。文档删除需要同步清理三处数据，上传失败需要回滚已写入的部分，这对事务管理和补偿机制提出了较高要求，也是面试中常被深入追问的技术点。
+
+## 值得注意
+
+- 向量维度与模型耦合：[[AI/RAG/RAG-Agent-项目/4-进阶篇/4.2-RAG-Agent RAG 项目的ElasticSearch混合检索精讲|混合检索精讲]]中 `vector` 字段为 `dense_vector`、`dims: 2048`，与豆包 Embedding 维度对齐；[[AI/RAG/RAG-Agent-项目/3-大厂篇/3.7-RAG-Agent RAG 项目的库表设计|库表设计]]用 `model_version` 字段在模型升级时识别需要重新向量化的文档。
+- 来源间出入：[[AI/RAG/RAG-Agent-项目/7-面试篇/7.7-RAG-Agent RAG 真实面经参考，已累计 27 家，700 道题目（不断更新中）|真实面经参考]]对“用的什么模型”的回答称豆包后来不向下兼容 2048 维、已切换到阿里 embedding 模型，与正文按豆包 2048 维设计的描述不一致，复用前需核对实际模型与维度。
+- ES 安全边界：[[AI/RAG/RAG-Agent-项目/2-工程篇/2.2-Elasticsearch 8.10安装教程（新人必看）|2.2]] 与 [[AI/RAG/RAG-Agent-项目/6-补充篇/6.3-es安装|6.3]] 中“禁用 HTTPS 和安全功能”的方法已被原文划除，并注明仅适用于开发环境、生产环境不建议；二者的 ES 8.10 安装章节结构基本一致（均含安全功能处理与 IK 分词器插件）。

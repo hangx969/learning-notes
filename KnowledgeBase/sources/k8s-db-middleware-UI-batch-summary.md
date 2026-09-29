@@ -37,9 +37,20 @@ aliases:
 - **领域**: Kubernetes 上部署数据库/中间件服务、集群可视化与管理工具
 - **摄入日期**: 2026-04-17
 
-## 整体概述
+## 摘要
 
 本批次文档涵盖两大主题：一是在 Kubernetes 中部署各类数据库（MySQL、PostgreSQL、Redis、MongoDB、Kafka）和中间件服务的实战笔记，涉及原生 YAML、Helm Chart 以及 Operator 三种主流部署方式；二是 Kubernetes 集群的可视化管理工具链，包括 Dashboard、Kuboard、Lens、k9s、Rancher 等多种方案。文档以操作步骤为主，辅以架构说明和生产环境注意事项，是一套完整的 K8s 有状态服务部署与集群管理参考资料。
+
+## 关键知识点
+
+1. Redis Cluster 最少需要 6 个实例（3 主 3 从），通过 16384 个哈希槽实现数据分片；哨兵模式提供监控、通知和自动故障转移。
+2. MySQL NDB Cluster 由管理节点、数据节点、SQL 节点三种角色组成，通过 NdbCluster CRD 声明，`redundancyLevel` 控制数据副本数，生产环境建议 >= 2。
+3. Bitnami PostgreSQL HA 由 Pgpool（流量接入与读写分离）、repmgr（主从自动切换）和 witness（防脑裂）组成，偶数个节点必须配置 witness；Bitnami 的 MySQL、PostgreSQL Chart 均依赖 `bitnami/common` 子 Chart。
+4. Strimzi 部署 Kafka 需先部署 Cluster Operator，再创建 Kafka、Topic、User 等 CRD 资源；Mirror Maker 用于跨集群数据复制和灾备。
+5. MongoDB 高可用有主从、副本集、分片三种方案，副本集实现自动故障转移，分片实现水平扩展。
+6. MySQL 主从 YAML 实践中，NFS Provisioner 由 ServiceAccount、ClusterRoleBinding、Deployment 组成，配合 StorageClass 动态供给 PV。
+7. Dashboard 安装后需将 Service 类型改为 NodePort 并通过 Token 登录；Kuboard v3 以 Docker 容器部署、不依赖 K8s 集群，通过 Service Account 接入集群；Lens 无需在集群中安装组件，内置 Prometheus 集成提供资源可视化。
+8. k9s 采用 Vim 风格操作（`:` 输入资源类型，`/` 输入过滤器）；krew 是 kubectl 插件管理工具，rolesum 插件用于可视化查看 RBAC Role 绑定；Rancher 是底层基于 K8s 的企业级多集群管理平台。
 
 ## 各文档摘要
 
@@ -217,3 +228,9 @@ aliases:
 3. **Helm Chart 依赖管理**: Bitnami 系列 Chart（MySQL、PostgreSQL、Tomcat）都需要 `common` 子 Chart，这是 Helm 依赖管理的通用模式。
 4. **可视化工具互补**: Dashboard（Web 原生）、Kuboard（国产增强）、Lens（桌面 IDE）、k9s（终端 TUI）、Rancher（多集群管理平台）各有定位，形成从轻量到重量级的工具链。
 5. **Operator 生态**: Redis Operator (OT)、NDB Operator (MySQL 官方)、Strimzi Operator (Kafka) 均采用 CRD + Controller 模式，体现了 K8s 声明式 API 扩展的统一范式。
+
+## 值得注意
+
+- **NFS 仅适合学习环境**: Helm 部署 MySQL 文档指出生产环境不推荐 NFS（单点无高可用、性能也有问题），MySQL 主从文档也提示性能要求高的 MySQL 不建议部署在 K8s 中；而 MongoDB、MySQL 主从等 YAML 实践均以 NFS 作为持久化存储，引用其存储配置时需注意这一前提。
+- **Redis 部署模式取舍**: Operator 文档推荐 Cluster 模式，不推荐主从 replication 模式（在 K8s 中主从切换不及时）；主从复制属于弱一致模型。
+- **旧版 Chart 与 API 兼容**: aliyun/rabbitmq-ha Chart（1.0.0，基于 rabbitmq:3.7-alpine）需手动将 `rbac.authorization.k8s.io/v1beta1` 改为 `v1`、`apps/v1beta1` 改为 `apps/v1`，并为 StatefulSet 补充 `spec.selector.matchLabels`，生产环境建议评估 Bitnami 维护的 `bitnami/rabbitmq`；K8s 1.24+ 部署 Dashboard 需手动创建 SA 和 Secret 绑定；集群升级前可用 kubent 检查废弃 API。

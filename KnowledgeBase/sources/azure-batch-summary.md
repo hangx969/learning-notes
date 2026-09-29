@@ -34,9 +34,20 @@ aliases:
 - **领域**：Azure
 - **摄入日期**：2026-04-17
 
-## 整体概述
+## 摘要
 
 该 Azure 文档集涵盖了 Azure 云平台的核心基础设施服务与运维实践。内容覆盖计算（VM/VMSS、AKS）、存储、网络、容器服务（ACR/ACI）、DevOps CI/CD 流水线、治理（Azure Policy）等关键领域。此外还包含大量实用的故障排查工具与方法（Fiddler、PerfMon、Browser Trace、KQL 查询等），以及客户支持邮件模板。整体定位为 Azure 技术支持工程师的实战知识库，侧重于中国区（Azure China Cloud）的部署与运维场景。
+
+## 关键知识点
+
+1. Azure China Cloud 需要专门配置：PowerShell 登录使用 `Connect-AzAccount -Environment AzureChinaCloud`，ACR 完全限定 URL 为 `<registry-name>.azurecr.cn`；Azure DevOps 在 Azure China 不支持 MS Managed Agents，只能使用自托管代理。
+2. AKS 控制面（apiserver、scheduler、etcd、controller）由 Azure 托管；AKS 1.19+ 的 Linux 节点使用 containerd 作为容器运行时。
+3. Workload Identity 需启用 OIDC Issuer 和 Workload Identity 功能，通过 Federated Credential 将 Kubernetes Service Account 与 Azure Managed Identity 关联；SecretProviderClass（CSI 驱动的 AKS 插件）借助预先授权的 User-Assigned Managed Identity，将 Key Vault Secret 同步为同一 namespace 下的 Kubernetes Secret。
+4. Azure Policy 在 ARM 层拦截所有 CRUD 请求，位于 RBAC 之后；Policy 针对资源定义，RBAC 针对用户操作；拒绝策略凌驾于所有允许操作之上。
+5. 存储冗余有 LRS、GRS、RA-GRS、ZRS、GZRS 五种；Blob 分为 Block、Append、Page 三种类型，访问层中 Cool 最少 30 天、Archive 最少 180 天。
+6. Azure DevOps Pipeline 各 Step 之间不共享环境变量，需通过 logging command 传递；自托管 Agent 通过 capability/demand 机制匹配 Pipeline 需求，注册支持 PAT、Device Code、Service Principal 三种认证方式。
+7. Linux VM 的 OS 磁盘扩展需在系统内用 fdisk + resize2fs 完成；文件系统损坏时可用 rescue VM 挂载问题磁盘并执行 fsck 修复。
+8. 排障工具分工：Browser Trace 导出 HAR，Fiddler Classic 捕获 HTTP/HTTPS 会话，Process Monitor 保存 .PML，PerfMon 与 Diskspd 同步采集性能指标；Diskspd、FIO 分别用于 Windows、Linux 磁盘测试，iotop 用于持续观察 I/O。
 
 ## 各文档摘要
 
@@ -200,3 +211,9 @@ aliases:
 - **工具链与故障排查**：约半数文档属于诊断工具类（Fiddler、PerfMon、Browser Trace、Postman、KQL、IO Monitor），体现了知识库的技术支持工程师视角。
 - **DevOps 全链路**：从 Pipeline 基础、自托管 Agent 到 Agent Pool 管理，覆盖了 Azure DevOps CI/CD 的完整运维流程。
 - **存储与计算交叉**：Azure Storage 与 VM、AKS 存在紧密关联，磁盘类型、IO 测试、存储冗余等知识点跨多篇文档互相引用。
+
+## 值得注意
+- **Policy 显式拒绝无法被子级放宽**：原笔记举例，若对管理组施加拒绝策略，再给下层 child 分配更宽松的策略是行不通的，需先把 child 排除在外再分配宽松策略。
+- **令牌与抓包数据的敏感性**：Entra ID（AAD）与 ARM 接口需使用各自目标资源对应的令牌，两者不能互换；HAR、Fiddler 会话和令牌可能包含身份验证信息，共享前应移除敏感字段。
+- **登录缓存的清理方式**：原笔记建议先用 `Clear-AzContext -Scope CurrentUser`（PowerShell）或 `az account clear`（Az CLI）清除后重新登录；列出的 msal.cache 等缓存文件仅供排查旧环境参考，不要不加区分地批量删除（上文"清缓存需手动删除相关文件"的概括与此不一致，以原笔记为准）。
+- **Agent 删除只能走 REST API**：Az CLI 没有删除 agent 的命令；可通过 assignedRequest 字段判断 agent 是否正在执行 job。

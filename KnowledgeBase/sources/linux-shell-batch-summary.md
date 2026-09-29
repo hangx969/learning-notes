@@ -29,9 +29,22 @@ aliases:
 
 ---
 
-## 整体概述
+## 摘要
 
 本目录是一套实战导向的 Linux 与 Shell 运维知识库，覆盖从 Linux 基础概念到高级系统管理的完整链路。内容以 Ubuntu 和 CentOS/Rocky Linux 为主要操作系统，涉及用户与权限管理、存储（LVM/RAID）、网络配置（nmcli/proxy/SSH）、自动化运维（Ansible/Shell 脚本）、安全加固（unattended-upgrade/JumpServer）、终端美化（zsh/oh-my-zsh）、开发工具（VSCode/direnv/VMWare）以及文件同步监控（inotifywait/rsync）等多个子领域。笔记风格统一为"概念介绍 + 操作命令 + 配置示例"，适合作为日常运维和开发环境搭建的速查手册。
+
+---
+
+## 关键知识点
+
+1. LVM 由物理卷（PV）、卷组（VG）、逻辑卷（LV）三层组成，按 `pvcreate` → `vgcreate` → `lvcreate` 顺序创建，逻辑卷分线性（Linear）与条带（Striped）两类。
+2. FTP 使用 TCP 21 端口建立控制连接、20 端口建立数据连接，分主动与被动模式；vsftpd 支持匿名、本地、虚拟用户三种认证，以 `pasv_min_port`/`pasv_max_port` 限定被动端口范围，并用 chroot 禁锢家目录。
+3. SSH 密钥登录流程为 `ssh-keygen` 生成密钥、`ssh-copy-id` 上传公钥；`~/.ssh/config` 可配置主机别名，here document 配合循环可在多台服务器上远程执行命令。
+4. direnv 基于目录自动装载/卸载 `.envrc` 中的环境变量，按 Shell 配置 `direnv hook bash` 或 `direnv hook zsh` 后执行 `direnv allow`，适合管理 PYTHONPATH、API 密钥等项目级变量。
+5. 终端代理通过 `http_proxy`/`https_proxy` 环境变量设置，可封装 `proxy_on`/`proxy_off` 函数写入 `~/.bashrc` 或 `~/.zshrc`，并用 `curl cip.cc` 验证是否生效。
+6. screen 会话管理：`screen -S` 创建、`Ctrl-A D` 分离、`screen -r` 恢复、`screen -D -r` 强制分离并重新附加、`screen -L -S` 保存会话日志。
+7. inotifywait 以 `-m`（持续监控）、`-r`（递归）、`-e`（事件过滤）监控文件变化，结合 rsync 可实现变更自动同步，并交由 systemd 管理同步任务。
+8. nmcli 可查看网卡、删除/添加连接配置、修改 IP/网关/DNS，适用于由 NetworkManager 管理的 CentOS、RHEL、Rocky Linux 和 Ubuntu 连接。
 
 ---
 
@@ -272,3 +285,12 @@ aliases:
 6. **文件同步与监控**: [[Linux-Shell/Linux-learning-notes#inotifywait 文件监控与同步|inotifywait]] 与 [[Linux-Shell/Linux-learning-notes#Samba 文件共享|Samba]] 都解决文件共享/同步问题，但前者侧重实时监控触发同步，后者侧重跨平台网络共享，两者可互补。
 
 7. **自动化运维工具链**: [[Linux-Shell/ansible安装-rockylinux8|Ansible]]（配置管理）、[[Linux-Shell/开源堡垒机jumpserver部署|JumpServer]]（安全审计）、[[Linux-Shell/shell-scripts|Shell 脚本]]（任务自动化）、[[Linux-Shell/Linux-learning-notes#screen 后台会话|screen]]（后台任务管理）共同构成了一套运维自动化工具链。
+
+---
+
+## 值得注意
+
+- 平台边界：Ansible 环境基于 Rocky Linux 8，微信安装基于 Ubuntu 22.04 + Flatpak，Zsh 配置按 CentOS/Linux 通用方式编写；原文强调使用 nmcli 前应先确认连接实际由 NetworkManager 管理，不能仅凭发行版推断。
+- 安全处理不一致：Ansible 实验环境直接停用 firewalld 并关闭 SELinux，而 Samba 部分通过 `firewall-cmd` 放行服务、`chcon` 设置 SELinux 上下文；前者属于实验环境的简化做法。
+- VMWare 共享目录通过 `mount -t fuse.vmhgfs-fuse` 手动挂载后，虚拟机重启需要重新挂载。
+- 内容深度不均：JumpServer 笔记只收录简洁版/详细版教程、GitHub 仓库与安装文档链接，本库未保存具体部署步骤。

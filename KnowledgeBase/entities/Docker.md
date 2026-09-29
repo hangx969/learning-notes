@@ -56,7 +56,7 @@ Docker 是一种容器化技术，提供镜像构建、容器运行、网络管�
 - **Seccomp/AppArmor**：自定义系统调用过滤和强制访问控制策略
 - **镜像扫描**：Trivy 漏洞扫描，详见 [[Docker-Kubernetes/docker/docker安全配置-Capabilities与容器加固]]
 
-## 部署实践总结
+## 使用场景：部署实践总结
 
 本仓库记录了大量基于 Docker 的服务部署实战，按场景分类如下：
 
@@ -92,6 +92,25 @@ Docker 是一种容器化技术，提供镜像构建、容器运行、网络管�
 | 运行时 | [[KnowledgeBase/entities/containerd|containerd]]（Docker 引擎中剥离的核心运行时） |
 | DevOps | [[KnowledgeBase/entities/GitLab|GitLab]]、[[KnowledgeBase/entities/Redis|Redis]] |
 | GPU | [[KnowledgeBase/entities/NVIDIA GPU|NVIDIA GPU]] |
+
+## 在本仓库中的覆盖
+
+`Docker-Kubernetes/docker/` 目录笔记（详细摘要见 [[KnowledgeBase/sources/docker-batch-summary|Docker 来源批量摘要]]）：
+
+- [[Docker-Kubernetes/docker/docker基础|Docker 基础]]：CentOS/Ubuntu 安装、镜像与常用命令、数据卷、容器网络、资源配额、Dockerfile、docker-compose 与 Harbor 私有仓库
+- [[Docker-Kubernetes/docker/docker配置NVIDIA GPU|Docker 配置 NVIDIA GPU]]：安装驱动、CUDA 与 nvidia-docker2，用 `--gpus` 启动 GPU 容器
+- [[Docker-Kubernetes/docker/docker配置代理|Docker 配置代理]]：在 `docker.service` 中为 daemon 配置 `HTTP_PROXY`/`HTTPS_PROXY`，与只作用于容器内进程的 `~/.docker/config.json` 区分
+- [[Docker-Kubernetes/docker/docker安全配置-Capabilities与容器加固|Docker 安全配置]]：Capabilities 最小化、no-new-privileges、userns-remap、只读文件系统、资源限制、Seccomp/AppArmor 与 Trivy 扫描
+- [[Docker-Kubernetes/docker/docker无需本地环境从DockerHub下载镜像并保存为tar|无本地 Docker 环境下载镜像]]：通过 Registry 下载镜像层并导出 `.tar`，支持多架构选择与断点续传
+- [[Docker-Kubernetes/docker/docker部署nginx-tomcat-httpd-go-python服务|部署 Nginx/Tomcat/Httpd/Go/Python 服务]]：从容器内手动配置到用 Dockerfile 构建多种 Web 服务镜像
+- [[Docker-Kubernetes/docker/docker部署lnmp网站|部署 LNMP 网站]]：docker-compose 编排 Nginx + MySQL + PHP 网站环境
+- [[Docker-Kubernetes/docker/docker部署UI工具portainer-部署redis-sentinel|部署 Portainer 与 Redis Sentinel]]：Portainer 多节点环境管理，Redis 一主二从三哨兵高可用
+- [[Docker-Kubernetes/docker/docker部署gitlab|部署 GitLab]]：GitLab CE 部署，最低 4G 内存，通过 `gitlab.rb` 关闭不必要的 exporter 加速启动
+- [[Docker-Kubernetes/docker/docker部署prometheus-grafana-cAdvisior监控|部署 Prometheus + Grafana + cAdvisor]]：指标监控、node_exporter systemd 服务与 Grafana Dashboard 导入
+- [[Docker-Kubernetes/docker/docker部署loki|部署 Loki]]：Loki + Promtail + Grafana 轻量级日志平台
+- [[Docker-Kubernetes/docker/docker部署仓库平台homebox|部署 Homebox]]：基于 Go + SQLite 的家庭库存管理系统
+- [[Docker-Kubernetes/docker/docker部署定时任务工具gocron|部署 GoCron]]：可视化定时任务调度，支持用 YAML 定义任务
+- [[Docker-Kubernetes/docker/docker部署路由监控工具NextTrace|部署 NextTrace]]：可视化路由追踪工具，需 `--network host` 与 `--privileged`
 
 ### 镜像分发专题
 

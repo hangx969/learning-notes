@@ -25,7 +25,7 @@ aliases:
 
 阿里云（Alibaba Cloud）是阿里巴巴集团旗下的公有云平台，提供计算、网络、存储、数据库、安全、资源管理等全栈云服务。本仓库共收录 21 篇阿里云相关笔记（详见 [[KnowledgeBase/sources/aliyun-batch-summary|Aliyun 来源批量摘要]]），围绕 **ACP 云计算工程师认证备考**和**实战运维**两条主线展开，系统梳理五大领域的产品架构、功能特性与计费模式。认证路径为 ACP → 专项工程师 → ACE 架构师（详见 [[Aliyun/ACP考试|ACP 考试笔记]]）。
 
-## 核心服务覆盖
+## 核心功能：核心服务覆盖
 
 ### 计算：ECS / ESS
 
@@ -85,6 +85,14 @@ aliases:
 - **FinOps 成本优化**：先量化（三个月账单基线）→ 再优化（夜间关机、降配、存储分层、EIP 回收）→ 再固化（预算告警、Infracost PR 卡点、Prometheus 账单看板）。覆盖阿里云/腾讯云/华为云三家 CLI 操作
 - 详见 [[Aliyun/资源管理/Landing Zone|Landing Zone]]、[[Aliyun/资源管理/FinOps-云成本优化实战|FinOps]]
 
+## 使用场景
+
+- **ACP 认证备考**：按计算、网络、存储、数据库、资源管理梳理产品架构、功能与计费模式，认证路径见 [[Aliyun/ACP考试|ACP 考试笔记]]
+- **企业上云与迁移**：Landing Zone 按"网络先行"规划 Region、VPC 与云上云下互联；SMC 迁移主机，DTS 以结构迁移 + 全量迁移 + 增量迁移完成数据库不停机迁移
+- **跨地域组网与混合云互联**：CEN + TR 打通不同地域、不同账号的 VPC；VPN 网关、高速通道与智能接入网关 SAG 连接本地 IDC
+- **Web 业务安全防护**：WAF（七层）、DDoS 高防（三/四层）、云防火墙与云安全中心分层防御
+- **弹性伸缩与成本治理**：ESS 扩缩容时联动 ECS、SLB 与 RDS 白名单；FinOps 按"量化 → 优化 → 固化"降低云成本
+
 ## 实践亮点
 
 1. **安全防护纵深联动**：WAF（七层）+ DDoS 高防（三/四层）+ 云防火墙（南北+东西流量）+ 云安全中心（主机层）形成完整的多层防御体系
@@ -121,6 +129,31 @@ aliases:
 - [[KnowledgeBase/entities/HDFS|HDFS]] / [[KnowledgeBase/entities/Landing Zone|Landing Zone]]
 - [[KnowledgeBase/entities/Terraform|Terraform]]
 - [[KnowledgeBase/concepts/自动化运维|自动化运维]]
+
+## 在本仓库中的覆盖
+
+- [[KnowledgeBase/sources/aliyun-batch-summary|Aliyun 来源批量摘要]]：`Aliyun/` 目录笔记的批量摘要（尚未收录 ACK 网络规划与 FinOps 笔记）
+- [[Aliyun/ACP考试|ACP 考试]]：ACP 云计算工程师认证路径、考试组成与分领域题目笔记
+- [[Aliyun/计算/ECS|ECS]]：虚拟化架构演进（Xen → KVM → 神龙 → CIPU）、费用构成与计费模式
+- [[Aliyun/计算/弹性伸缩ESS|弹性伸缩 ESS]]：自动创建和释放 ECS，联动 SLB 后端与 RDS 白名单
+- [[Aliyun/计算/云盘-快照-镜像|云盘、快照与镜像]]：云盘三副本、ESSD 多重挂载与增量快照
+- [[Aliyun/计算/主机迁移工具SMC|主机迁移工具 SMC]]：跨账号、跨 Region 与 VMware 无代理迁移
+- [[Aliyun/网络/VPC|VPC]]：网络隔离、路由表最长前缀匹配与 VPC 互通方式
+- [[Aliyun/网络/CEN-TR|CEN 与 TR]]：跨地域、跨账号 VPC 互联，统一互联网出口与共享服务 VPC
+- [[Aliyun/网络/负载均衡SLB|负载均衡 SLB]]：ALB、NLB、CLB 产品家族对比
+- [[Aliyun/网络/网关-VPN-专线|网关、VPN 与专线]]：NAT 网关、公网与私网产品选型、VPN 网关、高速通道与智能接入网关
+- [[Aliyun/网络/DNS-CDN-SSL|DNS、CDN 与 SSL]]：云解析 DNS、CDN 加速与 SSL 证书管理
+- [[Aliyun/网络/ACK网络规划与成本优化|ACK 网络规划与成本优化]]：Pod/Service CIDR 规划对成本的影响，Flannel 与 Terway 选型
+- [[Aliyun/网络/WAF|WAF]]：七层防护 SQL 注入、XSS、CC 攻击等 OWASP 威胁
+- [[Aliyun/网络/DDoS高防|DDoS 高防]]：三/四层 DDoS 攻击类型与防护
+- [[Aliyun/网络/云安全中心-云防火墙|云安全中心与云防火墙]]：南北、东西流量防护与主机安全态势感知
+- [[Aliyun/存储/对象存储OSS|对象存储 OSS]]：扁平 Key-Value 架构，块存储、文件存储与对象存储对比
+- [[Aliyun/存储/数据湖-HDFS-POSIX|数据湖、HDFS 与 POSIX]]：存算分离、ETL 与 ELT，对象存储与 POSIX 的兼容边界
+- [[Aliyun/存储/跨域共享CORS|跨域共享 CORS]]：同源策略、OPTIONS 预检与 Access-Control-Allow-* 响应头
+- [[Aliyun/数据库/关系型数据库RDS|RDS]]：支持的数据库引擎与基础版、高可用版、集群版实例类型
+- [[Aliyun/数据库/数据传输服务DTS|DTS]]：数据同步、迁移、订阅等功能，以及不停机迁移的组合方式
+- [[Aliyun/资源管理/Landing Zone|Landing Zone]]：企业上云模块、CAF 阶段与"网络先行"原则
+- [[Aliyun/资源管理/FinOps-云成本优化实战|FinOps 云成本优化实战]]：量化 → 优化 → 固化，含阿里云、腾讯云、华为云 CLI 操作
 
 ## 知识空白
 

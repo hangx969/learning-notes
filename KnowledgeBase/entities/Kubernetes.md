@@ -35,7 +35,7 @@ aliases:
 
 Kubernetes（K8s）是容器编排平台，源自 Google Borg 系统，2014 年开源，2018 年从 CNCF 毕业。本仓库 Docker-Kubernetes 目录共 168 篇，其中 Kubernetes 相关 **154 篇**（其余 14 篇为 `docker/`），覆盖了 K8s 全生命周期，包括基础资源、集群安装与管理、监控日志、CI/CD、网络与服务网格、安全认证、扩缩容、存储、数据库中间件、UI 工具、备份恢复、GPU 配置、认证考试等主题。全部源文档的详细摘要见上方 `sources` 中列出的批量摘要页面。下文各小节篇数按对应子目录统计（2026-09-29），杂项专题含 helm、配置管理、镜像管理、CKA/CKS、KubeBlocks、容器平台、SpringCloud、GPU 子目录及根目录简历指南。
 
-## 核心架构知识
+## 核心功能：核心架构知识
 
 ### 控制平面与数据平面
 - **API Server**：所有组件通信的中枢，唯一与 etcd 交互的组件
@@ -71,7 +71,15 @@ Kubernetes（K8s）是容器编排平台，源自 Google Borg 系统，2014 年�
 - memory.high 双层限制：`memory.min = requests`、`memory.high = requests * 0.9`、`memory.max = limits`
 - 生产迁移：先在非核心节点验证，通过 NodeAffinity 标签隔离 v1/v2 节点，逐步扩大
 
-## 本仓库知识覆盖地图
+## 使用场景
+
+- **生产级集群建设与容灾**：用 kubeadm 或二进制方式部署高可用集群，配置 etcd 高可用与故障恢复，跨地域采用两地三中心或异地多活（Karmada、智能 DNS/GTM）；etcd 快照、Velero 与应用数据备份构成三层容灾
+- **云原生应用交付**：GitLab 提交 → Jenkins/Tekton 构建 → Harbor 推送镜像 → K8s 部署，或由 ArgoCD 以 GitOps Pull 模式交付，Kustomize Base + Overlay 管理环境差异
+- **可观测性平台**：Prometheus、Grafana、Alertmanager 负责指标与告警，EFK 或 Loki 收集日志，SkyWalking、Jaeger 做链路追踪
+- **有状态中间件托管**：用原生 YAML、Helm Chart 或 Operator 部署 MySQL、PostgreSQL、Redis、MongoDB、Kafka
+- **AI 推理服务**：在 GPU 节点上用 KServe InferenceService 部署 vLLM，并通过 KEDA 按请求指标扩缩容
+
+## 在本仓库中的覆盖：知识覆盖地图
 
 ### 基础资源（25 篇）
 详见 [[KnowledgeBase/sources/k8s-basic-resources-batch-summary|k8s-basic-resources 批量摘要]]

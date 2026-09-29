@@ -39,7 +39,7 @@ aliases:
 
 ---
 
-## 整体概述
+## 摘要
 
 本批次汇总了 8 个杂项技术领域的学习笔记，覆盖面广、层次分明：
 
@@ -53,6 +53,19 @@ aliases:
 - **软件工程与测试**：软件生存期模型（瀑布/敏捷）、面向对象基础、测试分层（单元/集成/系统/验收）、自动化测试工具。
 
 整体上这些笔记呈现出一条从**底层硬件与操作系统** -> **网络通信** -> **数据存储与中间件** -> **应用开发与部署** -> **质量保障**的完整技术栈学习路径。
+
+---
+
+## 关键知识点
+
+1. MySQL 高可用方案包括 MGR（原生组复制）、MMM（多主复制管理）、MHA（主从故障自动转移）；MGR 一主多从集群可结合 Keepalived + Nginx 实现读写分离与虚拟 IP 漂移。
+2. Redis 高可用有主从复制、Sentinel 哨兵、Redis Cluster 三种部署方案；源码安装需关注 bind、daemonize、requirepass 等配置参数。
+3. Kafka 核心架构为 Topic、Partition、Broker 与 Leader/Follower 副本机制，2.8.0 引入 KRaft 一致性算法替代 Zookeeper。
+4. 操作系统四大特征为并发、共享（互斥共享/同时共享）、虚拟（时分/空分复用）、异步；库函数与系统调用的区别对应用户态与内核态；磁盘调度算法包括 FCFS、SSTF、SCAN（电梯算法）、LOOK、C-SCAN、C-LOOK。
+5. HTTP 1.0 为非持久连接，HTTP 1.1 引入持久连接（Keep-Alive）与 Pipeline；Cookie 通过 Set-Cookie 实现状态管理，范围请求支持断点续传。
+6. Terraform 三阶段工作流为 `terraform init`（下载 Provider）→ `plan`（计算差异）→ `apply`（执行变更），核心文件包括 main.tf、variable.tf、terraform.tfvars、terraform.tfstate；terraform-docs 可为 Module 自动生成 Markdown 文档。
+7. Git 四层结构为工作目录 → 暂存区 → 本地仓库 → 远程仓库，基本工作流程为 clone → add → commit → push。
+8. 测试分层为单元测试（白盒/代码审查）→ 集成测试（Smoke Test）→ 系统测试 → 验收测试；瀑布模型重文档、不喜欢需求变更，敏捷模型以 Sprint/Story 快速迭代。
 
 ---
 
@@ -294,3 +307,11 @@ C++ 语言基础学习笔记：
 
 ### 6. CentOS 7 作为统一实验环境
 Database 和 OS 相关笔记中大量操作基于 CentOS 7.9 环境，包括 MySQL 5.7 安装、Redis 6.2.6 源码编译、yum 包管理等。这与 Linux 操作系统笔记中的理论知识形成了"理论 + 实践"的闭环。
+
+---
+
+## 值得注意
+
+- 内容缺口：RabbitMQ 与 RocketMQ 原文各只有一条 Bilibili 视频链接，Kafka 也仅有简短概念笔记，消息队列部分尚缺实操内容。
+- 摘要与原文不一致：PicGo 一节写的“修改 hosts 解决图片不显示”与原文当前表述不符——原文要求先在浏览器直接打开图片 URL 确认可访问，再检查本机网络和 DNS，并提醒不要将固定 GitHub IP 长期写入 `hosts`（地址可能变化）。
+- 环境与版本边界：MGR 部署基于三节点 CentOS 7.9 + MySQL 5.7，需使用 InnoDB 存储引擎并加载 `group_replication` 插件；Redis 为 CentOS 7 上源码编译的 6.2.6；Kafka 2.8.0 起支持移除 Zookeeper、引入 KRaft。

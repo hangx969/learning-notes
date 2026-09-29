@@ -23,7 +23,7 @@ aliases:
 
 Microsoft Azure 是微软提供的公有云计算平台，涵盖计算、存储、网络、容器、DevOps、治理等完整云服务体系。本仓库共收录 17 篇 Azure 相关笔记（详见 [[KnowledgeBase/sources/azure-batch-summary|Azure 来源批量摘要]]），内容定位为 **Azure 技术支持工程师的实战知识库**，侧重于 Azure China Cloud（中国区）的部署与运维场景。
 
-## 核心服务覆盖
+## 核心功能：核心服务覆盖
 
 ### 计算：VM / VMSS
 
@@ -83,6 +83,14 @@ Microsoft Azure 是微软提供的公有云计算平台，涵盖计算、存储�
 - [[Azure/Jfrog-artifactory-Azure|JFrog Artifactory]]：在 Azure 上通过 ACI 或 AKS 部署 Artifactory，与 ACR、Azure Storage 集成
 - [[Azure/Customer Support/Email Templates|邮件模板]]：面向 Azure 全球技术中心（GTC）的中英文工单邮件模板
 
+## 使用场景
+
+- **Azure China Cloud 运维**：命令行工具需指定 AzureChinaCloud 环境，ACR 使用 `azurecr.cn` 域名，DevOps 只能使用自托管 Agent
+- **VM 与 AKS 故障排查**：处理 Linux VM 磁盘扩展、文件系统损坏（rescue VM + fsck）和 fstab 配置错误；用 KQL 查询诊断数据，用 HAR、Fiddler、PerfMon 等工具排查浏览器、API 与性能问题
+- **AKS 密钥注入**：Workload Identity 为 Pod 提供 Azure 身份，SecretProviderClass 将 Key Vault 密钥同步为 K8s Secret
+- **中国区 CI/CD**：Azure DevOps Pipeline 配合自托管 Agent，通过 Az CLI 与 REST API 管理 Agent Pool
+- **资源合规治理**：Azure Policy 在 ARM 层对资源配置执行审计（Audit）或强制（Enforcement）
+
 ## 实践亮点
 
 1. **Azure China Cloud 专注**：多篇文档专门针对中国区 Azure 的特殊配置（AzureChinaCloud 环境变量、`azurecr.cn` 域名、自托管 DevOps Agent 的必要性），该知识库主要服务于中国区 Azure 运维
@@ -106,6 +114,27 @@ Microsoft Azure 是微软提供的公有云计算平台，涵盖计算、存储�
 - [[KnowledgeBase/entities/Terraform|Terraform]]
 - [[KnowledgeBase/concepts/CICD|CICD]]
 - [[KnowledgeBase/concepts/Observability|Observability]]
+
+## 在本仓库中的覆盖
+
+- [[KnowledgeBase/sources/azure-batch-summary|Azure 来源批量摘要]]：`Azure/` 目录笔记的批量摘要
+- [[Azure/0_Azure-VM-VMSS|VM 与 VMSS]]：Fabric Controller 资源分配、Guest Agent（waagent）与 VM/VMSS 基础
+- [[Azure/1_Azure-Linux-VM-troubheshooting|Linux VM 故障排查]]：磁盘扩展、rescue VM + fsck 修复文件系统、fstab 配置错误
+- [[Azure/2_AKS-basics|AKS 基础]]：托管控制面、节点池、资源预留、存储、伸缩、升级与证书
+- [[Azure/3_AKS-workload-identity|AKS Workload Identity]]：OIDC Issuer + Federated Credential 关联 Managed Identity，实验 Pod 访问 Key Vault
+- [[Azure/4_AKS-SecretProviderClass-KeyVault|AKS SecretProviderClass 集成 Key Vault]]：Secrets Store CSI Driver 挂载 Key Vault 内容并同步为 K8s Secret
+- [[Azure/5_Azure-Storage|Azure Storage]]：存储冗余策略、Blob 类型与访问层、托管磁盘类型
+- [[Azure/6_Azure-Networking|Azure Networking]]：psping、nc、dig 等连通性测试命令，以及 VNet、NSG、负载均衡等网络基础
+- [[Azure/7_ACR-ACI|ACR 与 ACI]]：注册表层级、中国区 `azurecr.cn` 登录服务器、ACR 任务与 ACI 容器实例
+- [[Azure/8_Azure-devops-basics|DevOps 基础]]：`azure-pipelines.yml` 的 Pipeline > Stage > Job > Step 层级与变量传递
+- [[Azure/9_Azure-devops-self-host-agents|自托管 Agent]]：中国区自托管 Agent 部署，PAT、Device Code、Service Principal 注册认证
+- [[Azure/10_Azure-devops-agent-pool-management|Agent Pool 管理]]：用 Az CLI 与 REST API 管理 Agent Pool，删除 Agent 只能走 REST API
+- [[Azure/11_Azure-Policy|Azure Policy]]：ARM 层拦截 CRUD 请求、与 RBAC 的分工、Audit 与 Enforcement 用途
+- [[Azure/12_Azure 故障排查工具|Azure 故障排查工具]]：HAR、Fiddler、Postman、ProcMon、PerfMon、Diskspd、FIO、iotop
+- [[Azure/13_Azure命令行工具|Azure 命令行工具]]：Az CLI、PowerShell 与 AzCopy，中国区需指定 AzureChinaCloud 环境
+- [[Azure/14_Kusto Query|Kusto Query（KQL）]]：Azure 内部诊断平台查询，覆盖 VM、AKS、ACR 等资源
+- [[Azure/Jfrog-artifactory-Azure|JFrog Artifactory]]：通过 ACI 或 AKS 部署 Artifactory，与 ACR、Azure Storage 集成
+- [[Azure/Customer Support/Email Templates|邮件模板]]：面向 Azure 全球技术中心（GTC）的中英文工单邮件模板
 
 ## 知识空白
 

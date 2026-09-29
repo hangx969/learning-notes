@@ -37,9 +37,20 @@ aliases:
 - **领域**: Kubernetes CI/CD 持续集成与持续部署
 - **摄入日期**: 2026-04-17
 
-## 整体概述
+## 摘要
 
 本目录系统性地覆盖了 Kubernetes 环境下主流 CI/CD 工具链的部署与使用，包括 ArgoCD（GitOps 持续交付）、Jenkins（传统 CI/CD 引擎）、Tekton（云原生 Pipeline）、GitLab（代码仓库）以及 Kustomize（配置定制）等。文档内容涵盖从工具的基础概念、多种部署方式（Helm、YAML、Docker、二进制）到企业级 DevOps 平台落地的完整实践，同时包含了 GitHub Actions 集成和多语言应用（Go/Python/Java）发布到 K8s 的实战案例。
+
+## 关键知识点
+
+1. ArgoCD 以 Git 仓库作为唯一事实来源，自动同步集群状态与期望状态；核心组件为 API Server、Repository Server、Application Controller，通过 AppProject（逻辑分组与权限隔离）和 Application 两类 CRD 管理应用。
+2. ArgoCD Image Updater 通过 Annotation 跟踪镜像仓库变更，支持 semver、latest、name、digest 四种更新策略；仅支持 Helm 或 Kustomize 渲染的应用，且镜像拉取密钥需在同集群。
+3. 基于 Jenkins 的通用发版流程为 GitLab 代码提交 → Jenkins 构建 → Docker 镜像 → Harbor 推送 → K8s 部署，Harbor 账号、GitLab 私钥、K8s 证书统一由 Jenkins Credentials 管理。
+4. Jenkins Pipeline 分为声明式（Declarative）与脚本式（Scripted）两种语法，核心元素为 agent、stages、steps、post，并通过 environment、credentials 引用变量与凭据。
+5. Tekton 源自 Knative build-pipeline 子项目，Pipeline 直接映射为 K8s Pod，所有构建任务以容器方式运行；平台落地需部署 Pipeline、Triggers、Dashboard 三个组件，最佳实践为 Task 作为最小单元、一个 Task 一个 Step、workspace 统一命名。
+6. Kustomize 是 K8s 原生的无模板配置定制工具，自 K8s 1.14 起集成在 kubectl 中（`kubectl apply -k`），以 Base 复用公共配置、Overlay 只描述环境差异；常用字段为 `resources`、`namespace`、`images`、`replicas`、`labels`、`patches`。
+7. 无公网 IP 的本地 K8s 环境可通过 GitHub Self-hosted Runner（支持 Linux/Windows，以 svc.sh 配置为系统服务）执行 GitHub Actions 工作流部署 Helm Chart。
+8. AI 增强的 GitLab 流水线分 review → build → deploy → release → notify 五个阶段，使用 Kaniko 构建镜像，由 AI 完成 MR 评审、部署失败根因分析和 Release Notes 生成；敏感信息全部通过 GitLab CI/CD Variables（Masked + Protected）注入，不进 yaml。
 
 ## 各文档摘要
 
@@ -239,3 +250,10 @@ aliases:
 4. **DNS 与网络问题**: ArgoCD DNS 排查文档揭示了 CoreDNS、IPv6、CGO 等底层网络问题对 CI/CD 流程的影响，与 `k8s-networking-service-mesh` 目录关联。
 5. **安全凭据管理**: Harbor 账号、GitLab 私钥、K8s 证书的管理贯穿所有 CI/CD 工具，与 `k8s-security-auth` 目录的 External Secrets、Cert-Manager 等工具关联。
 6. **云原生演进**: 从 Jenkins（VM 时代）到 Tekton（K8s 原生）再到 ArgoCD（GitOps），体现了 CI/CD 工具向云原生演进的趋势。
+
+## 值得注意
+
+- **两阶段 DNS 故障**: ArgoCD 部署 Helm 应用时先后出现两个阶段的 DNS 故障——CoreDNS forward 插件读取的宿主机 `/etc/resolv.conf` 上游 DNS 不可达；Helm 二进制无 CGO，Go 纯 DNS 解析器优先尝试 IPv6 导致连接失败。
+- **网络与端口约束**: Jenkins DevOps 平台中 Harbor 必须用 NodePort 暴露（JNLP Pod 内 CoreDNS 无法解析 Ingress 域名）；二进制安装的 GitLab 不能与 K8s 节点共用（80/443 端口冲突）。
+- **权限取舍**: Helm 部署 Jenkins 时 Controller 以 root 用户运行、Agent 启用特权模式；Claude Code 流水线则选用无需 dind/特权模式的 Kaniko 构建镜像。
+- **版本差异**: Kustomize 独立版与 kubectl 内置版存在版本差异；Jenkins（2.319 至 2.504.3）和 GitLab（11.8.1、17.9.8）的部署文档跨越多个版本，参考时需对照所用版本。

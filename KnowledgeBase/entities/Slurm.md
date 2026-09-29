@@ -18,6 +18,15 @@ aliases:
 ## 简介
 Slurm（Simple Linux Utility for Resource Management）是高性能计算（HPC）领域最主流的作业调度与资源管理系统，用于管理计算集群中的节点、队列（分区）和用户作业。本仓库记录了 Slurm 在 CentOS 和 Ubuntu 上的多种安装方式以及与 [[KnowledgeBase/entities/PBS|PBS]] 调度系统的对比。
 
+## 核心功能
+- **作业提交与管理**：`srun` 交互式运行，`sbatch` 提交带 `#SBATCH` 指令的批处理脚本，`salloc` 先分配资源再在其中执行 `srun`；`squeue` 查看队列，`scancel` 取消作业，`sacct` 查询作业的资源使用
+- **节点与分区管理**：`sinfo`、`scontrol show partition/node` 查看集群状态；`PartitionName` 定义节点集合与 `MaxTime`，生产环境用 `PriorityJobFactor`/`PriorityTier` 区分分区优先级；节点 DOWN 后可用 `scontrol update nodename=<节点> state=resume` 恢复
+- **可消费资源与 GPU（GRES）**：`SelectType=select/cons_tres` 将 CPU 核、内存、GPU 作为可消费资源分配；`GresTypes=gpu` 加节点定义 `Gres=gpu:H800:8`，并在 GPU 节点的 gres.conf 中声明设备文件
+- **记账与账户**：SlurmDBD 将作业记账数据写入 MySQL；`sacctmgr` 管理账户与关联，并可创建 QOS 限制资源
+- **资源隔离**：`ProctrackType=proctrack/cgroup` 与 `TaskPlugin=task/affinity,task/cgroup` 通过 cgroup 约束作业资源
+
+命令与配置示例见 [[HPC/Ubuntu2204-Slurm-安装指南|Ubuntu 22.04 Slurm 安装指南]] 与 [[HPC/CentOS7-slurm23.02-二进制安装|CentOS 7 Slurm 23.02 安装]]。
+
 ## 集群架构
 Slurm 集群采用典型的三层节点架构：
 - **Management 节点**：运行 slurmctld 控制守护进程和 [[KnowledgeBase/entities/SlurmDBD|SlurmDBD]] 数据库守护进程

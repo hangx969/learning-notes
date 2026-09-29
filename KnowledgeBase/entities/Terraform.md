@@ -17,7 +17,7 @@ aliases:
 ## 简介
 Terraform 是 HashiCorp 开发的基础设施即代码（Infrastructure as Code, IaC）工具，基于 Go 语言编写，使用声明式的 HCL（HashiCorp Configuration Language）语言来定义和管理云资源及本地基础设施的完整生命周期。
 
-## 核心工作流
+## 核心功能：核心工作流
 
 Terraform 采用三阶段工作流：
 1. **`terraform init`**：初始化工作目录，下载 Provider 插件

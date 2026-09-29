@@ -37,3 +37,8 @@ aliases:
 - [[KnowledgeBase/entities/Prometheus|Prometheus]]
 - [[KnowledgeBase/entities/Grafana|Grafana]]
 - [[KnowledgeBase/entities/AKS|AKS]]（EKS 类似）
+
+## 值得注意
+- 认证前提：Terraform 通过 `aws_eks_cluster_auth` 获取 token 连接 EKS，原文提示需在 AWS IAM 中为 Terraform 执行角色授予访问 EKS 的权限
+- 版本固定：示例固定了 EKS `cluster_version = "1.20"` 及 Helm Chart 版本（redis 17.3.14、prometheus 15.10.1、grafana 6.43.1），复用前需按目标环境核对可用版本与参数
+- 敏感信息：Grafana 示例通过 `set` 以明文写入 `adminPassword`，仅作演示，生产环境不宜照搬

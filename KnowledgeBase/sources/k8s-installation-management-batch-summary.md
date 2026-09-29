@@ -35,8 +35,18 @@ aliases:
 - **领域**：Docker-Kubernetes
 - **摄入日期**：2026-04-17
 
-## 整体概述
+## 摘要
 本批次文档全面覆盖了 Kubernetes 集群从安装部署到生产运维的完整生命周期。内容包括从 k8s 1.20 到 1.35 的多版本 kubeadm/二进制安装指南（涵盖 CentOS 和 Rocky Linux 操作系统），企业级高可用集群架构设计（含两地三中心、异地多活方案），以及 etcd 高可用、容器运行时迁移、版本升级、故障排查、多集群管理等生产运维实践。文档整体呈现了从实验环境到生产环境的演进路径，以及从 Docker 到 containerd 的容器运行时迁移趋势。
+
+## 关键知识点
+1. 节点网段、Service 网段、Pod 网段三者不能冲突（实验文档常用 Pod 网段 10.244.0.0/16、Service 网段 10.96.0.0/12）；企业级方案的磁盘划分为根分区 100G + etcd 数据盘 100G NVME SSD + 数据盘 500G SSD。
+2. 二进制高可用集群采用 3 master + 1 worker + VIP 架构，由 keepalived 提供 VIP 高可用，keepalived + nginx 实现负载均衡。
+3. etcd 集群化通过修改 etcd.yaml 的 initial-cluster 参数实现；故障节点恢复流程为删除 etcd 成员（etcdctl member remove）→ 拷贝证书 → kubeadm join 重新加入。
+4. 容器运行时从 Docker 迁移到 containerd 的步骤为 cordon/drain 节点 → 卸载 Docker → 安装 containerd → 修改 kubelet 配置；containerd 需配置 sandbox_image、SystemdCgroup 和镜像加速，并用 crictl 替代 docker 命令。
+5. cgroup v2 以统一层次树取代 v1 的多层次树，迁移时 kubelet 与 containerd 必须同时使用 systemd cgroupDriver，v1/v2 混合集群可通过 NodeAffinity 标签隔离逐步迁移。
+6. Pod 异常状态的排查方向：Pending（资源/调度问题）、ImagePullBackOff（镜像问题）、CrashLoopBackOff（代码/权限问题）、Evicted（资源不足）；livenessProbe 需设置 initialDelaySeconds 避免启动阶段误杀。
+7. 多集群 kubeconfig 可通过 `kubectl config set-cluster/set-credentials/set-context`、KUBECONFIG 环境变量指向多个文件、`kubectl config view --flatten` 合并或 krew 插件 konfig 管理；kubectx/kubens 负责切换 context 与默认 namespace，kube-ps1 常驻显示当前 context/namespace。
+8. 两地三中心为主备模式，异地多活由多中心同时承载流量，推荐多集群异地多活而非单集群方案；核心技术栈包括智能 DNS/GTM、Karmada、Thanos/VictoriaMetrics、TiDB/CockroachDB。
 
 ## 各文档摘要
 
@@ -193,3 +203,8 @@ aliases:
 - **高可用架构递进**：从单 master 实验环境到 3 master 生产环境，再到两地三中心和异地多活，呈现出逐步升级的架构演进路线。
 - **kubeadm 配置 API 演进**：从 v1beta2 到 v1beta3 再到 v1beta4，配置格式随 k8s 版本持续演进。
 - **离线部署能力**：k8s 1.20.6 文档中包含了制作离线 yum 源的详细方法，这是企业内网部署的关键能力。
+
+## 值得注意
+- **版本边界**：k8s 1.35 文档采用 containerd 2.x（配置格式升级为 `version = 3`）和 kubeadm v1beta4 配置 API（此前为 v1beta3）；cgroup v2 的 CPU Burst 特性需内核 5.14+。
+- **节点规划口径不一**：企业级高可用文档要求生产环境最低 3 主 3 从共 6 个节点，并按规模递增控制节点规格（0-100 节点 8C+32G、100-250 节点 16C+32G、250-500 节点需 etcd 分离）；生产优化文档则建议无压测数据时先用 3 master + 2 worker 起步，无应用数据时默认 master 8G/8vCPU、worker 12G/12vCPU，并称 3 master 可管理 900 个 worker。引用时需区分各自前提。
+- **kubeconfig 安全**：多文件合并发生同名冲突时第一个文件胜出；`--flatten` 输出可能内联敏感凭证，必须限制文件权限；生产环境应配合最小权限凭证、RBAC 和隔离/只读 shell。
