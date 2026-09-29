@@ -45,7 +45,7 @@ chown mysql:mysql -R /var/lib/mysql
 > [!warning] 兼容性问题
 > 注:这个教程在RockyLinux8.10上无法启动mysql。
 >
-> 尝试使用[helm安装mysql](../../Docker-Kubernetes/helm/helm部署mysql)
+> 尝试使用[[Docker-Kubernetes/k8s-db-middleware/helm部署mysql|helm安装mysql]]
 
 ```sh
 #初始化 MySQL

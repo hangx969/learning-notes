@@ -11,7 +11,7 @@ date: 2026-09-12
 # ☸️ Kubernetes 专题地图
 
 > [!info] 专题范围
-> 覆盖 Docker-Kubernetes 目录下 ==158 篇文档==，从容器基础到企业级 K8s 全生命周期管理。
+> 覆盖 Docker-Kubernetes 目录下 ==169 篇文档==（含目录 index.md，统计日期 2026-09-29），从容器基础到企业级 K8s 全生命周期管理。
 
 ---
 
@@ -71,49 +71,52 @@ date: 2026-09-12
 
 ## 📂 完整内容目录
 
-### 基础资源（22 篇）
+### 基础资源（25 篇）
 | 主题 | 文章 |
 |------|------|
 | 架构 | [[Docker-Kubernetes/k8s-basic-resources/k8s基础-架构-组件-资源|k8s基础-架构-组件-资源]] |
-| Pod | [[Docker-Kubernetes/k8s-basic-resources/k8s基础-pod|k8s基础-pod（含探针失效案例）]]、[[Docker-Kubernetes/k8s-basic-resources/K8s基础-pod调度-亲和力|K8s基础-pod调度-亲和力]]、[[Docker-Kubernetes/k8s-basic-resources/k8s基础-临时容器ephemeral|k8s基础-临时容器ephemeral]] |
-| 工作负载 | [[Docker-Kubernetes/k8s-basic-resources/k8s基础-deployment|k8s基础-deployment]]、[[Docker-Kubernetes/k8s-basic-resources/k8s基础-daemonset|k8s基础-daemonset]]、[[Docker-Kubernetes/k8s-basic-resources/k8s基础-statefulset|k8s基础-statefulset]]、[[Docker-Kubernetes/k8s-basic-resources/k8s基础-job-cronjob|k8s基础-job-cronjob]] |
+| Pod | [[Docker-Kubernetes/k8s-basic-resources/k8s基础-pod|k8s基础-pod（含探针失效案例）]]、[[Docker-Kubernetes/k8s-basic-resources/K8s基础-pod调度-亲和力|K8s基础-pod调度-亲和力]]、[[Docker-Kubernetes/k8s-basic-resources/k8s基础-临时容器ephemeral|k8s基础-临时容器ephemeral]]、[[Docker-Kubernetes/k8s-basic-resources/k8s基础-pod调度-标签与选择器实战|标签与选择器实战]] |
+| 工作负载 | [[Docker-Kubernetes/k8s-basic-resources/k8s基础-deployment|k8s基础-deployment]]、[[Docker-Kubernetes/k8s-basic-resources/k8s基础-daemonset|k8s基础-daemonset]]、[[Docker-Kubernetes/k8s-basic-resources/k8s基础-statefulset|k8s基础-statefulset]]、[[Docker-Kubernetes/k8s-basic-resources/k8s基础-job-cronjob|k8s基础-job-cronjob]]、[[Docker-Kubernetes/k8s-basic-resources/k8s-PodDisruptionBudget实战|PodDisruptionBudget 实战]] |
 | 网络 | [[Docker-Kubernetes/k8s-basic-resources/k8s基础-Service|k8s基础-Service]]、[[Docker-Kubernetes/k8s-basic-resources/k8s基础-ingress|k8s基础-ingress]]、[[Docker-Kubernetes/k8s-basic-resources/k8s基础-Calico|k8s基础-Calico]] |
 | 存储 | [[Docker-Kubernetes/k8s-basic-resources/k8s基础-storage|k8s基础-storage]] |
-| 配置 | [[Docker-Kubernetes/k8s-configMap-secret/k8s基础-configMap-Secret|k8s基础-configMap-Secret]]、[[Docker-Kubernetes/k8s-basic-resources/k8s基础-yaml-apply|k8s基础-yaml-apply]]、[[Docker-Kubernetes/k8s-basic-resources/k8s基础-namespace-资源分配|k8s基础-namespace-资源分配]] |
+| 配置 | [[Docker-Kubernetes/k8s-basic-resources/k8s基础-yaml-apply|k8s基础-yaml-apply]]、[[Docker-Kubernetes/k8s-basic-resources/k8s基础-namespace-资源分配|k8s基础-namespace-资源分配]] |
 | 安全 | [[Docker-Kubernetes/k8s-basic-resources/k8s基础-认证-授权-准入|k8s基础-认证-授权-准入]]、[[Docker-Kubernetes/k8s-basic-resources/k8s-APIServer深度剖析-请求链路-认证授权-生产调优|API Server 深度剖析]] |
-| 扩展 | [[Docker-Kubernetes/k8s-basic-resources/k8s基础-自定义CRD资源|k8s基础-自定义CRD资源]]、[[Docker-Kubernetes/k8s-basic-resources/k8s基础-kubeadm|k8s基础-kubeadm]]、[[Docker-Kubernetes/k8s-basic-resources/k8s基础-容器运行时-containerd|k8s基础-容器运行时-containerd]] |
+| 扩展 | [[Docker-Kubernetes/k8s-basic-resources/k8s基础-自定义CRD资源|k8s基础-自定义CRD资源]]、[[Docker-Kubernetes/k8s-basic-resources/k8s基础-kubeadm|k8s基础-kubeadm]]、[[Docker-Kubernetes/k8s-basic-resources/k8s基础-容器运行时-containerd|k8s基础-容器运行时-containerd]]、[[Docker-Kubernetes/k8s-basic-resources/k8s基础-Operator开发实战-Kubebuilder|Operator 开发实战（Kubebuilder）]] |
 | 生命周期 | [[Docker-Kubernetes/k8s-basic-resources/k8s基础-Finalizer与资源删除|k8s基础-Finalizer与资源删除]] |
 | 自动化 | [[Docker-Kubernetes/k8s-basic-resources/Python调用k8s-api实现资源管理|Python调用k8s-api实现资源管理]] |
+| 设计模式 | [[Docker-Kubernetes/k8s-basic-resources/k8s基础-容器设计模式-Sidecar-Init-Ambassador-Adapter|容器设计模式：Sidecar/Init/Ambassador/Adapter]] |
 
-### 安装与运维管理（17 篇）
+### 安装与运维管理（20 篇）
 | 主题 | 文章 |
 |------|------|
 | 最新版 | [[Docker-Kubernetes/k8s-installation-management/latest-version/安装k8s-1.35-基于rockylinux10-最新步骤|安装k8s-1.35-基于rockylinux10-最新步骤]] |
 | 企业级 | [[Docker-Kubernetes/k8s-installation-management/2025最新-企业级高可用集群-基于rockylinux|2025最新-企业级高可用集群-基于rockylinux]] |
 | 二进制 | [[Docker-Kubernetes/k8s-installation-management/legacy-versions/二进制安装k8s高可用集群|二进制安装k8s高可用集群]] |
 | 历史版本 | 1.20.6 / 1.23 / 1.26-1.27 / 1.28 / 1.30 / 1.32 / 1.33（7 篇） |
-| 运维 | [[Docker-Kubernetes/k8s-installation-management/etcd高可用配置以及模拟集群故障和恢复|etcd高可用配置以及模拟集群故障和恢复]]、[[Docker-Kubernetes/k8s-installation-management/k8s故障排查指南|k8s故障排查指南]]、[[Docker-Kubernetes/k8s-installation-management/k8s生产环境优化与最佳实践|k8s生产环境优化与最佳实践]]、[[Docker-Kubernetes/k8s-installation-management/升级/k8s迁移容器运行时-版本升级|k8s迁移容器运行时-版本升级]]、[[Docker-Kubernetes/k8s-installation-management/k8s-cgroup-v2深度解析-迁移实战与避坑指南|cgroup v2 深度解析与迁移]] |
+| 运维 | [[Docker-Kubernetes/k8s-installation-management/etcd高可用配置以及模拟集群故障和恢复|etcd高可用配置以及模拟集群故障和恢复]]、[[Docker-Kubernetes/k8s-installation-management/k8s故障排查指南|k8s故障排查指南]]、[[Docker-Kubernetes/k8s-installation-management/k8s生产环境优化与最佳实践|k8s生产环境优化与最佳实践]]、[[Docker-Kubernetes/k8s-installation-management/升级/k8s迁移容器运行时-版本升级|k8s迁移容器运行时-版本升级]]、[[Docker-Kubernetes/k8s-installation-management/k8s-cgroup-v2深度解析-迁移实战与避坑指南|cgroup v2 深度解析与迁移]]、[[Docker-Kubernetes/k8s-installation-management/升级/k8s-1.37-升级须知-breaking-changes|K8s 1.37 升级须知]]、[[Docker-Kubernetes/k8s-installation-management/k8s部署防火墙端口配置|k8s部署防火墙端口配置]] |
 | 架构 | [[Docker-Kubernetes/k8s-installation-management/k8s两地三中心架构|k8s两地三中心架构]]、[[Docker-Kubernetes/k8s-installation-management/k8s多集群kubeconfig管理|多集群 kubeconfig、kubectx 与 kubens]] |
+| 平台工程 | [[Docker-Kubernetes/k8s-installation-management/k8s-Backstage-内部开发者平台IDP实战|Backstage 内部开发者平台]] |
 
-### 监控与日志（22 篇）
+### 监控与日志（20 篇）
 | 主题 | 文章 |
 |------|------|
-| Prometheus | 基础、Helm Stack、监控 K8s 组件、监控外部集群、监控主机、多版本部署(3)、联邦集群 |
+| Prometheus | 基础、Helm Stack、监控 K8s 组件、监控外部集群、监控主机、原生部署 Prometheus 与 Grafana、二进制部署（含 Node Exporter）、联邦集群、Alertmanager |
 | 日志 | [[Docker-Kubernetes/k8s-monitoring-logging/k8s日志管理-采集方案与审计日志|k8s日志管理综合]]、EFK 系列(4)、ECK |
 | 追踪 | [[Docker-Kubernetes/k8s-monitoring-logging/k8s部署全链路追踪-Skywalking|k8s部署全链路追踪-Skywalking]]、[[Docker-Kubernetes/k8s-monitoring-logging/helm部署jaeger|helm部署jaeger]] |
 | 全栈 | [[Docker-Kubernetes/k8s-monitoring-logging/helm部署Loki-promtail-tempo-grafanaAgent全家桶|helm部署Loki-promtail-tempo-grafanaAgent全家桶]] |
 | 日志选型 | [[Docker-Kubernetes/k8s-monitoring-logging/k8s日志管理-采集方案与审计日志|六种采集方案+审计日志]] |
 | OTel | [[Docker-Kubernetes/k8s-monitoring-logging/OpenTelemetry实战-统一Traces-Metrics-Logs|OpenTelemetry 统一可观测性实战]] |
+| 巡检 | [[Docker-Kubernetes/k8s-monitoring-logging/K8s全面巡检脚本-生成HTML健康报告|K8s 全面巡检脚本]] |
 
-### CI/CD（21 篇）
+### CI/CD（24 篇）
 | 工具 | 文章数 | 代表 |
 |------|--------|------|
 | Jenkins | 7 | [[Docker-Kubernetes/k8s-CICD/Jenkins/k8s-Devops平台落地-基于jenkins|k8s-Devops平台落地-基于jenkins]] |
-| ArgoCD | 4 | [[Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD基础|ArgoCD基础]] |
+| ArgoCD | 5 | [[Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD基础|ArgoCD基础]] |
 | GitLab | 3 | [[Docker-Kubernetes/k8s-CICD/Gitlab/二进制安装Gitlab(17.9.8)|二进制安装Gitlab(17.9.8)]] |
 | Tekton | 2 | [[Docker-Kubernetes/k8s-CICD/Tekton/基于Tekton的云原生平台落地|基于Tekton的云原生平台落地]] |
 | Kustomize | 2 | [[Docker-Kubernetes/k8s-CICD/Kustomize/Kustomize入门-Base与Overlay多环境配置|Base 与 Overlay 入门]]、[[Docker-Kubernetes/k8s-CICD/Kustomize/k8s配置定制工具-kustomize|综合使用指南]] |
-| 其他 | 3 | GitHub Actions、发布代码到 K8S、Claude Code AI CI/CD |
+| 其他 | 5 | GitHub Actions、发布代码到 K8S、Claude Code AI CI/CD、蓝绿与金丝雀发布策略、Pact Broker |
 
 ### 网络与服务网格（7 篇）
 - [[Docker-Kubernetes/k8s-networking-service-mesh/k8s精细化流量管理-istio|Istio 服务网格：架构、部署与精细化流量治理]]
@@ -124,14 +127,14 @@ date: 2026-09-12
 - [[Docker-Kubernetes/k8s-networking-service-mesh/k8s-Gateway-API入门-Ingress下一代方案|Gateway API 入门]]
 - [[Docker-Kubernetes/k8s-networking-service-mesh/helm部署tomcat|Helm 部署 Tomcat]]
 
-### 安全与认证（8 篇）
-[[KnowledgeBase/entities/Cert-Manager|Cert-Manager]]（Helm、自签名、HTTP01/DNS01、Cloudflare/Azure DNS、自动续期）、External-Secrets、Kyverno+Policy-Reporter（含 1.18 新特性）、OAuth2-Proxy、Capsule、SonarQube、Trivy-Operator、[[k8s容器安全上下文-SecurityContext|Security Context 完全指南]]
+### 安全与认证（9 篇）
+[[KnowledgeBase/entities/Cert-Manager|Cert-Manager]]（Helm、自签名、HTTP01/DNS01、Cloudflare/Azure DNS、自动续期）、External-Secrets、Kyverno+Policy-Reporter（含 1.18 新特性）、OAuth2-Proxy、Capsule、SonarQube、Trivy-Operator、[[k8s容器安全上下文-SecurityContext|Security Context 完全指南]]、[[Docker-Kubernetes/k8s-security-auth/k8s-Admission-Webhook链冲突排查-Istio-Kyverno-Gatekeeper|Admission Webhook 链冲突排查]]
 
 ### 扩缩容（4 篇）
 [[Docker-Kubernetes/k8s-scaling/k8s-HPA-VPA|HPA、VPA 与原生 Scale-to-Zero]]、[[Docker-Kubernetes/k8s-scaling/k8s-基于KEDA的弹性能力|KEDA 事件驱动扩缩容与 KServe 实战]]、Goldilocks、[[Docker-Kubernetes/k8s-scaling/k8s成本优化方案-FinOps实战|K8s FinOps 成本优化]]
 
-### 存储（5 篇）
-NFS Provisioner、Ceph、CubeFS、[[Docker-Kubernetes/k8s-storage/k8s删除PVC后PV数据保护与复用避坑|PV/PVC 数据保护与复用避坑]]、[[Docker-Kubernetes/k8s-storage/让存储故障现形：Kubernetes Volume Health Monitor 原理与生产接入|Kubernetes Volume Health Monitor]]
+### 存储（6 篇）
+NFS Provisioner、Ceph、CubeFS、[[Docker-Kubernetes/k8s-storage/k8s删除PVC后PV数据保护与复用避坑|PV/PVC 数据保护与复用避坑]]、[[Docker-Kubernetes/k8s-storage/让存储故障现形：Kubernetes Volume Health Monitor 原理与生产接入|Kubernetes Volume Health Monitor]]、[[Docker-Kubernetes/k8s-storage/emptyDir监控与驱逐机制实战|emptyDir 监控与驱逐]]
 
 ### 中间件部署（11 篇）
 MySQL(3)、Redis(2)、PostgreSQL、Kafka(Strimzi)、RabbitMQ HA、MongoDB、httpd、SpringCloud
@@ -139,14 +142,18 @@ MySQL(3)、Redis(2)、PostgreSQL、Kafka(Strimzi)、RabbitMQ HA、MongoDB、http
 ### 其他
 | 子目录 | 篇数 | 代表 |
 |--------|------|------|
-| Docker | 13 | [[Docker-Kubernetes/docker/docker基础|docker基础]] |
-| Helm/Operator | 6 | [[Docker-Kubernetes/helm/helmv3-安装与使用|helmv3-安装与使用]] |
+| Docker | 14 | [[Docker-Kubernetes/docker/docker基础|docker基础]] |
+| Helm | 1 | [[Docker-Kubernetes/helm/helmv3-安装与使用|helmv3-安装与使用]] |
 | UI 工具 | 8 | k9s、Lens、Dashboard、Kuboard、Rancher |
-| Harbor | 3 | [[Docker-Kubernetes/k8s-image-management/Dragonfly与Harbor-P2P镜像分发|Dragonfly + Harbor P2P 镜像分发]] |
+| 镜像管理 | 3 | [[Docker-Kubernetes/k8s-image-management/Harbor 部署与使用指南|Harbor 部署与使用指南]]、[[Docker-Kubernetes/k8s-image-management/Dragonfly与Harbor-P2P镜像分发|Dragonfly + Harbor P2P 镜像分发]]、Dragonfly Helm 部署 |
 | CKA/CKS | 3 | [[Docker-Kubernetes/CKA-CKS/CKA-备考|CKA-备考]] |
 | KubeBlocks | 2 | WordPress、Harbor 高可用 |
-| 备份 | 1 | [[Docker-Kubernetes/k8s-backup-dr/k8s集群备份恢复-Velero|k8s集群备份恢复-Velero]] |
+| 备份 | 2 | [[Docker-Kubernetes/k8s-backup-dr/k8s集群备份恢复-Velero|k8s集群备份恢复-Velero]]、[[Docker-Kubernetes/k8s-backup-dr/k8s备份与灾备实战-三层容灾架构|三层容灾架构]] |
 | GPU | 2 | [[Docker-Kubernetes/k8s-ai-gpu/k8s配置NVIDIA GPU|k8s配置NVIDIA GPU]]、[[Docker-Kubernetes/k8s-ai-gpu/从零部署 NVIDIA Device Plugin：K8s 识别 GPU 的“第一块敲门砖”|NVIDIA Device Plugin 部署]] |
+| 配置管理 | 3 | [[Docker-Kubernetes/k8s-configMap-secret/k8s基础-configMap-Secret|k8s基础-configMap-Secret]]、Config Syncer、Reloader |
+| 容器平台 | 2 | OpenShift 3.10、K3S |
+| SpringCloud 迁移 | 1 | [[Docker-Kubernetes/k8s-springcloud/SpringCloud项目迁移到k8s实战|SpringCloud项目迁移到k8s实战]] |
+| 求职 | 1 | [[Docker-Kubernetes/简历指南|简历指南]] |
 
 ---
 

@@ -531,9 +531,9 @@ ALTER TABLE...
 
 ## 相关资源
 
-- [[Claude Code 配置]]
-- [[MCP 服务器配置]]
-- [[Skill 开发指南]]
-- [[SubAgent 使用手册]]
+- [[AI/ClaudeCode/CLAUDE.md维护工程-四层加载与指令预算|CLAUDE.md 配置与维护]]
+- [[AI/ClaudeCode/Claude Code 扩展体系#一、MCP（Model Context Protocol）|MCP 服务器配置]]
+- [[AI/ClaudeCode/Claude Code 扩展体系#二、Skills（技能）|Skills 开发与使用]]
+- [[AI/ClaudeCode/多智能体协作-Subagents与Agent-Teams|Subagents 与 Agent Teams]]
 
 #claude-code/guide #productivity/ai-tools #development/workflow

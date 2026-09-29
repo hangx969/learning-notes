@@ -314,8 +314,6 @@ Refer：[Grafana Agent参考](https://mp.weixin.qq.com/s?__biz=Mzk0NzIyMDA4MA==&
 
 - Grafana Agent集成了监控、日志、链路的处理转发相关客户端功能，可以完成对以上数据的采集。
 
-![image-20241112140930901](/home/s0001969/.config/Typora/typora-user-images/image-20241112140930901.png)
-
 ### 下载
 
 ~~~sh

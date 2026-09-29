@@ -520,8 +520,6 @@ Spring Cloud提供了许多有用的功能和组件，包括服务注册与发�
 
 - 通过Ingress
 
-  ![image-20240329083508314](/home/s0001969/.config/Typora/typora-user-images/image-20240329083508314.png)
-
 ### 流程
 
 1. 把Springcloud开发的java代码做到镜像里：可以基于dockerfile文件做镜像

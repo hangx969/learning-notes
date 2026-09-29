@@ -2,7 +2,7 @@
 title: Terraform 容器管理
 source: "https://mp.weixin.qq.com/s/b6pkgOpHn2tbEaBpOniyWw"
 author:
-  - "[[Hank]]"
+  - "Hank"
 created: 2026-04-23
 tags:
   - IaC

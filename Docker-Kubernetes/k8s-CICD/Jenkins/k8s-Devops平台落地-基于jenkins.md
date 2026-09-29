@@ -39,8 +39,8 @@ aliases:
 部署这套架构需要的组件：
 
 1. K8s
-2. Gitlab（参考[二进制安装Gitlab](./二进制安装Gitlab(17.9.8).md)）
-3. Jenkins（参考[docker部署Jenkins](./docker部署Jenkins)或者[helm部署Jenkins](./helm部署jenkins)）
+2. Gitlab（参考[[Docker-Kubernetes/k8s-CICD/Gitlab/二进制安装Gitlab(17.9.8)|二进制安装Gitlab]]）
+3. Jenkins（参考[[Docker-Kubernetes/k8s-CICD/Jenkins/docker部署jenkins|docker部署Jenkins]]或者[[Docker-Kubernetes/k8s-CICD/Jenkins/helm部署jenkins|helm部署Jenkins]]）
 4. Harbor（参考[[Docker-Kubernetes/k8s-image-management/Harbor 部署与使用指南|Harbor 部署与使用指南]]）
 
 ### 工具集成

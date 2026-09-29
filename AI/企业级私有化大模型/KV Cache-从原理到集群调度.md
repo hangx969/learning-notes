@@ -2,7 +2,7 @@
 title: "KV Cache：从原理到集群调度"
 source: "https://mp.weixin.qq.com/s/RajIT1Ozh-qhDkDmvIPD9A"
 author:
-  - "[[KV Cache 研习社]]"
+  - "KV Cache 研习社"
 published: 2026-07-15
 created: 2026-09-06
 description: "从 Attention 中的 K/V 复用，到 Prefill/Decode、生命周期、显存带宽瓶颈与集群调度。"

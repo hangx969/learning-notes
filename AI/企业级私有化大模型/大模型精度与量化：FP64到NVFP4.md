@@ -2,7 +2,7 @@
 title: "大模型精度与量化：FP64 到 NVFP4"
 source: "https://mp.weixin.qq.com/s/zCz7c1a9MT_q6C4NgB5YZA?scene=1&click_id=140159030"
 author:
-  - "[[李家旺]]"
+  - "李家旺"
 created: 2026-09-06
 description: "介绍 FP64、FP32、TF32、BF16、FP16、FP8、INT8、INT4 与 NVFP4 的表示方式、精度取舍、显存影响和训练/推理选择。"
 tags:
