@@ -79,7 +79,7 @@ date: 2026-09-12
 | 工作负载 | [[Docker-Kubernetes/k8s-basic-resources/k8s基础-deployment|k8s基础-deployment]]、[[Docker-Kubernetes/k8s-basic-resources/k8s基础-daemonset|k8s基础-daemonset]]、[[Docker-Kubernetes/k8s-basic-resources/k8s基础-statefulset|k8s基础-statefulset]]、[[Docker-Kubernetes/k8s-basic-resources/k8s基础-job-cronjob|k8s基础-job-cronjob]] |
 | 网络 | [[Docker-Kubernetes/k8s-basic-resources/k8s基础-Service|k8s基础-Service]]、[[Docker-Kubernetes/k8s-basic-resources/k8s基础-ingress|k8s基础-ingress]]、[[Docker-Kubernetes/k8s-basic-resources/k8s基础-Calico|k8s基础-Calico]] |
 | 存储 | [[Docker-Kubernetes/k8s-basic-resources/k8s基础-storage|k8s基础-storage]] |
-| 配置 | [[Docker-Kubernetes/k8s-configMap-secret/k8s基础-configMap-Secret|k8s基础-configMap-Secret]]、[[Docker-Kubernetes/k8s-basic-resources/k8s基础-yaml|k8s基础-yaml]]、[[Docker-Kubernetes/k8s-basic-resources/k8s基础-namespace-资源分配|k8s基础-namespace-资源分配]] |
+| 配置 | [[Docker-Kubernetes/k8s-configMap-secret/k8s基础-configMap-Secret|k8s基础-configMap-Secret]]、[[Docker-Kubernetes/k8s-basic-resources/k8s基础-yaml-apply|k8s基础-yaml-apply]]、[[Docker-Kubernetes/k8s-basic-resources/k8s基础-namespace-资源分配|k8s基础-namespace-资源分配]] |
 | 安全 | [[Docker-Kubernetes/k8s-basic-resources/k8s基础-认证-授权-准入|k8s基础-认证-授权-准入]]、[[Docker-Kubernetes/k8s-basic-resources/k8s-APIServer深度剖析-请求链路-认证授权-生产调优|API Server 深度剖析]] |
 | 扩展 | [[Docker-Kubernetes/k8s-basic-resources/k8s基础-自定义CRD资源|k8s基础-自定义CRD资源]]、[[Docker-Kubernetes/k8s-basic-resources/k8s基础-kubeadm|k8s基础-kubeadm]]、[[Docker-Kubernetes/k8s-basic-resources/k8s基础-容器运行时-containerd|k8s基础-容器运行时-containerd]] |
 | 生命周期 | [[Docker-Kubernetes/k8s-basic-resources/k8s基础-Finalizer与资源删除|k8s基础-Finalizer与资源删除]] |
@@ -90,9 +90,9 @@ date: 2026-09-12
 |------|------|
 | 最新版 | [[Docker-Kubernetes/k8s-installation-management/latest-version/安装k8s-1.35-基于rockylinux10-最新步骤|安装k8s-1.35-基于rockylinux10-最新步骤]] |
 | 企业级 | [[Docker-Kubernetes/k8s-installation-management/2025最新-企业级高可用集群-基于rockylinux|2025最新-企业级高可用集群-基于rockylinux]] |
-| 二进制 | [[Docker-Kubernetes/k8s-installation-management/二进制安装k8s高可用集群|二进制安装k8s高可用集群]] |
+| 二进制 | [[Docker-Kubernetes/k8s-installation-management/legacy-versions/二进制安装k8s高可用集群|二进制安装k8s高可用集群]] |
 | 历史版本 | 1.20.6 / 1.23 / 1.26-1.27 / 1.28 / 1.30 / 1.32 / 1.33（7 篇） |
-| 运维 | [[Docker-Kubernetes/k8s-installation-management/etcd高可用配置以及模拟集群故障和恢复|etcd高可用配置以及模拟集群故障和恢复]]、[[Docker-Kubernetes/k8s-installation-management/k8s故障排查指南|k8s故障排查指南]]、[[Docker-Kubernetes/k8s-installation-management/k8s生产环境优化与最佳实践|k8s生产环境优化与最佳实践]]、[[Docker-Kubernetes/k8s-installation-management/k8s迁移容器运行时-版本升级|k8s迁移容器运行时-版本升级]]、[[Docker-Kubernetes/k8s-installation-management/k8s-cgroup-v2深度解析-迁移实战与避坑指南|cgroup v2 深度解析与迁移]] |
+| 运维 | [[Docker-Kubernetes/k8s-installation-management/etcd高可用配置以及模拟集群故障和恢复|etcd高可用配置以及模拟集群故障和恢复]]、[[Docker-Kubernetes/k8s-installation-management/k8s故障排查指南|k8s故障排查指南]]、[[Docker-Kubernetes/k8s-installation-management/k8s生产环境优化与最佳实践|k8s生产环境优化与最佳实践]]、[[Docker-Kubernetes/k8s-installation-management/升级/k8s迁移容器运行时-版本升级|k8s迁移容器运行时-版本升级]]、[[Docker-Kubernetes/k8s-installation-management/k8s-cgroup-v2深度解析-迁移实战与避坑指南|cgroup v2 深度解析与迁移]] |
 | 架构 | [[Docker-Kubernetes/k8s-installation-management/k8s两地三中心架构|k8s两地三中心架构]]、[[Docker-Kubernetes/k8s-installation-management/k8s多集群kubeconfig管理|多集群 kubeconfig、kubectx 与 kubens]] |
 
 ### 监控与日志（22 篇）
@@ -140,7 +140,7 @@ MySQL(3)、Redis(2)、PostgreSQL、Kafka(Strimzi)、RabbitMQ HA、MongoDB、http
 | 子目录 | 篇数 | 代表 |
 |--------|------|------|
 | Docker | 13 | [[Docker-Kubernetes/docker/docker基础|docker基础]] |
-| Helm/Operator | 6 | [[Docker-Kubernetes/helm-operator/helmv3-安装与使用|helmv3-安装与使用]] |
+| Helm/Operator | 6 | [[Docker-Kubernetes/helm/helmv3-安装与使用|helmv3-安装与使用]] |
 | UI 工具 | 8 | k9s、Lens、Dashboard、Kuboard、Rancher |
 | Harbor | 3 | [[Docker-Kubernetes/k8s-image-management/Dragonfly与Harbor-P2P镜像分发|Dragonfly + Harbor P2P 镜像分发]] |
 | CKA/CKS | 3 | [[Docker-Kubernetes/CKA-CKS/CKA-备考|CKA-备考]] |

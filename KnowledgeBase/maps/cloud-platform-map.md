@@ -41,7 +41,7 @@ date: 2026-04-16
 | **迁移** | [[Aliyun/计算/主机迁移工具SMC|主机迁移工具SMC]] | — |
 | **资源管理** | [[Aliyun/资源管理/Landing Zone|Landing Zone]] | — |
 | **认证考试** | [[Aliyun/ACP考试|ACP考试]] | — |
-| **排障工具** | — | [[Azure/Kusto Query|Kusto Query]]、[[Azure/Azure 故障排查工具|Azure 故障排查工具]] |
+| **排障工具** | — | [[Azure/14_Kusto Query|Kusto Query]]、[[Azure/12_Azure 故障排查工具|Azure 故障排查工具]] |
 
 ---
 

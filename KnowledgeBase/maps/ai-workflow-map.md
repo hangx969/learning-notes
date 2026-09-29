@@ -69,11 +69,10 @@ date: 2026-04-16
 3. [[AI/行业动态/AI时代的Git版本管理最佳实践|AI 时代 Git 实践]] — 11 条最佳实践 + Jujutsu/GitButler 新工具 + 隔离/透明/自动化三原则
 
 ### AI 视觉与 HTML 交付路径
-1. [[AI/AI-视觉/Effective-HTML-Agent页面工作流|Effective HTML 页面工作流]] — 任务判断、线框、交互原型、架构图、计划和视觉设计；直接输出自包含 HTML
-2. [[AI/AI-视觉/effective-html-AI直出HTML工具实测|effective-html 工具实测]] — HTML 与 Markdown 的交付边界、20 个设计范本和同类工具定位
-3. [[AI/AI-视觉/Markdown-Viewer-Skills-Markdown中直接画图|Markdown Viewer Skills]] — 在 Markdown 中嵌入 PlantUML、Vega、Graphviz 等图表
-4. [[AI/AI-视觉/html-anything-AI生成HTML全场景工具|html-anything]] — 面向报告、演示文稿、动画和社交卡片的全场景 HTML 生成
-5. [[AI/AI-视觉/AI-Animation-Skill-科普动画|AI-Animation-Skill]] — 使用 HTML 模板生成可录制的科普动画
+1. [[AI/AI-视觉/Effective-HTML-Agent页面工作流|Effective HTML 页面工作流]] — 任务判断、线框、交互原型、架构图、计划和视觉设计；直接输出自包含 HTML，并对比 HTML 与 Markdown 的交付边界、20 个设计范本和同类工具定位
+2. [[AI/AI-视觉/Markdown-Viewer-Skills-Markdown中直接画图|Markdown Viewer Skills]] — 在 Markdown 中嵌入 PlantUML、Vega、Graphviz 等图表
+3. [[AI/AI-视觉/html-anything-AI生成HTML全场景工具|html-anything]] — 面向报告、演示文稿、动画和社交卡片的全场景 HTML 生成
+4. [[AI/AI-视觉/AI-Animation-Skill-科普动画|AI-Animation-Skill]] — 使用 HTML 模板生成可录制的科普动画
 
 ### 补充
 - [[HarnessKit|HarnessKit]] — AI 编码智能体统一管理工具（Skills/MCP/Plugins/Hooks 跨 Agent 管理）
@@ -103,12 +102,11 @@ date: 2026-04-16
 | [[AI/Obsidian/obsidian-claude-code-AI知识库完整指南|AI知识库完整指南]] | 完整指南 | Markdown 母语、三层架构、30 分钟上手、六大操作、改造计划（三文合并） |
 | [[AI/Obsidian/Obsidian可视化Skills-Excalidraw-Mermaid-Canvas|Obsidian可视化Skills]] | AI 可视化 | Excalidraw、Mermaid、Canvas、Skills |
 
-### AI 视觉与 HTML 交付（5 篇）
+### AI 视觉与 HTML 交付（4 篇）
 
 | 文章 | 主题 | 关键词 |
 |------|------|--------|
-| [[AI/AI-视觉/Effective-HTML-Agent页面工作流|Effective HTML 页面工作流]] | Agent 页面制作与 HTML 交付 | 任务路由、线框、原型、架构图、视觉设计、自包含 HTML |
-| [[AI/AI-视觉/effective-html-AI直出HTML工具实测|effective-html 工具实测]] | AI 直出 HTML | HTML vs Markdown、设计范本、暗色模式、交互式 SVG |
+| [[AI/AI-视觉/Effective-HTML-Agent页面工作流|Effective HTML 页面工作流]] | Agent 页面制作与 HTML 交付 | 任务路由、线框、原型、架构图、视觉设计、自包含 HTML、HTML vs Markdown、设计范本 |
 | [[AI/AI-视觉/Markdown-Viewer-Skills-Markdown中直接画图|Markdown Viewer Skills]] | Markdown 文档配图 | PlantUML、Vega、Graphviz、技能路由 |
 | [[AI/AI-视觉/html-anything-AI生成HTML全场景工具|html-anything]] | 全场景 HTML 生成 | Web 原型、演示文稿、视频、社交卡片、导出 |
 | [[AI/AI-视觉/AI-Animation-Skill-科普动画|AI-Animation-Skill]] | HTML 科普动画 | 模板、动画、视频录制 |

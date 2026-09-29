@@ -2062,3 +2062,11 @@ date: 2026-04-17
 - 将 `Docker-Kubernetes/k8s-monitoring-logging/k8s部署grafana(v5.0.4).md` 的独有内容并入 [[Docker-Kubernetes/k8s-monitoring-logging/Kubernetes原生部署Prometheus与Grafana]]，删除重复的旧版 Grafana Deployment 文档；保留旧版 UI、Dashboard 排障、KSM 监控步骤及 5 个 GitHub 图片 URL。
 - 按 kube-state-metrics 上游文档改正旧版工作负载 RBAC 的 `extensions` API 组、部署版本选择及 Service 注解与本文 Prometheus 发现配置的衔接；更正 `docker load -i` 镜像名参数和旧文对 Grafana 告警能力的过时概括。
 - 更新 Docker-Kubernetes 目录及 KnowledgeBase 的 Grafana、Observability、工具地图、来源摘要和盘点引用。
+
+## [2026-09-29] lint | 全库健康检查与 README 刷新
+
+- 按 CLAUDE.md 六个维度检查 826 个 Markdown 文件，其中 KnowledgeBase 161 页、3,513 条 wikilink、169 条 Markdown 链接；结果见 [[KnowledgeBase/maintenance/wiki-lint-2026-09-29|Wiki 健康检查 2026-09-29]]。
+- 修复 41 条由改名、合并或删除导致的失效链接，每条都经 git 历史确认了唯一现行路径，涉及 INDEX、repository-inventory、kubernetes/cloud-platform/ai-workflow 地图、提示词工程、Claude-Code、Codex 和 Effective HTML 来源摘要；另修复 INDEX 中 4 条在 GitHub 上失效的相对链接。
+- INDEX：移除 4 个已删除维护报告的链接，补录 Volume Health Monitor 来源摘要；领域表按 git 实测刷新篇数，并补充 Git、SoftwareTesting、C++；把"全部摄入"的说法改为实际覆盖情况（19 篇未被引用）。
+- README：按 git 实测刷新篇数（381 篇笔记、18 个领域、162 个知识库文件），修正 Claude Code 指南链接、`INDEX.md` 文件名、AI 与 Docker-Kubernetes 目录树；`AI/RAG/` 根目录下 3 篇独立文章改计为学习笔记，嵌入内容由 283 篇改为 280 篇。
+- 以下问题只记录在报告中，本次未修改：257 条红链、30 条指向已清理 0raw 剪藏的链接（待约定写法）、14 对需要复核的来源摘要、各页文档计数不一致、frontmatter 和模板缺口，以及原始来源层的链接问题。

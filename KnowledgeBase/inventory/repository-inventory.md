@@ -28,7 +28,7 @@ date: 2026-09-28
 
 | 文件 | 标题 | Frontmatter | 双链 |
 |------|------|:-----------:|:----:|
-| [[AI/ClaudeCode/ClaudeCode基础指南|ClaudeCode基础指南]] | Claude Code 使用指南 | ✅ | ✅ |
+| [[AI/ClaudeCode/Claude Code 基础指南|Claude Code 基础指南]] | Claude Code 使用指南 | ✅ | ✅ |
 | [[AI/ClaudeCode/Claude Code 扩展体系|扩展体系]] | MCP + Skills + Slash Commands + Plugin | ✅ | ❌ |
 | [[AI/ClaudeCode/多智能体协作-Subagents与Agent-Teams|多智能体协作]] | Subagents 与 Agent Teams | ✅ | ❌ |
 | [[AI/ClaudeCode/Claude-Skill质检工具-SkillCraft|Skill Craft 质检工具]] | Skill 质量工程（7 类失效模式 + 三层评估） | ✅ | ❌ |
@@ -41,22 +41,22 @@ date: 2026-09-28
 | [[AI/Obsidian/obsidian-claude-code-AI知识库完整指南|AI知识库完整指南]] | Obsidian+Claude Code AI 驱动的知识库完整指南（三文合并） | ✅ | ✅ |
 | [[AI/Obsidian/Obsidian可视化Skills-Excalidraw-Mermaid-Canvas|Obsidian可视化Skills]] | AI Skills 生成可编辑图表（Excalidraw/Mermaid/Canvas） | ✅ | ❌ |
 
-### skills/k8s-report-skills/（自研 Skill - Python 版，3 篇）
+### AIOps/AIOps-skills/k8s-report-skills/（自研 Skill - Python 版，3 篇）
 
 | 文件 | 标题 | Frontmatter | 双链 |
 |------|------|:-----------:|:----:|
-| [[AI/skills/k8s-report-skills/SKILL.md|SKILL.md]] | K8s Inspector Skill 定义 | ✅ | ❌ |
-| [[AI/skills/k8s-report-skills/k8s_inspector.py|k8s_inspector.py]] | K8s 巡检 Python 主脚本 | — | — |
-| [[AI/skills/k8s-report-skills/templates/report.html|report.html]] | Jinja2 HTML 报告模板 | — | — |
+| [[AI/AIOps/AIOps-skills/k8s-report-skills/SKILL.md|SKILL.md]] | K8s Inspector Skill 定义 | ✅ | ❌ |
+| [[AI/AIOps/AIOps-skills/k8s-report-skills/k8s_inspector.py|k8s_inspector.py]] | K8s 巡检 Python 主脚本 | — | — |
+| [[AI/AIOps/AIOps-skills/k8s-report-skills/templates/report.html|report.html]] | Jinja2 HTML 报告模板 | — | — |
 
-### skills/k8s-inspect-skills/（自研 Skill - Shell 版，2 篇）
+### AIOps/AIOps-skills/k8s-inspect-skills/（自研 Skill - Shell 版，2 篇）
 
 | 文件 | 标题 | Frontmatter | 双链 |
 |------|------|:-----------:|:----:|
-| [[AI/skills/k8s-inspect-skills/SKILL.md|SKILL.md]] | K8s Inspect Skill 定义 | ✅ | ❌ |
-| [[AI/skills/k8s-inspect-skills/k8s_inspect.sh|k8s_inspect.sh]] | K8s 巡检 Shell 脚本 | — | — |
+| [[AI/AIOps/AIOps-skills/k8s-inspect-skills/SKILL.md|SKILL.md]] | K8s Inspect Skill 定义 | ✅ | ❌ |
+| [[AI/AIOps/AIOps-skills/k8s-inspect-skills/k8s_inspect.sh|k8s_inspect.sh]] | K8s 巡检 Shell 脚本 | — | — |
 
-### agents/（8 个智能体定义，含 4 个 Skills）
+### AIOps/agents身份文件/（8 个智能体定义，含 4 个 Skills）
 
 | 智能体 | 核心文件 | 附带 Skills |
 |--------|---------|-------------|
@@ -99,7 +99,7 @@ date: 2026-09-28
 
 | 文件 | 标题 | Frontmatter | 双链 |
 |------|------|:-----------:|:----:|
-| [[AI/提示词|提示词]] | 提示词 | ✅ | ❌ |
+| [[AI/提示词/提示词|提示词]] | 提示词 | ✅ | ❌ |
 
 ---
 
@@ -168,10 +168,10 @@ date: 2026-09-28
 | [[Azure/10_Azure-devops-agent-pool-management|10_Azure-devops-agent-pool-management]] | Azure DevOps Agent Pool Management | ✅ | ✅ |
 | [[Azure/11_Azure-Policy|11_Azure-Policy]] | Azure Policy | ✅ | ✅ |
 | [[Azure/Jfrog-artifactory-Azure|Jfrog-artifactory-Azure]] | JFrog Artifactory on Azure | ✅ | ✅ |
-| [[Azure/Kusto Query|Kusto Query]] | Kusto Query Language (KQL) | ✅ | ✅ |
-| [[Azure/command-line-tools|command-line-tools]] | Command Line Tools | ✅ | ✅ |
+| [[Azure/14_Kusto Query|14_Kusto Query]] | Kusto Query Language (KQL) | ✅ | ✅ |
+| [[Azure/13_Azure命令行工具|13_Azure命令行工具]] | Command Line Tools | ✅ | ✅ |
 | [[Azure/Customer Support/Email Templates|Email Templates]] | Email Templates | ✅ | ❌ |
-| [[Azure/Azure 故障排查工具|Azure 故障排查工具]] | Browser Trace、Fiddler、Postman、PerfMon、Process Monitor 与磁盘 I/O | ✅ | ✅ |
+| [[Azure/12_Azure 故障排查工具|12_Azure 故障排查工具]] | Browser Trace、Fiddler、Postman、PerfMon、Process Monitor 与磁盘 I/O | ✅ | ✅ |
 
 ---
 
@@ -194,7 +194,7 @@ date: 2026-09-28
 | [[Docker-Kubernetes/k8s-basic-resources/k8s基础-ingress|k8s基础-ingress]] | Ingress | ✅ | ❌ |
 | [[Docker-Kubernetes/k8s-basic-resources/k8s基础-storage|k8s基础-storage]] | Storage | ✅ | ❌ |
 | [[Docker-Kubernetes/k8s-basic-resources/k8s基础-namespace-资源分配|k8s基础-namespace-资源分配]] | namespace-资源分配 | ✅ | ❌ |
-| [[Docker-Kubernetes/k8s-basic-resources/k8s基础-yaml|k8s基础-yaml]] | YAML | ✅ | ❌ |
+| [[Docker-Kubernetes/k8s-basic-resources/k8s基础-yaml-apply|k8s基础-yaml-apply]] | YAML | ✅ | ❌ |
 | [[Docker-Kubernetes/k8s-basic-resources/k8s基础-Calico|k8s基础-Calico]] | Calico | ✅ | ❌ |
 | [[Docker-Kubernetes/k8s-basic-resources/k8s基础-kubeadm|k8s基础-kubeadm]] | kubeadm | ✅ | ❌ |
 | [[Docker-Kubernetes/k8s-basic-resources/k8s基础-临时容器ephemeral|k8s基础-临时容器ephemeral]] | 临时容器 | ✅ | ❌ |
@@ -259,13 +259,13 @@ date: 2026-09-28
 |------|------|:--:|:--:|
 | [[Docker-Kubernetes/k8s-installation-management/latest-version/安装k8s-1.35-基于rockylinux10-最新步骤|安装k8s-1.35-基于rockylinux10-最新步骤]] | K8s 1.35 (最新) | ✅ | ✅ |
 | [[Docker-Kubernetes/k8s-installation-management/2025最新-企业级高可用集群-基于rockylinux|2025最新-企业级高可用集群-基于rockylinux]] | 企业级高可用集群 | ✅ | ✅ |
-| [[Docker-Kubernetes/k8s-installation-management/二进制安装k8s高可用集群|二进制安装k8s高可用集群]] | 二进制安装高可用 | ✅ | ❌ |
+| [[Docker-Kubernetes/k8s-installation-management/legacy-versions/二进制安装k8s高可用集群|二进制安装k8s高可用集群]] | 二进制安装高可用 | ✅ | ❌ |
 | [[Docker-Kubernetes/k8s-installation-management/etcd高可用配置以及模拟集群故障和恢复|etcd高可用配置以及模拟集群故障和恢复]] | etcd高可用 | ✅ | ❌ |
 | [[Docker-Kubernetes/k8s-installation-management/k8s两地三中心架构|k8s两地三中心架构]] | 两地三中心 | ✅ | ❌ |
 | [[Docker-Kubernetes/k8s-installation-management/k8s多集群kubeconfig管理|k8s多集群kubeconfig管理]] | kubeconfig管理 | ✅ | ❌ |
 | [[Docker-Kubernetes/k8s-installation-management/k8s故障排查指南|k8s故障排查指南]] | 故障排查 | ✅ | ❌ |
 | [[Docker-Kubernetes/k8s-installation-management/k8s生产环境优化与最佳实践|k8s生产环境优化与最佳实践]] | 生产环境优化 | ✅ | ❌ |
-| [[Docker-Kubernetes/k8s-installation-management/k8s迁移容器运行时-版本升级|k8s迁移容器运行时-版本升级]] | 运行时迁移 | ✅ | ❌ |
+| [[Docker-Kubernetes/k8s-installation-management/升级/k8s迁移容器运行时-版本升级|k8s迁移容器运行时-版本升级]] | 运行时迁移 | ✅ | ❌ |
 | [[Docker-Kubernetes/k8s-installation-management/legacy-versions/安装k8s-1.20.6-高可用|安装k8s-1.20.6-高可用]] | K8s 1.20.6 | ✅ | ❌ |
 | [[Docker-Kubernetes/k8s-installation-management/legacy-versions/安装k8s-1.23|安装k8s-1.23]] | K8s 1.23 | ✅ | ❌ |
 | [[Docker-Kubernetes/k8s-installation-management/legacy-versions/安装k8s-1.26-1.27|安装k8s-1.26-1.27]] | K8s 1.26-1.27 | ✅ | ❌ |
@@ -299,8 +299,8 @@ date: 2026-09-28
 | k8s-db-middleware/ | 11 | [[Docker-Kubernetes/k8s-db-middleware/Operator部署mysql集群|Operator部署mysql集群]]、[[Docker-Kubernetes/k8s-db-middleware/helm部署strimzi-kafka|helm部署strimzi-kafka]]、[[Docker-Kubernetes/k8s-db-middleware/helm部署rabbitmq-ha|helm部署rabbitmq-ha]] |
 | k8s-UI-tools/ | 8 | [[Docker-Kubernetes/k8s-UI-tools/kubectl-可视化插件k9s-stern|kubectl-可视化插件k9s-stern]]、[[Docker-Kubernetes/k8s-UI-tools/rancher(v2.6.4)管理k8s集群|rancher(v2.6.4)管理k8s集群]] |
 | k8s-networking-service-mesh/ | 7 | [[Docker-Kubernetes/k8s-networking-service-mesh/k8s精细化流量管理-istio|k8s精细化流量管理-istio]]、[[Docker-Kubernetes/k8s-networking-service-mesh/helm部署ingress-nginx|helm部署ingress-nginx]] |
-| k8s-security-auth/ | 7 | [[Docker-Kubernetes/k8s-security-auth/helm部署certmanager|helm部署certmanager]]、[[Docker-Kubernetes/k8s-security-auth/helm部署kyverno和policy-reporter|helm部署kyverno和policy-reporter]] |
-| helm-operator/ | 1 | [[Docker-Kubernetes/helm-operator/helmv3-安装与使用|helmv3-安装与使用]] |
+| k8s-security-auth/ | 7 | [[Docker-Kubernetes/k8s-security-auth/cert-manager 实战：Helm 部署、TLS 自动签发与续期|cert-manager 实战]]、[[Docker-Kubernetes/k8s-security-auth/helm部署kyverno和policy-reporter|helm部署kyverno和policy-reporter]] |
+| helm/ | 1 | [[Docker-Kubernetes/helm/helmv3-安装与使用|helmv3-安装与使用]] |
 | k8s-configMap-secret/ | 3 | [[Docker-Kubernetes/k8s-configMap-secret/k8s基础-configMap-Secret|k8s基础-configMap-Secret]]、[[Docker-Kubernetes/k8s-configMap-secret/helm部署config-syncer(kubed)|Config Syncer]]、[[Docker-Kubernetes/k8s-configMap-secret/helm部署reloader|Reloader]] |
 | k8s-scaling/ | 4 | [[Docker-Kubernetes/k8s-scaling/k8s-HPA-VPA|k8s-HPA-VPA]]、[[Docker-Kubernetes/k8s-scaling/k8s-基于KEDA的弹性能力|k8s-基于KEDA的弹性能力]] |
 | k8s-storage/ | 3 | [[Docker-Kubernetes/k8s-storage/k8s-ceph部署与集成|k8s-ceph部署与集成]]、[[Docker-Kubernetes/k8s-storage/k8s-分布式存储CubeFS|k8s-分布式存储CubeFS]] |
@@ -402,13 +402,13 @@ date: 2026-09-28
 
 | 文件 | 标题 |
 |------|------|
-| [[Go/go-01-环境配置-基础|go-01-环境配置-基础]] | 环境配置与基础 |
-| [[Go/go-变量-数据类型-运算|go-变量-数据类型-运算]] | 变量、数据类型与运算 |
-| [[Go/go-分支-循环|go-分支-循环]] | 分支与循环控制 |
-| [[Go/go-函数-包|go-函数-包]] | 函数与包 |
-| [[Go/go-数组-切片-map|go-数组-切片-map]] | 数组、切片与Map |
+| [[Go/go-基础-01-环境配置-基础|go-基础-01-环境配置-基础]] | 环境配置与基础 |
+| [[Go/go-基础-03-变量-数据类型-运算|go-基础-03-变量-数据类型-运算]] | 变量、数据类型与运算 |
+| [[Go/go-基础-04-分支-循环|go-基础-04-分支-循环]] | 分支与循环控制 |
+| [[Go/go-基础-05-函数-包|go-基础-05-函数-包]] | 函数与包 |
+| [[Go/go-基础-02-数组-切片-map|go-基础-02-数组-切片-map]] | 数组、切片与Map |
 | [[Go/go-面向对象|go-面向对象]] | 面向对象编程 |
-| [[Go/go-错误处理|go-错误处理]] | 错误处理 |
+| [[Go/go-基础-06-错误处理|go-基础-06-错误处理]] | 错误处理 |
 | [[Go/go-web开发|go-web开发]] | Web开发 |
 | [[Go/云原生开发-基础|云原生开发-基础]] | 云原生开发基础 |
 

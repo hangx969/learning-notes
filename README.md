@@ -6,7 +6,7 @@
 
 涵盖云原生技术、基础设施自动化、编程语言、AI/ML 和现代 DevOps 实践的综合知识库。
 
-> **~370 篇学习笔记 · 17 个技术领域 · 129 篇知识编译层文件**
+> **~380 篇学习笔记 · 18 个技术领域 · 162 篇知识编译层文件**
 
 ## 🧭 知识库导航（KnowledgeBase）
 
@@ -19,8 +19,8 @@
 | 📋 全库盘点 | 文档逐一索引 | [repository-inventory](./KnowledgeBase/inventory/repository-inventory.md) |
 | 🗺️ 领域地图 | 按技术领域导航 | [domain-map](./KnowledgeBase/maps/domain-map.md) |
 | 🔧 工具地图 | 按工具/平台聚合 | [tool-map](./KnowledgeBase/maps/tool-map.md) |
-| ☸️ K8s 专题 | 151 篇 K8s 生态导航 | [kubernetes-map](./KnowledgeBase/maps/kubernetes-map.md) |
-| 🤖 AI 专题 | Claude Code + OpenClaw + Hermes Agent | [ai-workflow-map](./KnowledgeBase/maps/ai-workflow-map.md) |
+| ☸️ K8s 专题 | K8s 生态导航（Docker-Kubernetes 共 169 篇） | [kubernetes-map](./KnowledgeBase/maps/kubernetes-map.md) |
+| 🤖 AI 专题 | Claude Code + Codex + OpenClaw + Hermes Agent + AI 视觉 | [ai-workflow-map](./KnowledgeBase/maps/ai-workflow-map.md) |
 | ☁️ 云平台专题 | Aliyun vs Azure 对标 | [cloud-platform-map](./KnowledgeBase/maps/cloud-platform-map.md) |
 | 🐧 Linux 运维 | 系统管理 + HPC + GPU | [linux-ops-map](./KnowledgeBase/maps/linux-ops-map.md) |
 | 🐍 Python 运维 | 27 篇 Python 开发导航 | [python-devops-map](./KnowledgeBase/maps/python-devops-map.md) |
@@ -31,17 +31,19 @@
 
 | 领域 | 篇数 | 成熟度 | 亮点 |
 | --- | ---: | :---: | --- |
-| Docker-Kubernetes | 170 | 🟢 | 基础资源→安装管理→监控日志→CI/CD→网络→安全→扩缩容→存储→中间件，全生命周期 |
-| AI¹ | 54 | 🟢 | Claude Code（9 篇深度）+ OpenClaw（8 篇）+ Hermes Agent（4 篇）+ 视觉 + 行业动态 |
+| Docker-Kubernetes | 169 | 🟢 | 基础资源→安装管理→监控日志→CI/CD→网络→安全→扩缩容→存储→中间件，全生命周期 |
+| AI¹ | 74 | 🟢 | Claude Code（13 篇）+ OpenClaw（10 篇）+ 提示词（8 篇）+ Hermes Agent（4 篇）+ Codex + 私有化大模型 + 代码审查 + RAG + 视觉 + 行业动态 |
 | Python | 29 | 🟢 | 基础→运维开发→网络编程→数据分析→项目实战 |
 | Linux-Shell | 12 | 🟡 | 系统管理 + Shell 脚本 + SSH/网络 + 存储/LVM/NFS |
-| Azure | 22 | 🟢 | VM/VMSS + AKS + 网络/存储 + DevOps Pipeline + Policy |
+| Azure | 18 | 🟢 | VM/VMSS + AKS + 网络/存储 + DevOps Pipeline + Policy |
 | Aliyun | 22 | 🟢 | ECS/ESS + VPC/SLB/WAF + OSS + RDS/DTS + Landing Zone |
 | Go | 12 | 🟡 | 环境配置→变量→控制流→OOP→云原生选型 |
-| HPC + Cloud + GPU | 21 | 🟡 | Slurm/PBS + 云原生/微服务 + CUDA/驱动 |
-| 杂项 | 24 | 🟡 | Database + Middlewares + OS + Networking + IaC + Git + C++ |
+| HPC + Cloud + GPU | 18 | 🟡 | Slurm/PBS + 云原生/微服务 + CUDA/驱动 |
+| 杂项 | 27 | 🟡 | Database + Middlewares + OS + Networking + IaC + Git + C++ + SoftwareTesting |
 
-¹ AI/ 目录下另有 283 篇引用/嵌入内容未计入：AI-视觉/awesome-design-md 第三方设计参考库（135 篇）、RAG-Agent 项目文档（110 篇）、Agent/Skill 定义文件（38 篇）。
+篇数按 git 跟踪的 Markdown 文件统计（含各目录 index.md），统计日期 2026-09-29。
+
+¹ AI/ 目录下另有 280 篇引用/嵌入内容未计入：AI-视觉/awesome-design-md 第三方设计参考库（135 篇）、RAG/ 下 CloudOps-Agent 与 RAG-Agent 项目文档（107 篇）、AIOps/ 下 Agent/Skill 定义文件（38 篇）。
 
 ## 🚀 推荐阅读路径
 
@@ -55,7 +57,7 @@
 7. [K8s 成本优化](./Docker-Kubernetes/k8s-scaling/k8s成本优化方案-FinOps实战.md) → FinOps 实战
 
 ### AI 赋能运维
-1. [Claude Code 指南](Claude%20Code%20基础指南.md) → 入门必读
+1. [Claude Code 指南](./AI/ClaudeCode/Claude%20Code%20基础指南.md) → 入门必读
 2. [扩展体系（MCP/Skills/Plugin）](./AI/ClaudeCode/Claude%20Code%20扩展体系.md) → 四层扩展机制
 3. [CLAUDE.md 12 条规则](./AI/ClaudeCode/CLAUDE.md最佳实践-12条规则模板.md) → 错误率 41%→3%
 4. [为什么 grep 不用 RAG](./AI/ClaudeCode/Claude-Code为什么用grep不用RAG.md) → Agentic Search 架构
@@ -73,25 +75,31 @@
 learning-notes/
 ├── CLAUDE.md                      ← 知识库 Schema（三层架构规约）
 ├── KnowledgeBase/                 ← 知识编译层（LLM 维护）
-│   ├── index.md                   ← 全库内容目录
+│   ├── INDEX.md                   ← 全库内容目录
 │   ├── log.md                     ← 操作日志
-│   ├── sources/                   ← 原始来源摘要页
-│   ├── concepts/                  ← 概念页（15 篇）
-│   ├── entities/                  ← 实体页（37 篇）
+│   ├── sources/                   ← 原始来源摘要页（79 篇）
+│   ├── concepts/                  ← 概念页（21 篇）
+│   ├── entities/                  ← 实体页（43 篇）
 │   ├── maps/                      ← 主题地图（8 篇）
 │   ├── analysis/                  ← 分析报告
 │   ├── inventory/                 ← 文档盘点
 │   └── maintenance/               ← 维护报告
 │
-├── AI/                            ← AI 工具与实践（54 篇笔记 + 283 篇引用/嵌入内容）
+├── AI/                            ← AI 工具与实践（74 篇笔记 + 280 篇引用/嵌入内容）
 │   ├── ClaudeCode/                ← Claude Code 深度文章
+│   ├── Codex/                     ← Codex 使用技巧与 Harness 架构
 │   ├── OpenClaw/                  ← OpenClaw 多智能体平台
 │   ├── Hermes-agent/              ← Hermes Agent 框架
-│   ├── RAG-Agent-项目/            ← RAG 知识库项目
+│   ├── AIOps/                     ← AIOps 实战 + Agent/Skill 定义文件
+│   ├── 提示词/                    ← 提示词库
+│   ├── 企业级私有化大模型/        ← 私有化部署、推理与量化
+│   ├── Code review和知识图谱/     ← AI 代码审查与代码知识图谱
+│   ├── RAG/                       ← RAG 文章 + CloudOps-Agent/RAG-Agent 项目
+│   ├── Obsidian/                  ← Obsidian + AI 知识库
 │   ├── AI-视觉/                   ← PPT/动画/HTML 生成
 │   └── 行业动态/                   ← AI 趋势与洞察
 │
-├── Docker-Kubernetes/             ← K8s 全生态（170 篇）
+├── Docker-Kubernetes/             ← K8s 全生态（169 篇）
 │   ├── docker/                    ← Docker 基础
 │   ├── k8s-basic-resources/       ← K8s 核心资源 + API Server
 │   ├── k8s-installation-management/ ← 安装管理 + cgroup v2
@@ -100,9 +108,9 @@ learning-notes/
 │   ├── k8s-networking-service-mesh/ ← 网络 + Istio
 │   ├── k8s-security-auth/         ← 安全认证
 │   ├── k8s-scaling/               ← 扩缩容 + FinOps 成本优化
-│   └── ...                        ← 存储/中间件/Helm/Harbor/GPU
+│   └── ...                        ← 存储/中间件/配置/镜像管理/Helm/GPU
 │
-├── Azure/                         ← Azure 云平台（22 篇）
+├── Azure/                         ← Azure 云平台（18 篇）
 ├── Aliyun/                        ← 阿里云（22 篇）
 ├── Python/                        ← Python 开发（29 篇）
 ├── Linux-Shell/                   ← Linux 运维（12 个 Markdown 文件，含索引）

@@ -111,7 +111,7 @@ date: 2026-09-26
 
 | 页面 | 原始来源 | 摘要 |
 |------|---------|------|
-| [ClaudeCode基础指南](sources/ClaudeCode基础指南-summary.md) | [AI/ClaudeCode/ClaudeCode基础指南](Claude%20Code%20基础指南.md) | 3 种模式、Extended Thinking、Claude.md、Spec 工作流、5 大实战场景 |
+| [ClaudeCode基础指南](sources/ClaudeCode基础指南-summary.md) | [AI/ClaudeCode/Claude Code 基础指南](../AI/ClaudeCode/Claude%20Code%20基础指南.md) | 3 种模式、Extended Thinking、Claude.md、Spec 工作流、5 大实战场景 |
 | [扩展体系](sources/Claude-Code扩展体系-summary.md) | [AI/ClaudeCode/Claude Code 扩展体系](../AI/ClaudeCode/Claude%20Code%20扩展体系.md) | 四层扩展机制全解：MCP（10+ 服务器）、Skills（3 层模式）、Slash Commands、Plugin |
 | [多智能体协作](sources/多智能体协作-summary.md) | [AI/ClaudeCode/多智能体协作-Subagents与Agent-Teams](../AI/ClaudeCode/多智能体协作-Subagents与Agent-Teams.md) | Subagents（5 组件、适用场景评级）+ Agent Teams（Team Lead/Teammates/Task List/Mailbox） |
 | [AI知识库完整指南](sources/obsidian-claude-AI知识库完整指南-summary.md) | [[AI/Obsidian/obsidian-claude-code-AI知识库完整指南]] | Markdown 母语论证、Karpathy Wiki 三层架构、30 分钟四步上手、六大操作谱系、三个集成工具、改造计划（三篇合并） |
@@ -137,24 +137,24 @@ date: 2026-09-26
 |------|---------|------|
 | [[KnowledgeBase/sources/12个常用Prompt-summary|12 个常用 Prompt]] | [[0raw/都Agent时代了，我还是想分享给你这12个我最常用的Prompt。]] | 12 个提示词，覆盖问题澄清、学习研究、解题、决策与自我探索；已按主题并入提示词库 |
 
-### AI/skills（自研 Skills ✅）
+### AI/AIOps/AIOps-skills（自研 Skills ✅）
 
 | 页面 | 原始来源 | 摘要 |
 |------|---------|------|
-| [k8s-report-skills](sources/k8s-report-skills-summary.md) | [AI/skills/k8s-report-skills](AI/AIOps/AIOps-skills/k8s-report-skills/SKILL.md) | Python 版：kubernetes 客户端 + Jinja2，6 大巡检维度，Agent API 集成 |
-| ↑ 同上 | [AI/skills/k8s-inspect-skills](AI/AIOps/AIOps-skills/k8s-inspect-skills/SKILL.md) | Shell 版：kubectl + 深色仪表盘 HTML，7 大模块含证书/网络检查 |
+| [k8s-report-skills](sources/k8s-report-skills-summary.md) | [AI/AIOps/AIOps-skills/k8s-report-skills](../AI/AIOps/AIOps-skills/k8s-report-skills/SKILL.md) | Python 版：kubernetes 客户端 + Jinja2，6 大巡检维度，Agent API 集成 |
+| ↑ 同上 | [AI/AIOps/AIOps-skills/k8s-inspect-skills](../AI/AIOps/AIOps-skills/k8s-inspect-skills/SKILL.md) | Shell 版：kubectl + 深色仪表盘 HTML，7 大模块含证书/网络检查 |
 
 ### AI/AI-视觉（已摄入 ✅）
 
 | 页面 | 原始来源 | 摘要 |
 |------|---------|------|
-| [[KnowledgeBase/sources/effective-html-agent-workflow-summary|Effective HTML Agent 页面工作流]] | [[AI/AI-视觉/Effective-HTML-Agent页面工作流]]、[[AI/AI-视觉/effective-html-AI直出HTML工具实测]] | 任务路由、线框→原型→图表→视觉设计，以及 HTML 直出、自包含交付、设计范本和同类工具边界 |
+| [[KnowledgeBase/sources/effective-html-agent-workflow-summary|Effective HTML Agent 页面工作流]] | [[AI/AI-视觉/Effective-HTML-Agent页面工作流]] | 任务路由、线框→原型→图表→视觉设计，以及 HTML 直出、自包含交付、设计范本和同类工具边界 |
 
-### AI/agents（OpenClaw 多智能体定义 ✅）
+### AI/AIOps/agents身份文件（OpenClaw 多智能体定义 ✅）
 
 | 页面 | 原始来源 | 摘要 |
 |------|---------|------|
-| [多智能体定义导出](sources/openclaw-agents-export-summary.md) | [AI/agents/](../AI/agents/) | 8 个智能体（aiops/linux/container/k8s/architect/backend/frontend/pm）完整定义文件 + 4 个 Skills |
+| [多智能体定义导出](sources/openclaw-agents-export-summary.md) | [AI/AIOps/agents身份文件/](../AI/AIOps/agents身份文件/) | 8 个智能体（aiops/linux/container/k8s/architect/backend/frontend/pm）完整定义文件 + 4 个 Skills |
 
 ### Docker-Kubernetes（已摄入 ✅）
 
@@ -184,6 +184,7 @@ date: 2026-09-26
 | [KServe + KEDA 请求指标扩缩容](sources/kserve-keda-request-autoscaling-summary.md) | 1 | KServe/vLLM 指标经 Prometheus、KEDA、External Metrics API 驱动 HPA，实现 1→2→1 扩缩容 |
 | [[KnowledgeBase/sources/k8s-hpa-scale-to-zero-1.37-summary|K8s 1.37 HPA Scale-to-Zero]] | 1 | HPAScaleToZero Beta、External/Object 指标、Worker 缩零、冷启动防抖与 KEDA 迁移清单 |
 | [PV/PVC 回收策略](sources/k8s-pv-pvc-reclaim-policy-summary.md) | 1 | PVC 删除后的 PV 回收策略、Released 复用风险、快照与 StatefulSet 安全删除 |
+| [[KnowledgeBase/sources/k8s-volume-health-monitor-summary|Kubernetes Volume Health Monitor]] | 1 | CSI 卷健康状态写入 PVC/Pod/CSINode、VolumeHealthMonitor Alpha 前提、Prometheus 分级告警与自动修复边界 |
 | [K8s 中间件与 UI](sources/k8s-db-middleware-UI-batch-summary.md) | 19 | Redis/MySQL/PostgreSQL/Kafka/RabbitMQ 部署 + Dashboard/Rancher/k9s 管理工具 |
 | [RabbitMQ HA](sources/rabbitmq-ha-summary.md) | 1 | Helm 部署 RabbitMQ 高可用集群（StatefulSet）、aliyun Chart 配置、旧版 API 兼容修复 |
 | [K8s 杂项](sources/k8s-misc-batch-summary.md) | 20 | Helm 工具链/CKA-CKS/KubeBlocks/Harbor/Dragonfly/K3S/Velero/GPU |
@@ -301,8 +302,8 @@ date: 2026-09-26
 |------|:---------:|------|
 | [杂项](sources/misc-domains-batch-summary.md) | 18 | Database(MySQL/Redis/MongoDB) + Middlewares(Kafka/RabbitMQ/RocketMQ) + OS + Networking + IaC(Terraform) + Git + C++ + SoftwareTesting |
 
-> [!success] 全部领域已摄入完成
-> 共 17 个领域、~440 篇原始文档已全部摄入 wiki 编译层。
+> [!info] 摄入覆盖
+> 共 18 个领域、381 篇学习笔记（按 git 跟踪的 Markdown 统计，含目录 index.md，不含 280 篇引用/嵌入内容）。截至 2026-09-29，仍有 19 篇未被任何 Wiki 页面引用，清单见 [[KnowledgeBase/maintenance/wiki-lint-2026-09-29|Wiki 健康检查 2026-09-29]]。
 
 ---
 
@@ -312,7 +313,7 @@ date: 2026-09-26
 |------|------|
 | [领域地图](maps/domain-map.md) | 按技术领域导航全库 |
 | [工具地图](maps/tool-map.md) | 按工具/平台聚合知识 |
-| [Kubernetes 专题](maps/kubernetes-map.md) | 156 篇 K8s 生态知识导航 |
+| [Kubernetes 专题](maps/kubernetes-map.md) | K8s 生态知识导航（Docker-Kubernetes 共 169 篇） |
 | [AI 工作流专题](maps/ai-workflow-map.md) | Claude Code + OpenClaw + AI 辅助运维 |
 | [Claude Code & OpenClaw 专题](maps/claude-code-openclaw-map.md) | AI 编程与开源 AI 工具 |
 | [云平台专题](maps/cloud-platform-map.md) | Aliyun + Azure 对标 |
@@ -338,10 +339,7 @@ date: 2026-09-26
 |------|------|
 | [全库文档盘点](inventory/repository-inventory.md) | 全部文档逐一列出 |
 | [领域内容特点分析](inventory/domain-summary.md) | 17 个领域的成熟度与优先级 |
-| [断链报告](maintenance/broken-links-report.md) | wikilink 有效性检查 |
-| [[KnowledgeBase/maintenance/broken-links-2026-09-05|断链检查报告 2026-09-05]] | 2026-09-05 KnowledgeBase wikilink 断链检查结果 |
-| [[KnowledgeBase/maintenance/wiki-lint-2026-09-06|Wiki 健康检查 2026-09-06]] | 提示词摄入后的断链、孤儿页、frontmatter、一致性与交叉引用检查 |
-| [[KnowledgeBase/maintenance/unclosed-html-tags-2026-09-12|未闭合 HTML 标签扫描 2026-09-12]] | Markdown-aware 复扫并修复 6 个文件、12 个标签；最终未闭合标签为 0 |
+| [[KnowledgeBase/maintenance/wiki-lint-2026-09-29|Wiki 健康检查 2026-09-29]] | 断链、孤儿页、概念覆盖、一致性、来源时效性与交叉引用六维检查；已修复可由 git 历史确认的改名/合并链接 |
 | [命名规范](maintenance/naming-normalization.md) | 文件命名约定 |
 | [增量维护流程](maintenance/update-workflow.md) | 新增文档后的更新步骤 |
 
@@ -351,21 +349,26 @@ date: 2026-09-26
 
 | 领域 | 篇数 | 成熟度 | 入口 |
 |------|------|:------:|------|
-| Docker-Kubernetes | 156 | 🟢 | [kubernetes-map](maps/kubernetes-map.md) |
-| Python | 27 | 🟢 | [python-devops-map](maps/python-devops-map.md) |
-| Linux-Shell | 11 | 🟡 | [linux-ops-map](maps/linux-ops-map.md) |
-| Azure | 21 | 🟢 | [cloud-platform-map](maps/cloud-platform-map.md) |
-| Aliyun | 19 | 🟢 | [cloud-platform-map](maps/cloud-platform-map.md) |
-| AI | 129 | 🟢 | [ai-workflow-map](maps/ai-workflow-map.md) |
-| Go | 9 | 🟡 | [go-基础-01-环境配置-基础](go-基础-01-环境配置-基础.md) |
-| CloudComputing | 7 | 🟡 | [云原生](../CloudComputing/云原生.md) |
+| Docker-Kubernetes | 169 | 🟢 | [kubernetes-map](maps/kubernetes-map.md) |
+| Python | 29 | 🟢 | [python-devops-map](maps/python-devops-map.md) |
+| Linux-Shell | 12 | 🟡 | [linux-ops-map](maps/linux-ops-map.md) |
+| Azure | 18 | 🟢 | [cloud-platform-map](maps/cloud-platform-map.md) |
+| Aliyun | 22 | 🟢 | [cloud-platform-map](maps/cloud-platform-map.md) |
+| AI | 74 | 🟢 | [ai-workflow-map](maps/ai-workflow-map.md) |
+| Go | 12 | 🟡 | [go-基础-01-环境配置-基础](../Go/go-基础-01-环境配置-基础.md) |
+| CloudComputing | 8 | 🟡 | [云原生](../CloudComputing/云原生.md) |
 | HPC | 5 | 🟡 | [CentOS7-slurm23.02-二进制安装](../HPC/CentOS7-slurm23.02-二进制安装.md) |
-| GPU-DeepLearning | 4 | 🟠 | [GPU-basics](../GPU-DeepLearning/GPU-basics.md) |
-| Database | 3 | 🟡 | [MySQL入门](../Database/MySQL入门.md) |
-| Middlewares | 3 | 🟠 | [Kafka](../Middlewares/Kafka.md) |
-| OS | 3 | 🟠 | [OS](../OS/OS.md) |
-| Networking | 2 | 🟠 | [计算机网络基础](../Networking/计算机网络基础.md) |
-| IaC | 3 | 🟡 | [terraform-basics](../IaC/terraform-basics.md) |
+| GPU-DeepLearning | 5 | 🟠 | [GPU-basics](../GPU-DeepLearning/GPU-basics.md) |
+| Database | 4 | 🟡 | [MySQL入门](../Database/MySQL入门.md) |
+| Middlewares | 4 | 🟠 | [Kafka](../Middlewares/Kafka.md) |
+| OS | 4 | 🟠 | [OS](../OS/OS.md) |
+| Networking | 3 | 🟠 | [计算机网络基础](../Networking/计算机网络基础.md) |
+| IaC | 4 | 🟡 | [terraform-basics](../IaC/terraform-basics.md) |
+| Git | 3 | 🟠 | [git-learning](../Git/git-learning.md) |
+| SoftwareTesting | 3 | 🟠 | [软件工程基础](../SoftwareTesting/软件工程基础.md) |
+| C++ | 2 | 🟠 | [C++LearningNotes](../C++/C++LearningNotes.md) |
+
+> 篇数按 git 跟踪的 Markdown 文件统计（含各目录 index.md；AI 不含 280 篇引用/嵌入内容），统计日期 2026-09-29。
 
 ---
 
@@ -379,7 +382,7 @@ date: 2026-09-26
 5. [helm部署prometheus-stack全家桶](../Docker-Kubernetes/k8s-monitoring-logging/helm部署prometheus-stack全家桶.md) → 可观测性
 
 ### AI 赋能运维
-1. [ClaudeCode基础指南](../AI/ClaudeCode/ClaudeCode基础指南.md) → Claude Code 入门
+1. [Claude Code 基础指南](../AI/ClaudeCode/Claude%20Code%20基础指南.md) → Claude Code 入门
 2. [扩展体系](../AI/ClaudeCode/Claude%20Code%20扩展体系.md) → MCP、Skills、Slash Commands、Plugin
 3. [OpenClaw-基础-安装](../AI/OpenClaw/OpenClaw-基础-安装.md) → OpenClaw 入门
 4. [[AI/Obsidian/obsidian-claude-code-AI知识库完整指南]] → 知识库完整指南（三文合并）

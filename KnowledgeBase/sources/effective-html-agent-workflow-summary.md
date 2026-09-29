@@ -8,7 +8,6 @@ tags:
 date: 2026-09-07
 sources:
   - "[[AI/AI-视觉/Effective-HTML-Agent页面工作流]]"
-  - "[[AI/AI-视觉/effective-html-AI直出HTML工具实测]]"
 aliases:
   - Effective HTML 来源摘要
   - effective-html 摘要
@@ -18,7 +17,7 @@ aliases:
 
 ## 元信息
 
-- **原始文档**：[[AI/AI-视觉/Effective-HTML-Agent页面工作流]]、[[AI/AI-视觉/effective-html-AI直出HTML工具实测]]
+- **原始文档**：[[AI/AI-视觉/Effective-HTML-Agent页面工作流]]（已整合原 effective-html 工具实测）
 - **原始来源**：[Effective HTML 页面工作流](https://mp.weixin.qq.com/s/EWFsQChEmC4aGfuQ1lcpgA)、[effective-html 工具实测](https://mp.weixin.qq.com/s/UpwCCgiK8BkT9P8U74x_Vw)
 - **领域**：AI / AI 视觉 / Agent Skills / HTML 交付
 - **摄入日期**：2026-09-07
