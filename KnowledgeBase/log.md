@@ -12,19 +12,19 @@ date: 2026-04-17
 
 ## [2026-09-12] ingest | Codex Harness 架构
 
-- **来源**：小林 coding《面试官得瑟：“你懂 Codex 的 Harness 架构吗？”》，原始剪藏位于 `0raw/`
+- **来源**：小林 coding《面试官得瑟：“你懂 Codex 的 Harness 架构吗？”》
 - **清洗与整理**：去除作者开场、系列宣传和文末引流；保留 App Server、Session、Agent 主循环、上下文管理、StepContext、工具路由与执行、审批/沙箱、状态持久化、长期记忆、Skills/MCP/Hooks 和子 Agent 等技术内容
 - **图片**：42 张微信图床图片经 PicGo CLI（GitHub Plus）上传至 `hangx969/upload-images-md`，正文已替换为 `.webp` 图床链接
-- **归档**：`0raw/面试官得瑟：“你懂Codex的Harness架构吗？”，我笑了：“何止懂？我还看过源码”，他愣了.....md` → `AI/Codex/Codex-Harness架构-任务循环与扩展.md`
+- **归档**：《面试官得瑟：“你懂Codex的Harness架构吗？”，我笑了：“何止懂？我还看过源码”，他愣了.....》 → `AI/Codex/Codex-Harness架构-任务循环与扩展.md`
 - **新建文件**：`KnowledgeBase/sources/codex-harness-architecture-summary.md` — 来源摘要页
 - **更新页面**：`KnowledgeBase/entities/Codex.md`、`KnowledgeBase/maps/ai-workflow-map.md`、`KnowledgeBase/INDEX.md`、`AI/index.md`
 - **边界说明**：文章是作者基于开源仓库的架构解读，摘要页标明了具体源码行为需以当前 Codex 版本和官方资料为准
 
 ## [2026-09-05] ingest | NVIDIA Device Plugin：K8s 识别 GPU
 
-- **来源**：深栈运维，2026-08-28，微信公众号；原始剪藏位于 `0raw/`
+- **来源**：深栈运维，2026-08-28，微信公众号
 - **清洗**：去除作者署名、联系方式、赞赏和目录导航；保留 GPU 调度链路、前置依赖、三种部署方式、验证命令、故障排查和运行时行为等技术内容，并规范 Bash 代码块与图片说明
-- **归档**：`0raw/从零部署 NVIDIA Device Plugin：K8s 识别 GPU 的“第一块敲门砖”.md` → `Docker-Kubernetes/k8s-ai-gpu/从零部署 NVIDIA Device Plugin：K8s 识别 GPU 的“第一块敲门砖”.md`
+- **归档**：《从零部署 NVIDIA Device Plugin：K8s 识别 GPU 的“第一块敲门砖”》 → `Docker-Kubernetes/k8s-ai-gpu/从零部署 NVIDIA Device Plugin：K8s 识别 GPU 的“第一块敲门砖”.md`
 - **新建文件**：`KnowledgeBase/sources/k8s-nvidia-device-plugin-summary.md` — 来源摘要页
 - **更新页面**：`KnowledgeBase/sources/k8s-misc-batch-summary.md`、`KnowledgeBase/entities/NVIDIA.md`、`KnowledgeBase/entities/Kubernetes.md`、`KnowledgeBase/maps/kubernetes-map.md`、`KnowledgeBase/INDEX.md`
 - **核心知识**：Device Plugin 通过 NVML 发现 GPU 并注册 `nvidia.com/gpu`；Helm、静态 DaemonSet、GPU Operator 三种部署路径；驱动/Toolkit/containerd 前置检查；节点资源、插件日志和 CUDA 测试 Pod 三层验证；常见错误的分层排障顺序
@@ -33,9 +33,9 @@ date: 2026-04-17
 
 ## [2026-07-18] ingest | K8s Finalizer 与资源删除机制
 
-- **来源**：WAKEUP技术，2026-07-12，微信公众号剪藏（原暂存于 `0raw/`）
+- **来源**：WAKEUP技术，2026-07-12，微信公众号剪藏
 - **清洗**：去除作者署名/公众号名片/个人主页链接行、文末"微信扫一扫赞赏作者"引导，技术内容完整保留
-- **归档**：`0raw/K8s Finalizer：那个让资源"删不掉"的隐形守护者.md` → `Docker-Kubernetes/k8s-basic-resources/k8s基础-Finalizer与资源删除.md`（Raw Source，人类确认后移入）
+- **归档**：《K8s Finalizer：那个让资源"删不掉"的隐形守护者》 → `Docker-Kubernetes/k8s-basic-resources/k8s基础-Finalizer与资源删除.md`（Raw Source，人类确认后移入）
 - **新建文件**：
   - `KnowledgeBase/concepts/Finalizer.md` — 新建概念页：定义、工作机制、内置/常见 Finalizer、五大"删不掉"场景、诊断修复方法、Operator 中的 Finalizer 编写原则
 - **更新文件**：
@@ -171,7 +171,7 @@ date: 2026-04-17
 - **合并来源**：
   - `k8s日志管理.md`（kubelet 本地日志管理基础，73 行）
   - `k8s日志采集六种方案深度对比与选型指南.md`（六种采集方案+踩坑+架构推荐，466 行）
-- **新增来源**：`0raw/K8s审计日志深度实践——从运维利器到合规基石.md`（WAKEUP技术，2026-05-17）
+- **新增来源**：《K8s审计日志深度实践——从运维利器到合规基石》（WAKEUP技术，2026-05-17）
   - 清洗：去除作者署名/简介/个人主页、页脚营销（赞赏/滑动导航）、列表冗余序号
 - **新建文件**：
   - `Docker-Kubernetes/k8s-monitoring-logging/k8s日志管理-采集方案与审计日志.md` — 三合一综合文章（922 行）
@@ -485,7 +485,7 @@ date: 2026-04-17
 
 ## [2026-05-05] ingest | Harness 实战文章摄入
 
-- **来源**：`0raw/Harness 实战：从零搭建最小可用的 Harness 系统.md`（微信公众号剪藏）
+- **来源**：《Harness 实战：从零搭建最小可用的 Harness 系统》（微信公众号剪藏）
 - **清洗**：去除作者署名行、微信赞赏/滑动导航、SVG 占位图，保留全部技术内容（四层架构、三个拦截器完整代码、编排流程、踩坑经验、组件清单表）
 - **新建文件**：
   - `AI/ClaudeCode/Claude-Code-Harness实战-最小可用系统.md` — 清洗后的技术文章
@@ -501,7 +501,7 @@ date: 2026-04-17
 
 ## [2026-05-05] ingest | Skill Craft 质检工具文章摄入
 
-- **来源**：`0raw/我做了一个 Claude Skill 质检工具：专门解决 Claude Skill 的不触发、乱触发、越用越跑偏.md`（微信公众号剪藏）
+- **来源**：《我做了一个 Claude Skill 质检工具：专门解决 Claude Skill 的不触发、乱触发、越用越跑偏》（微信公众号剪藏）
 - **清洗**：去除营销文案（01 节引入语、10 节目标受众推荐、11 节关注引导、页脚），保留技术内容（7 类失效模式、三层评估体系、四模式详解）
 - **新建文件**：
   - `AI/ClaudeCode/Claude-Skill质检工具-SkillCraft.md` — 清洗后的技术文章
@@ -524,7 +524,7 @@ date: 2026-04-17
 
 ## [2026-05-05] ingest | Hermes 满配指南文章摄入
 
-- **来源**：`0raw/装完 Hermes 一定要配置这五套系统，秒变满配版，能力提升数倍不止.md`（微信公众号剪藏）
+- **来源**：《装完 Hermes 一定要配置这五套系统，秒变满配版，能力提升数倍不止》（微信公众号剪藏）
 - **清洗**：去除营销文案，保留五大配置模块技术内容及安装命令
 - **新建文件**：
   - `AI/Hermes-agent/Hermes满配指南-五大配置模块.md` — 清洗后的技术文章
@@ -540,7 +540,7 @@ date: 2026-04-17
 
 ## [2026-05-05] ingest | Obsidian 可视化 Skills 文章摄入
 
-- **来源**：`0raw/这个 Skills 让 Obsidian 画图门槛降到了零.md`（微信公众号剪藏）
+- **来源**：《这个 Skills 让 Obsidian 画图门槛降到了零》（微信公众号剪藏）
 - **清洗**：去除营销内容（作者介绍、关注提示、往期推荐、赞赏等），保留技术内容
 - **新建文件**：
   - `AI/Obsidian/Obsidian可视化Skills-Excalidraw-Mermaid-Canvas.md` — 清洗后的技术文章
@@ -570,7 +570,7 @@ date: 2026-04-17
 
 ## [2026-05-04] ingest | Hermes Agent 架构解析文章
 
-- **来源**：`0raw/Hermes Agent全解析：与OpenClaw对比及飞书接入指南 - 飞书官网.md`
+- **来源**：《Hermes Agent全解析：与OpenClaw对比及飞书接入指南 - 飞书官网》
 - **操作**：
   - 清理格式后放置到 `AI/Hermes-agent/Hermes Agent全解析-与OpenClaw对比及飞书接入指南.md`
   - 更新 `sources/hermes-agent-batch-summary.md`：文档数 2→3，新增第三篇摘要（五层架构、记忆系统、子代理委托、OpenClaw 六维对比、飞书接入）
@@ -640,7 +640,7 @@ date: 2026-04-17
 
 ## [2026-04-23] ingest | External Secrets Operator 进阶
 
-- **来源**：[[0raw/K8S实战教程 如何使用 External Secrets Operator 管理 Kubernetes密钥]]（微信公众号文章）
+- **来源**：《K8S实战教程 如何使用 External Secrets Operator 管理 Kubernetes密钥》（微信公众号文章）
 - **操作**：整合到现有文档 [[Docker-Kubernetes/k8s-security-auth/helm部署external-secrets]]
 - **新增内容**：
   - "为什么需要 ESO" 对比表 + 工作原理架构说明 + 核心 CRD 对照表
@@ -655,7 +655,7 @@ date: 2026-04-17
 
 ## [2026-04-23] ingest | kubelogin OIDC 认证
 
-- **来源**：[[0raw/K8S工具推荐：告别复杂认证！Kubernetes登录神器kubelogin指南]]（微信公众号文章）
+- **来源**：《K8S工具推荐：告别复杂认证！Kubernetes登录神器kubelogin指南》（微信公众号文章）
 - **操作**：整合到现有文档 [[Docker-Kubernetes/k8s-installation-management/k8s多集群kubeconfig管理]]，新增"OIDC 认证：kubelogin"章节
 - **新增内容**：
   - kubelogin 核心特性（浏览器登录、短期令牌、自动刷新、加密存储）
@@ -668,7 +668,7 @@ date: 2026-04-17
 
 ## [2026-04-23] ingest | Client-Go K8s 客户端开发
 
-- **来源**：[[0raw/初始K8S客户端工具Client-Go]]（微信公众号文章）
+- **来源**：《初始K8S客户端工具Client-Go》（微信公众号文章）
 - **操作**：创建 [[Go/client-go-K8s客户端开发]] 新文章
 - **新增内容**：
   - client-go 简介、用途、核心功能
@@ -680,7 +680,7 @@ date: 2026-04-17
 
 ## [2026-04-23] ingest | ACK 网络规划与成本优化
 
-- **来源**：[[0raw/踩过网段坑才懂：K8s 网络规划与成本优化的底层逻辑]]（微信公众号文章）
+- **来源**：《踩过网段坑才懂：K8s 网络规划与成本优化的底层逻辑》（微信公众号文章）
 - **操作**：创建 [[Aliyun/网络/ACK网络规划与成本优化]] 新文章
 - **新增内容**：
   - 网段规划与成本关系（IP 不足→集群重建、CIDR 重叠→跨 AZ 费用、路由膨胀）
@@ -693,7 +693,7 @@ date: 2026-04-17
 
 ## [2026-04-23] ingest | K8s 部署防火墙端口配置
 
-- **来源**：[[0raw/部署K8S时关闭防火墙被吐槽了，我连夜整理全部需要开放的端口]]（微信公众号文章）
+- **来源**：《部署K8S时关闭防火墙被吐槽了，我连夜整理全部需要开放的端口》（微信公众号文章）
 - **操作**：创建 [[Docker-Kubernetes/k8s-installation-management/k8s部署防火墙端口配置]] 新文章
 - **新增内容**：
   - 生产环境正确做法：保留 firewalld + 精准开放端口（而非关闭防火墙）
@@ -705,7 +705,7 @@ date: 2026-04-17
 
 ## [2026-04-23] ingest | K8s 1.35 EnvFiles（fileKeyRef）
 
-- **来源**：[[0raw/k8s 1.35 版本 Pod环境变量配置]]（微信公众号文章）
+- **来源**：《k8s 1.35 版本 Pod环境变量配置》（微信公众号文章）
 - **操作**：将 K8s 1.35 新特性 EnvFiles 整合到现有文档 [[Docker-Kubernetes/k8s-basic-resources/k8s基础-configMap-Secret]]
 - **新增内容**：
   - K8s 1.35 `fileKeyRef` 机制：从 emptyDir 卷文件加载环境变量，主容器无需挂载
@@ -717,7 +717,7 @@ date: 2026-04-17
 
 ## [2026-04-23] ingest | FinOps 云成本优化实战
 
-- **来源**：[[0raw/老杨的压箱底的技能聊聊FinOps]]（微信公众号文章）
+- **来源**：《老杨的压箱底的技能聊聊FinOps》（微信公众号文章）
 - **操作**：创建 [[Aliyun/资源管理/FinOps-云成本优化实战]] 新文章
 - **新增内容**：
   - FinOps 方法论（量化→优化→固化）
@@ -748,7 +748,7 @@ date: 2026-04-17
 
 ## [2026-04-23] restructure + create | AI-视觉目录整合 + html-ppt-skill
 
-- **来源**：[[0raw/一句话生成PPT，已经能用了：html-ppt-skill实测指南]]（微信公众号文章）
+- **来源**：《一句话生成PPT，已经能用了：html-ppt-skill实测指南》（微信公众号文章）
 - **操作**：
   1. 创建 `AI/AI-视觉/` 目录，将 PPT/HTML 视觉生成类文章归集
   2. 移动 [[AI/AI-视觉/AI做PPT-ppt-master]] 和 [[AI/AI-视觉/AI-Animation-Skill-科普动画]] 至新目录
@@ -763,7 +763,7 @@ date: 2026-04-17
 
 ## [2026-04-23] create | AI-Animation-Skill HTML 科普动画生成
 
-- **来源**：[[0raw/扔掉PPT，用这44个HTML动画模板，让AI帮你做科普视频]]（微信公众号文章）
+- **来源**：《扔掉PPT，用这44个HTML动画模板，让AI帮你做科普视频》（微信公众号文章）
 - **操作**：创建 [[AI/AI-视觉/AI-Animation-Skill-科普动画]] 新文章
 - **新增内容**：
   - 项目简介：单 HTML 文件输出、零依赖、完全离线
@@ -777,7 +777,7 @@ date: 2026-04-17
 
 ## [2026-04-23] update | Skill 质量治理：7 类失效模式与 Skill Craft
 
-- **来源**：[[0raw/我做了一个 Claude Skill 质检工具：专门解决 Claude Skill 的不触发、乱触发、越用越跑偏]]（微信公众号文章）
+- **来源**：《我做了一个 Claude Skill 质检工具：专门解决 Claude Skill 的不触发、乱触发、越用越跑偏》（微信公众号文章）
 - **操作**：将 Skill 失效模式分析和 Skill Craft 工具整合到 [[AI/ClaudeCode/Claude Code 扩展体系]] 的 Skills 章节
 - **新增内容**：
   - 7 类系统性失效模式（约束衰减、工具漂移、输出膨胀、依赖链断裂、并行孤岛、触发模糊、幻觉填充）
@@ -790,7 +790,7 @@ date: 2026-04-17
 
 ## [2026-04-23] update | Obsidian 微信公众号发布插件
 
-- **来源**：[[0raw/告别公众号排版烦恼：Obsidian一键发布插件使用指南]]（微信公众号文章）
+- **来源**：《告别公众号排版烦恼：Obsidian一键发布插件使用指南》（微信公众号文章）
 - **操作**：将插件功能、安装配置、使用方法整合到 [[KnowledgeBase/entities/Obsidian]] 的"实用社区插件"章节
 - **新增内容**：
   - Wechat Public Platform 插件介绍（作者 ai-chen2050）
@@ -804,7 +804,7 @@ date: 2026-04-17
 
 ## [2026-04-22] update | Claude Code 并行开发：Git Worktree + 工作流编排 + Routines
 
-- **来源**：[[0raw/Claude Code 并行开发完全指南：Subagents + Agent Teams + Git Worktree + 工作流编排实战]]（微信公众号文章）
+- **来源**：《Claude Code 并行开发完全指南：Subagents + Agent Teams + Git Worktree + 工作流编排实战》（微信公众号文章）
 - **操作**：将 Git Worktree、工作流编排、Routines 三块新内容整合到 [[AI/ClaudeCode/多智能体协作-Subagents与Agent-Teams]]
 - **新增内容**：
   - 第三部分：Git Worktree 并行开发（命令、实战、与 Agent Teams 对比选型表）
@@ -825,7 +825,7 @@ date: 2026-04-17
 
 ## [2026-04-20] update | Claude Code 扩展体系 - Datadog MCP 配置
 
-- **来源**：[[0raw/Set Up the Datadog MCP Server 1]]（Datadog 官方文档）
+- **来源**：《Set Up the Datadog MCP Server 1》（Datadog 官方文档）
 - **操作**：在 [[AI/ClaudeCode/Claude Code 扩展体系]] MCP 章节新增 Datadog MCP Server 配置
 - **内容**：Claude Code 两种配置方式（远程 HTTP / 本地二进制）、权限要求、Toolset 按需加载机制、18 个 Toolset 完整列表（16 GA + 2 Preview）
 
@@ -833,7 +833,7 @@ date: 2026-04-17
 
 ## [2026-04-20] update | OpenClaw second-brain 知识管理插件
 
-- **来源**：[[0raw/Openclaw帮你管理个人知识库]]（微信公众号文章）
+- **来源**：《Openclaw帮你管理个人知识库》（微信公众号文章）
 - **操作**：将 second-brain 插件内容整合到 [[OpenClaw-Skills-Plugins]] 的"记忆插件"章节前，新增"个人知识库 - second-brain"章节
 - **改动**：安装配置命令、6 种使用场景表格、核心能力总结、与记忆插件的区别说明
 - **实体更新**：[[KnowledgeBase/entities/OpenClaw]] Skills 插件生态新增 second-brain 条目
@@ -850,7 +850,7 @@ date: 2026-04-17
 
 ## [2026-04-20] create | AI做PPT - ppt-master
 
-- **来源**：[[0raw/这才是AI做ppt的正确姿势 ！]]（微信公众号文章）+ [hugohe3/ppt-master](https://github.com/hugohe3/ppt-master) 仓库
+- **来源**：《这才是AI做ppt的正确姿势 ！》（微信公众号文章）+ [hugohe3/ppt-master](https://github.com/hugohe3/ppt-master) 仓库
 - **操作**：在 AI 目录下新建 [[AI/AI-视觉/AI做PPT-ppt-master]] 文章
 - **内容**：ppt-master 项目简介、核心特性（多格式/多风格/CRAP 设计原则）、AI 角色系统（Strategist→Executor→Optimizer 管道）、7 步使用流程、技术栈
 
@@ -858,7 +858,7 @@ date: 2026-04-17
 
 ## [2026-04-18] update | Containerd V2 私有仓库配置整合
 
-- **来源**：[[0raw/V2 版 Containerd 配置私有仓库和镜像加速]]（微信公众号文章）
+- **来源**：《V2 版 Containerd 配置私有仓库和镜像加速》（微信公众号文章）
 - **操作**：将 V2 版 containerd 私有仓库配置内容整合到 [[Docker-Kubernetes/k8s-installation-management/latest-version/安装k8s-1.35-基于rockylinux10-最新步骤]] 的 containerd 配置章节
 - **改动**：
   - 新增 `config_path` 与 `mirrors` 互斥警告 callout，含 V1/V2 插件路径差异说明
@@ -877,7 +877,7 @@ date: 2026-04-17
 
 ## [2026-04-18] ingest | Istio Sidecar vs Ambient 模式对比
 
-- **来源**：[[0raw/Istio Sidecar vs Ambient：不是"谁先进"，而是"谁更省、谁更稳、谁更适合你现在"]]（微信公众号文章）
+- **来源**：《Istio Sidecar vs Ambient：不是"谁先进"，而是"谁更省、谁更稳、谁更适合你现在"》（微信公众号文章）
 - **操作**：简化整理为 [[Docker-Kubernetes/k8s-networking-service-mesh/Istio-Sidecar-vs-Ambient]]
 - **知识库更新**：
   - `entities/Istio.md` — 新增 Sidecar vs Ambient 模块 + sources 引用 + 相关文章链接
@@ -887,7 +887,7 @@ date: 2026-04-17
 
 ## [2026-04-18] create | OpenClaw Workspace 运维实战文章
 
-- **来源**：[[0raw/牛逼干货分享！OpenClaw Workspace 运维实战手册]]（微信公众号文章，1500+ 行）
+- **来源**：《牛逼干货分享！OpenClaw Workspace 运维实战手册》（微信公众号文章，1500+ 行）
 - **操作**：简化整理为 [[AI/OpenClaw/OpenClaw-Workspace-运维]]（约 400 行），保留核心运维知识，去除冗余示例和重复内容
 - **核心内容**：
   - 配置与内容文件体系分离架构
@@ -930,7 +930,7 @@ date: 2026-04-17
 
 ## [2026-04-18] update | Claude Code Skills 新增 excalidraw-diagram-generator
 
-- **来源**：[[0raw/用这个 Skill，直接一句话生成手绘架构图，省时省力～]]（微信公众号文章，菜鸟教程）
+- **来源**：《用这个 Skill，直接一句话生成手绘架构图，省时省力～》（微信公众号文章，菜鸟教程）
 - **操作**：整理简化后添加到 [[AI/ClaudeCode/Claude Code 扩展体系]] 的"各种 Skill 推荐"部分
 - **知识库更新**：`entities/Claude-Code.md` 覆盖描述更新
 
@@ -1000,7 +1000,7 @@ date: 2026-04-17
 
 ## [2026-04-17] ingest | K8s 全面巡检脚本
 
-- **来源**：`0raw/K8s 全面巡检脚本：一键生成炫酷 HTML 健康报告.md`（微信公众号文章剪藏）
+- **来源**：《K8s 全面巡检脚本：一键生成炫酷 HTML 健康报告》（微信公众号文章剪藏）
 - **操作**：清理网页扒取的混乱格式（转义字符、断行、HTML 残留），整理为标准 Markdown + 干净代码块
 - **新建文件**：`Docker-Kubernetes/k8s-monitoring-logging/K8s全面巡检脚本-生成HTML健康报告.md`
   - 7 大巡检模块的完整 Shell 脚本（节点/Pod/资源/证书/网络/组件/事件）
@@ -1015,7 +1015,7 @@ date: 2026-04-17
 
 ## [2026-04-17] update | 开源 Plugin 推荐（andrej-karpathy-skills）
 
-- **来源**：`0raw/2.3K 小文件拿到 4 万星，它让你的 Claude Code 乖乖听话.md` + GitHub 仓库 forrestchang/andrej-karpathy-skills
+- **来源**：《2.3K 小文件拿到 4 万星，它让你的 Claude Code 乖乖听话》 + GitHub 仓库 forrestchang/andrej-karpathy-skills
 - **操作**：在 `AI/ClaudeCode/Claude Code 扩展体系.md` Plugin 章节新增"开源 Plugin 推荐"
   - andrej-karpathy-skills（⭐46.5K）：4 条行为准则、3 种安装方式、效果判断标准
   - wshobson/agents：交叉引用到多智能体协作文档
@@ -1248,7 +1248,7 @@ date: 2026-04-17
 - 创建 `analysis/multi-agent-vs-single-agent.md` 分析页
 - 核心论点：多Agent在现阶段很多时候是伪需求，提出信息隔离与并发需求两个决策维度
 - 内容涵盖：决策框架表格、信息损失分析、模型注意力论证、多Agent身份切换的真正价值
-- 关联页面：[[KnowledgeBase/sources/多智能体协作-summary]]、[[KnowledgeBase/entities/Claude-Code]]
+- 关联页面：`KnowledgeBase/sources/多智能体协作-summary.md`、[[KnowledgeBase/entities/Claude-Code]]
 - 更新 INDEX.md 分析报告分类，新增第 4 条条目
 
 
@@ -1260,7 +1260,7 @@ date: 2026-04-17
 - **1 个命名不一致**：`Docker Compose`（空格）→ 实际文件名 `Docker-Compose`（连字符）
 - **9 个路径错误**：链接指向 `KnowledgeBase/entities/X` 但实际文件在 Raw Source 目录（ECS、VPC、WAF、Fiddler、Landing Zone、OpenStack、RabbitMQ、RocketMQ、VSCode）
 - **217 个缺失 KB 页面**：被引用但从未创建的概念/实体页（66 个概念 + 151 个实体），高频缺失：StorageClass(4次)、ServiceMesh(3次)、高可用架构(3次)
-- **19 个死链**：`log.md` 中引用的 `0raw/` 路径，文件已移动或删除
+- **19 个死链**：`log.md` 中引用的原始剪藏路径，文件已移动或删除
 
 ### 2. 孤儿页检查（无入链页面）
 - 总计 83 个 wiki 页面，25 个孤儿页（30%）
@@ -1356,7 +1356,7 @@ date: 2026-04-17
 
 ## [2026-06-05] ingest | 飞书 CLI 画板生成能力
 
-- 清洗并简化原始文章 `0raw/别画了！用飞书 CLI 真能一句话生成架构图.md`，去除营销内容，保留技术要点
+- 清洗并简化原始文章《别画了！用飞书 CLI 真能一句话生成架构图》，去除营销内容，保留技术要点
 - 清洗后文章存入 `AI/OpenClaw/飞书CLI画板-一句话生成架构图.md`
 - 创建来源摘要页 `KnowledgeBase/sources/feishu-cli-whiteboard-summary.md`
 - 更新实体页 `KnowledgeBase/entities/OpenClaw.md`：添加相关文章链接 + Skills 插件生态新增 feishu-whiteboard-themes
@@ -1364,7 +1364,7 @@ date: 2026-04-17
 
 ## [2026-06-05] ingest | Docker 安全配置与 Capabilities 加固
 
-- 清洗原始文章 `0raw/Docker 安全配置详解：RockyLinux 9.7 开发容器.md`，去除营销内容
+- 清洗原始文章《Docker 安全配置详解：RockyLinux 9.7 开发容器》，去除营销内容
 - 清洗后文章存入 `Docker-Kubernetes/docker/docker安全配置-Capabilities与容器加固.md`
 - 创建来源摘要页 `KnowledgeBase/sources/docker-security-capabilities-summary.md`
 - 更新实体页 `KnowledgeBase/entities/Docker.md`：新增"安全加固"小节（7 项措施）、添加 sources 引用、标记知识空白部分已覆盖
@@ -1373,7 +1373,7 @@ date: 2026-04-17
 
 ## [2026-06-05] ingest | K8s 备份与灾备实战
 
-- 清洗原始文章 `0raw/K8s 集群的"后悔药"...备份与灾备实战全指南.md`，去除营销内容，保留完整技术要点（三层模型/etcd 实战/Velero 操作/六大避坑/告警规则）
+- 清洗原始文章《K8s 集群的"后悔药"...备份与灾备实战全指南》，去除营销内容，保留完整技术要点（三层模型/etcd 实战/Velero 操作/六大避坑/告警规则）
 - 清洗后文章存入 `Docker-Kubernetes/k8s-backup-dr/k8s备份与灾备实战-三层容灾架构.md`
 - 创建来源摘要页 `KnowledgeBase/sources/k8s-backup-dr-summary.md`
 - 更新实体页 `KnowledgeBase/entities/Kubernetes.md`：新增"备份与灾备"小节、添加 sources 引用
@@ -1382,7 +1382,7 @@ date: 2026-04-17
 
 ## [2026-06-06] ingest | K8s PodDisruptionBudget 实战
 
-- 清洗原始文章 `0raw/K8s PodDisruptionBudget 实战：优雅滚动更新背后的守护神.md`，去除营销内容
+- 清洗原始文章《K8s PodDisruptionBudget 实战：优雅滚动更新背后的守护神》，去除营销内容
 - 清洗后文章存入 `Docker-Kubernetes/k8s-basic-resources/k8s-PodDisruptionBudget实战.md`
 - 创建来源摘要页 `KnowledgeBase/sources/k8s-pdb-summary.md`
 - 更新实体页 `KnowledgeBase/entities/Kubernetes.md`：声明式资源模型小节新增 PDB 条目、添加 sources 引用
@@ -1390,7 +1390,7 @@ date: 2026-04-17
 
 ## [2026-06-06] ingest | VPA 实战补充（合并摄入）
 
-- 分析原始文章 `0raw/Kubernetes VPA深度解析...完整实战.md` 与已有 `Docker-Kubernetes/k8s-scaling/helm部署vpa.md` 的重复度（~50%），决定合并而非独立摄入
+- 分析原始文章《Kubernetes VPA深度解析...完整实战》与已有 `Docker-Kubernetes/k8s-scaling/helm部署vpa.md` 的重复度（~50%），决定合并而非独立摄入
 - 提取 4 个独特增量追加到 `Docker-Kubernetes/k8s-scaling/helm部署vpa.md`：
   1. MySQL StatefulSet 实战案例（Off→Initial 渐进式 + 资源节省量化）
   2. 三个避坑点（OOMKill 恶性循环、JVM 应用推荐偏差、Prometheus 数据空洞）
@@ -1400,7 +1400,7 @@ date: 2026-04-17
 
 ## [2026-06-06] ingest | K8s 发布策略（蓝绿部署与金丝雀发布）
 
-- 清洗原始文章 `0raw/蓝绿部署还是金丝雀发布...K8s生产发布再也不翻车.md`，去除营销内容
+- 清洗原始文章《蓝绿部署还是金丝雀发布...K8s生产发布再也不翻车》，去除营销内容
 - 清洗后文章存入 `Docker-Kubernetes/k8s-CICD/k8s发布策略-蓝绿部署与金丝雀发布.md`
 - 创建来源摘要页 `KnowledgeBase/sources/k8s-release-strategy-summary.md`
 - 更新概念页 `KnowledgeBase/concepts/CICD.md`：相关文章新增条目、标记"蓝绿/金丝雀"可延展方向已部分覆盖
@@ -1409,7 +1409,7 @@ date: 2026-04-17
 
 ## [2026-06-06] restructure | Prometheus-Stack 全家桶文章整合
 
-- 将新文章 `0raw/Prometheus + AlertManager + kube-prometheus 生产级部署完全指南.md`（131KB）与已有 `Docker-Kubernetes/k8s-monitoring-logging/helm部署prometheus-stack全家桶.md`（52KB）合并
+- 将新文章《Prometheus + AlertManager + kube-prometheus 生产级部署完全指南》（131KB）与已有 `Docker-Kubernetes/k8s-monitoring-logging/helm部署prometheus-stack全家桶.md`（52KB）合并
 - 重新设计章节结构为十章 + 附录：
   - 一~七（原有内容重新编号）：概述 → 部署 → Grafana 管理 → CRD 资源 → Target Down 排查 → 告警规则 → AlertManager 配置
   - 八（新增）：参数优化与性能调优（资源规划/TSDB/抓取/AlertManager/Grafana/PromQL/存储/网络 六维度）
@@ -1428,13 +1428,13 @@ date: 2026-04-17
 
 ## [2026-06-06] ingest | Script-Server 脚本 Web 化工具
 
-- 清洗原始文章 `0raw/Script-Server...` 并存入 `Python/script-server-脚本Web化工具.md`
+- 清洗原始文章《Script-Server...》并存入 `Python/script-server-脚本Web化工具.md`
 - 创建来源摘要页 `KnowledgeBase/sources/script-server-summary.md`
 - 更新 `KnowledgeBase/index.md`：Python 分区新增条目
 
 ## [2026-06-06] update | Claude Code Skills 工程化内容整合
 
-- 将 `0raw/滴滴面试官逗乐了...SKILL.md...5K token.md` 的核心内容简化后整合进 `AI/ClaudeCode/Claude Code 扩展体系.md` 的 Skills 章节
+- 将《滴滴面试官逗乐了...SKILL.md...5K token》的核心内容简化后整合进 `AI/ClaudeCode/Claude Code 扩展体系.md` 的 Skills 章节
 - 扩展"渐进式披露机制"子章节，新增内容：
   1. 官方三层加载机制表（Level 1/2/3 的 token 成本与加载时机）
   2. 官方硬限制（name 64 字符 / description 1024 字符 / SKILL.md < 5K token）
@@ -1447,7 +1447,7 @@ date: 2026-04-17
 
 ## [2026-06-07] ingest | CLAUDE.md 维护工程
 
-- 清洗原始文章 `0raw/腾讯面试官...CLAUDE.md...init...` 并存入 `AI/ClaudeCode/CLAUDE.md维护工程-四层加载与指令预算.md`
+- 清洗原始文章《腾讯面试官...CLAUDE.md...init...》并存入 `AI/ClaudeCode/CLAUDE.md维护工程-四层加载与指令预算.md`
 - 创建来源摘要页 `KnowledgeBase/sources/claude-md-maintenance-summary.md`
 - 更新 `KnowledgeBase/index.md`：AI/ClaudeCode 分区新增条目
 - 与已有文章的关系：`12条规则模板.md`（具体规则）和 `21条指令清单.md`（拿来即用指令）侧重内容，本文侧重维护方法论和架构设计，三者互补
@@ -1466,35 +1466,35 @@ date: 2026-04-17
 
 ## [2026-06-07] ingest | Graphify 软件工程知识图谱工具
 
-- 清洗原始文章 `0raw/开源 AI 编程可查询的软件工程知识图谱：Graphify 完整上手攻略.md`
+- 清洗原始文章《开源 AI 编程可查询的软件工程知识图谱：Graphify 完整上手攻略》
 - 清洗后文章存入 `AI/Graphify-软件工程知识图谱工具.md`
 - 创建来源摘要页 `KnowledgeBase/sources/graphify-summary.md`
 - 更新 `KnowledgeBase/index.md`：新增 AI/工具分区
 
 ## [2026-06-07] ingest | Kubernetes MCP Server + Dify 智能运维
 
-- 清洗原始文章 `0raw/AI 接管 Kubernetes 运维——Kubernetes MCP Server.md`
+- 清洗原始文章《AI 接管 Kubernetes 运维——Kubernetes MCP Server》
 - 清洗后文章存入 `AI/Kubernetes-MCP-Server-Dify智能运维.md`，保留完整背景说明、四大核心特点详述、四大使用场景、架构图、部署命令（含参数说明）、MCP 连接配置、Agent 完整提示词模板
 - 创建来源摘要页 `KnowledgeBase/sources/k8s-mcp-server-dify-summary.md`
 - 更新 `KnowledgeBase/index.md`：AI/工具分区新增条目
 
 ## [2026-06-07] ingest | AIOps 实战：Golang K8s 智能运维工具链
 
-- 清洗原始文章 `0raw/AIOps实战：手搓K8s智能运维工具链.md`
+- 清洗原始文章《AIOps实战：手搓K8s智能运维工具链》
 - 清洗后文章存入 `AI/AIOps/AIOps实战-Golang手搓K8s智能运维工具链.md`，保留完整背景说明、三层架构图、Go 源码（client-go 三客户端/OpenAI 适配层）、Function Calling 工作流四步骤、DeepRui 诊断流程四步、传统脚本 vs DeepRui 对比表、技术栈参考资料
 - 创建来源摘要页 `KnowledgeBase/sources/aiops-golang-k8s-toolchain-summary.md`
 - 更新 `KnowledgeBase/index.md`：AI/工具分区新增条目
 
 ## [2026-06-07] ingest | OpenRAG 生产级知识库架构实战
 
-- 清洗原始文章 `0raw/OpenRAG 生产级知识库架构实战...企业级 RAG 平台.md`（66KB），去除营销尾部，保留全部 21 章技术内容（42KB）
+- 清洗原始文章《OpenRAG 生产级知识库架构实战...企业级 RAG 平台》（66KB），去除营销尾部，保留全部 21 章技术内容（42KB）
 - 清洗后文章存入 `AI/RAG/OpenRAG生产级知识库架构实战.md`，完整保留：四面分离架构图、文档导入链路设计（含状态机+Worker 职责拆分）、Chunk 元数据模型、OpenSearch Mapping 示例、混合检索代码骨架、Reranker 实现骨架、权限模型（ACL 字段+检索前过滤+生成前复核）、问答服务骨架、K8s 部署拆分 YAML、缓存分层示例、SLI/SLO 指标、演进路线三阶段、真实案例、Agentic RAG 策略、MCP 接入、排坑清单、上线前 Checklist
 - 创建来源摘要页 `KnowledgeBase/sources/openrag-production-summary.md`
 - 更新 `KnowledgeBase/index.md`：AI/RAG-Agent 分区新增条目
 
 ## [2026-06-08] ingest | CodeGraph 代码语义知识图谱
 
-- 清洗原始文章 `0raw/CodeGraph：给 Claude Code 先画一张代码地图...` 并存入 `AI/ClaudeCode/CodeGraph-代码语义知识图谱.md`
+- 清洗原始文章《CodeGraph：给 Claude Code 先画一张代码地图...》并存入 `AI/ClaudeCode/CodeGraph-代码语义知识图谱.md`
 - 保留完整内容：问题背景、效果数据（VS Code 实测对比）、核心能力（影响分析/19 种语言/框架路由/本地数据/自动同步）、安装命令、适用场景分析、与 Graphify 的对比表
 - 创建来源摘要页 `KnowledgeBase/sources/codegraph-summary.md`
 - 更新 `KnowledgeBase/index.md`：AI/ClaudeCode 分区新增条目
@@ -1555,7 +1555,7 @@ date: 2026-04-17
 
 ## [2026-06-28] ingest | Git Worktree AI 开发实践指南
 
-- 清洗 `0raw/Vibe Coding时代的Git Worktree实践指南.md`（去除微信营销噪音），存入 `AI/ClaudeCode/Git-Worktree-AI开发实践指南.md`
+- 清洗《Vibe Coding时代的Git Worktree实践指南》（去除微信营销噪音），存入 `AI/ClaudeCode/Git-Worktree-AI开发实践指南.md`
 - 保留完整内容：问题分析（AI 上下文丢失）、Worktree 原理、核心原则（一个 AI 会话 = 一个 Worktree）、两个典型场景（紧急修复/多方案并行）、5 个实践踩坑
 - 创建来源摘要页 `KnowledgeBase/sources/git-worktree-ai-dev-summary.md`
 - 更新 `KnowledgeBase/entities/Claude-Code.md`：新增 sources 引用 + 覆盖条目
@@ -1564,7 +1564,7 @@ date: 2026-04-17
 
 ## [2026-06-28] ingest | K8s 标签与选择器实战
 
-- 清洗 `0raw/【K8s资源管理】Kubernetes 标签与选择器避坑...` 并存入 `Docker-Kubernetes/k8s-basic-resources/k8s基础-pod调度-标签与选择器实战.md`
+- 清洗《【K8s资源管理】Kubernetes 标签与选择器避坑...》并存入 `Docker-Kubernetes/k8s-basic-resources/k8s基础-pod调度-标签与选择器实战.md`
 - 保留完整内容：Labels vs Annotations 区分、`app.kubernetes.io/*` 六件套命名规范、两种选择器用法、5 条 SRE 铁律（含 Deployment selector 不可变、版本标签陷阱、成本归因）、4 个翻车案例（含 kubectl v1.33.0 Null 值修复）
 - 创建来源摘要页 `KnowledgeBase/sources/k8s-labels-selectors-summary.md`
 - 更新 `KnowledgeBase/index.md`：K8s 基础资源分区新增条目
@@ -1573,7 +1573,7 @@ date: 2026-04-17
 
 ## [2026-06-28] ingest | K8s 容器设计模式（四篇合并）
 
-- 清洗并合并 `0raw/` 中四篇容器设计模式文章（Sidecar / Init Container / Ambassador / Adapter）
+- 清洗并合并四篇容器设计模式剪藏文章（Sidecar / Init Container / Ambassador / Adapter）
 - 存入 `Docker-Kubernetes/k8s-basic-resources/k8s基础-容器设计模式-Sidecar-Init-Ambassador-Adapter.md`
 - 保留完整内容：四种模式的核心理念、应用场景、完整 YAML 配置示例、四模式对比表、选型指南
 - 新增整合内容：四种模式对比表（运行时机/生命周期/职责/数据流/典型代表）
@@ -1583,7 +1583,7 @@ date: 2026-04-17
 
 ## [2026-06-28] update | Claude Code 扩展体系 - Slash Commands 章节增强
 
-- 从 `0raw/技术Leader惊了...Claude Code 用得6吗` 文章中提取 Slash Commands 实用内容
+- 从《技术Leader惊了...Claude Code 用得6吗》文章中提取 Slash Commands 实用内容
 - 集成到 `AI/ClaudeCode/Claude Code 扩展体系.md` 的「三、Slash Commands」章节
 - 新增内容：/powerup 入门引导、内置命令速查（5 大类 17 个命令）、快捷键表（8 个）、三个隐藏关键词（ultrathink/ultracode/ultraplan）、推荐资源（2 个网站）、日常高频五件套
 - 原有自定义命令内容保留并重命名为「自定义斜杠命令」子节
@@ -1592,7 +1592,7 @@ date: 2026-04-17
 
 ## [2026-06-28] ingest | OpenAI Codex config.toml 全量配置参考
 
-- 清洗 `0raw/OpenAI Codex 可视化配置生成器.md` 并存入 `AI/Codex/Codex-config-toml-全量配置参考.md`
+- 清洗《OpenAI Codex 可视化配置生成器》并存入 `AI/Codex/Codex-config-toml-全量配置参考.md`
 - 保留完整内容：21 个配置分组（基础配置、模型与提供方、审批与沙箱、网络代理、TUI、环境策略、权限 Profiles、MCP Servers、Hooks、Agents、Memories、Apps、Tools、Skills、Plugins、OTel、指令与文档、认证、状态杂项）
 - 整理为结构化表格格式，方便速查
 - 未创建独立来源摘要页（Codex 领域尚未系统性摄入，待积累更多文档后批量处理）
@@ -1600,14 +1600,14 @@ date: 2026-04-17
 
 ## [2026-06-28] ingest | Markdown Viewer Skills AI 文档配图
 
-- 清洗 `0raw/Markdown Viewer：让 AI 写文档时，顺手把图也画了.md` 并存入 `AI/AI-视觉/Markdown-Viewer-Skills-AI文档配图.md`
+- 清洗《Markdown Viewer：让 AI 写文档时，顺手把图也画了》并存入 `AI/AI-视觉/Markdown-Viewer-Skills-AI文档配图.md`
 - 保留完整内容：问题定义（文档配图痛点）、5 类技能（UML/云架构/网络拓扑/数据分析/infocard）、6 种渲染引擎、关键设计点（图是代码块/文档改图也改）、定位与局限分析
 - 未创建独立来源摘要页（AI-视觉领域尚未系统性摄入，待积累后批量处理）
 
 
 ## [2026-06-28] ingest | Kubernetes Gateway API 入门
 
-- 清洗 `0raw/Kubernetes Gateway API 入门： Ingress 的下一代方案.md` 并存入 `Docker-Kubernetes/k8s-networking-service-mesh/k8s-Gateway-API入门-Ingress下一代方案.md`
+- 清洗《Kubernetes Gateway API 入门： Ingress 的下一代方案》并存入 `Docker-Kubernetes/k8s-networking-service-mesh/k8s-Gateway-API入门-Ingress下一代方案.md`
 - 保留完整内容：Ingress 三大局限（annotation 绑定/职责混合/跨 namespace 困难）、Gateway API 核心资源模型（GatewayClass/Gateway/HTTPRoute）、hostname 分层控制、parentRefs/sectionName 绑定机制、完整请求链路、Ingress vs Gateway API 对比表
 - 新增整合：Ingress vs Gateway API 对比表（原文无）
 - 未创建独立来源摘要页（待积累后与 k8s-networking 批量摘要合并更新）
@@ -1615,21 +1615,21 @@ date: 2026-04-17
 
 ## [2026-06-28] ingest | effective-html AI 直出 HTML 工具实测
 
-- 清洗 `0raw/AI别再输出Markdown了，让它直接吐HTML — effective-html 工具实测.md` 并存入 `AI/AI-视觉/effective-html-AI直出HTML工具实测.md`
+- 清洗《AI别再输出Markdown了，让它直接吐HTML — effective-html 工具实测》并存入 `AI/AI-视觉/effective-html-AI直出HTML工具实测.md`
 - 保留完整内容：问题定义（Markdown 无法承载视觉交付）、三个 Skill（html 通用/html-diagram 架构图/html-plan 计划文档）、html-effectiveness 设计范本库（20 个模板）、HTML vs Markdown 各自优势对比
 - 新增整合：与同类工具（Markdown Viewer Skills / html-anything / Mermaid）的定位对比表（原文无）
 
 
 ## [2026-06-28] ingest | K8s Backstage 内部开发者平台 IDP 实战
 
-- 清洗 `0raw/YAML 写到吐？2026 年最火的 K8s 平台工程实战：用 Backstage 打造一站式内部开发者平台.md` 并存入 `Docker-Kubernetes/k8s-installation-management/k8s-Backstage-内部开发者平台IDP实战.md`
+- 清洗《YAML 写到吐？2026 年最火的 K8s 平台工程实战：用 Backstage 打造一站式内部开发者平台》并存入 `Docker-Kubernetes/k8s-installation-management/k8s-Backstage-内部开发者平台IDP实战.md`
 - 保留完整内容：平台工程理念（DevOps→IDP）、Backstage 架构（Frontend+Backend+PostgreSQL）、生产部署实战（PostgreSQL StatefulSet + app-config.yaml + Deployment + RBAC）、Software Catalog 实体定义、Software Templates 一键创建服务、TechDocs 代码即文档、8 个插件推荐、5 大生产注意事项、竞品对比表（Backstage vs Port vs Cortex vs OpsLevel）
 - 未创建独立来源摘要页（待积累后与 k8s-installation-management 批量摘要合并更新）
 
 
 ## [2026-06-28] ingest | K8s Operator 开发实战 Kubebuilder
 
-- 清洗 `0raw/通过例子介绍如何从零开发 Kubernetes Operator.md` 并存入 `Docker-Kubernetes/k8s-basic-resources/k8s基础-Operator开发实战-Kubebuilder.md`
+- 清洗《通过例子介绍如何从零开发 Kubernetes Operator》并存入 `Docker-Kubernetes/k8s-basic-resources/k8s基础-Operator开发实战-Kubebuilder.md`
 - 保留完整内容：Operator 组成（CRD + Controller + Manager）、Kubebuilder 环境搭建、完整 Go 代码（FooSpec/FooStatus CRD 定义 + Reconcile 控制循环 + Pod 事件映射）、运行与测试流程、进阶方向
 - 新增整合：Operator 开发工具对比表（Kubebuilder/OperatorSDK/controller-runtime/Metacontroller，原文无）
 - 与现有知识网络关联：概念页 Operator模式、CRD，原始文档 k8s基础-自定义CRD资源
@@ -1637,28 +1637,28 @@ date: 2026-04-17
 
 ## [2026-06-28] ingest | Admission Webhook 链冲突排查
 
-- 清洗 `0raw/当 Istio、Kyverno、Gatekeeper 三个 Webhook 同时存在，你的集群会发生什么？.md` 并存入 `Docker-Kubernetes/k8s-security-auth/k8s-Admission-Webhook链冲突排查-Istio-Kyverno-Gatekeeper.md`
+- 清洗《当 Istio、Kyverno、Gatekeeper 三个 Webhook 同时存在，你的集群会发生什么？》并存入 `Docker-Kubernetes/k8s-security-auth/k8s-Admission-Webhook链冲突排查-Istio-Kyverno-Gatekeeper.md`
 - 保留完整内容：Admission 链执行顺序（Mutating→Validating）、三组件各自修改范围、3 个生产坑（JSON Patch 路径脆/annotations 整体覆盖/Gatekeeper 拒绝最终对象）、排查三步法（列 Webhook→审计日志→隔离复现）、reinvocationPolicy/failurePolicy 分级策略、6 条编排规范、10 步排查清单
 - 与现有知识关联：Kyverno（同目录）、Istio（networking 目录）、Gatekeeper/OPA（策略引擎）
 
 
 ## [2026-06-28] ingest | Loop Engineering 从 Prompt 到自动化流水线
 
-- 清洗 `0raw/Prompt该退环境了，未来属于Loop Engineering。.md` 并存入 `AI/行业动态/Loop-Engineering-从Prompt到自动化流水线.md`
+- 清洗《Prompt该退环境了，未来属于Loop Engineering。》并存入 `AI/行业动态/Loop-Engineering-从Prompt到自动化流水线.md`
 - 保留完整内容：四次跃迁对比（Prompt→Context→Harness→Loop，各自核心能力与底层学科）、Loop 五组件（定时任务/Worktree/知识体系/MCP/子Agent）、/goal 命令产品化、目标定义灵魂论（管理学视角）、古德哈特定律陷阱（Agent 删测试案例）、四条目标定义框架
 - 与现有知识关联：Harness Engineering、Claude Code /goal /loop 命令、Boris Cherny 行业判断
 
 
 ## [2026-06-28] update | K8s 存储文档整合 PVC 扩容/缩容
 
-- 将 `0raw/【Kubernetes 存储扩容避坑指南】PVPVCStorageClass 在线扩容+缩容真相.md` 整合到 `Docker-Kubernetes/k8s-basic-resources/k8s基础-storage.md` 末尾
+- 将《【Kubernetes 存储扩容避坑指南】PVPVCStorageClass 在线扩容+缩容真相》整合到 `Docker-Kubernetes/k8s-basic-resources/k8s基础-storage.md` 末尾
 - 新增章节「PVC 在线扩容与缩容」，保留完整内容：扩容前三件必查、两种扩容方式（patch/edit）、扩容后验证流程（后端→文件系统两阶段）、缩容不支持的核心限制、v1.34 扩容失败恢复机制、6 条生产环境建议、存储类选型表、常见问题速查表
 - 未创建独立来源文件（内容直接整合到现有文档中）
 
 
 ## [2026-06-28] ingest | Understand-Anything 代码知识图谱可视化
 
-- 清洗 `0raw/55.5k Star！AI代码知识图谱神器开源，让Claude Code一次看懂全仓库.md` 并存入 `AI/代码知识图谱/Understand-Anything-代码知识图谱可视化.md`
+- 清洗《55.5k Star！AI代码知识图谱神器开源，让Claude Code一次看懂全仓库》并存入 `AI/代码知识图谱/Understand-Anything-代码知识图谱可视化.md`
 - 保留完整内容：问题定义（AI 读不下整仓/传统可视化无语义）、三层架构（Tree-sitter AST→多智能体图谱构建→交互可视化）、安装方式（Claude Code/Cursor/VS Code/Codex）、团队共享图谱（JSON Git 同步 + git-lfs）
 - 新增整合：与 CodeGraph、Graphify 的三工具对比表（原文无）
 - 放入 AI/代码知识图谱/ 目录，与 CodeGraph、Graphify、code-review-graph 形成完整的代码知识图谱工具群
@@ -1666,59 +1666,59 @@ date: 2026-04-17
 
 ## [2026-06-28] ingest | ArgoCD 多集群 GitOps 实战
 
-- 清洗 `0raw/多集群 GitOps 实践：如何用 Argo CD 管理上百个 Kubernetes 集群.md` 并存入 `Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD多集群GitOps实战-ApplicationSet.md`
+- 清洗《多集群 GitOps 实践：如何用 Argo CD 管理上百个 Kubernetes 集群》并存入 `Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD多集群GitOps实战-ApplicationSet.md`
 - 保留完整内容：三层目录模型（应用模板/环境覆盖/集群元数据）、ApplicationSet Generator 选型（Cluster/List/Git/Matrix）、Push vs Pull vs 区域级折中架构（含选型表）、Project 权限隔离（多租户最佳实践）、环境差异分层覆盖（values 拼接模板）、大规模发布节奏控制（6 种手段 + Progressive Sync）、100 集群平台落地架构
 - 与现有知识关联：ArgoCD 实体页、联邦集群概念页、CICD 概念页
 
 
 ## [2026-06-28] update | ArgoCD 多集群实战整合生产加固 7 步法
 
-- 将 `0raw/告别 GitOps 翻车！7 招让 ArgoCD 稳如老狗.md` 整合到 `Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD多集群GitOps实战-ApplicationSet.md` 末尾
+- 将《告别 GitOps 翻车！7 招让 ArgoCD 稳如老狗》整合到 `Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD多集群GitOps实战-ApplicationSet.md` 末尾
 - 新增章节「附：生产环境 7 步加固法」：资源限制（含实测数据）、工具选型（Helm vs Kustomize）、源代码与清单库分离（权责+安全）、多实例隔离（Red Hat 推荐）、声明式配置漂移陷阱（All-in Git + argocd app diff + Prometheus 监控）、AppProject 细粒度 RBAC、按需调整不盲套模板
 - 更新 frontmatter source 为双来源数组
 
 
 ## [2026-06-28] ingest | TypeScript vs Python AI Agent 时代的语言分层
 
-- 清洗 `0raw/为什么 AI Agent 时代，TypeScript 正在抢走 Python 的主场？.md` 并存入 `AI/行业动态/TypeScript-vs-Python-AI-Agent时代的语言之争.md`
+- 清洗《为什么 AI Agent 时代，TypeScript 正在抢走 Python 的主场？》并存入 `AI/行业动态/TypeScript-vs-Python-AI-Agent时代的语言之争.md`
 - 保留完整内容：GitHub/npm/YC 三组数据信号、AI 技术栈两层分工（模型层 Python vs 应用层 TypeScript）、TypeScript 五个结构性优势（类型安全/框架生态/全栈同构/异步原生/边缘部署）、Python 四个不可替代领域、2026 年四大趋势（产品下半场/Agent SDK 标准/全栈工程师岗位/中国公司跟进）
 
 
 ## [2026-06-28] ingest | KEDA vs HPA 2026 终极对比
 
-- 清洗 `0raw/KEDA vs HPA 2026终极对比：v1.36原生缩零后该选谁？.md` 并存入 `Docker-Kubernetes/k8s-scaling/KEDA-vs-HPA-2026终极对比-v1.36缩零.md`
+- 清洗《KEDA vs HPA 2026终极对比：v1.36原生缩零后该选谁？》并存入 `Docker-Kubernetes/k8s-scaling/KEDA-vs-HPA-2026终极对比-v1.36缩零.md`
 - 保留完整内容：HPA 三种指标类型与三大硬伤、KEDA 架构（Scaler→HPA 代理模式）与 60+ 内置 Scaler 表、v1.36 HPA Scale-to-Zero（Beta 默认启用）+ External Metrics Fallback、全方位对比矩阵（10 维度）、五场景选型决策树、五大生产避坑（冷启动/认证/冻结/冲突/CRD 兼容）、Prometheus 告警规则
 - 与现有知识关联：k8s-HPA-VPA、k8s-基于KEDA的弹性能力、k8s成本优化方案-FinOps实战
 
 
 ## [2026-06-28] update | Kafka 生产避坑整合到 strimzi-kafka 文档
 
-- 将 `0raw/一个副本没同步引发的"血案"：别再迷信云厂商的默认配置！.md` 整合到 `Docker-Kubernetes/k8s-db-middleware/helm部署strimzi-kafka.md` 末尾
+- 将《一个副本没同步引发的"血案"：别再迷信云厂商的默认配置！》整合到 `Docker-Kubernetes/k8s-db-middleware/helm部署strimzi-kafka.md` 末尾
 - 新增章节「Kafka 生产避坑：副本同步与云厂商默认配置陷阱」：事故复盘（min.insync.replicas=1 导致数据空洞）、副本同步核心参数详解、生产环境标准配置（Broker/Topic/Producer/监控告警）、通用原则（5 组件坑人默认配置表 + 部署前审查六问 + 三个不要）
 
 
 ## [2026-06-28] ingest | OpenCodeReview 阿里 AI 代码审查工程化
 
-- 整合两篇 0raw/ 文章（OpenCodeReview 详解 + 阿里 Open Code Review 工程化实践）为一篇
+- 整合两篇剪藏文章（OpenCodeReview 详解 + 阿里 Open Code Review 工程化实践）为一篇
 - 存入 `AI/行业动态/OpenCodeReview-阿里AI代码审查工程化.md`
 - 保留完整内容：AI 代码质量数据（6 组权威报告）、通用 Agent 做 CR 的三个瓶颈、确定性工程骨架 + LLM 语义判断设计哲学、三项关键突破（隔离评审/行号分离/工具收束）、多语言路由/七层质量控制/可追溯、安装使用（三种审查模式）、三种集成方式（Skill/Plugin/命令文件）、CI/CD 集成、审查规则四层优先级、适用场景分析
 
 
 ## [2026-06-28] ingest | Obsidian Vault 模板库合集
 
-- 清洗 `0raw/Obsidian vault 模板库合集：48 个 GitHub 上的宝藏 vault，下载即用.md` 并存入 `AI/Obsidian/Obsidian-Vault模板库合集-48个宝藏vault.md`
+- 清洗《Obsidian vault 模板库合集：48 个 GitHub 上的宝藏 vault，下载即用》并存入 `AI/Obsidian/Obsidian-Vault模板库合集-48个宝藏vault.md`
 - 保留完整内容：48 个 vault 的 11 大分类表、挑选三原则（活跃度>star/场景对口/先标杆后同类）、5 个推荐 vault 详解（Kepano/Hub/JS Info/DevCookbook/HowToCook）、踩坑清单（3 个避坑）、5 分钟上手流程
 
 
 ## [2026-06-29] ingest | Codex 省 Token 工具实测
 
-- 清洗 `0raw/Codex 一键省 Token 大法，亲测有效.md` 并存入 `AI/Codex/Codex-省Token工具实测-Ponytail-Headroom-RTK.md`
+- 清洗《Codex 一键省 Token 大法，亲测有效》并存入 `AI/Codex/Codex-省Token工具实测-Ponytail-Headroom-RTK.md`
 - 保留完整内容：四个省 Token 工具总览表（Ponytail/穴居人/Headroom/RTK-AI）、Ponytail 详解（YAGNI 理念/判断决策梯子/6 个 Skill/3 个 Hooks/安装方式）、Codex 实测对比（小游戏生成 vs 代码审查两个场景）、官方 Benchmark（前端任务代码行数减少 62-94%）、适用场景分析、背后洞察（教 Agent 学会克制）
 
 
 ## [2026-06-29] update | K8s 故障排查指南整合 DiskPressure 驱逐机制
 
-- 将 `0raw/Kubernetes 节点突发 DiskPressure事件告警？吃透 Kubelet 驱逐底层原理，告别盲目扩容.md` 整合到 `Docker-Kubernetes/k8s-installation-management/k8s故障排查指南.md` 末尾
+- 将《Kubernetes 节点突发 DiskPressure事件告警？吃透 Kubelet 驱逐底层原理，告别盲目扩容》整合到 `Docker-Kubernetes/k8s-installation-management/k8s故障排查指南.md` 末尾
 - 新增章节「节点 DiskPressure 与 Kubelet 驱逐机制」：认知纠偏（DiskPressure≠磁盘满）、Eviction Manager 底层链路（cAdvisor→阈值判定→GC→驱逐）、三类磁盘监控（NodeFS/ImageFS/ContainerFS）、Inode 耗尽隐患、Pod QoS 驱逐优先级、5 步线上排查流程、6 条生产最佳实践
 - 补全了原文件缺失的"节点级故障排查"维度（原有内容只覆盖 Pod/Service/DNS/容器调试）
 
@@ -1746,14 +1746,14 @@ date: 2026-04-17
 
 ## [2026-09-05] ingest | Codex 两个体验设置
 
-- 清洗 `0raw/2个设置，让Codex体验翻倍.md` 并归档至 [[AI/Codex/Codex-两个设置提升体验]]。
+- 清洗《2个设置，让Codex体验翻倍》并归档至 [[AI/Codex/Codex-两个设置提升体验]]。
 - 保留技术内容：普通模式主动澄清的 `config.toml` 配置、完整 Juice 检查提示、使用顺序；移除公众号引流与互动话术。
-- 新增 [[KnowledgeBase/sources/codex-两个设置提升体验-summary|来源摘要]] 和 [[KnowledgeBase/entities/Codex|Codex 实体页]]，并更新 [[KnowledgeBase/maps/ai-workflow-map|AI 工作流专题地图]] 与 `INDEX.md`。
+- 新增 `KnowledgeBase/sources/codex-两个设置提升体验-summary.md` 来源摘要和 [[KnowledgeBase/entities/Codex|Codex 实体页]]，并更新 [[KnowledgeBase/maps/ai-workflow-map|AI 工作流专题地图]] 与 `INDEX.md`。
 - 将 Juice 相关结论标注为作者经验，避免作为已验证的模型质量指标。
 
 ## [2026-09-05] ingest | 删除 PVC 后 PV 数据保护与复用避坑
 
-- 清洗 `0raw/删 PV 数据没了？避 3 坑.md` 并归档至 `Docker-Kubernetes/k8s-storage/k8s删除PVC后PV数据保护与复用避坑.md`；保留回收策略、PV/PVC 命令、Released 复用、StatefulSet、VolumeSnapshot、恢复 SOP 与 FAQ，移除作者署名和微信赞赏页脚。
+- 清洗《删 PV 数据没了？避 3 坑》并归档至 `Docker-Kubernetes/k8s-storage/k8s删除PVC后PV数据保护与复用避坑.md`；保留回收策略、PV/PVC 命令、Released 复用、StatefulSet、VolumeSnapshot、恢复 SOP 与 FAQ，移除作者署名和微信赞赏页脚。
 - 新增来源摘要：`KnowledgeBase/sources/k8s-pv-pvc-reclaim-policy-summary.md`。
 - 更新 `KnowledgeBase/sources/k8s-scaling-storage-batch-summary.md`：文档数 8→9，新增 PV/PVC 生命周期与数据保护小节；Kubernetes 总文档数随本次摄入由 154→155。
 - 更新 `KnowledgeBase/concepts/StorageClass.md`、`KnowledgeBase/concepts/Finalizer.md`、`KnowledgeBase/entities/Kubernetes.md`、`KnowledgeBase/maps/kubernetes-map.md`、`KnowledgeBase/index.md` 与 `Docker-Kubernetes/index.md` 的交叉引用、存储文档数和导航。
@@ -1761,14 +1761,14 @@ date: 2026-04-17
 
 ## [2026-09-05] ingest | Docker 镜像无引擎下载与 tar 导出
 
-- 清洗 `0raw/不依赖本地docker环境 从Docker Hub 下载镜像到本地 并保存为tar镜像文件.md` 并存入 `Docker-Kubernetes/docker/docker无需本地环境从DockerHub下载镜像并保存为tar.md`。
+- 清洗《不依赖本地docker环境 从Docker Hub 下载镜像到本地 并保存为tar镜像文件》并存入 `Docker-Kubernetes/docker/docker无需本地环境从DockerHub下载镜像并保存为tar.md`。
 - 保留技术内容：Registry 直接拉取、manifest list/OCI index、多架构与 digest 选择、分层断点续传、Range 限制、指数退避重试、Python 依赖及 `docker load` 导入。
 - 新增 [[KnowledgeBase/sources/docker-image-download-summary|来源摘要]]，更新 [[KnowledgeBase/entities/Docker|Docker 实体页]]、Docker 批次摘要、工具/领域地图、文档盘点和 `INDEX.md`。
 - 移除正文作者署名、引流话术和免责声明（保留作者元数据）；标注原文 `docker_pull_v2.py` 与示例 `docker_pull.py` 的命名差异。
 
 ## [2026-09-06] ingest | KServe + KEDA 基于请求指标自动扩缩容
 
-- 清洗 `0raw/KServe + KEDA 实战：基于请求指标实现服务自动扩缩容.md` 并归档至 `Docker-Kubernetes/k8s-scaling/KServe+KEDA实战-基于请求指标实现服务自动扩缩容.md`。
+- 清洗《KServe + KEDA 实战：基于请求指标实现服务自动扩缩容》并归档至 `Docker-Kubernetes/k8s-scaling/KServe+KEDA实战-基于请求指标实现服务自动扩缩容.md`。
 - 保留完整技术内容：KEDA 2.17.2、kube-prometheus-stack、KServe InferenceService、HAMi DRA GPU 共享、ServiceMonitor、Prometheus 查询、External Metrics API、持续负载及 `1 -> 2 -> 1` 扩缩容验证；移除作者署名、往期回顾和公众号引流尾段，去除重复/装饰性图片。
 - 新增来源摘要：`KnowledgeBase/sources/kserve-keda-request-autoscaling-summary.md`。
 - 更新 `KnowledgeBase/sources/k8s-scaling-storage-batch-summary.md`、`KnowledgeBase/entities/Kubernetes.md`、`KnowledgeBase/entities/Prometheus.md`、`KnowledgeBase/maps/kubernetes-map.md`、`KnowledgeBase/INDEX.md` 与 `Docker-Kubernetes/index.md`。
@@ -1777,7 +1777,7 @@ date: 2026-04-17
 
 ## [2026-09-06] ingest | 12 个常用 Prompt 与提示词主题库重组
 
-- 摄入 [[0raw/都Agent时代了，我还是想分享给你这12个我最常用的Prompt。]]，移除公众号引流、作者宣传、赞赏、装饰图片和重复铺垫，完整保留 12 个可复用 Prompt。
+- 摄入《都Agent时代了，我还是想分享给你这12个我最常用的Prompt。》，移除公众号引流、作者宣传、赞赏、装饰图片和重复铺垫，完整保留 12 个可复用 Prompt。
 - 将原 [[AI/提示词/提示词|提示词集合]] 重组为入口页，并新增 6 个主题页：需求澄清、学习研究与事实核查、分析决策与解决问题、AI 编程协作、写作与表达、自我探索与人生设计。
 - 重复内容按快速版/完整版合并；补充联网能力、95% 启发式阈值、真实人物观点归因和自我探索非诊断用途等使用边界。
 - 新增 [[KnowledgeBase/sources/12个常用Prompt-summary|来源摘要]] 与 [[KnowledgeBase/concepts/提示词工程|提示词工程概念页]]，更新 [[KnowledgeBase/maps/ai-workflow-map|AI 工作流专题地图]] 和 KnowledgeBase/index.md。
@@ -1805,7 +1805,7 @@ date: 2026-04-17
 
 ## [2026-09-06] ingest | AI 代码审查验证闭环
 
-- 清洗 [[0raw/用 AI 审核 AI 的代码，踩了一堆坑之后我的方法]] 并归档至 [[AI/Code review和知识图谱/AI代码审查闭环-验证优先与敏感信息清理]]。
+- 清洗《用 AI 审核 AI 的代码，踩了一堆坑之后我的方法》并归档至 [[AI/Code review和知识图谱/AI代码审查闭环-验证优先与敏感信息清理]]。
 - 保留完整技术内容：Lint/类型检查/单元测试/集成测试/E2E 门禁、独立 Worktree、完整仓库上下文、真实运行验证、安全扫描、敏感信息清理、对抗式测试和项目级审查配置；移除作者宣传和公众号引流。
 - 新增 [[KnowledgeBase/sources/ai-code-review-validation-loop-summary|来源摘要]] 与 [[KnowledgeBase/concepts/AI代码审查|AI 代码审查概念页]]。
 - 更新 [[KnowledgeBase/entities/Claude-Code]]、[[KnowledgeBase/entities/Codex]]、[[KnowledgeBase/maps/ai-workflow-map|AI 工作流专题地图]]、KnowledgeBase/index.md 和 AI/index.md。
@@ -1814,7 +1814,7 @@ date: 2026-04-17
 
 ## [2026-09-06] update | Pod 健康探针重启风暴案例
 
-- 将 [[0raw/一场由健康探针引发的Pod重启风暴——K8s LivenessReadiness Probe配置不当的深度复盘]] 清洗后追加至 [[Docker-Kubernetes/k8s-basic-resources/k8s基础-pod#探针失效真实案例]]。
+- 将《一场由健康探针引发的Pod重启风暴——K8s LivenessReadiness Probe配置不当的深度复盘》清洗后追加至 [[Docker-Kubernetes/k8s-basic-resources/k8s基础-pod#探针失效真实案例]]。
 - 保留事故数据、错误配置、时间线、Liveness/Readiness/Startup 分工、端点实现、监控排查命令和工程治理措施；移除作者宣传与公众号引流。
 - 补充技术校正：探针时间倍数属于经验性建议；示例 Prometheus 指标并非 kubelet 固定指标；PDB 与 HPA 不能直接阻止 Liveness 误杀。
 - 新增 [[KnowledgeBase/sources/k8s-probe-restart-storm-summary|来源摘要]]，更新 K8s 基础资源批量摘要、[[KnowledgeBase/entities/Kubernetes]]、[[KnowledgeBase/maps/kubernetes-map|Kubernetes 主题地图]] 和 KnowledgeBase/index.md。
@@ -1822,17 +1822,16 @@ date: 2026-04-17
 
 ## [2026-09-06] ingest | Kubernetes Volume Health Monitor 存储健康监控
 
-- 清洗 `0raw/让存储故障现形：Kubernetes Volume Health Monitor 原理与生产接入.md`，移除作者署名、重复引言、赞赏尾注和排版噪音，归档至 `Docker-Kubernetes/k8s-storage/让存储故障现形：Kubernetes Volume Health Monitor 原理与生产接入.md`。
+- 清洗《让存储故障现形：Kubernetes Volume Health Monitor 原理与生产接入》，移除作者署名、重复引言、赞赏尾注和排版噪音，归档至 `Docker-Kubernetes/k8s-storage/让存储故障现形：Kubernetes Volume Health Monitor 原理与生产接入.md`。
 - 新增来源摘要：[[KnowledgeBase/sources/k8s-volume-health-monitor-summary]]。
 - 更新 `k8s-scaling-storage` 批量摘要、Kubernetes 实体、Observability 概念、Prometheus 实体、Kubernetes 专题地图、知识库索引和 Docker-Kubernetes 目录索引。
 - 核心知识：4 个 CSI 健康 RPC 分别写入 PVC、Pod 和 CSINode；1.37 Alpha 需要 feature gate 与 CSI 驱动双重支持；Prometheus 告警应区分 `Degraded`/`Inaccessible`，remediation 需带冷却、重试上限和人工确认。
 
 ## [2026-09-06] ingest | K8s 1.37 原生 HPA Scale-to-Zero
 
-- 清洗 `0raw/告别 KEDA：K8s 1.37 原生 HPA Scale-to-Zero 落地实战，空闲 Worker 直接缩到 0.md` 并归档至 `Docker-Kubernetes/k8s-scaling/k8s-1.37原生HPA-Scale-to-Zero实战.md`；保留 `HPAScaleToZero` 原理、External/Object 指标、HPA YAML、冷启动/防抖/就绪探针、六个生产陷阱、监控建议和 KEDA 迁移清单，移除作者宣传、公众号引流、下期预告与赞赏尾段。
+- 清洗《告别 KEDA：K8s 1.37 原生 HPA Scale-to-Zero 落地实战，空闲 Worker 直接缩到 0》并归档至 `Docker-Kubernetes/k8s-scaling/k8s-1.37原生HPA-Scale-to-Zero实战.md`；保留 `HPAScaleToZero` 原理、External/Object 指标、HPA YAML、冷启动/防抖/就绪探针、六个生产陷阱、监控建议和 KEDA 迁移清单，移除作者宣传、公众号引流、下期预告与赞赏尾段。
 - 新增 `KnowledgeBase/sources/k8s-hpa-scale-to-zero-1.37-summary.md`；更新 `KnowledgeBase/sources/k8s-scaling-storage-batch-summary.md`，文档数由 10 篇增至 11 篇（扩缩容 7 篇、存储 4 篇）。
 - 更新 `KnowledgeBase/entities/Kubernetes.md`、`KnowledgeBase/entities/Prometheus.md`、`KnowledgeBase/maps/kubernetes-map.md`、`KnowledgeBase/INDEX.md` 和 `Docker-Kubernetes/index.md` 的交叉引用与文档计数。
-- 原始来源文件保留在 `0raw/`，未修改、未移动、未删除。
 
 ## [2026-09-06] update | 合并并发 K8s 扩缩容与存储摄入
 
@@ -1843,7 +1842,7 @@ date: 2026-04-17
 
 ## [2026-09-06] ingest | 大模型精度与量化：FP64 到 NVFP4
 
-- 清洗并归档 `0raw/一文讲清 FP64、FP32、TF32、BF16、FP16、FP8、INT8、INT4、NVFP4.md` 至 `AI/企业级私有化大模型/大模型精度与量化：FP64到NVFP4.md`；移除作者署名、目录和提示性噪声，保留精度格式、缩放机制、显存估算及训练/推理选择等技术内容。
+- 清洗并归档《一文讲清 FP64、FP32、TF32、BF16、FP16、FP8、INT8、INT4、NVFP4》至 `AI/企业级私有化大模型/大模型精度与量化：FP64到NVFP4.md`；移除作者署名、目录和提示性噪声，保留精度格式、缩放机制、显存估算及训练/推理选择等技术内容。
 - 通过 PicGo 上传原文中的 7 张图片，并将归档文档中的图片链接替换为图床地址。
 - 新增 [[KnowledgeBase/concepts/混合精度与模型量化]] 与 [[KnowledgeBase/sources/model-precision-quantization-summary|来源摘要]]；更新 [[KnowledgeBase/entities/NVIDIA]]、[[KnowledgeBase/entities/CUDA]]、[[KnowledgeBase/maps/domain-map]] 与 `KnowledgeBase/INDEX.md`。
 - 关键边界：文章中的 70B 显存示例仅估算权重，未包含 KV Cache、运行时和系统开销；NVFP4 性能/精度数据保留为来源中的 NVIDIA 评测语境。
@@ -1851,7 +1850,7 @@ date: 2026-04-17
 
 ## [2026-09-06] ingest | KV Cache 从原理到集群调度
 
-- 读取 [[0raw/KV Cache - 一图看懂 KV Cache：从诞生到集群调度]]，未修改、未移动、未删除 Raw Source；清洗后归档至 [[AI/企业级私有化大模型/KV Cache-从原理到集群调度]]。
+- 读取原始剪藏《KV Cache - 一图看懂 KV Cache：从诞生到集群调度》，清洗后归档至 [[AI/企业级私有化大模型/KV Cache-从原理到集群调度]]。
 - 保留完整技术内容：KV Cache 与 Attention、Prefill/Decode、TTFT/TPOT、生命周期、显存估算、HBM/SRAM 带宽瓶颈、Prefix Cache、Prefill/Decode 分离与集群负载均衡；移除作者宣传性署名和尾部引流文案。
 - 通过 PicGo 的 githubPlus/github-images 图床上传原文 5 张图片，并将正文图片替换为对应的 `raw.githubusercontent.com/hangx969/upload-images-md/main/20260906154809144.png`～`...148.png` 链接。
 - 新增 [[KnowledgeBase/sources/kv-cache-inference-cluster-summary|来源摘要]] 与 [[KnowledgeBase/concepts/KV Cache|KV Cache 概念页]]；更新 vLLM 部署笔记、混合精度概念页、AI/index.md，并在知识库索引和领域地图追加本次新增条目。
@@ -1872,7 +1871,7 @@ date: 2026-04-17
 
 ## [2026-09-07] ingest | KServe 部署 vLLM 与 InferenceService
 
-- 读取 [[0raw/一个 Deployment 就能跑 vLLM，为什么还需要 KServe？]]，原始剪藏保持不变；清洗后归档至 [[AI/企业级私有化大模型/一个 Deployment 就能跑 vLLM，为什么还需要 KServe？]]。
+- 读取原始剪藏《一个 Deployment 就能跑 vLLM，为什么还需要 KServe？》，清洗后归档至 [[AI/企业级私有化大模型/一个 Deployment 就能跑 vLLM，为什么还需要 KServe？]]。
 - 移除作者宣传、往期回顾、关注转发引导和装饰性尾图；保留 KServe 定位、部署模式选择、cert-manager、Envoy Gateway、KServe 0.18.0、PVC 模型加载、InferenceService YAML、状态验证与 OpenAI 兼容 API 调用等完整技术内容。
 - 新增 [[KnowledgeBase/sources/kserve-vllm-inferenceservice-summary|来源摘要]]；更新 [[KnowledgeBase/entities/Kubernetes]]、[[KnowledgeBase/maps/kubernetes-map|Kubernetes 专题地图]]、`AI/index.md` 与 `KnowledgeBase/INDEX.md`。
 - 关键边界：vLLM 是推理引擎，KServe 是模型服务编排与控制层；Standard/Knative 属于 InferenceService 部署模式，LLMInferenceService 是独立 API；hostPath PV 仅适合单节点验证。
@@ -1880,7 +1879,7 @@ date: 2026-04-17
 
 ## [2026-09-12] ingest | kubectl Client-side Apply 与 Server-side Apply
 
-- 清洗 [[0raw/kubectl apply 背后的真相：为什么 Server-side Apply 正在成为标配]]，将技术内容整合进 [[k8s基础-yaml-apply#kubectl apply：Client-side Apply 与 Server-side Apply]]，没有创建重复的主题文章。
+- 清洗《kubectl apply 背后的真相：为什么 Server-side Apply 正在成为标配》，将技术内容整合进 [[k8s基础-yaml-apply#kubectl apply：Client-side Apply 与 Server-side Apply]]，没有创建重复的主题文章。
 - 保留 CSA 三路合并、HPA 静默覆盖案例、SSA 字段所有权、CRD schema、Helm 4 迁移和排障命令；移除关注引导、题库广告和好文推荐。
 - 将会被 Obsidian 解析为 HTML 的 `<object>`、`<[]Object>` 类型标记改为行内代码，恢复后续标题与图床图片的 Live Preview 渲染。
 - 新增 [[KnowledgeBase/sources/kubectl-server-side-apply-summary|来源摘要]]，并更新 Kubernetes 实体页、基础资源批量摘要、Kubernetes 专题地图和知识库索引。
@@ -1901,7 +1900,7 @@ date: 2026-04-17
 
 ## [2026-09-12] ingest | kubectx/kubens 多集群上下文切换
 
-- 读取并保留 [[0raw/多集群切换乱？用kubectx]]，将其技术内容整合进既有 [[Docker-Kubernetes/k8s-installation-management/k8s多集群kubeconfig管理#kubectx 与 kubens：多集群快速切换]]，未在 k8s-basic-resources 下创建重复主题文章。
+- 读取原始剪藏《多集群切换乱？用kubectx》，将其技术内容整合进既有 [[Docker-Kubernetes/k8s-installation-management/k8s多集群kubeconfig管理#kubectx 与 kubens：多集群快速切换]]，未在 k8s-basic-resources 下创建重复主题文章。
 - 保留并整理 context 原理、跨平台安装、kubectx/kubens 用法、fzf 交互选择、kube-ps1 动态着色、多 kubeconfig 合并和生产防误操作清单。
 - 依据 Kubernetes 与 kubectx/kube-ps1 官方文档完成技术校正：KUBECONFIG 同名键采用“第一个文件胜出”；无参数交互选择依赖 fzf；动态颜色使用 `KUBE_PS1_CTX_COLOR_FUNCTION`；移除固定旧版本下载方式。
 - 新增 [[KnowledgeBase/sources/kubectx-kubens-multi-cluster-summary|来源摘要]]；更新安装管理批量摘要、Kubernetes 实体、Kubernetes 专题地图、Docker-Kubernetes 入口和知识库索引。
@@ -1910,7 +1909,7 @@ date: 2026-04-17
 
 ## [2026-09-12] ingest | Kustomize Base 与 Overlay 多环境配置
 
-- 读取并保留 [[0raw/Kustomize 入门：用 Base 和 Overlay 管理 Kubernetes 多环境配置|原始剪藏]]，清洗后归档至 [[Docker-Kubernetes/k8s-CICD/Kustomize/Kustomize入门-Base与Overlay多环境配置]]。
+- 读取原始剪藏《Kustomize 入门：用 Base 和 Overlay 管理 Kubernetes 多环境配置》，清洗后归档至 [[Docker-Kubernetes/k8s-CICD/Kustomize/Kustomize入门-Base与Overlay多环境配置]]。
 - 保留多环境配置漂移背景、Kustomize 能力边界、Base/Overlay 模型、六个常用字段、构建/差异检查/部署命令和版本说明；移除作者署名、下篇预告与公众号分类尾注。
 - 修复剪藏产生的重复编号、项目符号和无语言代码围栏，并与既有 [[Docker-Kubernetes/k8s-CICD/Kustomize/k8s配置定制工具-kustomize|Kustomize 综合笔记]] 建立关联。
 - 新增 [[KnowledgeBase/sources/kustomize-base-overlay-summary|来源摘要]]，补全 [[KnowledgeBase/entities/Kustomize|Kustomize 实体页]]，更新 CI/CD 批量摘要、Kubernetes 实体、Kubernetes 专题地图、工具地图与知识库索引。
@@ -1918,7 +1917,7 @@ date: 2026-04-17
 
 ## [2026-09-13] ingest | Dragonfly + Harbor P2P 镜像与大文件分发
 
-- 读取并保留 [[0raw/Dragonfly + Harbor：为什么 AI 集群越来越需要 P2P 镜像分发？|原始剪藏]]，清洗后归档至 [[Docker-Kubernetes/harbor/Dragonfly与Harbor-P2P镜像分发]]。
+- 读取原始剪藏《Dragonfly + Harbor：为什么 AI 集群越来越需要 P2P 镜像分发？》，清洗后归档至 [[Docker-Kubernetes/harbor/Dragonfly与Harbor-P2P镜像分发]]。
 - 保留 Harbor 集中拉取瓶颈、文件分块、Peer 交换、新旧 Dragonfly 架构、测试数据、适用场景、优缺点和 AI 模型分发等技术内容；移除作者署名和公众号目录尾注。
 - 将剪藏后挤成单行的字符流程图恢复为 15 个 Mermaid 图，并校正 Scheduler 控制面、Peer/Seed Peer 数据面及 Manager 可选部署关系。
 - 通过本机 PicGo 的 githubPlus/github-images 配置上传原文 13 张图片，正文已全部替换为 `raw.githubusercontent.com/hangx969/upload-images-md` 图床链接。
@@ -1929,17 +1928,17 @@ date: 2026-04-17
 
 ## [2026-09-13] ingest | 大模型本地部署 Runtime 选型与离线交付
 
-- 读取并保留 [[0raw/大模型本地部署到底怎么选？Ollama、vLLM、SGLang、vLLM-Omni 一次讲透|原始剪藏]]，清洗后归档至 [[AI/企业级私有化大模型/大模型本地部署选型-Ollama-vLLM-SGLang-vLLM-Omni]]。
+- 读取原始剪藏《大模型本地部署到底怎么选？Ollama、vLLM、SGLang、vLLM-Omni 一次讲透》，清洗后归档至 [[AI/企业级私有化大模型/大模型本地部署选型-Ollama-vLLM-SGLang-vLLM-Omni]]。
 - 将原文 51 个重复、过短的章节收敛为 11 个工程主题，保留 ModelScope 下载、目录规划、rsync/tar、Docker 离线镜像、四种 Runtime、显存参数、容器粒度和模型平台架构等技术内容。
 - 将失效的字符流程图恢复为 13 个 Mermaid 图；Obsidian 内置解析验证为 13/13 通过。
 - 原始剪藏不含 Markdown/HTML 图片引用或图片 URL；原公众号页面拒绝自动提取，因此本次没有可交给 PicGo 上传的原图，未虚构或替换图片。
 - 依据 vLLM、SGLang、vLLM-Omni 与 ModelScope 官方文档补充版本与安全边界：显存比例不是硬隔离、PD 分离需要 KV 传输、Omni 模型支持按版本核对、远程代码仅对可信固定 Revision 启用。
 - 新增 [[KnowledgeBase/sources/local-llm-runtime-selection-summary|来源摘要]]、[[KnowledgeBase/entities/Ollama|Ollama]]、[[KnowledgeBase/entities/vLLM|vLLM]] 和 [[KnowledgeBase/entities/ModelScope|ModelScope]] 实体页；同步更新 Docker/CUDA/NVIDIA/KV Cache、AI 与工具地图及知识库索引。
-- 验证结果：正文围栏成对、13 个 Mermaid 全部通过解析、新增核心页面无未解析 wikilink、`git diff --check` 通过，原始 `0raw` 文件无改动。
+- 验证结果：正文围栏成对、13 个 Mermaid 全部通过解析、新增核心页面无未解析 wikilink、`git diff --check` 通过。
 
 ## [2026-09-15] ingest | cert-manager Helm 部署与 TLS 自动化整合
 
-- 读取并保留 [[0raw/K8s cert-manager实战：让TLS证书自动签发和续期|原始剪藏]]，按证书生命周期主线整合进 [[cert-manager 实战：Helm 部署、TLS 自动签发与续期|cert-manager 实战：Helm 部署、TLS 自动签发与续期]]；原始 0raw 文件保持不变。
+- 读取原始剪藏《K8s cert-manager实战：让TLS证书自动签发和续期》，按证书生命周期主线整合进 [[cert-manager 实战：Helm 部署、TLS 自动签发与续期|cert-manager 实战：Helm 部署、TLS 自动签发与续期]]。
 - 合并重复的 cert-manager 定位、Certificate/Ingress 接入和续期说明，同时完整保留 OCI 与本地 Chart 安装、自签名 Pod TLS、HTTP01/DNS01、Cloudflare、Azure DNS Workload Identity、通配符、PKCS#12、Helm 配置管理、故障案例和回滚命令。
 - 将原文字符流程重绘为 6 个 Mermaid 图，覆盖人工与自动化流程、资源关系、HTTP01/DNS01 选型、ACME 校验、Staging 到 Production 和自动续期；Obsidian 内置解析器验证为 6/6 通过。
 - 新增 [[KnowledgeBase/sources/cert-manager-tls-automation-summary|来源摘要]]、[[KnowledgeBase/entities/Cert-Manager|Cert-Manager 实体页]] 和 [[KnowledgeBase/concepts/证书管理|证书管理概念页]]；同步更新安全认证批量摘要、Kubernetes/Helm/Ingress 实体页、Kubernetes/工具地图与知识库索引。
@@ -2069,4 +2068,4 @@ date: 2026-04-17
 - 修复 41 条由改名、合并或删除导致的失效链接，每条都经 git 历史确认了唯一现行路径，涉及 INDEX、repository-inventory、kubernetes/cloud-platform/ai-workflow 地图、提示词工程、Claude-Code、Codex 和 Effective HTML 来源摘要；另修复 INDEX 中 4 条在 GitHub 上失效的相对链接。
 - INDEX：移除 4 个已删除维护报告的链接，补录 Volume Health Monitor 来源摘要；领域表按 git 实测刷新篇数，并补充 Git、SoftwareTesting、C++；把"全部摄入"的说法改为实际覆盖情况（19 篇未被引用）。
 - README：按 git 实测刷新篇数（381 篇笔记、18 个领域、162 个知识库文件），修正 Claude Code 指南链接、`INDEX.md` 文件名、AI 与 Docker-Kubernetes 目录树；`AI/RAG/` 根目录下 3 篇独立文章改计为学习笔记，嵌入内容由 283 篇改为 280 篇。
-- 以下问题只记录在报告中，本次未修改：257 条红链、30 条指向已清理 0raw 剪藏的链接（待约定写法）、14 对需要复核的来源摘要、各页文档计数不一致、frontmatter 和模板缺口，以及原始来源层的链接问题。
+- 以下问题只记录在报告中，本次未修改：257 条红链、30 条指向已清理剪藏的链接（待约定写法）、14 对需要复核的来源摘要、各页文档计数不一致、frontmatter 和模板缺口，以及原始来源层的链接问题。

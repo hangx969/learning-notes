@@ -14,8 +14,7 @@ aliases:
 
 ## 元信息
 
-- **原始文档**：[[0raw/多集群切换乱？用kubectx]]
-- **整合位置**：[[Docker-Kubernetes/k8s-installation-management/k8s多集群kubeconfig管理#kubectx 与 kubens：多集群快速切换]]
+- **原始文档**：[[Docker-Kubernetes/k8s-installation-management/k8s多集群kubeconfig管理#kubectx 与 kubens：多集群快速切换]]
 - **领域**：Kubernetes / kubeconfig / 多集群运维
 - **摄入日期**：2026-09-12
 

@@ -809,7 +809,7 @@ kubectl get events --field-selector involvedObject.name=podName
 ## 探针失效真实案例
 
 > [!info] 案例来源
-> 本章节整理自 [[0raw/一场由健康探针引发的Pod重启风暴——K8s LivenessReadiness Probe配置不当的深度复盘]]。保留事故时间线、错误配置、修复方案和工程治理措施，并对 PDB、HPA 的保护边界补充说明。
+> 本章节整理自《一场由健康探针引发的Pod重启风暴——K8s LivenessReadiness Probe配置不当的深度复盘》。保留事故时间线、错误配置、修复方案和工程治理措施，并对 PDB、HPA 的保护边界补充说明。
 
 ### 事故概况
 

@@ -16,7 +16,7 @@ aliases:
 # Kustomize 入门：用 Base 和 Overlay 管理 Kubernetes 多环境配置
 
 > [!note] 来源与版本边界
-> 本文由 [[0raw/Kustomize 入门：用 Base 和 Overlay 管理 Kubernetes 多环境配置|原始剪藏]] 清洗整理。字段支持情况取决于独立 Kustomize 与 `kubectl` 内置版本；新项目优先使用 `resources`、`labels` 和统一的 `patches` 字段，遇到兼容问题先执行 `kubectl version --client` 并核对对应版本文档。
+> 本文由《Kustomize 入门：用 Base 和 Overlay 管理 Kubernetes 多环境配置》一文清洗整理。字段支持情况取决于独立 Kustomize 与 `kubectl` 内置版本；新项目优先使用 `resources`、`labels` 和统一的 `patches` 字段，遇到兼容问题先执行 `kubectl version --client` 并核对对应版本文档。
 
 在学习 Kubernetes 时，我们通常会先编写 `deployment.yaml` 、 `service.yaml` 等资源清单。
 

@@ -13,8 +13,7 @@ aliases:
 
 ## 元信息
 
-- **原始文档**：[[0raw/大模型本地部署到底怎么选？Ollama、vLLM、SGLang、vLLM-Omni 一次讲透]]
-- **清洗归档**：[[AI/企业级私有化大模型/大模型本地部署选型-Ollama-vLLM-SGLang-vLLM-Omni]]
+- **原始文档**：[[AI/企业级私有化大模型/大模型本地部署选型-Ollama-vLLM-SGLang-vLLM-Omni]]
 - **领域**：AI 推理服务、私有化部署
 - **摄入日期**：2026-09-13
 

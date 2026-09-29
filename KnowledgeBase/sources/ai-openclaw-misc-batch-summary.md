@@ -16,18 +16,17 @@ sources:
   - "[[AI/OpenClaw/CoPaw]]"
   - "[[AI/OpenClaw/Ubuntu-2510-Setup-Guide]]"
   - "[[AI/GithubCopilot/Copilot CLI]]"
-  - "[[提示词]]"
 ---
 
 ## 元信息
 
-- **文档数量**：9 篇
-- **主要领域**：AI Agent 平台（OpenClaw）、提示词工程、GitHub Copilot CLI、Linux 环境配置
+- **文档数量**：8 篇
+- **主要领域**：AI Agent 平台（OpenClaw）、GitHub Copilot CLI、Linux 环境配置
 - **知识层次**：从安装部署到高级多智能体协同，覆盖基础使用、插件扩展、渠道对接、AIOps 实践、多智能体架构设计
 
 ## 整体概述
 
-本批次文档以 **OpenClaw** 这一大模型驱动的通用 AI Agent 平台为核心，完整记录了从零搭建到生产级多智能体协同的全流程。内容涵盖：平台安装与模型接入、Skills 插件生态（办公、搜索、浏览器、自我进化、安全审计）、飞书/QQ 渠道对接、基于 K8s 的 AIOps 巡检与邮件通知、多智能体架构设计（角色拆分、IDENTITY/SOUL/AGENTS 核心文件、飞书多账号路由、agent-to-agent 通信）。此外还包括竞品 CoPaw（阿里）、Ubuntu 25.10 环境初始化、GitHub Copilot CLI 配置，以及通用提示词工程技巧。
+本批次文档以 **OpenClaw** 这一大模型驱动的通用 AI Agent 平台为核心，完整记录了从零搭建到生产级多智能体协同的全流程。内容涵盖：平台安装与模型接入、Skills 插件生态（办公、搜索、浏览器、自我进化、安全审计）、飞书/QQ 渠道对接、基于 K8s 的 AIOps 巡检与邮件通知、多智能体架构设计（角色拆分、IDENTITY/SOUL/AGENTS 核心文件、飞书多账号路由、agent-to-agent 通信）。此外还包括竞品 CoPaw（阿里）、Ubuntu 25.10 环境初始化、GitHub Copilot CLI 配置。
 
 ## 各文档摘要
 
@@ -102,17 +101,6 @@ sources:
 - **关键知识点**：
   - 支持通过 JSON 配置文件管理 MCP Server
   - 文档链接指向 GitHub 官方文档
-
-### [[提示词|提示词]]
-
-- **核心内容**：通用提示词集合与技巧，涵盖作图、PPT 生成、去 AI 味、自优化 prompt、角色选定、追问式对话、辩论式思考、失败预演、反向提示、双层解释法
-- **关键知识点**：
-  - 作图提示词：手绘风格信息图卡片、麦肯锡风格流程图
-  - PPT 提示词：玻璃拟态风格、Bento 网格布局、3D 物体视觉锚点
-  - 去 AI 味：减少破折号、夸张词汇、比喻隐喻，语言风格自然平实
-  - 追问技巧：设定 95% 置信门槛，AI 先追问后回答
-  - 辩论技巧：让 AI 扮演反对者角色攻击观点，克服谄媚效应
-  - 反向提示：提供成品让 AI 倒推提示词
 
 ## 涉及的概念与实体
 

@@ -6,7 +6,6 @@ tags:
   - kubernetes/tls
 date: 2026-09-15
 sources:
-  - "[[0raw/K8s cert-manager实战：让TLS证书自动签发和续期]]"
   - "[[cert-manager 实战：Helm 部署、TLS 自动签发与续期]]"
 aliases:
   - cert-manager TLS 自动化摘要
@@ -16,8 +15,7 @@ aliases:
 
 ## 元信息
 
-- **原始剪藏**：[[0raw/K8s cert-manager实战：让TLS证书自动签发和续期]]
-- **整合文档**：[[cert-manager 实战：Helm 部署、TLS 自动签发与续期|cert-manager 实战：Helm 部署、TLS 自动签发与续期]]
+- **原始文档**：[[cert-manager 实战：Helm 部署、TLS 自动签发与续期|cert-manager 实战：Helm 部署、TLS 自动签发与续期]]
 - **领域**：Kubernetes 安全、TLS、证书自动化
 - **摄入日期**：2026-09-15
 

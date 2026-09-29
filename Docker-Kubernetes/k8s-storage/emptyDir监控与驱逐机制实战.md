@@ -9,8 +9,6 @@ aliases:
   - emptyDir 磁盘监控
   - Kubernetes 临时存储驱逐
 date: 2026-09-06
-sources:
-  - "[[0raw/明明每个 Pod 都没写满，为什么还是被驱逐？emptyDir 监控与驱逐机制实战]]"
 source_url: "https://mp.weixin.qq.com/s?__biz=MzY5NjMxMzAxMg==&mid=2247483781&idx=1&sn=f5bf7300b4faa51c98203381d59fe4fd&chksm=f46ff45ec3187d48bc06af292f2db03dff7365b165944b0bd02c2ea4be8e51c658981e678898&cur_album_id=4534870433564983299&scene=189#wechat_redirect"
 ---
 

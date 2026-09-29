@@ -13,8 +13,7 @@ aliases:
 
 ## 元信息
 
-- **原始文档**：[[0raw/删 PV 数据没了？避 3 坑]]
-- **归档文档**：[[Docker-Kubernetes/k8s-storage/k8s删除PVC后PV数据保护与复用避坑]]
+- **原始文档**：[[Docker-Kubernetes/k8s-storage/k8s删除PVC后PV数据保护与复用避坑]]
 - **领域**：Kubernetes 存储、PV/PVC 生命周期与数据保护
 - **摄入日期**：2026-09-05
 

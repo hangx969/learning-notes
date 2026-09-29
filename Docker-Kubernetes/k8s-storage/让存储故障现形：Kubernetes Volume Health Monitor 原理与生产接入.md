@@ -9,8 +9,6 @@ aliases:
   - Kubernetes Volume Health Monitor
   - Volume Health Monitor
 date: 2026-09-06
-sources:
-  - "[[0raw/让存储故障现形：Kubernetes Volume Health Monitor 原理与生产接入]]"
 ---
 
 # 让存储故障现形：Kubernetes Volume Health Monitor 原理与生产接入

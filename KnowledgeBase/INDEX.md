@@ -112,8 +112,6 @@ date: 2026-09-26
 | 页面 | 原始来源 | 摘要 |
 |------|---------|------|
 | [ClaudeCode基础指南](sources/ClaudeCode基础指南-summary.md) | [AI/ClaudeCode/Claude Code 基础指南](../AI/ClaudeCode/Claude%20Code%20基础指南.md) | 3 种模式、Extended Thinking、Claude.md、Spec 工作流、5 大实战场景 |
-| [扩展体系](sources/Claude-Code扩展体系-summary.md) | [AI/ClaudeCode/Claude Code 扩展体系](../AI/ClaudeCode/Claude%20Code%20扩展体系.md) | 四层扩展机制全解：MCP（10+ 服务器）、Skills（3 层模式）、Slash Commands、Plugin |
-| [多智能体协作](sources/多智能体协作-summary.md) | [AI/ClaudeCode/多智能体协作-Subagents与Agent-Teams](../AI/ClaudeCode/多智能体协作-Subagents与Agent-Teams.md) | Subagents（5 组件、适用场景评级）+ Agent Teams（Team Lead/Teammates/Task List/Mailbox） |
 | [AI知识库完整指南](sources/obsidian-claude-AI知识库完整指南-summary.md) | [[AI/Obsidian/obsidian-claude-code-AI知识库完整指南]] | Markdown 母语论证、Karpathy Wiki 三层架构、30 分钟四步上手、六大操作谱系、三个集成工具、改造计划（三篇合并） |
 | [Obsidian可视化Skills](sources/obsidian-visual-skills-summary.md) | [AI/Obsidian/Obsidian可视化Skills](../AI/Obsidian/Obsidian可视化Skills-Excalidraw-Mermaid-Canvas.md) | AI Skills 生成可编辑图表：Excalidraw/Mermaid/Canvas 三种格式 |
 | [Skill Craft](sources/skill-craft-summary.md) | [AI/ClaudeCode/Claude-Skill质检工具-SkillCraft](../AI/ClaudeCode/Claude-Skill质检工具-SkillCraft.md) | Skill 质量工程：7 类失效模式、三层评估体系、check/fix/create/audit 四模式 |
@@ -135,7 +133,7 @@ date: 2026-09-26
 
 | 页面 | 原始来源 | 摘要 |
 |------|---------|------|
-| [[KnowledgeBase/sources/12个常用Prompt-summary|12 个常用 Prompt]] | [[0raw/都Agent时代了，我还是想分享给你这12个我最常用的Prompt。]] | 12 个提示词，覆盖问题澄清、学习研究、解题、决策与自我探索；已按主题并入提示词库 |
+| [[KnowledgeBase/sources/12个常用Prompt-summary|12 个常用 Prompt]] | [[AI/提示词/提示词]] | 12 个提示词，覆盖问题澄清、学习研究、解题、决策与自我探索；已按主题并入提示词库 |
 
 ### AI/AIOps/AIOps-skills（自研 Skills ✅）
 
@@ -221,7 +219,7 @@ date: 2026-09-26
 
 | 页面 | 覆盖文档数 | 摘要 |
 |------|:---------:|------|
-| [AI-OpenClaw](sources/ai-openclaw-misc-batch-summary.md) | 9 | OpenClaw 全栈（安装/Skills/Channels/AIOps/多智能体）、Copilot CLI、提示词工程 |
+| [AI-OpenClaw](sources/ai-openclaw-misc-batch-summary.md) | 8 | OpenClaw 全栈（安装/Skills/Channels/AIOps/多智能体）、Copilot CLI |
 | [[AI/OpenClaw/OpenClaw-Workspace-运维]] | 1 | Workspace 运维实战——目录规划、多 Agent 隔离、记忆管理、故障排查、安全加固、备份恢复 |
 | [飞书CLI画板](sources/feishu-cli-whiteboard-summary.md) | 1 | 飞书 CLI 画板生成能力，AI Agent 一句话生成可编辑架构图/流程图/思维导图 |
 

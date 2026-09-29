@@ -11,8 +11,6 @@ aliases:
   - kubeconfig管理
   - kubectx与kubens
 date: 2026-09-12
-sources:
-  - "[[0raw/多集群切换乱？用kubectx]]"
 ---
 
 # k8s多集群kubeconfig管理
@@ -263,7 +261,6 @@ KUBECONFIG="${HOME}/merged-kubeconfig.yaml" kubectl config get-contexts
 - [kubectx/kubens 官方仓库](https://github.com/ahmetb/kubectx)
 - [Kubernetes：使用 kubeconfig 文件组织集群访问](https://kubernetes.io/zh-cn/docs/concepts/configuration/organize-cluster-access-kubeconfig/)
 - [kube-ps1 官方仓库](https://github.com/jonmosco/kube-ps1)
-- 原始剪藏：[[0raw/多集群切换乱？用kubectx]]
 
 ## OIDC 认证：kubelogin
 

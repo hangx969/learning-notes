@@ -14,7 +14,6 @@ aliases:
 ## 元信息
 
 - **原始文档**：[[AI/企业级私有化大模型/一个 Deployment 就能跑 vLLM，为什么还需要 KServe？]]
-- **剪藏来源**：[[0raw/一个 Deployment 就能跑 vLLM，为什么还需要 KServe？]]
 - **领域**：企业级大模型推理、Kubernetes
 - **摄入日期**：2026-09-07
 

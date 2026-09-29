@@ -6,7 +6,7 @@ tags:
   - ai/architecture
 date: 2026-04-27
 sources:
-  - "[[KnowledgeBase/sources/多智能体协作-summary]]"
+  - "[[AI/ClaudeCode/多智能体协作-Subagents与Agent-Teams]]"
 aliases:
   - 多智能体vs单智能体
   - multi-agent vs single-agent
@@ -59,7 +59,7 @@ aliases:
 
 ## 与现有知识的关联
 
-- [[KnowledgeBase/sources/多智能体协作-summary|多智能体协作来源摘要]]中的Claude Code实现印证了这一分析：
+- [[AI/ClaudeCode/多智能体协作-Subagents与Agent-Teams|多智能体协作笔记]]中的Claude Code实现印证了这一分析：
   - **Subagents**（子Agent）本质上是单任务分派，主Agent保持完整上下文
   - **Agent Teams**中的辩论结构（竞争假设）是多Agent真正有价值的模式——不同"身份"提出不同观点
 - [[KnowledgeBase/entities/Claude-Code|Claude Code]]的实际设计也体现了"单Agent为主、多Agent为辅"的思路

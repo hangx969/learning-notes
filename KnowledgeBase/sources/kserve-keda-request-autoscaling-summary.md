@@ -13,8 +13,7 @@ aliases:
 
 ## 元信息
 
-- **原始文档**：[[0raw/KServe + KEDA 实战：基于请求指标实现服务自动扩缩容]]
-- **整合文档**：[[Docker-Kubernetes/k8s-scaling/k8s-基于KEDA的弹性能力#KServe + KEDA：基于请求指标的模型服务实战|KEDA 事件驱动自动扩缩容中的 KServe 实战]]
+- **原始文档**：[[Docker-Kubernetes/k8s-scaling/k8s-基于KEDA的弹性能力#KServe + KEDA：基于请求指标的模型服务实战|KEDA 事件驱动自动扩缩容中的 KServe 实战]]
 - **领域**：Kubernetes 模型服务、请求指标监控与自动扩缩容
 - **摄入日期**：2026-09-06
 

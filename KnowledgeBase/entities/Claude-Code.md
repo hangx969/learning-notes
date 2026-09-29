@@ -220,7 +220,6 @@ Plugin 是应用级打包容器，将多种扩展机制捆绑为一个可分发�
 - [[AI/AIOps/AIOps-skills/k8s-report-skills/SKILL]]：自研 K8s 巡检 Skill（Python 版）——kubernetes 客户端 + Jinja2 HTML 报告，Agent API 集成
 - [[AI/AIOps/AIOps-skills/k8s-inspect-skills/SKILL]]：自研 K8s 巡检 Skill（Shell 版）——kubectl + 深色仪表盘 HTML 报告，7 大巡检模块含证书和网络检查
 - [[KnowledgeBase/sources/ClaudeCode基础指南-summary|ClaudeCode基础指南摘要]]：3 种模式、Extended Thinking、Claude.md、5 大实战场景
-- [[KnowledgeBase/sources/Claude-Code扩展体系-summary|扩展体系摘要]]：MCP/Skills/Slash Commands/Plugin 四层扩展
 - [[KnowledgeBase/sources/obsidian-claude-AI知识库完整指南-summary|AI知识库完整指南摘要]]：Claudian/Skills/MCP 三种集成方式、Markdown 母语论证、Karpathy Wiki 三层架构
 - [[AI/ClaudeCode/Claude-Skill质检工具-SkillCraft]]：Skill 质量工程——7 类失效模式、三层评估体系、check/fix/create/audit 四模式
 - [[KnowledgeBase/sources/skill-craft-summary|Skill Craft 摘要]]：Skill 质量工程工具的核心方法论

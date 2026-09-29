@@ -7,7 +7,6 @@ tags:
 date: 2026-09-06
 sources:
   - "[[Docker-Kubernetes/k8s-storage/让存储故障现形：Kubernetes Volume Health Monitor 原理与生产接入]]"
-  - "[[0raw/让存储故障现形：Kubernetes Volume Health Monitor 原理与生产接入]]"
 aliases:
   - Volume Health Monitor 摘要
 ---
@@ -17,7 +16,6 @@ aliases:
 ## 元信息
 
 - **原始文档**：[[Docker-Kubernetes/k8s-storage/让存储故障现形：Kubernetes Volume Health Monitor 原理与生产接入]]
-- **原始剪藏**：[[0raw/让存储故障现形：Kubernetes Volume Health Monitor 原理与生产接入]]
 - **领域**：Kubernetes 存储可观测性
 - **摄入日期**：2026-09-06
 

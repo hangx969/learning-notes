@@ -7,7 +7,7 @@ tags:
 date: 2026-09-06
 sources:
   - "[[KnowledgeBase/sources/k8s-nvidia-device-plugin-summary]]"
-  - "[[0raw/一文讲清 FP64、FP32、TF32、BF16、FP16、FP8、INT8、INT4、NVFP4]]"
+  - "[[AI/企业级私有化大模型/大模型精度与量化：FP64到NVFP4]]"
   - "[[AI/企业级私有化大模型/大模型本地部署选型-Ollama-vLLM-SGLang-vLLM-Omni]]"
 ---
 

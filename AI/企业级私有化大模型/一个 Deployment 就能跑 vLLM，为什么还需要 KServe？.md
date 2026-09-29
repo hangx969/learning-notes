@@ -5,7 +5,6 @@ tags:
   - kubernetes/kserve
   - llm/vllm
 date: 2026-09-07
-source: "[[0raw/一个 Deployment 就能跑 vLLM，为什么还需要 KServe？]]"
 aliases:
   - KServe 部署 vLLM
 ---
@@ -496,7 +495,6 @@ KServe 的价值不只是启动一个模型进程，而是把模型地址、Runt
 ## 参考资料
 
 - [KServe 官方仓库](https://github.com/kserve/kserve)
-- 原始来源：[[0raw/一个 Deployment 就能跑 vLLM，为什么还需要 KServe？]]
 
 ## 相关文档
 

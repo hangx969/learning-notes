@@ -14,7 +14,6 @@ aliases:
 ## 元信息
 
 - **原始文档**：[[k8s基础-yaml-apply]]
-- **剪藏来源**：[[0raw/kubectl apply 背后的真相：为什么 Server-side Apply 正在成为标配]]
 - **领域**：Kubernetes 声明式配置与字段所有权
 - **摄入日期**：2026-09-12
 

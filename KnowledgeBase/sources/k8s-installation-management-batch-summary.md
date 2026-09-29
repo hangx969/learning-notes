@@ -5,7 +5,6 @@ tags:
   - docker-kubernetes/installation-management
 date: 2026-09-12
 sources:
-  - "[[0raw/多集群切换乱？用kubectx]]"
   - "[[Docker-Kubernetes/k8s-installation-management/latest-version/安装k8s-1.35-基于rockylinux10-最新步骤]]"
   - "[[Docker-Kubernetes/k8s-installation-management/legacy-versions/安装k8s-1.33-基于rockylinux-最新步骤]]"
   - "[[Docker-Kubernetes/k8s-installation-management/legacy-versions/安装k8s-1.32-基于rockylinux]]"

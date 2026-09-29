@@ -5,8 +5,6 @@ tags:
   - docker-kubernetes/k8s-basic-resources
 date: 2026-09-12
 sources:
-  - "[[0raw/一场由健康探针引发的Pod重启风暴——K8s LivenessReadiness Probe配置不当的深度复盘]]"
-  - "[[0raw/kubectl apply 背后的真相：为什么 Server-side Apply 正在成为标配]]"
   - "[[Docker-Kubernetes/k8s-basic-resources/K8s基础-pod调度-亲和力]]"
   - "[[Docker-Kubernetes/k8s-basic-resources/Python调用k8s-api实现资源管理]]"
   - "[[Docker-Kubernetes/k8s-basic-resources/k8s基础-Calico]]"

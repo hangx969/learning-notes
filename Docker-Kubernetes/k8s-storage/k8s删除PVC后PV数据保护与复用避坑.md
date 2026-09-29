@@ -8,8 +8,6 @@ aliases:
   - 删 PVC 数据没了
   - PV 回收策略避坑
 date: 2026-09-05
-sources:
-  - "[[0raw/删 PV 数据没了？避 3 坑]]"
 ---
 
 # 删除 PVC 后 PV 数据保护与复用避坑

@@ -12,8 +12,7 @@ aliases:
 
 ## 元信息
 
-- **原始文档**：[[0raw/一场由健康探针引发的Pod重启风暴——K8s LivenessReadiness Probe配置不当的深度复盘]]
-- **整合位置**：[[Docker-Kubernetes/k8s-basic-resources/k8s基础-pod#探针失效真实案例]]
+- **原始文档**：[[Docker-Kubernetes/k8s-basic-resources/k8s基础-pod#探针失效真实案例]]
 - **领域**：Kubernetes / Pod / 健康探针
 - **摄入日期**：2026-09-06
 

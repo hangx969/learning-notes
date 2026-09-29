@@ -7,7 +7,6 @@ tags:
 date: 2026-09-12
 sources:
   - "[[AI/Codex/Codex-Harness架构-任务循环与扩展]]"
-  - "[[0raw/面试官得瑟：“你懂Codex的Harness架构吗？”，我笑了：“何止懂？我还看过源码”，他愣了.....]]"
 aliases:
   - Codex Harness 架构摘要
 ---
@@ -16,8 +15,7 @@ aliases:
 
 ## 元信息
 
-- **原始文档**：[[0raw/面试官得瑟：“你懂Codex的Harness架构吗？”，我笑了：“何止懂？我还看过源码”，他愣了.....]]
-- **整理文档**：[[AI/Codex/Codex-Harness架构-任务循环与扩展]]
+- **原始文档**：[[AI/Codex/Codex-Harness架构-任务循环与扩展]]
 - **领域**：AI / Codex / Agent 架构
 - **原文作者**：小林 coding
 - **原文地址**：https://mp.weixin.qq.com/s/ZxhhQlgzm7j7bfesSect4w?scene=1&click_id=941163511
