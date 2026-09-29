@@ -143,5 +143,5 @@ Microsoft Azure 是微软提供的公有云计算平台，涵盖计算、存储�
 - **Azure Bicep / ARM 模板**：缺少基础设施即代码的模板语言实践
 - **Azure RBAC 与 Entra ID**：缺少身份管理、条件访问策略、PIM 等安全身份体系
 - **Azure Cost Management**：缺少成本分析、预算告警、预留实例优化等 FinOps 实践
-- **Azure 网络深层**：缺少 Application Gateway、Front Door、Private Link/Endpoint、ExpressRoute 等高级网络服务
+- **Azure 网络深层**：缺少 Application Gateway、Front Door、ExpressRoute 等高级网络服务（Private Endpoint 已在 [[Azure/6_Azure-Networking|6_Azure-Networking]] 中覆盖）
 - **Azure Functions / App Service**：缺少 PaaS 级计算服务的实践记录

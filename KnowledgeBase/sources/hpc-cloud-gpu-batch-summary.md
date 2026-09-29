@@ -36,7 +36,7 @@ aliases:
 
 ---
 
-## 整体概述
+## 摘要
 
 这三个目录构成了从底层硬件到上层平台的完整技术栈：
 
@@ -45,6 +45,18 @@ aliases:
 3. **GPU-DeepLearning 目录**关注 NVIDIA GPU 的硬件基础、驱动与 CUDA 环境配置、Persistent Mode 设置、以及基于 Prometheus + Grafana 的 GPU 监控方案，同时包含服务器硬件（SSD）入门知识。
 
 三个方向相互关联：HPC 集群常配备 GPU 计算节点，需要 Slurm 进行 GPU 资源调度；云计算平台（如 Kubernetes）也需要管理 GPU 设备；监控体系（Prometheus/Grafana）贯穿 HPC 与 GPU 两个领域。
+
+---
+
+## 关键知识点
+
+1. GPU 环境按层叠加：裸机需要 GPU Driver + CUDA Toolkit，Docker 环境额外需要 nvidia-container-toolkit，Kubernetes 环境额外需要 device-plugin 或 gpu-operator。
+2. PBS 有 OpenPBS、PBS Pro、Torque 三大分支，作业流程为 qsub 提交 -> 排队 -> 资源分配 -> 执行 -> 完成，核心命令为 pbsnodes、qsub、qstat。
+3. Slurm 部署涉及网络与时间同步、Management/Login/Compute 节点部署、MUNGE 认证、GPU 分区、账户和 Prolog/Epilog 配置；CentOS 7 上还需关闭防火墙、禁用 SELinux 并配置资源限制。
+4. 监控端口与模板：prometheus-slurm-exporter 监听 9092 端口，nvidia_gpu_exporter 监听 9835 端口，GPU 仪表盘可导入 Grafana Dashboard ID 14574。
+5. 容器通过 Linux Namespace（PID、Mount、UTS、IPC、Network、User）隔离进程视图，通过 Cgroups 约束资源；与虚拟机相比没有 Guest OS 开销和 Hypervisor 性能损耗。
+6. GPU Persistent Mode 可用驱动自带的 nvidia-persistenced-init 工具包运行 install.sh 创建 systemd 服务实现开机自启，`nvidia-smi` 中 Persistence-M 显示 On 即生效。
+7. 认证需区分 Authentication 与 Authorization、Permission/Privilege/Scopes；SSO 首次登录经 302 重定向到统一认证中心并通过 ticket 验证，CAS 协议有三方参与者。
 
 ---
 
@@ -102,7 +114,7 @@ OpenStack 教程的链接笔记，指向微信公众号的 OpenStack 教程文�
 GPU 知识体系的系统笔记，收录多篇教程链接（GPU 入门、各型号介绍、CUDA 环境安装、nvidia-smi 使用），重点记录不同环境的 GPU 配置要求：裸机环境（GPU Driver + CUDA Toolkit）、Docker 环境（额外需 nvidia-container-toolkit）、Kubernetes 环境（额外需 device-plugin 或 gpu-operator），以及驱动安装步骤。
 
 #### [[GPU-DeepLearning/GPU-exporter-grafana|GPU Exporter 与 Grafana 监控]]
-基于 nvidia_gpu_exporter 的 GPU 监控部署方案：二进制部署 exporter（监听 9835 端口）、Prometheus 配置 job 抓取 GPU 指标、Grafana 仪表盘导入（Dashboard ID 14574），并提到内网 IP 变动问题可通过 Pushgateway 中转解决，以及时间同步对 Prometheus 数据准确性的重要性。
+基于 nvidia_gpu_exporter 的 GPU 监控部署方案：二进制部署 exporter（监听 9835 端口）、Prometheus 配置 job 抓取 GPU 指标、Grafana 仪表盘导入（Dashboard ID 14574），并说明宿主机内网 IP 变动时应先修复 DNS 或通过服务发现维护抓取目标，以及时间同步对 Prometheus 数据准确性的重要性。
 
 ---
 
@@ -166,3 +178,12 @@ GPU 知识体系的系统笔记，收录多篇教程链接（GPU 入门、各型
 6. **存储技术的互补**：HPC 使用 Lustre 并行文件系统满足高吞吐需求，云计算提供块存储（云硬盘）和对象存储（S3/OSS）满足不同场景，SSD（NVMe/SATA）作为底层介质支撑两种场景的 IO 性能。
 
 7. **多操作系统部署经验**：Slurm 安装文档覆盖 Ubuntu 22.04 和 CentOS 7 两大主流平台，PBS 案例涉及 SUSE Linux，形成了跨发行版的 HPC 部署知识体系。各平台在防火墙管理、包管理器、SELinux/AppArmor 等方面的差异均有记录。
+
+---
+
+## 值得注意
+
+- **故障案例中的版本建议有时效性**：Lustre 客户端升级至 2.14.0-ddn168 是案例记录时的建议，原笔记提示实施前应按当前环境重新核对兼容矩阵。
+- **PBS 时区报错需多处统一**：出现 `Timezone not found Asia/Beijing` 时，需把计算节点系统时区、`/etc/sysconfig/clock` 中的 `TIMEZONE` 以及 PBS `pbs_environment` 中的 `TZ` 统一改为 `Asia/Shanghai`，并重启相关 PBS 服务。
+- **Pushgateway 不宜替代常规抓取**：针对宿主机内网 IP 变动，原笔记建议先修复 DNS 或通过服务发现维护抓取目标；Pushgateway 主要用于短时批处理任务，不适合作为长期运行 Exporter 的常规抓取替代方案。
+- **监控依赖时间同步**：Exporter、Prometheus 和 Grafana 所在主机需保持系统时间同步，以便正确采集和查看时间序列。

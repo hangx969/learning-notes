@@ -79,7 +79,6 @@ aliases:
 - 核心内容：在 AKS 中启用和配置 Workload Identity 的完整步骤，实现 Pod 到 Azure 资源的身份认证。
 - 关键知识点：
   - 依赖 OIDC Issuer 和 Workload Identity 功能标志
-  - 需要注册 EnableWorkloadIdentityPreview 功能
   - 通过 Federated Credential 将 Kubernetes Service Account 与 Azure Managed Identity 关联
   - 适用于 Azure China Cloud 环境
 
@@ -169,7 +168,7 @@ aliases:
   - Azure PowerShell 基于 .NET 对象，使用 cmdlet 管理资源
   - Azure China Cloud 需使用 `Connect-AzAccount -Environment AzureChinaCloud`
   - 可使用 AAD App + Client Secret 实现自动登录
-  - msal.cache 存储 token，清缓存需手动删除相关文件
+  - 清除登录缓存优先使用 `Clear-AzContext -Scope CurrentUser` 或 `az account clear`，不要不加区分地批量删除缓存文件
 
 ### [[12_Azure 故障排查工具|12_Azure 故障排查工具]]
 - 核心内容：按浏览器和 HTTP 请求、Azure API、Windows 进程与性能、磁盘 I/O 的排障顺序整合五篇旧笔记。
@@ -208,12 +207,12 @@ aliases:
 ## 交叉主题发现
 - **Azure China Cloud 专注**：多篇文档专门针对中国区 Azure 的特殊配置（如 AzureChinaCloud 环境、azurecr.cn 域名、自托管 DevOps Agent 的必要性），说明该知识库主要服务于中国区 Azure 运维。
 - **AKS 安全体系**：Workload Identity、SecretProviderClass、Key Vault 三篇文档构成完整的 AKS 身份认证与密钥管理链路，从 Pod 身份到密钥注入形成闭环。
-- **工具链与故障排查**：约半数文档属于诊断工具类（Fiddler、PerfMon、Browser Trace、Postman、KQL、IO Monitor），体现了知识库的技术支持工程师视角。
+- **工具链与故障排查**：诊断与排障工具自成一类（Fiddler、PerfMon、Browser Trace、Postman、IO Monitor 已合并为故障排查工具专文，另有 KQL 与命令行工具），体现了知识库的技术支持工程师视角。
 - **DevOps 全链路**：从 Pipeline 基础、自托管 Agent 到 Agent Pool 管理，覆盖了 Azure DevOps CI/CD 的完整运维流程。
 - **存储与计算交叉**：Azure Storage 与 VM、AKS 存在紧密关联，磁盘类型、IO 测试、存储冗余等知识点跨多篇文档互相引用。
 
 ## 值得注意
 - **Policy 显式拒绝无法被子级放宽**：原笔记举例，若对管理组施加拒绝策略，再给下层 child 分配更宽松的策略是行不通的，需先把 child 排除在外再分配宽松策略。
 - **令牌与抓包数据的敏感性**：Entra ID（AAD）与 ARM 接口需使用各自目标资源对应的令牌，两者不能互换；HAR、Fiddler 会话和令牌可能包含身份验证信息，共享前应移除敏感字段。
-- **登录缓存的清理方式**：原笔记建议先用 `Clear-AzContext -Scope CurrentUser`（PowerShell）或 `az account clear`（Az CLI）清除后重新登录；列出的 msal.cache 等缓存文件仅供排查旧环境参考，不要不加区分地批量删除（上文"清缓存需手动删除相关文件"的概括与此不一致，以原笔记为准）。
+- **登录缓存的清理方式**：原笔记建议先用 `Clear-AzContext -Scope CurrentUser`（PowerShell）或 `az account clear`（Az CLI）清除后重新登录；列出的 msal.cache 等缓存文件仅供排查旧环境参考，不要不加区分地批量删除。
 - **Agent 删除只能走 REST API**：Az CLI 没有删除 agent 的命令；可通过 assignedRequest 字段判断 agent 是否正在执行 job。

@@ -19,7 +19,7 @@ sources:
 
 # OpenClaw
 
-## 定义
+## 简介
 OpenClaw 是一个大模型驱动的通用 AI Agent 平台，能够操作电脑、管理文件、调用 API，支持多智能体协作、AIOps 运维自动化、Channels 通道管理、Skills 插件扩展以及 CoPaw 交互界面。通过 npm 安装，需要 Node.js 22+ 和 Python 环境，配置文件位于 `~/.openclaw/openclaw.json`。本仓库记录了其安装部署、核心功能模块与实战用法。
 
 ## 核心功能模块
@@ -67,6 +67,13 @@ OpenClaw 是一个大模型驱动的通用 AI Agent 平台，能够操作电脑�
 - GitHub Copilot 原生支持，通过 OAuth 设备授权流程接入
 - 可通过配置文件或自然语言添加模型
 
+## 使用场景
+- **智慧办公与自媒体**：PPT 生成、Excel 与邮件处理、会议处理，以及素材收集、资讯聚合与内容分发
+- **远程 K8s 运维**：在飞书中用自然语言通过 kubectl Skill 查询节点与 Pod、诊断异常；按只读 → 诊断 → 变更三阶段逐步放权，并用 OPA 策略设置护栏
+- **定时巡检与报告**：用 `openclaw cron add` 添加定时任务，通过 imap-smtp-email Skill 发送 K8s 巡检报告
+- **多智能体协作**：PM 输出需求分析，架构师分发任务，前后端并行开发；AIOps 团队的 aiops、linux、container、k8s 智能体各自附带系统初始化、容器运行时与 K8s 集群安装 Skills
+- **图表与知识管理**：借助飞书 CLI 画板一句话生成可编辑架构图，用 second-brain 在本地构建个人知识库
+
 ## CoPaw 对比
 [[AI/OpenClaw/CoPaw|CoPaw]] 是阿里推出的对标 OpenClaw 的 AI Agent 产品，基于 AgentScope 框架。通过 pip 安装，`copaw init --defaults` 初始化，`copaw app` 启动，访问 `127.0.0.1:8088` 使用 WebUI。
 
@@ -82,26 +89,25 @@ OpenClaw 是一个大模型驱动的通用 AI Agent 平台，能够操作电脑�
 ## 与 Claude Code 的关系
 OpenClaw 和 [[KnowledgeBase/entities/Claude-Code|Claude Code]] 同属 AI Agent 工具，但定位不同：OpenClaw 侧重多智能体协同和渠道对接（飞书/QQ），Claude Code 侧重代码开发场景的 CLI 交互。两者的 Skills/[[KnowledgeBase/entities/MCP|MCP]] 插件扩展机制有可比性。
 
-## 在本仓库中的位置
+## 在本仓库中的覆盖
 主要集中在 `AI/OpenClaw/` 目录（10 篇文章）和 `AI/AIOps/agents身份文件/` 目录（8 个智能体定义文件集）。
 
-## 在本仓库中的覆盖
-- [[KnowledgeBase/sources/ai-openclaw-misc-batch-summary|AI-OpenClaw 批量摘要]] — OpenClaw 全栈（安装/Skills/Channels/AIOps/多智能体）、Copilot CLI
-- [[KnowledgeBase/sources/openclaw-agents-export-summary|多智能体定义导出摘要]] — 8 个智能体完整定义文件 + 4 个 Skills
+- [[KnowledgeBase/sources/ai-openclaw-misc-batch-summary|AI-OpenClaw 批量摘要]]：OpenClaw 全栈（安装/Skills/Channels/AIOps/多智能体）、Copilot CLI
+- [[KnowledgeBase/sources/openclaw-agents-export-summary|多智能体定义导出摘要]]：8 个智能体完整定义文件 + 4 个 Skills
+- [[AI/OpenClaw/OpenClaw-基础-安装|OpenClaw-基础-安装]]：定位、应用场景与架构分层，模型 API 准备，Windows/Linux 安装与引导配置，多供应商模型接入（含 GitHub Copilot）
+- [[AI/OpenClaw/Openclaw-多智能体|Openclaw-多智能体]]：角色拆分与 IDENTITY/SOUL/AGENTS 角色定义文件，多智能体开发团队和 AIOps 团队的飞书接入实践
+- [[AI/OpenClaw/Openclaw-AIOps|Openclaw-AIOps]]：基于飞书 + kubectl Skill 远程管理 K8s，配置邮箱 Skill 发送巡检报告
+- [[AI/OpenClaw/OpenClaw-Channels|OpenClaw-Channels]]：飞书（自带版与官方版）和 QQ Channel 配置
+- [[AI/OpenClaw/OpenClaw-Skills-Plugins|OpenClaw-Skills-Plugins]]：Clawhub 管理 Skills，办公、自我进化、second-brain、记忆插件、skill-vetter、浏览器与百度搜索等 Skills
+- [[AI/OpenClaw/CoPaw|CoPaw]]：阿里对标 OpenClaw 的 Agent 产品，pip 安装与 WebUI 启动
+- [[AI/OpenClaw/OpenClaw-Workspace-运维|OpenClaw-Workspace-运维]]：配置与内容分离、多 Agent 隔离、记忆系统、Skill 加载层级、故障排查与备份恢复
+- [[AI/OpenClaw/Ubuntu-2510-Setup-Guide|Ubuntu-2510-Setup-Guide]]：Ubuntu 25.10 新机初始化，含 SSH、免密 sudo、APT 国内源、开发工具、中文输入法与 VMware Tools
+- [[AI/OpenClaw/OpenClaw-K8s智能运维实战|OpenClaw-K8s智能运维实战]]：三阶段渐进（只读→诊断→变更）+ OPA 护栏 + 60 秒诊断修复实战
+- [[AI/OpenClaw/飞书CLI画板-一句话生成架构图|飞书CLI画板-一句话生成架构图]]：飞书 CLI 画板生成能力，AI Agent 一句话生成可编辑架构图
+- [[AI/Hermes-agent/Hermes与OpenClaw对比及飞书接入指南|Hermes 与 OpenClaw 对比]]：Hermes Agent 与 OpenClaw 的架构对比及飞书接入
+- [[AI/AI-视觉/AI-Animation-Skill-科普动画|AI-Animation-Skill]]：以 Skill 形式运行在 OpenClaw 等 Agent 中的 HTML 科普动画模板集，可通过 ClawHub 安装
 
-## 相关文章
-- [[AI/OpenClaw/OpenClaw-基础-安装|OpenClaw-基础-安装]]
-- [[AI/OpenClaw/Openclaw-多智能体|Openclaw-多智能体]]
-- [[AI/OpenClaw/Openclaw-AIOps|Openclaw-AIOps]]
-- [[AI/OpenClaw/OpenClaw-Channels|OpenClaw-Channels]]
-- [[AI/OpenClaw/OpenClaw-Skills-Plugins|OpenClaw-Skills-Plugins]]
-- [[AI/OpenClaw/CoPaw|CoPaw]]
-- [[AI/OpenClaw/OpenClaw-Workspace-运维|OpenClaw-Workspace-运维]]
-- [[AI/OpenClaw/Ubuntu-2510-Setup-Guide|Ubuntu-2510-Setup-Guide]]
-- [[AI/OpenClaw/OpenClaw-K8s智能运维实战|OpenClaw-K8s智能运维实战]] — 三阶段渐进（只读→诊断→变更）+ OPA 护栏 + 60 秒诊断修复实战
-- [[AI/OpenClaw/飞书CLI画板-一句话生成架构图|飞书CLI画板-一句话生成架构图]] — 飞书 CLI 画板生成能力，AI Agent 一句话生成可编辑架构图
-
-## 智能体定义文件（AI/agents/）
+## 智能体定义文件（AI/AIOps/agents身份文件/）
 
 从多智能体文档导出的 8 个智能体完整定义，可直接部署：
 
@@ -116,12 +122,12 @@ OpenClaw 和 [[KnowledgeBase/entities/Claude-Code|Claude Code]] 同属 AI Agent 
 | [[AI/AIOps/agents身份文件/frontend-engineer/IDENTITY\|frontend]] | 前端工程师 | — |
 | [[AI/AIOps/agents身份文件/pm/IDENTITY\|pm]] | 产品经理 | — |
 
-## 关联概念
+## 相关概念与实体
 - [[KnowledgeBase/entities/Claude-Code|Claude-Code]]
 - [[KnowledgeBase/entities/MCP|MCP]]
 - [[KnowledgeBase/entities/Kubernetes|Kubernetes]]
 
-## 可延展方向
+## 知识空白
 - ~~OpenClaw 与 Kubernetes 集群的 AIOps 集成~~（已有 K8s 智能运维实战文章覆盖）
 - 多智能体在 DevOps 场景中的应用
 - OpenClaw Skills 与 MCP 协议的对比

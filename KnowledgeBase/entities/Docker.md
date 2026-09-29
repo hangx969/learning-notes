@@ -126,6 +126,6 @@ Docker 是一种容器化技术，提供镜像构建、容器运行、网络管�
 - Docker 多阶段构建与镜像体积优化实践
 - Docker 与 containerd 的关系及运行时迁移路径
 - Docker Compose V2 与 Kubernetes 的功能对比
-- Docker 网络模式（bridge/host/overlay/macvlan）深入对比
+- Docker overlay/macvlan 网络模式（bridge/host/none/container 模式已在 [[Docker-Kubernetes/docker/docker基础#docker容器网络模式|docker基础]] 中覆盖）
 - ~~Docker 安全加固（Seccomp、AppArmor、rootless 模式）~~（已有 [[Docker-Kubernetes/docker/docker安全配置-Capabilities与容器加固]] 覆盖 Capabilities/Seccomp/AppArmor，尚缺 rootless 模式）
 - Docker BuildKit 高级构建功能

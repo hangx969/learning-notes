@@ -189,7 +189,7 @@ Git 版本控制基础：
 - 背景：解决 Typora 本地图片路径在换机器后失效的问题
 - 三端配置：GitHub（创建公有仓库 + Access Token）、PicGo（github-plus 插件 + HTTP Server 端口）、Typora（图像上传配置）
 - Obsidian 中使用 Image Auto Upload 插件实现同样功能
-- 常见问题排查：repo 路径空格导致 404、时间戳命名避免文件名重复、修改 hosts 解决图片不显示
+- 常见问题排查：repo 路径空格导致 404、时间戳命名避免文件名重复、上传成功但不显示时先在浏览器确认图片 URL 可访问，再检查本机网络和 DNS
 
 ### C++
 
@@ -313,5 +313,5 @@ Database 和 OS 相关笔记中大量操作基于 CentOS 7.9 环境，包括 MyS
 ## 值得注意
 
 - 内容缺口：RabbitMQ 与 RocketMQ 原文各只有一条 Bilibili 视频链接，Kafka 也仅有简短概念笔记，消息队列部分尚缺实操内容。
-- 摘要与原文不一致：PicGo 一节写的“修改 hosts 解决图片不显示”与原文当前表述不符——原文要求先在浏览器直接打开图片 URL 确认可访问，再检查本机网络和 DNS，并提醒不要将固定 GitHub IP 长期写入 `hosts`（地址可能变化）。
+- PicGo 图片不显示的排查：原文提醒不要将固定的 GitHub IP 地址长期写入 `hosts`，这些地址可能变化。
 - 环境与版本边界：MGR 部署基于三节点 CentOS 7.9 + MySQL 5.7，需使用 InnoDB 存储引擎并加载 `group_replication` 插件；Redis 为 CentOS 7 上源码编译的 6.2.6；Kafka 2.8.0 起支持移除 Zookeeper、引入 KRaft。

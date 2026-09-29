@@ -45,7 +45,6 @@ Azure Kubernetes Service（AKS）是 Microsoft Azure 提供的托管 Kubernetes 
 - [[KnowledgeBase/entities/Terraform|Terraform]]
 
 ## 知识空白
-- AKS 集群升级与节点池管理策略
 - AKS 与 Azure CNI / Kubenet 网络模型对比
 - AKS GitOps 集成（Flux / ArgoCD）
 - AKS 成本优化（Spot 节点、Karpenter）
