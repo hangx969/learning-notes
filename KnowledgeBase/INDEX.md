@@ -57,7 +57,7 @@ date: 2026-09-26
 
 | 页面 | 摘要 |
 |------|------|
-| [Kubernetes](entities/Kubernetes.md) | 容器编排平台，159 篇文章覆盖全生命周期 |
+| [Kubernetes](entities/Kubernetes.md) | 容器编排平台，154 篇 Kubernetes 相关文章覆盖全生命周期 |
 | [Docker](entities/Docker.md) | 容器运行时，14 篇覆盖基础、镜像分发与服务部署实战 |
 | [Helm](entities/Helm.md) | Kubernetes 包管理器 |
 | [[KnowledgeBase/entities/Cert-Manager|Cert-Manager]] | Kubernetes 原生证书生命周期控制器，支持 ACME、自签名与自动续期 |
@@ -170,11 +170,11 @@ date: 2026-09-26
 | [K8s PDB 实战](sources/k8s-pdb-summary.md) | 1 | PodDisruptionBudget 自愿中断保护、四大配置陷阱、与 drain/滚动更新/HPA 的配合 |
 | [K8s 安装管理](sources/k8s-installation-management-batch-summary.md) | 17 | v1.20→v1.35 安装演进、企业高可用、etcd HA、运行时迁移、cgroup v2 |
 | [K8s CGroup v2](sources/k8s-cgroup-v2-summary.md) | 1 | cgroup v1→v2 架构演进、K8s 实战配置（kubelet/containerd 对齐）、5 个生产踩坑案例、Prometheus 监控告警 |
-| [K8s 监控日志](sources/k8s-monitoring-logging-batch-summary.md) | 22 | Prometheus 全栈、EFK/Loki 日志、Jaeger/SkyWalking 链路追踪、日志管理+六种采集方案+审计日志（三合一）、OpenTelemetry 统一可观测性、集群巡检脚本 |
+| [K8s 监控日志](sources/k8s-monitoring-logging-batch-summary.md) | 20 | Prometheus 全栈、EFK/Loki 日志、Jaeger/SkyWalking 链路追踪、日志管理+六种采集方案+审计日志（三合一）、OpenTelemetry 统一可观测性、集群巡检脚本 |
 | [K8s CI/CD](sources/k8s-CICD-batch-summary.md) | 21 | Jenkins/ArgoCD/GitLab CI/Tekton/Kustomize/GitHub Actions/Claude Code AI CI/CD |
 | [[KnowledgeBase/sources/kustomize-base-overlay-summary|Kustomize Base 与 Overlay 多环境配置]] | 1 | Base/Overlay 分层、六个常用字段、构建/差异检查/部署顺序与弃用字段边界 |
 | [K8s 发布策略](sources/k8s-release-strategy-summary.md) | 1 | 蓝绿部署/金丝雀发布三种方案（原生/Nginx Ingress/Argo Rollouts）、选型决策树、数据库兼容性 |
-| [K8s 网络与服务网格](sources/k8s-networking-service-mesh-batch-summary.md) | 7 | Ingress-Nginx/External-DNS/Calico/Istio 流量管理 |
+| [K8s 网络与服务网格](sources/k8s-networking-service-mesh-batch-summary.md) | 5 | Ingress-Nginx/External-DNS/Calico/Istio 流量管理 |
 | [K8s 安全认证](sources/k8s-security-auth-batch-summary.md) | 8 | Cert-Manager/External Secrets/Kyverno(含1.18新特性)/OAuth2 Proxy/Trivy/SonarQube/Security Context |
 | [[KnowledgeBase/sources/cert-manager-tls-automation-summary|cert-manager TLS 自动化]] | 1（整合） | Helm 安装、自签名 Pod TLS、HTTP01/DNS01、Cloudflare/Azure DNS、续期、排障与回滚 |
 | [Kyverno 1.18](sources/kyverno-1.18-summary.md) | 1 | CNCF 毕业后首版：SSRF 防护、CLI 扩展、CEL 策略演进、性能与可观测性提升 |
@@ -185,7 +185,7 @@ date: 2026-09-26
 | [[KnowledgeBase/sources/k8s-volume-health-monitor-summary|Kubernetes Volume Health Monitor]] | 1 | CSI 卷健康状态写入 PVC/Pod/CSINode、VolumeHealthMonitor Alpha 前提、Prometheus 分级告警与自动修复边界 |
 | [K8s 中间件与 UI](sources/k8s-db-middleware-UI-batch-summary.md) | 19 | Redis/MySQL/PostgreSQL/Kafka/RabbitMQ 部署 + Dashboard/Rancher/k9s 管理工具 |
 | [RabbitMQ HA](sources/rabbitmq-ha-summary.md) | 1 | Helm 部署 RabbitMQ 高可用集群（StatefulSet）、aliyun Chart 配置、旧版 API 兼容修复 |
-| [K8s 杂项](sources/k8s-misc-batch-summary.md) | 20 | Helm 工具链/CKA-CKS/KubeBlocks/Harbor/Dragonfly/K3S/Velero/GPU |
+| [K8s 杂项](sources/k8s-misc-batch-summary.md) | 19 | Helm 工具链/CKA-CKS/KubeBlocks/Harbor/Dragonfly/K3S/Velero/GPU |
 | [[KnowledgeBase/sources/dragonfly-harbor-p2p-distribution-summary|Dragonfly 与 Harbor P2P 分发]] | 1 | Harbor 源站卸载、Peer 分块交换、AI 大文件分发、新旧架构和版本边界 |
 | [K8s NVIDIA Device Plugin](sources/k8s-nvidia-device-plugin-summary.md) | 1 | NVIDIA GPU 驱动与 Container Toolkit 前置检查、Device Plugin/Helm/GPU Operator 部署、验证与故障排查 |
 | [K8s 备份与灾备](sources/k8s-backup-dr-summary.md) | 1 | 三层容灾架构（etcd 快照/Velero/应用数据）、自动化备份 CronJob、六大生产避坑、RTO/RPO 目标 |
@@ -194,7 +194,7 @@ date: 2026-09-26
 
 | 页面 | 覆盖文档数 | 摘要 |
 |------|:---------:|------|
-| [Azure](sources/azure-batch-summary.md) | 21 | VM/VMSS、AKS 全栈、网络/存储、DevOps Pipeline、Policy 治理、诊断工具链 |
+| [Azure](sources/azure-batch-summary.md) | 17 | VM/VMSS、AKS 全栈、网络/存储、DevOps Pipeline、Policy 治理、诊断工具链 |
 
 ### Aliyun（已摄入 ✅）
 
@@ -227,7 +227,7 @@ date: 2026-09-26
 
 | 页面 | 覆盖文档数 | 摘要 |
 |------|:---------:|------|
-| [CloudOps-Agent](sources/cloudops-agent-batch-summary.md) | 57 | 三语言（Go/Java/Python）智能 OnCall Agent，RAG/ReAct/Plan-Execute-Replan 架构，Eino/Spring AI Alibaba/LangChain 框架 |
+| [CloudOps-Agent](sources/cloudops-agent-batch-summary.md) | 58 | 三语言（Go/Java/Python）智能 OnCall Agent，RAG/ReAct/Plan-Execute-Replan 架构，Eino/Spring AI Alibaba/LangChain 框架 |
 
 ### AI/RAG-Agent（已摄入 ✅）
 
@@ -292,7 +292,7 @@ date: 2026-09-26
 
 | 页面 | 覆盖文档数 | 摘要 |
 |------|:---------:|------|
-| [HPC-Cloud-GPU](sources/hpc-cloud-gpu-batch-summary.md) | 16 | Slurm 调度/PBS/GPU 管理、云原生/微服务/ServiceMesh、GPU 硬件/CUDA/驱动 |
+| [HPC-Cloud-GPU](sources/hpc-cloud-gpu-batch-summary.md) | 15 | Slurm 调度/PBS/GPU 管理、云原生/微服务/ServiceMesh、GPU 硬件/CUDA/驱动 |
 
 ### 杂项领域（已摄入 ✅）
 
@@ -301,7 +301,7 @@ date: 2026-09-26
 | [杂项](sources/misc-domains-batch-summary.md) | 18 | Database(MySQL/Redis/MongoDB) + Middlewares(Kafka/RabbitMQ/RocketMQ) + OS + Networking + IaC(Terraform) + Git + C++ + SoftwareTesting |
 
 > [!info] 摄入覆盖
-> 共 18 个领域、381 篇学习笔记（按 git 跟踪的 Markdown 统计，含目录 index.md，不含 280 篇引用/嵌入内容）。截至 2026-09-29，仍有 19 篇未被任何 Wiki 页面引用，清单见 [[KnowledgeBase/maintenance/wiki-lint-2026-09-29|Wiki 健康检查 2026-09-29]]。
+> 共 18 个领域、363 篇学习笔记（按 git 跟踪的 Markdown 统计，不含各目录 index.md 导航页和 280 篇引用/嵌入内容）。截至 2026-09-29，仍有 19 篇未被任何 Wiki 页面引用，清单见 [[KnowledgeBase/maintenance/wiki-lint-2026-09-29|Wiki 健康检查 2026-09-29]]。
 
 ---
 
@@ -311,7 +311,7 @@ date: 2026-09-26
 |------|------|
 | [领域地图](maps/domain-map.md) | 按技术领域导航全库 |
 | [工具地图](maps/tool-map.md) | 按工具/平台聚合知识 |
-| [Kubernetes 专题](maps/kubernetes-map.md) | K8s 生态知识导航（Docker-Kubernetes 共 169 篇） |
+| [Kubernetes 专题](maps/kubernetes-map.md) | K8s 生态知识导航（Docker-Kubernetes 共 168 篇） |
 | [AI 工作流专题](maps/ai-workflow-map.md) | Claude Code + OpenClaw + AI 辅助运维 |
 | [Claude Code & OpenClaw 专题](maps/claude-code-openclaw-map.md) | AI 编程与开源 AI 工具 |
 | [云平台专题](maps/cloud-platform-map.md) | Aliyun + Azure 对标 |
@@ -347,26 +347,26 @@ date: 2026-09-26
 
 | 领域 | 篇数 | 成熟度 | 入口 |
 |------|------|:------:|------|
-| Docker-Kubernetes | 169 | 🟢 | [kubernetes-map](maps/kubernetes-map.md) |
-| Python | 29 | 🟢 | [python-devops-map](maps/python-devops-map.md) |
-| Linux-Shell | 12 | 🟡 | [linux-ops-map](maps/linux-ops-map.md) |
-| Azure | 18 | 🟢 | [cloud-platform-map](maps/cloud-platform-map.md) |
-| Aliyun | 22 | 🟢 | [cloud-platform-map](maps/cloud-platform-map.md) |
-| AI | 74 | 🟢 | [ai-workflow-map](maps/ai-workflow-map.md) |
-| Go | 12 | 🟡 | [go-基础-01-环境配置-基础](../Go/go-基础-01-环境配置-基础.md) |
-| CloudComputing | 8 | 🟡 | [云原生](../CloudComputing/云原生.md) |
-| HPC | 5 | 🟡 | [CentOS7-slurm23.02-二进制安装](../HPC/CentOS7-slurm23.02-二进制安装.md) |
-| GPU-DeepLearning | 5 | 🟠 | [GPU-basics](../GPU-DeepLearning/GPU-basics.md) |
-| Database | 4 | 🟡 | [MySQL入门](../Database/MySQL入门.md) |
-| Middlewares | 4 | 🟠 | [Kafka](../Middlewares/Kafka.md) |
-| OS | 4 | 🟠 | [OS](../OS/OS.md) |
-| Networking | 3 | 🟠 | [计算机网络基础](../Networking/计算机网络基础.md) |
-| IaC | 4 | 🟡 | [terraform-basics](../IaC/terraform-basics.md) |
-| Git | 3 | 🟠 | [git-learning](../Git/git-learning.md) |
-| SoftwareTesting | 3 | 🟠 | [软件工程基础](../SoftwareTesting/软件工程基础.md) |
-| C++ | 2 | 🟠 | [C++LearningNotes](../C++/C++LearningNotes.md) |
+| Docker-Kubernetes | 168 | 🟢 | [kubernetes-map](maps/kubernetes-map.md) |
+| Python | 28 | 🟢 | [python-devops-map](maps/python-devops-map.md) |
+| Linux-Shell | 11 | 🟡 | [linux-ops-map](maps/linux-ops-map.md) |
+| Azure | 17 | 🟢 | [cloud-platform-map](maps/cloud-platform-map.md) |
+| Aliyun | 21 | 🟢 | [cloud-platform-map](maps/cloud-platform-map.md) |
+| AI | 73 | 🟢 | [ai-workflow-map](maps/ai-workflow-map.md) |
+| Go | 11 | 🟡 | [go-基础-01-环境配置-基础](../Go/go-基础-01-环境配置-基础.md) |
+| CloudComputing | 7 | 🟡 | [云原生](../CloudComputing/云原生.md) |
+| HPC | 4 | 🟡 | [CentOS7-slurm23.02-二进制安装](../HPC/CentOS7-slurm23.02-二进制安装.md) |
+| GPU-DeepLearning | 4 | 🟠 | [GPU-basics](../GPU-DeepLearning/GPU-basics.md) |
+| Database | 3 | 🟡 | [MySQL入门](../Database/MySQL入门.md) |
+| Middlewares | 3 | 🟠 | [Kafka](../Middlewares/Kafka.md) |
+| OS | 3 | 🟠 | [OS](../OS/OS.md) |
+| Networking | 2 | 🟠 | [计算机网络基础](../Networking/计算机网络基础.md) |
+| IaC | 3 | 🟡 | [terraform-basics](../IaC/terraform-basics.md) |
+| Git | 2 | 🟠 | [git-learning](../Git/git-learning.md) |
+| SoftwareTesting | 2 | 🟠 | [软件工程基础](../SoftwareTesting/软件工程基础.md) |
+| C++ | 1 | 🟠 | [C++LearningNotes](../C++/C++LearningNotes.md) |
 
-> 篇数按 git 跟踪的 Markdown 文件统计（含各目录 index.md；AI 不含 280 篇引用/嵌入内容），统计日期 2026-09-29。
+> 篇数按 git 跟踪的 Markdown 文件统计（不含各目录 index.md 导航页；AI 不含 280 篇引用/嵌入内容），统计日期 2026-09-29。
 
 ---
 

@@ -17,12 +17,20 @@ date: 2026-09-15
 ## AI 工具
 
 ### Claude Code
-**相关文档（7 篇）：**
+**相关文档（14 篇）：**
 - [[Claude Code 基础指南|Claude Code 基础指南]] ⭐ 推荐入口
 - [[AI/ClaudeCode/Claude Code 扩展体系|扩展体系]] — MCP + Skills + Slash Commands + Plugin 四层扩展机制
 - [[AI/ClaudeCode/多智能体协作-Subagents与Agent-Teams|多智能体协作]] — Subagents 与 Agent Teams
 - [[AI/ClaudeCode/Claude-Skill质检工具-SkillCraft|Skill Craft 质检工具]] — Skill 质量工程（7 类失效模式 + 三层评估）
 - [[AI/ClaudeCode/Claude-Code-Harness实战-最小可用系统|Harness 实战]] — 四层安全约束架构 + Git 门禁
+- [[AI/ClaudeCode/CLAUDE.md最佳实践-12条规则模板|CLAUDE.md 12 条规则模板]] — 可直接复用的 CLAUDE.md 规则
+- [[AI/ClaudeCode/CLAUDE.md最佳实践-21条指令清单|CLAUDE.md 21 条指令清单]]
+- [[AI/ClaudeCode/CLAUDE.md维护工程-四层加载与指令预算|CLAUDE.md 维护工程]] — 四层加载与指令预算
+- [[AI/ClaudeCode/Claude Code省token指南|Claude Code 省 Token 指南]]
+- [[AI/ClaudeCode/Claude-Code为什么用grep不用RAG|为什么用 grep 不用 RAG]] — Agentic Search
+- [[AI/ClaudeCode/Claude-Fable-5-system-prompt|Claude Fable 5 系统提示词]]
+- [[AI/ClaudeCode/Git-Worktree-AI开发实践指南|Git Worktree AI 开发实践指南]]
+- [[AI/ClaudeCode/HarnessKit|HarnessKit]] — AI 编码智能体统一管理工具
 - [[AI/Obsidian/obsidian-claude-code-AI知识库完整指南|AI知识库完整指南]] — 搭建知识库方法论（三文合并）
 
 **概念页：** [[KnowledgeBase/entities/Claude-Code|Claude-Code]]
@@ -39,7 +47,7 @@ date: 2026-09-15
 ---
 
 ### OpenClaw
-**相关文档（7 篇）：**
+**相关文档（10 篇）：**
 - [[AI/OpenClaw/OpenClaw-基础-安装|OpenClaw-基础-安装]] ⭐ 推荐入口
 - [[AI/OpenClaw/OpenClaw-Channels|OpenClaw-Channels]] — Channel 配置
 - [[OpenClaw-Skills-Plugins|OpenClaw-Skills-Plugins]] — Skills 与插件
@@ -47,6 +55,9 @@ date: 2026-09-15
 - [[AI/OpenClaw/Openclaw-多智能体|Openclaw-多智能体]] — 多智能体（2974 行）
 - [[AI/OpenClaw/CoPaw|CoPaw]] — CoPaw 工具
 - [[AI/OpenClaw/Ubuntu-2510-Setup-Guide|Ubuntu-2510-Setup-Guide]] — Ubuntu 环境搭建
+- [[AI/OpenClaw/OpenClaw-K8s智能运维实战|OpenClaw-K8s智能运维实战]] — 三阶段渐进式 AIOps
+- [[AI/OpenClaw/OpenClaw-Workspace-运维|OpenClaw-Workspace-运维]] — Workspace 运维实战
+- [[AI/OpenClaw/飞书CLI画板-一句话生成架构图|飞书CLI画板-一句话生成架构图]]
 
 **概念页：** [[KnowledgeBase/entities/OpenClaw|OpenClaw]]
 
@@ -149,7 +160,7 @@ date: 2026-09-15
 ---
 
 ### Istio
-**相关文档（4 篇）：**
+**相关文档（5 篇）：**
 - [[Docker-Kubernetes/k8s-networking-service-mesh/k8s精细化流量管理-istio|Istio 服务网格：架构、部署与精细化流量治理]] ⭐ 推荐入口
 - [[Docker-Kubernetes/k8s-networking-service-mesh/企业项目接入istio实战|企业项目接入istio实战]]
 - [[Docker-Kubernetes/k8s-networking-service-mesh/k8s集群网络安全|k8s集群网络安全]]
@@ -230,10 +241,11 @@ date: 2026-09-15
 ## CI/CD 工具
 
 ### ArgoCD
-**相关文档（4 篇）：**
+**相关文档（5 篇）：**
 - [[Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD基础|ArgoCD基础]] ⭐ 推荐入口
 - [[Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD Image Updater|ArgoCD Image Updater]]
 - [[Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD部署Helm应用时域名解析失败问题排查与解决|ArgoCD部署Helm应用时域名解析失败问题排查与解决]]
+- [[Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD多集群GitOps实战|ArgoCD多集群GitOps实战]]
 - [[Docker-Kubernetes/k8s-CICD/ArgoCD/学习链接|学习链接]]
 
 **概念页：** [[KnowledgeBase/entities/ArgoCD|ArgoCD]]
@@ -289,7 +301,7 @@ date: 2026-09-15
 ## 云平台
 
 ### Azure
-**相关文档（21 篇）：**
+**相关文档（17 篇）：**
 - [[Azure/2_AKS-basics|2_AKS-basics]] ⭐ 推荐入口（AKS）
 - [[Azure/0_Azure-VM-VMSS|0_Azure-VM-VMSS]] — 虚拟机
 - [[Azure/8_Azure-devops-basics|8_Azure-devops-basics]] — DevOps
@@ -300,7 +312,7 @@ date: 2026-09-15
 ---
 
 ### Aliyun
-**相关文档（19 篇）：**
+**相关文档（21 篇）：**
 - [[Aliyun/网络/VPC|VPC]] ⭐ 推荐入口
 - [[Aliyun/计算/ECS|ECS]] — 弹性计算
 - [[Aliyun/网络/负载均衡SLB|负载均衡SLB]] — 负载均衡
@@ -323,7 +335,7 @@ date: 2026-09-15
 ## 编程语言
 
 ### Python
-**相关文档（27 篇）：**
+**相关文档（28 篇）：**
 - [[Python/python-基础/python-basics|python-basics]] ⭐ 推荐入口
 - 完整列表参见 [[KnowledgeBase/maps/python-devops-map|python-devops-map]]
 
@@ -332,8 +344,9 @@ date: 2026-09-15
 ---
 
 ### Go
-**相关文档（9 篇）：**
+**相关文档（11 篇）：**
 - [[go-基础-01-环境配置-基础|go-基础-01-环境配置-基础]] ⭐ 推荐入口
+- 完整学习路径参见 [[KnowledgeBase/maps/domain-map|domain-map]] 的 Go 一节
 
 ---
 

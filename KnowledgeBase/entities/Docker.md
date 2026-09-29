@@ -27,7 +27,7 @@ sources:
 
 ## 简介
 
-Docker 是一种容器化技术，提供镜像构建、容器运行、网络管理和存储编排能力。本仓库记录了 Docker 从安装配置到生产级服务部署的 15 篇实战文档，是进入 [[KnowledgeBase/entities/Kubernetes|Kubernetes]] 生态的前置基础。所有源文档的详细摘要见 [[KnowledgeBase/sources/docker-batch-summary|Docker 来源批量摘要]]。
+Docker 是一种容器化技术，提供镜像构建、容器运行、网络管理和存储编排能力。本仓库记录了 Docker 从安装配置到生产级服务部署的 14 篇实战文档，是进入 [[KnowledgeBase/entities/Kubernetes|Kubernetes]] 生态的前置基础。所有源文档的详细摘要见 [[KnowledgeBase/sources/docker-batch-summary|Docker 来源批量摘要]]。
 
 ## 核心功能
 
@@ -40,7 +40,7 @@ Docker 是一种容器化技术，提供镜像构建、容器运行、网络管�
 
 ### 镜像构建与编排
 - **Dockerfile**：支持多种语言（Nginx、Tomcat、Httpd、Go、Python）的镜像构建，从手动容器内配置到 Dockerfile 自动化构建
-- **docker-compose**：12 篇文档中绝大多数使用 [[KnowledgeBase/entities/Docker-Compose|Docker Compose]] 进行服务编排，是单机多容器场景的核心工具
+- **docker-compose**：`docker/` 目录 14 篇中有 6 篇使用 [[KnowledgeBase/entities/Docker-Compose|Docker Compose]] 进行服务编排（Docker 基础、LNMP、Portainer、Loki、GitLab、Homebox），是单机多容器场景的核心工具
 - **网络原理**：宿主机高位端口到容器端口的映射通过 docker0 网桥 + veth pair 实现
 
 ### 高级配置

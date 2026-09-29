@@ -11,7 +11,7 @@ date: 2026-04-16
 # 🐍 Python 运维开发专题地图
 
 > [!info] 专题范围
-> 覆盖 Python/ 目录下 ==27 篇文档==，聚焦 Python 在运维自动化、Web 开发和数据分析中的应用。
+> 覆盖 Python/ 目录下 ==28 篇文档==，聚焦 Python 在运维自动化、Web 开发和数据分析中的应用。
 
 ---
 
@@ -92,12 +92,13 @@ date: 2026-04-16
 | [[Python/python-网络编程-前端/python-socket-module|python-socket-module]] | socket |
 | [[Python/python-网络编程-前端/python-爬虫|python-爬虫]] | 爬虫 |
 
-### 数据分析（2 篇） + 实际项目（1 篇）
+### 数据分析（2 篇） + 实际项目（1 篇） + 工具（1 篇）
 | 文章 | 主题 |
 |------|------|
 | [[Python/python-数据分析-AI大模型/python-处理excel-word|python-处理excel-word]] | openpyxl, python-docx |
 | [[Python/python-数据分析-AI大模型/python-机器学习与预测|python-机器学习与预测]] | sklearn, pandas |
 | [[Python/电池参数提取统计工具开发/实验室电池参数一键统计工具开发|实验室电池参数一键统计工具开发]] | 完整项目案例 |
+| [[Python/script-server-脚本Web化工具|script-server-脚本Web化工具]] | 脚本 Web 化工具 |
 
 ---
 

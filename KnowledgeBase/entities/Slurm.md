@@ -50,7 +50,7 @@ HPC 集群常配备 GPU 计算节点（如 H800），需要 Slurm 通过 GRES �
 - 多租户共享：通过分区和 QOS 策略实现计算资源公平分配
 
 ## 在本仓库中的覆盖
-主要集中在 `HPC/` 目录下，共 5 篇文章（含脚本），涵盖 Slurm 二进制安装（CentOS 7 / Ubuntu 22.04）、deb 包安装、Node Exporter 监控集成以及 PBS 调度系统对比。
+主要集中在 `HPC/` 目录下，共 4 篇文章，另附 2 个脚本（`job-submit.sh`、`pbs-python.py`），涵盖 Slurm 二进制安装（CentOS 7 / Ubuntu 22.04）、deb 包安装、Node Exporter 监控集成以及 PBS 调度系统对比。
 - [[KnowledgeBase/sources/hpc-cloud-gpu-batch-summary|HPC-Cloud-GPU 批量摘要]]：Slurm 调度/PBS/GPU 管理全栈覆盖
 
 

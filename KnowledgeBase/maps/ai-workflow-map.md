@@ -83,9 +83,9 @@ date: 2026-04-16
 
 ---
 
-## 📂 全部文档
+## 📂 主要文档
 
-### Claude Code（5 篇）
+### Claude Code（目录共 13 篇，此处列出 5 篇）
 
 | 文章 | 主题 | 关键词 |
 |------|------|--------|
@@ -95,14 +95,14 @@ date: 2026-04-16
 | [[AI/ClaudeCode/Claude-Skill质检工具-SkillCraft|Skill Craft 质检工具]] | Skill 质量工程 | 7 类失效模式、三层评估、check/fix/create/audit |
 | [[AI/ClaudeCode/Claude-Code-Harness实战-最小可用系统|Harness 实战]] | 安全约束系统 | 四层架构、Hooks 拦截器、规范先行、Git 门禁 |
 
-### Obsidian 知识库（4 篇）
+### Obsidian 知识库（目录共 5 篇，此处列出 2 篇）
 
 | 文章 | 主题 | 关键词 |
 |------|------|--------|
 | [[AI/Obsidian/obsidian-claude-code-AI知识库完整指南|AI知识库完整指南]] | 完整指南 | Markdown 母语、三层架构、30 分钟上手、六大操作、改造计划（三文合并） |
 | [[AI/Obsidian/Obsidian可视化Skills-Excalidraw-Mermaid-Canvas|Obsidian可视化Skills]] | AI 可视化 | Excalidraw、Mermaid、Canvas、Skills |
 
-### AI 视觉与 HTML 交付（4 篇）
+### AI 视觉与 HTML 交付（目录共 7 篇笔记，此处列出 4 篇）
 
 | 文章 | 主题 | 关键词 |
 |------|------|--------|
@@ -111,7 +111,7 @@ date: 2026-04-16
 | [[AI/AI-视觉/html-anything-AI生成HTML全场景工具|html-anything]] | 全场景 HTML 生成 | Web 原型、演示文稿、视频、社交卡片、导出 |
 | [[AI/AI-视觉/AI-Animation-Skill-科普动画|AI-Animation-Skill]] | HTML 科普动画 | 模板、动画、视频录制 |
 
-### OpenClaw（7 篇）
+### OpenClaw（目录共 10 篇，此处列出 7 篇）
 
 | 文章 | 主题 | 关键词 |
 |------|------|--------|
@@ -123,7 +123,7 @@ date: 2026-04-16
 | [[AI/OpenClaw/Openclaw-多智能体|Openclaw-多智能体]] | 多智能体 | Agent 协作、工作流编排 |
 | [[AI/OpenClaw/Ubuntu-2510-Setup-Guide|Ubuntu-2510-Setup-Guide]] | Ubuntu 配置 | 开发环境 |
 
-### 行业动态（3 篇）
+### 行业动态（目录共 6 篇，此处列出 3 篇）
 
 | 文章 | 主题 | 关键词 |
 |------|------|--------|
@@ -136,7 +136,7 @@ date: 2026-04-16
 ## 📑 来源摘要
 - [[KnowledgeBase/sources/ai-code-review-validation-loop-summary|AI 代码审查验证闭环]] — 完整上下文、真实运行、安全与信息清理
 - [[KnowledgeBase/sources/12个常用Prompt-summary|12 个常用 Prompt 摘要]] — 问题澄清、学习研究、解决问题、决策与自我探索
-- [[KnowledgeBase/sources/cloudops-agent-batch-summary|CloudOps-Agent 批量摘要]] — 57 篇，三语言智能 OnCall Agent
+- [[KnowledgeBase/sources/cloudops-agent-batch-summary|CloudOps-Agent 批量摘要]] — 58 篇，三语言智能 OnCall Agent
 - [[KnowledgeBase/sources/rag-agent-batch-summary|RAG-Agent 批量摘要]] — 33 篇，企业 RAG 知识库系统
 - [[KnowledgeBase/sources/hermes-agent-batch-summary|Hermes-agent 批量摘要]] — 4 篇，Hermes Agent 安装、资源合集、架构解析与 Curator Skill 治理
 - [[KnowledgeBase/sources/k8s-report-skills-summary|K8s 巡检 Skills 摘要]] — K8s 集群巡检 Python/Shell 技能

@@ -28,7 +28,7 @@ sources:
 
 ## 元信息
 - **原始目录**：`Docker-Kubernetes/k8s-installation-management/`
-- **文档数量**：17 篇
+- **文档数量**：本批次收录 17 篇（`k8s-installation-management/` 目录现有 20 篇）
 - **领域**：Docker-Kubernetes
 - **摄入日期**：2026-04-17
 

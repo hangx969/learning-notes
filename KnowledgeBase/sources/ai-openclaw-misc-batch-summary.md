@@ -20,7 +20,7 @@ sources:
 
 ## 元信息
 
-- **文档数量**：8 篇
+- **文档数量**：本批次收录 8 篇（`AI/OpenClaw/` 与 `AI/GithubCopilot/` 现有 11 篇）
 - **主要领域**：AI Agent 平台（OpenClaw）、GitHub Copilot CLI、Linux 环境配置
 - **知识层次**：从安装部署到高级多智能体协同，覆盖基础使用、插件扩展、渠道对接、AIOps 实践、多智能体架构设计
 

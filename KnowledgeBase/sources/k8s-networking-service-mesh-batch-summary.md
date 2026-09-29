@@ -15,7 +15,7 @@ sources:
 ## 元信息
 
 - **原始目录**: `Docker-Kubernetes/k8s-networking-service-mesh/`
-- **文档数量**: 5 篇
+- **文档数量**: 本批次收录 5 篇（`k8s-networking-service-mesh/` 目录现有 7 篇）
 - **领域**: Kubernetes 网络、Ingress 控制器、服务网格（Istio）、DNS 与网络安全
 - **摄入日期**: 2026-04-17
 

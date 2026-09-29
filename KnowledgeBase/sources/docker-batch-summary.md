@@ -24,7 +24,7 @@ sources:
 
 ## 元信息
 - **原始目录**：`Docker-Kubernetes/docker/`
-- **文档数量**：13 篇
+- **文档数量**：本批次收录 13 篇（`docker/` 目录现有 14 篇）
 - **领域**：Docker-Kubernetes
 - **摄入日期**：2026-04-17
 
@@ -144,7 +144,7 @@ sources:
 - [[KnowledgeBase/entities/Harbor|Harbor]]
 
 ## 交叉主题发现
-- **docker-compose 是核心编排工具**：12 篇文档中绝大多数使用 docker-compose 进行服务编排，体现了 compose 在单机多容器场景下的核心地位。
+- **docker-compose 是核心编排工具**：`docker/` 目录 14 篇中有 6 篇使用 docker-compose 进行服务编排（Docker 基础、LNMP、Portainer、Loki、GitLab、Homebox），体现了 compose 在单机多容器场景下的核心地位。
 - **监控与日志形成闭环**：Prometheus+Grafana+cAdvisor 提供指标监控，Loki+Promtail+Grafana 提供日志收集，两者共用 Grafana 展示层，形成统一的可观测性方案。
 - **生产环境关注点**：多篇文档涉及安全配置（密码设置、端口规划）、性能优化（关闭不必要服务、资源限制）和持久化（数据卷挂载），反映了从实验到生产的关注点转移。
 - **GPU 与代理属于进阶配置**：这两篇文档针对特定场景（深度学习、网络受限环境），是 Docker 基础之上的高级运维实践。

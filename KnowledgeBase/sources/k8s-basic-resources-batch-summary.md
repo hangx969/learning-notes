@@ -33,7 +33,7 @@ sources:
 
 ## 元信息
 - **原始目录**：`Docker-Kubernetes/k8s-basic-resources/`
-- **文档数量**：22 篇
+- **文档数量**：本批次收录 22 篇（`k8s-basic-resources/` 现有 25 篇；另 1 篇 ConfigMap/Secret 已移至 `k8s-configMap-secret/`）
 - **领域**：Docker-Kubernetes
 - **摄入日期**：2026-04-17（新增文档摄入日期：2026-07-18）
 

@@ -20,7 +20,7 @@ sources:
 ## 元信息
 
 - **原始目录**: `Docker-Kubernetes/k8s-scaling/` 与 `Docker-Kubernetes/k8s-storage/`
-- **文档数量**: 9 篇整合正文（扩缩容 4 篇 + 存储 5 篇）
+- **文档数量**: 9 篇整合正文（扩缩容 4 篇 + 存储 5 篇；两个目录现有 10 篇）
 - **领域**: Kubernetes 自动扩缩容（HPA/VPA/KEDA/KServe）与存储生命周期（PV/PVC/StorageClass）及分布式存储（NFS/Ceph/CubeFS）
 - **摄入日期**: 2026-04-17
 

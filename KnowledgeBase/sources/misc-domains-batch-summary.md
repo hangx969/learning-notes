@@ -30,7 +30,7 @@ sources:
 | 项目 | 说明 |
 |------|------|
 | 涵盖目录 | Database、Middlewares、OS、Networking、IaC、Git、C++、SoftwareTesting（共 8 个目录） |
-| 文档总数 | 18 篇 |
+| 文档总数 | 18 篇（另有 `IaC/terraform-container-management` 由单独摘要覆盖） |
 | 摄入日期 | 2026-04-17 |
 | 内容语言 | 中文为主，部分技术术语使用英文 |
 

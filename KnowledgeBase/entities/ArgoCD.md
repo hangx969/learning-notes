@@ -42,7 +42,7 @@ ArgoCD 是基于 GitOps 理念的 Kubernetes 持续交付（CD）工具，通过
 - 渐进式发布：与 Argo Rollouts 集成实现蓝绿/金丝雀部署
 
 ## 在本仓库中的覆盖
-主要集中在 `Docker-Kubernetes/k8s-CICD/ArgoCD/` 目录，共 4 篇文章。
+主要集中在 `Docker-Kubernetes/k8s-CICD/ArgoCD/` 目录，共 5 篇文章。
 
 
 - [[Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD基础|ArgoCD基础]]

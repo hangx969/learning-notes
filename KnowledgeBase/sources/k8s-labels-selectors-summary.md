@@ -37,6 +37,6 @@ K8s 标签（Labels）与选择器（Selectors）的生产级实战指南。覆�
 - [[KnowledgeBase/concepts/CICD]]：CI/CD 系统打标签需带前缀
 
 ## 值得注意
-- 与现有 [[KnowledgeBase/sources/k8s-basic-resources-batch-summary|K8s 基础资源]] 互补——该批量摘要覆盖 Pod/Deployment/Service 等 21 篇，但**没有 Labels/Selectors 专题**，本文填补了这个空白
+- 与现有 [[KnowledgeBase/sources/k8s-basic-resources-batch-summary|K8s 基础资源]] 互补——该批量摘要覆盖 Pod/Deployment/Service 等 22 篇，但**没有 Labels/Selectors 专题**，本文填补了这个空白
 - "Deployment selector 不可变"是高频翻车点，与 [[KnowledgeBase/sources/k8s-release-strategy-summary|K8s 发布策略]] 中的蓝绿/金丝雀部署直接相关
 - 成本归因标签体系与 [[KnowledgeBase/sources/k8s-scaling-storage-batch-summary|K8s 扩缩容与存储]] 中的 FinOps 内容形成完整闭环

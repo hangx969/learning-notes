@@ -31,9 +31,9 @@ sources:
 
 ## 简介
 
-Kubernetes（K8s）是容器编排平台，源自 Google Borg 系统，2014 年开源，2018 年从 CNCF 毕业。本仓库以 **159 篇文章**覆盖了 K8s 全生命周期，包括基础资源、集群安装与管理、监控日志、CI/CD、网络与服务网格、安全认证、扩缩容、存储、数据库中间件、UI 工具、备份恢复、GPU 配置、认证考试等主题。全部源文档的详细摘要见上方 `sources` 中列出的批量摘要页面。
+Kubernetes（K8s）是容器编排平台，源自 Google Borg 系统，2014 年开源，2018 年从 CNCF 毕业。本仓库 Docker-Kubernetes 目录共 168 篇，其中 Kubernetes 相关 **154 篇**（其余 14 篇为 `docker/`），覆盖了 K8s 全生命周期，包括基础资源、集群安装与管理、监控日志、CI/CD、网络与服务网格、安全认证、扩缩容、存储、数据库中间件、UI 工具、备份恢复、GPU 配置、认证考试等主题。全部源文档的详细摘要见上方 `sources` 中列出的批量摘要页面。下文各小节篇数按对应子目录统计（2026-09-29），杂项专题含 helm、配置管理、镜像管理、CKA/CKS、KubeBlocks、容器平台、SpringCloud、GPU 子目录及根目录简历指南。
 
-## 核心架构知识（从 146 篇中提炼）
+## 核心架构知识
 
 ### 控制平面与数据平面
 - **API Server**：所有组件通信的中枢，唯一与 etcd 交互的组件
@@ -71,7 +71,7 @@ Kubernetes（K8s）是容器编排平台，源自 Google Borg 系统，2014 年�
 
 ## 本仓库知识覆盖地图
 
-### 基础资源（22 篇）
+### 基础资源（25 篇）
 详见 [[KnowledgeBase/sources/k8s-basic-resources-batch-summary|k8s-basic-resources 批量摘要]]
 
 覆盖 Pod、Deployment（滚动更新 maxSurge/maxUnavailable）、StatefulSet（Headless Service + volumeClaimTemplates）、DaemonSet、Job/CronJob、Service、Ingress、ConfigMap/Secret、Storage（EmptyDir/HostPath/NFS/PV/PVC）、Namespace 资源分配（ResourceQuota/LimitRange）、Calico 网络、kubeadm 集群搭建、容器运行时 containerd、CRD/Operator、认证授权 RBAC、临时容器 Ephemeral、YAML 编写规范、Python K8s API 编程、Finalizer 资源删除生命周期机制。
@@ -82,7 +82,7 @@ Kubernetes（K8s）是容器编排平台，源自 Google Borg 系统，2014 年�
 - 生产环境必须对每个 Namespace 限制 Pod/RS 数量，防止异常激增拖垮集群
 - K8s 1.24 后不再自动为 ServiceAccount 创建 Secret，需手动创建 Token
 
-### 安装与管理（17 篇）
+### 安装与管理（20 篇）
 详见 [[KnowledgeBase/sources/k8s-installation-management-batch-summary|k8s-installation-management 批量摘要]]
 
 覆盖 k8s 1.20 至 1.35 多版本 kubeadm 安装（CentOS -> Rocky Linux 迁移路径）、二进制安装高可用集群（keepalived + nginx）、企业级高可用集群规划、etcd 高可用配置与故障恢复、两地三中心与异地多活架构（Karmada、智能 DNS/GTM）、生产环境优化最佳实践、容器运行时迁移与版本升级、故障排查指南，以及 kubectx/kubens、kube-ps1、OIDC 登录和多文件合并等多集群 kubeconfig 管理实践。
@@ -108,7 +108,7 @@ Kubernetes（K8s）是容器编排平台，源自 Google Borg 系统，2014 年�
 - EFK 适合 TB 级大规模日志，Loki 适合轻量级场景
 - Kafka 作为缓冲层解决高吞吐日志延迟：Fluentd -> Kafka -> Logstash -> ES
 
-### CI/CD（21 篇）
+### CI/CD（24 篇）
 详见 [[KnowledgeBase/sources/k8s-CICD-batch-summary|k8s-CICD 批量摘要]]
 
 覆盖 [[KnowledgeBase/entities/ArgoCD|ArgoCD]]（GitOps 持续交付、Image Updater、DNS 排查）、[[KnowledgeBase/entities/Jenkins|Jenkins]]（多版本部署、Pipeline 语法、DevOps 平台落地）、Tekton（云原生 Pipeline）、[[KnowledgeBase/entities/Kustomize|Kustomize]]（Base+Overlay 配置定制）、GitHub Actions（Self-hosted Runner）、多语言应用发布（Go/Python/Java）。
@@ -131,7 +131,7 @@ Kubernetes（K8s）是容器编排平台，源自 Google Borg 系统，2014 年�
 - 服务网格 vs SpringCloud/Nacos：语言无关、无需侵入业务代码
 - CVE-2019-5736：Docker 18.09.2 以下 runC 漏洞可提权
 
-### 安全与认证（8 篇）
+### 安全与认证（9 篇）
 详见 [[KnowledgeBase/sources/k8s-security-auth-batch-summary|k8s-security-auth 批量摘要]]
 
 覆盖 Capsule 多租户管理、Cert-Manager 证书自动化（ACME/Let's Encrypt）、External Secrets（Azure Key Vault 同步）、Kyverno 策略引擎、OAuth2 Proxy 身份认证、SonarQube 代码质量扫描、Trivy Operator 镜像漏洞扫描、Security Context 容器安全上下文。
@@ -142,7 +142,7 @@ Kubernetes（K8s）是容器编排平台，源自 Google Borg 系统，2014 年�
 - Capsule Tenant：一组 Namespace 的逻辑分组，RBAC + ResourceQuota + NetworkPolicy 策略隔离
 - Security Context：UID/GID 管理 + Capabilities（drop ALL + 按需 add）+ 特权模式禁止 + sysctl + seccomp + Pod 安全标准三级策略
 
-### 扩缩容与存储（12 篇）
+### 扩缩容与存储（10 篇）
 详见 [[KnowledgeBase/sources/k8s-scaling-storage-batch-summary|k8s-scaling-storage 批量摘要]]
 
 **扩缩容四层体系**：HPA（Pod 水平，基于 CPU/内存）-> VPA（Pod 垂直，调整 request/limit）-> KEDA（事件驱动，支持缩容到 0）-> Cluster Autoscaler（节点级别弹性）。Goldilocks 提供 VPA 推荐值可视化。
@@ -163,14 +163,14 @@ Kubernetes（K8s）是容器编排平台，源自 Google Borg 系统，2014 年�
 - Volume Health Monitor 通过 4 个 CSI RPC 将卷健康写入 `PVC.status.healthStatus`、`Pod.status.volumeHealth` 和 `CSINode.status.storageHealth`，补足 PVC 长期 `Bound` 但底层已降级的可观测性盲区
 - 该特性以 Kubernetes 1.37 Alpha 为前提，必须同时验证 feature gate 与 CSI 驱动版本，并把 `Degraded`/`Inaccessible` 分级接入告警和 remediation
 
-### 数据库中间件与 UI 工具（18 篇）
+### 数据库中间件与 UI 工具（19 篇）
 详见 [[KnowledgeBase/sources/k8s-db-middleware-UI-batch-summary|k8s-db-middleware-UI 批量摘要]]
 
 **数据库部署**（三种范式对比）：原生 YAML（学习底层）、Helm Chart（标准化配置）、Operator（自动化运维）。覆盖 MySQL（NDB Operator/Helm/YAML 主从）、PostgreSQL HA（Pgpool+repmgr）、Redis（Cluster 模式 3主3从）、MongoDB（副本集/分片）、Kafka（Strimzi Operator）。
 
 **UI 工具链**：Dashboard（Web 原生）、Kuboard（国产增强）、Lens（桌面 IDE，内置 Prometheus）、k9s（终端 TUI，Vim 风格）、Rancher（企业级多集群管理平台）、krew 插件管理器。
 
-### 杂项专题（20 篇）
+### 杂项专题（18 篇）
 详见 [[KnowledgeBase/sources/k8s-misc-batch-summary|k8s-misc 批量摘要]]
 
 覆盖 [[KnowledgeBase/entities/Helm|Helm]] v3 安装与使用、Config Syncer 跨 Namespace 同步、[[KnowledgeBase/entities/Dragonfly|Dragonfly]] P2P 镜像与 AI 大文件分发、Reloader 配置变更自动重启、CKA/CKS 认证备考、KubeBlocks 统一数据库管理、[[KnowledgeBase/entities/Harbor|Harbor]] 镜像仓库（docker-compose/Helm/KubeBlocks 三种部署方式）与 P2P Preheat、OpenShift、K3S、SpringCloud 迁移、Velero 备份恢复，以及 NVIDIA GPU 配置实践。Dragonfly 的 Scheduler 属于控制面，Peer、Seed Peer 与 Harbor 源站构成主要数据路径；P2P 的收益应以并发规模、对象大小、网络拓扑和运维成本共同评估。

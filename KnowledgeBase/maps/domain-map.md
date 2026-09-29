@@ -10,12 +10,12 @@ date: 2026-09-26
 
 # 领域地图
 
-> [!info] 按技术领域导航全库 18 个领域、381 篇学习笔记，每个领域标注覆盖范围、重点子目录、代表性文章和关联领域。
-> 篇数按 git 跟踪的 Markdown 文件统计（领域总数含目录 index.md，不含 AI/ 下 280 篇引用/嵌入内容），统计日期 2026-09-29。
+> [!info] 按技术领域导航全库 18 个领域、363 篇学习笔记，每个领域标注覆盖范围、重点子目录、代表性文章和关联领域。
+> 篇数按 git 跟踪的 Markdown 文件统计（不含各目录 index.md 导航页和 AI/ 下 280 篇引用/嵌入内容），统计日期 2026-09-29。
 
 ---
 
-## ☸️ Docker-Kubernetes（169 篇）
+## ☸️ Docker-Kubernetes（168 篇）
 
 **覆盖范围：** 从 Docker 容器基础到企业级 Kubernetes 全生命周期管理，包含安装部署、核心资源、监控日志、CI/CD、网络、安全、存储、扩缩容。
 
@@ -38,7 +38,7 @@ date: 2026-09-26
 
 ---
 
-## 🐍 Python（29 篇）
+## 🐍 Python（28 篇）
 
 **覆盖范围：** Python 语言基础、Web 框架、网络编程、运维自动化开发、数据分析。
 
@@ -57,7 +57,7 @@ date: 2026-09-26
 
 ---
 
-## 🐧 Linux-Shell（12 篇）
+## 🐧 Linux-Shell（11 篇）
 
 **覆盖范围：** Linux 系统管理、Shell 脚本、SSH、网络配置、Ubuntu 运维、开发环境搭建。
 
@@ -71,7 +71,7 @@ date: 2026-09-26
 
 ---
 
-## ☁️ Azure（18 篇）
+## ☁️ Azure（17 篇）
 
 **覆盖范围：** Azure VM/VMSS、AKS、DevOps、存储、网络、安全策略、排障工具链。
 
@@ -85,7 +85,7 @@ date: 2026-09-26
 
 ---
 
-## 🏔️ Aliyun（22 篇）
+## 🏔️ Aliyun（21 篇）
 
 **覆盖范围：** 阿里云全产品线 — 计算(ECS/ESS/SMC)、网络(VPC/SLB/WAF/DDoS)、存储(OSS/CORS)、数据库(RDS/DTS)、资源管理。
 
@@ -99,7 +99,7 @@ date: 2026-09-26
 
 ---
 
-## 🤖 AI（74 篇）
+## 🤖 AI（73 篇）
 
 **覆盖范围：** Claude Code（13 篇）、OpenClaw（10 篇）、提示词（8 篇）、AI 视觉（7 篇）、企业级私有化大模型（6 篇）、代码审查与知识图谱（6 篇）、行业动态（6 篇）、Obsidian（5 篇）、Hermes Agent（4 篇）、RAG（3 篇）、AIOps（2 篇）、Codex（2 篇）、GitHub Copilot（1 篇）。
 
@@ -124,7 +124,7 @@ date: 2026-09-26
 
 ---
 
-## 🔤 Go（12 篇）
+## 🔤 Go（11 篇）
 
 **覆盖范围：** Go 语言完整学习路径 + 云原生开发基础。
 
@@ -136,7 +136,7 @@ date: 2026-09-26
 
 ---
 
-## ☁️ CloudComputing（8 篇）
+## ☁️ CloudComputing（7 篇）
 
 **覆盖范围：** 云计算架构理论、云原生概念、OpenStack、K8s 深入剖析、认证协议（SSO/OAuth）。
 
@@ -149,7 +149,7 @@ date: 2026-09-26
 
 ---
 
-## 🖥️ HPC（5 篇）
+## 🖥️ HPC（4 篇）
 
 **覆盖范围：** Slurm 和 PBS 作业调度系统，覆盖 CentOS 7 / Ubuntu 22.04 多版本部署。
 
@@ -165,15 +165,15 @@ date: 2026-09-26
 
 | 领域 | 篇数 | 核心文章 | 关联 |
 |------|------|----------|------|
-| GPU-DeepLearning | 5 | [[GPU-DeepLearning/GPU-basics|GPU-basics]] | HPC、Docker |
-| Database | 4 | [[Database/MySQL入门|MySQL入门]]、[[Database/源码安装redis-6.2.6-centos7|源码安装redis-6.2.6-centos7]] | Python 运维 |
-| Middlewares | 4 | [[Middlewares/Kafka|Kafka]]、[[Middlewares/RabbitMQ|RabbitMQ]] | K8s 中间件部署 |
-| OS | 4 | [[OS/OS|OS]]、[[OS/计算机组成原理|计算机组成原理]] | 理论基础 |
-| Networking | 3 | [[Networking/计算机网络基础|计算机网络基础]]、[[Networking/HTTP基础|HTTP基础]] | 云网络基础 |
-| IaC | 4 | [[IaC/terraform-basics|terraform-basics]] | 自动化运维 |
-| Git | 3 | [[Git/git-learning|git-learning]] | 开发工具 |
-| SoftwareTesting | 3 | [[SoftwareTesting/软件工程基础|软件工程基础]] | 软件工程 |
-| C++ | 2 | [[C++/C++LearningNotes|C++LearningNotes]] | 编程语言 |
+| GPU-DeepLearning | 4 | [[GPU-DeepLearning/GPU-basics|GPU-basics]] | HPC、Docker |
+| Database | 3 | [[Database/MySQL入门|MySQL入门]]、[[Database/源码安装redis-6.2.6-centos7|源码安装redis-6.2.6-centos7]] | Python 运维 |
+| Middlewares | 3 | [[Middlewares/Kafka|Kafka]]、[[Middlewares/RabbitMQ|RabbitMQ]] | K8s 中间件部署 |
+| OS | 3 | [[OS/OS|OS]]、[[OS/计算机组成原理|计算机组成原理]] | 理论基础 |
+| Networking | 2 | [[Networking/计算机网络基础|计算机网络基础]]、[[Networking/HTTP基础|HTTP基础]] | 云网络基础 |
+| IaC | 3 | [[IaC/terraform-basics|terraform-basics]] | 自动化运维 |
+| Git | 2 | [[Git/git-learning|git-learning]] | 开发工具 |
+| SoftwareTesting | 2 | [[SoftwareTesting/软件工程基础|软件工程基础]] | 软件工程 |
+| C++ | 1 | [[C++/C++LearningNotes|C++LearningNotes]] | 编程语言 |
 
 **来源摘要：** [[KnowledgeBase/sources/misc-domains-batch-summary|杂项领域批量摘要]]、[[KnowledgeBase/sources/iac-terraform-container-summary|Terraform 容器管理摘要]]
 

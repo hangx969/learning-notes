@@ -37,8 +37,8 @@ sources:
 
 ## 元信息
 
-- **原始目录**: `Docker-Kubernetes/helm-operator/`、`Docker-Kubernetes/k8s-configMap-secret/`、`Docker-Kubernetes/k8s-CICD/`、`Docker-Kubernetes/CKA-CKS/`、`Docker-Kubernetes/kubeblocks/`、`Docker-Kubernetes/k8s-image-management/`、`Docker-Kubernetes/container-platform/`、`Docker-Kubernetes/k8s-springcloud/`、`Docker-Kubernetes/k8s-backup-dr/`、`Docker-Kubernetes/k8s-ai-gpu/`
-- **文档数量**: 20 篇（现分布于 10 个子目录）
+- **原始目录**: `Docker-Kubernetes/helm/`、`Docker-Kubernetes/k8s-configMap-secret/`、`Docker-Kubernetes/k8s-CICD/`、`Docker-Kubernetes/k8s-networking-service-mesh/`、`Docker-Kubernetes/CKA-CKS/`、`Docker-Kubernetes/kubeblocks/`、`Docker-Kubernetes/k8s-image-management/`、`Docker-Kubernetes/container-platform/`、`Docker-Kubernetes/k8s-springcloud/`、`Docker-Kubernetes/k8s-backup-dr/`、`Docker-Kubernetes/k8s-ai-gpu/`
+- **文档数量**: 19 篇（现分布于 11 个子目录）
 - **领域**: Helm 工具链、K8s 认证备考、KubeBlocks 数据库管理、Harbor 镜像仓库、容器平台（OpenShift/K3S）、SpringCloud 迁移、备份恢复、GPU 配置
 - **摄入日期**: 2026-04-17
 

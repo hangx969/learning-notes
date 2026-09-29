@@ -83,7 +83,7 @@ OpenClaw 是一个大模型驱动的通用 AI Agent 平台，能够操作电脑�
 OpenClaw 和 [[KnowledgeBase/entities/Claude-Code|Claude Code]] 同属 AI Agent 工具，但定位不同：OpenClaw 侧重多智能体协同和渠道对接（飞书/QQ），Claude Code 侧重代码开发场景的 CLI 交互。两者的 Skills/[[KnowledgeBase/entities/MCP|MCP]] 插件扩展机制有可比性。
 
 ## 在本仓库中的位置
-主要集中在 `AI/OpenClaw/` 目录（8 篇文章）和 `AI/agents/` 目录（8 个智能体定义文件集）。
+主要集中在 `AI/OpenClaw/` 目录（10 篇文章）和 `AI/AIOps/agents身份文件/` 目录（8 个智能体定义文件集）。
 
 ## 在本仓库中的覆盖
 - [[KnowledgeBase/sources/ai-openclaw-misc-batch-summary|AI-OpenClaw 批量摘要]] — OpenClaw 全栈（安装/Skills/Channels/AIOps/多智能体）、Copilot CLI

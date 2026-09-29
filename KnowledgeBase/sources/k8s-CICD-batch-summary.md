@@ -31,7 +31,7 @@ sources:
 ## 元信息
 
 - **原始目录**: `Docker-Kubernetes/k8s-CICD/`（含子目录 ArgoCD、Gitlab、Jenkins、Kustomize、Tekton）
-- **文档数量**: 21 篇
+- **文档数量**: 本批次收录 21 篇（`k8s-CICD/` 目录现有 24 篇）
 - **领域**: Kubernetes CI/CD 持续集成与持续部署
 - **摄入日期**: 2026-04-17
 

@@ -23,7 +23,7 @@ aliases:
 - AI 辅助 CI/CD：Claude Code 可自动生成 Pipeline 配置、执行代码审查、集成 GitHub Actions
 
 ## 在本仓库中的覆盖
-主要集中在 `Docker-Kubernetes/k8s-CICD/` 目录下，按工具分为 Jenkins、ArgoCD、Gitlab、Tekton、Kustomize 等子目录，共 19 篇文章。
+主要集中在 `Docker-Kubernetes/k8s-CICD/` 目录下，按工具分为 Jenkins、ArgoCD、Gitlab、Tekton、Kustomize 等子目录，共 24 篇文章。
 
 
 - [[Docker-Kubernetes/k8s-CICD/Jenkins/k8s-Devops平台落地-基于jenkins|k8s-Devops平台落地-基于jenkins]]
