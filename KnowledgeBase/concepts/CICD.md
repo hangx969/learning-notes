@@ -3,7 +3,26 @@ title: CICD
 tags:
   - knowledgebase/concept
 date: 2026-04-16
-sources: []
+sources:
+  - "[[Docker-Kubernetes/k8s-CICD/Jenkins/k8s-Devops平台落地-基于jenkins]]"
+  - "[[Docker-Kubernetes/k8s-CICD/Jenkins/k8s部署基于Jenkins(2.426.3)的Devops工具链-基于yaml]]"
+  - "[[Docker-Kubernetes/k8s-CICD/Jenkins/k8s部署基于Jenkins(2.394)的DevOps工具链-基于yaml]]"
+  - "[[Docker-Kubernetes/k8s-CICD/Jenkins/helm部署jenkins]]"
+  - "[[Docker-Kubernetes/k8s-CICD/Jenkins/docker部署jenkins]]"
+  - "[[Docker-Kubernetes/k8s-CICD/Jenkins/二进制安装Jenkins(2.319)]]"
+  - "[[Docker-Kubernetes/k8s-CICD/Jenkins/Jenkins语法-基于docker部署]]"
+  - "[[Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD基础]]"
+  - "[[Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD Image Updater]]"
+  - "[[Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD部署Helm应用时域名解析失败问题排查与解决]]"
+  - "[[Docker-Kubernetes/k8s-CICD/Gitlab/helm部署gitlab]]"
+  - "[[Docker-Kubernetes/k8s-CICD/Gitlab/k8s部署Gitlab(11.8.1)-基于yaml]]"
+  - "[[Docker-Kubernetes/k8s-CICD/Gitlab/二进制安装Gitlab(17.9.8)]]"
+  - "[[Docker-Kubernetes/k8s-CICD/Tekton/k8s部署原生的CICD工具Tekton-基于yaml]]"
+  - "[[Docker-Kubernetes/k8s-CICD/Tekton/基于Tekton的云原生平台落地]]"
+  - "[[Docker-Kubernetes/k8s-CICD/Kustomize/k8s配置定制工具-kustomize]]"
+  - "[[Docker-Kubernetes/k8s-CICD/使用github action部署helmchart]]"
+  - "[[Docker-Kubernetes/k8s-CICD/发布go-python-java代码到K8S环境]]"
+  - "[[Docker-Kubernetes/k8s-CICD/k8s发布策略-蓝绿部署与金丝雀发布]]"
 aliases:
   - CI/CD
   - 持续集成

@@ -3,9 +3,23 @@ title: 主题覆盖分析
 tags:
   - knowledgebase/analysis
 date: 2026-04-16
+sources:
+  - "[[Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD多集群GitOps实战]]"
+  - "[[Docker-Kubernetes/docker/docker安全配置-Capabilities与容器加固]]"
+  - "[[Docker-Kubernetes/k8s-security-auth/k8s容器安全上下文-SecurityContext]]"
+  - "[[Docker-Kubernetes/k8s-security-auth/k8s-Admission-Webhook链冲突排查-Istio-Kyverno-Gatekeeper]]"
+  - "[[Docker-Kubernetes/k8s-basic-resources/k8s基础-Operator开发实战-Kubebuilder]]"
+  - "[[Docker-Kubernetes/k8s-scaling/k8s成本优化方案-FinOps实战]]"
+  - "[[Aliyun/资源管理/FinOps-云成本优化实战]]"
+aliases:
+  - "topic-coverage-analysis"
+  - "覆盖分析"
 ---
 
 # 📈 主题覆盖分析
+
+> [!note] 快照与更新
+> 本页定性分析基于 2026-04-16 全库扫描；文档数已按 2026-09-29 统计更新（不含目录 index.md）。此后已补充的主题：GitOps 实践见 [[Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD多集群GitOps实战|ArgoCD 多集群 GitOps 实战]]；容器安全见 [[Docker-Kubernetes/docker/docker安全配置-Capabilities与容器加固|Docker 安全加固]]、[[Docker-Kubernetes/k8s-security-auth/k8s容器安全上下文-SecurityContext|SecurityContext]] 与 [[Docker-Kubernetes/k8s-security-auth/k8s-Admission-Webhook链冲突排查-Istio-Kyverno-Gatekeeper|Admission Webhook 链冲突排查]]；Operator 开发见 [[Docker-Kubernetes/k8s-basic-resources/k8s基础-Operator开发实战-Kubebuilder|Kubebuilder 实战]]；FinOps 见 [[Docker-Kubernetes/k8s-scaling/k8s成本优化方案-FinOps实战|K8s FinOps]] 与 [[Aliyun/资源管理/FinOps-云成本优化实战|云成本优化实战]]。
 
 ---
 
@@ -13,16 +27,16 @@ date: 2026-04-16
 
 | 排名 | 主题 | 文档数 | 覆盖深度 |
 |:----:|------|:------:|:--------:|
-| 1 | K8s 安装部署 | 16 | ⭐⭐⭐⭐⭐ |
-| 2 | K8s 监控与日志 | 20 | ⭐⭐⭐⭐⭐ |
-| 3 | K8s CI/CD | 19 | ⭐⭐⭐⭐⭐ |
-| 4 | K8s 核心资源 | 20 | ⭐⭐⭐⭐⭐ |
-| 5 | Docker 部署实战 | 12 | ⭐⭐⭐⭐ |
-| 6 | Python 运维开发 | 10 | ⭐⭐⭐⭐ |
-| 7 | Aliyun 网络安全 | 8 | ⭐⭐⭐⭐ |
-| 8 | K8s 服务网格 (Istio) | 7 | ⭐⭐⭐⭐ |
-| 9 | AI 工具 (Claude Code + OpenClaw) | 16 | ⭐⭐⭐ |
-| 10 | K8s 安全与认证 | 7 | ⭐⭐⭐ |
+| 1 | K8s 核心资源 | 25 | ⭐⭐⭐⭐⭐ |
+| 2 | K8s CI/CD | 24 | ⭐⭐⭐⭐⭐ |
+| 3 | AI 工具 (Claude Code + OpenClaw) | 23 | ⭐⭐⭐ |
+| 4 | K8s 安装部署 | 20 | ⭐⭐⭐⭐⭐ |
+| 5 | K8s 监控与日志 | 20 | ⭐⭐⭐⭐⭐ |
+| 6 | Docker 部署实战 | 14 | ⭐⭐⭐⭐ |
+| 7 | Python 运维开发 | 10 | ⭐⭐⭐⭐ |
+| 8 | Aliyun 网络安全 | 9 | ⭐⭐⭐⭐ |
+| 9 | K8s 安全与认证 | 9 | ⭐⭐⭐ |
+| 10 | K8s 网络与服务网格 (Istio) | 7 | ⭐⭐⭐⭐ |
 
 ---
 
@@ -32,17 +46,17 @@ date: 2026-04-16
 
 **1. Kubernetes 全生命周期**
 - 基础资源 → 安装部署(8版本) → 监控日志 → CI/CD → 服务网格 → 安全 → 存储 → 扩缩容
-- ==145 篇文档==形成完整知识体系
+- ==168 篇文档==形成完整知识体系
 - 缺点：文档间双链极少，缺少导航层（现已通过 KnowledgeBase 补充）
 
 **2. Aliyun 云平台产品矩阵**
 - 计算 → 网络 → 存储 → 数据库 → 安全 → 资源管理，覆盖核心产品线
-- 19 篇全部有双链互引，体系最完整
+- 21 篇中 20 篇有双链互引，体系最完整
 - 配合 ACP 认证考试，有明确学习目标
 
 **3. Python 运维开发栈**
 - 语言基础 → Web 框架 → 运维自动化 → 数据分析
-- 27 篇覆盖从 Python 入门到 K8s API / 数据库 / 中间件自动化
+- 28 篇覆盖从 Python 入门到 K8s API / 数据库 / 中间件自动化
 - 有完整的实际项目案例（电池参数工具）
 
 ### 🟡 部分体系化
@@ -58,7 +72,7 @@ date: 2026-04-16
 - 缺少：PromQL 深入、告警规则最佳实践
 
 **6. Claude Code + OpenClaw**
-- 各 7 篇，覆盖安装、配置、高级特性
+- Claude Code 13 篇、OpenClaw 10 篇，覆盖安装、配置、高级特性
 - 缺少：跨工具对比、实际运维案例、与 K8s 集成场景
 
 **7. Go 语言学习路径**
@@ -73,8 +87,8 @@ date: 2026-04-16
 
 | 主题 | 现有文档 | 问题 |
 |------|----------|------|
-| 数据库 | MySQL(2) + Redis(1) + K8s 部署(10) | 分散在两个目录，缺统一索引 |
-| HPC | Slurm(5) + PBS(2) | 多版本重复内容，缺乏系统整合 |
+| 数据库 | MySQL(2) + Redis(1) + K8s 部署(11) | 分散在两个目录，缺统一索引 |
+| HPC | Slurm(3) + PBS(1) | 多版本重复内容，缺乏系统整合 |
 | 消息中间件 | Kafka + RabbitMQ + RocketMQ | ==无 Frontmatter==，格式最差 |
 
 ### 🔴 明显空白

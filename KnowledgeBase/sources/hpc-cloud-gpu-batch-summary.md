@@ -22,6 +22,8 @@ sources:
   - "[[GPU-DeepLearning/Server-basics]]"
   - "[[GPU-DeepLearning/GPU-basics]]"
   - "[[GPU-DeepLearning/GPU-exporter-grafana]]"
+aliases:
+  - "HPC-Cloud-GPU 批量摘要"
 ---
 
 ## 元信息

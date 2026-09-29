@@ -3,7 +3,18 @@ title: Python运维开发
 tags:
   - knowledgebase/concept
 date: 2026-04-16
-sources: []
+sources:
+  - "[[Python/python-运维开发/python-Linux-operation]]"
+  - "[[Python/python-运维开发/python-kubernetes-module]]"
+  - "[[Python/python-运维开发/python-mysql]]"
+  - "[[Python/python-运维开发/python-postgresql]]"
+  - "[[Python/python-运维开发/python-fabric高级用法]]"
+  - "[[Python/python-运维开发/python-elasticsearch]]"
+  - "[[Python/python-运维开发/python-nginx]]"
+  - "[[Python/python-运维开发/python-tomcat]]"
+  - "[[Python/python-运维开发/python-GUI-tkinter]]"
+  - "[[Python/python-运维开发/python-游戏开发]]"
+  - "[[Docker-Kubernetes/k8s-basic-resources/Python调用k8s-api实现资源管理]]"
 aliases:
   - Python DevOps
   - Python运维

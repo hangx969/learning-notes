@@ -14,6 +14,9 @@ sources:
   - "[[Aliyun/资源管理/Landing Zone]]"
   - "[[Aliyun/资源管理/FinOps-云成本优化实战]]"
   - "[[KnowledgeBase/sources/aliyun-batch-summary]]"
+aliases:
+  - "阿里云"
+  - "Alibaba Cloud"
 ---
 
 # Aliyun

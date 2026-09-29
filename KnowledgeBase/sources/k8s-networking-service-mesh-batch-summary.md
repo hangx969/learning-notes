@@ -10,6 +10,8 @@ sources:
   - "[[Docker-Kubernetes/k8s-networking-service-mesh/k8s集群网络安全]]"
   - "[[Docker-Kubernetes/k8s-networking-service-mesh/k8s精细化流量管理-istio]]"
   - "[[Docker-Kubernetes/k8s-networking-service-mesh/企业项目接入istio实战]]"
+aliases:
+  - "k8s-networking-service-mesh 批量摘要"
 ---
 
 ## 元信息

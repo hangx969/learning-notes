@@ -9,6 +9,9 @@ sources:
   - "[[Claude Code 基础指南]]"
   - "[[AI/Obsidian/obsidian-claude-code-AI知识库完整指南]]"
   - "[[AI/行业动态/Claude-Code创始人红杉大会七个判断]]"
+aliases:
+  - "Model Context Protocol"
+  - "模型上下文协议"
 ---
 
 # MCP

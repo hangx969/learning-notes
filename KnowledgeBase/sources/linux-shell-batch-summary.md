@@ -16,6 +16,8 @@ sources:
   - "[[Linux-Shell/Ubuntu安装Wechat]]"
   - "[[Linux-Shell/VMWare-using-notes]]"
   - "[[Linux-Shell/vscode]]"
+aliases:
+  - "Linux-Shell 批量摘要"
 ---
 
 ## 元信息

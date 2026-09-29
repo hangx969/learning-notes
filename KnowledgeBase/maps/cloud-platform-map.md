@@ -6,6 +6,39 @@ tags:
 aliases:
   - Cloud Platform Map
 date: 2026-04-16
+sources:
+  - "[[Aliyun/计算/ECS]]"
+  - "[[Aliyun/计算/弹性伸缩ESS]]"
+  - "[[Azure/0_Azure-VM-VMSS]]"
+  - "[[Azure/2_AKS-basics]]"
+  - "[[Azure/3_AKS-workload-identity]]"
+  - "[[Azure/4_AKS-SecretProviderClass-KeyVault]]"
+  - "[[Aliyun/网络/VPC]]"
+  - "[[Aliyun/网络/CEN-TR]]"
+  - "[[Aliyun/网络/网关-VPN-专线]]"
+  - "[[Azure/6_Azure-Networking]]"
+  - "[[Aliyun/网络/负载均衡SLB]]"
+  - "[[Aliyun/存储/对象存储OSS]]"
+  - "[[Aliyun/存储/数据湖-HDFS-POSIX]]"
+  - "[[Azure/5_Azure-Storage]]"
+  - "[[Azure/7_ACR-ACI]]"
+  - "[[Aliyun/数据库/关系型数据库RDS]]"
+  - "[[Aliyun/数据库/数据传输服务DTS]]"
+  - "[[Aliyun/网络/WAF]]"
+  - "[[Aliyun/网络/DDoS高防]]"
+  - "[[Aliyun/网络/云安全中心-云防火墙]]"
+  - "[[Azure/11_Azure-Policy]]"
+  - "[[Azure/8_Azure-devops-basics]]"
+  - "[[Azure/9_Azure-devops-self-host-agents]]"
+  - "[[Azure/10_Azure-devops-agent-pool-management]]"
+  - "[[Aliyun/计算/主机迁移工具SMC]]"
+  - "[[Aliyun/资源管理/Landing Zone]]"
+  - "[[Aliyun/ACP考试]]"
+  - "[[Azure/14_Kusto Query]]"
+  - "[[Azure/12_Azure 故障排查工具]]"
+  - "[[Aliyun/网络/DNS-CDN-SSL]]"
+  - "[[Networking/计算机网络基础]]"
+  - "[[Aliyun/存储/跨域共享CORS]]"
 ---
 
 # ☁️ 云平台专题地图

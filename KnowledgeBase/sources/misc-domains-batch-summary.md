@@ -23,6 +23,9 @@ sources:
   - "[[C++/C++LearningNotes]]"
   - "[[SoftwareTesting/软件工程基础]]"
   - "[[SoftwareTesting/软件测试直播课笔记]]"
+aliases:
+  - "杂项领域批量摘要"
+  - "杂项领域摘要"
 ---
 
 ## 元信息

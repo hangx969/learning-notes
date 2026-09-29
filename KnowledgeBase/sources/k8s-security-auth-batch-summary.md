@@ -13,6 +13,9 @@ sources:
   - "[[Docker-Kubernetes/k8s-security-auth/helm部署sonarqube]]"
   - "[[Docker-Kubernetes/k8s-security-auth/helm部署trivy-operator]]"
   - "[[k8s容器安全上下文-SecurityContext]]"
+aliases:
+  - "k8s-security-auth 批量摘要"
+  - "K8s 安全认证批量摘要"
 ---
 
 ## 元信息

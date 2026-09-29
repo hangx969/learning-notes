@@ -4,11 +4,35 @@ tags:
   - knowledgebase/analysis
   - knowledgebase/gaps
 date: 2026-04-16
+sources:
+  - "[[Docker-Kubernetes/k8s-networking-service-mesh/k8s-Gateway-API入门-Ingress下一代方案]]"
+  - "[[Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD基础]]"
+  - "[[Docker-Kubernetes/k8s-installation-management/k8s故障排查指南]]"
+  - "[[Docker-Kubernetes/k8s-installation-management/k8s生产环境优化与最佳实践]]"
+  - "[[Docker-Kubernetes/k8s-security-auth/helm部署trivy-operator]]"
+  - "[[Docker-Kubernetes/k8s-basic-resources/k8s基础-自定义CRD资源]]"
+  - "[[Go/云原生开发-基础]]"
+  - "[[Docker-Kubernetes/k8s-basic-resources/k8s基础-ingress]]"
+  - "[[Docker-Kubernetes/k8s-installation-management/etcd高可用配置以及模拟集群故障和恢复]]"
+  - "[[CloudComputing/深入剖析Kubernetes]]"
+  - "[[CloudComputing/Auth]]"
+  - "[[Docker-Kubernetes/简历指南]]"
+  - "[[Docker-Kubernetes/k8s-installation-management/k8s两地三中心架构]]"
+  - "[[GPU-DeepLearning/Server-basics]]"
+  - "[[Middlewares/Kafka]]"
+  - "[[Middlewares/RabbitMQ]]"
+  - "[[Middlewares/RocketMQ]]"
+aliases:
+  - "high-value-gaps"
+  - "知识缺口"
 ---
 
 # 🔍 高价值知识缺口
 
 > [!info] 识别多次提到但没有专门页面的主题、明显偏空白的领域、以及高价值但低连接的知识孤岛。
+
+> [!note] 快照与更新
+> 本页基于 2026-04-16 全库扫描；文档数已按 2026-09-29 统计更新。此后已建立 [[KnowledgeBase/concepts/RBAC|RBAC]]、[[KnowledgeBase/concepts/StorageClass|StorageClass]] 概念页和 [[KnowledgeBase/entities/Calico|Calico]]、[[KnowledgeBase/entities/Nginx|Nginx]] 实体页；GitOps、容器安全、FinOps、Operator 开发和 API Gateway 方向的新增文档见 [[KnowledgeBase/analysis/topic-coverage-analysis|主题覆盖分析]] 顶部说明及 [[Docker-Kubernetes/k8s-networking-service-mesh/k8s-Gateway-API入门-Ingress下一代方案|Gateway API 入门]]。
 
 ---
 
@@ -33,7 +57,7 @@ date: 2026-04-16
 ### 🔥 高优先级空白
 
 **1. GitOps 方法论**
-- 现状：ArgoCD 工具使用有 4 篇，但 GitOps 理论、最佳实践、工作流设计为零
+- 现状：ArgoCD 工具使用有 5 篇（含多集群 GitOps 实战），但 GitOps 理论与工作流设计仍缺专题
 - 价值：GitOps 是云原生 CI/CD 的核心范式
 - 关联：[[Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD基础|ArgoCD基础]]
 
@@ -83,7 +107,7 @@ date: 2026-04-16
 
 | 孤岛 | 内容价值 | 连接缺失 |
 |------|----------|----------|
-| [[CloudComputing/深入剖析Kubernetes|深入剖析Kubernetes]] | K8s 理论深入 | 未被 145 篇 K8s 实操文档引用 |
+| [[CloudComputing/深入剖析Kubernetes|深入剖析Kubernetes]] | K8s 理论深入 | 未被 168 篇 K8s 实操文档引用 |
 | [[CloudComputing/Auth|Auth]] | OAuth/OIDC/SAML/SSO | 未连接到 Azure AD、K8s RBAC |
 | [[Docker-Kubernetes/简历指南|简历指南]] | 求职实用 | 孤立文档 |
 | [[Docker-Kubernetes/k8s-installation-management/k8s两地三中心架构|k8s两地三中心架构]] | 高可用架构 | 未连接到 Aliyun/Azure 多地域 |

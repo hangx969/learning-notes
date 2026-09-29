@@ -22,6 +22,8 @@ sources:
   - "[[Git-Worktree-AI开发实践指南]]"
   - "[[AI/Code review和知识图谱/AI代码审查闭环-验证优先与敏感信息清理]]"
   - "[[AI/AI-视觉/Effective-HTML-Agent页面工作流]]"
+aliases:
+  - "CC"
 ---
 
 # Claude Code

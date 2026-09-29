@@ -7,6 +7,8 @@ tags:
 date: 2026-05-09
 sources:
   - "[[AI/Obsidian/obsidian-claude-code-AI知识库完整指南]]"
+aliases:
+  - "AI知识库完整指南摘要"
 ---
 
 # Obsidian + Claude Code：AI 驱动的知识库完整指南

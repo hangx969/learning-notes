@@ -4,11 +4,53 @@ tags:
   - knowledgebase/analysis
   - knowledgebase/suggestions
 date: 2026-04-16
+sources:
+  - "[[Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD多集群GitOps实战]]"
+  - "[[Docker-Kubernetes/docker/docker安全配置-Capabilities与容器加固]]"
+  - "[[Docker-Kubernetes/k8s-security-auth/k8s容器安全上下文-SecurityContext]]"
+  - "[[Docker-Kubernetes/k8s-basic-resources/k8s基础-Operator开发实战-Kubebuilder]]"
+  - "[[AI/OpenClaw/OpenClaw-K8s智能运维实战]]"
+  - "[[AI/AIOps/AIOps实战-Golang手搓K8s智能运维工具链]]"
+  - "[[Docker-Kubernetes/k8s-scaling/k8s成本优化方案-FinOps实战]]"
+  - "[[Aliyun/资源管理/FinOps-云成本优化实战]]"
+  - "[[Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD基础]]"
+  - "[[Docker-Kubernetes/k8s-CICD/Kustomize/k8s配置定制工具-kustomize]]"
+  - "[[Docker-Kubernetes/helm/helmv3-安装与使用]]"
+  - "[[Docker-Kubernetes/k8s-monitoring-logging/Prometheus基础]]"
+  - "[[Docker-Kubernetes/k8s-installation-management/k8s故障排查指南]]"
+  - "[[Docker-Kubernetes/k8s-installation-management/k8s生产环境优化与最佳实践]]"
+  - "[[Docker-Kubernetes/k8s-monitoring-logging/helm部署prometheus-stack全家桶]]"
+  - "[[Docker-Kubernetes/k8s-monitoring-logging/k8s监控alertmanager(v0.14.0)]]"
+  - "[[Docker-Kubernetes/k8s-installation-management/etcd高可用配置以及模拟集群故障和恢复]]"
+  - "[[Linux-Shell/ansible安装-rockylinux8]]"
+  - "[[IaC/terraform-basics]]"
+  - "[[Python/python-运维开发/python-fabric高级用法]]"
+  - "[[Docker-Kubernetes/k8s-security-auth/helm部署trivy-operator]]"
+  - "[[Docker-Kubernetes/k8s-security-auth/helm部署kyverno和policy-reporter]]"
+  - "[[Docker-Kubernetes/k8s-basic-resources/k8s基础-认证-授权-准入]]"
+  - "[[Docker-Kubernetes/k8s-basic-resources/k8s基础-自定义CRD资源]]"
+  - "[[Docker-Kubernetes/k8s-db-middleware/Operator部署Redis集群]]"
+  - "[[Go/云原生开发-基础]]"
+  - "[[AI/OpenClaw/Openclaw-AIOps]]"
+  - "[[AI/ClaudeCode/Claude Code 基础指南]]"
+  - "[[Python/python-运维开发/python-Linux-operation]]"
+  - "[[Aliyun/网络/VPC]]"
+  - "[[Azure/6_Azure-Networking]]"
+  - "[[Azure/2_AKS-basics]]"
+  - "[[Aliyun/资源管理/Landing Zone]]"
+  - "[[Database/MGR部署MySQL5.7]]"
+  - "[[Database/源码安装redis-6.2.6-centos7]]"
+aliases:
+  - "next-writing-suggestions"
+  - "写作建议"
 ---
 
 # ✏️ 后续写作建议
 
 > [!info] 基于全库分析，推荐 10 个值得继续补写或系统化的主题。
+
+> [!note] 快照与更新
+> 本页基于 2026-04-16 的分析。此后部分建议已有对应文档：第 1 项见 [[Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD多集群GitOps实战|ArgoCD 多集群 GitOps 实战]]；第 6 项见 [[Docker-Kubernetes/docker/docker安全配置-Capabilities与容器加固|Docker 安全加固]] 与 [[Docker-Kubernetes/k8s-security-auth/k8s容器安全上下文-SecurityContext|SecurityContext]]；第 7 项见 [[Docker-Kubernetes/k8s-basic-resources/k8s基础-Operator开发实战-Kubebuilder|Kubebuilder 实战]]；第 8 项见 [[AI/OpenClaw/OpenClaw-K8s智能运维实战|OpenClaw K8s 智能运维实战]]、[[AI/AIOps/AIOps实战-Golang手搓K8s智能运维工具链|AIOps Golang 工具链]]；第 9 项的 FinOps 部分见 [[Docker-Kubernetes/k8s-scaling/k8s成本优化方案-FinOps实战|K8s FinOps]] 与 [[Aliyun/资源管理/FinOps-云成本优化实战|云成本优化实战]]。
 
 ---
 
@@ -133,7 +175,7 @@ date: 2026-04-16
 ## 9. 多云架构与 FinOps
 
 **为什么值得写：**
-- 已有 Aliyun(19 篇) 和 Azure(21 篇)，自然可以写多云对标
+- 已有 Aliyun(21 篇) 和 Azure(17 篇)，自然可以写多云对标
 - FinOps 是企业刚需
 
 **与当前仓库的关系：**

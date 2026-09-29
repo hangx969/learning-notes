@@ -7,6 +7,8 @@ tags:
 date: 2026-05-05
 sources:
   - "[[AI/Obsidian/Obsidian可视化Skills-Excalidraw-Mermaid-Canvas]]"
+aliases:
+  - "Obsidian 可视化 Skills"
 ---
 
 # Obsidian 可视化 Skills 来源摘要

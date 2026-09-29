@@ -13,6 +13,8 @@ sources:
   - "[[Azure/11_Azure-Policy]]"
   - "[[14_Kusto Query]]"
   - "[[KnowledgeBase/sources/azure-batch-summary]]"
+aliases:
+  - "Microsoft Azure"
 ---
 
 # Azure

@@ -6,6 +6,31 @@ tags:
 aliases:
   - Linux Ops Map
 date: 2026-09-26
+sources:
+  - "[[Linux-Shell/Linux-learning-notes]]"
+  - "[[OS/OS]]"
+  - "[[OS/OS-磁盘管理]]"
+  - "[[Linux-Shell/LVM-RAID]]"
+  - "[[Linux-Shell/shell-scripts]]"
+  - "[[Linux-Shell/开源堡垒机jumpserver部署]]"
+  - "[[Linux-Shell/ansible安装-rockylinux8]]"
+  - "[[IaC/terraform-basics]]"
+  - "[[Python/python-运维开发/python-Linux-operation]]"
+  - "[[Linux-Shell/Ubuntu基础操作]]"
+  - "[[Linux-Shell/Ubuntu部署vftpd]]"
+  - "[[Linux-Shell/MacBook开发环境配置]]"
+  - "[[Linux-Shell/vscode]]"
+  - "[[OS/计算机组成原理]]"
+  - "[[Networking/计算机网络基础]]"
+  - "[[Networking/HTTP基础]]"
+  - "[[HPC/CentOS7-slurm23.02-二进制安装]]"
+  - "[[HPC/Ubuntu2204-Slurm-安装指南]]"
+  - "[[HPC/PBS]]"
+  - "[[HPC/Slurm-node-exporter]]"
+  - "[[GPU-DeepLearning/GPU-basics]]"
+  - "[[GPU-DeepLearning/GPU-exporter-grafana]]"
+  - "[[GPU-DeepLearning/NVIDIA-GPU-开启persistent mode]]"
+  - "[[GPU-DeepLearning/Server-basics]]"
 ---
 
 # 🐧 Linux 运维专题地图

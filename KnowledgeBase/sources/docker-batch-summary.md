@@ -18,6 +18,8 @@ sources:
   - "[[Docker-Kubernetes/docker/docker配置NVIDIA GPU]]"
   - "[[Docker-Kubernetes/docker/docker配置代理]]"
   - "[[Docker-Kubernetes/docker/docker无需本地环境从DockerHub下载镜像并保存为tar]]"
+aliases:
+  - "Docker 批量摘要"
 ---
 
 # Docker 来源批量摘要

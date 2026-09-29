@@ -25,6 +25,9 @@ sources:
   - "[[Docker-Kubernetes/k8s-monitoring-logging/helm部署jaeger]]"
   - "[[Docker-Kubernetes/k8s-monitoring-logging/K8s全面巡检脚本-生成HTML健康报告]]"
   - "[[Docker-Kubernetes/k8s-monitoring-logging/OpenTelemetry实战-统一Traces-Metrics-Logs]]"
+aliases:
+  - "k8s-monitoring-logging 批量摘要"
+  - "K8s 监控日志批量摘要"
 ---
 
 # k8s-monitoring-logging 来源批量摘要

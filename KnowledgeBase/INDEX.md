@@ -301,7 +301,7 @@ date: 2026-09-26
 | [杂项](sources/misc-domains-batch-summary.md) | 18 | Database(MySQL/Redis/MongoDB) + Middlewares(Kafka/RabbitMQ/RocketMQ) + OS + Networking + IaC(Terraform) + Git + C++ + SoftwareTesting |
 
 > [!info] 摄入覆盖
-> 共 18 个领域、363 篇学习笔记（按 git 跟踪的 Markdown 统计，不含各目录 index.md 导航页和 280 篇引用/嵌入内容）。截至 2026-09-29，仍有 19 篇未被任何 Wiki 页面引用，清单见 [[KnowledgeBase/maintenance/wiki-lint-2026-09-29|Wiki 健康检查 2026-09-29]]。
+> 共 18 个领域、363 篇学习笔记（按 git 跟踪的 Markdown 统计，不含各目录 index.md 导航页和 280 篇引用/嵌入内容）。截至 2026-09-29，全部笔记均已在 [[KnowledgeBase/inventory/repository-inventory|全库文档盘点]] 中列出，其中 33 篇尚无来源摘要，清单见 [[KnowledgeBase/maintenance/wiki-lint-2026-09-29|Wiki 健康检查 2026-09-29]]。
 
 ---
 
@@ -324,7 +324,7 @@ date: 2026-09-26
 
 | 页面 | 摘要 |
 |------|------|
-| [主题覆盖分析](analysis/topic-coverage-analysis.md) | 17 个领域的覆盖度评估 |
+| [主题覆盖分析](analysis/topic-coverage-analysis.md) | 主要主题的覆盖度与空白评估（2026-04-16 快照，篇数已更新） |
 | [高价值知识缺口](analysis/high-value-gaps.md) | 优先填补的知识空白 |
 | [后续写作建议](analysis/next-writing-suggestions.md) | 推荐下一步写作方向 |
 | [多Agent vs 单Agent架构决策分析](analysis/multi-agent-vs-single-agent.md) | 分析多Agent何时是伪需求，提出信息隔离与并发需求的决策框架 |
@@ -336,7 +336,7 @@ date: 2026-09-26
 | 页面 | 摘要 |
 |------|------|
 | [全库文档盘点](inventory/repository-inventory.md) | 全部文档逐一列出 |
-| [领域内容特点分析](inventory/domain-summary.md) | 17 个领域的成熟度与优先级 |
+| [领域内容特点分析](inventory/domain-summary.md) | 18 个领域的成熟度与优先级 |
 | [[KnowledgeBase/maintenance/wiki-lint-2026-09-29|Wiki 健康检查 2026-09-29]] | 断链、孤儿页、概念覆盖、一致性、来源时效性与交叉引用六维检查；已修复可由 git 历史确认的改名/合并链接 |
 | [命名规范](maintenance/naming-normalization.md) | 文件命名约定 |
 | [增量维护流程](maintenance/update-workflow.md) | 新增文档后的更新步骤 |

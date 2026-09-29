@@ -16,6 +16,9 @@ sources:
   - "[[AI/OpenClaw/CoPaw]]"
   - "[[AI/OpenClaw/Ubuntu-2510-Setup-Guide]]"
   - "[[AI/GithubCopilot/Copilot CLI]]"
+aliases:
+  - "AI/OpenClaw 杂项批量摘要"
+  - "AI-OpenClaw 批量摘要"
 ---
 
 ## 元信息

@@ -22,6 +22,8 @@ sources:
   - "[[12_Azure 故障排查工具]]"
   - "[[13_Azure命令行工具]]"
   - "[[Azure/Customer Support/Email Templates]]"
+aliases:
+  - "Azure 批量摘要"
 ---
 
 # Azure 来源批量摘要

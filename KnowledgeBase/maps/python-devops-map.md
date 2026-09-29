@@ -6,6 +6,40 @@ tags:
 aliases:
   - Python DevOps Map
 date: 2026-04-16
+sources:
+  - "[[Python/python-基础/python-basics]]"
+  - "[[Python/python-基础/python-function]]"
+  - "[[Python/python-基础/python-OOP]]"
+  - "[[Python/python-基础/python-exception-handling]]"
+  - "[[Python/python-基础/python-QA]]"
+  - "[[Python/python-运维开发/python-Linux-operation]]"
+  - "[[Python/python-运维开发/python-fabric高级用法]]"
+  - "[[Python/python-运维开发/python-kubernetes-module]]"
+  - "[[Python/python-运维开发/python-mysql]]"
+  - "[[Python/python-运维开发/python-postgresql]]"
+  - "[[Python/python-运维开发/python-elasticsearch]]"
+  - "[[Python/python-运维开发/python-nginx]]"
+  - "[[Python/python-运维开发/python-tomcat]]"
+  - "[[Python/python-网络编程-前端/python-request-module]]"
+  - "[[Python/python-网络编程-前端/python-socket-module]]"
+  - "[[Python/python-网络编程-前端/python-爬虫]]"
+  - "[[Python/python-网络编程-前端/python-Web框架Flask]]"
+  - "[[Python/python-网络编程-前端/python-Web框架Django]]"
+  - "[[Python/python-数据分析-AI大模型/python-处理excel-word]]"
+  - "[[Python/python-数据分析-AI大模型/python-机器学习与预测]]"
+  - "[[Python/电池参数提取统计工具开发/实验室电池参数一键统计工具开发]]"
+  - "[[Python/python-基础/python包管理工具-uv]]"
+  - "[[Python/python-基础/rockylinux配置python开发环境]]"
+  - "[[Python/python-基础/windows配置python开发环境]]"
+  - "[[Python/python-运维开发/python-GUI-tkinter]]"
+  - "[[Python/python-运维开发/python-游戏开发]]"
+  - "[[Python/python-网络编程-前端/python-Web开发-HTML-CSS-JS]]"
+  - "[[Python/script-server-脚本Web化工具]]"
+  - "[[Docker-Kubernetes/k8s-basic-resources/Python调用k8s-api实现资源管理]]"
+  - "[[Database/MySQL入门]]"
+  - "[[Database/源码安装redis-6.2.6-centos7]]"
+  - "[[Linux-Shell/shell-scripts]]"
+  - "[[Docker-Kubernetes/k8s-CICD/发布go-python-java代码到K8S环境]]"
 ---
 
 # 🐍 Python 运维开发专题地图

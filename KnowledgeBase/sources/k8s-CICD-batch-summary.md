@@ -26,6 +26,8 @@ sources:
   - "[[Docker-Kubernetes/k8s-CICD/使用github action部署helmchart]]"
   - "[[Docker-Kubernetes/k8s-CICD/发布go-python-java代码到K8S环境]]"
   - "[[Docker-Kubernetes/k8s-CICD/Claude-Code实现CICD自动化发布流程]]"
+aliases:
+  - "k8s-CICD 批量摘要"
 ---
 
 ## 元信息

@@ -32,6 +32,8 @@ sources:
   - "[[Python/python-数据分析-AI大模型/python-处理excel-word]]"
   - "[[Python/python-数据分析-AI大模型/python-机器学习与预测]]"
   - "[[Python/电池参数提取统计工具开发/实验室电池参数一键统计工具开发]]"
+aliases:
+  - "Python 批量摘要"
 ---
 
 ## 元信息

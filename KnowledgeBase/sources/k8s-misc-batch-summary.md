@@ -33,6 +33,9 @@ sources:
   - "[[Docker-Kubernetes/k8s-backup-dr/k8s集群备份恢复-Velero]]"
   - "[[Docker-Kubernetes/k8s-ai-gpu/k8s配置NVIDIA GPU]]"
   - "[[Docker-Kubernetes/k8s-ai-gpu/从零部署 NVIDIA Device Plugin：K8s 识别 GPU 的“第一块敲门砖”]]"
+aliases:
+  - "k8s-misc 批量摘要"
+  - "K8s 杂项批量摘要"
 ---
 
 ## 元信息

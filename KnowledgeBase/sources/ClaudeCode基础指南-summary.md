@@ -6,6 +6,8 @@ tags:
 date: 2026-04-17
 sources:
   - "[[Claude Code 基础指南]]"
+aliases:
+  - "ClaudeCode基础指南摘要"
 ---
 
 # ClaudeCode基础指南

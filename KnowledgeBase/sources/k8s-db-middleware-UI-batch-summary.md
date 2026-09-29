@@ -25,6 +25,9 @@ sources:
   - "[[Docker-Kubernetes/k8s-UI-tools/kubectl-可视化插件k9s-stern]]"
   - "[[Docker-Kubernetes/k8s-UI-tools/kuebctl-插件krew-rolesum]]"
   - "[[Docker-Kubernetes/k8s-UI-tools/rancher(v2.6.4)管理k8s集群]]"
+aliases:
+  - "k8s-db-middleware-UI 批量摘要"
+  - "K8s 中间件与 UI"
 ---
 
 ## 元信息

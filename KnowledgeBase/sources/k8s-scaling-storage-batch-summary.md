@@ -15,6 +15,9 @@ sources:
   - "[[Docker-Kubernetes/k8s-scaling/k8s成本优化方案-FinOps实战]]"
   - "[[Docker-Kubernetes/k8s-storage/k8s删除PVC后PV数据保护与复用避坑]]"
   - "[[Docker-Kubernetes/k8s-storage/让存储故障现形：Kubernetes Volume Health Monitor 原理与生产接入]]"
+aliases:
+  - "k8s-scaling-storage 批量摘要"
+  - "K8s 扩缩容与存储批量摘要"
 ---
 
 ## 元信息

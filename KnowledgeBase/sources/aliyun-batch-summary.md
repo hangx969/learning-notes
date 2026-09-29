@@ -24,6 +24,8 @@ sources:
   - "[[Aliyun/数据库/关系型数据库RDS]]"
   - "[[Aliyun/数据库/数据传输服务DTS]]"
   - "[[Aliyun/资源管理/Landing Zone]]"
+aliases:
+  - "Aliyun 批量摘要"
 ---
 
 # Aliyun 来源批量摘要

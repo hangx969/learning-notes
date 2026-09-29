@@ -22,6 +22,9 @@ sources:
   - "[[Docker-Kubernetes/k8s-installation-management/k8s故障排查指南]]"
   - "[[Docker-Kubernetes/k8s-installation-management/k8s多集群kubeconfig管理]]"
   - "[[Docker-Kubernetes/k8s-installation-management/k8s-cgroup-v2深度解析-迁移实战与避坑指南]]"
+aliases:
+  - "k8s-installation-management 批量摘要"
+  - "K8s 安装与管理"
 ---
 
 # k8s-installation-management 来源批量摘要

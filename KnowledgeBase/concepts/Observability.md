@@ -3,7 +3,26 @@ title: Observability
 tags:
   - knowledgebase/concept
 date: 2026-04-16
-sources: []
+sources:
+  - "[[Docker-Kubernetes/k8s-monitoring-logging/Prometheus基础]]"
+  - "[[Docker-Kubernetes/k8s-monitoring-logging/Prometheus监控k8s系统组件]]"
+  - "[[Docker-Kubernetes/k8s-monitoring-logging/Prometheus监控外部k8s集群]]"
+  - "[[Docker-Kubernetes/k8s-monitoring-logging/Prometheus监控非云原生应用-主机]]"
+  - "[[Docker-Kubernetes/k8s-monitoring-logging/helm部署prometheus-stack全家桶]]"
+  - "[[Docker-Kubernetes/k8s-monitoring-logging/二进制部署Prometheus(v2.32.1)联邦集群]]"
+  - "[[Docker-Kubernetes/k8s-monitoring-logging/二进制部署prometheus-grafana-nodeexporter]]"
+  - "[[Docker-Kubernetes/k8s-monitoring-logging/Kubernetes原生部署Prometheus与Grafana]]"
+  - "[[Docker-Kubernetes/k8s-monitoring-logging/k8s监控alertmanager(v0.14.0)]]"
+  - "[[Docker-Kubernetes/k8s-monitoring-logging/helm部署Loki-promtail-tempo-grafanaAgent全家桶]]"
+  - "[[Docker-Kubernetes/k8s-monitoring-logging/helm部署jaeger]]"
+  - "[[Docker-Kubernetes/k8s-monitoring-logging/k8s部署全链路追踪-Skywalking]]"
+  - "[[Docker-Kubernetes/k8s-monitoring-logging/k8s日志管理-采集方案与审计日志]]"
+  - "[[Docker-Kubernetes/k8s-monitoring-logging/k8s监控EFK+logstash+kafka]]"
+  - "[[Docker-Kubernetes/k8s-monitoring-logging/k8s监控ES(7.2)+Kibana(7.2)+Fluentd(v1.4.2)]]"
+  - "[[Docker-Kubernetes/k8s-monitoring-logging/k8s部署elasticsearch集群]]"
+  - "[[Docker-Kubernetes/k8s-monitoring-logging/二进制部署efk+logstash+kafka日志收集平台]]"
+  - "[[Docker-Kubernetes/k8s-monitoring-logging/基于helm+operator部署ECK日志收集平台]]"
+  - "[[Docker-Kubernetes/k8s-storage/让存储故障现形：Kubernetes Volume Health Monitor 原理与生产接入]]"
 aliases:
   - 可观测性
   - 监控

@@ -25,6 +25,8 @@ sources:
   - "[[KnowledgeBase/sources/k8s-nvidia-device-plugin-summary]]"
   - "[[KnowledgeBase/sources/k8s-probe-restart-storm-summary]]"
   - "[[KnowledgeBase/sources/kserve-vllm-inferenceservice-summary]]"
+aliases:
+  - "K8s"
 ---
 
 # Kubernetes

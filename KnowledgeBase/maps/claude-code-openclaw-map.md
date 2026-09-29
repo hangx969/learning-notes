@@ -6,6 +6,17 @@ tags:
   - knowledgebase/claude-code
   - knowledgebase/openclaw
 date: 2026-04-16
+sources:
+  - "[[AI/ClaudeCode/Claude Code 基础指南]]"
+  - "[[AI/ClaudeCode/Claude Code 扩展体系]]"
+  - "[[AI/ClaudeCode/多智能体协作-Subagents与Agent-Teams]]"
+  - "[[AI/OpenClaw/OpenClaw-基础-安装]]"
+  - "[[AI/OpenClaw/Openclaw-多智能体]]"
+  - "[[AI/OpenClaw/Openclaw-AIOps]]"
+  - "[[AI/OpenClaw/OpenClaw-Skills-Plugins]]"
+  - "[[AI/OpenClaw/OpenClaw-Channels]]"
+aliases:
+  - "Claude Code & OpenClaw 专题"
 ---
 
 # 🧠 Claude Code & OpenClaw 专题地图

@@ -27,6 +27,9 @@ sources:
   - "[[Docker-Kubernetes/k8s-basic-resources/k8s基础-认证-授权-准入]]"
   - "[[Docker-Kubernetes/k8s-basic-resources/k8s-APIServer深度剖析-请求链路-认证授权-生产调优]]"
   - "[[Docker-Kubernetes/k8s-basic-resources/k8s基础-Finalizer与资源删除]]"
+aliases:
+  - "K8s 基础资源批量摘要"
+  - "k8s-basic-resources 批量摘要"
 ---
 
 # K8s基础资源 来源批量摘要
