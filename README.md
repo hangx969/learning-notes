@@ -77,7 +77,7 @@ learning-notes/
 ├── KnowledgeBase/                 ← 知识编译层（LLM 维护）
 │   ├── INDEX.md                   ← 全库内容目录
 │   ├── log.md                     ← 操作日志
-│   ├── sources/                   ← 原始来源摘要页（79 篇）
+│   ├── sources/                   ← 原始来源摘要页（76 篇）
 │   ├── concepts/                  ← 概念页（21 篇）
 │   ├── entities/                  ← 实体页（43 篇）
 │   ├── maps/                      ← 主题地图（8 篇）

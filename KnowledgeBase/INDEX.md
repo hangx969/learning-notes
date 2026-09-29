@@ -337,7 +337,7 @@ date: 2026-09-26
 |------|------|
 | [全库文档盘点](inventory/repository-inventory.md) | 全部文档逐一列出 |
 | [领域内容特点分析](inventory/domain-summary.md) | 18 个领域的成熟度与优先级 |
-| [[KnowledgeBase/maintenance/wiki-lint-2026-09-29|Wiki 健康检查 2026-09-29]] | 断链、孤儿页、概念覆盖、一致性、来源时效性与交叉引用六维检查；已修复可由 git 历史确认的改名/合并链接 |
+| [[KnowledgeBase/maintenance/wiki-lint-2026-09-29|Wiki 健康检查 2026-09-29]] | 六维健康检查与两轮处理：修复失效链接，删除剪藏暂存目录引用与过时摘要，统一篇数，补全页面格式 |
 | [命名规范](maintenance/naming-normalization.md) | 文件命名约定 |
 | [增量维护流程](maintenance/update-workflow.md) | 新增文档后的更新步骤 |
 
