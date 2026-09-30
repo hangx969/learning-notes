@@ -96,7 +96,7 @@ GitLab 在企业内经常用于代码的版本控制，也是DevOps平台中尤�
 
 7. 登录后，在Admin - Settings - General - Import and export settings里面开启import功能（勾上Github、Repository by URL、Gitlab export三项），可以从外部仓库导入代码到Gitlab。点击save changes保存配置。
 
-8. 在Overview - Users里面修改root用户密码。（yxK:yd9rrL:m4!K）
+8. 在Overview - Users里面修改root用户密码。（`<password>`）
 
 9. 如果需要重启gitlab：
 

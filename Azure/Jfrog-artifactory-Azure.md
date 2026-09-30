@@ -126,14 +126,14 @@ shared:
   database:
     driver: org.postgresql.Driver
     type: postgresql
-    url: jdbc:postgresql://pg-artifactory.postgres.database.chinacloudapi.cn:5432/postgres?user=artifactory&password=Passw0rd&sslmode=require
+    url: jdbc:postgresql://pg-artifactory.postgres.database.chinacloudapi.cn:5432/postgres?user=artifactory&password=<password>&sslmode=require
     username: artifactory
-    password: Passw0rd
+    password: <password>
 ```
 
 ### 2.4 准备 PostgreSQL
 
-在 VNet 中创建 PostgreSQL 实例。原实验记录中的管理员密码为 `Passw0rd`；下方配置中的数据库连接信息需与实际实例一致。
+在 VNet 中创建 PostgreSQL 实例。原实验记录中的管理员密码已替换为占位符 `<password>`；下方配置中的数据库连接信息需与实际实例一致。
 
 ### 2.5 创建 ACI 容器组
 
@@ -195,7 +195,7 @@ shared:
     database:
         driver: org.postgresql.Driver
         type: postgresql
-        url: jdbc:postgresql://artipgsql.postgres.database.chinacloudapi.cn:5432/artifactory?user=artifactory&password=Passw0rd&sslmode=require
+        url: jdbc:postgresql://artipgsql.postgres.database.chinacloudapi.cn:5432/artifactory?user=artifactory&password=<password>&sslmode=require
         username: <username>
         password: <password>
 EOF

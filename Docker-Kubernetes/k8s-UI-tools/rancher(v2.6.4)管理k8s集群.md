@@ -197,11 +197,11 @@ docker run -d --restart=unless-stopped -p 80:80 -p 443:443 --privileged rancher/
 docker ps #获取container ID
 docker logs 8708d5cbcb25 2>&1 | grep "Bootstrap"
 #2>&1：这是一个 Shell 命令，用于将标准错误（2）重定向到标准输出（1）。这样，无论日志条目是写入标准输出还是标准错误，都可以被后续的命令处理。
-#vjvnhwxfxpc45gmg695r6rr9cs4twx5rck2c7bjtsp6f8zvzzw5plv
+#<bootstrap-password>
 ~~~
 
 - 登录rancher
-  - 使用本地用户登录，设置密码（u:admin,p:azsxdcfvgbhn）
+  - 使用本地用户登录，设置密码（u:admin,p:`<password>`）
 
 ### 通过rancher管理k8s集群
 
@@ -212,7 +212,7 @@ docker logs 8708d5cbcb25 2>&1 | grep "Bootstrap"
 - 复制显示的导入命令
 
   ~~~sh
-  curl --insecure -sfL https://192.168.40.138/v3/import/kqvbv89b8vfvsp4vkwm7f47bw2sdvvd2ftz59tknlnpl8wkzm8wdnv_c-m-ktfx2cm5.yaml | kubectl apply -f -
+  curl --insecure -sfL https://192.168.40.138/v3/import/<registration-token>_c-m-ktfx2cm5.yaml | kubectl apply -f -
   ~~~
 
   > - `--insecure` 选项表示允许 `curl` 连接到使用自签名证书的 HTTPS 站点。`-s` 选项表示静默模式，不输出错误和进度信息。`-f` 选项表示在 HTTP 错误时失败。`-L` 选项表示如果服务器报告了重定向，那么就跟随重定向。

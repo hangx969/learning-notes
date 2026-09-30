@@ -2079,3 +2079,10 @@ date: 2026-04-17
 - 原始来源断链（用户授权）：修复 Claude Code 基础指南、HPC、Jenkins、Python、K8s 1.33 等笔记中的失效链接、锚点、同名歧义、作者字段和 Typora 本地图片引用；嵌入的 RAG 项目文档未改。
 - 孤儿页：删除 `sources/codex-两个设置提升体验-summary.md`；log.md 中指向已删除页面的链接改为行内代码。
 - 结果见更新后的 [[KnowledgeBase/maintenance/wiki-lint-2026-09-29|Wiki 健康检查 2026-09-29]]：知识库内只剩 257 条红链；原始来源层只剩 22 条，均在嵌入项目文档中；log.md 中剩 16 条历史链接。
+
+## [2026-09-30] update | 原始笔记明文凭据改为占位符
+
+- 按用户确认，将 3 篇原始笔记中的明文实验凭据改为占位符：[[Docker-Kubernetes/k8s-UI-tools/rancher(v2.6.4)管理k8s集群]] 的 bootstrap 密码、admin 密码和集群导入令牌；[[Azure/Jfrog-artifactory-Azure]] 中 4 处 PostgreSQL 密码；[[Docker-Kubernetes/k8s-CICD/Gitlab/二进制安装Gitlab(17.9.8)]] 的 root 密码。
+- 正文中的占位符放进行内代码，避免被当作 HTML 标签隐藏。
+- 更新 [[KnowledgeBase/maintenance/wiki-lint-2026-09-29|Wiki 健康检查 2026-09-29]] §8 第 4 条的处理状态。
+- 原值仍保留在 git 历史中。
