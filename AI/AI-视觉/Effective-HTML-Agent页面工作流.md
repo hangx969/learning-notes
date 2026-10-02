@@ -39,7 +39,7 @@ tags:
 
 安装到 Claude、Codex 这类工具后，它会先判断页面该怎么做，并在完成后自行检查。
 
-我平时也会让 Agent 画流程图、做些小页面。
+我也会让 Agent 画流程图、做些小页面。
 
 现在让我比较头疼的已经不是代码写不出来，而是第一版看着挺快，后面又得不断告诉它这里改一下，那里再补一个状态。
 
@@ -243,6 +243,3 @@ codex plugin add plannotator-effective-html@effective-html
 Effective HTML 把做页面的流程提前定好了，用Agent来写页面可以少走很多弯路。
 
 如果你经常用 Codex 写页面，可以安装后试用。
-
-
----

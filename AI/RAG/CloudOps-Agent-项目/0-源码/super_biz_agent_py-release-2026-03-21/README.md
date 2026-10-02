@@ -59,7 +59,7 @@ make start
 
 #### Windows 环境（PowerShell/CMD）
 
-如果Windows 不支持 `make` 命令，可以手动执行以下步骤以启动服务：
+如果 Windows 环境不支持 `make` 命令，可以按以下步骤手动启动服务：
 
 ```powershell
 # 1. 克隆项目
