@@ -40,7 +40,7 @@ func createMessages(ctx context.Context) []*schema.Message {
 
 ## 创建大模型的入口
 
-注意这里的api key记得替换成你的api key哦
+记得将这里的 API key 换成你自己的。
 
 ```go
 func openAIForDeepSeekV3Quick(ctx context.Context) (cm model.ToolCallingChatModel, err error) {

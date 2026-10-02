@@ -2,11 +2,11 @@
 
 
 
-对于没有编程基础的同学，直接看b站视频学习： https://www.bilibili.com/video/BV1eyWbzEEnw
+没有编程基础的同学，直接看 B 站视频学习： https://www.bilibili.com/video/BV1eyWbzEEnw
 
 
 
-对于有编程基础的同学，请看官方文档学习：
+有编程基础的同学，请看官方文档学习：
 
 1.  https://java2ai.com/ 
 
@@ -18,11 +18,11 @@ Spring AI Alibaba 是基于 Spring AI 框架对阿里云百炼大模型服务的
 
 
 
-下面我们通过一个最简单的对话接口，带你快速上手。
+下面通过一个最简单的对话接口，演示如何快速上手。
 
 
 
-源码：[ 项目源码（Go、Java、Python）](https://my.feishu.cn/wiki/L1dUw7qKziZeJXk17ojcdoKhn7g)使用spring ai alibaba实现一个ai对话接口
+源码：[ 项目源码（Go、Java、Python）](https://my.feishu.cn/wiki/L1dUw7qKziZeJXk17ojcdoKhn7g) 使用 Spring AI Alibaba 实现一个 AI 对话接口
 
 # 1. 创建项目 & 引入依赖
 
