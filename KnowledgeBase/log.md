@@ -2118,3 +2118,10 @@ date: 2026-04-17
 - 11 篇调整了别扭句式、重复说明和含糊指代，其余 24 篇保留原文；退回并修正了候选稿中的无谓扩写及限定条件变化，保留技术原意和确定程度。
 - 文件名、标题、frontmatter、代码块、行内代码、表格、链接、数值与列表顺序保持一致；35 个页面经 Obsidian MCP 读回，与验收稿完全一致。
 - 本轮仅检查文档内容和变更范围，未运行 Terraform init、validate、plan、apply 或 test。学习入口为 [[IaC/terraform/README|Terraform 基础系列学习路线]]。
+
+## [2026-10-02] update | Terraform 示例改为 AliCloud 生产结构
+
+- 调整 `IaC/terraform/` 的 15 篇正文及 README，以 `alicloud-operations` 的临时权限输入、OSS Bucket/ACL、CMS 告警模块、TFE remote Backend 和 ACK/Kubernetes/Helm 关系替换原平台示例；保留编号、文件名和中文学习顺序。
+- 由 3 个 GPT-6 Luna High 子 Agent 分组改写，统筹验收后写回 36 个页面：正文与 README、15 篇来源摘要、Terraform 实体页、2 个概念页、主题地图和 INDEX 的 Terraform 条目。生产片段、脱敏裁剪与教学新增测试/CI 均标明范围；账号、角色、资源 ID、内部域名、联系人及凭据用占位符代替，表达按 humanizer-zh 核对。
+- 70 个 HCL、62 个 Shell、3 个普通 YAML 代码块及策略模板语法检查通过；249 个内部引用和 51 个生产路径引用可定位，无生产敏感值命中。ACK 示例 Chart 通过离线 Helm lint 与两组 template 渲染，覆盖副本 1/2、Service 端口 80/8080及 checksum 变化；Obsidian 阅读视图表格和链接检查通过。
+- 36 个页面经 MCP 全文写回并逐批回读完全一致，Git diff 空白检查通过。244 份生产参考文件哈希及生产 Git 状态保持原样；未执行 Terraform init/validate/plan/apply/test，未访问 TFE、云端或集群。真实 Provider/API 行为、集群认证、镜像拉取及部署仍未验证。
