@@ -21,20 +21,23 @@ aliases:
 
 ## 摘要
 
-用两种批量本地文件实验解释索引和稳定 key 的区别。涵盖集合过滤、0/1 创建、链式 for_each 和地址迁移。
+用 `terraform_data` 承载 CMS 告警形状的本地练习，比较 `count` 索引与 `for_each` 稳定 key；生产 CMS 配置片段解释真实告警 map、dynamic block 和可选 OSS Bucket 的 count 条件。
 
 ## 关键知识点
 
-1. count 按索引分配实例身份，中间增删或重排可能影响后续实例。
-2. for_each 使用 map/set(string)，key 要在 plan 时已知且不能是敏感值。
-3. moved 迁移同一 State 内的地址，但不能取消真实参数变化要求的替换；for 表达式和 dynamic 不等于创建独立资源实例。
+1. `count` 地址由列表索引决定，中间增删或重排可能令后续地址代表不同对象。
+2. `for_each` 用 map key 或字符串集合成员作为地址身份；key 应预先已知且不能泄露敏感信息。
+3. Resource/module 上的 `for_each` 产生独立实例；dynamic block 只生成 Provider resource 内部的嵌套配置。
+4. `moved` 可迁移 State 地址，但不会免除实际属性变化带来的更新或替换。
+5. 生产 `shared/jfrog-cn.tf` 用 `count` 实现可选 OSS Bucket 的零/一实例模式。
 
 ## 涉及的概念与实体
 
 - [[KnowledgeBase/entities/Terraform|Terraform]]
-- [[KnowledgeBase/concepts/自动化运维|自动化运维]]
+- [[KnowledgeBase/concepts/Terraform状态管理|Terraform 状态管理]]
 
 ## 值得注意
 
-- 技术出处在原始笔记中按官方文档和 Provider 文档列出；实验输出标为预期观察，云端执行未验证。
-- 学习顺序与相关章节见 [[KnowledgeBase/maps/terraform-map|Terraform 主题地图]]。
+- CMS 配置基于 `monitoring/modules/cloud-monitor-alerts/main.tf` 与 `variables.tf` 脱敏裁剪/教学改编；本地逻辑 resource 只是练习 wrapper，不会创建 CMS 资源。
+- 实验命令只操作各自本地 State；未调用云端。
+- 学习顺序见 [[KnowledgeBase/maps/terraform-map|Terraform 主题地图]]。

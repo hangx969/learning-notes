@@ -3,6 +3,7 @@ title: "Terraform 变量、locals 与 outputs 来源摘要"
 tags:
   - knowledgebase/source
   - IaC/terraform
+  - alicloud
 date: 2026-10-02
 sources:
   - "[[IaC/terraform/03_terraform_变量与输出]]"
@@ -15,19 +16,20 @@ aliases:
 ## 元信息
 
 - **原始文档**：[[IaC/terraform/03_terraform_变量与输出]]
-- **领域**：IaC / Terraform
+- **领域**：IaC / Terraform / 阿里云
 - **摄入日期**：2026-10-02
 - **更新日期**：2026-10-02
 
 ## 摘要
 
-通过生成应用 JSON 的完整实验，说明输入接口、派生值和输出接口。整理本地 CLI 变量优先级及敏感值的持久化边界。
+以生产 CMS 告警模块的 map(object) 输入和 optional 字段为依据，完整构建一个不连接云端的告警数据实验。说明 variable、locals 和 output 的职责、对象输入校验、CLI 赋值优先级、敏感值及 State 的边界。
 
 ## 关键知识点
 
-1. variables.tf 声明变量，tfvars 提供值，子模块输入由父模块显式传递。
-2. 本地 CLI 依次处理默认值、环境变量、自动变量文件和按顺序提供的命令行赋值。
-3. sensitive 隐藏默认汇总显示，不保证值不进入 State/Plan；按名字读取 output 或使用 -raw/-json 仍可得到明文。换 tfvars 也不自动换状态。
+1. `variables.tf` 声明接口，变量文件或运行环境提供值，locals 派生数据，子模块输入由父模块显式传递。
+2. 本地 CLI 变量赋值按默认值、环境变量、自动变量文件和命令行参数等顺序覆盖；相同 map 变量整体替换，不会自动合并。
+3. `nullable` 与默认值共同决定省略值和显式 null 的结果；object optional 有字段默认值语义，跨变量 validation 从 Terraform 1.9 起可用。
+4. 敏感 input 的输出必须显式声明 `sensitive = true`；常规输出会遮盖值，但具名 output、`-raw`、`-json` 仍可能显示明文，State/Plan 也可能保存该值。
 
 ## 涉及的概念与实体
 
@@ -36,7 +38,6 @@ aliases:
 
 ## 值得注意
 
-- nullable=false 且提供非 null 默认值时，显式 null 会回退到默认值；该设置只约束整体值，不自动禁止对象内部字段为 null。
-- 自动文件按完整文件名排序；后赋值覆盖整个变量，不会自动合并两个 map。
-- 技术出处在原始笔记中按官方文档和 Provider 文档列出；实验输出标为预期观察，云端执行未验证。
-- 学习顺序与相关章节见 [[KnowledgeBase/maps/terraform-map|Terraform 主题地图]]。
+- 生产依据：`monitoring/modules/cloud-monitor-alerts/variables.tf` 和 `monitoring/modules/cloud-monitor-alerts/main.tf`；示例为脱敏裁剪和离线改编。
+- 认证环境变量与 `TF_VAR_*` 输入变量属于不同接口；阿里云认证的版本边界见第五篇及官方 Provider 文档。
+- 练习结果为预期观察，本次仅做静态核对，未初始化项目或执行 plan/apply/test。

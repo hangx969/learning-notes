@@ -23,7 +23,7 @@ Terraform 状态管理维护配置地址与实际对象之间的绑定，以及�
 
 - 地址由资源逻辑名、模块路径和实例 key 等组成，改地址时需考虑 moved。
 - refresh-only 同步记录但不改变配置目标；退出管理与删除对象是不同操作。
-- 远程 State 的存储、权限、恢复和锁定独立于资源 Provider 认证。
+- 远程 State 的存储、权限、恢复和锁定独立于资源 Provider 认证；生产参考采用 TFE remote Backend，阿里云连接仍由对应 Provider 配置。
 
 ## 与其他概念的关系
 
@@ -33,10 +33,10 @@ Terraform 状态管理维护配置地址与实际对象之间的绑定，以及�
 
 ## 在本仓库中的覆盖
 
-- [[IaC/terraform/08_terraform_状态漂移与状态操作|State、漂移与状态操作]]：覆盖该概念的定义、配置或维护步骤。
-- [[IaC/terraform/09_terraform_后端工作空间与多环境|Backend、Workspace 与多环境]]：覆盖该概念的定义、配置或维护步骤。
-- [[IaC/terraform/11_terraform_资源导入与重构|Import、moved 与 removed]]：覆盖该概念的定义、配置或维护步骤。
-- [[IaC/terraform/07_terraform_循环与批量资源|count 与 for_each]]：覆盖该概念的定义、配置或维护步骤。
+- [[IaC/terraform/08_terraform_状态漂移与状态操作|State、漂移与状态操作]]：用独立 OSS 实验区分标签漂移、状态刷新和删除资源。
+- [[IaC/terraform/09_terraform_后端工作空间与多环境|Backend、Workspace 与多环境]]：说明 TFE remote Backend、状态锁与多环境权限边界。
+- [[IaC/terraform/11_terraform_资源导入与重构|Import、moved 与 removed]]：用 OSS 纳管和 CMS 地址迁移说明绑定与移交。
+- [[IaC/terraform/07_terraform_循环与批量资源|count 与 for_each]]：比较列表索引和 CMS map key 对实例身份的影响。
 
 ## 知识空白
 

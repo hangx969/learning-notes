@@ -3,6 +3,7 @@ title: "Terraform HCL 语法与配置文件 来源摘要"
 tags:
   - knowledgebase/source
   - IaC/terraform
+  - alicloud
 date: 2026-10-02
 sources:
   - "[[IaC/terraform/02_terraform_配置语法与文件结构]]"
@@ -15,19 +16,19 @@ aliases:
 ## 元信息
 
 - **原始文档**：[[IaC/terraform/02_terraform_配置语法与文件结构]]
-- **领域**：IaC / Terraform
+- **领域**：IaC / Terraform / 阿里云
 - **摄入日期**：2026-10-02
 - **更新日期**：2026-10-02
 
 ## 摘要
 
-解释块、参数、类型、引用、模板转义和配置加载规则。以不创建平台资源的表达式实验帮助读懂后续配置。
+说明 HCL 块、参数、类型、引用和同目录文件的加载方式，并用 CMS 告警对象说明 Provider schema 与 Terraform 语言语法的分工。语法练习采用脱敏输入，不需要阿里云账号。
 
 ## 关键知识点
 
-1. 同目录 .tf/.tf.json 合并为一个模块，文件名不决定创建顺序。
-2. 对象赋值与 schema 的嵌套块是不同结构，不能只按外观互换。
-3. null 表示已知的无值，unknown 表示当前阶段未知；list、set、map、object 各有语义。
+1. 同目录 `.tf` 与 `.tf.json` 合并成一个模块，文件名是组织约定，不决定执行顺序；引用可定位 count/for_each 实例与 Workspace。
+2. 对象参数与嵌套块写法不同；资源内部字段以对应 Provider 版本的 schema 为准。
+3. `null` 表示已知无值，unknown 表示当前阶段未知；list、set、map、object 各有不同语义。
 
 ## 涉及的概念与实体
 
@@ -36,5 +37,5 @@ aliases:
 
 ## 值得注意
 
-- 技术出处在原始笔记中按官方文档和 Provider 文档列出；实验输出标为预期观察，云端执行未验证。
-- 学习顺序与相关章节见 [[KnowledgeBase/maps/terraform-map|Terraform 主题地图]]。
+- 代码结构依据 `monitoring/modules/cloud-monitor-alerts/variables.tf` 和 `monitoring/modules/cloud-monitor-alerts/main.tf`，已脱敏裁剪为离线示例。
+- Console 命令仅供读者运行，输出是预期观察；本次未执行 Provider 或云端操作。

@@ -3,7 +3,7 @@ title: 15_terraform_模块文档生成
 tags:
   - IaC
   - terraform
-  - terraform-docs
+  - terraform/basics
 date: 2026-10-02
 aliases:
   - Terraform Docs
@@ -12,102 +12,86 @@ aliases:
 
 # 15_terraform_模块文档生成
 
-## terraform-docs 做什么
+## 从 CMS 教学模块生成接口文档
 
-[terraform-docs](https://github.com/terraform-docs/terraform-docs) 从 Terraform 模块代码中提取接口信息，生成 Markdown、JSON 等文档格式。
+`terraform-docs` 从 Terraform 模块声明中提取依赖、Provider、资源、输入和输出，适合保持 README 中的接口表与代码同步。它不能解释设计背景、通知验证或升级步骤，也不会执行 Terraform Plan 或访问云端。
 
-常见生成内容包括：
+本篇使用 [[IaC/terraform/10_terraform_模块开发与复用|第 10 篇]] 同一个 `modules/cms-contacts/` 模块，接口统一如下：必需输入 `contacts` 和 `contact_groups`；输出 `contact_names` 与 `group_names`。生产来源是 `monitoring/modules/cloud-monitor-alerts/main.tf`、`monitoring/modules/cloud-monitor-alerts/variables.tf`、`monitoring/modules/cloud-monitor-alerts/versions.tf`，已裁剪为 CMS 联系人和联系人组能力。文档配置与调用示例为教学新增，terraform-docs 生成命令尚未执行。
 
-- Terraform/Provider 版本要求。
-- Provider 和模块调用列表。
-- 管理的资源类型。
-- 输入变量的类型、默认值、描述、是否必需。
-- 输出的名称和描述。
+## 模块 README 与调用示例
 
-它是独立工具，不是 Terraform CLI 的一个子命令，也不是访问云端资源的验证工具。它不会自动解释模块的设计意图、部署风险和升级步骤。
-
-## 安装与版本确认
-
-macOS 可使用：
-
-```bash
-brew install terraform-docs
-terraform-docs version
-```
-
-其他系统从 [官方 Releases](https://github.com/terraform-docs/terraform-docs/releases) 下载匹配系统和 CPU 架构的包，核对校验信息，将二进制加入 `PATH`。
-
-本篇配置按 0.20+ 的格式编写。团队应固定经过检查的工具版本，避免同一份代码在不同执行环境生成不同表格。
-
-下文 `.terraform-docs.yml` 中的 `version` 是**对运行中的 terraform-docs 的版本约束**，不会替你安装或选择二进制；它也不是 Terraform CLI 或模块版本。
-
-## 先生成到终端
-
-使用 [[IaC/terraform/10_terraform_模块开发与复用|模块实验]] 的 app-config：
-
-```bash
-terraform-docs markdown table ./modules/app-config
-```
-
-目标是模块目录，不是某个 `.tf` 文件。默认处理目标目录的模块接口，不需要初始化远程 Backend，也不需要云凭证。
-
-变量和 output 没有 description 时，工具不能凭空补上准确说明。先把接口描述写好，再自动生成，效果比生成后手工修表格更稳定。
-
-## 将生成结果注入 README
-
-人工说明与自动接口表应分开，让重复生成只更新指定区域。
-
-在 `modules/app-config/README.md` 写入：
+在模块目录 `10-cms-contacts/modules/cms-contacts/README.md` 手工维护说明和生成标记。完整示例保存于模块内的 `10-cms-contacts/modules/cms-contacts/examples/basic/main.tf`：
 
 ```markdown
-# app-config
+# cms-contacts
 
-为单个服务生成 JSON 配置。生成路径由调用者提供，模块不写入自己的下载缓存。
+管理 AliCloud CMS 告警联系人及联系人组。组成员通过联系人名称引用由模块管理的联系人。
 
-完整调用示例维护在 examples/basic/main.tf。
+完整调用例子见模块内的 `examples/basic/main.tf`。联系人邮箱需由收件人按 AliCloud 流程激活；API 创建成功不代表邮箱已激活或通知已送达。
 
 <!-- BEGIN_AUTOMATED_TF_DOCS_BLOCK -->
 <!-- END_AUTOMATED_TF_DOCS_BLOCK -->
 
-## Design and upgrade notes
+## Design and operational notes
 
-说明命名规则、输入约束和地址迁移要求。
+- Provider 配置由 root module 提供；调用方通过 providers 映射选择目标账号与区域。
+- 请勿在 README 或提交的输出中记录真实邮箱、账号 ID 或凭证。
+- 在授权环境中审查计划并核对联系人激活状态。
 ```
 
-然后创建 `modules/app-config/examples/basic/main.tf`，让用法与 [[IaC/terraform/10_terraform_模块开发与复用|模块接口]] 保持一致：
+`examples/basic/main.tf`：
 
 ```hcl
 terraform {
   required_version = ">= 1.7, < 2.0"
-
   required_providers {
-    local = {
-      source  = "hashicorp/local"
-      version = "~> 2.5"
+    alicloud = {
+      source  = "aliyun/alicloud"
+      version = "= 1.266.0"
     }
   }
 }
 
-module "web" {
-  source = "../../"
-
-  name             = "web"
-  environment      = "dev"
-  port             = 8080
-  output_directory = abspath("${path.root}/generated")
+provider "alicloud" {
+  region = "cn-shanghai"
+  # 读取受控环境中的 ALIBABA_CLOUD_* 凭证，不要在示例中填写密钥。
 }
 
-output "file_path" {
-  description = "示例生成的配置文件路径"
-  value       = module.web.file_path
+module "lab_contacts" {
+  source = "../.."
+
+  contacts = {
+    ops = {
+      alarm_contact_name = "terraform-lab-ops"
+      describe           = "terraform-lab 测试联系人"
+      channels_mail      = "terraform-lab@example.invalid"
+    }
+  }
+
+  contact_groups = {
+    platform = {
+      alarm_contact_group_name = "terraform-lab-platform"
+      contacts                 = ["terraform-lab-ops"]
+    }
+  }
+}
+
+output "contact_names" {
+  description = "示例中创建的联系人名称"
+  value       = module.lab_contacts.contact_names
+}
+
+output "group_names" {
+  description = "示例中创建的联系人组名称"
+  value       = module.lab_contacts.group_names
 }
 ```
 
-此 source 相对 examples/basic 目录定位到 app-config。文档生成不执行这个例子；读者单独运行它时，它是一个独立 root module，有自己的状态和执行目录。
+该例是一个独立 root module，文件位于 `10-cms-contacts/modules/cms-contacts/examples/basic/main.tf`，`source = "../.."` 相对示例目录指向模块根目录。如果把示例改放在项目根的 `10-cms-contacts/examples/basic/main.tf`，则 `source` 应改为 `../../modules/cms-contacts`。若读者运行它，会管理测试名称的 CMS 联系人与组；不要使用生产工作区或生产联系资料；运行前将 `.invalid` 邮箱替换为自己控制的测试邮箱。邮箱加入联系人后可能需要收件人完成激活流程，模块与 API 成功不代表通知已经验证。
 
-### 最小可用配置
+## 配置自动注入
 
-在模块目录创建 `.terraform-docs.yml`：
+在 `modules/cms-contacts/.terraform-docs.yml` 放置：
 
 ```yaml
 formatter: markdown table
@@ -147,64 +131,23 @@ settings:
   required: true
   sensitive: true
   type: true
+
+output-values:
+  enabled: false
 ```
 
-执行：
+在 `10-cms-contacts/` 项目根目录执行如下命令时，配置路径和输入模块目录均明确指定：
 
 ```bash
-terraform-docs --config ./modules/app-config/.terraform-docs.yml ./modules/app-config
-git diff -- modules/app-config/README.md
+terraform-docs --config ./modules/cms-contacts/.terraform-docs.yml ./modules/cms-contacts
+git diff -- modules/cms-contacts/README.md
 ```
 
-`output.file` 相对被处理的模块目录解析。输出模板中的 begin/end 标记必须与 README 一致；保留原来的自定义标记可以避免误把另一块区域当作生成区域。
+`output.file` 相对被处理的模块目录定位 README。匹配的 begin/end 标记之间会替换成生成表格；人工说明保留在标记之外。标记不一致时，inject 可能追加另一块表格，因此生成后要检查 diff 和 README 结构。
 
-| 配置 | 用途 |
-|---|---|
-| `formatter` | 选择输出形式，本例为 Markdown 接口表 |
-| `version` | 检查 terraform-docs 本身的版本是否允许运行 |
-| `sections.show` | 明确保留哪些章节；没有列出的章节不进入本例生成区 |
-| `output.file` / `mode` | 指定文件和注入方式，控制人工区是否保留 |
-| `output.template` | 指定注入标记和生成内容的位置 |
-| `sort.by` | 用名称稳定排序，减少无关 diff |
-| `settings.required` / `type` / `sensitive` | 在接口表中显示是否必需、类型和敏感标记 |
+## 使用 Go template 排列生成内容
 
-其他 settings 控制表格的转义、锚点、默认值等展示形式，不会替模块补充业务校验。
-
-预期生成区包含四个必需输入 `name`、`environment`、`port`、`output_directory`，以及 `file_path`、`content_sha256` 两个输出。人工编写的开头和 Design and upgrade notes 应保留。连续生成两次时，第二次应没有新 diff。
-
-如果原文件没有匹配的标记，inject 会追加生成区；目标文件不存在时则会创建它。因此标记不一致常表现为重复文档，而不是立即报错。
-
-### inject 与 replace
-
-| 模式 | 行为 | 使用场景 |
-|---|---|---|
-| `inject` | 替换标记之间的生成内容 | README 同时有人工作品和自动表格 |
-| `replace` | 用生成结果替换整个目标文件 | 单独维护全自动生成文档 |
-
-使用 replace 前应明确整个文件属于生成内容。接口表改动直接修改 `.tf` 中的声明，再生成，不在自动区手工写长期需要保留的信息。
-
-## 自定义内容模板
-
-需要调整章节顺序时可以增加 content。例如在前面的配置中补充：
-
-```yaml
-content: |-
-  {{ .Requirements }}
-
-  {{ .Providers }}
-
-  {{ .Resources }}
-
-  {{ .Inputs }}
-
-  {{ .Outputs }}
-```
-
-这些字段是 terraform-docs 的 Go template 内容，不是 Terraform 的 `${...}` 插值。
-
-### 把真实调用示例嵌入生成区
-
-可以使用 `include` 读取前面维护的可运行示例，避免把没有默认值的 RequiredInputs 自动拼成看似完整、实际缺少业务参数的调用。把前面的 content 替换为：
+当需要调整章节顺序并在接口表前加入可运行示例时，在前面的 `.terraform-docs.yml` 配置中添加以下 `content`。这是前一份配置的扩展，保留既有 `sections.show` 与 `output.template`：
 
 ````yaml
 content: |-
@@ -225,13 +168,9 @@ content: |-
   {{ .Outputs }}
 ````
 
-include 路径相对被处理的模块目录。README 中展示的是 examples/basic/main.tf 的内容，所以其中 `source = "../../"` 仍对应示例目录的位置；从其他目录复制运行时需要调整 source。
+`include` 的文件路径相对被处理的模块目录，因此这里引用 `modules/cms-contacts/examples/basic/main.tf`。README 会显示该文件的实际 HCL；当维护者把示例目录移动到项目根目录时，还需一并调整 include 路径和 HCL `source`。`sections.show` / `hide` 优先决定哪些数据可用：若关闭 Providers，模板中的 `{{ .Providers }}` 不会恢复该章节。
 
-`sections.show` / `hide` 优先于 content 模板。模板里写了 `{{ .Providers }}`，但配置隐藏了 providers 时，仍不会显示该节。工具还提供 `.Module` 原始接口对象供复杂模板使用；输入值该怎么选、哪些参数互斥仍需维护者根据模块语义编写。
-
-### 可选：生成参数骨架
-
-只想列出模块的必需和可选参数时，可以遍历 `.Module.RequiredInputs` / `.Module.OptionalInputs`。下面的 content 是前一个 content 的**替代模板**，输出的是待填写骨架，不是可运行调用；`<module-path>`、`<REQUIRED_VALUE>` 都必须由维护者替换。
+若只需要待填写的参数骨架，可以将上面的 `content` **替换**为以下模板：
 
 ````yaml
 content: |-
@@ -243,13 +182,13 @@ content: |-
   module "example" {
     source = "<module-path>"
     {{- if .Module.RequiredInputs }}
-    # Required variables: fill in actual values
+    # Required inputs: replace placeholders with actual values
     {{- range .Module.RequiredInputs }}
     {{ .Name }} = <REQUIRED_VALUE>
     {{- end }}
     {{- end }}
     {{- if .Module.OptionalInputs }}
-    # Optional variables: defaults from module code
+    # Optional inputs: defaults come from the module declarations
     {{- range .Module.OptionalInputs }}
     {{ .Name }} = {{ .GetValue }}
     {{- end }}
@@ -266,78 +205,61 @@ content: |-
   {{ .Outputs }}
 ````
 
-按 terraform-docs 0.20 的接口，GetValue 输出声明的默认值；必需输入没有默认值时，GetValue 返回空字符串。直接把所有必需参数写成 `{{ .Name }} = {{ .GetValue }}`，可能生成 `name =` 这样的缺值行，因此上面明确放置占位符。复杂对象、显式 null、敏感默认值和互斥参数仍需人工核对；骨架只帮助发现接口变化，完整调用优先维护为 examples 中的代码。
+此骨架对本模块会列出 `contacts` 与 `contact_groups` 必需输入，`<REQUIRED_VALUE>` 是提示而非有效 HCL。terraform-docs 0.20 的 `GetValue` 提供选填输入的声明默认值；对象形状、互斥字段或敏感内容仍由维护者核对。完整的 `examples/basic/main.tf` 更适合作为可运行调用示例。
 
-## 不读取实际 State 输出
+预期生成区域列出 AliCloud Provider 需求、联系人与联系人组资源、两个复杂类型输入及 `contact_names`、`group_names` 输出。具体 Markdown 格式由所固定的 terraform-docs 版本决定。本篇未安装或运行工具，也没有生成一份假装真实产出的表格。
 
-接口文档通常只需要 outputs 的描述，不需要部署时的真实值：
+## 配置含义与边界
 
-```yaml
-output-values:
-  enabled: false
-```
+| 配置 | 用途 |
+|---|---|
+| `formatter` | 选择 Markdown 表格格式 |
+| `version` | 限制 terraform-docs 工具自身版本，不选择 Terraform 或 Provider 版本 |
+| `sections.show` | 指定生成章节 |
+| `output.file` / `mode` | 写入 README 并仅替换标记内区域 |
+| `output.template` | 提供注入边界 |
+| `sort.by` | 名称排序，减少无关 diff |
+| `settings.required/type/sensitive` | 展示输入是否必需、类型与敏感标记 |
+| `output-values.enabled` | 关闭真实 State output 值读取 |
 
-不要为了 README 打开真实 output-values，再把资源地址、内部域名或敏感值提交出去。生成文档与读取部署结果是不同用途。
+`sensitive = true` 影响文档标记，不会扫描或脱敏人工文本。接口文档不需要真实联系人、组名或 State 输出值；避免打开实际 output-values 或把敏感输出复制进 README。
 
-`settings.sensitive` 控制变量敏感性标记展示，不是对任意文档内容做脱敏。
+如果模块增加必需变量，terraform-docs 可以列在 Inputs 表中，但无法选择业务值。完整调用例子应随接口一并更新；不要用空赋值生成看似可运行的示例。若需使用 Go template 输出调用骨架，应明确必填项为占位符，并说明它不是完整可执行配置。
 
-## 递归生成
+## 在持续集成中检查文档一致性
 
-多个模块可按工具约定开启递归模式：
-
-```yaml
-recursive:
-  enabled: true
-  path: modules
-```
-
-采用前先确认调用根目录、子模块配置发现方式和目标文件范围。目录复杂时逐个模块生成更容易观察差异；不要第一次就对整个仓库 replace。
-
-工具会自动发现 `.terraform-docs.yml`，优先查模块根目录及其 `.config/`，再查当前目录及其 `.config/`，最后查用户级配置；命令行选项可覆盖配置。开始使用统一模板时，显式 `--config` 更容易确认读取的是哪份文件。添加配置后再次运行先前的 `markdown table` 命令，也可能按配置写入 README，不能再假定所有调用都只输出终端。
-
-旧模板中的 `sections.hide-all` / `show-all` 已在历史版本中移除。本系列使用 `sections.show` / `hide`，不要复制旧字段再假定仍生效。
-
-## 在协作流程里使用
-
-1. 修改变量、outputs 或版本要求。
-2. 运行 terraform-docs。
-3. review README 和源码差异。
-4. 重复生成，确认结果稳定。
-5. 在 CI 中检查生成区是否与代码一致。
-
-简单 CI 检查片段：
+在教学项目中可增加下列文档一致性检查；生产仓库目前没有已确认的 CI 配置，因此这是新增设计示意：
 
 ```bash
-terraform-docs --config ./modules/app-config/.terraform-docs.yml ./modules/app-config
-git diff --exit-code -- modules/app-config/README.md
+terraform-docs --config ./modules/cms-contacts/.terraform-docs.yml ./modules/cms-contacts
+git diff --exit-code -- modules/cms-contacts/README.md
 ```
 
-这是文档一致性检查，不是 Terraform 配置验证或真实部署测试。生成过程中如工具版本不同，先核对 formatter、配置和版本，避免无意义的整页重排。
+第一条命令按当前模块接口刷新文档；第二条命令在工作树文档不一致时失败。该流程不等于 Terraform 配置验证、Provider 权限检查或部署测试。CI 中应固定 terraform-docs 版本、配置路径和工作目录，并确保示例、README 和实际变量定义一起审查。
 
 ## 常见问题
 
-- 没有生成输入变量：目标目录不对，或变量实际在另一个模块中。
-- 说明缺失：对应 variable/output 没有 description，或 sections 设置隐藏了部分内容。
-- README 人工说明被覆盖：使用了 replace 或错误的标记范围。
-- 反复产生 diff：工具版本、排序、行尾或模板不一致。
-- 变量默认值被误认为运行值：工具提取的是配置接口，不是某次 tfvars 或真实部署的最终输入。
+- 没有变量或输出章节：目标目录不对，或 `.terraform-docs.yml` 隐藏了相关 section。
+- README 被整份覆盖：使用了 `replace`，或目标文件/标记配置不正确。
+- 连续生成反复变化：核对工具版本、排序、行尾和配置文件。
+- 输出表中没有描述：在 Terraform variable/output 声明中补全准确的 `description`。
+- README 泄漏联系资料或凭证：自动生成工具不会代替内容脱敏；立即从源文档与提交 diff 中清除，再按相关凭证处理流程执行。
 
 ## 练习
 
-1. 只修改 port 的 description，再生成文档，说明它是否改变资源行为。
-2. 给模块增加一个有默认值的输入，观察接口表与参数骨架，补充实际调用示例。
-3. 连续生成两次，确认第二次没有 diff，且 README 的人工设计说明仍存在。
+1. 只修改 `contacts` 的 description，再生成文档；说明接口描述变化为何不等于 CMS 资源行为变化。
+2. 给模块增加可选输入，比较 README 输入表和 `examples/basic/main.tf`，确保默认行为有说明。
+3. 连续生成两次并审查 `git diff`；指出稳定生成与云端配置正确性分别由什么证据支持。
+4. 解释为什么不能把联系人真实邮箱、State output 值或密钥放进生成模板。
 
 ## 参考资料
 
-- [terraform-docs GitHub](https://github.com/terraform-docs/terraform-docs)
+- [terraform-docs 项目](https://github.com/terraform-docs/terraform-docs)
 - [配置文件](https://terraform-docs.io/user-guide/configuration/)
-- [Output 注入配置](https://terraform-docs.io/user-guide/configuration/output/)
-- [Content 模板](https://terraform-docs.io/user-guide/configuration/content/)
+- [输出注入配置](https://terraform-docs.io/user-guide/configuration/output/)
+- [内容模板](https://terraform-docs.io/user-guide/configuration/content/)
+- [terraform-docs 0.20.0 Input.GetValue 实现](https://github.com/terraform-docs/terraform-docs/blob/v0.20.0/terraform/input.go)
 - [工具版本约束](https://terraform-docs.io/user-guide/configuration/version/)
-- [output-values 配置](https://terraform-docs.io/user-guide/configuration/output-values/)
-- [递归生成配置](https://terraform-docs.io/user-guide/configuration/recursive/)
-- [terraform-docs 0.20 Input.GetValue 实现](https://github.com/terraform-docs/terraform-docs/blob/v0.20.0/terraform/input.go)
-- [terraform-docs 0.20 Module 模板接口](https://github.com/terraform-docs/terraform-docs/blob/v0.20.0/terraform/module.go)
+- [输出值配置](https://terraform-docs.io/user-guide/configuration/output-values/)
 
-上一篇：[[IaC/terraform/14_terraform_容器管理实战|容器实战]] · 返回：[[IaC/terraform/README|系列学习路线]]。
+上一篇：[[IaC/terraform/14_terraform_容器管理实战|ACK、Kubernetes 与 Helm]] · 返回：[[IaC/terraform/README|系列学习路线]]。

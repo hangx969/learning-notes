@@ -12,394 +12,252 @@ aliases:
 
 # 10_terraform_模块开发与复用
 
-## 什么是模块
+## 模块边界与复用
 
-一个目录中的 Terraform 配置构成一个 Module。直接运行 Terraform 命令的目录是 root module，通过 `module` 块调用的是 child module。
+Terraform 执行目录本身是 root module；由 `module` 块调用的目录是 child module。模块把一项有意义的能力封装成输入、资源和输出接口。拆分前先确认这项能力会被重复使用或需要单独维护；给每个 resource 再套一层 module 会增加接口和升级成本，却未必提升复用。
 
-Module 组织一组相关资源，接受输入，并通过 output 暴露需要的结果。它不是单独创建一个“模块云对象”；子模块中的资源仍由当前根配置的 State 管理。
+本篇从生产仓库的 Cloud Monitor 联系人与联系人组中裁剪例子。它演示模块接口与 Provider 传递，不管理完整告警配置。
 
-### 模块应该按什么边界拆
+生产依据：`monitoring/modules/cloud-monitor-alerts/main.tf`、`monitoring/modules/cloud-monitor-alerts/variables.tf`、`monitoring/modules/cloud-monitor-alerts/versions.tf`；Provider 配置位于 `monitoring/providers.tf`，调用与别名映射位于 `monitoring/cloud-monitor-alert.tf`。下面代码均为基于这些路径的独立教学改写，账号身份、联络资料和业务标识均为占位内容。
 
-一个模块可以表达“应用配置文件”“带标准标签的资源组”或“网络基础层”。边界应围绕有意义的能力和接口，不必给每个单独 resource 都套一层模块。
+## 最小项目结构
 
-模块复用能减少复制粘贴，但会增加接口维护、版本升级和地址迁移成本。先提炼真实重复的模式，再决定哪些细节应暴露给调用者。
-
-## 完整实验：应用配置模块
-
-本实验通过一个本地子模块为 web/api 生成配置，不需要云账号。
-
-先在笔记目录之外建立 `10-modules/`，以下“根模块”文件均放在这个目录；“子模块”文件放在 `modules/app-config/`。运行命令时始终留在 `10-modules/`。
+在独立目录 `10-cms-contacts/` 创建：
 
 ```text
-10-modules/
+10-cms-contacts/
 ├── versions.tf
+├── providers.tf
 ├── main.tf
-├── variables.tf
 ├── outputs.tf
-└── modules/
-    └── app-config/
-        ├── versions.tf
-        ├── variables.tf
-        ├── main.tf
-        └── outputs.tf
+└── modules/cms-contacts/
+    ├── versions.tf
+    ├── main.tf
+    ├── variables.tf
+    └── outputs.tf
 ```
 
-### 子模块 versions.tf
-
-```hcl
-terraform {
-  required_version = ">= 1.7"
-
-  required_providers {
-    local = {
-      source  = "hashicorp/local"
-      version = ">= 2.5"
-    }
-  }
-}
-```
-
-子模块声明自己需要的 Provider 来源与最低兼容版本，不在这里写连接凭证。最终实际版本还要满足根模块与其他子模块的全部约束。
-
-同一根配置内，同一个 Provider 来源只选择一个版本；不是根模块装一个 2.x、子模块再装一个 3.x。若各模块的版本范围没有交集，初始化会失败，应调整兼容性要求或升级模块。
-
-### 子模块 variables.tf
-
-```hcl
-variable "name" {
-  description = "服务名，同时作为配置文件名的一部分"
-  type        = string
-
-  validation {
-    condition     = can(regex("^[a-z][a-z0-9-]*$", var.name))
-    error_message = "name 必须使用小写字母、数字和连字符，并以字母开头。"
-  }
-}
-
-variable "environment" {
-  description = "配置所属环境"
-  type        = string
-}
-
-variable "port" {
-  description = "应用端口"
-  type        = number
-
-  validation {
-    condition     = var.port >= 1 && var.port <= 65535 && floor(var.port) == var.port
-    error_message = "port 必须是合法整数端口。"
-  }
-}
-
-variable "output_directory" {
-  description = "调用者指定的生成目录，避免写入模块下载缓存"
-  type        = string
-}
-```
-
-### 子模块 main.tf
-
-```hcl
-resource "local_file" "config" {
-  filename        = "${var.output_directory}/${var.name}.json"
-  file_permission = "0644"
-  content = jsonencode({
-    name        = var.name
-    environment = var.environment
-    port        = var.port
-  })
-}
-```
-
-生成路径由调用者指定。同一个本地或远程模块可能被多次调用；如果写成 `${path.module}/output.json`，容易让多个调用共用路径，也可能污染 `.terraform/modules` 缓存。
-
-### 子模块 outputs.tf
-
-```hcl
-output "file_path" {
-  description = "配置文件路径"
-  value       = local_file.config.filename
-}
-
-output "content_sha256" {
-  description = "配置内容摘要"
-  value       = local_file.config.content_sha256
-}
-```
-
-父模块不能直接用子模块内的 `local_file.config` 地址取值；应经由 output。只暴露调用者真正需要的结果，可以减少模块内部结构对外部调用的影响。
-
-### 根模块 versions.tf
+### 子模块：`modules/cms-contacts/versions.tf`
 
 ```hcl
 terraform {
   required_version = ">= 1.7, < 2.0"
-
   required_providers {
-    local = {
-      source  = "hashicorp/local"
-      version = "~> 2.5"
+    alicloud = {
+      source  = "aliyun/alicloud"
+      version = ">= 1.266.0"
     }
   }
 }
 ```
 
-### 根模块 variables.tf
+共享模块声明它依赖的 Provider 来源和最低版本，不放连接凭证或 `provider` 配置块。根模块和子模块的约束必须有共同可用版本；根目录的 `.terraform.lock.hcl` 记录本次安装选定的 Provider 版本。
+
+### 子模块：`variables.tf`
 
 ```hcl
-variable "environment" {
-  description = "本次实验环境"
-  type        = string
-  default     = "dev"
+variable "contacts" {
+  description = "CMS 告警联系人，key 是教学配置中的稳定标识"
+  type = map(object({
+    alarm_contact_name = string
+    describe           = string
+    channels_mail      = optional(string)
+    lang               = optional(string, "zh-cn")
+  }))
 }
 
-variable "services" {
-  description = "服务端口配置"
-  type        = map(number)
-  default = {
-    web = 8080
-    api = 9000
+variable "contact_groups" {
+  description = "CMS 联系人组，contacts 引用上面的 alarm_contact_name"
+  type = map(object({
+    alarm_contact_group_name = string
+    contacts                 = optional(list(string))
+  }))
+}
+```
+
+这是从生产模块 `variables.tf` 的 `contacts` 和 `contact_groups` 接口缩小而来。生产接口还含短信、钉钉 Webhook 和更多可选项；教学模块只保留说明本例所需的邮箱和语言字段。邮件地址必须由读者替换为自己控制的测试地址。AliCloud 会向新增或修改后的邮箱发送激活链接；收件人激活前，联系人可能不会出现在有效联系人列表中。联系人 API 创建成功不等于通知已验证。
+
+### 子模块：`main.tf`
+
+```hcl
+resource "alicloud_cms_alarm_contact" "contacts" {
+  for_each           = var.contacts
+  alarm_contact_name = each.value.alarm_contact_name
+  describe           = each.value.describe
+  channels_mail      = each.value.channels_mail
+  lang               = each.value.lang
+}
+
+resource "alicloud_cms_alarm_contact_group" "contact_groups" {
+  for_each                 = var.contact_groups
+  alarm_contact_group_name = each.value.alarm_contact_group_name
+  contacts                 = each.value.contacts
+
+  depends_on = [alicloud_cms_alarm_contact.contacts]
+}
+```
+
+`for_each` 的 map key 构成 Terraform 实例地址；资源名称来自对象字段。组资源显式依赖联系人资源，因此 Terraform 图会先完成联系人资源操作，再操作联系人组。`depends_on` 只规定 Terraform 资源顺序；邮箱激活是异步确认，不会因此自动完成，通知送达也需独立验证。
+
+### 子模块：`outputs.tf`
+
+```hcl
+output "contact_names" {
+  description = "由此模块管理的联系人名称"
+  value       = { for key, contact in alicloud_cms_alarm_contact.contacts : key => contact.alarm_contact_name }
+}
+
+output "group_names" {
+  description = "由此模块管理的联系人组名称"
+  value       = { for key, group in alicloud_cms_alarm_contact_group.contact_groups : key => group.alarm_contact_group_name }
+}
+```
+
+父模块通过 output 读取子模块公开的结果，不直接引用子模块内部的资源地址。只输出调用方需要的信息，可以降低内部实现变化对调用方的影响。
+
+### 根模块
+
+`versions.tf`：
+
+```hcl
+terraform {
+  required_version = ">= 1.7, < 2.0"
+  required_providers {
+    alicloud = {
+      source  = "aliyun/alicloud"
+      version = "= 1.266.0"
+    }
   }
 }
 ```
 
-### 根模块 main.tf
+`providers.tf`：
 
 ```hcl
-module "app" {
-  source   = "./modules/app-config"
-  for_each = var.services
+provider "alicloud" {
+  region = "cn-hongkong"
+  # 使用 AliCloud CLI 环境凭证，或由受控执行环境提供的凭证。
+  # 不要把 AccessKey 写入配置或提交到版本库。
+}
 
-  name             = each.key
-  port             = each.value
-  environment      = var.environment
-  output_directory = abspath("${path.root}/generated/${var.environment}")
+provider "alicloud" {
+  alias  = "secondary"
+  region = "cn-shanghai"
 }
 ```
 
-`source` 是模块调用的元参数；`name`、`port` 等是子模块声明的输入。Provider 资源字段不能自动成为模块参数，必须查模块接口。
+这是教学 Provider 配置，不含真实账号或角色。生产 `monitoring/cloud-monitor-alert.tf` 按账号和区域配置多个 `alicloud` Provider，并由调用端挑选具体配置传给共享模块。
 
-### 根模块 outputs.tf
+`main.tf`：
 
 ```hcl
-output "config_files" {
-  description = "服务名到配置文件路径的映射"
-  value = {
-    for name, app in module.app : name => app.file_path
+module "lab_contacts" {
+  source = "./modules/cms-contacts"
+
+  providers = {
+    alicloud = alicloud.secondary
+  }
+
+  contacts = {
+    ops = {
+      alarm_contact_name = "terraform-lab-ops"
+      describe           = "terraform-lab 测试联系人"
+      channels_mail      = "terraform-lab@example.invalid"
+    }
+  }
+
+  contact_groups = {
+    platform = {
+      alarm_contact_group_name = "terraform-lab-platform"
+      contacts                 = ["terraform-lab-ops"]
+    }
   }
 }
 ```
 
-实验步骤：
+生产调用采用同一类映射：左侧是 child module 内的本地 Provider 名，右侧是 root module 中的配置名。教学示例用 `alicloud.secondary` 表示被传入的 alias；生产源中的具体 alias 可在 `monitoring/providers.tf` 和 `monitoring/cloud-monitor-alert.tf` 追溯。实例模块用统一的 `alicloud` 名称写资源，根模块决定它连接哪个账号和区域。单一默认配置时可以省略 `providers` 映射并继承默认配置；明确映射可让多账号调用关系更容易审查。
+
+`outputs.tf`：
+
+```hcl
+output "contact_groups" {
+  description = "模块管理的联系人组名称"
+  value       = module.lab_contacts.group_names
+}
+```
+
+## 练习步骤与预期观察
+
+本例会通过 AliCloud API 创建 CMS 联系人和联系人组。先把 `terraform-lab@example.invalid` 换成自己控制的测试邮箱。只有在自己有明确授权的实验账号、确认 Provider 身份与目标区域后，才运行云端步骤；不要将生产 workspace、生产凭证或生产联系人用于练习。
 
 ```bash
 terraform init
+terraform fmt -recursive
 terraform plan -out=tfplan
 terraform show tfplan
+```
+
+计划应显示 `module.lab_contacts.alicloud_cms_alarm_contact.contacts["ops"]` 和 `module.lab_contacts.alicloud_cms_alarm_contact_group.contact_groups["platform"]` 待创建，具体属性及 Provider 返回值以实际配置为准。审查账号、区域、名称、通知地址及动作后，才可在授权实验环境应用：
+
+```bash
 terraform apply tfplan
+terraform output contact_groups
 terraform state list
-terraform output config_files
 ```
 
-预期地址类似：
+预期输出只包含组名映射，地址类似 `module.lab_contacts.alicloud_cms_alarm_contact.contacts["ops"]`。将 map key `ops` 改名会改变 Terraform 地址；仅修改描述或邮件字段通常是属性更新，实际资源更新行为需以该 Provider 版本的 Plan 为准。
 
-```text
-module.app["web"].local_file.config
-module.app["api"].local_file.config
-```
-
-预期生成 `generated/dev/web.json`、`generated/dev/api.json`。模块实例 key 来自根模块 map，不是子模块中自动发现的服务名。
-
-查看生成内容：
-
-```bash
-cat generated/dev/web.json
-cat generated/dev/api.json
-```
-
-JSON 的字段顺序不必与 HCL 一致，但 `web.json` 应包含 `name=web`、`environment=dev`、`port=8080`；`api.json` 的 port 应为 `9000`。根输出 `config_files` 是一个 map，key 为服务名，value 为文件的绝对路径。
-
-### 观察输入与资源身份的关系
-
-在根模块的 `services` 默认值中把 `web` 端口改为 `8081`，保留原 key，然后重新生成并审查计划：
-
-```bash
-terraform plan -out=port-change.tfplan
-terraform show port-change.tfplan
-terraform apply port-change.tfplan
-cat generated/dev/web.json
-```
-
-资源地址仍是 `module.app["web"].local_file.config`。Local Provider 会因文件内容变化替换该文件资源；这与 `for_each` key 被改名造成地址变化是两种原因，读 Plan 时应分别确认。把 key 从 `web` 改为 `frontend`，则会出现旧模块实例退出、新实例创建。
-
-`moved` 能迁移地址与状态绑定，但不能抵消资源参数变化。本例 `name = each.key` 会同时改变文件路径和内容，即使补了 moved，Local Provider 仍可能要求替换。只有实际对象参数保持兼容时，地址迁移才可能保留原对象；完整方法见下一篇 [[IaC/terraform/11_terraform_资源导入与重构|Import、moved 与 removed]]。
-
-将 environment 改为 `staging` 同样会改变生成路径，但**不会自动换一份 State**。在同一状态下运行，Terraform 会把原路径文件移除并管理新路径文件。此实验只是观察路径变化，多环境项目的执行隔离仍见 [[IaC/terraform/09_terraform_后端工作空间与多环境|Backend 与多环境]]。
-
-### 清理实验
+清理前生成并审查 destroy plan：
 
 ```bash
 terraform plan -destroy -out=destroy.tfplan
 terraform show destroy.tfplan
 terraform apply destroy.tfplan
-terraform state list
 ```
 
-预期销毁当前 State 中的配置文件资源，源码和父目录可能仍保留。Local Provider 操作的是 Terraform **执行机**上的文件；把实验搬到另一台 runner，不会自动读取开发机上的 `generated/`。
+上述是读者步骤与预期观察；本文仅静态核对配置，未连接云端或执行 plan/apply。
 
-## source 与模块版本
+## 模块来源、状态与 Provider
 
-### 本地模块
+本地模块路径相对调用方目录解析，与根项目一同版本管理；本例不涉及 Registry 发布。Registry 模块用 `source` 与 `version` 固定模块包版本，Git 模块用仓库子目录和 `ref` 选择版本。Provider 锁文件不锁远程模块内容，因此模块来源版本也要单独固定。
 
-```hcl
-module "app" {
-  source = "./modules/app-config"
-  # 还需要传入该模块定义的必需变量
-}
-```
+模块拆分不会自动隔离 State、执行权限或 apply 范围。若需独立审批或状态生命周期，应拆分 root module 并设计 Backend 边界，而不能只增加 `modules/` 子目录。
 
-此片段只展示 source 写法。路径相对调用模块的位置；本地模块版本随当前 Git 提交一起管理，没有 Registry 风格的 `version` 参数。
+每个模块都要声明 `required_providers`，但 provider 配置块应由 root module 持有。子模块要使用同一 Provider 的多个别名时，在约束中通过 `configuration_aliases` 声明接口，再由调用方显式映射。Provider 配置仍被 State 中资源引用时，不可在资源尚未迁移/销毁前删除对应 alias。
 
-### Registry 模块
+## 常见问题与维护检查
 
-来源一般写为 `命名空间/模块名/Provider`，并使用 `version` 固定发布版本。以下只展示 Registry 调用格式，来源、版本和输入应替换成目标模块真实发布的接口：
-
-```hcl
-module "network" {
-  source  = "namespace/network/azurerm"
-  version = "1.2.3"
-  # 还需要传入所选模块定义的必需变量
-}
-```
-
-`version` 仅适用于 Registry 模块；它是模块包版本，和 Provider 的版本不是同一个值。`1.2.3` 是固定单一版本，`~> 1.2` 是允许一个版本范围。选择具体模块后，先查看它自己的 Inputs、Outputs、Provider 要求和示例。
-
-模块名看起来像某个资源，不代表模块接受该资源的所有字段。例如资源的 `account_tier` 不能未经确认就传给任意“storage”模块。
-
-### Git 模块
-
-下面是格式示意，仓库和 ref 需替换成真实来源：
-
-```hcl
-module "app" {
-  source = "git::https://github.com/example/terraform-modules.git//modules/app?ref=v1.2.0"
-  # 还需要传入实际模块的必需变量
-}
-```
-
-`//modules/app` 指定仓库内子目录，`?ref=` 指定 tag/commit/branch。复现要求高时固定不可变提交，并保留对应的发布记录；浮动 branch 会让相同 source 得到不同代码。
-
-为兼容本系列 **Terraform 1.7 基线**，示例里的 `source` 和 `version` 使用字面量；1.7 不支持用普通变量或 locals 计算它们。**Terraform 1.15+** 新增了来源与版本表达式，但引用的输入变量必须声明 `const = true`，并在初始化阶段已有确定值，不能依赖 plan/apply 才产生的资源属性。本系列不把这项新语法混入基础实验。
-
-`.terraform.lock.hcl` 锁 Provider，不锁远程模块包，因此模块来源版本也要明确管理。根项目的锁文件控制所有子模块共同使用的 Provider；子模块独立运行测试时会成为自己的 root module，才使用其目录中的独立锁文件。
-
-## Provider 怎么传给子模块
-
-### 默认继承
-
-完整实验未写子模块 provider 块，Local Provider 默认配置从根层继承。子模块仍必须声明 `required_providers`，让本地名称对应正确来源。
-
-### 显式映射
-
-可以在根模块补充以下配置，并将 providers map 加入前面的 module 块：
-
-```hcl
-provider "local" {
-  alias = "execution"
-}
-
-module "app" {
-  source   = "./modules/app-config"
-  for_each = var.services
-
-  providers = {
-    local = local.execution
-  }
-
-  name             = each.key
-  port             = each.value
-  environment      = var.environment
-  output_directory = abspath("${path.root}/generated/${var.environment}")
-}
-```
-
-这是替换原 module 块的版本，不能保留两个同名块。map 左边是子模块看到的 Provider 名称，右边是父模块的配置引用。
-
-### 子模块本身需要多个别名
-
-子模块使用 `azurerm.primary`、`azurerm.secondary` 等内部别名时，在其 `required_providers` 中声明：
-
-```hcl
-terraform {
-  required_providers {
-    azurerm = {
-      source                = "hashicorp/azurerm"
-      configuration_aliases = [azurerm.primary, azurerm.secondary]
-    }
-  }
-}
-```
-
-根模块声明两份 Azure Provider 配置后，调用端应显式对应到子模块的接口名。以下是映射片段，假定默认配置 `azurerm` 与别名配置 `azurerm.secondary` 已按 [[IaC/terraform/05_terraform_提供者版本与认证|Provider 别名]] 配置，且 `./modules/dual-subscription` 是实际存在的模块：
-
-```hcl
-module "dual_subscription" {
-  source = "./modules/dual-subscription"
-
-  providers = {
-    azurerm.primary   = azurerm
-    azurerm.secondary = azurerm.secondary
-  }
-
-  # 其余输入由 dual-subscription 模块的 variables.tf 定义
-}
-```
-
-子模块中对应的 resource 通过 `provider = azurerm.primary` 或 `provider = azurerm.secondary` 选择配置。`configuration_aliases` 只是声明“调用者必须提供这些配置名”，不会自动新建凭证或订阅连接；别名配置也不会像默认配置那样自动继承。map 两边的名字可以不同，因为它们分别属于子模块和父模块。
-
-这是另一个 Azure 模块接口片段，不属于本地文件实验。不要在可复用子模块中硬编码 provider 连接和凭证；旧式子模块自带 provider 结构会限制 module 的 count/for_each/depends_on 用法。
-
-## Module 不自动隔离 State
-
-把配置拆成 `modules/network` 和 `modules/app`，仍可能共享同一根 State、执行权限和 apply 范围。要按团队职责或变更频率分开状态，需要独立 root module 和 Backend 设计。
-
-模块更适合表达复用边界；独立根配置更适合表达执行和管理边界。两种边界可以配合，但不能互相替代。
-
-## 模块接口与升级检查
-
-- 变量有明确类型、描述、默认值和业务校验。
-- 输出有描述，只包含调用者需要的信息。
-- Provider 约束反映实际兼容范围，不随意把根项目策略强加给所有调用者。
-- 有最小调用示例、变更说明和必要测试。
-- 改 resource label、for_each key 或模块路径时，提供 `moved` 迁移。
-- 删除输出或改变输入类型可能影响调用者，应作为接口变更审查。
-
-模块文档可以自动生成接口表，但“为什么这样设计”和升级边界仍要人工说明，见 [[IaC/terraform/15_terraform_模块文档生成|terraform-docs]]。
-
-## 常见问题
-
-- `Unsupported argument`：传入的名字不是该子模块声明的变量；不要把 resource 字段直接当模块输入。
-- 找不到 `module.app.file_path`：本例使用 `for_each`，`module.app` 是按服务名组织的 map，应读取 `module.app["web"].file_path` 或遍历它。
-- Provider 来源或版本冲突：各模块要明确声明 `required_providers`，再核对版本范围是否有交集。
-- 多个实例写入同一路径：模块 key 不会自动让文件名唯一，需要检查路径表达式中是否包含实例输入。
-- 更新模块代码但没有预期 diff：先确认 `source`、Registry 版本或 Git ref，以及实际下载的模块；本地模块直接随目录代码变化。
+- `Unsupported argument`：调用端传入的字段没有在子模块变量中声明；查看 `variables.tf`，不要把云资源字段当成模块输入。
+- 联系人组找不到联系人：核对组中的名称与 `contacts[*].alarm_contact_name`，并确认创建依赖指向由此模块管理的联系人。
+- Provider 配置不正确：确认别名指向目标区域和身份；跨账号角色信任与 RAM 授权要分别核实。
+- module 地址变化导致计划重建：检查 map key、module 名称和 source 路径变化，并评估 State 地址迁移。
+- 修改共享接口：检查所有调用方、Plan 和自动生成文档，避免删除仍被使用的输入或输出。
 
 ## 练习
 
-1. 给 services 增加 `worker = 7000`，观察新增地址、文件和根输出；原 web/api 的身份是否改变？
-2. 只改 web 的端口，再只改它的 map key，说明两个计划差异的原因。
-3. 给子模块新增一个有默认值的变量，并在测试与文档中体现它；再讨论删除已有 output 对调用者的影响。
-4. 解释根模块锁文件、Registry 模块 `version`、Git `ref` 分别固定什么。
+1. 增加第二个联系人并将其放入 `platform` 组，记录新增实例地址和执行顺序。
+2. 只改联系人 `describe`，再将 map key `ops` 改名；比较计划中的属性更新与地址变化。
+3. 扩展已存在的 `contacts` 对象，而不是重复声明 `contacts` 变量。在 `variables.tf` 的对象类型里加入：
+
+   ```hcl
+   channels_sms = optional(string)
+   ```
+
+   再在 `main.tf` 的 `alicloud_cms_alarm_contact.contacts` 资源中加入：
+
+   ```hcl
+   channels_sms = each.value.channels_sms
+   ```
+
+   更新测试与文档，并说明未提供该字段时的行为和接口兼容性。短信号码使用授权实验资料；不要将真实联系信息写入公开示例。
+4. 将 Provider 映射改为默认配置，并解释生产代码为什么仍为不同账号的模块实例显式映射别名。
 
 ## 参考资料
 
-- [Modules 概念](https://developer.hashicorp.com/terraform/language/modules)
-- [模块来源](https://developer.hashicorp.com/terraform/language/modules/sources)
-- [模块与 Provider 传递](https://developer.hashicorp.com/terraform/language/modules/develop/providers)
-- [模块标准结构](https://developer.hashicorp.com/terraform/language/modules/develop/structure)
-- [Provider 依赖锁文件](https://developer.hashicorp.com/terraform/language/files/dependency-lock)
-- [Terraform 1.15 模块来源表达式变更](https://github.com/hashicorp/terraform/blob/v1.15.0/CHANGELOG.md)
-- [Local file 资源行为](https://registry.terraform.io/providers/hashicorp/local/latest/docs/resources/file)
-- [社区目录组织经验](https://github.com/antonbabenko/terraform-best-practices/blob/master/code-structure.md)
+- [Terraform 模块](https://developer.hashicorp.com/terraform/language/modules)
+- [模块内 Provider 配置](https://developer.hashicorp.com/terraform/language/modules/develop/providers)
+- [Provider 映射](https://developer.hashicorp.com/terraform/language/meta-arguments/providers)
+- [AliCloud CMS 告警联系人资源](https://registry.terraform.io/providers/aliyun/alicloud/1.266.0/docs/resources/cms_alarm_contact)
+- [AliCloud CMS 告警联系人组资源](https://registry.terraform.io/providers/aliyun/alicloud/1.266.0/docs/resources/cms_alarm_contact_group)
 
 上一篇：[[IaC/terraform/09_terraform_后端工作空间与多环境|Backend 与多环境]] · 下一篇：[[IaC/terraform/11_terraform_资源导入与重构|Import、moved 与 removed]]。

@@ -14,363 +14,285 @@ aliases:
 
 ## Resource 表示管理所有权
 
-```hcl
-resource "local_file" "app" {
-  filename = "${path.module}/app.conf"
-  content  = "port=8080\n"
-}
-```
+`resource` 声明让 Terraform 通过 Provider 管理对象的生命周期。创建、更新、替换和删除由配置、State 与 Provider 共同决定。`alicloud_cms_alarm_contact.contacts["ops"]` 是 Terraform 地址；CMS 中真实联系人的 ID 由 Provider 记录到 State。仅写一个和现存对象同名的 resource，不会自动纳管该对象。
 
-声明 resource 不只是查询一个文件，而是让 Terraform 管理该对象的生命周期。配置变化时可能更新或替换它，配置删除或 destroy 时可能删除它。
-
-`local_file.app` 是配置地址，`filename` 是实际对象的参数，`id` 是 Provider 暴露的身份属性。云资源名称和 Terraform 逻辑名也同样需要区分。
-
-### 参数与导出属性
-
-- 参数是调用者设置的值，例如 `filename`、`content`。
-- 导出属性是 Provider 读回或计算的值，例如内容摘要、云资源 ID、分配的 IP。
-- 某些字段既可设置，又会被平台规范化或计算。具体行为查看 Provider schema。
-
-资源地址确定后，Terraform 仍需通过 State 将地址与实际对象绑定。只写一个与已有云资源同名的 resource，不会自动完成导入。
+生产代码出处：`monitoring/modules/cloud-monitor-alerts/main.tf`（脱敏裁剪/教学改编）以 map key 管理联系人、联系人组和告警实例；联系人信息与生产业务 key 已替换。
 
 ## Data Source 表示查询
 
-```hcl
-data "local_file" "existing" {
-  filename = "${path.module}/existing.txt"
-}
+`data` 块查询 Provider 支持读取的对象，并把返回值交给其他配置使用。查询结果不是 resource 的所有权绑定；删除 data 块不会因此删除被查询对象。各 Data Source 的读取内容与时机由 Provider 实现。
 
-output "existing_content" {
-  value = data.local_file.existing.content
-}
-```
+生产代码出处：`tool/data.tf`（脱敏裁剪/教学改编）使用 `data "alicloud_account" "current" {}` 读取当前账号 ID；`monitoring/cloud-monitor-alert.tf` 使用 EIP 与 NAT Gateway Data Source 查询监控目标。它们都只查询对象，不声明被查账号或实例的生命周期。
 
-这个配置读取已有文件，删除 data 块或执行 destroy 不会因为这段查询而删除那个文件。数据源用于读取配置所需的外部信息；查询到对象不等于接管对象。
+## 资源参数与导出属性
 
-严格说，具体数据源的行为仍由 Provider 实现，不能把“data”当成对任意第三方插件无副作用的保证。使用官方文档明确说明的查询接口。
+- 参数是 Terraform 传入的值，例如联系人组名称、告警周期或 Bucket 标签。
+- 导出属性由 Provider 读回或计算，例如资源 ID、创建时间或 endpoint。
+- 有些参数会被服务端规范化。能否更新或是否替换对象，要查对应 Provider 版本的资源文档并审阅计划。
 
-## 完整实验：已有文件与被管理文件
+## 完整实验：查询当前账号
 
-创建独立目录，先创建一个 Terraform 外部维护的文件 `existing.txt`：
-
-```text
-shared setting maintained outside Terraform
-```
-
-`main.tf` 完整内容：
+此独立实验只调用 `alicloud_account` Data Source，不创建或修改云资源。使用具有只读账号查询权限的教学凭证；认证信息从 Provider 推荐的受控环境变量或 credentials profile 提供，不写入 Terraform 文件。创建 `main.tf`：
 
 ```hcl
 terraform {
   required_version = ">= 1.7, < 2.0"
-
   required_providers {
-    local = {
-      source  = "hashicorp/local"
-      version = "~> 2.5"
+    alicloud = {
+      source  = "aliyun/alicloud"
+      version = "= 1.266.0"
     }
   }
 }
 
-data "local_file" "existing" {
-  filename = "${path.module}/existing.txt"
+variable "region" {
+  type = string
 }
 
-resource "local_file" "copy" {
-  filename        = "${path.module}/managed-copy.txt"
-  content         = data.local_file.existing.content
-  file_permission = "0644"
+provider "alicloud" {
+  region = var.region
 }
 
-output "paths" {
-  value = {
-    queried = data.local_file.existing.filename
-    managed = local_file.copy.filename
-  }
+data "alicloud_account" "current" {}
+
+output "current_account_id" {
+  value = data.alicloud_account.current.id
 }
 ```
 
-实验步骤：
+在同一实验目录创建 `lab.tfvars`，将占位符换成自己有权使用的地域：
+
+```hcl
+region = "<YOUR_REGION>"
+```
+
+凭证仍由受控环境或 profile 提供，变量文件只设置地域。按顺序观察：
 
 ```bash
 terraform init
-terraform plan -out=tfplan
-terraform show tfplan
-terraform apply tfplan
+terraform plan -var-file=lab.tfvars -out=account.tfplan
+terraform show account.tfplan
+terraform apply account.tfplan
+terraform output current_account_id
 terraform state list
-cat managed-copy.txt
-terraform plan -destroy -out=destroy.tfplan
-terraform show destroy.tfplan
-terraform apply destroy.tfplan
 ```
 
-预期 `managed-copy.txt` 被删除，`existing.txt` 保留。State 中可以出现 data source 的缓存记录，但那不意味着 Terraform 对查询对象拥有删除责任。
+Data Source 在计划时读取当前账号信息；输出是 Provider 返回的账号 ID。State 可记录查询结果，但这不表示 Terraform 创建或拥有该账号。此目录没有待销毁的云资源，完成后可归档或删除实验文件和本地状态。生产中的只读查询示例见 `tool/data.tf`。
+
+如需对比 Resource 管理，请继续第 05 篇在独立账号创建的空 OSS Bucket 与 ACL 实验。Bucket 是显式 resource，拥有独立 State 地址；账号 Data Source 只读取账号信息。不要把生产 OSS Bucket 当练习目标。
+
+## 生产数据流：Data Source、过滤与模块输入
+
+生产代码将不同地域查询到的 EIP 列表合并，按配置的排除标签过滤 ID，再把结果传给告警子模块。以下以 `monitoring/cloud-monitor-alert.tf` 为基础做脱敏裁剪/教学改编；region/provider aliases 减至两个教学 alias，必要输入变量接口在片段中展示，其他地域与完整 resource object 字段省略，不能单独复制运行：
+
+```hcl
+data "alicloud_eip_addresses" "network_cn_shanghai" {
+  provider = alicloud.network_cn_shanghai
+}
+
+data "alicloud_eip_addresses" "network_cn_hongkong" {
+  provider = alicloud.network_cn_hongkong
+}
+
+variable "account_alert_contacts_base" {
+  description = "教学接口形状；详细对象字段见生产 monitoring/cloud-monitor-alert.tf"
+  type = object({
+    contacts       = map(any)
+    contact_groups = map(any)
+  })
+}
+
+variable "account_alarms" {
+  description = "按账户区分排除标签和告警输入；省略生产对象的完整字段结构"
+  type = map(object({
+    exclude_tags = optional(map(string), {})
+    alarms       = map(any)
+  }))
+}
+
+locals {
+  all_eips = concat(
+    data.alicloud_eip_addresses.network_cn_shanghai.addresses,
+    data.alicloud_eip_addresses.network_cn_hongkong.addresses,
+  )
+
+  filtered_eip_ids = [
+    for eip in local.all_eips : eip.id
+    if length([
+      for key, value in var.account_alarms["network"].exclude_tags : key
+      if try(eip.tags[key], null) == value
+    ]) == 0
+  ]
+}
+
+module "network_alerts" {
+  source           = "./modules/cloud-monitor-alerts"
+  contacts         = var.account_alert_contacts_base.contacts
+  contact_groups   = var.account_alert_contacts_base.contact_groups
+  alarms           = var.account_alarms["network"].alarms
+  eip_instance_ids = local.filtered_eip_ids
+}
+```
+
+上例中 `exclude_tags` 是 `map(string)`，`contacts`、`contact_groups` 与 `alarms` 的类型见子模块 `monitoring/modules/cloud-monitor-alerts/variables.tf`。Data Source 读取对象，`local` 只转换返回值，module 调用将值传入子模块；这些步骤本身不把 EIP 纳入 Terraform 管理。
+
+生产代码使用多个 Provider alias 跨账户和地域查询。Data Source 列表的具体成员取决于运行身份、alias 与云端当前数据，不能仅凭源码推断当前查询结果。确切代码位置：`monitoring/cloud-monitor-alert.tf`。
+
+## CMS 联系人到告警的资源依赖
+
+子模块收到 `contacts`、`contact_groups` 与 `alarms` 三份独立 map 输入。生产资源之间的关系（摘自 `monitoring/modules/cloud-monitor-alerts/main.tf`，已脱敏裁剪/教学改编）：
+
+```hcl
+resource "alicloud_cms_alarm_contact" "contacts" {
+  for_each               = var.contacts
+  alarm_contact_name     = each.value.alarm_contact_name
+  describe               = each.value.describe
+  channels_mail          = each.value.channels_mail
+  channels_ding_web_hook = each.value.channels_ding_web_hook
+  channels_sms           = each.value.channels_sms
+  lang                   = each.value.lang
+}
+
+resource "alicloud_cms_alarm_contact_group" "contact_groups" {
+  for_each                 = var.contact_groups
+  alarm_contact_group_name = each.value.alarm_contact_group_name
+  contacts                 = each.value.contacts
+  depends_on               = [alicloud_cms_alarm_contact.contacts]
+}
+
+resource "alicloud_cms_alarm" "cms_alarms" {
+  for_each       = var.alarms != null ? var.alarms : {}
+  name           = each.key
+  contact_groups = each.value.contact_groups
+  depends_on     = [alicloud_cms_alarm_contact_group.contact_groups]
+}
+```
+
+片段省略了各 resource 的其他必要 Provider 参数。子模块完整变量结构以生产 `variables.tf` 为准；联系人 channels 和任何实际联系人/告警信息都未复制。模块根配置 `monitoring/cloud-monitor-alert.tf` 将共享的 contacts 与 contact groups 输入，以及每个账户自己的 alarms 输入传入各子模块。
+
+联系人组资源显式等待联系人资源，告警资源显式等待联系人组资源。`contact_groups` 和 `contacts` 是不同输入：依赖仅决定 Terraform 图的顺序，不会把告警中的组名转换成组成员，也不会自动同步 CMS 1.0 与 CMS 2.0 的联系人配置。CMS 2.0 `cms2_alert_rules` 是独立输入；不可从代码推断云端成员、组名是否一致。
 
 ## 隐式依赖：通过引用表达关系
 
-上一例中，`local_file.copy.content` 引用数据源内容，已经表达了“先有查询结果，才能计算文件内容”。
-
-云资源常见的写法也是如此：
-
-```hcl
-resource "azurerm_resource_group" "app" {
-  name     = "rg-learning-app"
-  location = var.location
-}
-
-resource "azurerm_storage_account" "app" {
-  name                     = var.storage_account_name
-  resource_group_name      = azurerm_resource_group.app.name
-  location                 = azurerm_resource_group.app.location
-  account_tier             = "Standard"
-  account_replication_type = "LRS"
-}
-```
-
-Storage Account 引用 Resource Group，Core 可从表达式构建依赖。`storage_account_name` 必须自己声明并提供符合 Azure 命名规则且全局唯一的值；此片段不是可直接执行的完整云项目。
-
-仅把资源组名字重复写成一个相同字符串，不会表达两个 resource 之间的关系。需要依赖时应引用被管理资源的属性。
-
-```mermaid
-flowchart LR
-    RG[Resource Group] --> SA[Storage Account]
-    SA --> OUT[Output]
-```
-
-没有依赖关系的节点可以并行处理，所以 `.tf` 中的上下书写顺序不是 API 执行顺序。删除时会考虑反向依赖，先删除依赖者，再删除其前置对象。
+若资源属性引用另一个对象的属性，Terraform 可从表达式推断数据依赖。生产 OSS Bucket ACL 资源引用 `alicloud_oss_bucket` 的名称，因此 ACL 使用对应 Bucket。生产网络告警则通过 Data Source 的返回值和本地表达式把 ID 传到 module。无关节点可并行执行；文件书写顺序不等于 API 执行顺序。删除时依赖顺序反转，先处理使用方。
 
 ## depends_on：表达看不见的行为依赖
 
-有些依赖不是某个参数值的输入，例如服务创建前，某条权限授权必须已完成。此时可以使用 `depends_on`。
+只有资源行为依赖无法通过属性引用表达时才用 `depends_on`，并写清楚原因。它控制 Terraform 依赖图的先后关系，不保证云端授权传播或外部系统就绪。宽泛依赖会减少并行性，也可能使读取延迟到 apply，增加 unknown 值。
 
-```hcl
-resource "terraform_data" "permission_ready" {
-  input = "教学用前置节点"
-}
-
-resource "terraform_data" "service" {
-  input      = "教学用后置节点"
-  depends_on = [terraform_data.permission_ready]
-}
-```
-
-这段可用于观察图关系，不代表它真正创建了云权限或服务。`terraform_data` 是内置资源，不需要下载一个名为 `terraform_data` 的外部 Provider。
-
-使用 depends_on 的原则：
-
-- 值依赖能表达时，优先直接引用。
-- 隐藏依赖要写注释，说明哪项行为需要等待。
-- 不要把所有资源串成一条链；会削弱并行性。
-- 对整个模块添加宽泛 depends_on，可能让更多数据源延后到 apply 读取，增加 unknown 和保守替换计划。
-- 依赖完成不保证云 API 的授权传播或外部系统可用性立即完成；有些问题需要 Provider 重试或更合理的分层部署。
+生产源码中的联系人组等待联系人，以及 CMS 1.0 alarm 等待联系组，属于显式依赖。若使用模块级 `depends_on`，它会扩展到该模块关联的资源和 data source，应先检查计划影响。
 
 ## Data Source 什么时候读取
 
-查询参数和依赖都可用时，数据源通常在 plan 阶段读取。如果参数依赖尚未创建的值，或有上游待变更的依赖，读取可能推迟到 apply。
+查询参数和依赖已知时，Data Source 通常在 plan 阶段读取。若读取依赖本次尚未创建或更新的资源，读取可能延后到 apply，计划提示 `will be read during apply`，下游值暂时 unknown。不要仅为强制执行顺序而对整个 module 加依赖；先确认隐式依赖是否已足够。
 
-因此 plan 中的 `will be read during apply` 不是自动故障。不过它意味着部分下游值暂时 unknown，需要检查是否引入了过宽的依赖。
+可在当前账号实验上观察 Data Source 计划输出。这里的数据源没有 Terraform 管理的上游 resource，也无需为了读账号添加 `depends_on`。
 
-可以在上面的文件查询实验中观察这种差别：向 `main.tf` 补充下面两个块，并用这里的 data 块替换原来的 `data "local_file" "existing"`：
+## dynamic：按条件生成嵌套块
 
-```hcl
-variable "lookup_revision" {
-  type    = string
-  default = "v1"
-}
-
-resource "terraform_data" "lookup_gate" {
-  input = var.lookup_revision
-}
-
-data "local_file" "existing" {
-  filename = "${path.module}/existing.txt"
-  # 教学用隐藏依赖：查询必须等 lookup_gate 完成本次操作。
-  depends_on = [terraform_data.lookup_gate]
-}
-```
-
-`existing.txt` 应仍存在；Provider、被管理副本和 output 沿用前面的完整配置。先建立新的基线，再只改变前置节点：
-
-```bash
-terraform plan -out=dependency.tfplan
-terraform show dependency.tfplan
-terraform apply dependency.tfplan
-terraform plan -var='lookup_revision=v2'
-```
-
-虽然 `filename` 早已确定、文件也没有改，`lookup_gate` 在本次计划中需要更新，显式依赖仍可能让读取推迟到 apply。副本的 `content` 因而成为 unknown，Provider 可能给出保守的替换计划；这不证明原文件内容已经变化。
-
-再用默认 `lookup_revision=v1` 运行普通 plan，前置节点没有待执行的变化时，不能把“写了 depends_on”理解成“每次查询都必然推迟到 apply”。这个实验用于理解计划成本，真实文件查询没有这项隐藏依赖时应去掉它。收尾沿用文件实验的 destroy 流程，清理副本和教学节点，外部文件保留。
+CMS 告警资源中的 `dynamic "escalations_critical"`、`dynamic "escalations_warn"` 与 `dynamic "prometheus"` 根据每项输入是否为 null，生成一个或零个资源内部配置块。它们不是可独立寻址或单独纳管的 Terraform resource 实例。出处为 `monitoring/modules/cloud-monitor-alerts/main.tf`（脱敏裁剪/教学改编）。
 
 ## lifecycle：控制资源变更方式
 
-### 用 terraform_data 观察更新与替换
+Lifecycle 元参数改变 Terraform 处理资源变更的方式，不替代计划审阅。
 
-在新实验目录中使用完整 `main.tf`：
+| 设置 | 用途 | 边界 |
+|---|---|---|
+| `create_before_destroy` | 替换时先创建新对象 | 服务端需允许新旧对象同时存在 |
+| `prevent_destroy` | 配置块保留时阻止删除计划 | 删除整个 resource 块后规则也消失 |
+| `ignore_changes` | 更新时忽略指定属性差异 | 不等于忽略整个资源删除 |
+| `replace_triggered_by` | 指定其他资源变化触发替换 | 需要资源引用；普通值可由 `terraform_data` 包装 |
+
+用内置资源观察 `triggers_replace`：
 
 ```hcl
-terraform {
-  required_version = ">= 1.7, < 2.0"
-}
-
-variable "release" {
+variable "revision" {
   type    = string
   default = "v1"
 }
 
-resource "terraform_data" "app" {
-  input            = { release = var.release }
-  triggers_replace = var.release
-}
-
-output "instance_id" {
-  value = terraform_data.app.id
+resource "terraform_data" "release" {
+  input            = var.revision
+  triggers_replace = var.revision
 }
 ```
 
-运行并记录第一次的逻辑实例 ID：
-
-```bash
-terraform init
-terraform plan -out=release-v1.tfplan
-terraform show release-v1.tfplan
-terraform apply release-v1.tfplan
-terraform output instance_id
-terraform plan -var='release=v2' -out=release-v2.tfplan
-terraform show release-v2.tfplan
-terraform apply release-v2.tfplan
-terraform output instance_id
-```
-
-预期第二个计划包含替换，apply 后的实例 ID 与第一次不同。原因是 `triggers_replace` 改变；单独改变 `input` 通常只是该逻辑资源的更新。
-
-实验结束时使用相同变量生成删除计划：
-
-```bash
-terraform plan -destroy -var='release=v2' -out=release-destroy.tfplan
-terraform show release-destroy.tfplan
-terraform apply release-destroy.tfplan
-```
-
-这个资源适合解释 Terraform 生命周期，不能替代 Provider 管理实际云资源。
-
-### 常见生命周期设置
-
-| 设置 | 作用 | 边界 |
-|---|---|---|
-| `create_before_destroy = true` | 替换时先创建新对象，再删除旧对象 | 平台必须允许新旧对象并存，名称与配额不能冲突 |
-| `prevent_destroy = true` | 配置保留该规则时阻止 Terraform 的删除计划 | 删除整个 resource 配置块后不能靠它继续保护对象 |
-| `ignore_changes = [tags]` | 创建后，在更新判断中忽略指定属性的外部变化 | 被忽略的值仍可在首次创建时配置；不代表忽略整个资源删除 |
-| `replace_triggered_by = [...]` | 指定管理资源发生相关变更时替换当前资源 | 接受资源引用，不直接接受任意字符串或变量 |
-
-示例片段：
-
-```hcl
-resource "terraform_data" "revision" {
-  input = var.release
-}
-
-resource "terraform_data" "consumer" {
-  input = "consumer"
-
-  lifecycle {
-    create_before_destroy = true
-    replace_triggered_by  = [terraform_data.revision]
-  }
-}
-```
-
-`var.release` 应来自同一实验的变量声明。通过 terraform_data 把普通值变化转成可引用的资源操作，才能用于 `replace_triggered_by`。
-
-生命周期规则在较早阶段处理，很多设置必须用字面值，不能随意改成 `var.*` 条件。`create_before_destroy` 还可能传播到依赖节点，应阅读最终计划。
+在专用本地目录中先 init、plan 并审阅，再 apply。把 `revision` 改成 `v2` 后生成并阅读新计划，预期该逻辑资源被替换；这个例子不代表生产发布动作。实验后对该目录执行 `terraform plan -destroy`，审阅后再清理。
 
 ## precondition / postcondition
 
-条件适合表达输入校验之外的资源约束。下面在另一个独立实验目录创建完整 `main.tf`，观察操作前条件与结果条件：
+在本系列的 Terraform 1.7 基线中，变量 validation 只校验该变量自身；`precondition` 和 `postcondition` 可表达资源上下文中的前置条件和结果保证。条件失败会阻止关联操作或依赖操作，但不会回滚已完成的其他云端动作。
+
+在另一个独立本地目录中使用完整示例：
 
 ```hcl
 terraform {
   required_version = ">= 1.7, < 2.0"
 }
 
-variable "replicas" {
+variable "period" {
   type    = number
-  default = 1
+  default = 60
 }
 
-resource "terraform_data" "checked" {
-  input = var.replicas
-
+resource "terraform_data" "checked_period" {
+  input = var.period
   lifecycle {
     precondition {
-      condition     = var.replicas >= 1
-      error_message = "副本数必须至少为 1。"
+      condition     = var.period >= 60
+      error_message = "教学周期必须至少为 60 秒。"
     }
-
     postcondition {
-      condition     = self.output >= 1
-      error_message = "逻辑资源记录的副本数必须至少为 1。"
+      condition     = self.output >= 60
+      error_message = "记录的周期必须至少为 60 秒。"
     }
   }
 }
 ```
 
-变量 validation 验证接口输入，precondition 可验证资源操作前的条件，postcondition 可验证操作或读取后的结果。`self` 表示当前资源，不能把它当成全局变量使用。这里的 `terraform_data` 只记录一个数值，没有真正创建一组副本；对于仅检查 `var.replicas` 的规则，实际项目通常放在变量 validation 中更直接。
-
-先初始化并观察一个失败输入：
-
-```bash
-terraform init
-terraform plan -var='replicas=0'
-```
-
-预期前置条件失败。改回有效输入后，计划、创建并清理：
-
-```bash
-terraform plan -var='replicas=1' -out=checked.tfplan
-terraform show checked.tfplan
-terraform apply checked.tfplan
-terraform plan -destroy -out=checked-destroy.tfplan
-terraform show checked-destroy.tfplan
-terraform apply checked-destroy.tfplan
-```
-
-新资源的 `output` 在计划中可能未知，结果条件便要等值确定后检查。条件涉及 unknown 时，检查可能推迟到 apply。
-
-条件失败会阻止对应操作或依赖它的后续操作，但不是一次基础设施事务的整体回滚。若 postcondition 在 apply 时才失败，已经完成的创建或更新不会因此自动撤销。删除计划也只针对这个独立目录中的教学资源。
+运行 `terraform init` 后执行 `terraform plan -var='period=30'`，预期 precondition 失败。再用默认 `period=60` 生成、审阅并应用计划，随后生成并审阅 destroy 计划，清理这个逻辑资源。`terraform_data` 只记录一个数字，不会创建 CMS 告警；生产 CMS 阈值需遵循对应的产品与 Provider schema。
 
 ## provisioner 为什么应少用
 
-`local-exec` 在 Terraform 执行机器上运行命令，`remote-exec` 通常通过远程连接执行配置。它们不是 Terraform 对“任意脚本内容”的完整状态管理。
+生产监控模块没有用以下命令式初始化 demo。`local-exec` 在运行 Terraform 的机器上执行命令，`remote-exec` 通过远程连接执行。Provisioner 不是资源差异的完整描述，失败也不能撤销已发生的外部副作用。
+
+若要在独立本地目录演示，可使用：
 
 ```hcl
+terraform {
+  required_version = ">= 1.7, < 2.0"
+}
+
 resource "terraform_data" "message" {
   triggers_replace = "v1"
-
   provisioner "local-exec" {
     command = "echo learning-bootstrap"
   }
 }
 ```
 
-这个例子只是演示生命周期内的命令执行。创建阶段 provisioner 通常不会在每次 plan/apply 都运行；修改输入也不自动等于再次执行脚本。失败还可能使资源被标记为需替换，已经产生的外部副作用不能靠 State 自动撤销。
-
-主机初始化优先考虑 cloud-init、user_data、预制镜像或专用配置管理工具。Shell 执行缺少可审查的资源差异，凭证、重试和幂等性都要额外设计。
+先运行 init、plan 并审阅，再 apply；预期首次创建时打印 `learning-bootstrap`。普通 plan 不会因为存在 provisioner 就重复执行。修改触发值导致替换时命令才会再次运行。完成演示后为该目录生成、审阅和应用 destroy 计划。主机初始化优先使用云初始化数据、镜像或配置管理工具；只有适用时才谨慎采用 provisioner，并设计好凭证、重试和幂等性。
 
 ## 练习
 
-1. 在文件查询实验中修改 `existing.txt`，查看为什么被管理副本的计划发生变化。
-2. 在 terraform_data 实验中删除 `triggers_replace`，比较修改 release 时的计划。
-3. 解释“依赖图里等到授权资源创建完”和“云端权限已经传播到所有 API”为什么不是同一保证。
+1. 画出 `data.alicloud_eip_addresses` → `local.filtered_eip_ids` → `module.network_alerts` 的数据流，指出哪些节点会创建云资源。
+2. 画出 CMS contact → contact group → CMS 1.0 alarm 的依赖图，并指出成员数据由哪个输入控制。
+3. 解释为什么 CMS 2.0 规则中的联系人组名不会因 `depends_on` 与 CMS 1.0 联系人组成员同步。
+4. 对比 `depends_on` 与属性引用，说明 Data Source 在什么情况下会延迟到 apply 读取。
+5. 对两个本地 `terraform_data` 示例分别测试有效值、无效值和 destroy 流程；不要将学习 demo 当作生产配置。
 
 ## 参考资料
 
-- [Resource 语法](https://developer.hashicorp.com/terraform/language/resources/syntax)
-- [Data sources](https://developer.hashicorp.com/terraform/language/data-sources)
+- [资源配置与依赖](https://developer.hashicorp.com/terraform/language/resources/configure)
+- [Data Sources](https://developer.hashicorp.com/terraform/language/data-sources)
 - [depends_on](https://developer.hashicorp.com/terraform/language/meta-arguments/depends_on)
-- [lifecycle](https://developer.hashicorp.com/terraform/language/meta-arguments/lifecycle)
+- [Dynamic Blocks](https://developer.hashicorp.com/terraform/language/expressions/dynamic-blocks)
+- [Lifecycle](https://developer.hashicorp.com/terraform/language/meta-arguments/lifecycle)
 - [自定义条件](https://developer.hashicorp.com/terraform/language/expressions/custom-conditions)
 - [terraform_data](https://developer.hashicorp.com/terraform/language/resources/terraform-data)
-- [Provisioners](https://developer.hashicorp.com/terraform/language/resources/provisioners/syntax)
-- [Local file 数据源](https://registry.terraform.io/providers/hashicorp/local/latest/docs/data-sources/file)
+- [alicloud_account（Provider 1.266.0）](https://registry.terraform.io/providers/aliyun/alicloud/1.266.0/docs/data-sources/account)
+- [alicloud_cms_alarm_contact（Provider 1.266.0）](https://registry.terraform.io/providers/aliyun/alicloud/1.266.0/docs/resources/cms_alarm_contact)
+- [alicloud_cms_alarm_contact_group（Provider 1.266.0）](https://registry.terraform.io/providers/aliyun/alicloud/1.266.0/docs/resources/cms_alarm_contact_group)
+- [alicloud_cms_alarm（Provider 1.266.0）](https://registry.terraform.io/providers/aliyun/alicloud/1.266.0/docs/resources/cms_alarm)
 
 上一篇：[[IaC/terraform/05_terraform_提供者版本与认证|Provider]] · 下一篇：[[IaC/terraform/07_terraform_循环与批量资源|count 与 for_each]]。

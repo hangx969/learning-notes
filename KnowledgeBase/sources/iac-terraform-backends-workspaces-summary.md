@@ -21,20 +21,22 @@ aliases:
 
 ## 摘要
 
-介绍状态存储、权限与锁定，并给出 Azure Blob 连接、本地迁移和 S3 锁文件示例。通过内置资源实验区分 Workspace 状态隔离与环境权限隔离。
+以生产代码的 TFE remote Backend 展开说明 Provider 与 Backend 的区别、状态迁移、CLI Workspace 隔离和多环境边界，并厘清远程执行与仅远程存储状态的差异。
 
 ## 关键知识点
 
-1. Backend 与 Provider 的目标和认证独立，Backend 不引用普通运行变量和资源。
-2. init -migrate-state 尝试迁移记录，reconfigure 不迁移；迁移后须核对地址与计划。
-3. 显式 Azure use_cli 要求 1.11+，S3 use_lockfile 要求 1.10+；DynamoDB 锁定已弃用；CLI Workspace 不等同于 HCP Workspace。
+1. Provider 管理资源 API，Backend 管理状态位置、访问和可能的锁；两者分别认证。
+2. TFE remote Backend 可执行远程运行，也可只保存状态供本地执行；Provider 凭证由实际执行环境消费。
+3. `init -migrate-state` 迁移状态；`-reconfigure` 只重配 Backend。迁移前备份并确认 workspace，迁移后核对地址和计划。
+4. CLI Workspace 分隔状态，不提供账号、权限或代码隔离。OSS 应用资源 Bucket 不是 Terraform OSS Backend。
 
 ## 涉及的概念与实体
 
 - [[KnowledgeBase/entities/Terraform|Terraform]]
-- [[KnowledgeBase/concepts/自动化运维|自动化运维]]
+- [[KnowledgeBase/concepts/Terraform状态管理|Terraform 状态管理]]
 
 ## 值得注意
 
-- 技术出处在原始笔记中按官方文档和 Provider 文档列出；实验输出标为预期观察，云端执行未验证。
-- 学习顺序与相关章节见 [[KnowledgeBase/maps/terraform-map|Terraform 主题地图]]。
+- 生产示例源于 `shared/backend.tf`、`monitoring/backend.tf`、`permissions/backend.tf` 的脱敏裁剪/教学改编；真实 hostname、organization 和 workspace 均替换为 `.invalid` 或示意名。`shared/jfrog-cn.tf` 的 OSS 应用 Bucket 由 `shared/backend.tf` 指定的 TFE remote workspace State 管理。
+- OSS 应用资源举例来自 `shared/jfrog-cn.tf`，不表示该目录使用 OSS 保存 Terraform State；Provider 与 OSS Backend 凭据需分别依据 Provider 和 Terraform CLI 对应版本文档核对。
+- remote Backend 行为按 HashiCorp 官方文档核对；未访问 TFE 或运行迁移。

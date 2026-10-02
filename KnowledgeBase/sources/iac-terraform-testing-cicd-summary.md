@@ -17,24 +17,24 @@ aliases:
 - **原始文档**：[[IaC/terraform/13_terraform_测试与持续集成交付]]
 - **领域**：IaC / Terraform
 - **摄入日期**：2026-10-02
-- **更新日期**：2026-10-02
 
 ## 摘要
 
-区分格式、配置、逻辑、集成和真实部署验证，并给 app-config 模块增加 mock 计划测试。提供模块 CI 示例与正式计划审批执行的最小逻辑。
+使用生产 CMS 联系人模块的教学裁剪版，演示 Terraform 原生测试的 mock plan 断言和 CI 检查骨架。明确区分代码检查、模拟测试、授权云端执行和执行后验收，并指出生产仓库当前没有查到原生 CI 配置。
 
 ## 关键知识点
 
-1. 原生测试默认 run 使用 apply，mock 要求 1.7+；plan/mock 不验证云 API 的真实行为。
-2. 测试覆盖命名、端口传参和非法值拒绝，避免只断言模拟生成的 ID。
-3. detailed-exitcode 的 2 是成功但有变化；审批后的执行应使用同一计划，并按 State 控制并发。
+1. 测试验证 `contacts`、`contact_groups` 的输入如何形成预期资源属性；Mock Provider 不调用 CMS API，也不证明真实联系人、权限或通知行为。
+2. `terraform test` 的 run 默认可能 apply；示例指定 `command = plan` 并使用 `mock_provider "alicloud" {}`。AliCloud 1.266.0 源码中联系人组 `contacts` 是 TypeSet，断言以 `toset` 统一类型；本轮未运行测试命令。
+3. CI 示例属于为该模块新增的教学设计，不是生产仓库已有流水线；独立测试副本先固定 `= 1.266.0` 约束，再审阅并提交自己的 `.terraform.lock.hcl` 锁定解析版本，CI 以 `-lockfile=readonly` 使用它；真实 Plan 和 Apply 需要独立 workspace、身份核验和审批。
 
 ## 涉及的概念与实体
 
 - [[KnowledgeBase/entities/Terraform|Terraform]]
 - [[KnowledgeBase/concepts/自动化运维|自动化运维]]
+- [[KnowledgeBase/concepts/Terraform模块化]]
 
 ## 值得注意
 
-- 技术出处在原始笔记中按官方文档和 Provider 文档列出；实验输出标为预期观察，云端执行未验证。
-- 学习顺序与相关章节见 [[KnowledgeBase/maps/terraform-map|Terraform 主题地图]]。
+- AliCloud 邮箱联系人需要收件人激活；离线测试不验证邮箱和告警投递。
+- 测试目录、Provider 锁文件和运行版本需在具体教学项目中准备；此处 CI action 和版本流程均未运行验证。

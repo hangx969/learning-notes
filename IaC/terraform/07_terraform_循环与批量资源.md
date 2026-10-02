@@ -14,330 +14,267 @@ aliases:
 
 ## 为什么需要批量创建
 
-多个同类资源如果只复制粘贴，命名、标签和参数容易不一致。Terraform 通过 `count` 或 `for_each` 让一个 resource/module 块对应多个实例。
-
-选择它们之前先考虑资源身份：一个实例是“第几个”，还是“哪一个服务”？这决定输入列表变化后，Terraform 会认为谁发生了变化。
+`count` 与 `for_each` 让一个 resource 或 module 块管理多个实例。实例身份可能取自列表位置，也可能取自业务 key；选哪种写法会影响增删、重排时 Terraform 如何匹配实例。同一 resource 或 module 块不能同时设置 `count` 与 `for_each`。
 
 | 比较项 | count | for_each |
 |---|---|---|
-| 输入 | 非负整数 | map 或 set(string) |
+| 输入 | 非负整数 | map 或 `set(string)` |
 | 实例身份 | 从 0 开始的索引 | map key 或 set 成员 |
 | 循环内引用 | `count.index` | `each.key`、`each.value` |
-| 地址 | `local_file.app[0]` | `local_file.app["web"]` |
-| 常见用途 | 固定数量、0/1 条件创建 | 按服务名、用户、区域等稳定 key 管理 |
+| 地址示例 | `terraform_data.cms_alarm[0]` | `terraform_data.cms_alarm["cpu"]` |
+| 常见用途 | 固定数量、0/1 条件创建 | 以稳定名称区分的一组对象 |
 
-同一个块不能同时使用 count 和 for_each。本文的普通资源实验要求 plan 阶段就能确定实例数量或 key；已知集合中的属性值可以继续是 unknown。
+生产来源：`monitoring/modules/cloud-monitor-alerts/main.tf` 中 `alicloud_cms_alarm.cms_alarms` 用 alarm map 的 key 作为实例身份；`shared/jfrog-cn.tf` 用 `count = var.jfrog_cn_oss_config != null ? 1 : 0` 选择创建零个或一个可选 OSS Bucket。以下本地实验用 `terraform_data` 承载 CMS 告警对象，只为观察 Terraform 地址和状态，不是生产 CMS 资源。
 
-## 实验一：用 count 管理三份配置
+## 实验一：按 count 索引观察 CMS 告警对象
 
-创建独立实验目录：
-
-```bash
-mkdir -p ~/terraform-labs/07-count
-cd ~/terraform-labs/07-count
-```
-
-完整 `main.tf`：
+在 `~/terraform-labs/07-count/` 创建完整 `main.tf`。Terraform Core 内置 `terraform_data`，本实验不需要 Provider、不连接云。
 
 ```hcl
 terraform {
   required_version = ">= 1.7, < 2.0"
+}
 
-  required_providers {
-    local = {
-      source  = "hashicorp/local"
-      version = "~> 2.5"
+variable "cms_alarms" {
+  description = "教学用 CMS 告警对象列表；不是生产阈值"
+  type = list(object({
+    key            = string
+    namespace      = string
+    metric         = string
+    period         = number
+    contact_groups = list(string)
+  }))
+  default = [
+    { key = "cpu", namespace = "acs_ecs_dashboard", metric = "CPUUtilization", period = 60, contact_groups = ["ops"] },
+    { key = "memory", namespace = "acs_ecs_dashboard", metric = "memory_usedutilization", period = 60, contact_groups = ["ops"] },
+    { key = "disk", namespace = "acs_ecs_dashboard", metric = "diskusage_utilization", period = 60, contact_groups = ["ops"] },
+  ]
+}
+
+resource "terraform_data" "cms_alarm" {
+  count = length(var.cms_alarms)
+
+  input            = var.cms_alarms[count.index]
+  triggers_replace = var.cms_alarms[count.index].key
+}
+
+output "instances" {
+  value = [
+    for index, alarm in terraform_data.cms_alarm : {
+      address = "terraform_data.cms_alarm[${index}]"
+      key     = alarm.output.key
+      period  = alarm.output.period
+    }
+  ]
+}
+```
+
+按顺序运行并查看状态：
+
+```bash
+terraform init
+terraform plan -out=count.tfplan
+terraform show count.tfplan
+terraform apply count.tfplan
+terraform state list
+terraform state show 'terraform_data.cms_alarm[1]'
+terraform output instances
+```
+
+预期创建三个逻辑实例，`[0]`、`[1]`、`[2]` 分别对应 cpu、memory、disk。`triggers_replace` 只是让本地练习清楚显示 key 改变导致的替换，不代表 CMS Provider 的具体更新行为。
+
+### 从中间删除 memory 会怎样
+
+把 `cms_alarms` 列表改成只留 cpu 与 disk，再运行：
+
+```bash
+terraform plan -out=count-delete-middle.tfplan
+terraform show count-delete-middle.tfplan
+```
+
+新列表的 `[1]` 变成 disk，旧 `[1]` 是 memory；旧 `[2]` 不再存在。由于本教学资源的 `triggers_replace` 绑定对象 key，计划会提出 `[1]` 替换并删除 `[2]`。这说明地址身份由索引决定，删除、插入或重排中间项可能导致后续地址指向不同对象。此时不要 apply；恢复原列表，再 plan 检查基线。
+
+实际云资源会按 Provider schema 决定原地更新或替换，但 Terraform 地址仍然按索引匹配。若生产对象应由稳定业务 key 标识，map/`for_each` 通常更合适。
+
+## 实验二：按 map key 管理同一组 CMS 告警
+
+在独立目录 `~/terraform-labs/07-for-each/` 保存完整 `main.tf`：
+
+```hcl
+terraform {
+  required_version = ">= 1.7, < 2.0"
+}
+
+variable "cms_alarms" {
+  description = "以稳定告警 key 标识的教学对象；不是生产告警配置"
+  type = map(object({
+    namespace      = string
+    metric         = string
+    period         = number
+    contact_groups = list(string)
+    enabled        = optional(bool, true)
+  }))
+  default = {
+    cpu = {
+      namespace = "acs_ecs_dashboard", metric = "CPUUtilization", period = 60, contact_groups = ["ops"]
+    }
+    memory = {
+      namespace = "acs_ecs_dashboard", metric = "memory_usedutilization", period = 60, contact_groups = ["ops"]
+    }
+    disk = {
+      namespace = "acs_ecs_dashboard", metric = "diskusage_utilization", period = 60, contact_groups = ["ops"]
     }
   }
 }
 
-variable "service_names" {
-  type    = list(string)
-  default = ["web", "api", "worker"]
-}
-
-resource "local_file" "config" {
-  count = length(var.service_names)
-
-  filename        = "${path.module}/${var.service_names[count.index]}.conf"
-  content         = "service=${var.service_names[count.index]}\n"
-  file_permission = "0644"
-}
-
-output "paths" {
-  value = local_file.config[*].filename
-}
-```
-
-初始化并查看计划后执行：
-
-```bash
-terraform init
-terraform plan -out=tfplan
-terraform show tfplan
-terraform apply tfplan
-terraform state list
-terraform state show 'local_file.config[1]'
-```
-
-预期首次计划为 `3 to add, 0 to change, 0 to destroy`。State 中有以下三个地址，`state show` 能看到 `[1]` 对应 api：
-
-```text
-local_file.config[0]  -> web.conf
-local_file.config[1]  -> api.conf
-local_file.config[2]  -> worker.conf
-```
-
-### 从中间删除 api 会怎样
-
-把默认列表改为：
-
-```hcl
-default = ["web", "worker"]
-```
-
-此时 `[1]` 的目标由 api 变成 worker，原来 `[2]` 不再有配置：
-
-```text
-[0] web    -> web
-[1] api    -> worker
-[2] worker -> 不存在
-```
-
-执行 `terraform plan`，本例预期 `[1]` 因文件名/内容变化被替换，`[2]` 被删除，总计 `1 to add, 0 to change, 2 to destroy`。其他 Provider 会按自己的 schema 决定更新还是替换；核心问题是实例身份按索引对应，中间删除、插入或重新排序都可能影响后续实例。
-
-此时新的 `[1]` 与旧的 `[2]` 都涉及 `worker.conf`，不同实例共用路径可能相互覆盖或删除。因此这一步只观察计划，随后恢复 `default = ["web", "api", "worker"]`，再 plan 确认没有变化；不要执行这份删中间元素的计划。
-
-## 实验二：用 for_each 保持服务身份
-
-创建另一个独立目录：
-
-```bash
-mkdir -p ~/terraform-labs/07-for-each
-cd ~/terraform-labs/07-for-each
-```
-
-把实验一 `main.tf` 顶部完整的 `terraform` 块复制到本目录 `versions.tf`，沿用相同的 Local Provider 要求。以下是本目录完整的 `main.tf`，不与 count 实验追加合并。
-
-```hcl
-variable "services" {
-  description = "以服务名作为稳定实例 key"
-  type = map(object({
-    port    = number
-    enabled = optional(bool, true)
-  }))
-  default = {
-    web    = { port = 8080 }
-    api    = { port = 9000 }
-    worker = { port = 7000 }
-  }
-}
-
 locals {
-  enabled_services = {
-    for name, service in var.services : name => service
-    if service.enabled
+  enabled_cms_alarms = {
+    for key, alarm in var.cms_alarms : key => alarm if alarm.enabled
   }
 }
 
-resource "local_file" "config" {
-  for_each = local.enabled_services
-
-  filename        = "${path.module}/${each.key}.conf"
-  file_permission = "0644"
-  content         = <<-EOT
-    service=${each.key}
-    port=${each.value.port}
-  EOT
+resource "terraform_data" "cms_alarm" {
+  for_each = local.enabled_cms_alarms
+  input = {
+    key            = each.key
+    namespace      = each.value.namespace
+    metric         = each.value.metric
+    period         = each.value.period
+    contact_groups = each.value.contact_groups
+  }
 }
 
-output "paths" {
+output "instances" {
   value = {
-    for name, config in local_file.config : name => config.filename
+    for key, alarm in terraform_data.cms_alarm : key => {
+      address = "terraform_data.cms_alarm[${jsonencode(key)}]"
+      period  = alarm.output.period
+    }
   }
 }
 ```
 
-实验步骤：
+运行 init、plan、show、apply、state list，并用 `terraform state show 'terraform_data.cms_alarm["cpu"]'` 查看实例。预期 key 形成三个独立地址。
 
-```bash
-terraform init
-terraform plan -out=tfplan
-terraform show tfplan
-terraform apply tfplan
-terraform state list
-terraform state show 'local_file.config["web"]'
-```
+- 改 cpu 的 period：地址保持不变，只改变该逻辑资源的 input。
+- 把 memory 的 `enabled` 改为 false：计划只移除 memory 实例。
+- 删除 memory key：同样只移除该实例。
+- 将 key `cpu` 改名为 `cpu_usage`：旧地址消失、新地址出现；若这只是逻辑改名，可用 `moved` 迁移状态地址。
 
-首次计划预期仍是创建三份文件。State 中的资源身份为：
-
-```text
-local_file.config["web"]
-local_file.config["api"]
-local_file.config["worker"]
-```
-
-从 default map 中删除 `api`，或把 api 条目替换为 `api = { port = 9000, enabled = false }`，再 plan，预期为 `0 to add, 0 to change, 1 to destroy`，只移除 api 实例。web/worker 不会因为排序改变而获得别的身份。
-
-### 修改 key 和修改 value
-
-- 把 web 的 port 改成 `8081`：web 地址不变，属性按 Provider 规则变更。
-- 把 key 从 web 改成 frontend：旧 web 地址消失，新 frontend 地址出现；普通计划会提出删除旧实例、创建新实例。
-- 若重命名只是改变 Terraform 逻辑身份，应通过 `moved` 迁移地址。本例文件名与文件内容都引用了 `each.key`，所以把 web 改成 frontend 即使用 moved，仍会因真实参数变化替换文件；要只迁移地址，就必须同时保持这些参数不变。
-
-云资源也一样：key 不是随便改的显示标题，它是资源地址的一部分。
+此 `terraform_data` 包装只模拟地址和状态行为，不会创建 CMS alarm，也不能代替真实 Provider 的参数校验或行为。
 
 ## set(string) 的写法
 
+当每个对象只有一个稳定 key、无需附加属性时，可给 `for_each` 一个字符串集合：
+
 ```hcl
-variable "names" {
+variable "alarm_keys" {
   type    = set(string)
-  default = ["web", "api", "web"]
+  default = ["cpu", "memory", "cpu"]
 }
 
-resource "terraform_data" "service" {
-  for_each = var.names
+resource "terraform_data" "alarm_key" {
+  for_each = var.alarm_keys
   input    = each.key
 }
 ```
 
-这是独立示例，不需要 Local Provider。set 会去重，不保证顺序；这里 `each.key` 和 `each.value` 是同一个成员值。
-
-不能直接把一个 list 当成 for_each 输入。明确使用 `toset` 转换，并确认去重和顺序丢失符合意图；复杂对象集合通常应整理成 map。
+Set 不保留顺序并会去重，例中只得到 cpu 和 memory 两个实例。若每个告警还需 namespace、周期、指标和联系人组，应使用 map(object)。
 
 ## plan 时必须知道哪些值
 
-for_each 的 map key 或 set 的所有成员必须已知；map value 中的某些资源属性可以在 apply 时才知道。若用 `if service.enabled` 过滤，enabled 条件也必须足够明确，让 Terraform 能确定最终有哪些 key。
+`for_each` 的 map key 或 set 成员必须在 Terraform 开始远端资源操作前已知。可用已知的业务标识作为 key，把 apply 后才取得的 ID 放到 map value 中。不能用本轮 apply 才生成的 ID 决定本轮实例地址，也不应使用敏感值作为 key，因为地址会把 key 显示出来。
 
-```hcl
-# 独立反例：首次创建时 ID 未知，不适合做实例 key
-resource "terraform_data" "created" {
-  input = "web"
-}
-
-resource "terraform_data" "bad" {
-  for_each = toset([terraform_data.created.id])
-  input    = each.value
-}
-```
-
-将上述两个资源放入独立实验目录，首次 plan 会因 ID 未知而报错。把 `bad` 块替换成下面的块，就把稳定 key 和未知属性分开了：
-
-```hcl
-resource "terraform_data" "good" {
-  for_each = { web = terraform_data.created.id }
-  input    = each.value
-}
-```
-
-`good["web"]` 的身份已经确定，input 仍可在 apply 时才知道。不需要先 apply 一部分资源或用 `-target` 掩盖不稳定的 key 设计。
-
-敏感值不能作为 for_each 实例身份，整个被标记为 sensitive 的 map/set 也不能直接传入，因为 key 会出现在地址和日志里。若只有 value 需要保密，应单独提供非敏感的稳定 key 集合，再用这些 key 索引敏感值。不要对整个 map 随意调用 `nonsensitive` 去掉保护。`timestamp`、`uuid`、`bcrypt` 等非纯函数同样不能作为 key 的来源。
-
-count 的数量也不能依赖一个新资源 apply 后才获得的未知数量。
+下面是概念性反例，不要并入上述实验：若 `terraform_data.bucket_id.id` 只有 apply 后才能确定，则 `for_each = toset([terraform_data.bucket_id.id])` 在同一轮计划不能确定集合成员。改为 `for_each = { bucket = terraform_data.bucket_id.id }` 后 key 是已知的 `bucket`，未知 ID 可以留在 value。
 
 ## 条件创建：0 或 1 个实例
 
-下面是独立示例：
+生产来源：`shared/jfrog-cn.tf`（脱敏裁剪/教学改编）的可选 OSS Bucket 结构按输入对象是否为空选择 `count` 为 1 或 0。下面保留这一条件模式，但使用逻辑资源展示：
 
 ```hcl
-variable "enabled" {
+variable "enable_cms_summary" {
   type    = bool
   default = false
 }
 
-resource "terraform_data" "optional" {
-  count = var.enabled ? 1 : 0
-  input = "optional feature"
-}
-
-output "optional_value" {
-  value = one(terraform_data.optional[*].output)
+resource "terraform_data" "cms_summary" {
+  count = var.enable_cms_summary ? 1 : 0
+  input = { enabled = true }
 }
 ```
 
-数量为 0 时不能无条件读取 `[0]`。本例 `one` 在零个元素时返回 null，在一个元素时返回该值；超过一个元素会报错。
-
-可选资源并不只是“设置上游变量为 false”；关闭开关可能删除已经存在的实例，应审查删除计划。
+`count = 0` 时没有实例；设为 true 后地址为 `terraform_data.cms_summary[0]`。引用这类资源时要处理空列表。实际 OSS 示例与风险控制见 05 篇；不要把本地逻辑练习 apply 到生产 Bucket。
 
 ## 链式 for_each
 
-在 map 实验中，可以补充下面的资源：
-
-```hcl
-resource "terraform_data" "summary" {
-  for_each = local_file.config
-  input    = each.value.filename
-}
-```
-
-资源 map 的 key 已由输入服务名确定，因此下游可以按同样的 key 创建逻辑节点，引用则自然建立依赖。
-
-父子模块批量创建时也可用 module 的 for_each：`module.app["web"].file_path`。子模块的 Provider 结构必须兼容此用法，见 [[IaC/terraform/10_terraform_模块开发与复用|模块开发]]。
+如果两个资源集合一一对应且共享同一组 key，下游可以使用上游 map 作为 `for_each`，再按 `each.key` 读取上游属性。这样两个资源集合的身份保持一致。key 仍须事先可知；不要用上游创建后才产生的 ID 作为 key。
 
 ## dynamic 与 for_each 的区别
 
-| 写法 | 增加的是什么 | 身份表现 |
-|---|---|---|
-| resource/module 上的 `for_each` | 多个资源或模块实例 | State 有多个独立地址 |
-| resource 内的 `dynamic` | 同一个资源中的重复嵌套块 | 通常仍是一个资源地址 |
-| 普通 for 表达式 | 一个计算后的集合值 | 本身不创建资源 |
+Resource/module 块上的 `for_each` 会创建有独立地址的实例。`dynamic` block 则生成 Provider schema 中资源内部可重复的嵌套块，没有单独 State 地址。
 
-增加三条网络规则和创建三个网络资源是不同的模型，先查 schema，再决定用哪种写法。
+生产片段出处：`monitoring/modules/cloud-monitor-alerts/main.tf`。以下仅展示现有 CMS alarm resource 内一个可选 escalation block；它需要外层 `alicloud_cms_alarm` 与 `each.value` 输入上下文，不能单独运行：
+
+```hcl
+resource "alicloud_cms_alarm" "cms_alarms" {
+  for_each = var.alarms != null ? var.alarms : {}
+
+  dynamic "escalations_critical" {
+    for_each = each.value.escalations_critical != null ? [each.value.escalations_critical] : []
+    content {
+      statistics          = escalations_critical.value.statistics
+      comparison_operator = escalations_critical.value.comparison_operator
+      threshold           = escalations_critical.value.threshold
+      times               = escalations_critical.value.times
+    }
+  }
+}
+```
+
+外层 map key 决定独立告警地址；dynamic block 决定这个告警资源中有零个或一个阈值子块。生产阈值与告警 key 未复用。
 
 ## 从 count 迁移到 for_each
 
-已经 apply 的资源不能只改语法。以实验一原始三项列表为例，旧索引到新 key 的映射必须完整，下面的 moved 块加在迁移后的配置中：
+应逐个把旧索引映射到代表同一个对象的新 key，例如：
 
 ```hcl
 moved {
-  from = local_file.config[0]
-  to   = local_file.config["web"]
-}
-
-moved {
-  from = local_file.config[1]
-  to   = local_file.config["api"]
-}
-
-moved {
-  from = local_file.config[2]
-  to   = local_file.config["worker"]
+  from = terraform_data.cms_alarm[0]
+  to   = terraform_data.cms_alarm["cpu"]
 }
 ```
 
-先通过 State 确认各索引实际对应谁，再为每个保留实例建立映射，并保持真实资源参数一致。本文两个实验位于不同目录、使用不同 State；上面的映射是迁移写法示例，不应追加到独立的 for_each 实验来迁移另一份 State。
-
-`moved` 解决同一 State 内的地址变化，不会取消属性变化本来要求的替换。例如直接把实验一内容换成实验二内容，还新增了 port 文本，文件仍会因 content 改变而替换。纯地址迁移的计划应展示 moved 提示，资源动作保持 `0 to add, 0 to change, 0 to destroy`；确认后 apply 才会将新地址写回 State。
-
-完整流程见 [[IaC/terraform/11_terraform_资源导入与重构|导入与重构]]。
+memory 与 disk 也各需一条对应映射。若在 count 实验原目录中替换成 map 配置，还应在新资源中保留 `triggers_replace = each.key`，使其值与旧实例中的 key 一致；移除或改变触发值本身也可能要求替换。先审阅计划，确认 Terraform 将原绑定迁到新地址，没有意外创建或删除。若资源实际属性也变化，Provider 仍可能提出更新或替换。CMS 实例要迁移时，目标地址必须匹配真实配置和 State，不能照抄这个本地教学地址。
 
 ## 清理两个实验
 
-分别回到 `07-count` 和 `07-for-each`，在每个目录执行：
+对 count 和 for_each 两个独立目录分别运行，并确认当前路径属于对应教学实验：
 
 ```bash
-terraform plan -destroy -out=destroy.tfplan
-terraform show destroy.tfplan
-terraform apply destroy.tfplan
+terraform plan -destroy -out=cleanup.tfplan
+terraform show cleanup.tfplan
+terraform apply cleanup.tfplan
 terraform state list
 ```
 
-预期 State 中不再有对应实验的资源，生成的 `.conf` 文件也被删除。若补充了链式 for_each，`terraform_data.summary` 也会列入删除计划。独立小示例只有在执行过 apply 时才需要同样清理。
+预期仅清理本地 `terraform_data` 实例，无云资源被创建或删除。关闭实验前保留的计划文件可以删除；State 只属于各自教学目录。
 
 ## 练习
 
-1. 在 count 实验中交换 web/api 的顺序，只看计划并解释结果。
-2. 在 for_each 实验中交换 map 的书写顺序，比较资源地址。
-3. 将 worker 关闭，确认计划的移除范围；再恢复它观察创建计划。
-4. 根据 map 生成服务名到文件路径的 output，避免用错误的 `[*]` 读取 map。
+1. 在 count 实验中删除中间的 memory，列出旧、新索引分别对应的告警 key，并解释地址错位。
+2. 在 for_each 实验中只修改一个 `period`，再停用 memory，比较计划的地址范围。
+3. 说明什么时候用字符串集合、什么时候用 map(object)。
+4. 为三个实例写完整 moved 映射，并说明资源输入改变仍可能导致更新。
+5. 用 CMS dynamic 片段指出独立资源的地址由什么决定，嵌套阈值块由什么决定。
 
 ## 参考资料
 
 - [count](https://developer.hashicorp.com/terraform/language/meta-arguments/count)
 - [for_each](https://developer.hashicorp.com/terraform/language/meta-arguments/for_each)
-- [Splat expressions](https://developer.hashicorp.com/terraform/language/expressions/splat)
-- [one 函数](https://developer.hashicorp.com/terraform/language/functions/one)
-- [模块重构与 moved](https://developer.hashicorp.com/terraform/language/modules/develop/refactoring)
+- [dynamic blocks](https://developer.hashicorp.com/terraform/language/expressions/dynamic-blocks)
+- [for 表达式](https://developer.hashicorp.com/terraform/language/expressions/for)
+- [moved 与模块重构](https://developer.hashicorp.com/terraform/language/modules/develop/refactoring)
+- [terraform_data](https://developer.hashicorp.com/terraform/language/resources/terraform-data)
+- [阿里云 CMS Alarm（Provider 1.266.0）](https://registry.terraform.io/providers/aliyun/alicloud/1.266.0/docs/resources/cms_alarm)
 
-上一篇：[[IaC/terraform/06_terraform_资源数据源与依赖|资源与依赖]] · 下一篇：[[IaC/terraform/08_terraform_状态漂移与状态操作|State 与漂移]]。
+上一篇：[[IaC/terraform/06_terraform_资源数据源与依赖|Resource、Data Source 与依赖]] · 下一篇：[[IaC/terraform/08_terraform_状态漂移与状态操作|State 与漂移]]。

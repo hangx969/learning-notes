@@ -12,267 +12,267 @@ aliases:
 
 # 03_terraform_变量与输出
 
-## 三种值各自负责什么
+## 输入、派生值与输出
 
-| 写法 | 作用 | 从哪里获得值 |
+| 写法 | 作用 | CMS 告警示例 |
 |---|---|---|
-| `variable` / `var.name` | 模块对外接受的输入 | 调用者、变量文件、环境变量或默认值 |
-| `locals` / `local.name` | 模块内部复用和派生值 | 由当前配置中的表达式计算 |
-| `output` | 模块对外暴露的结果 | 资源属性、表达式或子模块输出 |
+| `variable` / `var.name` | 模块输入接口 | 告警名称、周期和联系人组 |
+| `locals` / `local.name` | 模块内部派生值 | 补默认标签、过滤已启用告警 |
+| `output` | 暴露模块结果 | 返回告警名称或对象 ID |
 
-例如：环境名是输入，`项目名-环境名` 是内部派生的命名规则，最终文件路径是输出。不要为了减少几次重复而把每个内部计算结果都设计成外部参数。
+不要把每个内部计算结果都变成调用者输入。一个输入可以驱动多个内部值，模块输出则应只暴露调用者真正需要的接口。
 
-## 完整实验：生成一份应用配置
+## 完整离线实验：构造 CMS 告警输入
 
-在独立目录 `~/terraform-labs/03-variables` 创建下面四个文件。本实验只生成一个本地 JSON 文件。
+生产模块接受以名称为 key 的 `alarms` map，对每项声明 namespace、period、联系人组，并允许一些字段使用 optional 默认值。本实验保留 `map(object(...))` 以及 namespace、period 和联系人组字段，去掉 CMS Provider 和生产对象，用 `terraform_data` 检查并记录输入。`tags` 和标准标签合并是为演示表达式增加的教学字段，生产 CMS 告警接口不包含这个字段。整个实验不连接云端。
+
+生产依据：`monitoring/modules/cloud-monitor-alerts/variables.tf` 中 `variable "alarms"`，以及 `monitoring/modules/cloud-monitor-alerts/main.tf` 中 `alicloud_cms_alarm.cms_alarms` 对 `each.value` 的读取。以下为脱敏裁剪、离线教学改编，不是可直接运行的 CMS 告警。
+
+创建 `~/terraform-labs/03-cms-input/`，并放入下面四个文件。
 
 ### versions.tf
 
 ```hcl
 terraform {
   required_version = ">= 1.7, < 2.0"
-
-  required_providers {
-    local = {
-      source  = "hashicorp/local"
-      version = "~> 2.5"
-    }
-  }
 }
 ```
 
-### variables.tf：声明输入接口
+### variables.tf
 
 ```hcl
-variable "project" {
-  description = "用于资源命名的项目名"
-  type        = string
-  default     = "demo"
-  nullable    = false
+variable "alarms" {
+  description = "练习用的 CMS 风格告警输入"
+  type = map(object({
+    namespace      = string
+    period         = number
+    contact_groups = list(string)
+    enabled        = optional(bool, true)
+    metric         = optional(string, "")
+    tags           = optional(map(string), {})
+  }))
+  default = {
+    oss_capacity = {
+      namespace      = "acs_oss"
+      period         = 60
+      contact_groups = ["<LAB_CONTACT_GROUP>"]
+      tags           = { purpose = "terraform-lab" }
+    }
+  }
 
   validation {
-    condition     = can(regex("^[a-z][a-z0-9-]*$", var.project))
-    error_message = "项目名必须以小写字母开头，只包含小写字母、数字和连字符。"
+    condition = alltrue([
+      for alarm in values(var.alarms) :
+      alarm.period > 0 && length(alarm.contact_groups) > 0
+    ])
+    error_message = "每条练习告警都必须有正数 period 和至少一个联系人组名称。"
   }
-}
-
-variable "environment" {
-  description = "实验环境"
-  type        = string
-  default     = "dev"
-  nullable    = false
-
-  validation {
-    condition     = contains(["dev", "staging", "prod"], var.environment)
-    error_message = "environment 必须是 dev、staging 或 prod。"
-  }
-}
-
-variable "port" {
-  description = "应用监听端口"
-  type        = number
-  default     = 8080
-  nullable    = false
-
-  validation {
-    condition     = var.port >= 1 && var.port <= 65535 && floor(var.port) == var.port
-    error_message = "port 必须是 1 到 65535 之间的整数。"
-  }
-}
-
-variable "extra_tags" {
-  description = "调用者追加的标签"
-  type        = map(string)
-  default     = {}
-  nullable    = false
 }
 ```
 
-有 `default` 的变量可以不传；没有 `default` 的变量必须由调用者提供。`nullable` 控制模块内部最终能否得到 null，它默认是 true，不能简单理解成“null 一律报错”：
+`<LAB_CONTACT_GROUP>` 是占位文本；这里仅练习输入类型，不会检查这个名字是否存在于阿里云。
 
-| 声明方式 | 不传值 | 显式传入 null |
-|---|---|---|
-| 有非 null 默认值，`nullable = true` | 使用默认值 | null 覆盖默认值 |
-| 有非 null 默认值，`nullable = false` | 使用默认值 | 回退到默认值 |
-| 无默认值，`nullable = false` | 必须提供输入 | 报错 |
-
-本例四个变量都需要非 null 的值，因此显式设置 `nullable = false`。例如在 tfvars 中写 `port = null`，本例中的端口会回退到默认值 `8080`；写 `port = 0` 则会被 validation 拒绝。对于 object/list，`nullable = false` 只约束整体值，不会自动禁止内部字段或元素为 null。
-
-本例 validation 只引用被校验的变量，兼容系列的 1.7 基线。**Terraform 1.9+** 才允许校验引用其他变量和配置对象，旧版本项目不能直接照搬这种写法。
-
-### main.tf：计算派生值并使用输入
+### main.tf
 
 ```hcl
 locals {
-  name = "${var.project}-${var.environment}"
-  tags = merge(var.extra_tags, {
-    project     = var.project
-    environment = var.environment
-    managed_by  = "terraform"
-  })
+  effective_alarms = {
+    for name, alarm in var.alarms : name => merge(alarm, {
+      tags = merge(alarm.tags, {
+        managed_by = "terraform"
+        purpose    = "terraform-lab"
+      })
+    })
+  }
 }
 
-resource "local_file" "app" {
-  filename        = "${path.module}/${local.name}.json"
-  file_permission = "0644"
-  content = jsonencode({
-    name = local.name
-    port = var.port
-    tags = local.tags
-  })
+resource "terraform_data" "alarm" {
+  for_each = local.effective_alarms
+  input    = each.value
 }
 ```
 
-`merge` 后面的 map 覆盖前面的同名 key。本例让内部标准标签最终生效，避免调用者把 `environment` 改成与变量不一致的值。若希望调用者覆盖，应有意调整顺序。
+`merge` 后面的标准标签覆盖调用者提供的同名标签。若要让调用者优先，应调换两个参数的顺序。
 
-### outputs.tf：暴露关心的结果
+### outputs.tf
 
 ```hcl
-output "file_path" {
-  description = "应用配置文件的绝对路径"
-  value       = abspath(local_file.app.filename)
-}
-
-output "effective_tags" {
-  description = "合并后实际使用的标签"
-  value       = local.tags
+output "effective_alarms" {
+  description = "练习中经默认值和标准标签处理后的告警对象"
+  value       = { for name, alarm in terraform_data.alarm : name => alarm.output }
 }
 ```
 
-根模块 output 会在 apply 后显示，保存在状态里，也可通过 `terraform output` 查看。子模块 output 是父模块的读取接口，写法为 `module.<模块名>.<输出名>`。
-
-## variables.tf 与 tfvars 的区别
-
-创建 `dev.tfvars`：
-
-```hcl
-project     = "demo"
-environment = "dev"
-port        = 8081
-extra_tags = {
-  owner = "platform"
-}
-```
-
-- `variables.tf` 声明“允许哪些输入，类型和规则是什么”。
-- `dev.tfvars` 提供“这次运行使用哪些值”。
-- `.tfvars` 不能替代变量声明，也不要写 `var.port = 8081`。
-
-读者实验步骤：
+### 运行与观察
 
 ```bash
+cd ~/terraform-labs/03-cms-input
 terraform init
-terraform plan -var-file=dev.tfvars -out=tfplan
+terraform plan -out=tfplan
 terraform show tfplan
 terraform apply tfplan
-terraform output
-terraform output -raw file_path
-cat demo-dev.json
+terraform output effective_alarms
+terraform console
 ```
 
-预期文件中端口为 `8081`，标准标签和 `owner` 标签同时存在。保存的 Plan 已包含这些变量值，执行该计划时不再传 `-var-file`。
-
-## 根模块变量怎么赋值
-
-### 自动加载的文件
-
-当前 root module 目录中的以下文件会自动参与赋值：
-
-- `terraform.tfvars`
-- `terraform.tfvars.json`
-- `*.auto.tfvars`
-- `*.auto.tfvars.json`
-
-`dev.tfvars`、`prod.tfvars` 不因为名字中有环境名就自动加载，必须显式使用 `-var-file`。
-
-### 环境变量
+计划应包含一个本地 `terraform_data.alarm["oss_capacity"]` 实例。Console 中可查询 `var.alarms.oss_capacity.period`。这仅是预期观察；文档作者没有在此执行该命令。实验结束后退出 console，再清理：
 
 ```bash
-export TF_VAR_environment="staging"
-export TF_VAR_port="9090"
-terraform plan
-unset TF_VAR_environment TF_VAR_port
+terraform plan -destroy -out=destroy.tfplan
+terraform show destroy.tfplan
+terraform apply destroy.tfplan
 ```
 
-复杂类型也可通过环境变量提供，例如 `export TF_VAR_extra_tags='{"owner":"platform"}'`。在 Bash/zsh 中用外层单引号保留 JSON 内的双引号，结束实验后执行 `unset TF_VAR_extra_tags`。团队协作中复杂 map 通常用 tfvars 更容易阅读。
+## 根模块变量如何取得值
 
-`TF_VAR_port` 是 Terraform 输入变量。`ARM_SUBSCRIPTION_ID`、`AWS_PROFILE` 等通常是 Provider/Backend 的认证设置，两者不是同一层。
+`variables.tf` 声明模块允许接收的输入；变量文件为本次运行赋值；`locals` 负责模块内部计算；`output` 是根模块结果或子模块接口。子模块要自行声明输入，再由父模块显式传值，子目录里的 tfvars 不会自动参与根模块运行。
 
-### 命令行
+本实验的 `lab.tfvars` 内容如下，键和值都对应前文已声明的 `alarms` 变量：
+
+```hcl
+alarms = {
+  oss_capacity = {
+    namespace      = "acs_oss"
+    period         = 60
+    contact_groups = ["<LAB_CONTACT_GROUP>"]
+    tags           = { purpose = "terraform-lab" }
+  }
+}
+```
+
+读取文件并运行：
 
 ```bash
-terraform plan -var-file=dev.tfvars -var='port=9090'
+terraform plan -var-file=lab.tfvars -out=tfplan
 ```
 
-不在命令行中放真实密码或 token，避免进入 shell 历史和进程参数。自动化环境应通过受控凭证机制注入。
+优先级示例只覆盖已声明的 `alarms` 变量：
 
-## 本地 CLI 的优先级
+```bash
+terraform plan -var-file=lab.tfvars -var='alarms={oss_capacity={namespace="acs_oss",period=120,contact_groups=["<LAB_CONTACT_GROUP>"],tags={purpose="terraform-cli"}}}'
+```
 
-同一个根变量被重复赋值时，按以下顺序由低到高覆盖：
+本地 CLI 对同一个输入按以下顺序由低到高赋值，后面的值覆盖前面的值：
 
-1. `variable` 的 `default`。
+1. `variable` 的默认值。
 2. `TF_VAR_<name>` 环境变量。
 3. `terraform.tfvars`。
 4. `terraform.tfvars.json`。
-5. `*.auto.tfvars` 和 `*.auto.tfvars.json`，按文件名字典序加载。
-6. 命令行 `-var` / `-var-file`，按出现顺序处理。
+5. `*.auto.tfvars` 和 `*.auto.tfvars.json`，按完整文件名字典序加载。
+6. 命令行 `-var` 和 `-var-file`，按参数出现顺序处理。
 
-因此上面的 `-var='port=9090'` 覆盖 `dev.tfvars` 中的 `8081`；如果交换两项顺序，后面的变量文件会覆盖前面的命令行值。自动文件按完整文件名排序，`.auto.tfvars.json` 不会整体比 `.auto.tfvars` 更晚加载。覆盖以整个变量为单位；两份文件各提供一个 `extra_tags` map 时，后面的 map 不会自动与前面的 map 合并。
+因此示例中的命令行 map 覆盖 `lab.tfvars` 里的 `alarms`。覆盖按完整变量进行，不会合并嵌套对象或 map 中的字段。显式命名的 `dev.tfvars`、`prod.tfvars` 不会自动加载；命令行也不适合放真实密码或 token，因为参数可能进入 shell 历史和进程列表。HCP Terraform/Enterprise 的 Workspace 变量和变量集另有平台优先级规则。
 
-HCP Terraform/Enterprise 还有 Workspace 变量、变量集和远程执行模式。该表解释本地 CLI 的赋值顺序；远程项目还应核对平台自己的优先级规则。
+### 自动变量文件会整体替换同一 map
 
-## 对象变量和可选字段
+为了观察自动加载行为，把 `03-cms-input` 中的 `versions.tf`、`variables.tf`、`main.tf` 和 `outputs.tf` 复制到独立目录 `~/terraform-labs/03-variable-precedence`，再创建下面两个文件。
 
-下面的片段展示了另一种接口设计：将一组相关值组织成一个对象。
+`10-first.auto.tfvars`：
 
 ```hcl
-variable "service" {
-  description = "单个服务的配置"
-  nullable    = false
+alarms = {
+  oss_capacity = {
+    namespace      = "acs_oss"
+    period         = 60
+    contact_groups = ["<LAB_CONTACT_GROUP>"]
+    tags           = { purpose = "terraform-lab", owner = "first-file" }
+  }
+}
+```
+
+`20-second.auto.tfvars`：
+
+```hcl
+alarms = {
+  oss_capacity = {
+    namespace      = "acs_oss"
+    period         = 120
+    contact_groups = ["<LAB_CONTACT_GROUP>"]
+    tags           = { purpose = "terraform-lab-override" }
+  }
+}
+```
+
+先在该目录运行 `terraform init`，再执行 `terraform console` 并查看 `var.alarms.oss_capacity`。第二份文件里的整个 `alarms` map 覆盖第一份；所以 `period` 是 120，`owner` 标签也不保留。若希望合并标签，需在 HCL 中显式用 `merge`，变量文件不会自动深度合并。
+
+## object、nullable 与 optional 字段
+
+生产 ECS 和 CMS 输入使用 `map(object(...))`，必需字段明确声明类型，次要字段使用 `optional` 默认值。下面的 period 校验示意保留了 CMS 输入形状：
+
+```hcl
+variable "alert" {
+  description = "单条 CMS 风格告警输入"
   type = object({
-    name    = string
-    port    = number
-    enabled = optional(bool, true)
-    tags    = optional(map(string), {})
+    namespace      = string
+    period         = number
+    contact_groups = list(string)
+    enabled        = optional(bool, true)
+    tags           = optional(map(string), {})
   })
+  nullable = false
+
+  validation {
+    condition     = var.alert.period > 0
+    error_message = "告警 period 必须是正数。"
+  }
 }
 ```
 
-调用者可以只传：
+有 `default` 的变量可以不传；没有 `default` 的变量必须提供。`nullable` 默认是 `true`，不能简单理解成“显式 null 一律报错”：
+
+| 声明 | 不传值 | 显式传入 `null` |
+|---|---|---|
+| 有非 null 默认值，`nullable = true` | 使用默认值 | null 覆盖默认值 |
+| 有非 null 默认值，`nullable = false` | 使用默认值 | 回退到默认值 |
+| 无默认值，`nullable = true` | 提示输入；非交互运行时因缺值报错 | 变量值为 null |
+| 无默认值，`nullable = false` | 提示输入；非交互运行时因缺值报错 | 报错，必需输入不能为 null |
+
+可选对象属性从 Terraform 1.3 起稳定支持。`optional(bool, true)` 在字段缺省或显式为 null 时都使用 `true`；只写 `optional(bool)` 时，缺省值为 null。显式 object 类型转换会丢弃未声明的额外字段，因此拼错可选字段名可能让字段默默采用默认值。顶层 `nullable = false` 只约束整体值，不会自动禁止对象内部成员为 null。
+
+`any` 是让 Terraform 推导具体类型的占位符，不是逃避接口设计的通用类型。优先声明真实的 `map(object(...))` 结构，让 Terraform 尽早指出缺少字段或类型不匹配。
+
+### 跨变量校验的版本边界
+
+本系列的最低 CLI 版本是 1.7。在 1.7 中，变量 `validation` 只能引用当前被校验变量；不能直接在 `maximum_period` 的 validation 中比较另一个变量。Terraform 1.9 起才允许变量校验引用其他变量和配置对象。下面是 **1.9+ 专用片段**，不要放入本系列 1.7 基线实验：
 
 ```hcl
-service = {
-  name = "api"
-  port = 9000
+variable "minimum_period" {
+  type = number
+}
+
+variable "maximum_period" {
+  type = number
+
+  validation {
+    condition     = var.maximum_period >= var.minimum_period
+    error_message = "maximum_period 不能小于 minimum_period。"
+  }
 }
 ```
 
-这里 `enabled` 和 `tags` 会获得可选属性默认值。`optional(bool, true)` 在字段缺省或显式写成 null 时都使用 true；若只写 `optional(bool)`，缺省值则是 null。可选对象属性与默认值已在 **Terraform 1.3+** 稳定支持，兼容本系列基线。该赋值片段应放进使用此接口的根模块变量文件，而不是追加到前面的四文件实验中。
+## sensitive：隐藏显示不等于不保存
 
-明确的 object 类型能较早暴露必需字段遗漏和不兼容的类型，但额外字段在类型转换中可能被丢弃；把 `enabled` 拼成 `enabeld` 不一定报错，反而可能让真正的 `enabled` 使用默认值。`any` 是要求 Terraform 推导具体类型的占位符，通常不适合用来逃避接口设计。
-
-## sensitive 到底保护什么
+以下使用假 webhook 值说明敏感输入与敏感 output 的声明方式；`.invalid` 是示例域名，不代表真实联系人或凭据。真实阿里云认证仍由第五篇介绍的 Provider/profile/环境凭据机制提供，不要自行建立 AK/SK 的 Terraform 输入变量。
 
 ```hcl
-variable "api_token" {
-  description = "由执行环境提供的 API token"
+variable "lab_webhook" {
+  description = "仅用于说明 sensitive 行为的假值"
   type        = string
+  default     = "https://example.invalid/terraform-lab"
   sensitive   = true
 }
 
-output "api_token" {
-  value     = var.api_token
+output "lab_webhook" {
+  value     = var.lab_webhook
   sensitive = true
 }
 ```
 
-这是敏感值传播的教学片段，通常不应把 token 作为模块输出。`sensitive = true` 会在常规 plan/apply 展示中遮盖值，并把敏感性传播到引用它的结果。若 output 含敏感值，也必须明确标记 `sensitive = true`。这不等于加密，也不保证该值不被写入 State 或保存的 Plan。
+如果 output 引用了敏感值，必须显式写 `sensitive = true`，否则 Terraform 会拒绝该配置。标记后，常规 plan/apply 和不带名称的 `terraform output` 会遮盖值，但 `terraform output lab_webhook`、`-raw` 或 `-json` 仍可能显示明文。`sensitive` 不是加密，也不保证值不会写入 State 或保存的 Plan；真实凭据不要用于输出演示，State 和 Plan 也需要访问控制。
 
-`terraform output` 不带输出名时会隐藏敏感结果；**指定名字的 `terraform output api_token`，以及使用 `-raw` / `-json` 都可能显示明文**。真实凭证不要拿来做显示实验，读取状态或导出结果时同样要控制权限。
+“敏感”和“未知”是两件事：敏感性控制展示，unknown 表示 plan 时尚不知道具体值。一个值可以既敏感又已知，也可以既敏感又未知；`try` 不会把 unknown 资源 ID 转换成已知默认值。
 
-“敏感”和“未知”是两件事：敏感标记决定如何展示，unknown 表示 plan 时还不知道具体值。一个值可以既敏感又已知，也可以既敏感又未知；`try` 也不会把未知资源 ID 变成已知默认值。
-
-**Terraform 1.10+** 的 ephemeral 变量/子模块输出、**1.11+** 且由 Provider 支持的 write-only 参数，是另一组不持久化能力，使用位置受限制，本文的 1.7 基线示例没有启用。不能只加上 `sensitive` 就获得“不持久化”的效果。
+Terraform 1.10+ 增加 ephemeral 变量/子模块 output；Terraform 1.11+ 对 Provider 支持的 write-only 参数增加不持久化能力。这些功能有使用位置限制，本系列 1.7 基线没有使用。单独加 `sensitive` 不会获得不持久化效果。
 
 ## 换变量文件不等于换环境
 
@@ -280,41 +280,26 @@ output "api_token" {
 terraform plan -var-file=prod.tfvars
 ```
 
-若仍是同一 root module、Backend 和 Workspace，这条命令继续使用同一份 State，可能把开发资源改成生产参数，或者删除旧名称再创建新名称。
+只换变量文件不会自动换 Backend、Workspace、Provider 凭据或 State。若仍使用同一状态，这条命令可能计划修改现有对象。环境隔离还要设计独立状态位置和权限，见 [[IaC/terraform/09_terraform_后端工作空间与多环境|Backend 与多环境]]。
 
-环境隔离必须结合独立目录、独立状态 key/Workspace 和凭证设计，见 [[IaC/terraform/09_terraform_后端工作空间与多环境|Backend 与多环境]]。
+## 常见问题与练习
 
-## 清理完整实验
-
-回到 `03-variables` 目录，用实验时的变量文件生成删除计划：
-
-```bash
-terraform plan -destroy -var-file=dev.tfvars -out=destroy.tfplan
-terraform show destroy.tfplan
-terraform apply destroy.tfplan
-terraform state list
-```
-
-预期只删除 `local_file.app`，对应 JSON 文件消失，State 不再列出该资源。后面的接口示例和敏感值片段只是讲解，不需要追加到这个实验里执行。
-
-## 常见问题和练习
-
-- 未声明变量：tfvars 不能创建一个新的输入接口。未声明的 `TF_VAR_*` 被忽略；tfvars 中的未声明项通常警告；命令行 `-var` 传未声明项会报错。
-- 子模块读不到根变量：子模块要自己声明 variable，并由父模块显式传值。
-- 子模块自己的 tfvars 未生效：自动赋值机制针对当前 root module，父模块调用时不会自动读取子模块 tfvars。
-- 期望值被覆盖：同时检查环境变量、自动加载文件和命令行参数。
-
-练习：给完整实验增加 `log_level`，限制为 `debug/info/warn/error`，并把它写入 JSON。随后给出一个非法值，确认变量校验能在变更前暴露问题。
+- tfvars 不能声明变量；当前模块必须先定义 `variable`。
+- 子模块不会自动读取自己的 tfvars，由父模块传值。
+- 输入值被覆盖时，依次检查环境变量、自动变量文件和命令行赋值。
+- 给实验增加 `severity`，限制为 `CRITICAL`、`WARNING` 或 `INFO`；尝试一个非法值，观察 validation。
+- 按本节建立两个自动变量文件，检查后加载的 `alarms` 整体替换结果，并说明第一份 map 中 `owner` 标签为何消失。
 
 ## 参考资料
 
 - [输入变量与优先级](https://developer.hashicorp.com/terraform/language/values/variables)
-- [1.7 变量语义：nullable 与默认值](https://developer.hashicorp.com/terraform/language/v1.7.x/values/variables#disallowing-null-input-values)
-- [变量校验与 1.9 版本边界](https://developer.hashicorp.com/terraform/language/v1.9.x/expressions/custom-conditions#input-variable-validation)
+- [Terraform 1.7 nullable 语义](https://developer.hashicorp.com/terraform/language/v1.7.x/values/variables#disallowing-null-input-values)
+- [Terraform 1.9 变量校验边界](https://developer.hashicorp.com/terraform/language/v1.9.x/expressions/custom-conditions#input-variable-validation)
+- [可选对象属性](https://developer.hashicorp.com/terraform/language/expressions/type-constraints#optional-object-type-attributes)
 - [本地值](https://developer.hashicorp.com/terraform/language/values/locals)
 - [输出值](https://developer.hashicorp.com/terraform/language/values/outputs)
-- [可选对象属性](https://developer.hashicorp.com/terraform/language/expressions/type-constraints#optional-object-type-attributes)
 - [敏感数据处理](https://developer.hashicorp.com/terraform/language/manage-sensitive-data)
-- [terraform output 的敏感值展示规则](https://developer.hashicorp.com/terraform/cli/commands/output)
+- [阿里云 Terraform 认证方式](https://help.aliyun.com/en/terraform/terraform-authentication)
+- 生产依据：`monitoring/modules/cloud-monitor-alerts/variables.tf`、`monitoring/modules/cloud-monitor-alerts/main.tf` 与 `shared/ecs.tf`（脱敏裁剪、离线教学改编）
 
 上一篇：[[IaC/terraform/02_terraform_配置语法与文件结构|HCL 语法]] · 下一篇：[[IaC/terraform/04_terraform_表达式函数与模板|表达式、函数与模板]]。

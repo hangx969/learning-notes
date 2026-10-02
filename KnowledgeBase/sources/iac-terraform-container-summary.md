@@ -1,5 +1,5 @@
 ---
-title: "Terraform Docker、Kubernetes、Helm 与 Nomad 来源摘要"
+title: "Terraform ACK、Kubernetes 与 Helm 来源摘要"
 tags:
   - knowledgebase/source
   - IaC/terraform
@@ -8,37 +8,35 @@ sources:
   - "[[IaC/terraform/14_terraform_容器管理实战]]"
 aliases:
   - Terraform容器管理摘要
-  - "TerraformDocker、Kubernetes、Helm 与 Nomad摘要"
+  - "Terraform ACK、Kubernetes 与 Helm 摘要"
 ---
 
-# Terraform Docker、Kubernetes、Helm 与 Nomad 来源摘要
+# Terraform ACK、Kubernetes 与 Helm 来源摘要
 
 ## 元信息
 
 - **原始文档**：[[IaC/terraform/14_terraform_容器管理实战]]
 - **领域**：IaC / Terraform
-- **摄入日期**：2026-05-04
-- **更新日期**：2026-10-02
+- **摄入日期**：2026-10-02
 
 ## 摘要
 
-通过 Docker 容器、已有集群 Deployment、最小本地 Helm Chart 和 Nomad Job，说明 Terraform 在各容器层的连接与所有权。修正旧镜像属性、版本语法和不完整资源示例。
+以生产 `tool/data.tf`、`tool/providers.tf`、`tool/helm.tf` 和 `tool/external-secrets.tf` 为依据，演示对既有 ACK 实验集群读取凭证、配置 Kubernetes 与 Helm Provider，再创建 Namespace 和本地 Helm Chart release。生产配置关系被改写为独立教学项目；集群本身不由此练习创建或删除。
 
 ## 关键知识点
 
-1. Docker 3.x 使用 image_id；keep_locally 控制销毁时保留镜像，不表示仅用本地镜像。
-2. 集群创建与集群配置分层，云身份、Kubernetes 认证和 RBAC 分别核对；manifest 需可用 schema。
-3. Helm 3.x 使用 kubernetes 对象配置；Release 内对象不应被其他工具重复声明，Secret 显示遮盖不保证不入 State。
+1. AliCloud 身份访问 ACK 凭证数据源；集群 API endpoint 与临时证书、私钥、CA 配置 Kubernetes/Helm Provider；随后资源管理 namespace 和 Helm release。Helm 的本地 chart 文件摘要用于把模板/values变化纳入 release 的计划差异。
+2. Helm 2.17 使用生产源中的 `kubernetes {}` Provider 嵌套块语法；教学固定 Helm 2.17.0、Kubernetes 2.38.0 与 AliCloud 1.266.0。
+3. Terraform state、计划和数据源仍可能保存敏感凭证；不要输出 kubeconfig/client key，不启用会在 Plan 时落盘 kubeconfig 的 `output_file`，State 应加密并限制访问。
 
 ## 涉及的概念与实体
 
 - [[KnowledgeBase/entities/Terraform|Terraform]]
-- [[KnowledgeBase/concepts/自动化运维|自动化运维]]
-- [[KnowledgeBase/entities/Docker|Docker]]
 - [[KnowledgeBase/entities/Kubernetes|Kubernetes]]
 - [[KnowledgeBase/entities/Helm|Helm]]
+- [[KnowledgeBase/concepts/自动化运维|自动化运维]]
 
 ## 值得注意
 
-- 技术出处在原始笔记中按官方文档和 Provider 文档列出；实验输出标为预期观察，云端执行未验证。
-- 学习顺序与相关章节见 [[KnowledgeBase/maps/terraform-map|Terraform 主题地图]]。
+- 生产依据分别位于 `tool/` Terraform 文件；`monitoring/ack-addons-log-pipeline.tf` 是 Datadog 日志 pipeline，不是 ACK add-on 部署定义。示例 Chart、endpoint 输入和资源名称是教学新增。
+- 只有授权的隔离 ACK 集群可用于练习；本轮只做 HCL 静态检查及 Helm Chart 的离线 lint/template，未运行 plan/apply、kubectl 或云端操作。

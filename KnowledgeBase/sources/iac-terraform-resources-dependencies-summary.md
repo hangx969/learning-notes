@@ -21,20 +21,22 @@ aliases:
 
 ## 摘要
 
-通过查询外部文件、生成受管理副本和 terraform_data 生命周期实验说明所有权、依赖图与变更方式。补充生命周期、条件检查和 provisioner 的边界。
+以 AliCloud 当前账号 Data Source、生产网络告警的 EIP/NAT 查询过滤链，以及 CMS 联系人、联系人组和告警资源说明查询、管理和依赖的边界。用内置逻辑资源介绍 Terraform lifecycle、条件与 provisioner。
 
 ## 关键知识点
 
-1. resource 管理生命周期，data 查询结果不自动取得对象管理权。
-2. 直接引用建立隐式依赖，depends_on 用于隐藏行为依赖，不保证云端传播立即完成。
-3. prevent_destroy 不能在删掉整个配置块后继续保护对象；provisioner 也不能提供整体事务回滚。
+1. `data.alicloud_account.current` 读取当前账号，不管理或创建账号；resource 地址与实际对象 ID 由 State 绑定。
+2. 生产告警代码由 root Data Source 查询、标签过滤、本地值转换和模块参数传递组成；这条数据链本身不管理 EIP/NAT 对象。
+3. CMS 联系人、联系人组、CMS 1.0 告警是独立 map 输入。`depends_on` 表达顺序，不同步联系人组成员与告警组名；CMS 2.0 规则输入独立。
+4. dynamic block 生成告警资源内部的嵌套阈值块，不产生独立资源地址。Lifecycle 规则不提供整体回滚。
 
 ## 涉及的概念与实体
 
 - [[KnowledgeBase/entities/Terraform|Terraform]]
-- [[KnowledgeBase/concepts/自动化运维|自动化运维]]
+- [[KnowledgeBase/concepts/Terraform状态管理|Terraform 状态管理]]
 
 ## 值得注意
 
-- 技术出处在原始笔记中按官方文档和 Provider 文档列出；实验输出标为预期观察，云端执行未验证。
-- 学习顺序与相关章节见 [[KnowledgeBase/maps/terraform-map|Terraform 主题地图]]。
+- 生产代码来源为 `tool/data.tf`、`monitoring/cloud-monitor-alert.tf`、`monitoring/modules/cloud-monitor-alerts/main.tf` 与 `variables.tf` 的脱敏裁剪/教学改编；没有保留联系人或真实业务 key。
+- AliCloud 数据源和 CMS resource 文档链接固定到 Provider 1.266.0；未执行云端读取或修改。
+- 学习顺序见 [[KnowledgeBase/maps/terraform-map|Terraform 主题地图]]。

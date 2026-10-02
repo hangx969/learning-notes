@@ -14,293 +14,228 @@ aliases:
 
 ## 先区分三种意图
 
-| 意图 | 首选机制 | 对管理关系的影响 |
+| 意图 | 机制 | State 与实际对象 |
 |---|---|---|
-| 把已有对象纳入 Terraform | `import` 块 | 建立实际 ID 到配置地址的绑定 |
-| 改地址但保留原对象 | `moved` 块 | 把旧地址绑定迁移到新地址 |
-| 停止管理但保留实际对象 | `removed` + `destroy = false` | 移除绑定，保留对象 |
+| 纳管已存在对象 | `import` 块或 CLI import | 建立实际 ID 与配置地址绑定 |
+| 同一 State 内改地址 | `moved` 块 | 迁移绑定，保留实际对象 |
+| 停止管理并保留对象 | `removed` 加 `destroy = false` | 移除绑定，不请求删除实际对象 |
 
-这些操作首先处理的是资源身份和管理记录。目标配置的属性不一致时，仍可能产生更新或替换。
+导入或迁移后，资源配置属性仍需与实际对象相符。目标参数差异可能令计划包含更新或替换。
+
+生产来源：`monitoring/import.tf` 中存在阿里云 CMS 集成资源导入声明；`monitoring/moved.tf` 中将 CMS 告警从拼错的 module 地址迁到新地址，并以 `removed` 的 `destroy = false` 让重复共享的联系人和联系人组退出旧地址管理。本文依据这两份文件改写地址迁移示例，原 module 名与业务 key 均换成教学名称。
 
 ## 为什么写同名 resource 不能自动导入
 
-平台中已经有 `rg-learning-import`，不意味着 Terraform 知道它对应 `azurerm_resource_group.existing`。没有 State 绑定时，Terraform 通常仍按新资源计划创建，可能遇到同名冲突或 Provider 的显式导入提示。
+在阿里云已有一个名称看起来相同的 OSS Bucket，不代表 Terraform 已知它对应 `alicloud_oss_bucket.lab`。没有 State 绑定时，Terraform 会把该地址视为新实例；同名冲突或 Provider 提示都不等同于自动纳管。Data Source 查询对象也不会建立 resource 的管理关系。
 
-Data Source 可以查询已有对象，但不会因为读取它就自动承担它的生命周期。
+## OSS Bucket 导入实验
 
-## Azure Resource Group 导入实验
+只使用自己有权限的独立实验账号，以及专门创建、为空且允许删除的教学 Bucket。禁止将生产 Bucket、真实业务桶或由其他 State 管理的对象用作目标。若没有这样的对象，本节只阅读 HCL 和计划流程，不执行导入。
 
-使用自己有权限的独立实验订阅和资源组。先完成 [[IaC/terraform/05_terraform_提供者版本与认证|Azure 中国区认证]]，不要导入已经由另一份 State 或其他自动化系统负责的对象。
+### 1. 准备专用空 Bucket
 
-### 1. 明确已有对象
-
-如果已有合适的专用实验对象，可以直接查询。若要从零准备本实验，可由读者在已核对订阅的 Azure CLI 会话中创建一个专用空资源组；region 要替换为自己订阅可用的中国区名称：
-
-```bash
-az group create --name rg-learning-import --location chinanorth3 --tags purpose=terraform-import-learning
-```
-
-这是在 Terraform 外创建对象，不是在本仓库已经执行的记录。随后查询：
-
-```bash
-az group show --name rg-learning-import --query '{id:id,location:location,tags:tags}' -o json
-```
-
-记下实际名称、region 和 tags。导入 ID 必须按对应 Provider 资源文档规定的格式提供，不能只使用显示名。
+先按阿里云官方控制台或 API 操作指南，在教学账号中创建独立 Bucket，并记录准确 Bucket 名、地域和访问控制。名字应符合 OSS 命名规则且全局唯一。此预置动作不是 Terraform 导入，也不是已在本仓库执行的操作。确认 Bucket 中没有需保留的对象。
 
 ### 2. 准备完整配置
 
-在新目录创建 `main.tf`：
+在单独目录创建 `main.tf`：
 
 ```hcl
 terraform {
   required_version = ">= 1.7, < 2.0"
-
   required_providers {
-    azurerm = {
-      source  = "hashicorp/azurerm"
-      version = "~> 4.0"
+    alicloud = {
+      source  = "aliyun/alicloud"
+      version = "= 1.266.0"
     }
   }
 }
 
-variable "subscription_id" {
-  type = string
+provider "alicloud" {
+  region = var.region
 }
 
-variable "location" {
-  type = string
+variable "region" {
+  type        = string
+  description = "教学 Bucket 所在地域"
 }
 
-variable "resource_group_name" {
-  type    = string
-  default = "rg-learning-import"
+variable "bucket_name" {
+  type        = string
+  description = "仅填写本实验专用空 Bucket 名"
 }
 
-variable "existing_tags" {
-  type    = map(string)
-  default = {}
+resource "alicloud_oss_bucket" "lab" {
+  bucket        = var.bucket_name
+  force_destroy = false
 }
 
-provider "azurerm" {
-  features {}
-  subscription_id                 = var.subscription_id
-  environment                     = "china"
-  resource_provider_registrations = "none"
-}
-
-resource "azurerm_resource_group" "existing" {
-  name     = var.resource_group_name
-  location = var.location
-  tags     = var.existing_tags
+resource "alicloud_oss_bucket_acl" "lab" {
+  bucket = alicloud_oss_bucket.lab.bucket
+  acl    = "private"
 }
 
 import {
-  to = azurerm_resource_group.existing
-  id = "/subscriptions/${var.subscription_id}/resourceGroups/${var.resource_group_name}"
+  to = alicloud_oss_bucket.lab
+  id = var.bucket_name
 }
 
-output "resource_group_id" {
-  value = azurerm_resource_group.existing.id
+import {
+  to = alicloud_oss_bucket_acl.lab
+  id = var.bucket_name
 }
-```
 
-创建 `import.tfvars`，使用查询所得的实际值：
-
-```hcl
-subscription_id     = "00000000-0000-0000-0000-000000000000"
-location            = "chinanorth3"
-resource_group_name = "rg-learning-import"
-existing_tags = {
-  purpose = "terraform-import-learning"
+output "bucket_id" {
+  value = alicloud_oss_bucket.lab.id
 }
 ```
 
-全零订阅 ID 只是占位值，必须替换。上面的 tags 与本节 CLI 创建命令对应；纳管其他已有实验资源组时，以查询得到的实际 tags 为准，空标签才写 `{}`，避免无意清空或覆盖标签。
+`alicloud_oss_bucket` 与 `alicloud_oss_bucket_acl` 的 Provider 1.266.0 导入实现都以 Bucket 名为 ID；ACL resource 对象也以该 ID 定位桶。本文同时声明并导入两个地址，避免将已存在的 ACL 误判为新建。Provider 认证由本机或执行环境的受控配置提供，不写入 HCL、tfvars 或命令历史。Provider 1.266.0 支持 `ALIBABA_CLOUD_ACCESS_KEY_ID`、`ALIBABA_CLOUD_ACCESS_KEY_SECRET`，可选 `ALIBABA_CLOUD_SECURITY_TOKEN`，以及 `ALIBABA_CLOUD_REGION` / profile 配置。`force_destroy = false` 可避免 Terraform 为删除 Bucket 而清空其中对象。ACL 作为单独资源配置，符合 Provider 文档对旧 Bucket `acl` 参数的弃用说明。
 
 ### 3. 查看导入计划
 
+将真实的教学值放在本地受控的 `lab.tfvars`（不要提交）：
+
+```hcl
+region      = "<教学 Bucket 地域>"
+bucket_name = "<本实验专用空 Bucket 名>"
+```
+
+运行：
+
 ```bash
 terraform init
-terraform plan -var-file=import.tfvars -out=import.tfplan
+terraform plan -var-file=lab.tfvars -out=import.tfplan
 terraform show import.tfplan
 ```
 
-理想结果是导入目标对象，并且没有非预期创建、修改或删除。若出现标签修改、区域变化或替换，先调整配置以符合纳管意图，再重新 plan。`id` 必须在 plan 阶段能够确定，Provider 也需要能读取那个已有对象；导入不是跳过认证和 API 读取的离线操作。
+检查计划中的目标 ID 与地址。导入目标应指向已核对的教学 Bucket；属性计划不能包含意料外修改、替换或删除。如果出现这些动作，调整配置或停止，不要 apply。本文未连接云端，这些是预期操作说明，不是验证结果。
 
 ### 4. 接受计划并核对
 
+只有在已确认操作账号、Bucket 名和完整计划后，才在自己的教学环境应用导入计划：
+
 ```bash
 terraform apply import.tfplan
-terraform state show azurerm_resource_group.existing
-terraform plan -var-file=import.tfvars
+terraform state show alicloud_oss_bucket.lab
+terraform state show alicloud_oss_bucket_acl.lab
+terraform plan -var-file=lab.tfvars
 ```
 
-导入本身不重新创建对象，但同一计划可以包含其他变更，所以必须阅读完整计划。正常纳管之后再 plan 应符合预期；保持相同配置时通常没有变化。
+导入本身建立绑定，不重新创建对象；后续普通计划仍可能包含属性变更。维持配置与现状一致时，后续计划预期无意外变化。
 
 ## CLI import 与 import 块
 
-传统 CLI 写法示意：
+旧式 CLI 用法的形式为：
 
 ```bash
-terraform import -var-file=import.tfvars azurerm_resource_group.existing "/subscriptions/<订阅ID>/resourceGroups/<资源组名>"
+terraform import -var-file=lab.tfvars alicloud_oss_bucket.lab '<Bucket 名>'
+terraform import -var-file=lab.tfvars alicloud_oss_bucket_acl.lab '<Bucket 名>'
 ```
 
-这个命令直接修改状态，不生成完整资源配置。需要先准备 resource 定义和认证；不和前面的 import 块实验重复执行。
+CLI import 直接更新 State，不生成资源配置；必须预先写好 resource、Provider 和认证配置。不要对同一个地址再执行这一命令与上面的 import block 流程。
 
-Terraform 1.5+ 的 import 块把导入意图放进配置，支持 plan/review 工作流。1.7+ 支持 import 块的 for_each，批量导入仍要求实例映射和导入 ID 正确。
-
-导入完成后可以保留 import 块作为来源记录，也可按团队约定移除；移除 import 声明不等于退出资源管理，resource 和 State 绑定仍存在。
+声明式 import block 将目标地址与 ID 纳入 plan/review 流程，也支持对已知 map/set 使用 `for_each` 批量导入。导入结束后可按团队约定移除 import 块；移除该声明不会解除 resource 与 State 绑定。
 
 ## 自动生成配置
 
-另一种工作流是：保留 `terraform`、变量、Provider 配置和 import 块，暂时去掉目标 resource 定义及引用它的 output，然后运行：
-
-```bash
-terraform plan -var-file=import.tfvars -generate-config-out=generated_resources.tf
-```
-
-这是替代前面手写 resource 的流程。输出路径必须尚不存在；生成的文件需要人工 review，可能包含不合适的默认值、冲突参数或过多属性。
-
-生成配置不等于已导入，更不等于得到可复用模块。整理出清晰的变量与资源定义，按需补回 output，再重新查看和执行导入计划。不要把生成的 resource 与前面手写的同地址 resource 同时保留，否则会重复声明。
+对于 Terraform 尚无 resource 配置的对象，可在受控教学目录里通过 import block 和 `terraform plan -generate-config-out=generated.tf` 请求生成候选配置。目标路径必须尚不存在。生成结果需人工检查 Provider 参数、默认值与敏感字段，再与导入计划一起审阅。生成配置并不等于已导入，也不能与手写的同地址 resource 同时保留。
 
 ## moved：保留对象的地址重命名
 
-假设已经创建了 [[IaC/terraform/01_terraform_基础概念与第一个项目|本地文件实验]] 中的 `local_file.hello`。现在要把逻辑名改为 greeting，实际 filename/content 保持一致。
-
-替换原 resource，更新 output，并补充 moved 块：
+若只是逻辑地址改变而资源属性不变，可添加：
 
 ```hcl
-resource "local_file" "greeting" {
-  filename        = "${path.module}/hello.txt"
-  content         = "Hello, Terraform!\n"
-  file_permission = "0644"
-}
-
 moved {
-  from = local_file.hello
-  to   = local_file.greeting
-}
-
-output "file_path" {
-  value = local_file.greeting.filename
+  from = alicloud_cms_alarm.example["cpu"]
+  to   = alicloud_cms_alarm.rules["cpu"]
 }
 ```
 
-Provider 要求仍沿用原项目。若之前修改过内容，迁移时应使用当前实际期望的内容，而不是机械恢复本文字符串。
-
-```bash
-terraform plan -out=move.tfplan
-terraform show move.tfplan
-terraform apply move.tfplan
-terraform state list
-```
-
-预期计划显示地址迁移，不因单纯改名而删除文件重建。资源属性确实改变时，Provider 的更新/替换规则仍会生效。
+目标地址必须对应真实配置。先审阅计划，确认 Terraform 将原绑定迁到新地址，且没有意外删除或重建。
 
 ### count 到 for_each
 
+逐个映射旧索引与新 key：
+
 ```hcl
 moved {
-  from = local_file.config[0]
-  to   = local_file.config["web"]
+  from = alicloud_cms_alarm.example[0]
+  to   = alicloud_cms_alarm.rules["cpu"]
 }
 ```
 
-逐项映射旧索引与新 key，并核对 filename 等真实属性一致。不能只写第一项后就假设其余实例会自动对齐。
+旧索引和新 key 必须代表同一个实际告警。不能添加一条映射后就假定其余索引自动识别。
 
 ### 根资源移入模块
 
 ```hcl
 moved {
-  from = local_file.greeting
-  to   = module.app.local_file.config
+  from = alicloud_oss_bucket.lab
+  to   = module.storage.alicloud_oss_bucket.this
 }
 ```
 
-这是地址迁移片段，目标模块必须真实存在，且对应资源参数与原对象兼容。模块化不是单纯把文件挪到目录里；module 调用会引入新的地址层级。
+示例要求目标模块与资源确实存在、参数仍指向同一个教学 Bucket。移动到 module 会改变 Terraform 地址层级；仅在 `.tf` 文件间移动代码不会改变地址。若实际属性发生变化，Provider 仍可能提出更新。
 
-共享模块中的 moved 声明通常应保留，让尚未升级的调用者也能沿着旧地址迁移。是否移除要考虑所有调用者的升级路径。
+生产重构出处：`monitoring/moved.tf`（脱敏裁剪/教学改编）展示了 CMS alarm 的模块地址迁移。原文件按实例逐条写明映射。它还展示重复的联系人与联系人组从旧 module 地址 `removed` 并设置 `destroy = false`；教学时应按自己的 State 关系设计，不复制真实地址或成员名。
 
 ## removed：停止管理但保留对象
 
-Terraform **1.7+** 可以使用声明式退出管理。以导入实验的资源组为例：移除 resource、对应 import 和依赖它的 output，加入：
+当要退出管理但保留专用实验 Bucket 时，先移除两个 `resource` 块、两个 import 块和依赖它们的 output；不能只删 Bucket resource 而保留仍引用它的 ACL resource。随后在同一 root 配置中添加两个 removed 块：
 
 ```hcl
 removed {
-  from = azurerm_resource_group.existing
+  from = alicloud_oss_bucket.lab
+  lifecycle {
+    destroy = false
+  }
+}
 
+removed {
+  from = alicloud_oss_bucket_acl.lab
   lifecycle {
     destroy = false
   }
 }
 ```
 
-Provider 和变量设置按当前项目需要保留，再生成、查看和执行计划：
-
-```bash
-terraform plan -var-file=import.tfvars -out=remove.tfplan
-terraform show remove.tfplan
-terraform apply remove.tfplan
-terraform state list
-```
-
-预期 Terraform 忘记绑定，资源组仍存在。`destroy = false` 是这里表达保留对象的关键；不要把缺少该设置的移除行为理解为相同效果。
-
-之后若重新添加 resource 而不 import，Terraform 又会按没有绑定的新对象处理。
+先查看计划确认 Bucket 与 ACL 两个 State 绑定都退出管理且没有 Bucket 删除动作，再应用。ACL resource 被移除时 Provider 只会清掉 State 记录，ACL 设置可能留在 OSS。缺少 `destroy = false` 不能表达保留 Bucket 的意图。退出管理后 Terraform 不再负责该对象；重新添加 resource 时，如没有重新导入，Terraform 会按尚无绑定的新实例处理。
 
 ## 跨 State 移交
 
-`moved` 描述同一份 State 内的地址迁移，不把对象绑定自动搬到另一个 Backend 或 Workspace。移动整个 State 存储位置使用 [[IaC/terraform/09_terraform_后端工作空间与多环境|Backend 迁移]]；拆分其中某些对象的所有权才属于这里的跨 State 移交。
-
-跨项目移交需要协作流程：
-
-1. 停止原、新项目对这些对象的并发修改，备份各自状态。
-2. 核对实际 ID、新旧地址、Provider 和配置参数。
-3. 原项目退出管理，新项目 import，避免两个 State 同时控制同一对象。
-4. 分别查看完整计划，确认原项目不会重新创建，新项目不会意外替换。
-
-原项目既要移除绑定，也要调整旧 resource 配置，确保之后不会重新创建对象。新项目则要在导入后确认实际 ID 与预期一致，再恢复双方流水线。锁只保护对应的 State，不会自动阻止另一个项目管理同一云 ID。
-
-如果需要使用 `state mv`/`state rm` 等命令，应把它们作为受控状态维护操作，而不是为了躲过一个不理解的 Plan。普通 `state mv` 针对当前连接的状态改地址，不能通过切换 Backend 后随意执行它完成上述移交。
+`moved` 适用于同一 State 内的地址变化，不会自动在两个 Backend 或 Workspace 间迁移部分对象。跨 State 移交应先停止双方并发变更、备份状态、核对 ID 与地址，再由原项目退出绑定，新项目导入同一对象，并分别审阅计划。原项目若仍保留 resource 配置，后续可能重新创建对象。锁只作用于各自 State，不防止两份状态管理同一云 ID。
 
 ## 实验收尾
 
-收尾方式取决于资源是否仍由当前 State 管理：
-
-- **只完成导入，未应用 removed**：仅当对象就是自己为本实验创建的空资源组时，生成并查看 Terraform 删除计划。
+如果对象仍由实验 State 管理且它是本次专门创建的空 Bucket，可在当前教学目录生成并审阅 destroy 计划：
 
 ```bash
-terraform plan -destroy -var-file=import.tfvars -out=destroy.tfplan
+terraform plan -destroy -var-file=lab.tfvars -out=destroy.tfplan
 terraform show destroy.tfplan
 terraform apply destroy.tfplan
 ```
 
-- **已应用 `removed` 并保留对象**：当前 Terraform 已退出管理，destroy 不会清理该资源组。对于本节自己临时创建的对象，先用 Azure CLI 核对组内为空，再删除它。
-
-```bash
-az resource list --resource-group rg-learning-import --query '[].{name:name,type:type}' -o table
-az group delete --name rg-learning-import
-az group exists --name rg-learning-import
-```
-
-删除前确认查询没有列出其他系统使用的资源；等待删除完成后，最后一条命令预期返回 `false`。若使用的是原本就存在、需要继续保留的对象，纳管、移交或退出管理完成即可，不执行本节删除命令。资源组本身的导入也不会自动把组内所有子资源逐一导入。
+执行前再次核对 Bucket 名与账号。若已应用 `removed` 退出管理，Terraform 不再能通过该 State 删除 Bucket；如需清理，只能先确认 Bucket 仍为空，再用阿里云管理界面/API 删除该教学对象。生产 Bucket 和其真实内容永远不是本练习的清理目标。
 
 ## 练习
 
-1. 比较不写 moved 和写 moved 的改名计划，说明为什么 State 地址会影响资源身份。
-2. 给 count 的两个保留实例设计旧索引到新 key 的映射。
-3. 解释删除 import 块、删除 resource 块、应用 removed 块三者的区别。
+1. 区分 import 块、删除 import 块、删除 resource 配置、`removed destroy=false` 的结果。
+2. 将示例地址改名，写出 moved 块并说明哪些属性变化仍会产生更新或替换。
+3. 对比同一 State 地址迁移与两个 State 间所有权移交。
+4. 解释为什么生产中的 CMS alarm 可以迁移地址，而重复联系人需要确认是否已被新地址管理后再决定 `moved` 或 `removed`。
 
 ## 参考资料
 
-- [Import](https://developer.hashicorp.com/terraform/language/import)
-- [生成配置](https://developer.hashicorp.com/terraform/language/import/generating-configuration)
+- [Import block](https://developer.hashicorp.com/terraform/language/block/import)
+- [Terraform import](https://developer.hashicorp.com/terraform/language/import)
+- [生成导入配置](https://developer.hashicorp.com/terraform/language/import/generating-configuration)
 - [moved 与模块重构](https://developer.hashicorp.com/terraform/language/modules/develop/refactoring)
-- [移除资源管理](https://developer.hashicorp.com/terraform/language/block/removed)
-- [Azure Resource Group 导入格式](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/resource_group#import)
+- [removed block](https://developer.hashicorp.com/terraform/language/block/removed)
 - [CLI import](https://developer.hashicorp.com/terraform/cli/commands/import)
-- [state mv](https://developer.hashicorp.com/terraform/cli/commands/state/mv)
-- [Azure CLI 资源组命令](https://learn.microsoft.com/en-us/cli/azure/group)
+- [阿里云 OSS Bucket（Provider 1.266.0）](https://registry.terraform.io/providers/aliyun/alicloud/1.266.0/docs/resources/oss_bucket)
+- [阿里云 OSS ACL（Provider 1.266.0）](https://registry.terraform.io/providers/aliyun/alicloud/1.266.0/docs/resources/oss_bucket_acl)
+- [阿里云 Provider 1.266.0 认证文档](https://registry.terraform.io/providers/aliyun/alicloud/1.266.0/docs)
+- [OSS ACL Provider 1.266.0 实现（State passthrough）](https://github.com/aliyun/terraform-provider-alicloud/blob/v1.266.0/alicloud/resource_alicloud_oss_bucket_acl.go)
 
 上一篇：[[IaC/terraform/10_terraform_模块开发与复用|Module]] · 下一篇：[[IaC/terraform/12_terraform_工作流计划阅读与排错|Plan 阅读与排错]]。
