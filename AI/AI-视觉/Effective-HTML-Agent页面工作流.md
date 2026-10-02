@@ -13,9 +13,9 @@ tags:
   - effective-html
 ---
 
-现在让Codex 做网页已经很快了。
+现在用 Codex 做网页已经很快。
 
-给出一个需求，几分钟就可以生成一份HTML。
+给出需求后，几分钟就能生成一份 HTML。
 
 但是用多了就会发现，代码出来得快，并不等于页面就做好了。
 
@@ -25,21 +25,21 @@ tags:
 
 正常状态有了，加载、报错、提交失败这些真正用起来会碰到的情况，可能还得自己一条条提醒。
 
-最近我在 GitHub 上看到一个项目，正好管这些事情。
+最近，我在 GitHub 上看到一个项目，正好针对这些问题。
 
 ![图片](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260905211510363.webp)
 
 它叫 Effective HTML。
 
-目前项目已经接近3000个Star。
+目前项目已接近 3000 个 Star。
 
 ![图片](https://raw.githubusercontent.com/hangx969/upload-images-md/main/20260905211513385.webp)
 
-简单来说，它就是一套给 Coding Agent 用的 HTML Skills。
+简单来说，它是一套供 Coding Agent 使用的 HTML Skills。
 
-装到 Claude、Codex 这类工具里以后，做页面之前先判断该怎么做，完成以后还要自己检查一遍。
+安装到 Claude、Codex 这类工具后，它会先判断页面该怎么做，并在完成后自行检查。
 
-我也会让Agent画流程图、做些小页面。
+我平时也会让 Agent 画流程图、做些小页面。
 
 现在让我比较头疼的已经不是代码写不出来，而是第一版看着挺快，后面又得不断告诉它这里改一下，那里再补一个状态。
 
@@ -195,7 +195,7 @@ design-artifact 主要负责页面的视觉部分。
 
 ## 安装方法
 
-安装也十分简单，想要一次把6个技能都装上，直接运行：
+安装很简单。要一次装上 6 个技能，直接运行：
 
 ```
 npx skills add plannotator/effective-html
@@ -223,7 +223,7 @@ codex plugin add plannotator-effective-html@effective-html
 
 项目登记在 `skills.sh` 上，采用 Claude Agent 的 Skill 格式，同时兼容 `.claude-plugin` 格式，可在 Claude Desktop 中作为插件加载。
 
-安装好之后就可以直接让Agent按照这些规则来写页面了。
+安装完成后，就可以让 Agent 按这些规则编写页面。
 
 ## 与同类工具的定位
 
@@ -242,4 +242,7 @@ codex plugin add plannotator-effective-html@effective-html
 
 Effective HTML 把做页面的流程提前定好了，用Agent来写页面可以少走很多弯路。
 
-如果你经常用Codex来写页面的话，可以安装一下试一试。
+如果你经常用 Codex 写页面，可以安装后试用。
+
+
+---
