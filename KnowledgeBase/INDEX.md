@@ -6,7 +6,7 @@ tags:
 aliases:
   - 知识库首页
   - KB Index
-date: 2026-09-26
+date: 2026-10-02
 ---
 
 # 📚 Learning Notes 知识库
@@ -49,6 +49,10 @@ date: 2026-09-26
 | [[KnowledgeBase/concepts/P2P分发|P2P 分发]] | 通过分块、Peer 交换与缓存降低大规模数据分发的源站压力 |
 | [[KnowledgeBase/concepts/证书管理|证书管理]] | TLS 证书与私钥的签发、校验、分发、续期、审计和安全边界 |
 
+- [[KnowledgeBase/concepts/基础设施即代码|基础设施即代码]] — 基础设施即代码（IaC）将资源的期望配置写成可版本管理的代码或声明。它让配置差异可以审查，让环境搭建和变更有可重复的输入，但仍需要身份、状态和实际平台验收配合。
+- [[KnowledgeBase/concepts/Terraform状态管理|Terraform状态管理]] — Terraform 状态管理维护配置地址与实际对象之间的绑定，以及运行所需的已知属性和元数据。状态用于变更计算与身份跟踪，不等于完整基础设施或业务数据备份。
+- [[KnowledgeBase/concepts/Terraform模块化|Terraform模块化]] — Terraform 模块化把一组相关配置组织成具有输入、输出和版本要求的复用单元。子模块资源仍属于调用它的根配置 State，因此代码复用边界与独立执行边界需要分别设计。
+
 ---
 
 ## 🔧 实体页（Entities）
@@ -70,7 +74,7 @@ date: 2026-09-26
 | [Azure](entities/Azure.md) | Microsoft 公有云平台 |
 | [AKS](entities/AKS.md) | Azure 托管 Kubernetes 服务 |
 | [Aliyun](entities/Aliyun.md) | 阿里云公有云平台 |
-| [Terraform](entities/Terraform.md) | 基础设施即代码工具 |
+| [[KnowledgeBase/entities/Terraform|Terraform]] | 基础系列、Provider、状态、模块、容器与协作 |
 | [Claude-Code](entities/Claude-Code.md) | AI 编程助手 |
 | [[KnowledgeBase/entities/Codex|Codex]] | AI 编程助手；Harness 任务循环、配置、工具执行与工作流优化 |
 | [MCP](entities/MCP.md) | Model Context Protocol |
@@ -276,11 +280,25 @@ date: 2026-09-26
 | [[KnowledgeBase/sources/kserve-vllm-inferenceservice-summary|KServe 部署 vLLM 来源摘要]] | 1 | InferenceService Standard、Envoy Gateway、PVC 模型存储、GPU 资源与 OpenAI 兼容 API 完整链路 |
 | [[KnowledgeBase/sources/local-llm-runtime-selection-summary|大模型本地部署选型来源摘要]] | 1 | Ollama/vLLM/SGLang/vLLM-Omni 选型、模型与镜像离线交付、GPU 显存和容器化边界 |
 
-### IaC/Terraform 容器管理（已摄入 ✅）
+### IaC/Terraform 基础系列（已摄入 ✅）
 
-| 页面 | 覆盖文档数 | 摘要 |
-|------|:---------:|------|
-| [Terraform 容器管理](sources/iac-terraform-container-summary.md) | 1 | Docker/Kubernetes/Helm/Nomad Provider 统一容器编排，YAML/HCL/Helm 三种声明方式 |
+- [[KnowledgeBase/maps/terraform-map|Terraform 基础学习地图]] — 15 篇正文与 1 个学习路线入口，按本地项目、语言、资源、状态、模块和协作组织。
+
+- [[KnowledgeBase/sources/iac-terraform-basics-summary|Terraform 基础概念与第一个项目 来源摘要]] — 从 IaC 的用途开始，用本地文件实验解释配置、State 和实际资源的关系。涵盖创建、修改、重复计划与清理的完整步骤。
+- [[KnowledgeBase/sources/iac-terraform-hcl-summary|Terraform HCL 语法与配置文件 来源摘要]] — 解释块、参数、类型、引用、模板转义和配置加载规则。以不创建平台资源的表达式实验帮助读懂后续配置。
+- [[KnowledgeBase/sources/iac-terraform-variables-outputs-summary|Terraform 变量、locals 与 outputs 来源摘要]] — 通过生成应用 JSON 的完整实验，说明输入接口、派生值和输出接口。整理本地 CLI 变量优先级及敏感值的持久化边界。
+- [[KnowledgeBase/sources/iac-terraform-expressions-summary|Terraform 表达式、函数与模板 来源摘要]] — 用服务集合、YAML 生成和文本模板实验介绍条件与 for 表达式。解释常用函数、dynamic、静态文件读取和不稳定值的使用陷阱。
+- [[KnowledgeBase/sources/iac-terraform-providers-summary|Terraform Provider、版本与认证 来源摘要]] — 区分 Core、Provider、来源声明和具体连接配置。保留 Azure 中国区场景，提供使用自身订阅的完整资源组实验，并解释 alias 和版本锁定。
+- [[KnowledgeBase/sources/iac-terraform-resources-dependencies-summary|Terraform Resource、Data Source 与依赖 来源摘要]] — 通过查询外部文件、生成受管理副本和 terraform_data 生命周期实验说明所有权、依赖图与变更方式。补充生命周期、条件检查和 provisioner 的边界。
+- [[KnowledgeBase/sources/iac-terraform-count-for-each-summary|Terraform count 与 for_each 来源摘要]] — 用两种批量本地文件实验解释索引和稳定 key 的区别。涵盖集合过滤、0/1 创建、链式 for_each 和地址迁移。
+- [[KnowledgeBase/sources/iac-terraform-state-summary|Terraform State、漂移与状态操作 来源摘要]] — 解释状态身份、三方比较和本地文件漂移，区分普通与 refresh-only 计划。整理状态命令、退出管理、敏感数据与恢复思路。
+- [[KnowledgeBase/sources/iac-terraform-backends-workspaces-summary|Terraform Backend、Workspace 与多环境 来源摘要]] — 介绍状态存储、权限与锁定，并给出 Azure Blob 连接、本地迁移和 S3 锁文件示例。通过内置资源实验区分 Workspace 状态隔离与环境权限隔离。
+- [[KnowledgeBase/sources/iac-terraform-modules-summary|Terraform Module 开发与复用 来源摘要]] — 实现为多个服务生成配置的完整本地模块，明确父子模块接口和 Provider 传递。比较本地、Registry 和 Git 来源及模块版本、State 和执行边界。
+- [[KnowledgeBase/sources/iac-terraform-import-refactoring-summary|Terraform Import、moved 与 removed 来源摘要]] — 以 Azure 资源组纳管和本地文件改名说明管理身份的建立与迁移。比较声明式导入、生成配置、退出管理和跨 State 移交。
+- [[KnowledgeBase/sources/iac-terraform-workflow-troubleshooting-summary|Terraform 工作流、Plan 阅读与排错 来源摘要]] — 整理从写配置、审查计划到执行后验收的流程。解释计划动作、保存计划、选项、常见故障分层和部分失败恢复。
+- [[KnowledgeBase/sources/iac-terraform-testing-cicd-summary|Terraform 测试与 CI/CD 协作 来源摘要]] — 区分格式、配置、逻辑、集成和真实部署验证，并给 app-config 模块增加 mock 计划测试。提供模块 CI 示例与正式计划审批执行的最小逻辑。
+- [[KnowledgeBase/sources/iac-terraform-container-summary|Terraform Docker、Kubernetes、Helm 与 Nomad 来源摘要]] — 通过 Docker 容器、已有集群 Deployment、最小本地 Helm Chart 和 Nomad Job，说明 Terraform 在各容器层的连接与所有权。修正旧镜像属性、版本语法和不完整资源示例。
+- [[KnowledgeBase/sources/iac-terraform-docs-summary|Terraform terraform-docs 模块文档生成 来源摘要]] — 介绍模块接口文档提取、README 注入和自定义 Go template。保留可复用配置与调用模板，并说明工具版本、递归生成、真实输出和 CI 一致性边界。
 
 ### Go（已摄入 ✅）
 
@@ -303,6 +321,8 @@ date: 2026-09-26
 > [!info] 摄入覆盖
 > 共 18 个领域、363 篇学习笔记（按 git 跟踪的 Markdown 统计，不含各目录 index.md 导航页和 280 篇引用/嵌入内容）。截至 2026-09-29，全部笔记均已在 [[KnowledgeBase/inventory/repository-inventory|全库文档盘点]] 中列出，其中 33 篇尚无来源摘要，清单见 [[KnowledgeBase/maintenance/wiki-lint-2026-09-29|Wiki 健康检查 2026-09-29]]。
 
+> Terraform 系列于 2026-10-02 新增 12 篇正文和 1 个学习路线入口；上面的全库篇数保留为 2026-09-29 盘点快照，本次系列以 [[KnowledgeBase/maps/terraform-map|Terraform 学习地图]] 为当前导航。
+
 ---
 
 ## 🗺️ 主题地图（Maps）
@@ -317,6 +337,8 @@ date: 2026-09-26
 | [云平台专题](maps/cloud-platform-map.md) | Aliyun + Azure 对标 |
 | [Linux 运维专题](maps/linux-ops-map.md) | Linux 系统管理与 Shell 脚本 |
 | [Python 运维开发专题](maps/python-devops-map.md) | Python 运维场景应用 |
+
+- [[KnowledgeBase/maps/terraform-map|Terraform 基础学习地图]] — 入门顺序、逐篇来源摘要与实验边界。
 
 ---
 
@@ -361,7 +383,7 @@ date: 2026-09-26
 | Middlewares | 3 | 🟠 | [Kafka](../Middlewares/Kafka.md) |
 | OS | 3 | 🟠 | [OS](../OS/OS.md) |
 | Networking | 2 | 🟠 | [计算机网络基础](../Networking/计算机网络基础.md) |
-| IaC | 3 | 🟡 | [terraform-basics](terraform-basics.md) |
+| IaC | 16（含学习路线） | 🟢 | [[IaC/terraform/README|Terraform 基础系列]] |
 | Git | 2 | 🟠 | [git-learning](../Git/git-learning.md) |
 | SoftwareTesting | 2 | 🟠 | [软件工程基础](../SoftwareTesting/软件工程基础.md) |
 | C++ | 1 | 🟠 | [C++LearningNotes](../C++/C++LearningNotes.md) |

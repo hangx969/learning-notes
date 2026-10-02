@@ -3,7 +3,7 @@ title: 杂项领域（Database/Middlewares/OS/Networking/IaC/Git/C++/SoftwareTes
 tags:
   - knowledgebase/source
   - misc
-date: 2026-04-17
+date: 2026-10-02
 sources:
   - "[[Database/MGR部署MySQL5.7]]"
   - "[[Database/MySQL入门]]"
@@ -16,8 +16,8 @@ sources:
   - "[[OS/OS]]"
   - "[[Networking/计算机网络基础]]"
   - "[[Networking/HTTP基础]]"
-  - "[[terraform-docs]]"
-  - "[[terraform-basics]]"
+  - "[[IaC/terraform/terraform-docs]]"
+  - "[[IaC/terraform/terraform-basics]]"
   - "[[Git/git-learning]]"
   - "[[Git/Picgo-github图床配置]]"
   - "[[C++/C++LearningNotes]]"
@@ -63,7 +63,7 @@ aliases:
 3. Kafka 核心架构为 Topic、Partition、Broker 与 Leader/Follower 副本机制，2.8.0 引入 KRaft 一致性算法替代 Zookeeper。
 4. 操作系统四大特征为并发、共享（互斥共享/同时共享）、虚拟（时分/空分复用）、异步；库函数与系统调用的区别对应用户态与内核态；磁盘调度算法包括 FCFS、SSTF、SCAN（电梯算法）、LOOK、C-SCAN、C-LOOK。
 5. HTTP 1.0 为非持久连接，HTTP 1.1 引入持久连接（Keep-Alive）与 Pipeline；Cookie 通过 Set-Cookie 实现状态管理，范围请求支持断点续传。
-6. Terraform 三阶段工作流为 `terraform init`（下载 Provider）→ `plan`（计算差异）→ `apply`（执行变更），核心文件包括 main.tf、variable.tf、terraform.tfvars、terraform.tfstate；terraform-docs 可为 Module 自动生成 Markdown 文档。
+6. Terraform 的核心工作流为 Write → Plan → Apply，init 准备 Backend、模块与 Provider；State 跟踪资源身份，terraform-docs 提取模块接口。完整基础系列另见 Terraform 学习地图。
 7. Git 四层结构为工作目录 → 暂存区 → 本地仓库 → 远程仓库，基本工作流程为 clone → add → commit → push。
 8. 测试分层为单元测试（白盒/代码审查）→ 集成测试（Smoke Test）→ 系统测试 → 验收测试；瀑布模型重文档、不喜欢需求变更，敏捷模型以 Sprint/Story 快速迭代。
 
@@ -158,20 +158,15 @@ Kafka 消息队列的核心概念笔记：
 
 ### IaC
 
-#### [[terraform-basics|Terraform基础]]
+#### [[IaC/terraform/terraform-basics|Terraform 基础]]
 
-Terraform 入门与实践：
-- Terraform 与 ARM Template/Bicep 的定位对比；基于 Go 语言、HCL 声明式语言
-- 三阶段工作流：`terraform init`（下载 Provider）-> `plan`（计算差异）-> `apply`（执行变更）
-- 核心文件结构：main.tf、variable.tf、terraform.tfvars、terraform.tfstate
-- Azure 资源组创建示例（azurerm provider 配置、az login 认证流程）
+2026-10-02 改写为基础概念与本地文件完整实验，解释配置、State、实际对象与 Write → Plan → Apply 工作流。Azure 中国区资源组示例现集中在 [[IaC/terraform/terraform-providers|Provider、版本与认证]]。
 
-#### [[terraform-docs|Terraform-docs]]
+#### [[IaC/terraform/terraform-docs|Terraform-docs]]
 
-terraform-docs 文档自动生成工具：
-- 用途：为 Terraform Module 自动生成 Markdown 格式的说明文档
-- 安装方式（从 GitHub Release 下载）
-- 配置模板详解：formatter、content 模板（Requirements/Usage/Resources/Inputs/Outputs）、output 注入模式
+2026-10-02 补充模块接口提取、README 标记注入、完整配置、Go template 和 CI 一致性检查，并移除旧版废弃配置字段。
+
+基础系列现有 15 篇正文与学习路线，新增章节和逐篇来源摘要见 [[KnowledgeBase/maps/terraform-map|Terraform 基础学习地图]]；本批量摘要保留原来 18 篇来源的摄入范围。
 
 ### Git
 

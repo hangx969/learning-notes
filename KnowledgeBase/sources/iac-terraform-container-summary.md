@@ -1,44 +1,44 @@
 ---
-title: Terraform 容器管理 来源摘要
+title: "Terraform Docker、Kubernetes、Helm 与 Nomad 来源摘要"
 tags:
   - knowledgebase/source
   - IaC/terraform
-  - docker-kubernetes/container
-date: 2026-05-04
+date: 2026-10-02
 sources:
-  - "[[terraform-container-management]]"
+  - "[[IaC/terraform/terraform-container-management]]"
 aliases:
   - Terraform容器管理摘要
+  - "TerraformDocker、Kubernetes、Helm 与 Nomad摘要"
 ---
 
-# Terraform 容器管理 来源摘要
+# Terraform Docker、Kubernetes、Helm 与 Nomad 来源摘要
 
 ## 元信息
-- **原始文档**：`IaC/terraform-container-management.md`
-- **领域**：IaC / 容器编排
+
+- **原始文档**：[[IaC/terraform/terraform-container-management]]
+- **领域**：IaC / Terraform
 - **摄入日期**：2026-05-04
+- **更新日期**：2026-10-02
 
 ## 摘要
-介绍 Terraform 如何通过 Docker Provider、Kubernetes Provider 和 Helm Provider 统一管理容器基础设施，涵盖 Docker 镜像管理、EKS 集群部署/配置、YAML/HCL 资源定义、NetworkPolicy、Helm Chart（Redis/Prometheus/Grafana）及 Nomad 调度。
+
+通过 Docker 容器、已有集群 Deployment、最小本地 Helm Chart 和 Nomad Job，说明 Terraform 在各容器层的连接与所有权。修正旧镜像属性、版本语法和不完整资源示例。
 
 ## 关键知识点
-1. Docker Provider 支持本地/远程镜像，`keep_locally = true` 用于自研镜像管理
-2. 区分集群部署（新建 EKS）与集群配置（添加 namespace），使用不同 Terraform 模块
-3. `kubernetes_manifest` 资源支持直接加载 YAML，也可用纯 HCL 编写 K8s 资源
-4. NetworkPolicy 通过 `pod_selector` + `policy_types` 精细控制 Pod 间流量
-5. Helm Provider 将 Helm Release 纳入 Terraform 状态管理，支持 Prometheus + Grafana 一键部署
-6. Nomad 适合混合调度场景（容器+非容器化应用）
+
+1. Docker 3.x 使用 image_id；keep_locally 控制销毁时保留镜像，不表示仅用本地镜像。
+2. 集群创建与集群配置分层，云身份、Kubernetes 认证和 RBAC 分别核对；manifest 需可用 schema。
+3. Helm 3.x 使用 kubernetes 对象配置；Release 内对象不应被其他工具重复声明，Secret 显示遮盖不保证不入 State。
 
 ## 涉及的概念与实体
+
 - [[KnowledgeBase/entities/Terraform|Terraform]]
+- [[KnowledgeBase/concepts/自动化运维|自动化运维]]
 - [[KnowledgeBase/entities/Docker|Docker]]
 - [[KnowledgeBase/entities/Kubernetes|Kubernetes]]
 - [[KnowledgeBase/entities/Helm|Helm]]
-- [[KnowledgeBase/entities/Prometheus|Prometheus]]
-- [[KnowledgeBase/entities/Grafana|Grafana]]
-- [[KnowledgeBase/entities/AKS|AKS]]（EKS 类似）
 
 ## 值得注意
-- 认证前提：Terraform 通过 `aws_eks_cluster_auth` 获取 token 连接 EKS，原文提示需在 AWS IAM 中为 Terraform 执行角色授予访问 EKS 的权限
-- 版本固定：示例固定了 EKS `cluster_version = "1.20"` 及 Helm Chart 版本（redis 17.3.14、prometheus 15.10.1、grafana 6.43.1），复用前需按目标环境核对可用版本与参数
-- 敏感信息：Grafana 示例通过 `set` 以明文写入 `adminPassword`，仅作演示，生产环境不宜照搬
+
+- 技术出处在原始笔记中按官方文档和 Provider 文档列出；实验输出标为预期观察，云端执行未验证。
+- 学习顺序与相关章节见 [[KnowledgeBase/maps/terraform-map|Terraform 主题地图]]。
