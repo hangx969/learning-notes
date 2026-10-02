@@ -6,21 +6,21 @@ tags:
 date: 2026-10-02
 sources:
   - "[[IaC/terraform/README]]"
-  - "[[IaC/terraform/terraform-basics]]"
-  - "[[IaC/terraform/terraform-hcl]]"
-  - "[[IaC/terraform/terraform-variables-outputs]]"
-  - "[[IaC/terraform/terraform-expressions]]"
-  - "[[IaC/terraform/terraform-providers]]"
-  - "[[IaC/terraform/terraform-resources-dependencies]]"
-  - "[[IaC/terraform/terraform-count-for-each]]"
-  - "[[IaC/terraform/terraform-state]]"
-  - "[[IaC/terraform/terraform-backends-workspaces]]"
-  - "[[IaC/terraform/terraform-modules]]"
-  - "[[IaC/terraform/terraform-import-refactoring]]"
-  - "[[IaC/terraform/terraform-workflow-troubleshooting]]"
-  - "[[IaC/terraform/terraform-testing-cicd]]"
-  - "[[IaC/terraform/terraform-container-management]]"
-  - "[[IaC/terraform/terraform-docs]]"
+  - "[[IaC/terraform/01_terraform_基础概念与第一个项目]]"
+  - "[[IaC/terraform/02_terraform_配置语法与文件结构]]"
+  - "[[IaC/terraform/03_terraform_变量与输出]]"
+  - "[[IaC/terraform/04_terraform_表达式函数与模板]]"
+  - "[[IaC/terraform/05_terraform_提供者版本与认证]]"
+  - "[[IaC/terraform/06_terraform_资源数据源与依赖]]"
+  - "[[IaC/terraform/07_terraform_循环与批量资源]]"
+  - "[[IaC/terraform/08_terraform_状态漂移与状态操作]]"
+  - "[[IaC/terraform/09_terraform_后端工作空间与多环境]]"
+  - "[[IaC/terraform/10_terraform_模块开发与复用]]"
+  - "[[IaC/terraform/11_terraform_资源导入与重构]]"
+  - "[[IaC/terraform/12_terraform_工作流计划阅读与排错]]"
+  - "[[IaC/terraform/13_terraform_测试与持续集成交付]]"
+  - "[[IaC/terraform/14_terraform_容器管理实战]]"
+  - "[[IaC/terraform/15_terraform_模块文档生成]]"
 aliases:
   - "terraform"
   - "TF"
@@ -60,12 +60,12 @@ Terraform 是 HashiCorp 的基础设施即代码工具，通过声明式 HCL、P
 
 - [[IaC/terraform/README|基础系列学习路线]]：15 篇中文正文、实验约定和 GitHub 学习资料入口。
 - [[KnowledgeBase/maps/terraform-map|Terraform 主题地图]]：按依赖顺序关联正文和逐篇来源摘要。
-- [[IaC/terraform/terraform-basics|基础概念]]：本地文件创建、变更和清理。
-- [[IaC/terraform/terraform-providers|Provider]]：版本锁定、alias、认证和 Azure 中国区资源组实验。
-- [[IaC/terraform/terraform-state|State]]、[[IaC/terraform/terraform-backends-workspaces|Backend 与多环境]]：漂移、锁定和环境边界。
-- [[IaC/terraform/terraform-modules|Module]]、[[IaC/terraform/terraform-import-refactoring|导入与重构]]：复用接口与身份迁移。
-- [[IaC/terraform/terraform-testing-cicd|测试与协作]]：模块 mock 测试和 CI 示例。
-- [[IaC/terraform/terraform-container-management|容器管理]]、[[IaC/terraform/terraform-docs|文档生成]]：扩展实战。
+- [[IaC/terraform/01_terraform_基础概念与第一个项目|基础概念]]：本地文件创建、变更和清理。
+- [[IaC/terraform/05_terraform_提供者版本与认证|Provider]]：版本锁定、alias、认证和 Azure 中国区资源组实验。
+- [[IaC/terraform/08_terraform_状态漂移与状态操作|State]]、[[IaC/terraform/09_terraform_后端工作空间与多环境|Backend 与多环境]]：漂移、锁定和环境边界。
+- [[IaC/terraform/10_terraform_模块开发与复用|Module]]、[[IaC/terraform/11_terraform_资源导入与重构|导入与重构]]：复用接口与身份迁移。
+- [[IaC/terraform/13_terraform_测试与持续集成交付|测试与协作]]：模块 mock 测试和 CI 示例。
+- [[IaC/terraform/14_terraform_容器管理实战|容器管理]]、[[IaC/terraform/15_terraform_模块文档生成|文档生成]]：扩展实战。
 
 ## 知识空白
 

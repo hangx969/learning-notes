@@ -5,7 +5,7 @@ tags:
   - IaC/terraform
 date: 2026-10-02
 sources:
-  - "[[IaC/terraform/terraform-basics]]"
+  - "[[IaC/terraform/01_terraform_基础概念与第一个项目]]"
 aliases:
   - "Terraform基础概念与第一个项目摘要"
 ---
@@ -14,7 +14,7 @@ aliases:
 
 ## 元信息
 
-- **原始文档**：[[IaC/terraform/terraform-basics]]
+- **原始文档**：[[IaC/terraform/01_terraform_基础概念与第一个项目]]
 - **领域**：IaC / Terraform
 - **摄入日期**：2026-10-02
 - **更新日期**：2026-10-02

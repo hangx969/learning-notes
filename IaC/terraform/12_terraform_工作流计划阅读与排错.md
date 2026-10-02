@@ -1,5 +1,5 @@
 ---
-title: Terraform基础-工作流、Plan 阅读与排错
+title: 12_terraform_工作流计划阅读与排错
 tags:
   - IaC
   - terraform
@@ -10,7 +10,7 @@ aliases:
   - Terraform排错
 ---
 
-# Terraform基础-工作流、Plan 阅读与排错
+# 12_terraform_工作流计划阅读与排错
 
 ## 一个可审查的工作流
 
@@ -209,7 +209,7 @@ terraform plan -replace='local_file.config["web"]' -out=replace.tfplan
 | Refresh-only | `terraform plan -refresh-only` | 让状态记录和根输出符合实际对象 |
 | Destroy | `terraform plan -destroy` | 清理当前 State 管理的对象 |
 
-refresh-only 不会更新 `.tf`，destroy 也不会删除 `.tf`。完整示例见 [[IaC/terraform/terraform-state|State]]。
+refresh-only 不会更新 `.tf`，destroy 也不会删除 `.tf`。完整示例见 [[IaC/terraform/08_terraform_状态漂移与状态操作|State]]。
 
 ## 排错先分层
 
@@ -302,4 +302,4 @@ JSON 中的其他字段可能含敏感值，不能因为抽取结果只显示地
 - [Plan JSON 格式](https://developer.hashicorp.com/terraform/internals/json-format)
 - [依赖图命令](https://developer.hashicorp.com/terraform/cli/commands/graph)
 
-上一篇：[[IaC/terraform/terraform-import-refactoring|导入与重构]] · 下一篇：[[IaC/terraform/terraform-testing-cicd|测试与 CI/CD 协作]]。
+上一篇：[[IaC/terraform/11_terraform_资源导入与重构|导入与重构]] · 下一篇：[[IaC/terraform/13_terraform_测试与持续集成交付|测试与 CI/CD 协作]]。

@@ -5,7 +5,7 @@ tags:
   - IaC/terraform
 date: 2026-10-02
 sources:
-  - "[[IaC/terraform/terraform-docs]]"
+  - "[[IaC/terraform/15_terraform_模块文档生成]]"
 aliases:
   - "Terraformterraform-docs 模块文档生成摘要"
 ---
@@ -14,7 +14,7 @@ aliases:
 
 ## 元信息
 
-- **原始文档**：[[IaC/terraform/terraform-docs]]
+- **原始文档**：[[IaC/terraform/15_terraform_模块文档生成]]
 - **领域**：IaC / Terraform
 - **摄入日期**：2026-10-02
 - **更新日期**：2026-10-02

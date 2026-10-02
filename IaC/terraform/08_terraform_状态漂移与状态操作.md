@@ -1,5 +1,5 @@
 ---
-title: Terraform基础-State、漂移与状态操作
+title: 08_terraform_状态漂移与状态操作
 tags:
   - IaC
   - terraform
@@ -10,7 +10,7 @@ aliases:
   - Terraform状态与漂移
 ---
 
-# Terraform基础-State、漂移与状态操作
+# 08_terraform_状态漂移与状态操作
 
 ## State 不是基础设施的备份
 
@@ -55,7 +55,7 @@ State 是上次已知记录，实际资源可能已被手工修改。普通 plan
 
 ## 本地漂移实验
 
-使用 [[IaC/terraform/terraform-basics|第一个项目]] 的 `local_file.hello` 配置，先完成创建。
+使用 [[IaC/terraform/01_terraform_基础概念与第一个项目|第一个项目]] 的 `local_file.hello` 配置，先完成创建。
 
 ### 1. 确认基线
 
@@ -181,7 +181,7 @@ terraform state rm -dry-run local_file.hello
 
 预期列出当前实验文件的绑定，不会删除文件，也不会忘记它。如果匹配范围超出预期，应先修正地址；正式的 state rm 会直接修改状态，没有普通 plan/apply 的审查阶段。
 
-因此 state rm 不是解决权限失败或不明 drift 的通用方法。希望退出管理时，优先用可 review 的 `removed { lifecycle { destroy = false } }`，见 [[IaC/terraform/terraform-import-refactoring|导入与重构]]。
+因此 state rm 不是解决权限失败或不明 drift 的通用方法。希望退出管理时，优先用可 review 的 `removed { lifecycle { destroy = false } }`，见 [[IaC/terraform/11_terraform_资源导入与重构|导入与重构]]。
 
 ## 为什么同一个对象不能被两份 State 管理
 
@@ -197,7 +197,7 @@ terraform state rm -dry-run local_file.hello
 
 把 JSON 文件放进 Git 不是可靠的共享方式：Git merge 不能代替运行锁，历史里还会永久保存敏感值。发给同事一份文件也不能保证两个人运行时使用同一份最新状态。
 
-远程 Backend 的存储、权限、版本恢复和锁定设计见 [[IaC/terraform/terraform-backends-workspaces|Backend 与 Workspace]]。
+远程 Backend 的存储、权限、版本恢复和锁定设计见 [[IaC/terraform/09_terraform_后端工作空间与多环境|Backend 与 Workspace]]。
 
 ## 敏感数据会出现在哪里
 
@@ -249,4 +249,4 @@ terraform apply destroy.tfplan
 - [CLI Workspace 的状态位置](https://developer.hashicorp.com/terraform/cli/workspaces)
 - [Local Provider 的文件行为](https://registry.terraform.io/providers/hashicorp/local/latest/docs/resources/file)
 
-上一篇：[[IaC/terraform/terraform-count-for-each|count 与 for_each]] · 下一篇：[[IaC/terraform/terraform-backends-workspaces|Backend 与多环境]]。
+上一篇：[[IaC/terraform/07_terraform_循环与批量资源|count 与 for_each]] · 下一篇：[[IaC/terraform/09_terraform_后端工作空间与多环境|Backend 与多环境]]。

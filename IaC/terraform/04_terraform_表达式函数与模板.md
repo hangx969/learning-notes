@@ -1,5 +1,5 @@
 ---
-title: Terraform基础-表达式、函数与模板
+title: 04_terraform_表达式函数与模板
 tags:
   - IaC
   - terraform
@@ -10,7 +10,7 @@ aliases:
   - Terraform函数与模板
 ---
 
-# Terraform基础-表达式、函数与模板
+# 04_terraform_表达式函数与模板
 
 ## 表达式解决什么问题
 
@@ -237,7 +237,7 @@ terraform output replicas
 cat deployment.yaml
 ```
 
-预期文件中的副本数变成 3，environment 标签也变为 prod。`local_file` 因 content 变化被替换，这仍然只是生成本地文件；集群部署见 [[IaC/terraform/terraform-container-management|容器管理实战]]。
+预期文件中的副本数变成 3，environment 标签也变为 prod。`local_file` 因 content 变化被替换，这仍然只是生成本地文件；集群部署见 [[IaC/terraform/14_terraform_容器管理实战|容器管理实战]]。
 
 `yamldecode` 解析一个 YAML 文档，不能直接把包含多个 `---` 文档的文件当成单个 manifest。应用多份资源时应显式拆分和管理各个对象。
 
@@ -380,4 +380,4 @@ variable "port_mappings" {
 - [yamldecode](https://developer.hashicorp.com/terraform/language/functions/yamldecode)
 - [dynamic blocks](https://developer.hashicorp.com/terraform/language/expressions/dynamic-blocks)
 
-上一篇：[[IaC/terraform/terraform-variables-outputs|变量与输出]] · 下一篇：[[IaC/terraform/terraform-providers|Provider、版本与认证]]。
+上一篇：[[IaC/terraform/03_terraform_变量与输出|变量与输出]] · 下一篇：[[IaC/terraform/05_terraform_提供者版本与认证|Provider、版本与认证]]。

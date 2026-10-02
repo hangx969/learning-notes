@@ -22,36 +22,36 @@ aliases:
 
 | 顺序 | 文章 | 学完应该能做到 |
 |---|---|---|
-| 01 | [[IaC/terraform/terraform-basics\|基础概念与第一个项目]] | 解释配置、State、真实资源的关系，完成创建、修改、删除流程 |
-| 02 | [[IaC/terraform/terraform-hcl\|HCL 语法与配置文件]] | 读懂 block、argument、类型和引用，正确拆分 `.tf` 文件 |
-| 03 | [[IaC/terraform/terraform-variables-outputs\|变量、locals 与 outputs]] | 参数化配置，区分声明与赋值，理解输入优先级和敏感值 |
-| 04 | [[IaC/terraform/terraform-expressions\|表达式、函数与模板]] | 用条件、for 表达式、函数和模板生成配置 |
-| 05 | [[IaC/terraform/terraform-providers\|Provider、版本与认证]] | 区分版本约束和锁文件，配置认证、别名与 Azure 中国区实验 |
+| 01 | [[IaC/terraform/01_terraform_基础概念与第一个项目\|01_terraform_基础概念与第一个项目]] | 解释配置、State、真实资源的关系，完成创建、修改、删除流程 |
+| 02 | [[IaC/terraform/02_terraform_配置语法与文件结构\|02_terraform_配置语法与文件结构]] | 读懂 block、argument、类型和引用，正确拆分 `.tf` 文件 |
+| 03 | [[IaC/terraform/03_terraform_变量与输出\|03_terraform_变量与输出]] | 参数化配置，区分声明与赋值，理解输入优先级和敏感值 |
+| 04 | [[IaC/terraform/04_terraform_表达式函数与模板\|04_terraform_表达式函数与模板]] | 用条件、for 表达式、函数和模板生成配置 |
+| 05 | [[IaC/terraform/05_terraform_提供者版本与认证\|05_terraform_提供者版本与认证]] | 区分版本约束和锁文件，配置认证、别名与 Azure 中国区实验 |
 
 ### 第二阶段：理解资源如何变更
 
 | 顺序 | 文章 | 学完应该能做到 |
 |---|---|---|
-| 06 | [[IaC/terraform/terraform-resources-dependencies\|Resource、Data Source 与依赖]] | 区分资源所有权和查询，解释依赖图、生命周期与 provisioner 的边界 |
-| 07 | [[IaC/terraform/terraform-count-for-each\|count 与 for_each]] | 批量管理资源，识别索引变化和 key 变化造成的重建 |
-| 08 | [[IaC/terraform/terraform-state\|State、漂移与状态操作]] | 观察漂移，区分修改配置、刷新状态、移除管理和删除资源 |
-| 09 | [[IaC/terraform/terraform-backends-workspaces\|Backend、Workspace 与多环境]] | 迁移远程状态，解释状态锁，设计 dev/prod 的隔离方式 |
+| 06 | [[IaC/terraform/06_terraform_资源数据源与依赖\|06_terraform_资源数据源与依赖]] | 区分资源所有权和查询，解释依赖图、生命周期与 provisioner 的边界 |
+| 07 | [[IaC/terraform/07_terraform_循环与批量资源\|07_terraform_循环与批量资源]] | 批量管理资源，识别索引变化和 key 变化造成的重建 |
+| 08 | [[IaC/terraform/08_terraform_状态漂移与状态操作\|08_terraform_状态漂移与状态操作]] | 观察漂移，区分修改配置、刷新状态、移除管理和删除资源 |
+| 09 | [[IaC/terraform/09_terraform_后端工作空间与多环境\|09_terraform_后端工作空间与多环境]] | 迁移远程状态，解释状态锁，设计 dev/prod 的隔离方式 |
 
 ### 第三阶段：组织和维护实际项目
 
 | 顺序 | 文章 | 学完应该能做到 |
 |---|---|---|
-| 10 | [[IaC/terraform/terraform-modules\|Module 开发与复用]] | 编写有清晰输入输出的模块，正确传递 Provider 和固定模块版本 |
-| 11 | [[IaC/terraform/terraform-import-refactoring\|Import、moved 与 removed]] | 纳管已有资源，在改名或拆模块时保留资源身份 |
-| 12 | [[IaC/terraform/terraform-workflow-troubleshooting\|工作流、Plan 阅读与排错]] | 审查变更计划，理解保存计划、失败恢复和常用诊断命令 |
-| 13 | [[IaC/terraform/terraform-testing-cicd\|测试与 CI/CD 协作]] | 区分检查层级，编写原生测试，处理 Plan 退出码和审批后的执行 |
+| 10 | [[IaC/terraform/10_terraform_模块开发与复用\|10_terraform_模块开发与复用]] | 编写有清晰输入输出的模块，正确传递 Provider 和固定模块版本 |
+| 11 | [[IaC/terraform/11_terraform_资源导入与重构\|11_terraform_资源导入与重构]] | 纳管已有资源，在改名或拆模块时保留资源身份 |
+| 12 | [[IaC/terraform/12_terraform_工作流计划阅读与排错\|12_terraform_工作流计划阅读与排错]] | 审查变更计划，理解保存计划、失败恢复和常用诊断命令 |
+| 13 | [[IaC/terraform/13_terraform_测试与持续集成交付\|13_terraform_测试与持续集成交付]] | 区分检查层级，编写原生测试，处理 Plan 退出码和审批后的执行 |
 
 ### 第四阶段：扩展实战
 
 | 顺序 | 文章 | 学完应该能做到 |
 |---|---|---|
-| 14 | [[IaC/terraform/terraform-container-management\|Docker、Kubernetes、Helm 与 Nomad]] | 将基础知识用于容器资源，明确认证和多工具资源所有权 |
-| 15 | [[IaC/terraform/terraform-docs\|terraform-docs 模块文档生成]] | 生成模块接口文档，并保留人工编写的设计说明 |
+| 14 | [[IaC/terraform/14_terraform_容器管理实战\|14_terraform_容器管理实战]] | 将基础知识用于容器资源，明确认证和多工具资源所有权 |
+| 15 | [[IaC/terraform/15_terraform_模块文档生成\|15_terraform_模块文档生成]] | 生成模块接口文档，并保留人工编写的设计说明 |
 
 ## 实验环境和版本约定
 
@@ -130,6 +130,6 @@ terraform-labs/
 - 为什么把资源移动到模块里，要先处理地址迁移？
 - 一个 Helm Release 和它创建的 Deployment，应该由几个工具负责期望状态？
 
-下一篇：[[IaC/terraform/terraform-basics|Terraform 基础概念与第一个项目]]。
+下一篇：[[IaC/terraform/01_terraform_基础概念与第一个项目|Terraform 基础概念与第一个项目]]。
 
 知识层导航：[[KnowledgeBase/maps/terraform-map|Terraform 主题地图]] · [[KnowledgeBase/entities/Terraform|Terraform 实体页]]。

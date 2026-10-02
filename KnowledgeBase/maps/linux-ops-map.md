@@ -14,7 +14,7 @@ sources:
   - "[[Linux-Shell/shell-scripts]]"
   - "[[Linux-Shell/开源堡垒机jumpserver部署]]"
   - "[[Linux-Shell/ansible安装-rockylinux8]]"
-  - "[[terraform-basics]]"
+  - "[[IaC/terraform/01_terraform_基础概念与第一个项目]]"
   - "[[Python/python-运维开发/python-Linux-operation]]"
   - "[[Linux-Shell/Ubuntu基础操作]]"
   - "[[Linux-Shell/Ubuntu部署vftpd]]"
@@ -69,7 +69,7 @@ sources:
 
 ### 自动化运维工具
 14. [[Linux-Shell/ansible安装-rockylinux8|ansible安装-rockylinux8]] — Ansible
-15. [[terraform-basics|terraform-basics]] — Terraform
+15. [[IaC/terraform/01_terraform_基础概念与第一个项目|terraform-basics]] — Terraform
 16. [[Python/python-运维开发/python-Linux-operation|python-Linux-operation]] — Python 运维
 
 ### Ubuntu 专题

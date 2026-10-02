@@ -5,7 +5,7 @@ tags:
   - IaC/terraform
 date: 2026-10-02
 sources:
-  - "[[IaC/terraform/terraform-container-management]]"
+  - "[[IaC/terraform/14_terraform_容器管理实战]]"
 aliases:
   - Terraform容器管理摘要
   - "TerraformDocker、Kubernetes、Helm 与 Nomad摘要"
@@ -15,7 +15,7 @@ aliases:
 
 ## 元信息
 
-- **原始文档**：[[IaC/terraform/terraform-container-management]]
+- **原始文档**：[[IaC/terraform/14_terraform_容器管理实战]]
 - **领域**：IaC / Terraform
 - **摄入日期**：2026-05-04
 - **更新日期**：2026-10-02

@@ -94,8 +94,8 @@ sources:
   - "[[Docker-Kubernetes/k8s-CICD/Gitlab/k8s部署Gitlab(11.8.1)-基于yaml]]"
   - "[[Docker-Kubernetes/k8s-CICD/Tekton/基于Tekton的云原生平台落地]]"
   - "[[Docker-Kubernetes/k8s-CICD/Tekton/k8s部署原生的CICD工具Tekton-基于yaml]]"
-  - "[[IaC/terraform/terraform-basics]]"
-  - "[[IaC/terraform/terraform-docs]]"
+  - "[[IaC/terraform/01_terraform_基础概念与第一个项目]]"
+  - "[[IaC/terraform/15_terraform_模块文档生成]]"
   - "[[Linux-Shell/ansible安装-rockylinux8]]"
   - "[[Azure/2_AKS-basics]]"
   - "[[Azure/0_Azure-VM-VMSS]]"
@@ -410,9 +410,9 @@ sources:
 **学习入口：** [[IaC/terraform/README|Terraform 基础系列学习路线]]（15 篇正文 + 导航）
 
 - [[KnowledgeBase/maps/terraform-map|Terraform 主题地图]]：语言、资源身份、状态、模块和协作的连续学习路径。
-- [[IaC/terraform/terraform-basics|基础与第一个项目]]：本地实验入口。
-- [[IaC/terraform/terraform-container-management|容器管理]]：Docker、Kubernetes、Helm、Nomad 扩展实战。
-- [[IaC/terraform/terraform-docs|terraform-docs]]：模块接口文档生成。
+- [[IaC/terraform/01_terraform_基础概念与第一个项目|基础与第一个项目]]：本地实验入口。
+- [[IaC/terraform/14_terraform_容器管理实战|容器管理]]：Docker、Kubernetes、Helm、Nomad 扩展实战。
+- [[IaC/terraform/15_terraform_模块文档生成|terraform-docs]]：模块接口文档生成。
 
 **实体页：** [[KnowledgeBase/entities/Terraform|Terraform]]
 

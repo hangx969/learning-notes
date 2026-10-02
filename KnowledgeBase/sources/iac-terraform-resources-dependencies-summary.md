@@ -5,7 +5,7 @@ tags:
   - IaC/terraform
 date: 2026-10-02
 sources:
-  - "[[IaC/terraform/terraform-resources-dependencies]]"
+  - "[[IaC/terraform/06_terraform_资源数据源与依赖]]"
 aliases:
   - "TerraformResource、Data Source 与依赖摘要"
 ---
@@ -14,7 +14,7 @@ aliases:
 
 ## 元信息
 
-- **原始文档**：[[IaC/terraform/terraform-resources-dependencies]]
+- **原始文档**：[[IaC/terraform/06_terraform_资源数据源与依赖]]
 - **领域**：IaC / Terraform
 - **摄入日期**：2026-10-02
 - **更新日期**：2026-10-02

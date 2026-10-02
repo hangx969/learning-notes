@@ -5,10 +5,10 @@ tags:
   - IaC/terraform
 date: 2026-10-02
 sources:
-  - "[[IaC/terraform/terraform-modules]]"
-  - "[[IaC/terraform/terraform-providers]]"
-  - "[[IaC/terraform/terraform-import-refactoring]]"
-  - "[[IaC/terraform/terraform-docs]]"
+  - "[[IaC/terraform/10_terraform_模块开发与复用]]"
+  - "[[IaC/terraform/05_terraform_提供者版本与认证]]"
+  - "[[IaC/terraform/11_terraform_资源导入与重构]]"
+  - "[[IaC/terraform/15_terraform_模块文档生成]]"
 aliases:
   - "Terraform Module概念"
 ---
@@ -33,10 +33,10 @@ Terraform 模块化把一组相关配置组织成具有输入、输出和版本�
 
 ## 在本仓库中的覆盖
 
-- [[IaC/terraform/terraform-modules|Module 开发与复用]]：覆盖该概念的定义、配置或维护步骤。
-- [[IaC/terraform/terraform-providers|Provider、版本与认证]]：覆盖该概念的定义、配置或维护步骤。
-- [[IaC/terraform/terraform-import-refactoring|Import、moved 与 removed]]：覆盖该概念的定义、配置或维护步骤。
-- [[IaC/terraform/terraform-docs|terraform-docs 模块文档生成]]：覆盖该概念的定义、配置或维护步骤。
+- [[IaC/terraform/10_terraform_模块开发与复用|Module 开发与复用]]：覆盖该概念的定义、配置或维护步骤。
+- [[IaC/terraform/05_terraform_提供者版本与认证|Provider、版本与认证]]：覆盖该概念的定义、配置或维护步骤。
+- [[IaC/terraform/11_terraform_资源导入与重构|Import、moved 与 removed]]：覆盖该概念的定义、配置或维护步骤。
+- [[IaC/terraform/15_terraform_模块文档生成|terraform-docs 模块文档生成]]：覆盖该概念的定义、配置或维护步骤。
 
 ## 知识空白
 

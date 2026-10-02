@@ -1,5 +1,5 @@
 ---
-title: Terraform基础-Backend、Workspace 与多环境
+title: 09_terraform_后端工作空间与多环境
 tags:
   - IaC
   - terraform
@@ -10,7 +10,7 @@ aliases:
   - Terraform多环境管理
 ---
 
-# Terraform基础-Backend、Workspace 与多环境
+# 09_terraform_后端工作空间与多环境
 
 ## Backend 与 Provider 的区别
 
@@ -55,7 +55,7 @@ terraform {
 
 前提：
 
-1. 已有用于 State 的 Storage Account 和 Blob container；已按 [[IaC/terraform/terraform-providers|Azure 中国区认证]] 登录目标 cloud，Backend 要访问的存储账号可以与资源所在订阅不同。
+1. 已有用于 State 的 Storage Account 和 Blob container；已按 [[IaC/terraform/05_terraform_提供者版本与认证|Azure 中国区认证]] 登录目标 cloud，Backend 要访问的存储账号可以与资源所在订阅不同。
 2. 当前身份能访问它，使用 Entra ID 认证时具有相应的 Blob 数据权限，例如适当 scope 的 `Storage Blob Data Contributor`。
 3. 已明确状态 key 和 cloud environment；中国区与全球区 endpoint 不同。
 
@@ -282,4 +282,4 @@ infrastructure/
 - [删除 CLI Workspace](https://developer.hashicorp.com/terraform/cli/commands/workspace/delete)
 - [force-unlock](https://developer.hashicorp.com/terraform/cli/commands/force-unlock)
 
-上一篇：[[IaC/terraform/terraform-state|State]] · 下一篇：[[IaC/terraform/terraform-modules|Module 开发与复用]]。
+上一篇：[[IaC/terraform/08_terraform_状态漂移与状态操作|State]] · 下一篇：[[IaC/terraform/10_terraform_模块开发与复用|Module 开发与复用]]。

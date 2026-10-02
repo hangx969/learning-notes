@@ -5,7 +5,7 @@ tags:
   - IaC/terraform
 date: 2026-10-02
 sources:
-  - "[[IaC/terraform/terraform-state]]"
+  - "[[IaC/terraform/08_terraform_状态漂移与状态操作]]"
 aliases:
   - "TerraformState、漂移与状态操作摘要"
 ---
@@ -14,7 +14,7 @@ aliases:
 
 ## 元信息
 
-- **原始文档**：[[IaC/terraform/terraform-state]]
+- **原始文档**：[[IaC/terraform/08_terraform_状态漂移与状态操作]]
 - **领域**：IaC / Terraform
 - **摄入日期**：2026-10-02
 - **更新日期**：2026-10-02

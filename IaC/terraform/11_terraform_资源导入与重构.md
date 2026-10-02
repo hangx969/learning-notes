@@ -1,5 +1,5 @@
 ---
-title: Terraform基础-Import、moved 与 removed
+title: 11_terraform_资源导入与重构
 tags:
   - IaC
   - terraform
@@ -10,7 +10,7 @@ aliases:
   - Terraform资源重构
 ---
 
-# Terraform基础-Import、moved 与 removed
+# 11_terraform_资源导入与重构
 
 ## 先区分三种意图
 
@@ -30,7 +30,7 @@ Data Source 可以查询已有对象，但不会因为读取它就自动承担�
 
 ## Azure Resource Group 导入实验
 
-使用自己有权限的独立实验订阅和资源组。先完成 [[IaC/terraform/terraform-providers|Azure 中国区认证]]，不要导入已经由另一份 State 或其他自动化系统负责的对象。
+使用自己有权限的独立实验订阅和资源组。先完成 [[IaC/terraform/05_terraform_提供者版本与认证|Azure 中国区认证]]，不要导入已经由另一份 State 或其他自动化系统负责的对象。
 
 ### 1. 明确已有对象
 
@@ -166,7 +166,7 @@ terraform plan -var-file=import.tfvars -generate-config-out=generated_resources.
 
 ## moved：保留对象的地址重命名
 
-假设已经创建了 [[IaC/terraform/terraform-basics|本地文件实验]] 中的 `local_file.hello`。现在要把逻辑名改为 greeting，实际 filename/content 保持一致。
+假设已经创建了 [[IaC/terraform/01_terraform_基础概念与第一个项目|本地文件实验]] 中的 `local_file.hello`。现在要把逻辑名改为 greeting，实际 filename/content 保持一致。
 
 替换原 resource，更新 output，并补充 moved 块：
 
@@ -251,7 +251,7 @@ terraform state list
 
 ## 跨 State 移交
 
-`moved` 描述同一份 State 内的地址迁移，不把对象绑定自动搬到另一个 Backend 或 Workspace。移动整个 State 存储位置使用 [[IaC/terraform/terraform-backends-workspaces|Backend 迁移]]；拆分其中某些对象的所有权才属于这里的跨 State 移交。
+`moved` 描述同一份 State 内的地址迁移，不把对象绑定自动搬到另一个 Backend 或 Workspace。移动整个 State 存储位置使用 [[IaC/terraform/09_terraform_后端工作空间与多环境|Backend 迁移]]；拆分其中某些对象的所有权才属于这里的跨 State 移交。
 
 跨项目移交需要协作流程：
 
@@ -303,4 +303,4 @@ az group exists --name rg-learning-import
 - [state mv](https://developer.hashicorp.com/terraform/cli/commands/state/mv)
 - [Azure CLI 资源组命令](https://learn.microsoft.com/en-us/cli/azure/group)
 
-上一篇：[[IaC/terraform/terraform-modules|Module]] · 下一篇：[[IaC/terraform/terraform-workflow-troubleshooting|Plan 阅读与排错]]。
+上一篇：[[IaC/terraform/10_terraform_模块开发与复用|Module]] · 下一篇：[[IaC/terraform/12_terraform_工作流计划阅读与排错|Plan 阅读与排错]]。

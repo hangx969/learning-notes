@@ -5,10 +5,10 @@ tags:
   - IaC/terraform
 date: 2026-10-02
 sources:
-  - "[[IaC/terraform/terraform-state]]"
-  - "[[IaC/terraform/terraform-backends-workspaces]]"
-  - "[[IaC/terraform/terraform-import-refactoring]]"
-  - "[[IaC/terraform/terraform-count-for-each]]"
+  - "[[IaC/terraform/08_terraform_状态漂移与状态操作]]"
+  - "[[IaC/terraform/09_terraform_后端工作空间与多环境]]"
+  - "[[IaC/terraform/11_terraform_资源导入与重构]]"
+  - "[[IaC/terraform/07_terraform_循环与批量资源]]"
 aliases:
   - "Terraform状态概念"
 ---
@@ -33,10 +33,10 @@ Terraform 状态管理维护配置地址与实际对象之间的绑定，以及�
 
 ## 在本仓库中的覆盖
 
-- [[IaC/terraform/terraform-state|State、漂移与状态操作]]：覆盖该概念的定义、配置或维护步骤。
-- [[IaC/terraform/terraform-backends-workspaces|Backend、Workspace 与多环境]]：覆盖该概念的定义、配置或维护步骤。
-- [[IaC/terraform/terraform-import-refactoring|Import、moved 与 removed]]：覆盖该概念的定义、配置或维护步骤。
-- [[IaC/terraform/terraform-count-for-each|count 与 for_each]]：覆盖该概念的定义、配置或维护步骤。
+- [[IaC/terraform/08_terraform_状态漂移与状态操作|State、漂移与状态操作]]：覆盖该概念的定义、配置或维护步骤。
+- [[IaC/terraform/09_terraform_后端工作空间与多环境|Backend、Workspace 与多环境]]：覆盖该概念的定义、配置或维护步骤。
+- [[IaC/terraform/11_terraform_资源导入与重构|Import、moved 与 removed]]：覆盖该概念的定义、配置或维护步骤。
+- [[IaC/terraform/07_terraform_循环与批量资源|count 与 for_each]]：覆盖该概念的定义、配置或维护步骤。
 
 ## 知识空白
 

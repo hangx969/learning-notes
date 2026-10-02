@@ -5,7 +5,7 @@ tags:
   - IaC/terraform
 date: 2026-10-02
 sources:
-  - "[[IaC/terraform/terraform-testing-cicd]]"
+  - "[[IaC/terraform/13_terraform_测试与持续集成交付]]"
 aliases:
   - "Terraform测试与 CI/CD 协作摘要"
 ---
@@ -14,7 +14,7 @@ aliases:
 
 ## 元信息
 
-- **原始文档**：[[IaC/terraform/terraform-testing-cicd]]
+- **原始文档**：[[IaC/terraform/13_terraform_测试与持续集成交付]]
 - **领域**：IaC / Terraform
 - **摄入日期**：2026-10-02
 - **更新日期**：2026-10-02

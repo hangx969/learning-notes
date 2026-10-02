@@ -1,5 +1,5 @@
 ---
-title: Terraform基础-Provider、版本与认证
+title: 05_terraform_提供者版本与认证
 tags:
   - IaC
   - terraform
@@ -11,7 +11,7 @@ aliases:
   - Terraform版本锁定
 ---
 
-# Terraform基础-Provider、版本与认证
+# 05_terraform_提供者版本与认证
 
 ## Core 与 Provider 分工
 
@@ -97,7 +97,7 @@ terraform providers lock -platform=darwin_arm64 -platform=linux_amd64
 
 认证成功也不意味着授权足够。资源读取、创建、删除与 State Backend 的数据访问，可能需要不同权限。
 
-Provider 块中的认证参数不会自动成为 Backend 配置。即使 AzureRM Provider 和 Azure Blob Backend 都能读取某些 `ARM_*` 环境变量，它们仍各自建立连接、检查自己的权限；在 `terraform init` 阶段出现的状态存储错误，应先检查 [[IaC/terraform/terraform-backends-workspaces|Backend 认证]]。
+Provider 块中的认证参数不会自动成为 Backend 配置。即使 AzureRM Provider 和 Azure Blob Backend 都能读取某些 `ARM_*` 环境变量，它们仍各自建立连接、检查自己的权限；在 `terraform init` 阶段出现的状态存储错误，应先检查 [[IaC/terraform/09_terraform_后端工作空间与多环境|Backend 认证]]。
 
 ## Azure 中国区：完整资源组实验
 
@@ -248,7 +248,7 @@ resource "azurerm_resource_group" "secondary" {
 - 没写 `provider` 的资源通常使用默认配置。
 - 写 `provider = azurerm.secondary` 的资源使用别名配置，引用不是字符串。
 - 如果所有 provider 块都有 alias，Terraform 会产生一个隐含的空默认配置；资源误用默认配置时可能缺少必需参数。
-- 子模块可继承默认 Provider，别名通常要显式传递；子模块声明别名接口用 `configuration_aliases`，见 [[IaC/terraform/terraform-modules|Module]]。
+- 子模块可继承默认 Provider，别名通常要显式传递；子模块声明别名接口用 `configuration_aliases`，见 [[IaC/terraform/10_terraform_模块开发与复用|Module]]。
 
 ## 常见排错方向
 
@@ -281,4 +281,4 @@ resource "azurerm_resource_group" "secondary" {
 - [Azure CLI 认证](https://registry.terraform.io/providers/hashicorp/azurerm/4.0.0/docs/guides/azure_cli)
 - [Resource Group](https://registry.terraform.io/providers/hashicorp/azurerm/4.0.0/docs/resources/resource_group)
 
-上一篇：[[IaC/terraform/terraform-expressions|表达式与模板]] · 下一篇：[[IaC/terraform/terraform-resources-dependencies|Resource、Data Source 与依赖]]。
+上一篇：[[IaC/terraform/04_terraform_表达式函数与模板|表达式与模板]] · 下一篇：[[IaC/terraform/06_terraform_资源数据源与依赖|Resource、Data Source 与依赖]]。

@@ -1,5 +1,5 @@
 ---
-title: Terraform基础-Docker、Kubernetes、Helm 与 Nomad
+title: 14_terraform_容器管理实战
 original_source: "https://mp.weixin.qq.com/s/b6pkgOpHn2tbEaBpOniyWw"
 original_author: Hank
 created: 2026-04-23
@@ -15,7 +15,7 @@ aliases:
   - Terraform Container Management
 ---
 
-# Terraform基础-Docker、Kubernetes、Helm 与 Nomad
+# 14_terraform_容器管理实战
 
 ## 先确定 Terraform 管理哪一层
 
@@ -744,4 +744,4 @@ nomad job status learning-web
 
 相关原理：[[Docker-Kubernetes/k8s-basic-resources/k8s基础-deployment|Deployment]]、[[Docker-Kubernetes/k8s-basic-resources/k8s基础-认证-授权-准入|Kubernetes 认证授权]]。
 
-上一篇：[[IaC/terraform/terraform-testing-cicd|测试与协作]] · 下一篇：[[IaC/terraform/terraform-docs|模块文档生成]]。
+上一篇：[[IaC/terraform/13_terraform_测试与持续集成交付|测试与协作]] · 下一篇：[[IaC/terraform/15_terraform_模块文档生成|模块文档生成]]。

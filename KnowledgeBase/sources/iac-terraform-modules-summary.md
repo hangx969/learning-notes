@@ -5,7 +5,7 @@ tags:
   - IaC/terraform
 date: 2026-10-02
 sources:
-  - "[[IaC/terraform/terraform-modules]]"
+  - "[[IaC/terraform/10_terraform_模块开发与复用]]"
 aliases:
   - "TerraformModule 开发与复用摘要"
 ---
@@ -14,7 +14,7 @@ aliases:
 
 ## 元信息
 
-- **原始文档**：[[IaC/terraform/terraform-modules]]
+- **原始文档**：[[IaC/terraform/10_terraform_模块开发与复用]]
 - **领域**：IaC / Terraform
 - **摄入日期**：2026-10-02
 - **更新日期**：2026-10-02

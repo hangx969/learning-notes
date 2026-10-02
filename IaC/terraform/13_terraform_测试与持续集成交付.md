@@ -1,5 +1,5 @@
 ---
-title: Terraform基础-测试与 CI/CD 协作
+title: 13_terraform_测试与持续集成交付
 tags:
   - IaC
   - terraform
@@ -11,7 +11,7 @@ aliases:
   - Terraform CI/CD
 ---
 
-# Terraform基础-测试与 CI/CD 协作
+# 13_terraform_测试与持续集成交付
 
 ## 检查分几层
 
@@ -36,7 +36,7 @@ Terraform 1.6+ 提供原生测试框架，1.7+ 提供 Provider/resource/data sou
 
 ## 给 app-config 模块写测试
 
-使用 [[IaC/terraform/terraform-modules|Module 实验]] 中的 `modules/app-config`。在该子模块中创建：
+使用 [[IaC/terraform/10_terraform_模块开发与复用|Module 实验]] 中的 `modules/app-config`。在该子模块中创建：
 
 ```text
 modules/app-config/
@@ -271,4 +271,4 @@ PR 的格式/mock 测试通常不需要真实云凭证。需要真实读取权�
 - [执行保存计划](https://developer.hashicorp.com/terraform/cli/commands/apply)
 - [GitHub Actions 并发控制](https://docs.github.com/en/actions/how-tos/write-workflows/choose-when-workflows-run/control-workflow-concurrency)
 
-上一篇：[[IaC/terraform/terraform-workflow-troubleshooting|工作流与排错]] · 下一篇：[[IaC/terraform/terraform-container-management|容器管理实战]]。
+上一篇：[[IaC/terraform/12_terraform_工作流计划阅读与排错|工作流与排错]] · 下一篇：[[IaC/terraform/14_terraform_容器管理实战|容器管理实战]]。

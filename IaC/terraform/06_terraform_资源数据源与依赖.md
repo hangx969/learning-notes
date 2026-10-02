@@ -1,5 +1,5 @@
 ---
-title: Terraform基础-Resource、Data Source 与依赖
+title: 06_terraform_资源数据源与依赖
 tags:
   - IaC
   - terraform
@@ -10,7 +10,7 @@ aliases:
   - Terraform生命周期
 ---
 
-# Terraform基础-Resource、Data Source 与依赖
+# 06_terraform_资源数据源与依赖
 
 ## Resource 表示管理所有权
 
@@ -373,4 +373,4 @@ resource "terraform_data" "message" {
 - [Provisioners](https://developer.hashicorp.com/terraform/language/resources/provisioners/syntax)
 - [Local file 数据源](https://registry.terraform.io/providers/hashicorp/local/latest/docs/data-sources/file)
 
-上一篇：[[IaC/terraform/terraform-providers|Provider]] · 下一篇：[[IaC/terraform/terraform-count-for-each|count 与 for_each]]。
+上一篇：[[IaC/terraform/05_terraform_提供者版本与认证|Provider]] · 下一篇：[[IaC/terraform/07_terraform_循环与批量资源|count 与 for_each]]。

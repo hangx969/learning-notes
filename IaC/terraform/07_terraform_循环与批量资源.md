@@ -1,5 +1,5 @@
 ---
-title: Terraform基础-count与for_each
+title: 07_terraform_循环与批量资源
 tags:
   - IaC
   - terraform
@@ -10,7 +10,7 @@ aliases:
   - Terraform for_each
 ---
 
-# Terraform基础-count与for_each
+# 07_terraform_循环与批量资源
 
 ## 为什么需要批量创建
 
@@ -273,7 +273,7 @@ resource "terraform_data" "summary" {
 
 资源 map 的 key 已由输入服务名确定，因此下游可以按同样的 key 创建逻辑节点，引用则自然建立依赖。
 
-父子模块批量创建时也可用 module 的 for_each：`module.app["web"].file_path`。子模块的 Provider 结构必须兼容此用法，见 [[IaC/terraform/terraform-modules|模块开发]]。
+父子模块批量创建时也可用 module 的 for_each：`module.app["web"].file_path`。子模块的 Provider 结构必须兼容此用法，见 [[IaC/terraform/10_terraform_模块开发与复用|模块开发]]。
 
 ## dynamic 与 for_each 的区别
 
@@ -310,7 +310,7 @@ moved {
 
 `moved` 解决同一 State 内的地址变化，不会取消属性变化本来要求的替换。例如直接把实验一内容换成实验二内容，还新增了 port 文本，文件仍会因 content 改变而替换。纯地址迁移的计划应展示 moved 提示，资源动作保持 `0 to add, 0 to change, 0 to destroy`；确认后 apply 才会将新地址写回 State。
 
-完整流程见 [[IaC/terraform/terraform-import-refactoring|导入与重构]]。
+完整流程见 [[IaC/terraform/11_terraform_资源导入与重构|导入与重构]]。
 
 ## 清理两个实验
 
@@ -340,4 +340,4 @@ terraform state list
 - [one 函数](https://developer.hashicorp.com/terraform/language/functions/one)
 - [模块重构与 moved](https://developer.hashicorp.com/terraform/language/modules/develop/refactoring)
 
-上一篇：[[IaC/terraform/terraform-resources-dependencies|资源与依赖]] · 下一篇：[[IaC/terraform/terraform-state|State 与漂移]]。
+上一篇：[[IaC/terraform/06_terraform_资源数据源与依赖|资源与依赖]] · 下一篇：[[IaC/terraform/08_terraform_状态漂移与状态操作|State 与漂移]]。

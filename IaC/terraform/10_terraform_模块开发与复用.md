@@ -1,5 +1,5 @@
 ---
-title: Terraform基础-Module 开发与复用
+title: 10_terraform_模块开发与复用
 tags:
   - IaC
   - terraform
@@ -10,7 +10,7 @@ aliases:
   - Terraform Module开发
 ---
 
-# Terraform基础-Module 开发与复用
+# 10_terraform_模块开发与复用
 
 ## 什么是模块
 
@@ -232,9 +232,9 @@ cat generated/dev/web.json
 
 资源地址仍是 `module.app["web"].local_file.config`。Local Provider 会因文件内容变化替换该文件资源；这与 `for_each` key 被改名造成地址变化是两种原因，读 Plan 时应分别确认。把 key 从 `web` 改为 `frontend`，则会出现旧模块实例退出、新实例创建。
 
-`moved` 能迁移地址与状态绑定，但不能抵消资源参数变化。本例 `name = each.key` 会同时改变文件路径和内容，即使补了 moved，Local Provider 仍可能要求替换。只有实际对象参数保持兼容时，地址迁移才可能保留原对象；完整方法见下一篇 [[IaC/terraform/terraform-import-refactoring|Import、moved 与 removed]]。
+`moved` 能迁移地址与状态绑定，但不能抵消资源参数变化。本例 `name = each.key` 会同时改变文件路径和内容，即使补了 moved，Local Provider 仍可能要求替换。只有实际对象参数保持兼容时，地址迁移才可能保留原对象；完整方法见下一篇 [[IaC/terraform/11_terraform_资源导入与重构|Import、moved 与 removed]]。
 
-将 environment 改为 `staging` 同样会改变生成路径，但**不会自动换一份 State**。在同一状态下运行，Terraform 会把原路径文件移除并管理新路径文件。此实验只是观察路径变化，多环境项目的执行隔离仍见 [[IaC/terraform/terraform-backends-workspaces|Backend 与多环境]]。
+将 environment 改为 `staging` 同样会改变生成路径，但**不会自动换一份 State**。在同一状态下运行，Terraform 会把原路径文件移除并管理新路径文件。此实验只是观察路径变化，多环境项目的执行隔离仍见 [[IaC/terraform/09_terraform_后端工作空间与多环境|Backend 与多环境]]。
 
 ### 清理实验
 
@@ -340,7 +340,7 @@ terraform {
 }
 ```
 
-根模块声明两份 Azure Provider 配置后，调用端应显式对应到子模块的接口名。以下是映射片段，假定默认配置 `azurerm` 与别名配置 `azurerm.secondary` 已按 [[IaC/terraform/terraform-providers|Provider 别名]] 配置，且 `./modules/dual-subscription` 是实际存在的模块：
+根模块声明两份 Azure Provider 配置后，调用端应显式对应到子模块的接口名。以下是映射片段，假定默认配置 `azurerm` 与别名配置 `azurerm.secondary` 已按 [[IaC/terraform/05_terraform_提供者版本与认证|Provider 别名]] 配置，且 `./modules/dual-subscription` 是实际存在的模块：
 
 ```hcl
 module "dual_subscription" {
@@ -374,7 +374,7 @@ module "dual_subscription" {
 - 改 resource label、for_each key 或模块路径时，提供 `moved` 迁移。
 - 删除输出或改变输入类型可能影响调用者，应作为接口变更审查。
 
-模块文档可以自动生成接口表，但“为什么这样设计”和升级边界仍要人工说明，见 [[IaC/terraform/terraform-docs|terraform-docs]]。
+模块文档可以自动生成接口表，但“为什么这样设计”和升级边界仍要人工说明，见 [[IaC/terraform/15_terraform_模块文档生成|terraform-docs]]。
 
 ## 常见问题
 
@@ -402,4 +402,4 @@ module "dual_subscription" {
 - [Local file 资源行为](https://registry.terraform.io/providers/hashicorp/local/latest/docs/resources/file)
 - [社区目录组织经验](https://github.com/antonbabenko/terraform-best-practices/blob/master/code-structure.md)
 
-上一篇：[[IaC/terraform/terraform-backends-workspaces|Backend 与多环境]] · 下一篇：[[IaC/terraform/terraform-import-refactoring|Import、moved 与 removed]]。
+上一篇：[[IaC/terraform/09_terraform_后端工作空间与多环境|Backend 与多环境]] · 下一篇：[[IaC/terraform/11_terraform_资源导入与重构|Import、moved 与 removed]]。

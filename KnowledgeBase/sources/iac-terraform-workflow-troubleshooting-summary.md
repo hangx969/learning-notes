@@ -5,7 +5,7 @@ tags:
   - IaC/terraform
 date: 2026-10-02
 sources:
-  - "[[IaC/terraform/terraform-workflow-troubleshooting]]"
+  - "[[IaC/terraform/12_terraform_工作流计划阅读与排错]]"
 aliases:
   - "Terraform工作流、Plan 阅读与排错摘要"
 ---
@@ -14,7 +14,7 @@ aliases:
 
 ## 元信息
 
-- **原始文档**：[[IaC/terraform/terraform-workflow-troubleshooting]]
+- **原始文档**：[[IaC/terraform/12_terraform_工作流计划阅读与排错]]
 - **领域**：IaC / Terraform
 - **摄入日期**：2026-10-02
 - **更新日期**：2026-10-02

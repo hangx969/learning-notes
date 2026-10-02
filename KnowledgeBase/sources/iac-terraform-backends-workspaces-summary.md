@@ -5,7 +5,7 @@ tags:
   - IaC/terraform
 date: 2026-10-02
 sources:
-  - "[[IaC/terraform/terraform-backends-workspaces]]"
+  - "[[IaC/terraform/09_terraform_后端工作空间与多环境]]"
 aliases:
   - "TerraformBackend、Workspace 与多环境摘要"
 ---
@@ -14,7 +14,7 @@ aliases:
 
 ## 元信息
 
-- **原始文档**：[[IaC/terraform/terraform-backends-workspaces]]
+- **原始文档**：[[IaC/terraform/09_terraform_后端工作空间与多环境]]
 - **领域**：IaC / Terraform
 - **摄入日期**：2026-10-02
 - **更新日期**：2026-10-02

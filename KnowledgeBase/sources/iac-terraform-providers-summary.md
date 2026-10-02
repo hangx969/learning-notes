@@ -5,7 +5,7 @@ tags:
   - IaC/terraform
 date: 2026-10-02
 sources:
-  - "[[IaC/terraform/terraform-providers]]"
+  - "[[IaC/terraform/05_terraform_提供者版本与认证]]"
 aliases:
   - "TerraformProvider、版本与认证摘要"
 ---
@@ -14,7 +14,7 @@ aliases:
 
 ## 元信息
 
-- **原始文档**：[[IaC/terraform/terraform-providers]]
+- **原始文档**：[[IaC/terraform/05_terraform_提供者版本与认证]]
 - **领域**：IaC / Terraform
 - **摄入日期**：2026-10-02
 - **更新日期**：2026-10-02

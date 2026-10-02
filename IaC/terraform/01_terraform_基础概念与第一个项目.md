@@ -1,5 +1,5 @@
 ---
-title: Terraform基础-概念与第一个项目
+title: 01_terraform_基础概念与第一个项目
 tags:
   - IaC
   - terraform
@@ -10,7 +10,7 @@ aliases:
   - Terraform入门
 ---
 
-# Terraform基础-概念与第一个项目
+# 01_terraform_基础概念与第一个项目
 
 ## 为什么需要基础设施即代码
 
@@ -200,7 +200,7 @@ terraform apply tfplan
 cat hello.txt
 ```
 
-本例 Local Provider 的 `local_file` 对 `content` 变更采用替换，计划中预期出现 `-/+` 和 `forces replacement`，摘要为 `1 to add, 0 to change, 1 to destroy`。这描述的是 Terraform 资源的生命周期动作；不要由“只改了一行文本”推断一定是原地更新。其他资源的更新/替换行为也应查 Provider schema，详见 [[IaC/terraform/terraform-resources-dependencies|资源依赖与生命周期]]。
+本例 Local Provider 的 `local_file` 对 `content` 变更采用替换，计划中预期出现 `-/+` 和 `forces replacement`，摘要为 `1 to add, 0 to change, 1 to destroy`。这描述的是 Terraform 资源的生命周期动作；不要由“只改了一行文本”推断一定是原地更新。其他资源的更新/替换行为也应查 Provider schema，详见 [[IaC/terraform/06_terraform_资源数据源与依赖|资源依赖与生命周期]]。
 
 ### 7. 清理实验
 
@@ -253,4 +253,4 @@ terraform apply destroy.tfplan
 - [Local Provider 2.9.1：文件资源替换规则](https://github.com/hashicorp/terraform-provider-local/blob/v2.9.1/internal/provider/resource_local_file.go)
 - [State 的用途](https://developer.hashicorp.com/terraform/language/state/purpose)
 
-系列目录：[[IaC/terraform/README|学习路线]] · 下一篇：[[IaC/terraform/terraform-hcl|HCL 语法与配置文件]]。
+系列目录：[[IaC/terraform/README|学习路线]] · 下一篇：[[IaC/terraform/02_terraform_配置语法与文件结构|HCL 语法与配置文件]]。

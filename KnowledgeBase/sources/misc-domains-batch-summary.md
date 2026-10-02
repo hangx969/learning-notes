@@ -16,8 +16,8 @@ sources:
   - "[[OS/OS]]"
   - "[[Networking/计算机网络基础]]"
   - "[[Networking/HTTP基础]]"
-  - "[[IaC/terraform/terraform-docs]]"
-  - "[[IaC/terraform/terraform-basics]]"
+  - "[[IaC/terraform/15_terraform_模块文档生成]]"
+  - "[[IaC/terraform/01_terraform_基础概念与第一个项目]]"
   - "[[Git/git-learning]]"
   - "[[Git/Picgo-github图床配置]]"
   - "[[C++/C++LearningNotes]]"
@@ -158,11 +158,11 @@ Kafka 消息队列的核心概念笔记：
 
 ### IaC
 
-#### [[IaC/terraform/terraform-basics|Terraform 基础]]
+#### [[IaC/terraform/01_terraform_基础概念与第一个项目|Terraform 基础]]
 
-2026-10-02 改写为基础概念与本地文件完整实验，解释配置、State、实际对象与 Write → Plan → Apply 工作流。Azure 中国区资源组示例现集中在 [[IaC/terraform/terraform-providers|Provider、版本与认证]]。
+2026-10-02 改写为基础概念与本地文件完整实验，解释配置、State、实际对象与 Write → Plan → Apply 工作流。Azure 中国区资源组示例现集中在 [[IaC/terraform/05_terraform_提供者版本与认证|Provider、版本与认证]]。
 
-#### [[IaC/terraform/terraform-docs|Terraform-docs]]
+#### [[IaC/terraform/15_terraform_模块文档生成|Terraform-docs]]
 
 2026-10-02 补充模块接口提取、README 标记注入、完整配置、Go template 和 CI 一致性检查，并移除旧版废弃配置字段。
 

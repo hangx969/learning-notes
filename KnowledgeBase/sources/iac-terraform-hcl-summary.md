@@ -5,7 +5,7 @@ tags:
   - IaC/terraform
 date: 2026-10-02
 sources:
-  - "[[IaC/terraform/terraform-hcl]]"
+  - "[[IaC/terraform/02_terraform_配置语法与文件结构]]"
 aliases:
   - "TerraformHCL 语法与配置文件摘要"
 ---
@@ -14,7 +14,7 @@ aliases:
 
 ## 元信息
 
-- **原始文档**：[[IaC/terraform/terraform-hcl]]
+- **原始文档**：[[IaC/terraform/02_terraform_配置语法与文件结构]]
 - **领域**：IaC / Terraform
 - **摄入日期**：2026-10-02
 - **更新日期**：2026-10-02

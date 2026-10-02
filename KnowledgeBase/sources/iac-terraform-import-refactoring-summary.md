@@ -5,7 +5,7 @@ tags:
   - IaC/terraform
 date: 2026-10-02
 sources:
-  - "[[IaC/terraform/terraform-import-refactoring]]"
+  - "[[IaC/terraform/11_terraform_资源导入与重构]]"
 aliases:
   - "TerraformImport、moved 与 removed摘要"
 ---
@@ -14,7 +14,7 @@ aliases:
 
 ## 元信息
 
-- **原始文档**：[[IaC/terraform/terraform-import-refactoring]]
+- **原始文档**：[[IaC/terraform/11_terraform_资源导入与重构]]
 - **领域**：IaC / Terraform
 - **摄入日期**：2026-10-02
 - **更新日期**：2026-10-02

@@ -1,5 +1,5 @@
 ---
-title: Terraform基础-terraform-docs 模块文档生成
+title: 15_terraform_模块文档生成
 tags:
   - IaC
   - terraform
@@ -10,7 +10,7 @@ aliases:
   - terraform-docs
 ---
 
-# Terraform基础-terraform-docs 模块文档生成
+# 15_terraform_模块文档生成
 
 ## terraform-docs 做什么
 
@@ -43,7 +43,7 @@ terraform-docs version
 
 ## 先生成到终端
 
-使用 [[IaC/terraform/terraform-modules|模块实验]] 的 app-config：
+使用 [[IaC/terraform/10_terraform_模块开发与复用|模块实验]] 的 app-config：
 
 ```bash
 terraform-docs markdown table ./modules/app-config
@@ -74,7 +74,7 @@ terraform-docs markdown table ./modules/app-config
 说明命名规则、输入约束和地址迁移要求。
 ```
 
-然后创建 `modules/app-config/examples/basic/main.tf`，让用法与 [[IaC/terraform/terraform-modules|模块接口]] 保持一致：
+然后创建 `modules/app-config/examples/basic/main.tf`，让用法与 [[IaC/terraform/10_terraform_模块开发与复用|模块接口]] 保持一致：
 
 ```hcl
 terraform {
@@ -340,4 +340,4 @@ git diff --exit-code -- modules/app-config/README.md
 - [terraform-docs 0.20 Input.GetValue 实现](https://github.com/terraform-docs/terraform-docs/blob/v0.20.0/terraform/input.go)
 - [terraform-docs 0.20 Module 模板接口](https://github.com/terraform-docs/terraform-docs/blob/v0.20.0/terraform/module.go)
 
-上一篇：[[IaC/terraform/terraform-container-management|容器实战]] · 返回：[[IaC/terraform/README|系列学习路线]]。
+上一篇：[[IaC/terraform/14_terraform_容器管理实战|容器实战]] · 返回：[[IaC/terraform/README|系列学习路线]]。

@@ -5,7 +5,7 @@ tags:
   - IaC/terraform
 date: 2026-10-02
 sources:
-  - "[[IaC/terraform/terraform-variables-outputs]]"
+  - "[[IaC/terraform/03_terraform_变量与输出]]"
 aliases:
   - "Terraform变量、locals 与 outputs摘要"
 ---
@@ -14,7 +14,7 @@ aliases:
 
 ## 元信息
 
-- **原始文档**：[[IaC/terraform/terraform-variables-outputs]]
+- **原始文档**：[[IaC/terraform/03_terraform_变量与输出]]
 - **领域**：IaC / Terraform
 - **摄入日期**：2026-10-02
 - **更新日期**：2026-10-02

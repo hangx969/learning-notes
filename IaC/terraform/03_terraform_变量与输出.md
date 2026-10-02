@@ -1,5 +1,5 @@
 ---
-title: Terraform基础-变量、locals 与 outputs
+title: 03_terraform_变量与输出
 tags:
   - IaC
   - terraform
@@ -10,7 +10,7 @@ aliases:
   - Terraform输入输出
 ---
 
-# Terraform基础-变量、locals 与 outputs
+# 03_terraform_变量与输出
 
 ## 三种值各自负责什么
 
@@ -282,7 +282,7 @@ terraform plan -var-file=prod.tfvars
 
 若仍是同一 root module、Backend 和 Workspace，这条命令继续使用同一份 State，可能把开发资源改成生产参数，或者删除旧名称再创建新名称。
 
-环境隔离必须结合独立目录、独立状态 key/Workspace 和凭证设计，见 [[IaC/terraform/terraform-backends-workspaces|Backend 与多环境]]。
+环境隔离必须结合独立目录、独立状态 key/Workspace 和凭证设计，见 [[IaC/terraform/09_terraform_后端工作空间与多环境|Backend 与多环境]]。
 
 ## 清理完整实验
 
@@ -317,4 +317,4 @@ terraform state list
 - [敏感数据处理](https://developer.hashicorp.com/terraform/language/manage-sensitive-data)
 - [terraform output 的敏感值展示规则](https://developer.hashicorp.com/terraform/cli/commands/output)
 
-上一篇：[[IaC/terraform/terraform-hcl|HCL 语法]] · 下一篇：[[IaC/terraform/terraform-expressions|表达式、函数与模板]]。
+上一篇：[[IaC/terraform/02_terraform_配置语法与文件结构|HCL 语法]] · 下一篇：[[IaC/terraform/04_terraform_表达式函数与模板|表达式、函数与模板]]。

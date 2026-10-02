@@ -1,5 +1,5 @@
 ---
-title: Terraform基础-HCL 语法与配置文件
+title: 02_terraform_配置语法与文件结构
 tags:
   - IaC
   - terraform
@@ -10,7 +10,7 @@ aliases:
   - Terraform配置语法
 ---
 
-# Terraform基础-HCL 语法与配置文件
+# 02_terraform_配置语法与文件结构
 
 ## HCL 的基本结构
 
@@ -111,7 +111,7 @@ locals {
 
 `[ ... ]` 与 `{ ... }` 是字面量写法，Terraform 会结合目标类型进行转换。字面量本身可先形成 tuple/object，不能看到方括号就断言它已经是 `list(string)`。
 
-当配置需要稳定 key 时使用 map/object；当顺序重要时使用 list；当只关心不重复的成员集合时使用 set。`for_each` 如何利用 key，见 [[IaC/terraform/terraform-count-for-each|批量资源管理]]。
+当配置需要稳定 key 时使用 map/object；当顺序重要时使用 list；当只关心不重复的成员集合时使用 set。`for_each` 如何利用 key，见 [[IaC/terraform/07_terraform_循环与批量资源|批量资源管理]]。
 
 ### null 与 unknown
 
@@ -264,4 +264,4 @@ terraform console
 - [字符串与模板](https://developer.hashicorp.com/terraform/language/expressions/strings)
 - [Console 命令](https://developer.hashicorp.com/terraform/cli/commands/console)
 
-上一篇：[[IaC/terraform/terraform-basics|基础与第一个项目]] · 下一篇：[[IaC/terraform/terraform-variables-outputs|变量、locals 与 outputs]]。
+上一篇：[[IaC/terraform/01_terraform_基础概念与第一个项目|基础与第一个项目]] · 下一篇：[[IaC/terraform/03_terraform_变量与输出|变量、locals 与 outputs]]。

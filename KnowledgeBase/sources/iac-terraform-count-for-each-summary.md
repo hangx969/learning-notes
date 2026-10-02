@@ -5,7 +5,7 @@ tags:
   - IaC/terraform
 date: 2026-10-02
 sources:
-  - "[[IaC/terraform/terraform-count-for-each]]"
+  - "[[IaC/terraform/07_terraform_循环与批量资源]]"
 aliases:
   - "Terraformcount 与 for_each摘要"
 ---
@@ -14,7 +14,7 @@ aliases:
 
 ## 元信息
 
-- **原始文档**：[[IaC/terraform/terraform-count-for-each]]
+- **原始文档**：[[IaC/terraform/07_terraform_循环与批量资源]]
 - **领域**：IaC / Terraform
 - **摄入日期**：2026-10-02
 - **更新日期**：2026-10-02
