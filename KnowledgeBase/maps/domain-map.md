@@ -64,7 +64,7 @@ sources:
   - "[[OS/OS]]"
   - "[[OS/计算机组成原理]]"
   - "[[Networking/HTTP基础]]"
-  - "[[IaC/terraform-basics]]"
+  - "[[terraform-basics]]"
   - "[[Git/git-learning]]"
   - "[[SoftwareTesting/软件工程基础]]"
   - "[[C++/C++LearningNotes]]"

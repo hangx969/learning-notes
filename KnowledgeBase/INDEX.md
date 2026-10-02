@@ -361,7 +361,7 @@ date: 2026-09-26
 | Middlewares | 3 | 🟠 | [Kafka](../Middlewares/Kafka.md) |
 | OS | 3 | 🟠 | [OS](../OS/OS.md) |
 | Networking | 2 | 🟠 | [计算机网络基础](../Networking/计算机网络基础.md) |
-| IaC | 3 | 🟡 | [terraform-basics](../IaC/terraform-basics.md) |
+| IaC | 3 | 🟡 | [terraform-basics](terraform-basics.md) |
 | Git | 2 | 🟠 | [git-learning](../Git/git-learning.md) |
 | SoftwareTesting | 2 | 🟠 | [软件工程基础](../SoftwareTesting/软件工程基础.md) |
 | C++ | 1 | 🟠 | [C++LearningNotes](../C++/C++LearningNotes.md) |

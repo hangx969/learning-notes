@@ -23,7 +23,7 @@ sources:
   - "[[Docker-Kubernetes/k8s-monitoring-logging/k8s监控alertmanager(v0.14.0)]]"
   - "[[Docker-Kubernetes/k8s-installation-management/etcd高可用配置以及模拟集群故障和恢复]]"
   - "[[Linux-Shell/ansible安装-rockylinux8]]"
-  - "[[IaC/terraform-basics]]"
+  - "[[terraform-basics]]"
   - "[[Python/python-运维开发/python-fabric高级用法]]"
   - "[[Docker-Kubernetes/k8s-security-auth/helm部署trivy-operator]]"
   - "[[Docker-Kubernetes/k8s-security-auth/helm部署kyverno和policy-reporter]]"
@@ -41,8 +41,8 @@ sources:
   - "[[Database/MGR部署MySQL5.7]]"
   - "[[Database/源码安装redis-6.2.6-centos7]]"
 aliases:
-  - "next-writing-suggestions"
-  - "写作建议"
+  - next-writing-suggestions
+  - 写作建议
 ---
 
 # ✏️ 后续写作建议
@@ -120,7 +120,7 @@ aliases:
 
 **与当前仓库的关系：**
 - [[Linux-Shell/ansible安装-rockylinux8|ansible安装-rockylinux8]]
-- [[IaC/terraform-basics|terraform-basics]]
+- [[terraform-basics|terraform-basics]]
 - [[Python/python-运维开发/python-fabric高级用法|python-fabric高级用法]] — 类似工具
 
 **能补上的空白：** 自动化运维工具链中 Ansible 的深度内容

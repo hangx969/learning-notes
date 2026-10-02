@@ -6,7 +6,7 @@ tags:
   - docker-kubernetes/container
 date: 2026-05-04
 sources:
-  - "[[IaC/terraform-container-management]]"
+  - "[[terraform-container-management]]"
 aliases:
   - Terraform容器管理摘要
 ---

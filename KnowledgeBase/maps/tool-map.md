@@ -94,8 +94,8 @@ sources:
   - "[[Docker-Kubernetes/k8s-CICD/Gitlab/k8s部署Gitlab(11.8.1)-基于yaml]]"
   - "[[Docker-Kubernetes/k8s-CICD/Tekton/基于Tekton的云原生平台落地]]"
   - "[[Docker-Kubernetes/k8s-CICD/Tekton/k8s部署原生的CICD工具Tekton-基于yaml]]"
-  - "[[IaC/terraform-basics]]"
-  - "[[IaC/terraform-docs]]"
+  - "[[terraform-basics]]"
+  - "[[terraform-docs]]"
   - "[[Linux-Shell/ansible安装-rockylinux8]]"
   - "[[Azure/2_AKS-basics]]"
   - "[[Azure/0_Azure-VM-VMSS]]"
@@ -407,8 +407,8 @@ sources:
 
 ### Terraform
 **相关文档：**
-- [[IaC/terraform-basics|terraform-basics]] ⭐ 推荐入口
-- [[IaC/terraform-docs|terraform-docs]]
+- [[terraform-basics|terraform-basics]] ⭐ 推荐入口
+- [[terraform-docs|terraform-docs]]
 
 **概念页：** [[KnowledgeBase/entities/Terraform|Terraform]]
 

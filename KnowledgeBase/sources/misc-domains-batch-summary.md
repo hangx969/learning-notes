@@ -16,16 +16,16 @@ sources:
   - "[[OS/OS]]"
   - "[[Networking/计算机网络基础]]"
   - "[[Networking/HTTP基础]]"
-  - "[[IaC/terraform-docs]]"
-  - "[[IaC/terraform-basics]]"
+  - "[[terraform-docs]]"
+  - "[[terraform-basics]]"
   - "[[Git/git-learning]]"
   - "[[Git/Picgo-github图床配置]]"
   - "[[C++/C++LearningNotes]]"
   - "[[SoftwareTesting/软件工程基础]]"
   - "[[SoftwareTesting/软件测试直播课笔记]]"
 aliases:
-  - "杂项领域批量摘要"
-  - "杂项领域摘要"
+  - 杂项领域批量摘要
+  - 杂项领域摘要
 ---
 
 ## 元信息
@@ -158,7 +158,7 @@ Kafka 消息队列的核心概念笔记：
 
 ### IaC
 
-#### [[IaC/terraform-basics|Terraform基础]]
+#### [[terraform-basics|Terraform基础]]
 
 Terraform 入门与实践：
 - Terraform 与 ARM Template/Bicep 的定位对比；基于 Go 语言、HCL 声明式语言
@@ -166,7 +166,7 @@ Terraform 入门与实践：
 - 核心文件结构：main.tf、variable.tf、terraform.tfvars、terraform.tfstate
 - Azure 资源组创建示例（azurerm provider 配置、az login 认证流程）
 
-#### [[IaC/terraform-docs|Terraform-docs]]
+#### [[terraform-docs|Terraform-docs]]
 
 terraform-docs 文档自动生成工具：
 - 用途：为 Terraform Module 自动生成 Markdown 格式的说明文档

@@ -702,9 +702,9 @@ date: 2026-09-29
 
 | 文件 | 标题 | Frontmatter | 双链 |
 |------|------|:-----------:|:----:|
-| [[IaC/terraform-basics\|terraform-basics]] | Terraform 基础 | ✅ | ❌ |
-| [[IaC/terraform-container-management\|terraform-container-management]] | Terraform 容器管理 | ✅ | ❌ |
-| [[IaC/terraform-docs\|terraform-docs]] | Terraform-docs 文档生成工具 | ✅ | ❌ |
+| [[terraform-basics\|terraform-basics]] | Terraform 基础 | ✅ | ❌ |
+| [[terraform-container-management\|terraform-container-management]] | Terraform 容器管理 | ✅ | ❌ |
+| [[terraform-docs\|terraform-docs]] | Terraform-docs 文档生成工具 | ✅ | ❌ |
 
 ---
 

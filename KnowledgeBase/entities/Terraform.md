@@ -4,8 +4,8 @@ tags:
   - knowledgebase/entity
 date: 2026-04-17
 sources:
-  - "[[IaC/terraform-basics]]"
-  - "[[IaC/terraform-docs]]"
+  - "[[terraform-basics]]"
+  - "[[terraform-docs]]"
 aliases:
   - terraform
   - TF
@@ -46,8 +46,8 @@ terraform-docs 是 Terraform Module 的文档自动生成工具，可自动提�
 - [[KnowledgeBase/sources/iac-terraform-container-summary|Terraform 容器管理摘要]]：Docker/K8s/Helm/Nomad Provider 统一容器编排
 
 
-- [[IaC/terraform-basics|terraform-basics]]
-- [[IaC/terraform-docs|terraform-docs]]
+- [[terraform-basics|terraform-basics]]
+- [[terraform-docs|terraform-docs]]
 
 ## 相关概念与实体
 - [[KnowledgeBase/entities/Azure|Azure]]
