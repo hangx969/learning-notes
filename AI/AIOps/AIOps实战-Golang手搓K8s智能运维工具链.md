@@ -14,7 +14,7 @@ tags:
 
 ## 前言
 
-在云原生时代，K8s 已成为基础设施的"操作系统"。但随着集群规模的增长，运维复杂度呈指数级上升——资源管理需要记忆大量 `kubectl` 命令，故障排查需要在 Event、Logs、Metrics 之间反复横跳。AIOps（智能运维）正是为了解决这些问题而生。
+在云原生时代，K8s 已成为基础设施的"操作系统"。但随着集群规模的增长，运维复杂度呈指数级上升——资源管理需要记忆大量 `kubectl` 命令，故障排查需要在 Event、Logs、Metrics 之间反复横跳。这些问题催生了 AIOps（智能运维）。
 
 本文用 Golang 从零构建一套完整的 K8s AIOps 工具链，包含三个层层递进的案例：
 
@@ -228,7 +228,7 @@ func (o *OpenAI) SendMessage(prompt string, content string) (string, error) {
 **多模型兼容的关键设计**：
 
 - **环境变量注入**：API Key 通过 `os.Getenv` 读取，避免硬编码，符合 12-Factor App 规范
-- **BaseURL 重写**：`config.BaseURL = "..."` 是整个适配层的精髓。只要第三方模型提供了 OpenAI 兼容 API 格式，只需修改 URL 即可无缝切换，上层业务代码完全无感知
+- **BaseURL 重写**：`config.BaseURL = "..."` 是整个适配层的关键设置。只要第三方模型提供了 OpenAI 兼容 API 格式，只需修改 URL 即可无缝切换，上层业务代码完全无感知
 - **Context 管理**：每个请求携带 `context.Context`，为后续超时控制和请求取消预留扩展点
 
 ### Function Calling 完整工作流
