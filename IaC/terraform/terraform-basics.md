@@ -1,482 +1,254 @@
 ---
-title: Terraform 基础
+title: Terraform基础-概念与第一个项目
 tags:
   - IaC
   - terraform
-  - azure
+  - terraform/basics
+date: 2026-10-02
 aliases:
   - Terraform基础
   - Terraform入门
 ---
 
-# 介绍
+# Terraform基础-概念与第一个项目
 
-- ARM template和Bicep都是仅用于Azure的
+## 为什么需要基础设施即代码
 
-- Terraform是 Hashicorp发明，基于Go语言
+在控制台手工创建资源时，最终结果容易记住，创建过程却很难完整复现：资源选了哪个区域、网络用了哪个网段、哪些权限是后来补上的，往往分散在聊天记录和个人经验里。
 
-- 脚本采用HCL语言：
+基础设施即代码（Infrastructure as Code，IaC）把这些配置写成可版本管理的文件。修改前可以 review，执行前可以比较差异，创建新环境时可以复用同一套配置。
 
-  - 声明式脚本语言，Infrastructure as Code，通过目标状态和现在状态的对比，来实现资源的变更。
+Terraform 是 HashiCorp 开发的 IaC 工具。它通过 Provider 调用不同平台的 API，管理资源的创建、更新和删除。常见对象包括云网络、虚拟机、数据库、DNS、Docker 容器和 Kubernetes 资源。
 
-  - 脚本即文档
-  
-  - 比ARM template少30%
+### 声明式是什么意思
 
-# Terraform 三个阶段
+Shell 脚本通常描述“先调用接口创建 A，再创建 B”；Terraform 配置主要描述“最终应该存在怎样的 A 和 B”。Terraform 根据配置、已记录的资源身份和实际资源，计算本次需要执行哪些动作。
 
-- terraform init
-  - 检查脚本使用了哪些provider，会下载下来。
+```hcl
+resource "local_file" "hello" {
+  filename = "${path.module}/hello.txt"
+  content  = "Hello, Terraform!\n"
+}
+```
 
-- terraform plan
-  - 提示登录到azure
-  - 会计算出来通过哪几步达到目标状态
+这段配置的目标是让指定路径存在一个指定内容的文件，不是要求每次执行都额外创建一个新文件。
 
-- terraform apply
-  - 执行变更，会提示是否变更。如果需要跳过提示的话，加参数 --auto-approve。
+Terraform CLI 默认按命令触发运行，不会一直在后台巡检。手工改了资源后，要通过新的 plan/apply 或自动化运行才能发现和处理漂移。
 
+### 与其他工具的关系
 
-# 基本文件
+| 工具 | 主要用途 | 与 Terraform 的关系 |
+|---|---|---|
+| ARM Template / Bicep | Azure 原生资源声明与部署 | 同样可做 IaC，Terraform 通过 Provider 扩展到多个平台 |
+| Ansible | 主机配置、软件安装和执行任务 | 可配合使用：Terraform 创建基础设施，Ansible 配置操作系统 |
+| Packer | 构建机器镜像 | 先产出镜像，再由 Terraform 引用镜像创建实例 |
+| Helm / Argo CD | Kubernetes 应用打包与持续交付 | Terraform 可提供集群和基础资源；应用交付应明确工具所有权 |
 
-- main.tf
-  - 部署的骨头架子，存放主要的代码
+多云支持意味着使用统一的配置语言和工作流，不意味着 AWS、Azure 和阿里云可以直接复用同一种资源定义。资源类型、参数、认证和网络模型仍属于具体平台。
 
-- variable.tf
-  - 集中存储变量
+## Terraform 的几个核心对象
 
-- terraform.tfvars
-  - 覆盖一些变量，作为变量的临时定义处
-- terraform.tfstate文件
-  - 以json文件的格式描述了所有被terraform管理的资源状态，会拿这个文件和main.tf文件作比对，找到差异。
+| 对象 | 作用 | 例子 |
+|---|---|---|
+| Configuration | 描述期望状态的 `.tf` 配置 | 文件应该存在、内容应该是什么 |
+| Provider | 与平台交互的插件 | `hashicorp/local`、`hashicorp/azurerm` |
+| Resource | Terraform 管理生命周期的对象 | `local_file.hello` |
+| Data Source | 查询已有数据，供配置使用 | 查询已有资源组或读取文件 |
+| State | 记录配置地址和实际对象的绑定、属性及元数据 | `local_file.hello` 对应哪个路径和内容 |
+| Module | 同一目录内的一组 Terraform 配置 | 当前实验目录是 root module |
+| Backend | 决定 State 放在哪里、怎样访问和锁定 | 本地文件、Azure Blob、S3 |
 
-# 配置文件main.tf组成
+### 配置、State、真实资源的关系
 
-- Provider部分：用哪家的provider	
+```mermaid
+flowchart LR
+    C[配置：期望状态] --> P[Terraform Plan]
+    S[State：身份与已知属性] --> P
+    R[实际资源] -->|Provider 读取| P
+    P --> A[Terraform Apply]
+    A -->|Provider 写入| R
+    A -->|记录结果| S
+```
 
-- resource部分：创建什么资源
+- 配置说明“我想要什么”。
+- State 说明“哪个实际对象归哪个配置地址管理，以及上次记录的信息”。
+- Provider 读取当前实际对象，帮助 plan 判断变化；State 不能保证始终等于现实。
 
-- variable部分：集中存储变量、参数
+删除配置块后，只要对应对象仍由当前 State 管理，普通 plan 通常会提出删除它。删除 State 文件则丢失管理映射，不会自动删除真实资源。
 
-- output文件
-  - 某些值需要在等资源创建出来之后才有。比如资源ID等。
-  - 如果这些值需要在其他地方被使用，可以把这些值放到output文件里面。
+## 安装和版本确认
 
-# 示例
+按自己的操作系统使用 [官方安装指南](https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli) 安装 Terraform CLI。macOS 可使用官方 Homebrew tap：
 
-## 创建azure资源组
+```bash
+brew tap hashicorp/tap
+brew install hashicorp/tap/terraform
+terraform version
+terraform -help
+```
 
-- main.tf文件
+Linux/Windows 可以从官方发布渠道下载匹配 CPU 架构的二进制，校验发布方提供的校验信息，再加入 `PATH`。公司项目还应使用团队规定的 Terraform 版本，避免本地和 CI 版本不一致。
 
-~~~hcl
+## 第一个项目：管理本地文件
+
+本实验只在自己的实验目录内写文件，不需要云账号。需要联网下载 Local Provider。
+
+### 1. 创建独立目录
+
+```bash
+mkdir -p ~/terraform-labs/01-local-file
+cd ~/terraform-labs/01-local-file
+```
+
+创建 `main.tf`，完整内容如下：
+
+```hcl
 terraform {
+  required_version = ">= 1.7, < 2.0"
+
   required_providers {
-    azurerm = {
-      source = "hashicorp/azurerm"
-      version = "3.100.0"
+    local = {
+      source  = "hashicorp/local"
+      version = "~> 2.5"
     }
   }
 }
 
-provider "azurerm" {
-    features {} #This is required for v2+ of the provider even if empty or plan will fail
-    # Configuration options
-    environment = "china"
+resource "local_file" "hello" {
+  filename        = "${path.module}/hello.txt"
+  content         = "Hello, Terraform!\n"
+  file_permission = "0644"
 }
 
-resource "azurerm_resource_group" "ExampleRG" {
-  name     = "HangXu-ExampleRG"
-  location = "chinanorth3"
+output "file_path" {
+  description = "实验文件的路径"
+  value       = local_file.hello.filename
 }
-~~~
-
-~~~sh
-#使用azcli的方式登录
-az cloud set --name AzureChinaCloud
-az login -t 5748bdcc-52eb-4a8e-be69-29d0645fadbf 
-az account set --name "onepilot-dev"
-#执行部署
-terraform plan -out=./tf-plan
-terraform apply "./tf-plan"
-~~~
-
-# variable存储变量
-
-- main.tf
-
-~~~hcl
-# 3 Files
-# main.tf – The main configuration file for resource deployment.
-# variables.tf – The file for variables used for the deployment.
-# terraform.tfvars – The variable definition file used to set the variables for the deployment.
-
-terraform {
-  required_providers {
-    azurerm = {
-      source = "hashicorp/azurerm"
-      version = "3.100.0"
-    }
-  }
-}
-
-provider "azurerm" {
-  features{}
-  environment = "china"
-}
-
-# Local is a also a varibale, it's for repetitive use.
-locals {
-  tags = {
-    owner = "hangxu"
-    usage = "LearnTerraform"
-  }
-}
-
-#Create a Resource Group, note "resourcegroup" is a local name for Terraform only
-resource "azurerm_resource_group" "resourcegroup" {
-  name     = var.rsgname #call Variable
-  location = var.location #call Variable
-  tags = local.tags # #call Local
-}
-
-#Create a Storage Account
-resource "azurerm_storage_account" "storageaccount" {
-  name                     = var.stgactname
-  resource_group_name      = azurerm_resource_group.resourcegroup.name
-  location                 = azurerm_resource_group.resourcegroup.location
-  account_tier             = "Standard"
-  account_replication_type = "LRS"
-  tags = local.tags
-  }
-~~~
-
-- variable.tf
-
-~~~hcl
-# Variables can be in main.tf, but it's a mess, so we seperated it
-
-variable "location" {
-  type = string
-  description = "Location for deployment"
-  default = "chinanorth3"
-}
-
-variable "rsgname" {
-  type = string
-  description = "Resource Group Name"
-  default = "Hangxu-TerraformRG"
-}
-
-variable "stgactname" {
-  type = string
-  description = "Storage Account Name" #Storage Account should be globally unique
-}
-~~~
-
-- terraform.tfvars
-
-~~~hcl
-# 虽然我们可以通过这种方式指定variable，terraform plan -var="stgactname=cirtest332244423"
-# 但很不方便，所以我们创建terraform.tfvars文件
-
-location = "chinanorth3"
-rsgname = "Hangxu-TerraformRG"
-stgactname = "hangxutestsa"
-~~~
-
-- variable.tf和terraform.tfvars的区别
-  - 主要用于声明在Terraform配置中使用的变量。你可以在这个文件中定义变量的类型、默认值和描述等信息。
-  - 主要用于设置在Terraform配置中声明的变量的值。在执行`terraform apply`或`terraform plan`命令时，Terraform会自动加载这个文件，并使用其中的值来填充变量。
-  - `variables.tf`用于声明变量，而`terraform.tfvars`用于为这些变量设置值。这种分离的方式使得你可以在不同的环境中使用不同的`terraform.tfvars`文件，而不需要修改Terraform的主配置。
-
-# module可复用的基础架构代码
+```
 
-- 在Terraform中，模块（Module）是一种可重用的、自包含的包，它封装了一组相关的资源。模块可以被视为一种函数或者微服务，它接收一组输入变量，然后输出一组资源。
+字段解释：
 
-- 模块的主要作用有：
+- `required_version`：约束 Terraform CLI 版本。
+- `required_providers`：声明需要哪个 Provider，以及允许的版本范围。
+- `local_file`：Local Provider 提供的资源类型。
+- `hello`：Terraform 配置内的逻辑名称；不是磁盘上的文件名。
+- `path.module`：当前模块所在目录，根模块中通常是 `.`。
+- `output`：把感兴趣的结果暴露出来，便于 apply 后查看。
 
-  1. **代码重用**：你可以将常用的配置封装成模块，然后在多个地方重用，避免了代码的重复。
+### 2. 初始化和检查
 
-  2. **组织代码**：你可以使用模块来组织你的Terraform代码，将复杂的配置分解成一组可管理的模块。
+```bash
+terraform init
+terraform fmt
+terraform validate
+```
 
-  3. **共享代码**：你可以将模块发布到Terraform Registry，让其他人可以使用你的模块。
+这些是读者在独立实验目录中的操作步骤。初始化通常会准备 Backend、下载模块和 Provider，并生成或使用 `.terraform.lock.hcl`；它不会因为配置里声明了资源就创建该资源。
 
-  例如，你的`main.tf`文件中的存储账户资源可以被封装成一个模块，然后在其他地方重用。模块的定义可能如下：
+`fmt` 统一 HCL 格式。`validate` 检查配置的语法和内部一致性，但不能证明账号权限、平台容量或所有 API 参数都符合实际环境。
 
-  ```terraform
-  module "storage_account" {
-    source  = "Azure/storage/azurerm"
-    version = "1.5.0"
-  
-    name                     = var.stgactname
-    resource_group_name      = azurerm_resource_group.resourcegroup.name
-    location                 = azurerm_resource_group.resourcegroup.location
-    account_tier             = "Standard"
-    account_replication_type = "LRS"
-    tags = local.tags
-  }
-  ```
+### 3. 查看创建计划
 
-  然后在其他地方使用这个模块，只需要提供输入变量：
+```bash
+terraform plan -out=tfplan
+terraform show tfplan
+```
 
-  ```terraform
-  module "storage_account" {
-    source = "../modules/storage_account"
-    
-    stgactname = "my_storage_account"
-    # other variables...
-  }
-  ```
+首次执行，预期能看到 `local_file.hello` 将被创建，摘要类似：
 
-  这样，你就可以在多个地方重用这个存储账户的配置，而不需要每次都写一遍相同的代码。
+```text
+Plan: 1 to add, 0 to change, 0 to destroy.
+```
 
-- 在基础架构的目录中，root根目录下面会有main.tf/variables.tf/terraform.tfvar，可以创建一个modules目录，里面同样定义main.tf等，在其他地方可以引用这个modules文件中的资源定义。
+这是预期观察结果，不是本仓库已经执行的终端记录。Plan 同时可能显示 output 的变化，output 变化不计入资源数量。
 
-# outputs获取模块的输出
+### 4. 执行已查看的计划
 
-- 示例 - 创建outputs.tf
+```bash
+terraform apply tfplan
+cat hello.txt
+terraform output file_path
+terraform state list
+```
 
-~~~terraform
-# output "Resource Group" name, to be used as an input variable for "Storage Account"
+传入保存的计划文件表示执行该计划，不会再次询问 `yes`。因此查看计划的动作应发生在 apply 之前。
 
-output "rg_name_out" {
-  value = azurerm_resource_group.example.name # 资源类型.资源名.name
-}
-~~~
+预期：目录出现 `hello.txt`，内容为 `Hello, Terraform!`；State 中有 `local_file.hello`。
 
-- 示例 - 引用outputs.tf中的值
+### 5. 不改配置，再 plan 一次
 
-~~~terraform
-# call "StorageAccount" module which has 3 variables
-module "StorageAccount" {
-  source ="./StorageAccount"
-  basename = "learntfmodule"
-  resource_group_name = module.ResourceGroup.rg_name_out #引用来自Resource Group module的outputs
-  location = "chinanorth3"
-}
-~~~
+```bash
+terraform plan
+```
 
-- modules子目录中定义的outputs可以作为主模块或者其他子模块的输入，来引用。
-- 根目录中定义的outputs.tf可以作为terraform apply的输出，显示到terminal上。
+没有其他变化时，预期为 `No changes`。这是声明式配置的一个重要观察：重复执行不会按次数创建更多对象。
 
-# backend状态文件存储
+### 6. 修改目标内容
 
-> [!info] Terraform 状态文件
-> Terraform的状态文件（通常命名为`terraform.tfstate`）是Terraform管理和跟踪资源的关键组件。Terraform使用这个文件来记录它所管理的各种资源的信息，以及这些资源的配置和属性。
->
-> 以下是Terraform状态文件的主要用途：
->
-> 1. **映射资源到实际资源**：Terraform使用状态文件来映射你的配置文件中定义的资源到实际的云资源。例如，你可能在配置文件中定义了一个AWS EC2实例，Terraform会在状态文件中记录这个实例的ID，以便在将来的操作中找到它。
-> 2. **存储元数据**：状态文件还包含了关于你的Terraform环境的元数据，例如Terraform的版本号，以及你的提供者的版本号。
-> 3. **跟踪更改**：每次你运行`terraform apply`时，Terraform都会更新状态文件，以反映你的环境的最新状态。这使得Terraform能够知道哪些资源已经被创建，哪些资源已经被修改，哪些资源已经被删除。
-> 4. **支持团队协作**：通过共享状态文件，团队成员可以共享对Terraform环境的视图，这对于团队协作非常重要。
->
-> 需要注意的是，由于状态文件可能包含敏感信息，因此需要妥善保管。在生产环境中，通常会使用远程状态存储（如Terraform Cloud或AWS S3）来安全地存储和共享状态文件。
+把 `content` 改为：
 
-- 我们都知道在执行部署计划之后，当前目录中就产生了名叫 “terraform.states” 的 Terraform 的状态文件，该文件中记录了已部署资源的状态。默认情况下，在执行部署计划后，Terraform 的状态文件会存储在本地，但是这样往往就造成一些弊端：
+```hcl
+content = "Hello, Infrastructure as Code!\n"
+```
 
-  （1）不适用团队之间协助，就好比在数据库中对同一条数据进行操作时，就会引起异常
+这是一行替换片段，不是完整 `.tf` 文件。重新生成计划，查看 Local Provider 对内容变更给出的动作，再执行：
 
-  （2）状态文件中包含一些机密信息，会造成一定的机密泄露
+```bash
+terraform plan -out=tfplan
+terraform show tfplan
+terraform apply tfplan
+cat hello.txt
+```
 
-  （3）如果不慎将本地的状态文件删除掉的话，已执行部署计划的资源的管理将很难在通过 Terraform 进行管理
+Local Provider 可能通过替换文件资源实现变更；不要由“只改了一行文本”推断一定是原地更新。资源的更新/替换行为取决于 Provider schema，详见 [[IaC/terraform/terraform-resources-dependencies|资源依赖与生命周期]]。
 
-  所以，Terraform 是支持在远端存储状态文件，也就是在 Azure Storage Account 中存储远端状态文件，Terraform 状态的存储是由一个称之为Backend的组件决定的，local state使用的是local backend。并且其他所有的Backend在使用之前都需要在模板中显式定义并通过 **terraform init** 来实现加载和配置。
+### 7. 清理实验
 
-- 可以把terraform状态文件保存到存储账户中：[Terraform 远端存储状态文件到 Azure Storage](https://www.cnblogs.com/AllenMaster/p/14274731.html)
+```bash
+terraform plan -destroy -out=destroy.tfplan
+terraform show destroy.tfplan
+terraform apply destroy.tfplan
+```
 
-- 当你运行`terraform init`命令时，Terraform会初始化后端，并将本地状态文件迁移到远程状态存储。在后续的`terraform apply`或`terraform destroy`操作中，Terraform会直接从远程状态存储读取和写入状态。
-- 如果你想从远程状态存储拉取最新的状态，你可以运行`terraform refresh`命令。如果你想将远程状态下载到本地，你可以运行`terraform state pull`命令。如果你想将本地状态推送到远程存储，你可以运行`terraform state push`命令。
-- 需要注意的是，使用远程状态存储需要考虑安全性和访问控制。例如，你可能需要配置适当的IAM策略来限制对S3 bucket的访问，或者使用服务器端加密来保护存储在bucket中的状态文件。
+应确认删除计划只包含自己的实验文件。Terraform 会删除被管理的文件；配置文件仍在，之后再执行普通 plan 会提出重新创建它。
 
-# import导入已有资源
+## 目录里增加了哪些文件
 
-- 项目根目录创建一个imports.tf文件
+```text
+01-local-file/
+├── main.tf
+├── .terraform/              # 下载的 Provider、模块等工作数据
+├── .terraform.lock.hcl      # Provider 版本与校验信息
+├── terraform.tfstate        # 默认本地状态
+├── terraform.tfstate.backup # 可能出现的前一份状态备份
+├── tfplan                   # 保存的计划，包含潜在敏感信息
+└── hello.txt                # 由 local_file 管理的实验文件
+```
 
-  ~~~json
-  tee imports.tf <<'EOF'
-  import {
-      to = azurerm_storage_account.infrasa
-      id = "/subscriptions/9365cbc6-1cc4-4ab2-bd5f-2cb518cc2a51/resourceGroups/rg-mapapps-dev-mmatransfer/providers/Microsoft.Storage/storageAccounts/samapappsdevmmatransfer"
-  }
-  EOF
-  ~~~
+`.terraform/`、State、计划文件不应进入普通源码仓库；`.terraform.lock.hcl` 通常需要提交，供团队和 CI 使用相同的 Provider 选择。State 和计划都可能包含敏感数据。
 
-- terraform导入
+## 初学者容易混淆的地方
 
-  ~~~sh
-  terraform plan -generate-config-out=generated_resources.tf
-  ~~~
+- `init` 准备运行环境，`plan` 计算动作，`apply` 执行动作。官方把核心工作流概括为 **Write → Plan → Apply**，初始化属于准备步骤。
+- `main.tf` 没有特殊执行优先级，同目录的 `.tf` 文件会一起加载。
+- Terraform 不会替每个 Provider 自动完成登录；认证方式由 Provider 决定。
+- `plan` 会读取平台信息，可能需要网络和权限；“预览”不等于完全离线。
+- `apply` 失败可能留下部分已创建资源，不是数据库事务的自动整体回滚。
+- `destroy` 管理的是当前 State 绑定的资源，不是只清理终端所在目录的普通文件。
 
-- 在generated_resources.tf中即可看到资源定义
+## 练习
 
-# Terraform源参数
+1. 把 `main.tf` 改名为 `files.tf`，观察 plan 是否提出资源变化。
+2. 把资源逻辑名 `hello` 改成 `greeting`，同时更新 output 引用，观察计划中的地址变化。此时先不要执行；后面用 `moved` 学习保留身份。
+3. 用自己的话说明删除 `hello.txt`、删除配置块和删除 State 文件分别意味着什么。
 
-Terraform 为所有资源类型提供了一组通用的元参数,包括:
+## 参考资料
 
-- count - 控制资源实例的数量
-- for_each - 基于集合创建多个实例
-- depends_on - 显式声明依赖关系
-- provider - 指定使用的 provider
-- lifecycle - 控制资源生命周期行为
+- [Terraform 是什么](https://developer.hashicorp.com/terraform/intro)
+- [核心工作流](https://developer.hashicorp.com/terraform/intro/core-workflow)
+- [初始化命令](https://developer.hashicorp.com/terraform/cli/commands/init)
+- [计划命令](https://developer.hashicorp.com/terraform/cli/commands/plan)
+- [Local Provider：local_file](https://registry.terraform.io/providers/hashicorp/local/latest/docs/resources/file)
+- [State 的用途](https://developer.hashicorp.com/terraform/language/state/purpose)
 
-示例：`count` 的工作原理，条件创建逻辑:
-
-- **当 `count = 1`** (vpc_cen_grant 不为 null)
-  - 创建 **1个** 资源实例
-  - 资源引用: `alicloud_cen_transit_router_grant_attachment.vpc_cen_grant[0]`
-- **当 `count = 0`** (vpc_cen_grant 为 null)
-  - 创建 **0个** 资源实例
-  - 相当于此资源**不存在**,Terraform 跳过此资源
-
-~~~hcl
-resource "alicloud_cen_transit_router_grant_attachment" "vpc_cen_grant" {
-  count = var.vpc.vpc_cen_grant != null ? 1 : 0
-  # ... 其他属性
-}
-~~~
-
-count 是 Terraform 核心功能,与具体的云资源类型无关。任何 Terraform 资源(AWS、Azure、阿里云等)都可以使用 count 来控制创建数量, 包括 0 个(即不创建)。
-
-
-
-# terraform questions
-
-Basic：
-
-1. What is Terraform, and why is it used in the context of infrastructure automation? 
-
-Terraform is an open-source infrastructure as code (IaC) tool developed by HashiCorp. It allows you to define and manage your infrastructure declaratively using a simple and human- readable configuration language. 
-
-Terraform is used for infrastructure automation to provision and manage resources across various cloud providers and on-premises environments in a consistent and reproducible manner. 
-
-2. What is the Terraform state file, and why is it important? 
-
-The Terraform state file is a JSON or binary file that stores the current state of the managed infrastructure. It records resource metadata, dependencies, and other relevant information. The state file is critical for Terraform's operation as it allows the tool to understand the existing infrastructure and track changes over time. 
-
-It helps Terraform determine the delta between the desired state and the actual state during subsequent runs, enabling it to apply the necessary updates accurately. 
-
-3. What is the purpose of the Terraform plan command? 
-
-The Terraform plan command is used to create an execution plan that shows the changes Terraform will apply to the infrastructure. It compares the desired state defined in the configuration with the current state recorded in the state file. 
-
-The plan command provides a summary of the actions Terraform will take, such as creating, modifying, or deleting resources. It allows you to review and verify the changes before applying them to the infrastructure. 
-
-4. What is the purpose of the "Terraform init" command? 
-
-The "Terraform init" command initializes a Terraform working directory. It downloads and installs the necessary provider plugins, sets up the backend configuration, and prepares the directory for Terraform operations. 
-
-5. What are Terraform variables, and how can you use them in your infrastructure code? 
-
-Terraform variables allow you to parameterize your infrastructure code and make it more reusable and configurable. Variables can be defined in Terraform configuration files or separate variable files. You can use variables to customize resource configurations, such as specifying the number of instances or setting environment-specific values. 
-
-By leveraging variables, you can avoid hardcoding values and easily reuse and share your infrastructure code across different environments. 
-
-6. How does Terraform handle variable interpolation in strings? 
-
-Terraform allows variable interpolation in strings using the "${var.NAME}" syntax. When the configuration is processed, Terraform replaces the variable references with their corresponding values. 
-
-Intermediate：
-
-7. How can you organize your Terraform codebase for better maintainability?
-
-To organize a Terraform codebase for better maintainability, you can adopt various practices:
-
-***\*Modularization\****: Break down the codebase into reusable modules, encapsulating related resources and configurations.
-
-***\*Folder Structure\****: Organize files into logical folders based on resource types, environments, or modules.
-
-***\*Naming Conventions\****: Use consistent and descriptive naming conventions for resources, variables, and modules.
-
-***\*Documentation\****: Include comments, README files, or documentation to provide guidance and context for the codebase.
-
-***\*Version Control\****: Utilize a version control system like Git to track changes, collaborate, and roll back if needed.
-
-By following these practices, you can enhance code readability, reusability, and collaboration, making the codebase easier to maintain and evolve.
-
-8. Explain the concept of Terraform providers and their role in resource provisioning. 
-
-Terraform providers are plugins that enable Terraform to interact with specific infrastructure platforms, such as AWS, Azure, or GCP. They provide a way for Terraform to manage and provision resources on these platforms. Each provider implements resource types and APIs to create, update, and delete resources. 
-
-By configuring a provider in Terraform, you can leverage its resource types to define infrastructure as code and manage the lifecycle of resources on the target platform 
-
-9. What is the purpose of Terraform modules, and how do they promote reusability? 
-
-Terraform modules are self-contained packages of Terraform configurations that encapsulate a specific set of resources and their associated dependencies. Modules promote reusability by allowing you to define and share infrastructure components across projects and teams. 
-
-With modules, you can abstract complex configurations into reusable building blocks, reducing duplication, and improving maintainability. Modules can be published and consumed internally or through public module registries, enabling code sharing and collaboration. 
-
-10. How does Terraform handle drift detection and reconciliation? 
-
-Terraform handles drift detection by comparing the state stored in the state file with the current state of the infrastructure. During a Terraform application, it detects any differences between the two states and identifies resources that have drifted. 
-
-To reconcile the drift, Terraform determines the necessary actions (create, update, or delete) to bring the infrastructure back to the desired state defined in the configuration. By applying the changes, Terraform ensures that the infrastructure aligns with the intended configuration and resolves any discrepancies. 
-
-11. Describe how Terraform applies changes to your infrastructure and what happens during a Terraform application. 
-
-During a Terraform application, Terraform examines the configuration and state to determine the changes needed to reach the desired state. It creates an execution plan that outlines the actions required for resource creation, modification, or deletion. After confirming the execution plan, Terraform applies the changes by invoking the respective provider APIs. 
-
-It provisions or updates resources according to the plan and updates the state file with the new infrastructure state. Terraform captures the output values of the resources, which can be used for further configuration or reference in subsequent Terraform runs. 
-
-12. How can you manage secrets and sensitive data in Terraform?
-
-Managing secrets and sensitive data in Terraform require careful consideration to ensure security. Best practices include:
-
-· Storing secrets outside of version-controlled files, using tools like HashiCorp Vault or cloud-specific secret management services.
-
-· Utilizing Terraform input variables or environment variables to pass sensitive values securely during runtime.
-
-· Encrypting sensitive data using tools like Terraform Vault provider or native encryption mechanisms provided by the infrastructure platform.
-
-· Avoid writing secrets in plain text within Terraform configurations or logs.
-
-By following these practices, you can protect sensitive information and minimize the risk of exposing secrets unintentionally.
-
-Advanced：
-
-13. Explain the role of Terraform data sources and how you can use them.
-
-Terraform data sources allow you to fetch and reference information from external systems or existing resources. They provide a way to query and import data into your Terraform configurations.
-
-You can use data sources to retrieve attributes or metadata from various sources such as cloud providers, databases, or APIs. This data can then be used to make decisions, configure resources, or establish dependencies within your infrastructure.
-
-14. How can you perform blue-green deployments using Terraform?
-
-Blue-green deployments involve creating two identical environments (blue and green) and switching traffic from one to the other. In Terraform, you can achieve this by creating two sets of infrastructure resources with slight differences, such as different AWS Auto Scaling Groups or Azure Virtual Machine Scale Sets.
-
-Once the new environment (green) is provisioned and tested, you can update the load balancer or DNS records to direct traffic to the green environment. Terraform enables you to manage the infrastructure changes required for blue-green deployments in a declarative and automated manner.
-
-15. How can you integrate Terraform with CI/CD pipelines?
-
-Terraform can be integrated with [CI/CD pipelines](https://www.turing.com/kb/ci-cd-pipeline) to automate the deployment and management of infrastructure. Here's the typical process:
-
-· Commit the Terraform configurations to a version control system (e.g., Git).
-
-· Set up a CI/CD pipeline that monitors changes to the Terraform code repository.
-
-· In the pipeline, execute Terraform commands such as init, validate, and plan to ensure the configurations are valid and generate an execution plan.
-
-· Use Terraform's apply command to create or modify infrastructure based on the approved changes.
-
-· Optionally, leverage infrastructure testing and verification tools to validate the deployed infrastructure.
-
-· Finally, trigger additional pipeline stages for application deployment, testing, and release.
-
-16. How can you manage Terraform state locking for team collaboration?
-
-Terraform state locking is crucial for preventing concurrent modifications to the same infrastructure. To manage state locking for team collaboration, you can use a remote backend with built-in state locking support.
-
-Terraform supports various remote backends like Amazon S3, Azure Storage, or HashiCorp Consul. By configuring a remote backend, Terraform automatically handles the state locking, ensuring that only one user or process can modify the state at a time.
-
-This prevents conflicts and data corruption when multiple team members are working on the same infrastructure concurrently.
-
-17. How can you perform rolling updates or zero-downtime deployments with Terraform?
-
-Rolling updates or zero-downtime deployments involve updating infrastructure components without causing service disruptions. With Terraform, you can achieve this by utilizing features such as rolling deployment strategies and lifecycle hooks.
-
-For example, you can define an AWS Auto Scaling Group with a rolling update policy to gradually replace instances while ensuring the overall availability of the application. Terraform allows you to specify update policies, health checks, and other parameters to control the pace and behavior of updates, minimizing downtime and ensuring smooth transitions.
-
- 
-
- 
-
- 
+系列目录：[[IaC/terraform/README|学习路线]] · 下一篇：[[IaC/terraform/terraform-hcl|HCL 语法与配置文件]]。

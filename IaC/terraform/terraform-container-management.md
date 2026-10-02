@@ -1,9 +1,9 @@
 ---
-title: Terraform 容器管理
-source: "https://mp.weixin.qq.com/s/b6pkgOpHn2tbEaBpOniyWw"
-author:
-  - "Hank"
+title: Terraform基础-Docker、Kubernetes、Helm 与 Nomad
+original_source: "https://mp.weixin.qq.com/s/b6pkgOpHn2tbEaBpOniyWw"
+original_author: Hank
 created: 2026-04-23
+date: 2026-10-02
 tags:
   - IaC
   - terraform
@@ -15,358 +15,584 @@ aliases:
   - Terraform Container Management
 ---
 
-# Terraform 容器管理
+# Terraform基础-Docker、Kubernetes、Helm 与 Nomad
 
-容器（Container）已经成为现代软件交付的核心。无论是 Docker 还是 Kubernetes，Terraform 都能通过 Provider 插件实现资源的统一管理，将容器基础设施纳入基础设施即代码（IaC）的体系中。这样不仅能带来一致性，还能借助版本控制、自动化测试与审查机制，大大提升团队的交付效率。
+## 先确定 Terraform 管理哪一层
 
-本章围绕以下几个主题展开：
+Terraform 可以管理云上的集群基础设施，也可以通过 Docker、Kubernetes、Helm、Nomad Provider 管理容器相关对象。不同层的认证、可用时间和资源所有权应分清。
 
-- Docker 镜像与容器的本地/远程管理
-- Kubernetes 集群的部署与配置
-- 集群操作的认证与授权
-- 使用 YAML 与 HCL 定义 Kubernetes 资源
-- 网络策略与注解管理
-- Helm 在容器部署与监控中的应用
-- 使用 Nomad 调度容器
+| 层级 | 典型对象 | 连接方式 |
+|---|---|---|
+| 云基础设施 | VPC、集群、节点池、负载均衡 | 云 Provider 和云身份 |
+| Kubernetes API | Namespace、Deployment、ConfigMap | Kubernetes Provider、kubeconfig/RBAC |
+| 应用发布 | Helm Release | Helm Provider 和集群访问权限 |
+| Docker Engine | 本地/远程镜像、容器、网络 | Docker Provider 和 daemon endpoint |
+| Nomad | Job | Nomad Provider 和 Nomad API/ACL |
 
----
+对于新建集群，通常先完成基础设施层，再运行集群资源配置层。尤其 `kubernetes_manifest` 在 plan 时可能要查询 API schema，不能只加 depends_on 就保证与新建集群、CRD 在同一轮里都能工作。
 
-## 5.1 使用本地与远程 Docker 镜像
+本章每个实战使用独立目录和自己的状态。不要把以下所有配置拼进一个 main.tf，也不要把实验接到不明身份的生产集群。
 
-在 Terraform 中既可以使用远程仓库镜像（如 Docker Hub），也可以直接引用本地镜像。
+## 一、Docker：管理 Nginx 镜像和容器
+
+### 1. 确認连接的 Engine
+
+读者先在终端检查：
+
+```bash
+docker version
+docker context show
+docker context inspect --format '{{ .Endpoints.docker.Host }}'
+export DOCKER_HOST="$(docker context inspect --format '{{ .Endpoints.docker.Host }}')"
+```
+
+Terraform Provider 不应被假定总能自动采用 Docker CLI 当前 context。显式传入当前 daemon endpoint；远程 TLS/SSH context 还需要按 Provider 文档准备证书或 SSH 配置。
+
+macOS 的 Docker Desktop 等实现，socket 可能位于用户目录；不要机械固定成 Linux 常见的 `/var/run/docker.sock`。
+
+### 2. 完整 main.tf
 
 ```hcl
-# Docker Provider
+terraform {
+  required_version = ">= 1.7, < 2.0"
+
+  required_providers {
+    docker = {
+      source  = "kreuzwerker/docker"
+      version = "~> 3.0"
+    }
+  }
+}
+
 provider "docker" {}
 
-# 使用远程镜像
-resource "docker_image" "remote_image" {
-  name = "nginx:latest"
-}
-resource "docker_container" "remote_container" {
-  name  = "remote_nginx"
-  image = docker_image.remote_image.latest
+variable "host_port" {
+  type    = number
+  default = 8080
 }
 
-# 使用本地镜像
-resource "docker_image" "local_image" {
-  name         = "custom-app:1.0"
+resource "docker_image" "nginx" {
+  name         = "nginx:1.30.5-alpine"
   keep_locally = true
 }
-resource "docker_container" "local_container" {
-  name  = "local_app"
-  image = docker_image.local_image.latest
+
+resource "docker_container" "nginx" {
+  name  = "tf-learning-nginx"
+  image = docker_image.nginx.image_id
+
+  ports {
+    internal = 80
+    external = var.host_port
+    ip       = "127.0.0.1"
+  }
+}
+
+output "url" {
+  description = "Docker daemon 在本机时的访问地址"
+  value       = "http://127.0.0.1:${var.host_port}"
 }
 ```
 
-- **远程镜像**：适合使用最新版本或共享的公共镜像。
-- **本地镜像**：适合自研镜像或无公网访问的环境。
+- Provider 3.x 使用 `docker_image.nginx.image_id`，不要沿用旧教程中的 `.latest` 属性。
+- `keep_locally = true` 表示 destroy 时保留 daemon 上的镜像，不代表“只允许使用本地镜像”或“永远不从仓库拉取”。
+- `127.0.0.1` 是 daemon 所在主机的回环地址。连接远程 daemon 时，客户端 localhost 不会因此自动转发到远端容器。
+- 例子使用官方镜像的固定版本标签；追求不可变制品时还应使用经过确认的 digest。
 
-> 💡 在企业级环境中常用私有镜像仓库（Harbor、ECR、GCR 等），Terraform 同样可以管理。
+### 3. 创建、访问和清理
 
----
+```bash
+terraform init
+terraform plan -out=tfplan
+terraform show tfplan
+terraform apply tfplan
+docker ps --filter name=tf-learning-nginx
+curl http://127.0.0.1:8080
+terraform plan -destroy -out=destroy.tfplan
+terraform show destroy.tfplan
+terraform apply destroy.tfplan
+```
 
-## 5.2 区分集群部署与配置
+curl 示例假定 Engine 在本机，端口 8080 没被其他应用占用。预期删除容器后，本地镜像因 keep_locally 仍保留。
 
-**部署（Deployment）**：新建集群（例如 AWS EKS）。
-**配置（Configuration）**：在现有集群中添加资源（如命名空间）。
+### 4. 自研镜像
+
+已有本地镜像可以供容器引用，但需要明确镜像的生产和生命周期责任。需要 Terraform 在实验中构建镜像时，可补充下面的独立镜像资源：
 
 ```hcl
-# 部署 EKS 集群
-provider "aws" { region = "us-east-1" }
+resource "docker_image" "custom" {
+  name = "tf-learning-custom:1.0"
 
-module "eks" {
-  source          = "terraform-aws-modules/eks/aws"
-  cluster_name    = "demo-cluster"
-  cluster_version = "1.20"
-  vpc_id          = "vpc-xxxxxx"
-  subnets         = ["subnet-1", "subnet-2"]
+  build {
+    context = "${path.module}/app"
+  }
 
-  node_groups = {
-    eks_nodes = {
-      desired_capacity = 3
-      instance_type    = "t3.medium"
+  triggers = {
+    html_sha = filesha256("${path.module}/app/index.html")
+  }
+}
+```
+
+准备 `app/Dockerfile`：
+
+```dockerfile
+FROM nginx:1.30.5-alpine
+COPY index.html /usr/share/nginx/html/index.html
+```
+
+以及 `app/index.html`：
+
+```html
+<h1>Terraform Docker lab</h1>
+```
+
+将容器的 image 改为 `docker_image.custom.image_id` 才会使用此镜像。triggers 示例只观察 HTML；构建还有其他输入时需把它们纳入变更摘要。
+
+生产镜像通常由构建流水线产出，Terraform 消费固定制品，避免把每次基础设施变更都变成一轮应用构建。
+
+### 5. 同一个 tag 不自动代表新镜像
+
+Docker image 资源不会仅因远程同名 tag 的内容变化就总能知道要拉取新层。需要跟踪仓库 digest 时，可使用下面的替换写法：
+
+```hcl
+data "docker_registry_image" "nginx" {
+  name = "nginx:1.30.5-alpine"
+}
+
+resource "docker_image" "nginx" {
+  name          = data.docker_registry_image.nginx.name
+  pull_triggers = [data.docker_registry_image.nginx.sha256_digest]
+  keep_locally  = true
+}
+```
+
+此片段替换原同名 docker_image，不能重复声明。私有仓库还需配置认证；不要将密码写入笔记或资源参数。
+
+## 二、Kubernetes：在已有集群创建应用
+
+### 1. 认证与授权是两层
+
+- 认证确认请求者是谁，例如 kubeconfig 中的证书、token 或 exec 插件。
+- 授权确认该身份能否在目标 namespace 操作资源，通常由 Kubernetes RBAC 等决定。
+- 云端 EKS/ACK/AKS 还可能有云身份接入与角色映射。云 IAM 登录成功不等于 Kubernetes API 自动授权。
+
+先核对目标并检查必要权限：
+
+```bash
+kubectl config current-context
+kubectl config get-contexts
+kubectl --context "<实验context>" auth can-i create namespaces
+kubectl --context "<实验context>" auth can-i create deployments -n tf-learning-k8s
+```
+
+已有 namespace 下的项目可由管理员预先创建 namespace 并授予有限权限。本例包含 namespace 创建，所以需要相应集群级权限。
+
+### 2. 完整 main.tf
+
+例子使用 Kubernetes Provider **2.x** 的 `_v1` 类型。在独立目录创建：
+
+```hcl
+terraform {
+  required_version = ">= 1.7, < 2.0"
+
+  required_providers {
+    kubernetes = {
+      source  = "hashicorp/kubernetes"
+      version = "~> 2.30"
     }
   }
 }
 
-# 配置集群：创建 namespace
+variable "kubeconfig_path" {
+  type    = string
+  default = "~/.kube/config"
+}
+
+variable "kube_context" {
+  description = "显式指定的实验 context"
+  type        = string
+}
+
+variable "replicas" {
+  type    = number
+  default = 1
+}
+
 provider "kubernetes" {
-  host                   = module.eks.cluster_endpoint
-  cluster_ca_certificate = base64decode(module.eks.cluster_ca_data)
-  token                  = data.aws_eks_cluster_auth.cluster.token
+  config_path    = pathexpand(var.kubeconfig_path)
+  config_context = var.kube_context
 }
-data "aws_eks_cluster_auth" "cluster" {
-  name = module.eks.cluster_id
-}
-resource "kubernetes_namespace" "demo" {
-  metadata { name = "demo-namespace" }
-}
-```
 
----
-
-## 5.3 授权 Terraform 操作 Kubernetes 集群
-
-Terraform 需要通过认证和权限才能操作集群。例如在 EKS 中：
-
-```hcl
-provider "aws" { region = "us-east-1" }
-
-data "aws_eks_cluster" "cluster" { name = "demo-cluster" }
-data "aws_eks_cluster_auth" "cluster" { name = "demo-cluster" }
-
-provider "kubernetes" {
-  host                   = data.aws_eks_cluster.cluster.endpoint
-  cluster_ca_certificate = base64decode(data.aws_eks_cluster.cluster.certificate_authority[0].data)
-  token                  = data.aws_eks_cluster_auth.cluster.token
-  load_config_file       = false
-}
-```
-
-> ⚠️ 需要在 AWS IAM 中为 Terraform 执行角色授予访问 EKS 的权限。
-
----
-
-## 5.4 使用 YAML 调度容器
-
-Terraform 可以直接加载现有 Kubernetes YAML 配置：
-
-```hcl
-resource "kubernetes_manifest" "app" {
-  manifest = yamldecode(file("${path.module}/deployment.yaml"))
-}
-```
-
-**deployment.yaml**:
-
-```yaml
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: my-app
-spec:
-  replicas: 3
-  template:
-    spec:
-      containers:
-      - name: app
-        image: my-image:latest
-        ports:
-        - containerPort: 8080
-```
-
----
-
-## 5.5 使用 HCL 调度容器
-
-同样可以直接在 Terraform 中用 HCL 编写：
-
-```hcl
-resource "kubernetes_deployment" "app" {
-  metadata { name = "my-app" }
-  spec {
-    replicas = 3
-    selector { match_labels = { app = "my-app" } }
-    template {
-      metadata { labels = { app = "my-app" } }
-      spec {
-        container {
-          name  = "app"
-          image = "my-image:latest"
-          port { container_port = 8080 }
-        }
-      }
-    }
-  }
-}
-```
-
----
-
-## 5.6 YAML 转 HCL
-
-可使用 `terraform console` 将 YAML 转换为 HCL：
-
-```hcl
-terraform console
-> jsonencode({
-  resource = {
-    kubernetes_manifest = {
-      example = {
-        manifest = yamldecode(file("deployment.yaml"))
-      }
-    }
-  }
-})
-```
-
----
-
-## 5.7 调整 Kubernetes 注解
-
-```hcl
-resource "kubernetes_deployment" "example" {
+resource "kubernetes_namespace_v1" "lab" {
   metadata {
-    name = "my-app"
-    annotations = {
-      "example.com/version" = "v1.0"
-    }
+    name = "tf-learning-k8s"
   }
 }
-```
 
-注解（Annotation）与标签（Label）的区别：
+resource "kubernetes_deployment_v1" "web" {
+  metadata {
+    name      = "web"
+    namespace = kubernetes_namespace_v1.lab.metadata[0].name
+    annotations = {
+      "example.com/managed-by" = "terraform"
+    }
+  }
 
-- **Label**：用于选择和分组资源。
-- **Annotation**：存放元数据，如构建信息、监控配置。
-
----
-
-## 5.8 动态调整 Deployment 配置
-
-```hcl
-variable "replica_count" { default = 5 }
-variable "image_version" { default = "v2" }
-
-resource "kubernetes_deployment" "example" {
   spec {
-    replicas = var.replica_count
+    replicas = var.replicas
+
+    selector {
+      match_labels = { app = "web" }
+    }
+
     template {
+      metadata {
+        labels = { app = "web" }
+      }
+
       spec {
         container {
-          name  = "my-app"
-          image = "my-image:${var.image_version}"
-          env {
-            name  = "ENV_VAR"
-            value = "demo"
+          name  = "nginx"
+          image = "nginx:1.30.5-alpine"
+
+          port {
+            container_port = 80
+          }
+
+          resources {
+            requests = { cpu = "100m", memory = "64Mi" }
+            limits   = { cpu = "500m", memory = "128Mi" }
           }
         }
       }
     }
   }
 }
+
+output "namespace" {
+  value = kubernetes_namespace_v1.lab.metadata[0].name
+}
 ```
 
-执行时可动态覆盖参数：
+Deployment 的 selector 和 Pod labels 匹配，namespace 通过引用建立隐式依赖。Annotation 用于元信息，Label 用于选择和分组；两者不是同一用途。
+
+### 3. 运行和访问
 
 ```bash
-terraform apply -var="replica_count=3" -var="image_version=v3"
+export TF_VAR_kube_context="<实验context>"
+terraform init
+terraform plan -out=tfplan
+terraform show tfplan
+terraform apply tfplan
+kubectl --context "<实验context>" -n tf-learning-k8s get deployments,pods
+kubectl --context "<实验context>" -n tf-learning-k8s port-forward deployment/web 8081:80
 ```
 
----
+另一个终端访问 `http://127.0.0.1:8081`。停止 port-forward 后可通过 `terraform plan -var='replicas=2'` 观察扩容；执行保存计划后再核对 Pod 数量和 Ready 状态。
 
-## 5.9 应用 Kubernetes 网络策略 (NetworkPolicy)
+改变 kube_context 不等于创建独立集群环境；同一 State 可能拿旧资源记录去操作新集群。多个集群应使用明确分开的根配置/状态。
+
+### 4. 使用已有 YAML
+
+在同一个实验目录创建单文档 `configmap.yaml`：
+
+```yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: web-config
+data:
+  log_level: info
+```
+
+补充一个独立 manifest 资源：
 
 ```hcl
-resource "kubernetes_network_policy" "db_policy" {
-  metadata { name = "db-policy" namespace = "default" }
+locals {
+  raw_configmap = yamldecode(file("${path.module}/configmap.yaml"))
+}
+
+resource "kubernetes_manifest" "config" {
+  manifest = merge(local.raw_configmap, {
+    metadata = merge(local.raw_configmap.metadata, {
+      namespace = kubernetes_namespace_v1.lab.metadata[0].name
+    })
+  })
+}
+```
+
+`yamldecode` 得到 Terraform 对象，`kubernetes_manifest` 根据 Kubernetes schema 管理它。`jsonencode` 可以把值编码成 JSON，但不是把 YAML 自动翻译成所有 `_v1` resource 的块结构；两种资源模型要分别理解。
+
+Manifest 需要在 plan 阶段访问集群 schema。管理自定义资源时，CRD 应已存在；`depends_on` 不能让 plan 使用尚未安装的 CRD schema。
+
+### 5. NetworkPolicy
+
+可在已有实验中补充：
+
+```hcl
+resource "kubernetes_network_policy_v1" "web_ingress" {
+  metadata {
+    name      = "web-ingress"
+    namespace = kubernetes_namespace_v1.lab.metadata[0].name
+  }
+
   spec {
-    pod_selector { match_labels = { role = "db" } }
-    policy_types = ["Ingress", "Egress"]
+    pod_selector {
+      match_labels = { app = "web" }
+    }
+
+    policy_types = ["Ingress"]
 
     ingress {
-      from { pod_selector { match_labels = { role = "frontend" } } }
-      ports { protocol = "TCP" port = 6379 }
-    }
-    egress {
-      to { pod_selector { match_labels = { role = "replica" } } }
-      ports { protocol = "TCP" port = 6379 }
+      from {
+        pod_selector {
+          match_labels = { app = "frontend" }
+        }
+      }
+
+      ports {
+        protocol = "TCP"
+        port     = "80"
+      }
     }
   }
 }
 ```
 
-> 💡 仅允许 frontend → db，db → replica 的流量。
+目标是限制选中的 web Pod 入站流量，允许同 namespace 的 frontend Pod 访问 TCP 80。此例没有声明 Egress 隔离，不限制 web 的所有出站流量。
 
+实际效果要求 CNI 支持 NetworkPolicy，并要考虑其他策略的叠加。看到 API 创建成功不等于流量边界已经验证；使用真实允许/拒绝的 Pod 流量测试，port-forward 不能代替它。
+
+### 6. 清理边界
+
+先查看 destroy plan，再执行。本例会管理并删除自己的 namespace；删除 namespace 会涉及其中的所有资源，所以不要混入其他工具/团队的对象。
+
+## 三、Helm：把 Release 纳入 State
+
+Helm Provider 管理的是 Release。Chart 里的 Deployment、Service、ConfigMap 等由 Helm 渲染和操作，不应同时让 Terraform typed resource 或 Argo CD 管理相同对象。
+
+本例用自己的最小 Chart，避免依赖过期公共 Chart 参数。Provider 采用 **3.x**：`kubernetes = { ... }` 是对象写法，旧版 `kubernetes { ... }` 不能不加区分地混用。
+
+### 1. 目录结构
+
+```text
+14-helm/
+├── main.tf
+└── chart/
+    ├── Chart.yaml
+    ├── values.yaml
+    └── templates/
+        └── web.yaml
+```
+
+`chart/Chart.yaml`：
+
+```yaml
+apiVersion: v2
+name: learning-web
+description: Terraform Helm learning chart
+type: application
+version: 0.1.0
+appVersion: '1.30.5'
+```
+
+`chart/values.yaml`：
+
+```yaml
+replicaCount: 1
+image:
+  repository: nginx
+  tag: 1.30.5-alpine
+```
+
+`chart/templates/web.yaml`：
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}
+    spec:
+      containers:
+        - name: nginx
+          image: '{{ .Values.image.repository }}:{{ .Values.image.tag }}'
+          ports:
+            - containerPort: 80
 ---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}
+spec:
+  selector:
+    app: {{ .Release.Name }}
+  ports:
+    - port: 80
+      targetPort: 80
+```
 
-## 5.10 使用 Helm 部署应用
+### 2. 完整 main.tf
 
 ```hcl
+terraform {
+  required_version = ">= 1.7, < 2.0"
+
+  required_providers {
+    helm = {
+      source  = "hashicorp/helm"
+      version = "~> 3.0"
+    }
+  }
+}
+
+variable "kubeconfig_path" {
+  type    = string
+  default = "~/.kube/config"
+}
+
+variable "kube_context" {
+  type = string
+}
+
 provider "helm" {
-  kubernetes {}
+  kubernetes = {
+    config_path    = pathexpand(var.kubeconfig_path)
+    config_context = var.kube_context
+  }
 }
 
-resource "helm_release" "redis" {
-  name       = "redis"
-  repository = "https://charts.bitnami.com/bitnami"
-  chart      = "redis"
-  version    = "17.3.14"
+resource "helm_release" "web" {
+  name             = "learning-web"
+  namespace        = "tf-learning-helm"
+  create_namespace = true
+  chart            = "${path.module}/chart"
+  wait             = true
+  timeout          = 300
 
-  set {
-    name  = "architecture"
-    value = "standalone"
-  }
+  values = [yamlencode({
+    replicaCount = 1
+  })]
 }
 ```
 
-Helm Provider 结合 Terraform，能将 Helm Release 纳入 Terraform 的状态管理。
+使用 YAML 编码的 values 可以传对象和数组，也更容易避免 Helm `set` 的字符串转义。3.x 的 set 简单示意为 `set = [{ name = "replicaCount", value = "2" }]`，不是旧版的重复 `set { ... }` 块。
 
----
+### 3. 检查 Chart，再执行
 
-## 5.11 使用 Helm 部署监控 (Prometheus + Grafana)
-
-```hcl
-resource "helm_release" "prometheus" {
-  name       = "prometheus"
-  repository = "https://prometheus-community.github.io/helm-charts"
-  chart      = "prometheus"
-  version    = "15.10.1"
-}
-
-resource "helm_release" "grafana" {
-  name       = "grafana"
-  repository = "https://grafana.github.io/helm-charts"
-  chart      = "grafana"
-  version    = "6.43.1"
-  set {
-    name  = "adminPassword"
-    value = "StrongPassword123!"
-  }
-}
+```bash
+helm lint ./chart
+helm template learning-web ./chart --namespace tf-learning-helm
+export TF_VAR_kube_context="<实验context>"
+terraform init
+terraform plan -out=tfplan
+terraform show tfplan
+terraform apply tfplan
+helm --kube-context "<实验context>" list -n tf-learning-helm
+kubectl --context "<实验context>" -n tf-learning-helm get deployments,services,pods
 ```
 
-这样可以快速为 Kubernetes 部署可视化监控体系。
+把 replicaCount 改为 2 后，先 plan 再 apply，观察 Release 升级和 Pod 变化。
 
----
+清理时 destroy Release 并核对资源。`create_namespace` 创建的 namespace 通常不随 Helm Release 卸载自动删除；需要在确认没有其他资源后单独处理。
 
-## 5.12 使用 HashiCorp Nomad 调度容器
+### 4. 公共 Chart、监控与 Secret
 
-除了 Kubernetes，Terraform 还支持 **Nomad**：
+采用 Prometheus/Grafana 等公共 Chart 时，应固定具体 Chart 版本，查看该版本的 values schema、CRD 管理和升级说明。不要延续旧文章里随手固定的历史版本或明文 adminPassword。
+
+密码可由外部 Secret 流程准备，再通过 Chart 支持的已有 Secret 引用接入。`set_sensitive` 能遮盖显示，但不等于密码不进入 Terraform State。
+
+`atomic` 可提供 Helm 自身的失败清理/回滚行为；它不保证整个 Terraform 运行的其他资源都回滚。CRD、hook 和数据卷的卸载行为仍需按 Chart 核对。
+
+## 四、Nomad：管理已有集群中的 Job
+
+Nomad Provider 与 Kubernetes Provider 是不同接口。以下是有可用 Nomad server/client、Docker driver 的实验配置，不包含搭建 Nomad 集群。
+
+`main.tf`：
 
 ```hcl
+terraform {
+  required_version = ">= 1.7, < 2.0"
+
+  required_providers {
+    nomad = {
+      source  = "hashicorp/nomad"
+      version = "~> 2.0"
+    }
+  }
+}
+
 provider "nomad" {
-  address = "http://localhost:4646"
+  address = "http://127.0.0.1:4646"
 }
 
-resource "nomad_job" "redis" {
-  jobspec = file("${path.module}/redis.nomad")
+resource "nomad_job" "web" {
+  jobspec = file("${path.module}/web.nomad.hcl")
 }
 ```
 
-**redis.nomad**:
+`web.nomad.hcl`：
 
 ```hcl
-job "redis" {
+job "learning-web" {
   datacenters = ["dc1"]
-  group "cache" {
-    task "redis" {
+  type        = "service"
+
+  group "web" {
+    count = 1
+
+    network {
+      port "http" {
+        to = 80
+      }
+    }
+
+    task "nginx" {
       driver = "docker"
-      config { image = "redis:latest" }
+
+      config {
+        image = "nginx:1.30.5-alpine"
+        ports = ["http"]
+      }
+
+      resources {
+        cpu    = 100
+        memory = 128
+      }
     }
   }
 }
 ```
 
-Nomad 更适合混合调度（容器+非容器化应用）。
+生产环境使用自己的 TLS endpoint，并按 ACL 配置受控的 `NOMAD_TOKEN`。先用 Nomad CLI 检查 jobspec，再查看 Terraform 计划和执行；实际 allocation 状态仍需通过 Nomad 查询。
 
----
+## 工具所有权与常见问题
 
-## 总结
+- Terraform、Helm、kubectl、Argo CD 同时声明同一对象，会互相覆盖或出现所有权冲突。明确每个对象的负责人。
+- Helm Release 的资源不应再逐个声明为另一套 Terraform typed resource。
+- 创建集群需要云权限，操作集群需要集群认证和授权，两者分开检查。
+- 本地可用的 exec 认证插件在远程 runner 上也必须存在，短期 token 还要考虑有效期。
+- 读取 Secret 或把密码写进 Helm values，可能把值存进 State；显示遮盖和持久化是不同问题。
+- Terraform apply 成功后，继续核对容器运行、Pod Ready、Release 状态和实际访问。
 
-- Terraform 能管理 **Docker** 和 **Kubernetes** 的容器工作负载，也能支持 **Nomad**。
-- 在 Kubernetes 场景下，可以灵活选择 **YAML / HCL / Helm**。
-- 网络策略（NetworkPolicy）、注解（Annotation）、环境变量等，都能通过 Terraform 精细化管理。
-- Helm Provider 将 Helm Chart 纳入 Terraform 生命周期。
-- Terraform 的统一入口让 **容器编排与基础设施管理一致化**，非常适合企业 DevOps 流程。
+## 参考资料
+
+- [Docker Provider](https://registry.terraform.io/providers/kreuzwerker/docker/latest/docs)
+- [Docker image](https://registry.terraform.io/providers/kreuzwerker/docker/latest/docs/resources/image)
+- [官方 Nginx 镜像](https://hub.docker.com/_/nginx)
+- [Kubernetes Provider 2.30](https://registry.terraform.io/providers/hashicorp/kubernetes/2.30.0/docs)
+- [kubernetes_manifest](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest)
+- [Helm Provider 3.0](https://registry.terraform.io/providers/hashicorp/helm/3.0.0/docs)
+- [helm_release](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release)
+- [Nomad Job](https://registry.terraform.io/providers/hashicorp/nomad/latest/docs/resources/job)
+
+相关原理：[[Docker-Kubernetes/k8s-basic-resources/k8s基础-deployment|Deployment]]、[[Docker-Kubernetes/k8s-basic-resources/k8s基础-认证-授权-准入|Kubernetes 认证授权]]。
+
+上一篇：[[IaC/terraform/terraform-testing-cicd|测试与协作]] · 下一篇：[[IaC/terraform/terraform-docs|模块文档生成]]。
