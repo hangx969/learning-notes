@@ -74,7 +74,7 @@ date: 2026-10-02
 | [Azure](entities/Azure.md) | Microsoft 公有云平台 |
 | [AKS](entities/AKS.md) | Azure 托管 Kubernetes 服务 |
 | [Aliyun](entities/Aliyun.md) | 阿里云公有云平台 |
-| [[KnowledgeBase/entities/Terraform|Terraform]] | 基础系列、Provider、状态、模块、容器与协作 |
+| [[KnowledgeBase/entities/Terraform\|Terraform]] | 基础系列、Provider、状态、模块、容器与协作 |
 | [Claude-Code](entities/Claude-Code.md) | AI 编程助手 |
 | [[KnowledgeBase/entities/Codex|Codex]] | AI 编程助手；Harness 任务循环、配置、工具执行与工作流优化 |
 | [MCP](entities/MCP.md) | Model Context Protocol |
@@ -383,7 +383,7 @@ date: 2026-10-02
 | Middlewares | 3 | 🟠 | [Kafka](../Middlewares/Kafka.md) |
 | OS | 3 | 🟠 | [OS](../OS/OS.md) |
 | Networking | 2 | 🟠 | [计算机网络基础](../Networking/计算机网络基础.md) |
-| IaC | 16（含学习路线） | 🟢 | [[IaC/terraform/README|Terraform 基础系列]] |
+| IaC | 16（含学习路线） | 🟢 | [[IaC/terraform/README\|Terraform 基础系列]] |
 | Git | 2 | 🟠 | [git-learning](../Git/git-learning.md) |
 | SoftwareTesting | 2 | 🟠 | [软件工程基础](../SoftwareTesting/软件工程基础.md) |
 | C++ | 1 | 🟠 | [C++LearningNotes](../C++/C++LearningNotes.md) |

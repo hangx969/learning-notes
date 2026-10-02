@@ -233,7 +233,7 @@ sources:
 | Middlewares | 3 | [[Middlewares/Kafka|Kafka]]、[[Middlewares/RabbitMQ|RabbitMQ]] | K8s 中间件部署 |
 | OS | 3 | [[OS/OS|OS]]、[[OS/计算机组成原理|计算机组成原理]] | 理论基础 |
 | Networking | 2 | [[Networking/计算机网络基础|计算机网络基础]]、[[Networking/HTTP基础|HTTP基础]] | 云网络基础 |
-| IaC | 16（含学习路线） | [[IaC/terraform/README|Terraform 基础系列]]、[[KnowledgeBase/maps/terraform-map|学习地图]] | 自动化运维 |
+| IaC | 16（含学习路线） | [[IaC/terraform/README\|Terraform 基础系列]]、[[KnowledgeBase/maps/terraform-map\|学习地图]] | 自动化运维 |
 | Git | 2 | [[Git/git-learning|git-learning]] | 开发工具 |
 | SoftwareTesting | 2 | [[SoftwareTesting/软件工程基础|软件工程基础]] | 软件工程 |
 | C++ | 1 | [[C++/C++LearningNotes|C++LearningNotes]] | 编程语言 |

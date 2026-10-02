@@ -2086,3 +2086,12 @@ date: 2026-04-17
 - 正文中的占位符放进行内代码，避免被当作 HTML 标签隐藏。
 - 更新 [[KnowledgeBase/maintenance/wiki-lint-2026-09-29|Wiki 健康检查 2026-09-29]] §8 第 4 条的处理状态。
 - 原值仍保留在 git 历史中。
+
+
+## [2026-10-02] ingest | Terraform 基础系列扩充
+
+- 根据用户明确授权，改写 IaC/terraform 原有基础、容器管理与 terraform-docs 三篇笔记，新增 12 篇正文和 README 学习路线，形成 15 篇正文 + 1 个导航；按 k8s-basic-resources 的专题、完整配置、步骤解释和实验方式组织。
+- 搜索 GitHub 学习提纲、社区最佳实践及官方教程代码，并结合 Terraform/Provider 官方文档重写中文内容；逐篇列出出处和版本范围，修正 Docker image_id、Helm 3.x 配置、Azure Backend use_cli 版本及 S3 锁文件示例。
+- 新增 14 篇来源摘要并更新容器管理摘要，更新 Terraform 实体页，新增基础设施即代码、Terraform 状态管理、Terraform 模块化概念页和 Terraform 学习地图；仅局部修改总索引、工具/领域地图及杂项摘要中的 Terraform 内容，全库篇数保留为原有日期的盘点快照。
+- 40 个页面经 Obsidian 写入后逐篇回读一致；83 个 HCL 代码块通过 Terraform fmt 解析检查，YAML、代码围栏和新增内部链接检查通过，98 个外部链接可访问；最小 Helm Chart 通过离线 lint 和 template 渲染。
+- 本次没有运行 terraform init、terraform validate、plan、apply 或原生测试，没有访问云账号和集群；格式/静态检查及 Helm 离线渲染不表示平台部署或业务验收已通过。
