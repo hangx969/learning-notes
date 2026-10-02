@@ -27,7 +27,7 @@ aliases:
 
 1. count 按索引分配实例身份，中间增删或重排可能影响后续实例。
 2. for_each 使用 map/set(string)，key 要在 plan 时已知且不能是敏感值。
-3. key 改名需要考虑 moved；for 表达式和 dynamic 不等于创建独立资源实例。
+3. moved 迁移同一 State 内的地址，但不能取消真实参数变化要求的替换；for 表达式和 dynamic 不等于创建独立资源实例。
 
 ## 涉及的概念与实体
 

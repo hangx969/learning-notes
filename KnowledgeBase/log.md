@@ -2095,3 +2095,11 @@ date: 2026-04-17
 - 新增 14 篇来源摘要并更新容器管理摘要，更新 Terraform 实体页，新增基础设施即代码、Terraform 状态管理、Terraform 模块化概念页和 Terraform 学习地图；仅局部修改总索引、工具/领域地图及杂项摘要中的 Terraform 内容，全库篇数保留为原有日期的盘点快照。
 - 40 个页面经 Obsidian 写入后逐篇回读一致；83 个 HCL 代码块通过 Terraform fmt 解析检查，YAML、代码围栏和新增内部链接检查通过，98 个外部链接可访问；最小 Helm Chart 通过离线 lint 和 template 渲染。
 - 本次没有运行 terraform init、terraform validate、plan、apply 或原生测试，没有访问云账号和集群；格式/静态检查及 Helm 离线渲染不表示平台部署或业务验收已通过。
+
+## [2026-10-02] update | Terraform 分题写作与统筹验收
+
+- 三名 GPT-6.1 Sol 子 Agent（推理等级 Max）分别修订语言基础、Provider 与 State、模块与项目协作三组内容，共 15 篇文章；父级独立验收后统一写回。学习入口为 [[IaC/terraform/README|Terraform 基础系列学习路线]]。
+- 补齐实验变更、预期观察、清理和练习；修正 nullable 默认值、敏感 output 明文读取、moved 与参数替换的边界，并统一模块别名、测试接口及 terraform-docs 调用示例。
+- 同步 [[KnowledgeBase/sources/iac-terraform-variables-outputs-summary|变量摘要]]、[[KnowledgeBase/sources/iac-terraform-count-for-each-summary|循环摘要]]、[[KnowledgeBase/sources/iac-terraform-modules-summary|模块摘要]]、[[KnowledgeBase/sources/iac-terraform-docs-summary|文档生成摘要]]。
+- 独立检查通过：91 个 HCL 块的格式与两套解析器、96 个 Shell 块的语法、Markdown 围栏/表格/内部链接、跨篇输入输出及 Provider 映射；33 个新增外部来源链接可访问。Helm Chart lint 与副本数 1/2 的离线渲染通过。
+- 通过 Obsidian MCP 写回并逐文件读回全部 19 个变更文件，内容与验收稿完全一致。未运行 Terraform init、validate、plan、apply 或 test，未进行云、Docker 或集群部署；terraform-docs 实际生成未验证。
