@@ -2103,3 +2103,11 @@ date: 2026-04-17
 - 同步 [[KnowledgeBase/sources/iac-terraform-variables-outputs-summary|变量摘要]]、[[KnowledgeBase/sources/iac-terraform-count-for-each-summary|循环摘要]]、[[KnowledgeBase/sources/iac-terraform-modules-summary|模块摘要]]、[[KnowledgeBase/sources/iac-terraform-docs-summary|文档生成摘要]]。
 - 独立检查通过：91 个 HCL 块的格式与两套解析器、96 个 Shell 块的语法、Markdown 围栏/表格/内部链接、跨篇输入输出及 Provider 映射；33 个新增外部来源链接可访问。Helm Chart lint 与副本数 1/2 的离线渲染通过。
 - 通过 Obsidian MCP 写回并逐文件读回全部 19 个变更文件，内容与验收稿完全一致。未运行 Terraform init、validate、plan、apply 或 test，未进行云、Docker 或集群部署；terraform-docs 实际生成未验证。
+
+## [2026-10-02] restructure | Terraform 中文标题与学习顺序编号
+
+- 按 [[IaC/terraform/README|系列学习路线]] 将 15 篇正文命名为 `01_terraform_中文名` 至 `15_terraform_中文名`；文件名、正文一级标题和 frontmatter title 一致。
+- 同步 README、上级 IaC 索引及知识层引用，共 43 个文档、196 处正文引用；保留技术内容、代码示例、其余元数据和历史日志。
+- 逐文件 Obsidian MCP 读回核对通过，15 个旧路径已移除，新增文章路径均可解析；文件排序、标题一致性及 git diff --check 通过。
+
+- Obsidian 阅读视图验收通过：学习路线表格保持三列，编号标题正确显示，15 个新文章路径均能通过元数据缓存解析。
