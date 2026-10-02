@@ -39,6 +39,8 @@ terraform-docs version
 
 本篇配置按 0.20+ 的格式编写。团队应固定经过检查的工具版本，避免同一份代码在不同执行环境生成不同表格。
 
+下文 `.terraform-docs.yml` 中的 `version` 是**对运行中的 terraform-docs 的版本约束**，不会替你安装或选择二进制；它也不是 Terraform CLI 或模块版本。
+
 ## 先生成到终端
 
 使用 [[IaC/terraform/terraform-modules|模块实验]] 的 app-config：
@@ -58,13 +60,11 @@ terraform-docs markdown table ./modules/app-config
 在 `modules/app-config/README.md` 写入：
 
 ```markdown
-# Terraform基础-terraform-docs 模块文档生成
+# app-config
 
 为单个服务生成 JSON 配置。生成路径由调用者提供，模块不写入自己的下载缓存。
 
-## Usage
-
-示例调用和环境约定由维护者编写。
+完整调用示例维护在 examples/basic/main.tf。
 
 <!-- BEGIN_AUTOMATED_TF_DOCS_BLOCK -->
 <!-- END_AUTOMATED_TF_DOCS_BLOCK -->
@@ -73,6 +73,37 @@ terraform-docs markdown table ./modules/app-config
 
 说明命名规则、输入约束和地址迁移要求。
 ```
+
+然后创建 `modules/app-config/examples/basic/main.tf`，让用法与 [[IaC/terraform/terraform-modules|模块接口]] 保持一致：
+
+```hcl
+terraform {
+  required_version = ">= 1.7, < 2.0"
+
+  required_providers {
+    local = {
+      source  = "hashicorp/local"
+      version = "~> 2.5"
+    }
+  }
+}
+
+module "web" {
+  source = "../../"
+
+  name             = "web"
+  environment      = "dev"
+  port             = 8080
+  output_directory = abspath("${path.root}/generated")
+}
+
+output "file_path" {
+  description = "示例生成的配置文件路径"
+  value       = module.web.file_path
+}
+```
+
+此 source 相对 examples/basic 目录定位到 app-config。文档生成不执行这个例子；读者单独运行它时，它是一个独立 root module，有自己的状态和执行目录。
 
 ### 最小可用配置
 
@@ -127,6 +158,22 @@ git diff -- modules/app-config/README.md
 
 `output.file` 相对被处理的模块目录解析。输出模板中的 begin/end 标记必须与 README 一致；保留原来的自定义标记可以避免误把另一块区域当作生成区域。
 
+| 配置 | 用途 |
+|---|---|
+| `formatter` | 选择输出形式，本例为 Markdown 接口表 |
+| `version` | 检查 terraform-docs 本身的版本是否允许运行 |
+| `sections.show` | 明确保留哪些章节；没有列出的章节不进入本例生成区 |
+| `output.file` / `mode` | 指定文件和注入方式，控制人工区是否保留 |
+| `output.template` | 指定注入标记和生成内容的位置 |
+| `sort.by` | 用名称稳定排序，减少无关 diff |
+| `settings.required` / `type` / `sensitive` | 在接口表中显示是否必需、类型和敏感标记 |
+
+其他 settings 控制表格的转义、锚点、默认值等展示形式，不会替模块补充业务校验。
+
+预期生成区包含四个必需输入 `name`、`environment`、`port`、`output_directory`，以及 `file_path`、`content_sha256` 两个输出。人工编写的开头和 Design and upgrade notes 应保留。连续生成两次时，第二次应没有新 diff。
+
+如果原文件没有匹配的标记，inject 会追加生成区；目标文件不存在时则会创建它。因此标记不一致常表现为重复文档，而不是立即报错。
+
 ### inject 与 replace
 
 | 模式 | 行为 | 使用场景 |
@@ -155,9 +202,9 @@ content: |-
 
 这些字段是 terraform-docs 的 Go template 内容，不是 Terraform 的 `${...}` 插值。
 
-### 自动拼出调用参数示例
+### 把真实调用示例嵌入生成区
 
-下例展示基于 RequiredInputs/OptionalInputs 的模板。替换模块来源占位符后才能作为实际调用示例，复杂对象默认值仍应人工核对。
+可以使用 `include` 读取前面维护的可运行示例，避免把没有默认值的 RequiredInputs 自动拼成看似完整、实际缺少业务参数的调用。把前面的 content 替换为：
 
 ````yaml
 content: |-
@@ -166,22 +213,10 @@ content: |-
   ## Usage
 
   ```hcl
-  module "example" {
-    source = "<module-path>"
-    {{- if .Module.RequiredInputs }}
-    # Required variables
-    {{- range .Module.RequiredInputs }}
-    {{ .Name }} = {{ .GetValue }}
-    {{- end }}
-    {{- end }}
-    {{- if .Module.OptionalInputs }}
-    # Optional variables
-    {{- range .Module.OptionalInputs }}
-    {{ .Name }} = {{ .GetValue }}
-    {{- end }}
-    {{- end }}
-  }
+  {{ include "examples/basic/main.tf" }}
   ```
+
+  {{ .Providers }}
 
   {{ .Resources }}
 
@@ -190,7 +225,48 @@ content: |-
   {{ .Outputs }}
 ````
 
-自动生成的 Usage 可以帮助发现接口变化，但不代替一份实际可运行的模块示例。占位值、敏感输入、可选对象和互斥参数要根据模块语义处理。
+include 路径相对被处理的模块目录。README 中展示的是 examples/basic/main.tf 的内容，所以其中 `source = "../../"` 仍对应示例目录的位置；从其他目录复制运行时需要调整 source。
+
+`sections.show` / `hide` 优先于 content 模板。模板里写了 `{{ .Providers }}`，但配置隐藏了 providers 时，仍不会显示该节。工具还提供 `.Module` 原始接口对象供复杂模板使用；输入值该怎么选、哪些参数互斥仍需维护者根据模块语义编写。
+
+### 可选：生成参数骨架
+
+只想列出模块的必需和可选参数时，可以遍历 `.Module.RequiredInputs` / `.Module.OptionalInputs`。下面的 content 是前一个 content 的**替代模板**，输出的是待填写骨架，不是可运行调用；`<module-path>`、`<REQUIRED_VALUE>` 都必须由维护者替换。
+
+````yaml
+content: |-
+  {{ .Requirements }}
+
+  ## Parameter skeleton
+
+  ```hcl
+  module "example" {
+    source = "<module-path>"
+    {{- if .Module.RequiredInputs }}
+    # Required variables: fill in actual values
+    {{- range .Module.RequiredInputs }}
+    {{ .Name }} = <REQUIRED_VALUE>
+    {{- end }}
+    {{- end }}
+    {{- if .Module.OptionalInputs }}
+    # Optional variables: defaults from module code
+    {{- range .Module.OptionalInputs }}
+    {{ .Name }} = {{ .GetValue }}
+    {{- end }}
+    {{- end }}
+  }
+  ```
+
+  {{ .Providers }}
+
+  {{ .Resources }}
+
+  {{ .Inputs }}
+
+  {{ .Outputs }}
+````
+
+按 terraform-docs 0.20 的接口，GetValue 输出声明的默认值；必需输入没有默认值时，GetValue 返回空字符串。直接把所有必需参数写成 `{{ .Name }} = {{ .GetValue }}`，可能生成 `name =` 这样的缺值行，因此上面明确放置占位符。复杂对象、显式 null、敏感默认值和互斥参数仍需人工核对；骨架只帮助发现接口变化，完整调用优先维护为 examples 中的代码。
 
 ## 不读取实际 State 输出
 
@@ -216,6 +292,8 @@ recursive:
 ```
 
 采用前先确认调用根目录、子模块配置发现方式和目标文件范围。目录复杂时逐个模块生成更容易观察差异；不要第一次就对整个仓库 replace。
+
+工具会自动发现 `.terraform-docs.yml`，优先查模块根目录及其 `.config/`，再查当前目录及其 `.config/`，最后查用户级配置；命令行选项可覆盖配置。开始使用统一模板时，显式 `--config` 更容易确认读取的是哪份文件。添加配置后再次运行先前的 `markdown table` 命令，也可能按配置写入 README，不能再假定所有调用都只输出终端。
 
 旧模板中的 `sections.hide-all` / `show-all` 已在历史版本中移除。本系列使用 `sections.show` / `hide`，不要复制旧字段再假定仍生效。
 
@@ -244,6 +322,12 @@ git diff --exit-code -- modules/app-config/README.md
 - 反复产生 diff：工具版本、排序、行尾或模板不一致。
 - 变量默认值被误认为运行值：工具提取的是配置接口，不是某次 tfvars 或真实部署的最终输入。
 
+## 练习
+
+1. 只修改 port 的 description，再生成文档，说明它是否改变资源行为。
+2. 给模块增加一个有默认值的输入，观察接口表与参数骨架，补充实际调用示例。
+3. 连续生成两次，确认第二次没有 diff，且 README 的人工设计说明仍存在。
+
 ## 参考资料
 
 - [terraform-docs GitHub](https://github.com/terraform-docs/terraform-docs)
@@ -251,5 +335,9 @@ git diff --exit-code -- modules/app-config/README.md
 - [Output 注入配置](https://terraform-docs.io/user-guide/configuration/output/)
 - [Content 模板](https://terraform-docs.io/user-guide/configuration/content/)
 - [工具版本约束](https://terraform-docs.io/user-guide/configuration/version/)
+- [output-values 配置](https://terraform-docs.io/user-guide/configuration/output-values/)
+- [递归生成配置](https://terraform-docs.io/user-guide/configuration/recursive/)
+- [terraform-docs 0.20 Input.GetValue 实现](https://github.com/terraform-docs/terraform-docs/blob/v0.20.0/terraform/input.go)
+- [terraform-docs 0.20 Module 模板接口](https://github.com/terraform-docs/terraform-docs/blob/v0.20.0/terraform/module.go)
 
 上一篇：[[IaC/terraform/terraform-container-management|容器实战]] · 返回：[[IaC/terraform/README|系列学习路线]]。

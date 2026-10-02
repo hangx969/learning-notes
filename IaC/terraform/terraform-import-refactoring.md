@@ -34,7 +34,13 @@ Data Source 可以查询已有对象，但不会因为读取它就自动承担�
 
 ### 1. 明确已有对象
 
-如果需要创建一个新的、尚未交给 Terraform 的实验对象，可由读者在控制台创建专用空资源组。随后查询：
+如果已有合适的专用实验对象，可以直接查询。若要从零准备本实验，可由读者在已核对订阅的 Azure CLI 会话中创建一个专用空资源组；region 要替换为自己订阅可用的中国区名称：
+
+```bash
+az group create --name rg-learning-import --location chinanorth3 --tags purpose=terraform-import-learning
+```
+
+这是在 Terraform 外创建对象，不是在本仓库已经执行的记录。随后查询：
 
 ```bash
 az group show --name rg-learning-import --query '{id:id,location:location,tags:tags}' -o json
@@ -105,10 +111,12 @@ output "resource_group_id" {
 subscription_id     = "00000000-0000-0000-0000-000000000000"
 location            = "chinanorth3"
 resource_group_name = "rg-learning-import"
-existing_tags       = {}
+existing_tags = {
+  purpose = "terraform-import-learning"
+}
 ```
 
-全零订阅 ID 只是占位值，必须替换。已有 tags 不为空时应填入，而不是无意清空它们。
+全零订阅 ID 只是占位值，必须替换。上面的 tags 与本节 CLI 创建命令对应；纳管其他已有实验资源组时，以查询得到的实际 tags 为准，空标签才写 `{}`，避免无意清空或覆盖标签。
 
 ### 3. 查看导入计划
 
@@ -118,7 +126,7 @@ terraform plan -var-file=import.tfvars -out=import.tfplan
 terraform show import.tfplan
 ```
 
-理想结果是导入目标对象，并且没有非预期创建、修改或删除。若出现标签修改、区域变化或替换，先调整配置以符合纳管意图，再重新 plan。
+理想结果是导入目标对象，并且没有非预期创建、修改或删除。若出现标签修改、区域变化或替换，先调整配置以符合纳管意图，再重新 plan。`id` 必须在 plan 阶段能够确定，Provider 也需要能读取那个已有对象；导入不是跳过认证和 API 读取的离线操作。
 
 ### 4. 接受计划并核对
 
@@ -146,7 +154,7 @@ Terraform 1.5+ 的 import 块把导入意图放进配置，支持 plan/review �
 
 ## 自动生成配置
 
-另一种工作流是：保留 Provider 配置和 import 块，暂时没有目标 resource 定义，然后运行：
+另一种工作流是：保留 `terraform`、变量、Provider 配置和 import 块，暂时去掉目标 resource 定义及引用它的 output，然后运行：
 
 ```bash
 terraform plan -var-file=import.tfvars -generate-config-out=generated_resources.tf
@@ -154,7 +162,7 @@ terraform plan -var-file=import.tfvars -generate-config-out=generated_resources.
 
 这是替代前面手写 resource 的流程。输出路径必须尚不存在；生成的文件需要人工 review，可能包含不合适的默认值、冲突参数或过多属性。
 
-生成配置不等于已导入，更不等于得到可复用模块。整理出清晰的变量与资源定义，再重新查看和执行导入计划。
+生成配置不等于已导入，更不等于得到可复用模块。整理出清晰的变量与资源定义，按需补回 output，再重新查看和执行导入计划。不要把生成的 resource 与前面手写的同地址 resource 同时保留，否则会重复声明。
 
 ## moved：保留对象的地址重命名
 
@@ -243,7 +251,7 @@ terraform state list
 
 ## 跨 State 移交
 
-`moved` 主要描述同一配置状态内的地址迁移，不是把任意对象自动复制到另一个 Backend。
+`moved` 描述同一份 State 内的地址迁移，不把对象绑定自动搬到另一个 Backend 或 Workspace。移动整个 State 存储位置使用 [[IaC/terraform/terraform-backends-workspaces|Backend 迁移]]；拆分其中某些对象的所有权才属于这里的跨 State 移交。
 
 跨项目移交需要协作流程：
 
@@ -252,7 +260,31 @@ terraform state list
 3. 原项目退出管理，新项目 import，避免两个 State 同时控制同一对象。
 4. 分别查看完整计划，确认原项目不会重新创建，新项目不会意外替换。
 
-如果需要使用 `state mv`/`state rm` 等命令，应把它们作为受控状态维护操作，而不是为了躲过一个不理解的 Plan。
+原项目既要移除绑定，也要调整旧 resource 配置，确保之后不会重新创建对象。新项目则要在导入后确认实际 ID 与预期一致，再恢复双方流水线。锁只保护对应的 State，不会自动阻止另一个项目管理同一云 ID。
+
+如果需要使用 `state mv`/`state rm` 等命令，应把它们作为受控状态维护操作，而不是为了躲过一个不理解的 Plan。普通 `state mv` 针对当前连接的状态改地址，不能通过切换 Backend 后随意执行它完成上述移交。
+
+## 实验收尾
+
+收尾方式取决于资源是否仍由当前 State 管理：
+
+- **只完成导入，未应用 removed**：仅当对象就是自己为本实验创建的空资源组时，生成并查看 Terraform 删除计划。
+
+```bash
+terraform plan -destroy -var-file=import.tfvars -out=destroy.tfplan
+terraform show destroy.tfplan
+terraform apply destroy.tfplan
+```
+
+- **已应用 `removed` 并保留对象**：当前 Terraform 已退出管理，destroy 不会清理该资源组。对于本节自己临时创建的对象，先用 Azure CLI 核对组内为空，再删除它。
+
+```bash
+az resource list --resource-group rg-learning-import --query '[].{name:name,type:type}' -o table
+az group delete --name rg-learning-import
+az group exists --name rg-learning-import
+```
+
+删除前确认查询没有列出其他系统使用的资源；等待删除完成后，最后一条命令预期返回 `false`。若使用的是原本就存在、需要继续保留的对象，纳管、移交或退出管理完成即可，不执行本节删除命令。资源组本身的导入也不会自动把组内所有子资源逐一导入。
 
 ## 练习
 
@@ -265,8 +297,10 @@ terraform state list
 - [Import](https://developer.hashicorp.com/terraform/language/import)
 - [生成配置](https://developer.hashicorp.com/terraform/language/import/generating-configuration)
 - [moved 与模块重构](https://developer.hashicorp.com/terraform/language/modules/develop/refactoring)
-- [移除资源管理](https://developer.hashicorp.com/terraform/language/resources/behavior)
+- [移除资源管理](https://developer.hashicorp.com/terraform/language/block/removed)
 - [Azure Resource Group 导入格式](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/resource_group#import)
 - [CLI import](https://developer.hashicorp.com/terraform/cli/commands/import)
+- [state mv](https://developer.hashicorp.com/terraform/cli/commands/state/mv)
+- [Azure CLI 资源组命令](https://learn.microsoft.com/en-us/cli/azure/group)
 
 上一篇：[[IaC/terraform/terraform-modules|Module]] · 下一篇：[[IaC/terraform/terraform-workflow-troubleshooting|Plan 阅读与排错]]。

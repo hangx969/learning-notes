@@ -60,6 +60,7 @@ variable "environment" {
   description = "实验环境"
   type        = string
   default     = "dev"
+  nullable    = false
 
   validation {
     condition     = contains(["dev", "staging", "prod"], var.environment)
@@ -71,6 +72,7 @@ variable "port" {
   description = "应用监听端口"
   type        = number
   default     = 8080
+  nullable    = false
 
   validation {
     condition     = var.port >= 1 && var.port <= 65535 && floor(var.port) == var.port
@@ -82,12 +84,21 @@ variable "extra_tags" {
   description = "调用者追加的标签"
   type        = map(string)
   default     = {}
+  nullable    = false
 }
 ```
 
-有 `default` 的变量可以不传；没有 `default` 的变量必须由调用者提供。`nullable = false` 表示不接受 null；其他变量是否允许 null，应按接口意图明确设计。
+有 `default` 的变量可以不传；没有 `default` 的变量必须由调用者提供。`nullable` 控制模块内部最终能否得到 null，它默认是 true，不能简单理解成“null 一律报错”：
 
-本例 validation 只引用被校验的变量，兼容系列的 1.7 基线。较新版本允许更广泛的校验引用，迁移到旧版本项目时应再核对。
+| 声明方式 | 不传值 | 显式传入 null |
+|---|---|---|
+| 有非 null 默认值，`nullable = true` | 使用默认值 | null 覆盖默认值 |
+| 有非 null 默认值，`nullable = false` | 使用默认值 | 回退到默认值 |
+| 无默认值，`nullable = false` | 必须提供输入 | 报错 |
+
+本例四个变量都需要非 null 的值，因此显式设置 `nullable = false`。例如在 tfvars 中写 `port = null`，本例得到的端口会是默认的 `8080`；写 `port = 0` 则会被 validation 拒绝。对于 object/list，`nullable = false` 只约束整体值，不会自动禁止内部字段或元素为 null。
+
+本例 validation 只引用被校验的变量，兼容系列的 1.7 基线。**Terraform 1.9+** 才允许校验引用其他变量和配置对象，旧版本项目不能直接照搬这种写法。
 
 ### main.tf：计算派生值并使用输入
 
@@ -183,7 +194,7 @@ terraform plan
 unset TF_VAR_environment TF_VAR_port
 ```
 
-复杂类型也可通过环境变量提供，值需要是符合 Terraform 语法的表达式；团队协作中复杂 map 通常用 tfvars 更容易阅读。
+复杂类型也可通过环境变量提供，例如 `export TF_VAR_extra_tags='{"owner":"platform"}'`。在 Bash/zsh 中用外层单引号保留 JSON 内的双引号，结束实验后执行 `unset TF_VAR_extra_tags`。团队协作中复杂 map 通常用 tfvars 更容易阅读。
 
 `TF_VAR_port` 是 Terraform 输入变量。`ARM_SUBSCRIPTION_ID`、`AWS_PROFILE` 等通常是 Provider/Backend 的认证设置，两者不是同一层。
 
@@ -206,7 +217,7 @@ terraform plan -var-file=dev.tfvars -var='port=9090'
 5. `*.auto.tfvars` 和 `*.auto.tfvars.json`，按文件名字典序加载。
 6. 命令行 `-var` / `-var-file`，按出现顺序处理。
 
-因此上面的 `-var='port=9090'` 覆盖 `dev.tfvars` 中的 `8081`；如果交换两项顺序，后面的变量文件会覆盖前面的命令行值。
+因此上面的 `-var='port=9090'` 覆盖 `dev.tfvars` 中的 `8081`；如果交换两项顺序，后面的变量文件会覆盖前面的命令行值。自动文件按完整文件名排序，`.auto.tfvars.json` 不会整体比 `.auto.tfvars` 更晚加载。覆盖以整个变量为单位；两份文件各提供一个 `extra_tags` map 时，后面的 map 不会自动与前面的 map 合并。
 
 HCP Terraform/Enterprise 还有 Workspace 变量、变量集和远程执行模式。该表解释本地 CLI 的赋值顺序；远程项目还应核对平台自己的优先级规则。
 
@@ -217,6 +228,7 @@ HCP Terraform/Enterprise 还有 Workspace 变量、变量集和远程执行模�
 ```hcl
 variable "service" {
   description = "单个服务的配置"
+  nullable    = false
   type = object({
     name    = string
     port    = number
@@ -235,9 +247,9 @@ service = {
 }
 ```
 
-这里 `enabled` 和 `tags` 会获得可选属性默认值。该赋值片段应放进使用此接口的根模块变量文件，而不是追加到前面的四文件实验中。
+这里 `enabled` 和 `tags` 会获得可选属性默认值。`optional(bool, true)` 在字段缺省或显式写成 null 时都使用 true；若只写 `optional(bool)`，缺省值则是 null。可选对象属性与默认值已在 **Terraform 1.3+** 稳定支持，兼容本系列基线。该赋值片段应放进使用此接口的根模块变量文件，而不是追加到前面的四文件实验中。
 
-明确的 object 类型能较早暴露字段遗漏和类型错误。`any` 表示由 Terraform 推导类型，通常不适合用来逃避接口设计。
+明确的 object 类型能较早暴露必需字段遗漏和不兼容的类型，但额外字段在类型转换中可能被丢弃；把 `enabled` 拼成 `enabeld` 不一定报错，反而可能让真正的 `enabled` 使用默认值。`any` 是要求 Terraform 推导具体类型的占位符，通常不适合用来逃避接口设计。
 
 ## sensitive 到底保护什么
 
@@ -254,11 +266,13 @@ output "api_token" {
 }
 ```
 
-这是敏感值传播的教学片段，通常不应把 token 作为模块输出。`sensitive = true` 会遮盖常规终端输出中的值，但不等于加密，也不保证该值不被写入 State 或保存的 Plan。
+这是敏感值传播的教学片段，通常不应把 token 作为模块输出。`sensitive = true` 会在常规 plan/apply 展示中遮盖值，并把敏感性传播到引用它的结果。若 output 含敏感值，也必须明确标记 `sensitive = true`。这不等于加密，也不保证该值不被写入 State 或保存的 Plan。
 
-`terraform output -raw api_token`、`terraform output -json` 可以显示真实敏感值；读取状态或导出结果时同样要控制权限。
+`terraform output` 不带输出名时会隐藏敏感结果；**指定名字的 `terraform output api_token`，以及使用 `-raw` / `-json` 都可能显示明文**。真实凭证不要拿来做显示实验，读取状态或导出结果时同样要控制权限。
 
-Terraform 1.10+ 的 ephemeral 值，以及较新版本/特定 Provider 的 write-only 参数，是另一组能力，使用位置受限制。不能只加上 `sensitive` 就获得“不持久化”的效果。
+“敏感”和“未知”是两件事：敏感标记决定如何展示，unknown 表示 plan 时还不知道具体值。一个值可以既敏感又已知，也可以既敏感又未知；`try` 也不会把未知资源 ID 变成已知默认值。
+
+**Terraform 1.10+** 的 ephemeral 变量/子模块输出、**1.11+** 且由 Provider 支持的 write-only 参数，是另一组不持久化能力，使用位置受限制，本文的 1.7 基线示例没有启用。不能只加上 `sensitive` 就获得“不持久化”的效果。
 
 ## 换变量文件不等于换环境
 
@@ -270,9 +284,22 @@ terraform plan -var-file=prod.tfvars
 
 环境隔离必须结合独立目录、独立状态 key/Workspace 和凭证设计，见 [[IaC/terraform/terraform-backends-workspaces|Backend 与多环境]]。
 
+## 清理完整实验
+
+回到 `03-variables` 目录，用实验时的变量文件生成删除计划：
+
+```bash
+terraform plan -destroy -var-file=dev.tfvars -out=destroy.tfplan
+terraform show destroy.tfplan
+terraform apply destroy.tfplan
+terraform state list
+```
+
+预期只删除 `local_file.app`，对应 JSON 文件消失，State 不再列出该资源。后面的接口示例和敏感值片段只是讲解，不需要追加到这个实验里执行。
+
 ## 常见问题和练习
 
-- 未声明变量：tfvars 不能创建一个新的输入接口。
+- 未声明变量：tfvars 不能创建一个新的输入接口。未声明的 `TF_VAR_*` 被忽略；tfvars 中的未声明项通常警告；命令行 `-var` 传未声明项会报错。
 - 子模块读不到根变量：子模块要自己声明 variable，并由父模块显式传值。
 - 子模块自己的 tfvars 未生效：自动赋值机制针对当前 root module，父模块调用时不会自动读取子模块 tfvars。
 - 期望值被覆盖：同时检查环境变量、自动加载文件和命令行参数。
@@ -282,9 +309,12 @@ terraform plan -var-file=prod.tfvars
 ## 参考资料
 
 - [输入变量与优先级](https://developer.hashicorp.com/terraform/language/values/variables)
+- [1.7 变量语义：nullable 与默认值](https://developer.hashicorp.com/terraform/language/v1.7.x/values/variables#disallowing-null-input-values)
+- [变量校验与 1.9 版本边界](https://developer.hashicorp.com/terraform/language/v1.9.x/expressions/custom-conditions#input-variable-validation)
 - [本地值](https://developer.hashicorp.com/terraform/language/values/locals)
 - [输出值](https://developer.hashicorp.com/terraform/language/values/outputs)
 - [可选对象属性](https://developer.hashicorp.com/terraform/language/expressions/type-constraints#optional-object-type-attributes)
 - [敏感数据处理](https://developer.hashicorp.com/terraform/language/manage-sensitive-data)
+- [terraform output 的敏感值展示规则](https://developer.hashicorp.com/terraform/cli/commands/output)
 
 上一篇：[[IaC/terraform/terraform-hcl|HCL 语法]] · 下一篇：[[IaC/terraform/terraform-expressions|表达式、函数与模板]]。

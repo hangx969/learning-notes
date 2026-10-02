@@ -31,13 +31,13 @@ locals {
 下面是常见误区：
 
 ```hcl
-# Terraform基础-表达式、函数与模板
+# 避免用字符串表示未启用的副本数
 locals {
   replicas = var.enabled ? 3 : "disabled"
 }
 ```
 
-让“是否启用”和“副本数”保持不同字段更容易理解。也不要假设 `&&` / `||` 能像某些编程语言一样保护所有无效属性访问；对可为空的对象，优先用明确的条件表达式处理。
+Terraform 可以把这里的数字转换为字符串，因此启用时可能得到 `"3"`，而非预期的 number。让“是否启用”和“副本数”保持不同字段更容易理解。对于本系列的 1.7 基线，不要依靠 `&&` / `||` 保护可空对象的属性访问，应先用明确的条件表达式判断整体是否为 null。
 
 ## for 表达式：变换集合
 
@@ -68,6 +68,8 @@ locals {
 - 大括号形式产出 object，`=>` 左边是 key，右边是 value。
 - `if` 在产出元素前做过滤。
 - 从 map/object 按 key 遍历时，结果有确定的 key 排序规则；不要让 set 的顺序承担业务意义。
+
+在放入这些 locals 的目录中打开 `terraform console`，`local.names` 预期为 `["API", "OLD", "WEB"]`，`local.endpoints` 只有 api 和 web 两项。`local.services` 是原始输入，没有因为表达式变换而被修改。
 
 ### 重复 key 和分组
 
@@ -105,7 +107,7 @@ locals {
 | `file` / `templatefile` | 读取静态文件或渲染模板 | `templatefile("${path.module}/app.tftpl", {...})` |
 | `cidrsubnet` | 从网段计算子网 | `cidrsubnet("10.0.0.0/16", 8, 2)` |
 
-`try` 不能让未声明资源或非法语法变合法。它适合在一个局部位置把可选结构规范化，不适合包住所有字段来吞掉设计错误。
+`try` 不能让未声明资源或非法语法变合法，也不会把 unknown 当成错误：`try(新资源的未知属性, 默认值)` 通常仍是 unknown。它适合在一个局部位置把可选结构规范化，不适合包住所有字段来吞掉设计错误。`lookup` 的默认值针对不存在的 key；key 存在但 value 为 null 时，不会自动改用默认值。
 
 ### 浅合并，不是递归合并
 
@@ -122,19 +124,41 @@ locals {
 
 ## 完整实验：生成 Kubernetes YAML
 
-本实验只生成 YAML 文件，不连接或修改集群。创建独立目录，并使用 [[IaC/terraform/terraform-variables-outputs|变量实验]] 中的 `versions.tf`，其中只声明 Local Provider。
+本实验只生成 YAML 文件，不连接或修改集群。创建独立目录：
+
+```bash
+mkdir -p ~/terraform-labs/04-expressions-yaml
+cd ~/terraform-labs/04-expressions-yaml
+```
+
+### versions.tf
+
+```hcl
+terraform {
+  required_version = ">= 1.7, < 2.0"
+
+  required_providers {
+    local = {
+      source  = "hashicorp/local"
+      version = "~> 2.5"
+    }
+  }
+}
+```
 
 ### main.tf
 
 ```hcl
 variable "environment" {
-  type    = string
-  default = "dev"
+  type     = string
+  default  = "dev"
+  nullable = false
 }
 
 variable "service_name" {
-  type    = string
-  default = "web"
+  type     = string
+  default  = "web"
+  nullable = false
 }
 
 locals {
@@ -191,6 +215,8 @@ cat deployment.yaml
 terraform console
 ```
 
+预期首次计划创建一个 `local_file.deployment`。apply 后目录中出现 `deployment.yaml`，其 Deployment 名为 web，副本数为 1；`yamlencode` 可能为 key 加上双引号，应按 YAML 的值与层级阅读，不必与手写排版逐字一致。
+
 在 console 中验证往返转换：
 
 ```text
@@ -201,15 +227,41 @@ terraform console
 > exit
 ```
 
-随后用 `terraform plan -var='environment=prod'` 观察 YAML 中副本数的变化。这里只生成文件，不执行 `kubectl apply`；集群部署见 [[IaC/terraform/terraform-container-management|容器管理实战]]。
+退出 console 后，改变环境输入并审查计划：
+
+```bash
+terraform plan -var='environment=prod' -out=prod.tfplan
+terraform show prod.tfplan
+terraform apply prod.tfplan
+terraform output replicas
+cat deployment.yaml
+```
+
+预期文件中的副本数变成 3，environment 标签也变为 prod。`local_file` 因 content 变化被替换，这仍然只是生成本地文件；集群部署见 [[IaC/terraform/terraform-container-management|容器管理实战]]。
 
 `yamldecode` 解析一个 YAML 文档，不能直接把包含多个 `---` 文档的文件当成单个 manifest。应用多份资源时应显式拆分和管理各个对象。
+
+实验结束后清理生成文件：
+
+```bash
+terraform plan -destroy -var='environment=prod' -out=destroy.tfplan
+terraform show destroy.tfplan
+terraform apply destroy.tfplan
+```
 
 ## templatefile：保留文本模板
 
 JSON/YAML 优先编码函数，Nginx 配置、cloud-init 或脚本等文本可使用模板。
 
-在另一个独立目录创建 `app.conf.tftpl`：
+创建另一个独立目录，复制刚才只含 Provider 要求的 `versions.tf`：
+
+```bash
+mkdir -p ~/terraform-labs/04-templates
+cd ~/terraform-labs/04-templates
+cp ~/terraform-labs/04-expressions-yaml/versions.tf versions.tf
+```
+
+先创建 `app.conf.tftpl`：
 
 ```text
 service=${service_name}
@@ -234,6 +286,27 @@ resource "local_file" "config" {
 ```
 
 模板中的变量来自第二个参数，不会自动继承所有 `var.*` 和 `local.*`。`~` 用于控制模板指令周围的空白。
+
+文件都准备好后再运行：
+
+```bash
+terraform init
+terraform plan -out=tfplan
+terraform show tfplan
+terraform apply tfplan
+cat app.conf
+```
+
+预期文本为：
+
+```text
+service=web
+port=8080
+upstream=api
+upstream=worker
+```
+
+结束时同样生成、查看并执行删除计划：`terraform plan -destroy -out=destroy.tfplan`、`terraform show destroy.tfplan`、`terraform apply destroy.tfplan`。生成的 `app.conf` 应被删除，作为输入的 `app.conf.tftpl` 仍保留。
 
 `file` 和 `templatefile` 读取的文件必须在 Terraform 运行开始时已经存在。它们不会因为增加 `depends_on` 就变成“等待某个资源创建文件后再读”的资源操作。
 
@@ -289,11 +362,20 @@ variable "port_mappings" {
 2. 从三个服务的 map 中筛选 enabled 服务，返回一个服务名到端口的 map。
 3. 用 `terraform console` 观察 merge 嵌套对象为什么会丢失字段。
 
+## 常见问题
+
+- 模板文件找不到：先检查当前实验目录和 `path.module`，模板必须提前写入磁盘。
+- `Duplicate object key`：for 表达式生成了重复 key，按业务需要修正输入或明确使用分组模式。
+- `Inconsistent conditional result types`：条件两侧返回了不能统一的结构，先设计清楚输出类型。
+- YAML 文件没变化：只运行 plan 不会改写文件；apply 保存的计划后再检查磁盘内容。
+
 ## 参考资料
 
 - [条件表达式](https://developer.hashicorp.com/terraform/language/expressions/conditionals)
 - [for 表达式与分组](https://developer.hashicorp.com/terraform/language/expressions/for)
 - [函数索引](https://developer.hashicorp.com/terraform/language/functions)
+- [try 的错误捕获范围](https://developer.hashicorp.com/terraform/language/functions/try)
+- [lookup 的默认值](https://developer.hashicorp.com/terraform/language/functions/lookup)
 - [templatefile](https://developer.hashicorp.com/terraform/language/functions/templatefile)
 - [yamldecode](https://developer.hashicorp.com/terraform/language/functions/yamldecode)
 - [dynamic blocks](https://developer.hashicorp.com/terraform/language/expressions/dynamic-blocks)

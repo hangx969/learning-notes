@@ -200,7 +200,7 @@ terraform apply tfplan
 cat hello.txt
 ```
 
-Local Provider 可能通过替换文件资源实现变更；不要由“只改了一行文本”推断一定是原地更新。资源的更新/替换行为取决于 Provider schema，详见 [[IaC/terraform/terraform-resources-dependencies|资源依赖与生命周期]]。
+本例 Local Provider 的 `local_file` 对 `content` 变更采用替换，计划中预期出现 `-/+` 和 `forces replacement`，摘要为 `1 to add, 0 to change, 1 to destroy`。这描述的是 Terraform 资源的生命周期动作；不要由“只改了一行文本”推断一定是原地更新。其他资源的更新/替换行为也应查 Provider schema，详见 [[IaC/terraform/terraform-resources-dependencies|资源依赖与生命周期]]。
 
 ### 7. 清理实验
 
@@ -210,7 +210,7 @@ terraform show destroy.tfplan
 terraform apply destroy.tfplan
 ```
 
-应确认删除计划只包含自己的实验文件。Terraform 会删除被管理的文件；配置文件仍在，之后再执行普通 plan 会提出重新创建它。
+应确认删除计划只包含自己的实验文件。执行后，`terraform state list` 应不再列出 `local_file.hello`，`hello.txt` 应不存在。配置文件仍在，之后再执行普通 plan 会提出重新创建它。
 
 ## 目录里增加了哪些文件
 
@@ -222,6 +222,7 @@ terraform apply destroy.tfplan
 ├── terraform.tfstate        # 默认本地状态
 ├── terraform.tfstate.backup # 可能出现的前一份状态备份
 ├── tfplan                   # 保存的计划，包含潜在敏感信息
+├── destroy.tfplan           # 后续生成的删除计划
 └── hello.txt                # 由 local_file 管理的实验文件
 ```
 
@@ -238,8 +239,8 @@ terraform apply destroy.tfplan
 
 ## 练习
 
-1. 把 `main.tf` 改名为 `files.tf`，观察 plan 是否提出资源变化。
-2. 把资源逻辑名 `hello` 改成 `greeting`，同时更新 output 引用，观察计划中的地址变化。此时先不要执行；后面用 `moved` 学习保留身份。
+1. 在已创建资源且尚未清理时，把 `main.tf` 改名为 `files.tf`，观察 plan 是否提出资源变化。
+2. 在已创建 `hello.txt`、尚未清理的阶段，把资源逻辑名 `hello` 改成 `greeting`，同时更新 output 引用，观察计划中的地址变化。此时先不要执行，观察后恢复原逻辑名；后面用 `moved` 学习保留身份。清理之后 State 已没有旧绑定，不能再用它观察“删除旧地址、创建新地址”的差别。
 3. 用自己的话说明删除 `hello.txt`、删除配置块和删除 State 文件分别意味着什么。
 
 ## 参考资料
@@ -249,6 +250,7 @@ terraform apply destroy.tfplan
 - [初始化命令](https://developer.hashicorp.com/terraform/cli/commands/init)
 - [计划命令](https://developer.hashicorp.com/terraform/cli/commands/plan)
 - [Local Provider：local_file](https://registry.terraform.io/providers/hashicorp/local/latest/docs/resources/file)
+- [Local Provider 2.9.1：文件资源替换规则](https://github.com/hashicorp/terraform-provider-local/blob/v2.9.1/internal/provider/resource_local_file.go)
 - [State 的用途](https://developer.hashicorp.com/terraform/language/state/purpose)
 
 系列目录：[[IaC/terraform/README|学习路线]] · 下一篇：[[IaC/terraform/terraform-hcl|HCL 语法与配置文件]]。

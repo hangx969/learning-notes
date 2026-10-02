@@ -45,6 +45,80 @@ terraform plan -var-file=dev.tfvars
 
 初始化应在首次准备或配置变化需要时完成，不必把 `init -upgrade` 当成每次运行的固定动作。最后一个 plan 检查预期之外的残留差异，但不代替业务验收。
 
+`terraform providers` 能帮助确认依赖的 Provider 来源，不能证明当前凭证对应哪个账号。账号、Docker daemon 或集群 context 还要用对应平台工具核对，Backend 与 Provider 可能使用不同身份。
+
+## 本地实验：区分更新和替换
+
+新建独立目录 `12-plan-reading/`，不要覆盖前一章的实验。创建完整 `main.tf`：
+
+```hcl
+terraform {
+  required_version = ">= 1.7, < 2.0"
+}
+
+variable "message" {
+  description = "可以原地更新的数据"
+  type        = string
+  default     = "config-v1"
+}
+
+variable "release" {
+  description = "变化时显式要求替换的标记"
+  type        = string
+  default     = "v1"
+}
+
+resource "terraform_data" "app" {
+  input            = { message = var.message }
+  triggers_replace = var.release
+}
+
+output "record" {
+  description = "逻辑实例身份及保存的数据"
+  value = {
+    id      = terraform_data.app.id
+    message = terraform_data.app.output.message
+  }
+}
+```
+
+`terraform_data` 是内置资源，不调用云 API。`input` 保存数据，`triggers_replace` 指定变化时应替换实例的值，`id` 是该逻辑实例的身份。步骤如下：
+
+```bash
+terraform init
+terraform plan -out=create.tfplan
+terraform show create.tfplan
+terraform apply create.tfplan
+terraform output record
+```
+
+第一次预期创建一个实例，id 在 apply 前未知。然后按以下顺序观察：
+
+| 修改 | Plan 中的重点 | 执行后观察 |
+|---|---|---|
+| 只把 message 默认值改为 `config-v2` | `input` 的原地更新，通常显示 `~` | message 改变，id 保持 |
+| 保留新 message，再把 release 改为 `v2` | `triggers_replace` 变化触发替换，通常显示 `-/+` | message 相同，id 改变 |
+| 保持源码不变再 plan | 没有待执行的资源变更 | 输出仍对应最后一次实例 |
+
+每次修改后，完整生成、审查并执行新的计划：
+
+```bash
+terraform plan -out=change.tfplan
+terraform show change.tfplan
+terraform apply change.tfplan
+terraform output record
+```
+
+实验结束后生成并审查删除计划，再执行 `terraform apply destroy.tfplan`：
+
+```bash
+terraform plan -destroy -out=destroy.tfplan
+terraform show destroy.tfplan
+terraform apply destroy.tfplan
+```
+
+以上都是供读者执行的步骤和预期观察，不是已完成的运行记录。
+
 ## 怎么读 Plan
 
 ### 动作符号
@@ -105,7 +179,7 @@ terraform apply tfplan
 
 直接运行 `terraform apply` 会先生成新的计划，再等待交互确认。`-auto-approve` 会跳过这一步的确认，适合已经有其他审查与授权机制的受控自动化。
 
-保存的 Plan 可能包含明文敏感值，不要把它当成可公开分享的 diff。review 后代码、输入、状态或执行身份变了，应重新生成并审查计划。
+保存的 Plan 可能包含明文敏感值，不要把它当成可公开分享的 diff。review 后代码、输入、状态或执行身份变了，应重新生成并审查计划。源码的后续修改不会被偷偷合入旧计划，执行旧文件仍是执行那份计划中的决定，所以还应确认计划所属的提交和环境。
 
 ## 常用命令选项
 
@@ -125,7 +199,7 @@ terraform -chdir=environments/dev plan -var-file=dev.tfvars
 terraform plan -replace='local_file.config["web"]' -out=replace.tfplan
 ```
 
-相对文件路径按实际执行目录解析。replace 示例要使用真实存在的地址，不能把方括号里的 key 当成任意显示名。
+这里 `-var-file` 等命令选项的相对路径按实际执行目录解析；代码中的 `path.module` 等路径表达式另有自己的含义。replace 示例要使用真实存在的地址，不能把方括号里的 key 当成任意显示名。
 
 ## 三种计划模式
 
@@ -155,6 +229,8 @@ refresh-only 不会更新 `.tf`，destroy 也不会删除 `.tf`。完整示例�
 | checksum 错误 | 锁文件、下载渠道、实际执行环境缓存 | 关闭校验或删除整个依赖约束 |
 
 先保存错误、版本、操作目录和相关地址，再调整配置。debug 日志可能含敏感信息，公开 issue 只提供脱敏后的最小复现。
+
+本地、CI runner 与远程 Terraform 执行平台不一定使用同一套凭证、工具和缓存。错误出现在远程 runner 时，要检查实际执行环境；删除开发机缓存不能证明远程问题已解决。
 
 ## apply 中途失败
 
@@ -190,6 +266,16 @@ terraform console
 
 console 适合验证表达式、类型和 key；state 命令适合看身份记录；平台 CLI 适合确认真实对象。
 
+要查看当前依赖图，可使用 `terraform graph`，它输出图结构而不执行资源变更。图中没有表达式求值结果，也不能代替 Plan 的动作审查。
+
+深入排查时可在受控目录保存日志：
+
+```bash
+TF_LOG=DEBUG TF_LOG_PATH=./terraform-debug.log terraform plan -out=debug.tfplan
+```
+
+这是一次真实 plan，可能读取平台 API。`TF_LOG` 控制日志级别，`TF_LOG_PATH` 指定文件；按问题需要短暂启用，日志与计划都按敏感文件保管。`terraform output <敏感输出名>` 或 `output -json` 也可能明文显示结果，不能把终端遮盖当成日志脱敏。
+
 需要机器读取计划动作时，可在受控环境中使用：
 
 ```bash
@@ -200,7 +286,7 @@ JSON 中的其他字段可能含敏感值，不能因为抽取结果只显示地
 
 ## 练习
 
-1. 在 terraform_data 生命周期实验中找到触发替换的字段。
+1. 在本章 terraform_data 实验中，分别观察 input 更新与 triggers_replace 替换，记录 id 是否改变。
 2. 给 count=0 的资源增加错误的 `[0]` 引用，观察并修复 Invalid index。
 3. 模拟 A 成功、B 失败的执行过程，说明重新 plan 为什么比“删 State 重跑”更合理。
 
@@ -212,5 +298,8 @@ JSON 中的其他字段可能含敏感值，不能因为抽取结果只显示地
 - [官方排错练习仓库](https://github.com/hashicorp-education/learn-terraform-troubleshooting)
 - [全局 chdir 选项](https://developer.hashicorp.com/terraform/cli/commands)
 - [环境变量与日志](https://developer.hashicorp.com/terraform/cli/config/environment-variables)
+- [terraform_data 的更新与替换](https://developer.hashicorp.com/terraform/language/resources/terraform-data)
+- [Plan JSON 格式](https://developer.hashicorp.com/terraform/internals/json-format)
+- [依赖图命令](https://developer.hashicorp.com/terraform/cli/commands/graph)
 
 上一篇：[[IaC/terraform/terraform-import-refactoring|导入与重构]] · 下一篇：[[IaC/terraform/terraform-testing-cicd|测试与 CI/CD 协作]]。

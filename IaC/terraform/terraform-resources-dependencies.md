@@ -112,7 +112,6 @@ terraform apply destroy.tfplan
 云资源常见的写法也是如此：
 
 ```hcl
-# Terraform基础-Resource、Data Source 与依赖
 resource "azurerm_resource_group" "app" {
   name     = "rg-learning-app"
   location = var.location
@@ -170,6 +169,38 @@ resource "terraform_data" "service" {
 
 因此 plan 中的 `will be read during apply` 不是自动故障。不过它意味着部分下游值暂时 unknown，需要检查是否引入了过宽的依赖。
 
+可以在上面的文件查询实验中观察这种差别：向 `main.tf` 补充下面两个块，并用这里的 data 块替换原来的 `data "local_file" "existing"`：
+
+```hcl
+variable "lookup_revision" {
+  type    = string
+  default = "v1"
+}
+
+resource "terraform_data" "lookup_gate" {
+  input = var.lookup_revision
+}
+
+data "local_file" "existing" {
+  filename = "${path.module}/existing.txt"
+  # 教学用隐藏依赖：查询必须等 lookup_gate 完成本次操作。
+  depends_on = [terraform_data.lookup_gate]
+}
+```
+
+`existing.txt` 应仍存在；Provider、被管理副本和 output 沿用前面的完整配置。先建立新的基线，再只改变前置节点：
+
+```bash
+terraform plan -out=dependency.tfplan
+terraform show dependency.tfplan
+terraform apply dependency.tfplan
+terraform plan -var='lookup_revision=v2'
+```
+
+虽然 `filename` 早已确定、文件也没有改，`lookup_gate` 在本次计划中需要更新，显式依赖仍可能让读取推迟到 apply。副本的 `content` 因而成为 unknown，Provider 可能给出保守的替换计划；这不证明原文件内容已经变化。
+
+再用默认 `lookup_revision=v1` 运行普通 plan，前置节点没有待执行的变化时，不能把“写了 depends_on”理解成“每次查询都必然推迟到 apply”。这个实验用于理解计划成本，真实文件查询没有这项隐藏依赖时应去掉它。收尾沿用文件实验的 destroy 流程，清理副本和教学节点，外部文件保留。
+
 ## lifecycle：控制资源变更方式
 
 ### 用 terraform_data 观察更新与替换
@@ -196,7 +227,29 @@ output "instance_id" {
 }
 ```
 
-初始化、plan/apply 后，再用 `terraform plan -var='release=v2'` 查看替换。原因是 `triggers_replace` 改变；单独改变 `input` 通常只是该逻辑资源的更新。
+运行并记录第一次的逻辑实例 ID：
+
+```bash
+terraform init
+terraform plan -out=release-v1.tfplan
+terraform show release-v1.tfplan
+terraform apply release-v1.tfplan
+terraform output instance_id
+terraform plan -var='release=v2' -out=release-v2.tfplan
+terraform show release-v2.tfplan
+terraform apply release-v2.tfplan
+terraform output instance_id
+```
+
+预期第二个计划包含替换，apply 后的实例 ID 与第一次不同。原因是 `triggers_replace` 改变；单独改变 `input` 通常只是该逻辑资源的更新。
+
+实验结束时使用相同变量生成删除计划：
+
+```bash
+terraform plan -destroy -var='release=v2' -out=release-destroy.tfplan
+terraform show release-destroy.tfplan
+terraform apply release-destroy.tfplan
+```
 
 这个资源适合解释 Terraform 生命周期，不能替代 Provider 管理实际云资源。
 
@@ -232,9 +285,13 @@ resource "terraform_data" "consumer" {
 
 ## precondition / postcondition
 
-条件适合表达输入校验之外的资源约束。以下完整片段要求输入的副本数至少为 1：
+条件适合表达输入校验之外的资源约束。下面在另一个独立实验目录创建完整 `main.tf`，观察操作前条件与结果条件：
 
 ```hcl
+terraform {
+  required_version = ">= 1.7, < 2.0"
+}
+
 variable "replicas" {
   type    = number
   default = 1
@@ -248,11 +305,38 @@ resource "terraform_data" "checked" {
       condition     = var.replicas >= 1
       error_message = "副本数必须至少为 1。"
     }
+
+    postcondition {
+      condition     = self.output >= 1
+      error_message = "逻辑资源记录的副本数必须至少为 1。"
+    }
   }
 }
 ```
 
-变量 validation 验证接口输入，precondition 可验证资源操作前的条件，postcondition 可验证操作或读取后的结果。条件涉及 unknown 时，检查可能推迟到 apply。
+变量 validation 验证接口输入，precondition 可验证资源操作前的条件，postcondition 可验证操作或读取后的结果。`self` 表示当前资源，不能把它当成全局变量使用。这里的 `terraform_data` 只记录一个数值，没有真正创建一组副本；对于仅检查 `var.replicas` 的规则，实际项目通常放在变量 validation 中更直接。
+
+先初始化并观察一个失败输入：
+
+```bash
+terraform init
+terraform plan -var='replicas=0'
+```
+
+预期前置条件失败。改回有效输入后，计划、创建并清理：
+
+```bash
+terraform plan -var='replicas=1' -out=checked.tfplan
+terraform show checked.tfplan
+terraform apply checked.tfplan
+terraform plan -destroy -out=checked-destroy.tfplan
+terraform show checked-destroy.tfplan
+terraform apply checked-destroy.tfplan
+```
+
+新资源的 `output` 在计划中可能未知，结果条件便要等值确定后检查。条件涉及 unknown 时，检查可能推迟到 apply。
+
+条件失败会阻止对应操作或依赖它的后续操作，但不是一次基础设施事务的整体回滚。若 postcondition 在 apply 时才失败，已经完成的创建或更新不会因此自动撤销。删除计划也只针对这个独立目录中的教学资源。
 
 ## provisioner 为什么应少用
 
@@ -284,6 +368,7 @@ resource "terraform_data" "message" {
 - [Data sources](https://developer.hashicorp.com/terraform/language/data-sources)
 - [depends_on](https://developer.hashicorp.com/terraform/language/meta-arguments/depends_on)
 - [lifecycle](https://developer.hashicorp.com/terraform/language/meta-arguments/lifecycle)
+- [自定义条件](https://developer.hashicorp.com/terraform/language/expressions/custom-conditions)
 - [terraform_data](https://developer.hashicorp.com/terraform/language/resources/terraform-data)
 - [Provisioners](https://developer.hashicorp.com/terraform/language/resources/provisioners/syntax)
 - [Local file 数据源](https://registry.terraform.io/providers/hashicorp/local/latest/docs/data-sources/file)

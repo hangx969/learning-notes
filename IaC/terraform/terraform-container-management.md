@@ -35,7 +35,7 @@ Terraform 可以管理云上的集群基础设施，也可以通过 Docker、Kub
 
 ## 一、Docker：管理 Nginx 镜像和容器
 
-### 1. 确認连接的 Engine
+### 1. 确认连接的 Engine
 
 读者先在终端检查：
 
@@ -127,7 +127,8 @@ resource "docker_image" "custom" {
   }
 
   triggers = {
-    html_sha = filesha256("${path.module}/app/index.html")
+    html_sha       = filesha256("${path.module}/app/index.html")
+    dockerfile_sha = filesha256("${path.module}/app/Dockerfile")
   }
 }
 ```
@@ -145,7 +146,9 @@ COPY index.html /usr/share/nginx/html/index.html
 <h1>Terraform Docker lab</h1>
 ```
 
-将容器的 image 改为 `docker_image.custom.image_id` 才会使用此镜像。triggers 示例只观察 HTML；构建还有其他输入时需把它们纳入变更摘要。
+将容器的 image 改为 `docker_image.custom.image_id` 才会使用此镜像。triggers 示例观察 HTML 和 Dockerfile；构建还有其他输入时需把它们纳入变更摘要。只改构建目录中的文件，并不保证 Provider 自动发现所有变化。
+
+审查并执行新计划后访问同一端口，应看到 `Terraform Docker lab`；然后只修改 index.html，再次 plan，观察镜像重新构建与容器更新的计划。构建目录来自执行 Terraform 的机器，即使连接的是远程 daemon，也不能把 context 理解为 daemon 上的已有路径。
 
 生产镜像通常由构建流水线产出，Terraform 消费固定制品，避免把每次基础设施变更都变成一轮应用构建。
 
@@ -186,6 +189,8 @@ kubectl --context "<实验context>" auth can-i create deployments -n tf-learning
 
 已有 namespace 下的项目可由管理员预先创建 namespace 并授予有限权限。本例包含 namespace 创建，所以需要相应集群级权限。
 
+这里的 can-i 只演示 create 检查。完整生命周期还需要读取、更新与删除所管理对象；只通过创建权限检查，不能证明 plan、等待 Ready 和 destroy 都能成功。
+
 ### 2. 完整 main.tf
 
 例子使用 Kubernetes Provider **2.x** 的 `_v1` 类型。在独立目录创建：
@@ -215,6 +220,11 @@ variable "kube_context" {
 variable "replicas" {
   type    = number
   default = 1
+
+  validation {
+    condition     = var.replicas >= 0 && floor(var.replicas) == var.replicas
+    error_message = "replicas 必须是非负整数。"
+  }
 }
 
 provider "kubernetes" {
@@ -238,7 +248,7 @@ resource "kubernetes_deployment_v1" "web" {
   }
 
   spec {
-    replicas = var.replicas
+    replicas = tostring(var.replicas)
 
     selector {
       match_labels = { app = "web" }
@@ -275,6 +285,17 @@ output "namespace" {
 
 Deployment 的 selector 和 Pod labels 匹配，namespace 通过引用建立隐式依赖。Annotation 用于元信息，Label 用于选择和分组；两者不是同一用途。
 
+| 字段 | 本例的含义 |
+|---|---|
+| `metadata[0].name` | Provider 把 metadata 建模为单个 list block，因此用 `[0]` 取对象名 |
+| `spec.replicas` | Kubernetes Provider 2.x 将其建模为 string；本例把经过整数校验的 number 转为 string，Kubernetes API 中仍是整数副本数 |
+| `selector.match_labels` | Deployment 选择 Pod 的标签，须与 template 中对应的标签一致 |
+| `container.port.container_port` | 声明容器预期端口，不会让 Nginx 启动监听，也不会自动创建 Service |
+| `resources.requests` | 调度时考虑的资源请求；不是“使用量达到下限才启动” |
+| `resources.limits` | 运行时限制，CPU 常体现为限流，内存超限可能 OOM；不能把两者都理解为自动重启 |
+
+这些 HCL 块名、类型和索引来自该版本 Provider schema，不是把 Kubernetes YAML 字段名原样换个后缀。
+
 ### 3. 运行和访问
 
 ```bash
@@ -287,7 +308,25 @@ kubectl --context "<实验context>" -n tf-learning-k8s get deployments,pods
 kubectl --context "<实验context>" -n tf-learning-k8s port-forward deployment/web 8081:80
 ```
 
-另一个终端访问 `http://127.0.0.1:8081`。停止 port-forward 后可通过 `terraform plan -var='replicas=2'` 观察扩容；执行保存计划后再核对 Pod 数量和 Ready 状态。
+另一个终端访问：
+
+```bash
+curl http://127.0.0.1:8081
+```
+
+预期 Deployment 可用副本数为 1，Pod 为 Ready，curl 返回 Nginx 页面。若 Pod Pending/ImagePullBackOff，先用 `kubectl describe pod` 和事件检查调度、配额、镜像拉取等原因，Terraform 创建了 Deployment 不代表工作负载已经可用。
+
+在 port-forward 终端按 Ctrl+C 停止转发，然后观察扩容：
+
+```bash
+terraform plan -var='replicas=2' -out=scale.tfplan
+terraform show scale.tfplan
+terraform apply scale.tfplan
+kubectl --context "<实验context>" -n tf-learning-k8s rollout status deployment/web
+kubectl --context "<实验context>" -n tf-learning-k8s get deployments,pods
+```
+
+预期 Deployment 更新到两个副本，不新建另一个 Terraform 地址。命令行 `-var` 只影响这次计划；若要持续维持 2 个副本，应修改配置默认值或受控 tfvars，否则下一次不传该值的 plan 会尝试恢复到 1。
 
 改变 kube_context 不等于创建独立集群环境；同一 State 可能拿旧资源记录去操作新集群。多个集群应使用明确分开的根配置/状态。
 
@@ -364,13 +403,24 @@ resource "kubernetes_network_policy_v1" "web_ingress" {
 
 ### 6. 清理边界
 
-先查看 destroy plan，再执行。本例会管理并删除自己的 namespace；删除 namespace 会涉及其中的所有资源，所以不要混入其他工具/团队的对象。
+先查看 destroy plan，再执行：
+
+```bash
+terraform plan -destroy -out=destroy.tfplan
+terraform show destroy.tfplan
+terraform apply destroy.tfplan
+kubectl --context "<实验context>" get namespace tf-learning-k8s
+```
+
+正常清理后 namespace 查询应返回 NotFound。本例会管理并删除自己的 namespace；删除 namespace 会涉及其中的所有资源，所以不要混入其他工具/团队的对象。
 
 ## 三、Helm：把 Release 纳入 State
 
 Helm Provider 管理的是 Release。Chart 里的 Deployment、Service、ConfigMap 等由 Helm 渲染和操作，不应同时让 Terraform typed resource 或 Argo CD 管理相同对象。
 
 本例用自己的最小 Chart，避免依赖过期公共 Chart 参数。Provider 采用 **3.x**：`kubernetes = { ... }` 是对象写法，旧版 `kubernetes { ... }` 不能不加区分地混用。
+
+这里的 3.x 指 Terraform Helm Provider 的版本，并非本机 Helm CLI 的主版本。示例 Chart 不使用需要联网下载的子 Chart。
 
 ### 1. 目录结构
 
@@ -483,7 +533,22 @@ resource "helm_release" "web" {
 }
 ```
 
-使用 YAML 编码的 values 可以传对象和数组，也更容易避免 Helm `set` 的字符串转义。3.x 的 set 简单示意为 `set = [{ name = "replicaCount", value = "2" }]`，不是旧版的重复 `set { ... }` 块。
+使用 YAML 编码的 values 可以传对象和数组，也更容易避免 Helm `set` 的字符串转义。`values` 本身是 YAML 字符串列表，所以这里用 `[yamlencode(...)]`，不能直接赋一个 Terraform map。
+
+如果希望在 Release 中覆盖一个简单值，可在该资源内部补充下面的 Provider 3.x 写法：
+
+```hcl
+set = [
+  {
+    name  = "replicaCount"
+    value = "2"
+  }
+]
+```
+
+这是对象列表赋值，不是旧版重复的 `set { ... }` 块；同名值的 set 覆盖 values。本章默认实战使用 values，以下变更步骤也只改 values，避免把两个配置来源混起来。
+
+`wait = true` 等待 Helm 支持的资源就绪条件，`timeout = 300` 是等待超时秒数；它们不能代替业务接口验收。
 
 ### 3. 检查 Chart，再执行
 
@@ -499,9 +564,35 @@ helm --kube-context "<实验context>" list -n tf-learning-helm
 kubectl --context "<实验context>" -n tf-learning-helm get deployments,services,pods
 ```
 
-把 replicaCount 改为 2 后，先 plan 再 apply，观察 Release 升级和 Pod 变化。
+本地渲染预期包含一个 Deployment 和一个 Service，Nginx 镜像为 `1.30.5-alpine`；部署后 Release 应出现在 helm list 中。访问可以使用：
 
-清理时 destroy Release 并核对资源。`create_namespace` 创建的 namespace 通常不随 Helm Release 卸载自动删除；需要在确认没有其他资源后单独处理。
+```bash
+kubectl --context "<实验context>" -n tf-learning-helm port-forward service/learning-web 8082:80
+```
+
+另一个终端运行 `curl http://127.0.0.1:8082`。把 main.tf 中 values 的 replicaCount 改为 2，停止转发并生成新的计划：
+
+```bash
+terraform plan -out=scale.tfplan
+terraform show scale.tfplan
+terraform apply scale.tfplan
+helm --kube-context "<实验context>" status learning-web -n tf-learning-helm
+kubectl --context "<实验context>" -n tf-learning-helm get deployments,pods
+```
+
+预期是同一 Release 的升级和副本数变化，不是额外创建一套 Kubernetes typed resource。
+
+清理时 destroy Release 并核对资源：
+
+```bash
+terraform plan -destroy -out=destroy.tfplan
+terraform show destroy.tfplan
+terraform apply destroy.tfplan
+helm --kube-context "<实验context>" list -n tf-learning-helm
+kubectl --context "<实验context>" get namespace tf-learning-helm
+```
+
+本例 Deployment 和 Service 应被卸载。`create_namespace` 创建的 namespace 不随 Helm Release 卸载自动删除，它也不是单独纳入 State 的 namespace 资源；在确认没有其他对象后，实验维护者再单独删除它。公共 Chart 的 CRD、持久卷、保留注解和 hook 对象还需按其卸载规则核对。
 
 ### 4. 公共 Chart、监控与 Secret
 
@@ -571,7 +662,48 @@ job "learning-web" {
 }
 ```
 
-生产环境使用自己的 TLS endpoint，并按 ACL 配置受控的 `NOMAD_TOKEN`。先用 Nomad CLI 检查 jobspec，再查看 Terraform 计划和执行；实际 allocation 状态仍需通过 Nomad 查询。
+`jobspec` 是**文件内容字符串**，不是把文件路径交给 Nomad；因此使用 `file(...)`。Terraform Provider 默认解析 HCL2，但 `web.nomad.hcl` 仍是 Nomad 的 jobspec 语言，不能把任意 Terraform resource 写进它。
+
+| jobspec 字段 | 含义 |
+|---|---|
+| `datacenters = ["dc1"]` | 调度目标数据中心，要与实际 client 所属数据中心相符 |
+| `type = "service"` | 长期运行的服务型 Job |
+| `group.count` | 该任务组所需的 allocation 数量 |
+| `port "http" { to = 80 }` | 分配主机动态端口并映射到容器 80，不是固定主机 80 |
+| Docker `ports = ["http"]` | 使用前面声明的端口标签，启用对应的映射 |
+| `resources.cpu` / `memory` | CPU 以 MHz、内存按 Nomad 文档的 MB 数值表示，含义不同于 Kubernetes 的 `100m`/`128Mi` |
+
+生产环境使用自己的 TLS endpoint，并按 ACL 配置受控的 `NOMAD_TOKEN`。实验中的 Provider endpoint 与 Nomad CLI 的 `NOMAD_ADDR` 应一致。读者在已有实验集群中执行：
+
+```bash
+export NOMAD_ADDR="http://127.0.0.1:4646"
+nomad job validate web.nomad.hcl
+terraform init
+terraform plan -out=tfplan
+terraform show tfplan
+terraform apply tfplan
+nomad job status learning-web
+```
+
+`nomad job validate` 可能访问 server 做校验，并非保证离线。Provider 的 `detach` 默认是 true，提交 Job 后可以立即返回；所以 apply 完成不证明 allocation 已经 Running。根据 job status 列出的 allocation ID 继续查看：
+
+```bash
+nomad alloc status "<allocation-id>"
+curl "http://<可访问的client-IP>:<http动态主机端口>"
+```
+
+预期 task 为 Running，访问返回 Nginx 页面。访问地址是实际承载 allocation 的 client，不能因为 server 在 localhost 就假定应用也在该机。
+
+把 jobspec 的 group count 改为 2，再走 plan/show/apply，观察 allocation 数量。实验结束后：
+
+```bash
+terraform plan -destroy -out=destroy.tfplan
+terraform show destroy.tfplan
+terraform apply destroy.tfplan
+nomad job status learning-web
+```
+
+默认销毁会注销 Job，但 `purge_on_destroy` 默认为 false，历史 Job 记录可能仍可查询。应核对没有继续运行的实验 allocation，不能仅据“还能查到 Job 历史”判断删除失败。
 
 ## 工具所有权与常见问题
 
@@ -582,16 +714,33 @@ job "learning-web" {
 - 读取 Secret 或把密码写进 Helm values，可能把值存进 State；显示遮盖和持久化是不同问题。
 - Terraform apply 成功后，继续核对容器运行、Pod Ready、Release 状态和实际访问。
 
+## 练习
+
+1. 只修改 Docker 自研镜像的 index.html，解释 triggers、image_id 与容器更新之间的关系。
+2. 把 Kubernetes replicas 改为 2，说明为什么是同一 Deployment 地址的更新；再解释命令行临时赋值为何会在下一次 plan 消失。
+3. 在本地用 `helm template --set replicaCount=2` 查看副本数，区分 Chart 渲染、Release 部署和应用可访问三种证据。
+4. 解释 Terraform 删除 Helm Release 后 namespace、公共 Chart CRD 和持久卷为什么可能仍保留。
+5. 对比 Nomad Job 的提交成功与 allocation Running，说明应查询哪一层。
+
 ## 参考资料
 
 - [Docker Provider](https://registry.terraform.io/providers/kreuzwerker/docker/latest/docs)
 - [Docker image](https://registry.terraform.io/providers/kreuzwerker/docker/latest/docs/resources/image)
+- [Docker Provider 3.0.2 image schema](https://github.com/kreuzwerker/terraform-provider-docker/blob/v3.0.2/docs/resources/image.md)
+- [Docker container](https://registry.terraform.io/providers/kreuzwerker/docker/latest/docs/resources/container)
 - [官方 Nginx 镜像](https://hub.docker.com/_/nginx)
 - [Kubernetes Provider 2.30](https://registry.terraform.io/providers/hashicorp/kubernetes/2.30.0/docs)
+- [Kubernetes Deployment 2.30 schema](https://registry.terraform.io/providers/hashicorp/kubernetes/2.30.0/docs/resources/deployment_v1)
 - [kubernetes_manifest](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest)
 - [Helm Provider 3.0](https://registry.terraform.io/providers/hashicorp/helm/3.0.0/docs)
 - [helm_release](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release)
-- [Nomad Job](https://registry.terraform.io/providers/hashicorp/nomad/latest/docs/resources/job)
+- [helm_release 3.0 对象列表示例](https://github.com/hashicorp/terraform-provider-helm/blob/v3.0.0/docs/resources/release.md)
+- [Helm Chart 模板与字段](https://helm.sh/docs/topics/charts/)
+- [Nomad Job 2.0](https://registry.terraform.io/providers/hashicorp/nomad/2.0.0/docs/resources/job)
+- [Nomad jobspec network](https://developer.hashicorp.com/nomad/docs/job-specification/network)
+- [Nomad jobspec resources](https://developer.hashicorp.com/nomad/docs/job-specification/resources)
+- [Nomad job validate](https://developer.hashicorp.com/nomad/commands/job/validate)
+- [Nomad allocation status](https://developer.hashicorp.com/nomad/commands/alloc/status)
 
 相关原理：[[Docker-Kubernetes/k8s-basic-resources/k8s基础-deployment|Deployment]]、[[Docker-Kubernetes/k8s-basic-resources/k8s基础-认证-授权-准入|Kubernetes 认证授权]]。
 

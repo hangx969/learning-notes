@@ -68,8 +68,8 @@ run "renders_expected_configuration" {
   }
 
   assert {
-    condition     = local_file.config.filename == "/virtual-test-output/web.json"
-    error_message = "文件应写入调用者指定目录，并使用服务名。"
+    condition     = output.file_path == "/virtual-test-output/web.json"
+    error_message = "模块输出应指向调用者指定目录中的服务配置。"
   }
 
   assert {
@@ -94,7 +94,9 @@ run "rejects_invalid_port" {
 }
 ```
 
-这两个测试验证了目录命名、传参和非法端口拒绝行为，没有依赖随机 ID 或 mock 的自动生成字符串。
+文件级 `variables` 给出各 run 的公共输入，run 内的 port 覆盖本次输入。assert 中的 `output.file_path` 指的是**当前被测试模块**的输出；这里直接在 app-config 中运行，所以不是根模块的 `config_files`。
+
+这两个测试验证了路径输出接口、传参和非法端口拒绝行为，没有依赖随机 ID 或 mock 的自动生成字符串。`expect_failures = [var.port]` 期望变量的 validation 失败：port=0 被拒绝时该 run 才通过；若误删了校验，测试反而会失败。它不会把所有语法、类型或 Provider 错误都当成成功。
 
 ### 运行
 
@@ -107,6 +109,8 @@ terraform -chdir=modules/app-config test
 
 `/virtual-test-output` 是供 mock 断言使用的字符串，不需要创建实际目录。mock Provider 不会真的写该文件。
 
+预期两个 run 均通过，目录命名或 port 传递逻辑出错时会显示对应 error_message。这里是预期结果，本文没有执行该测试。此前仅从 `10-modules/` 初始化根模块，并不等于子模块目录已准备好独立运行，因此命令中的模块路径不能省略。
+
 测试状态与正常部署状态分开。真实 apply 测试仍可能创建收费资源，并在结束时尝试清理；清理失败需要人工跟进，不能把“测试结束”当成所有资源已删除。
 
 ## 哪些断言适合 plan
@@ -117,6 +121,8 @@ terraform -chdir=modules/app-config test
 - validation、precondition 等应拒绝的输入。
 
 新对象的真实 ID、平台计算的地址、实际服务状态，通常不能在 plan 中获得。用真实 apply 或明确的 mock/override 设计断言，并说明测试到底覆盖了哪部分。
+
+本例的 filename、content 都由已知输入配置，plan 可求值；`local_file.config.content_sha256` 则是 Provider 计算属性。mock 不会自动运行真实 Local Provider 的哈希算法，默认也不会让所有 computed 值在 plan 时变成已知值。因此不要在上述 plan run 中把 `output.content_sha256` 当成已完成文件写入的证据，或断言它必然等于真实文件摘要。
 
 Mock 的字符串不会自动具有合法 ARN、IP 或资源路径格式，不能拿任意生成值来测试平台语义。
 
@@ -132,6 +138,8 @@ check "nonempty_service_names" {
 ```
 
 这是引用模块实验根变量 `var.services` 的检查片段。check 不通过通常报告警告，允许其他操作继续；它不等于强制禁止创建的 variable validation 或 precondition。
+
+`check` 从 Terraform 1.5 起可用。上面的警告行为描述普通 plan/apply；在 `terraform test` 中，check 条件失败也会使测试失败，除非该 run 明确把它列为预期失败。
 
 用什么机制取决于意图：输入接口错误应拒绝；部署后探测可能适合告警；资源操作前必须满足的条件应明确阻断。
 
@@ -180,6 +188,8 @@ jobs:
 
 `-lockfile=readonly` 避免 CI 悄悄升级依赖；它不是禁止所有磁盘写入。模块更新后应通过专门升级变更更新锁文件和测试。
 
+格式检查、配置检查、测试是三个独立步骤，任一步失败就停止该 job。`terraform_wrapper: false` 让后续 shell 直接获取 CLI 退出码；启用 wrapper 的项目则还需理解 Action 提供的 `exitcode` 输出，不要混用两套判断方法。
+
 ## 正式部署流水线的最小逻辑
 
 ```mermaid
@@ -203,11 +213,11 @@ CI 并发控制应以实际环境/State 为单位，同时使用 Backend 锁。�
 - `1`：错误。
 - `2`：成功，有变化。
 
-示例 Bash 片段：
+示例 Bash 片段，假定执行目录、环境输入与身份已准备好：
 
 ```bash
 set +e
-terraform plan -input=false -detailed-exitcode -out=tfplan
+terraform plan -input=false -lock-timeout=5m -detailed-exitcode -out=tfplan
 plan_status=$?
 set -e
 
@@ -219,6 +229,16 @@ esac
 ```
 
 不要使用 `terraform plan || true` 掩盖真正失败，也不要把 2 一律视为错误。Plan 文件须按敏感 artifact 管理，限定保存时长与访问权限。
+
+保存计划的协作边界也要写清楚：
+
+- 只有成功生成的计划才能进入审查；错误运行可能仍留下文件，不能据“文件存在”判断 plan 成功。
+- artifact 对应确定的代码提交、目标 State 与输入，批准后执行 `terraform apply -input=false tfplan`；不要在 apply 步骤再传另一套变量。
+- 应用保存计划不再询问 `yes`，授权步骤应在下载和执行它之前完成。
+- 计划文件及 `terraform show -json tfplan` 都可能带明文敏感值，访问和保留策略应覆盖原文件、JSON、日志及备份。
+- 环境已被其他运行修改、计划过期或授权范围变化时，重新 plan 和审查。
+
+这些是部署流程应实现的逻辑，不是上面 PR mock 检查工作流已经具有的发布能力。
 
 ## 自动漂移检测
 
@@ -247,5 +267,8 @@ PR 的格式/mock 测试通常不需要真实云凭证。需要真实读取权�
 - [Plan 退出码](https://developer.hashicorp.com/terraform/cli/commands/plan#other-options)
 - [hashicorp/setup-terraform](https://github.com/hashicorp/setup-terraform)
 - [actions/checkout](https://github.com/actions/checkout)
+- [依赖锁文件与跨平台校验](https://developer.hashicorp.com/terraform/language/files/dependency-lock)
+- [执行保存计划](https://developer.hashicorp.com/terraform/cli/commands/apply)
+- [GitHub Actions 并发控制](https://docs.github.com/en/actions/how-tos/write-workflows/choose-when-workflows-run/control-workflow-concurrency)
 
 上一篇：[[IaC/terraform/terraform-workflow-troubleshooting|工作流与排错]] · 下一篇：[[IaC/terraform/terraform-container-management|容器管理实战]]。

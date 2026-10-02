@@ -97,6 +97,8 @@ terraform providers lock -platform=darwin_arm64 -platform=linux_amd64
 
 认证成功也不意味着授权足够。资源读取、创建、删除与 State Backend 的数据访问，可能需要不同权限。
 
+Provider 块中的认证参数不会自动成为 Backend 配置。即使 AzureRM Provider 和 Azure Blob Backend 都能读取某些 `ARM_*` 环境变量，它们仍各自建立连接、检查自己的权限；在 `terraform init` 阶段出现的状态存储错误，应先检查 [[IaC/terraform/terraform-backends-workspaces|Backend 认证]]。
+
 ## Azure 中国区：完整资源组实验
 
 本例保留原笔记的 Azure 中国区场景，但用自己的订阅和身份，不在文档里固定个人 tenant ID。采用 AzureRM **4.x**，不要直接混用旧 3.x 或新主版本示例。
@@ -114,11 +116,18 @@ export ARM_SUBSCRIPTION_ID="$(az account show --query id -o tsv)"
 
 Azure 全球区应使用 `AzureCloud`，并把 Provider 的 `environment` 改为 `public`。CLI 当前 cloud、身份所在 tenant、订阅和 Provider environment 必须匹配。
 
-AzureRM 4.x 的 plan/apply 需要明确的订阅 ID；本例通过环境变量传入，避免依赖模糊的账号选择。
+AzureRM 4.x 的 plan/apply 需要明确的订阅 ID；本例通过环境变量传入，避免依赖模糊的账号选择。只执行 `az account set`、却不提供 `ARM_SUBSCRIPTION_ID` 或 `subscription_id`，不能代替这项配置。这个变化来自 AzureRM Provider 4.x，与 Terraform CLI 的版本是两条独立的版本线。
 
 ### 2. 配置文件
 
-在独立的 `~/terraform-labs/05-azure-rg` 目录创建 `main.tf`：
+先创建独立实验目录：
+
+```bash
+mkdir -p ~/terraform-labs/05-azure-rg
+cd ~/terraform-labs/05-azure-rg
+```
+
+在其中创建 `main.tf`：
 
 ```hcl
 terraform {
@@ -186,7 +195,20 @@ terraform output resource_group_id
 
 预期计划只创建一个实验 Resource Group。该例没有创建虚拟机、磁盘或 Storage Account；扩展实验时应先核对平台价格和删除范围。
 
-### 4. 清理
+### 4. 观察一次标签更新
+
+在 `main.tf` 的 `tags` 中补充 `environment = "dev"`，名称和 region 保持原值，再运行：
+
+```bash
+terraform plan -var-file=lab.tfvars -out=tags.tfplan
+terraform show tags.tfplan
+terraform apply tags.tfplan
+az group show --name rg-terraform-learning-dev --query tags -o json
+```
+
+预期计划更新资源组标签，资源 ID 保持不变。如果前面改了 `resource_group_name`，查询命令也要使用自己的名称。不要用改变 region 来模拟普通更新：AzureRM 的资源组 `name` 和 `location` 改变会要求替换资源，必须先审查计划。
+
+### 5. 清理
 
 ```bash
 terraform plan -destroy -var-file=lab.tfvars -out=destroy.tfplan
@@ -203,15 +225,17 @@ terraform apply destroy.tfplan
 ```hcl
 provider "azurerm" {
   features {}
-  subscription_id = var.primary_subscription_id
-  environment     = "china"
+  subscription_id                 = var.primary_subscription_id
+  environment                     = "china"
+  resource_provider_registrations = "none"
 }
 
 provider "azurerm" {
   alias = "secondary"
   features {}
-  subscription_id = var.secondary_subscription_id
-  environment     = "china"
+  subscription_id                 = var.secondary_subscription_id
+  environment                     = "china"
+  resource_provider_registrations = "none"
 }
 
 resource "azurerm_resource_group" "secondary" {
@@ -240,6 +264,12 @@ resource "azurerm_resource_group" "secondary" {
 
 更换本地/远程执行方式时，Provider 认证也在新的执行环境里重新建立。开发机登录不能自动给远程 runner 授权。
 
+## 练习
+
+1. 根据锁文件说明当前使用哪个 AzureRM 版本，再解释 `~> 4.0` 允许的升级范围。
+2. 解释切换 Azure CLI 的默认订阅后，显式配置的 `subscription_id` 为什么仍需核对。
+3. 一名用户能创建 Resource Group，却在读取 State Blob 时收到 403，应该检查哪个组件、哪一类权限？
+
 ## 参考资料
 
 - [Provider requirements](https://developer.hashicorp.com/terraform/language/providers/requirements)
@@ -247,6 +277,8 @@ resource "azurerm_resource_group" "secondary" {
 - [版本约束](https://developer.hashicorp.com/terraform/language/expressions/version-constraints)
 - [依赖锁文件](https://developer.hashicorp.com/terraform/language/files/dependency-lock)
 - [AzureRM 4.x Provider 文档](https://registry.terraform.io/providers/hashicorp/azurerm/4.0.0/docs)
-- [Resource Group](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/resource_group)
+- [AzureRM 4.0 订阅与注册机制变更](https://registry.terraform.io/providers/hashicorp/azurerm/4.0.0/docs/guides/4.0-upgrade-guide)
+- [Azure CLI 认证](https://registry.terraform.io/providers/hashicorp/azurerm/4.0.0/docs/guides/azure_cli)
+- [Resource Group](https://registry.terraform.io/providers/hashicorp/azurerm/4.0.0/docs/resources/resource_group)
 
 上一篇：[[IaC/terraform/terraform-expressions|表达式与模板]] · 下一篇：[[IaC/terraform/terraform-resources-dependencies|Resource、Data Source 与依赖]]。
