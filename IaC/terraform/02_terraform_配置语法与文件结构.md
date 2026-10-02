@@ -14,7 +14,7 @@ aliases:
 
 ## HCL 的基本结构
 
-Terraform 常用 `.tf` 文件保存配置，使用 HCL 原生语法。阅读时先识别三件事：块（block）、块的标签（label）和块内部的参数（argument）。
+Terraform 配置通常保存在 `.tf` 文件中，并使用 HCL 原生语法。阅读时先识别三部分：块（block）、块的标签（label）和块内的参数（argument）。
 
 ```hcl
 resource "local_file" "config" {

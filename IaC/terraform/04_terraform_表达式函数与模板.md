@@ -69,7 +69,7 @@ locals {
 - `if` 在产出元素前做过滤。
 - 从 map/object 按 key 遍历时，结果有确定的 key 排序规则；不要让 set 的顺序承担业务意义。
 
-在放入这些 locals 的目录中打开 `terraform console`，`local.names` 预期为 `["API", "OLD", "WEB"]`，`local.endpoints` 只有 api 和 web 两项。`local.services` 是原始输入，没有因为表达式变换而被修改。
+在包含这些 locals 的目录中打开 `terraform console`。预期 `local.names` 为 `["API", "OLD", "WEB"]`，`local.endpoints` 只有 api 和 web 两项。`local.services` 是原始输入，没有因为表达式变换而被修改。
 
 ### 重复 key 和分组
 
@@ -120,7 +120,7 @@ locals {
 }
 ```
 
-结果中的 `app` 由第二个对象整体覆盖，不会自动保留 `log_level`。需要递归效果时，按层次显式 merge，并说明字段覆盖规则。
+第二个对象会整体覆盖结果中的 `app`，不会自动保留 `log_level`。如果需要递归合并，应按层次显式调用 merge，并说明字段覆盖规则。
 
 ## 完整实验：生成 Kubernetes YAML
 

@@ -93,7 +93,7 @@ terraform providers lock -platform=darwin_arm64 -platform=linux_amd64
 - 云平台的实例身份、工作负载身份或 OIDC。
 - 显式 Provider 参数。
 
-实际优先级和支持范围查看 Provider 文档。不要把可用登录命令、长期 Access Key 和 CI 工作负载身份混为一种方案。
+具体优先级和支持范围应查阅相应 Provider 文档。不要把可用的登录命令、长期 Access Key 和 CI 工作负载身份当成同一种方案。
 
 认证成功也不意味着授权足够。资源读取、创建、删除与 State Backend 的数据访问，可能需要不同权限。
 
@@ -114,7 +114,7 @@ az account list-locations --query '[].name' -o tsv
 export ARM_SUBSCRIPTION_ID="$(az account show --query id -o tsv)"
 ```
 
-Azure 全球区应使用 `AzureCloud`，并把 Provider 的 `environment` 改为 `public`。CLI 当前 cloud、身份所在 tenant、订阅和 Provider environment 必须匹配。
+Azure 全球区应使用 `AzureCloud`，并把 Provider 的 `environment` 改为 `public`。CLI 当前使用的 cloud、身份所属 tenant、订阅和 Provider environment 必须匹配。
 
 AzureRM 4.x 的 plan/apply 需要明确的订阅 ID；本例通过环境变量传入，避免依赖模糊的账号选择。只执行 `az account set`、却不提供 `ARM_SUBSCRIPTION_ID` 或 `subscription_id`，不能代替这项配置。这个变化来自 AzureRM Provider 4.x，与 Terraform CLI 的版本是两条独立的版本线。
 

@@ -111,7 +111,7 @@ resource "local_file" "config" {
 }
 ```
 
-模块由调用者指定生成路径。同一个本地或远程模块可能被重复调用，写 `${path.module}/output.json` 容易让多个调用共用路径，也可能污染 `.terraform/modules` 缓存。
+生成路径由调用者指定。同一个本地或远程模块可能被多次调用；如果写成 `${path.module}/output.json`，容易让多个调用共用路径，也可能污染 `.terraform/modules` 缓存。
 
 ### 子模块 outputs.tf
 

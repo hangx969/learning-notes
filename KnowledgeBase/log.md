@@ -2111,3 +2111,10 @@ date: 2026-04-17
 - 逐文件 Obsidian MCP 读回核对通过，15 个旧路径已移除，新增文章路径均可解析；文件排序、标题一致性及 git diff --check 通过。
 
 - Obsidian 阅读视图验收通过：学习路线表格保持三列，编号标题正确显示，15 个新文章路径均能通过元数据缓存解析。
+
+## [2026-10-02] update | Terraform 中文表达润色
+
+- 按 humanizer-zh skill，由三名 GPT-6 Luna 子 Agent（推理等级 High）分组审阅 Terraform 专题的 35 个页面：15 篇正文、README、15 篇来源摘要、实体页、两篇概念页和学习地图；父级逐处验收后写回。
+- 11 篇调整了别扭句式、重复说明和含糊指代，其余 24 篇保留原文；退回并修正了候选稿中的无谓扩写及限定条件变化，保留技术原意和确定程度。
+- 文件名、标题、frontmatter、代码块、行内代码、表格、链接、数值与列表顺序保持一致；35 个页面经 Obsidian MCP 读回，与验收稿完全一致。
+- 本轮仅检查文档内容和变更范围，未运行 Terraform init、validate、plan、apply 或 test。学习入口为 [[IaC/terraform/README|Terraform 基础系列学习路线]]。

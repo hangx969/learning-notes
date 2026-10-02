@@ -96,7 +96,7 @@ variable "extra_tags" {
 | 有非 null 默认值，`nullable = false` | 使用默认值 | 回退到默认值 |
 | 无默认值，`nullable = false` | 必须提供输入 | 报错 |
 
-本例四个变量都需要非 null 的值，因此显式设置 `nullable = false`。例如在 tfvars 中写 `port = null`，本例得到的端口会是默认的 `8080`；写 `port = 0` 则会被 validation 拒绝。对于 object/list，`nullable = false` 只约束整体值，不会自动禁止内部字段或元素为 null。
+本例四个变量都需要非 null 的值，因此显式设置 `nullable = false`。例如在 tfvars 中写 `port = null`，本例中的端口会回退到默认值 `8080`；写 `port = 0` 则会被 validation 拒绝。对于 object/list，`nullable = false` 只约束整体值，不会自动禁止内部字段或元素为 null。
 
 本例 validation 只引用被校验的变量，兼容系列的 1.7 基线。**Terraform 1.9+** 才允许校验引用其他变量和配置对象，旧版本项目不能直接照搬这种写法。
 
@@ -223,7 +223,7 @@ HCP Terraform/Enterprise 还有 Workspace 变量、变量集和远程执行模�
 
 ## 对象变量和可选字段
 
-下面是另一种接口设计片段，展示把一组相关值收成一个对象：
+下面的片段展示了另一种接口设计：将一组相关值组织成一个对象。
 
 ```hcl
 variable "service" {

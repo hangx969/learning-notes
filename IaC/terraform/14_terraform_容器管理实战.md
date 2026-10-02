@@ -31,7 +31,7 @@ Terraform 可以管理云上的集群基础设施，也可以通过 Docker、Kub
 
 对于新建集群，通常先完成基础设施层，再运行集群资源配置层。尤其 `kubernetes_manifest` 在 plan 时可能要查询 API schema，不能只加 depends_on 就保证与新建集群、CRD 在同一轮里都能工作。
 
-本章每个实战使用独立目录和自己的状态。不要把以下所有配置拼进一个 main.tf，也不要把实验接到不明身份的生产集群。
+本章每个实战都使用独立目录和自己的状态。不要把以下所有配置拼进一个 main.tf，也不要把实验接到身份不明的生产集群。
 
 ## 一、Docker：管理 Nginx 镜像和容器
 
@@ -46,9 +46,9 @@ docker context inspect --format '{{ .Endpoints.docker.Host }}'
 export DOCKER_HOST="$(docker context inspect --format '{{ .Endpoints.docker.Host }}')"
 ```
 
-Terraform Provider 不应被假定总能自动采用 Docker CLI 当前 context。显式传入当前 daemon endpoint；远程 TLS/SSH context 还需要按 Provider 文档准备证书或 SSH 配置。
+不要假定 Terraform Provider 总能自动采用 Docker CLI 当前 context。应显式传入当前 daemon endpoint；远程 TLS/SSH context 还需要按 Provider 文档准备证书或 SSH 配置。
 
-macOS 的 Docker Desktop 等实现，socket 可能位于用户目录；不要机械固定成 Linux 常见的 `/var/run/docker.sock`。
+在 macOS 上，Docker Desktop 等实现的 socket 可能位于用户目录；不要机械固定成 Linux 常见的 `/var/run/docker.sock`。
 
 ### 2. 完整 main.tf
 
@@ -189,7 +189,7 @@ kubectl --context "<实验context>" auth can-i create deployments -n tf-learning
 
 已有 namespace 下的项目可由管理员预先创建 namespace 并授予有限权限。本例包含 namespace 创建，所以需要相应集群级权限。
 
-这里的 can-i 只演示 create 检查。完整生命周期还需要读取、更新与删除所管理对象；只通过创建权限检查，不能证明 plan、等待 Ready 和 destroy 都能成功。
+这里的 can-i 命令只演示 create 权限检查。管理对象的完整生命周期还需要读取、更新和删除权限；仅通过创建权限检查，不能证明 plan、等待 Ready 和 destroy 都能成功。
 
 ### 2. 完整 main.tf
 
@@ -283,7 +283,7 @@ output "namespace" {
 }
 ```
 
-Deployment 的 selector 和 Pod labels 匹配，namespace 通过引用建立隐式依赖。Annotation 用于元信息，Label 用于选择和分组；两者不是同一用途。
+Deployment 的 selector 与 Pod labels 匹配，namespace 通过引用建立隐式依赖。Annotation 用于元信息，Label 用于选择和分组；两者用途不同。
 
 | 字段 | 本例的含义 |
 |---|---|
@@ -412,7 +412,7 @@ terraform apply destroy.tfplan
 kubectl --context "<实验context>" get namespace tf-learning-k8s
 ```
 
-正常清理后 namespace 查询应返回 NotFound。本例会管理并删除自己的 namespace；删除 namespace 会涉及其中的所有资源，所以不要混入其他工具/团队的对象。
+正常清理后，查询 namespace 应返回 NotFound。本例会管理并删除自己的 namespace；删除 namespace 会涉及其中的所有资源，所以不要混入其他工具/团队的对象。
 
 ## 三、Helm：把 Release 纳入 State
 
@@ -564,7 +564,7 @@ helm --kube-context "<实验context>" list -n tf-learning-helm
 kubectl --context "<实验context>" -n tf-learning-helm get deployments,services,pods
 ```
 
-本地渲染预期包含一个 Deployment 和一个 Service，Nginx 镜像为 `1.30.5-alpine`；部署后 Release 应出现在 helm list 中。访问可以使用：
+本地渲染预期包含一个 Deployment 和一个 Service，Nginx 镜像为 `1.30.5-alpine`；部署后 Release 应出现在 helm list 中。访问服务时可以运行：
 
 ```bash
 kubectl --context "<实验context>" -n tf-learning-helm port-forward service/learning-web 8082:80
@@ -673,7 +673,7 @@ job "learning-web" {
 | Docker `ports = ["http"]` | 使用前面声明的端口标签，启用对应的映射 |
 | `resources.cpu` / `memory` | CPU 以 MHz、内存按 Nomad 文档的 MB 数值表示，含义不同于 Kubernetes 的 `100m`/`128Mi` |
 
-生产环境使用自己的 TLS endpoint，并按 ACL 配置受控的 `NOMAD_TOKEN`。实验中的 Provider endpoint 与 Nomad CLI 的 `NOMAD_ADDR` 应一致。读者在已有实验集群中执行：
+生产环境使用自己的 TLS endpoint，并按 ACL 配置受控的 `NOMAD_TOKEN`。实验中的 Provider endpoint 与 Nomad CLI 的 `NOMAD_ADDR` 应一致。在已有实验集群中执行：
 
 ```bash
 export NOMAD_ADDR="http://127.0.0.1:4646"
@@ -685,7 +685,7 @@ terraform apply tfplan
 nomad job status learning-web
 ```
 
-`nomad job validate` 可能访问 server 做校验，并非保证离线。Provider 的 `detach` 默认是 true，提交 Job 后可以立即返回；所以 apply 完成不证明 allocation 已经 Running。根据 job status 列出的 allocation ID 继续查看：
+`nomad job validate` 可能访问 server 做校验，并非保证离线。Provider 的 `detach` 默认是 true，提交 Job 后可以立即返回；因此 apply 完成不代表 allocation 已经 Running。根据 job status 列出的 allocation ID 继续查看：
 
 ```bash
 nomad alloc status "<allocation-id>"
