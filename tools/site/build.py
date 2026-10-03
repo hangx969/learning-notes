@@ -310,6 +310,12 @@ def on_post_build(*, config):
     log.info("完成：%d 篇文章 → %s", len(_notes), config.site_dir)
 
 
+def on_serve(server, *, config, builder):
+    for topic in sorted({note.topic for note in _notes}):
+        server.watch(str(ROOT / topic), builder)
+    return server
+
+
 def main():
     return subprocess.call([
         sys.executable, "-m", "mkdocs", "build", "--strict",
