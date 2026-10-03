@@ -219,7 +219,8 @@ def page_markdown(title, body, meta=None):
 
 def markdown_link(title, path):
     label = title.replace("[", r"\[").replace("]", r"\]")
-    return f"[{label}]({quote(path, safe='/')})"
+    # Quartz 的 decodeURI 保留 %2B；直接保留 +，避免被误当作文件名中的百分号。
+    return f"[{label}]({quote(path, safe='/+')})"
 
 
 def write_content(path, text):
