@@ -1,13 +1,15 @@
 #!/usr/bin/env python3
-"""MkDocs hook：沿用发布筛选与 git 时间，生成首页、主题页和文章导航。
+"""Quartz 4 构建入口：沿用发布筛选与 git 时间，导出首页、主题页和文章。
 
-原始笔记只读，页面通过 MkDocs 的虚拟文件 API 提供给 Material 渲染。
-构建：mkdocs build --strict（也兼容 python tools/site/build.py）
-本地预览：mkdocs serve
+原始笔记只读，临时内容与固定版本的 Quartz 源码放在 .quartz-cache/。
+构建：python tools/site/build.py；本地预览：加 --serve。
 """
 
-import logging
+import argparse
+import datetime
+import json
 import re
+import shutil
 import subprocess
 import sys
 import time
@@ -16,13 +18,14 @@ from pathlib import Path, PurePosixPath
 from urllib.parse import quote
 
 import yaml
-from mkdocs.structure.files import File
-
-from obsidian import ObsidianExtension
 
 TOOLS_DIR = Path(__file__).resolve().parent
 ROOT = TOOLS_DIR.parent.parent
-log = logging.getLogger("mkdocs.learning_notes")
+QUARTZ_CONFIG = TOOLS_DIR / "quartz"
+CACHE = ROOT / ".quartz-cache"
+QUARTZ = CACHE / "upstream"
+CONTENT = QUARTZ / "content"
+OUTPUT = ROOT / "_site"
 
 # 发布排除规则（目录前缀 / 精确文件 / 主题根目录下的 index.md）
 EXCLUDE_DIRS = (
@@ -41,11 +44,6 @@ H1_RE = re.compile(r"#\s+(.+?)\s*#*\s*$")
 
 RECENT_COUNT = 15
 UNGROUPED = "其他"
-
-_notes = []
-_resolver = None
-_page_context = {}
-
 
 @dataclass
 class Note:
@@ -211,30 +209,11 @@ def build_topics(notes):
     return topics, groups
 
 
-def on_config(config):
-    global _notes, _resolver
-    _notes = load_notes()
-    load_git_times(_notes)
-    _resolver = make_resolver(_notes)
-    _page_context.clear()
-    topics, groups = build_topics(_notes)
-    config.nav = [{"首页": "index.md"}]
-    for topic in topics:
-        entries = [{"概览": f"{topic['name']}/index.md"}]
-        for group, notes in groups[topic["name"]]:
-            entries.append({group: [{n.title: n.path} for n in notes]})
-        config.nav.append({topic["name"]: entries})
-    # mkdocs serve 会重复构建，替换上一次注册的扩展以免叠加。
-    config.markdown_extensions = [
-        ext for ext in config.markdown_extensions
-        if not isinstance(ext, ObsidianExtension)
-    ] + [ObsidianExtension(_resolver, context=_page_context)]
-    return config
-
-
-def page_markdown(title, body):
-    meta = yaml.safe_dump({"title": title}, allow_unicode=True, sort_keys=False)
-    return f"---\n{meta}---\n\n{body}\n"
+def page_markdown(title, body, meta=None):
+    frontmatter = dict(meta or {})
+    frontmatter["title"] = title
+    serialized = yaml.safe_dump(frontmatter, allow_unicode=True, sort_keys=False)
+    return f"---\n{serialized}---\n\n{body}\n"
 
 
 def markdown_link(title, path):
@@ -242,85 +221,145 @@ def markdown_link(title, path):
     return f"[{label}]({quote(path, safe='/')})"
 
 
-def on_files(files, *, config):
-    # docs_dir 只是 hook/CSS 所在目录；保留 Material 资源，移除旧站模板和资源。
-    for file in list(files):
-        if file.src_dir == config.docs_dir and file.src_uri != "assets/extra.css":
-            files.remove(file)
+def write_content(path, text):
+    destination = CONTENT / path
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    destination.write_text(text, encoding="utf-8")
 
-    for note in _notes:
-        source_url = config.repo_url + "/blob/main/" + quote(note.path, safe="/")
-        body = (
-            f"# {note.title}\n\n"
-            f"更新于 {note.date_str} · [查看源文件]({source_url})\n\n"
-            f"{note.body}"
-        )
-        file = File.generated(config, note.path, content=page_markdown(note.title, body))
-        # 显式沿用旧站 URL，包括子目录中名为 index.md 的文章。
-        file.dest_uri = note.url + "index.html"
-        files.append(file)
 
-    topics, groups = build_topics(_notes)
+def export_content():
+    notes = load_notes()
+    load_git_times(notes)
+    resolver = make_resolver(notes)
+    # 只清理生成目录，不触碰原始笔记。
+    if CONTENT.exists():
+        shutil.rmtree(CONTENT)
+    CONTENT.mkdir(parents=True)
+    resolutions = {}
+
+    for note in notes:
+        source_url = "https://github.com/hangx969/learning-notes/blob/main/" + quote(note.path, safe="/")
+        meta = dict(note.meta)
+        meta["sourcePath"] = note.path
+        meta["modified"] = datetime.datetime.fromtimestamp(
+            note.mtime, datetime.timezone.utc,
+        ).isoformat()
+        meta.setdefault("created", meta["modified"])
+        body = f"[查看源文件]({source_url})\n\n{note.body}"
+        write_content(note.path, page_markdown(note.title, body, meta))
+
+        # 只生成消歧映射；真正的替换在 Quartz Markdown AST 上执行，代码块不受影响。
+        links = {}
+        for inner in re.findall(r"\[\[([^\[\]\n]+)\]\]", note.body):
+            target = inner.replace(r"\|", "|").partition("|")[0].partition("#")[0].strip()
+            if not target or Path(target).suffix.lower() in MEDIA_EXTENSIONS:
+                continue
+            resolved = resolver(target, note.path)
+            links[target] = resolved.path if resolved else None
+        resolutions[note.path] = links
+
+    topics, groups = build_topics(notes)
     for topic in topics:
-        lines = [f"# {topic['name']}", "", f"{topic['count']} 篇笔记", ""]
-        for group, notes in groups[topic["name"]]:
+        lines = [f"{topic['count']} 篇笔记", ""]
+        for group, members in groups[topic["name"]]:
             lines.extend([f"## {group}", ""])
-            for note in notes:
+            for note in members:
                 relative = PurePosixPath(note.path).relative_to(topic["name"]).as_posix()
                 lines.append(f"- {markdown_link(note.title, relative)} · {note.date_str}")
             lines.append("")
-        files.append(File.generated(
-            config, f"{topic['name']}/index.md",
-            content=page_markdown(topic["name"], "\n".join(lines)),
-        ))
+        write_content(
+            f"{topic['name']}/index.md",
+            page_markdown(topic["name"], "\n".join(lines)),
+        )
 
+    # 首页保持主题入口和基于 git 历史的最近更新，使用 Quartz 默认 Markdown 样式。
     lines = [
-        "# 学习笔记", "",
-        f"{len(_notes)} 篇笔记 · {len(topics)} 个主题 · 构建于 {time.strftime('%Y-%m-%d')}",
-        "", "## 主题", "", '<div class="grid cards" markdown="1">', "",
+        "云原生、基础设施与 AI 学习笔记。", "",
+        f"{len(notes)} 篇笔记 · {len(topics)} 个主题", "",
+        "## 主题", "", "| 主题 | 笔记数 |", "| --- | ---: |",
     ]
     for topic in topics:
-        link = markdown_link("浏览笔记", f"{topic['name']}/index.md")
-        lines.extend([
-            f"- **{topic['name']}**", "", "    ---", "",
-            f"    {topic['count']} 篇笔记", "", f"    {link}", "",
-        ])
-    lines.extend(["</div>", "", "## 最近更新", "", "| 笔记 | 主题 | 更新日期 |", "| --- | --- | --- |"])
-    recent = sorted(_notes, key=lambda n: n.mtime, reverse=True)[:RECENT_COUNT]
+        link = markdown_link(topic["name"], f"{topic['name']}/index.md")
+        lines.append(f"| {link} | {topic['count']} |")
+    lines.extend(["", "## 最近更新", "", "| 笔记 | 主题 | 更新日期 |", "| --- | --- | --- |"])
+    recent = sorted(notes, key=lambda n: n.mtime, reverse=True)[:RECENT_COUNT]
     for note in recent:
         link = markdown_link(note.title, note.path).replace("|", r"\|")
         lines.append(f"| {link} | {note.topic} | {note.date_str} |")
-    files.append(File.generated(config, "index.md", content=page_markdown("学习笔记", "\n".join(lines))))
-    return files
+    write_content("index.md", page_markdown("学习笔记", "\n".join(lines)))
+
+    assets = [
+        path for path in git("ls-files").splitlines()
+        if not is_excluded(path) and Path(path).suffix.lower() in MEDIA_EXTENSIONS
+    ]
+    for path in assets:
+        destination = CONTENT / path
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(ROOT / path, destination)
+    manifest = {"notes": [note.path for note in notes], "resolutions": resolutions}
+    (QUARTZ / "vault-manifest.json").write_text(
+        json.dumps(manifest, ensure_ascii=False), encoding="utf-8",
+    )
+    print(f"导出 {len(notes)} 篇文章、{len(topics)} 个主题、{len(assets)} 个附件", flush=True)
 
 
-def on_page_markdown(markdown, *, page, config, files):
-    _page_context["path"] = page.file.src_uri
-    _page_context["root"] = "../" * (len(PurePosixPath(page.file.dest_uri).parts) - 1)
-    return markdown
+MEDIA_EXTENSIONS = {
+    ".png", ".jpg", ".jpeg", ".gif", ".bmp", ".svg", ".webp", ".avif",
+    ".ico", ".pdf", ".mp4", ".webm", ".mp3", ".wav", ".ogg", ".m4a",
+}
 
 
-def on_post_build(*, config):
-    if _resolver.ambiguous:
-        log.info("歧义 wikilink（同目录优先→最短路径）：%d 处", len(_resolver.ambiguous))
-    if _resolver.unresolved:
-        log.info("未解析 wikilink（沿用纯文本降级）：%d 处", len(_resolver.unresolved))
-        for src, target in _resolver.unresolved:
-            log.info("  %s: [[%s]]", src, target)
-    log.info("完成：%d 篇文章 → %s", len(_notes), config.site_dir)
+def run(*args, cwd=ROOT):
+    subprocess.run(args, cwd=cwd, check=True)
 
 
-def on_serve(server, *, config, builder):
-    for topic in sorted({note.topic for note in _notes}):
-        server.watch(str(ROOT / topic), builder)
-    return server
+def prepare_quartz():
+    specification = json.loads((QUARTZ_CONFIG / "upstream.json").read_text())
+    if not QUARTZ.exists():
+        CACHE.mkdir(parents=True, exist_ok=True)
+        run("git", "clone", "--depth", "1", "--branch", specification["branch"],
+            specification["repository"], str(QUARTZ))
+    revision = subprocess.check_output(
+        ["git", "rev-parse", "HEAD"], cwd=QUARTZ, text=True,
+    ).strip()
+    if revision != specification["revision"]:
+        run("git", "fetch", "--depth", "1", "origin", specification["revision"], cwd=QUARTZ)
+        run("git", "checkout", "--force", "--detach", specification["revision"], cwd=QUARTZ)
+    for name in ("quartz.config.ts", "quartz.layout.ts", "vault-links.ts"):
+        shutil.copyfile(QUARTZ_CONFIG / name, QUARTZ / name)
+    shutil.copyfile(QUARTZ_CONFIG / "custom.scss", QUARTZ / "quartz/styles/custom.scss")
+    return specification
 
 
 def main():
-    return subprocess.call([
-        sys.executable, "-m", "mkdocs", "build", "--strict",
-        "--config-file", str(ROOT / "mkdocs.yml"),
-    ], cwd=ROOT)
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--prepare", action="store_true", help="仅准备固定版本 Quartz 源码与配置")
+    parser.add_argument("--export", action="store_true", help="仅导出发布内容")
+    parser.add_argument("--skip-install", action="store_true", help="CI 已运行 npm ci")
+    parser.add_argument("--serve", action="store_true", help="构建并在本地预览")
+    parser.add_argument("--port", type=int, default=8080)
+    args = parser.parse_args()
+    specification = prepare_quartz()
+    if args.prepare:
+        return 0
+    export_content()
+    if args.export:
+        return 0
+    installed = CACHE / "installed-revision"
+    if not args.skip_install and (
+        not installed.exists() or installed.read_text().strip() != specification["revision"]
+        or not (QUARTZ / "node_modules").is_dir()
+    ):
+        run("npm", "ci", "--cache", str(CACHE / "npm"), "--no-audit", "--no-fund", cwd=QUARTZ)
+        installed.write_text(specification["revision"])
+    command = [
+        "node", "quartz/bootstrap-cli.mjs", "build",
+        "--directory", str(CONTENT), "--output", str(OUTPUT), "--concurrency", "2",
+    ]
+    if args.serve:
+        command.extend(["--serve", "--port", str(args.port), "--baseDir", "/learning-notes"])
+    run(*command, cwd=QUARTZ)
+    return 0
 
 
 if __name__ == "__main__":

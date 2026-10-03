@@ -36,8 +36,21 @@ jobs:
       - name: Install site dependencies
         run: pip install -r tools/site/requirements.txt
 
-      - name: Build with MkDocs Material
-        run: mkdocs build --strict
+      - name: Prepare Quartz 4
+        run: python tools/site/build.py --prepare
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: .quartz-cache/upstream/package-lock.json
+
+      - name: Install Quartz dependencies
+        working-directory: .quartz-cache/upstream
+        run: npm ci
+
+      - name: Build with Quartz 4
+        run: python tools/site/build.py --skip-install
 
       - uses: actions/configure-pages@v5
 
