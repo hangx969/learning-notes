@@ -55,8 +55,8 @@ docker-compose -f portainer.yml up -d
 
 ### 主从复制部署
 
-- 主从结构的部署,我们还是基于docker-compose创建一个名为redis-cluster.yml的文件配置一下主从信息,配置内容如下
-  - 安全起见,建议尽可能不要使用6379作为对外暴露的端口号,就算使用6379也尽可能设置一个安全的密码,避免被人下挖矿程序。
+- 要部署主从结构，我们仍使用 docker-compose 创建名为 redis-cluster.yml 的文件，配置如下：
+  - 安全起见，尽量避免将 6379 暴露到外部；如果仍使用该端口，应设置安全的密码，避免有人植入挖矿程序。
 
 ~~~yaml
 tee redis-cluster.yml <<'EOF'
@@ -95,7 +95,7 @@ EOF
 docker-compose -f redis-cluster.yml up -d
 ~~~
 
-- 容器启动后可以在portainer中查看master容器的log,可以直接用console功能connect进入容器,尝试设置一个键值对
+- 容器启动后，可以在 Portainer 中查看 master 容器的日志，也可以使用 Console 功能连接容器，尝试设置一个键值对
 
   (202408:docker 26版本与portainer 2.19版本不兼容,console用不了)
 
@@ -113,7 +113,7 @@ docker-compose -f redis-cluster.yml up -d
 
 ### 创建redis-sentinel专用网络驱动
 
-为了确保redis-sentinel可以统一管理且和其他容器隔离,我们在部署sentinel之前需要基于Portainer创建一个自定义的brige网络。创建一个名为redis-sentinel的bridge网络将主从和哨兵节点关联起来,并且和docker中的其他容器隔离开。
+为了统一管理 Redis Sentinel 并将其与其他容器隔离，部署前需要在 Portainer 中创建自定义 bridge 网络。创建名为 redis-sentinel 的网络，将主从节点和哨兵节点关联起来，并与 Docker 中的其他容器隔离。
 
 <img src="https://raw.githubusercontent.com/hangx969/upload-images-md/main/202408141503188.png" alt="image-20240814150337050" style="zoom: 50%;" />
 

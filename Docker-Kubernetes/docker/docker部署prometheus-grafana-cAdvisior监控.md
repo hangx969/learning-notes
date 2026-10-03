@@ -280,10 +280,10 @@ docker run -i --restart=always \
 
 ### 被控端部署cAdvisior
 
-- 为了解决容器的监控问题,Google开发了一款容器监控工具cAdvisor(Container Advisor),它为容器用户提供了对其运行容器的资源使用和性能特征的直观展示。 它是一个运行守护程序,用于收集,聚合,处理和导出有关正在运行的容器的信息。
-- cAdvisor可以对节点机器上的资源及容器进行实时监控和性能数据采集,包括CPU使用情况、内存使用情况、网络吞吐量及文件系统使用情况。cAdvisor使用go语言开发,如果想了解更多请访问其官方github:[cAdvisor GitHub](https://github.com/google/cadvisor)
+- 为了解决容器监控问题，Google开发了容器监控工具cAdvisor(Container Advisor)，为容器用户直观展示运行中容器的资源使用情况和性能特征。它以守护进程形式运行，收集、聚合、处理并导出运行中容器的信息。
+- cAdvisor可以实时监控节点机器上的资源和容器，并采集性能数据，包括CPU使用情况、内存使用情况、网络吞吐量及文件系统使用情况。cAdvisor使用go语言开发，更多信息可参阅其官方github：[cAdvisor GitHub](https://github.com/google/cadvisor)
 
-- cAdvisior自带一些指标监控,但不是很直观;我们这里配置prometheus抓取cAdvisior数据,并用grafana展示出来。(参考:[微信公众号文章](https://mp.weixin.qq.com/s/GRexd30-oxLiwhBVjiOLew))
+- cAdvisior自带一些指标监控，但展示不够直观。我们在这里配置prometheus抓取cAdvisior数据，再用grafana展示出来。（参考：[微信公众号文章](https://mp.weixin.qq.com/s/GRexd30-oxLiwhBVjiOLew)）
 
 > [!info] Prometheus支持多种Exporter,这里我们使用Node Exporter 和 cAdvisor。其中,Node Exporter用于收集Host相关数据,cAdvisor用于收集容器相关数据
 
