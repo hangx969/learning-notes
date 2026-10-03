@@ -4,7 +4,7 @@ tags:
   - knowledgebase/concept
 date: 2026-10-03
 sources:
-  - "[[AI/Obsidian/github-pages-mkdocs-material-quartz]]"
+  - "[[AI/Obsidian/github-pages-quartz]]"
   - "[[Docker-Kubernetes/k8s-CICD/Jenkins/k8s-Devops平台落地-基于jenkins]]"
   - "[[Docker-Kubernetes/k8s-CICD/Jenkins/k8s部署基于Jenkins(2.426.3)的Devops工具链-基于yaml]]"
   - "[[Docker-Kubernetes/k8s-CICD/Jenkins/k8s部署基于Jenkins(2.394)的DevOps工具链-基于yaml]]"
@@ -67,7 +67,7 @@ aliases:
 - [[Docker-Kubernetes/k8s-CICD/发布go-python-java代码到K8S环境|发布go-python-java代码到K8S环境]]
 - [[Docker-Kubernetes/k8s-CICD/k8s发布策略-蓝绿部署与金丝雀发布|k8s发布策略-蓝绿部署与金丝雀发布]]
 
-- [[AI/Obsidian/github-pages-mkdocs-material-quartz|用 GitHub Actions 发布 Obsidian 笔记]]：保留 `main` push 与手动触发，用 Quartz 4 构建 `_site/` 并发布 GitHub Pages。
+- [[AI/Obsidian/github-pages-quartz|用 GitHub Actions 发布 Obsidian 笔记]]：保留 `main` push 与手动触发，用 Quartz 4 构建 `_site/` 并发布 GitHub Pages。
 
 ## 与其他概念的关系
 - [[KnowledgeBase/entities/Azure|Azure]]

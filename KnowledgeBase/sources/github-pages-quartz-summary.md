@@ -6,7 +6,7 @@ tags:
   - git/github-actions
 date: 2026-10-03
 sources:
-  - "[[AI/Obsidian/github-pages-mkdocs-material-quartz]]"
+  - "[[AI/Obsidian/github-pages-quartz]]"
 aliases:
   - Quartz 4 发布流程摘要
   - Obsidian 笔记的 GitHub Pages 构建
@@ -16,7 +16,7 @@ aliases:
 
 ## 元信息
 
-- **原始文档**：[[AI/Obsidian/github-pages-mkdocs-material-quartz|用 GitHub Actions 发布 Obsidian 笔记：Quartz 4]]
+- **原始文档**：[[AI/Obsidian/github-pages-quartz|用 GitHub Actions 发布 Obsidian 笔记：Quartz 4]]
 - **领域**：AI / Obsidian / 文档网站发布
 - **摄入日期**：2026-10-03
 

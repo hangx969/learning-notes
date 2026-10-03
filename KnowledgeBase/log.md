@@ -2145,3 +2145,15 @@ date: 2026-04-17
 - 以根目录 [[AGENTS|AGENTS.md]] 为统一规约，完整保留原有规则；[[CLAUDE|CLAUDE.md]] 改为仅一行 `@AGENTS.md`，供 Claude Code 导入。
 - 同步 README、知识库入口、Obsidian 与 Claude Code 实体页、Obsidian 与 shiji-kb 来源摘要及 2026-09-29 维护报告中的规约引用，注明来源文章和历史检查当时使用 CLAUDE.md 的背景。
 - 通过 MCP 写入并完整回读核对；按修改前快照验证原规则完整保留，7 个 YAML frontmatter、代码围栏、16 处新增规约 wikilink 及新增本地 Markdown 链接检查通过，`git diff --check` 通过。验证范围为静态内容与引用。
+
+## [2026-10-03] update | Pages 构建文档收敛为 Quartz 4
+
+- 按用户要求将 [[AI/Obsidian/github-pages-mkdocs-material-quartz|用 GitHub Actions 发布 Obsidian 笔记：Quartz 4]] 整理为 Quartz 专篇，移除另一套生成器的配置、workflow、本地命令、排障与参考资料，保留导出、构建、预览、主题定制、链接兼容和发布验收流程。文章文件名保留，现有链接继续有效。
+- 将固定复现基线更新为已推送的仓库提交 `af3c83afb0616ed996ac8a9841cd713fbb44e109`；Quartz 上游仍为 4.5.2，JSON 与 workflow 示例保持原样，本地命令仅更新仓库基线。同步来源摘要、INDEX、Obsidian 实体、CI/CD 概念、工具地图、AI 工作流地图、领域地图和全库盘点中的相关说明。
+- 9 个页面通过 Obsidian MCP 写入并完整回读一致，文章已无旧方案内容；4 个代码块、Shell 语法、frontmatter、25 处相关内部链接和 Git diff 空白检查通过。除指定文章外，674 份原始笔记校验值不变，15 份发布工具及 workflow 文件不变；本轮验证范围为文档内容与静态检查。
+
+## [2026-10-03] restructure | Quartz Pages 文档重命名
+
+- 按用户要求将 `AI/Obsidian/github-pages-mkdocs-material-quartz.md` 重命名为 [[AI/Obsidian/github-pages-quartz|用 GitHub Actions 发布 Obsidian 笔记：Quartz 4]]，文章全文与 4 个代码块保持原样；来源摘要同步重命名为 [[KnowledgeBase/sources/github-pages-quartz-summary|Quartz 4 构建来源摘要]]。
+- 更新 INDEX、Obsidian 实体、CI/CD 概念、三份主题地图和全库盘点中的路径引用；通过 Obsidian MCP 创建新文件、完整回读并删除旧文件。历史日志按仅追加规约保留，本条提供新入口。
+- 675 份原始笔记的内容校验值（含重命名映射）一致，7 份导航更新仅替换路径，17 处相关导航链接可定位，15 份发布工具与 workflow 文件不变；旧路径只保留在历史日志，Git diff 空白检查通过。

@@ -7,7 +7,7 @@ aliases:
   - Tool Map
 date: 2026-10-03
 sources:
-  - "[[AI/Obsidian/github-pages-mkdocs-material-quartz]]"
+  - "[[AI/Obsidian/github-pages-quartz]]"
   - "[[AI/ClaudeCode/Claude Code 基础指南]]"
   - "[[AI/ClaudeCode/Claude Code 扩展体系]]"
   - "[[AI/ClaudeCode/多智能体协作-Subagents与Agent-Teams]]"
@@ -198,7 +198,7 @@ sources:
 **相关文档：**
 - [[AI/Obsidian/obsidian-claude-code-AI知识库完整指南|AI知识库完整指南]] ⭐ 推荐入口
 - [[AI/Obsidian/Obsidian可视化Skills-Excalidraw-Mermaid-Canvas|Obsidian可视化Skills]] — AI 生成可编辑图表（Excalidraw/Mermaid/Canvas）
-- [[AI/Obsidian/github-pages-mkdocs-material-quartz|Quartz 4 发布笔记]] — GitHub Actions 构建 Pages、日夜主题、链接兼容与验收；[[KnowledgeBase/sources/github-pages-mkdocs-material-quartz-summary|来源摘要]]。
+- [[AI/Obsidian/github-pages-quartz|Quartz 4 发布笔记]] — GitHub Actions 构建 Pages、日夜主题、链接兼容与验收；[[KnowledgeBase/sources/github-pages-quartz-summary|来源摘要]]。
 
 **概念页：** [[KnowledgeBase/entities/Obsidian|Obsidian]]
 
