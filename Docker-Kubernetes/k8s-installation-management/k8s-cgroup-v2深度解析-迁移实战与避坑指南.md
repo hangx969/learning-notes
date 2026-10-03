@@ -63,7 +63,7 @@ cgroup v1 于 2008 年合入内核 2.6.24，采用 **多层次（Multiple Hierar
 
 ### 2.2 v1 的 CPU throttling 问题
 
-这是影响 Kubernetes 生产环境最广的问题之一。在 v1 中：
+这是 Kubernetes 生产环境中影响范围最广的问题之一。在 v1 中：
 
 ```
 # cgroup v1 CPU 限制接口

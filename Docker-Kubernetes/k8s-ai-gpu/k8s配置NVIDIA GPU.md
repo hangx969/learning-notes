@@ -25,7 +25,7 @@ aliases:
 
 这个主题对我来说很混乱，我不得不依赖于各种供应商的信息、GitHub问题和 stackoverflow 帖子。
 
-我旨在揭开神秘的面纱，提供一条清晰的道路，让您可以从自己的设置中立即利用GPU加速进行AI/ML工作负载。
+我想把这套配置过程梳理清楚，让您可以在自己的环境中立即使用 GPU 加速运行 AI/ML 工作负载。
 
 ## 范围
 
@@ -333,9 +333,7 @@ ls /dev/ | grep 'nvidia[0-9]\+'
 
 ### 安装NVIDIA容器工具包
 
-我的家庭实验室正在运行Kubernetes v1.28.4，使用containerd。如前所述，我们需要NVIDIA容器工具包（一组实用工具）来
-
-据我所知，这会在您的主机上安装工具，但默认情况下不会配置或更改任何东西。
+我的家庭实验室正在运行Kubernetes v1.28.4，使用containerd。如前所述，我们需要安装 NVIDIA 容器工具包（一组实用工具）。据我所知，这会在您的主机上安装工具，但默认情况下不会配置或更改任何东西。
 
 来自“安装NVIDIA容器工具包”指南。
 
@@ -508,7 +506,7 @@ kubectl logs job/test-job-gpu
 
 ## 结论
 
-将 GPU 集成到 Kubernetes 中可能看起来令人望而生畏，因为涉及到复杂的技术层。我希望这个指南能为您解密将 NVIDIA GPU 与 Kubernetes 集成的过程。
+将 GPU 集成到 Kubernetes 中可能看起来令人望而生畏，因为涉及到复杂的技术层。我希望本指南能帮助您理解将 NVIDIA GPU 与 Kubernetes 集成的过程。
 
 总之，在 k8s 上暴露 GPU 包括以下步骤：
 

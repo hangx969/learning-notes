@@ -39,7 +39,7 @@ Operator是一种用于扩展Kubernetes API的自定义控制器，可以实现*
 Operator使用CRD去定义一个新的资源类型。比如定义一个叫database的CRD，一键启动一组高可用数据库实例。
 
 - CRD 是 CustomResourceDefinition 的缩写：
-  - Kubernetes 1.7 之后，增加了通过 CRD 扩展 Kubernetes API 的能力。我们可以借助 CRD 向 Kubernetes API 添加新的资源类型，无需修改 Kubernetes 源码来创建自定义 API server。该功能大大增强了 Kubernetes 的扩展能力。
+  - 在 Kubernetes 中，一切都可视为资源。Kubernetes 1.7 之后，增加了通过 CRD 对自定义资源进行二次开发、扩展 Kubernetes API 的能力。我们可以借助 CRD 向 Kubernetes API 添加新的资源类型，无需修改 Kubernetes 源码来创建自定义 API server。该功能大大增强了 Kubernetes 的扩展能力。
   - 创建 CRD 后，Kubernetes API 服务器会为你指定的每个版本创建新的 RESTful 资源路径。我们可以通过这些 API 路径创建自定义类型的资源。
   - CRD可以是命名空间的，也可以是集群范围的，由CRD的作用域(scpoe)字段中所指定的，与现有的内置对象一样，删除名称空间将删除该名称空间中的所有自定义对象。CRD本身没有名称空间，所有名称空间都可以使用。
 

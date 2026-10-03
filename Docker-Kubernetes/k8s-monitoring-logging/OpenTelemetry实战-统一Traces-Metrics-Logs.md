@@ -28,7 +28,7 @@ tags:
 
 **这不是可观测性，这是信息孤岛。**
 
-OpenTelemetry（OTel）的出现，就是为了终结这场噩梦。2026 年的 OTel 已经足够成熟，成为 CNCF 毕业项目，Traces 和 Metrics 规范已 GA，Logs 规范也已 Stable。
+OpenTelemetry（OTel）旨在解决这些系统之间的数据割裂。2026 年的 OTel 已经足够成熟，成为 CNCF 毕业项目，Traces 和 Metrics 规范已 GA，Logs 规范也已 Stable。
 
 ---
 
