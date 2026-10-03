@@ -14,7 +14,7 @@ python tools/site/build.py
 python tools/site/build.py --serve
 ```
 
-首次构建自动下载固定版本的 Quartz 4.5.2 并安装 npm 依赖；生成内容和上游源码均放在 `.quartz-cache/`，网站输出为 `_site/`。预览地址为 `http://localhost:8080/learning-notes/`，修改源笔记后重新运行预览命令。
+首次构建自动下载固定版本的 Quartz 4.5.2 并安装 npm 依赖；生成内容和上游源码均放在 `.site-cache/`，网站输出为 `_site/`。预览地址为 `http://localhost:8080/learning-notes/`，修改源笔记后重新运行预览命令。
 
 主题配置、布局和样式分别位于 `tools/site/quartz/quartz.config.ts`、`quartz.layout.ts` 和 `custom.scss`。基础版沿用 Quartz 默认布局与配色，提供中文界面、搜索、目录树、关系图、反向链接和明暗切换。
 

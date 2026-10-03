@@ -21,6 +21,6 @@ Python/python-manuscripts/**/venv
 .terraform/
 0raw/
 _site/
-.quartz-cache/
+.site-cache/
 __pycache__/
 *.pyc

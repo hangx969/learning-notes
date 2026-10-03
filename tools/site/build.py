@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Quartz 4 构建入口：沿用发布筛选与 git 时间，导出首页、主题页和文章。
 
-原始笔记只读，临时内容与固定版本的 Quartz 源码放在 .quartz-cache/。
+原始笔记只读，临时内容与固定版本的 Quartz 源码放在 .site-cache/。
 构建：python tools/site/build.py；本地预览：加 --serve。
 """
 
@@ -22,7 +22,7 @@ import yaml
 TOOLS_DIR = Path(__file__).resolve().parent
 ROOT = TOOLS_DIR.parent.parent
 QUARTZ_CONFIG = TOOLS_DIR / "quartz"
-CACHE = ROOT / ".quartz-cache"
+CACHE = ROOT / ".site-cache"
 QUARTZ = CACHE / "upstream"
 CONTENT = QUARTZ / "content"
 OUTPUT = ROOT / "_site"

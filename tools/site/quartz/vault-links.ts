@@ -25,7 +25,7 @@ export const VaultLinks: QuartzTransformerPlugin = () => ({
         findAndReplace(tree, [
           [
             /(!?)\[\[([^\[\]\n]+)\]\]/g,
-            (value: string, embed: string, inner: string) => {
+            (_value: string, embed: string, inner: string) => {
               inner = inner.replace(/\\\|/g, "|")
               const pipe = inner.indexOf("|")
               const target = pipe < 0 ? inner : inner.slice(0, pipe)
@@ -67,8 +67,9 @@ function redirectHtml(destination: string) {
 // Quartz 使用 .html 路由；保留旧站的 文章/index.html，并保留查询参数与锚点。
 export const LegacyUrls: QuartzEmitterPlugin = () => ({
   name: "LegacyUrls",
-  async *emit(ctx) {
-    if (!fs.existsSync(path.join(ctx.argv.output, "index.html"))) {
+  async *emit(ctx, content) {
+    const available = new Set(content.map(([, file]) => file.data.slug))
+    if (!available.has("index" as FullSlug)) {
       throw new Error("Quartz 未生成首页")
     }
     const slugs = new Set<string>()
@@ -76,7 +77,7 @@ export const LegacyUrls: QuartzEmitterPlugin = () => ({
       const canonical = slugifyFilePath(note as FilePath)
       if (slugs.has(canonical)) throw new Error("Quartz URL 重复: " + note)
       slugs.add(canonical)
-      if (!fs.existsSync(path.join(ctx.argv.output, canonical + ".html"))) {
+      if (!available.has(canonical)) {
         throw new Error("Quartz 未生成文章: " + note)
       }
       const legacy = note.slice(0, -3) + "/index"

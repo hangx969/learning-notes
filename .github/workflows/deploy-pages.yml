@@ -43,10 +43,10 @@ jobs:
         with:
           node-version: "22"
           cache: npm
-          cache-dependency-path: .quartz-cache/upstream/package-lock.json
+          cache-dependency-path: .site-cache/upstream/package-lock.json
 
       - name: Install Quartz dependencies
-        working-directory: .quartz-cache/upstream
+        working-directory: .site-cache/upstream
         run: npm ci
 
       - name: Build with Quartz 4
