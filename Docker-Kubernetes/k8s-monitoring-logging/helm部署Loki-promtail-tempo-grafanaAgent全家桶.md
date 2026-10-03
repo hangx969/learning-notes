@@ -306,9 +306,9 @@ helm upgrade -i tempo -n monitoring . -f values.yaml
 
 Refer：[Grafana Agent参考](https://mp.weixin.qq.com/s?__biz=Mzk0NzIyMDA4MA==&mid=2247484542&idx=1&sn=02cba4c7dd124a06afa97104c2d50bca&chksm=c37b7f61f40cf677ae5b0aa9dfef3a39a6c945aa6f68379d1f81ccfe54d2cd706aa481efa08b&cur_album_id=3143335204699504647&scene=189#wechat_redirect)
 
-- Tempo服务可以通过Tempo-distributor组件或TempoGateWay直接接收Trace数据，因此无需部署Grafana Agent组件。
+- Tempo服务可以通过Tempo-distributor组件或TempoGateWay直接接收Trace数据，无需部署Grafana Agent组件。
 
-- 在生产环境中，Tempo作为基础组件通常与业务服务集群分开部署，由单独的集群为各业务集群提供Trace存储服务。因此，可以在各业务集群内部署Grafana Agent，将业务服务产生的Trace数据发送给Agent，再由Agent按配置的策略统一转发至Tempo服务端，如图：
+- 在生产环境中，Tempo作为基础组件通常与业务服务集群分开部署，由单独的集群为各业务集群提供Trace存储服务。因此，考虑在各集群内部署Grafana Agent，将业务服务产生的Trace数据发送给Grafana Agent，再由Grafana Agent按配置的策略统一发送至Tempo服务端，如图：
 
   ![image-20241112141359129](https://raw.githubusercontent.com/hangx969/upload-images-md/main/202411121413231.png)
 
@@ -324,7 +324,7 @@ helm pull grafana/grafana-agent --version 0.42.0
 
 ### 配置
 
-- 参考ado的values文件进行配置。
+- 仿照ado的values文件配置
 
 ### 安装
 

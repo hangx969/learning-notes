@@ -220,7 +220,7 @@ spec:
 
 连接基础组件的时候需要认证，KEDA设计了单独的资源来保存认证信息。
 
-TriggerAuthentication直接去k8s secret里面读，他自己并不保存认证信息。
+TriggerAuthentication直接从k8s secret读取认证信息，它本身并不保存认证信息。
 
 ~~~yaml
 apiVersion: v1
@@ -622,7 +622,7 @@ kubectl delete job insert-orders-job
 kubectl create job insert-orders-job --image=registry.cn-beijing.aliyuncs.com/dotbalo/mysql:insert
 ~~~
 
-可以观察到在insert-order-jobs完成后，立刻触发了updat-orders deployment的扩容，数据处理的很快，迅速就低于设定值了。30s之后就缩容到0了。
+可以观察到在insert-order-jobs完成后，立刻触发了updat-orders deployment的扩容，数据处理得很快，迅速就低于设定值了。30s之后就缩容到0了。
 
 ### ScaledJob 任务处理
 
