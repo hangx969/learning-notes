@@ -4,21 +4,7 @@
 
 [![Deploy Pages](https://github.com/hangx969/learning-notes/actions/workflows/deploy-pages.yml/badge.svg)](https://github.com/hangx969/learning-notes/actions/workflows/deploy-pages.yml)
 
-网站使用 [Quartz 4](https://github.com/jackyzha0/quartz/tree/v4) 的基础主题构建，仍由推送到 `main` 或手动运行 `Deploy Pages` 触发，通过 GitHub Pages artifact 发布。
-
-本地构建与预览（Python 3.12、Node.js 22+、npm 10.9.2+、Git）：
-
-```bash
-pip install -r tools/site/requirements.txt
-python tools/site/build.py
-python tools/site/build.py --serve
-```
-
-首次构建自动下载固定版本的 Quartz 4.5.2 并安装 npm 依赖；生成内容和上游源码均放在 `.site-cache/`，网站输出为 `_site/`。预览地址为 `http://localhost:8080/learning-notes/`，修改源笔记后重新运行预览命令。
-
-主题配置、布局和样式分别位于 `tools/site/quartz/quartz.config.ts`、`quartz.layout.ts` 和 `custom.scss`。基础版沿用 Quartz 默认布局与配色，提供中文界面、搜索、目录树、关系图、反向链接和明暗切换。
-
-`tools/site/build.py` 沿用原有文章排除规则、主题分组和基于 git 历史的最近更新，原始笔记仅在构建时读取。Quartz 使用新的文章路由，旧文章地址会自动跳转并保留查询参数与锚点。双链保留原有重名消歧规则，缺失文档链接仍降级为纯文本。
+网站使用 [Quartz 4](https://github.com/jackyzha0/quartz/tree/v4) 构建。
 
 涵盖云原生技术、基础设施自动化、编程语言、AI/ML 和现代 DevOps 实践的综合知识库。
 

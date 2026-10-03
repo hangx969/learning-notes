@@ -6,7 +6,7 @@ tags:
 aliases:
   - 知识库首页
   - KB Index
-date: 2026-10-02
+date: 2026-10-03
 ---
 
 # 📚 Learning Notes 知识库
@@ -350,6 +350,8 @@ date: 2026-10-02
 | [高价值知识缺口](analysis/high-value-gaps.md) | 优先填补的知识空白 |
 | [后续写作建议](analysis/next-writing-suggestions.md) | 推荐下一步写作方向 |
 | [多Agent vs 单Agent架构决策分析](analysis/multi-agent-vs-single-agent.md) | 分析多Agent何时是伪需求，提出信息隔离与并发需求的决策框架 |
+
+- [[KnowledgeBase/analysis/github-pages-mkdocs-material-quartz|GitHub Pages：MkDocs Material 与 Quartz 4]] — 固定版本、完整 workflow、Obsidian 适配、本地构建与发布验收步骤。
 
 ---
 

@@ -2125,3 +2125,10 @@ date: 2026-04-17
 - 由 3 个 GPT-6 Luna High 子 Agent 分组改写，统筹验收后写回 36 个页面：正文与 README、15 篇来源摘要、Terraform 实体页、2 个概念页、主题地图和 INDEX 的 Terraform 条目。生产片段、脱敏裁剪与教学新增测试/CI 均标明范围；账号、角色、资源 ID、内部域名、联系人及凭据用占位符代替，表达按 humanizer-zh 核对。
 - 70 个 HCL、62 个 Shell、3 个普通 YAML 代码块及策略模板语法检查通过；249 个内部引用和 51 个生产路径引用可定位，无生产敏感值命中。ACK 示例 Chart 通过离线 Helm lint 与两组 template 渲染，覆盖副本 1/2、Service 端口 80/8080及 checksum 变化；Obsidian 阅读视图表格和链接检查通过。
 - 36 个页面经 MCP 全文写回并逐批回读完全一致，Git diff 空白检查通过。244 份生产参考文件哈希及生产 Git 状态保持原样；未执行 Terraform init/validate/plan/apply/test，未访问 TFE、云端或集群。真实 Provider/API 行为、集群认证、镜像拉取及部署仍未验证。
+
+## [2026-10-03] create | GitHub Pages 构建流程复现文档
+
+- 新增 [[KnowledgeBase/analysis/github-pages-mkdocs-material-quartz|GitHub Pages：MkDocs Material 与 Quartz 4]]，记录两套固定版本、配套文件、完整 GitHub Actions workflow、本地构建与预览、Obsidian 链接适配、旧 URL/锚点兼容及验收步骤；区分已提交的 Quartz 基础方案与尚在审阅的主题。
+- 确认 `_site/` 是 Pages 上传所需的网站产物，按请求保留；它与 Quartz 缓存均由 Git 忽略。保持现有触发和发布筛选规则，未修改原始来源或 workflow。
+- 通过 Obsidian MCP 写入文章和更新 INDEX，并完整回读核对；按 humanizer-zh 润色正文，保留配置、命令、版本、路径及验证边界。文章 frontmatter、代码围栏、Shell 语法与两份 workflow 的发布约定检查通过，原始 Markdown 校验值未变。
+- Material 历史配置在临时副本中通过 strict 构建，生成 411 篇文章、18 个主题，仍有既有链接的 info 提示；Quartz 主题记录引用此前的本地构建和界面验收。本次未触发 GitHub Actions、未提交推送、未执行新的 Pages 部署。
