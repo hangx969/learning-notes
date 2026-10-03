@@ -4,7 +4,7 @@
   见类文档字符串。优先级 30（高于 fenced_code 的 25），必须先运行。
 - WikiLinkProcessor: 把 [[target#anchor|alias]] 解析为站内链接；
   解析失败降级为纯文本。依赖 build.py 注入的 resolver 和
-  md.current_note / md.root_prefix 两个渲染期属性。
+  md.current_note / md.root_prefix 或 MkDocs hook 提供的页面上下文。
 - CalloutPreprocessor: 把 `> [!type] Title` 块重写为
   <div class="callout callout-{type}" markdown="1">，配合 md_in_html
   让内部继续按 markdown 渲染。注册优先级 22（低于 fenced_code 的 25），
@@ -37,9 +37,10 @@ ESCAPED_CHAR_RE = re.compile("\x02(\\d+)\x03")
 
 
 class WikiLinkProcessor(InlineProcessor):
-    def __init__(self, pattern, md, resolver):
+    def __init__(self, pattern, md, resolver, context=None):
         super().__init__(pattern, md)
         self.resolver = resolver
+        self.context = context if context is not None else {}
 
     def _unescape(self, text):
         stash = self.md.treeprocessors["inline"].stashed_nodes
@@ -72,13 +73,14 @@ class WikiLinkProcessor(InlineProcessor):
             el.text = text
             return el, m.start(0), m.end(0)
 
-        note = self.resolver(page, getattr(self.md, "current_note", ""))
+        src = self.context.get("path", getattr(self.md, "current_note", ""))
+        note = self.resolver(page, src)
         if note is None:
             return text, m.start(0), m.end(0)
 
         el = etree.Element("a")
         el.set("class", "wikilink")
-        root = getattr(self.md, "root_prefix", "")
+        root = self.context.get("root", getattr(self.md, "root_prefix", ""))
         el.set("href", root + quote(note.url, safe="/") + frag)
         el.text = text
         return el, m.start(0), m.end(0)
@@ -159,8 +161,9 @@ class CalloutPreprocessor(Preprocessor):
 
 
 class ObsidianExtension(Extension):
-    def __init__(self, resolver, **kwargs):
+    def __init__(self, resolver, context=None, **kwargs):
         self.resolver = resolver
+        self.context = context
         super().__init__(**kwargs)
 
     def extendMarkdown(self, md):
@@ -170,5 +173,5 @@ class ObsidianExtension(Extension):
         # 代码块先被保护，callout 生成的 div 再交给 md_in_html 提取
         md.preprocessors.register(CalloutPreprocessor(md), "obsidian_callout", 22)
         md.inlinePatterns.register(
-            WikiLinkProcessor(WIKILINK_RE, md, self.resolver), "obsidian_wikilink", 75
+            WikiLinkProcessor(WIKILINK_RE, md, self.resolver, self.context), "obsidian_wikilink", 75
         )

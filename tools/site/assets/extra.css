@@ -1,0 +1,26 @@
+/* Obsidian callouts 使用 Material 的颜色，兼容深浅两种主题。 */
+.md-typeset .callout {
+  margin: 1em 0;
+  padding: 0.8em 1em;
+  background: var(--md-code-bg-color);
+  border-left: 0.2rem solid var(--md-accent-fg-color);
+  border-radius: 0.2rem;
+}
+
+.md-typeset .callout-title {
+  margin: 0 0 0.4em;
+  font-weight: 700;
+  color: var(--md-accent-fg-color);
+}
+
+.md-typeset .callout > :last-child {
+  margin-bottom: 0;
+}
+
+.md-typeset :is(.callout-warning, .callout-caution, .callout-important, .callout-attention) {
+  border-left-color: #ff9100;
+}
+
+.md-typeset :is(.callout-danger, .callout-error, .callout-bug, .callout-failure) {
+  border-left-color: #ff5252;
+}

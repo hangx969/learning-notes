@@ -1,36 +1,28 @@
 #!/usr/bin/env python3
-"""learning-notes 静态站点生成器。
+"""MkDocs hook：沿用发布筛选与 git 时间，生成首页、主题页和文章导航。
 
-发现 git 跟踪的 markdown 笔记（应用排除规则）→ 渲染为 NVIDIA 暗色主题
-HTML → 生成首页/主题页/搜索索引，输出到 _site/。
-
-用法：python tools/site/build.py
-本地预览：python -m http.server -d _site 8000
+原始笔记只读，页面通过 MkDocs 的虚拟文件 API 提供给 Material 渲染。
+构建：mkdocs build --strict（也兼容 python tools/site/build.py）
+本地预览：mkdocs serve
 """
 
-import json
+import logging
 import re
-import shutil
 import subprocess
 import sys
 import time
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path, PurePosixPath
 from urllib.parse import quote
 
-import markdown
 import yaml
-from jinja2 import Environment, FileSystemLoader, select_autoescape
-from markdown.extensions.toc import slugify_unicode
+from mkdocs.structure.files import File
 
 from obsidian import ObsidianExtension
 
 TOOLS_DIR = Path(__file__).resolve().parent
 ROOT = TOOLS_DIR.parent.parent
-SITE_DIR = ROOT / "_site"
-
-SITE_NAME = "Learning Notes"
-REPO_URL = "https://github.com/hangx969/learning-notes"
+log = logging.getLogger("mkdocs.learning_notes")
 
 # 发布排除规则（目录前缀 / 精确文件 / 主题根目录下的 index.md）
 EXCLUDE_DIRS = (
@@ -48,8 +40,11 @@ FRONTMATTER_RE = re.compile(r"\A---\s*\n(.*?)\n---\s*\n", re.S)
 H1_RE = re.compile(r"#\s+(.+?)\s*#*\s*$")
 
 RECENT_COUNT = 15
-SEARCH_CONTENT_CHARS = 2000
 UNGROUPED = "其他"
+
+_notes = []
+_resolver = None
+_page_context = {}
 
 
 @dataclass
@@ -61,8 +56,6 @@ class Note:
     body: str          # 去 frontmatter、去标题 H1 后的 markdown
     meta: dict
     mtime: int = 0
-    html: str = ""
-    toc_tokens: list = field(default_factory=list)
 
     @property
     def url(self):
@@ -197,33 +190,6 @@ def make_resolver(notes):
     return resolve
 
 
-def make_markdown(resolver):
-    return markdown.Markdown(
-        extensions=[
-            "fenced_code", "tables", "toc", "codehilite", "nl2br",
-            "md_in_html", "pymdownx.mark", "pymdownx.tilde",
-            ObsidianExtension(resolver),
-        ],
-        extension_configs={
-            "toc": {"slugify": slugify_unicode, "toc_depth": "2-3"},
-            "codehilite": {"guess_lang": False, "css_class": "highlight"},
-        },
-    )
-
-
-def strip_markdown(body):
-    """为搜索索引剥离 markdown 语法，保留纯文本。"""
-    t = re.sub(r"```.*?(```|\Z)", " ", body, flags=re.S)
-    t = re.sub(r"!\[[^\]]*\]\([^)]*\)", " ", t)
-    t = re.sub(r"\[([^\]]*)\]\([^)]*\)", r"\1", t)
-    t = re.sub(r"\[\[([^\]\[\n]+)\]\]", lambda m: m.group(1).rpartition("|")[2], t)
-    t = re.sub(r"`([^`]*)`", r"\1", t)
-    t = re.sub(r"^>\s*\[!\w+\][+-]?", " ", t, flags=re.M)
-    t = re.sub(r"[#>*_=~|\-]{1,}", " ", t)
-    t = re.sub(r"\s+", " ", t).strip()
-    return t[:SEARCH_CONTENT_CHARS]
-
-
 def build_topics(notes):
     """topic 列表（含 URL 与计数）+ topic → [(子目录组, notes)] 分组。"""
     by_topic = {}
@@ -245,81 +211,110 @@ def build_topics(notes):
     return topics, groups
 
 
-def main():
-    notes = load_notes()
-    load_git_times(notes)
-    resolver = make_resolver(notes)
-    md = make_markdown(resolver)
+def on_config(config):
+    global _notes, _resolver
+    _notes = load_notes()
+    load_git_times(_notes)
+    _resolver = make_resolver(_notes)
+    _page_context.clear()
+    topics, groups = build_topics(_notes)
+    config.nav = [{"首页": "index.md"}]
+    for topic in topics:
+        entries = [{"概览": f"{topic['name']}/index.md"}]
+        for group, notes in groups[topic["name"]]:
+            entries.append({group: [{n.title: n.path} for n in notes]})
+        config.nav.append({topic["name"]: entries})
+    # mkdocs serve 会重复构建，替换上一次注册的扩展以免叠加。
+    config.markdown_extensions = [
+        ext for ext in config.markdown_extensions
+        if not isinstance(ext, ObsidianExtension)
+    ] + [ObsidianExtension(_resolver, context=_page_context)]
+    return config
 
-    # 渲染全部文章
-    for n in notes:
-        md.reset()
-        md.current_note = n.path
-        md.root_prefix = "../" * n.depth
-        n.html = md.convert(n.body)
-        n.toc_tokens = getattr(md, "toc_tokens", [])
 
-    topics, groups = build_topics(notes)
-    recent = sorted(notes, key=lambda n: n.mtime, reverse=True)[:RECENT_COUNT]
+def page_markdown(title, body):
+    meta = yaml.safe_dump({"title": title}, allow_unicode=True, sort_keys=False)
+    return f"---\n{meta}---\n\n{body}\n"
 
-    # 输出目录
-    if SITE_DIR.exists():
-        shutil.rmtree(SITE_DIR)
-    SITE_DIR.mkdir()
-    shutil.copytree(TOOLS_DIR / "static", SITE_DIR / "static")
 
-    env = Environment(
-        loader=FileSystemLoader(TOOLS_DIR / "templates"),
-        autoescape=select_autoescape(["html"]),
-    )
-    env.filters["urlq"] = lambda p: quote(p, safe="/")
+def markdown_link(title, path):
+    label = title.replace("[", r"\[").replace("]", r"\]")
+    return f"[{label}]({quote(path, safe='/')})"
 
-    def render(template, out_rel, depth, **ctx):
-        out = SITE_DIR / out_rel
-        out.parent.mkdir(parents=True, exist_ok=True)
-        if out.exists():
-            print(f"  [warn] 输出路径冲突，跳过覆盖: {out_rel}")
-            return
-        ctx.setdefault("root", "../" * depth)
-        ctx.setdefault("site_name", SITE_NAME)
-        ctx.setdefault("repo_url", REPO_URL)
-        ctx.setdefault("topics", topics)
-        out.write_text(env.get_template(template).render(**ctx), encoding="utf-8")
 
-    for n in notes:
-        render("article.html", n.url + "index.html", n.depth,
-               note=n, current_topic=n.topic, groups=groups[n.topic])
+def on_files(files, *, config):
+    # docs_dir 只是 hook/CSS 所在目录；保留 Material 资源，移除旧站模板和资源。
+    for file in list(files):
+        if file.src_dir == config.docs_dir and file.src_uri != "assets/extra.css":
+            files.remove(file)
 
-    for t in topics:
-        render("topic.html", t["url"] + "index.html", 1,
-               topic=t, current_topic=t["name"], groups=groups[t["name"]])
+    for note in _notes:
+        source_url = config.repo_url + "/blob/main/" + quote(note.path, safe="/")
+        body = (
+            f"# {note.title}\n\n"
+            f"更新于 {note.date_str} · [查看源文件]({source_url})\n\n"
+            f"{note.body}"
+        )
+        file = File.generated(config, note.path, content=page_markdown(note.title, body))
+        # 显式沿用旧站 URL，包括子目录中名为 index.md 的文章。
+        file.dest_uri = note.url + "index.html"
+        files.append(file)
 
-    render("home.html", "index.html", 0,
-           recent=recent, total=len(notes),
-           build_date=time.strftime("%Y-%m-%d"))
+    topics, groups = build_topics(_notes)
+    for topic in topics:
+        lines = [f"# {topic['name']}", "", f"{topic['count']} 篇笔记", ""]
+        for group, notes in groups[topic["name"]]:
+            lines.extend([f"## {group}", ""])
+            for note in notes:
+                relative = PurePosixPath(note.path).relative_to(topic["name"]).as_posix()
+                lines.append(f"- {markdown_link(note.title, relative)} · {note.date_str}")
+            lines.append("")
+        files.append(File.generated(
+            config, f"{topic['name']}/index.md",
+            content=page_markdown(topic["name"], "\n".join(lines)),
+        ))
 
-    # 搜索索引
-    index = [
-        {"t": n.title, "u": n.url, "p": n.topic, "c": strip_markdown(n.body)}
-        for n in notes
+    lines = [
+        "# 学习笔记", "",
+        f"{len(_notes)} 篇笔记 · {len(topics)} 个主题 · 构建于 {time.strftime('%Y-%m-%d')}",
+        "", "## 主题", "", '<div class="grid cards" markdown="1">', "",
     ]
-    index_path = SITE_DIR / "search-index.json"
-    index_path.write_text(
-        json.dumps(index, ensure_ascii=False, separators=(",", ":")), encoding="utf-8"
-    )
-    print(f"搜索索引：{len(index)} 条，{index_path.stat().st_size / 1024:.0f} KB")
+    for topic in topics:
+        link = markdown_link("浏览笔记", f"{topic['name']}/index.md")
+        lines.extend([
+            f"- **{topic['name']}**", "", "    ---", "",
+            f"    {topic['count']} 篇笔记", "", f"    {link}", "",
+        ])
+    lines.extend(["</div>", "", "## 最近更新", "", "| 笔记 | 主题 | 更新日期 |", "| --- | --- | --- |"])
+    recent = sorted(_notes, key=lambda n: n.mtime, reverse=True)[:RECENT_COUNT]
+    for note in recent:
+        link = markdown_link(note.title, note.path).replace("|", r"\|")
+        lines.append(f"| {link} | {note.topic} | {note.date_str} |")
+    files.append(File.generated(config, "index.md", content=page_markdown("学习笔记", "\n".join(lines))))
+    return files
 
-    # 构建警告清单
-    if resolver.ambiguous:
-        print(f"\n歧义 wikilink（按 同目录优先→最短路径 消解）：{len(resolver.ambiguous)} 处")
-        for src, target, pick in resolver.ambiguous:
-            print(f"  {src}: [[{target}]] → {pick}")
-    if resolver.unresolved:
-        print(f"\n未解析 wikilink（降级为纯文本）：{len(resolver.unresolved)} 处")
-        for src, target in resolver.unresolved:
-            print(f"  {src}: [[{target}]]")
 
-    print(f"\n完成：{len(notes)} 篇文章 + {len(topics)} 个主题页 → {SITE_DIR}")
+def on_page_markdown(markdown, *, page, config, files):
+    _page_context["path"] = page.file.src_uri
+    _page_context["root"] = "../" * (len(PurePosixPath(page.file.dest_uri).parts) - 1)
+    return markdown
+
+
+def on_post_build(*, config):
+    if _resolver.ambiguous:
+        log.info("歧义 wikilink（同目录优先→最短路径）：%d 处", len(_resolver.ambiguous))
+    if _resolver.unresolved:
+        log.info("未解析 wikilink（沿用纯文本降级）：%d 处", len(_resolver.unresolved))
+        for src, target in _resolver.unresolved:
+            log.info("  %s: [[%s]]", src, target)
+    log.info("完成：%d 篇文章 → %s", len(_notes), config.site_dir)
+
+
+def main():
+    return subprocess.call([
+        sys.executable, "-m", "mkdocs", "build", "--strict",
+        "--config-file", str(ROOT / "mkdocs.yml"),
+    ], cwd=ROOT)
 
 
 if __name__ == "__main__":

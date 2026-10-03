@@ -33,9 +33,11 @@ jobs:
           cache: pip
           cache-dependency-path: tools/site/requirements.txt
 
-      - run: pip install -r tools/site/requirements.txt
+      - name: Install site dependencies
+        run: pip install -r tools/site/requirements.txt
 
-      - run: python tools/site/build.py
+      - name: Build with MkDocs Material
+        run: mkdocs build --strict
 
       - uses: actions/configure-pages@v5
 

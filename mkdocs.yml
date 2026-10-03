@@ -1,0 +1,65 @@
+site_name: Learning Notes
+site_description: 云原生、基础设施与 AI 学习笔记
+site_url: https://hangx969.github.io/learning-notes/
+repo_url: https://github.com/hangx969/learning-notes
+edit_uri: ""
+
+# hook 提供筛选后的虚拟 Markdown 页面，不复制或修改原始笔记。
+docs_dir: tools/site
+site_dir: _site
+use_directory_urls: true
+hooks:
+  - tools/site/build.py
+
+theme:
+  name: material
+  language: zh
+  font: false
+  palette:
+    - scheme: slate
+      primary: green
+      accent: lime
+      toggle:
+        icon: material/weather-sunny
+        name: 切换到浅色模式
+    - scheme: default
+      primary: green
+      accent: lime
+      toggle:
+        icon: material/weather-night
+        name: 切换到深色模式
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.indexes
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+
+plugins:
+  - search:
+      lang: [zh, en]
+
+markdown_extensions:
+  - fenced_code
+  - tables
+  - toc:
+      slugify: !!python/name:markdown.extensions.toc.slugify_unicode
+      toc_depth: "2-3"
+  - codehilite:
+      guess_lang: false
+      css_class: highlight
+  - nl2br
+  - md_in_html
+  - pymdownx.mark
+  - pymdownx.tilde
+
+extra_css:
+  - assets/extra.css
+
+# 保留旧站对缺失/排除文档链接的容忍；已解析 wikilink 使用原有目录 URL。
+validation:
+  links:
+    not_found: info
+    unrecognized_links: ignore

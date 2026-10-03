@@ -4,6 +4,18 @@
 
 [![Deploy Pages](https://github.com/hangx969/learning-notes/actions/workflows/deploy-pages.yml/badge.svg)](https://github.com/hangx969/learning-notes/actions/workflows/deploy-pages.yml)
 
+网站使用 [MkDocs Material](https://github.com/squidfunk/mkdocs-material) 构建，仍由推送到 `main` 或手动运行 `Deploy Pages` 触发，通过 GitHub Pages artifact 发布。
+
+本地构建与预览（Python 3.12）：
+
+```bash
+pip install -r tools/site/requirements.txt
+mkdocs build --strict
+mkdocs serve
+```
+
+主题与搜索配置见 `mkdocs.yml`；`tools/site/build.py` hook 沿用原有文章排除规则、主题分组和基于 git 历史的最近更新，文章 URL 保持不变。原始笔记仅在构建时读取，不会被改写。已有的缺失文档链接保留诊断信息，不因更换构建器而阻断发布。
+
 涵盖云原生技术、基础设施自动化、编程语言、AI/ML 和现代 DevOps 实践的综合知识库。
 
 > **~360 篇学习笔记 · 18 个技术领域 · 159 篇知识编译层文件**
