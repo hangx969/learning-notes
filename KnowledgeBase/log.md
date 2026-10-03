@@ -2132,3 +2132,16 @@ date: 2026-04-17
 - 确认 `_site/` 是 Pages 上传所需的网站产物，按请求保留；它与 Quartz 缓存均由 Git 忽略。保持现有触发和发布筛选规则，未修改原始来源或 workflow。
 - 通过 Obsidian MCP 写入文章和更新 INDEX，并完整回读核对；按 humanizer-zh 润色正文，保留配置、命令、版本、路径及验证边界。文章 frontmatter、代码围栏、Shell 语法与两份 workflow 的发布约定检查通过，原始 Markdown 校验值未变。
 - Material 历史配置在临时副本中通过 strict 构建，生成 411 篇文章、18 个主题，仍有既有链接的 info 提示；Quartz 主题记录引用此前的本地构建和界面验收。本次未触发 GitHub Actions、未提交推送、未执行新的 Pages 部署。
+
+## [2026-10-03] restructure | Pages 构建文档移入 Obsidian 原始来源
+
+- 按用户要求将 `KnowledgeBase/analysis/github-pages-mkdocs-material-quartz.md` 移至 [[AI/Obsidian/github-pages-mkdocs-material-quartz|用 GitHub Actions 发布 Obsidian 笔记：MkDocs Material 与 Quartz 4]]；仅调整分类标签和所在目录的发布说明，9 个代码块、命令、版本与配置保持原样。
+- 创建 [[KnowledgeBase/sources/github-pages-mkdocs-material-quartz-summary|GitHub Pages 构建来源摘要]]，更新 INDEX、Obsidian 实体、CI/CD 概念、工具地图、AI 工作流地图、领域地图及全库盘点。当前统计纳入本次迁移文件：学习笔记 377 篇、AI 74 篇、Obsidian 6 篇；历史分析快照保留。
+- 通过 Obsidian MCP 写入并逐页完整回读，保留同期间对 AGENTS/CLAUDE 规约入口的更新。移除旧文章文件；历史日志按仅追加规约保留原记录，本条提供迁移后的入口。
+- 文件移入原始来源后，在纳入 Git 跟踪时参与现有 Pages 构建；本次未修改 workflow、主题代码或其他原始笔记，未手动运行网站构建与部署。
+
+## [2026-10-03] restructure | 项目规约统一为 AGENTS.md
+
+- 以根目录 [[AGENTS|AGENTS.md]] 为统一规约，完整保留原有规则；[[CLAUDE|CLAUDE.md]] 改为仅一行 `@AGENTS.md`，供 Claude Code 导入。
+- 同步 README、知识库入口、Obsidian 与 Claude Code 实体页、Obsidian 与 shiji-kb 来源摘要及 2026-09-29 维护报告中的规约引用，注明来源文章和历史检查当时使用 CLAUDE.md 的背景。
+- 通过 MCP 写入并完整回读核对；按修改前快照验证原规则完整保留，7 个 YAML frontmatter、代码围栏、16 处新增规约 wikilink 及新增本地 Markdown 链接检查通过，`git diff --check` 通过。验证范围为静态内容与引用。

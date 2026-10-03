@@ -323,7 +323,7 @@ date: 2026-10-03
 | [杂项](sources/misc-domains-batch-summary.md) | 18 | Database(MySQL/Redis/MongoDB) + Middlewares(Kafka/RabbitMQ/RocketMQ) + OS + Networking + IaC(Terraform) + Git + C++ + SoftwareTesting |
 
 > [!info] 摄入覆盖
-> 2026-10-03 统计为 18 个领域、377 篇学习笔记（Git 已跟踪笔记加本次迁移文章，不含各目录 index.md 导航页和 280 篇引用/嵌入内容），详见 [[KnowledgeBase/inventory/repository-inventory|全库文档盘点]]。2026-09-29 检查时有 33 篇尚无来源摘要，历史清单见 [[KnowledgeBase/maintenance/wiki-lint-2026-09-29|Wiki 健康检查 2026-09-29]]。
+> 2026-10-03 统计为 18 个领域、377 篇学习笔记（本次整理的 Markdown 清单，已包含迁移文章，不含各目录 index.md 导航页和 280 篇引用/嵌入内容），详见 [[KnowledgeBase/inventory/repository-inventory|全库文档盘点]]。2026-09-29 检查时有 33 篇尚无来源摘要，历史清单见 [[KnowledgeBase/maintenance/wiki-lint-2026-09-29|Wiki 健康检查 2026-09-29]]。
 
 > Terraform 系列于 2026-10-02 新增 12 篇正文和 1 个学习路线入口；上面的全库篇数保留为 2026-09-29 盘点快照，本次系列以 [[KnowledgeBase/maps/terraform-map|Terraform 学习地图]] 为当前导航。
 

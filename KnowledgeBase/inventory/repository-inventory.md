@@ -2,21 +2,21 @@
 title: 全库文档盘点
 tags:
   - knowledgebase/inventory
-date: 2026-09-29
+date: 2026-10-03
 ---
 
 # 全库文档盘点
 
 > [!info] 统计概览
-> - **学习笔记**：363 篇，分布在 18 个顶层主题领域（按 git 跟踪的 Markdown 统计，不含 README、Schema、本知识库和各目录 index.md 导航页）
-> - **有 Frontmatter**：351 篇（96%）
-> - **正文含 Wikilink 双链**：106 篇（29%）
+> - **学习笔记**：377 篇，分布在 18 个顶层主题领域（按 Git 已跟踪的 Markdown 与本次迁移文章统计，不含 README、Schema、本知识库和各目录 index.md 导航页）
+> - **有 Frontmatter**：365 篇（97%）
+> - **正文含 Wikilink 双链**：133 篇（35%）
 > - **引用/嵌入内容**：另有 280 篇，不计入篇数，见 AI 一节末尾
-> - **扫描日期**：2026-09-29（按当前仓库重新生成；"标题"列沿用已有条目的人工描述，新增条目取文档标题）
+> - **扫描日期**：2026-10-03（概览重新统计并纳入本次迁移文章；既有条目的标题和格式标记沿用原盘点，新增条目取文档标题与当前标记）
 
 ---
 
-## AI（73 篇）
+## AI（74 篇）
 
 ### ClaudeCode/（13 篇）
 
@@ -109,7 +109,7 @@ date: 2026-09-29
 | [[AI/行业动态/OpenCodeReview-阿里AI代码审查工程化\|OpenCodeReview-阿里AI代码审查工程化]] | OpenCodeReview：阿里开源的 AI 代码审查工程化工具 | ✅ | ❌ |
 | [[AI/行业动态/TypeScript-vs-Python-AI-Agent时代的语言之争\|TypeScript-vs-Python-AI-Agent时代的语言之争]] | 为什么 AI Agent 时代，TypeScript 正在抢走 Python 的主场？ | ✅ | ❌ |
 
-### Obsidian/（5 篇）
+### Obsidian/（6 篇）
 
 | 文件 | 标题 | Frontmatter | 双链 |
 |------|------|:-----------:|:----:|
@@ -118,6 +118,7 @@ date: 2026-09-29
 | [[AI/Obsidian/Obsidian-Vault模板库合集-48个宝藏vault\|Obsidian-Vault模板库合集-48个宝藏vault]] | Obsidian Vault 模板库合集：48 个 GitHub 宝藏 vault | ✅ | ❌ |
 | [[AI/Obsidian/Obsidian可视化Skills-Excalidraw-Mermaid-Canvas\|Obsidian可视化Skills]] | AI Skills 生成可编辑图表（Excalidraw/Mermaid/Canvas） | ✅ | ❌ |
 | [[AI/Obsidian/obsidian-claude-code-AI知识库完整指南\|AI知识库完整指南]] | Obsidian+Claude Code AI 驱动的知识库完整指南（三文合并） | ✅ | ❌ |
+| [[AI/Obsidian/github-pages-mkdocs-material-quartz\|MkDocs Material 与 Quartz 发布笔记]] | 用 GitHub Actions 发布 Obsidian 笔记：MkDocs Material 与 Quartz 4 | ✅ | ✅ |
 
 ### Hermes-agent/（4 篇）
 
@@ -698,7 +699,7 @@ date: 2026-09-29
 
 ---
 
-## IaC（3 篇）
+## IaC（16 篇）
 
 | 文件 | 标题 | Frontmatter | 双链 |
 |------|------|:-----------:|:----:|
