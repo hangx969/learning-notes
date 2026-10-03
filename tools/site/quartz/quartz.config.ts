@@ -1,6 +1,7 @@
 import { QuartzConfig } from "./quartz/cfg"
 import * as Plugin from "./quartz/plugins"
 import { VaultLinks, LegacyUrls, LegacyAnchors } from "./vault-links"
+import { NotebookHome } from "./notebook-theme"
 
 /**
  * Quartz 4 Configuration
@@ -22,32 +23,32 @@ const config: QuartzConfig = {
       fontOrigin: "local",
       cdnCaching: true,
       typography: {
-        header: "system-ui",
+        header: "Georgia",
         body: "system-ui",
         code: "ui-monospace",
       },
       colors: {
         lightMode: {
-          light: "#faf8f8",
-          lightgray: "#e5e5e5",
-          gray: "#b8b8b8",
-          darkgray: "#4e4e4e",
-          dark: "#2b2b2b",
-          secondary: "#284b63",
-          tertiary: "#84a59d",
-          highlight: "rgba(143, 159, 169, 0.15)",
-          textHighlight: "#fff23688",
+          light: "#f6f2e8",
+          lightgray: "#ddd6c8",
+          gray: "#8a8176",
+          darkgray: "#4a433b",
+          dark: "#29251f",
+          secondary: "#665981",
+          tertiary: "#a15c3b",
+          highlight: "rgba(102, 89, 129, 0.1)",
+          textHighlight: "#eecb7880",
         },
         darkMode: {
-          light: "#161618",
-          lightgray: "#393639",
-          gray: "#646464",
-          darkgray: "#d4d4d4",
-          dark: "#ebebec",
-          secondary: "#7b97aa",
-          tertiary: "#84a59d",
-          highlight: "rgba(143, 159, 169, 0.15)",
-          textHighlight: "#b3aa0288",
+          light: "#1d2224",
+          lightgray: "#3c4243",
+          gray: "#a1a79d",
+          darkgray: "#d9d6ca",
+          dark: "#f4eee1",
+          secondary: "#c6b7e4",
+          tertiary: "#ddb38d",
+          highlight: "rgba(198, 183, 228, 0.12)",
+          textHighlight: "#8a692a80",
         },
       },
     },
@@ -78,7 +79,7 @@ const config: QuartzConfig = {
     emitters: [
       Plugin.AliasRedirects(),
       Plugin.ComponentResources(),
-      Plugin.ContentPage(),
+      Plugin.ContentPage({ pageBody: NotebookHome() }),
       Plugin.FolderPage(),
       Plugin.TagPage(),
       Plugin.ContentIndex({

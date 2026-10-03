@@ -7,8 +7,9 @@
 
 import argparse
 import datetime
+from functools import partial
+from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 import json
-import os
 import re
 import shutil
 import subprocess
@@ -16,7 +17,7 @@ import sys
 import time
 from dataclasses import dataclass
 from pathlib import Path, PurePosixPath
-from urllib.parse import quote
+from urllib.parse import quote, urlsplit
 
 import yaml
 
@@ -274,7 +275,7 @@ def export_content():
             page_markdown(topic["name"], "\n".join(lines)),
         )
 
-    # 首页保持主题入口和基于 git 历史的最近更新，使用 Quartz 默认 Markdown 样式。
+    # Markdown 保留搜索与摘要内容，主题组件复用相同的分组和最近更新数据。
     lines = [
         "云原生、基础设施与 AI 学习笔记。", "",
         f"{len(notes)} 篇笔记 · {len(topics)} 个主题", "",
@@ -288,7 +289,14 @@ def export_content():
     for note in recent:
         link = markdown_link(note.title, note.path).replace("|", r"\|")
         lines.append(f"| {link} | {note.topic} | {note.date_str} |")
-    write_content("index.md", page_markdown("学习笔记", "\n".join(lines)))
+    home_meta = {
+        "homeTopics": [{"name": topic["name"], "count": topic["count"]} for topic in topics],
+        "homeRecent": [
+            {"path": note.path, "title": note.title, "topic": note.topic, "date": note.date_str}
+            for note in recent
+        ],
+    }
+    write_content("index.md", page_markdown("学习笔记", "\n".join(lines), home_meta))
 
     assets = [
         path for path in git("ls-files").splitlines()
@@ -327,10 +335,40 @@ def prepare_quartz():
     if revision != specification["revision"]:
         run("git", "fetch", "--depth", "1", "origin", specification["revision"], cwd=QUARTZ)
         run("git", "checkout", "--force", "--detach", specification["revision"], cwd=QUARTZ)
-    for name in ("quartz.config.ts", "quartz.layout.ts", "vault-links.ts"):
+    for name in (
+        "quartz.config.ts", "quartz.layout.ts", "vault-links.ts",
+        "notebook-theme.tsx", "notebook-repository.inline.ts",
+    ):
         shutil.copyfile(QUARTZ_CONFIG / name, QUARTZ / name)
     shutil.copyfile(QUARTZ_CONFIG / "custom.scss", QUARTZ / "quartz/styles/custom.scss")
     return specification
+
+
+def serve_preview(port):
+    """与 Pages 一样优先解析 .html，避免旧目录跳转覆盖 Quartz 的文章链接。"""
+    class PreviewHandler(SimpleHTTPRequestHandler):
+        def translate_path(self, path):
+            requested = urlsplit(path).path
+            base = "/learning-notes"
+            if requested == base:
+                requested = "/"
+            elif requested.startswith(base + "/"):
+                requested = requested[len(base):]
+            else:
+                return str(OUTPUT / ".preview-not-found")
+            target = Path(super().translate_path(requested))
+            canonical = Path(str(target) + ".html")
+            if not requested.endswith("/") and canonical.is_file():
+                return str(canonical)
+            return str(target)
+
+    handler = partial(PreviewHandler, directory=str(OUTPUT))
+    with ThreadingHTTPServer(("127.0.0.1", port), handler) as server:
+        print(f"本地预览：http://localhost:{port}/learning-notes/", flush=True)
+        try:
+            server.serve_forever()
+        except KeyboardInterrupt:
+            pass
 
 
 def main():
@@ -358,11 +396,9 @@ def main():
         "node", "quartz/bootstrap-cli.mjs", "build",
         "--directory", str(CONTENT), "--output", str(OUTPUT), "--concurrency", "2",
     ]
+    run(*command, cwd=QUARTZ)
     if args.serve:
-        command.extend(["--serve", "--port", str(args.port), "--baseDir", "/learning-notes"])
-    # macOS 默认文件句柄上限较低；本地预览使用轮询，避免大量笔记导致 EMFILE。
-    environment = dict(os.environ, CHOKIDAR_USEPOLLING="1") if args.serve else None
-    run(*command, cwd=QUARTZ, env=environment)
+        serve_preview(args.port)
     return 0
 
 
