@@ -3,7 +3,7 @@ title: Claude Code
 tags:
   - knowledgebase/entity
   - ai/claude-code
-date: 2026-04-17
+date: 2026-10-03
 sources:
   - "[[Claude Code 基础指南]]"
   - "[[AI/ClaudeCode/Claude Code 扩展体系]]"
@@ -51,12 +51,14 @@ Extended Thinking 支持 4 级思考深度，通过自然语言触发：
 | `think harder` | 深度 | 复杂架构决策 |
 | `ultrathink` | 最深 | 高难度系统设计 |
 
-### 2. 记忆层 (Claude.md)
+### 2. 记忆层（CLAUDE.md / AGENTS.md）
 
-Claude.md 是 CC 的持久记忆机制，分两级：
+CC 通过 Markdown 指令文件保存跨会话的规则，分两级：
 
 - **用户级** (`~/.claude/CLAUDE.md`)：全局偏好，跨项目生效
-- **项目级** (项目根目录 `CLAUDE.md`)：项目特定的规范、技术栈、约定
+- **项目级**（项目根目录 `CLAUDE.md` 或 `AGENTS.md`）：项目特定的规范、技术栈、约定
+
+本仓库以 [[AGENTS|AGENTS.md]] 为统一规约，根目录 [[CLAUDE|CLAUDE.md]] 仅包含 `@AGENTS.md`，供 Claude Code 导入同一套规则。该写法见 [Claude Code 官方文档](https://code.claude.com/docs/en/memory#share-one-file-with-other-coding-tools)。
 
 创建方式：`/init` 命令自动生成，或通过 `# memory` 手动追加。
 

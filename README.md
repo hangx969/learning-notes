@@ -75,7 +75,8 @@
 
 ```
 learning-notes/
-├── CLAUDE.md                      ← 知识库 Schema（三层架构规约）
+├── AGENTS.md                      ← 知识库 Schema（三层架构规约）
+├── CLAUDE.md                      ← Claude Code 入口（仅导入 @AGENTS.md）
 ├── KnowledgeBase/                 ← 知识编译层（LLM 维护）
 │   ├── INDEX.md                   ← 全库内容目录
 │   ├── log.md                     ← 操作日志
@@ -128,6 +129,6 @@ learning-notes/
 | --- | --- | --- |
 | **Raw Sources** | 顶层主题目录中的 markdown 文件 | 人类策划，只读不改 |
 | **Wiki** | `KnowledgeBase/` 目录下的所有内容 | LLM 创建和维护 |
-| **Schema** | `CLAUDE.md` 规约文件 | 人类与 LLM 共同演进 |
+| **Schema** | `AGENTS.md` 规约文件 | 人类与 LLM 共同演进 |
 
-详见 [CLAUDE.md](./CLAUDE.md) 了解完整的页面模板、操作流程和命名约定。
+详见 [AGENTS.md](./AGENTS.md) 了解完整的页面模板、操作流程和命名约定。项目规约统一在此维护，[CLAUDE.md](./CLAUDE.md) 仅通过 `@AGENTS.md` 导入同一份规约。

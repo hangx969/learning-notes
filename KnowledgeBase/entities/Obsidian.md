@@ -3,8 +3,9 @@ title: Obsidian
 tags:
   - knowledgebase/entity
   - ai/knowledge-management
-date: 2026-04-17
+date: 2026-10-03
 sources:
+  - "[[AI/Obsidian/github-pages-mkdocs-material-quartz]]"
   - "[[AI/Obsidian/obsidian-claude-code-AI知识库完整指南]]"
   - "[[AI/ClaudeCode/Claude Code 扩展体系]]"
 ---
@@ -25,9 +26,10 @@ Obsidian 是一款基于本地 Markdown 文件的知识管理工具，拥有 150
 ## 使用场景
 
 - **AI 知识库**：通过 Claudian 插件、Obsidian Skills 和 Local REST API + mcp-obsidian，让 Claude Code 在 Vault 中搜索、读取、创建和修改笔记（见下文集成方案）
-- **LLM Wiki 运营**：本仓库即为 Obsidian Vault，按原始来源层、Wiki 编译层（`KnowledgeBase/`）和 Schema 层（`CLAUDE.md`）维护
+- **LLM Wiki 运营**：本仓库即为 Obsidian Vault，按原始来源层、Wiki 编译层（`KnowledgeBase/`）和 Schema 层（[[AGENTS|AGENTS.md]]）维护
 - **可编辑图表**：用可视化 Skills 让 AI 生成 Excalidraw、Mermaid、Canvas 图表，生成后仍可调整布局和文字，详见 [[AI/Obsidian/Obsidian可视化Skills-Excalidraw-Mermaid-Canvas|Obsidian 可视化 Skills]]
 - **内容发布**：用 Wechat Public Platform 插件把文章一键发布到微信公众号，也支持草稿、素材管理和百家号分发（见下文"实用社区插件"）
+- **静态网站发布**：通过 MkDocs Material 或 Quartz 将筛选后的 vault 笔记构建为 GitHub Pages，保留 wikilink 适配和日夜切换；流程见 [[AI/Obsidian/github-pages-mkdocs-material-quartz|Pages 构建文档]]。
 
 ## 与 Claude Code 的集成方案
 
@@ -65,7 +67,7 @@ Claude Code 直接搜索、读取、创建、修改笔记，无需手动复制�
 
 - **原始来源层**：顶层主题目录（只读）
 - **Wiki 编译层**：`KnowledgeBase/` 目录（LLM 维护）
-- **Schema 层**：`CLAUDE.md`（人机共同演进）
+- **Schema 层**：[[AGENTS|AGENTS.md]]（人机共同演进）；根目录 [[CLAUDE|CLAUDE.md]] 仅包含 `@AGENTS.md`，让 Claude Code 导入同一份规约
 
 > 之前的使用门槛（插件、同步、Markdown 语法、方法论如 Zettelkasten/PARA/MOC）曾让人望而却步。Claude Code 生态成熟后，这些门槛大幅降低——你不需要懂那些方法论，Claude Code 替你搞定。
 
@@ -79,6 +81,7 @@ Claude Code 直接搜索、读取、创建、修改笔记，无需手动复制�
 - [[AI/Obsidian/obsidian-claude-code-AI知识库完整指南]]：完整指南——3 种集成工具、Markdown 母语论证、30 分钟四步上手、Karpathy Wiki 模式、六大操作谱系、自动 backlinks
 - [[AI/Obsidian/Obsidian可视化Skills-Excalidraw-Mermaid-Canvas]]：AI Skills 生成可编辑图表（Excalidraw/Mermaid/Canvas）
 - [[AI/ClaudeCode/Claude Code 扩展体系]]：Obsidian Skills 的介绍与安装方法
+- [[AI/Obsidian/github-pages-mkdocs-material-quartz|MkDocs Material 与 Quartz 发布流程]]：固定版本、GitHub Actions artifact 发布、原始笔记只读导出与旧链接兼容；[[KnowledgeBase/sources/github-pages-mkdocs-material-quartz-summary|来源摘要]]。
 
 ## 实用社区插件
 

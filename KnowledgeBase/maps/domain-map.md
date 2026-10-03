@@ -5,8 +5,9 @@ tags:
   - knowledgebase/navigation
 aliases:
   - Domain Map
-date: 2026-10-02
+date: 2026-10-03
 sources:
+  - "[[AI/Obsidian/github-pages-mkdocs-material-quartz]]"
   - "[[Docker-Kubernetes/k8s-basic-resources/k8s基础-架构-组件-资源]]"
   - "[[Docker-Kubernetes/k8s-installation-management/latest-version/安装k8s-1.35-基于rockylinux10-最新步骤]]"
   - "[[Docker-Kubernetes/k8s-monitoring-logging/helm部署prometheus-stack全家桶]]"
@@ -73,8 +74,8 @@ sources:
 
 # 领域地图
 
-> [!info] 按技术领域导航全库 18 个领域、363 篇学习笔记，每个领域标注覆盖范围、重点子目录、代表性文章和关联领域。
-> 篇数按 git 跟踪的 Markdown 文件统计（不含各目录 index.md 导航页和 AI/ 下 280 篇引用/嵌入内容），统计日期 2026-09-29。
+> [!info] 按技术领域导航全库 18 个领域、377 篇学习笔记，每个领域标注覆盖范围、重点子目录、代表性文章和关联领域。
+> 篇数按 Git 已跟踪的 Markdown 与本次迁移文章统计（不含各目录 index.md 导航页和 AI/ 下 280 篇引用/嵌入内容），统计日期 2026-10-03。
 
 ---
 
@@ -162,9 +163,9 @@ sources:
 
 ---
 
-## 🤖 AI（73 篇）
+## 🤖 AI（74 篇）
 
-**覆盖范围：** Claude Code（13 篇）、OpenClaw（10 篇）、提示词（8 篇）、AI 视觉（7 篇）、企业级私有化大模型（6 篇）、代码审查与知识图谱（6 篇）、行业动态（6 篇）、Obsidian（5 篇）、Hermes Agent（4 篇）、RAG（3 篇）、AIOps（2 篇）、Codex（2 篇）、GitHub Copilot（1 篇）。
+**覆盖范围：** Claude Code（13 篇）、OpenClaw（10 篇）、提示词（8 篇）、AI 视觉（7 篇）、企业级私有化大模型（6 篇）、代码审查与知识图谱（6 篇）、行业动态（6 篇）、Obsidian（6 篇）、Hermes Agent（4 篇）、RAG（3 篇）、AIOps（2 篇）、Codex（2 篇）、GitHub Copilot（1 篇）。
 
 **重点子目录：**
 - `ClaudeCode/`（13 篇）— 基础指南、扩展体系（MCP/Skills/Plugin）、CLAUDE.md 最佳实践、多智能体协作、Harness 与省 Token
@@ -174,6 +175,7 @@ sources:
 - [[Claude Code 基础指南|Claude Code 基础指南]] — Claude Code 全面指南
 - [[AI/OpenClaw/OpenClaw-基础-安装|OpenClaw-基础-安装]] — OpenClaw 入门
 - [[AI/OpenClaw/Openclaw-多智能体|Openclaw-多智能体]] — 多智能体架构（2974 行，全库最大）
+- [[AI/Obsidian/github-pages-mkdocs-material-quartz|Obsidian 笔记发布到 GitHub Pages]] — MkDocs Material 与 Quartz 的完整 workflow、链接兼容与验收。
 
 **关联领域：** 与所有领域潜在交叉（AI 辅助编码、运维、知识管理）
 

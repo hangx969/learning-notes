@@ -2,13 +2,14 @@
 title: Learning Notes LLM Wiki Schema
 tags:
   - knowledgebase/schema
-date: 2026-04-17
+date: 2026-10-03
 ---
 
 # Learning Notes LLM Wiki Schema
 
 > 本文件是知识库的核心规约，定义三层架构、目录结构、页面模板和操作流程。
 > 人类与 LLM 共同演进此文件。
+> 项目规约统一维护在 `AGENTS.md`；根目录 `CLAUDE.md` 仅包含 `@AGENTS.md`，供 Claude Code 导入本文件。
 
 ---
 
@@ -27,6 +28,7 @@ date: 2026-04-17
 ```
 learning-notes/                    ← Obsidian vault, git 仓库
 ├── AGENTS.md                      ← 本文件（Schema 层）
+├── CLAUDE.md                      ← Claude Code 入口（仅导入 @AGENTS.md）
 │
 ├── AI/                            ← Raw Source（只读）
 ├── Aliyun/                        ← Raw Source（只读）

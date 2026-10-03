@@ -2,8 +2,9 @@
 title: CICD
 tags:
   - knowledgebase/concept
-date: 2026-04-16
+date: 2026-10-03
 sources:
+  - "[[AI/Obsidian/github-pages-mkdocs-material-quartz]]"
   - "[[Docker-Kubernetes/k8s-CICD/Jenkins/k8s-Devops平台落地-基于jenkins]]"
   - "[[Docker-Kubernetes/k8s-CICD/Jenkins/k8s部署基于Jenkins(2.426.3)的Devops工具链-基于yaml]]"
   - "[[Docker-Kubernetes/k8s-CICD/Jenkins/k8s部署基于Jenkins(2.394)的DevOps工具链-基于yaml]]"
@@ -40,6 +41,7 @@ aliases:
 - GitOps 模式（以 ArgoCD 为代表）通过 Git 仓库作为唯一事实源，实现声明式部署与自动漂移修复
 - Kustomize vs Helm：前者无模板引擎、原生 kubectl 集成；后者支持 Chart 打包与版本管理
 - AI 辅助 CI/CD：Claude Code 可自动生成 Pipeline 配置、执行代码审查、集成 GitHub Actions
+- 静态文档发布：将 MkDocs Material 或 Quartz 的构建结果上传为 Pages artifact，再执行部署；本地构建、Actions 运行与实际网站分别验收。
 
 ## 在本仓库中的覆盖
 主要集中在 `Docker-Kubernetes/k8s-CICD/` 目录下，按工具分为 Jenkins、ArgoCD、Gitlab、Tekton、Kustomize 等子目录，共 24 篇文章。
@@ -64,6 +66,8 @@ aliases:
 - [[Docker-Kubernetes/k8s-CICD/使用github action部署helmchart|使用github action部署helmchart]]
 - [[Docker-Kubernetes/k8s-CICD/发布go-python-java代码到K8S环境|发布go-python-java代码到K8S环境]]
 - [[Docker-Kubernetes/k8s-CICD/k8s发布策略-蓝绿部署与金丝雀发布|k8s发布策略-蓝绿部署与金丝雀发布]]
+
+- [[AI/Obsidian/github-pages-mkdocs-material-quartz|用 GitHub Actions 发布 Obsidian 笔记]]：保留 `main` push 与手动触发，用两种生成器构建 `_site/` 并发布 GitHub Pages。
 
 ## 与其他概念的关系
 - [[KnowledgeBase/entities/Azure|Azure]]

@@ -15,7 +15,7 @@ date: 2026-10-03
 > 本知识库基于 [Karpathy LLM Wiki 模式](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f) 构建。
 > 原始来源（顶层主题目录）只读不改，LLM 在本目录中生成和维护所有编译内容。
 >
-> - **Schema 文件**：[CLAUDE.md](../CLAUDE.md)
+> - **Schema 文件**：[[AGENTS|AGENTS.md]]（统一规约）；[[CLAUDE|CLAUDE.md]] 仅通过 `@AGENTS.md` 导入
 > - **操作日志**：[log.md](log.md)
 > - **扫描日期**：2026-04-17
 > - **核心定位**：云原生运维工程师的全栈技术知识库
@@ -125,6 +125,10 @@ date: 2026-10-03
 | [CodeGraph](sources/codegraph-summary.md) | [[CodeGraph-代码语义知识图谱]] | 代码语义图谱，工具调用减少 92%、探索速度提升 71%，19 种语言 + 框架路由映射，本地 AST 不依赖外部 |
 | [Fable 5 System Prompt](sources/claude-fable5-system-prompt-summary.md) | [[AI/ClaudeCode/Claude-Fable-5-system-prompt]] | Claude Fable 5 完整系统提示词（~125K 字符）：Mythos-class 新层级、行为规约体系、~15 个内置工具、沙箱架构、Artifact/Claudeception、版权硬限制 |
 | [Git Worktree AI 实践](sources/git-worktree-ai-dev-summary.md) | [[Git-Worktree-AI开发实践指南]] | 一个 AI 会话 = 一个 Worktree，并行开发/紧急修复/多方案探索，5 个实践踩坑 |
+
+### AI/Obsidian（增量）
+
+- [[KnowledgeBase/sources/github-pages-mkdocs-material-quartz-summary|GitHub Pages：MkDocs Material 与 Quartz 来源摘要]] — 两套生成器的固定版本、完整 workflow、Obsidian 适配与发布验收；原文：[[AI/Obsidian/github-pages-mkdocs-material-quartz|构建流程复现文档]]。
 
 ### AI/Codex（已摄入 ✅）
 
@@ -319,7 +323,7 @@ date: 2026-10-03
 | [杂项](sources/misc-domains-batch-summary.md) | 18 | Database(MySQL/Redis/MongoDB) + Middlewares(Kafka/RabbitMQ/RocketMQ) + OS + Networking + IaC(Terraform) + Git + C++ + SoftwareTesting |
 
 > [!info] 摄入覆盖
-> 共 18 个领域、363 篇学习笔记（按 git 跟踪的 Markdown 统计，不含各目录 index.md 导航页和 280 篇引用/嵌入内容）。截至 2026-09-29，全部笔记均已在 [[KnowledgeBase/inventory/repository-inventory|全库文档盘点]] 中列出，其中 33 篇尚无来源摘要，清单见 [[KnowledgeBase/maintenance/wiki-lint-2026-09-29|Wiki 健康检查 2026-09-29]]。
+> 2026-10-03 统计为 18 个领域、377 篇学习笔记（Git 已跟踪笔记加本次迁移文章，不含各目录 index.md 导航页和 280 篇引用/嵌入内容），详见 [[KnowledgeBase/inventory/repository-inventory|全库文档盘点]]。2026-09-29 检查时有 33 篇尚无来源摘要，历史清单见 [[KnowledgeBase/maintenance/wiki-lint-2026-09-29|Wiki 健康检查 2026-09-29]]。
 
 > Terraform 系列于 2026-10-02 新增 12 篇正文和 1 个学习路线入口；上面的全库篇数保留为 2026-09-29 盘点快照，本次系列以 [[KnowledgeBase/maps/terraform-map|Terraform 学习地图]] 为当前导航。
 
@@ -351,8 +355,6 @@ date: 2026-10-03
 | [后续写作建议](analysis/next-writing-suggestions.md) | 推荐下一步写作方向 |
 | [多Agent vs 单Agent架构决策分析](analysis/multi-agent-vs-single-agent.md) | 分析多Agent何时是伪需求，提出信息隔离与并发需求的决策框架 |
 
-- [[KnowledgeBase/analysis/github-pages-mkdocs-material-quartz|GitHub Pages：MkDocs Material 与 Quartz 4]] — 固定版本、完整 workflow、Obsidian 适配、本地构建与发布验收步骤。
-
 ---
 
 ## 📋 盘点与维护
@@ -376,7 +378,7 @@ date: 2026-10-03
 | Linux-Shell | 11 | 🟡 | [linux-ops-map](maps/linux-ops-map.md) |
 | Azure | 17 | 🟢 | [cloud-platform-map](maps/cloud-platform-map.md) |
 | Aliyun | 21 | 🟢 | [cloud-platform-map](maps/cloud-platform-map.md) |
-| AI | 73 | 🟢 | [ai-workflow-map](maps/ai-workflow-map.md) |
+| AI | 74 | 🟢 | [ai-workflow-map](maps/ai-workflow-map.md) |
 | Go | 11 | 🟡 | [go-基础-01-环境配置-基础](../Go/go-基础-01-环境配置-基础.md) |
 | CloudComputing | 7 | 🟡 | [云原生](../CloudComputing/云原生.md) |
 | HPC | 4 | 🟡 | [CentOS7-slurm23.02-二进制安装](../HPC/CentOS7-slurm23.02-二进制安装.md) |

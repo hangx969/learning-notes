@@ -5,8 +5,9 @@ tags:
   - knowledgebase/ai
 aliases:
   - AI Workflow Map
-date: 2026-04-16
+date: 2026-10-03
 sources:
+  - "[[AI/Obsidian/github-pages-mkdocs-material-quartz]]"
   - "[[AI/ClaudeCode/Claude Code 基础指南]]"
   - "[[AI/ClaudeCode/Claude Code 扩展体系]]"
   - "[[AI/ClaudeCode/多智能体协作-Subagents与Agent-Teams]]"
@@ -137,12 +138,13 @@ sources:
 | [[AI/ClaudeCode/Claude-Skill质检工具-SkillCraft|Skill Craft 质检工具]] | Skill 质量工程 | 7 类失效模式、三层评估、check/fix/create/audit |
 | [[AI/ClaudeCode/Claude-Code-Harness实战-最小可用系统|Harness 实战]] | 安全约束系统 | 四层架构、Hooks 拦截器、规范先行、Git 门禁 |
 
-### Obsidian 知识库（目录共 5 篇，此处列出 2 篇）
+### Obsidian 知识库（目录共 6 篇，此处列出 3 篇）
 
 | 文章 | 主题 | 关键词 |
 |------|------|--------|
 | [[AI/Obsidian/obsidian-claude-code-AI知识库完整指南|AI知识库完整指南]] | 完整指南 | Markdown 母语、三层架构、30 分钟上手、六大操作、改造计划（三文合并） |
 | [[AI/Obsidian/Obsidian可视化Skills-Excalidraw-Mermaid-Canvas|Obsidian可视化Skills]] | AI 可视化 | Excalidraw、Mermaid、Canvas、Skills |
+| [[AI/Obsidian/github-pages-mkdocs-material-quartz\|MkDocs Material 与 Quartz 发布笔记]] | 网站发布 | GitHub Actions、Pages artifact、日夜主题、wikilink 与旧路由兼容 |
 
 ### AI 视觉与 HTML 交付（目录共 7 篇笔记，此处列出 4 篇）
 
@@ -183,6 +185,7 @@ sources:
 - [[KnowledgeBase/sources/hermes-agent-batch-summary|Hermes-agent 批量摘要]] — 4 篇，Hermes Agent 安装、资源合集、架构解析与 Curator Skill 治理
 - [[KnowledgeBase/sources/k8s-report-skills-summary|K8s 巡检 Skills 摘要]] — K8s 集群巡检 Python/Shell 技能
 - [[KnowledgeBase/sources/obsidian-claude-AI知识库完整指南-summary|AI知识库完整指南摘要]] — Obsidian+Claude Code 完整指南（理念+工具+操作+计划）
+- [[KnowledgeBase/sources/github-pages-mkdocs-material-quartz-summary|MkDocs Material 与 Quartz 发布流程摘要]] — 两套生成器的固定版本、完整 workflow 与迁移验收。
 - [[KnowledgeBase/sources/codex-harness-architecture-summary|Codex Harness 架构摘要]] — Agent 主循环、上下文与工具执行的架构解读
 
 ---
