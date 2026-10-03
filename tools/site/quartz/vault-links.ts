@@ -2,6 +2,9 @@ import fs from "node:fs"
 import path from "node:path"
 import { findAndReplace } from "mdast-util-find-and-replace"
 import { Root } from "mdast"
+import { Root as HtmlRoot, Element } from "hast"
+import { toString } from "hast-util-to-string"
+import { visit } from "unist-util-visit"
 import { QuartzEmitterPlugin, QuartzTransformerPlugin } from "./quartz/plugins/types"
 import { write } from "./quartz/plugins/emitters/helpers"
 import { FilePath, FullSlug, slugifyFilePath } from "./quartz/util/path"
@@ -12,6 +15,46 @@ interface Manifest {
 }
 
 const manifest: Manifest = JSON.parse(fs.readFileSync("vault-manifest.json", "utf8"))
+
+// 保留旧 Markdown 标题锚点，同时保留 Quartz 自己的 ID 和目录链接。
+export const LegacyAnchors: QuartzTransformerPlugin = () => ({
+  name: "LegacyAnchors",
+  htmlPlugins() {
+    return [
+      () => (tree: HtmlRoot, file) => {
+        const ids = new Set<string>()
+        visit(tree, "element", (node) => {
+          if (node.properties.id) ids.add(String(node.properties.id))
+        })
+        const seen = new Set<string>()
+        const legacySlug = (text: string) => {
+          const base = text.toLowerCase().trim().replace(/[^\p{L}\p{N}_\s-]/gu, "").replace(/[-\s]+/g, "-")
+          let slug = base
+          let suffix = 1
+          while (seen.has(slug)) slug = base + "_" + suffix++
+          seen.add(slug)
+          return slug
+        }
+        const alias = (id: string): Element => ({
+          type: "element",
+          tagName: "span",
+          properties: { id, className: ["legacy-anchor"] },
+          children: [],
+        })
+        const title = legacySlug(file.data.frontmatter?.title ?? "")
+        if (title && !ids.has(title)) tree.children.unshift(alias(title))
+        visit(tree, "element", (node) => {
+          if (!/^h[1-6]$/.test(node.tagName)) return
+          const id = legacySlug(toString(node))
+          if (id && !ids.has(id)) {
+            node.children.unshift(alias(id))
+            ids.add(id)
+          }
+        })
+      },
+    ]
+  },
+})
 
 // 沿用旧站的同目录优先与最短路径规则，其余语法交给 Quartz 的 Obsidian 插件。
 export const VaultLinks: QuartzTransformerPlugin = () => ({

@@ -8,6 +8,7 @@
 import argparse
 import datetime
 import json
+import os
 import re
 import shutil
 import subprocess
@@ -309,8 +310,8 @@ MEDIA_EXTENSIONS = {
 }
 
 
-def run(*args, cwd=ROOT):
-    subprocess.run(args, cwd=cwd, check=True)
+def run(*args, cwd=ROOT, env=None):
+    subprocess.run(args, cwd=cwd, env=env, check=True)
 
 
 def prepare_quartz():
@@ -358,7 +359,9 @@ def main():
     ]
     if args.serve:
         command.extend(["--serve", "--port", str(args.port), "--baseDir", "/learning-notes"])
-    run(*command, cwd=QUARTZ)
+    # macOS 默认文件句柄上限较低；本地预览使用轮询，避免大量笔记导致 EMFILE。
+    environment = dict(os.environ, CHOKIDAR_USEPOLLING="1") if args.serve else None
+    run(*command, cwd=QUARTZ, env=environment)
     return 0
 
 

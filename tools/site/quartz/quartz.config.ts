@@ -1,6 +1,6 @@
 import { QuartzConfig } from "./quartz/cfg"
 import * as Plugin from "./quartz/plugins"
-import { VaultLinks, LegacyUrls } from "./vault-links"
+import { VaultLinks, LegacyUrls, LegacyAnchors } from "./vault-links"
 
 /**
  * Quartz 4 Configuration
@@ -72,6 +72,7 @@ const config: QuartzConfig = {
       Plugin.CrawlLinks({ markdownLinkResolution: "relative", prettyLinks: false }),
       Plugin.Description(),
       Plugin.Latex({ renderEngine: "katex" }),
+      LegacyAnchors(),
     ],
     filters: [], // 发布范围由 build.py 的原有筛选规则决定。
     emitters: [
