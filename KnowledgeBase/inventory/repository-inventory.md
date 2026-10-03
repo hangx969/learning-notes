@@ -118,7 +118,7 @@ date: 2026-10-03
 | [[AI/Obsidian/Obsidian-Vault模板库合集-48个宝藏vault\|Obsidian-Vault模板库合集-48个宝藏vault]] | Obsidian Vault 模板库合集：48 个 GitHub 宝藏 vault | ✅ | ❌ |
 | [[AI/Obsidian/Obsidian可视化Skills-Excalidraw-Mermaid-Canvas\|Obsidian可视化Skills]] | AI Skills 生成可编辑图表（Excalidraw/Mermaid/Canvas） | ✅ | ❌ |
 | [[AI/Obsidian/obsidian-claude-code-AI知识库完整指南\|AI知识库完整指南]] | Obsidian+Claude Code AI 驱动的知识库完整指南（三文合并） | ✅ | ❌ |
-| [[AI/Obsidian/github-pages-mkdocs-material-quartz\|MkDocs Material 与 Quartz 发布笔记]] | 用 GitHub Actions 发布 Obsidian 笔记：MkDocs Material 与 Quartz 4 | ✅ | ✅ |
+| [[AI/Obsidian/github-pages-mkdocs-material-quartz\|Quartz 4 发布笔记]] | 用 GitHub Actions 发布 Obsidian 笔记：Quartz 4 | ✅ | ✅ |
 
 ### Hermes-agent/（4 篇）
 

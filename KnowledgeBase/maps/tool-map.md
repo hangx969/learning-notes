@@ -198,7 +198,7 @@ sources:
 **相关文档：**
 - [[AI/Obsidian/obsidian-claude-code-AI知识库完整指南|AI知识库完整指南]] ⭐ 推荐入口
 - [[AI/Obsidian/Obsidian可视化Skills-Excalidraw-Mermaid-Canvas|Obsidian可视化Skills]] — AI 生成可编辑图表（Excalidraw/Mermaid/Canvas）
-- [[AI/Obsidian/github-pages-mkdocs-material-quartz|MkDocs Material 与 Quartz 发布笔记]] — GitHub Actions 构建 Pages、日夜主题、链接兼容与验收；[[KnowledgeBase/sources/github-pages-mkdocs-material-quartz-summary|来源摘要]]。
+- [[AI/Obsidian/github-pages-mkdocs-material-quartz|Quartz 4 发布笔记]] — GitHub Actions 构建 Pages、日夜主题、链接兼容与验收；[[KnowledgeBase/sources/github-pages-mkdocs-material-quartz-summary|来源摘要]]。
 
 **概念页：** [[KnowledgeBase/entities/Obsidian|Obsidian]]
 

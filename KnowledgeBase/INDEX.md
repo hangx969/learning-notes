@@ -128,7 +128,7 @@ date: 2026-10-03
 
 ### AI/Obsidian（增量）
 
-- [[KnowledgeBase/sources/github-pages-mkdocs-material-quartz-summary|GitHub Pages：MkDocs Material 与 Quartz 来源摘要]] — 两套生成器的固定版本、完整 workflow、Obsidian 适配与发布验收；原文：[[AI/Obsidian/github-pages-mkdocs-material-quartz|构建流程复现文档]]。
+- [[KnowledgeBase/sources/github-pages-mkdocs-material-quartz-summary|GitHub Pages：Quartz 4 来源摘要]] — Quartz 4 的固定版本、完整 workflow、Obsidian 适配与发布验收；原文：[[AI/Obsidian/github-pages-mkdocs-material-quartz|构建流程复现文档]]。
 
 ### AI/Codex（已摄入 ✅）
 

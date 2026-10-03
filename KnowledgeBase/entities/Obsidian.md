@@ -29,7 +29,7 @@ Obsidian 是一款基于本地 Markdown 文件的知识管理工具，拥有 150
 - **LLM Wiki 运营**：本仓库即为 Obsidian Vault，按原始来源层、Wiki 编译层（`KnowledgeBase/`）和 Schema 层（[[AGENTS|AGENTS.md]]）维护
 - **可编辑图表**：用可视化 Skills 让 AI 生成 Excalidraw、Mermaid、Canvas 图表，生成后仍可调整布局和文字，详见 [[AI/Obsidian/Obsidian可视化Skills-Excalidraw-Mermaid-Canvas|Obsidian 可视化 Skills]]
 - **内容发布**：用 Wechat Public Platform 插件把文章一键发布到微信公众号，也支持草稿、素材管理和百家号分发（见下文"实用社区插件"）
-- **静态网站发布**：通过 MkDocs Material 或 Quartz 将筛选后的 vault 笔记构建为 GitHub Pages，保留 wikilink 适配和日夜切换；流程见 [[AI/Obsidian/github-pages-mkdocs-material-quartz|Pages 构建文档]]。
+- **静态网站发布**：通过 Quartz 4 将筛选后的 vault 笔记构建为 GitHub Pages，保留 wikilink 适配和日夜切换；流程见 [[AI/Obsidian/github-pages-mkdocs-material-quartz|Pages 构建文档]]。
 
 ## 与 Claude Code 的集成方案
 
@@ -81,7 +81,7 @@ Claude Code 直接搜索、读取、创建、修改笔记，无需手动复制�
 - [[AI/Obsidian/obsidian-claude-code-AI知识库完整指南]]：完整指南——3 种集成工具、Markdown 母语论证、30 分钟四步上手、Karpathy Wiki 模式、六大操作谱系、自动 backlinks
 - [[AI/Obsidian/Obsidian可视化Skills-Excalidraw-Mermaid-Canvas]]：AI Skills 生成可编辑图表（Excalidraw/Mermaid/Canvas）
 - [[AI/ClaudeCode/Claude Code 扩展体系]]：Obsidian Skills 的介绍与安装方法
-- [[AI/Obsidian/github-pages-mkdocs-material-quartz|MkDocs Material 与 Quartz 发布流程]]：固定版本、GitHub Actions artifact 发布、原始笔记只读导出与旧链接兼容；[[KnowledgeBase/sources/github-pages-mkdocs-material-quartz-summary|来源摘要]]。
+- [[AI/Obsidian/github-pages-mkdocs-material-quartz|Quartz 4 发布流程]]：固定版本、GitHub Actions artifact 发布、原始笔记只读导出与旧链接兼容；[[KnowledgeBase/sources/github-pages-mkdocs-material-quartz-summary|来源摘要]]。
 
 ## 实用社区插件
 

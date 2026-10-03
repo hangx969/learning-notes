@@ -175,7 +175,7 @@ sources:
 - [[Claude Code 基础指南|Claude Code 基础指南]] — Claude Code 全面指南
 - [[AI/OpenClaw/OpenClaw-基础-安装|OpenClaw-基础-安装]] — OpenClaw 入门
 - [[AI/OpenClaw/Openclaw-多智能体|Openclaw-多智能体]] — 多智能体架构（2974 行，全库最大）
-- [[AI/Obsidian/github-pages-mkdocs-material-quartz|Obsidian 笔记发布到 GitHub Pages]] — MkDocs Material 与 Quartz 的完整 workflow、链接兼容与验收。
+- [[AI/Obsidian/github-pages-mkdocs-material-quartz|Obsidian 笔记发布到 GitHub Pages]] — Quartz 4 的完整 workflow、链接兼容与验收。
 
 **关联领域：** 与所有领域潜在交叉（AI 辅助编码、运维、知识管理）
 
