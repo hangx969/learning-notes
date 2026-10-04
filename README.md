@@ -42,16 +42,12 @@
 5. [多智能体协作](./AI/ClaudeCode/多智能体协作-Subagents与Agent-Teams.md) → 根据任务选择 Subagents 或 Agent Teams。
 6. [AI 代码审查闭环](./AI/Code%20review和知识图谱/AI代码审查闭环-验证优先与敏感信息清理.md) → 用实际验证、质量门禁与代码审查验收改动。
 
-Codex 阅读分支：[使用技巧和最佳实践](./AI/Codex/Codex-使用技巧和最佳实践.md) → [Harness 架构](./AI/Codex/Codex-Harness架构-任务循环与扩展.md)，从日常工作流进入任务循环、上下文与工具执行。
-
 ### AI Agent 与智能运维
 
 1. [OpenClaw 基础与安装](./AI/OpenClaw/OpenClaw-基础-安装.md) → 了解平台架构，搭建运行环境。
 2. [OpenClaw Workspace 运维](./AI/OpenClaw/OpenClaw-Workspace-运维.md) → 理清配置与工作区内容的边界。
 3. [OpenClaw Skills 与插件](./AI/OpenClaw/OpenClaw-Skills-Plugins.md) → 配置和扩展 Agent 能力。
 4. [OpenClaw K8s 智能运维实战](./AI/OpenClaw/OpenClaw-K8s智能运维实战.md) → 从只读巡检、诊断逐步进入低风险变更。
-
-Hermes 阅读分支：[与 OpenClaw 对比及飞书接入](./AI/Hermes-agent/Hermes与OpenClaw对比及飞书接入指南.md) → [满配指南与生态资源](./AI/Hermes-agent/Hermes-Agent-满配指南与生态资源.md)，先比较平台，再学习配置与使用。
 
 ### AI 知识管理与笔记发布
 
