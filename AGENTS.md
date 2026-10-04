@@ -1,11 +1,11 @@
 ---
-title: Learning Notes LLM Wiki Schema
+title: CloudOps Vault LLM Wiki Schema
 tags:
   - knowledgebase/schema
-date: 2026-10-03
+date: 2026-10-04
 ---
 
-# Learning Notes LLM Wiki Schema
+# CloudOps Vault LLM Wiki Schema
 
 > 本文件是知识库的核心规约，定义三层架构、目录结构、页面模板和操作流程。
 > 人类与 LLM 共同演进此文件。
@@ -26,7 +26,7 @@ date: 2026-10-03
 ## 目录结构
 
 ```
-learning-notes/                    ← Obsidian vault, git 仓库
+cloudops-vault/                    ← Obsidian vault, git 仓库
 ├── AGENTS.md                      ← 本文件（Schema 层）
 ├── CLAUDE.md                      ← Claude Code 入口（仅导入 @AGENTS.md）
 │

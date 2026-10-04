@@ -241,7 +241,7 @@ def export_content():
     resolutions = {}
 
     for note in notes:
-        source_url = "https://github.com/hangx969/learning-notes/blob/main/" + quote(note.path, safe="/")
+        source_url = "https://github.com/hangx969/cloudops-vault/blob/main/" + quote(note.path, safe="/")
         meta = dict(note.meta)
         meta["sourcePath"] = note.path
         meta["modified"] = datetime.datetime.fromtimestamp(
@@ -349,7 +349,7 @@ def serve_preview(port):
     class PreviewHandler(SimpleHTTPRequestHandler):
         def translate_path(self, path):
             requested = urlsplit(path).path
-            base = "/learning-notes"
+            base = "/cloudops-vault"
             if requested == base:
                 requested = "/"
             elif requested.startswith(base + "/"):
@@ -364,7 +364,7 @@ def serve_preview(port):
 
     handler = partial(PreviewHandler, directory=str(OUTPUT))
     with ThreadingHTTPServer(("127.0.0.1", port), handler) as server:
-        print(f"本地预览：http://localhost:{port}/learning-notes/", flush=True)
+        print(f"本地预览：http://localhost:{port}/cloudops-vault/", flush=True)
         try:
             server.serve_forever()
         except KeyboardInterrupt:

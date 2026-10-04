@@ -1,5 +1,5 @@
 // Fetch once per page load; Quartz SPA navigation reuses the same result.
-const notebookRepositoryStats = fetch("https://api.github.com/repos/hangx969/learning-notes", {
+const notebookRepositoryStats = fetch("https://api.github.com/repos/hangx969/cloudops-vault", {
   headers: { Accept: "application/vnd.github+json" },
 })
   .then(async (response) => {
@@ -25,7 +25,7 @@ document.addEventListener("nav", async () => {
     statistics.hidden = false
     link.setAttribute(
       "aria-label",
-      `在 GitHub 查看 Learning Notes 仓库，${stats.stars} Stars，${stats.forks} Forks`,
+      `在 GitHub 查看 CloudOps Vault 仓库，${stats.stars} Stars，${stats.forks} Forks`,
     )
   }
 })

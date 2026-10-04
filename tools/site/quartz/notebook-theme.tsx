@@ -181,12 +181,12 @@ export const NotebookMasthead = (() => {
         <a
           class="notebook-brand"
           href={pathToRoot(props.fileData.slug!) + "/"}
-          aria-label="Learning Notes 首页"
+          aria-label="CloudOps Vault 首页"
         >
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <path d="M4 4h7c2 0 3 1 3 3v14c0-2-1-3-3-3H4ZM14 7c0-2 1-3 3-3h4v14h-4c-2 0-3 1-3 3" />
           </svg>
-          <span>Learning Notes</span>
+          <span>CloudOps Vault</span>
         </a>
         <div class="notebook-actions">
           <SearchComponent {...props} />
@@ -210,11 +210,11 @@ export const NotebookMasthead = (() => {
         </div>
         <a
           class="notebook-repo"
-          href="https://github.com/hangx969/learning-notes"
+          href="https://github.com/hangx969/cloudops-vault"
           target="_blank"
           rel="noopener noreferrer"
-          title="hangx969/learning-notes"
-          aria-label="在 GitHub 查看 Learning Notes 仓库"
+          title="hangx969/cloudops-vault"
+          aria-label="在 GitHub 查看 CloudOps Vault 仓库"
         >
           <svg class="repo-icon" viewBox="0 0 48 48" aria-hidden="true">
             <rect x="8" y="8" width="32" height="32" rx="2" transform="rotate(45 24 24)" />
@@ -266,7 +266,7 @@ export const NotebookTitle = (() => {
     return (
       <div class={"notebook-title cover-" + style.tone}>
         <p class="notebook-eyebrow">
-          {topic in topics ? topic + " / 学习笔记" : "LEARNING NOTES / 知识目录"}
+          {topic in topics ? topic + " / 学习笔记" : "CLOUDOPS VAULT / 知识目录"}
         </p>
         <h1 class="article-title">{fileData.frontmatter?.title}</h1>
       </div>

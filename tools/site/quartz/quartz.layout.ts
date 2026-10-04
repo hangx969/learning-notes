@@ -12,7 +12,7 @@ export const sharedPageComponents: SharedLayout = {
   afterBody: [],
   footer: Component.Footer({
     links: {
-      GitHub: "https://github.com/hangx969/learning-notes",
+      GitHub: "https://github.com/hangx969/cloudops-vault",
     },
   }),
 }

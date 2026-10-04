@@ -10,13 +10,13 @@ import { NotebookHome } from "./notebook-theme"
  */
 const config: QuartzConfig = {
   configuration: {
-    pageTitle: "Learning Notes",
+    pageTitle: "CloudOps Vault",
     pageTitleSuffix: "",
     enableSPA: true,
     enablePopovers: true,
     analytics: null,
     locale: "zh-CN",
-    baseUrl: "hangx969.github.io/learning-notes",
+    baseUrl: "hangx969.github.io/cloudops-vault",
     ignorePatterns: [],
     defaultDateType: "modified",
     theme: {

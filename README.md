@@ -1,8 +1,8 @@
-# 云原生与基础设施学习笔记
+# CloudOps Vault · 云原生与基础设施知识库
 
-**📖 在线浏览：[hangx969.github.io/learning-notes](https://hangx969.github.io/learning-notes/)**（随 main 分支自动更新）
+**📖 在线浏览：[hangx969.github.io/cloudops-vault](https://hangx969.github.io/cloudops-vault/)**（随 main 分支自动更新）
 
-[![Deploy Pages](https://github.com/hangx969/learning-notes/actions/workflows/deploy-pages.yml/badge.svg)](https://github.com/hangx969/learning-notes/actions/workflows/deploy-pages.yml)
+[![Deploy Pages](https://github.com/hangx969/cloudops-vault/actions/workflows/deploy-pages.yml/badge.svg)](https://github.com/hangx969/cloudops-vault/actions/workflows/deploy-pages.yml)
 
 网站使用 [Quartz 4](https://github.com/jackyzha0/quartz/tree/v4) 构建。
 
@@ -74,7 +74,7 @@
 ## 📁 目录结构
 
 ```
-learning-notes/
+cloudops-vault/
 ├── AGENTS.md                      ← 知识库 Schema（三层架构规约）
 ├── CLAUDE.md                      ← Claude Code 入口（仅导入 @AGENTS.md）
 ├── KnowledgeBase/                 ← 知识编译层（LLM 维护）
