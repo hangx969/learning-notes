@@ -2204,3 +2204,11 @@ date: 2026-04-17
 - 正文另列官方资料核对说明，标明 USRBIO/FUSE 与内核参与、CRAQ 读路径、权限与轻量数据集快照、MIT 条件的表述边界；原文观点与核对说明分别标注。
 - 新增 [[KnowledgeBase/sources/deepseek-3fs-summary|来源摘要]]，更新 [[KnowledgeBase/concepts/KV Cache]]、[[KnowledgeBase/entities/vLLM]]、[[KnowledgeBase/maps/kubernetes-map|Kubernetes 专题地图]] 与 INDEX；保留同期 Longhorn 等摄入改动，相关导航按当前文件数统计（Docker-Kubernetes 171 篇，k8s-storage 8 篇）。
 - 15 个正文、SVG 与关联页面经 Obsidian MCP 写入并完整读回一致；frontmatter、核心 wikilink、SVG XML 与原图一致性、空白检查通过，原始剪藏 SHA-256 未变。Obsidian 阅读视图中 9 张图片均加载成功，11 个技术小节和两张表格可见；未运行 3FS 集群或复现性能基准。
+
+## [2026-10-04] ingest | ArgoCD 同步故障排查
+
+- 新建 [[Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD同步故障排查|ArgoCD 同步故障排查]]：基础篇已覆盖同步选项、Webhook 和健康机制，多集群实战侧重目录、权限和分发，故将这篇五类故障、案例与检查清单独立归档，并链接现有文章。
+- 使用 humanizer-zh 优化中文表达、去除营销话术、规范标题和剪藏列表；保留五类问题、20 组代码示例内容、12 条生产注意事项、三个作者案例和 13 项排查清单。原始剪藏与现有五篇 ArgoCD 文章的 SHA-256 均未变化。
+- 按官方文档与代码标注技术校正：三方模型范围、ignoreDifferences/RespectIgnoreDifferences、无效 all 字段与 CLI 参数、已有健康检查、replace/force、prune/delete 保护、Webhook 密钥位置、缓存和队列并发配置。案例数字、效果与归因保留为原文描述，未复现。
+- 新增 [[KnowledgeBase/sources/argocd-sync-troubleshooting-summary|来源摘要]]，同步 ArgoCD、CICD、Kubernetes、tool/domain/kubernetes map、CI/CD 批量摘要的增量入口与 INDEX；保留同期已有导航更新，按当前文件核对 ArgoCD 6 篇、CI/CD 25 篇。
+- MCP 写入后完整读回一致；10 页 frontmatter、13 个 YAML 与 7 个 Bash 代码块、15 处新页面内部链接/章节锚点及 Application/AppProject/ApplicationSet CRD 字段检查通过，Git diff 空白检查通过。Obsidian 阅读视图已检查开头、末尾 13 个复选项和速查表；清理历史错误缓冲后，本篇检查期间未捕获新错误。未执行 ArgoCD/kubectl 集群命令或部署验证。
