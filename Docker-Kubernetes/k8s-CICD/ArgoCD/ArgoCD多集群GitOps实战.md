@@ -14,6 +14,9 @@ tags:
 
 # Argo CD 多集群 GitOps 实战
 
+<div id="多集群-gitops-实战用-argo-cd-管理上百个-kubernetes-集群" class="legacy-anchor"></div>
+<div id="argocd-多集群-gitops-实战" class="legacy-anchor"></div>
+
 用 Argo CD 管理上百个 Kubernetes 集群。
 
 > 单集群 GitOps 玩得很顺，到了多集群规模，问题会突然变成平台工程问题。重点不再是 Sync 按钮，而是 ApplicationSet、目录模型、权限隔离和发布半径控制。

@@ -33,7 +33,7 @@ Azure Kubernetes Service（AKS）是 Microsoft Azure 提供的托管 Kubernetes 
 - [[Azure/2_AKS-basics|2_AKS-basics]]
 - [[Azure/3_AKS-workload-identity|3_AKS-workload-identity]]
 - [[Azure/4_AKS-SecretProviderClass-KeyVault|4_AKS-SecretProviderClass-KeyVault]]
-- [[Azure/7_ACR-ACI|7_ACR-ACI]]
+- [[Azure/7_ACR-ACI|Azure ACR and ACI]]
 - [[Azure/6_Azure-Networking|6_Azure-Networking]]
 
 ## 相关概念与实体

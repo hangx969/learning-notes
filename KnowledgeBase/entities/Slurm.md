@@ -25,7 +25,7 @@ Slurm（Simple Linux Utility for Resource Management）是高性能计算（HPC�
 - **记账与账户**：SlurmDBD 将作业记账数据写入 MySQL；`sacctmgr` 管理账户与关联，并可创建 QOS 限制资源
 - **资源隔离**：`ProctrackType=proctrack/cgroup` 与 `TaskPlugin=task/affinity,task/cgroup` 通过 cgroup 约束作业资源
 
-命令与配置示例见 [[HPC/Ubuntu2204-Slurm-安装指南|Ubuntu 22.04 Slurm 安装指南]] 与 [[HPC/CentOS7-slurm23.02-二进制安装|CentOS 7 Slurm 23.02 安装]]。
+命令与配置示例见 [[HPC/Ubuntu2204-Slurm-安装指南|Ubuntu 22.04：Slurm 安装与配置]] 与 [[HPC/CentOS7-slurm23.02-二进制安装|CentOS 7 Slurm 23.02 安装]]。
 
 ## 集群架构
 Slurm 集群采用典型的三层节点架构：
@@ -38,7 +38,7 @@ Slurm 集群采用典型的三层节点架构：
 
 ### 源码编译与 deb 包安装
 - **[[HPC/CentOS7-slurm23.02-二进制安装|CentOS 7 + Slurm 23.02]]**：一个控制节点（m1）+ 两个计算节点（c1/c2），包含防火墙关闭、SELinux 禁用等 CentOS 特有步骤
-- **[[HPC/Ubuntu2204-Slurm-安装指南|Ubuntu 22.04 + Slurm 22.05.11 / 23.11.4]]**：包含 22.05.11 三节点测试环境与 H800 GPU 生产集群的源码安装，以及 23.11.4 三节点（um1/uc1/ul1）源码构建 deb 包的部署、配置与作业验证
+- **[[HPC/Ubuntu2204-Slurm-安装指南|Ubuntu 22.04：Slurm 安装与配置]]**：包含 22.05.11 三节点测试环境与 H800 GPU 生产集群的源码安装，以及 23.11.4 三节点（um1/uc1/ul1）源码构建 deb 包的部署、配置与作业验证
 
 ### 关键依赖
 - **[[KnowledgeBase/entities/Munge|Munge]] 认证**：Slurm 集群必需的认证组件，需确保所有节点 UID/GID 一致，使用 rng-tools 生成熵池，全局分发密钥
@@ -64,7 +64,7 @@ HPC 集群常配备 GPU 计算节点（如 H800），需要 Slurm 通过 GRES �
 
 
 - [[HPC/CentOS7-slurm23.02-二进制安装|CentOS7-slurm23.02-二进制安装]]
-- [[HPC/Ubuntu2204-Slurm-安装指南|Ubuntu 22.04 Slurm 22.05.11 与 23.11.4 安装指南]]
+- [[HPC/Ubuntu2204-Slurm-安装指南|Ubuntu 22.04：Slurm 安装与配置]]
 - [[HPC/Slurm-node-exporter|Slurm-node-exporter]]
 - [[HPC/PBS|PBS]]
 

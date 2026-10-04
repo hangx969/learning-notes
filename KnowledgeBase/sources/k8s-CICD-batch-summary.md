@@ -70,7 +70,7 @@ aliases:
 - CRD 资源：AppProject（逻辑分组与权限隔离）、Application（应用定义）
 - 支持多集群管理、Helm/Kustomize/Jsonnet 配置来源、同步波次与钩子、RBAC 和 SSO 集成
 
-### [[Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD部署Helm应用时域名解析失败问题排查与解决|ArgoCD DNS 解析问题排查]]
+### [[Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD部署Helm应用时域名解析失败问题排查与解决|ArgoCD Helm 部署：域名解析故障处理]]
 
 **核心内容**: 排查 ArgoCD 部署 Helm 应用时的两阶段 DNS 故障：CoreDNS 上游转发失败和 Go 纯 DNS 解析器的 IPv6 缺陷。
 
@@ -133,7 +133,7 @@ aliases:
 - Harbor 必须用 NodePort 暴露（因 JNLP pod 内 CoreDNS 无法解析 Ingress 域名）
 - Jenkins Credentials 统一管理 Harbor 账号、GitLab 私钥、K8s 证书
 
-### [[Docker-Kubernetes/k8s-CICD/Jenkins/k8s部署基于Jenkins(2.394)的DevOps工具链-基于yaml|Jenkins 2.394 DevOps 工具链]]
+### [[Docker-Kubernetes/k8s-CICD/Jenkins/k8s部署基于Jenkins(2.394)的DevOps工具链-基于yaml|K8s DevOps 工具链：Jenkins 2.394]]
 
 **核心内容**: 详细介绍 CI/CD/持续交付概念，以及 Jenkins Pipeline 声明式与脚本式语法，包括 environment、credentials 等高级用法。
 
@@ -141,7 +141,7 @@ aliases:
 - Pipeline 两种语法对比：Declarative vs Scripted
 - agent、stages、steps、post 等核心语法元素
 
-### [[Docker-Kubernetes/k8s-CICD/Jenkins/k8s部署基于Jenkins(2.426.3)的Devops工具链-基于yaml|Jenkins 2.426.3 DevOps 工具链]]
+### [[Docker-Kubernetes/k8s-CICD/Jenkins/k8s部署基于Jenkins(2.426.3)的Devops工具链-基于yaml|K8s DevOps 工具链：Jenkins 2.426.3]]
 
 **核心内容**: 通过原生 YAML 在 K8s 中部署 Jenkins 2.426.3，包含 NFS 持久化存储和前置资源（PV/PVC/ServiceAccount）的创建。
 
@@ -189,7 +189,7 @@ aliases:
 - 与 Helm 模板引擎不同，直接操作原生资源文件
 - 支持分层管理（Base/Overlay）和环境感知（dev/prod/qa）
 
-### [[Docker-Kubernetes/k8s-CICD/Kustomize/Kustomize入门-Base与Overlay多环境配置|Kustomize Base 与 Overlay 多环境配置]]
+### [[Docker-Kubernetes/k8s-CICD/Kustomize/Kustomize入门-Base与Overlay多环境配置|Kustomize 入门：Base 与 Overlay]]
 
 **核心内容**: 从多环境 YAML 重复和配置漂移问题出发，建立 Base 复用公共配置、Overlay 只描述环境差异的 Kustomize 入门模型。
 
@@ -213,7 +213,7 @@ aliases:
 - 包含 Dockerfile 编写、镜像构建、K8s Deployment 创建的完整步骤
 - 适用于多语言微服务的标准化发布流程
 
-### [[Docker-Kubernetes/k8s-CICD/Claude-Code实现CICD自动化发布流程|Claude Code 实现 CI/CD 自动化发布流程]]
+### [[Docker-Kubernetes/k8s-CICD/Claude-Code实现CICD自动化发布流程|Claude Code CI/CD 自动发布指南]]
 
 **核心内容**: 以 Vue 前端项目为例，实现从 GitLab 推送 → Kaniko 构建 → Harbor 推送 → K8s 部署 → Istio 网关暴露的完整 CI/CD 流程，并集成 AI 能力实现 MR 自动评审、Release Notes 自动生成、部署失败根因分析。
 

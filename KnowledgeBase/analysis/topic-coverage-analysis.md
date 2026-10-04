@@ -19,7 +19,7 @@ aliases:
 # 📈 主题覆盖分析
 
 > [!note] 快照与更新
-> 本页定性分析基于 2026-04-16 全库扫描；文档数已按 2026-09-29 统计更新（不含目录 index.md）。此后已补充的主题：GitOps 实践见 [[Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD多集群GitOps实战|ArgoCD 多集群 GitOps 实战]]；容器安全见 [[Docker-Kubernetes/docker/docker安全配置-Capabilities与容器加固|Docker 安全加固]]、[[Docker-Kubernetes/k8s-security-auth/k8s容器安全上下文-SecurityContext|SecurityContext]] 与 [[Docker-Kubernetes/k8s-security-auth/k8s-Admission-Webhook链冲突排查-Istio-Kyverno-Gatekeeper|Admission Webhook 链冲突排查]]；Operator 开发见 [[Docker-Kubernetes/k8s-basic-resources/k8s基础-Operator开发实战-Kubebuilder|Kubebuilder 实战]]；FinOps 见 [[Docker-Kubernetes/k8s-scaling/k8s成本优化方案-FinOps实战|K8s FinOps]] 与 [[Aliyun/资源管理/FinOps-云成本优化实战|云成本优化实战]]。
+> 本页定性分析基于 2026-04-16 全库扫描；文档数已按 2026-09-29 统计更新（不含目录 index.md）。此后已补充的主题：GitOps 实践见 [[Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD多集群GitOps实战|Argo CD 多集群 GitOps 实战]]；容器安全见 [[Docker-Kubernetes/docker/docker安全配置-Capabilities与容器加固|Docker 安全配置：Capabilities 与容器加固]]、[[Docker-Kubernetes/k8s-security-auth/k8s容器安全上下文-SecurityContext|K8s 容器安全上下文：从入门到生产避坑]] 与 [[Docker-Kubernetes/k8s-security-auth/k8s-Admission-Webhook链冲突排查-Istio-Kyverno-Gatekeeper|Admission Webhook 链冲突排查]]；Operator 开发见 [[Docker-Kubernetes/k8s-basic-resources/k8s基础-Operator开发实战-Kubebuilder|Kubebuilder：从零开发 K8s Operator]]；FinOps 见 [[Docker-Kubernetes/k8s-scaling/k8s成本优化方案-FinOps实战|K8s 集群成本优化]] 与 [[Aliyun/资源管理/FinOps-云成本优化实战|云成本优化实战]]。
 
 ---
 

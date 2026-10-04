@@ -169,7 +169,7 @@ aliases:
   - Harbor 2.8+ 直接以 OCI Artifact 管理 Helm Chart；旧版本可选 ChartMuseum
   - 自签名 CA、跳过 TLS 校验和默认管理员凭据仅适合受控实验环境
 
-### [[Docker-Kubernetes/k8s-image-management/Dragonfly与Harbor-P2P镜像分发|Dragonfly + Harbor P2P 镜像分发]]
+### [[Docker-Kubernetes/k8s-image-management/Dragonfly与Harbor-P2P镜像分发|Dragonfly + Harbor：P2P 分发]]
 
 - **核心内容**: 解释大规模 Kubernetes 与 AI/GPU 集群中，Dragonfly 如何通过分块、Peer 交换、Seed Peer 回源和 Scheduler 调度降低 Harbor 源站压力。
 - **关键知识点**:
@@ -225,7 +225,7 @@ aliases:
   - GPU 节点通常设置 `NoSchedule` taint 防止非 GPU 工作负载调度
   - GPU 作为"扩展资源"需要 Device Plugin 向 K8s 注册
 
-### [[Docker-Kubernetes/k8s-ai-gpu/从零部署 NVIDIA Device Plugin：K8s 识别 GPU 的“第一块敲门砖”|从零部署 NVIDIA Device Plugin]]
+### [[Docker-Kubernetes/k8s-ai-gpu/从零部署 NVIDIA Device Plugin：K8s 识别 GPU 的“第一块敲门砖”|NVIDIA Device Plugin：K8s GPU 识别与部署入门]]
 
 - **核心内容**: 解释 NVIDIA Device Plugin 如何让 K8s 识别并分配 GPU，覆盖驱动、NVIDIA Container Toolkit、containerd runtime 前置检查，以及 Helm、静态 DaemonSet、GPU Operator 三种部署方式。
 - **关键知识点**:

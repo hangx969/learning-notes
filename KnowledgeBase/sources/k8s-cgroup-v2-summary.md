@@ -14,7 +14,7 @@ aliases:
 # K8s CGroup v2 深度解析 — 来源摘要
 
 ## 元信息
-- **原始文档**：[[Docker-Kubernetes/k8s-installation-management/k8s-cgroup-v2深度解析-迁移实战与避坑指南]]
+- **原始文档**：[[Docker-Kubernetes/k8s-installation-management/k8s-cgroup-v2深度解析-迁移实战与避坑指南|K8s cgroup v2：资源隔离原理、迁移与生产避坑]]
 - **领域**：Docker-Kubernetes / Linux 内核
 - **摄入日期**：2026-05-13
 

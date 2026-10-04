@@ -15,7 +15,7 @@ aliases:
 # AIOps 实战：Golang K8s 智能运维工具链
 
 ## 元信息
-- **原始文档**：[[AI/AIOps/AIOps实战-Golang手搓K8s智能运维工具链]]
+- **原始文档**：[[AI/AIOps/AIOps实战-Golang手搓K8s智能运维工具链|Golang 构建 K8s 智能运维工具链实战]]
 - **领域**：AI / AIOps / Golang / Kubernetes
 - **摄入日期**：2026-06-07
 

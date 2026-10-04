@@ -78,8 +78,8 @@ Claude Code 直接搜索、读取、创建、修改笔记，无需手动复制�
 
 ## 在本仓库中的覆盖
 
-- [[AI/Obsidian/obsidian-claude-code-AI知识库完整指南]]：完整指南——3 种集成工具、Markdown 母语论证、30 分钟四步上手、Karpathy Wiki 模式、六大操作谱系、自动 backlinks
-- [[AI/Obsidian/Obsidian可视化Skills-Excalidraw-Mermaid-Canvas]]：AI Skills 生成可编辑图表（Excalidraw/Mermaid/Canvas）
+- [[AI/Obsidian/obsidian-claude-code-AI知识库完整指南|Obsidian + Claude Code：AI 知识库指南]]：完整指南——3 种集成工具、Markdown 母语论证、30 分钟四步上手、Karpathy Wiki 模式、六大操作谱系、自动 backlinks
+- [[AI/Obsidian/Obsidian可视化Skills-Excalidraw-Mermaid-Canvas|Obsidian 可视化 Skills]]：AI Skills 生成可编辑图表（Excalidraw/Mermaid/Canvas）
 - [[AI/ClaudeCode/Claude Code 扩展体系]]：Obsidian Skills 的介绍与安装方法
 - [[AI/Obsidian/github-pages-quartz|Quartz 4 发布流程]]：固定版本、GitHub Actions artifact 发布、原始笔记只读导出与旧链接兼容；[[KnowledgeBase/sources/github-pages-quartz-summary|来源摘要]]。
 

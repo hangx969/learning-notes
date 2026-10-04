@@ -49,7 +49,7 @@ Effective HTML 是面向 Coding Agent 的 HTML Skills 集合，目标不是让 A
 - [[KnowledgeBase/concepts/提示词工程]]：通过任务路由、阶段约束和验证标准减少 Agent 页面返工。
 - [[KnowledgeBase/entities/Claude-Code|Claude Code]]：可加载 HTML Skills 和插件的 Coding Agent。
 - [[KnowledgeBase/entities/Codex|Codex]]：文章列举的另一种可通过插件使用 Effective HTML 的 Coding Agent。
-- [[AI/AI-视觉/Markdown-Viewer-Skills-Markdown中直接画图]]：同类的 Markdown 内嵌图表方案。
+- [[AI/AI-视觉/Markdown-Viewer-Skills-Markdown中直接画图|Markdown Viewer Skills：AI 文档配图]]：同类的 Markdown 内嵌图表方案。
 - [[AI/AI-视觉/html-anything-AI生成HTML全场景工具]]：同类的全场景 HTML 生成工具。
 - [[AI/AI-视觉/AI-Animation-Skill-科普动画]]：同属 AI 生成 HTML 视觉交付的相关实践。
 

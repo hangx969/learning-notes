@@ -54,7 +54,7 @@ Hermes Agent 是 Nous Research 推出的 AI Agent 框架，具备持久记忆、
   - OpenClaw 迁移：`hermes claw migrate --preset full --migrate-secrets`
   - 飞书集成推荐 WebSocket 模式，无需公网 Webhook
 
-### [[AI/Hermes-agent/Hermes与OpenClaw对比及飞书接入指南|架构解析与对比]]
+### [[AI/Hermes-agent/Hermes与OpenClaw对比及飞书接入指南|Hermes Agent：OpenClaw 对比与飞书接入]]
 - 核心内容：Hermes Agent 五层架构深度解析（入口/编排层、Agent 核心层、工具注册层、状态/持久层、平台适配层）、记忆系统设计（MEMORY.md/USER.md 分离、冻结快照、前缀缓存优化）、子代理委托机制（隔离原则、深度限制 2、ThreadPoolExecutor 并行 max 3）、与 OpenClaw 六维对比、飞书 Bot 接入指南
 - 关键知识点：
   - 五层架构：入口/编排 → Agent 核心 → 工具注册 → 状态/持久 → 平台适配，层间单向依赖
@@ -63,7 +63,7 @@ Hermes Agent 是 Nous Research 推出的 AI Agent 框架，具备持久记忆、
   - 与 OpenClaw 对比：Python 轻量后端 vs TypeScript 全平台产品；自注册 vs 插件生态；有机记忆 vs 模块化
   - 飞书接入：`hermes setup` 向导式配置，DM 配对，Feishu CLI 提供上下文+操作能力
 
-### [[AI/Hermes-agent/Hermes-Curator-Skill膨胀治理|Hermes Curator — Skill 膨胀治理]]
+### [[AI/Hermes-agent/Hermes-Curator-Skill膨胀治理|Hermes Agent：Skill 膨胀与上下文治理]]
 - 核心内容：Hermes Curator 后台维护系统设计原理——追踪 Skill 使用频率，自动降级/归档/合并，防止自我改进循环产生的 Skill 无限堆积
 - 关键知识点：
   - 四步工作流：监测（使用计数器+时间戳）→ 降级（30天陈旧/90天归档）→ 复盘（廉价模型审查合并）→ 锁定优先（pin 保护关键 Skill）

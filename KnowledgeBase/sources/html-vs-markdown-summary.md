@@ -16,7 +16,7 @@ aliases:
 
 ## 元信息
 
-- **原始文档**：[[AI/行业动态/Anthropic工程师力推HTML取代Markdown-Karpathy附议]]
+- **原始文档**：[[AI/行业动态/Anthropic工程师力推HTML取代Markdown-Karpathy附议|HTML 取代 Markdown：Anthropic 工程师的建议]]
 - **领域**：AI 行业动态
 - **摄入日期**：2026-05-13
 - **原始来源**：Anthropic 工程师 Thariq 的 X 长文 + Karpathy 回应
@@ -41,5 +41,5 @@ Anthropic 工程师 Thariq 发文主张在 AI 工作流中用 HTML 全面取代 
 ## 值得注意
 
 - **反面观点同样重要**：评论区有人算账——HTML 每年多花 5000 美元纯粹用于模型无法利用的标签冗余；有人调侃这是 Anthropic 提升 usage 的"阴招"
-- **与本库定位的张力**：本知识库基于 Obsidian+Markdown 构建（参见 [[AI/Obsidian/obsidian-claude-code-AI知识库完整指南|AI知识库完整指南]]），Thariq 的观点直接挑战了 Markdown 作为知识载体的前提。但两者并不完全矛盾——Markdown 仍适合作为**存储和编辑格式**，HTML 更适合作为**展示和交互格式**，二者可以互补
+- **与本库定位的张力**：本知识库基于 Obsidian+Markdown 构建（参见 [[AI/Obsidian/obsidian-claude-code-AI知识库完整指南|Obsidian + Claude Code：AI 知识库指南]]），Thariq 的观点直接挑战了 Markdown 作为知识载体的前提。但两者并不完全矛盾——Markdown 仍适合作为**存储和编辑格式**，HTML 更适合作为**展示和交互格式**，二者可以互补
 - **"一次性编辑器"概念**：这是文中最具实操价值的点——不追求可复用工具，而是让 AI 为当前任务定制一个专用 HTML 页面，用完即弃。这代表了一种新的"工具即消耗品"思维

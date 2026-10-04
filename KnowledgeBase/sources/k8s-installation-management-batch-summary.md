@@ -171,7 +171,7 @@ aliases:
   - kube-ps1 常驻显示 context/namespace；生产环境应配合最小权限凭证、RBAC 和隔离/只读 shell
   - 多文件合并发生同名冲突时第一个文件胜出；flatten 输出可能内联敏感凭证，必须限制文件权限
 
-### [[Docker-Kubernetes/k8s-installation-management/k8s-cgroup-v2深度解析-迁移实战与避坑指南|K8s CGroup v2 深度解析]]
+### [[Docker-Kubernetes/k8s-installation-management/k8s-cgroup-v2深度解析-迁移实战与避坑指南|K8s cgroup v2：资源隔离原理、迁移与生产避坑]]
 - 核心内容：从内核原理到 K8s 实战，系统讲解 cgroup v1→v2 迁移全流程，含 5 个生产踩坑案例和监控告警配置。
 - 关键知识点：
   - cgroup v2 统一层次树取代 v1 多层次树，消除跨子系统配置不一致

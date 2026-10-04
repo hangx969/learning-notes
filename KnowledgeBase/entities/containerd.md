@@ -47,7 +47,7 @@ containerd 是从 Docker 中剥离出的工业级容器运行时，自 Kubernete
 
 - `Docker-Kubernetes/k8s-installation-management/` 中涉及 containerd 作为 K8s 运行时的配置
 - `Docker-Kubernetes/k8s-basic-resources/` 中涉及容器运行时选型
-- [[Docker-Kubernetes/k8s-installation-management/k8s-cgroup-v2深度解析-迁移实战与避坑指南]]：containerd cgroup v2 配置与迁移踩坑
+- [[Docker-Kubernetes/k8s-installation-management/k8s-cgroup-v2深度解析-迁移实战与避坑指南|K8s cgroup v2：资源隔离原理、迁移与生产避坑]]：containerd cgroup v2 配置与迁移踩坑
 - Azure AKS 集群默认使用 containerd 运行时
 - [[Docker-Kubernetes/k8s-basic-resources/k8s基础-容器运行时-containerd|k8s基础-容器运行时-containerd]]：CRI 接口与调用链（Docker → containerd → runc），ctr、nerdctl、crictl 对比，以及 ctr 命名空间的注意事项
 - [[Docker-Kubernetes/k8s-installation-management/升级/k8s迁移容器运行时-版本升级|k8s迁移容器运行时-版本升级]]：把节点运行时从 Docker 迁移到 containerd（生成配置、调整 kubelet 参数与节点注解）

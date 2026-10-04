@@ -220,26 +220,26 @@ Plugin 是应用级打包容器，将多种扩展机制捆绑为一个可分发�
 - [[AI/AI-视觉/Effective-HTML-Agent页面工作流]]：Effective HTML 页面工作流——任务判断、线框、交互原型、架构图、计划和视觉设计，并支持通过插件安装。
 - [[KnowledgeBase/sources/effective-html-agent-workflow-summary|Effective HTML 来源摘要]]：HTML 直出、自包含视觉交付、设计范本及与 Markdown Viewer Skills、html-anything、Mermaid 的定位对比。
 - [[AI/ClaudeCode/多智能体协作-Subagents与Agent-Teams]]：SubAgent（5 组件架构、适用场景评级）+ Agent Teams（Team Lead/Teammates/Task List/Mailbox、竞争假设调试）+ 开源 Agent 生态（wshobson/agents：112 个 Agent、72 个插件）
-- [[AI/Obsidian/obsidian-claude-code-AI知识库完整指南]]：Obsidian 集成方案（Claudian + Skills + MCP）、Markdown 母语论证、30 分钟上手路径、Karpathy Wiki 三层架构
+- [[AI/Obsidian/obsidian-claude-code-AI知识库完整指南|Obsidian + Claude Code：AI 知识库指南]]：Obsidian 集成方案（Claudian + Skills + MCP）、Markdown 母语论证、30 分钟上手路径、Karpathy Wiki 三层架构
 - [[AI/AIOps/AIOps-skills/k8s-report-skills/SKILL]]：自研 K8s 巡检 Skill（Python 版）——kubernetes 客户端 + Jinja2 HTML 报告，Agent API 集成
 - [[AI/AIOps/AIOps-skills/k8s-inspect-skills/SKILL]]：自研 K8s 巡检 Skill（Shell 版）——kubectl + 深色仪表盘 HTML 报告，7 大巡检模块含证书和网络检查
 - [[KnowledgeBase/sources/ClaudeCode基础指南-summary|ClaudeCode基础指南摘要]]：3 种模式、Extended Thinking、Claude.md、5 大实战场景
 - [[KnowledgeBase/sources/obsidian-claude-AI知识库完整指南-summary|AI知识库完整指南摘要]]：Claudian/Skills/MCP 三种集成方式、Markdown 母语论证、Karpathy Wiki 三层架构
 - [[AI/ClaudeCode/Claude-Skill质检工具-SkillCraft]]：Skill 质量工程——7 类失效模式、三层评估体系、check/fix/create/audit 四模式
 - [[KnowledgeBase/sources/skill-craft-summary|Skill Craft 摘要]]：Skill 质量工程工具的核心方法论
-- [[AI/ClaudeCode/Claude-Code-Harness实战-最小可用系统]]：Harness 四层约束架构——约束层/工具层/中间件层/编排层 + Git 门禁，含完整拦截器代码
+- [[AI/ClaudeCode/Claude-Code-Harness实战-最小可用系统|Harness 实战：从零搭建最小可用系统]]：Harness 四层约束架构——约束层/工具层/中间件层/编排层 + Git 门禁，含完整拦截器代码
 - [[KnowledgeBase/sources/harness-system-summary|Harness 实战摘要]]：Harness 安全约束系统的核心方法论
-- [[AI/行业动态/Claude-Code创始人红杉大会七个判断]]：Boris Cherny（Claude Code 创始人）在红杉大会上的 7 个行业判断——代码不再稀缺、古登堡类比、判断力>编码、SaaS 护城河瓦解、创业黄金期、MCP 不会死、Computer Use 价值
+- [[AI/行业动态/Claude-Code创始人红杉大会七个判断|Claude Code 创始人：红杉大会的 7 个判断]]：Boris Cherny（Claude Code 创始人）在红杉大会上的 7 个行业判断——代码不再稀缺、古登堡类比、判断力>编码、SaaS 护城河瓦解、创业黄金期、MCP 不会死、Computer Use 价值
 - [[KnowledgeBase/sources/boris-cherny-sequoia-summary|红杉大会摘要]]：7 个行业判断的知识提炼
 
-- [[AI/ClaudeCode/CLAUDE.md最佳实践-21条指令清单]]：Mayank Agarwal 21 条指令——沟通方式/行为准则/个人上下文/MEMORY.md 记忆连续性/开发者安全五个维度
-- [[AI/ClaudeCode/CLAUDE.md最佳实践-12条规则模板]]：Mnilax 12 条规则模板——Karpathy 4 条 + 8 条新规则，30 个代码库实测错误率 41%→3%，含 200 行天花板发现和 6 条反面经验
+- [[AI/ClaudeCode/CLAUDE.md最佳实践-21条指令清单|Mayank Agarwal：21 条 CLAUDE.md 指令]]：Mayank Agarwal 21 条指令——沟通方式/行为准则/个人上下文/MEMORY.md 记忆连续性/开发者安全五个维度
+- [[AI/ClaudeCode/CLAUDE.md最佳实践-12条规则模板|Mnilax 的 CLAUDE.md：12 条规则]]：Mnilax 12 条规则模板——Karpathy 4 条 + 8 条新规则，30 个代码库实测错误率 41%→3%，含 200 行天花板发现和 6 条反面经验
 
-- [[code-review-graph-本地代码知识图谱]]：本地代码知识图谱工具——Tree-sitter AST 解析→SQLite 图谱→MCP 接入 Claude Code，blast-radius 影响范围分析，2900 文件增量索引 2 秒
+- [[code-review-graph-本地代码知识图谱|code-review-graph：本地代码知识图谱指南]]：本地代码知识图谱工具——Tree-sitter AST 解析→SQLite 图谱→MCP 接入 Claude Code，blast-radius 影响范围分析，2900 文件增量索引 2 秒
 - [[AI/Code review和知识图谱/AI代码审查闭环-验证优先与敏感信息清理]]：以质量门禁、完整仓库上下文、真实运行、安全扫描、敏感信息清理和对抗式测试构成 AI 代码审查闭环
-- [[AI/ClaudeCode/Claude-Code为什么用grep不用RAG]]：Agentic Search 架构解析——Glob+Grep(ripgrep)+Read 替代 RAG，Boris Cherny 播客原话+亚马逊论文实锤+Cursor 反面论证
+- [[AI/ClaudeCode/Claude-Code为什么用grep不用RAG|Claude Code 为何用 grep 而非 RAG 检索代码？]]：Agentic Search 架构解析——Glob+Grep(ripgrep)+Read 替代 RAG，Boris Cherny 播客原话+亚马逊论文实锤+Cursor 反面论证
 - [[AI/ClaudeCode/Claude-Fable-5-system-prompt]]：Claude Fable 5 完整系统提示词——Mythos-class 新层级、行为规约体系、~15 个内置工具、沙箱架构、Artifact/Claudeception、MCP 连接器流程、版权硬限制、Skill 强制规则
-- [[Git-Worktree-AI开发实践指南]]：Git Worktree 并行开发实践——"一个 AI 会话 = 一个 Worktree"原则、紧急修复/多方案探索场景、5 个实践踩坑（与 CC 原生 EnterWorktree 工具吻合）
+- [[Git-Worktree-AI开发实践指南|Vibe Coding 的 Git Worktree 实践]]：Git Worktree 并行开发实践——"一个 AI 会话 = 一个 Worktree"原则、紧急修复/多方案探索场景、5 个实践踩坑（与 CC 原生 EnterWorktree 工具吻合）
 
 ## 内部架构（来自 Fable 5 系统提示词）
 

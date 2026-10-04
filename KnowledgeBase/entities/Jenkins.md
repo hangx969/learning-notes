@@ -50,8 +50,8 @@ Jenkins 是老牌开源 CI/CD 服务器，支持 Pipeline as Code、丰富的插
 - [[Docker-Kubernetes/k8s-CICD/Jenkins/docker部署jenkins|docker部署jenkins]]
 - [[Docker-Kubernetes/k8s-CICD/Jenkins/helm部署jenkins|helm部署jenkins]]
 - [[Docker-Kubernetes/k8s-CICD/Jenkins/k8s-Devops平台落地-基于jenkins|k8s-Devops平台落地-基于jenkins]]
-- [[Docker-Kubernetes/k8s-CICD/Jenkins/k8s部署基于Jenkins(2.394)的DevOps工具链-基于yaml|k8s部署基于Jenkins(2.394)的DevOps工具链-基于yaml]]
-- [[Docker-Kubernetes/k8s-CICD/Jenkins/k8s部署基于Jenkins(2.426.3)的Devops工具链-基于yaml|k8s部署基于Jenkins(2.426.3)的Devops工具链-基于yaml]]
+- [[Docker-Kubernetes/k8s-CICD/Jenkins/k8s部署基于Jenkins(2.394)的DevOps工具链-基于yaml|K8s DevOps 工具链：Jenkins 2.394]]
+- [[Docker-Kubernetes/k8s-CICD/Jenkins/k8s部署基于Jenkins(2.426.3)的Devops工具链-基于yaml|K8s DevOps 工具链：Jenkins 2.426.3]]
 - [[Docker-Kubernetes/k8s-CICD/Jenkins/二进制安装Jenkins(2.319)|二进制安装Jenkins(2.319)]]
 
 ## 相关概念与实体

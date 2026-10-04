@@ -73,7 +73,7 @@ aliases:
 #### [[HPC/Slurm-node-exporter|Slurm Node Exporter]]
 记录两代 Slurm Prometheus Exporter 的部署方式：旧版基于 Go 编译的 prometheus-slurm-exporter（含在线与离线部署步骤），提供 Slurm 集群指标到 Prometheus 的采集方案，通过 systemd 服务管理，监听 9092 端口。
 
-#### [[HPC/Ubuntu2204-Slurm-安装指南|Ubuntu 22.04 Slurm 22.05.11 与 23.11.4 安装指南]]
+#### [[HPC/Ubuntu2204-Slurm-安装指南|Ubuntu 22.04：Slurm 安装与配置]]
 合并三个部署场景：22.05.11 三节点测试环境和 H800 GPU 生产环境保留网络、时间同步、Management/Login/Compute 部署、MUNGE、GPU 分区、账户和 Prolog/Epilog 配置；23.11.4 实验环境保留 um1/uc1/ul1 规划、Netplan、apt 源、资源限制、源码构建 deb 包和节点配置。
 
 #### [[HPC/CentOS7-slurm23.02-二进制安装|CentOS7 Slurm 23.02 二进制安装]]

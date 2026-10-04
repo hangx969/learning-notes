@@ -14,6 +14,10 @@ date: 2026-04-16
 
 # Azure ACR and ACI
 
+<div id="azure-container-registry-azure-container-instances" class="legacy-anchor"></div>
+<div id="azure-container-registry--azure-container-instances" class="legacy-anchor"></div>
+<div id="azure-container-registry-azure-container-instances_1" class="legacy-anchor"></div>
+
 Azure Container Registry 与 Azure Container Instances。
 
 ## Related Notes

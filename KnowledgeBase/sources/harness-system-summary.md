@@ -15,7 +15,7 @@ aliases:
 
 ## 元信息
 
-- **原始文档**：[[AI/ClaudeCode/Claude-Code-Harness实战-最小可用系统]]
+- **原始文档**：[[AI/ClaudeCode/Claude-Code-Harness实战-最小可用系统|Harness 实战：从零搭建最小可用系统]]
 - **领域**：AI / Claude Code 安全约束
 - **摄入日期**：2026-05-05
 

@@ -119,7 +119,7 @@ sources:
 | 文章 | 主题 |
 |------|------|
 | [[HPC/CentOS7-slurm23.02-二进制安装|CentOS7-slurm23.02-二进制安装]] | Slurm CentOS |
-| [[HPC/Ubuntu2204-Slurm-安装指南|Ubuntu 22.04 Slurm 22.05.11 与 23.11.4 安装指南]] | Slurm Ubuntu |
+| [[HPC/Ubuntu2204-Slurm-安装指南\|Ubuntu 22.04：Slurm 安装与配置]] | Slurm Ubuntu |
 | [[HPC/PBS|PBS]] | PBS 调度 |
 | [[HPC/Slurm-node-exporter|Slurm-node-exporter]] | Slurm 监控 |
 

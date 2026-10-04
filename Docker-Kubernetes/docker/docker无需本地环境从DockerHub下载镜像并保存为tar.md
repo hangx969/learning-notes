@@ -15,6 +15,9 @@ tags:
 
 # 无需本地 Docker：下载 Docker Hub 镜像为 tar
 
+<div id="不依赖本地-docker-环境从-docker-hub-下载镜像并保存为-tar-文件" class="legacy-anchor"></div>
+<div id="不依赖本地-docker-环境从-docker-hub-下载镜像并保存为-tar-文件_1" class="legacy-anchor"></div>
+
 ## 使用说明
 
 无需安装 Docker，直接从 Registry 拉取镜像并打包为 `.tar` 文件。支持 Docker Hub、quay.io 等公共或私有 Registry，并自动处理 manifest list / OCI index，支持选择多架构镜像。

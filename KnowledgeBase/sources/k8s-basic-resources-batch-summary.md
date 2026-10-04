@@ -221,7 +221,7 @@ aliases:
   - 需加载 kubeconfig 文件（master 节点的 `~/.kube/config`）进行认证
   - 支持列举、查询、创建等 CRUD 操作
 
-### [[Docker-Kubernetes/k8s-basic-resources/k8s-APIServer深度剖析-请求链路-认证授权-生产调优|API Server 深度剖析]]
+### [[Docker-Kubernetes/k8s-basic-resources/k8s-APIServer深度剖析-请求链路-认证授权-生产调优|K8s API Server：请求链路、认证授权与生产调优]]
 - 核心内容：kube-apiserver 内部工作原理全面剖析——请求完整生命周期（认证→授权→准入→持久化→Watch）、Watch/Informer 机制、API 扩展（CRD/聚合 API）、生产调优、故障排查。
 - 关键知识点：
   - 请求链路 7 步：认证（X.509/SA Token/OIDC/Webhook）→ 授权（RBAC）→ 变更准入（Mutating）→ 校验 → 验证准入（Validating）→ etcd 持久化 → Watch 通知

@@ -133,7 +133,7 @@ aliases:
   - `~/.docker/config.json` 仅为容器内进程配置代理，不影响镜像拉取
   - Chrome 插件 Docker Image Downloader 可直接下载 docker.io/gcr.io 镜像
 
-### [[Docker-Kubernetes/docker/docker无需本地环境从DockerHub下载镜像并保存为tar|Docker镜像无引擎下载与 tar 导出]]
+### [[Docker-Kubernetes/docker/docker无需本地环境从DockerHub下载镜像并保存为tar|无需本地 Docker：下载 Docker Hub 镜像为 tar]]
 - **核心内容**：使用 Python 脚本直接从 Docker Hub、quay.io 等 Registry 下载镜像层并生成 `.tar` 文件，不依赖本地 Docker Engine。
 - **关键知识点**：
   - 自动处理 manifest list / OCI index，并可按操作系统、CPU 架构或 digest 选择镜像

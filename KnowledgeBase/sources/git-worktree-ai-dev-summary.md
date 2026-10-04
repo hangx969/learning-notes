@@ -14,7 +14,7 @@ aliases:
 # Git Worktree AI 开发实践指南
 
 ## 元信息
-- **原始文档**：[[Git-Worktree-AI开发实践指南]]
+- **原始文档**：[[Git-Worktree-AI开发实践指南|Vibe Coding 的 Git Worktree 实践]]
 - **领域**：AI / Git / Vibe Coding
 - **摄入日期**：2026-06-28
 

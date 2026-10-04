@@ -64,7 +64,7 @@ sources:
 | **网络** | [[Aliyun/网络/VPC|VPC]]、[[Aliyun/网络/CEN-TR|CEN-TR]]、[[Aliyun/网络/网关-VPN-专线|网关-VPN-专线]] | [[Azure/6_Azure-Networking|6_Azure-Networking]] |
 | **负载均衡** | [[Aliyun/网络/负载均衡SLB|负载均衡SLB]]（CLB/ALB/NLB） | 含在 Azure Networking |
 | **存储** | [[Aliyun/存储/对象存储OSS|对象存储OSS]]、[[Aliyun/存储/数据湖-HDFS-POSIX|数据湖-HDFS-POSIX]] | [[Azure/5_Azure-Storage|5_Azure-Storage]] |
-| **容器镜像** | — | [[Azure/7_ACR-ACI|7_ACR-ACI]] |
+| **容器镜像** | — | [[Azure/7_ACR-ACI\|Azure ACR and ACI]] |
 | **数据库** | [[Aliyun/数据库/关系型数据库RDS|关系型数据库RDS]]、[[Aliyun/数据库/数据传输服务DTS|数据传输服务DTS]] | — |
 | **安全-WAF** | [[Aliyun/网络/WAF|WAF]] | — |
 | **安全-DDoS** | [[Aliyun/网络/DDoS高防|DDoS高防]] | — |

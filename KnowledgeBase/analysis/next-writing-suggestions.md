@@ -50,7 +50,7 @@ aliases:
 > [!info] 基于全库分析，推荐 10 个值得继续补写或系统化的主题。
 
 > [!note] 快照与更新
-> 本页基于 2026-04-16 的分析。此后部分建议已有对应文档：第 1 项见 [[Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD多集群GitOps实战|ArgoCD 多集群 GitOps 实战]]；第 6 项见 [[Docker-Kubernetes/docker/docker安全配置-Capabilities与容器加固|Docker 安全加固]] 与 [[Docker-Kubernetes/k8s-security-auth/k8s容器安全上下文-SecurityContext|SecurityContext]]；第 7 项见 [[Docker-Kubernetes/k8s-basic-resources/k8s基础-Operator开发实战-Kubebuilder|Kubebuilder 实战]]；第 8 项见 [[AI/OpenClaw/OpenClaw-K8s智能运维实战|OpenClaw K8s 智能运维实战]]、[[AI/AIOps/AIOps实战-Golang手搓K8s智能运维工具链|AIOps Golang 工具链]]；第 9 项的 FinOps 部分见 [[Docker-Kubernetes/k8s-scaling/k8s成本优化方案-FinOps实战|K8s FinOps]] 与 [[Aliyun/资源管理/FinOps-云成本优化实战|云成本优化实战]]。
+> 本页基于 2026-04-16 的分析。此后部分建议已有对应文档：第 1 项见 [[Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD多集群GitOps实战|Argo CD 多集群 GitOps 实战]]；第 6 项见 [[Docker-Kubernetes/docker/docker安全配置-Capabilities与容器加固|Docker 安全配置：Capabilities 与容器加固]] 与 [[Docker-Kubernetes/k8s-security-auth/k8s容器安全上下文-SecurityContext|K8s 容器安全上下文：从入门到生产避坑]]；第 7 项见 [[Docker-Kubernetes/k8s-basic-resources/k8s基础-Operator开发实战-Kubebuilder|Kubebuilder：从零开发 K8s Operator]]；第 8 项见 [[AI/OpenClaw/OpenClaw-K8s智能运维实战|OpenClaw K8s 运维：从只读巡检到低风险变更]]、[[AI/AIOps/AIOps实战-Golang手搓K8s智能运维工具链|Golang 构建 K8s 智能运维工具链实战]]；第 9 项的 FinOps 部分见 [[Docker-Kubernetes/k8s-scaling/k8s成本优化方案-FinOps实战|K8s 集群成本优化]] 与 [[Aliyun/资源管理/FinOps-云成本优化实战|云成本优化实战]]。
 
 ---
 
@@ -91,7 +91,7 @@ aliases:
 - 告警规则是运维核心，当前只有 Alertmanager 部署
 
 **与当前仓库的关系：**
-- [[Docker-Kubernetes/k8s-monitoring-logging/helm部署prometheus-stack全家桶|helm部署prometheus-stack全家桶]]
+- [[Docker-Kubernetes/k8s-monitoring-logging/helm部署prometheus-stack全家桶|Prometheus-Stack：生产部署与运维]]
 - [[Docker-Kubernetes/k8s-monitoring-logging/k8s监控alertmanager(v0.14.0)|k8s监控alertmanager(v0.14.0)]]
 
 **能补上的空白：** 可观测性体系中"查询与告警"的核心技能

@@ -54,7 +54,7 @@ aliases:
 - 可通过 `--exclude-namespaces` 和 `--ignore-controller-kind` 排除特定资源
 - 集成 OAuth2 Proxy 实现访问认证
 
-### [[Docker-Kubernetes/k8s-scaling/k8s-基于KEDA的弹性能力|KEDA 事件驱动扩缩容]]
+### [[Docker-Kubernetes/k8s-scaling/k8s-基于KEDA的弹性能力|KEDA：事件驱动扩缩容与 KServe 实战]]
 
 **核心内容**: 统一整理 KEDA 的事件驱动扩缩容原理、与 HPA/原生 Scale-to-Zero 的选型边界、资源模型、多事件源实践，以及 KServe + vLLM 请求指标实战。
 
@@ -65,7 +65,7 @@ aliases:
 - 实测 KEDA 2.17.2；必须确认 `external.metrics.k8s.io` 可用，只有 CRD 就绪并不够
 - 使用 `vllm:num_requests_running + vllm:num_requests_waiting` 驱动 1→2→1，并通过 HAMi DRA 在单 GPU 节点共享 GPU
 
-### [[Docker-Kubernetes/k8s-scaling/k8s-HPA-VPA|Kubernetes 自动扩缩容：HPA、VPA 与 Scale-to-Zero]]
+### [[Docker-Kubernetes/k8s-scaling/k8s-HPA-VPA|K8s 自动扩缩容：HPA、VPA 与 Scale-to-Zero]]
 
 **核心内容**: 将原 HPA/VPA 总览、Helm 部署 VPA 和 Kubernetes 1.37 原生 HPA Scale-to-Zero 三篇正文整合为一篇，按“选型→指标基础→HPA→Scale-to-Zero→VPA→生产治理”组织。
 
@@ -115,7 +115,7 @@ aliases:
 - StatefulSet 的 `volumeClaimTemplates` 同样继承 StorageClass 策略，删除前应使用快照或备份保护数据
 - 删除前 SOP：确认策略 → 创建并验证快照 → 必要时改为 Retain → 删除后检查 PV 与底层卷状态
 
-### [[Docker-Kubernetes/k8s-storage/让存储故障现形：Kubernetes Volume Health Monitor 原理与生产接入|Kubernetes Volume Health Monitor]]
+### [[Docker-Kubernetes/k8s-storage/让存储故障现形：Kubernetes Volume Health Monitor 原理与生产接入|K8s Volume Health Monitor：原理与生产接入]]
 
 **核心内容**: 介绍 Kubernetes 1.37 Alpha Volume Health Monitor 如何通过 4 个 CSI RPC 将卷健康状态写入 PVC、Pod 和 CSINode，并接入 Prometheus 告警与谨慎的故障切换流程。
 
@@ -144,7 +144,7 @@ aliases:
 - [[KnowledgeBase/concepts/Observability|Observability]]: CSI 卷健康状态的可观测性入口
 - [[KnowledgeBase/entities/Prometheus]]: 采集 vLLM 指标并提供 PromQL 查询
 
-### [[Docker-Kubernetes/k8s-scaling/k8s成本优化方案-FinOps实战|K8s 成本优化方案——FinOps 实战]]
+### [[Docker-Kubernetes/k8s-scaling/k8s成本优化方案-FinOps实战|K8s 集群成本优化]]
 
 **核心内容**: K8s 集群成本优化五层体系（Right-Sizing → 节点效率 → 调度策略 → FinOps 监控 → 存储网络），含完整配置和 4 周落地路线图，预期降低 40%-60% 云账单。
 
@@ -171,5 +171,5 @@ aliases:
 ## 值得注意
 
 - 版本边界：`HPAScaleToZero` 为 Kubernetes 1.37 Beta（原文注明默认启用），Volume Health Monitor 为 1.37 Alpha，字段与行为仍可能变化，原文建议与存储厂商监控互补、不作为唯一故障判定依据；KEDA 结论基于 2.17.2 实测。
-- 文档间不一致：[[Docker-Kubernetes/k8s-scaling/k8s成本优化方案-FinOps实战|FinOps 实战]]仍按 VPA 四种模式讲解，并在第 2 周路线图启用 `Auto`；[[Docker-Kubernetes/k8s-scaling/k8s-HPA-VPA|HPA/VPA 整合篇]]则标注 `Auto` 已被上游弃用、新配置应改用显式模式。
+- 文档间不一致：[[Docker-Kubernetes/k8s-scaling/k8s成本优化方案-FinOps实战|K8s 集群成本优化]]仍按 VPA 四种模式讲解，并在第 2 周路线图启用 `Auto`；[[Docker-Kubernetes/k8s-scaling/k8s-HPA-VPA|K8s 自动扩缩容：HPA、VPA 与 Scale-to-Zero]]则标注 `Auto` 已被上游弃用、新配置应改用显式模式。
 - 数据安全红线：`Released` PV 清理 `claimRef` 前必须确认旧数据可弃或已有备份；Ceph 原文强烈建议生产环境二进制安装在服务器上、不要装在 K8s 中（数据恢复困难）；卷健康 remediation 需要冷却、重试上限和人工确认。

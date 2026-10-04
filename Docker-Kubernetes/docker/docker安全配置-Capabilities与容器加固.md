@@ -10,6 +10,9 @@ tags:
 
 # Docker 安全配置：Capabilities 与容器加固
 
+<div id="docker-安全配置详解capabilities-与容器加固" class="legacy-anchor"></div>
+<div id="docker-安全配置详解capabilities-与容器加固_1" class="legacy-anchor"></div>
+
 基于一个 RockyLinux 9.7 开发容器的 `docker run` 命令，逐项解析安全参数并介绍容器安全最佳实践。
 
 ## 安全基线命令

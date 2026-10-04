@@ -11,6 +11,9 @@ tags:
 
 # AI Agent 时代：TypeScript 与 Python 的竞争
 
+<div id="为什么-ai-agent-时代typescript-正在抢走-python-的主场" class="legacy-anchor"></div>
+<div id="typescript-vs-pythonai-agent-时代的语言分层" class="legacy-anchor"></div>
+
 原文讨论 TypeScript 正在抢走 Python 主场的原因。
 
 ## 核心结论

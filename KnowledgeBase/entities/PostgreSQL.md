@@ -57,7 +57,7 @@ PostgreSQL 是功能最强大的开源关系型数据库，支持丰富的数据
 - [[Docker-Kubernetes/k8s-db-middleware/helm部署postgreSQL|helm部署postgreSQL]]：bitnami postgresql 与 postgresql-ha Chart，HA 模式的 Pgpool、repmgr、witness 组件，以及用 repmgr 查看集群状态
 - [[Python/python-运维开发/python-postgresql|python-postgresql]]：PostgreSQL 安装与远程访问配置、psql 常用操作，psycopg2 增删改查与 SQLAlchemy ORM
 - [[Docker-Kubernetes/kubeblocks/kubeblocks部署高可用harbor集群|kubeblocks部署高可用harbor集群]]：KubeBlocks 创建 replication 模式 PostgreSQL 主备集群作为 Harbor 外部数据库，并模拟主节点故障验证切换
-- [[Docker-Kubernetes/k8s-installation-management/k8s-Backstage-内部开发者平台IDP实战|k8s-Backstage-内部开发者平台IDP实战]]：以 StatefulSet 部署 PostgreSQL 作为 Backstage 软件目录数据库
+- [[Docker-Kubernetes/k8s-installation-management/k8s-Backstage-内部开发者平台IDP实战|Backstage：K8s 一站式内部开发者平台实战]]：以 StatefulSet 部署 PostgreSQL 作为 Backstage 软件目录数据库
 - [[AI/企业级私有化大模型/基于K8s部署vLLM和LiteLLM|基于K8s部署vLLM和LiteLLM]]：部署高可用 PostgreSQL（postgresql-ha）作为 LiteLLM 数据库
 - [[Docker-Kubernetes/k8s-CICD/Gitlab/k8s部署Gitlab(11.8.1)-基于yaml|k8s部署Gitlab(11.8.1)-基于yaml]]：以 YAML 部署 PostgreSQL 作为 GitLab 后端数据库
 - [[Azure/Jfrog-artifactory-Azure|Jfrog-artifactory-Azure]]：Azure Database for PostgreSQL Flexible Server 作为 Artifactory 数据库，配置 JDBC 连接

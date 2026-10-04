@@ -83,7 +83,7 @@ aliases:
   - 架构：主节点 + 多个联邦子节点，每个子节点监控各自数据中心
   - 各节点分别部署 node-exporter 采集主机指标
 
-### [[Docker-Kubernetes/k8s-monitoring-logging/helm部署prometheus-stack全家桶|Prometheus-Stack 全家桶：生产级部署与运维完全指南]]
+### [[Docker-Kubernetes/k8s-monitoring-logging/helm部署prometheus-stack全家桶|Prometheus-Stack：生产部署与运维]]
 - 核心内容：使用 Helm 部署 kube-prometheus-stack，一键安装 Prometheus、Alertmanager、Grafana、kube-state-metrics、node-exporter 等全套组件。整合了参数优化、高可用方案和故障排查内容。
 - 关键知识点：
   - kube-prometheus-stack 是 Prometheus Operator 的 Helm Chart 封装
@@ -123,7 +123,7 @@ aliases:
   - 配置 SMTP 邮件告警：smtp_smarthost、smtp_auth_password（授权码）
   - 使用 ConfigMap 挂载 alertmanager.yml 和 prometheus rules
 
-### [[Docker-Kubernetes/k8s-monitoring-logging/k8s日志管理-采集方案与审计日志|K8s 日志管理：基础机制、采集方案与审计日志]]
+### [[Docker-Kubernetes/k8s-monitoring-logging/k8s日志管理-采集方案与审计日志|K8s 日志：基础机制、六种采集方案与审计日志]]
 - 核心内容：三篇合并——kubelet 本地日志管理 + 六种采集方案对比 + 审计日志实战。覆盖从日志基础机制到生产选型再到合规审计的完整体系。
 - 关键知识点：
   - kubelet 默认日志限制：containerLogMaxSize 10Mi / containerLogMaxFiles 5，每容器最多约 50MiB
@@ -175,7 +175,7 @@ aliases:
   - 通过 ConfigMap 挂载 elasticsearch.yml 配置集群发现、节点角色等
   - 使用环境变量 MY_POD_NAME 动态设置 node.name
 
-### [[Docker-Kubernetes/k8s-monitoring-logging/helm部署Loki-promtail-tempo-grafanaAgent全家桶|Helm部署Loki+Promtail+Tempo+GrafanaAgent全家桶]]
+### [[Docker-Kubernetes/k8s-monitoring-logging/helm部署Loki-promtail-tempo-grafanaAgent全家桶|Helm部署Loki+Promtail+Tempo+GrafanaAgent]]
 - 核心内容：使用 Helm 部署 Loki + Promtail + Tempo + Grafana Agent 轻量级可观测性全家桶，以及 K8s Events 持久化方案。
 - 关键知识点：
   - K8s Events 默认只保留一小时，需要持久化存储以支持长期分析
@@ -207,7 +207,7 @@ aliases:
   - 自动化部署：Dockerfile 打包 + CronJob 每日定时执行 + PVC 持久化报告 + RBAC 只读权限
   - 告警集成：钉钉 Webhook + 企业微信 Webhook，异常 Pod 数 > 0 自动推送
 
-### [[Docker-Kubernetes/k8s-monitoring-logging/OpenTelemetry实战-统一Traces-Metrics-Logs|OpenTelemetry 实战：统一 Traces/Metrics/Logs]]
+### [[Docker-Kubernetes/k8s-monitoring-logging/OpenTelemetry实战-统一Traces-Metrics-Logs|OpenTelemetry 统一可观测性实战]]
 - 核心内容：从零搭建 OTel + LGTM（Loki+Grafana+Tempo+Mimir）完整可观测性体系，含 Collector 三段式管道、Operator 自动注入、尾部采样、与传统方案对比。
 - 关键知识点：
   - OTel Collector 三段式管道：Receivers → Processors → Exporters，OTLP 统一协议

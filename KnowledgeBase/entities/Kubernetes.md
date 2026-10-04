@@ -167,7 +167,7 @@ Kubernetes（K8s）是容器编排平台，源自 Google Borg 系统，2014 年�
 - 动态供给 PV 的 `Delete` 策略可能在删除 PVC 时销毁底层云盘；重要数据应使用 `Retain` 并在删除前确认快照或备份
 - 修改 StorageClass 不会回溯修改存量 PV；`Released` PV 复用前要审查 `claimRef` 和旧数据，StatefulSet 也要审查级联删除行为
 - KServe 可将 vLLM `running + waiting` 请求数交给 KEDA，再通过 External Metrics API 驱动 HPA，示例验证了模型服务 `1 -> 2 -> 1` 的请求指标扩缩容
-- KServe InferenceService Standard 将模型来源、Runtime、GPU 资源与 Gateway API 入口收敛为声明式服务；完整部署见 [[AI/企业级私有化大模型/一个 Deployment 就能跑 vLLM，为什么还需要 KServe？|KServe 部署 vLLM]]
+- KServe InferenceService Standard 将模型来源、Runtime、GPU 资源与 Gateway API 入口收敛为声明式服务；完整部署见 [[AI/企业级私有化大模型/一个 Deployment 就能跑 vLLM，为什么还需要 KServe？|为何用 KServe 管理 vLLM 推理服务？]]
 - Kubernetes 1.37 的 `HPAScaleToZero` 允许原生 HPA 基于 External/Object 指标将异步 Worker 缩到 0；从 0 拉起的冷启动、指标源可用性和就绪探针决定生产边界
 - KEDA 与原生 HPA 不能同时管理同一个 Deployment；KEDA 适合直接连接事件源，原生 HPA 适合已有 External 指标链路的场景
 - Volume Health Monitor 通过 4 个 CSI RPC 将卷健康写入 `PVC.status.healthStatus`、`Pod.status.volumeHealth` 和 `CSINode.status.storageHealth`，补足 PVC 长期 `Bound` 但底层已降级的可观测性盲区

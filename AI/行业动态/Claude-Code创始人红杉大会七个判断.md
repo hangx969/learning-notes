@@ -10,6 +10,9 @@ tags:
 
 # Claude Code 创始人：红杉大会的 7 个判断
 
+<div id="claude-code-创始人在红杉大会上的-7-个重要判断" class="legacy-anchor"></div>
+<div id="claude-code-创始人在红杉大会上的-7-个重要判断_1" class="legacy-anchor"></div>
+
 > Boris Cherny（Claude Code 创始人）在红杉大会上的分享。
 > 原始视频：https://www.youtube.com/watch?v=SlGRN8jh2RI
 

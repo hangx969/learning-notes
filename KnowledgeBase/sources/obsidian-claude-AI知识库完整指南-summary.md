@@ -14,7 +14,7 @@ aliases:
 # Obsidian + Claude Code：AI 驱动的知识库完整指南
 
 ## 元信息
-- **原始文档**：[[AI/Obsidian/obsidian-claude-code-AI知识库完整指南]]
+- **原始文档**：[[AI/Obsidian/obsidian-claude-code-AI知识库完整指南|Obsidian + Claude Code：AI 知识库指南]]
 - **领域**：AI / 知识管理
 - **摄入日期**：2026-05-09
 - **说明**：本文由三篇文章合并而成（karpathy-llm-wiki-改造计划、obsidian-claude-搭建karpathy-wiki知识库、obsidian-claude-code-AI知识管家），覆盖从理念论证到工具搭建到行动计划的完整路径

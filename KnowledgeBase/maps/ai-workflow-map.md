@@ -74,10 +74,10 @@ sources:
 2. [[AI/ClaudeCode/Claude Code 扩展体系|扩展体系]] — MCP + Skills + Slash Commands + Plugin 四层扩展机制
 3. [[AI/ClaudeCode/多智能体协作-Subagents与Agent-Teams|多智能体协作]] — Subagents 与 Agent Teams
 4. [[AI/ClaudeCode/Claude-Skill质检工具-SkillCraft|Skill Craft 质检工具]] — 7 类失效模式 + 三层评估 + 四模式质量工程
-5. [[AI/ClaudeCode/Claude-Code-Harness实战-最小可用系统|Harness 实战]] — 四层约束架构 + Git 门禁，系统强制执行安全边界
-6. [[AI/ClaudeCode/CLAUDE.md最佳实践-21条指令清单|CLAUDE.md 21 条指令]] — 五维度通用指令清单（沟通/行为/上下文/记忆/安全）
-7. [[AI/ClaudeCode/CLAUDE.md最佳实践-12条规则模板|CLAUDE.md 12 条规则]] — Karpathy 4 条 + 8 条新规则，实测错误率 41%→3%
-8. [[code-review-graph-本地代码知识图谱|code-review-graph 代码知识图谱]] — 本地 AST 图谱 + MCP 接入，blast-radius 影响范围分析
+5. [[AI/ClaudeCode/Claude-Code-Harness实战-最小可用系统|Harness 实战：从零搭建最小可用系统]] — 四层约束架构 + Git 门禁，系统强制执行安全边界
+6. [[AI/ClaudeCode/CLAUDE.md最佳实践-21条指令清单|Mayank Agarwal：21 条 CLAUDE.md 指令]] — 五维度通用指令清单（沟通/行为/上下文/记忆/安全）
+7. [[AI/ClaudeCode/CLAUDE.md最佳实践-12条规则模板|Mnilax 的 CLAUDE.md：12 条规则]] — Karpathy 4 条 + 8 条新规则，实测错误率 41%→3%
+8. [[code-review-graph-本地代码知识图谱|code-review-graph：本地代码知识图谱指南]] — 本地 AST 图谱 + MCP 接入，blast-radius 影响范围分析
 
 ### Codex 路径
 1. [[AI/Codex/Codex-Harness架构-任务循环与扩展|Codex Harness 架构]] — App Server、Agent 主循环、上下文、工具执行、状态记忆与扩展入口
@@ -85,8 +85,8 @@ sources:
 
 ### AI 代码审查与知识图谱
 1. [[AI/Code review和知识图谱/AI代码审查闭环-验证优先与敏感信息清理|AI 代码审查闭环]] — 质量门禁、真实运行、安全扫描、敏感信息清理与对抗式测试
-2. [[AI/Code review和知识图谱/code-review-graph-本地代码知识图谱|code-review-graph]] — 用本地 AST 图谱分析调用链与改动影响范围
-3. [[AI/Code review和知识图谱/CodeGraph-代码语义知识图谱|CodeGraph]] — 预建代码语义关系，减少 Agent 扫描成本
+2. [[AI/Code review和知识图谱/code-review-graph-本地代码知识图谱|code-review-graph：本地代码知识图谱指南]] — 用本地 AST 图谱分析调用链与改动影响范围
+3. [[AI/Code review和知识图谱/CodeGraph-代码语义知识图谱|CodeGraph：Claude Code 代码知识图谱]] — 预建代码语义关系，减少 Agent 扫描成本
 4. [[AI/Code review和知识图谱/Graphify-软件工程知识图谱工具|Graphify]] — 统一查询代码、文档与多媒体资料关系
 5. [[AI/Code review和知识图谱/Understand-Anything-代码知识图谱可视化|Understand-Anything]] — 代码库结构可视化与交互问答
 
@@ -98,22 +98,22 @@ sources:
 5. [[AI/OpenClaw/Openclaw-AIOps|Openclaw-AIOps]] — AIOps 运维场景
 6. [[AI/OpenClaw/Openclaw-多智能体|Openclaw-多智能体]] — 多智能体架构（2974 行，全库最大文档）
 7. [[AI/OpenClaw/Ubuntu-2510-Setup-Guide|Ubuntu-2510-Setup-Guide]] — Ubuntu 环境搭建
-8. [[AI/OpenClaw/OpenClaw-K8s智能运维实战|K8s 智能运维实战]] — 三阶段渐进（只读→诊断→变更）+ OPA 护栏 + 实战案例
+8. [[AI/OpenClaw/OpenClaw-K8s智能运维实战|OpenClaw K8s 运维：从只读巡检到低风险变更]] — 三阶段渐进（只读→诊断→变更）+ OPA 护栏 + 实战案例
 
 ### Hermes Agent 路径
 1. [[AI/Hermes-agent/Hermes-Agent-满配指南与生态资源|满配指南与生态资源]] — 五大配置模块 + 高阶进化 + 资源合集（两篇合并）
 2. [[AI/Hermes-agent/Ubuntu 25.10 安装与使用 Hermes Agent 指南|Ubuntu 安装指南]] — 部署与 OpenClaw 迁移
-3. [[AI/Hermes-agent/Hermes与OpenClaw对比及飞书接入指南|架构解析与对比]] — 五层架构、记忆系统、飞书接入
-4. [[AI/Hermes-agent/Hermes-Curator-Skill膨胀治理|Curator Skill 膨胀治理]] — Skill 生命周期管理、四步工作流、Agent 四种记忆
+3. [[AI/Hermes-agent/Hermes与OpenClaw对比及飞书接入指南|Hermes Agent：OpenClaw 对比与飞书接入]] — 五层架构、记忆系统、飞书接入
+4. [[AI/Hermes-agent/Hermes-Curator-Skill膨胀治理|Hermes Agent：Skill 膨胀与上下文治理]] — Skill 生命周期管理、四步工作流、Agent 四种记忆
 
 ### AI 行业动态
-1. [[AI/行业动态/Claude-Code创始人红杉大会七个判断|Boris Cherny 红杉大会七个判断]] — 代码价值重估、MCP 定位、SaaS 护城河瓦解、创业机会窗口
-2. [[AI/行业动态/Anthropic工程师力推HTML取代Markdown-Karpathy附议|HTML 取代 Markdown]] — Anthropic 工程师 5 大论据 + Karpathy 进化路线 + 哥白尼式智能观
+1. [[AI/行业动态/Claude-Code创始人红杉大会七个判断|Claude Code 创始人：红杉大会的 7 个判断]] — 代码价值重估、MCP 定位、SaaS 护城河瓦解、创业机会窗口
+2. [[AI/行业动态/Anthropic工程师力推HTML取代Markdown-Karpathy附议|HTML 取代 Markdown：Anthropic 工程师的建议]] — Anthropic 工程师 5 大论据 + Karpathy 进化路线 + 哥白尼式智能观
 3. [[AI/行业动态/AI时代的Git版本管理最佳实践|AI 时代 Git 实践]] — 11 条最佳实践 + Jujutsu/GitButler 新工具 + 隔离/透明/自动化三原则
 
 ### AI 视觉与 HTML 交付路径
 1. [[AI/AI-视觉/Effective-HTML-Agent页面工作流|Effective HTML 页面工作流]] — 任务判断、线框、交互原型、架构图、计划和视觉设计；直接输出自包含 HTML，并对比 HTML 与 Markdown 的交付边界、20 个设计范本和同类工具定位
-2. [[AI/AI-视觉/Markdown-Viewer-Skills-Markdown中直接画图|Markdown Viewer Skills]] — 在 Markdown 中嵌入 PlantUML、Vega、Graphviz 等图表
+2. [[AI/AI-视觉/Markdown-Viewer-Skills-Markdown中直接画图|Markdown Viewer Skills：AI 文档配图]] — 在 Markdown 中嵌入 PlantUML、Vega、Graphviz 等图表
 3. [[AI/AI-视觉/html-anything-AI生成HTML全场景工具|html-anything]] — 面向报告、演示文稿、动画和社交卡片的全场景 HTML 生成
 4. [[AI/AI-视觉/AI-Animation-Skill-科普动画|AI-Animation-Skill]] — 使用 HTML 模板生成可录制的科普动画
 
@@ -136,14 +136,14 @@ sources:
 | [[AI/ClaudeCode/Claude Code 扩展体系|扩展体系]] | 四层扩展机制 | MCP、Skills、Slash Commands、Plugin |
 | [[AI/ClaudeCode/多智能体协作-Subagents与Agent-Teams|多智能体协作]] | Subagents 与 Agent Teams | 并行任务、团队协作 |
 | [[AI/ClaudeCode/Claude-Skill质检工具-SkillCraft|Skill Craft 质检工具]] | Skill 质量工程 | 7 类失效模式、三层评估、check/fix/create/audit |
-| [[AI/ClaudeCode/Claude-Code-Harness实战-最小可用系统|Harness 实战]] | 安全约束系统 | 四层架构、Hooks 拦截器、规范先行、Git 门禁 |
+| [[AI/ClaudeCode/Claude-Code-Harness实战-最小可用系统\|Harness 实战：从零搭建最小可用系统]] | 安全约束系统 | 四层架构、Hooks 拦截器、规范先行、Git 门禁 |
 
 ### Obsidian 知识库（目录共 6 篇，此处列出 3 篇）
 
 | 文章 | 主题 | 关键词 |
 |------|------|--------|
-| [[AI/Obsidian/obsidian-claude-code-AI知识库完整指南|AI知识库完整指南]] | 完整指南 | Markdown 母语、三层架构、30 分钟上手、六大操作、改造计划（三文合并） |
-| [[AI/Obsidian/Obsidian可视化Skills-Excalidraw-Mermaid-Canvas|Obsidian可视化Skills]] | AI 可视化 | Excalidraw、Mermaid、Canvas、Skills |
+| [[AI/Obsidian/obsidian-claude-code-AI知识库完整指南\|Obsidian + Claude Code：AI 知识库指南]] | 完整指南 | Markdown 母语、三层架构、30 分钟上手、六大操作、改造计划（三文合并） |
+| [[AI/Obsidian/Obsidian可视化Skills-Excalidraw-Mermaid-Canvas\|Obsidian 可视化 Skills]] | AI 可视化 | Excalidraw、Mermaid、Canvas、Skills |
 | [[AI/Obsidian/github-pages-quartz\|Quartz 4 发布笔记]] | 网站发布 | GitHub Actions、Pages artifact、日夜主题、wikilink 与旧路由兼容 |
 
 ### AI 视觉与 HTML 交付（目录共 7 篇笔记，此处列出 4 篇）
@@ -151,7 +151,7 @@ sources:
 | 文章 | 主题 | 关键词 |
 |------|------|--------|
 | [[AI/AI-视觉/Effective-HTML-Agent页面工作流|Effective HTML 页面工作流]] | Agent 页面制作与 HTML 交付 | 任务路由、线框、原型、架构图、视觉设计、自包含 HTML、HTML vs Markdown、设计范本 |
-| [[AI/AI-视觉/Markdown-Viewer-Skills-Markdown中直接画图|Markdown Viewer Skills]] | Markdown 文档配图 | PlantUML、Vega、Graphviz、技能路由 |
+| [[AI/AI-视觉/Markdown-Viewer-Skills-Markdown中直接画图\|Markdown Viewer Skills：AI 文档配图]] | Markdown 文档配图 | PlantUML、Vega、Graphviz、技能路由 |
 | [[AI/AI-视觉/html-anything-AI生成HTML全场景工具|html-anything]] | 全场景 HTML 生成 | Web 原型、演示文稿、视频、社交卡片、导出 |
 | [[AI/AI-视觉/AI-Animation-Skill-科普动画|AI-Animation-Skill]] | HTML 科普动画 | 模板、动画、视频录制 |
 
@@ -171,8 +171,8 @@ sources:
 
 | 文章 | 主题 | 关键词 |
 |------|------|--------|
-| [[AI/行业动态/Claude-Code创始人红杉大会七个判断\|Boris Cherny 红杉大会七个判断]] | AI 行业趋势 | 代码民主化、MCP 定位、SaaS 瓦解、创业机会、Computer Use |
-| [[AI/行业动态/Anthropic工程师力推HTML取代Markdown-Karpathy附议\|HTML 取代 Markdown]] | AI 输出格式 | HTML vs Markdown、信息密度、交互性、一次性编辑器、哥白尼式智能观 |
+| [[AI/行业动态/Claude-Code创始人红杉大会七个判断\|Claude Code 创始人：红杉大会的 7 个判断]] | AI 行业趋势 | 代码民主化、MCP 定位、SaaS 瓦解、创业机会、Computer Use |
+| [[AI/行业动态/Anthropic工程师力推HTML取代Markdown-Karpathy附议\|HTML 取代 Markdown：Anthropic 工程师的建议]] | AI 输出格式 | HTML vs Markdown、信息密度、交互性、一次性编辑器、哥白尼式智能观 |
 | [[AI/行业动态/AI时代的Git版本管理最佳实践\|AI 时代 Git 实践]] | Agent Git 工作流 | Atomic Commit、Checkpoint、Stacked PR、Jujutsu、GitButler、AGENT.md |
 
 ---

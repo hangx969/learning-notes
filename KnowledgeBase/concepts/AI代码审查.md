@@ -39,8 +39,8 @@ AI 代码审查是使用语言模型或编码 Agent 分析代码变更、定位�
 ## 在本仓库中的覆盖
 
 - [[AI/Code review和知识图谱/AI代码审查闭环-验证优先与敏感信息清理]]：验证优先、真实环境副作用、敏感信息清理和五步闭环。
-- [[AI/Code review和知识图谱/code-review-graph-本地代码知识图谱]]：用 AST 图谱和 blast-radius 分析增强影响范围判断。
-- [[AI/Code review和知识图谱/CodeGraph-代码语义知识图谱]]：函数调用、继承和模块依赖图谱。
+- [[AI/Code review和知识图谱/code-review-graph-本地代码知识图谱|code-review-graph：本地代码知识图谱指南]]：用 AST 图谱和 blast-radius 分析增强影响范围判断。
+- [[AI/Code review和知识图谱/CodeGraph-代码语义知识图谱|CodeGraph：Claude Code 代码知识图谱]]：函数调用、继承和模块依赖图谱。
 - [[AI/行业动态/OpenCodeReview-阿里AI代码审查工程化]]：确定性工程骨架、模型语义判断和多层质量控制。
 - [[AI/提示词/AI编程协作提示词]]：代码审查、最小修改和回归验证提示词。
 

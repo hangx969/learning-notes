@@ -106,7 +106,7 @@ aliases:
   - curl 测试外网连通性，验证出站访问
   - 涵盖 Kubernetes 集群内部 DNS 解析测试
 
-### [[Azure/7_ACR-ACI|Azure Container Registry & Azure Container Instances]]
+### [[Azure/7_ACR-ACI|Azure ACR and ACI]]
 - 核心内容：ACR 容器注册表和 ACI 容器实例的概念、层级结构与操作方法。
 - 关键知识点：
   - ACR 层级：容器注册表 > 存储库 > 容器镜像

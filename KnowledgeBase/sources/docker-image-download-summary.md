@@ -14,7 +14,7 @@ aliases:
 
 ## 元信息
 
-- **原始文档**：[[Docker-Kubernetes/docker/docker无需本地环境从DockerHub下载镜像并保存为tar]]
+- **原始文档**：[[Docker-Kubernetes/docker/docker无需本地环境从DockerHub下载镜像并保存为tar|无需本地 Docker：下载 Docker Hub 镜像为 tar]]
 - **原始来源**：https://mp.weixin.qq.com/s/KtINb-TZxbvfuF7RwsBMVg?scene=1&click_id=458085540
 - **领域**：Docker-Kubernetes / Docker
 - **摄入日期**：2026-09-05

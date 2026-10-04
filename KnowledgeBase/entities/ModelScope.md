@@ -43,7 +43,7 @@ ModelScope（魔搭社区）是模型、数据集和 AI 应用的开放平台，
 ## 在本仓库中的覆盖
 
 - [[AI/企业级私有化大模型/基于K8s部署vLLM和LiteLLM]]：为 Kubernetes 推理服务准备模型文件。
-- [[AI/企业级私有化大模型/一个 Deployment 就能跑 vLLM，为什么还需要 KServe？]]：模型来源与 PVC 加载链路。
+- [[AI/企业级私有化大模型/一个 Deployment 就能跑 vLLM，为什么还需要 KServe？|为何用 KServe 管理 vLLM 推理服务？]]：模型来源与 PVC 加载链路。
 - [[AI/企业级私有化大模型/大模型本地部署选型-Ollama-vLLM-SGLang-vLLM-Omni]]：下载、目录规划、rsync 和离线镜像交付。
 
 ## 知识空白

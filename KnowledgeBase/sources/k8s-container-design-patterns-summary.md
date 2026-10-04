@@ -13,7 +13,7 @@ aliases:
 # K8s 容器设计模式
 
 ## 元信息
-- **原始文档**：[[k8s基础-容器设计模式-Sidecar-Init-Ambassador-Adapter]]
+- **原始文档**：[[k8s基础-容器设计模式-Sidecar-Init-Ambassador-Adapter|K8s 四种容器设计模式]]
 - **领域**：Docker-Kubernetes / 基础资源
 - **摄入日期**：2026-06-28
 - **合并来源**：四篇文章合并——Sidecar + Init Container + Ambassador + Adapter

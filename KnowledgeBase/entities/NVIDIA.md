@@ -20,11 +20,11 @@ NVIDIA 是全球领先的 GPU 硬件厂商，其 GPU 产品广泛用于深度学
 - [[GPU-DeepLearning/GPU-basics|GPU 基础与环境配置]]：裸机驱动与 CUDA Toolkit、Docker 的 NVIDIA Container Toolkit、K8s Device Plugin 与 GPU Operator（NFD/GFD、Driver Installer、DCGM Exporter）
 - [[GPU-DeepLearning/NVIDIA-GPU-开启persistent mode|NVIDIA GPU 开启 Persistent Mode]]：安装驱动自带的 `nvidia-persistenced` systemd 服务，在没有活动客户端时维持驱动状态
 - [[GPU-DeepLearning/GPU-exporter-grafana|GPU Exporter 与 Grafana 监控]]：以 systemd 部署 nvidia_gpu_exporter，由 Prometheus 抓取并在 Grafana 展示
-- [[HPC/Ubuntu2204-Slurm-安装指南|Ubuntu 22.04 Slurm 安装指南]]：H800 GPU 生产集群通过 `GresTypes=gpu`、`Gres=gpu:H800:8` 与 gres.conf 定义 GPU 资源
+- [[HPC/Ubuntu2204-Slurm-安装指南|Ubuntu 22.04：Slurm 安装与配置]]：H800 GPU 生产集群通过 `GresTypes=gpu`、`Gres=gpu:H800:8` 与 gres.conf 定义 GPU 资源
 - [[HPC/PBS|PBS]]：GPU 节点因 Lustre 客户端问题异常重启、Singularity 作业报 `cudaErrorUnknown` 的排查案例
 - [[Docker-Kubernetes/docker/docker配置NVIDIA GPU|Docker 配置 NVIDIA GPU]]：安装驱动、CUDA 与 nvidia-docker2，用 `--gpus` 指定容器可见的 GPU
 - [[Docker-Kubernetes/k8s-ai-gpu/k8s配置NVIDIA GPU|K8s 配置 NVIDIA GPU]]：Ubuntu 22.04 裸金属节点的驱动安装、NVIDIA Container Toolkit、containerd `nvidia` runtimeClass 与 GPU Operator
-- [[Docker-Kubernetes/k8s-ai-gpu/从零部署 NVIDIA Device Plugin：K8s 识别 GPU 的“第一块敲门砖”|从零部署 NVIDIA Device Plugin]]：驱动与 Container Toolkit 前置条件、Helm/手动/GPU Operator 三种部署方式、验证与常见报错
+- [[Docker-Kubernetes/k8s-ai-gpu/从零部署 NVIDIA Device Plugin：K8s 识别 GPU 的“第一块敲门砖”|NVIDIA Device Plugin：K8s GPU 识别与部署入门]]：驱动与 Container Toolkit 前置条件、Helm/手动/GPU Operator 三种部署方式、验证与常见报错
 - [[KnowledgeBase/sources/k8s-nvidia-device-plugin-summary|NVIDIA Device Plugin 摘要]]：Device Plugin 部署笔记的来源摘要
 - [[AI/企业级私有化大模型/大模型精度与量化：FP64到NVFP4|大模型精度与量化]]：介绍 NVIDIA Tensor Core 上的 TF32/FP8，以及 Blackwell 相关的 NVFP4 4-bit 浮点路线。
 - [[AI/企业级私有化大模型/大模型本地部署选型-Ollama-vLLM-SGLang-vLLM-Omni|大模型本地部署选型]]：覆盖 NVIDIA Container Toolkit、GPU 可见性、显存余量和多 Runtime 容器化。

@@ -11,6 +11,9 @@ aliases:
 
 # K8s DevOps 工具链：Jenkins 2.426.3
 
+<div id="k8s部署基于jenkins24263的devops工具链-基于yaml" class="legacy-anchor"></div>
+<div id="k8s部署基于jenkins24263的devops工具链-基于yaml_1" class="legacy-anchor"></div>
+
 基于 YAML 部署。
 
 

@@ -47,7 +47,7 @@ ArgoCD 是基于 GitOps 理念的 Kubernetes 持续交付（CD）工具，通过
 
 - [[Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD基础|ArgoCD基础]]
 - [[Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD Image Updater|ArgoCD Image Updater]]
-- [[Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD部署Helm应用时域名解析失败问题排查与解决|ArgoCD部署Helm应用时域名解析失败问题排查与解决]]
+- [[Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD部署Helm应用时域名解析失败问题排查与解决|ArgoCD Helm 部署：域名解析故障处理]]
 - [[Docker-Kubernetes/k8s-CICD/ArgoCD/学习链接|学习链接]]
 
 ## 相关概念与实体

@@ -78,7 +78,7 @@ OpenClaw 是一个大模型驱动的通用 AI Agent 平台，能够操作电脑�
 [[AI/OpenClaw/CoPaw|CoPaw]] 是阿里推出的对标 OpenClaw 的 AI Agent 产品，基于 AgentScope 框架。通过 pip 安装，`copaw init --defaults` 初始化，`copaw app` 启动，访问 `127.0.0.1:8088` 使用 WebUI。
 
 ## 与 Hermes Agent 的对比
-[[AI/Hermes-agent/Hermes与OpenClaw对比及飞书接入指南|Hermes Agent 架构解析]] 从六个维度对比了两者：
+[[AI/Hermes-agent/Hermes与OpenClaw对比及飞书接入指南|Hermes Agent：OpenClaw 对比与飞书接入]] 从六个维度对比了两者：
 - **技术栈**：Hermes 采用 Python 轻量后端，OpenClaw 基于 TypeScript 全平台产品
 - **工具注册**：Hermes 自注册 + 自动发现，OpenClaw 依托 Clawhub 插件生态
 - **记忆系统**：Hermes 有机记忆（MEMORY.md/USER.md 冻结快照），OpenClaw 模块化方案（builtin/qmd）
@@ -102,9 +102,9 @@ OpenClaw 和 [[KnowledgeBase/entities/Claude-Code|Claude Code]] 同属 AI Agent 
 - [[AI/OpenClaw/CoPaw|CoPaw]]：阿里对标 OpenClaw 的 Agent 产品，pip 安装与 WebUI 启动
 - [[AI/OpenClaw/OpenClaw-Workspace-运维|OpenClaw-Workspace-运维]]：配置与内容分离、多 Agent 隔离、记忆系统、Skill 加载层级、故障排查与备份恢复
 - [[AI/OpenClaw/Ubuntu-2510-Setup-Guide|Ubuntu-2510-Setup-Guide]]：Ubuntu 25.10 新机初始化，含 SSH、免密 sudo、APT 国内源、开发工具、中文输入法与 VMware Tools
-- [[AI/OpenClaw/OpenClaw-K8s智能运维实战|OpenClaw-K8s智能运维实战]]：三阶段渐进（只读→诊断→变更）+ OPA 护栏 + 60 秒诊断修复实战
+- [[AI/OpenClaw/OpenClaw-K8s智能运维实战|OpenClaw K8s 运维：从只读巡检到低风险变更]]：三阶段渐进（只读→诊断→变更）+ OPA 护栏 + 60 秒诊断修复实战
 - [[AI/OpenClaw/飞书CLI画板-一句话生成架构图|飞书CLI画板-一句话生成架构图]]：飞书 CLI 画板生成能力，AI Agent 一句话生成可编辑架构图
-- [[AI/Hermes-agent/Hermes与OpenClaw对比及飞书接入指南|Hermes 与 OpenClaw 对比]]：Hermes Agent 与 OpenClaw 的架构对比及飞书接入
+- [[AI/Hermes-agent/Hermes与OpenClaw对比及飞书接入指南|Hermes Agent：OpenClaw 对比与飞书接入]]：Hermes Agent 与 OpenClaw 的架构对比及飞书接入
 - [[AI/AI-视觉/AI-Animation-Skill-科普动画|AI-Animation-Skill]]：以 Skill 形式运行在 OpenClaw 等 Agent 中的 HTML 科普动画模板集，可通过 ClawHub 安装
 
 ## 智能体定义文件（AI/AIOps/agents身份文件/）

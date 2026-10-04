@@ -70,11 +70,11 @@ Prometheus 是开源的系统监控与告警工具，采用拉取（pull）模�
 - [[Docker-Kubernetes/k8s-monitoring-logging/k8s监控alertmanager(v0.14.0)|k8s监控alertmanager(v0.14.0)]]
 - [[Docker-Kubernetes/k8s-monitoring-logging/二进制部署Prometheus(v2.32.1)联邦集群|二进制部署Prometheus(v2.32.1)联邦集群]]
 - [[Docker-Kubernetes/k8s-monitoring-logging/二进制部署prometheus-grafana-nodeexporter|二进制部署prometheus-grafana-nodeexporter]]
-- [[Docker-Kubernetes/k8s-monitoring-logging/helm部署prometheus-stack全家桶|helm部署prometheus-stack全家桶]]
+- [[Docker-Kubernetes/k8s-monitoring-logging/helm部署prometheus-stack全家桶|Prometheus-Stack：生产部署与运维]]
 - [[Docker-Kubernetes/docker/docker部署prometheus-grafana-cAdvisior监控|docker部署prometheus-grafana-cAdvisior监控]]
 - [[Docker-Kubernetes/k8s-scaling/k8s-基于KEDA的弹性能力#KServe + KEDA：基于请求指标的模型服务实战|KServe + KEDA 基于请求指标自动扩缩容]]
 - [[Docker-Kubernetes/k8s-scaling/k8s-HPA-VPA#五、Kubernetes 1.37 原生 HPA Scale-to-Zero|K8s 1.37 原生 HPA Scale-to-Zero]]
-- [[Docker-Kubernetes/k8s-storage/让存储故障现形：Kubernetes Volume Health Monitor 原理与生产接入|Kubernetes Volume Health Monitor 原理与生产接入]]
+- [[Docker-Kubernetes/k8s-storage/让存储故障现形：Kubernetes Volume Health Monitor 原理与生产接入|K8s Volume Health Monitor：原理与生产接入]]
 
 ## 相关概念与实体
 - [[KnowledgeBase/entities/Grafana|Grafana]]

@@ -32,7 +32,7 @@ aliases:
 > [!info] 识别多次提到但没有专门页面的主题、明显偏空白的领域、以及高价值但低连接的知识孤岛。
 
 > [!note] 快照与更新
-> 本页基于 2026-04-16 全库扫描；文档数已按 2026-09-29 统计更新。此后已建立 [[KnowledgeBase/concepts/RBAC|RBAC]]、[[KnowledgeBase/concepts/StorageClass|StorageClass]] 概念页和 [[KnowledgeBase/entities/Calico|Calico]]、[[KnowledgeBase/entities/Nginx|Nginx]] 实体页；GitOps、容器安全、FinOps、Operator 开发和 API Gateway 方向的新增文档见 [[KnowledgeBase/analysis/topic-coverage-analysis|主题覆盖分析]] 顶部说明及 [[Docker-Kubernetes/k8s-networking-service-mesh/k8s-Gateway-API入门-Ingress下一代方案|Gateway API 入门]]。
+> 本页基于 2026-04-16 全库扫描；文档数已按 2026-09-29 统计更新。此后已建立 [[KnowledgeBase/concepts/RBAC|RBAC]]、[[KnowledgeBase/concepts/StorageClass|StorageClass]] 概念页和 [[KnowledgeBase/entities/Calico|Calico]]、[[KnowledgeBase/entities/Nginx|Nginx]] 实体页；GitOps、容器安全、FinOps、Operator 开发和 API Gateway 方向的新增文档见 [[KnowledgeBase/analysis/topic-coverage-analysis|主题覆盖分析]] 顶部说明及 [[Docker-Kubernetes/k8s-networking-service-mesh/k8s-Gateway-API入门-Ingress下一代方案|Kubernetes Gateway API 入门]]。
 
 ---
 

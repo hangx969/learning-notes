@@ -46,6 +46,6 @@ aliases:
 
 ## 值得注意
 
-- **与 Claude Code 的 Harness 实践互补**：本文的 AGENT.md 规范 + commit trailer 与 [[AI/ClaudeCode/Claude-Code-Harness实战-最小可用系统|Harness 四层约束架构]] 的 Hooks 拦截器 + Git 门禁高度互补——一个解决"怎么约束 agent 行为"，一个解决"怎么约束 agent 产出的版本历史"
+- **与 Claude Code 的 Harness 实践互补**：本文的 AGENT.md 规范 + commit trailer 与 [[AI/ClaudeCode/Claude-Code-Harness实战-最小可用系统|Harness 实战：从零搭建最小可用系统]] 的 Hooks 拦截器 + Git 门禁高度互补——一个解决"怎么约束 agent 行为"，一个解决"怎么约束 agent 产出的版本历史"
 - **jj 和 GitButler 值得关注**：两个工具都以 Git 为后端，兼容现有生态，但从设计层面解决了 Git 在 AI 并发场景下的根本限制。jj 的 `absorb` 和 GitButler 的虚拟分支对 multi-agent 场景尤其有价值
 - **Entire 的 Shadow Branch 思路新颖**：将 agent 的完整决策过程（prompt、推理链、上下文）纳入版本控制但不污染主分支，是目前最优雅的可追溯性方案

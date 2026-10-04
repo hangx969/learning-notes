@@ -41,7 +41,7 @@ Kustomize 是 Kubernetes 的无模板配置定制工具，可读取普通 Kubern
 
 ## 在本仓库中的覆盖
 
-- [[Docker-Kubernetes/k8s-CICD/Kustomize/Kustomize入门-Base与Overlay多环境配置|Kustomize Base 与 Overlay 入门]]：当前推荐字段、能力边界、六个常用字段和部署前验证顺序。
+- [[Docker-Kubernetes/k8s-CICD/Kustomize/Kustomize入门-Base与Overlay多环境配置|Kustomize 入门：Base 与 Overlay]]：当前推荐字段、能力边界、六个常用字段和部署前验证顺序。
 - [[Docker-Kubernetes/k8s-CICD/Kustomize/k8s配置定制工具-kustomize|Kustomize 使用指南]]：基础用法、生成器和更多进阶特性；部分示例包含旧字段，需要结合版本辨别。
 
 ## 版本边界

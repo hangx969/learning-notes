@@ -12,6 +12,9 @@ aliases:
 
 # ArgoCD Helm 部署：域名解析故障处理
 
+<div id="argocd部署helm应用时域名解析失败问题排查与解决" class="legacy-anchor"></div>
+<div id="argocd部署helm应用时域名解析失败问题排查与解决_1" class="legacy-anchor"></div>
+
 
 ## 问题背景
 

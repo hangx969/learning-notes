@@ -14,7 +14,7 @@ aliases:
 
 ## 元信息
 
-- **原始文档**：[[Docker-Kubernetes/k8s-CICD/Kustomize/Kustomize入门-Base与Overlay多环境配置]]
+- **原始文档**：[[Docker-Kubernetes/k8s-CICD/Kustomize/Kustomize入门-Base与Overlay多环境配置|Kustomize 入门：Base 与 Overlay]]
 - **领域**：Kubernetes 配置管理
 - **摄入日期**：2026-09-12
 

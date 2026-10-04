@@ -15,7 +15,7 @@ aliases:
 
 ## 元信息
 
-- **原始文档**：[[Docker-Kubernetes/k8s-storage/让存储故障现形：Kubernetes Volume Health Monitor 原理与生产接入]]
+- **原始文档**：[[Docker-Kubernetes/k8s-storage/让存储故障现形：Kubernetes Volume Health Monitor 原理与生产接入|K8s Volume Health Monitor：原理与生产接入]]
 - **领域**：Kubernetes 存储可观测性
 - **摄入日期**：2026-09-06
 
@@ -39,7 +39,7 @@ aliases:
 - [[KnowledgeBase/entities/Kubernetes|Kubernetes]]
 - [[KnowledgeBase/concepts/Observability|Observability]]
 - [[KnowledgeBase/entities/Prometheus|Prometheus]]
-- [[Docker-Kubernetes/k8s-storage/让存储故障现形：Kubernetes Volume Health Monitor 原理与生产接入|Volume Health Monitor 归档文档]]
+- [[Docker-Kubernetes/k8s-storage/让存储故障现形：Kubernetes Volume Health Monitor 原理与生产接入|K8s Volume Health Monitor：原理与生产接入]]
 
 ## 值得注意
 

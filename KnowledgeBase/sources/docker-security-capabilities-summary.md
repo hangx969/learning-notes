@@ -14,7 +14,7 @@ aliases:
 # Docker 安全配置与 Capabilities 加固
 
 ## 元信息
-- **原始文档**：[[Docker-Kubernetes/docker/docker安全配置-Capabilities与容器加固]]
+- **原始文档**：[[Docker-Kubernetes/docker/docker安全配置-Capabilities与容器加固|Docker 安全配置：Capabilities 与容器加固]]
 - **领域**：Docker / 容器安全
 - **摄入日期**：2026-06-05
 

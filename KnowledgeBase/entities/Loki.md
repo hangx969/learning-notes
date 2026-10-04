@@ -48,10 +48,10 @@ Grafana Loki 是轻量级日志聚合系统，与 Prometheus 设计理念一致�
 - `Docker-Kubernetes/k8s-monitoring-logging/` 目录中涉及 Loki 的部署与配置
 - `Docker-Kubernetes/docker/` 目录中包含 Loki 容器化部署相关笔记
 - [[Docker-Kubernetes/docker/docker部署loki|docker部署loki]]：Loki 特性、优缺点与 Loki/Promtail/Grafana 架构，Compose 部署与 Promtail 采集配置（文末标注该流程尚未跑通）
-- [[Docker-Kubernetes/k8s-monitoring-logging/helm部署Loki-promtail-tempo-grafanaAgent全家桶|helm部署Loki-promtail-tempo-grafanaAgent全家桶]]：Helm 部署 Loki（singleBinary + 持久化）与 Promtail，用 k8s-event-logger 或 Event Exporter 把 Kubernetes Events 写入 Loki
-- [[Docker-Kubernetes/k8s-monitoring-logging/k8s日志管理-采集方案与审计日志|k8s日志管理-采集方案与审计日志]]：应用直推 Loki、高基数标签导致查询超时的避坑，以及 PLG 选型建议
-- [[Docker-Kubernetes/k8s-monitoring-logging/helm部署prometheus-stack全家桶|helm部署prometheus-stack全家桶]]：在 Grafana 中添加 Loki 数据源并与 Tempo 关联，以及 Loki 存储空间告警规则
-- [[Docker-Kubernetes/k8s-monitoring-logging/OpenTelemetry实战-统一Traces-Metrics-Logs|OpenTelemetry实战-统一Traces-Metrics-Logs]]：OTel Collector 将日志导出到 Loki，以及 LGTM 技术栈与传统方案的对比
+- [[Docker-Kubernetes/k8s-monitoring-logging/helm部署Loki-promtail-tempo-grafanaAgent全家桶|Helm部署Loki+Promtail+Tempo+GrafanaAgent]]：Helm 部署 Loki（singleBinary + 持久化）与 Promtail，用 k8s-event-logger 或 Event Exporter 把 Kubernetes Events 写入 Loki
+- [[Docker-Kubernetes/k8s-monitoring-logging/k8s日志管理-采集方案与审计日志|K8s 日志：基础机制、六种采集方案与审计日志]]：应用直推 Loki、高基数标签导致查询超时的避坑，以及 PLG 选型建议
+- [[Docker-Kubernetes/k8s-monitoring-logging/helm部署prometheus-stack全家桶|Prometheus-Stack：生产部署与运维]]：在 Grafana 中添加 Loki 数据源并与 Tempo 关联，以及 Loki 存储空间告警规则
+- [[Docker-Kubernetes/k8s-monitoring-logging/OpenTelemetry实战-统一Traces-Metrics-Logs|OpenTelemetry 统一可观测性实战]]：OTel Collector 将日志导出到 Loki，以及 LGTM 技术栈与传统方案的对比
 - [[Docker-Kubernetes/k8s-monitoring-logging/基于helm+operator部署ECK日志收集平台|基于helm+operator部署ECK日志收集平台]]：Loki 轻量架构与 ELK/EFK 传统架构的对比
 
 ## 知识空白

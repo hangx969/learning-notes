@@ -15,7 +15,7 @@ aliases:
 
 ## 元信息
 
-- **原始文档**：[[Docker-Kubernetes/k8s-ai-gpu/从零部署 NVIDIA Device Plugin：K8s 识别 GPU 的“第一块敲门砖”]]
+- **原始文档**：[[Docker-Kubernetes/k8s-ai-gpu/从零部署 NVIDIA Device Plugin：K8s 识别 GPU 的“第一块敲门砖”|NVIDIA Device Plugin：K8s GPU 识别与部署入门]]
 - **原始来源**：[深栈运维：从零部署 NVIDIA Device Plugin](https://mp.weixin.qq.com/s/h49RmFUKpZXW1ybiltyqsg)
 - **领域**：Docker-Kubernetes / NVIDIA GPU
 - **摄入日期**：2026-09-05

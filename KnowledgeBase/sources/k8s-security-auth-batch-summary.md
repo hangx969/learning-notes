@@ -109,7 +109,7 @@ aliases:
 - Vulnerability DB 是 OCI Image，需使用 oras 工具下载（非 docker pull）
 - 支持离线环境的漏洞数据库部署
 
-### [[k8s容器安全上下文-SecurityContext|K8s 容器安全上下文完全指南]]
+### [[k8s容器安全上下文-SecurityContext|K8s 容器安全上下文：从入门到生产避坑]]
 
 **核心内容**: Security Context 生产实战完全指南，覆盖 UID/GID 管理、Linux Capabilities、特权模式、sysctl、seccomp、Pod 安全标准（PSS）三级策略。
 

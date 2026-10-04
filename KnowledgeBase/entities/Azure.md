@@ -38,7 +38,7 @@ Microsoft Azure 是微软提供的公有云计算平台，涵盖计算、存储�
 - **AKS 安全体系**形成闭环：[[Azure/3_AKS-workload-identity|Workload Identity]]（Pod 身份认证，通过 OIDC + Federated Credential 关联 Managed Identity）→ [[Azure/4_AKS-SecretProviderClass-KeyVault|SecretProviderClass]]（CSI 驱动将 Key Vault 密钥同步为 K8s Secret）
 - **ACR** 层级：容器注册表 > 存储库 > 容器镜像，中国区域名为 `azurecr.cn`
 - **ACI** 支持快速部署容器实例，可与 VNet 集成
-- 详见 [[Azure/2_AKS-basics|AKS 基础]]、[[Azure/7_ACR-ACI|ACR 与 ACI]]
+- 详见 [[Azure/2_AKS-basics|AKS 基础]]、[[Azure/7_ACR-ACI|Azure ACR and ACI]]
 
 ### 网络
 
@@ -125,7 +125,7 @@ Microsoft Azure 是微软提供的公有云计算平台，涵盖计算、存储�
 - [[Azure/4_AKS-SecretProviderClass-KeyVault|AKS SecretProviderClass 集成 Key Vault]]：Secrets Store CSI Driver 挂载 Key Vault 内容并同步为 K8s Secret
 - [[Azure/5_Azure-Storage|Azure Storage]]：存储冗余策略、Blob 类型与访问层、托管磁盘类型
 - [[Azure/6_Azure-Networking|Azure Networking]]：psping、nc、dig 等连通性测试命令，以及 VNet、NSG、负载均衡等网络基础
-- [[Azure/7_ACR-ACI|ACR 与 ACI]]：注册表层级、中国区 `azurecr.cn` 登录服务器、ACR 任务与 ACI 容器实例
+- [[Azure/7_ACR-ACI|Azure ACR and ACI]]：注册表层级、中国区 `azurecr.cn` 登录服务器、ACR 任务与 ACI 容器实例
 - [[Azure/8_Azure-devops-basics|DevOps 基础]]：`azure-pipelines.yml` 的 Pipeline > Stage > Job > Step 层级与变量传递
 - [[Azure/9_Azure-devops-self-host-agents|自托管 Agent]]：中国区自托管 Agent 部署，PAT、Device Code、Service Principal 注册认证
 - [[Azure/10_Azure-devops-agent-pool-management|Agent Pool 管理]]：用 Az CLI 与 REST API 管理 Agent Pool，删除 Agent 只能走 REST API

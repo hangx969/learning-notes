@@ -12,6 +12,9 @@ tags:
 
 # Kubebuilder：从零开发 K8s Operator
 
+<div id="从零开发-kubernetes-operatorkubebuilder-实战教程" class="legacy-anchor"></div>
+<div id="从零开发-kubernetes-operator" class="legacy-anchor"></div>
+
 ## 什么是 Operator？
 
 Operator 的主要目标是将工程师的逻辑转换为代码，以便实现原生 Kubernetes 无法完成的某些任务的自动化。

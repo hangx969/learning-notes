@@ -44,8 +44,8 @@ aliases:
 
 - [[KnowledgeBase/entities/Kubernetes|Kubernetes]]
 - [[KnowledgeBase/entities/Prometheus|Prometheus]]
-- [[Docker-Kubernetes/k8s-scaling/k8s-HPA-VPA|HPA 与 VPA 自动扩缩容]]
-- [[Docker-Kubernetes/k8s-scaling/k8s-基于KEDA的弹性能力|KEDA 事件驱动扩缩容]]
+- [[Docker-Kubernetes/k8s-scaling/k8s-HPA-VPA|K8s 自动扩缩容：HPA、VPA 与 Scale-to-Zero]]
+- [[Docker-Kubernetes/k8s-scaling/k8s-基于KEDA的弹性能力|KEDA：事件驱动扩缩容与 KServe 实战]]
 - [[Docker-Kubernetes/k8s-scaling/k8s-HPA-VPA#五、Kubernetes 1.37 原生 HPA Scale-to-Zero|整合文章中的 Scale-to-Zero 章节]]
 
 ## 值得注意

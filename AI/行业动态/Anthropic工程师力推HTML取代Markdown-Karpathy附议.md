@@ -1,5 +1,7 @@
 # HTML 取代 Markdown：Anthropic 工程师的建议
 
+<div id="anthropic-工程师力推-html-取代-markdown-karpathy-附议" class="legacy-anchor"></div>
+
 Karpathy 对这一建议表示支持。
 
 > 来源：量子位 QbitAI（Jay），2026-05-12

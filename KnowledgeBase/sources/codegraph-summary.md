@@ -14,7 +14,7 @@ aliases:
 # CodeGraph 代码语义知识图谱
 
 ## 元信息
-- **原始文档**：[[CodeGraph-代码语义知识图谱]]
+- **原始文档**：[[CodeGraph-代码语义知识图谱|CodeGraph：Claude Code 代码知识图谱]]
 - **领域**：AI / Claude Code / 代码理解
 - **摄入日期**：2026-06-08
 

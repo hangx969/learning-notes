@@ -11,6 +11,9 @@ tags:
 
 # K8s 标签与选择器避坑：5 条规则与生产案例
 
+<div id="kubernetes-标签与选择器避坑5-条核心铁律与生产级实战案例" class="legacy-anchor"></div>
+<div id="kubernetes-标签与选择器实战" class="legacy-anchor"></div>
+
 ## 一、标签到底是干嘛的
 
 标签（Label）就是挂在 K8s 对象上的键值对，`key=value` 格式。核心用途两个：**组织**和**选择**。

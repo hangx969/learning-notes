@@ -145,16 +145,16 @@ sources:
 - [[AI/ClaudeCode/Claude Code 扩展体系|扩展体系]] — MCP + Skills + Slash Commands + Plugin 四层扩展机制
 - [[AI/ClaudeCode/多智能体协作-Subagents与Agent-Teams|多智能体协作]] — Subagents 与 Agent Teams
 - [[AI/ClaudeCode/Claude-Skill质检工具-SkillCraft|Skill Craft 质检工具]] — Skill 质量工程（7 类失效模式 + 三层评估）
-- [[AI/ClaudeCode/Claude-Code-Harness实战-最小可用系统|Harness 实战]] — 四层安全约束架构 + Git 门禁
-- [[AI/ClaudeCode/CLAUDE.md最佳实践-12条规则模板|CLAUDE.md 12 条规则模板]] — 可直接复用的 CLAUDE.md 规则
-- [[AI/ClaudeCode/CLAUDE.md最佳实践-21条指令清单|CLAUDE.md 21 条指令清单]]
+- [[AI/ClaudeCode/Claude-Code-Harness实战-最小可用系统|Harness 实战：从零搭建最小可用系统]] — 四层安全约束架构 + Git 门禁
+- [[AI/ClaudeCode/CLAUDE.md最佳实践-12条规则模板|Mnilax 的 CLAUDE.md：12 条规则]] — 可直接复用的 CLAUDE.md 规则
+- [[AI/ClaudeCode/CLAUDE.md最佳实践-21条指令清单|Mayank Agarwal：21 条 CLAUDE.md 指令]]
 - [[AI/ClaudeCode/CLAUDE.md维护工程-四层加载与指令预算|CLAUDE.md 维护工程]] — 四层加载与指令预算
 - [[AI/ClaudeCode/Claude Code省token指南|Claude Code 省 Token 指南]]
-- [[AI/ClaudeCode/Claude-Code为什么用grep不用RAG|为什么用 grep 不用 RAG]] — Agentic Search
+- [[AI/ClaudeCode/Claude-Code为什么用grep不用RAG|Claude Code 为何用 grep 而非 RAG 检索代码？]] — Agentic Search
 - [[AI/ClaudeCode/Claude-Fable-5-system-prompt|Claude Fable 5 系统提示词]]
-- [[AI/ClaudeCode/Git-Worktree-AI开发实践指南|Git Worktree AI 开发实践指南]]
+- [[AI/ClaudeCode/Git-Worktree-AI开发实践指南|Vibe Coding 的 Git Worktree 实践]]
 - [[AI/ClaudeCode/HarnessKit|HarnessKit]] — AI 编码智能体统一管理工具
-- [[AI/Obsidian/obsidian-claude-code-AI知识库完整指南|AI知识库完整指南]] — 搭建知识库方法论（三文合并）
+- [[AI/Obsidian/obsidian-claude-code-AI知识库完整指南|Obsidian + Claude Code：AI 知识库指南]] — 搭建知识库方法论（三文合并）
 
 **概念页：** [[KnowledgeBase/entities/Claude-Code|Claude-Code]]
 
@@ -178,7 +178,7 @@ sources:
 - [[AI/OpenClaw/Openclaw-多智能体|Openclaw-多智能体]] — 多智能体（2974 行）
 - [[AI/OpenClaw/CoPaw|CoPaw]] — CoPaw 工具
 - [[AI/OpenClaw/Ubuntu-2510-Setup-Guide|Ubuntu-2510-Setup-Guide]] — Ubuntu 环境搭建
-- [[AI/OpenClaw/OpenClaw-K8s智能运维实战|OpenClaw-K8s智能运维实战]] — 三阶段渐进式 AIOps
+- [[AI/OpenClaw/OpenClaw-K8s智能运维实战|OpenClaw K8s 运维：从只读巡检到低风险变更]] — 三阶段渐进式 AIOps
 - [[AI/OpenClaw/OpenClaw-Workspace-运维|OpenClaw-Workspace-运维]] — Workspace 运维实战
 - [[AI/OpenClaw/飞书CLI画板-一句话生成架构图|飞书CLI画板-一句话生成架构图]]
 
@@ -196,8 +196,8 @@ sources:
 
 ### Obsidian
 **相关文档：**
-- [[AI/Obsidian/obsidian-claude-code-AI知识库完整指南|AI知识库完整指南]] ⭐ 推荐入口
-- [[AI/Obsidian/Obsidian可视化Skills-Excalidraw-Mermaid-Canvas|Obsidian可视化Skills]] — AI 生成可编辑图表（Excalidraw/Mermaid/Canvas）
+- [[AI/Obsidian/obsidian-claude-code-AI知识库完整指南|Obsidian + Claude Code：AI 知识库指南]] ⭐ 推荐入口
+- [[AI/Obsidian/Obsidian可视化Skills-Excalidraw-Mermaid-Canvas|Obsidian 可视化 Skills]] — AI 生成可编辑图表（Excalidraw/Mermaid/Canvas）
 - [[AI/Obsidian/github-pages-quartz|Quartz 4 发布笔记]] — GitHub Actions 构建 Pages、日夜主题、链接兼容与验收；[[KnowledgeBase/sources/github-pages-quartz-summary|来源摘要]]。
 
 **概念页：** [[KnowledgeBase/entities/Obsidian|Obsidian]]
@@ -213,7 +213,7 @@ sources:
 **推荐入口：**
 - [[AI/企业级私有化大模型/大模型本地部署选型-Ollama-vLLM-SGLang-vLLM-Omni|大模型本地部署选型]] — Ollama、vLLM、SGLang、vLLM-Omni 的定位、离线交付与部署边界
 - [[基于docker部署vLLM和LiteLLM私有化大模型|vLLM 与 LiteLLM 私有化部署]] — 权重、KV Cache、显存和统一网关
-- [[AI/企业级私有化大模型/一个 Deployment 就能跑 vLLM，为什么还需要 KServe？|KServe 部署 vLLM]] — 声明式模型服务、网关与弹性
+- [[AI/企业级私有化大模型/一个 Deployment 就能跑 vLLM，为什么还需要 KServe？|为何用 KServe 管理 vLLM 推理服务？]] — 声明式模型服务、网关与弹性
 
 **实体页：** [[KnowledgeBase/entities/Ollama|Ollama]]、[[KnowledgeBase/entities/vLLM|vLLM]]、[[KnowledgeBase/entities/ModelScope|ModelScope]]
 
@@ -231,7 +231,7 @@ sources:
 - [[Docker-Kubernetes/docker/docker部署prometheus-grafana-cAdvisior监控|docker部署prometheus-grafana-cAdvisior监控]]
 - [[Docker-Kubernetes/docker/docker部署nginx-tomcat-httpd-go-python服务|docker部署nginx-tomcat-httpd-go-python服务]]
 - [[Docker-Kubernetes/docker/docker部署lnmp网站|docker部署lnmp网站]]
-- [[Docker-Kubernetes/docker/docker无需本地环境从DockerHub下载镜像并保存为tar|无需本地 Docker 环境下载镜像并导出 tar]] — Registry 直连、多架构与断点续传
+- [[Docker-Kubernetes/docker/docker无需本地环境从DockerHub下载镜像并保存为tar|无需本地 Docker：下载 Docker Hub 镜像为 tar]] — Registry 直连、多架构与断点续传
 - 及更多部署实战...
 
 **概念页：** [[KnowledgeBase/entities/Docker|Docker]]
@@ -252,8 +252,8 @@ sources:
 **相关文档（20+ 篇）：**
 - [[helmv3-安装与使用|helmv3-安装与使用]] ⭐ 推荐入口
 - [[Harbor 部署与使用指南|Harbor 部署与使用指南]]
-- [[Docker-Kubernetes/k8s-monitoring-logging/helm部署prometheus-stack全家桶|helm部署prometheus-stack全家桶]]
-- [[Docker-Kubernetes/k8s-monitoring-logging/helm部署Loki-promtail-tempo-grafanaAgent全家桶|helm部署Loki-promtail-tempo-grafanaAgent全家桶]]
+- [[Docker-Kubernetes/k8s-monitoring-logging/helm部署prometheus-stack全家桶|Prometheus-Stack：生产部署与运维]]
+- [[Docker-Kubernetes/k8s-monitoring-logging/helm部署Loki-promtail-tempo-grafanaAgent全家桶|Helm部署Loki+Promtail+Tempo+GrafanaAgent]]
 - [[Docker-Kubernetes/k8s-CICD/Jenkins/helm部署jenkins|helm部署jenkins]]
 - [[Docker-Kubernetes/k8s-networking-service-mesh/helm部署ingress-nginx|helm部署ingress-nginx]]
 - [[Docker-Kubernetes/k8s-networking-service-mesh/k8s精细化流量管理-istio#Helm 安装|Helm 安装 Istio]]
@@ -276,7 +276,7 @@ sources:
 
 ### Kustomize
 **相关文档（2 篇）：**
-- [[Docker-Kubernetes/k8s-CICD/Kustomize/Kustomize入门-Base与Overlay多环境配置|Base 与 Overlay 多环境配置]] ⭐ 推荐入口
+- [[Docker-Kubernetes/k8s-CICD/Kustomize/Kustomize入门-Base与Overlay多环境配置|Kustomize 入门：Base 与 Overlay]] ⭐ 推荐入口
 - [[Docker-Kubernetes/k8s-CICD/Kustomize/k8s配置定制工具-kustomize|Kustomize 综合使用指南]] — 基础用法、生成器与进阶特性
 
 **概念页：** [[KnowledgeBase/entities/Kustomize|Kustomize]]
@@ -298,7 +298,7 @@ sources:
 ### Harbor
 **相关文档：**
 - [[Harbor 部署与使用指南|Harbor 部署与使用指南]] ⭐ 推荐入口
-- [[Docker-Kubernetes/k8s-image-management/Dragonfly与Harbor-P2P镜像分发|Dragonfly + Harbor P2P 镜像分发]] — AI/GPU 集群镜像与大文件源站卸载
+- [[Docker-Kubernetes/k8s-image-management/Dragonfly与Harbor-P2P镜像分发|Dragonfly + Harbor：P2P 分发]] — AI/GPU 集群镜像与大文件源站卸载
 - [[Docker-Kubernetes/kubeblocks/kubeblocks部署高可用harbor集群|kubeblocks部署高可用harbor集群]]
 
 **概念页：** [[KnowledgeBase/entities/Harbor|Harbor]]
@@ -307,7 +307,7 @@ sources:
 
 ### Dragonfly
 **相关文档：**
-- [[Docker-Kubernetes/k8s-image-management/Dragonfly与Harbor-P2P镜像分发|Dragonfly + Harbor P2P 镜像分发]] ⭐ 推荐入口
+- [[Docker-Kubernetes/k8s-image-management/Dragonfly与Harbor-P2P镜像分发|Dragonfly + Harbor：P2P 分发]] ⭐ 推荐入口
 - [[Docker-Kubernetes/k8s-image-management/helm部署dragonfly|helm部署dragonfly]]
 
 **概念页：** [[KnowledgeBase/entities/Dragonfly|Dragonfly]]
@@ -319,7 +319,7 @@ sources:
 ### Prometheus
 **相关文档（10+ 篇）：**
 - [[Docker-Kubernetes/k8s-monitoring-logging/Prometheus基础|Prometheus基础]] ⭐ 推荐入口
-- [[Docker-Kubernetes/k8s-monitoring-logging/helm部署prometheus-stack全家桶|helm部署prometheus-stack全家桶]]
+- [[Docker-Kubernetes/k8s-monitoring-logging/helm部署prometheus-stack全家桶|Prometheus-Stack：生产部署与运维]]
 - [[Docker-Kubernetes/k8s-monitoring-logging/Prometheus监控k8s系统组件|Prometheus监控k8s系统组件]]
 - [[Docker-Kubernetes/k8s-monitoring-logging/Prometheus监控外部k8s集群|Prometheus监控外部k8s集群]]
 - [[Docker-Kubernetes/k8s-monitoring-logging/Prometheus监控非云原生应用-主机|Prometheus监控非云原生应用-主机]]
@@ -336,7 +336,7 @@ sources:
 ### Grafana
 **相关文档：**
 - [[Docker-Kubernetes/k8s-monitoring-logging/Kubernetes原生部署Prometheus与Grafana|Kubernetes 原生部署 Prometheus 与 Grafana]] ⭐
-- [[Docker-Kubernetes/k8s-monitoring-logging/helm部署prometheus-stack全家桶|helm部署prometheus-stack全家桶]]
+- [[Docker-Kubernetes/k8s-monitoring-logging/helm部署prometheus-stack全家桶|Prometheus-Stack：生产部署与运维]]
 - [[Docker-Kubernetes/k8s-monitoring-logging/二进制部署prometheus-grafana-nodeexporter|二进制部署prometheus-grafana-nodeexporter]]
 - [[GPU-DeepLearning/GPU-exporter-grafana|GPU-exporter-grafana]]
 
@@ -357,7 +357,7 @@ sources:
 
 ### Loki
 **相关文档：**
-- [[Docker-Kubernetes/k8s-monitoring-logging/helm部署Loki-promtail-tempo-grafanaAgent全家桶|helm部署Loki-promtail-tempo-grafanaAgent全家桶]] ⭐
+- [[Docker-Kubernetes/k8s-monitoring-logging/helm部署Loki-promtail-tempo-grafanaAgent全家桶|Helm部署Loki+Promtail+Tempo+GrafanaAgent]] ⭐
 - [[Docker-Kubernetes/docker/docker部署loki|docker部署loki]]
 
 ---
@@ -368,8 +368,8 @@ sources:
 **相关文档（5 篇）：**
 - [[Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD基础|ArgoCD基础]] ⭐ 推荐入口
 - [[Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD Image Updater|ArgoCD Image Updater]]
-- [[Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD部署Helm应用时域名解析失败问题排查与解决|ArgoCD部署Helm应用时域名解析失败问题排查与解决]]
-- [[Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD多集群GitOps实战|ArgoCD多集群GitOps实战]]
+- [[Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD部署Helm应用时域名解析失败问题排查与解决|ArgoCD Helm 部署：域名解析故障处理]]
+- [[Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD多集群GitOps实战|Argo CD 多集群 GitOps 实战]]
 - [[Docker-Kubernetes/k8s-CICD/ArgoCD/学习链接|学习链接]]
 
 **概念页：** [[KnowledgeBase/entities/ArgoCD|ArgoCD]]
@@ -483,7 +483,7 @@ sources:
 ### Slurm
 **相关文档（3 篇）：**
 - [[HPC/CentOS7-slurm23.02-二进制安装|CentOS7-slurm23.02-二进制安装]] ⭐ 推荐入口
-- [[HPC/Ubuntu2204-Slurm-安装指南|Ubuntu 22.04 Slurm 22.05.11 与 23.11.4（源码与 deb 包）]]
+- [[HPC/Ubuntu2204-Slurm-安装指南|Ubuntu 22.04：Slurm 安装与配置]]
 - [[HPC/Slurm-node-exporter|Slurm-node-exporter]]
 
 **概念页：** [[KnowledgeBase/entities/Slurm|Slurm]]

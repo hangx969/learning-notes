@@ -51,7 +51,7 @@ Calico 是 Kubernetes 生态中最流行的 CNI（Container Network Interface）
 - [[Docker-Kubernetes/k8s-installation-management/latest-version/安装k8s-1.35-基于rockylinux10-最新步骤|安装k8s-1.35-基于rockylinux10-最新步骤]]：下载 calico.yaml，用脚本插入 `IP_AUTODETECTION_METHOD` 指定网卡，并验证跨节点网络
 - [[Docker-Kubernetes/k8s-installation-management/2025最新-企业级高可用集群-基于rockylinux|2025最新-企业级高可用集群-基于rockylinux]]：禁止 NetworkManager 管理 Calico 网卡，指定网卡后部署 Calico
 - [[Docker-Kubernetes/k8s-installation-management/k8s部署防火墙端口配置|k8s部署防火墙端口配置]]：按 IPIP、VXLAN、BGP、Typha 模式列出需要放行的端口
-- [[Docker-Kubernetes/k8s-CICD/Jenkins/k8s部署基于Jenkins(2.394)的DevOps工具链-基于yaml|k8s部署基于Jenkins(2.394)的DevOps工具链-基于yaml]]：Pod 沙箱创建报 Calico `Unauthorized` 时，删除 Calico 及其 CNI 配置后重新部署的排障记录
+- [[Docker-Kubernetes/k8s-CICD/Jenkins/k8s部署基于Jenkins(2.394)的DevOps工具链-基于yaml|K8s DevOps 工具链：Jenkins 2.394]]：Pod 沙箱创建报 Calico `Unauthorized` 时，删除 Calico 及其 CNI 配置后重新部署的排障记录
 - [[Docker-Kubernetes/CKA-CKS/CKA-备考|CKA-备考]]：CKA 练习环境中安装 Calico，并用 busybox 测试网络
 
 ## 知识空白

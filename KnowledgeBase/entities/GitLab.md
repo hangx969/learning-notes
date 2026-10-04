@@ -52,8 +52,8 @@ GitLab 是 DevOps 全生命周期平台，提供代码仓库、CI/CD 流水线�
 - [[Docker-Kubernetes/k8s-CICD/Gitlab/helm部署gitlab|helm部署gitlab]]：GitLab Helm Chart 的域名、Ingress 与初始 root 密码配置，记录部署中遇到的问题及放弃该方式的原因
 - [[Docker-Kubernetes/docker/docker部署gitlab|docker部署gitlab]]：用 docker-compose 部署 GitLab CE，关闭内置监控组件加快启动，配置 SSH Key，以及 gitlab-backup 备份与恢复
 - [[Docker-Kubernetes/k8s-CICD/Jenkins/k8s-Devops平台落地-基于jenkins|k8s-Devops平台落地-基于jenkins]]：GitLab 作为 DevOps 平台代码仓库，与 Jenkins 建立 SSH 互信，流水线支持手动触发与 GitLab Webhook 触发
-- [[Docker-Kubernetes/k8s-CICD/Jenkins/k8s部署基于Jenkins(2.394)的DevOps工具链-基于yaml|k8s部署基于Jenkins(2.394)的DevOps工具链-基于yaml]]：docker run 部署 GitLab 并配置 SSH 端口，在 Jenkins 中添加 GitLab 凭据并提交代码
-- [[Docker-Kubernetes/k8s-CICD/Claude-Code实现CICD自动化发布流程|Claude-Code实现CICD自动化发布流程]]：GitLab CI 流水线（Kaniko 构建、K8s 部署、Release）与 CI/CD Variables 管理敏感参数，以及 Claude 自动 MR 评审
+- [[Docker-Kubernetes/k8s-CICD/Jenkins/k8s部署基于Jenkins(2.394)的DevOps工具链-基于yaml|K8s DevOps 工具链：Jenkins 2.394]]：docker run 部署 GitLab 并配置 SSH 端口，在 Jenkins 中添加 GitLab 凭据并提交代码
+- [[Docker-Kubernetes/k8s-CICD/Claude-Code实现CICD自动化发布流程|Claude Code CI/CD 自动发布指南]]：GitLab CI 流水线（Kaniko 构建、K8s 部署、Release）与 CI/CD Variables 管理敏感参数，以及 Claude 自动 MR 评审
 - [[Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD基础|ArgoCD基础]]：在 argocd-secret 中配置 GitLab Webhook 密钥，推送后触发 ArgoCD 同步
 
 ## 知识空白

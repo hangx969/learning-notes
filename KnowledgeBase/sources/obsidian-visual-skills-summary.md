@@ -15,7 +15,7 @@ aliases:
 
 ## 元信息
 
-- **原始文档**：[[AI/Obsidian/Obsidian可视化Skills-Excalidraw-Mermaid-Canvas]]
+- **原始文档**：[[AI/Obsidian/Obsidian可视化Skills-Excalidraw-Mermaid-Canvas|Obsidian 可视化 Skills]]
 - **原始来源**：[微信公众号文章](https://mp.weixin.qq.com/s/EbNkKTGkp2WnqJ0nKNBwmA)
 - **领域**：AI / Obsidian / 可视化
 - **摄入日期**：2026-05-05

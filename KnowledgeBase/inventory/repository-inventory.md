@@ -22,17 +22,17 @@ date: 2026-10-03
 
 | 文件 | 标题 | Frontmatter | 双链 |
 |------|------|:-----------:|:----:|
-| [[AI/ClaudeCode/CLAUDE.md最佳实践-12条规则模板\|CLAUDE.md最佳实践-12条规则模板]] | Mnilax：CLAUDE.md 规则从 Karpathy 的 4 条增加到 12 条，错误率从 41% 降到 3% | ✅ | ❌ |
-| [[AI/ClaudeCode/CLAUDE.md最佳实践-21条指令清单\|CLAUDE.md最佳实践-21条指令清单]] | Mayank Agarwal：21 条 CLAUDE.md 指令，让 Claude 真正懂你 | ✅ | ❌ |
+| [[AI/ClaudeCode/CLAUDE.md最佳实践-12条规则模板\|Mnilax 的 CLAUDE.md：12 条规则]] | Mnilax：CLAUDE.md 规则从 Karpathy 的 4 条增加到 12 条，错误率从 41% 降到 3% | ✅ | ❌ |
+| [[AI/ClaudeCode/CLAUDE.md最佳实践-21条指令清单\|Mayank Agarwal：21 条 CLAUDE.md 指令]] | Mayank Agarwal：21 条 CLAUDE.md 指令，让 Claude 真正懂你 | ✅ | ❌ |
 | [[AI/ClaudeCode/CLAUDE.md维护工程-四层加载与指令预算\|CLAUDE.md维护工程-四层加载与指令预算]] | CLAUDE.md 维护工程：四层加载与指令预算 | ✅ | ❌ |
 | [[AI/ClaudeCode/Claude Code 基础指南\|Claude Code 基础指南]] | Claude Code 使用指南 | ✅ | ✅ |
 | [[AI/ClaudeCode/Claude Code 扩展体系\|扩展体系]] | MCP + Skills + Slash Commands + Plugin | ✅ | ✅ |
 | [[AI/ClaudeCode/Claude Code省token指南\|Claude Code省token指南]] | Claude Code 省 Token 指南 | ❌ | ❌ |
-| [[AI/ClaudeCode/Claude-Code-Harness实战-最小可用系统\|Harness 实战]] | 四层安全约束架构 + Hooks 拦截器 + Git 门禁 | ✅ | ❌ |
-| [[AI/ClaudeCode/Claude-Code为什么用grep不用RAG\|Claude-Code为什么用grep不用RAG]] | 为什么 Claude Code 不用 RAG 检索代码，而是 grep？ | ✅ | ❌ |
+| [[AI/ClaudeCode/Claude-Code-Harness实战-最小可用系统\|Harness 实战：从零搭建最小可用系统]] | 四层安全约束架构 + Hooks 拦截器 + Git 门禁 | ✅ | ❌ |
+| [[AI/ClaudeCode/Claude-Code为什么用grep不用RAG\|Claude Code 为何用 grep 而非 RAG 检索代码？]] | 为什么 Claude Code 不用 RAG 检索代码，而是 grep？ | ✅ | ❌ |
 | [[AI/ClaudeCode/Claude-Fable-5-system-prompt\|Claude-Fable-5-system-prompt]] | Claude Fable 5 — System Prompt | ❌ | ❌ |
 | [[AI/ClaudeCode/Claude-Skill质检工具-SkillCraft\|Skill Craft 质检工具]] | Skill 质量工程（7 类失效模式 + 三层评估） | ✅ | ❌ |
-| [[AI/ClaudeCode/Git-Worktree-AI开发实践指南\|Git-Worktree-AI开发实践指南]] | Vibe Coding 时代的 Git Worktree 实践指南 | ✅ | ❌ |
+| [[AI/ClaudeCode/Git-Worktree-AI开发实践指南\|Vibe Coding 的 Git Worktree 实践]] | Vibe Coding 时代的 Git Worktree 实践指南 | ✅ | ❌ |
 | [[AI/ClaudeCode/HarnessKit\|HarnessKit]] | HarnessKit — AI 编码智能体统一管理工具 | ✅ | ✅ |
 | [[AI/ClaudeCode/多智能体协作-Subagents与Agent-Teams\|多智能体协作]] | Subagents 与 Agent Teams | ✅ | ✅ |
 
@@ -42,7 +42,7 @@ date: 2026-10-03
 |------|------|:-----------:|:----:|
 | [[AI/OpenClaw/CoPaw\|CoPaw]] | CoPaw | ✅ | ❌ |
 | [[AI/OpenClaw/OpenClaw-Channels\|OpenClaw-Channels]] | OpenClaw Channel 配置 | ✅ | ❌ |
-| [[AI/OpenClaw/OpenClaw-K8s智能运维实战\|OpenClaw-K8s智能运维实战]] | 用 OpenClaw 智能体网关接管 K8s 日常运维：从只读巡检到低风险变更 | ✅ | ❌ |
+| [[AI/OpenClaw/OpenClaw-K8s智能运维实战\|OpenClaw K8s 运维：从只读巡检到低风险变更]] | 用 OpenClaw 智能体网关接管 K8s 日常运维：从只读巡检到低风险变更 | ✅ | ❌ |
 | [[AI/OpenClaw/OpenClaw-Skills-Plugins\|OpenClaw-Skills-Plugins]] | OpenClaw Skills 与插件 | ✅ | ❌ |
 | [[AI/OpenClaw/OpenClaw-Workspace-运维\|OpenClaw-Workspace-运维]] | OpenClaw Workspace 运维实战 | ✅ | ❌ |
 | [[AI/OpenClaw/OpenClaw-基础-安装\|OpenClaw-基础-安装]] | OpenClaw 基础与安装 | ✅ | ❌ |
@@ -70,9 +70,9 @@ date: 2026-10-03
 |------|------|:-----------:|:----:|
 | [[AI/AI-视觉/AI-Animation-Skill-科普动画\|AI-Animation-Skill-科普动画]] | AI-Animation-Skill - HTML科普动画生成 | ✅ | ✅ |
 | [[AI/AI-视觉/AI做PPT-ppt-master\|AI做PPT-ppt-master]] | AI做PPT - ppt-master | ✅ | ❌ |
-| [[AI/AI-视觉/Diagram-design\|Diagram-design]] | Diagram Design：让 Claude Code / Codex 生成更有设计感的技术图 | ❌ | ❌ |
+| [[AI/AI-视觉/Diagram-design\|Diagram Design：Claude Code / Codex 技术图设计]] | Diagram Design：让 Claude Code / Codex 生成更有设计感的技术图 | ❌ | ❌ |
 | [[AI/AI-视觉/Effective-HTML-Agent页面工作流\|Effective-HTML-Agent页面工作流]] | Effective HTML：Agent 页面制作与 HTML 交付工作流 | ✅ | ❌ |
-| [[AI/AI-视觉/Markdown-Viewer-Skills-Markdown中直接画图\|Markdown-Viewer-Skills-Markdown中直接画图]] | Markdown Viewer Skills：让 AI 写文档时顺手把图也画了 | ✅ | ❌ |
+| [[AI/AI-视觉/Markdown-Viewer-Skills-Markdown中直接画图\|Markdown Viewer Skills：AI 文档配图]] | Markdown Viewer Skills：让 AI 写文档时顺手把图也画了 | ✅ | ❌ |
 | [[AI/AI-视觉/html-anything-AI生成HTML全场景工具\|html-anything-AI生成HTML全场景工具]] | html-anything：AI 生成 HTML 全场景工具 | ✅ | ❌ |
 | [[AI/AI-视觉/html-ppt-skill-实测指南\|html-ppt-skill-实测指南]] | html-ppt-skill - HTML幻灯片生成 | ✅ | ✅ |
 
@@ -81,10 +81,10 @@ date: 2026-10-03
 | 文件 | 标题 | Frontmatter | 双链 |
 |------|------|:-----------:|:----:|
 | [[AI/Code review和知识图谱/AI代码审查闭环-验证优先与敏感信息清理\|AI代码审查闭环-验证优先与敏感信息清理]] | AI代码审查闭环：验证优先与敏感信息清理 | ✅ | ✅ |
-| [[AI/Code review和知识图谱/CodeGraph-代码语义知识图谱\|CodeGraph-代码语义知识图谱]] | CodeGraph：给 Claude Code 先画一张代码地图，工具调用砍掉 92% | ✅ | ❌ |
+| [[AI/Code review和知识图谱/CodeGraph-代码语义知识图谱\|CodeGraph：Claude Code 代码知识图谱]] | CodeGraph：给 Claude Code 先画一张代码地图，工具调用砍掉 92% | ✅ | ❌ |
 | [[AI/Code review和知识图谱/Graphify-软件工程知识图谱工具\|Graphify-软件工程知识图谱工具]] | Graphify：软件工程知识图谱工具 | ✅ | ❌ |
 | [[AI/Code review和知识图谱/Understand-Anything-代码知识图谱可视化\|Understand-Anything-代码知识图谱可视化]] | Understand-Anything：AI 代码知识图谱可视化工具 | ✅ | ❌ |
-| [[AI/Code review和知识图谱/code-review-graph-本地代码知识图谱\|code-review-graph-本地代码知识图谱]] | 开源 Claude Code 本地代码知识图谱：code-review-graph 完整上手攻略 | ✅ | ❌ |
+| [[AI/Code review和知识图谱/code-review-graph-本地代码知识图谱\|code-review-graph：本地代码知识图谱指南]] | 开源 Claude Code 本地代码知识图谱：code-review-graph 完整上手攻略 | ✅ | ❌ |
 | [[AI/Code review和知识图谱/shiji-kb-AI史记知识库与知识图谱构造方法论\|shiji-kb-AI史记知识库与知识图谱构造方法论]] | shiji-kb：AI 史记知识库与可复用知识图谱构造方法论 | ✅ | ❌ |
 
 ### 企业级私有化大模型/（6 篇）
@@ -92,7 +92,7 @@ date: 2026-10-03
 | 文件 | 标题 | Frontmatter | 双链 |
 |------|------|:-----------:|:----:|
 | [[AI/企业级私有化大模型/KV Cache-从原理到集群调度\|KV Cache-从原理到集群调度]] | KV Cache：从原理到集群调度 | ✅ | ❌ |
-| [[AI/企业级私有化大模型/一个 Deployment 就能跑 vLLM，为什么还需要 KServe？\|一个 Deployment 就能跑 vLLM，为什么还需要 KServe？]] | 一个 Deployment 就能跑 vLLM，为什么还需要 KServe？ | ✅ | ✅ |
+| [[AI/企业级私有化大模型/一个 Deployment 就能跑 vLLM，为什么还需要 KServe？\|为何用 KServe 管理 vLLM 推理服务？]] | 一个 Deployment 就能跑 vLLM，为什么还需要 KServe？ | ✅ | ✅ |
 | [[AI/企业级私有化大模型/基于K8s部署vLLM和LiteLLM\|基于K8s部署vLLM和LiteLLM]] | 安装依赖包 | ❌ | ❌ |
 | [[AI/企业级私有化大模型/基于docker部署vLLM和LiteLLM私有化大模型\|基于docker部署vLLM和LiteLLM私有化大模型]] | 企业级私有大模型 | ❌ | ✅ |
 | [[AI/企业级私有化大模型/大模型本地部署选型-Ollama-vLLM-SGLang-vLLM-Omni\|大模型本地部署选型-Ollama-vLLM-SGLang-vLLM-Omni]] | 大模型本地部署选型：Ollama、vLLM、SGLang 与 vLLM-Omni | ✅ | ✅ |
@@ -103,11 +103,11 @@ date: 2026-10-03
 | 文件 | 标题 | Frontmatter | 双链 |
 |------|------|:-----------:|:----:|
 | [[AI/行业动态/AI时代的Git版本管理最佳实践\|AI时代的Git版本管理最佳实践]] | AI 时代的 Git 版本管理最佳实践 | ❌ | ❌ |
-| [[AI/行业动态/Anthropic工程师力推HTML取代Markdown-Karpathy附议\|Anthropic工程师力推HTML取代Markdown-Karpathy附议]] | Anthropic 工程师力推 HTML 取代 Markdown —— Karpathy 附议 | ❌ | ❌ |
-| [[AI/行业动态/Claude-Code创始人红杉大会七个判断\|Boris Cherny 红杉大会七个判断]] | Claude Code 创始人在红杉大会上的 7 个重要判断 | ✅ | ❌ |
+| [[AI/行业动态/Anthropic工程师力推HTML取代Markdown-Karpathy附议\|HTML 取代 Markdown：Anthropic 工程师的建议]] | Anthropic 工程师力推 HTML 取代 Markdown —— Karpathy 附议 | ❌ | ❌ |
+| [[AI/行业动态/Claude-Code创始人红杉大会七个判断\|Claude Code 创始人：红杉大会的 7 个判断]] | Claude Code 创始人在红杉大会上的 7 个重要判断 | ✅ | ❌ |
 | [[AI/行业动态/Loop-Engineering-从Prompt到自动化流水线\|Loop-Engineering-从Prompt到自动化流水线]] | Loop Engineering：从 Prompt 到自动化流水线 | ✅ | ❌ |
 | [[AI/行业动态/OpenCodeReview-阿里AI代码审查工程化\|OpenCodeReview-阿里AI代码审查工程化]] | OpenCodeReview：阿里开源的 AI 代码审查工程化工具 | ✅ | ❌ |
-| [[AI/行业动态/TypeScript-vs-Python-AI-Agent时代的语言之争\|TypeScript-vs-Python-AI-Agent时代的语言之争]] | 为什么 AI Agent 时代，TypeScript 正在抢走 Python 的主场？ | ✅ | ❌ |
+| [[AI/行业动态/TypeScript-vs-Python-AI-Agent时代的语言之争\|AI Agent 时代：TypeScript 与 Python 的竞争]] | 为什么 AI Agent 时代，TypeScript 正在抢走 Python 的主场？ | ✅ | ❌ |
 
 ### Obsidian/（6 篇）
 
@@ -115,9 +115,9 @@ date: 2026-10-03
 |------|------|:-----------:|:----:|
 | [[AI/Obsidian/Obsidian-Agent知识系统-远程Vault与MCP\|Obsidian-Agent知识系统-远程Vault与MCP]] | Obsidian Agent 知识系统：远程 Vault 与 MCP 实践 | ✅ | ❌ |
 | [[AI/Obsidian/Obsidian-Apex-Dashboard-零代码仪表盘\|Obsidian-Apex-Dashboard-零代码仪表盘]] | Obsidian Apex Dashboard：零代码仪表盘 | ✅ | ❌ |
-| [[AI/Obsidian/Obsidian-Vault模板库合集-48个宝藏vault\|Obsidian-Vault模板库合集-48个宝藏vault]] | Obsidian Vault 模板库合集：48 个 GitHub 宝藏 vault | ✅ | ❌ |
-| [[AI/Obsidian/Obsidian可视化Skills-Excalidraw-Mermaid-Canvas\|Obsidian可视化Skills]] | AI Skills 生成可编辑图表（Excalidraw/Mermaid/Canvas） | ✅ | ❌ |
-| [[AI/Obsidian/obsidian-claude-code-AI知识库完整指南\|AI知识库完整指南]] | Obsidian+Claude Code AI 驱动的知识库完整指南（三文合并） | ✅ | ❌ |
+| [[AI/Obsidian/Obsidian-Vault模板库合集-48个宝藏vault\|Obsidian Vault：48 个 GitHub 模板库]] | Obsidian Vault 模板库合集：48 个 GitHub 宝藏 vault | ✅ | ❌ |
+| [[AI/Obsidian/Obsidian可视化Skills-Excalidraw-Mermaid-Canvas\|Obsidian 可视化 Skills]] | AI Skills 生成可编辑图表（Excalidraw/Mermaid/Canvas） | ✅ | ❌ |
+| [[AI/Obsidian/obsidian-claude-code-AI知识库完整指南\|Obsidian + Claude Code：AI 知识库指南]] | Obsidian+Claude Code AI 驱动的知识库完整指南（三文合并） | ✅ | ❌ |
 | [[AI/Obsidian/github-pages-quartz\|Quartz 4 发布笔记]] | 用 GitHub Actions 发布 Obsidian 笔记：Quartz 4 | ✅ | ✅ |
 
 ### Hermes-agent/（4 篇）
@@ -125,8 +125,8 @@ date: 2026-10-03
 | 文件 | 标题 | Frontmatter | 双链 |
 |------|------|:-----------:|:----:|
 | [[AI/Hermes-agent/Hermes-Agent-满配指南与生态资源\|满配指南与生态资源]] | 五大配置模块 + 高阶进化 + 生态资源（两篇合并） | ✅ | ❌ |
-| [[AI/Hermes-agent/Hermes-Curator-Skill膨胀治理\|Hermes-Curator-Skill膨胀治理]] | Skill 太多导致上下文膨胀怎么办？来自 Hermes Agent 的实践 | ✅ | ❌ |
-| [[AI/Hermes-agent/Hermes与OpenClaw对比及飞书接入指南\|架构解析与对比]] | 五层架构、记忆系统、飞书接入 | ✅ | ❌ |
+| [[AI/Hermes-agent/Hermes-Curator-Skill膨胀治理\|Hermes Agent：Skill 膨胀与上下文治理]] | Skill 太多导致上下文膨胀怎么办？来自 Hermes Agent 的实践 | ✅ | ❌ |
+| [[AI/Hermes-agent/Hermes与OpenClaw对比及飞书接入指南\|Hermes Agent：OpenClaw 对比与飞书接入]] | 五层架构、记忆系统、飞书接入 | ✅ | ❌ |
 | [[AI/Hermes-agent/Ubuntu 25.10 安装与使用 Hermes Agent 指南\|Ubuntu 安装指南]] | Ubuntu 25.10 部署 Hermes Agent | ✅ | ❌ |
 
 ### RAG/（3 篇）
@@ -141,7 +141,7 @@ date: 2026-10-03
 
 | 文件 | 标题 | Frontmatter | 双链 |
 |------|------|:-----------:|:----:|
-| [[AI/AIOps/AIOps实战-Golang手搓K8s智能运维工具链\|AIOps实战-Golang手搓K8s智能运维工具链]] | AIOps 实战：Golang 手搓 K8s 智能运维工具链 | ✅ | ❌ |
+| [[AI/AIOps/AIOps实战-Golang手搓K8s智能运维工具链\|Golang 构建 K8s 智能运维工具链实战]] | AIOps 实战：Golang 手搓 K8s 智能运维工具链 | ✅ | ❌ |
 | [[AI/AIOps/Kubernetes-MCP-Server-Dify智能运维\|Kubernetes-MCP-Server-Dify智能运维]] | AI 接管 Kubernetes 运维——Kubernetes MCP Server + Dify | ✅ | ❌ |
 
 ### Codex/（2 篇）
@@ -261,7 +261,7 @@ date: 2026-10-03
 | [[Azure/4_AKS-SecretProviderClass-KeyVault\|4_AKS-SecretProviderClass-KeyVault]] | AKS SecretProviderClass with KeyVault | ✅ | ✅ |
 | [[Azure/5_Azure-Storage\|5_Azure-Storage]] | Azure Storage | ✅ | ✅ |
 | [[Azure/6_Azure-Networking\|6_Azure-Networking]] | Azure Networking | ✅ | ✅ |
-| [[Azure/7_ACR-ACI\|7_ACR-ACI]] | Azure Container Registry & ACI | ✅ | ✅ |
+| [[Azure/7_ACR-ACI\|Azure ACR and ACI]] | Azure Container Registry & ACI | ✅ | ✅ |
 | [[Azure/8_Azure-devops-basics\|8_Azure-devops-basics]] | Azure DevOps Basics | ✅ | ✅ |
 | [[Azure/9_Azure-devops-self-host-agents\|9_Azure-devops-self-host-agents]] | Azure DevOps Self-Hosted Agents | ✅ | ✅ |
 | [[Azure/Jfrog-artifactory-Azure\|Jfrog-artifactory-Azure]] | JFrog Artifactory on Azure | ✅ | ✅ |
@@ -276,11 +276,11 @@ date: 2026-10-03
 |------|------|:-----------:|:----:|
 | [[Docker-Kubernetes/k8s-basic-resources/K8s基础-pod调度-亲和力\|K8s基础-pod调度-亲和力]] | Pod调度-亲和力 | ✅ | ❌ |
 | [[Docker-Kubernetes/k8s-basic-resources/Python调用k8s-api实现资源管理\|Python调用k8s-api实现资源管理]] | Python调用K8s-API | ✅ | ❌ |
-| [[Docker-Kubernetes/k8s-basic-resources/k8s-APIServer深度剖析-请求链路-认证授权-生产调优\|k8s-APIServer深度剖析-请求链路-认证授权-生产调优]] | Kubernetes API Server 深度剖析：请求链路、认证授权与生产调优 | ✅ | ❌ |
+| [[Docker-Kubernetes/k8s-basic-resources/k8s-APIServer深度剖析-请求链路-认证授权-生产调优\|K8s API Server：请求链路、认证授权与生产调优]] | Kubernetes API Server 深度剖析：请求链路、认证授权与生产调优 | ✅ | ❌ |
 | [[Docker-Kubernetes/k8s-basic-resources/k8s-PodDisruptionBudget实战\|k8s-PodDisruptionBudget实战]] | K8s PodDisruptionBudget 实战：优雅中断保护 | ✅ | ❌ |
 | [[Docker-Kubernetes/k8s-basic-resources/k8s基础-Calico\|k8s基础-Calico]] | Calico | ✅ | ❌ |
 | [[Docker-Kubernetes/k8s-basic-resources/k8s基础-Finalizer与资源删除\|k8s基础-Finalizer与资源删除]] | K8s基础-Finalizer与资源删除 | ✅ | ❌ |
-| [[Docker-Kubernetes/k8s-basic-resources/k8s基础-Operator开发实战-Kubebuilder\|k8s基础-Operator开发实战-Kubebuilder]] | 从零开发 Kubernetes Operator：Kubebuilder 实战教程 | ✅ | ❌ |
+| [[Docker-Kubernetes/k8s-basic-resources/k8s基础-Operator开发实战-Kubebuilder\|Kubebuilder：从零开发 K8s Operator]] | 从零开发 Kubernetes Operator：Kubebuilder 实战教程 | ✅ | ❌ |
 | [[Docker-Kubernetes/k8s-basic-resources/k8s基础-Service\|k8s基础-Service]] | Service | ✅ | ❌ |
 | [[Docker-Kubernetes/k8s-basic-resources/k8s基础-daemonset\|k8s基础-daemonset]] | DaemonSet | ✅ | ❌ |
 | [[Docker-Kubernetes/k8s-basic-resources/k8s基础-deployment\|k8s基础-deployment]] | Deployment | ✅ | ❌ |
@@ -289,12 +289,12 @@ date: 2026-10-03
 | [[Docker-Kubernetes/k8s-basic-resources/k8s基础-kubeadm\|k8s基础-kubeadm]] | kubeadm | ✅ | ❌ |
 | [[Docker-Kubernetes/k8s-basic-resources/k8s基础-namespace-资源分配\|k8s基础-namespace-资源分配]] | namespace-资源分配 | ✅ | ❌ |
 | [[Docker-Kubernetes/k8s-basic-resources/k8s基础-pod\|k8s基础-pod]] | K8s基础-Pod | ✅ | ❌ |
-| [[Docker-Kubernetes/k8s-basic-resources/k8s基础-pod调度-标签与选择器实战\|k8s基础-pod调度-标签与选择器实战]] | Kubernetes 标签与选择器避坑：5 条核心铁律与生产级实战案例 | ✅ | ❌ |
+| [[Docker-Kubernetes/k8s-basic-resources/k8s基础-pod调度-标签与选择器实战\|K8s 标签与选择器避坑：5 条规则与生产案例]] | Kubernetes 标签与选择器避坑：5 条核心铁律与生产级实战案例 | ✅ | ❌ |
 | [[Docker-Kubernetes/k8s-basic-resources/k8s基础-statefulset\|k8s基础-statefulset]] | StatefulSet | ✅ | ❌ |
 | [[Docker-Kubernetes/k8s-basic-resources/k8s基础-storage\|k8s基础-storage]] | Storage | ✅ | ❌ |
 | [[Docker-Kubernetes/k8s-basic-resources/k8s基础-yaml-apply\|k8s基础-yaml-apply]] | YAML | ✅ | ❌ |
 | [[Docker-Kubernetes/k8s-basic-resources/k8s基础-临时容器ephemeral\|k8s基础-临时容器ephemeral]] | 临时容器 | ✅ | ❌ |
-| [[Docker-Kubernetes/k8s-basic-resources/k8s基础-容器设计模式-Sidecar-Init-Ambassador-Adapter\|k8s基础-容器设计模式-Sidecar-Init-Ambassador-Adapter]] | K8s 容器设计模式：Sidecar / Init Container / Ambassador / Adapter | ✅ | ❌ |
+| [[Docker-Kubernetes/k8s-basic-resources/k8s基础-容器设计模式-Sidecar-Init-Ambassador-Adapter\|K8s 四种容器设计模式]] | K8s 容器设计模式：Sidecar / Init Container / Ambassador / Adapter | ✅ | ❌ |
 | [[Docker-Kubernetes/k8s-basic-resources/k8s基础-容器运行时-containerd\|k8s基础-容器运行时-containerd]] | 容器运行时-containerd | ✅ | ❌ |
 | [[Docker-Kubernetes/k8s-basic-resources/k8s基础-架构-组件-资源\|k8s基础-架构-组件-资源]] | K8s架构-组件-资源 | ✅ | ❌ |
 | [[Docker-Kubernetes/k8s-basic-resources/k8s基础-自定义CRD资源\|k8s基础-自定义CRD资源]] | 自定义CRD | ✅ | ❌ |
@@ -306,10 +306,10 @@ date: 2026-10-03
 |------|------|:-----------:|:----:|
 | [[Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD Image Updater\|ArgoCD Image Updater]] | ArgoCD Image Updater | ✅ | ❌ |
 | [[Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD基础\|ArgoCD基础]] | ArgoCD基础 | ✅ | ❌ |
-| [[Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD多集群GitOps实战\|ArgoCD多集群GitOps实战]] | 多集群 GitOps 实战：用 Argo CD 管理上百个 Kubernetes 集群 | ✅ | ❌ |
-| [[Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD部署Helm应用时域名解析失败问题排查与解决\|ArgoCD部署Helm应用时域名解析失败问题排查与解决]] | ArgoCD域名问题排查 | ✅ | ❌ |
+| [[Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD多集群GitOps实战\|Argo CD 多集群 GitOps 实战]] | 多集群 GitOps 实战：用 Argo CD 管理上百个 Kubernetes 集群 | ✅ | ❌ |
+| [[Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD部署Helm应用时域名解析失败问题排查与解决\|ArgoCD Helm 部署：域名解析故障处理]] | ArgoCD域名问题排查 | ✅ | ❌ |
 | [[Docker-Kubernetes/k8s-CICD/ArgoCD/学习链接\|学习链接]] | ArgoCD学习链接 | ✅ | ❌ |
-| [[Docker-Kubernetes/k8s-CICD/Claude-Code实现CICD自动化发布流程\|Claude-Code实现CICD自动化发布流程]] | Claude Code 实现 CI/CD 自动化发布流程详细指南 | ✅ | ❌ |
+| [[Docker-Kubernetes/k8s-CICD/Claude-Code实现CICD自动化发布流程\|Claude Code CI/CD 自动发布指南]] | Claude Code 实现 CI/CD 自动化发布流程详细指南 | ✅ | ❌ |
 | [[Docker-Kubernetes/k8s-CICD/Gitlab/helm部署gitlab\|helm部署gitlab]] | Helm部署GitLab | ✅ | ❌ |
 | [[Docker-Kubernetes/k8s-CICD/Gitlab/k8s部署Gitlab(11.8.1)-基于yaml\|k8s部署Gitlab(11.8.1)-基于yaml]] | K8s部署GitLab | ✅ | ❌ |
 | [[Docker-Kubernetes/k8s-CICD/Gitlab/二进制安装Gitlab(17.9.8)\|二进制安装Gitlab(17.9.8)]] | 二进制安装GitLab | ✅ | ❌ |
@@ -317,10 +317,10 @@ date: 2026-10-03
 | [[Docker-Kubernetes/k8s-CICD/Jenkins/docker部署jenkins\|docker部署jenkins]] | Docker部署Jenkins | ✅ | ❌ |
 | [[Docker-Kubernetes/k8s-CICD/Jenkins/helm部署jenkins\|helm部署jenkins]] | Helm部署Jenkins | ✅ | ✅ |
 | [[Docker-Kubernetes/k8s-CICD/Jenkins/k8s-Devops平台落地-基于jenkins\|k8s-Devops平台落地-基于jenkins]] | K8s DevOps平台落地 | ✅ | ✅ |
-| [[Docker-Kubernetes/k8s-CICD/Jenkins/k8s部署基于Jenkins(2.394)的DevOps工具链-基于yaml\|k8s部署基于Jenkins(2.394)的DevOps工具链-基于yaml]] | Jenkins 2.394 DevOps | ✅ | ❌ |
-| [[Docker-Kubernetes/k8s-CICD/Jenkins/k8s部署基于Jenkins(2.426.3)的Devops工具链-基于yaml\|k8s部署基于Jenkins(2.426.3)的Devops工具链-基于yaml]] | Jenkins 2.426.3 DevOps | ✅ | ✅ |
+| [[Docker-Kubernetes/k8s-CICD/Jenkins/k8s部署基于Jenkins(2.394)的DevOps工具链-基于yaml\|K8s DevOps 工具链：Jenkins 2.394]] | Jenkins 2.394 DevOps | ✅ | ❌ |
+| [[Docker-Kubernetes/k8s-CICD/Jenkins/k8s部署基于Jenkins(2.426.3)的Devops工具链-基于yaml\|K8s DevOps 工具链：Jenkins 2.426.3]] | Jenkins 2.426.3 DevOps | ✅ | ✅ |
 | [[Docker-Kubernetes/k8s-CICD/Jenkins/二进制安装Jenkins(2.319)\|二进制安装Jenkins(2.319)]] | 二进制安装Jenkins | ✅ | ❌ |
-| [[Docker-Kubernetes/k8s-CICD/Kustomize/Kustomize入门-Base与Overlay多环境配置\|Kustomize入门-Base与Overlay多环境配置]] | Kustomize 入门：用 Base 和 Overlay 管理 Kubernetes 多环境配置 | ✅ | ✅ |
+| [[Docker-Kubernetes/k8s-CICD/Kustomize/Kustomize入门-Base与Overlay多环境配置\|Kustomize 入门：Base 与 Overlay]] | Kustomize 入门：用 Base 和 Overlay 管理 Kubernetes 多环境配置 | ✅ | ✅ |
 | [[Docker-Kubernetes/k8s-CICD/Kustomize/k8s配置定制工具-kustomize\|k8s配置定制工具-kustomize]] | Kustomize | ✅ | ❌ |
 | [[Docker-Kubernetes/k8s-CICD/Tekton/k8s部署原生的CICD工具Tekton-基于yaml\|k8s部署原生的CICD工具Tekton-基于yaml]] | Tekton部署 | ✅ | ❌ |
 | [[Docker-Kubernetes/k8s-CICD/Tekton/基于Tekton的云原生平台落地\|基于Tekton的云原生平台落地]] | Tekton云原生平台 | ✅ | ❌ |
@@ -335,8 +335,8 @@ date: 2026-10-03
 |------|------|:-----------:|:----:|
 | [[Docker-Kubernetes/k8s-installation-management/2025最新-企业级高可用集群-基于rockylinux\|2025最新-企业级高可用集群-基于rockylinux]] | 企业级高可用集群 | ✅ | ❌ |
 | [[Docker-Kubernetes/k8s-installation-management/etcd高可用配置以及模拟集群故障和恢复\|etcd高可用配置以及模拟集群故障和恢复]] | etcd高可用 | ✅ | ❌ |
-| [[Docker-Kubernetes/k8s-installation-management/k8s-Backstage-内部开发者平台IDP实战\|k8s-Backstage-内部开发者平台IDP实战]] | K8s 平台工程实战：用 Backstage 打造一站式内部开发者平台 | ✅ | ❌ |
-| [[Docker-Kubernetes/k8s-installation-management/k8s-cgroup-v2深度解析-迁移实战与避坑指南\|k8s-cgroup-v2深度解析-迁移实战与避坑指南]] | K8s CGroup v2 深度解析：资源隔离原理、迁移实战与生产避坑指南 | ✅ | ❌ |
+| [[Docker-Kubernetes/k8s-installation-management/k8s-Backstage-内部开发者平台IDP实战\|Backstage：K8s 一站式内部开发者平台实战]] | K8s 平台工程实战：用 Backstage 打造一站式内部开发者平台 | ✅ | ❌ |
+| [[Docker-Kubernetes/k8s-installation-management/k8s-cgroup-v2深度解析-迁移实战与避坑指南\|K8s cgroup v2：资源隔离原理、迁移与生产避坑]] | K8s CGroup v2 深度解析：资源隔离原理、迁移实战与生产避坑指南 | ✅ | ❌ |
 | [[Docker-Kubernetes/k8s-installation-management/k8s两地三中心架构\|k8s两地三中心架构]] | 两地三中心 | ✅ | ❌ |
 | [[Docker-Kubernetes/k8s-installation-management/k8s多集群kubeconfig管理\|k8s多集群kubeconfig管理]] | kubeconfig管理 | ✅ | ❌ |
 | [[Docker-Kubernetes/k8s-installation-management/k8s故障排查指南\|k8s故障排查指南]] | 故障排查 | ✅ | ❌ |
@@ -360,15 +360,15 @@ date: 2026-10-03
 |------|------|:-----------:|:----:|
 | [[Docker-Kubernetes/k8s-monitoring-logging/K8s全面巡检脚本-生成HTML健康报告\|K8s 全面巡检脚本]] | 集群健康报告 | ✅ | ❌ |
 | [[Docker-Kubernetes/k8s-monitoring-logging/Kubernetes原生部署Prometheus与Grafana\|Kubernetes 原生部署 Prometheus 与 Grafana]] | Prometheus+Grafana 原生部署 | ✅ | ✅ |
-| [[Docker-Kubernetes/k8s-monitoring-logging/OpenTelemetry实战-统一Traces-Metrics-Logs\|OpenTelemetry 实战]] | Traces/Metrics/Logs | ✅ | ❌ |
+| [[Docker-Kubernetes/k8s-monitoring-logging/OpenTelemetry实战-统一Traces-Metrics-Logs\|OpenTelemetry 统一可观测性实战]] | Traces/Metrics/Logs | ✅ | ❌ |
 | [[Docker-Kubernetes/k8s-monitoring-logging/Prometheus基础\|Prometheus基础]] | Prometheus基础 | ✅ | ❌ |
 | [[Docker-Kubernetes/k8s-monitoring-logging/Prometheus监控k8s系统组件\|Prometheus监控k8s系统组件]] | 监控K8s系统组件 | ✅ | ❌ |
 | [[Docker-Kubernetes/k8s-monitoring-logging/Prometheus监控外部k8s集群\|Prometheus监控外部k8s集群]] | 监控外部K8s集群 | ✅ | ❌ |
 | [[Docker-Kubernetes/k8s-monitoring-logging/Prometheus监控非云原生应用-主机\|Prometheus监控非云原生应用-主机]] | 监控非云原生应用 | ✅ | ❌ |
-| [[Docker-Kubernetes/k8s-monitoring-logging/helm部署Loki-promtail-tempo-grafanaAgent全家桶\|helm部署Loki-promtail-tempo-grafanaAgent全家桶]] | Loki+Tempo全家桶 | ✅ | ❌ |
+| [[Docker-Kubernetes/k8s-monitoring-logging/helm部署Loki-promtail-tempo-grafanaAgent全家桶\|Helm部署Loki+Promtail+Tempo+GrafanaAgent]] | Loki+Tempo全家桶 | ✅ | ❌ |
 | [[Docker-Kubernetes/k8s-monitoring-logging/helm部署jaeger\|helm部署jaeger]] | Jaeger | ✅ | ❌ |
-| [[Docker-Kubernetes/k8s-monitoring-logging/helm部署prometheus-stack全家桶\|helm部署prometheus-stack全家桶]] | Helm部署Prometheus-Stack | ✅ | ❌ |
-| [[Docker-Kubernetes/k8s-monitoring-logging/k8s日志管理-采集方案与审计日志\|K8s 日志管理]] | 日志管理 | ✅ | ❌ |
+| [[Docker-Kubernetes/k8s-monitoring-logging/helm部署prometheus-stack全家桶\|Prometheus-Stack：生产部署与运维]] | Helm部署Prometheus-Stack | ✅ | ❌ |
+| [[Docker-Kubernetes/k8s-monitoring-logging/k8s日志管理-采集方案与审计日志\|K8s 日志：基础机制、六种采集方案与审计日志]] | 日志管理 | ✅ | ❌ |
 | [[Docker-Kubernetes/k8s-monitoring-logging/k8s监控EFK+logstash+kafka\|k8s监控EFK+logstash+kafka]] | EFK+Logstash+Kafka | ✅ | ❌ |
 | [[Docker-Kubernetes/k8s-monitoring-logging/k8s监控ES(7.2)+Kibana(7.2)+Fluentd(v1.4.2)\|k8s监控ES(7.2)+Kibana(7.2)+Fluentd(v1.4.2)]] | ES+Kibana+Fluentd | ✅ | ❌ |
 | [[Docker-Kubernetes/k8s-monitoring-logging/k8s监控alertmanager(v0.14.0)\|k8s监控alertmanager(v0.14.0)]] | Alertmanager | ✅ | ❌ |
@@ -384,8 +384,8 @@ date: 2026-10-03
 | 文件 | 标题 | Frontmatter | 双链 |
 |------|------|:-----------:|:----:|
 | [[Docker-Kubernetes/docker/docker基础\|docker基础]] | Docker基础 | ✅ | ❌ |
-| [[Docker-Kubernetes/docker/docker安全配置-Capabilities与容器加固\|docker安全配置-Capabilities与容器加固]] | Docker 安全配置详解：Capabilities 与容器加固 | ✅ | ❌ |
-| [[Docker-Kubernetes/docker/docker无需本地环境从DockerHub下载镜像并保存为tar\|docker无需本地环境下载镜像并保存为tar]] | Docker镜像离线分发 | ✅ | ❌ |
+| [[Docker-Kubernetes/docker/docker安全配置-Capabilities与容器加固\|Docker 安全配置：Capabilities 与容器加固]] | Docker 安全配置详解：Capabilities 与容器加固 | ✅ | ❌ |
+| [[Docker-Kubernetes/docker/docker无需本地环境从DockerHub下载镜像并保存为tar\|无需本地 Docker：下载 Docker Hub 镜像为 tar]] | Docker镜像离线分发 | ✅ | ❌ |
 | [[Docker-Kubernetes/docker/docker部署UI工具portainer-部署redis-sentinel\|docker部署UI工具portainer-部署redis-sentinel]] | Portainer+Redis | ✅ | ❌ |
 | [[Docker-Kubernetes/docker/docker部署gitlab\|docker部署gitlab]] | Docker部署GitLab | ✅ | ❌ |
 | [[Docker-Kubernetes/docker/docker部署lnmp网站\|docker部署lnmp网站]] | Docker LNMP | ✅ | ❌ |
@@ -425,8 +425,8 @@ date: 2026-10-03
 | [[Docker-Kubernetes/k8s-security-auth/helm部署oauth2proxy\|helm部署oauth2proxy]] | Helm部署OAuth2-Proxy | ✅ | ❌ |
 | [[Docker-Kubernetes/k8s-security-auth/helm部署sonarqube\|helm部署sonarqube]] | Helm部署SonarQube | ✅ | ❌ |
 | [[Docker-Kubernetes/k8s-security-auth/helm部署trivy-operator\|helm部署trivy-operator]] | Helm部署Trivy-Operator | ✅ | ❌ |
-| [[Docker-Kubernetes/k8s-security-auth/k8s-Admission-Webhook链冲突排查-Istio-Kyverno-Gatekeeper\|k8s-Admission-Webhook链冲突排查-Istio-Kyverno-Gatekeeper]] | 当 Istio、Kyverno、Gatekeeper 三个 Webhook 同时存在，你的集群会发生什么？ | ✅ | ❌ |
-| [[Docker-Kubernetes/k8s-security-auth/k8s容器安全上下文-SecurityContext\|k8s容器安全上下文-SecurityContext]] | Kubernetes 容器安全上下文完全指南：从入门到生产避坑 | ✅ | ❌ |
+| [[Docker-Kubernetes/k8s-security-auth/k8s-Admission-Webhook链冲突排查-Istio-Kyverno-Gatekeeper\|Admission Webhook 链冲突排查]] | 当 Istio、Kyverno、Gatekeeper 三个 Webhook 同时存在，你的集群会发生什么？ | ✅ | ❌ |
+| [[Docker-Kubernetes/k8s-security-auth/k8s容器安全上下文-SecurityContext\|K8s 容器安全上下文：从入门到生产避坑]] | Kubernetes 容器安全上下文完全指南：从入门到生产避坑 | ✅ | ❌ |
 
 ### k8s-UI-tools/（8 篇）
 
@@ -448,7 +448,7 @@ date: 2026-10-03
 | [[Docker-Kubernetes/k8s-networking-service-mesh/helm部署external-dns\|helm部署external-dns]] | Helm部署External-DNS | ✅ | ❌ |
 | [[Docker-Kubernetes/k8s-networking-service-mesh/helm部署ingress-nginx\|helm部署ingress-nginx]] | Helm部署Ingress-Nginx | ✅ | ❌ |
 | [[Docker-Kubernetes/k8s-networking-service-mesh/helm部署tomcat\|helm部署tomcat]] | Helm 部署 Tomcat | ✅ | ❌ |
-| [[Docker-Kubernetes/k8s-networking-service-mesh/k8s-Gateway-API入门-Ingress下一代方案\|k8s-Gateway-API入门-Ingress下一代方案]] | Kubernetes Gateway API 入门：Ingress 的下一代方案 | ✅ | ❌ |
+| [[Docker-Kubernetes/k8s-networking-service-mesh/k8s-Gateway-API入门-Ingress下一代方案\|Kubernetes Gateway API 入门]] | Kubernetes Gateway API 入门：Ingress 的下一代方案 | ✅ | ❌ |
 | [[Docker-Kubernetes/k8s-networking-service-mesh/k8s精细化流量管理-istio\|k8s精细化流量管理-istio]] | Istio 服务网格：架构、部署与精细化流量治理 | ✅ | ❌ |
 | [[Docker-Kubernetes/k8s-networking-service-mesh/k8s集群网络安全\|k8s集群网络安全]] | K8s集群网络安全 | ✅ | ❌ |
 | [[Docker-Kubernetes/k8s-networking-service-mesh/企业项目接入istio实战\|企业项目接入istio实战]] | 企业项目接入Istio实战 | ✅ | ❌ |
@@ -462,16 +462,16 @@ date: 2026-10-03
 | [[Docker-Kubernetes/k8s-storage/k8s-ceph部署与集成\|k8s-ceph部署与集成]] | K8s Ceph部署与集成 | ✅ | ❌ |
 | [[Docker-Kubernetes/k8s-storage/k8s-分布式存储CubeFS\|k8s-分布式存储CubeFS]] | K8s分布式存储CubeFS | ✅ | ❌ |
 | [[Docker-Kubernetes/k8s-storage/k8s删除PVC后PV数据保护与复用避坑\|k8s删除PVC后PV数据保护与复用避坑]] | 删除 PVC 后 PV 数据保护与复用避坑 | ✅ | ❌ |
-| [[Docker-Kubernetes/k8s-storage/让存储故障现形：Kubernetes Volume Health Monitor 原理与生产接入\|让存储故障现形：Kubernetes Volume Health Monitor 原理与生产接入]] | 让存储故障现形：Kubernetes Volume Health Monitor 原理与生产接入 | ✅ | ❌ |
+| [[Docker-Kubernetes/k8s-storage/让存储故障现形：Kubernetes Volume Health Monitor 原理与生产接入\|K8s Volume Health Monitor：原理与生产接入]] | 让存储故障现形：Kubernetes Volume Health Monitor 原理与生产接入 | ✅ | ❌ |
 
 ### k8s-scaling/（4 篇）
 
 | 文件 | 标题 | Frontmatter | 双链 |
 |------|------|:-----------:|:----:|
 | [[Docker-Kubernetes/k8s-scaling/helm部署goldilocks\|helm部署goldilocks]] | Helm部署Goldilocks | ✅ | ❌ |
-| [[Docker-Kubernetes/k8s-scaling/k8s-HPA-VPA\|k8s-HPA-VPA]] | Kubernetes 自动扩缩容实战：HPA、VPA 与 Scale-to-Zero | ✅ | ❌ |
-| [[Docker-Kubernetes/k8s-scaling/k8s-基于KEDA的弹性能力\|k8s-基于KEDA的弹性能力]] | Kubernetes KEDA 事件驱动自动扩缩容：原理、选型与 KServe 实战 | ✅ | ❌ |
-| [[Docker-Kubernetes/k8s-scaling/k8s成本优化方案-FinOps实战\|k8s成本优化方案-FinOps实战]] | K8s 集群成本优化方案：砍掉 60% 云账单 | ✅ | ❌ |
+| [[Docker-Kubernetes/k8s-scaling/k8s-HPA-VPA\|K8s 自动扩缩容：HPA、VPA 与 Scale-to-Zero]] | Kubernetes 自动扩缩容实战：HPA、VPA 与 Scale-to-Zero | ✅ | ❌ |
+| [[Docker-Kubernetes/k8s-scaling/k8s-基于KEDA的弹性能力\|KEDA：事件驱动扩缩容与 KServe 实战]] | Kubernetes KEDA 事件驱动自动扩缩容：原理、选型与 KServe 实战 | ✅ | ❌ |
+| [[Docker-Kubernetes/k8s-scaling/k8s成本优化方案-FinOps实战\|K8s 集群成本优化]] | K8s 集群成本优化方案：砍掉 60% 云账单 | ✅ | ❌ |
 
 ### CKA-CKS/（3 篇）
 
@@ -493,7 +493,7 @@ date: 2026-10-03
 
 | 文件 | 标题 | Frontmatter | 双链 |
 |------|------|:-----------:|:----:|
-| [[Docker-Kubernetes/k8s-image-management/Dragonfly与Harbor-P2P镜像分发\|Dragonfly与Harbor-P2P镜像分发]] | Dragonfly + Harbor：AI 集群的 P2P 镜像与大文件分发 | ✅ | ✅ |
+| [[Docker-Kubernetes/k8s-image-management/Dragonfly与Harbor-P2P镜像分发\|Dragonfly + Harbor：P2P 分发]] | Dragonfly + Harbor：AI 集群的 P2P 镜像与大文件分发 | ✅ | ✅ |
 | [[Docker-Kubernetes/k8s-image-management/Harbor 部署与使用指南\|Harbor 部署与使用指南]] | Harbor 部署与使用指南 | ✅ | ❌ |
 | [[Docker-Kubernetes/k8s-image-management/helm部署dragonfly\|helm部署dragonfly]] | Helm 部署 Dragonfly | ✅ | ❌ |
 
@@ -509,7 +509,7 @@ date: 2026-10-03
 | 文件 | 标题 | Frontmatter | 双链 |
 |------|------|:-----------:|:----:|
 | [[Docker-Kubernetes/k8s-ai-gpu/k8s配置NVIDIA GPU\|k8s配置NVIDIA GPU]] | K8s 配置 NVIDIA GPU | ✅ | ❌ |
-| [[Docker-Kubernetes/k8s-ai-gpu/从零部署 NVIDIA Device Plugin：K8s 识别 GPU 的“第一块敲门砖”\|从零部署 NVIDIA Device Plugin：K8s 识别 GPU 的“第一块敲门砖”]] | 从零部署 NVIDIA Device Plugin：K8s 识别 GPU 的“第一块敲门砖” | ✅ | ❌ |
+| [[Docker-Kubernetes/k8s-ai-gpu/从零部署 NVIDIA Device Plugin：K8s 识别 GPU 的“第一块敲门砖”\|NVIDIA Device Plugin：K8s GPU 识别与部署入门]] | 从零部署 NVIDIA Device Plugin：K8s 识别 GPU 的“第一块敲门砖” | ✅ | ❌ |
 
 ### k8s-backup-dr/（2 篇）
 
@@ -664,7 +664,7 @@ date: 2026-10-03
 | [[HPC/CentOS7-slurm23.02-二进制安装\|CentOS7-slurm23.02-二进制安装]] | CentOS7 Slurm 23.02 | ✅ | ✅ |
 | [[HPC/PBS\|PBS]] | PBS 作业调度、部署与故障案例 | ✅ | ✅ |
 | [[HPC/Slurm-node-exporter\|Slurm-node-exporter]] | Slurm Node Exporter | ✅ | ✅ |
-| [[HPC/Ubuntu2204-Slurm-安装指南\|Ubuntu 22.04 Slurm 22.05.11 与 23.11.4 安装指南]] | 测试与生产环境源码安装、实验环境源码构建 deb 包 | ✅ | ✅ |
+| [[HPC/Ubuntu2204-Slurm-安装指南\|Ubuntu 22.04：Slurm 安装与配置]] | 测试与生产环境源码安装、实验环境源码构建 deb 包 | ✅ | ✅ |
 
 ---
 

@@ -16,8 +16,8 @@ aliases:
 
 ## 元信息
 - **原始文档**（三篇合并）：
-  - [[CLAUDE.md最佳实践-12条规则模板]]（Mnilax 12 条行为规则）
-  - [[CLAUDE.md最佳实践-21条指令清单]]（Mayank Agarwal 21 条指令）
+  - [[CLAUDE.md最佳实践-12条规则模板|Mnilax 的 CLAUDE.md：12 条规则]]（Mnilax 12 条行为规则）
+  - [[CLAUDE.md最佳实践-21条指令清单|Mayank Agarwal：21 条 CLAUDE.md 指令]]（Mayank Agarwal 21 条指令）
   - [[CLAUDE.md维护工程-四层加载与指令预算]]（四层加载与指令预算）
 - **领域**：AI / Claude Code
 - **摄入日期**：2026-06-07

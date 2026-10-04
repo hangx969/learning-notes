@@ -15,7 +15,7 @@ aliases:
 # Claude Code 创始人红杉大会七个判断
 
 ## 元信息
-- **原始文档**：[[AI/行业动态/Claude-Code创始人红杉大会七个判断]]
+- **原始文档**：[[AI/行业动态/Claude-Code创始人红杉大会七个判断|Claude Code 创始人：红杉大会的 7 个判断]]
 - **领域**：AI 行业动态
 - **摄入日期**：2026-05-06
 - **原始视频**：https://www.youtube.com/watch?v=SlGRN8jh2RI

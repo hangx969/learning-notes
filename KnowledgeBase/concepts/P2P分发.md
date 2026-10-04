@@ -36,7 +36,7 @@ P2P 分发让已经获得数据的节点继续向其他节点提供数据，避�
 
 ## 在本仓库中的覆盖
 
-- [[Docker-Kubernetes/k8s-image-management/Dragonfly与Harbor-P2P镜像分发]]：分块、Peer 交换、源站卸载、AI 大对象分发和架构取舍
+- [[Docker-Kubernetes/k8s-image-management/Dragonfly与Harbor-P2P镜像分发|Dragonfly + Harbor：P2P 分发]]：分块、Peer 交换、源站卸载、AI 大对象分发和架构取舍
 - [[Docker-Kubernetes/k8s-image-management/helm部署dragonfly]]：Dragonfly 部署及带宽节省示例
 - [[Networking/计算机网络基础]]：P2P 作为网络通信模式的基础概念
 

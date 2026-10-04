@@ -45,7 +45,7 @@ Cert-Manager 是 Kubernetes 原生的证书生命周期控制器，通过 CRD �
 ## 在本仓库中的覆盖
 
 - [[cert-manager 实战：Helm 部署、TLS 自动签发与续期]]：Helm 安装、自签名、HTTP01/DNS01、Cloudflare、Azure DNS、续期与生产排障。
-- [[AI/企业级私有化大模型/一个 Deployment 就能跑 vLLM，为什么还需要 KServe？]]：作为 KServe 安装链路中的依赖组件。
+- [[AI/企业级私有化大模型/一个 Deployment 就能跑 vLLM，为什么还需要 KServe？|为何用 KServe 管理 vLLM 推理服务？]]：作为 KServe 安装链路中的依赖组件。
 - [[Docker-Kubernetes/k8s-security-auth/helm部署sonarqube]]：为 Ingress 创建 HTTPS 证书。
 
 ## 知识空白

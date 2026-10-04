@@ -50,7 +50,7 @@ PBS（Portable Batch System）是 HPC 领域经典的作业调度系统，有三
 - 与 Slurm 的对比分析散布在多篇 HPC 文档中
 - [[HPC/PBS|PBS]]：版本分支与工作流程，常用命令与作业脚本，PBS Pro 组件、作业参数与故障排查，Docker 部署 PBS Pro、CentOS 虚拟机部署 Torque，以及 GPU 节点故障、时区错误等案例
 - [[HPC/CentOS7-slurm23.02-二进制安装|CentOS7-slurm23.02-二进制安装]]：附 PBS 与 Slurm 的对比图
-- [[HPC/Ubuntu2204-Slurm-安装指南|Ubuntu2204-Slurm-安装指南]]：环境验收部分附 PBS 与 Slurm 对照资料
+- [[HPC/Ubuntu2204-Slurm-安装指南|Ubuntu 22.04：Slurm 安装与配置]]：环境验收部分附 PBS 与 Slurm 对照资料
 
 ## 知识空白
 

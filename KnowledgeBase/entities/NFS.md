@@ -54,10 +54,10 @@ NFS（Network File System）是经典的网络文件系统协议，在 Kubernete
 - `Docker-Kubernetes/k8s-db-middleware/` 中涉及中间件存储方案
 - [[Docker-Kubernetes/k8s-basic-resources/k8s基础-storage|k8s基础-storage]]：NFS 服务搭建与访问权限（squash 选项）、Pod 直接挂载、NFS PV/PVC 实验，以及基于 nfs-subdir 与 csi-driver-nfs 的 StorageClass
 - [[Docker-Kubernetes/k8s-storage/helm部署nfs-subdir-external-provisioner|helm部署nfs-subdir-external-provisioner]]：NFS 服务端部署与客户端挂载测试，用 Helm 安装 nfs-subdir-external-provisioner 实现动态 PV
-- [[Docker-Kubernetes/k8s-monitoring-logging/helm部署prometheus-stack全家桶|helm部署prometheus-stack全家桶]]：NFS StorageClass 挂载选项优化，以及 NFS 挂载失败的排查步骤
+- [[Docker-Kubernetes/k8s-monitoring-logging/helm部署prometheus-stack全家桶|Prometheus-Stack：生产部署与运维]]：NFS StorageClass 挂载选项优化，以及 NFS 挂载失败的排查步骤
 - [[Docker-Kubernetes/k8s-db-middleware/k8s基于yaml部署mysql主从高可用|k8s基于yaml部署mysql主从高可用]]：部署 nfs-subdir-external-provisioner，为 MySQL StatefulSet 提供持久化存储
 - [[Docker-Kubernetes/k8s-CICD/Gitlab/k8s部署Gitlab(11.8.1)-基于yaml|k8s部署Gitlab(11.8.1)-基于yaml]]：NFS 共享目录配合静态 PV/PVC，为 GitLab、PostgreSQL、Redis 持久化数据
-- [[Docker-Kubernetes/k8s-CICD/Jenkins/k8s部署基于Jenkins(2.426.3)的Devops工具链-基于yaml|k8s部署基于Jenkins(2.426.3)的Devops工具链-基于yaml]]：NFS 共享目录与 PV/PVC 持久化 Jenkins 数据
+- [[Docker-Kubernetes/k8s-CICD/Jenkins/k8s部署基于Jenkins(2.426.3)的Devops工具链-基于yaml|K8s DevOps 工具链：Jenkins 2.426.3]]：NFS 共享目录与 PV/PVC 持久化 Jenkins 数据
 - [[Linux-Shell/Ubuntu基础操作|Ubuntu基础操作]]：在 Ubuntu 上用 nfs-kernel-server 共享目录，以及 `no_root_squash` 的安全提示
 - [[HPC/CentOS7-slurm23.02-二进制安装|CentOS7-slurm23.02-二进制安装]]：HPC 控制节点通过 NFS 共享 `/software` 目录，计算节点挂载使用
 
