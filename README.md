@@ -31,27 +31,67 @@
 
 ## 🚀 推荐阅读路径
 
-### 云原生入门
-1. [云原生概念](./CloudComputing/云原生.md) → 理解云原生哲学
-2. [Docker 基础](./Docker-Kubernetes/docker/docker基础.md) → 容器基础
-3. [K8s 架构](./Docker-Kubernetes/k8s-basic-resources/k8s基础-架构-组件-资源.md) → K8s 架构总览
-4. [K8s API Server：请求链路、认证授权与生产调优](./Docker-Kubernetes/k8s-basic-resources/k8s-APIServer深度剖析-请求链路-认证授权-生产调优.md) → 请求链路与认证授权
-5. [Prometheus-Stack：生产部署与运维](./Docker-Kubernetes/k8s-monitoring-logging/helm部署prometheus-stack全家桶.md) → 可观测性
-6. [OpenTelemetry 统一可观测性实战](./Docker-Kubernetes/k8s-monitoring-logging/OpenTelemetry实战-统一Traces-Metrics-Logs.md) → 下一代可观测性
-7. [K8s 集群成本优化](./Docker-Kubernetes/k8s-scaling/k8s成本优化方案-FinOps实战.md) → FinOps 实战
+按目标选择一条路线，再沿顺序阅读；已有相关基础可以跳过入门部分。
 
-### AI 赋能运维
-1. [Claude Code 指南](./AI/ClaudeCode/Claude%20Code%20基础指南.md) → 入门必读
-2. [扩展体系（MCP/Skills/Plugin）](./AI/ClaudeCode/Claude%20Code%20扩展体系.md) → 四层扩展机制
-3. [Mnilax 的 CLAUDE.md：12 条规则](./AI/ClaudeCode/CLAUDE.md最佳实践-12条规则模板.md) → 错误率 41%→3%
-4. [Claude Code 为何用 grep 而非 RAG 检索代码？](./AI/ClaudeCode/Claude-Code为什么用grep不用RAG.md) → Agentic Search 架构
-5. [OpenClaw 安装](./AI/OpenClaw/OpenClaw-基础-安装.md) → 开源 AI 工具平台
-6. [OpenClaw K8s 运维：从只读巡检到低风险变更](./AI/OpenClaw/OpenClaw-K8s智能运维实战.md) → 三阶段渐进式 AIOps
+### AI 编程与 Agent 协作
 
-### 云平台实战
-1. [VPC](./Aliyun/网络/VPC.md) + [Azure 网络](./Azure/6_Azure-Networking.md) → 云网络对比
-2. [AKS 基础](./Azure/2_AKS-basics.md) → 托管 K8s 服务
-3. [FinOps 云成本优化](./Aliyun/资源管理/FinOps-云成本优化实战.md) → 降本增效
+1. [AI 编程协作提示词](./AI/提示词/AI编程协作提示词.md) → 明确需求、改动范围和验证方式。
+2. [Claude Code 使用指南](./AI/ClaudeCode/Claude%20Code%20基础指南.md) → 熟悉项目启动、交互模式与基本工作流。
+3. [CLAUDE.md 维护工程](./AI/ClaudeCode/CLAUDE.md维护工程-四层加载与指令预算.md) → 维护项目规则，理解加载层级与指令预算。
+4. [Claude Code 扩展体系](./AI/ClaudeCode/Claude%20Code%20扩展体系.md) → 按需接入 MCP、Skills 与 Plugin。
+5. [多智能体协作](./AI/ClaudeCode/多智能体协作-Subagents与Agent-Teams.md) → 根据任务选择 Subagents 或 Agent Teams。
+6. [AI 代码审查闭环](./AI/Code%20review和知识图谱/AI代码审查闭环-验证优先与敏感信息清理.md) → 用实际验证、质量门禁与代码审查验收改动。
+
+Codex 阅读分支：[使用技巧和最佳实践](./AI/Codex/Codex-使用技巧和最佳实践.md) → [Harness 架构](./AI/Codex/Codex-Harness架构-任务循环与扩展.md)，从日常工作流进入任务循环、上下文与工具执行。
+
+### AI Agent 与智能运维
+
+1. [OpenClaw 基础与安装](./AI/OpenClaw/OpenClaw-基础-安装.md) → 了解平台架构，搭建运行环境。
+2. [OpenClaw Workspace 运维](./AI/OpenClaw/OpenClaw-Workspace-运维.md) → 理清配置与工作区内容的边界。
+3. [OpenClaw Skills 与插件](./AI/OpenClaw/OpenClaw-Skills-Plugins.md) → 配置和扩展 Agent 能力。
+4. [OpenClaw K8s 智能运维实战](./AI/OpenClaw/OpenClaw-K8s智能运维实战.md) → 从只读巡检、诊断逐步进入低风险变更。
+
+Hermes 阅读分支：[与 OpenClaw 对比及飞书接入](./AI/Hermes-agent/Hermes与OpenClaw对比及飞书接入指南.md) → [满配指南与生态资源](./AI/Hermes-agent/Hermes-Agent-满配指南与生态资源.md)，先比较平台，再学习配置与使用。
+
+### AI 知识管理与笔记发布
+
+1. [Obsidian + Claude Code：AI 知识库指南](./AI/Obsidian/obsidian-claude-code-AI知识库完整指南.md) → 搭建知识库，建立摄入、查询与维护流程。
+2. [Obsidian 可视化 Skills](./AI/Obsidian/Obsidian可视化Skills-Excalidraw-Mermaid-Canvas.md) → 用 Excalidraw、Mermaid 和 Canvas 表达知识关系。
+3. [远程 Vault 与 MCP 实践](./AI/Obsidian/Obsidian-Agent知识系统-远程Vault与MCP.md) → 从本地笔记走向 Agent 维护与团队共享。
+4. [Quartz 4 笔记发布](./AI/Obsidian/github-pages-quartz.md) → 用 GitHub Actions 构建并发布 Obsidian 笔记。
+
+### AI 私有化模型部署
+
+1. [本地部署选型：Ollama、vLLM、SGLang 与 vLLM-Omni](./AI/企业级私有化大模型/大模型本地部署选型-Ollama-vLLM-SGLang-vLLM-Omni.md) → 根据工作负载选择推理框架与部署方式。
+2. [大模型精度与量化](./AI/企业级私有化大模型/大模型精度与量化：FP64到NVFP4.md) + [KV Cache 原理](./AI/企业级私有化大模型/KV%20Cache-从原理到集群调度.md) → 理解精度、显存占用与推理缓存。
+3. [Docker 部署 vLLM 与 LiteLLM](./AI/企业级私有化大模型/基于docker部署vLLM和LiteLLM私有化大模型.md) → 先跑通单机推理服务与模型网关。
+4. [K8s 部署 vLLM 与 LiteLLM](./AI/企业级私有化大模型/基于K8s部署vLLM和LiteLLM.md) → 进入 GPU 环境、集群部署与配套组件配置。
+5. [为何用 KServe 管理 vLLM 推理服务？](./AI/企业级私有化大模型/一个%20Deployment%20就能跑%20vLLM，为什么还需要%20KServe？.md) → 从 Deployment 部署进一步学习推理服务管理。
+
+### Kubernetes 基础与应用管理
+
+1. [Docker 基础](./Docker-Kubernetes/docker/docker基础.md) → 掌握镜像、容器与基本操作。
+2. [K8s 架构、组件与资源](./Docker-Kubernetes/k8s-basic-resources/k8s基础-架构-组件-资源.md) → 建立集群架构与资源模型的整体认识。
+3. [Pod](./Docker-Kubernetes/k8s-basic-resources/k8s基础-pod.md) + [Deployment](./Docker-Kubernetes/k8s-basic-resources/k8s基础-deployment.md) → 学习容器生命周期、应用发布与滚动更新。
+4. [Service](./Docker-Kubernetes/k8s-basic-resources/k8s基础-Service.md) → 理解服务发现与应用访问。
+5. [Helm v3 安装与使用](./Docker-Kubernetes/helm/helmv3-安装与使用.md) → 用 Chart 安装、升级和管理应用。
+
+### GitOps 交付与可观测性
+
+1. [Kustomize 入门：Base 与 Overlay](./Docker-Kubernetes/k8s-CICD/Kustomize/Kustomize入门-Base与Overlay多环境配置.md) → 组织多环境配置，管理共用基础与环境差异。
+2. [ArgoCD 基础](./Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD基础.md) → 建立从 Git 到集群的应用同步流程。
+3. [Argo CD 多集群 GitOps 实战](./Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD多集群GitOps实战.md) → 进一步学习 ApplicationSet 与多集群分发。
+4. [Prometheus 基础](./Docker-Kubernetes/k8s-monitoring-logging/Prometheus基础.md) → 理解指标采集、PromQL 与标签处理。
+5. [Prometheus-Stack：生产部署与运维](./Docker-Kubernetes/k8s-monitoring-logging/helm部署prometheus-stack全家桶.md) → 部署监控栈，进入 Grafana 与告警管理。
+6. [OpenTelemetry 统一可观测性实战](./Docker-Kubernetes/k8s-monitoring-logging/OpenTelemetry实战-统一Traces-Metrics-Logs.md) → 串联 Traces、Metrics 与 Logs。
+
+### 云平台与 Terraform 自动化
+
+1. [阿里云 VPC](./Aliyun/网络/VPC.md) + [Azure 网络](./Azure/6_Azure-Networking.md) → 理解云网络基础与平台差异。
+2. [Landing Zone](./Aliyun/资源管理/Landing%20Zone.md) → 学习企业上云的账号、网络与治理规划。
+3. [ACK 网络规划](./Aliyun/网络/ACK网络规划与成本优化.md) + [AKS 基础](./Azure/2_AKS-basics.md) → 将云网络知识应用到托管 Kubernetes。
+4. [Terraform 基础系列学习路线](./IaC/terraform/README.md) → 按 01–15 的顺序学习配置、状态、模块、重构、CI 与 ACK/Helm 实战。
+5. [FinOps 云成本优化实战](./Aliyun/资源管理/FinOps-云成本优化实战.md) → 建立成本基线，识别闲置资源并持续优化。
 
 ## 🏗️ 架构说明
 
