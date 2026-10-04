@@ -2157,3 +2157,10 @@ date: 2026-04-17
 - 按用户要求将 `AI/Obsidian/github-pages-mkdocs-material-quartz.md` 重命名为 [[AI/Obsidian/github-pages-quartz|用 GitHub Actions 发布 Obsidian 笔记：Quartz 4]]，文章全文与 4 个代码块保持原样；来源摘要同步重命名为 [[KnowledgeBase/sources/github-pages-quartz-summary|Quartz 4 构建来源摘要]]。
 - 更新 INDEX、Obsidian 实体、CI/CD 概念、三份主题地图和全库盘点中的路径引用；通过 Obsidian MCP 创建新文件、完整回读并删除旧文件。历史日志按仅追加规约保留，本条提供新入口。
 - 675 份原始笔记的内容校验值（含重命名映射）一致，7 份导航更新仅替换路径，17 处相关导航链接可定位，15 份发布工具与 workflow 文件不变；旧路径只保留在历史日志，Git diff 空白检查通过。
+
+## [2026-10-04] query | 全库文章标题审阅
+
+- 按 humanizer-zh 审阅 856 个 Git 跟踪 Markdown 文件的标题，直接核对现有构建器的 412 个发布文件；候选结合引言与相关章节判断，完整清单包含建议保留与另议项。
+- 新增 [[KnowledgeBase/analysis/title-review-2026-10-04|文章标题审阅]] 与 [[KnowledgeBase/maintenance/title-audit-2026-10-04|标题审阅清单]]，同步 INDEX。提出 75 条建议：网页 26 条直接精简、23 条需保留副标题/引言；离线 20 条直接精简、6 条需保留副标题/引言。其余 781 个文件保留或另议，原文章标题等待用户确认后修改。
+- 原有数字、版本和百分比保留检查通过；人工核对归因、范围与组件列表，并修正一处候选与来源摘要同名的问题。在线首页和三篇文章返回 HTTP 200，确认两篇存在网页顶部长标题与正文短 H1 并列；12 处明确指向候选文件的章节 wikilink 均指向技术小节。
+- 两份报告经 Obsidian MCP 写入并完整读回一致，表格、frontmatter 与内部引用静态检查通过；原文章标题、文件名及 675 份原始来源内容未修改，发布工具和 workflow 与扫描前内容一致。未核验原文性能比例/趋势结论，未执行改题构建、移动端视觉验收、部署或 Git add/commit/push。

@@ -355,6 +355,8 @@ date: 2026-10-03
 | [后续写作建议](analysis/next-writing-suggestions.md) | 推荐下一步写作方向 |
 | [多Agent vs 单Agent架构决策分析](analysis/multi-agent-vs-single-agent.md) | 分析多Agent何时是伪需求，提出信息隔离与并发需求的决策框架 |
 
+- [[KnowledgeBase/analysis/title-review-2026-10-04|文章标题审阅]] — 扫描 856 个文件，提出 49 条网页标题与 26 条离线建议；原文章标题待确认后修改。
+
 ---
 
 ## 📋 盘点与维护
@@ -366,6 +368,8 @@ date: 2026-10-03
 | [[KnowledgeBase/maintenance/wiki-lint-2026-09-29|Wiki 健康检查 2026-09-29]] | 六维健康检查与两轮处理：修复失效链接，删除剪藏暂存目录引用与过时摘要，统一篇数，补全页面格式 |
 | [命名规范](maintenance/naming-normalization.md) | 文件命名约定 |
 | [增量维护流程](maintenance/update-workflow.md) | 新增文档后的更新步骤 |
+
+- [[KnowledgeBase/maintenance/title-audit-2026-10-04|标题审阅清单]] — 856 个文件的取值标题、正文 H1、标题载体、发布状态与逐项结论。
 
 ---
 
