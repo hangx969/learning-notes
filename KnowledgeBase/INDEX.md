@@ -61,7 +61,7 @@ date: 2026-10-04
 
 | 页面 | 摘要 |
 |------|------|
-| [Kubernetes](entities/Kubernetes.md) | 容器编排平台，154 篇 Kubernetes 相关文章覆盖全生命周期 |
+| [Kubernetes](entities/Kubernetes.md) | 容器编排平台，157 篇 Kubernetes 相关文章覆盖全生命周期 |
 | [Docker](entities/Docker.md) | 容器运行时，14 篇覆盖基础、镜像分发与服务部署实战 |
 | [Helm](entities/Helm.md) | Kubernetes 包管理器 |
 | [[KnowledgeBase/entities/Cert-Manager|Cert-Manager]] | Kubernetes 原生证书生命周期控制器，支持 ACME、自签名与自动续期 |
@@ -202,6 +202,8 @@ date: 2026-10-04
 
 - [[KnowledgeBase/sources/deepseek-3fs-summary|DeepSeek 3FS 来源摘要]] — AI 集群存储负载、四组件架构、USRBIO/RDMA、CRAQ、性能口径与社区缓存集成。
 
+- [[KnowledgeBase/sources/argocd-sync-troubleshooting-summary|ArgoCD 同步故障排查 来源摘要]] — 五类同步问题、三组原文案例、配置示例与官方资料校正。
+
 ### Azure（已摄入 ✅）
 
 | 页面 | 覆盖文档数 | 摘要 |
@@ -341,7 +343,7 @@ date: 2026-10-04
 |------|------|
 | [领域地图](maps/domain-map.md) | 按技术领域导航全库 |
 | [工具地图](maps/tool-map.md) | 按工具/平台聚合知识 |
-| [Kubernetes 专题](maps/kubernetes-map.md) | K8s 生态知识导航（Docker-Kubernetes 共 170 篇） |
+| [Kubernetes 专题](maps/kubernetes-map.md) | K8s 生态知识导航（Docker-Kubernetes 共 171 篇） |
 | [AI 工作流专题](maps/ai-workflow-map.md) | Claude Code + OpenClaw + AI 辅助运维 |
 | [Claude Code & OpenClaw 专题](maps/claude-code-openclaw-map.md) | AI 编程与开源 AI 工具 |
 | [云平台专题](maps/cloud-platform-map.md) | Aliyun + Azure 对标 |
@@ -383,7 +385,7 @@ date: 2026-10-04
 
 | 领域 | 篇数 | 成熟度 | 入口 |
 |------|------|:------:|------|
-| Docker-Kubernetes | 170 | 🟢 | [kubernetes-map](maps/kubernetes-map.md) |
+| Docker-Kubernetes | 171 | 🟢 | [kubernetes-map](maps/kubernetes-map.md) |
 | Python | 28 | 🟢 | [python-devops-map](maps/python-devops-map.md) |
 | Linux-Shell | 11 | 🟡 | [linux-ops-map](maps/linux-ops-map.md) |
 | Azure | 17 | 🟢 | [cloud-platform-map](maps/cloud-platform-map.md) |

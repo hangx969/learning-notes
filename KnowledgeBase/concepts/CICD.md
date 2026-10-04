@@ -2,8 +2,9 @@
 title: CICD
 tags:
   - knowledgebase/concept
-date: 2026-10-03
+date: 2026-10-04
 sources:
+  - "[[Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD同步故障排查]]"
   - "[[AI/Obsidian/github-pages-quartz]]"
   - "[[Docker-Kubernetes/k8s-CICD/Jenkins/k8s-Devops平台落地-基于jenkins]]"
   - "[[Docker-Kubernetes/k8s-CICD/Jenkins/k8s部署基于Jenkins(2.426.3)的Devops工具链-基于yaml]]"
@@ -41,10 +42,11 @@ aliases:
 - GitOps 模式（以 ArgoCD 为代表）通过 Git 仓库作为唯一事实源，实现声明式部署与自动漂移修复
 - Kustomize vs Helm：前者无模板引擎、原生 kubectl 集成；后者支持 Chart 打包与版本管理
 - AI 辅助 CI/CD：Claude Code 可自动生成 Pipeline 配置、执行代码审查、集成 GitHub Actions
+- GitOps 同步治理：分别处理差异、健康状态、执行失败和 prune，合并前完成渲染、schema/策略校验及差异审查；force 不作为普通重试。
 - 静态文档发布：将 Quartz 4 的构建结果上传为 Pages artifact，再执行部署；本地构建、Actions 运行与实际网站分别验收。
 
 ## 在本仓库中的覆盖
-主要集中在 `Docker-Kubernetes/k8s-CICD/` 目录下，按工具分为 Jenkins、ArgoCD、Gitlab、Tekton、Kustomize 等子目录，共 24 篇文章。
+主要集中在 `Docker-Kubernetes/k8s-CICD/` 目录下，按工具分为 Jenkins、ArgoCD、Gitlab、Tekton、Kustomize 等子目录，共 25 篇文章。
 
 
 - [[Docker-Kubernetes/k8s-CICD/Jenkins/k8s-Devops平台落地-基于jenkins|k8s-Devops平台落地-基于jenkins]]
@@ -55,6 +57,7 @@ aliases:
 - [[Docker-Kubernetes/k8s-CICD/Jenkins/二进制安装Jenkins(2.319)|二进制安装Jenkins(2.319)]]
 - [[Docker-Kubernetes/k8s-CICD/Jenkins/Jenkins语法-基于docker部署|Jenkins语法-基于docker部署]]
 - [[Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD基础|ArgoCD基础]]
+- [[Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD同步故障排查|ArgoCD 同步故障排查]]：同步与漂移排查、生产删除保护和控制面调参。
 - [[Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD Image Updater|ArgoCD Image Updater]]
 - [[Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD部署Helm应用时域名解析失败问题排查与解决|ArgoCD Helm 部署：域名解析故障处理]]
 - [[Docker-Kubernetes/k8s-CICD/Gitlab/helm部署gitlab|helm部署gitlab]]

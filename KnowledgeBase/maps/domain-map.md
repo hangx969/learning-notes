@@ -5,8 +5,9 @@ tags:
   - knowledgebase/navigation
 aliases:
   - Domain Map
-date: 2026-10-03
+date: 2026-10-04
 sources:
+  - "[[Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD同步故障排查]]"
   - "[[AI/Obsidian/github-pages-quartz]]"
   - "[[Docker-Kubernetes/k8s-basic-resources/k8s基础-架构-组件-资源]]"
   - "[[Docker-Kubernetes/k8s-installation-management/latest-version/安装k8s-1.35-基于rockylinux10-最新步骤]]"
@@ -79,14 +80,14 @@ sources:
 
 ---
 
-## ☸️ Docker-Kubernetes（168 篇）
+## ☸️ Docker-Kubernetes（171 篇）
 
 **覆盖范围：** 从 Docker 容器基础到企业级 Kubernetes 全生命周期管理，包含安装部署、核心资源、监控日志、CI/CD、网络、安全、存储、扩缩容。
 
 **重点子目录：**
 - `k8s-basic-resources/`（25 篇）— Pod、Deployment、Service、Ingress、Storage 等核心资源
 - `k8s-monitoring-logging/`（20 篇）— Prometheus、Grafana、EFK、Loki、Jaeger、Skywalking
-- `k8s-CICD/`（24 篇）— Jenkins、ArgoCD、GitLab、Tekton、Kustomize、GitHub Actions
+- `k8s-CICD/`（25 篇）— Jenkins、ArgoCD、GitLab、Tekton、Kustomize、GitHub Actions
 - `k8s-installation-management/`（20 篇）— K8s 1.20~1.35 多版本安装、生产优化、故障排查
 - `docker/`（14 篇）— Docker 基础、镜像离线分发与各类服务部署
 - `k8s-networking-service-mesh/`（7 篇）— Istio、Ingress-Nginx、NetworkPolicy
@@ -96,6 +97,7 @@ sources:
 - [[Docker-Kubernetes/k8s-installation-management/latest-version/安装k8s-1.35-基于rockylinux10-最新步骤|安装k8s-1.35-基于rockylinux10-最新步骤]] — 最新版安装
 - [[Docker-Kubernetes/k8s-monitoring-logging/helm部署prometheus-stack全家桶|Prometheus-Stack：生产部署与运维]] — 可观测性全家桶
 - [[Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD基础|ArgoCD基础]] — GitOps 核心
+- [[Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD同步故障排查|ArgoCD 同步故障排查]] — 同步故障与生产边界
 - [[Docker-Kubernetes/k8s-networking-service-mesh/k8s精细化流量管理-istio|k8s精细化流量管理-istio]] — 服务网格
 
 **关联领域：** [[CloudComputing/云原生|云原生]]、[[Azure/2_AKS-basics|2_AKS-basics]]、[[Python/python-运维开发/python-kubernetes-module|python-kubernetes-module]]、[[GPU-DeepLearning/GPU-basics|GPU-basics]]

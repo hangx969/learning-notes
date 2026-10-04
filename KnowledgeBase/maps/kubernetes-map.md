@@ -8,6 +8,7 @@ aliases:
   - K8s Map
 date: 2026-10-04
 sources:
+  - "[[Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD同步故障排查]]"
   - "[[Docker-Kubernetes/k8s-storage/DeepSeek 3FS，AI原生的并行文件系统]]"
   - "[[Docker-Kubernetes/docker/docker基础]]"
   - "[[Docker-Kubernetes/k8s-basic-resources/k8s基础-容器运行时-containerd]]"
@@ -102,7 +103,7 @@ sources:
 # ☸️ Kubernetes 专题地图
 
 > [!info] 专题范围
-> 覆盖 Docker-Kubernetes 目录下 ==170 篇文档==（不含目录 index.md，统计日期 2026-10-04），从容器基础到企业级 K8s 全生命周期管理。
+> 覆盖 Docker-Kubernetes 目录下 ==171 篇文档==（不含目录 index.md，统计日期 2026-10-04），从容器基础到企业级 K8s 全生命周期管理。
 
 ---
 
@@ -148,7 +149,7 @@ sources:
 
 ### 第五阶段：CI/CD
 17. [[Docker-Kubernetes/k8s-CICD/Kustomize/Kustomize入门-Base与Overlay多环境配置|Kustomize 入门：Base 与 Overlay]] — 多环境配置定制
-18. [[Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD基础|ArgoCD基础]] — GitOps
+18. [[Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD基础|ArgoCD基础]] — GitOps；随后阅读 [[Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD同步故障排查|同步故障排查]]
 19. [[Docker-Kubernetes/k8s-CICD/Jenkins/k8s-Devops平台落地-基于jenkins|k8s-Devops平台落地-基于jenkins]] — Jenkins DevOps
 20. [[Docker-Kubernetes/k8s-CICD/Tekton/基于Tekton的云原生平台落地|基于Tekton的云原生平台落地]] — 云原生 CI/CD
 
@@ -199,15 +200,17 @@ sources:
 | OTel | [[Docker-Kubernetes/k8s-monitoring-logging/OpenTelemetry实战-统一Traces-Metrics-Logs\|OpenTelemetry 统一可观测性实战]] |
 | 巡检 | [[Docker-Kubernetes/k8s-monitoring-logging/K8s全面巡检脚本-生成HTML健康报告|K8s 全面巡检脚本]] |
 
-### CI/CD（24 篇）
+### CI/CD（25 篇）
 | 工具 | 文章数 | 代表 |
 |------|--------|------|
 | Jenkins | 7 | [[Docker-Kubernetes/k8s-CICD/Jenkins/k8s-Devops平台落地-基于jenkins|k8s-Devops平台落地-基于jenkins]] |
-| ArgoCD | 5 | [[Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD基础|ArgoCD基础]] |
+| ArgoCD | 6 | [[Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD基础|ArgoCD基础]] |
 | GitLab | 3 | [[Docker-Kubernetes/k8s-CICD/Gitlab/二进制安装Gitlab(17.9.8)|二进制安装Gitlab(17.9.8)]] |
 | Tekton | 2 | [[Docker-Kubernetes/k8s-CICD/Tekton/基于Tekton的云原生平台落地|基于Tekton的云原生平台落地]] |
 | Kustomize | 2 | [[Docker-Kubernetes/k8s-CICD/Kustomize/Kustomize入门-Base与Overlay多环境配置\|Kustomize 入门：Base 与 Overlay]]、[[Docker-Kubernetes/k8s-CICD/Kustomize/k8s配置定制工具-kustomize|综合使用指南]] |
 | 其他 | 5 | GitHub Actions、发布代码到 K8S、Claude Code AI CI/CD、蓝绿与金丝雀发布策略、Pact Broker |
+
+- [[Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD同步故障排查|ArgoCD 同步故障排查]] — OutOfSync、Progressing、执行失败、prune 和同步性能
 
 ### 网络与服务网格（7 篇）
 - [[Docker-Kubernetes/k8s-networking-service-mesh/k8s精细化流量管理-istio|Istio 服务网格：架构、部署与精细化流量治理]]

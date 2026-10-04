@@ -2187,3 +2187,20 @@ date: 2026-04-17
 - 创建 [[KnowledgeBase/sources/karpathy-llm-output-understanding-summary|来源摘要]]，同步 [[KnowledgeBase/concepts/提示词工程|提示词工程]]、[[KnowledgeBase/maps/ai-workflow-map|AI 工作流专题地图]] 与 INDEX；新增提示词明确标为应用示例。
 - 核对原推文正文与 2026-10-02 发布日期，并参考 ASD-STE100 官方介绍区分清晰写作、宽松的“80%”风格提示与正式标准合规。
 - 文章与关联页面经 Obsidian MCP 写入并完整回读一致；frontmatter、代码块、新增 wikilink 和空白检查通过，Obsidian 阅读视图中的标题、表格及提示词排版已检查。本次为文档摄入，未执行 HTML 或视频生成。
+
+## [2026-10-04] ingest | Longhorn 轻量块存储文章
+
+- 按用户要求新增 [[Docker-Kubernetes/k8s-storage/开源存储列传第 18 篇 — Longhorn，K8s的轻量块存储|开源存储列传第 18 篇 — Longhorn，K8s的轻量块存储]]；用 humanizer-zh 优化正文表达，清理剪藏编号和系列导航，保留 8 个章节、原始元信息、完整对比表、技术背景、数字、版本与作者判断，原稿保持原样。
+- 原文 10 幅 SVG 保留为 6 幅 Mermaid 和 4 幅 PNG；PNG 通过 PicGo CLI 的 GitHub Plus 上传到既有图床，流程图保留原图文字与关系。
+- 新增 [[KnowledgeBase/sources/longhorn-block-storage-summary|Longhorn 来源摘要]]，补充 [[KnowledgeBase/concepts/StorageClass]]、[[KnowledgeBase/entities/Rancher]]、[[KnowledgeBase/maps/kubernetes-map]] 与 [[KnowledgeBase/INDEX]] 的来源和入口；保留索引及地图中的同期摄入内容。
+- 对原文的每卷 Pod 数量、串行复制链、重建方式、快照空间和故障后果、部署与性能概括，另加带官方引用的折叠校核注释。未执行 Longhorn 部署、迁移、压测或故障演练。
+- 校验通过：正文与来源摘要写入后完整 MCP 读回一致；本机 Obsidian 1.13.7 自带 Mermaid 库离线解析、渲染 6/6 通过并逐图查看；4/4 图片返回 HTTP 200 且远端 SHA-256 与本地一致；原稿和已有 6 篇存储文章哈希未变；新增知识库引用、元信息、代码围栏和 Git diff 空白检查通过。
+
+
+## [2026-10-04] ingest | DeepSeek 3FS 并行文件系统
+
+- 新增 [[Docker-Kubernetes/k8s-storage/DeepSeek 3FS，AI原生的并行文件系统|DeepSeek 3FS，AI原生的并行文件系统]]，用 humanizer-zh 优化正文表达，保留 7 个主章节、4 个技术小节、两张对比表和正文数字；清除剪藏段落序号与系列页脚导航，原始剪藏未修改。
+- 原文 9 张内嵌 SVG 导出为 2100 px 宽 PNG，经 PicGo CLI 的 GitHub Plus 上传至图床；9/9 远端图片返回 HTTP 200，内容 SHA-256 与本地一致。独立 SVG 保存在文章的 assets 目录并提供正文链接，仅增加独立文件所需的 XML namespace，原图文字与图形保持一致。
+- 正文另列官方资料核对说明，标明 USRBIO/FUSE 与内核参与、CRAQ 读路径、权限与轻量数据集快照、MIT 条件的表述边界；原文观点与核对说明分别标注。
+- 新增 [[KnowledgeBase/sources/deepseek-3fs-summary|来源摘要]]，更新 [[KnowledgeBase/concepts/KV Cache]]、[[KnowledgeBase/entities/vLLM]]、[[KnowledgeBase/maps/kubernetes-map|Kubernetes 专题地图]] 与 INDEX；保留同期 Longhorn 等摄入改动，相关导航按当前文件数统计（Docker-Kubernetes 171 篇，k8s-storage 8 篇）。
+- 15 个正文、SVG 与关联页面经 Obsidian MCP 写入并完整读回一致；frontmatter、核心 wikilink、SVG XML 与原图一致性、空白检查通过，原始剪藏 SHA-256 未变。Obsidian 阅读视图中 9 张图片均加载成功，11 个技术小节和两张表格可见；未运行 3FS 集群或复现性能基准。

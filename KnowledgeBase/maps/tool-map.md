@@ -5,8 +5,9 @@ tags:
   - knowledgebase/tools
 aliases:
   - Tool Map
-date: 2026-10-03
+date: 2026-10-04
 sources:
+  - "[[Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD同步故障排查]]"
   - "[[AI/Obsidian/github-pages-quartz]]"
   - "[[AI/ClaudeCode/Claude Code 基础指南]]"
   - "[[AI/ClaudeCode/Claude Code 扩展体系]]"
@@ -365,8 +366,9 @@ sources:
 ## CI/CD 工具
 
 ### ArgoCD
-**相关文档（5 篇）：**
+**相关文档（6 篇）：**
 - [[Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD基础|ArgoCD基础]] ⭐ 推荐入口
+- [[Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD同步故障排查|ArgoCD 同步故障排查]] — 基础篇之后的同步排障与生产配置边界
 - [[Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD Image Updater|ArgoCD Image Updater]]
 - [[Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD部署Helm应用时域名解析失败问题排查与解决|ArgoCD Helm 部署：域名解析故障处理]]
 - [[Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD多集群GitOps实战|Argo CD 多集群 GitOps 实战]]

@@ -3,7 +3,7 @@ title: k8s-CICD 来源批量摘要
 tags:
   - knowledgebase/source
   - docker-kubernetes/cicd
-date: 2026-09-12
+date: 2026-10-04
 sources:
   - "[[Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD Image Updater]]"
   - "[[Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD基础]]"
@@ -33,7 +33,7 @@ aliases:
 ## 元信息
 
 - **原始目录**: `Docker-Kubernetes/k8s-CICD/`（含子目录 ArgoCD、Gitlab、Jenkins、Kustomize、Tekton）
-- **文档数量**: 本批次收录 21 篇（`k8s-CICD/` 目录现有 24 篇）
+- **文档数量**: 本批次收录 21 篇（`k8s-CICD/` 目录现有 25 篇；本次同步排障增量单列于 [[KnowledgeBase/sources/argocd-sync-troubleshooting-summary|ArgoCD 同步故障排查 来源摘要]]）
 - **领域**: Kubernetes CI/CD 持续集成与持续部署
 - **摄入日期**: 2026-04-17
 

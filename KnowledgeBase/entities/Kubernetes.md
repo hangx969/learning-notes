@@ -3,8 +3,9 @@ title: Kubernetes
 tags:
   - knowledgebase/entity
   - docker-kubernetes
-date: 2026-09-13
+date: 2026-10-04
 sources:
+  - "[[KnowledgeBase/sources/argocd-sync-troubleshooting-summary]]"
   - "[[KnowledgeBase/sources/k8s-basic-resources-batch-summary]]"
   - "[[KnowledgeBase/sources/kubectl-server-side-apply-summary]]"
   - "[[KnowledgeBase/sources/k8s-installation-management-batch-summary]]"
@@ -33,7 +34,7 @@ aliases:
 
 ## 简介
 
-Kubernetes（K8s）是容器编排平台，源自 Google Borg 系统，2014 年开源，2018 年从 CNCF 毕业。本仓库 Docker-Kubernetes 目录共 168 篇，其中 Kubernetes 相关 **154 篇**（其余 14 篇为 `docker/`），覆盖了 K8s 全生命周期，包括基础资源、集群安装与管理、监控日志、CI/CD、网络与服务网格、安全认证、扩缩容、存储、数据库中间件、UI 工具、备份恢复、GPU 配置、认证考试等主题。全部源文档的详细摘要见上方 `sources` 中列出的批量摘要页面。下文各小节篇数按对应子目录统计（2026-09-29），杂项专题含 helm、配置管理、镜像管理、CKA/CKS、KubeBlocks、容器平台、SpringCloud、GPU 子目录及根目录简历指南。
+Kubernetes（K8s）是容器编排平台，源自 Google Borg 系统，2014 年开源，2018 年从 CNCF 毕业。本仓库 Docker-Kubernetes 目录共 171 篇，其中 Kubernetes 相关 **157 篇**（其余 14 篇为 `docker/`），覆盖了 K8s 全生命周期，包括基础资源、集群安装与管理、监控日志、CI/CD、网络与服务网格、安全认证、扩缩容、存储、数据库中间件、UI 工具、备份恢复、GPU 配置、认证考试等主题。全部源文档的详细摘要见上方 `sources` 中列出的批量与增量摘要页面。下文各小节篇数按对应子目录统计（原统计日期 2026-09-29；总数与 CI/CD 增量于 2026-10-04 按现有文件复核），杂项专题含 helm、配置管理、镜像管理、CKA/CKS、KubeBlocks、容器平台、SpringCloud、GPU 子目录及根目录简历指南。
 
 ## 核心功能：核心架构知识
 
@@ -118,10 +119,10 @@ Kubernetes（K8s）是容器编排平台，源自 Google Borg 系统，2014 年�
 - EFK 适合 TB 级大规模日志，Loki 适合轻量级场景
 - Kafka 作为缓冲层解决高吞吐日志延迟：Fluentd -> Kafka -> Logstash -> ES
 
-### CI/CD（24 篇）
-详见 [[KnowledgeBase/sources/k8s-CICD-batch-summary|k8s-CICD 批量摘要]]
+### CI/CD（25 篇）
+详见 [[KnowledgeBase/sources/k8s-CICD-batch-summary|k8s-CICD 批量摘要]] 与 [[KnowledgeBase/sources/argocd-sync-troubleshooting-summary|同步故障排查增量摘要]]
 
-覆盖 [[KnowledgeBase/entities/ArgoCD|ArgoCD]]（GitOps 持续交付、Image Updater、DNS 排查）、[[KnowledgeBase/entities/Jenkins|Jenkins]]（多版本部署、Pipeline 语法、DevOps 平台落地）、Tekton（云原生 Pipeline）、[[KnowledgeBase/entities/Kustomize|Kustomize]]（Base+Overlay 配置定制）、GitHub Actions（Self-hosted Runner）、多语言应用发布（Go/Python/Java）。
+覆盖 [[KnowledgeBase/entities/ArgoCD|ArgoCD]]（GitOps 持续交付、Image Updater、DNS 与同步故障排查）、[[KnowledgeBase/entities/Jenkins|Jenkins]]（多版本部署、Pipeline 语法、DevOps 平台落地）、Tekton（云原生 Pipeline）、[[KnowledgeBase/entities/Kustomize|Kustomize]]（Base+Overlay 配置定制）、GitHub Actions（Self-hosted Runner）、多语言应用发布（Go/Python/Java）。
 
 **核心要点**：
 - GitOps（ArgoCD Pull 模式）vs 传统 CI/CD（Jenkins Push 模式）两种部署哲学
