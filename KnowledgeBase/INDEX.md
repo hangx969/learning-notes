@@ -355,7 +355,7 @@ date: 2026-10-03
 | [后续写作建议](analysis/next-writing-suggestions.md) | 推荐下一步写作方向 |
 | [多Agent vs 单Agent架构决策分析](analysis/multi-agent-vs-single-agent.md) | 分析多Agent何时是伪需求，提出信息隔离与并发需求的决策框架 |
 
-- [[KnowledgeBase/analysis/title-review-2026-10-04|文章标题审阅]] — 扫描 856 个文件，提出 49 条网页标题与 26 条离线建议；原文章标题待确认后修改。
+- [[KnowledgeBase/analysis/title-review-2026-10-04|文章标题审阅]] — 49 条网页标题与关联引用已按确认方案更新并验收，26 条离线建议未执行；保留原题对照与执行记录。
 
 ---
 

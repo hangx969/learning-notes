@@ -16,10 +16,10 @@ aliases:
 
 # 文章标题审阅
 
-> [!info] 待确认稿
-> 本轮扫描并逐条审阅了 856 个 Markdown 文件的标题。建议优化 75 个文件，其中 49 个参与 GitHub Pages 发布。原文章标题、文件名和发布配置均未修改；本轮只新增审阅报告、完整清单与对应导航/日志记录。
+> [!success] 已执行：49 条网页标题
+> 2026-10-04，按用户确认的当前表格更新 26 条可直接精简标题，以及 23 条需保留副标题或引言的标题，并同步关联引用。文件名和发布配置保持原样；26 条离线建议未执行。
 
-建议先确认**网页标题可直接精简的 26 条**。另有 **23 条网页标题需要短主标题配合副标题或引言**，以保留数字、作者归因、组件列表和适用条件；这 23 条不能只采用短主标题。**26 条离线建议**目前不会影响网页，可按需安排。其余 781 个文件保留现状或另列问题。
+第 1—9 节保留最初的审阅快照、原题对照和实施方案；其中“本轮”指审阅阶段。第 10 节记录确认后的实际更新、引用同步、兼容锚点和最终验收。
 
 ## 1. 扫描范围与计数
 
@@ -203,7 +203,7 @@ GitHub Actions 的 `.github/workflows/deploy-pages.yml` 调用 `tools/site/build
 
 本轮发现的一处候选同名已经处理：原文拟用“K8s 容器设计模式”会与已有来源摘要相同，改为“K8s 四种容器设计模式”，数量来自原题四个模式。按大小写及常见标点归一化比较全库最终候选，没有新增的候选标题同名组；路径也未变化。
 
-## 9. 本轮验收与边界
+## 9. 审阅阶段的验收与边界
 
 - 856 个文件均纳入清单且编号唯一，发布清单与直接调用现有 `load_notes()` 的结果一致；YAML 解析没有扫描警告。
 - 75 条建议均可对应原文件；49 条网页建议为 26 条直接精简、23 条配合副标题，26 条离线建议为 20 条直接精简、6 条配合副标题。
@@ -216,3 +216,42 @@ GitHub Actions 的 `.github/workflows/deploy-pages.yml` 调用 `tools/site/build
 相关入口：[[KnowledgeBase/maintenance/title-audit-2026-10-04|完整审阅清单]]、[[AI/Obsidian/github-pages-quartz|Quartz 发布流程]]。
 
 在线抽样入口：[Markdown Viewer](https://hangx969.github.io/learning-notes/AI/AI-%E8%A7%86%E8%A7%89/Markdown-Viewer-Skills-Markdown%E4%B8%AD%E7%9B%B4%E6%8E%A5%E7%94%BB%E5%9B%BE.html)、[CLAUDE.md 规则](https://hangx969.github.io/learning-notes/AI/ClaudeCode/CLAUDE.md%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5-12%E6%9D%A1%E8%A7%84%E5%88%99%E6%A8%A1%E6%9D%BF.html)、[Webhook 冲突](https://hangx969.github.io/learning-notes/Docker-Kubernetes/k8s-security-auth/k8s-Admission-Webhook%E9%93%BE%E5%86%B2%E7%AA%81%E6%8E%92%E6%9F%A5-Istio-Kyverno-Gatekeeper.html)。
+
+## 10. 已执行更新与最终验收（2026-10-04）
+
+用户确认后，按第 4、5 节当前表格的建议主标题更新全部 **49 篇已发布文章**：26 篇直接精简、23 篇同时保留必要副标题或引言。T0391 采用用户调整后的 `Azure ACR and ACI`，T0538 采用 `Helm部署Loki+Promtail+Tempo+GrafanaAgent`，四个组件名仍保留在主标题。第 6 节的 26 条离线标题建议未执行。
+
+### 文章与引用
+
+| 项目 | 执行结果 |
+| --- | --- |
+| 实际标题字段 | 47 个 frontmatter title、2 个首行 H1，均与批准表格逐字一致 |
+| 对应文章 H1 | 修改 41 处；3 篇已有相同短 H1，5 篇没有文章 H1，不新增重复标题 |
+| 必须保留的信息 | 23 篇全部保留数字、作者归因、完整产品名、组件列表和适用条件 |
+| 引用更新 | 完成时共 94 个文件、305 处显示文字：83 个 Wiki 文件、10 个原始导航/引用文件、根 README |
+| 当前可复核的引用 | 并发删除后仍存在 90 个文件、278 处，全部与新标题一致 |
+| 来源和章节链接 | 完成时核对 161 处 frontmatter 来源引用；并发删除后仍存在的 146 处与 12 处技术章节链接保持原目标与片段 |
+| 旧标题兼容 | 按修改前生成 HTML，在 49 篇文章中保留 92 个旧标题/H1 锚点；新旧锚点均可定位 |
+| 路径与发布范围 | 文件名、412 篇文章的发布路径及完整 URL 不变；发布工具与 workflow 未改 |
+
+引用扫描覆盖当时 Git 跟踪的 858 个 Markdown 文件（原审阅快照 856 个加两份报告），包括 wikilink、Markdown 链接、frontmatter 来源，以及带片段的 HTML 链接和引用式链接。页面入口与标题型显示文字采用短标题；技术章节文字和历史操作记录保留原含义。原题表与审阅清单仍是修改前快照，未用新题覆盖历史对照。
+
+兼容锚点采用正文中的空 `div.legacy-anchor`，网页不显示旧长标题；没有把长标题批量加入 `aliases`。旧文章 URL 的兼容入口仍存在，修改前的技术标题锚点也仍可定位。
+
+### 验收证据
+
+- 三个 GPT-6.1 Sol Low 子 Agent 分批实施和复核；主 Agent 独立核对最终表格、完整文件差异与生成网页。
+- 49 个取值标题与批准表格一致；23 篇必要保留项完整。其余仍存在的文件标题未改；非标题 metadata、代码块和技术小节与执行前一致。
+- 所有写入均经 Obsidian MCP 全文读回核对。部分原始页面采用上下文限定的逐行补丁；局部 MCP 编辑接口返回版本不兼容，逐行补丁后也通过全文 MCP 读回。
+- 本地 `python3 tools/site/build.py --skip-install` 成功。49 个网页顶部标题、49 个主题列表入口、49 个搜索索引标题逐条通过；发布范围仍为 412 篇。
+- 92 个旧标题兼容 ID 各存在一次；旧技术标题与旧兼容 ID 均保留。检查排除了构建器生成的浏览器侧栏序号 ID；已有 Mermaid 组件 ID 不作为文章书签验收对象。
+- 浏览器抽查首页的新标题及 Mnilax、Helm 文章搜索结果。两篇文章在 390 px 窄屏下标题完整换行，没有标题横向溢出；Mnilax 的原有数据归因和 Helm 四组件说明可见。
+- `git diff --check` 通过。366 个跟踪的非 Markdown 文件与执行前校验值一致，未改工具、主题、图片、workflow，也未重命名文章。
+
+### 同期工作区变化与发布边界
+
+最终验收期间，以下 6 个非获选页面从工作区消失：`KnowledgeBase/analysis/high-value-gaps.md`、`KnowledgeBase/analysis/multi-agent-vs-single-agent.md`、`KnowledgeBase/analysis/next-writing-suggestions.md`、`KnowledgeBase/analysis/topic-coverage-analysis.md`、`KnowledgeBase/maintenance/naming-normalization.md`、`KnowledgeBase/maintenance/wiki-lint-2026-09-29.md`。本次没有删除或恢复它们。其中 4 个文件曾包含已更新的 27 处引用，因此报告分别记录完成时的 305 处和当前仍存在的 278 处；已删除页面不再计入最终全文核对。
+
+本地构建仍提示 9 处既有 wikilink 指向发布规则排除的内容，已确认对应引用在修改前就存在；另有原有中文数学内容的 KaTeX 提示和 Node 弃用提示。它们不影响本轮标题构建成功，本次未改这些正文或发布筛选规则。
+
+本次仅确认本地内容、完整读回和生成网页，未执行 Git add/commit/push 或触发 GitHub Actions/Pages 部署，也未声称线上页面已经更新。原文性能比例和趋势判断仍作为来源说法保留，本轮未做事实核验。
