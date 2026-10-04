@@ -2173,3 +2173,9 @@ date: 2026-04-17
 - 49 篇文章保留 92 个旧标题/H1 兼容锚点，未批量增加 aliases；412 篇发布文章的完整 URL 和旧兼容入口不变。三名 GPT-6.1 Sol Low 子 Agent 分批处理与独立复核，主 Agent 完成验收。
 - 写入后完整 Obsidian MCP 读回一致，本地 Quartz 构建、49 篇顶部/列表/搜索标题和旧锚点检查通过，首页与两篇文章的搜索、390 px 窄屏显示抽查通过；366 个非 Markdown 文件未变，Git diff 空白检查通过。已知 9 处排除内容链接提示及既有数学/弃用提示见报告。
 - 更新报告执行状态、原题清单说明与 INDEX，本条仅追加历史日志。未执行 Git add/commit/push 或触发 Pages 部署；线上更新尚未验证，原文性能与趋势结论未在本轮核验。
+
+## [2026-10-04] update | 仓库更名为 CloudOps Vault
+
+- 将本地仓库目录更名为 `cloudops-vault`，Git origin 改为 `hangx969/cloudops-vault`；更新 README、Schema 与 Quartz 的站点名称、GitHub 链接和 Pages 路径。
+- 同步 Obsidian vault、Codex、Claude 与 VS Code 的本地项目路径配置，保留既有权限和历史会话内容；外部配置备份位于 `/private/tmp/cloudops-vault-migration-backup`。Obsidian Git 已在新目录启用，原有自动备份设置保持不变。
+- 1,023 个受保护原始文件的 SHA-256 校验值与迁移前一致；Git SSH 远程访问、配置解析、完整 Quartz 构建、本地首页与文章资源检查、Git diff 空白检查通过。GitHub Pages 部署成功，新地址 `https://hangx969.github.io/cloudops-vault/` 返回 HTTP 200。
