@@ -116,15 +116,15 @@ date: 2026-10-03
 | 页面 | 原始来源 | 摘要 |
 |------|---------|------|
 | [ClaudeCode基础指南](sources/ClaudeCode基础指南-summary.md) | [AI/ClaudeCode/Claude Code 基础指南](../AI/ClaudeCode/Claude%20Code%20基础指南.md) | 3 种模式、Extended Thinking、Claude.md、Spec 工作流、5 大实战场景 |
-| [AI知识库完整指南](sources/obsidian-claude-AI知识库完整指南-summary.md) | [[AI/Obsidian/obsidian-claude-code-AI知识库完整指南]] | Markdown 母语论证、Karpathy Wiki 三层架构、30 分钟四步上手、六大操作谱系、三个集成工具、改造计划（三篇合并） |
-| [Obsidian可视化Skills](sources/obsidian-visual-skills-summary.md) | [AI/Obsidian/Obsidian可视化Skills](../AI/Obsidian/Obsidian可视化Skills-Excalidraw-Mermaid-Canvas.md) | AI Skills 生成可编辑图表：Excalidraw/Mermaid/Canvas 三种格式 |
+| [AI知识库完整指南](sources/obsidian-claude-AI知识库完整指南-summary.md) | [[AI/Obsidian/obsidian-claude-code-AI知识库完整指南\|Obsidian + Claude Code：AI 知识库指南]] | Markdown 母语论证、Karpathy Wiki 三层架构、30 分钟四步上手、六大操作谱系、三个集成工具、改造计划（三篇合并） |
+| [Obsidian可视化Skills](sources/obsidian-visual-skills-summary.md) | [[AI/Obsidian/Obsidian可视化Skills-Excalidraw-Mermaid-Canvas\|Obsidian 可视化 Skills]] | AI Skills 生成可编辑图表：Excalidraw/Mermaid/Canvas 三种格式 |
 | [Skill Craft](sources/skill-craft-summary.md) | [AI/ClaudeCode/Claude-Skill质检工具-SkillCraft](../AI/ClaudeCode/Claude-Skill质检工具-SkillCraft.md) | Skill 质量工程：7 类失效模式、三层评估体系、check/fix/create/audit 四模式 |
-| [Harness 实战](sources/harness-system-summary.md) | [AI/ClaudeCode/Claude-Code-Harness实战-最小可用系统](../AI/ClaudeCode/Claude-Code-Harness实战-最小可用系统.md) | Harness 四层安全约束：约束层/工具层/中间件层/编排层 + Hooks 拦截器 + Git 门禁 |
-| [CLAUDE.md 完全指南](sources/claude-md-complete-guide-summary.md) | [[CLAUDE.md最佳实践-12条规则模板]] / [[CLAUDE.md最佳实践-21条指令清单]] / [[CLAUDE.md维护工程-四层加载与指令预算]] | 三篇合并：12 条行为规则（错误率 41%→3%）+ 21 条指令清单（五维度）+ 四层加载/指令预算/rules/ 精准投放/配置体系四角色 |
+| [Harness 实战](sources/harness-system-summary.md) | [[AI/ClaudeCode/Claude-Code-Harness实战-最小可用系统\|Harness 实战：从零搭建最小可用系统]] | Harness 四层安全约束：约束层/工具层/中间件层/编排层 + Hooks 拦截器 + Git 门禁 |
+| [CLAUDE.md 完全指南](sources/claude-md-complete-guide-summary.md) | [[CLAUDE.md最佳实践-12条规则模板\|Mnilax 的 CLAUDE.md：12 条规则]] / [[CLAUDE.md最佳实践-21条指令清单\|Mayank Agarwal：21 条 CLAUDE.md 指令]] / [[CLAUDE.md维护工程-四层加载与指令预算]] | 三篇合并：12 条行为规则（错误率 41%→3%）+ 21 条指令清单（五维度）+ 四层加载/指令预算/rules/ 精准投放/配置体系四角色 |
 | [CLAUDE.md 维护工程](sources/claude-md-maintenance-summary.md) | [[CLAUDE.md维护工程-四层加载与指令预算]] | 四层加载体系、LLM 指令预算（arXiv 论文）、rules/ 精准投放、配置体系四角色分工 |
-| [CodeGraph](sources/codegraph-summary.md) | [[CodeGraph-代码语义知识图谱]] | 代码语义图谱，工具调用减少 92%、探索速度提升 71%，19 种语言 + 框架路由映射，本地 AST 不依赖外部 |
+| [CodeGraph](sources/codegraph-summary.md) | [[CodeGraph-代码语义知识图谱\|CodeGraph：Claude Code 代码知识图谱]] | 代码语义图谱，工具调用减少 92%、探索速度提升 71%，19 种语言 + 框架路由映射，本地 AST 不依赖外部 |
 | [Fable 5 System Prompt](sources/claude-fable5-system-prompt-summary.md) | [[AI/ClaudeCode/Claude-Fable-5-system-prompt]] | Claude Fable 5 完整系统提示词（~125K 字符）：Mythos-class 新层级、行为规约体系、~15 个内置工具、沙箱架构、Artifact/Claudeception、版权硬限制 |
-| [Git Worktree AI 实践](sources/git-worktree-ai-dev-summary.md) | [[Git-Worktree-AI开发实践指南]] | 一个 AI 会话 = 一个 Worktree，并行开发/紧急修复/多方案探索，5 个实践踩坑 |
+| [Git Worktree AI 实践](sources/git-worktree-ai-dev-summary.md) | [[Git-Worktree-AI开发实践指南\|Vibe Coding 的 Git Worktree 实践]] | 一个 AI 会话 = 一个 Worktree，并行开发/紧急修复/多方案探索，5 个实践踩坑 |
 
 ### AI/Obsidian（增量）
 
@@ -256,8 +256,8 @@ date: 2026-10-03
 
 | 页面 | 原始来源 | 摘要 |
 |------|---------|------|
-| [Boris Cherny 红杉大会](sources/boris-cherny-sequoia-summary.md) | [AI/行业动态/Claude-Code创始人红杉大会七个判断](../AI/行业动态/Claude-Code创始人红杉大会七个判断.md) | Claude Code 创始人 7 个行业判断：代码民主化、MCP 定位、SaaS 护城河瓦解、创业黄金期 |
-| [HTML 取代 Markdown](sources/html-vs-markdown-summary.md) | [AI/行业动态/Anthropic工程师力推HTML取代Markdown-Karpathy附议](../AI/行业动态/Anthropic工程师力推HTML取代Markdown-Karpathy附议.md) | Anthropic 工程师 5 大论据力推 HTML、Karpathy 附议进化路线、Token 成本权衡、哥白尼式智能观 |
+| [Boris Cherny 红杉大会](sources/boris-cherny-sequoia-summary.md) | [[AI/行业动态/Claude-Code创始人红杉大会七个判断\|Claude Code 创始人：红杉大会的 7 个判断]] | Claude Code 创始人 7 个行业判断：代码民主化、MCP 定位、SaaS 护城河瓦解、创业黄金期 |
+| [HTML 取代 Markdown](sources/html-vs-markdown-summary.md) | [[AI/行业动态/Anthropic工程师力推HTML取代Markdown-Karpathy附议\|HTML 取代 Markdown：Anthropic 工程师的建议]] | Anthropic 工程师 5 大论据力推 HTML、Karpathy 附议进化路线、Token 成本权衡、哥白尼式智能观 |
 | [AI 时代 Git 实践](sources/ai-git-best-practices-summary.md) | [AI/行业动态/AI时代的Git版本管理最佳实践](../AI/行业动态/AI时代的Git版本管理最佳实践.md) | 11 条 Agent Git 最佳实践、Jujutsu/GitButler 新工具、隔离/透明/自动化三原则 |
 
 ### AI/HarnessKit（已摄入 ✅）
@@ -407,13 +407,13 @@ date: 2026-10-03
 2. [docker基础](../Docker-Kubernetes/docker/docker基础.md) → 容器基础
 3. [k8s基础-架构-组件-资源](../Docker-Kubernetes/k8s-basic-resources/k8s基础-架构-组件-资源.md) → K8s 架构
 4. [安装k8s-1.35-基于rockylinux10-最新步骤](../Docker-Kubernetes/k8s-installation-management/latest-version/安装k8s-1.35-基于rockylinux10-最新步骤.md) → 最新版安装
-5. [helm部署prometheus-stack全家桶](../Docker-Kubernetes/k8s-monitoring-logging/helm部署prometheus-stack全家桶.md) → 可观测性
+5. [[Docker-Kubernetes/k8s-monitoring-logging/helm部署prometheus-stack全家桶|Prometheus-Stack：生产部署与运维]] → 可观测性
 
 ### AI 赋能运维
 1. [Claude Code 基础指南](../AI/ClaudeCode/Claude%20Code%20基础指南.md) → Claude Code 入门
 2. [扩展体系](../AI/ClaudeCode/Claude%20Code%20扩展体系.md) → MCP、Skills、Slash Commands、Plugin
 3. [OpenClaw-基础-安装](../AI/OpenClaw/OpenClaw-基础-安装.md) → OpenClaw 入门
-4. [[AI/Obsidian/obsidian-claude-code-AI知识库完整指南]] → 知识库完整指南（三文合并）
+4. [[AI/Obsidian/obsidian-claude-code-AI知识库完整指南|Obsidian + Claude Code：AI 知识库指南]] → 知识库完整指南（三文合并）
 
 ### 云平台实战
 1. [VPC](../Aliyun/网络/VPC.md) + [Azure-Networking](../Azure/6_Azure-Networking.md) → 云网络对比

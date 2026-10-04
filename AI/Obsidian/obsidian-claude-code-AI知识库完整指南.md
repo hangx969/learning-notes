@@ -20,6 +20,10 @@ merged_from:
 
 # Obsidian + Claude Code：AI 知识库指南
 
+<div id="obsidian-claude-codeai-驱动的知识库完整指南" class="legacy-anchor"></div>
+<div id="obsidian--claude-codeai-驱动的知识库完整指南" class="legacy-anchor"></div>
+<div id="obsidian-claude-codeai-驱动的知识库完整指南_1" class="legacy-anchor"></div>
+
 > 你不需要成为笔记达人。你只需要把笔记存成 AI 能直读的格式，然后让 AI 接管剩下的事。
 
 ---

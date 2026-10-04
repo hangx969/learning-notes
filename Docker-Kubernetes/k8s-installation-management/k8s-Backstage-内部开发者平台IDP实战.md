@@ -11,6 +11,9 @@ tags:
 
 # Backstage：K8s 一站式内部开发者平台实战
 
+<div id="k8s-平台工程实战用-backstage-打造一站式内部开发者平台" class="legacy-anchor"></div>
+<div id="k8s-平台工程实战backstage-idp" class="legacy-anchor"></div>
+
 ## 一、为什么需要 IDP
 
 "帮我建个测试环境呗，要一个 namespace，配好 MySQL 和 Redis，再加个 Ingress。"

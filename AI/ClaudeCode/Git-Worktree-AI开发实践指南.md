@@ -11,6 +11,9 @@ tags:
 
 # Vibe Coding 的 Git Worktree 实践
 
+<div id="vibe-coding-时代的-git-worktree-实践指南" class="legacy-anchor"></div>
+<div id="git-worktreeai-开发时代的并行工作流" class="legacy-anchor"></div>
+
 ## 问题：AI 开发为什么怕切分支？
 
 想象一个常见场景：你正在用 AI 工具开发某个功能，已经迭代了 20 多轮，AI 理解了项目结构和你的设计意图。

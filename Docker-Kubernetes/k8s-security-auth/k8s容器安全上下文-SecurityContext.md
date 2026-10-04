@@ -14,6 +14,9 @@ tags:
 
 # K8s 容器安全上下文：从入门到生产避坑
 
+<div id="kubernetes-容器安全上下文完全指南从入门到生产避坑" class="legacy-anchor"></div>
+<div id="kubernetes-容器安全上下文完全指南从入门到生产避坑_1" class="legacy-anchor"></div>
+
 
 ## Security Context 到底是什么
 

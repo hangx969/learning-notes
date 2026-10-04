@@ -21,6 +21,9 @@ published: 2026-08-13
 
 # K8s 自动扩缩容：HPA、VPA 与 Scale-to-Zero
 
+<div id="kubernetes-自动扩缩容实战hpavpa-与-scale-to-zero" class="legacy-anchor"></div>
+<div id="kubernetes-自动扩缩容实战hpavpa-与-scale-to-zero_1" class="legacy-anchor"></div>
+
 Kubernetes 的自动扩缩容不是单一控制器，而是由多个层级协同完成：HPA 调整 Pod 副本数，VPA 调整单个 Pod 的资源请求，KPA 面向 Knative 请求并发，Cluster Autoscaler 调整节点容量。本文先建立指标基础，再分别说明 HPA、Kubernetes 1.37 原生 Scale-to-Zero 与 VPA 的原理、部署和生产实践。
 
 > [!summary] 选型速览

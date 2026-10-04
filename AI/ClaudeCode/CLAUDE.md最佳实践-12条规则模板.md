@@ -8,6 +8,8 @@ tags:
   - best-practices
 ---
 
+
+<div id="mnilaxclaudemd-规则从-karpathy-的-4-条增加到-12-条错误率从-41-降到-3" class="legacy-anchor"></div>
 > 一篇 X 长帖，Mnilax 在 Karpathy 原版 4 条规则的基础上，花了 6 周在 30 个代码库上实测，新增了 8 条新规则。错误率从 41% 降到 3%。
 
 ---

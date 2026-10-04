@@ -15,6 +15,10 @@ aliases:
 
 # Dragonfly + Harbor：P2P 分发
 
+<div id="dragonfly-harborai-集群的-p2p-镜像与大文件分发" class="legacy-anchor"></div>
+<div id="dragonfly--harborai-集群的-p2p-镜像与大文件分发" class="legacy-anchor"></div>
+<div id="dragonfly-harborai-集群的-p2p-镜像与大文件分发_1" class="legacy-anchor"></div>
+
 面向 AI 集群的 P2P 镜像与大文件分发。
 
 > [!info] 版本与阅读边界

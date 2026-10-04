@@ -1444,4 +1444,4 @@ sacctmgr show associations
 - [[HPC/PBS|PBS]] - PBS作业调度系统
 - [[HPC/PBS#实际故障案例|PBS 实际故障案例]] - PBS实际案例
 - [[Slurm-node-exporter]] - Slurm监控exporter
-- [[HPC/Ubuntu2204-Slurm-安装指南]] - Ubuntu 22.04 Slurm 22.05.11 测试与生产环境及 23.11.4 deb 安装
+- [[HPC/Ubuntu2204-Slurm-安装指南|Ubuntu 22.04：Slurm 安装与配置]] - Ubuntu 22.04 Slurm 22.05.11 测试与生产环境及 23.11.4 deb 安装

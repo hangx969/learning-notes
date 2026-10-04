@@ -11,6 +11,8 @@ tags:
 
 # Markdown Viewer Skills：AI 文档配图
 
+<div id="markdown-viewer-skills让-ai-写文档时顺手把图也画了" class="legacy-anchor"></div>
+
 ## 解决什么问题
 
 技术文档的痛点不在文字，而在图——架构图、流程图、部署图这些，总要切到另一个工具（draw.io、ProcessOn）去画，改一次流程图也跟着重画一遍。文字、图、表散在不同工具之间，最后 README 里留一张过期截图，Notion 里有一版流程图，draw.io 文件不知道谁本地还有。

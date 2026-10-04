@@ -11,6 +11,9 @@ aliases:
 
 # 为何用 KServe 管理 vLLM 推理服务？
 
+<div id="一个-deployment-就能跑-vllm为什么还需要-kserve" class="legacy-anchor"></div>
+<div id="一个-deployment-就能跑-vllm为什么还需要-kserve_1" class="legacy-anchor"></div>
+
 > [!summary]
 > 单个模型用 vLLM + Deployment 即可运行；当模型服务增多时，KServe 用 `InferenceService` 统一声明模型来源、Runtime、GPU 资源与访问入口，并自动管理底层 Deployment、Service 和 HTTPRoute。
 

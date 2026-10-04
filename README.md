@@ -53,18 +53,18 @@
 1. [云原生概念](./CloudComputing/云原生.md) → 理解云原生哲学
 2. [Docker 基础](./Docker-Kubernetes/docker/docker基础.md) → 容器基础
 3. [K8s 架构](./Docker-Kubernetes/k8s-basic-resources/k8s基础-架构-组件-资源.md) → K8s 架构总览
-4. [API Server 深度剖析](./Docker-Kubernetes/k8s-basic-resources/k8s-APIServer深度剖析-请求链路-认证授权-生产调优.md) → 请求链路与认证授权
-5. [Prometheus 全家桶](./Docker-Kubernetes/k8s-monitoring-logging/helm部署prometheus-stack全家桶.md) → 可观测性
-6. [OpenTelemetry 统一可观测性](./Docker-Kubernetes/k8s-monitoring-logging/OpenTelemetry实战-统一Traces-Metrics-Logs.md) → 下一代可观测性
-7. [K8s 成本优化](./Docker-Kubernetes/k8s-scaling/k8s成本优化方案-FinOps实战.md) → FinOps 实战
+4. [K8s API Server：请求链路、认证授权与生产调优](./Docker-Kubernetes/k8s-basic-resources/k8s-APIServer深度剖析-请求链路-认证授权-生产调优.md) → 请求链路与认证授权
+5. [Prometheus-Stack：生产部署与运维](./Docker-Kubernetes/k8s-monitoring-logging/helm部署prometheus-stack全家桶.md) → 可观测性
+6. [OpenTelemetry 统一可观测性实战](./Docker-Kubernetes/k8s-monitoring-logging/OpenTelemetry实战-统一Traces-Metrics-Logs.md) → 下一代可观测性
+7. [K8s 集群成本优化](./Docker-Kubernetes/k8s-scaling/k8s成本优化方案-FinOps实战.md) → FinOps 实战
 
 ### AI 赋能运维
 1. [Claude Code 指南](./AI/ClaudeCode/Claude%20Code%20基础指南.md) → 入门必读
 2. [扩展体系（MCP/Skills/Plugin）](./AI/ClaudeCode/Claude%20Code%20扩展体系.md) → 四层扩展机制
-3. [CLAUDE.md 12 条规则](./AI/ClaudeCode/CLAUDE.md最佳实践-12条规则模板.md) → 错误率 41%→3%
-4. [为什么 grep 不用 RAG](./AI/ClaudeCode/Claude-Code为什么用grep不用RAG.md) → Agentic Search 架构
+3. [Mnilax 的 CLAUDE.md：12 条规则](./AI/ClaudeCode/CLAUDE.md最佳实践-12条规则模板.md) → 错误率 41%→3%
+4. [Claude Code 为何用 grep 而非 RAG 检索代码？](./AI/ClaudeCode/Claude-Code为什么用grep不用RAG.md) → Agentic Search 架构
 5. [OpenClaw 安装](./AI/OpenClaw/OpenClaw-基础-安装.md) → 开源 AI 工具平台
-6. [OpenClaw K8s 智能运维](./AI/OpenClaw/OpenClaw-K8s智能运维实战.md) → 三阶段渐进式 AIOps
+6. [OpenClaw K8s 运维：从只读巡检到低风险变更](./AI/OpenClaw/OpenClaw-K8s智能运维实战.md) → 三阶段渐进式 AIOps
 
 ### 云平台实战
 1. [VPC](./Aliyun/网络/VPC.md) + [Azure 网络](./Azure/6_Azure-Networking.md) → 云网络对比

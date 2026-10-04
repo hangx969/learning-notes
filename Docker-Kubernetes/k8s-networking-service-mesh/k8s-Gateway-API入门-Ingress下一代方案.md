@@ -11,6 +11,8 @@ tags:
 
 # Kubernetes Gateway API 入门
 
+<div id="kubernetes-gateway-api-入门ingress-的下一代方案" class="legacy-anchor"></div>
+
 ## 一、为什么要学习 Gateway API
 
 在 Kubernetes 里，服务暴露通常会经历下面几个阶段。

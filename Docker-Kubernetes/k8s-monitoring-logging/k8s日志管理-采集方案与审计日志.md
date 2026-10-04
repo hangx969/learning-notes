@@ -15,6 +15,9 @@ aliases:
 
 # K8s 日志：基础机制、六种采集方案与审计日志
 
+<div id="k8s-日志管理基础机制六种采集方案与审计日志实战" class="legacy-anchor"></div>
+<div id="k8s-日志管理基础机制采集方案与审计日志" class="legacy-anchor"></div>
+
 > 你的 Pod 崩溃了，日志却消失了——这是 K8s 生产环境最令人抓狂的噩梦之一。
 
 在传统 VM 环境中，日志采集很简单：一台服务器，几个固定路径，Filebeat 一扫就搞定。但迁移到 Kubernetes 之后，事情变得复杂了：

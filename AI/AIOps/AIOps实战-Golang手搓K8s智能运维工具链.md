@@ -12,6 +12,9 @@ tags:
 
 # Golang 构建 K8s 智能运维工具链实战
 
+<div id="aiops-实战golang-手搓-k8s-智能运维工具链" class="legacy-anchor"></div>
+<div id="aiops-实战golang-手搓-k8s-智能运维工具链_1" class="legacy-anchor"></div>
+
 ## 前言
 
 在云原生时代，K8s 已成为基础设施的"操作系统"。但随着集群规模的增长，运维复杂度呈指数级上升——资源管理需要记忆大量 `kubectl` 命令，故障排查需要在 Event、Logs、Metrics 之间反复横跳。这些问题催生了 AIOps（智能运维）。

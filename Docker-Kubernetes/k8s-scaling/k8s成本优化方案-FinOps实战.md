@@ -11,6 +11,9 @@ tags:
 
 # K8s 集群成本优化
 
+<div id="k8s-集群成本优化方案砍掉-60-云账单" class="legacy-anchor"></div>
+<div id="k8s-集群成本优化方案砍掉-60-云账单_1" class="legacy-anchor"></div>
+
 原文主张：砍掉 60% 云账单。
 
 

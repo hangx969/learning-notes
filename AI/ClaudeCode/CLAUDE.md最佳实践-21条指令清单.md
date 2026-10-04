@@ -8,6 +8,8 @@ tags:
   - best-practices
 ---
 
+
+<div id="mayank-agarwal21-条-claudemd-指令让-claude-真正懂你" class="legacy-anchor"></div>
 > 一篇 X 长帖，Mayank Agarwal 用 21 条可复制的指令，把 CLAUDE.md 从"听说过但不会用"变成了"任何人两分钟就能上手的永久配置系统"——覆盖沟通方式、行为准则、个人上下文、记忆连续性、开发者安全五个维度。
 
 ---

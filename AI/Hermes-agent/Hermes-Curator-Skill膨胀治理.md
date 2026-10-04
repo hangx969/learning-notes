@@ -8,6 +8,10 @@ tags:
   - agent-architecture
 ---
 
+
+<div id="skill-太多导致上下文膨胀怎么办来自-hermes-agent-的实践" class="legacy-anchor"></div>
+
+Skill 过多导致上下文膨胀；本文介绍 Hermes Agent 的治理实践。
 **目录**
 
 1. Curator 如何管理 Skill

@@ -16,6 +16,9 @@ aliases:
 
 # Prometheus-Stack：生产部署与运维
 
+<div id="prometheus-stack-全家桶生产级部署与运维完全指南" class="legacy-anchor"></div>
+<div id="prometheus-stack-全家桶生产级部署与运维完全指南_1" class="legacy-anchor"></div>
+
 
 ## 一、概述
 

@@ -10,6 +10,9 @@ tags:
 
 # CodeGraph：Claude Code 代码知识图谱
 
+<div id="codegraph给-claude-code-先画一张代码地图工具调用砍掉-92" class="legacy-anchor"></div>
+<div id="codegraph代码语义知识图谱" class="legacy-anchor"></div>
+
 提前构建代码地图；项目 README 的基准称平均工具调用减少 92%。
 
 ## 解决什么问题

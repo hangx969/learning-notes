@@ -15,6 +15,9 @@ tags:
 
 # K8s 四种容器设计模式
 
+<div id="k8s-容器设计模式sidecar-init-container-ambassador-adapter" class="legacy-anchor"></div>
+<div id="k8s-容器设计模式" class="legacy-anchor"></div>
+
 Sidecar / Init Container / Ambassador / Adapter。
 
 ## 什么是容器设计模式？

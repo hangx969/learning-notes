@@ -10,6 +10,9 @@ tags:
 
 # OpenTelemetry 统一可观测性实战
 
+<div id="opentelemetry-实战告别厂商锁定统一-tracesmetricslogs" class="legacy-anchor"></div>
+<div id="opentelemetry-实战告别厂商锁定统一-tracesmetricslogs_1" class="legacy-anchor"></div>
+
 原文主张：告别厂商锁定，统一 Traces / Metrics / Logs。
 
 

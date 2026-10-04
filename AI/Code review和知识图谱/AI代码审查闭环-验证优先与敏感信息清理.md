@@ -46,7 +46,7 @@ AI 编程不会降低这些门禁的重要性，反而要求测试更全面。AI
 - 是否破坏了跨模块行为？
 - 是否存在 diff 之外的兼容性约束？
 
-知识图谱工具可以进一步提供调用关系、继承关系和影响范围，参见 [[AI/Code review和知识图谱/code-review-graph-本地代码知识图谱]] 与 [[AI/Code review和知识图谱/CodeGraph-代码语义知识图谱]]。
+知识图谱工具可以进一步提供调用关系、继承关系和影响范围，参见 [[AI/Code review和知识图谱/code-review-graph-本地代码知识图谱|code-review-graph：本地代码知识图谱指南]] 与 [[AI/Code review和知识图谱/CodeGraph-代码语义知识图谱|CodeGraph：Claude Code 代码知识图谱]]。
 
 ## 验证比静态审查更重要
 

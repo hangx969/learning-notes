@@ -22,6 +22,9 @@ date: 2026-09-26
 
 # Ubuntu 22.04：Slurm 安装与配置
 
+<div id="ubuntu-2204-slurm-220511-与-23114-安装与配置指南" class="legacy-anchor"></div>
+<div id="ubuntu-2204-slurm-安装与配置指南" class="legacy-anchor"></div>
+
 本指南包含三套 Ubuntu 22.04 部署：Slurm 22.05.11 三节点测试环境、22.05.11 H800 生产环境，以及 Slurm 23.11.4 三节点 deb 包实验环境。先按下表选择一套拓扑，再使用对应版本的安装与配置章节；主机名、分区、目录和资源参数不可跨版本拼接。MUNGE 密钥的安全生成与分发流程共用，作业命令的参数说明集中在文末。
 
 > [!warning] 使用前核对

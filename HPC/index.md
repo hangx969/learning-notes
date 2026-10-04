@@ -5,7 +5,7 @@
 ## Slurm 部署（按发行版/版本）
 
 - [[HPC/CentOS7-slurm23.02-二进制安装]] — CentOS 7 + Slurm 23.02
-- [[HPC/Ubuntu2204-Slurm-安装指南]] — Ubuntu 22.04 + Slurm 22.05.11（测试与生产环境）及 23.11.4（源码构建 deb 包）
+- [[HPC/Ubuntu2204-Slurm-安装指南|Ubuntu 22.04：Slurm 安装与配置]] — Ubuntu 22.04 + Slurm 22.05.11（测试与生产环境）及 23.11.4（源码构建 deb 包）
 
 ## PBS
 

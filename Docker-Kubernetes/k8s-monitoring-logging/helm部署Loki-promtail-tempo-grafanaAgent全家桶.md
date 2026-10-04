@@ -16,6 +16,9 @@ aliases:
 
 # Helm部署Loki+Promtail+Tempo+GrafanaAgent
 
+<div id="helm部署lokipromtailtempografanaagent全家桶" class="legacy-anchor"></div>
+<div id="helm部署lokipromtailtempografanaagent全家桶_1" class="legacy-anchor"></div>
+
 Loki / Promtail / Tempo / Grafana Agent。
 
 

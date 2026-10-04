@@ -10,6 +10,9 @@ tags:
 
 # Harness 实战：从零搭建最小可用系统
 
+<div id="harness-实战从零搭建最小可用的-harness-系统" class="legacy-anchor"></div>
+<div id="harness-实战从零搭建最小可用的-harness-系统_1" class="legacy-anchor"></div>
+
 ## 问题的起源
 
 当我用 Claude Code 做项目后，大概第三四天的时候，就逐渐出现问题了。

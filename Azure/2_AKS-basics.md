@@ -17,7 +17,7 @@ date: 2026-04-16
 - [[Azure/3_AKS-workload-identity]]
 - [[Azure/4_AKS-SecretProviderClass-KeyVault]]
 - [[Azure/6_Azure-Networking]]
-- [[Azure/7_ACR-ACI]]
+- [[Azure/7_ACR-ACI|Azure ACR and ACI]]
 
 ---
 

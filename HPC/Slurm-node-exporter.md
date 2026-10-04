@@ -314,5 +314,5 @@ scrape_configs:
 ## 相关笔记
 
 - [[CentOS7-slurm23.02-二进制安装]] - CentOS7 Slurm部署
-- [[HPC/Ubuntu2204-Slurm-安装指南]] - Ubuntu 22.04 Slurm 22.05.11 测试与生产环境及 23.11.4 deb 部署
+- [[HPC/Ubuntu2204-Slurm-安装指南|Ubuntu 22.04：Slurm 安装与配置]] - Ubuntu 22.04 Slurm 22.05.11 测试与生产环境及 23.11.4 deb 部署
 - [[HPC/PBS|PBS]] - PBS作业调度系统

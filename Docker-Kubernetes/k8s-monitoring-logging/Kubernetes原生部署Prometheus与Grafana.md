@@ -18,7 +18,7 @@ date: 2026-09-28
 
 # Kubernetes 原生部署 Prometheus 与 Grafana
 
-本文合并了三份 Kubernetes 原生部署与 Grafana 笔记。主流程固定使用 Prometheus `v2.33.5` 与 Grafana `v8.4.5`，保留旧版 `v2.2.1` 的架构、应用监控和 Pushgateway 实验经验，以及 Grafana `v5.0.4` 的界面、面板排障与 kube-state-metrics 实验。这里的版本用于复现实验，不代表当前生产版本建议。PromQL 语法集中在 [[Docker-Kubernetes/k8s-monitoring-logging/Prometheus基础|Prometheus 基础]]；Operator/Helm 部署见 [[Docker-Kubernetes/k8s-monitoring-logging/helm部署prometheus-stack全家桶|Prometheus Stack]]。
+本文合并了三份 Kubernetes 原生部署与 Grafana 笔记。主流程固定使用 Prometheus `v2.33.5` 与 Grafana `v8.4.5`，保留旧版 `v2.2.1` 的架构、应用监控和 Pushgateway 实验经验，以及 Grafana `v5.0.4` 的界面、面板排障与 kube-state-metrics 实验。这里的版本用于复现实验，不代表当前生产版本建议。PromQL 语法集中在 [[Docker-Kubernetes/k8s-monitoring-logging/Prometheus基础|Prometheus 基础]]；Operator/Helm 部署见 [[Docker-Kubernetes/k8s-monitoring-logging/helm部署prometheus-stack全家桶|Prometheus-Stack：生产部署与运维]]。
 
 ## 1. 监控范围与部署方案
 

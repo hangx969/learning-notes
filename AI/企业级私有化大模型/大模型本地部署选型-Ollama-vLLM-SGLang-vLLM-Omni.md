@@ -580,7 +580,7 @@ flowchart LR
 
 业务系统应尽量只认识稳定的能力接口，例如 `LLM`、`IMAGE`、`VIDEO`、`TTS`，而不绑定 DeepSeek、Qwen、Wan、FLUX 或某个 Runtime。这样替换模型或升级引擎时，业务层不必整体重构。
 
-对于 Kubernetes 生产环境，单个 Deployment 能运行 vLLM，但如果需要声明式 Runtime、统一网关、自动扩缩容和模型服务生命周期，可进一步参考 [[AI/企业级私有化大模型/一个 Deployment 就能跑 vLLM，为什么还需要 KServe？|KServe 部署 vLLM]]。
+对于 Kubernetes 生产环境，单个 Deployment 能运行 vLLM，但如果需要声明式 Runtime、统一网关、自动扩缩容和模型服务生命周期，可进一步参考 [[AI/企业级私有化大模型/一个 Deployment 就能跑 vLLM，为什么还需要 KServe？|为何用 KServe 管理 vLLM 推理服务？]]。
 
 ## 11. 落地检查清单
 
@@ -620,7 +620,7 @@ flowchart LR
 - [[AI/企业级私有化大模型/基于K8s部署vLLM和LiteLLM]]
 - [[AI/企业级私有化大模型/KV Cache-从原理到集群调度]]
 - [[AI/企业级私有化大模型/大模型精度与量化：FP64到NVFP4]]
-- [[AI/企业级私有化大模型/一个 Deployment 就能跑 vLLM，为什么还需要 KServe？]]
+- [[AI/企业级私有化大模型/一个 Deployment 就能跑 vLLM，为什么还需要 KServe？|为何用 KServe 管理 vLLM 推理服务？]]
 
 ## 参考资料
 

@@ -1,5 +1,7 @@
 # Diagram Design：Claude Code / Codex 技术图设计
 
+<div id="diagram-design让-claude-code-codex-生成更有设计感的技术图" class="legacy-anchor"></div>
+
 项目地址：[cathrynlavery/diagram-design](https://github.com/cathrynlavery/diagram-design)
 
 在使用 Claude Code、Codex 等 AI 编程 Agent 时，我们经常会让它们帮忙画：

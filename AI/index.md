@@ -27,7 +27,7 @@
 - [[AI/ClaudeCode/Claude Code 扩展体系]] — MCP/Skills/Slash Commands/Plugin 四层扩展
 - [[AI/Codex/Codex-Harness架构-任务循环与扩展]] — Codex Harness 架构：从任务循环到工具执行
 - [[AI/OpenClaw/OpenClaw-基础-安装]] — OpenClaw 入门
-- [[AI/Obsidian/obsidian-claude-code-AI知识库完整指南]] — Obsidian+Claude Code 知识库完整指南（理念+搭建+操作+计划）
+- [[AI/Obsidian/obsidian-claude-code-AI知识库完整指南|Obsidian + Claude Code：AI 知识库指南]] — Obsidian+Claude Code 知识库完整指南（理念+搭建+操作+计划）
 - [[HarnessKit]] — AI 编码智能体统一管理工具
 
 ## 知识库导航
@@ -43,5 +43,5 @@
 | [[AI/企业级私有化大模型/基于K8s部署vLLM和LiteLLM]] | Kubernetes GPU 服务部署上下文 |
 | [[AI/企业级私有化大模型/大模型精度与量化：FP64到NVFP4]] | 数值格式、量化与训练/推理取舍 |
 | [[AI/企业级私有化大模型/KV Cache-从原理到集群调度]] | KV Cache 生命周期、显存带宽瓶颈与集群调度 |
-| [[AI/企业级私有化大模型/一个 Deployment 就能跑 vLLM，为什么还需要 KServe？]] | KServe Standard、Envoy Gateway、PVC 模型加载与 OpenAI 兼容接口实操 |
+| [[AI/企业级私有化大模型/一个 Deployment 就能跑 vLLM，为什么还需要 KServe？\|为何用 KServe 管理 vLLM 推理服务？]] | KServe Standard、Envoy Gateway、PVC 模型加载与 OpenAI 兼容接口实操 |
 | [[AI/企业级私有化大模型/大模型本地部署选型-Ollama-vLLM-SGLang-vLLM-Omni]] | Ollama、vLLM、SGLang、vLLM-Omni 选型，模型与镜像离线交付及容器化边界 |

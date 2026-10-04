@@ -17,7 +17,7 @@ date: 2026-04-16
 ## 相关笔记
 
 - [[Azure/2_AKS-basics]]
-- [[Azure/7_ACR-ACI]]
+- [[Azure/7_ACR-ACI|Azure ACR and ACI]]
 - [[Azure/5_Azure-Storage]]
 
 ---

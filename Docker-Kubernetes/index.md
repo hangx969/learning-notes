@@ -31,9 +31,9 @@
 - [[Docker-Kubernetes/k8s-installation-management/k8s多集群kubeconfig管理]] — 多集群 kubeconfig、kubectx/kubens 与生产防误操作
 - [[Docker-Kubernetes/k8s-installation-management/latest-version/安装k8s-1.35-基于rockylinux10-最新步骤]] — 最新版安装
 - [[Docker-Kubernetes/k8s-monitoring-logging/Kubernetes原生部署Prometheus与Grafana]] — 原生部署 Prometheus 与 Grafana
-- [[Docker-Kubernetes/k8s-monitoring-logging/helm部署prometheus-stack全家桶]] — 监控全家桶
+- [[Docker-Kubernetes/k8s-monitoring-logging/helm部署prometheus-stack全家桶|Prometheus-Stack：生产部署与运维]] — 监控全家桶
 - [[Docker-Kubernetes/k8s-CICD/ArgoCD/ArgoCD基础]] — GitOps 入门
-- [[Docker-Kubernetes/k8s-image-management/Dragonfly与Harbor-P2P镜像分发]] — Harbor 源站卸载与 AI 集群 P2P 镜像/大文件分发
+- [[Docker-Kubernetes/k8s-image-management/Dragonfly与Harbor-P2P镜像分发|Dragonfly + Harbor：P2P 分发]] — Harbor 源站卸载与 AI 集群 P2P 镜像/大文件分发
 
 ## 知识库导航
 

@@ -10,6 +10,9 @@ tags:
 
 # Obsidian Vault：48 个 GitHub 模板库
 
+<div id="obsidian-vault-模板库合集48-个-github-宝藏-vault" class="legacy-anchor"></div>
+<div id="obsidian-vault-模板库合集" class="legacy-anchor"></div>
+
 > GitHub 仓库：[obsidian-pkm-vault/awesome-obsidian-vault](https://github.com/obsidian-pkm-vault/awesome-obsidian-vault)（1.2k star，CC0 协议，维护 4 年）
 >
 > 48 个开箱即用的 vault 资源，按 11 大场景分类。从零搭 vault 搭了一周没头绪？clone 一个 5 分钟就有了。

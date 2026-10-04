@@ -16,6 +16,9 @@ aliases:
 
 # Hermes Agent：OpenClaw 对比与飞书接入
 
+<div id="hermes-agent全解析与openclaw对比及飞书接入指南" class="legacy-anchor"></div>
+<div id="hermes-agent-全解析与-openclaw-对比及飞书接入指南" class="legacy-anchor"></div>
+
 2025 年以来，AI Agent 从概念验证走向工程化落地，开源社区涌现出大量框架级项目。其中，Nous Research 推出的 Hermes Agent 和社区驱动的 OpenClaw 是两个值得深入研究的标杆：前者以"会自我成长的 Agent"为核心定位，35.7k Star，3,496 次提交，317 位贡献者；后者是当前 GitHub 上最受欢迎的个人 AI 助手项目之一，352k Star，29,172 次提交，已发展为一个覆盖全平台的成熟产品。
 
 两个项目在技术栈、架构理念和产品定位上走了截然不同的路径。本文将以 Hermes Agent 的源码为主线进行深度架构剖析，然后从工程化维度与 OpenClaw 进行结构化对比，最后详解如何将 Hermes Agent 接入飞书 Bot 和飞书 CLI。

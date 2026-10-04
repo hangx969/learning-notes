@@ -13,6 +13,9 @@ date: 2026-09-06
 
 # K8s Volume Health Monitor：原理与生产接入
 
+<div id="让存储故障现形kubernetes-volume-health-monitor-原理与生产接入" class="legacy-anchor"></div>
+<div id="让存储故障现形kubernetes-volume-health-monitor-原理与生产接入_1" class="legacy-anchor"></div>
+
 ## 一、开头：PVC 一直 Bound，但业务已经卡死半小时
 
 存储故障是 Kubernetes 里最「阴险」的一类问题。一个 PV 后端其实是云盘，底层存储节点抖动、卷降级、甚至静默损坏，Kubernetes 侧看到的 `PersistentVolumeClaim` 状态却永远是 `Bound` ——因为 K8s 从来没有任何机制让 CSI 驱动「上报存储健康」。结果就是：应用 I/O 卡住、超时、报错，你却只能去翻云厂商控制台或存储阵列 dashboard 交叉比对，才能定位「哦，是那块盘出问题了」。在一次真实故障里，oncall 在三个系统之间来回切换了半个多小时才锁定根因，而那块卷从头到尾在 K8s 里都显示「正常」。这种黑盒，正是 Volume Health Monitor 要打破的。

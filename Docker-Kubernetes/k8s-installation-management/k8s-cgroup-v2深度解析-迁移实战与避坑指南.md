@@ -10,6 +10,9 @@ tags:
 
 # K8s cgroup v2：资源隔离原理、迁移与生产避坑
 
+<div id="k8s-cgroup-v2-深度解析资源隔离原理迁移实战与生产避坑指南" class="legacy-anchor"></div>
+<div id="k8s-cgroup-v2-深度解析资源隔离原理迁移实战与生产避坑指南_1" class="legacy-anchor"></div>
+
 
 > 当 RHEL 9 默认启用 cgroup v2、Ubuntu 22.04 全面切换，越来越多的生产集群开始强制面对 cgroup v2。但你真的搞清楚 cgroup v2 和 v1 的区别了吗？升级之后为什么 CPU throttling 变了？内存 OOM 行为为什么不一样了？本文从内核原理到 K8s 实战，带你彻底搞懂 cgroup v2。
 

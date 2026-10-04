@@ -10,6 +10,10 @@ source: "https://mp.weixin.qq.com/s/EbNkKTGkp2WnqJ0nKNBwmA"
 
 # Obsidian 可视化 Skills
 
+<div id="obsidian-可视化-skills-excalidraw-mermaid-canvas" class="legacy-anchor"></div>
+<div id="obsidian-可视化-skills--excalidraw--mermaid--canvas" class="legacy-anchor"></div>
+<div id="obsidian-可视化-skills-excalidraw-mermaid-canvas_1" class="legacy-anchor"></div>
+
 Excalidraw / Mermaid / Canvas。
 
 ## 项目简介
