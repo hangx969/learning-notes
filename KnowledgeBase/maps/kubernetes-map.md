@@ -3,10 +3,12 @@ title: Kubernetes 专题地图
 tags:
   - knowledgebase/map
   - knowledgebase/kubernetes
+  - "[[Docker-Kubernetes/k8s-storage/开源存储列传第 18 篇 — Longhorn，K8s的轻量块存储]]"
 aliases:
   - K8s Map
-date: 2026-09-12
+date: 2026-10-04
 sources:
+  - "[[Docker-Kubernetes/k8s-storage/DeepSeek 3FS，AI原生的并行文件系统]]"
   - "[[Docker-Kubernetes/docker/docker基础]]"
   - "[[Docker-Kubernetes/k8s-basic-resources/k8s基础-容器运行时-containerd]]"
   - "[[Docker-Kubernetes/k8s-basic-resources/k8s基础-架构-组件-资源]]"
@@ -100,7 +102,7 @@ sources:
 # ☸️ Kubernetes 专题地图
 
 > [!info] 专题范围
-> 覆盖 Docker-Kubernetes 目录下 ==168 篇文档==（不含目录 index.md，统计日期 2026-09-29），从容器基础到企业级 K8s 全生命周期管理。
+> 覆盖 Docker-Kubernetes 目录下 ==170 篇文档==（不含目录 index.md，统计日期 2026-10-04），从容器基础到企业级 K8s 全生命周期管理。
 
 ---
 
@@ -222,8 +224,13 @@ sources:
 ### 扩缩容（4 篇）
 [[Docker-Kubernetes/k8s-scaling/k8s-HPA-VPA|K8s 自动扩缩容：HPA、VPA 与 Scale-to-Zero]]、[[Docker-Kubernetes/k8s-scaling/k8s-基于KEDA的弹性能力|KEDA：事件驱动扩缩容与 KServe 实战]]、Goldilocks、[[Docker-Kubernetes/k8s-scaling/k8s成本优化方案-FinOps实战|K8s 集群成本优化]]
 
-### 存储（6 篇）
+### 存储（8 篇）
 NFS Provisioner、Ceph、CubeFS、[[Docker-Kubernetes/k8s-storage/k8s删除PVC后PV数据保护与复用避坑|PV/PVC 数据保护与复用避坑]]、[[Docker-Kubernetes/k8s-storage/让存储故障现形：Kubernetes Volume Health Monitor 原理与生产接入|K8s Volume Health Monitor：原理与生产接入]]、[[Docker-Kubernetes/k8s-storage/emptyDir监控与驱逐机制实战|emptyDir 监控与驱逐]]
+
+
+- [[Docker-Kubernetes/k8s-storage/开源存储列传第 18 篇 — Longhorn，K8s的轻量块存储|Longhorn 轻量块存储]] — 每卷引擎与副本、同步复制、快照备份、v2 SPDK 和选型边界；[[KnowledgeBase/sources/longhorn-block-storage-summary|来源摘要]]
+
+- [[Docker-Kubernetes/k8s-storage/DeepSeek 3FS，AI原生的并行文件系统|DeepSeek 3FS，AI原生的并行文件系统]] — AI 集群的并行存储、USRBIO/RDMA、CRAQ、KVCache 外置与性能口径；[[KnowledgeBase/sources/deepseek-3fs-summary|来源摘要]]。
 
 ### 中间件部署（11 篇）
 MySQL(3)、Redis(2)、PostgreSQL、Kafka(Strimzi)、RabbitMQ HA、MongoDB、httpd、SpringCloud

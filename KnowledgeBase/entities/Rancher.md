@@ -3,11 +3,12 @@ title: Rancher
 tags:
   - knowledgebase/entity
   - kubernetes/management
-date: 2026-04-17
+date: 2026-10-04
 sources:
   - "[[Docker-Kubernetes/k8s-UI-tools/rancher(v2.6.4)管理k8s集群]]"
   - "[[Docker-Kubernetes/container-platform/部署轻量级的K8S平台-K3S]]"
   - "[[Azure/Jfrog-artifactory-Azure]]"
+  - "[[Docker-Kubernetes/k8s-storage/开源存储列传第 18 篇 — Longhorn，K8s的轻量块存储]]"
 aliases:
   - SUSE Rancher
 ---
@@ -40,6 +41,8 @@ Rancher 是 SUSE 旗下的企业级 Kubernetes 多集群管理平台，提供统
 - [[KnowledgeBase/entities/Ingress|Ingress]]：在 Rancher UI 中创建 Ingress 规则发布应用
 - [[KnowledgeBase/entities/AKS|AKS]]：尝试通过 Rancher 导入 AKS 集群，因区域识别问题中止
 
+- [[KnowledgeBase/sources/longhorn-block-storage-summary|Longhorn 来源摘要]]：Rancher Labs 发起的独立存储项目，提供 Kubernetes 块存储；SUSE Harvester 将其作为存储底座
+
 ## 在本仓库中的覆盖
 
 - `Docker-Kubernetes/k8s-UI-tools/` 中涉及 Rancher 作为 K8s UI 管理工具
@@ -48,6 +51,8 @@ Rancher 是 SUSE 旗下的企业级 Kubernetes 多集群管理平台，提供统
 - [[Docker-Kubernetes/k8s-UI-tools/rancher(v2.6.4)管理k8s集群|rancher(v2.6.4)管理k8s集群]]：Rancher 介绍与优势、Docker 方式部署、导入已有 K8s 集群，并在 UI 中创建 Deployment、Service 与 Ingress（附未解决的域名访问问题）
 - [[Docker-Kubernetes/container-platform/部署轻量级的K8S平台-K3S|部署轻量级的K8S平台-K3S]]：Rancher 维护的 K3s 发行版的特点、安装、节点加入与高可用部署，以及 AutoK3s 工具
 - [[Azure/Jfrog-artifactory-Azure|Jfrog-artifactory-Azure]]：在 VM 中运行 Rancher 容器并尝试导入 AKS，因区域识别问题中止
+
+- [[Docker-Kubernetes/k8s-storage/开源存储列传第 18 篇 — Longhorn，K8s的轻量块存储|Longhorn 轻量块存储]]：Rancher Labs 的存储项目起源、SUSE/CNCF 发展背景和 Harvester 使用场景
 
 ## 知识空白
 

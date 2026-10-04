@@ -3,12 +3,13 @@ title: StorageClass
 tags:
   - knowledgebase/concept
   - kubernetes/storage
-date: 2026-09-05
+date: 2026-10-04
 sources:
   - "[[Docker-Kubernetes/k8s-basic-resources/k8s基础-storage]]"
   - "[[Docker-Kubernetes/k8s-storage/helm部署nfs-subdir-external-provisioner]]"
   - "[[Docker-Kubernetes/k8s-storage/k8s-ceph部署与集成]]"
   - "[[Docker-Kubernetes/k8s-storage/k8s删除PVC后PV数据保护与复用避坑]]"
+  - "[[Docker-Kubernetes/k8s-storage/开源存储列传第 18 篇 — Longhorn，K8s的轻量块存储]]"
 aliases:
   - 存储类
   - SC
@@ -31,6 +32,8 @@ StorageClass 是 Kubernetes 提供的动态创建 PersistentVolume（PV）的模
 - **默认存储类**：可通过 annotation `storageclass.kubernetes.io/is-default-class: "true"` 设置默认 StorageClass，PVC 未指定 `storageClassName` 时自动使用默认类
 - **Parameters**：StorageClass 的 `parameters` 字段传递存储后端的配置参数，如 NFS 的 server 地址和共享路径、Ceph 的 pool 名称等
 
+- **Longhorn 策略**：同一集群可按 StorageClass 区分 v1/v2 引擎，并用节点与磁盘标签选择副本放置目标；副本数和节点故障域应一起规划
+
 ## 与其他概念的关系
 
 - [[KnowledgeBase/concepts/PV-PVC|PV-PVC]]：StorageClass 是 PV 的动态创建模板，PVC 通过 `storageClassName` 引用 StorageClass 来触发自动创建 PV
@@ -46,6 +49,8 @@ StorageClass 是 Kubernetes 提供的动态创建 PersistentVolume（PV）的模
 - [[Docker-Kubernetes/k8s-storage/k8s-ceph部署与集成]]：Ceph 分布式存储的部署与 K8s 集成，涉及 RBD StorageClass 配置
 - [[Docker-Kubernetes/k8s-storage/k8s删除PVC后PV数据保护与复用避坑]]：围绕 PVC 删除后的 Delete/Retain 行为、Released PV 的 claimRef 复用风险、StatefulSet 和快照保护给出操作 SOP
 - [[Docker-Kubernetes/k8s-db-middleware/k8s基于yaml部署mysql主从高可用]]：包含 NFS Provisioner 的完整搭建流程，通过 StorageClass 动态供给 PV
+
+- [[Docker-Kubernetes/k8s-storage/开源存储列传第 18 篇 — Longhorn，K8s的轻量块存储|Longhorn 轻量块存储]]：每卷引擎与多副本、标签调度、v1/v2 存储类、快照备份及与云盘/Ceph 的分工；实现出入另见正文校核注释
 
 ## 知识空白
 

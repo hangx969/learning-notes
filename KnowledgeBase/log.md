@@ -2180,3 +2180,10 @@ date: 2026-04-17
 - 同步 Obsidian vault、Codex、Claude 与 VS Code 的本地项目路径配置，保留既有权限和历史会话内容；外部配置备份位于 `/private/tmp/cloudops-vault-migration-backup`。Obsidian Git 已在新目录启用，原有自动备份设置保持不变。
 - 1,023 个受保护原始文件的 SHA-256 校验值与迁移前一致；Git SSH 远程访问、配置解析、完整 Quartz 构建、本地首页与文章资源检查、Git diff 空白检查通过。GitHub Pages 部署成功，新地址 `https://hangx969.github.io/cloudops-vault/` 返回 HTTP 200。
 - 重启 Codex 后复查通过：38 个历史聊天的目录缓存全部迁移，实际项目注册、当前聊天工作目录和持久化配置均指向新目录，相关配置中的旧路径为 0；数据库完整性检查通过，一次性修复程序已成功结束。
+
+## [2026-10-04] ingest | Karpathy 大模型输出理解技巧
+
+- 新增 [[AI/行业动态/Karpathy-大模型输出理解技巧-文字图解网页视频|Karpathy：让大模型输出更容易理解的四种技巧]]，总结受控语言写作、图解、交互式 HTML 和定制讲解视频，保留 3b1b、ElevenLabs API Key、本地免费语音替代路线及用完即弃的软件产物观点。
+- 创建 [[KnowledgeBase/sources/karpathy-llm-output-understanding-summary|来源摘要]]，同步 [[KnowledgeBase/concepts/提示词工程|提示词工程]]、[[KnowledgeBase/maps/ai-workflow-map|AI 工作流专题地图]] 与 INDEX；新增提示词明确标为应用示例。
+- 核对原推文正文与 2026-10-02 发布日期，并参考 ASD-STE100 官方介绍区分清晰写作、宽松的“80%”风格提示与正式标准合规。
+- 文章与关联页面经 Obsidian MCP 写入并完整回读一致；frontmatter、代码块、新增 wikilink 和空白检查通过，Obsidian 阅读视图中的标题、表格及提示词排版已检查。本次为文档摄入，未执行 HTML 或视频生成。

@@ -3,8 +3,9 @@ title: KV Cache
 tags:
   - knowledgebase/concept
   - AI/企业级私有化大模型
-date: 2026-09-06
+date: 2026-10-04
 sources:
+  - "[[Docker-Kubernetes/k8s-storage/DeepSeek 3FS，AI原生的并行文件系统]]"
   - "[[基于docker部署vLLM和LiteLLM私有化大模型]]"
   - "[[AI/企业级私有化大模型/KV Cache-从原理到集群调度]]"
   - "[[AI/企业级私有化大模型/大模型本地部署选型-Ollama-vLLM-SGLang-vLLM-Omni]]"
@@ -29,6 +30,8 @@ KV Cache 是 Transformer Attention 在处理上下文时保存的 Key 和 Value 
 - **集群调度**：Prefix Cache 可以复用共享系统 Prompt；Prefill/Decode 分离让节点按计算或显存特性分工；负载均衡则需要在迁移请求时考虑缓存搬运成本。
 - **工程瓶颈**：Decode 常处于 memory/IO-bound 状态，GPU 计算单元的峰值算力不等于端到端生成速度；长上下文、高并发和跨节点传输会放大这一问题。
 
+- **磁盘外置**：不活跃的 KV Cache 可放到 3FS 这类分布式存储层，利用较大的容量与读取吞吐；实际收益取决于缓存命中、换入换出开销和适配组件，不能仅由聚合带宽推断推理延迟。
+
 ## 与其他概念的关系
 
 - [[KnowledgeBase/concepts/混合精度与模型量化]]：KV Cache 的精度字节数直接影响单请求显存；量化可减少占用，但需要验证质量和框架支持。
@@ -40,6 +43,8 @@ KV Cache 是 Transformer Attention 在处理上下文时保存的 Key 和 Value 
 - [[AI/企业级私有化大模型/KV Cache-从原理到集群调度]]：覆盖 KV Cache 定义、Prefill/Decode、生命周期、单节点带宽瓶颈与集群调度；正文图片已替换为 PicGo 图床链接。
 - [[基于docker部署vLLM和LiteLLM私有化大模型]]：覆盖 PagedAttention、KV Cache 显存估算和 vLLM 服务部署。
 - [[AI/企业级私有化大模型/大模型本地部署选型-Ollama-vLLM-SGLang-vLLM-Omni]]：把 KV Cache 放入 vLLM/SGLang 选型、上下文长度、显存比例、并发和 PD 分离的工程权衡中。
+
+- [[Docker-Kubernetes/k8s-storage/DeepSeek 3FS，AI原生的并行文件系统|DeepSeek 3FS 并行文件系统]]：介绍 GPU 显存、CPU 内存、磁盘的多级缓存，以及原文据公开报道提及的实验性适配路径。
 
 ## 知识空白
 
