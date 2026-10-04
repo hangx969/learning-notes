@@ -2179,3 +2179,4 @@ date: 2026-04-17
 - 将本地仓库目录更名为 `cloudops-vault`，Git origin 改为 `hangx969/cloudops-vault`；更新 README、Schema 与 Quartz 的站点名称、GitHub 链接和 Pages 路径。
 - 同步 Obsidian vault、Codex、Claude 与 VS Code 的本地项目路径配置，保留既有权限和历史会话内容；外部配置备份位于 `/private/tmp/cloudops-vault-migration-backup`。Obsidian Git 已在新目录启用，原有自动备份设置保持不变。
 - 1,023 个受保护原始文件的 SHA-256 校验值与迁移前一致；Git SSH 远程访问、配置解析、完整 Quartz 构建、本地首页与文章资源检查、Git diff 空白检查通过。GitHub Pages 部署成功，新地址 `https://hangx969.github.io/cloudops-vault/` 返回 HTTP 200。
+- 重启 Codex 后复查通过：38 个历史聊天的目录缓存全部迁移，实际项目注册、当前聊天工作目录和持久化配置均指向新目录，相关配置中的旧路径为 0；数据库完整性检查通过，一次性修复程序已成功结束。
