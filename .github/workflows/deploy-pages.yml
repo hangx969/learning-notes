@@ -21,13 +21,13 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7.0.1
         with:
           fetch-depth: 0        # 首页“最近更新”依赖全量 git 历史取文件提交时间
           filter: blob:none     # 无 blob 部分克隆：只下载 commit/tree 元数据，
                                 # HEAD 工作区 blob 按需拉取（约 10MB，而非全量 256MB 历史）
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7.0.0
         with:
           python-version: "3.12"
           cache: pip
@@ -39,7 +39,7 @@ jobs:
       - name: Prepare Quartz 4
         run: python tools/site/build.py --prepare
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7.0.0
         with:
           node-version: "22"
           cache: npm
@@ -52,11 +52,11 @@ jobs:
       - name: Build with Quartz 4
         run: python tools/site/build.py --skip-install
 
-      - uses: actions/configure-pages@v5
+      - uses: actions/configure-pages@v6.0.0
 
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@v5.0.0
         with:
           path: _site
 
       - id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5.0.1
