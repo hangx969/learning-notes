@@ -296,7 +296,7 @@ def export_content():
             for note in recent
         ],
     }
-    write_content("index.md", page_markdown("学习笔记", "\n".join(lines), home_meta))
+    write_content("index.md", page_markdown("工程笔记", "\n".join(lines), home_meta))
 
     assets = [
         path for path in git("ls-files").splitlines()

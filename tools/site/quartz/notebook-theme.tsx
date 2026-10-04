@@ -302,9 +302,9 @@ export const NotebookHome = (() => {
     return (
       <article class="notebook-home popover-hint">
         <div class="notebook-hero">
-          <p class="notebook-eyebrow">A PERSONAL KNOWLEDGE TOOLBOX</p>
-          <h1 id="学习笔记">
-            学习笔记
+          <p class="notebook-eyebrow">CLOUD · INFRASTRUCTURE · AI</p>
+          <h1 id="工程笔记">
+            工程笔记
             <svg class="hero-asterisk" viewBox="0 0 24 24" aria-hidden="true">
               <path d="M12 2v20M2 12h20M5 5l14 14M5 19 19 5" />
             </svg>
