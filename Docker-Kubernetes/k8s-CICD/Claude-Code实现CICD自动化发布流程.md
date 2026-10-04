@@ -1,5 +1,5 @@
 ---
-title: "Claude Code 实现 CI/CD 自动化发布流程详细指南"
+title: "Claude Code CI/CD 自动发布指南"
 source: "https://mp.weixin.qq.com/s/8P4qxr2iYCC_SraW3SJxjg"
 created: 2026-05-17
 tags:
@@ -10,7 +10,7 @@ tags:
   - kaniko
 ---
 
-# Claude Code 实现 CI/CD 自动化发布流程详细指南
+# Claude Code CI/CD 自动发布指南
 
 
 本篇用一个 Vue 前端项目结合 Claude Code 实现一次完整的 CI/CD 发布流程，实现的效果：从内网 GitLab 推送 → Kaniko 构建 → Harbor 推送 → Kubernetes 部署 → Istio 网关暴露，外加 Claude 自动 MR Review、Release Notes、部署失败根因分析。

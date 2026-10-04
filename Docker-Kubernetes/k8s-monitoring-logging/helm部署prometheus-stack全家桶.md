@@ -1,5 +1,5 @@
 ---
-title: "Prometheus-Stack 全家桶：生产级部署与运维完全指南"
+title: "Prometheus-Stack：生产部署与运维"
 tags:
   - kubernetes
   - monitoring
@@ -14,7 +14,7 @@ aliases:
   - kube-prometheus-stack
 ---
 
-# Prometheus-Stack 全家桶：生产级部署与运维完全指南
+# Prometheus-Stack：生产部署与运维
 
 
 ## 一、概述

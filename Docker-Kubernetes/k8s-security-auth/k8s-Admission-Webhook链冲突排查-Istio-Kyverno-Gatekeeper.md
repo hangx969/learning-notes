@@ -1,5 +1,5 @@
 ---
-title: "当 Istio、Kyverno、Gatekeeper 三个 Webhook 同时存在，你的集群会发生什么？"
+title: "Admission Webhook 链冲突排查"
 source: "https://mp.weixin.qq.com/s/i4RuNLZj5PSGScKpcE3vNQ"
 created: 2026-06-28
 tags:

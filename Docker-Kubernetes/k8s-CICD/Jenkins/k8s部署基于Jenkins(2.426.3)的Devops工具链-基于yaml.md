@@ -1,5 +1,5 @@
 ---
-title: K8s部署基于Jenkins(2.426.3)的DevOps工具链-基于YAML
+title: K8s DevOps 工具链：Jenkins 2.426.3
 tags:
   - kubernetes
   - cicd
@@ -9,7 +9,9 @@ aliases:
   - Jenkins 2.426.3 DevOps工具链
 ---
 
-# K8s部署基于Jenkins(2.426.3)的DevOps工具链-基于YAML
+# K8s DevOps 工具链：Jenkins 2.426.3
+
+基于 YAML 部署。
 
 
 ## 部署Jenkins

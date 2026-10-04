@@ -1,5 +1,5 @@
 ---
-title: "Kubernetes Gateway API 入门：Ingress 的下一代方案"
+title: "Kubernetes Gateway API 入门"
 source: "https://mp.weixin.qq.com/s/nOi89q7O9YvUo3H6NJqFKA"
 created: 2026-06-28
 tags:

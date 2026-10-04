@@ -1,5 +1,5 @@
 ---
-title: "Vibe Coding 时代的 Git Worktree 实践指南"
+title: "Vibe Coding 的 Git Worktree 实践"
 source: "https://mp.weixin.qq.com/s/QOjkU5QYcCb-OETfahnVBQ"
 created: 2026-06-28
 tags:
@@ -9,7 +9,7 @@ tags:
   - worktree
 ---
 
-# Git Worktree：AI 开发时代的并行工作流
+# Vibe Coding 的 Git Worktree 实践
 
 ## 问题：AI 开发为什么怕切分支？
 

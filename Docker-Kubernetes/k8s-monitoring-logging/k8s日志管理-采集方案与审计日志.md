@@ -1,5 +1,5 @@
 ---
-title: "K8s 日志管理：基础机制、六种采集方案与审计日志实战"
+title: "K8s 日志：基础机制、六种采集方案与审计日志"
 source:
   - "https://mp.weixin.qq.com/s/eOzdLWDVt_JU0ywK-PsWXQ"
   - "https://mp.weixin.qq.com/s/kvIaTMck_V1LpP848x4v7g"
@@ -13,7 +13,7 @@ aliases:
   - K8s容器日志管理
 ---
 
-# K8s 日志管理：基础机制、采集方案与审计日志
+# K8s 日志：基础机制、六种采集方案与审计日志
 
 > 你的 Pod 崩溃了，日志却消失了——这是 K8s 生产环境最令人抓狂的噩梦之一。
 

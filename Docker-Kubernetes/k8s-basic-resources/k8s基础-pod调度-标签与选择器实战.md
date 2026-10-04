@@ -1,5 +1,5 @@
 ---
-title: "Kubernetes 标签与选择器避坑：5 条核心铁律与生产级实战案例"
+title: "K8s 标签与选择器避坑：5 条规则与生产案例"
 source: "https://mp.weixin.qq.com/s/gSO9sQScNGJtSN3LnqZHwg"
 created: 2026-06-28
 tags:
@@ -9,7 +9,7 @@ tags:
   - scheduling
 ---
 
-# Kubernetes 标签与选择器实战
+# K8s 标签与选择器避坑：5 条规则与生产案例
 
 ## 一、标签到底是干嘛的
 

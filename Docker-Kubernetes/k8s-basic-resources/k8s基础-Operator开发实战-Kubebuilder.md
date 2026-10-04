@@ -1,5 +1,5 @@
 ---
-title: "从零开发 Kubernetes Operator：Kubebuilder 实战教程"
+title: "Kubebuilder：从零开发 K8s Operator"
 source: "https://mp.weixin.qq.com/s/Ts9MxQOpQVaUtw6YbHXogw"
 created: 2026-06-28
 tags:
@@ -10,7 +10,7 @@ tags:
   - go
 ---
 
-# 从零开发 Kubernetes Operator
+# Kubebuilder：从零开发 K8s Operator
 
 ## 什么是 Operator？
 

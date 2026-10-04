@@ -1,5 +1,5 @@
 ---
-title: "Claude Code 创始人在红杉大会上的 7 个重要判断"
+title: "Claude Code 创始人：红杉大会的 7 个判断"
 source: "https://mp.weixin.qq.com/s/nyBr3S87wjRoaBjYgvze0Q"
 date: 2026-05-06
 tags:
@@ -8,7 +8,7 @@ tags:
   - AI/mcp
 ---
 
-# Claude Code 创始人在红杉大会上的 7 个重要判断
+# Claude Code 创始人：红杉大会的 7 个判断
 
 > Boris Cherny（Claude Code 创始人）在红杉大会上的分享。
 > 原始视频：https://www.youtube.com/watch?v=SlGRN8jh2RI

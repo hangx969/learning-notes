@@ -1,5 +1,5 @@
 ---
-title: "用 OpenClaw 智能体网关接管 K8s 日常运维：从只读巡检到低风险变更"
+title: "OpenClaw K8s 运维：从只读巡检到低风险变更"
 source: "https://mp.weixin.qq.com/s/LYGGzLyVattT_sAmQDUHeQ"
 created: 2026-05-17
 tags:
@@ -8,6 +8,8 @@ tags:
   - AIOps
   - OPA
 ---
+
+通过 OpenClaw 智能体网关接管 K8s 日常运维。
 
 > 凌晨 2 点，AI 在钉钉上问我："检测到 recommend-engine 内存持续飙升，历史相似案例修复成功率 97%，是否允许我执行 patch？"我迷迷糊糊回了个"同意"，然后翻个身继续睡了。第二天看报告，AI 在 3 分钟内完成了诊断、调整、验证全流程——而我，全程只说了一个词。
 

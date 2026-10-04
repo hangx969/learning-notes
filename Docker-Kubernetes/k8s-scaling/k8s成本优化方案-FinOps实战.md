@@ -1,5 +1,5 @@
 ---
-title: "K8s 集群成本优化方案：砍掉 60% 云账单"
+title: "K8s 集群成本优化"
 source: "https://mp.weixin.qq.com/s/JPWgnmppvaaBXHeo2yO3nA"
 created: 2026-05-22
 tags:
@@ -9,7 +9,9 @@ tags:
   - scaling
 ---
 
-# K8s 集群成本优化方案：砍掉 60% 云账单
+# K8s 集群成本优化
+
+原文主张：砍掉 60% 云账单。
 
 
 > 你的 K8s 集群每月账单是不是像脱缰野马一样失控？Pod 里 request 设了 8 核实际只用了 0.5 核？半夜跑的批处理还占着 32G 内存？

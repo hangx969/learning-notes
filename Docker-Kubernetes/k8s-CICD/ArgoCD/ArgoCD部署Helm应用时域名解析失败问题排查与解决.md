@@ -1,5 +1,5 @@
 ---
-title: ArgoCD部署Helm应用时域名解析失败问题排查与解决
+title: ArgoCD Helm 部署：域名解析故障处理
 tags:
   - kubernetes
   - cicd
@@ -10,7 +10,7 @@ aliases:
   - ArgoCD DNS解析问题
 ---
 
-# ArgoCD部署Helm应用时域名解析失败问题排查与解决
+# ArgoCD Helm 部署：域名解析故障处理
 
 
 ## 问题背景

@@ -1,5 +1,5 @@
 ---
-title: Kubernetes KEDA 事件驱动自动扩缩容：原理、选型与 KServe 实战
+title: "KEDA：事件驱动扩缩容与 KServe 实战"
 date: 2026-09-15
 tags:
   - kubernetes
@@ -22,7 +22,9 @@ source_urls:
   - https://mp.weixin.qq.com/s/rMLNgv3N9vqkOQ28-833RQ
 ---
 
-# Kubernetes KEDA 事件驱动自动扩缩容：原理、选型与 KServe 实战
+# KEDA：事件驱动扩缩容与 KServe 实战
+
+Kubernetes 事件驱动自动扩缩容的原理与选型。
 
 KEDA（Kubernetes Event-Driven Autoscaling）把消息积压、请求并发、数据库查询、Prometheus 指标和定时计划等业务信号转换为 Kubernetes 扩缩容决策。本文统一整理 KEDA 的原理、资源模型、与 HPA 的边界、Scale-to-Zero、常见事件源实战，以及 KServe + vLLM 的请求指标扩缩容案例。
 

@@ -1,5 +1,5 @@
 ---
-title: "Obsidian Vault 模板库合集：48 个 GitHub 宝藏 vault"
+title: "Obsidian Vault：48 个 GitHub 模板库"
 source: "https://mp.weixin.qq.com/s/2sPkMM4TllTjOGY7CGa6ZQ"
 created: 2026-06-28
 tags:
@@ -8,7 +8,7 @@ tags:
   - awesome-list
 ---
 
-# Obsidian Vault 模板库合集
+# Obsidian Vault：48 个 GitHub 模板库
 
 > GitHub 仓库：[obsidian-pkm-vault/awesome-obsidian-vault](https://github.com/obsidian-pkm-vault/awesome-obsidian-vault)（1.2k star，CC0 协议，维护 4 年）
 >

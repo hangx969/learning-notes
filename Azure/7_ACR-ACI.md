@@ -1,5 +1,5 @@
 ---
-title: Azure Container Registry & Azure Container Instances
+title: Azure ACR and ACI
 tags:
   - azure/container
   - azure/ACR
@@ -12,7 +12,9 @@ aliases:
 date: 2026-04-16
 ---
 
-# Azure Container Registry & Azure Container Instances
+# Azure ACR and ACI
+
+Azure Container Registry 与 Azure Container Instances。
 
 ## Related Notes
 

@@ -1,5 +1,5 @@
 ---
-title: "Skill 太多导致上下文膨胀怎么办？来自 Hermes Agent 的实践"
+title: "Hermes Agent：Skill 膨胀与上下文治理"
 source: "https://mp.weixin.qq.com/s/eTE8rk-mCsqo0w88VmzYGw"
 created: 2026-05-13
 tags:

@@ -1,4 +1,6 @@
-# Anthropic 工程师力推 HTML 取代 Markdown —— Karpathy 附议
+# HTML 取代 Markdown：Anthropic 工程师的建议
+
+Karpathy 对这一建议表示支持。
 
 > 来源：量子位 QbitAI（Jay），2026-05-12
 > Thariq 原文：https://x.com/trq212/status/2052809885763747935

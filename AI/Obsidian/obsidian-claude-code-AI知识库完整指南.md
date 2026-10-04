@@ -1,5 +1,5 @@
 ---
-title: "Obsidian + Claude Code：AI 驱动的知识库完整指南"
+title: "Obsidian + Claude Code：AI 知识库指南"
 tags:
   - AI
   - obsidian
@@ -18,7 +18,7 @@ merged_from:
   - obsidian-claude-code-AI知识管家
 ---
 
-# Obsidian + Claude Code：AI 驱动的知识库完整指南
+# Obsidian + Claude Code：AI 知识库指南
 
 > 你不需要成为笔记达人。你只需要把笔记存成 AI 能直读的格式，然后让 AI 接管剩下的事。
 

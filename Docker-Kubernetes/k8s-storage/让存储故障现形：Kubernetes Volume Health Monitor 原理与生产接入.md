@@ -1,5 +1,5 @@
 ---
-title: 让存储故障现形：Kubernetes Volume Health Monitor 原理与生产接入
+title: "K8s Volume Health Monitor：原理与生产接入"
 tags:
   - kubernetes
   - storage/volume-health
@@ -11,7 +11,7 @@ aliases:
 date: 2026-09-06
 ---
 
-# 让存储故障现形：Kubernetes Volume Health Monitor 原理与生产接入
+# K8s Volume Health Monitor：原理与生产接入
 
 ## 一、开头：PVC 一直 Bound，但业务已经卡死半小时
 

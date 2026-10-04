@@ -1,5 +1,5 @@
 ---
-title: "Kubernetes 容器安全上下文完全指南：从入门到生产避坑"
+title: "K8s 容器安全上下文：从入门到生产避坑"
 source: "https://mp.weixin.qq.com/s/rUX0GmNlkEVbc-X6rZJ65A"
 author:
   - "老郭a"
@@ -12,7 +12,7 @@ tags:
   - "SecurityContext"
 ---
 
-# Kubernetes 容器安全上下文完全指南：从入门到生产避坑
+# K8s 容器安全上下文：从入门到生产避坑
 
 
 ## Security Context 到底是什么

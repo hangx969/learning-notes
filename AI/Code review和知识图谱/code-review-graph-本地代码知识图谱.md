@@ -1,5 +1,5 @@
 ---
-title: "开源 Claude Code 本地代码知识图谱：code-review-graph 完整上手攻略"
+title: "code-review-graph：本地代码知识图谱指南"
 source: "https://mp.weixin.qq.com/s/D2WBfa_FDfgz2n6sndLIVg"
 created: 2026-05-17
 tags:
@@ -8,6 +8,8 @@ tags:
   - code-review
   - knowledge-graph
 ---
+
+开源工具，面向 Claude Code 的本地代码知识图谱。
 
 用 code-review-graph 给本地代码仓库建立一张知识图谱，再通过 MCP 接入 Claude Code。这样 Claude Code 不再只会反复读文件，而是能像查地图一样查询代码结构、依赖关系、核心节点和影响范围。
 

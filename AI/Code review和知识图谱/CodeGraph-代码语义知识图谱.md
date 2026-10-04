@@ -1,5 +1,5 @@
 ---
-title: "CodeGraph：给 Claude Code 先画一张代码地图，工具调用砍掉 92%"
+title: "CodeGraph：Claude Code 代码知识图谱"
 source: "https://mp.weixin.qq.com/s/8sEC_IISL9BVcmOlw-Zlig"
 created: 2026-06-08
 tags:
@@ -8,7 +8,9 @@ tags:
   - knowledge-graph
 ---
 
-# CodeGraph：代码语义知识图谱
+# CodeGraph：Claude Code 代码知识图谱
+
+提前构建代码地图；项目 README 的基准称平均工具调用减少 92%。
 
 ## 解决什么问题
 

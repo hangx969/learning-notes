@@ -1,5 +1,5 @@
 ---
-title: "不依赖本地 Docker 环境：从 Docker Hub 下载镜像并保存为 tar 文件"
+title: "无需本地 Docker：下载 Docker Hub 镜像为 tar"
 source: "https://mp.weixin.qq.com/s/KtINb-TZxbvfuF7RwsBMVg?scene=1&click_id=458085540"
 author:
   - "李超"
@@ -13,7 +13,7 @@ tags:
   - multi-architecture
 ---
 
-# 不依赖本地 Docker 环境：从 Docker Hub 下载镜像并保存为 tar 文件
+# 无需本地 Docker：下载 Docker Hub 镜像为 tar
 
 ## 使用说明
 

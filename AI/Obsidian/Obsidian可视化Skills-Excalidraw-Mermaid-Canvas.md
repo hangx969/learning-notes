@@ -1,5 +1,5 @@
 ---
-title: Obsidian 可视化 Skills — Excalidraw / Mermaid / Canvas
+title: "Obsidian 可视化 Skills"
 tags:
   - ai/obsidian
   - ai/skills
@@ -8,7 +8,9 @@ date: 2026-01-14
 source: "https://mp.weixin.qq.com/s/EbNkKTGkp2WnqJ0nKNBwmA"
 ---
 
-# Obsidian 可视化 Skills — Excalidraw / Mermaid / Canvas
+# Obsidian 可视化 Skills
+
+Excalidraw / Mermaid / Canvas。
 
 ## 项目简介
 

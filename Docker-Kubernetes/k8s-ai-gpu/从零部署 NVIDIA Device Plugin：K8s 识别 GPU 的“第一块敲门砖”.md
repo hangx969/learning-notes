@@ -1,5 +1,5 @@
 ---
-title: "从零部署 NVIDIA Device Plugin：K8s 识别 GPU 的“第一块敲门砖”"
+title: "NVIDIA Device Plugin：K8s GPU 识别与部署入门"
 source: "https://mp.weixin.qq.com/s/h49RmFUKpZXW1ybiltyqsg"
 created: 2026-09-05
 tags:
@@ -9,7 +9,7 @@ tags:
   - device-plugin
 ---
 
-# 从零部署 NVIDIA Device Plugin：K8s 识别 GPU 的“第一块敲门砖”
+# NVIDIA Device Plugin：K8s GPU 识别与部署入门
 
 > K8s 节点上插着 8 张 A100，调度器却完全看不见——`kubectl describe node` 的 Capacity 里没有 `nvidia.com/gpu` 字段。
 

@@ -1,5 +1,5 @@
 ---
-title: "Kubernetes API Server 深度剖析：请求链路、认证授权与生产调优"
+title: "K8s API Server：请求链路、认证授权与生产调优"
 source: "https://mp.weixin.qq.com/s/jj6thW3nQ7H09rwAxvcxJg"
 created: 2026-05-17
 tags:
@@ -9,7 +9,7 @@ tags:
   - production
 ---
 
-# Kubernetes API Server 深度剖析：请求链路、认证授权与生产调优
+# K8s API Server：请求链路、认证授权与生产调优
 
 
 > 你的 kubectl apply 命令从按下回车到资源落地，中间到底经历了什么？kube-apiserver 作为 Kubernetes 的"神经中枢"，每一次操作背后都是一条精密设计的处理链路。本文深度剖析 API Server 内部工作原理，带你彻底搞懂这个最重要却最少被深入讲解的组件。
