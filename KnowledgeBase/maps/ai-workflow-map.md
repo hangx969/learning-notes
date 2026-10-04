@@ -5,7 +5,7 @@ tags:
   - knowledgebase/ai
 aliases:
   - AI Workflow Map
-date: 2026-10-03
+date: 2026-10-04
 sources:
   - "[[AI/Obsidian/github-pages-quartz]]"
   - "[[AI/ClaudeCode/Claude Code 基础指南]]"
@@ -37,6 +37,7 @@ sources:
   - "[[AI/行业动态/Claude-Code创始人红杉大会七个判断]]"
   - "[[AI/行业动态/Anthropic工程师力推HTML取代Markdown-Karpathy附议]]"
   - "[[AI/行业动态/AI时代的Git版本管理最佳实践]]"
+  - "[[AI/行业动态/Karpathy-大模型输出理解技巧-文字图解网页视频]]"
   - "[[AI/AI-视觉/Effective-HTML-Agent页面工作流]]"
   - "[[AI/AI-视觉/Markdown-Viewer-Skills-Markdown中直接画图]]"
   - "[[AI/AI-视觉/html-anything-AI生成HTML全场景工具]]"
@@ -110,6 +111,8 @@ sources:
 1. [[AI/行业动态/Claude-Code创始人红杉大会七个判断|Claude Code 创始人：红杉大会的 7 个判断]] — 代码价值重估、MCP 定位、SaaS 护城河瓦解、创业机会窗口
 2. [[AI/行业动态/Anthropic工程师力推HTML取代Markdown-Karpathy附议|HTML 取代 Markdown：Anthropic 工程师的建议]] — Anthropic 工程师 5 大论据 + Karpathy 进化路线 + 哥白尼式智能观
 3. [[AI/行业动态/AI时代的Git版本管理最佳实践|AI 时代 Git 实践]] — 11 条最佳实践 + Jujutsu/GitButler 新工具 + 隔离/透明/自动化三原则
+
+4. [[AI/行业动态/Karpathy-大模型输出理解技巧-文字图解网页视频|Karpathy：大模型输出理解技巧]] — 受控语言、图解、交互网页与讲解视频，附提示词、STE 边界和旁白路线
 
 ### AI 视觉与 HTML 交付路径
 1. [[AI/AI-视觉/Effective-HTML-Agent页面工作流|Effective HTML 页面工作流]] — 任务判断、线框、交互原型、架构图、计划和视觉设计；直接输出自包含 HTML，并对比 HTML 与 Markdown 的交付边界、20 个设计范本和同类工具定位

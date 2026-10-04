@@ -6,7 +6,7 @@ tags:
 aliases:
   - 知识库首页
   - KB Index
-date: 2026-10-03
+date: 2026-10-04
 ---
 
 # 📚 Learning Notes 知识库
@@ -259,6 +259,8 @@ date: 2026-10-03
 | [Boris Cherny 红杉大会](sources/boris-cherny-sequoia-summary.md) | [[AI/行业动态/Claude-Code创始人红杉大会七个判断\|Claude Code 创始人：红杉大会的 7 个判断]] | Claude Code 创始人 7 个行业判断：代码民主化、MCP 定位、SaaS 护城河瓦解、创业黄金期 |
 | [HTML 取代 Markdown](sources/html-vs-markdown-summary.md) | [[AI/行业动态/Anthropic工程师力推HTML取代Markdown-Karpathy附议\|HTML 取代 Markdown：Anthropic 工程师的建议]] | Anthropic 工程师 5 大论据力推 HTML、Karpathy 附议进化路线、Token 成本权衡、哥白尼式智能观 |
 | [AI 时代 Git 实践](sources/ai-git-best-practices-summary.md) | [AI/行业动态/AI时代的Git版本管理最佳实践](../AI/行业动态/AI时代的Git版本管理最佳实践.md) | 11 条 Agent Git 最佳实践、Jujutsu/GitButler 新工具、隔离/透明/自动化三原则 |
+
+- [[KnowledgeBase/sources/karpathy-llm-output-understanding-summary|Karpathy 输出理解技巧]] — ASD-STE100 写作、图解、HTML 与定制讲解视频；原始文章：[[AI/行业动态/Karpathy-大模型输出理解技巧-文字图解网页视频]]。
 
 ### AI/HarnessKit（已摄入 ✅）
 
