@@ -1,5 +1,5 @@
 ---
-title: "Harness 实战：从零搭建最小可用的 Harness 系统"
+title: "Harness 实战：从零搭建最小可用系统"
 source: "https://mp.weixin.qq.com/s/Q1pAwfL2FXGg2mEQNSNrkw"
 date: 2026-04-09
 tags:
@@ -8,7 +8,7 @@ tags:
   - AI/safety
 ---
 
-# Harness 实战：从零搭建最小可用的 Harness 系统
+# Harness 实战：从零搭建最小可用系统
 
 ## 问题的起源
 

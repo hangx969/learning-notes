@@ -1,5 +1,5 @@
 ---
-title: "为什么 Claude Code 不用 RAG 检索代码，而是 grep？"
+title: "Claude Code 为何用 grep 而非 RAG 检索代码？"
 source: "https://mp.weixin.qq.com/s/TGBfhrvC_7dtGxy1GAurBQ"
 created: 2026-05-22
 tags:
@@ -9,7 +9,7 @@ tags:
   - agentic-search
 ---
 
-# 为什么 Claude Code 不用 RAG 检索代码，而是 grep？
+# Claude Code 为何用 grep 而非 RAG 检索代码？
 
 Claude Code 的代码搜索又快又准，核心只用三个工具：**Glob、Grep、Read**。没有向量数据库，没有 Embedding 模型，没有索引构建过程。Anthropic 内部称之为 **Agentic Search**（智能体搜索）。
 

@@ -1,5 +1,5 @@
 ---
-title: "Mnilax：CLAUDE.md 规则从 Karpathy 的 4 条增加到 12 条，错误率从 41% 降到 3%"
+title: "Mnilax 的 CLAUDE.md：12 条规则"
 source: "https://x.com/Mnilax/status/2053116311132155938"
 created: 2026-05-15
 tags:

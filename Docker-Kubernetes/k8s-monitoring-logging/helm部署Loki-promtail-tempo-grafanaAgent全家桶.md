@@ -1,5 +1,5 @@
 ---
-title: Helm部署Loki+Promtail+Tempo+GrafanaAgent全家桶
+title: "Helm部署Loki+Promtail+Tempo+GrafanaAgent"
 tags:
   - kubernetes
   - monitoring
@@ -14,7 +14,9 @@ aliases:
   - Loki+Promtail+Tempo全家桶
 ---
 
-# Helm部署Loki+Promtail+Tempo+GrafanaAgent全家桶
+# Helm部署Loki+Promtail+Tempo+GrafanaAgent
+
+Loki / Promtail / Tempo / Grafana Agent。
 
 
 ## loki日志查询

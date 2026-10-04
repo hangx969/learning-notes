@@ -1,5 +1,5 @@
 ---
-title: "K8s 容器设计模式：Sidecar / Init Container / Ambassador / Adapter"
+title: "K8s 四种容器设计模式"
 source:
   - "https://mp.weixin.qq.com/s/LP79kNx9QRdTH44F5s46Kw"
   - "https://mp.weixin.qq.com/s/CHZjuW2hv1b-IaEXM0tM2A"
@@ -13,7 +13,9 @@ tags:
   - sidecar
 ---
 
-# K8s 容器设计模式
+# K8s 四种容器设计模式
+
+Sidecar / Init Container / Ambassador / Adapter。
 
 ## 什么是容器设计模式？
 

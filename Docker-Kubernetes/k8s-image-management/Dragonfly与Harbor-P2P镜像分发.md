@@ -1,5 +1,5 @@
 ---
-title: "Dragonfly + Harbor：AI 集群的 P2P 镜像与大文件分发"
+title: "Dragonfly + Harbor：P2P 分发"
 source: "https://mp.weixin.qq.com/s/NTEYZHwnhJkh9okx_2-2gQ"
 created: 2026-09-13
 updated: 2026-09-13
@@ -13,7 +13,9 @@ aliases:
   - AI 集群 P2P 镜像分发
 ---
 
-# Dragonfly + Harbor：AI 集群的 P2P 镜像与大文件分发
+# Dragonfly + Harbor：P2P 分发
+
+面向 AI 集群的 P2P 镜像与大文件分发。
 
 > [!info] 版本与阅读边界
 > 本文重点解释大规模镜像与模型分发的架构动机。Dragonfly v1 已归档，现代部署应以 Dragonfly v2 文档为准；v2 的核心角色是 Manager、Scheduler、Seed Peer 和 Peer，其中 Manager 可按部署模型省略。Harbor 的 P2P Preheat 是面向外部 P2P 引擎的预热策略，不等同于运行时拉取链路本身。具体版本兼容性见文末“版本与集成边界”。

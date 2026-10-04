@@ -1,5 +1,5 @@
 ---
-title: "Markdown Viewer Skills：让 AI 写文档时顺手把图也画了"
+title: "Markdown Viewer Skills：AI 文档配图"
 source: "https://mp.weixin.qq.com/s/gdIO1bWwjWUAceWcaovx9A"
 created: 2026-06-28
 tags:

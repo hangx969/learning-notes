@@ -1,5 +1,5 @@
 ---
-title: "AIOps 实战：Golang 手搓 K8s 智能运维工具链"
+title: "Golang 构建 K8s 智能运维工具链实战"
 source: "https://mp.weixin.qq.com/s/viobyCxwXGbUGqH-EvCsyQ"
 created: 2026-06-07
 tags:
@@ -10,7 +10,7 @@ tags:
   - RAG
 ---
 
-# AIOps 实战：Golang 手搓 K8s 智能运维工具链
+# Golang 构建 K8s 智能运维工具链实战
 
 ## 前言
 

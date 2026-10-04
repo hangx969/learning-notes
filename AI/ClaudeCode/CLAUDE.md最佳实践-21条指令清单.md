@@ -1,5 +1,5 @@
 ---
-title: "Mayank Agarwal：21 条 CLAUDE.md 指令，让 Claude 真正懂你"
+title: "Mayank Agarwal：21 条 CLAUDE.md 指令"
 source: "https://x.com/TheAIWorld22/status/2053023798170198453"
 created: 2026-05-15
 tags:

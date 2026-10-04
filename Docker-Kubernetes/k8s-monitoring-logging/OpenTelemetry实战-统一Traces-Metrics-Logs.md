@@ -1,5 +1,5 @@
 ---
-title: "OpenTelemetry 实战：告别厂商锁定，统一 Traces/Metrics/Logs"
+title: "OpenTelemetry 统一可观测性实战"
 source: "https://mp.weixin.qq.com/s/VXTpNqOldc_qiRhRov6j-g"
 created: 2026-05-15
 tags:
@@ -8,7 +8,9 @@ tags:
   - opentelemetry
 ---
 
-# OpenTelemetry 实战：告别厂商锁定，统一 Traces/Metrics/Logs
+# OpenTelemetry 统一可观测性实战
+
+原文主张：告别厂商锁定，统一 Traces / Metrics / Logs。
 
 
 > 你的监控系统，能告诉你"为什么慢"吗？

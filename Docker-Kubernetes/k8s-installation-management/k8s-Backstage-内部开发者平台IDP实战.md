@@ -1,5 +1,5 @@
 ---
-title: "K8s 平台工程实战：用 Backstage 打造一站式内部开发者平台"
+title: "Backstage：K8s 一站式内部开发者平台实战"
 source: "https://mp.weixin.qq.com/s/MY4_lenKLHmNhhgIZFYvKw"
 created: 2026-06-28
 tags:
@@ -9,7 +9,7 @@ tags:
   - idp
 ---
 
-# K8s 平台工程实战：Backstage IDP
+# Backstage：K8s 一站式内部开发者平台实战
 
 ## 一、为什么需要 IDP
 

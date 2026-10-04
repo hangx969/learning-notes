@@ -1,4 +1,4 @@
-# Diagram Design：让 Claude Code / Codex 生成更有设计感的技术图
+# Diagram Design：Claude Code / Codex 技术图设计
 
 项目地址：[cathrynlavery/diagram-design](https://github.com/cathrynlavery/diagram-design)
 
