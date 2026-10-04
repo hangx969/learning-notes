@@ -12,7 +12,7 @@
 
 ## 🧭 知识库导航（KnowledgeBase）
 
-本仓库在原始文档之上构建了一个 **知识编译层**（[Karpathy LLM Wiki 模式](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f)），提供全局导航、概念网络和分析报告，无需逐篇翻找。
+可以按技术领域、工具或概念查找相关笔记，通过交叉引用延伸阅读，并在分析报告中查看主题覆盖与待补充方向。
 
 **→ [进入知识库首页](./KnowledgeBase/INDEX.md)**
 
